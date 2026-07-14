@@ -173,10 +173,10 @@ class TushareScreener:
         """Lazy-initialize Tushare pro API."""
         if self._pro is None:
             import tushare as ts
-            ts.set_token(self._token)
-            self._pro = ts.pro_api(timeout=30)
+            self._pro = ts.pro_api(token=self._token, timeout=30)
             api_url = os.environ.get("TUSHARE_API_URL", "")
             if api_url:
+                self._pro._DataApi__token = self._token
                 self._pro._DataApi__http_url = api_url
         return self._pro
 
@@ -191,11 +191,16 @@ class TushareScreener:
                 return api_func(**kwargs)
             except Exception as e:
                 last_err = e
+                err_text = str(e)
+                permission_denied = "访问权限" in err_text or "无权限" in err_text or "permission" in err_text.lower()
+                if permission_denied:
+                    raise RuntimeError(f"Tushare API '{api_name}' permission denied: {e}") from e
                 if attempt < 3:
                     import tushare as ts
-                    self._pro = ts.pro_api(timeout=30)
+                    self._pro = ts.pro_api(token=self._token, timeout=30)
                     api_url = os.environ.get("TUSHARE_API_URL", "")
                     if api_url:
+                        self._pro._DataApi__token = self._token
                         self._pro._DataApi__http_url = api_url
                     time.sleep(1.0 * attempt)
         raise RuntimeError(f"Tushare API '{api_name}' failed after 3 retries: {last_err}")

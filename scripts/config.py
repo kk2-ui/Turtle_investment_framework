@@ -49,13 +49,29 @@ def get_token() -> str:
 
 
 def get_api_url() -> Optional[str]:
-    """Return custom Tushare API URL if TUSHARE_API_URL is set.
+    """Return custom Tushare API URL from supported environment variables.
 
     When a broker API URL is configured, TushareClient will route all calls
     through it and auto-upgrade to VIP endpoints for better rate limits.
     """
     _load_env_file()
-    return os.environ.get("TUSHARE_API_URL") or None
+    return (
+        os.environ.get("TUSHARE_API_URL")
+        or os.environ.get("TUSHARE_HTTP_URL")
+        or os.environ.get("API_URL")
+        or None
+    )
+
+
+def get_vip_mode() -> bool:
+    """Return whether VIP endpoint auto-upgrade is enabled.
+
+    Default True (backward compatible). Set VIP_MODE=false in .env to disable
+    for broker/proxy APIs that don't support _vip endpoints.
+    """
+    _load_env_file()
+    val = os.environ.get("VIP_MODE", "true").strip().lower()
+    return val not in ("false", "0", "no", "off")
 
 
 def validate_stock_code(code: str) -> str:
@@ -176,3 +192,102 @@ def validate_pdf(filepath: str) -> "tuple[bool, str]":
             return False, "File does not start with %PDF- magic bytes"
 
     return True, "Valid PDF"
+
+
+def normalize_holding_channel(channel: Optional[str]) -> str:
+    """Normalize user-provided holding-channel text into internal categories."""
+    if not channel:
+        return ""
+    raw = str(channel).strip().lower()
+    if not raw:
+        return ""
+
+    if raw in {"southbound", "hk_local_direct", "hk_local_direct_tax0", "hk_local_direct_tax10", "us_broker", "direct"}:
+        return raw
+    if any(k in raw for k in ("港股通", "southbound", "southbound connect")):
+        return "southbound"
+    if any(k in raw for k in ("香港", "hk local", "hong kong local", "香港券商", "本地直投")):
+        if "10%" in raw or "10％" in raw or "tax10" in raw:
+            return "hk_local_direct_tax10"
+        if "0%" in raw or "0％" in raw or "tax0" in raw:
+            return "hk_local_direct_tax0"
+        return "hk_local_direct"
+    if any(k in raw for k in ("w-8ben", "美股券商", "us broker")):
+        return "us_broker"
+    if any(k in raw for k in ("直接", "direct")):
+        return "direct"
+    return raw
+
+
+def infer_listing_structure(ts_code: str, basic_info: Optional[dict] = None) -> str:
+    """Best-effort listing-structure inference for tax handling."""
+    code = (ts_code or "").upper()
+    if code.endswith(".HK"):
+        market = str((basic_info or {}).get("market", "")).strip()
+        fullname = str((basic_info or {}).get("fullname", "")).strip().lower()
+        enname = str((basic_info or {}).get("enname", "")).strip().lower()
+        name_blob = " ".join(part for part in [market, fullname, enname] if part).lower()
+        if "cayman" in name_blob or "开曼" in name_blob:
+            return "red_chip_cayman"
+        if "bermuda" in name_blob or "百慕大" in name_blob:
+            return "red_chip_bermuda"
+        return "hk"
+    if code.endswith(".US"):
+        return "us"
+    if code.endswith(".SH") or code.endswith(".SZ"):
+        return "a_share"
+    return ""
+
+
+def resolve_shareholder_dividend_tax_rate(
+    ts_code: str,
+    holding_channel: Optional[str] = None,
+    listing_structure: Optional[str] = None,
+) -> tuple[Optional[float], str]:
+    """Resolve shareholder-level dividend tax rate for throughput-return analysis.
+
+    Returns:
+        (tax_rate_decimal_or_none, explanation)
+    """
+    code = (ts_code or "").upper()
+    channel = normalize_holding_channel(holding_channel)
+    structure = (listing_structure or "").strip().lower()
+    override = os.environ.get("DIVIDEND_TAX_RATE", "").strip()
+    if override:
+        raw = override.replace("%", "")
+        try:
+            value = float(raw)
+            rate = value / 100.0 if value > 1 else value
+            if 0.0 <= rate <= 0.5:
+                return rate, f"DIVIDEND_TAX_RATE 显式覆盖为 {rate * 100:.2f}%"
+        except ValueError:
+            pass
+
+    if code.endswith(".SH") or code.endswith(".SZ"):
+        return 0.0, "A股默认长期持有，股东层面股息税率 0%"
+
+    if code.endswith(".US"):
+        if channel == "us_broker":
+            return 0.10, "美股 W-8BEN 口径，股东层面股息税率 10%"
+        return 0.30, "美股默认非协定口径，股东层面股息税率 30%"
+
+    if code.endswith(".HK"):
+        if channel == "southbound":
+            return 0.20, "港股通（内地个人）口径，股东层面股息税率 20%"
+        if channel == "hk_local_direct_tax0":
+            return 0.0, "香港券商直投，用户显式指定股东层面股息税率 0%"
+        if channel == "hk_local_direct_tax10":
+            return 0.10, "香港券商直投，用户显式指定股东层面股息税率 10%"
+
+        if structure in {"red_chip_cayman", "red_chip_bermuda", "red_chip"}:
+            if channel == "hk_local_direct":
+                return None, "红筹/离岸架构 + 香港券商直投需确认实际预扣安排；不可默认 0%，建议列示 0%/10% 情景"
+            if channel in {"direct", ""}:
+                return None, "红筹/离岸架构直接持有需按税务居民身份确认，不能默认 20%"
+
+        if structure in {"h_share", "hk"} and channel in {"direct", "hk_local_direct"}:
+            return None, "港股直接持有税率依赖税务居民身份和发行人安排，需个案确认"
+
+        return None, "港股股东层面股息税率需结合上市结构与持有人身份确认"
+
+    return None, "未知市场，无法解析股东层面股息税率"

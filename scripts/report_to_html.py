@@ -367,7 +367,29 @@ def main():
         action="store_true",
         help="Embed CSS inline for local viewing (no external CSS dependencies)",
     )
+    parser.add_argument(
+        "--format", "-f",
+        choices=["html", "pdf", "docx"],
+        default="html",
+        help="输出格式: html (默认, Jinja2模板), pdf (Pandoc+Chrome), docx (Pandoc)",
+    )
     args = parser.parse_args()
+
+    # V10: PDF/DOCX 格式委托给 render_report.py
+    if args.format in ("pdf", "docx"):
+        from render_report import render_to_pdf, render_to_docx
+        input_md = str(input_path) if input_path else args.input
+        output_file = str(output_path) if output_path else None
+        try:
+            if args.format == "pdf":
+                result = render_to_pdf(input_md, output_file)
+            else:
+                result = render_to_docx(input_md, output_file)
+            print(f"✅ {args.format.upper()} 渲染完成: {result}")
+            return
+        except Exception as e:
+            print(f"❌ {args.format.upper()} 渲染失败: {e}", file=sys.stderr)
+            sys.exit(1)
 
     # --- Resolve paths ---
     project_root = Path(__file__).resolve().parent.parent
