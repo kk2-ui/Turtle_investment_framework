@@ -36,15 +36,15 @@
 
 ### 重要决策
 
-- 当前 `main`已有大量历史未提交改动；本次治理接入不自动搬运、stash或重置它们。
-- 新门禁只对后续工作完整生效；历史改动必须先完成基线审计与冻结。
+- 历史基线已在用户授权后冻结并合入：`ecceb06`、`3a9b217`、`2a6c5a4`；当前 `main` 工作区干净。
+- 新门禁对后续工作完整生效；任何新增改动仍必须从干净 `main` 创建 linked worktree 和功能分支。
 - Turtle 的远端主分支应使用 PR 和 required checks，不能依赖本地 hook 作为唯一保护。
+- 当前浏览器登录账号 `kk2-ui` 不是 `terancejiang/Turtle_investment_framework` 的管理员；远端保护只能由仓库 owner/admin 完成。
 
 ### 阻断
 
-- 当前主工作区不干净，因此 `project_guard.py start`会有意停止。
-- 在建立可靠基线提交前，不能从当前 HEAD 创建包含全部现状的新 worktree。
-- GitHub required check/branch protection 尚未在远端启用；工作流文件已准备，远端设置需要单独授权。
+- 本地基线、worktree、hook 和验证门禁均已就绪；当前没有本地阻断。
+- GitHub required check/branch protection 尚未在 Turtle 远端启用；当前账号访问分支设置返回 404，需要 `terancejiang` owner/admin 权限。
 
 ### 完成证据
 
@@ -55,6 +55,7 @@
 - 开发规范、GOALS 和状态面板内容一致。
 - 独立路线图/实现审计无阻断级问题。
 - 安装技能与仓库内技能逐文件一致；两套集成测试、两仓治理自检及主工作区拒绝路径复核通过。
+- 历史基线冻结提交已通过本地完整回归，主工作区已回到干净、仅用于集成的状态。
 
 ## T1 Phase 08 完整报告恢复
 
@@ -68,7 +69,6 @@
 
 ### 阻断
 
-- T0 的历史脏主干尚未冻结。
 - 任何新增昂贵真实运行继续服从 `docs/RUNTIME_OPERATIONS.md` 的授权和熔断规则。
 
 ## T2 Phase 08 真实验收收口
@@ -117,3 +117,5 @@
 | 2026-08-05 | 独立审计后补充面板最近决策，并将旧黄金检查点明确标为历史 | 避免路线图和状态面板在长任务恢复时产生过时暗示 |
 | 2026-08-05 | `start` 自动共享被忽略 `.venv` 并写入仓库本地 exclude | 保证 Turtle 新 worktree 的 hook 和 full 验证使用同一运行环境 |
 | 2026-08-05 | 四项环境回滚/权限修复经独立复审通过，T0 标记 COMPLETE；T1 不自动激活 | 完成治理目标，同时把基线冻结和远端设置留在用户授权边界 |
+| 2026-08-05 | 用户授权后冻结历史基线并合入 `main` | 让后续 `start` 能从包含完整现状的干净基线创建 worktree |
+| 2026-08-05 | Turtle 远端保护保留为 owner/admin 待办 | 当前 `kk2-ui` 账号无 `terancejiang` 仓库分支设置权限，不伪造完成证据 |

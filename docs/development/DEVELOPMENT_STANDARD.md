@@ -120,7 +120,7 @@ python3 scripts/project_guard.py merge-check
 
 通过门禁只是“可以申请合入”，不是自动授权合并。仍需完成路线图审计、代码审查和项目要求的人工/真机验收。
 
-Turtle 仓库提供 `.github/workflows/change-gate.yml` 作为 PR 回归检查。工作流文件本身不会自动开启 GitHub branch protection；远端仍需把该检查设为 required，并禁止绕过 PR。该外部设置必须在获得授权后执行。
+Turtle 仓库提供 `.github/workflows/change-gate.yml` 作为 PR 回归检查，年糕 Android 仓库使用同名工作流并将 `android-full` 作为完整门禁 job。工作流文件本身不会自动开启 GitHub branch protection；远端仍需把对应检查设为 required，并禁止绕过 PR。该外部设置必须由仓库 owner/admin 执行并保留配置证据。
 
 ## 7. 项目验证档
 

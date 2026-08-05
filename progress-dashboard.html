@@ -32,8 +32,8 @@
   <div class="goal"><strong>本轮 Goal · T0（COMPLETE）</strong><br>建立里程碑协调、独立 worktree/分支和 commit 绑定验证门禁，不改变“完整价值投资报告”的产品目标。</div>
   <div class="grid">
     <section><h2>已完成</h2><ul><li>8月5日目标校正已成为路线图最新真源</li><li>治理规范、GOALS与本地门禁已生成</li><li>可复用技能已安装并完成集成烟测</li></ul></section>
-    <section><h2>下一步</h2><ul><li>用户确认历史基线冻结方式</li><li>获授权后启用GitHub required check</li><li>确认后再激活 T1，恢复Phase 08完整报告</li></ul></section>
-    <section><h2>阻断项</h2><ul><li><code>main</code>存在大量历史未提交改动</li><li>新 worktree 目前不能代表完整现状</li><li>远端 required check 尚待授权启用</li></ul></section>
+    <section><h2>下一步</h2><ul><li>由 Turtle 仓库 owner/admin 配置 <code>main</code> PR-only、required <code>change-gate / phase-regression</code> 和禁止强推</li><li>确认后再激活 T1，恢复 Phase 08 完整报告</li><li>后续功能从干净 <code>main</code> 创建新的 linked worktree</li></ul></section>
+    <section><h2>阻断项</h2><ul><li>Turtle 远端分支设置对当前 <code>kk2-ui</code> 账号返回 404，等待 <code>terancejiang</code> owner/admin 权限</li></ul></section>
   </div>
   <section>
     <h2>里程碑</h2>
@@ -43,8 +43,8 @@
     <div class="milestone"><strong>T3</strong><span>Phase 09 纵向跟踪与年糕投影</span><span class="state">PLANNED</span></div>
     <div class="milestone"><strong>T4</strong><span>Phase 10 PIT研究回测</span><span class="state">PLANNED</span></div>
   </section>
-  <section style="margin-top:16px"><h2>最近证据</h2><ul><li>阶段回归：<code>579 passed</code>（2026-08-05，脏基线证据，不是commit绑定merge evidence）</li><li>源技能与安装技能逐文件一致；两套集成测试均 <code>3 passed</code></li><li>两仓治理自检通过；当前<code>main</code>的preflight、pre-commit、pre-push按预期拒绝</li><li>独立审计确认环境回滚、UTF-8清理和权限保留修复，无P0/P1缺陷</li></ul></section>
-  <section style="margin-top:16px"><h2>最近决策</h2><ul><li>T0治理证据闭合并标记 COMPLETE；T1 不在本轮自动激活</li><li>历史脏 <code>main</code> 不自动 reset、stash、迁移或提交</li><li>新 worktree 自动共享被忽略的 Python 环境，但不把环境纳入提交</li><li>远端 branch protection 只有获授权后才配置，当前不宣称已启用</li></ul></section>
+  <section style="margin-top:16px"><h2>最近证据</h2><ul><li>历史基线已冻结并合入：<code>ecceb06 → 3a9b217 → 2a6c5a4</code>；当前 <code>main</code> 干净</li><li>阶段回归：<code>579 passed</code>；新 worktree/共享环境/证据绑定集成测试均通过</li><li>源技能与安装技能逐文件一致；两套集成测试均 <code>3 passed</code></li><li>两仓治理自检通过；当前<code>main</code>的preflight、pre-commit、pre-push按预期拒绝</li><li>独立审计确认环境回滚、UTF-8清理和权限保留修复，无P0/P1缺陷</li></ul></section>
+  <section style="margin-top:16px"><h2>最近决策</h2><ul><li>T0治理证据闭合并标记 COMPLETE；T1 不在本轮自动激活</li><li>用户授权后完成历史基线冻结，后续 <code>main</code> 只做集成</li><li>新 worktree 自动共享被忽略的 Python 环境，但不把环境纳入提交</li><li>Turtle 远端 branch protection 明确保留给 owner/admin，当前不宣称已启用</li></ul></section>
   <p class="muted">协调真源：GOALS.md ｜ 领域真源：docs/development/LONG_TERM_ROADMAP.md ｜ 详细证据以测试日志和当前 commit 为准。</p>
 </main>
 </body>
