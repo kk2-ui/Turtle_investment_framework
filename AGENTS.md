@@ -58,6 +58,18 @@ When working here with Codex, treat those files as workflow specifications, not 
 8. For Tushare broker/proxy setups, the repo accepts `TUSHARE_API_URL`, `TUSHARE_HTTP_URL`, or `API_URL`.
 9. For `business-analysis`, prefer reusing the latest 5 annual-report PDFs already present in `output/{code}_{company}/` and use them as multi-year primary sources.
 
+### Session Bootstrap And Isolation
+
+When a new Codex session is asked to continue, improve, or repair this project, restore project state before editing:
+
+1. Read `GOALS.md`, `progress-dashboard.html`, the current domain roadmap, and this file. Treat the active milestone and recorded blockers as the starting state; do not silently activate a later milestone.
+2. Run `git status --short --branch`. `main` and `master` are integration-only. If the protected worktree is dirty, stop and record the baseline blocker; never reset, stash, or edit it to begin a task.
+3. For any write, start a fresh linked worktree and branch from clean `main` with `.venv/bin/python scripts/project_guard.py start <kind> <slug>`. Do not modify files in the primary worktree before `start` succeeds.
+4. Keep one coherent objective per worktree. Commit from that worktree, then run `.venv/bin/python scripts/project_guard.py verify full` and `merge-check`; verification evidence must match the current branch and commit.
+5. Before integration, complete the independent code review, roadmap audit, and any required real-run or Computer Use checks. Update `GOALS.md` and `progress-dashboard.html` only from an isolated worktree.
+
+Read-only investigation may remain in the primary worktree, but any generated report, configuration, documentation, or source change follows the same isolation and verification gates. When the `orchestrate-projects` skill is available, activate it for long-running coordination rather than relying on conversation history alone.
+
 ## Important Paths
 
 - `.claude/commands/` — original command specs
