@@ -8,6 +8,7 @@ import tempfile
 import unittest
 import os
 import stat
+import json
 from pathlib import Path
 
 
@@ -56,7 +57,13 @@ class OrchestrationIntegrationTest(unittest.TestCase):
             shared_env = repo / ".venv"
             shared_env.mkdir()
             (shared_env / "marker").write_text("shared\n", encoding="utf-8")
-            (repo / ".gitignore").write_text(".venv/\n", encoding="utf-8")
+            shared_file = repo / "local.properties"
+            shared_file.write_text("sdk.dir=/opt/android-sdk\n", encoding="utf-8")
+            (repo / ".gitignore").write_text(".venv/\nlocal.properties\n", encoding="utf-8")
+            governance_path = repo / ".project-governance.json"
+            governance = json.loads(governance_path.read_text(encoding="utf-8"))
+            governance["shared_files"] = ["local.properties"]
+            governance_path.write_text(json.dumps(governance), encoding="utf-8")
             self.assertEqual(0, run(["git", "add", "."], repo).returncode)
             self.assertEqual(0, run(["git", "commit", "-m", "bootstrap"], repo).returncode)
             repository_exclude = Path(run(["git", "rev-parse", "--git-path", "info/exclude"], repo).stdout.strip())
@@ -74,11 +81,14 @@ class OrchestrationIntegrationTest(unittest.TestCase):
             self.assertTrue((worktree / ".git").is_file())
             self.assertTrue((worktree / ".venv").is_symlink())
             self.assertEqual((worktree / ".venv").resolve(), shared_env.resolve())
+            self.assertTrue((worktree / "local.properties").is_symlink())
+            self.assertEqual((worktree / "local.properties").resolve(), shared_file.resolve())
             exclude_path = Path(run(["git", "rev-parse", "--git-path", "info/exclude"], worktree).stdout.strip())
             if not exclude_path.is_absolute():
                 exclude_path = worktree / exclude_path
             self.assertEqual(exclude_path.resolve(), (repo / ".git/info/exclude").resolve())
             self.assertIn(".venv", exclude_path.read_text(encoding="utf-8").splitlines())
+            self.assertIn("local.properties", exclude_path.read_text(encoding="utf-8").splitlines())
             self.assertEqual(stat.S_IMODE(exclude_path.stat().st_mode), original_exclude_mode)
             self.assertEqual(0, run(["python3", "scripts/project_guard.py", "preflight"], worktree).returncode)
             self.assertEqual(0, run(["python3", "scripts/project_guard.py", "verify", "full"], worktree).returncode)

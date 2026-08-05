@@ -55,6 +55,11 @@ def load_config(root: Path) -> dict:
         raise RuntimeError(f"治理配置缺少字段：{', '.join(missing)}")
     if config["required_profile"] not in config["profiles"]:
         raise RuntimeError("required_profile 不存在于 profiles")
+    shared_files = config.get("shared_files", [])
+    if not isinstance(shared_files, list) or not all(isinstance(item, str) and item for item in shared_files):
+        raise RuntimeError("shared_files 必须是字符串路径列表")
+    if any(Path(item).is_absolute() or ".." in Path(item).parts for item in shared_files):
+        raise RuntimeError("shared_files 只能使用仓库内相对路径")
     return config
 
 
@@ -95,6 +100,21 @@ def write_evidence(root: Path, payload: dict) -> None:
     temp.replace(path)
 
 
+def link_shared_files(root: Path, config: dict, destination: Path) -> tuple[list[Path], list[str]]:
+    created: list[Path] = []
+    exclude_entries: list[str] = []
+    for relative in config.get("shared_files", []):
+        source = root / relative
+        target = destination / relative
+        if not source.is_file() or target.exists() or target.is_symlink():
+            continue
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.symlink_to(source)
+        created.append(target)
+        exclude_entries.append(relative)
+    return created, exclude_entries
+
+
 def cmd_self_test(root: Path, config: dict, _args: argparse.Namespace) -> int:
     git(root, "rev-parse", "--git-dir")
     for name, commands in config["profiles"].items():
@@ -133,35 +153,55 @@ def cmd_start(root: Path, config: dict, args: argparse.Namespace) -> int:
         return result.returncode
     shared_python_env = root / ".venv"
     worktree_python_env = destination / ".venv"
-    if shared_python_env.is_dir() and not worktree_python_env.exists():
-        temp_exclude = None
-        try:
+    cleanup_paths: list[Path] = []
+    exclude_entries: list[str] = []
+    temp_exclude: Path | None = None
+    try:
+        if shared_python_env.is_dir() and not worktree_python_env.exists():
             worktree_python_env.symlink_to(shared_python_env, target_is_directory=True)
+            cleanup_paths.append(worktree_python_env)
+            exclude_entries.append(".venv")
+        shared_files, file_entries = link_shared_files(root, config, destination)
+        cleanup_paths.extend(shared_files)
+        exclude_entries.extend(file_entries)
+        if exclude_entries:
             repository_exclude = Path(git(destination, "rev-parse", "--git-path", "info/exclude"))
             if not repository_exclude.is_absolute():
                 repository_exclude = destination / repository_exclude
             existing_excludes = repository_exclude.read_text(encoding="utf-8") if repository_exclude.exists() else ""
-            if ".venv" not in existing_excludes.splitlines():
+            existing_lines = existing_excludes.splitlines()
+            missing_entries = [entry for entry in dict.fromkeys(exclude_entries) if entry not in existing_lines]
+            if missing_entries:
                 repository_exclude.parent.mkdir(parents=True, exist_ok=True)
                 separator = "" if not existing_excludes or existing_excludes.endswith("\n") else "\n"
                 temp_exclude = repository_exclude.with_suffix(".tmp")
-                temp_exclude.write_text(existing_excludes + separator + ".venv\n", encoding="utf-8")
+                temp_exclude.write_text(existing_excludes + separator + "\n".join(missing_entries) + "\n", encoding="utf-8")
                 if repository_exclude.exists():
                     temp_exclude.chmod(repository_exclude.stat().st_mode & 0o777)
                 temp_exclude.replace(repository_exclude)
+    except (OSError, RuntimeError, UnicodeError) as exc:
+        if temp_exclude is not None and temp_exclude.exists():
+            try:
+                temp_exclude.unlink()
+            except OSError:
+                pass
+        for path in reversed(cleanup_paths):
+            try:
+                if path.is_symlink() or path.is_file():
+                    path.unlink()
+            except OSError:
+                pass
+        cleanup = run(["git", "worktree", "remove", "--force", str(destination)], root)
+        branch_cleanup = run(["git", "branch", "-D", new_branch], root)
+        cleanup_note = ""
+        if cleanup.returncode or branch_cleanup.returncode:
+            cleanup_note = "; 清理失败，请检查新建 worktree/分支"
+        raise RuntimeError(f"新 worktree 环境准备失败：{exc}{cleanup_note}") from exc
+    if cleanup_paths:
+        if worktree_python_env in cleanup_paths:
             print(f"linked-env=.venv -> {shared_python_env}")
-        except (OSError, RuntimeError, UnicodeError) as exc:
-            if temp_exclude is not None and temp_exclude.exists():
-                try:
-                    temp_exclude.unlink()
-                except OSError:
-                    pass
-            cleanup = run(["git", "worktree", "remove", "--force", str(destination)], root)
-            branch_cleanup = run(["git", "branch", "-D", new_branch], root)
-            cleanup_note = ""
-            if cleanup.returncode or branch_cleanup.returncode:
-                cleanup_note = "; 清理失败，请检查新建 worktree/分支"
-            raise RuntimeError(f"新 worktree 环境准备失败：{exc}{cleanup_note}") from exc
+        if any(path != worktree_python_env for path in cleanup_paths):
+            print("linked-files=shared")
     print(f"base={args.base}@{base_commit[:12]}")
     print(destination)
     return 0

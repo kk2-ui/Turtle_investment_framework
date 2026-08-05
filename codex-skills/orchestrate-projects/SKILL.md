@@ -60,6 +60,8 @@ After adapting `.project-governance.json`:
 4. Create future work with `project_guard.py start <type> <slug>`.
 5. Commit in the linked worktree, run `verify full`, then `merge-check`.
 
+When a project has machine-local ignored files required by its verifier, list their repository-relative paths in `shared_files` in `.project-governance.json`. `start` symlinks existing files into the linked worktree and records them in repository-local `info/exclude`; Android projects commonly use this for `local.properties`.
+
 Never reset, stash, relocate, or commit a pre-existing dirty main worktree automatically. Record it as a baseline-migration blocker and require a safe audit/freeze decision.
 
 ## Report state
