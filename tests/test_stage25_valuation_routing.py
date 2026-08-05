@@ -37,6 +37,15 @@ def _fixture(output: Path, industry: str = "物业服务", include_gg: bool = Tr
     _write(output / "report_context.json", {"meta": {"report_id": "09999.HK"}, "domains": {}, "unresolved_gaps": []})
 
 
+def _valuation_reference_root() -> Path:
+    """Find the shared reference pack from both primary and linked worktrees."""
+    for ancestor in Path(__file__).resolve().parents:
+        candidate = ancestor / "130家估值模型"
+        if candidate.is_dir():
+            return candidate
+    raise AssertionError("缺少共享资料目录：130家估值模型")
+
+
 def test_registry_is_internally_closed_and_prohibits_model_vote() -> None:
     registry = load_registry()
     models = set(registry["models"])
@@ -49,7 +58,7 @@ def test_registry_is_internally_closed_and_prohibits_model_vote() -> None:
 
 
 def test_reference_index_covers_every_local_file_without_granting_fact_status() -> None:
-    root = Path(__file__).parents[2] / "130家估值模型"
+    root = _valuation_reference_root()
     index = json.loads((Path(__file__).parents[1] / "config/valuation_reference_index.json").read_text(encoding="utf-8"))
     actual = [path for path in root.rglob("*") if path.is_file()]
     assert index["summary"]["file_count"] == len(actual) == 364
