@@ -10,6 +10,7 @@ import pandas as pd
 import pytest
 
 from tushare_collector import TushareClient, WarningsCollector, rate_limit
+from config import resolve_shareholder_dividend_tax_rate
 
 MOCK_DIR = os.path.join(os.path.dirname(__file__), "fixtures", "mock_tushare_responses")
 
@@ -2386,6 +2387,26 @@ class TestGetPayoutByYear:
         # No income data
         result = client._get_payout_by_year()
         assert result == {}
+
+
+class TestShareholderDividendTaxRate:
+    def test_hk_red_chip_hk_local_direct_is_zero(self):
+        rate, reason = resolve_shareholder_dividend_tax_rate(
+            "02669.HK",
+            holding_channel="香港居民香港券商直投",
+            listing_structure="red_chip_cayman",
+        )
+        assert rate == 0.0
+        assert "不额外代扣" in reason
+
+    def test_hk_red_chip_southbound_is_20pct(self):
+        rate, reason = resolve_shareholder_dividend_tax_rate(
+            "02669.HK",
+            holding_channel="港股通",
+            listing_structure="red_chip_cayman",
+        )
+        assert rate == 0.20
+        assert "港股通" in reason
 
 
 class TestHKHoldersYfinance:

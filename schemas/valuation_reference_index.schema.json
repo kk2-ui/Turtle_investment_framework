@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://turtle.local/schemas/valuation_reference_index.schema.json",
+  "title": "Turtle Valuation Reference Index",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "generated_at", "source_root_label", "source_root_fingerprint", "policy", "summary", "files"],
+  "properties": {
+    "schema_version": {"const": "valuation-reference-index.v1"},
+    "generated_at": {"type": "string"},
+    "source_root_label": {"type": "string"},
+    "source_root_fingerprint": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "policy": {"type": "object", "required": ["company_fact_eligible", "parameter_copying_forbidden", "use"]},
+    "summary": {"type": "object", "required": ["file_count", "extension_counts", "collection_counts"]},
+    "files": {"type": "array", "items": {"type": "object", "required": ["relative_path", "sha256", "size_bytes", "extension", "collection", "mechanism_tags", "usage", "company_fact_eligible"]}}
+  }
+}

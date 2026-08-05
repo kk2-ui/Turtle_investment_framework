@@ -134,6 +134,30 @@ cp .env.sample .env
 export TUSHARE_TOKEN='your_token_here'
 ```
 
+跨机器迁移时，如外部数据目录不在仓库同级，可在 `.env` 中额外指定：
+
+```bash
+TURTLE_DB_PATH=/path/to/Turtle_investment_framework/stock_analysis.db
+TURTLE_OUTPUT_DIR=/path/to/Turtle_investment_framework/output
+TURTLE_DATA_ROOT=/path/to/data-root
+TURTLE_CSMAR_A_PATH=/path/to/cn_financials_panel_raw/上市公司-财务报表年度面板数据.xlsx
+TURTLE_CSMAR_HK_DIR=/path/to/hk_new_financials
+TURTLE_HK_FINANCIALS_DIR=/path/to/hk_financials
+```
+
+默认查找顺序：
+
+1. 显式环境变量
+2. 仓库内对应目录
+3. 仓库同级目录
+
+这意味着在 Windows 11 + WSL2 下，最简单的迁移方式通常是把以下目录放到仓库同级：
+
+- `Turtle_investment_framework/`
+- `hk_new_financials/`
+- `cn_financials_panel_raw/`
+- `hk_financials/`
+
 ## 使用方法
 
 ### 单股分析
@@ -149,6 +173,85 @@ export TUSHARE_TOKEN='your_token_here'
 `/turtle-analysis` 自动执行 Phase 0 → 1A → 1B → 2A → 2B → 3 完整流程。
 `/business-analysis` PDF-first 单 Agent 定性分析（年报 PDF + Tushare 数据）。
 `/valuation` 独立估值分析，需先运行 `/business-analysis`（依赖定性报告 + 市场数据）。
+
+### 在 Codex 中使用
+
+这个仓库现在也可以直接给 Codex 使用，不必依赖 Claude slash command。
+
+Codex 侧的入口约定：
+
+- 仓库根的 `AGENTS.md`
+  - 告诉 Codex 这个仓库的主工作流、脚本入口和输出约定
+- `codex-skills/`
+  - 提供与 `/business-analysis`、`/valuation`、`/turtle-analysis` 对应的仓库内 skill 定义
+- `.claude/commands/`
+  - 仍然保留，作为工作流规范文档供 Codex 读取和执行
+
+对 Codex 的推荐用法：
+
+```text
+帮我对 600887 跑 business-analysis
+帮我对 00700.HK 跑 valuation
+帮我基于已有商业分析结果执行 turtle-analysis
+```
+
+Codex 执行时应优先调用真实脚本，而不是只复述 slash command：
+
+```bash
+.venv/bin/python scripts/tushare_collector.py --code 600887.SH --output output/600887_公司名/data_pack_market.md
+.venv/bin/python scripts/valuation_engine.py --code 600887.SH --output-dir output/600887_公司名/
+python3 scripts/download_report.py --url "<pdf_url>" --stock-code 00700 --report-type 年报 --year 2025 --save-dir output/00700_公司名/
+```
+
+也可以直接使用仓库内新增的 Codex wrapper：
+
+```bash
+python3 scripts/codex_workflow.py business-analysis --code 600887
+python3 scripts/codex_workflow.py business-analysis --code 02669.HK --pdf output/02669_中海物业/02669_2025_年报.pdf
+python3 scripts/codex_workflow.py valuation --code 600887
+python3 scripts/codex_workflow.py turtle-analysis --code 600887
+python3 scripts/codex_workflow.py valuation --code 600887 --write-report
+python3 scripts/codex_workflow.py turtle-analysis --code 00700.HK --write-report
+```
+
+这个 wrapper 负责：
+
+- 统一股票代码格式
+- 解析或创建标准 `output/{code}_{company}/` 目录
+- 运行确定性 Python 步骤
+- 输出下一步应读取的工作流规范
+- 自动生成 handoff 文件和报告 scaffold，供 Codex 或人工继续补全文本报告
+- 可选生成真实目标报告文件和 `*_write_prompt.md`，方便 Codex 在同目录继续写完报告
+
+生成物示例：
+
+- `business_analysis_handoff.md`
+- `qualitative_report.scaffold.md`
+- `business_analysis_write_prompt.md`
+- `valuation_handoff.md`
+- `valuation_report.scaffold.md`
+- `valuation_write_prompt.md`
+- `turtle_analysis_handoff.md`
+- `turtle_report.scaffold.md`
+- `turtle_analysis_write_prompt.md`
+- `phase3_preflight.md`
+- `phase3_quantitative.md`
+
+`--write-report` 的行为：
+
+- `business-analysis`
+  - 优先复用 `output/{code}_{company}/` 中近 5 年年报 PDF（如果已存在）
+  - 为每个已发现年度生成或复用 `pdf_sections_YYYY.json`
+  - 若 `qualitative_report.md` 不存在，则生成该真实目标文件的初始 scaffold
+  - 生成 `business_analysis_write_prompt.md`
+- `valuation`
+  - 若 `{company}_{code}_估值报告.md` 不存在，则生成该真实目标文件的初始 scaffold
+  - 生成 `valuation_write_prompt.md`
+- `turtle-analysis`
+  - 若 `phase3_preflight.md`、`phase3_quantitative.md`、`{company}_{code}_分析报告.md` 不存在，则分别生成初始 scaffold
+  - 生成 `turtle_analysis_write_prompt.md`
+
+这样做的目的不是伪装成“全自动写完”，而是把确定性步骤、目标文件和续写说明一次性准备好，让 Codex 能直接接着写。
 
 ### 数据采集（仅 Phase 1A）
 

@@ -139,7 +139,7 @@ _TITLE_FISCAL_YEAR_FALLBACK: re.Pattern[str] = re.compile(r"(\d{4})\s*年")
 _CHINESE_DIGIT_MAP: dict[str, int] = {
     "零": 0, "〇": 0,
     "一": 1, "二": 2, "三": 3, "四": 4,
-    "五": 6, "六": 6, "七": 7, "八": 8, "九": 9,
+    "五": 5, "六": 6, "七": 7, "八": 8, "九": 9,
 }
 _CHINESE_NUMERAL_PATTERN: re.Pattern[str] = re.compile(
     r"(二零|二〇)?([一二三四五六七八九零〇]{1,2})[年度]?"

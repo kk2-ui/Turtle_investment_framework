@@ -15,11 +15,17 @@ Usage:
 """
 
 import argparse
+import hashlib
 import json
 import os
 import re
 import sqlite3
 import sys
+from copy import deepcopy
+from datetime import datetime, timezone
+from pathlib import Path
+from collections import Counter, defaultdict
+from typing import Any
 from typing import Optional
 
 DB_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), "stock_analysis.db")
@@ -473,3 +479,298 @@ def build_context(ts_code: str, stock_dir: str, latest_year: int = 2025) -> dict
     context["evidence_summary"]["warnings"] = v_warnings
 
     return context
+
+
+# ── Official Evidence Context v2 ──
+
+EVIDENCE_CONTEXT_VERSION = "report-context.v2"
+
+
+def _now_utc() -> str:
+    return datetime.now(timezone.utc).replace(microsecond=0).isoformat()
+
+
+def _canonical_hash(value: Any) -> str:
+    raw = json.dumps(value, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
+    return hashlib.sha256(raw.encode("utf-8")).hexdigest()
+
+
+def _read_object(path: Path) -> dict[str, Any]:
+    try:
+        value = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return {}
+    return value if isinstance(value, dict) else {}
+
+
+def _context_fingerprint(payload: dict[str, Any]) -> str:
+    core = deepcopy(payload)
+    meta = core.get("meta") if isinstance(core.get("meta"), dict) else {}
+    meta.pop("generated_at", None)
+    meta.pop("context_fingerprint", None)
+    core.pop("validation", None)
+    return _canonical_hash(core)
+
+
+def build_verified_context(
+    stock_dir: str | Path,
+    manifest: dict[str, Any],
+    facts: dict[str, Any],
+    *,
+    persist: bool = True,
+) -> dict[str, Any]:
+    """Assemble only VERIFIED facts into the LLM-visible report context."""
+    try:
+        from scripts.evidence_documents import _atomic_write_json
+    except ModuleNotFoundError:
+        from evidence_documents import _atomic_write_json
+
+    output = Path(stock_dir)
+    domains: dict[str, list[dict[str, Any]]] = defaultdict(list)
+    conflicts: list[dict[str, Any]] = []
+    counts: Counter[str] = Counter()
+    for observation in facts.get("observations") or []:
+        if not isinstance(observation, dict):
+            continue
+        status = str(observation.get("status") or "")
+        counts[status] += 1
+        if status == "VERIFIED":
+            domains[str(observation.get("domain") or "other")].append(deepcopy(observation))
+        elif status == "CONFLICT":
+            conflicts.append({
+                "observation_id": observation.get("observation_id"),
+                "fact_name": observation.get("fact_name"),
+                "as_of": observation.get("as_of"),
+                "conflict_ids": observation.get("conflict_ids") or [],
+            })
+    for values in domains.values():
+        values.sort(key=lambda item: (str(item.get("as_of")), str(item.get("fact_name")), str(item.get("observation_id"))))
+
+    expected_domains = ("audit", "financial", "operations", "governance", "industry", "capital_allocation")
+    gaps: list[dict[str, Any]] = []
+    for domain in expected_domains:
+        if not domains.get(domain):
+            gaps.append({
+                "gap_id": "GAP:" + _canonical_hash({"report_id": manifest.get("report_id"), "domain": domain})[:16],
+                "domain": domain,
+                "fact_name": None,
+                "severity": "WARN",
+                "reason": "verified_domain_fact_missing",
+                "attempted_sources": [doc.get("doc_id") for doc in manifest.get("documents") or [] if isinstance(doc, dict)],
+                "decision_impact": "Phase 02必须在问题入选后判断是否升级为关键缺口",
+            })
+
+    invalid = list((manifest.get("validation") or {}).get("invalid_findings") or [])
+    invalid += list((facts.get("validation") or {}).get("invalid_findings") or [])
+    incomplete = list((manifest.get("validation") or {}).get("incomplete_findings") or [])
+    incomplete += list((facts.get("validation") or {}).get("incomplete_findings") or [])
+    warnings = list((manifest.get("validation") or {}).get("warnings") or [])
+    warnings += list((facts.get("validation") or {}).get("warnings") or [])
+    warnings += [f"domain_gap:{item['domain']}" for item in gaps]
+    if conflicts:
+        incomplete.append("verified_fact_conflicts_unresolved")
+    state = "INVALID" if invalid else "INCOMPLETE" if incomplete else "REVIEWABLE"
+    payload: dict[str, Any] = {
+        "schema_version": EVIDENCE_CONTEXT_VERSION,
+        "meta": {
+            "report_id": manifest.get("report_id"),
+            "code": manifest.get("code"),
+            "market": manifest.get("market"),
+            "issuer": manifest.get("issuer"),
+            "generated_at": _now_utc(),
+            "manifest_hash": manifest.get("manifest_hash"),
+            "observation_hash": facts.get("observation_hash"),
+            "context_fingerprint": "",
+        },
+        "documents": sorted(str(doc.get("doc_id")) for doc in manifest.get("documents") or [] if isinstance(doc, dict) and doc.get("doc_id")),
+        "domains": dict(sorted(domains.items())),
+        "unresolved_gaps": gaps,
+        "conflicts": conflicts,
+        "coverage": {
+            "document_count": len(manifest.get("documents") or []),
+            "observation_counts": dict(sorted(counts.items())),
+            "verified_domains": sorted(domains),
+            "expected_domains": list(expected_domains),
+            "domain_coverage_ratio": round(len(domains) / len(expected_domains), 4),
+            "citable_observation_ids": sorted(
+                str(item.get("observation_id")) for values in domains.values() for item in values
+            ),
+        },
+        "validation": {
+            "state": state,
+            "invalid_findings": list(dict.fromkeys(invalid)),
+            "incomplete_findings": list(dict.fromkeys(incomplete)),
+            "warnings": list(dict.fromkeys(warnings)),
+        },
+    }
+    payload["meta"]["context_fingerprint"] = _context_fingerprint(payload)
+    if persist:
+        _atomic_write_json(output / "report_context.json", payload)
+    return payload
+
+
+def build_official_evidence_bundle(
+    stock_dir: str | Path,
+    code: str,
+    *,
+    persist: bool = True,
+    run_id: str | None = None,
+    enforced: bool = False,
+) -> dict[str, Any]:
+    try:
+        from scripts.computation_evidence import build_calculation_observations
+        from scripts.evidence_documents import build_document_manifest, initialize_official_evidence_policy
+        from scripts.evidence_facts import build_fact_observations
+    except ModuleNotFoundError:
+        from computation_evidence import build_calculation_observations
+        from evidence_documents import build_document_manifest, initialize_official_evidence_policy
+        from evidence_facts import build_fact_observations
+
+    output = Path(stock_dir)
+    manifest = build_document_manifest(output, code, persist=persist)
+    facts = build_fact_observations(output, manifest, persist=persist)
+    calculations = (
+        build_calculation_observations(output, persist=persist)
+        if (output / "compute_bundle.json").is_file() else {}
+    )
+    context = build_verified_context(output, manifest, facts, persist=persist)
+    if run_id is not None:
+        initialize_official_evidence_policy(output, run_id=run_id, enforced=enforced)
+    migration: dict[str, Any] = {}
+    claim_path = output / "claim_evidence.json"
+    if persist and claim_path.is_file():
+        claim_payload = _read_object(claim_path)
+        needs_identity_migration = any(
+            isinstance(evidence, dict)
+            and evidence.get("direct_support")
+            and evidence.get("support_type") == "supports"
+            and not evidence.get("observation_id")
+            and not evidence.get("calculation_id")
+            for claim in claim_payload.get("claims") or [] if isinstance(claim, dict)
+            for evidence in claim.get("raw_facts") or []
+        )
+        if needs_identity_migration:
+            try:
+                from scripts.claim_evidence_migration import migrate_claim_evidence, promote_migration_candidate
+            except ModuleNotFoundError:
+                from claim_evidence_migration import migrate_claim_evidence, promote_migration_candidate
+            migration = migrate_claim_evidence(output, persist=True)
+            if migration.get("report", {}).get("candidate_validation", {}).get("state") == "REVIEWABLE":
+                migration["promotion"] = promote_migration_candidate(output)
+    return {
+        "manifest": manifest, "facts": facts, "calculations": calculations,
+        "context": context, "claim_migration": migration,
+    }
+
+
+def evaluate_output_official_evidence(
+    stock_dir: str | Path, *, persist: bool = True
+) -> dict[str, Any]:
+    """Evaluate new runs fail-closed while leaving legacy outputs as SKIP."""
+    try:
+        from scripts.evidence_documents import validate_document_manifest, _atomic_write_json
+        from scripts.evidence_facts import validate_fact_observations
+    except ModuleNotFoundError:
+        from evidence_documents import validate_document_manifest, _atomic_write_json
+        from evidence_facts import validate_fact_observations
+
+    output = Path(stock_dir)
+    policy = _read_object(output / "official_evidence_policy.json")
+    enforced = bool(policy.get("enforced"))
+    if not policy:
+        return {
+            "schema_version": "official-evidence-validation.v1", "state": "SKIP", "status": "SKIP",
+            "invalid_findings": [], "incomplete_findings": [], "warnings": [], "enforced": False,
+        }
+    manifest = _read_object(output / "document_manifest.json")
+    facts = _read_object(output / "fact_observations.json")
+    context = _read_object(output / "report_context.json")
+    invalid: list[str] = []
+    incomplete: list[str] = []
+    warnings: list[str] = []
+    if not manifest:
+        incomplete.append("document_manifest_missing")
+    if not facts:
+        incomplete.append("fact_observations_missing")
+    if not context:
+        incomplete.append("report_context_missing")
+    if manifest:
+        check = validate_document_manifest(manifest, output)
+        invalid += check["invalid_findings"]
+        incomplete += check["incomplete_findings"]
+        warnings += check["warnings"]
+    if facts and manifest:
+        check = validate_fact_observations(facts, manifest, output)
+        invalid += check["invalid_findings"]
+        incomplete += check["incomplete_findings"]
+        warnings += check["warnings"]
+    if context:
+        if context.get("schema_version") != EVIDENCE_CONTEXT_VERSION:
+            invalid.append("report_context_schema_version_invalid")
+        if (context.get("meta") or {}).get("manifest_hash") != manifest.get("manifest_hash"):
+            invalid.append("report_context_manifest_hash_mismatch")
+        if (context.get("meta") or {}).get("observation_hash") != facts.get("observation_hash"):
+            invalid.append("report_context_observation_hash_mismatch")
+        if (context.get("meta") or {}).get("context_fingerprint") != _context_fingerprint(context):
+            invalid.append("report_context_fingerprint_mismatch")
+        context_validation = context.get("validation") or {}
+        invalid += list(context_validation.get("invalid_findings") or [])
+        incomplete += list(context_validation.get("incomplete_findings") or [])
+        warnings += list(context_validation.get("warnings") or [])
+    invalid = list(dict.fromkeys(invalid))
+    incomplete = list(dict.fromkeys(incomplete))
+    warnings = list(dict.fromkeys(warnings))
+    state = "INVALID" if invalid else "INCOMPLETE" if enforced and incomplete else "REVIEWABLE"
+    result = {
+        "schema_version": "official-evidence-validation.v1",
+        "state": state,
+        "status": "FAIL" if state in {"INVALID", "INCOMPLETE"} else "PASS",
+        "invalid_findings": invalid,
+        "incomplete_findings": incomplete,
+        "warnings": warnings,
+        "enforced": enforced,
+        "manifest_hash": manifest.get("manifest_hash"),
+        "observation_hash": facts.get("observation_hash"),
+        "context_fingerprint": (context.get("meta") or {}).get("context_fingerprint"),
+        "coverage": context.get("coverage") or {},
+    }
+    if persist:
+        _atomic_write_json(output / "official_evidence_validation.json", result)
+    return result
+
+
+def _resolve_output_dir(code: str, requested: str | None) -> Path:
+    if requested:
+        return Path(requested)
+    base = str(code).split(".", 1)[0]
+    candidates = sorted(Path(OUTPUT_BASE).glob(base + "_*"))
+    canonical = [path for path in candidates if path.is_dir() and not re.search(r"_(?:phase|stage|try)_", path.name, re.IGNORECASE)]
+    if len(canonical) == 1:
+        return canonical[0]
+    raise SystemExit("无法唯一确定输出目录，请使用 --output-dir")
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(description="构建可回读的官方证据report context")
+    parser.add_argument("--code", required=True)
+    parser.add_argument("--output-dir", "--output")
+    parser.add_argument("--legacy", action="store_true", help="仅生成旧版内存context，不写v2证据产物")
+    parser.add_argument("--latest-year", type=int, default=2025)
+    args = parser.parse_args()
+    output = _resolve_output_dir(args.code, args.output_dir)
+    if args.legacy:
+        print(json.dumps(build_context(args.code, str(output), args.latest_year), ensure_ascii=False, indent=2))
+        return 0
+    bundle = build_official_evidence_bundle(output, args.code, persist=True)
+    context = bundle["context"]
+    print(json.dumps({
+        "path": str(output / "report_context.json"),
+        "state": context["validation"]["state"],
+        "context_fingerprint": context["meta"]["context_fingerprint"],
+        "coverage": context["coverage"],
+    }, ensure_ascii=False))
+    return 0 if context["validation"]["state"] != "INVALID" else 2
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

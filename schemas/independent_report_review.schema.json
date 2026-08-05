@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "independent_report_review.schema.json",
+  "type": "object",
+  "required": ["schema_version", "sample_id", "variant_id", "reviewer_id", "reviewer_provenance", "independence", "dimensions", "ceiling_verdict", "fatal_findings", "reviewer_limits", "submitted_at"],
+  "properties": {
+    "schema_version": {"const": "independent-report-review.v2"},
+    "sample_id": {"type": "string"},
+    "variant_id": {"type": "string", "pattern": "^[0-9a-f]{16}$"},
+    "reviewer_id": {"type": "string", "minLength": 1},
+    "reviewer_provenance": {
+      "type": "object",
+      "required": ["actor_type", "context_id", "reviewed_packet_sha256"],
+      "properties": {
+        "actor_type": {"enum": ["human", "model", "hybrid"]},
+        "provider": {"type": "string"},
+        "model": {"type": "string"},
+        "context_id": {"type": "string", "minLength": 1},
+        "reviewed_packet_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+      }
+    },
+    "independence": {"type": "object", "required": ["did_not_generate_candidate", "variant_label_blinded", "no_prior_review_seen", "reviewer_context_isolated", "generator_identity_disjoint"]},
+    "dimensions": {
+      "type": "object",
+      "required": ["decisive_question_quality", "evidence_discrimination", "causal_depth", "valuation_judgment", "action_coherence", "information_efficiency"],
+      "additionalProperties": {
+        "type": "object",
+        "required": ["state", "basis", "report_locations"],
+        "properties": {
+          "state": {"enum": ["STRONG", "MIXED", "WEAK", "NOT_ASSESSABLE"]},
+          "basis": {"type": "string", "minLength": 30},
+          "report_locations": {"type": "array", "minItems": 1, "items": {"type": "string"}}
+        }
+      }
+    },
+    "ceiling_verdict": {"enum": ["INSIGHTFUL", "COMPETENT", "FRAGILE", "NOT_ASSESSABLE"]},
+    "fatal_findings": {"type": "array", "items": {"type": "string"}},
+    "reviewer_limits": {"type": "array", "minItems": 1, "items": {"type": "string"}},
+    "submitted_at": {"type": "string"}
+  }
+}

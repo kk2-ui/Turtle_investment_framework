@@ -4,7 +4,13 @@ import os
 
 import pytest
 
-from config import get_token, validate_stock_code, check_local_pdf, validate_pdf
+from config import (
+    check_local_pdf,
+    get_token,
+    normalize_holding_channel,
+    validate_pdf,
+    validate_stock_code,
+)
 
 
 # --- get_token() ---
@@ -238,3 +244,11 @@ class TestValidatePdf:
         is_valid, reason = validate_pdf(str(pdf))
         assert is_valid is False
         assert "magic" in reason.lower() or "%PDF" in reason
+
+
+class TestNormalizeHoldingChannel:
+    def test_accepts_internal_hk_local_direct_code(self):
+        assert normalize_holding_channel("hk_local_direct") == "hk_local_direct"
+
+    def test_accepts_internal_southbound_code(self):
+        assert normalize_holding_channel("southbound") == "southbound"

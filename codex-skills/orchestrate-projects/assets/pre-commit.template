@@ -1,0 +1,2 @@
+#!/bin/sh
+exec {{PYTHON}} {{GUARD_PATH}} preflight --allow-dirty

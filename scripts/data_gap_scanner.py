@@ -73,7 +73,7 @@ def main():
         "_meta": {"ts_code": args.code, "scanned_at": datetime.now().isoformat(), "total_gaps": total},
         "gaps": gaps,
         "suggestions": {
-            "db": "检查 hk_financials/ CSV 是否有对应字段，运行 import_hk_bulk.py 重导",
+            "db": "检查 hk_financials/ CSV 是否有对应字段，运行 rebuild_hk_data.py 或 import_csmar_hk_full.py 重导",
             "zone_b": f"可自动重提取的字段: {ZONEB_FIXABLE}。用 --retry 触发协调器重调 Zone B sub-agent",
             "zone_j": f"可重跑的agent: {ZONEJ_FIXABLE}。运行 zone_j_agent.py --agent <name> --save-prompt",
         },

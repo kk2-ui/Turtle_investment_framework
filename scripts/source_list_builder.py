@@ -33,7 +33,7 @@ def build_source_list(
         registry = EvidenceRegistry()
 
     # 提取所有来源引用
-    sources = registry.extract_all_sources(report_text)
+    sources = registry.extract_canonical_sources(report_text)
 
     if not sources:
         return "## 来源清单\n\n_（未检测到证据引用）_\n"
@@ -133,8 +133,10 @@ def _categorize_sources(
             categories["Zone B 定性提取"].append(source)
         elif any(k in source for k in ["moat_assessment", "capex_classification", "earnings_quality", "data_discount"]):
             categories["Zone J 判断参数"].append(source)
-        elif "annual_report" in source or ".pdf" in source:
+        elif "annual_report" in source or ".pdf" in source or re.match(r"20\d{2}_年报\.md$", source):
             categories["年报原文"].append(source)
+        elif source in {"report_internal", "framework_method", "report_derivation", "public_market_research", "unresolved_evidence"}:
+            categories["其他"].append(source)
         else:
             categories["其他"].append(source)
 

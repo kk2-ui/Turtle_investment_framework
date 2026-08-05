@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://turtle.local/schemas/base_rate_context.schema.json",
+  "title": "Turtle Base Rate Context",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "generated_at", "library_path_label", "library_fingerprint", "archetype_ids", "queries", "policy", "warnings", "context_fingerprint"],
+  "properties": {
+    "schema_version": {"const": "base-rate-context.v1"},
+    "generated_at": {"type": "string"},
+    "library_path_label": {"type": "string"},
+    "library_fingerprint": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "archetype_ids": {"type": "array", "items": {"type": "string"}},
+    "queries": {"type": "object", "additionalProperties": {"type": "object"}},
+    "policy": {"type": "object"},
+    "warnings": {"type": "array", "items": {"type": "string"}},
+    "context_fingerprint": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+  }
+}

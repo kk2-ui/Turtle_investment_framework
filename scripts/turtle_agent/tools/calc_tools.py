@@ -14,6 +14,12 @@ _scripts_dir = os.path.join(os.path.dirname(__file__), "..", "..")
 if _scripts_dir not in sys.path:
     sys.path.insert(0, _scripts_dir)
 
+from financial_rigor import (
+    benford_check as _benford_check,
+    cross_validate as _cross_validate,
+    verify_market_cap as _verify_market_cap,
+)
+
 
 def _read_json(path: str) -> dict[str, Any] | None:
     if not os.path.exists(path):
@@ -28,6 +34,70 @@ def _read_json(path: str) -> dict[str, Any] | None:
 def _load_bundle(output_dir: str) -> dict[str, Any] | None:
     """加载 compute_bundle.json。"""
     return _read_json(os.path.join(output_dir, "compute_bundle.json"))
+
+
+def _analyze_ap_driven_cashflow(output_dir: str) -> dict[str, Any]:
+    """AP 驱动伪现金流拆解：对标 v2.39 AP-Driven AA 检测。
+
+    若应付账款(AP)增速持续超出营业成本增速 → AA 中可能含有靠挤压供应商获得的伪现金流。
+    返回：ap_pct（AP驱动占比）、ap_adjusted_aa（剔除AP后的真实AA）。
+    """
+    result: dict[str, Any] = {"ap_pct": 0, "ap_adjusted_aa": None, "warning": ""}
+    try:
+        ft = _read_json(os.path.join(output_dir, "financial_trends.json"))
+        cb = _load_bundle(output_dir)
+        if not ft or not cb:
+            return result
+
+        # 提取 AP 和营业成本
+        ap_vals = []
+        cost_vals = []
+        for row in ft.get("balance_sheet", {}).get("rows", []):
+            if row.get("field") in ("accounts_payable", "acct_payable"):
+                ap_vals = row.get("values", []) or []
+        for row in ft.get("income_statement", {}).get("rows", []):
+            if row.get("field") == "oper_cost":
+                cost_vals = row.get("values", []) or []
+
+        if len(ap_vals) < 3 or len(cost_vals) < 3:
+            return result
+
+        # 方法 1: 5 年 AP/Cost 比率趋势（对标 v2.39 DPO 分析）
+        # DPO ≈ AP / (Cost/365)。若 DPO 持续拉长且远超行业基准（物管行业 ~60-90 天），则是伪现金流信号。
+        ap_cost_ratios = []
+        for i in range(min(len(ap_vals), len(cost_vals))):
+            if cost_vals[i] and cost_vals[i] > 0:
+                ap_cost_ratios.append(ap_vals[i] / cost_vals[i])
+        if len(ap_cost_ratios) >= 5:
+            ratio_5y_ago = ap_cost_ratios[-5]
+            ratio_latest = ap_cost_ratios[-1]
+            ratio_increase = ratio_latest - ratio_5y_ago
+            dpo_latest = round(ratio_latest * 365, 0)
+            # 计算 AP 驱动的伪现金流
+            if ratio_increase > 0.02 and cost_vals[-1]:
+                normal_ap = cost_vals[-1] * ratio_5y_ago
+                excess_ap = ap_vals[-1] - normal_ap
+                f3 = cb.get("factor3", {})
+                aa_avg_3y = f3.get("aa_avg", {}).get("3y", 0) or 0
+                if aa_avg_3y > 0 and excess_ap > 0:
+                    # 超额 AP 摊销到每年（假设 3 年累积）
+                    annual_excess = excess_ap / 3
+                    ap_pct = round(min(annual_excess / aa_avg_3y * 100, 100), 0)
+                    ap_adjusted_aa = round(aa_avg_3y - annual_excess, 2)
+                    result["ap_pct"] = ap_pct
+                    result["ap_adjusted_aa"] = ap_adjusted_aa
+                    result["excess_ap_annual"] = round(annual_excess, 2)
+                    result["dpo_latest"] = dpo_latest
+                    result["dpo_5y_ago"] = round(ratio_5y_ago * 365, 0)
+                    result["warning"] = (
+                        f"⚠️ DPO从{result['dpo_5y_ago']}天拉长至{dpo_latest}天(物管行业基准~60-90天)。"
+                        f"AA中约{ap_pct:.0f}%来自延迟支付供应商（年均{annual_excess:.1f}M）。"
+                        f"剔除后真实AA={ap_adjusted_aa}M。"
+                        f"GG应从名义值下调约{ap_pct:.0f}%。"
+                    )
+    except Exception:
+        pass
+    return result
 
 
 def _compute_ddm_implied_pe(output_dir: str) -> float | None:
@@ -48,6 +118,63 @@ def _compute_ddm_implied_pe(output_dir: str) -> float | None:
     except Exception:
         pass
     return None
+
+
+# ---------------------------------------------------------------------------
+# Financial rigor helpers
+# ---------------------------------------------------------------------------
+
+
+def verify_market_cap(
+    price: float,
+    shares: float,
+    reported_cap: float,
+    currency: str = "",
+) -> dict[str, Any]:
+    """验证市值=股价×股本，并返回偏差结果。"""
+    calculated = float(price) * float(shares)
+    deviation_pct = abs(calculated - float(reported_cap)) / abs(float(reported_cap)) * 100 if float(reported_cap) else 0.0
+    ok = _verify_market_cap(price, shares, reported_cap, currency)
+    return {
+        "price": float(price),
+        "shares": float(shares),
+        "reported_cap": float(reported_cap),
+        "calculated_cap": calculated,
+        "deviation_pct": round(deviation_pct, 4),
+        "currency": currency,
+        "ok": bool(ok),
+    }
+
+
+def cross_validate_data(
+    field: str,
+    sources_json: str,
+    unit: str = "",
+    tolerance: float = 2.0,
+) -> dict[str, Any]:
+    """对同一字段做多源交叉验证。"""
+    values = json.loads(sources_json) if isinstance(sources_json, str) else dict(sources_json or {})
+    result = _cross_validate(field, values, unit, tolerance)
+    result.update({
+        "field": field,
+        "unit": unit,
+        "tolerance_pct": float(tolerance),
+        "sources": values,
+    })
+    return result
+
+
+def check_benford(values_json: str) -> dict[str, Any]:
+    """对一组数字做 Benford 定律检测。"""
+    values = json.loads(values_json) if isinstance(values_json, str) else list(values_json or [])
+    result = _benford_check(values)
+    return result or {
+        "mad": None,
+        "chi2": None,
+        "conformity": "insufficient_sample",
+        "is_conforming": None,
+        "sample_size": len(values),
+    }
 
 
 # ---------------------------------------------------------------------------
@@ -151,18 +278,23 @@ def compute_gg(output_dir: str = ".") -> dict[str, Any]:
     elif gg_base is None and r_np and r_oe:
         gg_base = round((r_np + r_oe) / 2 + f3.get("g_adj", 0), 1)
 
-    # V12: HH 偏离检测（因子2 粗算 vs 因子3 精算 一致性）
-    r_np_for_hh = r_np if r_np and r_np < 50 else None  # 用修正后的 R(NP)，排除 yfinance 膨胀值
+    # HH must compare like with like.  Raw NP/MC is pre-distribution and
+    # pre-tax, while GG already includes M and (1-Q); comparing those two
+    # creates a large but meaningless spread.  Use the penetration return.
+    r_np_for_hh = f2.get("r_np_penetration")
+    hh_payload = f3.get("hh_deviation") if isinstance(f3.get("hh_deviation"), dict) else {}
+    gg_for_hh = hh_payload.get("gg_aa", (f3.get("gg_raw") or {}).get("aa_based", gg_base))
     hh = None
     hh_note = ""
-    if r_np_for_hh and gg_base and r_np_for_hh > 0:
-        hh = round(abs(r_np_for_hh - gg_base), 1)
+    if r_np_for_hh and gg_for_hh and r_np_for_hh > 0:
+        hh = hh_payload.get("deviation")
+        hh = round(float(hh), 2) if isinstance(hh, (int, float)) else round(abs(r_np_for_hh - gg_for_hh), 2)
         if hh > 3:
-            hh_note = f"⚠️ HH=|R(NP)-GG|={hh}pct > 3pct → 因子2不适用，因子3为唯一有效穿透回报率"
+            hh_note = f"⚠️ HH=|R(NP)_penetration-GG|={hh}pct > 3pct → 因子2不适用，因子3为唯一有效穿透回报率"
         elif hh > 1.5:
-            hh_note = f"HH=|R(NP)-GG|={hh}pct > 1.5pct，因子2可信度存疑"
+            hh_note = f"HH=|R(NP)_penetration-GG|={hh}pct > 1.5pct，因子2可信度存疑"
         else:
-            hh_note = f"HH={hh}pct ≤ 1.5pct，因子2与因子3一致"
+            hh_note = f"HH=|R(NP)_penetration-GG|={hh}pct ≤ 1.5pct，因子2与因子3一致"
 
     m_warning = ""
 
@@ -185,11 +317,20 @@ def compute_gg(output_dir: str = ".") -> dict[str, Any]:
         # === 因子2 粗算 ===
         "r_np_pre_tax": r_np,
         "r_oe_pre_tax": r_oe,
+        # V12.5: 穿透回报率 (Spec Factor2 Step8)
+        "r_np_penetration": f2.get("r_np_penetration"),  # NP×M×(1-Q)/MC
+        "r_oe_penetration": f2.get("r_oe_penetration"),  # OE×M×(1-Q)/MC
         # === 因子3 精算（原料代入公式的结果）===
         "gg_raw": f3.get("gg_raw", {}),
         "gg_base": gg_base,
         "gg_pessimistic": gg_pessimistic,
         "gg_optimistic": gg_optimistic,
+        # V12.5: EV双轨 + λ敏感性 + 外推可信度
+        "gg_ev": f3.get("gg_ev"),                        # EV双轨 (净现金/MC>40%触发)
+        "gg_normalized": f3.get("gg_normalized"),         # V12.13: 正常化GG (只扣维持Capex)
+        "gg_fcfe": f3.get("gg_fcfe"),                     # V12.13: FCFE GG (绕开W倒挤法)
+        "lambda_sensitivity": f3.get("lambda_sensitivity"),  # λ=median(ΔAA/ΔS) + 临界收入倍数
+        "extrapolation_rating": f3.get("extrapolation_rating"),  # 5维外推可信度评级
         # === 参数 ===
         "II": p.get("II"),
         "Rf": p.get("Rf"),
@@ -197,7 +338,7 @@ def compute_gg(output_dir: str = ".") -> dict[str, Any]:
         "hh_note": hh_note,
         "rejection": f3.get("rejection", {}),
         "correction_note": correction_note,
-        "formula": "GG = NP_avg × M × (1-Q) / MC × 100 + g_adj",
+        "formula": "GG = AA_avg × M × (1-Q) / MC × 100. R(NP)_raw = NP/MC (诊断). R(NP)_penetration = NP×M×(1-Q)/MC (穿透, 与GG同单位)",
         # V12: 隐含PE
         "implied_pe": round(100 / gg_base, 1) if gg_base and gg_base > 0 else None,
         "summary": (
@@ -266,14 +407,19 @@ def compute_aa(output_dir: str = ".") -> dict[str, Any]:
         "Q": p.get("Q"),
         "net_cash": f3.get("net_cash"),
         "net_cash_pct_mc": f3.get("net_cash_pct_mc"),
+        # V12.6: 多层现金结构 + W分解
+        "cash_structure": f3.get("cash_structure"),
+        "w_breakdown": f3.get("w_breakdown"),
 
         # AP 检查
         "ap_cost_ratio_avg": f3.get("ap_cost_ratio_avg"),
         "ap_excess_financing": f3.get("ap_excess_financing"),
 
         # GG 公式提示
+        # V12: AP 驱动伪现金流拆解（对标 v2.39 AP-Driven AA 检测）
+        "ap_driven_analysis": _analyze_ap_driven_cashflow(output_dir),
         "gg_formula": "GG = AA_avg × M × (1-Q) / MC_rmb × 100",
-        "gg_note": "此工具输出 AA 构建的中间数据。用 compute_gg 获取最终 GG 值（含股本修正）。",
+        "gg_note": "此工具输出 AA 构建的中间数据。用 compute_gg 获取最终 GG 值（含股本修正）。若 ap_driven_analysis.ap_pct > 20%，应考虑使用 ap_adjusted_aa 计算保守 GG。",
     }
 
 
@@ -308,6 +454,7 @@ def compute_ddm(output_dir: str = ".") -> dict[str, Any]:
         "upside_pct": tiers[0].get("upside_pct") if tiers else None,
         "dps_fy": p.get("dps_fy"),
         "dps_ttm": p.get("dps_ttm"),
+        "dividend_identity": f4.get("dividend_identity"),
         "formula": ddm.get("formula"),
         "steps": ddm.get("steps"),
         "tiers": [
@@ -318,6 +465,11 @@ def compute_ddm(output_dir: str = ".") -> dict[str, Any]:
             }
             for t in tiers[:5]
         ],
+        # V12.5: P_base 目标价 (Spec Factor4 Step4) + II 周期调整
+        "p_base": f4.get("p_base"),                # P_base = MC×(GG/II)/shares
+        "II_original": f4.get("II_original"),       # 原始II
+        "II_adjusted": f4.get("II_adjusted"),       # 周期调整后II
+        "cycle_adjustment": f4.get("cycle_adjustment"),  # 周期调整说明
         "position": f4.get("position"),
         "stop_loss": f4.get("stop_loss"),
         "value_trap": f4.get("value_trap"),
@@ -557,6 +709,9 @@ def compute_data_quality(output_dir: str = ".") -> dict[str, Any]:
     return result
 
 
+verify_market_cap._tool_meta = {"name": "verify_market_cap", "description": "验证市值=股价×总股本，并返回偏差百分比。", "parameters": {"price": {"type": "number", "description": "股价"}, "shares": {"type": "number", "description": "总股本"}, "reported_cap": {"type": "number", "description": "报告或行情给出的市值"}, "currency": {"type": "string", "description": "币种", "optional": True}}}  # type: ignore[attr-defined]
+cross_validate_data._tool_meta = {"name": "cross_validate_data", "description": "对同一财务字段做多源交叉验证并输出共识值。", "parameters": {"field": {"type": "string", "description": "字段名"}, "sources_json": {"type": "string", "description": "JSON: {来源: 数值}"}, "unit": {"type": "string", "description": "单位", "optional": True}, "tolerance": {"type": "number", "description": "容差百分比", "optional": True}}}  # type: ignore[attr-defined]
+check_benford._tool_meta = {"name": "check_benford", "description": "对一组财务数字做 Benford 定律检测。", "parameters": {"values_json": {"type": "string", "description": "JSON数组"}}}  # type: ignore[attr-defined]
 compute_aa._tool_meta = {"name": "compute_aa", "description": "展示AA(可支配现金)完整构建链路—逐年FCF+收款比率+收入还原。用于GG章节推导过程。", "parameters": {"output_dir": {"type": "string", "description": "股票输出目录"}}}  # type: ignore[attr-defined]
 compute_data_quality._tool_meta = {"name": "compute_data_quality", "description": "评估数据完整性—统计Zone A/B/J文件覆盖率+折价建议。对标海螺'36/36字段0%折价'。", "parameters": {"output_dir": {"type": "string", "description": "股票输出目录"}}}  # type: ignore[attr-defined]
 compute_gg._tool_meta = {"name": "compute_gg", "description": "计算穿透回报率GG(GG_np/GG_oe/GG_base/II/Rf/G_adj/scenarios)—含yfinance股本自动修正", "parameters": {"output_dir": {"type": "string", "description": "股票输出目录"}}}  # type: ignore[attr-defined]

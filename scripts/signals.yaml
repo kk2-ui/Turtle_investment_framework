@@ -1,0 +1,99 @@
+# signals.yaml — 声明式财务信号规则文件
+# 由 rule_engine.py 加载。可外置编辑，无需改 Python 代码。
+
+rules:
+  - id: gross_margin_decline
+    name: 毛利率连续下滑
+    severity: WARN
+    description: 毛利率连续3年以上下降，累计压缩超过3个百分点
+    check:
+      field: gross_margin
+      condition: consecutive_decline
+      min_years: 3
+      min_cumulative_drop_pct: 3.0
+
+  - id: no_interest_bearing_debt
+    name: 连续零有息负债
+    severity: POSITIVE
+    description: 连续多年无短期借款或长期借款
+    check:
+      fields: [st_borr, lt_borr]
+      condition: all_zero
+      min_years: 3
+
+  - id: ar_to_revenue_rising
+    name: 应收/营收占比持续上升
+    severity: WARN
+    description: 应收账款占营收比例持续上升，回款恶化
+    check:
+      field: ar_to_revenue_ratio
+      condition: rising_trend
+      min_years: 3
+      threshold_pct: 5.0
+
+  - id: fcf_positive_streak
+    name: FCF持续为正
+    severity: POSITIVE
+    description: 自由现金流连续多年为正
+    check:
+      field: fcf
+      condition: all_positive
+      min_years: 3
+
+  - id: goodwill_spike
+    name: 商誉跳变
+    severity: WARN
+    description: 商誉某年突然大幅变动，可能为并购或减值
+    check:
+      field: goodwill
+      condition: single_year_spike
+      threshold_pct: 100.0
+
+  - id: dividend_sustainable
+    name: 分红可持续
+    severity: POSITIVE
+    description: EPS始终大于DPS，分红政策有盈利支撑
+    check:
+      fields: [eps, dps]
+      condition: field_a_gt_field_b
+      min_years: 3
+
+  - id: net_cash_position
+    name: 净现金状态
+    severity: POSITIVE
+    description: 货币资金大于总负债
+    check:
+      fields: [money_cap, total_liab]
+      condition: field_a_gt_field_b_latest
+      label: [货币资金, 总负债]
+
+  - id: dps_decline
+    name: DPS连续下滑
+    severity: INFO
+    description: 每股股息连续下降
+    check:
+      field: dps
+      condition: consecutive_decline
+      min_years: 2
+      min_cumulative_drop_pct: 0.0
+
+  - id: ocf_np_divergence
+    name: OCF/NP比率恶化
+    severity: WARN
+    description: 经营现金流与净利润比率持续低于0.8
+    check:
+      field: ocf_np_ratio
+      condition: below_threshold
+      threshold: 0.8
+      min_years: 2
+
+  - id: revenue_growth_slowdown
+    name: 收入增速放缓
+    severity: INFO
+    description: 近3年收入增速显著低于5年平均
+    check:
+      field: revenue_yoy
+      condition: recent_lower_than_historical
+      recent_years: 3
+      historical_years: 5
+      threshold_ratio: 0.5

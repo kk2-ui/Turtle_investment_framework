@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://turtle.local/schemas/archetype_valuation_registry.schema.json",
+  "title": "Turtle Archetype and Valuation Registry",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "registry_version", "model_policy", "models", "archetypes"],
+  "properties": {
+    "schema_version": {"const": "archetype-valuation-registry.v1"},
+    "registry_version": {"type": "string", "minLength": 1},
+    "model_policy": {"type": "object", "required": ["no_unjustified_weighted_average", "relative_valuation_cannot_be_sole_primary", "minimum_r_g_buffer_pct", "high_terminal_share_pct", "required_stress_cases"]},
+    "models": {"type": "object", "minProperties": 1, "additionalProperties": {"type": "object", "required": ["model_type", "value_scope", "cash_flow_scope", "discount_rate_kind", "independence_group", "fragilities"]}},
+    "archetypes": {"type": "object", "minProperties": 4, "additionalProperties": {"type": "object", "required": ["label", "legacy_business_type", "asset_intensity", "industry_patterns", "counter_patterns", "required_input_paths", "research_requirements", "primary_models", "corroborative_models", "stress_models", "rejected_models", "rejection_reasons"]}}
+  }
+}

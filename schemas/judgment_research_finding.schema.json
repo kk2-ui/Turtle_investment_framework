@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "judgment-research-finding.v1",
+  "type": "object",
+  "required": [
+    "schema_version", "task_id", "resolution", "prior_claim", "evidence_items",
+    "strongest_alternative", "discriminating_result", "inference",
+    "applicability_conditions", "confidence_update", "valuation_impact",
+    "action_impact", "chapter_update"
+  ],
+  "properties": {
+    "schema_version": {"const": "judgment-research-finding.v1"},
+    "task_id": {"type": "string"},
+    "resolution": {"enum": ["SUPPORTED", "CONTRADICTED", "MIXED", "UNRESOLVED", "PUBLIC_INFO_UNAVAILABLE"]},
+    "prior_claim": {"type": "string"},
+    "evidence_items": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["source_id", "source_kind", "directness", "relation", "fact", "as_of"],
+        "properties": {
+          "source_id": {"type": "string"},
+          "source_kind": {"enum": ["primary_filing", "official_data", "independent_dataset", "company_statement", "secondary_research", "market_data", "unknown"]},
+          "directness": {"enum": ["DIRECT", "INDIRECT", "CONTEXT"]},
+          "relation": {"enum": ["supports", "contradicts", "context"]},
+          "fact": {"type": "string"},
+          "as_of": {"type": "string"}
+        }
+      }
+    },
+    "strongest_alternative": {"type": "string"},
+    "discriminating_result": {"type": "string"},
+    "inference": {"type": "string"},
+    "applicability_conditions": {"type": "array", "items": {"type": "string"}},
+    "confidence_update": {"type": "object"},
+    "valuation_impact": {"type": "object"},
+    "action_impact": {"type": "object"},
+    "chapter_update": {"type": "object"}
+  }
+}

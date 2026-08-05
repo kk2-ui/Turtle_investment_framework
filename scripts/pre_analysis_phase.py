@@ -15,13 +15,15 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import re
 import sqlite3
 import sys
 from datetime import datetime
 from statistics import mean, stdev
 from typing import Dict, List, Optional, Tuple
 
-DB_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), "stock_analysis.db")
+DB_PATH = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "stock_analysis.db")
+# 防止 import 到空 DB 文件
 OUTPUT_BASE = os.path.join(os.path.dirname(os.path.dirname(__file__)), "output")
 
 # ── Dual-dimension cyclicality classification (V1.1) ───────────────────────────
@@ -106,6 +108,13 @@ def load_financials(ts_code: str, db_path: str = DB_PATH
     conn = sqlite3.connect(db_path, timeout=5)
     conn.row_factory = sqlite3.Row
 
+    # V12.19: 卫星上市标的 — 财务数据回退到母标
+    data_source = ts_code
+    st_row = conn.execute("SELECT data_source_code FROM stocks WHERE ts_code=?", (ts_code,)).fetchone()
+    if st_row and st_row["data_source_code"]:
+        data_source = st_row["data_source_code"]
+        print(f"📊 pre_analysis: {ts_code} → 使用 {data_source} 的财务数据", file=sys.stderr)
+
     rows = conn.execute(
         """SELECT fiscal_year, revenue, n_income_attr_p, total_assets, total_liab,
                   total_hldr_eqy_exc_min_int, goodwill, n_cashflow_act,
@@ -113,7 +122,7 @@ def load_financials(ts_code: str, db_path: str = DB_PATH
            FROM annual_financials
            WHERE ts_code=? AND report_type='annual'
            ORDER BY fiscal_year""",
-        (ts_code,)
+        (data_source,)
     ).fetchall()
 
     # Get listing year
@@ -127,11 +136,16 @@ def load_financials(ts_code: str, db_path: str = DB_PATH
         except (ValueError, IndexError):
             pass
 
-    # Get industry
+    # Get industry (V12.19: use data_source for satellite listings)
     ind_row = conn.execute(
         "SELECT industry_l1, industry_l2 FROM industry_classification WHERE ts_code=?",
-        (ts_code,)
+        (data_source,)
     ).fetchone()
+    if not ind_row:
+        ind_row = conn.execute(
+            "SELECT industry_l1, industry_l2 FROM industry_classification WHERE ts_code=?",
+            (ts_code,)
+        ).fetchone()
     industry_l1 = ind_row["industry_l1"] if ind_row else None
     industry_l2 = ind_row["industry_l2"] if ind_row else None
 
@@ -510,6 +524,90 @@ def detect_anomaly_years(financials: List[dict]) -> List[dict]:
     return anomalies
 
 
+def assess_info_richness(ts_code: str, financials: List[dict]) -> dict:
+    """Assess research information richness for Phase 0."""
+    years = [r.get("fiscal_year") for r in financials if r.get("fiscal_year")]
+    earliest_year = min(years) if years else None
+    latest_year = max(years) if years else None
+    n_years = len(years)
+
+    stock_dir = find_stock_dir(ts_code)
+    artifact_source_code = ts_code
+    # Satellite listings inherit the same annual-report research evidence as their
+    # financial-data source. Phase 0 runs before Phase 1 creates symlinks, so
+    # resolve the parent output directory here instead of undercounting evidence.
+    if (not stock_dir or not os.path.isdir(stock_dir)) and os.path.exists(DB_PATH):
+        try:
+            conn = sqlite3.connect(DB_PATH, timeout=5)
+            row = conn.execute(
+                "SELECT data_source_code FROM stocks WHERE ts_code=?",
+                (ts_code,),
+            ).fetchone()
+            conn.close()
+            parent_code = row[0] if row and row[0] else ""
+            if parent_code:
+                parent_dir = find_stock_dir(parent_code)
+                if parent_dir and os.path.isdir(parent_dir):
+                    stock_dir = parent_dir
+                    artifact_source_code = parent_code
+        except sqlite3.Error:
+            pass
+    pdf_sections_count = 0
+    annual_md_count = 0
+    if stock_dir and os.path.isdir(stock_dir):
+        for name in os.listdir(stock_dir):
+            if name.startswith("pdf_sections_") and name.endswith(".json"):
+                pdf_sections_count += 1
+            elif name.endswith("_年报.md") or re.match(r"^\d{4}_年报\.md$", name):
+                annual_md_count += 1
+
+    # The target directory can already exist but be empty on the first run.
+    # In that case it still needs to inherit the parent's evidence counts.
+    if pdf_sections_count == 0 and annual_md_count == 0 and artifact_source_code == ts_code:
+        try:
+            conn = sqlite3.connect(DB_PATH, timeout=5)
+            row = conn.execute(
+                "SELECT data_source_code FROM stocks WHERE ts_code=?",
+                (ts_code,),
+            ).fetchone()
+            conn.close()
+            parent_code = row[0] if row and row[0] else ""
+            parent_dir = find_stock_dir(parent_code) if parent_code else None
+            if parent_dir and os.path.isdir(parent_dir):
+                for name in os.listdir(parent_dir):
+                    if name.startswith("pdf_sections_") and name.endswith(".json"):
+                        pdf_sections_count += 1
+                    elif name.endswith("_年报.md") or re.match(r"^\d{4}_年报\.md$", name):
+                        annual_md_count += 1
+                artifact_source_code = parent_code
+        except sqlite3.Error:
+            pass
+
+    if n_years >= 6 and pdf_sections_count >= 3:
+        level = "A"
+        label = "高信息丰富度"
+        reason = f"{n_years}年财务历史，{pdf_sections_count}份结构化年报材料，适合完整框架分析"
+    elif n_years >= 3:
+        level = "B"
+        label = "中等信息丰富度"
+        reason = f"{n_years}年财务历史，{pdf_sections_count}份结构化年报材料，适合谨慎分析"
+    else:
+        level = "C"
+        label = "低信息丰富度"
+        reason = f"{n_years}年财务历史，材料有限，建议降低结论强度"
+
+    return {
+        "level": level,
+        "label": label,
+        "reason": reason,
+        "financial_years": n_years,
+        "pdf_sections_count": pdf_sections_count,
+        "annual_md_count": annual_md_count,
+        "range": [earliest_year, latest_year],
+        "artifact_source_code": artifact_source_code,
+    }
+
+
 def load_segment_data(ts_code: str) -> Optional[List[dict]]:
     """Load multi-year segment data from stock output directory (Zone B output).
 
@@ -546,6 +644,54 @@ def load_segment_data(ts_code: str) -> Optional[List[dict]]:
             return [{"fiscal_year": int(fy), "segments": data["segments"]}]
 
     return None
+
+
+def detect_asset_profile(ts_code: str, industry_l1: Optional[str], industry_l2: Optional[str], db_path: str = DB_PATH) -> dict:
+    """Infer asset type / analysis mode for future phase routing."""
+    name_cn = ''
+    try:
+        conn = sqlite3.connect(db_path, timeout=5)
+        conn.row_factory = sqlite3.Row
+        row = conn.execute('SELECT name_cn, name_en FROM stocks WHERE ts_code=?', (ts_code,)).fetchone()
+        conn.close()
+        if row:
+            name_cn = row['name_cn'] or row['name_en'] or ''
+    except Exception:
+        pass
+
+    code = ts_code.split('.')[0]
+    name_lower = str(name_cn).lower()
+    combined = f"{name_cn} {industry_l1 or ''} {industry_l2 or ''}"
+
+    asset_type = 'stock'
+    analysis_mode = 'stock'
+    notes = []
+    recommended_templates = ['report_template_v12.md']
+
+    etf_name_hit = any(x in combined for x in ['ETF', 'etf', '交易型开放式', '指数基金', '联接基金', 'LOF'])
+    etf_code_hit = code.startswith(('510', '511', '512', '513', '515', '516', '517', '518', '519', '520', '560', '561', '562', '563', '564', '565', '566', '567', '568', '569', '588', '159'))
+    bond_name_hit = any(x in combined for x in ['债券', '国债', '信用债', '可转债'])
+
+    if etf_name_hit or etf_code_hit:
+        asset_type = 'etf'
+        analysis_mode = 'etf'
+        recommended_templates = ['etf_analysis.md', 'macro_sector_transmission.md']
+        notes.append('识别为 ETF / 指数基金，更适合宽基/主题/因子框架。')
+    elif bond_name_hit:
+        asset_type = 'bond'
+        analysis_mode = 'bond'
+        recommended_templates = ['bond_yield_scorecard.md', 'macro_sector_transmission.md']
+        notes.append('识别为债券或固收类标的，应优先用利率/信用评分卡。')
+    else:
+        notes.append('默认按个股基本面框架处理。')
+
+    return {
+        'asset_type': asset_type,
+        'analysis_mode': analysis_mode,
+        'name_cn': name_cn,
+        'recommended_templates': recommended_templates,
+        'notes': notes,
+    }
 
 
 def build_analysis_contract(ts_code: str, db_path: str = DB_PATH,
@@ -588,6 +734,8 @@ def build_analysis_contract(ts_code: str, db_path: str = DB_PATH,
 
     cyclicality = compute_cyclicality_profile(financials, industry_l1, industry_l2)
     anomalies = detect_anomaly_years(financials)
+    info_richness = assess_info_richness(ts_code, financials)
+    asset_profile = detect_asset_profile(ts_code, industry_l1, industry_l2, db_path)
 
     # Effective years: from analysis_start_year to latest, capped by window_n
     window_n = cyclicality["window_n"]
@@ -616,6 +764,8 @@ def build_analysis_contract(ts_code: str, db_path: str = DB_PATH,
         "analysis_start_year": start_year,
         "effective_years": effective_years,
         "cyclicality_profile": cyclicality,
+        "info_richness": info_richness,
+        "asset_profile": asset_profile,
         "three_track": {
             "track_a_long_term": {
                 "years": track_a_years,
@@ -709,6 +859,10 @@ def main():
         print(f"   分析起点: {contract['analysis_start_year']}")
         print(f"   有效年份: {contract['effective_years']} "
               f"({len(contract['effective_years'])}年)")
+        info = contract.get("info_richness", {})
+        print(f"   信息丰富度: {info.get('level', '?')} | {info.get('label', '')}")
+        asset = contract.get('asset_profile', {})
+        print(f"   资产类型: {asset.get('asset_type', '?')} | 模式: {asset.get('analysis_mode', '?')}")
         print(f"   周期分类: {cyc['label']} "
               f"(profit_cv={cyc['profit_cv']}, "
               f"demand={cyc.get('demand_driver','?')}, "

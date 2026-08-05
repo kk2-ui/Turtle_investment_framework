@@ -5,11 +5,23 @@ Section 17 derived metrics: financial trends, Factor 2/3/4 computations.
 
 import pandas as pd
 
+from config import resolve_shareholder_dividend_tax_rate
 from format_utils import format_number, format_table, format_header
+from turtle_thresholds import classify_threshold_profile
 
 
 class DerivedMetricsMixin:
     """Mixin providing derived metrics computation for TushareClient."""
+
+    def _shareholder_tax_context(self, ts_code: str) -> tuple[float | None, str]:
+        """Resolve shareholder-level tax rate from client context."""
+        structure = getattr(self, "listing_structure", "") or ""
+        channel = getattr(self, "holding_channel", "") or ""
+        return resolve_shareholder_dividend_tax_rate(
+            ts_code=ts_code,
+            holding_channel=channel,
+            listing_structure=structure,
+        )
 
     def _compute_financial_trends(self) -> str | None:
         """Compute §17.1: Financial trend summary (CAGR, debt ratios, net cash, payout)."""
@@ -279,19 +291,53 @@ class DerivedMetricsMixin:
 
         if rf_val is not None:
             summary_rows.append(["Rf（无风险利率）", f"{rf_val:.4f}%", "来自 §14"])
-            # Determine market type from ts_code
-            if ts_code.endswith(".HK"):
-                ii = max(5.0, rf_val + 3.0)
-                summary_rows.append(["II（门槛值）", f"{ii:.2f}%", f"港股: max(5%, {rf_val:.2f}%+3%)"])
-            elif ts_code.endswith(".US"):
-                ii = max(4.0, rf_val + 2.0)
-                summary_rows.append(["II（门槛值）", f"{ii:.2f}%", f"美股: max(4%, {rf_val:.2f}%+2%)"])
-            else:  # A-share default
-                ii = max(3.5, rf_val + 2.0)
-                summary_rows.append(["II（门槛值）", f"{ii:.2f}%", f"A股: max(3.5%, {rf_val:.2f}%+2%)"])
         else:
             summary_rows.append(["Rf（无风险利率）", "—", "数据缺失"])
-            summary_rows.append(["II（门槛值）", "—", "需Rf"])
+
+        basic_df = self._store.get("basic_info")
+        basic_row = basic_df.iloc[0] if basic_df is not None and not basic_df.empty else {}
+        latest_net_cash = None
+        latest_debt_ratio = None
+        bs_df = self._get_annual_df("balance_sheet")
+        if bs_df is not None and not bs_df.empty:
+            latest_bs = bs_df.iloc[0]
+            debt_components = [
+                self._safe_float(latest_bs.get("st_borr")),
+                self._safe_float(latest_bs.get("lt_borr")),
+                self._safe_float(latest_bs.get("bond_payable")),
+                self._safe_float(latest_bs.get("non_cur_liab_due_1y")),
+            ]
+            debt_vals = [v for v in debt_components if v is not None]
+            latest_debt = sum(debt_vals) if debt_vals else None
+            latest_cash = self._safe_float(latest_bs.get("money_cap"))
+            latest_assets = self._safe_float(latest_bs.get("total_assets"))
+            if latest_cash is not None and latest_debt is not None:
+                latest_net_cash = latest_cash - latest_debt
+            if latest_debt is not None and latest_assets and latest_assets > 0:
+                latest_debt_ratio = latest_debt / latest_assets * 100.0
+        payout_for_profile = m_mean if payout_ratios else None
+        self._store["financial_trends_threshold_inputs"] = {
+            "net_cash": latest_net_cash,
+            "debt_ratio_pct": latest_debt_ratio,
+            "payout_pct": payout_for_profile,
+        }
+        threshold_profile = classify_threshold_profile(
+            ts_code=ts_code,
+            company_name=str(getattr(basic_row, "get", lambda _k, _d=None: _d)("name", "")),
+            fullname=str(getattr(basic_row, "get", lambda _k, _d=None: _d)("fullname", "")),
+            industry=str(getattr(basic_row, "get", lambda _k, _d=None: _d)("industry", "")),
+            net_cash=latest_net_cash,
+            debt_ratio_pct=latest_debt_ratio,
+            payout_pct=payout_for_profile,
+            rf_pct=rf_val,
+        )
+        summary_rows.append(["门槛子类", threshold_profile.category, threshold_profile.rationale])
+        summary_rows.append(["II（门槛值）", f"{threshold_profile.ii_pct:.2f}%", threshold_profile.method])
+        summary_rows.append([
+            "星级锚",
+            f"五星≥{threshold_profile.star_5_pct:.2f}%；四星≥{threshold_profile.star_4_pct:.2f}%；三星≥{threshold_profile.star_3_pct:.2f}%",
+            "静态GG分档",
+        ])
 
         # OE base case (G=1.0)
         latest_c = self._safe_float(income_df.iloc[0].get("n_income_attr_p"))
@@ -658,7 +704,260 @@ class DerivedMetricsMixin:
 
         return "\n".join(lines)
 
-    # --- Feature #96: §17.9 Factor 4 earnings decline sensitivity ---
+    
+    # --- Feature: S17.10 Factor 4 asset-value safety margin ---
+
+    def _compute_factor4_asset_value(self, ts_code: str) -> str | None:
+        """Compute S17.10: Asset-value safety margin cross-validation.
+
+        Computes net cash coverage ratio, PB valuation band, goodwill concentration,
+        and composite asset safety rating.
+
+        Requires basic_info (mkt cap, shares, close), balance_sheet (equity, goodwill,
+        cash, debt), and fina_indicators (bps, pb). Uses existing net_cash_mm from
+        S17.1 computed by _compute_financial_trends.
+        """
+        basic_df = self._store.get("basic_info")
+        if basic_df is None or basic_df.empty:
+            return None
+        bi = basic_df.iloc[0]
+
+        close = self._safe_float(bi.get("close"))
+        if self._is_us(ts_code):
+            total_mv_raw = self._safe_float(bi.get("total_mv"))
+            if not close or not total_mv_raw:
+                return None
+            mkt_cap = total_mv_raw / 1e6
+            total_shares = total_mv_raw / close
+        elif self._is_hk(ts_code):
+            total_market_cap = self._safe_float(bi.get("total_market_cap"))
+            if not close or not total_market_cap:
+                return None
+            mkt_cap = total_market_cap
+            total_shares = mkt_cap * 1e6 / close if close else 0
+        else:
+            total_mv_wan = self._safe_float(bi.get("total_mv"))
+            total_share_wan = self._safe_float(bi.get("total_share"))
+            if not close or not total_mv_wan or not total_share_wan:
+                return None
+            mkt_cap = total_mv_wan * 10000 / 1e6
+            total_shares = total_share_wan * 10000
+
+        bs_df = self._get_annual_df("balance_sheet")
+        fi_df = self._store.get("fina_indicators")
+
+        lines = [format_header(3, "17.10 因子4 资产价值安全边际"), ""]
+
+        # ---- 3D.1: Net cash coverage ----
+        net_cash_raw = None
+        trends = self._store.get("financial_trends_threshold_inputs")
+        if trends:
+            net_cash_raw = trends.get("net_cash")
+
+        net_cash_per_share = None
+        net_cash_coverage = None
+        nc_rating = "净负债"
+        if net_cash_raw is not None:
+            net_cash_m = net_cash_raw / 1e6
+            net_cash_coverage = (net_cash_m / mkt_cap * 100) if mkt_cap > 0 else None
+            if total_shares and total_shares > 0:
+                net_cash_per_share = net_cash_raw / total_shares
+            if net_cash_coverage is not None:
+                if net_cash_coverage >= 80:
+                    nc_rating = "现金垫极厚"
+                elif net_cash_coverage >= 50:
+                    nc_rating = "现金垫充裕"
+                elif net_cash_coverage >= 20:
+                    nc_rating = "有一定现金垫"
+                elif net_cash_coverage >= 0:
+                    nc_rating = "现金垫薄"
+
+        nc_rows = [
+            ["广义净现金", format_number(net_cash_raw / 1e6) if net_cash_raw is not None else "—",
+             self._unit_label()],
+            ["净现金/股", "{:.2f}".format(net_cash_per_share) if net_cash_per_share is not None else "—",
+             self._price_unit()],
+            ["净现金覆盖率", "{:.1f}%".format(net_cash_coverage) if net_cash_coverage is not None else "—",
+             "判定：" + nc_rating],
+        ]
+        lines.append("#### 3D.1 净现金覆盖率")
+        lines.append("")
+        lines.append(format_table(["指标", "值", "说明"], nc_rows, alignments=["l", "r", "l"]))
+        lines.append("")
+
+        # ---- 3D.2: PB valuation band ----
+        bps = None
+        pb_current = None
+        if fi_df is not None and not fi_df.empty:
+            fy_month_str = "{:02d}".format(self._fy_end_month)
+            fi_annual = fi_df[fi_df["end_date"].str[4:6] == fy_month_str].sort_values(
+                "end_date", ascending=False)
+            if not fi_annual.empty:
+                fi_row = fi_annual.iloc[0]
+                bps = self._safe_float(fi_row.get("bps"))
+                pb_current = self._safe_float(fi_row.get("pb_ttm"))
+
+        if pb_current is None and bs_df is not None and not bs_df.empty:
+            latest_bs = bs_df.iloc[0]
+            equity = self._safe_float(latest_bs.get("total_hldr_eqy_exc_min_int")) or 0
+            if equity > 0 and total_shares > 0:
+                bps = equity / total_shares
+                if self._is_hk(ts_code):
+                    pb_current = mkt_cap * 1e6 / equity
+                else:
+                    pb_current = mkt_cap * 1e6 / equity
+
+        pb_rating = "不适用（数据不足）"
+        premium_parity = None
+        premium_liq = None
+        asset_parity = 0.0
+        liq_value = 0.0
+        if bps is not None and bps > 0:
+            if pb_current is not None:
+                if pb_current < 0.7:
+                    pb_rating = "低于保守清算价值"
+                elif pb_current < 1.0:
+                    pb_rating = "破净"
+                elif pb_current < 1.5:
+                    pb_rating = "低于1.5倍，关注"
+                else:
+                    pb_rating = "正常范围"
+            asset_parity = bps
+            liq_value = bps * 0.7
+            if close:
+                premium_parity = (close / asset_parity - 1) * 100
+                premium_liq = (close / liq_value - 1) * 100
+
+        pb_rows = [
+            ["当前 PB", "{:.2f}x".format(pb_current) if pb_current is not None else "—",
+             "判定：" + pb_rating],
+            ["每股净资产", "{:.2f}".format(bps) if bps is not None else "—", self._price_unit()],
+        ]
+        if bps is not None and premium_parity is not None:
+            tag_p = "折价" if premium_parity < 0 else "溢价"
+            tag_l = "折价" if premium_liq < 0 else "溢价"
+            pb_rows.append(["资产平价（bps x 1.0）", "{:.2f}".format(asset_parity),
+                           "vs 当前价 " + tag_p + " {:.1f}%".format(abs(premium_parity))])
+            pb_rows.append(["保守清算价（bps x 0.7）", "{:.2f}".format(liq_value),
+                           "vs 当前价 " + tag_l + " {:.1f}%".format(abs(premium_liq))])
+
+        lines.append("#### 3D.2 PB 估值区间")
+        lines.append("")
+        lines.append(format_table(["指标", "值", "说明"], pb_rows, alignments=["l", "r", "l"]))
+        lines.append("")
+
+        # ---- 3D.3: Goodwill concentration ----
+        goodwill_ratio = None
+        intangible_ratio = None
+        if bs_df is not None and not bs_df.empty:
+            latest_bs = bs_df.iloc[0]
+            goodwill = self._safe_float(latest_bs.get("goodwill")) or 0
+            intangible = self._safe_float(latest_bs.get("intang_assets")) or 0
+            equity = self._safe_float(latest_bs.get("total_hldr_eqy_exc_min_int")) or 0
+            if equity > 0:
+                goodwill_ratio = goodwill / equity * 100
+                intangible_ratio = (goodwill + intangible) / equity * 100
+
+        gw_rating = "低"
+        if goodwill_ratio is not None:
+            if goodwill_ratio >= 30:
+                gw_rating = "高"
+            elif goodwill_ratio >= 10:
+                gw_rating = "中"
+
+        gw_rows = [
+            ["商誉/归母权益", "{:.2f}%".format(goodwill_ratio) if goodwill_ratio is not None else "—",
+             "风险：" + gw_rating],
+            ["（商誉+无形资产）/归母权益",
+             "{:.2f}%".format(intangible_ratio) if intangible_ratio is not None else "—",
+             "含无形资产的总集中度"],
+        ]
+
+        lines.append("#### 3D.3 商誉/无形资产集中度")
+        lines.append("")
+        lines.append(format_table(["指标", "值", "说明"], gw_rows, alignments=["l", "r", "l"]))
+
+        if goodwill_ratio is not None and goodwill_ratio >= 30 and pb_current is not None and pb_current < 1.0:
+            lines.append("")
+            lines.append("> 商誉占净资产 {:.1f}%，账面价值存在虚高风险。".format(goodwill_ratio))
+            lines.append("> 即使 PB < 1.0，实际资产质量可能低于账面值。")
+            lines.append("> 建议检查因子1对商誉减值的评估结论。")
+        lines.append("")
+
+        # ---- 3D.4: Composite rating ----
+        composite = "不适用"
+        composite_reason = ""
+
+        nc_avail = net_cash_coverage is not None
+        pb_avail = pb_current is not None and bps is not None and bps > 0
+        gw_avail = goodwill_ratio is not None
+
+        if not nc_avail and not pb_avail and not gw_avail:
+            composite = "不适用"
+            composite_reason = "数据不足"
+        elif not nc_avail and not gw_avail:
+            composite = "不适用"
+            composite_reason = "仅PB数据可用，不足以评级"
+        else:
+            score = 0.0
+            if net_cash_coverage is not None:
+                if net_cash_coverage >= 80:
+                    score += 2
+                elif net_cash_coverage >= 50:
+                    score += 1
+                elif net_cash_coverage < 0:
+                    score -= 1
+            if pb_current is not None:
+                if pb_current < 0.7:
+                    if goodwill_ratio is not None and goodwill_ratio < 10:
+                        score += 2
+                    else:
+                        score += 1
+            if goodwill_ratio is not None:
+                if goodwill_ratio >= 30:
+                    score -= 1
+                elif goodwill_ratio >= 10:
+                    score -= 0.5
+
+            if score >= 2:
+                composite = "强"
+                composite_reason = "资产底充足"
+                if net_cash_coverage is not None and net_cash_coverage >= 80:
+                    composite_reason = "净现金覆盖率>=80%，下行风险极小"
+            elif score >= 0:
+                composite = "中"
+                composite_reason = "资产底适中"
+            else:
+                composite = "弱"
+                composite_reason = "净负债或高商誉，资产底薄弱"
+
+        lines.append("#### 3D.4 资产安全垫综合评级")
+        lines.append("")
+        lines.append("**综合评级：{}** -- {}".format(composite, composite_reason))
+        lines.append("")
+
+        limit_adj = "无调整"
+        if composite == "强" and net_cash_coverage is not None and net_cash_coverage >= 80:
+            limit_adj = "仓位上限可上调一档（净现金覆盖充分）"
+        elif composite == "弱":
+            limit_adj = "仓位上限应下调一档（资产底薄弱）"
+
+        adj_rows = [
+            ["综合评级", composite, composite_reason],
+            ["仓位上限修正建议", limit_adj, "最终上限=min(三-C, 三-D修正)"],
+        ]
+        lines.append(format_table(["维度", "结论", "说明"], adj_rows, alignments=["l", "l", "l"]))
+
+        self._store["_asset_value_metrics"] = {
+            "net_cash_coverage_pct": net_cash_coverage,
+            "net_cash_per_share": net_cash_per_share,
+            "pb_current": pb_current,
+            "bps_current": bps,
+            "goodwill_concentration_pct": goodwill_ratio,
+        }
+
+        return "\n".join(lines)
+# --- Feature #96: §17.9 Factor 4 earnings decline sensitivity ---
 
     def _compute_factor4_sensitivity(self, ts_code: str) -> str | None:
         """Compute §17.9: Earnings decline sensitivity tables.
@@ -701,19 +1000,26 @@ class DerivedMetricsMixin:
             mkt_cap = total_mv_wan * 10000  # 元（与 aa 同单位）
             total_shares = total_share_wan * 10000  # 股
 
-        # Read II (threshold) from risk_free_rate
+        # Read II (threshold) from subtype classifier.
         rf_df = self._store.get("risk_free_rate")
         if rf_df is None or rf_df.empty:
             return None
         rf_val = self._safe_float(rf_df.iloc[0].get("yield"))
         if rf_val is None:
             return None
-        if ts_code.endswith(".HK"):
-            ii = max(5.0, rf_val + 3.0)
-        elif ts_code.endswith(".US"):
-            ii = max(4.0, rf_val + 2.0)
-        else:
-            ii = max(3.5, rf_val + 2.0)
+
+        trends = self._store.get("financial_trends_threshold_inputs", {})
+        threshold_profile = classify_threshold_profile(
+            ts_code=ts_code,
+            company_name=str(bi.get("name", "")),
+            fullname=str(bi.get("fullname", "")),
+            industry=str(bi.get("industry", "")),
+            net_cash=trends.get("net_cash"),
+            debt_ratio_pct=trends.get("debt_ratio_pct"),
+            payout_pct=trends.get("payout_pct"),
+            rf_pct=rf_val,
+        )
+        ii = threshold_profile.ii_pct
 
         # Read M (payout ratio) — uses _get_payout_by_year helper
         income_df = self._get_annual_df("income")
@@ -727,15 +1033,18 @@ class DerivedMetricsMixin:
         # O = repurchase annual average (default 0, same as §17.2)
         o_val = 0.0
 
+        q_rate, q_reason = self._shareholder_tax_context(ts_code)
+        tax_multiplier = 1.0 if q_rate is None else (1.0 - q_rate)
+
         # Base 穿透回报率
-        gg_base = (aa * m_pct / 100 + o_val) / mkt_cap * 100  # percent
-        threshold_price_base = (aa * m_pct / 100 + o_val) / (ii / 100 * total_shares)
+        gg_base = (aa * m_pct / 100 * tax_multiplier + o_val) / mkt_cap * 100  # percent
+        threshold_price_base = (aa * m_pct / 100 * tax_multiplier + o_val) / (ii / 100 * total_shares)
 
         def _row(label: str, factor: float):
             aa_new = aa * factor
-            gg = (aa_new * m_pct / 100 + o_val) / mkt_cap * 100
+            gg = (aa_new * m_pct / 100 * tax_multiplier + o_val) / mkt_cap * 100
             vs_threshold = gg - ii
-            tp = (aa_new * m_pct / 100 + o_val) / (ii / 100 * total_shares)
+            tp = (aa_new * m_pct / 100 * tax_multiplier + o_val) / (ii / 100 * total_shares)
             vs_price = (tp / close - 1) * 100 if close and close > 0 else 0
             return [
                 label,
@@ -750,6 +1059,11 @@ class DerivedMetricsMixin:
         lines.append(f"> AA（真实可支配现金结余）= {format_number(aa)} {self._unit_label()}，"
                      f"M = {m_pct:.2f}%，O = {format_number(o_val)}，"
                      f"II = {ii:.2f}%，市值 = {format_number(mkt_cap)} {self._unit_label()}")
+        lines.append(f"> 门槛子类 = {threshold_profile.category}；{threshold_profile.method}")
+        if q_rate is not None:
+            lines.append(f"> 股东层面税率 Q = {q_rate * 100:.2f}%（{q_reason}）")
+        else:
+            lines.append(f"> 股东层面税率 Q = 未指定（{q_reason}）；本表暂按税前口径展示")
         lines.append("")
 
         # Table 1: cumulative 10%/year decline over 1-3 years
@@ -942,10 +1256,12 @@ class DerivedMetricsMixin:
             ap_change = ap_cur - ap_prev
             w1 = oper_cost + max(0, -ap_change)
 
-            # W2: employee = c_pay_to_staff (fallback to SGA if null)
+            # W2: employee cash outflow. Ignore HK annual-report employee-cost proxy here;
+            # it is useful for display, but not a stable cash-flow substitute in §17.
             w2_raw = self._safe_float(cf.get("c_pay_to_staff"))
+            w2_is_proxy = bool(self._safe_float(cf.get("_c_pay_to_staff_is_proxy")) or 0)
             w2_is_fallback = False
-            if w2_raw is None or w2_raw == 0:
+            if w2_raw is None or w2_raw == 0 or w2_is_proxy:
                 # Fallback: SGA from income statement as proxy
                 selling = self._safe_float(inc.get("sell_exp")) or 0
                 admin = self._safe_float(inc.get("admin_exp")) or 0
@@ -976,6 +1292,9 @@ class DerivedMetricsMixin:
 
         # Store for §17.5
         self._store["_w_total"] = w_total_store
+        ap_adjustment = self._compute_ap_excess_metrics(income_years, inc_by_year, bs_by_year)
+        if ap_adjustment:
+            self._store["_ap_adjustment"] = ap_adjustment
 
         # Build output
         lines = [format_header(3, "17.4 因子3·步骤4 经营性现金支出"), ""]
@@ -1003,7 +1322,29 @@ class DerivedMetricsMixin:
         # Footnote for W2 fallback
         if has_w2_fallback:
             lines.append("")
-            lines.append("> † W2: c_pay_to_staff 为空，已用利润表 SGA（销售+管理+研发费用）替代，偏保守。")
+            lines.append("> † W2: `c_pay_to_staff` 为空，已用利润表 SGA（销售+管理+研发费用）替代，偏保守；若港股年报 fallback 已反填员工成本代理，则不会触发此脚注。")
+
+        if ap_adjustment:
+            lines.append("")
+            lines.append(format_header(4, "17.4-bis 因子3·AP超额融资检测"))
+            lines.append("")
+            ap_headers = ["年份", "AP/成本", "DPO", "基准AP/成本", "正常AP", "超额AP存量", "本年超额AP融资贡献", "基准"]
+            ap_rows = []
+            for year in sorted(ap_adjustment.keys(), reverse=True):
+                item = ap_adjustment[year]
+                ap_rows.append([
+                    year,
+                    f"{item['ap_ratio'] * 100:.2f}%",
+                    f"{item['dpo']:.1f}",
+                    f"{item['baseline_ratio'] * 100:.2f}%",
+                    format_number(item['normal_ap']),
+                    format_number(item['excess_ap_stock']),
+                    format_number(item['ap_excess_contribution']),
+                    item['basis'],
+                ])
+            lines.append(format_table(ap_headers, ap_rows, alignments=["l"] + ["r"] * 6 + ["l"]))
+            lines.append("")
+            lines.append("> AP超额融资贡献仅识别 AP/成本 或 DPO 相对历史基准拉长后的超额部分；成本同比扩张带来的正常 AP 增长不视为供应商融资。")
 
         # Null-value warnings
         warnings = []
@@ -1022,6 +1363,72 @@ class DerivedMetricsMixin:
                 lines.append(f"> ⚠️ {wm}")
 
         return "\n".join(lines)
+
+    def _compute_ap_excess_metrics(self, income_years, inc_by_year, bs_by_year) -> dict:
+        """Compute AP excess financing metrics for §17.4-bis.
+
+        Normal AP grows with operating cost. Only AP above the historical
+        AP/cost baseline is treated as supplier financing.
+        """
+        yearly = {}
+        for year in income_years:
+            inc = inc_by_year.get(year)
+            bs_cur = bs_by_year.get(year)
+            prior_year = str(int(year) - 1)
+            bs_prev = bs_by_year.get(prior_year)
+            if inc is None or bs_cur is None or bs_prev is None:
+                continue
+            oper_cost = self._safe_float(inc.get("oper_cost"))
+            ap_cur = self._safe_float(bs_cur.get("acct_payable"))
+            ap_prev = self._safe_float(bs_prev.get("acct_payable"))
+            if oper_cost is None or oper_cost <= 0 or ap_cur is None or ap_prev is None:
+                continue
+            yearly[year] = {
+                "oper_cost": oper_cost,
+                "ap": ap_cur,
+                "ap_prev": ap_prev,
+                "ap_ratio": ap_cur / oper_cost,
+                "dpo": ((ap_cur + ap_prev) / 2) / oper_cost * 365,
+            }
+
+        metrics = {}
+        years_desc = [y for y in income_years if y in yearly]
+        for year in years_desc:
+            older_years = [y for y in years_desc if int(y) < int(year)]
+            baseline_ratios = [yearly[y]["ap_ratio"] for y in older_years]
+            if not baseline_ratios:
+                continue
+            sorted_ratios = sorted(baseline_ratios)
+            mid = len(sorted_ratios) // 2
+            if len(sorted_ratios) % 2:
+                baseline_ratio = sorted_ratios[mid]
+            else:
+                baseline_ratio = (sorted_ratios[mid - 1] + sorted_ratios[mid]) / 2
+            basis = "historical" if len(baseline_ratios) >= 3 else "low-confidence"
+
+            item = yearly[year]
+            normal_ap = item["oper_cost"] * baseline_ratio
+            excess_stock = max(0, item["ap"] - normal_ap)
+
+            prior_year = str(int(year) - 1)
+            prior_item = yearly.get(prior_year)
+            if prior_item:
+                prior_normal_ap = prior_item["oper_cost"] * baseline_ratio
+                prior_excess_stock = max(0, prior_item["ap"] - prior_normal_ap)
+            else:
+                prior_excess_stock = 0
+            contribution = max(0, excess_stock - prior_excess_stock)
+
+            metrics[year] = {
+                **item,
+                "baseline_ratio": baseline_ratio,
+                "normal_ap": normal_ap,
+                "excess_ap_stock": excess_stock,
+                "ap_excess_contribution": contribution,
+                "basis": basis,
+            }
+
+        return metrics
 
     def _compute_factor3_sensitivity_base(self) -> str | None:
         """Compute §17.5: Base surplus + sensitivity inputs.

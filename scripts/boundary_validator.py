@@ -57,8 +57,8 @@ ZONE_J_SCHEMAS = {
     "moat_assessment.json": {
         "required_fields": ["b_penalty_final", "g_base", "g_scenarios", "value_trap_signals", "moat_evidence"],
         "field_types": {
-            "b_penalty_final": (int, float),
-            "g_base": (int, float),
+            "b_penalty_final": (int, float, dict),
+            "g_base": (int, float, dict),
             "g_scenarios": dict,
             "value_trap_signals": list,
             "moat_evidence": list,
@@ -70,6 +70,14 @@ ZONE_J_SCHEMAS = {
         "sub_fields": {
             "g_scenarios": {"required_fields": ["pessimistic", "base", "optimistic"], "field_types": {"pessimistic": (int,float), "base": (int,float), "optimistic": (int,float)}},
             "moat_evidence": {"is_list_of_objects": True, "item_required": ["type"]},
+            "b_penalty_final": {
+                "required_fields": ["value", "rationale", "evidence_ref", "confidence"],
+                "field_types": {"value": (int, float), "rationale": str, "evidence_ref": list, "confidence": str},
+            },
+            "g_base": {
+                "required_fields": ["value", "rationale", "evidence_ref", "confidence"],
+                "field_types": {"value": (int, float), "rationale": str, "evidence_ref": list, "confidence": str},
+            },
         },
     },
     "capex_classification.json": {
@@ -101,12 +109,18 @@ ZONE_J_SCHEMAS = {
     "data_discount.json": {
         "required_fields": ["total_discount_pct", "confidence_by_section", "discount_factors"],
         "field_types": {
-            "total_discount_pct": (int, float),
+            "total_discount_pct": (int, float, dict),
             "confidence_by_section": dict,
             "discount_factors": list,
         },
         "range_checks": {
             "total_discount_pct": (0, 50),
+        },
+        "sub_fields": {
+            "total_discount_pct": {
+                "required_fields": ["value", "rationale", "evidence_ref", "confidence"],
+                "field_types": {"value": (int, float), "rationale": str, "evidence_ref": list, "confidence": str},
+            },
         },
     },
 }
@@ -126,6 +140,11 @@ def validate_file(data: dict, schema: dict, fname: str) -> list:
     """Validate a JSON object against its expected schema. Returns list of errors."""
     errors = []
 
+    def _unwrap_numeric(val):
+        if isinstance(val, dict) and "value" in val:
+            return val.get("value")
+        return val
+
     # Check required fields
     for field in schema.get("required_fields", []):
         if field not in data or data[field] is None:
@@ -141,7 +160,11 @@ def validate_file(data: dict, schema: dict, fname: str) -> list:
     # Check ranges
     for field, (lo, hi) in schema.get("range_checks", {}).items():
         if field in data and data[field] is not None:
-            val = data[field]
+            val = _unwrap_numeric(data[field])
+            if not isinstance(val, (int, float)):
+                errors.append(
+                    f"WRONG_RANGE_TYPE: {fname}.{field} is {type(data[field]).__name__}, expected numeric or {{value}} wrapper")
+                continue
             if val < lo or val > hi:
                 errors.append(
                     f"OUT_OF_RANGE: {fname}.{field}={val}, expected [{lo}, {hi}]")
@@ -165,6 +188,9 @@ def validate_file(data: dict, schema: dict, fname: str) -> list:
                 if sf in val and val[sf] is not None:
                     if not isinstance(val[sf], st):
                         errors.append(f"SUB_TYPE: {fname}.{field}.{sf} is {type(val[sf]).__name__}, expected {st}")
+            if "evidence_ref" in val:
+                if not isinstance(val["evidence_ref"], list) or not val["evidence_ref"]:
+                    errors.append(f"SUB_EMPTY: {fname}.{field}.evidence_ref")
 
     return errors
 

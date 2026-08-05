@@ -15,6 +15,7 @@ from __future__ import annotations
 
 import argparse
 import hashlib
+import json
 import os
 import sys
 import time
@@ -71,6 +72,24 @@ _TIER2_TTL_CATEGORY = {
     "weekly": "market",
     "yc_cb": "global",
 }
+
+_GROWTH8_WEIGHTS = {
+    "listing_age": 10,
+    "market_cap": 10,
+    "founder_status": 15,
+    "executive_ownership": 10,
+    "talent_density": 10,
+    "employee_culture": 10,
+    "product_attraction": 25,
+    "price_trend": 10,
+}
+_GROWTH8_TEMPLATE_PATH = os.path.join(
+    os.path.dirname(os.path.dirname(__file__)),
+    "shared",
+    "qualitative",
+    "templates",
+    "growth_stock_8d.md",
+)
 
 # ============================================================
 # Cache
@@ -264,6 +283,117 @@ class TushareScreener:
         keys_to_remove = [k for k in self._stock_data_cache if k.startswith(prefix)]
         for k in keys_to_remove:
             del self._stock_data_cache[k]
+
+    def _score_growth8_listing_age(self, list_date: str | None) -> tuple[int, str, bool]:
+        if not list_date:
+            return 2, "缺少上市日期，给中性分", False
+        try:
+            years = max((datetime.now() - datetime.strptime(str(list_date), "%Y%m%d")).days / 365.25, 0)
+        except ValueError:
+            return 2, "上市日期格式异常，给中性分", False
+        if years < 2:
+            return 3, f"上市约 {years:.1f} 年，处于高成长窗口", True
+        if years < 5:
+            return 2, f"上市约 {years:.1f} 年，仍具成长弹性", True
+        if years < 8:
+            return 1, f"上市约 {years:.1f} 年，成长股属性开始钝化", True
+        return 1, f"上市约 {years:.1f} 年，偏成熟期", True
+
+    def _score_growth8_market_cap(self, total_mv_wan: float | None) -> tuple[int, str, bool]:
+        if total_mv_wan is None:
+            return 2, "缺少市值数据，给中性分", False
+        market_cap_yi = total_mv_wan / 10000
+        if 30 <= market_cap_yi <= 80:
+            return 3, f"总市值约 {market_cap_yi:.1f} 亿，处于偏理想成长区间", True
+        if 80 < market_cap_yi <= 200:
+            return 2, f"总市值约 {market_cap_yi:.1f} 亿，仍可接受", True
+        if 200 < market_cap_yi <= 500:
+            return 1, f"总市值约 {market_cap_yi:.1f} 亿，体量已偏大", True
+        return 1, f"总市值约 {market_cap_yi:.1f} 亿，超出成长股甜蜜区", True
+
+    def _score_growth8_price_trend(self, ts_code: str) -> tuple[int, str, bool]:
+        try:
+            weekly_df = self._cached_call("weekly", ts_code=ts_code)
+        except Exception:
+            return 2, "周线数据不可用，给中性分", False
+        if weekly_df.empty or "close" not in weekly_df.columns:
+            return 2, "周线数据缺失，给中性分", False
+        weekly_df = weekly_df.sort_values("trade_date")
+        closes = weekly_df["close"].dropna().tail(26)
+        if len(closes) < 8:
+            return 2, "周线样本不足，给中性分", False
+        start = float(closes.iloc[0])
+        end = float(closes.iloc[-1])
+        change_pct = (end / start - 1) * 100 if start > 0 else 0.0
+        if change_pct >= 20:
+            return 3, f"近 26 周上涨约 {change_pct:.1f}%，趋势较强", True
+        if change_pct >= -5:
+            return 2, f"近 26 周变动约 {change_pct:.1f}%，趋势中性", True
+        return 1, f"近 26 周下跌约 {abs(change_pct):.1f}%，趋势偏弱", True
+
+    def _load_growth8_template(self) -> str:
+        if not os.path.exists(_GROWTH8_TEMPLATE_PATH):
+            return ""
+        try:
+            with open(_GROWTH8_TEMPLATE_PATH, encoding="utf-8") as f:
+                return f.read()
+        except OSError:
+            return ""
+
+    def _build_growth8_assessment(self, row: pd.Series) -> dict[str, Any]:
+        ts_code = row["ts_code"]
+        total_mv_wan = float(row.get("total_mv", 0) or 0)
+        listing_score, listing_reason, listing_known = self._score_growth8_listing_age(row.get("list_date"))
+        market_score, market_reason, market_known = self._score_growth8_market_cap(total_mv_wan)
+        trend_score, trend_reason, trend_known = self._score_growth8_price_trend(ts_code)
+
+        dimension_scores = {
+            "listing_age": {"score": listing_score, "reason": listing_reason, "known": listing_known},
+            "market_cap": {"score": market_score, "reason": market_reason, "known": market_known},
+            "founder_status": {"score": 2, "reason": "当前筛选器未接入创始人与实控人数据库，保留中性分，需后续 LLM/外部资料补齐", "known": False},
+            "executive_ownership": {"score": 2, "reason": "当前筛选器未接入高管持股明细，保留中性分", "known": False},
+            "talent_density": {"score": 2, "reason": "当前筛选器未接入人才密度资料，保留中性分", "known": False},
+            "employee_culture": {"score": 2, "reason": "当前筛选器未接入员工氛围资料，保留中性分", "known": False},
+            "product_attraction": {"score": 2, "reason": "当前筛选器未接入产品口碑与社媒证据，保留中性分", "known": False},
+            "price_trend": {"score": trend_score, "reason": trend_reason, "known": trend_known},
+        }
+
+        weighted_total = sum(dimension_scores[key]["score"] * weight for key, weight in _GROWTH8_WEIGHTS.items()) / 100
+        known_dims = [key for key, value in dimension_scores.items() if value["known"]]
+        unknown_dims = [key for key, value in dimension_scores.items() if not value["known"]]
+        if len(known_dims) >= 6:
+            info_richness = "A"
+        elif len(known_dims) >= 4:
+            info_richness = "B"
+        else:
+            info_richness = "C"
+
+        turnover_rate = row.get("turnover_rate")
+        est_daily_turnover_mn = None
+        veto = False
+        veto_reason = ""
+        if turnover_rate is not None and turnover_rate == turnover_rate and total_mv_wan > 0:
+            est_daily_turnover_mn = total_mv_wan * 10000 * float(turnover_rate) / 100 / 1e6
+            if est_daily_turnover_mn < 50:
+                veto = True
+                veto_reason = f"估算日成交额约 {est_daily_turnover_mn:.1f} 百万元，低于 5000 万流动性门槛"
+
+        key_strength = max(dimension_scores.items(), key=lambda item: item[1]["score"])[0]
+        key_risk = min(dimension_scores.items(), key=lambda item: item[1]["score"])[0]
+
+        return {
+            "growth8_score": round(weighted_total, 2),
+            "growth8_info_richness": info_richness,
+            "growth8_veto": veto,
+            "growth8_veto_reason": veto_reason,
+            "growth8_known_dims": ",".join(known_dims),
+            "growth8_unknown_dims": ",".join(unknown_dims),
+            "growth8_est_daily_turnover_mn": round(est_daily_turnover_mn, 2) if est_daily_turnover_mn is not None else None,
+            "growth8_key_strength": key_strength,
+            "growth8_key_risk": key_risk,
+            "growth8_breakdown": json.dumps(dimension_scores, ensure_ascii=False),
+            "growth8_prompt_template_path": _GROWTH8_TEMPLATE_PATH if os.path.exists(_GROWTH8_TEMPLATE_PATH) else "",
+        }
 
     # ---- Tier 1: Bulk data ----
 
@@ -1079,6 +1209,8 @@ class TushareScreener:
             "pe_ttm": row.get("pe_ttm"),
             "pb": row.get("pb"),
             "dv_ttm": row.get("dv_ttm"),
+            "list_date": row.get("list_date"),
+            "turnover_rate": row.get("turnover_rate"),
         }
 
         # Step 1: Hard vetoes (early termination)
@@ -1114,7 +1246,10 @@ class TushareScreener:
         result["fcf_consistency"] = f4.get("fcf_consistency")
         result["fcf_margin"] = f4.get("fcf_margin")
 
-        # Step 5: Floor price
+        # Step 5: Growth8 qualitative-ready snapshot
+        result.update(self._build_growth8_assessment(row))
+
+        # Step 6: Floor price
         fp = self._extract_floor_price(ts_code, close, total_mv_wan)
         result["floor_baseline"] = fp.get("composite_baseline")
         result["floor_premium"] = fp.get("premium")
@@ -1241,7 +1376,7 @@ class TushareScreener:
         display_cols = [c for c in [
             "ts_code", "name", "industry", "close", "pe_ttm", "pb", "dv_ttm",
             "roe_waa", "gross_margin", "fcf_yield", "fcf_margin", "R",
-            "ev_ebitda", "floor_premium", "composite_score"
+            "ev_ebitda", "floor_premium", "growth8_score", "growth8_info_richness", "composite_score"
         ] if c in df.columns]
 
         display_df = df[display_cols].copy()
@@ -1352,7 +1487,7 @@ def main():
 
     # Display top results
     display_cols = [c for c in [
-        "ts_code", "name", "industry", "composite_score", "roe_waa",
+        "ts_code", "name", "industry", "composite_score", "growth8_score", "growth8_info_richness", "roe_waa",
         "fcf_yield", "fcf_margin", "R", "ev_ebitda", "floor_premium"
     ] if c in result.columns]
     print("\n" + result[display_cols].head(20).to_string(index=False))

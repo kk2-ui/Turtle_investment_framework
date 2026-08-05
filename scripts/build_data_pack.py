@@ -74,12 +74,13 @@ def build_data_pack(stock_dir, ts_code):
     lines.append(f"*生成时间: {cb.get('meta',{}).get('date','—')}*  *金额: 百万元 RMB*")
     lines.append("")
     h("§MKT 市场数据")
+    native_currency = mkt.get("native_currency", "RMB")
     lines.append(table(
         ["项目", "值", "说明"],
-        [["股价(HKD)", mkt.get("price_hkd","—"), mkt.get("price_source","—")],
+        [[f"股价({native_currency})", mkt.get("price_native", mkt.get("price_hkd","—")), mkt.get("price_source","—")],
          ["股价(RMB)", mkt.get("price_rmb","—"), f"FX={mkt.get('fx','—')}"],
          ["总股本(M)", mkt.get("shares_m","—"), "⚠️DB缺失" if mkt.get("shares_warning") else ""],
-         ["市值(M HKD)", mkt.get("mc_hkd","—"), "=P×S"],
+         [f"市值(M {native_currency})", mkt.get("mc_native", mkt.get("mc_hkd","—")), "=P×S"],
          ["市值(M RMB)", mkt.get("mc_rmb","—"), "=P×S×FX"]]
     ))
 
@@ -91,7 +92,7 @@ def build_data_pack(stock_dir, ts_code):
          ["股息税率", "Q", pct(params.get('Q')), "持股渠道"],
          ["基准永续增长", "g_base", f"{params.get('g_base','—')}%", "Zone J moat"],
          ["B类惩罚", "b_penalty", pct(params.get('b_penalty')), "Zone J moat"],
-         ["最新DPS(HKD)", "DPS", params.get('dps_latest','—'), "DB"],
+         [f"最新DPS({native_currency})", "DPS", params.get('dps_latest','—'), "DB"],
          ["组合上限", "CAP", f"{params.get('PORTFOLIO_CAP_PCT','—')}%", ".env"]]
     ))
 

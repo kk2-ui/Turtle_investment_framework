@@ -1,0 +1,4 @@
+interface:
+  display_name: "Long Project Orchestrator"
+  short_description: "Coordinate milestone roadmaps, worktrees, gates, and evidence"
+  default_prompt: "Use $orchestrate-projects to set up and coordinate this repository as a gated long-running project."

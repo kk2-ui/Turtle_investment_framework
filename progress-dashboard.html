@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Turtle 项目进度</title>
+  <style>
+    :root { color-scheme: light; --ink:#17302a; --muted:#64746f; --paper:#f4f1e8; --card:#fffdf7; --line:#d8d3c4; --green:#286b53; --amber:#ad6b16; --red:#a13b34; }
+    * { box-sizing:border-box; }
+    body { margin:0; font:15px/1.55 ui-sans-serif,system-ui,-apple-system,"PingFang SC",sans-serif; color:var(--ink); background:linear-gradient(135deg,#e9efe8,var(--paper) 42%,#eee7d8); }
+    main { max-width:1080px; margin:auto; padding:42px 22px 64px; }
+    header { display:flex; justify-content:space-between; gap:24px; align-items:end; margin-bottom:24px; }
+    h1 { margin:0; font:700 34px/1.15 ui-serif,Georgia,"Songti SC",serif; }
+    .stamp,.muted { color:var(--muted); }
+    .goal { padding:22px; border-left:5px solid var(--green); background:var(--card); box-shadow:0 12px 30px #30483a12; }
+    .grid { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin:18px 0; }
+    section { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:18px; }
+    h2 { margin:0 0 10px; font-size:14px; letter-spacing:.08em; text-transform:uppercase; }
+    ul { margin:0; padding-left:20px; }
+    .milestone { display:grid; grid-template-columns:92px 1fr 130px; gap:12px; padding:12px 0; border-top:1px solid var(--line); align-items:center; }
+    .milestone:first-of-type { border-top:0; }
+    .state { font-weight:700; color:var(--muted); }
+    .validating { color:var(--amber); }
+    .blocked { color:var(--red); }
+    code { background:#eee9dc; padding:2px 5px; border-radius:4px; }
+    @media (max-width:760px) { header{display:block}.grid{grid-template-columns:1fr}.milestone{grid-template-columns:68px 1fr}.state{grid-column:2} }
+  </style>
+</head>
+<body>
+<main>
+  <header><div><div class="muted">LONG-RUNNING PROJECT</div><h1>Turtle Investment Framework</h1></div><div class="stamp">更新：2026-08-05</div></header>
+  <div class="goal"><strong>本轮 Goal · T0（COMPLETE）</strong><br>建立里程碑协调、独立 worktree/分支和 commit 绑定验证门禁，不改变“完整价值投资报告”的产品目标。</div>
+  <div class="grid">
+    <section><h2>已完成</h2><ul><li>8月5日目标校正已成为路线图最新真源</li><li>治理规范、GOALS与本地门禁已生成</li><li>可复用技能已安装并完成集成烟测</li></ul></section>
+    <section><h2>下一步</h2><ul><li>用户确认历史基线冻结方式</li><li>获授权后启用GitHub required check</li><li>确认后再激活 T1，恢复Phase 08完整报告</li></ul></section>
+    <section><h2>阻断项</h2><ul><li><code>main</code>存在大量历史未提交改动</li><li>新 worktree 目前不能代表完整现状</li><li>远端 required check 尚待授权启用</li></ul></section>
+  </div>
+  <section>
+    <h2>里程碑</h2>
+    <div class="milestone"><strong>T0</strong><span>长任务治理接入</span><span class="state">COMPLETE</span></div>
+    <div class="milestone"><strong>T1</strong><span>Phase 08 完整报告恢复</span><span class="state">PLANNED</span></div>
+    <div class="milestone"><strong>T2</strong><span>Phase 08 真实验收收口</span><span class="state">PLANNED</span></div>
+    <div class="milestone"><strong>T3</strong><span>Phase 09 纵向跟踪与年糕投影</span><span class="state">PLANNED</span></div>
+    <div class="milestone"><strong>T4</strong><span>Phase 10 PIT研究回测</span><span class="state">PLANNED</span></div>
+  </section>
+  <section style="margin-top:16px"><h2>最近证据</h2><ul><li>阶段回归：<code>579 passed</code>（2026-08-05，脏基线证据，不是commit绑定merge evidence）</li><li>源技能与安装技能逐文件一致；两套集成测试均 <code>3 passed</code></li><li>两仓治理自检通过；当前<code>main</code>的preflight、pre-commit、pre-push按预期拒绝</li><li>独立审计确认环境回滚、UTF-8清理和权限保留修复，无P0/P1缺陷</li></ul></section>
+  <section style="margin-top:16px"><h2>最近决策</h2><ul><li>T0治理证据闭合并标记 COMPLETE；T1 不在本轮自动激活</li><li>历史脏 <code>main</code> 不自动 reset、stash、迁移或提交</li><li>新 worktree 自动共享被忽略的 Python 环境，但不把环境纳入提交</li><li>远端 branch protection 只有获授权后才配置，当前不宣称已启用</li></ul></section>
+  <p class="muted">协调真源：GOALS.md ｜ 领域真源：docs/development/LONG_TERM_ROADMAP.md ｜ 详细证据以测试日志和当前 commit 为准。</p>
+</main>
+</body>
+</html>

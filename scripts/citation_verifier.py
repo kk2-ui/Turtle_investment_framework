@@ -25,11 +25,19 @@ def extract_numbers_from_report(report_text):
     # Pattern: key_number pairs like "营业收入 1,999 百万元" or "R_NP 19.46%"
     patterns = [
         # Named metrics
-        (r'R\(?NP\)?\s*[:：]?\s*([\d.]+)\s*%', 'R_NP', '%'),
-        (r'R\(?OE\)?\s*[:：]?\s*([\d.]+)\s*%', 'R_OE', '%'),
-        (r'GG.*?(?:基准|base).*?([\d.]+)\s*%', 'GG_base', '%'),
+        # Framework return metrics must retain their identity.  In particular,
+        # ``R\(?OE\)?`` also matched ordinary accounting ``ROE`` under
+        # IGNORECASE, which then compared ROE with factor2.r_oe.
+        (r'R(?:\(NP\)|_NP)\s*[:：]?\s*([\d.]+)\s*%', 'R_NP', '%'),
+        (r'R(?:\(OE\)|_OE)\s*[:：]?\s*([\d.]+)\s*%', 'R_OE', '%'),
+        (r'GG\(AA口径\).*?([\d.]+)\s*%', 'GG_base', '%'),
+        (r'GG\(FCFE口径\).*?([\d.]+)\s*%', 'GG_FCFE', '%'),
+        (r'GG\(Normalized口径\).*?([\d.]+)\s*%', 'GG_normalized', '%'),
         (r'DDM.*?公允价.*?([\d.]+)\s*(?:HKD|港币)', 'DDM_v', 'HKD'),
-        (r'OCF/NP.*?([\d.]+)', 'OCF_NP_ratio', 'ratio'),
+        # Require an explicit value separator so labels such as
+        # ``OCF/NP 3y均值=1.78`` do not turn the window marker ``3y`` into a
+        # reported ratio of 3.0.
+        (r'OCF/NP(?:比值|比率|原始口径)?(?:\s*(?:近?\d+\s*年|\d+y)\s*均值)?\s*(?:=|[:：]|为)\s*([\d.]+)', 'OCF_NP_ratio', 'ratio'),
         # Financial data
         (r'营业收入\s*[:：]?\s*([\d,]+(?:\.\d+)?)\s*(?:百万|百万元)', 'revenue', '百万元'),
         (r'归母净利润\s*[:：]?\s*([\d,]+(?:\.\d+)?)\s*(?:百万|百万元)', 'n_income_attr_p', '百万元'),
@@ -55,18 +63,30 @@ def extract_numbers_from_report(report_text):
 
     return findings
 
-def verify_findings(ts_code, findings):
+def verify_findings(ts_code, findings, stock_dir=None):
     """Cross-reference extracted numbers against source data."""
     conn = sqlite3.connect(DB_PATH)
     conn.row_factory = sqlite3.Row
-    stock_dir = find_stock_dir(ts_code)
+    stock_dir = stock_dir or find_stock_dir(ts_code)
 
     # Load source data
     bundle = None
+    industry_context = None
+    gross_margin_candidates = []
     if stock_dir:
         bp = os.path.join(stock_dir, "compute_bundle.json")
         if os.path.exists(bp):
             with open(bp) as f: bundle = json.load(f)
+        ip = os.path.join(stock_dir, "industry_context.json")
+        if os.path.exists(ip):
+            with open(ip) as f: industry_context = json.load(f)
+        for fname in ("segments.json", "mda.json", "industry_context.json"):
+            source_path = os.path.join(stock_dir, fname)
+            if os.path.exists(source_path):
+                with open(source_path) as handle:
+                    gross_margin_candidates.extend(
+                        _collect_gross_margin_candidates(json.load(handle), fname)
+                    )
 
     af_latest = conn.execute(
         "SELECT * FROM annual_financials WHERE ts_code=? ORDER BY fiscal_year DESC LIMIT 1",
@@ -90,18 +110,54 @@ def verify_findings(ts_code, findings):
             elif metric == "GG_base":
                 source_val = bundle.get("factor3", {}).get("gg", {}).get("base")
                 source_desc = "compute_bundle.factor3.gg.base"
+            elif metric == "GG_FCFE":
+                source_val = bundle.get("factor3", {}).get("gg_fcfe", {}).get("base")
+                source_desc = "compute_bundle.factor3.gg_fcfe.base"
+            elif metric == "GG_normalized":
+                source_val = bundle.get("factor3", {}).get("gg_normalized", {}).get("base")
+                source_desc = "compute_bundle.factor3.gg_normalized.base"
             elif metric == "DDM_v":
                 source_val = bundle.get("factor4", {}).get("ddm_v_hkd")
                 source_desc = "compute_bundle.factor4.ddm_v_hkd"
             elif metric == "OCF_NP_ratio":
-                source_val = bundle.get("factor2", {}).get("ocf_np_ratio")
-                source_desc = "compute_bundle.factor2.ocf_np_ratio"
+                # Two valid identities occur in reports: the multi-year
+                # compute-bundle ratio and the latest-year peer-comparison
+                # ratio.  Select the source matching the reported value rather
+                # than forcing both onto the multi-year mean.
+                candidates = [
+                    (
+                        bundle.get("factor2", {}).get("ocf_np_ratio"),
+                        "compute_bundle.factor2.ocf_np_ratio",
+                    )
+                ]
+                if industry_context:
+                    candidates.append((
+                        industry_context.get("percentiles", {}).get("ocf_np_ratio", {}).get("value"),
+                        "industry_context.percentiles.ocf_np_ratio.value",
+                    ))
+                waiver = bundle.get("factor2", {}).get("perturbation_waiver", {})
+                for item in waiver.get("anomalous_years", []) if isinstance(waiver, dict) else []:
+                    if isinstance(item, dict):
+                        candidates.append((
+                            item.get("ocf_np"),
+                            "compute_bundle.factor2.perturbation_waiver.anomalous_years",
+                        ))
+                source_val, source_desc = _nearest_source(reported, candidates)
             elif metric == "market_cap":
                 source_val = bundle.get("market", {}).get("mc_rmb")
                 source_desc = "compute_bundle.market.mc_rmb"
             elif metric == "net_cash":
                 source_val = bundle.get("factor3", {}).get("net_cash")
                 source_desc = "compute_bundle.factor3.net_cash"
+
+        if metric == "gross_margin":
+            margin_val, margin_desc = _nearest_source(reported, gross_margin_candidates)
+            margin_is_near_disclosed_fact = (
+                margin_val is not None
+                and abs(reported - margin_val) / max(abs(margin_val), 0.01) < 0.02
+            )
+            if not _is_scenario_claim(f.get("context", "")) or margin_is_near_disclosed_fact:
+                source_val, source_desc = margin_val, margin_desc
 
         if af_latest:
             if metric == "revenue":
@@ -111,8 +167,13 @@ def verify_findings(ts_code, findings):
                 source_val = af_latest["n_income_attr_p"]
                 source_desc = f"DB annual_financials FY{af_latest['fiscal_year']}.n_income_attr_p"
             elif metric == "gross_margin":
-                source_val = af_latest["gross_margin"]
-                source_desc = f"DB annual_financials FY{af_latest['fiscal_year']}.gross_margin"
+                db_margin = af_latest["gross_margin"]
+                if db_margin is not None:
+                    candidate = (db_margin, f"DB annual_financials FY{af_latest['fiscal_year']}.gross_margin")
+                    source_val, source_desc = _nearest_source(
+                        reported,
+                        [candidate, *gross_margin_candidates],
+                    )
 
         if source_val is not None:
             diff_pct = abs(reported - source_val) / abs(source_val) * 100 if source_val != 0 else 0
@@ -130,6 +191,62 @@ def verify_findings(ts_code, findings):
         })
 
     return results
+
+
+def _nearest_source(reported, candidates):
+    """Return the numerically nearest non-null ``(value, description)`` source."""
+    valid = [(value, desc) for value, desc in candidates if value is not None]
+    if not valid:
+        return None, ""
+    return min(
+        valid,
+        key=lambda item: abs(reported - item[0]) / abs(item[0]) if item[0] else abs(reported),
+    )
+
+
+def _is_scenario_claim(context):
+    text = str(context)
+    return bool(
+        re.search(r"情景|假设|若|如果|降至|跌至|升至|警戒|阈值|敏感性|目标", text)
+        or re.search(r"\d+(?:\.\d+)?\s*%\s*[-–—~至到]\s*\d+(?:\.\d+)?\s*%", text)
+    )
+
+
+def _collect_gross_margin_candidates(data, source_name):
+    """Collect disclosed gross-margin facts while retaining a useful JSON path."""
+    candidates = []
+
+    def add(value, path):
+        try:
+            numeric = float(value)
+        except (TypeError, ValueError):
+            return
+        if -100 <= numeric <= 100:
+            candidates.append((numeric, f"{source_name}:{path}"))
+
+    def walk(node, path="$", margin_context=False):
+        if isinstance(node, dict):
+            for key, value in node.items():
+                next_path = f"{path}.{key}"
+                normalized = str(key).lower()
+                next_margin_context = margin_context or "gross_margin" in normalized or "毛利率" in str(key)
+                margin_value_keys = {
+                    "gross_margin", "gross_margin_pct", "value",
+                    "industry_median", "industry_q1", "industry_q3",
+                }
+                if isinstance(value, (int, float)) and next_margin_context and normalized in margin_value_keys:
+                    add(value, next_path)
+                walk(value, next_path, next_margin_context)
+        elif isinstance(node, list):
+            for idx, value in enumerate(node):
+                walk(value, f"{path}[{idx}]", margin_context)
+        elif isinstance(node, str) and "毛利率" in node:
+            for match in re.finditer(r"毛利率[^\d()\-]{0,12}\(?(-?\d+(?:\.\d+)?)\s*%", node):
+                add(match.group(1), path)
+
+    walk(data)
+    # Preserve deterministic order while removing duplicate value/path pairs.
+    return list(dict.fromkeys(candidates))
 
 def main():
     p = argparse.ArgumentParser(description="citation_verifier.py — Zone C (V10 enhanced)")
@@ -165,7 +282,8 @@ def main():
         print(f"  数字声明: {coverage['number_claims']}")
         print(f"  证据锚点: {coverage['evidence_anchors']}")
         print(f"  唯一来源: {coverage['unique_sources']}")
-        print(f"  覆盖率: {coverage['coverage_ratio']:.0%}")
+        ratio = coverage['coverage_ratio']
+        print(f"  覆盖率: {ratio:.0%}" if ratio is not None else "  覆盖率: N/A")
         print(f"  未知来源: {coverage['unknown_sources']}")
         print(f"  未引用关键源: {coverage['uncited_key_sources']}")
         print(f"  状态: {coverage['status']}")
@@ -177,7 +295,7 @@ def main():
         return 0 if coverage['status'] == 'PASS' else 1
 
     findings = extract_numbers_from_report(report_text)
-    results = verify_findings(args.code, findings)
+    results = verify_findings(args.code, findings, stock_dir=args.stock_dir)
 
     # Print verification report
     print(f"Citation Verification: {args.code}")
@@ -197,7 +315,7 @@ def main():
     print(f"\n✅ {passed} PASS | ⚠️ {warned} WARN | ❌ {failed} FAIL | ❓ {unverified} UNVERIFIED")
 
     # Save verification report
-    stock_dir = find_stock_dir(args.code)
+    stock_dir = args.stock_dir or find_stock_dir(args.code)
     if stock_dir:
         vp = os.path.join(stock_dir, "verification_report.json")
         with open(vp, "w") as f:

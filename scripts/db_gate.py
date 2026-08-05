@@ -55,6 +55,11 @@ MONETARY_FIELDS = [
     "total_hldr_eqy_exc_min_int", "minority_int", "goodwill",
     "st_borr", "lt_borr",
     "n_cashflow_act", "c_pay_acq_const_fiolta", "fcf", "dividends_paid",
+    # V12 AA: extended fields
+    "invest_income", "fix_assets", "intang_assets", "inventories",
+    "admin_exp", "sell_dist_exp", "other_income",
+    "rou_assets", "lease_liab", "defer_tax_assets", "defer_tax_liab",
+    "total_profit", "total_cur_assets", "total_cur_liab", "gov_subsidy",
 ]
 
 

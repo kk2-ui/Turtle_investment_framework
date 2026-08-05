@@ -1,0 +1,788 @@
+from __future__ import annotations
+
+import json
+import os
+import re
+from pathlib import Path
+from dataclasses import dataclass, asdict
+from typing import Any
+
+try:
+    from scripts.chapter_depth import analyze_chapter_depth, detect_data_richness
+except ModuleNotFoundError:
+    from chapter_depth import analyze_chapter_depth, detect_data_richness  # type: ignore[no-redef]
+
+
+@dataclass
+class CompletionResult:
+    status: str
+    blocking_findings: list[str]
+    warning_findings: list[str]
+    chapter_results: list[dict[str, Any]]
+    validators: dict[str, Any]
+
+    def to_dict(self) -> dict[str, Any]:
+        return asdict(self)
+
+
+def _load_audit_ledger(output_dir: str) -> dict[str, Any]:
+    path = os.path.join(output_dir, 'chapter_audit_ledger.json')
+    if not os.path.exists(path):
+        return {'chapters': {}}
+    with open(path, encoding='utf-8') as handle:
+        return json.load(handle)
+
+
+def evaluate_pending_valuation_decision_revision(output_dir: str) -> dict[str, Any]:
+    """Validate a non-canonical valuation hypothesis against current state.
+
+    A valuation-layer action is not a user approval surface.  It remains an
+    internal synthesis input until thesis, insight, chapters and the full
+    completion contract are coherent.  Legacy pending-approval proposals are
+    interpreted under the same rule instead of asking the user to approve an
+    incomplete report.
+    """
+    path = Path(output_dir, 'valuation_decision_revision_proposal.json')
+    try:
+        proposal = json.loads(path.read_text(encoding='utf-8'))
+    except (OSError, json.JSONDecodeError):
+        return {'state': 'NONE', 'status': 'SKIP', 'findings': []}
+    state = str(proposal.get('state') or '')
+    legacy_pending = (
+        state == 'READY_FOR_DECISION_REVISION'
+        and proposal.get('approval_status') == 'PENDING'
+    )
+    internal_synthesis = (
+        state == 'INTERNAL_SYNTHESIS_REQUIRED'
+        and proposal.get('approval_status') == 'NOT_REQUESTED_AT_VALUATION_STAGE'
+    )
+    if not (legacy_pending or internal_synthesis):
+        return {'state': 'NONE', 'status': 'SKIP', 'findings': []}
+    try:
+        from scripts.decision_ledger import ledger_fingerprint
+        from scripts.valuation_model_gate import valuation_fingerprint
+    except ModuleNotFoundError:
+        from decision_ledger import ledger_fingerprint
+        from valuation_model_gate import valuation_fingerprint
+    findings: list[str] = []
+    candidate = proposal.get('candidate')
+    if not isinstance(candidate, dict) or (
+        valuation_fingerprint(candidate) != proposal.get('candidate_fingerprint')
+    ):
+        findings.append('candidate_fingerprint_mismatch')
+    # A valuation proposal is an internal hypothesis, not a permanent approval
+    # ticket.  Once full-report synthesis has propagated the same valuation,
+    # action, position and chosen value into the canonical files, the old
+    # ledger fingerprint is expected to differ and the proposal is resolved.
+    # Treating that intentional propagation as staleness would force a user to
+    # approve an already coherent final report one intermediate step at a time.
+    try:
+        canonical_valuation = json.loads(
+            Path(output_dir, 'valuation_model.json').read_text(encoding='utf-8')
+        )
+        canonical_manifest = json.loads(
+            Path(output_dir, 'decision_manifest.json').read_text(encoding='utf-8')
+        )
+        canonical_ledger = json.loads(
+            Path(output_dir, 'decision_ledger.json').read_text(encoding='utf-8')
+        )
+    except (OSError, json.JSONDecodeError):
+        canonical_valuation = {}; canonical_manifest = {}; canonical_ledger = {}
+    proposed = proposal.get('proposed_synthesis') or {}
+    canonical_synthesis = canonical_valuation.get('synthesis') or {}
+    entries = {
+        str(item.get('entry_id')): item
+        for item in canonical_ledger.get('entries') or []
+        if isinstance(item, dict)
+    }
+    chosen_entry = entries.get(str(proposed.get('decision_entry_id') or 'D006')) or {}
+    action = str(proposed.get('action') or '').lower()
+    manifest_actions = {
+        str(canonical_manifest.get('quantitative_decision') or '').lower(),
+        str(canonical_manifest.get('unified_decision') or '').lower(),
+    }
+    try:
+        position_matches = abs(
+            float(canonical_manifest.get('position_pct'))
+            - float(proposed.get('position_pct'))
+        ) <= 1e-9
+        value_matches = abs(
+            float(chosen_entry.get('value'))
+            - float(proposed.get('chosen_value_per_share'))
+        ) <= 1e-9
+    except (TypeError, ValueError):
+        position_matches = False; value_matches = False
+    valuation_metadata = {
+        'revision', 'lifecycle', 'change_reason', 'generated_at', 'freeze',
+    }
+    semantic_keys = (
+        set(candidate) | set(canonical_valuation)
+        if isinstance(candidate, dict) else set()
+    ) - valuation_metadata
+    valuation_semantics_match = bool(semantic_keys) and all(
+        canonical_valuation.get(key) == candidate.get(key) for key in semantic_keys
+    )
+    if (
+        isinstance(candidate, dict)
+        and not findings
+        and valuation_semantics_match
+        and canonical_synthesis == proposed
+        and action in manifest_actions
+        and position_matches
+        and value_matches
+    ):
+        return {
+            'state': 'RESOLVED', 'status': 'PASS', 'findings': [],
+            'path': str(path),
+            'resolution': 'propagated_after_full_report_synthesis',
+            'candidate_fingerprint': proposal.get('candidate_fingerprint'),
+        }
+    try:
+        ledger = canonical_ledger or json.loads(Path(output_dir, 'decision_ledger.json').read_text(encoding='utf-8'))
+    except (OSError, json.JSONDecodeError):
+        ledger = {}
+    if not ledger or ledger_fingerprint(ledger) != proposal.get('current_decision_ledger_fingerprint'):
+        findings.append('current_decision_ledger_changed')
+    structural = proposal.get('structural_validation') or {}
+    report_text = '\n\n'.join(
+        chapter.read_text(encoding='utf-8')
+        for chapter in sorted(Path(output_dir, 'chapters').glob('_ch*.md'))
+    )
+    try:
+        from scripts.valuation_model_gate import validate_valuation_model_ledger
+        from scripts.decision_reliability import validate_decision_reliability
+    except ModuleNotFoundError:
+        from valuation_model_gate import validate_valuation_model_ledger
+        from decision_reliability import validate_decision_reliability
+    if isinstance(candidate, dict):
+        structural = validate_valuation_model_ledger(
+            candidate, output_dir=output_dir, report_text=report_text, enforced=True
+        )
+    allowed = {
+        'synthesis_manifest_action_mismatch',
+        'synthesis_manifest_position_mismatch',
+        'synthesis_v_final_mismatch',
+    }
+    structural_invalid = set(structural.get('invalid_findings') or [])
+    if (
+        not structural_invalid
+        or not structural_invalid.issubset(allowed)
+        or structural.get('incomplete_findings')
+    ):
+        findings.append('proposal_structural_scope_invalid')
+    reliability = (
+        validate_decision_reliability(
+            output_dir, report_text=report_text, enforced=True,
+            valuation_override=candidate,
+        ) if isinstance(candidate, dict) else {}
+    )
+    if reliability.get('state') not in {'DECISION_READY', 'MONITORING'}:
+        findings.append('proposal_decision_reliability_not_ready')
+    if findings:
+        return {'state': 'INVALID', 'status': 'FAIL', 'findings': findings, 'path': str(path)}
+    return {
+        'state': 'INCOMPLETE', 'status': 'FULL_REPORT_SYNTHESIS_REQUIRED',
+        'findings': ['valuation_hypothesis_requires_full_report_synthesis'],
+        'path': str(path),
+        'candidate_fingerprint': proposal.get('candidate_fingerprint'),
+        'proposed_synthesis': proposal.get('proposed_synthesis') or {},
+        'required_revisions': proposal.get('required_revisions') or [],
+    }
+
+
+def has_valid_internal_valuation_hypothesis(output_dir: str) -> bool:
+    """Whether downstream synthesis may consume a non-final valuation.
+
+    This advances research context only.  It does not make the candidate
+    canonical, publishable, approved or executable.
+    """
+    result = evaluate_pending_valuation_decision_revision(output_dir)
+    return (
+        result.get('state') == 'INCOMPLETE'
+        and result.get('status') == 'FULL_REPORT_SYNTHESIS_REQUIRED'
+        and result.get('findings') == [
+            'valuation_hypothesis_requires_full_report_synthesis'
+        ]
+    )
+
+
+def _expected_v13_chapters() -> list[int]:
+    return list(range(15))
+
+
+def _chapter_path(output_dir: str, idx: int) -> str:
+    chapters_dir = os.path.join(output_dir, 'chapters')
+    candidate = os.path.join(chapters_dir, f'_ch{idx:02d}.md')
+    if os.path.exists(candidate):
+        return candidate
+    return os.path.join(output_dir, f'_ch{idx:02d}.md')
+
+
+def _title_from_text(text: str) -> str:
+    for line in text.splitlines():
+        if line.startswith('## '):
+            return line[3:].strip()
+    return ''
+
+
+def _check_gg_derivation(text: str) -> list[str]:
+    required = [
+        '参数', '方法', 'AA', '公式', '情景', 'M', 'HH', '敏感', '压力', 'AP', '少数股东', 'λ', '治理折价'
+    ]
+    missing = []
+    for token in required:
+        if token not in text:
+            missing.append(token)
+    return missing
+
+
+def evaluate_report_completion(report_text: str, output_dir: str) -> CompletionResult:
+    ledger = _load_audit_ledger(output_dir)
+    blocking: list[str] = []
+    warnings: list[str] = []
+    chapter_results: list[dict[str, Any]] = []
+    chapter_texts: dict[int, str] = {}
+    chapters = ledger.get('chapters', {}) if isinstance(ledger, dict) else {}
+    data_rich = detect_data_richness(output_dir)
+    for idx in _expected_v13_chapters():
+        path = _chapter_path(output_dir, idx)
+        exists = os.path.exists(path)
+        text = ''
+        if exists:
+            text = Path(path).read_text(encoding='utf-8')
+        chapter_texts[idx] = text
+        nonempty = sum(1 for line in text.splitlines() if line.strip())
+        title = _title_from_text(text)
+        ledger_entry = chapters.get(str(idx), {}) if isinstance(chapters, dict) else {}
+        final_audit = ledger_entry.get('final') if isinstance(ledger_entry, dict) else None
+        depth = analyze_chapter_depth(text, idx, data_rich=data_rich)
+        chapter_blockers: list[str] = []
+        if not exists:
+            chapter_blockers.append('missing_file')
+        if exists and not title:
+            chapter_blockers.append('missing_h2_title')
+        if depth['status'] == 'FAIL':
+            chapter_blockers.append('short_depth:' + ','.join(depth['failures']))
+        if not final_audit:
+            chapter_blockers.append('missing_audit_record')
+        elif not final_audit.get('passed', False):
+            chapter_blockers.append('audit_failed')
+        if idx == 11 and text:
+            missing = _check_gg_derivation(text)
+            if missing:
+                chapter_blockers.append('gg_derivation_missing:' + ','.join(missing))
+        if chapter_blockers:
+            blocking.append(f'Ch{idx}: ' + '; '.join(chapter_blockers))
+        chapter_results.append({
+            'index': idx,
+            'path': path,
+            'exists': exists,
+            'title': title,
+            'nonempty_lines': nonempty,
+            'depth': depth,
+            'audit': final_audit,
+            'blocking_rules': chapter_blockers,
+        })
+
+    decision_status = 'PASS'
+    manifest_path = os.path.join(output_dir, 'decision_manifest.json')
+    try:
+        manifest = json.loads(Path(manifest_path).read_text(encoding='utf-8'))
+    except (OSError, json.JSONDecodeError):
+        manifest = {}
+    required_decision_fields = {
+        'qualitative_decision', 'quantitative_decision', 'unified_decision',
+        'display_label', 'decision_family', 'position_pct',
+    }
+    missing_decision_fields = sorted(required_decision_fields - set(manifest)) if isinstance(manifest, dict) else sorted(required_decision_fields)
+    if missing_decision_fields:
+        decision_status = 'FAIL'
+        blocking.append('Decision: manifest_missing_fields:' + ','.join(missing_decision_fields))
+    else:
+        label = str(manifest.get('display_label') or '').strip()
+        if not label or label not in chapter_texts.get(0, '') or label not in chapter_texts.get(14, ''):
+            decision_status = 'FAIL'
+            blocking.append(f'Decision: Ch0/Ch14/manifest mismatch ({label or "empty"})')
+
+    # Phase 01 official-evidence platform. Legacy directories without its
+    # policy remain SKIP; new unified runs must preserve document/fact identity.
+    try:
+        from scripts.build_report_context import evaluate_output_official_evidence
+    except ModuleNotFoundError:
+        from build_report_context import evaluate_output_official_evidence
+    try:
+        official_evidence = evaluate_output_official_evidence(output_dir, persist=True)
+    except (OSError, ValueError, TypeError, json.JSONDecodeError) as exc:
+        official_evidence = {
+            'state': 'INVALID', 'status': 'FAIL',
+            'invalid_findings': ['validator_error:' + str(exc)],
+            'incomplete_findings': [], 'warnings': [],
+        }
+    official_evidence_state = str(official_evidence.get('state') or 'INVALID')
+    if official_evidence_state == 'INVALID':
+        blocking.append('Official evidence: INVALID: ' + ' | '.join(str(item) for item in official_evidence.get('invalid_findings', [])[:12]))
+    elif official_evidence_state == 'INCOMPLETE':
+        blocking.append('Official evidence: INCOMPLETE: ' + ' | '.join(str(item) for item in official_evidence.get('incomplete_findings', [])[:12]))
+    elif official_evidence_state not in {'SKIP', 'REVIEWABLE', 'DECISION_READY', 'MONITORING'}:
+        blocking.append('Official evidence: INVALID: unknown state ' + official_evidence_state)
+
+    try:
+        from scripts.valuation_routing import evaluate_output_valuation_route
+    except ModuleNotFoundError:
+        from valuation_routing import evaluate_output_valuation_route
+    try:
+        valuation_route = evaluate_output_valuation_route(output_dir, persist=True)
+    except (OSError, ValueError, TypeError, json.JSONDecodeError) as exc:
+        valuation_route = {'state': 'INVALID', 'status': 'FAIL', 'invalid_findings': ['validator_error:' + str(exc)], 'incomplete_findings': [], 'warnings': []}
+    valuation_route_state = str(valuation_route.get('state') or 'INVALID')
+    if valuation_route_state == 'INVALID':
+        blocking.append('Valuation route: INVALID: ' + ' | '.join(str(item) for item in valuation_route.get('invalid_findings', [])[:12]))
+    elif valuation_route_state == 'INCOMPLETE':
+        blocking.append('Valuation route: INCOMPLETE: ' + ' | '.join(str(item) for item in valuation_route.get('incomplete_findings', [])[:12]))
+    elif valuation_route_state not in {'SKIP', 'REVIEWABLE', 'DECISION_READY', 'MONITORING'}:
+        blocking.append('Valuation route: INVALID: unknown state ' + valuation_route_state)
+
+    try:
+        from scripts.decisive_question import evaluate_output_decisive_questions
+    except ModuleNotFoundError:
+        from decisive_question import evaluate_output_decisive_questions
+    try:
+        decisive_questions = evaluate_output_decisive_questions(output_dir, persist=True)
+    except (OSError, ValueError, TypeError, json.JSONDecodeError) as exc:
+        decisive_questions = {
+            'state': 'INVALID', 'status': 'FAIL',
+            'invalid_findings': ['validator_error:' + str(exc)],
+            'incomplete_findings': [], 'warnings': [],
+        }
+    decisive_questions_state = str(decisive_questions.get('state') or 'INVALID')
+    if decisive_questions_state == 'INVALID':
+        blocking.append('Decisive questions: INVALID: ' + ' | '.join(str(item) for item in decisive_questions.get('invalid_findings', [])[:12]))
+    elif decisive_questions_state == 'INCOMPLETE':
+        blocking.append('Decisive questions: INCOMPLETE: ' + ' | '.join(str(item) for item in decisive_questions.get('incomplete_findings', [])[:12]))
+    elif decisive_questions_state not in {'SKIP', 'REVIEWABLE', 'DECISION_READY', 'MONITORING'}:
+        blocking.append('Decisive questions: INVALID: unknown state ' + decisive_questions_state)
+
+    try:
+        from scripts.base_rate_case_library import evaluate_output_base_rate
+    except ModuleNotFoundError:
+        from base_rate_case_library import evaluate_output_base_rate
+    try:
+        base_rate = evaluate_output_base_rate(output_dir, persist=True)
+    except (OSError, ValueError, TypeError, json.JSONDecodeError) as exc:
+        base_rate = {
+            'state': 'INVALID', 'status': 'FAIL',
+            'invalid_findings': ['validator_error:' + str(exc)],
+            'incomplete_findings': [], 'warnings': [],
+        }
+    base_rate_state = str(base_rate.get('state') or 'INVALID')
+    if base_rate_state == 'INVALID':
+        blocking.append('Base rate: INVALID: ' + ' | '.join(str(item) for item in base_rate.get('invalid_findings', [])[:12]))
+    elif base_rate_state == 'INCOMPLETE':
+        blocking.append('Base rate: INCOMPLETE: ' + ' | '.join(str(item) for item in base_rate.get('incomplete_findings', [])[:12]))
+    elif base_rate_state not in {'SKIP', 'REVIEWABLE', 'DECISION_READY', 'MONITORING'}:
+        blocking.append('Base rate: INVALID: unknown state ' + base_rate_state)
+    for finding in base_rate.get('warnings') or []:
+        warnings.append('Base rate: ' + str(finding))
+
+    # A current-price refresh is a dependency change, not a cosmetic edit.
+    # When a refresh candidate exists, completion stays blocked until all
+    # market-cap/return/action dependents have been rebuilt and reviewed.
+    try:
+        from scripts.market_refresh import evaluate_output_market_refresh
+    except ModuleNotFoundError:
+        from market_refresh import evaluate_output_market_refresh
+    try:
+        market_refresh = evaluate_output_market_refresh(output_dir)
+    except (OSError, ValueError, TypeError, json.JSONDecodeError) as exc:
+        market_refresh = {
+            'state': 'INVALID', 'status': 'FAIL',
+            'invalid_findings': ['validator_error:' + str(exc)],
+            'incomplete_findings': [],
+        }
+    market_refresh_state = str(market_refresh.get('state') or 'INVALID')
+    if market_refresh_state == 'INVALID':
+        blocking.append('Market refresh: INVALID: ' + ' | '.join(str(item) for item in market_refresh.get('invalid_findings', [])[:12]))
+    elif market_refresh_state == 'RECOMPUTE_REQUIRED':
+        blocking.append('Market refresh: RECOMPUTE_REQUIRED: ' + ' | '.join(str(item) for item in market_refresh.get('incomplete_findings', [])[:12]))
+    elif market_refresh_state not in {'SKIP', 'CURRENT'}:
+        blocking.append('Market refresh: INVALID: unknown state ' + market_refresh_state)
+
+    # V3 decision ledger.  Old directories without a policy/ledger are SKIP;
+    # new unified runs bind enforcement to their run_id before report writing.
+    try:
+        from scripts.decision_ledger import evaluate_output_decision_ledger
+    except ModuleNotFoundError:
+        from decision_ledger import evaluate_output_decision_ledger
+    try:
+        decision_ledger = evaluate_output_decision_ledger(
+            output_dir, report_text=report_text, persist=True
+        )
+    except (OSError, ValueError, TypeError, json.JSONDecodeError) as exc:
+        decision_ledger = {
+            'state': 'INVALID',
+            'status': 'FAIL',
+            'invalid_findings': ['validator_error:' + str(exc)],
+            'incomplete_findings': [],
+        }
+    decision_ledger_state = str(decision_ledger.get('state') or 'INVALID')
+    if decision_ledger_state == 'INVALID':
+        findings = decision_ledger.get('invalid_findings', [])
+        blocking.append('Decision ledger: INVALID: ' + ' | '.join(str(item) for item in findings[:12]))
+    elif decision_ledger_state == 'INCOMPLETE':
+        findings = decision_ledger.get('incomplete_findings', [])
+        blocking.append('Decision ledger: INCOMPLETE: ' + ' | '.join(str(item) for item in findings[:12]))
+    elif decision_ledger_state not in {'SKIP', 'REVIEWABLE', 'DECISION_READY', 'MONITORING'}:
+        blocking.append('Decision ledger: INVALID: unknown state ' + decision_ledger_state)
+
+    # Phase 04 decision compiler: a valid ledger is necessary but insufficient.
+    # The protected output must still match its exact sources, and no second set
+    # of unbound critical values may survive in explanatory prose.
+    try:
+        from scripts.decision_compiler import evaluate_output_decision_compiler
+    except ModuleNotFoundError:
+        from decision_compiler import evaluate_output_decision_compiler
+    try:
+        decision_compiler = evaluate_output_decision_compiler(output_dir, persist=True)
+    except (OSError, ValueError, TypeError, json.JSONDecodeError) as exc:
+        decision_compiler = {
+            'state': 'INVALID', 'status': 'FAIL',
+            'invalid_findings': ['validator_error:' + str(exc)],
+            'incomplete_findings': [],
+        }
+    decision_compiler_state = str(decision_compiler.get('state') or 'INVALID')
+    if decision_compiler_state == 'INVALID':
+        blocking.append('Decision compiler: INVALID: ' + ' | '.join(str(item) for item in decision_compiler.get('invalid_findings', [])[:12]))
+    elif decision_compiler_state == 'INCOMPLETE':
+        blocking.append('Decision compiler: INCOMPLETE: ' + ' | '.join(str(item) for item in decision_compiler.get('incomplete_findings', [])[:12]))
+    elif decision_compiler_state not in {'SKIP', 'REVIEWABLE', 'DECISION_READY', 'MONITORING'}:
+        blocking.append('Decision compiler: INVALID: unknown state ' + decision_compiler_state)
+
+    # V3 major-claim evidence graph.  Like the decision ledger, enforcement is
+    # bound only to new unified runs; legacy output directories remain SKIP.
+    try:
+        from scripts.claim_evidence import evaluate_output_claim_evidence
+    except ModuleNotFoundError:
+        from claim_evidence import evaluate_output_claim_evidence
+    try:
+        claim_evidence = evaluate_output_claim_evidence(
+            output_dir, report_text=report_text, persist=True
+        )
+    except (OSError, ValueError, TypeError, json.JSONDecodeError) as exc:
+        claim_evidence = {
+            'state': 'INVALID',
+            'status': 'FAIL',
+            'invalid_findings': ['validator_error:' + str(exc)],
+            'incomplete_findings': [],
+        }
+    claim_evidence_state = str(claim_evidence.get('state') or 'INVALID')
+    if claim_evidence_state == 'INVALID':
+        findings = claim_evidence.get('invalid_findings', [])
+        blocking.append('Claim evidence: INVALID: ' + ' | '.join(str(item) for item in findings[:12]))
+    elif claim_evidence_state == 'INCOMPLETE':
+        findings = claim_evidence.get('incomplete_findings', [])
+        blocking.append('Claim evidence: INCOMPLETE: ' + ' | '.join(str(item) for item in findings[:12]))
+    elif claim_evidence_state not in {'SKIP', 'REVIEWABLE', 'DECISION_READY', 'MONITORING'}:
+        blocking.append('Claim evidence: INVALID: unknown state ' + claim_evidence_state)
+
+    try:
+        from scripts.valuation_model_gate import evaluate_output_valuation_model
+    except ModuleNotFoundError:
+        from valuation_model_gate import evaluate_output_valuation_model
+    try:
+        valuation_model = evaluate_output_valuation_model(output_dir, report_text=report_text, persist=True)
+    except (OSError, ValueError, TypeError, json.JSONDecodeError) as exc:
+        valuation_model = {'state': 'INVALID', 'status': 'FAIL', 'invalid_findings': ['validator_error:' + str(exc)], 'incomplete_findings': []}
+    valuation_model_state = str(valuation_model.get('state') or 'INVALID')
+    if valuation_model_state == 'INVALID':
+        blocking.append('Valuation model: INVALID: ' + ' | '.join(str(item) for item in valuation_model.get('invalid_findings', [])[:12]))
+    elif valuation_model_state == 'INCOMPLETE':
+        blocking.append('Valuation model: INCOMPLETE: ' + ' | '.join(str(item) for item in valuation_model.get('incomplete_findings', [])[:12]))
+    elif valuation_model_state not in {'SKIP', 'REVIEWABLE', 'DECISION_READY', 'MONITORING'}:
+        blocking.append('Valuation model: INVALID: unknown state ' + valuation_model_state)
+
+    # Phase-08 decision reliability is deliberately separate from structural
+    # valuation validity: a syntactically complete model must still reconcile
+    # cash access, parameter calibration, model comparability, arithmetic and
+    # action logic before it can be published.
+    try:
+        from scripts.decision_reliability import evaluate_output_decision_reliability
+    except ModuleNotFoundError:
+        from decision_reliability import evaluate_output_decision_reliability
+    try:
+        decision_reliability = evaluate_output_decision_reliability(
+            output_dir, report_text=report_text, persist=True
+        )
+    except (OSError, ValueError, TypeError, json.JSONDecodeError) as exc:
+        decision_reliability = {
+            'state': 'INVALID', 'status': 'FAIL',
+            'invalid_findings': ['validator_error:' + str(exc)],
+            'incomplete_findings': [],
+        }
+    decision_reliability_state = str(decision_reliability.get('state') or 'INVALID')
+    if decision_reliability_state == 'INVALID':
+        blocking.append(
+            'Decision reliability: INVALID: ' + ' | '.join(
+                str(item) for item in decision_reliability.get('invalid_findings', [])[:12]
+            )
+        )
+    elif decision_reliability_state == 'INCOMPLETE':
+        blocking.append(
+            'Decision reliability: INCOMPLETE: ' + ' | '.join(
+                str(item) for item in decision_reliability.get('incomplete_findings', [])[:12]
+            )
+        )
+    elif decision_reliability_state not in {'SKIP', 'REVIEWABLE', 'DECISION_READY', 'MONITORING'}:
+        blocking.append('Decision reliability: INVALID: unknown state ' + decision_reliability_state)
+
+    decision_revision = evaluate_pending_valuation_decision_revision(output_dir)
+    decision_revision_state = str(decision_revision.get('state') or 'NONE')
+    if decision_revision_state == 'INCOMPLETE':
+        # Replace the canonical reliability failure with the more precise
+        # transactional state.  The candidate itself passed reliability; it
+        # is withheld solely because its action/position/value differs from
+        # the currently approved decision ledger.
+        blocking = [
+            item for item in blocking
+            if not item.startswith('Decision reliability:')
+            and not item.startswith('Valuation model:')
+        ]
+        valuation_model = {
+            'state': 'INCOMPLETE', 'status': 'FULL_REPORT_SYNTHESIS_REQUIRED',
+            'invalid_findings': [],
+            'incomplete_findings': ['valuation_hypothesis_requires_full_report_synthesis'],
+            'candidate_fingerprint': decision_revision.get('candidate_fingerprint'),
+        }
+        valuation_model_state = 'INCOMPLETE'
+        decision_reliability = {
+            'state': 'INCOMPLETE', 'status': 'FULL_REPORT_SYNTHESIS_REQUIRED',
+            'invalid_findings': [],
+            'incomplete_findings': ['valuation_hypothesis_requires_full_report_synthesis'],
+            'candidate_fingerprint': decision_revision.get('candidate_fingerprint'),
+        }
+        decision_reliability_state = 'INCOMPLETE'
+        blocking.append(
+            'Decision synthesis: INCOMPLETE: valuation_hypothesis_requires_full_report_synthesis'
+        )
+    elif decision_revision_state == 'INVALID':
+        blocking.append(
+            'Decision revision: INVALID: '
+            + ' | '.join(str(item) for item in decision_revision.get('findings', [])[:12])
+        )
+
+    try:
+        from scripts.thesis_test_gate import evaluate_output_thesis_test
+    except ModuleNotFoundError:
+        from thesis_test_gate import evaluate_output_thesis_test
+    try:
+        thesis_test = evaluate_output_thesis_test(output_dir, report_text=report_text, persist=True)
+    except (OSError, ValueError, TypeError, json.JSONDecodeError) as exc:
+        thesis_test = {'state': 'INVALID', 'status': 'FAIL', 'invalid_findings': ['validator_error:' + str(exc)], 'incomplete_findings': []}
+    thesis_test_state = str(thesis_test.get('state') or 'INVALID')
+    if thesis_test_state == 'INVALID':
+        blocking.append('Thesis test: INVALID: ' + ' | '.join(str(item) for item in thesis_test.get('invalid_findings', [])[:12]))
+    elif thesis_test_state == 'INCOMPLETE':
+        blocking.append('Thesis test: INCOMPLETE: ' + ' | '.join(str(item) for item in thesis_test.get('incomplete_findings', [])[:12]))
+    elif thesis_test_state not in {'SKIP', 'REVIEWABLE', 'DECISION_READY', 'MONITORING'}:
+        blocking.append('Thesis test: INVALID: unknown state ' + thesis_test_state)
+
+    try:
+        from scripts.insight_ledger import evaluate_output_insight
+    except ModuleNotFoundError:
+        from insight_ledger import evaluate_output_insight
+    try:
+        insight = evaluate_output_insight(output_dir, report_text=report_text, persist=True)
+    except (OSError, ValueError, TypeError, json.JSONDecodeError) as exc:
+        insight = {'state': 'INVALID', 'status': 'FAIL', 'invalid_findings': ['validator_error:' + str(exc)], 'incomplete_findings': []}
+    insight_state = str(insight.get('state') or 'INVALID')
+    if insight_state == 'INVALID':
+        blocking.append('Insight ledger: INVALID: ' + ' | '.join(str(item) for item in insight.get('invalid_findings', [])[:12]))
+    elif insight_state == 'INCOMPLETE':
+        blocking.append('Insight ledger: INCOMPLETE: ' + ' | '.join(str(item) for item in insight.get('incomplete_findings', [])[:12]))
+    elif insight_state not in {'SKIP', 'REVIEWABLE', 'DECISION_READY', 'MONITORING'}:
+        blocking.append('Insight ledger: INVALID: unknown state ' + insight_state)
+
+    # Independent ceiling review is deliberately diagnostic-only. Missing or
+    # weak judgment must remain visible, but can neither pass nor fail V3 gates.
+    try:
+        from scripts.judgment_review import evaluate_output_judgment_review
+    except ModuleNotFoundError:
+        from judgment_review import evaluate_output_judgment_review
+    try:
+        judgment_review = evaluate_output_judgment_review(output_dir, persist=True)
+    except (OSError, ValueError, TypeError, json.JSONDecodeError) as exc:
+        judgment_review = {'state': 'INVALID', 'status': 'FAIL', 'ceiling_verdict': 'NOT_ASSESSABLE', 'invalid_findings': ['validator_error:' + str(exc)]}
+    try:
+        from scripts.judgment_research_router import evaluate_output_judgment_research_plan
+    except ModuleNotFoundError:
+        from judgment_research_router import evaluate_output_judgment_research_plan
+    try:
+        judgment_research_plan = evaluate_output_judgment_research_plan(output_dir)
+    except (OSError, ValueError, TypeError, json.JSONDecodeError) as exc:
+        judgment_research_plan = {'state': 'INVALID', 'status': 'FAIL', 'blocking': False, 'invalid_findings': ['validator_error:' + str(exc)]}
+    try:
+        from scripts.judgment_research_execution import evaluate_judgment_research_execution
+    except ModuleNotFoundError:
+        from judgment_research_execution import evaluate_judgment_research_execution
+    try:
+        judgment_research_execution = evaluate_judgment_research_execution(output_dir)
+    except (OSError, ValueError, TypeError, json.JSONDecodeError) as exc:
+        judgment_research_execution = {'state': 'VIOLATION', 'status': 'FAIL', 'blocking': True, 'violations': ['validator_error:' + str(exc)]}
+    if judgment_research_execution.get('state') == 'VIOLATION':
+        blocking.append('Judgment research execution: ' + ' | '.join(str(item) for item in judgment_research_execution.get('violations', [])[:12]))
+    elif judgment_research_execution.get('state') == 'ACTIVE':
+        blocking.append('Judgment research execution: active task not completed: ' + str(judgment_research_execution.get('active_task_id')))
+    elif judgment_research_execution.get('state') == 'PENDING':
+        warnings.append(
+            'Judgment research pending: '
+            f"{judgment_research_execution.get('completed_tasks', 0)}/"
+            f"{judgment_research_execution.get('task_count', 0)} queued tasks completed"
+        )
+    try:
+        from scripts.judgment_research_synthesis import evaluate_judgment_research_synthesis
+    except ModuleNotFoundError:
+        from judgment_research_synthesis import evaluate_judgment_research_synthesis
+    try:
+        judgment_research_synthesis = evaluate_judgment_research_synthesis(output_dir)
+    except (OSError, ValueError, TypeError, json.JSONDecodeError) as exc:
+        judgment_research_synthesis = {
+            'state': 'INVALID', 'status': 'FAIL', 'blocking': True,
+            'findings': ['validator_error:' + str(exc)],
+        }
+    try:
+        with open(os.path.join(output_dir, 'judgment_research_execution.json'), encoding='utf-8') as handle:
+            raw_judgment_execution = json.load(handle)
+    except (OSError, json.JSONDecodeError):
+        raw_judgment_execution = {}
+    synthesis_required = bool(
+        (judgment_research_plan.get('execution_policy') or {}).get('independent_synthesis_context')
+        or any(
+            isinstance(entry, dict) and bool(entry.get('finding'))
+            for entry in (raw_judgment_execution.get('tasks') or {}).values()
+        )
+    )
+    synthesis_state = str(judgment_research_synthesis.get('state') or 'NOT_STARTED')
+    if synthesis_state == 'INVALID':
+        blocking.append(
+            'Judgment research synthesis: '
+            + ' | '.join(str(item) for item in judgment_research_synthesis.get('findings', [])[:12])
+        )
+    elif synthesis_required and judgment_research_execution.get('state') == 'COMPLETE' and synthesis_state != 'REVIEWED':
+        blocking.append('Judgment research synthesis: independent review not completed: ' + synthesis_state)
+
+    # Optional historical-reference regression.  It is only a regression fuse,
+    # never an absolute quality judge: old reports may themselves be mediocre.
+    try:
+        from scripts.legacy_reference_regression import evaluate_from_config
+    except ModuleNotFoundError:
+        from legacy_reference_regression import evaluate_from_config
+    try:
+        legacy_reference = evaluate_from_config(output_dir)
+    except (OSError, ValueError, json.JSONDecodeError) as exc:
+        legacy_reference = {'status': 'ERROR', 'reason': str(exc)}
+    legacy_status = legacy_reference.get('status', 'SKIP')
+    if legacy_status == 'FAIL':
+        failures = legacy_reference.get('core_fact_failures', [])
+        blocking.append('Legacy core facts: unexplained loss/change: ' + ' | '.join(str(item) for item in failures[:12]))
+    elif legacy_status == 'WARN':
+        warned = legacy_reference.get('warning_chapters', [])
+        warnings.append('Legacy reference regression: relative drift in ' + ','.join(f'Ch{idx}' for idx in warned))
+    elif legacy_status == 'ERROR':
+        warnings.append('Legacy reference regression: evaluator error: ' + str(legacy_reference.get('reason', 'unknown')))
+
+    # The hard contract is independent of the soft quality radar. Only
+    # objectively auditable failures block publication; semantic weakness is
+    # surfaced as a grade/WARN for repair prioritisation.
+    try:
+        from scripts.absolute_quality_scorecard import evaluate_absolute_quality
+    except ModuleNotFoundError:
+        from absolute_quality_scorecard import evaluate_absolute_quality
+    try:
+        absolute_quality = evaluate_absolute_quality(output_dir)
+    except (OSError, ValueError, json.JSONDecodeError) as exc:
+        absolute_quality = {'status': 'ERROR', 'reason': str(exc)}
+    absolute_status = absolute_quality.get('status', 'ERROR')
+    if absolute_status == 'FAIL':
+        failed = absolute_quality.get('failed_chapters', [])
+        blocking.append('Quality hard contract: failure in ' + ','.join(f'Ch{idx}' for idx in failed))
+    elif absolute_status == 'ERROR':
+        warnings.append('Quality evaluator: error: ' + str(absolute_quality.get('reason', 'unknown')))
+
+    # V3 canonical report card is deliberately non-compensating.  The hard
+    # lifecycle comes from the four structured gates above; expression is a
+    # separate efficiency diagnostic and can never offset or create a hard
+    # investment-quality result.
+    try:
+        from scripts.v3_quality_report import evaluate_v3_quality
+    except ModuleNotFoundError:
+        from v3_quality_report import evaluate_v3_quality
+    try:
+        v3_quality = evaluate_v3_quality(
+            output_dir,
+            report_text,
+            gate_results={
+                'official_evidence': official_evidence,
+                'valuation_route': valuation_route,
+                'decisive_questions': decisive_questions,
+                'base_rate': base_rate,
+                'market_refresh': market_refresh,
+                'decision': decision_ledger,
+                'decision_compiler': decision_compiler,
+                'claim_evidence': claim_evidence,
+                'valuation': valuation_model,
+                'decision_reliability': decision_reliability,
+                'thesis_test': thesis_test,
+                'insight': insight,
+            },
+            judgment_review=judgment_review,
+            persist=True,
+        )
+        if v3_quality.get('expression', {}).get('status') == 'WARN':
+            findings = v3_quality.get('expression', {}).get('findings') or []
+            warnings.append('Expression efficiency: ' + ', '.join(findings))
+    except (OSError, ValueError, TypeError, json.JSONDecodeError) as exc:
+        v3_quality = {'status': 'ERROR', 'reason': str(exc)}
+        warnings.append('V3 quality report: evaluator error: ' + str(exc))
+
+    if 'INVALID' in {official_evidence_state, valuation_route_state, decisive_questions_state, base_rate_state, market_refresh_state, decision_ledger_state, decision_compiler_state, claim_evidence_state, valuation_model_state, decision_reliability_state, thesis_test_state, insight_state, decision_revision_state}:
+        status = 'INVALID'
+    elif 'INCOMPLETE' in {official_evidence_state, valuation_route_state, decisive_questions_state, base_rate_state, decision_ledger_state, decision_compiler_state, claim_evidence_state, valuation_model_state, decision_reliability_state, thesis_test_state, insight_state} or market_refresh_state == 'RECOMPUTE_REQUIRED':
+        status = 'INCOMPLETE'
+    else:
+        status = 'COMPLETE' if not blocking else 'BLOCKED'
+    validators = {
+        'structure': {'status': 'PASS' if not any('missing_file' in b or 'missing_h2_title' in b for b in blocking) else 'FAIL'},
+        'depth': {'status': 'PASS' if not any('short_depth:' in b for b in blocking) else 'FAIL'},
+        'audit': {'status': 'PASS' if not any('audit_' in b or 'missing_audit_record' in b for b in blocking) else 'FAIL'},
+        'gg_derivation': {'status': 'PASS' if not any('gg_derivation_missing' in b for b in blocking) else 'FAIL'},
+        'decision_manifest': {'status': decision_status, 'path': manifest_path},
+        'official_evidence': official_evidence,
+        'valuation_route': valuation_route,
+        'decisive_questions': decisive_questions,
+        'base_rate': base_rate,
+        'market_refresh': market_refresh,
+        'decision_ledger': decision_ledger,
+        'decision_compiler': decision_compiler,
+        'claim_evidence': claim_evidence,
+        'valuation_model': valuation_model,
+        'decision_reliability': decision_reliability,
+        'valuation_decision_revision': decision_revision,
+        'thesis_test': thesis_test,
+        'insight': insight,
+        'judgment_review': judgment_review,
+        'judgment_research_plan': judgment_research_plan,
+        'judgment_research_execution': judgment_research_execution,
+        'judgment_research_synthesis': judgment_research_synthesis,
+        'legacy_reference_regression': legacy_reference,
+        'absolute_quality': absolute_quality,
+        'v3_quality': v3_quality,
+    }
+    result = CompletionResult(
+        status=status,
+        blocking_findings=blocking,
+        warning_findings=warnings,
+        chapter_results=chapter_results,
+        validators=validators,
+    )
+    out = os.path.join(output_dir, 'completion_report.json')
+    Path(out).write_text(json.dumps(result.to_dict(), ensure_ascii=False, indent=2), encoding='utf-8')
+    return result

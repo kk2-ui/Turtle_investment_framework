@@ -1,0 +1,29 @@
+name: change-gate
+
+on:
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  phase-regression:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - run: python -m pip install --upgrade pip
+      - run: python -m pip install -r requirements.txt
+      - name: Governance self-test
+        run: python scripts/project_guard.py self-test
+      - name: Phase regression
+        run: >-
+          python -m pytest -q tests/test_stage*.py
+          tests/test_completion_contract_v13.py
+          tests/test_auto_repair_pipeline.py

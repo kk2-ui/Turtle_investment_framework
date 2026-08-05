@@ -1,0 +1,83 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://turtle.local/schemas/claim_evidence.schema.json",
+  "title": "Turtle V3 Major Claim Evidence Ledger",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "report_id", "revision", "lifecycle", "change_reason", "claims", "freeze"],
+  "properties": {
+    "schema_version": {"const": "claim-evidence-ledger.v1"},
+    "report_id": {"type": "string", "minLength": 1},
+    "revision": {"type": "integer", "minimum": 1},
+    "lifecycle": {"enum": ["reviewable", "decision_ready", "monitoring"]},
+    "change_reason": {"type": "string", "minLength": 1},
+    "generated_at": {"type": "string"},
+    "claims": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/claim"}},
+    "freeze": {
+      "type": "object",
+      "required": ["frozen", "fingerprint", "frozen_at"],
+      "properties": {
+        "frozen": {"type": "boolean"},
+        "fingerprint": {"type": "string"},
+        "frozen_at": {"type": ["string", "null"]}
+      }
+    }
+  },
+  "$defs": {
+    "claim": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["claim_id", "claim", "chapters", "raw_facts", "reasoning_steps", "alternative_explanations", "applicability_conditions", "confidence", "decision_impact", "decision_entry_ids"],
+      "properties": {
+        "claim_id": {"type": "string", "minLength": 1},
+        "claim": {"type": "string", "minLength": 1},
+        "chapters": {"type": "array", "items": {"type": "integer", "minimum": 0, "maximum": 14}, "minItems": 1},
+        "raw_facts": {"type": "array", "items": {"$ref": "#/$defs/evidence"}, "minItems": 1},
+        "reasoning_steps": {"type": "array", "items": {"type": "string", "minLength": 1}, "minItems": 1},
+        "alternative_explanations": {"type": "array", "items": {"type": "string", "minLength": 1}, "minItems": 1},
+        "applicability_conditions": {"type": "array", "items": {"type": "string", "minLength": 1}, "minItems": 1},
+        "confidence": {
+          "type": "object",
+          "required": ["kind", "value", "basis"],
+          "properties": {
+            "kind": {"enum": ["frequency", "base_rate", "analyst_subjective", "scenario_weight"]},
+            "value": {"type": "number", "minimum": 0, "maximum": 1},
+            "basis": {"type": "string", "minLength": 1},
+            "interval": {"type": "array", "prefixItems": [{"type": "number", "minimum": 0, "maximum": 1}, {"type": "number", "minimum": 0, "maximum": 1}], "minItems": 2, "maxItems": 2}
+          }
+        },
+        "decision_impact": {
+          "type": "object",
+          "required": ["valuation", "position", "action"],
+          "properties": {
+            "valuation": {"type": "string", "minLength": 1},
+            "position": {"type": "string", "minLength": 1},
+            "action": {"type": "string", "minLength": 1}
+          }
+        },
+        "decision_entry_ids": {"type": "array", "items": {"type": "string", "minLength": 1}}
+      }
+    },
+    "evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["evidence_id", "source_id", "source_group_id", "fact", "authority", "claim_distance", "published_at", "data_as_of", "direct_support", "support_type", "basis_match", "conflict_of_interest"],
+      "properties": {
+        "evidence_id": {"type": "string", "minLength": 1},
+        "observation_id": {"type": "string", "pattern": "^OBS:"},
+        "source_id": {"type": "string", "minLength": 1},
+        "source_group_id": {"type": "string", "minLength": 1},
+        "fact": {"type": "string", "minLength": 1},
+        "authority": {"enum": ["audited_filing", "company_filing", "official_statistics", "industry_data", "media", "other"]},
+        "claim_distance": {"enum": ["raw_data", "direct_statement", "secondary_summary", "analysis", "rumor"]},
+        "published_at": {"type": "string", "minLength": 4},
+        "data_as_of": {"type": "string", "minLength": 4},
+        "direct_support": {"type": "boolean"},
+        "support_type": {"enum": ["supports", "contradicts", "context"]},
+        "basis_match": {"enum": ["exact", "compatible", "uncertain", "mismatch"]},
+        "conflict_of_interest": {"type": "string", "minLength": 1},
+        "cross_checked_by": {"type": "array", "items": {"type": "string"}}
+      }
+    }
+  }
+}

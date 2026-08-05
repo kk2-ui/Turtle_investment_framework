@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "judgment-research-plan.v2",
+  "type": "object",
+  "required": ["schema_version", "report_id", "state", "execution_policy", "execution_queue", "tasks", "allowed_mutations", "forbidden_mutations"],
+  "properties": {
+    "schema_version": {"const": "judgment-research-plan.v2"},
+    "state": {"enum": ["PLANNED", "NO_ACTION"]},
+    "execution_queue": {"type": "array", "maxItems": 3},
+    "tasks": {"type": "array"},
+    "allowed_mutations": {"type": "array"},
+    "forbidden_mutations": {"type": "array"}
+  }
+}

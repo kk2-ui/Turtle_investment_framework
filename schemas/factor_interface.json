@@ -1,0 +1,24 @@
+{
+  "_description": "V9.3: Zone J→Zone C 关键参数接口契约。每个 Agent 输出必须包含这些参数，Zone C 只从这些字段读取。",
+  "from_moat_assessment": {
+    "b_penalty_final": {"type": "number", "range": [0.0, 0.5], "description": "B类业务惩罚系数"},
+    "g_base": {"type": "number", "range": [0.5, 8.0], "description": "长期增长率基准(%)"},
+    "g_scenarios": {"type": "object", "description": "悲观/基准/乐观三档增长率"},
+    "value_trap_signals": {"type": "array", "description": "价值陷阱定性信号(禁止含GG/DDM/PE等计算数字)"}
+  },
+  "from_capex_classification": {
+    "mcapex_split_pct": {"type": "number", "range": [0, 100], "description": "维持性Capex占比(%)"},
+    "growth_classification": {"type": "object", "description": "A类/B类/C类增长占比"},
+    "incremental_roic": {"type": "array", "description": "分期增量ROIC"}
+  },
+  "from_earnings_quality": {
+    "ar_adjustment_needed": {"type": "boolean", "description": "是否需要调整应收款"},
+    "ap_excess_financing": {"type": "boolean", "description": "是否存在AP超额融资"},
+    "non_recurring_items": {"type": "array", "description": "非经常项目列表"},
+    "ocf_quality_flags": {"type": "array", "description": "OCF质量标记"}
+  },
+  "from_data_discount": {
+    "total_discount_pct": {"type": "number", "range": [0, 30], "description": "数据质量综合折价(%)"},
+    "confidence_by_section": {"type": "object", "description": "各因子置信度(high/medium/low)"}
+  }
+}

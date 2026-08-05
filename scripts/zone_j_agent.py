@@ -1,19 +1,20 @@
 #!/usr/bin/env python3
-"""zone_j_agent.py — Zone J: Hybrid Judgment Layer (V7 → V12)
+"""zone_j_agent.py — Zone J: Hybrid Judgment Layer (V7 → V12.15)
 
-4 independent agents that transform "hardcoded defaults" into "reasoned parameters".
+5 independent agents that transform "hardcoded defaults" into "reasoned parameters".
 Each agent reads its designated Zone A/B JSON inputs + optional V12 qualitative_summary.json.
 Zone J is NOT computation — it outputs parameters + rationale for Python to consume.
 
-V12: 新增 --qualitative-summary 标志，允许四个代理读取 Dayu 定性分析的
+V12: 新增 --qualitative-summary 标志，允许代理读取 Dayu 定性分析的
 structured summary 作为额外的输入上下文，提升参数估计精度。
+V12.15: 新增 governance_tension 代理，评估少数股东治理张力。
 
 Usage:
     python3 scripts/zone_j_agent.py --code 01502.HK --agent moat --save-prompt output/01502_金融街物业/zone_j_prompt_moat.txt
     python3 scripts/zone_j_agent.py --code 01502.HK --agent moat --result result.json
     python3 scripts/zone_j_agent.py --code 01502.HK --agent moat --qualitative-summary output/XXXX/qualitative_summary.json
 
-Agents: moat | capex | earnings_quality | data_quality
+Agents: moat | capex | earnings_quality | data_quality | governance_tension
 """
 
 import argparse
@@ -21,169 +22,54 @@ import json
 import os
 import sys
 from datetime import datetime
-from typing import Optional
+from pathlib import Path
+from typing import Any, Optional
 
 OUTPUT_BASE = os.path.join(os.path.dirname(os.path.dirname(__file__)), "output")
+SHARED_QUALITATIVE_BASE = Path(__file__).resolve().parent.parent / "shared" / "qualitative"
 
 AGENTS = {
     "moat": {
         "output_file": "moat_assessment.json",
-        "description": "护城河证据提取 + B类参数 + g_base参数",
+        "description": "段永平视角：护城河证据提取 + B类参数 + g_base参数",
+        "role_name": "duan",
         "allowed_inputs": ["segments.json", "financial_trends.json", "mda.json", "qualitative_summary.json"],
-        "prompt_template": """你是数据提取器和参数估算器，不是分析师。你的任务是把证据整理成结构化参数，不写结论。
-
-【任务】基于以下结构化数据：(1)提取护城河证据（每条附原文引用），(2)识别B类/劣质业务板块并给出惩罚参数，(3)判断合理的g_base参数。
-
-【定性分析上下文（V12新增）】
-{qualitative_context}
-
-【量化数据】
-{context_json}
-
-【输出要求】严格按以下JSON schema输出。只输出参数和证据，不输出评级、不输出叙事理由：
-
-{{
-  "moat_evidence": [
-    {{"type": "品牌/规模/切换成本/网络效应/成本优势/监管/其他",
-      "evidence": "从数据中找到的具体证据（引用数字）",
-      "quote": "原文中包含该证据的句子",
-      "durability": "5年以上/3-5年/不确定"}}
-  ],
-  "b_class_segments": [
-    {{"name": "业务名称",
-      "revenue_pct": 0.0,
-      "margin_pct": 0.0,
-      "classification": "B-劣/B-中/A",
-      "penalty_pct": 0.0}}
-  ],
-  "b_penalty_final": 0.0,
-  "g_base": 2.0,
-  "g_scenarios": {{"pessimistic": 0.0, "base": 2.0, "optimistic": 3.5}},
-  "value_trap_signals": ["仅从定性数据中观察到的价值陷阱信号。禁止引用:GG/DDM/s2/PE/市值/任何计算结果的数字。只准引用:毛利率趋势/竞争格局/管理层行为/行业趋势/商业模式/客户集中度等定性信号。"]
-
-【强制规则】
-1. 所有数字从输入数据中引用，不自行计算
-2. b_penalty_final 是0.0-0.5之间的浮点数，附带 rationale 和 evidence_ref
-3. g_base 通常1.0-4.0%，成熟企业偏低，成长企业偏高，附带 rationale 和 evidence_ref
-4. 不要输出 moat_rating（评级）——这是 Zone C 的工作。但 rationale（判断理由）和 evidence_ref（证据引用）必须输出
-5. moat_evidence 的每条必须附 quote（原文引用）
-6. value_trap_signals 禁止包含: GG/DDM/R(NP)/PE/s2/市值/OCF/NP/ROE/任何计算数字
-7. V9.2: b_penalty_final 和 g_base 输出为对象格式: {{"value": 数字, "rationale": "理由", "evidence_ref": ["来源1", "来源2"], "confidence": "high/medium/low"}}
-8. V9.3 保守规则: 若 audit.json 中 data_gap:true 涉及金额 > NP 的 5%，强制 g_base.value 至少下调 0.5%，confidence 强制设为 "low"。理由: 未量化的一次性收益造成增长归因不确定性，估值参数必须反映此风险。"""
+        "prompt_template_file": "zone_j/zone_j_duan.md",
     },
-
     "capex": {
         "output_file": "capex_classification.json",
-        "description": "Capex分类（维持性vs扩张性）+ 增长类型 + 增量ROIC",
+        "description": "巴菲特视角：Capex 分类 + 增长类型 + 增量ROIC",
+        "role_name": "buffett",
         "allowed_inputs": ["financial_trends.json", "mda.json", "qualitative_summary.json"],
-        "prompt_template": """你是投资分析助手。
-
-【任务】分析该公司的资本支出结构，判断维持性vs扩张性Capex比例，评估增长质量。
-
-【定性分析上下文（V12新增）】
-{qualitative_context}
-
-【量化数据】
-{context_json}
-
-【输出要求】：
-{{
-  "capex_type": "light_asset | heavy_asset | mixed",
-  "mcapex_split_pct": 0.0,
-  "mcapex_rationale": "为何维持性Capex占此比例",
-  "growth_classification": {{
-    "A_class_pct": 0.0,
-    "B_class_pct": 0.0,
-    "C_class_pct": 0.0,
-    "rationale": "增长分类理由"
-  }},
-  "incremental_roic": [
-    {{"period": "FY20XX-FY20XX", "delta_np_m": 0.0, "delta_invested_capital_m": 0.0, "roic_pct": 0.0, "classification": "A/B/C"}}
-  ]
-}}
-
-【规则】
-1. 维持性Capex = 维持现有运营必需的资本支出
-2. 轻资产公司（物管/互联网）维持性Capex通常占70-90%
-3. 增量ROIC = ΔNP / ΔInvestedCapital（NP变化/投入资本变化）
-4. A类=主业扩产(ROIC>20%) B类=相关延伸(ROIC 10-20%) C类=非主业多元化(ROIC<10%)"""
+        "prompt_template_file": "zone_j/zone_j_buffett.md",
     },
-
     "earnings_quality": {
         "output_file": "earnings_quality.json",
-        "description": "收益质量：AR收款检查 + AP超额融资 + 非经常项分类",
+        "description": "芒格视角：AR收款检查 + AP超额融资 + 非经常项分类",
+        "role_name": "munger",
         "allowed_inputs": ["financial_trends.json", "risks.json", "audit.json", "qualitative_summary.json"],
-        "prompt_template": """你是投资分析助手。
-
-【任务】评估该公司的收益质量，检查应收账款异常、应付账款融资、非经常项目。
-
-【定性分析上下文（V12新增）】
-{qualitative_context}
-
-【量化数据】
-{context_json}
-
-【输出要求】：
-{{
-  "ar_quality": {{
-    "collection_ratios": [
-      {{"year": "FY20XX", "ratio": 0.0, "flag": "OK|WARN", "reason": "..."}}
-    ],
-    "ar_adjustment_needed": false,
-    "adjustment_years": []
-  }},
-  "ap_excess_check": {{
-    "dpo_by_year": [{{"year": "FY20XX", "dpo_days": 0}}],
-    "excess_financing_flag": false,
-    "rationale": "..."
-  }},
-  "non_recurring_items": {{
-    "keep": [{{"item": "...", "reason": "持续性收入"}}],
-    "exclude": [{{"item": "...", "amount_m": 0.0, "reason": "一次性"}}],
-    "net_adjustment_m": 0.0
-  }},
-  "ocf_quality_flags": ["..."]
-}}
-
-【规则】
-1. AR收款比率 = True Revenue / Revenue。如果AR增速>收入增速，标记WARN
-2. DPO = AP / (Cost/365)。如果DPO显著拉长，可能超额融资
-3. 非经常项：区分"保留"(持续性如利息收入)和"排除"(一次性如资产出售)"""
+        "prompt_template_file": "zone_j/zone_j_munger.md",
     },
-
     "data_quality": {
         "output_file": "data_discount.json",
-        "description": "数据质量折价：来源评估 + 置信度 + 综合折价率",
+        "description": "李录视角：数据质量折价 + 10年确定性",
+        "role_name": "lilu",
         "allowed_inputs": ["financial_trends.json", "audit.json", "qualitative_summary.json"],
-        "prompt_template": """你是投资分析助手。
+        "prompt_template_file": "zone_j/zone_j_lilu.md",
+    },
+    "governance_tension": {
+        "output_file": "governance_tension.json",
+        "description": "治理专家视角：少数股东治理张力 + 额外治理折价",
+        "role_name": "governance_specialist",
+        "allowed_inputs": ["governance.json", "audit.json", "mda.json", "qualitative_summary.json"],
+        "prompt_template_file": "zone_j/zone_j_governance.md",
+    },
+}
 
-【任务】评估数据质量，给出各因子置信度和综合折价率。
-
-【定性分析上下文（V12新增）】
-{qualitative_context}
-
-【量化数据】
-{context_json}
-
-【输出要求】：
-{{
-  "discount_factors": [
-    {{"factor": "...", "discount_pct": 0, "rationale": "..."}}
-  ],
-  "total_discount_pct": 0,
-  "confidence_by_section": {{
-    "factor2": "high|medium|low",
-    "factor3_aa": "high|medium|low",
-    "factor3_gg": "high|medium|low",
-    "factor4_ddm": "high|medium|low"
-  }}
-}}
-
-【规则】
-1. 数据完整性高(所有DB字段可用)→折价5-10%。字段缺失多→15-25%
-2. 审计质量(Big4→0-2%，非Big4持续无保留→2-5%)
-3. 有PDF年报→置信度+1档；无PDF→-1档"""
-    }
+VALIDATE_FIELDS = {
+    "moat": ["b_penalty_final", "g_base"],
+    "data_quality": ["total_discount_pct"],
+    "governance_tension": ["governance_discount"],
 }
 
 
@@ -194,13 +80,50 @@ def load_json(path: str) -> Optional[dict]:
         return json.load(f)
 
 
+def _validate_param_wrapper(data: dict, field: str) -> list[str]:
+    errors: list[str] = []
+    val = data.get(field)
+    if val is None:
+        errors.append(f"MISSING: {field}")
+        return errors
+    if isinstance(val, (int, float)):
+        return errors
+    if not isinstance(val, dict):
+        errors.append(f"FORMAT: {field} is {type(val).__name__}, expected dict with {{value, rationale, evidence_ref, confidence}}")
+        return errors
+
+    for sub in ["value", "rationale", "evidence_ref", "confidence"]:
+        if sub not in val:
+            errors.append(f"MISSING: {field}.{sub}")
+    if "evidence_ref" in val and (not isinstance(val["evidence_ref"], list) or len(val["evidence_ref"]) == 0):
+        errors.append(f"EMPTY: {field}.evidence_ref")
+    if "confidence" in val and val.get("confidence") not in {"high", "medium", "low"}:
+        errors.append(f"INVALID: {field}.confidence")
+    return errors
+
+
+
+
+def _derive_company_name(stock_dir: str) -> str:
+    base = os.path.basename(os.path.normpath(stock_dir))
+    if "_" in base:
+        return base.split("_", 1)[1]
+    return base or "未知公司"
+
+
+def _load_prompt_template(rel_path: str) -> str:
+    path = SHARED_QUALITATIVE_BASE / rel_path
+    if not path.exists():
+        raise FileNotFoundError(f"Zone J prompt template missing: {path}")
+    return path.read_text(encoding="utf-8")
+
 def build_context(agent_name: str, stock_dir: str, ts_code: str, qualitative_summary_path: str | None = None) -> dict:
     """Load allowed input files and build context for the agent.
 
     V12: 支持加载 qualitative_summary.json 作为额外的定性上下文。
     """
     agent = AGENTS[agent_name]
-    context: dict[str, Any] = {"ts_code": ts_code}
+    context: dict[str, Any] = {"ts_code": ts_code, "company_name": _derive_company_name(stock_dir)}
     missing: list[str] = []
 
     for fname in agent["allowed_inputs"]:
@@ -233,9 +156,11 @@ def build_prompt(agent_name: str, context: dict, qualitative_summary: dict | Non
     V12: 支持注入定性分析摘要文本。
     """
     agent = AGENTS[agent_name]
-    # V12: 构建定性上下文文本
     qual_text = _format_qualitative_context(qualitative_summary)
-    return agent["prompt_template"].format(
+    template = _load_prompt_template(agent["prompt_template_file"])
+    return template.format(
+        company_name=context.get("company_name", "未知公司"),
+        code=context.get("ts_code", ""),
         context_json=json.dumps(context, indent=2, ensure_ascii=False),
         qualitative_context=qual_text,
     )
@@ -388,22 +313,9 @@ def main():
             print(f"ERROR: Cannot read {validate_path}", file=sys.stderr)
             return 1
 
-        # V9.2: Check required parameter audit fields
         errors = []
-        param_fields = ["b_penalty_final", "g_base"]
-        for field in param_fields:
-            val = data.get(field)
-            if val is None:
-                errors.append(f"MISSING: {field}")
-                continue
-            if isinstance(val, dict):
-                for sub in ["value", "evidence_ref", "confidence"]:
-                    if sub not in val:
-                        errors.append(f"MISSING: {field}.{sub}")
-                if "evidence_ref" in val and (not val["evidence_ref"] or len(val["evidence_ref"]) == 0):
-                    errors.append(f"EMPTY: {field}.evidence_ref")
-            else:
-                errors.append(f"FORMAT: {field} is {type(val).__name__}, expected dict with {{value, evidence_ref, confidence}}")
+        for field in VALIDATE_FIELDS.get(args.agent, []):
+            errors.extend(_validate_param_wrapper(data, field))
 
         if errors:
             print(f"❌ VALIDATION FAILED ({len(errors)} issues):")
@@ -411,7 +323,8 @@ def main():
                 print(f"   {e}")
             return 1
         else:
-            print(f"✅ VALIDATION PASSED: all parameters have evidence_ref + confidence")
+            checked = ", ".join(VALIDATE_FIELDS.get(args.agent, [])) or "no wrapper fields"
+            print(f"✅ VALIDATION PASSED: {checked}")
             return 0
 
     # Status

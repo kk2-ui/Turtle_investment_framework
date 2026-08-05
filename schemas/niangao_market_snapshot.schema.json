@@ -1,0 +1,44 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://turtle.local/schemas/niangao_market_snapshot.schema.json",
+  "title": "Niangao market snapshot consumed by Turtle",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version", "normalized_symbol", "market", "currency", "price",
+    "source", "fetched_at", "as_of", "age_seconds_at_capture", "quote",
+    "refresh_run", "provenance", "captured_at", "snapshot_hash"
+  ],
+  "properties": {
+    "schema_version": {"const": "niangao-market-snapshot.v1"},
+    "normalized_symbol": {"type": "string", "minLength": 1},
+    "name": {"type": "string"},
+    "market": {"type": "string"},
+    "currency": {"enum": ["CNY", "HKD", "USD", "EUR"]},
+    "price": {"type": "number", "exclusiveMinimum": 0},
+    "source": {"type": "string", "minLength": 1},
+    "fetched_at": {"type": "string", "format": "date-time"},
+    "as_of": {"type": "string", "format": "date"},
+    "age_seconds_at_capture": {"type": "integer", "minimum": 0},
+    "quote": {"type": "object"},
+    "refresh_run": {
+      "type": "object",
+      "required": ["status", "batch_contains_symbol"],
+      "properties": {
+        "status": {"type": ["string", "null"]},
+        "batch_contains_symbol": {"type": "boolean"}
+      }
+    },
+    "provenance": {
+      "type": "object",
+      "required": ["system", "database_path", "access_mode"],
+      "properties": {
+        "system": {"const": "niangao"},
+        "database_path": {"type": "string", "minLength": 1},
+        "access_mode": {"const": "sqlite_read_only"}
+      }
+    },
+    "captured_at": {"type": "string", "format": "date-time"},
+    "snapshot_hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+  }
+}

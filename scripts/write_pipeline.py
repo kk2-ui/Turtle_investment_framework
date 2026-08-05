@@ -434,7 +434,7 @@ class WritePipelineRunner:
         # V10: 证据覆盖率检查（审计通过后附加）
         if result.status == ChapterStatus.PASSED and result.content:
             evidence_cov = validate_evidence_coverage(result.content, self.evidence_registry)
-            evidence_coverage = evidence_cov["coverage_ratio"]
+            evidence_coverage = evidence_cov["coverage_ratio"] or 0.0
             if evidence_cov["status"] == "FAIL":
                 result.status = ChapterStatus.FAILED
                 result.error = f"证据覆盖率不足: {evidence_coverage:.0%}"

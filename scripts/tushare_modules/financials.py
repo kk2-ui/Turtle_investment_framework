@@ -38,6 +38,7 @@ class FinancialsMixin:
             return format_header(2, "1. 基本信息") + "\n\n数据缺失\n"
 
         row = basic.iloc[0]
+        self._set_basic_info_context(ts_code, row)
 
         # Get latest daily_basic for valuation
         daily = self._safe_call("daily_basic", ts_code=ts_code,
@@ -79,32 +80,109 @@ class FinancialsMixin:
             return format_header(2, "1. 基本信息") + "\n\n数据缺失\n"
 
         row = basic.iloc[0]
+        self._set_basic_info_context(ts_code, row)
+        capability = self._probe_hk_tushare_market_capability(ts_code)
 
         # Get PE/PB/market_cap from hk_fina_indicator
         val_rows = []
-        try:
-            fina = self._safe_call("hk_fina_indicator", ts_code=ts_code,
-                                   fields="ts_code,end_date,pe_ttm,pb_ttm,total_market_cap,hksk_market_cap")
-            if not fina.empty:
-                self._store["basic_info"] = fina
-                d = fina.iloc[0]
-                # Try yfinance for current price
-                close_price = "—"
-                yf_data = self._yf_hk_market_data(ts_code)
-                if yf_data and yf_data.get("close"):
-                    close_price = f"{yf_data['close']:.2f}"
-                    # Store close for downstream
-                    fina_copy = fina.copy()
-                    fina_copy["close"] = yf_data["close"]
-                    self._store["basic_info"] = fina_copy
-                val_rows = [
-                    ["当前价格 (HKD)", close_price],
-                    ["PE (TTM)", f"{d.get('pe_ttm', '—')}"],
-                    ["PB", f"{d.get('pb_ttm', '—')}"],
-                    ["总市值 (百万港元)", format_number(d.get('total_market_cap', None), divider=1, decimals=2)],
-                ]
-        except RuntimeError:
-            pass
+        fina = pd.DataFrame()
+        if capability.get("hk_fina_indicator"):
+            try:
+                fina = self._safe_call(
+                    "hk_fina_indicator",
+                    ts_code=ts_code,
+                    fields="ts_code,end_date,pe_ttm,pb_ttm,total_market_cap,hksk_market_cap",
+                )
+            except RuntimeError:
+                pass
+        if fina.empty:
+            fina = self._get_hk_report_fallback_df(ts_code, "fina_indicators")
+
+        close_price = "—"
+        yf_data = self._yf_hk_market_data(ts_code)
+        if not yf_data or not yf_data.get("close"):
+            yf_data = self._web_hk_market_snapshot(ts_code)
+        report_market = self._hk_report_market_derived_fields(ts_code)
+        if not fina.empty:
+            store_df = fina.copy()
+            store_df["name"] = row.get("name", "")
+            store_df["fullname"] = row.get("fullname", "")
+            if yf_data and yf_data.get("close"):
+                close_price = f"{yf_data['close']:.2f}"
+                store_df["close"] = yf_data["close"]
+            elif "close" in store_df.columns and pd.notna(store_df.iloc[0].get("close")):
+                close_price = f"{float(store_df.iloc[0].get('close')):.2f}"
+
+            if (
+                ("total_market_cap" not in store_df.columns or store_df["total_market_cap"].isna().all())
+                and yf_data and yf_data.get("market_cap")
+            ):
+                store_df["total_market_cap"] = yf_data["market_cap"] / 1e6
+            if (
+                ("total_market_cap" not in store_df.columns or store_df["total_market_cap"].isna().all())
+                and yf_data and yf_data.get("close")
+                and report_market.get("shares")
+            ):
+                store_df["total_market_cap"] = yf_data["close"] * report_market["shares"] / 1e6
+            if "pb_ttm" not in store_df.columns and "pb" in store_df.columns:
+                store_df["pb_ttm"] = store_df["pb"]
+            if "pe_ttm" not in store_df.columns and "pe" in store_df.columns:
+                store_df["pe_ttm"] = store_df["pe"]
+            if (
+                ("pe_ttm" not in store_df.columns or store_df["pe_ttm"].isna().all())
+                and yf_data and yf_data.get("close")
+                and report_market.get("eps")
+            ):
+                eps = report_market["eps"]
+                if eps and eps > 0:
+                    store_df["pe_ttm"] = yf_data["close"] / eps
+            if (
+                ("pb_ttm" not in store_df.columns or store_df["pb_ttm"].isna().all())
+                and yf_data and yf_data.get("close")
+                and report_market.get("bps")
+            ):
+                bps = report_market["bps"]
+                if bps and bps > 0:
+                    store_df["pb_ttm"] = yf_data["close"] / bps
+
+            self._store["basic_info"] = store_df
+            d = store_df.iloc[0]
+            val_rows = [
+                ["当前价格 (HKD)", close_price],
+                ["PE (TTM)", f"{d.get('pe_ttm', '—')}"],
+                ["PB", f"{d.get('pb_ttm', d.get('pb', '—'))}"],
+                ["总市值 (百万港元)", format_number(d.get("total_market_cap", None), divider=1, decimals=2)],
+            ]
+        elif yf_data and yf_data.get("close"):
+            market_cap_mm = (yf_data.get("market_cap") or 0) / 1e6 if yf_data.get("market_cap") else None
+            if market_cap_mm is None and report_market.get("shares"):
+                market_cap_mm = yf_data["close"] * report_market["shares"] / 1e6
+            pe_ttm = None
+            pb_ttm = None
+            if report_market.get("eps"):
+                eps = report_market["eps"]
+                if eps and eps > 0:
+                    pe_ttm = yf_data["close"] / eps
+            if report_market.get("bps"):
+                bps = report_market["bps"]
+                if bps and bps > 0:
+                    pb_ttm = yf_data["close"] / bps
+            basic_info = pd.DataFrame([{
+                "ts_code": ts_code,
+                "end_date": pd.Timestamp.now().strftime("%Y%m%d"),
+                "close": yf_data["close"],
+                "total_market_cap": market_cap_mm,
+                "pe_ttm": pe_ttm,
+                "pb_ttm": pb_ttm,
+                "name": row.get("name", ""),
+            }])
+            self._store["basic_info"] = basic_info
+            val_rows = [
+                ["当前价格 (HKD)", f"{yf_data['close']:.2f}"],
+                ["PE (TTM)", f"{pe_ttm:.2f}" if pe_ttm is not None else "—"],
+                ["PB", f"{pb_ttm:.2f}" if pb_ttm is not None else "—"],
+                ["总市值 (百万港元)", format_number(market_cap_mm, divider=1, decimals=2)],
+            ]
 
         lines = [format_header(2, "1. 基本信息"), ""]
         info_table = format_table(
@@ -120,6 +198,14 @@ class FinancialsMixin:
             alignments=["l", "r"],
         )
         lines.append(info_table)
+        if not val_rows:
+            attempts = self._get_market_attempts()
+            if attempts:
+                lines.append("")
+                attempt_text = ", ".join(
+                    f"{a.get('source')}={a.get('detail')}" for a in attempts[-3:]
+                )
+                lines.append(f"*港股行情快照缺失；已尝试: {attempt_text}*")
         return "\n".join(lines)
 
     def _get_basic_info_us(self, ts_code: str) -> str:
@@ -131,6 +217,7 @@ class FinancialsMixin:
             return format_header(2, "1. 基本信息") + "\n\n数据缺失\n"
 
         row = basic.iloc[0]
+        self._set_basic_info_context(ts_code, row)
         name = str(row.get("name", "")) or ""
         if (not name or name == "None") and self._yf_available:
             try:
@@ -217,9 +304,12 @@ class FinancialsMixin:
     def _get_market_data_hk(self, ts_code: str) -> str:
         """Section 2 (HK): Market data via yfinance (primary) or hk_daily fallback."""
         lines = [format_header(2, "2. 市场行情"), ""]
+        capability = self._probe_hk_tushare_market_capability(ts_code)
 
         # Primary: yfinance
         yf_data = self._yf_hk_market_data(ts_code)
+        if not yf_data or not yf_data.get("close"):
+            yf_data = self._web_hk_market_snapshot(ts_code)
         if yf_data and yf_data.get("close"):
             rows = [["最新价格 (HKD)", f"{yf_data['close']:.2f}"]]
             if yf_data.get("high_52w"):
@@ -236,16 +326,18 @@ class FinancialsMixin:
 
         # Fallback: hk_daily (requires broker permission)
         df = pd.DataFrame()
-        try:
-            today = pd.Timestamp.now().strftime("%Y%m%d")
-            year_ago = (pd.Timestamp.now() - pd.DateOffset(years=1)).strftime("%Y%m%d")
-            df = self._safe_call("hk_daily", ts_code=ts_code,
-                                 start_date=year_ago, end_date=today,
-                                 fields="ts_code,trade_date,open,high,low,close,vol,amount")
-        except RuntimeError:
-            pass
+        if capability.get("hk_daily"):
+            try:
+                today = pd.Timestamp.now().strftime("%Y%m%d")
+                year_ago = (pd.Timestamp.now() - pd.DateOffset(years=1)).strftime("%Y%m%d")
+                df = self._safe_call("hk_daily", ts_code=ts_code,
+                                     start_date=year_ago, end_date=today,
+                                     fields="ts_code,trade_date,open,high,low,close,vol,amount")
+            except RuntimeError:
+                pass
 
         if not df.empty:
+            self._store["market_daily"] = df.copy()
             latest_close = df.iloc[0]["close"]
             high_52w = df["high"].max()
             low_52w = df["low"].min()
@@ -269,6 +361,20 @@ class FinancialsMixin:
             return "\n".join(lines)
 
         lines.append("数据缺失\n")
+        details = []
+        if not capability.get("hk_daily"):
+            details.append("Tushare hk_daily 返回空")
+        if not capability.get("hk_fina_indicator"):
+            details.append("Tushare hk_fina_indicator 返回空")
+        attempts = self._get_market_attempts()
+        if attempts:
+            details.extend(
+                f"{item['source']}:{item['detail']}"
+                for item in attempts[-3:]
+            )
+        if details:
+            lines.append("")
+            lines.append(f"*诊断: {'; '.join(details)}*")
         return "\n".join(lines)
 
     def _get_market_data_us(self, ts_code: str) -> str:
@@ -302,17 +408,7 @@ class FinancialsMixin:
         if self._is_us(ts_code):
             return self._get_income_us(ts_code)
 
-        df = self._safe_call("income", ts_code=ts_code,
-                             report_type=report_type,
-                             fields="ts_code,end_date,report_type,"
-                                    "revenue,oper_cost,biz_tax_surchg,"
-                                    "sell_exp,admin_exp,rd_exp,fin_exp,"
-                                    "assets_impair_loss,credit_impa_loss,"
-                                    "fv_value_chg_gain,invest_income,asset_disp_income,"
-                                    "operate_profit,non_oper_income,non_oper_exp,"
-                                    "total_profit,income_tax,"
-                                    "n_income,n_income_attr_p,minority_gain,"
-                                    "basic_eps,diluted_eps,dt_eps")
+        df = self._safe_call("income", ts_code=ts_code)
         # Map Tushare API field names → project internal names
         _INCOME_RENAME = {
             "biz_tax_surchg": "biz_tax_surch",
@@ -394,15 +490,19 @@ class FinancialsMixin:
         lines = [format_header(2, "3. 合并利润表"), ""]
 
         if df.empty:
+            pivoted = self._get_hk_report_fallback_df(ts_code, "income")
+            yf_used = False
+        else:
+            pivoted = self._pivot_hk_line_items(df, HK_INCOME_MAP)
+            if pivoted.empty:
+                pivoted = self._get_hk_report_fallback_df(ts_code, "income")
+                yf_used = False
+            else:
+                pivoted, yf_used = self._yf_fill_missing_hk(pivoted, ts_code, "income")
+
+        if pivoted.empty:
             lines.append("数据缺失\n")
             return "\n".join(lines)
-
-        pivoted = self._pivot_hk_line_items(df, HK_INCOME_MAP)
-        if pivoted.empty:
-            lines.append("数据缺失 (无法匹配行项目)\n")
-            return "\n".join(lines)
-
-        pivoted, yf_used = self._yf_fill_missing_hk(pivoted, ts_code, "income")
 
         pivoted, years = self._prepare_display_periods(pivoted)
         self._store["income"] = pivoted
@@ -532,20 +632,7 @@ class FinancialsMixin:
         if self._is_us(ts_code):
             return self._get_balance_sheet_us(ts_code)
 
-        df = self._safe_call("balancesheet", ts_code=ts_code,
-                             report_type=report_type,
-                             fields="ts_code,end_date,report_type,"
-                                    "money_cap,trad_asset,notes_receiv,"
-                                    "accounts_receiv,oth_receiv,inventories,"
-                                    "oth_cur_assets,total_cur_assets,"
-                                    "lt_eqt_invest,fix_assets,cip,"
-                                    "intang_assets,goodwill,total_assets,"
-                                    "st_borr,notes_payable,acct_payable,"
-                                    "contract_liab,adv_receipts,"
-                                    "non_cur_liab_due_1y,oth_cur_liab,"
-                                    "total_cur_liab,lt_borr,bond_payable,"
-                                    "total_liab,defer_tax_assets,defer_tax_liab,"
-                                    "total_hldr_eqy_exc_min_int,minority_int")
+        df = self._safe_call("balancesheet", ts_code=ts_code)
         section_label = "4P. 母公司资产负债表" if report_type == "6" else "4. 合并资产负债表"
         lines = [format_header(2, section_label), ""]
 
@@ -632,15 +719,19 @@ class FinancialsMixin:
         lines = [format_header(2, "4. 合并资产负债表"), ""]
 
         if df.empty:
+            pivoted = self._get_hk_report_fallback_df(ts_code, "balance_sheet")
+            yf_used = False
+        else:
+            pivoted = self._pivot_hk_line_items(df, HK_BALANCE_MAP)
+            if pivoted.empty:
+                pivoted = self._get_hk_report_fallback_df(ts_code, "balance_sheet")
+                yf_used = False
+            else:
+                pivoted, yf_used = self._yf_fill_missing_hk(pivoted, ts_code, "balance")
+
+        if pivoted.empty:
             lines.append("数据缺失\n")
             return "\n".join(lines)
-
-        pivoted = self._pivot_hk_line_items(df, HK_BALANCE_MAP)
-        if pivoted.empty:
-            lines.append("数据缺失 (无法匹配行项目)\n")
-            return "\n".join(lines)
-
-        pivoted, yf_used = self._yf_fill_missing_hk(pivoted, ts_code, "balance")
 
         pivoted, years = self._prepare_display_periods(pivoted)
         self._store["balance_sheet"] = pivoted
@@ -766,17 +857,7 @@ class FinancialsMixin:
         if self._is_us(ts_code):
             return self._get_cashflow_us(ts_code)
 
-        df = self._safe_call("cashflow", ts_code=ts_code,
-                             report_type="1",
-                             fields="ts_code,end_date,report_type,"
-                                    "n_cashflow_act,n_cashflow_inv_act,"
-                                    "n_cash_flows_fnc_act,c_pay_acq_const_fiolta,"
-                                    "depr_fa_coga_dpba,amort_intang_assets,"
-                                    "lt_amort_deferred_exp,"
-                                    "c_pay_dist_dpcp_int_exp,"
-                                    "c_pay_to_staff,c_paid_for_taxes,"
-                                    "n_recp_disp_fiolta,receiv_tax_refund,"
-                                    "c_recp_return_invest")
+        df = self._safe_call("cashflow", ts_code=ts_code)
         lines = [format_header(2, "5. 现金流量表"), ""]
 
         if df.empty:
@@ -852,17 +933,37 @@ class FinancialsMixin:
         df = self._safe_call("hk_cashflow", ts_code=ts_code,
                              fields="ts_code,end_date,ind_name,ind_value")
         lines = [format_header(2, "5. 现金流量表"), ""]
+        fallback_df = self._get_hk_report_fallback_df(ts_code, "cashflow")
 
         if df.empty:
+            pivoted = fallback_df
+            yf_used = False
+        else:
+            pivoted = self._pivot_hk_line_items(df, HK_CASHFLOW_MAP)
+            if pivoted.empty:
+                pivoted = fallback_df
+                yf_used = False
+            else:
+                pivoted, yf_used = self._yf_fill_missing_hk(pivoted, ts_code, "cashflow")
+                if not fallback_df.empty:
+                    fb = fallback_df.copy()
+                    if "end_date" in fb.columns:
+                        fb = fb.set_index("end_date")
+                    for col in ["c_pay_to_staff", "_c_pay_to_staff_is_proxy", "_employee_benefit_total", "_employee_direct_opex", "_employee_above_opex"]:
+                        if col not in pivoted.columns:
+                            pivoted[col] = float("nan")
+                        if col in fb.columns:
+                            for idx, row in pivoted.iterrows():
+                                end_date = str(row.get("end_date", ""))
+                                if not end_date or end_date not in fb.index:
+                                    continue
+                                current = row.get(col)
+                                if current is None or current != current or current == 0:
+                                    pivoted.at[idx, col] = fb.at[end_date, col]
+
+        if pivoted.empty:
             lines.append("数据缺失\n")
             return "\n".join(lines)
-
-        pivoted = self._pivot_hk_line_items(df, HK_CASHFLOW_MAP)
-        if pivoted.empty:
-            lines.append("数据缺失 (无法匹配行项目)\n")
-            return "\n".join(lines)
-
-        pivoted, yf_used = self._yf_fill_missing_hk(pivoted, ts_code, "cashflow")
 
         pivoted, years = self._prepare_display_periods(pivoted)
         self._store["cashflow"] = pivoted
@@ -880,6 +981,7 @@ class FinancialsMixin:
             ("投资业务现金净额", "n_cashflow_inv_act"),
             ("融资业务现金净额", "n_cash_flows_fnc_act"),
             ("购建无形资产及其他资产", "c_pay_acq_const_fiolta"),
+            ("支付给职工现金/年报代理", "c_pay_to_staff"),
             ("已付税项", "c_paid_for_taxes"),
             ("收回投资所得现金", "c_recp_return_invest"),
             ("已付股息(融资)", "c_pay_dist_dpcp_int_exp"),
@@ -915,7 +1017,7 @@ class FinancialsMixin:
         table = format_table(headers, rows, alignments=["l"] + ["r"] * len(years))
         lines.append(table)
         lines.append("")
-        lines.append("*单位: 百万港元; FCF = OCF - |Capex|; c_pay_to_staff 港股不可用*")
+        lines.append("*单位: 百万港元; FCF = OCF - |Capex|; `支付给职工现金/年报代理` 优先取现金流原始字段，缺失时回落到港股年报员工成本代理口径*")
         if yf_used:
             lines.append("\n*部分缺失数据由 yfinance 补充*")
         return "\n".join(lines)
@@ -1012,41 +1114,97 @@ class FinancialsMixin:
             return "\n".join(lines)
 
         # Filter for completed dividends
-        df = df[df["div_proc"] == "实施"].copy()
-        df = df.drop_duplicates(subset=["end_date"])
-        df = df.sort_values("end_date", ascending=False)
+        df_implemented = df[df["div_proc"] == "实施"].copy()
+        df_implemented = df_implemented.drop_duplicates(subset=["end_date"])
+        df_implemented = df_implemented.sort_values("end_date", ascending=False)
         # Limit by year count (not row count) — a company may pay multiple dividends per year
-        df["_year"] = df["end_date"].astype(str).str[:4]
-        top_years = df["_year"].drop_duplicates().head(5).tolist()
-        df = df[df["_year"].isin(top_years)].drop(columns=["_year"])
+        df_implemented["_year"] = df_implemented["end_date"].astype(str).str[:4]
+        top_years = df_implemented["_year"].drop_duplicates().head(5).tolist()
+        df_implemented = df_implemented[df_implemented["_year"].isin(top_years)]
+
+        # --- Detect incomplete latest year (FY final dividend approved but not yet implemented) ---
+        latest_year = max(top_years) if top_years else ""
+        incomplete_warning = ""
+        if latest_year:
+            latest_end_date = f"{latest_year}1231"
+            # Check for approved-but-unimplemented dividends
+            df_approved = df[
+                (df["div_proc"].isin(["股东大会通过", "预案"])) &
+                (df["end_date"].astype(str) == latest_end_date)
+            ]
+            # Count implemented payments for latest year
+            latest_impl_count = len(df_implemented[df_implemented["_year"] == latest_year])
+            # Check prior-year pattern (how many payments in the second-latest year)
+            prior_years = sorted(top_years, reverse=True)
+            if len(prior_years) >= 2:
+                prev_year = prior_years[1]
+                prev_count = len(df_implemented[df_implemented["_year"] == prev_year])
+            else:
+                prev_count = 1  # assume at least 1
+            if not df_approved.empty and latest_impl_count < prev_count:
+                incomplete_warning = (
+                    f"\n> ⚠️ **FY{latest_year}末期分红**：已获股东大会通过但尚未实施（除权日未到），"
+                    f"当前仅显示已实施分红。完整DPS可能高于当前值。"
+                    f"建议Phase 3分析时参考历史支付率模式预估全年DPS。\n"
+                )
+
+        # --- Aggregate by fiscal year (sum DPS within same end_date year) ---
+        fy_agg = df_implemented.groupby("_year").agg(
+            total_cash_div=("cash_div_tax", "sum"),
+            total_stk_div=("stk_div", "sum"),
+            payment_count=("end_date", "count"),
+            latest_ex_date=("ex_date", "max"),
+            latest_record_date=("record_date", "max"),
+        ).reset_index()
+        fy_agg = fy_agg.sort_values("_year", ascending=False)
 
         # Store for derived metrics
-        self._store["dividends"] = df
+        self._store["dividends"] = df_implemented.drop(columns=["_year"])
 
-        if df.empty:
+        if fy_agg.empty:
             lines.append("暂无已实施分红\n")
             return "\n".join(lines)
 
-        headers = ["年度", "每股现金分红(税前)", "每股送股", "登记日", "除权日", "总分红 (百万元)"]
+        # --- Write aggregated table ---
+        lines = [format_header(2, "6. 分红历史"), ""]
+        if incomplete_warning:
+            lines.append(incomplete_warning)
+        headers = ["财年", "全年DPS(税前)", "送股", "分红次数", "最近除权日", "最近登记日"]
         rows = []
-        for _, r in df.iterrows():
-            year = str(r.get("end_date", ""))[:4]
-            cash_div = r.get("cash_div_tax", 0) or 0
-            stk_div = r.get("stk_div", 0) or 0
-            base_share = r.get("base_share", 0) or 0
-            total_div = cash_div * base_share * 10000  # base_share is 万股, convert to shares
+        for _, r in fy_agg.iterrows():
+            stk = f"{r['total_stk_div']:.2f}" if r['total_stk_div'] else "—"
             rows.append([
-                year,
-                f"{cash_div:.4f}",
-                f"{stk_div:.2f}" if stk_div else "—",
+                f"FY{r['_year']}",
+                f"{r['total_cash_div']:.4f}",
+                stk,
+                str(int(r['payment_count'])),
+                str(int(r['latest_ex_date'])) if pd.notna(r['latest_ex_date']) else "—",
+                str(int(r['latest_record_date'])) if pd.notna(r['latest_record_date']) else "—",
+            ])
+        table = format_table(headers, rows,
+                             alignments=["l", "r", "r", "r", "l", "l"])
+        lines.append(table)
+
+        # --- Detailed payment breakdown ---
+        lines.append("")
+        lines.append("**明细**：")
+        detail_headers = ["财年", "每股现金分红", "送股", "登记日", "除权日", "期间"]
+        detail_rows = []
+        for _, r in df_implemented.iterrows():
+            year = str(r.get("end_date", ""))[:4]
+            month = str(r.get("end_date", ""))[4:6]
+            period = "末期" if month == "12" else f"中期({month}月)"
+            detail_rows.append([
+                f"FY{year}",
+                f"{r.get('cash_div_tax', 0) or 0:.4f}",
+                f"{r.get('stk_div', 0):.2f}" if r.get('stk_div', 0) else "—",
                 str(r.get("record_date", "—")),
                 str(r.get("ex_date", "—")),
-                format_number(total_div),
+                period,
             ])
-
-        table = format_table(headers, rows,
-                             alignments=["l", "r", "r", "l", "l", "r"])
-        lines.append(table)
+        detail_table = format_table(detail_headers, detail_rows,
+                                    alignments=["l", "r", "r", "l", "l", "l"])
+        lines.append(detail_table)
         return "\n".join(lines)
 
     def _get_yf_annual_dividends(self, ts_code: str) -> dict[str, float] | None:
@@ -1075,12 +1233,13 @@ class FinancialsMixin:
             df = self._safe_call("hk_fina_indicator", ts_code=ts_code,
                                  fields="ts_code,end_date,dps_hkd,divi_ratio")
         except RuntimeError:
-            lines.append("数据缺失 (接口可能无权限)\n")
-            return "\n".join(lines)
+            df = pd.DataFrame()
 
         if df.empty:
-            lines.append("暂无分红数据\n")
-            return "\n".join(lines)
+            df = self._get_hk_report_fallback_df(ts_code, "dividends")
+            if df.empty:
+                lines.append("暂无分红数据\n")
+                return "\n".join(lines)
 
         df = df.drop_duplicates(subset=["end_date"])
         df = df.sort_values("end_date", ascending=False)
@@ -1280,12 +1439,15 @@ class FinancialsMixin:
     def _get_weekly_prices_hk(self, ts_code: str) -> str:
         """Section 11 (HK): Weekly prices via yfinance (primary) or hk_daily fallback."""
         lines = [format_header(2, "11. 十年周线行情"), ""]
+        capability = self._probe_hk_tushare_market_capability(ts_code)
 
         # Primary: yfinance
         df = self._yf_weekly_history(ts_code)
+        if df.empty:
+            df = self._web_weekly_history(ts_code)
 
         # Fallback: hk_daily → resample to weekly
-        if df.empty:
+        if df.empty and capability.get("hk_daily"):
             try:
                 today = pd.Timestamp.now().strftime("%Y%m%d")
                 ten_years_ago = (pd.Timestamp.now() - pd.DateOffset(years=10)).strftime("%Y%m%d")
@@ -1309,7 +1471,35 @@ class FinancialsMixin:
                 pass
 
         if df.empty:
+            market_daily = self._store.get("market_daily")
+            if market_daily is not None and not market_daily.empty:
+                daily = market_daily.copy()
+                if "trade_date" in daily.columns:
+                    daily["trade_date"] = pd.to_datetime(daily["trade_date"])
+                    daily = daily.sort_values("trade_date")
+                    weekly = daily.resample("W-FRI", on="trade_date").agg({
+                        "open": "first", "high": "max", "low": "min",
+                        "close": "last", "vol": "sum",
+                    }).dropna(subset=["close"])
+                    weekly = weekly.reset_index()
+                    weekly["trade_date"] = weekly["trade_date"].dt.strftime("%Y%m%d")
+                    weekly["ts_code"] = ts_code
+                    df = weekly
+
+        if df.empty:
             lines.append("数据缺失\n")
+            details = []
+            if not capability.get("hk_daily"):
+                details.append("Tushare hk_daily 返回空")
+            attempts = self._get_market_attempts()
+            if attempts:
+                details.extend(
+                    f"{item['source']}:{item['detail']}"
+                    for item in attempts[-3:]
+                )
+            if details:
+                lines.append("")
+                lines.append(f"*诊断: {'; '.join(details)}*")
             return "\n".join(lines)
 
         df = df.sort_values("trade_date", ascending=True)
@@ -1522,8 +1712,10 @@ class FinancialsMixin:
         lines = [format_header(2, "12. 关键财务指标"), ""]
 
         if df.empty:
-            lines.append("数据缺失\n")
-            return "\n".join(lines)
+            df = self._get_hk_report_fallback_df(ts_code, "fina_indicators")
+            if df.empty:
+                lines.append("数据缺失\n")
+                return "\n".join(lines)
 
         df, years = self._prepare_display_periods(df)
         self._store["fina_indicators"] = df
@@ -1560,6 +1752,24 @@ class FinancialsMixin:
 
         table = format_table(headers, rows, alignments=["l"] + ["r"] * len(years))
         lines.append(table)
+
+        basic_df = self._store.get("basic_info")
+        if basic_df is not None and not basic_df.empty:
+            latest = basic_df.iloc[0]
+            snapshot_rows = [
+                ["当前价格 (HKD)", f"{float(latest.get('close')):.2f}" if pd.notna(latest.get("close")) else "—"],
+                ["最新 PE (TTM)", f"{float(latest.get('pe_ttm')):.2f}" if pd.notna(latest.get("pe_ttm")) else "—"],
+                ["最新 PB", f"{float(latest.get('pb_ttm', latest.get('pb'))):.2f}" if pd.notna(latest.get("pb_ttm", latest.get("pb"))) else "—"],
+                ["最新总市值 (百万港元)", format_number(latest.get("total_market_cap", None), divider=1, decimals=2)],
+            ]
+            lines.append("")
+            lines.append("**最新市场估值快照**")
+            lines.append("")
+            lines.append(format_table(
+                ["指标", "当前值"],
+                snapshot_rows,
+                alignments=["l", "r"],
+            ))
         return "\n".join(lines)
 
     def _get_fina_indicators_us(self, ts_code: str) -> str:
@@ -1657,4 +1867,3 @@ class FinancialsMixin:
         return "\n".join(lines)
 
     # --- Feature #24: Section 9 — Business segments ---
-

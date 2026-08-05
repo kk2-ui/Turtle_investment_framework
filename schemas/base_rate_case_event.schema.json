@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://turtle.local/schemas/base_rate_case_event.schema.json",
+  "title": "Turtle Base Rate Case Event",
+  "type": "object",
+  "required": ["schema_version", "event_id", "case_id", "event_type", "observed_at", "source_evidence", "recorded_at", "event_fingerprint"],
+  "properties": {
+    "schema_version": {"const": "base-rate-case-event.v1"},
+    "event_id": {"type": "string", "pattern": "^CASEEV:"},
+    "case_id": {"type": "string", "pattern": "^CASE:"},
+    "event_type": {"enum": ["outcome", "eligibility_review", "exclusion"]},
+    "observed_at": {"type": "string"},
+    "source_evidence": {"type": "array", "minItems": 1, "items": {"type": "object", "required": ["source_id", "sha256", "disclosed_at"]}},
+    "resolved_scenario_id": {"type": "string"},
+    "approved": {"type": "boolean"},
+    "reviewer": {"type": "string"},
+    "rationale": {"type": "string"},
+    "reason": {"type": "string"},
+    "recorded_at": {"type": "string"},
+    "event_fingerprint": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+  }
+}

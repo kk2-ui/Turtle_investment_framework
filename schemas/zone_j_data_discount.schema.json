@@ -1,0 +1,78 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Data Discount (J4)",
+  "type": "object",
+  "definitions": {
+    "audit_param": {
+      "type": "object",
+      "properties": {
+        "value": { "type": "number" },
+        "rationale": { "type": "string" },
+        "evidence_ref": {
+          "type": "array",
+          "items": { "type": "string" },
+          "minItems": 1
+        },
+        "confidence": {
+          "type": "string",
+          "enum": ["high", "medium", "low"]
+        }
+      },
+      "required": ["value", "rationale", "evidence_ref", "confidence"],
+      "additionalProperties": true
+    }
+  },
+  "properties": {
+    "_provenance": {
+      "type": "object",
+      "properties": {
+        "generated_at": { "type": "string" },
+        "agent": { "type": "string" },
+        "context_files": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      },
+      "additionalProperties": true
+    },
+    "master_source": { "type": "string" },
+    "info_richness": { "type": "string", "enum": ["A", "B", "C"] },
+    "confidence": { "type": "string", "enum": ["high", "medium", "low"] },
+    "dissenting_view": { "type": "string" },
+    "discount_factors": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "factor": { "type": "string" },
+          "discount_pct": { "type": "number", "minimum": 0, "maximum": 100 },
+          "rationale": { "type": "string" }
+        },
+        "required": ["factor", "discount_pct", "rationale"],
+        "additionalProperties": true
+      }
+    },
+    "total_discount_pct": {
+      "allOf": [
+        { "$ref": "#/definitions/audit_param" },
+        {
+          "properties": {
+            "value": { "type": "number", "minimum": 0, "maximum": 100 }
+          }
+        }
+      ]
+    },
+    "confidence_by_section": {
+      "type": "object",
+      "properties": {
+        "factor2": { "type": "string", "enum": ["high", "medium", "low"] },
+        "factor3_aa": { "type": "string", "enum": ["high", "medium", "low"] },
+        "factor3_gg": { "type": "string", "enum": ["high", "medium", "low"] },
+        "factor4_ddm": { "type": "string", "enum": ["high", "medium", "low"] }
+      },
+      "additionalProperties": true
+    }
+  },
+  "required": ["discount_factors", "total_discount_pct", "confidence_by_section"],
+  "additionalProperties": true
+}

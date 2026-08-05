@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "project_name": "Turtle Investment Framework",
+  "protected_branches": ["main", "master"],
+  "branch_prefixes": ["feat", "fix", "docs", "refactor", "test", "chore", "hotfix"],
+  "worktree_root": "../worktrees",
+  "profile_order": ["docs", "fast", "full"],
+  "required_profile": "full",
+  "profiles": {
+    "docs": [
+      [".venv/bin/python", "scripts/project_guard.py", "self-test"]
+    ],
+    "fast": [
+      [".venv/bin/python", "-m", "pytest", "-q", "tests/test_config.py", "tests/test_derived_metrics.py", "tests/test_tushare_client.py"]
+    ],
+    "full": [
+      [".venv/bin/python", "-m", "pytest", "-q", "tests/test_stage*.py", "tests/test_completion_contract_v13.py", "tests/test_auto_repair_pipeline.py"]
+    ]
+  }
+}

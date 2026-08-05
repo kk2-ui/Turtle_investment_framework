@@ -1,0 +1,12 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "judgment-research-execution.v1",
+  "type": "object",
+  "required": ["schema_version", "plan_sha256", "state", "active_task_id", "execution_queue", "tasks"],
+  "properties": {
+    "schema_version": {"const": "judgment-research-execution.v1"},
+    "state": {"enum": ["PENDING", "ACTIVE", "COMPLETE", "VIOLATION", "NO_ACTION"]},
+    "execution_queue": {"type": "array", "maxItems": 3},
+    "tasks": {"type": "object"}
+  }
+}

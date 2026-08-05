@@ -1,0 +1,12 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "gold_approval_preview.schema.json",
+  "type": "object",
+  "required": ["schema_version", "sample_id", "contract", "approval_fingerprint"],
+  "properties": {
+    "schema_version": {"const": "gold-approval-preview.v1"},
+    "sample_id": {"type": "string"},
+    "contract": {"type": "object"},
+    "approval_fingerprint": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "enabled": true,
+  "hard_floor": 0.55,
+  "warn_floor": 0.75,
+  "topic_hard_floor": 0.60,
+  "topic_warn_floor": 0.80,
+  "references": {
+    "000651": {
+      "name": "格力电器 v13 历史较优稿（非质量金标）",
+      "chapter_dir": "quality_references/000651_gree_v13/chapters"
+    }
+  }
+}

@@ -18,6 +18,8 @@ import re
 import sys
 from typing import Any
 
+from report_audit import audit_report_against_bundle
+
 
 def enhanced_check(
     report_text: str,
@@ -48,6 +50,13 @@ def enhanced_check(
     result["checks"].append(num_check)
     if num_check["status"] == "FAIL":
         result["blocks"].append(num_check["name"])
+        result["status"] = "BLOCKED"
+
+    # 1.5 关键数字抽样审计
+    audit_check = _check_data_point_audit(report_text, compute_bundle)
+    result["checks"].append(audit_check)
+    if audit_check["status"] == "FAIL":
+        result["blocks"].append(audit_check["name"])
         result["status"] = "BLOCKED"
 
     # 2. Token 效率检查
@@ -126,34 +135,71 @@ def _check_number_consistency(report: str, compute_bundle: dict | None) -> dict:
     }
 
 
+def _check_data_point_audit(report: str, compute_bundle: dict | None) -> dict:
+    """调用独立 report_audit 工具，对报告做抽样核对。"""
+    if not compute_bundle:
+        return {
+            "name": "data_point_audit",
+            "status": "PASS",
+            "detail": "未提供 compute_bundle，跳过抽样审计",
+            "audited": [],
+            "failures": [],
+        }
+
+    audit_result = audit_report_against_bundle(report, compute_bundle, ratio=0.15, seed=7)
+    failures = [
+        f"{item['field']} 偏差 {item['deviation_pct']:.2f}% > 1% (报告={item['reported']}, 计算={item['expected']})"
+        for item in audit_result.get("items", [])
+        if item.get("status") == "FAIL"
+    ]
+    audited = [
+        {
+            "field": item.get("field"),
+            "expected": item.get("expected"),
+            "observed": item.get("reported"),
+            "deviation_pct": item.get("deviation_pct"),
+            "line_number": item.get("line_number"),
+        }
+        for item in audit_result.get("items", [])
+    ]
+
+    detail = (
+        failures
+        if failures
+        else (
+            f"已审计 {audit_result.get('sampled_count', 0)} 个关键数字，"
+            f"通过 {audit_result.get('pass_count', 0)}，警告 {audit_result.get('warn_count', 0)}"
+        )
+    )
+    return {
+        "name": "data_point_audit",
+        "status": "FAIL" if failures else "PASS",
+        "detail": detail,
+        "audited": audited,
+        "failures": failures,
+        "audit_result": audit_result,
+    }
+
+
 def _check_content_efficiency(report: str) -> dict:
-    """检查报告的实质内容密度。"""
-    lines = report.split("\n")
-    total = len(lines)
-
-    # 空行
-    blank = sum(1 for l in lines if not l.strip())
-    # 分隔线
-    separators = sum(1 for l in lines if l.strip().startswith("---"))
-    # 表格行
-    tables = len(re.findall(r"\|.*\|.*\|", report))
-    # 注释
-    comments = sum(1 for l in lines if l.strip().startswith("<!--"))
-
-    substantive = total - blank - separators - comments
-    efficiency = substantive / max(total, 1)
-
-    issues = []
-    if efficiency < 0.4:
-        issues.append(f"实质内容密度过低: {efficiency:.1%}")
-    if blank / max(total, 1) > 0.3:
-        issues.append(f"空行过多: {blank}/{total}")
+    """检查叙事碎片和重复，不惩罚 Markdown 所需的正常空行。"""
+    try:
+        from scripts.report_prose import narrative_efficiency_metrics
+    except ModuleNotFoundError:
+        from report_prose import narrative_efficiency_metrics
+    metrics = narrative_efficiency_metrics(report)
+    issues = metrics["issues"]
 
     return {
         "name": "content_efficiency",
         "status": "FAIL" if issues else "PASS",
-        "detail": f"实质内容: {efficiency:.1%} ({substantive}/{total} 行)",
-        "metrics": {"total": total, "blank": blank, "substantive": substantive, "efficiency": efficiency},
+        "detail": issues if issues else (
+            f"叙事段落 {metrics['prose_paragraphs']} 个；"
+            f"短单句比例 {metrics['single_sentence_ratio']:.1%}；"
+            f"重复比例 {metrics['duplicate_ratio']:.1%}"
+        ),
+        "issues": issues,
+        "metrics": metrics,
     }
 
 
@@ -275,7 +321,7 @@ if __name__ == "__main__":
 
     report_path = args.report or next(
         (os.path.join(stock_dir, f) for f in sorted(os.listdir(stock_dir))
-         if f.endswith(".md") and ("v10" in f.lower() or "v7" in f.lower() or "v5" in f.lower())),
+         if f.endswith(".md") and ("v12" in f.lower() or "v10" in f.lower() or "v7" in f.lower() or "v5" in f.lower())),
         None
     )
     if not report_path:

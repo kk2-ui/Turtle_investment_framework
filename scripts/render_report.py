@@ -260,7 +260,7 @@ def _simple_md_to_html(md: str) -> str:
 
 
 def _wrap_html(body: str, title: str) -> str:
-    """将 HTML 正文包装为完整 HTML 页面，含增强 CSS。
+    """将 HTML 正文包装为完整 HTML 页面，含增强 CSS + 双栏布局 + TOC。
 
     Args:
         body: HTML 正文。
@@ -269,6 +269,130 @@ def _wrap_html(body: str, title: str) -> str:
     Returns:
         完整 HTML 字符串。
     """
+    _JS = r"""
+document.addEventListener('DOMContentLoaded', function () {
+
+  /* ──── 1. TOC 构建 ──── */
+  const toc = document.getElementById('toc');
+  const partLabels = { 'A': 'Part A · 定性', 'B': 'Part B · 定量', 'C': 'Part C · 决策' };
+
+  document.querySelectorAll('h2').forEach(function (h2, i) {
+    const text = h2.textContent.trim();
+    const partMatch = text.match(/^Part\s+([A-C])[：:]/);
+
+    if (partMatch) {
+      const letter = partMatch[1];
+      const label = document.createElement('div');
+      label.className = 'toc-part-label';
+      label.textContent = partLabels[letter] || ('Part ' + letter);
+      toc.appendChild(label);
+    } else {
+      const id = 'ch-' + i;
+      h2.id = id;
+      const a = document.createElement('a');
+      a.href = '#' + id;
+      a.textContent = text.length > 18 ? text.slice(0, 18) + '…' : text;
+      a.title = text;
+      toc.appendChild(a);
+    }
+  });
+
+  /* ──── 2. 结论要点 → 卡片 ──── */
+  document.querySelectorAll('h3').forEach(function (h3) {
+    if (!h3.textContent.includes('结论要点')) return;
+
+    const card = document.createElement('div');
+    card.className = 'conclusion-card';
+
+    const title = document.createElement('div');
+    title.className = 'conclusion-card-title';
+    title.textContent = '结论要点';
+    card.appendChild(title);
+
+    const siblings = [];
+    let el = h3.nextElementSibling;
+    while (el && el.tagName !== 'H2' && el.tagName !== 'H3') {
+      siblings.push(el);
+      el = el.nextElementSibling;
+    }
+    siblings.forEach(function (s) { card.appendChild(s.cloneNode(true)); });
+
+    h3.parentNode.insertBefore(card, h3);
+    h3.remove();
+    siblings.forEach(function (s) { s.remove(); });
+  });
+
+  /* ──── 3. Part A/B/C h2 → Banner ──── */
+  document.querySelectorAll('h2').forEach(function (h2) {
+    const text = h2.textContent.trim();
+    const m = text.match(/^(Part\s+[A-C])[：:]?\s*(.+)?$/);
+    if (!m) return;
+
+    const banner = document.createElement('div');
+    banner.className = 'part-banner';
+
+    const lbl = document.createElement('div');
+    lbl.className = 'part-banner-label';
+    lbl.textContent = m[1];
+    banner.appendChild(lbl);
+
+    if (m[2]) {
+      const ttl = document.createElement('div');
+      ttl.className = 'part-banner-title';
+      ttl.textContent = m[2].trim();
+      banner.appendChild(ttl);
+    }
+
+    h2.parentNode.replaceChild(banner, h2);
+  });
+
+  /* ──── 4. 综合决策 Badge ──── */
+  const badgeMap = [
+    [/(Strong\s*Buy|强烈买入)/gi,   'badge-strong-buy'],
+    [/((?<!Strong\s)Buy|买入)/gi,  'badge-buy'],
+    [/(Hold|持有)/gi,              'badge-hold'],
+    [/(Watch|观察)/gi,             'badge-watch'],
+    [/(Abandon|放弃|终止)/gi,      'badge-abandon'],
+  ];
+
+  const sections = document.querySelectorAll('section');
+  const targets = Array.from(sections).slice(-2);
+
+  targets.forEach(function (sec) {
+    sec.querySelectorAll('p, td, li, h3, h4').forEach(function (node) {
+      badgeMap.forEach(function (entry) {
+        const [re, cls] = entry;
+        if (re.test(node.textContent)) {
+          node.innerHTML = node.innerHTML.replace(re, function (m) {
+            return '<span class="decision-badge ' + cls + '">' + m + '</span>';
+          });
+        }
+        re.lastIndex = 0;
+      });
+    });
+  });
+
+  /* ──── 5. IntersectionObserver — TOC 高亮 ──── */
+  const tocLinks = toc.querySelectorAll('a');
+  if (tocLinks.length > 0 && 'IntersectionObserver' in window) {
+    const observer = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) {
+          tocLinks.forEach(function (a) { a.classList.remove('active'); });
+          const active = toc.querySelector('a[href="#' + e.target.id + '"]');
+          if (active) {
+            active.classList.add('active');
+            active.scrollIntoView({ block: 'nearest' });
+          }
+        }
+      });
+    }, { rootMargin: '-8% 0px -80% 0px' });
+
+    document.querySelectorAll('h2[id]').forEach(function (h) { observer.observe(h); });
+  }
+});
+"""
+
     return f"""<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -307,14 +431,86 @@ def _wrap_html(body: str, title: str) -> str:
 
   body {{
     font-family: "Charter", "Georgia", "Noto Serif CJK SC", "Source Han Serif SC", "Songti SC", "PingFang SC", serif;
-    max-width: 780px;
-    margin: 0 auto;
-    padding: 3em 2em 6em 2em;
     background: var(--bg);
     color: var(--text);
     line-height: 1.8;
     font-size: 16px;
     -webkit-font-smoothing: antialiased;
+  }}
+
+  /* ── 双栏布局 ── */
+  .layout {{
+    display: flex;
+    max-width: 1080px;
+    margin: 0 auto;
+    gap: 0;
+  }}
+
+  .toc-sidebar {{
+    width: 240px;
+    flex-shrink: 0;
+    position: sticky;
+    top: 2rem;
+    align-self: flex-start;
+    height: calc(100vh - 4rem);
+    max-height: calc(100vh - 4rem);
+    overflow-y: auto;
+    padding: 2rem 1.2rem 2rem 0;
+    border-right: 1px solid var(--border);
+    scrollbar-width: thin;
+    scrollbar-color: var(--border) transparent;
+  }}
+  .toc-sidebar::-webkit-scrollbar {{ width: 3px; }}
+  .toc-sidebar::-webkit-scrollbar-thumb {{ background: var(--border); border-radius: 2px; }}
+
+  .toc-header {{
+    font-family: -apple-system, "PingFang SC", sans-serif;
+    font-size: 0.82em;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-light);
+    margin-bottom: 0.8rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--border);
+  }}
+
+  .toc-part-label {{
+    font-family: -apple-system, "PingFang SC", sans-serif;
+    font-size: 0.78em;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin: 1.1rem 0 0.25rem 0;
+  }}
+
+  #toc a {{
+    display: block;
+    font-family: -apple-system, "PingFang SC", sans-serif;
+    font-size: 0.88em;
+    color: var(--text-light);
+    text-decoration: none;
+    padding: 0.25em 0;
+    line-height: 1.4;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    transition: color 0.15s;
+  }}
+  #toc a:hover {{ color: var(--heading); }}
+  #toc a.active {{ color: var(--accent); font-weight: 600; }}
+
+  .main-content {{
+    flex: 1;
+    min-width: 0;
+    padding: 3em 2em 6em 3em;
+    max-width: 780px;
+  }}
+
+  @media (max-width: 1000px) {{
+    .toc-sidebar {{ display: none; }}
+    .main-content {{ padding: 2em; max-width: 100%; }}
   }}
 
   h1 {{
@@ -367,6 +563,82 @@ def _wrap_html(body: str, title: str) -> str:
     color: var(--text-light);
     font-size: 0.95em;
   }}
+
+  /* ── 结论要点卡片 ── */
+  .conclusion-card {{
+    background: var(--accent-light);
+    border-left: 3px solid var(--accent);
+    border-radius: 0 4px 4px 0;
+    padding: 0.75em 1.2em 0.75em 1em;
+    margin: 0.4em 0 1.2em 0;
+  }}
+
+  .conclusion-card-title {{
+    font-family: -apple-system, "PingFang SC", sans-serif;
+    font-size: 0.7em;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 0.45em;
+  }}
+
+  .conclusion-card ul {{
+    margin: 0;
+    padding-left: 1.1em;
+  }}
+
+  .conclusion-card li {{
+    margin: 0.25em 0;
+    font-size: 0.94em;
+    line-height: 1.6;
+  }}
+
+  /* ── Part A/B/C 分区 Banner ── */
+  .part-banner {{
+    margin: 3em 0 0.5em 0;
+    padding: 0.9em 1.4em;
+    background: var(--accent-light);
+    border-top: 2px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    border-left: 4px solid var(--accent);
+  }}
+
+  .part-banner-label {{
+    font-family: -apple-system, "PingFang SC", sans-serif;
+    font-size: 0.7em;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 0.15em;
+  }}
+
+  .part-banner-title {{
+    font-family: -apple-system, "PingFang SC", sans-serif;
+    font-size: 1.15em;
+    font-weight: 700;
+    color: var(--heading);
+    margin: 0;
+  }}
+
+  /* ── 综合决策 Badge ── */
+  .decision-badge {{
+    display: inline-block;
+    padding: 0.15em 0.7em;
+    border-radius: 3px;
+    font-family: -apple-system, "PingFang SC", sans-serif;
+    font-size: 0.88em;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    margin: 0 0.2em;
+    vertical-align: middle;
+  }}
+  .badge-strong-buy {{ background: #1b5e33; color: #fff; }}
+  .badge-buy        {{ background: #2d7a3a; color: #fff; }}
+  .badge-hold       {{ background: #7a6a1b; color: #fff; }}
+  .badge-watch      {{ background: #555;    color: #fff; }}
+  .badge-abandon    {{ background: #5c1a1a; color: #fff; }}
 
   /* 表格 — 保留框线，经典风格 */
   .table-card {{
@@ -435,14 +707,26 @@ def _wrap_html(body: str, title: str) -> str:
 
   /* 打印 */
   @media print {{
-    body {{ max-width: none; font-size: 11pt; padding: 0; }}
-    h2 {{ page-break-before: always; }}
-    .table-card {{ break-inside: avoid; }}
+    .toc-sidebar  {{ display: none !important; }}
+    .main-content {{ padding: 0; max-width: 100%; }}
+    .layout       {{ display: block; }}
+    body          {{ max-width: none; font-size: 11pt; }}
+    h2            {{ page-break-before: always; }}
+    .table-card   {{ break-inside: avoid; }}
   }}
 </style>
+<script>{_JS}</script>
 </head>
 <body>
+<div class="layout">
+  <aside class="toc-sidebar">
+    <div class="toc-header">目录</div>
+    <nav id="toc"></nav>
+  </aside>
+  <main class="main-content">
 {body}
+  </main>
+</div>
 </body>
 </html>"""
 

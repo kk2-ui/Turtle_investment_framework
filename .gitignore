@@ -5,8 +5,17 @@ output/
 __pycache__/
 .venv/
 *.html
+!progress-dashboard.html
 .DS_Store
 .vscode/
 *.egg-info/
 dist/
 build/
+.env
+.project/evidence/
+.omc/
+scripts/.omc/
+turtle_framework/
+.env.*
+!.env.sample
+analyze.sh

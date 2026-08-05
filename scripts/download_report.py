@@ -41,7 +41,7 @@ import os
 import re
 import sys
 import time
-from datetime import datetime
+from datetime import datetime, timezone
 
 import requests
 
@@ -379,6 +379,42 @@ def print_result(success, filepath="", filesize=0, url="", stock_code="",
     print("---END---")
 
 
+def record_document_source(
+    save_dir: str,
+    filename: str,
+    *,
+    url: str,
+    published_at: str | None = None,
+    title: str = "",
+    provider: str = "",
+) -> None:
+    """Persist acquisition provenance for the Phase 01 document manifest."""
+    path = os.path.join(save_dir, "document_sources.json")
+    try:
+        with open(path, encoding="utf-8") as handle:
+            payload = json.load(handle)
+    except (OSError, json.JSONDecodeError):
+        payload = {"schema_version": "document-sources.v1", "documents": {}}
+    if not isinstance(payload, dict):
+        payload = {"schema_version": "document-sources.v1", "documents": {}}
+    documents = payload.setdefault("documents", {})
+    if not isinstance(documents, dict):
+        documents = {}
+        payload["documents"] = documents
+    documents[str(filename)] = {
+        "source_url": str(url or "") or None,
+        "published_at": str(published_at or "") or None,
+        "title": str(title or ""),
+        "provider": str(provider or ""),
+        "retrieved_at": datetime.now(timezone.utc).replace(microsecond=0).isoformat(),
+    }
+    temporary = path + ".tmp"
+    with open(temporary, "w", encoding="utf-8") as handle:
+        json.dump(payload, handle, ensure_ascii=False, indent=2)
+        handle.write("\n")
+    os.replace(temporary, path)
+
+
 def download_from_cre8ir(stock_code: str, year: int, save_dir: str) -> str | None:
     """Download HK stock annual report from cre8ir.com IR portal (v2.32).
 
@@ -407,6 +443,7 @@ def download_from_cre8ir(stock_code: str, year: int, save_dir: str) -> str | Non
                     with open(fpath, 'wb') as f: f.write(r2.content)
                     if os.path.getsize(fpath) > 100000:
                         print(f"  已保存: {fpath} ({os.path.getsize(fpath):,} bytes)", file=sys.stderr)
+                        record_document_source(save_dir, fname, url=url, title=title, provider="cre8ir")
                         return fpath
                 except Exception as e: print(f"  cre8ir error: {e}", file=sys.stderr)
     return None
@@ -512,6 +549,10 @@ def _retry_download_with_next_match(
         if success:
             valid, reason = _is_valid_annual_report(fpath)
             if valid:
+                record_document_source(
+                    save_dir, fname, url=result["url"],
+                    published_at=result.get("date"), title=result.get("title", ""), provider="cninfo",
+                )
                 return fpath
             else:
                 print(f"  ⚠️ 重试下载仍无效 ({reason})", file=sys.stderr)
@@ -655,6 +696,10 @@ def download_hk(stock_code: str, year: int, save_dir: str, skip_cninfo: bool = F
             success, _, _ = downloader.download_pdf(search_result["url"], fpath)
             if success and os.path.exists(fpath) and os.path.getsize(fpath) > 100000:
                 print(f"  已保存: {fpath} ({os.path.getsize(fpath):,} bytes)", file=sys.stderr)
+                record_document_source(
+                    save_dir, fname, url=search_result["url"],
+                    published_at=search_result.get("date"), title=search_result.get("title", ""), provider="hkexnews",
+                )
                 return fpath
     except (RuntimeError, ValueError) as exc:
         print(f"  hkexnews API skipped: {exc}", file=sys.stderr)
@@ -680,6 +725,10 @@ def download_hk(stock_code: str, year: int, save_dir: str, skip_cninfo: bool = F
                 download_annual_report(url, fpath, max_retries=2)
                 if os.path.getsize(fpath) > 100000:
                     print(f"  已保存: {fpath} ({os.path.getsize(fpath):,} bytes)", file=sys.stderr)
+                    record_document_source(
+                        save_dir, fname, url=url, published_at=result.get("date"),
+                        title=result.get("title", ""), provider="cninfo",
+                    )
                     return fpath
                 adj = result.get("adjunct_url", "") or result.get("adjunctUrl", "") or url.replace("https://static.cninfo.com.cn/", "")
                 if adj:
@@ -688,6 +737,10 @@ def download_hk(stock_code: str, year: int, save_dir: str, skip_cninfo: bool = F
                     download_annual_report(webchat_url, fpath, max_retries=2)
                     if os.path.getsize(fpath) > 100000:
                         print(f"  已保存: {fpath} ({os.path.getsize(fpath):,} bytes)", file=sys.stderr)
+                        record_document_source(
+                            save_dir, fname, url=webchat_url, published_at=result.get("date"),
+                            title=result.get("title", ""), provider="cninfo_webchat",
+                        )
                         return fpath
         except Exception:
             pass
@@ -746,6 +799,7 @@ def download_hk(stock_code: str, year: int, save_dir: str, skip_cninfo: bool = F
     with open(fpath, 'wb') as f:
         f.write(r.content)
     print(f"  已保存: {fpath} ({len(r.content):,} bytes)", file=sys.stderr)
+    record_document_source(save_dir, fname, url=found_url, provider="hkexnews_legacy")
     return fpath
 
 
@@ -870,8 +924,19 @@ def main(argv=None):
                     fpath = os.path.join(args.save_dir, fname)
                     success, msg, size = download_annual_report(result["url"], fpath, max_retries=args.max_retries)
                     result_path = fpath if success else None
+                    if success:
+                        record_document_source(
+                            args.save_dir, fname, url=result["url"],
+                            published_at=result.get("date"), title=result.get("title", ""), provider="cninfo",
+                        )
                 else:
-                    result_path = None
+                    # V12.19: HK stocks — fallback to hkexnews when cninfo fails
+                    is_hk = (len(args.stock_code) == 5 and args.stock_code.isdigit() and args.stock_code.startswith('0'))
+                    if is_hk and args.report_type in ("年报", "annual"):
+                        print(f"  🔄 cninfo无结果，回退到hkexnews...", file=sys.stderr)
+                        result_path = download_hk(args.stock_code, yr, args.save_dir, skip_cninfo=True)
+                    else:
+                        result_path = None
             else:
                 result_path = None
 
@@ -1019,6 +1084,15 @@ def main(argv=None):
             sys.exit(EXIT_PDF_VALIDATION_FAILURE)
         else:
             sys.exit(EXIT_NETWORK_FAILURE)
+
+    record_document_source(
+        args.save_dir,
+        filename,
+        url=pdf_url,
+        published_at=result.get("date") if args.auto and isinstance(result, dict) else None,
+        title=result.get("title", "") if args.auto and isinstance(result, dict) else "",
+        provider="cninfo" if args.auto else "explicit_url",
+    )
 
     # V8.3: Auto-OCR image PDFs after successful download
     ocr_pdf_if_needed(save_path)

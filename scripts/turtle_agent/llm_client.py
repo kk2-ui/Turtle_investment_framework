@@ -24,6 +24,16 @@ import time
 from dataclasses import dataclass, field
 from typing import Any
 
+try:
+    from scripts.runtime_governance import (
+        BudgetExhausted,
+        CriticalTruncation,
+        classify_error,
+        redact_text,
+    )
+except ModuleNotFoundError:
+    from runtime_governance import BudgetExhausted, CriticalTruncation, classify_error, redact_text
+
 
 @dataclass
 class ToolCall:
@@ -47,14 +57,17 @@ class LlmResponse:
     Args:
         content: 文本内容（无工具调用时）。
         tool_calls: 工具调用列表。
-        finish_reason: 完成原因 (stop/tool_calls/length)。
+        finish_reason: 标准化完成原因。
+        raw_stop_reason: 供应商返回的原始结束原因。
         usage: token 用量 {input, output}。
     """
 
     content: str = ""
     tool_calls: list[ToolCall] = field(default_factory=list)
     finish_reason: str = "stop"
+    raw_stop_reason: str = ""
     usage: dict[str, int] = field(default_factory=dict)
+    provider: str = ""
 
     @property
     def has_tool_calls(self) -> bool:
@@ -64,7 +77,40 @@ class LlmResponse:
     @property
     def is_text_only(self) -> bool:
         """是否为纯文本响应（无工具调用）。"""
-        return self.finish_reason == "stop" and not self.tool_calls
+        return self.finish_reason in {"stop", "end_turn", "max_tokens", "pause_turn", "refusal", "context_window"} and not self.tool_calls
+
+
+def _response_to_cache(response: LlmResponse) -> dict[str, Any]:
+    """Serialize only the normalized response; raw provider payloads stay out."""
+    return {
+        "content": response.content,
+        "tool_calls": [
+            {"id": call.id, "name": call.name, "arguments": call.arguments}
+            for call in response.tool_calls
+        ],
+        "finish_reason": response.finish_reason,
+        "raw_stop_reason": response.raw_stop_reason,
+        "usage": response.usage,
+        "provider": response.provider,
+    }
+
+
+def _response_from_cache(payload: dict[str, Any]) -> LlmResponse:
+    return LlmResponse(
+        content=str(payload.get("content") or ""),
+        tool_calls=[
+            ToolCall(
+                id=str(item.get("id") or ""),
+                name=str(item.get("name") or ""),
+                arguments=item.get("arguments") if isinstance(item.get("arguments"), dict) else {},
+            )
+            for item in (payload.get("tool_calls") or []) if isinstance(item, dict)
+        ],
+        finish_reason=str(payload.get("finish_reason") or "stop"),
+        raw_stop_reason=str(payload.get("raw_stop_reason") or ""),
+        usage=payload.get("usage") if isinstance(payload.get("usage"), dict) else {},
+        provider=str(payload.get("provider") or "cache"),
+    )
 
 
 class LlmClient:
@@ -87,12 +133,16 @@ class LlmClient:
         api_key: str | None = None,
         base_url: str | None = None,
         max_retries: int = 3,
+        timeout_seconds: int = 600,
+        runtime_controller: Any | None = None,
     ) -> None:
         if provider not in ("anthropic", "openai", "deepseek", "deepseek_oa"):
             raise ValueError(f"不支持的 provider: {provider}，可选 anthropic/openai/deepseek/deepseek_oa")
 
         self._provider: str = provider
         self._max_retries: int = max_retries
+        self._timeout_seconds: int = max(1, int(timeout_seconds))
+        self._runtime_controller: Any | None = runtime_controller
 
         if provider in ("anthropic", "deepseek"):
             import anthropic
@@ -104,7 +154,9 @@ class LlmClient:
                     "需要 API key。设置 ANTHROPIC_API_KEY 环境变量或传入 api_key 参数。"
                 )
 
-            client_kwargs: dict[str, Any] = {"api_key": key}
+            client_kwargs: dict[str, Any] = {
+                "api_key": key, "timeout": self._timeout_seconds, "max_retries": 0,
+            }
             if url:
                 client_kwargs["base_url"] = url
             elif provider == "deepseek":
@@ -136,7 +188,9 @@ class LlmClient:
                     "设置 OPENAI_API_KEY 环境变量或传入 api_key 参数。"
                 )
 
-            client_kwargs: dict[str, Any] = {"api_key": key}
+            client_kwargs: dict[str, Any] = {
+                "api_key": key, "timeout": self._timeout_seconds, "max_retries": 0,
+            }
             if url:
                 client_kwargs["base_url"] = url
             self._client: Any = openai.OpenAI(**client_kwargs)
@@ -146,6 +200,11 @@ class LlmClient:
     def model(self) -> str:
         """当前使用的模型 ID。"""
         return self._model
+
+    def set_runtime_task(self, task_type: str) -> None:
+        """Select a governed task profile without changing provider or model."""
+        if self._runtime_controller is not None:
+            self._runtime_controller.set_task(task_type)
 
     def chat_with_retry(
         self,
@@ -164,29 +223,24 @@ class LlmClient:
 
         与 Dayu 的区别：同步（无 asyncio），无 Host 依赖。
         """
-        last_error: Exception | None = None
-
         for attempt in range(max_retries + 1):
-            try:
-                resp = self.chat(messages, tools=tools, temperature=temperature, max_tokens=max_tokens)
+            # Transport retries belong exclusively to ``chat``.  This loop is
+            # semantic replay for a successfully returned but empty payload;
+            # it must not multiply provider retry counts.
+            resp = self.chat(messages, tools=tools, temperature=temperature, max_tokens=max_tokens)
 
-                # 空输出检测 → 触发 replay
-                if replay_on_empty and (not resp.content or len(resp.content.strip()) < 50):
-                    if attempt < max_retries:
-                        messages.append({"role": "assistant", "content": resp.content or ""})
-                        messages.append({
-                            "role": "user",
-                            "content": "上一轮输出无法解析或内容过短，请直接基于已有上下文按要求格式输出完整结果，不要再调用工具。",
-                        })
-                        continue
-
-                return resp
-            except Exception as exc:
-                last_error = exc
+            if replay_on_empty and (not resp.content or len(resp.content.strip()) < 50):
                 if attempt < max_retries:
-                    time.sleep(2 ** attempt)
+                    messages.append({"role": "assistant", "content": resp.content or ""})
+                    messages.append({
+                        "role": "user",
+                        "content": "上一轮输出无法解析或内容过短，请直接基于已有上下文按要求格式输出完整结果，不要再调用工具。",
+                    })
+                    continue
 
-        raise RuntimeError(f"LLM 调用失败（重试{max_retries}次，含replay）: {last_error}")
+            return resp
+
+        raise RuntimeError("LLM 语义 replay 未产生可用响应")
 
     # ------------------------------------------------------------------
     # chat — 主要调用接口
@@ -214,6 +268,115 @@ class LlmClient:
         Raises:
             RuntimeError: API 调用失败（重试后仍失败）。
         """
+        prepared: dict[str, Any] | None = None
+        controller = self._runtime_controller
+        if controller is not None:
+            prepared = controller.prepare_call(
+                model=self._model,
+                messages=messages,
+                tools=tools,
+                temperature=temperature,
+                max_tokens=max_tokens,
+            )
+            max_tokens = int(prepared["max_tokens"])
+            cached = prepared.get("cached")
+            if isinstance(cached, dict):
+                response = _response_from_cache(cached)
+                controller.record_call({
+                    "task_type": prepared["route"]["task_type"],
+                    "model": self._model,
+                    "request_fingerprint": prepared["request_fingerprint"],
+                    "outcome": "success",
+                    "cache_hit": True,
+                    "attempt": 0,
+                    "usage": {"input": 0, "output": 0},
+                    "finish_reason": response.finish_reason,
+                })
+                return response
+
+        policy = controller.retry_policy() if controller is not None else {
+            "max_attempts": self._max_retries + 1,
+            "base_delay_seconds": 1.0,
+            "max_delay_seconds": 8.0,
+            "retryable_categories": ["timeout", "connection", "rate_limit", "server_error"],
+        }
+        max_attempts = max(1, int(policy.get("max_attempts", 1)))
+        retryable = set(policy.get("retryable_categories") or [])
+        last_error: BaseException | None = None
+        for attempt in range(1, max_attempts + 1):
+            started = time.time()
+            try:
+                if controller is not None:
+                    controller.wait_for_rate_limit()
+                response = self._chat_once(messages, tools, temperature, max_tokens)
+                if controller is not None and prepared is not None:
+                    call = {
+                        "task_type": prepared["route"]["task_type"],
+                        "critical": prepared["route"]["critical"],
+                        "model": self._model,
+                        "provider": self._provider,
+                        "request_fingerprint": prepared["request_fingerprint"],
+                        "outcome": "success",
+                        "cache_hit": False,
+                        "attempt": attempt,
+                        "duration_sec": round(time.time() - started, 3),
+                        "usage": response.usage,
+                        "finish_reason": response.finish_reason,
+                    }
+                    controller.record_call(call)
+                    if response.finish_reason in {"max_tokens", "context_window"} and prepared["route"]["critical"]:
+                        controller.manifest.add_warning(
+                            f"critical_truncation_rejected:{prepared['route']['task_type']}:{response.finish_reason}"
+                        )
+                        raise CriticalTruncation(
+                            f"关键任务输出被截断 ({response.finish_reason})；禁止把不完整响应当作成功"
+                        )
+                    # Replaying tool calls can repeat writes or other side
+                    # effects.  Only normalized text-only responses are cached.
+                    if (
+                        not response.tool_calls
+                        and response.finish_reason not in {"max_tokens", "context_window", "refusal"}
+                    ):
+                        controller.cache_response(prepared, _response_to_cache(response))
+                return response
+            except (BudgetExhausted, CriticalTruncation):
+                raise
+            except Exception as exc:
+                last_error = exc
+                classified = classify_error(exc)
+                if controller is not None and prepared is not None:
+                    controller.record_call({
+                        "task_type": prepared["route"]["task_type"],
+                        "critical": prepared["route"]["critical"],
+                        "model": self._model,
+                        "provider": self._provider,
+                        "request_fingerprint": prepared["request_fingerprint"],
+                        "outcome": "error",
+                        "cache_hit": False,
+                        "attempt": attempt,
+                        "duration_sec": round(time.time() - started, 3),
+                        "error_category": classified["category"],
+                        "error": classified["message"],
+                    })
+                if classified["category"] not in retryable or attempt >= max_attempts:
+                    break
+                delay = min(
+                    float(policy.get("max_delay_seconds", 8.0)),
+                    float(policy.get("base_delay_seconds", 1.0)) * (2 ** (attempt - 1)),
+                )
+                time.sleep(max(0.0, delay))
+        detail = classify_error(last_error or RuntimeError("unknown LLM error"))
+        raise RuntimeError(
+            f"LLM 调用失败（{detail['category']}，尝试{max_attempts}次）: {redact_text(detail['message'])}"
+        ) from last_error
+
+    def _chat_once(
+        self,
+        messages: list[dict[str, Any]],
+        tools: list[dict[str, Any]] | None,
+        temperature: float,
+        max_tokens: int,
+    ) -> LlmResponse:
         if self._provider == "deepseek_oa":
             return self._chat_deepseek_oa(messages, tools, temperature, max_tokens)
         if self._provider in ("anthropic", "deepseek"):
@@ -259,20 +422,22 @@ class LlmClient:
         }
         if system_text:
             kwargs["system"] = system_text
+        # Anthropic 服务端工具不能注入 DeepSeek 的 Anthropic 兼容代理。
+        if self._provider == "anthropic":
+            if anthropic_tools is None:
+                anthropic_tools = []
+            anthropic_tools.append({"type": "web_search_20260209", "name": "web_search"})
+            anthropic_tools.append({"type": "web_fetch_20260209", "name": "web_fetch"})
         if anthropic_tools:
             kwargs["tools"] = anthropic_tools
 
-        last_error: Exception | None = None
-        for attempt in range(self._max_retries + 1):
-            try:
-                resp = self._client.messages.create(**kwargs)
-                return self._parse_anthropic_response(resp)
-            except Exception as exc:
-                last_error = exc
-                if attempt < self._max_retries:
-                    time.sleep(2 ** attempt)
-
-        raise RuntimeError(f"Anthropic API 调用失败（重试{self._max_retries}次）: {last_error}")
+        use_stream = max_tokens > 16000
+        if use_stream:
+            with self._client.messages.stream(**kwargs) as stream:
+                resp = stream.get_final_message()
+        else:
+            resp = self._client.messages.create(**kwargs)
+        return self._parse_anthropic_response(resp)
 
     def _chat_deepseek_oa(
         self,
@@ -305,24 +470,16 @@ class LlmClient:
             "Content-Type": "application/json",
         }
 
-        last_error: Exception | None = None
-        for attempt in range(self._max_retries + 1):
-            try:
-                with httpx.Client(timeout=600.0) as client:
-                    resp = client.post(self._base_url, json=payload, headers=headers)
-                    if resp.status_code >= 400:
-                        detail = resp.text[:1000]
-                        raise RuntimeError(f"HTTP {resp.status_code}: {detail}")
-                    data = resp.json()
-                return self._parse_openai_response_raw(data)
-            except RuntimeError:
-                raise
-            except Exception as exc:
-                last_error = exc
-                if attempt < self._max_retries:
-                    time.sleep(2 ** attempt)
-
-        raise RuntimeError(f"DeepSeek API 调用失败（重试{self._max_retries}次）: {last_error}")
+        with httpx.Client(timeout=float(self._timeout_seconds)) as client:
+            resp = client.post(self._base_url, json=payload, headers=headers)
+            if resp.status_code >= 400:
+                # Response bodies can contain echoed request details.  Preserve
+                # the status for classification, not the untrusted raw body.
+                error = RuntimeError(f"HTTP {resp.status_code}")
+                error.status_code = resp.status_code  # type: ignore[attr-defined]
+                raise error
+            data = resp.json()
+        return self._parse_openai_response_raw(data)
 
     def _chat_openai(
         self,
@@ -341,17 +498,9 @@ class LlmClient:
         if tools:
             kwargs["tools"] = tools
 
-        last_error: Exception | None = None
-        for attempt in range(self._max_retries + 1):
-            try:
-                resp = self._client.chat.completions.create(**kwargs)
-                return self._parse_openai_response(resp)
-            except Exception as exc:
-                last_error = exc
-                if attempt < self._max_retries:
-                    time.sleep(2 ** attempt)
-
-        raise RuntimeError(f"OpenAI API 调用失败（重试{self._max_retries}次）: {last_error}")
+        kwargs["timeout"] = self._timeout_seconds
+        resp = self._client.chat.completions.create(**kwargs)
+        return self._parse_openai_response(resp)
 
     # ------------------------------------------------------------------
     # 响应解析
@@ -363,6 +512,7 @@ class LlmClient:
         content_text = ""
         tool_calls: list[ToolCall] = []
         finish_reason = "stop"
+        raw_stop_reason = getattr(resp, "stop_reason", "") or ""
         usage: dict[str, int] = {}
 
         for block in resp.content:
@@ -377,8 +527,7 @@ class LlmClient:
                     )
                 )
 
-        if resp.stop_reason == "tool_use":
-            finish_reason = "tool_calls"
+        finish_reason = _normalize_finish_reason(raw_stop_reason)
 
         if hasattr(resp, "usage"):
             usage = {
@@ -390,7 +539,9 @@ class LlmClient:
             content=content_text,
             tool_calls=tool_calls,
             finish_reason=finish_reason,
+            raw_stop_reason=raw_stop_reason,
             usage=usage,
+            provider="anthropic",
         )
 
     @staticmethod
@@ -398,7 +549,8 @@ class LlmClient:
         """解析 OpenAI 兼容 API 的原始 JSON 响应。"""
         choice = data["choices"][0]
         message = choice.get("message", {})
-        finish_reason = choice.get("finish_reason", "stop") or "stop"
+        raw_finish_reason = choice.get("finish_reason", "stop") or "stop"
+        finish_reason = _normalize_finish_reason(raw_finish_reason)
 
         content_text = message.get("content") or ""
         tool_calls: list[ToolCall] = []
@@ -423,13 +575,17 @@ class LlmClient:
             usage = {
                 "input": u.get("prompt_tokens", 0),
                 "output": u.get("completion_tokens", 0),
+                "cache_hit_input": u.get("prompt_cache_hit_tokens", 0),
+                "cache_miss_input": u.get("prompt_cache_miss_tokens", 0),
             }
 
         return LlmResponse(
             content=content_text,
             tool_calls=tool_calls,
             finish_reason=finish_reason,
+            raw_stop_reason=raw_finish_reason,
             usage=usage,
+            provider="openai_compatible",
         )
 
     @staticmethod
@@ -437,7 +593,8 @@ class LlmClient:
         """解析 OpenAI 响应为 LlmResponse。"""
         choice = resp.choices[0]
         message = choice.message
-        finish_reason = choice.finish_reason or "stop"
+        raw_finish_reason = choice.finish_reason or "stop"
+        finish_reason = _normalize_finish_reason(raw_finish_reason)
 
         tool_calls: list[ToolCall] = []
         content_text = message.content or ""
@@ -469,8 +626,29 @@ class LlmClient:
             content=content_text,
             tool_calls=tool_calls,
             finish_reason=finish_reason,
+            raw_stop_reason=raw_finish_reason,
             usage=usage,
+            provider="openai",
         )
+
+
+def _normalize_finish_reason(raw_reason: str) -> str:
+    raw = (raw_reason or "").strip().lower()
+    mapping = {
+        "tool_use": "tool_calls",
+        "tool_calls": "tool_calls",
+        "end_turn": "end_turn",
+        "stop": "stop",
+        "stop_sequence": "stop",
+        "max_tokens": "max_tokens",
+        "length": "max_tokens",
+        "pause_turn": "pause_turn",
+        "refusal": "refusal",
+        "model_context_window_exceeded": "context_window",
+        "content_filter": "refusal",
+    }
+    return mapping.get(raw, raw or "stop")
+
 
 
 # ------------------------------------------------------------------

@@ -1,7 +1,17 @@
 #!/usr/bin/env python3
 """migrate_to_db.py — 数据迁移 v3.1（候选→门禁→策展→最终事实）
 
-新流程:
+⚠️ V12.12: 管线已废弃。annual_financials 现在由直接导入脚本维护：
+  - scripts/rebuild_hk_data.py       — Tushare HK CSV → annual_financials
+  - scripts/import_csmar_hk_full.py   — CSMAR HK xlsx → annual_financials
+  - scripts/import_csmar.py           — CSMAR A股 xlsx → annual_financials
+  - scripts/import_hk_shares.py       — Tushare parquet → EPS/DPS/股本
+  这些脚本直接 UPSERT annual_financials，绕过 observations/curation 管线。
+  financial_observations / field_evidence / curation_decisions 表已清空。
+
+仅保留 auto_curate() 的排序逻辑（年报优先）供未来增量导入使用。
+
+旧流程:
   1. 创建 import batch
   2. JSON → financial_observations（候选值）
   3. 运行 db_gate 验证 → quality_findings
@@ -34,7 +44,7 @@ def safe_float(v, default=None):
 
 
 def uid(prefix="ob"):
-    return f"{prefix}_{uuid.uuid4().hex[:12]}"
+    return f"{prefix}_{uuid.uuid4().hex[:16]}"
 
 
 def file_hash(path: str) -> str:
@@ -49,12 +59,17 @@ def file_hash(path: str) -> str:
 
 def create_batch(conn, ts_code: str, source_type: str, source_path: str = "",
                  fiscal_year: int = None) -> str:
-    batch_id = f"batch_{uuid.uuid4().hex[:8]}"
-    conn.execute("""INSERT INTO raw_import_batches (batch_id, ts_code, fiscal_year, source_type, source_path, source_hash, status)
-        VALUES (?,?,?,?,?,?,?)""",
-        (batch_id, ts_code, fiscal_year, source_type, source_path,
-         file_hash(source_path) if source_path else "", "imported"))
-    return batch_id
+    for _ in range(5):  # retry on collision
+        batch_id = f"batch_{uuid.uuid4().hex[:16]}"
+        try:
+            conn.execute("""INSERT INTO raw_import_batches (batch_id, ts_code, fiscal_year, source_type, source_path, source_hash, status)
+                VALUES (?,?,?,?,?,?,?)""",
+                (batch_id, ts_code, fiscal_year, source_type, source_path,
+                 file_hash(source_path) if source_path else "", "imported"))
+            return batch_id
+        except sqlite3.IntegrityError:
+            continue  # UUID collision, retry
+    raise RuntimeError("Failed to create unique batch_id after 5 retries")
 
 
 # ── observation creation ──
@@ -81,7 +96,7 @@ def insert_observation(conn, batch_id: str, ts_code: str, fiscal_year: int,
                        confidence: float = 0.5) -> str:
     obs_id = uid("ob")
     stmt = FIELD_TO_STATEMENT.get(field_name, "unknown")
-    conn.execute("""INSERT INTO financial_observations
+    conn.execute("""INSERT OR IGNORE INTO financial_observations
         (observation_id, batch_id, ts_code, fiscal_year, statement_type,
          field_name, raw_value, normalized_value, unit, source_type, source_priority, confidence, status)
         VALUES (?,?,?,?,?,?,?,?,'RMB_million',?,?,?,'candidate')""",
@@ -162,7 +177,10 @@ def auto_curate(conn, ts_code: str, fiscal_year: int) -> int:
             AND qf.severity='BLOCK' AND qf.fix_status='open'
             AND qf.observation_id IS NOT NULL
         )
-        ORDER BY fo.field_name, fo.source_priority, fo.confidence DESC
+        ORDER BY fo.field_name, fo.source_priority,
+                 -- Prefer annual (month=12) over interim (month=6/9/3) within same priority
+                 CASE WHEN CAST(SUBSTR(fo.end_date,5,2) AS INTEGER) = 12 THEN 0 ELSE 1 END,
+                 fo.confidence DESC
     """, (ts_code, fiscal_year)).fetchall()
 
     # If this year has an open row-level BLOCK, reject all observations
@@ -227,12 +245,17 @@ def auto_curate(conn, ts_code: str, fiscal_year: int) -> int:
     if not af_row.get("revenue") and not af_row.get("n_income_attr_p"):
         return 0  # insufficient data
 
-    # Upsert to annual_financials
+    # Upsert to annual_financials — UPDATE only changed columns, preserve existing data
     cols = [k for k in af_row.keys()]
     ph = ", ".join("?" for _ in cols)
     vals = [af_row[c] for c in cols]
+    set_clause = ", ".join(f"{c}=excluded.{c}" for c in cols if c not in ("ts_code", "fiscal_year", "report_type"))
     try:
-        conn.execute(f"INSERT OR REPLACE INTO annual_financials ({', '.join(cols)}) VALUES ({ph})", vals)
+        conn.execute(
+            f"INSERT INTO annual_financials ({', '.join(cols)}) VALUES ({ph}) "
+            f"ON CONFLICT(ts_code, fiscal_year, report_type) DO UPDATE SET {set_clause}",
+            vals,
+        )
     except sqlite3.IntegrityError as e:
         # Log but don't block — quality issues are in quality_findings
         conn.execute("""INSERT INTO data_quality_log (ts_code, check_time, layer, verdict, blocks, warns, missing_critical, missing_asset)

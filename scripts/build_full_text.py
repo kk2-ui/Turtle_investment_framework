@@ -12,9 +12,11 @@ Usage:
     python3 scripts/build_full_text.py --code 02669.HK --years 5 --max-chars 80000
 """
 
-import argparse, json, os, re, sys
+import argparse, json, os, re, sqlite3, sys
 from datetime import datetime
 from statistics import mean, stdev
+
+DB_PATH = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "stock_analysis.db")
 
 OUTPUT_BASE = os.path.join(os.path.dirname(os.path.dirname(__file__)), "output")
 
@@ -135,7 +137,7 @@ def smart_extract(text: str, max_chars: int = 12000) -> str:
     # Sort by score descending
     valuable.sort(key=lambda x: -x[0])
 
-    # Build output up to max_chars
+    # Build output up to max_chars — keep original order
     result_parts = []
     total = 0
     kept_original_order = [(i, s, p) for i, (s, p) in enumerate(scored) if s >= 1.5]
@@ -146,6 +148,12 @@ def smart_extract(text: str, max_chars: int = 12000) -> str:
             break
         result_parts.append(para)
         total += len(para) + 2
+
+    # 保留原文最后一段（审计报告签名/关键结论通常在末尾，分数低但信息密度高）
+    if paragraphs and paragraphs[-1] not in result_parts:
+        last = paragraphs[-1]
+        if len(last) >= 20:
+            result_parts.append(last)
 
     return "\n\n".join(result_parts)
 
@@ -207,6 +215,48 @@ def detect_cyclicality(stock_dir: str, ts_code: str) -> dict:
     return result
 
 
+def load_db_financials(ts_code: str) -> dict:
+    """从 stock_analysis.db 加载定量财务数据，按年份索引。
+
+    定量数据一律走 DB，不从 PDF 提取。返回格式: {year: {revenue, np, ocf, ...}}
+    """
+    if not os.path.exists(DB_PATH):
+        return {}
+    conn = sqlite3.connect(DB_PATH)
+    conn.row_factory = sqlite3.Row
+    rows = conn.execute("""
+        SELECT fiscal_year, revenue, n_income_attr_p, n_cashflow_act,
+               total_assets, total_liab, total_hldr_eqy_exc_min_int,
+               gross_margin, d_a, dividends_paid, eps, dps, goodwill
+        FROM annual_financials
+        WHERE ts_code=? AND report_type='annual'
+        ORDER BY fiscal_year
+    """, (ts_code,)).fetchall()
+    conn.close()
+    return {str(r["fiscal_year"]): dict(r) for r in rows}
+
+
+def _build_db_financial_header(db_fin: dict, year: str) -> str:
+    """用 DB 数据构建年度财务快照头，嵌入 PDF 文本前作为定量上下文。"""
+    row = db_fin.get(year, {})
+    if not row:
+        return ""
+    rev = row.get("revenue")
+    np_val = row.get("n_income_attr_p")
+    ocf = row.get("n_cashflow_act")
+    assets = row.get("total_assets")
+    equity = row.get("total_hldr_eqy_exc_min_int")
+    dps = row.get("dps")
+    parts = [f"FY{year}"]
+    if rev: parts.append(f"营收={rev:,.0f}M")
+    if np_val: parts.append(f"归母净利={np_val:,.0f}M")
+    if ocf: parts.append(f"经营CF={ocf:,.0f}M")
+    if assets: parts.append(f"总资产={assets:,.0f}M")
+    if equity: parts.append(f"归母权益={equity:,.0f}M")
+    if dps is not None and dps > 0: parts.append(f"DPS={dps:.2f}")
+    return "[" + " | ".join(parts) + " — 来源: stock_analysis.db]\n"
+
+
 def build_full_text(stock_dir: str, ts_code: str,
                     num_years: int = 5, max_chars_per_section: int = 12000) -> dict:
     """Assemble multi-year pdf_sections with qualitative-focused extraction."""
@@ -219,6 +269,9 @@ def build_full_text(stock_dir: str, ts_code: str,
 
     section_files = section_files[-num_years:]
     cyclical_info = detect_cyclicality(stock_dir, ts_code)
+
+    # 定量数据一律从 DB 取，不从 PDF 提取
+    db_fin = load_db_financials(ts_code)
 
     years_data = {}
     total_chars = 0
@@ -233,20 +286,16 @@ def build_full_text(stock_dir: str, ts_code: str,
 
         year_sections = {}
         year_chars = 0
-        # Add one-line financial snapshot for context
-        fin = data.get("financials", {})
-        fin_header = ""
-        rev = fin.get("营业收入")
-        np_val = fin.get("归母净利润")
-        if rev or np_val:
-            fin_header = f"[FY{year}: 营收={rev or '?'}M, 净利={np_val or '?'}M] "
+        # 用 DB 数据构建财务快照头（PDF 提取的 financials 仅作 fallback）
+        fin_header = _build_db_financial_header(db_fin, year)
 
         for key, label in SECTION_LABELS.items():
             content = data.get(key, "")
             if not content or not isinstance(content, str) or len(content.strip()) < 100:
                 continue
 
-            extracted = smart_extract(content, max_chars=max_chars_per_section)
+            # 全量保留原文（1M 上下文足够容纳 5年×90K≈450K chars，无需压缩）
+            extracted = content
             char_count = len(extracted)
 
             section_label = label
@@ -274,8 +323,11 @@ def build_full_text(stock_dir: str, ts_code: str,
             "years_covered": sorted(years_data.keys()),
             "total_chars": total_chars,
             "extraction_method": "scored_qualitative_filtering",
+            "quantitative_source": "stock_analysis.db (annual_financials)",
         },
         "cyclical_info": cyclical_info,
+        "_db_financials": {yr: {k: v for k, v in row.items() if k != "fiscal_year"}
+                           for yr, row in db_fin.items()},
         "years": years_data,
     }
 

@@ -8,10 +8,12 @@ import glob
 from typing import Optional
 
 
+PROJECT_ROOT = os.path.normpath(os.path.join(os.path.dirname(__file__), ".."))
+
+
 def _load_env_file() -> None:
     """Load .env file from project root if it exists."""
-    env_path = os.path.join(os.path.dirname(__file__), "..", ".env")
-    env_path = os.path.normpath(env_path)
+    env_path = os.path.join(PROJECT_ROOT, ".env")
     if not os.path.isfile(env_path):
         return
     with open(env_path, encoding="utf-8") as f:
@@ -25,6 +27,128 @@ def _load_env_file() -> None:
                 value = value.strip().strip("'\"")
                 if key and key not in os.environ:
                     os.environ[key] = value
+
+
+def get_project_root() -> str:
+    """Return the Turtle framework project root."""
+    return PROJECT_ROOT
+
+
+def _iter_data_roots() -> list[str]:
+    """Return candidate base directories for external datasets."""
+    _load_env_file()
+    candidates = []
+    data_root = os.environ.get("TURTLE_DATA_ROOT", "").strip()
+    if data_root:
+        candidates.append(os.path.abspath(os.path.expanduser(data_root)))
+    candidates.append(PROJECT_ROOT)
+    candidates.append(os.path.dirname(PROJECT_ROOT))
+
+    seen = set()
+    roots = []
+    for candidate in candidates:
+        norm = os.path.normpath(candidate)
+        if norm in seen:
+            continue
+        seen.add(norm)
+        roots.append(norm)
+    return roots
+
+
+def _resolve_candidate_path(
+    env_var: str,
+    relative_candidates: list[str],
+    description: str,
+    required: bool = True,
+) -> Optional[str]:
+    """Resolve a configurable file or directory path with repo-local fallbacks."""
+    _load_env_file()
+
+    env_value = os.environ.get(env_var, "").strip()
+    candidates = []
+    if env_value:
+        candidates.append(os.path.abspath(os.path.expanduser(env_value)))
+
+    for base in _iter_data_roots():
+        for rel in relative_candidates:
+            candidates.append(os.path.normpath(os.path.join(base, rel)))
+
+    seen = set()
+    unique_candidates = []
+    for candidate in candidates:
+        if candidate in seen:
+            continue
+        seen.add(candidate)
+        unique_candidates.append(candidate)
+        if os.path.exists(candidate):
+            return candidate
+
+    if not required:
+        return None
+
+    joined = "\n".join(f"  - {path}" for path in unique_candidates)
+    raise RuntimeError(
+        f"{description} not found.\n"
+        f"Set {env_var} explicitly or place the dataset under a standard location.\n"
+        f"Checked:\n{joined}"
+    )
+
+
+def get_output_dir() -> str:
+    """Return the analysis output directory."""
+    _load_env_file()
+    raw = os.environ.get("TURTLE_OUTPUT_DIR", "").strip()
+    if raw:
+        return os.path.abspath(os.path.expanduser(raw))
+    return os.path.join(PROJECT_ROOT, "output")
+
+
+def get_base_rate_library_dir() -> str:
+    """Return the append-only cross-company base-rate case library."""
+    _load_env_file()
+    raw = os.environ.get("TURTLE_BASE_RATE_LIBRARY_DIR", "").strip()
+    if raw:
+        return os.path.abspath(os.path.expanduser(raw))
+    return os.path.join(get_output_dir(), ".base_rate_library")
+
+
+def get_db_path() -> str:
+    """Return the SQLite database path."""
+    _load_env_file()
+    raw = os.environ.get("TURTLE_DB_PATH", "").strip()
+    if raw:
+        return os.path.abspath(os.path.expanduser(raw))
+    return os.path.join(PROJECT_ROOT, "stock_analysis.db")
+
+
+def get_csmar_a_xlsx(required: bool = True) -> Optional[str]:
+    """Return the CSMAR A-share annual panel workbook path."""
+    return _resolve_candidate_path(
+        "TURTLE_CSMAR_A_PATH",
+        ["cn_financials_panel_raw/上市公司-财务报表年度面板数据.xlsx"],
+        "CSMAR A-share workbook",
+        required=required,
+    )
+
+
+def get_hk_new_financials_dir(required: bool = True) -> Optional[str]:
+    """Return the HK CSMAR workbook directory."""
+    return _resolve_candidate_path(
+        "TURTLE_CSMAR_HK_DIR",
+        ["hk_new_financials"],
+        "CSMAR HK workbook directory",
+        required=required,
+    )
+
+
+def get_hk_financials_dir(required: bool = True) -> Optional[str]:
+    """Return the legacy HK financials directory."""
+    return _resolve_candidate_path(
+        "TURTLE_HK_FINANCIALS_DIR",
+        ["hk_financials"],
+        "Legacy HK financials directory",
+        required=required,
+    )
 
 
 def get_token() -> str:

@@ -1,0 +1,156 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://turtle.local/schemas/decisive_question_plan.schema.json",
+  "title": "Turtle Decisive Question Plan",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "report_id", "input_sources", "input_fingerprint", "generated_at", "preliminary_archetype", "selection_policy", "base_rate_context", "selected_questions", "rejected_candidates", "validation"],
+  "properties": {
+    "schema_version": {"const": "decisive-question-plan.v1"},
+    "report_id": {"type": "string", "minLength": 1},
+    "input_sources": {"type": "object", "minProperties": 1, "additionalProperties": {"type": "string", "pattern": "^[0-9a-f]{64}$"}},
+    "input_fingerprint": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "generated_at": {"type": "string"},
+    "preliminary_archetype": {"type": "object"},
+    "selection_policy": {
+      "type": "object",
+      "required": ["max_selected", "minimum_priority", "weights", "ranking_is_not_a_quality_substitute"],
+      "properties": {
+        "max_selected": {"const": 3},
+        "minimum_priority": {"type": "number", "minimum": 0, "maximum": 1},
+        "weights": {"type": "object"},
+        "ranking_is_not_a_quality_substitute": {"const": true}
+      }
+    },
+    "base_rate_context": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "context_fingerprint", "library_fingerprint", "warnings"],
+      "properties": {
+        "path": {"const": "base_rate_context.json"},
+        "context_fingerprint": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "library_fingerprint": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "warnings": {"type": "array", "items": {"type": "string"}}
+      }
+    },
+    "selected_questions": {"type": "array", "minItems": 1, "maxItems": 3, "items": {"$ref": "#/$defs/question"}},
+    "rejected_candidates": {"type": "array", "items": {"$ref": "#/$defs/rejected"}},
+    "validation": {"$ref": "#/$defs/validation"}
+  },
+  "$defs": {
+    "question": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["question_id", "topic_family", "mechanism_key", "question", "candidate_origins", "score", "base_rate_refs", "base_rate_sample_size", "competing_explanations", "discriminating_signals", "decision_link", "research_tasks", "stopping_rule", "confidence"],
+      "properties": {
+        "question_id": {"type": "string", "pattern": "^DQ:"},
+        "topic_family": {"type": "string", "minLength": 1},
+        "mechanism_key": {"type": "string", "minLength": 1},
+        "question": {"type": "string", "minLength": 15},
+        "candidate_origins": {"type": "array", "minItems": 1, "items": {"type": "string"}},
+        "score": {"$ref": "#/$defs/score"},
+        "base_rate_refs": {"type": "array", "uniqueItems": true, "items": {"type": "string", "pattern": "^CASE:"}},
+        "base_rate_sample_size": {"type": "integer", "minimum": 0},
+        "competing_explanations": {"type": "array", "minItems": 2, "items": {"$ref": "#/$defs/explanation"}},
+        "discriminating_signals": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/signal"}},
+        "decision_link": {"$ref": "#/$defs/decisionLink"},
+        "research_tasks": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/task"}},
+        "stopping_rule": {"type": "object"},
+        "confidence": {"type": "object"}
+      }
+    },
+    "score": {
+      "type": "object",
+      "required": ["decision_sensitivity", "evidence_discriminability", "observability", "time_value", "base_rate_relevance", "redundancy_penalty", "priority", "basis"],
+      "properties": {
+        "decision_sensitivity": {"type": "number", "minimum": 0, "maximum": 1},
+        "evidence_discriminability": {"type": "number", "minimum": 0, "maximum": 1},
+        "observability": {"type": "number", "minimum": 0, "maximum": 1},
+        "time_value": {"type": "number", "minimum": 0, "maximum": 1},
+        "base_rate_relevance": {"type": "number", "minimum": 0, "maximum": 1},
+        "redundancy_penalty": {"type": "number", "minimum": 0, "maximum": 1},
+        "priority": {"type": "number", "minimum": 0, "maximum": 1},
+        "basis": {"type": "array", "minItems": 1, "items": {"type": "string"}}
+      }
+    },
+    "explanation": {
+      "type": "object",
+      "required": ["explanation_id", "label", "mechanism", "current_support_observation_ids", "current_contradiction_observation_ids"],
+      "properties": {
+        "explanation_id": {"type": "string", "minLength": 1},
+        "label": {"type": "string", "minLength": 1},
+        "mechanism": {"type": "string", "minLength": 1},
+        "current_support_observation_ids": {"type": "array", "items": {"type": "string", "pattern": "^OBS:"}},
+        "current_contradiction_observation_ids": {"type": "array", "items": {"type": "string", "pattern": "^OBS:"}}
+      }
+    },
+    "signal": {
+      "type": "object",
+      "required": ["signal_id", "observable", "direction_if_explanation_a", "direction_if_explanation_b", "source_type", "availability", "observation_window", "current_observation_ids"],
+      "properties": {
+        "signal_id": {"type": "string", "minLength": 1},
+        "observable": {"type": "string", "minLength": 1},
+        "direction_if_explanation_a": {"type": "string", "minLength": 1},
+        "direction_if_explanation_b": {"type": "string", "minLength": 1},
+        "source_type": {"type": "string", "minLength": 1},
+        "availability": {"type": "string", "minLength": 1},
+        "observation_window": {"type": "string", "minLength": 1},
+        "current_observation_ids": {"type": "array", "items": {"type": "string", "pattern": "^OBS:"}}
+      }
+    },
+    "decisionLink": {
+      "type": "object",
+      "required": ["affected_metric_ids", "sensitivity_basis", "if_explanation_a", "if_explanation_b", "flip_condition"],
+      "properties": {
+        "affected_metric_ids": {"type": "array", "minItems": 1, "items": {"type": "string"}},
+        "sensitivity_basis": {"type": "object"},
+        "if_explanation_a": {"$ref": "#/$defs/action"},
+        "if_explanation_b": {"$ref": "#/$defs/action"},
+        "flip_condition": {"type": "string", "minLength": 1}
+      }
+    },
+    "action": {
+      "type": "object",
+      "required": ["valuation_direction", "position_direction", "action"],
+      "properties": {
+        "valuation_direction": {"type": "string", "minLength": 1},
+        "position_direction": {"type": "string", "minLength": 1},
+        "action": {"type": "string", "minLength": 1}
+      }
+    },
+    "task": {
+      "type": "object",
+      "required": ["task_id", "route", "research_question", "required_tools", "annual_report_sections", "required_source_types", "stopping_rule"],
+      "properties": {
+        "task_id": {"type": "string", "minLength": 1},
+        "route": {"type": "string", "minLength": 1},
+        "research_question": {"type": "string", "minLength": 1},
+        "required_tools": {"type": "array", "minItems": 1, "items": {"type": "string"}},
+        "annual_report_sections": {"type": "array", "items": {"type": "string"}},
+        "required_source_types": {"type": "array", "minItems": 1, "items": {"type": "string"}},
+        "stopping_rule": {"type": "object"}
+      }
+    },
+    "rejected": {
+      "type": "object",
+      "required": ["question_id", "topic_family", "question", "priority", "rejection_reason"],
+      "properties": {
+        "question_id": {"type": "string", "pattern": "^DQ:"},
+        "topic_family": {"type": "string"},
+        "question": {"type": "string"},
+        "priority": {"type": "number"},
+        "rejection_reason": {"type": "string", "minLength": 1}
+      }
+    },
+    "validation": {
+      "type": "object",
+      "required": ["state", "invalid_findings", "incomplete_findings", "warnings"],
+      "properties": {
+        "state": {"enum": ["INVALID", "INCOMPLETE", "REVIEWABLE"]},
+        "invalid_findings": {"type": "array", "items": {"type": "string"}},
+        "incomplete_findings": {"type": "array", "items": {"type": "string"}},
+        "warnings": {"type": "array", "items": {"type": "string"}}
+      }
+    }
+  }
+}

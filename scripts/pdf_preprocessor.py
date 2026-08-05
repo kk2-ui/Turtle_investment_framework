@@ -1,4 +1,19 @@
 #!/usr/bin/env python3
+from __future__ import annotations
+
+import sys as _sys
+# 抑制 macOS CoreGraphics PDF 渲染警告（无害）
+import warnings as _warnings
+_warnings.filterwarnings("ignore")
+_original_stderr = _sys.stderr
+class _FilteredStderr:
+    def write(self, s):
+        if "Cannot set" not in s and "CoreGraphics" not in s:
+            _original_stderr.write(s)
+    def flush(self):
+        _original_stderr.flush()
+_sys.stderr = _FilteredStderr()
+
 """Turtle Investment Framework - PDF Preprocessor (Phase 2A).
 
 Scans annual report PDFs for 9 target sections using keyword matching
@@ -21,8 +36,6 @@ Usage:
     python3 scripts/pdf_preprocessor.py --pdf report.pdf --output output/sections.json
     python3 scripts/pdf_preprocessor.py --pdf report.pdf --verbose --dry-run
 """
-
-from __future__ import annotations
 
 import argparse
 import json
@@ -160,6 +173,10 @@ SECTION_KEYWORDS: Dict[str, List[str]] = {
         "每股股息",
     ],
     "STMT": [
+        # Independent Auditor's Report (capture before financial statements)
+        "INDEPENDENT AUDITOR'S REPORT",
+        "獨立核數師報告",
+        "独立核数师报告",
         # HK consolidated income statement
         "综合损益表",
         "综合收益及其他全面收益表",
@@ -424,7 +441,7 @@ SECTION_ZONE_PREFERENCES: Dict[str, Dict[str, List[str]]] = {
     "P13": {"prefer": ["SUPPLEMENT_ZONE", "NOTES_ZONE"], "avoid": ["POLICY_ZONE"]},
     "MDA":  {"prefer": ["MDA_ZONE"], "avoid": ["NOTES_ZONE", "FIN_ZONE", "POLICY_ZONE", "SUPPLEMENT_ZONE"]},
     "SUB":  {"prefer": ["NOTES_ZONE"], "avoid": ["POLICY_ZONE"]},
-    "STMT": {"prefer": ["FIN_ZONE"], "avoid": ["NOTES_ZONE", "POLICY_ZONE", "SUPPLEMENT_ZONE", "GOVERNANCE_ZONE", "AUDIT_ZONE", "MDA_ZONE"]},
+    "STMT": {"prefer": ["FIN_ZONE", "AUDIT_ZONE"], "avoid": ["NOTES_ZONE", "POLICY_ZONE", "SUPPLEMENT_ZONE", "GOVERNANCE_ZONE", "MDA_ZONE"]},
     "DAN":  {"prefer": ["SUPPLEMENT_ZONE", "NOTES_ZONE"], "avoid": ["POLICY_ZONE", "MDA_ZONE"]},
     "SEG":  {"prefer": ["MDA_ZONE", "NOTES_ZONE"], "avoid": ["POLICY_ZONE", "GOVERNANCE_ZONE"]},
 }

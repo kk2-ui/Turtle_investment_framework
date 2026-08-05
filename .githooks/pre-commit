@@ -1,0 +1,2 @@
+#!/bin/sh
+exec .venv/bin/python scripts/project_guard.py preflight --allow-dirty

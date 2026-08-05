@@ -1,0 +1,28 @@
+{
+  "schema_version": "insight-research-brief.v1",
+  "primary_archetype": "operating_transition",
+  "secondary_archetypes": [],
+  "decisive_question": "当前异常是周期、结构还是会计扰动，哪项可观察事实能最快区分并改变估值？",
+  "case_pattern": "general operating transition",
+  "required_moves": [
+    "锁定单一异常",
+    "提出最强竞争解释",
+    "定义区分性观察和动作更新"
+  ],
+  "forbidden_shortcuts": [
+    "罗列风险代替判断",
+    "无依据的精确概率"
+  ],
+  "classification_scores": {
+    "asset_catalyst": 0,
+    "distressed_survival": 0,
+    "franchise_customer_lockin": 0,
+    "technology_transition": 0,
+    "mature_cash_return": 0,
+    "compounder_reinvestment": 0,
+    "regulated_financial": 0,
+    "operating_transition": 0
+  },
+  "classification_signals": {},
+  "research_instruction": "Use the routed question as a hypothesis to refine from company evidence; do not mechanically copy it."
+}

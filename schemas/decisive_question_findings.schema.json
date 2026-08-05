@@ -1,0 +1,66 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://turtle.local/schemas/decisive_question_findings.schema.json",
+  "title": "Turtle Decisive Question Findings",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "report_id", "plan_input_fingerprint", "generated_at", "change_reason", "findings"],
+  "properties": {
+    "schema_version": {"const": "decisive-question-findings.v1"},
+    "report_id": {"type": "string", "minLength": 1},
+    "plan_input_fingerprint": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "generated_at": {"type": "string"},
+    "change_reason": {"type": "string"},
+    "findings": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 3,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["question_id", "outcome", "evidence_observation_ids", "attempted_sources", "signal_results", "explanation_update", "decision_update", "conclusion", "unresolved"],
+        "properties": {
+          "question_id": {"type": "string", "pattern": "^DQ:"},
+          "outcome": {"enum": ["RESOLVED", "INCONCLUSIVE", "PUBLIC_INFO_UNAVAILABLE"]},
+          "evidence_observation_ids": {"type": "array", "items": {"type": "string", "pattern": "^OBS:"}},
+          "attempted_sources": {"type": "array", "items": {"type": "string"}},
+          "signal_results": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["signal_id", "result", "supports_explanation_id"],
+              "properties": {
+                "signal_id": {"type": "string"},
+                "result": {"type": "string"},
+                "supports_explanation_id": {"type": "string"}
+              }
+            }
+          },
+          "explanation_update": {
+            "type": "object",
+            "required": ["favored_explanation_id", "confidence_before", "confidence_after", "basis"],
+            "properties": {
+              "favored_explanation_id": {"type": "string"},
+              "confidence_before": {"type": "number", "minimum": 0, "maximum": 1},
+              "confidence_after": {"type": "number", "minimum": 0, "maximum": 1},
+              "basis": {"type": "string"}
+            }
+          },
+          "decision_update": {
+            "type": "object",
+            "required": ["valuation_impact", "position_impact", "action", "changed", "decision_entry_ids"],
+            "properties": {
+              "valuation_impact": {"type": "string"},
+              "position_impact": {"type": "string"},
+              "action": {"type": "string"},
+              "changed": {"type": "boolean"},
+              "decision_entry_ids": {"type": "array", "items": {"type": "string"}}
+            }
+          },
+          "conclusion": {"type": "string", "minLength": 1},
+          "unresolved": {"type": "array", "items": {"type": "string"}}
+        }
+      }
+    }
+  }
+}

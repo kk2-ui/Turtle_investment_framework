@@ -1,0 +1,43 @@
+{
+  "_description": "行业→国际对标公司索引。仅存公司名，不存财务数据。Agent 用 get_global_benchmarks 获取名单后，通过 web_search 获取实时财务数据。",
+  "_maintenance": "新增行业时添加新的 benchmark entry，keywords 匹配 industry_l2 / peer_group。",
+
+  "benchmarks": [
+    {
+      "id": "beverage_bottlers",
+      "keywords": ["软饮料", "饮料", "装瓶商", "bottler", "非酒精饮料"],
+      "description": "全球饮料装瓶商",
+      "business_model_note": "装瓶商是品牌方的特许经营合作伙伴。核心特征：品牌方定价浓缩液→装瓶商无法控制最大成本项；资本密集；区域垄断；稳健现金流支撑高派息。国际对标关注：派息率差距(CCEP>80% vs 中国食品~50%)。",
+      "peers": [
+        {"name": "Coca-Cola Europacific Partners (CCEP)", "ticker": "CCEP"},
+        {"name": "太古可口可乐 Swire Coca-Cola", "ticker": "0019.HK"},
+        {"name": "Coca-Cola HBC", "ticker": "CCH.L"},
+        {"name": "Arca Continental", "ticker": "AC.MX"}
+      ]
+    },
+    {
+      "id": "property_management",
+      "keywords": ["物业服务", "物业管理", "物管", "property management"],
+      "description": "全球物业管理公司",
+      "business_model_note": "物业管理：轻资产、高现金流、合约性收入。国际对标关注：在管面积、物业费水平、增值服务收入占比、收缴率。",
+      "peers": [
+        {"name": "CBRE Group", "ticker": "CBRE"},
+        {"name": "Jones Lang LaSalle (JLL)", "ticker": "JLL"},
+        {"name": "Colliers International", "ticker": "CIGI"},
+        {"name": "Savills", "ticker": "SVS.L"}
+      ]
+    },
+    {
+      "id": "real_estate_dev",
+      "keywords": ["地产", "房地产", "开发商", "real estate"],
+      "description": "全球房地产开发/投资",
+      "business_model_note": "地产：重资产、高杠杆、周期性强。国际对标关注：负债率、土地储备/总资产、融资成本。",
+      "peers": [
+        {"name": "D.R. Horton", "ticker": "DHI"},
+        {"name": "Lennar", "ticker": "LEN"},
+        {"name": "Mitsui Fudosan", "ticker": "8801.T"},
+        {"name": "Mitsubishi Estate", "ticker": "8802.T"}
+      ]
+    }
+  ]
+}

@@ -3,7 +3,7 @@
 
 程序化审计（P1-P3）：结构比对、最短长度、证据小节 — 来自 Dayu audit_formatting.py。
 审计决策逻辑：verdict、repair strategy — 来自 Dayu audit_rules.py。
-V12 增强：P2 阈值大幅提高（Dayu 只要求≥10字，V12 要求≥80行/定性章，≥120行/定量章）。
+V13 增强：P2 使用不受 Markdown 排版影响的实质深度契约。
 
 不包含 LLM 审计（E1-E3/C1-C2/S1-S7）—— Agent 自己就是 LLM，在写章节时会自行判断质量。
 """
@@ -130,10 +130,22 @@ def _log_chapter_confirm_result(chapter_index: int, confirm_result: Any) -> None
     """确认结果日志（stub）。"""
     pass
 
-# ---- V12 深度阈值 ----
-MIN_QUALITATIVE_LINES = 80   # 定性章 ≥ 80 行
-MIN_QUANTITATIVE_LINES = 120 # 定量章 ≥ 120 行
-QUANTITATIVE_CHAPTER_INDEXES = {11, 12, 13, 14}  # Part B + 综合决策
+try:
+    from scripts.chapter_depth import (
+        MIN_QUALITATIVE_LINES,
+        MIN_QUANTITATIVE_LINES,
+        QUANTITATIVE_CHAPTER_INDEXES,
+        analyze_chapter_depth,
+        depth_failure_description,
+    )
+except ModuleNotFoundError:
+    from chapter_depth import (  # type: ignore[no-redef]
+        MIN_QUALITATIVE_LINES,
+        MIN_QUANTITATIVE_LINES,
+        QUANTITATIVE_CHAPTER_INDEXES,
+        analyze_chapter_depth,
+        depth_failure_description,
+    )
 _CONTENT_MIN_CHARS = 10  # Dayu 原始阈值
 
 
@@ -180,15 +192,13 @@ def _run_programmatic_audits(
                 description="章节结构与骨架不匹配：缺少必须的子节标题或顺序错乱",
             ))
 
-    # P2: 最短长度（V12 增强版）
-    is_quant = chapter_index in QUANTITATIVE_CHAPTER_INDEXES
-    min_lines = MIN_QUANTITATIVE_LINES if is_quant else MIN_QUALITATIVE_LINES
-    content_lines = [l for l in content.split("\n") if l.strip()]
-    if len(content_lines) < min_lines:
+    # P2: 实质深度。排版换行不影响结果，也不再奖励逐句断行。
+    depth = analyze_chapter_depth(content, chapter_index)
+    if depth["status"] == "FAIL":
         violations.append(Violation(
             rule_code=AuditRuleCode.P2.value,
             severity="error",
-            description=f"内容过短: {len(content_lines)} 行 < 最低 {min_lines} 行（{'定量' if is_quant else '定性'}章要求）",
+            description="实质深度不足: " + depth_failure_description(depth),
         ))
     elif len(content.strip()) < _CONTENT_MIN_CHARS:
         violations.append(Violation(
@@ -241,13 +251,46 @@ def _check_evidence_density(content: str) -> list[Violation]:
     """E1：检查 [source:] 锚点密度。"""
     violations: list[Violation] = []
     sources = re.findall(r"\[source:\s*[^\]]+\]", content)
-    numbers = re.findall(r"\d+[\.\d]*\s*(%|亿|万|M|B|HKD|RMB|元|倍|x)", content)
-    if len(numbers) > 20 and len(sources) < len(numbers) / 10:
+    try:
+        from scripts.chapter_depth import analyze_chapter_depth
+    except ModuleNotFoundError:
+        from chapter_depth import analyze_chapter_depth
+    numeric_claims = analyze_chapter_depth(content, 0)["metrics"]["numeric_claim_lines"]
+    # A paragraph/table-level anchor can support several related numbers.  The
+    # old token/10 rule punished dense tables and encouraged citation spam.
+    required_sources = max(3, (numeric_claims + 8) // 9) if numeric_claims > 20 else 0
+    if required_sources and len(sources) < required_sources:
         violations.append(Violation(
             rule_code="E1",
             severity="error",
-            description=f"证据锚点密度过低: {len(sources)} 个 [source] 对应 ~{len(numbers)} 个数字声明",
+            description=(
+                f"证据锚点密度过低: {len(sources)} 个 [source] 对应 "
+                f"{numeric_claims} 个数字声明（至少需要 {required_sources} 个段落/表格级合引用）"
+            ),
         ))
+    # V12.17: 逐句 source 密度过高检测（反模式）
+    # Compiler-owned canonical blocks deliberately use one source per machine
+    # generated row.  They are immutable registries, not narrative prose, so
+    # applying the anti-citation-spam heuristic to them makes a freshly
+    # compiled report fail its next audit.  Keep their anchors in the overall
+    # coverage count above, but exclude the blocks from prose-style sampling.
+    density_content = re.sub(
+        r"<!-- TURTLE:DECISION_BLOCK:Ch\d+:BEGIN[^>]*-->.*?"
+        r"<!-- TURTLE:DECISION_BLOCK:Ch\d+:END -->",
+        "", content, flags=re.DOTALL,
+    )
+    paragraphs = [p for p in density_content.split("\n\n") if len(p) > 100]
+    for p in paragraphs[:5]:  # 抽查前5段
+        src_count = len(re.findall(r"\[source:\s*[^\]]+\]", p))
+        sentences = len(re.findall(r"[。；;.]", p)) + 1
+        if sentences > 2 and src_count > sentences * 0.8:  # ≥80%句子有source
+            violations.append(Violation(
+                rule_code="E1",
+                severity="error",
+                description=f"逐句 [source] 密度过高: {src_count} 个 source / ~{sentences} 句。应合并为每段末尾一个合引用。",
+            ))
+            break  # 一个就够报警了
+
     return violations
 
 
@@ -272,8 +315,24 @@ def _check_forbidden(content: str, must_not_cover: list[str]) -> list[Violation]
 def _check_number_consistency(content: str) -> list[Violation]:
     """S2：检查关键参数（GG/II/Rf）在全文是否一致。"""
     violations: list[Violation] = []
+    try:
+        from scripts.report_audit import extract_data_points
+    except ModuleNotFoundError:
+        from report_audit import extract_data_points
+    base_gg_values = {
+        f"{float(point['reported_value']):.4g}"
+        for point in extract_data_points(content)
+        if point.get("inferred_field") == "GG"
+        and "base" in set(point.get("metric_tags", []))
+        and not {"fcfe", "normalized", "discounted", "scenario"}.intersection(point.get("metric_tags", []))
+    }
+    if len(base_gg_values) > 1:
+        violations.append(Violation(
+            rule_code="S2",
+            severity="error",
+            description=f"GG(AA/base口径) 值不一致: {base_gg_values}",
+        ))
     for pat, name in [
-        (r"GG\s*[=＝]\s*([\d.-]+)\s*%", "GG"),
         (r"II\s*[=＝]\s*([\d.]+)\s*%", "II"),
         (r"Rf\s*[=＝]\s*([\d.]+)\s*%", "Rf"),
     ]:
@@ -350,7 +409,7 @@ def run_audit(
         plan_parts = []
         if has_structural:
             plan_parts.append("⚠️ 结构性违规 → 必须整章重写（REGENERATE）：")
-            plan_parts.append(f"  - 每章需≥{MIN_QUALITATIVE_LINES}行（定性）/ ≥{MIN_QUANTITATIVE_LINES}行（定量）")
+            plan_parts.append("  - 补足实质正文、数字声明、分析推导、证据锚点与小节覆盖；禁止用逐句断行凑深度")
             plan_parts.append("  - 需包含完整的子节标题（与模板骨架对齐）")
             plan_parts.append('  - 需包含 "### 证据与出处" 小节')
         if errors:

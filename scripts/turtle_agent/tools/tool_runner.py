@@ -19,8 +19,10 @@ sys.path.insert(0, _scripts_dir)
 from read_tools import (
     list_documents, read_section, search_report,
     get_financial_statement, get_financial_trends, read_zone_data,
+    read_framework_reference,
 )
 from calc_tools import compute_gg, compute_ddm, assess_moat, evaluate_decision
+from technical_tools import calc_ma, calc_rsi, calc_macd, calc_bollinger, build_technical_snapshot
 from write_tools import write_chapter, read_chapter, audit_chapter, assemble_report
 from phase_tools import (
     run_pre_analysis, download_annual_reports, check_report_completeness,
@@ -35,11 +37,17 @@ TOOLS = {
     "get_financial_statement": get_financial_statement,
     "get_financial_trends": get_financial_trends,
     "read_zone_data": read_zone_data,
+    "read_framework_reference": read_framework_reference,
     # calc
     "compute_gg": compute_gg,
     "compute_ddm": compute_ddm,
     "assess_moat": assess_moat,
     "evaluate_decision": evaluate_decision,
+    "calc_ma": calc_ma,
+    "calc_rsi": calc_rsi,
+    "calc_macd": calc_macd,
+    "calc_bollinger": calc_bollinger,
+    "build_technical_snapshot": build_technical_snapshot,
     # write
     "write_chapter": write_chapter,
     "read_chapter": read_chapter,
