@@ -1,6 +1,6 @@
 # Turtle Investment Framework 长期开发路线图
 
-> 状态：ACTIVE ｜ 建立日期：2026-08-02 ｜ 最近更新：2026-08-13 ｜ 当前主阶段：Phase 08（VALIDATING）
+> 状态：ACTIVE ｜ 建立日期：2026-08-02 ｜ 最近更新：2026-08-14 ｜ 当前主阶段：Phase 08（VALIDATING）
 >
 > 本文件是项目开发状态、优先级和阶段依赖的唯一索引。方法公式以对应规范为准；历史过程不再写入交接文档。
 
@@ -128,6 +128,26 @@
 
 阶段状态只允许：`PLANNED → IN_PROGRESS → VALIDATING → COMPLETE`。无法继续时标记 `BLOCKED` 并写清唯一阻断条件；不得用“基本完成”代替出口验收。
 
+### 5.1 外部能力候选的阶段路由
+
+截至 2026-08-14，用户批准把以下开源项目纳入长期能力候选，但不授权整套替换现有系统：
+
+| 候选 | 当前定位 | 最早准入阶段 | 与 Turtle 的边界 |
+|---|---|---|---|
+| [ai-berkshire](https://github.com/xbtlin/ai-berkshire) | 外部研究挑战器和问题库 | Phase 08 G2，G3 前完成 | 只比较方法覆盖和确定性小工具；输出不进入 canonical 证据、判断或动作 |
+| [daily_stock_analysis](https://github.com/ZhuLinsen/daily_stock_analysis) | 行情/事件采集、调度与通知工程参考 | Phase 08 G4；事件接入最早 Phase 09 | 年糕仍拥有 provider 与行情真值；Turtle 只接收带 provenance 的快照，新闻线索须回到原始来源核验 |
+| [FinceptTerminal](https://github.com/Fincept-Corporation/FinceptTerminal) | 综合终端产品参照 | Phase 09 产品设计 | 默认只参考通用需求；不复制代码、具体界面或 trade dress，不建立运行依赖 |
+| [QuantConnect/Lean](https://github.com/QuantConnect/Lean) | 可替换的执行与收益结算 sidecar | Phase 10 | Turtle 先冻结历史信息集、报告和决策；Lean 只模拟成交、费用、滑点和组合路径 |
+
+吸收顺序统一为：能力缺口审计 → 固定 revision 与许可证/数据条款审阅 → 最小隔离原型 → 与现有 schema 和真源边界对抗验证 → 独立审阅 → 才能进入统一管线。外部项目不得以受欢迎程度、功能数量或示例报告质量绕过 Golden Set、证据门和 Research Handoff 契约。
+
+```text
+ai-berkshire 挑战问题 ─→ Turtle G2 方法裁决
+daily 事件/行情模式 ──→ 年糕市场真值与事件箱 ─→ Turtle 原始证据复核
+Turtle PIT 冻结决策 ──→ Lean 执行结算 ─────────→ 年糕分栏展示
+FinceptTerminal ───────→ 只提供产品需求参照
+```
+
 ## 6. 全局完成定义
 
 每一阶段只有同时满足以下条件才可标记 `COMPLETE`：
@@ -174,6 +194,7 @@
 - 不在一个阶段顺手扩大到下一个阶段；发现的问题进入路线图backlog。
 - 删除或迁移历史产物前先确认真源、引用和可恢复性。
 - 质量规则需要真实标的校准；纯fixture通过不能宣称研究能力完成。
+- 外部项目只能在第 5.1 节指定阶段启动；实现前必须记录固定 revision、许可证、数据条款、保留/拒绝能力和退出条件。
 
 ## 10. 近期顺序
 
@@ -292,3 +313,9 @@
 - 正确顺序为：逐案内容成熟与接纳 → 跨报告裁决共同不变量和路线差异 → 冻结多报告 Golden Set v1 → 从集合反推统一流水线 → 两个全新 holdout 盲测 → Phase 08 收口。
 - 旧 01502/02669 benchmark身份、旧黄金预览、旧评审票和旧Q1执行顺序均只作历史资料，不得自动沿用；01502因长期参与规则形成，不再具备真正holdout身份。
 - 当前执行细节、候选成熟度、Agent工作顺序和完成定义以仓库根`GOALS.md`为准。G6完成以前不得进入Phase 09/10。
+
+### 2026-08-14 外部能力候选检查点
+
+- 用户批准把 `ai-berkshire`、`daily_stock_analysis`、`FinceptTerminal` 和 `QuantConnect/Lean` 纳入长期路线，但不改变当前 Phase 08 G1。
+- G2 才进行 ai-berkshire 方法挑战，G4 才审计 daily 的采集/调度模式，Phase 09 才考虑事件接入和终端体验，Phase 10 才允许 Lean 执行结算原型；Fincept 默认保持只参考、不复制。
+- 四个项目均不得成为研究、行情、组合、合理估值或真实成交的新真源；任何代码复用另行通过固定 revision、许可证、schema 和独立验收门。
