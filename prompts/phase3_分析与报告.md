@@ -54,6 +54,8 @@
 执行因子4时 → Read("references/factor4_估值与安全边际.md")
 ```
 
+若公司含 REIT、合营/土地/特许经营期限、到期移交、清算、注册资本返还或法定储备/跨境上划限制，必须额外加载 `references/factor_有限期限资产与法律现金流.md`。首次发行文件和最新中报均为强制证据；不得把“到期后权益归零”直接写成“到期现金为零”。
+
 **★ Graham 框架总览卡（建议进入 Graham 流水线前先读一遍建立全局认知）**：
 `references/_graham_framework_lite.md` —— 把整套框架压成"三块价值→六路由→λ兑现→裁决"的执行流程卡（带公式）。
 需要某一步的**推导/边界/什么时候不这么算**时，再查完整版 `references/_graham_framework_full.md`（含算例）。
@@ -234,6 +236,8 @@ Phase 3 在开始分析前，应了解全部否决门。任一否决门触发则
 
 **→ 加载 `references/factor1.5_估值路由.md`**
 
+- 有限期限、清算、到期移交或跨境上划限制存在时，同时加载 `references/factor_有限期限资产与法律现金流.md`，先闭合终止现金和法律分配顺位，再选择估值路由。
+
 - 吃 EPV/AV 比 + 因子1B（moat/trap/franchise_type）→ 决策树分流
 - 冲突裁决：客观勾稽（EPV/AV）与定性冲突时优先信客观 + 回标复核 1B
 - 输出 valuation_route(R1-R6)、alt_route、route_reasoning、franchise_value、route_confidence → 传因子4
@@ -310,6 +314,7 @@ Phase 3 在开始分析前，应了解全部否决门。任一否决门触发则
 
 ### Step 7: 生成报告
 
+- **→ 加载 `references/factor_黄金报告读者叙事.md`**，先确定企业类型、单一因果主线和 `PRIMARY DECISION RETURN`，再把因子结论写入读者报告；详细审计表不得反过来支配正文顺序。
 - 严格按照下方 `<report_template>` 输出完整Markdown报告
 - 整合所有 Checkpoint 中已写入的因子结论
 - **★ Graham 买点结论块**：按 `references/_graham_integration.md` §三 输出（估值路由 + 两条流水线数字 + 一致性 + 目标买入价 + 仓位 + 卖点参考）
