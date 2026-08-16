@@ -176,4 +176,6 @@ cutoff 后文件，也没有将页面标题、内容或结果用于来源包、�
 
 P10-B 已在本次 continuation 完成一次受限 direct writer 运行：不依赖 `DEEPSEEK_API_KEY`/`ANTHROPIC_API_KEY`，由当前 Codex agent 在同一 PIT source boundary 内读取静态 `framework/policy.md` 与四份关键 cutoff 内来源，并通过 `PITReportWriter` 唯一写入器生成冻结前工程草案。草案与 read attestation 位于 `output/phase10_pit_writer_600340_direct_20260817/`，runner `REVIEWABLE`、writer `PASS`，实际 ALLOW 读取为 1 份 framework + 4 份 source，未读取行情、公司行动、结算或 cutoff 后资料。
 
-该草案仍不是完整生产冻结报告：尚未接入 Phase 08 acceptance/V3、完整 claim/calibration ledger、独立 reviewer、走步结算或模型记忆 attestation。故本案继续不得标为生产回测、收益、买点、选股或黄金标准校准样本；下一步是对草案做独立内容审阅，登记可结算 claim 与 UNKNOWN 的观察口径，再冻结失败/通过版本并进入后续结算。
+该草案曾被独立 reviewer 发现一处材料性单位传播错误：2019 年经营现金流 `-31,819,098,425.06` 元误写为 `-31.82` 亿元，已修正为 `-318.19` 亿元并重新通过 PIT writer gate；同时补齐 2017/2018/2019 担保、关联方页码锚点，并收窄融资依赖、担保扣项和翻转条件的推断。复审结论为 `PASS_AFTER_REPAIR_FOR_DRAFT_ONLY`，根因归类为 `WRITING` + `MODEL`，不是数据采集缺口。
+
+独立 review 与仅含冻结前 UNKNOWN 的 ledger 草案位于 `output/phase10_pit_review_600340_20260817/`。它们仍不是完整生产冻结报告：尚未接入 Phase 08 acceptance/V3、生产 origin、模型记忆 attestation 或走步结算。故本案继续不得标为生产回测、收益、买点、选股或黄金标准校准样本；下一步是把 ledger 接入正式 freeze contract，注册隔离 reviewer 身份和冻结生命周期，再决定是否以 `FROZEN_WITH_QUALITY_FAILURE` 保留工程压力案例。
