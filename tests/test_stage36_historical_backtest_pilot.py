@@ -124,6 +124,11 @@ def _case() -> dict:
             "primary_price_identity": "P_LONG",
             "prices": [{"identity": "P_LONG", "currency": "HKD", "value": 2.0, "meaning": "达到目标长期所有者回报的条件价格"}],
         },
+        "investment_decision": {
+            "action": "BUY",
+            "price_identity": "P_LONG",
+            "execution_rule": "冻结报告后首个可交易日以原始开盘价执行。",
+        },
         "status": "FROZEN",
     }
 
@@ -142,6 +147,13 @@ def _settlement() -> dict:
             "published_at": "2022-03-25",
             "source_version": "annual-report-original-2021",
             "data_as_of": "2021-12-31",
+        }, {
+            "source_id": "MKT:00506:2022-08-30",
+            "source_type": "OFFICIAL_MARKET_DATA",
+            "official": True,
+            "published_at": "2022-08-30",
+            "source_version": "exchange-official-unadjusted-close-v1",
+            "data_as_of": "2022-08-30",
         }],
         "actual_outcomes": {
             "currency": "HKD",
@@ -181,10 +193,96 @@ def _settlement() -> dict:
         "investment_return_outcome": {
             "status": "CALCULATED",
             "action": "BUY",
-            "total_return": 0.08,
+            "frozen_action": "BUY",
+            "frozen_price_identity": "P_LONG",
+            "total_return": 0.09,
             "benchmark_return": 0.03,
             "currency": "HKD",
             "notes": ["含现金股息和费用"],
+            "execution": {
+                "execution_rule": "冻结报告后首个可交易日以原始开盘价执行。",
+                "fill_status": "FILLED",
+                "entry": {
+                    "date": "2021-09-01",
+                    "price": 1.0,
+                    "quantity": 100,
+                    "currency": "HKD",
+                    "source_ids": ["MKT:00506:2022-08-30"],
+                },
+                "exit": {
+                    "status": "MARKED_TO_MARKET",
+                    "date": "2022-08-30",
+                    "price": 1.0,
+                    "quantity": 100,
+                    "currency": "HKD",
+                    "source_ids": ["MKT:00506:2022-08-30"],
+                },
+            },
+            "cash_flow_ledger": [
+                {
+                    "flow_id": "HBTFLW:entry",
+                    "date": "2021-09-01",
+                    "flow_type": "ENTRY",
+                    "gross_amount": -100.0,
+                    "tax_amount": 0.0,
+                    "fee_amount": 0.0,
+                    "net_amount": -100.0,
+                    "currency": "HKD",
+                    "fx_rate_to_base": 1.0,
+                    "net_base_amount": -100.0,
+                    "source_ids": ["MKT:00506:2022-08-30"],
+                },
+                {
+                    "flow_id": "HBTFLW:dividend",
+                    "date": "2022-05-10",
+                    "flow_type": "DIVIDEND",
+                    "gross_amount": 10.0,
+                    "tax_amount": 1.0,
+                    "fee_amount": 0.0,
+                    "net_amount": 9.0,
+                    "currency": "HKD",
+                    "fx_rate_to_base": 1.0,
+                    "net_base_amount": 9.0,
+                    "corporate_action_id": "HBTCA:dividend",
+                    "source_ids": ["AR:00506:2021"],
+                },
+                {
+                    "flow_id": "HBTFLW:mark",
+                    "date": "2022-08-30",
+                    "flow_type": "MARK_TO_MARKET",
+                    "gross_amount": 100.0,
+                    "tax_amount": 0.0,
+                    "fee_amount": 0.0,
+                    "net_amount": 100.0,
+                    "currency": "HKD",
+                    "fx_rate_to_base": 1.0,
+                    "net_base_amount": 100.0,
+                    "source_ids": ["MKT:00506:2022-08-30"],
+                },
+            ],
+            "corporate_actions": [{
+                "action_id": "HBTCA:dividend",
+                "action_type": "CASH_DIVIDEND",
+                "effective_date": "2022-05-10",
+                "treatment": "REFLECTED_IN_CASH_FLOW_LEDGER",
+                "source_ids": ["AR:00506:2021"],
+                "cash_flow_ids": ["HBTFLW:dividend"],
+            }],
+            "taxes_fees_fx": {
+                "tax_rate": 0.1,
+                "transaction_fee_rate": 0.001,
+                "dividend_tax_rate": 0.1,
+                "base_currency": "HKD",
+                "fx_rule": "仅在报告冻结时使用历史可见汇率",
+            },
+            "benchmark_identity": {
+                "benchmark_id": "HSI",
+                "market": "HK",
+                "currency": "HKD",
+                "return_basis": "TOTAL_RETURN_NET",
+                "calculation_rule": "与个股使用相同入场日和期末盯市日。",
+                "source_ids": ["MKT:00506:2022-08-30"],
+            },
         },
         "status": "REVIEWABLE",
     }
@@ -375,6 +473,52 @@ def test_forecast_error_must_reference_the_same_operating_observation() -> None:
     settlement["model_forecast_error"]["metrics"][0]["observation_id"] = "HBTOBS:missing"
     result = validate_settlement(settlement, case=case)
     assert "model_forecast_error.metrics[0]:observation_id_not_found:HBTOBS:missing" in result["invalid_findings"]
+
+
+def test_return_settlement_binds_frozen_action_price_identity_and_execution_rule() -> None:
+    case = _case()
+
+    changed_action = _settlement()
+    changed_action["investment_return_outcome"]["action"] = "WAIT"
+    result = validate_settlement(changed_action, case=case)
+    assert "investment_return_outcome:action_does_not_match_frozen_action" in result["invalid_findings"]
+
+    changed_price = _settlement()
+    changed_price["investment_return_outcome"]["frozen_price_identity"] = "P_XIRR"
+    result = validate_settlement(changed_price, case=case)
+    assert "investment_return_outcome:frozen_price_identity_does_not_match_case" in result["invalid_findings"]
+
+    changed_rule = _settlement()
+    changed_rule["investment_return_outcome"]["execution"]["execution_rule"] = "等待事后最低价。"
+    result = validate_settlement(changed_rule, case=case)
+    assert "investment_return_outcome.execution:rule_does_not_match_frozen_action" in result["invalid_findings"]
+
+
+def test_return_settlement_reconciles_cash_flows_policy_and_corporate_action_links() -> None:
+    case = _case()
+
+    changed_cash = _settlement()
+    changed_cash["investment_return_outcome"]["cash_flow_ledger"][1]["net_amount"] = 10.0
+    result = validate_settlement(changed_cash, case=case)
+    assert "investment_return_outcome.cash_flow_ledger[1]:net_amount_does_not_reconcile" in result["invalid_findings"]
+
+    changed_policy = _settlement()
+    changed_policy["investment_return_outcome"]["taxes_fees_fx"]["dividend_tax_rate"] = 0.0
+    result = validate_settlement(changed_policy, case=case)
+    assert "investment_return_outcome.taxes_fees_fx:dividend_tax_rate_does_not_match_frozen_case" in result["invalid_findings"]
+
+    broken_action_link = _settlement()
+    broken_action_link["investment_return_outcome"]["corporate_actions"][0]["cash_flow_ids"] = []
+    result = validate_settlement(broken_action_link, case=case)
+    assert "investment_return_outcome.corporate_actions[0]:cash_dividend_flow_link_missing" in result["incomplete_findings"]
+    assert "investment_return_outcome.cash_flow_ledger:corporate_action_link_not_bidirectional:HBTFLW:dividend" in result["invalid_findings"]
+
+
+def test_return_settlement_requires_official_benchmark_identity_source() -> None:
+    settlement = _settlement()
+    settlement["investment_return_outcome"]["benchmark_identity"]["source_ids"] = ["AR:00506:2021"]
+    result = validate_settlement(settlement, case=_case())
+    assert "investment_return_outcome.benchmark_identity:official_market_data_source_required" in result["invalid_findings"]
 
 
 def test_checked_in_pilot_config_matches_builder() -> None:

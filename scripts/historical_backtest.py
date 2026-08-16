@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import math
 from copy import deepcopy
 from datetime import date, datetime
 from pathlib import Path
@@ -23,6 +24,15 @@ SETTLEMENT_SCHEMA_VERSION = "historical-backtest-settlement.v1"
 
 ROUTES = {"LONG_TERM_OWNER", "FINITE_XIRR", "DUAL"}
 PRIMARY_PRICE_IDENTITIES = {"P_LONG", "P_XIRR", "P_LEGAL", "P_BUSINESS_VALUE_EXIT", "UNKNOWN"}
+INVESTMENT_ACTIONS = {"BUY", "HOLD", "WAIT", "SELL", "NO_BUY", "UNKNOWN"}
+FILL_STATUSES = {"FILLED", "PARTIALLY_FILLED", "NOT_FILLED", "NOT_APPLICABLE"}
+EXIT_STATUSES = {"EXITED", "MARKED_TO_MARKET", "OPEN", "NOT_APPLICABLE"}
+RETURN_CASH_FLOW_TYPES = {
+    "ENTRY", "EXIT", "MARK_TO_MARKET", "DIVIDEND", "CORPORATE_ACTION_CASH", "CASH_ALTERNATIVE",
+}
+CORPORATE_ACTION_TYPES = {
+    "CASH_DIVIDEND", "STOCK_SPLIT", "RIGHTS_ISSUE", "MERGER", "DELISTING", "SPINOFF", "OTHER",
+}
 OFFICIAL_SETTLEMENT_SOURCE_TYPES = {
     "ANNUAL_REPORT", "INTERIM_REPORT", "EXCHANGE_ANNOUNCEMENT", "OFFICIAL_STATISTICS",
     "OFFICIAL_MARKET_DATA", "OTHER_OFFICIAL",
@@ -63,6 +73,20 @@ def _date(value: Any) -> date | None:
 
 def _required(record: dict[str, Any], fields: Iterable[str], prefix: str) -> list[str]:
     return [f"{prefix}:missing:{field}" for field in fields if record.get(field) in (None, "", [], {})]
+
+
+def _number(value: Any) -> float | None:
+    """Return a finite numeric value without accepting bools as money."""
+    if isinstance(value, bool) or not isinstance(value, (int, float)):
+        return None
+    number = float(value)
+    return number if math.isfinite(number) else None
+
+
+def _numbers_match(left: Any, right: Any) -> bool:
+    lhs = _number(left)
+    rhs = _number(right)
+    return lhs is not None and rhs is not None and math.isclose(lhs, rhs, rel_tol=1e-9, abs_tol=1e-9)
 
 
 def _nested_forbidden(value: Any, *, path: str = "") -> list[str]:
@@ -324,6 +348,43 @@ def _route_findings(record: dict[str, Any]) -> list[str]:
     return findings
 
 
+def _frozen_price(case: dict[str, Any], identity: str) -> dict[str, Any] | None:
+    price_identity = case.get("price_identity") if isinstance(case.get("price_identity"), dict) else {}
+    prices = price_identity.get("prices") if isinstance(price_identity.get("prices"), list) else []
+    return next(
+        (price for price in prices if isinstance(price, dict) and price.get("identity") == identity),
+        None,
+    )
+
+
+def _validate_investment_decision(record: dict[str, Any]) -> tuple[list[str], list[str]]:
+    """Validate the action and price identity frozen with the report.
+
+    The field is optional for legacy frozen cases, but a settlement that claims
+    an investment outcome must bind to it.  This keeps old calibration-only
+    records readable while refusing to manufacture a return from them.
+    """
+    decision = record.get("investment_decision")
+    if decision is None:
+        return [], []
+    if not isinstance(decision, dict):
+        return ["investment_decision:not_object"], []
+    invalid: list[str] = []
+    incomplete = _required(decision, ("action", "price_identity", "execution_rule"), "investment_decision")
+    action = decision.get("action")
+    identity = str(decision.get("price_identity") or "")
+    if action not in INVESTMENT_ACTIONS:
+        invalid.append("investment_decision:action_invalid")
+    if identity not in PRIMARY_PRICE_IDENTITIES:
+        invalid.append("investment_decision:price_identity_invalid")
+    elif identity == "UNKNOWN":
+        if action not in {"NO_BUY", "UNKNOWN"}:
+            invalid.append("investment_decision:unknown_price_identity_requires_no_buy_or_unknown_action")
+    elif _frozen_price(record, identity) is None:
+        invalid.append("investment_decision:price_identity_not_registered_in_frozen_case")
+    return invalid, incomplete
+
+
 def validate_case(record: dict[str, Any]) -> dict[str, Any]:
     invalid: list[str] = []
     incomplete: list[str] = []
@@ -377,6 +438,9 @@ def validate_case(record: dict[str, Any]) -> dict[str, Any]:
     ledger_invalid, ledger_incomplete = _validate_calibration_ledger(record, source_ids)
     invalid.extend(ledger_invalid)
     incomplete.extend(ledger_incomplete)
+    decision_invalid, decision_incomplete = _validate_investment_decision(record)
+    invalid.extend(decision_invalid)
+    incomplete.extend(decision_incomplete)
     taxes = record.get("taxes_fees_fx") if isinstance(record.get("taxes_fees_fx"), dict) else {}
     incomplete.extend(_required(taxes, ("tax_rate", "transaction_fee_rate", "dividend_tax_rate", "base_currency", "fx_rule"), "taxes_fees_fx"))
     invalid.extend(_route_findings(record))
@@ -466,6 +530,285 @@ def _validate_operating_observation(
     return invalid, incomplete
 
 
+def _validate_return_outcome(
+    outcome: dict[str, Any],
+    *,
+    case: dict[str, Any] | None,
+    actual_source_ids: set[str],
+    actual_sources: dict[str, dict[str, Any]],
+    cutoff: date | None,
+    settlement_date: date | None,
+) -> tuple[list[str], list[str]]:
+    """Validate the small, replayable investment-return ledger.
+
+    This deliberately models one position entry and one exit/mark.  It is
+    enough to catch action/price swaps and arithmetic tampering without
+    pretending to be a portfolio or order-management system.
+    """
+    invalid: list[str] = []
+    incomplete: list[str] = []
+    return_statuses = {"CALCULATED", "PARTIAL", "NOT_CALCULABLE"}
+    status = outcome.get("status")
+    action = outcome.get("action")
+    if status not in return_statuses:
+        invalid.append("investment_return_outcome:status_invalid")
+    if action not in INVESTMENT_ACTIONS:
+        invalid.append("investment_return_outcome:action_invalid")
+
+    decision = case.get("investment_decision") if isinstance(case, dict) else None
+    if not isinstance(decision, dict):
+        invalid.append("frozen_investment_decision_required_for_return_settlement")
+    else:
+        expected_action = decision.get("action")
+        expected_identity = decision.get("price_identity")
+        expected_rule = decision.get("execution_rule")
+        if action != expected_action:
+            invalid.append("investment_return_outcome:action_does_not_match_frozen_action")
+        if outcome.get("frozen_action") != expected_action:
+            invalid.append("investment_return_outcome:frozen_action_does_not_match_case")
+        if outcome.get("frozen_price_identity") != expected_identity:
+            invalid.append("investment_return_outcome:frozen_price_identity_does_not_match_case")
+        selected_price = _frozen_price(case, str(expected_identity or ""))
+        if expected_identity != "UNKNOWN" and selected_price is None:
+            invalid.append("investment_return_outcome:price_identity_not_registered_in_case")
+
+    policy = outcome.get("taxes_fees_fx")
+    if not isinstance(policy, dict):
+        incomplete.append("investment_return_outcome:taxes_fees_fx_missing")
+    elif isinstance(case, dict):
+        frozen_policy = case.get("taxes_fees_fx") if isinstance(case.get("taxes_fees_fx"), dict) else {}
+        for field in ("tax_rate", "transaction_fee_rate", "dividend_tax_rate", "base_currency", "fx_rule"):
+            if field not in policy:
+                incomplete.append(f"investment_return_outcome.taxes_fees_fx:missing:{field}")
+            elif policy.get(field) != frozen_policy.get(field) and not (
+                field in {"tax_rate", "transaction_fee_rate", "dividend_tax_rate"}
+                and _numbers_match(policy.get(field), frozen_policy.get(field))
+            ):
+                invalid.append(f"investment_return_outcome.taxes_fees_fx:{field}_does_not_match_frozen_case")
+
+    benchmark = outcome.get("benchmark_identity")
+    benchmark_source_ids: set[str] = set()
+    if not isinstance(benchmark, dict):
+        incomplete.append("investment_return_outcome:benchmark_identity_missing")
+    else:
+        incomplete.extend(_required(
+            benchmark,
+            ("benchmark_id", "market", "currency", "return_basis", "calculation_rule", "source_ids"),
+            "investment_return_outcome.benchmark_identity",
+        ))
+        benchmark_source_ids = set(str(item) for item in benchmark.get("source_ids") or [])
+        ref_invalid, ref_incomplete = _validate_source_references(
+            benchmark.get("source_ids"), actual_source_ids, "investment_return_outcome.benchmark_identity",
+        )
+        invalid.extend(ref_invalid)
+        incomplete.extend(ref_incomplete)
+        if benchmark_source_ids and not any(
+            actual_sources.get(source_id, {}).get("source_type") == "OFFICIAL_MARKET_DATA"
+            for source_id in benchmark_source_ids
+        ):
+            invalid.append("investment_return_outcome.benchmark_identity:official_market_data_source_required")
+
+    execution = outcome.get("execution")
+    if not isinstance(execution, dict):
+        incomplete.append("investment_return_outcome:execution_missing")
+        execution = {}
+    incomplete.extend(_required(
+        execution, ("execution_rule", "fill_status", "entry", "exit"),
+        "investment_return_outcome.execution",
+    ))
+    if isinstance(decision, dict) and execution.get("execution_rule") != decision.get("execution_rule"):
+        invalid.append("investment_return_outcome.execution:rule_does_not_match_frozen_action")
+    fill_status = execution.get("fill_status")
+    if fill_status not in FILL_STATUSES:
+        invalid.append("investment_return_outcome.execution:fill_status_invalid")
+    entry = execution.get("entry") if isinstance(execution.get("entry"), dict) else {}
+    exit_leg = execution.get("exit") if isinstance(execution.get("exit"), dict) else {}
+    leg_fields = ("date", "price", "quantity", "currency", "source_ids")
+    for leg, prefix in ((entry, "investment_return_outcome.execution.entry"), (exit_leg, "investment_return_outcome.execution.exit")):
+        incomplete.extend(prefix + ":missing:" + field for field in leg_fields if field not in leg)
+        if leg.get("source_ids"):
+            ref_invalid, ref_incomplete = _validate_source_references(leg.get("source_ids"), actual_source_ids, prefix)
+            invalid.extend(ref_invalid)
+            incomplete.extend(ref_incomplete)
+        leg_date = _date(leg.get("date")) if leg.get("date") else None
+        if leg.get("date") and leg_date is None:
+            incomplete.append(prefix + ":date_invalid")
+        if leg_date and cutoff and leg_date <= cutoff:
+            invalid.append(prefix + ":date_must_follow_report_cutoff")
+        if leg_date and settlement_date and leg_date > settlement_date:
+            invalid.append(prefix + ":date_after_settlement")
+
+    def _leg_populated(leg: dict[str, Any]) -> bool:
+        return any(leg.get(field) not in (None, "", []) for field in leg_fields)
+
+    def _require_populated(leg: dict[str, Any], prefix: str) -> None:
+        for field in leg_fields:
+            if leg.get(field) in (None, "", []):
+                incomplete.append(prefix + ":missing_filled_" + field)
+        if _number(leg.get("price")) is None or _number(leg.get("price")) <= 0:
+            invalid.append(prefix + ":price_invalid")
+        if _number(leg.get("quantity")) is None or _number(leg.get("quantity")) <= 0:
+            invalid.append(prefix + ":quantity_invalid")
+
+    settled_exit = exit_leg.get("status") in {"EXITED", "MARKED_TO_MARKET"}
+    if fill_status in {"FILLED", "PARTIALLY_FILLED"}:
+        _require_populated(entry, "investment_return_outcome.execution.entry")
+        if exit_leg.get("status") not in EXIT_STATUSES:
+            invalid.append("investment_return_outcome.execution.exit:status_invalid")
+        elif settled_exit:
+            _require_populated(exit_leg, "investment_return_outcome.execution.exit")
+        elif _leg_populated(exit_leg) and exit_leg.get("status") not in {"OPEN", "NOT_APPLICABLE"}:
+            invalid.append("investment_return_outcome.execution.exit:unsettled_leg_has_values")
+        entry_date = _date(entry.get("date"))
+        exit_date = _date(exit_leg.get("date"))
+        if entry_date and exit_date and exit_date < entry_date:
+            invalid.append("investment_return_outcome.execution.exit_before_entry")
+    elif fill_status in {"NOT_FILLED", "NOT_APPLICABLE"}:
+        if _leg_populated(entry) or _leg_populated(exit_leg):
+            invalid.append("investment_return_outcome.execution:unfilled_position_cannot_have_entry_or_exit")
+        if exit_leg.get("status") not in {None, "NOT_APPLICABLE"}:
+            invalid.append("investment_return_outcome.execution:unfilled_position_exit_must_be_not_applicable")
+
+    if isinstance(decision, dict) and decision.get("price_identity") != "UNKNOWN":
+        selected_price = _frozen_price(case or {}, str(decision.get("price_identity")))
+        expected_currency = selected_price.get("currency") if selected_price else None
+        for leg, prefix in ((entry, "investment_return_outcome.execution.entry"), (exit_leg, "investment_return_outcome.execution.exit")):
+            if expected_currency and leg.get("currency") not in (None, "", expected_currency):
+                invalid.append(prefix + ":currency_does_not_match_frozen_price_identity")
+
+    ledger = outcome.get("cash_flow_ledger")
+    flows: list[dict[str, Any]] = []
+    flow_ids: set[str] = set()
+    if not isinstance(ledger, list):
+        incomplete.append("investment_return_outcome:cash_flow_ledger_missing")
+    else:
+        flow_fields = ("flow_id", "date", "flow_type", "gross_amount", "tax_amount", "fee_amount", "net_amount", "currency", "fx_rate_to_base", "net_base_amount", "source_ids")
+        for index, flow in enumerate(ledger):
+            prefix = f"investment_return_outcome.cash_flow_ledger[{index}]"
+            if not isinstance(flow, dict):
+                invalid.append(prefix + ":not_object")
+                continue
+            flows.append(flow)
+            incomplete.extend(_required(flow, flow_fields, prefix))
+            flow_id = str(flow.get("flow_id") or "")
+            if flow_id in flow_ids:
+                invalid.append(prefix + ":duplicate_flow_id")
+            flow_ids.add(flow_id)
+            if flow.get("flow_type") not in RETURN_CASH_FLOW_TYPES:
+                invalid.append(prefix + ":flow_type_invalid")
+            refs = flow.get("source_ids")
+            ref_invalid, ref_incomplete = _validate_source_references(refs, actual_source_ids, prefix)
+            invalid.extend(ref_invalid)
+            incomplete.extend(ref_incomplete)
+            flow_date = _date(flow.get("date"))
+            if flow_date is None:
+                incomplete.append(prefix + ":date_invalid")
+            elif settlement_date and flow_date > settlement_date:
+                invalid.append(prefix + ":date_after_settlement")
+            gross = _number(flow.get("gross_amount"))
+            tax = _number(flow.get("tax_amount"))
+            fee = _number(flow.get("fee_amount"))
+            net = _number(flow.get("net_amount"))
+            fx_rate = _number(flow.get("fx_rate_to_base"))
+            net_base = _number(flow.get("net_base_amount"))
+            if tax is not None and tax < 0:
+                invalid.append(prefix + ":tax_amount_negative")
+            if fee is not None and fee < 0:
+                invalid.append(prefix + ":fee_amount_negative")
+            if fx_rate is not None and fx_rate <= 0:
+                invalid.append(prefix + ":fx_rate_invalid")
+            if gross is not None and tax is not None and fee is not None and net is not None and not _numbers_match(net, gross - tax - fee):
+                invalid.append(prefix + ":net_amount_does_not_reconcile")
+            if net is not None and fx_rate is not None and net_base is not None and not _numbers_match(net_base, net * fx_rate):
+                invalid.append(prefix + ":net_base_amount_does_not_reconcile")
+            if flow.get("flow_type") in {"DIVIDEND", "CORPORATE_ACTION_CASH"} and not flow.get("corporate_action_id"):
+                invalid.append(prefix + ":corporate_action_link_required")
+
+    actions = outcome.get("corporate_actions")
+    action_ids: set[str] = set()
+    if not isinstance(actions, list):
+        incomplete.append("investment_return_outcome:corporate_actions_missing")
+        actions = []
+    for index, corporate_action in enumerate(actions):
+        prefix = f"investment_return_outcome.corporate_actions[{index}]"
+        if not isinstance(corporate_action, dict):
+            invalid.append(prefix + ":not_object")
+            continue
+        incomplete.extend(_required(corporate_action, ("action_id", "action_type", "effective_date", "treatment", "source_ids", "cash_flow_ids"), prefix))
+        action_id = str(corporate_action.get("action_id") or "")
+        if action_id in action_ids:
+            invalid.append(prefix + ":duplicate_action_id")
+        action_ids.add(action_id)
+        if corporate_action.get("action_type") not in CORPORATE_ACTION_TYPES:
+            invalid.append(prefix + ":action_type_invalid")
+        ref_invalid, ref_incomplete = _validate_source_references(corporate_action.get("source_ids"), actual_source_ids, prefix)
+        invalid.extend(ref_invalid)
+        incomplete.extend(ref_incomplete)
+        effective_date = _date(corporate_action.get("effective_date"))
+        if effective_date and settlement_date and effective_date > settlement_date:
+            invalid.append(prefix + ":effective_date_after_settlement")
+        linked = corporate_action.get("cash_flow_ids") if isinstance(corporate_action.get("cash_flow_ids"), list) else []
+        if corporate_action.get("action_type") == "CASH_DIVIDEND" and not linked:
+            incomplete.append(prefix + ":cash_dividend_flow_link_missing")
+        for flow_id in linked:
+            if flow_id not in flow_ids:
+                invalid.append(prefix + ":cash_flow_id_not_found:" + str(flow_id))
+            else:
+                flow = next(item for item in flows if item.get("flow_id") == flow_id)
+                if flow.get("corporate_action_id") != action_id:
+                    invalid.append(prefix + ":cash_flow_link_not_bidirectional:" + str(flow_id))
+    for flow in flows:
+        action_id = flow.get("corporate_action_id")
+        if action_id and action_id in action_ids:
+            linked_action = next(item for item in actions if item.get("action_id") == action_id)
+            if flow.get("flow_id") not in (linked_action.get("cash_flow_ids") or []):
+                invalid.append("investment_return_outcome.cash_flow_ledger:corporate_action_link_not_bidirectional:" + str(flow.get("flow_id")))
+        elif action_id:
+            invalid.append("investment_return_outcome.cash_flow_ledger:corporate_action_id_not_found:" + str(action_id))
+
+    if status == "CALCULATED":
+        if fill_status not in {"FILLED", "PARTIALLY_FILLED"} or not settled_exit:
+            invalid.append("investment_return_outcome:calculated_requires_filled_and_settled_execution")
+        if _number(outcome.get("total_return")) is None:
+            invalid.append("investment_return_outcome:total_return_must_be_numeric_when_calculated")
+        entry_flows = [flow for flow in flows if flow.get("flow_type") == "ENTRY"]
+        final_type = "EXIT" if exit_leg.get("status") == "EXITED" else "MARK_TO_MARKET"
+        final_flows = [flow for flow in flows if flow.get("flow_type") == final_type]
+        if len(entry_flows) != 1:
+            invalid.append("investment_return_outcome:exactly_one_entry_cash_flow_required")
+        if len(final_flows) != 1:
+            invalid.append("investment_return_outcome:exactly_one_final_cash_flow_required")
+        if len(entry_flows) == 1:
+            entry_flow = entry_flows[0]
+            if entry.get("date") != entry_flow.get("date"):
+                invalid.append("investment_return_outcome:entry_cash_flow_date_mismatch")
+            entry_price = _number(entry.get("price"))
+            entry_quantity = _number(entry.get("quantity"))
+            if entry_price is not None and entry_quantity is not None and not _numbers_match(
+                entry_flow.get("gross_amount"), -entry_price * entry_quantity,
+            ):
+                invalid.append("investment_return_outcome:entry_cash_flow_price_quantity_mismatch")
+        if len(final_flows) == 1:
+            final_flow = final_flows[0]
+            if exit_leg.get("date") != final_flow.get("date"):
+                invalid.append("investment_return_outcome:exit_cash_flow_date_mismatch")
+            exit_price = _number(exit_leg.get("price"))
+            exit_quantity = _number(exit_leg.get("quantity"))
+            if exit_price is not None and exit_quantity is not None and not _numbers_match(
+                final_flow.get("gross_amount"), exit_price * exit_quantity,
+            ):
+                invalid.append("investment_return_outcome:exit_cash_flow_price_quantity_mismatch")
+        if entry_flows and final_flows and _number(entry_flows[0].get("net_base_amount")) is not None:
+            invested = -_number(entry_flows[0].get("net_base_amount"))
+            if invested <= 0:
+                invalid.append("investment_return_outcome:entry_cash_flow_must_be_negative")
+            else:
+                expected_return = sum(_number(flow.get("net_base_amount")) or 0.0 for flow in flows) / invested
+                if not _numbers_match(outcome.get("total_return"), expected_return):
+                    invalid.append("investment_return_outcome:total_return_does_not_reconcile_to_cash_flow_ledger")
+    return invalid, incomplete
+
+
 def validate_settlement(record: dict[str, Any], *, case: dict[str, Any] | None = None) -> dict[str, Any]:
     invalid: list[str] = []
     incomplete: list[str] = []
@@ -492,6 +835,12 @@ def validate_settlement(record: dict[str, Any], *, case: dict[str, Any] | None =
     )
     invalid.extend(source_invalid)
     incomplete.extend(source_incomplete)
+    actual_sources = {
+        str(source.get("source_id")): source
+        for source in record.get("actual_sources", [])
+        if isinstance(source, dict) and source.get("source_id")
+    }
+    actual_source_ids = set(actual_sources)
     actual = record.get("actual_outcomes") if isinstance(record.get("actual_outcomes"), dict) else {}
     incomplete.extend(_required(actual, ("currency", "cash_flows", "operating_observations"), "actual_outcomes"))
     for group, fields in {
@@ -520,6 +869,17 @@ def validate_settlement(record: dict[str, Any], *, case: dict[str, Any] | None =
     }.items():
         payload = record.get(section) if isinstance(record.get(section), dict) else {}
         incomplete.extend(_required(payload, fields, section))
+    return_outcome = record.get("investment_return_outcome") if isinstance(record.get("investment_return_outcome"), dict) else {}
+    return_invalid, return_incomplete = _validate_return_outcome(
+        return_outcome,
+        case=case,
+        actual_source_ids=actual_source_ids,
+        actual_sources=actual_sources,
+        cutoff=cutoff,
+        settlement_date=settlement_date,
+    )
+    invalid.extend(return_invalid)
+    incomplete.extend(return_incomplete)
     frozen_predictions = _frozen_predictions(case)
     frozen_claims = _frozen_claims(case)
     observation_by_id: dict[str, dict[str, Any]] = {}

@@ -151,6 +151,16 @@
         "prices": {"type": "array", "items": {"type": "object", "required": ["identity", "currency", "value", "meaning"], "properties": {"identity": {"type": "string"}, "currency": {"type": "string"}, "value": {"type": "number"}, "meaning": {"type": "string"}}}}
       }
     },
+    "investment_decision": {
+      "description": "Action and execution rule frozen with the report; optional for legacy calibration-only cases.",
+      "type": "object",
+      "required": ["action", "price_identity", "execution_rule"],
+      "properties": {
+        "action": {"enum": ["BUY", "HOLD", "WAIT", "SELL", "NO_BUY", "UNKNOWN"]},
+        "price_identity": {"enum": ["P_LONG", "P_XIRR", "P_LEGAL", "P_BUSINESS_VALUE_EXIT", "UNKNOWN"]},
+        "execution_rule": {"type": "string", "minLength": 1}
+      }
+    },
     "status": {"enum": ["FROZEN", "FROZEN_WITH_QUALITY_FAILURE", "INVALID"]}
   }
 }
