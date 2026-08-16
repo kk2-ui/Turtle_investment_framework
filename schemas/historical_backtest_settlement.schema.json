@@ -37,12 +37,26 @@
         },
         "operating_observations": {
           "type": "array",
-          "items": {"type": "object", "required": ["claim_id", "metric", "value", "source_ids"], "properties": {"claim_id": {"type": "string", "pattern": "^HBTCLM:"}, "metric": {"type": "string", "minLength": 1}, "value": {}, "unit": {"type": "string"}, "source_ids": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}}}}
+          "items": {
+            "type": "object",
+            "required": ["observation_id", "claim_id", "metric", "value", "unit", "measurement_basis", "period_start", "period_end", "source_ids"],
+            "properties": {
+              "observation_id": {"type": "string", "pattern": "^HBTOBS:"},
+              "claim_id": {"type": "string", "pattern": "^HBTCLM:"},
+              "metric": {"type": "string", "minLength": 1},
+              "value": {},
+              "unit": {"type": "string", "minLength": 1},
+              "measurement_basis": {"type": "string", "minLength": 1},
+              "period_start": {"type": "string", "minLength": 10},
+              "period_end": {"type": "string", "minLength": 10},
+              "source_ids": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}}
+            }
+          }
         }
       }
     },
     "report_coverage": {"type": "object", "required": ["status", "supported_claim_count", "unsupported_claim_count", "unknowns_preserved", "notes"], "properties": {"status": {"enum": ["PASS", "PARTIAL", "INCOMPLETE", "INVALID"]}, "supported_claim_count": {"type": "integer", "minimum": 0}, "unsupported_claim_count": {"type": "integer", "minimum": 0}, "unknowns_preserved": {"type": "boolean"}, "notes": {"type": "array", "items": {"type": "string"}}}},
-    "model_forecast_error": {"type": "object", "required": ["status", "metrics", "notes"], "properties": {"status": {"enum": ["CALCULATED", "PARTIAL", "NOT_CALCULABLE"]}, "metrics": {"type": "array", "items": {"type": "object", "required": ["claim_id", "metric", "forecast_value", "actual_value", "unit", "actual_source_ids"], "properties": {"claim_id": {"type": "string", "pattern": "^HBTCLM:"}, "metric": {"type": "string", "minLength": 1}, "forecast_value": {"type": "number"}, "actual_value": {"type": "number"}, "unit": {"type": "string", "minLength": 1}, "actual_source_ids": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}}}}}, "notes": {"type": "array", "items": {"type": "string"}}}},
+    "model_forecast_error": {"type": "object", "required": ["status", "metrics", "notes"], "properties": {"status": {"enum": ["CALCULATED", "PARTIAL", "NOT_CALCULABLE"]}, "metrics": {"type": "array", "items": {"type": "object", "required": ["claim_id", "observation_id", "metric", "forecast_value", "actual_value", "unit", "actual_source_ids"], "properties": {"claim_id": {"type": "string", "pattern": "^HBTCLM:"}, "observation_id": {"type": "string", "pattern": "^HBTOBS:"}, "metric": {"type": "string", "minLength": 1}, "forecast_value": {"type": "number"}, "actual_value": {"type": "number"}, "unit": {"type": "string", "minLength": 1}, "actual_source_ids": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}}}}}, "notes": {"type": "array", "items": {"type": "string"}}}},
     "investment_return_outcome": {"type": "object", "required": ["status", "action", "total_return", "benchmark_return", "currency", "notes"], "properties": {"status": {"enum": ["CALCULATED", "PARTIAL", "NOT_CALCULABLE"]}, "action": {"enum": ["BUY", "HOLD", "WAIT", "SELL", "NO_BUY", "UNKNOWN"]}, "total_return": {"type": ["number", "null"]}, "benchmark_return": {"type": ["number", "null"]}, "currency": {"type": "string"}, "notes": {"type": "array", "items": {"type": "string"}}}},
     "status": {"enum": ["REVIEWABLE", "INCOMPLETE", "INVALID"]}
   }

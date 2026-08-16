@@ -31,6 +31,29 @@
 
 结算使用独立的 `actual_sources`，每一项实际现金流、经营观察和预测误差都要引用该清单中的来源。结算来源必须是官方来源类型，并记录 `published_at` 和 `source_version`；发布时间必须在模拟截止日之后、结算日之前。这样“事实后来发生了什么”与“冻结时报告主张了什么”可以逐项对照，但仍与覆盖度和投资结果分开保存。
 
+### 经营预测结算契约
+
+`calibration_ledger` 的每条 claim 只能对应一个经营观察口径。`observable_outcome` 必须冻结以下字段：
+
+- `metric`、`unit`：指标和单位；
+- `measurement_basis`：会计/经济口径，例如经营现金减维护资本、普通股归属和分母定义；
+- `measurement_rule`：从年报或公告中如何计算该指标；
+- `period_start`、`period_end`：要结算的经营期间，不能只写“下一年”；
+- `allowed_source_types`：允许的后续来源，限定为 `ANNUAL_REPORT`、`INTERIM_REPORT` 或
+  `EXCHANGE_ANNOUNCEMENT` 的明确子集。
+
+`PREDICTION` 还必须冻结数值、方向、期限和失效阈值；预测及阈值的 `metric`/`unit` 必须与
+`observable_outcome` 一致。`UNKNOWN` 不得伪造数值或阈值，但仍必须给出同样的指标、口径、期间和
+允许来源，让后续年报可以结算“仍未知”或“未知已解决”。一个 claim 如果要观察两个不同指标，
+必须拆成两个 claim，避免结算时把同名指标或不同会计口径混在一起。
+
+后续 `actual_outcomes.operating_observations` 必须有唯一的 `observation_id`，并逐字匹配冻结
+claim 的指标、单位、`measurement_basis` 和报告期。每个观测的来源类型必须属于冻结的
+`allowed_source_types`；年报/中报来源还必须以 `data_as_of` 对应该观测的 `period_end`。
+`model_forecast_error.metrics` 通过 `observation_id` 引用同一观测，实际值和来源清单也必须
+一致。任何指标、口径、期间、来源类型或来源报告期漂移都会使结算 `INVALID`，而不是被平均分数
+或收益结果掩盖。
+
 ## 回报通道与价格身份
 
 报告必须先识别通道：

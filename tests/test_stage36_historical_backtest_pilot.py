@@ -78,7 +78,11 @@ def _case() -> dict:
                     "observable_outcome": {
                         "metric": "ordinary_share_owner_cash_per_share",
                         "unit": "HKD/share",
+                        "measurement_basis": "cash_flow_from_operations less maintenance_capex attributable to ordinary shareholders divided by weighted_average_ordinary_shares",
                         "measurement_rule": "按下一份官方年报的经营现金、资本开支和普通股归属重新计算。",
+                        "period_start": "2021-01-01",
+                        "period_end": "2021-12-31",
+                        "allowed_source_types": ["ANNUAL_REPORT", "EXCHANGE_ANNOUNCEMENT"],
                     },
                 },
                 {
@@ -99,7 +103,11 @@ def _case() -> dict:
                     "observable_outcome": {
                         "metric": "minority_cash_distribution_ratio",
                         "unit": "%",
+                        "measurement_basis": "minority_dividends_paid divided by minority_attributable_cash_measure",
                         "measurement_rule": "以官方年报的少数股东分红除以少数股东归属现金口径。",
+                        "period_start": "2021-01-01",
+                        "period_end": "2021-12-31",
+                        "allowed_source_types": ["ANNUAL_REPORT"],
                     },
                 },
             ],
@@ -139,10 +147,14 @@ def _settlement() -> dict:
             "currency": "HKD",
             "cash_flows": [{"date": "2022-05-10", "amount": 0.1, "source_ids": ["AR:00506:2021"]}],
             "operating_observations": [{
+                "observation_id": "HBTOBS:owner-cash:FY2021",
                 "claim_id": "HBTCLM:owner-cash",
                 "metric": "ordinary_share_owner_cash_per_share",
                 "value": 0.18,
                 "unit": "HKD/share",
+                "measurement_basis": "cash_flow_from_operations less maintenance_capex attributable to ordinary shareholders divided by weighted_average_ordinary_shares",
+                "period_start": "2021-01-01",
+                "period_end": "2021-12-31",
                 "source_ids": ["AR:00506:2021"],
             }],
         },
@@ -157,6 +169,7 @@ def _settlement() -> dict:
             "status": "CALCULATED",
             "metrics": [{
                 "claim_id": "HBTCLM:owner-cash",
+                "observation_id": "HBTOBS:owner-cash:FY2021",
                 "metric": "ordinary_share_owner_cash_per_share",
                 "forecast_value": 0.2,
                 "actual_value": 0.18,
@@ -236,6 +249,23 @@ def test_calibration_ledger_binds_claims_to_frozen_sources_and_preserves_unknown
     assert "calibration_ledger.claims[1]:unknown_cannot_carry_quantitative_prediction" in result["invalid_findings"]
 
 
+def test_calibration_ledger_requires_a_period_and_accounting_basis() -> None:
+    case = _case()
+    del case["calibration_ledger"]["claims"][0]["observable_outcome"]["measurement_basis"]
+    result = validate_case(case)
+    assert "calibration_ledger.claims[0].observable_outcome:missing:measurement_basis" in result["incomplete_findings"]
+
+    case = _case()
+    case["calibration_ledger"]["claims"][0]["prediction"]["unit"] = "RMB/share"
+    result = validate_case(case)
+    assert "calibration_ledger.claims[0].prediction:unit_does_not_match_observable_outcome" in result["invalid_findings"]
+
+    case = _case()
+    case["calibration_ledger"]["claims"][0]["observable_outcome"]["period_start"] = "2022-01-01"
+    result = validate_case(case)
+    assert "calibration_ledger.claims[0].observable_outcome:period_start_after_period_end" in result["invalid_findings"]
+
+
 def test_fixed_market_terminal_price_cannot_be_primary_without_independent_evidence() -> None:
     case = _case()
     case["route"] = "FINITE_XIRR"
@@ -302,6 +332,49 @@ def test_settlement_requires_later_official_sources_and_cannot_rewrite_frozen_pr
     rewritten["model_forecast_error"]["metrics"][0]["forecast_value"] = 0.25
     result = validate_settlement(rewritten, case=case)
     assert "model_forecast_error.metrics[0]:forecast_value_does_not_match_frozen_prediction" in result["invalid_findings"]
+
+
+def test_settlement_rejects_operating_metric_basis_period_and_source_drift() -> None:
+    case = _case()
+    settlement = _settlement()
+
+    metric_drift = deepcopy(settlement)
+    metric_drift["actual_outcomes"]["operating_observations"][0]["metric"] = "reported_revenue"
+    result = validate_settlement(metric_drift, case=case)
+    assert "actual_outcomes.operating_observations[0]:metric_does_not_match_frozen_contract" in result["invalid_findings"]
+
+    basis_drift = deepcopy(settlement)
+    basis_drift["actual_outcomes"]["operating_observations"][0]["measurement_basis"] = "reported_net_income"
+    result = validate_settlement(basis_drift, case=case)
+    assert "actual_outcomes.operating_observations[0]:measurement_basis_does_not_match_frozen_contract" in result["invalid_findings"]
+
+    period_drift = deepcopy(settlement)
+    period_drift["actual_outcomes"]["operating_observations"][0]["period_end"] = "2022-12-31"
+    result = validate_settlement(period_drift, case=case)
+    assert "actual_outcomes.operating_observations[0]:period_end_does_not_match_frozen_contract" in result["invalid_findings"]
+
+    source_drift = deepcopy(settlement)
+    source_drift["actual_sources"][0]["source_type"] = "OFFICIAL_STATISTICS"
+    result = validate_settlement(source_drift, case=case)
+    assert "actual_outcomes.operating_observations[0]:source_type_not_allowed_for_frozen_contract:AR:00506:2021" in result["invalid_findings"]
+
+    report_period_drift = deepcopy(settlement)
+    report_period_drift["actual_sources"][0]["data_as_of"] = "2020-12-31"
+    result = validate_settlement(report_period_drift, case=case)
+    assert "actual_outcomes.operating_observations[0]:report_source_period_does_not_match_observation:AR:00506:2021" in result["invalid_findings"]
+
+
+def test_forecast_error_must_reference_the_same_operating_observation() -> None:
+    case = _case()
+    settlement = _settlement()
+    settlement["model_forecast_error"]["metrics"][0]["actual_value"] = 0.19
+    result = validate_settlement(settlement, case=case)
+    assert "model_forecast_error.metrics[0]:actual_value_does_not_match_operating_observation" in result["invalid_findings"]
+
+    settlement = _settlement()
+    settlement["model_forecast_error"]["metrics"][0]["observation_id"] = "HBTOBS:missing"
+    result = validate_settlement(settlement, case=case)
+    assert "model_forecast_error.metrics[0]:observation_id_not_found:HBTOBS:missing" in result["invalid_findings"]
 
 
 def test_checked_in_pilot_config_matches_builder() -> None:

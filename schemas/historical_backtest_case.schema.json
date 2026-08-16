@@ -111,11 +111,19 @@
               "flip_condition": {"type": "string", "minLength": 1},
               "observable_outcome": {
                 "type": "object",
-                "required": ["metric", "unit", "measurement_rule"],
+                "required": ["metric", "unit", "measurement_basis", "measurement_rule", "period_start", "period_end", "allowed_source_types"],
                 "properties": {
                   "metric": {"type": "string", "minLength": 1},
                   "unit": {"type": "string", "minLength": 1},
-                  "measurement_rule": {"type": "string", "minLength": 1}
+                  "measurement_basis": {"type": "string", "minLength": 1},
+                  "measurement_rule": {"type": "string", "minLength": 1},
+                  "period_start": {"type": "string", "minLength": 10},
+                  "period_end": {"type": "string", "minLength": 10},
+                  "allowed_source_types": {
+                    "type": "array",
+                    "minItems": 1,
+                    "items": {"enum": ["ANNUAL_REPORT", "INTERIM_REPORT", "EXCHANGE_ANNOUNCEMENT"]}
+                  }
                 }
               }
             }

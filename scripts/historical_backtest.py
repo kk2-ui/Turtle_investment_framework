@@ -27,6 +27,9 @@ OFFICIAL_SETTLEMENT_SOURCE_TYPES = {
     "ANNUAL_REPORT", "INTERIM_REPORT", "EXCHANGE_ANNOUNCEMENT", "OFFICIAL_STATISTICS",
     "OFFICIAL_MARKET_DATA", "OTHER_OFFICIAL",
 }
+OPERATING_OBSERVATION_SOURCE_TYPES = {
+    "ANNUAL_REPORT", "INTERIM_REPORT", "EXCHANGE_ANNOUNCEMENT",
+}
 LEAKAGE_FIELDS = {
     "actual", "actual_value", "actual_outcome", "actual_outcomes", "outcome", "outcomes", "settlement",
     "settled_at", "future_price", "future_return", "realized_return", "benchmark_return",
@@ -216,12 +219,40 @@ def _validate_calibration_ledger(
         invalid.extend(ref_invalid)
         incomplete.extend(ref_incomplete)
         outcome = claim.get("observable_outcome") if isinstance(claim.get("observable_outcome"), dict) else {}
-        incomplete.extend(_required(outcome, ("metric", "unit", "measurement_rule"), prefix + ".observable_outcome"))
+        outcome_prefix = prefix + ".observable_outcome"
+        incomplete.extend(_required(
+            outcome,
+            (
+                "metric", "unit", "measurement_basis", "measurement_rule", "period_start", "period_end",
+                "allowed_source_types",
+            ),
+            outcome_prefix,
+        ))
+        period_start = _date(outcome.get("period_start"))
+        period_end = _date(outcome.get("period_end"))
+        if outcome.get("period_start") not in (None, "") and period_start is None:
+            invalid.append(outcome_prefix + ":period_start_invalid")
+        if outcome.get("period_end") not in (None, "") and period_end is None:
+            invalid.append(outcome_prefix + ":period_end_invalid")
+        if period_start and period_end and period_start > period_end:
+            invalid.append(outcome_prefix + ":period_start_after_period_end")
+        allowed_source_types = outcome.get("allowed_source_types")
+        if isinstance(allowed_source_types, list):
+            for source_type in allowed_source_types:
+                if source_type not in OPERATING_OBSERVATION_SOURCE_TYPES:
+                    invalid.append(outcome_prefix + ":allowed_source_type_invalid:" + str(source_type))
+        elif allowed_source_types not in (None, ""):
+            invalid.append(outcome_prefix + ":allowed_source_types_not_list")
         if disposition == "PREDICTION":
             prediction = claim.get("prediction") if isinstance(claim.get("prediction"), dict) else {}
             threshold = claim.get("threshold") if isinstance(claim.get("threshold"), dict) else {}
             incomplete.extend(_required(prediction, ("metric", "operator", "value", "unit", "horizon"), prefix + ".prediction"))
             incomplete.extend(_required(threshold, ("metric", "operator", "value", "unit", "consequence"), prefix + ".threshold"))
+            for field in ("metric", "unit"):
+                if prediction.get(field) != outcome.get(field):
+                    invalid.append(prefix + ".prediction:" + field + "_does_not_match_observable_outcome")
+                if threshold.get(field) != outcome.get(field):
+                    invalid.append(prefix + ".threshold:" + field + "_does_not_match_observable_outcome")
             if claim.get("unknown") is not None:
                 invalid.append(prefix + ":prediction_cannot_carry_unknown_payload")
         elif disposition == "UNKNOWN":
@@ -241,6 +272,18 @@ def _frozen_predictions(case: dict[str, Any] | None) -> dict[str, dict[str, Any]
         str(claim.get("claim_id")): claim
         for claim in claims
         if isinstance(claim, dict) and isinstance(claim.get("prediction"), dict)
+    }
+
+
+def _frozen_claims(case: dict[str, Any] | None) -> dict[str, dict[str, Any]]:
+    if not isinstance(case, dict):
+        return {}
+    ledger = case.get("calibration_ledger") if isinstance(case.get("calibration_ledger"), dict) else {}
+    claims = ledger.get("claims") if isinstance(ledger.get("claims"), list) else []
+    return {
+        str(claim.get("claim_id")): claim
+        for claim in claims
+        if isinstance(claim, dict) and str(claim.get("claim_id") or "")
     }
 
 
@@ -343,15 +386,15 @@ def validate_case(record: dict[str, Any]) -> dict[str, Any]:
 
 def _validate_actual_sources(
     record: dict[str, Any], *, cutoff: date | None, settlement_date: date | None,
-) -> tuple[set[str], list[str], list[str]]:
+) -> tuple[dict[str, dict[str, Any]], list[str], list[str]]:
     """Check that settlement facts have their own later official evidence."""
-    source_ids: set[str] = set()
+    sources_by_id: dict[str, dict[str, Any]] = {}
     invalid: list[str] = []
     incomplete: list[str] = []
     sources = record.get("actual_sources") if isinstance(record.get("actual_sources"), list) else []
     if not sources:
         incomplete.append("actual_sources_missing")
-        return source_ids, invalid, incomplete
+        return sources_by_id, invalid, incomplete
     for index, source in enumerate(sources):
         prefix = f"actual_sources[{index}]"
         if not isinstance(source, dict):
@@ -360,9 +403,10 @@ def _validate_actual_sources(
         source_id = str(source.get("source_id") or "")
         if not source_id:
             incomplete.append(prefix + ":source_id_missing")
-        elif source_id in source_ids:
+        elif source_id in sources_by_id:
             invalid.append("duplicate_actual_source_id:" + source_id)
-        source_ids.add(source_id)
+        if source_id:
+            sources_by_id[source_id] = source
         incomplete.extend(_required(source, ("source_type", "official", "published_at", "source_version"), prefix))
         if source.get("official") is not True:
             invalid.append(prefix + ":official_source_required")
@@ -383,7 +427,43 @@ def _validate_actual_sources(
                 incomplete.append(prefix + ":data_as_of_invalid")
             elif settlement_date and observed_date > settlement_date:
                 invalid.append(prefix + ":data_as_of_after_settlement")
-    return source_ids, invalid, incomplete
+    return sources_by_id, invalid, incomplete
+
+
+def _validate_operating_observation(
+    observation: dict[str, Any], *, prefix: str, frozen_claims: dict[str, dict[str, Any]],
+    actual_sources: dict[str, dict[str, Any]],
+) -> tuple[list[str], list[str]]:
+    """Bind an observed operating result to the frozen metric, basis, period and source contract."""
+    invalid: list[str] = []
+    incomplete: list[str] = []
+    claim_id = str(observation.get("claim_id") or "")
+    claim = frozen_claims.get(claim_id)
+    if claim is None:
+        invalid.append(prefix + ":claim_id_not_frozen:" + claim_id)
+        return invalid, incomplete
+    outcome = claim.get("observable_outcome") if isinstance(claim.get("observable_outcome"), dict) else {}
+    for field in ("metric", "unit", "measurement_basis", "period_start", "period_end"):
+        if observation.get(field) != outcome.get(field):
+            invalid.append(prefix + ":" + field + "_does_not_match_frozen_contract")
+    allowed_source_types = outcome.get("allowed_source_types")
+    if not isinstance(allowed_source_types, list) or not allowed_source_types:
+        return invalid, incomplete
+    for source_id in observation.get("source_ids") or []:
+        source = actual_sources.get(str(source_id or ""))
+        if source is None:
+            continue
+        source_type = source.get("source_type")
+        if source_type not in allowed_source_types:
+            invalid.append(prefix + ":source_type_not_allowed_for_frozen_contract:" + str(source_id))
+        if source_type in {"ANNUAL_REPORT", "INTERIM_REPORT"}:
+            source_period_end = _date(source.get("data_as_of"))
+            observation_period_end = _date(observation.get("period_end"))
+            if source_period_end is None:
+                incomplete.append(prefix + ":report_source_data_as_of_missing:" + str(source_id))
+            elif observation_period_end and source_period_end != observation_period_end:
+                invalid.append(prefix + ":report_source_period_does_not_match_observation:" + str(source_id))
+    return invalid, incomplete
 
 
 def validate_settlement(record: dict[str, Any], *, case: dict[str, Any] | None = None) -> dict[str, Any]:
@@ -407,7 +487,7 @@ def validate_settlement(record: dict[str, Any], *, case: dict[str, Any] | None =
         invalid.append("settlement_as_of_invalid")
     elif cutoff and settlement_date <= cutoff:
         invalid.append("settlement_must_follow_report_cutoff")
-    actual_source_ids, source_invalid, source_incomplete = _validate_actual_sources(
+    actual_sources, source_invalid, source_incomplete = _validate_actual_sources(
         record, cutoff=cutoff, settlement_date=settlement_date,
     )
     invalid.extend(source_invalid)
@@ -416,7 +496,10 @@ def validate_settlement(record: dict[str, Any], *, case: dict[str, Any] | None =
     incomplete.extend(_required(actual, ("currency", "cash_flows", "operating_observations"), "actual_outcomes"))
     for group, fields in {
         "cash_flows": ("date", "amount", "source_ids"),
-        "operating_observations": ("claim_id", "metric", "value", "source_ids"),
+        "operating_observations": (
+            "observation_id", "claim_id", "metric", "value", "unit", "measurement_basis", "period_start",
+            "period_end", "source_ids",
+        ),
     }.items():
         observations = actual.get(group) if isinstance(actual.get(group), list) else []
         for index, observation in enumerate(observations):
@@ -426,7 +509,7 @@ def validate_settlement(record: dict[str, Any], *, case: dict[str, Any] | None =
                 continue
             incomplete.extend(_required(observation, fields, prefix))
             ref_invalid, ref_incomplete = _validate_source_references(
-                observation.get("source_ids"), actual_source_ids, prefix,
+                observation.get("source_ids"), set(actual_sources), prefix,
             )
             invalid.extend(ref_invalid)
             incomplete.extend(ref_incomplete)
@@ -438,19 +521,27 @@ def validate_settlement(record: dict[str, Any], *, case: dict[str, Any] | None =
         payload = record.get(section) if isinstance(record.get(section), dict) else {}
         incomplete.extend(_required(payload, fields, section))
     frozen_predictions = _frozen_predictions(case)
-    known_claim_ids = set(frozen_predictions)
-    if case:
-        ledger = case.get("calibration_ledger") if isinstance(case.get("calibration_ledger"), dict) else {}
-        known_claim_ids.update(
-            str(item.get("claim_id"))
-            for item in ledger.get("claims", []) if isinstance(item, dict)
-        )
+    frozen_claims = _frozen_claims(case)
+    observation_by_id: dict[str, dict[str, Any]] = {}
     for index, observation in enumerate(actual.get("operating_observations") or []):
         if not isinstance(observation, dict) or not case:
             continue
-        claim_id = str(observation.get("claim_id") or "")
-        if claim_id not in known_claim_ids:
-            invalid.append(f"actual_outcomes.operating_observations[{index}]:claim_id_not_frozen:{claim_id}")
+        prefix = f"actual_outcomes.operating_observations[{index}]"
+        observation_id = str(observation.get("observation_id") or "")
+        if not observation_id.startswith("HBTOBS:"):
+            invalid.append(prefix + ":observation_id_invalid")
+        elif observation_id in observation_by_id:
+            invalid.append("duplicate_operating_observation_id:" + observation_id)
+        else:
+            observation_by_id[observation_id] = observation
+        observation_invalid, observation_incomplete = _validate_operating_observation(
+            observation,
+            prefix=prefix,
+            frozen_claims=frozen_claims,
+            actual_sources=actual_sources,
+        )
+        invalid.extend(observation_invalid)
+        incomplete.extend(observation_incomplete)
     model_error = record.get("model_forecast_error") if isinstance(record.get("model_forecast_error"), dict) else {}
     for index, metric in enumerate(model_error.get("metrics") or []):
         prefix = f"model_forecast_error.metrics[{index}]"
@@ -459,11 +550,14 @@ def validate_settlement(record: dict[str, Any], *, case: dict[str, Any] | None =
             continue
         incomplete.extend(_required(
             metric,
-            ("claim_id", "metric", "forecast_value", "actual_value", "unit", "actual_source_ids"),
+            (
+                "claim_id", "observation_id", "metric", "forecast_value", "actual_value", "unit",
+                "actual_source_ids",
+            ),
             prefix,
         ))
         ref_invalid, ref_incomplete = _validate_source_references(
-            metric.get("actual_source_ids"), actual_source_ids, prefix,
+            metric.get("actual_source_ids"), set(actual_sources), prefix,
         )
         invalid.extend(ref_invalid)
         incomplete.extend(ref_incomplete)
@@ -478,6 +572,21 @@ def validate_settlement(record: dict[str, Any], *, case: dict[str, Any] | None =
                 invalid.append(prefix + ":metric_does_not_match_frozen_prediction")
             if metric.get("forecast_value") != prediction.get("value"):
                 invalid.append(prefix + ":forecast_value_does_not_match_frozen_prediction")
+            observation_id = str(metric.get("observation_id") or "")
+            observation = observation_by_id.get(observation_id)
+            if observation is None:
+                invalid.append(prefix + ":observation_id_not_found:" + observation_id)
+                continue
+            if metric.get("claim_id") != observation.get("claim_id"):
+                invalid.append(prefix + ":claim_id_does_not_match_operating_observation")
+            if metric.get("metric") != observation.get("metric"):
+                invalid.append(prefix + ":metric_does_not_match_operating_observation")
+            if metric.get("unit") != observation.get("unit"):
+                invalid.append(prefix + ":unit_does_not_match_operating_observation")
+            if metric.get("actual_value") != observation.get("value"):
+                invalid.append(prefix + ":actual_value_does_not_match_operating_observation")
+            if set(metric.get("actual_source_ids") or []) != set(observation.get("source_ids") or []):
+                invalid.append(prefix + ":actual_source_ids_do_not_match_operating_observation")
     forbidden = _nested_forbidden(record, path="settlement")
     # Hindsight is expected in actual_outcomes; only reject a combined score.
     if "combined_score" in json.dumps(record, ensure_ascii=False).lower() or "composite_score" in json.dumps(record, ensure_ascii=False).lower():
