@@ -4,6 +4,9 @@
 > 状态：`STARTED / FIRST_CASE_ACQUISITION_PENDING`  
 > 交接范围：黄金候选的当前状态、已合入的回测基础设施，以及下一会话的执行顺序。
 
+当前执行路线以 [Phase 10 回测路线图与模型行为契约](PHASE10_BACKTEST_ROADMAP.md) 和
+[收益与选股评估契约](PHASE10_RETURN_SELECTION_EVALUATION.md) 为准；本交接只保留当时的启动状态。
+
 ## 1. 当前结论
 
 可以开始历史回测的**资料采集、冻结案例和工程验收**，但不能把当前工作称为
