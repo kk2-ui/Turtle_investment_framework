@@ -163,3 +163,15 @@ PIT 工具、writer 和 production-origin 正向回放均有定向测试。此�
 cutoff 后文件，也没有将页面标题、内容或结果用于来源包、报告或结论。该尝试归类为
 `ACQUISITION_MODULE`：后续只在确认官方查询响应的开始/结束日期已经生效后才读取或保存枚举结果；若日期过滤
 失效，采集必须失败而非退回最新列表。
+
+## 11. 2026-08-17 continuation: P10-A source package complete
+
+本次 continuation 已在独立分支 `feat/phase10-600340-precutoff-acquisition-v2` 完成首案 P10-A 受控采集：
+
+- 上交所官方公告查询在 `2018-01-01` 至 `2020-04-27` 范围内完成 880 条 inventory 枚举，保留 879 条准入来源和 1 条截止日前已被修订版替代的原始年报拒绝记录；没有打开 cutoff 后资料。
+- 静态 SSE PDF 的 gzip/反爬响应只有在解压后识别出官方 challenge 并成功重试、最终首字节为 `%PDF` 时才接受；普通拒绝 HTML、损坏 gzip 和非 PDF 响应均失败关闭。
+- 最终 source package manifest 为 `config/historical_backtest_600340_source_manifest.package-v5.json`，本地 package root 为 `data/phase10/600340/precutoff-v2`：879/879 原始 PDF 与 reader 表示完成，855 份由 `pdf_preprocessor.extract_all_pages` 读取，24 份扫描 PDF 由显式 `pdftoppm+tesseract` OCR fallback 读取。PIT acquisition manifest 和 `scripts/phase10_pit_runner.py` 均为 `REVIEWABLE`，无 `invalid_findings` 或 `incomplete_findings`。
+- 采集器现在支持断点恢复：已完成来源不会重复下载，已有失败 PDF 可只补做 reader 物化。`data/phase10/` 仅为本地证据包，已加入 `.gitignore`；git 提交不包含 552MB 原件或 Markdown。
+- 定向 PIT/acquisition 回归 23 项通过，项目完整门禁 `612 passed`，`merge-check READY`；提交 `b1fbbb2`。
+
+当前停点：PIT preflight 已通过并生成新的 attestation；P10-B 受限 writer 尚未运行，因为当前 shell 没有 `DEEPSEEK_API_KEY` 或 `ANTHROPIC_API_KEY`。下一会话应使用新/空 output 目录启动 `--pit-writer --validation-only`，只允许生成冻结前 Markdown 草案；在 writer、独立 reviewer、完整 calibration ledger 和 Phase 08 acceptance/V3 接入前，仍不得把本案标为生产回测、收益、买点、选股或黄金标准校准样本。
