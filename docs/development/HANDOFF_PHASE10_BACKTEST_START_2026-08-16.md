@@ -133,3 +133,9 @@ case 的 `calibration_ledger.claims` 至少覆盖：项目销售/回款与资本
 - 不增加哈希、校验和、向量库或全文存储，除非有明确用途并改变下一步决策。
 - 发现材料性缺口时，按 `DATA_COVERAGE`、`ACQUISITION_MODULE`、`REASONING`、`MODEL`、`WRITING` 归因；先修可复用采集器/schema/validator，再重写报告。
 - 每次写入使用隔离 worktree，提交后运行 `.venv/bin/python scripts/project_guard.py verify full` 和 `merge-check`；不要直接在 `main` 提交。
+
+## 9. 2026-08-16 continuation: contract branch update
+
+本交接第 4 节记录的是当时 `main=74f2bfd` 的启动快照，不因本分支的后续 contract 修补而改写。当前分支已将 `FROZEN` 收紧为可读取的 Markdown 报告、`variant_id -> freeze_id -> review_id` 生命周期、固定章节和 claim statement、不同 writer/reviewer context 的逐 claim 审阅和可回放的 `REPORT_COVERAGE`；生产路径预留统一 `turtle_agent`、Phase 08 acceptance/V3 gates、publication snapshot、run manifest 和 PIT runner attestation，测试夹具只留在测试命名空间。PIT runner/read audit 与部署级模型记忆 attestation 还没有实现，validator 因而故意不允许生产 case 或非测试 `CONTROLLED / STRICT` 成为 `REVIEWABLE`；当前只能是 `UNCONTROLLED / EXPLORATORY / ENGINEERING_DIAGNOSTIC_ONLY`。报告 artifact SHA-256 只用于发现冻结后文本改写并强制重审。质量失败必须保留完整根因工件。该 assurance 是 `VERIFIED_ARTIFACT_AND_DECLARED_PROCESS`，不是密码学作者或模型记忆证明。
+
+这些 validators 不是实际回测：600340 的年报/公告全集、价格、公司行动和基准还未采集，仓库没有真实 historical case、冻结报告或结算结果；因此不能产生黄金标准改进、个股收益、选股或买点结论。

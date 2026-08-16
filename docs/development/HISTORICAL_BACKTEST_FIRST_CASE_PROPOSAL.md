@@ -31,7 +31,7 @@
 
 ## 冻结证据包
 
-所有冻结输入都必须保留 `source_id`、`source_version`、`published_at`、`data_as_of` 和准入裁决。下表列出已经在上交所页面核实可取得的关键原始版本；实际下载仍须走采集器并建立逐页/逐项引用。
+所有冻结输入都必须保留 `source_id`、`source_version`、`published_at`、`data_as_of` 和准入裁决。下表只是采集 seed：尚未下载、尚未完成公告全量枚举或准入验证，也未形成 source manifest；实际下载仍须走采集器并建立逐页/逐项引用。
 
 | source_id | 截止日前文件与版本 | published_at | 用途与版本规则 |
 |---|---|---|---|
@@ -58,7 +58,7 @@
 | 基准 | 中证指数有限公司当时的沪深 300 官方指数历史记录；同时保存指数发布日期和价格日期。 | 基准缺失只阻断相对回报栏，不允许影响报告覆盖或模型误差栏。 |
 | 后续经营与债务结算 | 只在报告冻结后按真实发布日期逐份打开上交所后续公告和年报。例如[2021-02-02 部分债务未能如期偿还公告](https://static.sse.com.cn/disclosure/listedinfo/announcement/c/2021-02-02/600340_20210202_1.pdf)属于结算池，绝不属于冻结证据。 | 逐份记录 `published_at` 和版本；不能从最终重组总结倒推早期事实。 |
 
-本提案尚未把行情来源伪装成已完成证据包。真正的 `ELIGIBLE` 前提是：原始行情、公司行动和基准均完成上述双时间身份与执行日交叉核对。
+本提案尚未把行情来源伪装成已完成证据包。年报、公告全集、原始行情、公司行动和沪深 300 基准均仍是 600340 acquisition gap；真正的 `ELIGIBLE` 前提是：全部来源完成上述双时间身份、全量枚举和执行日交叉核对。
 
 ## 幸存者偏差与停牌处理
 
@@ -75,6 +75,8 @@
 
 各项还须遵循[经营预测与年报走步结算设计](PHASE10_OPERATING_FORECAST_SETTLEMENT.md)：冻结时明确年报附注/公式、合并范围、目标经济期间和首次可见披露期；冻结后按真实 `published_at` 逐份打开年报和公告。`UNKNOWN`、修订年报与口径漂移必须分别展示，不能借用后续重述值补写冻结结论或把不可比数值强行算成预测误差。
 
+`FROZEN` 还必须有仓库内的 Markdown 报告 artifact、固定章节、全部 claim statement、`COMPLETE` writer 及不同身份和 context 的 reviewer；正文 variant 必须确定性绑定 freeze/review identity，生产首案的目标是统一 `turtle_agent` 管线、Phase 08/V3 acceptance 和 PIT runner attestation，不能拿测试 Markdown 冒充历史报告。PIT runner/read audit 尚未实现，故在该能力落地前首案不能成为生产 `FROZEN` 或进入结算。reviewer 对每一条 claim 重放冻结 `source_ids`，把 `UNKNOWN` 标为 `UNKNOWN_PRESERVED`，并且只让材料预测以 `SUPPORTED` 进入 `FROZEN`。质量不足时保留带根因、经济影响、缺失事实、禁止假设、修复和验收条件的 `FROZEN_WITH_QUALITY_FAILURE`；它不能进入结算或校准。该门的 assurance 是 `VERIFIED_ARTIFACT_AND_DECLARED_PROCESS`，不是密码学作者证明或无记忆证明。
+
 该首案可校准的黄金报告门包括：
 
 1. `DATA_COVERAGE + ACQUISITION_MODULE`：原始年报、截止日前修订版、交易所问询和公告全量采集，以及禁止当前重述值倒灌。
@@ -87,7 +89,7 @@
 
 ## 开始条件
 
-1. 将本案以新 `experiment_id` 预注册，并注明 `PURPOSEFUL_STRESS_CASE`；不改写当前九案的 `INELIGIBLE_NO_HISTORICAL_VINTAGE` 状态。
+1. 将本案以新 `experiment_id` 预注册，并注明 `PURPOSEFUL_STRESS_CASE` 和 `UNCONTROLLED / EXPLORATORY / ENGINEERING_DIAGNOSTIC_ONLY`；不改写当前九案的 `INELIGIBLE_NO_HISTORICAL_VINTAGE` 状态。
 2. 先完成原始报告、截止日前公告和原始行情的受控采集；来源准入器必须拒绝 2020-04-27 之后的文件。
 3. 冻结“主张/预测/阈值/反方/UNKNOWN”账本后，才允许打开 2020-04-28 之后的任何公告或行情。
 4. 冻结报告通过独立质量审阅后再走步结算。若报告未通过，保留 `FROZEN_WITH_QUALITY_FAILURE`，不能重写到好看后只展示通过版本。

@@ -17,6 +17,13 @@
 5. 发布后的预测、阈值和决策能够被长期校准。
 6. 操作人审阅的是完整报告是否符合其投资体系及最终结论，而不是逐项审批研究过程中的临时动作。
 
+### 1.2 历史研究基础设施的长期边界
+
+历史回测是发布后校准基础设施，不是另一套报告生成器。它必须复用统一
+`scripts/turtle_agent/run.py` 和 V3 数据/模型/决策门，并把同一冻结时点的三本账分开保存：
+`REPORT_COVERAGE`、`MODEL_FORECAST_ERROR`、`INVESTMENT_RETURN_OUTCOME`。报告版本按
+`variant_id -> freeze_id -> review_id` 生命周期管理；报告、买点或结构化账本变化只能产生新版本和新审阅，不能覆盖旧结论。只有在生产管线 acceptance、PIT source-package 读取审计和留出集均通过后，历史结果才可用于改进黄金标准、买点或选股；在此之前只作为工程诊断，不产生投资收益或模型有效性声明。
+
 ### 1.1 用户重申的最终目标
 
 本项目的目标不是生成更短、更容易通过评分或盲评的报告，也不是把研究过程变成需要操作人逐步批准的工作流。目标是建立一个能够在取得充分上下文后，自动完成完整价值投资研究并给出最终判断的系统；操作人最终判断的是成稿是否符合其投资体系、是否偏离其思路，而不是代替Agent审阅全部中间步骤。
@@ -124,7 +131,7 @@
 | 07 | [模型编排与运行治理](stages/07_MODEL_ORCHESTRATION_AND_OPERATIONS.md) | **COMPLETE** | 贯穿；最终收口 | 安全、可控成本与可观测生产运行 |
 | 08 | [真实报告验收与质量校准](stages/08_REAL_REPORT_ACCEPTANCE_AND_QUALITY_CALIBRATION.md) | **VALIDATING** | 01–07 | 盲评候选、黄金不变量与真实质量基线 |
 | 09 | [纵向论点跟踪与年糕可视化](stages/09_LONGITUDINAL_THESIS_TRACKING_AND_NIANGAO.md) | **PLANNED** | 01、02、04、06、08 | 同期可比、逐题结算、干扰桥及Web历史时间轴 |
-| 10 | [历史时点研究回测](stages/10_POINT_IN_TIME_RESEARCH_BACKTEST.md) | **PLANNED** | 01–09 | 无未来数据的历史报告、走步结算及决策质量评价 |
+| 10 | [历史时点研究回测](stages/10_POINT_IN_TIME_RESEARCH_BACKTEST.md) | **IN_PROGRESS** | 01–09 | P10-A 合同与校验器完成；历史来源采集、真实冻结报告与走步结算待完成 |
 
 阶段状态只允许：`PLANNED → IN_PROGRESS → VALIDATING → COMPLETE`。无法继续时标记 `BLOCKED` 并写清唯一阻断条件；不得用“基本完成”代替出口验收。
 

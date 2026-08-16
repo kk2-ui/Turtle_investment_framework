@@ -9,6 +9,8 @@
 `INELIGIBLE_NO_HISTORICAL_VINTAGE`，因此现在不能回答推荐个股未来收益是否好，也不能据此改
 `P_LONG`、要求回报率、资本化率或买点规则。
 
+当前模型记忆登记为 `UNCONTROLLED / EXPLORATORY / ENGINEERING_DIAGNOSTIC_ONLY`，所以即使未来完成工程 replay，也不能作严格回测、校准或生产选股声明。只有部署级 attestation 支持的 `CONTROLLED / STRICT` case 才可能进入模型记忆受控候选池；当前 validator 尚未开放该路径，且未来仍须满足本文件的宇宙、对照组和 holdout 条件。
+
 后续必须注册两个相互关联但不合并的实验：
 
 1. **标准校准实验**：以点时报告冻结输入检验 `REPORT_COVERAGE` 和
@@ -28,6 +30,7 @@
 在看到冻结后的资料和价格前，登记以下内容：
 
 - 候选宇宙的生成规则、纳入/排除理由和当时可见的全量名单；
+- `eligible_case_count` 与 `calibration_eligible_case_count`：前者只代表历史资料齐备，后者未来还必须是部署级 attestation 支持的 `CONTROLLED / STRICT / MODEL_MEMORY_CONTROLLED_CANDIDATE`，并且仍需本文件的跨发行人、跨 cutoff 和 holdout 审查；
 - 报告版本、证据截止时间、路由（`LONG_TERM_OWNER`、`FINITE_XIRR`、`DUAL`）和动作；
 - 观察窗口（例如 1 年、3 年；长期所有者路线不得强行用固定退出价）；
 - 执行日规则（冻结后首个可交易日，或预注册的限价触发窗口）；
@@ -94,10 +97,8 @@
 行业暴露和幸存者偏差误判为选股能力。主要终点应是净超额回报和回撤，绝对回报、命中率和持有期
 作为次要终点，并保留所有案例而不删除坏结果。
 
-当前 `historical_backtest_settlement.v1` 的 `action`、`total_return` 和 `benchmark_return` 只够
-单案例摘要；进入收益实验前需在案例/结算对象增加可解析的 `execution`、`corporate_actions`、
-`cash_flow_ledger`、`benchmark_identity`、`fill_status` 和逐笔净现金流字段，或提供等价的独立
-官方结算账本。没有这些字段，结果只能是 `NOT_CALCULABLE`。
+当前 `historical_backtest_settlement.v1` 已包含并校验 `execution`、`corporate_actions`、
+`cash_flow_ledger`、`benchmark_identity`、`fill_status` 和逐笔净现金流字段。缺口是没有真实冻结 case、官方行情/公司行动/基准来源账本或结算对象；在这些资料到位前，投资结果仍为 `INCOMPLETE`/`NOT_CALCULABLE`，不能报告选股能力或更好的买点。
 
 ## 如何检验“更好的买点”
 

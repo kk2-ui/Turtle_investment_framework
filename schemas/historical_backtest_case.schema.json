@@ -3,7 +3,7 @@
   "$id": "https://turtle.local/schemas/historical_backtest_case.schema.json",
   "title": "Turtle Historical Backtest Frozen Case",
   "type": "object",
-  "required": ["schema_version", "case_id", "experiment_id", "company_code", "simulation_cutoff", "report_freeze", "route", "forecast", "sources", "inputs", "calibration_ledger", "taxes_fees_fx", "price_identity", "status"],
+  "required": ["schema_version", "case_id", "experiment_id", "company_code", "simulation_cutoff", "report_freeze", "credibility", "route", "forecast", "sources", "inputs", "calibration_ledger", "taxes_fees_fx", "price_identity", "status"],
   "properties": {
     "schema_version": {"const": "historical-backtest-case.v1"},
     "case_id": {"type": "string", "pattern": "^HBTCASE:"},
@@ -12,12 +12,108 @@
     "simulation_cutoff": {"type": "string", "minLength": 10},
     "report_freeze": {
       "type": "object",
-      "required": ["frozen_at", "evidence_cutoff", "settlement_locked", "report_status"],
+      "required": ["frozen_at", "evidence_cutoff", "settlement_locked", "report_status", "mode", "freeze_id", "frozen_report", "independent_review", "quality_failure"],
       "properties": {
         "frozen_at": {"type": "string"},
         "evidence_cutoff": {"type": "string"},
         "settlement_locked": {"const": true},
-        "report_status": {"enum": ["FROZEN", "FROZEN_WITH_QUALITY_FAILURE"]}
+        "report_status": {"enum": ["FROZEN", "FROZEN_WITH_QUALITY_FAILURE"]},
+        "mode": {"enum": ["TEST_FIXTURE", "PRODUCTION_PIPELINE"]},
+        "freeze_id": {"type": "string", "pattern": "^HBTFRZ:"},
+        "frozen_report": {
+          "type": "object",
+          "required": ["report_id", "variant_id", "origin", "artifact_path", "artifact_sha256", "format", "writer_id", "writer_provenance", "writer_status", "claim_ids", "section_markers"],
+          "properties": {
+            "report_id": {"type": "string", "pattern": "^HBTREP:"},
+            "variant_id": {"type": "string", "pattern": "^[0-9a-f]{16}$"},
+            "origin": {
+              "type": "object",
+              "required": ["kind"],
+              "properties": {
+                "kind": {"enum": ["TEST_FIXTURE", "TURTLE_PIPELINE"]},
+                "output_dir": {"type": "string", "minLength": 1},
+                "acceptance_root": {"type": "string", "minLength": 1},
+                "sample_id": {"type": "string", "minLength": 1},
+                "run_manifest_path": {"type": "string", "minLength": 1},
+                "completion_report_path": {"type": "string", "minLength": 1},
+                "publication_snapshot_path": {"type": "string", "minLength": 1}
+              }
+            },
+            "artifact_path": {"type": "string", "minLength": 1},
+            "artifact_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+            "format": {"const": "MARKDOWN"},
+            "writer_id": {"type": "string", "minLength": 1},
+            "writer_provenance": {"$ref": "#/$defs/actor_provenance"},
+            "writer_status": {"enum": ["COMPLETE", "QUALITY_FAILURE"]},
+            "claim_ids": {"type": "array", "minItems": 1, "items": {"type": "string", "pattern": "^HBTCLM:"}},
+            "section_markers": {"type": "array", "minItems": 4, "items": {"type": "string", "minLength": 1}}
+          }
+        },
+        "independent_review": {
+          "type": "object",
+            "required": ["review_id", "reviewed_variant_id", "reviewer_id", "reviewer_provenance", "independence", "reviewed_report_sha256", "status", "claim_reviews"],
+            "properties": {
+              "review_id": {"type": "string", "pattern": "^HBTREV:"},
+              "reviewed_variant_id": {"type": "string", "pattern": "^[0-9a-f]{16}$"},
+            "reviewer_id": {"type": "string", "minLength": 1},
+            "reviewer_provenance": {"$ref": "#/$defs/actor_provenance"},
+            "independence": {"$ref": "#/$defs/reviewer_independence"},
+            "reviewed_report_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+            "status": {"enum": ["PASS", "FAIL"]},
+            "claim_reviews": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "type": "object",
+                "required": ["claim_id", "disposition", "source_ids", "notes"],
+                "properties": {
+                  "claim_id": {"type": "string", "pattern": "^HBTCLM:"},
+                  "disposition": {"enum": ["SUPPORTED", "PARTIAL", "UNSUPPORTED", "UNKNOWN_PRESERVED"]},
+                  "source_ids": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}},
+                  "notes": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}}
+                }
+              }
+            }
+          }
+        },
+        "quality_failure": {
+          "type": ["object", "null"],
+          "properties": {
+            "classifications": {"type": "array", "minItems": 1, "items": {"enum": ["DATA_COVERAGE", "ACQUISITION_MODULE", "REASONING", "MODEL", "WRITING"]}},
+            "economic_impact": {"type": "string", "minLength": 1},
+            "missing_facts": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}},
+            "prohibited_assumptions": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}},
+            "remediation": {"type": "string", "minLength": 1},
+            "acceptance_criteria": {"type": "string", "minLength": 1}
+          }
+        }
+      }
+    },
+    "credibility": {
+      "description": "Case-level model-memory assessment. A controlled candidate still needs the separately preregistered cross-issuer/cross-cutoff calibration design and holdout evidence.",
+      "type": "object",
+      "required": ["model_memory_control", "backtest_credibility", "assessment_basis", "control_evidence", "calibration_role"],
+      "properties": {
+        "model_memory_control": {"enum": ["CONTROLLED", "MITIGATED", "UNCONTROLLED"]},
+        "backtest_credibility": {"enum": ["STRICT", "QUALIFIED", "EXPLORATORY"]},
+        "assessment_basis": {"type": "string", "minLength": 1},
+        "control_evidence": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["evidence_id", "artifact_path", "artifact_sha256", "control_level", "method", "verifier_id", "scope"],
+            "properties": {
+              "evidence_id": {"type": "string", "pattern": "^HBTMEM:"},
+              "artifact_path": {"type": "string", "minLength": 1},
+              "artifact_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+              "control_level": {"enum": ["MITIGATION", "CONTROL"]},
+              "method": {"type": "string", "minLength": 1},
+              "verifier_id": {"type": "string", "minLength": 1},
+              "scope": {"type": "string", "minLength": 1}
+            }
+          }
+        },
+        "calibration_role": {"enum": ["ENGINEERING_DIAGNOSTIC_ONLY", "MODEL_MEMORY_CONTROLLED_CANDIDATE"]}
       }
     },
     "route": {"enum": ["LONG_TERM_OWNER", "FINITE_XIRR", "DUAL"]},
@@ -173,5 +269,27 @@
       }
     },
     "status": {"enum": ["FROZEN", "FROZEN_WITH_QUALITY_FAILURE", "INVALID"]}
+  },
+  "$defs": {
+    "actor_provenance": {
+      "type": "object",
+      "required": ["actor_type", "context_id"],
+      "properties": {
+        "actor_type": {"enum": ["human", "model", "hybrid"]},
+        "provider": {"type": "string", "minLength": 1},
+        "model": {"type": "string", "minLength": 1},
+        "context_id": {"type": "string", "minLength": 1}
+      }
+    },
+    "reviewer_independence": {
+      "type": "object",
+      "required": ["did_not_generate_candidate", "no_prior_review_seen", "reviewer_context_isolated", "generator_identity_disjoint"],
+      "properties": {
+        "did_not_generate_candidate": {"const": true},
+        "no_prior_review_seen": {"const": true},
+        "reviewer_context_isolated": {"const": true},
+        "generator_identity_disjoint": {"const": true}
+      }
+    }
   }
 }

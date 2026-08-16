@@ -160,6 +160,20 @@ def _report_bundle_hash(report: Path, technical: Path | None) -> str:
     })
 
 
+def resolve_report_variant(output: Path) -> dict[str, Any]:
+    """Resolve the current pipeline report and Phase 08 variant identity."""
+    report = find_report(output)
+    technical = find_technical_report(report)
+    report_sha256 = _report_bundle_hash(report, technical) if report else ""
+    return {
+        "report": report,
+        "technical_report": technical,
+        "report_sha256": report_sha256,
+        "variant_id": report_sha256[:16] if report_sha256 else "",
+        "hard_gates": evaluate_machine_gates(output),
+    }
+
+
 def summarize_candidate_provenance(output: Path) -> dict[str, Any]:
     """Return known generator identities without pretending authorship is exhaustive."""
     identities: set[str] = set()

@@ -3,7 +3,7 @@
   "$id": "https://turtle.local/schemas/historical_backtest_experiment.schema.json",
   "title": "Turtle Historical Backtest Experiment",
   "type": "object",
-  "required": ["schema_version", "experiment_id", "status", "registered_at", "framework", "information_policy", "universe", "scoring_policy"],
+  "required": ["schema_version", "experiment_id", "status", "registered_at", "framework", "information_policy", "credibility", "universe", "scoring_policy"],
   "properties": {
     "schema_version": {"const": "historical-backtest-experiment.v1"},
     "experiment_id": {"type": "string", "pattern": "^HBT:"},
@@ -30,27 +30,57 @@
         "execution_rule": {"type": "string", "minLength": 1}
       }
     },
+    "credibility": {
+      "description": "Model-memory assessment. MODEL_MEMORY_CONTROLLED_CANDIDATE is necessary but never sufficient for cross-case calibration.",
+      "type": "object",
+      "required": ["model_memory_control", "backtest_credibility", "assessment_basis", "control_evidence", "calibration_role"],
+      "properties": {
+        "model_memory_control": {"enum": ["CONTROLLED", "MITIGATED", "UNCONTROLLED"]},
+        "backtest_credibility": {"enum": ["STRICT", "QUALIFIED", "EXPLORATORY"]},
+        "assessment_basis": {"type": "string", "minLength": 1},
+        "control_evidence": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["evidence_id", "artifact_path", "artifact_sha256", "control_level", "method", "verifier_id", "scope"],
+            "properties": {
+              "evidence_id": {"type": "string", "pattern": "^HBTMEM:"},
+              "artifact_path": {"type": "string", "minLength": 1},
+              "artifact_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+              "control_level": {"enum": ["MITIGATION", "CONTROL"]},
+              "method": {"type": "string", "minLength": 1},
+              "verifier_id": {"type": "string", "minLength": 1},
+              "scope": {"type": "string", "minLength": 1}
+            }
+          }
+        },
+        "calibration_role": {"enum": ["ENGINEERING_DIAGNOSTIC_ONLY", "MODEL_MEMORY_CONTROLLED_CANDIDATE"]}
+      }
+    },
     "universe": {
       "type": "object",
-      "required": ["selection_status", "cases", "eligible_case_count"],
+      "required": ["selection_status", "cases", "eligible_case_count", "calibration_eligible_case_count"],
       "properties": {
         "selection_status": {"enum": ["PRE_REGISTERED", "USER_SELECTED_CASE", "RESEARCH_PILOT"]},
         "cases": {
           "type": "array",
           "items": {
             "type": "object",
-            "required": ["case_id", "company_code", "company_name", "eligibility_status", "eligibility_reason"],
+            "required": ["case_id", "company_code", "company_name", "eligibility_status", "eligibility_reason", "calibration_eligibility"],
             "properties": {
               "case_id": {"type": "string", "pattern": "^HBTCASE:"},
               "company_code": {"type": "string", "minLength": 1},
               "company_name": {"type": "string", "minLength": 1},
+              "simulation_cutoff": {"type": "string", "minLength": 10},
               "eligibility_status": {"enum": ["ELIGIBLE", "INELIGIBLE_NO_HISTORICAL_VINTAGE", "INELIGIBLE_INCOMPLETE_OUTCOMES", "INELIGIBLE_SURVIVORSHIP_UNRESOLVED", "INELIGIBLE_OTHER"]},
               "eligibility_reason": {"type": "string", "minLength": 1},
+              "calibration_eligibility": {"enum": ["NOT_ELIGIBLE_MODEL_MEMORY", "MODEL_MEMORY_CONTROLLED_CANDIDATE"]},
               "route": {"enum": ["LONG_TERM_OWNER", "FINITE_XIRR", "DUAL"]}
             }
           }
         },
-        "eligible_case_count": {"type": "integer", "minimum": 0}
+        "eligible_case_count": {"type": "integer", "minimum": 0},
+        "calibration_eligible_case_count": {"type": "integer", "minimum": 0}
       }
     },
     "scoring_policy": {

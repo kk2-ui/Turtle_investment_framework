@@ -27,6 +27,62 @@ def _case() -> dict:
             "evidence_cutoff": "2021-08-31T18:00:00+08:00",
             "settlement_locked": True,
             "report_status": "FROZEN",
+            "mode": "TEST_FIXTURE",
+            "freeze_id": "HBTFRZ:d705bf29a4c72fb1",
+            "frozen_report": {
+                "report_id": "HBTREP:TEST",
+                "variant_id": "d705bf29a4c72fb1",
+                "origin": {"kind": "TEST_FIXTURE"},
+                "artifact_path": "tests/fixtures/historical_backtest_frozen_report.md",
+                "artifact_sha256": "d705bf29a4c72fb18f6cb77c7d3834a2b130d6ff4c9c5c06b4b13b808b15bb98",
+                "format": "MARKDOWN",
+                "writer_id": "writer:test",
+                "writer_provenance": {
+                    "actor_type": "human",
+                    "context_id": "writer-context:test",
+                },
+                "writer_status": "COMPLETE",
+                "claim_ids": ["HBTCLM:owner-cash", "HBTCLM:minority-cash-access"],
+                "section_markers": [
+                    "## Evidence", "## Operating forecast", "## Valuation", "## Risks and unknowns", "## Decision",
+                ],
+            },
+            "independent_review": {
+                "review_id": "HBTREV:d705bf29a4c72fb1",
+                "reviewed_variant_id": "d705bf29a4c72fb1",
+                "reviewer_id": "reviewer:test",
+                "reviewer_provenance": {
+                    "actor_type": "human",
+                    "context_id": "reviewer-context:test",
+                },
+                "independence": {
+                    "did_not_generate_candidate": True,
+                    "no_prior_review_seen": True,
+                    "reviewer_context_isolated": True,
+                    "generator_identity_disjoint": True,
+                },
+                "reviewed_report_sha256": "d705bf29a4c72fb18f6cb77c7d3834a2b130d6ff4c9c5c06b4b13b808b15bb98",
+                "status": "PASS",
+                "claim_reviews": [{
+                    "claim_id": "HBTCLM:owner-cash",
+                    "disposition": "SUPPORTED",
+                    "source_ids": ["AR:00506:2020"],
+                    "notes": ["预测、阈值和口径已冻结。"],
+                }, {
+                    "claim_id": "HBTCLM:minority-cash-access",
+                    "disposition": "UNKNOWN_PRESERVED",
+                    "source_ids": ["AR:00506:2020"],
+                    "notes": ["未知及其经济影响被保留。"],
+                }],
+            },
+            "quality_failure": None,
+        },
+        "credibility": {
+            "model_memory_control": "UNCONTROLLED",
+            "backtest_credibility": "EXPLORATORY",
+            "assessment_basis": "这是用于验证冻结与结算契约的工程 replay；没有参数记忆隔离证据。",
+            "control_evidence": [],
+            "calibration_role": "ENGINEERING_DIAGNOSTIC_ONLY",
         },
         "route": "LONG_TERM_OWNER",
         "forecast": {
@@ -141,6 +197,7 @@ def _settlement() -> dict:
         "settlement_id": "HBTSET:TEST:2022",
         "experiment_id": "HBT:test",
         "case_id": "HBTCASE:TEST",
+        "freeze_id": "HBTFRZ:d705bf29a4c72fb1",
         "settlement_as_of": "2022-08-31T18:00:00+08:00",
         "actual_sources": [{
             "source_id": "AR:00506:2021",
@@ -178,9 +235,19 @@ def _settlement() -> dict:
             }],
         },
         "report_coverage": {
-            "status": "PARTIAL",
-            "supported_claim_count": 8,
-            "unsupported_claim_count": 2,
+            "status": "PASS",
+            "review_id": "HBTREV:d705bf29a4c72fb1",
+            "claim_reviews": [{
+                "claim_id": "HBTCLM:owner-cash",
+                "disposition": "SUPPORTED",
+                "source_ids": ["AR:00506:2020"],
+            }, {
+                "claim_id": "HBTCLM:minority-cash-access",
+                "disposition": "UNKNOWN_PRESERVED",
+                "source_ids": ["AR:00506:2020"],
+            }],
+            "supported_claim_count": 1,
+            "unsupported_claim_count": 0,
             "unknowns_preserved": True,
             "notes": ["覆盖度不与投资结果合并"],
         },
@@ -311,9 +378,114 @@ def test_current_candidate_pilot_is_explicitly_empty_and_does_not_unlock_g3() ->
     result = validate_experiment(experiment)
     assert result["state"] == "REVIEWABLE"
     assert experiment["universe"]["eligible_case_count"] == 0
+    assert experiment["universe"]["calibration_eligible_case_count"] == 0
     assert len(experiment["universe"]["cases"]) == 9
     assert experiment["framework"]["golden_gate_state"] == "G3_NOT_READY"
+    assert experiment["credibility"]["model_memory_control"] == "UNCONTROLLED"
+    assert experiment["credibility"]["backtest_credibility"] == "EXPLORATORY"
+    assert experiment["credibility"]["calibration_role"] == "ENGINEERING_DIAGNOSTIC_ONLY"
     assert validate_pilot()["pilot_is_empty"] is True
+
+
+def test_model_memory_contract_keeps_exploratory_cases_reviewable_but_rejects_unsupported_strictness() -> None:
+    case = _case()
+    assert validate_case(case)["state"] == "REVIEWABLE"
+    assert validate_settlement(_settlement(), case=case)["state"] == "REVIEWABLE"
+
+    unsupported_strict = _case()
+    unsupported_strict["credibility"].update({
+        "model_memory_control": "CONTROLLED",
+        "backtest_credibility": "STRICT",
+        "calibration_role": "MODEL_MEMORY_CONTROLLED_CANDIDATE",
+        "control_evidence": ["a free-text assertion is not evidence"],
+    })
+    result = validate_case(unsupported_strict)
+    assert result["state"] == "INVALID"
+    assert "credibility.control_evidence[0]:not_object" in result["invalid_findings"]
+
+    no_control_evidence = _case()
+    no_control_evidence["credibility"].update({
+        "model_memory_control": "CONTROLLED",
+        "backtest_credibility": "STRICT",
+        "calibration_role": "MODEL_MEMORY_CONTROLLED_CANDIDATE",
+    })
+    result = validate_case(no_control_evidence)
+    assert "credibility:controlled_or_mitigated_memory_requires_control_evidence" in result["invalid_findings"]
+
+    mitigated = _case()
+    mitigated["credibility"].update({
+        "model_memory_control": "MITIGATED",
+        "backtest_credibility": "QUALIFIED",
+        "control_evidence": [{
+            "evidence_id": "HBTMEM:TEST:mitigated",
+            "artifact_path": "tests/fixtures/historical_backtest_model_memory_control.md",
+            "artifact_sha256": "eaf9a93c721bfd117683b034a22474ffc1afcf265334d9f497bf1258b8bba10c",
+            "control_level": "MITIGATION",
+            "method": "公司名称和证券代码已从模型上下文删除。",
+            "verifier_id": "reviewer:memory-control",
+            "scope": "仅覆盖本夹具的受控回归上下文。",
+        }],
+    })
+    assert validate_case(mitigated)["state"] == "REVIEWABLE"
+
+    strict_candidate = deepcopy(mitigated)
+    strict_candidate["credibility"].update({
+        "model_memory_control": "CONTROLLED",
+        "backtest_credibility": "STRICT",
+        "calibration_role": "MODEL_MEMORY_CONTROLLED_CANDIDATE",
+        "control_evidence": [{
+            "evidence_id": "HBTMEM:TEST:controlled",
+            "artifact_path": "tests/fixtures/historical_backtest_model_memory_controlled.md",
+            "artifact_sha256": "45c3c44341cf07cc8f5d0aa4a279384bc0f7ee006e4d00b8c866ba2a983f716d",
+            "control_level": "CONTROL",
+            "method": "隔离评测模型与历史发行人训练语料。",
+            "verifier_id": "reviewer:memory-control",
+            "scope": "仅覆盖本夹具的受控回归上下文。",
+        }],
+    })
+    result = validate_case(strict_candidate)
+    assert result["state"] == "INCOMPLETE"
+    assert "credibility:experiment_required_for_calibration_candidate" in result["incomplete_findings"]
+    uncontrolled_experiment = build_pilot_experiment()
+    uncontrolled_experiment["experiment_id"] = "HBT:test"
+    result = validate_case(strict_candidate, experiment=uncontrolled_experiment)
+    assert "credibility:model_memory_control_does_not_match_experiment" in result["invalid_findings"]
+
+    controlled_experiment = deepcopy(uncontrolled_experiment)
+    controlled_experiment["credibility"] = deepcopy(strict_candidate["credibility"])
+    controlled_experiment["universe"] = {
+        "selection_status": "PRE_REGISTERED",
+        "eligible_case_count": 1,
+        "calibration_eligible_case_count": 1,
+        "cases": [{
+            "case_id": "HBTCASE:TEST",
+            "company_code": "00506.HK",
+            "company_name": "测试公司",
+            "simulation_cutoff": "2021-08-31T18:00:00+08:00",
+            "eligibility_status": "ELIGIBLE",
+            "eligibility_reason": "受控回归夹具。",
+            "calibration_eligibility": "MODEL_MEMORY_CONTROLLED_CANDIDATE",
+            "route": "LONG_TERM_OWNER",
+        }],
+    }
+    assert validate_experiment(controlled_experiment)["state"] == "REVIEWABLE"
+    assert validate_case(strict_candidate, experiment=controlled_experiment)["state"] == "REVIEWABLE"
+
+    false_calibration_role = _case()
+    false_calibration_role["credibility"]["calibration_role"] = "MODEL_MEMORY_CONTROLLED_CANDIDATE"
+    result = validate_case(false_calibration_role)
+    assert "credibility:calibration_role_inconsistent_with_model_memory_control" in result["invalid_findings"]
+
+    uncontrolled_experiment["universe"]["cases"][0].update({
+        "eligibility_status": "ELIGIBLE",
+        "route": "LONG_TERM_OWNER",
+        "calibration_eligibility": "MODEL_MEMORY_CONTROLLED_CANDIDATE",
+    })
+    uncontrolled_experiment["universe"]["eligible_case_count"] = 1
+    uncontrolled_experiment["universe"]["calibration_eligible_case_count"] = 1
+    result = validate_experiment(uncontrolled_experiment)
+    assert result["state"] == "INVALID"
+    assert "universe.cases[0]:experiment_model_memory_not_controlled_for_calibration" in result["invalid_findings"]
 
 
 def test_future_source_and_current_restated_value_are_blocked() -> None:
@@ -327,6 +499,125 @@ def test_future_source_and_current_restated_value_are_blocked() -> None:
     case["sources"][0]["revision_policy"] = "CURRENT_RESTATED_ONLY"
     result = validate_case(case)
     assert "sources[0]:current_restated_data_not_admissible" in result["invalid_findings"]
+
+
+def test_frozen_case_requires_readable_report_and_independent_claim_review() -> None:
+    missing_report = _case()
+    del missing_report["report_freeze"]["frozen_report"]
+    result = validate_case(missing_report)
+    assert result["state"] != "REVIEWABLE"
+    assert "report_freeze.frozen_report:missing:artifact_path" in result["incomplete_findings"]
+
+    same_reviewer = _case()
+    same_reviewer["report_freeze"]["independent_review"]["reviewer_id"] = "writer:test"
+    result = validate_case(same_reviewer)
+    assert "report_freeze.independent_review:reviewer_must_be_independent_from_writer" in result["invalid_findings"]
+
+    same_context = _case()
+    same_context["report_freeze"]["independent_review"]["reviewer_provenance"]["context_id"] = "writer-context:test"
+    result = validate_case(same_context)
+    assert "report_freeze.independent_review:reviewer_context_must_differ_from_writer" in result["invalid_findings"]
+
+    thin_report = _case()
+    thin_report["report_freeze"]["frozen_report"].update({
+        "artifact_path": "tests/fixtures/historical_backtest_thin_report.md",
+        "variant_id": "4ce31d58584a4da3",
+        "artifact_sha256": "4ce31d58584a4da3b8a2c41b039cd91e25e8c170572988dc4a054133a7ca18d8",
+    })
+    thin_report["report_freeze"]["freeze_id"] = "HBTFRZ:4ce31d58584a4da3"
+    thin_report["report_freeze"]["independent_review"]["review_id"] = "HBTREV:4ce31d58584a4da3"
+    thin_report["report_freeze"]["independent_review"]["reviewed_variant_id"] = "4ce31d58584a4da3"
+    thin_report["report_freeze"]["independent_review"]["reviewed_report_sha256"] = "4ce31d58584a4da3b8a2c41b039cd91e25e8c170572988dc4a054133a7ca18d8"
+    result = validate_case(thin_report)
+    assert result["state"] != "REVIEWABLE"
+    assert "report_freeze.frozen_report:artifact_section_missing:## Evidence" in result["incomplete_findings"]
+
+    altered_report_identity = _case()
+    altered_report_identity["report_freeze"]["frozen_report"]["artifact_sha256"] = "0" * 64
+    result = validate_case(altered_report_identity)
+    assert "report_freeze.frozen_report:artifact_sha256_mismatch" in result["invalid_findings"]
+
+    partial_prediction = _case()
+    partial_prediction["report_freeze"]["independent_review"]["claim_reviews"][0]["disposition"] = "PARTIAL"
+    result = validate_case(partial_prediction)
+    assert "report_freeze.independent_review:partial_prediction_cannot_be_frozen" in result["invalid_findings"]
+
+    quality_failure = _case()
+    quality_failure["status"] = "FROZEN_WITH_QUALITY_FAILURE"
+    quality_failure["report_freeze"]["report_status"] = "FROZEN_WITH_QUALITY_FAILURE"
+    quality_failure["report_freeze"]["frozen_report"]["writer_status"] = "QUALITY_FAILURE"
+    quality_failure["report_freeze"]["independent_review"]["status"] = "FAIL"
+    quality_failure["report_freeze"]["quality_failure"] = {
+        "classifications": ["DATA_COVERAGE"],
+        "economic_impact": "缺少债务期限事实会影响普通股永久损失判断。",
+        "missing_facts": ["截止日前的债务到期明细。"],
+        "prohibited_assumptions": ["不得以当前债务重述替代历史披露。"],
+        "remediation": "补全截止日前官方年报和交易所公告。",
+        "acceptance_criteria": "每条债务 claim 有对应官方来源和独立审阅结论。",
+    }
+    result = validate_case(quality_failure)
+    assert result["state"] == "INCOMPLETE"
+    assert "case_frozen_with_quality_failure" in result["incomplete_findings"]
+
+
+def test_report_variant_lifecycle_rejects_reused_review_identity() -> None:
+    case = _case()
+    new_variant = "0" * 16
+    case["report_freeze"]["frozen_report"]["variant_id"] = new_variant
+    case["report_freeze"]["freeze_id"] = "HBTFRZ:" + new_variant
+    result = validate_case(case)
+    assert "report_freeze.independent_review:reviewed_variant_id_mismatch" in result["invalid_findings"]
+    assert "report_freeze.independent_review:review_id_must_bind_report_variant" in result["invalid_findings"]
+
+
+def test_test_fixture_report_and_memory_evidence_cannot_enter_real_case() -> None:
+    case = _case()
+    result = validate_case(case, allow_test_fixtures=False)
+    assert "report_freeze.frozen_report:test_fixture_requires_explicit_allowance" in result["invalid_findings"]
+
+    case = _case()
+    case["case_id"] = "HBTCASE:600340"
+    result = validate_case(case)
+    assert "report_freeze.frozen_report:test_fixture_forbidden_outside_test_case" in result["invalid_findings"]
+
+    controlled = _case()
+    controlled["case_id"] = "HBTCASE:600340"
+    controlled["credibility"].update({
+        "model_memory_control": "CONTROLLED",
+        "backtest_credibility": "STRICT",
+        "calibration_role": "MODEL_MEMORY_CONTROLLED_CANDIDATE",
+        "control_evidence": [{
+            "evidence_id": "HBTMEM:TEST:controlled",
+            "artifact_path": "tests/fixtures/historical_backtest_model_memory_controlled.md",
+            "artifact_sha256": "45c3c44341cf07cc8f5d0aa4a279384bc0f7ee006e4d00b8c866ba2a983f716d",
+            "control_level": "CONTROL",
+            "method": "隔离评测模型与历史发行人训练语料。",
+            "verifier_id": "reviewer:memory-control",
+            "scope": "仅覆盖本夹具的受控回归上下文。",
+        }],
+    })
+    result = validate_case(controlled)
+    assert "credibility.control_evidence[0]:test_fixture_forbidden_outside_test_namespace" in result["invalid_findings"]
+    assert "credibility:controlled_memory_requires_deployment_attestation" in result["incomplete_findings"]
+
+
+def test_production_report_requires_pipeline_acceptance_artifacts() -> None:
+    case = _case()
+    case["case_id"] = "HBTCASE:600340"
+    report = case["report_freeze"]["frozen_report"]
+    case["report_freeze"]["mode"] = "PRODUCTION_PIPELINE"
+    report["origin"] = {
+        "kind": "TURTLE_PIPELINE",
+        "output_dir": "output/historical/600340",
+        "acceptance_root": "output/.acceptance/phase08",
+        "sample_id": "600340",
+        "run_manifest_path": "output/historical/600340/run_manifest.json",
+        "completion_report_path": "output/historical/600340/completion_report.json",
+        "publication_snapshot_path": "output/historical/600340/publication_snapshot.json",
+    }
+    result = validate_case(case)
+    assert "report_freeze.frozen_report.origin:acceptance_sample_not_unique" in result["invalid_findings"]
+    assert "report_freeze.frozen_report.origin:pit_runner_attestation_not_implemented" in result["incomplete_findings"]
 
 
 def test_cutoff_comparisons_preserve_intraday_source_order() -> None:
@@ -430,6 +721,24 @@ def test_settlement_keeps_coverage_model_and_investment_dimensions_separate() ->
     result = validate_settlement(combined, case=case)
     assert result["state"] == "INVALID"
     assert "combined_score_forbidden" in result["invalid_findings"]
+
+
+def test_report_coverage_must_replay_the_frozen_claim_review() -> None:
+    settlement = _settlement()
+    settlement["report_coverage"].update({
+        "supported_claim_count": 0,
+        "unsupported_claim_count": 0,
+    })
+    result = validate_settlement(settlement, case=_case())
+    assert "report_coverage:supported_claim_count_does_not_match_claim_reviews" in result["invalid_findings"]
+
+    settlement = _settlement()
+    settlement["report_coverage"]["claim_reviews"] = [
+        settlement["report_coverage"]["claim_reviews"][0],
+    ]
+    result = validate_settlement(settlement, case=_case())
+    assert "report_coverage:claim_reviews_do_not_match_frozen_review" in result["invalid_findings"]
+    assert "report_coverage:claim_reviews_do_not_cover_frozen_ledger" in result["incomplete_findings"]
 
 
 def test_settlement_before_cutoff_is_lookahead() -> None:

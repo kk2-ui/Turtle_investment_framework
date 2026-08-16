@@ -10,8 +10,10 @@ error and investment outcome as separate ledgers.
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import math
+import re
 from copy import deepcopy
 from datetime import date, datetime, time, timedelta, timezone
 from pathlib import Path
@@ -43,6 +45,24 @@ OPERATING_COMPARABILITY_STATUSES = {
 }
 COMPARABLE_OPERATING_STATUSES = {"COMPARABLE", "CONVERTIBLE_WITH_PREREGISTERED_RULE"}
 PIT_TIMEZONE = timezone(timedelta(hours=8))
+REPORT_REVIEW_DISPOSITIONS = {"SUPPORTED", "PARTIAL", "UNSUPPORTED", "UNKNOWN_PRESERVED"}
+QUALITY_FAILURE_CLASSIFICATIONS = {"DATA_COVERAGE", "ACQUISITION_MODULE", "REASONING", "MODEL", "WRITING"}
+MODEL_MEMORY_CONTROLS = {"CONTROLLED", "MITIGATED", "UNCONTROLLED"}
+BACKTEST_CREDIBILITIES = {"STRICT", "QUALIFIED", "EXPLORATORY"}
+CALIBRATION_ROLES = {"ENGINEERING_DIAGNOSTIC_ONLY", "MODEL_MEMORY_CONTROLLED_CANDIDATE"}
+MODEL_MEMORY_EXPECTATIONS = {
+    "CONTROLLED": ("STRICT", "MODEL_MEMORY_CONTROLLED_CANDIDATE"),
+    "MITIGATED": ("QUALIFIED", "ENGINEERING_DIAGNOSTIC_ONLY"),
+    "UNCONTROLLED": ("EXPLORATORY", "ENGINEERING_DIAGNOSTIC_ONLY"),
+}
+REPORT_FREEZE_MODES = {"TEST_FIXTURE", "PRODUCTION_PIPELINE"}
+REPORT_ORIGIN_KINDS = {"TEST_FIXTURE", "TURTLE_PIPELINE"}
+REQUIRED_FROZEN_REPORT_SECTIONS = {
+    "## Evidence", "## Operating forecast", "## Valuation", "## Risks and unknowns", "## Decision",
+}
+REVIEWER_INDEPENDENCE_FIELDS = {
+    "did_not_generate_candidate", "no_prior_review_seen", "reviewer_context_isolated", "generator_identity_disjoint",
+}
 OFFICIAL_SETTLEMENT_SOURCE_TYPES = {
     "ANNUAL_REPORT", "INTERIM_REPORT", "EXCHANGE_ANNOUNCEMENT", "OFFICIAL_STATISTICS",
     "OFFICIAL_MARKET_DATA", "OTHER_OFFICIAL",
@@ -147,6 +167,199 @@ def _nested_forbidden(value: Any, *, path: str = "") -> list[str]:
     return findings
 
 
+def _read_repo_artifact(artifact_path: Any, *, prefix: str) -> tuple[str, str, list[str], list[str]]:
+    """Read a UTF-8 artifact only from this repository and return its identity."""
+    invalid: list[str] = []
+    incomplete: list[str] = []
+    if not isinstance(artifact_path, str) or not artifact_path.strip():
+        return "", "", invalid, incomplete
+    candidate = Path(artifact_path)
+    root = Path(__file__).resolve().parents[1]
+    if candidate.is_absolute():
+        invalid.append(prefix + ":artifact_path_must_be_repo_relative")
+        return "", "", invalid, incomplete
+    resolved = (root / candidate).resolve()
+    if root not in resolved.parents:
+        invalid.append(prefix + ":artifact_path_outside_repository")
+        return "", "", invalid, incomplete
+    if not resolved.is_file():
+        incomplete.append(prefix + ":artifact_missing")
+        return "", "", invalid, incomplete
+    raw = resolved.read_bytes()
+    digest = hashlib.sha256(raw).hexdigest()
+    try:
+        content = raw.decode("utf-8").strip()
+    except UnicodeDecodeError:
+        invalid.append(prefix + ":artifact_not_utf8")
+        return "", digest, invalid, incomplete
+    if not content:
+        incomplete.append(prefix + ":artifact_empty")
+    return content, digest, invalid, incomplete
+
+
+def _validate_actor_provenance(provenance: Any, *, prefix: str) -> tuple[str, str, list[str], list[str]]:
+    """Validate the declared identity used by a writer or independent reviewer."""
+    invalid: list[str] = []
+    incomplete: list[str] = []
+    item = provenance if isinstance(provenance, dict) else {}
+    actor_type = str(item.get("actor_type") or "")
+    context_id = str(item.get("context_id") or "").strip()
+    if actor_type not in {"human", "model", "hybrid"}:
+        invalid.append(prefix + ":actor_type_invalid")
+    if not context_id:
+        incomplete.append(prefix + ":context_id_missing")
+    identity = ""
+    if actor_type in {"model", "hybrid"}:
+        provider = str(item.get("provider") or "").strip().lower()
+        model = str(item.get("model") or "").strip().lower()
+        if not provider or not model:
+            incomplete.append(prefix + ":model_identity_missing")
+        else:
+            identity = provider + ":" + model
+    return context_id, identity, invalid, incomplete
+
+
+def _validate_credibility(record: dict[str, Any], *, prefix: str = "credibility") -> tuple[list[str], list[str]]:
+    """Keep model-memory uncertainty explicit without blocking engineering replay.
+
+    A `STRICT` label or any calibration-candidate role is an assertion about the
+    model-memory control itself, so it needs positive, inspectable evidence.
+    That evidence only clears this one dimension; the separately preregistered
+    sampling and holdout rules still decide whether calibration may proceed.
+    """
+    invalid: list[str] = []
+    incomplete: list[str] = []
+    credibility = record.get("credibility") if isinstance(record.get("credibility"), dict) else {}
+    incomplete.extend(_required(
+        credibility,
+        ("model_memory_control", "backtest_credibility", "assessment_basis", "calibration_role"),
+        prefix,
+    ))
+    if "control_evidence" not in credibility:
+        incomplete.append(prefix + ":missing:control_evidence")
+    memory_control = credibility.get("model_memory_control")
+    credibility_level = credibility.get("backtest_credibility")
+    calibration_role = credibility.get("calibration_role")
+    if memory_control not in MODEL_MEMORY_CONTROLS:
+        invalid.append(prefix + ":model_memory_control_invalid")
+    if credibility_level not in BACKTEST_CREDIBILITIES:
+        invalid.append(prefix + ":backtest_credibility_invalid")
+    if calibration_role not in CALIBRATION_ROLES:
+        invalid.append(prefix + ":calibration_role_invalid")
+    expected = MODEL_MEMORY_EXPECTATIONS.get(memory_control)
+    if expected:
+        expected_credibility, expected_role = expected
+        if credibility_level != expected_credibility:
+            invalid.append(prefix + ":backtest_credibility_inconsistent_with_model_memory_control")
+        if calibration_role != expected_role:
+            invalid.append(prefix + ":calibration_role_inconsistent_with_model_memory_control")
+    evidence_value = credibility.get("control_evidence")
+    if evidence_value is not None and not isinstance(evidence_value, list):
+        invalid.append(prefix + ":control_evidence_invalid")
+    evidence = evidence_value if isinstance(evidence_value, list) else []
+    if memory_control in {"CONTROLLED", "MITIGATED"} and not evidence:
+        invalid.append(prefix + ":controlled_or_mitigated_memory_requires_control_evidence")
+    if memory_control == "UNCONTROLLED" and evidence:
+        invalid.append(prefix + ":uncontrolled_memory_cannot_claim_control_evidence")
+    evidence_ids: set[str] = set()
+    evidence_levels: set[str] = set()
+    test_namespace = str(record.get("case_id") or record.get("experiment_id") or "") in {"HBTCASE:TEST", "HBT:test"}
+    if memory_control == "CONTROLLED" and not test_namespace:
+        # A repository-authored artifact cannot attest to the model/provider,
+        # isolated context, and deployment boundary that a strict replay needs.
+        incomplete.append(prefix + ":controlled_memory_requires_deployment_attestation")
+    for index, item in enumerate(evidence):
+        evidence_prefix = f"{prefix}.control_evidence[{index}]"
+        if not isinstance(item, dict):
+            invalid.append(evidence_prefix + ":not_object")
+            continue
+        incomplete.extend(_required(
+            item, ("evidence_id", "artifact_path", "artifact_sha256", "control_level", "method", "verifier_id", "scope"), evidence_prefix,
+        ))
+        evidence_id = str(item.get("evidence_id") or "")
+        if not evidence_id.startswith("HBTMEM:"):
+            invalid.append(evidence_prefix + ":evidence_id_invalid")
+        elif evidence_id in evidence_ids:
+            invalid.append("duplicate_model_memory_evidence_id:" + evidence_id)
+        evidence_ids.add(evidence_id)
+        control_level = item.get("control_level")
+        if control_level not in {"MITIGATION", "CONTROL"}:
+            invalid.append(evidence_prefix + ":control_level_invalid")
+        else:
+            evidence_levels.add(control_level)
+        for field in ("method", "verifier_id", "scope"):
+            if not isinstance(item.get(field), str) or not item[field].strip():
+                invalid.append(evidence_prefix + ":" + field + "_invalid")
+        content, digest, artifact_invalid, artifact_incomplete = _read_repo_artifact(
+            item.get("artifact_path"), prefix=evidence_prefix,
+        )
+        invalid.extend(artifact_invalid)
+        incomplete.extend(artifact_incomplete)
+        artifact_path = str(item.get("artifact_path") or "")
+        if artifact_path.startswith("tests/fixtures/") and not test_namespace:
+            invalid.append(evidence_prefix + ":test_fixture_forbidden_outside_test_namespace")
+        if not isinstance(item.get("artifact_sha256"), str) or item.get("artifact_sha256") != digest:
+            invalid.append(evidence_prefix + ":artifact_sha256_mismatch")
+        if content and evidence_id not in content:
+            invalid.append(evidence_prefix + ":artifact_evidence_id_missing")
+        if content:
+            for field in ("method", "verifier_id", "scope"):
+                value = str(item.get(field) or "").strip()
+                if value and value not in content:
+                    invalid.append(evidence_prefix + ":artifact_" + field + "_missing")
+    if memory_control == "MITIGATED" and "MITIGATION" not in evidence_levels:
+        invalid.append(prefix + ":mitigated_memory_requires_mitigation_evidence")
+    if memory_control == "CONTROLLED" and "CONTROL" not in evidence_levels:
+        invalid.append(prefix + ":controlled_memory_requires_control_evidence")
+    return invalid, incomplete
+
+
+def _validate_case_experiment_credibility(
+    record: dict[str, Any], *, experiment: dict[str, Any] | None,
+) -> tuple[list[str], list[str]]:
+    """Prevent a case from upgrading its model-memory credibility over its experiment."""
+    invalid: list[str] = []
+    incomplete: list[str] = []
+    case_credibility = record.get("credibility") if isinstance(record.get("credibility"), dict) else {}
+    candidate = case_credibility.get("calibration_role") == "MODEL_MEMORY_CONTROLLED_CANDIDATE"
+    if experiment is None:
+        if candidate:
+            incomplete.append("credibility:experiment_required_for_calibration_candidate")
+        return invalid, incomplete
+    experiment_result = validate_experiment(experiment)
+    if experiment_result["state"] != "REVIEWABLE":
+        invalid.append("credibility:experiment_not_reviewable")
+    if record.get("experiment_id") != experiment.get("experiment_id"):
+        invalid.append("credibility:case_experiment_id_does_not_match_experiment")
+    experiment_credibility = experiment.get("credibility") if isinstance(experiment.get("credibility"), dict) else {}
+    for field in ("model_memory_control", "backtest_credibility", "calibration_role"):
+        if case_credibility.get(field) != experiment_credibility.get(field):
+            invalid.append("credibility:" + field + "_does_not_match_experiment")
+    if case_credibility.get("control_evidence") != experiment_credibility.get("control_evidence"):
+        invalid.append("credibility:control_evidence_does_not_match_experiment")
+    if candidate:
+        universe = experiment.get("universe") if isinstance(experiment.get("universe"), dict) else {}
+        experiment_cases = universe.get("cases") if isinstance(universe.get("cases"), list) else []
+        matching_cases = [
+            item for item in experiment_cases
+            if isinstance(item, dict) and item.get("case_id") == record.get("case_id")
+        ]
+        if len(matching_cases) != 1:
+            invalid.append("credibility:calibration_candidate_not_preregistered_in_experiment")
+        else:
+            registered = matching_cases[0]
+            for field in ("company_code", "simulation_cutoff", "route"):
+                if registered.get(field) != record.get(field):
+                    invalid.append("credibility:calibration_candidate_" + field + "_does_not_match_experiment")
+            if registered.get("eligibility_status") != "ELIGIBLE":
+                invalid.append("credibility:calibration_candidate_not_eligible_in_experiment")
+            if registered.get("calibration_eligibility") != "MODEL_MEMORY_CONTROLLED_CANDIDATE":
+                invalid.append("credibility:calibration_candidate_not_registered_for_calibration")
+    if candidate and not experiment_result["state"] == "REVIEWABLE":
+        invalid.append("credibility:calibration_candidate_requires_reviewable_experiment")
+    return invalid, incomplete
+
+
 def validate_experiment(record: dict[str, Any]) -> dict[str, Any]:
     invalid: list[str] = []
     incomplete: list[str] = []
@@ -167,6 +380,9 @@ def validate_experiment(record: dict[str, Any]) -> dict[str, Any]:
     for field, expected in expected_policy.items():
         if policy.get(field) != expected:
             invalid.append(f"information_policy:{field}_invalid")
+    credibility_invalid, credibility_incomplete = _validate_credibility(record)
+    invalid.extend(credibility_invalid)
+    incomplete.extend(credibility_incomplete)
     scoring = record.get("scoring_policy") if isinstance(record.get("scoring_policy"), dict) else {}
     if scoring.get("separate_dimensions") != ["REPORT_COVERAGE", "MODEL_FORECAST_ERROR", "INVESTMENT_RETURN_OUTCOME"]:
         invalid.append("scoring_dimensions_must_remain_separate")
@@ -179,6 +395,18 @@ def validate_experiment(record: dict[str, Any]) -> dict[str, Any]:
     eligible = [item for item in cases if isinstance(item, dict) and item.get("eligibility_status") == "ELIGIBLE"]
     if universe.get("eligible_case_count") != len(eligible):
         invalid.append("eligible_case_count_mismatch")
+    calibration_candidates = [
+        item for item in cases
+        if isinstance(item, dict) and item.get("calibration_eligibility") == "MODEL_MEMORY_CONTROLLED_CANDIDATE"
+    ]
+    if universe.get("calibration_eligible_case_count") != len(calibration_candidates):
+        invalid.append("calibration_eligible_case_count_mismatch")
+    credibility = record.get("credibility") if isinstance(record.get("credibility"), dict) else {}
+    experiment_can_nominate_calibration_candidates = (
+        credibility.get("model_memory_control") == "CONTROLLED"
+        and credibility.get("backtest_credibility") == "STRICT"
+        and credibility.get("calibration_role") == "MODEL_MEMORY_CONTROLLED_CANDIDATE"
+    )
     ids: set[str] = set()
     for index, item in enumerate(cases):
         prefix = f"universe.cases[{index}]"
@@ -195,6 +423,16 @@ def validate_experiment(record: dict[str, Any]) -> dict[str, Any]:
             incomplete.append(prefix + ":eligibility_reason_missing")
         if item.get("eligibility_status") == "ELIGIBLE" and not item.get("route"):
             incomplete.append(prefix + ":eligible_route_missing")
+        if item.get("eligibility_status") == "ELIGIBLE" and not str(item.get("simulation_cutoff") or "").strip():
+            incomplete.append(prefix + ":eligible_simulation_cutoff_missing")
+        calibration_eligibility = item.get("calibration_eligibility")
+        if calibration_eligibility not in {"NOT_ELIGIBLE_MODEL_MEMORY", "MODEL_MEMORY_CONTROLLED_CANDIDATE"}:
+            invalid.append(prefix + ":calibration_eligibility_invalid")
+        elif calibration_eligibility == "MODEL_MEMORY_CONTROLLED_CANDIDATE":
+            if item.get("eligibility_status") != "ELIGIBLE":
+                invalid.append(prefix + ":calibration_candidate_must_be_eligible")
+            if not experiment_can_nominate_calibration_candidates:
+                invalid.append(prefix + ":experiment_model_memory_not_controlled_for_calibration")
     state = "INVALID" if invalid else "INCOMPLETE" if incomplete else "REVIEWABLE"
     return {"state": state, "invalid_findings": invalid, "incomplete_findings": incomplete}
 
@@ -450,7 +688,390 @@ def _validate_investment_decision(record: dict[str, Any]) -> tuple[list[str], li
     return invalid, incomplete
 
 
-def validate_case(record: dict[str, Any]) -> dict[str, Any]:
+def _validate_production_report_origin(
+    record: dict[str, Any], *, report: dict[str, Any], artifact_sha256: str, origin: dict[str, Any],
+) -> tuple[list[str], list[str]]:
+    """Require the unified pipeline and V3 acceptance artifacts for real cases."""
+    invalid: list[str] = []
+    incomplete: list[str] = []
+    prefix = "report_freeze.frozen_report.origin"
+    # The PIT source-package runner and its deployment-signed read audit are
+    # P10-A acquisition work.  Until they exist, metadata-only artifacts must
+    # never upgrade a real case to REVIEWABLE.
+    incomplete.append(prefix + ":pit_runner_attestation_not_implemented")
+    required = (
+        "output_dir", "acceptance_root", "sample_id", "run_manifest_path",
+        "completion_report_path", "publication_snapshot_path",
+    )
+    incomplete.extend(_required(origin, required, prefix))
+    root = Path(__file__).resolve().parents[1]
+
+    def repo_path(value: Any, field: str) -> Path | None:
+        raw = str(value or "")
+        if not raw or Path(raw).is_absolute():
+            invalid.append(prefix + ":" + field + "_must_be_repo_relative")
+            return None
+        resolved = (root / raw).resolve()
+        if root not in resolved.parents:
+            invalid.append(prefix + ":" + field + "_outside_repository")
+            return None
+        return resolved
+
+    def load_json(path: Path | None, field: str) -> dict[str, Any]:
+        if path is None:
+            return {}
+        if not path.is_file():
+            incomplete.append(prefix + ":" + field + "_missing")
+            return {}
+        try:
+            value = json.loads(path.read_text(encoding="utf-8"))
+        except (OSError, UnicodeDecodeError, json.JSONDecodeError):
+            invalid.append(prefix + ":" + field + "_invalid_json")
+            return {}
+        if not isinstance(value, dict):
+            invalid.append(prefix + ":" + field + "_must_be_object")
+            return {}
+        return value
+
+    output_dir = repo_path(origin.get("output_dir"), "output_dir")
+    acceptance_root = repo_path(origin.get("acceptance_root"), "acceptance_root")
+    run_manifest = repo_path(origin.get("run_manifest_path"), "run_manifest_path")
+    completion = repo_path(origin.get("completion_report_path"), "completion_report_path")
+    snapshot = repo_path(origin.get("publication_snapshot_path"), "publication_snapshot_path")
+    expected_manifest = output_dir / "run_manifest.json" if output_dir else None
+    expected_completion = output_dir / "completion_report.json" if output_dir else None
+    if run_manifest and expected_manifest and run_manifest != expected_manifest:
+        invalid.append(prefix + ":run_manifest_path_does_not_match_output_dir")
+    if completion and expected_completion and completion != expected_completion:
+        invalid.append(prefix + ":completion_report_path_does_not_match_output_dir")
+    run_payload = load_json(run_manifest, "run_manifest")
+    completion_payload = load_json(completion, "completion_report")
+    snapshot_payload = load_json(snapshot, "publication_snapshot")
+    acceptance_payload = load_json(
+        acceptance_root / "acceptance_baseline.json" if acceptance_root else None,
+        "acceptance_baseline",
+    )
+    report_status = (record.get("report_freeze") or {}).get("report_status")
+    pipeline_variant: dict[str, Any] = {}
+    if output_dir and output_dir.is_dir():
+        try:
+            from scripts.real_report_acceptance import resolve_report_variant
+            pipeline_variant = resolve_report_variant(output_dir)
+        except (ImportError, OSError, ValueError) as exc:
+            invalid.append(prefix + ":pipeline_variant_unreadable:" + type(exc).__name__)
+            pipeline_variant = {}
+        pipeline_report = pipeline_variant.get("report")
+        report_path = repo_path(report.get("artifact_path"), "report_artifact_path")
+        if pipeline_report is None:
+            incomplete.append(prefix + ":pipeline_report_missing")
+        elif report_path and pipeline_report.resolve() != report_path:
+            invalid.append(prefix + ":report_artifact_does_not_match_pipeline_report")
+        if pipeline_variant.get("variant_id") and pipeline_variant.get("variant_id") != report.get("variant_id"):
+            invalid.append(prefix + ":pipeline_variant_id_mismatch")
+    pipeline_report_sha256 = pipeline_variant.get("report_sha256") if isinstance(pipeline_variant, dict) else ""
+    if report_status == "FROZEN":
+        if run_payload.get("status") != "COMPLETED":
+            invalid.append(prefix + ":frozen_report_requires_completed_run_manifest")
+        if completion_payload.get("status") not in {"COMPLETE", "COMPLETE_WITH_WARNINGS"}:
+            invalid.append(prefix + ":frozen_report_requires_complete_pipeline")
+        if not snapshot_payload:
+            incomplete.append(prefix + ":publication_snapshot_missing")
+    if snapshot_payload.get("report_sha256") not in {None, "", artifact_sha256}:
+        invalid.append(prefix + ":publication_snapshot_report_sha256_mismatch")
+    samples = acceptance_payload.get("samples") if isinstance(acceptance_payload.get("samples"), list) else []
+    matches = [item for item in samples if isinstance(item, dict) and item.get("sample_id") == origin.get("sample_id")]
+    if len(matches) != 1:
+        invalid.append(prefix + ":acceptance_sample_not_unique")
+    else:
+        sample = matches[0]
+        if sample.get("report_sha256") != (pipeline_report_sha256 or artifact_sha256):
+            invalid.append(prefix + ":acceptance_report_sha256_mismatch")
+        if report_status == "FROZEN":
+            if sample.get("machine_status") not in {"READY_FOR_BLIND_REVIEW", "BENCHMARK_CANDIDATE", "BENCHMARK_APPROVED"}:
+                invalid.append(prefix + ":acceptance_machine_status_not_ready")
+            if not (sample.get("hard_gates") or {}).get("passed"):
+                invalid.append(prefix + ":acceptance_v3_gates_not_passed")
+    return invalid, incomplete
+
+
+def _validate_report_freeze(
+    record: dict[str, Any], *, source_ids: set[str], frozen_claims: dict[str, dict[str, Any]],
+    allow_test_fixtures: bool = True,
+) -> tuple[list[str], list[str]]:
+    """Require a readable frozen report and an independent, claim-level review."""
+    invalid: list[str] = []
+    incomplete: list[str] = []
+    freeze = record.get("report_freeze") if isinstance(record.get("report_freeze"), dict) else {}
+    prefix = "report_freeze"
+    report_status = freeze.get("report_status")
+    if report_status not in {"FROZEN", "FROZEN_WITH_QUALITY_FAILURE"}:
+        invalid.append(prefix + ":report_status_invalid")
+    if record.get("status") != report_status:
+        invalid.append("case_status_does_not_match_report_freeze")
+
+    mode = freeze.get("mode")
+    if mode not in REPORT_FREEZE_MODES:
+        invalid.append(prefix + ":mode_invalid")
+    freeze_id = str(freeze.get("freeze_id") or "")
+    if not freeze_id.startswith("HBTFRZ:"):
+        invalid.append(prefix + ":freeze_id_invalid")
+
+    report = freeze.get("frozen_report") if isinstance(freeze.get("frozen_report"), dict) else {}
+    report_prefix = prefix + ".frozen_report"
+    incomplete.extend(_required(
+        report,
+        ("report_id", "variant_id", "origin", "artifact_path", "artifact_sha256", "format", "writer_id", "writer_provenance", "writer_status", "claim_ids", "section_markers"),
+        report_prefix,
+    ))
+    report_id = report.get("report_id")
+    if not isinstance(report_id, str) or not report_id.startswith("HBTREP:"):
+        invalid.append(report_prefix + ":report_id_invalid")
+    if report.get("format") != "MARKDOWN":
+        invalid.append(report_prefix + ":format_must_be_markdown")
+    variant_id = str(report.get("variant_id") or "")
+    if not re.fullmatch(r"[0-9a-f]{16}", variant_id):
+        invalid.append(report_prefix + ":variant_id_invalid")
+    if not isinstance(report.get("writer_id"), str) or not report.get("writer_id").strip():
+        invalid.append(report_prefix + ":writer_id_invalid")
+    writer_context, writer_identity, provenance_invalid, provenance_incomplete = _validate_actor_provenance(
+        report.get("writer_provenance"), prefix=report_prefix + ".writer_provenance",
+    )
+    invalid.extend(provenance_invalid)
+    incomplete.extend(provenance_incomplete)
+    expected_claim_ids = set(frozen_claims)
+    report_claim_ids = report.get("claim_ids") if isinstance(report.get("claim_ids"), list) else []
+    normalized_report_claim_ids = [str(item or "") for item in report_claim_ids]
+    if set(normalized_report_claim_ids) != expected_claim_ids or len(normalized_report_claim_ids) != len(set(normalized_report_claim_ids)):
+        invalid.append(report_prefix + ":claim_ids_do_not_match_frozen_ledger")
+    content, artifact_sha256, artifact_invalid, artifact_incomplete = _read_repo_artifact(
+        report.get("artifact_path"), prefix=report_prefix,
+    )
+    invalid.extend(artifact_invalid)
+    incomplete.extend(artifact_incomplete)
+    if not isinstance(report.get("artifact_sha256"), str) or report.get("artifact_sha256") != artifact_sha256:
+        invalid.append(report_prefix + ":artifact_sha256_mismatch")
+    if mode == "TEST_FIXTURE" and variant_id and artifact_sha256 and variant_id != artifact_sha256[:16]:
+        invalid.append(report_prefix + ":variant_id_does_not_match_artifact")
+    if variant_id and freeze_id != "HBTFRZ:" + variant_id:
+        invalid.append(prefix + ":freeze_id_does_not_match_report_variant")
+    origin = report.get("origin") if isinstance(report.get("origin"), dict) else {}
+    origin_kind = origin.get("kind")
+    if origin_kind not in REPORT_ORIGIN_KINDS:
+        invalid.append(report_prefix + ":origin_kind_invalid")
+    if mode == "TEST_FIXTURE" or origin_kind == "TEST_FIXTURE":
+        if mode != "TEST_FIXTURE" or origin_kind != "TEST_FIXTURE":
+            invalid.append(report_prefix + ":fixture_mode_and_origin_must_match")
+        if record.get("case_id") != "HBTCASE:TEST":
+            invalid.append(report_prefix + ":test_fixture_forbidden_outside_test_case")
+        if not allow_test_fixtures:
+            invalid.append(report_prefix + ":test_fixture_requires_explicit_allowance")
+        if not str(report.get("artifact_path") or "").startswith("tests/fixtures/"):
+            invalid.append(report_prefix + ":test_fixture_must_use_fixture_artifact")
+    elif mode == "PRODUCTION_PIPELINE":
+        if origin_kind != "TURTLE_PIPELINE":
+            invalid.append(report_prefix + ":production_case_requires_turtle_pipeline_origin")
+        origin_invalid, origin_incomplete = _validate_production_report_origin(
+            record, report=report, artifact_sha256=artifact_sha256, origin=origin,
+        )
+        invalid.extend(origin_invalid)
+        incomplete.extend(origin_incomplete)
+    section_markers = report.get("section_markers") if isinstance(report.get("section_markers"), list) else []
+    normalized_markers = {str(item or "") for item in section_markers}
+    if not REQUIRED_FROZEN_REPORT_SECTIONS.issubset(normalized_markers) or len(normalized_markers) != len(section_markers):
+        invalid.append(report_prefix + ":section_markers_incomplete")
+    if content:
+        if isinstance(report_id, str) and report_id not in content:
+            invalid.append(report_prefix + ":artifact_report_id_missing")
+        for marker in REQUIRED_FROZEN_REPORT_SECTIONS:
+            if marker not in content:
+                incomplete.append(report_prefix + ":artifact_section_missing:" + marker)
+        for claim_id, claim in frozen_claims.items():
+            if claim_id not in content:
+                invalid.append(report_prefix + ":artifact_claim_id_missing:" + claim_id)
+            statement = str(claim.get("statement") or "").strip()
+            if statement and statement not in content:
+                incomplete.append(report_prefix + ":artifact_claim_statement_missing:" + claim_id)
+
+    review = freeze.get("independent_review") if isinstance(freeze.get("independent_review"), dict) else {}
+    review_prefix = prefix + ".independent_review"
+    incomplete.extend(_required(
+        review,
+        ("review_id", "reviewed_variant_id", "reviewer_id", "reviewer_provenance", "independence", "reviewed_report_sha256", "status", "claim_reviews"),
+        review_prefix,
+    ))
+    if not isinstance(review.get("review_id"), str) or not review.get("review_id").startswith("HBTREV:"):
+        invalid.append(review_prefix + ":review_id_invalid")
+    if review.get("reviewed_variant_id") != variant_id:
+        invalid.append(review_prefix + ":reviewed_variant_id_mismatch")
+    if variant_id and review.get("review_id") != "HBTREV:" + variant_id:
+        invalid.append(review_prefix + ":review_id_must_bind_report_variant")
+    if not isinstance(review.get("reviewer_id"), str) or not review.get("reviewer_id").strip():
+        invalid.append(review_prefix + ":reviewer_id_invalid")
+    elif review.get("reviewer_id") == report.get("writer_id"):
+        invalid.append(review_prefix + ":reviewer_must_be_independent_from_writer")
+    reviewer_context, reviewer_identity, reviewer_invalid, reviewer_incomplete = _validate_actor_provenance(
+        review.get("reviewer_provenance"), prefix=review_prefix + ".reviewer_provenance",
+    )
+    invalid.extend(reviewer_invalid)
+    incomplete.extend(reviewer_incomplete)
+    if writer_context and reviewer_context and writer_context == reviewer_context:
+        invalid.append(review_prefix + ":reviewer_context_must_differ_from_writer")
+    if writer_identity and reviewer_identity and writer_identity == reviewer_identity:
+        invalid.append(review_prefix + ":reviewer_model_identity_overlaps_writer")
+    independence = review.get("independence") if isinstance(review.get("independence"), dict) else {}
+    for field in REVIEWER_INDEPENDENCE_FIELDS:
+        if independence.get(field) is not True:
+            invalid.append(review_prefix + ":independence_" + field + "_required")
+    if review.get("reviewed_report_sha256") != artifact_sha256:
+        invalid.append(review_prefix + ":reviewed_report_sha256_mismatch")
+    if review.get("status") not in {"PASS", "FAIL"}:
+        invalid.append(review_prefix + ":status_invalid")
+    reviews = review.get("claim_reviews") if isinstance(review.get("claim_reviews"), list) else []
+    reviewed_claim_ids: set[str] = set()
+    has_unsupported_prediction = False
+    has_partial_prediction = False
+    for index, claim_review in enumerate(reviews):
+        claim_prefix = f"{review_prefix}.claim_reviews[{index}]"
+        if not isinstance(claim_review, dict):
+            invalid.append(claim_prefix + ":not_object")
+            continue
+        incomplete.extend(_required(claim_review, ("claim_id", "disposition", "source_ids", "notes"), claim_prefix))
+        claim_id = str(claim_review.get("claim_id") or "")
+        claim = frozen_claims.get(claim_id)
+        if claim is None:
+            invalid.append(claim_prefix + ":claim_id_not_frozen:" + claim_id)
+            continue
+        if claim_id in reviewed_claim_ids:
+            invalid.append("duplicate_report_review_claim_id:" + claim_id)
+        reviewed_claim_ids.add(claim_id)
+        disposition = claim_review.get("disposition")
+        if disposition not in REPORT_REVIEW_DISPOSITIONS:
+            invalid.append(claim_prefix + ":disposition_invalid")
+        if claim.get("frozen_disposition") == "UNKNOWN" and disposition != "UNKNOWN_PRESERVED":
+            invalid.append(claim_prefix + ":unknown_claim_must_be_preserved")
+        if claim.get("frozen_disposition") == "PREDICTION" and disposition == "UNKNOWN_PRESERVED":
+            invalid.append(claim_prefix + ":prediction_claim_cannot_be_marked_unknown_preserved")
+        if claim.get("frozen_disposition") == "PREDICTION" and disposition == "UNSUPPORTED":
+            has_unsupported_prediction = True
+        if claim.get("frozen_disposition") == "PREDICTION" and disposition == "PARTIAL":
+            has_partial_prediction = True
+        review_sources = claim_review.get("source_ids") if isinstance(claim_review.get("source_ids"), list) else []
+        if set(str(item or "") for item in review_sources) != set(str(item) for item in claim.get("source_ids") or []):
+            invalid.append(claim_prefix + ":source_ids_do_not_match_frozen_claim")
+        ref_invalid, ref_incomplete = _validate_source_references(review_sources, source_ids, claim_prefix)
+        invalid.extend(ref_invalid)
+        incomplete.extend(ref_incomplete)
+    if reviewed_claim_ids != expected_claim_ids:
+        incomplete.append(review_prefix + ":claim_reviews_do_not_cover_frozen_ledger")
+
+    quality_failure = freeze.get("quality_failure")
+    if report_status == "FROZEN":
+        if report.get("writer_status") != "COMPLETE":
+            invalid.append(report_prefix + ":frozen_report_must_be_complete")
+        if review.get("status") != "PASS":
+            invalid.append(review_prefix + ":frozen_report_requires_pass")
+        if has_unsupported_prediction:
+            invalid.append(review_prefix + ":unsupported_prediction_cannot_be_frozen")
+        if has_partial_prediction:
+            invalid.append(review_prefix + ":partial_prediction_cannot_be_frozen")
+        if quality_failure is not None:
+            invalid.append(prefix + ":quality_failure_must_be_null_for_frozen_report")
+    elif report_status == "FROZEN_WITH_QUALITY_FAILURE":
+        if report.get("writer_status") != "QUALITY_FAILURE":
+            invalid.append(report_prefix + ":quality_failure_report_status_required")
+        if review.get("status") != "FAIL":
+            invalid.append(review_prefix + ":quality_failure_requires_failed_review")
+        if not isinstance(quality_failure, dict):
+            incomplete.append(prefix + ":quality_failure_details_missing")
+        else:
+            failure_prefix = prefix + ".quality_failure"
+            incomplete.extend(_required(
+                quality_failure,
+                ("classifications", "economic_impact", "missing_facts", "prohibited_assumptions", "remediation", "acceptance_criteria"),
+                failure_prefix,
+            ))
+            classifications = quality_failure.get("classifications") if isinstance(quality_failure.get("classifications"), list) else []
+            if not classifications or any(item not in QUALITY_FAILURE_CLASSIFICATIONS for item in classifications):
+                invalid.append(failure_prefix + ":classifications_invalid")
+    return invalid, incomplete
+
+
+def _validate_report_coverage(
+    coverage: dict[str, Any], *, case: dict[str, Any] | None, frozen_claims: dict[str, dict[str, Any]],
+) -> tuple[list[str], list[str]]:
+    """Bind frozen report-quality aggregates to the independent claim review."""
+    invalid: list[str] = []
+    incomplete: list[str] = []
+    prefix = "report_coverage"
+    incomplete.extend(_required(
+        coverage,
+        ("status", "review_id", "claim_reviews", "supported_claim_count", "unsupported_claim_count", "unknowns_preserved", "notes"),
+        prefix,
+    ))
+    freeze = case.get("report_freeze") if isinstance(case, dict) and isinstance(case.get("report_freeze"), dict) else {}
+    review = freeze.get("independent_review") if isinstance(freeze.get("independent_review"), dict) else {}
+    if coverage.get("review_id") != review.get("review_id"):
+        invalid.append(prefix + ":review_id_does_not_match_frozen_review")
+    expected_reviews = review.get("claim_reviews") if isinstance(review.get("claim_reviews"), list) else []
+    actual_reviews = coverage.get("claim_reviews") if isinstance(coverage.get("claim_reviews"), list) else []
+
+    def normalize(rows: list[Any], row_prefix: str) -> dict[str, tuple[str, frozenset[str]]]:
+        normalized: dict[str, tuple[str, frozenset[str]]] = {}
+        for index, row in enumerate(rows):
+            item_prefix = f"{row_prefix}[{index}]"
+            if not isinstance(row, dict):
+                invalid.append(item_prefix + ":not_object")
+                continue
+            incomplete.extend(_required(row, ("claim_id", "disposition", "source_ids"), item_prefix))
+            claim_id = str(row.get("claim_id") or "")
+            if claim_id not in frozen_claims:
+                invalid.append(item_prefix + ":claim_id_not_frozen:" + claim_id)
+                continue
+            if claim_id in normalized:
+                invalid.append("duplicate_report_coverage_claim_id:" + claim_id)
+                continue
+            disposition = row.get("disposition")
+            if disposition not in REPORT_REVIEW_DISPOSITIONS:
+                invalid.append(item_prefix + ":disposition_invalid")
+            source_values = row.get("source_ids") if isinstance(row.get("source_ids"), list) else []
+            source_set = frozenset(str(item or "") for item in source_values)
+            if source_set != frozenset(str(item) for item in frozen_claims[claim_id].get("source_ids") or []):
+                invalid.append(item_prefix + ":source_ids_do_not_match_frozen_claim")
+            normalized[claim_id] = (str(disposition), source_set)
+        return normalized
+
+    expected = normalize(expected_reviews, prefix + ".frozen_review")
+    actual = normalize(actual_reviews, prefix + ".claim_reviews")
+    if actual != expected:
+        invalid.append(prefix + ":claim_reviews_do_not_match_frozen_review")
+    if set(actual) != set(frozen_claims):
+        incomplete.append(prefix + ":claim_reviews_do_not_cover_frozen_ledger")
+    supported_count = sum(1 for disposition, _ in actual.values() if disposition == "SUPPORTED")
+    unsupported_count = sum(1 for disposition, _ in actual.values() if disposition == "UNSUPPORTED")
+    unknowns_preserved = all(
+        actual.get(claim_id, (None, frozenset()))[0] == "UNKNOWN_PRESERVED"
+        for claim_id, claim in frozen_claims.items()
+        if claim.get("frozen_disposition") == "UNKNOWN"
+    )
+    if coverage.get("supported_claim_count") != supported_count:
+        invalid.append(prefix + ":supported_claim_count_does_not_match_claim_reviews")
+    if coverage.get("unsupported_claim_count") != unsupported_count:
+        invalid.append(prefix + ":unsupported_claim_count_does_not_match_claim_reviews")
+    if coverage.get("unknowns_preserved") is not unknowns_preserved:
+        invalid.append(prefix + ":unknowns_preserved_does_not_match_claim_reviews")
+    expected_status = "INVALID" if unsupported_count else "PARTIAL" if any(
+        disposition == "PARTIAL" for disposition, _ in actual.values()
+    ) else "PASS"
+    if coverage.get("status") != expected_status:
+        invalid.append(prefix + ":status_does_not_match_claim_reviews")
+    if freeze.get("report_status") == "FROZEN" and expected_status != "PASS":
+        invalid.append(prefix + ":frozen_case_requires_pass_claim_reviews")
+    return invalid, incomplete
+
+
+def validate_case(
+    record: dict[str, Any], *, experiment: dict[str, Any] | None = None, allow_test_fixtures: bool = True,
+) -> dict[str, Any]:
     invalid: list[str] = []
     incomplete: list[str] = []
     if record.get("schema_version") != CASE_SCHEMA_VERSION:
@@ -472,6 +1093,14 @@ def validate_case(record: dict[str, Any]) -> dict[str, Any]:
         invalid.append("evidence_cutoff_after_simulation_cutoff")
     elif freeze_date < evidence_cutoff:
         invalid.append("report_freeze_before_evidence_cutoff")
+    credibility_invalid, credibility_incomplete = _validate_credibility(record)
+    invalid.extend(credibility_invalid)
+    incomplete.extend(credibility_incomplete)
+    experiment_credibility_invalid, experiment_credibility_incomplete = _validate_case_experiment_credibility(
+        record, experiment=experiment,
+    )
+    invalid.extend(experiment_credibility_invalid)
+    incomplete.extend(experiment_credibility_incomplete)
     sources = record.get("sources") if isinstance(record.get("sources"), list) else []
     if not sources:
         incomplete.append("sources_missing")
@@ -503,6 +1132,13 @@ def validate_case(record: dict[str, Any]) -> dict[str, Any]:
     ledger_invalid, ledger_incomplete = _validate_calibration_ledger(record, source_ids)
     invalid.extend(ledger_invalid)
     incomplete.extend(ledger_incomplete)
+    report_invalid, report_incomplete = _validate_report_freeze(
+        record, source_ids=source_ids, frozen_claims=_frozen_claims(record), allow_test_fixtures=allow_test_fixtures,
+    )
+    invalid.extend(report_invalid)
+    incomplete.extend(report_incomplete)
+    if report_freeze.get("report_status") == "FROZEN_WITH_QUALITY_FAILURE":
+        incomplete.append("case_frozen_with_quality_failure")
     decision_invalid, decision_incomplete = _validate_investment_decision(record)
     invalid.extend(decision_invalid)
     incomplete.extend(decision_incomplete)
@@ -1060,7 +1696,10 @@ def _validate_return_outcome(
     return invalid, incomplete
 
 
-def validate_settlement(record: dict[str, Any], *, case: dict[str, Any] | None = None) -> dict[str, Any]:
+def validate_settlement(
+    record: dict[str, Any], *, case: dict[str, Any] | None = None, experiment: dict[str, Any] | None = None,
+    allow_test_fixtures: bool = True,
+) -> dict[str, Any]:
     invalid: list[str] = []
     incomplete: list[str] = []
     if record.get("schema_version") != SETTLEMENT_SCHEMA_VERSION:
@@ -1068,13 +1707,16 @@ def validate_settlement(record: dict[str, Any], *, case: dict[str, Any] | None =
     if case is None:
         invalid.append("frozen_case_required_for_settlement_calibration")
     else:
-        case_result = validate_case(case)
+        case_result = validate_case(case, experiment=experiment, allow_test_fixtures=allow_test_fixtures)
         if case_result["state"] != "REVIEWABLE":
             invalid.append("frozen_case_not_reviewable")
         if record.get("case_id") != case.get("case_id"):
             invalid.append("settlement_case_id_does_not_match_frozen_case")
         if record.get("experiment_id") != case.get("experiment_id"):
             invalid.append("settlement_experiment_id_does_not_match_frozen_case")
+        case_freeze = (case.get("report_freeze") or {}).get("freeze_id")
+        if record.get("freeze_id") != case_freeze:
+            invalid.append("settlement_freeze_id_does_not_match_frozen_case")
     cutoff = _timestamp(case.get("simulation_cutoff")) if case else None
     settlement_date = _timestamp(record.get("settlement_as_of"))
     if settlement_date is None:
@@ -1133,6 +1775,12 @@ def validate_settlement(record: dict[str, Any], *, case: dict[str, Any] | None =
     incomplete.extend(return_incomplete)
     frozen_predictions = _frozen_predictions(case)
     frozen_claims = _frozen_claims(case)
+    coverage = record.get("report_coverage") if isinstance(record.get("report_coverage"), dict) else {}
+    coverage_invalid, coverage_incomplete = _validate_report_coverage(
+        coverage, case=case, frozen_claims=frozen_claims,
+    )
+    invalid.extend(coverage_invalid)
+    incomplete.extend(coverage_incomplete)
     observation_by_id: dict[str, dict[str, Any]] = {}
     for index, observation in enumerate(actual.get("operating_observations") or []):
         if not isinstance(observation, dict) or not case:
@@ -1253,6 +1901,7 @@ def build_pilot_experiment(*, registered_at: str = "2026-08-16T00:00:00+08:00") 
             "company_name": name,
             "eligibility_status": "INELIGIBLE_NO_HISTORICAL_VINTAGE",
             "eligibility_reason": "当前候选保存的是最新研究输出，未同时保存可验证的历史报告版本、逐源发布时间和当时市场数据，不能重建无前视信息的冻结报告。",
+            "calibration_eligibility": "NOT_ELIGIBLE_MODEL_MEMORY",
         }
         for code, name in PILOT_CASES
     ]
@@ -1274,7 +1923,19 @@ def build_pilot_experiment(*, registered_at: str = "2026-08-16T00:00:00+08:00") 
             "survivorship_rule": "retain_delisted_acquired_and_failed_cases_in_registered_universe",
             "execution_rule": "next_tradable_price_after_frozen_report_or_preregistered_rule",
         },
-        "universe": {"selection_status": "RESEARCH_PILOT", "cases": cases, "eligible_case_count": 0},
+        "credibility": {
+            "model_memory_control": "UNCONTROLLED",
+            "backtest_credibility": "EXPLORATORY",
+            "assessment_basis": "当前模型可能在训练中见过历史发行人及其后续事件；尚无可验证的参数记忆隔离证据。",
+            "control_evidence": [],
+            "calibration_role": "ENGINEERING_DIAGNOSTIC_ONLY",
+        },
+        "universe": {
+            "selection_status": "RESEARCH_PILOT",
+            "cases": cases,
+            "eligible_case_count": 0,
+            "calibration_eligible_case_count": 0,
+        },
         "scoring_policy": {
             "separate_dimensions": ["REPORT_COVERAGE", "MODEL_FORECAST_ERROR", "INVESTMENT_RETURN_OUTCOME"],
             "no_compensating_score": True,
@@ -1305,6 +1966,8 @@ def main() -> int:
     validate.add_argument("kind", choices=["experiment", "case", "settlement"])
     validate.add_argument("path", type=Path)
     validate.add_argument("--case", type=Path, help="frozen case required to cross-check a settlement")
+    validate.add_argument("--experiment", type=Path, help="registered experiment required for a calibration candidate")
+    validate.add_argument("--allow-test-fixtures", action="store_true", help="allow HBTCASE:TEST regression fixtures")
     args = parser.parse_args()
     if args.command == "pilot":
         payload = build_pilot_experiment()
@@ -1312,13 +1975,14 @@ def main() -> int:
         print(json.dumps({"written": str(args.output), "eligible_case_count": 0}, ensure_ascii=False))
         return 0
     payload = json.loads(args.path.read_text(encoding="utf-8"))
+    experiment = json.loads(args.experiment.read_text(encoding="utf-8")) if args.experiment else None
     if args.kind == "experiment":
         result = validate_experiment(payload)
     elif args.kind == "case":
-        result = validate_case(payload)
+        result = validate_case(payload, experiment=experiment, allow_test_fixtures=args.allow_test_fixtures)
     else:
         case = json.loads(args.case.read_text(encoding="utf-8")) if args.case else None
-        result = validate_settlement(payload, case=case)
+        result = validate_settlement(payload, case=case, experiment=experiment, allow_test_fixtures=args.allow_test_fixtures)
     print(json.dumps(result, ensure_ascii=False, indent=2))
     return 0 if result["state"] == "REVIEWABLE" else 1
 

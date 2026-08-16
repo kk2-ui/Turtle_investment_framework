@@ -2,7 +2,7 @@
 
 状态：`PILOT_PREREGISTERED / ELIGIBLE_SET_EMPTY`
 
-本试点用于校准报告标准，不用于调参、挑选赢家或解锁 G3。它评价三件不同的事，三者不能互相抵消：
+本试点用于工程验证并为后续校准收集诊断证据，不用于调参、挑选赢家或解锁 G3。它评价三件不同的事，三者不能互相抵消：
 
 1. **报告覆盖度**：截至模拟日，重要主张是否有当时可见的官方证据，未知是否被保留。
 2. **模型预测误差**：报告冻结的正常盈利、现金流、终值或经营阈值，后来实际结果偏离多少。
@@ -16,7 +16,15 @@
 
 实验还必须预注册幸存者处理：后来退市、被收购或失败的公司不能从登记样本中删除。当前九份候选没有历史版本，仍然是资格不足，而不是被当作“未发生”。
 
-模型记忆无法完全控制，因此即使文件围栏通过，也只能将大模型回放标记为 `QUALIFIED` 或 `EXPLORATORY`，不能冒充严格前瞻样本。
+当前试点明确登记为 `UNCONTROLLED / EXPLORATORY / ENGINEERING_DIAGNOSTIC_ONLY`：模型可能在训练中见过发行人及其后续事件，尚无可验证的参数记忆隔离证据。`MITIGATED` 必须有缓解证据且至多为 `QUALIFIED`；未来只有带部署级 attestation 的 `CONTROLLED` 才可能标为 `STRICT` 和模型记忆受控的校准候选。后者仍须通过独立的跨发行人、跨 cutoff 与 holdout 门槛，不能直接改参数或产生生产结论。
+
+## 冻结报告与独立审阅
+
+`FROZEN` 不是只有 JSON 或账本：它必须指向仓库内可读取的 Markdown 报告，包含 `report_id`、全部冻结 claim statement 和规定章节，并由 `COMPLETE` writer 提交。报告内容派生 `variant_id`，再确定性绑定 `freeze_id` 和 `HBTREV:<variant_id>` review identity；报告变化必须产生新 variant、新 freeze 和新审阅，旧结算不能借用新版本。`TEST_FIXTURE` 只允许 `HBTCASE:TEST` 回归命名空间。真实 case 的目标生产路径是 `PRODUCTION_PIPELINE`，将绑定 `scripts/turtle_agent/run.py` 输出、Phase 08 acceptance baseline、V3 gates、`publication_snapshot.json`、`run_manifest.json` 和 PIT runner attestation；P10-A 的 source-package runner/read audit 尚未实现，因此 validator 现在**故意拒绝**任何生产 case 为 `REVIEWABLE`，不会把任意 Markdown 或本地 JSON 当成真实历史报告。独立 reviewer 的身份与 context 不得和 writer 相同，并须声明未参与生成、上下文隔离和生成者身份不重叠；reviewer 所见的 SHA-256 必须与报告一致。reviewer 必须对每一个 claim 复核同一组冻结 `source_ids`；冻结为 `UNKNOWN` 的 claim 只能标为 `UNKNOWN_PRESERVED`，材料 `PREDICTION` 只能标为 `SUPPORTED`。结算的 `REPORT_COVERAGE` 逐项重放这份审阅，不能自行填写支持数、未支持数或未知保留状态。
+
+当前冻结保证的 assurance level 是 `VERIFIED_ARTIFACT_AND_DECLARED_PROCESS`：它核对工件、管线入口、声明的 reviewer 独立性和版本身份，不是密码学作者证明，也不是模型没有历史记忆的证明。非测试 `CONTROLLED / STRICT` 需要部署级 attestation；该能力尚未实现，因而当前只能是 `UNCONTROLLED / EXPLORATORY / ENGINEERING_DIAGNOSTIC_ONLY`。未来 `MODEL_MEMORY_CONTROLLED_CANDIDATE` 仍须跨发行人、跨 cutoff 和 holdout 复验。
+
+未通过时保留 `FROZEN_WITH_QUALITY_FAILURE` 和 `DATA_COVERAGE`、`ACQUISITION_MODULE`、`REASONING`、`MODEL`、`WRITING` 中的适用根因、经济影响、缺失事实、禁止假设、修复和验收条件。`tests/fixtures/historical_backtest_frozen_report.md` 只是 validator 回归夹具，不是任何历史公司的报告或回测样本。
 
 ## 冻结校准账本
 
@@ -68,7 +76,9 @@ claim 的指标、单位、`measurement_basis` 和报告期。每个观测的来
 
 试点登记文件为 `config/historical_backtest_pilot.v1.json`。九份当前候选均被明确登记为 `INELIGIBLE_NO_HISTORICAL_VINTAGE`：现有候选保存的是最新研究输出，没有同时保存可验证的历史报告版本、逐源发布时间、当时市场数据和公司行动账本。因此当前**合格案例数为 0**，这不是回测失败，也不是对个股结论的否定，而是诚实的数据覆盖结论。
 
-在取得历史年报原始版本、交易所发布时间、历史价格/分红/公司行动以及未幸存者样本后，才可以把某个案例改为 `ELIGIBLE`。用户临时指定的公司必须保留 `USER_SELECTED_CASE` 标签，不能用于无偏总体胜率声明。
+在取得历史年报原始版本、交易所发布时间、历史价格/分红/公司行动以及未幸存者样本，并完成 PIT runner/read audit 后，才可以把某个案例改为 `ELIGIBLE`。这只表示可建立来源齐备的工程 case；`calibration_eligible` 是单独计数，未来只有部署级 attestation 支持的 `CONTROLLED / STRICT / MODEL_MEMORY_CONTROLLED_CANDIDATE` 才可能进入后续样本与 holdout 审查。用户临时指定的公司必须保留 `USER_SELECTED_CASE` 标签，不能用于无偏总体胜率声明。
+
+目前没有一个实际 historical case、冻结报告、走步结算或收益样本；试点的零合格案例和回归夹具都不能改变这一事实。
 
 ## 使用
 
