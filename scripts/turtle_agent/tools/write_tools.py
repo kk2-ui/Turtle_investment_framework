@@ -1767,6 +1767,50 @@ def assemble_report(
     else:
         report_text = _extract_sources(report_text, output_dir)
 
+    # Re-run the semantic reader contract on the actual publication text.  In
+    # the dual-layer path this is the compact memo, not the full technical
+    # appendix; checking only the pre-memo chapters would allow a short memo to
+    # displace the reader-facing explanation while every numeric gate passed.
+    try:
+        from scripts.reader_coverage import evaluate_reader_coverage
+    except ModuleNotFoundError:
+        from reader_coverage import evaluate_reader_coverage
+    reader_coverage = evaluate_reader_coverage(
+        report_text,
+        output_dir,
+        enforced=Path(output_dir, "company_archetype.json").is_file(),
+        persist=Path(output_dir, "company_archetype.json").is_file(),
+    )
+    completion_dict["validators"]["reader_coverage"] = reader_coverage
+    if reader_coverage.get("status") == "BLOCKED":
+        completion_dict["status"] = "BLOCKED"
+        completion_dict["blocking_findings"].extend(
+            f"Reader coverage: {item}"
+            for item in reader_coverage.get("blocking_findings", [])
+        )
+        Path(os.path.join(output_dir, "completion_report.json")).write_text(
+            json.dumps(completion_dict, ensure_ascii=False, indent=2),
+            encoding="utf-8",
+        )
+        drafts_d = os.path.join(reports_d, "drafts")
+        os.makedirs(drafts_d, exist_ok=True)
+        report_path = os.path.join(
+            drafts_d, f"{code_short}_分析报告_{REPORT_VERSION}_draft.md"
+        )
+        Path(report_path).write_text(report_text, encoding="utf-8")
+        return {
+            "path": report_path,
+            "tool_name": "assemble_report",
+            "chapter_count": len(chapter_files),
+            "char_count": len(report_text),
+            "quality": quality_result,
+            "completion": completion_dict,
+            "memo_preservation": memo_preservation,
+            "reader_coverage": reader_coverage,
+            "published": False,
+            "error": "读者层语义覆盖不足，已保留 draft，禁止发布正式报告",
+        }
+
     # The sole formal-publication exit freezes the report, structured ledgers,
     # predictions, triggers and all resolvable source files visible at release.
     # A later changed report/ledger cannot silently overwrite this snapshot.

@@ -284,6 +284,33 @@ def evaluate_report_completion(report_text: str, output_dir: str) -> CompletionR
             'blocking_rules': chapter_blockers,
         })
 
+    # Chapter depth and structured ledgers can all pass while a remediation
+    # accidentally replaces the reader narrative with a technical summary.
+    # The semantic reader gate is enforced for current archetype-aware runs;
+    # legacy directories without that context remain auditable by the older
+    # contracts and are not silently reclassified here.
+    try:
+        from scripts.reader_coverage import evaluate_reader_coverage
+    except ModuleNotFoundError:
+        from reader_coverage import evaluate_reader_coverage
+    # Archetype routing is the activation marker.  An insight-policy file can
+    # exist in legacy/unit-test outputs without the current reader contract.
+    reader_enforced = os.path.exists(
+        os.path.join(output_dir, 'company_archetype.json')
+    )
+    reader_coverage = evaluate_reader_coverage(
+        report_text,
+        output_dir,
+        enforced=reader_enforced,
+        persist=reader_enforced,
+    )
+    if reader_coverage.get('status') == 'BLOCKED':
+        blocking.append(
+            'Reader coverage: ' + ' | '.join(
+                str(item) for item in reader_coverage.get('blocking_findings', [])[:12]
+            )
+        )
+
     decision_status = 'PASS'
     manifest_path = os.path.join(output_dir, 'decision_manifest.json')
     try:
@@ -754,6 +781,7 @@ def evaluate_report_completion(report_text: str, output_dir: str) -> CompletionR
         'depth': {'status': 'PASS' if not any('short_depth:' in b for b in blocking) else 'FAIL'},
         'audit': {'status': 'PASS' if not any('audit_' in b or 'missing_audit_record' in b for b in blocking) else 'FAIL'},
         'gg_derivation': {'status': 'PASS' if not any('gg_derivation_missing' in b for b in blocking) else 'FAIL'},
+        'reader_coverage': reader_coverage,
         'decision_manifest': {'status': decision_status, 'path': manifest_path},
         'official_evidence': official_evidence,
         'valuation_route': valuation_route,
