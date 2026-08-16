@@ -4,15 +4,20 @@ import json
 from copy import deepcopy
 from pathlib import Path
 
+import scripts.historical_backtest as historical_backtest
+import scripts.phase10_pit_runner as phase10_pit_runner
+from scripts.phase10_acquisition import enumerate_sse_announcements
 from scripts.historical_backtest import (
     CASE_SCHEMA_VERSION,
     SETTLEMENT_SCHEMA_VERSION,
+    _validate_production_report_origin,
     build_pilot_experiment,
     validate_case,
     validate_experiment,
     validate_pilot,
     validate_settlement,
 )
+from scripts.phase10_pit_runner import PITSourcePackage
 
 
 def _case() -> dict:
@@ -619,6 +624,104 @@ def test_production_report_requires_pipeline_acceptance_artifacts() -> None:
     assert "report_freeze.frozen_report.origin:acceptance_sample_not_unique" in result["invalid_findings"]
     assert "report_freeze.frozen_report.origin.pit_runner:missing:attestation_path" in result["incomplete_findings"]
     assert "report_freeze.frozen_report.origin.pit_runner:tool_boundary_not_integrated" in result["incomplete_findings"]
+
+
+def test_production_origin_replays_pdf_page_markdown_source_reads(
+    tmp_path: Path,
+    monkeypatch,
+) -> None:
+    root = tmp_path / "repository"
+    package = root / "historical" / "package"
+    (package / "annual").mkdir(parents=True)
+    (package / "annual" / "2019.pdf").write_bytes(b"%PDF-original")
+    (package / "annual" / "2019.pages.md").write_text(
+        "# AR:00506:2020\n\n"
+        "- source_id: AR:00506:2020\n"
+        "- source_version: annual-report-original-2020\n"
+        "- content_representation: PDF_PAGE_MARKDOWN\n\n"
+        "## 第 1 页\n\n历史年报正文\n",
+        encoding="utf-8",
+    )
+    framework_root = root / "config" / "phase10_pit_framework" / "framework"
+    framework_root.mkdir(parents=True)
+    (framework_root / "policy.md").write_text("PIT policy", encoding="utf-8")
+    monkeypatch.setattr(phase10_pit_runner, "PIT_STATIC_FRAMEWORK_ROOT", framework_root.parent)
+    monkeypatch.setattr(historical_backtest, "__file__", str(root / "scripts" / "historical_backtest.py"))
+
+    manifest = enumerate_sse_announcements([{
+        "source_id": "AR:00506:2020",
+        "source_version": "annual-report-original-2020",
+        "source_type": "ANNUAL_REPORT",
+        "title": "2020 年年度报告",
+        "published_at": "2021-03-25",
+        "data_as_of": "2020-12-31",
+        "revision_policy": "ORIGINAL_VINTAGE",
+    }], cutoff_at="2021-08-31T18:00:00+08:00", period_start="2021-01-01")
+    for source in [*manifest["inventory"], *manifest["sources"]]:
+        source.update({
+            "package_path": "annual/2019.pdf",
+            "content_representation": "PDF_PAGE_MARKDOWN",
+            "reader_text_path": "annual/2019.pages.md",
+            "reader_text_extractor": "pdf_preprocessor.extract_all_pages",
+            "reader_text_extractor_version": "phase10-pdf-page-markdown.v1",
+            "reader_text_page_count": 1,
+        })
+    manifest["framework_allowlist"] = [{"path": "framework/policy.md"}]
+    manifest_path = root / "historical" / "source-manifest.json"
+    manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
+    runner = PITSourcePackage(
+        manifest,
+        package,
+        case_id="HBTCASE:TEST",
+        experiment_id="HBT:test",
+        run_id="pit-production-test",
+        manifest_path=str(manifest_path),
+    )
+    assert runner.state == "REVIEWABLE"
+    runner.read_source("AR:00506:2020")
+    attestation_path = root / "historical" / "pit-attestation.json"
+    attestation_path.write_text(json.dumps(runner.attestation()), encoding="utf-8")
+
+    record = {
+        "case_id": "HBTCASE:TEST",
+        "experiment_id": "HBT:test",
+        "company_code": "00506.HK",
+        "simulation_cutoff": "2021-08-31T18:00:00+08:00",
+        "report_freeze": {
+            "evidence_cutoff": "2021-08-31T18:00:00+08:00",
+            "report_status": "FROZEN",
+        },
+        "sources": [{
+            "source_id": "AR:00506:2020",
+            "source_version": "annual-report-original-2020",
+            "published_at": "2021-03-25",
+            "data_as_of": "2020-12-31",
+            "revision_policy": "ORIGINAL_VINTAGE",
+        }],
+    }
+    origin = {
+        "output_dir": "pipeline-output",
+        "acceptance_root": "acceptance",
+        "sample_id": "00506",
+        "run_manifest_path": "pipeline-output/run_manifest.json",
+        "completion_report_path": "pipeline-output/completion_report.json",
+        "publication_snapshot_path": "pipeline-output/publication_snapshot.json",
+        "pit_runner": {
+            "attestation_path": "historical/pit-attestation.json",
+            "source_package_manifest_path": "historical/source-manifest.json",
+            "package_root": "historical/package",
+            "status": "PASS",
+        },
+    }
+    invalid, _incomplete = _validate_production_report_origin(
+        record,
+        report={"artifact_path": "pipeline-output/report.md", "variant_id": "unused"},
+        artifact_sha256="unused",
+        origin=origin,
+    )
+    assert not any("source_path_mismatch" in finding for finding in invalid)
+    assert not any("source_representation_mismatch" in finding for finding in invalid)
+    assert not any("source_reader_text_path_mismatch" in finding for finding in invalid)
 
 
 def test_cutoff_comparisons_preserve_intraday_source_order() -> None:

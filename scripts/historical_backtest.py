@@ -900,8 +900,16 @@ def _validate_production_report_origin(
                     registration = allowlist.get(source_id)
                     if registration is None:
                         invalid.append(event_prefix + ":source_not_allowlisted")
-                    elif event.get("path") != registration.get("package_path"):
+                    elif event.get("path") != (
+                        registration.get("reader_text_path")
+                        if registration.get("content_representation") == "PDF_PAGE_MARKDOWN"
+                        else registration.get("package_path")
+                    ):
                         invalid.append(event_prefix + ":source_path_mismatch")
+                    elif event.get("representation") != registration.get("content_representation"):
+                        invalid.append(event_prefix + ":source_representation_mismatch")
+                    elif event.get("reader_text_path") != registration.get("reader_text_path"):
+                        invalid.append(event_prefix + ":source_reader_text_path_mismatch")
                     elif any(event.get(field) != registration.get(field) for field in ("source_version", "published_at", "data_as_of")):
                         invalid.append(event_prefix + ":source_identity_mismatch")
                     elif event.get("admission_status") != "ADMITTED":
@@ -969,7 +977,10 @@ def _validate_production_report_origin(
             attested = attestation_by_id.get(source_id)
             if attested is None:
                 continue
-            for field in ("source_version", "published_at", "data_as_of", "package_path", "admission_status"):
+            for field in (
+                "source_version", "published_at", "data_as_of", "package_path",
+                "content_representation", "reader_text_path", "admission_status",
+            ):
                 if field == "admission_status":
                     expected = "ADMITTED"
                 else:

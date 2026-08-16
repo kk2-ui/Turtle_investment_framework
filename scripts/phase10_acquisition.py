@@ -115,6 +115,10 @@ def materialize_pdf_page_markdown(
     if reader_relative is None:
         raise ValueError("reader_text_path must be a relative source-package path")
     destination = _resolve_package_path(root, reader_relative, field="source.reader_text_path")
+    if destination == raw_path:
+        raise ValueError("reader_text_path must differ from source.package_path")
+    if destination.exists():
+        raise FileExistsError(f"reader_text_path already exists: {reader_relative}")
 
     try:
         from scripts.pdf_preprocessor import extract_all_pages
@@ -131,6 +135,7 @@ def materialize_pdf_page_markdown(
     lines = [
         f"# {source_id or raw_relative}",
         "",
+        f"- source_id: {source_id}",
         f"- source_version: {source_version}",
         f"- content_representation: {PDF_PAGE_MARKDOWN}",
         "",

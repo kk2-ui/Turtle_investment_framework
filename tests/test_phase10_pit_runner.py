@@ -144,7 +144,11 @@ def test_runner_requires_registered_page_text_for_pdf_and_audits_representation(
                 "reader_text_page_count": 1,
             })
     (package / "annual/2019.pages.md").write_text(
-        "# SSE:600340:AR2019:ORIGINAL\n\n## 第 1 页\n\n历史年报正文\n",
+        "# SSE:600340:AR2019:ORIGINAL\n\n"
+        "- source_id: SSE:600340:AR2019:ORIGINAL\n"
+        "- source_version: annual-report-2019-original\n"
+        "- content_representation: PDF_PAGE_MARKDOWN\n\n"
+        "## 第 1 页\n\n历史年报正文\n",
         encoding="utf-8",
     )
     runner = PITSourcePackage(manifest, package)
@@ -153,3 +157,78 @@ def test_runner_requires_registered_page_text_for_pdf_and_audits_representation(
     allowed = runner.attestation()["read_audit"][-1]
     assert allowed["path"] == "annual/2019.pages.md"
     assert allowed["representation"] == "PDF_PAGE_MARKDOWN"
+    assert allowed["reader_text_path"] == "annual/2019.pages.md"
+
+
+@pytest.mark.parametrize(
+    ("reader_text", "expected_finding"),
+    [
+        (b"\xff\xfe", "reader_text_not_utf8"),
+        (b"", "reader_text_page_markers_missing"),
+        (
+            b"# SSE:600340:AR2019:ORIGINAL\n\n"
+            b"- source_id: SSE:600340:AR2019:ORIGINAL\n"
+            b"- source_version: annual-report-2019-original\n"
+            b"- content_representation: PDF_PAGE_MARKDOWN\n",
+            "reader_text_page_markers_missing",
+        ),
+        (
+            (
+                "# SSE:600340:AR2019:ORIGINAL\n\n"
+                "- source_id: SSE:600340:AR2019:ORIGINAL\n"
+                "- source_version: annual-report-2019-original\n"
+                "- content_representation: PDF_PAGE_MARKDOWN\n\n"
+                "## 第 1 页\n\n历史年报正文\n"
+            ).encode("utf-8"),
+            "reader_text_page_count_mismatch",
+        ),
+    ],
+)
+def test_runner_marks_unreadable_or_invalid_pdf_page_text_incomplete(
+    tmp_path, reader_text: bytes, expected_finding: str,
+) -> None:
+    package = tmp_path / "package"
+    (package / "annual").mkdir(parents=True)
+    (package / "annual/2019.pdf").write_bytes(b"%PDF-original")
+    (package / "annual/2019.pages.md").write_bytes(reader_text)
+    manifest = _manifest(package_path="annual/2019.pdf")
+    for source in [*manifest["inventory"], *manifest["sources"]]:
+        if source["source_id"] == "SSE:600340:AR2019:ORIGINAL":
+            source.update({
+                "content_representation": "PDF_PAGE_MARKDOWN",
+                "reader_text_path": "annual/2019.pages.md",
+                "reader_text_extractor": "pdf_preprocessor.extract_all_pages",
+                "reader_text_extractor_version": "phase10-pdf-page-markdown.v1",
+                "reader_text_page_count": 2,
+            })
+    runner = PITSourcePackage(manifest, package)
+    assert runner.state == "INCOMPLETE"
+    assert f"source:SSE:600340:AR2019:ORIGINAL:{expected_finding}" in runner.incomplete_findings
+
+
+def test_runner_rejects_pdf_page_text_with_wrong_metadata_or_nonpositive_page_count(tmp_path) -> None:
+    package = tmp_path / "package"
+    (package / "annual").mkdir(parents=True)
+    (package / "annual/2019.pdf").write_bytes(b"%PDF-original")
+    (package / "annual/2019.pages.md").write_text(
+        "# SSE:600340:AR2019:ORIGINAL\n\n"
+        "- source_id: SSE:600340:OTHER\n"
+        "- source_version: annual-report-2019-original\n"
+        "- content_representation: PDF_PAGE_MARKDOWN\n\n"
+        "## 第 1 页\n\n历史年报正文\n",
+        encoding="utf-8",
+    )
+    manifest = _manifest(package_path="annual/2019.pdf")
+    for source in [*manifest["inventory"], *manifest["sources"]]:
+        if source["source_id"] == "SSE:600340:AR2019:ORIGINAL":
+            source.update({
+                "content_representation": "PDF_PAGE_MARKDOWN",
+                "reader_text_path": "annual/2019.pages.md",
+                "reader_text_extractor": "pdf_preprocessor.extract_all_pages",
+                "reader_text_extractor_version": "phase10-pdf-page-markdown.v1",
+                "reader_text_page_count": 0,
+            })
+    runner = PITSourcePackage(manifest, package)
+    assert runner.state == "INCOMPLETE"
+    assert "source:SSE:600340:AR2019:ORIGINAL:reader_text_metadata_mismatch:source_id" in runner.incomplete_findings
+    assert "source:SSE:600340:AR2019:ORIGINAL:reader_text_page_count_invalid" in runner.incomplete_findings

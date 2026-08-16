@@ -10,7 +10,7 @@ from turtle_agent.tool_registry import ToolRegistry
 from turtle_agent.tools import pit_read_tools
 
 
-def _manifest() -> dict:
+def _manifest(*, pdf_page_markdown: bool = False) -> dict:
     manifest = enumerate_sse_announcements([
         {
             "source_id": "SSE:600340:AR2019:ORIGINAL",
@@ -33,9 +33,29 @@ def _manifest() -> dict:
     ], cutoff_at="2020-04-27T18:00:00+08:00", period_start="2019-01-01")
     for source in manifest["inventory"]:
         if source["source_id"] == "SSE:600340:AR2019:ORIGINAL":
-            source["package_path"] = "annual/2019.txt"
+            if pdf_page_markdown:
+                source.update({
+                    "package_path": "annual/2019.pdf",
+                    "content_representation": "PDF_PAGE_MARKDOWN",
+                    "reader_text_path": "annual/2019.pages.md",
+                    "reader_text_extractor": "pdf_preprocessor.extract_all_pages",
+                    "reader_text_extractor_version": "phase10-pdf-page-markdown.v1",
+                    "reader_text_page_count": 1,
+                })
+            else:
+                source["package_path"] = "annual/2019.txt"
     for source in manifest["sources"]:
-        source["package_path"] = "annual/2019.txt"
+        if pdf_page_markdown:
+            source.update({
+                "package_path": "annual/2019.pdf",
+                "content_representation": "PDF_PAGE_MARKDOWN",
+                "reader_text_path": "annual/2019.pages.md",
+                "reader_text_extractor": "pdf_preprocessor.extract_all_pages",
+                "reader_text_extractor_version": "phase10-pdf-page-markdown.v1",
+                "reader_text_page_count": 1,
+            })
+        else:
+            source["package_path"] = "annual/2019.txt"
     manifest["framework_allowlist"] = [{"path": "framework/policy.md"}]
     return manifest
 
@@ -44,8 +64,22 @@ def _manifest() -> dict:
 def configured_runner(tmp_path: Path) -> PITSourcePackage:
     package = tmp_path / "package"
     (package / "annual").mkdir(parents=True)
-    (package / "annual/2019.txt").write_text("历史时点经营事实\n第二行", encoding="utf-8")
-    runner = PITSourcePackage(_manifest(), package, case_id="HBTCASE:TEST", experiment_id="HBT:TEST", run_id="run-test")
+    (package / "annual/2019.pdf").write_bytes(b"%PDF-original")
+    (package / "annual/2019.pages.md").write_text(
+        "# SSE:600340:AR2019:ORIGINAL\n\n"
+        "- source_id: SSE:600340:AR2019:ORIGINAL\n"
+        "- source_version: annual-report-2019-original\n"
+        "- content_representation: PDF_PAGE_MARKDOWN\n\n"
+        "## 第 1 页\n\n历史时点经营事实\n",
+        encoding="utf-8",
+    )
+    runner = PITSourcePackage(
+        _manifest(pdf_page_markdown=True),
+        package,
+        case_id="HBTCASE:TEST",
+        experiment_id="HBT:TEST",
+        run_id="run-test",
+    )
     assert runner.state == "REVIEWABLE"
     pit_read_tools.configure_pit_runner(runner)
     try:
@@ -65,8 +99,11 @@ def test_pit_tools_are_discoverable_and_read_only(configured_runner: PITSourcePa
 
     source = registry.execute("pit_read_source", {"source_id": "SSE:600340:AR2019:ORIGINAL"})
     assert source["ok"] is True
-    assert source["value"]["content"].startswith("历史时点经营事实")
+    assert "## 第 1 页" in source["value"]["content"]
+    assert "历史时点经营事实" in source["value"]["content"]
     assert source["value"]["source_version"] == "annual-report-2019-original"
+    assert source["value"]["content_representation"] == "PDF_PAGE_MARKDOWN"
+    assert source["value"]["reader_text_path"] == "annual/2019.pages.md"
 
     framework = registry.execute("pit_read_framework", {"path": "framework/policy.md"})
     assert framework["ok"] is True

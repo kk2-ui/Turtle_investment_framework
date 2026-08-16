@@ -3,6 +3,8 @@ from __future__ import annotations
 from copy import deepcopy
 from unittest.mock import patch
 
+import pytest
+
 from scripts.phase10_acquisition import (
     DEFAULT_CUTOFF_AT,
     admit_source_manifest,
@@ -162,3 +164,26 @@ def test_materialize_pdf_page_markdown_keeps_raw_source_and_page_locators(tmp_pa
     assert materialized["content_representation"] == "PDF_PAGE_MARKDOWN"
     assert materialized["reader_text_path"] == "reader/test.pages.md"
     assert materialized["reader_text_page_count"] == 2
+
+
+def test_materialize_pdf_page_markdown_never_overwrites_raw_or_existing_reader(tmp_path) -> None:
+    package = tmp_path / "package"
+    (package / "raw").mkdir(parents=True)
+    raw_path = package / "raw/test.pdf"
+    raw_path.write_bytes(b"%PDF-original")
+    source = _source(
+        source_id="SSE:600340:TEST:PDF",
+        source_type="ANNUAL_REPORT",
+        package_path="raw/test.pdf",
+    )
+
+    with pytest.raises(ValueError, match="must differ"):
+        materialize_pdf_page_markdown(source, package, reader_text_path="raw/test.pdf")
+    assert raw_path.read_bytes() == b"%PDF-original"
+
+    (package / "reader").mkdir()
+    existing_reader = package / "reader/test.pages.md"
+    existing_reader.write_text("existing reader text", encoding="utf-8")
+    with pytest.raises(FileExistsError, match="already exists"):
+        materialize_pdf_page_markdown(source, package, reader_text_path="reader/test.pages.md")
+    assert existing_reader.read_text(encoding="utf-8") == "existing reader text"

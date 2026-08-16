@@ -153,6 +153,12 @@ PIT writer 的 registry 仍只有四个工具。模型请求 Web、普通 Turtle
 入口时，不执行该调用，且以 `kind=TOOL`、`decision=DENY` 记入同一 runner read audit；这与未准入来源和
 非 allowlist framework 的 `DENY` 一样，都会保留在 writer attestation。
 
+本分支随后关闭了三项会阻断真实 PDF 来源包的契约缺口：派生页码 Markdown 不能与原始 PDF 同路径，
+也不能覆盖既有 reader 文件；runner 会验证 reader 为 UTF-8、带正页码标记、页数以及来源
+`source_id/source_version/content_representation` 元数据一致，否则保持 `INCOMPLETE`；production-origin
+回放按 `PDF_PAGE_MARKDOWN` 的 `reader_text_path` 而不是原 PDF 路径核对读取审计，并同时核对表示和来源身份。
+PIT 工具、writer 和 production-origin 正向回放均有定向测试。此修补没有新增来源 hash、校验和或指纹。
+
 一次上交所公告页采集尝试发现网页日期控件未接受自动填值，查询退回了默认“最新公告”列表。没有打开任何
 cutoff 后文件，也没有将页面标题、内容或结果用于来源包、报告或结论。该尝试归类为
 `ACQUISITION_MODULE`：后续只在确认官方查询响应的开始/结束日期已经生效后才读取或保存枚举结果；若日期过滤

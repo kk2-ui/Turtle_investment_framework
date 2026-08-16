@@ -15,6 +15,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 from copy import deepcopy
 from dataclasses import dataclass
 from datetime import date, datetime, time, timezone
@@ -28,6 +29,7 @@ PIT_ATTESTATION_SCHEMA_VERSION = "phase10-pit-runner-attestation.v1"
 PIT_RUNNER_VERSION = "phase10-pit-runner.v1"
 ADMITTED = "ADMITTED"
 PIT_STATIC_FRAMEWORK_ROOT = Path(__file__).resolve().parents[1] / "config" / "phase10_pit_framework"
+PDF_PAGE_MARKER = re.compile(r"^## 第 ([1-9][0-9]*) 页[ \t]*$", re.MULTILINE)
 
 
 class PITRunnerError(RuntimeError):
@@ -130,6 +132,7 @@ class PITReadAudit:
         published_at: str | None = None,
         data_as_of: str | None = None,
         representation: str | None = None,
+        reader_text_path: str | None = None,
         reason: str | None = None,
     ) -> None:
         event: dict[str, Any] = {
@@ -154,6 +157,8 @@ class PITReadAudit:
             event["data_as_of"] = data_as_of
         if representation is not None:
             event["representation"] = representation
+        if reader_text_path is not None:
+            event["reader_text_path"] = reader_text_path
         if reason:
             event["reason"] = reason
         self._events.append(event)
@@ -263,9 +268,22 @@ class PITSourcePackage:
                     else:
                         if not reader_file.is_file():
                             self._incomplete.append(f"source:{source_id}:reader_text_file_missing")
-                    for field in ("reader_text_extractor", "reader_text_extractor_version", "reader_text_page_count"):
+                        elif reader_text_path == path:
+                            self._incomplete.append(f"source:{source_id}:reader_text_path_matches_package_path")
+                        else:
+                            self._validate_pdf_page_markdown(
+                                source_id=source_id,
+                                source=source,
+                                reader_file=reader_file,
+                            )
+                    for field in ("reader_text_extractor", "reader_text_extractor_version"):
                         if source.get(field) in (None, ""):
                             self._incomplete.append(f"source:{source_id}:{field}_missing")
+                    page_count = source.get("reader_text_page_count")
+                    if page_count in (None, ""):
+                        self._incomplete.append(f"source:{source_id}:reader_text_page_count_missing")
+                    elif type(page_count) is not int or page_count <= 0:
+                        self._incomplete.append(f"source:{source_id}:reader_text_page_count_invalid")
             registration = self._registrations.get(source_id)
             if registration is not None:
                 self._registrations[source_id] = SourceRegistration(
@@ -315,6 +333,49 @@ class PITSourcePackage:
         if resolved != root and root not in resolved.parents:
             raise PITRunnerError(f"{reason_prefix}:path_outside_root")
         return resolved
+
+    def _validate_pdf_page_markdown(
+        self,
+        *,
+        source_id: str,
+        source: dict[str, Any],
+        reader_file: Path,
+    ) -> None:
+        """Reject a nominal reader file unless it is the registered page text."""
+        prefix = f"source:{source_id}"
+        try:
+            text = reader_file.read_text(encoding="utf-8")
+        except UnicodeDecodeError:
+            self._incomplete.append(prefix + ":reader_text_not_utf8")
+            return
+        except OSError as exc:
+            self._incomplete.append(prefix + ":reader_text_unreadable:" + exc.__class__.__name__)
+            return
+
+        metadata_region = text.split("\n## 第", 1)[0]
+        metadata: dict[str, str] = {}
+        for line in metadata_region.splitlines():
+            if not line.startswith("- "):
+                continue
+            field, separator, value = line[2:].partition(":")
+            if separator:
+                metadata[field.strip()] = value.strip()
+        expected_metadata = {
+            "source_id": source_id,
+            "source_version": str(source.get("source_version") or ""),
+            "content_representation": "PDF_PAGE_MARKDOWN",
+        }
+        for field, expected in expected_metadata.items():
+            if metadata.get(field) != expected:
+                self._incomplete.append(prefix + f":reader_text_metadata_mismatch:{field}")
+
+        page_numbers = PDF_PAGE_MARKER.findall(text)
+        if not page_numbers:
+            self._incomplete.append(prefix + ":reader_text_page_markers_missing")
+            return
+        page_count = source.get("reader_text_page_count")
+        if type(page_count) is int and page_count > 0 and len(page_numbers) != page_count:
+            self._incomplete.append(prefix + ":reader_text_page_count_mismatch")
 
     def _deny(self, *, kind: str, path: str, reason: str, source: SourceRegistration | None = None) -> None:
         self.audit.record(
@@ -372,6 +433,7 @@ class PITSourcePackage:
             published_at=source.published_at,
             data_as_of=source.data_as_of,
             representation=source.content_representation,
+            reader_text_path=source.reader_text_path,
         )
         return content
 

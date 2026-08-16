@@ -100,12 +100,34 @@ def _runner(tmp_path: Path) -> PITSourcePackage:
     ], cutoff_at="2020-04-27T18:00:00+08:00", period_start="2019-01-01")
     package = tmp_path / "package"
     (package / "annual").mkdir(parents=True)
-    (package / "annual/2019.txt").write_text("2019 historical annual report", encoding="utf-8")
+    (package / "annual/2019.pdf").write_bytes(b"%PDF-original-annual-report")
+    (package / "annual/2019.pages.md").write_text(
+        "# SSE:600340:AR2019\n\n"
+        "- source_id: SSE:600340:AR2019\n"
+        "- source_version: annual-report-2019-original\n"
+        "- content_representation: PDF_PAGE_MARKDOWN\n\n"
+        "## 第 1 页\n\n2019 historical annual report\n",
+        encoding="utf-8",
+    )
     for source in manifest["inventory"]:
         if source["source_id"] == "SSE:600340:AR2019":
-            source["package_path"] = "annual/2019.txt"
+            source.update({
+                "package_path": "annual/2019.pdf",
+                "content_representation": "PDF_PAGE_MARKDOWN",
+                "reader_text_path": "annual/2019.pages.md",
+                "reader_text_extractor": "pdf_preprocessor.extract_all_pages",
+                "reader_text_extractor_version": "phase10-pdf-page-markdown.v1",
+                "reader_text_page_count": 1,
+            })
     for source in manifest["sources"]:
-        source["package_path"] = "annual/2019.txt"
+        source.update({
+            "package_path": "annual/2019.pdf",
+            "content_representation": "PDF_PAGE_MARKDOWN",
+            "reader_text_path": "annual/2019.pages.md",
+            "reader_text_extractor": "pdf_preprocessor.extract_all_pages",
+            "reader_text_extractor_version": "phase10-pdf-page-markdown.v1",
+            "reader_text_page_count": 1,
+        })
     manifest["framework_allowlist"] = [{"path": "framework/policy.md"}]
     return PITSourcePackage(
         manifest,
@@ -172,6 +194,10 @@ def test_pit_writer_uses_only_admitted_reads_and_single_restricted_output(tmp_pa
     assert [event["source_id"] for event in audit if event["kind"] == "SOURCE" and event["allowed"]] == [
         "SSE:600340:AR2019",
     ]
+    source_read = next(event for event in audit if event["kind"] == "SOURCE" and event["allowed"])
+    assert source_read["path"] == "annual/2019.pages.md"
+    assert source_read["representation"] == "PDF_PAGE_MARKDOWN"
+    assert source_read["reader_text_path"] == "annual/2019.pages.md"
 
 
 def test_pit_agent_rejects_an_ordinary_tool_registry(tmp_path: Path) -> None:
