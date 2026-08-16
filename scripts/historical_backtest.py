@@ -807,7 +807,7 @@ def _validate_production_report_origin(
     if pit_attestation:
         incomplete.extend(_required(
             pit_attestation,
-            ("case_id", "experiment_id", "run_id", "manifest_path", "package_root", "cutoff_at", "allowed_source_ids", "source_allowlist", "framework_allowlist", "read_audit", "read_count", "forbidden_success_count"),
+            ("case_id", "experiment_id", "run_id", "manifest_path", "package_root", "framework_root", "framework_root_class", "cutoff_at", "allowed_source_ids", "source_allowlist", "framework_allowlist", "read_audit", "read_count", "forbidden_success_count"),
             pit_prefix + ".attestation",
         ))
         if pit_attestation.get("schema_version") != "phase10-pit-runner-attestation.v1":
@@ -818,6 +818,14 @@ def _validate_production_report_origin(
             incomplete.append(pit_prefix + ":attestation_not_reviewable")
         if pit_attestation.get("assurance_level") != "VERIFIED_ARTIFACT_AND_DECLARED_PROCESS":
             invalid.append(pit_prefix + ":assurance_level_invalid")
+        static_framework_root = (root / "config" / "phase10_pit_framework").resolve()
+        if pit_attestation.get("framework_root_class") != "REPOSITORY_STATIC":
+            invalid.append(pit_prefix + ":framework_root_class_invalid")
+        try:
+            if Path(str(pit_attestation.get("framework_root") or "")).resolve() != static_framework_root:
+                invalid.append(pit_prefix + ":framework_root_invalid")
+        except OSError:
+            invalid.append(pit_prefix + ":framework_root_invalid")
         if pit_attestation.get("company_code") != record.get("company_code"):
             invalid.append(pit_prefix + ":company_code_mismatch")
         if pit_attestation.get("case_id") != record.get("case_id"):
@@ -926,7 +934,10 @@ def _validate_production_report_origin(
         if pit_package_root:
             try:
                 from scripts.phase10_pit_runner import PITSourcePackage
-                package_check = PITSourcePackage(pit_manifest, pit_package_root)
+                package_check = PITSourcePackage(
+                    pit_manifest,
+                    pit_package_root,
+                )
                 if package_check.state != "REVIEWABLE":
                     incomplete.append(pit_prefix + ":source_package_not_reviewable")
             except (ImportError, OSError, ValueError) as exc:

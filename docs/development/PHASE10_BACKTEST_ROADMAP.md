@@ -100,8 +100,9 @@ Phase 10 只服务两条需要分开回答的主线：
 - 预注册实验、cutoff、来源版本、执行规则和幸存者处理；
 - `ELIGIBLE` 只表示历史来源可建立 case；`calibration_eligible` 单独计数，只有模型记忆受控的候选才可能进入后续 holdout 审查；
 - 采集器按公告日期全量枚举，拒绝 cutoff 后来源和截止日前已被修订版替代的原版本；
-- `scripts/phase10_pit_runner.py` 已实现 source-package allowlist、只读 PIT runner 和读取审计，并由 production origin 回放 source identity、cutoff、package root 和实际 ALLOW 事件；它不使用来源内容 hash。既有 `turtle_agent` 读工具尚未绑定该 runner，故 production validator 仍保持 `INCOMPLETE`，不能把 attestation JSON 当作运行隔离证明；
-- `scripts/turtle_agent/run.py` 已提供 PIT preflight：它拒绝复用 output、跳过普通 Phase 0-2/网络/当前行情准备，只注册 PIT 读取工具并生成 attestation；这一步仍不生成冻结报告，writer 的 PIT context 和写工具边界需单独验收；
+- `scripts/phase10_pit_runner.py` 已实现 source-package allowlist、只读 PIT runner 和读取审计，并由 production origin 回放 source identity、cutoff、package root 和实际 ALLOW 事件；框架读取根目录固定为仓库内受控静态目录，并在 attestation 记录 root 与 `REPOSITORY_STATIC` provenance。它不使用来源内容 hash。普通 `turtle_agent` 读工具仍未绑定该 runner，故不得把普通管线或 attestation JSON 当作运行隔离证明；
+- `scripts/turtle_agent/run.py` 现区分 `--pit-preflight` 和 `--pit-writer`：两者都拒绝复用 output、跳过普通 Phase 0-2/网络/当前行情准备，且 output 必须与历史来源包和静态 framework 根目录隔离。writer 只注册 `pit_list_sources`、`pit_read_source`、`pit_read_framework` 和无路径参数的 `pit_write_report`；它不加载普通 contract、旧输出、tracking、数据库或 Web。写入时逐一核对正文 source anchor 对应本运行实际 ALLOW 的 source_id，最终 attestation 回写真实 read audit 和 writer outcome；
+- 该 writer 只生成受限的冻结前 Markdown 草案，尚未接入 Phase 08 acceptance/V3、完整 frozen claim/calibration ledger 或独立 reviewer。因此 production validator 仍保持 `INCOMPLETE`，任何真实 case 仍不得标为 `REVIEWABLE`；
 - 首案 600340 形成可审阅的冻结来源包。
 
 **出口**：来源准入测试通过，且没有任何未来文件可被冻结运行读取。
@@ -109,6 +110,7 @@ Phase 10 只服务两条需要分开回答的主线：
 ### P10-B：首份历史报告
 
 - 从冻结来源包生成一份完整报告；
+- P10-B writer boundary 已实现：真实 LLM 仅可通过 PIT allowlist 读取来源与框架，并只能向新沙箱写一份 Markdown 草案。该草案明确保留 `UNKNOWN`，禁止收益、买点、选股、仓位和事后结论；它是完整生产冻结报告的输入，不是替代品；
 - 至少覆盖项目销售/回款与资本占用、受限现金、债务期限、担保/关联方占用、普通股可得现金、融资阈值、最强反方和永久损失触发条件；
 - 每项可量化经营判断必须在冻结时登记指标、单位、目标期间、可比口径和后续年报结算规则；无法如此定义的内容必须是有经济影响的 `UNKNOWN`；
 - `FROZEN` 必须有 repo-relative Markdown artifact、固定章节和 claim statement、匹配的 artifact SHA-256、`COMPLETE` writer、声明隔离的独立 reviewer 和所有 claim 的逐项审阅；`UNKNOWN` 只能为 `UNKNOWN_PRESERVED`，材料预测必须为 `SUPPORTED`。否则保留带完整根因的 `FROZEN_WITH_QUALITY_FAILURE`。
@@ -153,7 +155,7 @@ Phase 10 只服务两条需要分开回答的主线：
 
 - 当前九份黄金候选仍是 `INELIGIBLE_NO_HISTORICAL_VINTAGE`；不能用今天的报告倒灌历史回测。
 - G3 仍为 `NOT_READY`；首案 600340 是 `PURPOSEFUL_STRESS_CASE`，不代表总体成功率。
-- 当前最近的有效工作是 P10-A：完成截止日前公告/年报/行情的受控采集，并在看任何未来资料前生成首份冻结报告。
+- 当前最近的有效工作是 P10-A 受控采集与 P10-B writer boundary：先完成截止日前公告/年报/行情的来源包，再在看任何未来资料前生成首份冻结草案并接入完整质量门。
 - `historical_backtest_settlement.v1` 已经绑定冻结动作、价格身份和执行规则，并校验成交、公司行动、税费、现金流和基准账本；但尚没有真实来源包、冻结报告或结算对象，故没有任何收益、买点或选股结果。
 - 当前试点的模型记忆状态固定为 `UNCONTROLLED / EXPLORATORY / ENGINEERING_DIAGNOSTIC_ONLY`。未来只有部署级 attestation 支持的 `CONTROLLED / STRICT` case 才可能是模型记忆受控的校准候选；当前 validator 未开放该路径，这仍不替代跨发行人、跨 cutoff 和 holdout 门槛。
 - 只有完成 P10-B 后，才允许进入 P10-C；只有多个 case 完成 P10-C 后，才讨论买点、选股和模型更新。

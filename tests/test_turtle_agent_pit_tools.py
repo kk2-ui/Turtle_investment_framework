@@ -44,9 +44,7 @@ def _manifest() -> dict:
 def configured_runner(tmp_path: Path) -> PITSourcePackage:
     package = tmp_path / "package"
     (package / "annual").mkdir(parents=True)
-    (package / "framework").mkdir()
     (package / "annual/2019.txt").write_text("历史时点经营事实\n第二行", encoding="utf-8")
-    (package / "framework/policy.md").write_text("冻结运行框架", encoding="utf-8")
     runner = PITSourcePackage(_manifest(), package, case_id="HBTCASE:TEST", experiment_id="HBT:TEST", run_id="run-test")
     assert runner.state == "REVIEWABLE"
     pit_read_tools.configure_pit_runner(runner)
@@ -72,7 +70,7 @@ def test_pit_tools_are_discoverable_and_read_only(configured_runner: PITSourcePa
 
     framework = registry.execute("pit_read_framework", {"path": "framework/policy.md"})
     assert framework["ok"] is True
-    assert framework["value"]["content"] == "冻结运行框架"
+    assert framework["value"]["content"].startswith("# Phase 10 PIT Writer Policy")
 
     allowed = [event for event in configured_runner.attestation()["read_audit"] if event["allowed"]]
     assert [event["kind"] for event in allowed] == ["SOURCE", "FRAMEWORK"]
@@ -98,6 +96,30 @@ def test_pit_tools_reject_future_unknown_and_arbitrary_paths(configured_runner: 
     assert len(denied) == 2
     assert all(event["decision"] == "DENY" for event in denied)
     assert all(event["cutoff_at"] == "2020-04-27T18:00:00+08:00" for event in denied)
+
+
+def test_pit_runner_framework_root_cannot_be_redirected_after_construction(tmp_path: Path) -> None:
+    package = tmp_path / "package"
+    (package / "annual").mkdir(parents=True)
+    (package / "annual/2019.txt").write_text("historical source", encoding="utf-8")
+    ordinary_output = tmp_path / "ordinary-output"
+    ordinary_output.mkdir()
+    (ordinary_output / "future-settlement.md").write_text("future outcome", encoding="utf-8")
+    manifest = _manifest()
+    manifest["framework_allowlist"] = [{"path": "future-settlement.md"}]
+    runner = PITSourcePackage(manifest, package)
+
+    with pytest.raises(AttributeError):
+        runner.framework_root = ordinary_output  # type: ignore[misc]
+
+    pit_read_tools.configure_pit_runner(runner)
+    try:
+        result = pit_read_tools.pit_read_framework("future-settlement.md")
+    finally:
+        pit_read_tools.clear_pit_runner()
+    assert result["ok"] is False
+    assert "framework_file_missing" in result["error"]
+    assert runner.attestation()["read_audit"][-1]["decision"] == "DENY"
 
 
 def test_pit_tools_do_not_read_until_runner_is_explicitly_bound() -> None:

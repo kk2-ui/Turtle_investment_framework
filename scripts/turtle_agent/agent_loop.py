@@ -413,6 +413,10 @@ class AgentConfig:
     judgment_task_resume: bool = False
     judgment_synthesis: bool = False
     synthesis_only: bool = False
+    pit_mode: bool = False
+    pit_case_id: str = ""
+    pit_experiment_id: str = ""
+    pit_cutoff_at: str = ""
 
     def __post_init__(self) -> None:
         if not self.output_dir and self.contract_path:
@@ -499,6 +503,7 @@ class TurtleAgent:
             self._structured_repair_frontier()[0] if self._config.synthesis_only else ""
         )
         self._structured_frontier_completed: bool = False
+        self._pit_report_path: str = ""
 
     # ------------------------------------------------------------------
     # analyze — 主入口
@@ -513,6 +518,9 @@ class TurtleAgent:
         Raises:
             RuntimeError: 关键步骤失败时抛出。
         """
+        if self._config.pit_mode:
+            return self._analyze_pit()
+
         task_type = (
             "challenger" if self._config.judgment_synthesis
             else "deep_research" if self._config.judgment_task_id
@@ -809,6 +817,68 @@ class TurtleAgent:
             print(f"  ⚠️ _niangao 更新失败: {e}")
 
         return report_path
+
+    def _analyze_pit(self) -> str:
+        """Run a deliberately small writer context inside the PIT boundary."""
+        allowed_tools = {
+            "pit_list_sources",
+            "pit_read_source",
+            "pit_read_framework",
+            "pit_write_report",
+        }
+        registered_tools = set(self._tools.list_tools())
+        if registered_tools != allowed_tools:
+            raise RuntimeError(
+                "PIT writer 必须只注册受限读取和写入工具: "
+                + ", ".join(sorted(registered_tools))
+            )
+        if not self._config.code or not self._config.pit_case_id or not self._config.pit_experiment_id:
+            raise RuntimeError("PIT writer 缺少 code/case/experiment identity")
+        if self._llm is None:
+            raise RuntimeError("PIT writer 需要 LLM client")
+        if hasattr(self._llm, "set_runtime_task"):
+            self._llm.set_runtime_task("pit_writer")
+        self._messages = [
+            {"role": "system", "content": self._build_pit_system_prompt()},
+            {
+                "role": "user",
+                "content": (
+                    f"为 {self._config.code} 在 {self._config.pit_cutoff_at} 的信息集写PIT草案。"
+                    "先列出来源，再阅读框架和支撑实质主张的来源；"
+                    "最后只调用 pit_write_report 提交唯一草案。"
+                ),
+            },
+        ]
+        self._run_loop()
+        if self._loop_error:
+            raise RuntimeError(f"PIT writer 未完成: {self._loop_error}")
+        if not self._pit_report_path:
+            raise RuntimeError("PIT writer 在未写入草案前结束")
+        return self._pit_report_path
+
+    def _build_pit_system_prompt(self) -> str:
+        """Keep PIT writer instructions independent from normal report context."""
+        return f"""你在执行严格的历史时点研究写作。
+
+公司身份：{self._config.code}
+案例：{self._config.pit_case_id}
+实验：{self._config.pit_experiment_id}
+信息截止：{self._config.pit_cutoff_at}
+
+你只能使用列出的四个工具。先调用 pit_list_sources；只可按 source_id 调用
+pit_read_source，且只可按 allowlist 路径调用 pit_read_framework。禁止网页、搜索、
+行情、当前价格、数据库、普通报告工具、任意路径和任何结算资料。
+
+报告只能陈述已读取来源支持的事实；不确定处保留 UNKNOWN。不得给出投资收益、
+买点、选股、仓位或事后结论。完成后调用 pit_write_report 一次：正文必须含有下列
+独立标题，并在每个实质来源主张处使用精确的 `[source: source_id]`：
+
+- `## Point-in-time scope`
+- `## Evidence`
+- `## Business and financial implications`
+- `## Unknowns and monitoring`
+
+正文说明这是冻结前的工程草案，而非已经通过完整生产质量门的报告。"""
 
     # ------------------------------------------------------------------
     # 上下文加载
@@ -1991,6 +2061,17 @@ Zone B 提取结果写入 audit.json / governance.json。写作 Agent 在相关�
 
     def _tool_schemas_for_stage(self) -> list[dict[str, Any]]:
         """Expose only tools authorized for the current execution stage."""
+        if self._config.pit_mode:
+            allowed = {
+                "pit_list_sources",
+                "pit_read_source",
+                "pit_read_framework",
+                "pit_write_report",
+            }
+            return [
+                deepcopy(item) for item in self._tools.get_schemas()
+                if str(item.get("function", {}).get("name") or "") in allowed
+            ]
         tool_schemas = (
             self._judgment_tool_schemas()
             if self._config.judgment_task_id
@@ -2286,6 +2367,8 @@ Zone B 提取结果写入 audit.json / governance.json。写作 Agent 在相关�
             # 工具调用
             if resp.has_tool_calls:
                 self._handle_tool_calls(resp)
+                if self._config.pit_mode and self._pit_report_path:
+                    break
                 if self._config.judgment_task_id and self._judgment_task_finished():
                     break
                 if self._config.judgment_synthesis and self._judgment_synthesis_finished():
@@ -2352,6 +2435,9 @@ Zone B 提取结果写入 audit.json / governance.json。写作 Agent 在相关�
                 self._messages.append(
                     {"role": "assistant", "content": resp.content}
                 )
+                if self._config.pit_mode:
+                    self._loop_error = "pit_writer_finished_without_pit_write_report"
+                    break
                 if self._config.judgment_task_id:
                     if self._judgment_task_finished():
                         break
@@ -2762,6 +2848,9 @@ Zone B 提取结果写入 audit.json / governance.json。写作 Agent 在相关�
 
     def _handle_tool_calls(self, resp: LlmResponse) -> None:
         """处理 LLM 返回的工具调用。"""
+        if self._config.pit_mode:
+            self._handle_pit_tool_calls(resp)
+            return
         # 添加 assistant 消息（含 tool_use blocks）
         # Anthropic 格式：content 是 list of blocks
         self._messages.append({
@@ -3471,6 +3560,51 @@ Zone B 提取结果写入 audit.json / governance.json。写作 Agent 在相关�
                 name="write_chapter",
                 arguments=pending_args,
             )]))
+
+    def _handle_pit_tool_calls(self, resp: LlmResponse) -> None:
+        """Execute PIT tools without normal-output injection or research hooks."""
+        self._messages.append({
+            "role": "assistant",
+            "content": [
+                {
+                    "type": "tool_use",
+                    "id": tc.id,
+                    "name": tc.name,
+                    "input": tc.arguments,
+                }
+                for tc in resp.tool_calls
+            ],
+        })
+        allowed = {
+            "pit_list_sources",
+            "pit_read_source",
+            "pit_read_framework",
+            "pit_write_report",
+        }
+        results: list[dict[str, Any]] = []
+        for tc in resp.tool_calls:
+            if tc.name not in allowed or tc.name not in self._last_offered_tool_names:
+                result: dict[str, Any] = {
+                    "ok": False,
+                    "error": "pit_tool_not_offered",
+                    "requested_tool": tc.name,
+                }
+            else:
+                result = self._tools.execute(tc.name, dict(tc.arguments))
+            value = result.get("value") if isinstance(result, dict) else None
+            if (
+                tc.name == "pit_write_report"
+                and result.get("ok") is True
+                and isinstance(value, dict)
+                and value.get("written") is True
+            ):
+                self._pit_report_path = str(value.get("report_path") or "")
+            results.append({
+                "type": "tool_result",
+                "tool_use_id": tc.id,
+                "content": json.dumps(result, ensure_ascii=False, default=str),
+            })
+        self._messages.append({"role": "user", "content": results})
 
     def _compact_contract_pack(self, chapter_indexes: set[int]) -> None:
         """Remove only completed chapters from the one-shot contract pack."""

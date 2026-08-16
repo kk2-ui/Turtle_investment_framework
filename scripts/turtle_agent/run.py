@@ -38,6 +38,7 @@ if _scripts_dir not in sys.path:
 
 _FRAMEWORK_DIR = os.path.normpath(os.path.join(_scripts_dir, ".."))
 _OUTPUT_DIR = os.path.join(_FRAMEWORK_DIR, "output")
+_PIT_FRAMEWORK_ROOT = Path(_FRAMEWORK_DIR) / "config" / "phase10_pit_framework"
 
 
 
@@ -1091,6 +1092,94 @@ def _explicit_repair_targets_for_pass(
 # ===================================================================
 
 
+def _run_pit_writer(
+    *,
+    code: str,
+    output_dir: str,
+    model: str,
+    max_iterations: int,
+    pit_runner: Any,
+    pit_case_id: str,
+    pit_experiment_id: str,
+    diagnostics: dict[str, Any],
+) -> str:
+    """Run the isolated P10-B writer without entering the normal pipeline."""
+    try:
+        from turtle_agent.agent_loop import AgentConfig, TurtleAgent
+        from turtle_agent.llm_client import LlmClient
+        from turtle_agent.tool_registry import ToolRegistry
+        from turtle_agent.tools.pit_read_tools import configure_pit_runner, clear_pit_runner
+        from turtle_agent.tools.pit_write_tools import (
+            clear_pit_writer,
+            configure_pit_writer,
+            pit_writer_attestation,
+        )
+    except ModuleNotFoundError as exc:
+        raise RuntimeError(f"PIT writer 导入失败: {exc}") from exc
+
+    deepseek_api_key = os.environ.get("DEEPSEEK_API_KEY", "").strip()
+    anthropic_api_key = os.environ.get("ANTHROPIC_API_KEY", "").strip()
+    if deepseek_api_key:
+        llm = LlmClient(provider="deepseek_oa", model="deepseek-v4-pro")
+    elif anthropic_api_key:
+        llm = LlmClient(provider="anthropic", model=model)
+    else:
+        raise RuntimeError("PIT writer 需要已配置的 DEEPSEEK_API_KEY 或 ANTHROPIC_API_KEY")
+
+    tools = ToolRegistry()
+    configure_pit_runner(pit_runner)
+    configure_pit_writer(
+        pit_runner,
+        output_dir=output_dir,
+        case_id=pit_case_id,
+        experiment_id=pit_experiment_id,
+    )
+    tools.auto_discover("turtle_agent.tools.pit_read_tools")
+    tools.auto_discover("turtle_agent.tools.pit_write_tools")
+    diagnostics.update({
+        "status": "pit_writer_running",
+        "mode": "pit_writer",
+        "tools": tools.list_tools(),
+        "tool_count": len(tools),
+        "pit_writer_budget": {"max_llm_calls": min(max(1, int(max_iterations)), 12)},
+    })
+    attestation_path = Path(output_dir) / "pit_runner_attestation.json"
+    try:
+        agent = TurtleAgent(
+            llm=llm,
+            tools=tools,
+            config=AgentConfig(
+                code=code,
+                output_dir=output_dir,
+                max_iterations=min(max(1, int(max_iterations)), 12),
+                max_tokens_per_call=16384,
+                publish_downstream=False,
+                pit_mode=True,
+                pit_case_id=pit_case_id,
+                pit_experiment_id=pit_experiment_id,
+                pit_cutoff_at=str(pit_runner.cutoff_at),
+            ),
+        )
+        report_path = agent.analyze()
+        writer = pit_writer_attestation()
+        if writer.get("status") != "PASS":
+            raise RuntimeError("PIT writer 未生成受限草案")
+        diagnostics.update({
+            "status": "completed",
+            "report_path": report_path,
+            "pit_attestation_path": str(attestation_path),
+        })
+        _write_diagnostics(output_dir, diagnostics)
+        return report_path
+    finally:
+        attestation = pit_runner.attestation()
+        attestation["writer"] = pit_writer_attestation()
+        attestation["execution_mode"] = "PIT_WRITER"
+        _write_json_file(str(attestation_path), attestation)
+        clear_pit_writer()
+        clear_pit_runner()
+
+
 def run_full_pipeline(
     code: str,
     *,
@@ -1124,6 +1213,7 @@ def run_full_pipeline(
     pit_case_id: str = "",
     pit_experiment_id: str = "",
     pit_preflight: bool = False,
+    pit_writer: bool = False,
 ) -> str:
     """运行完整分析管线。
 
@@ -1133,13 +1223,16 @@ def run_full_pipeline(
     Agent Loop 内全自动：定性写作 Ch1-9 → 摘要提取 → Zone J → 定量估值 Ch10-13 → 统一决策。
     所有 LLM 调用走 Claude Code 内置 API（不受子进程安全策略限制）。
     """
-    pit_values = (pit_source_manifest, pit_package_root, pit_framework_root, pit_case_id, pit_experiment_id)
+    pit_values = (pit_source_manifest, pit_package_root, pit_case_id, pit_experiment_id)
     if any(str(value or "").strip() for value in pit_values) and not all(str(value or "").strip() for value in pit_values):
-        raise RuntimeError("PIT参数必须完整提供 manifest/package/framework/case/experiment")
+        raise RuntimeError("PIT参数必须完整提供 manifest/package/case/experiment")
     pit_mode = bool(str(pit_source_manifest or "").strip())
     if pit_mode:
-        if not pit_preflight:
-            raise RuntimeError("当前 PIT 入口仅支持显式 --pit-preflight；报告 writer 接入尚未开放")
+        static_framework_root = _PIT_FRAMEWORK_ROOT.resolve()
+        if pit_framework_root and Path(pit_framework_root).expanduser().resolve() != static_framework_root:
+            raise RuntimeError("PIT framework root 必须使用仓库内受控静态目录")
+        if pit_preflight == pit_writer:
+            raise RuntimeError("PIT运行必须二选一指定 --pit-preflight 或 --pit-writer")
         if not output_dir:
             raise RuntimeError("PIT运行必须显式提供新的 --output 目录")
         if (
@@ -1147,7 +1240,7 @@ def run_full_pipeline(
             or repair_chapters or source_deepening is not None or not validation_only
         ):
             raise RuntimeError(
-                "PIT预检禁止普通报告、数据源、当前价格、repair-only、dry-run、unified、"
+                "PIT运行禁止普通报告、数据源、当前价格、repair-only、dry-run、unified、"
                 "qualitative-only、章节修复和来源深化，且必须 --validation-only"
             )
         existing = Path(output_dir)
@@ -1155,10 +1248,18 @@ def run_full_pipeline(
             raise RuntimeError("PIT运行要求 --output 是新建或空目录，禁止复用现有输出")
         if not pit_package_root:
             raise RuntimeError("PIT运行缺少 --pit-package-root")
-        if not pit_framework_root:
-            raise RuntimeError("PIT运行缺少 --pit-framework-root")
         if not pit_case_id or not pit_experiment_id:
             raise RuntimeError("PIT运行缺少 --pit-case-id/--pit-experiment-id")
+        output_root = existing.expanduser().resolve()
+        input_roots = [
+            Path(pit_package_root).expanduser().resolve(),
+            static_framework_root,
+        ]
+        if any(
+            output_root == root or output_root in root.parents or root in output_root.parents
+            for root in input_roots
+        ):
+            raise RuntimeError("PIT运行要求 --output 与 source/framework 输入根目录隔离")
         skip_prepare = True
     if not output_dir:
         # 自动检测或创建带中文名的目录
@@ -1245,7 +1346,6 @@ def run_full_pipeline(
             pit_runner = PITSourcePackage(
                 manifest,
                 pit_package_root,
-                framework_root=pit_framework_root or None,
                 case_id=pit_case_id or None,
                 experiment_id=pit_experiment_id or None,
                 run_id=run_id,
@@ -1261,6 +1361,19 @@ def run_full_pipeline(
         diagnostics["pit_mode"] = True
         diagnostics["pit_source_manifest"] = str(manifest_path)
         diagnostics["pit_package_root"] = str(Path(pit_package_root).expanduser().resolve())
+        diagnostics["pit_framework_root"] = str(_PIT_FRAMEWORK_ROOT.resolve())
+        diagnostics["pit_framework_root_class"] = "REPOSITORY_STATIC"
+        if pit_writer:
+            return _run_pit_writer(
+                code=code,
+                output_dir=output_dir,
+                model=model,
+                max_iterations=max_iterations,
+                pit_runner=pit_runner,
+                pit_case_id=pit_case_id,
+                pit_experiment_id=pit_experiment_id,
+                diagnostics=diagnostics,
+            )
     try:
         from scripts.runtime_governance import RuntimeController
     except ModuleNotFoundError:
@@ -2701,11 +2814,13 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--pit-package-root", default="",
                     help="P10-A PIT 来源包目录；必须是独立历史输入目录")
     ap.add_argument("--pit-framework-root", default="",
-                    help="P10-A PIT 框架 allowlist 根目录")
+                    help="兼容参数；只能是仓库内受控的 P10 PIT framework 根目录")
     ap.add_argument("--pit-case-id", default="", help="P10-A case identity")
     ap.add_argument("--pit-experiment-id", default="", help="P10-A experiment identity")
     ap.add_argument("--pit-preflight", action="store_true",
                     help="仅执行 P10-A PIT 来源包和工具隔离预检，不生成报告")
+    ap.add_argument("--pit-writer", action="store_true",
+                    help="执行 P10-B PIT 受限 writer，生成草案但不解锁生产回测")
     args = ap.parse_args(argv)
     try:
         repair_chapters = tuple(
@@ -2749,6 +2864,7 @@ def main(argv: list[str] | None = None) -> int:
             pit_case_id=args.pit_case_id,
             pit_experiment_id=args.pit_experiment_id,
             pit_preflight=args.pit_preflight,
+            pit_writer=args.pit_writer,
         )
         print(f"\n📄 {report_path}")
         return 0

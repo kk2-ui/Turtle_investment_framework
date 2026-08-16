@@ -41,9 +41,7 @@ def _manifest(*, package_path: str = "annual/2019.pdf") -> dict:
 def test_runner_reads_only_admitted_source_and_framework_and_audits_identity(tmp_path) -> None:
     package = tmp_path / "package"
     (package / "annual").mkdir(parents=True)
-    (package / "framework").mkdir()
     (package / "annual/2019.pdf").write_bytes(b"historical report")
-    (package / "framework/policy.md").write_text("policy", encoding="utf-8")
 
     runner = PITSourcePackage(
         _manifest(), package,
@@ -54,7 +52,7 @@ def test_runner_reads_only_admitted_source_and_framework_and_audits_identity(tmp
     )
     assert runner.state == "REVIEWABLE"
     assert runner.read_source("SSE:600340:AR2019:ORIGINAL") == b"historical report"
-    assert runner.read_framework("framework/policy.md") == b"policy"
+    assert runner.read_framework("framework/policy.md").startswith(b"# Phase 10 PIT Writer Policy")
 
     audit = runner.attestation()
     assert audit["schema_version"] == "phase10-pit-runner-attestation.v1"
@@ -113,3 +111,15 @@ def test_runner_rejects_path_traversal_in_registered_source(tmp_path) -> None:
     runner = PITSourcePackage(manifest, tmp_path)
     assert runner.state == "INVALID"
     assert "source:SSE:600340:AR2019:ORIGINAL:package_path_invalid" in runner.invalid_findings
+
+
+def test_runner_rejects_untrusted_framework_root(tmp_path) -> None:
+    package = tmp_path / "package"
+    (package / "annual").mkdir(parents=True)
+    (package / "annual/2019.pdf").write_bytes(b"historical report")
+    untrusted_framework = tmp_path / "ordinary-output"
+    untrusted_framework.mkdir()
+    (untrusted_framework / "future-settlement.md").write_text("future outcome", encoding="utf-8")
+
+    with pytest.raises(ValueError, match="framework root 必须使用仓库内受控静态目录"):
+        PITSourcePackage(_manifest(), package, framework_root=untrusted_framework)

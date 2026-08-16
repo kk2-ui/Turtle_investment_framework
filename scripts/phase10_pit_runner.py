@@ -27,6 +27,7 @@ from scripts.phase10_acquisition import validate_source_manifest
 PIT_ATTESTATION_SCHEMA_VERSION = "phase10-pit-runner-attestation.v1"
 PIT_RUNNER_VERSION = "phase10-pit-runner.v1"
 ADMITTED = "ADMITTED"
+PIT_STATIC_FRAMEWORK_ROOT = Path(__file__).resolve().parents[1] / "config" / "phase10_pit_framework"
 
 
 class PITRunnerError(RuntimeError):
@@ -178,7 +179,11 @@ class PITSourcePackage:
         self.run_id = run_id
         self.manifest_path = manifest_path
         self.package_root = Path(package_root).expanduser().resolve()
-        self.framework_root = Path(framework_root).expanduser().resolve() if framework_root else self.package_root
+        static_framework_root = PIT_STATIC_FRAMEWORK_ROOT.resolve()
+        if framework_root and Path(framework_root).expanduser().resolve() != static_framework_root:
+            raise ValueError("PIT framework root 必须使用仓库内受控静态目录")
+        self._framework_root = static_framework_root
+        self.framework_root_class = "REPOSITORY_STATIC"
         self.validation = validate_source_manifest(self.manifest)
         self.cutoff_at = str(self.manifest.get("cutoff_at") or "")
         cutoff = _timestamp(self.cutoff_at)
@@ -186,7 +191,7 @@ class PITSourcePackage:
         self._incomplete: list[str] = list(self.validation.get("incomplete_findings", []))
         if not self.package_root.is_dir():
             self._incomplete.append("package_root_missing")
-        if framework_root is not None and not self.framework_root.is_dir():
+        if not self._framework_root.is_dir():
             self._incomplete.append("framework_root_missing")
         if cutoff is None:
             self._invalid.append("cutoff_at_invalid")
@@ -252,6 +257,11 @@ class PITSourcePackage:
     @property
     def admitted_source_ids(self) -> list[str]:
         return list(self._registrations)
+
+    @property
+    def framework_root(self) -> Path:
+        """Expose the static framework location without a mutable setter."""
+        return self._framework_root
 
     def _resolve_under(self, root: Path, relative: str, *, reason_prefix: str) -> Path:
         normalized = _relative_path(relative)
@@ -319,7 +329,7 @@ class PITSourcePackage:
             self._deny(kind="FRAMEWORK", path=str(relative_path), reason=f"framework_not_allowlisted:{relative_path}")
         assert normalized is not None
         try:
-            path = self._resolve_under(self.framework_root, normalized, reason_prefix="framework")
+            path = self._resolve_under(self._framework_root, normalized, reason_prefix="framework")
         except PITRunnerError as exc:
             self._deny(kind="FRAMEWORK", path=normalized, reason=str(exc))
         assert path is not None
@@ -347,6 +357,8 @@ class PITSourcePackage:
             "company_code": self.manifest.get("company_code"),
             "cutoff_at": self.cutoff_at,
             "package_root": str(self.package_root),
+            "framework_root": str(self.framework_root),
+            "framework_root_class": self.framework_root_class,
             "allowed_source_ids": self.admitted_source_ids,
             "source_allowlist": [
                 {
@@ -421,10 +433,12 @@ def main(argv: Iterable[str] | None = None) -> int:
     parser.add_argument("--experiment-id")
     parser.add_argument("--run-id")
     args = parser.parse_args(list(argv) if argv is not None else None)
+    static_framework_root = PIT_STATIC_FRAMEWORK_ROOT.resolve()
+    if args.framework_root and args.framework_root.expanduser().resolve() != static_framework_root:
+        parser.error("--framework-root 只能使用仓库内受控的 P10 PIT framework 目录")
     runner = PITSourcePackage(
         _load_json(args.manifest),
         args.package_root,
-        framework_root=args.framework_root,
         case_id=args.case_id,
         experiment_id=args.experiment_id,
         run_id=args.run_id,

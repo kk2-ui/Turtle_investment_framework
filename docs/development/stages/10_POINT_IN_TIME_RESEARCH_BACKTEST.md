@@ -81,9 +81,9 @@
 
 `scripts/phase10_pit_runner.py` 现已提供 source-package allowlist、只读 `source_id`/framework 读取和 ALLOW/DENY read audit；production origin 会回放 attestation、source manifest、case source identity、cutoff、package root 和已读取来源。它不增加来源内容 hash。真实 600340 catalog 仍没有完整公告枚举或本地 package path，故 runner 保持 `INCOMPLETE`。
 
-当前 `turtle_agent` 的既有读工具尚未注入该 boundary，仍可能按普通 `output_dir` 扫描文件。因此 PIT attestation 只能作为 `VERIFIED_ARTIFACT_AND_DECLARED_PROCESS`，production validator 明确保持 `INCOMPLETE`，直到所有 writer 读取工具和 Web 入口都实际受 source-package gate 控制。在此之前，case 不得标为生产 `ELIGIBLE`，更不能称为严格回测。
+普通 `turtle_agent` 的既有读工具尚未注入该 boundary，仍可能按普通 `output_dir` 扫描文件；它们不得用于 PIT。PIT framework root 固定为仓库内受控静态目录，调用者不得以普通 output、结算或公司资料目录替换它；attestation 同时记录 root 与 `REPOSITORY_STATIC` provenance。`--pit-writer` 是独立 context：只注册 `pit_list_sources`、`pit_read_source`、`pit_read_framework` 和无路径参数的 `pit_write_report`，不加载 contract、旧输出、tracking、数据库、Web 或价格。writer 只能引用同一运行中实际 ALLOW 的 source_id，最终 `pit_runner_attestation.json` 写入真实 read audit 和 writer outcome。
 
-当前已接入 `scripts/turtle_agent/run.py` 的 PIT preflight：启用 `--pit-source-manifest` 和 `--pit-package-root` 时，必须使用新/空 output、`--validation-only`，跳过 Phase 0-2 数据准备，只注册 `pit_list_sources`、`pit_read_source`、`pit_read_framework`，并写出 `pit_runner_attestation.json`。该入口目前是运行时隔离验收，不生成冻结报告；报告 writer 的受限上下文接入仍是下一步。
+启用 `--pit-source-manifest` 和 `--pit-package-root` 时，必须在 `--pit-preflight` 与 `--pit-writer` 中二选一，并使用新/空 output、`--validation-only`。preflight 只验证来源包；writer 生成一份受限 Markdown 草案，明确禁止收益、买点、选股、仓位和事后结论。该草案尚未接入 Phase 08 acceptance/V3、完整 frozen claim/calibration ledger 或独立 reviewer；因此 PIT attestation 仍只是 `VERIFIED_ARTIFACT_AND_DECLARED_PROCESS`，production validator 明确保持 `INCOMPLETE`，case 不得标为生产 `ELIGIBLE` 或严格回测。
 
 ## 5. 大模型参数记忆限制
 

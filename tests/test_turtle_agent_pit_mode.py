@@ -50,7 +50,6 @@ def test_run_full_pipeline_pit_preflight_registers_only_pit_tools(tmp_path: Path
         validation_only=True,
         pit_source_manifest=str(manifest_path),
         pit_package_root=str(package),
-        pit_framework_root=str(package),
         pit_case_id="HBTCASE:600340",
         pit_experiment_id="HBT:600340",
         pit_preflight=True,
@@ -80,22 +79,62 @@ def test_run_full_pipeline_pit_rejects_reused_output(tmp_path: Path) -> None:
             validation_only=True,
             pit_source_manifest=str(manifest_path),
             pit_package_root=str(package),
-            pit_framework_root=str(package),
             pit_case_id="HBTCASE:600340",
             pit_experiment_id="HBT:600340",
             pit_preflight=True,
         )
 
 
-def test_run_full_pipeline_pit_requires_explicit_preflight(tmp_path: Path) -> None:
-    with pytest.raises(RuntimeError, match="PIT 入口仅支持显式"):
+def test_run_full_pipeline_pit_rejects_output_inside_input_package(tmp_path: Path) -> None:
+    package = tmp_path / "package"
+    _package(package)
+    manifest_path = tmp_path / "manifest.json"
+    _manifest(manifest_path)
+
+    with pytest.raises(RuntimeError, match="source/framework 输入根目录隔离"):
+        run_full_pipeline(
+            "600340.SH",
+            output_dir=str(package / "writer-output"),
+            validation_only=True,
+            pit_source_manifest=str(manifest_path),
+            pit_package_root=str(package),
+            pit_case_id="HBTCASE:600340",
+            pit_experiment_id="HBT:600340",
+            pit_preflight=True,
+        )
+
+
+def test_run_full_pipeline_pit_rejects_untrusted_framework_root(tmp_path: Path) -> None:
+    package = tmp_path / "package"
+    _package(package)
+    manifest_path = tmp_path / "manifest.json"
+    _manifest(manifest_path)
+    untrusted_framework = tmp_path / "ordinary-output"
+    untrusted_framework.mkdir()
+    (untrusted_framework / "future-settlement.md").write_text("future outcome", encoding="utf-8")
+
+    with pytest.raises(RuntimeError, match="framework root 必须使用仓库内受控静态目录"):
+        run_full_pipeline(
+            "600340.SH",
+            output_dir=str(tmp_path / "new-output"),
+            validation_only=True,
+            pit_source_manifest=str(manifest_path),
+            pit_package_root=str(package),
+            pit_framework_root=str(untrusted_framework),
+            pit_case_id="HBTCASE:600340",
+            pit_experiment_id="HBT:600340",
+            pit_preflight=True,
+        )
+
+
+def test_run_full_pipeline_pit_requires_explicit_mode(tmp_path: Path) -> None:
+    with pytest.raises(RuntimeError, match="PIT运行必须二选一"):
         run_full_pipeline(
             "600340.SH",
             output_dir=str(tmp_path / "new-run"),
             validation_only=True,
             pit_source_manifest=str(tmp_path / "manifest.json"),
             pit_package_root=str(tmp_path / "package"),
-            pit_framework_root=str(tmp_path / "package"),
             pit_case_id="HBTCASE:600340",
             pit_experiment_id="HBT:600340",
         )
@@ -115,14 +154,13 @@ def test_run_full_pipeline_pit_rejects_ordinary_pipeline_modes(
     manifest_path = tmp_path / "manifest.json"
     _manifest(manifest_path)
 
-    with pytest.raises(RuntimeError, match="PIT预检禁止普通报告"):
+    with pytest.raises(RuntimeError, match="PIT运行禁止普通报告"):
         run_full_pipeline(
             "600340.SH",
             output_dir=str(tmp_path / "new-run"),
             validation_only=True,
             pit_source_manifest=str(manifest_path),
             pit_package_root=str(package),
-            pit_framework_root=str(package),
             pit_case_id="HBTCASE:600340",
             pit_experiment_id="HBT:600340",
             pit_preflight=True,
