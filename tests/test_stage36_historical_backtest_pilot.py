@@ -557,6 +557,37 @@ def test_initial_disclosure_policy_rejects_a_later_restatement_as_actual() -> No
     assert "model_forecast_error.metrics[0]:does_not_use_initial_disclosure_per_frozen_policy" in result["invalid_findings"]
 
 
+def test_version_policy_requires_a_provable_order_for_same_day_disclosures() -> None:
+    settlement = _settlement()
+    settlement["actual_sources"].append({
+        "source_id": "AR:00506:2021:SAME_DAY_REVISION",
+        "source_type": "ANNUAL_REPORT",
+        "official": True,
+        "published_at": "2022-03-25",
+        "source_version": "annual-report-revision-2021",
+        "data_as_of": "2021-12-31",
+    })
+    settlement["operating_source_timeline"]["source_ids"].append("AR:00506:2021:SAME_DAY_REVISION")
+    revision_observation = deepcopy(settlement["actual_outcomes"]["operating_observations"][0])
+    revision_observation.update({
+        "observation_id": "HBTOBS:owner-cash:FY2021:same-day-revision",
+        "value": 0.30,
+        "source_ids": ["AR:00506:2021:SAME_DAY_REVISION"],
+    })
+    settlement["actual_outcomes"]["operating_observations"].append(revision_observation)
+    settlement["model_forecast_error"]["claim_settlements"][0]["observation_ids"] = [
+        "HBTOBS:owner-cash:FY2021:same-day-revision",
+    ]
+    settlement["model_forecast_error"]["metrics"][0].update({
+        "observation_id": "HBTOBS:owner-cash:FY2021:same-day-revision",
+        "actual_value": 0.30,
+        "actual_source_ids": ["AR:00506:2021:SAME_DAY_REVISION"],
+    })
+    result = validate_settlement(settlement, case=_case())
+    assert result["state"] == "INVALID"
+    assert "model_forecast_error.metrics[0]:publication_order_ambiguous" in result["incomplete_findings"]
+
+
 def test_return_settlement_binds_frozen_action_price_identity_and_execution_rule() -> None:
     case = _case()
 

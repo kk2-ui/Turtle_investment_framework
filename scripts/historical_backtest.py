@@ -693,7 +693,7 @@ def _validate_claim_settlements(
 def _validate_metric_version_policy(
     metric: dict[str, Any], observation: dict[str, Any], *, frozen_claim: dict[str, Any],
     observations: dict[str, dict[str, Any]], actual_sources: dict[str, dict[str, Any]], prefix: str,
-) -> list[str]:
+) -> tuple[list[str], list[str]]:
     """Select the pre-registered first or latest comparable disclosure, never a convenient revision."""
     outcome = frozen_claim.get("observable_outcome") if isinstance(frozen_claim.get("observable_outcome"), dict) else {}
     policy = outcome.get("settlement_version_policy")
@@ -713,16 +713,19 @@ def _validate_metric_version_policy(
     dated_candidates = [(item, visible_at) for item, visible_at in dated_candidates if visible_at is not None]
     selected_at = _observation_visible_at(observation, actual_sources)
     if not dated_candidates or selected_at is None:
-        return [prefix + ":observation_publication_timeline_incomplete"]
+        return [], [prefix + ":observation_publication_timeline_incomplete"]
     required_at = (
         min(visible_at for _, visible_at in dated_candidates)
         if policy == "INITIAL_DISCLOSURE"
         else max(visible_at for _, visible_at in dated_candidates)
     )
+    boundary_candidates = [item for item, visible_at in dated_candidates if visible_at == required_at]
+    if len(boundary_candidates) > 1:
+        return [], [prefix + ":publication_order_ambiguous"]
     if selected_at != required_at:
         required = "initial" if policy == "INITIAL_DISCLOSURE" else "latest"
-        return [prefix + ":does_not_use_" + required + "_disclosure_per_frozen_policy"]
-    return []
+        return [prefix + ":does_not_use_" + required + "_disclosure_per_frozen_policy"], []
+    return [], []
 
 
 def _validate_return_outcome(
@@ -1163,10 +1166,12 @@ def validate_settlement(record: dict[str, Any], *, case: dict[str, Any] | None =
                 invalid.append(prefix + ":actual_observation_not_comparable")
             if claim_settlement is not None and observation_id not in (claim_settlement.get("observation_ids") or []):
                 invalid.append(prefix + ":observation_not_registered_for_claim_settlement")
-            invalid.extend(_validate_metric_version_policy(
+            version_invalid, version_incomplete = _validate_metric_version_policy(
                 metric, observation, frozen_claim=frozen, observations=observation_by_id,
                 actual_sources=actual_sources, prefix=prefix,
-            ))
+            )
+            invalid.extend(version_invalid)
+            incomplete.extend(version_incomplete)
     for claim_id in frozen_predictions:
         claim_settlement = claim_settlements.get(claim_id)
         if claim_settlement is None:

@@ -108,7 +108,7 @@
 - 为每个经营观察写入 `comparability_status`，只有 `COMPARABLE` 或已预注册换算规则的观察可以成为预测误差的 actual；
 - 由 `INITIAL_DISCLOSURE` 强制选用同一 claim、指标、口径和经济期间的首次可见可比观察；选择后续重述会被 validator 拒绝。`LATEST_OFFICIAL_AS_OF_EVALUATION` 则在已枚举时间线中选择结算日以前的最后可见观察，已枚举的首次披露不会被覆盖。
 
-所有 `published_at`、冻结 cutoff 和结算时点按完整时间戳比较。只有日期的资料在 cutoff 当日不足以证明先后，会使该 case 保持 `INCOMPLETE`，而不是被当作已知的盘中时刻。
+所有 `published_at`、冻结 cutoff 和结算时点按完整时间戳比较。只有日期的资料在 cutoff 当日、或在同一 claim 的首次/最新披露选择中无法证明版本先后时，会使该 case 保持 `INCOMPLETE`，而不是被当作已知的盘中时刻。
 
 ## 4. 口径漂移、缺失和不可比
 
