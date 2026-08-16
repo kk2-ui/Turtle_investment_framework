@@ -1,0 +1,2429 @@
+{
+  "schema_version": "historical-backtest-settlement.v1",
+  "settlement_id": "HBTSET:600340:20200427:METADATA_DIAGNOSTIC",
+  "experiment_id": "HBT:phase10-600340-20200427-engineering",
+  "case_id": "HBTCASE:600340:20200427",
+  "freeze_id": "HBTFRZ:8ff08ee91e04d193",
+  "settlement_as_of": "2021-04-27T18:00:00+08:00",
+  "actual_sources": [
+    {
+      "source_id": "SSE:600340:ANN:20210422:600340_20210422_1",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2021-04-22",
+      "source_version": "sse-announcement-original:600340_20210422_1",
+      "data_as_of": "2021-04-22",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20210417:600340_20210417_1",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2021-04-17",
+      "source_version": "sse-announcement-original:600340_20210417_1",
+      "data_as_of": "2021-04-17",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20210409:600340_20210409_1",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2021-04-09",
+      "source_version": "sse-announcement-original:600340_20210409_1",
+      "data_as_of": "2021-04-09",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20210331:600340_20210331_1",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2021-03-31",
+      "source_version": "sse-announcement-original:600340_20210331_1",
+      "data_as_of": "2021-03-31",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20210324:600340_20210324_1",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2021-03-24",
+      "source_version": "sse-announcement-original:600340_20210324_1",
+      "data_as_of": "2021-03-24",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20210319:600340_20210319_1",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2021-03-19",
+      "source_version": "sse-announcement-original:600340_20210319_1",
+      "data_as_of": "2021-03-19",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20210317:600340_20210317_1",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2021-03-17",
+      "source_version": "sse-announcement-original:600340_20210317_1",
+      "data_as_of": "2021-03-17",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20210313:600340_20210313_1",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2021-03-13",
+      "source_version": "sse-announcement-original:600340_20210313_1",
+      "data_as_of": "2021-03-13",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20210310:600340_20210310_1",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2021-03-10",
+      "source_version": "sse-announcement-original:600340_20210310_1",
+      "data_as_of": "2021-03-10",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20210309:600340_20210309_1",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2021-03-09",
+      "source_version": "sse-announcement-original:600340_20210309_1",
+      "data_as_of": "2021-03-09",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20210309:600340_20210309_2",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2021-03-09",
+      "source_version": "sse-announcement-original:600340_20210309_2",
+      "data_as_of": "2021-03-09",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20210305:600340_20210305_1",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2021-03-05",
+      "source_version": "sse-announcement-original:600340_20210305_1",
+      "data_as_of": "2021-03-05",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20210227:600340_20210227_1",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2021-02-27",
+      "source_version": "sse-announcement-original:600340_20210227_1",
+      "data_as_of": "2021-02-27",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20210227:600340_20210227_2",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2021-02-27",
+      "source_version": "sse-announcement-original:600340_20210227_2",
+      "data_as_of": "2021-02-27",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20210225:600340_20210225_1",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2021-02-25",
+      "source_version": "sse-announcement-original:600340_20210225_1",
+      "data_as_of": "2021-02-25",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20210224:600340_20210224_1",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2021-02-24",
+      "source_version": "sse-announcement-original:600340_20210224_1",
+      "data_as_of": "2021-02-24",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20210223:600340_20210223_1",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2021-02-23",
+      "source_version": "sse-announcement-original:600340_20210223_1",
+      "data_as_of": "2021-02-23",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20210220:600340_20210220_1",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2021-02-20",
+      "source_version": "sse-announcement-original:600340_20210220_1",
+      "data_as_of": "2021-02-20",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20210219:600340_20210219_1",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2021-02-19",
+      "source_version": "sse-announcement-original:600340_20210219_1",
+      "data_as_of": "2021-02-19",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20210219:600340_20210219_2",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2021-02-19",
+      "source_version": "sse-announcement-original:600340_20210219_2",
+      "data_as_of": "2021-02-19",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20210219:600340_20210219_3",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2021-02-19",
+      "source_version": "sse-announcement-original:600340_20210219_3",
+      "data_as_of": "2021-02-19",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20210210:600340_20210210_1",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2021-02-10",
+      "source_version": "sse-announcement-original:600340_20210210_1",
+      "data_as_of": "2021-02-10",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20210206:600340_20210206_1",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2021-02-06",
+      "source_version": "sse-announcement-original:600340_20210206_1",
+      "data_as_of": "2021-02-06",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20210205:600340_20210205_1",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2021-02-05",
+      "source_version": "sse-announcement-original:600340_20210205_1",
+      "data_as_of": "2021-02-05",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20210202:600340_20210202_1",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2021-02-02",
+      "source_version": "sse-announcement-original:600340_20210202_1",
+      "data_as_of": "2021-02-02",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20210202:600340_20210202_2",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2021-02-02",
+      "source_version": "sse-announcement-original:600340_20210202_2",
+      "data_as_of": "2021-02-02",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20210129:600340_20210129_1",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2021-01-29",
+      "source_version": "sse-announcement-original:600340_20210129_1",
+      "data_as_of": "2021-01-29",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20210129:600340_20210129_2",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2021-01-29",
+      "source_version": "sse-announcement-original:600340_20210129_2",
+      "data_as_of": "2021-01-29",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20210121:600340_20210121_1",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2021-01-21",
+      "source_version": "sse-announcement-original:600340_20210121_1",
+      "data_as_of": "2021-01-21",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20210121:600340_20210121_2",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2021-01-21",
+      "source_version": "sse-announcement-original:600340_20210121_2",
+      "data_as_of": "2021-01-21",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20210116:600340_20210116_1",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2021-01-16",
+      "source_version": "sse-announcement-original:600340_20210116_1",
+      "data_as_of": "2021-01-16",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20210114:600340_20210114_1",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2021-01-14",
+      "source_version": "sse-announcement-original:600340_20210114_1",
+      "data_as_of": "2021-01-14",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20210112:600340_20210112_1",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2021-01-12",
+      "source_version": "sse-announcement-original:600340_20210112_1",
+      "data_as_of": "2021-01-12",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20201231:600340_20201231_1",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-12-31",
+      "source_version": "sse-announcement-original:600340_20201231_1",
+      "data_as_of": "2020-12-31",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20201231:600340_20201231_2",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-12-31",
+      "source_version": "sse-announcement-original:600340_20201231_2",
+      "data_as_of": "2020-12-31",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20201231:600340_20201231_3",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-12-31",
+      "source_version": "sse-announcement-original:600340_20201231_3",
+      "data_as_of": "2020-12-31",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20201223:600340_20201223_1",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-12-23",
+      "source_version": "sse-announcement-original:600340_20201223_1",
+      "data_as_of": "2020-12-23",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20201219:600340_20201219_1",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-12-19",
+      "source_version": "sse-announcement-original:600340_20201219_1",
+      "data_as_of": "2020-12-19",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20201215:600340_20201215_1",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-12-15",
+      "source_version": "sse-announcement-original:600340_20201215_1",
+      "data_as_of": "2020-12-15",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20201212:600340_20201212_1",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-12-12",
+      "source_version": "sse-announcement-original:600340_20201212_1",
+      "data_as_of": "2020-12-12",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20201210:600340_20201210_1",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-12-10",
+      "source_version": "sse-announcement-original:600340_20201210_1",
+      "data_as_of": "2020-12-10",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20201207:600340_20201207_1",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-12-07",
+      "source_version": "sse-announcement-original:600340_20201207_1",
+      "data_as_of": "2020-12-07",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20201205:600340_20201205_1",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-12-05",
+      "source_version": "sse-announcement-original:600340_20201205_1",
+      "data_as_of": "2020-12-05",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20201204:600340_20201204_1",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-12-04",
+      "source_version": "sse-announcement-original:600340_20201204_1",
+      "data_as_of": "2020-12-04",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20201203:600340_20201203_1",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-12-03",
+      "source_version": "sse-announcement-original:600340_20201203_1",
+      "data_as_of": "2020-12-03",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20201203:600340_20201203_10",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-12-03",
+      "source_version": "sse-announcement-original:600340_20201203_10",
+      "data_as_of": "2020-12-03",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20201203:600340_20201203_2",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-12-03",
+      "source_version": "sse-announcement-original:600340_20201203_2",
+      "data_as_of": "2020-12-03",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20201203:600340_20201203_3",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-12-03",
+      "source_version": "sse-announcement-original:600340_20201203_3",
+      "data_as_of": "2020-12-03",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20201203:600340_20201203_4",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-12-03",
+      "source_version": "sse-announcement-original:600340_20201203_4",
+      "data_as_of": "2020-12-03",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20201203:600340_20201203_5",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-12-03",
+      "source_version": "sse-announcement-original:600340_20201203_5",
+      "data_as_of": "2020-12-03",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20201203:600340_20201203_6",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-12-03",
+      "source_version": "sse-announcement-original:600340_20201203_6",
+      "data_as_of": "2020-12-03",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20201203:600340_20201203_7",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-12-03",
+      "source_version": "sse-announcement-original:600340_20201203_7",
+      "data_as_of": "2020-12-03",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20201203:600340_20201203_8",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-12-03",
+      "source_version": "sse-announcement-original:600340_20201203_8",
+      "data_as_of": "2020-12-03",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20201203:600340_20201203_9",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-12-03",
+      "source_version": "sse-announcement-original:600340_20201203_9",
+      "data_as_of": "2020-12-03",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20201201:600340_20201201_1",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-12-01",
+      "source_version": "sse-announcement-original:600340_20201201_1",
+      "data_as_of": "2020-12-01",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20201120:600340_20201120_1",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-11-20",
+      "source_version": "sse-announcement-original:600340_20201120_1",
+      "data_as_of": "2020-11-20",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20201120:600340_20201120_2",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-11-20",
+      "source_version": "sse-announcement-original:600340_20201120_2",
+      "data_as_of": "2020-11-20",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20201120:600340_20201120_3",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-11-20",
+      "source_version": "sse-announcement-original:600340_20201120_3",
+      "data_as_of": "2020-11-20",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20201120:600340_20201120_4",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-11-20",
+      "source_version": "sse-announcement-original:600340_20201120_4",
+      "data_as_of": "2020-11-20",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20201120:600340_20201120_5",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-11-20",
+      "source_version": "sse-announcement-original:600340_20201120_5",
+      "data_as_of": "2020-11-20",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20201114:600340_20201114_1",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-11-14",
+      "source_version": "sse-announcement-original:600340_20201114_1",
+      "data_as_of": "2020-11-14",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20201114:600340_20201114_2",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-11-14",
+      "source_version": "sse-announcement-original:600340_20201114_2",
+      "data_as_of": "2020-11-14",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20201112:600340_20201112_1",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-11-12",
+      "source_version": "sse-announcement-original:600340_20201112_1",
+      "data_as_of": "2020-11-12",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20201112:600340_20201112_2",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-11-12",
+      "source_version": "sse-announcement-original:600340_20201112_2",
+      "data_as_of": "2020-11-12",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20201110:600340_20201110_1",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-11-10",
+      "source_version": "sse-announcement-original:600340_20201110_1",
+      "data_as_of": "2020-11-10",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20201103:600340_20201103_1",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-11-03",
+      "source_version": "sse-announcement-original:600340_20201103_1",
+      "data_as_of": "2020-11-03",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20201030:600340_20201030_1",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-10-30",
+      "source_version": "sse-announcement-original:600340_20201030_1",
+      "data_as_of": "2020-10-30",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20201030:600340_20201030_2",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-10-30",
+      "source_version": "sse-announcement-original:600340_20201030_2",
+      "data_as_of": "2020-10-30",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20201030:600340_20201030_3",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-10-30",
+      "source_version": "sse-announcement-original:600340_20201030_3",
+      "data_as_of": "2020-10-30",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20201030:600340_20201030_4",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-10-30",
+      "source_version": "sse-announcement-original:600340_20201030_4",
+      "data_as_of": "2020-10-30",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20201030:600340_20201030_5",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-10-30",
+      "source_version": "sse-announcement-original:600340_20201030_5",
+      "data_as_of": "2020-10-30",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20201024:600340_20201024_1",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-10-24",
+      "source_version": "sse-announcement-original:600340_20201024_1",
+      "data_as_of": "2020-10-24",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20201024:600340_20201024_2",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-10-24",
+      "source_version": "sse-announcement-original:600340_20201024_2",
+      "data_as_of": "2020-10-24",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20201024:600340_20201024_3",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-10-24",
+      "source_version": "sse-announcement-original:600340_20201024_3",
+      "data_as_of": "2020-10-24",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20201024:600340_20201024_4",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-10-24",
+      "source_version": "sse-announcement-original:600340_20201024_4",
+      "data_as_of": "2020-10-24",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20201024:600340_20201024_5",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-10-24",
+      "source_version": "sse-announcement-original:600340_20201024_5",
+      "data_as_of": "2020-10-24",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20201017:600340_20201017_1",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-10-17",
+      "source_version": "sse-announcement-original:600340_20201017_1",
+      "data_as_of": "2020-10-17",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20201017:600340_20201017_2",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-10-17",
+      "source_version": "sse-announcement-original:600340_20201017_2",
+      "data_as_of": "2020-10-17",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20201017:600340_20201017_3",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-10-17",
+      "source_version": "sse-announcement-original:600340_20201017_3",
+      "data_as_of": "2020-10-17",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20201017:600340_20201017_4",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-10-17",
+      "source_version": "sse-announcement-original:600340_20201017_4",
+      "data_as_of": "2020-10-17",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20201017:600340_20201017_5",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-10-17",
+      "source_version": "sse-announcement-original:600340_20201017_5",
+      "data_as_of": "2020-10-17",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20201016:600340_20201016_1",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-10-16",
+      "source_version": "sse-announcement-original:600340_20201016_1",
+      "data_as_of": "2020-10-16",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20201016:600340_20201016_2",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-10-16",
+      "source_version": "sse-announcement-original:600340_20201016_2",
+      "data_as_of": "2020-10-16",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20201016:600340_20201016_3",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-10-16",
+      "source_version": "sse-announcement-original:600340_20201016_3",
+      "data_as_of": "2020-10-16",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20201010:600340_20201010_1",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-10-10",
+      "source_version": "sse-announcement-original:600340_20201010_1",
+      "data_as_of": "2020-10-10",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20201010:600340_20201010_2",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-10-10",
+      "source_version": "sse-announcement-original:600340_20201010_2",
+      "data_as_of": "2020-10-10",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20201009:600340_20201009_1",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-10-09",
+      "source_version": "sse-announcement-original:600340_20201009_1",
+      "data_as_of": "2020-10-09",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20200930:600340_20200930_1",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-09-30",
+      "source_version": "sse-announcement-original:600340_20200930_1",
+      "data_as_of": "2020-09-30",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20200930:600340_20200930_10",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-09-30",
+      "source_version": "sse-announcement-original:600340_20200930_10",
+      "data_as_of": "2020-09-30",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20200930:600340_20200930_11",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-09-30",
+      "source_version": "sse-announcement-original:600340_20200930_11",
+      "data_as_of": "2020-09-30",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20200930:600340_20200930_2",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-09-30",
+      "source_version": "sse-announcement-original:600340_20200930_2",
+      "data_as_of": "2020-09-30",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20200930:600340_20200930_3",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-09-30",
+      "source_version": "sse-announcement-original:600340_20200930_3",
+      "data_as_of": "2020-09-30",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20200930:600340_20200930_4",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-09-30",
+      "source_version": "sse-announcement-original:600340_20200930_4",
+      "data_as_of": "2020-09-30",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20200930:600340_20200930_5",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-09-30",
+      "source_version": "sse-announcement-original:600340_20200930_5",
+      "data_as_of": "2020-09-30",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20200930:600340_20200930_6",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-09-30",
+      "source_version": "sse-announcement-original:600340_20200930_6",
+      "data_as_of": "2020-09-30",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20200930:600340_20200930_7",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-09-30",
+      "source_version": "sse-announcement-original:600340_20200930_7",
+      "data_as_of": "2020-09-30",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20200930:600340_20200930_8",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-09-30",
+      "source_version": "sse-announcement-original:600340_20200930_8",
+      "data_as_of": "2020-09-30",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20200930:600340_20200930_9",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-09-30",
+      "source_version": "sse-announcement-original:600340_20200930_9",
+      "data_as_of": "2020-09-30",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20200924:600340_20200924_1",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-09-24",
+      "source_version": "sse-announcement-original:600340_20200924_1",
+      "data_as_of": "2020-09-24",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20200917:600340_20200917_1",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-09-17",
+      "source_version": "sse-announcement-original:600340_20200917_1",
+      "data_as_of": "2020-09-17",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20200916:600340_20200916_1",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-09-16",
+      "source_version": "sse-announcement-original:600340_20200916_1",
+      "data_as_of": "2020-09-16",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20200916:600340_20200916_2",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-09-16",
+      "source_version": "sse-announcement-original:600340_20200916_2",
+      "data_as_of": "2020-09-16",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20200915:600340_20200915_1",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-09-15",
+      "source_version": "sse-announcement-original:600340_20200915_1",
+      "data_as_of": "2020-09-15",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20200912:600340_20200912_1",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-09-12",
+      "source_version": "sse-announcement-original:600340_20200912_1",
+      "data_as_of": "2020-09-12",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20200911:600340_20200911_1",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-09-11",
+      "source_version": "sse-announcement-original:600340_20200911_1",
+      "data_as_of": "2020-09-11",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20200908:600340_20200908_1",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-09-08",
+      "source_version": "sse-announcement-original:600340_20200908_1",
+      "data_as_of": "2020-09-08",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20200905:600340_20200905_1",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-09-05",
+      "source_version": "sse-announcement-original:600340_20200905_1",
+      "data_as_of": "2020-09-05",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20200905:600340_20200905_2",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-09-05",
+      "source_version": "sse-announcement-original:600340_20200905_2",
+      "data_as_of": "2020-09-05",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20200829:600340_20200829_1",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-08-29",
+      "source_version": "sse-announcement-original:600340_20200829_1",
+      "data_as_of": "2020-08-29",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20200829:600340_20200829_10",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-08-29",
+      "source_version": "sse-announcement-original:600340_20200829_10",
+      "data_as_of": "2020-08-29",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20200829:600340_20200829_11",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-08-29",
+      "source_version": "sse-announcement-original:600340_20200829_11",
+      "data_as_of": "2020-08-29",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20200829:600340_20200829_12",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-08-29",
+      "source_version": "sse-announcement-original:600340_20200829_12",
+      "data_as_of": "2020-08-29",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20200829:600340_20200829_13",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-08-29",
+      "source_version": "sse-announcement-original:600340_20200829_13",
+      "data_as_of": "2020-08-29",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20200829:600340_20200829_2",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-08-29",
+      "source_version": "sse-announcement-original:600340_20200829_2",
+      "data_as_of": "2020-08-29",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20200829:600340_20200829_3",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-08-29",
+      "source_version": "sse-announcement-original:600340_20200829_3",
+      "data_as_of": "2020-08-29",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20200829:600340_20200829_4",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-08-29",
+      "source_version": "sse-announcement-original:600340_20200829_4",
+      "data_as_of": "2020-08-29",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20200829:600340_20200829_5",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-08-29",
+      "source_version": "sse-announcement-original:600340_20200829_5",
+      "data_as_of": "2020-08-29",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20200829:600340_20200829_6",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-08-29",
+      "source_version": "sse-announcement-original:600340_20200829_6",
+      "data_as_of": "2020-08-29",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20200829:600340_20200829_7",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-08-29",
+      "source_version": "sse-announcement-original:600340_20200829_7",
+      "data_as_of": "2020-08-29",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20200829:600340_20200829_8",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-08-29",
+      "source_version": "sse-announcement-original:600340_20200829_8",
+      "data_as_of": "2020-08-29",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20200829:600340_20200829_9",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-08-29",
+      "source_version": "sse-announcement-original:600340_20200829_9",
+      "data_as_of": "2020-08-29",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20200826:600340_20200826_1",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-08-26",
+      "source_version": "sse-announcement-original:600340_20200826_1",
+      "data_as_of": "2020-08-26",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20200826:600340_20200826_2",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-08-26",
+      "source_version": "sse-announcement-original:600340_20200826_2",
+      "data_as_of": "2020-08-26",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20200819:600340_20200819_1",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-08-19",
+      "source_version": "sse-announcement-original:600340_20200819_1",
+      "data_as_of": "2020-08-19",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20200819:600340_20200819_2",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-08-19",
+      "source_version": "sse-announcement-original:600340_20200819_2",
+      "data_as_of": "2020-08-19",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20200819:600340_20200819_3",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-08-19",
+      "source_version": "sse-announcement-original:600340_20200819_3",
+      "data_as_of": "2020-08-19",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20200815:600340_20200815_1",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-08-15",
+      "source_version": "sse-announcement-original:600340_20200815_1",
+      "data_as_of": "2020-08-15",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20200813:600340_20200813_1",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-08-13",
+      "source_version": "sse-announcement-original:600340_20200813_1",
+      "data_as_of": "2020-08-13",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20200812:600340_20200812_1",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-08-12",
+      "source_version": "sse-announcement-original:600340_20200812_1",
+      "data_as_of": "2020-08-12",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20200812:600340_20200812_2",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-08-12",
+      "source_version": "sse-announcement-original:600340_20200812_2",
+      "data_as_of": "2020-08-12",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20200812:600340_20200812_3",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-08-12",
+      "source_version": "sse-announcement-original:600340_20200812_3",
+      "data_as_of": "2020-08-12",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20200812:600340_20200812_4",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-08-12",
+      "source_version": "sse-announcement-original:600340_20200812_4",
+      "data_as_of": "2020-08-12",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20200808:600340_20200808_1",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-08-08",
+      "source_version": "sse-announcement-original:600340_20200808_1",
+      "data_as_of": "2020-08-08",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20200808:600340_20200808_2",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-08-08",
+      "source_version": "sse-announcement-original:600340_20200808_2",
+      "data_as_of": "2020-08-08",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20200808:600340_20200808_3",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-08-08",
+      "source_version": "sse-announcement-original:600340_20200808_3",
+      "data_as_of": "2020-08-08",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20200808:600340_20200808_4",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-08-08",
+      "source_version": "sse-announcement-original:600340_20200808_4",
+      "data_as_of": "2020-08-08",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20200808:600340_20200808_5",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-08-08",
+      "source_version": "sse-announcement-original:600340_20200808_5",
+      "data_as_of": "2020-08-08",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20200807:600340_20200807_1",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-08-07",
+      "source_version": "sse-announcement-original:600340_20200807_1",
+      "data_as_of": "2020-08-07",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20200804:600340_20200804_1",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-08-04",
+      "source_version": "sse-announcement-original:600340_20200804_1",
+      "data_as_of": "2020-08-04",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20200729:600340_20200729_1",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-07-29",
+      "source_version": "sse-announcement-original:600340_20200729_1",
+      "data_as_of": "2020-07-29",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20200729:600340_20200729_2",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-07-29",
+      "source_version": "sse-announcement-original:600340_20200729_2",
+      "data_as_of": "2020-07-29",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20200729:600340_20200729_3",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-07-29",
+      "source_version": "sse-announcement-original:600340_20200729_3",
+      "data_as_of": "2020-07-29",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20200725:600340_20200725_1",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-07-25",
+      "source_version": "sse-announcement-original:600340_20200725_1",
+      "data_as_of": "2020-07-25",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20200725:600340_20200725_2",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-07-25",
+      "source_version": "sse-announcement-original:600340_20200725_2",
+      "data_as_of": "2020-07-25",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20200725:600340_20200725_3",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-07-25",
+      "source_version": "sse-announcement-original:600340_20200725_3",
+      "data_as_of": "2020-07-25",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20200725:600340_20200725_4",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-07-25",
+      "source_version": "sse-announcement-original:600340_20200725_4",
+      "data_as_of": "2020-07-25",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20200721:600340_20200721_1",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-07-21",
+      "source_version": "sse-announcement-original:600340_20200721_1",
+      "data_as_of": "2020-07-21",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20200718:600340_20200718_1",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-07-18",
+      "source_version": "sse-announcement-original:600340_20200718_1",
+      "data_as_of": "2020-07-18",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20200716:600340_20200716_1",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-07-16",
+      "source_version": "sse-announcement-original:600340_20200716_1",
+      "data_as_of": "2020-07-16",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20200715:600340_20200715_1",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-07-15",
+      "source_version": "sse-announcement-original:600340_20200715_1",
+      "data_as_of": "2020-07-15",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20200715:600340_20200715_2",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-07-15",
+      "source_version": "sse-announcement-original:600340_20200715_2",
+      "data_as_of": "2020-07-15",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20200711:600340_20200711_1",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-07-11",
+      "source_version": "sse-announcement-original:600340_20200711_1",
+      "data_as_of": "2020-07-11",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20200711:600340_20200711_2",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-07-11",
+      "source_version": "sse-announcement-original:600340_20200711_2",
+      "data_as_of": "2020-07-11",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20200711:600340_20200711_3",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-07-11",
+      "source_version": "sse-announcement-original:600340_20200711_3",
+      "data_as_of": "2020-07-11",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20200711:600340_20200711_4",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-07-11",
+      "source_version": "sse-announcement-original:600340_20200711_4",
+      "data_as_of": "2020-07-11",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20200711:600340_20200711_5",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-07-11",
+      "source_version": "sse-announcement-original:600340_20200711_5",
+      "data_as_of": "2020-07-11",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20200711:600340_20200711_6",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-07-11",
+      "source_version": "sse-announcement-original:600340_20200711_6",
+      "data_as_of": "2020-07-11",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20200711:600340_20200711_7",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-07-11",
+      "source_version": "sse-announcement-original:600340_20200711_7",
+      "data_as_of": "2020-07-11",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20200709:600340_20200709_1",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-07-09",
+      "source_version": "sse-announcement-original:600340_20200709_1",
+      "data_as_of": "2020-07-09",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20200709:600340_20200709_2",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-07-09",
+      "source_version": "sse-announcement-original:600340_20200709_2",
+      "data_as_of": "2020-07-09",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20200708:600340_20200708_1",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-07-08",
+      "source_version": "sse-announcement-original:600340_20200708_1",
+      "data_as_of": "2020-07-08",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20200708:600340_20200708_2",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-07-08",
+      "source_version": "sse-announcement-original:600340_20200708_2",
+      "data_as_of": "2020-07-08",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20200708:600340_20200708_3",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-07-08",
+      "source_version": "sse-announcement-original:600340_20200708_3",
+      "data_as_of": "2020-07-08",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20200707:600340_20200707_1",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-07-07",
+      "source_version": "sse-announcement-original:600340_20200707_1",
+      "data_as_of": "2020-07-07",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20200704:600340_20200704_1",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-07-04",
+      "source_version": "sse-announcement-original:600340_20200704_1",
+      "data_as_of": "2020-07-04",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20200701:600340_20200701_1",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-07-01",
+      "source_version": "sse-announcement-original:600340_20200701_1",
+      "data_as_of": "2020-07-01",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20200701:600340_20200701_2",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-07-01",
+      "source_version": "sse-announcement-original:600340_20200701_2",
+      "data_as_of": "2020-07-01",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20200629:600340_20200629_1",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-06-29",
+      "source_version": "sse-announcement-original:600340_20200629_1",
+      "data_as_of": "2020-06-29",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20200629:600340_20200629_2",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-06-29",
+      "source_version": "sse-announcement-original:600340_20200629_2",
+      "data_as_of": "2020-06-29",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20200629:600340_20200629_3",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-06-29",
+      "source_version": "sse-announcement-original:600340_20200629_3",
+      "data_as_of": "2020-06-29",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20200629:600340_20200629_4",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-06-29",
+      "source_version": "sse-announcement-original:600340_20200629_4",
+      "data_as_of": "2020-06-29",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20200629:600340_20200629_5",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-06-29",
+      "source_version": "sse-announcement-original:600340_20200629_5",
+      "data_as_of": "2020-06-29",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20200629:600340_20200629_6",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-06-29",
+      "source_version": "sse-announcement-original:600340_20200629_6",
+      "data_as_of": "2020-06-29",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20200629:600340_20200629_7",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-06-29",
+      "source_version": "sse-announcement-original:600340_20200629_7",
+      "data_as_of": "2020-06-29",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20200629:600340_20200629_8",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-06-29",
+      "source_version": "sse-announcement-original:600340_20200629_8",
+      "data_as_of": "2020-06-29",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20200623:600340_20200623_1",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-06-23",
+      "source_version": "sse-announcement-original:600340_20200623_1",
+      "data_as_of": "2020-06-23",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20200623:600340_20200623_2",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-06-23",
+      "source_version": "sse-announcement-original:600340_20200623_2",
+      "data_as_of": "2020-06-23",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20200620:600340_20200620_1",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-06-20",
+      "source_version": "sse-announcement-original:600340_20200620_1",
+      "data_as_of": "2020-06-20",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20200619:600340_20200619_1",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-06-19",
+      "source_version": "sse-announcement-original:600340_20200619_1",
+      "data_as_of": "2020-06-19",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20200619:600340_20200619_2",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-06-19",
+      "source_version": "sse-announcement-original:600340_20200619_2",
+      "data_as_of": "2020-06-19",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20200619:600340_20200619_3",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-06-19",
+      "source_version": "sse-announcement-original:600340_20200619_3",
+      "data_as_of": "2020-06-19",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20200619:600340_20200619_4",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-06-19",
+      "source_version": "sse-announcement-original:600340_20200619_4",
+      "data_as_of": "2020-06-19",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20200619:600340_20200619_5",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-06-19",
+      "source_version": "sse-announcement-original:600340_20200619_5",
+      "data_as_of": "2020-06-19",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20200619:600340_20200619_6",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-06-19",
+      "source_version": "sse-announcement-original:600340_20200619_6",
+      "data_as_of": "2020-06-19",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20200619:600340_20200619_7",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-06-19",
+      "source_version": "sse-announcement-original:600340_20200619_7",
+      "data_as_of": "2020-06-19",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20200619:600340_20200619_8",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-06-19",
+      "source_version": "sse-announcement-original:600340_20200619_8",
+      "data_as_of": "2020-06-19",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20200618:600340_20200618_1",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-06-18",
+      "source_version": "sse-announcement-original:600340_20200618_1",
+      "data_as_of": "2020-06-18",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20200618:600340_20200618_2",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-06-18",
+      "source_version": "sse-announcement-original:600340_20200618_2",
+      "data_as_of": "2020-06-18",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20200617:600340_20200617_1",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-06-17",
+      "source_version": "sse-announcement-original:600340_20200617_1",
+      "data_as_of": "2020-06-17",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20200617:600340_20200617_2",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-06-17",
+      "source_version": "sse-announcement-original:600340_20200617_2",
+      "data_as_of": "2020-06-17",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20200617:600340_20200617_3",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-06-17",
+      "source_version": "sse-announcement-original:600340_20200617_3",
+      "data_as_of": "2020-06-17",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20200617:600340_20200617_4",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-06-17",
+      "source_version": "sse-announcement-original:600340_20200617_4",
+      "data_as_of": "2020-06-17",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20200616:600340_20200616_1",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-06-16",
+      "source_version": "sse-announcement-original:600340_20200616_1",
+      "data_as_of": "2020-06-16",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20200613:600340_20200613_1",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-06-13",
+      "source_version": "sse-announcement-original:600340_20200613_1",
+      "data_as_of": "2020-06-13",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20200613:600340_20200613_2",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-06-13",
+      "source_version": "sse-announcement-original:600340_20200613_2",
+      "data_as_of": "2020-06-13",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20200610:600340_20200610_1",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-06-10",
+      "source_version": "sse-announcement-original:600340_20200610_1",
+      "data_as_of": "2020-06-10",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20200610:600340_20200610_2",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-06-10",
+      "source_version": "sse-announcement-original:600340_20200610_2",
+      "data_as_of": "2020-06-10",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20200610:600340_20200610_3",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-06-10",
+      "source_version": "sse-announcement-original:600340_20200610_3",
+      "data_as_of": "2020-06-10",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20200610:600340_20200610_4",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-06-10",
+      "source_version": "sse-announcement-original:600340_20200610_4",
+      "data_as_of": "2020-06-10",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20200610:600340_20200610_5",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-06-10",
+      "source_version": "sse-announcement-original:600340_20200610_5",
+      "data_as_of": "2020-06-10",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20200610:600340_20200610_6",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-06-10",
+      "source_version": "sse-announcement-original:600340_20200610_6",
+      "data_as_of": "2020-06-10",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20200609:600340_20200609_1",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-06-09",
+      "source_version": "sse-announcement-original:600340_20200609_1",
+      "data_as_of": "2020-06-09",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20200609:600340_20200609_2",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-06-09",
+      "source_version": "sse-announcement-original:600340_20200609_2",
+      "data_as_of": "2020-06-09",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20200530:600340_20200530_1",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-05-30",
+      "source_version": "sse-announcement-original:600340_20200530_1",
+      "data_as_of": "2020-05-30",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20200529:600340_20200529_1",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-05-29",
+      "source_version": "sse-announcement-original:600340_20200529_1",
+      "data_as_of": "2020-05-29",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20200528:600340_20200528_1",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-05-28",
+      "source_version": "sse-announcement-original:600340_20200528_1",
+      "data_as_of": "2020-05-28",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20200523:600340_20200523_1",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-05-23",
+      "source_version": "sse-announcement-original:600340_20200523_1",
+      "data_as_of": "2020-05-23",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20200523:600340_20200523_2",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-05-23",
+      "source_version": "sse-announcement-original:600340_20200523_2",
+      "data_as_of": "2020-05-23",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20200521:600340_20200521_1",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-05-21",
+      "source_version": "sse-announcement-original:600340_20200521_1",
+      "data_as_of": "2020-05-21",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20200521:600340_20200521_2",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-05-21",
+      "source_version": "sse-announcement-original:600340_20200521_2",
+      "data_as_of": "2020-05-21",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20200521:600340_20200521_3",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-05-21",
+      "source_version": "sse-announcement-original:600340_20200521_3",
+      "data_as_of": "2020-05-21",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20200521:600340_20200521_4",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-05-21",
+      "source_version": "sse-announcement-original:600340_20200521_4",
+      "data_as_of": "2020-05-21",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20200521:600340_20200521_5",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-05-21",
+      "source_version": "sse-announcement-original:600340_20200521_5",
+      "data_as_of": "2020-05-21",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20200516:600340_20200516_1",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-05-16",
+      "source_version": "sse-announcement-original:600340_20200516_1",
+      "data_as_of": "2020-05-16",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20200516:600340_20200516_2",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-05-16",
+      "source_version": "sse-announcement-original:600340_20200516_2",
+      "data_as_of": "2020-05-16",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20200515:600340_20200515_1",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-05-15",
+      "source_version": "sse-announcement-original:600340_20200515_1",
+      "data_as_of": "2020-05-15",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20200513:600340_20200513_1",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-05-13",
+      "source_version": "sse-announcement-original:600340_20200513_1",
+      "data_as_of": "2020-05-13",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20200513:600340_20200513_2",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-05-13",
+      "source_version": "sse-announcement-original:600340_20200513_2",
+      "data_as_of": "2020-05-13",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20200513:600340_20200513_3",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-05-13",
+      "source_version": "sse-announcement-original:600340_20200513_3",
+      "data_as_of": "2020-05-13",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20200509:600340_20200509_1",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-05-09",
+      "source_version": "sse-announcement-original:600340_20200509_1",
+      "data_as_of": "2020-05-09",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20200509:600340_20200509_2",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-05-09",
+      "source_version": "sse-announcement-original:600340_20200509_2",
+      "data_as_of": "2020-05-09",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20200507:600340_20200507_1",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-05-07",
+      "source_version": "sse-announcement-original:600340_20200507_1",
+      "data_as_of": "2020-05-07",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20200506:600340_20200506_1",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-05-06",
+      "source_version": "sse-announcement-original:600340_20200506_1",
+      "data_as_of": "2020-05-06",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20200506:600340_20200506_2",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-05-06",
+      "source_version": "sse-announcement-original:600340_20200506_2",
+      "data_as_of": "2020-05-06",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20200430:600340_20200430_1",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-04-30",
+      "source_version": "sse-announcement-original:600340_20200430_1",
+      "data_as_of": "2020-04-30",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20200429:600340_20200429_1",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-04-29",
+      "source_version": "sse-announcement-original:600340_20200429_1",
+      "data_as_of": "2020-04-29",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20200429:600340_20200429_2",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-04-29",
+      "source_version": "sse-announcement-original:600340_20200429_2",
+      "data_as_of": "2020-04-29",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    },
+    {
+      "source_id": "SSE:600340:ANN:20200429:600340_20200429_3",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "official": true,
+      "published_at": "2020-04-29",
+      "source_version": "sse-announcement-original:600340_20200429_3",
+      "data_as_of": "2020-04-29",
+      "source_access_status": "METADATA_ONLY_BODY_NOT_READ"
+    }
+  ],
+  "operating_source_timeline": {
+    "enumeration_status": "COMPLETE",
+    "source_ids": [
+      "SSE:600340:ANN:20210422:600340_20210422_1",
+      "SSE:600340:ANN:20210417:600340_20210417_1",
+      "SSE:600340:ANN:20210409:600340_20210409_1",
+      "SSE:600340:ANN:20210331:600340_20210331_1",
+      "SSE:600340:ANN:20210324:600340_20210324_1",
+      "SSE:600340:ANN:20210319:600340_20210319_1",
+      "SSE:600340:ANN:20210317:600340_20210317_1",
+      "SSE:600340:ANN:20210313:600340_20210313_1",
+      "SSE:600340:ANN:20210310:600340_20210310_1",
+      "SSE:600340:ANN:20210309:600340_20210309_1",
+      "SSE:600340:ANN:20210309:600340_20210309_2",
+      "SSE:600340:ANN:20210305:600340_20210305_1",
+      "SSE:600340:ANN:20210227:600340_20210227_1",
+      "SSE:600340:ANN:20210227:600340_20210227_2",
+      "SSE:600340:ANN:20210225:600340_20210225_1",
+      "SSE:600340:ANN:20210224:600340_20210224_1",
+      "SSE:600340:ANN:20210223:600340_20210223_1",
+      "SSE:600340:ANN:20210220:600340_20210220_1",
+      "SSE:600340:ANN:20210219:600340_20210219_1",
+      "SSE:600340:ANN:20210219:600340_20210219_2",
+      "SSE:600340:ANN:20210219:600340_20210219_3",
+      "SSE:600340:ANN:20210210:600340_20210210_1",
+      "SSE:600340:ANN:20210206:600340_20210206_1",
+      "SSE:600340:ANN:20210205:600340_20210205_1",
+      "SSE:600340:ANN:20210202:600340_20210202_1",
+      "SSE:600340:ANN:20210202:600340_20210202_2",
+      "SSE:600340:ANN:20210129:600340_20210129_1",
+      "SSE:600340:ANN:20210129:600340_20210129_2",
+      "SSE:600340:ANN:20210121:600340_20210121_1",
+      "SSE:600340:ANN:20210121:600340_20210121_2",
+      "SSE:600340:ANN:20210116:600340_20210116_1",
+      "SSE:600340:ANN:20210114:600340_20210114_1",
+      "SSE:600340:ANN:20210112:600340_20210112_1",
+      "SSE:600340:ANN:20201231:600340_20201231_1",
+      "SSE:600340:ANN:20201231:600340_20201231_2",
+      "SSE:600340:ANN:20201231:600340_20201231_3",
+      "SSE:600340:ANN:20201223:600340_20201223_1",
+      "SSE:600340:ANN:20201219:600340_20201219_1",
+      "SSE:600340:ANN:20201215:600340_20201215_1",
+      "SSE:600340:ANN:20201212:600340_20201212_1",
+      "SSE:600340:ANN:20201210:600340_20201210_1",
+      "SSE:600340:ANN:20201207:600340_20201207_1",
+      "SSE:600340:ANN:20201205:600340_20201205_1",
+      "SSE:600340:ANN:20201204:600340_20201204_1",
+      "SSE:600340:ANN:20201203:600340_20201203_1",
+      "SSE:600340:ANN:20201203:600340_20201203_10",
+      "SSE:600340:ANN:20201203:600340_20201203_2",
+      "SSE:600340:ANN:20201203:600340_20201203_3",
+      "SSE:600340:ANN:20201203:600340_20201203_4",
+      "SSE:600340:ANN:20201203:600340_20201203_5",
+      "SSE:600340:ANN:20201203:600340_20201203_6",
+      "SSE:600340:ANN:20201203:600340_20201203_7",
+      "SSE:600340:ANN:20201203:600340_20201203_8",
+      "SSE:600340:ANN:20201203:600340_20201203_9",
+      "SSE:600340:ANN:20201201:600340_20201201_1",
+      "SSE:600340:ANN:20201120:600340_20201120_1",
+      "SSE:600340:ANN:20201120:600340_20201120_2",
+      "SSE:600340:ANN:20201120:600340_20201120_3",
+      "SSE:600340:ANN:20201120:600340_20201120_4",
+      "SSE:600340:ANN:20201120:600340_20201120_5",
+      "SSE:600340:ANN:20201114:600340_20201114_1",
+      "SSE:600340:ANN:20201114:600340_20201114_2",
+      "SSE:600340:ANN:20201112:600340_20201112_1",
+      "SSE:600340:ANN:20201112:600340_20201112_2",
+      "SSE:600340:ANN:20201110:600340_20201110_1",
+      "SSE:600340:ANN:20201103:600340_20201103_1",
+      "SSE:600340:ANN:20201030:600340_20201030_1",
+      "SSE:600340:ANN:20201030:600340_20201030_2",
+      "SSE:600340:ANN:20201030:600340_20201030_3",
+      "SSE:600340:ANN:20201030:600340_20201030_4",
+      "SSE:600340:ANN:20201030:600340_20201030_5",
+      "SSE:600340:ANN:20201024:600340_20201024_1",
+      "SSE:600340:ANN:20201024:600340_20201024_2",
+      "SSE:600340:ANN:20201024:600340_20201024_3",
+      "SSE:600340:ANN:20201024:600340_20201024_4",
+      "SSE:600340:ANN:20201024:600340_20201024_5",
+      "SSE:600340:ANN:20201017:600340_20201017_1",
+      "SSE:600340:ANN:20201017:600340_20201017_2",
+      "SSE:600340:ANN:20201017:600340_20201017_3",
+      "SSE:600340:ANN:20201017:600340_20201017_4",
+      "SSE:600340:ANN:20201017:600340_20201017_5",
+      "SSE:600340:ANN:20201016:600340_20201016_1",
+      "SSE:600340:ANN:20201016:600340_20201016_2",
+      "SSE:600340:ANN:20201016:600340_20201016_3",
+      "SSE:600340:ANN:20201010:600340_20201010_1",
+      "SSE:600340:ANN:20201010:600340_20201010_2",
+      "SSE:600340:ANN:20201009:600340_20201009_1",
+      "SSE:600340:ANN:20200930:600340_20200930_1",
+      "SSE:600340:ANN:20200930:600340_20200930_10",
+      "SSE:600340:ANN:20200930:600340_20200930_11",
+      "SSE:600340:ANN:20200930:600340_20200930_2",
+      "SSE:600340:ANN:20200930:600340_20200930_3",
+      "SSE:600340:ANN:20200930:600340_20200930_4",
+      "SSE:600340:ANN:20200930:600340_20200930_5",
+      "SSE:600340:ANN:20200930:600340_20200930_6",
+      "SSE:600340:ANN:20200930:600340_20200930_7",
+      "SSE:600340:ANN:20200930:600340_20200930_8",
+      "SSE:600340:ANN:20200930:600340_20200930_9",
+      "SSE:600340:ANN:20200924:600340_20200924_1",
+      "SSE:600340:ANN:20200917:600340_20200917_1",
+      "SSE:600340:ANN:20200916:600340_20200916_1",
+      "SSE:600340:ANN:20200916:600340_20200916_2",
+      "SSE:600340:ANN:20200915:600340_20200915_1",
+      "SSE:600340:ANN:20200912:600340_20200912_1",
+      "SSE:600340:ANN:20200911:600340_20200911_1",
+      "SSE:600340:ANN:20200908:600340_20200908_1",
+      "SSE:600340:ANN:20200905:600340_20200905_1",
+      "SSE:600340:ANN:20200905:600340_20200905_2",
+      "SSE:600340:ANN:20200829:600340_20200829_1",
+      "SSE:600340:ANN:20200829:600340_20200829_10",
+      "SSE:600340:ANN:20200829:600340_20200829_11",
+      "SSE:600340:ANN:20200829:600340_20200829_12",
+      "SSE:600340:ANN:20200829:600340_20200829_13",
+      "SSE:600340:ANN:20200829:600340_20200829_2",
+      "SSE:600340:ANN:20200829:600340_20200829_3",
+      "SSE:600340:ANN:20200829:600340_20200829_4",
+      "SSE:600340:ANN:20200829:600340_20200829_5",
+      "SSE:600340:ANN:20200829:600340_20200829_6",
+      "SSE:600340:ANN:20200829:600340_20200829_7",
+      "SSE:600340:ANN:20200829:600340_20200829_8",
+      "SSE:600340:ANN:20200829:600340_20200829_9",
+      "SSE:600340:ANN:20200826:600340_20200826_1",
+      "SSE:600340:ANN:20200826:600340_20200826_2",
+      "SSE:600340:ANN:20200819:600340_20200819_1",
+      "SSE:600340:ANN:20200819:600340_20200819_2",
+      "SSE:600340:ANN:20200819:600340_20200819_3",
+      "SSE:600340:ANN:20200815:600340_20200815_1",
+      "SSE:600340:ANN:20200813:600340_20200813_1",
+      "SSE:600340:ANN:20200812:600340_20200812_1",
+      "SSE:600340:ANN:20200812:600340_20200812_2",
+      "SSE:600340:ANN:20200812:600340_20200812_3",
+      "SSE:600340:ANN:20200812:600340_20200812_4",
+      "SSE:600340:ANN:20200808:600340_20200808_1",
+      "SSE:600340:ANN:20200808:600340_20200808_2",
+      "SSE:600340:ANN:20200808:600340_20200808_3",
+      "SSE:600340:ANN:20200808:600340_20200808_4",
+      "SSE:600340:ANN:20200808:600340_20200808_5",
+      "SSE:600340:ANN:20200807:600340_20200807_1",
+      "SSE:600340:ANN:20200804:600340_20200804_1",
+      "SSE:600340:ANN:20200729:600340_20200729_1",
+      "SSE:600340:ANN:20200729:600340_20200729_2",
+      "SSE:600340:ANN:20200729:600340_20200729_3",
+      "SSE:600340:ANN:20200725:600340_20200725_1",
+      "SSE:600340:ANN:20200725:600340_20200725_2",
+      "SSE:600340:ANN:20200725:600340_20200725_3",
+      "SSE:600340:ANN:20200725:600340_20200725_4",
+      "SSE:600340:ANN:20200721:600340_20200721_1",
+      "SSE:600340:ANN:20200718:600340_20200718_1",
+      "SSE:600340:ANN:20200716:600340_20200716_1",
+      "SSE:600340:ANN:20200715:600340_20200715_1",
+      "SSE:600340:ANN:20200715:600340_20200715_2",
+      "SSE:600340:ANN:20200711:600340_20200711_1",
+      "SSE:600340:ANN:20200711:600340_20200711_2",
+      "SSE:600340:ANN:20200711:600340_20200711_3",
+      "SSE:600340:ANN:20200711:600340_20200711_4",
+      "SSE:600340:ANN:20200711:600340_20200711_5",
+      "SSE:600340:ANN:20200711:600340_20200711_6",
+      "SSE:600340:ANN:20200711:600340_20200711_7",
+      "SSE:600340:ANN:20200709:600340_20200709_1",
+      "SSE:600340:ANN:20200709:600340_20200709_2",
+      "SSE:600340:ANN:20200708:600340_20200708_1",
+      "SSE:600340:ANN:20200708:600340_20200708_2",
+      "SSE:600340:ANN:20200708:600340_20200708_3",
+      "SSE:600340:ANN:20200707:600340_20200707_1",
+      "SSE:600340:ANN:20200704:600340_20200704_1",
+      "SSE:600340:ANN:20200701:600340_20200701_1",
+      "SSE:600340:ANN:20200701:600340_20200701_2",
+      "SSE:600340:ANN:20200629:600340_20200629_1",
+      "SSE:600340:ANN:20200629:600340_20200629_2",
+      "SSE:600340:ANN:20200629:600340_20200629_3",
+      "SSE:600340:ANN:20200629:600340_20200629_4",
+      "SSE:600340:ANN:20200629:600340_20200629_5",
+      "SSE:600340:ANN:20200629:600340_20200629_6",
+      "SSE:600340:ANN:20200629:600340_20200629_7",
+      "SSE:600340:ANN:20200629:600340_20200629_8",
+      "SSE:600340:ANN:20200623:600340_20200623_1",
+      "SSE:600340:ANN:20200623:600340_20200623_2",
+      "SSE:600340:ANN:20200620:600340_20200620_1",
+      "SSE:600340:ANN:20200619:600340_20200619_1",
+      "SSE:600340:ANN:20200619:600340_20200619_2",
+      "SSE:600340:ANN:20200619:600340_20200619_3",
+      "SSE:600340:ANN:20200619:600340_20200619_4",
+      "SSE:600340:ANN:20200619:600340_20200619_5",
+      "SSE:600340:ANN:20200619:600340_20200619_6",
+      "SSE:600340:ANN:20200619:600340_20200619_7",
+      "SSE:600340:ANN:20200619:600340_20200619_8",
+      "SSE:600340:ANN:20200618:600340_20200618_1",
+      "SSE:600340:ANN:20200618:600340_20200618_2",
+      "SSE:600340:ANN:20200617:600340_20200617_1",
+      "SSE:600340:ANN:20200617:600340_20200617_2",
+      "SSE:600340:ANN:20200617:600340_20200617_3",
+      "SSE:600340:ANN:20200617:600340_20200617_4",
+      "SSE:600340:ANN:20200616:600340_20200616_1",
+      "SSE:600340:ANN:20200613:600340_20200613_1",
+      "SSE:600340:ANN:20200613:600340_20200613_2",
+      "SSE:600340:ANN:20200610:600340_20200610_1",
+      "SSE:600340:ANN:20200610:600340_20200610_2",
+      "SSE:600340:ANN:20200610:600340_20200610_3",
+      "SSE:600340:ANN:20200610:600340_20200610_4",
+      "SSE:600340:ANN:20200610:600340_20200610_5",
+      "SSE:600340:ANN:20200610:600340_20200610_6",
+      "SSE:600340:ANN:20200609:600340_20200609_1",
+      "SSE:600340:ANN:20200609:600340_20200609_2",
+      "SSE:600340:ANN:20200530:600340_20200530_1",
+      "SSE:600340:ANN:20200529:600340_20200529_1",
+      "SSE:600340:ANN:20200528:600340_20200528_1",
+      "SSE:600340:ANN:20200523:600340_20200523_1",
+      "SSE:600340:ANN:20200523:600340_20200523_2",
+      "SSE:600340:ANN:20200521:600340_20200521_1",
+      "SSE:600340:ANN:20200521:600340_20200521_2",
+      "SSE:600340:ANN:20200521:600340_20200521_3",
+      "SSE:600340:ANN:20200521:600340_20200521_4",
+      "SSE:600340:ANN:20200521:600340_20200521_5",
+      "SSE:600340:ANN:20200516:600340_20200516_1",
+      "SSE:600340:ANN:20200516:600340_20200516_2",
+      "SSE:600340:ANN:20200515:600340_20200515_1",
+      "SSE:600340:ANN:20200513:600340_20200513_1",
+      "SSE:600340:ANN:20200513:600340_20200513_2",
+      "SSE:600340:ANN:20200513:600340_20200513_3",
+      "SSE:600340:ANN:20200509:600340_20200509_1",
+      "SSE:600340:ANN:20200509:600340_20200509_2",
+      "SSE:600340:ANN:20200507:600340_20200507_1",
+      "SSE:600340:ANN:20200506:600340_20200506_1",
+      "SSE:600340:ANN:20200506:600340_20200506_2",
+      "SSE:600340:ANN:20200430:600340_20200430_1",
+      "SSE:600340:ANN:20200429:600340_20200429_1",
+      "SSE:600340:ANN:20200429:600340_20200429_2",
+      "SSE:600340:ANN:20200429:600340_20200429_3"
+    ]
+  },
+  "actual_outcomes": {
+    "currency": "CNY",
+    "cash_flows": [],
+    "operating_observations": []
+  },
+  "report_coverage": {
+    "status": "PASS",
+    "review_id": "HBTREV:8ff08ee91e04d193",
+    "claim_reviews": [
+      {
+        "claim_id": "HBTCLM:600340:P10B:ORDINARY_CASH",
+        "disposition": "UNKNOWN_PRESERVED",
+        "source_ids": [
+          "SSE:600340:AR2017:REVISED",
+          "SSE:600340:AR2018:ORIGINAL",
+          "SSE:600340:AR2019:ORIGINAL"
+        ]
+      },
+      {
+        "claim_id": "HBTCLM:600340:P10B:GOV_RECEIVABLES",
+        "disposition": "UNKNOWN_PRESERVED",
+        "source_ids": [
+          "SSE:600340:AR2017:INQUIRY_REPLY",
+          "SSE:600340:AR2019:ORIGINAL"
+        ]
+      },
+      {
+        "claim_id": "HBTCLM:600340:P10B:DEBT_REFINANCING",
+        "disposition": "UNKNOWN_PRESERVED",
+        "source_ids": [
+          "SSE:600340:AR2017:INQUIRY_REPLY",
+          "SSE:600340:AR2018:ORIGINAL",
+          "SSE:600340:AR2019:ORIGINAL"
+        ]
+      },
+      {
+        "claim_id": "HBTCLM:600340:P10B:GUARANTEE_RECOVERY",
+        "disposition": "UNKNOWN_PRESERVED",
+        "source_ids": [
+          "SSE:600340:AR2017:REVISED",
+          "SSE:600340:AR2018:ORIGINAL",
+          "SSE:600340:AR2019:ORIGINAL"
+        ]
+      }
+    ],
+    "supported_claim_count": 0,
+    "unsupported_claim_count": 0,
+    "unknowns_preserved": true,
+    "notes": [
+      "Coverage is replayed from the frozen independent review; it is not a return score."
+    ]
+  },
+  "model_forecast_error": {
+    "status": "NOT_CALCULABLE",
+    "claim_settlements": [
+      {
+        "claim_id": "HBTCLM:600340:P10B:ORDINARY_CASH",
+        "frozen_disposition": "UNKNOWN",
+        "status": "UNRESOLVED_AS_OF_SETTLEMENT",
+        "observation_ids": []
+      },
+      {
+        "claim_id": "HBTCLM:600340:P10B:GOV_RECEIVABLES",
+        "frozen_disposition": "UNKNOWN",
+        "status": "UNRESOLVED_AS_OF_SETTLEMENT",
+        "observation_ids": []
+      },
+      {
+        "claim_id": "HBTCLM:600340:P10B:DEBT_REFINANCING",
+        "frozen_disposition": "UNKNOWN",
+        "status": "UNRESOLVED_AS_OF_SETTLEMENT",
+        "observation_ids": []
+      },
+      {
+        "claim_id": "HBTCLM:600340:P10B:GUARANTEE_RECOVERY",
+        "frozen_disposition": "UNKNOWN",
+        "status": "UNRESOLVED_AS_OF_SETTLEMENT",
+        "observation_ids": []
+      }
+    ],
+    "metrics": [],
+    "notes": [
+      "Only official announcement metadata has been acquired; no body fact is treated as an actual observation."
+    ]
+  },
+  "investment_return_outcome": {
+    "status": "NOT_CALCULABLE",
+    "action": "UNKNOWN",
+    "frozen_action": "UNKNOWN",
+    "frozen_price_identity": "UNKNOWN",
+    "total_return": null,
+    "benchmark_return": null,
+    "currency": "CNY",
+    "notes": [
+      "No investment action, official raw price series, corporate-action treatment, or benchmark series is frozen."
+    ],
+    "execution": {
+      "execution_rule": "No investment action was frozen in the PIT engineering case.",
+      "fill_status": "NOT_APPLICABLE",
+      "entry": {
+        "date": null,
+        "price": null,
+        "quantity": null,
+        "currency": null,
+        "source_ids": []
+      },
+      "exit": {
+        "status": "NOT_APPLICABLE",
+        "date": null,
+        "price": null,
+        "quantity": null,
+        "currency": null,
+        "source_ids": []
+      }
+    },
+    "cash_flow_ledger": [],
+    "corporate_actions": [],
+    "taxes_fees_fx": {
+      "tax_rate": 0.0,
+      "transaction_fee_rate": 0.0,
+      "dividend_tax_rate": 0.0,
+      "base_currency": "CNY",
+      "fx_rule": "No investment action or return is frozen in this engineering case."
+    },
+    "benchmark_identity": {
+      "benchmark_id": "UNAVAILABLE",
+      "market": "CN",
+      "currency": "CNY",
+      "return_basis": "PRICE_RETURN",
+      "calculation_rule": "No official CSI 300 series has been acquired.",
+      "source_ids": []
+    }
+  },
+  "status": "INCOMPLETE"
+}

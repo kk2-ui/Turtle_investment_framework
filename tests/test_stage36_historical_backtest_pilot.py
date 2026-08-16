@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import hashlib
 from copy import deepcopy
 from pathlib import Path
 
@@ -722,6 +723,245 @@ def test_production_origin_replays_pdf_page_markdown_source_reads(
     assert not any("source_path_mismatch" in finding for finding in invalid)
     assert not any("source_representation_mismatch" in finding for finding in invalid)
     assert not any("source_reader_text_path_mismatch" in finding for finding in invalid)
+
+
+def test_pit_engineering_freeze_replays_writer_reads_but_cannot_settle_as_production(
+    tmp_path: Path,
+    monkeypatch,
+) -> None:
+    root = tmp_path / "repository"
+    package = root / "historical" / "package"
+    (package / "annual").mkdir(parents=True)
+    (package / "annual" / "2020.pdf").write_bytes(b"%PDF-original")
+    (package / "annual" / "2020.pages.md").write_text(
+        "# AR:00506:2020\n\n"
+        "- source_id: AR:00506:2020\n"
+        "- source_version: annual-report-original-2020\n"
+        "- content_representation: PDF_PAGE_MARKDOWN\n\n"
+        "## 第 1 页\n\n历史年报正文\n",
+        encoding="utf-8",
+    )
+    framework_root = root / "config" / "phase10_pit_framework" / "framework"
+    framework_root.mkdir(parents=True)
+    (framework_root / "policy.md").write_text("PIT policy", encoding="utf-8")
+    monkeypatch.setattr(phase10_pit_runner, "PIT_STATIC_FRAMEWORK_ROOT", framework_root.parent)
+    monkeypatch.setattr(historical_backtest, "__file__", str(root / "scripts" / "historical_backtest.py"))
+
+    manifest = enumerate_sse_announcements([{
+        "source_id": "AR:00506:2020",
+        "source_version": "annual-report-original-2020",
+        "source_type": "ANNUAL_REPORT",
+        "title": "2020 年年度报告",
+        "published_at": "2021-03-25",
+        "data_as_of": "2020-12-31",
+        "revision_policy": "ORIGINAL_VINTAGE",
+    }], cutoff_at="2021-08-31T18:00:00+08:00", period_start="2021-01-01")
+    manifest["company_code"] = "00506.HK"
+    for source in [*manifest["inventory"], *manifest["sources"]]:
+        source.update({
+            "package_path": "annual/2020.pdf",
+            "content_representation": "PDF_PAGE_MARKDOWN",
+            "reader_text_path": "annual/2020.pages.md",
+            "reader_text_extractor": "pdf_preprocessor.extract_all_pages",
+            "reader_text_extractor_version": "phase10-pdf-page-markdown.v1",
+            "reader_text_page_count": 1,
+        })
+    manifest["framework_allowlist"] = [{"path": "framework/policy.md"}]
+    manifest_path = root / "historical" / "source-manifest.json"
+    manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
+    report_path = root / "historical" / "pit-engineering-report.md"
+    report_path.write_text(
+        "# PIT engineering report\n\n"
+        "## Point-in-time scope\n\n"
+        "HBTCASE:TEST only uses the registered source.\n\n"
+        "## Evidence\n\nAR:00506:2020\n\n"
+        "## Business and financial implications\n\n"
+        "No production investment conclusion.\n\n"
+        "## Unknowns and monitoring\n\n"
+        "HBTCLM:owner-cash\nHBTCLM:minority-cash-access\n",
+        encoding="utf-8",
+    )
+    digest = hashlib.sha256(report_path.read_bytes()).hexdigest()
+    runner = PITSourcePackage(
+        manifest,
+        package,
+        case_id="HBTCASE:TEST",
+        experiment_id="HBT:test",
+        run_id="pit-engineering-test",
+        manifest_path=str(manifest_path),
+    )
+    assert runner.state == "REVIEWABLE"
+    runner.read_framework("framework/policy.md")
+    runner.read_source("AR:00506:2020")
+    attestation = runner.attestation()
+    attestation.update({
+        "execution_mode": "PIT_WRITER_TEST",
+        "writer": {
+            "status": "PASS",
+            "report_path": str(report_path),
+            "source_ids": ["AR:00506:2020"],
+            "case_id": "HBTCASE:TEST",
+            "experiment_id": "HBT:test",
+        },
+    })
+    attestation_path = root / "historical" / "pit-attestation.json"
+    attestation_path.write_text(json.dumps(attestation), encoding="utf-8")
+    review_path = root / "historical" / "independent-review.md"
+    review_path.write_text(
+        "HBTCASE:TEST\n"
+        "historical/pit-engineering-report.md\n"
+        "PASS_AFTER_REPAIR_FOR_DRAFT_ONLY\n",
+        encoding="utf-8",
+    )
+
+    case = _case()
+    variant = digest[:16]
+    case["report_freeze"].update({
+        "mode": "PIT_ENGINEERING",
+        "freeze_id": "HBTFRZ:" + variant,
+    })
+    case["report_freeze"]["frozen_report"].update({
+        "report_id": "HBTREP:TEST:PIT_ENGINEERING",
+        "variant_id": variant,
+        "artifact_path": "historical/pit-engineering-report.md",
+        "artifact_sha256": digest,
+        "origin": {
+            "kind": "PIT_ENGINEERING",
+            "review_artifact_path": "historical/independent-review.md",
+            "pit_runner": {
+                "attestation_path": "historical/pit-attestation.json",
+                "source_package_manifest_path": "historical/source-manifest.json",
+                "package_root": "historical/package",
+                "status": "PASS",
+            },
+        },
+        "writer_provenance": {
+            "actor_type": "model",
+            "provider": "openai",
+            "model": "gpt-5.6-terra",
+            "context_id": "writer-context:test",
+        },
+        "section_markers": [
+            "## Point-in-time scope", "## Evidence", "## Business and financial implications", "## Unknowns and monitoring",
+        ],
+    })
+    case["report_freeze"]["independent_review"].update({
+        "review_id": "HBTREV:" + variant,
+        "reviewed_variant_id": variant,
+        "reviewed_report_sha256": digest,
+        "reviewer_provenance": {
+            "actor_type": "model",
+            "provider": "openai",
+            "model": "gpt-5.6-terra",
+            "context_id": "reviewer-context:test",
+        },
+    })
+    result = validate_case(case)
+    assert result["state"] == "REVIEWABLE", result
+
+    quality_failure_review_path = root / "historical" / "quality-failure-review.md"
+    quality_failure_review_path.write_text(
+        "HBTCASE:TEST\n"
+        "historical/pit-engineering-report.md\n"
+        "FROZEN_WITH_QUALITY_FAILURE\n",
+        encoding="utf-8",
+    )
+    quality_failure_case = deepcopy(case)
+    quality_failure_case["status"] = "FROZEN_WITH_QUALITY_FAILURE"
+    quality_failure_case["report_freeze"].update({
+        "report_status": "FROZEN_WITH_QUALITY_FAILURE",
+        "quality_failure": {
+            "classifications": ["MODEL", "WRITING"],
+            "economic_impact": "The engineering draft cannot support a production investment conclusion.",
+            "missing_facts": ["Production-pipeline artifacts are unavailable."],
+            "prohibited_assumptions": ["Do not infer a production decision from the engineering draft."],
+            "remediation": "Integrate the PIT writer with the production report pipeline.",
+            "acceptance_criteria": "A production-origin case passes its report and reviewer gates.",
+        },
+    })
+    quality_failure_case["report_freeze"]["frozen_report"]["writer_status"] = "QUALITY_FAILURE"
+    quality_failure_case["report_freeze"]["frozen_report"]["origin"]["review_artifact_path"] = "historical/quality-failure-review.md"
+    quality_failure_case["report_freeze"]["independent_review"]["status"] = "FAIL"
+    result = validate_case(quality_failure_case)
+    assert result["state"] == "INCOMPLETE", result
+    assert result["invalid_findings"] == []
+    assert result["incomplete_findings"] == ["case_frozen_with_quality_failure"]
+
+    settlement = _settlement()
+    settlement.update({
+        "freeze_id": "HBTFRZ:" + variant,
+        "status": "INCOMPLETE",
+    })
+    settlement["report_coverage"]["review_id"] = "HBTREV:" + variant
+    result = validate_settlement(settlement, case=case)
+    assert result["state"] == "INCOMPLETE", result
+    assert "engineering_freeze_settlement_diagnostic_only" in result["incomplete_findings"]
+
+    settlement["status"] = "REVIEWABLE"
+    result = validate_settlement(settlement, case=case)
+    assert "engineering_freeze_cannot_produce_reviewable_settlement" in result["invalid_findings"]
+
+    no_action_case = deepcopy(case)
+    del no_action_case["investment_decision"]
+    assert validate_case(no_action_case)["state"] == "REVIEWABLE"
+    diagnostic = _settlement()
+    diagnostic.update({
+        "freeze_id": "HBTFRZ:" + variant,
+        "status": "INCOMPLETE",
+    })
+    diagnostic["report_coverage"]["review_id"] = "HBTREV:" + variant
+    diagnostic["investment_return_outcome"] = {
+        "status": "NOT_CALCULABLE",
+        "action": "UNKNOWN",
+        "frozen_action": "UNKNOWN",
+        "frozen_price_identity": "UNKNOWN",
+        "total_return": None,
+        "benchmark_return": None,
+        "currency": "HKD",
+        "notes": ["No action or market data was frozen."],
+        "execution": {
+            "execution_rule": "No investment action was frozen.",
+            "fill_status": "NOT_APPLICABLE",
+            "entry": {"date": None, "price": None, "quantity": None, "currency": None, "source_ids": []},
+            "exit": {"status": "NOT_APPLICABLE", "date": None, "price": None, "quantity": None, "currency": None, "source_ids": []},
+        },
+        "cash_flow_ledger": [],
+        "corporate_actions": [],
+        "taxes_fees_fx": deepcopy(no_action_case["taxes_fees_fx"]),
+        "benchmark_identity": {
+            "benchmark_id": "UNAVAILABLE",
+            "market": "HK",
+            "currency": "HKD",
+            "return_basis": "PRICE_RETURN",
+            "calculation_rule": "No official benchmark data acquired.",
+            "source_ids": [],
+        },
+    }
+    result = validate_settlement(diagnostic, case=no_action_case)
+    assert result["state"] == "INCOMPLETE", result
+    assert "engineering_freeze_settlement_diagnostic_only" in result["incomplete_findings"]
+
+    legacy_identity_case = deepcopy(quality_failure_case)
+    legacy_identity_case["experiment_id"] = "HBT:engineering-quality-failure"
+    legacy_identity_case["report_freeze"]["frozen_report"]["origin"]["legacy_attestation_experiment_id"] = "HBT:test"
+    result = validate_case(legacy_identity_case)
+    assert result["state"] == "INCOMPLETE", result
+    assert result["invalid_findings"] == []
+    assert "case_frozen_with_quality_failure" in result["incomplete_findings"]
+    assert "report_freeze.frozen_report.origin.pit_runner:legacy_experiment_identity_requires_rerun" in result["incomplete_findings"]
+    assert "report_freeze.frozen_report.origin.pit_runner:writer_legacy_experiment_identity_requires_rerun" in result["incomplete_findings"]
+
+
+def test_case_and_settlement_require_a_canonical_hbt_experiment_id() -> None:
+    case = _case()
+    case["experiment_id"] = "HBTEXP:legacy"
+    result = validate_case(case)
+    assert "case_experiment_id_invalid" in result["invalid_findings"]
+
+    settlement = _settlement()
+    settlement["experiment_id"] = "HBTEXP:legacy"
+    result = validate_settlement(settlement, case=_case())
+    assert "settlement_experiment_id_invalid" in result["invalid_findings"]
 
 
 def test_cutoff_comparisons_preserve_intraday_source_order() -> None:

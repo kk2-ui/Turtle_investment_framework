@@ -23,6 +23,8 @@ from typing import Any, Iterable
 EXPERIMENT_SCHEMA_VERSION = "historical-backtest-experiment.v1"
 CASE_SCHEMA_VERSION = "historical-backtest-case.v1"
 SETTLEMENT_SCHEMA_VERSION = "historical-backtest-settlement.v1"
+CASE_SCHEMA_VERSION_V2 = "historical-backtest-case.v2"
+SETTLEMENT_SCHEMA_VERSION_V2 = "historical-backtest-settlement.v2"
 
 ROUTES = {"LONG_TERM_OWNER", "FINITE_XIRR", "DUAL"}
 PRIMARY_PRICE_IDENTITIES = {"P_LONG", "P_XIRR", "P_LEGAL", "P_BUSINESS_VALUE_EXIT", "UNKNOWN"}
@@ -55,10 +57,13 @@ MODEL_MEMORY_EXPECTATIONS = {
     "MITIGATED": ("QUALIFIED", "ENGINEERING_DIAGNOSTIC_ONLY"),
     "UNCONTROLLED": ("EXPLORATORY", "ENGINEERING_DIAGNOSTIC_ONLY"),
 }
-REPORT_FREEZE_MODES = {"TEST_FIXTURE", "PRODUCTION_PIPELINE"}
-REPORT_ORIGIN_KINDS = {"TEST_FIXTURE", "TURTLE_PIPELINE"}
+REPORT_FREEZE_MODES = {"TEST_FIXTURE", "PRODUCTION_PIPELINE", "PIT_ENGINEERING"}
+REPORT_ORIGIN_KINDS = {"TEST_FIXTURE", "TURTLE_PIPELINE", "PIT_ENGINEERING"}
 REQUIRED_FROZEN_REPORT_SECTIONS = {
     "## Evidence", "## Operating forecast", "## Valuation", "## Risks and unknowns", "## Decision",
+}
+PIT_ENGINEERING_REPORT_SECTIONS = {
+    "## Point-in-time scope", "## Evidence", "## Business and financial implications", "## Unknowns and monitoring",
 }
 REVIEWER_INDEPENDENCE_FIELDS = {
     "did_not_generate_candidate", "no_prior_review_seen", "reviewer_context_isolated", "generator_identity_disjoint",
@@ -70,6 +75,8 @@ OFFICIAL_SETTLEMENT_SOURCE_TYPES = {
 OPERATING_OBSERVATION_SOURCE_TYPES = {
     "ANNUAL_REPORT", "INTERIM_REPORT", "EXCHANGE_ANNOUNCEMENT",
 }
+MEASUREMENT_PERIOD_KINDS = {"REPORTING_PERIOD", "EVENT_WINDOW"}
+SOURCE_CONTENT_ACCESS = {"BODY_READ", "METADATA_ONLY"}
 LEAKAGE_FIELDS = {
     "actual", "actual_value", "actual_outcome", "actual_outcomes", "outcome", "outcomes", "settlement",
     "settled_at", "future_price", "future_return", "realized_return", "benchmark_return",
@@ -131,6 +138,21 @@ def _timestamp(value: Any, *, date_only_at_end: bool = False) -> datetime | None
 def _is_date_only(value: Any) -> bool:
     text = str(value or "").strip()
     return len(text) == 10 and _date(text) is not None
+
+
+def _is_case_v2(record: dict[str, Any] | None) -> bool:
+    return isinstance(record, dict) and record.get("schema_version") == CASE_SCHEMA_VERSION_V2
+
+
+def _measurement_period(outcome: dict[str, Any], *, v2: bool) -> dict[str, Any]:
+    if v2:
+        value = outcome.get("measurement_period")
+        return value if isinstance(value, dict) else {}
+    return {
+        "kind": "REPORTING_PERIOD",
+        "start": outcome.get("period_start"),
+        "end": outcome.get("period_end"),
+    }
 
 
 def _required(record: dict[str, Any], fields: Iterable[str], prefix: str) -> list[str]:
@@ -488,6 +510,8 @@ def _validate_calibration_ledger(
     """Validate the frozen, claim-level calibration contract for a case."""
     invalid: list[str] = []
     incomplete: list[str] = []
+    case_v2 = _is_case_v2(record)
+    simulation_cutoff = _timestamp(record.get("simulation_cutoff"))
     ledger = record.get("calibration_ledger") if isinstance(record.get("calibration_ledger"), dict) else {}
     claims = ledger.get("claims") if isinstance(ledger.get("claims"), list) else []
     if not claims:
@@ -526,22 +550,40 @@ def _validate_calibration_ledger(
         incomplete.extend(ref_incomplete)
         outcome = claim.get("observable_outcome") if isinstance(claim.get("observable_outcome"), dict) else {}
         outcome_prefix = prefix + ".observable_outcome"
+        period_fields = ("measurement_period", "observation_window") if case_v2 else ("period_start", "period_end")
         incomplete.extend(_required(
             outcome,
-            (
-                "metric", "unit", "measurement_basis", "measurement_rule", "period_start", "period_end",
-                "allowed_source_types", "settlement_version_policy",
-            ),
+            ("metric", "unit", "measurement_basis", "measurement_rule", *period_fields,
+             "allowed_source_types", "settlement_version_policy"),
             outcome_prefix,
         ))
-        period_start = _date(outcome.get("period_start"))
-        period_end = _date(outcome.get("period_end"))
-        if outcome.get("period_start") not in (None, "") and period_start is None:
-            invalid.append(outcome_prefix + ":period_start_invalid")
-        if outcome.get("period_end") not in (None, "") and period_end is None:
-            invalid.append(outcome_prefix + ":period_end_invalid")
+        period = _measurement_period(outcome, v2=case_v2)
+        period_prefix = outcome_prefix + (".measurement_period" if case_v2 else "")
+        period_start = _date(period.get("start"))
+        period_end = _date(period.get("end"))
+        if period.get("start") not in (None, "") and period_start is None:
+            invalid.append(period_prefix + (":start_invalid" if case_v2 else ":period_start_invalid"))
+        if period.get("end") not in (None, "") and period_end is None:
+            invalid.append(period_prefix + (":end_invalid" if case_v2 else ":period_end_invalid"))
         if period_start and period_end and period_start > period_end:
-            invalid.append(outcome_prefix + ":period_start_after_period_end")
+            invalid.append(period_prefix + (":start_after_end" if case_v2 else ":period_start_after_period_end"))
+        if case_v2:
+            if any(field in outcome for field in ("period_start", "period_end")):
+                invalid.append(outcome_prefix + ":legacy_period_fields_not_allowed")
+            if period.get("kind") not in MEASUREMENT_PERIOD_KINDS:
+                invalid.append(period_prefix + ":kind_invalid")
+            window = outcome.get("observation_window") if isinstance(outcome.get("observation_window"), dict) else {}
+            window_prefix = outcome_prefix + ".observation_window"
+            opens_after = _timestamp(window.get("opens_after"))
+            closes_at = _timestamp(window.get("closes_at"))
+            if window.get("opens_after") not in (None, "") and opens_after is None:
+                invalid.append(window_prefix + ":opens_after_invalid")
+            if window.get("closes_at") not in (None, "") and closes_at is None:
+                invalid.append(window_prefix + ":closes_at_invalid")
+            if opens_after and closes_at and opens_after >= closes_at:
+                invalid.append(window_prefix + ":opens_after_must_precede_closes_at")
+            if simulation_cutoff and opens_after and opens_after < simulation_cutoff:
+                invalid.append(window_prefix + ":opens_before_simulation_cutoff")
         allowed_source_types = outcome.get("allowed_source_types")
         if isinstance(allowed_source_types, list):
             for source_type in allowed_source_types:
@@ -1014,6 +1056,215 @@ def _validate_production_report_origin(
     return invalid, incomplete
 
 
+def _validate_pit_engineering_report_origin(
+    record: dict[str, Any], *, report: dict[str, Any], origin: dict[str, Any],
+) -> tuple[list[str], list[str]]:
+    """Validate the constrained PIT-writer path without claiming production acceptance.
+
+    This mode is intentionally narrow: it proves that the frozen engineering
+    draft and its review are bound to an admissible source package and actual
+    PIT reads.  It does not substitute for the unified report pipeline, V3,
+    model-memory control, or a production calibration candidate.
+    """
+    invalid: list[str] = []
+    incomplete: list[str] = []
+    prefix = "report_freeze.frozen_report.origin"
+    root = Path(__file__).resolve().parents[1]
+
+    def repo_path(value: Any, field: str) -> Path | None:
+        raw = str(value or "")
+        if not raw or Path(raw).is_absolute():
+            invalid.append(prefix + ":" + field + "_must_be_repo_relative")
+            return None
+        resolved = (root / raw).resolve()
+        if root not in resolved.parents:
+            invalid.append(prefix + ":" + field + "_outside_repository")
+            return None
+        return resolved
+
+    def load_json(path: Path | None, field: str) -> dict[str, Any]:
+        if path is None:
+            return {}
+        if not path.is_file():
+            incomplete.append(prefix + ":" + field + "_missing")
+            return {}
+        try:
+            value = json.loads(path.read_text(encoding="utf-8"))
+        except (OSError, UnicodeDecodeError, json.JSONDecodeError):
+            invalid.append(prefix + ":" + field + "_invalid_json")
+            return {}
+        if not isinstance(value, dict):
+            invalid.append(prefix + ":" + field + "_must_be_object")
+            return {}
+        return value
+
+    incomplete.extend(_required(origin, ("pit_runner", "review_artifact_path"), prefix))
+    pit = origin.get("pit_runner") if isinstance(origin.get("pit_runner"), dict) else {}
+    pit_prefix = prefix + ".pit_runner"
+    incomplete.extend(_required(
+        pit,
+        ("attestation_path", "source_package_manifest_path", "package_root", "status"),
+        pit_prefix,
+    ))
+    attestation_path = repo_path(pit.get("attestation_path"), "pit_runner_attestation_path")
+    manifest_path = repo_path(pit.get("source_package_manifest_path"), "pit_runner_source_manifest_path")
+    package_root = repo_path(pit.get("package_root"), "pit_runner_package_root")
+    review_path = repo_path(origin.get("review_artifact_path"), "review_artifact_path")
+    attestation = load_json(attestation_path, "pit_runner_attestation")
+    manifest = load_json(manifest_path, "pit_runner_source_manifest")
+
+    if pit.get("status") != "PASS":
+        incomplete.append(pit_prefix + ":status_not_pass")
+    if attestation:
+        incomplete.extend(_required(
+            attestation,
+            ("case_id", "experiment_id", "run_id", "manifest_path", "package_root", "framework_root", "framework_root_class", "cutoff_at", "allowed_source_ids", "source_allowlist", "read_audit", "read_count", "forbidden_success_count", "writer", "execution_mode"),
+            pit_prefix + ".attestation",
+        ))
+        if attestation.get("schema_version") != "phase10-pit-runner-attestation.v1":
+            invalid.append(pit_prefix + ":attestation_schema_invalid")
+        if attestation.get("runner") != "phase10_pit_runner":
+            invalid.append(pit_prefix + ":runner_invalid")
+        if attestation.get("state") != "REVIEWABLE":
+            incomplete.append(pit_prefix + ":attestation_not_reviewable")
+        if attestation.get("assurance_level") != "VERIFIED_ARTIFACT_AND_DECLARED_PROCESS":
+            invalid.append(pit_prefix + ":assurance_level_invalid")
+        if not str(attestation.get("execution_mode") or "").startswith("PIT_WRITER"):
+            invalid.append(pit_prefix + ":execution_mode_must_be_pit_writer")
+        if attestation.get("company_code") != record.get("company_code"):
+            invalid.append(pit_prefix + ":company_code_mismatch")
+        if attestation.get("case_id") != record.get("case_id"):
+            invalid.append(pit_prefix + ":case_id_mismatch")
+        legacy_experiment_id = str(origin.get("legacy_attestation_experiment_id") or "")
+        if attestation.get("experiment_id") != record.get("experiment_id"):
+            if (
+                legacy_experiment_id
+                and attestation.get("experiment_id") == legacy_experiment_id
+                and (record.get("report_freeze") or {}).get("report_status") == "FROZEN_WITH_QUALITY_FAILURE"
+            ):
+                incomplete.append(pit_prefix + ":legacy_experiment_identity_requires_rerun")
+            else:
+                invalid.append(pit_prefix + ":experiment_id_mismatch")
+        case_cutoff = _timestamp(record.get("simulation_cutoff"))
+        if case_cutoff and _timestamp(attestation.get("cutoff_at")) != case_cutoff:
+            invalid.append(pit_prefix + ":cutoff_mismatch")
+        if attestation.get("forbidden_success_count") != 0:
+            invalid.append(pit_prefix + ":forbidden_read_succeeded")
+        if package_root:
+            try:
+                if Path(str(attestation.get("package_root") or "")).resolve() != package_root.resolve():
+                    invalid.append(pit_prefix + ":package_root_mismatch")
+            except OSError:
+                invalid.append(pit_prefix + ":package_root_invalid")
+        if manifest_path:
+            try:
+                if Path(str(attestation.get("manifest_path") or "")).resolve() != manifest_path.resolve():
+                    invalid.append(pit_prefix + ":manifest_path_mismatch")
+            except OSError:
+                invalid.append(pit_prefix + ":manifest_path_invalid")
+        writer = attestation.get("writer") if isinstance(attestation.get("writer"), dict) else {}
+        if writer.get("status") != "PASS":
+            incomplete.append(pit_prefix + ":writer_not_pass")
+        report_path = repo_path(report.get("artifact_path"), "report_artifact_path")
+        try:
+            if report_path and Path(str(writer.get("report_path") or "")).resolve() != report_path.resolve():
+                invalid.append(pit_prefix + ":writer_report_path_mismatch")
+        except OSError:
+            invalid.append(pit_prefix + ":writer_report_path_invalid")
+        if writer.get("case_id") != record.get("case_id"):
+            invalid.append(pit_prefix + ":writer_case_id_mismatch")
+        if writer.get("experiment_id") != record.get("experiment_id"):
+            if (
+                legacy_experiment_id
+                and writer.get("experiment_id") == legacy_experiment_id
+                and (record.get("report_freeze") or {}).get("report_status") == "FROZEN_WITH_QUALITY_FAILURE"
+            ):
+                incomplete.append(pit_prefix + ":writer_legacy_experiment_identity_requires_rerun")
+            else:
+                invalid.append(pit_prefix + ":writer_experiment_id_mismatch")
+        case_source_ids = {
+            str(source.get("source_id") or "")
+            for source in (record.get("sources") or [])
+            if isinstance(source, dict) and source.get("source_id")
+        }
+        if set(str(item) for item in (writer.get("source_ids") or [])) != case_source_ids:
+            invalid.append(pit_prefix + ":writer_source_ids_do_not_match_case")
+        audit = attestation.get("read_audit")
+        allowed_sources: set[str] = set()
+        if not isinstance(audit, list):
+            incomplete.append(pit_prefix + ":read_audit_missing")
+        else:
+            if len(audit) != attestation.get("read_count"):
+                invalid.append(pit_prefix + ":read_count_mismatch")
+            for index, event in enumerate(audit):
+                event_prefix = f"{pit_prefix}.read_audit[{index}]"
+                if not isinstance(event, dict):
+                    invalid.append(event_prefix + ":not_object")
+                    continue
+                if event.get("allowed") is True:
+                    if event.get("kind") not in {"SOURCE", "FRAMEWORK"}:
+                        invalid.append(event_prefix + ":forbidden_kind_allowed")
+                    elif event.get("kind") == "SOURCE":
+                        allowed_sources.add(str(event.get("source_id") or ""))
+            if not case_source_ids.issubset(allowed_sources):
+                incomplete.extend(
+                    pit_prefix + ":case_source_not_read:" + source_id
+                    for source_id in sorted(case_source_ids - allowed_sources)
+                )
+    if manifest:
+        try:
+            from scripts.phase10_acquisition import validate_source_manifest
+            from scripts.phase10_pit_runner import PITSourcePackage
+            manifest_result = validate_source_manifest(manifest)
+            package_result = PITSourcePackage(manifest, package_root) if package_root else None
+        except (ImportError, OSError, TypeError, ValueError) as exc:
+            invalid.append(pit_prefix + ":source_package_unreadable:" + type(exc).__name__)
+            manifest_result = {"state": "INVALID"}
+            package_result = None
+        if manifest_result.get("state") != "REVIEWABLE":
+            incomplete.append(pit_prefix + ":source_manifest_not_reviewable")
+        if package_result is None or package_result.state != "REVIEWABLE":
+            incomplete.append(pit_prefix + ":source_package_not_reviewable")
+        if manifest.get("company_code") != record.get("company_code"):
+            invalid.append(pit_prefix + ":source_manifest_company_code_mismatch")
+        if _timestamp(manifest.get("cutoff_at")) != _timestamp(record.get("simulation_cutoff")):
+            invalid.append(pit_prefix + ":source_manifest_cutoff_mismatch")
+        sources_by_id = {
+            str(item.get("source_id") or ""): item
+            for item in (manifest.get("sources") or []) if isinstance(item, dict)
+        }
+        for source in record.get("sources") or []:
+            if not isinstance(source, dict):
+                continue
+            source_id = str(source.get("source_id") or "")
+            registered = sources_by_id.get(source_id)
+            if registered is None:
+                invalid.append(pit_prefix + ":case_source_not_admitted:" + source_id)
+                continue
+            for field in ("source_version", "published_at", "data_as_of", "revision_policy"):
+                if source.get(field) != registered.get(field):
+                    invalid.append(pit_prefix + f":case_source_{field}_mismatch:" + source_id)
+    review_content, _review_digest, review_invalid, review_incomplete = _read_repo_artifact(
+        origin.get("review_artifact_path"), prefix=prefix + ".review_artifact",
+    )
+    invalid.extend(review_invalid)
+    incomplete.extend(review_incomplete)
+    if review_path and review_content:
+        if str(record.get("case_id") or "") not in review_content:
+            incomplete.append(prefix + ":review_artifact_case_id_missing")
+        if str(report.get("artifact_path") or "") not in review_content:
+            incomplete.append(prefix + ":review_artifact_report_path_missing")
+        freeze = record.get("report_freeze") if isinstance(record.get("report_freeze"), dict) else {}
+        expected_disposition = (
+            "PASS_AFTER_REPAIR_FOR_DRAFT_ONLY"
+            if freeze.get("report_status") == "FROZEN"
+            else "FROZEN_WITH_QUALITY_FAILURE"
+        )
+        if expected_disposition not in review_content:
+            incomplete.append(prefix + ":review_artifact_disposition_missing")
+    return invalid, incomplete
+
+
 def _validate_report_freeze(
     record: dict[str, Any], *, source_ids: set[str], frozen_claims: dict[str, dict[str, Any]],
     allow_test_fixtures: bool = True,
@@ -1070,7 +1321,7 @@ def _validate_report_freeze(
     incomplete.extend(artifact_incomplete)
     if not isinstance(report.get("artifact_sha256"), str) or report.get("artifact_sha256") != artifact_sha256:
         invalid.append(report_prefix + ":artifact_sha256_mismatch")
-    if mode == "TEST_FIXTURE" and variant_id and artifact_sha256 and variant_id != artifact_sha256[:16]:
+    if mode in {"TEST_FIXTURE", "PIT_ENGINEERING"} and variant_id and artifact_sha256 and variant_id != artifact_sha256[:16]:
         invalid.append(report_prefix + ":variant_id_does_not_match_artifact")
     if variant_id and freeze_id != "HBTFRZ:" + variant_id:
         invalid.append(prefix + ":freeze_id_does_not_match_report_variant")
@@ -1095,21 +1346,30 @@ def _validate_report_freeze(
         )
         invalid.extend(origin_invalid)
         incomplete.extend(origin_incomplete)
+    elif mode == "PIT_ENGINEERING":
+        if origin_kind != "PIT_ENGINEERING":
+            invalid.append(report_prefix + ":pit_engineering_case_requires_pit_engineering_origin")
+        origin_invalid, origin_incomplete = _validate_pit_engineering_report_origin(
+            record, report=report, origin=origin,
+        )
+        invalid.extend(origin_invalid)
+        incomplete.extend(origin_incomplete)
     section_markers = report.get("section_markers") if isinstance(report.get("section_markers"), list) else []
     normalized_markers = {str(item or "") for item in section_markers}
-    if not REQUIRED_FROZEN_REPORT_SECTIONS.issubset(normalized_markers) or len(normalized_markers) != len(section_markers):
+    required_sections = PIT_ENGINEERING_REPORT_SECTIONS if mode == "PIT_ENGINEERING" else REQUIRED_FROZEN_REPORT_SECTIONS
+    if not required_sections.issubset(normalized_markers) or len(normalized_markers) != len(section_markers):
         invalid.append(report_prefix + ":section_markers_incomplete")
     if content:
-        if isinstance(report_id, str) and report_id not in content:
+        if mode != "PIT_ENGINEERING" and isinstance(report_id, str) and report_id not in content:
             invalid.append(report_prefix + ":artifact_report_id_missing")
-        for marker in REQUIRED_FROZEN_REPORT_SECTIONS:
+        for marker in required_sections:
             if marker not in content:
                 incomplete.append(report_prefix + ":artifact_section_missing:" + marker)
         for claim_id, claim in frozen_claims.items():
             if claim_id not in content:
                 invalid.append(report_prefix + ":artifact_claim_id_missing:" + claim_id)
             statement = str(claim.get("statement") or "").strip()
-            if statement and statement not in content:
+            if mode != "PIT_ENGINEERING" and statement and statement not in content:
                 incomplete.append(report_prefix + ":artifact_claim_statement_missing:" + claim_id)
 
     review = freeze.get("independent_review") if isinstance(freeze.get("independent_review"), dict) else {}
@@ -1136,8 +1396,8 @@ def _validate_report_freeze(
     incomplete.extend(reviewer_incomplete)
     if writer_context and reviewer_context and writer_context == reviewer_context:
         invalid.append(review_prefix + ":reviewer_context_must_differ_from_writer")
-    if writer_identity and reviewer_identity and writer_identity == reviewer_identity:
-        invalid.append(review_prefix + ":reviewer_model_identity_overlaps_writer")
+    # A separate review context can use the same deployed model.  The reviewer
+    # identity and isolated context are the relevant independence boundary.
     independence = review.get("independence") if isinstance(review.get("independence"), dict) else {}
     for field in REVIEWER_INDEPENDENCE_FIELDS:
         if independence.get(field) is not True:
@@ -1294,8 +1554,10 @@ def validate_case(
 ) -> dict[str, Any]:
     invalid: list[str] = []
     incomplete: list[str] = []
-    if record.get("schema_version") != CASE_SCHEMA_VERSION:
+    if record.get("schema_version") not in {CASE_SCHEMA_VERSION, CASE_SCHEMA_VERSION_V2}:
         invalid.append("schema_version_invalid")
+    if not str(record.get("experiment_id") or "").startswith("HBT:"):
+        invalid.append("case_experiment_id_invalid")
     invalid.extend(_nested_forbidden(record.get("inputs", []), path="inputs"))
     invalid.extend(_nested_forbidden(record.get("calibration_ledger", {}), path="calibration_ledger"))
     simulation_cutoff = _timestamp(record.get("simulation_cutoff"))
@@ -1370,7 +1632,7 @@ def validate_case(
 
 
 def _validate_actual_sources(
-    record: dict[str, Any], *, cutoff: datetime | None, settlement_date: datetime | None,
+    record: dict[str, Any], *, cutoff: datetime | None, settlement_date: datetime | None, require_content_access: bool,
 ) -> tuple[dict[str, dict[str, Any]], list[str], list[str]]:
     """Check that settlement facts have their own later official evidence."""
     sources_by_id: dict[str, dict[str, Any]] = {}
@@ -1393,6 +1655,11 @@ def _validate_actual_sources(
         if source_id:
             sources_by_id[source_id] = source
         incomplete.extend(_required(source, ("source_type", "official", "published_at", "source_version"), prefix))
+        if require_content_access:
+            if source.get("content_access") in (None, ""):
+                incomplete.append(prefix + ":missing:content_access")
+            elif source.get("content_access") not in SOURCE_CONTENT_ACCESS:
+                invalid.append(prefix + ":content_access_invalid")
         if source.get("official") is not True:
             invalid.append(prefix + ":official_source_required")
         if source.get("source_type") not in OFFICIAL_SETTLEMENT_SOURCE_TYPES:
@@ -1419,7 +1686,7 @@ def _validate_actual_sources(
 
 def _validate_operating_observation(
     observation: dict[str, Any], *, prefix: str, frozen_claims: dict[str, dict[str, Any]],
-    actual_sources: dict[str, dict[str, Any]],
+    actual_sources: dict[str, dict[str, Any]], case_v2: bool, settlement_date: datetime | None,
 ) -> tuple[list[str], list[str]]:
     """Bind an observed operating result to the frozen metric, basis, period and source contract."""
     invalid: list[str] = []
@@ -1432,9 +1699,44 @@ def _validate_operating_observation(
     outcome = claim.get("observable_outcome") if isinstance(claim.get("observable_outcome"), dict) else {}
     if observation.get("comparability_status") not in OPERATING_COMPARABILITY_STATUSES:
         invalid.append(prefix + ":comparability_status_invalid")
-    for field in ("metric", "unit", "measurement_basis", "period_start", "period_end"):
+    for field in ("metric", "unit", "measurement_basis"):
         if observation.get(field) != outcome.get(field):
             invalid.append(prefix + ":" + field + "_does_not_match_frozen_contract")
+    period = _measurement_period(outcome, v2=case_v2)
+    if case_v2:
+        if any(field in observation for field in ("period_start", "period_end")):
+            invalid.append(prefix + ":legacy_period_fields_not_allowed")
+        if observation.get("measurement_period") != period:
+            invalid.append(prefix + ":measurement_period_does_not_match_frozen_contract")
+        if period.get("kind") == "EVENT_WINDOW":
+            event_period = observation.get("event_period") if isinstance(observation.get("event_period"), dict) else {}
+            event_prefix = prefix + ".event_period"
+            incomplete.extend(_required(event_period, ("start", "end"), event_prefix))
+            event_start = _date(event_period.get("start"))
+            event_end = _date(event_period.get("end"))
+            frozen_start = _date(period.get("start"))
+            frozen_end = _date(period.get("end"))
+            if event_period.get("start") not in (None, "") and event_start is None:
+                invalid.append(event_prefix + ":start_invalid")
+            if event_period.get("end") not in (None, "") and event_end is None:
+                invalid.append(event_prefix + ":end_invalid")
+            if event_start and event_end and event_start > event_end:
+                invalid.append(event_prefix + ":start_after_end")
+            if frozen_start and event_start and event_start < frozen_start:
+                invalid.append(event_prefix + ":starts_before_frozen_measurement_period")
+            if frozen_end and event_end and event_end > frozen_end:
+                invalid.append(event_prefix + ":ends_after_frozen_measurement_period")
+        elif observation.get("event_period") is not None:
+            invalid.append(prefix + ":event_period_only_allowed_for_event_window")
+        window = outcome.get("observation_window") if isinstance(outcome.get("observation_window"), dict) else {}
+        opens_after = _timestamp(window.get("opens_after"))
+        closes_at = _timestamp(window.get("closes_at"))
+        if settlement_date and closes_at and closes_at > settlement_date:
+            invalid.append(prefix + ":observation_window_closes_after_settlement")
+    else:
+        for field in ("period_start", "period_end"):
+            if observation.get(field) != outcome.get(field):
+                invalid.append(prefix + ":" + field + "_does_not_match_frozen_contract")
     allowed_source_types = outcome.get("allowed_source_types")
     if not isinstance(allowed_source_types, list) or not allowed_source_types:
         return invalid, incomplete
@@ -1445,9 +1747,17 @@ def _validate_operating_observation(
         source_type = source.get("source_type")
         if source_type not in allowed_source_types:
             invalid.append(prefix + ":source_type_not_allowed_for_frozen_contract:" + str(source_id))
-        if source_type in {"ANNUAL_REPORT", "INTERIM_REPORT"}:
+        if case_v2:
+            if source.get("content_access") != "BODY_READ":
+                invalid.append(prefix + ":source_body_not_read:" + str(source_id))
+            published_at = _timestamp(source.get("published_at"), date_only_at_end=True)
+            if opens_after and published_at and published_at <= opens_after:
+                invalid.append(prefix + ":source_published_before_observation_window:" + str(source_id))
+            if closes_at and published_at and published_at > closes_at:
+                invalid.append(prefix + ":source_published_after_observation_window:" + str(source_id))
+        if period.get("kind") == "REPORTING_PERIOD" and source_type in {"ANNUAL_REPORT", "INTERIM_REPORT"}:
             source_period_end = _date(source.get("data_as_of"))
-            observation_period_end = _date(observation.get("period_end"))
+            observation_period_end = _date(period.get("end"))
             if source_period_end is None:
                 incomplete.append(prefix + ":report_source_data_as_of_missing:" + str(source_id))
             elif observation_period_end and source_period_end != observation_period_end:
@@ -1525,6 +1835,7 @@ def _matching_comparable_observations(
     frozen_claim: dict[str, Any], observations: dict[str, dict[str, Any]],
 ) -> dict[str, dict[str, Any]]:
     outcome = frozen_claim.get("observable_outcome") if isinstance(frozen_claim.get("observable_outcome"), dict) else {}
+    case_v2 = isinstance(outcome.get("measurement_period"), dict)
     return {
         observation_id: observation
         for observation_id, observation in observations.items()
@@ -1532,8 +1843,13 @@ def _matching_comparable_observations(
         and observation.get("metric") == outcome.get("metric")
         and observation.get("unit") == outcome.get("unit")
         and observation.get("measurement_basis") == outcome.get("measurement_basis")
-        and observation.get("period_start") == outcome.get("period_start")
-        and observation.get("period_end") == outcome.get("period_end")
+        and (
+            observation.get("measurement_period") == outcome.get("measurement_period")
+            if case_v2 else (
+                observation.get("period_start") == outcome.get("period_start")
+                and observation.get("period_end") == outcome.get("period_end")
+            )
+        )
         and observation.get("comparability_status") in COMPARABLE_OPERATING_STATUSES
     }
 
@@ -1662,7 +1978,46 @@ def _validate_return_outcome(
     if action not in INVESTMENT_ACTIONS:
         invalid.append("investment_return_outcome:action_invalid")
 
+    freeze_mode = ((case or {}).get("report_freeze") or {}).get("mode") if isinstance(case, dict) else None
     decision = case.get("investment_decision") if isinstance(case, dict) else None
+    if freeze_mode == "PIT_ENGINEERING" and not isinstance(decision, dict):
+        # A constrained engineering freeze can intentionally preserve an
+        # unknown action and market-data gap.  Its settlement stays diagnostic
+        # at the caller, but the return ledger must still say explicitly that
+        # there is no frozen action, position, cash flow, or benchmark result.
+        if status != "NOT_CALCULABLE":
+            invalid.append("investment_return_outcome:engineering_no_action_requires_not_calculable")
+        if action != "UNKNOWN" or outcome.get("frozen_action") != "UNKNOWN":
+            invalid.append("investment_return_outcome:engineering_no_action_requires_unknown_action")
+        if outcome.get("frozen_price_identity") != "UNKNOWN":
+            invalid.append("investment_return_outcome:engineering_no_action_requires_unknown_price_identity")
+        if outcome.get("total_return") is not None or outcome.get("benchmark_return") is not None:
+            invalid.append("investment_return_outcome:engineering_no_action_cannot_claim_return")
+        policy = outcome.get("taxes_fees_fx") if isinstance(outcome.get("taxes_fees_fx"), dict) else {}
+        frozen_policy = case.get("taxes_fees_fx") if isinstance(case.get("taxes_fees_fx"), dict) else {}
+        for field in ("tax_rate", "transaction_fee_rate", "dividend_tax_rate", "base_currency", "fx_rule"):
+            if field not in policy:
+                incomplete.append(f"investment_return_outcome.taxes_fees_fx:missing:{field}")
+            elif policy.get(field) != frozen_policy.get(field):
+                invalid.append(f"investment_return_outcome.taxes_fees_fx:{field}_does_not_match_frozen_case")
+        execution = outcome.get("execution") if isinstance(outcome.get("execution"), dict) else {}
+        if execution.get("fill_status") != "NOT_APPLICABLE":
+            invalid.append("investment_return_outcome:engineering_no_action_requires_not_applicable_execution")
+        entry = execution.get("entry") if isinstance(execution.get("entry"), dict) else {}
+        exit_leg = execution.get("exit") if isinstance(execution.get("exit"), dict) else {}
+        if exit_leg.get("status") != "NOT_APPLICABLE":
+            invalid.append("investment_return_outcome:engineering_no_action_requires_not_applicable_exit")
+        for leg, prefix in ((entry, "entry"), (exit_leg, "exit")):
+            if any(leg.get(field) not in (None, "", []) for field in ("date", "price", "quantity", "currency", "source_ids")):
+                invalid.append("investment_return_outcome:engineering_no_action_" + prefix + "_must_be_empty")
+        if outcome.get("cash_flow_ledger") not in ([], None):
+            invalid.append("investment_return_outcome:engineering_no_action_cash_flows_must_be_empty")
+        if outcome.get("corporate_actions") not in ([], None):
+            invalid.append("investment_return_outcome:engineering_no_action_corporate_actions_must_be_empty")
+        benchmark = outcome.get("benchmark_identity") if isinstance(outcome.get("benchmark_identity"), dict) else {}
+        if benchmark.get("source_ids") not in ([], None):
+            invalid.append("investment_return_outcome:engineering_no_action_benchmark_sources_must_be_empty")
+        return invalid, incomplete
     if not isinstance(decision, dict):
         invalid.append("frozen_investment_decision_required_for_return_settlement")
     else:
@@ -1704,6 +2059,8 @@ def _validate_return_outcome(
             "investment_return_outcome.benchmark_identity",
         ))
         benchmark_source_ids = set(str(item) for item in benchmark.get("source_ids") or [])
+        if not benchmark_source_ids:
+            incomplete.append("investment_return_outcome.benchmark_identity:source_ids_missing")
         ref_invalid, ref_incomplete = _validate_source_references(
             benchmark.get("source_ids"), actual_source_ids, "investment_return_outcome.benchmark_identity",
         )
@@ -1922,14 +2279,28 @@ def validate_settlement(
 ) -> dict[str, Any]:
     invalid: list[str] = []
     incomplete: list[str] = []
-    if record.get("schema_version") != SETTLEMENT_SCHEMA_VERSION:
+    settlement_v2 = record.get("schema_version") == SETTLEMENT_SCHEMA_VERSION_V2
+    if record.get("schema_version") not in {SETTLEMENT_SCHEMA_VERSION, SETTLEMENT_SCHEMA_VERSION_V2}:
         invalid.append("schema_version_invalid")
+    if not str(record.get("experiment_id") or "").startswith("HBT:"):
+        invalid.append("settlement_experiment_id_invalid")
     if case is None:
         invalid.append("frozen_case_required_for_settlement_calibration")
     else:
+        case_v2 = _is_case_v2(case)
+        if settlement_v2 != case_v2:
+            invalid.append("settlement_schema_version_does_not_match_case")
         case_result = validate_case(case, experiment=experiment, allow_test_fixtures=allow_test_fixtures)
         if case_result["state"] != "REVIEWABLE":
-            invalid.append("frozen_case_not_reviewable")
+            freeze = case.get("report_freeze") if isinstance(case.get("report_freeze"), dict) else {}
+            if (
+                freeze.get("mode") == "PIT_ENGINEERING"
+                and freeze.get("report_status") == "FROZEN_WITH_QUALITY_FAILURE"
+                and not case_result["invalid_findings"]
+            ):
+                incomplete.append("engineering_case_quality_failure")
+            else:
+                invalid.append("frozen_case_not_reviewable")
         if record.get("case_id") != case.get("case_id"):
             invalid.append("settlement_case_id_does_not_match_frozen_case")
         if record.get("experiment_id") != case.get("experiment_id"):
@@ -1937,6 +2308,13 @@ def validate_settlement(
         case_freeze = (case.get("report_freeze") or {}).get("freeze_id")
         if record.get("freeze_id") != case_freeze:
             invalid.append("settlement_freeze_id_does_not_match_frozen_case")
+        if (case.get("report_freeze") or {}).get("mode") == "PIT_ENGINEERING":
+            # Engineering replay may retain an explicit diagnostic settlement,
+            # but it must never be promoted into the production/calibration
+            # result set or used as an investment-return conclusion.
+            incomplete.append("engineering_freeze_settlement_diagnostic_only")
+            if record.get("status") == "REVIEWABLE":
+                invalid.append("engineering_freeze_cannot_produce_reviewable_settlement")
     cutoff = _timestamp(case.get("simulation_cutoff")) if case else None
     settlement_date = _timestamp(record.get("settlement_as_of"))
     if settlement_date is None:
@@ -1944,7 +2322,7 @@ def validate_settlement(
     elif cutoff and settlement_date <= cutoff:
         invalid.append("settlement_must_follow_report_cutoff")
     actual_sources, source_invalid, source_incomplete = _validate_actual_sources(
-        record, cutoff=cutoff, settlement_date=settlement_date,
+        record, cutoff=cutoff, settlement_date=settlement_date, require_content_access=settlement_v2,
     )
     invalid.extend(source_invalid)
     incomplete.extend(source_incomplete)
@@ -1955,13 +2333,24 @@ def validate_settlement(
     }
     actual_source_ids = set(actual_sources)
     actual = record.get("actual_outcomes") if isinstance(record.get("actual_outcomes"), dict) else {}
+    if _is_case_v2(case) and settlement_date:
+        for claim_id, claim in _frozen_claims(case).items():
+            outcome = claim.get("observable_outcome") if isinstance(claim.get("observable_outcome"), dict) else {}
+            window = outcome.get("observation_window") if isinstance(outcome.get("observation_window"), dict) else {}
+            closes_at = _timestamp(window.get("closes_at"))
+            if closes_at and closes_at > settlement_date:
+                invalid.append("calibration_ledger.claims:" + claim_id + ":observation_window_closes_after_settlement")
     incomplete.extend(_required(actual, ("currency", "cash_flows", "operating_observations"), "actual_outcomes"))
+    observation_fields = (
+        "observation_id", "claim_id", "metric", "value", "unit", "measurement_basis", "measurement_period",
+        "source_ids", "comparability_status",
+    ) if settlement_v2 else (
+        "observation_id", "claim_id", "metric", "value", "unit", "measurement_basis", "period_start",
+        "period_end", "source_ids", "comparability_status",
+    )
     for group, fields in {
         "cash_flows": ("date", "amount", "source_ids"),
-        "operating_observations": (
-            "observation_id", "claim_id", "metric", "value", "unit", "measurement_basis", "period_start",
-            "period_end", "source_ids", "comparability_status",
-        ),
+        "operating_observations": observation_fields,
     }.items():
         observations = actual.get(group) if isinstance(actual.get(group), list) else []
         for index, observation in enumerate(observations):
@@ -2018,6 +2407,8 @@ def validate_settlement(
             prefix=prefix,
             frozen_claims=frozen_claims,
             actual_sources=actual_sources,
+            case_v2=_is_case_v2(case),
+            settlement_date=settlement_date,
         )
         invalid.extend(observation_invalid)
         incomplete.extend(observation_incomplete)

@@ -155,9 +155,10 @@ Phase 10 只服务两条需要分开回答的主线：
 
 - 当前九份黄金候选仍是 `INELIGIBLE_NO_HISTORICAL_VINTAGE`；不能用今天的报告倒灌历史回测。
 - G3 仍为 `NOT_READY`；首案 600340 是 `PURPOSEFUL_STRESS_CASE`，不代表总体成功率。
-- 当前最近的有效工作是 P10-A 受控采集与 P10-B writer boundary：先完成截止日前公告/年报/行情的来源包，再在看任何未来资料前生成首份冻结草案并接入完整质量门。
-- `historical_backtest_settlement.v1` 已经绑定冻结动作、价格身份和执行规则，并校验成交、公司行动、税费、现金流和基准账本；但尚没有真实来源包、冻结报告或结算对象，故没有任何收益、买点或选股结果。
+- 600340 已完成 P10-A 的 cutoff 前 source package，并在未打开后续资料前生成 PIT engineering draft。该 draft 的正式状态是 `FROZEN_WITH_QUALITY_FAILURE`，因为它尚未接入 production origin、Phase 08 acceptance/V3、完整报告章节、可冻结的经营预测、估值、价格或行动；它只能证明工程边界，不是通过的历史报告。
+- 该诊断已建立一份 2020-04-28 至 2021-04-27 的官方 SSE 公告元数据库存和按 claim 的待读计划；元数据不等于后续经营事实，尚未读取公告正文、行情、公司行动或沪深 300。三账当前为 `REPORT_COVERAGE=PASS`（仅回放冻结时的 UNKNOWN 审阅）、`MODEL_FORECAST_ERROR=NOT_CALCULABLE`、`INVESTMENT_RETURN_OUTCOME=NOT_CALCULABLE`，没有收益、买点或选股结果。
+- 当前 case 的 lifecycle identity 已是规范 `HBT:`，但它显式保留 legacy `HBTEXP:` writer attestation，因此仍要求用规范 identity 重跑 production writer。后继 `historical-backtest-*.v2` 已把经营观察的真实 `measurement_period` 与公告 `observation_window` 拆开，并要求 actual observation 只能使用 `BODY_READ` 官方来源；不得静默修改这个质量失败 case。v2 契约不等于已创建后继 case：完成 production writer/report/reviewer 修复后，才可按元数据待读计划逐份打开官方正文；无冻结动作和价格身份时，仍不得采集行情或计算收益。
 - 当前试点的模型记忆状态固定为 `UNCONTROLLED / EXPLORATORY / ENGINEERING_DIAGNOSTIC_ONLY`。未来只有部署级 attestation 支持的 `CONTROLLED / STRICT` case 才可能是模型记忆受控的校准候选；当前 validator 未开放该路径，这仍不替代跨发行人、跨 cutoff 和 holdout 门槛。
-- 只有完成 P10-B 后，才允许进入 P10-C；只有多个 case 完成 P10-C 后，才讨论买点、选股和模型更新。
+- 只有生产 case 完成 P10-B 后，才允许进入可校准的 P10-C；只有多个 production case 完成 P10-C 后，才讨论买点、选股和模型更新。
 
 这份路线图的验收标准是“先有可读、可审、可结算的完整报告，再有回测结论”。任何只增加 hash、指纹、分数或审计文件而没有改善报告和可执行结果的改动，不算 Phase 10 进展。

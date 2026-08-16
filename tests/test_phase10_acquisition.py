@@ -1,7 +1,7 @@
 from __future__ import annotations
 
-from copy import deepcopy
 import gzip
+from copy import deepcopy
 from unittest.mock import patch
 
 import pytest
@@ -12,6 +12,7 @@ from scripts.phase10_acquisition import (
     _download_sse_pdf,
     acquire_source_package,
     admit_source_manifest,
+    build_post_cutoff_reading_queue,
     build_600340_source_manifest,
     fetch_600340_sse_manifest,
     fetch_sse_announcement_records,
@@ -115,6 +116,58 @@ def test_sse_enumeration_sorts_by_date_and_title_without_dropping_future_rows() 
     ]
     assert result["admitted_source_ids"] == ["SSE:600340:ANN:1", "SSE:600340:ANN:2"]
     assert result["inventory"][2]["admission_status"] == "REJECTED_FUTURE_PUBLISHED_AT"
+
+
+def test_post_cutoff_queue_uses_titles_only_without_acquiring_document_bodies() -> None:
+    inventory = {
+        "provider": "SSE",
+        "endpoint": "https://query.sse.com.cn/security/stock/queryCompanyBulletin.do",
+        "company_code": "600340",
+        "begin_date": "2020-04-28",
+        "end_date": "2021-04-27",
+        "record_count": 3,
+        "records": [
+            _source("SSE:600340:ANN:1", title="关于公司债券兑付安排的公告", published_at="2020-05-10"),
+            _source("SSE:600340:ANN:2", title="2020 年半年度报告", published_at="2020-08-30"),
+            _source("SSE:600340:ANN:3", title="关于办公地址变更的公告", published_at="2020-06-01"),
+        ],
+    }
+
+    queue = build_post_cutoff_reading_queue(inventory)
+
+    assert queue["metadata_only"] is True
+    assert queue["pdf_downloaded"] is False
+    assert queue["body_read"] is False
+    assert queue["title_match_is_evidence"] is False
+    assert queue["candidate_record_count"] == 2
+    debt_notice = next(item for item in queue["records"] if item["source_id"] == "SSE:600340:ANN:1")
+    assert set(debt_notice["candidate_claim_ids"]) == {
+        "HBTCLM:600340:P10B:ORDINARY_CASH",
+        "HBTCLM:600340:P10B:DEBT_REFINANCING",
+    }
+    interim = next(item for item in queue["records"] if item["source_id"] == "SSE:600340:ANN:2")
+    assert set(interim["candidate_claim_ids"]) == {
+        "HBTCLM:600340:P10B:ORDINARY_CASH",
+        "HBTCLM:600340:P10B:GOV_RECEIVABLES",
+        "HBTCLM:600340:P10B:DEBT_REFINANCING",
+        "HBTCLM:600340:P10B:GUARANTEE_RECOVERY",
+    }
+
+
+def test_post_cutoff_queue_preserves_an_empty_official_inventory() -> None:
+    queue = build_post_cutoff_reading_queue({
+        "provider": "SSE",
+        "endpoint": "https://query.sse.com.cn/security/stock/queryCompanyBulletin.do",
+        "company_code": "600340",
+        "begin_date": "2020-04-28",
+        "end_date": "2020-04-28",
+        "record_count": 0,
+        "records": [],
+    })
+
+    assert queue["record_count"] == 0
+    assert queue["candidate_record_count"] == 0
+    assert queue["records"] == []
 
 
 def test_sse_malformed_rows_keep_explicit_rejection_reason() -> None:

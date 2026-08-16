@@ -1,11 +1,11 @@
 # Phase 10 经营预测与年报走步结算设计
 
-> 状态：`IMPLEMENTED_IN_SCHEMA_AND_VALIDATOR / HISTORICAL_CASE_ACQUISITION_PENDING`
+> 状态：`V1_ENGINEERING_DIAGNOSTIC_FROZEN / V2_SUCCESSOR_CONTRACT_IMPLEMENTED`
 > 日期：2026-08-16（Asia/Shanghai）
 > 适用：每个已冻结的 `case-vintage`；首案 600340 也适用，但其
 > `PURPOSEFUL_STRESS_CASE` 标签不变。
 
-本文补充[Phase 10 回测路线图与模型行为契约](PHASE10_BACKTEST_ROADMAP.md)和[收益与选股评估契约](PHASE10_RETURN_SELECTION_EVALUATION.md)。它规定黄金报告对经营的判断如何在后续年报、半年报和公告中被逐份结算。当前 `historical-backtest-*.v1` 已执行最小契约；尚未完成的是首个历史 case 的完整来源采集和真实冻结报告，不是用假样本宣称校准完成。
+本文补充[Phase 10 回测路线图与模型行为契约](PHASE10_BACKTEST_ROADMAP.md)和[收益与选股评估契约](PHASE10_RETURN_SELECTION_EVALUATION.md)。它规定黄金报告对经营的判断如何在后续年报、半年报和公告中被逐份结算。v1 保留首个工程诊断的原始冻结语义；v2 将财务计量期间与事后阅读窗口显式分离，供后继 production case 使用。v2 契约存在不等于已经创建新的 600340 case、读取其后续正文或完成校准。
 
 ## 1. 结算的对象和边界
 
@@ -111,6 +111,33 @@
 - 由 `INITIAL_DISCLOSURE` 强制选用同一 claim、指标、口径和经济期间的首次可见可比观察；选择后续重述会被 validator 拒绝。`LATEST_OFFICIAL_AS_OF_EVALUATION` 则在已枚举时间线中选择结算日以前的最后可见观察，已枚举的首次披露不会被覆盖。
 
 所有 `published_at`、冻结 cutoff 和结算时点按完整时间戳比较。只有日期的资料在 cutoff 当日、或在同一 claim 的首次/最新披露选择中无法证明版本先后时，会使该 case 保持 `INCOMPLETE`，而不是被当作已知的盘中时刻。
+
+### 3.4 v2 successor contract
+
+v1 的 `period_start` / `period_end` 在首个工程冻结中被错误用于
+2020-04-28 至 2021-04-27 的公告阅读窗口，导致真实 FY2020 年报的
+`data_as_of=2020-12-31` 无法成为可比观察。该 v1 工件保持冻结，不作
+事后迁移。
+
+后继 production case 使用 `historical-backtest-case.v2` 与
+`historical-backtest-settlement.v2`：
+
+- 每个 frozen `observable_outcome.measurement_period` 记录 `kind`
+  (`REPORTING_PERIOD` 或 `EVENT_WINDOW`)、`start` 和 `end`；
+- `observation_window.opens_after` 与 `closes_at` 记录后续官方披露可被
+  阅读的完整时间范围；
+- 结算 observation 复述 `measurement_period`，而不复述阅读窗口；
+- `EVENT_WINDOW` observation 还须登记实际 `event_period`，并完全落在
+  冻结 measurement period 内；
+- v2 的每条 `actual_source` 声明 `content_access`。只有
+  `BODY_READ` 来源可支持 actual observation，元数据库存不能作为经营事实；
+- 对 `REPORTING_PERIOD`，年报/中报 `data_as_of` 必须等于 measurement
+  period 的 `end`；对 `EVENT_WINDOW`，证据来源仍须在阅读窗口内，且其
+  event period 必须被正文支持，但不强制年报/中报 `data_as_of` 等于事件日。
+
+v2 settlement 还会拒绝阅读窗口结束晚于 `settlement_as_of` 的 claim，并仍按
+`INITIAL_DISCLOSURE` 或 `LATEST_OFFICIAL_AS_OF_EVALUATION` 仅在可比观察中
+选择版本。它不能让旧 v1 质量失败工件变为 production case。
 
 ## 4. 口径漂移、缺失和不可比
 

@@ -1,11 +1,11 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://turtle.local/schemas/historical_backtest_case.schema.json",
-  "title": "Turtle Historical Backtest Frozen Case",
+  "$id": "https://turtle.local/schemas/historical_backtest_case.v2.schema.json",
+  "title": "Turtle Historical Backtest Frozen Case v2",
   "type": "object",
   "required": ["schema_version", "case_id", "experiment_id", "company_code", "simulation_cutoff", "report_freeze", "credibility", "route", "forecast", "sources", "inputs", "calibration_ledger", "taxes_fees_fx", "price_identity", "status"],
   "properties": {
-    "schema_version": {"const": "historical-backtest-case.v1"},
+    "schema_version": {"const": "historical-backtest-case.v2"},
     "case_id": {"type": "string", "pattern": "^HBTCASE:"},
     "experiment_id": {"type": "string", "pattern": "^HBT:"},
     "company_code": {"type": "string", "minLength": 1},
@@ -251,14 +251,29 @@
               "flip_condition": {"type": "string", "minLength": 1},
               "observable_outcome": {
                 "type": "object",
-                "required": ["metric", "unit", "measurement_basis", "measurement_rule", "period_start", "period_end", "allowed_source_types", "settlement_version_policy"],
+                "required": ["metric", "unit", "measurement_basis", "measurement_rule", "measurement_period", "observation_window", "allowed_source_types", "settlement_version_policy"],
                 "properties": {
                   "metric": {"type": "string", "minLength": 1},
                   "unit": {"type": "string", "minLength": 1},
                   "measurement_basis": {"type": "string", "minLength": 1},
                   "measurement_rule": {"type": "string", "minLength": 1},
-                  "period_start": {"type": "string", "minLength": 10},
-                  "period_end": {"type": "string", "minLength": 10},
+                  "measurement_period": {
+                    "type": "object",
+                    "required": ["kind", "start", "end"],
+                    "properties": {
+                      "kind": {"enum": ["REPORTING_PERIOD", "EVENT_WINDOW"]},
+                      "start": {"type": "string", "minLength": 10},
+                      "end": {"type": "string", "minLength": 10}
+                    }
+                  },
+                  "observation_window": {
+                    "type": "object",
+                    "required": ["opens_after", "closes_at"],
+                    "properties": {
+                      "opens_after": {"type": "string", "minLength": 20},
+                      "closes_at": {"type": "string", "minLength": 20}
+                    }
+                  },
                   "allowed_source_types": {
                     "type": "array",
                     "minItems": 1,

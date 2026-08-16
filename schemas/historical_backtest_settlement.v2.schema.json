@@ -1,11 +1,11 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://turtle.local/schemas/historical_backtest_settlement.schema.json",
-  "title": "Turtle Historical Backtest Settlement",
+  "$id": "https://turtle.local/schemas/historical_backtest_settlement.v2.schema.json",
+  "title": "Turtle Historical Backtest Settlement v2",
   "type": "object",
   "required": ["schema_version", "settlement_id", "experiment_id", "case_id", "freeze_id", "settlement_as_of", "actual_sources", "operating_source_timeline", "actual_outcomes", "report_coverage", "model_forecast_error", "investment_return_outcome", "status"],
   "properties": {
-    "schema_version": {"const": "historical-backtest-settlement.v1"},
+    "schema_version": {"const": "historical-backtest-settlement.v2"},
     "settlement_id": {"type": "string", "pattern": "^HBTSET:"},
     "experiment_id": {"type": "string", "pattern": "^HBT:"},
     "case_id": {"type": "string", "pattern": "^HBTCASE:"},
@@ -16,14 +16,15 @@
       "minItems": 1,
       "items": {
         "type": "object",
-        "required": ["source_id", "source_type", "official", "published_at", "source_version"],
+        "required": ["source_id", "source_type", "official", "published_at", "source_version", "content_access"],
         "properties": {
           "source_id": {"type": "string", "minLength": 1},
           "source_type": {"enum": ["ANNUAL_REPORT", "INTERIM_REPORT", "EXCHANGE_ANNOUNCEMENT", "OFFICIAL_STATISTICS", "OFFICIAL_MARKET_DATA", "OTHER_OFFICIAL"]},
           "official": {"const": true},
           "published_at": {"type": "string"},
           "source_version": {"type": "string", "minLength": 1},
-          "data_as_of": {"type": ["string", "null"]}
+          "data_as_of": {"type": ["string", "null"]},
+          "content_access": {"enum": ["BODY_READ", "METADATA_ONLY"]}
         }
       }
     },
@@ -48,7 +49,7 @@
           "type": "array",
           "items": {
             "type": "object",
-            "required": ["observation_id", "claim_id", "metric", "value", "unit", "measurement_basis", "period_start", "period_end", "source_ids", "comparability_status"],
+            "required": ["observation_id", "claim_id", "metric", "value", "unit", "measurement_basis", "measurement_period", "source_ids", "comparability_status"],
             "properties": {
               "observation_id": {"type": "string", "pattern": "^HBTOBS:"},
               "claim_id": {"type": "string", "pattern": "^HBTCLM:"},
@@ -56,14 +57,36 @@
               "value": {},
               "unit": {"type": "string", "minLength": 1},
               "measurement_basis": {"type": "string", "minLength": 1},
-              "period_start": {"type": "string", "minLength": 10},
-              "period_end": {"type": "string", "minLength": 10},
+              "measurement_period": {
+                "type": "object",
+                "required": ["kind", "start", "end"],
+                "properties": {
+                  "kind": {"enum": ["REPORTING_PERIOD", "EVENT_WINDOW"]},
+                  "start": {"type": "string", "minLength": 10},
+                  "end": {"type": "string", "minLength": 10}
+                }
+              },
+              "event_period": {
+                "type": "object",
+                "required": ["start", "end"],
+                "properties": {
+                  "start": {"type": "string", "minLength": 10},
+                  "end": {"type": "string", "minLength": 10}
+                }
+              },
               "source_ids": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}},
               "comparability_status": {"enum": ["COMPARABLE", "CONVERTIBLE_WITH_PREREGISTERED_RULE", "PERIOD_MISMATCH", "SCOPE_OR_ACCOUNTING_DRIFT", "NOT_COMPARABLE", "NOT_DISCLOSED"]},
               "raw_value": {"type": ["number", "null"]},
               "raw_unit": {"type": ["string", "null"]},
               "conversion_rule_id": {"type": ["string", "null"]}
-            }
+            },
+            "allOf": [{
+              "if": {
+                "properties": {"measurement_period": {"properties": {"kind": {"const": "EVENT_WINDOW"}}, "required": ["kind"]}},
+                "required": ["measurement_period"]
+              },
+              "then": {"required": ["event_period"]}
+            }]
           }
         }
       }

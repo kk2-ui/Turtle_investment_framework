@@ -41,6 +41,21 @@ SSE_BULLETIN_QUERY_URL = "https://query.sse.com.cn/security/stock/queryCompanyBu
 SSE_STATIC_BASE_URL = "https://static.sse.com.cn"
 SSE_SECURITY_TYPES = "0101,120100,020100,020200,120200"
 
+POST_CUTOFF_CLAIM_TITLE_TERMS: dict[str, tuple[str, ...]] = {
+    "HBTCLM:600340:P10B:ORDINARY_CASH": (
+        "年度报告", "半年度报告", "季度报告", "现金流量", "募集资金", "资产负债", "融资", "债券", "永续债",
+    ),
+    "HBTCLM:600340:P10B:GOV_RECEIVABLES": (
+        "年度报告", "半年度报告", "应收账款", "应收", "园区", "结算", "回款", "减值", "坏账",
+    ),
+    "HBTCLM:600340:P10B:DEBT_REFINANCING": (
+        "年度报告", "半年度报告", "债券", "融资券", "中票", "公司债", "兑付", "回售", "展期", "借款", "永续债", "担保",
+    ),
+    "HBTCLM:600340:P10B:GUARANTEE_RECOVERY": (
+        "年度报告", "半年度报告", "担保", "关联交易", "关联方", "委托贷款", "拆借", "展期", "抵押", "质押", "诉讼", "资产减值",
+    ),
+}
+
 ADMITTED = "ADMITTED"
 REJECTION_REASONS = {
     "FUTURE_PUBLISHED_AT",
@@ -587,6 +602,65 @@ def fetch_sse_announcement_records(
     }
 
 
+def build_post_cutoff_reading_queue(inventory: dict[str, Any]) -> dict[str, Any]:
+    """Turn official announcement metadata into a bounded claim-reading queue.
+
+    Titles only establish which documents may be read after a formal freeze.
+    They are not evidence of a collection, refinancing, guarantee loss, or any
+    later investment outcome. This function deliberately does not acquire a
+    document body or call the source-package downloader.
+    """
+    records = inventory.get("records") if isinstance(inventory.get("records"), list) else None
+    if records is None or any(not isinstance(record, dict) for record in records):
+        raise ValueError("inventory.records must be an array of announcement metadata")
+    required_query_fields = ("provider", "endpoint", "company_code", "begin_date", "end_date")
+    if any(not inventory.get(field) for field in required_query_fields):
+        raise ValueError("inventory is missing official query metadata")
+    if type(inventory.get("record_count")) is not int or inventory.get("record_count") < 0:
+        raise ValueError("inventory record_count is invalid")
+    if inventory.get("record_count") != len(records):
+        raise ValueError("inventory record_count does not match records")
+
+    queue: list[dict[str, Any]] = []
+    for record in records:
+        title = str(record.get("title") or "").strip()
+        if not title:
+            raise ValueError("announcement metadata title is missing")
+        normalized_title = title.casefold()
+        candidate_claim_ids: list[str] = []
+        matched_terms: dict[str, list[str]] = {}
+        for claim_id, terms in POST_CUTOFF_CLAIM_TITLE_TERMS.items():
+            matches = [term for term in terms if term.casefold() in normalized_title]
+            if matches:
+                candidate_claim_ids.append(claim_id)
+                matched_terms[claim_id] = matches
+        queued = deepcopy(record)
+        queued["candidate_claim_ids"] = candidate_claim_ids
+        queued["matched_terms"] = matched_terms
+        queue.append(queued)
+
+    queue.sort(key=lambda item: (
+        str(item.get("published_at") or ""),
+        str(item.get("title") or ""),
+        str(item.get("source_id") or ""),
+    ))
+    return {
+        "schema_version": "phase10-post-cutoff-inventory.v1",
+        "purpose": "OFFICIAL_METADATA_ONLY_READING_QUEUE",
+        "metadata_only": True,
+        "pdf_downloaded": False,
+        "body_read": False,
+        "title_match_is_evidence": False,
+        "query": {
+            **{field: inventory.get(field) for field in required_query_fields},
+            "record_count": inventory["record_count"],
+        },
+        "record_count": len(queue),
+        "candidate_record_count": sum(bool(item["candidate_claim_ids"]) for item in queue),
+        "records": queue,
+    }
+
+
 def build_600340_manifest_from_sse_records(
     records: Iterable[dict[str, Any]],
     *,
@@ -1035,16 +1109,28 @@ def _write(path: Path, payload: dict[str, Any]) -> None:
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("command", choices=["catalog", "validate", "enumerate", "fetch-sse", "download-package"])
+    parser.add_argument("command", choices=["catalog", "validate", "enumerate", "fetch-sse", "fetch-sse-records", "queue-settlement", "download-package"])
     parser.add_argument("--input", type=Path)
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--manifest-output", type=Path)
     parser.add_argument("--page-size", type=int, default=100)
+    parser.add_argument("--company-code", default="600340")
+    parser.add_argument("--begin-date")
+    parser.add_argument("--end-date")
     args = parser.parse_args()
     if args.command == "catalog":
         payload = build_600340_source_manifest()
     elif args.command == "fetch-sse":
         payload = fetch_600340_sse_manifest(page_size=args.page_size)
+    elif args.command == "fetch-sse-records":
+        if not args.begin_date or not args.end_date:
+            parser.error("--begin-date and --end-date are required for fetch-sse-records")
+        payload = fetch_sse_announcement_records(
+            company_code=args.company_code,
+            begin_date=args.begin_date,
+            end_date=args.end_date,
+            page_size=args.page_size,
+        )
     elif args.command == "download-package":
         if args.input is None:
             parser.error("--input is required for download-package")
@@ -1065,16 +1151,20 @@ def main() -> int:
         return 0 if payload["source_package"]["status"] == "COMPLETE" else 2
     else:
         if args.input is None:
-            parser.error("--input is required for validate/enumerate")
+            parser.error("--input is required for validate/enumerate/queue-settlement")
         payload = json.loads(args.input.read_text(encoding="utf-8"))
         if args.command == "validate":
             result = validate_source_manifest(payload)
             print(json.dumps(result, ensure_ascii=False, indent=2))
             return 0 if result["state"] == "REVIEWABLE" else 1
-        records = payload.get("records") if isinstance(payload, dict) else payload
-        payload = enumerate_sse_announcements(records or [])
+        if args.command == "queue-settlement":
+            payload = build_post_cutoff_reading_queue(payload)
+        else:
+            records = payload.get("records") if isinstance(payload, dict) else payload
+            payload = enumerate_sse_announcements(records or [])
     _write(args.output, payload)
-    print(json.dumps({"written": str(args.output), "admitted_count": payload.get("admitted_count", 0)}, ensure_ascii=False))
+    count = payload.get("admitted_count", payload.get("record_count", 0))
+    print(json.dumps({"written": str(args.output), "record_count": count}, ensure_ascii=False))
     return 0
 
 

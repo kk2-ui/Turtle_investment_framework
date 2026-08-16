@@ -138,7 +138,7 @@ case 的 `calibration_ledger.claims` 至少覆盖：项目销售/回款与资本
 
 本交接第 4 节记录的是当时 `main=74f2bfd` 的启动快照，不因本分支的后续 contract 修补而改写。当前分支已将 `FROZEN` 收紧为可读取的 Markdown 报告、`variant_id -> freeze_id -> review_id` 生命周期、固定章节和 claim statement、不同 writer/reviewer context 的逐 claim 审阅和可回放的 `REPORT_COVERAGE`；生产路径预留统一 `turtle_agent`、Phase 08 acceptance/V3 gates、publication snapshot、run manifest 和 PIT runner attestation，测试夹具只留在测试命名空间。`scripts/phase10_pit_runner.py` 已实现 source-package allowlist、只读 source/framework 读取、cutoff 准入和 ALLOW/DENY read audit；framework root 固定为仓库内受控静态目录，attestation 记录其 root 与 `REPOSITORY_STATIC` provenance，普通 output 或结算目录不能作为 framework 输入。production origin 会核对 attestation、manifest、case source identity、package root 和实际读取。它不对来源文件新增 hash。`scripts/turtle_agent/run.py` 现在区分 PIT preflight 与独立 PIT writer：两者拒绝复用旧 output、跳过普通数据准备；writer 不加载普通 contract、旧 output、tracking、数据库、Web 或行情，只注册 source/framework 读取与无路径的单草案写工具。草案中的每个 source_id 必须已在同一 run 的 ALLOW audit 中实际读取，最终 attestation 回写 writer outcome。它仍不是完整生产冻结报告，尚未接入 Phase 08 acceptance/V3、完整 claim/calibration ledger 或独立 reviewer；故 validator 仍故意不允许生产 case 成为 `REVIEWABLE`。部署级模型记忆 attestation 也未实现，当前只能是 `UNCONTROLLED / EXPLORATORY / ENGINEERING_DIAGNOSTIC_ONLY`。报告 artifact SHA-256 只用于发现冻结后文本改写并强制重审。质量失败必须保留完整根因工件。该 assurance 是 `VERIFIED_ARTIFACT_AND_DECLARED_PROCESS`，不是密码学作者或模型记忆证明。
 
-这些 validators 不是实际回测：600340 的年报/公告全集、价格、公司行动和基准还未采集，仓库没有真实 historical case、冻结报告或结算结果；因此不能产生黄金标准改进、个股收益、选股或买点结论。
+这些 validators 本身不是实际回测：即使 P10-A 后来补齐 cutoff 前来源包，production report、行动、价格、公司行动和基准仍不能由契约文件凭空产生；因此不能产生黄金标准改进、个股收益、选股或买点结论。
 
 ## 10. 2026-08-16 continuation: readable-source and acquisition boundary
 
@@ -179,3 +179,44 @@ P10-B 已在本次 continuation 完成一次受限 direct writer 运行：不依
 该草案曾被独立 reviewer 发现一处材料性单位传播错误：2019 年经营现金流 `-31,819,098,425.06` 元误写为 `-31.82` 亿元，已修正为 `-318.19` 亿元并重新通过 PIT writer gate；同时补齐 2017/2018/2019 担保、关联方页码锚点，并收窄融资依赖、担保扣项和翻转条件的推断。复审结论为 `PASS_AFTER_REPAIR_FOR_DRAFT_ONLY`，根因归类为 `WRITING` + `MODEL`，不是数据采集缺口。
 
 独立 review 与仅含冻结前 UNKNOWN 的 ledger 草案位于 `output/phase10_pit_review_600340_20260817/`；四个 `HBTCLM` 已回写草案正文并重新通过 writer gate。它们仍不是完整生产冻结报告：尚未接入 Phase 08 acceptance/V3、生产 origin、模型记忆 attestation 或走步结算。故本案继续不得标为生产回测、收益、买点、选股或黄金标准校准样本；下一步是把 ledger 接入正式 freeze contract，注册隔离 reviewer 身份和冻结生命周期，再决定是否以 `FROZEN_WITH_QUALITY_FAILURE` 保留工程压力案例。
+
+## 12. 2026-08-17 continuation: engineering quality-failure freeze and metadata-only queue
+
+`config/historical_backtest_600340_pit_engineering_case.json` preserves the
+first writer output as `FROZEN_WITH_QUALITY_FAILURE`, not a passing production
+freeze. Its validator is deliberately `INCOMPLETE`: it contains
+`case_frozen_with_quality_failure` plus two explicit legacy-attestation rerun
+findings; any `INVALID` finding is a defect. The separate freeze-contract review is
+`output/phase10_pit_review_600340_20260817/engineering_freeze_contract_review.md`.
+
+The retained root causes are `ACQUISITION_MODULE` (the correctly acquired
+four-source PIT boundary is not integrated with the unified production writer
+and acceptance artifacts), `MODEL` (no ordinary-share cash, valuation, price,
+or action was frozen; the original observation definition conflates a reading
+window with an annual/interim report's economic period), and `WRITING` (the PIT
+draft is not a full production report). This is not a `DATA_COVERAGE` claim:
+the four sources actually read by the PIT writer remain correctly admitted.
+
+The official SSE metadata inventory for 2020-04-28 through 2021-04-27 contains
+228 records, with a claim-specific reading plan. It has not opened announcement
+bodies or acquired market prices, company actions, or CSI 300 data. The
+diagnostic settlement keeps `REPORT_COVERAGE=PASS` only as a replay of the
+frozen review; `MODEL_FORECAST_ERROR` and `INVESTMENT_RETURN_OUTCOME` are both
+`NOT_CALCULABLE`. Do not revise this diagnostic after opening later disclosures.
+
+The case itself uses a valid `HBT:` experiment identity, while its retained
+writer attestation remains explicitly identified as legacy `HBTEXP:` and must
+be rerun. A successor must isolate each observation's economic period from its
+post-freeze reading window and pass the production writer/report/reviewer gates
+before any targeted body read can be treated as a model outcome. With
+`PRIMARY_ROUTE_UNKNOWN`, no price identity, and no investment action, this
+diagnostic can never produce a legitimate return result.
+
+The successor contract is now versioned rather than retrofitted into v1:
+`historical-backtest-case.v2` and `historical-backtest-settlement.v2` use a
+`measurement_period` plus an `observation_window`, and require `BODY_READ`
+for any source supporting an actual operating observation. A reporting-period
+annual/interim source must match the frozen measurement-period end; an event
+window must also state an in-window `event_period`, without pretending that
+its `data_as_of` is a report period. No v2 600340 case or later disclosure body
+has been created or read yet.
