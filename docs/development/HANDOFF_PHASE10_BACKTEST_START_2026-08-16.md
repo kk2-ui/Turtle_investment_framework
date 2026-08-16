@@ -178,4 +178,4 @@ P10-B 已在本次 continuation 完成一次受限 direct writer 运行：不依
 
 该草案曾被独立 reviewer 发现一处材料性单位传播错误：2019 年经营现金流 `-31,819,098,425.06` 元误写为 `-31.82` 亿元，已修正为 `-318.19` 亿元并重新通过 PIT writer gate；同时补齐 2017/2018/2019 担保、关联方页码锚点，并收窄融资依赖、担保扣项和翻转条件的推断。复审结论为 `PASS_AFTER_REPAIR_FOR_DRAFT_ONLY`，根因归类为 `WRITING` + `MODEL`，不是数据采集缺口。
 
-独立 review 与仅含冻结前 UNKNOWN 的 ledger 草案位于 `output/phase10_pit_review_600340_20260817/`。它们仍不是完整生产冻结报告：尚未接入 Phase 08 acceptance/V3、生产 origin、模型记忆 attestation 或走步结算。故本案继续不得标为生产回测、收益、买点、选股或黄金标准校准样本；下一步是把 ledger 接入正式 freeze contract，注册隔离 reviewer 身份和冻结生命周期，再决定是否以 `FROZEN_WITH_QUALITY_FAILURE` 保留工程压力案例。
+独立 review 与仅含冻结前 UNKNOWN 的 ledger 草案位于 `output/phase10_pit_review_600340_20260817/`；四个 `HBTCLM` 已回写草案正文并重新通过 writer gate。它们仍不是完整生产冻结报告：尚未接入 Phase 08 acceptance/V3、生产 origin、模型记忆 attestation 或走步结算。故本案继续不得标为生产回测、收益、买点、选股或黄金标准校准样本；下一步是把 ledger 接入正式 freeze contract，注册隔离 reviewer 身份和冻结生命周期，再决定是否以 `FROZEN_WITH_QUALITY_FAILURE` 保留工程压力案例。
