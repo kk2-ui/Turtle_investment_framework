@@ -42,11 +42,22 @@ def test_cutoff_is_timestamp_precise_and_future_records_are_retained_as_rejectio
 def test_pre_cutoff_revision_replaces_original_vintage() -> None:
     result = admit_source_manifest([
         _source("SSE:600340:AR2017:ORIGINAL", published_at="2018-03-30", data_as_of="2017-12-31", version_group="AR2017"),
-        _source("SSE:600340:AR2017:REVISED", published_at="2018-04-21", data_as_of="2017-12-31", version_group="AR2017", revision_policy="HISTORICAL_RESTATEMENT_PUBLISHED_BEFORE_CUTOFF"),
+        _source("SSE:600340:AR2017:REVISED", published_at="2018-04-21", data_as_of="2017-12-31", version_group="AR2017", supersedes=["SSE:600340:AR2017:ORIGINAL"], revision_policy="HISTORICAL_RESTATEMENT_PUBLISHED_BEFORE_CUTOFF"),
     ])
     decisions = {item["source_id"]: item for item in result["sources"]}
     assert decisions["SSE:600340:AR2017:ORIGINAL"]["admission_status"] == "REJECTED_SUPERSEDED_BEFORE_CUTOFF"
     assert decisions["SSE:600340:AR2017:REVISED"]["admissible"] is True
+    assert result["admitted_source_ids"] == ["SSE:600340:AR2017:REVISED"]
+
+
+def test_supersedes_requires_an_explicit_shared_version_family() -> None:
+    result = admit_source_manifest([
+        _source("SSE:600340:AR2017:ORIGINAL", published_at="2018-03-30", data_as_of="2017-12-31"),
+        _source("SSE:600340:AR2017:REVISED", published_at="2018-04-21", data_as_of="2017-12-31", version_group="AR2017", supersedes=["SSE:600340:AR2017:ORIGINAL"], revision_policy="HISTORICAL_RESTATEMENT_PUBLISHED_BEFORE_CUTOFF"),
+    ])
+    decisions = {item["source_id"]: item for item in result["sources"]}
+    assert decisions["SSE:600340:AR2017:ORIGINAL"]["admissible"] is True
+    assert decisions["SSE:600340:AR2017:REVISED"]["admission_status"] == "REJECTED_INVALID_SUPERSEDES_REFERENCE"
 
 
 def test_current_restated_data_and_future_revision_are_not_admissible() -> None:
@@ -102,3 +113,21 @@ def test_manifest_validator_catches_tampered_admitted_source_list() -> None:
     result = validate_source_manifest(tampered)
     assert result["state"] == "INVALID"
     assert "admitted_source_ids_mismatch" in result["invalid_findings"]
+
+
+def test_manifest_validator_recomputes_current_restated_inventory_admission() -> None:
+    manifest = enumerate_sse_announcements([_source()])
+    tampered = deepcopy(manifest)
+    tampered["inventory"][0]["revision_policy"] = "CURRENT_RESTATED_ONLY"
+    result = validate_source_manifest(tampered)
+    assert result["state"] == "INVALID"
+    assert "inventory[0]:admission_decision_mismatch" in result["invalid_findings"]
+
+
+def test_manifest_validator_rejects_an_externally_injected_selected_source() -> None:
+    manifest = enumerate_sse_announcements([_source()])
+    tampered = deepcopy(manifest)
+    tampered["sources"].append(_source("SSE:600340:TEST:INJECTED", published_at="2020-04-28"))
+    result = validate_source_manifest(tampered)
+    assert result["state"] == "INVALID"
+    assert "selected_source_not_admitted:SSE:600340:TEST:INJECTED" in result["invalid_findings"]

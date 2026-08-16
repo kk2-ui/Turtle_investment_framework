@@ -36,6 +36,8 @@ REJECTION_REASONS = {
     "DUPLICATE_SOURCE_ID",
     "MISSING_ANNOUNCEMENT_TITLE",
     "MISSING_ANNOUNCEMENT_DATE",
+    "MISSING_VERSION_FAMILY",
+    "INVALID_SUPERSEDES_REFERENCE",
 }
 
 
@@ -63,7 +65,7 @@ def _copy_record(record: dict[str, Any], **updates: Any) -> dict[str, Any]:
 
 
 def _source_identity_ok(source: dict[str, Any]) -> bool:
-    required = ("source_id", "source_version", "source_type", "published_at", "data_as_of", "revision_policy")
+    required = ("source_id", "source_version", "source_type", "revision_policy")
     return all(str(source.get(field) or "").strip() for field in required)
 
 
@@ -72,15 +74,16 @@ def _reject(source: dict[str, Any], reason: str) -> dict[str, Any]:
 
 
 def _admit_one(source: dict[str, Any], cutoff: datetime) -> dict[str, Any]:
-    if str(source.get("admission_status") or "").startswith("REJECTED_"):
-        return _copy_record(source, admissible=False)
     if not _source_identity_ok(source):
         return _reject(source, "MISSING_IDENTITY")
-    published = _timestamp(source["published_at"])
-    data_as_of = _timestamp(source["data_as_of"])
+    if source.get("source_type") == "EXCHANGE_ANNOUNCEMENT" and not str(source.get("title") or "").strip():
+        return _reject(source, "MISSING_ANNOUNCEMENT_TITLE")
+    published = _timestamp(source.get("published_at"))
+    data_as_of = _timestamp(source.get("data_as_of"))
     revision_at = _timestamp(source.get("revision_published_at")) if source.get("revision_published_at") else None
     if published is None:
-        return _reject(source, "MISSING_IDENTITY")
+        reason = "MISSING_ANNOUNCEMENT_DATE" if source.get("source_type") == "EXCHANGE_ANNOUNCEMENT" else "MISSING_IDENTITY"
+        return _reject(source, reason)
     if published > cutoff:
         return _reject(source, "FUTURE_PUBLISHED_AT")
     if data_as_of is None:
@@ -94,16 +97,62 @@ def _admit_one(source: dict[str, Any], cutoff: datetime) -> dict[str, Any]:
     return _copy_record(source, admissible=True, admission_status=ADMITTED)
 
 
-def _supersession_group(source: dict[str, Any]) -> str | None:
+def _version_family(source: dict[str, Any]) -> str | None:
     group = source.get("version_group") or source.get("revision_group")
-    if group:
-        return str(group)
-    # A revision may explicitly identify the source it replaces.  Both records
-    # are placed in the same group without requiring a naming convention.
-    supersedes = source.get("supersedes")
-    if isinstance(supersedes, list) and supersedes:
-        return str(supersedes[0])
-    return None
+    normalized = str(group or "").strip()
+    return normalized or None
+
+
+def _supersedes_ids(source: dict[str, Any]) -> list[str] | None:
+    """Return explicit replacement targets, or ``None`` for a malformed value."""
+    if "supersedes" not in source:
+        return []
+    value = source.get("supersedes")
+    if not isinstance(value, list):
+        return None
+    ids = [str(item or "").strip() for item in value]
+    if not ids or any(not item for item in ids) or len(set(ids)) != len(ids):
+        return None
+    return ids
+
+
+def _apply_supersession_rules(decisions: list[dict[str, Any]]) -> None:
+    """Require an explicit version family before one source replaces another."""
+    source_index = {
+        str(source.get("source_id") or ""): source
+        for source in decisions
+        if str(source.get("source_id") or "")
+    }
+    for index, decision in enumerate(decisions):
+        if decision.get("admissible") is not True:
+            continue
+        targets = _supersedes_ids(decision)
+        if targets == []:
+            continue
+        family = _version_family(decision)
+        if family is None:
+            decisions[index] = _reject(decision, "MISSING_VERSION_FAMILY")
+            continue
+        if targets is None or any(
+            target not in source_index or _version_family(source_index[target]) != family
+            for target in targets
+        ):
+            decisions[index] = _reject(decision, "INVALID_SUPERSEDES_REFERENCE")
+
+    # Once both replacement ends declare the same family, the latest eligible
+    # disclosure is the sole selected version at this cutoff.
+    groups: dict[str, list[tuple[int, dict[str, Any]]]] = {}
+    for index, decision in enumerate(decisions):
+        if decision.get("admissible") is True:
+            family = _version_family(decision)
+            if family:
+                groups.setdefault(family, []).append((index, decision))
+    for members in groups.values():
+        if len(members) < 2:
+            continue
+        members.sort(key=lambda item: (_timestamp(item[1].get("published_at")) or datetime.min.replace(tzinfo=timezone.utc), item[0]))
+        for index, _decision in members[:-1]:
+            decisions[index] = _reject(decisions[index], "SUPERSEDED_BEFORE_CUTOFF")
 
 
 def admit_source_manifest(
@@ -137,20 +186,7 @@ def admit_source_manifest(
             decision = _reject(decision, "DUPLICATE_SOURCE_ID")
         decisions.append(decision)
 
-    # Apply version replacement only among records that passed the temporal
-    # fence.  A revision published after cutoff cannot replace the vintage.
-    groups: dict[str, list[tuple[int, dict[str, Any]]]] = {}
-    for index, decision in enumerate(decisions):
-        if decision.get("admissible") is True:
-            group = _supersession_group(decision)
-            if group:
-                groups.setdefault(group, []).append((index, decision))
-    for members in groups.values():
-        if len(members) < 2:
-            continue
-        members.sort(key=lambda item: (_timestamp(item[1].get("published_at")) or datetime.min.replace(tzinfo=timezone.utc), item[0]))
-        for index, _decision in members[:-1]:
-            decisions[index] = _reject(decisions[index], "SUPERSEDED_BEFORE_CUTOFF")
+    _apply_supersession_rules(decisions)
 
     admitted = [item for item in decisions if item.get("admissible") is True]
     return {
@@ -220,8 +256,20 @@ def enumerate_sse_announcements(
     return manifest
 
 
+def _source_without_persisted_admission(source: dict[str, Any]) -> dict[str, Any]:
+    result = deepcopy(source)
+    result.pop("admissible", None)
+    result.pop("admission_status", None)
+    return result
+
+
 def validate_source_manifest(manifest: dict[str, Any]) -> dict[str, Any]:
-    """Validate a persisted manifest without contacting the network."""
+    """Validate a persisted manifest without contacting the network.
+
+    Admission and selected sources are recomputed from the retained inventory.
+    Persisted ``admissible`` flags are review evidence, not an authority that
+    can turn a post-cutoff or current-restated record into a usable source.
+    """
     invalid: list[str] = []
     incomplete: list[str] = []
     if manifest.get("schema_version") != MANIFEST_SCHEMA_VERSION:
@@ -230,40 +278,85 @@ def validate_source_manifest(manifest: dict[str, Any]) -> dict[str, Any]:
     if cutoff is None:
         invalid.append("cutoff_at_invalid")
         cutoff = _timestamp(DEFAULT_CUTOFF_AT)
-    inventory = manifest.get("inventory") if isinstance(manifest.get("inventory"), list) else manifest.get("sources")
+
+    has_inventory = isinstance(manifest.get("inventory"), list)
+    inventory = manifest.get("inventory") if has_inventory else manifest.get("sources")
     if not isinstance(inventory, list) or not inventory:
         incomplete.append("inventory_missing")
         inventory = []
     if manifest.get("enumeration_complete") is not True:
         incomplete.append("sse_enumeration_incomplete")
+
     ids: set[str] = set()
+    inventory_is_valid_shape = True
     for index, source in enumerate(inventory):
         if not isinstance(source, dict):
             invalid.append(f"inventory[{index}]:not_object")
+            inventory_is_valid_shape = False
             continue
         source_id = str(source.get("source_id") or "")
         if not source_id:
             invalid.append(f"inventory[{index}]:source_id_missing")
+            inventory_is_valid_shape = False
         elif source_id in ids:
             invalid.append(f"inventory[{index}]:duplicate_source_id:{source_id}")
+            inventory_is_valid_shape = False
         ids.add(source_id)
-        published = _timestamp(source.get("published_at"))
-        data_as_of = _timestamp(source.get("data_as_of"))
-        if source.get("admissible") is True:
-            if published is None or data_as_of is None:
-                invalid.append(f"inventory[{index}]:admitted_missing_time_identity")
-            elif published > cutoff:
-                invalid.append(f"inventory[{index}]:admitted_future_published_at")
-            elif data_as_of > cutoff:
-                invalid.append(f"inventory[{index}]:admitted_future_data_as_of")
-        elif not str(source.get("admission_status") or "").startswith("REJECTED_"):
-            incomplete.append(f"inventory[{index}]:rejection_reason_missing")
-    admitted_ids = [str(item.get("source_id")) for item in inventory if isinstance(item, dict) and item.get("admissible") is True]
-    if manifest.get("admitted_source_ids") != admitted_ids:
+
+    expected_decisions: list[dict[str, Any]] = []
+    if inventory_is_valid_shape:
+        recomputed = admit_source_manifest(
+            [_source_without_persisted_admission(source) for source in inventory],
+            cutoff_at=cutoff.isoformat(),
+            company_code=str(manifest.get("company_code") or DEFAULT_COMPANY_CODE),
+        )
+        expected_decisions = recomputed["sources"]
+        for index, (stored, expected) in enumerate(zip(inventory, expected_decisions)):
+            stored_decision = (stored.get("admissible"), stored.get("admission_status"))
+            expected_decision = (expected.get("admissible"), expected.get("admission_status"))
+            if stored_decision != expected_decision:
+                invalid.append(f"inventory[{index}]:admission_decision_mismatch")
+
+    expected_admitted_ids = [
+        str(source["source_id"])
+        for source in expected_decisions
+        if source.get("admissible") is True
+    ]
+    expected_rejected_ids = [
+        str(source.get("source_id") or "")
+        for source in expected_decisions
+        if source.get("admissible") is not True
+    ]
+    expected_selected_sources = [
+        source for source in expected_decisions if source.get("admissible") is True
+    ]
+    if manifest.get("admitted_source_ids") != expected_admitted_ids:
         invalid.append("admitted_source_ids_mismatch")
-    expected_count = len(admitted_ids)
-    if manifest.get("admitted_count") != expected_count:
+    if manifest.get("rejected_source_ids") != expected_rejected_ids:
+        invalid.append("rejected_source_ids_mismatch")
+    if manifest.get("admitted_count") != len(expected_admitted_ids):
         invalid.append("admitted_count_mismatch")
+    if manifest.get("rejected_count") != len(expected_rejected_ids):
+        invalid.append("rejected_count_mismatch")
+
+    if has_inventory:
+        selected_sources = manifest.get("sources")
+        if not isinstance(selected_sources, list):
+            invalid.append("selected_sources_invalid")
+        elif selected_sources != expected_selected_sources:
+            invalid.append("selected_sources_mismatch")
+            expected_by_id = {str(source["source_id"]): source for source in expected_selected_sources}
+            for selected in selected_sources:
+                if not isinstance(selected, dict):
+                    invalid.append("selected_source_not_object")
+                    continue
+                source_id = str(selected.get("source_id") or "")
+                expected = expected_by_id.get(source_id)
+                if expected is None:
+                    invalid.append(f"selected_source_not_admitted:{source_id}")
+                elif selected != expected:
+                    invalid.append(f"selected_source_payload_mismatch:{source_id}")
+
     state = "INVALID" if invalid else "INCOMPLETE" if incomplete else "REVIEWABLE"
     return {"state": state, "invalid_findings": invalid, "incomplete_findings": incomplete}
 
@@ -320,6 +413,7 @@ def build_600340_source_manifest() -> dict[str, Any]:
             "data_as_of": "2017-12-31",
             "revision_policy": "HISTORICAL_RESTATEMENT_PUBLISHED_BEFORE_CUTOFF",
             "version_group": "SSE:600340:AR2017",
+            "supersedes": ["SSE:600340:AR2017:ORIGINAL"],
             "admissible": True,
         },
         {

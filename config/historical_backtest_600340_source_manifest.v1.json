@@ -65,6 +65,9 @@
       "data_as_of": "2017-12-31",
       "revision_policy": "HISTORICAL_RESTATEMENT_PUBLISHED_BEFORE_CUTOFF",
       "version_group": "SSE:600340:AR2017",
+      "supersedes": [
+        "SSE:600340:AR2017:ORIGINAL"
+      ],
       "admissible": true,
       "admission_status": "ADMITTED"
     },
@@ -128,6 +131,9 @@
       "data_as_of": "2017-12-31",
       "revision_policy": "HISTORICAL_RESTATEMENT_PUBLISHED_BEFORE_CUTOFF",
       "version_group": "SSE:600340:AR2017",
+      "supersedes": [
+        "SSE:600340:AR2017:ORIGINAL"
+      ],
       "admissible": true,
       "admission_status": "ADMITTED"
     },
