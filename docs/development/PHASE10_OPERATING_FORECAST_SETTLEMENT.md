@@ -106,7 +106,7 @@
   `CALCULATED`、`PARTIAL` 或 `NOT_CALCULABLE`，未知使用明确的解决状态；不允许遗漏后仍标为 `REVIEWABLE`；
 - 用 `operating_source_timeline` 声明已枚举的经营来源及其完整性，并让观察引用该时间线中的官方来源；
 - 为每个经营观察写入 `comparability_status`，只有 `COMPARABLE` 或已预注册换算规则的观察可以成为预测误差的 actual；
-- `CONVERTIBLE_WITH_PREREGISTERED_RULE` 在当前 v1 只支持可复算的固定单位换算：冻结时必须写入 `conversion_rule`（原始单位、目标单位和乘数），结算时必须保留原始值并复算换算值。动态汇率、范围变更或叙事性换算仍是 `NOT_COMPARABLE`，直到有独立的结构化规则；
+- `CONVERTIBLE_WITH_PREREGISTERED_RULE` 在当前 v1 只支持可复算的固定单位换算：冻结时必须写入 `conversion_rule`（原始单位、目标单位和正乘数），结算时必须保留原始值并复算换算值。动态汇率、范围变更或叙事性换算仍是 `NOT_COMPARABLE`，直到有独立的结构化规则；
 - 每个与冻结定义匹配且可比的观察都必须登记到该 claim 的结算中。预测不能在已有可比 actual 时标为 `NOT_CALCULABLE` 或 `PARTIAL`，未知也不能在已有可比 actual 时继续标为 `UNRESOLVED_AS_OF_SETTLEMENT`；
 - 由 `INITIAL_DISCLOSURE` 强制选用同一 claim、指标、口径和经济期间的首次可见可比观察；选择后续重述会被 validator 拒绝。`LATEST_OFFICIAL_AS_OF_EVALUATION` 则在已枚举时间线中选择结算日以前的最后可见观察，已枚举的首次披露不会被覆盖。
 

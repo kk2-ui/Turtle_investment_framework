@@ -517,6 +517,20 @@ def test_convertible_observation_requires_a_frozen_replayable_rule() -> None:
     })
     assert validate_settlement(settlement, case=case)["state"] == "REVIEWABLE"
 
+    case["calibration_ledger"]["claims"][0]["observable_outcome"]["conversion_rule"]["multiplier"] = -0.01
+    result = validate_case(case)
+    assert "calibration_ledger.claims[0].observable_outcome.conversion_rule:multiplier_invalid" in result["invalid_findings"]
+
+    wrong_type_case = _case()
+    wrong_type_case["calibration_ledger"]["claims"][0]["observable_outcome"]["conversion_rule"] = {
+        "rule_id": 7,
+        "raw_unit": "HKD/100 shares",
+        "converted_unit": "HKD/share",
+        "multiplier": 0.01,
+    }
+    result = validate_case(wrong_type_case)
+    assert "calibration_ledger.claims[0].observable_outcome.conversion_rule:rule_id_invalid" in result["invalid_findings"]
+
 
 def test_forecast_error_must_reference_the_same_operating_observation() -> None:
     case = _case()

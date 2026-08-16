@@ -324,10 +324,13 @@ def _validate_calibration_ledger(
                 incomplete.extend(_required(
                     conversion_rule, ("rule_id", "raw_unit", "converted_unit", "multiplier"), conversion_prefix,
                 ))
+                for field in ("rule_id", "raw_unit", "converted_unit"):
+                    if not isinstance(conversion_rule.get(field), str) or not conversion_rule.get(field).strip():
+                        invalid.append(conversion_prefix + ":" + field + "_invalid")
                 if conversion_rule.get("converted_unit") != outcome.get("unit"):
                     invalid.append(conversion_prefix + ":converted_unit_does_not_match_observable_outcome")
                 multiplier = _number(conversion_rule.get("multiplier"))
-                if multiplier is None or multiplier == 0:
+                if multiplier is None or multiplier <= 0:
                     invalid.append(conversion_prefix + ":multiplier_invalid")
         if disposition == "PREDICTION":
             prediction = claim.get("prediction") if isinstance(claim.get("prediction"), dict) else {}

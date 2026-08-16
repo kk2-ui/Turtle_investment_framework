@@ -132,7 +132,7 @@
                       "rule_id": {"type": "string", "minLength": 1},
                       "raw_unit": {"type": "string", "minLength": 1},
                       "converted_unit": {"type": "string", "minLength": 1},
-                      "multiplier": {"type": "number", "not": {"const": 0}}
+                      "multiplier": {"type": "number", "exclusiveMinimum": 0}
                     }
                   }
                 }
