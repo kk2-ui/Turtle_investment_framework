@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://turtle.local/schemas/historical_backtest_settlement.schema.json",
+  "title": "Turtle Historical Backtest Settlement",
+  "type": "object",
+  "required": ["schema_version", "settlement_id", "experiment_id", "case_id", "settlement_as_of", "actual_outcomes", "report_coverage", "model_forecast_error", "investment_return_outcome", "status"],
+  "properties": {
+    "schema_version": {"const": "historical-backtest-settlement.v1"},
+    "settlement_id": {"type": "string", "pattern": "^HBTSET:"},
+    "experiment_id": {"type": "string", "pattern": "^HBT:"},
+    "case_id": {"type": "string", "pattern": "^HBTCASE:"},
+    "settlement_as_of": {"type": "string"},
+    "actual_outcomes": {"type": "object", "required": ["published_at", "currency", "cash_flows", "operating_observations"], "properties": {"published_at": {"type": "string"}, "currency": {"type": "string"}, "cash_flows": {"type": "array"}, "operating_observations": {"type": "array"}}},
+    "report_coverage": {"type": "object", "required": ["status", "supported_claim_count", "unsupported_claim_count", "unknowns_preserved", "notes"], "properties": {"status": {"enum": ["PASS", "PARTIAL", "INCOMPLETE", "INVALID"]}, "supported_claim_count": {"type": "integer", "minimum": 0}, "unsupported_claim_count": {"type": "integer", "minimum": 0}, "unknowns_preserved": {"type": "boolean"}, "notes": {"type": "array", "items": {"type": "string"}}}},
+    "model_forecast_error": {"type": "object", "required": ["status", "metrics", "notes"], "properties": {"status": {"enum": ["CALCULATED", "PARTIAL", "NOT_CALCULABLE"]}, "metrics": {"type": "array"}, "notes": {"type": "array", "items": {"type": "string"}}}},
+    "investment_return_outcome": {"type": "object", "required": ["status", "action", "total_return", "benchmark_return", "currency", "notes"], "properties": {"status": {"enum": ["CALCULATED", "PARTIAL", "NOT_CALCULABLE"]}, "action": {"enum": ["BUY", "HOLD", "WAIT", "SELL", "NO_BUY", "UNKNOWN"]}, "total_return": {"type": ["number", "null"]}, "benchmark_return": {"type": ["number", "null"]}, "currency": {"type": "string"}, "notes": {"type": "array", "items": {"type": "string"}}}},
+    "status": {"enum": ["REVIEWABLE", "INCOMPLETE", "INVALID"]}
+  }
+}

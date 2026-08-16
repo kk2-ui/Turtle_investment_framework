@@ -1,0 +1,86 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://turtle.local/schemas/historical_backtest_case.schema.json",
+  "title": "Turtle Historical Backtest Frozen Case",
+  "type": "object",
+  "required": ["schema_version", "case_id", "experiment_id", "company_code", "simulation_cutoff", "report_freeze", "route", "forecast", "sources", "inputs", "taxes_fees_fx", "price_identity", "status"],
+  "properties": {
+    "schema_version": {"const": "historical-backtest-case.v1"},
+    "case_id": {"type": "string", "pattern": "^HBTCASE:"},
+    "experiment_id": {"type": "string", "pattern": "^HBT:"},
+    "company_code": {"type": "string", "minLength": 1},
+    "simulation_cutoff": {"type": "string", "minLength": 10},
+    "report_freeze": {
+      "type": "object",
+      "required": ["frozen_at", "evidence_cutoff", "settlement_locked", "report_status"],
+      "properties": {
+        "frozen_at": {"type": "string"},
+        "evidence_cutoff": {"type": "string"},
+        "settlement_locked": {"const": true},
+        "report_status": {"enum": ["FROZEN", "FROZEN_WITH_QUALITY_FAILURE"]}
+      }
+    },
+    "route": {"enum": ["LONG_TERM_OWNER", "FINITE_XIRR", "DUAL"]},
+    "forecast": {
+      "type": "object",
+      "required": ["horizon_years", "terminal_handling", "cash_flow_basis"],
+      "properties": {
+        "horizon_years": {"type": "number", "minimum": 0},
+        "terminal_handling": {"enum": ["NO_REQUIRED_EXIT", "BUSINESS_VALUE_EXIT", "MARKET_EXIT", "LEGAL_END", "DUAL_TERMINAL_PATH"]},
+        "cash_flow_basis": {"type": "string", "minLength": 1},
+        "independent_terminal_evidence": {"type": "boolean"}
+      }
+    },
+    "sources": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["source_id", "source_type", "published_at", "data_as_of", "revision_policy", "admissible"],
+        "properties": {
+          "source_id": {"type": "string", "minLength": 1},
+          "source_type": {"enum": ["ANNUAL_REPORT", "INTERIM_REPORT", "EXCHANGE_ANNOUNCEMENT", "OFFICIAL_STATISTICS", "MARKET_DATA", "OTHER_OFFICIAL"]},
+          "published_at": {"type": "string"},
+          "data_as_of": {"type": "string"},
+          "revision_published_at": {"type": ["string", "null"]},
+          "revision_policy": {"enum": ["ORIGINAL_VINTAGE", "HISTORICAL_RESTATEMENT_PUBLISHED_BEFORE_CUTOFF", "CURRENT_RESTATED_ONLY"]},
+          "admissible": {"type": "boolean"}
+        }
+      }
+    },
+    "inputs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "value", "input_role", "source_ids"],
+        "properties": {
+          "name": {"type": "string", "minLength": 1},
+          "value": {},
+          "input_role": {"enum": ["HISTORICAL_FACT", "JUDGMENT", "MODEL_ASSUMPTION"]},
+          "source_ids": {"type": "array", "items": {"type": "string"}}
+        }
+      }
+    },
+    "taxes_fees_fx": {
+      "type": "object",
+      "required": ["tax_rate", "transaction_fee_rate", "dividend_tax_rate", "base_currency", "fx_rule"],
+      "properties": {
+        "tax_rate": {"type": "number", "minimum": 0, "maximum": 1},
+        "transaction_fee_rate": {"type": "number", "minimum": 0, "maximum": 1},
+        "dividend_tax_rate": {"type": "number", "minimum": 0, "maximum": 1},
+        "base_currency": {"type": "string", "minLength": 3},
+        "fx_rule": {"type": "string", "minLength": 1}
+      }
+    },
+    "price_identity": {
+      "type": "object",
+      "required": ["primary_route", "primary_price_identity", "prices"],
+      "properties": {
+        "primary_route": {"enum": ["LONG_TERM_OWNER", "FINITE_XIRR", "DUAL", "PRIMARY_ROUTE_UNKNOWN"]},
+        "primary_price_identity": {"enum": ["P_LONG", "P_XIRR", "P_LEGAL", "P_BUSINESS_VALUE_EXIT", "UNKNOWN"]},
+        "prices": {"type": "array", "items": {"type": "object", "required": ["identity", "currency", "value", "meaning"], "properties": {"identity": {"type": "string"}, "currency": {"type": "string"}, "value": {"type": "number"}, "meaning": {"type": "string"}}}}
+      }
+    },
+    "status": {"enum": ["FROZEN", "FROZEN_WITH_QUALITY_FAILURE", "INVALID"]}
+  }
+}

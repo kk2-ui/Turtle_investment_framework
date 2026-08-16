@@ -1,6 +1,10 @@
 # Phase 10：历史时点研究回测
 
-> 状态：PLANNED ｜ 优先级：P1 ｜ 依赖：Phase 01–09 ｜ 建立日期：2026-08-03
+> 状态：PILOT_PREREGISTERED ｜ 优先级：P1 ｜ 依赖：Phase 01–09 ｜ 建立日期：2026-08-03
+
+> 2026-08-16：完成第一阶段可执行边界。实验、冻结案例和结算对象已有 schema 与校验器；当前九份候选因缺少可验证历史报告 vintage，合格案例数诚实登记为 0。走步执行、历史文件仓和年糕投影尚未启动。
+
+实现入口：`scripts/historical_backtest.py`；试点登记：`config/historical_backtest_pilot.v1.json`；对象约束：`schemas/historical_backtest_*.schema.json`。本阶段不修改个股模型、不产生回测收益结论、不解锁 G3。
 
 ## 1. 目标
 
