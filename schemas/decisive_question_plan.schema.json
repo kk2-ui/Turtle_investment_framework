@@ -33,6 +33,7 @@
         "warnings": {"type": "array", "items": {"type": "string"}}
       }
     },
+    "industry_knowledge_context": {"$ref": "#/$defs/industryKnowledgeContext"},
     "selected_questions": {"type": "array", "minItems": 1, "maxItems": 3, "items": {"$ref": "#/$defs/question"}},
     "rejected_candidates": {"type": "array", "items": {"$ref": "#/$defs/rejected"}},
     "validation": {"$ref": "#/$defs/validation"}
@@ -140,6 +141,48 @@
         "question": {"type": "string"},
         "priority": {"type": "number"},
         "rejection_reason": {"type": "string", "minLength": 1}
+      }
+    },
+    "industryKnowledgeContext": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["source", "profile", "matched_mechanisms", "validation_status", "usage_contract", "warnings"],
+      "properties": {
+        "source": {"const": "industry_knowledge"},
+        "profile": {"type": "object"},
+        "matched_mechanisms": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/industryMechanismMatch"}
+        },
+        "validation_status": {"type": "string", "minLength": 1},
+        "usage_contract": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["may_supply", "must_not_supply", "company_evidence_required"],
+          "properties": {
+            "may_supply": {"type": "array", "items": {"type": "string"}},
+            "must_not_supply": {"type": "array", "items": {"type": "string"}},
+            "company_evidence_required": {"const": true}
+          }
+        },
+        "warnings": {"type": "array", "items": {"type": "string"}}
+      }
+    },
+    "industryMechanismMatch": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["mechanism_id", "mechanism_key", "title", "status", "match_reason", "company_verification_fields", "company_assessment", "question_injected", "forbidden_model_role"],
+      "properties": {
+        "mechanism_id": {"type": "string", "minLength": 1},
+        "mechanism_key": {"type": "string", "minLength": 1},
+        "title": {"type": "string", "minLength": 1},
+        "status": {"type": "string", "minLength": 1},
+        "match_reason": {"type": "string", "minLength": 1},
+        "company_verification_fields": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}},
+        "alternative_explanations": {"type": "array", "items": {"type": "string", "minLength": 1}},
+        "company_assessment": {"enum": ["SUPPORTED", "CONTRADICTED", "NOT_EVIDENCED", "NOT_APPLICABLE"]},
+        "question_injected": {"type": "boolean"},
+        "forbidden_model_role": {"type": "string", "minLength": 1}
       }
     },
     "validation": {

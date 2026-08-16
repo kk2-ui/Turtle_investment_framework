@@ -181,6 +181,56 @@ def test_concentrated_industry_exception_is_explicit_and_limited(tmp_path):
     assert result["validation"]["external_validity_limited"] is True
 
 
+def test_corroborated_card_is_reviewer_material_not_an_auto_injected_company_question(tmp_path):
+    library = tmp_path / "industry"
+    ids = ["IKC:group-a", "IKC:group-b"]
+    for candidate, group in zip(ids, ("group-a", "group-b"), strict=True):
+        assert write_industry_insight_candidate(
+            _candidate(candidate, group, "FY2025"), knowledge_dir=library,
+        )["written"] is True
+    assert review_industry_mechanism(
+        _mechanism("CORROBORATED", ids), knowledge_dir=library,
+    )["written"] is True
+
+    default_search = search_industry_knowledge(
+        industry_keys=[INDUSTRY_KEY], knowledge_dir=library,
+    )
+    assert default_search["results"] == []
+    reviewer_search = search_industry_knowledge(
+        industry_keys=[INDUSTRY_KEY], statuses=["CORROBORATED"], knowledge_dir=library,
+    )
+    assert reviewer_search["results"][0]["status"] == "CORROBORATED"
+    assert "candidate_ids" not in reviewer_search["results"][0]
+    assert "evidence" not in reviewer_search["results"][0]
+
+    profile = build_company_industry_profile(
+        {"company_id": "00506.HK", "industry_keys": [INDUSTRY_KEY]}, knowledge_dir=library,
+    )
+    assert profile["mechanisms"] == []
+    context = read_industry_knowledge_context(
+        "00506.HK", industry_keys=[INDUSTRY_KEY], knowledge_dir=library,
+    )
+    assert context["research_questions"] == []
+
+
+def test_retired_mechanism_is_not_a_default_prior(tmp_path):
+    library = tmp_path / "industry"
+    candidate = _candidate("IKC:retired", "group-a", "FY2024")
+    assert write_industry_insight_candidate(candidate, knowledge_dir=library)["written"] is True
+    retired = _mechanism("RETIRED", ["IKC:retired"])
+    retired["lifecycle_reason"] = "后续官方披露显示原机制只适用于已取消的监管安排。"
+    assert review_industry_mechanism(retired, knowledge_dir=library)["written"] is True
+
+    default_search = search_industry_knowledge(
+        industry_keys=[INDUSTRY_KEY], knowledge_dir=library,
+    )
+    assert default_search["results"] == []
+    historical_search = search_industry_knowledge(
+        industry_keys=[INDUSTRY_KEY], statuses=["RETIRED"], knowledge_dir=library,
+    )
+    assert historical_search["results"][0]["status"] == "RETIRED"
+
+
 def test_ready_card_is_not_returned_without_a_company_industry_or_mechanism_match(tmp_path):
     library = tmp_path / "industry"
     ids = ["IKC:a", "IKC:b", "IKC:c"]

@@ -834,6 +834,7 @@ def test_decisive_question_tools_are_auto_discoverable() -> None:
     registry.auto_discover("turtle_agent.tools.read_tools")
     registry.auto_discover("turtle_agent.tools.write_tools")
     assert "read_decisive_question_plan" in registry.list_tools()
+    assert "read_industry_knowledge_context" in registry.list_tools()
     assert "write_decisive_question_findings" in registry.list_tools()
     schema = next(
         item for item in registry.get_schemas()

@@ -1597,6 +1597,18 @@ def run_full_pipeline(
                 f"{decisive_plan['validation']['state']}, selected="
                 f"{len(decisive_plan.get('selected_questions') or [])}"
             )
+            industry_knowledge = decisive_plan.get("industry_knowledge_context") or {}
+            matched_mechanisms = industry_knowledge.get("matched_mechanisms") or []
+            ready_mechanisms = [
+                item for item in matched_mechanisms
+                if isinstance(item, dict) and item.get("status") == "MECHANISM_READY"
+            ]
+            print(
+                "[Phase 3.87] 行业知识取证路由: "
+                f"{industry_knowledge.get('validation_status') or 'UNAVAILABLE'}, "
+                f"matched={len(matched_mechanisms)}, ready_questions={len(ready_mechanisms)} "
+                "(仅生成本公司验证问题，不作为估值或行动输入)"
+            )
             try:
                 from scripts.decision_ledger import initialize_decision_ledger_policy
             except ModuleNotFoundError:

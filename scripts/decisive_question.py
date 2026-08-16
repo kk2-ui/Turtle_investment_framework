@@ -30,6 +30,9 @@ VALIDATION_VERSION = "decisive-question-validation.v1"
 FINDINGS_VERSION = "decisive-question-findings.v1"
 MAX_SELECTED = 3
 MINIMUM_PRIORITY = 0.48
+INDUSTRY_COMPANY_ASSESSMENTS = {
+    "SUPPORTED", "CONTRADICTED", "NOT_EVIDENCED", "NOT_APPLICABLE",
+}
 WEIGHTS = {
     "decision_sensitivity": 0.35,
     "evidence_discriminability": 0.25,
@@ -302,6 +305,184 @@ def decisive_input_sources(output_dir: str | Path) -> dict[str, str]:
 
 def decisive_input_fingerprint(input_sources: dict[str, str]) -> str:
     return _hash(input_sources)
+
+
+def _industry_usage_contract() -> dict[str, Any]:
+    """Keep industry knowledge in its proper role: a research aid, never evidence.
+
+    A cross-company mechanism can tell the analyst which alternative explanation
+    to test and which fields to seek.  It cannot establish that the mechanism
+    applies to this issuer, nor supply an input to the valuation model.
+    """
+    return {
+        "may_supply": ["decisive_research_questions", "alternative_explanations", "company_verification_fields"],
+        "must_not_supply": ["claim_evidence", "official_observation", "valuation_parameter", "probability", "price", "action_basis"],
+        "company_evidence_required": True,
+    }
+
+
+def _industry_profile_summary(profile: dict[str, Any]) -> dict[str, Any]:
+    source_metadata = profile.get("source_metadata")
+    source_files = (
+        source_metadata.get("source_metadata_files")
+        if isinstance(source_metadata, dict) else []
+    )
+    return {
+        "schema_version": str(profile.get("schema_version") or "industry-profile-unavailable.v1"),
+        "company_id": str(profile.get("company_id") or ""),
+        "industry_keys": [
+            str(item) for item in profile.get("industry_keys") or [] if str(item).strip()
+        ],
+        "profile_role": str(profile.get("profile_role") or "UNKNOWN"),
+        "source_basis": ",".join(
+            str(item) for item in source_files if str(item).strip()
+        ) or str(profile.get("source_basis") or "company_archetype_and_official_context"),
+    }
+
+
+def _industry_fields(*values: Any) -> list[str]:
+    result: list[str] = []
+    for value in values:
+        if isinstance(value, str) and value.strip():
+            result.append(value.strip())
+        elif isinstance(value, list):
+            result.extend(str(item).strip() for item in value if str(item).strip())
+    return list(dict.fromkeys(result))
+
+
+def build_industry_knowledge_context(output_dir: str | Path) -> dict[str, Any]:
+    """Create the plan-safe projection of reusable industry mechanisms.
+
+    The core knowledge module owns the full mechanism cards and matching
+    implementation.  The decisive-question layer records only the matched ID,
+    why it was surfaced, and the issuer fields that still need official
+    verification.  Every match starts as NOT_EVIDENCED by design.
+    """
+    output = Path(output_dir)
+    usage_contract = _industry_usage_contract()
+    try:
+        from scripts.industry_knowledge import (
+            build_company_industry_profile,
+            load_company_industry_metadata,
+            read_industry_knowledge_context,
+        )
+    except ModuleNotFoundError:
+        try:
+            from industry_knowledge import (
+                build_company_industry_profile,
+                load_company_industry_metadata,
+                read_industry_knowledge_context,
+            )
+        except ModuleNotFoundError:
+            return {
+                "source": "industry_knowledge",
+                "profile": _industry_profile_summary({}),
+                "matched_mechanisms": [],
+                "validation_status": "UNAVAILABLE",
+                "usage_contract": usage_contract,
+                "warnings": ["industry_knowledge_module_unavailable"],
+            }
+    try:
+        company_input = load_company_industry_metadata(output)
+        industry_keys = company_input.get("industry_keys") or []
+        mechanism_keys = company_input.get("mechanism_keys") or []
+        profile = build_company_industry_profile(
+            company_input, industry_keys=industry_keys,
+            mechanism_keys=mechanism_keys, max_ready=3, max_corroborated=0,
+        )
+        profile = profile if isinstance(profile, dict) else {}
+        raw_context = read_industry_knowledge_context(
+            company_input, industry_keys=industry_keys,
+            mechanism_keys=mechanism_keys, max_ready=3, max_corroborated=0,
+        )
+        raw_context = raw_context if isinstance(raw_context, dict) else {}
+    except Exception as exc:
+        return {
+            "source": "industry_knowledge",
+            "profile": _industry_profile_summary({}),
+            "matched_mechanisms": [],
+            "validation_status": "UNAVAILABLE",
+            "usage_contract": usage_contract,
+            "warnings": [f"industry_knowledge_context_unavailable:{type(exc).__name__}"],
+        }
+
+    context_profile = raw_context.get("profile")
+    if isinstance(context_profile, dict) and context_profile:
+        profile = context_profile
+    mechanism_by_id = {
+        str(item.get("mechanism_id")): item
+        for item in profile.get("mechanisms") or []
+        if isinstance(item, dict) and str(item.get("mechanism_id") or "").strip()
+    }
+    research_rows = [
+        item for item in raw_context.get("research_questions") or []
+        if isinstance(item, dict) and str(item.get("mechanism_id") or "").strip()
+    ]
+    research_by_id = {
+        str(item.get("mechanism_id")): item for item in research_rows
+    }
+    matches: list[dict[str, Any]] = []
+    for mechanism_id in sorted(set(mechanism_by_id) | set(research_by_id)):
+        mechanism = mechanism_by_id.get(mechanism_id, {})
+        research = research_by_id.get(mechanism_id, {})
+        status = str(
+            research.get("status") or mechanism.get("status") or "NOT_READY"
+        )
+        fields = _industry_fields(
+            research.get("company_verification_fields"),
+            mechanism.get("company_verification_fields"),
+            profile.get("required_company_verification_fields"),
+        )
+        if not fields:
+            fields = ["本公司对应经营、成本、现金或治理披露"]
+        company_industries = ",".join(
+            str(item) for item in profile.get("industry_keys") or [] if str(item).strip()
+        ) or "UNKNOWN"
+        mechanism_industries = ",".join(
+            str(item) for item in mechanism.get("industry_keys") or [] if str(item).strip()
+        ) or "UNKNOWN"
+        reason = str(
+            research.get("match_reason") or mechanism.get("match_reason")
+            or research.get("reason") or mechanism.get("reason")
+            or (
+                f"本公司行业键[{company_industries}]命中机制行业键"
+                f"[{mechanism_industries}]；仍须以本公司官方披露逐项验证"
+            )
+        )
+        matches.append({
+            "mechanism_id": mechanism_id,
+            "mechanism_key": str(
+                research.get("mechanism_key") or mechanism.get("mechanism_key")
+                or mechanism_id
+            ),
+            "title": str(research.get("title") or mechanism.get("title") or mechanism_id),
+            "status": status,
+            "match_reason": reason,
+            "company_verification_fields": fields,
+            "alternative_explanations": _industry_fields(
+                research.get("alternative_explanations"),
+                mechanism.get("alternative_explanations"),
+            ),
+            "company_assessment": "NOT_EVIDENCED",
+            # This is updated after ranking. A ready card may still lose to a
+            # more decision-relevant question when the three-question cap binds.
+            "question_injected": False,
+            "forbidden_model_role": str(
+                research.get("forbidden_model_role") or mechanism.get("forbidden_model_role")
+                or "not_a_claim_evidence_or_valuation_input"
+            ),
+        })
+    warnings = [str(item) for item in raw_context.get("warnings") or [] if str(item).strip()]
+    return {
+        "source": "industry_knowledge",
+        "profile": _industry_profile_summary(profile),
+        "matched_mechanisms": matches,
+        "validation_status": str(
+            raw_context.get("validation_status") or raw_context.get("state") or "AVAILABLE"
+        ),
+        "usage_contract": usage_contract,
+        "warnings": warnings,
+    }
 
 
 def make_question_id(report_id: str, topic_family: str, mechanism_key: str) -> str:
@@ -632,12 +813,112 @@ def _income_change(bundle: dict[str, Any]) -> dict[str, float | None]:
     return {"revenue_growth_pct": growth("revenue"), "profit_growth_pct": growth("n_income_attr_p")}
 
 
+def _industry_topic_family(match: dict[str, Any]) -> str:
+    """Route a mechanism question into an existing report chapter family."""
+    text = " ".join(
+        str(match.get(key) or "")
+        for key in ("mechanism_key", "title", "match_reason")
+    ).lower()
+    if any(token in text for token in ("cash", "distribution", "dividend", "debt", "上游", "分派", "债务", "现金")):
+        return "cash_value_realization"
+    if any(token in text for token in ("terminal", "legal", "期限", "终值", "清算", "资产兑现")):
+        return "valuation_model_applicability"
+    if any(token in text for token in ("return", "capex", "margin", "成本", "资本开支", "毛利", "回报")):
+        return "owner_return_hurdle"
+    return "operating_transition"
+
+
+def _industry_mechanism_candidates(
+    report_id: str, company: str, industry_context: dict[str, Any]
+) -> list[dict[str, Any]]:
+    """Turn only ready cards into bounded company-verification questions.
+
+    The card text is deliberately not a factual premise.  The two explanations
+    are applicability alternatives, and the only closing route is an official
+    company source that covers each requested field.
+    """
+    candidates: list[dict[str, Any]] = []
+    for match in industry_context.get("matched_mechanisms") or []:
+        if not isinstance(match, dict) or match.get("status") != "MECHANISM_READY":
+            continue
+        if match.get("company_assessment") != "NOT_EVIDENCED":
+            continue
+        mechanism_id = str(match.get("mechanism_id") or "")
+        mechanism_key = str(match.get("mechanism_key") or mechanism_id)
+        title = str(match.get("title") or mechanism_id)
+        fields = [str(item) for item in match.get("company_verification_fields") or [] if str(item).strip()]
+        if not mechanism_id or not fields:
+            continue
+        field_text = "、".join(fields[:5])
+        alternatives = [
+            str(item) for item in match.get("alternative_explanations") or []
+            if str(item).strip()
+        ]
+        alternative_text = "；".join(alternatives[:3])
+        family = _industry_topic_family(match)
+        candidate = _candidate(
+            report_id,
+            topic_family=family,
+            mechanism_key="industry_knowledge:" + mechanism_id,
+            question=(
+                f"{company}是否满足行业机制“{title}”的适用边界，还是存在公司特异反例？"
+                f"本公司必须以官方披露验证：{field_text}吗？"
+            ),
+            origins=["industry_knowledge:" + mechanism_id, "company_archetype"],
+            score=_score(
+                0.74, 0.82, 0.72, 0.76, 0.0,
+                [
+                    "industry mechanism is a research prompt, not company evidence",
+                    f"mechanism_id={mechanism_id}",
+                    f"required_company_fields={field_text}",
+                ],
+            ),
+            explanations=_explanations(
+                "industry_mechanism_" + re.sub(r"[^A-Za-z0-9]+", "_", mechanism_id)[:32],
+                "本公司满足机制边界",
+                "本公司官方披露逐项支持该机制的适用条件，且没有重大反例。",
+                "本公司不适用或存在反例",
+                (
+                    "本公司披露显示关键经营、现金、合同或治理条件与机制前提不符。"
+                    + ("还须排除替代解释：" + alternative_text + "。" if alternative_text else "")
+                ),
+            ),
+            signals=[_signal(
+                "industry_company_verification_" + re.sub(r"[^A-Za-z0-9]+", "_", mechanism_id)[:28],
+                "本公司对以下字段的逐项官方披露：" + field_text,
+                "所需字段支持适用边界且无重大反例",
+                "所需字段缺失、反驳机制或显示不适用",
+                "official_company_filing",
+                "当前年报、最新中报和必要公告",
+            )],
+            decision_link=_decision_link(
+                ["valuation.v_final", "decision.position.recommended"],
+                {},
+                ("仅在公司证据支持后再评估相关经营假设", "维持或谨慎提高", "完成公司验证后重估"),
+                ("不得使用该机制支持经营假设", "维持或降低", "反例成立或无法验证时不把机制写入论点"),
+                "公司官方证据未逐项支持机制适用，或出现会改变现金流、竞争位置或兑现路径的反例",
+            ),
+            research_need=(
+                f"行业知识只提供待验证机制。逐项回读本公司官方披露的{field_text}；"
+                "未验证时结论必须保持NOT_EVIDENCED，不得作为claim/evidence、估值参数、概率、价格或行动依据。"
+            ),
+            confidence=0.5,
+            confidence_basis="行业机制仅是待验证研究提示，不代表本公司事实、经验概率或估值结论",
+        )
+        task = candidate["research_tasks"][0]
+        task["route"] = "industry_mechanism_company_verification"
+        task["annual_report_sections"] = fields
+        candidates.append(candidate)
+    return candidates
+
+
 def generate_decisive_candidates(
     output_dir: str | Path,
     context: dict[str, Any],
     bundle: dict[str, Any],
     contract: dict[str, Any],
     archetype: dict[str, Any],
+    industry_context: dict[str, Any] | None = None,
 ) -> list[dict[str, Any]]:
     report_id = str(_nested(context, "meta", "report_id") or contract.get("ts_code") or Path(output_dir).name)
     company = str(_nested(context, "meta", "issuer") or Path(output_dir).name)
@@ -874,6 +1155,10 @@ def generate_decisive_candidates(
             confidence_basis="价格与P_base可确定，但完整反向模型留待Phase 03模型路由",
         ))
 
+    candidates.extend(_industry_mechanism_candidates(
+        report_id, company, industry_context or {}
+    ))
+
     # Ensure a real question exists even when the deterministic bundle is thin.
     if not candidates:
         gap_domains = [str(item.get("domain")) for item in context.get("unresolved_gaps") or [] if isinstance(item, dict)]
@@ -956,6 +1241,26 @@ def rank_and_select(candidates: list[dict[str, Any]]) -> tuple[list[dict[str, An
     selected.sort(key=lambda item: (-float(item["score"]["priority"]), item["question_id"]))
     rejected.sort(key=lambda item: (-float(item["priority"]), item["question_id"]))
     return selected, rejected
+
+
+def _mark_industry_question_injection(
+    industry_context: dict[str, Any], selected: list[dict[str, Any]],
+) -> None:
+    """Record which ready mechanisms made this plan's final top-three cut."""
+    selected_mechanism_ids = {
+        str(origin).split(":", 1)[1]
+        for question in selected
+        if isinstance(question, dict)
+        for origin in question.get("candidate_origins") or []
+        if str(origin).startswith("industry_knowledge:")
+    }
+    for match in industry_context.get("matched_mechanisms") or []:
+        if not isinstance(match, dict):
+            continue
+        match["question_injected"] = (
+            str(match.get("status") or "") == "MECHANISM_READY"
+            and str(match.get("mechanism_id") or "") in selected_mechanism_ids
+        )
 
 
 def build_decisive_question_findings(
@@ -1962,6 +2267,64 @@ def validate_decisive_question_plan(
                     invalid.append("base_rate_library_fingerprint_mismatch")
                 base_rate_queries = context.get("queries") if isinstance(context.get("queries"), dict) else {}
                 warnings.extend(str(value) for value in context.get("warnings") or [] if str(value).strip())
+    industry_context = payload.get("industry_knowledge_context")
+    industry_matches: dict[str, dict[str, Any]] = {}
+    if industry_context is not None:
+        if not isinstance(industry_context, dict):
+            invalid.append("industry_knowledge_context_not_object")
+            industry_context = {}
+        if industry_context.get("source") != "industry_knowledge":
+            invalid.append("industry_knowledge_context_source_invalid")
+        profile = industry_context.get("profile")
+        if not isinstance(profile, dict):
+            incomplete.append("industry_knowledge_profile_missing")
+        usage = industry_context.get("usage_contract")
+        if not isinstance(usage, dict):
+            incomplete.append("industry_knowledge_usage_contract_missing")
+        else:
+            prohibited = {str(value) for value in usage.get("must_not_supply") or []}
+            required_prohibited = {
+                "claim_evidence", "official_observation", "valuation_parameter",
+                "probability", "price", "action_basis",
+            }
+            if not required_prohibited.issubset(prohibited):
+                invalid.append("industry_knowledge_usage_contract_allows_decision_input")
+            if usage.get("company_evidence_required") is not True:
+                invalid.append("industry_knowledge_company_evidence_requirement_missing")
+        if not str(industry_context.get("validation_status") or "").strip():
+            incomplete.append("industry_knowledge_validation_status_missing")
+        matches = industry_context.get("matched_mechanisms")
+        if not isinstance(matches, list):
+            invalid.append("industry_knowledge_matches_not_array")
+            matches = []
+        for index, match in enumerate(matches):
+            prefix = f"industry_knowledge_context.matched_mechanisms[{index}]"
+            if not isinstance(match, dict):
+                invalid.append(prefix + ":not_object")
+                continue
+            mechanism_id = str(match.get("mechanism_id") or "")
+            if not mechanism_id:
+                incomplete.append(prefix + ":mechanism_id_missing")
+                continue
+            if mechanism_id in industry_matches:
+                invalid.append("industry_knowledge_duplicate_mechanism:" + mechanism_id)
+            industry_matches[mechanism_id] = match
+            for field in ("mechanism_key", "title", "status", "match_reason", "forbidden_model_role"):
+                if not str(match.get(field) or "").strip():
+                    incomplete.append(prefix + ":" + field + "_missing")
+            fields = match.get("company_verification_fields")
+            if not isinstance(fields, list) or not [value for value in fields if str(value).strip()]:
+                incomplete.append(prefix + ":company_verification_fields_missing")
+            assessment = str(match.get("company_assessment") or "")
+            if assessment not in INDUSTRY_COMPANY_ASSESSMENTS:
+                invalid.append(prefix + ":company_assessment_invalid")
+            # A matching rule is not an issuer conclusion. New plans are
+            # deliberately born unverified; research findings, not a plan edit,
+            # are the only place where company evidence can change the view.
+            if assessment != "NOT_EVIDENCED":
+                invalid.append(prefix + ":company_assessment_must_start_not_evidenced")
+            if match.get("question_injected") is True and str(match.get("status")) != "MECHANISM_READY":
+                invalid.append(prefix + ":non_ready_mechanism_auto_injected")
     seen_ids: set[str] = set()
     seen_families: set[str] = set()
     all_selected_ids: set[str] = set()
@@ -2010,6 +2373,20 @@ def validate_decisive_question_plan(
             invalid.append(f"{question_id or prefix}:score_invalid")
         if not score.get("basis"):
             incomplete.append(f"{question_id or prefix}:score_basis_missing")
+        industry_origins = [
+            str(origin).split(":", 1)[1]
+            for origin in item.get("candidate_origins") or []
+            if str(origin).startswith("industry_knowledge:")
+        ]
+        for mechanism_id in industry_origins:
+            match = industry_matches.get(mechanism_id)
+            if not match:
+                invalid.append(f"{question_id or prefix}:industry_mechanism_not_in_context:{mechanism_id}")
+                continue
+            if match.get("question_injected") is not True:
+                invalid.append(f"{question_id or prefix}:industry_mechanism_not_injectable:{mechanism_id}")
+            if str(match.get("status") or "") != "MECHANISM_READY":
+                invalid.append(f"{question_id or prefix}:industry_mechanism_not_ready:{mechanism_id}")
         explanations = item.get("competing_explanations")
         if not isinstance(explanations, list) or len(explanations) < 2:
             incomplete.append(f"{question_id or prefix}:competing_explanations_missing")
@@ -2039,6 +2416,8 @@ def validate_decisive_question_plan(
                 if str(observation_id) not in verified_ids:
                     invalid.append(f"{question_id or prefix}:unknown_or_unverified_observation:{observation_id}")
         link = item.get("decision_link") if isinstance(item.get("decision_link"), dict) else {}
+        if industry_origins and link.get("sensitivity_basis"):
+            invalid.append(f"{question_id or prefix}:industry_knowledge_used_as_model_input")
         metrics = link.get("affected_metric_ids") or []
         if not metrics:
             incomplete.append(f"{question_id or prefix}:decision_metrics_missing")
@@ -2133,7 +2512,13 @@ def build_decisive_question_plan(
     else:
         archetype = classify_company_archetype(output)
     report_id = str(_nested(context, "meta", "report_id") or contract.get("ts_code") or output.name)
-    candidates = generate_decisive_candidates(output, context, bundle, contract, archetype)
+    # The profile is generated after official evidence and the company archetype,
+    # immediately before question selection.  It may guide what to verify, but
+    # cannot itself create a company claim or a valuation input.
+    industry_knowledge_context = build_industry_knowledge_context(output)
+    candidates = generate_decisive_candidates(
+        output, context, bundle, contract, archetype, industry_knowledge_context,
+    )
     try:
         from scripts.base_rate_case_library import build_base_rate_context
     except ModuleNotFoundError:
@@ -2153,6 +2538,7 @@ def build_decisive_question_plan(
         ]
         candidate["base_rate_sample_size"] = int(query.get("eligible_sample_size") or 0)
     selected, rejected = rank_and_select(candidates)
+    _mark_industry_question_injection(industry_knowledge_context, selected)
     input_sources = decisive_input_sources(output)
     payload: dict[str, Any] = {
         "schema_version": SCHEMA_VERSION,
@@ -2177,6 +2563,7 @@ def build_decisive_question_plan(
             "library_fingerprint": base_rate_context.get("library_fingerprint"),
             "warnings": base_rate_context.get("warnings") or [],
         },
+        "industry_knowledge_context": industry_knowledge_context,
         "selected_questions": selected,
         "rejected_candidates": rejected,
     }

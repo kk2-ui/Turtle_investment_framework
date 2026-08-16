@@ -206,6 +206,33 @@ def read_decisive_question_plan(
     }
 
 
+def read_industry_knowledge_context(output_dir: str = ".") -> dict[str, Any]:
+    """Read matched industry mechanisms as a company-verification agenda.
+
+    This intentionally returns the plan-bound, minimal projection rather than
+    treating an industry card as a source of issuer facts. Every new match is
+    NOT_EVIDENCED until the analyst verifies the listed issuer fields.
+    """
+    plan = _read_json(os.path.join(output_dir, "decisive_question_plan.json")) or {}
+    context = plan.get("industry_knowledge_context")
+    if not isinstance(context, dict):
+        return {
+            "ok": False,
+            "error": "industry_knowledge_context_not_available_for_this_plan",
+            "instruction": "历史计划可以没有行业知识上下文；不得用行业常识替代本公司官方证据。",
+        }
+    return {
+        "ok": True,
+        **context,
+        "instruction": (
+            "行业知识只能提供问题、反例和本公司取证清单。每个匹配机制当前默认"
+            "NOT_EVIDENCED；只有本公司VERIFIED官方证据支持后才能在研究结论中"
+            "写为SUPPORTED或CONTRADICTED。不得把机制卡作为claim/evidence、估值参数、"
+            "概率、价格或行动依据。"
+        ),
+    }
+
+
 def read_valuation_route(output_dir: str = ".") -> dict[str, Any]:
     """Read the canonical archetype and model route before valuation work."""
     archetype = _read_json(os.path.join(output_dir, "company_archetype.json")) or {}
@@ -285,6 +312,7 @@ def read_report_contract_pack(
         from insight_research import build_insight_research_brief
     insight_brief = build_insight_research_brief(output_dir, persist=True)
     decisive_plan = read_decisive_question_plan(output_dir)
+    industry_knowledge_context = read_industry_knowledge_context(output_dir)
     valuation_route = read_valuation_route(output_dir)
     for idx in indexes:
         chapters[str(idx)]["research_plan"] = research_plan["chapters"][str(idx)]
@@ -300,6 +328,7 @@ def read_report_contract_pack(
         "available_annual_years": research_plan["available_annual_years"],
         "insight_research_brief": insight_brief,
         "decisive_question_plan": decisive_plan,
+        "industry_knowledge_context": industry_knowledge_context,
         "valuation_route": valuation_route,
         "official_evidence": {
             "state": (evidence_context.get("validation") or {}).get("state", "UNAVAILABLE"),
@@ -326,6 +355,11 @@ read_decisive_question_plan._tool_meta = {
         "output_dir": {"type": "string", "description": "股票输出目录"},
         "chapter_index": {"type": "integer", "description": "可选；只返回与该章相关的问题", "optional": True}
     },
+}
+read_industry_knowledge_context._tool_meta = {
+    "name": "read_industry_knowledge_context",
+    "description": "读取行业机制匹配及本公司必须验证字段。它只提供研究问题和反例，不能替代公司官方证据或直接支持估值、价格和动作。",
+    "parameters": {"output_dir": {"type": "string", "description": "股票输出目录"}},
 }
 read_valuation_route._tool_meta = {
     "name": "read_valuation_route",
