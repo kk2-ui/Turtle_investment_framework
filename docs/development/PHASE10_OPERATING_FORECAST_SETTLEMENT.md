@@ -1,18 +1,18 @@
 # Phase 10 经营预测与年报走步结算设计
 
-> 状态：`DESIGN / NOT_YET_IMPLEMENTED_IN_SCHEMA`
+> 状态：`IMPLEMENTED_IN_SCHEMA_AND_VALIDATOR / HISTORICAL_CASE_ACQUISITION_PENDING`
 > 日期：2026-08-16（Asia/Shanghai）
 > 适用：每个已冻结的 `case-vintage`；首案 600340 也适用，但其
 > `PURPOSEFUL_STRESS_CASE` 标签不变。
 
-本文补充[Phase 10 回测路线图与模型行为契约](PHASE10_BACKTEST_ROADMAP.md)和[收益与选股评估契约](PHASE10_RETURN_SELECTION_EVALUATION.md)。它规定黄金报告对经营的判断如何在后续年报、半年报和公告中被逐份结算。它不修改当前 `historical-backtest-*.v1` schema，也不把设计字段描述成已经可执行的程序能力。
+本文补充[Phase 10 回测路线图与模型行为契约](PHASE10_BACKTEST_ROADMAP.md)和[收益与选股评估契约](PHASE10_RETURN_SELECTION_EVALUATION.md)。它规定黄金报告对经营的判断如何在后续年报、半年报和公告中被逐份结算。当前 `historical-backtest-*.v1` 已执行最小契约；尚未完成的是首个历史 case 的完整来源采集和真实冻结报告，不是用假样本宣称校准完成。
 
 ## 1. 结算的对象和边界
 
 要回答的是：“冻结时，报告对公司经营、现金、资本结构和永久损失路径的理解，后来被官方披露怎样支持、反驳或保留为未知？”这与“股价后来涨跌多少？”是两道不同的问题。
 
 - 只有冻结 `calibration_ledger.claims` 中的材料性项目可以结算。不得在看到年报后把平淡但有利的指标补进冻结报告，也不得删除原先的反方条件。
-- 每个可量化预测必须对应一个预注册的 `forecast_spec`。当前 v1 只有 `prediction` 和 `observable_outcome` 的最小字段；在 schema 扩展获批前，`forecast_spec` 是报告和结算审阅所需的文档化设计，不是可绕过 v1 校验的新 payload。
+- 每个可量化预测必须对应预注册的 `prediction` 和 `observable_outcome`。当前 v1 已冻结指标、单位、计量口径、经济期间、允许来源和 `settlement_version_policy`；更细的 `forecast_spec` 可以作为报告附页，但不能绕过这些已执行字段。
 - 当前 v1 无法严格表达的经营判断，必须在冻结时写为具体、可观察的 `UNKNOWN`，或降级为不进入预测误差统计的解释性文字。不能把“经营将改善”这类没有指标、期限和比较口径的句子事后称为预测。
 - 后续披露只进入 `MODEL_FORECAST_ERROR` 和 `actual_outcomes.operating_observations`。它绝不回写报告的事实基础、估值输入、行动价或冻结动作。
 
@@ -97,6 +97,18 @@
 - `LATEST_OFFICIAL_AS_OF_EVALUATION`：用结算日之前的最新官方更正值评估经济数值；必须同时保留并展示首次披露值与差异。
 
 两种口径可以并排报告以研究会计质量和数据稳定性，但不能混成一个误差数字，也不能在出现更有利版本后替换已展示的历史结果。修订本身应标记 `RESTATEMENT_OR_RECLASSIFICATION`，并按其影响归入 `DATA_COVERAGE`、`ACQUISITION_MODULE` 或报告期的会计可比性说明；除非冻结报告依赖了错误版本，否则它不是 writer 的事后过失。
+
+### 3.3 当前可执行字段
+
+冻结 case 的每个 `observable_outcome` 必须携带 `settlement_version_policy`。结算记录则必须：
+
+- 将每个冻结 claim 写入 `model_forecast_error.claim_settlements`；预测使用
+  `CALCULATED`、`PARTIAL` 或 `NOT_CALCULABLE`，未知使用明确的解决状态；不允许遗漏后仍标为 `REVIEWABLE`；
+- 用 `operating_source_timeline` 声明已枚举的经营来源及其完整性，并让观察引用该时间线中的官方来源；
+- 为每个经营观察写入 `comparability_status`，只有 `COMPARABLE` 或已预注册换算规则的观察可以成为预测误差的 actual；
+- 由 `INITIAL_DISCLOSURE` 强制选用同一 claim、指标、口径和经济期间的首次可见可比观察；选择后续重述会被 validator 拒绝。`LATEST_OFFICIAL_AS_OF_EVALUATION` 则在已枚举时间线中选择结算日以前的最后可见观察，已枚举的首次披露不会被覆盖。
+
+所有 `published_at`、冻结 cutoff 和结算时点按完整时间戳比较。只有日期的资料在 cutoff 当日不足以证明先后，会使该 case 保持 `INCOMPLETE`，而不是被当作已知的盘中时刻。
 
 ## 4. 口径漂移、缺失和不可比
 

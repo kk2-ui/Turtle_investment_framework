@@ -83,6 +83,7 @@ def _case() -> dict:
                         "period_start": "2021-01-01",
                         "period_end": "2021-12-31",
                         "allowed_source_types": ["ANNUAL_REPORT", "EXCHANGE_ANNOUNCEMENT"],
+                        "settlement_version_policy": "INITIAL_DISCLOSURE",
                     },
                 },
                 {
@@ -108,6 +109,7 @@ def _case() -> dict:
                         "period_start": "2021-01-01",
                         "period_end": "2021-12-31",
                         "allowed_source_types": ["ANNUAL_REPORT"],
+                        "settlement_version_policy": "INITIAL_DISCLOSURE",
                     },
                 },
             ],
@@ -155,6 +157,10 @@ def _settlement() -> dict:
             "source_version": "exchange-official-unadjusted-close-v1",
             "data_as_of": "2022-08-30",
         }],
+        "operating_source_timeline": {
+            "enumeration_status": "COMPLETE",
+            "source_ids": ["AR:00506:2021"],
+        },
         "actual_outcomes": {
             "currency": "HKD",
             "cash_flows": [{"date": "2022-05-10", "amount": 0.1, "source_ids": ["AR:00506:2021"]}],
@@ -168,6 +174,7 @@ def _settlement() -> dict:
                 "period_start": "2021-01-01",
                 "period_end": "2021-12-31",
                 "source_ids": ["AR:00506:2021"],
+                "comparability_status": "COMPARABLE",
             }],
         },
         "report_coverage": {
@@ -179,6 +186,17 @@ def _settlement() -> dict:
         },
         "model_forecast_error": {
             "status": "CALCULATED",
+            "claim_settlements": [{
+                "claim_id": "HBTCLM:owner-cash",
+                "frozen_disposition": "PREDICTION",
+                "status": "CALCULATED",
+                "observation_ids": ["HBTOBS:owner-cash:FY2021"],
+            }, {
+                "claim_id": "HBTCLM:minority-cash-access",
+                "frozen_disposition": "UNKNOWN",
+                "status": "UNRESOLVED_AS_OF_SETTLEMENT",
+                "observation_ids": [],
+            }],
             "metrics": [{
                 "claim_id": "HBTCLM:owner-cash",
                 "observation_id": "HBTOBS:owner-cash:FY2021",
@@ -311,6 +329,22 @@ def test_future_source_and_current_restated_value_are_blocked() -> None:
     assert "sources[0]:current_restated_data_not_admissible" in result["invalid_findings"]
 
 
+def test_cutoff_comparisons_preserve_intraday_source_order() -> None:
+    case = _case()
+    case["sources"][0]["published_at"] = "2021-08-31T18:00:01+08:00"
+    result = validate_case(case)
+    assert "sources[0]:future_published_at" in result["invalid_findings"]
+
+    settlement = _settlement()
+    settlement["actual_sources"][0]["published_at"] = "2021-08-31T18:00:01+08:00"
+    assert validate_settlement(settlement, case=_case())["state"] == "REVIEWABLE"
+
+    ambiguous = _case()
+    ambiguous["sources"][0]["published_at"] = "2021-08-31"
+    result = validate_case(ambiguous)
+    assert "sources[0]:published_at_time_required_on_cutoff_date" in result["incomplete_findings"]
+
+
 def test_frozen_inputs_cannot_contain_hindsight_and_route_price_identity_is_checked() -> None:
     case = _case()
     case["inputs"][0]["actual_outcome"] = 0.3
@@ -415,7 +449,7 @@ def test_settlement_requires_later_official_sources_and_cannot_rewrite_frozen_pr
     assert "actual_outcomes.cash_flows[0]:source_id_not_found:AR:missing" in result["invalid_findings"]
 
     after_cutoff = deepcopy(settlement)
-    after_cutoff["actual_sources"][0]["published_at"] = "2021-08-31"
+    after_cutoff["actual_sources"][0]["published_at"] = "2021-08-31T18:00:00+08:00"
     result = validate_settlement(after_cutoff, case=case)
     assert "actual_sources[0]:published_at_must_follow_report_cutoff" in result["invalid_findings"]
 
@@ -473,6 +507,54 @@ def test_forecast_error_must_reference_the_same_operating_observation() -> None:
     settlement["model_forecast_error"]["metrics"][0]["observation_id"] = "HBTOBS:missing"
     result = validate_settlement(settlement, case=case)
     assert "model_forecast_error.metrics[0]:observation_id_not_found:HBTOBS:missing" in result["invalid_findings"]
+
+
+def test_settlement_requires_an_explicit_outcome_for_every_frozen_claim() -> None:
+    missing_prediction = _case()
+    extra_prediction = deepcopy(missing_prediction["calibration_ledger"]["claims"][0])
+    extra_prediction["claim_id"] = "HBTCLM:omitted-prediction"
+    missing_prediction["calibration_ledger"]["claims"].append(extra_prediction)
+    result = validate_settlement(_settlement(), case=missing_prediction)
+    assert result["state"] == "INVALID"
+    assert "model_forecast_error.claim_settlements:missing_frozen_claim:HBTCLM:omitted-prediction" in result["incomplete_findings"]
+
+    missing_unknown = _case()
+    extra_unknown = deepcopy(missing_unknown["calibration_ledger"]["claims"][1])
+    extra_unknown["claim_id"] = "HBTCLM:omitted-unknown"
+    missing_unknown["calibration_ledger"]["claims"].append(extra_unknown)
+    result = validate_settlement(_settlement(), case=missing_unknown)
+    assert result["state"] == "INVALID"
+    assert "model_forecast_error.claim_settlements:missing_frozen_claim:HBTCLM:omitted-unknown" in result["incomplete_findings"]
+
+
+def test_initial_disclosure_policy_rejects_a_later_restatement_as_actual() -> None:
+    settlement = _settlement()
+    settlement["actual_sources"].append({
+        "source_id": "AR:00506:2021:RESTATED",
+        "source_type": "ANNUAL_REPORT",
+        "official": True,
+        "published_at": "2022-06-01",
+        "source_version": "annual-report-restated-2021",
+        "data_as_of": "2021-12-31",
+    })
+    settlement["operating_source_timeline"]["source_ids"].append("AR:00506:2021:RESTATED")
+    restated_observation = deepcopy(settlement["actual_outcomes"]["operating_observations"][0])
+    restated_observation.update({
+        "observation_id": "HBTOBS:owner-cash:FY2021:restated",
+        "value": 0.30,
+        "source_ids": ["AR:00506:2021:RESTATED"],
+    })
+    settlement["actual_outcomes"]["operating_observations"].append(restated_observation)
+    settlement["model_forecast_error"]["claim_settlements"][0]["observation_ids"] = [
+        "HBTOBS:owner-cash:FY2021:restated",
+    ]
+    settlement["model_forecast_error"]["metrics"][0].update({
+        "observation_id": "HBTOBS:owner-cash:FY2021:restated",
+        "actual_value": 0.30,
+        "actual_source_ids": ["AR:00506:2021:RESTATED"],
+    })
+    result = validate_settlement(settlement, case=_case())
+    assert "model_forecast_error.metrics[0]:does_not_use_initial_disclosure_per_frozen_policy" in result["invalid_findings"]
 
 
 def test_return_settlement_binds_frozen_action_price_identity_and_execution_rule() -> None:
