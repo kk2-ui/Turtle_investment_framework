@@ -106,6 +106,7 @@
   `CALCULATED`、`PARTIAL` 或 `NOT_CALCULABLE`，未知使用明确的解决状态；不允许遗漏后仍标为 `REVIEWABLE`；
 - 用 `operating_source_timeline` 声明已枚举的经营来源及其完整性，并让观察引用该时间线中的官方来源；
 - 为每个经营观察写入 `comparability_status`，只有 `COMPARABLE` 或已预注册换算规则的观察可以成为预测误差的 actual；
+- 每个与冻结定义匹配且可比的观察都必须登记到该 claim 的结算中。预测不能在已有可比 actual 时标为 `NOT_CALCULABLE` 或 `PARTIAL`，未知也不能在已有可比 actual 时继续标为 `UNRESOLVED_AS_OF_SETTLEMENT`；
 - 由 `INITIAL_DISCLOSURE` 强制选用同一 claim、指标、口径和经济期间的首次可见可比观察；选择后续重述会被 validator 拒绝。`LATEST_OFFICIAL_AS_OF_EVALUATION` 则在已枚举时间线中选择结算日以前的最后可见观察，已枚举的首次披露不会被覆盖。
 
 所有 `published_at`、冻结 cutoff 和结算时点按完整时间戳比较。只有日期的资料在 cutoff 当日、或在同一 claim 的首次/最新披露选择中无法证明版本先后时，会使该 case 保持 `INCOMPLETE`，而不是被当作已知的盘中时刻。

@@ -527,6 +527,50 @@ def test_settlement_requires_an_explicit_outcome_for_every_frozen_claim() -> Non
     assert "model_forecast_error.claim_settlements:missing_frozen_claim:HBTCLM:omitted-unknown" in result["incomplete_findings"]
 
 
+def test_comparable_observations_cannot_be_dropped_from_prediction_or_unknown_settlement() -> None:
+    case = _case()
+    dropped_prediction = deepcopy(case["calibration_ledger"]["claims"][0])
+    dropped_prediction["claim_id"] = "HBTCLM:dropped-despite-observation"
+    case["calibration_ledger"]["claims"].append(dropped_prediction)
+    settlement = _settlement()
+    observation = deepcopy(settlement["actual_outcomes"]["operating_observations"][0])
+    observation.update({
+        "observation_id": "HBTOBS:dropped-despite-observation",
+        "claim_id": "HBTCLM:dropped-despite-observation",
+        "value": 0.01,
+    })
+    settlement["actual_outcomes"]["operating_observations"].append(observation)
+    settlement["model_forecast_error"]["claim_settlements"].append({
+        "claim_id": "HBTCLM:dropped-despite-observation",
+        "frozen_disposition": "PREDICTION",
+        "status": "NOT_CALCULABLE",
+        "observation_ids": [],
+    })
+    settlement["model_forecast_error"]["status"] = "PARTIAL"
+    result = validate_settlement(settlement, case=case)
+    assert "model_forecast_error.claim_settlements[2]:comparable_observation_requires_calculated_status" in result["invalid_findings"]
+    assert "model_forecast_error.claim_settlements[2]:comparable_observation_not_registered:HBTOBS:dropped-despite-observation" in result["invalid_findings"]
+
+    case = _case()
+    settlement = _settlement()
+    unknown = case["calibration_ledger"]["claims"][1]
+    unknown_observation = deepcopy(settlement["actual_outcomes"]["operating_observations"][0])
+    unknown_observation.update({
+        "observation_id": "HBTOBS:minority-cash-access:FY2021",
+        "claim_id": unknown["claim_id"],
+        "metric": unknown["observable_outcome"]["metric"],
+        "value": 0.4,
+        "unit": unknown["observable_outcome"]["unit"],
+        "measurement_basis": unknown["observable_outcome"]["measurement_basis"],
+        "period_start": unknown["observable_outcome"]["period_start"],
+        "period_end": unknown["observable_outcome"]["period_end"],
+    })
+    settlement["actual_outcomes"]["operating_observations"].append(unknown_observation)
+    result = validate_settlement(settlement, case=case)
+    assert "model_forecast_error.claim_settlements[1]:comparable_observation_requires_resolution_status" in result["invalid_findings"]
+    assert "model_forecast_error.claim_settlements[1]:comparable_observation_not_registered:HBTOBS:minority-cash-access:FY2021" in result["invalid_findings"]
+
+
 def test_initial_disclosure_policy_rejects_a_later_restatement_as_actual() -> None:
     settlement = _settlement()
     settlement["actual_sources"].append({

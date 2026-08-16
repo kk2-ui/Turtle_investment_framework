@@ -629,6 +629,23 @@ def _validate_operating_source_timeline(
     return invalid, incomplete
 
 
+def _matching_comparable_observations(
+    frozen_claim: dict[str, Any], observations: dict[str, dict[str, Any]],
+) -> dict[str, dict[str, Any]]:
+    outcome = frozen_claim.get("observable_outcome") if isinstance(frozen_claim.get("observable_outcome"), dict) else {}
+    return {
+        observation_id: observation
+        for observation_id, observation in observations.items()
+        if observation.get("claim_id") == frozen_claim.get("claim_id")
+        and observation.get("metric") == outcome.get("metric")
+        and observation.get("unit") == outcome.get("unit")
+        and observation.get("measurement_basis") == outcome.get("measurement_basis")
+        and observation.get("period_start") == outcome.get("period_start")
+        and observation.get("period_end") == outcome.get("period_end")
+        and observation.get("comparability_status") in COMPARABLE_OPERATING_STATUSES
+    }
+
+
 def _validate_claim_settlements(
     model_error: dict[str, Any], *, frozen_claims: dict[str, dict[str, Any]],
     observations: dict[str, dict[str, Any]],
@@ -670,11 +687,20 @@ def _validate_claim_settlements(
         if status not in allowed_statuses:
             invalid.append(prefix + ":status_invalid_for_frozen_disposition")
         observation_ids = entry.get("observation_ids") if isinstance(entry.get("observation_ids"), list) else []
+        registered_observation_ids = {str(item or "") for item in observation_ids}
+        matching_observations = _matching_comparable_observations(frozen, observations)
+        for observation_id in matching_observations:
+            if observation_id not in registered_observation_ids:
+                invalid.append(prefix + ":comparable_observation_not_registered:" + observation_id)
         if disposition == "PREDICTION" and status == "CALCULATED" and not observation_ids:
             incomplete.append(prefix + ":calculated_prediction_requires_observation")
+        if disposition == "PREDICTION" and matching_observations and status != "CALCULATED":
+            invalid.append(prefix + ":comparable_observation_requires_calculated_status")
         if disposition == "UNKNOWN":
             if status == "UNRESOLVED_AS_OF_SETTLEMENT" and observation_ids:
                 invalid.append(prefix + ":unresolved_unknown_cannot_reference_observation")
+            if status == "UNRESOLVED_AS_OF_SETTLEMENT" and matching_observations:
+                invalid.append(prefix + ":comparable_observation_requires_resolution_status")
             elif status in UNKNOWN_SETTLEMENT_STATUSES - {"UNRESOLVED_AS_OF_SETTLEMENT"} and not observation_ids:
                 incomplete.append(prefix + ":resolved_unknown_requires_observation")
         for observation_id in observation_ids:
@@ -697,16 +723,7 @@ def _validate_metric_version_policy(
     """Select the pre-registered first or latest comparable disclosure, never a convenient revision."""
     outcome = frozen_claim.get("observable_outcome") if isinstance(frozen_claim.get("observable_outcome"), dict) else {}
     policy = outcome.get("settlement_version_policy")
-    candidates = [
-        item for item in observations.values()
-        if item.get("claim_id") == observation.get("claim_id")
-        and item.get("metric") == observation.get("metric")
-        and item.get("unit") == observation.get("unit")
-        and item.get("measurement_basis") == observation.get("measurement_basis")
-        and item.get("period_start") == observation.get("period_start")
-        and item.get("period_end") == observation.get("period_end")
-        and item.get("comparability_status") in COMPARABLE_OPERATING_STATUSES
-    ]
+    candidates = list(_matching_comparable_observations(frozen_claim, observations).values())
     dated_candidates = [
         (item, _observation_visible_at(item, actual_sources)) for item in candidates
     ]
