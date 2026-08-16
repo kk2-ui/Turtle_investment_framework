@@ -36152,6 +36152,12 @@
     "record_count": 880
   },
   "package_root": "data/phase10/600340/precutoff-v2",
+  "framework_allowlist": [
+    {
+      "path": "framework/policy.md",
+      "role": "PIT_WRITER_POLICY"
+    }
+  ],
   "source_package": {
     "status": "COMPLETE",
     "selected_count": 879,

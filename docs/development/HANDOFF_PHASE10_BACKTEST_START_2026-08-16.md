@@ -174,4 +174,6 @@ cutoff 后文件，也没有将页面标题、内容或结果用于来源包、�
 - 采集器现在支持断点恢复：已完成来源不会重复下载，已有失败 PDF 可只补做 reader 物化。`data/phase10/` 仅为本地证据包，已加入 `.gitignore`；git 提交不包含 552MB 原件或 Markdown。
 - 定向 PIT/acquisition 回归 23 项通过，项目完整门禁 `612 passed`，`merge-check READY`；提交 `b1fbbb2`。
 
-当前停点：PIT preflight 已通过并生成新的 attestation；P10-B 受限 writer 尚未运行，因为当前 shell 没有 `DEEPSEEK_API_KEY` 或 `ANTHROPIC_API_KEY`。下一会话应使用新/空 output 目录启动 `--pit-writer --validation-only`，只允许生成冻结前 Markdown 草案；在 writer、独立 reviewer、完整 calibration ledger 和 Phase 08 acceptance/V3 接入前，仍不得把本案标为生产回测、收益、买点、选股或黄金标准校准样本。
+P10-B 已在本次 continuation 完成一次受限 direct writer 运行：不依赖 `DEEPSEEK_API_KEY`/`ANTHROPIC_API_KEY`，由当前 Codex agent 在同一 PIT source boundary 内读取静态 `framework/policy.md` 与四份关键 cutoff 内来源，并通过 `PITReportWriter` 唯一写入器生成冻结前工程草案。草案与 read attestation 位于 `output/phase10_pit_writer_600340_direct_20260817/`，runner `REVIEWABLE`、writer `PASS`，实际 ALLOW 读取为 1 份 framework + 4 份 source，未读取行情、公司行动、结算或 cutoff 后资料。
+
+该草案仍不是完整生产冻结报告：尚未接入 Phase 08 acceptance/V3、完整 claim/calibration ledger、独立 reviewer、走步结算或模型记忆 attestation。故本案继续不得标为生产回测、收益、买点、选股或黄金标准校准样本；下一步是对草案做独立内容审阅，登记可结算 claim 与 UNKNOWN 的观察口径，再冻结失败/通过版本并进入后续结算。
