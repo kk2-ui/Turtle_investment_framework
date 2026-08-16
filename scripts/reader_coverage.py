@@ -202,11 +202,21 @@ def _group_hits(text: str, groups: list[tuple[str, tuple[str, ...]]]) -> set[str
     return {name for name, cues in groups if any(cue.lower() in lowered for cue in cues)}
 
 
+def _windows(paragraphs: list[str]) -> list[str]:
+    """Allow a reader explanation to span adjacent prose blocks."""
+    windows = list(paragraphs)
+    windows.extend(
+        f"{left} {right}"
+        for left, right in zip(paragraphs, paragraphs[1:])
+    )
+    return windows
+
+
 def _topic_result(
     text: str, spec: dict[str, Any], paragraphs: list[str], *, source_available: bool
 ) -> dict[str, Any]:
     hits: list[dict[str, Any]] = []
-    for paragraph in paragraphs:
+    for paragraph in _windows(paragraphs):
         groups = _group_hits(paragraph, spec["groups"])
         unknown = bool(_UNKNOWN_RE.search(paragraph))
         causal = bool(_CAUSAL_RE.search(paragraph))
