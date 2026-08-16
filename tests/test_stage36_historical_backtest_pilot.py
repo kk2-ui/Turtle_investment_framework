@@ -50,6 +50,60 @@ def _case() -> dict:
             "input_role": "JUDGMENT",
             "source_ids": ["AR:00506:2020"],
         }],
+        "calibration_ledger": {
+            "claims": [
+                {
+                    "claim_id": "HBTCLM:owner-cash",
+                    "statement": "普通股每股 owner cash 在下一财年不少于 HKD0.20。",
+                    "materiality": "RETURN",
+                    "frozen_disposition": "PREDICTION",
+                    "source_ids": ["AR:00506:2020"],
+                    "prediction": {
+                        "metric": "ordinary_share_owner_cash_per_share",
+                        "operator": "AT_LEAST",
+                        "value": 0.2,
+                        "unit": "HKD/share",
+                        "horizon": "FY2021 results",
+                    },
+                    "threshold": {
+                        "metric": "ordinary_share_owner_cash_per_share",
+                        "operator": "AT_MOST",
+                        "value": 0.15,
+                        "unit": "HKD/share",
+                        "consequence": "长期回报和 P_LONG 需要下调重算。",
+                    },
+                    "unknown": None,
+                    "counter_thesis": "渠道和包材压力使现金转化低于正常化判断。",
+                    "flip_condition": "FY2021 普通股 owner cash 低于 HKD0.15/share。",
+                    "observable_outcome": {
+                        "metric": "ordinary_share_owner_cash_per_share",
+                        "unit": "HKD/share",
+                        "measurement_rule": "按下一份官方年报的经营现金、资本开支和普通股归属重新计算。",
+                    },
+                },
+                {
+                    "claim_id": "HBTCLM:minority-cash-access",
+                    "statement": "子公司少数股东现金索取的实际比例尚未被官方披露闭合。",
+                    "materiality": "VALUATION",
+                    "frozen_disposition": "UNKNOWN",
+                    "source_ids": ["AR:00506:2020"],
+                    "prediction": None,
+                    "threshold": None,
+                    "unknown": {
+                        "statement": "少数股东现金索取比例未知。",
+                        "economic_impact": "可能高估普通股可得现金和长期价格。",
+                        "resolution_observation": "后续年报披露的少数股东分红与现金流量资料。",
+                    },
+                    "counter_thesis": "少数股东分红长期接近其利润份额。",
+                    "flip_condition": "官方披露证明普通股现金归属低于模型假设。",
+                    "observable_outcome": {
+                        "metric": "minority_cash_distribution_ratio",
+                        "unit": "%",
+                        "measurement_rule": "以官方年报的少数股东分红除以少数股东归属现金口径。",
+                    },
+                },
+            ],
+        },
         "taxes_fees_fx": {
             "tax_rate": 0.1,
             "transaction_fee_rate": 0.001,
@@ -73,11 +127,24 @@ def _settlement() -> dict:
         "experiment_id": "HBT:test",
         "case_id": "HBTCASE:TEST",
         "settlement_as_of": "2022-08-31T18:00:00+08:00",
-        "actual_outcomes": {
+        "actual_sources": [{
+            "source_id": "AR:00506:2021",
+            "source_type": "ANNUAL_REPORT",
+            "official": True,
             "published_at": "2022-03-25",
+            "source_version": "annual-report-original-2021",
+            "data_as_of": "2021-12-31",
+        }],
+        "actual_outcomes": {
             "currency": "HKD",
-            "cash_flows": [{"date": "2022-05-10", "amount": 0.1}],
-            "operating_observations": [{"metric": "revenue", "value": 100}],
+            "cash_flows": [{"date": "2022-05-10", "amount": 0.1, "source_ids": ["AR:00506:2021"]}],
+            "operating_observations": [{
+                "claim_id": "HBTCLM:owner-cash",
+                "metric": "ordinary_share_owner_cash_per_share",
+                "value": 0.18,
+                "unit": "HKD/share",
+                "source_ids": ["AR:00506:2021"],
+            }],
         },
         "report_coverage": {
             "status": "PARTIAL",
@@ -88,7 +155,14 @@ def _settlement() -> dict:
         },
         "model_forecast_error": {
             "status": "CALCULATED",
-            "metrics": [{"name": "owner_cash_error", "forecast": 0.2, "actual": 0.18}],
+            "metrics": [{
+                "claim_id": "HBTCLM:owner-cash",
+                "metric": "ordinary_share_owner_cash_per_share",
+                "forecast_value": 0.2,
+                "actual_value": 0.18,
+                "unit": "HKD/share",
+                "actual_source_ids": ["AR:00506:2021"],
+            }],
             "notes": ["只评价冻结报告已声明的预测"],
         },
         "investment_return_outcome": {
@@ -139,6 +213,29 @@ def test_frozen_inputs_cannot_contain_hindsight_and_route_price_identity_is_chec
     assert "long_term_route_requires_p_long_primary" in result["invalid_findings"]
 
 
+def test_calibration_ledger_binds_claims_to_frozen_sources_and_preserves_unknowns() -> None:
+    case = _case()
+    assert validate_case(case)["state"] == "REVIEWABLE"
+
+    unresolved = deepcopy(case)
+    unresolved["inputs"][0]["source_ids"] = ["AR:missing"]
+    result = validate_case(unresolved)
+    assert "inputs[0]:source_id_not_found:AR:missing" in result["invalid_findings"]
+
+    hindsight = deepcopy(case)
+    hindsight["calibration_ledger"]["claims"][0]["prediction"]["actual_value"] = 0.18
+    result = validate_case(hindsight)
+    assert any(item.startswith("future_field_in_frozen_input:calibration_ledger") for item in result["invalid_findings"])
+
+    malformed_unknown = deepcopy(case)
+    malformed_unknown["calibration_ledger"]["claims"][1]["threshold"] = {
+        "metric": "minority_cash_distribution_ratio", "operator": "AT_LEAST", "value": 0.5,
+        "unit": "%", "consequence": "not applicable",
+    }
+    result = validate_case(malformed_unknown)
+    assert "calibration_ledger.claims[1]:unknown_cannot_carry_quantitative_prediction" in result["invalid_findings"]
+
+
 def test_fixed_market_terminal_price_cannot_be_primary_without_independent_evidence() -> None:
     case = _case()
     case["route"] = "FINITE_XIRR"
@@ -163,6 +260,9 @@ def test_settlement_keeps_coverage_model_and_investment_dimensions_separate() ->
     assert validate_case(case)["state"] == "REVIEWABLE"
     assert validate_settlement(settlement, case=case)["state"] == "REVIEWABLE"
 
+    without_case = validate_settlement(settlement)
+    assert "frozen_case_required_for_settlement_calibration" in without_case["invalid_findings"]
+
     combined = deepcopy(settlement)
     combined["score"] = {"combined_score": 0.8}
     result = validate_settlement(combined, case=case)
@@ -175,6 +275,33 @@ def test_settlement_before_cutoff_is_lookahead() -> None:
     settlement["settlement_as_of"] = "2021-08-31T17:00:00+08:00"
     result = validate_settlement(settlement, case=_case())
     assert "settlement_must_follow_report_cutoff" in result["invalid_findings"]
+
+
+def test_settlement_requires_later_official_sources_and_cannot_rewrite_frozen_prediction() -> None:
+    case = _case()
+    settlement = _settlement()
+
+    unverified = deepcopy(settlement)
+    unverified["actual_outcomes"]["cash_flows"][0]["source_ids"] = ["AR:missing"]
+    result = validate_settlement(unverified, case=case)
+    assert "actual_outcomes.cash_flows[0]:source_id_not_found:AR:missing" in result["invalid_findings"]
+
+    after_cutoff = deepcopy(settlement)
+    after_cutoff["actual_sources"][0]["published_at"] = "2021-08-31"
+    result = validate_settlement(after_cutoff, case=case)
+    assert "actual_sources[0]:published_at_must_follow_report_cutoff" in result["invalid_findings"]
+
+    source_metadata_missing = deepcopy(settlement)
+    source_metadata_missing["actual_sources"][0]["official"] = False
+    source_metadata_missing["actual_sources"][0]["source_version"] = ""
+    result = validate_settlement(source_metadata_missing, case=case)
+    assert "actual_sources[0]:official_source_required" in result["invalid_findings"]
+    assert "actual_sources[0]:missing:source_version" in result["incomplete_findings"]
+
+    rewritten = deepcopy(settlement)
+    rewritten["model_forecast_error"]["metrics"][0]["forecast_value"] = 0.25
+    result = validate_settlement(rewritten, case=case)
+    assert "model_forecast_error.metrics[0]:forecast_value_does_not_match_frozen_prediction" in result["invalid_findings"]
 
 
 def test_checked_in_pilot_config_matches_builder() -> None:

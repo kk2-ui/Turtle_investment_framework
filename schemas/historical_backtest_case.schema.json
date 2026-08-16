@@ -3,7 +3,7 @@
   "$id": "https://turtle.local/schemas/historical_backtest_case.schema.json",
   "title": "Turtle Historical Backtest Frozen Case",
   "type": "object",
-  "required": ["schema_version", "case_id", "experiment_id", "company_code", "simulation_cutoff", "report_freeze", "route", "forecast", "sources", "inputs", "taxes_fees_fx", "price_identity", "status"],
+  "required": ["schema_version", "case_id", "experiment_id", "company_code", "simulation_cutoff", "report_freeze", "route", "forecast", "sources", "inputs", "calibration_ledger", "taxes_fees_fx", "price_identity", "status"],
   "properties": {
     "schema_version": {"const": "historical-backtest-case.v1"},
     "case_id": {"type": "string", "pattern": "^HBTCASE:"},
@@ -59,6 +59,67 @@
           "value": {},
           "input_role": {"enum": ["HISTORICAL_FACT", "JUDGMENT", "MODEL_ASSUMPTION"]},
           "source_ids": {"type": "array", "items": {"type": "string"}}
+        }
+      }
+    },
+    "calibration_ledger": {
+      "description": "Frozen material claims for later calibration. This is not a scorecard and cannot contain realized outcomes.",
+      "type": "object",
+      "required": ["claims"],
+      "properties": {
+        "claims": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": ["claim_id", "statement", "materiality", "frozen_disposition", "source_ids", "prediction", "threshold", "unknown", "counter_thesis", "flip_condition", "observable_outcome"],
+            "properties": {
+              "claim_id": {"type": "string", "pattern": "^HBTCLM:"},
+              "statement": {"type": "string", "minLength": 1},
+              "materiality": {"enum": ["CENTRAL_THESIS", "VALUATION", "RETURN", "PERMANENT_LOSS"]},
+              "frozen_disposition": {"enum": ["PREDICTION", "UNKNOWN"]},
+              "source_ids": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}},
+              "prediction": {
+                "type": ["object", "null"],
+                "properties": {
+                  "metric": {"type": "string", "minLength": 1},
+                  "operator": {"enum": ["AT_LEAST", "AT_MOST", "EQUALS"]},
+                  "value": {"type": "number"},
+                  "unit": {"type": "string", "minLength": 1},
+                  "horizon": {"type": "string", "minLength": 1}
+                }
+              },
+              "threshold": {
+                "type": ["object", "null"],
+                "properties": {
+                  "metric": {"type": "string", "minLength": 1},
+                  "operator": {"enum": ["AT_LEAST", "AT_MOST", "EQUALS"]},
+                  "value": {"type": "number"},
+                  "unit": {"type": "string", "minLength": 1},
+                  "consequence": {"type": "string", "minLength": 1}
+                }
+              },
+              "unknown": {
+                "type": ["object", "null"],
+                "properties": {
+                  "statement": {"type": "string", "minLength": 1},
+                  "economic_impact": {"type": "string", "minLength": 1},
+                  "resolution_observation": {"type": "string", "minLength": 1}
+                }
+              },
+              "counter_thesis": {"type": "string", "minLength": 1},
+              "flip_condition": {"type": "string", "minLength": 1},
+              "observable_outcome": {
+                "type": "object",
+                "required": ["metric", "unit", "measurement_rule"],
+                "properties": {
+                  "metric": {"type": "string", "minLength": 1},
+                  "unit": {"type": "string", "minLength": 1},
+                  "measurement_rule": {"type": "string", "minLength": 1}
+                }
+              }
+            }
+          }
         }
       }
     },

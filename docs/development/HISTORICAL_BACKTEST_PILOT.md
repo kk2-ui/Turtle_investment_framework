@@ -18,6 +18,19 @@
 
 模型记忆无法完全控制，因此即使文件围栏通过，也只能将大模型回放标记为 `QUALIFIED` 或 `EXPLORATORY`，不能冒充严格前瞻样本。
 
+## 冻结校准账本
+
+每个可结算 case 在冻结时都必须写入 `calibration_ledger.claims`。它只记录会改变当时投资判断的材料性主张，不能用报告全文或事后叙事替代。每条主张必须：
+
+- 绑定冻结来源清单中的 `source_ids`；输入的 `source_ids` 也必须在同一清单中存在；
+- 明确标注为定量 `PREDICTION` 或 `UNKNOWN`；
+- 对预测预注册指标、数值、期限和失效阈值；对未知项预注册经济影响和后续如何观察；
+- 写出最强反方、结论翻转条件和后续可观察的结果口径。
+
+冻结 case 不得出现 `actual`、`actual_value`、`outcome` 或其他事后结算字段。特别是不能在结算时把模型的原始数值改成后来更合理的数值：结算中的 `forecast_value` 必须逐字匹配对应冻结预测的 `value`，否则校验失败。
+
+结算使用独立的 `actual_sources`，每一项实际现金流、经营观察和预测误差都要引用该清单中的来源。结算来源必须是官方来源类型，并记录 `published_at` 和 `source_version`；发布时间必须在模拟截止日之后、结算日之前。这样“事实后来发生了什么”与“冻结时报告主张了什么”可以逐项对照，但仍与覆盖度和投资结果分开保存。
+
 ## 回报通道与价格身份
 
 报告必须先识别通道：
@@ -41,6 +54,10 @@ python scripts/historical_backtest.py pilot \
   --output config/historical_backtest_pilot.v1.json
 python scripts/historical_backtest.py validate experiment \
   config/historical_backtest_pilot.v1.json
+
+# settlement 与冻结 case 一起校验，才能检查主张引用和预测值未被改写
+python scripts/historical_backtest.py validate settlement \
+  settlement.json --case frozen_case.json
 ```
 
 完整对象约束见：
