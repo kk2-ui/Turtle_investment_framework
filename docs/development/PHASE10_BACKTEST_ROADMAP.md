@@ -101,6 +101,7 @@ Phase 10 只服务两条需要分开回答的主线：
 - `ELIGIBLE` 只表示历史来源可建立 case；`calibration_eligible` 单独计数，只有模型记忆受控的候选才可能进入后续 holdout 审查；
 - 采集器按公告日期全量枚举，拒绝 cutoff 后来源和截止日前已被修订版替代的原版本；
 - `scripts/phase10_pit_runner.py` 已实现 source-package allowlist、只读 PIT runner 和读取审计，并由 production origin 回放 source identity、cutoff、package root 和实际 ALLOW 事件；它不使用来源内容 hash。既有 `turtle_agent` 读工具尚未绑定该 runner，故 production validator 仍保持 `INCOMPLETE`，不能把 attestation JSON 当作运行隔离证明；
+- `scripts/turtle_agent/run.py` 已提供 PIT preflight：它拒绝复用 output、跳过普通 Phase 0-2/网络/当前行情准备，只注册 PIT 读取工具并生成 attestation；这一步仍不生成冻结报告，writer 的 PIT context 和写工具边界需单独验收；
 - 首案 600340 形成可审阅的冻结来源包。
 
 **出口**：来源准入测试通过，且没有任何未来文件可被冻结运行读取。

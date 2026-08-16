@@ -1118,6 +1118,12 @@ def run_full_pipeline(
     period_end: str = "",
     validation_only: bool = False,
     approve_expensive_run: bool = False,
+    pit_source_manifest: str = "",
+    pit_package_root: str = "",
+    pit_framework_root: str = "",
+    pit_case_id: str = "",
+    pit_experiment_id: str = "",
+    pit_preflight: bool = False,
 ) -> str:
     """运行完整分析管线。
 
@@ -1127,6 +1133,27 @@ def run_full_pipeline(
     Agent Loop 内全自动：定性写作 Ch1-9 → 摘要提取 → Zone J → 定量估值 Ch10-13 → 统一决策。
     所有 LLM 调用走 Claude Code 内置 API（不受子进程安全策略限制）。
     """
+    pit_values = (pit_source_manifest, pit_package_root, pit_framework_root, pit_case_id, pit_experiment_id)
+    if any(str(value or "").strip() for value in pit_values) and not all(str(value or "").strip() for value in pit_values):
+        raise RuntimeError("PIT参数必须完整提供 manifest/package/framework/case/experiment")
+    pit_mode = bool(str(pit_source_manifest or "").strip())
+    if pit_mode:
+        if not pit_preflight:
+            raise RuntimeError("当前 PIT 入口仅支持显式 --pit-preflight；报告 writer 接入尚未开放")
+        if not output_dir:
+            raise RuntimeError("PIT运行必须显式提供新的 --output 目录")
+        if data_source or price_source or repair_only or not validation_only:
+            raise RuntimeError("PIT运行禁止数据源、当前价格、repair-only，且必须 --validation-only")
+        existing = Path(output_dir)
+        if existing.exists() and any(existing.iterdir()):
+            raise RuntimeError("PIT运行要求 --output 是新建或空目录，禁止复用现有输出")
+        if not pit_package_root:
+            raise RuntimeError("PIT运行缺少 --pit-package-root")
+        if not pit_framework_root:
+            raise RuntimeError("PIT运行缺少 --pit-framework-root")
+        if not pit_case_id or not pit_experiment_id:
+            raise RuntimeError("PIT运行缺少 --pit-case-id/--pit-experiment-id")
+        skip_prepare = True
     if not output_dir:
         # 自动检测或创建带中文名的目录
         code_short = code.replace(".HK", "").replace(".SH", "").replace(".SZ", "")
@@ -1198,6 +1225,36 @@ def run_full_pipeline(
         "status": "running",
         "phases": [],
     }
+    pit_runner = None
+    pit_attestation_path = ""
+    if pit_mode:
+        try:
+            from scripts.phase10_pit_runner import PITSourcePackage
+            manifest_path = Path(pit_source_manifest).expanduser().resolve()
+            manifest = _load_json_file(str(manifest_path))
+            if manifest.get("company_code") != code:
+                raise RuntimeError(
+                    f"PIT source manifest company_code={manifest.get('company_code')!r} 与 code={code!r} 不一致"
+                )
+            pit_runner = PITSourcePackage(
+                manifest,
+                pit_package_root,
+                framework_root=pit_framework_root or None,
+                case_id=pit_case_id or None,
+                experiment_id=pit_experiment_id or None,
+                run_id=run_id,
+                manifest_path=str(manifest_path),
+            )
+        except (OSError, ValueError, ImportError) as exc:
+            raise RuntimeError(f"PIT source-package 初始化失败: {exc}") from exc
+        if pit_runner.state != "REVIEWABLE":
+            raise RuntimeError(
+                "PIT source-package 未通过准入: "
+                + json.dumps({"state": pit_runner.state, "invalid": pit_runner.invalid_findings, "incomplete": pit_runner.incomplete_findings}, ensure_ascii=False)
+            )
+        diagnostics["pit_mode"] = True
+        diagnostics["pit_source_manifest"] = str(manifest_path)
+        diagnostics["pit_package_root"] = str(Path(pit_package_root).expanduser().resolve())
     try:
         from scripts.runtime_governance import RuntimeController
     except ModuleNotFoundError:
@@ -1731,7 +1788,7 @@ def run_full_pipeline(
     
         # 自动发现工具（每次 run 重新注册，~0.1秒，可接受）
         tools = ToolRegistry()
-        for mod in [
+        modules = ["turtle_agent.tools.pit_read_tools"] if pit_runner else [
             "turtle_agent.tools.read_tools",
             "turtle_agent.tools.calc_tools",
             "turtle_agent.tools.technical_tools",
@@ -1739,12 +1796,26 @@ def run_full_pipeline(
             "turtle_agent.tools.phase_tools",
             "turtle_agent.tools.search_tools",
             "turtle_agent.tools.browser_tools",
-        ]:
+        ]
+        if pit_runner:
+            from turtle_agent.tools.pit_read_tools import configure_pit_runner
+            configure_pit_runner(pit_runner)
+        for mod in modules:
             n = tools.auto_discover(mod)
     
         diagnostics['tools'] = tools.list_tools()
         diagnostics['tool_count'] = len(tools)
-        runtime.refresh_input_fingerprints(template_path)
+        if not pit_runner:
+            runtime.refresh_input_fingerprints(template_path)
+        if pit_runner:
+            pit_attestation_path = str(Path(output_dir) / "pit_runner_attestation.json")
+            _write_json_file(pit_attestation_path, pit_runner.attestation())
+            diagnostics["pit_attestation_path"] = pit_attestation_path
+            _write_diagnostics(output_dir, diagnostics)
+            print("PIT preflight 通过；已注册工具: " + ", ".join(diagnostics["tools"]))
+            from turtle_agent.tools.pit_read_tools import clear_pit_runner
+            clear_pit_runner()
+            return pit_attestation_path
         if llm:
             # 复用 Phase 2 创建的 LlmClient → 运行完整 Agent Loop
             print(f"\n{'━'*40}")
@@ -2619,6 +2690,16 @@ def main(argv: list[str] | None = None) -> int:
                     help="真实生成并验证报告，但不写入 _niangao 等下游系统")
     ap.add_argument("--approve-expensive-run", action="store_true",
                     help="明确批准超过预检阈值的真实 LLM 运行；仍受硬预算和无进展熔断约束")
+    ap.add_argument("--pit-source-manifest", default="",
+                    help="P10-A PIT source manifest；启用只读来源包 preflight")
+    ap.add_argument("--pit-package-root", default="",
+                    help="P10-A PIT 来源包目录；必须是独立历史输入目录")
+    ap.add_argument("--pit-framework-root", default="",
+                    help="P10-A PIT 框架 allowlist 根目录")
+    ap.add_argument("--pit-case-id", default="", help="P10-A case identity")
+    ap.add_argument("--pit-experiment-id", default="", help="P10-A experiment identity")
+    ap.add_argument("--pit-preflight", action="store_true",
+                    help="仅执行 P10-A PIT 来源包和工具隔离预检，不生成报告")
     args = ap.parse_args(argv)
     try:
         repair_chapters = tuple(
@@ -2656,6 +2737,12 @@ def main(argv: list[str] | None = None) -> int:
             period_end=args.period_end,
             validation_only=args.validation_only,
             approve_expensive_run=args.approve_expensive_run,
+            pit_source_manifest=args.pit_source_manifest,
+            pit_package_root=args.pit_package_root,
+            pit_framework_root=args.pit_framework_root,
+            pit_case_id=args.pit_case_id,
+            pit_experiment_id=args.pit_experiment_id,
+            pit_preflight=args.pit_preflight,
         )
         print(f"\n📄 {report_path}")
         return 0

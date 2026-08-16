@@ -83,6 +83,8 @@
 
 当前 `turtle_agent` 的既有读工具尚未注入该 boundary，仍可能按普通 `output_dir` 扫描文件。因此 PIT attestation 只能作为 `VERIFIED_ARTIFACT_AND_DECLARED_PROCESS`，production validator 明确保持 `INCOMPLETE`，直到所有 writer 读取工具和 Web 入口都实际受 source-package gate 控制。在此之前，case 不得标为生产 `ELIGIBLE`，更不能称为严格回测。
 
+当前已接入 `scripts/turtle_agent/run.py` 的 PIT preflight：启用 `--pit-source-manifest` 和 `--pit-package-root` 时，必须使用新/空 output、`--validation-only`，跳过 Phase 0-2 数据准备，只注册 `pit_list_sources`、`pit_read_source`、`pit_read_framework`，并写出 `pit_runner_attestation.json`。该入口目前是运行时隔离验收，不生成冻结报告；报告 writer 的受限上下文接入仍是下一步。
+
 ## 5. 大模型参数记忆限制
 
 2026年的模型可能在训练中见过该公司2021年以后的事件。即使文件围栏完全正确，也不能保证模型内部没有后见信息。因此回测必须分别报告：
