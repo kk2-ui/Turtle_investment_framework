@@ -12,11 +12,19 @@ empty selection.
 from __future__ import annotations
 
 import argparse
+import base64
+import gzip
 import json
+import os
+import re
+import subprocess
+import tempfile
 from copy import deepcopy
 from datetime import date, datetime, time, timezone
 from pathlib import Path
-from typing import Any, Iterable
+from typing import Any, Callable, Iterable
+from urllib.parse import urlencode, urljoin, urlparse
+from urllib.request import Request, urlopen
 from zoneinfo import ZoneInfo
 
 
@@ -27,6 +35,11 @@ LOCAL_TZ = ZoneInfo("Asia/Shanghai")
 PDF_PAGE_MARKDOWN = "PDF_PAGE_MARKDOWN"
 PDF_PAGE_MARKDOWN_EXTRACTOR = "pdf_preprocessor.extract_all_pages"
 PDF_PAGE_MARKDOWN_EXTRACTOR_VERSION = "phase10-pdf-page-markdown.v1"
+PDF_OCR_EXTRACTOR = "pdftoppm+tesseract"
+PDF_OCR_EXTRACTOR_VERSION = "phase10-pdf-ocr-tesseract.v1"
+SSE_BULLETIN_QUERY_URL = "https://query.sse.com.cn/security/stock/queryCompanyBulletin.do"
+SSE_STATIC_BASE_URL = "https://static.sse.com.cn"
+SSE_SECURITY_TYPES = "0101,120100,020100,020200,120200"
 
 ADMITTED = "ADMITTED"
 REJECTION_REASONS = {
@@ -42,6 +55,10 @@ REJECTION_REASONS = {
     "MISSING_VERSION_FAMILY",
     "INVALID_SUPERSEDES_REFERENCE",
 }
+
+
+class SSEAnnouncementQueryError(RuntimeError):
+    """Raised when the official SSE response cannot prove a bounded inventory."""
 
 
 def _timestamp(value: Any) -> datetime | None:
@@ -85,11 +102,49 @@ def _resolve_package_path(package_root: Path, relative_path: str, *, field: str)
     return resolved
 
 
+def _extract_pdf_pages_with_ocr(pdf_path: Path) -> list[tuple[int, str]]:
+    """Extract page text from a scanned PDF using installed CLI tools."""
+    with tempfile.TemporaryDirectory(prefix="phase10-pdf-ocr-") as temporary:
+        prefix = Path(temporary) / "page"
+        try:
+            subprocess.run(
+                ["pdftoppm", "-png", "-r", "150", str(pdf_path), str(prefix)],
+                check=True,
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.PIPE,
+            )
+        except (FileNotFoundError, subprocess.CalledProcessError) as exc:
+            raise ValueError("source PDF OCR rasterizer unavailable or failed") from exc
+        image_paths = sorted(
+            Path(temporary).glob("page-*.png"),
+            key=lambda path: int(path.stem.rsplit("-", 1)[1]),
+        )
+        if not image_paths:
+            raise ValueError("source PDF OCR produced no page images")
+        pages: list[tuple[int, str]] = []
+        for image_path in image_paths:
+            try:
+                result = subprocess.run(
+                    ["tesseract", str(image_path), "stdout", "-l", "chi_sim+eng"],
+                    check=True,
+                    capture_output=True,
+                    text=True,
+                )
+            except (FileNotFoundError, subprocess.CalledProcessError) as exc:
+                raise ValueError("source PDF OCR engine unavailable or failed") from exc
+            text = result.stdout.strip()
+            if text:
+                page_number = int(image_path.stem.rsplit("-", 1)[1])
+                pages.append((page_number, text))
+        return pages
+
+
 def materialize_pdf_page_markdown(
     source: dict[str, Any],
     package_root: str | Path,
     *,
     reader_text_path: str | None = None,
+    allow_ocr: bool = False,
 ) -> dict[str, Any]:
     """Create the registered, page-marked reader representation for one PDF.
 
@@ -127,6 +182,16 @@ def materialize_pdf_page_markdown(
 
     pages = extract_all_pages(str(raw_path), verbose=False)
     nonempty_pages = [(number, text.strip()) for number, text in pages if text and text.strip()]
+    reader_text_extractor = PDF_PAGE_MARKDOWN_EXTRACTOR
+    reader_text_extractor_version = PDF_PAGE_MARKDOWN_EXTRACTOR_VERSION
+    if not nonempty_pages and allow_ocr:
+        nonempty_pages = [
+            (number, text.strip())
+            for number, text in _extract_pdf_pages_with_ocr(raw_path)
+            if text and text.strip()
+        ]
+        reader_text_extractor = PDF_OCR_EXTRACTOR
+        reader_text_extractor_version = PDF_OCR_EXTRACTOR_VERSION
     if not nonempty_pages:
         raise ValueError("source PDF has no extractable text pages")
 
@@ -148,8 +213,8 @@ def materialize_pdf_page_markdown(
         source,
         content_representation=PDF_PAGE_MARKDOWN,
         reader_text_path=reader_relative,
-        reader_text_extractor=PDF_PAGE_MARKDOWN_EXTRACTOR,
-        reader_text_extractor_version=PDF_PAGE_MARKDOWN_EXTRACTOR_VERSION,
+        reader_text_extractor=reader_text_extractor,
+        reader_text_extractor_version=reader_text_extractor_version,
         reader_text_page_count=len(nonempty_pages),
     )
 
@@ -344,6 +409,424 @@ def enumerate_sse_announcements(
     manifest["admitted_count"] = len(manifest["sources"])
     manifest["rejected_count"] = len(manifest["inventory"]) - len(manifest["sources"])
     return manifest
+
+
+def _sse_date(value: Any, *, field: str) -> date:
+    text = str(value or "").strip()
+    try:
+        return date.fromisoformat(text[:10])
+    except ValueError as exc:
+        raise SSEAnnouncementQueryError(f"SSE {field} is not an ISO date: {text!r}") from exc
+
+
+def _sse_url(value: Any) -> str:
+    raw = str(value or "").strip()
+    if not raw:
+        raise SSEAnnouncementQueryError("SSE announcement URL missing")
+    return urljoin(SSE_STATIC_BASE_URL, raw)
+
+
+def normalize_sse_announcement_record(record: dict[str, Any], *, company_code: str) -> dict[str, Any]:
+    """Convert one official SSE row into the stable source-inventory shape."""
+    security_code = str(record.get("SECURITY_CODE") or record.get("security_code") or "").strip()
+    if security_code != company_code:
+        raise SSEAnnouncementQueryError(f"SSE row security code mismatch: {security_code!r}")
+    published_at = _sse_date(record.get("SSEDATE") or record.get("published_at"), field="SSEDATE").isoformat()
+    title = str(record.get("TITLE") or record.get("title") or "").strip()
+    if not title:
+        raise SSEAnnouncementQueryError("SSE announcement title missing")
+    source_url = _sse_url(record.get("URL") or record.get("url"))
+    filename = Path(urlparse(source_url).path).stem
+    stable_filename = re.sub(r"[^A-Za-z0-9]+", "_", filename).strip("_")
+    if not stable_filename:
+        raise SSEAnnouncementQueryError("SSE announcement URL has no stable filename")
+    normalized: dict[str, Any] = {
+        "source_id": f"SSE:{company_code}:ANN:{published_at.replace('-', '')}:{stable_filename}",
+        "source_version": f"sse-announcement-original:{stable_filename}",
+        "source_type": "EXCHANGE_ANNOUNCEMENT",
+        "title": title,
+        "url": source_url,
+        "published_at": published_at,
+        "data_as_of": published_at,
+        "revision_policy": "ORIGINAL_VINTAGE",
+    }
+    bulletin_type = str(record.get("BULLETIN_TYPE") or "").strip()
+    if bulletin_type:
+        normalized["sse_bulletin_type"] = bulletin_type
+    return normalized
+
+
+def _default_sse_request(params: dict[str, str]) -> dict[str, Any]:
+    request = Request(
+        SSE_BULLETIN_QUERY_URL + "?" + urlencode(params),
+        headers={
+            "Referer": "https://www.sse.com.cn/",
+            "User-Agent": "Mozilla/5.0 (Phase10 PIT acquisition)",
+            "Accept": "application/json",
+        },
+    )
+    try:
+        with urlopen(request, timeout=30) as response:
+            payload = json.loads(response.read().decode("utf-8"))
+    except (OSError, UnicodeDecodeError, json.JSONDecodeError) as exc:
+        raise SSEAnnouncementQueryError(f"SSE query failed: {exc.__class__.__name__}") from exc
+    if not isinstance(payload, dict):
+        raise SSEAnnouncementQueryError("SSE query response is not an object")
+    return payload
+
+
+def _validate_sse_page(
+    payload: dict[str, Any],
+    *,
+    company_code: str,
+    begin_date: date,
+    end_date: date,
+    expected_page_no: int,
+    expected_page_size: int,
+) -> tuple[int, list[dict[str, Any]]]:
+    if str(payload.get("productId") or "").strip() != company_code:
+        raise SSEAnnouncementQueryError("SSE response productId does not match request")
+    if str(payload.get("beginDate") or "").strip() != begin_date.isoformat():
+        raise SSEAnnouncementQueryError("SSE response beginDate does not match request")
+    if str(payload.get("endDate") or "").strip() != end_date.isoformat():
+        raise SSEAnnouncementQueryError("SSE response endDate does not match request")
+    page_help = payload.get("pageHelp")
+    if not isinstance(page_help, dict):
+        raise SSEAnnouncementQueryError("SSE response pageHelp missing")
+    if page_help.get("pageNo") != expected_page_no or page_help.get("beginPage") != expected_page_no:
+        raise SSEAnnouncementQueryError("SSE response page number does not match request")
+    if page_help.get("pageSize") != expected_page_size or page_help.get("cacheSize") != 1:
+        raise SSEAnnouncementQueryError("SSE response did not honor single-page pagination")
+    total = page_help.get("total")
+    if type(total) is not int or total < 0:
+        raise SSEAnnouncementQueryError("SSE response total is invalid")
+    expected_page_count = (total + expected_page_size - 1) // expected_page_size
+    if page_help.get("pageCount") != expected_page_count:
+        raise SSEAnnouncementQueryError("SSE response page count is inconsistent with total")
+    records = page_help.get("data")
+    if not isinstance(records, list) or any(not isinstance(item, dict) for item in records):
+        raise SSEAnnouncementQueryError("SSE response page data is invalid")
+    for record in records:
+        security_code = str(record.get("SECURITY_CODE") or record.get("security_code") or "").strip()
+        if security_code != company_code:
+            raise SSEAnnouncementQueryError("SSE response includes a different security code")
+        published_at = _sse_date(record.get("SSEDATE") or record.get("published_at"), field="SSEDATE")
+        if not begin_date <= published_at <= end_date:
+            raise SSEAnnouncementQueryError("SSE response includes a row outside the requested dates")
+    return total, records
+
+
+def fetch_sse_announcement_records(
+    *,
+    company_code: str = "600340",
+    begin_date: str = "2018-01-01",
+    end_date: str = "2020-04-27",
+    page_size: int = 100,
+    request: Callable[[dict[str, str]], dict[str, Any]] | None = None,
+) -> dict[str, Any]:
+    """Fetch and validate every page in an official SSE announcement query."""
+    start = _sse_date(begin_date, field="begin_date")
+    end = _sse_date(end_date, field="end_date")
+    if start > end:
+        raise ValueError("begin_date must not be after end_date")
+    if type(page_size) is not int or page_size <= 0:
+        raise ValueError("page_size must be a positive integer")
+    fetch_page = request or _default_sse_request
+    records: list[dict[str, Any]] = []
+    expected_total: int | None = None
+    page_no = 1
+    while expected_total is None or len(records) < expected_total:
+        params = {
+            "productId": company_code,
+            "beginDate": start.isoformat(),
+            "endDate": end.isoformat(),
+            "securityType": SSE_SECURITY_TYPES,
+            "reportType": "ALL",
+            "pageHelp.pageSize": str(page_size),
+            "pageHelp.pageNo": str(page_no),
+            "pageHelp.beginPage": str(page_no),
+            "pageHelp.cacheSize": "1",
+        }
+        payload = fetch_page(params)
+        if not isinstance(payload, dict):
+            raise SSEAnnouncementQueryError("SSE request adapter returned a non-object")
+        total, page_records = _validate_sse_page(
+            payload,
+            company_code=company_code,
+            begin_date=start,
+            end_date=end,
+            expected_page_no=page_no,
+            expected_page_size=page_size,
+        )
+        if expected_total is None:
+            expected_total = total
+        elif total != expected_total:
+            raise SSEAnnouncementQueryError("SSE response total changed during pagination")
+        if not page_records and len(records) < expected_total:
+            raise SSEAnnouncementQueryError("SSE response ended before the declared total")
+        records.extend(deepcopy(page_records))
+        if len(records) > expected_total:
+            raise SSEAnnouncementQueryError("SSE response exceeded the declared total")
+        page_no += 1
+        if page_no > expected_total + 1:
+            raise SSEAnnouncementQueryError("SSE pagination exceeded the declared total")
+
+    normalized = [normalize_sse_announcement_record(record, company_code=company_code) for record in records]
+    return {
+        "provider": "SSE",
+        "endpoint": SSE_BULLETIN_QUERY_URL,
+        "company_code": company_code,
+        "begin_date": start.isoformat(),
+        "end_date": end.isoformat(),
+        "security_types": SSE_SECURITY_TYPES,
+        "report_type": "ALL",
+        "requested_page_size": page_size,
+        "page_count": page_no - 1,
+        "record_count": len(normalized),
+        "records": normalized,
+    }
+
+
+def build_600340_manifest_from_sse_records(
+    records: Iterable[dict[str, Any]],
+    *,
+    period_start: str = "2018-01-01",
+) -> dict[str, Any]:
+    """Overlay the pre-registered annual-report version rules on full SSE rows."""
+    catalog = build_600340_source_manifest()
+    catalog_by_url = {
+        _sse_url(item.get("url")): _source_without_persisted_admission(item)
+        for item in catalog["inventory"]
+    }
+    normalized_records = [deepcopy(item) for item in records]
+    record_urls = {_sse_url(item.get("url")) for item in normalized_records}
+    missing_catalog_urls = sorted(set(catalog_by_url) - record_urls)
+    if missing_catalog_urls:
+        raise SSEAnnouncementQueryError("SSE inventory is missing pre-registered primary documents")
+    merged: list[dict[str, Any]] = []
+    for record in normalized_records:
+        source = deepcopy(record)
+        catalog_source = catalog_by_url.get(_sse_url(source.get("url")))
+        if catalog_source is not None:
+            if source.get("published_at") != catalog_source.get("published_at"):
+                raise SSEAnnouncementQueryError("SSE primary-document date differs from pre-registered catalog")
+            source.update(catalog_source)
+        merged.append(source)
+    return enumerate_sse_announcements(merged, cutoff_at=DEFAULT_CUTOFF_AT, period_start=period_start)
+
+
+def fetch_600340_sse_manifest(
+    *,
+    page_size: int = 100,
+    request: Callable[[dict[str, str]], dict[str, Any]] | None = None,
+) -> dict[str, Any]:
+    """Create a complete 600340 source manifest only after SSE bounds verify."""
+    acquisition = fetch_sse_announcement_records(page_size=page_size, request=request)
+    manifest = build_600340_manifest_from_sse_records(
+        acquisition["records"],
+        period_start=acquisition["begin_date"],
+    )
+    manifest["acquisition_status"] = "SSE_FULL_ENUMERATION_DATE_FILTER_VERIFIED"
+    manifest["sse_query"] = {
+        key: acquisition[key]
+        for key in (
+            "provider", "endpoint", "company_code", "begin_date", "end_date",
+            "security_types", "report_type", "requested_page_size", "page_count", "record_count",
+        )
+    }
+    return manifest
+
+
+def _decode_sse_response(response: Any) -> bytes:
+    content = response.read()
+    content_encoding = response.headers.get("Content-Encoding", "")
+    if any(encoding.strip().lower() == "gzip" for encoding in content_encoding.split(",")):
+        try:
+            content = gzip.decompress(content)
+        except (OSError, EOFError) as exc:
+            raise SSEAnnouncementQueryError("SSE PDF gzip response is invalid") from exc
+    return content
+
+
+def _sse_bot_challenge_cookie(content: bytes) -> str | None:
+    """Solve the supported static SSE ``acw_sc__v2`` challenge without JS."""
+    try:
+        html = content.decode("utf-8")
+    except UnicodeDecodeError:
+        return None
+    if "document.location.reload" not in html or "posList" not in html:
+        return None
+    arg1_match = re.search(r"var\s+arg1\s*=\s*['\"]([0-9A-Fa-f]+)['\"]", html)
+    positions_match = re.search(r"var\s+posList\s*=\s*\[([^]]+)\]", html)
+    table_match = re.search(r"var\s+_0x3e9e\s*=\s*\[(.*?)\]", html, flags=re.DOTALL)
+    if arg1_match is None or positions_match is None or table_match is None:
+        raise SSEAnnouncementQueryError("SSE bot challenge format is unsupported")
+    arg1 = arg1_match.group(1)
+    try:
+        positions = [int(token.strip(), 16) for token in positions_match.group(1).split(",")]
+    except ValueError as exc:
+        raise SSEAnnouncementQueryError("SSE bot challenge positions are invalid") from exc
+    if len(arg1) != len(positions) or len(arg1) % 2:
+        raise SSEAnnouncementQueryError("SSE bot challenge length is invalid")
+    mask: str | None = None
+    for encoded in re.findall(r"['\"]([^'\"]+)['\"]", table_match.group(1)):
+        try:
+            decoded = base64.b64decode(encoded, validate=True).decode("ascii")
+        except (ValueError, UnicodeDecodeError):
+            continue
+        if len(decoded) == len(arg1) and re.fullmatch(r"[0-9]+", decoded):
+            mask = decoded
+            break
+    if mask is None:
+        raise SSEAnnouncementQueryError("SSE bot challenge mask is missing")
+    try:
+        reordered = "".join(arg1[position - 1] for position in positions)
+        cookie_value = "".join(
+            f"{int(reordered[index:index + 2], 16) ^ int(mask[index:index + 2], 16):02x}"
+            for index in range(0, len(reordered), 2)
+        )
+    except (IndexError, ValueError) as exc:
+        raise SSEAnnouncementQueryError("SSE bot challenge values are invalid") from exc
+    return f"acw_sc__v2={cookie_value}"
+
+
+def _download_sse_pdf(url: str) -> bytes:
+    parsed = urlparse(url)
+    if parsed.scheme != "https" or parsed.netloc.lower() != "static.sse.com.cn":
+        raise SSEAnnouncementQueryError("source PDF URL is outside the official SSE static host")
+
+    def fetch(cookie: str | None = None) -> bytes:
+        headers = {
+            "Referer": "https://www.sse.com.cn/",
+            "User-Agent": "Mozilla/5.0 (Phase10 PIT acquisition)",
+            "Accept": "application/pdf",
+        }
+        if cookie:
+            headers["Cookie"] = cookie
+        request = Request(url, headers=headers)
+        try:
+            with urlopen(request, timeout=60) as response:
+                return _decode_sse_response(response)
+        except OSError as exc:
+            raise SSEAnnouncementQueryError(f"SSE PDF download failed: {exc.__class__.__name__}") from exc
+
+    content = fetch()
+    if not content.startswith(b"%PDF"):
+        challenge_cookie = _sse_bot_challenge_cookie(content)
+        if challenge_cookie is not None:
+            content = fetch(challenge_cookie)
+        if not content.startswith(b"%PDF"):
+            raise SSEAnnouncementQueryError("SSE PDF response does not start with the PDF signature")
+    return content
+
+
+def _package_stem(source_id: str, index: int) -> str:
+    normalized = re.sub(r"[^A-Za-z0-9_.-]+", "_", source_id).strip("_")
+    return f"{index:04d}_{normalized or 'source'}"
+
+
+def acquire_source_package(
+    manifest: dict[str, Any],
+    package_root: str | Path,
+    *,
+    downloader: Callable[[str], bytes] | None = None,
+) -> dict[str, Any]:
+    """Download admitted official PDFs and materialize their page text.
+
+    Failures remain attached to the source row and keep the package status
+    incomplete.  Existing destination files are never replaced.
+    """
+    result = deepcopy(manifest)
+    root = Path(package_root).expanduser().resolve()
+    root.mkdir(parents=True, exist_ok=True)
+    fetch_pdf = downloader or _download_sse_pdf
+    by_id = {
+        str(source.get("source_id")): source
+        for source in result.get("inventory", [])
+        if isinstance(source, dict) and source.get("source_id")
+    }
+    selected = result.get("sources") if isinstance(result.get("sources"), list) else []
+    failures: list[str] = []
+    successful: list[str] = []
+    for index, selected_source in enumerate(selected, start=1):
+        if not isinstance(selected_source, dict):
+            continue
+        source_id = str(selected_source.get("source_id") or "")
+        source = by_id.get(source_id)
+        if source is None:
+            failures.append(source_id or f"index:{index}")
+            continue
+        stem = _package_stem(source_id, index)
+        package_path = Path("pdf") / f"{stem}.pdf"
+        reader_path = Path("reader") / f"{stem}.pages.md"
+        enriched = _copy_record(
+            source,
+            package_path=package_path.as_posix(),
+            content_representation=PDF_PAGE_MARKDOWN,
+            reader_text_path=reader_path.as_posix(),
+        )
+        destination = _resolve_package_path(root, package_path.as_posix(), field="source.package_path")
+        reader_destination = _resolve_package_path(root, reader_path.as_posix(), field="source.reader_text_path")
+        if (
+            source.get("package_acquisition_status") == "ADMITTED_PACKAGE"
+            and destination.is_file()
+            and reader_destination.is_file()
+        ):
+            successful.append(source_id)
+            by_id[source_id] = enriched
+            continue
+        try:
+            if not (source.get("package_acquisition_status") == "FAILED" and destination.is_file()):
+                content = fetch_pdf(str(source.get("url") or ""))
+                if not content.startswith(b"%PDF"):
+                    raise SSEAnnouncementQueryError("downloaded source does not start with the PDF signature")
+                if destination.exists():
+                    raise FileExistsError(f"source package file already exists: {package_path}")
+                destination.parent.mkdir(parents=True, exist_ok=True)
+                temporary = destination.with_suffix(destination.suffix + ".part")
+                if temporary.exists():
+                    raise FileExistsError(f"partial source package file already exists: {temporary.name}")
+                try:
+                    temporary.write_bytes(content)
+                    os.replace(temporary, destination)
+                finally:
+                    if temporary.exists():
+                        temporary.unlink()
+            enriched = materialize_pdf_page_markdown(
+                enriched,
+                root,
+                reader_text_path=reader_path.as_posix(),
+                allow_ocr=True,
+            )
+            enriched["package_acquisition_status"] = "ADMITTED_PACKAGE"
+            successful.append(source_id)
+        except (FileExistsError, OSError, SSEAnnouncementQueryError, ValueError) as exc:
+            enriched["package_acquisition_status"] = "FAILED"
+            enriched["package_acquisition_error"] = f"{exc.__class__.__name__}: {exc}"
+            failures.append(source_id)
+        by_id[source_id] = enriched
+
+    updated_inventory: list[dict[str, Any]] = []
+    for source in result.get("inventory", []):
+        source_id = str(source.get("source_id") or "") if isinstance(source, dict) else ""
+        updated_inventory.append(by_id.get(source_id, source))
+    result["inventory"] = updated_inventory
+    result["sources"] = [
+        by_id.get(str(source.get("source_id") or ""), source)
+        for source in selected
+    ]
+    result["package_root"] = str(package_root)
+    result["source_package"] = {
+        "status": "COMPLETE" if not failures else "INCOMPLETE",
+        "selected_count": len(selected),
+        "successful_count": len(successful),
+        "failed_count": len(failures),
+        "failed_source_ids": failures,
+    }
+    result["acquisition_status"] = (
+        "SOURCE_PACKAGE_COMPLETE" if not failures else "SOURCE_PACKAGE_INCOMPLETE"
+    )
+    return result
 
 
 def _source_without_persisted_admission(source: dict[str, Any]) -> dict[str, Any]:
@@ -552,12 +1035,34 @@ def _write(path: Path, payload: dict[str, Any]) -> None:
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("command", choices=["catalog", "validate", "enumerate"])
+    parser.add_argument("command", choices=["catalog", "validate", "enumerate", "fetch-sse", "download-package"])
     parser.add_argument("--input", type=Path)
     parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--manifest-output", type=Path)
+    parser.add_argument("--page-size", type=int, default=100)
     args = parser.parse_args()
     if args.command == "catalog":
         payload = build_600340_source_manifest()
+    elif args.command == "fetch-sse":
+        payload = fetch_600340_sse_manifest(page_size=args.page_size)
+    elif args.command == "download-package":
+        if args.input is None:
+            parser.error("--input is required for download-package")
+        if args.manifest_output is None:
+            parser.error("--manifest-output is required for download-package")
+        payload = acquire_source_package(
+            json.loads(args.input.read_text(encoding="utf-8")),
+            args.output,
+        )
+        _write(args.manifest_output, payload)
+        print(json.dumps({
+            "written": str(args.manifest_output),
+            "package_root": str(args.output),
+            "status": payload["source_package"]["status"],
+            "successful_count": payload["source_package"]["successful_count"],
+            "failed_count": payload["source_package"]["failed_count"],
+        }, ensure_ascii=False))
+        return 0 if payload["source_package"]["status"] == "COMPLETE" else 2
     else:
         if args.input is None:
             parser.error("--input is required for validate/enumerate")

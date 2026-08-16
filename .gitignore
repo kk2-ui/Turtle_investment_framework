@@ -1,5 +1,6 @@
 *.db
 output/
+data/phase10/
 *.pdf
 *.pyc
 __pycache__/
