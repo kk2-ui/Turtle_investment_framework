@@ -1142,8 +1142,14 @@ def run_full_pipeline(
             raise RuntimeError("当前 PIT 入口仅支持显式 --pit-preflight；报告 writer 接入尚未开放")
         if not output_dir:
             raise RuntimeError("PIT运行必须显式提供新的 --output 目录")
-        if data_source or price_source or repair_only or not validation_only:
-            raise RuntimeError("PIT运行禁止数据源、当前价格、repair-only，且必须 --validation-only")
+        if (
+            data_source or price_source or repair_only or dry_run or unified or qualitative_only
+            or repair_chapters or source_deepening is not None or not validation_only
+        ):
+            raise RuntimeError(
+                "PIT预检禁止普通报告、数据源、当前价格、repair-only、dry-run、unified、"
+                "qualitative-only、章节修复和来源深化，且必须 --validation-only"
+            )
         existing = Path(output_dir)
         if existing.exists() and any(existing.iterdir()):
             raise RuntimeError("PIT运行要求 --output 是新建或空目录，禁止复用现有输出")

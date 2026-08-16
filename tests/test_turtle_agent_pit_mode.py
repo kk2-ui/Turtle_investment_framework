@@ -99,3 +99,32 @@ def test_run_full_pipeline_pit_requires_explicit_preflight(tmp_path: Path) -> No
             pit_case_id="HBTCASE:600340",
             pit_experiment_id="HBT:600340",
         )
+
+
+@pytest.mark.parametrize("ordinary_mode", [
+    {"dry_run": True},
+    {"unified": True},
+    {"qualitative_only": True},
+    {"source_deepening": False},
+])
+def test_run_full_pipeline_pit_rejects_ordinary_pipeline_modes(
+    tmp_path: Path, ordinary_mode: dict[str, object],
+) -> None:
+    package = tmp_path / "package"
+    _package(package)
+    manifest_path = tmp_path / "manifest.json"
+    _manifest(manifest_path)
+
+    with pytest.raises(RuntimeError, match="PIT预检禁止普通报告"):
+        run_full_pipeline(
+            "600340.SH",
+            output_dir=str(tmp_path / "new-run"),
+            validation_only=True,
+            pit_source_manifest=str(manifest_path),
+            pit_package_root=str(package),
+            pit_framework_root=str(package),
+            pit_case_id="HBTCASE:600340",
+            pit_experiment_id="HBT:600340",
+            pit_preflight=True,
+            **ordinary_mode,
+        )
