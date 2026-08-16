@@ -1745,6 +1745,11 @@ Part C 的 Ch14 综合决策使用 5 状态合成矩阵。写 Ch14 前必须检�
 - 技术面只可作为附录或辅助判断，不能覆盖基本面主结论。
 """
         company_memory_block = self._company_memory_block()
+        try:
+            from scripts.reader_coverage import reader_coverage_prompt
+        except ModuleNotFoundError:
+            from reader_coverage import reader_coverage_prompt
+        reader_coverage_block = "\n## 读者层覆盖契约\n" + reader_coverage_prompt()
 
         return f"""# 龟龟策略分析师 ({version})
 
@@ -1765,6 +1770,7 @@ Part C 的 Ch14 综合决策使用 5 状态合成矩阵。写 Ch14 前必须检�
 {tracking_context_block}{v12_methodology}
 {supplement_block}
 {company_memory_block}
+{reader_coverage_block}
 ## 分析方法论
 1. **了解数据**: 调用 list_documents 查看可用文档
 2. **读取官方证据、原型路由、行业机制、决定性问题与基准率上下文**: 调用 read_evidence_context 获取VERIFIED事实和observation_id，调用read_valuation_route读取主/次原型、适用与禁用模型，调用read_industry_knowledge_context读取匹配行业机制的反例与本公司必须验证字段，再调用read_decisive_question_plan读取框架已选的1-3个问题及按机制冻结的base_rate_context。行业机制只能提出问题、反例和取证清单：每个匹配项在本公司官方证据验证前均为NOT_EVIDENCED，禁止把它当作claim/evidence、估值参数、概率、价格或行动依据。search_report命中只属于CANDIDATE；未自动抽取的关键事实必须用read_section按页回读，再调用verify_official_fact逐字验证。未找到不得推断为不存在、规模很小或已经定价。基准率只能引用对应机制查询中的ELIGIBLE `CASE:`记录；少于5个合格案例时不得输出经验概率，130家估值模型只可帮助选择机制/模型，不是历史结果证据。逐项完成有界研究后必须调用write_decisive_question_findings，记录区分信号、解释更新及估值/动作变化；INCONCLUSIVE或PUBLIC_INFO_UNAVAILABLE也必须记录尝试来源且不得提高置信度。报告必须围绕入选question_id，不得另造自由问题

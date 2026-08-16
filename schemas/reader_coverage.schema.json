@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://turtle.local/schemas/reader_coverage.schema.json",
+  "title": "Turtle Reader Coverage Validation",
+  "type": "object",
+  "required": ["schema_version", "status"],
+  "properties": {
+    "schema_version": {"const": "reader-coverage.v1"},
+    "status": {"enum": ["PASS", "BLOCKED", "SKIP"]},
+    "archetype": {"type": "string"},
+    "archetype_source": {"type": "string"},
+    "paragraph_count": {"type": "integer", "minimum": 0},
+    "source_anchor_count": {"type": "integer", "minimum": 0},
+    "evidence_binding_count": {"type": "integer", "minimum": 0},
+    "topics": {"type": "object", "additionalProperties": {"type": "object"}},
+    "blocking_findings": {"type": "array", "items": {"type": "string"}},
+    "warnings": {"type": "array", "items": {"type": "string"}},
+    "policy": {"type": "string"},
+    "reason": {"type": "string"},
+    "path": {"type": "string"}
+  },
+  "additionalProperties": true
+}
