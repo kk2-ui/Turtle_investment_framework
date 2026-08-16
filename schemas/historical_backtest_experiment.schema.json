@@ -20,12 +20,13 @@
     },
     "information_policy": {
       "type": "object",
-      "required": ["cutoff_timezone", "source_rule", "current_restated_data_rule", "future_file_rule", "execution_rule"],
+      "required": ["cutoff_timezone", "source_rule", "current_restated_data_rule", "future_file_rule", "survivorship_rule", "execution_rule"],
       "properties": {
         "cutoff_timezone": {"type": "string", "minLength": 1},
         "source_rule": {"const": "published_at_and_data_as_of_must_not_exceed_cutoff"},
         "current_restated_data_rule": {"const": "current_restated_values_are_ineligible_without_historical_vintage"},
         "future_file_rule": {"const": "future_files_are_unreadable_before_settlement"},
+        "survivorship_rule": {"const": "retain_delisted_acquired_and_failed_cases_in_registered_universe"},
         "execution_rule": {"type": "string", "minLength": 1}
       }
     },

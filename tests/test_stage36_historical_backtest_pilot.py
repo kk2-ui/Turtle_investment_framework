@@ -39,6 +39,7 @@ def _case() -> dict:
             "source_type": "ANNUAL_REPORT",
             "published_at": "2021-03-25",
             "data_as_of": "2020-12-31",
+            "source_version": "annual-report-original-2020",
             "revision_published_at": None,
             "revision_policy": "ORIGINAL_VINTAGE",
             "admissible": True,

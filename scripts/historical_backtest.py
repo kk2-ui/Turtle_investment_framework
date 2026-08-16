@@ -89,6 +89,7 @@ def validate_experiment(record: dict[str, Any]) -> dict[str, Any]:
         "source_rule": "published_at_and_data_as_of_must_not_exceed_cutoff",
         "current_restated_data_rule": "current_restated_values_are_ineligible_without_historical_vintage",
         "future_file_rule": "future_files_are_unreadable_before_settlement",
+        "survivorship_rule": "retain_delisted_acquired_and_failed_cases_in_registered_universe",
     }
     for field, expected in expected_policy.items():
         if policy.get(field) != expected:
@@ -143,6 +144,8 @@ def _validate_source(source: dict[str, Any], cutoff: date, index: int) -> tuple[
         invalid.append(prefix + ":future_revision")
     if source.get("revision_policy") == "CURRENT_RESTATED_ONLY":
         invalid.append(prefix + ":current_restated_data_not_admissible")
+    if not str(source.get("source_version") or "").strip():
+        incomplete.append(prefix + ":source_version_missing")
     if source.get("admissible") is not True:
         invalid.append(prefix + ":source_not_admissible")
     return invalid, incomplete
@@ -297,6 +300,7 @@ def build_pilot_experiment(*, registered_at: str = "2026-08-16T00:00:00+08:00") 
             "source_rule": "published_at_and_data_as_of_must_not_exceed_cutoff",
             "current_restated_data_rule": "current_restated_values_are_ineligible_without_historical_vintage",
             "future_file_rule": "future_files_are_unreadable_before_settlement",
+            "survivorship_rule": "retain_delisted_acquired_and_failed_cases_in_registered_universe",
             "execution_rule": "next_tradable_price_after_frozen_report_or_preregistered_rule",
         },
         "universe": {"selection_status": "RESEARCH_PILOT", "cases": cases, "eligible_case_count": 0},

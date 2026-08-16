@@ -13,6 +13,7 @@
     "source_rule": "published_at_and_data_as_of_must_not_exceed_cutoff",
     "current_restated_data_rule": "current_restated_values_are_ineligible_without_historical_vintage",
     "future_file_rule": "future_files_are_unreadable_before_settlement",
+    "survivorship_rule": "retain_delisted_acquired_and_failed_cases_in_registered_universe",
     "execution_rule": "next_tradable_price_after_frozen_report_or_preregistered_rule"
   },
   "universe": {

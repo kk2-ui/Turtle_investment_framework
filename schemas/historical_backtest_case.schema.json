@@ -36,9 +36,10 @@
       "minItems": 1,
       "items": {
         "type": "object",
-        "required": ["source_id", "source_type", "published_at", "data_as_of", "revision_policy", "admissible"],
+        "required": ["source_id", "source_version", "source_type", "published_at", "data_as_of", "revision_policy", "admissible"],
         "properties": {
           "source_id": {"type": "string", "minLength": 1},
+          "source_version": {"type": "string", "minLength": 1},
           "source_type": {"enum": ["ANNUAL_REPORT", "INTERIM_REPORT", "EXCHANGE_ANNOUNCEMENT", "OFFICIAL_STATISTICS", "MARKET_DATA", "OTHER_OFFICIAL"]},
           "published_at": {"type": "string"},
           "data_as_of": {"type": "string"},
