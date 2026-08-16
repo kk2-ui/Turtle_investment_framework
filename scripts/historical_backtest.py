@@ -695,10 +695,6 @@ def _validate_production_report_origin(
     invalid: list[str] = []
     incomplete: list[str] = []
     prefix = "report_freeze.frozen_report.origin"
-    # The PIT source-package runner and its deployment-signed read audit are
-    # P10-A acquisition work.  Until they exist, metadata-only artifacts must
-    # never upgrade a real case to REVIEWABLE.
-    incomplete.append(prefix + ":pit_runner_attestation_not_implemented")
     required = (
         "output_dir", "acceptance_root", "sample_id", "run_manifest_path",
         "completion_report_path", "publication_snapshot_path",
@@ -732,6 +728,10 @@ def _validate_production_report_origin(
             invalid.append(prefix + ":" + field + "_must_be_object")
             return {}
         return value
+
+    def load_pit_json(path: Path | None, field: str) -> dict[str, Any]:
+        payload = load_json(path, field)
+        return payload
 
     output_dir = repo_path(origin.get("output_dir"), "output_dir")
     acceptance_root = repo_path(origin.get("acceptance_root"), "acceptance_root")
@@ -778,6 +778,204 @@ def _validate_production_report_origin(
             incomplete.append(prefix + ":publication_snapshot_missing")
     if snapshot_payload.get("report_sha256") not in {None, "", artifact_sha256}:
         invalid.append(prefix + ":publication_snapshot_report_sha256_mismatch")
+
+    # A production report is only readable when its source-package runner has
+    # recorded the same cutoff, company and admitted source identities as the
+    # case.  This is a replayable declared-process boundary, not a model-memory
+    # or deployment-signature claim.
+    pit_prefix = prefix + ".pit_runner"
+    # P10-A provides the reusable source-package gate and audit.  The current
+    # turtle_agent read tools have not yet been routed through it, so an
+    # attestation alone cannot establish that a production writer lacked all
+    # alternate filesystem and web reads.
+    incomplete.append(pit_prefix + ":tool_boundary_not_integrated")
+    pit = origin.get("pit_runner") if isinstance(origin.get("pit_runner"), dict) else {}
+    incomplete.extend(_required(
+        pit,
+        ("attestation_path", "source_package_manifest_path", "package_root", "status"),
+        pit_prefix,
+    ))
+    pit_attestation_path = repo_path(pit.get("attestation_path"), "pit_runner_attestation_path")
+    pit_manifest_path = repo_path(pit.get("source_package_manifest_path"), "source_package_manifest_path")
+    pit_package_root = repo_path(pit.get("package_root"), "pit_runner_package_root")
+    if pit_package_root and any(part.lower() in {"settlement", "settlements", "output", "results", "outcomes"} for part in pit_package_root.parts):
+        invalid.append(pit_prefix + ":package_root_must_be_historical_input")
+    pit_attestation = load_pit_json(pit_attestation_path, "pit_runner_attestation")
+    pit_manifest = load_pit_json(pit_manifest_path, "source_package_manifest")
+    if pit.get("status") != "PASS":
+        incomplete.append(pit_prefix + ":status_not_pass")
+    if pit_attestation:
+        incomplete.extend(_required(
+            pit_attestation,
+            ("case_id", "experiment_id", "run_id", "manifest_path", "package_root", "cutoff_at", "allowed_source_ids", "source_allowlist", "framework_allowlist", "read_audit", "read_count", "forbidden_success_count"),
+            pit_prefix + ".attestation",
+        ))
+        if pit_attestation.get("schema_version") != "phase10-pit-runner-attestation.v1":
+            invalid.append(pit_prefix + ":attestation_schema_invalid")
+        if pit_attestation.get("runner") != "phase10_pit_runner":
+            invalid.append(pit_prefix + ":runner_invalid")
+        if pit_attestation.get("state") != "REVIEWABLE":
+            incomplete.append(pit_prefix + ":attestation_not_reviewable")
+        if pit_attestation.get("assurance_level") != "VERIFIED_ARTIFACT_AND_DECLARED_PROCESS":
+            invalid.append(pit_prefix + ":assurance_level_invalid")
+        if pit_attestation.get("company_code") != record.get("company_code"):
+            invalid.append(pit_prefix + ":company_code_mismatch")
+        if pit_attestation.get("case_id") != record.get("case_id"):
+            invalid.append(pit_prefix + ":case_id_mismatch")
+        if pit_attestation.get("experiment_id") != record.get("experiment_id"):
+            invalid.append(pit_prefix + ":experiment_id_mismatch")
+        if not run_payload.get("run_id"):
+            incomplete.append(pit_prefix + ":pipeline_run_id_missing")
+        elif pit_attestation.get("run_id") != run_payload.get("run_id"):
+            invalid.append(pit_prefix + ":run_id_mismatch")
+        case_cutoff = _timestamp(record.get("simulation_cutoff"))
+        evidence_cutoff = _timestamp((record.get("report_freeze") or {}).get("evidence_cutoff"))
+        pit_cutoff = _timestamp(pit_attestation.get("cutoff_at"))
+        if case_cutoff and pit_cutoff and pit_cutoff != case_cutoff:
+            invalid.append(pit_prefix + ":cutoff_mismatch")
+        if evidence_cutoff and pit_cutoff and pit_cutoff != evidence_cutoff:
+            invalid.append(pit_prefix + ":evidence_cutoff_mismatch")
+        if pit_attestation.get("forbidden_success_count") != 0:
+            invalid.append(pit_prefix + ":forbidden_read_succeeded")
+        if pit_package_root:
+            try:
+                attested_root = Path(str(pit_attestation.get("package_root") or "")).resolve()
+                if attested_root != pit_package_root.resolve():
+                    invalid.append(pit_prefix + ":package_root_mismatch")
+            except OSError:
+                invalid.append(pit_prefix + ":package_root_invalid")
+        if pit_manifest_path:
+            try:
+                attested_manifest = Path(str(pit_attestation.get("manifest_path") or "")).resolve()
+                if attested_manifest != pit_manifest_path.resolve():
+                    invalid.append(pit_prefix + ":manifest_path_mismatch")
+            except OSError:
+                invalid.append(pit_prefix + ":manifest_path_invalid")
+        audit = pit_attestation.get("read_audit")
+        if not isinstance(audit, list):
+            incomplete.append(pit_prefix + ":read_audit_missing")
+        else:
+            allowed_ids = set(str(item) for item in (pit_attestation.get("allowed_source_ids") or []))
+            allowlist = {
+                str(item.get("source_id")): item
+                for item in (pit_attestation.get("source_allowlist") or [])
+                if isinstance(item, dict) and item.get("source_id")
+            }
+            if allowed_ids != set(allowlist):
+                invalid.append(pit_prefix + ":source_allowlist_mismatch")
+            if len(audit) != pit_attestation.get("read_count"):
+                invalid.append(pit_prefix + ":read_count_mismatch")
+            seen_ordinals: set[int] = set()
+            allowed_read_sources: set[str] = set()
+            for index, event in enumerate(audit):
+                event_prefix = f"{pit_prefix}.read_audit[{index}]"
+                if not isinstance(event, dict):
+                    invalid.append(event_prefix + ":not_object")
+                    continue
+                if event.get("decision") not in {"ALLOW", "DENY"}:
+                    invalid.append(event_prefix + ":decision_invalid")
+                if event.get("allowed") is not (event.get("decision") == "ALLOW"):
+                    invalid.append(event_prefix + ":decision_allowed_mismatch")
+                ordinal = event.get("read_ordinal")
+                if not isinstance(ordinal, int) or ordinal <= 0 or ordinal in seen_ordinals:
+                    invalid.append(event_prefix + ":read_ordinal_invalid_or_duplicate")
+                else:
+                    seen_ordinals.add(ordinal)
+                if event.get("phase") != "FREEZE":
+                    invalid.append(event_prefix + ":phase_invalid")
+                if event.get("run_id") != pit_attestation.get("run_id"):
+                    invalid.append(event_prefix + ":run_id_mismatch")
+                if event.get("cutoff_at") and pit_cutoff and _timestamp(event.get("cutoff_at")) != pit_cutoff:
+                    invalid.append(event_prefix + ":cutoff_mismatch")
+                if event.get("allowed") is True and event.get("kind") == "SOURCE":
+                    source_id = str(event.get("source_id") or "")
+                    registration = allowlist.get(source_id)
+                    if registration is None:
+                        invalid.append(event_prefix + ":source_not_allowlisted")
+                    elif event.get("path") != registration.get("package_path"):
+                        invalid.append(event_prefix + ":source_path_mismatch")
+                    elif any(event.get(field) != registration.get(field) for field in ("source_version", "published_at", "data_as_of")):
+                        invalid.append(event_prefix + ":source_identity_mismatch")
+                    elif event.get("admission_status") != "ADMITTED":
+                        invalid.append(event_prefix + ":source_admission_status_invalid")
+                    else:
+                        allowed_read_sources.add(source_id)
+                elif event.get("allowed") is True and event.get("kind") == "FRAMEWORK":
+                    if event.get("path") not in set(pit_attestation.get("framework_allowlist") or []):
+                        invalid.append(event_prefix + ":framework_not_allowlisted")
+                elif event.get("allowed") is True and event.get("kind") not in {"FRAMEWORK"}:
+                    invalid.append(event_prefix + ":forbidden_kind_allowed")
+            if seen_ordinals != set(range(1, len(audit) + 1)):
+                invalid.append(pit_prefix + ":read_ordinals_not_contiguous")
+            case_source_ids = {
+                str(source.get("source_id") or "")
+                for source in (record.get("sources") or [])
+                if isinstance(source, dict) and source.get("source_id")
+            }
+            for source_id in case_source_ids - allowed_read_sources:
+                incomplete.append(pit_prefix + ":case_source_not_read:" + source_id)
+    if pit_manifest:
+        try:
+            from scripts.phase10_acquisition import validate_source_manifest
+            manifest_result = validate_source_manifest(pit_manifest)
+        except (ImportError, TypeError, ValueError) as exc:
+            invalid.append(pit_prefix + ":source_manifest_unreadable:" + type(exc).__name__)
+            manifest_result = {"state": "INVALID"}
+        if manifest_result.get("state") != "REVIEWABLE":
+            incomplete.append(pit_prefix + ":source_manifest_not_reviewable")
+        if pit_package_root:
+            try:
+                from scripts.phase10_pit_runner import PITSourcePackage
+                package_check = PITSourcePackage(pit_manifest, pit_package_root)
+                if package_check.state != "REVIEWABLE":
+                    incomplete.append(pit_prefix + ":source_package_not_reviewable")
+            except (ImportError, OSError, ValueError) as exc:
+                invalid.append(pit_prefix + ":source_package_unreadable:" + type(exc).__name__)
+        manifest_ids = set(str(item) for item in (pit_manifest.get("admitted_source_ids") or []))
+        attestation_ids = set(str(item) for item in (pit_attestation.get("allowed_source_ids") or []))
+        if pit_attestation and manifest_ids != attestation_ids:
+            invalid.append(pit_prefix + ":attestation_manifest_source_ids_mismatch")
+        if pit_attestation and pit_attestation.get("source_manifest_schema_version") != pit_manifest.get("schema_version"):
+            invalid.append(pit_prefix + ":source_manifest_schema_mismatch")
+        if pit_manifest.get("company_code") != record.get("company_code"):
+            invalid.append(pit_prefix + ":source_manifest_company_code_mismatch")
+        manifest_cutoff = _timestamp(pit_manifest.get("cutoff_at"))
+        case_cutoff = _timestamp(record.get("simulation_cutoff"))
+        if manifest_cutoff and case_cutoff and manifest_cutoff != case_cutoff:
+            invalid.append(pit_prefix + ":source_manifest_cutoff_mismatch")
+        case_sources = record.get("sources") if isinstance(record.get("sources"), list) else []
+        manifest_by_id = {
+            str(item.get("source_id")): item
+            for item in (pit_manifest.get("sources") or [])
+            if isinstance(item, dict) and item.get("source_id")
+        }
+        attestation_by_id = {
+            str(item.get("source_id")): item
+            for item in (pit_attestation.get("source_allowlist") or [])
+            if isinstance(item, dict) and item.get("source_id")
+        }
+        for source_id, registered in manifest_by_id.items():
+            attested = attestation_by_id.get(source_id)
+            if attested is None:
+                continue
+            for field in ("source_version", "published_at", "data_as_of", "package_path", "admission_status"):
+                if field == "admission_status":
+                    expected = "ADMITTED"
+                else:
+                    expected = registered.get(field)
+                if attested.get(field) != expected:
+                    invalid.append(pit_prefix + f":attestation_source_{field}_mismatch:{source_id}")
+        for source in case_sources:
+            if not isinstance(source, dict):
+                continue
+            source_id = str(source.get("source_id") or "")
+            registered = manifest_by_id.get(source_id)
+            if registered is None:
+                invalid.append(pit_prefix + ":case_source_not_admitted:" + source_id)
+            else:
+                for field in ("source_version", "published_at", "data_as_of", "revision_policy"):
+                    if source.get(field) != registered.get(field):
+                        invalid.append(pit_prefix + f":case_source_{field}_mismatch:{source_id}")
     samples = acceptance_payload.get("samples") if isinstance(acceptance_payload.get("samples"), list) else []
     matches = [item for item in samples if isinstance(item, dict) and item.get("sample_id") == origin.get("sample_id")]
     if len(matches) != 1:

@@ -79,7 +79,9 @@
 
 工具层必须按来源身份拒绝未来文件，不能只靠提示词要求模型“不要看”。每次读工具调用记录准入裁决和cutoff。
 
-当前 v1 的 case validator 只能核对已提交的来源时间和声明工件，尚不能单独证明模型运行时没有读取沙箱外文件。真实首案在 `P10-A` 必须先落地 source-package allowlist、只读 PIT runner 和读取审计；在该 acquisition module 完成前，case 不得标为生产 `ELIGIBLE`，更不能称为严格回测。
+`scripts/phase10_pit_runner.py` 现已提供 source-package allowlist、只读 `source_id`/framework 读取和 ALLOW/DENY read audit；production origin 会回放 attestation、source manifest、case source identity、cutoff、package root 和已读取来源。它不增加来源内容 hash。真实 600340 catalog 仍没有完整公告枚举或本地 package path，故 runner 保持 `INCOMPLETE`。
+
+当前 `turtle_agent` 的既有读工具尚未注入该 boundary，仍可能按普通 `output_dir` 扫描文件。因此 PIT attestation 只能作为 `VERIFIED_ARTIFACT_AND_DECLARED_PROCESS`，production validator 明确保持 `INCOMPLETE`，直到所有 writer 读取工具和 Web 入口都实际受 source-package gate 控制。在此之前，case 不得标为生产 `ELIGIBLE`，更不能称为严格回测。
 
 ## 5. 大模型参数记忆限制
 

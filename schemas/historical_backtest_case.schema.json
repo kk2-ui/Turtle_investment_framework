@@ -36,7 +36,18 @@
                 "sample_id": {"type": "string", "minLength": 1},
                 "run_manifest_path": {"type": "string", "minLength": 1},
                 "completion_report_path": {"type": "string", "minLength": 1},
-                "publication_snapshot_path": {"type": "string", "minLength": 1}
+                "publication_snapshot_path": {"type": "string", "minLength": 1},
+                "pit_runner": {
+                  "type": "object",
+                  "description": "P10-A source-package runner declared-process attestation.",
+                  "required": ["attestation_path", "source_package_manifest_path", "package_root", "status"],
+                  "properties": {
+                    "attestation_path": {"type": "string", "minLength": 1},
+                    "source_package_manifest_path": {"type": "string", "minLength": 1},
+                    "package_root": {"type": "string", "minLength": 1},
+                    "status": {"enum": ["PASS", "INCOMPLETE", "INVALID"]}
+                  }
+                }
               }
             },
             "artifact_path": {"type": "string", "minLength": 1},
@@ -87,7 +98,22 @@
             "acceptance_criteria": {"type": "string", "minLength": 1}
           }
         }
-      }
+      },
+      "allOf": [{
+        "if": {
+          "properties": {"mode": {"const": "PRODUCTION_PIPELINE"}},
+          "required": ["mode"]
+        },
+        "then": {
+          "properties": {
+            "frozen_report": {
+              "properties": {
+                "origin": {"required": ["pit_runner"]}
+              }
+            }
+          }
+        }
+      }]
     },
     "credibility": {
       "description": "Case-level model-memory assessment. A controlled candidate still needs the separately preregistered cross-issuer/cross-cutoff calibration design and holdout evidence.",

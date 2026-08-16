@@ -617,7 +617,8 @@ def test_production_report_requires_pipeline_acceptance_artifacts() -> None:
     }
     result = validate_case(case)
     assert "report_freeze.frozen_report.origin:acceptance_sample_not_unique" in result["invalid_findings"]
-    assert "report_freeze.frozen_report.origin:pit_runner_attestation_not_implemented" in result["incomplete_findings"]
+    assert "report_freeze.frozen_report.origin.pit_runner:missing:attestation_path" in result["incomplete_findings"]
+    assert "report_freeze.frozen_report.origin.pit_runner:tool_boundary_not_integrated" in result["incomplete_findings"]
 
 
 def test_cutoff_comparisons_preserve_intraday_source_order() -> None:
