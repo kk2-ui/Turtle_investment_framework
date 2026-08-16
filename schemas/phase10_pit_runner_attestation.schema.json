@@ -46,6 +46,8 @@
           "published_at": {"type": "string", "minLength": 10},
           "data_as_of": {"type": "string", "minLength": 10},
           "package_path": {"type": "string", "minLength": 1},
+          "content_representation": {"type": "string", "minLength": 1},
+          "reader_text_path": {"type": ["string", "null"]},
           "admission_status": {"const": "ADMITTED"}
         }
       }
@@ -63,12 +65,13 @@
           "read_ordinal": {"type": "integer", "minimum": 1},
           "allowed": {"type": "boolean"},
           "decision": {"enum": ["ALLOW", "DENY"]},
-          "kind": {"enum": ["SOURCE", "FRAMEWORK"]},
+          "kind": {"enum": ["SOURCE", "FRAMEWORK", "TOOL"]},
           "path": {"type": "string"},
           "source_id": {"type": "string"},
           "source_version": {"type": "string"},
           "published_at": {"type": "string", "minLength": 10},
           "data_as_of": {"type": "string", "minLength": 10},
+          "representation": {"type": "string", "minLength": 1},
           "run_id": {"type": "string", "minLength": 1},
           "phase": {"const": "FREEZE"},
           "cutoff_at": {"type": "string", "minLength": 10},

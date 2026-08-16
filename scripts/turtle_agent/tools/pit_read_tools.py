@@ -29,6 +29,12 @@ def clear_pit_runner() -> None:
     configure_pit_runner(None)
 
 
+def audit_pit_tool_denial(tool_name: str, *, reason: str = "pit_tool_not_offered") -> None:
+    """Persist rejection of an ordinary tool entrypoint in the PIT audit."""
+    if _RUNNER is not None:
+        _RUNNER.record_tool_denial(tool_name, reason=reason)
+
+
 def _not_configured() -> dict[str, Any]:
     return {"ok": False, "error": "pit_runner_not_configured"}
 
@@ -84,6 +90,8 @@ def _source_identity(source_id: str) -> dict[str, Any]:
                 "published_at": item.get("published_at"),
                 "data_as_of": item.get("data_as_of"),
                 "admission_status": item.get("admission_status"),
+                "content_representation": item.get("content_representation"),
+                "reader_text_path": item.get("reader_text_path"),
             }
     return {"source_id": source_id, "admission_status": "REJECTED"}
 

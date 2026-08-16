@@ -1,12 +1,14 @@
 from __future__ import annotations
 
 from copy import deepcopy
+from unittest.mock import patch
 
 from scripts.phase10_acquisition import (
     DEFAULT_CUTOFF_AT,
     admit_source_manifest,
     build_600340_source_manifest,
     enumerate_sse_announcements,
+    materialize_pdf_page_markdown,
     validate_source_manifest,
 )
 
@@ -131,3 +133,32 @@ def test_manifest_validator_rejects_an_externally_injected_selected_source() -> 
     result = validate_source_manifest(tampered)
     assert result["state"] == "INVALID"
     assert "selected_source_not_admitted:SSE:600340:TEST:INJECTED" in result["invalid_findings"]
+
+
+def test_materialize_pdf_page_markdown_keeps_raw_source_and_page_locators(tmp_path) -> None:
+    package = tmp_path / "package"
+    (package / "raw").mkdir(parents=True)
+    (package / "raw/test.pdf").write_bytes(b"%PDF-test")
+    source = _source(
+        source_id="SSE:600340:TEST:PDF",
+        source_type="ANNUAL_REPORT",
+        package_path="raw/test.pdf",
+    )
+
+    with patch("scripts.pdf_preprocessor.extract_all_pages", return_value=[
+        (1, "第一页经营事实"),
+        (2, "第二页债务与担保"),
+    ]):
+        materialized = materialize_pdf_page_markdown(
+            source,
+            package,
+            reader_text_path="reader/test.pages.md",
+        )
+
+    assert (package / "raw/test.pdf").read_bytes() == b"%PDF-test"
+    text = (package / "reader/test.pages.md").read_text(encoding="utf-8")
+    assert "## 第 1 页" in text
+    assert "## 第 2 页" in text
+    assert materialized["content_representation"] == "PDF_PAGE_MARKDOWN"
+    assert materialized["reader_text_path"] == "reader/test.pages.md"
+    assert materialized["reader_text_page_count"] == 2

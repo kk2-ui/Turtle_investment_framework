@@ -139,3 +139,21 @@ case 的 `calibration_ledger.claims` 至少覆盖：项目销售/回款与资本
 本交接第 4 节记录的是当时 `main=74f2bfd` 的启动快照，不因本分支的后续 contract 修补而改写。当前分支已将 `FROZEN` 收紧为可读取的 Markdown 报告、`variant_id -> freeze_id -> review_id` 生命周期、固定章节和 claim statement、不同 writer/reviewer context 的逐 claim 审阅和可回放的 `REPORT_COVERAGE`；生产路径预留统一 `turtle_agent`、Phase 08 acceptance/V3 gates、publication snapshot、run manifest 和 PIT runner attestation，测试夹具只留在测试命名空间。`scripts/phase10_pit_runner.py` 已实现 source-package allowlist、只读 source/framework 读取、cutoff 准入和 ALLOW/DENY read audit；framework root 固定为仓库内受控静态目录，attestation 记录其 root 与 `REPOSITORY_STATIC` provenance，普通 output 或结算目录不能作为 framework 输入。production origin 会核对 attestation、manifest、case source identity、package root 和实际读取。它不对来源文件新增 hash。`scripts/turtle_agent/run.py` 现在区分 PIT preflight 与独立 PIT writer：两者拒绝复用旧 output、跳过普通数据准备；writer 不加载普通 contract、旧 output、tracking、数据库、Web 或行情，只注册 source/framework 读取与无路径的单草案写工具。草案中的每个 source_id 必须已在同一 run 的 ALLOW audit 中实际读取，最终 attestation 回写 writer outcome。它仍不是完整生产冻结报告，尚未接入 Phase 08 acceptance/V3、完整 claim/calibration ledger 或独立 reviewer；故 validator 仍故意不允许生产 case 成为 `REVIEWABLE`。部署级模型记忆 attestation 也未实现，当前只能是 `UNCONTROLLED / EXPLORATORY / ENGINEERING_DIAGNOSTIC_ONLY`。报告 artifact SHA-256 只用于发现冻结后文本改写并强制重审。质量失败必须保留完整根因工件。该 assurance 是 `VERIFIED_ARTIFACT_AND_DECLARED_PROCESS`，不是密码学作者或模型记忆证明。
 
 这些 validators 不是实际回测：600340 的年报/公告全集、价格、公司行动和基准还未采集，仓库没有真实 historical case、冻结报告或结算结果；因此不能产生黄金标准改进、个股收益、选股或买点结论。
+
+## 10. 2026-08-16 continuation: readable-source and acquisition boundary
+
+PIT reader 不再把官方 PDF 的二进制 base64 当作可供研究的年报内容。每份准入 PDF 必须保留原始
+`package_path`，并在同一 source package 中登记由
+`pdf_preprocessor.extract_all_pages` 生成的 `PDF_PAGE_MARKDOWN`：`reader_text_path`、提取器版本和
+页数均为必填；runner 只通过 `source_id` 读取这份页码文本，并在 audit 中保留原始 source identity 与
+`representation=PDF_PAGE_MARKDOWN`。普通文本来源仍可直接读取。原始 PDF 或页码文本任何一方缺失都会使
+PIT package 为 `INCOMPLETE`。
+
+PIT writer 的 registry 仍只有四个工具。模型请求 Web、普通 Turtle 输出读取、年糕上下文或其他未提供的
+入口时，不执行该调用，且以 `kind=TOOL`、`decision=DENY` 记入同一 runner read audit；这与未准入来源和
+非 allowlist framework 的 `DENY` 一样，都会保留在 writer attestation。
+
+一次上交所公告页采集尝试发现网页日期控件未接受自动填值，查询退回了默认“最新公告”列表。没有打开任何
+cutoff 后文件，也没有将页面标题、内容或结果用于来源包、报告或结论。该尝试归类为
+`ACQUISITION_MODULE`：后续只在确认官方查询响应的开始/结束日期已经生效后才读取或保存枚举结果；若日期过滤
+失效，采集必须失败而非退回最新列表。

@@ -8,7 +8,7 @@ from scripts.phase10_acquisition import enumerate_sse_announcements
 from scripts.phase10_pit_runner import PITRunnerError, PITSourcePackage
 
 
-def _manifest(*, package_path: str = "annual/2019.pdf") -> dict:
+def _manifest(*, package_path: str = "annual/2019.txt") -> dict:
     manifest = enumerate_sse_announcements([
         {
             "source_id": "SSE:600340:AR2019:ORIGINAL",
@@ -41,7 +41,7 @@ def _manifest(*, package_path: str = "annual/2019.pdf") -> dict:
 def test_runner_reads_only_admitted_source_and_framework_and_audits_identity(tmp_path) -> None:
     package = tmp_path / "package"
     (package / "annual").mkdir(parents=True)
-    (package / "annual/2019.pdf").write_bytes(b"historical report")
+    (package / "annual/2019.txt").write_text("historical report", encoding="utf-8")
 
     runner = PITSourcePackage(
         _manifest(), package,
@@ -68,7 +68,7 @@ def test_runner_rejects_future_and_unregistered_reads_without_exposing_files(tmp
     package = tmp_path / "package"
     package.mkdir()
     (package / "annual").mkdir()
-    (package / "annual/2019.pdf").write_bytes(b"historical report")
+    (package / "annual/2019.txt").write_text("historical report", encoding="utf-8")
     future = package / "future-settlement.json"
     future.write_text(json.dumps({"future_return": 3}), encoding="utf-8")
     runner = PITSourcePackage(_manifest(), package)
@@ -116,10 +116,40 @@ def test_runner_rejects_path_traversal_in_registered_source(tmp_path) -> None:
 def test_runner_rejects_untrusted_framework_root(tmp_path) -> None:
     package = tmp_path / "package"
     (package / "annual").mkdir(parents=True)
-    (package / "annual/2019.pdf").write_bytes(b"historical report")
+    (package / "annual/2019.txt").write_text("historical report", encoding="utf-8")
     untrusted_framework = tmp_path / "ordinary-output"
     untrusted_framework.mkdir()
     (untrusted_framework / "future-settlement.md").write_text("future outcome", encoding="utf-8")
 
     with pytest.raises(ValueError, match="framework root 必须使用仓库内受控静态目录"):
         PITSourcePackage(_manifest(), package, framework_root=untrusted_framework)
+
+
+def test_runner_requires_registered_page_text_for_pdf_and_audits_representation(tmp_path) -> None:
+    package = tmp_path / "package"
+    (package / "annual").mkdir(parents=True)
+    (package / "annual/2019.pdf").write_bytes(b"%PDF-not-read-directly")
+    manifest = _manifest(package_path="annual/2019.pdf")
+    missing_reader = PITSourcePackage(manifest, package)
+    assert missing_reader.state == "INCOMPLETE"
+    assert "source:SSE:600340:AR2019:ORIGINAL:reader_text_path_missing" in missing_reader.incomplete_findings
+
+    for source in [*manifest["inventory"], *manifest["sources"]]:
+        if source["source_id"] == "SSE:600340:AR2019:ORIGINAL":
+            source.update({
+                "content_representation": "PDF_PAGE_MARKDOWN",
+                "reader_text_path": "annual/2019.pages.md",
+                "reader_text_extractor": "pdf_preprocessor.extract_all_pages",
+                "reader_text_extractor_version": "phase10-pdf-page-markdown.v1",
+                "reader_text_page_count": 1,
+            })
+    (package / "annual/2019.pages.md").write_text(
+        "# SSE:600340:AR2019:ORIGINAL\n\n## 第 1 页\n\n历史年报正文\n",
+        encoding="utf-8",
+    )
+    runner = PITSourcePackage(manifest, package)
+    assert runner.state == "REVIEWABLE"
+    assert "## 第 1 页" in runner.read_source("SSE:600340:AR2019:ORIGINAL").decode("utf-8")
+    allowed = runner.attestation()["read_audit"][-1]
+    assert allowed["path"] == "annual/2019.pages.md"
+    assert allowed["representation"] == "PDF_PAGE_MARKDOWN"

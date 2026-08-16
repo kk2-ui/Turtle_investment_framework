@@ -107,6 +107,8 @@ class SourceRegistration:
     published_at: str
     data_as_of: str
     package_path: str
+    content_representation: str = "SOURCE_TEXT"
+    reader_text_path: str | None = None
 
 
 class PITReadAudit:
@@ -127,6 +129,7 @@ class PITReadAudit:
         source_version: str | None = None,
         published_at: str | None = None,
         data_as_of: str | None = None,
+        representation: str | None = None,
         reason: str | None = None,
     ) -> None:
         event: dict[str, Any] = {
@@ -149,6 +152,8 @@ class PITReadAudit:
             event["published_at"] = published_at
         if data_as_of is not None:
             event["data_as_of"] = data_as_of
+        if representation is not None:
+            event["representation"] = representation
         if reason:
             event["reason"] = reason
         self._events.append(event)
@@ -201,6 +206,7 @@ class PITSourcePackage:
             self._incomplete.append("source_manifest_not_reviewable")
         self._registrations: dict[str, SourceRegistration] = {}
         registered_paths: dict[str, str] = {}
+        registered_reader_paths: dict[str, str] = {}
         for source in _manifest_sources(self.manifest):
             source_id = str(source.get("source_id") or "").strip()
             if source.get("admissible") is not True or not source_id:
@@ -233,6 +239,44 @@ class PITSourcePackage:
             else:
                 if not package_file.is_file():
                     self._incomplete.append(f"source:{source_id}:package_file_missing")
+            representation = str(source.get("content_representation") or "SOURCE_TEXT").strip()
+            reader_text_path = _relative_path(source.get("reader_text_path"))
+            requires_reader_text = Path(path).suffix.lower() == ".pdf" or representation == "PDF_PAGE_MARKDOWN"
+            if requires_reader_text:
+                if representation != "PDF_PAGE_MARKDOWN":
+                    self._incomplete.append(f"source:{source_id}:reader_text_representation_required")
+                if not reader_text_path:
+                    self._incomplete.append(f"source:{source_id}:reader_text_path_missing")
+                else:
+                    previous_reader_source = registered_reader_paths.get(reader_text_path)
+                    if previous_reader_source is not None and previous_reader_source != source_id:
+                        self._invalid.append(f"source:{source_id}:reader_text_path_reused:{reader_text_path}")
+                    registered_reader_paths[reader_text_path] = source_id
+                    try:
+                        reader_file = self._resolve_under(
+                            self.package_root,
+                            reader_text_path,
+                            reason_prefix=f"source:{source_id}:reader_text",
+                        )
+                    except PITRunnerError as exc:
+                        self._invalid.append(str(exc))
+                    else:
+                        if not reader_file.is_file():
+                            self._incomplete.append(f"source:{source_id}:reader_text_file_missing")
+                    for field in ("reader_text_extractor", "reader_text_extractor_version", "reader_text_page_count"):
+                        if source.get(field) in (None, ""):
+                            self._incomplete.append(f"source:{source_id}:{field}_missing")
+            registration = self._registrations.get(source_id)
+            if registration is not None:
+                self._registrations[source_id] = SourceRegistration(
+                    source_id=registration.source_id,
+                    source_version=registration.source_version,
+                    published_at=registration.published_at,
+                    data_as_of=registration.data_as_of,
+                    package_path=registration.package_path,
+                    content_representation=representation,
+                    reader_text_path=reader_text_path,
+                )
         self._framework: dict[str, dict[str, Any]] = {
             str(item["path"]): item for item in _framework_entries(self.manifest)
         }
@@ -285,6 +329,15 @@ class PITSourcePackage:
         )
         raise PITRunnerError(reason)
 
+    def record_tool_denial(self, tool_name: str, *, reason: str = "pit_tool_not_offered") -> None:
+        """Record a rejected agent entrypoint without executing it."""
+        self.audit.record(
+            allowed=False,
+            kind="TOOL",
+            path=str(tool_name or ""),
+            reason=reason,
+        )
+
     def read_source(self, source_id: str) -> bytes:
         """Read one admitted source; all other IDs are denied and audited."""
         if self.state != "REVIEWABLE":
@@ -298,25 +351,27 @@ class PITSourcePackage:
         published = _timestamp(source.published_at)
         if cutoff is None or published is None or published > cutoff:
             self._deny(kind="SOURCE", path=source.package_path, reason=f"source_after_cutoff:{key}", source=source)
+        read_path = source.reader_text_path or source.package_path
         try:
-            path = self._resolve_under(self.package_root, source.package_path, reason_prefix=f"source:{key}")
+            path = self._resolve_under(self.package_root, read_path, reason_prefix=f"source:{key}")
         except PITRunnerError as exc:
-            self._deny(kind="SOURCE", path=source.package_path, reason=str(exc), source=source)
+            self._deny(kind="SOURCE", path=read_path, reason=str(exc), source=source)
         assert path is not None
         if not path.is_file():
-            self._deny(kind="SOURCE", path=source.package_path, reason=f"source_file_missing:{key}", source=source)
+            self._deny(kind="SOURCE", path=read_path, reason=f"source_file_missing:{key}", source=source)
         try:
             content = path.read_bytes()
         except OSError as exc:
-            self._deny(kind="SOURCE", path=source.package_path, reason=f"source_read_failed:{key}:{exc.__class__.__name__}", source=source)
+            self._deny(kind="SOURCE", path=read_path, reason=f"source_read_failed:{key}:{exc.__class__.__name__}", source=source)
         self.audit.record(
             allowed=True,
             kind="SOURCE",
-            path=source.package_path,
+            path=read_path,
             source_id=source.source_id,
             source_version=source.source_version,
             published_at=source.published_at,
             data_as_of=source.data_as_of,
+            representation=source.content_representation,
         )
         return content
 
@@ -367,6 +422,8 @@ class PITSourcePackage:
                     "published_at": registration.published_at,
                     "data_as_of": registration.data_as_of,
                     "package_path": registration.package_path,
+                    "content_representation": registration.content_representation,
+                    "reader_text_path": registration.reader_text_path,
                     "admission_status": ADMITTED,
                 }
                 for registration in self._registrations.values()

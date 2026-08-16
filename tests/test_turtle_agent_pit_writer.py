@@ -21,7 +21,11 @@ class ScriptedLlm:
     def __init__(self) -> None:
         self.schemas: list[set[str]] = []
         self.responses = [
-            LlmResponse(tool_calls=[ToolCall(id="blocked", name="web_search", arguments={})]),
+            LlmResponse(tool_calls=[
+                ToolCall(id="blocked-web", name="web_search", arguments={}),
+                ToolCall(id="blocked-turtle", name="read_section", arguments={"output_dir": "output/600340"}),
+                ToolCall(id="blocked-niangao", name="read_industry_knowledge_context", arguments={"output_dir": "../_niangao"}),
+            ]),
             LlmResponse(tool_calls=[
                 ToolCall(id="sources", name="pit_list_sources", arguments={}),
                 ToolCall(id="framework", name="pit_read_framework", arguments={"path": "framework/policy.md"}),
@@ -157,6 +161,14 @@ def test_pit_writer_uses_only_admitted_reads_and_single_restricted_output(tmp_pa
         and event.get("reason") == "source_not_allowlisted:SSE:600340:FUTURE"
         for event in audit
     )
+    blocked_entrypoints = {
+        event["path"]
+        for event in audit
+        if event["kind"] == "TOOL" and event["decision"] == "DENY"
+    }
+    assert blocked_entrypoints == {
+        "web_search", "read_section", "read_industry_knowledge_context",
+    }
     assert [event["source_id"] for event in audit if event["kind"] == "SOURCE" and event["allowed"]] == [
         "SSE:600340:AR2019",
     ]

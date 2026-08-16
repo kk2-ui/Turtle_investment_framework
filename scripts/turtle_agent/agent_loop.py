@@ -3584,6 +3584,8 @@ Zone B 提取结果写入 audit.json / governance.json。写作 Agent 在相关�
         results: list[dict[str, Any]] = []
         for tc in resp.tool_calls:
             if tc.name not in allowed or tc.name not in self._last_offered_tool_names:
+                from turtle_agent.tools.pit_read_tools import audit_pit_tool_denial
+                audit_pit_tool_denial(tc.name)
                 result: dict[str, Any] = {
                     "ok": False,
                     "error": "pit_tool_not_offered",

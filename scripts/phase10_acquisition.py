@@ -24,6 +24,9 @@ MANIFEST_SCHEMA_VERSION = "phase10-source-manifest.v1"
 DEFAULT_COMPANY_CODE = "600340.SH"
 DEFAULT_CUTOFF_AT = "2020-04-27T18:00:00+08:00"
 LOCAL_TZ = ZoneInfo("Asia/Shanghai")
+PDF_PAGE_MARKDOWN = "PDF_PAGE_MARKDOWN"
+PDF_PAGE_MARKDOWN_EXTRACTOR = "pdf_preprocessor.extract_all_pages"
+PDF_PAGE_MARKDOWN_EXTRACTOR_VERSION = "phase10-pdf-page-markdown.v1"
 
 ADMITTED = "ADMITTED"
 REJECTION_REASONS = {
@@ -62,6 +65,88 @@ def _copy_record(record: dict[str, Any], **updates: Any) -> dict[str, Any]:
     result = deepcopy(record)
     result.update(updates)
     return result
+
+
+def _package_relative_path(value: Any) -> str | None:
+    """Normalize a source-package-relative path without accepting escapes."""
+    text = str(value or "").strip().replace("\\", "/")
+    if not text or text.startswith("/"):
+        return None
+    candidate = Path(text)
+    if candidate.is_absolute() or ".." in candidate.parts:
+        return None
+    return candidate.as_posix()
+
+
+def _resolve_package_path(package_root: Path, relative_path: str, *, field: str) -> Path:
+    resolved = (package_root / relative_path).resolve()
+    if resolved != package_root and package_root not in resolved.parents:
+        raise ValueError(f"{field} must stay under package_root")
+    return resolved
+
+
+def materialize_pdf_page_markdown(
+    source: dict[str, Any],
+    package_root: str | Path,
+    *,
+    reader_text_path: str | None = None,
+) -> dict[str, Any]:
+    """Create the registered, page-marked reader representation for one PDF.
+
+    The original official PDF remains the source artifact at ``package_path``.
+    The derived Markdown stays in the same source package and is usable only
+    through the runner's source-id boundary.  It is never written to a normal
+    Turtle output directory.
+    """
+    root = Path(package_root).expanduser().resolve()
+    raw_relative = _package_relative_path(source.get("package_path"))
+    if raw_relative is None:
+        raise ValueError("source.package_path must be a relative source-package path")
+    raw_path = _resolve_package_path(root, raw_relative, field="source.package_path")
+    if raw_path.suffix.lower() != ".pdf":
+        raise ValueError("materialize_pdf_page_markdown requires a PDF package_path")
+    if not raw_path.is_file():
+        raise FileNotFoundError(f"source PDF missing: {raw_relative}")
+
+    chosen_reader_path = reader_text_path or source.get("reader_text_path")
+    if not chosen_reader_path:
+        chosen_reader_path = str(Path(raw_relative).with_suffix(".pages.md"))
+    reader_relative = _package_relative_path(chosen_reader_path)
+    if reader_relative is None:
+        raise ValueError("reader_text_path must be a relative source-package path")
+    destination = _resolve_package_path(root, reader_relative, field="source.reader_text_path")
+
+    try:
+        from scripts.pdf_preprocessor import extract_all_pages
+    except ModuleNotFoundError:
+        from pdf_preprocessor import extract_all_pages
+
+    pages = extract_all_pages(str(raw_path), verbose=False)
+    nonempty_pages = [(number, text.strip()) for number, text in pages if text and text.strip()]
+    if not nonempty_pages:
+        raise ValueError("source PDF has no extractable text pages")
+
+    source_id = str(source.get("source_id") or "").strip()
+    source_version = str(source.get("source_version") or "").strip()
+    lines = [
+        f"# {source_id or raw_relative}",
+        "",
+        f"- source_version: {source_version}",
+        f"- content_representation: {PDF_PAGE_MARKDOWN}",
+        "",
+    ]
+    for page_number, text in nonempty_pages:
+        lines.extend((f"## 第 {page_number} 页", "", text, ""))
+    destination.parent.mkdir(parents=True, exist_ok=True)
+    destination.write_text("\n".join(lines), encoding="utf-8")
+    return _copy_record(
+        source,
+        content_representation=PDF_PAGE_MARKDOWN,
+        reader_text_path=reader_relative,
+        reader_text_extractor=PDF_PAGE_MARKDOWN_EXTRACTOR,
+        reader_text_extractor_version=PDF_PAGE_MARKDOWN_EXTRACTOR_VERSION,
+        reader_text_page_count=len(nonempty_pages),
+    )
 
 
 def _source_identity_ok(source: dict[str, Any]) -> bool:

@@ -100,8 +100,8 @@ Phase 10 只服务两条需要分开回答的主线：
 - 预注册实验、cutoff、来源版本、执行规则和幸存者处理；
 - `ELIGIBLE` 只表示历史来源可建立 case；`calibration_eligible` 单独计数，只有模型记忆受控的候选才可能进入后续 holdout 审查；
 - 采集器按公告日期全量枚举，拒绝 cutoff 后来源和截止日前已被修订版替代的原版本；
-- `scripts/phase10_pit_runner.py` 已实现 source-package allowlist、只读 PIT runner 和读取审计，并由 production origin 回放 source identity、cutoff、package root 和实际 ALLOW 事件；框架读取根目录固定为仓库内受控静态目录，并在 attestation 记录 root 与 `REPOSITORY_STATIC` provenance。它不使用来源内容 hash。普通 `turtle_agent` 读工具仍未绑定该 runner，故不得把普通管线或 attestation JSON 当作运行隔离证明；
-- `scripts/turtle_agent/run.py` 现区分 `--pit-preflight` 和 `--pit-writer`：两者都拒绝复用 output、跳过普通 Phase 0-2/网络/当前行情准备，且 output 必须与历史来源包和静态 framework 根目录隔离。writer 只注册 `pit_list_sources`、`pit_read_source`、`pit_read_framework` 和无路径参数的 `pit_write_report`；它不加载普通 contract、旧输出、tracking、数据库或 Web。写入时逐一核对正文 source anchor 对应本运行实际 ALLOW 的 source_id，最终 attestation 回写真实 read audit 和 writer outcome；
+- `scripts/phase10_pit_runner.py` 已实现 source-package allowlist、只读 PIT runner 和读取审计，并由 production origin 回放 source identity、cutoff、package root 和实际 ALLOW 事件；框架读取根目录固定为仓库内受控静态目录，并在 attestation 记录 root 与 `REPOSITORY_STATIC` provenance。它不使用来源内容 hash。准入 PDF 必须同时保留原始 `package_path` 和来源包内 `PDF_PAGE_MARKDOWN` 页码文本表示；少任一项即为 `INCOMPLETE`，不能把 base64 当作可读年报证据；
+- `scripts/turtle_agent/run.py` 现区分 `--pit-preflight` 和 `--pit-writer`：两者都拒绝复用 output、跳过普通 Phase 0-2/网络/当前行情准备，且 output 必须与历史来源包和静态 framework 根目录隔离。writer 只注册 `pit_list_sources`、`pit_read_source`、`pit_read_framework` 和无路径参数的 `pit_write_report`；它不加载普通 contract、旧输出、tracking、数据库、Web 或价格。任何未提供的工具入口（包括 Web、普通 Turtle 输出读取和年糕上下文）都会以 `TOOL / DENY` 写入同一 read audit；写入时逐一核对正文 source anchor 对应本运行实际 ALLOW 的 source_id，最终 attestation 回写真实 read audit 和 writer outcome；
 - 该 writer 只生成受限的冻结前 Markdown 草案，尚未接入 Phase 08 acceptance/V3、完整 frozen claim/calibration ledger 或独立 reviewer。因此 production validator 仍保持 `INCOMPLETE`，任何真实 case 仍不得标为 `REVIEWABLE`；
 - 首案 600340 形成可审阅的冻结来源包。
 
