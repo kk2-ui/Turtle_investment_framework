@@ -315,6 +315,20 @@ def _validate_calibration_ledger(
             "INITIAL_DISCLOSURE", "LATEST_OFFICIAL_AS_OF_EVALUATION",
         }:
             invalid.append(outcome_prefix + ":settlement_version_policy_invalid")
+        conversion_rule = outcome.get("conversion_rule")
+        if conversion_rule is not None:
+            if not isinstance(conversion_rule, dict):
+                invalid.append(outcome_prefix + ":conversion_rule_not_object")
+            else:
+                conversion_prefix = outcome_prefix + ".conversion_rule"
+                incomplete.extend(_required(
+                    conversion_rule, ("rule_id", "raw_unit", "converted_unit", "multiplier"), conversion_prefix,
+                ))
+                if conversion_rule.get("converted_unit") != outcome.get("unit"):
+                    invalid.append(conversion_prefix + ":converted_unit_does_not_match_observable_outcome")
+                multiplier = _number(conversion_rule.get("multiplier"))
+                if multiplier is None or multiplier == 0:
+                    invalid.append(conversion_prefix + ":multiplier_invalid")
         if disposition == "PREDICTION":
             prediction = claim.get("prediction") if isinstance(claim.get("prediction"), dict) else {}
             threshold = claim.get("threshold") if isinstance(claim.get("threshold"), dict) else {}
@@ -579,6 +593,25 @@ def _validate_operating_observation(
                 incomplete.append(prefix + ":report_source_data_as_of_missing:" + str(source_id))
             elif observation_period_end and source_period_end != observation_period_end:
                 invalid.append(prefix + ":report_source_period_does_not_match_observation:" + str(source_id))
+    if observation.get("comparability_status") == "CONVERTIBLE_WITH_PREREGISTERED_RULE":
+        conversion_rule = outcome.get("conversion_rule") if isinstance(outcome.get("conversion_rule"), dict) else None
+        if conversion_rule is None:
+            invalid.append(prefix + ":conversion_rule_not_preregistered")
+        else:
+            incomplete.extend(_required(
+                observation, ("raw_value", "raw_unit", "conversion_rule_id"), prefix,
+            ))
+            if observation.get("conversion_rule_id") != conversion_rule.get("rule_id"):
+                invalid.append(prefix + ":conversion_rule_id_does_not_match_frozen_contract")
+            if observation.get("raw_unit") != conversion_rule.get("raw_unit"):
+                invalid.append(prefix + ":raw_unit_does_not_match_frozen_contract")
+            raw_value = _number(observation.get("raw_value"))
+            converted_value = _number(observation.get("value"))
+            multiplier = _number(conversion_rule.get("multiplier"))
+            if raw_value is None or converted_value is None or multiplier is None:
+                invalid.append(prefix + ":conversion_value_not_numeric")
+            elif not _numbers_match(converted_value, raw_value * multiplier):
+                invalid.append(prefix + ":converted_value_does_not_match_frozen_rule")
     return invalid, incomplete
 
 

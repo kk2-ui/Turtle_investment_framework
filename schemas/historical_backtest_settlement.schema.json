@@ -58,7 +58,10 @@
               "period_start": {"type": "string", "minLength": 10},
               "period_end": {"type": "string", "minLength": 10},
               "source_ids": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}},
-              "comparability_status": {"enum": ["COMPARABLE", "CONVERTIBLE_WITH_PREREGISTERED_RULE", "PERIOD_MISMATCH", "SCOPE_OR_ACCOUNTING_DRIFT", "NOT_COMPARABLE", "NOT_DISCLOSED"]}
+              "comparability_status": {"enum": ["COMPARABLE", "CONVERTIBLE_WITH_PREREGISTERED_RULE", "PERIOD_MISMATCH", "SCOPE_OR_ACCOUNTING_DRIFT", "NOT_COMPARABLE", "NOT_DISCLOSED"]},
+              "raw_value": {"type": ["number", "null"]},
+              "raw_unit": {"type": ["string", "null"]},
+              "conversion_rule_id": {"type": ["string", "null"]}
             }
           }
         }

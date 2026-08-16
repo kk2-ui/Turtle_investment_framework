@@ -496,6 +496,28 @@ def test_settlement_rejects_operating_metric_basis_period_and_source_drift() -> 
     assert "actual_outcomes.operating_observations[0]:report_source_period_does_not_match_observation:AR:00506:2021" in result["invalid_findings"]
 
 
+def test_convertible_observation_requires_a_frozen_replayable_rule() -> None:
+    case = _case()
+    settlement = _settlement()
+    observation = settlement["actual_outcomes"]["operating_observations"][0]
+    observation["comparability_status"] = "CONVERTIBLE_WITH_PREREGISTERED_RULE"
+    result = validate_settlement(settlement, case=case)
+    assert "actual_outcomes.operating_observations[0]:conversion_rule_not_preregistered" in result["invalid_findings"]
+
+    case["calibration_ledger"]["claims"][0]["observable_outcome"]["conversion_rule"] = {
+        "rule_id": "HBTCONV:owner-cash-per-100-shares",
+        "raw_unit": "HKD/100 shares",
+        "converted_unit": "HKD/share",
+        "multiplier": 0.01,
+    }
+    observation.update({
+        "raw_value": 18.0,
+        "raw_unit": "HKD/100 shares",
+        "conversion_rule_id": "HBTCONV:owner-cash-per-100-shares",
+    })
+    assert validate_settlement(settlement, case=case)["state"] == "REVIEWABLE"
+
+
 def test_forecast_error_must_reference_the_same_operating_observation() -> None:
     case = _case()
     settlement = _settlement()

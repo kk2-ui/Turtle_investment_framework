@@ -124,7 +124,17 @@
                     "minItems": 1,
                     "items": {"enum": ["ANNUAL_REPORT", "INTERIM_REPORT", "EXCHANGE_ANNOUNCEMENT"]}
                   },
-                  "settlement_version_policy": {"enum": ["INITIAL_DISCLOSURE", "LATEST_OFFICIAL_AS_OF_EVALUATION"]}
+                  "settlement_version_policy": {"enum": ["INITIAL_DISCLOSURE", "LATEST_OFFICIAL_AS_OF_EVALUATION"]},
+                  "conversion_rule": {
+                    "type": "object",
+                    "required": ["rule_id", "raw_unit", "converted_unit", "multiplier"],
+                    "properties": {
+                      "rule_id": {"type": "string", "minLength": 1},
+                      "raw_unit": {"type": "string", "minLength": 1},
+                      "converted_unit": {"type": "string", "minLength": 1},
+                      "multiplier": {"type": "number", "not": {"const": 0}}
+                    }
+                  }
                 }
               }
             }
