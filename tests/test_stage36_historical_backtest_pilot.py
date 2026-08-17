@@ -19,6 +19,10 @@ from scripts.historical_backtest import (
     validate_settlement,
 )
 from scripts.phase10_pit_runner import PITSourcePackage
+from scripts.real_report_acceptance import (
+    REQUIRED_MACHINE_GATES,
+    evaluate_phase10_production_freeze_acceptance,
+)
 
 
 def _case() -> dict:
@@ -625,6 +629,206 @@ def test_production_report_requires_pipeline_acceptance_artifacts() -> None:
     assert "report_freeze.frozen_report.origin:acceptance_sample_not_unique" in result["invalid_findings"]
     assert "report_freeze.frozen_report.origin.pit_runner:missing:attestation_path" in result["incomplete_findings"]
     assert "report_freeze.frozen_report.origin.pit_runner:tool_boundary_not_integrated" in result["incomplete_findings"]
+
+
+def test_production_origin_accepts_only_pit_production_freeze(
+    tmp_path: Path,
+    monkeypatch,
+) -> None:
+    root = tmp_path / "repository"
+    package = root / "historical" / "package"
+    (package / "annual").mkdir(parents=True)
+    (package / "annual" / "2020.pdf").write_bytes(b"%PDF-original")
+    (package / "annual" / "2020.pages.md").write_text(
+        "# AR:00506:2020\n\n"
+        "- source_id: AR:00506:2020\n"
+        "- source_version: annual-report-original-2020\n"
+        "- content_representation: PDF_PAGE_MARKDOWN\n\n"
+        "## 第 1 页\n\n历史年报正文\n",
+        encoding="utf-8",
+    )
+    framework_root = root / "config" / "phase10_pit_framework" / "framework"
+    framework_root.mkdir(parents=True)
+    (framework_root / "policy.md").write_text("PIT policy", encoding="utf-8")
+    monkeypatch.setattr(phase10_pit_runner, "PIT_STATIC_FRAMEWORK_ROOT", framework_root.parent)
+    monkeypatch.setattr(historical_backtest, "__file__", str(root / "scripts" / "historical_backtest.py"))
+
+    manifest = enumerate_sse_announcements([{
+        "source_id": "AR:00506:2020",
+        "source_version": "annual-report-original-2020",
+        "source_type": "ANNUAL_REPORT",
+        "title": "2020 年年度报告",
+        "published_at": "2021-03-25",
+        "data_as_of": "2020-12-31",
+        "revision_policy": "ORIGINAL_VINTAGE",
+    }], cutoff_at="2021-08-31T18:00:00+08:00", period_start="2021-01-01")
+    manifest["company_code"] = "00506.HK"
+    for source in [*manifest["inventory"], *manifest["sources"]]:
+        source.update({
+            "package_path": "annual/2020.pdf",
+            "content_representation": "PDF_PAGE_MARKDOWN",
+            "reader_text_path": "annual/2020.pages.md",
+            "reader_text_extractor": "pdf_preprocessor.extract_all_pages",
+            "reader_text_extractor_version": "phase10-pdf-page-markdown.v1",
+            "reader_text_page_count": 1,
+        })
+    manifest["framework_allowlist"] = [{"path": "framework/policy.md"}]
+    manifest_path = root / "historical" / "source-manifest.json"
+    manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
+    runner = PITSourcePackage(
+        manifest,
+        package,
+        case_id="HBTCASE:TEST",
+        experiment_id="HBT:test",
+        run_id="pit-production-test",
+        manifest_path=str(manifest_path),
+    )
+    assert runner.state == "REVIEWABLE"
+    runner.read_framework("framework/policy.md")
+    runner.read_source("AR:00506:2020")
+
+    output = root / "pipeline-output"
+    report_path = output / "reports" / "00506_分析报告_v13.md"
+    report_path.parent.mkdir(parents=True)
+    report_path.write_text("# Production PIT report\n", encoding="utf-8")
+    report_sha256 = hashlib.sha256(report_path.read_bytes()).hexdigest()
+    (output / "run_manifest.json").write_text(json.dumps({
+        "run_id": "pit-production-test",
+        "status": "COMPLETED",
+    }), encoding="utf-8")
+    (output / "completion_report.json").write_text(json.dumps({
+        "status": "COMPLETE",
+        "validators": {"publication_snapshot": {"written": True}},
+    }), encoding="utf-8")
+    (output / "publication_snapshot.json").write_text(json.dumps({
+        "report_sha256": report_sha256,
+        "run_id": "pit-production-test",
+        "completion_status": "COMPLETE",
+        "v3_enforced": True,
+    }), encoding="utf-8")
+    for gate, (filename, accepted) in REQUIRED_MACHINE_GATES.items():
+        if gate in {"completion", "runtime_manifest"}:
+            continue
+        key = "status" if gate in {"completion", "runtime_manifest", "absolute_quality"} else "state"
+        (output / filename).write_text(json.dumps({key: sorted(accepted)[0]}), encoding="utf-8")
+    (output / "research_execution.json").write_text(json.dumps({
+        "enforced": True,
+        "chapters": {"2": {
+            "enforced": True,
+            "tool_counts": {"read_section": 2},
+            "fiscal_years": [2019, 2020],
+            "sections": ["MDA", "STMT"],
+        }},
+    }), encoding="utf-8")
+    (output / "judgment_review_validation.json").write_text(json.dumps({
+        "state": "REVIEWED", "ceiling_verdict": "COMPETENT",
+    }), encoding="utf-8")
+    (output / "judgment_review.json").write_text(json.dumps({
+        "ceiling_verdict": "COMPETENT", "fragile_leaps": [], "dimension_assessments": {},
+    }), encoding="utf-8")
+    acceptance_root = root / "acceptance"
+    acceptance = evaluate_phase10_production_freeze_acceptance(
+        sample_id="00506",
+        company_code="00506.HK",
+        output_dir=output,
+        report_period="PIT-2021-08-31",
+        acceptance_root=acceptance_root,
+    )
+    assert acceptance["samples"][0]["machine_status"] == "READY_FOR_BLIND_REVIEW"
+
+    attestation = runner.attestation()
+    attestation.update({
+        "execution_mode": "PIT_PRODUCTION_FREEZE",
+        "writer": {
+            "run_id": "pit-production-test",
+            "case_id": "HBTCASE:TEST",
+            "experiment_id": "HBT:test",
+            "final_report_path": str(report_path),
+            "source_anchor_ids": ["AR:00506:2020"],
+            "read_source_ids": ["AR:00506:2020"],
+        },
+    })
+    attestation_path = root / "historical" / "pit-attestation.json"
+    attestation_path.write_text(json.dumps(attestation), encoding="utf-8")
+    record = {
+        "case_id": "HBTCASE:TEST",
+        "experiment_id": "HBT:test",
+        "company_code": "00506.HK",
+        "simulation_cutoff": "2021-08-31T18:00:00+08:00",
+        "report_freeze": {
+            "evidence_cutoff": "2021-08-31T18:00:00+08:00",
+            "report_status": "FROZEN",
+        },
+        "sources": [{
+            "source_id": "AR:00506:2020",
+            "source_version": "annual-report-original-2020",
+            "published_at": "2021-03-25",
+            "data_as_of": "2020-12-31",
+            "revision_policy": "ORIGINAL_VINTAGE",
+        }],
+    }
+    origin = {
+        "output_dir": "pipeline-output",
+        "acceptance_root": "acceptance",
+        "sample_id": "00506",
+        "run_manifest_path": "pipeline-output/run_manifest.json",
+        "completion_report_path": "pipeline-output/completion_report.json",
+        "publication_snapshot_path": "pipeline-output/publication_snapshot.json",
+        "pit_runner": {
+            "attestation_path": "historical/pit-attestation.json",
+            "source_package_manifest_path": "historical/source-manifest.json",
+            "package_root": "historical/package",
+            "status": "PASS",
+        },
+    }
+    report = {
+        "artifact_path": "pipeline-output/reports/00506_分析报告_v13.md",
+        "variant_id": report_sha256[:16],
+    }
+
+    invalid, incomplete = _validate_production_report_origin(
+        record, report=report, artifact_sha256=report_sha256, origin=origin,
+    )
+    assert invalid == []
+    assert incomplete == []
+
+    config_path = acceptance_root / "phase10_production_freeze_config.json"
+    config = json.loads(config_path.read_text(encoding="utf-8"))
+    config["phase"] = "other-phase"
+    config_path.write_text(json.dumps(config), encoding="utf-8")
+    invalid, incomplete = _validate_production_report_origin(
+        record, report=report, artifact_sha256=report_sha256, origin=origin,
+    )
+    assert "report_freeze.frozen_report.origin:phase10_acceptance_config_phase_invalid" in invalid
+    assert incomplete == []
+    config["phase"] = "10-production-freeze"
+    config_path.write_text(json.dumps(config), encoding="utf-8")
+
+    attestation["writer"]["run_id"] = "different-production-run"
+    attestation_path.write_text(json.dumps(attestation), encoding="utf-8")
+    invalid, incomplete = _validate_production_report_origin(
+        record, report=report, artifact_sha256=report_sha256, origin=origin,
+    )
+    assert "report_freeze.frozen_report.origin.pit_runner:writer_run_id_mismatch" in invalid
+    assert incomplete == []
+
+    attestation["writer"]["run_id"] = "pit-production-test"
+    attestation["writer"]["source_anchor_ids"] = ["AR:missing"]
+    attestation_path.write_text(json.dumps(attestation), encoding="utf-8")
+    invalid, incomplete = _validate_production_report_origin(
+        record, report=report, artifact_sha256=report_sha256, origin=origin,
+    )
+    assert "report_freeze.frozen_report.origin.pit_runner:writer_source_anchor_not_read" in invalid
+    assert incomplete == []
+
+    attestation["writer"]["source_anchor_ids"] = ["AR:00506:2020"]
+    attestation["execution_mode"] = "PIT_WRITER"
+    attestation_path.write_text(json.dumps(attestation), encoding="utf-8")
+    invalid, incomplete = _validate_production_report_origin(
+        record, report=report, artifact_sha256=report_sha256, origin=origin,
+    )
+    assert invalid == []
+    assert "report_freeze.frozen_report.origin.pit_runner:tool_boundary_not_integrated" in incomplete
 
 
 def test_production_origin_replays_pdf_page_markdown_source_reads(

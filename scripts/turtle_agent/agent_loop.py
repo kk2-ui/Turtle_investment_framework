@@ -888,6 +888,7 @@ pit_read_source，且只可按 allowlist 路径调用 pit_read_framework。禁�
         return {
             "pit_list_sources", "pit_read_source", "pit_read_framework",
             "pit_verify_official_fact", "pit_write_chapter", "pit_read_chapter",
+            "pit_read_report_contract_pack", "pit_read_structured_ledger_contract",
             "pit_audit_chapter", "pit_write_decision_manifest", "pit_write_decision_ledger",
             "pit_write_claim_evidence_ledger", "pit_write_valuation_model_ledger",
             "pit_write_thesis_test_ledger", "pit_write_decisive_question_findings",
@@ -909,8 +910,11 @@ pit_read_source，且只可按 allowlist 路径调用 pit_read_framework。禁�
                 f"你在生成 {self._config.code} 的完整历史时点冻结报告。案例 {self._config.pit_case_id}，"
                 f"实验 {self._config.pit_experiment_id}，截止 {self._config.pit_cutoff_at}。"
                 "只可使用提供的PIT工具：先读取官方来源，数值事实用pit_verify_official_fact逐页验证，"
-                "再完成章节和V3账本并调用pit_assemble_report。禁止网页、行情、数据库、任意路径、"
+                "再读取pit_read_report_contract_pack取得当前V3合同，完成章节和账本并调用pit_assemble_report。"
+                "需要修复结构化账本时只用pit_read_structured_ledger_contract。禁止网页、行情、数据库、任意路径、"
                 "cutoff后资料和事后结论。来源不足时保留UNKNOWN，且不得由UNKNOWN推出买点、收益、选股或仓位。"
+                "章节中的[source: ...]只能填写本次pit_read_source已经读取的精确source_id；"
+                "不得填写文件路径、URL、doc_id或未读取来源。"
             )},
             {"role": "user", "content": "开始受限生产冻结。"},
         ]

@@ -1180,6 +1180,165 @@ def _run_pit_writer(
         clear_pit_runner()
 
 
+def _initialize_pit_production_output(
+    *, output_dir: str, code: str, run_id: str, cutoff_at: str,
+) -> None:
+    """Seed only the local contracts a PIT production writer may complete."""
+    cutoff_date = str(cutoff_at or "")[:10]
+    _write_json_file(str(Path(output_dir) / "analysis_contract.json"), {
+        "schema_version": "analysis-contract.v1",
+        "ts_code": code,
+        "code": code,
+        "run_id": run_id,
+        "analysis_date": cutoff_date,
+        "data_as_of": cutoff_date,
+        "report_type": "annual",
+        "tracking": {"report_type": "annual", "period_end": cutoff_date},
+        "pit_production": {"cutoff_at": cutoff_at, "source_access": "PIT_ALLOWLIST_ONLY"},
+    })
+    from scripts.evidence_documents import initialize_official_evidence_policy
+    from scripts.decision_ledger import initialize_decision_ledger_policy
+    from scripts.decision_compiler import initialize_decision_compiler_policy
+    from scripts.claim_evidence import initialize_claim_evidence_policy
+    from scripts.valuation_model_gate import initialize_valuation_model_policy
+    from scripts.decision_reliability import initialize_decision_reliability_policy
+    from scripts.thesis_test_gate import initialize_thesis_test_policy
+    from scripts.insight_ledger import initialize_insight_policy
+    from scripts.valuation_routing import initialize_valuation_route_policy
+    from scripts.decisive_question import initialize_decisive_question_policy
+    from scripts.base_rate_case_library import initialize_base_rate_policy
+    initialize_official_evidence_policy(output_dir, run_id=run_id, enforced=True)
+    initialize_valuation_route_policy(output_dir, run_id=run_id, enforced=True)
+    initialize_decisive_question_policy(output_dir, run_id=run_id, enforced=True)
+    initialize_base_rate_policy(output_dir, run_id=run_id, enforced=True)
+    initialize_decision_ledger_policy(output_dir, run_id=run_id, enforced=True)
+    initialize_decision_compiler_policy(output_dir, run_id=run_id, enforced=True)
+    initialize_claim_evidence_policy(output_dir, run_id=run_id, enforced=True)
+    initialize_valuation_model_policy(output_dir, run_id=run_id, enforced=True)
+    initialize_decision_reliability_policy(output_dir, run_id=run_id, enforced=True)
+    initialize_thesis_test_policy(output_dir, run_id=run_id, enforced=True, monitoring_required=True)
+    initialize_insight_policy(output_dir, run_id=run_id, enforced=True)
+
+
+def _validate_pit_production_completion(
+    *, output_dir: str, report_path: str, run_id: str,
+) -> dict[str, Any]:
+    """Confirm the normal report exit completed before a PIT freeze is published."""
+    output = Path(output_dir).expanduser().resolve()
+    report = Path(report_path).expanduser().resolve()
+    if output not in report.parents or not report.is_file():
+        raise RuntimeError("PIT production report must be a materialized file under its fresh output directory")
+    if "drafts" in report.parts:
+        raise RuntimeError("PIT production report remained a draft; publication is prohibited")
+
+    completion = _load_completion_report(str(output))
+    status = str(completion.get("status") or "").upper()
+    if status not in {"COMPLETE", "COMPLETE_WITH_WARNINGS"}:
+        raise RuntimeError("PIT production report did not pass completion contract: " + (status or "MISSING"))
+    validators = completion.get("validators") if isinstance(completion.get("validators"), dict) else {}
+    snapshot_result = validators.get("publication_snapshot") if isinstance(validators, dict) else {}
+    if not isinstance(snapshot_result, dict) or snapshot_result.get("written") is not True:
+        raise RuntimeError("PIT production report lacks a successful publication snapshot")
+
+    snapshot = _load_json_file(str(output / "publication_snapshot.json"))
+    if not snapshot:
+        raise RuntimeError("PIT production publication snapshot is missing")
+    if str(snapshot.get("run_id") or "") != str(run_id):
+        raise RuntimeError("PIT production publication snapshot run_id does not match the active run")
+    if str(snapshot.get("completion_status") or "").upper() not in {"COMPLETE", "COMPLETE_WITH_WARNINGS"}:
+        raise RuntimeError("PIT production publication snapshot does not record a completed report")
+    if snapshot.get("v3_enforced") is not True:
+        raise RuntimeError("PIT production publication snapshot is not V3-enforced")
+    attestation_path = output / "pit_runner_attestation.json"
+    attestation = _load_json_file(str(attestation_path))
+    writer = attestation.get("writer") if isinstance(attestation.get("writer"), dict) else {}
+    if attestation.get("execution_mode") != "PIT_PRODUCTION_FREEZE":
+        raise RuntimeError("PIT production attestation does not record the production execution mode")
+    if str(attestation.get("run_id") or "") != str(run_id) or str(writer.get("run_id") or "") != str(run_id):
+        raise RuntimeError("PIT production attestation run_id does not match the active run")
+    if str(writer.get("final_report_path") or "") != str(report):
+        raise RuntimeError("PIT production attestation final report path does not match the published report")
+    source_anchors = {str(value) for value in writer.get("source_anchor_ids", []) if str(value)}
+    read_sources = {str(value) for value in writer.get("read_source_ids", []) if str(value)}
+    if not source_anchors.issubset(read_sources):
+        raise RuntimeError("PIT production attestation contains source anchors outside actual reads")
+    return {
+        "completion_status": status,
+        "report_path": str(report),
+        "publication_snapshot_path": str(output / "publication_snapshot.json"),
+        "pit_attestation_path": str(attestation_path),
+    }
+
+
+def _run_pit_production_freeze(
+    *, code: str, output_dir: str, model: str, max_iterations: int, pit_runner: Any,
+    pit_case_id: str, pit_experiment_id: str, runtime: Any, diagnostics: dict[str, Any],
+) -> str:
+    """Run one full PIT report with the normal V3 exits but no normal inputs."""
+    from scripts.phase10_pit_production import PITProductionWorkspace
+    from turtle_agent.agent_loop import AgentConfig, TurtleAgent
+    from turtle_agent.llm_client import LlmClient
+    from turtle_agent.tool_registry import ToolRegistry
+    from turtle_agent.tools.pit_read_tools import configure_pit_runner, clear_pit_runner
+    from turtle_agent.tools.pit_production_write_tools import (
+        configure_pit_production_writer, clear_pit_production_writer, production_source_anchor_ids,
+    )
+    deepseek_api_key = os.environ.get("DEEPSEEK_API_KEY", "").strip()
+    anthropic_api_key = os.environ.get("ANTHROPIC_API_KEY", "").strip()
+    if deepseek_api_key:
+        llm = LlmClient(provider="deepseek_oa", model="deepseek-v4-pro", runtime_controller=runtime)
+    elif anthropic_api_key:
+        llm = LlmClient(provider="anthropic", model=model, runtime_controller=runtime)
+    else:
+        raise RuntimeError("PIT production writer 需要已配置的 DEEPSEEK_API_KEY 或 ANTHROPIC_API_KEY")
+    _initialize_pit_production_output(
+        output_dir=output_dir, code=code, run_id=pit_runner.run_id, cutoff_at=str(pit_runner.cutoff_at),
+    )
+    workspace = PITProductionWorkspace(
+        pit_runner, output_dir, company_code=code, run_id=str(pit_runner.run_id),
+    )
+    tools = ToolRegistry()
+    configure_pit_runner(pit_runner, production_workspace=workspace)
+    configure_pit_production_writer(
+        output_dir=output_dir, code=code, run_id=str(pit_runner.run_id), pit_runner=pit_runner,
+    )
+    tools.auto_discover("turtle_agent.tools.pit_read_tools")
+    tools.auto_discover("turtle_agent.tools.pit_production_write_tools")
+    attestation_path = Path(output_dir) / "pit_runner_attestation.json"
+    diagnostics.update({"status": "pit_production_running", "mode": "pit_production_freeze",
+                        "tools": tools.list_tools(), "tool_count": len(tools)})
+    report_path = ""
+    try:
+        report_path = TurtleAgent(
+            llm=llm, tools=tools,
+            config=AgentConfig(code=code, output_dir=output_dir, max_iterations=max(1, int(max_iterations)),
+                max_tokens_per_call=32768, publish_downstream=False, pit_production_mode=True,
+                pit_case_id=pit_case_id, pit_experiment_id=pit_experiment_id,
+                pit_cutoff_at=str(pit_runner.cutoff_at), run_id=str(pit_runner.run_id)),
+        ).analyze()
+        diagnostics.update({"status": "completed", "report_path": report_path,
+                            "pit_attestation_path": str(attestation_path)})
+        return report_path
+    finally:
+        attestation = pit_runner.attestation()
+        read_source_ids = sorted({
+            str(event.get("source_id") or "")
+            for event in attestation.get("read_audit", [])
+            if event.get("allowed") is True and event.get("kind") == "SOURCE" and event.get("source_id")
+        })
+        attestation.update({"execution_mode": "PIT_PRODUCTION_FREEZE", "writer": {
+            "provider": getattr(llm, "_provider", ""), "model": getattr(llm, "model", ""),
+            "run_id": pit_runner.run_id, "case_id": pit_case_id, "experiment_id": pit_experiment_id,
+            "final_report_path": str(Path(report_path).expanduser().resolve()) if report_path else "",
+            "source_anchor_ids": production_source_anchor_ids(),
+            "read_source_ids": read_source_ids,
+        }})
+        _write_json_file(str(attestation_path), attestation)
+        runtime.manifest.add_artifact(attestation_path, "pit_runner_attestation")
+        clear_pit_production_writer()
+        clear_pit_runner()
+
+
 def run_full_pipeline(
     code: str,
     *,
@@ -1214,6 +1373,7 @@ def run_full_pipeline(
     pit_experiment_id: str = "",
     pit_preflight: bool = False,
     pit_writer: bool = False,
+    pit_production_freeze: bool = False,
 ) -> str:
     """运行完整分析管线。
 
@@ -1231,17 +1391,21 @@ def run_full_pipeline(
         static_framework_root = _PIT_FRAMEWORK_ROOT.resolve()
         if pit_framework_root and Path(pit_framework_root).expanduser().resolve() != static_framework_root:
             raise RuntimeError("PIT framework root 必须使用仓库内受控静态目录")
-        if pit_preflight == pit_writer:
-            raise RuntimeError("PIT运行必须二选一指定 --pit-preflight 或 --pit-writer")
+        if sum(bool(value) for value in (pit_preflight, pit_writer, pit_production_freeze)) != 1:
+            raise RuntimeError("PIT运行必须三选一指定 --pit-preflight、--pit-writer 或 --pit-production-freeze")
         if not output_dir:
             raise RuntimeError("PIT运行必须显式提供新的 --output 目录")
-        if (
+        ordinary_mode = (
             data_source or price_source or repair_only or dry_run or unified or qualitative_only
-            or repair_chapters or source_deepening is not None or not validation_only
+            or repair_chapters or source_deepening is not None
+        )
+        if ordinary_mode or (pit_production_freeze and validation_only) or (
+            not pit_production_freeze and not validation_only
         ):
             raise RuntimeError(
                 "PIT运行禁止普通报告、数据源、当前价格、repair-only、dry-run、unified、"
-                "qualitative-only、章节修复和来源深化，且必须 --validation-only"
+                "qualitative-only、章节修复和来源深化；草案/预检必须 --validation-only，"
+                "production-freeze 禁止 --validation-only"
             )
         existing = Path(output_dir)
         if existing.exists() and any(existing.iterdir()):
@@ -1311,7 +1475,7 @@ def run_full_pipeline(
         "code": code,
         "output_dir": output_dir,
         "template_path": template_path,
-        "mode": "qualitative_only" if qualitative_only else "unified" if unified else "classic",
+        "mode": "pit_production_freeze" if pit_production_freeze else "qualitative_only" if qualitative_only else "unified" if unified else "classic",
         "skip_prepare": skip_prepare,
         "dry_run": dry_run,
         "provider": provider,
@@ -1387,6 +1551,63 @@ def run_full_pipeline(
         template_path=template_path,
     )
     diagnostics["run_manifest_path"] = str(runtime.manifest.path)
+    if pit_mode and pit_production_freeze:
+        try:
+            report_path = _run_pit_production_freeze(
+                code=code, output_dir=output_dir, model=model, max_iterations=max_iterations,
+                pit_runner=pit_runner, pit_case_id=pit_case_id, pit_experiment_id=pit_experiment_id,
+                runtime=runtime, diagnostics=diagnostics,
+            )
+            production_completion = _validate_pit_production_completion(
+                output_dir=output_dir, report_path=report_path, run_id=run_id,
+            )
+            runtime.manifest.add_artifact(report_path, "pit_production_report")
+            runtime.manifest.add_artifact(production_completion["publication_snapshot_path"], "publication_snapshot")
+            runtime.manifest.record_step(
+                "pit_production_freeze", "COMPLETED", **production_completion,
+            )
+            diagnostics.update({"status": "completed", "report_path": report_path, **production_completion})
+            diagnostics_path = _write_diagnostics(output_dir, diagnostics)
+            runtime.manifest.add_artifact(diagnostics_path, "diagnostics")
+
+            from scripts.real_report_acceptance import evaluate_phase10_production_freeze_acceptance
+            acceptance_root = Path(output_dir) / "phase10_acceptance"
+            acceptance = evaluate_phase10_production_freeze_acceptance(
+                sample_id=pit_case_id,
+                company_code=code,
+                output_dir=output_dir,
+                report_period="PIT-" + str(pit_runner.cutoff_at)[:10],
+                acceptance_root=acceptance_root,
+            )
+            acceptance_sample = (acceptance.get("samples") or [{}])[0]
+            acceptance_status = str(acceptance_sample.get("machine_status") or "")
+            diagnostics["phase10_acceptance"] = {
+                "root": str(acceptance_root),
+                "machine_status": acceptance_status,
+            }
+            acceptance_baseline = acceptance_root / "acceptance_baseline.json"
+            runtime.manifest.add_artifact(acceptance_baseline, "phase10_production_acceptance")
+            if acceptance_status not in {
+                "READY_FOR_BLIND_REVIEW", "BENCHMARK_CANDIDATE", "BENCHMARK_APPROVED",
+            }:
+                raise RuntimeError(
+                    "PIT production report was not ready at the independent Phase 10 acceptance gate: "
+                    + (acceptance_status or "MISSING")
+                )
+            _write_diagnostics(output_dir, diagnostics)
+            runtime.manifest.finalize("COMPLETED", publication={"status": "PUBLISHED", "validation_only": False})
+            return report_path
+        except Exception as exc:
+            diagnostics["status"] = "blocked"
+            diagnostics["error"] = str(exc)
+            diagnostics_path = _write_diagnostics(output_dir, diagnostics)
+            try:
+                runtime.manifest.add_error("pit_production_freeze", str(exc))
+                runtime.manifest.add_artifact(diagnostics_path, "diagnostics")
+                runtime.manifest.finalize("BLOCKED", publication={"status": "NOT_PUBLISHED", "validation_only": False})
+            except Exception:
+                pass
+            raise
     report_path = ""
 
     def _run_phase_tracked(phase_name: str, phase_code: str, phase_target_code: str, **phase_kwargs: Any) -> dict[str, Any]:
@@ -2821,6 +3042,8 @@ def main(argv: list[str] | None = None) -> int:
                     help="仅执行 P10-A PIT 来源包和工具隔离预检，不生成报告")
     ap.add_argument("--pit-writer", action="store_true",
                     help="执行 P10-B PIT 受限 writer，生成草案但不解锁生产回测")
+    ap.add_argument("--pit-production-freeze", action="store_true",
+                    help="执行 P10 生产冻结：仅PIT读取、完整V3报告出口和独立验收根目录")
     args = ap.parse_args(argv)
     try:
         repair_chapters = tuple(
@@ -2865,6 +3088,7 @@ def main(argv: list[str] | None = None) -> int:
             pit_experiment_id=args.pit_experiment_id,
             pit_preflight=args.pit_preflight,
             pit_writer=args.pit_writer,
+            pit_production_freeze=args.pit_production_freeze,
         )
         print(f"\n📄 {report_path}")
         return 0

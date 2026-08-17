@@ -105,6 +105,67 @@ def _resolve_source(output: Path, source_id: str) -> Path | None:
     return sorted(matches, key=lambda item: (len(item.parts), str(item)))[0] if matches else None
 
 
+def _pit_production_contract(contract: dict[str, Any]) -> bool:
+    pit = contract.get("pit_production")
+    return isinstance(pit, dict) and pit.get("source_access") == "PIT_ALLOWLIST_ONLY"
+
+
+def _document_projections(output: Path) -> dict[str, dict[str, Any]]:
+    manifest = _load(output / "document_manifest.json")
+    documents = manifest.get("documents") if isinstance(manifest.get("documents"), list) else []
+    return {
+        str(document.get("doc_id") or ""): document
+        for document in documents
+        if isinstance(document, dict) and str(document.get("doc_id") or "")
+    }
+
+
+def _projected_document_path(output: Path, local_path: Any) -> Path | None:
+    relative = str(local_path or "").strip()
+    if not relative:
+        return None
+    candidate = (output / relative).resolve()
+    if candidate != output and output not in candidate.parents:
+        return None
+    return candidate if candidate.is_file() else None
+
+
+def _resolve_visible_source(
+    output: Path,
+    source_id: str,
+    *,
+    document_projections: dict[str, dict[str, Any]],
+    pit_production: bool,
+) -> tuple[Path | None, str | None, dict[str, str], str | None]:
+    """Resolve a ledger reference to the source actually visible to the report.
+
+    PIT direct evidence uses a V3 ``DOC:`` identifier, while the historical
+    case needs the source-package identifier.  The production workspace writes
+    that mapping only after the runner has allowed and projected a source, so a
+    snapshot may safely retain both identities without opening the package.
+    """
+    document = document_projections.get(source_id)
+    if document is not None:
+        source = str(document.get("source_id") or "").strip()
+        path = _projected_document_path(output, document.get("local_path"))
+        if not source:
+            return None, None, {}, "document_source_id_missing:" + source_id
+        if path is None:
+            return None, None, {}, "document_projection_missing:" + source_id
+        if pit_production and document.get("acquisition_status") != "PIT_LINKED_AFTER_ALLOW_READ":
+            return None, None, {}, "document_not_allow_read_projected:" + source_id
+        return path, source, {
+            "evidence_source_id": source_id,
+            "document_id": source_id,
+            "source_provenance": "PIT_PROJECTED_AFTER_ALLOW_READ" if pit_production else "DOCUMENT_MANIFEST",
+        }, None
+
+    path = _resolve_source(output, source_id)
+    if path is None:
+        return None, None, {}, "source_unresolved:" + source_id
+    return path, source_id, {}, None
+
+
 def _ledger_states(output: Path, report_text: str) -> dict[str, dict[str, Any]]:
     try:
         from scripts.decision_ledger import evaluate_output_decision_ledger
@@ -208,6 +269,39 @@ def create_publication_snapshot(
     else:
         states = {name: {"state": "SKIP"} for name in LEDGER_FILES}
     ledgers = {name: _load(output / filename) for name, filename in LEDGER_FILES.items() if (output / filename).is_file()}
+    contract = _load(output / "analysis_contract.json")
+    pit_production = _pit_production_contract(contract)
+    document_projections = _document_projections(output)
+    source_fingerprints: list[dict[str, Any]] = []
+    unresolved: list[str] = []
+    projection_findings: list[str] = []
+    for source_id in sorted(_source_ids(ledgers)):
+        resolved_path, resolved_source_id, identity, finding = _resolve_visible_source(
+            output,
+            source_id,
+            document_projections=document_projections,
+            pit_production=pit_production,
+        )
+        if resolved_path is None or resolved_source_id is None:
+            unresolved.append(source_id)
+            if finding:
+                projection_findings.append(finding)
+            continue
+        stat = resolved_path.stat()
+        source_fingerprints.append({
+            "source_id": resolved_source_id,
+            "path": str(resolved_path), "sha256": _sha_file(resolved_path),
+            "size": stat.st_size, "modified_at": datetime.fromtimestamp(stat.st_mtime, timezone.utc).isoformat(),
+            **identity,
+        })
+    unresolved_documents = [source_id for source_id in unresolved if source_id.startswith("DOC:")]
+    if pit_production and unresolved_documents:
+        return {
+            "written": False,
+            "error": "pit_production_snapshot_requires_resolved_document_projections",
+            "unresolved_source_ids": unresolved_documents,
+            "projection_findings": projection_findings,
+        }
     ledger_hashes = {
         name: _sha_file(output / filename)
         for name, filename in {**ROUTING_CONTEXT_FILES, **LEDGER_FILES}.items()
@@ -222,19 +316,6 @@ def create_publication_snapshot(
             core_path.write_text(json.dumps(core_manifest, ensure_ascii=False, indent=2), encoding="utf-8")
         if core_path.exists():
             ledger_hashes["core_facts"] = _sha_file(core_path)
-    source_fingerprints: list[dict[str, Any]] = []
-    unresolved: list[str] = []
-    for source_id in sorted(_source_ids(ledgers)):
-        path = _resolve_source(output, source_id)
-        if path is None:
-            unresolved.append(source_id)
-            continue
-        stat = path.stat()
-        source_fingerprints.append({
-            "source_id": source_id, "path": str(path), "sha256": _sha_file(path),
-            "size": stat.st_size, "modified_at": datetime.fromtimestamp(stat.st_mtime, timezone.utc).isoformat(),
-        })
-    contract = _load(output / "analysis_contract.json")
     thesis = ledgers.get("thesis_test", {})
     try:
         from scripts.research_monitoring import freeze_fact_observations

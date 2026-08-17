@@ -793,6 +793,10 @@ def _validate_production_report_origin(
         acceptance_root / "acceptance_baseline.json" if acceptance_root else None,
         "acceptance_baseline",
     )
+    acceptance_config = load_json(
+        acceptance_root / "phase10_production_freeze_config.json" if acceptance_root else None,
+        "phase10_acceptance_config",
+    )
     report_status = (record.get("report_freeze") or {}).get("report_status")
     pipeline_variant: dict[str, Any] = {}
     if output_dir and output_dir.is_dir():
@@ -820,17 +824,90 @@ def _validate_production_report_origin(
             incomplete.append(prefix + ":publication_snapshot_missing")
     if snapshot_payload.get("report_sha256") not in {None, "", artifact_sha256}:
         invalid.append(prefix + ":publication_snapshot_report_sha256_mismatch")
+    if report_status == "FROZEN":
+        if snapshot_payload.get("run_id") != run_payload.get("run_id"):
+            invalid.append(prefix + ":publication_snapshot_run_id_mismatch")
+        if snapshot_payload.get("completion_status") not in {"COMPLETE", "COMPLETE_WITH_WARNINGS"}:
+            invalid.append(prefix + ":publication_snapshot_completion_status_invalid")
+        if snapshot_payload.get("v3_enforced") is not True:
+            invalid.append(prefix + ":publication_snapshot_not_v3_enforced")
+        validators = completion_payload.get("validators") if isinstance(completion_payload.get("validators"), dict) else {}
+        publication_snapshot = validators.get("publication_snapshot") if isinstance(validators, dict) else {}
+        if not isinstance(publication_snapshot, dict) or publication_snapshot.get("written") is not True:
+            invalid.append(prefix + ":completion_missing_publication_snapshot")
+
+    if acceptance_config:
+        try:
+            from scripts.real_report_acceptance import (
+                CONFIG_VERSION,
+                PHASE10_PRODUCTION_FREEZE_PHASE,
+                evaluate_phase10_production_freeze_acceptance,
+            )
+        except ImportError as exc:
+            invalid.append(prefix + ":phase10_acceptance_import_failed:" + type(exc).__name__)
+        else:
+            if acceptance_config.get("schema_version") != CONFIG_VERSION:
+                invalid.append(prefix + ":phase10_acceptance_config_schema_invalid")
+            if acceptance_config.get("phase") != PHASE10_PRODUCTION_FREEZE_PHASE:
+                invalid.append(prefix + ":phase10_acceptance_config_phase_invalid")
+            config_samples = acceptance_config.get("samples") if isinstance(acceptance_config.get("samples"), list) else []
+            config_matches = [
+                item for item in config_samples
+                if isinstance(item, dict) and item.get("sample_id") == origin.get("sample_id")
+            ]
+            if len(config_matches) != 1:
+                invalid.append(prefix + ":phase10_acceptance_config_sample_not_unique")
+            else:
+                config_sample = config_matches[0]
+                if config_sample.get("company_code") != record.get("company_code"):
+                    invalid.append(prefix + ":phase10_acceptance_config_company_code_mismatch")
+                config_output = str(config_sample.get("output_dir") or "")
+                config_output_path = Path(config_output).expanduser()
+                if not config_output_path.is_absolute():
+                    config_output_path = root / config_output_path
+                if output_dir and config_output_path.resolve() != output_dir:
+                    invalid.append(prefix + ":phase10_acceptance_config_output_dir_mismatch")
+                expected_period = "PIT-" + str(record.get("simulation_cutoff") or "")[:10]
+                if config_sample.get("report_period") != expected_period:
+                    invalid.append(prefix + ":phase10_acceptance_config_report_period_mismatch")
+                if output_dir and acceptance_root:
+                    replay = evaluate_phase10_production_freeze_acceptance(
+                        sample_id=str(origin.get("sample_id") or ""),
+                        company_code=str(record.get("company_code") or ""),
+                        output_dir=output_dir,
+                        report_period=expected_period,
+                        acceptance_root=acceptance_root,
+                        persist=False,
+                    )
+                    replay_samples = replay.get("samples") if isinstance(replay.get("samples"), list) else []
+                    replay_matches = [
+                        item for item in replay_samples
+                        if isinstance(item, dict) and item.get("sample_id") == origin.get("sample_id")
+                    ]
+                    if len(replay_matches) != 1:
+                        invalid.append(prefix + ":phase10_acceptance_replay_sample_not_unique")
+                    else:
+                        replay_sample = replay_matches[0]
+                        saved_samples = acceptance_payload.get("samples") if isinstance(acceptance_payload.get("samples"), list) else []
+                        saved_matches = [
+                            item for item in saved_samples
+                            if isinstance(item, dict) and item.get("sample_id") == origin.get("sample_id")
+                        ]
+                        if len(saved_matches) == 1:
+                            saved = saved_matches[0]
+                            for field in ("report_sha256", "machine_status"):
+                                if saved.get(field) != replay_sample.get(field):
+                                    invalid.append(prefix + ":phase10_acceptance_replay_" + field + "_mismatch")
+                            if (saved.get("hard_gates") or {}).get("passed") != (
+                                (replay_sample.get("hard_gates") or {}).get("passed")
+                            ):
+                                invalid.append(prefix + ":phase10_acceptance_replay_hard_gates_mismatch")
 
     # A production report is only readable when its source-package runner has
     # recorded the same cutoff, company and admitted source identities as the
     # case.  This is a replayable declared-process boundary, not a model-memory
     # or deployment-signature claim.
     pit_prefix = prefix + ".pit_runner"
-    # P10-A provides the reusable source-package gate and audit.  The current
-    # turtle_agent read tools have not yet been routed through it, so an
-    # attestation alone cannot establish that a production writer lacked all
-    # alternate filesystem and web reads.
-    incomplete.append(pit_prefix + ":tool_boundary_not_integrated")
     pit = origin.get("pit_runner") if isinstance(origin.get("pit_runner"), dict) else {}
     incomplete.extend(_required(
         pit,
@@ -844,14 +921,45 @@ def _validate_production_report_origin(
         invalid.append(pit_prefix + ":package_root_must_be_historical_input")
     pit_attestation = load_pit_json(pit_attestation_path, "pit_runner_attestation")
     pit_manifest = load_pit_json(pit_manifest_path, "source_package_manifest")
+    if not pit_attestation or pit_attestation.get("execution_mode") != "PIT_PRODUCTION_FREEZE":
+        # Legacy constrained drafts, unknown modes, and a missing attestation
+        # do not establish a production writer boundary.
+        incomplete.append(pit_prefix + ":tool_boundary_not_integrated")
     if pit.get("status") != "PASS":
         incomplete.append(pit_prefix + ":status_not_pass")
+    writer_source_anchor_ids: set[str] | None = None
+    writer_read_source_ids: set[str] | None = None
     if pit_attestation:
         incomplete.extend(_required(
             pit_attestation,
-            ("case_id", "experiment_id", "run_id", "manifest_path", "package_root", "framework_root", "framework_root_class", "cutoff_at", "allowed_source_ids", "source_allowlist", "framework_allowlist", "read_audit", "read_count", "forbidden_success_count"),
+            ("case_id", "experiment_id", "run_id", "execution_mode", "manifest_path", "package_root", "framework_root", "framework_root_class", "cutoff_at", "allowed_source_ids", "source_allowlist", "framework_allowlist", "read_audit", "read_count", "forbidden_success_count"),
             pit_prefix + ".attestation",
         ))
+        if pit_attestation.get("execution_mode") == "PIT_PRODUCTION_FREEZE":
+            writer = pit_attestation.get("writer") if isinstance(pit_attestation.get("writer"), dict) else {}
+            incomplete.extend(_required(
+                writer,
+                ("run_id", "case_id", "experiment_id", "final_report_path", "source_anchor_ids", "read_source_ids"),
+                pit_prefix + ".attestation.writer",
+            ))
+            for field in ("run_id", "case_id", "experiment_id"):
+                if writer.get(field) not in (None, "", [], {}) and writer.get(field) != pit_attestation.get(field):
+                    invalid.append(pit_prefix + ":writer_" + field + "_mismatch")
+            report_path = repo_path(report.get("artifact_path"), "report_artifact_path")
+            try:
+                final_report_path = Path(str(writer.get("final_report_path") or "")).resolve()
+            except OSError:
+                final_report_path = None
+            if report_path and final_report_path and final_report_path != report_path:
+                invalid.append(pit_prefix + ":writer_final_report_path_mismatch")
+            for field in ("source_anchor_ids", "read_source_ids"):
+                values = writer.get(field)
+                if values not in (None, "", [], {}) and not isinstance(values, list):
+                    invalid.append(pit_prefix + ":writer_" + field + "_must_be_list")
+            if isinstance(writer.get("source_anchor_ids"), list):
+                writer_source_anchor_ids = {str(value) for value in writer["source_anchor_ids"] if str(value)}
+            if isinstance(writer.get("read_source_ids"), list):
+                writer_read_source_ids = {str(value) for value in writer["read_source_ids"] if str(value)}
         if pit_attestation.get("schema_version") != "phase10-pit-runner-attestation.v1":
             invalid.append(pit_prefix + ":attestation_schema_invalid")
         if pit_attestation.get("runner") != "phase10_pit_runner":
@@ -972,6 +1080,11 @@ def _validate_production_report_origin(
             }
             for source_id in case_source_ids - allowed_read_sources:
                 incomplete.append(pit_prefix + ":case_source_not_read:" + source_id)
+            if writer_read_source_ids is not None and writer_read_source_ids != allowed_read_sources:
+                invalid.append(pit_prefix + ":writer_read_source_ids_mismatch")
+            if writer_source_anchor_ids is not None and writer_read_source_ids is not None:
+                if not writer_source_anchor_ids.issubset(writer_read_source_ids):
+                    invalid.append(pit_prefix + ":writer_source_anchor_not_read")
     if pit_manifest:
         try:
             from scripts.phase10_acquisition import validate_source_manifest

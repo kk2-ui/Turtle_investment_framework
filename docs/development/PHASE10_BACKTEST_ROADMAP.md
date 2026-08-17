@@ -21,7 +21,7 @@ Phase 10 只服务两条需要分开回答的主线：
 
 历史黄金报告工作曾把大量时间花在 hash、指纹和审计工件上，却没有先产出一份完整报告。Phase 10 的硬约束是：
 
-- `FROZEN` 必须包含仓库内可读取的 Markdown 报告（`report_id`、全部 frozen claim statement 和固定章节）、`COMPLETE` writer，以及不同于 writer 的独立 reviewer；内容派生 `variant_id -> freeze_id -> review_id` 生命周期，报告变更必须新 variant、新 freeze、新审阅。生产路径将绑定 `scripts/turtle_agent/run.py`、Phase 08 acceptance/V3 gates、`publication_snapshot.json`、`run_manifest.json` 及 PIT runner attestation；后者尚未实现，故当前 validator 故意不允许任何生产 case `REVIEWABLE`。`TEST_FIXTURE` 只允许测试命名空间。reviewer 必须逐 claim 复核相同的 `source_ids`，并将冻结的 `UNKNOWN` 标为 `UNKNOWN_PRESERVED`。没有报告不得开始评分和结算。
+- `FROZEN` 必须包含仓库内可读取的 Markdown 报告（`report_id`、全部 frozen claim statement 和固定章节）、`COMPLETE` writer，以及不同于 writer 的独立 reviewer；内容派生 `variant_id -> freeze_id -> review_id` 生命周期，报告变更必须新 variant、新 freeze、新审阅。生产适配器通过 `scripts/turtle_agent/run.py --pit-production-freeze` 绑定 PIT reads、Phase 08 acceptance/V3 gates、`publication_snapshot.json`、`run_manifest.json` 及 PIT runner attestation；只有 attestation 明确为 `PIT_PRODUCTION_FREEZE` 并可回放最终报告、来源锚点和实际读取时，production origin 才解除工具边界阻断。`TEST_FIXTURE` 只允许测试命名空间。reviewer 必须逐 claim 复核相同的 `source_ids`，并将冻结的 `UNKNOWN` 标为 `UNKNOWN_PRESERVED`。没有报告不得开始评分和结算。
 - 未达到上述门槛只能是 `FROZEN_WITH_QUALITY_FAILURE`：保留分类、经济影响、缺失事实、禁止假设、可执行修复和验收条件，不能在看过未来资料后重写成通过版。
 - hash、指纹和校验只在能跳过昂贵重读、或正式验收确实需要时使用；本阶段仅用冻结报告、模型控制证据和统一管线 variant 的 artifact SHA-256 发现内容变更并触发重审。它们不是研究产品、质量分数或回测结论。当前 assurance 是 `VERIFIED_ARTIFACT_AND_DECLARED_PROCESS`，不声称密码学作者独立性或模型记忆隔离。
 - 资料不足时保留 `UNKNOWN`，不得把未知保守归零、补成漂亮假设或用审计循环掩盖缺口。
@@ -102,7 +102,7 @@ Phase 10 只服务两条需要分开回答的主线：
 - 采集器按公告日期全量枚举，拒绝 cutoff 后来源和截止日前已被修订版替代的原版本；
 - `scripts/phase10_pit_runner.py` 已实现 source-package allowlist、只读 PIT runner 和读取审计，并由 production origin 回放 source identity、cutoff、package root 和实际 ALLOW 事件；框架读取根目录固定为仓库内受控静态目录，并在 attestation 记录 root 与 `REPOSITORY_STATIC` provenance。它不使用来源内容 hash。准入 PDF 必须同时保留原始 `package_path` 和来源包内 `PDF_PAGE_MARKDOWN` 页码文本表示；少任一项即为 `INCOMPLETE`，不能把 base64 当作可读年报证据；
 - `scripts/turtle_agent/run.py` 现区分 `--pit-preflight` 和 `--pit-writer`：两者都拒绝复用 output、跳过普通 Phase 0-2/网络/当前行情准备，且 output 必须与历史来源包和静态 framework 根目录隔离。writer 只注册 `pit_list_sources`、`pit_read_source`、`pit_read_framework` 和无路径参数的 `pit_write_report`；它不加载普通 contract、旧输出、tracking、数据库、Web 或价格。任何未提供的工具入口（包括 Web、普通 Turtle 输出读取和年糕上下文）都会以 `TOOL / DENY` 写入同一 read audit；写入时逐一核对正文 source anchor 对应本运行实际 ALLOW 的 source_id，最终 attestation 回写真实 read audit 和 writer outcome；
-- 该 writer 只生成受限的冻结前 Markdown 草案，尚未接入 Phase 08 acceptance/V3、完整 frozen claim/calibration ledger 或独立 reviewer。因此 production validator 仍保持 `INCOMPLETE`，任何真实 case 仍不得标为 `REVIEWABLE`；
+- 草案 writer 仍只生成受限 Markdown，不能取代生产冻结。独立的 `--pit-production-freeze` 入口只提供 PIT 读取、无路径 V3 写入器、实际读取后的文档投影、事实核验后的确定性 V3 前置刷新、完成/快照/run-id 复核和独立 Phase 10 acceptance root；它不开放 Web、行情、数据库、普通输出读取或任意路径。尚未完成独立 reviewer 和完整 case lifecycle 的真实案例仍为 `INCOMPLETE`；
 - 首案 600340 形成可审阅的冻结来源包。
 
 **出口**：来源准入测试通过，且没有任何未来文件可被冻结运行读取。
@@ -155,9 +155,9 @@ Phase 10 只服务两条需要分开回答的主线：
 
 - 当前九份黄金候选仍是 `INELIGIBLE_NO_HISTORICAL_VINTAGE`；不能用今天的报告倒灌历史回测。
 - G3 仍为 `NOT_READY`；首案 600340 是 `PURPOSEFUL_STRESS_CASE`，不代表总体成功率。
-- 600340 已完成 P10-A 的 cutoff 前 source package，并在未打开后续资料前生成 PIT engineering draft。该 draft 的正式状态是 `FROZEN_WITH_QUALITY_FAILURE`，因为它尚未接入 production origin、Phase 08 acceptance/V3、完整报告章节、可冻结的经营预测、估值、价格或行动；它只能证明工程边界，不是通过的历史报告。
+- 600340 已完成 P10-A 的 cutoff 前 source package，并在未打开后续资料前生成 PIT engineering draft。该 draft 的正式状态是 `FROZEN_WITH_QUALITY_FAILURE`；新的 production adapter 不会回填或升级它。v1 仍缺完整报告章节、可冻结的经营预测、估值、价格、行动和独立 reviewer，故只能证明工程边界，不是通过的历史报告。
 - 该诊断已建立一份 2020-04-28 至 2021-04-27 的官方 SSE 公告元数据库存和按 claim 的待读计划；元数据不等于后续经营事实，尚未读取公告正文、行情、公司行动或沪深 300。三账当前为 `REPORT_COVERAGE=PASS`（仅回放冻结时的 UNKNOWN 审阅）、`MODEL_FORECAST_ERROR=NOT_CALCULABLE`、`INVESTMENT_RETURN_OUTCOME=NOT_CALCULABLE`，没有收益、买点或选股结果。
-- 当前 case 的 lifecycle identity 已是规范 `HBT:`，但它显式保留 legacy `HBTEXP:` writer attestation，因此仍要求用规范 identity 重跑 production writer。后继 `historical-backtest-*.v2` 已把经营观察的真实 `measurement_period` 与公告 `observation_window` 拆开，并要求 actual observation 只能使用 `BODY_READ` 官方来源；不得静默修改这个质量失败 case。v2 契约不等于已创建后继 case：完成 production writer/report/reviewer 修复后，才可按元数据待读计划逐份打开官方正文；无冻结动作和价格身份时，仍不得采集行情或计算收益。
+- 当前 case 的 lifecycle identity 已是规范 `HBT:`，但它显式保留 legacy `HBTEXP:` writer attestation，因此仍要求用规范 identity 新建 production freeze。后继 `historical-backtest-*.v2` 已把经营观察的真实 `measurement_period` 与公告 `observation_window` 拆开，并要求 actual observation 只能使用 `BODY_READ` 官方来源；不得静默修改这个质量失败 case。下一步是以 v2 新 case 在 production adapter 中重新冻结并完成独立 reviewer，随后才可按元数据待读计划逐份打开官方正文；无冻结动作和价格身份时，仍不得采集行情或计算收益。
 - 当前试点的模型记忆状态固定为 `UNCONTROLLED / EXPLORATORY / ENGINEERING_DIAGNOSTIC_ONLY`。未来只有部署级 attestation 支持的 `CONTROLLED / STRICT` case 才可能是模型记忆受控的校准候选；当前 validator 未开放该路径，这仍不替代跨发行人、跨 cutoff 和 holdout 门槛。
 - 只有生产 case 完成 P10-B 后，才允许进入可校准的 P10-C；只有多个 production case 完成 P10-C 后，才讨论买点、选股和模型更新。
 

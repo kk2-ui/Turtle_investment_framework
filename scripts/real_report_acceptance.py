@@ -24,6 +24,8 @@ SCHEMA_VERSION = "real-report-acceptance.v1"
 CONFIG_VERSION = "real-report-acceptance-config.v1"
 REVIEW_VERSION = "independent-report-review.v2"
 GOLD_VERSION = "gold-report-contract.v1"
+PHASE10_PRODUCTION_FREEZE_PHASE = "10-production-freeze"
+PHASE10_PRODUCTION_FREEZE_CONFIG_NAME = "phase10_production_freeze_config.json"
 MACHINE_STATES = {
     "NOT_ASSESSABLE", "TECHNICALLY_BLOCKED", "READY_FOR_BLIND_REVIEW",
     "REVISION_REQUIRED", "BENCHMARK_CANDIDATE", "BENCHMARK_APPROVED",
@@ -93,6 +95,54 @@ def load_config(path: str | Path | None = None) -> dict[str, Any]:
     if not isinstance(payload.get("samples"), list) or not payload["samples"]:
         raise ValueError("acceptance samples missing")
     return payload
+
+
+def build_phase10_production_freeze_config(
+    *,
+    sample_id: str,
+    company_code: str,
+    output_dir: str | Path,
+    report_period: str,
+    archetype: str = "point_in_time_production_freeze",
+) -> dict[str, Any]:
+    """Build the isolated Phase 10 acceptance registration for one freeze.
+
+    Phase 10 cases must use the ordinary Phase 08 machine gates, but they must
+    not amend the frozen Phase 08 candidate set.  The caller supplies the
+    fresh production output and stores the resulting baseline under a separate
+    acceptance root.
+    """
+    values = {
+        "sample_id": sample_id,
+        "company_code": company_code,
+        "output_dir": str(output_dir),
+        "report_period": report_period,
+        "archetype": archetype,
+    }
+    missing = sorted(name for name, value in values.items() if not str(value or "").strip())
+    if missing:
+        raise ValueError("phase10 production acceptance requires: " + ", ".join(missing))
+    return {
+        "schema_version": CONFIG_VERSION,
+        "phase": PHASE10_PRODUCTION_FREEZE_PHASE,
+        "policy": {
+            "minimum_independent_reviews": 2,
+            "human_approval_required": True,
+            "automatic_ceiling": "READY_FOR_BLIND_REVIEW",
+            "no_compensating_score": True,
+            "control_sample_hidden_until_rules_frozen": True,
+            "rules_frozen": True,
+        },
+        "samples": [{
+            "sample_id": str(sample_id).strip(),
+            "company_code": str(company_code).strip(),
+            "archetype": str(archetype).strip(),
+            "role": "historical_production_freeze",
+            "output_dir": str(output_dir),
+            "report_period": str(report_period).strip(),
+            "rules_visible": True,
+        }],
+    }
 
 
 def resolve_output_dir(raw: str | Path) -> Path:
@@ -562,13 +612,12 @@ def evaluate_sample(
     }
 
 
-def evaluate_acceptance(
-    config_path: str | Path | None = None,
+def _evaluate_config(
+    config: dict[str, Any],
     *,
     acceptance_root: str | Path | None = None,
     persist: bool = True,
 ) -> dict[str, Any]:
-    config = load_config(config_path)
     root = Path(acceptance_root) if acceptance_root else _repo_root() / "output" / ".acceptance" / "phase08"
     review_root = root / "reviews"
     gold_root = root / "gold_contracts"
@@ -605,6 +654,46 @@ def evaluate_acceptance(
         (root / "acceptance_baseline.md").write_text(render_markdown(result), encoding="utf-8")
         write_blind_packets(result, root / "blind_packets")
     return result
+
+
+def evaluate_acceptance(
+    config_path: str | Path | None = None,
+    *,
+    acceptance_root: str | Path | None = None,
+    persist: bool = True,
+) -> dict[str, Any]:
+    return _evaluate_config(
+        load_config(config_path),
+        acceptance_root=acceptance_root,
+        persist=persist,
+    )
+
+
+def evaluate_phase10_production_freeze_acceptance(
+    *,
+    sample_id: str,
+    company_code: str,
+    output_dir: str | Path,
+    report_period: str,
+    acceptance_root: str | Path,
+    archetype: str = "point_in_time_production_freeze",
+    persist: bool = True,
+) -> dict[str, Any]:
+    """Evaluate one PIT production freeze under the unmodified Phase 08 gates."""
+    root = Path(acceptance_root)
+    config = build_phase10_production_freeze_config(
+        sample_id=sample_id,
+        company_code=company_code,
+        output_dir=output_dir,
+        report_period=report_period,
+        archetype=archetype,
+    )
+    if persist:
+        root.mkdir(parents=True, exist_ok=True)
+        (root / PHASE10_PRODUCTION_FREEZE_CONFIG_NAME).write_text(
+            json.dumps(config, ensure_ascii=False, indent=2), encoding="utf-8"
+        )
+    return _evaluate_config(config, acceptance_root=root, persist=persist)
 
 
 def render_markdown(result: dict[str, Any]) -> str:

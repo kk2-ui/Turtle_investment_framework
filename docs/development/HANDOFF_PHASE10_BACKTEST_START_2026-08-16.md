@@ -220,3 +220,39 @@ annual/interim source must match the frozen measurement-period end; an event
 window must also state an in-window `event_period`, without pretending that
 its `data_as_of` is a report period. No v2 600340 case or later disclosure body
 has been created or read yet.
+
+## 13. 2026-08-17 continuation: production-freeze adapter complete offline
+
+`scripts/turtle_agent/run.py --pit-production-freeze` is now the only PIT
+production entrypoint. It requires a fresh output directory, a complete
+source package, no normal data/price/Web/database/output-read mode, and one
+shared run identity across the PIT runner, writer attestation, snapshot and
+runtime manifest. Sources enter the report workspace only after an actual
+`ALLOW` read. Each chapter source anchor must be an exact source id that was
+read in that same run; the final attestation records both anchors and read
+source ids.
+
+The adapter seeds only normal V3 policies. It never fabricates report context,
+archetype, valuation route or decisive questions before a verified PIT fact
+exists; it refreshes these deterministic prerequisites from the projected
+document manifest and verified facts after fact verification and again before
+assembly. A report may be marked completed only after normal completion,
+V3-enforced publication snapshot, final-report/attestation run-id agreement
+and source-anchor replay all pass. It then writes a separate
+`phase10_acceptance/` root and reuses Phase 08 machine gates without mutating
+the default acceptance config. The resulting automatic ceiling is still
+`READY_FOR_BLIND_REVIEW`; independent review and formal case lifecycle remain
+separate requirements.
+
+Production origin replay accepts only `PIT_PRODUCTION_FREEZE`; it rejects the
+legacy four-tool `PIT_WRITER` as an incomplete engineering draft. Targeted
+offline coverage covers the runtime profile, CLI entrypoint, forbidden normal
+modes, V3 preparation timing, completion/snapshot/attestation consistency,
+isolated acceptance root and origin replay. This change has not run a real
+LLM report and has not opened any post-cutoff disclosure, price, corporate
+action or benchmark input. The retained 600340 v1 case remains
+`FROZEN_WITH_QUALITY_FAILURE / UNCONTROLLED / EXPLORATORY /
+ENGINEERING_DIAGNOSTIC_ONLY`; it still cannot support returns, buy points,
+stock selection or calibration. The next product step is a new v2 case with
+the corrected measurement-period/observation-window contract, followed by
+independent review before any post-cutoff body read.

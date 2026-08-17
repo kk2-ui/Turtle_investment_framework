@@ -14,6 +14,7 @@
     "deep_research": {"critical": true, "minimum_tier": "frontier", "cache_ttl_seconds": 86400},
     "challenger": {"critical": true, "minimum_tier": "frontier", "cache_ttl_seconds": 86400},
     "report_synthesis": {"critical": true, "minimum_tier": "frontier", "cache_ttl_seconds": 86400},
+    "pit_production_freeze": {"critical": true, "minimum_tier": "frontier", "cache_ttl_seconds": 86400},
     "report_repair": {"critical": true, "minimum_tier": "frontier", "cache_ttl_seconds": 43200},
     "expression_compression": {"critical": false, "minimum_tier": "standard", "cache_ttl_seconds": 43200}
   },

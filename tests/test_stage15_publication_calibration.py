@@ -38,6 +38,42 @@ def _snapshot_fixture(output: Path) -> None:
     })
 
 
+def _pit_snapshot_fixture(output: Path) -> tuple[str, str, Path]:
+    _snapshot_fixture(output)
+    document_id = "DOC:CN-SH:600340:annual_report:2019-12-31:0123456789ab"
+    pit_source_id = "SSE:600340:2019-ANNUAL"
+    projected = output / "pit_sources" / "SSE_600340_2019-ANNUAL" / "original.pdf"
+    projected.parent.mkdir(parents=True)
+    projected.write_bytes(b"official pit source")
+    _write_json(output / "analysis_contract.json", {
+        "ts_code": "600340.SH", "run_id": "pit-run-15", "data_as_of": "2020-04-27",
+        "pit_production": {"cutoff_at": "2020-04-27T18:00:00+08:00", "source_access": "PIT_ALLOWLIST_ONLY"},
+    })
+    _write_json(output / "document_manifest.json", {"documents": [{
+        "doc_id": document_id,
+        "source_id": pit_source_id,
+        "local_path": projected.relative_to(output).as_posix(),
+        "acquisition_status": "PIT_LINKED_AFTER_ALLOW_READ",
+    }]})
+    for filename in ("decision_ledger.json", "claim_evidence.json", "thesis_test.json"):
+        payload = json.loads((output / filename).read_text(encoding="utf-8"))
+
+        def replace_sources(value: object) -> None:
+            if isinstance(value, dict):
+                for key, item in value.items():
+                    if key in {"source_id", "source_ids"}:
+                        value[key] = document_id if key == "source_id" else [document_id]
+                    else:
+                        replace_sources(item)
+            elif isinstance(value, list):
+                for item in value:
+                    replace_sources(item)
+
+        replace_sources(payload)
+        _write_json(output / filename, payload)
+    return document_id, pit_source_id, projected
+
+
 def _ready_states(*args, **kwargs):
     return {name: {"state": "DECISION_READY"} for name in ("decision", "claim_evidence", "valuation", "thesis_test")}
 
@@ -96,6 +132,45 @@ def test_publication_snapshot_freezes_visible_information_and_is_immutable(tmp_p
     assert changed["written"] is False
     assert changed["error"] == "published_snapshot_is_immutable"
     assert (output / "publication_snapshot_conflict.json").exists()
+
+
+def test_pit_publication_snapshot_resolves_document_evidence_to_allow_read_projection(
+    tmp_path: Path, monkeypatch
+) -> None:
+    output = tmp_path / "out"
+    document_id, pit_source_id, projected = _pit_snapshot_fixture(output)
+    monkeypatch.setattr(calibration, "_ledger_states", _ready_states)
+
+    result = create_publication_snapshot(output, "PIT final report")
+
+    assert result["written"] is True
+    snapshot = result["snapshot"]
+    assert snapshot["unresolved_source_ids"] == []
+    assert {item["source_id"] for item in snapshot["visible_information"]} == {pit_source_id}
+    item = snapshot["visible_information"][0]
+    assert item["evidence_source_id"] == document_id
+    assert item["document_id"] == document_id
+    assert item["source_provenance"] == "PIT_PROJECTED_AFTER_ALLOW_READ"
+    assert Path(item["path"]) == projected.resolve()
+
+
+def test_pit_publication_snapshot_rejects_document_without_allow_read_projection(
+    tmp_path: Path, monkeypatch
+) -> None:
+    output = tmp_path / "out"
+    document_id, _, _ = _pit_snapshot_fixture(output)
+    manifest = json.loads((output / "document_manifest.json").read_text(encoding="utf-8"))
+    manifest["documents"][0]["acquisition_status"] = "MANUAL_LINK"
+    _write_json(output / "document_manifest.json", manifest)
+    monkeypatch.setattr(calibration, "_ledger_states", _ready_states)
+
+    result = create_publication_snapshot(output, "PIT final report")
+
+    assert result["written"] is False
+    assert result["error"] == "pit_production_snapshot_requires_resolved_document_projections"
+    assert result["unresolved_source_ids"] == [document_id]
+    assert "document_not_allow_read_projected:" + document_id in result["projection_findings"]
+    assert not (output / "publication_snapshot.json").exists()
 
 
 def test_publication_snapshot_dry_run_validates_without_writing_or_conflicting(tmp_path: Path, monkeypatch) -> None:
