@@ -414,6 +414,7 @@ class AgentConfig:
     judgment_synthesis: bool = False
     synthesis_only: bool = False
     pit_mode: bool = False
+    pit_production_mode: bool = False
     pit_case_id: str = ""
     pit_experiment_id: str = ""
     pit_cutoff_at: str = ""
@@ -520,6 +521,8 @@ class TurtleAgent:
         """
         if self._config.pit_mode:
             return self._analyze_pit()
+        if self._config.pit_production_mode:
+            return self._analyze_pit_production()
 
         task_type = (
             "challenger" if self._config.judgment_synthesis
@@ -879,6 +882,44 @@ pit_read_source，且只可按 allowlist 路径调用 pit_read_framework。禁�
 - `## Unknowns and monitoring`
 
 正文说明这是冻结前的工程草案，而非已经通过完整生产质量门的报告。"""
+
+    @staticmethod
+    def _pit_production_allowed_tools() -> set[str]:
+        return {
+            "pit_list_sources", "pit_read_source", "pit_read_framework",
+            "pit_verify_official_fact", "pit_write_chapter", "pit_read_chapter",
+            "pit_audit_chapter", "pit_write_decision_manifest", "pit_write_decision_ledger",
+            "pit_write_claim_evidence_ledger", "pit_write_valuation_model_ledger",
+            "pit_write_thesis_test_ledger", "pit_write_decisive_question_findings",
+            "pit_write_insight_ledger", "pit_write_judgment_review", "pit_assemble_report",
+        }
+
+    def _analyze_pit_production(self) -> str:
+        """Generate a full report through PIT reads and output-bound V3 writes."""
+        if set(self._tools.list_tools()) != self._pit_production_allowed_tools():
+            raise RuntimeError("PIT production writer 工具集不完整或包含越界入口")
+        if not self._config.code or not self._config.pit_case_id or not self._config.pit_experiment_id:
+            raise RuntimeError("PIT production writer 缺少 code/case/experiment identity")
+        if self._llm is None:
+            raise RuntimeError("PIT production writer 需要 LLM client")
+        if hasattr(self._llm, "set_runtime_task"):
+            self._llm.set_runtime_task("pit_production_freeze")
+        self._messages = [
+            {"role": "system", "content": (
+                f"你在生成 {self._config.code} 的完整历史时点冻结报告。案例 {self._config.pit_case_id}，"
+                f"实验 {self._config.pit_experiment_id}，截止 {self._config.pit_cutoff_at}。"
+                "只可使用提供的PIT工具：先读取官方来源，数值事实用pit_verify_official_fact逐页验证，"
+                "再完成章节和V3账本并调用pit_assemble_report。禁止网页、行情、数据库、任意路径、"
+                "cutoff后资料和事后结论。来源不足时保留UNKNOWN，且不得由UNKNOWN推出买点、收益、选股或仓位。"
+            )},
+            {"role": "user", "content": "开始受限生产冻结。"},
+        ]
+        self._run_loop()
+        if self._loop_error:
+            raise RuntimeError(f"PIT production writer 未完成: {self._loop_error}")
+        if not self._pit_report_path:
+            raise RuntimeError("PIT production writer 在未组装报告前结束")
+        return self._pit_report_path
 
     # ------------------------------------------------------------------
     # 上下文加载
@@ -2072,6 +2113,12 @@ Zone B 提取结果写入 audit.json / governance.json。写作 Agent 在相关�
                 deepcopy(item) for item in self._tools.get_schemas()
                 if str(item.get("function", {}).get("name") or "") in allowed
             ]
+        if self._config.pit_production_mode:
+            allowed = self._pit_production_allowed_tools()
+            return [
+                deepcopy(item) for item in self._tools.get_schemas()
+                if str(item.get("function", {}).get("name") or "") in allowed
+            ]
         tool_schemas = (
             self._judgment_tool_schemas()
             if self._config.judgment_task_id
@@ -2367,7 +2414,7 @@ Zone B 提取结果写入 audit.json / governance.json。写作 Agent 在相关�
             # 工具调用
             if resp.has_tool_calls:
                 self._handle_tool_calls(resp)
-                if self._config.pit_mode and self._pit_report_path:
+                if (self._config.pit_mode or self._config.pit_production_mode) and self._pit_report_path:
                     break
                 if self._config.judgment_task_id and self._judgment_task_finished():
                     break
@@ -2435,7 +2482,7 @@ Zone B 提取结果写入 audit.json / governance.json。写作 Agent 在相关�
                 self._messages.append(
                     {"role": "assistant", "content": resp.content}
                 )
-                if self._config.pit_mode:
+                if self._config.pit_mode or self._config.pit_production_mode:
                     self._loop_error = "pit_writer_finished_without_pit_write_report"
                     break
                 if self._config.judgment_task_id:
@@ -2848,7 +2895,7 @@ Zone B 提取结果写入 audit.json / governance.json。写作 Agent 在相关�
 
     def _handle_tool_calls(self, resp: LlmResponse) -> None:
         """处理 LLM 返回的工具调用。"""
-        if self._config.pit_mode:
+        if self._config.pit_mode or self._config.pit_production_mode:
             self._handle_pit_tool_calls(resp)
             return
         # 添加 assistant 消息（含 tool_use blocks）
@@ -3575,7 +3622,7 @@ Zone B 提取结果写入 audit.json / governance.json。写作 Agent 在相关�
                 for tc in resp.tool_calls
             ],
         })
-        allowed = {
+        allowed = self._pit_production_allowed_tools() if self._config.pit_production_mode else {
             "pit_list_sources",
             "pit_read_source",
             "pit_read_framework",
@@ -3601,6 +3648,13 @@ Zone B 提取结果写入 audit.json / governance.json。写作 Agent 在相关�
                 and value.get("written") is True
             ):
                 self._pit_report_path = str(value.get("report_path") or "")
+            if (
+                tc.name == "pit_assemble_report"
+                and result.get("ok") is True
+                and isinstance(value, dict)
+                and value.get("path")
+            ):
+                self._pit_report_path = str(value["path"])
             results.append({
                 "type": "tool_result",
                 "tool_use_id": tc.id,

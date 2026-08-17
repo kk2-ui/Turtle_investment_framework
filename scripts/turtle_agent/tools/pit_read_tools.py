@@ -140,6 +140,7 @@ def pit_read_source(
             result["production_projection"] = _PRODUCTION_WORKSPACE.project_read_source(
                 str(source_id or "").strip()
             )
+            result["production_document_manifest"] = _PRODUCTION_WORKSPACE.write_document_manifest()
         except PITProductionWorkspaceError as exc:
             return {"ok": False, **identity, "error": str(exc)}
     return result
