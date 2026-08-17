@@ -831,6 +831,12 @@ def _validate_production_report_origin(
             invalid.append(prefix + ":publication_snapshot_completion_status_invalid")
         if snapshot_payload.get("v3_enforced") is not True:
             invalid.append(prefix + ":publication_snapshot_not_v3_enforced")
+        if snapshot_payload.get("lifecycle") != "MONITORING":
+            invalid.append(prefix + ":publication_snapshot_lifecycle_invalid")
+        gate_states = snapshot_payload.get("gate_states") if isinstance(snapshot_payload.get("gate_states"), dict) else {}
+        for gate_name in ("decision", "claim_evidence", "valuation", "thesis_test", "insight"):
+            if gate_states.get(gate_name) not in {"DECISION_READY", "MONITORING"}:
+                invalid.append(prefix + ":publication_snapshot_gate_not_ready:" + gate_name)
         validators = completion_payload.get("validators") if isinstance(completion_payload.get("validators"), dict) else {}
         publication_snapshot = validators.get("publication_snapshot") if isinstance(validators, dict) else {}
         if not isinstance(publication_snapshot, dict) or publication_snapshot.get("written") is not True:

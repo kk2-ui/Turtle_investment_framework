@@ -705,6 +705,14 @@ def test_production_origin_accepts_only_pit_production_freeze(
         "run_id": "pit-production-test",
         "completion_status": "COMPLETE",
         "v3_enforced": True,
+        "lifecycle": "MONITORING",
+        "gate_states": {
+            "decision": "DECISION_READY",
+            "claim_evidence": "DECISION_READY",
+            "valuation": "DECISION_READY",
+            "thesis_test": "DECISION_READY",
+            "insight": "DECISION_READY",
+        },
     }), encoding="utf-8")
     for gate, (filename, accepted) in REQUIRED_MACHINE_GATES.items():
         if gate in {"completion", "runtime_manifest"}:
@@ -803,6 +811,18 @@ def test_production_origin_accepts_only_pit_production_freeze(
     assert incomplete == []
     config["phase"] = "10-production-freeze"
     config_path.write_text(json.dumps(config), encoding="utf-8")
+
+    snapshot_path = output / "publication_snapshot.json"
+    snapshot = json.loads(snapshot_path.read_text(encoding="utf-8"))
+    snapshot["gate_states"]["claim_evidence"] = "INCOMPLETE"
+    snapshot_path.write_text(json.dumps(snapshot), encoding="utf-8")
+    invalid, incomplete = _validate_production_report_origin(
+        record, report=report, artifact_sha256=report_sha256, origin=origin,
+    )
+    assert "report_freeze.frozen_report.origin:publication_snapshot_gate_not_ready:claim_evidence" in invalid
+    assert incomplete == []
+    snapshot["gate_states"]["claim_evidence"] = "DECISION_READY"
+    snapshot_path.write_text(json.dumps(snapshot), encoding="utf-8")
 
     attestation["writer"]["run_id"] = "different-production-run"
     attestation_path.write_text(json.dumps(attestation), encoding="utf-8")
