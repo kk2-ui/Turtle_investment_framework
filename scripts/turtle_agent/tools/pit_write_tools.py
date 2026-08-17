@@ -7,6 +7,7 @@ and read through the ``PITSourcePackage`` boundary in the same run.
 
 from __future__ import annotations
 
+import re
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
@@ -74,13 +75,25 @@ class PITReportWriter:
                 "error": "pit_report_source_not_read",
                 "source_ids": missing_reads,
             }
-        for source_id in normalized_sources:
-            if f"[source: {source_id}]" not in body:
-                return {
-                    "written": False,
-                    "error": "pit_report_source_anchor_missing",
-                    "source_id": source_id,
-                }
+        anchors = [item.strip() for item in re.findall(r"\[source:\s*([^\]]+)\]", body)]
+        if "[source:" in body and len(anchors) != body.count("[source:"):
+            return {"written": False, "error": "pit_report_source_anchor_invalid"}
+        declared = set(normalized_sources)
+        anchored = set(anchors)
+        missing_anchors = sorted(declared - anchored)
+        if missing_anchors:
+            return {
+                "written": False,
+                "error": "pit_report_source_anchor_missing",
+                "source_ids": missing_anchors,
+            }
+        undeclared_anchors = sorted(anchored - declared)
+        if undeclared_anchors:
+            return {
+                "written": False,
+                "error": "pit_report_source_anchor_not_declared",
+                "source_ids": undeclared_anchors,
+            }
         markers = [str(item or "").strip() for item in section_markers]
         required_markers = {
             "## Point-in-time scope",

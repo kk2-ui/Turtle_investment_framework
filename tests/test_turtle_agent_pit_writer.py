@@ -218,6 +218,54 @@ def test_pit_agent_rejects_an_ordinary_tool_registry(tmp_path: Path) -> None:
         ).analyze()
 
 
+def test_pit_writer_rejects_anchor_for_source_not_declared_or_read(tmp_path: Path) -> None:
+    runner = _runner(tmp_path)
+    runner.read_framework("framework/policy.md")
+    runner.read_source("SSE:600340:AR2019")
+    output = tmp_path / "fresh-output"
+    configure_pit_writer(
+        runner,
+        output_dir=output,
+        case_id="HBTCASE:600340",
+        experiment_id="HBT:600340",
+    )
+    try:
+        from turtle_agent.tools.pit_write_tools import pit_write_report
+
+        result = pit_write_report(
+            report_markdown="""# PIT draft
+
+## Point-in-time scope
+The report uses the frozen source boundary. [source: SSE:600340:AR2019]
+
+## Evidence
+Only the admitted annual report was read. [source: SSE:600340:AR2019]
+
+## Business and financial implications
+No return outcome is available. [source: SSE:600340:FUTURE]
+
+## Unknowns and monitoring
+The later disclosure remains unread and UNKNOWN. [source: SSE:600340:AR2019]
+""",
+            source_ids=["SSE:600340:AR2019"],
+            section_markers=[
+                "## Point-in-time scope",
+                "## Evidence",
+                "## Business and financial implications",
+                "## Unknowns and monitoring",
+            ],
+        )
+    finally:
+        clear_pit_writer()
+
+    assert result == {
+        "written": False,
+        "error": "pit_report_source_anchor_not_declared",
+        "source_ids": ["SSE:600340:FUTURE"],
+    }
+    assert not (output / "pit_writer_report.md").exists()
+
+
 def test_pit_writer_entrypoint_bypasses_the_normal_pipeline(
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,

@@ -13,15 +13,24 @@ import base64
 from typing import Any
 
 from scripts.phase10_pit_runner import PITRunnerError, PITSourcePackage
+from scripts.phase10_pit_production import PITProductionWorkspace, PITProductionWorkspaceError
 
 
 _RUNNER: PITSourcePackage | None = None
+_PRODUCTION_WORKSPACE: PITProductionWorkspace | None = None
 
 
-def configure_pit_runner(runner: PITSourcePackage | None) -> None:
+def configure_pit_runner(
+    runner: PITSourcePackage | None,
+    *,
+    production_workspace: PITProductionWorkspace | None = None,
+) -> None:
     """Bind the read tools to one runner for the lifetime of one run."""
-    global _RUNNER
+    global _RUNNER, _PRODUCTION_WORKSPACE
+    if production_workspace is not None and production_workspace.runner is not runner:
+        raise ValueError("PIT production workspace must use the configured runner")
     _RUNNER = runner
+    _PRODUCTION_WORKSPACE = production_workspace
 
 
 def clear_pit_runner() -> None:
@@ -125,7 +134,15 @@ def pit_read_source(
         raw = _RUNNER.read_source(str(source_id or "").strip())
     except (PITRunnerError, OSError, ValueError) as exc:
         return {"ok": False, **identity, "error": str(exc)}
-    return _text_payload(raw, identity=identity, max_chars=max_chars, start_char=start_char)
+    result = _text_payload(raw, identity=identity, max_chars=max_chars, start_char=start_char)
+    if _PRODUCTION_WORKSPACE is not None:
+        try:
+            result["production_projection"] = _PRODUCTION_WORKSPACE.project_read_source(
+                str(source_id or "").strip()
+            )
+        except PITProductionWorkspaceError as exc:
+            return {"ok": False, **identity, "error": str(exc)}
+    return result
 
 
 def pit_read_framework(
