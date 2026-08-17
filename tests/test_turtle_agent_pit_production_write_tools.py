@@ -9,9 +9,16 @@ from turtle_agent.tools.pit_production_write_tools import (
 )
 
 
+class _Runner:
+    def attestation(self) -> dict:
+        return {"read_audit": []}
+
+
 def test_pit_production_write_facade_binds_output_and_exposes_no_path_argument(tmp_path: Path) -> None:
     output = tmp_path / "fresh-output"
-    configure_pit_production_writer(output_dir=output, code="600340.SH")
+    configure_pit_production_writer(
+        output_dir=output, code="600340.SH", run_id="pit-production-test", pit_runner=_Runner(),
+    )
     try:
         tools = ToolRegistry()
         tools.auto_discover("turtle_agent.tools.pit_production_write_tools")
@@ -42,7 +49,9 @@ def test_pit_production_write_facade_binds_output_and_exposes_no_path_argument(t
 
 
 def test_pit_production_write_facade_rejects_an_attempted_output_override(tmp_path: Path) -> None:
-    configure_pit_production_writer(output_dir=tmp_path / "fresh-output", code="600340.SH")
+    configure_pit_production_writer(
+        output_dir=tmp_path / "fresh-output", code="600340.SH", run_id="pit-production-test", pit_runner=_Runner(),
+    )
     try:
         tools = ToolRegistry()
         tools.auto_discover("turtle_agent.tools.pit_production_write_tools")

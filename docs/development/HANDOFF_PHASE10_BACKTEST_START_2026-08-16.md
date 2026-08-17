@@ -256,3 +256,32 @@ ENGINEERING_DIAGNOSTIC_ONLY`; it still cannot support returns, buy points,
 stock selection or calibration. The next product step is a new v2 case with
 the corrected measurement-period/observation-window contract, followed by
 independent review before any post-cutoff body read.
+
+## 14. 2026-08-17 continuation: v2 case lifecycle adapter
+
+`scripts/phase10_backtest_case_adapter.py` is the sole derivation entrypoint
+for `historical-backtest-case.v2`. It reads only the completed PIT production
+output, its existing acceptance artifacts, the PIT attestation/source manifest
+and the report-local document projection; it does not read source bodies,
+post-cutoff disclosures, prices, corporate actions or benchmarks. The caller
+supplies a freeze-period case specification with forecast claims and the
+separated `measurement_period`/`observation_window`; an independent reviewer
+separately supplies a claim-level review artifact bound to the exact report
+variant and an exact copy of the full frozen case contract. These inputs are
+deliberately not inferred from report prose and cannot inherit the old 600340
+engineering case. The adapter compares the reviewed contract with the
+submitted spec, so a later prediction, threshold, observation-window, input or
+tax/fee rewrite must be reviewed again.
+
+Before a case is written, the adapter replays `PIT_PRODUCTION_FREEZE`, run,
+case, experiment, company and cutoff identities, V3 `MONITORING`, Phase 10
+acceptance, actual `ALLOW` reads and `DOC:*` to PIT-projection identity. A
+missing, unreadable or non-PASS independent review produces a named
+`INCOMPLETE` candidate and writes nothing. The current bridge accepts only
+`DUAL / PRIMARY_ROUTE_UNKNOWN / UNKNOWN`; it writes no investment decision,
+so settlement is prohibited from calculating a return. This prevents the
+writer or later reviewer from post hoc adding a price, buy point, stock
+selection decision, realized outcome or benchmark result. `PIT_WRITER`,
+unread sources, malformed V3 document mappings, mismatched identities and
+future-settlement fields all reject. No v2 600340 case or post-cutoff body read
+has been created.
