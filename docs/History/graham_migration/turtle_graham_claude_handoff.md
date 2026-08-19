@@ -1,5 +1,7 @@
 # Turtle x Graham 迁移 - Claude 规划资料包
 
+> **ARCHIVED / NON_CANONICAL：**迁移规划已完成并被现行估值路由与黄金报告契约吸收；本文不是当前Agent入口。
+
 用途：给 Claude 做前期规划，不是直接改代码。这个包的目标是让 Claude 先理解整个 Turtle 框架、你的迁移目标、以及为什么这次改造不是“换一套说法”，而是“换一套判断引擎”。
 
 ## 先读什么

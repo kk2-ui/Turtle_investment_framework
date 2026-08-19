@@ -2,7 +2,7 @@
 
 > **Phase 2 产出**。书的头号估值锚点。`EPV = 正常化盈利 / r*`，再做资产负债表调整得股权 EPV。
 > 上游：Phase 1（`factor_资本成本与正常化盈利.md` 给 r* 与 E_norm/AA）。下游：Phase 4 路由（EPV↔资产价值勾稽判护城河）、Factor4 安全边际。
-> 母版 `_executor_template.md`；路线图 `docs/turtle_graham_deepening_roadmap.md`。单位百万元。
+> 母版 `_executor_template.md`；现行方法权限见 `docs/turtle_valuation_routing_and_investor_styles.md`，迁移历史见 `docs/History/graham_migration/turtle_graham_deepening_roadmap.md`。单位百万元。
 > **全局原则**：拿不到精确数据给近似估算 + 方法 + ⚠️，绝不空着。
 
 ---
@@ -165,4 +165,3 @@ GG 双验：R3 路由下 EPV 为主，GG 穿透回报率为辅（Q3 定案 GG �
 ---
 
 *龟龟投资策略 · Graham 深化 Phase 2 · EPV 盈利能力价值*
-

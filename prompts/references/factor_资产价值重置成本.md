@@ -2,7 +2,7 @@
 
 > **Phase 3 产出**。Greenwald 三价值来源里**最可靠的锚**。逐项把资产负债表调到"竞争对手今天重建这盘生意要花多少钱"。
 > 上游：§4 资产负债表、Factor1B（是否持续经营/清算情景）、Phase 2 EPV（做 AV↔EPV 勾稽）。下游：Phase 4 路由（护城河判定）、R1/R2/R4 主估值。
-> 母版 `_executor_template.md`；路线图 `docs/turtle_graham_deepening_roadmap.md`。单位百万元。
+> 母版 `_executor_template.md`；现行方法权限见 `docs/turtle_valuation_routing_and_investor_styles.md`，迁移历史见 `docs/History/graham_migration/turtle_graham_deepening_roadmap.md`。单位百万元。
 > **全局原则**：拿不到精确数据给近似估算 + 方法 + ⚠️，绝不空着。重置成本是本框架数据缺口最大处——**能估则估、否则给账面近似 + ⚠️，绝不留空**（Q2 定案 + 用户 2026-07-30 加强）。
 
 ---
@@ -171,4 +171,3 @@ AV 三档（无形资产估算不确定性主导）：
 ---
 
 *龟龟投资策略 · Graham 深化 Phase 3 · 资产价值/重置成本*
-

@@ -1,5 +1,7 @@
 # V12.18 龟龟投资策略框架 — 使用手册
 
+> **ARCHIVED / V12：**本文包含旧执行入口、模板、变量和质量门，不得指导当前V13/Phase 08运行。当前入口见 `AGENTS.md`、`GOALS.md`、`docs/CURRENT_DOCUMENTS.md` 与 `docs/RUNTIME_OPERATIONS.md`。
+
 > **目标读者**：接手本项目的 AI Agent。读完本文即可开始执行分析任务，无需探索代码。
 > **最后更新**：2026-08-03
 > **版本历程**：... → V12.18(保守偏空校正+控股豁免+框架局限性+CSMAR全量修复+web_search启用+报告归档+定性降级+source脚注化)

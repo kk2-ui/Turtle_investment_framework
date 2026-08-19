@@ -1,5 +1,7 @@
 # 龟龟投资框架 (Turtle Investment Framework)
 
+> **当前项目入口（2026-08-19）：**后续 Agent 先读 `AGENTS.md`、`GOALS.md` 和 `docs/CURRENT_DOCUMENTS.md`。当前处于 Phase 08 `G1_CANDIDATE_MATURATION / IN_PROGRESS`；本文后续部分包含较早的引擎使用说明，若与当前入口、schema或代码冲突，以当前入口和实现为准。旧V12手册、迁移计划、handoff和累计状态日志已移入 `docs/History/`，不得用于恢复当前状态。
+
 AI 辅助的 A 股/港股/美股基本面分析系统。混合架构：Python 脚本完成确定性数据采集，LLM 提示词驱动定性分析与多因子评估。
 
 > **当前版本：v2.0-beta** — PDF-first 单 Agent 架构 + 独立估值模块 + Pre-flight 合并 + 实战验证。详见 [CHANGELOG_V2.md](CHANGELOG_V2.md)。

@@ -1,5 +1,7 @@
 # Turtle x Graham 项目简报
 
+> **ARCHIVED / NON_CANONICAL：**只保留项目迁移背景，不代表当前架构、状态或任务。
+
 ## 1. 项目一句话
 
 把 Turtle Investment Framework 从“通用龟龟估值框架”升级成“以《价值投资：从格雷厄姆到巴菲特》为方法底座的框架”，同时保留 Turtle 现有的 GG 计算严谨性、数据管线和报告工程。

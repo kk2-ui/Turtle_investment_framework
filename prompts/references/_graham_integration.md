@@ -10,7 +10,7 @@
 
 > **Phase 8 产出**。把 Phase 1-6 的执行器接进 `phase3_分析与报告.md` 的执行流，并把**两条流水线汇成一个买/卖/仓位裁决**。
 > 上游全部执行器：Phase1 `factor_资本成本与正常化盈利`、Phase2 `factor_EPV盈利能力价值`、Phase3 `factor_资产价值重置成本`、Phase4 `factor1.5_估值路由`、Phase5 `factor_R5回报率分解`、Phase6 `factor_VCF成长价值`。
-> 路线图 `docs/turtle_graham_deepening_roadmap.md`；迁移结构 `docs/turtle_graham_migration_plan.md` §VII。
+> 现行方法权限见 `docs/turtle_valuation_routing_and_investor_styles.md`；历史迁移推导见 `docs/History/graham_migration/turtle_graham_deepening_roadmap.md` 与 `docs/History/graham_migration/turtle_graham_migration_plan.md` §VII。
 
 ---
 
@@ -191,5 +191,4 @@ R6 特殊  ：各分部按自身路由算 V_final → SOTP 加总
 ---
 
 *龟龟投资策略 · Graham 深化 Phase 8 · 整合规格*
-
 

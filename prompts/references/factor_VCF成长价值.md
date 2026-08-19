@@ -2,7 +2,7 @@
 
 > **Phase 6 产出**。Greenwald 三价值来源里**最不可靠的一个**——只有护城河内的增长才创造价值。VCF = 增量ROIC/r* 判断增长是否增值；成长价值叠加在 EPV 之上。
 > 上游：Factor1C（增量增长）、Phase1（r*）、Phase2（EPV）、Phase5（回报分解的积极投资项）。下游：Phase5 积极投资回报、Factor4 成长溢价上限。
-> 母版 `_executor_template.md`；路线图 `docs/turtle_graham_deepening_roadmap.md`。单位百万元。
+> 母版 `_executor_template.md`；现行方法权限见 `docs/turtle_valuation_routing_and_investor_styles.md`，迁移历史见 `docs/History/graham_migration/turtle_graham_deepening_roadmap.md`。单位百万元。
 > **全局原则**：拿不到精确数据给近似估算 + 方法 + ⚠️，绝不空着。本执行器数据缺口最深（分部级并购回报），降级阶梯必须给出可算的重构算法，而非仅标⚠️。
 
 ---
@@ -241,4 +241,3 @@ VCF 三档（禁止单点）：
 ---
 
 *龟龟投资策略 · Graham 深化 Phase 6 · VCF + 成长价值*
-

@@ -1,5 +1,7 @@
 # Turtle × Graham 完整迁移规划方案
 
+> **ARCHIVED / NON_CANONICAL：**本规划已经被现行估值路由、质量契约和Golden Set路线替代；不得按旧章节或Phase恢复实施。
+
 > **版本**: v1.0 | **日期**: 2026-07-30 | **规划者**: Claude Opus | **执行者**: GPT  
 > **目标**: 将 Turtle Investment Framework 的判断引擎按《价值投资：从格雷厄姆到巴菲特》重建，保留 GG 计算纪律  
 > **粒度**: 具体到「改哪个文件的哪一节」，所有概念必须落到可计算的变量

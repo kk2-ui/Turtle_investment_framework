@@ -1,5 +1,7 @@
 # 历史回测首个真实样本：证据获取提案
 
+> **ARCHIVED / NOT_REGISTERED：**该首案从未成为当前预注册样本或执行授权，不得据此启动采集、报告或回测。
+
 > 状态：`PROPOSAL / NOT_YET_REGISTERED / READ_ONLY_SELECTION`  
 > 日期：2026-08-16  
 > 用途：为 Phase 10 的首个工程样本准备一个可冻结的历史信息集；不构成回测结果、投资结论或选股建议。

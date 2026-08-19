@@ -62,11 +62,13 @@ When working here with Codex, treat those files as workflow specifications, not 
 
 When a new Codex session is asked to continue, improve, or repair this project, restore project state before editing:
 
-1. Read `GOALS.md`, `progress-dashboard.html`, the current domain roadmap, and this file. Treat the active milestone and recorded blockers as the starting state; do not silently activate a later milestone.
+1. Read `GOALS.md`, `docs/CURRENT_DOCUMENTS.md`, `progress-dashboard.html`, the current domain roadmap, and this file. Treat the active milestone and recorded blockers as the starting state; do not silently activate a later milestone. Never restore current state from `docs/History/`.
 2. Run `git status --short --branch`. `main` and `master` are integration-only. If the protected worktree is dirty, stop and record the baseline blocker; never reset, stash, or edit it to begin a task.
 3. For any write, start a fresh linked worktree and branch from clean `main` with `.venv/bin/python scripts/project_guard.py start <kind> <slug>`. Do not modify files in the primary worktree before `start` succeeds.
 4. Keep one coherent objective per worktree. Commit from that worktree, then run `.venv/bin/python scripts/project_guard.py verify full` and `merge-check`; verification evidence must match the current branch and commit.
 5. Before integration, complete the independent code review, roadmap audit, and any required real-run or Computer Use checks. Update `GOALS.md` and `progress-dashboard.html` only from an isolated worktree.
+
+Current-state document searches should exclude `docs/History/` by default. Search History only when the task explicitly needs design provenance, an old failure, or audit reconstruction.
 
 Read-only investigation may remain in the primary worktree, but any generated report, configuration, documentation, or source change follows the same isolation and verification gates. When the `orchestrate-projects` skill is available, activate it for long-running coordination rather than relying on conversation history alone.
 

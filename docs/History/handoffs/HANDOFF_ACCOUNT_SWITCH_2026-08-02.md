@@ -1,5 +1,7 @@
 # Turtle Investment Framework 换账号交接文档
 
+> **ARCHIVED / NON_CANONICAL：**账号与项目状态均为2026-08-02快照。不得按本文“先执行什么”恢复任务；当前入口是仓库根 `AGENTS.md`、`GOALS.md` 与 `docs/CURRENT_DOCUMENTS.md`。
+
 > 用途：当前 Codex/OpenAI 账户额度不足时，在另一账户的新会话中无损续接框架优化工作。
 >
 > 更新时间：2026-08-02（Asia/Shanghai）

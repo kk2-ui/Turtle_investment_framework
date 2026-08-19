@@ -12,7 +12,7 @@
 > **下游传递**：factor_VCF 关卡①a（cap_alloc_score → 成长价值准入闸门）、
 >   _graham_integration λ③（治理打分细化）、Factor4（gov_priced_in → 买点结论注释）。
 >
-> 母版 `_executor_template.md`；路线图 `docs/turtle_graham_deepening_roadmap.md`。
+> 母版 `_executor_template.md`；现行方法权限见 `docs/turtle_valuation_routing_and_investor_styles.md`，迁移历史见 `docs/History/graham_migration/turtle_graham_deepening_roadmap.md`。
 > **全局原则**：数据不足给近似判断 + ⚠️，绝不"无法评估"。
 
 ---

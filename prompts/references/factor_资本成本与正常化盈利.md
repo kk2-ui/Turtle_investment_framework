@@ -1,7 +1,7 @@
 # 共享输入执行器：资本成本 r* + 正常化盈利
 
 > **Phase 1 产出**。EPV = 正常化盈利 / r*，两个输入都在这里算。下游：Factor_EPV（Phase 2）、Factor4 安全边际、VCF（除数 r*）。
-> 母版见 `_executor_template.md`；深化路线图见 `docs/turtle_graham_deepening_roadmap.md`。金额单位百万元。
+> 母版见 `_executor_template.md`；现行方法权限见 `docs/turtle_valuation_routing_and_investor_styles.md`，迁移历史见 `docs/History/graham_migration/turtle_graham_deepening_roadmap.md`。金额单位百万元。
 > **全局原则**：任何变量拿不到精确数据，给近似估算 + 方法 + ⚠️，绝不空着。
 
 ---
@@ -259,4 +259,3 @@ E_norm 是 EPV 分子，直接决定：
 ---
 
 *龟龟投资策略 · Graham 深化 Phase 1 · 资本成本与正常化盈利*
-

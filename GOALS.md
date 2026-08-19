@@ -385,7 +385,7 @@ Phase 08 只有同时具备以下结果才能完成：
 
 每个 Agent 开始前必须：
 
-1. 阅读本文件、仓库根 `AGENTS.md` 和当前候选最新审阅；
+1. 阅读本文件、仓库根 `AGENTS.md`、`docs/CURRENT_DOCUMENTS.md` 和当前候选最新审阅；默认不从 `docs/History/` 恢复状态；
 2. 运行 `git status --short --branch` 与 `git worktree list`；
 3. 确认自己工作的唯一公司、唯一材料性阻断集合和当前分支；
 4. 写入必须使用独立 linked worktree；主 worktree 只读和集成；

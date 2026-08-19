@@ -2,7 +2,7 @@
 
 > **Phase 5 产出**。特许经营成长股的买点引擎。落地原书第8章回报率分解，补齐 GG 精算缺的那半：半衰期怎么从财报算、r_b2 迭代收敛、decay 接入安全边际。
 > 上游：Factor1.5（路由 = R5 时激活）、Phase 1（r*）、Phase 2（EPV）、Phase 3（AV，franchise_value=EPV−AV）、factor3（GG、D/M、g_base）。下游：Factor4 三视角裁决。
-> 母版 `_executor_template.md`；路线图 `docs/turtle_graham_deepening_roadmap.md`。单位百万元。
+> 母版 `_executor_template.md`；现行方法权限见 `docs/turtle_valuation_routing_and_investor_styles.md`，迁移历史见 `docs/History/graham_migration/turtle_graham_deepening_roadmap.md`。单位百万元。
 > **全局原则**：拿不到精确数据给近似估算 + 方法 + ⚠️，绝不空着。
 
 ---
@@ -232,4 +232,3 @@ R5 三视角统一裁决（权重）：
 ---
 
 *龟龟投资策略 · Graham 深化 Phase 5 · R5 回报率分解（第8章）*
-

@@ -30,7 +30,7 @@
 - `scripts/build_report_context.py` 已有文件级上下文拼装，但尚未形成完整事实身份和验证状态。
 - `scripts/turtle_agent/tools/read_tools.py`、PDF预处理及 `search_report` / `read_section` 已支持基础读取与游标。
 - claim evidence ledger、来源身份和截断元数据已有局部实现，可作为下游接口。
-- `docs/REPORT_CONTEXT_DESIGN.md` 是本阶段的设计输入，不代表能力已完成。
+- `docs/History/design/REPORT_CONTEXT_DESIGN.md` 是本阶段的历史设计输入，不代表当前能力或实现状态。
 - 主干定向回归基线为 `254 passed`；全仓测试存在已知的可选依赖和嵌套旧仓库收集问题。
 
 ## 4. 接口与数据流

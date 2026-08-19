@@ -1,5 +1,7 @@
 # Phase 10 历史回测启动交接
 
+> **ARCHIVED / NON_CANONICAL：**本文的 `STARTED` 只代表当时工程快照。当前Phase 10全面运行仍被锁定；权限见 `GOALS.md`、`docs/CURRENT_DOCUMENTS.md` 和现行Phase 10契约。
+
 > 日期：2026-08-16（Asia/Shanghai）  
 > 状态：`STARTED / FIRST_CASE_ACQUISITION_PENDING`  
 > 交接范围：黄金候选的当前状态、已合入的回测基础设施，以及下一会话的执行顺序。

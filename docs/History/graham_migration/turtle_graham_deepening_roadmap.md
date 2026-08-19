@@ -1,5 +1,7 @@
 # Turtle × Graham 深化路线图（元计划）
 
+> **ARCHIVED / NON_CANONICAL：**旧Phase 0–8与校准进度仅作迁移历史。当前方法权限见 `docs/turtle_valuation_routing_and_investor_styles.md` 和 `GOALS.md`。
+
 > **本文件 ≠ 迁移计划**。`turtle_graham_migration_plan.md` 讲"改什么"（§I–§X）；本文件讲"**怎么把每个新执行器建到 GG 精算的可执行深度**"。
 >
 > 定案（2026-07-30）：起点 = 先建 EPV/资产价值估值流水线（Phase 1→2→3）；节奏 = 深度优先，逐个执行器打磨到 GG 精算深度再下一个。
@@ -280,4 +282,3 @@ V_final = IV ×[分红率 + λ×(1−分红率)]          # λ 只裁决留存�
 
 ### 优先级与依赖
 D0 是**前置**（方法接不进链，D1/D2 写得再好 DeepSeek 也读不到，重蹈分红 bug 覆辙）。建议序：**D0 → 重跑格力验证 AV 变细 + 分红修复生效 → D1 → D2**。三者都属"prompt/框架层"，不改判断引擎代码。
-

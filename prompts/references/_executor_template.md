@@ -4,7 +4,7 @@
 > **规则**：5 关（数据源锚定 / 降级阶梯 / 边界情形 / 强制敏感性 / 裁决联动）每关都必须有实体内容，不得留空过关。金额单位统一百万元。
 >
 > **⭐ 全局原则「估算优先于空着」**：任何变量拿不到精确数据时，必须给**近似估算值 + 估算方法 + ⚠️ 标注**，绝不留空、绝不跳过。近似估算好过没有数字——空着会让下游因子无法计算。标⚠️ 只标"这是估算/口径受限"，不是"拒绝给值"。（用户 2026-07-30 定案）
-> 深化路线图见 `docs/turtle_graham_deepening_roadmap.md`。
+> 现行方法权限见 `docs/turtle_valuation_routing_and_investor_styles.md`；迁移推导历史见 `docs/History/graham_migration/turtle_graham_deepening_roadmap.md`。
 
 ---
 
@@ -96,4 +96,3 @@
 ---
 
 *龟龟投资策略 · Graham 深化 · 执行器母版*
-

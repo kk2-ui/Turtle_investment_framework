@@ -1,5 +1,7 @@
 # V12 代码 vs v0.15 参考 Spec — 公式对齐分析
 
+> **ARCHIVED / V12：**对齐结论只适用于当时版本，不能证明当前代码、数据库或模型仍具相同状态。
+
 > **对比基准**：Turtle Framework v0.15 Phase 3 | **最终更新**：2026-07-17
 > **最终状态**：Spec v0.15 全部 30+ Step 完整覆盖 ✅。三数据源（CSMAR A股 + CSMAR HK + Tushare HK），DB 159K 行 × 200+ 列。
 

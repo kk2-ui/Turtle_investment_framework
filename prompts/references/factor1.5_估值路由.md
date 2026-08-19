@@ -3,7 +3,7 @@
 > **Phase 4 产出 · Q4 定案新建的独立因子**。整个"路由→选法→计算"重构的枢纽。
 > 位置：`phase3_分析与报告.md` 在 Step 3（Factor1B）后、原 Factor1C 前，插入**新 Step 3.3（Factor1.5）**，后续编号顺延。
 > 上游：Factor1B（moat_rating / trap_rating / franchise_type）、Phase 2 EPV、Phase 3 AV。下游：Factor4（valuation_route + route_reasoning 决定用哪条估值法）。
-> 母版 `_executor_template.md`；路线图 `docs/turtle_graham_deepening_roadmap.md`。
+> 母版 `_executor_template.md`；现行方法权限见 `docs/turtle_valuation_routing_and_investor_styles.md`，迁移历史见 `docs/History/graham_migration/turtle_graham_deepening_roadmap.md`。
 > **全局原则**：输入缺失给近似判断 + ⚠️，绝不"无法路由"。路由必须落到一条 R。
 
 ---
@@ -204,4 +204,3 @@ franchise_type 缺：
 ---
 
 *龟龟投资策略 · Graham 深化 Phase 4 · 因子1.5 估值路由*
-
