@@ -136,7 +136,7 @@ cp .env.sample .env
 export TUSHARE_TOKEN='your_token_here'
 ```
 
-跨机器迁移时，如外部数据目录不在仓库同级，可在 `.env` 中额外指定：
+正常运行只需要活动数据库和 `output/`；外部财务数据已经随 `stock_analysis.db` 自包含。只有取得新数据批次并执行数据库重建时，才需要临时指定：
 
 ```bash
 TURTLE_DB_PATH=/path/to/Turtle_investment_framework/stock_analysis.db
@@ -147,18 +147,17 @@ TURTLE_CSMAR_HK_DIR=/path/to/hk_new_financials
 TURTLE_HK_FINANCIALS_DIR=/path/to/hk_financials
 ```
 
-默认查找顺序：
+重建工具的默认查找顺序：
 
 1. 显式环境变量
 2. 仓库内对应目录
 3. 仓库同级目录
 
-这意味着在 Windows 11 + WSL2 下，最简单的迁移方式通常是把以下目录放到仓库同级：
+跨机器迁移正常运行环境时只需复制：
 
 - `Turtle_investment_framework/`
-- `hk_new_financials/`
-- `cn_financials_panel_raw/`
-- `hk_financials/`
+
+不要长期复制或保留 `a_financials/`、`hk_financials/`、`hk_new_financials/`、`cn_financials_panel_raw/`。如需吸收新批次，按 `docs/DB_SPEC.md` 使用统一构建器，验证并切换后再清理临时源目录。
 
 ## 使用方法
 

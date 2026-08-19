@@ -150,6 +150,10 @@ def ensure_columns(db, field_map):
 
 
 def main():
+    raise SystemExit(
+        "This partial importer is retired because it can bypass the consolidated "
+        "source tables and validation gate. Use scripts/consolidate_financial_database.py build."
+    )
     base_dir = get_hk_new_financials_dir()
     db = sqlite3.connect(DB, timeout=30)
 

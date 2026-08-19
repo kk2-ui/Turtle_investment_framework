@@ -353,6 +353,10 @@ def parse_args():
 
 
 def main():
+    raise SystemExit(
+        "This observations-era importer is retired. Use "
+        "scripts/consolidate_financial_database.py build."
+    )
     args = parse_args()
     db_path = args.db
 

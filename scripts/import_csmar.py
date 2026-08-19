@@ -76,6 +76,10 @@ def ts_code_from_csmar(code_str: str) -> str:
         return f"{code}.SZ"
 
 def main():
+    raise SystemExit(
+        "This partial importer is retired because it can bypass the consolidated "
+        "source tables and validation gate. Use scripts/consolidate_financial_database.py build."
+    )
     import openpyxl
     # Suppress openpyxl warnings
     import warnings

@@ -72,6 +72,10 @@ CF_MAP = {
 }
 
 def main():
+    raise SystemExit(
+        "This partial importer is retired because it can bypass the consolidated "
+        "source tables and validation gate. Use scripts/consolidate_financial_database.py build."
+    )
     csv_dir = get_hk_financials_dir()
     db = sqlite3.connect(DB_PATH, timeout=30)
     cols = {c[1] for c in db.execute('PRAGMA table_info(annual_financials)').fetchall()}

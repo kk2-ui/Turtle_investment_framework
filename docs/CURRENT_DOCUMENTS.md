@@ -49,7 +49,7 @@
 |---|---|
 | `docs/RUNTIME_OPERATIONS.md` | 真实运行、模型调用、恢复和昂贵运行边界 |
 | `docs/development/DEVELOPMENT_STANDARD.md` | 长任务、worktree和协作规范 |
-| `docs/DB_SPEC.md` | 数据库历史基线和已知坑；具体字段仍须以当前schema、采集代码和数据库为准 |
+| `docs/DB_SPEC.md` | 当前单库结构、来源优先级、重建/切换流程和数据验收门 |
 | `docs/development/stages/01_OFFICIAL_EVIDENCE_PLATFORM.md` | 当前官方证据平台契约 |
 | `docs/development/stages/02_DECISIVE_QUESTION_ENGINE.md` | 决定性问题契约 |
 | `docs/development/stages/03_INDUSTRY_ARCHETYPES_AND_VALUATION.md` | 行业原型与估值路由契约 |
