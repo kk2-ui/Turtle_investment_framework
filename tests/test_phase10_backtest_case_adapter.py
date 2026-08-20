@@ -200,7 +200,10 @@ def _production_fixture(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> dict
         if gate in {"completion", "runtime_manifest"}:
             continue
         key = "status" if gate in {"completion", "runtime_manifest", "absolute_quality"} else "state"
-        _write_json(output / filename, {key: sorted(accepted)[0]})
+        payload = {key: sorted(accepted)[0]}
+        if gate == "thesis_test":
+            payload["forward_judgment_state"] = "DECISION_READY"
+        _write_json(output / filename, payload)
     _write_json(output / "research_execution.json", {
         "enforced": True,
         "chapters": {"2": {

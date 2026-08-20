@@ -136,6 +136,7 @@ def migrate_thesis_test(output_dir: str | Path, *, persist: bool = True) -> dict
         candidate, output_dir=output, report_text=report_text,
         enforced=bool(policy.get("enforced")),
         monitoring_required=bool(policy.get("monitoring_required")),
+        forward_judgment_required=bool(policy.get("forward_judgment_required")),
         required_trigger_metric_ids=set(policy.get("required_trigger_metric_ids") or []),
     ) if candidate else {"state": "INCOMPLETE", "status": "FAIL"}
 
@@ -143,6 +144,7 @@ def migrate_thesis_test(output_dir: str | Path, *, persist: bool = True) -> dict
         original, output_dir=output, report_text=report_text,
         enforced=bool(policy.get("enforced")),
         monitoring_required=bool(policy.get("monitoring_required")),
+        forward_judgment_required=bool(policy.get("forward_judgment_required")),
         required_trigger_metric_ids=set(policy.get("required_trigger_metric_ids") or []),
     ) if original else {"state": "INCOMPLETE", "status": "FAIL", "invalid_findings": []}
     allowed_original_findings = {

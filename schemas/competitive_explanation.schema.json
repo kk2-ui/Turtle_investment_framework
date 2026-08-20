@@ -13,6 +13,8 @@
     "competitive_tests": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/test"}},
     "thresholds": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/threshold"}},
     "probability_sets": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/probabilitySet"}},
+    "central_path": {"$ref": "#/$defs/centralPath"},
+    "forward_judgments": {"type": "array", "minItems": 3, "maxItems": 5, "items": {"$ref": "#/$defs/forwardJudgment"}},
     "freeze": {"type": "object", "required": ["frozen", "fingerprint", "frozen_at"]},
     "generated_at": {"type": "string"}
   },
@@ -30,6 +32,95 @@
       "required": ["set_id", "mutually_exclusive", "collectively_exhaustive", "estimates", "chapters"],
       "properties": {
         "estimates": {"type": "array", "minItems": 2, "items": {"type": "object", "required": ["scenario_id", "label", "kind", "value", "interval", "basis", "source_ids", "as_of"]}}
+      }
+    },
+    "centralPath": {
+      "type": "object",
+      "required": ["path_id", "statement", "as_of", "horizon_years", "probability_set_id", "selected_scenario_id", "competing_scenario_id", "why_more_likely", "competitive_test_ids", "chapters"],
+      "properties": {
+        "path_id": {"type": "string", "minLength": 1},
+        "statement": {"type": "string", "minLength": 1},
+        "as_of": {"type": "string", "minLength": 10},
+        "horizon_years": {"enum": [3, 5]},
+        "probability_set_id": {"type": "string", "minLength": 1},
+        "selected_scenario_id": {"type": "string", "minLength": 1},
+        "competing_scenario_id": {"type": "string", "minLength": 1},
+        "why_more_likely": {"type": "string", "minLength": 1},
+        "competitive_test_ids": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}},
+        "chapters": {"type": "array", "minItems": 1, "items": {"type": "integer", "minimum": 0, "maximum": 14}}
+      }
+    },
+    "forwardJudgment": {
+      "type": "object",
+      "required": ["judgment_id", "statement", "materiality", "claim_id", "competitive_test_id", "probability_set_id", "scenario_id", "evidence_ids", "leading_signal_threshold_ids", "falsifier", "prediction", "observable_outcome", "transmission", "valuation_model_ids", "decision_entry_ids"],
+      "properties": {
+        "judgment_id": {"type": "string", "minLength": 1},
+        "statement": {"type": "string", "minLength": 1},
+        "materiality": {"enum": ["CENTRAL_THESIS", "INDUSTRY_STRUCTURE", "NORMALIZED_EARNINGS", "OWNER_CASH", "VALUATION", "RETURN", "PERMANENT_LOSS"]},
+        "claim_id": {"type": "string", "minLength": 1},
+        "competitive_test_id": {"type": "string", "minLength": 1},
+        "probability_set_id": {"type": "string", "minLength": 1},
+        "scenario_id": {"type": "string", "minLength": 1},
+        "evidence_ids": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}},
+        "leading_signal_threshold_ids": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}},
+        "falsifier": {"type": "string", "minLength": 1},
+        "prediction": {"$ref": "#/$defs/forwardPrediction"},
+        "observable_outcome": {"$ref": "#/$defs/observableOutcome"},
+        "transmission": {"$ref": "#/$defs/forwardTransmission"},
+        "valuation_model_ids": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}},
+        "decision_entry_ids": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}}
+      }
+    },
+    "forwardPrediction": {
+      "type": "object",
+      "required": ["metric", "operator", "unit", "horizon", "resolution_due"],
+      "properties": {
+        "metric": {"type": "string", "minLength": 1},
+        "operator": {"enum": ["AT_LEAST", "AT_MOST", "EQUALS", "RANGE"]},
+        "value": {"type": "number"},
+        "range_low": {"type": "number"},
+        "range_high": {"type": "number"},
+        "unit": {"type": "string", "minLength": 1},
+        "horizon": {"type": "string", "minLength": 1},
+        "resolution_due": {"type": "string", "minLength": 10}
+      }
+    },
+    "observableOutcome": {
+      "type": "object",
+      "required": ["measurement_basis", "measurement_rule", "measurement_period", "allowed_source_types", "settlement_version_policy"],
+      "properties": {
+        "measurement_basis": {"type": "string", "minLength": 1},
+        "measurement_rule": {"type": "string", "minLength": 1},
+        "measurement_period": {
+          "type": "object",
+          "required": ["kind", "start", "end"],
+          "properties": {
+            "kind": {"enum": ["REPORTING_PERIOD", "EVENT_WINDOW"]},
+            "start": {"type": "string", "minLength": 10},
+            "end": {"type": "string", "minLength": 10}
+          }
+        },
+        "allowed_source_types": {"type": "array", "minItems": 1, "items": {"enum": ["ANNUAL_REPORT", "INTERIM_REPORT", "EXCHANGE_ANNOUNCEMENT"]}},
+        "settlement_version_policy": {"enum": ["INITIAL_DISCLOSURE", "LATEST_OFFICIAL_AS_OF_EVALUATION"]}
+      }
+    },
+    "forwardTransmission": {
+      "type": "object",
+      "required": ["normalized_earnings", "owner_cash", "valuation", "expected_return"],
+      "properties": {
+        "normalized_earnings": {"$ref": "#/$defs/transmissionChannel"},
+        "owner_cash": {"$ref": "#/$defs/transmissionChannel"},
+        "valuation": {"$ref": "#/$defs/transmissionChannel"},
+        "expected_return": {"$ref": "#/$defs/transmissionChannel"}
+      }
+    },
+    "transmissionChannel": {
+      "type": "object",
+      "required": ["direction", "basis"],
+      "properties": {
+        "direction": {"enum": ["increase", "decrease", "stable", "range", "not_material", "unknown"]},
+        "basis": {"type": "string", "minLength": 1},
+        "conservative_treatment": {"type": "string", "minLength": 1}
       }
     }
   }

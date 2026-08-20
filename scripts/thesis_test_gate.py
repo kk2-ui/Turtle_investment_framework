@@ -19,14 +19,23 @@ except ModuleNotFoundError:
 
 
 SCHEMA_VERSION = "thesis-test-ledger.v1"
-POLICY_VERSION = "thesis-test-policy.v1"
+POLICY_VERSION = "thesis-test-policy.v2"
 PROBABILITY_KINDS = {"frequency", "base_rate", "analyst_subjective", "scenario_weight"}
 THRESHOLD_BASES = {"historical_volatility", "peer_benchmark", "model_sensitivity", "contractual", "accounting_regulatory", "base_rate", "expert_judgment"}
 ACTIONS = {"buy", "hold", "increase", "reduce", "avoid", "exit", "reassess"}
 OPERATORS = {">", ">=", "<", "<=", "==", "changes_to"}
+PREDICTION_OPERATORS = {"AT_LEAST", "AT_MOST", "EQUALS", "RANGE"}
+FORWARD_MATERIALITIES = {
+    "CENTRAL_THESIS", "INDUSTRY_STRUCTURE", "NORMALIZED_EARNINGS",
+    "OWNER_CASH", "VALUATION", "RETURN", "PERMANENT_LOSS",
+}
+TRANSMISSION_CHANNELS = ("normalized_earnings", "owner_cash", "valuation", "expected_return")
+TRANSMISSION_DIRECTIONS = {"increase", "decrease", "stable", "range", "not_material", "unknown"}
+MATERIAL_TRANSMISSION_DIRECTIONS = {"increase", "decrease", "stable", "range"}
 REQUIRED_TRIGGER_METRICS = {"trigger.buy", "trigger.reduce", "trigger.exit"}
 INTERNAL_EVIDENCE = {"report_internal", "report_derivation", "framework_method", "claim_evidence.json", "decision_ledger.json", "valuation_model.json", "thesis_test.json"}
 _ANCHOR_PATTERNS = {
+    "central": re.compile(r"\[central-path:\s*([A-Za-z0-9_.:@/-]+)\s*\]", re.I),
     "test": re.compile(r"\[thesis-test:\s*([A-Za-z0-9_.:@/-]+)\s*\]", re.I),
     "threshold": re.compile(r"\[threshold:\s*([A-Za-z0-9_.:@/-]+)\s*\]", re.I),
     "probability": re.compile(r"\[probability:\s*([A-Za-z0-9_.:@/-]+)\s*\]", re.I),
@@ -58,6 +67,17 @@ def bind_thesis_test_references(output_dir: str | Path, payload: dict[str, Any])
     output = Path(output_dir); chapter_dir = output / "chapters"
     if not chapter_dir.is_dir(): chapter_dir = output
     additions: dict[int, list[str]] = {}
+    central = payload.get("central_path") if isinstance(payload.get("central_path"), dict) else {}
+    path_id = str(central.get("path_id") or "").strip()
+    if path_id:
+        for chapter in central.get("chapters") or []:
+            if not isinstance(chapter, int):
+                continue
+            path = chapter_dir / f"_ch{chapter:02d}.md"
+            if not path.is_file():
+                continue
+            if path_id not in _ANCHOR_PATTERNS["central"].findall(path.read_text(encoding="utf-8")):
+                additions.setdefault(chapter, []).append(f"- 中心路径引用：[central-path: {path_id}]")
     specs = (
         ("competitive_tests", "test_id", "thesis-test", "竞争解释测试"),
         ("thresholds", "threshold_id", "threshold", "监控阈值"),
@@ -92,6 +112,7 @@ def promote_reviewable_thesis_test(output_dir: str | Path, *, report_text: str) 
         payload, output_dir=output, report_text=report_text,
         enforced=bool(policy.get("enforced")),
         monitoring_required=bool(policy.get("monitoring_required")),
+        forward_judgment_required=bool(policy.get("forward_judgment_required")),
         required_trigger_metric_ids=set(policy.get("required_trigger_metric_ids") or REQUIRED_TRIGGER_METRICS),
     )
     if validation.get("state") != "REVIEWABLE":
@@ -105,17 +126,33 @@ def promote_reviewable_thesis_test(output_dir: str | Path, *, report_text: str) 
 
 def initialize_thesis_test_policy(
     output_dir: str | Path, *, run_id: str, enforced: bool, monitoring_required: bool = False,
+    forward_judgment_required: bool = False,
 ) -> dict[str, Any]:
     payload = {"schema_version": POLICY_VERSION, "run_id": str(run_id), "enforced": bool(enforced),
                "required_trigger_metric_ids": sorted(REQUIRED_TRIGGER_METRICS),
-               "monitoring_required": bool(monitoring_required), "created_at": _now()}
+               "monitoring_required": bool(monitoring_required),
+               "forward_judgment_required": bool(forward_judgment_required), "created_at": _now()}
     path = Path(output_dir) / "thesis_test_policy.json"; path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8"); return payload
 
 
-def build_thesis_test_ledger(output_dir: str | Path, competitive_tests: list[dict[str, Any]], thresholds: list[dict[str, Any]], probability_sets: list[dict[str, Any]], *, change_reason: str, freeze: bool = True) -> dict[str, Any]:
+def build_thesis_test_ledger(
+    output_dir: str | Path,
+    competitive_tests: list[dict[str, Any]],
+    thresholds: list[dict[str, Any]],
+    probability_sets: list[dict[str, Any]],
+    *,
+    central_path: dict[str, Any] | None = None,
+    forward_judgments: list[dict[str, Any]] | None = None,
+    change_reason: str,
+    freeze: bool = True,
+) -> dict[str, Any]:
     output = Path(output_dir); contract = _read_json(output / "analysis_contract.json")
     payload: dict[str, Any] = {"schema_version": SCHEMA_VERSION, "report_id": str(contract.get("ts_code") or contract.get("code") or output.name), "revision": 1, "lifecycle": "decision_ready" if freeze else "reviewable", "change_reason": str(change_reason or "").strip(), "competitive_tests": deepcopy(competitive_tests), "thresholds": deepcopy(thresholds), "probability_sets": deepcopy(probability_sets), "generated_at": _now()}
+    if central_path is not None:
+        payload["central_path"] = deepcopy(central_path)
+    if forward_judgments is not None:
+        payload["forward_judgments"] = deepcopy(forward_judgments)
     payload["freeze"] = {"frozen": bool(freeze), "fingerprint": thesis_test_fingerprint(payload) if freeze else "", "frozen_at": _now() if freeze else None}
     return payload
 
@@ -133,6 +170,13 @@ def _num(value: Any) -> float | None:
     return result if math.isfinite(result) else None
 
 
+def _iso_date(value: Any):
+    try:
+        return datetime.fromisoformat(str(value or "")[:10]).date()
+    except ValueError:
+        return None
+
+
 def _decimals(value: Any) -> int:
     text = str(value)
     return len(text.rstrip("0").split(".", 1)[1]) if "." in text else 0
@@ -142,7 +186,12 @@ def _ids(payload: dict[str, Any], key: str) -> set[str]:
     return {str(item.get(key)) for item in payload if isinstance(item, dict) and item.get(key)}
 
 
-def validate_thesis_test_ledger(payload: dict[str, Any], *, output_dir: str | Path | None = None, report_text: str = "", enforced: bool = False, monitoring_required: bool = False, required_trigger_metric_ids: set[str] | frozenset[str] = REQUIRED_TRIGGER_METRICS) -> dict[str, Any]:
+def validate_thesis_test_ledger(
+    payload: dict[str, Any], *, output_dir: str | Path | None = None,
+    report_text: str = "", enforced: bool = False, monitoring_required: bool = False,
+    forward_judgment_required: bool = False,
+    required_trigger_metric_ids: set[str] | frozenset[str] = REQUIRED_TRIGGER_METRICS,
+) -> dict[str, Any]:
     invalid: list[str] = []; incomplete: list[str] = []; warnings: list[str] = []
     if payload.get("schema_version") != SCHEMA_VERSION: invalid.append("schema_version_invalid")
     if not str(payload.get("report_id") or "").strip(): invalid.append("report_id_missing")
@@ -154,6 +203,11 @@ def validate_thesis_test_ledger(payload: dict[str, Any], *, output_dir: str | Pa
     claim_ids = _ids(claim_ledger.get("claims") or [], "claim_id")
     evidence = {str(item.get("evidence_id")): item for claim in claim_ledger.get("claims") or [] if isinstance(claim, dict) for item in claim.get("raw_facts") or [] if isinstance(item, dict) and item.get("evidence_id")}
     decisions = {str(item.get("entry_id")): item for item in (_read_json(output / "decision_ledger.json").get("entries") or []) if isinstance(item, dict) and item.get("entry_id") and item.get("status") == "active"} if output is not None else {}
+    valuation_models = {
+        str(item.get("model_id")): item
+        for item in (_read_json(output / "valuation_model.json").get("models") or [])
+        if isinstance(item, dict) and item.get("model_id") and item.get("status") == "active"
+    } if output is not None else {}
     chapter_text = _chapters(report_text)
 
     tests = payload.get("competitive_tests"); thresholds = payload.get("thresholds"); probability_sets = payload.get("probability_sets")
@@ -162,6 +216,10 @@ def validate_thesis_test_ledger(payload: dict[str, Any], *, output_dir: str | Pa
     if not isinstance(probability_sets, list): invalid.append("probability_sets_not_array"); probability_sets = []
     if enforced and not tests: incomplete.append("competitive_test_missing")
     test_ids = _ids(tests, "test_id"); threshold_ids = _ids(thresholds, "threshold_id"); probability_ids = _ids(probability_sets, "set_id")
+    probability_scenarios = {
+        str(item.get("set_id")): _ids(item.get("estimates") or [], "scenario_id")
+        for item in probability_sets if isinstance(item, dict) and item.get("set_id")
+    }
     for items, key, label in ((tests, "test_id", "test"), (thresholds, "threshold_id", "threshold"), (probability_sets, "set_id", "probability_set")):
         values = [str(item.get(key)) for item in items if isinstance(item, dict) and item.get(key)]
         if len(values) != len(set(values)): invalid.append("duplicate_" + label + "_id")
@@ -319,20 +377,278 @@ def validate_thesis_test_ledger(payload: dict[str, Any], *, output_dir: str | Pa
             for chapter in chapters:
                 if tid not in _ANCHOR_PATTERNS["test"].findall(chapter_text.get(int(chapter), "")): incomplete.append(f"thesis_test_reference_missing:Ch{chapter}:{tid}")
 
-    known = {"test": test_ids, "threshold": threshold_ids, "probability": probability_ids}
+    # G1-J extends the existing thesis ledger instead of creating a parallel
+    # forecast system.  The policy flag keeps historical ledgers readable,
+    # while all new unified runs must freeze one selected path and 3-5
+    # decision-material, settleable forward judgments.
+    forward_invalid: list[str] = []
+    forward_incomplete: list[str] = []
+    central = payload.get("central_path")
+    judgments = payload.get("forward_judgments")
+    forward_present = central is not None or judgments is not None
+    central_id = ""
+
+    if forward_judgment_required and central is None:
+        forward_incomplete.append("central_path_missing")
+    if forward_judgment_required and judgments is None:
+        forward_incomplete.append("forward_judgments_missing")
+
+    if central is not None:
+        if not isinstance(central, dict):
+            forward_invalid.append("central_path_not_object")
+            central = {}
+        central_id = str(central.get("path_id") or "").strip()
+        for key in ("path_id", "statement", "as_of", "why_more_likely"):
+            if not str(central.get(key) or "").strip():
+                forward_incomplete.append(f"central_path:{key}_missing")
+        horizon = _num(central.get("horizon_years"))
+        if horizon not in {3.0, 5.0}:
+            forward_invalid.append("central_path:horizon_years_must_be_3_or_5")
+        probability_set_id = str(central.get("probability_set_id") or "")
+        selected_scenario_id = str(central.get("selected_scenario_id") or "")
+        competing_scenario_id = str(central.get("competing_scenario_id") or "")
+        if probability_set_id not in probability_ids:
+            forward_invalid.append("central_path:unknown_probability_set")
+        else:
+            scenarios = probability_scenarios.get(probability_set_id, set())
+            if selected_scenario_id not in scenarios:
+                forward_invalid.append("central_path:selected_scenario_unknown")
+            if competing_scenario_id not in scenarios:
+                forward_invalid.append("central_path:competing_scenario_unknown")
+            if selected_scenario_id == competing_scenario_id:
+                forward_invalid.append("central_path:scenarios_not_distinct")
+            selected_set = next((
+                item for item in probability_sets
+                if isinstance(item, dict) and item.get("set_id") == probability_set_id
+            ), {})
+            estimates = selected_set.get("estimates") or []
+            selected_estimate = next((
+                item for item in estimates
+                if isinstance(item, dict) and item.get("scenario_id") == selected_scenario_id
+            ), {})
+            selected_value = _num(selected_estimate.get("value"))
+            other_values = [
+                _num(item.get("value")) for item in estimates
+                if isinstance(item, dict) and item.get("scenario_id") != selected_scenario_id
+            ]
+            if selected_value is not None and any(
+                value is not None and value > selected_value for value in other_values
+            ):
+                forward_invalid.append("central_path:selected_scenario_not_most_likely")
+            central_as_of = _iso_date(central.get("as_of"))
+            selected_as_of = _iso_date(selected_estimate.get("as_of"))
+            if central_as_of is None:
+                forward_invalid.append("central_path:as_of_invalid")
+            elif selected_as_of is not None and central_as_of != selected_as_of:
+                forward_invalid.append("central_path:as_of_probability_identity_mismatch")
+        central_test_ids = central.get("competitive_test_ids")
+        if not isinstance(central_test_ids, list) or not central_test_ids:
+            forward_incomplete.append("central_path:competitive_test_ids_missing")
+            central_test_ids = []
+        for test_id in central_test_ids:
+            if str(test_id) not in test_ids:
+                forward_invalid.append(f"central_path:unknown_competitive_test:{test_id}")
+        selected_tests = [
+            item for item in tests
+            if isinstance(item, dict) and str(item.get("test_id")) in {str(value) for value in central_test_ids}
+        ]
+        if probability_set_id in probability_ids and selected_scenario_id:
+            if not any(
+                item.get("probability_set_id") == probability_set_id
+                and item.get("primary_scenario_id") == selected_scenario_id
+                for item in selected_tests
+            ):
+                forward_invalid.append("central_path:selected_scenario_not_primary_explanation")
+        chapters = central.get("chapters")
+        if not isinstance(chapters, list) or not chapters or any(
+            not isinstance(chapter, int) or chapter < 0 or chapter > 14 for chapter in chapters
+        ):
+            forward_invalid.append("central_path:chapters_invalid")
+        elif enforced and central_id:
+            for chapter in chapters:
+                if central_id not in _ANCHOR_PATTERNS["central"].findall(chapter_text.get(chapter, "")):
+                    forward_incomplete.append(f"central_path_reference_missing:Ch{chapter}:{central_id}")
+
+    forward_items: list[dict[str, Any]] = []
+    if judgments is not None:
+        if not isinstance(judgments, list):
+            forward_invalid.append("forward_judgments_not_array")
+        else:
+            forward_items = [item for item in judgments if isinstance(item, dict)]
+            if len(forward_items) != len(judgments):
+                forward_invalid.append("forward_judgments_item_not_object")
+            if len(judgments) < 3:
+                forward_incomplete.append("forward_judgments_fewer_than_3")
+            if len(judgments) > 5:
+                forward_invalid.append("forward_judgments_more_than_5")
+
+    judgment_ids = [str(item.get("judgment_id") or "") for item in forward_items]
+    if len([value for value in judgment_ids if value]) != len(set(value for value in judgment_ids if value)):
+        forward_invalid.append("duplicate_forward_judgment_id")
+    transmission_coverage: set[str] = set()
+    linked_decision_metrics: set[str] = set()
+    for idx, judgment in enumerate(forward_items):
+        jid = str(judgment.get("judgment_id") or f"forward_judgments[{idx}]")
+        for key in ("judgment_id", "statement", "falsifier"):
+            if not str(judgment.get(key) or "").strip():
+                forward_incomplete.append(f"{jid}:{key}_missing")
+        if judgment.get("materiality") not in FORWARD_MATERIALITIES:
+            forward_invalid.append(f"{jid}:materiality_invalid")
+        claim_id = str(judgment.get("claim_id") or "")
+        if not claim_id:
+            forward_incomplete.append(f"{jid}:claim_id_missing")
+        elif output is not None and claim_id not in claim_ids:
+            forward_invalid.append(f"{jid}:unknown_claim:{claim_id}")
+        test_id = str(judgment.get("competitive_test_id") or "")
+        if test_id not in test_ids:
+            forward_invalid.append(f"{jid}:unknown_competitive_test:{test_id}")
+        probability_set_id = str(judgment.get("probability_set_id") or "")
+        scenario_id = str(judgment.get("scenario_id") or "")
+        if probability_set_id not in probability_ids:
+            forward_invalid.append(f"{jid}:unknown_probability_set")
+        elif scenario_id not in probability_scenarios.get(probability_set_id, set()):
+            forward_invalid.append(f"{jid}:unknown_scenario")
+        evidence_ids = judgment.get("evidence_ids")
+        if not isinstance(evidence_ids, list) or not evidence_ids:
+            forward_incomplete.append(f"{jid}:evidence_ids_missing")
+            evidence_ids = []
+        for evidence_id in evidence_ids:
+            if output is not None and str(evidence_id) not in evidence:
+                forward_invalid.append(f"{jid}:unknown_evidence:{evidence_id}")
+        signal_ids = judgment.get("leading_signal_threshold_ids")
+        if not isinstance(signal_ids, list) or not signal_ids:
+            forward_incomplete.append(f"{jid}:leading_signal_threshold_ids_missing")
+            signal_ids = []
+        for threshold_id in signal_ids:
+            if str(threshold_id) not in threshold_ids:
+                forward_invalid.append(f"{jid}:unknown_leading_signal:{threshold_id}")
+
+        prediction = judgment.get("prediction")
+        if not isinstance(prediction, dict):
+            forward_invalid.append(f"{jid}:prediction_invalid")
+            prediction = {}
+        for key in ("metric", "unit", "horizon", "resolution_due"):
+            if not str(prediction.get(key) or "").strip():
+                forward_incomplete.append(f"{jid}:prediction_{key}_missing")
+        operator = prediction.get("operator")
+        if operator not in PREDICTION_OPERATORS:
+            forward_invalid.append(f"{jid}:prediction_operator_invalid")
+        if operator == "RANGE":
+            low, high = _num(prediction.get("range_low")), _num(prediction.get("range_high"))
+            if low is None or high is None or low > high:
+                forward_invalid.append(f"{jid}:prediction_range_invalid")
+        elif operator in PREDICTION_OPERATORS and _num(prediction.get("value")) is None:
+            forward_invalid.append(f"{jid}:prediction_value_invalid")
+        due = _iso_date(prediction.get("resolution_due"))
+        if due is None:
+            forward_invalid.append(f"{jid}:resolution_due_invalid")
+        else:
+            estimates = next((
+                item.get("estimates") or [] for item in probability_sets
+                if isinstance(item, dict) and item.get("set_id") == probability_set_id
+            ), [])
+            as_of_dates = [_iso_date(item.get("as_of")) for item in estimates if isinstance(item, dict)]
+            as_of_dates = [value for value in as_of_dates if value is not None]
+            if not as_of_dates or due <= max(as_of_dates):
+                forward_invalid.append(f"{jid}:resolution_due_not_after_prediction")
+
+        outcome = judgment.get("observable_outcome")
+        if not isinstance(outcome, dict):
+            forward_invalid.append(f"{jid}:observable_outcome_invalid")
+            outcome = {}
+        for key in ("measurement_basis", "measurement_rule", "settlement_version_policy"):
+            if not str(outcome.get(key) or "").strip():
+                forward_incomplete.append(f"{jid}:observable_outcome_{key}_missing")
+        if outcome.get("settlement_version_policy") not in {
+            "INITIAL_DISCLOSURE", "LATEST_OFFICIAL_AS_OF_EVALUATION",
+        }:
+            forward_invalid.append(f"{jid}:settlement_version_policy_invalid")
+        period = outcome.get("measurement_period")
+        if not isinstance(period, dict):
+            forward_invalid.append(f"{jid}:measurement_period_invalid")
+            period = {}
+        start, end = _iso_date(period.get("start")), _iso_date(period.get("end"))
+        if period.get("kind") not in {"REPORTING_PERIOD", "EVENT_WINDOW"}:
+            forward_invalid.append(f"{jid}:measurement_period_kind_invalid")
+        if start is None or end is None or start > end:
+            forward_invalid.append(f"{jid}:measurement_period_dates_invalid")
+        elif due is not None and end > due:
+            forward_invalid.append(f"{jid}:measurement_period_ends_after_resolution_due")
+        source_types = outcome.get("allowed_source_types")
+        if not isinstance(source_types, list) or not source_types:
+            forward_incomplete.append(f"{jid}:allowed_source_types_missing")
+        elif any(value not in {"ANNUAL_REPORT", "INTERIM_REPORT", "EXCHANGE_ANNOUNCEMENT"} for value in source_types):
+            forward_invalid.append(f"{jid}:allowed_source_type_invalid")
+
+        model_ids = judgment.get("valuation_model_ids")
+        if not isinstance(model_ids, list) or not model_ids:
+            forward_incomplete.append(f"{jid}:valuation_model_ids_missing")
+            model_ids = []
+        for model_id in model_ids:
+            if output is not None and str(model_id) not in valuation_models:
+                forward_invalid.append(f"{jid}:unknown_valuation_model:{model_id}")
+        decision_ids = judgment.get("decision_entry_ids")
+        if not isinstance(decision_ids, list) or not decision_ids:
+            forward_incomplete.append(f"{jid}:decision_entry_ids_missing")
+            decision_ids = []
+        for decision_id in decision_ids:
+            if output is not None and str(decision_id) not in decisions:
+                forward_invalid.append(f"{jid}:unknown_decision_entry:{decision_id}")
+            elif output is not None:
+                linked_decision_metrics.add(str(decisions[str(decision_id)].get("metric_id") or ""))
+
+        transmission = judgment.get("transmission")
+        if not isinstance(transmission, dict):
+            forward_invalid.append(f"{jid}:transmission_invalid")
+            transmission = {}
+        for channel in TRANSMISSION_CHANNELS:
+            bridge = transmission.get(channel)
+            if not isinstance(bridge, dict):
+                forward_incomplete.append(f"{jid}:transmission_{channel}_missing")
+                continue
+            direction = bridge.get("direction")
+            if direction not in TRANSMISSION_DIRECTIONS:
+                forward_invalid.append(f"{jid}:transmission_{channel}_direction_invalid")
+            if not str(bridge.get("basis") or "").strip():
+                forward_incomplete.append(f"{jid}:transmission_{channel}_basis_missing")
+            if direction in {"unknown", "not_material"} and not str(bridge.get("conservative_treatment") or "").strip():
+                forward_incomplete.append(f"{jid}:transmission_{channel}_conservative_treatment_missing")
+            if direction in MATERIAL_TRANSMISSION_DIRECTIONS:
+                transmission_coverage.add(channel)
+    if forward_judgment_required or forward_present:
+        for channel in TRANSMISSION_CHANNELS:
+            if channel not in transmission_coverage:
+                forward_incomplete.append(f"forward_judgment_transmission_uncovered:{channel}")
+        if output is not None and "valuation.v_final" not in linked_decision_metrics:
+            forward_incomplete.append("forward_judgment_decision_link_missing:valuation.v_final")
+        if output is not None and not any(
+            metric.startswith("return.gg.") for metric in linked_decision_metrics
+        ):
+            forward_incomplete.append("forward_judgment_decision_link_missing:expected_return")
+
+    invalid.extend(forward_invalid)
+    incomplete.extend(forward_incomplete)
+    forward_invalid = list(dict.fromkeys(forward_invalid))
+    forward_incomplete = list(dict.fromkeys(forward_incomplete))
+    forward_state = (
+        "INVALID" if forward_invalid else "INCOMPLETE" if forward_incomplete
+        else "DECISION_READY" if (forward_judgment_required or forward_present) else "SKIP"
+    )
+
+    known = {"central": {central_id} if central_id else set(), "test": test_ids, "threshold": threshold_ids, "probability": probability_ids}
     for kind, pattern in _ANCHOR_PATTERNS.items():
         for ref in sorted(set(pattern.findall(report_text)) - known[kind]): invalid.append(f"unknown_{kind}_reference:{ref}")
     frozen = bool((payload.get("freeze") or {}).get("frozen"))
     if frozen and (payload.get("freeze") or {}).get("fingerprint") != thesis_test_fingerprint(payload): invalid.append("freeze_fingerprint_mismatch")
     invalid = list(dict.fromkeys(invalid)); incomplete = list(dict.fromkeys(incomplete)); warnings = list(dict.fromkeys(warnings))
     state = "INVALID" if invalid else "INCOMPLETE" if incomplete else "MONITORING" if payload.get("lifecycle") == "monitoring" else "DECISION_READY" if frozen else "REVIEWABLE"
-    return {"schema_version": "thesis-test-validation.v1", "state": state, "status": "FAIL" if state in {"INVALID", "INCOMPLETE"} else "PASS", "invalid_findings": invalid, "incomplete_findings": incomplete, "warnings": warnings, "competitive_test_ids": sorted(test_ids), "threshold_ids": sorted(threshold_ids), "probability_set_ids": sorted(probability_ids), "covered_trigger_metric_ids": sorted(covered_trigger_metrics), "enforced": bool(enforced)}
+    return {"schema_version": "thesis-test-validation.v1", "state": state, "status": "FAIL" if state in {"INVALID", "INCOMPLETE"} else "PASS", "invalid_findings": invalid, "incomplete_findings": incomplete, "warnings": warnings, "competitive_test_ids": sorted(test_ids), "threshold_ids": sorted(threshold_ids), "probability_set_ids": sorted(probability_ids), "covered_trigger_metric_ids": sorted(covered_trigger_metrics), "forward_judgment_required": bool(forward_judgment_required), "forward_judgment_state": forward_state, "forward_judgment_count": len(forward_items), "forward_judgment_invalid_findings": forward_invalid, "forward_judgment_incomplete_findings": forward_incomplete, "enforced": bool(enforced)}
 
 
 def persist_thesis_test_ledger(output_dir: str | Path, payload: dict[str, Any], *, report_text: str = "", allow_frozen_update: bool = False) -> dict[str, Any]:
     output = Path(output_dir); output.mkdir(parents=True, exist_ok=True); path = output / "thesis_test.json"; diff_path = output / "thesis_test_diff.json"
     old = _read_json(path); policy = _read_json(output / "thesis_test_policy.json")
-    validation = validate_thesis_test_ledger(payload, output_dir=output, report_text=report_text, enforced=bool(policy.get("enforced")), monitoring_required=bool(policy.get("monitoring_required")), required_trigger_metric_ids=set(policy.get("required_trigger_metric_ids") or REQUIRED_TRIGGER_METRICS))
+    validation = validate_thesis_test_ledger(payload, output_dir=output, report_text=report_text, enforced=bool(policy.get("enforced")), monitoring_required=bool(policy.get("monitoring_required")), forward_judgment_required=bool(policy.get("forward_judgment_required")), required_trigger_metric_ids=set(policy.get("required_trigger_metric_ids") or REQUIRED_TRIGGER_METRICS))
     if validation["state"] == "INVALID" or (validation["state"] == "INCOMPLETE" and bool((payload.get("freeze") or {}).get("frozen"))):
         # Preserve the exact structured candidate.  A validation report alone
         # cannot be repaired deterministically because it contains field paths
@@ -378,8 +694,8 @@ def persist_thesis_test_ledger(output_dir: str | Path, payload: dict[str, Any], 
 def evaluate_output_thesis_test(output_dir: str | Path, *, report_text: str = "", persist: bool = True) -> dict[str, Any]:
     output = Path(output_dir); policy = _read_json(output / "thesis_test_policy.json"); ledger = _read_json(output / "thesis_test.json"); enforced = bool(policy.get("enforced"))
     if not ledger:
-        state = "INCOMPLETE" if enforced else "SKIP"; result = {"schema_version": "thesis-test-validation.v1", "state": state, "status": "FAIL" if enforced else "SKIP", "invalid_findings": [], "incomplete_findings": ["thesis_test_missing"] if enforced else [], "warnings": [], "enforced": enforced, "policy": policy}
+        state = "INCOMPLETE" if enforced else "SKIP"; result = {"schema_version": "thesis-test-validation.v1", "state": state, "status": "FAIL" if enforced else "SKIP", "invalid_findings": [], "incomplete_findings": ["thesis_test_missing"] if enforced else [], "warnings": [], "forward_judgment_required": bool(policy.get("forward_judgment_required")), "forward_judgment_state": "INCOMPLETE" if policy.get("forward_judgment_required") else "SKIP", "forward_judgment_count": 0, "forward_judgment_invalid_findings": [], "forward_judgment_incomplete_findings": ["thesis_test_missing"] if policy.get("forward_judgment_required") else [], "enforced": enforced, "policy": policy}
     else:
-        result = validate_thesis_test_ledger(ledger, output_dir=output, report_text=report_text, enforced=enforced, monitoring_required=bool(policy.get("monitoring_required")), required_trigger_metric_ids=set(policy.get("required_trigger_metric_ids") or REQUIRED_TRIGGER_METRICS)); result["policy"] = policy
+        result = validate_thesis_test_ledger(ledger, output_dir=output, report_text=report_text, enforced=enforced, monitoring_required=bool(policy.get("monitoring_required")), forward_judgment_required=bool(policy.get("forward_judgment_required")), required_trigger_metric_ids=set(policy.get("required_trigger_metric_ids") or REQUIRED_TRIGGER_METRICS)); result["policy"] = policy
     if persist: (output / "thesis_test_validation.json").write_text(json.dumps(result, ensure_ascii=False, indent=2), encoding="utf-8")
     return result

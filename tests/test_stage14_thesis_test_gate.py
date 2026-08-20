@@ -11,6 +11,7 @@ from scripts.turtle_agent.tool_registry import ToolRegistry
 
 DECISIONS = {
     "vfinal": ("valuation.v_final", 50.0),
+    "ggbase": ("return.gg.base", 7.0),
     "buy": ("trigger.buy", "price<=40"),
     "reduce": ("trigger.reduce", "retention<85"),
     "exit": ("trigger.exit", "audit_flag=1"),
@@ -52,12 +53,169 @@ def _payload(output: Path, *, freeze: bool = True) -> dict:
     return build_thesis_test_ledger(output, [_test()], thresholds, [_probabilities()], change_reason="initial competitive test", freeze=freeze)
 
 
+def _forward_payload(output: Path, *, freeze: bool = True) -> dict:
+    _prepare(output)
+    (output / "valuation_model.json").write_text(json.dumps({
+        "models": [{"model_id": "M001", "status": "active"}],
+    }), encoding="utf-8")
+    thresholds = [
+        _threshold("th.buy", "buy", action="buy", target="decision_rule", value=40.0, chapters=[13]),
+        _threshold("th.reduce", "reduce", action="reduce"),
+        _threshold("th.exit", "exit", action="exit", value=1.0),
+    ]
+    probabilities = _probabilities()
+    probabilities["resolution_due"] = "2029-12-31"
+    central_path = {
+        "path_id": "path.core",
+        "statement": "未来三年需求只是阶段性放缓，核心客户留存恢复，正常化盈利与owner cash大致稳定。",
+        "as_of": "2026-08-02",
+        "horizon_years": 3,
+        "probability_set_id": "prob.core",
+        "selected_scenario_id": "primary",
+        "competing_scenario_id": "alternative",
+        "why_more_likely": "现有同口径续约证据更符合项目组合波动，结构性流失尚未解释客户回流信号。",
+        "competitive_test_ids": ["test.core"],
+        "chapters": [0, 14],
+    }
+    judgments = []
+    specs = [
+        ("fj.retention", "INDUSTRY_STRUCTURE", "same_scope_retention", "AT_LEAST", 90.0, "th.reduce"),
+        ("fj.owner_cash", "OWNER_CASH", "owner_cash_index", "RANGE", None, "th.reduce"),
+        ("fj.value", "VALUATION", "intrinsic_value_per_share", "AT_LEAST", 45.0, "th.buy"),
+    ]
+    for judgment_id, materiality, metric, operator, value, signal in specs:
+        prediction = {
+            "metric": metric,
+            "operator": operator,
+            "unit": "%" if metric == "same_scope_retention" else "index" if metric == "owner_cash_index" else "RMB/share",
+            "horizon": "FY2029",
+            "resolution_due": "2029-12-31",
+        }
+        if operator == "RANGE":
+            prediction.update({"range_low": 95.0, "range_high": 105.0})
+        else:
+            prediction["value"] = value
+        judgments.append({
+            "judgment_id": judgment_id,
+            "statement": f"{metric}在FY2029达到冻结目标。",
+            "materiality": materiality,
+            "claim_id": "claim.core",
+            "competitive_test_id": "test.core",
+            "probability_set_id": "prob.core",
+            "scenario_id": "primary",
+            "evidence_ids": ["ev.primary"],
+            "leading_signal_threshold_ids": [signal],
+            "falsifier": "连续两期落入结构性流失阈值则该判断失败。",
+            "prediction": prediction,
+            "observable_outcome": {
+                "measurement_basis": "公司定期报告同口径披露",
+                "measurement_rule": "使用首次正式披露的FY2029数值与冻结阈值比较",
+                "measurement_period": {"kind": "REPORTING_PERIOD", "start": "2029-01-01", "end": "2029-12-31"},
+                "allowed_source_types": ["ANNUAL_REPORT", "EXCHANGE_ANNOUNCEMENT"],
+                "settlement_version_policy": "INITIAL_DISCLOSURE",
+            },
+            "transmission": {
+                "normalized_earnings": {"direction": "stable", "basis": "留存稳定使收入与毛利回到正常区间"},
+                "owner_cash": {"direction": "stable", "basis": "正常盈利与营运资本回收共同稳定owner cash"},
+                "valuation": {"direction": "range", "basis": "稳定owner cash进入M001估值区间"},
+                "expected_return": {"direction": "range", "basis": "估值区间与当前价共同约束预期回报"},
+            },
+            "valuation_model_ids": ["M001"],
+            "decision_entry_ids": ["vfinal", "ggbase"],
+        })
+    return build_thesis_test_ledger(
+        output, [_test()], thresholds, [probabilities],
+        central_path=central_path, forward_judgments=judgments,
+        change_reason="freeze selected path and forward judgments", freeze=freeze,
+    )
+
+
+def _forward_report() -> str:
+    return "\n\n".join([
+        "## Ch0 投资要点\n[central-path: path.core]",
+        "## Ch9 风险\n[thesis-test: test.core] [probability: prob.core] [threshold: th.reduce] [threshold: th.exit]",
+        "## Ch13 执行\n[threshold: th.buy]",
+        "## Ch14 决策\n[central-path: path.core] [thesis-test: test.core]",
+    ])
+
+
 def _validate(path: Path, payload: dict, *, enforced: bool = True) -> dict:
     return validate_thesis_test_ledger(payload, output_dir=path, report_text=_report(), enforced=enforced)
 
 
 def test_valid_thesis_test_reaches_decision_ready(tmp_path: Path) -> None:
     assert _validate(tmp_path, _payload(tmp_path))["state"] == "DECISION_READY"
+
+
+def test_required_forward_judgment_contract_reaches_decision_ready(tmp_path: Path) -> None:
+    payload = _forward_payload(tmp_path)
+    result = validate_thesis_test_ledger(
+        payload, output_dir=tmp_path, report_text=_forward_report(),
+        enforced=True, monitoring_required=True, forward_judgment_required=True,
+    )
+    assert result["state"] == "DECISION_READY"
+    assert result["forward_judgment_state"] == "DECISION_READY"
+    assert result["forward_judgment_count"] == 3
+
+
+def test_sensitivity_without_selected_central_path_cannot_pass_forward_gate(tmp_path: Path) -> None:
+    payload = _forward_payload(tmp_path, freeze=False)
+    payload.pop("central_path")
+    result = validate_thesis_test_ledger(
+        payload, output_dir=tmp_path, report_text=_forward_report(),
+        enforced=True, forward_judgment_required=True,
+    )
+    assert result["forward_judgment_state"] == "INCOMPLETE"
+    assert "central_path_missing" in result["forward_judgment_incomplete_findings"]
+
+
+def test_central_path_must_select_the_most_likely_scenario(tmp_path: Path) -> None:
+    payload = _forward_payload(tmp_path, freeze=False)
+    payload["central_path"]["selected_scenario_id"] = "alternative"
+    payload["central_path"]["competing_scenario_id"] = "primary"
+    payload["competitive_tests"][0]["primary_scenario_id"] = "alternative"
+    payload["competitive_tests"][0]["alternative_scenario_id"] = "primary"
+    result = validate_thesis_test_ledger(
+        payload, output_dir=tmp_path, report_text=_forward_report(),
+        enforced=True, forward_judgment_required=True,
+    )
+    assert "central_path:selected_scenario_not_most_likely" in result["forward_judgment_invalid_findings"]
+
+
+def test_forward_gate_requires_three_to_five_settleable_judgments(tmp_path: Path) -> None:
+    payload = _forward_payload(tmp_path, freeze=False)
+    payload["forward_judgments"] = payload["forward_judgments"][:2]
+    result = validate_thesis_test_ledger(
+        payload, output_dir=tmp_path, report_text=_forward_report(),
+        enforced=True, forward_judgment_required=True,
+    )
+    assert result["forward_judgment_state"] == "INCOMPLETE"
+    assert "forward_judgments_fewer_than_3" in result["forward_judgment_incomplete_findings"]
+
+
+def test_forward_judgment_must_link_outcome_model_and_decision(tmp_path: Path) -> None:
+    payload = _forward_payload(tmp_path, freeze=False)
+    judgment = payload["forward_judgments"][0]
+    judgment["observable_outcome"].pop("measurement_rule")
+    judgment["valuation_model_ids"] = ["M404"]
+    result = validate_thesis_test_ledger(
+        payload, output_dir=tmp_path, report_text=_forward_report(),
+        enforced=True, forward_judgment_required=True,
+    )
+    assert result["forward_judgment_state"] == "INVALID"
+    assert any("unknown_valuation_model:M404" in item for item in result["forward_judgment_invalid_findings"])
+    assert any("measurement_rule_missing" in item for item in result["forward_judgment_incomplete_findings"])
+
+
+def test_forward_judgments_must_reach_value_and_expected_return_identities(tmp_path: Path) -> None:
+    payload = _forward_payload(tmp_path, freeze=False)
+    for judgment in payload["forward_judgments"]:
+        judgment["decision_entry_ids"] = ["vfinal"]
+    result = validate_thesis_test_ledger(
+        payload, output_dir=tmp_path, report_text=_forward_report(),
+        enforced=True, forward_judgment_required=True,
+    )
+    assert "forward_judgment_decision_link_missing:expected_return" in result["forward_judgment_incomplete_findings"]
 
 
 def test_malformed_nested_thesis_returns_findings_not_exception(tmp_path: Path) -> None:
@@ -262,6 +420,8 @@ def test_thesis_writer_exposes_nested_schema_to_provider() -> None:
     assert "discriminating_observations" in test_properties
     assert "discrimination_target" in threshold_properties
     assert "estimates" in probability_properties
+    assert "selected_scenario_id" in params["central_path"]["properties"]
+    assert "observable_outcome" in params["forward_judgments"]["items"]["properties"]
 
 
 def test_old_output_without_policy_remains_skip(tmp_path: Path) -> None:

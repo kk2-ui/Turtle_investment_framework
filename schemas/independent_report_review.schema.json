@@ -22,7 +22,7 @@
     "independence": {"type": "object", "required": ["did_not_generate_candidate", "variant_label_blinded", "no_prior_review_seen", "reviewer_context_isolated", "generator_identity_disjoint"]},
     "dimensions": {
       "type": "object",
-      "required": ["decisive_question_quality", "evidence_discrimination", "causal_depth", "valuation_judgment", "action_coherence", "information_efficiency"],
+      "required": ["decisive_question_quality", "evidence_discrimination", "causal_depth", "forward_judgment_quality", "valuation_judgment", "action_coherence", "information_efficiency"],
       "additionalProperties": {
         "type": "object",
         "required": ["state", "basis", "report_locations"],

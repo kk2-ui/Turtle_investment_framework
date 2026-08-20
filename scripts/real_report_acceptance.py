@@ -32,7 +32,8 @@ MACHINE_STATES = {
 }
 REVIEW_DIMENSIONS = (
     "decisive_question_quality", "evidence_discrimination", "causal_depth",
-    "valuation_judgment", "action_coherence", "information_efficiency",
+    "forward_judgment_quality", "valuation_judgment", "action_coherence",
+    "information_efficiency",
 )
 DIMENSION_STATES = {"STRONG", "MIXED", "WEAK", "NOT_ASSESSABLE"}
 CEILING_VERDICTS = {"INSIGHTFUL", "COMPETENT", "FRAGILE", "NOT_ASSESSABLE"}
@@ -132,6 +133,7 @@ def build_phase10_production_freeze_config(
             "no_compensating_score": True,
             "control_sample_hidden_until_rules_frozen": True,
             "rules_frozen": True,
+            "forward_judgment_contract_required": True,
         },
         "samples": [{
             "sample_id": str(sample_id).strip(),
@@ -279,7 +281,9 @@ def _observed_state(payload: dict[str, Any]) -> str:
     return "MISSING"
 
 
-def evaluate_machine_gates(output: Path) -> dict[str, Any]:
+def evaluate_machine_gates(
+    output: Path, *, require_forward_judgment_contract: bool = False,
+) -> dict[str, Any]:
     gates: dict[str, Any] = {}
     blocking: list[str] = []
     for gate_id, (filename, accepted) in REQUIRED_MACHINE_GATES.items():
@@ -295,6 +299,18 @@ def evaluate_machine_gates(output: Path) -> dict[str, Any]:
         }
         if not passed:
             blocking.append(f"{gate_id}:{observed}")
+    if require_forward_judgment_contract:
+        thesis_validation = _load(output / "thesis_test_validation.json")
+        observed = str(thesis_validation.get("forward_judgment_state") or "MISSING").upper()
+        passed = observed == "DECISION_READY"
+        gates["forward_judgment_contract"] = {
+            "file": "thesis_test_validation.json",
+            "observed": observed,
+            "accepted": ["DECISION_READY"],
+            "passed": passed,
+        }
+        if not passed:
+            blocking.append(f"forward_judgment_contract:{observed}")
     completion = _load(output / "completion_report.json")
     completion_findings = list(completion.get("blocking_findings") or [])
     return {"passed": not blocking, "gates": gates, "blocking": blocking, "completion_findings": completion_findings[:30]}
@@ -521,7 +537,12 @@ def evaluate_sample(
         "variant_id": variant_id,
     }
     packet_sha256 = hashlib.sha256(_blind_packet_text(packet_item).encode("utf-8")).hexdigest() if report else ""
-    hard = evaluate_machine_gates(output)
+    hard = evaluate_machine_gates(
+        output,
+        require_forward_judgment_contract=bool(
+            policy.get("forward_judgment_contract_required")
+        ),
+    )
     research = summarize_research_execution(output)
     ceiling = summarize_insight_ceiling(output)
     reviews = load_reviews(
@@ -746,7 +767,11 @@ def write_blind_packets(result: dict[str, Any], directory: Path) -> None:
                 "reviewer_limits_format": "array of non-empty strings",
                 "instruction": (
                     "Use only the exact enum values above. Do not submit PASS/FAIL, "
-                    "free-form verdicts, or object-valued fatal findings."
+                    "free-form verdicts, or object-valued fatal findings. For "
+                    "forward_judgment_quality, decide whether the report actually selects "
+                    "a more likely 3/5-year path, discriminates the strongest alternative, "
+                    "and transmits its frozen judgments into earnings, owner cash, value, "
+                    "and expected return; a sensitivity table alone is WEAK."
                 ),
             },
             "sample_id": item["sample_id"],

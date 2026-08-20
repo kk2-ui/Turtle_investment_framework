@@ -26,7 +26,10 @@ def _production_report(output: Path) -> None:
 def _pass_phase08_machine_gates(output: Path) -> None:
     for gate, (filename, accepted) in REQUIRED_MACHINE_GATES.items():
         key = "status" if gate in {"completion", "runtime_manifest", "absolute_quality"} else "state"
-        _write_json(output / filename, {key: sorted(accepted)[0]})
+        payload = {key: sorted(accepted)[0]}
+        if gate == "thesis_test":
+            payload["forward_judgment_state"] = "DECISION_READY"
+        _write_json(output / filename, payload)
     _write_json(output / "research_execution.json", {
         "enforced": True,
         "chapters": {

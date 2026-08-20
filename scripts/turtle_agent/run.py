@@ -1216,7 +1216,10 @@ def _initialize_pit_production_output(
     initialize_claim_evidence_policy(output_dir, run_id=run_id, enforced=True)
     initialize_valuation_model_policy(output_dir, run_id=run_id, enforced=True)
     initialize_decision_reliability_policy(output_dir, run_id=run_id, enforced=True)
-    initialize_thesis_test_policy(output_dir, run_id=run_id, enforced=True, monitoring_required=True)
+    initialize_thesis_test_policy(
+        output_dir, run_id=run_id, enforced=True, monitoring_required=True,
+        forward_judgment_required=True,
+    )
     initialize_insight_policy(output_dir, run_id=run_id, enforced=True)
 
 
@@ -2090,7 +2093,8 @@ def run_full_pipeline(
             except ModuleNotFoundError:
                 from thesis_test_gate import initialize_thesis_test_policy
             initialize_thesis_test_policy(
-                output_dir, run_id=run_id, enforced=True, monitoring_required=True
+                output_dir, run_id=run_id, enforced=True, monitoring_required=True,
+                forward_judgment_required=True,
             )
             if os.path.isfile(os.path.join(output_dir, "thesis_test.json")):
                 try:

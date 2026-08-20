@@ -735,6 +735,8 @@ def write_thesis_test_ledger(
     competitive_tests: list[dict[str, Any]] | None = None,
     thresholds: list[dict[str, Any]] | None = None,
     probability_sets: list[dict[str, Any]] | None = None,
+    central_path: dict[str, Any] | None = None,
+    forward_judgments: list[dict[str, Any]] | None = None,
     change_reason: str = "",
     freeze: bool = True,
     repair_invalid_frozen: bool = False,
@@ -747,7 +749,12 @@ def write_thesis_test_ledger(
     chapter_dir = Path(output_dir) / CHAPTERS_SUBDIR
     if not chapter_dir.is_dir(): chapter_dir = Path(output_dir)
     report_text = "\n\n".join(path.read_text(encoding="utf-8") for path in sorted(chapter_dir.glob("_ch*.md")))
-    payload = build_thesis_test_ledger(output_dir, list(competitive_tests or []), list(thresholds or []), list(probability_sets or []), change_reason=str(change_reason or "").strip(), freeze=False)
+    payload = build_thesis_test_ledger(
+        output_dir, list(competitive_tests or []), list(thresholds or []),
+        list(probability_sets or []), central_path=central_path,
+        forward_judgments=(list(forward_judgments) if forward_judgments is not None else None),
+        change_reason=str(change_reason or "").strip(), freeze=False,
+    )
     result = persist_thesis_test_ledger(
         output_dir, payload, report_text=report_text,
         allow_frozen_update=bool(repair_invalid_frozen),
@@ -2867,6 +2874,47 @@ write_thesis_test_ledger._tool_meta = {
             }, "required": ["scenario_id", "label", "kind", "value", "interval", "basis", "source_ids", "as_of"]}},
             "chapters": {"type": "array", "items": {"type": "integer"}}
         }, "required": ["set_id", "mutually_exclusive", "collectively_exhaustive", "resolution_due", "estimates", "chapters"]}},
+        "central_path": {"type": "object", "description": "唯一3年或5年中心路径；必须选择更可能情景并说明为何，而非只列敏感性", "properties": {
+            "path_id": {"type": "string"}, "statement": {"type": "string"},
+            "as_of": {"type": "string"}, "horizon_years": {"type": "integer", "enum": [3, 5]},
+            "probability_set_id": {"type": "string"}, "selected_scenario_id": {"type": "string"},
+            "competing_scenario_id": {"type": "string"}, "why_more_likely": {"type": "string"},
+            "competitive_test_ids": {"type": "array", "minItems": 1, "items": {"type": "string"}},
+            "chapters": {"type": "array", "minItems": 1, "items": {"type": "integer"}}
+        }, "required": ["path_id", "statement", "as_of", "horizon_years", "probability_set_id", "selected_scenario_id", "competing_scenario_id", "why_more_likely", "competitive_test_ids", "chapters"]},
+        "forward_judgments": {"type": "array", "minItems": 3, "maxItems": 5, "description": "3-5项可证伪、可结算且进入估值/回报的关键前瞻判断", "items": {"type": "object", "properties": {
+            "judgment_id": {"type": "string"}, "statement": {"type": "string"},
+            "materiality": {"type": "string", "enum": ["CENTRAL_THESIS", "INDUSTRY_STRUCTURE", "NORMALIZED_EARNINGS", "OWNER_CASH", "VALUATION", "RETURN", "PERMANENT_LOSS"]},
+            "claim_id": {"type": "string"}, "competitive_test_id": {"type": "string"},
+            "probability_set_id": {"type": "string"}, "scenario_id": {"type": "string"},
+            "evidence_ids": {"type": "array", "minItems": 1, "items": {"type": "string"}},
+            "leading_signal_threshold_ids": {"type": "array", "minItems": 1, "items": {"type": "string"}},
+            "falsifier": {"type": "string"},
+            "prediction": {"type": "object", "properties": {
+                "metric": {"type": "string"}, "operator": {"type": "string", "enum": ["AT_LEAST", "AT_MOST", "EQUALS", "RANGE"]},
+                "value": {"type": "number", "optional": True}, "range_low": {"type": "number", "optional": True},
+                "range_high": {"type": "number", "optional": True}, "unit": {"type": "string"},
+                "horizon": {"type": "string"}, "resolution_due": {"type": "string"}
+            }, "required": ["metric", "operator", "unit", "horizon", "resolution_due"]},
+            "observable_outcome": {"type": "object", "properties": {
+                "measurement_basis": {"type": "string"}, "measurement_rule": {"type": "string"},
+                "measurement_period": {"type": "object", "properties": {
+                    "kind": {"type": "string", "enum": ["REPORTING_PERIOD", "EVENT_WINDOW"]},
+                    "start": {"type": "string"}, "end": {"type": "string"}
+                }, "required": ["kind", "start", "end"]},
+                "allowed_source_types": {"type": "array", "minItems": 1, "items": {"type": "string", "enum": ["ANNUAL_REPORT", "INTERIM_REPORT", "EXCHANGE_ANNOUNCEMENT"]}},
+                "settlement_version_policy": {"type": "string", "enum": ["INITIAL_DISCLOSURE", "LATEST_OFFICIAL_AS_OF_EVALUATION"]}
+            }, "required": ["measurement_basis", "measurement_rule", "measurement_period", "allowed_source_types", "settlement_version_policy"]},
+            "transmission": {"type": "object", "properties": {
+                channel: {"type": "object", "properties": {
+                    "direction": {"type": "string", "enum": ["increase", "decrease", "stable", "range", "not_material", "unknown"]},
+                    "basis": {"type": "string"}, "conservative_treatment": {"type": "string", "optional": True}
+                }, "required": ["direction", "basis"]}
+                for channel in ("normalized_earnings", "owner_cash", "valuation", "expected_return")
+            }, "required": ["normalized_earnings", "owner_cash", "valuation", "expected_return"]},
+            "valuation_model_ids": {"type": "array", "minItems": 1, "items": {"type": "string"}},
+            "decision_entry_ids": {"type": "array", "minItems": 1, "items": {"type": "string"}}
+        }, "required": ["judgment_id", "statement", "materiality", "claim_id", "competitive_test_id", "probability_set_id", "scenario_id", "evidence_ids", "leading_signal_threshold_ids", "falsifier", "prediction", "observable_outcome", "transmission", "valuation_model_ids", "decision_entry_ids"]}},
         "change_reason": {"type": "string"},
         "freeze": {"type": "boolean", "description": "首次无账本先false，按validation补测试/阈值/概率锚点后再true", "optional": True}
     }

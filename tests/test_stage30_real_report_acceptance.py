@@ -34,6 +34,7 @@ def _config(path: Path, output: Path) -> Path:
             "automatic_ceiling": "READY_FOR_BLIND_REVIEW",
             "no_compensating_score": True,
             "control_sample_hidden_until_rules_frozen": True,
+            "forward_judgment_contract_required": True,
         },
         "samples": [{
             "sample_id": "sample", "company_code": "000001.SZ", "archetype": "test",
@@ -56,7 +57,10 @@ def _pass_gates(output: Path) -> None:
     for gate, (filename, accepted) in REQUIRED_MACHINE_GATES.items():
         state = sorted(accepted)[0]
         key = "status" if gate in {"completion", "runtime_manifest", "absolute_quality"} else "state"
-        _write_json(output / filename, {key: state})
+        payload = {key: state}
+        if gate == "thesis_test":
+            payload["forward_judgment_state"] = "DECISION_READY"
+        _write_json(output / filename, payload)
     _write_json(output / "research_execution.json", {
         "enforced": True,
         "chapters": {
@@ -218,6 +222,23 @@ def test_machine_complete_report_stops_at_blind_review(tmp_path: Path) -> None:
     assert sample["hard_gates"]["passed"] is True
     assert sample["machine_status"] == "READY_FOR_BLIND_REVIEW"
     assert sample["research_execution"]["two_fiscal_years_observed"] is True
+
+
+def test_new_gold_candidate_requires_forward_judgment_contract(tmp_path: Path) -> None:
+    output = tmp_path / "candidate"
+    _report(output)
+    _pass_gates(output)
+    thesis_validation = json.loads((output / "thesis_test_validation.json").read_text(encoding="utf-8"))
+    thesis_validation.pop("forward_judgment_state")
+    _write_json(output / "thesis_test_validation.json", thesis_validation)
+
+    config = _config(tmp_path / "config.json", output)
+    sample = evaluate_acceptance(
+        config, acceptance_root=tmp_path / "acceptance", persist=False,
+    )["samples"][0]
+
+    assert sample["machine_status"] == "TECHNICALLY_BLOCKED"
+    assert "forward_judgment_contract:MISSING" in sample["hard_gates"]["blocking"]
 
 
 def test_two_independent_reviews_create_candidate_but_not_approval(tmp_path: Path) -> None:

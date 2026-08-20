@@ -718,7 +718,10 @@ def test_production_origin_accepts_only_pit_production_freeze(
         if gate in {"completion", "runtime_manifest"}:
             continue
         key = "status" if gate in {"completion", "runtime_manifest", "absolute_quality"} else "state"
-        (output / filename).write_text(json.dumps({key: sorted(accepted)[0]}), encoding="utf-8")
+        payload = {key: sorted(accepted)[0]}
+        if gate == "thesis_test":
+            payload["forward_judgment_state"] = "DECISION_READY"
+        (output / filename).write_text(json.dumps(payload), encoding="utf-8")
     (output / "research_execution.json").write_text(json.dumps({
         "enforced": True,
         "chapters": {"2": {
