@@ -2,7 +2,7 @@
 
 > 状态：`CURRENT / AUTHORITATIVE_NAVIGATION`
 >
-> 更新：2026-08-19
+> 更新：2026-08-20
 
 本文件只解决一件事：告诉后续 Agent 哪些文档可以决定当前状态、执行顺序和产品标准。`docs/History/` 中的文件只用于追溯，不能成为恢复入口、当前状态或实施授权。
 
@@ -27,7 +27,7 @@
 | `docs/development/stages/08_REAL_REPORT_ACCEPTANCE_AND_QUALITY_CALIBRATION.md` | 当前Phase 08产品与验收规范 |
 | `progress-dashboard.html` | 当前状态的人读摘要；派生视图 |
 
-当前状态是 `G1_CANDIDATE_MATURATION / IN_PROGRESS`。G1.5 已进入正式路线但仍为 `PLANNED`；路线落库不等于已启动24份报告生产。
+当前状态是 `G1_CANDIDATE_MATURATION / IN_PROGRESS`，当前内部前置门为 `G1-J_JUDGMENT_CONTRACT`：复用已有书籍方法案例卡与基准率候选，把中心路径、可证伪前瞻判断和追加式结果结算接入黄金接纳契约。G1.5 已进入正式路线但仍为 `PLANNED`；路线落库不等于已启动24份报告生产。
 
 ## 3. 当前产品与研究规范
 
@@ -41,7 +41,7 @@
 | `docs/development/INDUSTRY_KNOWLEDGE_BASE.md` | 行业机制知识库权限、升格和隔离规则 |
 | `docs/ANALYSIS_HORIZON.md` | 自适应分析时域设计 |
 
-黄金报告的当前共同内容契约以 `GOALS.md` 第3、4节为准。质量评分、旧V12模板、旧盲评票或历史报告不能授予黄金状态。
+黄金报告的当前共同内容契约以 `GOALS.md` 第3、4节为准。质量评分、旧V12模板、旧盲评票、历史报告、敏感性完整或叙事流畅都不能单独授予黄金状态；G1-J完成后还必须通过中心路径和前瞻判断硬门。
 
 ## 4. 当前工程与运行规范
 
