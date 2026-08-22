@@ -738,6 +738,14 @@ def test_cninfo_fetch_fails_when_page_repeats_an_announcement() -> None:
         )
 
 
+def test_cninfo_fetch_rejects_page_size_above_provider_limit() -> None:
+    with pytest.raises(ValueError, match="at most 30"):
+        fetch_cninfo_announcement_records(
+            company_code="000651", org_id="gssz0000651", begin_date="2025-01-01", end_date="2026-08-02",
+            page_size=31,
+        )
+
+
 def test_post_cutoff_queue_uses_titles_only_without_acquiring_document_bodies() -> None:
     inventory = {
         "provider": "SSE",

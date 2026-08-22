@@ -102,6 +102,10 @@ SSE_SECURITY_TYPES = "0101,120100,020100,020200,120200"
 CNINFO_ANNOUNCEMENT_QUERY_URL = "https://www.cninfo.com.cn/new/hisAnnouncement/query"
 CNINFO_STATIC_BASE_URL = "https://static.cninfo.com.cn/"
 CNINFO_STATIC_HOST = "static.cninfo.com.cn"
+# CNINFO's historical fulltext endpoint returns at most 30 records per page.
+# Requesting more can make it repeat the first page, which invalidates a
+# bounded announcement inventory rather than merely making acquisition slower.
+CNINFO_MAX_PAGE_SIZE = 30
 
 POST_CUTOFF_CLAIM_TITLE_TERMS: dict[str, tuple[str, ...]] = {
     "HBTCLM:600340:P10B:ORDINARY_CASH": (
@@ -1637,6 +1641,8 @@ def fetch_cninfo_announcement_records(
         raise ValueError("org_id is required")
     if type(page_size) is not int or page_size <= 0:
         raise ValueError("page_size must be a positive integer")
+    if page_size > CNINFO_MAX_PAGE_SIZE:
+        raise ValueError(f"CNINFO page_size must be at most {CNINFO_MAX_PAGE_SIZE}")
     fetch_page = request or _default_cninfo_request
     records: list[dict[str, Any]] = []
     source_ids: set[str] = set()
@@ -2745,7 +2751,7 @@ def main() -> int:
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--manifest-output", type=Path)
     parser.add_argument("--selection-input", type=Path)
-    parser.add_argument("--page-size", type=int, default=100)
+    parser.add_argument("--page-size", type=int, default=CNINFO_MAX_PAGE_SIZE)
     parser.add_argument("--company-code", default="600340")
     parser.add_argument("--org-id")
     parser.add_argument("--begin-date")
