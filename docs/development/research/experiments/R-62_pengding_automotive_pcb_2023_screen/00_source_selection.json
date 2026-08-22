@@ -1,0 +1,17 @@
+{
+  "selection_policy_id": "R62-PENGDING-AUTO-PCB-2023-SCREEN-V1",
+  "selection_reason": "Screen a Chinese electronics manufacturer’s automotive/servers PCB capacity decision without reading later outcomes. The narrow question is whether the 2022 completed automotive battery-board line, customer certification and proposed 338-million-square-inch automotive/server expansion form a same-company D1-D5 enterprise system with a fair rival, rather than an undifferentiated diversification narrative.",
+  "cutoff_at": "2023-03-30T00:00:00+08:00",
+  "source_research_rationales": [
+    {
+      "source_id": "CNINFO:002938:ANN:20230323:1216189769",
+      "selection_reason": "Read the statutory capital-use feasibility disclosure for the committed project’s scope, investment boundary, implementation entity and any disclosed demand, capacity or counterarguments.",
+      "research_question_ids": ["R62-D1-CAPITAL-IMPLEMENTATION", "R62-D5-CAPITAL-BOUNDARY"]
+    },
+    {
+      "source_id": "CNINFO:002938:ANN:20230329:1216245992",
+      "selection_reason": "Read the FY2022 annual report for the pre-outcome automotive-board customer certification, quantity/product and working-capital baseline, and to decide whether a same-company post-cutoff metric contract is possible.",
+      "research_question_ids": ["R62-D1", "R62-D2", "R62-D3", "R62-D4", "R62-ADMISSION"]
+    }
+  ]
+}
