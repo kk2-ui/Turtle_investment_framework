@@ -1,6 +1,6 @@
 # R-71｜中国制造多层时钟合成：经营判断是一个 D1–D5 向量，不是一条“成功／失败”故事
 
-状态：`KNOWN_OUTCOME_TEACHING / MULTICLOCK_SYNTHESIS / NO_SELECTION_SCORE / NEXT_FREEZE_CONSTRAINTS_PENDING`。
+状态：`KNOWN_OUTCOME_TEACHING / MULTICLOCK_SYNTHESIS / NO_SELECTION_SCORE / TEACHING_APPLICATION_FROZEN / INDEPENDENT_REVIEW_PENDING`。
 
 R-71 不新增公司结论，也不重新结算任何历史结果。它把已经结束的中国制造教学卡放在同一张企业系统图上，检验我们是否仍在用一个漂亮的收入、毛利或 OCF 数字替代整项企业判断。答案是不能。
 
@@ -70,7 +70,7 @@ R-71 的有效产出不是增加案例数量，而是下一张不同公司卡在
 5. `D5_CAPITAL_BOUNDARY`：登记责任单元资本、结果窗口和替代；没有公开数据时，事前冻结 `CAPITAL_RETURN_UNKNOWN`，不追读集团故事。
 6. `RIVAL_SEQUENCE_AND_STOP`：H-A/H-B 对 D2、D3、D4 必须有不同的先后顺序；若同一观察两方都接受，立即降为 `NO_PRIMARY`，而不是由结局挑选主路径。
 
-上述约束尚未因为写在本文件就成为“学习闭环已验证”。只有下一份**不同公司**的结果前冻结真正逐字段引用并改变输入，且随后独立复核，才可登记为 `learning application`。
+上述约束尚未因为写在本文件就成为“学习闭环已验证”。R-78 已将六项字段迁移到 Ford 这一不同公司的**历史教学冻结**，并仍等待独立 reviewer 只核对“字段在结果读取前已实际改变”。这证明约束能够改变输入，不能证明选择能力、方法普适性或中国企业适用性。只有另一家中国公司的结果前冻结具备本地行动、方向性选择依据、公平基线与可结算反方，并完成相同复核，才可登记为正式 `learning application`。
 
 ## 5. R-71 的当前搜寻结论
 
@@ -82,7 +82,7 @@ R-71 的有效产出不是增加案例数量，而是下一张不同公司卡在
 
 - 根因：`REASONING + DATA_COVERAGE + ACQUISITION_MODULE`。公开材料更常给出行动宣言、总收入、单期毛利或 OCF，而不是同责任单元的 D2–D5 链。
 - 经济影响：若跳过该链，会材料性高估正常盈利、owner cash、资本回收和管理决策质量，或因一个负面层次错误否定另一个已成立的经营箭头。
-- 缺失事实：钱江摩托的可枚举 action 原件、同门店/渠道的采用与价格成本、现金来源和资本边界；其他未来候选也必须逐案补齐，而非套用本表。
+- 缺失事实：下一家中国公司的可枚举 action 原件、同责任单元的采用与价格成本、现金来源和资本边界；不得把 Ford 的经销商金融、劳工制度或结果迁移为中国事实。
 - 禁止假设：行业销量、公司名气、总收入、毛利、OCF、经销商数量、投资者问答、后续结果、证券价格或回报可以替代五层中任一层。
-- 可执行处置：结束 R-71 合成与钱江来源试探；下一张卡先完成 `ACTION / STATE_AND_RIVAL / MECHANISM_OUTCOME / CAPITAL_AND_CASH` 四格，缺 action 或 D2–D4 的同边界结果通道立即停止。
-- 验收：下一不同公司的冻结附件逐项引用第 4 节字段，且其 H-A/H-B 在 D2、D3、D4 的来源、窗口和禁止代理不同；之后才允许讨论它是否是 `SELECTION_ADMITTED`。
+- 可执行处置：以 R-78 的独立 reviewer 作为教学迁移的收据；下一张中国卡仍须先完成 `ACTION / STATE_AND_RIVAL / MECHANISM_OUTCOME / CAPITAL_AND_CASH` 四格，缺 action 或 D2–D4 的同边界结果通道立即停止。
+- 验收：R-78 reviewer 只能确认第 4 节字段在 outcome body 读取前存在；下一不同中国公司的冻结附件还须逐项引用第 4 节字段，且其 H-A/H-B 在 D2、D3、D4 的来源、窗口和禁止代理不同。只有后者才允许讨论 `SELECTION_ADMITTED`。
