@@ -283,33 +283,45 @@ def _write_json_file(path: str, data: dict[str, Any]) -> None:
 
 
 def _surface_live_forward_due_inbox() -> dict[str, Any]:
-    """Run the bounded forward-result inbox before a CJO production run.
+    """Reconcile the persistent forward-result inbox before a CJO run.
 
-    The inbox reads only frozen contracts, never issuer result bodies.  It is
-    therefore safe to run on every CJO entry and makes a due outcome task
-    visible before the normal Agent loop starts.
+    Registration reads only frozen contracts, never issuer result bodies.  It
+    is therefore safe on every CJO entry.  The resulting task is persistent in
+    the project database rather than a one-off scan that an Agent can forget.
     """
     try:
-        from scripts.outcome_acquisition import build_live_forward_due_inbox
+        from scripts.judgment_feedback_control import connect, initialize, reconcile, sync_live_forward_contracts
     except ModuleNotFoundError:
-        from outcome_acquisition import build_live_forward_due_inbox
+        from judgment_feedback_control import connect, initialize, reconcile, sync_live_forward_contracts
     contract_root = Path(_FRAMEWORK_DIR) / "docs" / "development" / "research" / "experiments"
     as_of = datetime.now().astimezone().replace(microsecond=0).isoformat()
-    inbox = build_live_forward_due_inbox(contract_root, as_of=as_of)
-    actionable = inbox.get("actionable") or []
+    conn = connect(Path(_FRAMEWORK_DIR) / "stock_analysis.db")
+    try:
+        initialize(conn)
+        sync = sync_live_forward_contracts(conn, contract_root=contract_root, registered_at=as_of)
+        inbox = reconcile(conn, as_of=as_of)
+    finally:
+        conn.close()
+    sync_rows = [
+        row
+        for item in sync.get("registered", [])
+        for row in (item.get("result", {}).get("registered", []) or [])
+    ]
+    actionable = [item for item in inbox.get("items") or [] if item.get("time_state") in {"DUE", "OVERDUE"}]
     print(
-        "[Forward due inbox] "
-        f"contracts={inbox.get('contracts_scanned', 0)}, actionable={len(actionable)}, "
-        f"state={inbox.get('state')}"
+        "[Judgment feedback inbox] "
+        f"new={sum(1 for row in sync_rows if row.get('registered'))}, tracked={len(sync_rows)}, "
+        f"actionable={len(actionable)}, contract_issues={len(sync.get('issues', []))}"
     )
+    for issue in sync.get("issues", []):
+        print(f"  ⚠ contract: {issue.get('contract_path')} / {issue.get('code')}")
     for item in actionable:
-        claim = item.get("claim") or {}
         print(
             "  ↪ "
-            f"{claim.get('action')}: {item.get('case_id')} / {claim.get('claim_id')} "
+            f"{item.get('time_state')}: {item.get('episode_id')} / {item.get('claim_id')} / {item.get('stage_id')} "
             "→ enumerate_and_acquire_frozen_result_sources"
         )
-    return inbox
+    return {"sync": sync, "inbox": inbox}
 
 
 def _load_tracking_comparison(output_dir: str) -> dict[str, Any]:

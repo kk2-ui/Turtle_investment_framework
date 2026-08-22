@@ -228,6 +228,133 @@ def _expand_manifest(manifest: dict[str, Any]) -> list[dict[str, Any]]:
     return expanded
 
 
+def _live_forward_validation(contract: dict[str, Any]) -> dict[str, Any]:
+    """Reuse the frozen outcome-contract validator; do not re-specify it here."""
+    try:
+        from scripts.outcome_acquisition import validate_live_forward_outcome_contract
+    except ModuleNotFoundError:
+        from outcome_acquisition import validate_live_forward_outcome_contract
+    return validate_live_forward_outcome_contract(contract)
+
+
+def _frozen_locator_path(locator: Any, *, contract_path: Path) -> Path:
+    """Resolve a structured ``file:line`` locator emitted by the forward freeze."""
+    if not isinstance(locator, str) or not locator.strip():
+        raise ControlPlaneError("forward_freeze_locator_missing", "each signal must retain frozen_locator")
+    candidate = locator.strip()
+    path_text, separator, tail = candidate.rpartition(":")
+    if not separator or not tail.isdigit():
+        path_text = candidate
+    path = Path(path_text).expanduser()
+    if not path.is_absolute():
+        path = contract_path.parent / path
+    if not path.is_file():
+        raise ControlPlaneError("forward_freeze_artifact_missing", f"frozen_locator does not resolve to a file: {locator}")
+    return path.resolve()
+
+
+def frozen_artifact_for_live_forward_contract(contract: dict[str, Any], *, contract_path: Path) -> Path:
+    """Derive the sole freeze artifact from explicit signal locators, never Markdown prose."""
+    pair = contract.get("mechanism_signal_pair") if isinstance(contract.get("mechanism_signal_pair"), dict) else {}
+    signals = pair.get("signals") if isinstance(pair.get("signals"), list) else []
+    locations = {
+        _frozen_locator_path(signal.get("frozen_locator"), contract_path=contract_path)
+        for signal in signals if isinstance(signal, dict)
+    }
+    if len(locations) != 1:
+        raise ControlPlaneError(
+            "forward_freeze_artifact_ambiguous",
+            "a live forward contract must have exactly one explicit frozen artifact across its signals",
+        )
+    return locations.pop()
+
+
+def live_forward_registration_manifest(
+    contract: dict[str, Any], *, contract_path: Path, frozen_artifact_ref: str | Path | None = None,
+) -> dict[str, Any]:
+    """Project a reviewed forward outcome contract into independent clock entries.
+
+    The projection is deliberately mechanical: it only schedules the outcome
+    contracts already frozen in ``calibration_ledger``.  It adds neither a
+    forecast, a mechanism verdict, nor a selection conclusion.
+    """
+    validation = _live_forward_validation(contract)
+    if validation.get("state") != "REVIEWABLE":
+        findings = list(validation.get("invalid_findings") or []) + list(validation.get("incomplete_findings") or [])
+        raise ControlPlaneError("live_forward_contract_not_reviewable", "; ".join(findings) or "contract is not reviewable")
+    identity = contract.get("research_identity") if isinstance(contract.get("research_identity"), dict) else {}
+    episode_id = _required_text({"episode_id": contract.get("case_id")}, "episode_id")
+    company_id = _required_text({"company_id": identity.get("company_cluster_id")}, "company_id")
+    frozen_at = _required_text({"frozen_at": contract.get("simulation_cutoff")}, "frozen_at")
+    freeze_path = Path(frozen_artifact_ref).expanduser().resolve() if frozen_artifact_ref else frozen_artifact_for_live_forward_contract(contract, contract_path=contract_path)
+    _require_artifact(str(freeze_path), field="frozen_artifact_ref")
+    signal_stages = {
+        str(signal.get("claim_id") or ""): str(signal.get("stage") or "")
+        for signal in ((contract.get("mechanism_signal_pair") or {}).get("signals") or [])
+        if isinstance(signal, dict)
+    }
+    claims = ((contract.get("calibration_ledger") or {}).get("claims") or [])
+    feedback_items: list[dict[str, Any]] = []
+    contract_ref = str(contract_path.resolve())
+    for index, claim in enumerate(claims):
+        if not isinstance(claim, dict):
+            continue
+        outcome = claim.get("observable_outcome") if isinstance(claim.get("observable_outcome"), dict) else {}
+        window = outcome.get("observation_window") if isinstance(outcome.get("observation_window"), dict) else {}
+        opens = _parse_time(window.get("opens_after"), field=f"claim[{index}].opens_after")
+        closes = _parse_time(window.get("closes_at"), field=f"claim[{index}].closes_at")
+        claim_id = _required_text(claim, "claim_id")
+        stage_id = str(claim.get("operating_clock") or signal_stages.get(claim_id) or "OPERATING_OUTCOME")
+        feedback_items.append({
+            "claim_id": claim_id,
+            "stage_id": stage_id,
+            "source_kind": ",".join(str(value) for value in outcome.get("allowed_source_types") or []),
+            "source_ref": f"{contract_ref}#/calibration_ledger/claims/{index}/observable_outcome",
+            "eligible_at": _iso(opens + timedelta(seconds=1)),
+            "overdue_at": _iso(closes),
+            "settlement_version_policy": outcome.get("settlement_version_policy"),
+            "frozen_artifact_ref": str(freeze_path),
+            "source_contract_ref": contract_ref,
+            "measurement_contract_ref": f"{contract_ref}#/calibration_ledger/claims/{index}/observable_outcome/metric_reconstruction_contract",
+        })
+    return {
+        "schema_version": REGISTRATION_SCHEMA_VERSION,
+        "episode_id": episode_id,
+        "company_id": company_id,
+        "frozen_at": frozen_at,
+        "feedback_items": feedback_items,
+    }
+
+
+def register_live_forward_contract(
+    conn: sqlite3.Connection, *, contract_path: str | Path, frozen_artifact_ref: str | Path | None = None,
+    registered_at: str | None = None,
+) -> dict[str, Any]:
+    path = Path(contract_path).expanduser().resolve()
+    manifest = live_forward_registration_manifest(
+        _read_json(path), contract_path=path, frozen_artifact_ref=frozen_artifact_ref,
+    )
+    return register_manifest(conn, manifest, registered_at=registered_at)
+
+
+def sync_live_forward_contracts(
+    conn: sqlite3.Connection, *, contract_root: str | Path, registered_at: str | None = None,
+) -> dict[str, Any]:
+    """Register every reviewed contract once; retain bad contracts as visible issues."""
+    root = Path(contract_root).expanduser()
+    if not root.is_dir():
+        raise ControlPlaneError("live_forward_contract_root_missing", f"contract root is missing: {root}")
+    registered: list[dict[str, Any]] = []
+    issues: list[dict[str, str]] = []
+    for path in sorted(root.rglob("08_outcome_acquisition_contract.json")):
+        try:
+            result = register_live_forward_contract(conn, contract_path=path, registered_at=registered_at)
+            registered.append({"contract_path": str(path), "result": result})
+        except ControlPlaneError as exc:
+            issues.append({"contract_path": str(path), "code": exc.code, "detail": exc.detail})
+    return {"schema_version": SCHEMA_VERSION, "registered": registered, "issues": issues}
+
+
 def register_manifest(conn: sqlite3.Connection, manifest: dict[str, Any], *, registered_at: str | None = None) -> dict[str, Any]:
     if manifest.get("schema_version") != REGISTRATION_SCHEMA_VERSION:
         raise ControlPlaneError("registration_schema_invalid", f"expected schema_version {REGISTRATION_SCHEMA_VERSION}")
@@ -668,6 +795,33 @@ def _command_register(args: argparse.Namespace) -> dict[str, Any]:
         conn.close()
 
 
+def _command_register_live_forward(args: argparse.Namespace) -> dict[str, Any]:
+    conn = connect(args.db)
+    try:
+        initialize(conn)
+        return register_live_forward_contract(
+            conn,
+            contract_path=args.contract,
+            frozen_artifact_ref=args.frozen_artifact,
+            registered_at=args.registered_at,
+        )
+    finally:
+        conn.close()
+
+
+def _command_sync_live_forward(args: argparse.Namespace) -> dict[str, Any]:
+    conn = connect(args.db)
+    try:
+        initialize(conn)
+        return sync_live_forward_contracts(
+            conn,
+            contract_root=args.contract_root,
+            registered_at=args.registered_at,
+        )
+    finally:
+        conn.close()
+
+
 def _command_reconcile(args: argparse.Namespace) -> dict[str, Any]:
     conn = connect(args.db)
     try:
@@ -706,6 +860,17 @@ def _parser() -> argparse.ArgumentParser:
     register.add_argument("--experiment-dir", required=True)
     register.add_argument("--registered-at")
     register.set_defaults(handler=_command_register)
+    live = sub.add_parser("register-live-forward-contract", help="project one reviewed forward contract into the feedback inbox")
+    live.add_argument("--db", required=True)
+    live.add_argument("--contract", required=True)
+    live.add_argument("--frozen-artifact")
+    live.add_argument("--registered-at")
+    live.set_defaults(handler=_command_register_live_forward)
+    sync = sub.add_parser("sync-live-forward-contracts", help="register all reviewed forward contracts below an experiments root")
+    sync.add_argument("--db", required=True)
+    sync.add_argument("--contract-root", required=True)
+    sync.add_argument("--registered-at")
+    sync.set_defaults(handler=_command_sync_live_forward)
     reconcile_cmd = sub.add_parser("reconcile", help="derive the feedback inbox without writing events")
     reconcile_cmd.add_argument("--db", required=True)
     reconcile_cmd.add_argument("--as-of", required=True)

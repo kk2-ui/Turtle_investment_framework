@@ -3,12 +3,14 @@ from __future__ import annotations
 import argparse
 import importlib.util
 import json
+import shutil
 from pathlib import Path
 
 import pytest
 
 
 MODULE_PATH = Path(__file__).resolve().parents[1] / "scripts" / "judgment_feedback_control.py"
+REPO_ROOT = MODULE_PATH.parents[1]
 SPEC = importlib.util.spec_from_file_location("judgment_feedback_control", MODULE_PATH)
 assert SPEC and SPEC.loader
 jfc = importlib.util.module_from_spec(SPEC)
@@ -248,3 +250,59 @@ def test_register_experiment_requires_explicit_contract_and_resolves_local_artif
     conn = jfc.connect(tmp_path / "stock_analysis.db")
     claim = jfc.show(conn, "FBI:R-TEST-01:FJ:DEMAND:S1_DECISION")["claim"]
     assert claim["frozen_artifact_ref"] == str((experiment / "thesis_test.json").resolve())
+
+
+def test_projects_a_real_forward_contract_into_separate_due_clocks(tmp_path: Path) -> None:
+    experiment = REPO_ROOT / "docs" / "development" / "research" / "experiments" / "R-05_prospective_operating_feedback"
+    contract = experiment / "08_outcome_acquisition_contract.json"
+    conn = _conn(tmp_path)
+    result = jfc.register_live_forward_contract(
+        conn,
+        contract_path=contract,
+        registered_at="2026-08-22T12:00:00+08:00",
+    )
+    assert len(result["registered"]) == 2
+    first = "FBI:R-05:SBUX:NA_TRANSACTION_DURABILITY:20260821:R05-S1:EARLY_MECHANISM"
+    second = "FBI:R-05:SBUX:NA_TRANSACTION_DURABILITY:20260821:R05-S2:CONTINUATION_SIGNAL"
+    waiting = jfc.reconcile(conn, as_of="2027-01-01T00:00:00-08:00")
+    states = {item["feedback_item_id"]: item["time_state"] for item in waiting["items"]}
+    assert states[first] == "WAITING"
+    assert states[second] == "WAITING"
+    due = jfc.reconcile(conn, as_of="2027-01-01T00:00:01-08:00")
+    states = {item["feedback_item_id"]: item["time_state"] for item in due["items"]}
+    assert states[first] == "DUE"
+    assert states[second] == "WAITING"
+    assert jfc.show(conn, first)["claim"]["measurement_contract_ref"].endswith("/metric_reconstruction_contract")
+
+
+def test_sync_keeps_a_bad_forward_contract_visible(tmp_path: Path) -> None:
+    root = tmp_path / "experiments"
+    bad = root / "R-BAD"
+    bad.mkdir(parents=True)
+    (bad / "08_outcome_acquisition_contract.json").write_text("{}\n", encoding="utf-8")
+    conn = _conn(tmp_path)
+    synced = jfc.sync_live_forward_contracts(conn, contract_root=root)
+    assert synced["registered"] == []
+    assert synced["issues"][0]["code"] == "live_forward_contract_not_reviewable"
+
+
+def test_cjo_entry_surfaces_the_persistent_control_plane_inbox(tmp_path: Path) -> None:
+    source = REPO_ROOT / "docs" / "development" / "research" / "experiments" / "R-05_prospective_operating_feedback"
+    target = tmp_path / "docs" / "development" / "research" / "experiments" / source.name
+    target.mkdir(parents=True)
+    for name in ("06_forward_freeze.md", "08_outcome_acquisition_contract.json"):
+        shutil.copy2(source / name, target / name)
+    run_path = REPO_ROOT / "scripts" / "turtle_agent" / "run.py"
+    run_spec = importlib.util.spec_from_file_location("turtle_agent_run_control_test", run_path)
+    assert run_spec and run_spec.loader
+    run = importlib.util.module_from_spec(run_spec)
+    run_spec.loader.exec_module(run)
+    previous_root = run._FRAMEWORK_DIR
+    run._FRAMEWORK_DIR = str(tmp_path)
+    try:
+        surfaced = run._surface_live_forward_due_inbox()
+    finally:
+        run._FRAMEWORK_DIR = previous_root
+    assert not surfaced["sync"]["issues"]
+    assert len(surfaced["inbox"]["items"]) == 2
+    assert (tmp_path / "stock_analysis.db").is_file()
