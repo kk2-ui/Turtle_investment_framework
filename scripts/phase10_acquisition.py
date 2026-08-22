@@ -106,6 +106,7 @@ CNINFO_STATIC_HOST = "static.cninfo.com.cn"
 # Requesting more can make it repeat the first page, which invalidates a
 # bounded announcement inventory rather than merely making acquisition slower.
 CNINFO_MAX_PAGE_SIZE = 30
+CNINFO_QUERY_TABS = frozenset({"fulltext", "relation"})
 
 POST_CUTOFF_CLAIM_TITLE_TERMS: dict[str, tuple[str, ...]] = {
     "HBTCLM:600340:P10B:ORDINARY_CASH": (
@@ -1631,13 +1632,17 @@ def _validate_cninfo_page(
 
 def fetch_cninfo_announcement_records(
     *, company_code: str, org_id: str, begin_date: str, end_date: str,
-    page_size: int = 30, request: Callable[[dict[str, str]], dict[str, Any]] | None = None,
+    page_size: int = 30, tab_name: str = "fulltext",
+    request: Callable[[dict[str, str]], dict[str, Any]] | None = None,
 ) -> dict[str, Any]:
-    """Fetch every page of one bounded official CNINFO announcement query.
+    """Fetch every page of one bounded official CNINFO disclosure query.
 
-    This only captures dated statutory metadata.  A later source package still
-    selects and downloads attachments from this frozen inventory; it does not
-    infer company facts from titles or from the current page display.
+    ``fulltext`` is the ordinary announcement inventory.  ``relation`` is
+    CNINFO's separately enumerated investor-relations activity-record
+    inventory; those records are official issuer disclosures rather than a
+    current-page proxy.  A later source package still selects and downloads
+    attachments from the frozen inventory; this function never infers company
+    facts from titles or page presentation.
     """
     start = _cninfo_date(begin_date, field="begin_date")
     end = _cninfo_date(end_date, field="end_date")
@@ -1646,6 +1651,10 @@ def fetch_cninfo_announcement_records(
         raise ValueError("begin_date must not be after end_date")
     if not organization:
         raise ValueError("org_id is required")
+    tab = str(tab_name or "").strip()
+    if tab not in CNINFO_QUERY_TABS:
+        allowed = ", ".join(sorted(CNINFO_QUERY_TABS))
+        raise ValueError(f"tab_name must be one of: {allowed}")
     if type(page_size) is not int or page_size <= 0:
         raise ValueError("page_size must be a positive integer")
     if page_size > CNINFO_MAX_PAGE_SIZE:
@@ -1658,7 +1667,7 @@ def fetch_cninfo_announcement_records(
     while expected_total is None or len(records) < expected_total:
         params = {
             "stock": f"{company_code},{organization}",
-            "tabName": "fulltext",
+            "tabName": tab,
             "pageSize": str(page_size),
             "pageNum": str(page_no),
             "column": "szse",
@@ -1707,6 +1716,7 @@ def fetch_cninfo_announcement_records(
         "endpoint": CNINFO_ANNOUNCEMENT_QUERY_URL,
         "company_code": company_code,
         "org_id": organization,
+        "tab_name": tab,
         "begin_date": start.isoformat(),
         "end_date": end.isoformat(),
         "requested_page_size": page_size,
@@ -1718,7 +1728,8 @@ def fetch_cninfo_announcement_records(
 
 def fetch_cninfo_manifest(
     *, company_code: str, org_id: str, begin_date: str, cutoff_at: str,
-    page_size: int = 30, request: Callable[[dict[str, str]], dict[str, Any]] | None = None,
+    page_size: int = 30, tab_name: str = "fulltext",
+    request: Callable[[dict[str, str]], dict[str, Any]] | None = None,
 ) -> dict[str, Any]:
     """Create a reviewable CNINFO manifest only after all bounded pages verify."""
     cutoff = _timestamp(cutoff_at)
@@ -1730,6 +1741,7 @@ def fetch_cninfo_manifest(
         begin_date=begin_date,
         end_date=cutoff.date().isoformat(),
         page_size=page_size,
+        tab_name=tab_name,
         request=request,
     )
     manifest = enumerate_cninfo_announcements(
@@ -1738,12 +1750,17 @@ def fetch_cninfo_manifest(
         period_start=acquisition["begin_date"],
         cutoff_at=cutoff_at,
     )
-    manifest["acquisition_status"] = "CNINFO_FULL_ENUMERATION_DATE_FILTER_VERIFIED"
+    is_relation = acquisition["tab_name"] == "relation"
+    if is_relation:
+        manifest["inventory_kind"] = "CNINFO_RELATION_ACTIVITY_FULL_EXPORT"
+        manifest["acquisition_status"] = "CNINFO_RELATION_FULL_ENUMERATION_DATE_FILTER_VERIFIED"
+    else:
+        manifest["acquisition_status"] = "CNINFO_FULL_ENUMERATION_DATE_FILTER_VERIFIED"
     manifest["cninfo_query"] = {
         key: acquisition[key]
         for key in (
             "provider", "endpoint", "company_code", "org_id", "begin_date", "end_date",
-            "requested_page_size", "page_count", "record_count",
+            "tab_name", "requested_page_size", "page_count", "record_count",
         )
     }
     return manifest
@@ -2761,6 +2778,7 @@ def main() -> int:
     parser.add_argument("--page-size", type=int, default=CNINFO_MAX_PAGE_SIZE)
     parser.add_argument("--company-code", default="600340")
     parser.add_argument("--org-id")
+    parser.add_argument("--cninfo-tab", choices=sorted(CNINFO_QUERY_TABS), default="fulltext")
     parser.add_argument("--begin-date")
     parser.add_argument("--end-date")
     parser.add_argument("--cutoff-at")
@@ -2787,6 +2805,7 @@ def main() -> int:
             begin_date=args.begin_date,
             cutoff_at=args.cutoff_at,
             page_size=args.page_size,
+            tab_name=args.cninfo_tab,
         )
     elif args.command == "enumerate-web":
         if args.input is None or not args.cutoff_at:

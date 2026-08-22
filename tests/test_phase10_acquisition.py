@@ -714,6 +714,7 @@ def test_cninfo_fetch_paginates_complete_official_metadata_and_builds_manifest()
     assert all(item["seDate"] == "2025-01-01~2026-08-02" for item in requested)
     assert all(item["sortName"] == "announcementTime" for item in requested)
     assert all(item["sortType"] == "desc" for item in requested)
+    assert all(item["tabName"] == "fulltext" for item in requested)
 
     manifest = fetch_cninfo_manifest(
         company_code="000651", org_id="gssz0000651", begin_date="2025-01-01",
@@ -722,6 +723,51 @@ def test_cninfo_fetch_paginates_complete_official_metadata_and_builds_manifest()
     assert manifest["acquisition_status"] == "CNINFO_FULL_ENUMERATION_DATE_FILTER_VERIFIED"
     assert manifest["cninfo_query"]["record_count"] == 2
     assert validate_source_manifest(manifest)["state"] == "REVIEWABLE"
+
+
+def test_cninfo_relation_fetch_enumerates_investor_activity_records_separately() -> None:
+    rows = [
+        {
+            "secCode": "300625", "orgId": "9900031434", "announcementId": "R1",
+            "announcementTitle": "三雄极光：2026年04月29日投资者关系活动记录表",
+            "announcementTime": "2026-04-29T22:08:00+08:00",
+            "adjunctUrl": "finalpage/2026-04-29/R1.PDF",
+        },
+        {
+            "secCode": "300625", "orgId": "9900031434", "announcementId": "R2",
+            "announcementTitle": "三雄极光：2026年06月12日投资者关系活动记录表",
+            "announcementTime": "2026-06-12T17:00:00+08:00",
+            "adjunctUrl": "finalpage/2026-06-12/R2.PDF",
+        },
+    ]
+    requested: list[dict[str, str]] = []
+
+    def request(params: dict[str, str]) -> dict[str, object]:
+        requested.append(params)
+        index = int(params["pageNum"]) - 1
+        return _cninfo_payload([rows[index]], total=2)
+
+    manifest = fetch_cninfo_manifest(
+        company_code="300625", org_id="9900031434", begin_date="2026-01-01",
+        cutoff_at="2026-08-23T18:00:00+08:00", page_size=1, tab_name="relation", request=request,
+    )
+
+    assert all(item["tabName"] == "relation" for item in requested)
+    assert manifest["inventory_kind"] == "CNINFO_RELATION_ACTIVITY_FULL_EXPORT"
+    assert manifest["acquisition_status"] == "CNINFO_RELATION_FULL_ENUMERATION_DATE_FILTER_VERIFIED"
+    assert manifest["cninfo_query"]["tab_name"] == "relation"
+    assert manifest["admitted_source_ids"] == [
+        "CNINFO:300625:ANN:20260429:R1", "CNINFO:300625:ANN:20260612:R2",
+    ]
+    assert validate_source_manifest(manifest)["state"] == "REVIEWABLE"
+
+
+def test_cninfo_fetch_rejects_unknown_query_tab() -> None:
+    with pytest.raises(ValueError, match="tab_name"):
+        fetch_cninfo_announcement_records(
+            company_code="000651", org_id="gssz0000651", begin_date="2026-01-01", end_date="2026-08-02",
+            tab_name="summary",
+        )
 
 
 def test_cninfo_fetch_accepts_provider_empty_enumeration() -> None:
