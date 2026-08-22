@@ -1,0 +1,17 @@
+{
+  "selection_policy_id": "R63-XUSHENG-AUTO-2020-CAPACITY-SCREEN-V1",
+  "selection_reason": "Screen whether Xusheng's 2020 high-intelligence automated factory investment has a pre-outcome, same-company decision-to-capital-return chain that can distinguish multi-customer qualification and monetisation from an EV/Tesla demand-cycle explanation. Later operating disclosures remain unread during this screen.",
+  "cutoff_at": "2021-03-31T23:59:59+08:00",
+  "source_research_rationales": [
+    {
+      "source_id": "SSE:603305:ANN:20200523:603305_20200523_1",
+      "selection_reason": "Read the statutory decision disclosure for investment scope, implementation entity, committed capital, timing, stated customer or product linkage, and disclosed downside conditions.",
+      "research_question_ids": ["R63-D1-DECISION-IMPLEMENTATION", "R63-D5-CAPITAL-BOUNDARY"]
+    },
+    {
+      "source_id": "SSE:603305:ANN:20210323:603305_20210323_24",
+      "selection_reason": "Read the FY2020 annual report for the pre-outcome customer, product, operating, working-capital and capital baseline needed to determine whether a same-company D2-D5 settlement contract is possible.",
+      "research_question_ids": ["R63-D1", "R63-D2", "R63-D3", "R63-D4", "R63-D5", "R63-ADMISSION"]
+    }
+  ]
+}
