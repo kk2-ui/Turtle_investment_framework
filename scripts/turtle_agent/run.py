@@ -290,10 +290,14 @@ def _surface_live_forward_due_inbox() -> dict[str, Any]:
     the project database rather than a one-off scan that an Agent can forget.
     """
     try:
-        from scripts.judgment_feedback_control import connect, initialize, reconcile, sync_live_forward_contracts
+        from scripts.judgment_feedback_control import (
+            ControlPlaneError, connect, execute_due_claim, initialize, reconcile, sync_live_forward_contracts,
+        )
         from scripts.config import get_db_path
     except ModuleNotFoundError:
-        from judgment_feedback_control import connect, initialize, reconcile, sync_live_forward_contracts
+        from judgment_feedback_control import (
+            ControlPlaneError, connect, execute_due_claim, initialize, reconcile, sync_live_forward_contracts,
+        )
         from config import get_db_path
     contract_root = Path(_FRAMEWORK_DIR) / "docs" / "development" / "research" / "experiments"
     as_of = datetime.now().astimezone().replace(microsecond=0).isoformat()
@@ -306,10 +310,35 @@ def _surface_live_forward_due_inbox() -> dict[str, Any]:
         print(f"[Judgment feedback inbox] BLOCKED: configured database is missing: {db_path}")
         return result
     conn = connect(db_path)
+    executions: list[dict[str, Any]] = []
     try:
         initialize(conn)
         sync = sync_live_forward_contracts(conn, contract_root=contract_root, registered_at=as_of)
         inbox = reconcile(conn, as_of=as_of)
+        due_ids = {
+            str(item.get("feedback_item_id") or "")
+            for item in inbox.get("items") or []
+            if item.get("time_state") in {"DUE", "OVERDUE"}
+        }
+        # A CJO run may execute only an explicit, locally prepared outcome
+        # request.  Absent that file it remains an inbox task; the agent never
+        # manufactures an issuer query, source inventory or extraction from a
+        # report it was not asked to read.
+        for request_path in sorted(contract_root.rglob("09_outcome_execution.json")):
+            request = _load_json_file(str(request_path))
+            feedback_item_id = str(request.get("feedback_item_id") or "")
+            if feedback_item_id not in due_ids:
+                continue
+            try:
+                result = execute_due_claim(conn, execution_request_ref=request_path, actor_id="turtle_agent_due_runner")
+                executions.append({"request_ref": str(request_path), "feedback_item_id": feedback_item_id, "result": result})
+            except ControlPlaneError as exc:
+                executions.append({
+                    "request_ref": str(request_path), "feedback_item_id": feedback_item_id,
+                    "status": "BLOCKED", "code": exc.code, "detail": exc.detail,
+                })
+        if executions:
+            inbox = reconcile(conn, as_of=as_of)
     finally:
         conn.close()
     sync_rows = [
@@ -321,7 +350,7 @@ def _surface_live_forward_due_inbox() -> dict[str, Any]:
     print(
         "[Judgment feedback inbox] "
         f"new={sum(1 for row in sync_rows if row.get('registered'))}, tracked={len(sync_rows)}, "
-        f"actionable={len(actionable)}, contract_issues={len(sync.get('issues', []))}"
+        f"actionable={len(actionable)}, executed={len(executions)}, contract_issues={len(sync.get('issues', []))}"
     )
     for issue in sync.get("issues", []):
         print(f"  ⚠ contract: {issue.get('contract_path')} / {issue.get('code')}")
@@ -329,9 +358,14 @@ def _surface_live_forward_due_inbox() -> dict[str, Any]:
         print(
             "  ↪ "
             f"{item.get('time_state')}: {item.get('episode_id')} / {item.get('claim_id')} / {item.get('stage_id')} "
-            "→ run_outcome_acquisition with a bounded frozen outcome-source manifest"
+            "→ add an explicit 09_outcome_execution.json, or execute-due with a bounded frozen outcome-source manifest"
         )
-    return {"sync": sync, "inbox": inbox}
+    for execution in executions:
+        print(
+            "  ↪ execution: "
+            f"{execution.get('feedback_item_id')} → {execution.get('result', {}).get('status') or execution.get('status')}"
+        )
+    return {"sync": sync, "inbox": inbox, "executions": executions}
 
 
 def _load_tracking_comparison(output_dir: str) -> dict[str, Any]:

@@ -223,6 +223,7 @@ READ_ATTESTED
 OUTCOME_EXTRACTED
 CLAIM_SETTLED
 MEASUREMENT_MISMATCH
+OPERATING_OUTCOME_RECORDED
 OUTCOME_EXPOSURE_BREACH
 DIAGNOSIS_ACCEPTED
 LEARNING_NOTE_READY
@@ -438,12 +439,24 @@ register_from_thesis_test(output_dir)
 register_from_experiment(experiment_dir)
 run_outcome_acquisition(feedback_item_id)
 record_reader_attestation(feedback_item_id, artifact_ref)
+record_outcome_extraction(feedback_item_id, artifact_ref)
 run_signal_settlement(feedback_item_id)
 run_judgment_feedback(feedback_item_id)
 record_learning_note(feedback_item_id, artifact_ref)
 record_learning_application(feedback_item_id, target_episode_ref)
 run_method_evaluation(batch_ref)
 ```
+
+`execute_due_claim(execution_request)` 将上述结果链编排为一个窄入口。它只读取
+实验目录中显式提供的 `09_outcome_execution.json`：`feedback_item_id`、
+`settlement_as_of`、冻结后的有界 outcome inventory、package/event 输出根，以及
+可用时的 extraction 与 exposure attestation。缺 inventory 时不开始采集；缺
+extraction 时只能推进到 `READ_ATTESTED / P2`；缺 exposure attestation 时不能
+结算 A/B 信号。非方向性决策、现金和资本时钟以真实 extraction 生成
+`OPERATING_OUTCOME_RECORDED / NOT_DIAGNOSTIC`，不能被遗忘也不能生成选择胜负。
+
+CJO 入口只会扫描并运行**已明确落入 due inbox**的这种 request；没有该文件时
+保留 P1 任务。因此“到期”不等于“自动读取公告”，更不等于“已结算”。
 
 适配器必须遵守：
 
@@ -615,4 +628,3 @@ schemas/judgment_learning_application.schema.json
 - <https://docs.temporal.io/workflow-execution/timers-delays>
 - <https://docs.camunda.io/docs/components/modeler/bpmn/user-tasks/>
 - <https://mlflow.org/docs/latest/ml/tracking/>
-
