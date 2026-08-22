@@ -461,6 +461,15 @@ def test_missing_lower_artifact_cannot_advance_a_due_claim(tmp_path: Path) -> No
         })
 
 
+def test_generic_cli_cannot_forge_an_outcome_pipeline_event(tmp_path: Path) -> None:
+    conn, item, _ = _registered(tmp_path)
+    conn.close()
+    event_path = tmp_path / "forged_outcome_event.json"
+    event_path.write_text(json.dumps(_event(item, "ACQUISITION_STARTED", "2026-04-01T00:00:00+08:00", key="forged")), encoding="utf-8")
+    with pytest.raises(jfc.ControlPlaneError, match="lower-module adapter"):
+        jfc._command_append(argparse.Namespace(db=str(tmp_path / "stock_analysis.db"), input=str(event_path), recorded_at=None))
+
+
 def test_real_lower_acquisition_failure_stays_blocked_at_p1(tmp_path: Path) -> None:
     contract = REPO_ROOT / "docs" / "development" / "research" / "experiments" / "R-05_prospective_operating_feedback" / "08_outcome_acquisition_contract.json"
     conn = _conn(tmp_path)

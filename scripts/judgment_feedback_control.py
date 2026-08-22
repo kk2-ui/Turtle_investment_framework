@@ -1470,10 +1470,17 @@ def _command_reconcile(args: argparse.Namespace) -> dict[str, Any]:
 
 
 def _command_append(args: argparse.Namespace) -> dict[str, Any]:
+    event = _read_json(Path(args.input))
+    event_type = str(event.get("event_type") or "").upper()
+    if event_type in OUTCOME_PIPELINE_EVENTS | OUTCOME_EVENTS | {"OUTCOME_EXPOSURE_BREACH"}:
+        raise ControlPlaneError(
+            "outcome_event_adapter_only",
+            "outcome pipeline events must be emitted by their lower-module adapter, not append-event",
+        )
     conn = connect(args.db)
     try:
         initialize(conn)
-        return append_event(conn, _read_json(Path(args.input)), recorded_at=args.recorded_at)
+        return append_event(conn, event, recorded_at=args.recorded_at)
     finally:
         conn.close()
 
@@ -1519,7 +1526,7 @@ def _parser() -> argparse.ArgumentParser:
     inbox.add_argument("--as-of", required=True)
     inbox.add_argument("--due-soon-days", type=int, default=7)
     inbox.set_defaults(handler=_command_reconcile)
-    append = sub.add_parser("append-event", help="append one validated control event")
+    append = sub.add_parser("append-event", help="append a reviewed non-outcome control event")
     append.add_argument("--db", required=True)
     append.add_argument("--input", required=True)
     append.add_argument("--recorded-at")

@@ -66,6 +66,9 @@ R05/R06、`outcome_acquisition.py`、`live_forward_signal_settlement.py` 与
 机械结算或 learning receipt 后追加；采集失败则显式留在 `BLOCKED/P1`。不能再用
 `artifact:fixture` 或事件名称伪造推进。
 
+`append-event` 只保留给已审阅的诊断、learning application 与关闭事件；采集、
+读取、提取、曝光和结算事件必须经相应下层模块适配器写入。
+
 这不等于已经验证了真实中国企业选择判断：R54 是 `NO_PRIMARY` 的机制探针，
 只能完成机制结算，不能进入选择准确性、方法学习或跨案例复制。只有未来具备
 `SELECTION_ADMITTED`、非共同方向性证据、公平基线及同口径结果合同的中国
