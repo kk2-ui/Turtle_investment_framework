@@ -23,6 +23,7 @@ from typing import Any, Iterable
 
 SCHEMA_VERSION = "judgment-feedback-control.v1"
 REGISTRATION_SCHEMA_VERSION = "judgment-feedback-control-registration.v1"
+OPERATING_OUTCOME_RECORD_SCHEMA_VERSION = "judgment-feedback-operating-outcome-record.v1"
 TIME_STATES = {"WAITING", "DUE", "OVERDUE", "CLOSED"}
 EVIDENCE_STATES = {"EMPTY", "ACQUIRING", "BLOCKED", "PACKAGE_READY", "READ_ATTESTED", "EXTRACTED"}
 SETTLEMENT_STATES = {"UNSETTLED", "A_ONLY", "B_ONLY", "MIXED", "NOT_DIAGNOSTIC", "MEASUREMENT_MISMATCH"}
@@ -40,6 +41,7 @@ EVENT_TYPES = {
     "OUTCOME_EXTRACTED",
     "CLAIM_SETTLED",
     "MEASUREMENT_MISMATCH",
+    "OPERATING_OUTCOME_RECORDED",
     "OUTCOME_EXPOSURE_BREACH",
     "DIAGNOSIS_ACCEPTED",
     "LEARNING_NOTE_READY",
@@ -49,10 +51,12 @@ EVENT_TYPES = {
 }
 EPISTEMIC_FAILURE_LOCI = {"STATE", "DECISION", "MEASUREMENT", "MECHANISM", "TRANSMISSION", "ENVIRONMENT"}
 DELIVERY_ROOT_CAUSES = {"DATA_COVERAGE", "ACQUISITION_MODULE", "REASONING", "MODEL", "WRITING"}
-OUTCOME_EVENTS = {"CLAIM_SETTLED", "MEASUREMENT_MISMATCH"}
+OPERATING_OUTCOME_RECORDED = "OPERATING_OUTCOME_RECORDED"
+OUTCOME_EVENTS = {"CLAIM_SETTLED", "MEASUREMENT_MISMATCH", OPERATING_OUTCOME_RECORDED}
 OUTCOME_PIPELINE_EVENTS = {
     "ACQUISITION_STARTED", "ACQUISITION_BLOCKED", "OUTCOME_PACKAGE_READY", "READ_ATTESTED", "OUTCOME_EXTRACTED",
 }
+ADAPTER_ONLY_EVENTS = OUTCOME_PIPELINE_EVENTS | OUTCOME_EVENTS
 
 
 class ControlPlaneError(ValueError):
@@ -128,6 +132,47 @@ def connect(db_path: str | Path) -> sqlite3.Connection:
     return conn
 
 
+def _identity_from_frozen_contract(reference: str) -> tuple[str, str, str] | None:
+    """Recover a legacy row's learning identity from the already-frozen contract."""
+    path = _reference_path(reference)
+    if not path.is_file():
+        return None
+    try:
+        contract = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return None
+    pair = contract.get("mechanism_signal_pair") if isinstance(contract, dict) else None
+    if not isinstance(pair, dict):
+        return None
+    selection_status = str(pair.get("selection_status") or "").upper()
+    if selection_status not in SELECTION_STATUSES:
+        return None
+    if selection_status == "SELECTION_ADMITTED":
+        return ("JUDGMENT_SELECTION_EPISODE", selection_status, "SELECTION_METHOD_ELIGIBLE")
+    return ("MECHANISM_SIGNAL_PROBE", "NO_PRIMARY", "MECHANISM_SETTLEMENT_ONLY")
+
+
+def _backfill_legacy_claim_identity(conn: sqlite3.Connection) -> None:
+    """Replace only schema-default identities with their frozen-contract identity."""
+    rows = conn.execute(
+        """SELECT feedback_item_id, source_contract_ref
+           FROM judgment_feedback_claims
+           WHERE episode_class = 'PIPELINE_REHEARSAL'
+             AND selection_status = 'NO_PRIMARY'
+             AND learning_eligibility = 'MECHANISM_SETTLEMENT_ONLY'"""
+    ).fetchall()
+    for row in rows:
+        identity = _identity_from_frozen_contract(str(row["source_contract_ref"]))
+        if identity is None:
+            continue
+        conn.execute(
+            """UPDATE judgment_feedback_claims
+               SET episode_class = ?, selection_status = ?, learning_eligibility = ?
+               WHERE feedback_item_id = ?""",
+            (*identity, row["feedback_item_id"]),
+        )
+
+
 def initialize(conn: sqlite3.Connection) -> None:
     conn.executescript(
         """
@@ -183,6 +228,7 @@ def initialize(conn: sqlite3.Connection) -> None:
     ):
         if name not in existing_columns:
             conn.execute(f"ALTER TABLE judgment_feedback_claims ADD COLUMN {name} {definition}")
+    _backfill_legacy_claim_identity(conn)
     conn.commit()
 
 
@@ -434,6 +480,22 @@ def register_manifest(conn: sqlite3.Connection, manifest: dict[str, Any], *, reg
                 comparable = {column: existing[column] for column in columns if column != "registered_at"}
                 intended = {column: row[column] for column in columns if column != "registered_at"}
                 if comparable != intended:
+                    identity_columns = {"episode_class", "selection_status", "learning_eligibility"}
+                    immutable_existing = {key: value for key, value in comparable.items() if key not in identity_columns}
+                    immutable_intended = {key: value for key, value in intended.items() if key not in identity_columns}
+                    existing_identity = tuple(comparable[key] for key in ("episode_class", "selection_status", "learning_eligibility"))
+                    intended_identity = tuple(intended[key] for key in ("episode_class", "selection_status", "learning_eligibility"))
+                    frozen_identity = _identity_from_frozen_contract(str(existing["source_contract_ref"]))
+                    legacy_default = ("PIPELINE_REHEARSAL", "NO_PRIMARY", "MECHANISM_SETTLEMENT_ONLY")
+                    if immutable_existing == immutable_intended and existing_identity == legacy_default and frozen_identity == intended_identity:
+                        conn.execute(
+                            """UPDATE judgment_feedback_claims
+                               SET episode_class = ?, selection_status = ?, learning_eligibility = ?
+                               WHERE feedback_item_id = ?""",
+                            (*intended_identity, row["feedback_item_id"]),
+                        )
+                        results.append({"feedback_item_id": row["feedback_item_id"], "registered": False, "idempotent": True, "legacy_identity_upgraded": True})
+                        continue
                     raise ControlPlaneError("claim_registration_conflict", f"immutable claim differs: {row['feedback_item_id']}")
                 results.append({"feedback_item_id": row["feedback_item_id"], "registered": False, "idempotent": True})
                 continue
@@ -582,7 +644,10 @@ def _validate_transition(conn: sqlite3.Connection, claim: dict[str, Any], events
         raise ControlPlaneError("claim_registered_via_manifest_only", "CLAIM_REGISTERED is created only by register-experiment")
     if effective_at < _parse_time(claim["frozen_at"], field="frozen_at"):
         raise ControlPlaneError("event_before_freeze", f"{event_type} cannot predate the frozen claim")
-    if event_type in {"ACQUISITION_STARTED", "ACQUISITION_BLOCKED", "OUTCOME_PACKAGE_READY", "READ_ATTESTED", "OUTCOME_EXTRACTED", "CLAIM_SETTLED", "MEASUREMENT_MISMATCH"} and effective_at < eligible_at:
+    if event_type in {
+        "ACQUISITION_STARTED", "ACQUISITION_BLOCKED", "OUTCOME_PACKAGE_READY", "READ_ATTESTED",
+        "OUTCOME_EXTRACTED", "CLAIM_SETTLED", "MEASUREMENT_MISMATCH", OPERATING_OUTCOME_RECORDED,
+    } and effective_at < eligible_at:
         raise ControlPlaneError("outcome_before_eligible", f"{event_type} cannot be recorded before eligible_at")
     if _event_exists(events, "CLOSED"):
         raise ControlPlaneError("claim_closed", "closed feedback items do not accept new events")
@@ -617,6 +682,10 @@ def _validate_transition(conn: sqlite3.Connection, claim: dict[str, Any], events
             verdict = _required_text(payload, "settlement_verdict").upper()
             if verdict not in SETTLEMENT_STATES - {"UNSETTLED", "MEASUREMENT_MISMATCH"}:
                 raise ControlPlaneError("settlement_verdict_invalid", f"unsupported settlement_verdict: {verdict}")
+        if event_type == OPERATING_OUTCOME_RECORDED:
+            _require_artifact(_required_text(payload, "operating_outcome_ref"), field="operating_outcome_ref")
+            if _required_text(payload, "operating_outcome_status").upper() not in {"OBSERVED", "NOT_DIAGNOSTIC"}:
+                raise ControlPlaneError("operating_outcome_status_invalid", "operating outcome must be OBSERVED or NOT_DIAGNOSTIC")
     if event_type == "DIAGNOSIS_ACCEPTED":
         settlement = _last_effective_no_later_than(events, OUTCOME_EVENTS, effective_at)
         if not settlement:
@@ -666,10 +735,18 @@ def _validate_transition(conn: sqlite3.Connection, claim: dict[str, Any], events
                WHERE event.event_id = ?""",
             (target_event_id,),
         ).fetchone()
-        if not target or target["event_type"] not in OUTCOME_EVENTS:
+        if not target or target["event_type"] != "CLAIM_SETTLED":
             raise ControlPlaneError("replication_settlement_unknown", "replication_settlement_event_id must resolve to a real settled target claim")
+        target_payload = _loads(target["payload_json"])
+        if str(target_payload.get("settlement_verdict") or "").upper() not in {"A_ONLY", "B_ONLY", "MIXED"}:
+            raise ControlPlaneError("replication_target_not_diagnostic", "replication target must have a diagnostic settled verdict")
         if target["learning_eligibility"] != "SELECTION_METHOD_ELIGIBLE":
             raise ControlPlaneError("replication_target_not_selection_eligible", "replication target must be a selection-eligible episode")
+        if (
+            target["episode_id"] != application["payload"].get("target_episode_id")
+            or target["company_id"] != application["payload"].get("target_company_id")
+        ):
+            raise ControlPlaneError("replication_target_application_mismatch", "replication settlement must belong to the learning application's intended target")
         if target["episode_id"] == claim["episode_id"] or target["company_id"] == claim["company_id"]:
             raise ControlPlaneError("replication_target_not_independent", "replication target must be from a different company and episode")
         if _parse_time(target["effective_at"], field="replication_target.effective_at") <= _parse_time(application["effective_at"], field="learning_application.effective_at"):
@@ -686,9 +763,17 @@ def _validate_transition(conn: sqlite3.Connection, claim: dict[str, Any], events
         _required_text(payload, "closure_reason")
 
 
-def append_event(conn: sqlite3.Connection, event: dict[str, Any], *, recorded_at: str | None = None) -> dict[str, Any]:
+def _append_event(
+    conn: sqlite3.Connection, event: dict[str, Any], *, recorded_at: str | None = None,
+    allow_adapter_events: bool = False,
+) -> dict[str, Any]:
     feedback_item_id = _required_text(event, "feedback_item_id")
     event_type = _required_text(event, "event_type").upper()
+    if event_type in ADAPTER_ONLY_EVENTS and not allow_adapter_events:
+        raise ControlPlaneError(
+            "outcome_event_requires_lower_adapter",
+            f"{event_type} must be emitted by its lower-module adapter, not append_event()",
+        )
     effective_at = _iso(_parse_time(event.get("effective_at"), field="effective_at"))
     actor_role = _required_text(event, "actor_role")
     actor_id = _required_text(event, "actor_id")
@@ -749,6 +834,16 @@ def append_event(conn: sqlite3.Connection, event: dict[str, Any], *, recorded_at
     return {"schema_version": SCHEMA_VERSION, "event_id": event_id, "idempotent": False}
 
 
+def append_event(conn: sqlite3.Connection, event: dict[str, Any], *, recorded_at: str | None = None) -> dict[str, Any]:
+    """Append non-outcome control events through the public API.
+
+    Outcome acquisition, reading, extraction and settlement records need their
+    corresponding lower-module receipt.  Those transitions are deliberately
+    unavailable to callers that merely have a file path and an event name.
+    """
+    return _append_event(conn, event, recorded_at=recorded_at)
+
+
 def _derived_states(claim: dict[str, Any], events: list[dict[str, Any]], *, as_of: datetime | None = None) -> dict[str, str]:
     as_of = as_of or datetime.now(timezone.utc)
     # A later official release opens a distinct versioned chain.  Never let
@@ -788,6 +883,8 @@ def _derived_states(claim: dict[str, Any], events: list[dict[str, Any]], *, as_o
         settlement_state = "UNSETTLED"
     elif settlement["event_type"] == "MEASUREMENT_MISMATCH":
         settlement_state = "MEASUREMENT_MISMATCH"
+    elif settlement["event_type"] == OPERATING_OUTCOME_RECORDED:
+        settlement_state = "NOT_DIAGNOSTIC"
     else:
         settlement_state = str(settlement["payload"].get("settlement_verdict") or "UNSETTLED").upper()
     latest_diagnosis = next(
@@ -935,6 +1032,14 @@ def _next_settlement_version(claim: dict[str, Any], events: list[dict[str, Any]]
     return len(_settlement_events(events)) + 1
 
 
+def _next_acquisition_attempt(events: list[dict[str, Any]], version: int) -> int:
+    return 1 + sum(
+        1 for event in events
+        if event["event_type"] == "ACQUISITION_STARTED"
+        and event["payload"].get("settlement_version", 1) == version
+    )
+
+
 def _adapter_output_path(event_root: str | Path, feedback_item_id: str, version: int, name: str) -> Path:
     safe_id = feedback_item_id.replace(":", "_")
     return Path(event_root).expanduser().resolve() / "feedback_control" / safe_id / f"v{version}" / name
@@ -970,7 +1075,10 @@ def _append_adapter_event(
     conn: sqlite3.Connection, *, feedback_item_id: str, event_type: str, effective_at: str,
     actor_id: str, idempotency_key: str, artifact_refs: list[str], payload: dict[str, Any],
 ) -> dict[str, Any]:
-    return append_event(conn, {
+    _validate_adapter_event_receipt(
+        conn, feedback_item_id=feedback_item_id, event_type=event_type, artifact_refs=artifact_refs, payload=payload,
+    )
+    return _append_event(conn, {
         "feedback_item_id": feedback_item_id,
         "event_type": event_type,
         "effective_at": effective_at,
@@ -979,7 +1087,149 @@ def _append_adapter_event(
         "idempotency_key": idempotency_key,
         "artifact_refs": artifact_refs,
         "payload": payload,
-    })
+    }, allow_adapter_events=True)
+
+
+def _adapter_path(payload: dict[str, Any], field: str) -> Path:
+    value = _required_text(payload, field)
+    path = _reference_path(value).resolve()
+    _require_artifact(str(path), field=field)
+    return path
+
+
+def _validate_adapter_event_receipt(
+    conn: sqlite3.Connection, *, feedback_item_id: str, event_type: str,
+    artifact_refs: list[str], payload: dict[str, Any],
+) -> None:
+    """Require a lower-module receipt at the control-plane transition boundary.
+
+    The CLI restriction is only ergonomics.  This validation sits behind both
+    the CLI and the Python adapters so a generic event with an unrelated file
+    cannot be mistaken for acquisition, reading, extraction or settlement.
+    """
+    if event_type not in ADAPTER_ONLY_EVENTS:
+        return
+    claim = _claim(conn, feedback_item_id)
+    _, contract = _event_contract(claim)
+    version = _settlement_version(claim, {"payload": payload})
+    refs = {str(_reference_path(reference).resolve()) for reference in artifact_refs}
+
+    if event_type == "ACQUISITION_STARTED":
+        manifest_path = _adapter_path(payload, "outcome_manifest_ref")
+        if str(manifest_path) not in refs:
+            raise ControlPlaneError("adapter_receipt_missing", "ACQUISITION_STARTED must retain its bounded outcome manifest")
+        _read_json(manifest_path)
+        return
+
+    if event_type == "ACQUISITION_BLOCKED":
+        receipt_path = _adapter_path(payload, "package_manifest_ref")
+        if str(receipt_path) not in refs:
+            raise ControlPlaneError("adapter_receipt_missing", "ACQUISITION_BLOCKED must retain its acquisition receipt")
+        receipt = _read_json(receipt_path)
+        if receipt.get("settlement_version") not in (None, version):
+            raise ControlPlaneError("adapter_receipt_version_mismatch", "blocked acquisition receipt belongs to another settlement version")
+        return
+
+    try:
+        from scripts.outcome_acquisition import read_outcome_package, validate_outcome_extraction, validate_outcome_package
+    except ModuleNotFoundError:
+        from outcome_acquisition import read_outcome_package, validate_outcome_extraction, validate_outcome_package
+
+    if event_type == "OUTCOME_PACKAGE_READY":
+        manifest_path = _adapter_path(payload, "package_manifest_ref")
+        package_root = _required_text(payload, "package_root")
+        validation = validate_outcome_package(
+            _read_json(manifest_path), package_root, case=contract,
+            settlement_as_of=str(payload.get("settlement_as_of") or ""),
+        )
+        if validation.get("state") != "REVIEWABLE":
+            raise ControlPlaneError("adapter_package_not_reviewable", "OUTCOME_PACKAGE_READY requires a reviewable lower acquisition receipt")
+        if str(manifest_path) not in refs:
+            raise ControlPlaneError("adapter_receipt_missing", "OUTCOME_PACKAGE_READY must retain its package manifest")
+        return
+
+    if event_type == "READ_ATTESTED":
+        manifest_path = _adapter_path(payload, "package_manifest_ref")
+        attestation_path = _adapter_path(payload, "read_attestation_ref")
+        package_root = _required_text(payload, "package_root")
+        expected = read_outcome_package(
+            _read_json(manifest_path), package_root, case=contract,
+            settlement_as_of=str(payload.get("settlement_as_of") or ""),
+        )
+        if _read_json(attestation_path) != expected or expected.get("state") != "REVIEWABLE":
+            raise ControlPlaneError("adapter_read_attestation_invalid", "READ_ATTESTED receipt is not the bound lower reader audit")
+        if {str(manifest_path), str(attestation_path)} - refs:
+            raise ControlPlaneError("adapter_receipt_missing", "READ_ATTESTED must retain package and reader receipts")
+        return
+
+    if event_type == "OUTCOME_EXTRACTED":
+        manifest_path = _adapter_path(payload, "package_manifest_ref")
+        attestation_path = _adapter_path(payload, "read_attestation_ref")
+        extraction_path = _adapter_path(payload, "extraction_ref")
+        package_root = _required_text(payload, "package_root")
+        validation = validate_outcome_extraction(
+            _read_json(extraction_path), manifest=_read_json(manifest_path), package_root=package_root,
+            read_attestation=_read_json(attestation_path), case=contract,
+            settlement_as_of=str(payload.get("settlement_as_of") or ""),
+        )
+        if validation.get("state") != "REVIEWABLE":
+            raise ControlPlaneError("adapter_extraction_not_reviewable", "OUTCOME_EXTRACTED requires a reviewable bound extraction")
+        if {str(manifest_path), str(attestation_path), str(extraction_path)} - refs:
+            raise ControlPlaneError("adapter_receipt_missing", "OUTCOME_EXTRACTED must retain package, reader and extraction receipts")
+        return
+
+    if event_type == OPERATING_OUTCOME_RECORDED:
+        record_path = _adapter_path(payload, "operating_outcome_ref")
+        record = _read_json(record_path)
+        expected = {
+            "schema_version": OPERATING_OUTCOME_RECORD_SCHEMA_VERSION,
+            "case_id": contract.get("case_id"),
+            "freeze_id": (contract.get("report_freeze") or {}).get("freeze_id"),
+            "feedback_item_id": feedback_item_id,
+            "claim_id": claim["claim_id"],
+            "settlement_version": version,
+            "settlement_as_of": payload.get("settlement_as_of"),
+        }
+        if any(record.get(field) != value for field, value in expected.items()):
+            raise ControlPlaneError("adapter_operating_outcome_identity_mismatch", "operating outcome receipt is not bound to this claim/version")
+        if record.get("status") != payload.get("operating_outcome_status"):
+            raise ControlPlaneError("adapter_operating_outcome_status_mismatch", "operating outcome status must equal its receipt")
+        manifest_path = _adapter_path(record, "package_manifest_ref")
+        read_path = _adapter_path(record, "read_attestation_ref")
+        extraction_path = _adapter_path(record, "extraction_ref")
+        package_root = _required_text(record, "package_root")
+        validation = validate_outcome_extraction(
+            _read_json(extraction_path), manifest=_read_json(manifest_path), package_root=package_root,
+            read_attestation=_read_json(read_path), case=contract,
+            settlement_as_of=str(record.get("settlement_as_of") or ""),
+        )
+        if validation.get("state") != "REVIEWABLE":
+            raise ControlPlaneError("adapter_operating_outcome_extraction_invalid", "operating outcome must retain a reviewable bound extraction")
+        if {str(record_path), str(manifest_path), str(read_path), str(extraction_path)} - refs:
+            raise ControlPlaneError("adapter_receipt_missing", "operating outcome must retain its package, reader, extraction and derived receipts")
+        return
+
+    if event_type in {"CLAIM_SETTLED", "MEASUREMENT_MISMATCH"}:
+        settlement_path = _adapter_path(payload, "settlement_ref")
+        settlement = _read_json(settlement_path)
+        if settlement.get("schema_version") != "turtle-live-forward-signal-settlement.v1" or settlement.get("state") != "REVIEWABLE":
+            raise ControlPlaneError("adapter_settlement_invalid", "settlement event requires a reviewable mechanical signal settlement")
+        if settlement.get("case_id") != contract.get("case_id") or settlement.get("freeze_id") != (contract.get("report_freeze") or {}).get("freeze_id"):
+            raise ControlPlaneError("adapter_settlement_identity_mismatch", "settlement receipt belongs to another frozen case")
+        current = next(
+            (item for item in settlement.get("claim_settlements") or [] if isinstance(item, dict) and item.get("claim_id") == claim["claim_id"]),
+            None,
+        )
+        if not current:
+            raise ControlPlaneError("adapter_settlement_claim_missing", "settlement receipt does not contain this frozen claim")
+        if event_type == "CLAIM_SETTLED" and payload.get("settlement_verdict") != current.get("signal_verdict"):
+            raise ControlPlaneError("adapter_settlement_verdict_mismatch", "control verdict must equal the mechanical signal verdict")
+        if event_type == "MEASUREMENT_MISMATCH" and not (
+            current.get("status") == "NOT_CALCULABLE" and current.get("resolution") == "MEASUREMENT_MISMATCH"
+        ):
+            raise ControlPlaneError("adapter_measurement_mismatch_invalid", "measurement mismatch must be derived by the lower settlement")
+        if str(settlement_path) not in refs:
+            raise ControlPlaneError("adapter_receipt_missing", "settlement event must retain its mechanical settlement receipt")
 
 
 def run_outcome_acquisition(
@@ -1001,6 +1251,7 @@ def run_outcome_acquisition(
     claim = _claim(conn, feedback_item_id)
     events = _events(conn, feedback_item_id)
     version = _next_settlement_version(claim, events)
+    attempt = _next_acquisition_attempt(events, version)
     manifest_path = _reference_path(str(outcome_manifest_ref)).resolve()
     _require_artifact(str(manifest_path), field="outcome_manifest_ref")
     _, contract = _event_contract(claim)
@@ -1013,20 +1264,25 @@ def run_outcome_acquisition(
             "settlement_version": version, "package_manifest_ref": ready["payload"].get("package_manifest_ref"),
         }
     previous_block = _last_for_version(events, {"ACQUISITION_BLOCKED"}, version)
-    start_payload = {"settlement_version": version, "outcome_manifest_ref": str(manifest_path), "package_root": str(Path(package_root).resolve())}
+    start_payload = {
+        "settlement_version": version, "acquisition_attempt": attempt,
+        "outcome_manifest_ref": str(manifest_path), "package_root": str(Path(package_root).resolve()),
+    }
     if previous_block:
         start_payload["retry_of_event_id"] = previous_block["event_id"]
     _append_adapter_event(
         conn, feedback_item_id=feedback_item_id, event_type="ACQUISITION_STARTED", effective_at=settled_as_of,
         actor_id=actor_id,
         idempotency_key=(
-            f"ACQUISITION_STARTED:{feedback_item_id}:v{version}:{manifest_path}"
+            f"ACQUISITION_STARTED:{feedback_item_id}:v{version}:a{attempt}:{manifest_path}"
             + (f":retry:{previous_block['event_id']}" if previous_block else "")
         ),
         artifact_refs=[str(manifest_path)],
         payload=start_payload,
     )
-    receipt_path = _adapter_output_path(event_root, feedback_item_id, version, "01_outcome_package_manifest.json")
+    receipt_path = _adapter_output_path(
+        event_root, feedback_item_id, version, f"attempt-{attempt:02d}/01_outcome_package_manifest.json",
+    )
     try:
         acquired = acquire_outcome_package(_read_json(manifest_path), package_root, downloader=downloader)
         validation = validate_outcome_package(acquired, package_root, case=contract, settlement_as_of=bound_settlement_as_of)
@@ -1045,13 +1301,17 @@ def run_outcome_acquisition(
         failure = {
             "schema_version": "judgment-feedback-acquisition-receipt.v1", "state": "BLOCKED",
             "error_type": type(exc).__name__, "detail": str(exc), "settlement_version": version,
+            "acquisition_attempt": attempt,
         }
         _write_adapter_json(receipt_path, failure)
         _append_adapter_event(
             conn, feedback_item_id=feedback_item_id, event_type="ACQUISITION_BLOCKED", effective_at=settled_as_of,
             actor_id=actor_id, idempotency_key=f"ACQUISITION_BLOCKED:{feedback_item_id}:v{version}:{manifest_path}",
             artifact_refs=[str(manifest_path), str(receipt_path)],
-            payload={"settlement_version": version, "package_manifest_ref": str(receipt_path), "root_cause": "ACQUISITION_MODULE"},
+            payload={
+                "settlement_version": version, "acquisition_attempt": attempt,
+                "package_manifest_ref": str(receipt_path), "root_cause": "ACQUISITION_MODULE",
+            },
         )
         return {"schema_version": SCHEMA_VERSION, "status": "BLOCKED", "feedback_item_id": feedback_item_id, "receipt_ref": str(receipt_path)}
     if validation["state"] != "REVIEWABLE":
@@ -1060,7 +1320,8 @@ def run_outcome_acquisition(
             actor_id=actor_id, idempotency_key=f"ACQUISITION_BLOCKED:{feedback_item_id}:v{version}:{manifest_path}",
             artifact_refs=[str(manifest_path), str(receipt_path)],
             payload={
-                "settlement_version": version, "package_manifest_ref": str(receipt_path), "root_cause": "ACQUISITION_MODULE",
+                "settlement_version": version, "acquisition_attempt": attempt,
+                "package_manifest_ref": str(receipt_path), "root_cause": "ACQUISITION_MODULE",
                 "invalid_findings": validation.get("invalid_findings") or [],
                 "incomplete_findings": validation.get("incomplete_findings") or [],
             },
@@ -1070,7 +1331,11 @@ def run_outcome_acquisition(
         conn, feedback_item_id=feedback_item_id, event_type="OUTCOME_PACKAGE_READY", effective_at=settled_as_of,
         actor_id=actor_id, idempotency_key=f"OUTCOME_PACKAGE_READY:{feedback_item_id}:v{version}",
         artifact_refs=[str(manifest_path), str(receipt_path)],
-        payload={"settlement_version": version, "package_manifest_ref": str(receipt_path), "package_root": str(Path(package_root).resolve())},
+        payload={
+            "settlement_version": version, "acquisition_attempt": attempt,
+            "package_manifest_ref": str(receipt_path), "package_root": str(Path(package_root).resolve()),
+            "settlement_as_of": bound_settlement_as_of,
+        },
     )
     return {
         "schema_version": SCHEMA_VERSION, "status": "PACKAGE_READY", "feedback_item_id": feedback_item_id,
@@ -1104,7 +1369,11 @@ def record_reader_attestation(
         conn, feedback_item_id=feedback_item_id, event_type="READ_ATTESTED", effective_at=settled_as_of,
         actor_id=actor_id, idempotency_key=f"READ_ATTESTED:{feedback_item_id}:v{version}",
         artifact_refs=[str(manifest_path), str(audit_path)],
-        payload={"settlement_version": version, "package_manifest_ref": str(manifest_path), "read_attestation_ref": str(audit_path)},
+        payload={
+            "settlement_version": version, "package_manifest_ref": str(manifest_path),
+            "package_root": str(Path(package_root).resolve()), "read_attestation_ref": str(audit_path),
+            "settlement_as_of": bound_settlement_as_of,
+        },
     )
     return {"schema_version": SCHEMA_VERSION, "status": "READ_ATTESTED", "read_attestation_ref": str(audit_path), "event": event_result}
 
@@ -1149,10 +1418,99 @@ def record_outcome_extraction(
         artifact_refs=[str(manifest_path), str(attestation_path), str(extraction_path)],
         payload={
             "settlement_version": version, "package_manifest_ref": str(manifest_path),
-            "read_attestation_ref": str(attestation_path), "extraction_ref": str(extraction_path),
+            "package_root": str(Path(package_root).resolve()), "read_attestation_ref": str(attestation_path),
+            "extraction_ref": str(extraction_path), "settlement_as_of": bound_settlement_as_of,
         },
     )
     return {"schema_version": SCHEMA_VERSION, "status": "EXTRACTED", "event": event_result}
+
+
+def record_operating_outcome(
+    conn: sqlite3.Connection, *, feedback_item_id: str, package_manifest_ref: str | Path, package_root: str | Path,
+    read_attestation_ref: str | Path, extraction_ref: str | Path, settlement_as_of: str, event_root: str | Path,
+    actor_id: str = "judgment_feedback_control",
+) -> dict[str, Any]:
+    """Close a non-directional operating clock without inventing an A/B verdict.
+
+    Decision implementation, cash and capital-boundary clocks are still real
+    evidence.  They must complete their package→read→extraction chain, but
+    they are not smuggled into selection learning merely because they lack a
+    rival-pair threshold.
+    """
+    try:
+        from scripts.outcome_acquisition import validate_outcome_extraction
+    except ModuleNotFoundError:
+        from outcome_acquisition import validate_outcome_extraction
+    claim = _claim(conn, feedback_item_id)
+    events = _events(conn, feedback_item_id)
+    version = _next_settlement_version(claim, events)
+    manifest_path = _reference_path(str(package_manifest_ref)).resolve()
+    read_path = _reference_path(str(read_attestation_ref)).resolve()
+    extraction_path = _reference_path(str(extraction_ref)).resolve()
+    for field, path in (
+        ("package_manifest_ref", manifest_path), ("read_attestation_ref", read_path), ("extraction_ref", extraction_path),
+    ):
+        _require_artifact(str(path), field=field)
+    _, contract = _event_contract(claim)
+    signal_claim_ids = {
+        str(signal.get("claim_id") or "")
+        for signal in ((contract.get("mechanism_signal_pair") or {}).get("signals") or [])
+        if isinstance(signal, dict)
+    }
+    if claim["claim_id"] in signal_claim_ids:
+        raise ControlPlaneError("operating_outcome_is_signal_claim", "directional signal claims must use run_signal_settlement")
+    bound_settlement_as_of = _required_text({"settlement_as_of": settlement_as_of}, "settlement_as_of")
+    settled_as_of = _iso(_parse_time(bound_settlement_as_of, field="settlement_as_of"))
+    manifest, read, extraction = _read_json(manifest_path), _read_json(read_path), _read_json(extraction_path)
+    validation = validate_outcome_extraction(
+        extraction, manifest=manifest, package_root=package_root, read_attestation=read,
+        case=contract, settlement_as_of=bound_settlement_as_of,
+    )
+    if validation.get("state") != "REVIEWABLE":
+        raise ControlPlaneError(
+            "operating_outcome_extraction_not_reviewable",
+            "; ".join(validation.get("invalid_findings") or validation.get("incomplete_findings") or ["extraction failed"]),
+        )
+    observation = next(
+        (item for item in extraction.get("observations") or [] if isinstance(item, dict) and item.get("claim_id") == claim["claim_id"]),
+        None,
+    )
+    resolution = next(
+        (item for item in extraction.get("non_diagnostic_resolutions") or [] if isinstance(item, dict) and item.get("claim_id") == claim["claim_id"]),
+        None,
+    )
+    if observation is not None and resolution is not None:
+        raise ControlPlaneError("operating_outcome_ambiguous", "one operating claim cannot have both observation and non-diagnostic resolution")
+    if observation is None and resolution is None:
+        raise ControlPlaneError("operating_outcome_claim_missing", "bound extraction does not contain this operating claim")
+    status = "OBSERVED" if observation is not None else "NOT_DIAGNOSTIC"
+    record = {
+        "schema_version": OPERATING_OUTCOME_RECORD_SCHEMA_VERSION,
+        "case_id": contract.get("case_id"), "freeze_id": (contract.get("report_freeze") or {}).get("freeze_id"),
+        "feedback_item_id": feedback_item_id, "claim_id": claim["claim_id"],
+        "settlement_version": version, "settlement_as_of": bound_settlement_as_of,
+        "status": status,
+        "observation_id": observation.get("observation_id") if observation else None,
+        "resolution": resolution.get("resolution") if resolution else None,
+        "package_manifest_ref": str(manifest_path), "package_root": str(Path(package_root).resolve()),
+        "read_attestation_ref": str(read_path),
+        "extraction_ref": str(extraction_path),
+    }
+    record_path = _adapter_output_path(event_root, feedback_item_id, version, "04_operating_outcome_record.json")
+    _write_adapter_json(record_path, record)
+    event_result = _append_adapter_event(
+        conn, feedback_item_id=feedback_item_id, event_type=OPERATING_OUTCOME_RECORDED, effective_at=settled_as_of,
+        actor_id=actor_id, idempotency_key=f"OPERATING_OUTCOME_RECORDED:{feedback_item_id}:v{version}",
+        artifact_refs=[str(manifest_path), str(read_path), str(extraction_path), str(record_path)],
+        payload={
+            "settlement_version": version, "operating_outcome_ref": str(record_path),
+            "operating_outcome_status": status, "settlement_as_of": bound_settlement_as_of,
+        },
+    )
+    return {
+        "schema_version": SCHEMA_VERSION, "status": "OPERATING_OUTCOME_RECORDED",
+        "operating_outcome_ref": str(record_path), "event": event_result,
+    }
 
 
 def run_judgment_feedback(
@@ -1181,7 +1539,8 @@ def run_signal_settlement(
     """Call mechanical settlement and feedback before appending a claim verdict.
 
     A control event is therefore evidence of completed lower work, not a
-    human-entered label.  Non-signal claims remain extracted rather than being
+    human-entered label.  Non-signal claims complete through the same bounded
+    extraction chain, but are recorded as operating observations rather than
     invented into an A/B verdict.
     """
     try:
@@ -1189,6 +1548,18 @@ def run_signal_settlement(
     except ModuleNotFoundError:
         from live_forward_signal_settlement import event_output_paths, settle_live_forward_signals
     claim = _claim(conn, feedback_item_id)
+    _, dispatch_contract = _event_contract(claim)
+    signal_claim_ids = {
+        str(signal.get("claim_id") or "")
+        for signal in ((dispatch_contract.get("mechanism_signal_pair") or {}).get("signals") or [])
+        if isinstance(signal, dict)
+    }
+    if claim["claim_id"] not in signal_claim_ids:
+        return record_operating_outcome(
+            conn, feedback_item_id=feedback_item_id, package_manifest_ref=package_manifest_ref, package_root=package_root,
+            read_attestation_ref=read_attestation_ref, extraction_ref=extraction_ref,
+            settlement_as_of=settlement_as_of, event_root=event_root, actor_id=actor_id,
+        )
     events = _events(conn, feedback_item_id)
     version = _next_settlement_version(claim, events)
     manifest_path = _reference_path(str(package_manifest_ref)).resolve()
