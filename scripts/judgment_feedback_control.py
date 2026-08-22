@@ -24,6 +24,7 @@ from typing import Any, Iterable
 SCHEMA_VERSION = "judgment-feedback-control.v1"
 REGISTRATION_SCHEMA_VERSION = "judgment-feedback-control-registration.v1"
 OPERATING_OUTCOME_RECORD_SCHEMA_VERSION = "judgment-feedback-operating-outcome-record.v1"
+DUE_EXECUTION_SCHEMA_VERSION = "judgment-feedback-due-execution.v1"
 TIME_STATES = {"WAITING", "DUE", "OVERDUE", "CLOSED"}
 EVIDENCE_STATES = {"EMPTY", "ACQUIRING", "BLOCKED", "PACKAGE_READY", "READ_ATTESTED", "EXTRACTED"}
 SETTLEMENT_STATES = {"UNSETTLED", "A_ONLY", "B_ONLY", "MIXED", "NOT_DIAGNOSTIC", "MEASUREMENT_MISMATCH"}
@@ -1513,6 +1514,111 @@ def record_operating_outcome(
     }
 
 
+def _execution_path(request: dict[str, Any], *, request_path: Path, field: str, require_file: bool) -> Path:
+    """Resolve a declared execution input relative to its explicit request."""
+    raw = _required_text(request, field)
+    path = Path(raw).expanduser()
+    if not path.is_absolute():
+        path = request_path.parent / path
+    path = path.resolve()
+    if require_file:
+        _require_artifact(str(path), field=field)
+    return path
+
+
+def execute_due_claim(
+    conn: sqlite3.Connection, *, execution_request_ref: str | Path, actor_id: str = "judgment_feedback_control",
+    downloader: Any = None,
+) -> dict[str, Any]:
+    """Run one due claim through real adapters, using only declared inputs.
+
+    The request holds no verdict and no inferred source query.  It merely
+    binds a frozen due item to an already-prepared bounded outcome inventory,
+    a destination for raw/reader receipts, and (when available) the manually
+    extracted observation and exposure attestation.  Therefore repeated CJO
+    runs can advance real work without turning a printed inbox line into an
+    ungrounded settlement.
+    """
+    request_path = _reference_path(str(execution_request_ref)).resolve()
+    request = _read_json(request_path)
+    if request.get("schema_version") != DUE_EXECUTION_SCHEMA_VERSION:
+        raise ControlPlaneError("due_execution_schema_invalid", f"expected {DUE_EXECUTION_SCHEMA_VERSION}")
+    feedback_item_id = _required_text(request, "feedback_item_id")
+    settlement_as_of = _required_text(request, "settlement_as_of")
+    claim = _claim(conn, feedback_item_id)
+    if _parse_time(settlement_as_of, field="settlement_as_of") < _parse_time(claim["eligible_at"], field="eligible_at"):
+        raise ControlPlaneError("due_execution_before_eligible", "due execution cannot precede the frozen eligible_at")
+    state = show(conn, feedback_item_id, as_of=settlement_as_of)["states"]
+    if claim["settlement_version_policy"] == "INITIAL_DISCLOSURE" and state["settlement_state"] != "UNSETTLED":
+        return {
+            "schema_version": SCHEMA_VERSION, "status": "SETTLEMENT_ALREADY_RECORDED",
+            "feedback_item_id": feedback_item_id, "states": state,
+        }
+
+    manifest_path = _execution_path(request, request_path=request_path, field="outcome_manifest_ref", require_file=True)
+    package_root = _execution_path(request, request_path=request_path, field="package_root", require_file=False)
+    event_root = _execution_path(request, request_path=request_path, field="event_root", require_file=False)
+    acquisition = run_outcome_acquisition(
+        conn, feedback_item_id=feedback_item_id, outcome_manifest_ref=manifest_path, package_root=package_root,
+        event_root=event_root, settlement_as_of=settlement_as_of, actor_id=actor_id, downloader=downloader,
+    )
+    if acquisition["status"] == "BLOCKED":
+        return {"schema_version": SCHEMA_VERSION, "status": "BLOCKED", "feedback_item_id": feedback_item_id, "acquisition": acquisition}
+    package_manifest_ref = acquisition.get("package_manifest_ref")
+    if not isinstance(package_manifest_ref, str) or not package_manifest_ref:
+        raise ControlPlaneError("due_execution_package_receipt_missing", "successful acquisition did not return a package receipt")
+    reader = record_reader_attestation(
+        conn, feedback_item_id=feedback_item_id, package_manifest_ref=package_manifest_ref, package_root=package_root,
+        event_root=event_root, settlement_as_of=settlement_as_of, actor_id=actor_id,
+    )
+    if not isinstance(request.get("extraction_ref"), str) or not str(request.get("extraction_ref") or "").strip():
+        return {
+            "schema_version": SCHEMA_VERSION, "status": "EXTRACTION_INPUT_REQUIRED", "feedback_item_id": feedback_item_id,
+            "acquisition": acquisition, "reader": reader,
+            "remediation": "read the bounded package and provide a source-bound outcome extraction before settlement",
+        }
+    extraction_path = _execution_path(request, request_path=request_path, field="extraction_ref", require_file=True)
+    extraction = record_outcome_extraction(
+        conn, feedback_item_id=feedback_item_id, package_manifest_ref=package_manifest_ref, package_root=package_root,
+        read_attestation_ref=reader["read_attestation_ref"], extraction_ref=extraction_path,
+        settlement_as_of=settlement_as_of, actor_id=actor_id,
+    )
+    _, contract = _event_contract(claim)
+    signal_claim_ids = {
+        str(signal.get("claim_id") or "")
+        for signal in ((contract.get("mechanism_signal_pair") or {}).get("signals") or [])
+        if isinstance(signal, dict)
+    }
+    if claim["claim_id"] not in signal_claim_ids:
+        completed = record_operating_outcome(
+            conn, feedback_item_id=feedback_item_id, package_manifest_ref=package_manifest_ref, package_root=package_root,
+            read_attestation_ref=reader["read_attestation_ref"], extraction_ref=extraction_path,
+            settlement_as_of=settlement_as_of, event_root=event_root, actor_id=actor_id,
+        )
+        return {
+            "schema_version": SCHEMA_VERSION, "status": "OPERATING_OUTCOME_RECORDED", "feedback_item_id": feedback_item_id,
+            "acquisition": acquisition, "reader": reader, "extraction": extraction, "completion": completed,
+        }
+    if not isinstance(request.get("exposure_attestation_ref"), str) or not str(request.get("exposure_attestation_ref") or "").strip():
+        return {
+            "schema_version": SCHEMA_VERSION, "status": "EXPOSURE_ATTESTATION_REQUIRED", "feedback_item_id": feedback_item_id,
+            "acquisition": acquisition, "reader": reader, "extraction": extraction,
+            "remediation": "provide the bounded outcome-exposure attestation before mechanical A/B settlement",
+        }
+    exposure_path = _execution_path(request, request_path=request_path, field="exposure_attestation_ref", require_file=True)
+    settlement_id = str(request.get("settlement_id") or f"{feedback_item_id}:v{_next_settlement_version(claim, _events(conn, feedback_item_id))}")
+    settlement = run_signal_settlement(
+        conn, feedback_item_id=feedback_item_id, package_manifest_ref=package_manifest_ref, package_root=package_root,
+        read_attestation_ref=reader["read_attestation_ref"], exposure_attestation_ref=exposure_path,
+        extraction_ref=extraction_path, settlement_id=settlement_id, settlement_as_of=settlement_as_of,
+        event_root=event_root, actor_id=actor_id,
+    )
+    return {
+        "schema_version": SCHEMA_VERSION, "status": settlement["status"], "feedback_item_id": feedback_item_id,
+        "acquisition": acquisition, "reader": reader, "extraction": extraction, "settlement": settlement,
+    }
+
+
 def run_judgment_feedback(
     *, settlement_ref: str | Path, event_root: str | Path,
 ) -> dict[str, Any]:
@@ -1865,6 +1971,15 @@ def _command_show(args: argparse.Namespace) -> dict[str, Any]:
         conn.close()
 
 
+def _command_execute_due(args: argparse.Namespace) -> dict[str, Any]:
+    conn = connect(args.db)
+    try:
+        initialize(conn)
+        return execute_due_claim(conn, execution_request_ref=args.request, actor_id=args.actor_id)
+    finally:
+        conn.close()
+
+
 def _parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description="Judgment feedback control plane")
     sub = parser.add_subparsers(dest="command", required=True)
@@ -1907,6 +2022,11 @@ def _parser() -> argparse.ArgumentParser:
     show_cmd.add_argument("--feedback-item-id", required=True)
     show_cmd.add_argument("--as-of")
     show_cmd.set_defaults(handler=_command_show)
+    execute = sub.add_parser("execute-due", help="run one declared due claim through its real lower-module adapters")
+    execute.add_argument("--db", required=True)
+    execute.add_argument("--request", required=True)
+    execute.add_argument("--actor-id", default="judgment_feedback_control")
+    execute.set_defaults(handler=_command_execute_due)
     return parser
 
 

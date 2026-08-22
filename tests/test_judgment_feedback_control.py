@@ -440,17 +440,6 @@ def test_real_lower_adapters_move_a_due_mechanism_probe_from_p1_to_settlement(tm
     source_manifest_path = tmp_path / "bounded_inventory.json"
     source_manifest_path.write_text(json.dumps(source_manifest), encoding="utf-8")
     at = "2027-01-15T12:00:00-08:00"
-    acquired = jfc.run_outcome_acquisition(
-        conn, feedback_item_id=item, outcome_manifest_ref=source_manifest_path, package_root=package_root,
-        event_root=event_root, settlement_as_of=at,
-        downloader=lambda _: b"<html><body>Q1 Fiscal Year 2027 North America Change in Transactions 1</body></html>",
-    )
-    assert acquired["status"] == "PACKAGE_READY"
-    read = jfc.record_reader_attestation(
-        conn, feedback_item_id=item, package_manifest_ref=acquired["package_manifest_ref"], package_root=package_root,
-        event_root=event_root, settlement_as_of=at,
-    )
-    assert read["status"] == "READ_ATTESTED"
     outcome = frozen["calibration_ledger"]["claims"][0]["observable_outcome"]
     extraction = {
         "schema_version": "turtle-post-cutoff-outcome-extraction.v1", "outcome_package_id": source_manifest["outcome_package_id"],
@@ -468,11 +457,6 @@ def test_real_lower_adapters_move_a_due_mechanism_probe_from_p1_to_settlement(tm
     }
     extraction_path = tmp_path / "extraction.json"
     extraction_path.write_text(json.dumps(extraction), encoding="utf-8")
-    extracted = jfc.record_outcome_extraction(
-        conn, feedback_item_id=item, package_manifest_ref=acquired["package_manifest_ref"], package_root=package_root,
-        read_attestation_ref=read["read_attestation_ref"], extraction_ref=extraction_path, settlement_as_of=at,
-    )
-    assert extracted["status"] == "EXTRACTED"
     exposure = {
         "schema_version": "turtle-live-forward-exposure-attestation.v1", "case_id": frozen["case_id"],
         "freeze_id": frozen["report_freeze"]["freeze_id"], "settlement_as_of": at,
@@ -480,10 +464,28 @@ def test_real_lower_adapters_move_a_due_mechanism_probe_from_p1_to_settlement(tm
     }
     exposure_path = tmp_path / "exposure.json"
     exposure_path.write_text(json.dumps(exposure), encoding="utf-8")
-    settled = jfc.run_signal_settlement(
-        conn, feedback_item_id=item, package_manifest_ref=acquired["package_manifest_ref"], package_root=package_root,
-        read_attestation_ref=read["read_attestation_ref"], exposure_attestation_ref=exposure_path,
-        extraction_ref=extraction_path, settlement_id="R05-S1-TEST", settlement_as_of=at, event_root=event_root,
+    request_path = tmp_path / "09_outcome_execution.json"
+    request = {
+        "schema_version": jfc.DUE_EXECUTION_SCHEMA_VERSION, "feedback_item_id": item,
+        "settlement_as_of": at, "outcome_manifest_ref": str(source_manifest_path),
+        "package_root": str(package_root), "event_root": str(event_root),
+        "extraction_ref": str(extraction_path), "exposure_attestation_ref": str(exposure_path),
+        "settlement_id": "R05-S1-TEST",
+    }
+    pending_request = dict(request)
+    pending_request.pop("extraction_ref")
+    pending_request.pop("exposure_attestation_ref")
+    request_path.write_text(json.dumps(pending_request), encoding="utf-8")
+    pending = jfc.execute_due_claim(
+        conn, execution_request_ref=request_path,
+        downloader=lambda _: b"<html><body>Q1 Fiscal Year 2027 North America Change in Transactions 1</body></html>",
+    )
+    assert pending["status"] == "EXTRACTION_INPUT_REQUIRED"
+    assert jfc.show(conn, item, as_of=at)["states"]["evidence_state"] == "READ_ATTESTED"
+    request_path.write_text(json.dumps(request), encoding="utf-8")
+    settled = jfc.execute_due_claim(
+        conn, execution_request_ref=request_path,
+        downloader=lambda _: b"<html><body>Q1 Fiscal Year 2027 North America Change in Transactions 1</body></html>",
     )
     assert settled["status"] == "SETTLED"
     state = jfc.show(conn, item, as_of=at)
@@ -745,3 +747,51 @@ def test_cjo_entry_surfaces_the_configured_persistent_control_plane_inbox(tmp_pa
     assert len(surfaced["inbox"]["items"]) == 2
     assert configured_db.is_file()
     assert not (tmp_path / "stock_analysis.db").exists()
+
+
+def test_cjo_entry_dispatches_only_an_explicit_due_execution_request(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    """The CJO entry point executes real adapters only when an input receipt is declared."""
+    import scripts.judgment_feedback_control as control_module
+
+    source = REPO_ROOT / "docs" / "development" / "research" / "experiments" / "R-05_prospective_operating_feedback"
+    target = tmp_path / "docs" / "development" / "research" / "experiments" / source.name
+    target.mkdir(parents=True)
+    for name in ("06_forward_freeze.md", "08_outcome_acquisition_contract.json"):
+        shutil.copy2(source / name, target / name)
+    item = "FBI:R-05:SBUX:NA_TRANSACTION_DURABILITY:20260821:R05-S1:EARLY_MECHANISM"
+    request = target / "09_outcome_execution.json"
+    request.write_text(json.dumps({"schema_version": jfc.DUE_EXECUTION_SCHEMA_VERSION, "feedback_item_id": item}), encoding="utf-8")
+    configured_db = tmp_path / "configured-production.db"
+    bootstrap = jfc.connect(configured_db)
+    jfc.initialize(bootstrap)
+    bootstrap.close()
+    calls: list[Path] = []
+
+    def _fake_execute(conn, *, execution_request_ref, actor_id, downloader=None):
+        calls.append(Path(execution_request_ref))
+        return {"status": "BLOCKED", "reason": "fixture has no real lower inputs"}
+
+    run_path = REPO_ROOT / "scripts" / "turtle_agent" / "run.py"
+    run_spec = importlib.util.spec_from_file_location("turtle_agent_run_execution_test", run_path)
+    assert run_spec and run_spec.loader
+    run = importlib.util.module_from_spec(run_spec)
+    run_spec.loader.exec_module(run)
+    previous_root = run._FRAMEWORK_DIR
+    original_datetime = run.datetime
+
+    class _FutureClock:
+        @classmethod
+        def now(cls):
+            return original_datetime.fromisoformat("2027-01-15T12:00:00-08:00")
+
+    monkeypatch.setenv("TURTLE_DB_PATH", str(configured_db))
+    monkeypatch.setattr(control_module, "execute_due_claim", _fake_execute)
+    run._FRAMEWORK_DIR = str(tmp_path)
+    run.datetime = _FutureClock
+    try:
+        surfaced = run._surface_live_forward_due_inbox()
+    finally:
+        run._FRAMEWORK_DIR = previous_root
+        run.datetime = original_datetime
+    assert calls == [request]
+    assert surfaced["executions"][0]["result"]["status"] == "BLOCKED"
