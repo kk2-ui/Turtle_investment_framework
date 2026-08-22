@@ -2,17 +2,38 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "insight-ledger.v1",
   "type": "object",
-  "required": ["schema_version", "report_id", "archetype", "decisive_question", "question_basis", "insights", "reverse_expectations", "value_realization", "adversarial_review", "memo", "change_reason", "freeze"],
+  "required": ["schema_version", "report_id", "analysis_purpose", "archetype", "decisive_question", "question_basis", "insights", "adversarial_review", "memo", "change_reason", "freeze"],
   "properties": {
     "schema_version": {"const": "insight-ledger.v1"},
+    "analysis_purpose": {"enum": ["INVESTMENT_DECISION", "COMPANY_JUDGMENT_ONLY"]},
     "archetype": {"enum": ["asset_catalyst", "distressed_survival", "franchise_customer_lockin", "technology_transition", "mature_cash_return", "compounder_reinvestment", "regulated_financial", "operating_transition"]},
     "decisive_question": {"type": "string", "minLength": 15},
-    "insights": {"type": "array", "minItems": 1, "maxItems": 3, "items": {"type": "object", "required": ["insight_id", "title", "claim_id", "evidence_ids", "anomaly", "mechanism", "strongest_alternative", "discriminating_observation", "valuation_impact", "action_impact", "falsification", "company_specific_terms", "decision_entry_ids", "chapters"]}},
+    "insights": {"type": "array", "minItems": 1, "maxItems": 3, "items": {"type": "object"}},
     "question_basis": {"type": "object"},
     "reverse_expectations": {"type": "object"},
     "value_realization": {"type": "object"},
     "adversarial_review": {"type": "object"},
     "memo": {"type": "object"},
     "freeze": {"type": "object"}
-  }
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"analysis_purpose": {"const": "INVESTMENT_DECISION"}}},
+      "then": {
+        "required": ["reverse_expectations", "value_realization"],
+        "properties": {
+          "insights": {"items": {"required": ["insight_id", "title", "claim_id", "evidence_ids", "anomaly", "mechanism", "strongest_alternative", "discriminating_observation", "valuation_impact", "action_impact", "falsification", "company_specific_terms", "decision_entry_ids", "chapters"]}}
+        }
+      }
+    },
+    {
+      "if": {"properties": {"analysis_purpose": {"const": "COMPANY_JUDGMENT_ONLY"}}},
+      "then": {
+        "not": {"anyOf": [{"required": ["reverse_expectations"]}, {"required": ["value_realization"]}]},
+        "properties": {
+          "insights": {"items": {"required": ["insight_id", "title", "claim_id", "evidence_ids", "anomaly", "mechanism", "strongest_alternative", "discriminating_observation", "operating_impact", "monitoring_or_forward_judgment", "forward_judgment_ids", "falsification", "company_specific_terms", "chapters"]}}
+        }
+      }
+    }
+  ]
 }

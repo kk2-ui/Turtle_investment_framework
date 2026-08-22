@@ -4,8 +4,8 @@ import json
 
 import pytest
 
-from scripts.phase10_acquisition import enumerate_sse_announcements
-from scripts.phase10_pit_runner import PITRunnerError, PITSourcePackage
+from scripts.phase10_acquisition import build_source_package_selection, enumerate_sse_announcements
+from scripts.phase10_pit_runner import PITRunnerError, PITSourcePackage, main
 
 
 def _manifest(*, package_path: str = "annual/2019.txt") -> dict:
@@ -64,6 +64,57 @@ def test_runner_reads_only_admitted_source_and_framework_and_audits_identity(tmp
     assert audit["forbidden_success_count"] == 0
 
 
+def test_runner_cli_reads_explicit_allowlisted_sources_and_persists_the_audit(tmp_path) -> None:
+    package = tmp_path / "package"
+    (package / "annual").mkdir(parents=True)
+    (package / "annual/2019.txt").write_text("historical report", encoding="utf-8")
+    manifest_path = tmp_path / "manifest.json"
+    manifest_path.write_text(json.dumps(_manifest()), encoding="utf-8")
+    attestation_path = tmp_path / "attestation.json"
+
+    result = main([
+        str(manifest_path), str(package),
+        "--case-id", "HBTCASE:600340",
+        "--experiment-id", "HBT:600340",
+        "--run-id", "pit-read:600340",
+        "--read-source", "SSE:600340:AR2019:ORIGINAL",
+        "--attestation", str(attestation_path),
+    ])
+
+    attestation = json.loads(attestation_path.read_text(encoding="utf-8"))
+    assert result == 0
+    assert attestation["read_count"] == 1
+    assert attestation["read_audit"] == [{
+        "read_ordinal": 1, "allowed": True, "decision": "ALLOW", "kind": "SOURCE",
+        "path": "annual/2019.txt", "cutoff_at": "2020-04-27T18:00:00+08:00",
+        "phase": "FREEZE", "admission_status": "ADMITTED",
+        "source_id": "SSE:600340:AR2019:ORIGINAL", "run_id": "pit-read:600340",
+        "source_version": "annual-report-2019-original", "published_at": "2020-04-25",
+        "data_as_of": "2019-12-31", "representation": "SOURCE_TEXT",
+    }]
+
+
+def test_runner_cli_records_and_fails_an_unallowlisted_read(tmp_path) -> None:
+    package = tmp_path / "package"
+    (package / "annual").mkdir(parents=True)
+    (package / "annual/2019.txt").write_text("historical report", encoding="utf-8")
+    manifest_path = tmp_path / "manifest.json"
+    manifest_path.write_text(json.dumps(_manifest()), encoding="utf-8")
+    attestation_path = tmp_path / "attestation.json"
+
+    result = main([
+        str(manifest_path), str(package),
+        "--read-source", "SSE:600340:ANN:FUTURE",
+        "--attestation", str(attestation_path),
+    ])
+
+    attestation = json.loads(attestation_path.read_text(encoding="utf-8"))
+    assert result == 2
+    assert attestation["read_count"] == 1
+    assert attestation["read_audit"][0]["decision"] == "DENY"
+    assert attestation["read_audit"][0]["reason"] == "source_not_allowlisted:SSE:600340:ANN:FUTURE"
+
+
 def test_runner_rejects_future_and_unregistered_reads_without_exposing_files(tmp_path) -> None:
     package = tmp_path / "package"
     package.mkdir()
@@ -82,6 +133,47 @@ def test_runner_rejects_future_and_unregistered_reads_without_exposing_files(tmp
     assert len(denied) == 2
     assert denied[0]["admission_status"] == "REJECTED"
     assert future.read_text(encoding="utf-8").startswith("{")
+
+
+def test_runner_selection_is_the_allowlist_not_the_whole_admitted_inventory(tmp_path) -> None:
+    manifest = enumerate_sse_announcements([
+        {
+            "source_id": "SSE:600340:TEST:ONE", "source_version": "one-v1",
+            "source_type": "EXCHANGE_ANNOUNCEMENT", "title": "公告一",
+            "published_at": "2020-04-20", "data_as_of": "2020-03-31",
+            "revision_policy": "ORIGINAL_VINTAGE",
+        },
+        {
+            "source_id": "SSE:600340:TEST:TWO", "source_version": "two-v1",
+            "source_type": "EXCHANGE_ANNOUNCEMENT", "title": "公告二",
+            "published_at": "2020-04-21", "data_as_of": "2020-03-31",
+            "revision_policy": "ORIGINAL_VINTAGE",
+        },
+    ])
+    manifest["source_package_selection"] = build_source_package_selection(
+        manifest,
+        selection_policy_id="test-selection.v2",
+        selection_reason="只物化服务于已声明经营问题的来源。",
+        source_ids=["SSE:600340:TEST:TWO"],
+        source_research_rationales=[{
+            "source_id": "SSE:600340:TEST:TWO",
+            "selection_reason": "建立现金转换的同口径观察。",
+            "research_question_ids": ["DQ-NORMAL-OWNER-CASH"],
+        }],
+    )
+    for source in [*manifest["inventory"], *manifest["sources"]]:
+        if source["source_id"] == "SSE:600340:TEST:TWO":
+            source["package_path"] = "selected/two.txt"
+    package = tmp_path / "package"
+    (package / "selected").mkdir(parents=True)
+    (package / "selected/two.txt").write_text("selected historical source", encoding="utf-8")
+
+    runner = PITSourcePackage(manifest, package)
+    assert runner.state == "REVIEWABLE"
+    assert runner.admitted_source_ids == ["SSE:600340:TEST:TWO"]
+    assert runner.read_source("SSE:600340:TEST:TWO") == b"selected historical source"
+    with pytest.raises(PITRunnerError, match="source_not_allowlisted"):
+        runner.read_source("SSE:600340:TEST:ONE")
 
 
 def test_runner_marks_missing_package_path_incomplete_and_current_restated_invalid(tmp_path) -> None:

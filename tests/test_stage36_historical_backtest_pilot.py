@@ -1294,6 +1294,53 @@ def test_settlement_keeps_coverage_model_and_investment_dimensions_separate() ->
     assert "combined_score_forbidden" in result["invalid_findings"]
 
 
+def test_range_prediction_settlement_preserves_bounds_and_interval_result() -> None:
+    case = _case()
+    claim = case["calibration_ledger"]["claims"][0]
+    claim["prediction"] = {
+        "metric": "ordinary_share_owner_cash_per_share",
+        "operator": "RANGE",
+        "range_low": 0.15,
+        "range_high": 0.25,
+        "unit": "HKD/share",
+        "horizon": "FY2021 results",
+    }
+    settlement = _settlement()
+    metric = settlement["model_forecast_error"]["metrics"][0]
+    metric.pop("forecast_value")
+    metric.update({
+        "forecast_range_low": 0.15,
+        "forecast_range_high": 0.25,
+        "interval_disposition": "WITHIN_RANGE",
+    })
+
+    assert validate_case(case)["state"] == "REVIEWABLE"
+    assert validate_settlement(settlement, case=case)["state"] == "REVIEWABLE"
+
+
+def test_range_prediction_settlement_rejects_a_midpoint_substitution() -> None:
+    case = _case()
+    claim = case["calibration_ledger"]["claims"][0]
+    claim["prediction"] = {
+        "metric": "ordinary_share_owner_cash_per_share",
+        "operator": "RANGE",
+        "range_low": 0.15,
+        "range_high": 0.25,
+        "unit": "HKD/share",
+        "horizon": "FY2021 results",
+    }
+    settlement = _settlement()
+    metric = settlement["model_forecast_error"]["metrics"][0]
+    metric.update({
+        "forecast_range_low": 0.15,
+        "forecast_range_high": 0.25,
+        "interval_disposition": "WITHIN_RANGE",
+    })
+
+    result = validate_settlement(settlement, case=case)
+    assert "model_forecast_error.metrics[0]:range_prediction_cannot_carry_point_forecast_value" in result["invalid_findings"]
+
+
 def test_report_coverage_must_replay_the_frozen_claim_review() -> None:
     settlement = _settlement()
     settlement["report_coverage"].update({

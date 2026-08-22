@@ -63,6 +63,31 @@ def test_run_full_pipeline_pit_preflight_registers_only_pit_tools(tmp_path: Path
     assert diagnostics["tools"] == ["pit_list_sources", "pit_read_framework", "pit_read_source"]
 
 
+def test_run_full_pipeline_cjo_preflight_does_not_require_a_full_report(tmp_path: Path) -> None:
+    package = tmp_path / "package"
+    _package(package)
+    manifest_path = tmp_path / "manifest.json"
+    _manifest(manifest_path)
+    output = tmp_path / "cjo-preflight"
+
+    attestation_path = run_full_pipeline(
+        "600340.SH",
+        output_dir=str(output),
+        validation_only=True,
+        pit_source_manifest=str(manifest_path),
+        pit_package_root=str(package),
+        pit_case_id="CJO:600340",
+        pit_experiment_id="CJO:600340",
+        pit_preflight=True,
+        analysis_purpose="COMPANY_JUDGMENT_ONLY",
+    )
+
+    attestation = json.loads(Path(attestation_path).read_text(encoding="utf-8"))
+    diagnostics = json.loads((output / "_diagnostics.json").read_text(encoding="utf-8"))
+    assert attestation["state"] == "REVIEWABLE"
+    assert diagnostics["analysis_purpose"] == "COMPANY_JUDGMENT_ONLY"
+
+
 def test_run_full_pipeline_pit_rejects_reused_output(tmp_path: Path) -> None:
     package = tmp_path / "package"
     _package(package)
@@ -128,7 +153,7 @@ def test_run_full_pipeline_pit_rejects_untrusted_framework_root(tmp_path: Path) 
 
 
 def test_run_full_pipeline_pit_requires_explicit_mode(tmp_path: Path) -> None:
-    with pytest.raises(RuntimeError, match="PIT运行必须二选一"):
+    with pytest.raises(RuntimeError, match="PIT运行必须三选一"):
         run_full_pipeline(
             "600340.SH",
             output_dir=str(tmp_path / "new-run"),

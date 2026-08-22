@@ -1,0 +1,9 @@
+{
+  "schema_version": "turtle-live-forward-exposure-attestation.v1",
+  "case_id": "R-XX:ENTITY:MECHANISM:YYYYMMDD",
+  "freeze_id": "R-XX:ENTITY:MECHANISM:YYYYMMDD",
+  "settlement_as_of": "YYYY-MM-DDTHH:MM:SS+08:00",
+  "status": "NO_NONCLAIM_RESULT_EXPOSURE",
+  "pipeline_read_source_ids": ["IR:ENTITY:FYXXXXQX_RESULTS"],
+  "nonclaim_exposure_descriptions": []
+}

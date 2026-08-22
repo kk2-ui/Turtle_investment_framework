@@ -49,6 +49,30 @@ def test_completion_blocks_missing_gg_derivation(tmp_path: Path) -> None:
     assert any("gg_derivation_missing" in item for item in result.blocking_findings)
 
 
+def test_company_judgment_completion_skips_investment_manifest_and_gg_contract(tmp_path: Path) -> None:
+    out = tmp_path / "stock"
+    chapters = out / "chapters"
+    for idx in range(15):
+        _write(
+            chapters / f"_ch{idx:02d}.md",
+            f"## Ch{idx} 公司判断\n\n### 经营机制\n" + "\n".join(["公司事实与可结算信号。"] * 145),
+        )
+    (out / "analysis_contract.json").write_text(
+        json.dumps({"analysis_purpose": "COMPANY_JUDGMENT_ONLY"}), encoding="utf-8",
+    )
+    (out / "chapter_audit_ledger.json").write_text(json.dumps({"chapters": {
+        str(idx): {"final": {"passed": True, "verdict": "pass", "error_count": 0, "warn_count": 0, "violations": []}}
+        for idx in range(15)
+    }}), encoding="utf-8")
+
+    result = evaluate_report_completion("company judgment", str(out))
+
+    assert result.validators["analysis_purpose"]["state"] == "COMPANY_JUDGMENT_ONLY"
+    assert result.validators["decision_manifest"]["status"] == "SKIP"
+    assert result.validators["gg_derivation"]["status"] == "SKIP"
+    assert not any(item.startswith(("Decision:", "Valuation route:", "Decision ledger:")) for item in result.blocking_findings)
+
+
 def test_quality_gate_detects_v13_structure() -> None:
     text = "## 投资要点概览\n" + "\n".join(f"## Ch{i} 标题" for i in range(1, 15)) + "\n## 来源清单\n" + ("有效分析内容123。" * 3000)
     result = check(text)

@@ -22,24 +22,30 @@ _OUTPUT_DIR: str = ""
 _CODE: str = ""
 _RUN_ID: str = ""
 _PIT_RUNNER: Any = None
+_ANALYSIS_PURPOSE: str = "INVESTMENT_DECISION"
 
 
 def configure_pit_production_writer(
     *, output_dir: str | Path, code: str, run_id: str, pit_runner: Any,
+    analysis_purpose: str = "INVESTMENT_DECISION",
 ) -> None:
-    global _OUTPUT_DIR, _CODE, _RUN_ID, _PIT_RUNNER
+    global _OUTPUT_DIR, _CODE, _RUN_ID, _PIT_RUNNER, _ANALYSIS_PURPOSE
+    if analysis_purpose not in {"INVESTMENT_DECISION", "COMPANY_JUDGMENT_ONLY"}:
+        raise RuntimeError("PIT production analysis_purpose invalid")
     _OUTPUT_DIR = str(Path(output_dir).expanduser().resolve())
     _CODE = str(code or "").strip()
     _RUN_ID = str(run_id or "").strip()
     _PIT_RUNNER = pit_runner
+    _ANALYSIS_PURPOSE = analysis_purpose
 
 
 def clear_pit_production_writer() -> None:
-    global _OUTPUT_DIR, _CODE, _RUN_ID, _PIT_RUNNER
+    global _OUTPUT_DIR, _CODE, _RUN_ID, _PIT_RUNNER, _ANALYSIS_PURPOSE
     _OUTPUT_DIR = ""
     _CODE = ""
     _RUN_ID = ""
     _PIT_RUNNER = None
+    _ANALYSIS_PURPOSE = "INVESTMENT_DECISION"
 
 
 def _bound_output() -> str:
@@ -117,6 +123,15 @@ def _refresh_pit_v3_prerequisites() -> dict[str, Any]:
     manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
     facts = json.loads(facts_path.read_text(encoding="utf-8"))
     context = build_verified_context(output, manifest, facts, persist=True)
+    if _ANALYSIS_PURPOSE == "COMPANY_JUDGMENT_ONLY":
+        return {
+            "state": "REFRESHED",
+            "analysis_purpose": _ANALYSIS_PURPOSE,
+            "official_evidence_state": (context.get("validation") or {}).get("state"),
+            "valuation_route_state": "NOT_APPLICABLE",
+            "decisive_question_state": "NOT_APPLICABLE",
+            "calculation_state": "NOT_APPLICABLE",
+        }
     archetype = build_company_archetype(output, persist=True)
     route = build_valuation_route(output, archetype, persist=True)
     decisive = refresh_decisive_question_plan(output, run_id=_RUN_ID or None, enforced=True)
@@ -138,6 +153,10 @@ def _bind(name: str) -> Callable[..., Any]:
             raise RuntimeError("PIT production writer does not accept output_dir")
         if name == "write_chapter":
             _validate_source_anchors(kwargs.get("content"))
+        if _ANALYSIS_PURPOSE == "COMPANY_JUDGMENT_ONLY" and name in {
+            "write_decision_manifest", "write_decision_ledger", "write_valuation_model_ledger",
+        }:
+            raise RuntimeError("COMPANY_JUDGMENT_ONLY PIT writer 禁止写入决策、仓位或估值对象")
         result = source(output_dir=_bound_output(), **kwargs)
         if name == "verify_official_fact" and result.get("verified") is True:
             result["pit_v3_prerequisites"] = _refresh_pit_v3_prerequisites()
@@ -194,6 +213,7 @@ def pit_assemble_report(*, company_name: str = "") -> dict[str, Any]:
     if report_path.is_file():
         result["pit_source_anchor_ids"] = sorted(source_anchors)
     result["pit_v3_prerequisites"] = prerequisites
+    result["analysis_purpose"] = _ANALYSIS_PURPOSE
     return result
 
 
@@ -213,6 +233,7 @@ for _name in (
     "write_decision_ledger",
     "write_claim_evidence_ledger",
     "write_valuation_model_ledger",
+    "write_financial_driver_bridge",
     "write_thesis_test_ledger",
     "write_decisive_question_findings",
     "write_insight_ledger",

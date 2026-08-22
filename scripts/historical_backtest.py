@@ -19,6 +19,19 @@ from datetime import date, datetime, time, timedelta, timezone
 from pathlib import Path
 from typing import Any, Iterable
 
+from scripts.phase10_acquisition import (
+    LICENSED_INDUSTRY_DATA_SOURCE_TYPE,
+    independent_industry_inference_mode,
+    licensed_industry_series_contract_findings,
+    licensed_industry_series_matches_source,
+    validate_independent_industry_data_source,
+)
+from scripts.metric_reconstruction_contract import (
+    contract_findings,
+    observation_contract_findings,
+)
+from scripts.outcome_acquisition import validate_settlement_outcome_acquisition
+
 
 EXPERIMENT_SCHEMA_VERSION = "historical-backtest-experiment.v1"
 CASE_SCHEMA_VERSION = "historical-backtest-case.v1"
@@ -38,6 +51,8 @@ CORPORATE_ACTION_TYPES = {
     "CASH_DIVIDEND", "STOCK_SPLIT", "RIGHTS_ISSUE", "MERGER", "DELISTING", "SPINOFF", "OTHER",
 }
 PREDICTION_SETTLEMENT_STATUSES = {"CALCULATED", "PARTIAL", "NOT_CALCULABLE"}
+CALIBRATION_PREDICTION_OPERATORS = {"AT_LEAST", "AT_MOST", "EQUALS", "RANGE"}
+INTERVAL_DISPOSITIONS = {"WITHIN_RANGE", "BELOW_RANGE", "ABOVE_RANGE"}
 UNKNOWN_SETTLEMENT_STATUSES = {
     "UNRESOLVED_AS_OF_SETTLEMENT", "PARTIALLY_RESOLVED", "RESOLVED_MATERIAL", "RESOLVED_IMMATERIAL",
 }
@@ -51,6 +66,9 @@ REPORT_REVIEW_DISPOSITIONS = {"SUPPORTED", "PARTIAL", "UNSUPPORTED", "UNKNOWN_PR
 QUALITY_FAILURE_CLASSIFICATIONS = {"DATA_COVERAGE", "ACQUISITION_MODULE", "REASONING", "MODEL", "WRITING"}
 MODEL_MEMORY_CONTROLS = {"CONTROLLED", "MITIGATED", "UNCONTROLLED"}
 BACKTEST_CREDIBILITIES = {"STRICT", "QUALIFIED", "EXPLORATORY"}
+CASE_PURPOSES = {"INVESTMENT_DECISION", "COMPANY_JUDGMENT_ONLY"}
+COMPANY_JUDGMENT_SETTLEMENT_STAGES = {"EARLY_MECHANISM", "TERMINAL_OPERATING"}
+RIVAL_PAIR_SIGNAL_OUTCOMES = {"SUPPORTS_PRIMARY", "SUPPORTS_RIVAL", "MIXED", "NOT_YET_DUE"}
 CALIBRATION_ROLES = {"ENGINEERING_DIAGNOSTIC_ONLY", "MODEL_MEMORY_CONTROLLED_CANDIDATE"}
 MODEL_MEMORY_EXPECTATIONS = {
     "CONTROLLED": ("STRICT", "MODEL_MEMORY_CONTROLLED_CANDIDATE"),
@@ -61,6 +79,10 @@ REPORT_FREEZE_MODES = {"TEST_FIXTURE", "PRODUCTION_PIPELINE", "PIT_ENGINEERING"}
 REPORT_ORIGIN_KINDS = {"TEST_FIXTURE", "TURTLE_PIPELINE", "PIT_ENGINEERING"}
 REQUIRED_FROZEN_REPORT_SECTIONS = {
     "## Evidence", "## Operating forecast", "## Valuation", "## Risks and unknowns", "## Decision",
+}
+CJO_FROZEN_REPORT_SECTIONS = {
+    "## 公司判断摘要", "## 经营表现与核心驱动", "## 财务表现与资本配置",
+    "## 竞争性机制与早期判别信号", "## 监测、结算与再研究", "## 公司判断结论与数据边界",
 }
 PIT_ENGINEERING_REPORT_SECTIONS = {
     "## Point-in-time scope", "## Evidence", "## Business and financial implications", "## Unknowns and monitoring",
@@ -74,6 +96,10 @@ OFFICIAL_SETTLEMENT_SOURCE_TYPES = {
 }
 OPERATING_OBSERVATION_SOURCE_TYPES = {
     "ANNUAL_REPORT", "INTERIM_REPORT", "EXCHANGE_ANNOUNCEMENT",
+    LICENSED_INDUSTRY_DATA_SOURCE_TYPE, "OTHER_OFFICIAL",
+}
+QUANTITATIVE_INDUSTRY_INFERENCE_MODES = {
+    "WITHIN_PROVIDER_RELATIVE_CHANGE", "LEVEL_WITH_STATED_LIMITS",
 }
 MEASUREMENT_PERIOD_KINDS = {"REPORTING_PERIOD", "EVENT_WINDOW"}
 SOURCE_CONTENT_ACCESS = {"BODY_READ", "METADATA_ONLY"}
@@ -144,6 +170,13 @@ def _is_case_v2(record: dict[str, Any] | None) -> bool:
     return isinstance(record, dict) and record.get("schema_version") == CASE_SCHEMA_VERSION_V2
 
 
+def _case_purpose(record: dict[str, Any] | None) -> str:
+    """Keep legacy case semantics, but make the v2 company-only route explicit."""
+    if not _is_case_v2(record):
+        return "INVESTMENT_DECISION"
+    return str((record or {}).get("purpose") or "")
+
+
 def _measurement_period(outcome: dict[str, Any], *, v2: bool) -> dict[str, Any]:
     if v2:
         value = outcome.get("measurement_period")
@@ -171,6 +204,48 @@ def _numbers_match(left: Any, right: Any) -> bool:
     lhs = _number(left)
     rhs = _number(right)
     return lhs is not None and rhs is not None and math.isclose(lhs, rhs, rel_tol=1e-9, abs_tol=1e-9)
+
+
+def _prediction_is_met_at(prediction: dict[str, Any], value: float) -> bool:
+    """Evaluate a valid frozen predicate at a finite candidate observation."""
+    operator = prediction.get("operator")
+    if operator == "RANGE":
+        low, high = _number(prediction.get("range_low")), _number(prediction.get("range_high"))
+        return low is not None and high is not None and low <= value <= high
+    target = _number(prediction.get("value"))
+    if target is None:
+        return False
+    if operator == "AT_LEAST":
+        return value >= target
+    if operator == "AT_MOST":
+        return value <= target
+    return operator == "EQUALS" and value == target
+
+
+def _pair_allows_each_side_to_win(primary: Any, rival: Any) -> bool:
+    """Reject nested rival predicates that make one mechanism unfalsifiable."""
+    if not isinstance(primary, dict) or not isinstance(rival, dict):
+        return False
+
+    def boundaries(prediction: dict[str, Any]) -> list[float]:
+        if prediction.get("operator") == "RANGE":
+            values = [_number(prediction.get("range_low")), _number(prediction.get("range_high"))]
+        else:
+            values = [_number(prediction.get("value"))]
+        return [value for value in values if value is not None]
+
+    candidates: set[float] = set()
+    for boundary in [*boundaries(primary), *boundaries(rival)]:
+        candidates.update({boundary, math.nextafter(boundary, -math.inf), math.nextafter(boundary, math.inf)})
+    primary_only = any(
+        _prediction_is_met_at(primary, value) and not _prediction_is_met_at(rival, value)
+        for value in candidates
+    )
+    rival_only = any(
+        _prediction_is_met_at(rival, value) and not _prediction_is_met_at(primary, value)
+        for value in candidates
+    )
+    return primary_only and rival_only
 
 
 def _nested_forbidden(value: Any, *, path: str = "") -> list[str]:
@@ -483,6 +558,10 @@ def _validate_source(source: dict[str, Any], cutoff: datetime, index: int) -> tu
         incomplete.append(prefix + ":source_version_missing")
     if source.get("admissible") is not True:
         invalid.append(prefix + ":source_not_admissible")
+    if source.get("source_type") == LICENSED_INDUSTRY_DATA_SOURCE_TYPE:
+        industry_validation = validate_independent_industry_data_source(source)
+        invalid.extend(prefix + ":industry_data_contract:" + finding for finding in industry_validation["invalid_findings"])
+        incomplete.extend(prefix + ":industry_data_contract:" + finding for finding in industry_validation["incomplete_findings"])
     return invalid, incomplete
 
 
@@ -505,19 +584,30 @@ def _validate_source_references(
 
 
 def _validate_calibration_ledger(
-    record: dict[str, Any], known_source_ids: set[str],
+    record: dict[str, Any], known_sources: dict[str, dict[str, Any]],
 ) -> tuple[list[str], list[str]]:
     """Validate the frozen, claim-level calibration contract for a case."""
     invalid: list[str] = []
     incomplete: list[str] = []
     case_v2 = _is_case_v2(record)
+    known_source_ids = set(known_sources)
     simulation_cutoff = _timestamp(record.get("simulation_cutoff"))
     ledger = record.get("calibration_ledger") if isinstance(record.get("calibration_ledger"), dict) else {}
     claims = ledger.get("claims") if isinstance(ledger.get("claims"), list) else []
     if not claims:
         incomplete.append("calibration_ledger:claims_missing")
         return invalid, incomplete
+    selection_admission = ledger.get("selection_admission") if isinstance(ledger.get("selection_admission"), dict) else {}
+    selection_judgment_ids = {
+        str(judgment_id).strip()
+        for judgment_id in selection_admission.get("selection_forward_judgment_ids") or []
+        if str(judgment_id).strip()
+    }
+    selection_admitted = selection_admission.get("status") == "SELECTION_ADMITTED"
+    if selection_admitted and not selection_judgment_ids:
+        incomplete.append("calibration_ledger.selection_admission:selection_forward_judgment_ids_missing")
     claim_ids: set[str] = set()
+    frozen_judgment_ids: set[str] = set()
     for index, claim in enumerate(claims):
         prefix = f"calibration_ledger.claims[{index}]"
         if not isinstance(claim, dict):
@@ -540,6 +630,9 @@ def _validate_calibration_ledger(
         elif claim_id in claim_ids:
             invalid.append("duplicate_calibration_claim_id:" + claim_id)
         claim_ids.add(claim_id)
+        forward_judgment_id = str(claim.get("forward_judgment_id") or "").strip()
+        if forward_judgment_id:
+            frozen_judgment_ids.add(forward_judgment_id)
         if claim.get("materiality") not in {"CENTRAL_THESIS", "VALUATION", "RETURN", "PERMANENT_LOSS"}:
             invalid.append(prefix + ":materiality_invalid")
         disposition = claim.get("frozen_disposition")
@@ -550,6 +643,7 @@ def _validate_calibration_ledger(
         incomplete.extend(ref_incomplete)
         outcome = claim.get("observable_outcome") if isinstance(claim.get("observable_outcome"), dict) else {}
         outcome_prefix = prefix + ".observable_outcome"
+        series_contract = outcome.get("licensed_industry_series_contract")
         period_fields = ("measurement_period", "observation_window") if case_v2 else ("period_start", "period_end")
         incomplete.extend(_required(
             outcome,
@@ -589,8 +683,42 @@ def _validate_calibration_ledger(
             for source_type in allowed_source_types:
                 if source_type not in OPERATING_OBSERVATION_SOURCE_TYPES:
                     invalid.append(outcome_prefix + ":allowed_source_type_invalid:" + str(source_type))
+            if LICENSED_INDUSTRY_DATA_SOURCE_TYPE in allowed_source_types:
+                inference = outcome.get("industry_measurement_inference")
+                if inference not in QUANTITATIVE_INDUSTRY_INFERENCE_MODES:
+                    invalid.append(outcome_prefix + ":industry_measurement_inference_not_quantitative")
+                # P27 applies only to new frozen FJs carrying this field.  A
+                # legacy LID case remains readable, but a new one must prove
+                # that its declared pre-cutoff source and tuple are real.
+                if "licensed_industry_series_contract" in outcome:
+                    series_invalid, series_incomplete = licensed_industry_series_contract_findings(
+                        series_contract,
+                        prefix=outcome_prefix,
+                        pre_cutoff_sources=known_sources,
+                    )
+                    invalid.extend(series_invalid)
+                    incomplete.extend(series_incomplete)
+                    if isinstance(series_contract, dict):
+                        if str(series_contract.get("pre_cutoff_source_id") or "") not in {
+                            str(source_id) for source_id in claim.get("source_ids") or []
+                        }:
+                            invalid.append(outcome_prefix + ":pre_cutoff_source_not_in_claim_source_ids")
+            elif outcome.get("industry_measurement_inference") not in (None, ""):
+                invalid.append(outcome_prefix + ":industry_measurement_inference_without_industry_source")
         elif allowed_source_types not in (None, ""):
             invalid.append(outcome_prefix + ":allowed_source_types_not_list")
+        if selection_admitted and forward_judgment_id in selection_judgment_ids:
+            contract_invalid, contract_incomplete = contract_findings(
+                outcome,
+                prefix=outcome_prefix,
+                allowed_source_types={
+                    str(source_type).strip()
+                    for source_type in allowed_source_types or []
+                    if str(source_type).strip()
+                },
+            )
+            invalid.extend(contract_invalid)
+            incomplete.extend(contract_incomplete)
         if outcome.get("settlement_version_policy") not in {
             "INITIAL_DISCLOSURE", "LATEST_OFFICIAL_AS_OF_EVALUATION",
         }:
@@ -615,13 +743,26 @@ def _validate_calibration_ledger(
         if disposition == "PREDICTION":
             prediction = claim.get("prediction") if isinstance(claim.get("prediction"), dict) else {}
             threshold = claim.get("threshold") if isinstance(claim.get("threshold"), dict) else {}
-            incomplete.extend(_required(prediction, ("metric", "operator", "value", "unit", "horizon"), prefix + ".prediction"))
+            incomplete.extend(_required(prediction, ("metric", "operator", "unit", "horizon"), prefix + ".prediction"))
             incomplete.extend(_required(threshold, ("metric", "operator", "value", "unit", "consequence"), prefix + ".threshold"))
+            operator = prediction.get("operator")
+            if operator not in CALIBRATION_PREDICTION_OPERATORS:
+                invalid.append(prefix + ".prediction:operator_invalid")
+            elif operator == "RANGE":
+                low, high = _number(prediction.get("range_low")), _number(prediction.get("range_high"))
+                if low is None or high is None or low > high:
+                    invalid.append(prefix + ".prediction:range_invalid")
+                if prediction.get("value") not in (None, ""):
+                    invalid.append(prefix + ".prediction:range_cannot_carry_point_value")
+            elif _number(prediction.get("value")) is None:
+                incomplete.append(prefix + ".prediction:value_missing")
             for field in ("metric", "unit"):
                 if prediction.get(field) != outcome.get(field):
                     invalid.append(prefix + ".prediction:" + field + "_does_not_match_observable_outcome")
                 if threshold.get(field) != outcome.get(field):
                     invalid.append(prefix + ".threshold:" + field + "_does_not_match_observable_outcome")
+            if isinstance(series_contract, dict) and series_contract.get("metric_id") not in (None, "") and series_contract.get("metric_id") != prediction.get("metric"):
+                invalid.append(outcome_prefix + ":licensed_industry_series_metric_does_not_match_prediction")
             if claim.get("unknown") is not None:
                 invalid.append(prefix + ":prediction_cannot_carry_unknown_payload")
         elif disposition == "UNKNOWN":
@@ -629,6 +770,198 @@ def _validate_calibration_ledger(
             incomplete.extend(_required(unknown, ("statement", "economic_impact", "resolution_observation"), prefix + ".unknown"))
             if claim.get("prediction") is not None or claim.get("threshold") is not None:
                 invalid.append(prefix + ":unknown_cannot_carry_quantitative_prediction")
+
+    if selection_admitted:
+        missing_selection_judgments = sorted(selection_judgment_ids - frozen_judgment_ids)
+        if missing_selection_judgments:
+            invalid.append(
+                "calibration_ledger.selection_admission:forward_judgment_not_frozen:"
+                + ",".join(missing_selection_judgments)
+            )
+
+    # These pair objects originate in the snapshot-hashed thesis ledger.  They
+    # add a rival predicate to an existing claim; they do not create a second
+    # scorecard, a price input, or an un-frozen post-hoc verdict.
+    pairs = ledger.get("rival_hypothesis_pairs")
+    cards = ledger.get("analogy_transfer_cards")
+    if pairs is not None or cards is not None:
+        if not isinstance(pairs, list) or not pairs:
+            incomplete.append("calibration_ledger:rival_hypothesis_pairs_missing")
+            pairs = []
+        if not isinstance(cards, list) or not cards:
+            incomplete.append("calibration_ledger:analogy_transfer_cards_missing")
+            cards = []
+        claims_by_id = {
+            str(claim.get("claim_id")): claim
+            for claim in claims if isinstance(claim, dict) and str(claim.get("claim_id") or "")
+        }
+        claims_by_forward_judgment_id: dict[str, list[dict[str, Any]]] = {}
+        for claim in claims_by_id.values():
+            forward_judgment_id = str(claim.get("forward_judgment_id") or "").strip()
+            if forward_judgment_id:
+                claims_by_forward_judgment_id.setdefault(forward_judgment_id, []).append(claim)
+        pair_ids: set[str] = set()
+        signal_ids: set[str] = set()
+        pair_signal_judgment_ids: set[str] = set()
+        for index, pair in enumerate(pairs):
+            prefix = f"calibration_ledger.rival_hypothesis_pairs[{index}]"
+            if not isinstance(pair, dict):
+                invalid.append(prefix + ":not_object")
+                continue
+            incomplete.extend(_required(
+                pair,
+                ("pair_id", "competitive_test_id", "primary_mechanism_chain_id", "rival_mechanism_chain_id", "discriminators"),
+                prefix,
+            ))
+            pair_id = str(pair.get("pair_id") or "")
+            if not pair_id.startswith("RHP:"):
+                invalid.append(prefix + ":pair_id_invalid")
+            elif pair_id in pair_ids:
+                invalid.append("duplicate_rival_hypothesis_pair_id")
+            pair_ids.add(pair_id)
+            if pair.get("primary_mechanism_chain_id") == pair.get("rival_mechanism_chain_id"):
+                invalid.append(prefix + ":mechanisms_not_competitive")
+            discriminators = pair.get("discriminators") if isinstance(pair.get("discriminators"), list) else []
+            if len(discriminators) < 2:
+                incomplete.append(prefix + ":two_or_more_discriminators_required")
+            seen_sequences: set[int] = set()
+            signal_schedule: list[tuple[int, date, str]] = []
+            signal_claim_ids_by_stage: dict[str, set[str]] = {
+                "EARLY_MECHANISM": set(),
+                "TERMINAL_OPERATING": set(),
+            }
+            signal_judgment_ids_by_stage: dict[str, set[str]] = {
+                "EARLY_MECHANISM": set(),
+                "TERMINAL_OPERATING": set(),
+            }
+            signal_windows: list[tuple[str, datetime, datetime]] = []
+            stages: set[str] = set()
+            for didx, signal in enumerate(discriminators):
+                sprefix = f"{prefix}.discriminators[{didx}]"
+                if not isinstance(signal, dict):
+                    invalid.append(sprefix + ":not_object")
+                    continue
+                incomplete.extend(_required(
+                    signal,
+                    ("signal_id", "sequence", "stage", "forward_judgment_id", "claim_id", "primary_prediction", "rival_prediction"),
+                    sprefix,
+                ))
+                signal_id = str(signal.get("signal_id") or "")
+                if not signal_id.startswith("RHPSIG:"):
+                    invalid.append(sprefix + ":signal_id_invalid")
+                elif signal_id in signal_ids:
+                    invalid.append("duplicate_rival_hypothesis_signal_id")
+                signal_ids.add(signal_id)
+                sequence = signal.get("sequence")
+                if not isinstance(sequence, int) or sequence < 1:
+                    invalid.append(sprefix + ":sequence_invalid")
+                elif sequence in seen_sequences:
+                    invalid.append(prefix + ":duplicate_signal_sequence")
+                else:
+                    seen_sequences.add(sequence)
+                if signal.get("stage") not in COMPANY_JUDGMENT_SETTLEMENT_STAGES:
+                    invalid.append(sprefix + ":stage_invalid")
+                else:
+                    stages.add(str(signal.get("stage")))
+                claim = claims_by_id.get(str(signal.get("claim_id") or ""))
+                if claim is None:
+                    invalid.append(sprefix + ":claim_not_found")
+                    continue
+                stage = str(signal.get("stage") or "")
+                if stage in signal_claim_ids_by_stage:
+                    signal_claim_ids_by_stage[stage].add(str(claim.get("claim_id") or ""))
+                forward_judgment_id = str(signal.get("forward_judgment_id") or "").strip()
+                linked_claims = claims_by_forward_judgment_id.get(forward_judgment_id, [])
+                if not linked_claims:
+                    invalid.append(sprefix + ":forward_judgment_not_frozen")
+                elif len(linked_claims) != 1:
+                    invalid.append(sprefix + ":forward_judgment_not_unique")
+                elif linked_claims[0].get("claim_id") != claim.get("claim_id"):
+                    invalid.append(sprefix + ":claim_id_does_not_match_forward_judgment")
+                if forward_judgment_id:
+                    if forward_judgment_id in pair_signal_judgment_ids:
+                        invalid.append(sprefix + ":forward_judgment_reused")
+                    else:
+                        pair_signal_judgment_ids.add(forward_judgment_id)
+                    if stage in signal_judgment_ids_by_stage:
+                        signal_judgment_ids_by_stage[stage].add(forward_judgment_id)
+                if case_v2 and stage in signal_claim_ids_by_stage:
+                    outcome = claim.get("observable_outcome") if isinstance(claim.get("observable_outcome"), dict) else {}
+                    window = outcome.get("observation_window") if isinstance(outcome.get("observation_window"), dict) else {}
+                    opens_after = _timestamp(window.get("opens_after"))
+                    closes_at = _timestamp(window.get("closes_at"))
+                    if opens_after is None or closes_at is None:
+                        incomplete.append(sprefix + ":observation_window_missing_or_invalid")
+                    else:
+                        signal_windows.append((stage, opens_after, closes_at))
+                primary = signal.get("primary_prediction") if isinstance(signal.get("primary_prediction"), dict) else {}
+                rival = signal.get("rival_prediction") if isinstance(signal.get("rival_prediction"), dict) else {}
+                for role, prediction in (("primary", primary), ("rival", rival)):
+                    if prediction.get("operator") not in CALIBRATION_PREDICTION_OPERATORS:
+                        invalid.append(sprefix + f":{role}_prediction_operator_invalid")
+                    if prediction.get("operator") == "RANGE":
+                        low, high = _number(prediction.get("range_low")), _number(prediction.get("range_high"))
+                        if low is None or high is None or low > high:
+                            invalid.append(sprefix + f":{role}_prediction_range_invalid")
+                    elif _number(prediction.get("value")) is None:
+                        incomplete.append(sprefix + f":{role}_prediction_value_missing")
+                if primary == rival:
+                    invalid.append(sprefix + ":predictions_not_discriminating")
+                elif not _pair_allows_each_side_to_win(primary, rival):
+                    invalid.append(sprefix + ":predictions_do_not_allow_both_sides_to_win")
+                frozen = claim.get("prediction") if isinstance(claim.get("prediction"), dict) else {}
+                if primary != frozen:
+                    invalid.append(sprefix + ":primary_prediction_does_not_match_frozen_claim")
+                for field in ("metric", "unit", "horizon", "resolution_due"):
+                    if primary.get(field) != rival.get(field):
+                        invalid.append(sprefix + ":rival_prediction_" + field + "_does_not_match_primary")
+                resolution_due = _date(primary.get("resolution_due"))
+                if resolution_due is None:
+                    incomplete.append(sprefix + ":primary_prediction_resolution_due_missing_or_invalid")
+                elif isinstance(sequence, int) and sequence >= 1 and signal.get("stage") in COMPANY_JUDGMENT_SETTLEMENT_STAGES:
+                    signal_schedule.append((sequence, resolution_due, str(signal.get("stage"))))
+            if seen_sequences and seen_sequences != set(range(1, len(discriminators) + 1)):
+                invalid.append(prefix + ":signal_sequence_not_contiguous")
+            if "EARLY_MECHANISM" not in stages:
+                invalid.append(prefix + ":early_mechanism_signal_missing")
+            if "TERMINAL_OPERATING" not in stages:
+                invalid.append(prefix + ":terminal_operating_signal_missing")
+            ordered_schedule = sorted(signal_schedule)
+            terminal_seen = False
+            for _, _, stage in ordered_schedule:
+                if stage == "TERMINAL_OPERATING":
+                    terminal_seen = True
+                elif stage == "EARLY_MECHANISM" and terminal_seen:
+                    invalid.append(prefix + ":early_signal_must_precede_terminal_signal")
+                    break
+            early_due = [due for _, due, stage in ordered_schedule if stage == "EARLY_MECHANISM"]
+            terminal_due = [due for _, due, stage in ordered_schedule if stage == "TERMINAL_OPERATING"]
+            if early_due and terminal_due and max(early_due) >= min(terminal_due):
+                invalid.append(prefix + ":early_signal_resolution_due_not_before_terminal_signal")
+            early_claim_ids = signal_claim_ids_by_stage["EARLY_MECHANISM"]
+            terminal_claim_ids = signal_claim_ids_by_stage["TERMINAL_OPERATING"]
+            if early_claim_ids & terminal_claim_ids:
+                invalid.append(prefix + ":early_and_terminal_claims_must_differ")
+            early_judgment_ids = signal_judgment_ids_by_stage["EARLY_MECHANISM"]
+            terminal_judgment_ids = signal_judgment_ids_by_stage["TERMINAL_OPERATING"]
+            if early_judgment_ids & terminal_judgment_ids:
+                invalid.append(prefix + ":early_and_terminal_forward_judgments_must_differ")
+            if case_v2:
+                early_windows = [(opens_after, closes_at) for stage, opens_after, closes_at in signal_windows if stage == "EARLY_MECHANISM"]
+                terminal_windows = [(opens_after, closes_at) for stage, opens_after, closes_at in signal_windows if stage == "TERMINAL_OPERATING"]
+                for early_window in early_windows:
+                    for terminal_window in terminal_windows:
+                        if early_window == terminal_window:
+                            invalid.append(prefix + ":early_and_terminal_observation_windows_must_differ")
+                        if early_window[1] >= terminal_window[1]:
+                            invalid.append(prefix + ":early_observation_window_must_close_before_terminal")
+        card_pair_ids = {
+            str(card.get("target_pair_id") or "")
+            for card in cards if isinstance(card, dict) and str(card.get("target_pair_id") or "")
+        }
+        for pair_id in pair_ids:
+            if pair_id and pair_id not in card_pair_ids:
+                incomplete.append("calibration_ledger:" + pair_id + ":analogy_transfer_card_missing")
     return invalid, incomplete
 
 
@@ -834,8 +1167,19 @@ def _validate_production_report_origin(
         if snapshot_payload.get("lifecycle") != "MONITORING":
             invalid.append(prefix + ":publication_snapshot_lifecycle_invalid")
         gate_states = snapshot_payload.get("gate_states") if isinstance(snapshot_payload.get("gate_states"), dict) else {}
-        for gate_name in ("decision", "claim_evidence", "valuation", "thesis_test", "insight"):
-            if gate_states.get(gate_name) not in {"DECISION_READY", "MONITORING"}:
+        company_judgment_only = record.get("purpose") == "COMPANY_JUDGMENT_ONLY"
+        required_snapshot_gates = (
+            ("official_evidence", "financial_driver_bridge", "claim_evidence", "thesis_test", "insight")
+            if company_judgment_only else
+            ("decision", "claim_evidence", "valuation", "thesis_test", "insight")
+        )
+        for gate_name in required_snapshot_gates:
+            allowed_states = (
+                {"REVIEWABLE", "DECISION_READY", "MONITORING"}
+                if company_judgment_only and gate_name in {"official_evidence", "financial_driver_bridge"}
+                else {"DECISION_READY", "MONITORING"}
+            )
+            if gate_states.get(gate_name) not in allowed_states:
                 invalid.append(prefix + ":publication_snapshot_gate_not_ready:" + gate_name)
         validators = completion_payload.get("validators") if isinstance(completion_payload.get("validators"), dict) else {}
         publication_snapshot = validators.get("publication_snapshot") if isinstance(validators, dict) else {}
@@ -1475,7 +1819,12 @@ def _validate_report_freeze(
         incomplete.extend(origin_incomplete)
     section_markers = report.get("section_markers") if isinstance(report.get("section_markers"), list) else []
     normalized_markers = {str(item or "") for item in section_markers}
-    required_sections = PIT_ENGINEERING_REPORT_SECTIONS if mode == "PIT_ENGINEERING" else REQUIRED_FROZEN_REPORT_SECTIONS
+    required_sections = (
+        PIT_ENGINEERING_REPORT_SECTIONS if mode == "PIT_ENGINEERING"
+        else CJO_FROZEN_REPORT_SECTIONS
+        if mode == "PRODUCTION_PIPELINE" and record.get("purpose") == "COMPANY_JUDGMENT_ONLY"
+        else REQUIRED_FROZEN_REPORT_SECTIONS
+    )
     if not required_sections.issubset(normalized_markers) or len(normalized_markers) != len(section_markers):
         invalid.append(report_prefix + ":section_markers_incomplete")
     if content:
@@ -1675,6 +2024,9 @@ def validate_case(
     incomplete: list[str] = []
     if record.get("schema_version") not in {CASE_SCHEMA_VERSION, CASE_SCHEMA_VERSION_V2}:
         invalid.append("schema_version_invalid")
+    purpose = _case_purpose(record)
+    if _is_case_v2(record) and purpose not in CASE_PURPOSES:
+        incomplete.append("case_purpose_missing_or_invalid")
     if not str(record.get("experiment_id") or "").startswith("HBT:"):
         invalid.append("case_experiment_id_invalid")
     invalid.extend(_nested_forbidden(record.get("inputs", []), path="inputs"))
@@ -1730,7 +2082,12 @@ def validate_case(
         )
         invalid.extend(ref_invalid)
         incomplete.extend(ref_incomplete)
-    ledger_invalid, ledger_incomplete = _validate_calibration_ledger(record, source_ids)
+    sources_by_id = {
+        str(source.get("source_id")): source
+        for source in sources
+        if isinstance(source, dict) and str(source.get("source_id") or "").strip()
+    }
+    ledger_invalid, ledger_incomplete = _validate_calibration_ledger(record, sources_by_id)
     invalid.extend(ledger_invalid)
     incomplete.extend(ledger_incomplete)
     report_invalid, report_incomplete = _validate_report_freeze(
@@ -1743,6 +2100,16 @@ def validate_case(
     decision_invalid, decision_incomplete = _validate_investment_decision(record)
     invalid.extend(decision_invalid)
     incomplete.extend(decision_incomplete)
+    if purpose == "COMPANY_JUDGMENT_ONLY":
+        if record.get("investment_decision") is not None:
+            invalid.append("company_judgment_only_cannot_carry_investment_decision")
+        price = record.get("price_identity") if isinstance(record.get("price_identity"), dict) else {}
+        if (
+            price.get("primary_route") != "PRIMARY_ROUTE_UNKNOWN"
+            or price.get("primary_price_identity") != "UNKNOWN"
+            or price.get("prices") != []
+        ):
+            invalid.append("company_judgment_only_requires_unknown_price_identity")
     taxes = record.get("taxes_fees_fx") if isinstance(record.get("taxes_fees_fx"), dict) else {}
     incomplete.extend(_required(taxes, ("tax_rate", "transaction_fee_rate", "dividend_tax_rate", "base_currency", "fx_rule"), "taxes_fees_fx"))
     invalid.extend(_route_findings(record))
@@ -1753,7 +2120,13 @@ def validate_case(
 def _validate_actual_sources(
     record: dict[str, Any], *, cutoff: datetime | None, settlement_date: datetime | None, require_content_access: bool,
 ) -> tuple[dict[str, dict[str, Any]], list[str], list[str]]:
-    """Check that settlement facts have their own later official evidence."""
+    """Check later official facts and bounded licensed industry observations.
+
+    Licensed industry data is permitted only for an operating observation whose
+    frozen contract explicitly allows it.  It can never claim ``official``
+    authority and does not relax official-source requirements for company,
+    capital-allocation, or investment-return facts.
+    """
     sources_by_id: dict[str, dict[str, Any]] = {}
     invalid: list[str] = []
     incomplete: list[str] = []
@@ -1779,10 +2152,18 @@ def _validate_actual_sources(
                 incomplete.append(prefix + ":missing:content_access")
             elif source.get("content_access") not in SOURCE_CONTENT_ACCESS:
                 invalid.append(prefix + ":content_access_invalid")
-        if source.get("official") is not True:
-            invalid.append(prefix + ":official_source_required")
-        if source.get("source_type") not in OFFICIAL_SETTLEMENT_SOURCE_TYPES:
-            invalid.append(prefix + ":official_source_type_invalid")
+        source_type = source.get("source_type")
+        if source_type in OFFICIAL_SETTLEMENT_SOURCE_TYPES:
+            if source.get("official") is not True:
+                invalid.append(prefix + ":official_source_required")
+        elif source_type == LICENSED_INDUSTRY_DATA_SOURCE_TYPE:
+            if source.get("official") is not False:
+                invalid.append(prefix + ":independent_industry_source_must_be_non_official")
+            industry_validation = validate_independent_industry_data_source(source)
+            invalid.extend(prefix + ":industry_data_contract:" + finding for finding in industry_validation["invalid_findings"])
+            incomplete.extend(prefix + ":industry_data_contract:" + finding for finding in industry_validation["incomplete_findings"])
+        else:
+            invalid.append(prefix + ":official_or_licensed_industry_source_type_required")
         published = _timestamp(source.get("published_at"), date_only_at_end=True)
         if published is None:
             incomplete.append(prefix + ":published_at_invalid")
@@ -1816,6 +2197,8 @@ def _validate_operating_observation(
         invalid.append(prefix + ":claim_id_not_frozen:" + claim_id)
         return invalid, incomplete
     outcome = claim.get("observable_outcome") if isinstance(claim.get("observable_outcome"), dict) else {}
+    if claim.get("frozen_disposition") == "PREDICTION" and _number(observation.get("value")) is None:
+        invalid.append(prefix + ":value_must_be_numeric_for_quantitative_prediction")
     if observation.get("comparability_status") not in OPERATING_COMPARABILITY_STATUSES:
         invalid.append(prefix + ":comparability_status_invalid")
     for field in ("metric", "unit", "measurement_basis"):
@@ -1859,6 +2242,9 @@ def _validate_operating_observation(
     allowed_source_types = outcome.get("allowed_source_types")
     if not isinstance(allowed_source_types, list) or not allowed_source_types:
         return invalid, incomplete
+    series_contract = outcome.get("licensed_industry_series_contract")
+    series_source_ids: list[str] = []
+    series_mismatch = False
     for source_id in observation.get("source_ids") or []:
         source = actual_sources.get(str(source_id or ""))
         if source is None:
@@ -1866,6 +2252,17 @@ def _validate_operating_observation(
         source_type = source.get("source_type")
         if source_type not in allowed_source_types:
             invalid.append(prefix + ":source_type_not_allowed_for_frozen_contract:" + str(source_id))
+        if source_type == LICENSED_INDUSTRY_DATA_SOURCE_TYPE:
+            frozen_inference = outcome.get("industry_measurement_inference")
+            source_inference = independent_industry_inference_mode(source)
+            if source_inference not in QUANTITATIVE_INDUSTRY_INFERENCE_MODES:
+                invalid.append(prefix + ":industry_source_not_quantitative:" + str(source_id))
+            elif frozen_inference != source_inference:
+                invalid.append(prefix + ":industry_measurement_inference_does_not_match_frozen_contract:" + str(source_id))
+            if isinstance(series_contract, dict):
+                series_source_ids.append(str(source_id))
+                if not licensed_industry_series_matches_source(series_contract, source):
+                    series_mismatch = True
         if case_v2:
             if source.get("content_access") != "BODY_READ":
                 invalid.append(prefix + ":source_body_not_read:" + str(source_id))
@@ -1881,6 +2278,19 @@ def _validate_operating_observation(
                 incomplete.append(prefix + ":report_source_data_as_of_missing:" + str(source_id))
             elif observation_period_end and source_period_end != observation_period_end:
                 invalid.append(prefix + ":report_source_period_does_not_match_observation:" + str(source_id))
+    if isinstance(series_contract, dict):
+        if not series_source_ids:
+            series_mismatch = True
+        # A mismatch can be retained as a non-comparable measurement record
+        # (and becomes NOT_DIAGNOSTIC feedback), but it can never enter a
+        # calculated comparable FJ settlement.
+        if series_mismatch and observation.get("comparability_status") in COMPARABLE_OPERATING_STATUSES:
+            invalid.append(prefix + ":licensed_industry_series_does_not_match_frozen_contract")
+    contract_invalid, contract_incomplete = observation_contract_findings(
+        outcome, observation, actual_sources, prefix=prefix,
+    )
+    invalid.extend(contract_invalid)
+    incomplete.extend(contract_incomplete)
     if observation.get("comparability_status") == "CONVERTIBLE_WITH_PREREGISTERED_RULE":
         conversion_rule = outcome.get("conversion_rule") if isinstance(outcome.get("conversion_rule"), dict) else None
         if conversion_rule is None:
@@ -2089,13 +2499,49 @@ def _validate_return_outcome(
     """
     invalid: list[str] = []
     incomplete: list[str] = []
+    purpose = _case_purpose(case)
     return_statuses = {"CALCULATED", "PARTIAL", "NOT_CALCULABLE"}
+    if purpose == "COMPANY_JUDGMENT_ONLY":
+        return_statuses.add("NOT_APPLICABLE")
     status = outcome.get("status")
     action = outcome.get("action")
     if status not in return_statuses:
         invalid.append("investment_return_outcome:status_invalid")
     if action not in INVESTMENT_ACTIONS:
         invalid.append("investment_return_outcome:action_invalid")
+
+    if purpose == "COMPANY_JUDGMENT_ONLY":
+        # Company learning must not smuggle a market result into the operating
+        # feedback loop.  Keep an explicit empty return record so the three
+        # ledgers remain structurally comparable without asserting a return.
+        if status != "NOT_APPLICABLE":
+            invalid.append("investment_return_outcome:company_judgment_only_requires_not_applicable")
+        if action != "UNKNOWN" or outcome.get("frozen_action") != "UNKNOWN":
+            invalid.append("investment_return_outcome:company_judgment_only_requires_unknown_action")
+        if outcome.get("frozen_price_identity") != "UNKNOWN":
+            invalid.append("investment_return_outcome:company_judgment_only_requires_unknown_price_identity")
+        if outcome.get("total_return") is not None or outcome.get("benchmark_return") is not None:
+            invalid.append("investment_return_outcome:company_judgment_only_cannot_claim_return")
+        execution = outcome.get("execution") if isinstance(outcome.get("execution"), dict) else {}
+        if execution.get("fill_status") != "NOT_APPLICABLE":
+            invalid.append("investment_return_outcome:company_judgment_only_requires_not_applicable_execution")
+        entry = execution.get("entry") if isinstance(execution.get("entry"), dict) else {}
+        exit_leg = execution.get("exit") if isinstance(execution.get("exit"), dict) else {}
+        if exit_leg.get("status") != "NOT_APPLICABLE":
+            invalid.append("investment_return_outcome:company_judgment_only_requires_not_applicable_exit")
+        for leg, prefix in ((entry, "entry"), (exit_leg, "exit")):
+            if any(leg.get(field) not in (None, "", []) for field in ("date", "price", "quantity", "currency", "source_ids")):
+                invalid.append("investment_return_outcome:company_judgment_only_" + prefix + "_must_be_empty")
+        if outcome.get("cash_flow_ledger") not in ([], None):
+            invalid.append("investment_return_outcome:company_judgment_only_cash_flows_must_be_empty")
+        if outcome.get("corporate_actions") not in ([], None):
+            invalid.append("investment_return_outcome:company_judgment_only_corporate_actions_must_be_empty")
+        benchmark = outcome.get("benchmark_identity") if isinstance(outcome.get("benchmark_identity"), dict) else {}
+        if benchmark.get("source_ids") not in ([], None):
+            invalid.append("investment_return_outcome:company_judgment_only_benchmark_sources_must_be_empty")
+        if any(source.get("source_type") == "OFFICIAL_MARKET_DATA" for source in actual_sources.values()):
+            invalid.append("investment_return_outcome:company_judgment_only_cannot_read_market_sources")
+        return invalid, incomplete
 
     freeze_mode = ((case or {}).get("report_freeze") or {}).get("mode") if isinstance(case, dict) else None
     decision = case.get("investment_decision") if isinstance(case, dict) else None
@@ -2392,6 +2838,123 @@ def _validate_return_outcome(
     return invalid, incomplete
 
 
+def _prediction_is_met(prediction: dict[str, Any], actual_value: Any) -> bool | None:
+    """Evaluate a frozen predicate without turning ranges into point estimates."""
+    actual = _number(actual_value)
+    if actual is None:
+        return None
+    operator = prediction.get("operator")
+    if operator == "RANGE":
+        low, high = _number(prediction.get("range_low")), _number(prediction.get("range_high"))
+        return None if low is None or high is None else low <= actual <= high
+    target = _number(prediction.get("value"))
+    if target is None:
+        return None
+    if operator == "AT_LEAST":
+        return actual >= target
+    if operator == "AT_MOST":
+        return actual <= target
+    if operator == "EQUALS":
+        return actual == target
+    return None
+
+
+def derive_rival_hypothesis_pair_outcomes(case: dict[str, Any], settlement: dict[str, Any]) -> list[dict[str, Any]]:
+    """Derive, never accept, mechanism-pair verdicts from frozen operating claims.
+
+    This function deliberately works only from frozen pair predicates and the
+    same admissible actual operating observations used to settle their primary
+    forward judgment.  It does not inspect stock prices, total returns, later
+    report prose, or an author-supplied winner field.
+    """
+    ledger = case.get("calibration_ledger") if isinstance(case.get("calibration_ledger"), dict) else {}
+    pairs = ledger.get("rival_hypothesis_pairs") if isinstance(ledger.get("rival_hypothesis_pairs"), list) else []
+    model_error = settlement.get("model_forecast_error") if isinstance(settlement.get("model_forecast_error"), dict) else {}
+    claim_settlements = {
+        str(item.get("claim_id")): item
+        for item in model_error.get("claim_settlements") or []
+        if isinstance(item, dict) and item.get("claim_id")
+    }
+    metrics = {
+        str(item.get("claim_id")): item
+        for item in model_error.get("metrics") or []
+        if isinstance(item, dict) and item.get("claim_id")
+    }
+    outcomes: list[dict[str, Any]] = []
+    for pair in pairs:
+        if not isinstance(pair, dict):
+            continue
+        signal_outcomes: list[dict[str, Any]] = []
+        for signal in pair.get("discriminators") or []:
+            if not isinstance(signal, dict):
+                continue
+            claim_id = str(signal.get("claim_id") or "")
+            status = (claim_settlements.get(claim_id) or {}).get("status")
+            base = {
+                "signal_id": signal.get("signal_id"),
+                "sequence": signal.get("sequence"),
+                "stage": signal.get("stage"),
+                "claim_id": claim_id,
+                "primary_prediction": deepcopy(signal.get("primary_prediction") or {}),
+                "rival_prediction": deepcopy(signal.get("rival_prediction") or {}),
+            }
+            metric = metrics.get(claim_id)
+            if status != "CALCULATED" or not isinstance(metric, dict):
+                signal_outcomes.append({
+                    **base,
+                    "verdict": "NOT_YET_DUE",
+                    "comparison_state": "NOT_YET_DUE",
+                    "actual_value": None,
+                    "observation_id": None,
+                })
+                continue
+            primary_met = _prediction_is_met(signal.get("primary_prediction") or {}, metric.get("actual_value"))
+            rival_met = _prediction_is_met(signal.get("rival_prediction") or {}, metric.get("actual_value"))
+            comparison_state = (
+                "PRIMARY_ONLY" if primary_met is True and rival_met is False
+                else "RIVAL_ONLY" if rival_met is True and primary_met is False
+                else "BOTH_MET" if primary_met is True and rival_met is True
+                else "NEITHER_MET"
+            )
+            verdict = (
+                "SUPPORTS_PRIMARY" if comparison_state == "PRIMARY_ONLY"
+                else "SUPPORTS_RIVAL" if comparison_state == "RIVAL_ONLY"
+                else "MIXED"
+            )
+            signal_outcomes.append({
+                **base,
+                "verdict": verdict,
+                "comparison_state": comparison_state,
+                "actual_value": metric.get("actual_value"),
+                "observation_id": metric.get("observation_id"),
+            })
+        terminal = [item for item in signal_outcomes if item.get("stage") == "TERMINAL_OPERATING"]
+        terminal_verdicts = {item.get("verdict") for item in terminal}
+        terminal_comparison_states = {item.get("comparison_state") for item in terminal}
+        pair_verdict = (
+            "NOT_YET_DUE" if not terminal or "NOT_YET_DUE" in terminal_verdicts
+            else "SUPPORTS_PRIMARY" if terminal_verdicts == {"SUPPORTS_PRIMARY"}
+            else "SUPPORTS_RIVAL" if terminal_verdicts == {"SUPPORTS_RIVAL"}
+            else "MIXED"
+        )
+        terminal_comparison_state = (
+            "NOT_YET_DUE" if not terminal or "NOT_YET_DUE" in terminal_comparison_states
+            else "PRIMARY_ONLY" if terminal_comparison_states == {"PRIMARY_ONLY"}
+            else "RIVAL_ONLY" if terminal_comparison_states == {"RIVAL_ONLY"}
+            else "BOTH_MET" if terminal_comparison_states == {"BOTH_MET"}
+            else "NEITHER_MET" if terminal_comparison_states == {"NEITHER_MET"}
+            else "MIXED"
+        )
+        outcomes.append({
+            "pair_id": pair.get("pair_id"),
+            "competitive_test_id": pair.get("competitive_test_id"),
+            "pair_verdict": pair_verdict,
+            "terminal_comparison_state": terminal_comparison_state,
+            "signals": signal_outcomes,
+        })
+    return outcomes
+
+
 def validate_settlement(
     record: dict[str, Any], *, case: dict[str, Any] | None = None, experiment: dict[str, Any] | None = None,
     allow_test_fixtures: bool = True,
@@ -2440,6 +3003,20 @@ def validate_settlement(
         invalid.append("settlement_as_of_invalid")
     elif cutoff and settlement_date <= cutoff:
         invalid.append("settlement_must_follow_report_cutoff")
+    if _case_purpose(case) == "COMPANY_JUDGMENT_ONLY":
+        series_id = str(record.get("settlement_series_id") or "")
+        if not series_id.startswith("HBTSETS:"):
+            incomplete.append("settlement_series_id_missing_or_invalid")
+        sequence = record.get("settlement_sequence")
+        if not isinstance(sequence, int) or sequence < 1:
+            invalid.append("settlement_sequence_invalid")
+        predecessor = record.get("previous_settlement_id")
+        if sequence == 1 and predecessor is not None:
+            invalid.append("initial_settlement_cannot_have_predecessor")
+        elif isinstance(sequence, int) and sequence > 1 and not str(predecessor or "").startswith("HBTSET:"):
+            incomplete.append("previous_settlement_id_missing_or_invalid")
+        if record.get("settlement_stage") not in COMPANY_JUDGMENT_SETTLEMENT_STAGES:
+            invalid.append("company_judgment_settlement_stage_invalid")
     actual_sources, source_invalid, source_incomplete = _validate_actual_sources(
         record, cutoff=cutoff, settlement_date=settlement_date, require_content_access=settlement_v2,
     )
@@ -2452,13 +3029,14 @@ def validate_settlement(
     }
     actual_source_ids = set(actual_sources)
     actual = record.get("actual_outcomes") if isinstance(record.get("actual_outcomes"), dict) else {}
+    future_claim_ids: set[str] = set()
     if _is_case_v2(case) and settlement_date:
         for claim_id, claim in _frozen_claims(case).items():
             outcome = claim.get("observable_outcome") if isinstance(claim.get("observable_outcome"), dict) else {}
             window = outcome.get("observation_window") if isinstance(outcome.get("observation_window"), dict) else {}
             closes_at = _timestamp(window.get("closes_at"))
             if closes_at and closes_at > settlement_date:
-                invalid.append("calibration_ledger.claims:" + claim_id + ":observation_window_closes_after_settlement")
+                future_claim_ids.add(claim_id)
     incomplete.extend(_required(actual, ("currency", "cash_flows", "operating_observations"), "actual_outcomes"))
     observation_fields = (
         "observation_id", "claim_id", "metric", "value", "unit", "measurement_basis", "measurement_period",
@@ -2483,13 +3061,24 @@ def validate_settlement(
             )
             invalid.extend(ref_invalid)
             incomplete.extend(ref_incomplete)
-    for section, fields in {
+    section_requirements = {
         "report_coverage": ("status", "supported_claim_count", "unsupported_claim_count", "unknowns_preserved", "notes"),
-        "model_forecast_error": ("status", "metrics", "notes"),
+        # A P-23 definition change is a valid non-calculable settlement.  Its
+        # empty metric list is evidence that we did not substitute a proxy;
+        # calculated claims are still required below to carry exactly one.
+        "model_forecast_error": ("status", "notes"),
         "investment_return_outcome": ("status", "action", "total_return", "benchmark_return", "currency", "notes"),
-    }.items():
+    }
+    if _case_purpose(case) == "COMPANY_JUDGMENT_ONLY":
+        section_requirements["investment_return_outcome"] = ("status", "action", "currency", "notes")
+    for section, fields in section_requirements.items():
         payload = record.get(section) if isinstance(record.get(section), dict) else {}
         incomplete.extend(_required(payload, fields, section))
+    model_error_payload = record.get("model_forecast_error") if isinstance(record.get("model_forecast_error"), dict) else {}
+    if "metrics" not in model_error_payload:
+        incomplete.append("model_forecast_error:missing:metrics")
+    elif not isinstance(model_error_payload.get("metrics"), list):
+        invalid.append("model_forecast_error:metrics_not_list")
     return_outcome = record.get("investment_return_outcome") if isinstance(record.get("investment_return_outcome"), dict) else {}
     return_invalid, return_incomplete = _validate_return_outcome(
         return_outcome,
@@ -2532,16 +3121,45 @@ def validate_settlement(
         invalid.extend(observation_invalid)
         incomplete.extend(observation_incomplete)
     model_error = record.get("model_forecast_error") if isinstance(record.get("model_forecast_error"), dict) else {}
+    if "rival_hypothesis_pair_outcomes" in model_error:
+        invalid.append("model_forecast_error:rival_hypothesis_pair_outcomes_must_be_derived_not_submitted")
     timeline_invalid, timeline_incomplete = _validate_operating_source_timeline(
         record, actual_sources=actual_sources, observations=observation_by_id,
     )
     invalid.extend(timeline_invalid)
     incomplete.extend(timeline_incomplete)
+    # A production company-judgment pair may not turn an analyst-entered
+    # number into a mechanism verdict.  Its later operating observations have
+    # to be a projection of a separately enumerated/read outcome package.
+    # Test fixtures stay lightweight; the CLI and Phase10 production path call
+    # this validator with ``allow_test_fixtures=False``.
+    ledger = case.get("calibration_ledger") if isinstance(case, dict) and isinstance(case.get("calibration_ledger"), dict) else {}
+    has_rival_pair = bool(ledger.get("rival_hypothesis_pairs"))
+    if _case_purpose(case) == "COMPANY_JUDGMENT_ONLY" and has_rival_pair and not allow_test_fixtures:
+        outcome_invalid, outcome_incomplete = validate_settlement_outcome_acquisition(
+            record.get("outcome_acquisition") if isinstance(record.get("outcome_acquisition"), dict) else {},
+            settlement=record, case=case,
+        )
+        invalid.extend(outcome_invalid)
+        incomplete.extend(outcome_incomplete)
     claim_settlements, settlement_invalid, settlement_incomplete = _validate_claim_settlements(
         model_error, frozen_claims=frozen_claims, observations=observation_by_id,
     )
     invalid.extend(settlement_invalid)
     incomplete.extend(settlement_incomplete)
+    if future_claim_ids:
+        for claim_id in sorted(future_claim_ids):
+            settlement = claim_settlements.get(claim_id)
+            prefix = "calibration_ledger.claims:" + claim_id
+            if _case_purpose(case) != "COMPANY_JUDGMENT_ONLY":
+                invalid.append(prefix + ":observation_window_closes_after_settlement")
+            elif not isinstance(settlement, dict):
+                # The normal missing-claim finding is emitted by the shared
+                # validator; this one explains why a later window cannot be
+                # omitted from a partial company-learning settlement.
+                incomplete.append(prefix + ":future_claim_settlement_missing")
+            elif settlement.get("status") != "PARTIAL" or settlement.get("observation_ids"):
+                invalid.append(prefix + ":future_claim_requires_partial_without_observation")
     metrics_by_claim: dict[str, list[dict[str, Any]]] = {}
     for index, metric in enumerate(model_error.get("metrics") or []):
         prefix = f"model_forecast_error.metrics[{index}]"
@@ -2551,7 +3169,7 @@ def validate_settlement(
         incomplete.extend(_required(
             metric,
             (
-                "claim_id", "observation_id", "metric", "forecast_value", "actual_value", "unit",
+                "claim_id", "observation_id", "metric", "actual_value", "unit",
                 "actual_source_ids",
             ),
             prefix,
@@ -2574,10 +3192,38 @@ def validate_settlement(
             elif claim_settlement.get("status") != "CALCULATED":
                 invalid.append(prefix + ":metric_requires_calculated_claim_settlement")
             prediction = frozen.get("prediction") if isinstance(frozen.get("prediction"), dict) else {}
+            range_prediction = prediction.get("operator") == "RANGE"
             if metric.get("metric") != prediction.get("metric"):
                 invalid.append(prefix + ":metric_does_not_match_frozen_prediction")
-            if metric.get("forecast_value") != prediction.get("value"):
-                invalid.append(prefix + ":forecast_value_does_not_match_frozen_prediction")
+            if range_prediction:
+                incomplete.extend(_required(metric, ("forecast_range_low", "forecast_range_high", "interval_disposition"), prefix))
+                if metric.get("forecast_value") not in (None, ""):
+                    invalid.append(prefix + ":range_prediction_cannot_carry_point_forecast_value")
+                if metric.get("forecast_range_low") != prediction.get("range_low"):
+                    invalid.append(prefix + ":forecast_range_low_does_not_match_frozen_prediction")
+                if metric.get("forecast_range_high") != prediction.get("range_high"):
+                    invalid.append(prefix + ":forecast_range_high_does_not_match_frozen_prediction")
+                interval_disposition = metric.get("interval_disposition")
+                if interval_disposition not in INTERVAL_DISPOSITIONS:
+                    invalid.append(prefix + ":interval_disposition_invalid")
+                actual = _number(metric.get("actual_value"))
+                low, high = _number(prediction.get("range_low")), _number(prediction.get("range_high"))
+                if actual is None:
+                    invalid.append(prefix + ":actual_value_must_be_numeric_for_range_prediction")
+                elif low is not None and high is not None:
+                    expected_disposition = (
+                        "BELOW_RANGE" if actual < low else "ABOVE_RANGE" if actual > high else "WITHIN_RANGE"
+                    )
+                    if interval_disposition != expected_disposition:
+                        invalid.append(prefix + ":interval_disposition_does_not_match_actual_value")
+            else:
+                incomplete.extend(_required(metric, ("forecast_value",), prefix))
+                if metric.get("forecast_value") != prediction.get("value"):
+                    invalid.append(prefix + ":forecast_value_does_not_match_frozen_prediction")
+                if any(metric.get(field) not in (None, "") for field in ("forecast_range_low", "forecast_range_high", "interval_disposition")):
+                    invalid.append(prefix + ":point_prediction_cannot_carry_interval_fields")
+                if _number(metric.get("actual_value")) is None:
+                    invalid.append(prefix + ":actual_value_must_be_numeric_for_point_prediction")
             observation_id = str(metric.get("observation_id") or "")
             observation = observation_by_id.get(observation_id)
             if observation is None:
@@ -2619,7 +3265,142 @@ def validate_settlement(
     if record.get("status") == "REVIEWABLE" and incomplete:
         invalid.append("reviewable_settlement_incomplete")
     state = "INVALID" if invalid else "INCOMPLETE" if incomplete else "REVIEWABLE"
-    return {"state": state, "invalid_findings": list(dict.fromkeys(invalid)), "incomplete_findings": list(dict.fromkeys(incomplete)), "hindsight_fields_seen": len(forbidden)}
+    return {"state": state, "invalid_findings": list(dict.fromkeys(invalid)), "incomplete_findings": list(dict.fromkeys(incomplete)), "hindsight_fields_seen": len(forbidden), "rival_hypothesis_pair_outcomes": derive_rival_hypothesis_pair_outcomes(case, record) if case else []}
+
+
+def validate_settlement_series(
+    records: list[dict[str, Any]], *, case: dict[str, Any], experiment: dict[str, Any] | None = None,
+    allow_test_fixtures: bool = True,
+) -> dict[str, Any]:
+    """Verify that company-judgment settlements only append new information.
+
+    A single settlement can validate its own frozen contract.  This function
+    checks the relation between successive artifacts: same case/freeze/series,
+    strictly ordered predecessor links, and no rewriting of an already
+    calculated claim.  It deliberately does not count the individual entries
+    as independent calibration samples.
+    """
+    invalid: list[str] = []
+    incomplete: list[str] = []
+    if _case_purpose(case) != "COMPANY_JUDGMENT_ONLY":
+        invalid.append("settlement_series_requires_company_judgment_only_case")
+    if not isinstance(records, list) or not records:
+        incomplete.append("settlement_series_records_missing")
+        return {"state": "INCOMPLETE", "invalid_findings": invalid, "incomplete_findings": incomplete}
+
+    indexed: list[tuple[int, dict[str, Any]]] = []
+    seen_ids: set[str] = set()
+    for index, record in enumerate(records):
+        prefix = f"settlements[{index}]"
+        if not isinstance(record, dict):
+            invalid.append(prefix + ":not_object")
+            continue
+        result = validate_settlement(
+            record, case=case, experiment=experiment, allow_test_fixtures=allow_test_fixtures,
+        )
+        if result["state"] != "REVIEWABLE":
+            invalid.extend(prefix + ":not_reviewable:" + finding for finding in result["invalid_findings"])
+            incomplete.extend(prefix + ":incomplete:" + finding for finding in result["incomplete_findings"])
+        settlement_id = str(record.get("settlement_id") or "")
+        if not settlement_id.startswith("HBTSET:"):
+            invalid.append(prefix + ":settlement_id_invalid")
+        elif settlement_id in seen_ids:
+            invalid.append("duplicate_settlement_id:" + settlement_id)
+        seen_ids.add(settlement_id)
+        sequence = record.get("settlement_sequence")
+        if isinstance(sequence, int) and sequence >= 1:
+            indexed.append((index, record))
+
+    ordered = sorted(indexed, key=lambda item: item[1].get("settlement_sequence"))
+    series_ids = {str(record.get("settlement_series_id") or "") for _, record in ordered}
+    if len(series_ids) != 1:
+        invalid.append("settlement_series_id_not_common")
+    for expected_sequence, (index, record) in enumerate(ordered, start=1):
+        prefix = f"settlements[{index}]"
+        if record.get("settlement_sequence") != expected_sequence:
+            invalid.append(prefix + ":settlement_sequence_not_contiguous")
+        if expected_sequence == 1:
+            if record.get("previous_settlement_id") is not None:
+                invalid.append(prefix + ":initial_settlement_cannot_have_predecessor")
+            continue
+        _, predecessor = ordered[expected_sequence - 2]
+        if record.get("previous_settlement_id") != predecessor.get("settlement_id"):
+            invalid.append(prefix + ":previous_settlement_id_does_not_match_predecessor")
+        predecessor_as_of = _timestamp(predecessor.get("settlement_as_of"))
+        current_as_of = _timestamp(record.get("settlement_as_of"))
+        if predecessor_as_of and current_as_of and current_as_of <= predecessor_as_of:
+            invalid.append(prefix + ":settlement_as_of_not_after_predecessor")
+        prior_claims = {
+            str(item.get("claim_id")): item
+            for item in ((predecessor.get("model_forecast_error") or {}).get("claim_settlements") or [])
+            if isinstance(item, dict) and item.get("claim_id")
+        }
+        current_claims = {
+            str(item.get("claim_id")): item
+            for item in ((record.get("model_forecast_error") or {}).get("claim_settlements") or [])
+            if isinstance(item, dict) and item.get("claim_id")
+        }
+        for claim_id, prior in prior_claims.items():
+            if prior.get("status") != "CALCULATED":
+                continue
+            current = current_claims.get(claim_id)
+            if not isinstance(current, dict) or current.get("status") != "CALCULATED":
+                invalid.append(prefix + ":calculated_claim_rewritten:" + claim_id)
+            elif set(current.get("observation_ids") or []) != set(prior.get("observation_ids") or []):
+                invalid.append(prefix + ":calculated_claim_observations_rewritten:" + claim_id)
+                continue
+            else:
+                # A CJO series may append later signals, but it may not use a
+                # later artifact to revise the actual value, comparability, or
+                # source attribution of a signal already settled.  Comparing
+                # the concrete observations (rather than an author-supplied
+                # summary or digest) makes this check useful for the next
+                # action: a genuine restatement must be a new, explicitly
+                # non-comparable/reopened outcome rather than a silent rewrite.
+                prior_observations = {
+                    str(observation.get("observation_id") or ""): observation
+                    for observation in ((predecessor.get("actual_outcomes") or {}).get("operating_observations") or [])
+                    if isinstance(observation, dict)
+                    and str(observation.get("observation_id") or "") in set(prior.get("observation_ids") or [])
+                }
+                current_observations = {
+                    str(observation.get("observation_id") or ""): observation
+                    for observation in ((record.get("actual_outcomes") or {}).get("operating_observations") or [])
+                    if isinstance(observation, dict)
+                    and str(observation.get("observation_id") or "") in set(prior.get("observation_ids") or [])
+                }
+                for observation_id, prior_observation in prior_observations.items():
+                    current_observation = current_observations.get(observation_id)
+                    if current_observation != prior_observation:
+                        invalid.append(
+                            prefix + ":calculated_claim_observation_payload_rewritten:"
+                            + claim_id + ":" + observation_id
+                        )
+                        continue
+                    prior_sources = {
+                        str(source.get("source_id") or ""): source
+                        for source in (predecessor.get("actual_sources") or [])
+                        if isinstance(source, dict)
+                    }
+                    current_sources = {
+                        str(source.get("source_id") or ""): source
+                        for source in (record.get("actual_sources") or [])
+                        if isinstance(source, dict)
+                    }
+                    for source_id in prior_observation.get("source_ids") or []:
+                        source_id = str(source_id or "")
+                        if current_sources.get(source_id) != prior_sources.get(source_id):
+                            invalid.append(
+                                prefix + ":calculated_claim_source_payload_rewritten:"
+                                + claim_id + ":" + source_id
+                            )
+    state = "INVALID" if invalid else "INCOMPLETE" if incomplete else "REVIEWABLE"
+    return {
+        "state": state,
+        "invalid_findings": list(dict.fromkeys(invalid)),
+        "incomplete_findings": list(dict.fromkeys(incomplete)),
+        "settlement_count": len(ordered),
+    }
 
 
 def build_pilot_experiment(*, registered_at: str = "2026-08-16T00:00:00+08:00") -> dict[str, Any]:

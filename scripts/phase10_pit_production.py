@@ -12,6 +12,7 @@ from __future__ import annotations
 
 import os
 import re
+from copy import deepcopy
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
@@ -25,6 +26,9 @@ from scripts.evidence_documents import (
     validate_document_manifest,
 )
 from scripts.phase10_pit_runner import PITSourcePackage
+
+
+PIT_SOURCE_PROVENANCE_PROJECTION_SCHEMA_VERSION = "phase10-pit-source-provenance-projection.v1"
 
 
 class PITProductionWorkspaceError(RuntimeError):
@@ -46,9 +50,10 @@ class PITProjectedSource:
     reader_text_path: str
     local_path: str
     derived_text_path: str
+    source_role_provenance: dict[str, Any] | None = None
 
-    def to_dict(self) -> dict[str, str]:
-        return {
+    def to_dict(self) -> dict[str, Any]:
+        result: dict[str, Any] = {
             "source_id": self.source_id,
             "source_version": self.source_version,
             "published_at": self.published_at,
@@ -61,6 +66,9 @@ class PITProjectedSource:
             "local_path": self.local_path,
             "derived_text_path": self.derived_text_path,
         }
+        if self.source_role_provenance is not None:
+            result["source_role_provenance"] = deepcopy(self.source_role_provenance)
+        return result
 
 
 class PITProductionWorkspace:
@@ -124,7 +132,7 @@ class PITProductionWorkspace:
         relative_target = os.path.relpath(target, path.parent)
         path.symlink_to(relative_target)
 
-    def project_read_source(self, source_id: str) -> dict[str, str]:
+    def project_read_source(self, source_id: str) -> dict[str, Any]:
         """Project an admitted source only after the runner logged an ALLOW read."""
         source_id = str(source_id or "").strip()
         if not source_id:
@@ -138,6 +146,15 @@ class PITProductionWorkspace:
         source = self._manifest_source(source_id)
         package_path = str(registration.get("package_path") or "")
         reader_text_path = str(registration.get("reader_text_path") or "")
+        # A versioned industry export is directly readable data.  Other
+        # source types must supply a registered reader representation; that
+        # includes first-party web releases, whose page-marked reader copy is
+        # created by the acquisition module rather than from a live browser.
+        if (
+            not reader_text_path
+            and str(source.get("source_type") or "").upper() == "LICENSED_INDUSTRY_DATA"
+        ):
+            reader_text_path = package_path
         if not package_path or not reader_text_path:
             raise PITProductionWorkspaceError("PIT source lacks original or reader path: " + source_id)
         original = self._source_file(package_path, source_id=source_id)
@@ -159,11 +176,15 @@ class PITProductionWorkspace:
             reader_text_path=reader_text_path,
             local_path=local_path.as_posix(),
             derived_text_path=derived_text_path.as_posix(),
+            source_role_provenance=(
+                deepcopy(source["source_role_provenance"])
+                if isinstance(source.get("source_role_provenance"), dict) else None
+            ),
         )
         self._projected[source_id] = projected
         return projected.to_dict()
 
-    def document_sources(self) -> list[dict[str, str]]:
+    def document_sources(self) -> list[dict[str, Any]]:
         """Return the already-projected source map in stable source-id order."""
         return [self._projected[key].to_dict() for key in sorted(self._projected)]
 
@@ -179,6 +200,7 @@ class PITProductionWorkspace:
             raise PITProductionWorkspaceError("PIT document manifest requires at least one projected source")
         code, market = self._security_identity()
         documents: list[dict[str, Any]] = []
+        source_provenance: list[dict[str, Any]] = []
         for projected in self.document_sources():
             doc_type, authority = self._document_class(projected["source_type"])
             original = self.output_dir / projected["local_path"]
@@ -186,7 +208,7 @@ class PITProductionWorkspace:
                 raise PITProductionWorkspaceError("PIT projected original is missing: " + projected["source_id"])
             digest = _sha256_bytes(original)
             period_end = projected["data_as_of"]
-            documents.append({
+            document = {
                 "doc_id": f"DOC:{market}:{code}:{doc_type}:{period_end}:{digest[:12]}",
                 "report_id": "",
                 "issuer": code,
@@ -201,12 +223,32 @@ class PITProductionWorkspace:
                 "local_path": projected["local_path"],
                 "derived_text_path": projected["derived_text_path"],
                 "sha256": digest,
-                "mime_type": "application/pdf" if original.suffix.lower() == ".pdf" else "text/markdown",
-                "language": "zh",
+                "mime_type": (
+                    "application/pdf" if original.suffix.lower() == ".pdf"
+                    else "text/csv" if original.suffix.lower() == ".csv"
+                    else "text/html" if original.suffix.lower() in {".html", ".htm"}
+                    else "text/markdown"
+                ),
+                "language": str(self._manifest_source(projected["source_id"]).get("language") or "zh"),
                 "acquisition_status": "PIT_LINKED_AFTER_ALLOW_READ",
                 "source_id": projected["source_id"],
                 "source_version": projected["source_version"],
                 "revision_policy": projected["revision_policy"],
+            }
+            role_provenance = projected.get("source_role_provenance")
+            if isinstance(role_provenance, dict):
+                # This is a structural copy of acquisition metadata.  Neither
+                # the document title, URL nor legal-name display text is used
+                # to infer a publisher role later.
+                document["source_role_provenance"] = deepcopy(role_provenance)
+            documents.append(document)
+            source_provenance.append({
+                "source_id": projected["source_id"],
+                "source_version": projected["source_version"],
+                "revision_policy": projected["revision_policy"],
+                "source_type": projected["source_type"],
+                "admission_status": "ADMITTED",
+                "source_role_provenance": deepcopy(role_provenance) if isinstance(role_provenance, dict) else None,
             })
         documents.sort(key=lambda item: (str(item["period_end"]), str(item["doc_id"])))
         report_id = f"REPORT:{market}:{code}:{documents[-1]['period_end']}"
@@ -224,6 +266,17 @@ class PITProductionWorkspace:
         payload["manifest_hash"] = _payload_hash(_manifest_core(payload))
         payload["validation"] = validate_document_manifest(payload, self.output_dir)
         _atomic_write_json(self.output_dir / "document_manifest.json", payload)
+        # The P29 gate cannot safely reconstruct a publisher role from a DOC
+        # alone.  Keep a narrow, read-only projection of the actual admitted
+        # source identities beside the documents so it can reject a hand-edited
+        # DOC role contract.  It contains no source content and only sources
+        # already ALLOW-read by this runner.
+        _atomic_write_json(self.output_dir / "pit_source_provenance.json", {
+            "schema_version": PIT_SOURCE_PROVENANCE_PROJECTION_SCHEMA_VERSION,
+            "run_id": self.run_id,
+            "company_code": self.company_code,
+            "sources": sorted(source_provenance, key=lambda item: str(item["source_id"])),
+        })
         return payload
 
     def _security_identity(self) -> tuple[str, str]:
@@ -238,6 +291,8 @@ class PITProductionWorkspace:
             "ANNUAL_REPORT": ("annual_report", "audited_filing"),
             "INTERIM_REPORT": ("interim_report", "company_filing"),
             "QUARTERLY_REPORT": ("quarterly_report", "company_filing"),
+            "LICENSED_INDUSTRY_DATA": ("licensed_industry_data", "industry_data"),
+            "OTHER_OFFICIAL": ("other_official", "other_official"),
         }
         return classes.get(str(source_type or "").upper(), ("exchange_announcement", "company_filing"))
 

@@ -3,12 +3,13 @@
   "$id": "https://turtle.local/schemas/historical_backtest_case.v2.schema.json",
   "title": "Turtle Historical Backtest Frozen Case v2",
   "type": "object",
-  "required": ["schema_version", "case_id", "experiment_id", "company_code", "simulation_cutoff", "report_freeze", "credibility", "route", "forecast", "sources", "inputs", "calibration_ledger", "taxes_fees_fx", "price_identity", "status"],
+  "required": ["schema_version", "case_id", "experiment_id", "company_code", "simulation_cutoff", "purpose", "report_freeze", "credibility", "route", "forecast", "sources", "inputs", "calibration_ledger", "taxes_fees_fx", "price_identity", "status"],
   "properties": {
     "schema_version": {"const": "historical-backtest-case.v2"},
     "case_id": {"type": "string", "pattern": "^HBTCASE:"},
     "experiment_id": {"type": "string", "pattern": "^HBT:"},
     "company_code": {"type": "string", "minLength": 1},
+    "purpose": {"enum": ["INVESTMENT_DECISION", "COMPANY_JUDGMENT_ONLY"]},
     "simulation_cutoff": {"type": "string", "minLength": 10},
     "report_freeze": {
       "type": "object",
@@ -223,8 +224,10 @@
                 "type": ["object", "null"],
                 "properties": {
                   "metric": {"type": "string", "minLength": 1},
-                  "operator": {"enum": ["AT_LEAST", "AT_MOST", "EQUALS"]},
+                  "operator": {"enum": ["AT_LEAST", "AT_MOST", "EQUALS", "RANGE"]},
                   "value": {"type": "number"},
+                  "range_low": {"type": "number"},
+                  "range_high": {"type": "number"},
                   "unit": {"type": "string", "minLength": 1},
                   "horizon": {"type": "string", "minLength": 1}
                 }
@@ -249,6 +252,9 @@
               },
               "counter_thesis": {"type": "string", "minLength": 1},
               "flip_condition": {"type": "string", "minLength": 1},
+              "forward_judgment_id": {"type": "string", "minLength": 1},
+              "rival_hypothesis_pair_id": {"type": ["string", "null"], "pattern": "^RHP:"},
+              "rival_signal_id": {"type": ["string", "null"], "pattern": "^RHPSIG:"},
               "observable_outcome": {
                 "type": "object",
                 "required": ["metric", "unit", "measurement_basis", "measurement_rule", "measurement_period", "observation_window", "allowed_source_types", "settlement_version_policy"],
@@ -277,9 +283,23 @@
                   "allowed_source_types": {
                     "type": "array",
                     "minItems": 1,
-                    "items": {"enum": ["ANNUAL_REPORT", "INTERIM_REPORT", "EXCHANGE_ANNOUNCEMENT"]}
+                    "items": {"enum": ["ANNUAL_REPORT", "INTERIM_REPORT", "EXCHANGE_ANNOUNCEMENT", "OTHER_OFFICIAL", "LICENSED_INDUSTRY_DATA"]}
                   },
+                  "industry_measurement_inference": {"enum": ["WITHIN_PROVIDER_RELATIVE_CHANGE", "LEVEL_WITH_STATED_LIMITS"]},
+                  "licensed_industry_series_contract": {"type": "object", "required": ["pre_cutoff_source_id", "provider_id", "dataset_id", "metric_id", "semantic", "geography", "product_mapping_id", "channel_mapping_id", "brand_mapping_id", "denominator_mapping_id"], "properties": {
+                    "pre_cutoff_source_id": {"type": "string", "minLength": 1}, "provider_id": {"type": "string", "minLength": 1}, "dataset_id": {"type": "string", "minLength": 1}, "metric_id": {"type": "string", "minLength": 1}, "semantic": {"type": "string", "minLength": 1}, "geography": {"type": "string", "minLength": 1}, "product_mapping_id": {"type": "string", "minLength": 1}, "channel_mapping_id": {"type": "string", "minLength": 1}, "brand_mapping_id": {"type": "string", "minLength": 1}, "denominator_mapping_id": {"type": "string", "minLength": 1}
+                  }},
                   "settlement_version_policy": {"enum": ["INITIAL_DISCLOSURE", "LATEST_OFFICIAL_AS_OF_EVALUATION"]},
+                  "metric_reconstruction_contract": {"type": "object", "required": ["source_targets", "prohibited_substitutes", "definition_change_action"], "properties": {
+                    "source_targets": {"type": "array", "minItems": 1, "items": {"type": "object", "required": ["source_type", "file_scope", "reported_label", "reported_locator"], "properties": {
+                      "source_type": {"enum": ["ANNUAL_REPORT", "INTERIM_REPORT", "EXCHANGE_ANNOUNCEMENT", "OTHER_OFFICIAL", "LICENSED_INDUSTRY_DATA"]},
+                      "file_scope": {"type": "string", "minLength": 1},
+                      "reported_label": {"type": "string", "minLength": 1},
+                      "reported_locator": {"type": "string", "minLength": 1}
+                    }}},
+                    "prohibited_substitutes": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}},
+                    "definition_change_action": {"const": "MEASUREMENT_MISMATCH"}
+                  }},
                   "conversion_rule": {
                     "type": "object",
                     "required": ["rule_id", "raw_unit", "converted_unit", "multiplier"],
@@ -292,6 +312,67 @@
                   }
                 }
               }
+            }
+          }
+        },
+        "rival_hypothesis_pairs": {
+          "description": "Frozen primary/rival operating predicates. Verdicts are derived only from later official operating observations.",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["pair_id", "competitive_test_id", "primary_mechanism_chain_id", "rival_mechanism_chain_id", "discriminators"],
+            "properties": {
+              "pair_id": {"type": "string", "pattern": "^RHP:"},
+              "competitive_test_id": {"type": "string", "minLength": 1},
+              "primary_mechanism_chain_id": {"type": "string", "minLength": 1},
+              "rival_mechanism_chain_id": {"type": "string", "minLength": 1},
+              "discriminators": {
+                "type": "array", "minItems": 2,
+                "items": {"type": "object", "required": ["signal_id", "sequence", "stage", "forward_judgment_id", "claim_id", "primary_prediction", "rival_prediction"], "properties": {
+                  "signal_id": {"type": "string", "pattern": "^RHPSIG:"},
+                  "sequence": {"type": "integer", "minimum": 1},
+                  "stage": {"enum": ["EARLY_MECHANISM", "TERMINAL_OPERATING"]},
+                  "forward_judgment_id": {"type": "string", "minLength": 1},
+                  "claim_id": {"type": "string", "pattern": "^HBTCLM:"},
+                  "primary_prediction": {"type": "object"}, "rival_prediction": {"type": "object"}
+                }}
+              }
+            }
+          }
+        },
+        "analogy_transfer_cards": {
+          "description": "Frozen structural analogy and near-miss context; it is not a price, probability, or direct valuation input.",
+          "type": "array",
+          "items": {"type": "object", "required": ["card_id", "target_pair_id"], "properties": {
+            "card_id": {"type": "string", "pattern": "^ATC:"},
+            "target_pair_id": {"type": "string", "pattern": "^RHP:"}
+          }}
+        },
+        "selection_admission": {
+          "description": "Optional frozen R-07 CJO selection-learning receipt. It is not an outcome input; Phase 10 feedback uses it only to classify a settled mechanism signal as selection-eligible or not.",
+          "type": "object",
+          "required": ["status"],
+          "properties": {
+            "status": {"enum": ["NOT_SELECTION_ELIGIBLE", "NO_PRIMARY", "SELECTION_ADMITTED"]},
+            "candidate_scenario_ids": {"type": "array", "items": {"type": "string"}},
+            "strongest_rival_scenario_id": {"type": "string"},
+            "strongest_rival_not_selected_reason": {"type": "string"},
+            "rival_hypothesis_pair_id": {"type": "string", "pattern": "^RHP:"},
+            "no_primary_reason": {"type": "string"},
+            "selection_register_binding": {"type": "object", "required": ["register_id", "register_fingerprint", "selection_entry_id", "company_id", "company_cluster_id"], "properties": {
+              "register_id": {"type": "string", "pattern": "^CSR:"}, "register_fingerprint": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+              "selection_entry_id": {"type": "string", "pattern": "^CSRSEL:"}, "company_id": {"type": "string", "minLength": 1}, "company_cluster_id": {"type": "string", "minLength": 1}
+            }},
+            "selection_forward_judgment_ids": {"type": "array", "items": {"type": "string"}},
+            "selection_evidence": {
+              "type": "array",
+              "items": {"type": "object", "required": ["evidence_id", "source_id", "source_group_id", "supports_scenario_id", "directional_reason", "why_rival_cannot_equally_explain", "distortion_downgrade"], "properties": {
+                "evidence_id": {"type": "string"}, "source_id": {"type": "string"},
+                "source_group_id": {"type": "string"}, "supports_scenario_id": {"type": "string"},
+                "directional_reason": {"type": "string"},
+                "why_rival_cannot_equally_explain": {"type": "string"},
+                "distortion_downgrade": {"type": "string"}
+              }}
             }
           }
         }

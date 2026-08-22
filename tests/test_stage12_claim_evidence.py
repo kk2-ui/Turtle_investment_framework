@@ -70,6 +70,31 @@ def _valid_payload(output: Path, *, chapters: list[int] | None = None, freeze: b
     )
 
 
+def _valid_cjo_payload(output: Path, *, freeze: bool = True) -> dict:
+    output.mkdir(parents=True, exist_ok=True)
+    (output / "analysis_contract.json").write_text(json.dumps({
+        "ts_code": "000001.SZ", "analysis_purpose": "COMPANY_JUDGMENT_ONLY",
+    }), encoding="utf-8")
+    (output / "2025_年报.md").write_text("# FY2025", encoding="utf-8")
+    (output / "thesis_test.json").write_text(json.dumps({
+        "analysis_purpose": "COMPANY_JUDGMENT_ONLY",
+        "forward_judgments": [{"judgment_id": "fj.owner_cash"}],
+    }), encoding="utf-8")
+    claim = _claim()
+    claim.pop("decision_impact")
+    claim.pop("decision_entry_ids")
+    claim["judgment_impact"] = {
+        "mechanism": "续约留存降低替换频率，先维持收入可见性。",
+        "normalized_earnings_or_owner_cash": "若续约保持，正常化毛利与经营现金转化不应先于销量恶化而断裂。",
+        "monitoring_or_forward_judgment": "跟踪续约率、单客价格与经营现金转化，并结算 fj.owner_cash。",
+        "forward_judgment_ids": ["fj.owner_cash"],
+    }
+    return build_claim_evidence_ledger(
+        output, [claim], change_reason="freeze company mechanism and owner-cash judgment",
+        freeze=freeze, analysis_purpose="COMPANY_JUDGMENT_ONLY",
+    )
+
+
 def test_compound_source_cannot_mask_invented_component(tmp_path: Path) -> None:
     (tmp_path / "compute_bundle.json").write_text("{}", encoding="utf-8")
     registry = EvidenceRegistry()
@@ -88,6 +113,54 @@ def test_numericless_evidence_coverage_is_na_not_free_pass() -> None:
     assert result["number_claims"] == 0
     assert result["coverage_ratio"] is None
     assert result["status"] == "N/A"
+
+
+def test_company_judgment_claim_freezes_fact_to_mechanism_to_owner_cash_to_fj(tmp_path: Path) -> None:
+    initialize_claim_evidence_policy(
+        tmp_path, run_id="cjo", enforced=True,
+        analysis_purpose="COMPANY_JUDGMENT_ONLY",
+    )
+    payload = _valid_cjo_payload(tmp_path)
+
+    result = validate_claim_evidence_ledger(
+        payload, report_text=_report(), output_dir=tmp_path, enforced=True,
+    )
+
+    assert result["state"] == "DECISION_READY"
+    assert result["analysis_purpose"] == "COMPANY_JUDGMENT_ONLY"
+
+
+def test_company_judgment_claim_can_bootstrap_planned_fj_but_cannot_freeze_it(tmp_path: Path) -> None:
+    initialize_claim_evidence_policy(
+        tmp_path, run_id="cjo-bootstrap", enforced=True,
+        analysis_purpose="COMPANY_JUDGMENT_ONLY",
+    )
+    payload = _valid_cjo_payload(tmp_path, freeze=False)
+    (tmp_path / "thesis_test.json").unlink()
+
+    bootstrap = validate_claim_evidence_ledger(
+        payload, report_text=_report(), output_dir=tmp_path, enforced=True,
+    )
+    assert bootstrap["state"] == "INCOMPLETE"
+    assert "claims[0]" not in "\n".join(bootstrap["invalid_findings"])
+    assert any("forward_judgment_pending:fj.owner_cash" in item for item in bootstrap["incomplete_findings"])
+
+    payload["freeze"]["frozen"] = True
+    final = validate_claim_evidence_ledger(
+        payload, report_text=_report(), output_dir=tmp_path, enforced=True,
+    )
+    assert final["state"] == "INVALID"
+    assert any("unknown_forward_judgment:fj.owner_cash" in item for item in final["invalid_findings"])
+
+
+def test_company_judgment_claim_rejects_decision_id_placeholder(tmp_path: Path) -> None:
+    payload = _valid_cjo_payload(tmp_path, freeze=False)
+    payload["claims"][0]["decision_entry_ids"] = []
+
+    result = validate_claim_evidence_ledger(payload, report_text=_report(), output_dir=tmp_path)
+
+    assert result["state"] == "INVALID"
+    assert "claim.moat:company_judgment_cannot_carry_decision_entry_ids" in result["invalid_findings"]
 
 
 def test_atomic_numeric_support_handles_decimal_thousands_and_accounting_negatives() -> None:

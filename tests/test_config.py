@@ -38,7 +38,7 @@ class TestGetToken:
         env_file.write_text("TUSHARE_TOKEN=from_env_file\n")
         monkeypatch.delenv("TUSHARE_TOKEN", raising=False)
         import config as config_mod
-        monkeypatch.setattr(config_mod, "__file__", str(scripts_dir / "config.py"))
+        monkeypatch.setattr(config_mod, "PROJECT_ROOT", str(tmp_path))
         token = get_token()
         assert token == "from_env_file"
         # Clean up so other tests aren't affected
@@ -52,7 +52,7 @@ class TestGetToken:
         env_file.write_text("TUSHARE_TOKEN=from_file\n")
         monkeypatch.setenv("TUSHARE_TOKEN", "from_env")
         import config as config_mod
-        monkeypatch.setattr(config_mod, "__file__", str(scripts_dir / "config.py"))
+        monkeypatch.setattr(config_mod, "PROJECT_ROOT", str(tmp_path))
         assert get_token() == "from_env"
 
     def test_env_file_skips_comments(self, monkeypatch, tmp_path):
@@ -63,7 +63,7 @@ class TestGetToken:
         env_file.write_text("# This is a comment\n\nTUSHARE_TOKEN=valid_token\n")
         monkeypatch.delenv("TUSHARE_TOKEN", raising=False)
         import config as config_mod
-        monkeypatch.setattr(config_mod, "__file__", str(scripts_dir / "config.py"))
+        monkeypatch.setattr(config_mod, "PROJECT_ROOT", str(tmp_path))
         assert get_token() == "valid_token"
         monkeypatch.delenv("TUSHARE_TOKEN", raising=False)
 

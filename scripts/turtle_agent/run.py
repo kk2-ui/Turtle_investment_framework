@@ -21,6 +21,7 @@ Usage::
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import os
 import re
@@ -33,10 +34,14 @@ from datetime import datetime, timezone
 
 # 确保 scripts/ 可导入
 _scripts_dir = os.path.normpath(os.path.join(os.path.dirname(__file__), ".."))
+_FRAMEWORK_DIR = os.path.normpath(os.path.join(_scripts_dir, ".."))
+if _FRAMEWORK_DIR not in sys.path:
+    # Direct execution has ``scripts/turtle_agent`` as sys.path[0].  Add the
+    # repository root as well so ``scripts.*`` imports used by bound PIT tools
+    # resolve exactly as they do under ``python -m``.
+    sys.path.insert(0, _FRAMEWORK_DIR)
 if _scripts_dir not in sys.path:
     sys.path.insert(0, _scripts_dir)
-
-_FRAMEWORK_DIR = os.path.normpath(os.path.join(_scripts_dir, ".."))
 _OUTPUT_DIR = os.path.join(_FRAMEWORK_DIR, "output")
 _PIT_FRAMEWORK_ROOT = Path(_FRAMEWORK_DIR) / "config" / "phase10_pit_framework"
 
@@ -66,6 +71,80 @@ def _load_json_file(path: str) -> dict[str, Any]:
         return data if isinstance(data, dict) else {}
     except Exception:
         return {}
+
+
+def _sha256_file(path: Path) -> str:
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def _load_company_judgment_predecessor(
+    snapshot_path: str, *, company_code: str, cutoff_at: str,
+) -> dict[str, Any]:
+    """Load one completed, same-cutoff CJO freeze for an investment PIT run.
+
+    This is deliberately a predecessor rather than another evidence source:
+    it establishes the operating path that valuation and price must build on.
+    The predecessor itself was already frozen and reviewed by its own CJO
+    production contract, so this boundary only verifies identity and exports
+    the exact operating objects needed to prevent a parallel rewrite.
+    """
+    path = Path(snapshot_path).expanduser().resolve()
+    snapshot = _load_json_file(str(path))
+    if not snapshot:
+        raise RuntimeError("投资 PIT 生产冻结需要可读取的 --company-judgment-snapshot")
+    source_root = path.parent
+    source_contract = _load_json_file(str(source_root / "analysis_contract.json"))
+    thesis_path = source_root / "thesis_test.json"
+    thesis = _load_json_file(str(thesis_path))
+    expected_thesis_hash = str((snapshot.get("ledger_sha256") or {}).get("thesis_test") or "")
+    findings: list[str] = []
+    if snapshot.get("analysis_purpose") != "COMPANY_JUDGMENT_ONLY":
+        findings.append("snapshot_not_company_judgment_only")
+    if source_contract.get("analysis_purpose") != "COMPANY_JUDGMENT_ONLY":
+        findings.append("predecessor_contract_not_company_judgment_only")
+    if str(snapshot.get("report_id") or "") != str(company_code):
+        findings.append("predecessor_company_code_mismatch")
+    if str(snapshot.get("data_as_of") or "")[:10] != str(cutoff_at or "")[:10]:
+        findings.append("predecessor_cutoff_mismatch")
+    if snapshot.get("v3_enforced") is not True:
+        findings.append("predecessor_snapshot_not_v3_enforced")
+    if str(snapshot.get("completion_status") or "").upper() not in {"COMPLETE", "COMPLETE_WITH_WARNINGS"}:
+        findings.append("predecessor_completion_not_complete")
+    if not str(snapshot.get("snapshot_fingerprint") or ""):
+        findings.append("predecessor_snapshot_fingerprint_missing")
+    if thesis.get("analysis_purpose") != "COMPANY_JUDGMENT_ONLY":
+        findings.append("predecessor_thesis_not_company_judgment_only")
+    if not bool((thesis.get("freeze") or {}).get("frozen")):
+        findings.append("predecessor_thesis_not_frozen")
+    if not expected_thesis_hash or not thesis_path.is_file() or _sha256_file(thesis_path) != expected_thesis_hash:
+        findings.append("predecessor_thesis_hash_mismatch")
+    central_path = thesis.get("central_path") if isinstance(thesis.get("central_path"), dict) else {}
+    forward_judgments = thesis.get("forward_judgments") if isinstance(thesis.get("forward_judgments"), list) else []
+    mechanism_chains = thesis.get("mechanism_chains") if isinstance(thesis.get("mechanism_chains"), list) else []
+    if not str(central_path.get("path_id") or ""):
+        findings.append("predecessor_central_path_missing")
+    if not forward_judgments:
+        findings.append("predecessor_forward_judgments_missing")
+    if not mechanism_chains:
+        findings.append("predecessor_mechanism_chains_missing")
+    if findings:
+        raise RuntimeError(
+            "投资 PIT 生产冻结的公司判断前置物无效: " + ", ".join(findings)
+        )
+    return {
+        "schema_version": "company-judgment-predecessor.v1",
+        "source": {
+            "snapshot_path": str(path),
+            "snapshot_fingerprint": str(snapshot["snapshot_fingerprint"]),
+            "report_id": str(snapshot["report_id"]),
+            "data_as_of": str(snapshot["data_as_of"]),
+            "thesis_path": str(thesis_path),
+            "thesis_sha256": expected_thesis_hash,
+        },
+        "central_path": central_path,
+        "forward_judgments": forward_judgments,
+        "mechanism_chains": mechanism_chains,
+    }
 
 
 def _safe_int(value: Any) -> int | None:
@@ -201,6 +280,36 @@ def _write_json_file(path: str, data: dict[str, Any]) -> None:
     os.makedirs(os.path.dirname(path), exist_ok=True)
     with open(path, 'w', encoding='utf-8') as f:
         json.dump(data, f, ensure_ascii=False, indent=2)
+
+
+def _surface_live_forward_due_inbox() -> dict[str, Any]:
+    """Run the bounded forward-result inbox before a CJO production run.
+
+    The inbox reads only frozen contracts, never issuer result bodies.  It is
+    therefore safe to run on every CJO entry and makes a due outcome task
+    visible before the normal Agent loop starts.
+    """
+    try:
+        from scripts.outcome_acquisition import build_live_forward_due_inbox
+    except ModuleNotFoundError:
+        from outcome_acquisition import build_live_forward_due_inbox
+    contract_root = Path(_FRAMEWORK_DIR) / "docs" / "development" / "research" / "experiments"
+    as_of = datetime.now().astimezone().replace(microsecond=0).isoformat()
+    inbox = build_live_forward_due_inbox(contract_root, as_of=as_of)
+    actionable = inbox.get("actionable") or []
+    print(
+        "[Forward due inbox] "
+        f"contracts={inbox.get('contracts_scanned', 0)}, actionable={len(actionable)}, "
+        f"state={inbox.get('state')}"
+    )
+    for item in actionable:
+        claim = item.get("claim") or {}
+        print(
+            "  ↪ "
+            f"{claim.get('action')}: {item.get('case_id')} / {claim.get('claim_id')} "
+            "→ enumerate_and_acquire_frozen_result_sources"
+        )
+    return inbox
 
 
 def _load_tracking_comparison(output_dir: str) -> dict[str, Any]:
@@ -1182,10 +1291,16 @@ def _run_pit_writer(
 
 def _initialize_pit_production_output(
     *, output_dir: str, code: str, run_id: str, cutoff_at: str,
+    analysis_purpose: str = "INVESTMENT_DECISION",
+    company_judgment_predecessor: dict[str, Any] | None = None,
 ) -> None:
     """Seed only the local contracts a PIT production writer may complete."""
+    if analysis_purpose not in {"INVESTMENT_DECISION", "COMPANY_JUDGMENT_ONLY"}:
+        raise RuntimeError("PIT production analysis_purpose invalid")
     cutoff_date = str(cutoff_at or "")[:10]
-    _write_json_file(str(Path(output_dir) / "analysis_contract.json"), {
+    if analysis_purpose == "INVESTMENT_DECISION" and not isinstance(company_judgment_predecessor, dict):
+        raise RuntimeError("投资 PIT 生产冻结需要同 cutoff 的公司判断前置物")
+    contract = {
         "schema_version": "analysis-contract.v1",
         "ts_code": code,
         "code": code,
@@ -1193,38 +1308,60 @@ def _initialize_pit_production_output(
         "analysis_date": cutoff_date,
         "data_as_of": cutoff_date,
         "report_type": "annual",
+        "analysis_purpose": analysis_purpose,
         "tracking": {"report_type": "annual", "period_end": cutoff_date},
         "pit_production": {"cutoff_at": cutoff_at, "source_access": "PIT_ALLOWLIST_ONLY"},
-    })
+    }
+    if analysis_purpose == "INVESTMENT_DECISION":
+        predecessor_path = Path(output_dir) / "company_judgment_predecessor.json"
+        _write_json_file(str(predecessor_path), company_judgment_predecessor or {})
+        source = (company_judgment_predecessor or {}).get("source") or {}
+        contract["company_judgment_predecessor"] = {
+            "snapshot_fingerprint": source.get("snapshot_fingerprint"),
+            "thesis_sha256": source.get("thesis_sha256"),
+            "data_as_of": source.get("data_as_of"),
+            "central_path_id": ((company_judgment_predecessor or {}).get("central_path") or {}).get("path_id"),
+            "forward_judgment_ids": [
+                item.get("judgment_id")
+                for item in (company_judgment_predecessor or {}).get("forward_judgments") or []
+                if isinstance(item, dict) and item.get("judgment_id")
+            ],
+        }
+    _write_json_file(str(Path(output_dir) / "analysis_contract.json"), contract)
     from scripts.evidence_documents import initialize_official_evidence_policy
-    from scripts.decision_ledger import initialize_decision_ledger_policy
-    from scripts.decision_compiler import initialize_decision_compiler_policy
     from scripts.claim_evidence import initialize_claim_evidence_policy
-    from scripts.valuation_model_gate import initialize_valuation_model_policy
-    from scripts.decision_reliability import initialize_decision_reliability_policy
+    from scripts.financial_driver_bridge import initialize_financial_driver_bridge_policy
     from scripts.thesis_test_gate import initialize_thesis_test_policy
     from scripts.insight_ledger import initialize_insight_policy
-    from scripts.valuation_routing import initialize_valuation_route_policy
-    from scripts.decisive_question import initialize_decisive_question_policy
-    from scripts.base_rate_case_library import initialize_base_rate_policy
     initialize_official_evidence_policy(output_dir, run_id=run_id, enforced=True)
-    initialize_valuation_route_policy(output_dir, run_id=run_id, enforced=True)
-    initialize_decisive_question_policy(output_dir, run_id=run_id, enforced=True)
-    initialize_base_rate_policy(output_dir, run_id=run_id, enforced=True)
-    initialize_decision_ledger_policy(output_dir, run_id=run_id, enforced=True)
-    initialize_decision_compiler_policy(output_dir, run_id=run_id, enforced=True)
     initialize_claim_evidence_policy(output_dir, run_id=run_id, enforced=True)
-    initialize_valuation_model_policy(output_dir, run_id=run_id, enforced=True)
-    initialize_decision_reliability_policy(output_dir, run_id=run_id, enforced=True)
+    initialize_financial_driver_bridge_policy(output_dir, run_id=run_id, enforced=True)
     initialize_thesis_test_policy(
         output_dir, run_id=run_id, enforced=True, monitoring_required=True,
-        forward_judgment_required=True,
+        forward_judgment_required=True, rival_hypothesis_pair_required=True,
+        company_judgment_lineage_required=analysis_purpose == "INVESTMENT_DECISION",
     )
     initialize_insight_policy(output_dir, run_id=run_id, enforced=True)
+    if analysis_purpose == "INVESTMENT_DECISION":
+        from scripts.decision_ledger import initialize_decision_ledger_policy
+        from scripts.decision_compiler import initialize_decision_compiler_policy
+        from scripts.valuation_model_gate import initialize_valuation_model_policy
+        from scripts.decision_reliability import initialize_decision_reliability_policy
+        from scripts.valuation_routing import initialize_valuation_route_policy
+        from scripts.decisive_question import initialize_decisive_question_policy
+        from scripts.base_rate_case_library import initialize_base_rate_policy
+        initialize_valuation_route_policy(output_dir, run_id=run_id, enforced=True)
+        initialize_decisive_question_policy(output_dir, run_id=run_id, enforced=True)
+        initialize_base_rate_policy(output_dir, run_id=run_id, enforced=True)
+        initialize_decision_ledger_policy(output_dir, run_id=run_id, enforced=True)
+        initialize_decision_compiler_policy(output_dir, run_id=run_id, enforced=True)
+        initialize_valuation_model_policy(output_dir, run_id=run_id, enforced=True)
+        initialize_decision_reliability_policy(output_dir, run_id=run_id, enforced=True)
 
 
 def _validate_pit_production_completion(
     *, output_dir: str, report_path: str, run_id: str,
+    analysis_purpose: str = "INVESTMENT_DECISION",
 ) -> dict[str, Any]:
     """Confirm the normal report exit completed before a PIT freeze is published."""
     output = Path(output_dir).expanduser().resolve()
@@ -1248,6 +1385,12 @@ def _validate_pit_production_completion(
         raise RuntimeError("PIT production publication snapshot is missing")
     if str(snapshot.get("run_id") or "") != str(run_id):
         raise RuntimeError("PIT production publication snapshot run_id does not match the active run")
+    snapshot_purpose = str(snapshot.get("analysis_purpose") or "")
+    if (
+        (snapshot_purpose and snapshot_purpose != str(analysis_purpose))
+        or (analysis_purpose == "COMPANY_JUDGMENT_ONLY" and not snapshot_purpose)
+    ):
+        raise RuntimeError("PIT production publication snapshot analysis_purpose does not match the active run")
     if str(snapshot.get("completion_status") or "").upper() not in {"COMPLETE", "COMPLETE_WITH_WARNINGS"}:
         raise RuntimeError("PIT production publication snapshot does not record a completed report")
     if snapshot.get("v3_enforced") is not True:
@@ -1276,6 +1419,8 @@ def _validate_pit_production_completion(
 def _run_pit_production_freeze(
     *, code: str, output_dir: str, model: str, max_iterations: int, pit_runner: Any,
     pit_case_id: str, pit_experiment_id: str, runtime: Any, diagnostics: dict[str, Any],
+    analysis_purpose: str = "INVESTMENT_DECISION",
+    company_judgment_predecessor: dict[str, Any] | None = None,
 ) -> str:
     """Run one full PIT report with the normal V3 exits but no normal inputs."""
     from scripts.phase10_pit_production import PITProductionWorkspace
@@ -1283,9 +1428,7 @@ def _run_pit_production_freeze(
     from turtle_agent.llm_client import LlmClient
     from turtle_agent.tool_registry import ToolRegistry
     from turtle_agent.tools.pit_read_tools import configure_pit_runner, clear_pit_runner
-    from turtle_agent.tools.pit_production_write_tools import (
-        configure_pit_production_writer, clear_pit_production_writer, production_source_anchor_ids,
-    )
+    from turtle_agent.tools import pit_production_write_tools as production_tools
     deepseek_api_key = os.environ.get("DEEPSEEK_API_KEY", "").strip()
     anthropic_api_key = os.environ.get("ANTHROPIC_API_KEY", "").strip()
     if deepseek_api_key:
@@ -1296,17 +1439,34 @@ def _run_pit_production_freeze(
         raise RuntimeError("PIT production writer 需要已配置的 DEEPSEEK_API_KEY 或 ANTHROPIC_API_KEY")
     _initialize_pit_production_output(
         output_dir=output_dir, code=code, run_id=pit_runner.run_id, cutoff_at=str(pit_runner.cutoff_at),
+        analysis_purpose=analysis_purpose, company_judgment_predecessor=company_judgment_predecessor,
     )
     workspace = PITProductionWorkspace(
         pit_runner, output_dir, company_code=code, run_id=str(pit_runner.run_id),
     )
     tools = ToolRegistry()
     configure_pit_runner(pit_runner, production_workspace=workspace)
-    configure_pit_production_writer(
+    production_tools.configure_pit_production_writer(
         output_dir=output_dir, code=code, run_id=str(pit_runner.run_id), pit_runner=pit_runner,
+        analysis_purpose=analysis_purpose,
     )
     tools.auto_discover("turtle_agent.tools.pit_read_tools")
-    tools.auto_discover("turtle_agent.tools.pit_production_write_tools")
+    writer_tool_names = {
+        "pit_verify_official_fact", "pit_write_chapter", "pit_read_chapter",
+        "pit_read_report_contract_pack", "pit_read_structured_ledger_contract",
+        "pit_audit_chapter", "pit_write_claim_evidence_ledger",
+        "pit_write_financial_driver_bridge", "pit_write_thesis_test_ledger",
+        "pit_write_insight_ledger", "pit_write_judgment_review", "pit_assemble_report",
+    }
+    if analysis_purpose == "INVESTMENT_DECISION":
+        writer_tool_names.update({
+            "pit_write_decision_manifest", "pit_write_decision_ledger",
+            "pit_write_valuation_model_ledger", "pit_write_decisive_question_findings",
+        })
+    for name in sorted(writer_tool_names):
+        tool = getattr(production_tools, name)
+        meta = getattr(tool, "_tool_meta")
+        tools.register(name, tool, description=meta.get("description", ""), parameters=meta.get("parameters", {}))
     attestation_path = Path(output_dir) / "pit_runner_attestation.json"
     diagnostics.update({"status": "pit_production_running", "mode": "pit_production_freeze",
                         "tools": tools.list_tools(), "tool_count": len(tools)})
@@ -1317,7 +1477,8 @@ def _run_pit_production_freeze(
             config=AgentConfig(code=code, output_dir=output_dir, max_iterations=max(1, int(max_iterations)),
                 max_tokens_per_call=32768, publish_downstream=False, pit_production_mode=True,
                 pit_case_id=pit_case_id, pit_experiment_id=pit_experiment_id,
-                pit_cutoff_at=str(pit_runner.cutoff_at), run_id=str(pit_runner.run_id)),
+                pit_cutoff_at=str(pit_runner.cutoff_at), run_id=str(pit_runner.run_id),
+                analysis_purpose=analysis_purpose),
         ).analyze()
         diagnostics.update({"status": "completed", "report_path": report_path,
                             "pit_attestation_path": str(attestation_path)})
@@ -1333,12 +1494,12 @@ def _run_pit_production_freeze(
             "provider": getattr(llm, "_provider", ""), "model": getattr(llm, "model", ""),
             "run_id": pit_runner.run_id, "case_id": pit_case_id, "experiment_id": pit_experiment_id,
             "final_report_path": str(Path(report_path).expanduser().resolve()) if report_path else "",
-            "source_anchor_ids": production_source_anchor_ids(),
+            "source_anchor_ids": production_tools.production_source_anchor_ids(),
             "read_source_ids": read_source_ids,
         }})
         _write_json_file(str(attestation_path), attestation)
         runtime.manifest.add_artifact(attestation_path, "pit_runner_attestation")
-        clear_pit_production_writer()
+        production_tools.clear_pit_production_writer()
         clear_pit_runner()
 
 
@@ -1377,6 +1538,8 @@ def run_full_pipeline(
     pit_preflight: bool = False,
     pit_writer: bool = False,
     pit_production_freeze: bool = False,
+    analysis_purpose: str = "INVESTMENT_DECISION",
+    company_judgment_snapshot: str = "",
 ) -> str:
     """运行完整分析管线。
 
@@ -1386,10 +1549,17 @@ def run_full_pipeline(
     Agent Loop 内全自动：定性写作 Ch1-9 → 摘要提取 → Zone J → 定量估值 Ch10-13 → 统一决策。
     所有 LLM 调用走 Claude Code 内置 API（不受子进程安全策略限制）。
     """
+    analysis_purpose = str(analysis_purpose or "INVESTMENT_DECISION").upper()
+    if analysis_purpose not in {"INVESTMENT_DECISION", "COMPANY_JUDGMENT_ONLY"}:
+        raise RuntimeError("analysis_purpose 只允许 INVESTMENT_DECISION 或 COMPANY_JUDGMENT_ONLY")
     pit_values = (pit_source_manifest, pit_package_root, pit_case_id, pit_experiment_id)
     if any(str(value or "").strip() for value in pit_values) and not all(str(value or "").strip() for value in pit_values):
         raise RuntimeError("PIT参数必须完整提供 manifest/package/case/experiment")
     pit_mode = bool(str(pit_source_manifest or "").strip())
+    if analysis_purpose == "COMPANY_JUDGMENT_ONLY" and not (
+        pit_mode and (pit_preflight or pit_production_freeze)
+    ):
+        raise RuntimeError("COMPANY_JUDGMENT_ONLY 只支持 PIT 预检或受限生产入口")
     if pit_mode:
         static_framework_root = _PIT_FRAMEWORK_ROOT.resolve()
         if pit_framework_root and Path(pit_framework_root).expanduser().resolve() != static_framework_root:
@@ -1433,6 +1603,12 @@ def run_full_pipeline(
         code_short = code.replace(".HK", "").replace(".SH", "").replace(".SZ", "")
         output_dir = _find_or_create_output_dir(code, code_short)
     os.makedirs(output_dir, exist_ok=True)
+
+    if analysis_purpose == "COMPANY_JUDGMENT_ONLY":
+        # This happens before the CJO Agent loop and intentionally has no
+        # access to outcome bodies.  It surfaces a due frozen result without
+        # letting an unrelated company report silently consume it.
+        _surface_live_forward_due_inbox()
 
     # Auto-detect full ts_code (with market suffix) from existing contract or heuristics
     contract_path = os.path.join(output_dir, "analysis_contract.json")
@@ -1479,6 +1655,7 @@ def run_full_pipeline(
         "output_dir": output_dir,
         "template_path": template_path,
         "mode": "pit_production_freeze" if pit_production_freeze else "qualitative_only" if qualitative_only else "unified" if unified else "classic",
+        "analysis_purpose": analysis_purpose,
         "skip_prepare": skip_prepare,
         "dry_run": dry_run,
         "provider": provider,
@@ -1500,10 +1677,18 @@ def run_full_pipeline(
         "phases": [],
     }
     pit_runner = None
+    company_judgment_predecessor: dict[str, Any] | None = None
     pit_attestation_path = ""
     if pit_mode:
         try:
-            from scripts.phase10_pit_runner import PITSourcePackage
+            try:
+                from scripts.phase10_pit_runner import PITSourcePackage
+            except ModuleNotFoundError:
+                # ``python scripts/turtle_agent/run.py`` puts scripts/ (not
+                # the repository root) on sys.path.  PIT preflight is a
+                # supported CLI path, so retain the package import for module
+                # callers and the sibling import for direct CLI callers.
+                from phase10_pit_runner import PITSourcePackage
             manifest_path = Path(pit_source_manifest).expanduser().resolve()
             manifest = _load_json_file(str(manifest_path))
             if manifest.get("company_code") != code:
@@ -1530,6 +1715,14 @@ def run_full_pipeline(
         diagnostics["pit_package_root"] = str(Path(pit_package_root).expanduser().resolve())
         diagnostics["pit_framework_root"] = str(_PIT_FRAMEWORK_ROOT.resolve())
         diagnostics["pit_framework_root_class"] = "REPOSITORY_STATIC"
+        if pit_production_freeze and analysis_purpose == "INVESTMENT_DECISION":
+            company_judgment_predecessor = _load_company_judgment_predecessor(
+                company_judgment_snapshot, company_code=code, cutoff_at=str(pit_runner.cutoff_at),
+            )
+            diagnostics["company_judgment_predecessor"] = {
+                key: value for key, value in (company_judgment_predecessor.get("source") or {}).items()
+                if key != "snapshot_path"
+            }
         if pit_writer:
             return _run_pit_writer(
                 code=code,
@@ -1559,10 +1752,12 @@ def run_full_pipeline(
             report_path = _run_pit_production_freeze(
                 code=code, output_dir=output_dir, model=model, max_iterations=max_iterations,
                 pit_runner=pit_runner, pit_case_id=pit_case_id, pit_experiment_id=pit_experiment_id,
-                runtime=runtime, diagnostics=diagnostics,
+                runtime=runtime, diagnostics=diagnostics, analysis_purpose=analysis_purpose,
+                company_judgment_predecessor=company_judgment_predecessor,
             )
             production_completion = _validate_pit_production_completion(
                 output_dir=output_dir, report_path=report_path, run_id=run_id,
+                analysis_purpose=analysis_purpose,
             )
             runtime.manifest.add_artifact(report_path, "pit_production_report")
             runtime.manifest.add_artifact(production_completion["publication_snapshot_path"], "publication_snapshot")
@@ -2065,6 +2260,11 @@ def run_full_pipeline(
             except ModuleNotFoundError:
                 from decision_reliability import initialize_decision_reliability_policy
             initialize_decision_reliability_policy(output_dir, run_id=run_id, enforced=True)
+            try:
+                from scripts.financial_driver_bridge import initialize_financial_driver_bridge_policy
+            except ModuleNotFoundError:
+                from financial_driver_bridge import initialize_financial_driver_bridge_policy
+            initialize_financial_driver_bridge_policy(output_dir, run_id=run_id, enforced=True)
             if os.path.isfile(os.path.join(output_dir, "valuation_model.json")):
                 try:
                     from scripts.valuation_model_migration import (
@@ -2095,6 +2295,9 @@ def run_full_pipeline(
             initialize_thesis_test_policy(
                 output_dir, run_id=run_id, enforced=True, monitoring_required=True,
                 forward_judgment_required=True,
+                rival_hypothesis_pair_required=not os.path.isfile(
+                    os.path.join(output_dir, "thesis_test.json")
+                ),
             )
             if os.path.isfile(os.path.join(output_dir, "thesis_test.json")):
                 try:
@@ -3048,6 +3251,11 @@ def main(argv: list[str] | None = None) -> int:
                     help="执行 P10-B PIT 受限 writer，生成草案但不解锁生产回测")
     ap.add_argument("--pit-production-freeze", action="store_true",
                     help="执行 P10 生产冻结：仅PIT读取、完整V3报告出口和独立验收根目录")
+    ap.add_argument("--analysis-purpose", default="INVESTMENT_DECISION",
+                    choices=["INVESTMENT_DECISION", "COMPANY_JUDGMENT_ONLY"],
+                    help="分析用途；CJO 只允许经营机制、前瞻判断与结算，不产生投资决策")
+    ap.add_argument("--company-judgment-snapshot", default="",
+                    help="投资 PIT 生产冻结的同 cutoff CJO publication_snapshot.json；估值/价格只能建立在此冻结经营判断上")
     args = ap.parse_args(argv)
     try:
         repair_chapters = tuple(
@@ -3093,6 +3301,8 @@ def main(argv: list[str] | None = None) -> int:
             pit_preflight=args.pit_preflight,
             pit_writer=args.pit_writer,
             pit_production_freeze=args.pit_production_freeze,
+            analysis_purpose=args.analysis_purpose,
+            company_judgment_snapshot=args.company_judgment_snapshot,
         )
         print(f"\n📄 {report_path}")
         return 0

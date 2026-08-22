@@ -21,6 +21,7 @@ being manufactured.
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import sys
 from copy import deepcopy
@@ -32,6 +33,8 @@ if __package__ in {None, ""}:
 
 from scripts import historical_backtest
 from scripts.historical_backtest import CASE_SCHEMA_VERSION_V2, validate_case
+from scripts.metric_reconstruction_contract import contract_findings
+from scripts.phase10_acquisition import licensed_industry_series_contract_findings
 from scripts.real_report_acceptance import (
     CONFIG_VERSION,
     PHASE10_PRODUCTION_FREEZE_CONFIG_NAME,
@@ -47,7 +50,16 @@ READY_ACCEPTANCE_STATES = {
     "BENCHMARK_APPROVED",
 }
 READY_SNAPSHOT_STATES = {"DECISION_READY", "MONITORING"}
-REQUIRED_SNAPSHOT_GATES = ("decision", "claim_evidence", "valuation", "thesis_test", "insight")
+CASE_PURPOSES = {"INVESTMENT_DECISION", "COMPANY_JUDGMENT_ONLY"}
+REQUIRED_SNAPSHOT_GATES_BY_PURPOSE = {
+    # An investment conclusion still needs its value and action controls.  Do
+    # not let a company-learning case profile weaken that requirement.
+    "INVESTMENT_DECISION": ("decision", "claim_evidence", "valuation", "thesis_test", "insight"),
+    # Company-judgment settlement tests operating mechanisms, not a return or
+    # trade.  Evidence, thesis and insight remain mandatory; valuation and
+    # decision are deliberately out of scope.
+    "COMPANY_JUDGMENT_ONLY": ("claim_evidence", "thesis_test", "insight"),
+}
 FUTURE_SETTLEMENT_FIELDS = {
     *historical_backtest.LEAKAGE_FIELDS,
     "cash_flows", "corporate_actions", "benchmark_identity",
@@ -55,11 +67,19 @@ FUTURE_SETTLEMENT_FIELDS = {
 CASE_SPEC_FIELDS = {
     "case_id", "experiment_id", "sample_id", "company_code", "simulation_cutoff", "frozen_at",
     "report_id", "writer_id", "writer_provenance", "review_artifact_path", "route", "forecast",
-    "inputs", "calibration_ledger", "taxes_fees_fx", "price_identity", "investment_decision",
+    "purpose", "inputs", "calibration_ledger", "taxes_fees_fx", "price_identity", "investment_decision",
 }
 FROZEN_CASE_CONTRACT_FIELDS = (
-    "route", "forecast", "inputs", "calibration_ledger", "taxes_fees_fx", "price_identity", "investment_decision",
+    "purpose", "route", "forecast", "inputs", "calibration_ledger", "taxes_fees_fx", "price_identity",
 )
+CJO_FROZEN_REPORT_SECTIONS = (
+    "## 公司判断摘要", "## 经营表现与核心驱动", "## 财务表现与资本配置",
+    "## 竞争性机制与早期判别信号", "## 监测、结算与再研究", "## 公司判断结论与数据边界",
+)
+INVESTMENT_FROZEN_REPORT_SECTIONS = (
+    "## Evidence", "## Operating forecast", "## Valuation", "## Risks and unknowns", "## Decision",
+)
+FORWARD_JUDGMENT_LEDGER_SOURCE = "FROZEN_FORWARD_JUDGMENTS"
 
 
 class ProductionFreezeCaseError(ValueError):
@@ -99,6 +119,168 @@ def _required(record: dict[str, Any], fields: tuple[str, ...], label: str) -> No
         raise ProductionFreezeCaseError(label + " missing: " + ", ".join(missing))
 
 
+def _uses_frozen_forward_judgments(value: Any) -> bool:
+    """Return true only for the explicit no-retyping settlement mode."""
+    return value == {"source": FORWARD_JUDGMENT_LEDGER_SOURCE}
+
+
+def _frozen_financial_driver_bridge(
+    output: Path, snapshot: dict[str, Any], *, expected_analysis_purpose: str | None = None,
+) -> dict[str, Any] | None:
+    """Project the exact snapshot-hashed driver bridge for later diagnosis.
+
+    This remains separate from settlement arithmetic.  Its only purpose is to
+    preserve the company facts, monitoring contracts, and (where applicable)
+    model/decision bindings that existed when a forward judgment was frozen,
+    so feedback cannot recreate them after the outcome is known.
+    """
+    if snapshot.get("financial_driver_bridge_required") is not True:
+        return None
+    path = output / "financial_driver_bridge.json"
+    if not path.is_file():
+        raise ProductionFreezeCaseError("production snapshot requires a frozen financial_driver_bridge ledger")
+    expected = (snapshot.get("ledger_sha256") or {}).get("financial_driver_bridge")
+    if not isinstance(expected, str) or not expected:
+        raise ProductionFreezeCaseError("publication snapshot lacks financial_driver_bridge ledger identity")
+    if hashlib.sha256(path.read_bytes()).hexdigest() != expected:
+        raise ProductionFreezeCaseError("frozen financial_driver_bridge differs from publication snapshot")
+    bridge = _load_object(path, "frozen financial_driver_bridge ledger")
+    if bridge.get("schema_version") != "financial-driver-bridge.v1":
+        raise ProductionFreezeCaseError("frozen financial_driver_bridge schema is invalid")
+    analysis_purpose = str(bridge.get("analysis_purpose") or "")
+    if analysis_purpose not in CASE_PURPOSES:
+        raise ProductionFreezeCaseError("frozen financial_driver_bridge analysis_purpose is invalid")
+    if expected_analysis_purpose is not None and analysis_purpose != expected_analysis_purpose:
+        raise ProductionFreezeCaseError("frozen financial_driver_bridge analysis_purpose does not match case purpose")
+    drivers = bridge.get("drivers")
+    events = bridge.get("allocation_events")
+    if not isinstance(drivers, list) or not isinstance(events, list):
+        raise ProductionFreezeCaseError("frozen financial_driver_bridge is structurally incomplete")
+    return {
+        "schema_version": "frozen-financial-driver-bridge.v1",
+        "ledger_sha256": expected,
+        "validation_state": "REVIEWABLE",
+        "analysis_purpose": analysis_purpose,
+        "drivers": deepcopy(drivers),
+        "allocation_events": deepcopy(events),
+    }
+
+
+def _forward_judgment_ids(value: Any) -> set[str]:
+    """Return explicit forward-judgment references without coercing objects."""
+    if not isinstance(value, list):
+        return set()
+    return {str(item).strip() for item in value if str(item).strip()}
+
+
+def _financial_driver_bridge_forward_judgment_links(
+    bridge: dict[str, Any] | None,
+) -> tuple[
+    dict[str, set[str]], set[str], dict[str, set[str]], dict[str, dict[str, Any]],
+    dict[str, str], dict[str, str],
+]:
+    """Read the two FDB-to-forward-judgment relationships needed at freeze.
+
+    A driver's ongoing monitoring contract must name the judgment that cites
+    that driver.  Allocation realization contracts have no driver-id field on
+    the thesis judgment, so their useful invariant is that every named
+    judgment survives in the frozen thesis ledger.
+    """
+    if bridge is None:
+        return {}, set(), {}, {}, {}, {}
+    driver_links: dict[str, set[str]] = {}
+    driver_monitoring_source_types: dict[str, set[str]] = {}
+    driver_monitoring_contracts: dict[str, dict[str, Any]] = {}
+    driver_layers: dict[str, str] = {}
+    cash_normalization_states: dict[str, str] = {}
+    for driver in bridge.get("drivers") or []:
+        if not isinstance(driver, dict):
+            continue
+        driver_id = str(driver.get("driver_id") or "").strip()
+        monitoring = driver.get("monitoring_contract")
+        if not driver_id or not isinstance(monitoring, dict):
+            continue
+        driver_layers[driver_id] = str(driver.get("layer") or "")
+        if driver_layers[driver_id] == "CASH_CONVERSION":
+            cash_normalization = driver.get("cash_normalization_contract")
+            cash_normalization_states[driver_id] = (
+                str(cash_normalization.get("state") or "")
+                if isinstance(cash_normalization, dict) else "MISSING"
+            )
+        driver_links[driver_id] = _forward_judgment_ids(monitoring.get("forward_judgment_ids"))
+        driver_monitoring_contracts[driver_id] = deepcopy(monitoring)
+        allowed_source_types = monitoring.get("allowed_source_types")
+        if isinstance(allowed_source_types, list):
+            driver_monitoring_source_types[driver_id] = {
+                str(item).strip() for item in allowed_source_types if str(item).strip()
+            }
+    realization_links: set[str] = set()
+    for event in bridge.get("allocation_events") or []:
+        if not isinstance(event, dict):
+            continue
+        realization = event.get("realization_contract")
+        if not isinstance(realization, dict):
+            continue
+        realization_links.update(_forward_judgment_ids(realization.get("forward_judgment_ids")))
+        for stage in ("early_signal", "terminal_outcome"):
+            stage_contract = realization.get(stage)
+            if isinstance(stage_contract, dict):
+                realization_links.update(_forward_judgment_ids(stage_contract.get("forward_judgment_ids")))
+    return (
+        driver_links, realization_links, driver_monitoring_source_types,
+        driver_monitoring_contracts, driver_layers, cash_normalization_states,
+    )
+
+
+def _frozen_forward_judgment_ledger(
+    output: Path, snapshot: dict[str, Any], sources: list[dict[str, Any]], simulation_cutoff: str,
+    *, frozen_financial_driver_bridge: dict[str, Any] | None = None,
+) -> dict[str, Any]:
+    """Load the exact snapshot-hashed thesis ledger and project its judgments.
+
+    This is intentionally available only after the adapter has established the
+    report's admitted PIT sources.  It prevents a caller from replacing the
+    report's frozen predictions with a hand-maintained parallel ledger.
+    """
+    thesis_path = output / "thesis_test.json"
+    if not thesis_path.is_file():
+        raise ProductionFreezeCaseError("production output has no frozen thesis_test ledger for forward judgment projection")
+    expected = (snapshot.get("ledger_sha256") or {}).get("thesis_test")
+    if not isinstance(expected, str) or not expected:
+        raise ProductionFreezeCaseError("publication snapshot lacks thesis_test ledger identity for forward judgment projection")
+    actual = hashlib.sha256(thesis_path.read_bytes()).hexdigest()
+    if actual != expected:
+        raise ProductionFreezeCaseError("frozen thesis_test ledger differs from publication snapshot")
+    (
+        driver_links,
+        realization_links,
+        driver_monitoring_source_types,
+        driver_monitoring_contracts,
+        driver_layers,
+        cash_normalization_states,
+    ) = _financial_driver_bridge_forward_judgment_links(
+        frozen_financial_driver_bridge,
+    )
+    known_sources = {
+        str(source.get("source_id")): source
+        for source in sources
+        if isinstance(source, dict) and str(source.get("source_id") or "").strip()
+    }
+    return build_calibration_ledger_from_forward_judgments(
+        _load_object(thesis_path, "frozen thesis_test ledger"),
+        simulation_cutoff=simulation_cutoff,
+        known_source_ids=set(known_sources),
+        known_sources=known_sources,
+        known_financial_driver_ids=set(driver_links) if frozen_financial_driver_bridge is not None else None,
+        financial_driver_monitoring_links=driver_links if frozen_financial_driver_bridge is not None else None,
+        financial_driver_monitoring_source_types=driver_monitoring_source_types if frozen_financial_driver_bridge is not None else None,
+        financial_driver_monitoring_contracts=driver_monitoring_contracts if frozen_financial_driver_bridge is not None else None,
+        financial_driver_layers=driver_layers if frozen_financial_driver_bridge is not None else None,
+        financial_driver_cash_normalization_states=cash_normalization_states if frozen_financial_driver_bridge is not None else None,
+        financial_driver_realization_judgment_ids=realization_links if frozen_financial_driver_bridge is not None else None,
+    )
+
+
 def _future_fields(value: Any, *, path: str = "case_spec") -> list[str]:
     findings: list[str] = []
     if isinstance(value, dict):
@@ -113,8 +295,10 @@ def _future_fields(value: Any, *, path: str = "case_spec") -> list[str]:
     return findings
 
 
-def _require_unknown_execution_boundary(case_spec: dict[str, Any]) -> None:
-    """Refuse an executable decision until production exports one with PIT evidence."""
+def _require_company_judgment_boundary(case_spec: dict[str, Any]) -> None:
+    """Freeze an operating-learning case without turning it into a trade."""
+    if case_spec.get("purpose") != "COMPANY_JUDGMENT_ONLY":
+        raise ProductionFreezeCaseError("current production bridge requires purpose COMPANY_JUDGMENT_ONLY")
     if case_spec.get("route") != "DUAL":
         raise ProductionFreezeCaseError("current production bridge requires route DUAL while the primary route is unknown")
     forecast = case_spec.get("forecast") if isinstance(case_spec.get("forecast"), dict) else {}
@@ -127,9 +311,16 @@ def _require_unknown_execution_boundary(case_spec: dict[str, Any]) -> None:
         or price.get("prices") != []
     ):
         raise ProductionFreezeCaseError("current production bridge requires UNKNOWN price identity and no frozen prices")
-    decision = case_spec.get("investment_decision") if isinstance(case_spec.get("investment_decision"), dict) else {}
-    if decision.get("action") != "UNKNOWN" or decision.get("price_identity") != "UNKNOWN":
-        raise ProductionFreezeCaseError("current production bridge requires UNKNOWN investment decision")
+    if case_spec.get("investment_decision") is not None:
+        raise ProductionFreezeCaseError("company-judgment-only production case cannot carry an investment decision")
+
+
+def _required_snapshot_gates(purpose: str, snapshot: dict[str, Any]) -> tuple[str, ...]:
+    """Return the frozen-snapshot controls for the declared analysis purpose."""
+    gates = list(REQUIRED_SNAPSHOT_GATES_BY_PURPOSE[purpose])
+    if snapshot.get("financial_driver_bridge_required") is True:
+        gates.append("financial_driver_bridge")
+    return tuple(gates)
 
 
 def _source_map(
@@ -196,6 +387,11 @@ def _source_map(
             "revision_policy": source["revision_policy"],
             "admissible": True,
         })
+        # Settlement must retain both the independent-data contract and the
+        # fact that the source is not official after PIT projection.
+        if source.get("source_type") == "LICENSED_INDUSTRY_DATA":
+            result[-1]["official"] = source.get("official")
+            result[-1]["industry_data_contract"] = deepcopy(source.get("industry_data_contract"))
     return sorted(result, key=lambda item: str(item["source_id"]))
 
 
@@ -241,6 +437,10 @@ def _review_from_artifact(
         "independence": deepcopy(review["independence"]),
         "reviewed_report_sha256": report_sha256,
         "status": review["status"],
+        # Retain the independently reviewed contract for later feedback
+        # integrity checks.  It is not an execution input and does not affect
+        # settlement arithmetic.
+        "frozen_case_contract": deepcopy(review["frozen_case_contract"]),
         "claim_reviews": normalized_reviews,
     }
 
@@ -275,8 +475,19 @@ def _validate_production_artifacts(
         raise ProductionFreezeCaseError("PIT source manifest company does not match case specification")
     if source_manifest.get("cutoff_at") != case_spec["simulation_cutoff"]:
         raise ProductionFreezeCaseError("PIT source manifest cutoff does not match case specification")
+    purpose = str(case_spec.get("purpose") or "")
+    snapshot_purpose = str(snapshot.get("analysis_purpose") or "")
+    if snapshot_purpose != purpose:
+        raise ProductionFreezeCaseError("production snapshot analysis_purpose does not match case purpose")
     gate_states = snapshot.get("gate_states") if isinstance(snapshot.get("gate_states"), dict) else {}
-    failed_gates = [name for name in REQUIRED_SNAPSHOT_GATES if gate_states.get(name) not in READY_SNAPSHOT_STATES]
+    required_snapshot_gates = _required_snapshot_gates(purpose, snapshot)
+    failed_gates = [
+        name for name in required_snapshot_gates
+        if gate_states.get(name) not in (
+            {"REVIEWABLE", *READY_SNAPSHOT_STATES}
+            if name == "financial_driver_bridge" else READY_SNAPSHOT_STATES
+        )
+    ]
     if failed_gates:
         raise ProductionFreezeCaseError("production snapshot has unfinished V3 gates: " + ", ".join(failed_gates))
 
@@ -327,6 +538,330 @@ def _validate_production_artifacts(
     return saved, replayed
 
 
+def build_calibration_ledger_from_forward_judgments(
+    thesis_ledger: dict[str, Any], *, simulation_cutoff: str, known_source_ids: set[str],
+    known_sources: dict[str, dict[str, Any]] | None = None,
+    known_financial_driver_ids: set[str] | None = None,
+    financial_driver_monitoring_links: dict[str, set[str]] | None = None,
+    financial_driver_monitoring_source_types: dict[str, set[str]] | None = None,
+    financial_driver_monitoring_contracts: dict[str, dict[str, Any]] | None = None,
+    financial_driver_layers: dict[str, str] | None = None,
+    financial_driver_cash_normalization_states: dict[str, str] | None = None,
+    financial_driver_realization_judgment_ids: set[str] | None = None,
+) -> dict[str, Any]:
+    """Project frozen forward judgments into the historical settlement ledger.
+
+    The function is deliberately a projection, not an inference layer.  Every
+    historical-only field that the settlement engine needs must already be in
+    ``settlement_contract`` on the judgment; a missing source, threshold, or
+    observation window is an error instead of an opportunity for the adapter
+    to invent one.  Price and execution remain outside this operating-forecast
+    bridge.
+    """
+    if not isinstance(thesis_ledger, dict):
+        raise ProductionFreezeCaseError("thesis_ledger must be an object")
+    judgments = thesis_ledger.get("forward_judgments")
+    if not isinstance(judgments, list) or not judgments:
+        raise ProductionFreezeCaseError("thesis_ledger has no forward_judgments")
+    selection_admission = thesis_ledger.get("selection_admission")
+    selection_admission = selection_admission if isinstance(selection_admission, dict) else {}
+    selection_judgment_ids = {
+        str(judgment_id).strip()
+        for judgment_id in selection_admission.get("selection_forward_judgment_ids") or []
+        if str(judgment_id).strip()
+    }
+    if selection_admission.get("status") == "SELECTION_ADMITTED" and not selection_judgment_ids:
+        raise ProductionFreezeCaseError("SELECTION_ADMITTED requires selection_forward_judgment_ids")
+    central = thesis_ledger.get("central_path") if isinstance(thesis_ledger.get("central_path"), dict) else {}
+    central_path_id = str(central.get("path_id") or "").strip()
+    tests = {
+        str(item.get("test_id") or ""): item
+        for item in thesis_ledger.get("competitive_tests") or []
+        if isinstance(item, dict) and str(item.get("test_id") or "").strip()
+    }
+    claims: list[dict[str, Any]] = []
+    claim_by_judgment_id: dict[str, dict[str, Any]] = {}
+    frozen_judgment_ids: set[str] = set()
+    for index, judgment in enumerate(judgments):
+        label = f"forward_judgments[{index}]"
+        if not isinstance(judgment, dict):
+            raise ProductionFreezeCaseError(label + " must be an object")
+        judgment_id = str(judgment.get("judgment_id") or "").strip()
+        prediction = judgment.get("prediction") if isinstance(judgment.get("prediction"), dict) else {}
+        outcome = judgment.get("observable_outcome") if isinstance(judgment.get("observable_outcome"), dict) else {}
+        settlement = judgment.get("settlement_contract") if isinstance(judgment.get("settlement_contract"), dict) else {}
+        _required(judgment, ("judgment_id", "statement", "competitive_test_id", "falsifier", "mechanism_chain_ids"), label)
+        _required(prediction, ("metric", "operator", "unit", "horizon"), label + ".prediction")
+        _required(
+            outcome,
+            ("measurement_basis", "measurement_rule", "measurement_period", "allowed_source_types", "settlement_version_policy"),
+            label + ".observable_outcome",
+        )
+        if judgment_id in selection_judgment_ids:
+            contract_outcome = dict(outcome)
+            contract_outcome["unit"] = prediction.get("unit")
+            contract_invalid, contract_incomplete = contract_findings(
+                contract_outcome,
+                prefix=label + ".observable_outcome",
+                allowed_source_types={
+                    str(source_type).strip()
+                    for source_type in outcome.get("allowed_source_types") or []
+                    if str(source_type).strip()
+                },
+            )
+            contract_findings_text = contract_invalid + contract_incomplete
+            if contract_findings_text:
+                raise ProductionFreezeCaseError(
+                    label + " metric_reconstruction_contract is incomplete: "
+                    + ", ".join(contract_findings_text)
+                )
+        _required(
+            settlement,
+            ("calibration_claim_id", "materiality", "source_ids", "threshold", "observation_window"),
+            label + ".settlement_contract",
+        )
+        claim_id = str(settlement.get("calibration_claim_id") or "").strip()
+        if not claim_id.startswith("HBTCLM:"):
+            raise ProductionFreezeCaseError(label + " settlement calibration_claim_id is invalid")
+        source_ids = settlement.get("source_ids") if isinstance(settlement.get("source_ids"), list) else []
+        if not source_ids or any(str(source_id) not in known_source_ids for source_id in source_ids):
+            raise ProductionFreezeCaseError(label + " settlement source_ids are not admitted PIT sources")
+        outcome_source_types = {
+            str(source_type).strip()
+            for source_type in outcome.get("allowed_source_types") or []
+            if str(source_type).strip()
+        }
+        if "LICENSED_INDUSTRY_DATA" in outcome_source_types:
+            if known_sources is None:
+                raise ProductionFreezeCaseError(
+                    label + " licensed industry outcome requires admitted source records for series resolution"
+                )
+            series_invalid, series_incomplete = licensed_industry_series_contract_findings(
+                outcome.get("licensed_industry_series_contract"),
+                prefix=label + ".observable_outcome",
+                pre_cutoff_sources=known_sources,
+            )
+            findings = series_invalid + series_incomplete
+            if findings:
+                raise ProductionFreezeCaseError(
+                    label + " licensed industry series contract is invalid: " + ", ".join(findings)
+                )
+            series = outcome.get("licensed_industry_series_contract") or {}
+            if series.get("metric_id") != prediction.get("metric"):
+                raise ProductionFreezeCaseError(
+                    label + " licensed industry series metric does not match frozen prediction"
+                )
+            if str(series.get("pre_cutoff_source_id")) not in {str(source_id) for source_id in source_ids}:
+                raise ProductionFreezeCaseError(
+                    label + " licensed industry series pre-cutoff source is not in settlement source_ids"
+                )
+        threshold = settlement.get("threshold") if isinstance(settlement.get("threshold"), dict) else {}
+        if threshold.get("metric") != prediction.get("metric") or threshold.get("unit") != prediction.get("unit"):
+            raise ProductionFreezeCaseError(label + " settlement threshold does not match frozen prediction")
+        window = settlement.get("observation_window") if isinstance(settlement.get("observation_window"), dict) else {}
+        if not str(window.get("opens_after") or "").strip() or not str(window.get("closes_at") or "").strip():
+            raise ProductionFreezeCaseError(label + " settlement observation_window is incomplete")
+        test = tests.get(str(judgment.get("competitive_test_id") or ""))
+        if not isinstance(test, dict) or not str(test.get("strongest_alternative") or "").strip():
+            raise ProductionFreezeCaseError(label + " cannot resolve a counter thesis from competitive_test_id")
+        financial_driver_ids = judgment.get("financial_driver_ids")
+        transmission = judgment.get("transmission") if isinstance(judgment.get("transmission"), dict) else {}
+        if known_financial_driver_ids is not None:
+            if not isinstance(financial_driver_ids, list) or not financial_driver_ids:
+                raise ProductionFreezeCaseError(label + " requires financial_driver_ids when the frozen bridge is enabled")
+            unknown_driver_ids = sorted(
+                str(driver_id) for driver_id in financial_driver_ids
+                if str(driver_id) not in known_financial_driver_ids
+            )
+            if unknown_driver_ids:
+                raise ProductionFreezeCaseError(
+                    label + " references unknown frozen financial drivers: " + ", ".join(unknown_driver_ids)
+                )
+            if financial_driver_monitoring_links is not None:
+                unmonitored_driver_ids = sorted(
+                    str(driver_id) for driver_id in financial_driver_ids
+                    if judgment_id not in financial_driver_monitoring_links.get(str(driver_id), set())
+                )
+                if unmonitored_driver_ids:
+                    raise ProductionFreezeCaseError(
+                        label + " lacks FDB monitoring links for financial drivers: "
+                        + ", ".join(unmonitored_driver_ids)
+                    )
+            if financial_driver_monitoring_source_types is not None:
+                permitted_source_sets = [
+                    financial_driver_monitoring_source_types.get(str(driver_id), set())
+                    for driver_id in financial_driver_ids
+                ]
+                permitted_source_types = set.intersection(*permitted_source_sets) if permitted_source_sets else set()
+                if not outcome_source_types or not outcome_source_types.issubset(permitted_source_types):
+                    raise ProductionFreezeCaseError(
+                        label + " observable_outcome allowed_source_types exceed frozen FDB monitoring contracts"
+                    )
+                if "LICENSED_INDUSTRY_DATA" in outcome_source_types:
+                    contracts = [
+                        financial_driver_monitoring_contracts.get(str(driver_id))
+                        if financial_driver_monitoring_contracts is not None else None
+                        for driver_id in financial_driver_ids
+                    ]
+                    expected_outcome_identity = {
+                        "metric": prediction.get("metric"),
+                        "unit": prediction.get("unit"),
+                        "measurement_basis": outcome.get("measurement_basis"),
+                        "measurement_period": outcome.get("measurement_period"),
+                        "observation_window": window,
+                    }
+                    if any(
+                        not isinstance(contract, dict)
+                        or any(contract.get(field) != expected for field, expected in expected_outcome_identity.items())
+                        for contract in contracts
+                    ):
+                        raise ProductionFreezeCaseError(
+                            label + " licensed industry outcome does not match frozen FDB monitoring contract"
+                        )
+            if financial_driver_layers is not None and financial_driver_cash_normalization_states is not None:
+                owner_cash = transmission.get("owner_cash") if isinstance(transmission.get("owner_cash"), dict) else {}
+                owner_cash_direction = str(owner_cash.get("direction") or "")
+                if owner_cash_direction not in {"unknown", "not_material", ""}:
+                    cash_driver_ids = [
+                        str(driver_id) for driver_id in financial_driver_ids
+                        if financial_driver_layers.get(str(driver_id)) == "CASH_CONVERSION"
+                    ]
+                    if not cash_driver_ids:
+                        raise ProductionFreezeCaseError(
+                            label + " material owner_cash transmission requires a frozen CASH_CONVERSION driver"
+                        )
+                    unresolved_cash_drivers = sorted(
+                        driver_id for driver_id in cash_driver_ids
+                        if financial_driver_cash_normalization_states.get(driver_id) != "NORMALIZED"
+                    )
+                    if unresolved_cash_drivers:
+                        raise ProductionFreezeCaseError(
+                            label + " material owner_cash transmission requires NORMALIZED cash drivers: "
+                            + ", ".join(unresolved_cash_drivers)
+                        )
+        elif financial_driver_ids is not None and not isinstance(financial_driver_ids, list):
+            raise ProductionFreezeCaseError(label + " financial_driver_ids must be an array")
+        projected_outcome = deepcopy(outcome)
+        projected_outcome["metric"] = prediction.get("metric")
+        projected_outcome["unit"] = prediction.get("unit")
+        projected_outcome["observation_window"] = deepcopy(window)
+        projected_claim = {
+            "claim_id": claim_id,
+            "statement": judgment.get("statement"),
+            "materiality": settlement.get("materiality"),
+            "frozen_disposition": "PREDICTION",
+            "source_ids": deepcopy(source_ids),
+            "prediction": deepcopy(prediction),
+            "threshold": deepcopy(threshold),
+            "unknown": None,
+            "counter_thesis": test.get("strongest_alternative"),
+            "flip_condition": judgment.get("falsifier"),
+            "observable_outcome": projected_outcome,
+            "forward_judgment_id": judgment_id,
+            # A forward judgment in a G1-J pair has exactly one frozen
+            # discriminator. Preserve that identity on the projected claim so
+            # feedback can distinguish a diagnostic signal from a merely
+            # calculated operating observation.
+            "rival_hypothesis_pair_id": judgment.get("rival_hypothesis_pair_id"),
+            "rival_signal_id": judgment.get("rival_signal_id"),
+            "central_path_id": central_path_id or None,
+            "mechanism_chain_ids": deepcopy(judgment.get("mechanism_chain_ids")),
+            "financial_driver_ids": deepcopy(financial_driver_ids or []),
+            "baseline_id": str(((judgment.get("baseline") or {}).get("baseline_id")) or "") or None,
+            # The settlement engine need not score the baseline today, but the
+            # frozen case must retain it.  Otherwise a later feedback review
+            # can identify the author's claim but cannot compare it with the
+            # same-scope simple challenger that existed at freeze time.
+            "baseline": deepcopy(judgment.get("baseline")),
+            # Preserve the author's economic transmission for task-level
+            # feedback.  These are not outcome fields and do not participate
+            # in settlement validation; they make it possible to distinguish a
+            # failed mechanism/model link from a merely wrong point forecast.
+            "transmission": deepcopy(transmission),
+        }
+        claims.append(projected_claim)
+        claim_by_judgment_id[judgment_id] = projected_claim
+        frozen_judgment_ids.add(judgment_id)
+    missing_selection_judgments = sorted(selection_judgment_ids - frozen_judgment_ids)
+    if missing_selection_judgments:
+        raise ProductionFreezeCaseError(
+            "SELECTION_ADMITTED references forward judgments not projected into the frozen case: "
+            + ", ".join(missing_selection_judgments)
+        )
+    if financial_driver_monitoring_links is not None:
+        for driver_id, monitored_judgment_ids in sorted(financial_driver_monitoring_links.items()):
+            missing = sorted(monitored_judgment_ids - frozen_judgment_ids)
+            if missing:
+                raise ProductionFreezeCaseError(
+                    "frozen FDB monitoring contract references forward judgments absent from thesis ledger: "
+                    + driver_id + " -> " + ", ".join(missing)
+                )
+    if financial_driver_realization_judgment_ids is not None:
+        missing = sorted(financial_driver_realization_judgment_ids - frozen_judgment_ids)
+        if missing:
+            raise ProductionFreezeCaseError(
+                "frozen FDB realization contract references forward judgments absent from thesis ledger: "
+                + ", ".join(missing)
+            )
+    # Keep the R-07 admission receipt alongside the immutable claims.  It is
+    # not an outcome input: feedback uses it only to distinguish a diagnostic
+    # mechanism signal from an eligible path-selection learning result.
+    projected = {"claims": claims}
+    if selection_admission:
+        projected["selection_admission"] = deepcopy(selection_admission)
+    pairs = thesis_ledger.get("rival_hypothesis_pairs")
+    cards = thesis_ledger.get("analogy_transfer_cards")
+    if pairs is not None or cards is not None:
+        if not isinstance(pairs, list) or not pairs:
+            raise ProductionFreezeCaseError("thesis_ledger rival_hypothesis_pairs are incomplete")
+        if not isinstance(cards, list) or not cards:
+            raise ProductionFreezeCaseError("thesis_ledger analogy_transfer_cards are incomplete")
+        projected_pairs: list[dict[str, Any]] = []
+        for index, pair in enumerate(pairs):
+            label = f"rival_hypothesis_pairs[{index}]"
+            if not isinstance(pair, dict):
+                raise ProductionFreezeCaseError(label + " must be an object")
+            frozen_pair = deepcopy(pair)
+            discriminators = frozen_pair.get("discriminators")
+            if not isinstance(discriminators, list) or not discriminators:
+                raise ProductionFreezeCaseError(label + " has no frozen discriminators")
+            for didx, discriminator in enumerate(discriminators):
+                dlabel = f"{label}.discriminators[{didx}]"
+                if not isinstance(discriminator, dict):
+                    raise ProductionFreezeCaseError(dlabel + " must be an object")
+                judgment_id = str(discriminator.get("forward_judgment_id") or "")
+                claim = claim_by_judgment_id.get(judgment_id)
+                if claim is None:
+                    raise ProductionFreezeCaseError(dlabel + " references a forward judgment not projected into the frozen case")
+                judgment = next(
+                    (item for item in judgments if isinstance(item, dict) and item.get("judgment_id") == judgment_id),
+                    {},
+                )
+                if discriminator.get("primary_prediction") != judgment.get("prediction"):
+                    raise ProductionFreezeCaseError(dlabel + " primary prediction differs from the frozen forward judgment")
+                if judgment.get("rival_hypothesis_pair_id") != pair.get("pair_id") or judgment.get("rival_signal_id") != discriminator.get("signal_id"):
+                    raise ProductionFreezeCaseError(dlabel + " does not match the forward judgment rival-pair links")
+                discriminator["claim_id"] = claim.get("claim_id")
+            projected_pairs.append(frozen_pair)
+        projected["rival_hypothesis_pairs"] = projected_pairs
+        projected["analogy_transfer_cards"] = deepcopy(cards)
+    invalid, incomplete = historical_backtest._validate_calibration_ledger(
+        {
+            "schema_version": historical_backtest.CASE_SCHEMA_VERSION_V2,
+            "simulation_cutoff": simulation_cutoff,
+            "calibration_ledger": projected,
+        },
+        known_sources or {
+            str(source_id): {"source_id": str(source_id)}
+            for source_id in known_source_ids
+        },
+    )
+    if invalid or incomplete:
+        findings = "; ".join([*invalid, *incomplete])
+        raise ProductionFreezeCaseError("forward judgment projection is not settlement-ready: " + findings)
+    return projected
+
+
 def derive_v2_case(
     *,
     case_spec: dict[str, Any],
@@ -353,14 +888,16 @@ def derive_v2_case(
         (
             "case_id", "experiment_id", "sample_id", "company_code", "simulation_cutoff", "frozen_at",
             "report_id", "writer_id", "writer_provenance", "route", "forecast",
-            "inputs", "calibration_ledger", "taxes_fees_fx", "price_identity", "investment_decision",
+            "purpose", "inputs", "calibration_ledger", "taxes_fees_fx", "price_identity",
         ),
         "case_spec",
     )
     future_fields = _future_fields(case_spec)
     if future_fields:
         raise ProductionFreezeCaseError("case_spec contains post-freeze settlement fields: " + ", ".join(future_fields))
-    _require_unknown_execution_boundary(case_spec)
+    if case_spec.get("purpose") not in CASE_PURPOSES:
+        raise ProductionFreezeCaseError("case_spec purpose is invalid")
+    _require_company_judgment_boundary(case_spec)
 
     output, output_rel = _repo_path(production_output_dir, "production_output_dir")
     acceptance, acceptance_rel = _repo_path(acceptance_root, "acceptance_root")
@@ -418,6 +955,17 @@ def derive_v2_case(
     document_manifest = _load_object(output / "document_manifest.json", "production document manifest")
     sources = _source_map(snapshot, source_manifest, document_manifest, output)
     source_ids = {str(source["source_id"]) for source in sources}
+    frozen_driver_bridge = _frozen_financial_driver_bridge(
+        output,
+        snapshot,
+        expected_analysis_purpose=str(case_spec["purpose"]),
+    )
+    calibration_ledger = deepcopy(case_spec["calibration_ledger"])
+    if _uses_frozen_forward_judgments(calibration_ledger):
+        calibration_ledger = _frozen_forward_judgment_ledger(
+            output, snapshot, sources, str(case_spec["simulation_cutoff"]),
+            frozen_financial_driver_bridge=frozen_driver_bridge,
+        )
     writer_reads = {str(source_id) for source_id in writer.get("read_source_ids") or []}
     audit_reads = {
         str(event.get("source_id") or "")
@@ -426,6 +974,13 @@ def derive_v2_case(
     }
     if not source_ids.issubset(writer_reads) or not source_ids.issubset(audit_reads):
         raise ProductionFreezeCaseError("production snapshot source was not actually read by the PIT writer")
+    frozen_case_contract = {
+        field: deepcopy(case_spec[field])
+        for field in FROZEN_CASE_CONTRACT_FIELDS
+    }
+    frozen_case_contract["calibration_ledger"] = deepcopy(calibration_ledger)
+    if frozen_driver_bridge is not None:
+        frozen_case_contract["financial_driver_bridge"] = deepcopy(frozen_driver_bridge)
     incomplete = {
         "state": "INCOMPLETE",
         "case": None,
@@ -435,6 +990,7 @@ def derive_v2_case(
         "variant_id": variant_id,
         "freeze_id": "HBTFRZ:" + variant_id,
         "next_action": "REGISTER_INDEPENDENT_REVIEW",
+        "frozen_case_contract": frozen_case_contract,
     }
     review_reference = str(case_spec.get("review_artifact_path") or "").strip()
     if not review_reference:
@@ -451,10 +1007,6 @@ def derive_v2_case(
         return {**incomplete, "blockers": ["independent_review_artifact_unreadable"]}
     if raw_review.get("status") != "PASS":
         return {**incomplete, "blockers": ["independent_review_not_passed"]}
-    frozen_case_contract = {
-        field: deepcopy(case_spec[field])
-        for field in FROZEN_CASE_CONTRACT_FIELDS
-    }
     review = _review_from_artifact(
         review_path,
         variant_id=variant_id,
@@ -467,6 +1019,7 @@ def derive_v2_case(
         "case_id": case_spec["case_id"],
         "experiment_id": case_spec["experiment_id"],
         "company_code": case_spec["company_code"],
+        "purpose": case_spec["purpose"],
         "simulation_cutoff": case_spec["simulation_cutoff"],
         "report_freeze": {
             "frozen_at": case_spec["frozen_at"],
@@ -500,10 +1053,12 @@ def derive_v2_case(
                 "writer_id": case_spec["writer_id"],
                 "writer_provenance": deepcopy(writer_provenance),
                 "writer_status": "COMPLETE",
-                "claim_ids": [claim.get("claim_id") for claim in case_spec["calibration_ledger"].get("claims", []) if isinstance(claim, dict)],
-                "section_markers": [
-                    "## Evidence", "## Operating forecast", "## Valuation", "## Risks and unknowns", "## Decision",
-                ],
+                "claim_ids": [claim.get("claim_id") for claim in calibration_ledger.get("claims", []) if isinstance(claim, dict)],
+                "section_markers": list(
+                    CJO_FROZEN_REPORT_SECTIONS
+                    if case_spec["purpose"] == "COMPANY_JUDGMENT_ONLY"
+                    else INVESTMENT_FROZEN_REPORT_SECTIONS
+                ),
             },
             "independent_review": review,
             "quality_failure": None,
@@ -519,7 +1074,8 @@ def derive_v2_case(
         "forecast": deepcopy(case_spec["forecast"]),
         "sources": sources,
         "inputs": deepcopy(case_spec["inputs"]),
-        "calibration_ledger": deepcopy(case_spec["calibration_ledger"]),
+        "calibration_ledger": deepcopy(calibration_ledger),
+        **({"financial_driver_bridge": deepcopy(frozen_driver_bridge)} if frozen_driver_bridge is not None else {}),
         "taxes_fees_fx": deepcopy(case_spec["taxes_fees_fx"]),
         "price_identity": {
             "primary_route": "PRIMARY_ROUTE_UNKNOWN",

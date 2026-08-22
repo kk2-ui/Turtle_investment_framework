@@ -120,6 +120,7 @@ def classify_company_archetype(output_dir: str | Path) -> dict[str, Any]:
         "secondary_archetypes": secondary,
         "decisive_question": spec["decisive_question"],
         "case_pattern": spec["case_pattern"],
+        "case_provenance": spec.get("case_provenance", {}),
         "required_moves": spec["required_moves"],
         "forbidden_shortcuts": spec["forbidden_shortcuts"],
         "classification_scores": scores,

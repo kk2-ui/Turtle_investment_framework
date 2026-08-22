@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import hashlib
 import json
 from pathlib import Path
 
@@ -73,6 +74,67 @@ PIT_ARGS = {
 }
 
 
+def _company_judgment_snapshot(tmp_path: Path, code: str = "600340.SH") -> Path:
+    predecessor = tmp_path / "company-judgment"
+    predecessor.mkdir()
+    thesis = {
+        "analysis_purpose": "COMPANY_JUDGMENT_ONLY",
+        "freeze": {"frozen": True},
+        "central_path": {"path_id": "CJO:path.core", "statement": "经营中心路径"},
+        "forward_judgments": [{"judgment_id": "FJ:CJO:operating"}],
+        "mechanism_chains": [{"chain_id": "MC:CJO:operating"}],
+    }
+    thesis_path = predecessor / "thesis_test.json"
+    thesis_path.write_text(json.dumps(thesis), encoding="utf-8")
+    digest = hashlib.sha256(thesis_path.read_bytes()).hexdigest()
+    (predecessor / "analysis_contract.json").write_text(json.dumps({
+        "analysis_purpose": "COMPANY_JUDGMENT_ONLY", "ts_code": code,
+    }), encoding="utf-8")
+    snapshot = predecessor / "publication_snapshot.json"
+    snapshot.write_text(json.dumps({
+        "analysis_purpose": "COMPANY_JUDGMENT_ONLY", "report_id": code,
+        "data_as_of": "2020-04-27", "v3_enforced": True,
+        "completion_status": "COMPLETE", "snapshot_fingerprint": "cjo-freeze",
+        "ledger_sha256": {"thesis_test": digest},
+    }), encoding="utf-8")
+    return snapshot
+
+
+def test_investment_pit_predecessor_requires_same_cutoff_frozen_cjo(tmp_path: Path) -> None:
+    with pytest.raises(RuntimeError, match="company-judgment-snapshot"):
+        run_module._load_company_judgment_predecessor(
+            "", company_code="600340.SH", cutoff_at="2020-04-27T18:00:00+08:00",
+        )
+    snapshot = _company_judgment_snapshot(tmp_path)
+    predecessor = run_module._load_company_judgment_predecessor(
+        str(snapshot), company_code="600340.SH", cutoff_at="2020-04-27T18:00:00+08:00",
+    )
+    assert predecessor["source"]["snapshot_fingerprint"] == "cjo-freeze"
+    with pytest.raises(RuntimeError, match="predecessor_cutoff_mismatch"):
+        run_module._load_company_judgment_predecessor(
+            str(snapshot), company_code="600340.SH", cutoff_at="2020-04-28T18:00:00+08:00",
+        )
+
+
+def test_investment_pit_initialization_freezes_company_judgment_lineage(tmp_path: Path) -> None:
+    snapshot = _company_judgment_snapshot(tmp_path)
+    predecessor = run_module._load_company_judgment_predecessor(
+        str(snapshot), company_code="600340.SH", cutoff_at="2020-04-27T18:00:00+08:00",
+    )
+    output = tmp_path / "investment"
+    run_module._initialize_pit_production_output(
+        output_dir=str(output), code="600340.SH", run_id="run", cutoff_at="2020-04-27T18:00:00+08:00",
+        analysis_purpose="INVESTMENT_DECISION", company_judgment_predecessor=predecessor,
+    )
+
+    contract = json.loads((output / "analysis_contract.json").read_text(encoding="utf-8"))
+    policy = json.loads((output / "thesis_test_policy.json").read_text(encoding="utf-8"))
+    frozen_predecessor = json.loads((output / "company_judgment_predecessor.json").read_text(encoding="utf-8"))
+    assert contract["company_judgment_predecessor"]["central_path_id"] == "CJO:path.core"
+    assert policy["company_judgment_lineage_required"] is True
+    assert frozen_predecessor["source"]["snapshot_fingerprint"] == "cjo-freeze"
+
+
 @pytest.mark.parametrize(
     "blocked_kwargs",
     [
@@ -112,6 +174,7 @@ def test_pit_production_freeze_uses_one_run_id_and_only_publishes_after_ready_ac
     package_root = tmp_path / "source-package"
     package_root.mkdir()
     output = tmp_path / "output"
+    cjo_snapshot = _company_judgment_snapshot(tmp_path)
     observed: dict[str, object] = {}
 
     class FakeRunner:
@@ -191,6 +254,7 @@ def test_pit_production_freeze_uses_one_run_id_and_only_publishes_after_ready_ac
             pit_case_id="HBTCASE:600340:20200427",
             pit_experiment_id="HBT:600340:20200427",
             pit_production_freeze=True,
+            company_judgment_snapshot=str(cjo_snapshot),
         )
     else:
         with pytest.raises(RuntimeError, match="not ready at the independent Phase 10 acceptance gate"):
@@ -202,6 +266,7 @@ def test_pit_production_freeze_uses_one_run_id_and_only_publishes_after_ready_ac
                 pit_case_id="HBTCASE:600340:20200427",
                 pit_experiment_id="HBT:600340:20200427",
                 pit_production_freeze=True,
+                company_judgment_snapshot=str(cjo_snapshot),
             )
         report_path = str(output / "report.md")
 
@@ -215,6 +280,7 @@ def test_pit_production_freeze_uses_one_run_id_and_only_publishes_after_ready_ac
     assert run_id == runtime_kwargs["run_id"]
     assert production_kwargs["pit_runner"].run_id == run_id
     assert production_kwargs["runtime"] is observed["runtime"]
+    assert production_kwargs["company_judgment_predecessor"]["source"]["snapshot_fingerprint"] == "cjo-freeze"
     assert report_path == str(output / "report.md")
     runtime = observed["runtime"]
     assert isinstance(runtime, FakeRuntime)

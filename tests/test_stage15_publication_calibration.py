@@ -105,6 +105,90 @@ def test_publication_snapshot_requires_ready_frozen_ledgers(tmp_path: Path, monk
     assert result["error"] == "publication_snapshot_requires_frozen_ready_ledgers"
 
 
+def test_company_judgment_snapshot_requires_only_operating_evidence_gates_and_freezes_purpose(
+    tmp_path: Path, monkeypatch
+) -> None:
+    output = tmp_path / "out"
+    _snapshot_fixture(output)
+    contract = json.loads((output / "analysis_contract.json").read_text(encoding="utf-8"))
+    contract["analysis_purpose"] = "COMPANY_JUDGMENT_ONLY"
+    _write_json(output / "analysis_contract.json", contract)
+    _write_json(output / "financial_driver_bridge_policy.json", {"enforced": True})
+    _write_json(output / "official_evidence_policy.json", {"enforced": True})
+    monkeypatch.setattr(calibration, "_ledger_states", lambda *args, **kwargs: {
+        "official_evidence": {"state": "REVIEWABLE"},
+        "claim_evidence": {"state": "DECISION_READY"},
+        "financial_driver_bridge": {"state": "REVIEWABLE", "analysis_purpose": "COMPANY_JUDGMENT_ONLY"},
+        "thesis_test": {"state": "DECISION_READY", "analysis_purpose": "COMPANY_JUDGMENT_ONLY"},
+        "insight": {"state": "DECISION_READY"},
+    })
+
+    result = create_publication_snapshot(output, "company judgment report")
+
+    assert result["written"] is True
+    assert result["snapshot"]["analysis_purpose"] == "COMPANY_JUDGMENT_ONLY"
+    assert set(result["snapshot"]["gate_states"]) == {
+        "official_evidence", "claim_evidence", "financial_driver_bridge", "thesis_test", "insight",
+    }
+    assert "decision" not in result["snapshot"]["gate_states"]
+    assert "valuation" not in result["snapshot"]["gate_states"]
+
+
+def test_company_judgment_snapshot_preserves_no_probability_without_creating_predictions(
+    tmp_path: Path, monkeypatch
+) -> None:
+    output = tmp_path / "out"
+    _snapshot_fixture(output)
+    contract = json.loads((output / "analysis_contract.json").read_text(encoding="utf-8"))
+    contract["analysis_purpose"] = "COMPANY_JUDGMENT_ONLY"
+    _write_json(output / "analysis_contract.json", contract)
+    thesis = json.loads((output / "thesis_test.json").read_text(encoding="utf-8"))
+    thesis["analysis_purpose"] = "COMPANY_JUDGMENT_ONLY"
+    thesis["probability_mode"] = "NO_PROBABILITY"
+    thesis["probability_sets"] = []
+    _write_json(output / "thesis_test.json", thesis)
+    _write_json(output / "financial_driver_bridge_policy.json", {"enforced": True})
+    _write_json(output / "official_evidence_policy.json", {"enforced": True})
+    monkeypatch.setattr(calibration, "_ledger_states", lambda *args, **kwargs: {
+        "official_evidence": {"state": "REVIEWABLE"},
+        "claim_evidence": {"state": "DECISION_READY"},
+        "financial_driver_bridge": {"state": "REVIEWABLE", "analysis_purpose": "COMPANY_JUDGMENT_ONLY"},
+        "thesis_test": {"state": "DECISION_READY", "analysis_purpose": "COMPANY_JUDGMENT_ONLY"},
+        "insight": {"state": "DECISION_READY"},
+    })
+
+    result = create_publication_snapshot(output, "company judgment report")
+
+    assert result["written"] is True
+    assert result["snapshot"]["thesis_probability_mode"] == "NO_PROBABILITY"
+    assert result["snapshot"]["predictions"] == []
+
+
+def test_company_judgment_snapshot_rejects_investment_purpose_bridge_or_thesis(
+    tmp_path: Path, monkeypatch
+) -> None:
+    output = tmp_path / "out"
+    _snapshot_fixture(output)
+    contract = json.loads((output / "analysis_contract.json").read_text(encoding="utf-8"))
+    contract["analysis_purpose"] = "COMPANY_JUDGMENT_ONLY"
+    _write_json(output / "analysis_contract.json", contract)
+    _write_json(output / "financial_driver_bridge_policy.json", {"enforced": True})
+    _write_json(output / "official_evidence_policy.json", {"enforced": True})
+    monkeypatch.setattr(calibration, "_ledger_states", lambda *args, **kwargs: {
+        "official_evidence": {"state": "REVIEWABLE"},
+        "claim_evidence": {"state": "DECISION_READY"},
+        "financial_driver_bridge": {"state": "REVIEWABLE", "analysis_purpose": "INVESTMENT_DECISION"},
+        "thesis_test": {"state": "DECISION_READY", "analysis_purpose": "COMPANY_JUDGMENT_ONLY"},
+        "insight": {"state": "DECISION_READY"},
+    })
+
+    result = create_publication_snapshot(output, "company judgment report")
+
+    assert result["written"] is False
+    assert result["error"] == "publication_snapshot_requires_cjo_purpose_matched_ledgers"
+    assert result["purpose_mismatches"] == {"financial_driver_bridge": "INVESTMENT_DECISION"}
+
+
 def test_legacy_directory_gets_minimal_snapshot_without_v3_gate(tmp_path: Path) -> None:
     output = tmp_path / "legacy"; output.mkdir()
     _write_json(output / "analysis_contract.json", {"ts_code": "000002.SZ"})

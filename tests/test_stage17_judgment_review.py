@@ -75,12 +75,96 @@ def _payload(output: Path) -> dict:
     )
 
 
+def _cjo_dependencies(output: Path) -> None:
+    _write(output / "analysis_contract.json", {
+        "ts_code": "000001.SZ", "analysis_purpose": "COMPANY_JUDGMENT_ONLY",
+    })
+    _write(output / "insight_ledger.json", {
+        "report_id": "000001.SZ", "analysis_purpose": "COMPANY_JUDGMENT_ONLY",
+        "insights": [{"insight_id": "I001"}],
+    })
+    _write(output / "claim_evidence.json", {
+        "analysis_purpose": "COMPANY_JUDGMENT_ONLY",
+        "claims": [{"raw_facts": [{"evidence_id": "E001"}, {"evidence_id": "E002"}]}],
+    })
+    _write(output / "thesis_test.json", {
+        "analysis_purpose": "COMPANY_JUDGMENT_ONLY",
+        "forward_judgments": [{"judgment_id": "FJ001"}],
+    })
+
+
+def _cjo_payload(output: Path) -> dict:
+    return build_judgment_review(
+        output,
+        "COMPETENT",
+        "核心变量改变的是渠道摩擦如何传导到正常化经营现金；当前尚缺同口径渠道库存，判断可冻结但必须等待前瞻信号结算。",
+        {
+            "insight_id": "I001",
+            "why_it_matters": "该变量决定收入下滑是周期扰动还是 owner cash 的结构性收缩。",
+            "why_not_obvious": "高毛利率本身不能区分渠道返利挤压与短期库存调整。",
+            "evidence_ids": ["E001", "E002"],
+            "forward_judgment_ids": ["FJ001"],
+        },
+        ["财务趋势和竞争解释已经完整，但同口径的渠道库存仍未取得。"],
+        [{
+            "claim": "渠道返利将持续压低经营现金转化。",
+            "why_fragile": "公开数据不能直接拆分返利与其他销售费用。",
+            "needed_evidence": "按渠道的返利率、库存周转和销售现金回款数据。",
+            "judgment_consequence": "若返利并未上升，应将收缩机制改判为需求周期而非渠道结构变化。",
+        }],
+        {
+            "strongest_alternative": "淡季库存调整即可解释收入下滑。",
+            "evidence_for_alternative": "旺季前库存和现金可能同步恢复。",
+            "discriminator": "后续旺季销量、渠道库存和经营现金转化的先后顺序。",
+            "unresolved": "没有同口径渠道库存序列。",
+        },
+        ["渠道库存", "返利率"],
+        {},
+        {
+            "question_selection": {"state": "strong", "basis": "问题锁定收入收缩传导到经营现金的渠道。"},
+            "differentiation": {"state": "strong", "basis": "将高毛利现象与现金转换机制明确拆分。"},
+            "evidence_discrimination": {"state": "mixed", "basis": "存在竞争解释但缺少直接的返利和库存拆分数据。"},
+            "operating_transmission": {"state": "strong", "basis": "机制明确连到正常化经营利润和 owner cash。"},
+            "monitoring_relevance": {"state": "strong", "basis": "后续渠道和现金信号可以明确结算当前判断。"},
+        },
+        ["该评审只能依据当前输出目录内可见信息，不能替代后续经营数据。"],
+        analysis_purpose="COMPANY_JUDGMENT_ONLY",
+        judgment_dependency={
+            "without_insight": "只能得出收入走弱的描述，无法判断其机制。",
+            "changed_mechanism": "渠道返利挤压与周期库存调整不再可区分。",
+            "changed_normalized_earnings_or_owner_cash": "正常化经营现金的下行风险失去可解释基础。",
+            "changed_monitoring_or_forward_judgment": "无法确定 FJ001 应由哪些后续经营信号结算。",
+            "conclusion": "该洞见直接决定公司机制判断及其监控路径。",
+        },
+    )
+
+
 def test_complete_judgment_review_is_cross_ledger_bound(tmp_path: Path) -> None:
     _dependencies(tmp_path)
     result = persist_judgment_review(tmp_path, _payload(tmp_path))
     assert result["written"] is True
     assert result["validation"]["state"] == "REVIEWED"
     assert result["validation"]["ceiling_verdict"] == "COMPETENT"
+
+
+def test_company_judgment_review_cross_binds_forward_judgment_without_models_or_decisions(tmp_path: Path) -> None:
+    _cjo_dependencies(tmp_path)
+    result = persist_judgment_review(tmp_path, _cjo_payload(tmp_path))
+
+    assert result["written"] is True
+    assert result["validation"]["state"] == "REVIEWED"
+    assert result["validation"]["analysis_purpose"] == "COMPANY_JUDGMENT_ONLY"
+
+
+def test_company_judgment_review_rejects_model_placeholder(tmp_path: Path) -> None:
+    _cjo_dependencies(tmp_path)
+    payload = _cjo_payload(tmp_path)
+    payload["distinctive_insight"]["valuation_model_ids"] = []
+
+    result = validate_judgment_review(payload, tmp_path)
+
+    assert result["state"] == "INVALID"
+    assert "distinctive_insight:company_judgment_cannot_carry_valuation_model_ids" in result["invalid_findings"]
 
 
 def test_unknown_binding_invalidates_review(tmp_path: Path) -> None:

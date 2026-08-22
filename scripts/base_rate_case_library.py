@@ -32,6 +32,8 @@ MANIFEST_SCHEMA_VERSION = "base-rate-library-manifest.v1"
 MIN_EMPIRICAL_SAMPLE = 5
 PROBABILITY_KINDS = {"frequency", "base_rate", "analyst_subjective", "scenario_weight"}
 EVENT_TYPES = {"outcome", "eligibility_review", "exclusion"}
+EPISODE_SETTLEMENT_STATUSES = {"OPEN", "SETTLED", "UNRESOLVED"}
+CASE_SELECTION_OUTCOME_ISOLATIONS = {"PIT_PRE_OUTCOME", "OUTCOME_SELECTED_RESEARCH_ONLY"}
 
 
 def _now() -> str:
@@ -115,7 +117,57 @@ def _append_line(path: Path, payload: dict[str, Any]) -> None:
         fcntl.flock(handle.fileno(), fcntl.LOCK_UN)
 
 
-def validate_case(record: dict[str, Any]) -> dict[str, Any]:
+def validate_mechanism_episode(episode: Any) -> dict[str, list[str]]:
+    """Validate episode identity without manufacturing a reference-class sample.
+
+    A base-rate case remains the append-only PIT object.  This optional
+    extension makes its mechanism comparable with other company×time cases;
+    it is not a second case library and does not make correlated cases
+    independent observations.
+    """
+    invalid: list[str] = []
+    incomplete: list[str] = []
+    if not isinstance(episode, dict):
+        return {"invalid_findings": ["episode_not_object"], "incomplete_findings": []}
+    if not str(episode.get("episode_id") or "").startswith("MEP:"):
+        invalid.append("episode_id_invalid")
+    for field in ("industry_regime", "common_question_set_id", "terminal_outcome_scope", "strongest_alternative_id"):
+        if not str(episode.get(field) or "").strip():
+            incomplete.append(field + "_missing")
+    for field in ("mechanism_chain_ids", "forward_judgment_ids", "baseline_ids"):
+        values = episode.get(field)
+        if not isinstance(values, list) or not values or any(not str(item).strip() for item in values):
+            incomplete.append(field + "_missing")
+        elif len({str(item) for item in values}) != len(values):
+            invalid.append(field + "_duplicate")
+    bridge = episode.get("financial_driver_bridge")
+    if not isinstance(bridge, dict):
+        incomplete.append("financial_driver_bridge_missing")
+    elif bridge.get("state") not in {"BOUND", "UNKNOWN"}:
+        invalid.append("financial_driver_bridge_state_invalid")
+    elif bridge.get("state") == "BOUND" and not str(bridge.get("reference") or "").strip():
+        incomplete.append("financial_driver_bridge_reference_missing")
+    elif bridge.get("state") == "UNKNOWN" and not str(bridge.get("conservative_treatment") or "").strip():
+        incomplete.append("financial_driver_bridge_conservative_treatment_missing")
+    cluster = episode.get("cluster")
+    if not isinstance(cluster, dict):
+        incomplete.append("cluster_missing")
+    else:
+        for field in ("company_id", "period_cluster_id", "mechanism_cluster_id"):
+            if not str(cluster.get(field) or "").strip():
+                incomplete.append("cluster_" + field + "_missing")
+    if episode.get("settlement_status") not in EPISODE_SETTLEMENT_STATUSES:
+        invalid.append("settlement_status_invalid")
+    return {
+        "invalid_findings": list(dict.fromkeys(invalid)),
+        "incomplete_findings": list(dict.fromkeys(incomplete)),
+    }
+
+
+def validate_case(
+    record: dict[str, Any], *, require_episode_identity: bool = False,
+    require_case_selection_identity: bool = False,
+) -> dict[str, Any]:
     invalid: list[str] = []
     incomplete: list[str] = []
     warnings: list[str] = []
@@ -224,6 +276,37 @@ def validate_case(record: dict[str, Any]) -> dict[str, Any]:
     for field in ("population_definition", "inclusion_rule", "exclusion_rule"):
         if not str(comparability.get(field) or "").strip():
             incomplete.append("comparability_missing:" + field)
+    selection = record.get("case_selection")
+    if selection is None and require_case_selection_identity:
+        incomplete.append("case_selection_missing")
+    elif selection is not None:
+        if not isinstance(selection, dict):
+            invalid.append("case_selection_not_object")
+        else:
+            for field in ("register_id", "register_fingerprint", "entry_id"):
+                if not str(selection.get(field) or "").strip():
+                    incomplete.append("case_selection_" + field + "_missing")
+            if not str(selection.get("register_id") or "").startswith("CSR:"):
+                invalid.append("case_selection_register_id_invalid")
+            if len(str(selection.get("register_fingerprint") or "")) != 64:
+                invalid.append("case_selection_register_fingerprint_invalid")
+            if not str(selection.get("entry_id") or "").startswith("CSRSEL:"):
+                invalid.append("case_selection_entry_id_invalid")
+            isolation = str(selection.get("outcome_isolation") or "")
+            if isolation not in CASE_SELECTION_OUTCOME_ISOLATIONS:
+                invalid.append("case_selection_outcome_isolation_invalid")
+            elif isolation == "OUTCOME_SELECTED_RESEARCH_ONLY":
+                invalid.append("outcome_selected_research_only_cannot_enter_forward_judgment_calibration_cohort")
+    episode = record.get("episode")
+    if episode is None:
+        if require_episode_identity:
+            incomplete.append("mechanism_episode_missing")
+        else:
+            warnings.append("mechanism_episode_missing")
+    else:
+        episode_validation = validate_mechanism_episode(episode)
+        invalid.extend("mechanism_episode:" + item for item in episode_validation["invalid_findings"])
+        incomplete.extend("mechanism_episode:" + item for item in episode_validation["incomplete_findings"])
     expected_fingerprint = _record_fingerprint(record, "case_fingerprint")
     if record.get("case_fingerprint") and record.get("case_fingerprint") != expected_fingerprint:
         invalid.append("case_fingerprint_mismatch")
@@ -365,6 +448,78 @@ def _case_state(case: dict[str, Any], events: Iterable[dict[str, Any]]) -> str:
     return "REVIEWABLE" if validation["state"] == "REVIEWABLE" else "CANDIDATE"
 
 
+def validate_verified_episode_reference(
+    *, case_id: str, episode_id: str, outcome_event_id: str,
+    library_dir: str | Path | None = None,
+) -> dict[str, Any]:
+    """Confirm that an analogy near-miss is an actual settled case episode.
+
+    A ``CASE:/MEP:/CASEEV:`` prefix is only an identifier shape.  Primary
+    analogy support needs the append-only case, its matching episode, a valid
+    recorded outcome, and a valid independent eligibility review.  This is
+    deliberately not a base-rate query: a single verified near-miss remains a
+    structural counterexample, not a frequency observation.
+    """
+    root = _library_dir(library_dir)
+    cases, case_errors = _read_jsonl(root / "cases.jsonl")
+    events, event_errors = _read_jsonl(root / "events.jsonl")
+    invalid: list[str] = []
+    if case_errors or event_errors:
+        invalid.append("case_library_parse_errors")
+    case = next((item for item in cases if str(item.get("case_id") or "") == case_id), None)
+    if case is None:
+        invalid.append("case_not_registered")
+        return {"state": "INVALID", "invalid_findings": invalid}
+    episode = case.get("episode") if isinstance(case.get("episode"), dict) else {}
+    if str(episode.get("episode_id") or "") != episode_id:
+        invalid.append("episode_not_registered_for_case")
+    outcome = next((
+        item for item in events
+        if str(item.get("event_id") or "") == outcome_event_id
+        and str(item.get("case_id") or "") == case_id
+    ), None)
+    if outcome is None:
+        invalid.append("outcome_event_not_registered_for_case")
+    elif outcome.get("event_type") != "outcome":
+        invalid.append("registered_event_not_outcome")
+    elif validate_event(outcome, case)["state"] != "REVIEWABLE":
+        invalid.append("outcome_event_not_reviewable")
+    valid_approval = any(
+        item.get("event_type") == "eligibility_review"
+        and item.get("approved") is True
+        and validate_event(item, case)["state"] == "REVIEWABLE"
+        for item in events if str(item.get("case_id") or "") == case_id
+    )
+    if not valid_approval:
+        invalid.append("independent_eligibility_review_missing")
+    case_validation = validate_case(case, require_episode_identity=True)
+    if case_validation["state"] != "REVIEWABLE":
+        invalid.append("case_or_episode_not_reviewable")
+    if _case_state(case, events) != "ELIGIBLE":
+        invalid.append("case_not_eligible_settled_episode")
+    invalid = list(dict.fromkeys(invalid))
+    return {
+        "state": "REVIEWABLE" if not invalid else "INVALID",
+        "invalid_findings": invalid,
+    }
+
+
+def _episode_company_id(case: dict[str, Any]) -> str | None:
+    """Return the pre-registered company cluster for a mechanism episode."""
+    episode = case.get("episode") if isinstance(case.get("episode"), dict) else {}
+    cluster = episode.get("cluster") if isinstance(episode.get("cluster"), dict) else {}
+    company_id = str(cluster.get("company_id") or "").strip()
+    return company_id or None
+
+
+def _episode_comparability_identity(case: dict[str, Any]) -> tuple[str | None, str | None]:
+    """Return the common question and terminal-outcome identities of an episode."""
+    episode = case.get("episode") if isinstance(case.get("episode"), dict) else {}
+    question_set_id = str(episode.get("common_question_set_id") or "").strip() or None
+    terminal_scope = str(episode.get("terminal_outcome_scope") or "").strip() or None
+    return question_set_id, terminal_scope
+
+
 def library_fingerprint(cases: list[dict[str, Any]], events: list[dict[str, Any]]) -> str:
     return _hash({
         "cases": sorted(str(item.get("case_fingerprint") or "") for item in cases),
@@ -390,12 +545,17 @@ def query_cases(
         archetype_overlap = len(set(archetype_ids) & set(case.get("archetype_ids") or []))
         variable_overlap = len(variables & set(case.get("variable_keys") or []))
         outcome = next((item for item in events if item.get("case_id") == case.get("case_id") and item.get("event_type") == "outcome"), {})
+        common_question_set_id, terminal_outcome_scope = _episode_comparability_identity(case)
         matches.append({
             "case_id": case.get("case_id"), "case_fingerprint": case.get("case_fingerprint"),
             "outcome_event_id": outcome.get("event_id"),
             "resolved_scenario_id": outcome.get("resolved_scenario_id"),
             "archetype_overlap": archetype_overlap, "variable_overlap": variable_overlap,
             "comparability": case.get("comparability"),
+            "episode_cluster": deepcopy(((case.get("episode") or {}).get("cluster") or {})),
+            "independent_company_id": _episode_company_id(case),
+            "common_question_set_id": common_question_set_id,
+            "terminal_outcome_scope": terminal_outcome_scope,
         })
     matches.sort(key=lambda item: (-item["archetype_overlap"], -item["variable_overlap"], str(item["case_id"])))
     counts: dict[str, int] = {}
@@ -403,18 +563,69 @@ def query_cases(
         scenario = str(item.get("resolved_scenario_id") or "")
         counts[scenario] = counts.get(scenario, 0) + 1
     sample_size = len(matches)
+    company_case_ids: dict[str, list[str]] = {}
+    unclustered_case_ids: list[str] = []
+    for item in matches:
+        company_id = item.get("independent_company_id")
+        case_id = str(item.get("case_id") or "")
+        if not company_id:
+            unclustered_case_ids.append(case_id)
+            continue
+        company_case_ids.setdefault(str(company_id), []).append(case_id)
+    duplicated_companies = {
+        company_id: case_ids for company_id, case_ids in company_case_ids.items()
+        if len(case_ids) > 1
+    }
+    independent_company_sample_size = len(company_case_ids)
+    question_set_ids = {str(item["common_question_set_id"]) for item in matches if item.get("common_question_set_id")}
+    terminal_scopes = {str(item["terminal_outcome_scope"]) for item in matches if item.get("terminal_outcome_scope")}
+    missing_comparability_case_ids = [
+        str(item.get("case_id") or "") for item in matches
+        if not item.get("common_question_set_id") or not item.get("terminal_outcome_scope")
+    ]
+    common_question_set_qualified = not missing_comparability_case_ids and len(question_set_ids) == 1
+    terminal_outcome_scope_qualified = not missing_comparability_case_ids and len(terminal_scopes) == 1
+    independence_qualified = (
+        not unclustered_case_ids and not duplicated_companies
+        and common_question_set_qualified and terminal_outcome_scope_qualified
+    )
     empirical = (
         {key: round(value / sample_size, 6) for key, value in sorted(counts.items())}
-        if sample_size >= MIN_EMPIRICAL_SAMPLE else None
+        if sample_size >= MIN_EMPIRICAL_SAMPLE and independence_qualified else None
     )
     warnings: list[str] = []
     if sample_size < MIN_EMPIRICAL_SAMPLE:
         warnings.append(f"sample_too_small:{sample_size}<{MIN_EMPIRICAL_SAMPLE}")
+    elif unclustered_case_ids:
+        warnings.append("eligible_cases_missing_episode_cluster:" + ",".join(sorted(unclustered_case_ids)))
+    elif duplicated_companies:
+        warnings.extend(
+            "correlated_company_episodes_prevent_base_rate:"
+            + company_id + ":" + ",".join(sorted(case_ids))
+            for company_id, case_ids in sorted(duplicated_companies.items())
+        )
+    if sample_size >= MIN_EMPIRICAL_SAMPLE and missing_comparability_case_ids:
+        warnings.append(
+            "eligible_cases_missing_common_question_or_terminal_scope:"
+            + ",".join(sorted(missing_comparability_case_ids))
+        )
+    elif sample_size >= MIN_EMPIRICAL_SAMPLE and len(question_set_ids) > 1:
+        warnings.append("mixed_common_question_sets_prevent_base_rate:" + ",".join(sorted(question_set_ids)))
+    elif sample_size >= MIN_EMPIRICAL_SAMPLE and len(terminal_scopes) > 1:
+        warnings.append("mixed_terminal_outcome_scopes_prevent_base_rate:" + ",".join(sorted(terminal_scopes)))
+    if sample_size >= MIN_EMPIRICAL_SAMPLE and independent_company_sample_size < MIN_EMPIRICAL_SAMPLE:
+        warnings.append(
+            f"independent_company_sample_too_small:{independent_company_sample_size}<{MIN_EMPIRICAL_SAMPLE}"
+        )
     if case_errors or event_errors:
         warnings.append("library_parse_errors")
     return {
         "mechanism_key": mechanism_key, "archetype_ids": archetype_ids,
         "variable_keys": sorted(variables), "eligible_sample_size": sample_size,
+        "independent_company_sample_size": independent_company_sample_size,
+        "independence_qualified": independence_qualified,
+        "common_question_set_ids": sorted(question_set_ids),
+        "terminal_outcome_scopes": sorted(terminal_scopes),
         "outcome_counts": counts, "empirical_base_rate": empirical,
         "eligible_cases": matches, "warnings": warnings,
     }
@@ -459,7 +670,8 @@ def build_base_rate_context(
 
 def initialize_base_rate_policy(
     output_dir: str | Path, *, run_id: str, enforced: bool,
-    context: dict[str, Any] | None = None,
+    context: dict[str, Any] | None = None, require_episode_identity: bool = False,
+    require_case_selection_identity: bool = False,
 ) -> dict[str, Any]:
     context = context or _load(Path(output_dir) / "base_rate_context.json")
     payload = {
@@ -468,6 +680,8 @@ def initialize_base_rate_policy(
         "context_fingerprint": context.get("context_fingerprint"),
         "library_fingerprint_at_plan": context.get("library_fingerprint"),
         "minimum_empirical_sample": MIN_EMPIRICAL_SAMPLE,
+        "require_episode_identity": bool(require_episode_identity),
+        "require_case_selection_identity": bool(require_case_selection_identity),
     }
     _atomic_write_json(Path(output_dir) / "base_rate_policy.json", payload)
     return payload
@@ -496,12 +710,13 @@ def validate_base_rate_context(
         if not isinstance(query, dict) or str(query.get("mechanism_key") or "") != str(mechanism):
             invalid.append("query_mechanism_identity_mismatch:" + str(mechanism)); continue
         sample = int(query.get("eligible_sample_size") or 0)
+        independent_sample = int(query.get("independent_company_sample_size", sample) or 0)
         refs = query.get("eligible_cases") or []
         if sample != len(refs):
             invalid.append("eligible_sample_count_mismatch:" + str(mechanism))
-        if sample < MIN_EMPIRICAL_SAMPLE and query.get("empirical_base_rate") is not None:
+        if independent_sample < MIN_EMPIRICAL_SAMPLE and query.get("empirical_base_rate") is not None:
             invalid.append("small_sample_emitted_base_rate:" + str(mechanism))
-        if sample >= MIN_EMPIRICAL_SAMPLE and not isinstance(query.get("empirical_base_rate"), dict):
+        if independent_sample >= MIN_EMPIRICAL_SAMPLE and not isinstance(query.get("empirical_base_rate"), dict):
             incomplete.append("eligible_sample_missing_base_rate:" + str(mechanism))
         for ref in refs:
             case_id = str((ref or {}).get("case_id") or "")
@@ -536,6 +751,22 @@ def validate_base_rate_context(
                 invalid.extend(f"{pset.get('set_id')}:base_rate_case_not_in_context:{item}" for item in missing_refs)
                 if len(refs) < MIN_EMPIRICAL_SAMPLE:
                     invalid.append(f"{pset.get('set_id')}:base_rate_sample_too_small:{len(refs)}")
+                selected_cases = [case_map.get(case_id) for case_id in refs]
+                company_ids = [_episode_company_id(case) if isinstance(case, dict) else None for case in selected_cases]
+                comparability_ids = [
+                    _episode_comparability_identity(case) if isinstance(case, dict) else (None, None)
+                    for case in selected_cases
+                ]
+                if any(company_id is None for company_id in company_ids):
+                    invalid.append(f"{pset.get('set_id')}:base_rate_source_missing_episode_company_cluster")
+                elif len(set(company_ids)) != len(company_ids):
+                    invalid.append(f"{pset.get('set_id')}:base_rate_sources_not_independent_company_clusters")
+                if any(question_set_id is None or terminal_scope is None for question_set_id, terminal_scope in comparability_ids):
+                    invalid.append(f"{pset.get('set_id')}:base_rate_source_missing_common_question_or_terminal_scope")
+                elif len({question_set_id for question_set_id, _ in comparability_ids}) != 1:
+                    invalid.append(f"{pset.get('set_id')}:base_rate_sources_mixed_common_question_sets")
+                elif len({terminal_scope for _, terminal_scope in comparability_ids}) != 1:
+                    invalid.append(f"{pset.get('set_id')}:base_rate_sources_mixed_terminal_outcome_scopes")
     invalid = list(dict.fromkeys(invalid)); incomplete = list(dict.fromkeys(incomplete)); warnings = list(dict.fromkeys(warnings))
     state = "INVALID" if invalid else "INCOMPLETE" if incomplete else "REVIEWABLE"
     return {
@@ -568,6 +799,28 @@ def evaluate_output_base_rate(
         if policy.get("context_fingerprint") != context.get("context_fingerprint"):
             result["invalid_findings"].append("policy_context_fingerprint_mismatch")
             result["state"] = "INVALID"; result["status"] = "FAIL"
+        if policy.get("require_episode_identity") or policy.get("require_case_selection_identity"):
+            cases, _ = _read_jsonl(_library_dir(library_dir) / "cases.jsonl")
+            case_map = {str(item.get("case_id")): item for item in cases}
+            for case_id in result.get("eligible_case_ids") or []:
+                case = case_map.get(str(case_id))
+                if not case:
+                    continue
+                episode_validation = validate_case(
+                    case,
+                    require_episode_identity=bool(policy.get("require_episode_identity")),
+                    require_case_selection_identity=bool(policy.get("require_case_selection_identity")),
+                )
+                result["invalid_findings"].extend(
+                    f"{case_id}:{item}" for item in episode_validation["invalid_findings"]
+                )
+                result["incomplete_findings"].extend(
+                    f"{case_id}:{item}" for item in episode_validation["incomplete_findings"]
+                )
+            result["invalid_findings"] = list(dict.fromkeys(result["invalid_findings"]))
+            result["incomplete_findings"] = list(dict.fromkeys(result["incomplete_findings"]))
+            result["state"] = "INVALID" if result["invalid_findings"] else "INCOMPLETE" if result["incomplete_findings"] else "REVIEWABLE"
+            result["status"] = "FAIL" if result["state"] in {"INVALID", "INCOMPLETE"} else "PASS"
     result["enforced"] = bool(policy.get("enforced"))
     if persist:
         _atomic_write_json(output / "base_rate_validation.json", result)
@@ -673,6 +926,17 @@ def build_candidate_cases_from_output(
     output_dir: str | Path, *, library_dir: str | Path | None = None,
 ) -> dict[str, Any]:
     output = Path(output_dir)
+    try:
+        from scripts.case_selection_register import validate_output_case_selection
+    except ModuleNotFoundError:
+        from case_selection_register import validate_output_case_selection
+    selection_admission = validate_output_case_selection(output)
+    if selection_admission.get("state") in {"INVALID", "INCOMPLETE"}:
+        return {
+            "written": False,
+            "error": "case_selection_not_admissible_for_forward_judgment_calibration",
+            "case_selection": selection_admission,
+        }
     plan = _load(output / "decisive_question_plan.json")
     archetype = _load(output / "company_archetype.json")
     contract = _load(output / "analysis_contract.json")
@@ -719,6 +983,13 @@ def build_candidate_cases_from_output(
             },
             "extraction_notes": "候选案例只冻结当时问题结构；披露日期和概率尚未审核，不进入基准率分母。",
         }
+        if selection_admission.get("state") == "REVIEWABLE":
+            record["case_selection"] = {
+                "register_id": selection_admission.get("register_id"),
+                "register_fingerprint": selection_admission.get("register_fingerprint"),
+                "entry_id": selection_admission.get("entry_id"),
+                "outcome_isolation": selection_admission.get("outcome_isolation"),
+            }
         results.append(append_case(record, library_dir=library_dir))
     return {"written": all(item.get("written") for item in results), "cases": results}
 

@@ -135,9 +135,11 @@ v1 的 `period_start` / `period_end` 在首个工程冻结中被错误用于
   period 的 `end`；对 `EVENT_WINDOW`，证据来源仍须在阅读窗口内，且其
   event period 必须被正文支持，但不强制年报/中报 `data_as_of` 等于事件日。
 
-v2 settlement 还会拒绝阅读窗口结束晚于 `settlement_as_of` 的 claim，并仍按
+价格/投资目的的 v2 settlement 仍会拒绝阅读窗口结束晚于 `settlement_as_of` 的 claim，并按
 `INITIAL_DISCLOSURE` 或 `LATEST_OFFICIAL_AS_OF_EVALUATION` 仅在可比观察中
-选择版本。它不能让旧 v1 质量失败工件变为 production case。
+选择版本。`COMPANY_JUDGMENT_ONLY` 则可在同一 immutable case 的早期追加结算中保留这类未来
+claim 为无 observation 的 `PARTIAL`；它必须携带连续的 `settlement_series_id`、序号和前序 ID，
+series 审阅会拒绝改写已经结算的 claim。它不能让旧 v1 质量失败工件变为 production case。
 
 ## 4. 口径漂移、缺失和不可比
 

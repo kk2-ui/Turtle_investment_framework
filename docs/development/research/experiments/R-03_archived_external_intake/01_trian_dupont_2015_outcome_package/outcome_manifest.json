@@ -1,0 +1,103 @@
+{
+  "schema_version": "r03-outcome-package.v1",
+  "package_id": "R03:TRIAN_DUPONT:2015:OUTCOME",
+  "status": "OUTCOME_RESOLUTION_RECORDED_NO_PRE_OUTCOME_MUTATION",
+  "purpose": "Physical separation of post-cutoff source artifacts from the R-03 pre-outcome intake; acquisition only, not settlement.",
+  "pre_outcome_intake_locator": "../01_trian_dupont_2015_preoutcome_intake.md",
+  "outcome_window": {
+    "start": "2015-07-01",
+    "end": "2015-12-31",
+    "resolution_scope": "2015 Q2-Q4 operating bridge only"
+  },
+  "firewall": {
+    "pre_outcome_intake_modified": false,
+    "source_bodies_read_at_acquisition": false,
+    "source_bodies_read_in_outcome_resolution": true,
+    "source_bodies_summarized": false,
+    "outcome_values_extracted": false,
+    "derived_reader_text_present": false,
+    "price_or_return_material_present": false,
+    "later_reorganization_material_present": false,
+    "rule": "Raw artifacts may be read only in a separately recorded outcome-resolution step. This package must not be used to amend the pre-outcome card."
+  },
+  "sources": [
+    {
+      "source_id": "SEC:EIDP:2015Q2:10-Q",
+      "issuer": "E. I. du Pont de Nemours and Company",
+      "source_type": "SEC_FORM_10-Q",
+      "period_of_report": "2015-06-30",
+      "filed_at": "2015-07-28",
+      "accession_number": "0000030554-15-000070",
+      "filing_index_url": "https://www.sec.gov/Archives/edgar/data/30554/000003055415000070/0000030554-15-000070-index.htm",
+      "original_file_url": "https://www.sec.gov/Archives/edgar/data/30554/000003055415000070/dd-2015630x10q.htm",
+      "package_path": "raw/SEC_EIDP_2015Q2_10Q.html",
+      "acquisition_status": "RAW_ORIGINAL_DOWNLOADED_UNREAD",
+      "content_representation": "RAW_SEC_HTML_UNREAD",
+      "later_read_targets": [
+        "operating-earnings-definition-and-bridge-comparability",
+        "cost-savings-or-restructuring-disclosure",
+        "Agriculture-and-other-business-operating-context"
+      ]
+    },
+    {
+      "source_id": "SEC:EIDP:2015Q3:10-Q",
+      "issuer": "E. I. du Pont de Nemours and Company",
+      "source_type": "SEC_FORM_10-Q",
+      "period_of_report": "2015-09-30",
+      "filed_at": "2015-10-27",
+      "accession_number": "0000030554-15-000083",
+      "filing_index_url": "https://www.sec.gov/Archives/edgar/data/30554/000003055415000083/0000030554-15-000083-index.htm",
+      "original_file_url": "https://www.sec.gov/Archives/edgar/data/30554/000003055415000083/dd-2015930x10q.htm",
+      "package_path": "raw/SEC_EIDP_2015Q3_10Q.html",
+      "acquisition_status": "RAW_ORIGINAL_DOWNLOADED_UNREAD",
+      "content_representation": "RAW_SEC_HTML_UNREAD",
+      "later_read_targets": [
+        "operating-earnings-definition-and-bridge-comparability",
+        "cost-savings-or-restructuring-disclosure",
+        "Agriculture-and-other-business-operating-context"
+      ]
+    },
+    {
+      "source_id": "SEC:EIDP:2015FY:10-K",
+      "issuer": "E. I. du Pont de Nemours and Company",
+      "source_type": "SEC_FORM_10-K",
+      "period_of_report": "2015-12-31",
+      "filed_at": "2016-02-04",
+      "accession_number": "0000030554-16-000106",
+      "filing_index_url": "https://www.sec.gov/Archives/edgar/data/30554/000003055416000106/0000030554-16-000106-index.htm",
+      "original_file_url": "https://www.sec.gov/Archives/edgar/data/30554/000003055416000106/dd-12312015x10k.htm",
+      "package_path": "raw/SEC_EIDP_2015FY_10K.html",
+      "acquisition_status": "RAW_ORIGINAL_DOWNLOADED_UNREAD",
+      "content_representation": "RAW_SEC_HTML_UNREAD",
+      "later_read_targets": [
+        "full-year-bridge-comparability",
+        "cost-savings-or-restructuring-disclosure",
+        "Agriculture-and-other-business-operating-context"
+      ]
+    }
+  ],
+  "resolution_events": [
+    {
+      "event_id": "R03:TRIAN_DUPONT:2015:OUTCOME_RESOLUTION:001",
+      "status": "MEASUREMENT_MISMATCH_RECORDED",
+      "scope": "Frozen 2015 Q2-Q4 conditional operating-earnings bridge and its stated cost-savings assumption only.",
+      "resolution_document": "../02_trian_dupont_2015_outcome_resolution.md",
+      "learning_review_document": "../03_trian_dupont_2015_learning_review.md",
+      "pre_outcome_intake_modified": false,
+      "price_or_return_read": false,
+      "post_2015_material_used": false
+    }
+  ],
+  "excluded_from_this_package": [
+    "XBRL instances and derived tables",
+    "earnings-release 8-Ks or investor-relations copies",
+    "stock prices, returns, targets, or valuation material",
+    "post-2015 filings and corporate-reorganization material",
+    "derived text, OCR, extraction, or settlement notes"
+  ],
+  "acceptance": {
+    "physical_separation": "All post-cutoff raw source bodies are under this outcome package only; the pre-outcome card remains outside it.",
+    "outcome_read_gate": "A later read must be recorded separately and may compare only the frozen 2015 Q2-Q4 bridge fields with same-period official disclosures.",
+    "current_verdict": "ACQUISITION_ONLY_NOT_SETTLED"
+  }
+}

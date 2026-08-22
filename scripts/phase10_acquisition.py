@@ -2,11 +2,11 @@
 """Point-in-time source acquisition primitives for the Phase 10 first case.
 
 The module is deliberately an offline boundary layer.  A caller may feed it
-the records returned by an SSE announcement export or an already downloaded
-source catalog; it never uses the current web page as a proxy for a historical
-vintage.  Every discovered announcement is retained, including rejected
-records, so later review can distinguish an incomplete enumeration from an
-empty selection.
+records returned by an official exchange disclosure export (currently SSE or
+CNINFO/SZSE) or an already downloaded source catalog; it never uses the
+current web page as a proxy for a historical vintage.  Every discovered
+announcement is retained, including rejected records, so later review can
+distinguish an incomplete enumeration from an empty selection.
 """
 
 from __future__ import annotations
@@ -21,6 +21,7 @@ import subprocess
 import tempfile
 from copy import deepcopy
 from datetime import date, datetime, time, timezone
+from html.parser import HTMLParser
 from pathlib import Path
 from typing import Any, Callable, Iterable
 from urllib.parse import urlencode, urljoin, urlparse
@@ -29,17 +30,78 @@ from zoneinfo import ZoneInfo
 
 
 MANIFEST_SCHEMA_VERSION = "phase10-source-manifest.v1"
+SOURCE_PACKAGE_SELECTION_SCHEMA_VERSION = "phase10-source-package-selection.v2"
+INDEPENDENT_INDUSTRY_DATA_CONTRACT_SCHEMA_VERSION = "phase10-independent-industry-data.v2"
+SOURCE_ROLE_PROVENANCE_SCHEMA_VERSION = "phase10-source-role-provenance.v1"
+LICENSED_INDUSTRY_DATA_SOURCE_TYPE = "LICENSED_INDUSTRY_DATA"
+EXTERNAL_DISCLOSURE_RELATIVE_ROLES = {
+    "COMPETITOR_DISCLOSURE",
+    "SUPPLIER_OR_CUSTOMER_DISCLOSURE",
+    "REGULATORY_DISCLOSURE",
+}
+SOURCE_ROLE_ENTITY_KINDS = {"OPERATING_ENTITY", "REGULATOR"}
+SOURCE_ROLE_BASIS_KINDS = {
+    "PUBLISHER_PRIMARY_DISCLOSURE",
+    "OFFICIAL_REGISTRY_OR_FILING",
+    "REGULATORY_PRIMARY_INSTRUMENT",
+}
+SOURCE_ROLE_BASIS_SOURCE_TYPES = {
+    "ANNUAL_REPORT", "INTERIM_REPORT", "QUARTERLY_REPORT",
+    "EXCHANGE_ANNOUNCEMENT", "OTHER_OFFICIAL",
+}
+_CANONICAL_ENTITY_ID = re.compile(
+    r"^(?:ENTITY|LEI|SEC_CIK|CN_UNIFIED|EXCHANGE_SECURITY|REGULATOR):[A-Za-z0-9._:-]+$"
+)
+INDUSTRY_METRIC_SEMANTICS = {"RETAIL_SELL_OUT", "SHIPMENT", "INVENTORY_STOCK"}
+STOCK_FLOW_SEMANTICS = {"RETAIL_SELL_OUT", "SHIPMENT", "INVENTORY_STOCK"}
+MEASUREMENT_METHOD_DISCLOSURES = {
+    "PROVIDER_METHOD_DOCUMENTED", "PROVIDER_METHOD_PARTIAL", "PROVIDER_METHOD_UNDISCLOSED",
+}
+MEASUREMENT_ERROR_STATUSES = {"PROVIDER_DECLARED_BOUND", "UNQUANTIFIED"}
+MEASUREMENT_INFERENCE_MODES = {
+    "DIRECTIONAL_SENSOR_ONLY", "WITHIN_PROVIDER_RELATIVE_CHANGE", "LEVEL_WITH_STATED_LIMITS",
+}
+MEASUREMENT_DISAGREEMENT_TREATMENTS = {"DO_NOT_AVERAGE_REOPEN_MECHANISM"}
+LICENSED_INDUSTRY_SERIES_CONTRACT_FIELDS = (
+    "pre_cutoff_source_id", "provider_id", "dataset_id", "metric_id", "semantic",
+    "geography", "product_mapping_id", "channel_mapping_id", "brand_mapping_id",
+    "denominator_mapping_id",
+)
+STOCK_FLOW_BOUNDARY_FIELDS = (
+    "boundary_id", "geography", "product_mapping_id", "channel_mapping_id",
+    "brand_mapping_id", "denominator_mapping_id", "period",
+    "inventory_ownership", "definition_locator",
+)
+SHIPMENT_SELL_IN_STATUSES = {
+    "NOT_APPLICABLE",
+    "PROVIDER_DEFINED_SELL_IN",
+    "SHIPMENT_SEMANTICS_UNRESOLVED",
+}
+INDUSTRY_RELEASE_STATUSES = {"ORIGINAL_HISTORICAL", "HISTORICAL_REVISION"}
 DEFAULT_COMPANY_CODE = "600340.SH"
 DEFAULT_CUTOFF_AT = "2020-04-27T18:00:00+08:00"
 LOCAL_TZ = ZoneInfo("Asia/Shanghai")
 PDF_PAGE_MARKDOWN = "PDF_PAGE_MARKDOWN"
+WEB_PAGE_MARKDOWN = "WEB_PAGE_MARKDOWN"
+OFFICIAL_WEB_RELEASE_ACQUISITION_KIND = "OFFICIAL_WEB_RELEASE"
+OFFICIAL_IR_PDF_RELEASE_ACQUISITION_KIND = "OFFICIAL_IR_PDF_RELEASE"
+OFFICIAL_ISSUER_RELEASE_ACQUISITION_KINDS = {
+    OFFICIAL_WEB_RELEASE_ACQUISITION_KIND,
+    OFFICIAL_IR_PDF_RELEASE_ACQUISITION_KIND,
+}
+OFFICIAL_WEB_RELEASE_SOURCE_TYPE = "OTHER_OFFICIAL"
 PDF_PAGE_MARKDOWN_EXTRACTOR = "pdf_preprocessor.extract_all_pages"
 PDF_PAGE_MARKDOWN_EXTRACTOR_VERSION = "phase10-pdf-page-markdown.v1"
+PDF_TEXT_EXTRACTOR = "pdftotext -layout"
+PDF_TEXT_EXTRACTOR_VERSION = "phase10-pdf-page-markdown-poppler.v1"
 PDF_OCR_EXTRACTOR = "pdftoppm+tesseract"
 PDF_OCR_EXTRACTOR_VERSION = "phase10-pdf-ocr-tesseract.v1"
 SSE_BULLETIN_QUERY_URL = "https://query.sse.com.cn/security/stock/queryCompanyBulletin.do"
 SSE_STATIC_BASE_URL = "https://static.sse.com.cn"
 SSE_SECURITY_TYPES = "0101,120100,020100,020200,120200"
+CNINFO_ANNOUNCEMENT_QUERY_URL = "https://www.cninfo.com.cn/new/hisAnnouncement/query"
+CNINFO_STATIC_BASE_URL = "https://static.cninfo.com.cn/"
+CNINFO_STATIC_HOST = "static.cninfo.com.cn"
 
 POST_CUTOFF_CLAIM_TITLE_TERMS: dict[str, tuple[str, ...]] = {
     "HBTCLM:600340:P10B:ORDINARY_CASH": (
@@ -59,8 +121,10 @@ POST_CUTOFF_CLAIM_TITLE_TERMS: dict[str, tuple[str, ...]] = {
 ADMITTED = "ADMITTED"
 REJECTION_REASONS = {
     "FUTURE_PUBLISHED_AT",
+    "PUBLISHED_AT_TIME_UNKNOWN_AT_CUTOFF",
     "FUTURE_DATA_AS_OF",
     "FUTURE_REVISION",
+    "REVISION_TIME_UNKNOWN_AT_CUTOFF",
     "CURRENT_RESTATED_ONLY",
     "SUPERSEDED_BEFORE_CUTOFF",
     "MISSING_IDENTITY",
@@ -69,11 +133,29 @@ REJECTION_REASONS = {
     "MISSING_ANNOUNCEMENT_DATE",
     "MISSING_VERSION_FAMILY",
     "INVALID_SUPERSEDES_REFERENCE",
+    "INDEPENDENT_INDUSTRY_CONTRACT_INVALID",
+    "INDEPENDENT_INDUSTRY_CONTRACT_INCOMPLETE",
+    "OFFICIAL_WEB_RELEASE_CONTRACT_INVALID",
+    "OFFICIAL_WEB_RELEASE_CONTRACT_INCOMPLETE",
+    "SOURCE_ROLE_PROVENANCE_INVALID",
+    "SOURCE_ROLE_PROVENANCE_INCOMPLETE",
 }
 
 
 class SSEAnnouncementQueryError(RuntimeError):
     """Raised when the official SSE response cannot prove a bounded inventory."""
+
+
+class CNInfoAnnouncementExportError(RuntimeError):
+    """Raised when an exported CNINFO/SZSE announcement row lacks identity."""
+
+
+class CNInfoAnnouncementQueryError(RuntimeError):
+    """Raised when the official CNINFO response cannot prove a bounded inventory."""
+
+
+class OfficialWebReleaseError(RuntimeError):
+    """Raised when a declared first-party web release cannot be frozen."""
 
 
 def _timestamp(value: Any) -> datetime | None:
@@ -91,6 +173,18 @@ def _timestamp(value: Any) -> datetime | None:
     if parsed.tzinfo is None:
         parsed = parsed.replace(tzinfo=LOCAL_TZ)
     return parsed.astimezone(LOCAL_TZ)
+
+
+def _is_date_precision(value: Any) -> bool:
+    """Whether a disclosed date has no publication-time evidence.
+
+    Exchange inventories commonly identify a statutory announcement by date
+    only.  Treating that as midnight would quietly admit a disclosure that
+    might have appeared after an intraday PIT cutoff.  A date is sufficient
+    when it precedes the cutoff day; it is not evidence for availability
+    inside that same day.
+    """
+    return bool(re.fullmatch(r"\d{4}-\d{2}-\d{2}", str(value or "").strip()))
 
 
 def _copy_record(record: dict[str, Any], **updates: Any) -> dict[str, Any]:
@@ -154,6 +248,26 @@ def _extract_pdf_pages_with_ocr(pdf_path: Path) -> list[tuple[int, str]]:
         return pages
 
 
+def _extract_pdf_pages_with_pdftotext(pdf_path: Path) -> list[tuple[int, str]]:
+    """Fast, page-preserving text extraction for registered reader copies.
+
+    ``pdfplumber`` remains the fallback because it can help with unusual PDFs,
+    but extracting tables from every page of a long annual report is needlessly
+    slow for a page-marked reader copy.  The official PDF remains the source;
+    this routine only creates the bounded reading representation.
+    """
+    result = subprocess.run(
+        ["pdftotext", "-layout", str(pdf_path), "-"],
+        check=True,
+        capture_output=True,
+        text=True,
+    )
+    chunks = result.stdout.split("\f")
+    if chunks and not chunks[-1].strip():
+        chunks.pop()
+    return [(page_number, text) for page_number, text in enumerate(chunks, start=1)]
+
+
 def materialize_pdf_page_markdown(
     source: dict[str, Any],
     package_root: str | Path,
@@ -191,14 +305,18 @@ def materialize_pdf_page_markdown(
         raise FileExistsError(f"reader_text_path already exists: {reader_relative}")
 
     try:
-        from scripts.pdf_preprocessor import extract_all_pages
-    except ModuleNotFoundError:
-        from pdf_preprocessor import extract_all_pages
-
-    pages = extract_all_pages(str(raw_path), verbose=False)
+        pages = _extract_pdf_pages_with_pdftotext(raw_path)
+        reader_text_extractor = PDF_TEXT_EXTRACTOR
+        reader_text_extractor_version = PDF_TEXT_EXTRACTOR_VERSION
+    except (FileNotFoundError, OSError, subprocess.CalledProcessError):
+        try:
+            from scripts.pdf_preprocessor import extract_all_pages
+        except ModuleNotFoundError:
+            from pdf_preprocessor import extract_all_pages
+        pages = extract_all_pages(str(raw_path), verbose=False)
+        reader_text_extractor = PDF_PAGE_MARKDOWN_EXTRACTOR
+        reader_text_extractor_version = PDF_PAGE_MARKDOWN_EXTRACTOR_VERSION
     nonempty_pages = [(number, text.strip()) for number, text in pages if text and text.strip()]
-    reader_text_extractor = PDF_PAGE_MARKDOWN_EXTRACTOR
-    reader_text_extractor_version = PDF_PAGE_MARKDOWN_EXTRACTOR_VERSION
     if not nonempty_pages and allow_ocr:
         nonempty_pages = [
             (number, text.strip())
@@ -234,9 +352,627 @@ def materialize_pdf_page_markdown(
     )
 
 
+class _ReleaseTextExtractor(HTMLParser):
+    """Keep the readable text of a first-party release without browser state."""
+
+    _block_tags = {"article", "br", "div", "h1", "h2", "h3", "h4", "li", "p", "section", "table", "td", "th", "tr"}
+
+    def __init__(self) -> None:
+        super().__init__(convert_charrefs=True)
+        self.parts: list[str] = []
+
+    def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
+        if tag.casefold() in self._block_tags:
+            self.parts.append("\n")
+
+    def handle_endtag(self, tag: str) -> None:
+        if tag.casefold() in self._block_tags:
+            self.parts.append("\n")
+
+    def handle_data(self, data: str) -> None:
+        self.parts.append(data)
+
+    def text(self) -> str:
+        return re.sub(r"\n{3,}", "\n\n", "\n".join(
+            line.strip() for line in "".join(self.parts).splitlines() if line.strip()
+        )).strip()
+
+
+def materialize_web_page_markdown(
+    source: dict[str, Any], package_root: str | Path, *, reader_text_path: str | None = None,
+) -> dict[str, Any]:
+    """Create a single-page, readable representation of a frozen web release.
+
+    The original HTML stays in the package.  The registered reader copy is a
+    rendering-free text extraction with an explicit single-page locator; this
+    permits later exact-quote verification without treating a live page as the
+    source of record.
+    """
+    root = Path(package_root).expanduser().resolve()
+    raw_relative = _package_relative_path(source.get("package_path"))
+    if raw_relative is None:
+        raise ValueError("source.package_path must be a relative source-package path")
+    raw_path = _resolve_package_path(root, raw_relative, field="source.package_path")
+    if raw_path.suffix.lower() not in {".html", ".htm"}:
+        raise ValueError("materialize_web_page_markdown requires an HTML package_path")
+    if not raw_path.is_file():
+        raise FileNotFoundError(f"source HTML missing: {raw_relative}")
+    try:
+        raw_html = raw_path.read_text(encoding="utf-8")
+    except UnicodeDecodeError as exc:
+        raise ValueError("source HTML must be UTF-8") from exc
+    extractor = _ReleaseTextExtractor()
+    try:
+        extractor.feed(raw_html)
+        extractor.close()
+    except Exception as exc:  # HTMLParser accepts imperfect HTML; malformed feeds are still unusable.
+        raise ValueError("source HTML text extraction failed") from exc
+    body = extractor.text()
+    if not body:
+        raise ValueError("source HTML has no readable text")
+
+    chosen_reader_path = reader_text_path or source.get("reader_text_path")
+    if not chosen_reader_path:
+        chosen_reader_path = str(Path(raw_relative).with_suffix(".pages.md"))
+    reader_relative = _package_relative_path(chosen_reader_path)
+    if reader_relative is None:
+        raise ValueError("reader_text_path must be a relative source-package path")
+    destination = _resolve_package_path(root, reader_relative, field="source.reader_text_path")
+    if destination.exists():
+        raise FileExistsError("registered web reader path already exists: " + reader_relative)
+    lines = [
+        "# " + str(source.get("source_id") or ""),
+        "",
+        "- source_id: " + str(source.get("source_id") or ""),
+        "- source_version: " + str(source.get("source_version") or ""),
+        "- content_representation: " + WEB_PAGE_MARKDOWN,
+        "",
+        "## 第 1 页",
+        "",
+        body,
+        "",
+    ]
+    destination.parent.mkdir(parents=True, exist_ok=True)
+    destination.write_text("\n".join(lines), encoding="utf-8")
+    return _copy_record(
+        source,
+        content_representation=WEB_PAGE_MARKDOWN,
+        reader_text_path=reader_relative,
+        reader_text_extractor="html.parser.HTMLParser",
+        reader_text_extractor_version="phase10-web-page-markdown.v1",
+        reader_text_page_count=1,
+    )
+
+
 def _source_identity_ok(source: dict[str, Any]) -> bool:
     required = ("source_id", "source_version", "source_type", "revision_policy")
     return all(str(source.get(field) or "").strip() for field in required)
+
+
+def validate_official_web_release_source(source: dict[str, Any]) -> dict[str, list[str]]:
+    """Validate the small contract for a first-party HTML or PDF release.
+
+    The contract deliberately proves only a named publisher page frozen before
+    the research cutoff.  It does not claim a complete historical archive or
+    turn a current web page into a reconstructed historical vintage.
+    """
+    invalid: list[str] = []
+    incomplete: list[str] = []
+    if source.get("acquisition_kind") not in OFFICIAL_ISSUER_RELEASE_ACQUISITION_KINDS:
+        invalid.append("acquisition_kind_invalid")
+    if source.get("source_type") != OFFICIAL_WEB_RELEASE_SOURCE_TYPE:
+        invalid.append("source_type_must_be_other_official")
+    if source.get("official") is not True:
+        invalid.append("official_must_be_true")
+    if source.get("revision_policy") != "ORIGINAL_VINTAGE":
+        invalid.append("revision_policy_must_be_original_vintage")
+    for field in ("title", "publisher_name", "official_publisher_domain", "release_id"):
+        if not _contract_text(source.get(field)):
+            incomplete.append(field + "_missing")
+    url = str(source.get("url") or "").strip()
+    parsed = urlparse(url)
+    expected_domain = str(source.get("official_publisher_domain") or "").strip().casefold()
+    if parsed.scheme != "https" or not parsed.netloc:
+        invalid.append("url_must_be_https")
+    elif expected_domain and parsed.netloc.casefold() != expected_domain:
+        invalid.append("url_domain_does_not_match_declared_publisher")
+    return {"invalid_findings": invalid, "incomplete_findings": incomplete}
+
+
+def _contract_text(value: Any) -> bool:
+    return isinstance(value, str) and bool(value.strip())
+
+
+def _source_role_entity_findings(value: Any, *, prefix: str, required_kind: str | None = None) -> tuple[list[str], list[str]]:
+    """Validate an identity record without using its display name as evidence.
+
+    ``legal_name`` is retained for human review, but role classification is
+    driven only by the stable entity identifier, declared kind, and a separate
+    locatable primary basis.  This prevents domains, names, file paths and
+    prose labels from becoming an implicit entity resolver.
+    """
+    invalid: list[str] = []
+    incomplete: list[str] = []
+    if not isinstance(value, dict):
+        return invalid, [prefix + "_missing"]
+    entity_id = str(value.get("entity_id") or "").strip()
+    if not entity_id:
+        incomplete.append(prefix + ":entity_id_missing")
+    elif not _CANONICAL_ENTITY_ID.fullmatch(entity_id):
+        invalid.append(prefix + ":entity_id_not_canonical")
+    if not _contract_text(value.get("legal_name")):
+        incomplete.append(prefix + ":legal_name_missing")
+    kind = str(value.get("entity_kind") or "").strip()
+    if kind not in SOURCE_ROLE_ENTITY_KINDS:
+        invalid.append(prefix + ":entity_kind_invalid")
+    elif required_kind is not None and kind != required_kind:
+        invalid.append(prefix + ":entity_kind_does_not_match_relative_role")
+    return invalid, incomplete
+
+
+def validate_source_role_provenance(
+    source: dict[str, Any], *, source_index: dict[str, dict[str, Any]] | None = None,
+) -> dict[str, list[str]]:
+    """Validate an optional, source-bound external-publisher role contract.
+
+    This validates *provenance shape and availability*, not the economics of a
+    relationship.  A role becomes available to P29 only when the publisher,
+    subject, bounded scope and a separately readable primary locator are all
+    frozen in the source package.  It never infers a role from a URL, source
+    type, title, company name or the free-text legal-name display field.
+    """
+    invalid: list[str] = []
+    incomplete: list[str] = []
+    contract = source.get("source_role_provenance")
+    if contract in (None, "", [], {}):
+        return {"invalid_findings": invalid, "incomplete_findings": incomplete}
+    if not isinstance(contract, dict):
+        return {"invalid_findings": ["source_role_provenance:not_object"], "incomplete_findings": incomplete}
+    if contract.get("schema_version") != SOURCE_ROLE_PROVENANCE_SCHEMA_VERSION:
+        invalid.append("source_role_provenance:schema_version_invalid")
+    relative_role = str(contract.get("relative_role") or "").strip()
+    if relative_role not in EXTERNAL_DISCLOSURE_RELATIVE_ROLES:
+        invalid.append("source_role_provenance:relative_role_invalid")
+    expected_publisher_kind = "REGULATOR" if relative_role == "REGULATORY_DISCLOSURE" else "OPERATING_ENTITY"
+    entity_invalid, entity_incomplete = _source_role_entity_findings(
+        contract.get("publisher_entity"),
+        prefix="source_role_provenance:publisher_entity",
+        required_kind=expected_publisher_kind if relative_role in EXTERNAL_DISCLOSURE_RELATIVE_ROLES else None,
+    )
+    invalid.extend(entity_invalid)
+    incomplete.extend(entity_incomplete)
+    entity_invalid, entity_incomplete = _source_role_entity_findings(
+        contract.get("subject_entity"),
+        prefix="source_role_provenance:subject_entity",
+    )
+    invalid.extend(entity_invalid)
+    incomplete.extend(entity_incomplete)
+    publisher = contract.get("publisher_entity") if isinstance(contract.get("publisher_entity"), dict) else {}
+    subject = contract.get("subject_entity") if isinstance(contract.get("subject_entity"), dict) else {}
+    publisher_id = str(publisher.get("entity_id") or "").strip()
+    subject_id = str(subject.get("entity_id") or "").strip()
+    if publisher_id and subject_id and publisher_id == subject_id:
+        invalid.append("source_role_provenance:publisher_and_subject_must_differ")
+
+    scope = contract.get("scope")
+    if not isinstance(scope, dict):
+        incomplete.append("source_role_provenance:scope_missing")
+    else:
+        for field in ("scope_id", "product_or_service", "geography", "period_start", "period_end"):
+            if not _contract_text(scope.get(field)):
+                incomplete.append("source_role_provenance:scope:" + field + "_missing")
+        start = _timestamp(scope.get("period_start"))
+        end = _timestamp(scope.get("period_end"))
+        if _contract_text(scope.get("period_start")) and start is None:
+            invalid.append("source_role_provenance:scope:period_start_invalid")
+        if _contract_text(scope.get("period_end")) and end is None:
+            invalid.append("source_role_provenance:scope:period_end_invalid")
+        if start is not None and end is not None and start > end:
+            invalid.append("source_role_provenance:scope:period_order_invalid")
+
+    basis = contract.get("role_basis")
+    if not isinstance(basis, dict):
+        incomplete.append("source_role_provenance:role_basis_missing")
+    else:
+        basis_source_id = str(basis.get("source_id") or "").strip()
+        if not basis_source_id:
+            incomplete.append("source_role_provenance:role_basis:source_id_missing")
+        if not _contract_text(basis.get("locator")):
+            incomplete.append("source_role_provenance:role_basis:locator_missing")
+        basis_kind = str(basis.get("basis_kind") or "").strip()
+        if basis_kind not in SOURCE_ROLE_BASIS_KINDS:
+            invalid.append("source_role_provenance:role_basis:basis_kind_invalid")
+        elif relative_role == "REGULATORY_DISCLOSURE" and basis_kind != "REGULATORY_PRIMARY_INSTRUMENT":
+            invalid.append("source_role_provenance:role_basis:regulatory_primary_instrument_required")
+        elif relative_role in {"COMPETITOR_DISCLOSURE", "SUPPLIER_OR_CUSTOMER_DISCLOSURE"} and basis_kind == "REGULATORY_PRIMARY_INSTRUMENT":
+            invalid.append("source_role_provenance:role_basis:operating_relationship_cannot_use_regulatory_instrument")
+        if source_index is not None and basis_source_id:
+            basis_source = source_index.get(basis_source_id)
+            if basis_source is None:
+                incomplete.append("source_role_provenance:role_basis:source_not_in_manifest")
+            elif basis_source.get("admissible") is not True:
+                incomplete.append("source_role_provenance:role_basis:source_not_admitted")
+            elif str(basis_source.get("source_type") or "").strip() not in SOURCE_ROLE_BASIS_SOURCE_TYPES:
+                invalid.append("source_role_provenance:role_basis:source_type_not_first_order")
+    return {
+        "invalid_findings": list(dict.fromkeys(invalid)),
+        "incomplete_findings": list(dict.fromkeys(incomplete)),
+    }
+
+
+def _validate_contract_locator(value: Any, *, prefix: str, incomplete: list[str]) -> None:
+    if not isinstance(value, dict):
+        incomplete.append(prefix + ":missing_or_invalid")
+        return
+    for field in ("statement", "locator"):
+        if not _contract_text(value.get(field)):
+            incomplete.append(prefix + ":" + field + "_missing")
+
+
+def _same_timestamp(left: Any, right: Any) -> bool:
+    parsed_left = _timestamp(left)
+    parsed_right = _timestamp(right)
+    return parsed_left is not None and parsed_right is not None and parsed_left == parsed_right
+
+
+def _validate_measurement_profile(profile: Any) -> tuple[list[str], list[str]]:
+    """Bound what a provider series may say without assigning it a truth score.
+
+    A versioned vendor export is still a measurement with coverage, sampling,
+    mapping, and model-risk limits.  This contract records those limits and
+    restricts the maximum inference: a directional sensor can open research,
+    a stable provider series can support a within-provider change, and only a
+    provider-declared error boundary permits a level claim.  It deliberately
+    does not manufacture an accuracy probability or average disagreements.
+    """
+    invalid: list[str] = []
+    incomplete: list[str] = []
+    if not isinstance(profile, dict):
+        return invalid, ["measurement_profile_missing"]
+    disclosure = profile.get("methodology_disclosure")
+    if disclosure not in MEASUREMENT_METHOD_DISCLOSURES:
+        invalid.append("measurement_profile:methodology_disclosure_invalid")
+    elif disclosure != "PROVIDER_METHOD_UNDISCLOSED":
+        _validate_contract_locator(
+            profile.get("methodology_locator"),
+            prefix="measurement_profile:methodology_locator", incomplete=incomplete,
+        )
+    elif profile.get("methodology_locator") not in (None, ""):
+        invalid.append("measurement_profile:undisclosed_method_cannot_carry_locator")
+
+    error_status = profile.get("error_status")
+    if error_status not in MEASUREMENT_ERROR_STATUSES:
+        invalid.append("measurement_profile:error_status_invalid")
+    elif error_status == "PROVIDER_DECLARED_BOUND":
+        _validate_contract_locator(
+            profile.get("error_bound_locator"),
+            prefix="measurement_profile:error_bound_locator", incomplete=incomplete,
+        )
+    elif profile.get("error_bound_locator") not in (None, ""):
+        invalid.append("measurement_profile:unquantified_error_cannot_carry_bound_locator")
+    inference_mode = profile.get("permitted_inference")
+    if inference_mode not in MEASUREMENT_INFERENCE_MODES:
+        invalid.append("measurement_profile:permitted_inference_invalid")
+    elif disclosure == "PROVIDER_METHOD_UNDISCLOSED" and inference_mode != "DIRECTIONAL_SENSOR_ONLY":
+        invalid.append("measurement_profile:undisclosed_method_requires_directional_sensor_only")
+    elif error_status == "UNQUANTIFIED" and inference_mode == "LEVEL_WITH_STATED_LIMITS":
+        invalid.append("measurement_profile:unquantified_error_cannot_support_level_inference")
+
+    limitations = profile.get("known_limitations")
+    if not isinstance(limitations, list) or not limitations:
+        incomplete.append("measurement_profile:known_limitations_missing")
+    else:
+        for index, limitation in enumerate(limitations):
+            prefix = f"measurement_profile:known_limitations[{index}]"
+            if not isinstance(limitation, dict):
+                invalid.append(prefix + ":not_object")
+                continue
+            for field in ("statement", "conservative_treatment"):
+                if not _contract_text(limitation.get(field)):
+                    incomplete.append(prefix + ":" + field + "_missing")
+    if profile.get("disagreement_treatment") not in MEASUREMENT_DISAGREEMENT_TREATMENTS:
+        invalid.append("measurement_profile:disagreement_treatment_invalid")
+    return invalid, incomplete
+
+
+def independent_industry_inference_mode(source: dict[str, Any]) -> str | None:
+    """Return the provider-declared maximum inference, never a quality score."""
+    contract = source.get("industry_data_contract") if isinstance(source, dict) else None
+    profile = contract.get("measurement_profile") if isinstance(contract, dict) else None
+    return str(profile.get("permitted_inference")) if isinstance(profile, dict) else None
+
+
+def licensed_industry_series_identity(source: dict[str, Any]) -> dict[str, str] | None:
+    """Return the release-independent identity of one licensed panel series.
+
+    A later release must differ in release/version/query identity.  What must
+    remain fixed for an outcome settlement is the provider, dataset, metric
+    meaning and market-cell mappings.  This is deliberately not a source
+    quality score and intentionally excludes release/version/query fields.
+    """
+    contract = source.get("industry_data_contract") if isinstance(source, dict) else None
+    metric = contract.get("metric") if isinstance(contract, dict) else None
+    scope = contract.get("scope") if isinstance(contract, dict) else None
+    if not isinstance(contract, dict) or not isinstance(metric, dict) or not isinstance(scope, dict):
+        return None
+    mappings = {
+        "product_mapping_id": scope.get("product_mapping"),
+        "channel_mapping_id": scope.get("channel_mapping"),
+        "brand_mapping_id": scope.get("brand_mapping"),
+        "denominator_mapping_id": scope.get("denominator"),
+    }
+    identity = {
+        "provider_id": contract.get("provider_id"),
+        "dataset_id": contract.get("dataset_id"),
+        "metric_id": metric.get("metric_id"),
+        "semantic": metric.get("semantic"),
+        "geography": scope.get("geography"),
+    }
+    for field, mapping in mappings.items():
+        identity[field] = mapping.get("mapping_id") if isinstance(mapping, dict) else None
+    if any(not _contract_text(value) for value in identity.values()):
+        return None
+    return {field: str(value) for field, value in identity.items()}
+
+
+def licensed_industry_series_contract_findings(
+    series_contract: Any, *, prefix: str, pre_cutoff_sources: dict[str, dict[str, Any]] | None = None,
+) -> tuple[list[str], list[str]]:
+    """Validate a frozen licensed-series contract and, when available, resolve it.
+
+    ``pre_cutoff_sources`` is supplied only at the production adapter/case
+    boundary, where the admitted source manifest is available.  The thesis
+    authoring gate can still require a complete contract before a new ledger
+    is frozen without pretending it can read a manifest it was not given.
+    """
+    invalid: list[str] = []
+    incomplete: list[str] = []
+    if not isinstance(series_contract, dict):
+        return invalid, [prefix + ":licensed_industry_series_contract_missing"]
+    for field in LICENSED_INDUSTRY_SERIES_CONTRACT_FIELDS:
+        if not _contract_text(series_contract.get(field)):
+            incomplete.append(prefix + ":" + field + "_missing")
+    if incomplete or pre_cutoff_sources is None:
+        return invalid, incomplete
+    source_id = str(series_contract.get("pre_cutoff_source_id") or "")
+    source = pre_cutoff_sources.get(source_id)
+    if source is None:
+        invalid.append(prefix + ":pre_cutoff_source_id_not_admitted")
+        return invalid, incomplete
+    if source.get("source_type") != LICENSED_INDUSTRY_DATA_SOURCE_TYPE:
+        invalid.append(prefix + ":pre_cutoff_source_not_licensed_industry_data")
+        return invalid, incomplete
+    identity = licensed_industry_series_identity(source)
+    if identity is None:
+        invalid.append(prefix + ":pre_cutoff_source_series_identity_invalid")
+        return invalid, incomplete
+    for field, expected in identity.items():
+        if series_contract.get(field) != expected:
+            invalid.append(prefix + ":" + field + "_does_not_match_pre_cutoff_source")
+    return invalid, incomplete
+
+
+def licensed_industry_series_matches_source(
+    series_contract: dict[str, Any], source: dict[str, Any],
+) -> bool:
+    """Return whether a later licensed release is the frozen panel series."""
+    if source.get("source_type") != LICENSED_INDUSTRY_DATA_SOURCE_TYPE:
+        return False
+    identity = licensed_industry_series_identity(source)
+    return identity is not None and all(
+        series_contract.get(field) == value for field, value in identity.items()
+    )
+
+
+def validate_independent_industry_data_source(source: dict[str, Any]) -> dict[str, Any]:
+    """Validate a licensed industry-data source without claiming the data exist.
+
+    The contract intentionally verifies a *declared historical release* and
+    the meaning of its market metric.  It never fetches a vendor portal or
+    treats a current product page as a historical observation.  A shipment is
+    not promoted to ``sell_in`` unless the provider's own definition is saved
+    with a locator in the admitted source package.
+    """
+    invalid: list[str] = []
+    incomplete: list[str] = []
+    if source.get("source_type") != LICENSED_INDUSTRY_DATA_SOURCE_TYPE:
+        invalid.append("source_type_invalid")
+    if source.get("official") is not False:
+        invalid.append("official_must_be_false_for_independent_industry_data")
+
+    contract = source.get("industry_data_contract")
+    if not isinstance(contract, dict):
+        incomplete.append("industry_data_contract_missing")
+        return {"state": "INCOMPLETE", "invalid_findings": invalid, "incomplete_findings": incomplete}
+    if contract.get("schema_version") != INDEPENDENT_INDUSTRY_DATA_CONTRACT_SCHEMA_VERSION:
+        invalid.append("schema_version_invalid")
+
+    for field in ("provider_id", "dataset_id"):
+        if not _contract_text(contract.get(field)):
+            incomplete.append(field + "_missing")
+
+    release = contract.get("release")
+    if not isinstance(release, dict):
+        incomplete.append("release_missing")
+    else:
+        for field in ("release_id", "version_id", "published_at", "data_as_of", "revision_status", "revision_id"):
+            if not _contract_text(release.get(field)):
+                incomplete.append("release:" + field + "_missing")
+        revision_status = release.get("revision_status")
+        if revision_status not in INDUSTRY_RELEASE_STATUSES:
+            invalid.append("release:revision_status_invalid")
+        release_published = _timestamp(release.get("published_at"))
+        release_as_of = _timestamp(release.get("data_as_of"))
+        if release_published is None:
+            invalid.append("release:published_at_invalid")
+        if release_as_of is None:
+            invalid.append("release:data_as_of_invalid")
+        if _contract_text(release.get("version_id")) and str(source.get("source_version") or "") != release.get("version_id"):
+            invalid.append("release:version_id_does_not_match_source_version")
+        if release.get("published_at") not in (None, "") and not _same_timestamp(release.get("published_at"), source.get("published_at")):
+            invalid.append("release:published_at_does_not_match_source")
+        if release.get("data_as_of") not in (None, "") and not _same_timestamp(release.get("data_as_of"), source.get("data_as_of")):
+            invalid.append("release:data_as_of_does_not_match_source")
+        revision_published_at = release.get("revision_published_at")
+        if revision_status == "ORIGINAL_HISTORICAL":
+            if source.get("revision_policy") != "ORIGINAL_VINTAGE":
+                invalid.append("release:original_requires_original_vintage_policy")
+            if revision_published_at not in (None, "") or source.get("revision_published_at") not in (None, ""):
+                invalid.append("release:original_cannot_carry_revision_published_at")
+        elif revision_status == "HISTORICAL_REVISION":
+            if source.get("revision_policy") != "HISTORICAL_RESTATEMENT_PUBLISHED_BEFORE_CUTOFF":
+                invalid.append("release:historical_revision_policy_invalid")
+            if not _contract_text(revision_published_at) or _timestamp(revision_published_at) is None:
+                incomplete.append("release:revision_published_at_missing_or_invalid")
+            elif not _same_timestamp(revision_published_at, source.get("revision_published_at")):
+                invalid.append("release:revision_published_at_does_not_match_source")
+
+    query = contract.get("query_identity")
+    if not isinstance(query, dict):
+        incomplete.append("query_identity_missing")
+    else:
+        if not _contract_text(query.get("query_id")):
+            incomplete.append("query_identity:query_id_missing")
+        parameters = query.get("parameters")
+        if not isinstance(parameters, dict) or not parameters:
+            incomplete.append("query_identity:parameters_missing")
+
+    measurement_invalid, measurement_incomplete = _validate_measurement_profile(
+        contract.get("measurement_profile"),
+    )
+    invalid.extend(measurement_invalid)
+    incomplete.extend(measurement_incomplete)
+
+    metric = contract.get("metric")
+    if not isinstance(metric, dict):
+        incomplete.append("metric_missing")
+    else:
+        for field in ("metric_id", "unit"):
+            if not _contract_text(metric.get(field)):
+                incomplete.append("metric:" + field + "_missing")
+        semantic = metric.get("semantic")
+        if semantic not in INDUSTRY_METRIC_SEMANTICS:
+            invalid.append("metric:semantic_invalid")
+        _validate_contract_locator(metric.get("provider_definition"), prefix="metric:provider_definition", incomplete=incomplete)
+        sell_in_status = metric.get("shipment_sell_in_status")
+        if sell_in_status not in SHIPMENT_SELL_IN_STATUSES:
+            invalid.append("metric:shipment_sell_in_status_invalid")
+        elif semantic in {"RETAIL_SELL_OUT", "INVENTORY_STOCK"} and sell_in_status != "NOT_APPLICABLE":
+            invalid.append("metric:non_shipment_cannot_be_labeled_sell_in")
+        elif semantic == "SHIPMENT":
+            if sell_in_status == "NOT_APPLICABLE":
+                invalid.append("metric:shipment_requires_sell_in_status")
+            elif sell_in_status == "PROVIDER_DEFINED_SELL_IN":
+                _validate_contract_locator(
+                    metric.get("provider_sell_in_definition"),
+                    prefix="metric:provider_sell_in_definition",
+                    incomplete=incomplete,
+                )
+            elif metric.get("provider_sell_in_definition") not in (None, ""):
+                invalid.append("metric:unresolved_shipment_cannot_carry_sell_in_definition")
+
+    scope = contract.get("scope")
+    if not isinstance(scope, dict):
+        incomplete.append("scope_missing")
+    else:
+        if not _contract_text(scope.get("geography")):
+            incomplete.append("scope:geography_missing")
+        for field in ("product_mapping", "channel_mapping", "brand_mapping", "denominator"):
+            mapping = scope.get(field)
+            prefix = "scope:" + field
+            if not isinstance(mapping, dict):
+                incomplete.append(prefix + "_missing")
+                continue
+            for required in ("mapping_id", "definition"):
+                if not _contract_text(mapping.get(required)):
+                    incomplete.append(prefix + ":" + required + "_missing")
+
+    state = "INVALID" if invalid else "INCOMPLETE" if incomplete else "REVIEWABLE"
+    return {"state": state, "invalid_findings": invalid, "incomplete_findings": incomplete}
+
+
+def validate_stock_flow_reconciliation(sources: list[dict[str, Any]]) -> dict[str, Any]:
+    """Decide whether three licensed metrics may be reconciled as one flow.
+
+    This checks contracts only.  It deliberately performs no arithmetic and
+    cannot infer a company's inventory, retail demand, revenue, or cash.  A
+    result is ``RECONCILABLE`` only when one provider release explicitly
+    supplies retail sell-out, shipment, and inventory stock under the same
+    frozen product, geographic, channel, brand, denominator, period and
+    inventory-ownership boundary.
+    """
+    invalid: list[str] = []
+    non_reconcilable: list[str] = []
+    by_semantic: dict[str, list[dict[str, Any]]] = {semantic: [] for semantic in STOCK_FLOW_SEMANTICS}
+    for index, source in enumerate(sources):
+        prefix = f"sources[{index}]"
+        if not isinstance(source, dict):
+            invalid.append(prefix + ":not_object")
+            continue
+        source_validation = validate_independent_industry_data_source(source)
+        if source_validation["state"] != "REVIEWABLE":
+            invalid.append(prefix + ":independent_industry_source_not_reviewable")
+            continue
+        contract = source["industry_data_contract"]
+        metric = contract["metric"]
+        semantic = metric.get("semantic")
+        if semantic in by_semantic:
+            by_semantic[str(semantic)].append(source)
+
+    selected: list[dict[str, Any]] = []
+    for semantic in sorted(STOCK_FLOW_SEMANTICS):
+        matching = by_semantic[semantic]
+        if len(matching) != 1:
+            non_reconcilable.append(f"{semantic.lower()}_source_count_must_equal_one")
+        else:
+            selected.append(matching[0])
+    if invalid:
+        return {"state": "INVALID", "invalid_findings": invalid, "non_reconcilable_findings": non_reconcilable}
+    if non_reconcilable:
+        return {"state": "NOT_RECONCILABLE", "invalid_findings": [], "non_reconcilable_findings": non_reconcilable}
+
+    releases = {
+        (
+            source["industry_data_contract"]["provider_id"],
+            source["industry_data_contract"]["dataset_id"],
+            source["industry_data_contract"]["release"]["release_id"],
+            source["industry_data_contract"]["release"]["version_id"],
+        )
+        for source in selected
+    }
+    if len(releases) != 1:
+        non_reconcilable.append("provider_release_or_version_not_shared")
+
+    boundaries: list[dict[str, Any]] = []
+    for source in selected:
+        contract = source["industry_data_contract"]
+        boundary = contract.get("stock_flow_boundary")
+        semantic = str(contract["metric"].get("semantic") or "").lower()
+        if not isinstance(boundary, dict):
+            non_reconcilable.append(semantic + ":stock_flow_boundary_missing")
+            continue
+        missing = [field for field in STOCK_FLOW_BOUNDARY_FIELDS if not _contract_text(boundary.get(field))]
+        if missing:
+            non_reconcilable.append(semantic + ":stock_flow_boundary_fields_missing:" + ",".join(missing))
+            continue
+        scope = contract["scope"]
+        expected_ids = {
+            "product_mapping_id": scope["product_mapping"].get("mapping_id"),
+            "channel_mapping_id": scope["channel_mapping"].get("mapping_id"),
+            "brand_mapping_id": scope["brand_mapping"].get("mapping_id"),
+            "denominator_mapping_id": scope["denominator"].get("mapping_id"),
+            "geography": scope.get("geography"),
+        }
+        if any(boundary.get(field) != expected for field, expected in expected_ids.items()):
+            non_reconcilable.append(semantic + ":stock_flow_boundary_does_not_match_source_scope")
+        boundaries.append({field: boundary.get(field) for field in STOCK_FLOW_BOUNDARY_FIELDS})
+        if contract["metric"].get("semantic") == "SHIPMENT" and contract["metric"].get("shipment_sell_in_status") != "PROVIDER_DEFINED_SELL_IN":
+            non_reconcilable.append("shipment:provider_defined_sell_in_required")
+
+    if len(boundaries) == 3 and any(boundary != boundaries[0] for boundary in boundaries[1:]):
+        non_reconcilable.append("stock_flow_boundaries_not_identical")
+    state = "NOT_RECONCILABLE" if non_reconcilable else "RECONCILABLE"
+    return {"state": state, "invalid_findings": [], "non_reconcilable_findings": non_reconcilable}
 
 
 def _reject(source: dict[str, Any], reason: str) -> dict[str, Any]:
@@ -246,6 +982,18 @@ def _reject(source: dict[str, Any], reason: str) -> dict[str, Any]:
 def _admit_one(source: dict[str, Any], cutoff: datetime) -> dict[str, Any]:
     if not _source_identity_ok(source):
         return _reject(source, "MISSING_IDENTITY")
+    if source.get("source_type") == LICENSED_INDUSTRY_DATA_SOURCE_TYPE:
+        industry_validation = validate_independent_industry_data_source(source)
+        if industry_validation["invalid_findings"]:
+            return _reject(source, "INDEPENDENT_INDUSTRY_CONTRACT_INVALID")
+        if industry_validation["incomplete_findings"]:
+            return _reject(source, "INDEPENDENT_INDUSTRY_CONTRACT_INCOMPLETE")
+    if source.get("acquisition_kind") in OFFICIAL_ISSUER_RELEASE_ACQUISITION_KINDS:
+        web_validation = validate_official_web_release_source(source)
+        if web_validation["invalid_findings"]:
+            return _reject(source, "OFFICIAL_WEB_RELEASE_CONTRACT_INVALID")
+        if web_validation["incomplete_findings"]:
+            return _reject(source, "OFFICIAL_WEB_RELEASE_CONTRACT_INCOMPLETE")
     if source.get("source_type") == "EXCHANGE_ANNOUNCEMENT" and not str(source.get("title") or "").strip():
         return _reject(source, "MISSING_ANNOUNCEMENT_TITLE")
     published = _timestamp(source.get("published_at"))
@@ -256,12 +1004,16 @@ def _admit_one(source: dict[str, Any], cutoff: datetime) -> dict[str, Any]:
         return _reject(source, reason)
     if published > cutoff:
         return _reject(source, "FUTURE_PUBLISHED_AT")
+    if _is_date_precision(source.get("published_at")) and published.date() == cutoff.date():
+        return _reject(source, "PUBLISHED_AT_TIME_UNKNOWN_AT_CUTOFF")
     if data_as_of is None:
         return _reject(source, "MISSING_IDENTITY")
     if data_as_of > cutoff:
         return _reject(source, "FUTURE_DATA_AS_OF")
     if revision_at and revision_at > cutoff:
         return _reject(source, "FUTURE_REVISION")
+    if revision_at and _is_date_precision(source.get("revision_published_at")) and revision_at.date() == cutoff.date():
+        return _reject(source, "REVISION_TIME_UNKNOWN_AT_CUTOFF")
     if source.get("revision_policy") == "CURRENT_RESTATED_ONLY":
         return _reject(source, "CURRENT_RESTATED_ONLY")
     return _copy_record(source, admissible=True, admission_status=ADMITTED)
@@ -325,6 +1077,37 @@ def _apply_supersession_rules(decisions: list[dict[str, Any]]) -> None:
             decisions[index] = _reject(decisions[index], "SUPERSEDED_BEFORE_CUTOFF")
 
 
+def _apply_source_role_provenance_rules(decisions: list[dict[str, Any]]) -> None:
+    """Reject only malformed role-declared sources after all PIT admission facts exist.
+
+    The role basis may point at another admitted source, so it cannot be
+    checked in ``_admit_one``.  Re-evaluate until a source whose basis was
+    itself rejected is also removed; a normal source with no role contract is
+    deliberately untouched.
+    """
+    for _ in range(len(decisions) + 1):
+        changed = False
+        source_index = {
+            str(item.get("source_id") or ""): item
+            for item in decisions
+            if isinstance(item, dict) and str(item.get("source_id") or "")
+        }
+        for index, source in enumerate(decisions):
+            if source.get("admissible") is not True or source.get("source_role_provenance") in (None, "", [], {}):
+                continue
+            role_validation = validate_source_role_provenance(source, source_index=source_index)
+            reason = (
+                "SOURCE_ROLE_PROVENANCE_INVALID" if role_validation["invalid_findings"]
+                else "SOURCE_ROLE_PROVENANCE_INCOMPLETE" if role_validation["incomplete_findings"]
+                else ""
+            )
+            if reason:
+                decisions[index] = _reject(source, reason)
+                changed = True
+        if not changed:
+            return
+
+
 def admit_source_manifest(
     sources: Iterable[dict[str, Any]],
     *,
@@ -357,6 +1140,7 @@ def admit_source_manifest(
         decisions.append(decision)
 
     _apply_supersession_rules(decisions)
+    _apply_source_role_provenance_rules(decisions)
 
     admitted = [item for item in decisions if item.get("admissible") is True]
     return {
@@ -370,6 +1154,210 @@ def admit_source_manifest(
         "admitted_count": len(admitted),
         "rejected_count": len(decisions) - len(admitted),
     }
+
+
+def normalize_official_web_release_record(record: dict[str, Any], *, company_code: str) -> dict[str, Any]:
+    """Normalize a declared first-party Investor Relations HTML or PDF release.
+
+    The caller supplies the release identity and the publisher domain from the
+    issuer's own IR page.  This is a bounded source set for a live, forward
+    experiment; it must not be used to assert an exhaustive historical web
+    archive.
+    """
+    release_id = str(record.get("release_id") or "").strip()
+    if not release_id or not re.fullmatch(r"[A-Za-z0-9_.-]+", release_id):
+        raise OfficialWebReleaseError("official web release_id is missing or invalid")
+    title = str(record.get("title") or "").strip()
+    if not title:
+        raise OfficialWebReleaseError("official web release title is missing")
+    url = str(record.get("url") or "").strip()
+    parsed = urlparse(url)
+    domain = str(record.get("official_publisher_domain") or parsed.netloc).strip().casefold()
+    if parsed.scheme != "https" or not parsed.netloc or parsed.netloc.casefold() != domain:
+        raise OfficialWebReleaseError("official web release URL/domain is invalid")
+    published_at = str(record.get("published_at") or "").strip()
+    data_as_of = str(record.get("data_as_of") or "").strip()
+    if _timestamp(published_at) is None or _timestamp(data_as_of) is None:
+        raise OfficialWebReleaseError("official web release published_at or data_as_of is invalid")
+    publisher_name = str(record.get("publisher_name") or "").strip()
+    if not publisher_name:
+        raise OfficialWebReleaseError("official web release publisher_name is missing")
+    format_value = str(record.get("content_format") or "HTML").strip().upper()
+    if format_value not in {"HTML", "PDF"}:
+        raise OfficialWebReleaseError("official web release content_format must be HTML or PDF")
+    return {
+        "source_id": f"IR:{company_code}:{release_id}",
+        "source_version": str(record.get("source_version") or f"official-ir-release:{release_id}"),
+        "source_type": OFFICIAL_WEB_RELEASE_SOURCE_TYPE,
+        "official": True,
+        "title": title,
+        "url": url,
+        "published_at": published_at,
+        "data_as_of": data_as_of,
+        "revision_policy": "ORIGINAL_VINTAGE",
+        "acquisition_kind": (
+            OFFICIAL_WEB_RELEASE_ACQUISITION_KIND
+            if format_value == "HTML"
+            else OFFICIAL_IR_PDF_RELEASE_ACQUISITION_KIND
+        ),
+        "content_format": format_value,
+        "release_id": release_id,
+        "publisher_name": publisher_name,
+        "official_publisher_domain": domain,
+        "language": str(record.get("language") or "en"),
+    }
+
+
+def enumerate_official_web_releases(
+    records: Iterable[dict[str, Any]], *, company_code: str, cutoff_at: str,
+) -> dict[str, Any]:
+    """Freeze a declared set of issuer IR pages/PDFs for a true-forward experiment.
+
+    ``enumeration_complete`` refers only to the explicit release set selected
+    for the stated research question.  It does not represent an assertion that
+    an issuer's entire website or historical archive was captured.
+    """
+    normalized = [normalize_official_web_release_record(item, company_code=company_code) for item in records]
+    normalized.sort(key=lambda item: (str(item["published_at"]), str(item["source_id"])))
+    manifest = admit_source_manifest(normalized, cutoff_at=cutoff_at, company_code=company_code)
+    manifest.update({
+        "inventory_kind": "OFFICIAL_WEB_RELEASE_DECLARED_SET",
+        "enumeration_scope": "DECLARED_RESEARCH_RELEASE_SET_ONLY",
+        "enumeration_complete": True,
+        "inventory_count": len(normalized),
+        "inventory": manifest.pop("sources"),
+        "acquisition_status": "OFFICIAL_WEB_RELEASE_SET_DECLARED",
+    })
+    manifest["sources"] = [item for item in manifest["inventory"] if item.get("admissible") is True]
+    manifest["admitted_source_ids"] = [str(item["source_id"]) for item in manifest["sources"]]
+    manifest["rejected_source_ids"] = [
+        str(item.get("source_id") or "") for item in manifest["inventory"] if item.get("admissible") is not True
+    ]
+    manifest["admitted_count"] = len(manifest["sources"])
+    manifest["rejected_count"] = len(manifest["inventory"]) - len(manifest["sources"])
+    return manifest
+
+
+def enumerate_independent_industry_sources(
+    records: Iterable[dict[str, Any]], *, company_code: str, cutoff_at: str,
+) -> dict[str, Any]:
+    """Freeze a bounded, licensed industry-query result for PIT use.
+
+    ``enumeration_complete`` means the declared provider query/export is fully
+    retained in this source package.  It does *not* claim that the vendor's
+    whole database is public, complete, or downloaded.  The caller supplies
+    an already licensed historical release and its local package path later;
+    this helper performs no vendor network access.
+    """
+    materialized = [deepcopy(item) for item in records]
+    manifest = admit_source_manifest(
+        materialized,
+        cutoff_at=cutoff_at,
+        company_code=company_code,
+    )
+    manifest.update({
+        "inventory_kind": "LICENSED_INDUSTRY_DATA_DECLARED_QUERY",
+        "enumeration_complete": True,
+        "enumeration_basis": "DECLARED_LICENSED_QUERY_IDENTITY",
+        "inventory_count": len(materialized),
+        "inventory": manifest.pop("sources"),
+        "acquisition_status": "LICENSED_INDUSTRY_QUERY_METADATA_FROZEN",
+    })
+    manifest["sources"] = [
+        item for item in manifest["inventory"] if item.get("admissible") is True
+    ]
+    manifest["admitted_source_ids"] = [str(item["source_id"]) for item in manifest["sources"]]
+    manifest["rejected_source_ids"] = [
+        str(item.get("source_id") or "")
+        for item in manifest["inventory"]
+        if item.get("admissible") is not True
+    ]
+    manifest["admitted_count"] = len(manifest["sources"])
+    manifest["rejected_count"] = len(manifest["inventory"]) - len(manifest["sources"])
+    return manifest
+
+
+def compose_company_manifest_with_independent_industry_sources(
+    company_manifest: dict[str, Any],
+    industry_sources: Iterable[dict[str, Any]],
+    *,
+    selection_policy_id: str,
+    selection_reason: str,
+    industry_source_research_rationales: Iterable[dict[str, Any]],
+) -> dict[str, Any]:
+    """Add declared licensed exports to one complete company PIT manifest.
+
+    The statutory-announcement inventory is preserved verbatim.  This only
+    appends already-acquired, versioned industry releases and re-freezes the
+    source selection with an explicit rationale for each new source; it never
+    downloads a vendor database or mutates the input manifest.
+    """
+    validation = validate_source_manifest(company_manifest)
+    if validation["state"] != "REVIEWABLE":
+        raise ValueError("company manifest must be reviewable before adding industry sources")
+    inventory = company_manifest.get("inventory")
+    selection = company_manifest.get("source_package_selection")
+    if not isinstance(inventory, list) or not isinstance(selection, dict):
+        raise ValueError("company manifest requires a complete inventory and frozen source selection")
+    additions = [deepcopy(source) for source in industry_sources]
+    if not additions or any(
+        source.get("source_type") != LICENSED_INDUSTRY_DATA_SOURCE_TYPE for source in additions
+    ):
+        raise ValueError("only declared LICENSED_INDUSTRY_DATA sources may be composed")
+    addition_ids = [str(source.get("source_id") or "").strip() for source in additions]
+    existing_ids = {
+        str(source.get("source_id") or "").strip()
+        for source in inventory if isinstance(source, dict)
+    }
+    if any(not source_id for source_id in addition_ids) or len(set(addition_ids)) != len(addition_ids):
+        raise ValueError("independent industry source IDs must be non-empty and unique")
+    if set(addition_ids).intersection(existing_ids):
+        raise ValueError("independent industry source ID already exists in the company inventory")
+
+    recomputed = admit_source_manifest(
+        [
+            _source_without_persisted_admission(source)
+            for source in [*inventory, *additions]
+            if isinstance(source, dict)
+        ],
+        cutoff_at=str(company_manifest.get("cutoff_at") or ""),
+        company_code=str(company_manifest.get("company_code") or DEFAULT_COMPANY_CODE),
+    )
+    result = deepcopy(company_manifest)
+    result.update(recomputed)
+    result["inventory"] = result.pop("sources")
+    result["sources"] = [
+        source for source in result["inventory"] if source.get("admissible") is True
+    ]
+    result["inventory_count"] = len(result["inventory"])
+    result["inventory_kind"] = "COMPOSITE_COMPANY_AND_INDEPENDENT_INDUSTRY_SOURCE_PACKAGE"
+    result["company_inventory_kind"] = company_manifest.get("inventory_kind")
+    result["independent_industry_source_ids"] = addition_ids
+    # Existing acquisition receipts cover only the old selection.  The new
+    # export is checked at its registered path by PITSourcePackage.
+    result.pop("source_package", None)
+    result.pop("package_root", None)
+    result["acquisition_status"] = "COMPOSITE_SOURCE_PACKAGE_METADATA_FROZEN"
+    result.pop("source_package_selection", None)
+
+    existing_selected = selection.get("selected_source_ids")
+    existing_rationales = selection.get("source_research_rationales")
+    if not isinstance(existing_selected, list) or not isinstance(existing_rationales, list):
+        raise ValueError("company source selection is malformed")
+    result["source_package_selection"] = build_source_package_selection(
+        result,
+        selection_policy_id=selection_policy_id,
+        selection_reason=selection_reason,
+        source_ids=[*existing_selected, *addition_ids],
+        source_research_rationales=[*existing_rationales, *list(industry_source_research_rationales)],
+    )
+    composed_validation = validate_source_manifest(result)
+    if composed_validation["state"] != "REVIEWABLE":
+        raise ValueError(
+            "composed source manifest is invalid: "
+            + ",".join([*composed_validation["invalid_findings"], *composed_validation["incomplete_findings"]])
+        )
+    return result
 
 
 def enumerate_sse_announcements(
@@ -469,6 +1457,337 @@ def normalize_sse_announcement_record(record: dict[str, Any], *, company_code: s
     if bulletin_type:
         normalized["sse_bulletin_type"] = bulletin_type
     return normalized
+
+
+def _cninfo_date(value: Any, *, field: str) -> date:
+    """Read CNINFO's date string or millisecond timestamp as Shanghai date."""
+    if isinstance(value, (int, float)) and not isinstance(value, bool):
+        return datetime.fromtimestamp(float(value) / 1000, tz=LOCAL_TZ).date()
+    text = str(value or "").strip()
+    if text.isdigit() and len(text) >= 12:
+        return datetime.fromtimestamp(float(text) / 1000, tz=LOCAL_TZ).date()
+    try:
+        return date.fromisoformat(text[:10])
+    except ValueError as exc:
+        raise CNInfoAnnouncementExportError(f"CNINFO {field} is not a date/timestamp: {text!r}") from exc
+
+
+def _cninfo_source_type_and_period(title: str, published_at: date) -> tuple[str, str]:
+    compact = re.sub(r"\s+", "", title)
+    annual = re.search(r"(20\d{2})年年度报告", compact)
+    if annual:
+        return "ANNUAL_REPORT", annual.group(1) + "-12-31"
+    interim = re.search(r"(20\d{2})年半年度报告", compact)
+    if interim:
+        return "INTERIM_REPORT", interim.group(1) + "-06-30"
+    quarter = re.search(r"(20\d{2})年(?:第一季度|一季报)", compact)
+    if quarter:
+        return "EXCHANGE_ANNOUNCEMENT", quarter.group(1) + "-03-31"
+    third = re.search(r"(20\d{2})年(?:第三季度|三季报)", compact)
+    if third:
+        return "EXCHANGE_ANNOUNCEMENT", third.group(1) + "-09-30"
+    return "EXCHANGE_ANNOUNCEMENT", published_at.isoformat()
+
+
+def normalize_cninfo_announcement_record(record: dict[str, Any], *, company_code: str) -> dict[str, Any]:
+    """Normalize one row from an already exported CNINFO/SZSE announcement list.
+
+    CNINFO is the statutory-disclosure service used by Shenzhen issuers.  This
+    adapter deliberately accepts an offline export rather than treating today's
+    search page as a substitute for a historic inventory.  Callers remain
+    responsible for proving that their export covers the requested period.
+    """
+    security_code = str(record.get("secCode") or record.get("security_code") or record.get("company_code") or "").strip()
+    if security_code != company_code:
+        raise CNInfoAnnouncementExportError(f"CNINFO row security code mismatch: {security_code!r}")
+    title = str(record.get("announcementTitle") or record.get("title") or "").strip()
+    if not title:
+        raise CNInfoAnnouncementExportError("CNINFO announcement title missing")
+    published_at = _cninfo_date(record.get("announcementTime") or record.get("published_at"), field="announcementTime")
+    raw_url = str(record.get("adjunctUrl") or record.get("url") or "").strip()
+    if not raw_url:
+        raise CNInfoAnnouncementExportError("CNINFO announcement URL missing")
+    source_url = urljoin(CNINFO_STATIC_BASE_URL, raw_url)
+    announcement_id = str(record.get("announcementId") or record.get("announcement_id") or "").strip()
+    if not announcement_id:
+        announcement_id = Path(urlparse(source_url).path).stem
+    if not announcement_id:
+        raise CNInfoAnnouncementExportError("CNINFO announcement identity missing")
+    source_type, inferred_as_of = _cninfo_source_type_and_period(title, published_at)
+    data_as_of = str(record.get("data_as_of") or inferred_as_of).strip()
+    return {
+        "source_id": f"CNINFO:{company_code}:ANN:{published_at.strftime('%Y%m%d')}:{announcement_id}",
+        "source_version": f"cninfo-announcement-original:{announcement_id}",
+        "source_type": source_type,
+        "official": True,
+        "title": title,
+        "url": source_url,
+        "published_at": published_at.isoformat(),
+        "data_as_of": data_as_of,
+        "revision_policy": "ORIGINAL_VINTAGE",
+        "publisher_name": "CNINFO statutory disclosure service",
+        "official_publisher_domain": urlparse(CNINFO_STATIC_BASE_URL).netloc,
+        "cninfo_announcement_id": announcement_id,
+    }
+
+
+def enumerate_cninfo_announcements(
+    records: Iterable[dict[str, Any]], *, company_code: str, cutoff_at: str,
+    period_start: str,
+) -> dict[str, Any]:
+    """Admit a bounded, externally-exported CNINFO announcement inventory.
+
+    The function makes no network call.  It retains every normalized row,
+    including later/rejected disclosures, so a complete official export can be
+    audited under the same PIT rules as the SSE path.
+    """
+    normalized = [normalize_cninfo_announcement_record(item, company_code=company_code) for item in records]
+    normalized.sort(key=lambda item: (str(item.get("published_at") or ""), str(item.get("source_id") or "")))
+    manifest = admit_source_manifest(normalized, cutoff_at=cutoff_at, company_code=company_code + ".SZ")
+    manifest.update({
+        "inventory_kind": "CNINFO_ANNOUNCEMENT_FULL_EXPORT",
+        "period_start": str(period_start),
+        "period_end": _timestamp(cutoff_at).date().isoformat() if _timestamp(cutoff_at) else str(cutoff_at)[:10],
+        "enumeration_complete": True,
+        "inventory_count": len(normalized),
+        "inventory": manifest.pop("sources"),
+        "acquisition_status": "CNINFO_FULL_EXPORT_DATE_FILTER_VERIFIED",
+    })
+    manifest["sources"] = [item for item in manifest["inventory"] if item.get("admissible") is True]
+    manifest["admitted_source_ids"] = [str(item["source_id"]) for item in manifest["sources"]]
+    manifest["rejected_source_ids"] = [str(item.get("source_id") or "") for item in manifest["inventory"] if item.get("admissible") is not True]
+    manifest["admitted_count"] = len(manifest["sources"])
+    manifest["rejected_count"] = len(manifest["inventory"]) - len(manifest["sources"])
+    return manifest
+
+
+def _default_cninfo_request(params: dict[str, str]) -> dict[str, Any]:
+    request = Request(
+        CNINFO_ANNOUNCEMENT_QUERY_URL,
+        data=urlencode(params).encode("utf-8"),
+        headers={
+            "Referer": "https://www.cninfo.com.cn/",
+            "User-Agent": "Mozilla/5.0 (Phase10 PIT acquisition)",
+            "Accept": "application/json",
+            "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
+        },
+    )
+    try:
+        with urlopen(request, timeout=30) as response:
+            payload = json.loads(response.read().decode("utf-8"))
+    except (OSError, UnicodeDecodeError, json.JSONDecodeError) as exc:
+        raise CNInfoAnnouncementQueryError(f"CNINFO query failed: {exc.__class__.__name__}") from exc
+    if not isinstance(payload, dict):
+        raise CNInfoAnnouncementQueryError("CNINFO query response is not an object")
+    return payload
+
+
+def _validate_cninfo_page(
+    payload: dict[str, Any], *, company_code: str, org_id: str,
+    begin_date: date, end_date: date, page_size: int,
+) -> tuple[int, list[dict[str, Any]]]:
+    total = payload.get("totalAnnouncement")
+    records = payload.get("announcements")
+    if type(total) is not int or total < 0:
+        raise CNInfoAnnouncementQueryError("CNINFO response totalAnnouncement is invalid")
+    if not isinstance(records, list) or any(not isinstance(item, dict) for item in records):
+        raise CNInfoAnnouncementQueryError("CNINFO response announcements are invalid")
+    if len(records) > page_size:
+        raise CNInfoAnnouncementQueryError("CNINFO response exceeded requested page size")
+    for record in records:
+        if str(record.get("secCode") or "").strip() != company_code:
+            raise CNInfoAnnouncementQueryError("CNINFO response includes a different security code")
+        if str(record.get("orgId") or "").strip() != org_id:
+            raise CNInfoAnnouncementQueryError("CNINFO response includes a different organization")
+        published_at = _cninfo_date(record.get("announcementTime"), field="announcementTime")
+        if not begin_date <= published_at <= end_date:
+            raise CNInfoAnnouncementQueryError("CNINFO response includes a row outside the requested dates")
+        if not str(record.get("announcementId") or "").strip():
+            raise CNInfoAnnouncementQueryError("CNINFO response announcement ID missing")
+        if not str(record.get("announcementTitle") or "").strip():
+            raise CNInfoAnnouncementQueryError("CNINFO response announcement title missing")
+        if not str(record.get("adjunctUrl") or "").strip():
+            raise CNInfoAnnouncementQueryError("CNINFO response announcement URL missing")
+    return total, records
+
+
+def fetch_cninfo_announcement_records(
+    *, company_code: str, org_id: str, begin_date: str, end_date: str,
+    page_size: int = 30, request: Callable[[dict[str, str]], dict[str, Any]] | None = None,
+) -> dict[str, Any]:
+    """Fetch every page of one bounded official CNINFO announcement query.
+
+    This only captures dated statutory metadata.  A later source package still
+    selects and downloads attachments from this frozen inventory; it does not
+    infer company facts from titles or from the current page display.
+    """
+    start = _cninfo_date(begin_date, field="begin_date")
+    end = _cninfo_date(end_date, field="end_date")
+    organization = str(org_id or "").strip()
+    if start > end:
+        raise ValueError("begin_date must not be after end_date")
+    if not organization:
+        raise ValueError("org_id is required")
+    if type(page_size) is not int or page_size <= 0:
+        raise ValueError("page_size must be a positive integer")
+    fetch_page = request or _default_cninfo_request
+    records: list[dict[str, Any]] = []
+    source_ids: set[str] = set()
+    expected_total: int | None = None
+    page_no = 1
+    while expected_total is None or len(records) < expected_total:
+        params = {
+            "stock": f"{company_code},{organization}",
+            "tabName": "fulltext",
+            "pageSize": str(page_size),
+            "pageNum": str(page_no),
+            "column": "szse",
+            "category": "",
+            "plate": "sz",
+            "seDate": f"{start.isoformat()}~{end.isoformat()}",
+            "searchkey": "",
+            "secid": "",
+            # CNINFO otherwise returns its first page for every pageNum on the
+            # supported fulltext endpoint.  An explicit stable ordering is
+            # therefore part of the acquisition query, not presentation.
+            "sortName": "announcementTime",
+            "sortType": "desc",
+            "isHLtitle": "true",
+        }
+        payload = fetch_page(params)
+        if not isinstance(payload, dict):
+            raise CNInfoAnnouncementQueryError("CNINFO request adapter returned a non-object")
+        total, page_records = _validate_cninfo_page(
+            payload,
+            company_code=company_code,
+            org_id=organization,
+            begin_date=start,
+            end_date=end,
+            page_size=page_size,
+        )
+        if expected_total is None:
+            expected_total = total
+        elif total != expected_total:
+            raise CNInfoAnnouncementQueryError("CNINFO response total changed during pagination")
+        if not page_records and len(records) < expected_total:
+            raise CNInfoAnnouncementQueryError("CNINFO response ended before the declared total")
+        for record in page_records:
+            announcement_id = str(record["announcementId"])
+            if announcement_id in source_ids:
+                raise CNInfoAnnouncementQueryError("CNINFO response repeated an announcement across pages")
+            source_ids.add(announcement_id)
+        records.extend(deepcopy(page_records))
+        if len(records) > expected_total:
+            raise CNInfoAnnouncementQueryError("CNINFO response exceeded the declared total")
+        page_no += 1
+        if page_no > expected_total + 1:
+            raise CNInfoAnnouncementQueryError("CNINFO pagination exceeded the declared total")
+    return {
+        "provider": "CNINFO",
+        "endpoint": CNINFO_ANNOUNCEMENT_QUERY_URL,
+        "company_code": company_code,
+        "org_id": organization,
+        "begin_date": start.isoformat(),
+        "end_date": end.isoformat(),
+        "requested_page_size": page_size,
+        "page_count": page_no - 1,
+        "record_count": len(records),
+        "records": records,
+    }
+
+
+def fetch_cninfo_manifest(
+    *, company_code: str, org_id: str, begin_date: str, cutoff_at: str,
+    page_size: int = 30, request: Callable[[dict[str, str]], dict[str, Any]] | None = None,
+) -> dict[str, Any]:
+    """Create a reviewable CNINFO manifest only after all bounded pages verify."""
+    cutoff = _timestamp(cutoff_at)
+    if cutoff is None:
+        raise ValueError("cutoff_at is invalid")
+    acquisition = fetch_cninfo_announcement_records(
+        company_code=company_code,
+        org_id=org_id,
+        begin_date=begin_date,
+        end_date=cutoff.date().isoformat(),
+        page_size=page_size,
+        request=request,
+    )
+    manifest = enumerate_cninfo_announcements(
+        acquisition["records"],
+        company_code=company_code,
+        period_start=acquisition["begin_date"],
+        cutoff_at=cutoff_at,
+    )
+    manifest["acquisition_status"] = "CNINFO_FULL_ENUMERATION_DATE_FILTER_VERIFIED"
+    manifest["cninfo_query"] = {
+        key: acquisition[key]
+        for key in (
+            "provider", "endpoint", "company_code", "org_id", "begin_date", "end_date",
+            "requested_page_size", "page_count", "record_count",
+        )
+    }
+    return manifest
+
+
+def build_source_package_selection(
+    manifest: dict[str, Any], *, selection_policy_id: str, selection_reason: str,
+    source_ids: Iterable[str], source_research_rationales: Iterable[dict[str, Any]],
+) -> dict[str, Any]:
+    """Freeze which admitted source bodies are needed from a full inventory.
+
+    Admission answers whether a dated official row may be read at a cutoff;
+    selection answers which admissible attachments a defined research question
+    needs materialized.  The latter must never erase the complete inventory.
+    """
+    validation = validate_source_manifest(manifest)
+    if validation["state"] != "REVIEWABLE":
+        raise ValueError("source package selection requires a reviewable full manifest")
+    policy = str(selection_policy_id or "").strip()
+    reason = str(selection_reason or "").strip()
+    selected = [str(item or "").strip() for item in source_ids]
+    if not policy or not reason or not selected or any(not item for item in selected):
+        raise ValueError("source package selection requires policy, reason and non-empty source IDs")
+    if len(set(selected)) != len(selected):
+        raise ValueError("source package selection source IDs must be unique")
+    admitted = set(str(item) for item in manifest.get("admitted_source_ids") or [])
+    unknown = sorted(set(selected) - admitted)
+    if unknown:
+        raise ValueError("source package selection includes non-admitted source IDs: " + ",".join(unknown))
+    raw_rationales = list(source_research_rationales)
+    if len(raw_rationales) != len(selected) or any(not isinstance(item, dict) for item in raw_rationales):
+        raise ValueError("source package selection requires one rationale per selected source")
+    rationale_by_id: dict[str, dict[str, Any]] = {}
+    for raw in raw_rationales:
+        source_id = str(raw.get("source_id") or "").strip()
+        source_reason = str(raw.get("selection_reason") or "").strip()
+        question_ids = raw.get("research_question_ids")
+        normalized_question_ids = [str(item or "").strip() for item in question_ids] if isinstance(question_ids, list) else []
+        if (
+            not source_id
+            or not source_reason
+            or not normalized_question_ids
+            or any(not item for item in normalized_question_ids)
+            or len(set(normalized_question_ids)) != len(normalized_question_ids)
+            or source_id in rationale_by_id
+        ):
+            raise ValueError("source package selection rationale is invalid")
+        rationale_by_id[source_id] = {
+            "source_id": source_id,
+            "selection_reason": source_reason,
+            "research_question_ids": normalized_question_ids,
+        }
+    if set(rationale_by_id) != set(selected):
+        raise ValueError("source package selection rationales must cover exactly the selected source IDs")
+    return {
+        "schema_version": SOURCE_PACKAGE_SELECTION_SCHEMA_VERSION,
+        "selection_policy_id": policy,
+        "selection_reason": reason,
+        "inventory_count": int(manifest.get("inventory_count") or len(manifest.get("inventory") or [])),
+        "admitted_source_count": len(admitted),
+        "selected_source_ids": selected,
+        "source_research_rationales": [rationale_by_id[source_id] for source_id in selected],
+        "unselected_admitted_count": len(admitted) - len(selected),
+    }
 
 
 def _default_sse_request(params: dict[str, str]) -> dict[str, Any]:
@@ -794,6 +2113,84 @@ def _download_sse_pdf(url: str) -> bytes:
     return content
 
 
+def _download_cninfo_pdf(url: str) -> bytes:
+    """Download an official CNINFO attachment without treating the portal UI as evidence."""
+    parsed = urlparse(url)
+    if parsed.scheme != "https" or parsed.netloc.lower() != CNINFO_STATIC_HOST:
+        raise CNInfoAnnouncementExportError("source PDF URL is outside the official CNINFO static host")
+    request = Request(
+        url,
+        headers={
+            "Referer": "https://www.cninfo.com.cn/",
+            "User-Agent": "Mozilla/5.0 (Phase10 PIT acquisition)",
+            "Accept": "application/pdf",
+        },
+    )
+    try:
+        with urlopen(request, timeout=60) as response:
+            content = _decode_sse_response(response)
+    except OSError as exc:
+        raise CNInfoAnnouncementExportError(f"CNINFO PDF download failed: {exc.__class__.__name__}") from exc
+    if not content.startswith(b"%PDF"):
+        raise CNInfoAnnouncementExportError("CNINFO PDF response does not start with the PDF signature")
+    return content
+
+
+def _download_official_issuer_release(url: str, *, publisher_domain: str, accept: str) -> bytes:
+    """Download one declared issuer release without browser/session fallback."""
+    parsed = urlparse(url)
+    if (
+        parsed.scheme != "https"
+        or not parsed.netloc
+        or parsed.netloc.casefold() != str(publisher_domain or "").strip().casefold()
+    ):
+        raise OfficialWebReleaseError("web release URL is outside the declared official publisher domain")
+    request = Request(
+        url,
+        headers={
+            "User-Agent": "Mozilla/5.0 (Phase10 PIT acquisition)",
+            "Accept": accept,
+        },
+    )
+    try:
+        with urlopen(request, timeout=60) as response:
+            content = response.read()
+    except OSError as exc:
+        raise OfficialWebReleaseError(f"official web release download failed: {exc.__class__.__name__}") from exc
+    if not content.strip():
+        raise OfficialWebReleaseError("official web release response is empty")
+    return content
+
+
+def _download_official_web_release(url: str, *, publisher_domain: str) -> bytes:
+    return _download_official_issuer_release(
+        url,
+        publisher_domain=publisher_domain,
+        accept="text/html,application/xhtml+xml",
+    )
+
+
+def _download_official_ir_pdf_release(url: str, *, publisher_domain: str) -> bytes:
+    content = _download_official_issuer_release(
+        url,
+        publisher_domain=publisher_domain,
+        accept="application/pdf",
+    )
+    if not content.startswith(b"%PDF"):
+        raise OfficialWebReleaseError("official issuer PDF response does not start with the PDF signature")
+    return content
+
+
+def _download_official_pdf(url: str) -> bytes:
+    """Route a source-package attachment only to its enumerated official host."""
+    host = urlparse(url).netloc.lower()
+    if host == "static.sse.com.cn":
+        return _download_sse_pdf(url)
+    if host == CNINFO_STATIC_HOST:
+        return _download_cninfo_pdf(url)
+    raise ValueError("source PDF URL is outside supported official static hosts")
+
+
 def _package_stem(source_id: str, index: int) -> str:
     normalized = re.sub(r"[^A-Za-z0-9_.-]+", "_", source_id).strip("_")
     return f"{index:04d}_{normalized or 'source'}"
@@ -805,7 +2202,7 @@ def acquire_source_package(
     *,
     downloader: Callable[[str], bytes] | None = None,
 ) -> dict[str, Any]:
-    """Download admitted official PDFs and materialize their page text.
+    """Materialize official filings and register pre-acquired licensed exports.
 
     Failures remain attached to the source row and keep the package status
     incomplete.  Existing destination files are never replaced.
@@ -813,13 +2210,25 @@ def acquire_source_package(
     result = deepcopy(manifest)
     root = Path(package_root).expanduser().resolve()
     root.mkdir(parents=True, exist_ok=True)
-    fetch_pdf = downloader or _download_sse_pdf
+    fetch_pdf = downloader or _download_official_pdf
     by_id = {
         str(source.get("source_id")): source
         for source in result.get("inventory", [])
         if isinstance(source, dict) and source.get("source_id")
     }
-    selected = result.get("sources") if isinstance(result.get("sources"), list) else []
+    admitted_sources = result.get("sources") if isinstance(result.get("sources"), list) else []
+    selection = result.get("source_package_selection")
+    if selection is None:
+        selected = admitted_sources
+    else:
+        selection_findings = [
+            finding for finding in validate_source_manifest(result)["invalid_findings"]
+            if finding.startswith("source_package_selection")
+        ]
+        if selection_findings:
+            raise ValueError("source package selection is invalid: " + ",".join(selection_findings))
+        requested_ids = selection.get("selected_source_ids") if isinstance(selection, dict) else []
+        selected = [by_id[source_id] for source_id in requested_ids if source_id in by_id]
     failures: list[str] = []
     successful: list[str] = []
     for index, selected_source in enumerate(selected, start=1):
@@ -829,6 +2238,143 @@ def acquire_source_package(
         source = by_id.get(source_id)
         if source is None:
             failures.append(source_id or f"index:{index}")
+            continue
+        if source.get("source_type") == LICENSED_INDUSTRY_DATA_SOURCE_TYPE:
+            enriched = deepcopy(source)
+            package_path = str(enriched.get("package_path") or "")
+            try:
+                if not package_path:
+                    raise ValueError("licensed industry export package_path is missing")
+                destination = _resolve_package_path(root, package_path, field="source.package_path")
+                if not destination.is_file():
+                    raise FileNotFoundError("licensed industry export is missing: " + package_path)
+                enriched["package_acquisition_status"] = "LICENSED_EXPORT_PRESENT"
+                successful.append(source_id)
+            except (OSError, ValueError) as exc:
+                enriched["package_acquisition_status"] = "FAILED"
+                enriched["package_acquisition_error"] = f"{exc.__class__.__name__}: {exc}"
+                failures.append(source_id)
+            by_id[source_id] = enriched
+            continue
+        if source.get("acquisition_kind") == OFFICIAL_WEB_RELEASE_ACQUISITION_KIND:
+            stem = _package_stem(source_id, index)
+            package_path = Path("web") / f"{stem}.html"
+            reader_path = Path("reader") / f"{stem}.pages.md"
+            enriched = _copy_record(
+                source,
+                package_path=package_path.as_posix(),
+                content_representation=WEB_PAGE_MARKDOWN,
+                reader_text_path=reader_path.as_posix(),
+            )
+            destination = _resolve_package_path(root, package_path.as_posix(), field="source.package_path")
+            reader_destination = _resolve_package_path(root, reader_path.as_posix(), field="source.reader_text_path")
+            if destination.is_file() and reader_destination.is_file():
+                enriched = _copy_record(
+                    enriched,
+                    reader_text_extractor="interrupted_acquisition_reader_resume",
+                    reader_text_extractor_version="phase10-reader-resume.v1",
+                    reader_text_page_count=1,
+                    package_acquisition_status="ADMITTED_PACKAGE",
+                )
+                successful.append(source_id)
+                by_id[source_id] = enriched
+                continue
+            try:
+                if not destination.is_file():
+                    content = (
+                        downloader(str(source.get("url") or ""))
+                        if downloader is not None
+                        else _download_official_web_release(
+                            str(source.get("url") or ""),
+                            publisher_domain=str(source.get("official_publisher_domain") or ""),
+                        )
+                    )
+                    if destination.exists():
+                        raise FileExistsError(f"source package file already exists: {package_path}")
+                    destination.parent.mkdir(parents=True, exist_ok=True)
+                    temporary = destination.with_suffix(destination.suffix + ".part")
+                    if temporary.exists():
+                        raise FileExistsError(f"partial source package file already exists: {temporary.name}")
+                    try:
+                        temporary.write_bytes(content)
+                        os.replace(temporary, destination)
+                    finally:
+                        if temporary.exists():
+                            temporary.unlink()
+                enriched = materialize_web_page_markdown(
+                    enriched, root, reader_text_path=reader_path.as_posix(),
+                )
+                enriched["package_acquisition_status"] = "ADMITTED_PACKAGE"
+                successful.append(source_id)
+            except (FileExistsError, OSError, OfficialWebReleaseError, ValueError) as exc:
+                enriched["package_acquisition_status"] = "FAILED"
+                enriched["package_acquisition_error"] = f"{exc.__class__.__name__}: {exc}"
+                failures.append(source_id)
+            by_id[source_id] = enriched
+            continue
+        if source.get("acquisition_kind") == OFFICIAL_IR_PDF_RELEASE_ACQUISITION_KIND:
+            stem = _package_stem(source_id, index)
+            package_path = Path("pdf") / f"{stem}.pdf"
+            reader_path = Path("reader") / f"{stem}.pages.md"
+            enriched = _copy_record(
+                source,
+                package_path=package_path.as_posix(),
+                content_representation=PDF_PAGE_MARKDOWN,
+                reader_text_path=reader_path.as_posix(),
+            )
+            destination = _resolve_package_path(root, package_path.as_posix(), field="source.package_path")
+            reader_destination = _resolve_package_path(root, reader_path.as_posix(), field="source.reader_text_path")
+            if destination.is_file() and reader_destination.is_file():
+                page_markers = re.findall(
+                    r"^## 第 [0-9]+ 页$",
+                    reader_destination.read_text(encoding="utf-8"),
+                    flags=re.MULTILINE,
+                )
+                enriched = _copy_record(
+                    enriched,
+                    reader_text_extractor="interrupted_acquisition_reader_resume",
+                    reader_text_extractor_version="phase10-reader-resume.v1",
+                    reader_text_page_count=len(page_markers),
+                    package_acquisition_status="ADMITTED_PACKAGE",
+                )
+                successful.append(source_id)
+                by_id[source_id] = enriched
+                continue
+            try:
+                if not destination.is_file():
+                    content = (
+                        downloader(str(source.get("url") or ""))
+                        if downloader is not None
+                        else _download_official_ir_pdf_release(
+                            str(source.get("url") or ""),
+                            publisher_domain=str(source.get("official_publisher_domain") or ""),
+                        )
+                    )
+                    if not content.startswith(b"%PDF"):
+                        raise OfficialWebReleaseError("official issuer PDF response does not start with the PDF signature")
+                    destination.parent.mkdir(parents=True, exist_ok=True)
+                    temporary = destination.with_suffix(destination.suffix + ".part")
+                    if temporary.exists():
+                        raise FileExistsError(f"partial source package file already exists: {temporary.name}")
+                    try:
+                        temporary.write_bytes(content)
+                        os.replace(temporary, destination)
+                    finally:
+                        if temporary.exists():
+                            temporary.unlink()
+                enriched = materialize_pdf_page_markdown(
+                    enriched,
+                    root,
+                    reader_text_path=reader_path.as_posix(),
+                    allow_ocr=True,
+                )
+                enriched["package_acquisition_status"] = "ADMITTED_PACKAGE"
+                successful.append(source_id)
+            except (FileExistsError, OSError, OfficialWebReleaseError, ValueError) as exc:
+                enriched["package_acquisition_status"] = "FAILED"
+                enriched["package_acquisition_error"] = f"{exc.__class__.__name__}: {exc}"
+                failures.append(source_id)
+            by_id[source_id] = enriched
             continue
         stem = _package_stem(source_id, index)
         package_path = Path("pdf") / f"{stem}.pdf"
@@ -841,16 +2387,31 @@ def acquire_source_package(
         )
         destination = _resolve_package_path(root, package_path.as_posix(), field="source.package_path")
         reader_destination = _resolve_package_path(root, reader_path.as_posix(), field="source.reader_text_path")
-        if (
-            source.get("package_acquisition_status") == "ADMITTED_PACKAGE"
-            and destination.is_file()
-            and reader_destination.is_file()
-        ):
+        if destination.is_file() and reader_destination.is_file():
+            # The materializer can finish before a command interruption writes
+            # the updated manifest.  The registered reader itself is checked
+            # by the PIT runner; retain it and resume the manifest rather than
+            # re-reading a 200+ page filing or treating a successful run as a
+            # failed download.
+            page_markers = re.findall(
+                r"^## 第 [0-9]+ 页$",
+                reader_destination.read_text(encoding="utf-8"),
+                flags=re.MULTILINE,
+            )
+            enriched = _copy_record(
+                enriched,
+                reader_text_extractor="interrupted_acquisition_reader_resume",
+                reader_text_extractor_version="phase10-reader-resume.v1",
+                reader_text_page_count=len(page_markers),
+            )
             successful.append(source_id)
             by_id[source_id] = enriched
             continue
         try:
-            if not (source.get("package_acquisition_status") == "FAILED" and destination.is_file()):
+            # A prior interrupted run may already have the immutable official
+            # PDF but not its registered reader text.  Resume from that exact
+            # source-id path instead of re-downloading or failing on existence.
+            if not destination.is_file():
                 content = fetch_pdf(str(source.get("url") or ""))
                 if not content.startswith(b"%PDF"):
                     raise SSEAnnouncementQueryError("downloaded source does not start with the PDF signature")
@@ -874,7 +2435,7 @@ def acquire_source_package(
             )
             enriched["package_acquisition_status"] = "ADMITTED_PACKAGE"
             successful.append(source_id)
-        except (FileExistsError, OSError, SSEAnnouncementQueryError, ValueError) as exc:
+        except (FileExistsError, OSError, SSEAnnouncementQueryError, CNInfoAnnouncementExportError, ValueError) as exc:
             enriched["package_acquisition_status"] = "FAILED"
             enriched["package_acquisition_error"] = f"{exc.__class__.__name__}: {exc}"
             failures.append(source_id)
@@ -887,7 +2448,7 @@ def acquire_source_package(
     result["inventory"] = updated_inventory
     result["sources"] = [
         by_id.get(str(source.get("source_id") or ""), source)
-        for source in selected
+        for source in admitted_sources
     ]
     result["package_root"] = str(package_root)
     result["source_package"] = {
@@ -896,6 +2457,7 @@ def acquire_source_package(
         "successful_count": len(successful),
         "failed_count": len(failures),
         "failed_source_ids": failures,
+        "selection_policy_id": selection.get("selection_policy_id") if isinstance(selection, dict) else None,
     }
     result["acquisition_status"] = (
         "SOURCE_PACKAGE_COMPLETE" if not failures else "SOURCE_PACKAGE_INCOMPLETE"
@@ -932,7 +2494,7 @@ def validate_source_manifest(manifest: dict[str, Any]) -> dict[str, Any]:
         incomplete.append("inventory_missing")
         inventory = []
     if manifest.get("enumeration_complete") is not True:
-        incomplete.append("sse_enumeration_incomplete")
+        incomplete.append("announcement_enumeration_incomplete")
 
     ids: set[str] = set()
     inventory_is_valid_shape = True
@@ -985,6 +2547,59 @@ def validate_source_manifest(manifest: dict[str, Any]) -> dict[str, Any]:
         invalid.append("admitted_count_mismatch")
     if manifest.get("rejected_count") != len(expected_rejected_ids):
         invalid.append("rejected_count_mismatch")
+
+    selection = manifest.get("source_package_selection")
+    if selection is not None:
+        if not isinstance(selection, dict):
+            invalid.append("source_package_selection_invalid")
+        else:
+            if selection.get("schema_version") != SOURCE_PACKAGE_SELECTION_SCHEMA_VERSION:
+                invalid.append("source_package_selection_schema_version_invalid")
+            if not str(selection.get("selection_policy_id") or "").strip():
+                invalid.append("source_package_selection_policy_missing")
+            if not str(selection.get("selection_reason") or "").strip():
+                invalid.append("source_package_selection_reason_missing")
+            selected_ids = selection.get("selected_source_ids")
+            if not isinstance(selected_ids, list) or not selected_ids:
+                invalid.append("source_package_selection_ids_missing")
+            else:
+                normalized_selected = [str(item or "").strip() for item in selected_ids]
+                if any(not item for item in normalized_selected) or len(set(normalized_selected)) != len(normalized_selected):
+                    invalid.append("source_package_selection_ids_invalid")
+                unknown_selected = sorted(set(normalized_selected) - set(expected_admitted_ids))
+                if unknown_selected:
+                    invalid.append("source_package_selection_unknown_source_id:" + ",".join(unknown_selected))
+            rationales = selection.get("source_research_rationales")
+            if not isinstance(rationales, list) or len(rationales) != len(selected_ids or []):
+                invalid.append("source_package_selection_rationales_missing_or_count_mismatch")
+            else:
+                rationale_ids: list[str] = []
+                for index, rationale in enumerate(rationales):
+                    if not isinstance(rationale, dict):
+                        invalid.append(f"source_package_selection_rationale[{index}]:not_object")
+                        continue
+                    source_id = str(rationale.get("source_id") or "").strip()
+                    rationale_ids.append(source_id)
+                    if not source_id or not str(rationale.get("selection_reason") or "").strip():
+                        invalid.append(f"source_package_selection_rationale[{index}]:source_id_or_reason_missing")
+                    question_ids = rationale.get("research_question_ids")
+                    if (
+                        not isinstance(question_ids, list)
+                        or not question_ids
+                        or any(not str(item or "").strip() for item in question_ids)
+                        or len({str(item or "").strip() for item in question_ids}) != len(question_ids)
+                    ):
+                        invalid.append(f"source_package_selection_rationale[{index}]:research_question_ids_invalid")
+                normalized_selected = [str(item or "").strip() for item in selected_ids] if isinstance(selected_ids, list) else []
+                if len(set(rationale_ids)) != len(rationale_ids) or set(rationale_ids) != set(normalized_selected):
+                    invalid.append("source_package_selection_rationale_source_coverage_mismatch")
+            if selection.get("inventory_count") != len(inventory):
+                invalid.append("source_package_selection_inventory_count_mismatch")
+            if selection.get("admitted_source_count") != len(expected_admitted_ids):
+                invalid.append("source_package_selection_admitted_count_mismatch")
+            selected_count = len(selection.get("selected_source_ids") or []) if isinstance(selection.get("selected_source_ids"), list) else 0
+            if selection.get("unselected_admitted_count") != len(expected_admitted_ids) - selected_count:
+                invalid.append("source_package_selection_unselected_count_mismatch")
 
     if has_inventory:
         selected_sources = manifest.get("sources")
@@ -1107,16 +2722,28 @@ def _write(path: Path, payload: dict[str, Any]) -> None:
     path.write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
 
 
+def _records_from_payload(payload: Any, *, label: str) -> list[dict[str, Any]]:
+    """Read the explicit record list used by a source-enumeration command."""
+    records = payload.get("records") if isinstance(payload, dict) else payload
+    if not isinstance(records, list) or any(not isinstance(item, dict) for item in records):
+        raise ValueError(label + " must contain a records array of objects")
+    return records
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("command", choices=["catalog", "validate", "enumerate", "fetch-sse", "fetch-sse-records", "queue-settlement", "download-package"])
+    parser.add_argument("command", choices=["catalog", "validate", "enumerate", "enumerate-cninfo", "enumerate-web", "enumerate-industry", "compose-industry", "fetch-sse", "fetch-sse-records", "fetch-cninfo", "select-package", "queue-settlement", "download-package"])
     parser.add_argument("--input", type=Path)
+    parser.add_argument("--industry-input", type=Path)
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--manifest-output", type=Path)
+    parser.add_argument("--selection-input", type=Path)
     parser.add_argument("--page-size", type=int, default=100)
     parser.add_argument("--company-code", default="600340")
+    parser.add_argument("--org-id")
     parser.add_argument("--begin-date")
     parser.add_argument("--end-date")
+    parser.add_argument("--cutoff-at")
     args = parser.parse_args()
     if args.command == "catalog":
         payload = build_600340_source_manifest()
@@ -1130,6 +2757,24 @@ def main() -> int:
             begin_date=args.begin_date,
             end_date=args.end_date,
             page_size=args.page_size,
+        )
+    elif args.command == "fetch-cninfo":
+        if not args.begin_date or not args.cutoff_at or not args.org_id:
+            parser.error("--begin-date, --cutoff-at and --org-id are required for fetch-cninfo")
+        payload = fetch_cninfo_manifest(
+            company_code=args.company_code,
+            org_id=args.org_id,
+            begin_date=args.begin_date,
+            cutoff_at=args.cutoff_at,
+            page_size=args.page_size,
+        )
+    elif args.command == "enumerate-web":
+        if args.input is None or not args.cutoff_at:
+            parser.error("--input and --cutoff-at are required for enumerate-web")
+        payload = enumerate_official_web_releases(
+            _records_from_payload(json.loads(args.input.read_text(encoding="utf-8")), label="official web release input"),
+            company_code=args.company_code,
+            cutoff_at=args.cutoff_at,
         )
     elif args.command == "download-package":
         if args.input is None:
@@ -1149,6 +2794,100 @@ def main() -> int:
             "failed_count": payload["source_package"]["failed_count"],
         }, ensure_ascii=False))
         return 0 if payload["source_package"]["status"] == "COMPLETE" else 2
+    elif args.command == "enumerate-industry":
+        if args.input is None or not args.cutoff_at:
+            parser.error("--input and --cutoff-at are required for enumerate-industry")
+        try:
+            records = _records_from_payload(
+                json.loads(args.input.read_text(encoding="utf-8")),
+                label="licensed industry input",
+            )
+        except (OSError, ValueError, json.JSONDecodeError) as exc:
+            parser.error(str(exc))
+        payload = enumerate_independent_industry_sources(
+            records,
+            company_code=args.company_code,
+            cutoff_at=args.cutoff_at,
+        )
+        _write(args.output, payload)
+        validation = validate_source_manifest(payload)
+        print(json.dumps({
+            "written": str(args.output),
+            "admitted_count": payload["admitted_count"],
+            "state": validation["state"],
+        }, ensure_ascii=False))
+        return 0 if validation["state"] == "REVIEWABLE" else 1
+    elif args.command == "compose-industry":
+        if args.input is None or args.industry_input is None or args.selection_input is None:
+            parser.error("--input, --industry-input and --selection-input are required for compose-industry")
+        try:
+            company_manifest = json.loads(args.input.read_text(encoding="utf-8"))
+            industry_manifest = json.loads(args.industry_input.read_text(encoding="utf-8"))
+            selection_input = json.loads(args.selection_input.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError) as exc:
+            parser.error(str(exc))
+        if not isinstance(industry_manifest, dict):
+            parser.error("--industry-input must be an independent industry manifest object")
+        if industry_manifest.get("inventory_kind") != "LICENSED_INDUSTRY_DATA_DECLARED_QUERY":
+            parser.error("--industry-input must be produced by enumerate-industry")
+        industry_validation = validate_source_manifest(industry_manifest)
+        if industry_validation["state"] != "REVIEWABLE":
+            parser.error("--industry-input is not reviewable: " + ",".join([
+                *industry_validation["invalid_findings"], *industry_validation["incomplete_findings"],
+            ]))
+        if not isinstance(company_manifest, dict):
+            parser.error("--input must be a company source manifest object")
+        for field in ("company_code", "cutoff_at"):
+            if industry_manifest.get(field) != company_manifest.get(field):
+                parser.error("--industry-input " + field + " must match the company manifest")
+        if not isinstance(selection_input, dict):
+            parser.error("--selection-input must be a JSON object")
+        rationales = selection_input.get("source_research_rationales")
+        if not isinstance(rationales, list):
+            parser.error("--selection-input requires source_research_rationales")
+        try:
+            payload = compose_company_manifest_with_independent_industry_sources(
+                company_manifest,
+                industry_manifest.get("sources") or [],
+                selection_policy_id=str(selection_input.get("selection_policy_id") or ""),
+                selection_reason=str(selection_input.get("selection_reason") or ""),
+                industry_source_research_rationales=rationales,
+            )
+        except ValueError as exc:
+            parser.error(str(exc))
+        _write(args.output, payload)
+        print(json.dumps({
+            "written": str(args.output),
+            "selected_count": len(payload["source_package_selection"]["selected_source_ids"]),
+            "state": "REVIEWABLE",
+        }, ensure_ascii=False))
+        return 0
+    elif args.command == "select-package":
+        if args.input is None or args.selection_input is None:
+            parser.error("--input and --selection-input are required for select-package")
+        payload = json.loads(args.input.read_text(encoding="utf-8"))
+        selection_input = json.loads(args.selection_input.read_text(encoding="utf-8"))
+        if not isinstance(selection_input, dict):
+            parser.error("--selection-input must be a JSON object")
+        rationales = selection_input.get("source_research_rationales")
+        if not isinstance(rationales, list):
+            parser.error("--selection-input requires source_research_rationales")
+        payload["source_package_selection"] = build_source_package_selection(
+            payload,
+            selection_policy_id=str(selection_input.get("selection_policy_id") or ""),
+            selection_reason=str(selection_input.get("selection_reason") or ""),
+            source_ids=[str(item.get("source_id") or "") for item in rationales if isinstance(item, dict)],
+            source_research_rationales=rationales,
+        )
+        validation = validate_source_manifest(payload)
+        _write(args.output, payload)
+        print(json.dumps({
+            "written": str(args.output),
+            "selected_count": len(payload["source_package_selection"]["selected_source_ids"]),
+            "state": validation["state"],
+            "invalid_findings": validation["invalid_findings"],
+        }, ensure_ascii=False))
+        return 0 if validation["state"] == "REVIEWABLE" else 1
     else:
         if args.input is None:
             parser.error("--input is required for validate/enumerate/queue-settlement")
@@ -1159,9 +2898,23 @@ def main() -> int:
             return 0 if result["state"] == "REVIEWABLE" else 1
         if args.command == "queue-settlement":
             payload = build_post_cutoff_reading_queue(payload)
+        elif args.command == "enumerate-cninfo":
+            if not args.begin_date or not args.cutoff_at:
+                parser.error("--begin-date and --cutoff-at are required for enumerate-cninfo")
+            records = payload.get("records") if isinstance(payload, dict) else payload
+            payload = enumerate_cninfo_announcements(
+                records or [],
+                company_code=args.company_code,
+                period_start=args.begin_date,
+                cutoff_at=args.cutoff_at,
+            )
         else:
             records = payload.get("records") if isinstance(payload, dict) else payload
-            payload = enumerate_sse_announcements(records or [])
+            payload = enumerate_sse_announcements(
+                records or [],
+                cutoff_at=args.cutoff_at or DEFAULT_CUTOFF_AT,
+                period_start=args.begin_date or "2018-01-01",
+            )
     _write(args.output, payload)
     count = payload.get("admitted_count", payload.get("record_count", 0))
     print(json.dumps({"written": str(args.output), "record_count": count}, ensure_ascii=False))

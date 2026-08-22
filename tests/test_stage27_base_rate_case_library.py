@@ -16,6 +16,7 @@ from scripts.base_rate_case_library import (
     prepare_case,
     query_cases,
     validate_case,
+    validate_verified_episode_reference,
 )
 from scripts.research_calibration import create_publication_snapshot
 
@@ -55,6 +56,23 @@ def _source(disclosed: str = "2027-05-02") -> list[dict]:
     return [{"source_id": "annual-2026.pdf", "sha256": "d" * 64, "disclosed_at": disclosed}]
 
 
+def _episode(
+    *, company_id: str = "01502.HK", episode_id: str = "MEP:test:001",
+    common_question_set_id: str = "CQS:mature-cash-manufacturing.v1",
+) -> dict:
+    return {
+        "episode_id": episode_id, "industry_regime": "consumer-demand-pressure",
+        "common_question_set_id": common_question_set_id,
+        "terminal_outcome_scope": "TERMINAL_OPERATING_OUTCOME",
+        "mechanism_chain_ids": ["mechanism.cash-control"],
+        "strongest_alternative_id": "alternative.trapped-cash",
+        "financial_driver_bridge": {"state": "BOUND", "reference": "financial_driver_bridge.json#v1"},
+        "forward_judgment_ids": ["fj.cash-access"], "baseline_ids": ["baseline.cash-access"],
+        "cluster": {"company_id": company_id, "period_cluster_id": "2025", "mechanism_cluster_id": "cash-control"},
+        "settlement_status": "OPEN",
+    }
+
+
 def _resolve_and_approve(root: Path, case_id: str, scenario: str) -> None:
     assert append_event({
         "event_id": "CASEEV:" + case_id.split(":")[-1] + ":outcome", "case_id": case_id,
@@ -81,6 +99,24 @@ def test_valid_case_schema_and_append_only_idempotence(tmp_path: Path) -> None:
     assert len((tmp_path / "cases.jsonl").read_text(encoding="utf-8").splitlines()) == 1
 
 
+def test_verified_episode_reference_requires_matching_settled_case(tmp_path: Path) -> None:
+    record = _case("CASE:near-miss:001")
+    record["episode"] = _episode(episode_id="MEP:near-miss:001")
+    assert append_case(record, library_dir=tmp_path)["written"]
+    _resolve_and_approve(tmp_path, "CASE:near-miss:001", "trapped")
+    outcome_id = "CASEEV:001:outcome"
+    verified = validate_verified_episode_reference(
+        case_id="CASE:near-miss:001", episode_id="MEP:near-miss:001",
+        outcome_event_id=outcome_id, library_dir=tmp_path,
+    )
+    assert verified["state"] == "REVIEWABLE"
+    mismatched = validate_verified_episode_reference(
+        case_id="CASE:near-miss:001", episode_id="MEP:not-this-case",
+        outcome_event_id=outcome_id, library_dir=tmp_path,
+    )
+    assert "episode_not_registered_for_case" in mismatched["invalid_findings"]
+
+
 def test_future_information_and_hindsight_fields_are_invalid(tmp_path: Path) -> None:
     leaked = _case(); leaked["visible_evidence"][0]["disclosed_at"] = "2026-05-01"
     result = validate_case(prepare_case(leaked))
@@ -97,6 +133,51 @@ def test_same_source_group_warns_and_does_not_fake_cross_validation() -> None:
     result = validate_case(prepare_case(record))
     assert result["state"] == "REVIEWABLE"
     assert "duplicate_source_groups_do_not_count_as_cross_validation" in result["warnings"]
+
+
+def test_episode_identity_extends_the_existing_case_without_creating_a_second_library() -> None:
+    record = _case(); record["episode"] = _episode()
+    assert validate_case(prepare_case(record), require_episode_identity=True)["state"] == "REVIEWABLE"
+    missing = validate_case(prepare_case(_case()), require_episode_identity=True)
+    assert missing["state"] == "INCOMPLETE"
+    assert "mechanism_episode_missing" in missing["incomplete_findings"]
+    invalid = _case(); invalid["episode"] = _episode(); invalid["episode"]["cluster"].pop("mechanism_cluster_id")
+    result = validate_case(prepare_case(invalid), require_episode_identity=True)
+    assert result["state"] == "INCOMPLETE"
+    assert "mechanism_episode:cluster_mechanism_cluster_id_missing" in result["incomplete_findings"]
+
+
+def test_new_policy_requires_episode_only_for_cases_entering_reference_context(tmp_path: Path) -> None:
+    library = tmp_path / "library"
+    append_case(_case(), library_dir=library)
+    _resolve_and_approve(library, "CASE:test:001", "trapped")
+    context = build_base_rate_context(
+        tmp_path, archetype_ids=["property_service"],
+        questions=[{"mechanism_key": "cash_control_access_and_distribution", "decision_link": {}}],
+        library_dir=library,
+    )
+    initialize_base_rate_policy(tmp_path, run_id="episode-required", enforced=True, context=context, require_episode_identity=True)
+    result = evaluate_output_base_rate(tmp_path, library_dir=library, persist=False)
+    assert result["state"] == "INCOMPLETE"
+    assert "CASE:test:001:mechanism_episode_missing" in result["incomplete_findings"]
+
+
+def test_selection_required_policy_excludes_unregistered_cases_from_calibration_cohort(tmp_path: Path) -> None:
+    library = tmp_path / "library"
+    append_case(_case(), library_dir=library)
+    _resolve_and_approve(library, "CASE:test:001", "trapped")
+    context = build_base_rate_context(
+        tmp_path, archetype_ids=["property_service"],
+        questions=[{"mechanism_key": "cash_control_access_and_distribution", "decision_link": {}}],
+        library_dir=library,
+    )
+    initialize_base_rate_policy(
+        tmp_path, run_id="selection-required", enforced=True, context=context,
+        require_case_selection_identity=True,
+    )
+    result = evaluate_output_base_rate(tmp_path, library_dir=library, persist=False)
+    assert result["state"] == "INCOMPLETE"
+    assert "CASE:test:001:case_selection_missing" in result["incomplete_findings"]
 
 
 def test_valuation_reference_index_cannot_become_historical_case() -> None:
@@ -130,7 +211,9 @@ def test_outcomes_are_post_cutoff_append_only_events(tmp_path: Path) -> None:
 def test_only_resolved_and_approved_cases_enter_empirical_rate(tmp_path: Path) -> None:
     for index in range(5):
         case_id = f"CASE:sample:{index}"
-        append_case(_case(case_id), library_dir=tmp_path)
+        record = _case(case_id)
+        record["episode"] = _episode(company_id=f"COMPANY:{index}", episode_id=f"MEP:sample:{index}")
+        append_case(record, library_dir=tmp_path)
         _resolve_and_approve(tmp_path, case_id, "trapped" if index < 3 else "distributed")
     append_case(_case("CASE:unresolved"), library_dir=tmp_path)
     result = query_cases(
@@ -138,6 +221,7 @@ def test_only_resolved_and_approved_cases_enter_empirical_rate(tmp_path: Path) -
         archetype_ids=["property_service"], library_dir=tmp_path,
     )
     assert result["eligible_sample_size"] == 5
+    assert result["independent_company_sample_size"] == 5
     assert result["empirical_base_rate"] == {"distributed": 0.4, "trapped": 0.6}
     assert all(item["case_fingerprint"] and item["outcome_event_id"] for item in result["eligible_cases"])
 
@@ -160,6 +244,48 @@ def test_small_sample_never_emits_pseudo_precise_base_rate(tmp_path: Path) -> No
     assert result["eligible_sample_size"] == 1
     assert result["empirical_base_rate"] is None
     assert result["warnings"] == ["sample_too_small:1<5"]
+
+
+def test_many_reports_from_one_company_do_not_create_an_empirical_base_rate(tmp_path: Path) -> None:
+    for index in range(6):
+        case_id = f"CASE:gree:{index}"
+        record = _case(case_id)
+        record["episode"] = _episode(company_id="000651.SZ", episode_id=f"MEP:gree:{index}")
+        append_case(record, library_dir=tmp_path)
+        _resolve_and_approve(tmp_path, case_id, "trapped" if index < 3 else "distributed")
+
+    result = query_cases(
+        mechanism_key="cash_control_access_and_distribution",
+        archetype_ids=["property_service"], library_dir=tmp_path,
+    )
+
+    assert result["eligible_sample_size"] == 6
+    assert result["independent_company_sample_size"] == 1
+    assert result["independence_qualified"] is False
+    assert result["empirical_base_rate"] is None
+    assert any(item.startswith("correlated_company_episodes_prevent_base_rate:000651.SZ") for item in result["warnings"])
+
+
+def test_mixed_question_sets_do_not_become_a_reference_class(tmp_path: Path) -> None:
+    for index in range(5):
+        case_id = f"CASE:mixed:{index}"
+        record = _case(case_id)
+        record["episode"] = _episode(
+            company_id=f"COMPANY:{index}", episode_id=f"MEP:mixed:{index}",
+            common_question_set_id="CQS:cash.v1" if index < 3 else "CQS:competition.v1",
+        )
+        append_case(record, library_dir=tmp_path)
+        _resolve_and_approve(tmp_path, case_id, "trapped" if index < 3 else "distributed")
+
+    result = query_cases(
+        mechanism_key="cash_control_access_and_distribution",
+        archetype_ids=["property_service"], library_dir=tmp_path,
+    )
+
+    assert result["independent_company_sample_size"] == 5
+    assert result["independence_qualified"] is False
+    assert result["empirical_base_rate"] is None
+    assert any(item.startswith("mixed_common_question_sets_prevent_base_rate:") for item in result["warnings"])
 
 
 def test_context_is_mechanism_first_and_freezes_case_fingerprints(tmp_path: Path) -> None:
@@ -253,7 +379,7 @@ def test_publication_snapshot_freezes_base_rate_context_hash(tmp_path: Path) -> 
 
 def test_schema_files_parse() -> None:
     root = Path(__file__).resolve().parents[1] / "schemas"
-    for name in ("base_rate_case.schema.json", "base_rate_case_event.schema.json", "base_rate_context.schema.json", "base_rate_policy.schema.json"):
+    for name in ("base_rate_case.schema.json", "base_rate_case_event.schema.json", "base_rate_context.schema.json", "base_rate_policy.schema.json", "case_selection_register.schema.json"):
         schema = json.loads((root / name).read_text(encoding="utf-8"))
         assert schema["$schema"] == "https://json-schema.org/draft/2020-12/schema"
         assert schema["required"]

@@ -1,0 +1,127 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Turtle Frozen Case Selection Register",
+  "type": "object",
+  "required": ["schema_version", "register_id", "common_mechanism_question", "selection_information_cutoff", "universe", "entries", "freeze"],
+  "properties": {
+    "schema_version": {"const": "case-selection-register.v1"},
+    "register_id": {"type": "string", "pattern": "^CSR:"},
+    "common_mechanism_question": {"type": "string", "minLength": 1},
+    "selection_information_cutoff": {"type": "string", "format": "date"},
+    "universe": {
+      "type": "object",
+      "required": ["universe_id", "definition", "as_of", "candidate_company_ids", "state_vector_fields", "source_ids"],
+      "properties": {
+        "universe_id": {"type": "string", "minLength": 1},
+        "definition": {"type": "string", "minLength": 1},
+        "as_of": {"type": "string", "format": "date"},
+        "candidate_company_ids": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+        "state_vector_fields": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+        "source_ids": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}}
+      }
+    },
+    "entries": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["entry_id", "company_id", "period_id", "information_cutoff", "state_vector_as_of", "state_vector", "selection_mode", "case_role", "mechanism_arrow", "exclusion", "cluster", "outcome_isolation"],
+        "properties": {
+          "entry_id": {"type": "string", "pattern": "^CSRSEL:"},
+          "company_id": {"type": "string", "minLength": 1},
+          "period_id": {"type": "string", "minLength": 1},
+          "information_cutoff": {"type": "string", "format": "date"},
+          "state_vector_as_of": {"type": "string", "format": "date"},
+          "state_vector": {"type": "object", "minProperties": 1},
+          "selection_mode": {"enum": ["TYPICAL", "DIVERSE", "MOST_SIMILAR", "MOST_DIFFERENT", "DEVIANT"]},
+          "case_role": {"enum": ["LITERAL_REPLICATION", "THEORETICAL_EXTENSION", "DEVIANT_TEST"]},
+          "mechanism_arrow": {"type": "object", "required": ["arrow_id", "from", "to", "expected_difference"]},
+          "exclusion": {"type": "object", "required": ["status", "reason"], "properties": {"status": {"enum": ["INCLUDED", "EXCLUDED"]}, "reason": {"type": "string", "minLength": 1}}},
+          "cluster": {"type": "object", "required": ["company_id", "period_cluster_id", "mechanism_cluster_id"]},
+          "outcome_isolation": {"enum": ["PIT_PRE_OUTCOME", "OUTCOME_SELECTED_RESEARCH_ONLY"]}
+        }
+      }
+    },
+    "judgment_flywheel_sampling": {
+      "description": "可选、显式启用的三对象判断飞轮抽样；只冻结 pre-outcome 比较结构，不保存价格、实际结果、回报或资料可得性评分。省略此对象时保持普通/legacy register 行为。",
+      "type": "object",
+      "required": ["enabled", "batches"],
+      "additionalProperties": false,
+      "properties": {
+        "enabled": {"const": true},
+        "batches": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": ["batch_id", "members"],
+            "additionalProperties": false,
+            "properties": {
+              "batch_id": {"type": "string", "pattern": "^CSRFWB:"},
+              "members": {
+                "type": "array",
+                "minItems": 3,
+                "maxItems": 3,
+                "items": {
+                  "type": "object",
+                  "required": ["entry_id", "role"],
+                  "additionalProperties": false,
+                  "properties": {
+                    "entry_id": {"type": "string", "pattern": "^CSRSEL:"},
+                    "role": {"enum": ["FOCAL", "NEAR_MISS", "BOUNDARY_REPLICATION"]},
+                    "focal_entry_id": {"type": "string", "pattern": "^CSRSEL:"},
+                    "upstream_mediator_relation": {"enum": ["OPPOSITE"]}
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "possibility_condition_evidence": {
+      "description": "仅在显式启用 judgment_flywheel_sampling 时使用的冻结映射。它只索引现有 claim_evidence、fact_observations 与 document_manifest 中的事实，不复制或新造事实。",
+      "type": "object",
+      "required": ["mappings"],
+      "additionalProperties": false,
+      "properties": {
+        "mappings": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": ["entry_id", "condition_id", "role", "state_vector_field", "evidence_refs"],
+            "additionalProperties": false,
+            "properties": {
+              "entry_id": {"type": "string", "pattern": "^CSRSEL:"},
+              "condition_id": {"type": "string", "pattern": "^PCOND:"},
+              "role": {"enum": ["COMMON", "MEDIATOR_EXCEPTION"]},
+              "state_vector_field": {"type": "string", "minLength": 1},
+              "evidence_refs": {
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "type": "object",
+                  "required": ["evidence_id", "observation_id", "source_id", "cutoff_at", "as_of"],
+                  "additionalProperties": false,
+                  "properties": {
+                    "evidence_id": {"type": "string", "minLength": 1},
+                    "observation_id": {"type": "string", "pattern": "^OBS:"},
+                    "source_id": {"type": "string", "pattern": "^DOC:"},
+                    "cutoff_at": {"type": "string", "format": "date"},
+                    "as_of": {"type": "string", "format": "date"}
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "freeze": {"type": "object", "required": ["frozen", "frozen_at", "fingerprint"], "properties": {"frozen": {"const": true}, "frozen_at": {"type": "string"}, "fingerprint": {"type": "string", "pattern": "^[0-9a-f]{64}$"}}}
+  },
+  "allOf": [{
+    "if": {"required": ["judgment_flywheel_sampling"]},
+    "then": {"required": ["possibility_condition_evidence"]}
+  }]
+}

@@ -14,7 +14,7 @@
 
 正式名称为：
 
-> **黄金报告驱动的双向层级研究系统**  
+> **黄金报告驱动的双向层级研究系统**<br>
 > Golden-Report-Driven Bidirectional Hierarchical Research System
 
 它不是 Agent 投票或蜂群共识。向上归纳依赖纵向多案例研究、反例和参考类；向下传播依赖明确的行业机制与公司暴露。任何层级都不能用多数意见替代证据、经济身份或确定性计算。
@@ -43,7 +43,7 @@
 
 | 对象 | 已有状态 | 本路线用途 | 是否属于 24 份产物 |
 |---|---|---|---|
-| 书籍方法案例卡 `config/insight_case_benchmark.json` | 8 类研究原型已实现并由 `scripts/insight_research.py` 使用 | 提供决定性问题、必做推理和禁止捷径；挑战报告是否作出类似书中案例的战略裁决 | 否 |
+| 方法案例卡 `config/insight_case_benchmark.json` | 4 个具名书中案例 + 4 个 Turtle 综合研究原型，均已由 `scripts/insight_research.py` 使用 | 提供决定性问题、必做推理和禁止捷径；来源身份只校准研究动作，不构成历史公司经验 | 否 |
 | 基准率候选 `output/.base_rate_library/cases.jsonl` | 9 个 `CANDIDATE`，覆盖 3 个公司原型和 4 类机制；当前无结果事件、无 `ELIGIBLE` 样本 | 核实披露时间、补齐当时预测身份、等待或追加结果结算；为判断校准积累案例 | 否 |
 | 行业知识库 `knowledge/industry/` | policy、taxonomy 和升格基础设施已存在；尚无已升格机制实例集 | 接纳由完整报告跨公司、跨期、反例审阅后形成的机制 | 否 |
 | 6 公司 × 3 时点完整报告 | 尚未生产 | 形成公司事实、前瞻判断、确定性模型和可结算结果的正式研究对象 | 是，18 份 |
@@ -56,11 +56,15 @@
 
 - 方向或区间、观察期限和到期日；
 - 支持证据、竞争解释和选择中心路径的理由；
-- 领先指标、区分信号、反证与失效条件；
+- 领先指标、区分信号、反证与失效条件；每个区分信号必须说明同一观察在主解释和最强反方下各自的 `LOW` / `MEDIUM` / `HIGH` 事前可能性及经济理由，且两者不同；这检验诊断性，不伪造精确似然比；
 - 置信身份：有经验基准率时引用合格案例；否则明确为主观判断、情景权重、低置信或 `UNKNOWN`；
 - 对销量/价格/组合、毛利/费用、营运资本/资本开支、正常利润、普通股现金、价值和回报的传播。
 
 禁止用三套并列情景、九格敏感性、模型可复算或“合理有利边界可翻转”替代中心路径裁决。无法选择时可以保持 `UNKNOWN`，但必须说明缺少什么信息、采用什么保守处理以及哪项新证据会解除未知。
+
+被中心路径选择的概率集合只可容纳同一 3/5 年尺度的**经营终局**。渠道去库存、会计确认、存货、价格动作和资本配置等是可与多个终局共存的过程因素，必须作为具名机制链绑定到终局、领先指标、财务传导和前瞻判断；不得为了让概率相加为 100% 而把它们并列为终局。
+
+每项可量化前瞻判断还要有一条事前冻结、只使用同一 PIT 经营信息的**简单基线预测**（例如同口径持续、行业调整持续或具名等权驱动规则）。它不参与中心路径投票，也不以价格替代经营判断；其唯一用途是在结果开放后检验复杂的行业机制链是否带来增量预测信息。单个或相关小样本不得据此调参数或宣布统计优势，只能记录相对误差、命中与反例。
 
 ## 3. 双向层级架构
 
@@ -121,7 +125,7 @@
 2. 更优秀或显著不同的战略路线；
 3. 渠道、产品或全球化结构不同者；
 4. 国际可比公司；
-5. 失败、衰退或资本配置反例。
+5. 在 cutoff 当时具有压力或资本配置风险信号的 deviant test（不得按后来失败结果挑选）。
 
 三个时期按结构断点选择，不按方便取得数据的自然年随意取样。至少覆盖：
 
@@ -144,7 +148,23 @@
 
 每个公司—时点案例仍须包含连续读者报告、材料性事实和来源、模型输入、确定性结果、普通股价值桥、UNKNOWN、最强反方、永久损失、翻转条件、前瞻判断账本以及独立判断、内容和数字审阅。PIT 报告不得读取 cutoff 后的公告、财报、价格、指数成分或结果标签；报告冻结后，结果只能通过追加事件结算，不能反写原判断。
 
+上表的 24 是研究**覆盖范围**，不是 24 个独立公司经验、参考类样本或“黄金深度”分数。同一公司、同一结构时期的多份报告共享事实和结果；只有在各自 cutoff 前冻结了可区分机制与可结算 FJ、并通过独立性审阅后，才可能成为不同 episode。报告数量、agent 数量、章节数和图表数都不能提高中心路径的置信度。
+
 ## 5. 总体执行里程碑
+
+### 价格与公司经验的优先级
+
+公司经验是路线的第一性训练对象：每个公司—时点 episode 从当时可见的公司事实、竞争解释、资本配置和经营结果中学习，随后以冻结判断的结果反馈校正。股价同样材料性，因为它决定进入回报、下行风险和行动；但它对“公司发生了什么、哪条经营路径更可能”不具有优先证据权。
+
+因此每份报告必须先完成经营盲轨（公司证据 → 中心路径 → 财务驱动 → 价值条件），再单列价格隐含轨（同一 cutoff 市价 → 市场隐含路径 → 与盲轨的差异）。只允许以下关系：
+
+```text
+公司经验与官方证据 -> 中心经营路径 -> normal owner cash / 价值条件
+同一 cutoff 股价       -> 隐含预期与条件回报
+两轨差异               -> 新的决定性问题或安全边际判断
+```
+
+禁止以价格、事后回报或相对表现选择中心路径、填补公司事实、提高机制概率或训练行业规则。结算时经营判断、机制判断、估值误差和投资回报仍分列；股价不能抵销公司经验判断的失败，反之亦然。
 
 R0–R8 属于 G1.5；R9 覆盖 G2–G4 的规则升格、冻结和流水线；R10 属于 G5 的双轴留出与后续跨行业扩展。G1.5 不得越过 G2–G4 直接运行留出。
 
@@ -154,32 +174,84 @@ R0–R8 属于 G1.5；R9 覆盖 G2–G4 的规则升格、冻结和流水线；R
 - 复用 `insight_case_benchmark.json` 的书籍方法案例卡，不另建通用案例卡；
 - 盘点基准率候选的披露时间、预测身份、到期日和未完成项，保持原始候选不可变；
 - 将 G1-J 的中心路径、前瞻判断、竞争解释和结果结算字段接入全部公司—时点报告；
+- 并行研究任务只用于补证、寻找反例和形成可复核 finding；除非来源、信息集、方法与 reviewer provenance 能证明实质独立，否则不得以 agent 数量、投票或平均数选择中心路径或提高置信度；
+- 为中心路径写明终局范围，并将过程机制以 `mechanism_chain` 连接到领先指标、正常利润、owner cash、估值、回报和判断 ID；
+- 在不运行历史回测的前提下，验证 `forward_judgment → historical_backtest.calibration_ledger claim` 的一对一适配：复用冻结预测、官方测量规则、版本政策和机制链，并显式冻结 claim ID、PIT 来源身份、材料性、阈值和观察窗口；点值与区间必须保留原语义，禁止在 adapter 中制造价格、投资动作或区间中点；
 - 定义当前、PIT 和综合报告的状态语义；
 - 禁止用新评分表替代独立投资判断。
 
-退出：所有产物类型拥有明确的黄金接纳身份和判断身份；已有案例资产具名复用且没有重复生产任务；敏感性不能冒充前瞻判断。
+退出：所有产物类型拥有明确的黄金接纳身份和判断身份；已有案例资产具名复用且没有重复生产任务；敏感性不能冒充前瞻判断；被声明为过程机制的项目不能作为中心路径概率情景通过验证；点值与区间前瞻判断均可无损投影为待追加结算的 claim，或由验证器明确阻断并留下可执行修复项。
 
-实现状态（2026-08-20）：统一 `thesis_test` 已承载中心路径和 3—5 项可结算前瞻判断，新运行、黄金机器门与独立盲评已接线。R0 尚待格力真实候选跑通后退出；不得以测试夹具替代内容验收。
+实现状态（2026-08-20）：统一 `thesis_test` 已承载中心路径和 3—5 项可结算前瞻判断，新运行、黄金机器门与独立盲评已接线。研究 worktree 已为 `historical_backtest` 增加 `RANGE` 的上下界和 `WITHIN_RANGE / BELOW_RANGE / ABOVE_RANGE` 结算身份，并拒绝中点替换；`forward_judgment → claim` 现已接入生产 adapter：case spec 只能显式引用 `FROZEN_FORWARD_JUDGMENTS`，adapter 再从 publication snapshot 哈希一致的 `thesis_test.json` 无损投影，而不是接受手写平行 ledger。它拒绝未准入 PIT 来源、区间中点、价格和投资动作，并要求独立审阅覆盖同一投影后的 frozen contract。投影同时保留 frozen baseline 与四段财务传导；`judgment_feedback` 只在 case/settlement 均 `REVIEWABLE` 时把它们和后续官方 observation 生成任务信息卡，并把投资回报排除在公司判断评分外。`financial_driver_bridge` 已进入新运行与 PIT production 的 writer/contract，并在 publication snapshot 和 production adapter 中成为启用 policy 后的冻结门：投资用途必须同时绑定四层公司事实、模型和动作；CJO 则必须无模型/动作而以 FJ monitoring/realization contract 绑定四层事实。格力真实 PIT 冻结、经营驱动桥和内容验收仍未完成；R0 不得以测试夹具替代内容验收。
 
 ### R1｜预注册研究设计
 
+#### R1 的当前关键路径：先形成一条可被事实推翻的公司判断
+
+R1 的长清单不是格力 V1 的并行待办，也不是报告深度的计数器。当前只按下列顺序推进：先用已物化的公司资料冻结问题、当期事实与 H-A/H-B；再取得能让两者在**同一口径**下分叉的 P0 行业 release，以及补齐现金/资本事项的来源化字段；随后只生成无价格的四层 CJO bridge、3–5 条 FJ 和一条最强反方；6–12 个月后结算领先经营信号，才根据结果决定是否扩展案例、机制或投资轨。任何一步不能缩小 H-A/H-B、normal owner cash 或资本配置质量的不确定性，就不应抢占下一步资料获取。
+
+因果力分解、零售 Shapley、行业架构图、存量—流量图、访谈 episode、reference class 和部分识别均是有明确触发条件的窄实验，不是格力当前冻结的必填层。它们只有在同口径基础数据已到位、并能产生一个原来不存在且会改变 H-A/H-B 或现金判断的可结算观察时才启动；否则保留为 `UNKNOWN`。这样案例经验服务于“这条机制会怎样失效”，而不是让路线图、报告篇幅或报告数量代替判断。
+
 - 冻结 5 家同行及其案例责任；
+- 为 5 家同行 × 3 个时点建立 `case_selection_register`：共同机制问题、cutoff 前 universe/state vector、选择模式（typical/diverse/most-similar/most-different/deviant）、`LITERAL_REPLICATION` / `THEORETICAL_EXTENSION` / `DEVIANT_TEST` 角色、预期区分的 mechanism arrow、排除规则与公司/时期/机制 cluster。它只约束 cohort 的因果比较，不新建案例卡或把 18 个报告变成独立统计样本；实现的 register 必须在构建 PIT 输出前冻结，`analysis_contract.case_selection_required=true` 的输出必须引用一个 `PIT_PRE_OUTCOME + INCLUDED` entry；
+- 不得以已知的后来失败、股价、终局经营或资本损失选择用于盲 PIT 判断的同行。若需要保留一个已知后验失败作教学/反方素材，显式标为 `OUTCOME_SELECTED_RESEARCH_ONLY`，只能生成取证问题或候选 near-miss，不能进入 PIT evidence、中心路径、FJ 对错结算、独立性 cohort 或经验概率分母；
 - 冻结 3 个结构时期和各自信息 cutoff；
 - 冻结格力初始决定性问题、行业驱动树、待检验机制和反例；
-- 冻结每份报告必须回答的中心路径、预测期限、区分信号、结果字段和结算规则；
+- 为每家公司预先建立跨期**状态转换编年表**：只在有可指认的结构变化时划分时期，并在每段并列记录竞争/客户替代、单位经济性、现金转换、资本配置事件、管理层当时承诺及其后续可观察结果、会计口径变化与 `UNKNOWN`。多年年报/中报的用途是检验同一公司机制如何演变、寻找反例和核对承诺后果；它们不得按报告份数平均成正常利润或 owner cash，也不得增加跨公司参考类的独立样本数；
+- 对每个会影响中心路径的机制，在写正文前建立一张轻量 `analogy_transfer_card`：目标问题与期限、状态向量、可迁移的“驱动→中间变量→经营结果”关系、不匹配维度和失效条件；每个支持类比必须预选一个表面相近而结果相反的 `strongest_near_miss`。它扩展现有书籍方法案例卡的适用域/反例/诊断信号/不可推断边界，不新建平行案例库，也不把历史成功故事写成概率。格力当前将既有 `operating_transition` 作为主路由，`franchise_customer_lockin`/`technology_transition` 分别作为 H-A/H-B 的条件检验，`mature_cash_return` 作为结果审计；
+- 已核查 `config/insight_case_benchmark.json`：现有 8 张卡是 `asset_catalyst` 至 `operating_transition` 的研究原型，已具备决定性问题、必做动作和禁用捷径；但并不含可结算的公司—时点 `MEP:` / `CASEEV:` episode。故它们现在可改进格力的取证、反方和传导问题，却不能作为历史事实、primary support 或经验频率。真正的公司经验只能进入既有 append-only `base_rate_case` / episode 登记簿，满足 PIT、结果、独立 eligibility 后再被 transfer card 引用；
+- 现有 `HBTCASE:600340:20200427` 也不能被偷列为首个历史案例：其明确标注为 `PIT_ENGINEERING`、`FROZEN_WITH_QUALITY_FAILURE`、`EXPLORATORY`，四条 claim 全为 `UNKNOWN`，且结算源为 `METADATA_ONLY_BODY_NOT_READ`。回测引擎因此已可用于冻结后结算，但该工件没有提供公司判断、可用 FJ 或可复用 episode。首个 episode 必须另由真实 PIT 资料、可结算经营结果和独立 eligibility 构成，不能给这个工程工件补写结局；
+- 对每份完整法定公告 inventory，先冻结 `source_package_selection`：选择 policy、总理由、将被物化的 admitted `source_id`，并为**每个** source ID 写选择理由和其服务的预注册决定性问题 ID。它把“可在 cutoff 读取”与“为本轮决定性问题下载正文”分开；完整 inventory 永远保留，未选择项不冒充已读证据，选择后不得随结论临时加减来源；
+- 外部研究报告只能作为 `MECHANISM_DISCOVERY` 的“分歧—验证”输入：每一份须登记当时可得性、所声称的机制箭头、与哪一份材料或 H-A/H-B 的分歧、其宣称依赖的原始来源谱系（公司披露、provider/release/query、渠道访谈、公开统计或未披露），以及一项可由官方或授权独立行业资料完成的验证任务和其区分信号。相同来源谱系的同向转述先折叠为一项取证任务；未披露谱系标为 `UNRESOLVED_DEPENDENCE`，只可生成问题。它们不构成事实、独立样本、基准率、共识票数或估值/目标价输入；cutoff 后报告一律 `OUTCOME_SELECTED_RESEARCH_ONLY`，只能生成问题。禁止按篇数、机构名气或目标价加权/平均；只有同一 metric/unit/denominator/horizon、当时已写下的前瞻谓词、独立结果 observation 与 PIT 误差记录同时存在时，才可另行实验其等权组合，并仅作为 Turtle 冻结 FJ 的外部 benchmark。没有实际外部报告文件时不新建空 schema 或伪造 coverage；
+- 先验证公共 `financial_driver_bridge` 能从官方披露取得竞争/需求、单位经济性、现金转换和资本配置事件；投资报告还须绑定模型和决策，`COMPANY_JUDGMENT_ONLY` 则以冻结的 FJ monitoring/realization contract 绑定，禁止伪造模型/交易对象；现金转换还必须明确它是已来源化的 `NORMALIZED` owner cash、`UNKNOWN`，还是仅 `REPORTED_CASH_STATE_ONLY`。`NORMALIZED` 必须逐项说明调整、维持性 Capex、必要营运资本与资金可支配性的 treatment，并为三者各有 VERIFIED observation；没有这条 adjustment bridge 时 OCF、货币资金和 OCF–Capex 不得传导为 owner cash；已观察到的竞争/需求还须冻结市场定义、客户替代选项、比较 observation 与范围边界，不能用公司内部指标冒充全行业护城河；无法取得的字段预注册为 `UNKNOWN` 与保守处理；
+- “因果力分解”仍是研究实验，而不是既有 FDB 的替代或因果证明：只有总量高度不确定、可按受不同方向力量影响的**可观测分项**拆开、分项与 parent 有预先冻结的经济恒等关系、并在 cutoff 前的 expanding-window 模拟（或短序列下预注册的波动代理）显示分项比总量更可预测时，才允许用它预测那个单一 parent metric。原方法不授权任意加总，也不将收入分解自动传导到费用、营运资本、Capex 或 owner cash；后者仍须由四层 FDB 的独立事实支持。任一分项只靠叙事、跨 sell-in/sell-out 口径、或在结果期才选择函数/基线时，保留 aggregate `UNKNOWN`；
+- “零售状态构成分解”是另一项更窄的**描述性**竞争诊断，而非因果力或预测器：只有已准入的同一来源、品牌×稳定 category cell 的 `RETAIL_SELL_OUT` 双期完整面板，才可用对称 Shapley 恒等分解格力零售量/额的行业规模、类别/渠道 mix 与格内份额变动。它只为 H-A/H-B 产生一个可审阅的竞争分叉观察；不得混入 shipment、填补或重定义缺失 cell，也不得据此判断公司收入确认、owner cash、资本配置、估值、回报或动作。没有实际持牌面板时不计算、H-A/H-B 仍为 `UNKNOWN / UNDISCRIMINATED`；
+- 对可能影响零售诊断的渠道、价格带、产品/冷量和品牌组口径，须在读取面板前列出理论上合理、可由同一 source contract 支持且不冗余的有限视图；结果逐视图并列，而非选择最支持 H-A/H-B 的切分。此“规格审阅”只报告方向是否跨预注册视图稳定、哪个边界导致结果改变；不做 joint statistical inference、不产生综合分数或概率，也不能弥补缺失的 sell-out cell；
+- “行业架构—价值攫取图”是第二个窄实验，不是新的评分层：对会改变中心路径的机制，只在已有 `analogy_transfer_card` 中冻结分工、接口控制、互补资产、要素流动性与价值攫取节点五项事实/`UNKNOWN`，并要求主/反机制由此产生一个原先不存在、可明显削弱对方的观察。若只是把供应商—公司—消费者重画一遍，或不能产生独特 FJ，则撤销；不能用垂直整合、公司自述或线上排名代替接口控制或价值攫取证据；
+- “存量—流量—时滞图”也是数据先行的试验：对渠道、产能、安装/服务或营运资本等动态问题，最多冻结四项可观察存量，各自的单位、期初/变动/期末、相关流量、时滞和两条反馈链；缺数据明确为 `UNKNOWN`。它只约束主/反机制预期的**先后顺序**，不做参数化仿真、不从单期出货/收入/OCF反推库存。只有在一份历史 PIT episode 用同口径的出货、sell-out、库存和价格资料结算出不同序列后，才考虑成为 G1-J 的必填对象；
+- “关键经营决策 episode”只在获得合格的一手、授权访谈或同期决策记录时启动：对经销、零售、安装/售后、供应链或产品负责人已经发生的困难决策，记录事件时间线、所见线索、目标/约束、被排除的方案、采取动作和当时预期；每个 episode 必须先链接 H-A/H-B 的一条箭头，再生成一项不同于现有 FJ 的独立可结算观察。研究者以 premortem 方式预写该机制失败的可见路径，防止访谈沦为确认偏误。受访者陈述只能是 `MECHANISM_DISCOVERY`，不得升级为公司 VERIFIED fact、独立行业数据或结果证据；在 cutoff 后才进行的回忆访谈一律 `OUTCOME_SELECTED_RESEARCH_ONLY`，只能生成问题，不能进入历史 PIT evidence、中心路径或 calibration cohort；
+- 为每项机制族冻结 `reference_class_spec`：预测对象、期限、当时可见状态变量、候选宇宙、排除与相似性规则、共同问题集/终局空间、公司/时期/机制独立簇和分位数输出；没有合格样本时只登记 `UNKNOWN`，不得以少数类比、混合问题或 18 个相关产物伪造概率；
+- 为会影响资本纪律、owner cash、`lambda` 或永久损失的每笔材料事项冻结 `allocation_event`：启动承诺的金额/币种/资金来源及其 VERIFIED observation，或金额 `UNKNOWN` 的原因与保守处理；再冻结启动后的首次可观察加码、维持、撤退或 `UNKNOWN`，并精确连接该事件的 `FDBREAL:` 与早期/终局 `FDBMON:` 合同。`MAINTAIN` 必须有明确持续决策/授权，不能由持股比例、账面余额静态不变推断。不得从一次减值、金融资产余额、股价或回报倒推累计投入、资金来源或资本配置质量；
+- 为每项可量化判断预注册一个经营盲的简单基线：方法、可复算公式、带 evidence 身份的数值输入、PIT cutoff、适用范围、预测输出和它与中心路径的差异；基线不得读取价格、估值倍数或事后结果，也不得被用来机械选择中心路径；
+- “部分识别／决策边界”只在一个**单一、预先定义的 metric**具有同口径的会计恒等式、物理约束或外部硬约束时使用：上下界、公式、全部输入和 `PIT` 来源必须冻结且能独立复算。它只可声明该窄命题在全部可行值下为 `ROBUSTLY_TRUE`、`ROBUSTLY_FALSE` 或 `UNIDENTIFIED`；不得把 H-A/H-B、乐观/悲观终局、价格、估值或回报当成 range 两端，不能取代中心路径、概率、FJ 或保守 `UNKNOWN`。没有非平凡的、来源约束的边界时不新建参数或模块；
+- 启用 `financial_driver_bridge` 的报告中，每项前瞻判断预注册其依赖的 driver ID；snapshot/独立审阅把同一四层 bridge 一并冻结，结果反馈只能读取此副本，不得根据结果重连驱动；
+- 冻结每份报告必须回答的中心路径、预测期限、区分信号、结果字段和结算规则；区分信号还须带主/反方的非对称粗粒度可能性和理由，避免只是两句不同措辞；
+- 每个核心判断建立同粒度的 `rival_hypothesis_pair`：主/竞争机制都须能解释当前事实，并各自给出必经信号、可明显削弱对方的信号、可观察的先后顺序和财务传导；所有早期机制 signal 的最晚到期日必须严格早于首个终局经营 signal。投资用途另接估值影响，CJO 严禁把它写入公司判断对象。没有 6–12 月可结算区分信号时，报告只能标为未判别并降低结论强度，不能伪造精确概率；
+- 主/反方的每个 pair predicate 必须让**双方各自**存在至少一个可单独成立的结果区域；仅“数值不同”不够。诸如主方 `AT_LEAST 90`、反方 `AT_LEAST 95` 的嵌套预测使反方实现时仍同时满足主方，故不是可结算竞争测试；允许有真实的重叠 `MIXED` 区，但不能让任何一方在逻辑上永远不能赢。此规则不设任意区间宽度或概率阈值：范围宽度只有在未来存在足够同类 episode 时才可用校准/锐度方法审阅；
+- 管理层的“协同、改善、持续推进”类叙述只有在**cutoff 当时**同时给出可观察 metric、比较对象、观察窗和允许来源，且 H-A/H-B 对该 metric 有不同预测时，才可成为 FJ 的输入；否则它只是 `MECHANISM_DISCOVERY`。不得因后来已经看到收入、亏损、现金、减值或管理层自评，就把原叙述倒写成早期预测或补设阈值；
+- `pair` 是一个可结算的**比较单元**，不是声称候选解释宇宙只有两种。写中心路径前必须检视是否存在另一条可解释同一材料事实、并会改变经营/现金结论的机制；若有，为其建立同一 probability set 的第三终局、机制链、独有 FJ 信号和第二张 pair/card，而不是把它塞进“风险”或把两条现有机制改成含混的宽标签。只是 measurement boundary、不能解释共同事实、或没有不同可观察序列的项目应保留为 `UNKNOWN`，不得为了凑多元解释新增场景；
+- 每个 G1-J `rival_hypothesis_pair` 还须显式列出双方各自的 `critical_assumptions`，即“若该方将作为中心路径，必须为真”的具体前提；`VERIFIED` 必须有当期 evidence，`TESTABLE` 必须绑定该 pair 的预注册区分信号，`UNKNOWN` 则须给出保守处理。中心路径所选一方只要仍有必要前提为 `UNKNOWN`，该 pair 不能冻结；这是一道机制完整性门，不是打分、概率、估值或行动输入；
+- 每个新 G1-J `rival_hypothesis_pair` 还须把双方机制拆成各至少两条 `causal_trace` 箭头：`from_state → to_state`、所属 mechanism chain、为何具诊断性，以及其当期 evidence、预注册 FJ 或保守 `UNKNOWN`。双方都须有一条由本 pair 6–12 月 `EARLY_MECHANISM` signal 检验的箭头；而且 pair 内**每一个**冻结 signal（包括终局经营 signal）都须分别连接 PRIMARY 与 RIVAL 各一条 `TESTABLE` arrow，不能把终局 cash 或盈利放在机制链外当作“整体佐证”。选作中心路径的一方不能留下 `UNKNOWN` 箭头。它不取代 `critical_assumptions`：前者说明机制如何传导，后者说明机制必须依赖什么；
+- 实现状态（2026-08-21）：上述 pair/card 与逐箭头 `causal_trace` 已进入 `thesis_test`、snapshot-hashed forward-judgment adapter 和 `COMPANY_JUDGMENT_ONLY` settlement。新 G1-J PIT policy 要求三者同时存在：每个 FJ 须反向链接唯一 pair signal，每个 pair 须有复用既有书籍方法卡的 transfer card；旧冻结账本保持 legacy，不能冒充已覆盖。pair signal 的主/反谓词必须共享 metric/unit/horizon/due，且 verdict 只能由同一官方经营 observation 派生为 `SUPPORTS_PRIMARY / SUPPORTS_RIVAL / MIXED / NOT_YET_DUE`；`MIXED` 还必须派生为 `BOTH_MET`（共同允许、非诊断）或 `NEITHER_MET`（机制或计量边界须重开研究），不得把前者当双重支持、后者当任一方胜利，也不得因此自动创造第三机制。禁止在结果期手写胜负或让股价/回报裁决。新 card 的 `strongest_near_miss` 只能是 append-only 登记簿中**同一** `CASE:/MEP:/CASEEV:` 的已结算、独立复核 episode，或明确原因与保守处理的 `UNKNOWN_NO_QUALIFIED_EPISODE`；ID 前缀本身不构成验证。后者强制 `QUESTION_ONLY`，不得支持中心路径；单个近失效永不成为频率或基准率。每张新 card 还必须明示“何时可迁移／何时不可迁移”结构规则，不能只列相似点；这使近失效案例成为迁移边界而非公司名联想。H7 的五项行业架构字段现为 card 的**可选但一旦填写即受验证**的实验契约：每项必须为外部可复读事实或带保守处理的 `UNKNOWN`，并要链接 card 自己的 pair discriminator 与一个最小外部查询；其 `UNKNOWN` 状态不能支持中心路径。CJO 成稿须把被冻结的关键前提和箭头用简洁自然语言呈现，并明确各自是当期证据、待检验信号还是保守 `UNKNOWN`；不得把它压成内部 ID/status 面板或借此增加结论强度。它不是自动产生格力架构判断的评分层。当前没有可用的格力近失效 episode，也没有可填写这五项的合格行业接口资料，故格力 V1 尚无真实冻结 pair/card；
+- CJO 生产入口（部分完成，不能以结构化 fixture 冒充）：`analysis_purpose` 已从 PIT runner/CLI、AgentConfig、初始化和 writer facade 贯通至 claim、insight、judgment review、报告组装、章节审计、completion、reader coverage 及 HBT production-origin validation；CJO 工具集不暴露模型、D-id、估值、价格、回报和动作 writer，且仅使用公司事实、机制、FJ 与反馈 contract。completion 与最终 case 验证对 CJO 仍强制公司判断章节、官方证据、FDB、claim、thesis、insight、独立判断和质量门，但不再错误要求 `GG`、估值或交易决策对象；投资用途的原门保持不变。FJ 同时连向 claim/thesis 时，允许 claim 仅在 `freeze=false` 的 bootstrap 阶段保留计划 ID；最终冻结仍须连接真实 FJ 和 FDB monitoring/realization contract。剩余里程碑是由一个真实 PIT fixture 端到端通过 completion、snapshot、独立接纳与无价格 Phase10 settlement。禁止用空字段、占位估值或伪交易对象通过；
+- 预注册经营盲轨与价格隐含轨：先在不含价格、估值倍数和事后结果的源包中冻结经营路径，再读取同一 cutoff 价格反解隐含路径；二者差异只能生成新的决定性问题，不能反向覆盖盲轨；
+- 若法定公告只能证明发布日期而无披露时刻，日期本身不是该日任意时点的可得性证明：日期精度来源只能进入**早于**时点 cutoff 的盲轨；同日来源须取得可审计的发布时间，或把公司证据边界前移到前一日。市场轨单列 `price_source`、`price_as_of` 和观测时刻，并不得早于盲轨最后一个日期精度来源的完整可得日；这是一项防前视的证据规则，不赋予价格选择经营路径的权力；
+- 当前行情快照、实时 quote 或事后手抄的历史收盘价都不能充当 PIT 市场轨。历史市场观察至少冻结交易代码、币种、未复权/复权口径、交易日及市场收市时刻、价格字段、数据提供者/原始响应身份和取得时刻；取得不到则市场隐含路径、条件回报和动作保持 `UNKNOWN`，但公司盲轨继续完成；
 - 冻结未来结果封存、公司留出和时间留出的结算规则。
 
-退出：在任何后验结果可见之前形成可审阅的预注册包。
+退出：在任何后验结果可见之前形成可审阅的预注册包；每个公司的状态转换编年表可追溯至同口径官方观察，并明确哪些跨期字段不可比或仍为 `UNKNOWN`；每项中心机制都有一张 transfer card 和一个预选近似反例；每个核心假设对有相同颗粒度的主/竞争机制、区分信号与结算时序；每份 source package 有完整 inventory 和先于正文阅读的 `source_package_selection`；日期精度公告在同日时点 cutoff 下被阻断或有独立发布时间证据；`financial_driver_bridge` 和 `allocation_event` 已用至少一个公司—时点做字段可得性验证且缺口被明确冻结；每个机制族有 `reference_class_spec` 或诚实 `UNKNOWN`；每项可量化判断都有同 cutoff 的简单基线；运行记录可证明经营盲轨和基线均未读取价格、估值倍数或事后结果。
+
+实施注记（2026-08-20）：公共 `financial_driver_bridge.v1` 现强制四层覆盖、VERIFIED observation 和用途明确的冻结绑定；`INVESTMENT_DECISION` 仍需估值模型输入与决策条目，`COMPANY_JUDGMENT_ONLY` 则必须无模型/交易字段并以 FJ monitoring contract 绑定。`UNKNOWN` 必须同时说明原因和保守处理。竞争/需求层在 `OBSERVED` 时还必须保存市场、客户替代、比较 observation 和范围边界；缺此上下文会保留可执行 finding。每个 driver 还必须有可结算的 `FDBMON:` monitoring contract；每个资本事件必须有 `FDBREAL:` realization contract 以及时间顺序正确的早期/终局监测合同，不能再以自由文本“兑现期”通过。新初始化的 policy 进一步要求可审计的“启动承诺→后续 movement→兑现”链：可验证金额必须含币种、资金来源和 observation；金额未披露时允许 `UNKNOWN`，但必须写原因和保守处理；movement 必须连接该事件自己的 `FDBREAL:` 与早期/终局 `FDBMON:`。它不从减值、金融资产余额、价格或回报推断资本配置质量。新 policy 启用后，bridge 缺失会同时阻断 completion、publication snapshot 和 PIT production adapter；代理的受限 writer 也必须先读取这一契约，不能只靠提示词。格力 2025 年报的只读字段验证已区分 OCF 与 156.67 亿元受限资金释放、金融产品申购/赎回/定存滚动以及格力钛在建工程 11.42 亿元减值。格力候选边界的完整 889 条 CNINFO inventory 与 41 项带逐源问题理由的官方正文现已物化为 `COMPLETE / REVIEWABLE` source package；PIT runner 的 allowlist 只允许该 41 项，不因 inventory 保留而放开其余公告。此结果只证明公司盲轨的采集边界可用，不构成格力 V1 的冻结桥或投资结论。持牌独立行业数据的生产契约也已实现：它只能作为竞争/单位经济 FDBMON 与 FJ 的非官方结算来源，PIT projection 和 production case 保留 release/query contract；现金、资本、公司事实与投资回报路径仍不可使用。完整公司公告 inventory 与已取得行业 release 现在可通过受控 compose 进入同一 PIT source package，逐源 rationale 和 selection 一并重冻，CSV 不会触发联网下载；`enumerate-industry` 与 `compose-industry` 命令已使这一入口真实可达。当前尚无实际 AVC/ChinaIOL 历史 release 被接纳，因此这是一条可执行采集通道，而非格力结论升级。`case_selection_register` 亦已成为可冻结对象：被标为 `OUTCOME_SELECTED_RESEARCH_ONLY` 的 entry 被 claim、thesis 与 calibration candidate 三条路径拒绝，不能将后验挑选案例混入公司经验。
+
+格力的当前落点已细化为 [公司驱动与 FJ 冻结设计](research/GREE_V1_DRIVER_AND_FJ_FREEZE_DESIGN.md)：257 条已核实事实已足以建立四层候选 driver、监测合同、H-A/H-B 的区分信号与 FJ 模板，但不足以生成可审阅 bridge 或中心路径。2023–25 官方披露已形成 `CASH_STATE` 序列，且采集层将经营受限资金的净减少（流入）和净增加（流出）分开：2024 的 9.51 亿元不得再误作释放，2025 同时存在 156.67 亿元净减少和 9.51 亿元净增加，未经同一资金池证明不能轧差。格力钛的 2021 控制权取得、2023 增持与累计投资成本也已进入事实账本，故其金额不再是未知；但资金来源、2023 后资源 movement 和经营兑现仍未闭合。具体而言，全渠道竞争比较、量价费用、调整后 owner cash 与资本配置质量仍未裁决；报告不得以线上份额、单期毛利、表观 OCF、一次减值或投资成本余额填补。`historical_backtest.v2` 现已实现 `COMPANY_JUDGMENT_ONLY`：无价格 case 可用官方经营 observation 产生早期 `REVIEWABLE` settlement，未到期 claim 保持无 observation 的 `PARTIAL`，并以 append-only settlement series 防止改写已结算事实。首个真实 CJO 的反馈必须走这条 FJ→case→settlement→learning 的逐次链，不能用投资研究的阈值/决策监控替代。格力尚未有正式 FDB/FJ，故这只关闭反馈引擎缺口，不提升 V1 的冻结状态。
+
+### R1.5｜先冻结格力公司判断 episode，再进入证券结论
+
+这一步直接落实“股价材料但不裁决公司机制”的顺序。取得已版本化的竞争/单位经济行业轨，以及公司现金/资本事实后，先完成一份 `COMPANY_JUDGMENT_ONLY` 的格力 PIT episode：四层 FDB、H-A/H-B pair、对既有案例卡的 transfer card 与 near-miss、3—5 条经营 FJ、简单基线、source policy、无价格 early/terminal settlement contract 和独立审阅。它不包含估值模型、当前价、回报、仓位或交易动作。后续 `INVESTMENT_DECISION` PIT production freeze 必须引用同公司、同 cutoff、已完成的 CJO publication snapshot；系统会冻结其中心路径、经营 FJ 与 normalized-earnings / owner-cash transmission，并拒绝投资版本改写它们。投资轨只可在此后追加 valuation、expected-return 和 decision binding；若经营判断需要变化，先另建新的 CJO。
+
+退出：该 episode 以真实（非测试夹具）PIT source package 通过 completion、snapshot、独立接纳和 Phase10 的无价格生产冻结；竞争 FJ 的行业数据只能来自同口径、可追溯的独立 release，现金与资本 FJ 仍只用官方公司资料。若同口径轨或 normal owner-cash bridge 未闭合，冻结结果是 `UNKNOWN / UNDISCRIMINATED`，而不是编造中心路径。此门通过后，R2 的投资报告只能读取同一已冻结公司判断，而不能被价格反向改写。
 
 ### R2｜冻结格力黄金基线 V1
 
 只使用当时 Turtle 已有公司研究能力生成并独立接纳格力 V1。V1 与未来 V2 使用同一观察日、市场价格、投资体系和黄金标准；冻结后不得为了改善对比而修改。
 
-退出：V1 为 `CONTENT_GOLD_ACCEPTED`，具有独立通过的前瞻判断账本，且行业经验工厂尚未进入其研究上下文。只有敏感性而没有中心路径的旧格力候选不能作为 V1 冻结对象。
+退出：V1 为 `CONTENT_GOLD_ACCEPTED`，具有独立通过的四层 `financial_driver_bridge` 与前瞻判断账本，且行业经验工厂尚未进入其研究上下文。只有敏感性而没有中心路径、或把 OCF/金融资产/格力钛混为一个自由折减的旧格力候选不能作为 V1 冻结对象。
 
 ### R3｜完成 18 份公司—时点黄金报告
 
 每份报告独立完成证据、事实、中心路径、前瞻判断、模型、正文、HTML 和审阅。数据覆盖不足时先修公共采集模块、schema 或 validator；公开证据确实不存在时保留区间或 `UNKNOWN`，不得用行业常识填空。历史报告在结果揭示前冻结判断对象；当前报告登记到期日和未来结算入口。
+
+每份历史报告同时在既有 append-only `base-rate-case` 上注册一个 `mechanism_episode` 身份：公司、cutoff、行业阶段、来源包、共同问题、机制族、终局空间、中心路径、财务驱动桥版本、判断 ID、简单基线 ID 和公司/时期/机制聚类。它用于跨案例反例与结果结算；同一公司的多时点、同一机制或综合报告不得机械当作独立基准率样本。不得另建平行案例库，也不得因填入 episode 字段就自动提升为 `ELIGIBLE`。
 
 退出：18 份报告全部接纳；历史报告通过未来信息泄漏审阅；每份报告至少有一条中心路径和 3—5 项可结算决定性判断。
 
@@ -191,11 +263,36 @@ R0–R8 属于 G1.5；R9 覆盖 G2–G4 的规则升格、冻结和流水线；R
 - 数值或范围判断：实际结果、是否落入区间、偏差大小及口径变化；
 - 机制判断：当初选择的主导机制与最终主导因素是否一致；
 - 时效判断：报告是否在损害价值前给出可操作的领先信号；
+- 基线增量：在同一可比口径下，机制判断的点/区间误差和命中是否优于冻结的简单基线；
+- **概率校准（仅限已冻结的二元概率判断）**：在预先定义的可重复置信档位中，同时报告 Brier、可靠性（预测概率与结果频率的偏离）、区分能力和事件本身不确定性；档位内样本不足时保留 `UNKNOWN`，不得把点值/区间判断硬转成概率，也不得以校准总分选择公司中心路径；
+- **不要混淆区分与校准**：`rival_hypothesis_pair` 的同口径双预测和 `SUPPORTS_PRIMARY / SUPPORTS_RIVAL / MIXED` 只检验信号能否分开 H-A/H-B；它不是概率准确度。只有跨独立、预先冻结的二元判断积累到足够样本，才单列评估置信档位的校准，且该统计不得替代某一公司当前机制的证据裁决；
 - 根因：错误来自 `DATA_COVERAGE`、`ACQUISITION_MODULE`、`REASONING`、`MODEL` 或 `WRITING`。
+- **任务信息反馈**：对每个已结算判断——包括命中、错判与 `UNRESOLVED`——回显当时选择的终局、竞争解释、机制链、驱动层、模型输入、反证和缺失数据；命中也必须检验它是否优于冻结简单基线、是否真有区分性，而非自动当作能力证明。先判是哪一环失效或为何仍应保留，再写复盘。不得只展示价格回报、总分、排名或“当时应更保守”。
+- **学习处置而非重写历史**：完成反馈审阅后，另追加一条 `learning_note`，只声明该 signal 在何种状态/口径下 `RETAIN`、`RETIRE` 或 `INSUFFICIENT_EVIDENCE`，以及下次取证或 FJ 设计应改变什么；它引用冻结 case/settlement，但不得修改其文字、阈值、机制、基线或结算，也不自动调概率、估值或行动。`judgment_learning.py` 只允许 note 引用一个既有 feedback claim；每条 note 必须同时选择项目根因（`DATA_COVERAGE` / `ACQUISITION_MODULE` / `REASONING` / `MODEL` / `WRITING`）及下轮该改哪一环（状态表征、机制、取证、财务传导或估值/决策），不能只留下“这次错了”。`RETAIN/RETIRE` 还必须对应已计算的 settlement。对 G1-J 的成对机制，claim 还必须能回指同一冻结 `RHPSIG`，且该 signal 的派生结果是 `SUPPORTS_PRIMARY` 或 `SUPPORTS_RIVAL`；`MIXED`、未到期或丢失绑定只能标 `INSUFFICIENT_EVIDENCE`。这允许一个已区分双方的早期信号先改变下一轮研究设计，无须伪称终局 pair 已结算。`RETAIN` 仍须人工说明其相对简单基线和对立机制的诊断价值，并会拒绝 prediction、observation、mechanism、阈值、价格、估值、回报和交易字段。note ID 不可覆盖，故它只改变下一轮研究设计。没有这种可执行的下一轮变化，反馈只是一张结果卡，不得声称已形成判断能力；
+
+### 公司判断学习闭环（不依赖股价）
+
+每个冻结 episode 应是一条不可变的公司学习序列，而不是一笔等待终局回报的交易回测：
+
+```text
+T0：PIT 公司证据 + 四层 driver bridge + 中心路径/反方 + FJ/简单基线
+  -> T+6–12m：领先机制与经营信号结算
+  -> T+3–5y：终局经营、owner cash 与资本配置兑现结算
+  -> 追加 feedback：人工归因并改变下一次证据获取顺序
+```
+
+- 该路径的 purpose 是 `COMPANY_JUDGMENT_ONLY`：不要求价格、基准、投资动作或投资回报；市场隐含路径和投资回报继续作为单列市场轨，不能成为经营判断的真值或评分抵消项；
+- 同一 case 可以同时有早期与终局 FJ。早期结算只结算已到期 claim，未到期的 3–5 年 claim 保持 `PARTIAL / NOT_EVALUATED`，不得为等候终局而阻断早期反馈，也不得让未到期 claim 写入实际结果；每次结算 append-only，并通过 `settlement_series_id`、前序结算和阶段身份相连；
+- 每个被 FJ 引用的材料 driver 预注册 `monitoring_contract`：关联 FJ、metric/unit/basis/period、官方来源范围、窗口、可比性规则和后续 observation ID；资本配置事件另有结构化的 `realization_contract`，分别记录 6–12 月行为信号与 3–5 年经营兑现，不能用自由文本“兑现期”代替；
+- 反馈只比较冻结 FJ 与冻结简单基线的经营增量。复盘保留两条**正交轴**：研究设计失败位置为 `STATE_REPRESENTATION`、`MECHANISM`、`EVIDENCE_ACQUISITION`、`FINANCIAL_TRANSMISSION` 或 `VALUATION/DECISION`；企业经济链的失效位置为 `STATE`、`DECISION`、`MEASUREMENT`、`MECHANISM`、`TRANSMISSION` 或 `ENVIRONMENT`。前者说明下一次如何取证和建模，后者说明哪一段企业因果链未成立；两者不得互相替代。一次结算或同一公司多次结算都不增加独立样本数。
+
+退出补充：一个无价格、无投资决策的**真实 PIT 生产冻结** case 能以官方经营 observation 产生 `REVIEWABLE` 的早期结算与 feedback；至少一条结算后的人工 review 必须形成不改写历史的 `learning_note`。到期 claim 未结算、未来 claim 写入实际、缺 driver 监测合同、生产 writer 注入 model/D-id/price/value/return/action，或把回报作为经营真值时，验证必须拒绝。
+
+结算先报告 episode 覆盖数、可结算数、`UNRESOLVED`、反例和按公司/时期/机制的聚类；不得用 18 份相关公司—时点报告或 24 份总产物直接宣称经验概率。未预注册聚合规则时，同一公司多个时期的 episodes 只增加覆盖和反例，不增加经验概率分母；只有同机制、PIT、独立资格和结果事件均闭合、且公司聚类独立的案例，才可进入既有 `ELIGIBLE` 基准率分母。
 
 已有基准率 `CANDIDATE` 只在其原始披露日期、预测身份、结果事件和独立资格全部闭合后，按 Phase 05 契约进入 `ELIGIBLE`；不得为了填满样本而改写问题或结果。G1.5 的历史判断结算可用于学习机制，G5 仍须保留未参与规则形成的公司轴和时间轴 holdout。
 
-退出：历史 PIT 报告都有追加式结算或诚实 `UNRESOLVED`；行业综合可以区分“解释历史”“事前判断正确”和“尚未被结果验证”。
+退出：历史 PIT 报告都有追加式结算或诚实 `UNRESOLVED`；每项已结算判断都产生上述任务信息反馈；行业综合可以区分“解释历史”“事前判断正确”和“尚未被结果验证”。
 
 ### R4｜形成行业经验工厂
 

@@ -15,6 +15,7 @@ from typing import Any
 SCHEMA_VERSION = "insight-ledger.v1"
 POLICY_VERSION = "insight-policy.v1"
 READY_STATES = {"DECISION_READY", "MONITORING"}
+ANALYSIS_PURPOSES = {"INVESTMENT_DECISION", "COMPANY_JUDGMENT_ONLY"}
 ARCHETYPES = {
     "asset_catalyst", "distressed_survival", "franchise_customer_lockin",
     "technology_transition", "mature_cash_return", "compounder_reinvestment",
@@ -33,6 +34,19 @@ def _load(path: Path) -> dict[str, Any]:
     try: value = json.loads(path.read_text(encoding="utf-8"))
     except (OSError, json.JSONDecodeError): return {}
     return value if isinstance(value, dict) else {}
+
+
+def _analysis_purpose(payload: dict[str, Any], output_dir: str | Path | None = None) -> str:
+    """Keep legacy ledgers investment-scoped unless CJO is explicit in a contract."""
+    declared = str(payload.get("analysis_purpose") or "").strip()
+    if declared:
+        return declared
+    if output_dir is not None:
+        contract = _load(Path(output_dir) / "analysis_contract.json")
+        contract_purpose = str(contract.get("analysis_purpose") or "").strip()
+        if contract_purpose:
+            return contract_purpose
+    return "INVESTMENT_DECISION"
 
 
 def _canonical(payload: dict[str, Any]) -> dict[str, Any]:
@@ -256,9 +270,18 @@ def promote_reviewable_insight(output_dir: str | Path, *, report_text: str) -> d
     result["promoted"] = bool(result.get("written")); return result
 
 
-def initialize_insight_policy(output_dir: str | Path, *, run_id: str, enforced: bool) -> dict[str, Any]:
-    payload = {"schema_version": POLICY_VERSION, "run_id": str(run_id), "enforced": bool(enforced), "created_at": _now()}
-    path = Path(output_dir) / "insight_policy.json"; path.parent.mkdir(parents=True, exist_ok=True)
+def initialize_insight_policy(
+    output_dir: str | Path, *, run_id: str, enforced: bool,
+    analysis_purpose: str | None = None,
+) -> dict[str, Any]:
+    output = Path(output_dir)
+    payload = {
+        "schema_version": POLICY_VERSION, "run_id": str(run_id),
+        "enforced": bool(enforced),
+        "analysis_purpose": _analysis_purpose({"analysis_purpose": analysis_purpose}, output),
+        "created_at": _now(),
+    }
+    path = output / "insight_policy.json"; path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
     return payload
 
@@ -274,19 +297,23 @@ def build_insight_ledger(
     adversarial_review: dict[str, Any],
     memo: dict[str, Any],
     *, change_reason: str, freeze: bool = True,
+    analysis_purpose: str | None = None,
 ) -> dict[str, Any]:
     output = Path(output_dir); contract = _load(output / "analysis_contract.json")
+    purpose = str(analysis_purpose or contract.get("analysis_purpose") or "INVESTMENT_DECISION")
     payload: dict[str, Any] = {
         "schema_version": SCHEMA_VERSION,
         "report_id": str(contract.get("ts_code") or contract.get("code") or output.name),
         "revision": 1, "lifecycle": "decision_ready" if freeze else "reviewable",
+        "analysis_purpose": purpose,
         "archetype": str(archetype), "decisive_question": str(decisive_question).strip(),
         "question_basis": deepcopy(question_basis), "insights": deepcopy(insights),
-        "reverse_expectations": deepcopy(reverse_expectations),
-        "value_realization": deepcopy(value_realization),
         "adversarial_review": deepcopy(adversarial_review), "memo": deepcopy(memo),
         "change_reason": str(change_reason or "").strip(), "generated_at": _now(),
     }
+    if purpose == "INVESTMENT_DECISION":
+        payload["reverse_expectations"] = deepcopy(reverse_expectations)
+        payload["value_realization"] = deepcopy(value_realization)
     payload["freeze"] = {"frozen": bool(freeze), "fingerprint": insight_fingerprint(payload) if freeze else "", "frozen_at": _now() if freeze else None}
     return payload
 
@@ -319,32 +346,49 @@ def validate_rendered_memo(payload: dict[str, Any], memo_text: str, technical_fi
     insight binding and monitoring item must remain visible. The technical report is
     linked separately and remains the full evidence/derivation layer.
     """
+    analysis_purpose = _analysis_purpose(payload)
     required: list[tuple[str, Any]] = [
         ("decisive_question", payload.get("decisive_question")),
     ]
     for idx, insight in enumerate(payload.get("insights") or []):
-        for key in (
+        keys = (
             "title", "anomaly", "mechanism", "strongest_alternative",
-            "discriminating_observation", "falsification", "valuation_impact",
-            "action_impact", "insight_id", "claim_id", "evidence_ids",
-            "decision_entry_ids",
-        ):
+            "discriminating_observation", "falsification", "insight_id", "claim_id",
+            "evidence_ids",
+        )
+        if analysis_purpose == "COMPANY_JUDGMENT_ONLY":
+            keys += (
+                "operating_impact", "monitoring_or_forward_judgment",
+                "forward_judgment_ids",
+            )
+        else:
+            keys += ("valuation_impact", "action_impact", "decision_entry_ids")
+        for key in keys:
             required.append((f"insights[{idx}].{key}", insight.get(key)))
-    for section, keys in {
-        "reverse_expectations": (
-            "as_of", "current_price", "method", "implied_operating_path",
-            "assumptions", "conclusion", "flip_condition", "valuation_model_ids",
-        ),
-        "value_realization": (
-            "latent_value", "controller", "access_mechanism", "no_catalyst_value",
-            "failure_mode", "decision_entry_ids",
-        ),
+    sections = {
         "adversarial_review": (
             "strongest_case_against", "why_it_may_be_right", "unresolved",
-            "decision_if_true", "evidence_ids",
+            "judgment_if_true" if analysis_purpose == "COMPANY_JUDGMENT_ONLY" else "decision_if_true",
+            "evidence_ids",
         ),
-        "memo": ("executive_decision", "valuation_action", "monitoring"),
-    }.items():
+        "memo": (
+            "executive_judgment" if analysis_purpose == "COMPANY_JUDGMENT_ONLY" else "executive_decision",
+            "monitoring",
+        ),
+    }
+    if analysis_purpose != "COMPANY_JUDGMENT_ONLY":
+        sections.update({
+            "reverse_expectations": (
+                "as_of", "current_price", "method", "implied_operating_path",
+                "assumptions", "conclusion", "flip_condition", "valuation_model_ids",
+            ),
+            "value_realization": (
+                "latent_value", "controller", "access_mechanism", "no_catalyst_value",
+                "failure_mode", "decision_entry_ids",
+            ),
+        })
+        sections["memo"] += ("valuation_action",)
+    for section, keys in sections.items():
         value = payload.get(section) or {}
         for key in keys:
             required.append((f"{section}.{key}", value.get(key)))
@@ -378,6 +422,8 @@ def validate_rendered_memo(payload: dict[str, Any], memo_text: str, technical_fi
 def validate_insight_ledger(payload: dict[str, Any], *, output_dir: str | Path | None = None, report_text: str = "", enforced: bool = False) -> dict[str, Any]:
     invalid: list[str] = []; incomplete: list[str] = []; warnings: list[str] = []
     if payload.get("schema_version") != SCHEMA_VERSION: invalid.append("schema_version_invalid")
+    analysis_purpose = _analysis_purpose(payload, output_dir)
+    if analysis_purpose not in ANALYSIS_PURPOSES: invalid.append("analysis_purpose_invalid")
     if not str(payload.get("report_id") or "").strip(): invalid.append("report_id_missing")
     if payload.get("archetype") not in ARCHETYPES: invalid.append("archetype_invalid")
     question = str(payload.get("decisive_question") or "").strip()
@@ -387,15 +433,31 @@ def validate_insight_ledger(payload: dict[str, Any], *, output_dir: str | Path |
     claims = _load(output / "claim_evidence.json") if output is not None else {}
     decisions = _load(output / "decision_ledger.json") if output is not None else {}
     valuations = _load(output / "valuation_model.json") if output is not None else {}
+    thesis = _load(output / "thesis_test.json") if output is not None else {}
+    contract = _load(output / "analysis_contract.json") if output is not None else {}
+    policy = _load(output / "insight_policy.json") if output is not None else {}
+    contract_purpose = str(contract.get("analysis_purpose") or "").strip()
+    if contract_purpose in ANALYSIS_PURPOSES and analysis_purpose != contract_purpose:
+        invalid.append("analysis_purpose_contract_mismatch")
+    policy_purpose = str(policy.get("analysis_purpose") or "").strip()
+    if policy_purpose in ANALYSIS_PURPOSES and analysis_purpose != policy_purpose:
+        invalid.append("analysis_purpose_policy_mismatch")
+    claim_purpose = str(claims.get("analysis_purpose") or "").strip()
+    if claim_purpose in ANALYSIS_PURPOSES and analysis_purpose != claim_purpose:
+        invalid.append("analysis_purpose_claim_evidence_mismatch")
     claim_ids = _ids(claims.get("claims"), "claim_id")
     evidence_ids = {str(raw.get("evidence_id")) for claim in claims.get("claims") or [] if isinstance(claim, dict) for raw in claim.get("raw_facts") or [] if isinstance(raw, dict) and raw.get("evidence_id")}
     decision_ids = _ids([item for item in decisions.get("entries") or [] if isinstance(item, dict) and item.get("status", "active") == "active"], "entry_id")
     model_ids = _ids(valuations.get("models"), "model_id")
+    forward_judgment_ids = _ids(thesis.get("forward_judgments"), "judgment_id")
 
     basis = payload.get("question_basis")
     if not isinstance(basis, dict): invalid.append("question_basis_not_object"); basis = {}
-    for key in ("anomaly", "why_it_changes_the_decision"):
+    basis_reason = "why_it_changes_the_judgment" if analysis_purpose == "COMPANY_JUDGMENT_ONLY" else "why_it_changes_the_decision"
+    for key in ("anomaly", basis_reason):
         if not str(basis.get(key) or "").strip(): incomplete.append(f"question_basis:{key}_missing")
+    if analysis_purpose == "COMPANY_JUDGMENT_ONLY" and "why_it_changes_the_decision" in basis:
+        invalid.append("question_basis:company_judgment_cannot_carry_decision_reason")
     for eid in basis.get("evidence_ids") or []:
         if output is not None and str(eid) not in evidence_ids: invalid.append(f"question_basis:unknown_evidence:{eid}")
     decisive_policy = _load(output / "decisive_question_policy.json") if output is not None else {}
@@ -422,7 +484,12 @@ def validate_insight_ledger(payload: dict[str, Any], *, output_dir: str | Path |
     for idx, insight in enumerate(insights):
         if not isinstance(insight, dict): invalid.append(f"insights[{idx}]:not_object"); continue
         iid = str(insight.get("insight_id") or f"insights[{idx}]")
-        for key in ("title", "anomaly", "mechanism", "strongest_alternative", "discriminating_observation", "valuation_impact", "action_impact", "falsification"):
+        required_fields = ("title", "anomaly", "mechanism", "strongest_alternative", "discriminating_observation", "falsification")
+        if analysis_purpose == "COMPANY_JUDGMENT_ONLY":
+            required_fields += ("operating_impact", "monitoring_or_forward_judgment")
+        else:
+            required_fields += ("valuation_impact", "action_impact")
+        for key in required_fields:
             value = insight.get(key)
             if not _text(value).strip(): incomplete.append(f"{iid}:{key}_missing")
         mechanism = insight.get("mechanism")
@@ -433,10 +500,24 @@ def validate_insight_ledger(payload: dict[str, Any], *, output_dir: str | Path |
         if not refs: incomplete.append(f"{iid}:evidence_ids_missing")
         for eid in refs:
             if output is not None and str(eid) not in evidence_ids: invalid.append(f"{iid}:unknown_evidence:{eid}")
-        drefs = insight.get("decision_entry_ids") or []
-        if not drefs: incomplete.append(f"{iid}:decision_entry_ids_missing")
-        for did in drefs:
-            if output is not None and str(did) not in decision_ids: invalid.append(f"{iid}:unknown_decision_entry:{did}")
+        if analysis_purpose == "COMPANY_JUDGMENT_ONLY":
+            for forbidden in ("valuation_impact", "action_impact", "decision_entry_ids"):
+                if forbidden in insight:
+                    invalid.append(f"{iid}:company_judgment_cannot_carry_{forbidden}")
+            frefs = insight.get("forward_judgment_ids")
+            if not isinstance(frefs, list):
+                invalid.append(f"{iid}:forward_judgment_ids_invalid")
+                frefs = []
+            elif not frefs:
+                incomplete.append(f"{iid}:forward_judgment_ids_missing")
+            for fjid in frefs:
+                if output is not None and str(fjid) not in forward_judgment_ids:
+                    invalid.append(f"{iid}:unknown_forward_judgment:{fjid}")
+        else:
+            drefs = insight.get("decision_entry_ids") or []
+            if not drefs: incomplete.append(f"{iid}:decision_entry_ids_missing")
+            for did in drefs:
+                if output is not None and str(did) not in decision_ids: invalid.append(f"{iid}:unknown_decision_entry:{did}")
         terms = [str(x).strip() for x in insight.get("company_specific_terms") or [] if str(x).strip()]
         combined = _text(insight)
         if len(terms) < 2 or sum(term in combined for term in terms) < 2: incomplete.append(f"{iid}:company_specificity_missing")
@@ -445,35 +526,48 @@ def validate_insight_ledger(payload: dict[str, Any], *, output_dir: str | Path |
         elif enforced and not any(iid in _ANCHOR.findall(report_text) for _ in chapters):
             incomplete.append(f"{iid}:report_anchor_missing")
 
-    reverse = payload.get("reverse_expectations")
-    if not isinstance(reverse, dict): invalid.append("reverse_expectations_not_object"); reverse = {}
-    for key in ("as_of", "current_price", "method", "implied_operating_path", "assumptions", "conclusion", "flip_condition"):
-        if not _text(reverse.get(key)).strip(): incomplete.append(f"reverse_expectations:{key}_missing")
-    if str(reverse.get("method") or "").strip().lower() in {"pe", "pb", "low_pe", "low_pb"}: invalid.append("reverse_expectations:multiple_not_reverse_model")
-    for mid in reverse.get("valuation_model_ids") or []:
-        if output is not None and str(mid) not in model_ids: invalid.append(f"reverse_expectations:unknown_valuation_model:{mid}")
-    if not reverse.get("valuation_model_ids"): incomplete.append("reverse_expectations:valuation_model_ids_missing")
+    reverse = payload.get("reverse_expectations") if analysis_purpose != "COMPANY_JUDGMENT_ONLY" else {}
+    if analysis_purpose == "COMPANY_JUDGMENT_ONLY":
+        for forbidden in ("reverse_expectations", "value_realization"):
+            if forbidden in payload:
+                invalid.append(f"company_judgment_cannot_carry_{forbidden}")
+    else:
+        if not isinstance(reverse, dict): invalid.append("reverse_expectations_not_object"); reverse = {}
+        for key in ("as_of", "current_price", "method", "implied_operating_path", "assumptions", "conclusion", "flip_condition"):
+            if not _text(reverse.get(key)).strip(): incomplete.append(f"reverse_expectations:{key}_missing")
+        if str(reverse.get("method") or "").strip().lower() in {"pe", "pb", "low_pe", "low_pb"}: invalid.append("reverse_expectations:multiple_not_reverse_model")
+        for mid in reverse.get("valuation_model_ids") or []:
+            if output is not None and str(mid) not in model_ids: invalid.append(f"reverse_expectations:unknown_valuation_model:{mid}")
+        if not reverse.get("valuation_model_ids"): incomplete.append("reverse_expectations:valuation_model_ids_missing")
 
-    realization = payload.get("value_realization")
-    if not isinstance(realization, dict): invalid.append("value_realization_not_object"); realization = {}
-    for key in ("latent_value", "controller", "access_mechanism", "no_catalyst_value", "failure_mode"):
-        if not _text(realization.get(key)).strip(): incomplete.append(f"value_realization:{key}_missing")
-    if "catalyst_required" not in realization or not isinstance(realization.get("catalyst_required"), bool):
-        invalid.append("value_realization:catalyst_required_invalid")
-    for did in realization.get("decision_entry_ids") or []:
-        if output is not None and str(did) not in decision_ids: invalid.append(f"value_realization:unknown_decision_entry:{did}")
+        realization = payload.get("value_realization")
+        if not isinstance(realization, dict): invalid.append("value_realization_not_object"); realization = {}
+        for key in ("latent_value", "controller", "access_mechanism", "no_catalyst_value", "failure_mode"):
+            if not _text(realization.get(key)).strip(): incomplete.append(f"value_realization:{key}_missing")
+        if "catalyst_required" not in realization or not isinstance(realization.get("catalyst_required"), bool):
+            invalid.append("value_realization:catalyst_required_invalid")
+        for did in realization.get("decision_entry_ids") or []:
+            if output is not None and str(did) not in decision_ids: invalid.append(f"value_realization:unknown_decision_entry:{did}")
 
     adversarial = payload.get("adversarial_review")
     if not isinstance(adversarial, dict): invalid.append("adversarial_review_not_object"); adversarial = {}
-    for key in ("strongest_case_against", "why_it_may_be_right", "unresolved", "decision_if_true"):
+    adverse_consequence = "judgment_if_true" if analysis_purpose == "COMPANY_JUDGMENT_ONLY" else "decision_if_true"
+    for key in ("strongest_case_against", "why_it_may_be_right", "unresolved", adverse_consequence):
         if not _text(adversarial.get(key)).strip(): incomplete.append(f"adversarial_review:{key}_missing")
+    if analysis_purpose == "COMPANY_JUDGMENT_ONLY" and "decision_if_true" in adversarial:
+        invalid.append("adversarial_review:company_judgment_cannot_carry_decision_if_true")
     for eid in adversarial.get("evidence_ids") or []:
         if output is not None and str(eid) not in evidence_ids: invalid.append(f"adversarial_review:unknown_evidence:{eid}")
 
     memo = payload.get("memo")
     if not isinstance(memo, dict): invalid.append("memo_not_object"); memo = {}
-    for key in ("executive_decision", "valuation_action", "monitoring"):
+    memo_required = ("executive_judgment", "monitoring") if analysis_purpose == "COMPANY_JUDGMENT_ONLY" else ("executive_decision", "valuation_action", "monitoring")
+    for key in memo_required:
         if not _text(memo.get(key)).strip(): incomplete.append(f"memo:{key}_missing")
+    if analysis_purpose == "COMPANY_JUDGMENT_ONLY":
+        for forbidden in ("executive_decision", "valuation_action", "price_rule_exception_basis"):
+            if forbidden in memo:
+                invalid.append(f"memo:company_judgment_cannot_carry_{forbidden}")
     all_text = _text(payload)
     if _PRICE_STOP.search(all_text) and not str(memo.get("price_rule_exception_basis") or "").strip(): invalid.append("price_only_stop_rule")
     if _FULLY_PRICED.search(all_text) and (not _text(reverse.get("implied_operating_path")).strip() or not _text(reverse.get("assumptions")).strip()): invalid.append("priced_risk_without_reverse_expectations")
@@ -487,7 +581,7 @@ def validate_insight_ledger(payload: dict[str, Any], *, output_dir: str | Path |
     if freeze.get("frozen") and freeze.get("fingerprint") != insight_fingerprint(payload): invalid.append("freeze_fingerprint_mismatch")
     invalid = list(dict.fromkeys(invalid)); incomplete = list(dict.fromkeys(incomplete))
     state = "INVALID" if invalid else "INCOMPLETE" if incomplete else "MONITORING" if payload.get("lifecycle") == "monitoring" else "DECISION_READY" if freeze.get("frozen") else "REVIEWABLE"
-    return {"schema_version": "insight-validation.v1", "state": state, "status": "FAIL" if state in {"INVALID", "INCOMPLETE"} else "PASS", "invalid_findings": invalid, "incomplete_findings": incomplete, "warnings": warnings, "insight_count": len(insights)}
+    return {"schema_version": "insight-validation.v1", "state": state, "status": "FAIL" if state in {"INVALID", "INCOMPLETE"} else "PASS", "invalid_findings": invalid, "incomplete_findings": incomplete, "warnings": warnings, "insight_count": len(insights), "analysis_purpose": analysis_purpose}
 
 
 def evaluate_output_insight(output_dir: str | Path, *, report_text: str = "", persist: bool = True) -> dict[str, Any]:
@@ -543,6 +637,8 @@ def persist_insight_ledger(output_dir: str | Path, payload: dict[str, Any], *, r
 
 
 def render_investment_memo(payload: dict[str, Any], company_name: str, ts_code: str, technical_filename: str) -> str:
+    if _analysis_purpose(payload) == "COMPANY_JUDGMENT_ONLY":
+        return render_company_judgment_memo(payload, company_name, ts_code, technical_filename)
     insights = payload.get("insights") or []
     reverse = payload.get("reverse_expectations") or {}
     realization = payload.get("value_realization") or {}
@@ -596,5 +692,54 @@ def render_investment_memo(payload: dict[str, Any], company_name: str, ts_code: 
         "## 监控清单", "",
     ]
     lines += [f"- {_inline(item)}" for item in (memo.get("monitoring") if isinstance(memo.get("monitoring"), list) else [memo.get("monitoring")]) if _inline(item)]
+    lines += ["", "## 技术附录", "", f"[{technical_filename}]({technical_filename})", ""]
+    return "\n".join(lines)
+
+
+def render_company_judgment_memo(
+    payload: dict[str, Any], company_name: str, ts_code: str, technical_filename: str,
+) -> str:
+    """Render the company-learning layer without smuggling in an investment conclusion."""
+    insights = payload.get("insights") or []
+    adversarial = payload.get("adversarial_review") or {}
+    memo = payload.get("memo") or {}
+    lines = [
+        f"# {company_name} ({ts_code}) 公司判断备忘录", "",
+        "> 仅冻结事实、机制、经营传导和后续可结算判断；不包含价格、估值、回报、仓位或交易动作。", "",
+        "## 当前公司判断", "", _inline(memo.get("executive_judgment")) + "。", "",
+        "## 首要判断问题", "", _inline(payload.get("decisive_question")), "",
+        "## 关键机制洞见", "",
+    ]
+    for item in insights:
+        iid = str(item.get("insight_id") or "")
+        bindings = [iid, _inline(item.get("claim_id"))]
+        bindings += [_inline(x) for x in item.get("evidence_ids") or []]
+        bindings += [_inline(x) for x in item.get("forward_judgment_ids") or []]
+        lines += [
+            f"### {_inline(item.get('title')) or iid} [insight: {iid}]", "",
+            f"- **观察**：{_inline(item.get('anomaly'))}",
+            "- **机制**：" + " → ".join(_inline(x) for x in item.get("mechanism") or []),
+            f"- **竞争解释**：{_inline(item.get('strongest_alternative'))}",
+            f"- **判别观察**：{_inline(item.get('discriminating_observation'))}",
+            f"- **经营传导**：{_inline(item.get('operating_impact'))}",
+            f"- **监控 / 前瞻判断**：{_inline(item.get('monitoring_or_forward_judgment'))}",
+            f"- **证伪条件**：{_inline(item.get('falsification'))}",
+            f"- **绑定**：{' / '.join(x for x in bindings if x)}", "",
+        ]
+    lines += [
+        "## 最强反方", "",
+        f"- **反方论点**：{_inline(adversarial.get('strongest_case_against'))}",
+        f"- **为何可能成立**：{_inline(adversarial.get('why_it_may_be_right'))}",
+        f"- **尚未解决**：{_inline(adversarial.get('unresolved'))}",
+        f"- **若成立的公司判断**：{_inline(adversarial.get('judgment_if_true'))}",
+        f"- **证据绑定**：{' / '.join(_inline(x) for x in adversarial.get('evidence_ids') or [])}", "",
+        "## 监控清单", "",
+    ]
+    monitoring = memo.get("monitoring")
+    lines += [
+        f"- {_inline(item)}"
+        for item in (monitoring if isinstance(monitoring, list) else [monitoring])
+        if _inline(item)
+    ]
     lines += ["", "## 技术附录", "", f"[{technical_filename}]({technical_filename})", ""]
     return "\n".join(lines)
