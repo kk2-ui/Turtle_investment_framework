@@ -16,6 +16,20 @@ assert SPEC and SPEC.loader
 jfc = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(jfc)
 
+# Most tests below exercise ordering and state derivation in isolation.  They
+# intentionally bypass the public API's lower-module boundary, which is
+# covered separately by the adapter integration tests and the direct-forgery
+# regression below.  Keeping this escape private to the test module prevents
+# the production API from regressing into a hand-entered settlement channel.
+_PUBLIC_APPEND_EVENT = jfc.append_event
+
+
+def _append_transition(conn, event: dict):
+    return jfc._append_event(conn, event, allow_adapter_events=True)
+
+
+jfc.append_event = _append_transition
+
 
 def _artifact(tmp_path: Path, name: str) -> str:
     path = tmp_path / name
@@ -223,12 +237,39 @@ def test_learning_application_requires_real_cross_company_change_and_reviewer(tm
             "reviewer_id": "reviewer-c", "reviewer_receipt_ref": _artifact(tmp_path, "reviewer_receipt.json"),
             "reviewer_acceptance": "ACCEPTED",
         }))
+
+    unrelated_manifest = _manifest(tmp_path, selection=True)
+    unrelated_manifest["episode_id"] = "R-UNRELATED"
+    unrelated_manifest["company_id"] = "CN:UNRELATED"
+    jfc.register_manifest(conn, unrelated_manifest)
+    unrelated = "FBI:R-UNRELATED:FJ:DEMAND:S1_DECISION"
+    for event_type, key in (("ACQUISITION_STARTED", "unrelated-a"), ("OUTCOME_PACKAGE_READY", "unrelated-p"), ("READ_ATTESTED", "unrelated-r"), ("OUTCOME_EXTRACTED", "unrelated-x")):
+        jfc.append_event(conn, _event(unrelated, event_type, "2026-04-02T00:00:00+08:00", key=key))
+    jfc.append_event(conn, _event(unrelated, "CLAIM_SETTLED", "2026-04-02T00:00:00+08:00", key="unrelated-settle", payload={"settlement_verdict": "A_ONLY"}))
+    with pytest.raises(jfc.ControlPlaneError, match="intended target"):
+        jfc.append_event(conn, _event(s1, "REPLICATION_ACCEPTED", "2026-04-03T00:00:00+08:00", key="unrelated-replication", payload={
+            "learning_application_event_id": "EVT:applied", "replication_settlement_event_id": "EVT:unrelated-settle",
+            "reviewer_id": "reviewer-c", "reviewer_receipt_ref": _artifact(tmp_path, "unrelated_reviewer_receipt.json"),
+            "reviewer_acceptance": "ACCEPTED",
+        }))
+
     target_manifest = _manifest(tmp_path, selection=True)
     target_manifest["episode_id"] = "R-TEST-02"
     target_manifest["company_id"] = "CN:OTHER"
+    target_manifest["claims"][0]["stages"][1]["eligible_at"] = "2026-04-01T00:00:00+08:00"
     jfc.register_manifest(conn, target_manifest)
     target = "FBI:R-TEST-02:FJ:DEMAND:S1_DECISION"
     for event_type, key in (("ACQUISITION_STARTED", "other-a"), ("OUTCOME_PACKAGE_READY", "other-p"), ("READ_ATTESTED", "other-r"), ("OUTCOME_EXTRACTED", "other-x")):
+        jfc.append_event(conn, _event(target, event_type, "2026-04-02T00:00:00+08:00", key=key))
+    jfc.append_event(conn, _event(target, "MEASUREMENT_MISMATCH", "2026-04-02T00:00:00+08:00", key="other-mismatch"))
+    with pytest.raises(jfc.ControlPlaneError, match="real settled target claim"):
+        jfc.append_event(conn, _event(s1, "REPLICATION_ACCEPTED", "2026-04-03T00:00:00+08:00", key="mismatch-replication", payload={
+            "learning_application_event_id": "EVT:applied", "replication_settlement_event_id": "EVT:other-mismatch",
+            "reviewer_id": "reviewer-c", "reviewer_receipt_ref": _artifact(tmp_path, "mismatch_reviewer_receipt.json"),
+            "reviewer_acceptance": "ACCEPTED",
+        }))
+    target = "FBI:R-TEST-02:FJ:DEMAND:S2_UNIT_ECONOMICS"
+    for event_type, key in (("ACQUISITION_STARTED", "other2-a"), ("OUTCOME_PACKAGE_READY", "other2-p"), ("READ_ATTESTED", "other2-r"), ("OUTCOME_EXTRACTED", "other2-x")):
         jfc.append_event(conn, _event(target, event_type, "2026-04-02T00:00:00+08:00", key=key))
     jfc.append_event(conn, _event(target, "CLAIM_SETTLED", "2026-04-02T00:00:00+08:00", key="other-settle", payload={"settlement_verdict": "A_ONLY"}))
     jfc.append_event(conn, _event(s1, "REPLICATION_ACCEPTED", "2026-04-03T00:00:00+08:00", key="real-replication", payload={
@@ -461,13 +502,11 @@ def test_missing_lower_artifact_cannot_advance_a_due_claim(tmp_path: Path) -> No
         })
 
 
-def test_generic_cli_cannot_forge_an_outcome_pipeline_event(tmp_path: Path) -> None:
+def test_public_api_cannot_forge_an_outcome_pipeline_event(tmp_path: Path) -> None:
     conn, item, _ = _registered(tmp_path)
-    conn.close()
-    event_path = tmp_path / "forged_outcome_event.json"
-    event_path.write_text(json.dumps(_event(item, "ACQUISITION_STARTED", "2026-04-01T00:00:00+08:00", key="forged")), encoding="utf-8")
+    forged = _event(item, "ACQUISITION_STARTED", "2026-04-01T00:00:00+08:00", key="forged")
     with pytest.raises(jfc.ControlPlaneError, match="lower-module adapter"):
-        jfc._command_append(argparse.Namespace(db=str(tmp_path / "stock_analysis.db"), input=str(event_path), recorded_at=None))
+        _PUBLIC_APPEND_EVENT(conn, forged)
 
 
 def test_real_lower_acquisition_failure_stays_blocked_at_p1(tmp_path: Path) -> None:
@@ -486,6 +525,198 @@ def test_real_lower_acquisition_failure_stays_blocked_at_p1(tmp_path: Path) -> N
     assert states["evidence_state"] == "BLOCKED"
     priorities = {row["feedback_item_id"]: row["priority"] for row in jfc.reconcile(conn, as_of="2027-01-15T12:00:00-08:00")["items"]}
     assert priorities[item] == "P1"
+
+
+def test_legacy_live_forward_rows_are_backfilled_from_their_frozen_contracts(tmp_path: Path) -> None:
+    """An upgraded control-plane DB must not re-register old rows as a new identity."""
+    db_path = tmp_path / "legacy-control-plane.db"
+    conn = jfc.connect(db_path)
+    conn.executescript(
+        """
+        CREATE TABLE judgment_feedback_claims (
+          feedback_item_id TEXT PRIMARY KEY,
+          episode_id TEXT NOT NULL,
+          claim_id TEXT NOT NULL,
+          stage_id TEXT NOT NULL,
+          company_id TEXT NOT NULL,
+          source_kind TEXT NOT NULL,
+          source_ref TEXT NOT NULL,
+          frozen_at TEXT NOT NULL,
+          eligible_at TEXT NOT NULL,
+          overdue_at TEXT,
+          settlement_version_policy TEXT NOT NULL,
+          frozen_artifact_ref TEXT NOT NULL,
+          source_contract_ref TEXT NOT NULL,
+          measurement_contract_ref TEXT NOT NULL,
+          registered_at TEXT NOT NULL,
+          UNIQUE (episode_id, claim_id, stage_id)
+        );
+        """
+    )
+    contract_paths = [
+        REPO_ROOT / "docs" / "development" / "research" / "experiments" / name / "08_outcome_acquisition_contract.json"
+        for name in (
+            "R-05_prospective_operating_feedback",
+            "R-06_prospective_retail_feedback",
+            "R-54_midea_core_growth_20260430",
+        )
+    ]
+    manifests = [
+        jfc.live_forward_registration_manifest(json.loads(path.read_text(encoding="utf-8")), contract_path=path)
+        for path in contract_paths
+    ]
+    legacy_columns = (
+        "feedback_item_id", "episode_id", "claim_id", "stage_id", "company_id", "source_kind", "source_ref",
+        "frozen_at", "eligible_at", "overdue_at", "settlement_version_policy", "frozen_artifact_ref",
+        "source_contract_ref", "measurement_contract_ref", "registered_at",
+    )
+    for manifest in manifests:
+        for item in jfc._expand_manifest(manifest):
+            row = jfc._claim_fields(item, manifest=manifest, registered_at="2026-08-22T12:00:00+08:00")
+            placeholders = ", ".join("?" for _ in legacy_columns)
+            conn.execute(
+                f"INSERT INTO judgment_feedback_claims ({', '.join(legacy_columns)}) VALUES ({placeholders})",
+                tuple(row[column] for column in legacy_columns),
+            )
+    conn.commit()
+
+    jfc.initialize(conn)
+    assert conn.execute("SELECT COUNT(*) FROM judgment_feedback_claims").fetchone()[0] == 9
+    r54 = conn.execute(
+        """SELECT episode_class, selection_status, learning_eligibility
+           FROM judgment_feedback_claims WHERE feedback_item_id = ?""",
+        ("FBI:R-54:MIDEA:CORE_GROWTH_COMPLEXITY:20260430:R54-S3:WORKING_CAPITAL_CASH",),
+    ).fetchone()
+    assert tuple(r54) == ("MECHANISM_SIGNAL_PROBE", "NO_PRIMARY", "MECHANISM_SETTLEMENT_ONLY")
+
+    synced = [jfc.register_live_forward_contract(conn, contract_path=path) for path in contract_paths]
+    assert all(all(row["idempotent"] for row in result["registered"]) for result in synced)
+    assert conn.execute("SELECT COUNT(*) FROM judgment_feedback_claims").fetchone()[0] == 9
+
+
+def test_acquisition_retry_keeps_a_new_successful_receipt(tmp_path: Path) -> None:
+    """A transient package failure must not make attempt two reuse BLOCKED JSON."""
+    contract_path = REPO_ROOT / "docs" / "development" / "research" / "experiments" / "R-05_prospective_operating_feedback" / "08_outcome_acquisition_contract.json"
+    contract = json.loads(contract_path.read_text(encoding="utf-8"))
+    conn = _conn(tmp_path)
+    jfc.register_live_forward_contract(conn, contract_path=contract_path, registered_at="2026-08-22T12:00:00+08:00")
+    item = "FBI:R-05:SBUX:NA_TRANSACTION_DURABILITY:20260821:R05-S1:EARLY_MECHANISM"
+    source_id = "IR:SBUX:FY2027Q1"
+    inventory = {
+        "schema_version": "turtle-post-cutoff-outcome-package.v1",
+        "outcome_package_id": "OUTPKG:R05:S1:RETRY",
+        "case_id": contract["case_id"], "freeze_id": contract["report_freeze"]["freeze_id"],
+        "frozen_cutoff": contract["simulation_cutoff"],
+        "enumeration": {"status": "COMPLETE", "query_identity": "issuer FY2027 Q1 result archive", "source_ids": [source_id]},
+        "inventory": [{
+            "source_id": source_id, "source_type": "OTHER_OFFICIAL", "official": True,
+            "published_at": "2027-01-10T09:00:00-08:00", "source_version": "original-release-v1",
+            "data_as_of": "2027-01-01", "revision_policy": "ORIGINAL_VINTAGE",
+            "acquisition_kind": "OFFICIAL_WEB_RELEASE", "content_format": "HTML",
+            "url": "https://investor.starbucks.com/fy2027q1", "release_id": "FY2027Q1",
+            "publisher_name": "Starbucks Investor Relations", "official_publisher_domain": "investor.starbucks.com",
+            "candidate_claim_ids": ["R05-S1"],
+        }],
+        "selected_source_ids": [source_id], "source_package_status": "INCOMPLETE",
+    }
+    inventory_path = tmp_path / "bounded_inventory.json"
+    inventory_path.write_text(json.dumps(inventory), encoding="utf-8")
+    package_root, event_root = tmp_path / "outcome_package", tmp_path / "events"
+    as_of = "2027-01-15T12:00:00-08:00"
+
+    malformed_path = tmp_path / "not-yet-published.json"
+    malformed_path.write_text("{}\n", encoding="utf-8")
+    first = jfc.run_outcome_acquisition(
+        conn, feedback_item_id=item, outcome_manifest_ref=malformed_path, package_root=package_root,
+        event_root=event_root, settlement_as_of=as_of,
+    )
+    assert first["status"] == "BLOCKED"
+
+    second = jfc.run_outcome_acquisition(
+        conn, feedback_item_id=item, outcome_manifest_ref=inventory_path, package_root=package_root,
+        event_root=event_root, settlement_as_of=as_of,
+        downloader=lambda _: b"<html>Q1 Fiscal Year 2027 North America Change in Transactions 1</html>",
+    )
+    assert second["status"] == "PACKAGE_READY"
+    assert second["package_manifest_ref"] != first["receipt_ref"]
+    assert "/attempt-02/" in second["package_manifest_ref"].replace("\\", "/")
+    assert json.loads(Path(second["package_manifest_ref"]).read_text(encoding="utf-8"))["source_package_status"] == "COMPLETE"
+    attestation = jfc.record_reader_attestation(
+        conn, feedback_item_id=item, package_manifest_ref=second["package_manifest_ref"], package_root=package_root,
+        event_root=event_root, settlement_as_of=as_of,
+    )
+    assert attestation["status"] == "READ_ATTESTED"
+
+
+def test_r54_cash_clock_records_an_operating_outcome_without_selection_learning(tmp_path: Path) -> None:
+    """Cash is a real feedback clock even when it is not an A/B signal."""
+    contract_path = REPO_ROOT / "docs" / "development" / "research" / "experiments" / "R-54_midea_core_growth_20260430" / "08_outcome_acquisition_contract.json"
+    contract = json.loads(contract_path.read_text(encoding="utf-8"))
+    conn = _conn(tmp_path)
+    jfc.register_live_forward_contract(conn, contract_path=contract_path, registered_at="2026-08-22T12:00:00+08:00")
+    item = "FBI:R-54:MIDEA:CORE_GROWTH_COMPLEXITY:20260430:R54-S3:WORKING_CAPITAL_CASH"
+    source_id = "CNINFO:R54:2026H1"
+    source_manifest = {
+        "schema_version": "turtle-post-cutoff-outcome-package.v1",
+        "outcome_package_id": "OUTPKG:R54:S3:TEST",
+        "case_id": contract["case_id"], "freeze_id": contract["report_freeze"]["freeze_id"],
+        "frozen_cutoff": contract["simulation_cutoff"],
+        "enumeration": {"status": "COMPLETE", "query_identity": "美的 2026H1 官方报告", "source_ids": [source_id]},
+        "inventory": [{
+            "source_id": source_id, "source_type": "INTERIM_REPORT", "official": True,
+            "published_at": "2026-08-23T10:00:00+08:00", "source_version": "original-release-v1",
+            "data_as_of": "2026-06-30", "revision_policy": "ORIGINAL_VINTAGE",
+            "acquisition_kind": "OFFICIAL_WEB_RELEASE", "content_format": "HTML",
+            "url": "https://static.cninfo.com.cn/midea-2026h1", "release_id": "MIDEA-2026H1",
+            "publisher_name": "美的集团", "official_publisher_domain": "static.cninfo.com.cn",
+            "candidate_claim_ids": ["R54-S3"],
+        }],
+        "selected_source_ids": [source_id], "source_package_status": "INCOMPLETE",
+    }
+    inventory_path = tmp_path / "midea_inventory.json"
+    inventory_path.write_text(json.dumps(source_manifest), encoding="utf-8")
+    package_root, event_root = tmp_path / "midea_package", tmp_path / "midea_events"
+    as_of = "2026-08-24T12:00:00+08:00"
+    acquired = jfc.run_outcome_acquisition(
+        conn, feedback_item_id=item, outcome_manifest_ref=inventory_path, package_root=package_root,
+        event_root=event_root, settlement_as_of=as_of,
+        downloader=lambda _: "<html>2026 年 1—6 月 经营活动产生的现金流量净额 123</html>".encode("utf-8"),
+    )
+    read = jfc.record_reader_attestation(
+        conn, feedback_item_id=item, package_manifest_ref=acquired["package_manifest_ref"], package_root=package_root,
+        event_root=event_root, settlement_as_of=as_of,
+    )
+    outcome = contract["calibration_ledger"]["claims"][3]["observable_outcome"]
+    extraction = {
+        "schema_version": "turtle-post-cutoff-outcome-extraction.v1", "outcome_package_id": source_manifest["outcome_package_id"],
+        "case_id": contract["case_id"], "freeze_id": contract["report_freeze"]["freeze_id"], "settlement_as_of": as_of,
+        "observations": [{
+            "observation_id": "OBS:R54:S3:TEST", "claim_id": "R54-S3", "metric": outcome["metric"], "value": 123,
+            "unit": outcome["unit"], "measurement_basis": outcome["measurement_basis"],
+            "measurement_period": outcome["measurement_period"], "source_ids": [source_id], "comparability_status": "COMPARABLE",
+            "reported_file_scope": "美的集团 2026 年半年度报告全文", "reported_label": "经营活动产生的现金流量净额",
+            "reported_locator": "主要会计数据和财务指标 / 合并现金流量表", "reported_period_text": "2026 年 1—6 月",
+            "reported_text": "2026 年 1—6 月 经营活动产生的现金流量净额 123", "reported_value_text": "123",
+        }],
+    }
+    extraction_path = tmp_path / "midea_extraction.json"
+    extraction_path.write_text(json.dumps(extraction), encoding="utf-8")
+    jfc.record_outcome_extraction(
+        conn, feedback_item_id=item, package_manifest_ref=acquired["package_manifest_ref"], package_root=package_root,
+        read_attestation_ref=read["read_attestation_ref"], extraction_ref=extraction_path, settlement_as_of=as_of,
+    )
+    exposure = _artifact(tmp_path, "unused-exposure.json")
+    result = jfc.run_signal_settlement(
+        conn, feedback_item_id=item, package_manifest_ref=acquired["package_manifest_ref"], package_root=package_root,
+        read_attestation_ref=read["read_attestation_ref"], exposure_attestation_ref=exposure,
+        extraction_ref=extraction_path, settlement_id="R54-S3-TEST", settlement_as_of=as_of, event_root=event_root,
+    )
+    assert result["status"] == "OPERATING_OUTCOME_RECORDED"
+    state = jfc.show(conn, item, as_of=as_of)["states"]
+    assert state["settlement_state"] == "NOT_DIAGNOSTIC"
+    assert state["learning_state"] == "NONE"
+    priorities = {row["feedback_item_id"]: row["priority"] for row in jfc.reconcile(conn, as_of=as_of)["items"]}
+    assert priorities[item] == "DONE"
 
 
 def test_cjo_entry_surfaces_the_configured_persistent_control_plane_inbox(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:

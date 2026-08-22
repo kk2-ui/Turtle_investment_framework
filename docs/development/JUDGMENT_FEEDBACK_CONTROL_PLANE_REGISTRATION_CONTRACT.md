@@ -51,6 +51,7 @@
 
 - 采集、结果包、读取证明、提取和结算必须按顺序发生，且不得早于 `eligible_at`；
 - `INITIAL_DISCLOSURE` 只允许一次结算；`LATEST_OFFICIAL_AS_OF_EVALUATION` 要求连续版本和前一事件引用；
+- 决策实施、营运资本/现金和资本回报等非 A/B 时钟也必须完成结果包、读取和 extraction；它们以 `OPERATING_OUTCOME_RECORDED` 结束为 `NOT_DIAGNOSTIC`，不得伪装成选择胜负；
 - `NOT_DIAGNOSTIC` 与 `MEASUREMENT_MISMATCH` 不得创建方法学习；
 - 诊断必须同时记录认识论位置（`STATE` 至 `ENVIRONMENT`）和生产根因（`DATA_COVERAGE` 至 `WRITING`），两轴不混用；
 - `METHOD_TRANSFER` 只能指向不同公司，且必须记录目标冻结工件、实际改变字段、改变前后含义、目标作者与独立 reviewer；
@@ -66,8 +67,15 @@ R05/R06、`outcome_acquisition.py`、`live_forward_signal_settlement.py` 与
 机械结算或 learning receipt 后追加；采集失败则显式留在 `BLOCKED/P1`。不能再用
 `artifact:fixture` 或事件名称伪造推进。
 
-`append-event` 只保留给已审阅的诊断、learning application 与关闭事件；采集、
-读取、提取、曝光和结算事件必须经相应下层模块适配器写入。
+公开 `append_event`/`append-event` 只保留给已审阅的诊断、learning application
+与关闭事件；采集、读取、提取、非方向性经营完成和结算事件必须经相应下层模块
+适配器写入，并在核心 transition 处回验实际 receipt，而不只检查文件存在。
+同一 settlement version 的失败重试拥有独立 acquisition attempt receipt，不能复用
+先前的 `BLOCKED` 包。
+
+开发期旧数据库新增身份列后，初始化会从已冻结 outcome contract 回填 episode
+identity；不会把 `NO_PRIMARY` 机制探针升级为选择样本，也不会因为默认值与重新扫描
+发生登记冲突。
 
 这不等于已经验证了真实中国企业选择判断：R54 是 `NO_PRIMARY` 的机制探针，
 只能完成机制结算，不能进入选择准确性、方法学习或跨案例复制。只有未来具备
