@@ -221,9 +221,13 @@ def settle_live_forward_signals(
             "nonclaim_exposure_descriptions": list(exposure_attestation.get("nonclaim_exposure_descriptions") or []),
         },
         "learning_eligibility": (
-            "ELIGIBLE"
-            if exposure_attestation.get("status") == NO_NONCLAIM_RESULT_EXPOSURE
-            else "OUTCOME_EXPOSED_TRAINING_ONLY"
+            "MECHANISM_SETTLEMENT_ONLY"
+            if str(pair.get("selection_status") or "NO_PRIMARY").upper() != "SELECTION_ADMITTED"
+            else (
+                "ELIGIBLE"
+                if exposure_attestation.get("status") == NO_NONCLAIM_RESULT_EXPOSURE
+                else "OUTCOME_EXPOSED_TRAINING_ONLY"
+            )
         ),
         "pair_settlement": {
             "pair_id": pair.get("pair_id"), "selection_status": pair.get("selection_status"),
@@ -237,22 +241,24 @@ def settle_live_forward_signals(
 def build_live_forward_judgment_feedback(settlement: dict[str, Any]) -> dict[str, Any]:
     """Project an immutable, derived signal settlement into learning input.
 
-    The feedback deliberately marks the baseline as non-discriminating and
-    the selection status as ``NO_PRIMARY``.  It permits learning about signal
-    design, not a claim that the researcher selected the correct company path.
+    The feedback preserves the frozen selection status.  A ``NO_PRIMARY``
+    signal probe can improve an evidence contract but is never selection or
+    method-learning evidence.
     """
     if settlement.get("schema_version") != SETTLEMENT_SCHEMA_VERSION or settlement.get("state") != "REVIEWABLE":
         raise ValueError("live forward settlement is not reviewable")
-    if settlement.get("learning_eligibility") == "OUTCOME_EXPOSED_TRAINING_ONLY":
+    if settlement.get("learning_eligibility") in {"OUTCOME_EXPOSED_TRAINING_ONLY", "MECHANISM_SETTLEMENT_ONLY"}:
         return {
             "schema_version": FEEDBACK_SCHEMA_VERSION, "case_id": settlement.get("case_id"),
             "freeze_id": settlement.get("freeze_id"), "settlement_id": settlement.get("settlement_id"),
             "experiment_id": settlement.get("experiment_id"), "company_cluster_id": settlement.get("company_cluster_id"),
-            "state": "OUTCOME_EXPOSED_TRAINING_ONLY",
+            "state": settlement.get("learning_eligibility"),
             "outcome_exposure": settlement.get("outcome_exposure"),
+            "pair_settlement": settlement.get("pair_settlement"),
             "cards": [],
         }
     pair = settlement.get("pair_settlement") if isinstance(settlement.get("pair_settlement"), dict) else {}
+    selection_status = str(pair.get("selection_status") or "NO_PRIMARY").upper()
     cards: list[dict[str, Any]] = []
     for item in settlement.get("claim_settlements") or []:
         if not isinstance(item, dict):
@@ -263,13 +269,15 @@ def build_live_forward_judgment_feedback(settlement: dict[str, Any]) -> dict[str
             "pair_id": pair.get("pair_id"), "signal_id": item.get("signal_id"),
             "signal_stage": item.get("stage"), "signal_verdict": verdict,
             "pair_verdict": pair.get("verdict"),
-            "selection_status": "NO_PRIMARY",
+            "selection_status": selection_status,
         }
         cards.append({
             "claim_id": item.get("claim_id"), "forward_judgment_id": item.get("signal_id"),
             "settlement_status": item.get("status"),
             "judgment_outcome": {"status": verdict},
-            "increment_vs_baseline": "BASELINE_NONDISCRIMINATING",
+            "increment_vs_baseline": (
+                "BASELINE_NONDISCRIMATING" if selection_status != "SELECTION_ADMITTED" else "SELECTION_COMPARISON_PENDING"
+            ),
             "rival_hypothesis_feedback": derived,
         })
     return {

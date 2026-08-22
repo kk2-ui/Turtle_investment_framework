@@ -291,11 +291,21 @@ def _surface_live_forward_due_inbox() -> dict[str, Any]:
     """
     try:
         from scripts.judgment_feedback_control import connect, initialize, reconcile, sync_live_forward_contracts
+        from scripts.config import get_db_path
     except ModuleNotFoundError:
         from judgment_feedback_control import connect, initialize, reconcile, sync_live_forward_contracts
+        from config import get_db_path
     contract_root = Path(_FRAMEWORK_DIR) / "docs" / "development" / "research" / "experiments"
     as_of = datetime.now().astimezone().replace(microsecond=0).isoformat()
-    conn = connect(Path(_FRAMEWORK_DIR) / "stock_analysis.db")
+    db_path = Path(get_db_path())
+    if not db_path.is_file():
+        result = {
+            "status": "BLOCKED", "code": "judgment_feedback_database_missing", "db_path": str(db_path),
+            "remediation": "initialize the configured production database explicitly; CJO entry will not create a worktree-local database",
+        }
+        print(f"[Judgment feedback inbox] BLOCKED: configured database is missing: {db_path}")
+        return result
+    conn = connect(db_path)
     try:
         initialize(conn)
         sync = sync_live_forward_contracts(conn, contract_root=contract_root, registered_at=as_of)
@@ -319,7 +329,7 @@ def _surface_live_forward_due_inbox() -> dict[str, Any]:
         print(
             "  ↪ "
             f"{item.get('time_state')}: {item.get('episode_id')} / {item.get('claim_id')} / {item.get('stage_id')} "
-            "→ enumerate_and_acquire_frozen_result_sources"
+            "→ run_outcome_acquisition with a bounded frozen outcome-source manifest"
         )
     return {"sync": sync, "inbox": inbox}
 

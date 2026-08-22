@@ -104,7 +104,7 @@ def _materialize(contract: dict, *, values: tuple[float, ...]) -> tuple[dict, Pa
     return manifest, root, attestation, extraction
 
 
-def test_frozen_live_forward_pair_is_derived_from_read_extraction_and_can_feed_learning() -> None:
+def test_frozen_live_forward_pair_is_derived_from_read_extraction_but_no_primary_cannot_feed_method_learning() -> None:
     for path in CONTRACTS:
         contract = _contract(path)
         assert validate_live_forward_outcome_contract(contract)["state"] == "REVIEWABLE"
@@ -118,27 +118,14 @@ def test_frozen_live_forward_pair_is_derived_from_read_extraction_and_can_feed_l
                 settlement_as_of=extraction["settlement_as_of"],
             )
             assert result["state"] == "REVIEWABLE"
-            assert result["learning_eligibility"] == "ELIGIBLE"
+            assert result["learning_eligibility"] == "MECHANISM_SETTLEMENT_ONLY"
             assert [item["signal_verdict"] for item in result["claim_settlements"]] == ["A_ONLY", "B_ONLY"]
             assert result["pair_settlement"]["verdict"] == "MIXED"
             assert result["pair_settlement"]["selection_status"] == "NO_PRIMARY"
 
             feedback = build_live_forward_judgment_feedback(result)
-            assert feedback["cards"][0]["rival_hypothesis_feedback"]["state"] == "DERIVED_FROM_FROZEN_HYPOTHESIS_SIGNAL"
-            assert feedback["cards"][0]["increment_vs_baseline"] == "BASELINE_NONDISCRIMINATING"
-            note = build_judgment_learning_note(
-                feedback, note_id="LNOTE:live-forward:" + contract["case_id"],
-                claim_id=feedback["cards"][0]["claim_id"], disposition="RETAIN",
-                state_scope="Customer transactions with a two-period durability probe.",
-                measurement_scope="Issuer-defined comparable transactions under the frozen result contract.",
-                learning_basis="The first frozen signal was diagnostic; retain it only as a signal-level method input.",
-                next_research_change="Use the same two-period transaction sequence in a different customer-facing industry.",
-                experiment_id=feedback["experiment_id"], company_cluster_id=feedback["company_cluster_id"],
-                root_cause_classes=["REASONING"],
-                failure_loci=["MECHANISM"], economic_failure_loci=["MECHANISM"],
-                recorded_at="2026-08-21T00:00:00+00:00",
-            )
-            assert note["feedback_context"]["rival_hypothesis_feedback"]["selection_status"] == "NO_PRIMARY"
+            assert feedback["state"] == "MECHANISM_SETTLEMENT_ONLY"
+            assert feedback["cards"] == []
         finally:
             directory.cleanup()
 
@@ -263,7 +250,9 @@ def test_live_forward_settlement_cli_only_projects_existing_artifacts() -> None:
         generated = json.loads(settlement_path.read_text(encoding="utf-8"))
         assert generated["pair_settlement"]["verdict"] == "SUPPORTS_HYPOTHESIS_A"
         assert main(["feedback", str(settlement_path), "--event-root", str(paths["event_root"])]) == 0
-        assert json.loads(feedback_path.read_text(encoding="utf-8"))["cards"][0]["claim_id"] == "R05-S1"
+        feedback = json.loads(feedback_path.read_text(encoding="utf-8"))
+        assert feedback["state"] == "MECHANISM_SETTLEMENT_ONLY"
+        assert feedback["cards"] == []
         try:
             main([
                 "settle", str(paths["contract"]), str(paths["manifest"]), str(root), str(paths["attestation"]), str(paths["exposure"]), str(paths["extraction"]),
@@ -295,9 +284,9 @@ def test_nonclaim_outcome_exposure_keeps_mechanical_settlement_but_blocks_learni
         )
         assert settlement["state"] == "REVIEWABLE"
         assert settlement["pair_settlement"]["verdict"] == "SUPPORTS_HYPOTHESIS_A"
-        assert settlement["learning_eligibility"] == "OUTCOME_EXPOSED_TRAINING_ONLY"
+        assert settlement["learning_eligibility"] == "MECHANISM_SETTLEMENT_ONLY"
         feedback = build_live_forward_judgment_feedback(settlement)
-        assert feedback["state"] == "OUTCOME_EXPOSED_TRAINING_ONLY"
+        assert feedback["state"] == "MECHANISM_SETTLEMENT_ONLY"
         assert feedback["cards"] == []
         from scripts.judgment_learning import JudgmentLearningError
         try:

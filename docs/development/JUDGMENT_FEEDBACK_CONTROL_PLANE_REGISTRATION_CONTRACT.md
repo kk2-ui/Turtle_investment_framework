@@ -58,13 +58,15 @@
 
 `reconcile` 与 `inbox` 均为只读派生操作；持久状态来自 `stock_analysis.db` 的 `judgment_feedback_claims` 与 `judgment_feedback_events`。
 
-## 尚未接线的边界
+## 当前执行边界
 
-本 worktree 尚无规格所列的 R05/R06、`outcome_acquisition.py`、`live_forward_signal_settlement.py`、`judgment_feedback.py` 或 `judgment_learning.py`。因此：
+R05/R06、`outcome_acquisition.py`、`live_forward_signal_settlement.py` 与
+`judgment_learning.py` 已接入控制面适配器。`OUTCOME_PACKAGE_READY`、读取、
+提取、结算和 learning 事件只会在下层模块产生实际结果包、读取回执、提取验证、
+机械结算或 learning receipt 后追加；采集失败则显式留在 `BLOCKED/P1`。不能再用
+`artifact:fixture` 或事件名称伪造推进。
 
-- M10.2 的采集、阅读证明、提取和结算适配器尚未实现；
-- M10.3 的真实 learning note/application 工件适配器尚未实现；
-- 不能登记 R05/R06，也不能宣称真实中国企业选择判断已被验证；
-- 这些接口合入后，控制面只读取其冻结合同和结构化结果，不复制其机制语义。
-
-这是刻意的集成边界，而不是用合成事件替代真实经营反馈。
+这不等于已经验证了真实中国企业选择判断：R54 是 `NO_PRIMARY` 的机制探针，
+只能完成机制结算，不能进入选择准确性、方法学习或跨案例复制。只有未来具备
+`SELECTION_ADMITTED`、非共同方向性证据、公平基线及同口径结果合同的中国
+episode，才能走 selection/method-learning 分支。
