@@ -1,0 +1,16 @@
+{
+  "selection_policy_id": "r54-midea-core-growth-selection-pre-read.v1",
+  "selection_reason": "冻结一项企业判断选择：2026 年提出的聚焦核心增长、降低复杂性，能否把 ToB 组合变成可穿透的经营增长，而非以组合与非经常性项目维持表面增长。只选择界定该决策与 2026Q1 已出现的经营分歧所必需的两份法定披露；不读取 2026 年中报或任何后续业绩。",
+  "source_research_rationales": [
+    {
+      "source_id": "CNINFO:000333:ANN:20260331:1225065145",
+      "selection_reason": "记录 2025 年经营状态、2026 年聚焦核心增长/降低复杂性的实际战略承诺，以及截至冻结时可用的产品与资本配置边界。",
+      "research_question_ids": ["R54-Q1-core-growth-versus-portfolio-aggregation"]
+    },
+    {
+      "source_id": "CNINFO:000333:ANN:20260430:1225259066",
+      "selection_reason": "记录战略承诺后的首个同公司法定观察：扣非利润、经营现金以及楼宇科技、机器人与自动化、工业技术的方向性分歧。",
+      "research_question_ids": ["R54-Q1-core-growth-versus-portfolio-aggregation"]
+    }
+  ]
+}

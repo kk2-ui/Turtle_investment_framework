@@ -1365,6 +1365,7 @@ def enumerate_sse_announcements(
     *,
     cutoff_at: str = DEFAULT_CUTOFF_AT,
     period_start: str = "2018-01-01",
+    company_code: str = DEFAULT_COMPANY_CODE,
 ) -> dict[str, Any]:
     """Preserve a full SSE announcement inventory before source selection.
 
@@ -1372,6 +1373,12 @@ def enumerate_sse_announcements(
     the requested period.  The function does not silently discard a future or
     malformed row: each row becomes a source decision and remains reviewable.
     """
+    normalized_company_code = str(company_code or "").strip()
+    if not normalized_company_code:
+        raise ValueError("company_code is required for an SSE announcement manifest")
+    if "." not in normalized_company_code:
+        normalized_company_code = normalized_company_code + ".SH"
+    sse_code = normalized_company_code.split(".", 1)[0]
     materialized = [deepcopy(item) for item in records]
     normalized: list[dict[str, Any]] = []
     for item in materialized:
@@ -1380,7 +1387,7 @@ def enumerate_sse_announcements(
         published = _timestamp(published_value)
         source = _copy_record(
             item,
-            source_id=item.get("source_id") or f"SSE:600340:ANN:{published_value}:{title}",
+            source_id=item.get("source_id") or f"SSE:{sse_code}:ANN:{published_value}:{title}",
             source_version=item.get("source_version") or "sse-announcement-original",
             source_type=item.get("source_type") or "EXCHANGE_ANNOUNCEMENT",
             revision_policy=item.get("revision_policy") or "ORIGINAL_VINTAGE",
@@ -1395,7 +1402,7 @@ def enumerate_sse_announcements(
         else:
             normalized.append(source)
     normalized.sort(key=lambda item: (_timestamp(item.get("published_at")) or datetime.max.replace(tzinfo=timezone.utc), str(item.get("title") or "")))
-    manifest = admit_source_manifest(normalized, cutoff_at=cutoff_at)
+    manifest = admit_source_manifest(normalized, cutoff_at=cutoff_at, company_code=normalized_company_code)
     manifest.update({
         "inventory_kind": "SSE_ANNOUNCEMENT_FULL_ENUMERATION",
         "period_start": period_start,
@@ -2910,10 +2917,15 @@ def main() -> int:
             )
         else:
             records = payload.get("records") if isinstance(payload, dict) else payload
+            record_company_code = str(payload.get("company_code") or "").strip() if isinstance(payload, dict) else ""
+            requested_company_code = str(args.company_code or "").strip()
+            if record_company_code and requested_company_code not in {"", "600340", record_company_code}:
+                parser.error("--company-code does not match the SSE record inventory company_code")
             payload = enumerate_sse_announcements(
                 records or [],
                 cutoff_at=args.cutoff_at or DEFAULT_CUTOFF_AT,
                 period_start=args.begin_date or "2018-01-01",
+                company_code=record_company_code or requested_company_code,
             )
     _write(args.output, payload)
     count = payload.get("admitted_count", payload.get("record_count", 0))

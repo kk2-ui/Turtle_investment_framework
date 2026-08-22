@@ -625,6 +625,27 @@ def test_sse_enumeration_sorts_by_date_and_title_without_dropping_future_rows() 
     assert result["inventory"][2]["admission_status"] == "REJECTED_FUTURE_PUBLISHED_AT"
 
 
+def test_generic_sse_cli_preserves_the_official_query_company_identity(tmp_path) -> None:
+    source = tmp_path / "records.json"
+    output = tmp_path / "manifest.json"
+    source.write_text(json.dumps({
+        "company_code": "688432",
+        "records": [{
+            "source_id": "SSE:688432:ANN:20260327:annual",
+            "title": "2025 年年度报告",
+            "published_at": "2026-03-27",
+            "data_as_of": "2025-12-31",
+        }],
+    }), encoding="utf-8")
+    with patch.object(sys, "argv", [
+        "phase10_acquisition.py", "enumerate", "--input", str(source),
+        "--cutoff-at", "2026-08-21T23:59:59+08:00", "--output", str(output),
+    ]):
+        assert phase10_acquisition.main() == 0
+    manifest = json.loads(output.read_text(encoding="utf-8"))
+    assert manifest["company_code"] == "688432.SH"
+
+
 def test_cninfo_export_normalizes_shenzhen_filing_and_preserves_future_rejection() -> None:
     records = [
         {

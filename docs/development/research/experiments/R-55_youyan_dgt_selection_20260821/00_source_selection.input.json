@@ -1,0 +1,26 @@
+{
+  "selection_policy_id": "r55-youyan-dgt-selection-screen.v2",
+  "selection_reason": "筛查一项中国半导体材料企业的跨境、同一控制下收购。只读取界定 DGT 70% 收购承诺、交割、2025 年过渡期表现、2026H1 责任单元收入/毛利以及关联方资金边界所必需的上交所法定文件。本阶段尚未选择 H-A/H-B；不读取 2026-08-21 后的业绩、价格、回报或二手材料。",
+  "source_research_rationales": [
+    {
+      "source_id": "SSE:688432:ANN:20250315:688432_20250315_4MT8",
+      "selection_reason": "核对收购交易边界、同一控制关系、对价、业绩承诺、客户/产业链传导主张及风险披露。",
+      "research_question_ids": ["R55-Q1-dgt-acquisition-economic-quality"]
+    },
+    {
+      "source_id": "SSE:688432:ANN:20260128:688432_20260128_H9JF",
+      "selection_reason": "核对交割先决条件、首笔对价和控制权是否实际落地；交割只结算行动，不替代经济效果。",
+      "research_question_ids": ["R55-Q1-dgt-acquisition-economic-quality"]
+    },
+    {
+      "source_id": "SSE:688432:ANN:20260327:688432_20260327_WCEG",
+      "selection_reason": "核对 DGT 在收购完成前的 2025 年收入、盈利/毛利、现金与关联方边界，以免把 2026H1 单期表现误作常态。",
+      "research_question_ids": ["R55-Q1-dgt-acquisition-economic-quality"]
+    },
+    {
+      "source_id": "SSE:688432:ANN:20260814:688432_20260814_TG0E",
+      "selection_reason": "核对交割后 DGT 2026H1 责任单元收入、毛利、关联方应收应付/借款及集团合并边界，为后续选择准入提供截止日前责任单元事实。",
+      "research_question_ids": ["R55-Q1-dgt-acquisition-economic-quality"]
+    }
+  ]
+}

@@ -7,7 +7,7 @@
 ## 截止日与一手源包
 
 - 冻结时点：`2026-05-01T00:00:00+08:00`。
-- 已读且物理保留的源包：[R54 source package](/Users/xiami/workspace/analy/worktrees/Turtle_investment_framework/feat-forward-judgment-research-loop/output/research/experiments/r54_midea_core_growth_20260430/source_manifest.package.json)。它来自截至截止日完整枚举的巨潮法定披露；只选择了两份文件。对应 [PIT 读取回执](/Users/xiami/workspace/analy/worktrees/Turtle_investment_framework/feat-forward-judgment-research-loop/output/research/experiments/r54_midea_core_growth_20260430/pit_source_package_attestation.json) 为 `REVIEWABLE`，只读这两份源。
+- 已读且物理保留的源包：[R54 source package](/Users/xiami/workspace/analy/worktrees/Turtle_investment_framework/feat-judgment-feedback-control-plane/output/research/experiments/r54_midea_core_growth_20260430/source_manifest.package.json)。它来自截至截止日完整枚举的巨潮法定披露；只选择了两份文件。对应 [PIT 读取回执](/Users/xiami/workspace/analy/worktrees/Turtle_investment_framework/feat-judgment-feedback-control-plane/output/research/experiments/r54_midea_core_growth_20260430/pit_source_package_attestation.json) 为 `REVIEWABLE`，只读这两份源。
 - `CNINFO:000333:ANN:20260331:1225065145`，2025 年年度报告：公司称 ToB 收入 1,228 亿元、同比 +17.5%，且 2026 年要聚焦核心业务/市场/能力，压低复杂性；培育业务审慎观察、问题业务果断处置。
 - `CNINFO:000333:ANN:20260430:1225259066`，2026Q1：总收入 +2.55%、归母净利润 +2.03%，但扣非净利润 -14.02%；楼宇科技、机器人与自动化、工业技术收入方向分别为 +10.1%、+11.8%、-11.7%。同期非经常性损益为 17.13 亿元，含资产处置、金融资产/衍生工具损益与其他项目。
 - 结果防火墙：冻结后才允许读取 2026H1 及以后披露；本卡没有读取它们。
