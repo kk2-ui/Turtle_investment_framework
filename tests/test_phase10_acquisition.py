@@ -724,6 +724,26 @@ def test_cninfo_fetch_paginates_complete_official_metadata_and_builds_manifest()
     assert validate_source_manifest(manifest)["state"] == "REVIEWABLE"
 
 
+def test_cninfo_fetch_accepts_provider_empty_enumeration() -> None:
+    """CNINFO represents a valid zero-result date query as announcements=null."""
+    result = fetch_cninfo_announcement_records(
+        company_code="000333", org_id="9900005965", begin_date="2026-08-23", end_date="2026-08-23",
+        request=lambda _params: {"totalAnnouncement": 0, "announcements": None},
+    )
+
+    assert result["record_count"] == 0
+    assert result["page_count"] == 1
+    assert result["records"] == []
+
+    manifest = fetch_cninfo_manifest(
+        company_code="000333", org_id="9900005965", begin_date="2026-08-23",
+        cutoff_at="2026-08-23T00:05:00+08:00",
+        request=lambda _params: {"totalAnnouncement": 0, "announcements": None},
+    )
+    assert manifest["inventory_count"] == 0
+    assert manifest["acquisition_status"] == "CNINFO_FULL_ENUMERATION_DATE_FILTER_VERIFIED"
+
+
 def test_cninfo_fetch_fails_when_page_repeats_an_announcement() -> None:
     row = {
         "secCode": "000651", "orgId": "gssz0000651", "announcementId": "A1",

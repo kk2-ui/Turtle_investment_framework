@@ -1601,6 +1601,13 @@ def _validate_cninfo_page(
     records = payload.get("announcements")
     if type(total) is not int or total < 0:
         raise CNInfoAnnouncementQueryError("CNINFO response totalAnnouncement is invalid")
+    # CNINFO returns `announcements: null` (rather than an empty array) for a
+    # valid query with no matching disclosures.  That is a complete empty
+    # enumeration, not a malformed response; treating it as an error prevents
+    # a due contract from recording that the statutory source has not yet
+    # published its result.
+    if total == 0 and records is None:
+        records = []
     if not isinstance(records, list) or any(not isinstance(item, dict) for item in records):
         raise CNInfoAnnouncementQueryError("CNINFO response announcements are invalid")
     if len(records) > page_size:
@@ -1693,7 +1700,7 @@ def fetch_cninfo_announcement_records(
         if len(records) > expected_total:
             raise CNInfoAnnouncementQueryError("CNINFO response exceeded the declared total")
         page_no += 1
-        if page_no > expected_total + 1:
+        if expected_total > 0 and page_no > expected_total + 1:
             raise CNInfoAnnouncementQueryError("CNINFO pagination exceeded the declared total")
     return {
         "provider": "CNINFO",
