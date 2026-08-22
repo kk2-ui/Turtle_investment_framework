@@ -1,0 +1,11 @@
+{
+  "selection_policy_id": "R58-LITTLE-SWAN-2008-PRE-OUTCOME-BASELINE-V1",
+  "selection_reason": "Read the target issuer's statutory 2008 annual report to establish a same-entity washing-machine revenue, cost, margin and cash baseline before opening the pre-registered FY2009 target outcome report.",
+  "source_research_rationales": [
+    {
+      "source_id": "CNINFO:000418:ANN:20090306:49844455",
+      "selection_reason": "Provide the target-company baseline for the pre-outcome metric reconstruction contract; no post-2008 operating body is selected.",
+      "research_question_ids": ["R58-Q3-METRIC-CONTRACT", "R58-Q4-CASH-BASELINE"]
+    }
+  ]
+}
