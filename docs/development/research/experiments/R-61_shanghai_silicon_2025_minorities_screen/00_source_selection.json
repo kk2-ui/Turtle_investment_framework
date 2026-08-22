@@ -1,0 +1,22 @@
+{
+  "selection_policy_id": "R61-SHANGHAI-SILICON-2025-MINORITY-BUYOUT-SCREEN-V1",
+  "selection_reason": "Screen a current Chinese semiconductor-materials transaction before opening any result-period disclosure. The narrow question is whether the 2025 purchase of minority interests in three existing 300mm-wafer affiliates creates an operating decision with a separately observable D1-D5 enterprise system, or merely changes ownership and financing. This is an admission screen, not a judgment selection episode.",
+  "cutoff_at": "2025-05-22T00:00:00+08:00",
+  "source_research_rationales": [
+    {
+      "source_id": "SSE:688126:ANN:20250308:688126_20250308_G3ER",
+      "selection_reason": "Read the first official transaction plan for target identity, existing ownership/control, decision scope and stated transaction mechanism.",
+      "research_question_ids": ["R61-D1-OWNERSHIP-VS-OPERATING-CONTROL"]
+    },
+    {
+      "source_id": "SSE:688126:ANN:20250424:688126_20250424_ABU9",
+      "selection_reason": "Establish the issuer's FY2024 pre-transaction segment, cash and capital context without substituting it for target-company results.",
+      "research_question_ids": ["R61-BASELINE", "R61-D2-D5-BOUNDARY"]
+    },
+    {
+      "source_id": "SSE:688126:ANN:20250521:688126_20250521_SO6M",
+      "selection_reason": "Read the disclosed transaction report for target responsibility-unit financials, pre-existing control/operations, purchase consideration and any customer, product or capital contracts that can differentiate an operating mechanism from a pure ownership change.",
+      "research_question_ids": ["R61-D1", "R61-D2", "R61-D3", "R61-D4", "R61-D5", "R61-ADMISSION"]
+    }
+  ]
+}
