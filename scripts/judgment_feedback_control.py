@@ -174,6 +174,48 @@ def _backfill_legacy_claim_identity(conn: sqlite3.Connection) -> None:
         )
 
 
+def _reference_fragment(reference: str) -> str:
+    return reference.split("#", 1)[1] if "#" in reference else ""
+
+
+def _can_rehome_live_forward_references(existing: dict[str, Any], intended: dict[str, Any]) -> bool:
+    """Allow a worktree-path move only when the frozen files are identical.
+
+    Integration moves the same frozen R05/R06/R54 files from a linked
+    development worktree into the main checkout.  That operational relocation
+    must not be confused with a changed claim.  We compare the actual small
+    contract/freeze files directly; any unavailable or changed legacy file
+    remains a normal registration conflict rather than being guessed into the
+    new path.
+    """
+    reference_fields = {
+        "source_ref", "frozen_artifact_ref", "source_contract_ref", "measurement_contract_ref",
+    }
+    if any(existing.get(key) != intended.get(key) for key in set(existing) - reference_fields - {"registered_at"}):
+        return False
+    old_contract = _reference_path(str(existing.get("source_contract_ref") or ""))
+    new_contract = _reference_path(str(intended.get("source_contract_ref") or ""))
+    old_freeze = _reference_path(str(existing.get("frozen_artifact_ref") or ""))
+    new_freeze = _reference_path(str(intended.get("frozen_artifact_ref") or ""))
+    if not all(path.is_file() for path in (old_contract, new_contract, old_freeze, new_freeze)):
+        return False
+    try:
+        old_payload = json.loads(old_contract.read_text(encoding="utf-8"))
+        new_payload = json.loads(new_contract.read_text(encoding="utf-8"))
+        identical_contract = old_payload == new_payload
+        identical_freeze = old_freeze.read_text(encoding="utf-8") == new_freeze.read_text(encoding="utf-8")
+    except (OSError, UnicodeDecodeError, json.JSONDecodeError):
+        return False
+    if not identical_contract or not identical_freeze:
+        return False
+    if old_contract.parent.name != new_contract.parent.name:
+        return False
+    for field in ("source_ref", "measurement_contract_ref"):
+        if _reference_fragment(str(existing.get(field) or "")) != _reference_fragment(str(intended.get(field) or "")):
+            return False
+    return True
+
+
 def initialize(conn: sqlite3.Connection) -> None:
     conn.executescript(
         """
@@ -481,6 +523,19 @@ def register_manifest(conn: sqlite3.Connection, manifest: dict[str, Any], *, reg
                 comparable = {column: existing[column] for column in columns if column != "registered_at"}
                 intended = {column: row[column] for column in columns if column != "registered_at"}
                 if comparable != intended:
+                    if _can_rehome_live_forward_references(comparable, intended):
+                        conn.execute(
+                            """UPDATE judgment_feedback_claims
+                               SET source_ref = ?, frozen_artifact_ref = ?, source_contract_ref = ?, measurement_contract_ref = ?
+                               WHERE feedback_item_id = ?""",
+                            (
+                                intended["source_ref"], intended["frozen_artifact_ref"],
+                                intended["source_contract_ref"], intended["measurement_contract_ref"],
+                                row["feedback_item_id"],
+                            ),
+                        )
+                        results.append({"feedback_item_id": row["feedback_item_id"], "registered": False, "idempotent": True, "worktree_rehomed": True})
+                        continue
                     identity_columns = {"episode_class", "selection_status", "learning_eligibility"}
                     immutable_existing = {key: value for key, value in comparable.items() if key not in identity_columns}
                     immutable_intended = {key: value for key, value in intended.items() if key not in identity_columns}
