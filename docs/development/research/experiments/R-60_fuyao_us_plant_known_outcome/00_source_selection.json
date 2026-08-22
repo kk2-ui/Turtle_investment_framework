@@ -1,0 +1,31 @@
+{
+  "selection_policy_id": "R60-FUYAO-US-PLANT-KNOWN-OUTCOME-TEACHING-V1",
+  "selection_reason": "Build a bounded known-outcome teaching case for a Chinese manufacturer's overseas greenfield plant. Results were exposed during candidate discovery, so this is explicitly not a blind replay or selection evaluation. The sources cover the 2013 U.S. plant commitment, two interim company baselines, and FY2016 when the plant was reported as opened.",
+  "source_research_rationales": [
+    {
+      "source_id": "SSE:600660:ANN:20131023:600660_20131023_3",
+      "selection_reason": "Read the board-announced U.S. subsidiary and automotive-safety-glass plant commitment, including investment boundary, stated customer rationale and identified risks.",
+      "research_question_ids": ["R60-Q1-DECISION-CAPITAL", "R60-Q2-MECHANISM"]
+    },
+    {
+      "source_id": "SSE:600660:ANN:20140225:600660_2013_n",
+      "selection_reason": "Establish the pre-implementation operating and cash base available after the decision year.",
+      "research_question_ids": ["R60-Q3-BASELINE"]
+    },
+    {
+      "source_id": "SSE:600660:ANN:20150217:600660_2014_n",
+      "selection_reason": "Read the first post-decision annual status for implementation, overseas customer/production disclosures, economics and cash boundaries.",
+      "research_question_ids": ["R60-D1", "R60-D2", "R60-D3", "R60-D4", "R60-D5"]
+    },
+    {
+      "source_id": "SSE:600660:ANN:20160321:600660_2015_n",
+      "selection_reason": "Read the second annual status for plant implementation, operating ramp, customer response and capital absorption.",
+      "research_question_ids": ["R60-D1", "R60-D2", "R60-D3", "R60-D4", "R60-D5"]
+    },
+    {
+      "source_id": "SSE:600660:ANN:20170225:600660_2016_n",
+      "selection_reason": "Read the registered known outcome only to complete the multi-clock teaching map; no price, return or management-quality verdict is permitted.",
+      "research_question_ids": ["R60-D1", "R60-D2", "R60-D3", "R60-D4", "R60-D5"]
+    }
+  ]
+}
