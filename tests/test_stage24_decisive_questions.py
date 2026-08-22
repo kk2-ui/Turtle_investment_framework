@@ -774,7 +774,7 @@ def test_structured_contract_exposes_exact_decisive_ids_and_types(tmp_path: Path
         "OBS:annual:operations:revenue:2025:abc123"
     ]
     assert result["sequence"] == [
-        "decision", "claim", "valuation", "thesis", "decisive", "insight", "judgment"
+        "decision", "claim", "valuation", "financial_driver", "thesis", "decisive", "insight", "judgment"
     ]
 
 

@@ -17,6 +17,7 @@ from typing import Any
 SCHEMA_VERSION = "judgment-review.v1"
 VERDICTS = {"INSIGHTFUL", "COMPETENT", "FRAGILE", "NOT_ASSESSABLE"}
 DIMENSION_STATES = {"strong", "mixed", "weak", "not_assessable"}
+ANALYSIS_PURPOSES = {"INVESTMENT_DECISION", "COMPANY_JUDGMENT_ONLY"}
 
 
 def _now() -> str:
@@ -29,6 +30,18 @@ def _load(path: Path) -> dict[str, Any]:
     except (OSError, json.JSONDecodeError):
         return {}
     return value if isinstance(value, dict) else {}
+
+
+def _analysis_purpose(payload: dict[str, Any], output_dir: str | Path | None = None) -> str:
+    declared = str(payload.get("analysis_purpose") or "").strip()
+    if declared:
+        return declared
+    if output_dir is not None:
+        contract = _load(Path(output_dir) / "analysis_contract.json")
+        contract_purpose = str(contract.get("analysis_purpose") or "").strip()
+        if contract_purpose:
+            return contract_purpose
+    return "INVESTMENT_DECISION"
 
 
 def _ids(items: Any, key: str) -> set[str]:
@@ -50,13 +63,18 @@ def build_judgment_review(
     decision_dependency: dict[str, Any],
     dimension_assessments: dict[str, Any],
     reviewer_limits: list[str],
+    *,
+    analysis_purpose: str | None = None,
+    judgment_dependency: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     output = Path(output_dir)
     insight = _load(output / "insight_ledger.json")
     contract = _load(output / "analysis_contract.json")
-    return {
+    purpose = str(analysis_purpose or insight.get("analysis_purpose") or contract.get("analysis_purpose") or "INVESTMENT_DECISION")
+    payload = {
         "schema_version": SCHEMA_VERSION,
         "report_id": str(insight.get("report_id") or contract.get("ts_code") or output.name),
+        "analysis_purpose": purpose,
         "reviewer_mode": "independent_challenger",
         "ceiling_verdict": str(ceiling_verdict or "").upper(),
         "verdict_basis": str(verdict_basis or "").strip(),
@@ -65,12 +83,16 @@ def build_judgment_review(
         "fragile_leaps": list(fragile_leaps or []),
         "competitive_explanation_test": dict(competitive_explanation_test or {}),
         "missing_information": list(missing_information or []),
-        "decision_dependency": dict(decision_dependency or {}),
         "dimension_assessments": dict(dimension_assessments or {}),
         "reviewer_limits": list(reviewer_limits or []),
         "generated_at": _now(),
         "policy_note": "Diagnostic only: this verdict cannot offset or change V3 publication gates.",
     }
+    if purpose == "COMPANY_JUDGMENT_ONLY":
+        payload["judgment_dependency"] = dict(judgment_dependency or {})
+    else:
+        payload["decision_dependency"] = dict(decision_dependency or {})
+    return payload
 
 
 def validate_judgment_review(payload: dict[str, Any], output_dir: str | Path) -> dict[str, Any]:
@@ -79,6 +101,9 @@ def validate_judgment_review(payload: dict[str, Any], output_dir: str | Path) ->
     incomplete: list[str] = []
     if payload.get("schema_version") != SCHEMA_VERSION:
         invalid.append("schema_version_invalid")
+    analysis_purpose = _analysis_purpose(payload, output_dir)
+    if analysis_purpose not in ANALYSIS_PURPOSES:
+        invalid.append("analysis_purpose_invalid")
     if payload.get("reviewer_mode") != "independent_challenger":
         invalid.append("reviewer_mode_invalid")
     verdict = str(payload.get("ceiling_verdict") or "").upper()
@@ -91,6 +116,15 @@ def validate_judgment_review(payload: dict[str, Any], output_dir: str | Path) ->
     claim_ledger = _load(output / "claim_evidence.json")
     decision_ledger = _load(output / "decision_ledger.json")
     valuation_ledger = _load(output / "valuation_model.json")
+    thesis_ledger = _load(output / "thesis_test.json")
+    contract = _load(output / "analysis_contract.json")
+    contract_purpose = str(contract.get("analysis_purpose") or "").strip()
+    if contract_purpose in ANALYSIS_PURPOSES and analysis_purpose != contract_purpose:
+        invalid.append("analysis_purpose_contract_mismatch")
+    for label, source in (("insight", insight_ledger), ("claim_evidence", claim_ledger), ("thesis_test", thesis_ledger)):
+        source_purpose = str(source.get("analysis_purpose") or "").strip()
+        if source_purpose in ANALYSIS_PURPOSES and source_purpose != analysis_purpose:
+            invalid.append(f"analysis_purpose_{label}_mismatch")
     insight_ids = _ids(insight_ledger.get("insights"), "insight_id")
     evidence_ids = {
         str(fact.get("evidence_id"))
@@ -102,6 +136,7 @@ def validate_judgment_review(payload: dict[str, Any], output_dir: str | Path) ->
         "entry_id",
     )
     model_ids = _ids(valuation_ledger.get("models"), "model_id")
+    forward_judgment_ids = _ids(thesis_ledger.get("forward_judgments"), "judgment_id")
 
     distinctive = payload.get("distinctive_insight")
     if not isinstance(distinctive, dict):
@@ -112,11 +147,15 @@ def validate_judgment_review(payload: dict[str, Any], output_dir: str | Path) ->
             incomplete.append(f"distinctive_insight:{key}_missing")
     if str(distinctive.get("insight_id") or "") not in insight_ids:
         invalid.append("distinctive_insight:unknown_insight_id")
-    for key, known in (
-        ("evidence_ids", evidence_ids),
-        ("decision_entry_ids", decision_ids),
-        ("valuation_model_ids", model_ids),
-    ):
+    binding_sets = [("evidence_ids", evidence_ids)]
+    if analysis_purpose == "COMPANY_JUDGMENT_ONLY":
+        for forbidden in ("decision_entry_ids", "valuation_model_ids"):
+            if forbidden in distinctive:
+                invalid.append(f"distinctive_insight:company_judgment_cannot_carry_{forbidden}")
+        binding_sets.append(("forward_judgment_ids", forward_judgment_ids))
+    else:
+        binding_sets.extend((("decision_entry_ids", decision_ids), ("valuation_model_ids", model_ids)))
+    for key, known in binding_sets:
         refs = distinctive.get(key)
         if not isinstance(refs, list) or not refs:
             incomplete.append(f"distinctive_insight:{key}_missing")
@@ -136,9 +175,12 @@ def validate_judgment_review(payload: dict[str, Any], output_dir: str | Path) ->
         if not isinstance(item, dict):
             invalid.append(f"fragile_leaps[{idx}]:not_object")
             continue
-        for key in ("claim", "why_fragile", "needed_evidence", "decision_consequence"):
+        consequence_key = "judgment_consequence" if analysis_purpose == "COMPANY_JUDGMENT_ONLY" else "decision_consequence"
+        for key in ("claim", "why_fragile", "needed_evidence", consequence_key):
             if not str(item.get(key) or "").strip():
                 incomplete.append(f"fragile_leaps[{idx}]:{key}_missing")
+        if analysis_purpose == "COMPANY_JUDGMENT_ONLY" and "decision_consequence" in item:
+            invalid.append(f"fragile_leaps[{idx}]:company_judgment_cannot_carry_decision_consequence")
 
     competitive = payload.get("competitive_explanation_test")
     if not isinstance(competitive, dict):
@@ -151,19 +193,36 @@ def validate_judgment_review(payload: dict[str, Any], output_dir: str | Path) ->
     missing = payload.get("missing_information")
     if not isinstance(missing, list) or not any(str(item).strip() for item in missing):
         incomplete.append("missing_information_missing")
-    dependency = payload.get("decision_dependency")
+    dependency_key = "judgment_dependency" if analysis_purpose == "COMPANY_JUDGMENT_ONLY" else "decision_dependency"
+    if analysis_purpose == "COMPANY_JUDGMENT_ONLY" and "decision_dependency" in payload:
+        invalid.append("company_judgment_cannot_carry_decision_dependency")
+    dependency = payload.get(dependency_key)
     if not isinstance(dependency, dict):
-        invalid.append("decision_dependency_not_object")
+        invalid.append(dependency_key + "_not_object")
         dependency = {}
-    for key in ("without_insight", "changed_values", "changed_action", "conclusion"):
+    dependency_fields = (
+        ("without_insight", "changed_mechanism", "changed_normalized_earnings_or_owner_cash", "changed_monitoring_or_forward_judgment", "conclusion")
+        if analysis_purpose == "COMPANY_JUDGMENT_ONLY"
+        else ("without_insight", "changed_values", "changed_action", "conclusion")
+    )
+    for key in dependency_fields:
         if not str(dependency.get(key) or "").strip():
-            incomplete.append(f"decision_dependency:{key}_missing")
+            incomplete.append(f"{dependency_key}:{key}_missing")
 
     dimensions = payload.get("dimension_assessments")
     if not isinstance(dimensions, dict):
         invalid.append("dimension_assessments_not_object")
         dimensions = {}
-    for key in ("question_selection", "differentiation", "evidence_discrimination", "valuation_transmission", "action_relevance"):
+    dimension_keys = (
+        ("question_selection", "differentiation", "evidence_discrimination", "operating_transmission", "monitoring_relevance")
+        if analysis_purpose == "COMPANY_JUDGMENT_ONLY"
+        else ("question_selection", "differentiation", "evidence_discrimination", "valuation_transmission", "action_relevance")
+    )
+    if analysis_purpose == "COMPANY_JUDGMENT_ONLY":
+        for forbidden in ("valuation_transmission", "action_relevance"):
+            if forbidden in dimensions:
+                invalid.append(f"dimension_assessments:company_judgment_cannot_carry_{forbidden}")
+    for key in dimension_keys:
         item = dimensions.get(key)
         if not isinstance(item, dict):
             incomplete.append(f"dimension_assessments:{key}_missing")
@@ -186,6 +245,7 @@ def validate_judgment_review(payload: dict[str, Any], output_dir: str | Path) ->
         "ceiling_verdict": verdict if verdict in VERDICTS else "NOT_ASSESSABLE",
         "invalid_findings": invalid,
         "incomplete_findings": incomplete,
+        "analysis_purpose": analysis_purpose,
         "policy_note": "Judgment review is diagnostic and never changes publication eligibility.",
     }
 

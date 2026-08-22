@@ -418,8 +418,12 @@ class AgentConfig:
     pit_case_id: str = ""
     pit_experiment_id: str = ""
     pit_cutoff_at: str = ""
+    analysis_purpose: str = "INVESTMENT_DECISION"
 
     def __post_init__(self) -> None:
+        self.analysis_purpose = str(self.analysis_purpose or "INVESTMENT_DECISION").upper()
+        if self.analysis_purpose not in {"INVESTMENT_DECISION", "COMPANY_JUDGMENT_ONLY"}:
+            raise ValueError("analysis_purpose invalid")
         if not self.output_dir and self.contract_path:
             self.output_dir = os.path.dirname(os.path.abspath(self.contract_path))
         if self.binding_only:
@@ -596,6 +600,7 @@ class TurtleAgent:
                     "目标章节处理完后调用 write_decision_manifest 固化唯一决策身份，再调用 "
                     "write_decision_ledger 固化全部canonical参数，再调用 write_claim_evidence_ledger "
                     "校验重大主张证据链，然后调用 write_valuation_model_ledger 验证模型适用性与脆弱性，"
+                    "再调用 write_financial_driver_bridge 固化公司经营驱动、现金转换与资本配置到模型和动作的传导，"
                     "再调用 write_thesis_test_ledger 固化竞争解释、阈值和概率，调用 write_decisive_question_findings "
                     "闭环全部入选问题，随后调用 write_insight_ledger、write_judgment_review 与 "
                     "plan_judgment_research，最后调用 assemble_report。"
@@ -603,7 +608,7 @@ class TurtleAgent:
             elif synthesis_batch:
                 decision_instruction = (
                     "decision manifest/ledger 已冻结，不得改写其 canonical 值；依次更新或验证 "
-                    "write_claim_evidence_ledger、write_valuation_model_ledger、write_thesis_test_ledger、"
+                    "write_claim_evidence_ledger、write_valuation_model_ledger、write_financial_driver_bridge、write_thesis_test_ledger、"
                     "write_decisive_question_findings 与 write_insight_ledger，再调用 write_judgment_review、"
                     "plan_judgment_research 和 assemble_report。"
                 )
@@ -884,20 +889,28 @@ pit_read_source，且只可按 allowlist 路径调用 pit_read_framework。禁�
 正文说明这是冻结前的工程草案，而非已经通过完整生产质量门的报告。"""
 
     @staticmethod
-    def _pit_production_allowed_tools() -> set[str]:
-        return {
+    def _pit_production_allowed_tools(
+        analysis_purpose: str = "INVESTMENT_DECISION",
+    ) -> set[str]:
+        allowed = {
             "pit_list_sources", "pit_read_source", "pit_read_framework",
             "pit_verify_official_fact", "pit_write_chapter", "pit_read_chapter",
             "pit_read_report_contract_pack", "pit_read_structured_ledger_contract",
-            "pit_audit_chapter", "pit_write_decision_manifest", "pit_write_decision_ledger",
-            "pit_write_claim_evidence_ledger", "pit_write_valuation_model_ledger",
-            "pit_write_thesis_test_ledger", "pit_write_decisive_question_findings",
+            "pit_audit_chapter", "pit_write_claim_evidence_ledger",
+            "pit_write_financial_driver_bridge",
+            "pit_write_thesis_test_ledger",
             "pit_write_insight_ledger", "pit_write_judgment_review", "pit_assemble_report",
         }
+        if analysis_purpose == "INVESTMENT_DECISION":
+            allowed.update({
+                "pit_write_decision_manifest", "pit_write_decision_ledger",
+                "pit_write_valuation_model_ledger", "pit_write_decisive_question_findings",
+            })
+        return allowed
 
     def _analyze_pit_production(self) -> str:
         """Generate a full report through PIT reads and output-bound V3 writes."""
-        if set(self._tools.list_tools()) != self._pit_production_allowed_tools():
+        if set(self._tools.list_tools()) != self._pit_production_allowed_tools(self._config.analysis_purpose):
             raise RuntimeError("PIT production writer 工具集不完整或包含越界入口")
         if not self._config.code or not self._config.pit_case_id or not self._config.pit_experiment_id:
             raise RuntimeError("PIT production writer 缺少 code/case/experiment identity")
@@ -905,17 +918,31 @@ pit_read_source，且只可按 allowlist 路径调用 pit_read_framework。禁�
             raise RuntimeError("PIT production writer 需要 LLM client")
         if hasattr(self._llm, "set_runtime_task"):
             self._llm.set_runtime_task("pit_production_freeze")
+        purpose_instruction = (
+            "再读取pit_read_report_contract_pack取得当前V3合同及其公司判断前置物，必须原样继承其中的中心路径、经营FJ和正常化盈利/owner-cash传导；"
+            "估值、条件回报和动作只能附加在该经营判断之后，若需要修改经营机制则停止本投资版本并先重做CJO；完成章节、估值后经营驱动桥和其余账本；"
+            "每项材料FJ必须绑定主/反 pair 的唯一 signal，每个材料 pair 必须有复用既有案例卡的 transfer card；近失效反例若没有可验证 PIT episode，必须标记 UNKNOWN 且 card 只能 QUESTION_ONLY；再调用pit_assemble_report。"
+            if self._config.analysis_purpose == "INVESTMENT_DECISION" else
+            "再读取pit_read_report_contract_pack取得公司判断合同，完成章节后先以 freeze=false 写入含计划 FJ ID 的 claim bootstrap，继而按 financial_driver→thesis→claim(freeze=true promote)→insight→judgment review 顺序冻结四层经营驱动桥、竞争反方、3—5条前瞻判断与案例 card；若无独立同定义 episode 或外部频率，thesis 必须写 probability_mode=NO_PROBABILITY、空 probability_sets 和完整双边 FJ/pair：没有 cutoff 前方向性证据则 NO_PRIMARY 且不写 central_path，有 P24 定向证据才用 selection_basis 作定性选择，绝不可填主观权重；仅 QUALIFIED_PROBABILITY 才可填概率及可追溯校准依据。近失效反例没有可验证 PIT episode 时必须 UNKNOWN/QUESTION_ONLY，再调用pit_assemble_report。"
+        )
+        purpose_boundary = (
+            "CJO 严禁写入或讨论价格、估值、回报、仓位、交易动作、模型或 D-id；它只学习公司机制和可结算经营后果。"
+            if self._config.analysis_purpose == "COMPANY_JUDGMENT_ONLY" else ""
+        )
+        system_prompt = (
+            f"你在生成 {self._config.code} 的完整历史时点冻结报告。案例 {self._config.pit_case_id}，"
+            f"实验 {self._config.pit_experiment_id}，截止 {self._config.pit_cutoff_at}，"
+            f"用途 {self._config.analysis_purpose}。"
+            "只可使用提供的PIT工具：先读取官方来源，数值事实用pit_verify_official_fact逐页验证，"
+            + purpose_instruction
+            + "需要修复结构化账本时只用pit_read_structured_ledger_contract。禁止网页、行情、数据库、任意路径、"
+            "cutoff后资料和事后结论。来源不足时保留UNKNOWN，且不得由UNKNOWN推出买点、收益、选股或仓位。"
+            + purpose_boundary
+            + "章节中的[source: ...]只能填写本次pit_read_source已经读取的精确source_id；"
+            "不得填写文件路径、URL、doc_id或未读取来源。"
+        )
         self._messages = [
-            {"role": "system", "content": (
-                f"你在生成 {self._config.code} 的完整历史时点冻结报告。案例 {self._config.pit_case_id}，"
-                f"实验 {self._config.pit_experiment_id}，截止 {self._config.pit_cutoff_at}。"
-                "只可使用提供的PIT工具：先读取官方来源，数值事实用pit_verify_official_fact逐页验证，"
-                "再读取pit_read_report_contract_pack取得当前V3合同，完成章节和账本并调用pit_assemble_report。"
-                "需要修复结构化账本时只用pit_read_structured_ledger_contract。禁止网页、行情、数据库、任意路径、"
-                "cutoff后资料和事后结论。来源不足时保留UNKNOWN，且不得由UNKNOWN推出买点、收益、选股或仓位。"
-                "章节中的[source: ...]只能填写本次pit_read_source已经读取的精确source_id；"
-                "不得填写文件路径、URL、doc_id或未读取来源。"
-            )},
+            {"role": "system", "content": system_prompt},
             {"role": "user", "content": "开始受限生产冻结。"},
         ]
         self._run_loop()
@@ -1897,15 +1924,18 @@ Part C 的 Ch14 综合决策使用 5 状态合成矩阵。写 Ch14 前必须检�
    - 其他章节 chapter_index 与模板序号一致（Ch12=内在价值合成与裁决，Ch13=DDM估值与仓位执行，Ch14=综合决策）
 6. **最终决策**: 综合各因子给出最终结论
 7. **固化决策身份**: 调用 write_decision_manifest，将定性/定量判断、展示标签和仓位写入唯一真源
-   - **账本分阶段提交纪律**：写 claim/valuation/thesis/decisive/insight/judgment 中任一结构化产物前，必须先调用 `read_structured_ledger_contract(ledger=...)` 读取精确嵌套类型与当前可用 ID。若对应 ledger 尚不存在，先以 `freeze=false` 提交完整结构，允许框架返回 INCOMPLETE 和精确缺口；据此补正文锚点/证据后，再以同一结构 `freeze=true` 冻结。decisive findings 和 judgment review 没有 freeze 参数，但仍须先读各自精确契约。禁止第一次就用空对象或残缺对象冻结；也禁止因一次冻结失败而跳过后续产物。
+   - **账本分阶段提交纪律**：写 claim/valuation/financial_driver/thesis/decisive/insight/judgment 中任一结构化产物前，必须先调用 `read_structured_ledger_contract(ledger=...)` 读取精确嵌套类型与当前可用 ID。若对应 ledger 尚不存在，先以 `freeze=false` 提交完整结构，允许框架返回 INCOMPLETE 和精确缺口；据此补正文锚点/证据后，再以同一结构 `freeze=true` 冻结。经营驱动桥、decisive findings 和 judgment review 没有 freeze 参数，但仍须先读各自精确契约。禁止第一次就用空对象或残缺对象冻结；也禁止因一次冻结失败而跳过后续产物。
 8. **固化参数账本**: 调用 write_decision_ledger，覆盖 market price、三种GG、II、V_final、λ、r*、衰减、双安全边际、仓位和买入/减仓/退出触发器。同一指标有多情景时用`canonical=true`显式指定唯一最终口径；其他值必须明确scenario/date/basis或deprecated。正文解释若出现关键值仍须用`[decision: entry_id]`绑定。Ch0、Ch9、Ch12、Ch13、Ch14的最终数字与动作由assemble前的决策编译器生成受保护区块；不得自行生成、删除或改写`TURTLE:DECISION_BLOCK`，禁止复制第二套自由参数
 9. **固化估值与决策可靠性账本**: 严格按read_valuation_route结果调用 write_valuation_model_ledger，正文用 `[valuation: model_id]` 绑定模型。company_profile必须写入archetype_id、valuation_route_id和registry_version；每个模型必须引用route_model_id，角色、价值范围、现金流范围不得漂移；route禁用模型必须以status=rejected和理由入账。FCFF 必须配 enterprise value+WACC+EV→股权桥，FCFE/DDM 必须配 equity value+cost of equity。明确名义/实际、税前/税后、币种和日期；永续模型必须报告 r-g、终值占比及折现率+1pct、g-1pct、组合压力三组敏感性动作。至少两个真正独立的假设组；共享假设不能伪装成多模型交叉验证。另须提交cash_access_bridge、parameter_calibrations、model_comparisons、joint_stress_tests和action_policy；未验证现金不得进入主估值，市场价格不得反向校准内在价值参数，非同口径模型不得声称交叉验证，联合压力必须同时覆盖盈利、派息和现金可达性。多模型不得无依据加权平均，最终 chosen value、仓位和 action 必须与 decision ledger/manifest 一致。
-10. **固化重大主张证据链**: 调用 write_claim_evidence_ledger。重大主张正文用 `[claim: claim_id]`；`chapters` 第一章是该主张的 canonical home，必须原样包含 ledger 的 claim 文本，其他章可只引用 ID。每条链必须包含原始事实、推理、竞争解释、适用条件、置信度及决策影响，并绑定至少一个 decision entry。新统一运行的每条直接支持必须填写VERIFIED `observation_id`，`source_id`必须是该observation对应的`DOC:`身份；CANDIDATE、搜索摘要和报告内部引用都不得作为直接支持。来源同时记录 authority × claim_distance、发布日期/数据截止日、利益冲突、口径匹配和同源组。Markdown 表格可在紧邻位置用 `[table-source: X]` 一次映射整表。
-11. **固化中心路径、前瞻判断、竞争解释、阈值与概率**: 调用 write_thesis_test_ledger。先提交唯一的3年或5年 `central_path`，明确选择哪个情景更可能以及为什么；“若X则Y”的敏感性不能替代“X更可能，因为……”的判断。再冻结3-5项 `forward_judgments`：每项必须有方向/区间、期限与resolution_due、证据、竞争解释、领先信号、证伪条件、概率情景身份、官方结果测量规则，并逐项说明如何传导到正常化盈利、owner cash、估值和预期回报；正文用 `[central-path: id]` 绑定中心路径。核心 thesis 还必须给出有证据的最强替代解释、能区分两者的观察及可获得时间、翻转条件，以及翻转后的估值/仓位/动作；正文分别用 `[thesis-test: id]`、`[threshold: id]`、`[probability: id]` 绑定。阈值必须说明历史波动/同行/模型敏感性/合同或监管依据、观测频率、窗口、滚动或连续期规则、季节性、会计口径和合理精度；没有依据的精确数值不得使用。概率必须标明 frequency/base_rate/analyst_subjective/scenario_weight，情景互斥完备且合计100%，每个probability_set必须给出晚于as_of的resolution_due；`base_rate` 的source_ids必须是base_rate_context中至少5个同机制ELIGIBLE `CASE:` ID，否则只能标为analyst_subjective或scenario_weight；主观概率必须给区间，禁止伪精确。
-12. **固化洞见账本**: 先确认write_decisive_question_findings已覆盖全部入选question_id，再以合同包 decisive_question_plan、研究结论和 insight_research_brief 为起点。`decisive_question`必须逐字使用某个入选问题，`question_basis.question_id`必须引用对应ID；禁止绕开计划另造问题。调用 write_insight_ledger，仅保留1-3条能改变估值或动作的公司特异洞见；每条绑定 claim/evidence/decision，写出异常→机制链→最强替代解释→区分观察→估值与动作。必须用估值模型反推市场隐含经营路径，不能用“低PE/PB”代替逆向预期；必须说明潜在价值由谁控制、如何兑现、无催化剂时值多少；最强反方成立时动作如何改变。Ch0/Ch14用 `[insight: id]` 绑定。禁止仅因股价跌破某数无条件止损。
-13. **独立洞见上限评审**: 洞见账冻结后切换为反方审稿人，调用 write_judgment_review。必须区分“真正差异化洞见”和“只是合格的常规分析”，指出最脆弱跳跃、最需要的新证据，以及拿掉核心洞见后估值与动作是否改变。只能引用现有 insight/evidence/decision/model ID。裁决仅诊断，不得因自评为INSIGHTFUL而放宽任何发布门。
-14. **定向研究路由**: 调用 plan_judgment_research(max_tasks_per_run=3)，对execution_queue严格按顺序先调用begin_judgment_research_task，再执行该项required_tools，最后调用complete_judgment_research_task。执行账本会在工具层核验每项maximum tool calls、来源调用和mutation_scope；越界写章/账本与活动任务未完成时assemble会被拒绝。查不到公开信息是有效结果，必须以PUBLIC_INFO_UNAVAILABLE结束，禁止把“未找到”写成正面证据。只有新证据改变主张时才可重写mutation_scope.chapters；禁止全篇扩写、优化分数或修改无关章节。若涉及canonical决策，必须显式decision diff并重新验证全部账本；完成队列后重新调用write_judgment_review。
-15. **组装报告**: 调用 assemble_report；工具先从冻结账本单向编译关键决策区块，再执行完成契约。若返回free_critical_value、protected_block或decision_diff_approval错误，只修对应身份/证据/解释，不得绕过或手工修改受保护区块。新 unified run 自动生成精简投资备忘录与独立15章技术附录
+10. **固化公司经营驱动桥**: 在前瞻判断前调用 `read_structured_ledger_contract(ledger=financial_driver)` 再调用 `write_financial_driver_bridge`。必须分别覆盖竞争/需求、单位经济、现金转换、资本配置四层；每个OBSERVED项只能引用VERIFIED observation，并明确如何进入已有估值模型输入和决策条目。UNKNOWN必须保留并采用保守处理。金融产品滚动、受限资金释放、在建工程减值等不能被一个标签吞没：分别给出分类依据、实现/结算窗口和行动含义。价格只能进入入场和条件回报，不得作为经营驱动证据或中心路径选择依据。
+
+11. **固化重大主张证据链**: 调用 write_claim_evidence_ledger。重大主张正文用 `[claim: claim_id]`；`chapters` 第一章是该主张的 canonical home，必须原样包含 ledger 的 claim 文本，其他章可只引用 ID。每条链必须包含原始事实、推理、竞争解释、适用条件、置信度及决策影响，并绑定至少一个 decision entry。新统一运行的每条直接支持必须填写VERIFIED `observation_id`，`source_id`必须是该observation对应的`DOC:`身份；CANDIDATE、搜索摘要和报告内部引用都不得作为直接支持。来源同时记录 authority × claim_distance、发布日期/数据截止日、利益冲突、口径匹配和同源组。Markdown 表格可在紧邻位置用 `[table-source: X]` 一次映射整表。
+12. **固化中心路径、前瞻判断、竞争解释、阈值与概率**: 调用 write_thesis_test_ledger。先提交唯一的3年或5年 `central_path`，明确选择哪个情景更可能以及为什么；“若X则Y”的敏感性不能替代“X更可能，因为……”的判断。被中心路径选择的 `probability_set` 必须声明为 `TERMINAL_OPERATING_OUTCOME`，并以同一3/5年尺度定义终局；渠道调整、会计确认、库存和其他过程因素必须写入 `mechanism_chains`，不得与经营终局并列占用概率。每条机制链都要绑定情景、领先阈值和到正常化盈利、owner cash、估值、预期回报的传导；每项前瞻判断再用 `mechanism_chain_ids` 连接它。再冻结3-5项 `forward_judgments`：每项必须有方向/区间、期限与resolution_due、证据、竞争解释、领先信号、证伪条件、概率情景身份、官方结果测量规则，并逐项说明如何传导到正常化盈利、owner cash、估值和预期回报；启用 `financial_driver_bridge` 时每项还要用 `financial_driver_ids` 绑定当时四层 bridge 的具体 driver，不能等结果出来再补连；每项可量化判断另冻结一个同一PIT经营信息下的简单 `baseline`，其指标、单位、期限与到期日必须完全相同，且必须写出由已列 evidence 的数值输入可复算的指定公式（持续、公司水平加行业变化或等权驱动）；它只能在结果期比较机制判断的增量信息，绝不参与中心路径选择或读取价格/事后结果；每项还必须登记 `settlement_contract`（冻结 claim ID、PIT 来源、同指标阈值与后果、观察窗口），adapter 不得代填或把区间取中点；正文用 `[central-path: id]` 绑定中心路径。核心 thesis 还必须给出有证据的最强替代解释、能区分两者的观察及可获得时间，并为每个观察写明其在主/反方下各自 `LOW` / `MEDIUM` / `HIGH` 的事前可能性和经济理由（两者必须不同；不得伪造精确概率或贝叶斯因子）、翻转条件，以及翻转后的估值/仓位/动作；正文分别用 `[thesis-test: id]`、`[threshold: id]`、`[probability: id]` 绑定。阈值必须说明历史波动/同行/模型敏感性/合同或监管依据、观测频率、窗口、滚动或连续期规则、季节性、会计口径和合理精度；没有依据的精确数值不得使用。概率必须标明 frequency/base_rate/analyst_subjective/scenario_weight，情景互斥完备且合计100%，每个probability_set必须给出晚于as_of的resolution_due；`base_rate` 的source_ids必须是base_rate_context中至少5个同机制ELIGIBLE `CASE:` ID，否则只能标为analyst_subjective或scenario_weight；主观概率必须给区间，禁止伪精确。
+12.1 **冻结前失败预演**: 在中心路径冻结前，先假定这份公司判断已经失败，列出最可能的失败机制。每个材料性失败机制必须转入最强替代解释、`mechanism_chain`、领先阈值或明确 `UNKNOWN`；不能只是再写一张风险清单，不能产生新的评分，也不能以假想失败替代公司证据。
+13. **固化洞见账本**: 先确认write_decisive_question_findings已覆盖全部入选question_id，再以合同包 decisive_question_plan、研究结论和 insight_research_brief 为起点。`decisive_question`必须逐字使用某个入选问题，`question_basis.question_id`必须引用对应ID；禁止绕开计划另造问题。调用 write_insight_ledger，仅保留1-3条能改变估值或动作的公司特异洞见；每条绑定 claim/evidence/decision，写出异常→机制链→最强替代解释→区分观察→估值与动作。必须用估值模型反推市场隐含经营路径，不能用“低PE/PB”代替逆向预期；必须说明潜在价值由谁控制、如何兑现、无催化剂时值多少；最强反方成立时动作如何改变。Ch0/Ch14用 `[insight: id]` 绑定。禁止仅因股价跌破某数无条件止损。
+14. **独立洞见上限评审**: 洞见账冻结后切换为反方审稿人，调用 write_judgment_review。必须区分“真正差异化洞见”和“只是合格的常规分析”，指出最脆弱跳跃、最需要的新证据，以及拿掉核心洞见后估值与动作是否改变。只能引用现有 insight/evidence/decision/model ID。裁决仅诊断，不得因自评为INSIGHTFUL而放宽任何发布门。
+15. **定向研究路由**: 调用 plan_judgment_research(max_tasks_per_run=3)，对execution_queue严格按顺序先调用begin_judgment_research_task，再执行该项required_tools，最后调用complete_judgment_research_task。执行账本会在工具层核验每项maximum tool calls、来源调用和mutation_scope；越界写章/账本与活动任务未完成时assemble会被拒绝。查不到公开信息是有效结果，必须以PUBLIC_INFO_UNAVAILABLE结束，禁止把“未找到”写成正面证据。只有新证据改变主张时才可重写mutation_scope.chapters；禁止全篇扩写、优化分数或修改无关章节。若涉及canonical决策，必须显式decision diff并重新验证全部账本；完成队列后重新调用write_judgment_review。
+16. **组装报告**: 调用 assemble_report；工具先从冻结账本单向编译关键决策区块，再执行完成契约。若返回free_critical_value、protected_block或decision_diff_approval错误，只修对应身份/证据/解释，不得绕过或手工修改受保护区块。新 unified run 自动生成精简投资备忘录与独立15章技术附录
 
 ## 模板合约要求
 {template_raw if template_raw else '（模板未加载，按标准龟龟报告结构写作）'}
@@ -2118,7 +2148,7 @@ Zone B 提取结果写入 audit.json / governance.json。写作 Agent 在相关�
                 if str(item.get("function", {}).get("name") or "") in allowed
             ]
         if self._config.pit_production_mode:
-            allowed = self._pit_production_allowed_tools()
+            allowed = self._pit_production_allowed_tools(self._config.analysis_purpose)
             return [
                 deepcopy(item) for item in self._tools.get_schemas()
                 if str(item.get("function", {}).get("name") or "") in allowed
@@ -2161,6 +2191,7 @@ Zone B 提取结果写入 audit.json / governance.json。写作 Agent 在相关�
                 structured_mutations = {
                     "write_decision_manifest", "write_decision_ledger",
                     "write_claim_evidence_ledger", "write_valuation_model_ledger",
+                    "write_financial_driver_bridge",
                     "write_thesis_test_ledger", "write_decisive_question_findings",
                     "write_insight_ledger", "write_judgment_review",
                     "plan_judgment_research", "begin_judgment_research_task",
@@ -2243,6 +2274,7 @@ Zone B 提取结果写入 audit.json / governance.json。写作 Agent 在相关�
             ("claim_evidence_validation.json", "write_claim_evidence_ledger"),
             ("valuation_model_validation.json", "write_valuation_model_ledger"),
             ("decision_reliability_validation.json", "write_valuation_model_ledger"),
+            ("financial_driver_bridge_validation.json", "write_financial_driver_bridge"),
             ("thesis_test_validation.json", "write_thesis_test_ledger"),
             ("decisive_question_findings_validation.json", "write_decisive_question_findings"),
             ("insight_validation.json", "write_insight_ledger"),
@@ -2290,6 +2322,8 @@ Zone B 提取结果写入 audit.json / governance.json。写作 Agent 在相关�
                     "decision_reliability_validation.json",
                 }
             ):
+                continue
+            if filename == "financial_driver_bridge_validation.json" and state in {"REVIEWABLE", "DECISION_READY", "MONITORING"}:
                 continue
             if filename == "decision_ledger_validation.json" and state == "INCOMPLETE":
                 # Ch0/Ch14 are derived decision surfaces and intentionally stay
@@ -2539,10 +2573,10 @@ Zone B 提取结果写入 audit.json / governance.json。写作 Agent 在相关�
                         + (
                             "请先调用 write_decision_manifest 固化唯一决策身份，再调用 write_decision_ledger 固化canonical参数，"
                             "随后调用 write_claim_evidence_ledger 固化重大主张证据链，再调用 write_valuation_model_ledger 验证估值模型，"
-                            "并调用 write_thesis_test_ledger 固化竞争解释、阈值和概率，再调用 write_decisive_question_findings 闭环全部入选问题，再调用 write_insight_ledger 固化洞见与精简备忘录，再调用 write_judgment_review 与 plan_judgment_research，最后调用 assemble_report。"
+                            "再调用 write_financial_driver_bridge 固化公司经营驱动到估值和动作的传导，并调用 write_thesis_test_ledger 固化竞争解释、阈值和概率，再调用 write_decisive_question_findings 闭环全部入选问题，再调用 write_insight_ledger 固化洞见与精简备忘录，再调用 write_judgment_review 与 plan_judgment_research，最后调用 assemble_report。"
                             if (not self._config.repair_targets or {0, 14}.intersection(self._config.repair_targets))
                             and not self._decision_already_frozen
-                            else "本轮不得改写决策 manifest/ledger；请依次验证 write_claim_evidence_ledger、write_valuation_model_ledger、write_thesis_test_ledger、write_decisive_question_findings 与 write_insight_ledger，再调用 write_judgment_review 和 plan_judgment_research 后调用 assemble_report。"
+                            else "本轮不得改写决策 manifest/ledger；请依次验证 write_claim_evidence_ledger、write_valuation_model_ledger、write_financial_driver_bridge、write_thesis_test_ledger、write_decisive_question_findings 与 write_insight_ledger，再调用 write_judgment_review 和 plan_judgment_research 后调用 assemble_report。"
                         )
                     ),
                 })
@@ -2959,6 +2993,7 @@ Zone B 提取结果写入 audit.json / governance.json。写作 Agent 在相关�
                     structured_names = {
                         "write_decision_manifest", "write_decision_ledger",
                         "write_claim_evidence_ledger", "write_valuation_model_ledger",
+                        "write_financial_driver_bridge",
                         "write_thesis_test_ledger", "write_decisive_question_findings",
                         "write_insight_ledger", "write_judgment_review",
                         "plan_judgment_research", "begin_judgment_research_task",
@@ -3022,6 +3057,9 @@ Zone B 提取结果写入 audit.json / governance.json。写作 Agent 在相关�
                 "write_thesis_test_ledger": (
                     ("valuation_model_validation.json", {"DECISION_READY", "MONITORING"}),
                     ("decision_reliability_validation.json", {"DECISION_READY", "MONITORING"}),
+                ),
+                "write_financial_driver_bridge": (
+                    ("valuation_model_validation.json", {"DECISION_READY", "MONITORING"}),
                 ),
                 "write_decisive_question_findings": (("thesis_test_validation.json", {"DECISION_READY", "MONITORING"}),),
                 "write_insight_ledger": (
@@ -3224,6 +3262,7 @@ Zone B 提取结果写入 audit.json / governance.json。写作 Agent 在相关�
                 tc.name in {
                     "write_decision_manifest", "write_decision_ledger",
                     "write_claim_evidence_ledger", "write_valuation_model_ledger",
+                    "write_financial_driver_bridge",
                     "write_thesis_test_ledger", "write_decisive_question_findings",
                     "write_insight_ledger", "write_judgment_review",
                     "plan_judgment_research", "assemble_report",
@@ -3393,6 +3432,7 @@ Zone B 提取结果写入 audit.json / governance.json。写作 Agent 在相关�
             value = result.get("value", result.get("error", ""))
             structured_write_rejected = tc.name in {
                 "write_claim_evidence_ledger", "write_valuation_model_ledger",
+                "write_financial_driver_bridge",
                 "write_thesis_test_ledger", "write_decisive_question_findings",
                 "write_insight_ledger", "write_judgment_review",
             } and isinstance(value, dict) and value.get("written") is False and not value.get(
@@ -3626,7 +3666,7 @@ Zone B 提取结果写入 audit.json / governance.json。写作 Agent 在相关�
                 for tc in resp.tool_calls
             ],
         })
-        allowed = self._pit_production_allowed_tools() if self._config.pit_production_mode else {
+        allowed = self._pit_production_allowed_tools(self._config.analysis_purpose) if self._config.pit_production_mode else {
             "pit_list_sources",
             "pit_read_source",
             "pit_read_framework",
@@ -3794,7 +3834,7 @@ Zone B 提取结果写入 audit.json / governance.json。写作 Agent 在相关�
     def _compact_duplicate_tool_results(self) -> None:
         """Keep the latest identical data read, never multiple stale copies."""
         call_meta: dict[str, tuple[str, str]] = {}
-        excluded = {"write_chapter", "audit_chapter", "assemble_report", "write_decision_manifest", "write_decision_ledger", "write_valuation_model_ledger", "write_claim_evidence_ledger", "write_thesis_test_ledger", "write_decisive_question_findings", "write_insight_ledger", "write_judgment_review", "plan_judgment_research", "read_chapter_contract", "read_report_contract_pack", "read_chapter"}
+        excluded = {"write_chapter", "audit_chapter", "assemble_report", "write_decision_manifest", "write_decision_ledger", "write_valuation_model_ledger", "write_claim_evidence_ledger", "write_financial_driver_bridge", "write_thesis_test_ledger", "write_decisive_question_findings", "write_insight_ledger", "write_judgment_review", "plan_judgment_research", "read_chapter_contract", "read_report_contract_pack", "read_chapter"}
         for message in self._messages:
             content = message.get("content")
             if message.get("role") != "assistant" or not isinstance(content, list):

@@ -58,6 +58,84 @@ _CANONICAL_CHAPTER_TITLES = {
     14: "综合决策",
 }
 
+_CJO_CANONICAL_CHAPTER_TITLES = {
+    0: "公司判断摘要", 1: "公司做的是什么生意", 2: "行业结构与公司位置",
+    3: "商业机制、护城河与关键约束", 4: "最近一年关键变化与当前阶段",
+    5: "经营表现与核心驱动", 6: "财务表现与资本配置",
+    7: "经营现金与资本约束", 8: "管理层、治理与激励",
+    9: "核心风险、反方解释与证伪项", 10: "前瞻机制与情景",
+    11: "竞争性机制与早期判别信号", 12: "终局经营结果与可证伪条件",
+    13: "监测、结算与再研究", 14: "公司判断结论与数据边界",
+}
+
+ANALYSIS_PURPOSES = {"INVESTMENT_DECISION", "COMPANY_JUDGMENT_ONLY"}
+
+# Product pricing is a normal company-mechanism input and is deliberately not
+# prohibited here.  These patterns identify a security-price, valuation,
+# return or trade instruction in a release whose contract is company judgment
+# only.
+_CJO_FORBIDDEN_REPORT_PATTERNS: tuple[tuple[str, re.Pattern[str]], ...] = (
+    ("security_price", re.compile(r"股价|目标价|买入价|卖出价|市场价格|证券价格|每股(?:价值|价格)|\b(?:current|market)[_ -]?price\b", re.I)),
+    ("valuation", re.compile(r"估值|内在价值|估值模型|\b(?:DCF|DDM|NAV|EPV|SOTP)\b|折现率|终值|\bintrinsic[_ -]?value\b|\bvaluation[_ -]?model\b", re.I)),
+    ("return", re.compile(r"预期回报|投资回报|回报率|\b(?:XIRR|IRR)\b|年化收益|\bexpected[_ -]?return\b", re.I)),
+    ("position", re.compile(r"仓位|建仓|加仓|减仓|持仓|\bposition(?:_pct)?\b", re.I)),
+    ("trade_action", re.compile(r"建议(?:买入|卖出)|(?:买入|卖出)建议|交易动作|投资动作|交易执行|投资决策|\b(?:buy|sell|hold|avoid)\b", re.I)),
+)
+
+
+def _analysis_purpose(output_dir: str | os.PathLike[str]) -> str:
+    """Resolve the report contract before applying purpose-specific writers."""
+    try:
+        contract = json.loads(
+            Path(output_dir, "analysis_contract.json").read_text(encoding="utf-8")
+        )
+    except (OSError, json.JSONDecodeError):
+        return "INVESTMENT_DECISION"
+    purpose = str(contract.get("analysis_purpose") or "INVESTMENT_DECISION")
+    return purpose if purpose in ANALYSIS_PURPOSES else "INVALID"
+
+
+def _resolve_submitted_analysis_purpose(
+    output_dir: str | os.PathLike[str], submitted: str | None
+) -> tuple[str | None, str | None]:
+    """Use the frozen contract purpose; reject an explicit cross-purpose write."""
+    contract_purpose = _analysis_purpose(output_dir)
+    if contract_purpose == "INVALID":
+        return None, "analysis_contract_purpose_invalid"
+    requested = str(submitted or "").strip()
+    if requested and requested not in ANALYSIS_PURPOSES:
+        return None, "analysis_purpose_invalid"
+    if requested and requested != contract_purpose:
+        return None, "analysis_purpose_contract_mismatch"
+    return contract_purpose, None
+
+
+def _cjo_forbidden_report_findings(text: str) -> list[str]:
+    """Return concrete CJO output-boundary breaches without blocking product price."""
+    findings: list[str] = []
+    for category, pattern in _CJO_FORBIDDEN_REPORT_PATTERNS:
+        if pattern.search(text or ""):
+            findings.append("cjo_forbidden_" + category)
+    return findings
+
+
+def _append_cjo_boundary_violations(audit: dict[str, Any], content: str) -> list[str]:
+    """Make CJO publication boundaries visible to normal chapter-audit repair."""
+    findings = _cjo_forbidden_report_findings(content)
+    for finding in findings:
+        if any(
+            item.get("rule") == "CJO_OUTPUT_BOUNDARY" and item.get("desc") == finding
+            for item in audit.get("violations", [])
+        ):
+            continue
+        audit.setdefault("violations", []).append({
+            "rule": "CJO_OUTPUT_BOUNDARY", "severity": "error", "desc": finding,
+        })
+        audit["error_count"] = int(audit.get("error_count", 0)) + 1
+        audit["passed"] = False
+        audit["verdict"] = "fail"
+    return findings
+
 
 def verify_official_fact(
     output_dir: str = ".",
@@ -102,9 +180,18 @@ def verify_official_fact(
     return result
 
 
-def _ensure_canonical_chapter_heading(content: str, chapter_index: int) -> str:
+def _ensure_canonical_chapter_heading(
+    content: str,
+    chapter_index: int,
+    output_dir: str | os.PathLike[str] | None = None,
+) -> str:
     """Make report identity deterministic instead of relying on model styling."""
-    title = _CANONICAL_CHAPTER_TITLES.get(int(chapter_index))
+    titles = (
+        _CJO_CANONICAL_CHAPTER_TITLES
+        if output_dir is not None and _analysis_purpose(output_dir) == "COMPANY_JUDGMENT_ONLY"
+        else _CANONICAL_CHAPTER_TITLES
+    )
+    title = titles.get(int(chapter_index))
     if title is None:
         return content
     canonical = f"## Ch{int(chapter_index)} {title}"
@@ -730,29 +817,106 @@ def write_valuation_model_ledger(
     return result
 
 
+def write_financial_driver_bridge(
+    output_dir: str = ".",
+    drivers: list[dict[str, Any]] | None = None,
+    allocation_events: list[dict[str, Any]] | None = None,
+    report_id: str = "",
+    as_of: str = "",
+    change_reason: str = "",
+    lifecycle: str = "reviewable",
+    analysis_purpose: str = "",
+) -> dict[str, Any]:
+    """Persist the evidence-bound operating-driver bridge before thesis synthesis.
+
+    The bridge records how competition, unit economics, cash conversion and
+    capital allocation enter a model and action. Under the current policy,
+    cash conversion must explicitly state whether normal owner cash is
+    normalized, unknown, or merely a reported cash state; each allocation
+    event also records the source-bound initial commitment and its next
+    commitment movement. It deliberately does not calculate a price, a return,
+    or infer missing company economics.
+    """
+    try:
+        from scripts.financial_driver_bridge import (
+            build_financial_driver_bridge,
+            evaluate_output_financial_driver_bridge,
+            persist_financial_driver_bridge,
+        )
+    except ModuleNotFoundError:
+        from financial_driver_bridge import (  # type: ignore[no-redef]
+            build_financial_driver_bridge,
+            evaluate_output_financial_driver_bridge,
+            persist_financial_driver_bridge,
+        )
+    output = Path(output_dir)
+    resolved_purpose, purpose_error = _resolve_submitted_analysis_purpose(
+        output, analysis_purpose
+    )
+    if purpose_error:
+        return {"written": False, "error": purpose_error}
+    contract: dict[str, Any] = {}
+    try:
+        contract = json.loads((output / "analysis_contract.json").read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        pass
+    payload = build_financial_driver_bridge(
+        output,
+        list(drivers or []),
+        list(allocation_events or []),
+        report_id=str(report_id or contract.get("ts_code") or contract.get("code") or output.name),
+        as_of=str(as_of or contract.get("data_as_of") or contract.get("analysis_date") or ""),
+        change_reason=str(change_reason or "").strip(),
+        lifecycle=str(lifecycle or "reviewable"),
+        analysis_purpose=str(resolved_purpose),
+    )
+    result = persist_financial_driver_bridge(output, payload)
+    result["validation"] = evaluate_output_financial_driver_bridge(output, persist=True)
+    return result
+
+
 def write_thesis_test_ledger(
     output_dir: str = ".",
     competitive_tests: list[dict[str, Any]] | None = None,
     thresholds: list[dict[str, Any]] | None = None,
     probability_sets: list[dict[str, Any]] | None = None,
     central_path: dict[str, Any] | None = None,
+    mechanism_chains: list[dict[str, Any]] | None = None,
     forward_judgments: list[dict[str, Any]] | None = None,
+    rival_hypothesis_pairs: list[dict[str, Any]] | None = None,
+    analogy_transfer_cards: list[dict[str, Any]] | None = None,
+    selection_admission: dict[str, Any] | None = None,
+    probability_mode: str = "QUALIFIED_PROBABILITY",
+    probability_qualification: dict[str, Any] | None = None,
+    analysis_purpose: str = "",
     change_reason: str = "",
     freeze: bool = True,
     repair_invalid_frozen: bool = False,
 ) -> dict[str, Any]:
-    """Persist V3 competitive explanations, justified thresholds and probabilities."""
+    """Persist competitive explanations and forward judgments without inventing CJO odds."""
     try:
         from scripts.thesis_test_gate import build_thesis_test_ledger, persist_thesis_test_ledger, bind_thesis_test_references, promote_reviewable_thesis_test, evaluate_output_thesis_test
     except ModuleNotFoundError:
         from thesis_test_gate import build_thesis_test_ledger, persist_thesis_test_ledger, bind_thesis_test_references, promote_reviewable_thesis_test, evaluate_output_thesis_test
+    resolved_purpose, purpose_error = _resolve_submitted_analysis_purpose(
+        output_dir, analysis_purpose
+    )
+    if purpose_error:
+        return {"written": False, "error": purpose_error}
     chapter_dir = Path(output_dir) / CHAPTERS_SUBDIR
     if not chapter_dir.is_dir(): chapter_dir = Path(output_dir)
     report_text = "\n\n".join(path.read_text(encoding="utf-8") for path in sorted(chapter_dir.glob("_ch*.md")))
     payload = build_thesis_test_ledger(
         output_dir, list(competitive_tests or []), list(thresholds or []),
         list(probability_sets or []), central_path=central_path,
+        mechanism_chains=(list(mechanism_chains) if mechanism_chains is not None else None),
         forward_judgments=(list(forward_judgments) if forward_judgments is not None else None),
+        rival_hypothesis_pairs=(list(rival_hypothesis_pairs) if rival_hypothesis_pairs is not None else None),
+        analogy_transfer_cards=(list(analogy_transfer_cards) if analogy_transfer_cards is not None else None),
+        selection_admission=selection_admission,
+        probability_mode=str(probability_mode or "").strip(),
+        probability_qualification=probability_qualification,
+        analysis_purpose=str(resolved_purpose),
         change_reason=str(change_reason or "").strip(), freeze=False,
     )
     result = persist_thesis_test_ledger(
@@ -892,6 +1056,7 @@ def write_judgment_review(
     decision_dependency: dict[str, Any] | None = None,
     dimension_assessments: dict[str, Any] | None = None,
     reviewer_limits: list[str] | None = None,
+    judgment_dependency: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     """Persist an independent, diagnostic-only review of the insight ceiling."""
     try:
@@ -903,7 +1068,7 @@ def write_judgment_review(
         list(competent_but_conventional or []), list(fragile_leaps or []),
         dict(competitive_explanation_test or {}), list(missing_information or []),
         dict(decision_dependency or {}), dict(dimension_assessments or {}),
-        list(reviewer_limits or []),
+        list(reviewer_limits or []), judgment_dependency=dict(judgment_dependency or {}),
     )
     return persist_judgment_review(output_dir, payload)
 
@@ -1273,6 +1438,8 @@ def write_chapter(
         ``{path, char_count, audit: {violations}}``。
     """
     os.makedirs(output_dir, exist_ok=True)
+    analysis_purpose = _analysis_purpose(output_dir)
+    company_judgment_only = analysis_purpose == "COMPANY_JUDGMENT_ONLY"
     filename = f"_ch{int(chapter_index):02d}.md"
     chapters_d = os.path.join(output_dir, CHAPTERS_SUBDIR)
     os.makedirs(chapters_d, exist_ok=True)
@@ -1289,12 +1456,15 @@ def write_chapter(
                 _existing_depth = _enforce_depth_contract(
                     _quick_audit, _existing, chapter_index, output_dir
                 )
-                _enforce_graham_block(_quick_audit, _existing, chapter_index)
-                _enforce_av_bridge(_quick_audit, _existing, chapter_index)
-                _enforce_av_method(_quick_audit, _existing, chapter_index)
-                _enforce_reliability_language(
-                    _quick_audit, _existing, chapter_index, output_dir
-                )
+                if company_judgment_only:
+                    _append_cjo_boundary_violations(_quick_audit, _existing)
+                else:
+                    _enforce_graham_block(_quick_audit, _existing, chapter_index)
+                    _enforce_av_bridge(_quick_audit, _existing, chapter_index)
+                    _enforce_av_method(_quick_audit, _existing, chapter_index)
+                    _enforce_reliability_language(
+                        _quick_audit, _existing, chapter_index, output_dir
+                    )
                 if _quick_audit.get("passed") and _quick_audit.get("error_count", 0) == 0:
                     # 即使跳过内容重写，也要留下本轮可验证的审计记录，避免
                     # completion contract 因 missing_audit_record 永久阻断。
@@ -1310,6 +1480,7 @@ def write_chapter(
                         "path": path,
                         "chapter_index": chapter_index,
                         "title": title,
+                        "analysis_purpose": analysis_purpose,
                         "char_count": len(_existing),
                         "audit": _quick_audit,
                         "depth": _existing_depth,
@@ -1323,11 +1494,11 @@ def write_chapter(
         except OSError:
             pass  # 读取失败 → 回落到正常写入
 
-    content = _ensure_canonical_chapter_heading(content, chapter_index)
+    content = _ensure_canonical_chapter_heading(content, chapter_index, output_dir)
     # Phase 04: compiler-owned decision blocks are immutable from the
     # chapter-writing surface.  Agents may improve the surrounding reasoning,
     # but cannot silently delete or rewrite canonical values/actions.
-    if os.path.exists(path):
+    if os.path.exists(path) and not company_judgment_only:
         try:
             from scripts.decision_compiler import preserve_protected_blocks
         except ModuleNotFoundError:
@@ -1366,10 +1537,13 @@ def write_chapter(
     # 自动审计
     audit = _audit_content(content, chapter_index=chapter_index)
     _depth = _enforce_depth_contract(audit, content, chapter_index, output_dir)
-    _enforce_graham_block(audit, content, chapter_index)
-    _enforce_av_bridge(audit, content, chapter_index)
-    _enforce_av_method(audit, content, chapter_index)
-    _enforce_reliability_language(audit, content, chapter_index, output_dir)
+    if company_judgment_only:
+        _append_cjo_boundary_violations(audit, content)
+    else:
+        _enforce_graham_block(audit, content, chapter_index)
+        _enforce_av_bridge(audit, content, chapter_index)
+        _enforce_av_method(audit, content, chapter_index)
+        _enforce_reliability_language(audit, content, chapter_index, output_dir)
     _persist_chapter_audit(
         output_dir,
         chapter_index,
@@ -1383,17 +1557,24 @@ def write_chapter(
         "path": path,
         "chapter_index": chapter_index,
         "title": title,
+        "analysis_purpose": analysis_purpose,
         "char_count": len(content),
         "depth": _depth,
         "audit": audit,
     }
-    try:
-        from scripts.decision_compiler import validate_chapter_decision_bindings
-    except ModuleNotFoundError:
-        from decision_compiler import validate_chapter_decision_bindings
-    binding_validation = validate_chapter_decision_bindings(
-        output_dir, int(chapter_index)
-    )
+    if company_judgment_only:
+        binding_validation = {
+            "state": "SKIP", "status": "SKIP",
+            "reason": "company_judgment_only_has_no_decision_bindings",
+        }
+    else:
+        try:
+            from scripts.decision_compiler import validate_chapter_decision_bindings
+        except ModuleNotFoundError:
+            from decision_compiler import validate_chapter_decision_bindings
+        binding_validation = validate_chapter_decision_bindings(
+            output_dir, int(chapter_index)
+        )
     _ret["decision_binding_validation"] = binding_validation
     if binding_validation.get("state") == "INVALID":
         _ret["passed"] = False
@@ -1504,6 +1685,174 @@ def _extract_sources(report_text: str, output_dir: str, source_json_name: str = 
     return text + footnotes
 
 
+def _inline_report_text(value: Any) -> str:
+    text = re.sub(r"\s+", " ", str(value or "")).strip()
+    return re.sub(r"[。；;，,]+$", "", text)
+
+
+def _render_cjo_prediction(prediction: dict[str, Any]) -> str:
+    if not isinstance(prediction, dict):
+        return "口径或阈值尚未冻结"
+    metric = _inline_report_text(prediction.get("metric")) or "未命名指标"
+    operator = _inline_report_text(prediction.get("operator"))
+    unit = _inline_report_text(prediction.get("unit"))
+    horizon = _inline_report_text(prediction.get("horizon"))
+    due = _inline_report_text(prediction.get("resolution_due"))
+    if operator == "RANGE":
+        target = "–".join(
+            _inline_report_text(prediction.get(key))
+            for key in ("range_low", "range_high")
+            if prediction.get(key) is not None
+        )
+    else:
+        target = _inline_report_text(prediction.get("value"))
+    target_text = " ".join(part for part in (operator, target, unit) if part)
+    timing = "，".join(part for part in (horizon, f"结算不晚于{due}" if due else "") if part)
+    return "；".join(part for part in (metric, target_text, timing) if part)
+
+
+def _render_company_judgment_summary(
+    output_dir: str | os.PathLike[str], company_name: str, ts_code: str
+) -> str:
+    """Render a CJO reader summary from frozen operating-mechanism ledgers.
+
+    This deliberately consumes only the company-judgment parts of
+    ``thesis_test.json``.  It does not fall back to the investment memo, whose
+    fields encode market, valuation and action semantics.
+    """
+    del company_name, ts_code
+    try:
+        thesis = json.loads(
+            Path(output_dir, "thesis_test.json").read_text(encoding="utf-8")
+        )
+    except (OSError, json.JSONDecodeError):
+        thesis = {}
+    central = thesis.get("central_path") if isinstance(thesis.get("central_path"), dict) else {}
+    chains = {
+        str(item.get("chain_id") or ""): item
+        for item in thesis.get("mechanism_chains") or []
+        if isinstance(item, dict)
+    }
+    pairs = [item for item in thesis.get("rival_hypothesis_pairs") or [] if isinstance(item, dict)]
+    judgments = [item for item in thesis.get("forward_judgments") or [] if isinstance(item, dict)]
+    tests = {
+        str(item.get("test_id") or ""): item
+        for item in thesis.get("competitive_tests") or []
+        if isinstance(item, dict)
+    }
+
+    def render_trace_status(edge: dict[str, Any], signal_judgments: dict[str, dict[str, Any]]) -> str:
+        status = str(edge.get("status") or "")
+        if status == "VERIFIED":
+            return "当期证据已核实"
+        if status == "TESTABLE":
+            linked = edge.get("linked_discriminator_ids")
+            linked_ids = linked if isinstance(linked, list) else []
+            signal_statements = [
+                _inline_report_text(signal_judgments.get(str(signal_id), {}).get("statement"))
+                for signal_id in linked_ids
+            ]
+            signal_statements = [statement for statement in signal_statements if statement]
+            if signal_statements:
+                return "将由前瞻信号检验：" + "；".join(signal_statements)
+            return "将由已冻结的前瞻信号检验"
+        if status == "UNKNOWN":
+            treatment = _inline_report_text(edge.get("conservative_treatment"))
+            return "仍属 UNKNOWN" + ("；保守处理：" + treatment if treatment else "")
+        return "证据状态尚未冻结"
+
+    lines = [
+        "## 公司判断摘要", "",
+        "本摘要冻结公司的经营机制、竞争解释、前瞻信号与证据边界。", "",
+        "### 当前主路径", "",
+        _inline_report_text(central.get("statement")) or "当前没有可冻结的主路径；需要先补足公司层面的可判别事实。",
+        "",
+        "### 竞争性机制", "",
+    ]
+    if pairs:
+        for pair in pairs:
+            primary = chains.get(str(pair.get("primary_mechanism_chain_id") or ""), {})
+            rival = chains.get(str(pair.get("rival_mechanism_chain_id") or ""), {})
+            test = tests.get(str(pair.get("competitive_test_id") or ""), {})
+            signal_judgments = {
+                str(discriminator.get("signal_id") or ""): next(
+                    (
+                        judgment for judgment in judgments
+                        if str(judgment.get("judgment_id") or "")
+                        == str(discriminator.get("forward_judgment_id") or "")
+                    ),
+                    {},
+                )
+                for discriminator in pair.get("discriminators") or []
+                if isinstance(discriminator, dict)
+            }
+            lines.extend([
+                f"- **主路径**：{_inline_report_text(primary.get('mechanism')) or _inline_report_text(test.get('primary_explanation')) or '尚未说明'}",
+                f"- **竞争路径**：{_inline_report_text(rival.get('mechanism')) or _inline_report_text(test.get('strongest_alternative')) or '尚未说明'}",
+            ])
+            assumptions = pair.get("critical_assumptions") if isinstance(pair.get("critical_assumptions"), list) else []
+            if assumptions:
+                lines.append("- **关键前提与边界**：")
+                for side, label in (("PRIMARY", "主路径"), ("RIVAL", "竞争路径")):
+                    for assumption in assumptions:
+                        if not isinstance(assumption, dict) or str(assumption.get("mechanism_side") or "") != side:
+                            continue
+                        statement = _inline_report_text(assumption.get("statement")) or "未命名前提"
+                        reason = _inline_report_text(assumption.get("why_necessary"))
+                        context = "；".join(part for part in (reason, render_trace_status(assumption, signal_judgments)) if part)
+                        lines.append(f"  - {label}：{statement}（{context}）。")
+            trace = pair.get("causal_trace") if isinstance(pair.get("causal_trace"), list) else []
+            if trace:
+                lines.append("- **机制传导与检验**：")
+                for side, label in (("PRIMARY", "主路径"), ("RIVAL", "竞争路径")):
+                    side_edges = [
+                        edge for edge in trace
+                        if isinstance(edge, dict) and str(edge.get("mechanism_side") or "") == side
+                    ]
+                    if not side_edges:
+                        continue
+                    lines.append(f"  - {label}：")
+                    for edge in side_edges:
+                        from_state = _inline_report_text(edge.get("from_state")) or "未命名起点"
+                        to_state = _inline_report_text(edge.get("to_state")) or "未命名结果"
+                        reason = _inline_report_text(edge.get("why_diagnostic"))
+                        context = "；".join(part for part in (reason, render_trace_status(edge, signal_judgments)) if part)
+                        lines.append(f"    - {from_state} → {to_state}（{context}）。")
+    else:
+        lines.append("- 尚未冻结竞争性机制；不能把单一路径写成确定结论。")
+    lines.extend(["", "### 前瞻判别与结算", ""])
+    if judgments:
+        for judgment in judgments:
+            statement = _inline_report_text(judgment.get("statement"))
+            prediction = _render_cjo_prediction(judgment.get("prediction") or {})
+            outcome = judgment.get("observable_outcome") or {}
+            rule = _inline_report_text(outcome.get("measurement_rule"))
+            lines.append(
+                f"- **{_inline_report_text(judgment.get('judgment_id')) or '前瞻判断'}**："
+                f"{statement or prediction}；观察口径：{rule or prediction}。"
+            )
+    else:
+        lines.append("- 尚未冻结可结算的前瞻判断；后续不能把事后解释当作预测能力。")
+    lines.extend([
+        "", "### 数据边界", "",
+        "- 本摘要只陈述截至冻结日可见的公司证据；缺失的同口径经营数据保持 UNKNOWN，不以行业平均数替代。",
+        "- 新披露将按已冻结的指标、口径和结算规则检验主路径与竞争路径，而不是事后改写机制。",
+        "",
+    ])
+    return "\n".join(lines)
+
+
+def _cjo_report_output_validation(report_text: str) -> dict[str, Any]:
+    findings = _cjo_forbidden_report_findings(report_text)
+    return {
+        "schema_version": "cjo-report-output.v1",
+        "analysis_purpose": "COMPANY_JUDGMENT_ONLY",
+        "status": "BLOCKED" if findings else "PASS",
+        "blocking_findings": findings,
+        "policy": "company_mechanism_and_settlement_only; product_pricing_is_allowed",
+    }
+
+
 def assemble_report(
     output_dir: str = ".",
     company_name: str = "",
@@ -1542,6 +1891,9 @@ def assemble_report(
     if not company_name:
         company_name = ts_code
 
+    analysis_purpose = _analysis_purpose(output_dir)
+    company_judgment_only = analysis_purpose == "COMPANY_JUDGMENT_ONLY"
+
     # Phase 04: canonical values/actions are compiled immediately before any
     # chapter bytes are read.  Legacy directories without an enforcement
     # policy remain unchanged; new unified runs cannot publish free-form
@@ -1552,8 +1904,13 @@ def assemble_report(
         from decision_compiler import compile_decision_sections
     compiler_policy = Path(output_dir) / "decision_compiler_policy.json"
     compiler_result: dict[str, Any] = {"state": "SKIP", "written": False}
-    if compiler_policy.is_file():
+    if compiler_policy.is_file() and not company_judgment_only:
         compiler_result = compile_decision_sections(output_dir, persist=True)
+    elif company_judgment_only:
+        compiler_result = {
+            "state": "SKIP", "written": False,
+            "reason": "company_judgment_only_has_no_decision_compilation",
+        }
 
     # v13+: chapters live in chapters/ subdir; fallback to root for legacy v12 dirs
     chapters_d = os.path.join(output_dir, CHAPTERS_SUBDIR)
@@ -1569,9 +1926,17 @@ def assemble_report(
     )
 
     header_parts: list[str] = [
-        f"# {company_name} ({ts_code}) 龟龟策略分析报告",
+        (
+            f"# {company_name} ({ts_code}) 公司判断研究报告"
+            if company_judgment_only else
+            f"# {company_name} ({ts_code}) 龟龟策略分析报告"
+        ),
         "",
-        f"> 由 TurtleAgent V12 单 Agent 工具循环生成 | Dayu定性+Turtle定量 | {len(chapter_files)} 章",
+        (
+            f"> Turtle 公司机制与前瞻判断研究 | {len(chapter_files)} 章"
+            if company_judgment_only else
+            f"> 由 TurtleAgent V12 单 Agent 工具循环生成 | Dayu定性+Turtle定量 | {len(chapter_files)} 章"
+        ),
         f"> 分析日期: {__import__('datetime').datetime.now().strftime('%Y-%m-%d')}",
         "",
         "**风险警示与免责声明**：*本文由AI/大模型基于公开披露且可核查的财报/公告文件辅助生成，仅用于学术研究与信息交流之目的。阅读后产生的任何观点需核对原文。*",
@@ -1594,10 +1959,10 @@ def assemble_report(
     body_text = normalize_markdown_paragraphs(body_text)
     temp_text = "\n".join(header_parts) + body_text
 
-    # 新报告应由 Agent 显式调用 write_decision_manifest；现有存量章节允许
+    # 新投资报告应由 Agent 显式调用 write_decision_manifest；现有存量章节允许
     # 一次性从 Ch14 推断并落盘，之后完成契约会验证 Ch0/Ch14/manifest 一致。
     decision_manifest_path = os.path.join(output_dir, "decision_manifest.json")
-    if not os.path.exists(decision_manifest_path):
+    if not company_judgment_only and not os.path.exists(decision_manifest_path):
         _infer_and_write_decision_manifest(output_dir)
 
     # V12: 来源清单 — 从各章证据与出处聚合，去重
@@ -1657,7 +2022,11 @@ def assemble_report(
         with open(technical_appendix_path, encoding="utf-8") as f:
             technical_appendix = f.read().strip()
 
-    report_parts = ["\n".join(header_parts), body_text]
+    company_judgment_summary = (
+        _render_company_judgment_summary(output_dir, company_name, ts_code)
+        if company_judgment_only else ""
+    )
+    report_parts = ["\n".join(header_parts), company_judgment_summary, body_text]
     if technical_appendix:
         report_parts.append(technical_appendix)
     if source_section:
@@ -1674,6 +2043,36 @@ def assemble_report(
     os.makedirs(reports_d, exist_ok=True)
     code_short = ts_code.replace(".HK", "").replace(".SH", "").replace(".SZ", "")
 
+    cjo_report_output = (
+        _cjo_report_output_validation(report_text)
+        if company_judgment_only else
+        {"status": "SKIP", "analysis_purpose": analysis_purpose, "blocking_findings": []}
+    )
+    if cjo_report_output.get("status") == "BLOCKED":
+        completion_dict = completion.to_dict()
+        completion_dict.setdefault("validators", {})["cjo_report_output"] = cjo_report_output
+        completion_dict["status"] = "BLOCKED"
+        completion_dict.setdefault("blocking_findings", []).extend(
+            "CJO report output: " + str(item)
+            for item in cjo_report_output.get("blocking_findings", [])
+        )
+        Path(os.path.join(output_dir, "completion_report.json")).write_text(
+            json.dumps(completion_dict, ensure_ascii=False, indent=2), encoding="utf-8"
+        )
+        drafts_d = os.path.join(reports_d, "drafts")
+        os.makedirs(drafts_d, exist_ok=True)
+        report_path = os.path.join(
+            drafts_d, f"{code_short}_公司判断报告_{REPORT_VERSION}_draft.md"
+        )
+        Path(report_path).write_text(report_text, encoding="utf-8")
+        return {
+            "path": report_path, "tool_name": "assemble_report",
+            "chapter_count": len(chapter_files), "char_count": len(report_text),
+            "completion": completion_dict, "decision_compiler": compiler_result,
+            "cjo_report_output": cjo_report_output, "published": False,
+            "error": "公司判断稿出现证券价格、估值、回报、仓位或交易动作，已阻断发布",
+        }
+
     if completion.status not in {"COMPLETE", "COMPLETE_WITH_WARNINGS"}:
         drafts_d = os.path.join(reports_d, 'drafts')
         os.makedirs(drafts_d, exist_ok=True)
@@ -1687,6 +2086,7 @@ def assemble_report(
             "char_count": len(report_text),
             "completion": completion.to_dict(),
             "decision_compiler": compiler_result,
+            "cjo_report_output": cjo_report_output,
             "published": False,
             "error": "报告未通过完成契约，已保留 draft，禁止发布正式报告",
         }
@@ -1718,6 +2118,7 @@ def assemble_report(
             "char_count": len(report_text),
             "quality": quality_result,
             "completion": completion_dict,
+            "cjo_report_output": cjo_report_output,
             "published": False,
             "error": "增强质量门未通过，已保留 draft，禁止发布正式报告",
         }
@@ -1728,7 +2129,10 @@ def assemble_report(
         insight_policy = json.loads(insight_policy_path.read_text(encoding="utf-8"))
     except (OSError, json.JSONDecodeError):
         insight_policy = {}
-    dual_layer = bool(insight_policy.get("enforced"))
+    # CJO has its own company-judgment summary above.  The investment memo
+    # serializes valuation and action fields and must never become its reader
+    # layer, even if an old insight policy happens to be present.
+    dual_layer = bool(insight_policy.get("enforced")) and not company_judgment_only
     technical_filename = (
         f"{code_short}_分析报告_{REPORT_VERSION}_technical_draft.md"
         if validation_only else f"{code_short}_分析报告_{REPORT_VERSION}_technical.md"
@@ -1766,7 +2170,8 @@ def assemble_report(
                 "path": report_path, "tool_name": "assemble_report",
                 "chapter_count": len(chapter_files), "char_count": len(memo_text),
                 "quality": quality_result, "completion": completion_dict,
-                "memo_preservation": memo_preservation, "published": False,
+                "memo_preservation": memo_preservation,
+                "cjo_report_output": cjo_report_output, "published": False,
                 "error": "精简报告丢失决策内容，已阻断发布",
             }
         disclaimer = "\n\n**风险警示与免责声明**：本文由AI基于公开披露辅助生成，仅供研究；投资者必须核对原始文件并独立判断。\n"
@@ -1812,8 +2217,10 @@ def assemble_report(
             "char_count": len(report_text),
             "quality": quality_result,
             "completion": completion_dict,
+            "decision_compiler": compiler_result,
             "memo_preservation": memo_preservation,
             "reader_coverage": reader_coverage,
+            "cjo_report_output": cjo_report_output,
             "published": False,
             "error": "读者层语义覆盖不足，已保留 draft，禁止发布正式报告",
         }
@@ -1850,7 +2257,8 @@ def assemble_report(
             "path": report_path, "tool_name": "assemble_report",
             "chapter_count": len(chapter_files), "char_count": len(report_text),
             "quality": quality_result, "completion": completion_dict,
-            "publication_snapshot": publication_snapshot, "published": False,
+            "publication_snapshot": publication_snapshot,
+            "cjo_report_output": cjo_report_output, "published": False,
             "error": "发布快照创建失败，已保留 draft，禁止覆盖正式报告",
         }
     Path(os.path.join(output_dir, "completion_report.json")).write_text(
@@ -1878,6 +2286,7 @@ def assemble_report(
             "completion": completion_dict,
             "memo_preservation": memo_preservation,
             "publication_snapshot": publication_snapshot,
+            "cjo_report_output": cjo_report_output,
             "published": False,
             "validated": True,
         }
@@ -1902,8 +2311,10 @@ def assemble_report(
         "char_count": len(report_text),
         "quality": quality_result,
         "completion": completion_dict,
+        "decision_compiler": compiler_result,
         "memo_preservation": memo_preservation,
         "publication_snapshot": publication_snapshot,
+        "cjo_report_output": cjo_report_output,
         "published": True,
     }
 
@@ -1960,15 +2371,21 @@ def audit_chapter(
     with open(path, encoding="utf-8") as f:
         content = f.read()
 
+    analysis_purpose = _analysis_purpose(output_dir)
+    company_judgment_only = analysis_purpose == "COMPANY_JUDGMENT_ONLY"
     audit = _audit_content(content, chapter_index=chapter_index)
     depth = _enforce_depth_contract(audit, content, chapter_index, output_dir)
-    _enforce_graham_block(audit, content, chapter_index)
-    _enforce_av_bridge(audit, content, chapter_index)
-    _enforce_av_method(audit, content, chapter_index)
-    _enforce_reliability_language(audit, content, chapter_index, output_dir)
+    if company_judgment_only:
+        _append_cjo_boundary_violations(audit, content)
+    else:
+        _enforce_graham_block(audit, content, chapter_index)
+        _enforce_av_bridge(audit, content, chapter_index)
+        _enforce_av_method(audit, content, chapter_index)
+        _enforce_reliability_language(audit, content, chapter_index, output_dir)
     audit["path"] = path
     audit["chapter_index"] = chapter_index
     audit["depth"] = depth
+    audit["analysis_purpose"] = analysis_purpose
     return audit
 
 
@@ -2687,7 +3104,7 @@ write_decision_ledger._tool_meta = {
 }  # type: ignore[attr-defined]
 write_claim_evidence_ledger._tool_meta = {
     "name": "write_claim_evidence_ledger",
-    "description": "提交V3重大主张证据链；直接支持必须是原子事实，其每个实质数字均逐字存在于绑定VERIFIED观察，复合事实须拆行；同时校验来源权威性×主张距离、口径日期、循环引用和决策影响",
+    "description": "提交V3重大主张证据链；直接支持必须是原子事实，其每个实质数字均逐字存在于绑定VERIFIED观察，复合事实须拆行。用途由analysis_contract决定：CJO填写judgment_impact与FJ，投资用途填写decision_impact与D-id。",
     "parameters": {
         "output_dir": {"type": "string", "description": "股票输出目录"},
         "claims": {
@@ -2745,8 +3162,14 @@ write_claim_evidence_ledger._tool_meta = {
                         "required": ["valuation", "position", "action"]
                     },
                     "decision_entry_ids": {"type": "array", "items": {"type": "string"}}
+                    ,"judgment_impact": {"type": "object", "description": "仅CJO：事实→机制→normalized earnings/owner cash→监控/FJ", "properties": {
+                        "mechanism": {"type": "string"},
+                        "normalized_earnings_or_owner_cash": {"type": "string"},
+                        "monitoring_or_forward_judgment": {"type": "string"},
+                        "forward_judgment_ids": {"type": "array", "items": {"type": "string"}}
+                    }, "required": ["mechanism", "normalized_earnings_or_owner_cash", "monitoring_or_forward_judgment", "forward_judgment_ids"]}
                 },
-                "required": ["claim_id", "claim", "chapters", "raw_facts", "reasoning_steps", "alternative_explanations", "applicability_conditions", "confidence", "decision_impact", "decision_entry_ids"]
+                "required": ["claim_id", "claim", "chapters", "raw_facts", "reasoning_steps", "alternative_explanations", "applicability_conditions", "confidence"]
             }
         },
         "change_reason": {"type": "string"},
@@ -2820,12 +3243,73 @@ write_valuation_model_ledger._tool_meta = {
         "freeze": {"type": "boolean", "description": "首次无账本先false，按validation补模型锚点后再true", "optional": True}
     }
 }  # type: ignore[attr-defined]
-write_thesis_test_ledger._tool_meta = {
-    "name": "write_thesis_test_ledger",
-    "description": "提交V3竞争性解释、区分性观察、阈值依据与概率身份账本",
+write_financial_driver_bridge._tool_meta = {
+    "name": "write_financial_driver_bridge",
+    "description": "在前瞻判断前固化公司经营驱动桥：现金层必须明确 normal owner cash 是已来源化正常化、UNKNOWN，还是仅报表现金状态；每个资本事项必须有可验证的初始承诺、资金来源与后续加码/维持/撤退观察，并连接 FDBREAL 早期或终局合同；不得把 OCF/货币资金、价格、回报、单期减值或理财余额伪造成 owner cash 或资本配置事实。INVESTMENT_DECISION 绑定模型和动作；COMPANY_JUDGMENT_ONLY 只绑定冻结 FJ monitoring，禁止估值、价格和交易对象。",
     "parameters": {
         "output_dir": {"type": "string"},
-        "competitive_tests": {"type": "array", "description": "竞争解释测试；字段名必须严格遵守schema", "items": {"type": "object", "properties": {
+        "drivers": {"type": "array", "description": "四层驱动，每层至少一项", "items": {"type": "object", "properties": {
+            "driver_id": {"type": "string"},
+            "layer": {"type": "string", "enum": ["COMPETITION_DEMAND", "UNIT_ECONOMICS", "CASH_CONVERSION", "CAPITAL_ALLOCATION"]},
+            "statement": {"type": "string"}, "status": {"type": "string", "enum": ["OBSERVED", "UNKNOWN"]},
+            "observation_ids": {"type": "array", "items": {"type": "string"}},
+            "measurement_period": {"type": "object", "properties": {"start": {"type": "string"}, "end": {"type": "string"}}, "required": ["start", "end"]},
+            "competitive_context": {"type": "object", "description": "COMPETITION_DEMAND 且 OBSERVED 时必填；说明相对竞争而非把公司内部指标外推为护城河", "properties": {
+                "market_definition": {"type": "string"}, "customer_alternatives": {"type": "array", "items": {"type": "string"}},
+                "comparison_observation_ids": {"type": "array", "items": {"type": "string"}}, "scope_limit": {"type": "string"}
+            }, "required": ["market_definition", "customer_alternatives", "comparison_observation_ids", "scope_limit"]},
+            "unknown_reason": {"type": "string"}, "conservative_treatment": {"type": "string"},
+            "cash_normalization_contract": {"type": "object", "description": "新 policy 下 CASH_CONVERSION 必填：state=NORMALIZED|UNKNOWN|REPORTED_CASH_STATE_ONLY。NORMALIZED 需 reported_cash_metric、reported_cash_observation_ids、来源化的 maintenance-capex/working-capital/cash-accessibility treatment、conservative_treatment 与逐项 adjustment_components；UNKNOWN 需 unknown_reason 与 conservative_treatment。", "properties": {
+                "state": {"type": "string", "enum": ["NORMALIZED", "UNKNOWN", "REPORTED_CASH_STATE_ONLY"]},
+                "reported_cash_metric": {"type": "string"}, "reported_cash_observation_ids": {"type": "array", "items": {"type": "string"}},
+                "maintenance_capex_treatment": {"type": "string"}, "maintenance_capex_observation_ids": {"type": "array", "items": {"type": "string"}}, "working_capital_treatment": {"type": "string"}, "working_capital_observation_ids": {"type": "array", "items": {"type": "string"}}, "cash_accessibility_treatment": {"type": "string"}, "cash_accessibility_observation_ids": {"type": "array", "items": {"type": "string"}}, "conservative_treatment": {"type": "string"}, "unknown_reason": {"type": "string"},
+                "adjustment_components": {"type": "array", "items": {"type": "object", "properties": {
+                    "component_id": {"type": "string"}, "direction": {"type": "string", "enum": ["ADD_BACK", "DEDUCT", "EXCLUDE"]},
+                    "recurrence_assessment": {"type": "string", "enum": ["RECURRING", "NON_RECURRING", "UNKNOWN"]},
+                    "observation_ids": {"type": "array", "items": {"type": "string"}}, "treatment": {"type": "string"}
+                }}}
+            }},
+            "model_bindings": {"type": "array", "items": {"type": "object", "properties": {
+                "model_id": {"type": "string"}, "input_id": {"type": "string"},
+                "treatment": {"type": "string", "enum": ["DIRECT_INPUT", "NORMALIZATION_ADJUSTMENT", "SENSITIVITY", "QUALITATIVE_GUARDRAIL"]},
+                "effect": {"type": "string"}, "decision_entry_ids": {"type": "array", "items": {"type": "string"}}
+            }, "required": ["model_id", "input_id", "treatment", "effect", "decision_entry_ids"]}}
+        }, "required": ["driver_id", "layer", "statement", "status", "measurement_period"]}},
+        "allocation_events": {"type": "array", "items": {"type": "object", "properties": {
+            "event_id": {"type": "string"}, "event_type": {"type": "string", "enum": ["OPERATING_CAPEX", "FINANCIAL_ASSET_ROLLOVER", "ACQUISITION", "DISPOSAL", "IMPAIRMENT", "DIVIDEND", "FINANCING", "OTHER"]},
+            "classification": {"type": "string", "enum": ["OPERATING_REINVESTMENT", "LIQUIDITY_MANAGEMENT", "VALUE_DESTRUCTIVE_CANDIDATE", "RETURN_OF_CAPITAL", "UNRESOLVED"]},
+            "classification_basis": {"type": "string"}, "decision_date": {"type": "string"}, "realization_window": {"type": "string"},
+            "observation_ids": {"type": "array", "items": {"type": "string"}}, "conservative_treatment": {"type": "string"},
+            "initial_commitment": {"type": "object", "description": "新 policy 必填：金额可验证时填写 number+currency+funding_source+VERIFIED observation_ids；资金来源未披露可填 funding_source=UNKNOWN，并给 unknown_reason 与 conservative_treatment；金额未披露时 amount=UNKNOWN。不得以价格或回报替代。", "properties": {
+                "amount": {"description": "number 或 UNKNOWN"}, "currency": {"type": "string"}, "funding_source": {"type": "string", "description": "明确披露的资金来源，或 UNKNOWN（需 unknown_reason 和 conservative_treatment）"},
+                "observation_ids": {"type": "array", "items": {"type": "string"}}, "unknown_reason": {"type": "string"}, "conservative_treatment": {"type": "string"}
+            }, "required": ["amount"]},
+            "commitment_movement": {"type": "object", "description": "新 policy 必填：启动后一个可观察的加码/维持/撤退或明确 UNKNOWN；必须标明它覆盖全部、部分（给出初始承诺的受影响比例）还是范围未知。MAINTAIN 必须有明确的持续决策或授权，持股/余额静态不变不够。必须连接本 event 的 FDBREAL 与其 early/terminal FDBMON。", "properties": {
+                "movement": {"type": "string", "enum": ["ESCALATE", "MAINTAIN", "DEESCALATE", "UNKNOWN"]}, "observation_date": {"type": "string"},
+                "observation_ids": {"type": "array", "items": {"type": "string"}}, "unknown_reason": {"type": "string"}, "conservative_treatment": {"type": "string"},
+                "scope": {"type": "string", "enum": ["FULL", "PARTIAL", "UNKNOWN"]}, "affected_fraction_of_initial": {"type": "number"},
+                "scope_unknown_reason": {"type": "string"}, "scope_conservative_treatment": {"type": "string"},
+                "realization_contract_id": {"type": "string"}, "monitoring_stage": {"type": "string", "enum": ["EARLY_SIGNAL", "TERMINAL_OUTCOME"]}, "monitoring_contract_id": {"type": "string"}
+            }, "required": ["movement", "scope", "observation_date", "realization_contract_id", "monitoring_stage", "monitoring_contract_id"]}
+        }, "required": ["event_id", "event_type", "classification", "classification_basis", "decision_date", "realization_window", "observation_ids"]}},
+        "report_id": {"type": "string", "optional": True}, "as_of": {"type": "string", "optional": True},
+        "change_reason": {"type": "string"}, "lifecycle": {"type": "string", "enum": ["reviewable", "decision_ready"], "optional": True},
+        "analysis_purpose": {"type": "string", "enum": ["INVESTMENT_DECISION", "COMPANY_JUDGMENT_ONLY"], "optional": True}
+    }
+}  # type: ignore[attr-defined]
+write_thesis_test_ledger._tool_meta = {
+    "name": "write_thesis_test_ledger",
+    "description": "提交竞争性解释、可结算前瞻判断与其概率边界；CJO 不得为通过门而伪造主观概率。",
+    "parameters": {
+        "output_dir": {"type": "string"},
+        "analysis_purpose": {"type": "string", "enum": ["INVESTMENT_DECISION", "COMPANY_JUDGMENT_ONLY"], "optional": True, "description": "CJO只冻结公司经营机制：不得填写估值、回报、仓位或投资动作字段。"},
+        "probability_mode": {"type": "string", "enum": ["NO_PROBABILITY", "QUALIFIED_PROBABILITY"], "optional": True, "description": "仅 CJO：NO_PROBABILITY 时 probability_sets 必须为空，所有 probability_set_id 与 why_more_likely 禁止；NO_PRIMARY 不写 central_path，SELECTION_ADMITTED 只写有 cutoff 前定向证据的 selection_basis。QUALIFIED_PROBABILITY 才可使用数值概率，且必须给 probability_qualification。"},
+        "probability_qualification": {"type": "object", "optional": True, "description": "仅 CJO QUALIFIED_PROBABILITY：可追溯的同定义经验依据，不能是 analyst_subjective。至少给两条已结算独立 episode 引用，或外部频率 evidence；并声明 event_definition、calibration_plan、as_of。", "properties": {
+            "event_definition": {"type": "string"}, "calibration_plan": {"type": "string"}, "as_of": {"type": "string"},
+            "independent_episode_references": {"type": "array", "items": {"type": "object", "properties": {"case_id": {"type": "string"}, "episode_id": {"type": "string"}, "outcome_event_id": {"type": "string"}}, "required": ["case_id", "episode_id", "outcome_event_id"]}},
+            "external_frequency_evidence_ids": {"type": "array", "items": {"type": "string"}}, "external_frequency_definition": {"type": "string"}
+        }, "required": ["event_definition", "calibration_plan", "as_of"]},
+        "competitive_tests": {"type": "array", "description": "竞争解释测试；CJO不填写翻转后的估值/仓位/动作或decision_entry_ids", "items": {"type": "object", "properties": {
             "test_id": {"type": "string"}, "thesis_claim_id": {"type": "string"},
             "primary_explanation": {"type": "string"}, "strongest_alternative": {"type": "string"},
             "alternative_evidence_ids": {"type": "array", "items": {"type": "string"}},
@@ -2833,8 +3317,13 @@ write_thesis_test_ledger._tool_meta = {
                 "observation_id": {"type": "string"}, "metric": {"type": "string"},
                 "availability": {"type": "string"}, "primary_prediction": {"type": "string"},
                 "alternative_prediction": {"type": "string"}, "update_rule": {"type": "string"},
+                "diagnosticity": {"type": "object", "description": "同一观察在主解释与最强反方下的事前相对可能性；只用粗粒度判断，不伪造概率或贝叶斯因子", "properties": {
+                    "primary_likelihood": {"type": "string", "enum": ["LOW", "MEDIUM", "HIGH"]},
+                    "alternative_likelihood": {"type": "string", "enum": ["LOW", "MEDIUM", "HIGH"]},
+                    "rationale": {"type": "string"}
+                }, "required": ["primary_likelihood", "alternative_likelihood", "rationale"]},
                 "threshold_id": {"type": "string"}
-            }, "required": ["observation_id", "metric", "availability", "primary_prediction", "alternative_prediction", "update_rule", "threshold_id"]}},
+            }, "required": ["observation_id", "metric", "availability", "primary_prediction", "alternative_prediction", "update_rule", "diagnosticity", "threshold_id"]}},
             "probability_set_id": {"type": "string"}, "primary_scenario_id": {"type": "string"},
             "alternative_scenario_id": {"type": "string"},
             "flip_condition": {"type": "object", "properties": {
@@ -2844,8 +3333,8 @@ write_thesis_test_ledger._tool_meta = {
             "action_after_flip": {"type": "string", "enum": ["buy", "hold", "increase", "reduce", "avoid", "exit", "reassess"]},
             "decision_entry_ids": {"type": "array", "items": {"type": "string"}},
             "chapters": {"type": "array", "items": {"type": "integer"}}
-        }, "required": ["test_id", "thesis_claim_id", "primary_explanation", "strongest_alternative", "alternative_evidence_ids", "discriminating_observations", "probability_set_id", "primary_scenario_id", "alternative_scenario_id", "flip_condition", "valuation_after_flip", "position_after_flip", "action_after_flip", "decision_entry_ids", "chapters"]}},
-        "thresholds": {"type": "array", "description": "可审计监控阈值；discrimination_target必须为test_id或decision_rule", "items": {"type": "object", "properties": {
+        }, "required": ["test_id", "thesis_claim_id", "primary_explanation", "strongest_alternative", "alternative_evidence_ids", "discriminating_observations", "primary_scenario_id", "alternative_scenario_id", "flip_condition", "chapters"]}},
+        "thresholds": {"type": "array", "description": "可审计监控阈值；CJO不填写action或decision_entry_ids", "items": {"type": "object", "properties": {
             "threshold_id": {"type": "string"}, "metric": {"type": "string"},
             "current_value": {"type": "number"}, "threshold_value": {"type": "number"}, "unit": {"type": "string"},
             "operator": {"type": "string", "enum": [">", ">=", "<", "<=", "==", "changes_to"]},
@@ -2861,32 +3350,72 @@ write_thesis_test_ledger._tool_meta = {
             "action": {"type": "string", "enum": ["buy", "hold", "increase", "reduce", "avoid", "exit", "reassess"]},
             "decision_entry_ids": {"type": "array", "items": {"type": "string"}},
             "chapters": {"type": "array", "items": {"type": "integer"}}
-        }, "required": ["threshold_id", "metric", "current_value", "threshold_value", "unit", "operator", "basis_type", "basis_description", "source_ids", "observation_frequency", "window", "aggregation", "seasonal_adjustment", "accounting_definition", "precision", "discrimination_target", "action", "decision_entry_ids", "chapters"]}},
-        "probability_sets": {"type": "array", "description": "互斥且完备的概率集合", "items": {"type": "object", "properties": {
+        }, "required": ["threshold_id", "metric", "current_value", "threshold_value", "unit", "operator", "basis_type", "basis_description", "source_ids", "observation_frequency", "window", "aggregation", "seasonal_adjustment", "accounting_definition", "precision", "discrimination_target", "chapters"]}},
+        "probability_sets": {"type": "array", "description": "互斥且完备的概率集合；CJO NO_PROBABILITY 必须传空数组。", "items": {"type": "object", "properties": {
             "set_id": {"type": "string"}, "mutually_exclusive": {"type": "boolean"},
             "collectively_exhaustive": {"type": "boolean"}, "resolution_due": {"type": "string"},
+            "outcome_scope": {"type": "string", "enum": ["TERMINAL_OPERATING_OUTCOME"], "optional": True},
+            "horizon_years": {"type": "integer", "enum": [3, 5], "optional": True},
+            "outcome_space_definition": {"type": "string", "optional": True},
             "estimates": {"type": "array", "minItems": 2, "items": {"type": "object", "properties": {
                 "scenario_id": {"type": "string"}, "label": {"type": "string"},
                 "kind": {"type": "string", "enum": ["frequency", "base_rate", "analyst_subjective", "scenario_weight"]},
                 "value": {"type": "number"}, "interval": {"type": "array", "minItems": 2, "maxItems": 2, "items": {"type": "number"}},
                 "basis": {"type": "string"}, "source_ids": {"type": "array", "items": {"type": "string"}},
-                "as_of": {"type": "string"}, "calibration_history_id": {"type": "string", "optional": True}
+                "as_of": {"type": "string"}, "scenario_role": {"type": "string", "enum": ["TERMINAL_OUTCOME", "MECHANISM"], "optional": True}, "calibration_history_id": {"type": "string", "optional": True}
             }, "required": ["scenario_id", "label", "kind", "value", "interval", "basis", "source_ids", "as_of"]}},
             "chapters": {"type": "array", "items": {"type": "integer"}}
         }, "required": ["set_id", "mutually_exclusive", "collectively_exhaustive", "resolution_due", "estimates", "chapters"]}},
-        "central_path": {"type": "object", "description": "唯一3年或5年中心路径；必须选择更可能情景并说明为何，而非只列敏感性", "properties": {
+        "mechanism_chains": {"type": "array", "description": "中心路径或机制探针下的过程机制；CJO NO_PROBABILITY 保留 scenario_id 作为机制标签，但禁止 probability_set_id。", "optional": True, "items": {"type": "object", "properties": {
+            "chain_id": {"type": "string"}, "probability_set_id": {"type": "string"}, "scenario_id": {"type": "string"},
+            "mechanism": {"type": "string"}, "leading_signal_threshold_ids": {"type": "array", "minItems": 1, "items": {"type": "string"}},
+            "transmission": {"type": "object", "properties": {
+                channel: {"type": "object", "properties": {"direction": {"type": "string", "enum": ["increase", "decrease", "stable", "range", "not_material", "unknown"]}, "basis": {"type": "string"}, "conservative_treatment": {"type": "string", "optional": True}}, "required": ["direction", "basis"]}
+                for channel in ("normalized_earnings", "owner_cash", "valuation", "expected_return")
+            }, "required": ["normalized_earnings", "owner_cash"]},
+            "decision_entry_ids": {"type": "array", "minItems": 1, "items": {"type": "string"}}
+        }, "required": ["chain_id", "scenario_id", "mechanism", "leading_signal_threshold_ids", "transmission"]}},
+        "central_path": {"type": "object", "description": "唯一3年或5年中心路径。投资与 CJO QUALIFIED_PROBABILITY 选择最高数值情景；CJO NO_PROBABILITY 仅 SELECTION_ADMITTED 可用 selection_basis 作定性选择，不能给 probability_set_id 或 why_more_likely。", "properties": {
             "path_id": {"type": "string"}, "statement": {"type": "string"},
             "as_of": {"type": "string"}, "horizon_years": {"type": "integer", "enum": [3, 5]},
             "probability_set_id": {"type": "string"}, "selected_scenario_id": {"type": "string"},
-            "competing_scenario_id": {"type": "string"}, "why_more_likely": {"type": "string"},
+            "competing_scenario_id": {"type": "string"}, "why_more_likely": {"type": "string"}, "selection_basis": {"type": "string", "optional": True},
             "competitive_test_ids": {"type": "array", "minItems": 1, "items": {"type": "string"}},
             "chapters": {"type": "array", "minItems": 1, "items": {"type": "integer"}}
-        }, "required": ["path_id", "statement", "as_of", "horizon_years", "probability_set_id", "selected_scenario_id", "competing_scenario_id", "why_more_likely", "competitive_test_ids", "chapters"]},
-        "forward_judgments": {"type": "array", "minItems": 3, "maxItems": 5, "description": "3-5项可证伪、可结算且进入估值/回报的关键前瞻判断", "items": {"type": "object", "properties": {
+        }, "required": ["path_id", "statement", "as_of", "horizon_years", "selected_scenario_id", "competing_scenario_id", "competitive_test_ids", "chapters"]},
+        "selection_admission": {"type": "object", "optional": True, "description": "仅 COMPANY_JUDGMENT_ONLY 的 R-07 主路径选择学习收据。省略即 NOT_SELECTION_ELIGIBLE，不阻断普通 CJO；SELECTION_ADMITTED 只能使用 cutoff 前、可追溯且能区分主/反路径的经营事实。", "properties": {
+            "status": {"type": "string", "enum": ["NOT_SELECTION_ELIGIBLE", "NO_PRIMARY", "SELECTION_ADMITTED"]},
+            "candidate_scenario_ids": {"type": "array", "minItems": 2, "items": {"type": "string"}},
+            "strongest_rival_scenario_id": {"type": "string"},
+            "strongest_rival_not_selected_reason": {"type": "string"},
+            "rival_hypothesis_pair_id": {"type": "string"},
+            "no_primary_reason": {"type": "string", "optional": True},
+            "selection_register_binding": {"type": "object", "optional": True, "description": "仅当本 CJO 未来会进入 L5 cohort 时填写：SELECTION_ADMITTED 或 NO_PRIMARY 都可将冻结收据绑定到同一 case-selection register 的 canonical entry/company cluster；普通 CJO 可省略。", "properties": {
+                "register_id": {"type": "string"}, "register_fingerprint": {"type": "string"},
+                "selection_entry_id": {"type": "string"}, "company_id": {"type": "string"},
+                "company_cluster_id": {"type": "string"}
+            }, "required": ["register_id", "register_fingerprint", "selection_entry_id", "company_id", "company_cluster_id"]},
+            "selection_forward_judgment_ids": {"type": "array", "minItems": 1, "items": {"type": "string"}, "optional": True},
+            "selection_evidence": {"type": "array", "minItems": 1, "optional": True, "items": {"type": "object", "description": "仅 SELECTION_ADMITTED：可由跨层证据组合构成，不要求某一事实逻辑上只会发生于主路径；但每条都必须说明反方为何不能无代价地同样预期它，并进入 PRIMARY VERIFIED 箭头、预承诺同一 pair 的 EARLY_MECHANISM FJ 和双方共同的竞争阈值。共同事实或反方可无额外中介容纳的事实不得写入。", "properties": {
+                "evidence_id": {"type": "string"}, "source_id": {"type": "string"},
+                "source_group_id": {"type": "string"}, "supports_scenario_id": {"type": "string"},
+                "directional_reason": {"type": "string"},
+                "why_rival_cannot_equally_explain": {"type": "string"},
+                "distortion_downgrade": {"type": "string"},
+                "forward_judgment_id": {"type": "string"},
+                "primary_causal_edge_id": {"type": "string"},
+                "leading_threshold_id": {"type": "string"}
+            }, "required": ["evidence_id", "source_id", "source_group_id", "supports_scenario_id", "directional_reason", "why_rival_cannot_equally_explain", "distortion_downgrade", "forward_judgment_id", "primary_causal_edge_id", "leading_threshold_id"]}}
+        }, "required": ["status"]},
+        "forward_judgments": {"type": "array", "minItems": 3, "maxItems": 5, "description": "3-5项可证伪、可结算的关键前瞻判断；CJO只传导至经营结果", "items": {"type": "object", "properties": {
             "judgment_id": {"type": "string"}, "statement": {"type": "string"},
             "materiality": {"type": "string", "enum": ["CENTRAL_THESIS", "INDUSTRY_STRUCTURE", "NORMALIZED_EARNINGS", "OWNER_CASH", "VALUATION", "RETURN", "PERMANENT_LOSS"]},
             "claim_id": {"type": "string"}, "competitive_test_id": {"type": "string"},
+            "rival_hypothesis_pair_id": {"type": "string", "optional": True},
+            "rival_signal_id": {"type": "string", "optional": True},
             "probability_set_id": {"type": "string"}, "scenario_id": {"type": "string"},
+            "mechanism_chain_ids": {"type": "array", "minItems": 1, "items": {"type": "string"}, "optional": True},
+            "financial_driver_ids": {"type": "array", "minItems": 1, "items": {"type": "string"}, "optional": True},
             "evidence_ids": {"type": "array", "minItems": 1, "items": {"type": "string"}},
             "leading_signal_threshold_ids": {"type": "array", "minItems": 1, "items": {"type": "string"}},
             "falsifier": {"type": "string"},
@@ -2894,16 +3423,61 @@ write_thesis_test_ledger._tool_meta = {
                 "metric": {"type": "string"}, "operator": {"type": "string", "enum": ["AT_LEAST", "AT_MOST", "EQUALS", "RANGE"]},
                 "value": {"type": "number", "optional": True}, "range_low": {"type": "number", "optional": True},
                 "range_high": {"type": "number", "optional": True}, "unit": {"type": "string"},
-                "horizon": {"type": "string"}, "resolution_due": {"type": "string"}
+                "horizon": {"type": "string"}, "as_of": {"type": "string", "optional": True}, "resolution_due": {"type": "string"}
             }, "required": ["metric", "operator", "unit", "horizon", "resolution_due"]},
+            "baseline": {"type": "object", "description": "同一PIT经营信息下的简单挑战预测；只用于后续比较机制判断的增量信息，不参与中心路径选择", "properties": {
+                "baseline_id": {"type": "string"},
+                "method": {"type": "string", "enum": ["CARRY_FORWARD", "INDUSTRY_ADJUSTED_CARRY_FORWARD", "EQUAL_WEIGHT_DRIVER_RULE"]},
+                "statement": {"type": "string"}, "scope_conditions": {"type": "string"},
+                "input_evidence_ids": {"type": "array", "minItems": 1, "items": {"type": "string"}},
+                "calculation": {"type": "object", "description": "冻结的简单基线公式和数值输入；不得只以文字声明基线", "properties": {
+                    "formula_id": {"type": "string", "enum": ["LAST_OBSERVED_VALUE", "COMPANY_LEVEL_PLUS_INDUSTRY_DELTA", "EQUAL_WEIGHT_NUMERIC_DRIVERS"]},
+                    "inputs": {"type": "array", "minItems": 1, "items": {"type": "object", "properties": {
+                        "evidence_id": {"type": "string"}, "role": {"type": "string"}, "value": {"type": "number"}, "unit": {"type": "string"}
+                    }, "required": ["evidence_id", "role", "value", "unit"]}}
+                }, "required": ["formula_id", "inputs"]},
+                "prediction": {"type": "object", "properties": {
+                    "metric": {"type": "string"}, "operator": {"type": "string", "enum": ["AT_LEAST", "AT_MOST", "EQUALS", "RANGE"]},
+                    "value": {"type": "number", "optional": True}, "range_low": {"type": "number", "optional": True},
+                    "range_high": {"type": "number", "optional": True}, "unit": {"type": "string"},
+                    "horizon": {"type": "string"}, "resolution_due": {"type": "string"}
+                }, "required": ["metric", "operator", "unit", "horizon", "resolution_due"]}
+            }, "required": ["baseline_id", "method", "statement", "scope_conditions", "input_evidence_ids", "calculation", "prediction"], "optional": True},
+            "settlement_contract": {"type": "object", "description": "将该前瞻判断无人工重抄地投影为历史结算 claim 所需的冻结字段", "properties": {
+                "calibration_claim_id": {"type": "string", "description": "HBTCLM: 前缀的唯一结算 claim ID"},
+                "materiality": {"type": "string", "enum": ["CENTRAL_THESIS", "VALUATION", "RETURN", "PERMANENT_LOSS"]},
+                "source_ids": {"type": "array", "minItems": 1, "items": {"type": "string"}},
+                "threshold": {"type": "object", "properties": {
+                    "metric": {"type": "string"}, "operator": {"type": "string"}, "value": {"type": "number"},
+                    "unit": {"type": "string"}, "consequence": {"type": "string"}
+                }, "required": ["metric", "operator", "value", "unit", "consequence"]},
+                "observation_window": {"type": "object", "properties": {
+                    "opens_after": {"type": "string"}, "closes_at": {"type": "string"}
+                }, "required": ["opens_after", "closes_at"]}
+            }, "required": ["calibration_claim_id", "materiality", "source_ids", "threshold", "observation_window"], "optional": True},
             "observable_outcome": {"type": "object", "properties": {
                 "measurement_basis": {"type": "string"}, "measurement_rule": {"type": "string"},
                 "measurement_period": {"type": "object", "properties": {
                     "kind": {"type": "string", "enum": ["REPORTING_PERIOD", "EVENT_WINDOW"]},
                     "start": {"type": "string"}, "end": {"type": "string"}
                 }, "required": ["kind", "start", "end"]},
-                "allowed_source_types": {"type": "array", "minItems": 1, "items": {"type": "string", "enum": ["ANNUAL_REPORT", "INTERIM_REPORT", "EXCHANGE_ANNOUNCEMENT"]}},
-                "settlement_version_policy": {"type": "string", "enum": ["INITIAL_DISCLOSURE", "LATEST_OFFICIAL_AS_OF_EVALUATION"]}
+                "allowed_source_types": {"type": "array", "minItems": 1, "items": {"type": "string", "enum": ["ANNUAL_REPORT", "INTERIM_REPORT", "EXCHANGE_ANNOUNCEMENT", "OTHER_OFFICIAL", "LICENSED_INDUSTRY_DATA"]}},
+                "industry_measurement_inference": {"type": "string", "enum": ["WITHIN_PROVIDER_RELATIVE_CHANGE", "LEVEL_WITH_STATED_LIMITS"]},
+                "licensed_industry_series_contract": {"type": "object", "optional": True, "description": "当 allowed_source_types 含 LICENSED_INDUSTRY_DATA 并冻结时必填：绑定截止日前已准入的稳定 panel identity；不得填未来 release/version/query。", "properties": {
+                    "pre_cutoff_source_id": {"type": "string"}, "provider_id": {"type": "string"}, "dataset_id": {"type": "string"}, "metric_id": {"type": "string"}, "semantic": {"type": "string"}, "geography": {"type": "string"}, "product_mapping_id": {"type": "string"}, "channel_mapping_id": {"type": "string"}, "brand_mapping_id": {"type": "string"}, "denominator_mapping_id": {"type": "string"}
+                }, "required": ["pre_cutoff_source_id", "provider_id", "dataset_id", "metric_id", "semantic", "geography", "product_mapping_id", "channel_mapping_id", "brand_mapping_id", "denominator_mapping_id"]},
+                "settlement_version_policy": {"type": "string", "enum": ["INITIAL_DISCLOSURE", "LATEST_OFFICIAL_AS_OF_EVALUATION"]},
+                "metric_reconstruction_contract": {"type": "object", "optional": True, "description": "仅 selection_admission=SELECTION_ADMITTED 登记的 FJ 必填：冻结来源类型、文件范围、官方标签与定位；允许单位转换只可使用 outcome.conversion_rule；口径变化必须 MEASUREMENT_MISMATCH。", "properties": {
+                    "source_targets": {"type": "array", "minItems": 1, "items": {"type": "object", "properties": {
+                        "source_type": {"type": "string", "enum": ["ANNUAL_REPORT", "INTERIM_REPORT", "EXCHANGE_ANNOUNCEMENT", "OTHER_OFFICIAL", "LICENSED_INDUSTRY_DATA"]},
+                        "file_scope": {"type": "string"}, "reported_label": {"type": "string"}, "reported_locator": {"type": "string"}
+                    }, "required": ["source_type", "file_scope", "reported_label", "reported_locator"]}},
+                    "prohibited_substitutes": {"type": "array", "minItems": 1, "items": {"type": "string"}},
+                    "definition_change_action": {"type": "string", "enum": ["MEASUREMENT_MISMATCH"]}
+                }, "required": ["source_targets", "prohibited_substitutes", "definition_change_action"]},
+                "conversion_rule": {"type": "object", "optional": True, "description": "若允许单位换算，只能冻结这一条固定规则；省略表示不得换算。", "properties": {
+                    "rule_id": {"type": "string"}, "raw_unit": {"type": "string"}, "converted_unit": {"type": "string"}, "multiplier": {"type": "number"}
+                }, "required": ["rule_id", "raw_unit", "converted_unit", "multiplier"]}
             }, "required": ["measurement_basis", "measurement_rule", "measurement_period", "allowed_source_types", "settlement_version_policy"]},
             "transmission": {"type": "object", "properties": {
                 channel: {"type": "object", "properties": {
@@ -2911,10 +3485,62 @@ write_thesis_test_ledger._tool_meta = {
                     "basis": {"type": "string"}, "conservative_treatment": {"type": "string", "optional": True}
                 }, "required": ["direction", "basis"]}
                 for channel in ("normalized_earnings", "owner_cash", "valuation", "expected_return")
-            }, "required": ["normalized_earnings", "owner_cash", "valuation", "expected_return"]},
+            }, "required": ["normalized_earnings", "owner_cash"]},
             "valuation_model_ids": {"type": "array", "minItems": 1, "items": {"type": "string"}},
             "decision_entry_ids": {"type": "array", "minItems": 1, "items": {"type": "string"}}
-        }, "required": ["judgment_id", "statement", "materiality", "claim_id", "competitive_test_id", "probability_set_id", "scenario_id", "evidence_ids", "leading_signal_threshold_ids", "falsifier", "prediction", "observable_outcome", "transmission", "valuation_model_ids", "decision_entry_ids"]}},
+        }, "required": ["judgment_id", "statement", "materiality", "claim_id", "competitive_test_id", "scenario_id", "evidence_ids", "leading_signal_threshold_ids", "falsifier", "prediction", "observable_outcome", "transmission"]}},
+        "rival_hypothesis_pairs": {"type": "array", "description": "新 G1-J PIT 冻结的必填对象：冻结主/反机制的共同当前事实和可结算分叉；不是风险清单或概率表", "items": {"type": "object", "properties": {
+            "pair_id": {"type": "string", "description": "RHP: 前缀"},
+            "competitive_test_id": {"type": "string"},
+            "primary_mechanism_chain_id": {"type": "string"}, "rival_mechanism_chain_id": {"type": "string"},
+            "common_fact_evidence_ids": {"type": "array", "minItems": 1, "items": {"type": "string"}},
+            "critical_assumptions": {"type": "array", "minItems": 2, "description": "每条机制成立所必需的事实前提；不是概率或风险清单。PRIMARY 与 RIVAL 各至少一项；VERIFIED 需证据，TESTABLE 需本 pair 的 RHPSIG，UNKNOWN 只能保守处理且不能支持已选中心路径。", "items": {"type": "object", "properties": {
+                "assumption_id": {"type": "string", "description": "RHPASM: 前缀"}, "mechanism_side": {"type": "string", "enum": ["PRIMARY", "RIVAL"]},
+                "statement": {"type": "string"}, "why_necessary": {"type": "string"}, "status": {"type": "string", "enum": ["VERIFIED", "TESTABLE", "UNKNOWN"]},
+                "evidence_ids": {"type": "array", "items": {"type": "string"}, "optional": True}, "linked_discriminator_ids": {"type": "array", "items": {"type": "string"}, "optional": True}, "conservative_treatment": {"type": "string", "optional": True}
+            }, "required": ["assumption_id", "mechanism_side", "statement", "why_necessary", "status"]}},
+            "causal_trace": {"type": "array", "minItems": 4, "description": "逐箭头过程追踪：PRIMARY 与 RIVAL 各至少两条；每方必须有一条连接本 pair 6–12月信号的 TESTABLE 箭头。它不是概率表，也不能以终局结果倒写。", "items": {"type": "object", "properties": {
+                "edge_id": {"type": "string", "description": "RHPEDGE: 前缀"}, "mechanism_side": {"type": "string", "enum": ["PRIMARY", "RIVAL"]}, "mechanism_chain_id": {"type": "string"},
+                "from_state": {"type": "string"}, "to_state": {"type": "string"}, "why_diagnostic": {"type": "string"}, "status": {"type": "string", "enum": ["VERIFIED", "TESTABLE", "UNKNOWN"]},
+                "evidence_ids": {"type": "array", "items": {"type": "string"}, "optional": True}, "linked_discriminator_ids": {"type": "array", "items": {"type": "string"}, "optional": True}, "conservative_treatment": {"type": "string", "optional": True}
+            }, "required": ["edge_id", "mechanism_side", "mechanism_chain_id", "from_state", "to_state", "why_diagnostic", "status"]}},
+            "discriminators": {"type": "array", "minItems": 2, "items": {"type": "object", "properties": {
+                "signal_id": {"type": "string", "description": "RHPSIG: 前缀"}, "sequence": {"type": "integer"},
+                "stage": {"type": "string", "enum": ["EARLY_MECHANISM", "TERMINAL_OPERATING"]},
+                "forward_judgment_id": {"type": "string"},
+                "primary_prediction": {"type": "object"}, "rival_prediction": {"type": "object"}
+            }, "required": ["signal_id", "sequence", "stage", "forward_judgment_id", "primary_prediction", "rival_prediction"]}}
+        }, "required": ["pair_id", "competitive_test_id", "primary_mechanism_chain_id", "rival_mechanism_chain_id", "common_fact_evidence_ids", "critical_assumptions", "causal_trace", "discriminators"]}},
+        "analogy_transfer_cards": {"type": "array", "description": "新 G1-J PIT 冻结的必填对象：把既有书籍方法案例迁移为结构映射与近失效反例；禁止价格、概率、直接估值输入", "items": {"type": "object", "properties": {
+            "card_id": {"type": "string", "description": "ATC: 前缀"}, "target_pair_id": {"type": "string"}, "source_case_id": {"type": "string"}, "support_role": {"type": "string", "enum": ["PRIMARY_SUPPORT", "QUESTION_ONLY"], "description": "无合格反例时只能 QUESTION_ONLY，不能支持中心路径"},
+            "target_state_vector": {"type": "array", "minItems": 3, "items": {"type": "object"}},
+            "structural_mapping": {"type": "array", "minItems": 1, "items": {"type": "object", "properties": {
+                "source_driver": {"type": "string"}, "target_driver": {"type": "string"}, "intermediate_variable": {"type": "string"}, "operating_outcome": {"type": "string"}
+            }, "required": ["source_driver", "target_driver", "intermediate_variable", "operating_outcome"]}},
+            "mismatch_dimensions": {"type": "array", "minItems": 1, "items": {"type": "object"}},
+            "application_rule": {"type": "object", "description": "结构类比的迁移边界：何时可迁移该机制、何时必须停止迁移；不是概率或估值输入。", "properties": {"when_to_apply": {"type": "string"}, "when_not_to_apply": {"type": "string"}}, "required": ["when_to_apply", "when_not_to_apply"]},
+            "invalidation_conditions": {"type": "array", "minItems": 1, "items": {"type": "object", "properties": {"signal_id": {"type": "string"}, "condition": {"type": "string"}, "effect": {"type": "string"}}, "required": ["signal_id", "condition", "effect"]}},
+            "strongest_near_miss": {"type": "object", "properties": {"status": {"type": "string", "enum": ["VERIFIED_EPISODE", "UNKNOWN_NO_QUALIFIED_EPISODE"]}, "case_id": {"type": "string", "description": "VERIFIED_EPISODE 时 CASE: 前缀"}, "episode_id": {"type": "string", "description": "VERIFIED_EPISODE 时 MEP: 前缀"}, "outcome_event_id": {"type": "string", "description": "VERIFIED_EPISODE 时 CASEEV: 前缀"}, "structural_break": {"type": "string"}, "source_reference": {"type": "string"}, "unknown_reason": {"type": "string"}, "conservative_treatment": {"type": "string"}}, "required": ["status"]},
+            "linked_discriminator_ids": {"type": "array", "minItems": 1, "items": {"type": "string"}},
+            "industry_architecture": {"type": "object", "description": "可选H7行业架构实验；五项只能是外部可复读事实或UNKNOWN，必须导向已冻结pair区分信号，不能由公司自述、垂直整合或线上排名替代。", "properties": {
+                element: {"type": "object", "properties": {
+                    "status": {"type": "string", "enum": ["VERIFIED", "UNKNOWN"]}, "statement": {"type": "string"},
+                    "evidence_ids": {"type": "array", "items": {"type": "string"}, "optional": True},
+                    "source_classes": {"type": "array", "items": {"type": "string", "enum": ["OFFICIAL_STATISTICS", "LICENSED_INDUSTRY_DATA", "COMPETITOR_DISCLOSURE", "SUPPLIER_OR_CUSTOMER_DISCLOSURE", "REGULATORY_DISCLOSURE"]}, "optional": True},
+                    "evidence_bindings": {"type": "array", "description": "新 CJO 冻结且 status=VERIFIED 时必填：每项把 claim_evidence evidence_id 绑定到同一 source_id（DOC:...）及 document_manifest 可证明的 source_class。LICENSED_INDUSTRY_DATA 还要 canonical_source_id 对应 PIT source package 的 source_id；公司自述、垂直整合或排名不能填作外部类。", "items": {"type": "object", "properties": {
+                        "evidence_id": {"type": "string"}, "source_id": {"type": "string", "description": "必须等于该 raw fact 的 DOC: source_id"},
+                        "canonical_source_id": {"type": "string", "optional": True, "description": "LICENSED_INDUSTRY_DATA 时必须等于 document_manifest 的 source_id"},
+                        "source_class": {"type": "string", "enum": ["OFFICIAL_STATISTICS", "LICENSED_INDUSTRY_DATA", "COMPETITOR_DISCLOSURE", "SUPPLIER_OR_CUSTOMER_DISCLOSURE", "REGULATORY_DISCLOSURE"]}
+                    }, "required": ["evidence_id", "source_id", "source_class"]}, "optional": True},
+                    "unknown_reason": {"type": "string", "optional": True}, "conservative_treatment": {"type": "string", "optional": True},
+                }, "required": ["status", "statement"]}
+                for element in ("division_of_labour", "interface_control", "co_specialized_assets", "factor_mobility", "appropriation_node")
+            } | {
+                "interface_discriminator": {"type": "object", "properties": {"signal_id": {"type": "string"}, "causal_edge_id": {"type": "string", "description": "目标 pair 中冻结的 RHPEDGE；必须为连接该 RHPSIG 的 TESTABLE 因果箭头。"}, "mechanism_edge": {"type": "string"}, "why_discriminating": {"type": "string"}}, "required": ["signal_id", "causal_edge_id", "mechanism_edge", "why_discriminating"]},
+                "minimal_external_query": {"type": "object", "properties": {"question": {"type": "string"}, "metric": {"type": "string"}, "allowed_source_classes": {"type": "array", "minItems": 1, "items": {"type": "string", "enum": ["OFFICIAL_STATISTICS", "LICENSED_INDUSTRY_DATA", "COMPETITOR_DISCLOSURE", "SUPPLIER_OR_CUSTOMER_DISCLOSURE", "REGULATORY_DISCLOSURE"]}}, "why_required": {"type": "string"}}, "required": ["question", "metric", "allowed_source_classes", "why_required"]},
+            }, "required": ["division_of_labour", "interface_control", "co_specialized_assets", "factor_mobility", "appropriation_node", "interface_discriminator", "minimal_external_query"], "optional": True},
+            "settlement_rule": {"type": "string", "enum": ["DERIVE_FROM_PAIR_SIGNALS_ONLY"]}
+        }, "required": ["card_id", "target_pair_id", "source_case_id", "support_role", "target_state_vector", "structural_mapping", "mismatch_dimensions", "application_rule", "invalidation_conditions", "strongest_near_miss", "linked_discriminator_ids", "settlement_rule"]}},
         "change_reason": {"type": "string"},
         "freeze": {"type": "boolean", "description": "首次无账本先false，按validation补测试/阈值/概率锚点后再true", "optional": True}
     }
@@ -3009,23 +3635,23 @@ write_decisive_question_findings._tool_meta = {
 }  # type: ignore[attr-defined]
 write_insight_ledger._tool_meta = {
     "name": "write_insight_ledger",
-    "description": "提交案例校准洞见账本：首要决定性问题、1-3条公司特异洞见、逆向市场预期、价值兑现和最强反方；用于生成精简投资备忘录",
+    "description": "提交案例校准洞见账本。CJO 以公司机制、经营传导、FJ 与最强反方形成公司判断 memo；投资用途另要求逆向市场预期、价值兑现和行动。",
     "parameters": {
         "output_dir": {"type": "string"},
         "archetype": {"type": "string", "enum": ["asset_catalyst", "distressed_survival", "franchise_customer_lockin", "technology_transition", "mature_cash_return", "compounder_reinvestment", "regulated_financial", "operating_transition"]},
         "decisive_question": {"type": "string"},
-        "question_basis": {"type": "object", "description": "必须含decisive_question_plan中入选的question_id，并填写anomaly/evidence_ids/why_it_changes_the_decision"},
-        "insights": {"type": "array", "description": "1-3项；每项含insight_id/title/claim_id/evidence_ids/anomaly/mechanism/strongest_alternative/discriminating_observation/valuation_impact/action_impact/falsification/company_specific_terms/decision_entry_ids/chapters", "items": {"type": "object"}},
-        "reverse_expectations": {"type": "object", "description": "as_of/current_price/method/implied_operating_path/assumptions/valuation_model_ids/conclusion/flip_condition"},
-        "value_realization": {"type": "object", "description": "latent_value/controller/access_mechanism/catalyst_required/catalysts/no_catalyst_value/failure_mode/decision_entry_ids"},
-        "adversarial_review": {"type": "object", "description": "strongest_case_against/why_it_may_be_right/evidence_ids/unresolved/decision_if_true"},
-        "memo": {"type": "object", "description": "executive_decision/valuation_action/monitoring；禁止仅凭价格止损"},
+        "question_basis": {"type": "object", "description": "anomaly/evidence_ids；CJO 用why_it_changes_the_judgment，投资用途用why_it_changes_the_decision；enforced decisive policy时须有question_id"},
+        "insights": {"type": "array", "description": "1-3项。CJO：operating_impact、monitoring_or_forward_judgment、forward_judgment_ids，且不得有valuation/action/D-id；投资用途保留估值与动作影响。", "items": {"type": "object"}},
+        "reverse_expectations": {"type": "object", "description": "仅投资用途：as_of/current_price/method/implied_operating_path/assumptions/valuation_model_ids/conclusion/flip_condition", "optional": True},
+        "value_realization": {"type": "object", "description": "仅投资用途：latent_value/controller/access_mechanism/catalyst_required/catalysts/no_catalyst_value/failure_mode/decision_entry_ids", "optional": True},
+        "adversarial_review": {"type": "object", "description": "strongest_case_against/why_it_may_be_right/evidence_ids/unresolved；CJO用judgment_if_true，投资用途用decision_if_true"},
+        "memo": {"type": "object", "description": "CJO：executive_judgment/monitoring；投资用途：executive_decision/valuation_action/monitoring"},
         "change_reason": {"type": "string"}, "freeze": {"type": "boolean", "description": "首次无账本先false；完整洞见和正文锚点通过后再true冻结", "optional": True}
     }
 }  # type: ignore[attr-defined]
 write_judgment_review._tool_meta = {
     "name": "write_judgment_review",
-    "description": "提交独立洞见上限评审；指出差异化洞见、常规内容、脆弱跳跃、缺失信息和决策依赖。仅诊断，不能改变发布门",
+    "description": "提交独立洞见上限评审；用途由analysis_contract决定。CJO 绑定 FJ、经营传导与监测相关性；投资用途绑定估值、行动和 D-id。仅诊断，不能改变发布门。",
     "parameters": {
         "output_dir": {"type": "string"},
         "ceiling_verdict": {"type": "string", "enum": ["INSIGHTFUL", "COMPETENT", "FRAGILE", "NOT_ASSESSABLE"]},
@@ -3035,29 +3661,36 @@ write_judgment_review._tool_meta = {
             "why_not_obvious": {"type": "string"},
             "evidence_ids": {"type": "array", "items": {"type": "string"}},
             "decision_entry_ids": {"type": "array", "items": {"type": "string"}},
-            "valuation_model_ids": {"type": "array", "items": {"type": "string"}}
-        }, "required": ["insight_id", "why_it_matters", "why_not_obvious", "evidence_ids", "decision_entry_ids", "valuation_model_ids"]},
+            "valuation_model_ids": {"type": "array", "items": {"type": "string"}},
+            "forward_judgment_ids": {"type": "array", "items": {"type": "string"}}
+        }, "required": ["insight_id", "why_it_matters", "why_not_obvious", "evidence_ids"]},
         "competent_but_conventional": {"type": "array", "items": {"type": "string"}},
         "fragile_leaps": {"type": "array", "items": {"type": "object", "properties": {
             "claim": {"type": "string"}, "why_fragile": {"type": "string"},
-            "needed_evidence": {"type": "string"}, "decision_consequence": {"type": "string"}
-        }, "required": ["claim", "why_fragile", "needed_evidence", "decision_consequence"]}},
+            "needed_evidence": {"type": "string"}, "decision_consequence": {"type": "string"},
+            "judgment_consequence": {"type": "string"}
+        }, "required": ["claim", "why_fragile", "needed_evidence"]}},
         "competitive_explanation_test": {"type": "object", "properties": {
             "strongest_alternative": {"type": "string"}, "evidence_for_alternative": {"type": "string"},
             "discriminator": {"type": "string"}, "unresolved": {"type": "string"}
         }, "required": ["strongest_alternative", "evidence_for_alternative", "discriminator", "unresolved"]},
         "missing_information": {"type": "array", "items": {"type": "string"}},
-        "decision_dependency": {"type": "object", "properties": {
+        "decision_dependency": {"type": "object", "optional": True, "properties": {
             "without_insight": {"type": "string"}, "changed_values": {"type": "string"},
             "changed_action": {"type": "string"}, "conclusion": {"type": "string"}
         }, "required": ["without_insight", "changed_values", "changed_action", "conclusion"]},
+        "judgment_dependency": {"type": "object", "optional": True, "properties": {
+            "without_insight": {"type": "string"}, "changed_mechanism": {"type": "string"},
+            "changed_normalized_earnings_or_owner_cash": {"type": "string"},
+            "changed_monitoring_or_forward_judgment": {"type": "string"}, "conclusion": {"type": "string"}
+        }, "required": ["without_insight", "changed_mechanism", "changed_normalized_earnings_or_owner_cash", "changed_monitoring_or_forward_judgment", "conclusion"]},
         "dimension_assessments": {"type": "object", "properties": {
             key: {"type": "object", "properties": {
                 "state": {"type": "string", "enum": ["strong", "mixed", "weak", "not_assessable"]},
                 "basis": {"type": "string"}
             }, "required": ["state", "basis"]}
-            for key in ["question_selection", "differentiation", "evidence_discrimination", "valuation_transmission", "action_relevance"]
-        }, "required": ["question_selection", "differentiation", "evidence_discrimination", "valuation_transmission", "action_relevance"]},
+            for key in ["question_selection", "differentiation", "evidence_discrimination", "valuation_transmission", "action_relevance", "operating_transmission", "monitoring_relevance"]
+        }},
         "reviewer_limits": {"type": "array", "items": {"type": "string"}}
     }
 }  # type: ignore[attr-defined]

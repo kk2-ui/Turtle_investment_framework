@@ -59,6 +59,23 @@ REQUIRED_MACHINE_GATES: dict[str, tuple[str, set[str]]] = {
     "absolute_quality": ("absolute_quality_scorecard.json", {"PASS"}),
 }
 
+# A company-judgment release must still be evidence-first and point-in-time
+# reviewable.  It deliberately does not fabricate a valuation, a return, or an
+# investment action just to satisfy an investment-decision release contract.
+CJO_REQUIRED_MACHINE_GATES: dict[str, tuple[str, set[str]]] = {
+    "completion": ("completion_report.json", {"COMPLETE", "COMPLETE_WITH_WARNINGS"}),
+    "runtime_manifest": ("run_manifest.json", {"COMPLETED"}),
+    "official_evidence": ("official_evidence_validation.json", {"REVIEWABLE", "DECISION_READY", "MONITORING"}),
+    "financial_driver_bridge": ("financial_driver_bridge_validation.json", {"REVIEWABLE", "DECISION_READY", "MONITORING"}),
+    "claim_evidence": ("claim_evidence_validation.json", {"DECISION_READY", "MONITORING"}),
+    "thesis_test": ("thesis_test_validation.json", {"DECISION_READY", "MONITORING"}),
+    "insight": ("insight_validation.json", {"DECISION_READY", "MONITORING"}),
+    "judgment_review": ("judgment_review_validation.json", {"REVIEWED"}),
+    "judgment_synthesis": ("judgment_research_synthesis.json", {"REVIEWED", "NO_ACTION"}),
+    "absolute_quality": ("absolute_quality_scorecard.json", {"PASS"}),
+}
+ANALYSIS_PURPOSES = {"INVESTMENT_DECISION", "COMPANY_JUDGMENT_ONLY"}
+
 
 def _now() -> str:
     return datetime.now(timezone.utc).replace(microsecond=0).isoformat()
@@ -281,12 +298,32 @@ def _observed_state(payload: dict[str, Any]) -> str:
     return "MISSING"
 
 
+def _analysis_purpose(output: Path) -> tuple[str, bool]:
+    contract = _load(output / "analysis_contract.json")
+    purpose = str(contract.get("analysis_purpose") or "INVESTMENT_DECISION")
+    return purpose, purpose in ANALYSIS_PURPOSES
+
+
 def evaluate_machine_gates(
     output: Path, *, require_forward_judgment_contract: bool = False,
 ) -> dict[str, Any]:
     gates: dict[str, Any] = {}
     blocking: list[str] = []
-    for gate_id, (filename, accepted) in REQUIRED_MACHINE_GATES.items():
+    analysis_purpose, purpose_valid = _analysis_purpose(output)
+    required_gates = (
+        CJO_REQUIRED_MACHINE_GATES
+        if analysis_purpose == "COMPANY_JUDGMENT_ONLY"
+        else REQUIRED_MACHINE_GATES
+    )
+    if not purpose_valid:
+        blocking.append("analysis_purpose:INVALID")
+        gates["analysis_purpose"] = {
+            "file": "analysis_contract.json",
+            "observed": analysis_purpose,
+            "accepted": sorted(ANALYSIS_PURPOSES),
+            "passed": False,
+        }
+    for gate_id, (filename, accepted) in required_gates.items():
         path = output / filename
         payload = _load(path)
         observed = _observed_state(payload) if payload else "MISSING"
@@ -299,6 +336,15 @@ def evaluate_machine_gates(
         }
         if not passed:
             blocking.append(f"{gate_id}:{observed}")
+        if analysis_purpose == "COMPANY_JUDGMENT_ONLY" and gate_id in {
+            "financial_driver_bridge", "thesis_test",
+        }:
+            declared_purpose = str(payload.get("analysis_purpose") or "MISSING")
+            purpose_passed = declared_purpose == analysis_purpose
+            gates[gate_id]["analysis_purpose"] = declared_purpose
+            gates[gate_id]["analysis_purpose_passed"] = purpose_passed
+            if not purpose_passed:
+                blocking.append(f"{gate_id}:analysis_purpose:{declared_purpose}")
     if require_forward_judgment_contract:
         thesis_validation = _load(output / "thesis_test_validation.json")
         observed = str(thesis_validation.get("forward_judgment_state") or "MISSING").upper()
@@ -313,7 +359,13 @@ def evaluate_machine_gates(
             blocking.append(f"forward_judgment_contract:{observed}")
     completion = _load(output / "completion_report.json")
     completion_findings = list(completion.get("blocking_findings") or [])
-    return {"passed": not blocking, "gates": gates, "blocking": blocking, "completion_findings": completion_findings[:30]}
+    return {
+        "passed": not blocking,
+        "analysis_purpose": analysis_purpose,
+        "gates": gates,
+        "blocking": blocking,
+        "completion_findings": completion_findings[:30],
+    }
 
 
 def summarize_research_execution(output: Path) -> dict[str, Any]:

@@ -18,6 +18,7 @@ from typing import Any
 
 SCHEMA_VERSION = "reader-coverage.v1"
 READY_STATES = {"PASS", "SKIP"}
+ANALYSIS_PURPOSES = {"INVESTMENT_DECISION", "COMPANY_JUDGMENT_ONLY"}
 
 _SOURCE_ANCHOR_RE = re.compile(r"\[(?:table-)?source:\s*[^\]]+\]", re.I)
 _FOOTNOTE_RE = re.compile(r"^\[\^\d+\]:\s*\S+", re.M)
@@ -96,7 +97,11 @@ def _context(output_dir: str | Path | None, archetype: str | None) -> tuple[str,
     return aliases.get(legacy, "general_operating"), "valuation_model.json" if legacy else "default"
 
 
-def _topic_specs(archetype: str) -> dict[str, dict[str, Any]]:
+def _topic_specs(
+    archetype: str,
+    *,
+    analysis_purpose: str = "INVESTMENT_DECISION",
+) -> dict[str, dict[str, Any]]:
     # Each cue group expresses a different part of the economic question.  A
     # paragraph must connect multiple groups; a keyword list by itself is not
     # sufficient evidence of an explanation.
@@ -194,6 +199,33 @@ def _topic_specs(archetype: str) -> dict[str, dict[str, Any]]:
             "required_group": "limits",
         },
     }
+    if analysis_purpose == "COMPANY_JUDGMENT_ONLY":
+        # A company-judgment release freezes causal mechanisms and their
+        # observable settlement.  It must not borrow the shareholder-access,
+        # valuation, return or market-price questions from an investment
+        # report merely to make the prose look complete.
+        specs.pop("ordinary_share_cash_access", None)
+        specs.pop("valuation_return_price", None)
+        specs["rival_mechanisms"] = {
+            "label": "竞争性机制与反方解释",
+            "groups": [
+                ("primary", ("主路径", "主要机制", "核心解释", "primary", "mechanism")),
+                ("rival", ("竞争解释", "替代解释", "反方", "相反", "rival", "alternative")),
+                ("split", ("区分", "判别", "不同", "分歧", "证伪", "discriminat", "falsif")),
+            ],
+            "minimum_groups": 2,
+            "required_group": "rival",
+        }
+        specs["forward_settlement"] = {
+            "label": "前瞻信号与结算",
+            "groups": [
+                ("forward", ("未来", "前瞻", "之后", "horizon", "forward")),
+                ("signal", ("信号", "指标", "阈值", "观察", "metric", "signal", "threshold")),
+                ("settle", ("结算", "验证", "到期", "确认", "settle", "resolve", "confirm")),
+            ],
+            "minimum_groups": 2,
+            "required_any_groups": ["signal", "settle"],
+        }
     return specs
 
 
@@ -291,11 +323,25 @@ def _identity_findings(text: str, output_dir: str | Path | None) -> list[str]:
     return findings
 
 
+def _analysis_purpose(output_dir: str | Path | None, declared: str | None) -> str:
+    """Resolve purpose without making a missing legacy contract invalid."""
+    if declared:
+        purpose = str(declared)
+    elif output_dir is not None:
+        purpose = str(_load(Path(output_dir) / "analysis_contract.json").get(
+            "analysis_purpose"
+        ) or "INVESTMENT_DECISION")
+    else:
+        purpose = "INVESTMENT_DECISION"
+    return purpose if purpose in ANALYSIS_PURPOSES else "INVALID"
+
+
 def evaluate_reader_coverage(
     report_text: str,
     output_dir: str | Path | None = None,
     *,
     archetype: str | None = None,
+    analysis_purpose: str | None = None,
     enforced: bool = True,
     persist: bool = False,
 ) -> dict[str, Any]:
@@ -306,6 +352,14 @@ def evaluate_reader_coverage(
     if not str(report_text or '').strip():
         result = {"schema_version": SCHEMA_VERSION, "status": "BLOCKED", "blocking_findings": ["reader_report_empty"]}
         return result
+    purpose = _analysis_purpose(output_dir, analysis_purpose)
+    if purpose == "INVALID":
+        return {
+            "schema_version": SCHEMA_VERSION,
+            "status": "BLOCKED",
+            "analysis_purpose": purpose,
+            "blocking_findings": ["reader_analysis_purpose_invalid"],
+        }
     archetype_id, source = _context(output_dir, archetype)
     paragraphs = _paragraphs(report_text)
     source_count = len(_SOURCE_ANCHOR_RE.findall(report_text)) + len(_FOOTNOTE_RE.findall(report_text))
@@ -313,17 +367,21 @@ def evaluate_reader_coverage(
     source_available = bool(source_count or binding_count)
     topics = {
         name: _topic_result(report_text, spec, paragraphs, source_available=source_available)
-        for name, spec in _topic_specs(archetype_id).items()
+        for name, spec in _topic_specs(
+            archetype_id, analysis_purpose=purpose
+        ).items()
     }
     blocking = [
         f"topic_missing:{name}" for name, item in topics.items() if item.get("status") != "PASS"
     ]
     if not source_available:
         blocking.append("reader_source_anchor_missing")
-    blocking.extend(_identity_findings(report_text, output_dir))
+    if purpose == "INVESTMENT_DECISION":
+        blocking.extend(_identity_findings(report_text, output_dir))
     result = {
         "schema_version": SCHEMA_VERSION,
         "status": "BLOCKED" if blocking else "PASS",
+        "analysis_purpose": purpose,
         "archetype": archetype_id,
         "archetype_source": source,
         "paragraph_count": len(paragraphs),
@@ -341,13 +399,31 @@ def evaluate_reader_coverage(
     return result
 
 
-def reader_coverage_prompt(*, archetype: str = "general_operating") -> str:
+def reader_coverage_prompt(
+    *,
+    archetype: str = "general_operating",
+    analysis_purpose: str = "INVESTMENT_DECISION",
+) -> str:
     """Prompt hook used by report synthesis and repair contexts."""
-    labels = ", ".join(spec["label"] for spec in _topic_specs(archetype).values())
+    labels = ", ".join(
+        spec["label"]
+        for spec in _topic_specs(
+            archetype, analysis_purpose=analysis_purpose
+        ).values()
+    )
+    scope = (
+        "公司判断稿只解释经营机制、竞争解释、前瞻信号与证据边界；不得写证券价格、估值、回报、仓位或交易动作。"
+        if analysis_purpose == "COMPANY_JUDGMENT_ONLY" else
+        ""
+    )
+    implication = (
+        "公司判断含义"
+        if analysis_purpose == "COMPANY_JUDGMENT_ONLY" else "投资含义"
+    )
     return (
         "读者层覆盖契约：在技术附录或ledger之外，正文必须用普通语言解释 "
-        f"{labels}。每一项都要连接事实、机制与投资含义；证据不足时明确写UNKNOWN/未披露及其影响。"
-        "不得用附录链接、来源清单、字段名或数字表格代替解释。"
+        f"{labels}。每一项都要连接事实、机制与{implication}；证据不足时明确写UNKNOWN/未披露及其影响。"
+        "不得用附录链接、来源清单、字段名或数字表格代替解释。" + scope
     )
 
 

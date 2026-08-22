@@ -54,6 +54,59 @@ def _payload(output: Path) -> dict:
     )
 
 
+def _cjo_dependencies(output: Path) -> None:
+    _write_json(output / "analysis_contract.json", {
+        "ts_code": "000001.SZ", "analysis_purpose": "COMPANY_JUDGMENT_ONLY",
+    })
+    _write_json(output / "claim_evidence.json", {
+        "analysis_purpose": "COMPANY_JUDGMENT_ONLY",
+        "claims": [{"claim_id": "claim.core", "raw_facts": [
+            {"evidence_id": "ev.sales"}, {"evidence_id": "ev.alt"},
+        ]}],
+    })
+    _write_json(output / "thesis_test.json", {
+        "analysis_purpose": "COMPANY_JUDGMENT_ONLY",
+        "forward_judgments": [{"judgment_id": "fj.owner_cash"}],
+    })
+
+
+def _cjo_payload(output: Path, *, freeze: bool = True) -> dict:
+    return build_insight_ledger(
+        output, "operating_transition", "收入收缩是短期扰动，还是会通过渠道返利永久压低经营现金？",
+        {
+            "anomaly": "收入下降但毛利率保持高位",
+            "evidence_ids": ["ev.sales"],
+            "why_it_changes_the_judgment": "它决定高毛利是否仍能转化为可持续的经营现金。",
+        },
+        [{
+            "insight_id": "insight.cash_decay", "title": "高毛利可能掩盖现金引擎收缩",
+            "claim_id": "claim.core", "evidence_ids": ["ev.sales", "ev.alt"],
+            "anomaly": "内销收入下降但品牌毛利率仍高",
+            "mechanism": ["内销量下滑压低收入", "固定费用与渠道返利压低经营现金转化"],
+            "strongest_alternative": "需求只是短周期回落",
+            "discriminating_observation": "未来两个旺季销量、渠道库存和现金转换是否同步修复",
+            "operating_impact": "若返利与固定费用没有回落，正常化经营利润和 owner cash 将低于历史水平。",
+            "monitoring_or_forward_judgment": "用销量、返利与经营现金转化跟踪并结算 fj.owner_cash。",
+            "forward_judgment_ids": ["fj.owner_cash"],
+            "falsification": "连续两个旺季量价和现金转换同时恢复则撤销该判断",
+            "company_specific_terms": ["内销", "品牌"], "chapters": [0, 5, 14],
+        }],
+        {}, {},
+        {
+            "strongest_case_against": "渠道变化没有改变现金引擎，只是淡季去库存。",
+            "why_it_may_be_right": "高毛利率和经营现金可能在旺季恢复。",
+            "evidence_ids": ["ev.alt"], "unresolved": "渠道库存与返利缺少同口径公开序列。",
+            "judgment_if_true": "应把当前收缩重判为短周期扰动，并等待下一季经营数据结算。",
+        },
+        {
+            "executive_judgment": "当前证据支持现金引擎收缩假说，但尚不能排除短周期扰动。",
+            "monitoring": ["内销量", "渠道库存", "经营现金流"],
+        },
+        change_reason="freeze operating mechanism and its forward settlement",
+        freeze=freeze, analysis_purpose="COMPANY_JUDGMENT_ONLY",
+    )
+
+
 def test_case_router_is_question_led_and_detects_mature_cash_return(tmp_path: Path) -> None:
     _write_json(tmp_path / "compute_bundle.json", {"dividend_yield_pct": 5.2, "revenue_growth": -4.0})
     _write_json(tmp_path / "analysis_contract.json", {"company_name": "成熟消费公司"})
@@ -61,6 +114,19 @@ def test_case_router_is_question_led_and_detects_mature_cash_return(tmp_path: Pa
     assert brief["primary_archetype"] in {"mature_cash_return", "operating_transition"}
     assert brief["decisive_question"].endswith("？")
     assert brief["required_moves"] and brief["forbidden_shortcuts"]
+    assert brief["case_provenance"]["kind"] == "SYNTHESIS_PATTERN"
+
+
+def test_case_router_distinguishes_named_book_case_from_synthesis_pattern(tmp_path: Path) -> None:
+    _write_json(tmp_path / "analysis_contract.json", {"company_name": "芯片公司"})
+    brief = build_insight_research_brief(tmp_path, persist=False)
+
+    assert brief["primary_archetype"] == "technology_transition"
+    assert brief["case_provenance"] == {
+        "kind": "NAMED_BOOK_CASE",
+        "source_label": "Intel",
+        "scope": "ROUTING_ONLY_NOT_COMPANY_EPISODE",
+    }
 
 
 def test_complete_insight_ledger_is_frozen_and_cross_ledger_bound(tmp_path: Path) -> None:
@@ -70,6 +136,35 @@ def test_complete_insight_ledger_is_frozen_and_cross_ledger_bound(tmp_path: Path
     result = persist_insight_ledger(tmp_path, payload, report_text=report)
     assert result["state"] == "DECISION_READY"
     assert (tmp_path / "insight_validation.json").exists()
+
+
+def test_company_judgment_insight_freezes_operating_transmission_without_investment_fields(tmp_path: Path) -> None:
+    _cjo_dependencies(tmp_path)
+    initialize_insight_policy(
+        tmp_path, run_id="cjo", enforced=True,
+        analysis_purpose="COMPANY_JUDGMENT_ONLY",
+    )
+    payload = _cjo_payload(tmp_path)
+    report = "## Ch0 公司判断\n[insight: insight.cash_decay]\n## Ch14 综合判断\n[insight: insight.cash_decay]"
+
+    result = validate_insight_ledger(payload, output_dir=tmp_path, report_text=report, enforced=True)
+    memo = render_investment_memo(payload, "测试公司", "000001.SZ", "technical.md")
+
+    assert result["state"] == "DECISION_READY"
+    assert result["analysis_purpose"] == "COMPANY_JUDGMENT_ONLY"
+    assert "市场隐含预期" not in memo and "估值与动作" not in memo
+    assert "fj.owner_cash" in memo
+
+
+def test_company_judgment_insight_rejects_valuation_placeholder(tmp_path: Path) -> None:
+    _cjo_dependencies(tmp_path)
+    payload = _cjo_payload(tmp_path, freeze=False)
+    payload["insights"][0]["valuation_impact"] = "留空的估值占位"
+
+    result = validate_insight_ledger(payload, output_dir=tmp_path, report_text="[insight: insight.cash_decay]")
+
+    assert result["state"] == "INVALID"
+    assert "insight.cash_decay:company_judgment_cannot_carry_valuation_impact" in result["invalid_findings"]
 
 
 def test_enforced_missing_insight_ledger_is_incomplete_not_invalid(tmp_path: Path) -> None:

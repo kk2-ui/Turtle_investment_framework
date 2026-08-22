@@ -5,7 +5,8 @@ The acquisition module decides *which* disclosures are admissible.  This
 module is the smaller execution boundary that decides *what a writer may
 read*: only an admitted ``source_id`` whose registered package path is under
 the package root, plus explicitly registered framework files.  It does not
-fetch URLs and it does not expose arbitrary filesystem reads.
+fetch URLs and it does not expose arbitrary filesystem reads.  Its CLI can
+read explicitly named admitted sources before writing the same run's audit.
 
 The attestation emitted here is a declared-process/read-audit artifact.  It
 is intentionally not a deployment signature or a model-memory guarantee.
@@ -22,7 +23,10 @@ from datetime import date, datetime, time, timezone
 from pathlib import Path
 from typing import Any, Iterable
 
-from scripts.phase10_acquisition import validate_source_manifest
+try:
+    from scripts.phase10_acquisition import validate_source_manifest
+except ModuleNotFoundError:  # Direct ``python scripts/phase10_pit_runner.py`` execution.
+    from phase10_acquisition import validate_source_manifest
 
 
 PIT_ATTESTATION_SCHEMA_VERSION = "phase10-pit-runner-attestation.v1"
@@ -30,6 +34,7 @@ PIT_RUNNER_VERSION = "phase10-pit-runner.v1"
 ADMITTED = "ADMITTED"
 PIT_STATIC_FRAMEWORK_ROOT = Path(__file__).resolve().parents[1] / "config" / "phase10_pit_framework"
 PDF_PAGE_MARKER = re.compile(r"^## 第 ([1-9][0-9]*) 页[ \t]*$", re.MULTILINE)
+PAGE_MARKDOWN_REPRESENTATIONS = {"PDF_PAGE_MARKDOWN", "WEB_PAGE_MARKDOWN"}
 
 
 class PITRunnerError(RuntimeError):
@@ -74,13 +79,26 @@ def _path_field(source: dict[str, Any]) -> str | None:
 
 
 def _manifest_sources(manifest: dict[str, Any]) -> list[dict[str, Any]]:
-    selected = manifest.get("sources")
-    if isinstance(selected, list):
-        return [item for item in selected if isinstance(item, dict)]
-    inventory = manifest.get("inventory")
-    if isinstance(inventory, list):
-        return [item for item in inventory if isinstance(item, dict) and item.get("admissible") is True]
-    return []
+    sources = manifest.get("sources")
+    if isinstance(sources, list):
+        admitted = [item for item in sources if isinstance(item, dict) and item.get("admissible") is True]
+    else:
+        inventory = manifest.get("inventory")
+        admitted = [
+            item for item in inventory
+            if isinstance(item, dict) and item.get("admissible") is True
+        ] if isinstance(inventory, list) else []
+
+    # A complete inventory is deliberately broader than the bodies selected
+    # for this frozen research question.  Once selection exists, it is the
+    # runner's allowlist too: retaining 848 unmaterialized announcements for
+    # audit must not turn them into paths a writer may attempt to read.
+    selection = manifest.get("source_package_selection")
+    selected_ids = selection.get("selected_source_ids") if isinstance(selection, dict) else None
+    if not isinstance(selected_ids, list):
+        return admitted
+    by_id = {str(item.get("source_id") or ""): item for item in admitted}
+    return [by_id[source_id] for source_id in selected_ids if isinstance(source_id, str) and source_id in by_id]
 
 
 def _framework_entries(manifest: dict[str, Any]) -> list[dict[str, Any]]:
@@ -246,9 +264,9 @@ class PITSourcePackage:
                     self._incomplete.append(f"source:{source_id}:package_file_missing")
             representation = str(source.get("content_representation") or "SOURCE_TEXT").strip()
             reader_text_path = _relative_path(source.get("reader_text_path"))
-            requires_reader_text = Path(path).suffix.lower() == ".pdf" or representation == "PDF_PAGE_MARKDOWN"
+            requires_reader_text = Path(path).suffix.lower() == ".pdf" or representation in PAGE_MARKDOWN_REPRESENTATIONS
             if requires_reader_text:
-                if representation != "PDF_PAGE_MARKDOWN":
+                if Path(path).suffix.lower() == ".pdf" and representation != "PDF_PAGE_MARKDOWN":
                     self._incomplete.append(f"source:{source_id}:reader_text_representation_required")
                 if not reader_text_path:
                     self._incomplete.append(f"source:{source_id}:reader_text_path_missing")
@@ -271,7 +289,7 @@ class PITSourcePackage:
                         elif reader_text_path == path:
                             self._incomplete.append(f"source:{source_id}:reader_text_path_matches_package_path")
                         else:
-                            self._validate_pdf_page_markdown(
+                            self._validate_page_markdown(
                                 source_id=source_id,
                                 source=source,
                                 reader_file=reader_file,
@@ -334,7 +352,7 @@ class PITSourcePackage:
             raise PITRunnerError(f"{reason_prefix}:path_outside_root")
         return resolved
 
-    def _validate_pdf_page_markdown(
+    def _validate_page_markdown(
         self,
         *,
         source_id: str,
@@ -363,7 +381,7 @@ class PITSourcePackage:
         expected_metadata = {
             "source_id": source_id,
             "source_version": str(source.get("source_version") or ""),
-            "content_representation": "PDF_PAGE_MARKDOWN",
+            "content_representation": str(source.get("content_representation") or ""),
         }
         for field, expected in expected_metadata.items():
             if metadata.get(field) != expected:
@@ -551,6 +569,10 @@ def main(argv: Iterable[str] | None = None) -> int:
     parser.add_argument("--case-id")
     parser.add_argument("--experiment-id")
     parser.add_argument("--run-id")
+    parser.add_argument(
+        "--read-source", action="append", default=[], metavar="SOURCE_ID",
+        help="Read one admitted source and include its ALLOW/DENY event in this attestation. Repeatable.",
+    )
     args = parser.parse_args(list(argv) if argv is not None else None)
     static_framework_root = PIT_STATIC_FRAMEWORK_ROOT.resolve()
     if args.framework_root and args.framework_root.expanduser().resolve() != static_framework_root:
@@ -563,13 +585,20 @@ def main(argv: Iterable[str] | None = None) -> int:
         run_id=args.run_id,
         manifest_path=str(args.manifest.resolve()),
     )
+    read_error: PITRunnerError | None = None
+    for source_id in args.read_source:
+        try:
+            runner.read_source(source_id)
+        except PITRunnerError as exc:
+            read_error = exc
+            break
     payload = runner.attestation()
     if args.attestation:
         args.attestation.parent.mkdir(parents=True, exist_ok=True)
         args.attestation.write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     else:
         print(json.dumps(payload, ensure_ascii=False, indent=2))
-    return 0 if runner.state == "REVIEWABLE" else 2
+    return 0 if runner.state == "REVIEWABLE" and read_error is None else 2
 
 
 if __name__ == "__main__":

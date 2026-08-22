@@ -2358,7 +2358,7 @@ def validate_decisive_question_plan(
             except (TypeError, ValueError):
                 invalid.append(f"{question_id or prefix}:base_rate_sample_size_invalid")
             else:
-                expected_size = int(query.get("eligible_sample_size") or 0)
+                expected_size = int(query.get("independent_company_sample_size", query.get("eligible_sample_size") or 0) or 0)
                 if sample_size != expected_size or sample_size != len(eligible_ids):
                     invalid.append(f"{question_id or prefix}:base_rate_sample_size_mismatch")
         question = str(item.get("question") or "").strip()
@@ -2536,7 +2536,7 @@ def build_decisive_question_plan(
             str(item.get("case_id")) for item in query.get("eligible_cases") or []
             if isinstance(item, dict) and item.get("case_id")
         ]
-        candidate["base_rate_sample_size"] = int(query.get("eligible_sample_size") or 0)
+        candidate["base_rate_sample_size"] = int(query.get("independent_company_sample_size", query.get("eligible_sample_size") or 0) or 0)
     selected, rejected = rank_and_select(candidates)
     _mark_industry_question_injection(industry_knowledge_context, selected)
     input_sources = decisive_input_sources(output)

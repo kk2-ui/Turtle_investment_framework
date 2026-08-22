@@ -4,48 +4,56 @@
   "archetypes": {
     "asset_catalyst": {
       "case_pattern": "Hudson General",
+      "case_provenance": {"kind": "NAMED_BOOK_CASE", "source_label": "Hudson General", "scope": "ROUTING_ONLY_NOT_COMPANY_EPISODE"},
       "decisive_question": "账面或分部价值由谁、通过什么机制、在什么时间内兑现给外部股东？",
       "required_moves": ["按业务拆分AV与EPV", "区分潜在价值和可兑现价值", "识别控制人、催化剂与价值陷阱"],
       "forbidden_shortcuts": ["净现金等于股东安全垫", "低PB自动代表低估"]
     },
     "distressed_survival": {
       "case_pattern": "Magna",
+      "case_provenance": {"kind": "NAMED_BOOK_CASE", "source_label": "Magna International", "scope": "ROUTING_ONLY_NOT_COMPANY_EPISODE"},
       "decisive_question": "公司能否避免永久性损失，并在不依赖增长的情况下保住多少价值？",
       "required_moves": ["先判断生存和融资需求", "用AV与EPV双锚", "无护城河时不给增长高权重"],
       "forbidden_shortcuts": ["便宜等于安全", "周期反转自动修复资产负债表"]
     },
     "franchise_customer_lockin": {
       "case_pattern": "WD-40",
+      "case_provenance": {"kind": "NAMED_BOOK_CASE", "source_label": "WD-40", "scope": "ROUTING_ONLY_NOT_COMPANY_EPISODE"},
       "decisive_question": "客户为什么持续选择公司、这种选择优势如何衰减、当前价格隐含了多久？",
       "required_moves": ["解释客户选择机制", "区分搜索成本、切换成本和失败成本", "把优势持续期映射到价格"],
       "forbidden_shortcuts": ["品牌名气等于护城河", "高毛利自动证明定价权"]
     },
     "technology_transition": {
       "case_pattern": "Intel",
+      "case_provenance": {"kind": "NAMED_BOOK_CASE", "source_label": "Intel", "scope": "ROUTING_ONLY_NOT_COMPANY_EPISODE"},
       "decisive_question": "产业阶段变化会怎样改写竞争优势，当前价格是否把旧优势错误外推？",
       "required_moves": ["按产业阶段分析优势", "用多个历史时点校准", "区分好公司和好股票"],
       "forbidden_shortcuts": ["历史ROIC线性外推", "技术领先永久不变"]
     },
     "mature_cash_return": {
       "case_pattern": "mature franchise synthesis",
+      "case_provenance": {"kind": "SYNTHESIS_PATTERN", "source_label": "Turtle mature-franchise synthesis", "scope": "ROUTING_ONLY_NOT_COMPANY_EPISODE"},
       "decisive_question": "现金创造能力是在衰退还是被低估，剩余现金能否以可接受回报兑现给股东？",
       "required_moves": ["拆分周期与结构性衰退", "检验维持性资本开支和分红覆盖", "将资本配置纳入价值兑现"],
       "forbidden_shortcuts": ["高股息等于安全", "低PE代表风险已充分定价"]
     },
     "compounder_reinvestment": {
       "case_pattern": "franchise reinvestment synthesis",
+      "case_provenance": {"kind": "SYNTHESIS_PATTERN", "source_label": "Turtle franchise-reinvestment synthesis", "scope": "ROUTING_ONLY_NOT_COMPANY_EPISODE"},
       "decisive_question": "公司能否在足够长时间内以高于资本成本的回报再投资，价格隐含了多少成功？",
       "required_moves": ["识别再投资跑道", "区分存量回报与增量回报", "反推市场隐含增长和回报"],
       "forbidden_shortcuts": ["高历史ROE等于未来复利", "多个估值模型共享同一乐观增长"]
     },
     "regulated_financial": {
       "case_pattern": "controlled-balance-sheet synthesis",
+      "case_provenance": {"kind": "SYNTHESIS_PATTERN", "source_label": "Turtle controlled-balance-sheet synthesis", "scope": "ROUTING_ONLY_NOT_COMPANY_EPISODE"},
       "decisive_question": "资产和现金的控制权、监管约束与关联方安排会让多少价值真正归属外部股东？",
       "required_moves": ["穿透资产控制权", "核对监管和资本约束", "区分集团流动性与上市公司可分配现金"],
       "forbidden_shortcuts": ["集团现金等于上市公司现金", "账面净资产可无折价兑现"]
     },
     "operating_transition": {
       "case_pattern": "general operating transition",
+      "case_provenance": {"kind": "SYNTHESIS_PATTERN", "source_label": "Turtle general operating-transition synthesis", "scope": "ROUTING_ONLY_NOT_COMPANY_EPISODE"},
       "decisive_question": "当前异常是周期、结构还是会计扰动，哪项可观察事实能最快区分并改变估值？",
       "required_moves": ["锁定单一异常", "提出最强竞争解释", "定义区分性观察和动作更新"],
       "forbidden_shortcuts": ["罗列风险代替判断", "无依据的精确概率"]

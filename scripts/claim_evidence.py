@@ -40,6 +40,7 @@ DISTANCES = {
 SUPPORT_TYPES = {"supports", "contradicts", "context"}
 BASIS_MATCHES = {"exact", "compatible", "uncertain", "mismatch"}
 CONFIDENCE_KINDS = {"frequency", "base_rate", "analyst_subjective", "scenario_weight"}
+ANALYSIS_PURPOSES = {"INVESTMENT_DECISION", "COMPANY_JUDGMENT_ONLY"}
 INTERNAL_SOURCES = {"report_internal", "report_derivation", "framework_method"}
 SELF_REFERENTIAL_FILES = {
     "claim_evidence.json", "claim_evidence_validation.json", "claim_evidence_diff.json",
@@ -65,6 +66,19 @@ def _read_json(path: Path) -> dict[str, Any]:
     except (OSError, json.JSONDecodeError):
         return {}
     return value if isinstance(value, dict) else {}
+
+
+def _analysis_purpose(payload: dict[str, Any], output_dir: str | Path | None = None) -> str:
+    """Resolve legacy ledgers to the investment contract, never to a silent CJO mode."""
+    declared = str(payload.get("analysis_purpose") or "").strip()
+    if declared:
+        return declared
+    if output_dir is not None:
+        contract = _read_json(Path(output_dir) / "analysis_contract.json")
+        contract_purpose = str(contract.get("analysis_purpose") or "").strip()
+        if contract_purpose:
+            return contract_purpose
+    return "INVESTMENT_DECISION"
 
 
 def _observation_covers_fact_numbers(
@@ -130,15 +144,19 @@ def initialize_claim_evidence_policy(
     run_id: str,
     enforced: bool,
     required_chapters: set[int] | frozenset[int] = REQUIRED_CLAIM_CHAPTERS,
+    analysis_purpose: str | None = None,
 ) -> dict[str, Any]:
+    output = Path(output_dir)
+    purpose = _analysis_purpose({"analysis_purpose": analysis_purpose}, output)
     payload = {
         "schema_version": POLICY_VERSION,
         "run_id": str(run_id),
         "enforced": bool(enforced),
         "required_chapters": sorted(required_chapters),
+        "analysis_purpose": purpose,
         "created_at": _now(),
     }
-    path = Path(output_dir) / "claim_evidence_policy.json"
+    path = output / "claim_evidence_policy.json"
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
     return payload
@@ -150,12 +168,15 @@ def build_claim_evidence_ledger(
     *,
     change_reason: str,
     freeze: bool = True,
+    analysis_purpose: str | None = None,
 ) -> dict[str, Any]:
     output = Path(output_dir)
     contract = _read_json(output / "analysis_contract.json")
+    purpose = str(analysis_purpose or contract.get("analysis_purpose") or "INVESTMENT_DECISION")
     payload: dict[str, Any] = {
         "schema_version": SCHEMA_VERSION,
         "report_id": str(contract.get("ts_code") or contract.get("code") or output.name),
+        "analysis_purpose": purpose,
         "revision": 1,
         "lifecycle": "decision_ready" if freeze else "reviewable",
         "change_reason": str(change_reason or "").strip(),
@@ -245,10 +266,41 @@ def validate_claim_evidence_ledger(
     registry = EvidenceRegistry()
     if output_dir is not None and Path(output_dir).is_dir():
         registry.register_from_output_dir(str(output_dir))
+    analysis_purpose = _analysis_purpose(payload if isinstance(payload, dict) else {}, output_dir)
+    if analysis_purpose not in ANALYSIS_PURPOSES:
+        invalid.append("analysis_purpose_invalid")
+    if output_dir is not None:
+        try:
+            from scripts.case_selection_register import validate_output_case_selection
+        except ModuleNotFoundError:
+            from case_selection_register import validate_output_case_selection
+        selection_admission = validate_output_case_selection(output_dir)
+        if selection_admission.get("state") in {"INVALID", "INCOMPLETE"}:
+            invalid.extend(
+                "case_selection:" + item
+                for item in selection_admission.get("invalid_findings") or []
+            )
+            incomplete.extend(
+                "case_selection:" + item
+                for item in selection_admission.get("incomplete_findings") or []
+            )
+    contract = _read_json(Path(output_dir) / "analysis_contract.json") if output_dir is not None else {}
+    contract_purpose = str(contract.get("analysis_purpose") or "").strip()
+    if contract_purpose in ANALYSIS_PURPOSES and analysis_purpose != contract_purpose:
+        invalid.append("analysis_purpose_contract_mismatch")
+    policy = _read_json(Path(output_dir) / "claim_evidence_policy.json") if output_dir is not None else {}
+    policy_purpose = str(policy.get("analysis_purpose") or "").strip()
+    if policy_purpose in ANALYSIS_PURPOSES and analysis_purpose != policy_purpose:
+        invalid.append("analysis_purpose_policy_mismatch")
     decision_entries = {
         str(item.get("entry_id"))
         for item in (_read_json(Path(output_dir) / "decision_ledger.json").get("entries") or [])
         if isinstance(item, dict) and item.get("entry_id")
+    } if output_dir is not None else set()
+    forward_judgment_ids = {
+        str(item.get("judgment_id"))
+        for item in (_read_json(Path(output_dir) / "thesis_test.json").get("forward_judgments") or [])
+        if isinstance(item, dict) and item.get("judgment_id")
     } if output_dir is not None else set()
     official_policy = _read_json(Path(output_dir) / "official_evidence_policy.json") if output_dir is not None else {}
     official_evidence_enforced = bool(official_policy.get("enforced"))
@@ -330,18 +382,48 @@ def validate_claim_evidence_ledger(
                 invalid.append(f"{claim_id or prefix}:confidence_value_invalid")
             if not str(confidence.get("basis") or "").strip():
                 incomplete.append(f"{claim_id or prefix}:confidence_basis_missing")
-        impact = claim.get("decision_impact")
-        if not isinstance(impact, dict) or any(not str(impact.get(key) or "").strip() for key in ("valuation", "position", "action")):
-            incomplete.append(f"{claim_id or prefix}:decision_impact_missing")
-        refs = claim.get("decision_entry_ids")
-        if not isinstance(refs, list):
-            invalid.append(f"{claim_id or prefix}:decision_entry_ids_invalid")
-            refs = []
-        if enforced and not refs:
-            incomplete.append(f"{claim_id or prefix}:decision_entry_ids_missing")
-        for ref in refs:
-            if output_dir is not None and str(ref) not in decision_entries:
-                invalid.append(f"{claim_id or prefix}:unknown_decision_entry:{ref}")
+        if analysis_purpose == "COMPANY_JUDGMENT_ONLY":
+            for forbidden in ("decision_impact", "decision_entry_ids"):
+                if forbidden in claim:
+                    invalid.append(f"{claim_id or prefix}:company_judgment_cannot_carry_{forbidden}")
+            impact = claim.get("judgment_impact")
+            if not isinstance(impact, dict):
+                invalid.append(f"{claim_id or prefix}:judgment_impact_invalid")
+                impact = {}
+            for key in (
+                "mechanism",
+                "normalized_earnings_or_owner_cash",
+                "monitoring_or_forward_judgment",
+            ):
+                if not str(impact.get(key) or "").strip():
+                    incomplete.append(f"{claim_id or prefix}:judgment_impact:{key}_missing")
+            refs = impact.get("forward_judgment_ids")
+            if not isinstance(refs, list):
+                invalid.append(f"{claim_id or prefix}:judgment_impact:forward_judgment_ids_invalid")
+                refs = []
+            elif not refs:
+                incomplete.append(f"{claim_id or prefix}:judgment_impact:forward_judgment_ids_missing")
+            for ref in refs:
+                if output_dir is not None and str(ref) not in forward_judgment_ids:
+                    if not bool((payload.get("freeze") or {}).get("frozen")):
+                        incomplete.append(
+                            f"{claim_id or prefix}:judgment_impact:forward_judgment_pending:{ref}"
+                        )
+                    else:
+                        invalid.append(f"{claim_id or prefix}:judgment_impact:unknown_forward_judgment:{ref}")
+        else:
+            impact = claim.get("decision_impact")
+            if not isinstance(impact, dict) or any(not str(impact.get(key) or "").strip() for key in ("valuation", "position", "action")):
+                incomplete.append(f"{claim_id or prefix}:decision_impact_missing")
+            refs = claim.get("decision_entry_ids")
+            if not isinstance(refs, list):
+                invalid.append(f"{claim_id or prefix}:decision_entry_ids_invalid")
+                refs = []
+            if enforced and not refs:
+                incomplete.append(f"{claim_id or prefix}:decision_entry_ids_missing")
+            for ref in refs:
+                if output_dir is not None and str(ref) not in decision_entries:
+                    invalid.append(f"{claim_id or prefix}:unknown_decision_entry:{ref}")
 
         facts = claim.get("raw_facts")
         if not isinstance(facts, list):
@@ -503,6 +585,7 @@ def validate_claim_evidence_ledger(
         "covered_chapters": sorted(covered_chapters),
         "required_chapters": sorted(required_chapters) if enforced else [],
         "enforced": bool(enforced),
+        "analysis_purpose": analysis_purpose,
     }
 
 

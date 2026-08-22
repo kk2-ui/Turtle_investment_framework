@@ -23,6 +23,7 @@ LEDGER_FILES = {
     "valuation": "valuation_model.json",
     "thesis_test": "thesis_test.json",
     "insight": "insight_ledger.json",
+    "financial_driver_bridge": "financial_driver_bridge.json",
 }
 ROUTING_CONTEXT_FILES = {
     "company_archetype": "company_archetype.json",
@@ -36,8 +37,24 @@ READY_STATES = {"DECISION_READY", "MONITORING"}
 POLICY_FILES = (
     "decision_ledger_policy.json", "decision_compiler_policy.json", "claim_evidence_policy.json",
     "valuation_route_policy.json", "valuation_model_policy.json", "thesis_test_policy.json", "insight_policy.json",
-    "base_rate_policy.json",
+    "base_rate_policy.json", "financial_driver_bridge_policy.json",
 )
+DRIVER_BRIDGE_READY_STATES = {"REVIEWABLE", "DECISION_READY", "MONITORING"}
+ANALYSIS_PURPOSES = {"INVESTMENT_DECISION", "COMPANY_JUDGMENT_ONLY"}
+CJO_SNAPSHOT_GATES = (
+    "official_evidence",
+    "claim_evidence",
+    "financial_driver_bridge",
+    "thesis_test",
+    "insight",
+)
+CJO_GATE_READY_STATES = {
+    "official_evidence": {"REVIEWABLE", "DECISION_READY", "MONITORING"},
+    "financial_driver_bridge": DRIVER_BRIDGE_READY_STATES,
+    "claim_evidence": READY_STATES,
+    "thesis_test": READY_STATES,
+    "insight": READY_STATES,
+}
 
 
 def _now() -> str:
@@ -166,26 +183,50 @@ def _resolve_visible_source(
     return path, source_id, {}, None
 
 
-def _ledger_states(output: Path, report_text: str) -> dict[str, dict[str, Any]]:
+def _ledger_states(
+    output: Path,
+    report_text: str,
+    *,
+    analysis_purpose: str = "INVESTMENT_DECISION",
+) -> dict[str, dict[str, Any]]:
     try:
-        from scripts.decision_ledger import evaluate_output_decision_ledger
         from scripts.claim_evidence import evaluate_output_claim_evidence
-        from scripts.valuation_model_gate import evaluate_output_valuation_model
         from scripts.thesis_test_gate import evaluate_output_thesis_test
         from scripts.insight_ledger import evaluate_output_insight
+        from scripts.financial_driver_bridge import evaluate_output_financial_driver_bridge
+        from scripts.build_report_context import evaluate_output_official_evidence
     except ModuleNotFoundError:
-        from decision_ledger import evaluate_output_decision_ledger
         from claim_evidence import evaluate_output_claim_evidence
-        from valuation_model_gate import evaluate_output_valuation_model
         from thesis_test_gate import evaluate_output_thesis_test
         from insight_ledger import evaluate_output_insight
-    return {
+        from financial_driver_bridge import evaluate_output_financial_driver_bridge
+        from build_report_context import evaluate_output_official_evidence
+
+    if analysis_purpose == "COMPANY_JUDGMENT_ONLY":
+        return {
+            "official_evidence": evaluate_output_official_evidence(output, persist=False),
+            "claim_evidence": evaluate_output_claim_evidence(output, report_text=report_text, persist=False),
+            "financial_driver_bridge": evaluate_output_financial_driver_bridge(output, persist=False),
+            "thesis_test": evaluate_output_thesis_test(output, report_text=report_text, persist=False),
+            "insight": evaluate_output_insight(output, report_text=report_text, persist=False),
+        }
+
+    try:
+        from scripts.decision_ledger import evaluate_output_decision_ledger
+        from scripts.valuation_model_gate import evaluate_output_valuation_model
+    except ModuleNotFoundError:
+        from decision_ledger import evaluate_output_decision_ledger
+        from valuation_model_gate import evaluate_output_valuation_model
+    states = {
         "decision": evaluate_output_decision_ledger(output, report_text=report_text, persist=False),
         "claim_evidence": evaluate_output_claim_evidence(output, report_text=report_text, persist=False),
         "valuation": evaluate_output_valuation_model(output, report_text=report_text, persist=False),
         "thesis_test": evaluate_output_thesis_test(output, report_text=report_text, persist=False),
         "insight": evaluate_output_insight(output, report_text=report_text, persist=False),
     }
+    if (output / "financial_driver_bridge_policy.json").is_file():
+        states["financial_driver_bridge"] = evaluate_output_financial_driver_bridge(output, persist=False)
+    return states
 
 
 def _predictions(thesis: dict[str, Any]) -> list[dict[str, Any]]:
@@ -259,17 +300,55 @@ def create_publication_snapshot(
     dry_run: bool = False,
 ) -> dict[str, Any]:
     output = Path(output_dir)
+    contract = _load(output / "analysis_contract.json")
+    analysis_purpose = str(contract.get("analysis_purpose") or "INVESTMENT_DECISION")
+    if analysis_purpose not in ANALYSIS_PURPOSES:
+        return {
+            "written": False,
+            "error": "publication_snapshot_analysis_purpose_invalid",
+            "analysis_purpose": analysis_purpose,
+    }
     policies = [_load(output / filename) for filename in POLICY_FILES]
-    v3_enforced = any(bool(policy.get("enforced")) for policy in policies)
+    v3_enforced = (
+        any(bool(policy.get("enforced")) for policy in policies)
+        or analysis_purpose == "COMPANY_JUDGMENT_ONLY"
+    )
+    financial_driver_bridge_required = bool(
+        _load(output / "financial_driver_bridge_policy.json").get("enforced")
+    ) or analysis_purpose == "COMPANY_JUDGMENT_ONLY"
     if v3_enforced:
-        states = _ledger_states(output, validation_report_text if validation_report_text is not None else report_text)
-        not_ready = {name: value.get("state") for name, value in states.items() if str(value.get("state")) not in READY_STATES}
+        states = _ledger_states(
+            output,
+            validation_report_text if validation_report_text is not None else report_text,
+            analysis_purpose=analysis_purpose,
+        )
+        required_states = CJO_SNAPSHOT_GATES if analysis_purpose == "COMPANY_JUDGMENT_ONLY" else tuple(states)
+        not_ready = {
+            name: (states.get(name) or {}).get("state", "MISSING") for name in required_states
+            if str((states.get(name) or {}).get("state")) not in (
+                CJO_GATE_READY_STATES[name]
+                if analysis_purpose == "COMPANY_JUDGMENT_ONLY"
+                else (DRIVER_BRIDGE_READY_STATES if name == "financial_driver_bridge" else READY_STATES)
+            )
+        }
         if not_ready:
             return {"written": False, "error": "publication_snapshot_requires_frozen_ready_ledgers", "gate_states": not_ready}
+        if analysis_purpose == "COMPANY_JUDGMENT_ONLY":
+            purpose_mismatches = {
+                name: str((states.get(name) or {}).get("analysis_purpose") or "MISSING")
+                for name in ("financial_driver_bridge", "thesis_test")
+                if str((states.get(name) or {}).get("analysis_purpose") or "") != analysis_purpose
+            }
+            if purpose_mismatches:
+                return {
+                    "written": False,
+                    "error": "publication_snapshot_requires_cjo_purpose_matched_ledgers",
+                    "analysis_purpose": analysis_purpose,
+                    "purpose_mismatches": purpose_mismatches,
+                }
     else:
         states = {name: {"state": "SKIP"} for name in LEDGER_FILES}
     ledgers = {name: _load(output / filename) for name, filename in LEDGER_FILES.items() if (output / filename).is_file()}
-    contract = _load(output / "analysis_contract.json")
     pit_production = _pit_production_contract(contract)
     document_projections = _document_projections(output)
     source_fingerprints: list[dict[str, Any]] = []
@@ -325,6 +404,8 @@ def create_publication_snapshot(
         "schema_version": "publication-snapshot.v1",
         "lifecycle": "MONITORING",
         "v3_enforced": v3_enforced,
+        "financial_driver_bridge_required": financial_driver_bridge_required,
+        "analysis_purpose": analysis_purpose,
         "legacy_compatibility": not v3_enforced,
         "report_id": str(contract.get("ts_code") or contract.get("code") or output.name),
         "run_id": str(contract.get("run_id") or ""),
@@ -335,6 +416,10 @@ def create_publication_snapshot(
         "gate_states": {name: value.get("state") for name, value in states.items()},
         "visible_information": source_fingerprints,
         "unresolved_source_ids": unresolved,
+        "thesis_probability_mode": (
+            thesis.get("probability_mode")
+            if analysis_purpose == "COMPANY_JUDGMENT_ONLY" else None
+        ),
         "predictions": _predictions(thesis),
         "thresholds": thesis.get("thresholds") or [],
         "facts": freeze_fact_observations(output),

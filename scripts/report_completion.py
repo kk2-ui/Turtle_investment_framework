@@ -236,8 +236,20 @@ def _check_gg_derivation(text: str) -> list[str]:
     return missing
 
 
+def _analysis_purpose(output_dir: str) -> str:
+    """Resolve the frozen report purpose before choosing completion gates."""
+    try:
+        contract = json.loads(Path(output_dir, "analysis_contract.json").read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return "INVESTMENT_DECISION"
+    purpose = str(contract.get("analysis_purpose") or "INVESTMENT_DECISION")
+    return purpose if purpose in {"INVESTMENT_DECISION", "COMPANY_JUDGMENT_ONLY"} else "INVALID"
+
+
 def evaluate_report_completion(report_text: str, output_dir: str) -> CompletionResult:
     ledger = _load_audit_ledger(output_dir)
+    analysis_purpose = _analysis_purpose(output_dir)
+    company_judgment_only = analysis_purpose == "COMPANY_JUDGMENT_ONLY"
     blocking: list[str] = []
     warnings: list[str] = []
     chapter_results: list[dict[str, Any]] = []
@@ -267,7 +279,7 @@ def evaluate_report_completion(report_text: str, output_dir: str) -> CompletionR
             chapter_blockers.append('missing_audit_record')
         elif not final_audit.get('passed', False):
             chapter_blockers.append('audit_failed')
-        if idx == 11 and text:
+        if idx == 11 and text and not company_judgment_only:
             missing = _check_gg_derivation(text)
             if missing:
                 chapter_blockers.append('gg_derivation_missing:' + ','.join(missing))
@@ -311,25 +323,26 @@ def evaluate_report_completion(report_text: str, output_dir: str) -> CompletionR
             )
         )
 
-    decision_status = 'PASS'
+    decision_status = 'SKIP' if company_judgment_only else 'PASS'
     manifest_path = os.path.join(output_dir, 'decision_manifest.json')
     try:
         manifest = json.loads(Path(manifest_path).read_text(encoding='utf-8'))
     except (OSError, json.JSONDecodeError):
         manifest = {}
-    required_decision_fields = {
-        'qualitative_decision', 'quantitative_decision', 'unified_decision',
-        'display_label', 'decision_family', 'position_pct',
-    }
-    missing_decision_fields = sorted(required_decision_fields - set(manifest)) if isinstance(manifest, dict) else sorted(required_decision_fields)
-    if missing_decision_fields:
-        decision_status = 'FAIL'
-        blocking.append('Decision: manifest_missing_fields:' + ','.join(missing_decision_fields))
-    else:
-        label = str(manifest.get('display_label') or '').strip()
-        if not label or label not in chapter_texts.get(0, '') or label not in chapter_texts.get(14, ''):
+    if not company_judgment_only:
+        required_decision_fields = {
+            'qualitative_decision', 'quantitative_decision', 'unified_decision',
+            'display_label', 'decision_family', 'position_pct',
+        }
+        missing_decision_fields = sorted(required_decision_fields - set(manifest)) if isinstance(manifest, dict) else sorted(required_decision_fields)
+        if missing_decision_fields:
             decision_status = 'FAIL'
-            blocking.append(f'Decision: Ch0/Ch14/manifest mismatch ({label or "empty"})')
+            blocking.append('Decision: manifest_missing_fields:' + ','.join(missing_decision_fields))
+        else:
+            label = str(manifest.get('display_label') or '').strip()
+            if not label or label not in chapter_texts.get(0, '') or label not in chapter_texts.get(14, ''):
+                decision_status = 'FAIL'
+                blocking.append(f'Decision: Ch0/Ch14/manifest mismatch ({label or "empty"})')
 
     # Phase 01 official-evidence platform. Legacy directories without its
     # policy remain SKIP; new unified runs must preserve document/fact identity.
@@ -353,6 +366,29 @@ def evaluate_report_completion(report_text: str, output_dir: str) -> CompletionR
     elif official_evidence_state not in {'SKIP', 'REVIEWABLE', 'DECISION_READY', 'MONITORING'}:
         blocking.append('Official evidence: INVALID: unknown state ' + official_evidence_state)
 
+    # A financial-driver bridge is opt-in for legacy outputs, but once a new
+    # run enables it, a report cannot complete while cash conversion or capital
+    # allocation remains unbound from the valuation and decision ledgers.
+    try:
+        from scripts.financial_driver_bridge import evaluate_output_financial_driver_bridge
+    except ModuleNotFoundError:
+        from financial_driver_bridge import evaluate_output_financial_driver_bridge
+    try:
+        financial_driver_bridge = evaluate_output_financial_driver_bridge(output_dir, persist=True)
+    except (OSError, ValueError, TypeError, json.JSONDecodeError) as exc:
+        financial_driver_bridge = {
+            'state': 'INVALID', 'status': 'FAIL',
+            'invalid_findings': ['validator_error:' + str(exc)],
+            'incomplete_findings': [], 'warnings': [],
+        }
+    financial_driver_bridge_state = str(financial_driver_bridge.get('state') or 'INVALID')
+    if financial_driver_bridge_state == 'INVALID':
+        blocking.append('Financial driver bridge: INVALID: ' + ' | '.join(str(item) for item in financial_driver_bridge.get('invalid_findings', [])[:12]))
+    elif financial_driver_bridge_state == 'INCOMPLETE':
+        blocking.append('Financial driver bridge: INCOMPLETE: ' + ' | '.join(str(item) for item in financial_driver_bridge.get('incomplete_findings', [])[:12]))
+    elif financial_driver_bridge_state not in {'SKIP', 'REVIEWABLE', 'DECISION_READY', 'MONITORING'}:
+        blocking.append('Financial driver bridge: INVALID: unknown state ' + financial_driver_bridge_state)
+
     try:
         from scripts.valuation_routing import evaluate_output_valuation_route
     except ModuleNotFoundError:
@@ -362,11 +398,11 @@ def evaluate_report_completion(report_text: str, output_dir: str) -> CompletionR
     except (OSError, ValueError, TypeError, json.JSONDecodeError) as exc:
         valuation_route = {'state': 'INVALID', 'status': 'FAIL', 'invalid_findings': ['validator_error:' + str(exc)], 'incomplete_findings': [], 'warnings': []}
     valuation_route_state = str(valuation_route.get('state') or 'INVALID')
-    if valuation_route_state == 'INVALID':
+    if not company_judgment_only and valuation_route_state == 'INVALID':
         blocking.append('Valuation route: INVALID: ' + ' | '.join(str(item) for item in valuation_route.get('invalid_findings', [])[:12]))
-    elif valuation_route_state == 'INCOMPLETE':
+    elif not company_judgment_only and valuation_route_state == 'INCOMPLETE':
         blocking.append('Valuation route: INCOMPLETE: ' + ' | '.join(str(item) for item in valuation_route.get('incomplete_findings', [])[:12]))
-    elif valuation_route_state not in {'SKIP', 'REVIEWABLE', 'DECISION_READY', 'MONITORING'}:
+    elif not company_judgment_only and valuation_route_state not in {'SKIP', 'REVIEWABLE', 'DECISION_READY', 'MONITORING'}:
         blocking.append('Valuation route: INVALID: unknown state ' + valuation_route_state)
 
     try:
@@ -382,11 +418,11 @@ def evaluate_report_completion(report_text: str, output_dir: str) -> CompletionR
             'incomplete_findings': [], 'warnings': [],
         }
     decisive_questions_state = str(decisive_questions.get('state') or 'INVALID')
-    if decisive_questions_state == 'INVALID':
+    if not company_judgment_only and decisive_questions_state == 'INVALID':
         blocking.append('Decisive questions: INVALID: ' + ' | '.join(str(item) for item in decisive_questions.get('invalid_findings', [])[:12]))
-    elif decisive_questions_state == 'INCOMPLETE':
+    elif not company_judgment_only and decisive_questions_state == 'INCOMPLETE':
         blocking.append('Decisive questions: INCOMPLETE: ' + ' | '.join(str(item) for item in decisive_questions.get('incomplete_findings', [])[:12]))
-    elif decisive_questions_state not in {'SKIP', 'REVIEWABLE', 'DECISION_READY', 'MONITORING'}:
+    elif not company_judgment_only and decisive_questions_state not in {'SKIP', 'REVIEWABLE', 'DECISION_READY', 'MONITORING'}:
         blocking.append('Decisive questions: INVALID: unknown state ' + decisive_questions_state)
 
     try:
@@ -402,14 +438,15 @@ def evaluate_report_completion(report_text: str, output_dir: str) -> CompletionR
             'incomplete_findings': [], 'warnings': [],
         }
     base_rate_state = str(base_rate.get('state') or 'INVALID')
-    if base_rate_state == 'INVALID':
+    if not company_judgment_only and base_rate_state == 'INVALID':
         blocking.append('Base rate: INVALID: ' + ' | '.join(str(item) for item in base_rate.get('invalid_findings', [])[:12]))
-    elif base_rate_state == 'INCOMPLETE':
+    elif not company_judgment_only and base_rate_state == 'INCOMPLETE':
         blocking.append('Base rate: INCOMPLETE: ' + ' | '.join(str(item) for item in base_rate.get('incomplete_findings', [])[:12]))
-    elif base_rate_state not in {'SKIP', 'REVIEWABLE', 'DECISION_READY', 'MONITORING'}:
+    elif not company_judgment_only and base_rate_state not in {'SKIP', 'REVIEWABLE', 'DECISION_READY', 'MONITORING'}:
         blocking.append('Base rate: INVALID: unknown state ' + base_rate_state)
-    for finding in base_rate.get('warnings') or []:
-        warnings.append('Base rate: ' + str(finding))
+    if not company_judgment_only:
+        for finding in base_rate.get('warnings') or []:
+            warnings.append('Base rate: ' + str(finding))
 
     # A current-price refresh is a dependency change, not a cosmetic edit.
     # When a refresh candidate exists, completion stays blocked until all
@@ -427,11 +464,11 @@ def evaluate_report_completion(report_text: str, output_dir: str) -> CompletionR
             'incomplete_findings': [],
         }
     market_refresh_state = str(market_refresh.get('state') or 'INVALID')
-    if market_refresh_state == 'INVALID':
+    if not company_judgment_only and market_refresh_state == 'INVALID':
         blocking.append('Market refresh: INVALID: ' + ' | '.join(str(item) for item in market_refresh.get('invalid_findings', [])[:12]))
-    elif market_refresh_state == 'RECOMPUTE_REQUIRED':
+    elif not company_judgment_only and market_refresh_state == 'RECOMPUTE_REQUIRED':
         blocking.append('Market refresh: RECOMPUTE_REQUIRED: ' + ' | '.join(str(item) for item in market_refresh.get('incomplete_findings', [])[:12]))
-    elif market_refresh_state not in {'SKIP', 'CURRENT'}:
+    elif not company_judgment_only and market_refresh_state not in {'SKIP', 'CURRENT'}:
         blocking.append('Market refresh: INVALID: unknown state ' + market_refresh_state)
 
     # V3 decision ledger.  Old directories without a policy/ledger are SKIP;
@@ -452,13 +489,13 @@ def evaluate_report_completion(report_text: str, output_dir: str) -> CompletionR
             'incomplete_findings': [],
         }
     decision_ledger_state = str(decision_ledger.get('state') or 'INVALID')
-    if decision_ledger_state == 'INVALID':
+    if not company_judgment_only and decision_ledger_state == 'INVALID':
         findings = decision_ledger.get('invalid_findings', [])
         blocking.append('Decision ledger: INVALID: ' + ' | '.join(str(item) for item in findings[:12]))
-    elif decision_ledger_state == 'INCOMPLETE':
+    elif not company_judgment_only and decision_ledger_state == 'INCOMPLETE':
         findings = decision_ledger.get('incomplete_findings', [])
         blocking.append('Decision ledger: INCOMPLETE: ' + ' | '.join(str(item) for item in findings[:12]))
-    elif decision_ledger_state not in {'SKIP', 'REVIEWABLE', 'DECISION_READY', 'MONITORING'}:
+    elif not company_judgment_only and decision_ledger_state not in {'SKIP', 'REVIEWABLE', 'DECISION_READY', 'MONITORING'}:
         blocking.append('Decision ledger: INVALID: unknown state ' + decision_ledger_state)
 
     # Phase 04 decision compiler: a valid ledger is necessary but insufficient.
@@ -477,11 +514,11 @@ def evaluate_report_completion(report_text: str, output_dir: str) -> CompletionR
             'incomplete_findings': [],
         }
     decision_compiler_state = str(decision_compiler.get('state') or 'INVALID')
-    if decision_compiler_state == 'INVALID':
+    if not company_judgment_only and decision_compiler_state == 'INVALID':
         blocking.append('Decision compiler: INVALID: ' + ' | '.join(str(item) for item in decision_compiler.get('invalid_findings', [])[:12]))
-    elif decision_compiler_state == 'INCOMPLETE':
+    elif not company_judgment_only and decision_compiler_state == 'INCOMPLETE':
         blocking.append('Decision compiler: INCOMPLETE: ' + ' | '.join(str(item) for item in decision_compiler.get('incomplete_findings', [])[:12]))
-    elif decision_compiler_state not in {'SKIP', 'REVIEWABLE', 'DECISION_READY', 'MONITORING'}:
+    elif not company_judgment_only and decision_compiler_state not in {'SKIP', 'REVIEWABLE', 'DECISION_READY', 'MONITORING'}:
         blocking.append('Decision compiler: INVALID: unknown state ' + decision_compiler_state)
 
     # V3 major-claim evidence graph.  Like the decision ledger, enforcement is
@@ -520,11 +557,11 @@ def evaluate_report_completion(report_text: str, output_dir: str) -> CompletionR
     except (OSError, ValueError, TypeError, json.JSONDecodeError) as exc:
         valuation_model = {'state': 'INVALID', 'status': 'FAIL', 'invalid_findings': ['validator_error:' + str(exc)], 'incomplete_findings': []}
     valuation_model_state = str(valuation_model.get('state') or 'INVALID')
-    if valuation_model_state == 'INVALID':
+    if not company_judgment_only and valuation_model_state == 'INVALID':
         blocking.append('Valuation model: INVALID: ' + ' | '.join(str(item) for item in valuation_model.get('invalid_findings', [])[:12]))
-    elif valuation_model_state == 'INCOMPLETE':
+    elif not company_judgment_only and valuation_model_state == 'INCOMPLETE':
         blocking.append('Valuation model: INCOMPLETE: ' + ' | '.join(str(item) for item in valuation_model.get('incomplete_findings', [])[:12]))
-    elif valuation_model_state not in {'SKIP', 'REVIEWABLE', 'DECISION_READY', 'MONITORING'}:
+    elif not company_judgment_only and valuation_model_state not in {'SKIP', 'REVIEWABLE', 'DECISION_READY', 'MONITORING'}:
         blocking.append('Valuation model: INVALID: unknown state ' + valuation_model_state)
 
     # Phase-08 decision reliability is deliberately separate from structural
@@ -546,22 +583,25 @@ def evaluate_report_completion(report_text: str, output_dir: str) -> CompletionR
             'incomplete_findings': [],
         }
     decision_reliability_state = str(decision_reliability.get('state') or 'INVALID')
-    if decision_reliability_state == 'INVALID':
+    if not company_judgment_only and decision_reliability_state == 'INVALID':
         blocking.append(
             'Decision reliability: INVALID: ' + ' | '.join(
                 str(item) for item in decision_reliability.get('invalid_findings', [])[:12]
             )
         )
-    elif decision_reliability_state == 'INCOMPLETE':
+    elif not company_judgment_only and decision_reliability_state == 'INCOMPLETE':
         blocking.append(
             'Decision reliability: INCOMPLETE: ' + ' | '.join(
                 str(item) for item in decision_reliability.get('incomplete_findings', [])[:12]
             )
         )
-    elif decision_reliability_state not in {'SKIP', 'REVIEWABLE', 'DECISION_READY', 'MONITORING'}:
+    elif not company_judgment_only and decision_reliability_state not in {'SKIP', 'REVIEWABLE', 'DECISION_READY', 'MONITORING'}:
         blocking.append('Decision reliability: INVALID: unknown state ' + decision_reliability_state)
 
-    decision_revision = evaluate_pending_valuation_decision_revision(output_dir)
+    decision_revision = (
+        {'state': 'SKIP', 'status': 'SKIP', 'findings': []}
+        if company_judgment_only else evaluate_pending_valuation_decision_revision(output_dir)
+    )
     decision_revision_state = str(decision_revision.get('state') or 'NONE')
     if decision_revision_state == 'INCOMPLETE':
         # Replace the canonical reliability failure with the more precise
@@ -748,6 +788,7 @@ def evaluate_report_completion(report_text: str, output_dir: str) -> CompletionR
             report_text,
             gate_results={
                 'official_evidence': official_evidence,
+                'financial_driver_bridge': financial_driver_bridge,
                 'valuation_route': valuation_route,
                 'decisive_questions': decisive_questions,
                 'base_rate': base_rate,
@@ -770,9 +811,21 @@ def evaluate_report_completion(report_text: str, output_dir: str) -> CompletionR
         v3_quality = {'status': 'ERROR', 'reason': str(exc)}
         warnings.append('V3 quality report: evaluator error: ' + str(exc))
 
-    if 'INVALID' in {official_evidence_state, valuation_route_state, decisive_questions_state, base_rate_state, market_refresh_state, decision_ledger_state, decision_compiler_state, claim_evidence_state, valuation_model_state, decision_reliability_state, thesis_test_state, insight_state, decision_revision_state}:
+    active_states = {
+        official_evidence_state, financial_driver_bridge_state, claim_evidence_state,
+        thesis_test_state, insight_state,
+    }
+    if not company_judgment_only:
+        active_states.update({
+            valuation_route_state, decisive_questions_state, base_rate_state,
+            market_refresh_state, decision_ledger_state, decision_compiler_state,
+            valuation_model_state, decision_reliability_state, decision_revision_state,
+        })
+    if analysis_purpose == 'INVALID' or 'INVALID' in active_states:
         status = 'INVALID'
-    elif 'INCOMPLETE' in {official_evidence_state, valuation_route_state, decisive_questions_state, base_rate_state, decision_ledger_state, decision_compiler_state, claim_evidence_state, valuation_model_state, decision_reliability_state, thesis_test_state, insight_state} or market_refresh_state == 'RECOMPUTE_REQUIRED':
+    elif 'INCOMPLETE' in active_states or (
+        not company_judgment_only and market_refresh_state == 'RECOMPUTE_REQUIRED'
+    ):
         status = 'INCOMPLETE'
     else:
         status = 'COMPLETE' if not blocking else 'BLOCKED'
@@ -780,10 +833,12 @@ def evaluate_report_completion(report_text: str, output_dir: str) -> CompletionR
         'structure': {'status': 'PASS' if not any('missing_file' in b or 'missing_h2_title' in b for b in blocking) else 'FAIL'},
         'depth': {'status': 'PASS' if not any('short_depth:' in b for b in blocking) else 'FAIL'},
         'audit': {'status': 'PASS' if not any('audit_' in b or 'missing_audit_record' in b for b in blocking) else 'FAIL'},
-        'gg_derivation': {'status': 'PASS' if not any('gg_derivation_missing' in b for b in blocking) else 'FAIL'},
+        'analysis_purpose': {'state': analysis_purpose},
+        'gg_derivation': {'status': 'SKIP' if company_judgment_only else 'PASS' if not any('gg_derivation_missing' in b for b in blocking) else 'FAIL'},
         'reader_coverage': reader_coverage,
         'decision_manifest': {'status': decision_status, 'path': manifest_path},
         'official_evidence': official_evidence,
+        'financial_driver_bridge': financial_driver_bridge,
         'valuation_route': valuation_route,
         'decisive_questions': decisive_questions,
         'base_rate': base_rate,

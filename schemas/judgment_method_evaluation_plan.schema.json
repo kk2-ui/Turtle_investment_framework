@@ -1,0 +1,80 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Turtle Frozen Non-price Method Relative Evaluation Plan",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "plan_id", "cohort", "evaluation_units", "minimum_independent_company_clusters", "aggregation_rule", "freeze"],
+  "properties": {
+    "schema_version": {"const": "judgment-method-evaluation-plan.v1"},
+    "plan_id": {"type": "string", "pattern": "^JMEPLAN:"},
+    "cohort": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["register_id", "register_fingerprint", "screen_entries"],
+      "properties": {
+        "register_id": {"type": "string", "pattern": "^CSR:"},
+        "register_fingerprint": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "screen_entries": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["selection_entry_id", "disposition", "reason"],
+            "properties": {
+              "selection_entry_id": {"type": "string", "pattern": "^CSRSEL:"},
+              "disposition": {"enum": ["INCLUDED_SELECTION_EPISODE", "EXCLUDED_NO_PRIMARY", "EXCLUDED_NONCOMPARABLE"]},
+              "reason": {"type": "string", "minLength": 1},
+              "no_primary_case_id": {"type": "string", "minLength": 1},
+              "no_primary_freeze_id": {"type": "string", "minLength": 1}
+            }
+          }
+        }
+      }
+    },
+    "evaluation_units": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["episode_id", "selection_entry_id", "company_id", "company_cluster_id", "case_id", "freeze_id", "claim_id", "forward_judgment_id", "outcome_not_before"],
+        "properties": {
+          "episode_id": {"type": "string", "pattern": "^JMEP:"},
+          "selection_entry_id": {"type": "string", "pattern": "^CSRSEL:"},
+          "company_id": {"type": "string", "minLength": 1},
+          "company_cluster_id": {"type": "string", "minLength": 1},
+          "case_id": {"type": "string", "minLength": 1},
+          "freeze_id": {"type": "string", "minLength": 1},
+          "claim_id": {"type": "string", "minLength": 1},
+          "forward_judgment_id": {"type": "string", "minLength": 1},
+          "outcome_not_before": {"type": "string", "format": "date"}
+        }
+      }
+    },
+    "minimum_independent_company_clusters": {"type": "integer", "minimum": 2},
+    "aggregation_rule": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["analysis_purpose", "outcome_boundary", "forecast_commitment", "unit", "direct_comparison", "retention"],
+      "properties": {
+        "analysis_purpose": {"const": "COMPANY_JUDGMENT_ONLY"},
+        "outcome_boundary": {"const": "NON_PRICE_OPERATING_ONLY"},
+        "forecast_commitment": {"const": "NO_PROBABILITY"},
+        "unit": {"const": "ONE_SELECTED_TERMINAL_FJ_PER_INDEPENDENT_COMPANY_CLUSTER"},
+        "direct_comparison": {"const": "BINARY_FROZEN_PREDICATE_LOSS"},
+        "retention": {"const": "RETAIN_ALL_PLANNED_UNITS_AND_NONDIAGNOSTIC_OUTCOMES"}
+      }
+    },
+    "freeze": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["frozen", "frozen_at", "fingerprint"],
+      "properties": {
+        "frozen": {"const": true},
+        "frozen_at": {"type": "string", "format": "date-time"},
+        "fingerprint": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+      }
+    }
+  }
+}

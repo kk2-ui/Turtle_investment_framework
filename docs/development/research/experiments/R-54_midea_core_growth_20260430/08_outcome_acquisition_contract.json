@@ -1,0 +1,133 @@
+{
+  "schema_version": "turtle-live-forward-outcome-contract.v1",
+  "purpose": "POST_FREEZE_EXECUTION_ONLY_NO_NEW_CURRENT_FACT_OR_PREDICTION",
+  "case_id": "R-54:MIDEA:CORE_GROWTH_COMPLEXITY:20260430",
+  "report_freeze": {"freeze_id": "R-54:MIDEA:CORE_GROWTH_COMPLEXITY:20260430"},
+  "simulation_cutoff": "2026-05-01T00:00:00+08:00",
+  "research_identity": {"experiment_id": "R-54", "company_cluster_id": "COMPANY:000333.SZ"},
+  "calibration_ledger": {
+    "claims": [
+      {
+        "claim_id": "R54-S0",
+        "operating_clock": "DECISION_IMPLEMENTATION",
+        "observable_outcome": {
+          "metric": "named_problem_business_disposal_or_reduction_disclosure",
+          "unit": "binary",
+          "measurement_basis": "仅当年度报告指明具体问题业务且披露处置或缩减动作时记为 1；泛称聚焦、降本、优化或金融资产处置不构成实施。未披露时结算为 NOT_DISCLOSED，而非推断为 0。",
+          "measurement_period": {"kind": "ISSUER_FISCAL_PERIOD", "label": "FY2026"},
+          "allowed_source_types": ["ANNUAL_REPORT"],
+          "publisher_domains": ["static.cninfo.com.cn"],
+          "observation_window": {"opens_after": "2027-01-01T00:00:00+08:00", "closes_at": "2027-05-15T23:59:59+08:00"},
+          "settlement_version_policy": "INITIAL_DISCLOSURE",
+          "metric_reconstruction_contract": {
+            "source_targets": [{"source_type": "ANNUAL_REPORT", "file_scope": "美的集团 2026 年年度报告全文", "reported_label": "问题业务处置或缩减的具名披露", "reported_locator": "董事会报告 / 管理层讨论与分析 / 重要资产与股权处置", "reported_period_anchor": "2026 年度"}],
+            "prohibited_substitutes": ["战略口号", "金融资产处置收益", "非经常性损益金额", "证券价格或回报"],
+            "definition_change_action": "MEASUREMENT_MISMATCH"
+          }
+        }
+      },
+      {
+        "claim_id": "R54-S1",
+        "operating_clock": "CUSTOMER_COMPETITOR_RESPONSE",
+        "observable_outcome": {
+          "metric": "minimum_yoy_revenue_growth_across_three_tob_businesses",
+          "unit": "%",
+          "measurement_basis": "从美的中报‘分产品’表的新能源与工业技术、智能建筑科技、机器人与自动化三项营业收入逐项计算同比后取最小值；只要任一项不增长，结果即不大于 0。",
+          "measurement_period": {"kind": "ISSUER_INTERIM_PERIOD", "label": "2026H1"},
+          "allowed_source_types": ["INTERIM_REPORT"],
+          "publisher_domains": ["static.cninfo.com.cn"],
+          "observation_window": {"opens_after": "2026-08-22T23:59:59+08:00", "closes_at": "2026-09-15T23:59:59+08:00"},
+          "settlement_version_policy": "INITIAL_DISCLOSURE",
+          "metric_reconstruction_contract": {
+            "source_targets": [{"source_type": "INTERIM_REPORT", "file_scope": "美的集团 2026 年半年度报告全文", "reported_label": "分产品", "reported_locator": "第三节管理层讨论与分析—营业收入构成—分产品；必须同时含新能源与工业技术、智能建筑科技、机器人与自动化三行", "reported_period_anchor": "2026 年 1—6 月"}],
+            "prohibited_substitutes": ["三项收入加总", "集团营业收入", "任一单独子项", "ToB 管理层描述", "证券价格或回报"],
+            "definition_change_action": "MEASUREMENT_MISMATCH"
+          }
+        }
+      },
+      {
+        "claim_id": "R54-S2",
+        "operating_clock": "UNIT_ECONOMICS",
+        "observable_outcome": {
+          "metric": "commercial_industrial_solutions_gross_margin",
+          "unit": "%",
+          "measurement_basis": "美的公司在年度报告‘分产品’表内披露的商业及工业解决方案毛利率",
+          "measurement_period": {"kind": "ISSUER_FISCAL_PERIOD", "label": "FY2026"},
+          "allowed_source_types": ["ANNUAL_REPORT"],
+          "publisher_domains": ["static.cninfo.com.cn"],
+          "observation_window": {"opens_after": "2027-01-01T00:00:00+08:00", "closes_at": "2027-05-15T23:59:59+08:00"},
+          "settlement_version_policy": "INITIAL_DISCLOSURE",
+          "metric_reconstruction_contract": {
+            "source_targets": [{"source_type": "ANNUAL_REPORT", "file_scope": "美的集团 2026 年年度报告全文", "reported_label": "商业及工业解决方案", "reported_locator": "第三节管理层讨论与分析—营业收入构成—分产品", "reported_period_anchor": "2026 年 1 月 1 日至 12 月 31 日"}],
+            "prohibited_substitutes": ["集团毛利率", "任一 ToB 子项毛利率", "扣非利润", "证券价格或回报"],
+            "definition_change_action": "MEASUREMENT_MISMATCH"
+          }
+        }
+      },
+      {
+        "claim_id": "R54-S3",
+        "operating_clock": "WORKING_CAPITAL_CASH",
+        "observable_outcome": {
+          "metric": "net_cash_from_operating_activities",
+          "unit": "CNY_thousand",
+          "measurement_basis": "美的合并现金流量表的经营活动产生的现金流量净额；与扣非利润、应收、存货、应付同表阅读，不作为 ToB 单元现金",
+          "measurement_period": {"kind": "ISSUER_INTERIM_PERIOD", "label": "2026H1"},
+          "allowed_source_types": ["INTERIM_REPORT"],
+          "publisher_domains": ["static.cninfo.com.cn"],
+          "observation_window": {"opens_after": "2026-08-22T23:59:59+08:00", "closes_at": "2026-09-15T23:59:59+08:00"},
+          "settlement_version_policy": "INITIAL_DISCLOSURE",
+          "metric_reconstruction_contract": {
+            "source_targets": [{"source_type": "INTERIM_REPORT", "file_scope": "美的集团 2026 年半年度报告全文", "reported_label": "经营活动产生的现金流量净额", "reported_locator": "主要会计数据和财务指标 / 合并现金流量表", "reported_period_anchor": "2026 年 1—6 月"}],
+            "prohibited_substitutes": ["期末现金余额", "投资活动现金流", "筹资活动现金流", "净利润", "证券价格或回报"],
+            "definition_change_action": "MEASUREMENT_MISMATCH"
+          }
+        }
+      },
+      {
+        "claim_id": "R54-S4",
+        "operating_clock": "CAPITAL_RETURN",
+        "observable_outcome": {
+          "metric": "weighted_average_return_on_equity",
+          "unit": "%",
+          "measurement_basis": "美的年度报告披露的加权平均净资产收益率；只作集团资本回报边界，不归因于 ToB 战略",
+          "measurement_period": {"kind": "ISSUER_FISCAL_PERIOD", "label": "FY2026"},
+          "allowed_source_types": ["ANNUAL_REPORT"],
+          "publisher_domains": ["static.cninfo.com.cn"],
+          "observation_window": {"opens_after": "2027-01-01T00:00:00+08:00", "closes_at": "2027-05-15T23:59:59+08:00"},
+          "settlement_version_policy": "INITIAL_DISCLOSURE",
+          "metric_reconstruction_contract": {
+            "source_targets": [{"source_type": "ANNUAL_REPORT", "file_scope": "美的集团 2026 年年度报告全文", "reported_label": "加权平均净资产收益率", "reported_locator": "第二节公司简介和主要财务指标", "reported_period_anchor": "2026 年度"}],
+            "prohibited_substitutes": ["单季度 ROE", "市值", "证券回报", "分红金额", "ToB 单项收入"],
+            "definition_change_action": "MEASUREMENT_MISMATCH"
+          }
+        }
+      }
+    ]
+  },
+  "mechanism_signal_pair": {
+    "pair_id": "R54:CORE_GROWTH_VS_PORTFOLIO_AGGREGATION",
+    "selection_status": "NO_PRIMARY",
+    "selection_evidence_locator": "01_pre_outcome_selection_integrity_review.md:7（原选择依据已撤回；不得用于选择学习）",
+    "baseline_rule": "本案不再进行主路径与基线的选择比较。三个披露子业务的最弱收入增长和商业及工业解决方案毛利率只作为 H-A/H-B 的机制信号；不以集团利润、价格或回报替代。",
+    "hypothesis_a_id": "H-A",
+    "hypothesis_b_id": "H-B",
+    "signals": [
+      {
+        "signal_id": "R54-S1",
+        "claim_id": "R54-S1",
+        "stage": "EARLY_MECHANISM",
+        "hypothesis_a_prediction": {"operator": "GREATER_THAN", "value": 0},
+        "hypothesis_b_prediction": {"operator": "LESS_THAN_OR_EQUAL", "value": 0},
+        "frozen_locator": "00_judgment_selection_episode.md:42"
+      },
+      {
+        "signal_id": "R54-S2",
+        "claim_id": "R54-S2",
+        "stage": "CONTINUATION_SIGNAL",
+        "hypothesis_a_prediction": {"operator": "GREATER_THAN", "value": 21.25},
+        "hypothesis_b_prediction": {"operator": "LESS_THAN_OR_EQUAL", "value": 21.25},
+        "frozen_locator": "00_judgment_selection_episode.md:42"
+      }
+    ]
+  }
+}

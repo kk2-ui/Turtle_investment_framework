@@ -4,6 +4,11 @@
   "secondary_archetypes": [],
   "decisive_question": "当前异常是周期、结构还是会计扰动，哪项可观察事实能最快区分并改变估值？",
   "case_pattern": "general operating transition",
+  "case_provenance": {
+    "kind": "SYNTHESIS_PATTERN",
+    "source_label": "Turtle general operating-transition synthesis",
+    "scope": "ROUTING_ONLY_NOT_COMPANY_EPISODE"
+  },
   "required_moves": [
     "锁定单一异常",
     "提出最强竞争解释",

@@ -1,0 +1,136 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://turtle.local/schemas/phase10_independent_industry_data_source.schema.json",
+  "title": "Phase 10 Licensed Independent Industry Data Source",
+  "description": "A historical, provider-versioned industry-data source. It is independent industry evidence, never an official company filing.",
+  "type": "object",
+  "required": [
+    "source_id",
+    "source_version",
+    "source_type",
+    "official",
+    "published_at",
+    "data_as_of",
+    "revision_policy",
+    "industry_data_contract"
+  ],
+  "properties": {
+    "source_id": {"type": "string", "minLength": 1},
+    "source_version": {"type": "string", "minLength": 1},
+    "source_type": {"const": "LICENSED_INDUSTRY_DATA"},
+    "official": {"const": false},
+    "published_at": {"type": "string", "minLength": 10},
+    "data_as_of": {"type": "string", "minLength": 10},
+    "revision_published_at": {"type": ["string", "null"]},
+    "revision_policy": {"enum": ["ORIGINAL_VINTAGE", "HISTORICAL_RESTATEMENT_PUBLISHED_BEFORE_CUTOFF"]},
+    "package_path": {"type": "string", "minLength": 1},
+    "content_representation": {"type": "string", "minLength": 1},
+    "industry_data_contract": {"$ref": "#/$defs/contract"}
+  },
+  "$defs": {
+    "locator": {
+      "type": "object",
+      "required": ["statement", "locator"],
+      "properties": {
+        "statement": {"type": "string", "minLength": 1},
+        "locator": {"type": "string", "minLength": 1}
+      }
+    },
+    "mapping": {
+      "type": "object",
+      "required": ["mapping_id", "definition"],
+      "properties": {
+        "mapping_id": {"type": "string", "minLength": 1},
+        "definition": {"type": "string", "minLength": 1}
+      }
+    },
+    "stock_flow_boundary": {
+      "type": "object",
+      "required": ["boundary_id", "geography", "product_mapping_id", "channel_mapping_id", "brand_mapping_id", "denominator_mapping_id", "period", "inventory_ownership", "definition_locator"],
+      "properties": {
+        "boundary_id": {"type": "string", "minLength": 1},
+        "geography": {"type": "string", "minLength": 1},
+        "product_mapping_id": {"type": "string", "minLength": 1},
+        "channel_mapping_id": {"type": "string", "minLength": 1},
+        "brand_mapping_id": {"type": "string", "minLength": 1},
+        "denominator_mapping_id": {"type": "string", "minLength": 1},
+        "period": {"type": "string", "minLength": 1},
+        "inventory_ownership": {"type": "string", "minLength": 1},
+        "definition_locator": {"type": "string", "minLength": 1}
+      }
+    },
+    "contract": {
+      "type": "object",
+      "required": ["schema_version", "provider_id", "dataset_id", "release", "query_identity", "measurement_profile", "metric", "scope"],
+      "properties": {
+        "schema_version": {"const": "phase10-independent-industry-data.v2"},
+        "provider_id": {"type": "string", "minLength": 1},
+        "dataset_id": {"type": "string", "minLength": 1},
+        "release": {
+          "type": "object",
+          "required": ["release_id", "version_id", "published_at", "data_as_of", "revision_status", "revision_id"],
+          "properties": {
+            "release_id": {"type": "string", "minLength": 1},
+            "version_id": {"type": "string", "minLength": 1},
+            "published_at": {"type": "string", "minLength": 10},
+            "data_as_of": {"type": "string", "minLength": 10},
+            "revision_status": {"enum": ["ORIGINAL_HISTORICAL", "HISTORICAL_REVISION"]},
+            "revision_id": {"type": "string", "minLength": 1},
+            "revision_published_at": {"type": ["string", "null"]}
+          }
+        },
+        "query_identity": {
+          "type": "object",
+          "required": ["query_id", "parameters"],
+          "properties": {
+            "query_id": {"type": "string", "minLength": 1},
+            "parameters": {"type": "object", "minProperties": 1}
+          }
+        },
+        "measurement_profile": {
+          "type": "object",
+          "required": ["methodology_disclosure", "error_status", "permitted_inference", "known_limitations", "disagreement_treatment"],
+          "properties": {
+            "methodology_disclosure": {"enum": ["PROVIDER_METHOD_DOCUMENTED", "PROVIDER_METHOD_PARTIAL", "PROVIDER_METHOD_UNDISCLOSED"]},
+            "methodology_locator": {"$ref": "#/$defs/locator"},
+            "error_status": {"enum": ["PROVIDER_DECLARED_BOUND", "UNQUANTIFIED"]},
+            "error_bound_locator": {"$ref": "#/$defs/locator"},
+            "permitted_inference": {"enum": ["DIRECTIONAL_SENSOR_ONLY", "WITHIN_PROVIDER_RELATIVE_CHANGE", "LEVEL_WITH_STATED_LIMITS"]},
+            "known_limitations": {
+              "type": "array", "minItems": 1,
+              "items": {"type": "object", "required": ["statement", "conservative_treatment"], "properties": {
+                "statement": {"type": "string", "minLength": 1},
+                "conservative_treatment": {"type": "string", "minLength": 1}
+              }}
+            },
+            "disagreement_treatment": {"const": "DO_NOT_AVERAGE_REOPEN_MECHANISM"}
+          }
+        },
+        "metric": {
+          "type": "object",
+          "required": ["metric_id", "unit", "semantic", "provider_definition", "shipment_sell_in_status"],
+          "properties": {
+            "metric_id": {"type": "string", "minLength": 1},
+            "unit": {"type": "string", "minLength": 1},
+            "semantic": {"enum": ["RETAIL_SELL_OUT", "SHIPMENT", "INVENTORY_STOCK"]},
+            "provider_definition": {"$ref": "#/$defs/locator"},
+            "shipment_sell_in_status": {"enum": ["NOT_APPLICABLE", "PROVIDER_DEFINED_SELL_IN", "SHIPMENT_SEMANTICS_UNRESOLVED"]},
+            "provider_sell_in_definition": {"$ref": "#/$defs/locator"}
+          }
+        },
+        "scope": {
+          "type": "object",
+          "required": ["geography", "product_mapping", "channel_mapping", "brand_mapping", "denominator"],
+          "properties": {
+            "geography": {"type": "string", "minLength": 1},
+            "product_mapping": {"$ref": "#/$defs/mapping"},
+            "channel_mapping": {"$ref": "#/$defs/mapping"},
+            "brand_mapping": {"$ref": "#/$defs/mapping"},
+            "denominator": {"$ref": "#/$defs/mapping"}
+          }
+        },
+        "stock_flow_boundary": {"$ref": "#/$defs/stock_flow_boundary"}
+      }
+    }
+  }
+}

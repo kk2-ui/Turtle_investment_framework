@@ -1026,7 +1026,7 @@ def test_successful_initial_structured_frontier_stops_before_downstream(tmp_path
     )
     for name in (
         "decision_ledger", "claim_evidence", "valuation_model",
-        "decision_reliability", "thesis_test",
+        "decision_reliability", "financial_driver_bridge", "thesis_test",
     ):
         (tmp_path / f"{name}_validation.json").write_text(
             json.dumps({"state": "DECISION_READY"}), encoding="utf-8"

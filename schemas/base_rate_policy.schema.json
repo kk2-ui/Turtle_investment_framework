@@ -4,7 +4,7 @@
   "title": "Turtle Base Rate Policy",
   "type": "object",
   "additionalProperties": false,
-  "required": ["schema_version", "run_id", "enforced", "created_at", "context_fingerprint", "library_fingerprint_at_plan", "minimum_empirical_sample"],
+  "required": ["schema_version", "run_id", "enforced", "created_at", "context_fingerprint", "library_fingerprint_at_plan", "minimum_empirical_sample", "require_episode_identity", "require_case_selection_identity"],
   "properties": {
     "schema_version": {"const": "base-rate-policy.v1"},
     "run_id": {"type": "string", "minLength": 1},
@@ -12,6 +12,8 @@
     "created_at": {"type": "string"},
     "context_fingerprint": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
     "library_fingerprint_at_plan": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
-    "minimum_empirical_sample": {"const": 5}
+    "minimum_empirical_sample": {"const": 5},
+    "require_episode_identity": {"type": "boolean"},
+    "require_case_selection_identity": {"type": "boolean"}
   }
 }

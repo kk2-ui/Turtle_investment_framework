@@ -4,15 +4,16 @@
   "title": "Turtle V3 Major Claim Evidence Ledger",
   "type": "object",
   "additionalProperties": false,
-  "required": ["schema_version", "report_id", "revision", "lifecycle", "change_reason", "claims", "freeze"],
+  "required": ["schema_version", "report_id", "revision", "lifecycle", "analysis_purpose", "change_reason", "claims", "freeze"],
   "properties": {
     "schema_version": {"const": "claim-evidence-ledger.v1"},
     "report_id": {"type": "string", "minLength": 1},
     "revision": {"type": "integer", "minimum": 1},
     "lifecycle": {"enum": ["reviewable", "decision_ready", "monitoring"]},
+    "analysis_purpose": {"enum": ["INVESTMENT_DECISION", "COMPANY_JUDGMENT_ONLY"]},
     "change_reason": {"type": "string", "minLength": 1},
     "generated_at": {"type": "string"},
-    "claims": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/claim"}},
+    "claims": {"type": "array", "minItems": 1, "items": {"oneOf": [{"$ref": "#/$defs/investment_claim"}, {"$ref": "#/$defs/company_judgment_claim"}]}},
     "freeze": {
       "type": "object",
       "required": ["frozen", "fingerprint", "frozen_at"],
@@ -23,8 +24,12 @@
       }
     }
   },
+  "allOf": [{
+    "if": {"properties": {"analysis_purpose": {"const": "COMPANY_JUDGMENT_ONLY"}}},
+    "then": {"properties": {"claims": {"items": {"$ref": "#/$defs/company_judgment_claim"}}}}
+  }],
   "$defs": {
-    "claim": {
+    "investment_claim": {
       "type": "object",
       "additionalProperties": false,
       "required": ["claim_id", "claim", "chapters", "raw_facts", "reasoning_steps", "alternative_explanations", "applicability_conditions", "confidence", "decision_impact", "decision_entry_ids"],
@@ -56,6 +61,42 @@
           }
         },
         "decision_entry_ids": {"type": "array", "items": {"type": "string", "minLength": 1}}
+      }
+    },
+    "company_judgment_claim": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["claim_id", "claim", "chapters", "raw_facts", "reasoning_steps", "alternative_explanations", "applicability_conditions", "confidence", "judgment_impact"],
+      "properties": {
+        "claim_id": {"type": "string", "minLength": 1},
+        "claim": {"type": "string", "minLength": 1},
+        "chapters": {"type": "array", "items": {"type": "integer", "minimum": 0, "maximum": 14}, "minItems": 1},
+        "raw_facts": {"type": "array", "items": {"$ref": "#/$defs/evidence"}, "minItems": 1},
+        "reasoning_steps": {"type": "array", "items": {"type": "string", "minLength": 1}, "minItems": 1},
+        "alternative_explanations": {"type": "array", "items": {"type": "string", "minLength": 1}, "minItems": 1},
+        "applicability_conditions": {"type": "array", "items": {"type": "string", "minLength": 1}, "minItems": 1},
+        "confidence": {"$ref": "#/$defs/confidence"},
+        "judgment_impact": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["mechanism", "normalized_earnings_or_owner_cash", "monitoring_or_forward_judgment", "forward_judgment_ids"],
+          "properties": {
+            "mechanism": {"type": "string", "minLength": 1},
+            "normalized_earnings_or_owner_cash": {"type": "string", "minLength": 1},
+            "monitoring_or_forward_judgment": {"type": "string", "minLength": 1},
+            "forward_judgment_ids": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}}
+          }
+        }
+      }
+    },
+    "confidence": {
+      "type": "object",
+      "required": ["kind", "value", "basis"],
+      "properties": {
+        "kind": {"enum": ["frequency", "base_rate", "analyst_subjective", "scenario_weight"]},
+        "value": {"type": "number", "minimum": 0, "maximum": 1},
+        "basis": {"type": "string", "minLength": 1},
+        "interval": {"type": "array", "prefixItems": [{"type": "number", "minimum": 0, "maximum": 1}, {"type": "number", "minimum": 0, "maximum": 1}], "minItems": 2, "maxItems": 2}
       }
     },
     "evidence": {

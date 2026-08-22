@@ -287,6 +287,78 @@ def read_report_contract_pack(
 ) -> dict[str, Any]:
     """一次读取本轮所有章节合同与研究计划，避免逐章增加 LLM 往返。"""
     indexes = [int(item) for item in (chapter_indexes or sorted(_CHAPTER_TEMPLATE_TITLES))]
+    analysis_contract = _read_json(os.path.join(output_dir, "analysis_contract.json")) or {}
+    analysis_purpose = str(analysis_contract.get("analysis_purpose") or "INVESTMENT_DECISION")
+    if analysis_purpose == "COMPANY_JUDGMENT_ONLY":
+        titles = {
+            0: "公司判断摘要", 1: "公司做的是什么生意", 2: "行业结构与公司位置",
+            3: "商业机制、护城河与关键约束", 4: "最近一年关键变化与当前阶段",
+            5: "经营表现与核心驱动", 6: "财务表现与资本配置",
+            7: "经营现金与资本约束", 8: "管理层、治理与激励",
+            9: "核心风险、反方解释与证伪项", 10: "前瞻机制与情景",
+            11: "竞争性机制与早期判别信号", 12: "终局经营结果与可证伪条件",
+            13: "监测、结算与再研究", 14: "公司判断结论与数据边界",
+        }
+        evidence_context = _read_json(os.path.join(output_dir, "report_context.json")) or {}
+        invalid = [idx for idx in indexes if idx not in titles]
+        if invalid:
+            return {"ok": False, "error": "invalid_cjo_chapter", "chapter_indexes": invalid}
+        cjo_template_path = os.path.abspath(os.path.join(
+            _scripts_dir, "..", "templates", "company_judgment_report_template.md",
+        ))
+        cjo_template = _read_text(cjo_template_path)
+        if not cjo_template:
+            return {"ok": False, "error": "cjo_template_missing"}
+        cjo_chapters: dict[str, Any] = {}
+        for idx in indexes:
+            heading = f"## {titles[idx]}"
+            match = re.search(rf"^{re.escape(heading)}\s*$", cjo_template, re.MULTILINE)
+            if not match:
+                return {"ok": False, "error": "cjo_template_chapter_missing", "chapter_index": idx}
+            next_heading = re.search(r"^## ", cjo_template[match.end():], re.MULTILINE)
+            end = match.end() + next_heading.start() if next_heading else len(cjo_template)
+            content = cjo_template[match.start():end].strip()
+            cjo_chapters[str(idx)] = {
+                "title": titles[idx],
+                "content": content,
+                "char_count": len(content),
+            }
+        return {
+            "ok": True,
+            "analysis_purpose": analysis_purpose,
+            "template": os.path.basename(cjo_template_path),
+            "chapter_indexes": indexes,
+            "chapters": cjo_chapters,
+            "company_judgment_rules": [
+                "所有实质事实引用本次允许且已读的官方 source/VERIFIED observation；未知显式为 UNKNOWN。",
+                "先完成公司机制与经营盲轨，禁止使用价格、估值、回报、仓位、交易动作、模型或 D-id。",
+                "每个核心 driver 必须连接竞争 pair、FJ、简单经营基线及早期/终局结算。",
+                "案例只迁移机制；每个支持类比必须有 strongest near miss 和断裂条件。",
+            ],
+            "official_evidence": {
+                "state": (evidence_context.get("validation") or {}).get("state", "UNAVAILABLE"),
+                "coverage": evidence_context.get("coverage") or {},
+                "unresolved_gaps": evidence_context.get("unresolved_gaps") or [],
+                "instruction": "重大主张优先引用 VERIFIED observation；CANDIDATE 只能指导继续回读，不能支持冻结结论。",
+            },
+            "char_count": sum(item["char_count"] for item in cjo_chapters.values()),
+        }
+    if analysis_purpose != "INVESTMENT_DECISION":
+        return {"ok": False, "error": "analysis_purpose_invalid", "analysis_purpose": analysis_purpose}
+    predecessor = _read_json(os.path.join(output_dir, "company_judgment_predecessor.json")) or {}
+    predecessor_source = predecessor.get("source") if isinstance(predecessor.get("source"), dict) else {}
+    predecessor_context = None
+    if predecessor:
+        predecessor_context = {
+            "source": {
+                key: predecessor_source.get(key)
+                for key in ("snapshot_fingerprint", "report_id", "data_as_of", "thesis_sha256")
+            },
+            "central_path": predecessor.get("central_path") or {},
+            "forward_judgments": predecessor.get("forward_judgments") or [],
+            "mechanism_chains": predecessor.get("mechanism_chains") or [],
+            "rule": "这是同 cutoff、已冻结的公司经营判断。投资账本必须原样保留其中心路径、经营 FJ 与正常化盈利/owner-cash 传导；只允许新增估值、条件回报和决策绑定，不能因价格或估值改写经营机制。若经营判断需要改变，先重做 CJO。",
+        }
     chapters: dict[str, Any] = {}
     for idx in indexes:
         result = read_chapter_contract(
@@ -330,6 +402,7 @@ def read_report_contract_pack(
         "decisive_question_plan": decisive_plan,
         "industry_knowledge_context": industry_knowledge_context,
         "valuation_route": valuation_route,
+        "company_judgment_predecessor": predecessor_context,
         "official_evidence": {
             "state": (evidence_context.get("validation") or {}).get("state", "UNAVAILABLE"),
             "coverage": evidence_context.get("coverage") or {},
@@ -1183,6 +1256,11 @@ def read_structured_ledger_contract(
             return {}
         return value if isinstance(value, dict) else {}
 
+    analysis_contract = load("analysis_contract.json")
+    analysis_purpose = str(analysis_contract.get("analysis_purpose") or "INVESTMENT_DECISION")
+    if analysis_purpose not in {"INVESTMENT_DECISION", "COMPANY_JUDGMENT_ONLY"}:
+        return {"ok": False, "error": "analysis_purpose_invalid", "analysis_purpose": analysis_purpose}
+
     decisions = [
         str(item.get("entry_id"))
         for item in load("decision_ledger.json").get("entries") or []
@@ -1240,6 +1318,7 @@ def read_structured_ledger_contract(
         "decision": load("decision_ledger.json"),
         "claim": load("claim_evidence.json"),
         "valuation": load("valuation_model.json"),
+        "financial_driver": load("financial_driver_bridge.json"),
         "thesis": load("thesis_test.json"),
         "decisive": load("decisive_question_findings.json"),
         "insight": load("insight_ledger.json"),
@@ -1250,8 +1329,65 @@ def read_structured_ledger_contract(
         else "reviewable" if value else "missing"
         for name, value in gate_files.items()
     }
+    if analysis_purpose == "COMPANY_JUDGMENT_ONLY":
+        cjo_contracts: dict[str, Any] = {
+            "claim": {
+                "claim": "{claim_id,claim,chapters:[int],raw_facts:[evidence],reasoning_steps:[str],alternative_explanations:[str],applicability_conditions:[str],confidence:{kind,value 0..1,basis,interval?},judgment_impact:{mechanism,normalized_earnings_or_owner_cash,monitoring_or_forward_judgment,forward_judgment_ids:[FJ ids]}}",
+                "evidence": "{evidence_id, exactly one VERIFIED observation_id or allow-listed calculation_id, source_id, source_group_id, fact, authority, claim_distance, published_at/data_as_of,direct_support,support_type,basis_match,conflict_of_interest}",
+                "rules": "CJO claim 只陈述公司事实、机制和可结算经营后果；不得含 D-id、估值、价格、回报、仓位或交易动作。",
+            },
+            "financial_driver": {
+                "driver": "{driver_id,layer:COMPETITION_DEMAND|UNIT_ECONOMICS|CASH_CONVERSION|CAPITAL_ALLOCATION,statement,status:OBSERVED|UNKNOWN,observation_ids:[VERIFIED OBS ids],measurement_period:{start,end},monitoring_contract:{contract_id:FDBMON:*,forward_judgment_ids:[FJ ids],metric,unit,measurement_basis,comparability_rule,measurement_period:{start,end},allowed_source_types,observation_window:{opens_after,closes_at}},cash_normalization_contract? (CASH_CONVERSION: state=NORMALIZED|UNKNOWN|REPORTED_CASH_STATE_ONLY; NORMALIZED 需来源化 reported cash、调整项，以及 maintenance-Capex/working-capital/cash-accessibility treatment 和各自 VERIFIED observation ids；UNKNOWN/报表状态不得当 normal owner cash),competitive_context? (OBSERVED COMPETITION_DEMAND required),unknown_reason?,conservative_treatment?}. CJO 必须省略 model_bindings。",
+                "allocation_event": "{event_id,event_type,classification,classification_basis,decision_date,realization_window,observation_ids:[VERIFIED OBS ids],conservative_treatment?,initial_commitment:{amount:number|UNKNOWN,currency? (number时必填),funding_source,observation_ids:[VERIFIED OBS ids] (number时必填),unknown_reason?/conservative_treatment? (UNKNOWN时必填)},commitment_movement:{movement:ESCALATE|MAINTAIN|DEESCALATE|UNKNOWN,scope:FULL|PARTIAL|UNKNOWN,affected_fraction_of_initial? (PARTIAL时必须是0到1之间；FULL/UNKNOWN禁止),scope_unknown_reason?/scope_conservative_treatment? (scope=UNKNOWN时必填),observation_date:晚于decision_date,observation_ids:[VERIFIED OBS ids] (非UNKNOWN时必填),unknown_reason?/conservative_treatment? (UNKNOWN时必填),realization_contract_id:本event FDBREAL,monitoring_stage:EARLY_SIGNAL|TERMINAL_OUTCOME,monitoring_contract_id:该stage FDBMON},realization_contract:{contract_id:FDBREAL:*,forward_judgment_ids:[FJ ids],early_signal:monitoring_contract,terminal_outcome:monitoring_contract}}",
+                "rules": "覆盖四层；OBSERVED 仅用 VERIFIED 官方 observation；UNKNOWN 给出原因与保守处理；CASH_CONVERSION 必须说明 normal owner cash 是否已来源化正常化；OCF、货币资金或 OCF–Capex 在缺 adjustment bridge 时仅是报表现金状态。只有 COMPETITION_DEMAND/UNIT_ECONOMICS 的监测合同可使用版本化 LICENSED_INDUSTRY_DATA，现金转换与资本配置兑现仍只用官方来源；每个资本事件须冻结初始资金承诺及随后承诺移动，且移动直接链接本 event 的 FDBREAL/FDBMON；不得以价格、回报、单期减值或理财余额伪造资本配置结论。",
+            },
+            "thesis": {
+                "probability_mode": "NO_PROBABILITY|QUALIFIED_PROBABILITY。NO_PROBABILITY：probability_sets=[]，所有 probability_set_id、数值权重和 why_more_likely 均禁止；只可 NO_PRIMARY（无 central_path，作为机制信号探针）或 SELECTION_ADMITTED（P24 cutoff 前方向性证据的定性选择）。QUALIFIED_PROBABILITY 才可有概率集，且 probability_qualification 必须有 event_definition、calibration_plan、as_of，及 >=2 已结算独立 CASE/MEP/CASEEV 或外部频率 evidence。",
+                "central_path": "NO_PROBABILITY + SELECTION_ADMITTED 时 {path_id,statement,as_of,horizon_years,selected_scenario_id,competing_scenario_id,selection_basis,competitive_test_ids,chapters:[int]}；没有主路径时省略。QUALIFIED_PROBABILITY 保留 probability_set_id/why_more_likely。仅公司经营终局，不含估值或回报。",
+                "mechanism_chain": "{chain_id,scenario_id,mechanism,leading_signal_threshold_ids:[threshold_id],transmission:{normalized_earnings:{direction,basis},owner_cash:{direction,basis}}}; NO_PROBABILITY 的 scenario_id 只是机制标签，禁止 probability_set_id；QUALIFIED 才绑定该 ID。禁止 valuation、expected_return 和 decision_entry_ids。",
+                "forward_judgment": "{judgment_id:FJ:*,financial_driver_ids,mechanism_chain_ids,rival_hypothesis_pair_id,rival_signal_id,scenario_id,prediction:{metric,unit,basis,operator,value|range,as_of,due},baseline:{method,prediction},settlement_contract:{allowed_source_types,observation_window},materiality:EARLY_MECHANISM|TERMINAL_OPERATING}; NO_PROBABILITY 禁止 probability_set_id，但仍须 6—12 月信号与终局经营结果可结算。",
+                "rival_hypothesis_pair": "{pair_id,common_fact_ids,primary_mechanism_chain_id,rival_mechanism_chain_id,critical_assumptions:[RHPASM {mechanism_side:PRIMARY|RIVAL,statement,why_necessary,status:VERIFIED with evidence_ids|TESTABLE with same-pair RHPSIG ids|UNKNOWN with conservative_treatment}],discriminators:[ordered RHPSIG with a shared FJ metric/unit/window and different primary/rival predicates]}; UNKNOWN 必要前提不能支撑被选中心路径。",
+                "analogy_transfer_card": "{card_id,target_pair_id,source_case_id,support_role:PRIMARY_SUPPORT|QUESTION_ONLY,target_state_vector:[>=3],structural_mapping:{driver,intermediate,operating_outcome},mismatch_dimensions,invalidation_conditions,strongest_near_miss:{VERIFIED_EPISODE with CASE:/MEP:/CASEEV:|UNKNOWN_NO_QUALIFIED_EPISODE with reason+treatment},linked_discriminator_ids}; UNKNOWN 只能 QUESTION_ONLY；禁止 price/valuation/probability/return。",
+                "rules": "CJO 要有 3—5 FJ、完整竞争 pair 与近失效反例；NO_PRIMARY 保留双边信号但不选中心路径，结果只能学习信号；未有合格 PIT 反例时只可 QUESTION_ONLY，不得为中心路径背书；仅传导 normalized_earnings/owner_cash；不得有模型、价值、回报、仓位、动作或 D-id。",
+            },
+            "insight": {
+                "question_basis": "{anomaly,evidence_ids:[existing evidence],why_it_changes_the_judgment,question_id?}; CJO 不写 why_it_changes_the_decision。",
+                "insight": "{insight_id,title,claim_id,evidence_ids,anomaly,mechanism:[>=2 strings],strongest_alternative,discriminating_observation,operating_impact,monitoring_or_forward_judgment,falsification,company_specific_terms:[>=2],forward_judgment_ids:[FJ ids],chapters:[int]}",
+                "adversarial_review": "{strongest_case_against,why_it_may_be_right,evidence_ids,unresolved,judgment_if_true}",
+                "memo": "{executive_judgment,monitoring}; 禁止 reverse market expectation、current price、估值或交易动作。",
+            },
+            "judgment": {
+                "distinctive_insight": "{insight_id,why_it_matters,why_not_obvious,evidence_ids,forward_judgment_ids}",
+                "fragile_leap": "{claim,why_fragile,needed_evidence,judgment_consequence}",
+                "competitive_explanation_test": "{strongest_alternative,evidence_for_alternative,discriminator,unresolved}",
+                "judgment_dependency": "{without_insight,changed_mechanism,changed_normalized_earnings_or_owner_cash,changed_monitoring_or_forward_judgment,conclusion}",
+                "dimension_assessments": "五个且仅五个键：question_selection/differentiation/evidence_discrimination/operating_transmission/monitoring_relevance；每项 {state:strong|mixed|weak|not_assessable,basis(至少15字符)}。",
+                "rules": "reviewer_limits 与 missing_information 不得为空；禁止 D-id、估值模型、价格和行动。",
+            },
+        }
+        if ledger not in cjo_contracts:
+            return {
+                "ok": False,
+                "error": "ledger_not_available_for_company_judgment_only",
+                "analysis_purpose": analysis_purpose,
+                "available_ledgers": sorted(cjo_contracts),
+            }
+        return {
+            "ok": True,
+            "ledger": ledger,
+            "analysis_purpose": analysis_purpose,
+            "sequence": ["claim (freeze=false bootstrap)", "financial_driver", "thesis", "claim (freeze=true promote)", "insight", "judgment"],
+            "claim_ids": claim_ids,
+            "evidence_ids": evidence_ids,
+            "verified_observation_ids": verified_observation_ids,
+            "gate_states": {name: gate_states[name] for name in ("claim", "financial_driver", "thesis", "insight", "judgment")},
+            "skip_rule": "Do not write a price, valuation, return, position, action, model or D-id object; continue with the first missing/reviewable CJO ledger.",
+            "staging": "CJO 的 FJ 同时连接 claim 与 thesis：先提交含计划 FJ ID 的 claim 且 freeze=false，它只能是 INCOMPLETE/REVIEWABLE bootstrap；再写 FDB 和 thesis；FJ 已存在后重交同一 claim 并 freeze=true。未知 FJ 绝不能在最终冻结时通过。",
+            "contract": cjo_contracts[ledger],
+        }
     common = {
-        "sequence": ["decision", "claim", "valuation", "thesis", "decisive", "insight", "judgment"],
+        "analysis_purpose": analysis_purpose,
+        "sequence": ["decision", "claim", "valuation", "financial_driver", "thesis", "decisive", "insight", "judgment"],
         "active_decision_entry_ids": decisions,
         "claim_ids": claim_ids,
         "evidence_ids": evidence_ids,
@@ -1263,6 +1399,19 @@ def read_structured_ledger_contract(
         "skip_rule": "Do not rewrite a frozen earlier gate; continue with the first missing/reviewable gate.",
         "staging": "submit complete structure with freeze=false; repair returned findings; freeze=true only when clean",
     }
+    predecessor = load("company_judgment_predecessor.json")
+    if predecessor:
+        source = predecessor.get("source") if isinstance(predecessor.get("source"), dict) else {}
+        common["company_judgment_predecessor"] = {
+            "source": {
+                key: source.get(key)
+                for key in ("snapshot_fingerprint", "report_id", "data_as_of", "thesis_sha256")
+            },
+            "central_path": predecessor.get("central_path") or {},
+            "forward_judgments": predecessor.get("forward_judgments") or [],
+            "mechanism_chains": predecessor.get("mechanism_chains") or [],
+            "rule": "投资 thesis 必须保持上述经营对象不变；仅可在其后附加 valuation/expected-return/decision 传导。不得因价格、估值或回报改写任何经营预测、pair 或 chain；若确需改变，停止本投资版本并先建立新的 CJO。",
+        }
     if internal_valuation and ledger in {"thesis", "decisive", "insight", "judgment"}:
         common["internal_full_report_synthesis"] = {
             "status": "INTERNAL_HYPOTHESIS_NOT_FINAL_ACTION",
@@ -1582,8 +1731,15 @@ def read_structured_ledger_contract(
             "synthesis": "{action buy|hold|avoid matching manifest,position_pct matching manifest,range_low,range_base,range_high,chosen_value_per_share matching D006,decision_rule,divergence_explanation,decision_entry_id:D006}",
             "semantic_resolution": "For every deterministic_migration.semantic_frontier item submit {model_id,field,evidence_ids:[VERIFIED OBS:/CALC: identities],research_basis,mechanism,valuation_impact,decision_impact}; exact frontier coverage is required and no other active-model/synthesis field may change.",
         },
+        "financial_driver": {
+            "monitoring_contract": "{contract_id:FDBMON:*,forward_judgment_ids:[FJ ids],metric,unit,measurement_basis,comparability_rule,measurement_period:{start:YYYY-MM-DD,end:YYYY-MM-DD},allowed_source_types:[ANNUAL_REPORT|INTERIM_REPORT|EXCHANGE_ANNOUNCEMENT|OFFICIAL_STATISTICS|OTHER_OFFICIAL|LICENSED_INDUSTRY_DATA (仅 COMPETITION_DEMAND/UNIT_ECONOMICS)],observation_window:{opens_after:YYYY-MM-DD,closes_at:YYYY-MM-DD}}",
+            "driver": "{driver_id,layer:COMPETITION_DEMAND|UNIT_ECONOMICS|CASH_CONVERSION|CAPITAL_ALLOCATION,statement,status:OBSERVED|UNKNOWN,observation_ids:[VERIFIED OBS ids],measurement_period:{start,end},monitoring_contract,cash_normalization_contract? (CASH_CONVERSION: NORMALIZED 含 reported_cash_observation_ids、adjustment_components、maintenance_capex_treatment、maintenance_capex_observation_ids、working_capital_treatment、working_capital_observation_ids、cash_accessibility_treatment、cash_accessibility_observation_ids；UNKNOWN/REPORTED_CASH_STATE_ONLY 不得作为 normal owner cash),competitive_context? (COMPETITION_DEMAND+OBSERVED required):{market_definition,customer_alternatives:[buyer alternatives],comparison_observation_ids:[VERIFIED OBS ids],scope_limit},unknown_reason?,conservative_treatment?,model_bindings:[{model_id:existing model,input_id,treatment:DIRECT_INPUT|NORMALIZATION_ADJUSTMENT|SENSITIVITY|QUALITATIVE_GUARDRAIL,effect,decision_entry_ids:[existing D-id]}]}",
+            "allocation_event": "{event_id,event_type:OPERATING_CAPEX|FINANCIAL_ASSET_ROLLOVER|ACQUISITION|DISPOSAL|IMPAIRMENT|DIVIDEND|FINANCING|OTHER,classification:OPERATING_REINVESTMENT|LIQUIDITY_MANAGEMENT|VALUE_DESTRUCTIVE_CANDIDATE|RETURN_OF_CAPITAL|UNRESOLVED,classification_basis,decision_date,realization_window,observation_ids:[VERIFIED OBS ids],conservative_treatment?,initial_commitment:{amount:number|UNKNOWN,currency? (number时必填),funding_source,observation_ids:[VERIFIED OBS ids] (number时必填),unknown_reason?/conservative_treatment? (UNKNOWN时必填)},commitment_movement:{movement:ESCALATE|MAINTAIN|DEESCALATE|UNKNOWN,scope:FULL|PARTIAL|UNKNOWN,affected_fraction_of_initial? (PARTIAL requires 0<x<1; prohibited for FULL/UNKNOWN),scope_unknown_reason?/scope_conservative_treatment? (required for scope UNKNOWN),observation_date:later than decision_date,observation_ids:[VERIFIED OBS ids] (non-UNKNOWN required),unknown_reason?/conservative_treatment? (UNKNOWN required),realization_contract_id:current event FDBREAL,monitoring_stage:EARLY_SIGNAL|TERMINAL_OUTCOME,monitoring_contract_id:matching FDBMON},realization_contract:{contract_id:FDBREAL:*,forward_judgment_ids:[FJ ids],early_signal:monitoring_contract,terminal_outcome:monitoring_contract}}",
+            "rules": "Cover all four economic layers. OBSERVED may cite only VERIFIED official observations; UNKNOWN must name the reason and a conservative treatment. A CASH_CONVERSION driver must state whether normal owner cash is source-bound NORMALIZED; OCF, cash balances and OCF–Capex without that bridge remain reported cash state only. An OBSERVED competition/demand driver must define the market, customer alternatives, comparison observation(s), and scope limit; an internal metric alone is not a full-market moat claim. Every driver must bind to an existing valuation-model input and active decision entry. Each driver needs its own settleable monitoring_contract; each allocation event needs an FDBREAL realization_contract with distinct early and terminal monitoring contracts, whose terminal period follows the early signal, plus a source-bound initial commitment and subsequent commitment movement that links to that event's FDBREAL/FDBMON. Do not infer capital allocation from price, return, a single impairment, or financial-product rollover without evidence.",
+        },
         "thesis": {
-            "probability_set": "{set_id,mutually_exclusive:true,collectively_exhaustive:true,resolution_due:YYYY-MM-DD later than prediction as_of,estimates:[>=2 {scenario_id,label,kind frequency|base_rate|analyst_subjective|scenario_weight,value 0..1,interval:[lo,hi],basis,source_ids:[],as_of}],chapters:[int]}; probabilities sum 1; use wide intervals for subjective. kind=base_rate requires at least 5 same-mechanism ELIGIBLE CASE: IDs from base_rate_context; otherwise use analyst_subjective/scenario_weight and disclose sample shortage",
+            "probability_set": "{set_id,mutually_exclusive:true,collectively_exhaustive:true,resolution_due:YYYY-MM-DD later than prediction as_of,outcome_scope:TERMINAL_OPERATING_OUTCOME,horizon_years:3|5,outcome_space_definition,estimates:[>=2 {scenario_id,label,scenario_role:TERMINAL_OUTCOME,kind frequency|base_rate|analyst_subjective|scenario_weight,value 0..1,interval:[lo,hi],basis,source_ids:[],as_of}],chapters:[int]}; 被中心路径选择时必须是同一3/5年经营终局，过程因素不得占概率情景；probabilities sum 1; use wide intervals for subjective. kind=base_rate requires at least 5 same-mechanism ELIGIBLE CASE: IDs from base_rate_context; otherwise use analyst_subjective/scenario_weight and disclose sample shortage",
+            "mechanism_chain": "{chain_id,probability_set_id,scenario_id,mechanism,leading_signal_threshold_ids:[threshold_id],transmission:{normalized_earnings:{direction,basis},owner_cash:{direction,basis},valuation:{direction,basis},expected_return:{direction,basis}},decision_entry_ids:[D-id]}; 将渠道、库存、会计和其他过程因素放在这里，前瞻判断以mechanism_chain_ids引用同一情景的链",
             "threshold": "{threshold_id,metric,unit,current_value:number,operator >|>=|<|<=|==|changes_to,threshold_value:number,basis_type historical_volatility|peer_benchmark|model_sensitivity|contractual|accounting_regulatory|base_rate|expert_judgment,basis_description,source_ids:[external],observation_frequency,window,aggregation single_period|rolling_average|consecutive_periods|cumulative,seasonal_adjustment adjusted|not_needed|unavailable,accounting_definition,precision:{justified_decimals:int,basis},discrimination_target:test_id|decision_rule,action buy|hold|increase|reduce|avoid|exit|reassess,decision_entry_ids:[D013/D014/D015],chapters:[int]}",
             "competitive_test": "{test_id,thesis_claim_id:existing claim,primary_explanation,strongest_alternative,alternative_evidence_ids:[contradicts/context evidence],discriminating_observations:[{observation_id,metric,availability,primary_prediction,alternative_prediction,update_rule,threshold_id}],probability_set_id,primary_scenario_id,alternative_scenario_id,flip_condition:{threshold_id,basis,window},valuation_after_flip:number,position_after_flip:number,action_after_flip,decision_entry_ids:[D-id],chapters:[int]}",
             "anchors": "declared chapters contain [thesis-test: id], [threshold: id], [probability: id]",
@@ -1731,7 +1887,7 @@ read_structured_ledger_contract._tool_meta = {
     "description": "写V3结构化账本前读取精确嵌套类型、顺序和当前可用ID；避免把object误写成string/number",
     "parameters": {
         "output_dir": {"type": "string"},
-        "ledger": {"type": "string", "enum": ["decision_binding", "claim", "valuation", "thesis", "decisive", "insight", "judgment"]},
+        "ledger": {"type": "string", "enum": ["decision_binding", "claim", "valuation", "financial_driver", "thesis", "decisive", "insight", "judgment"]},
     },
 }  # type: ignore[attr-defined]
 

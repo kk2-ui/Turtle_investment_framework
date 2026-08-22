@@ -4,6 +4,7 @@ import json
 from pathlib import Path
 
 from scripts.real_report_acceptance import (
+    CJO_REQUIRED_MACHINE_GATES,
     REQUIRED_MACHINE_GATES,
     REVIEW_DIMENSIONS,
     _hash,
@@ -68,6 +69,26 @@ def _pass_gates(output: Path) -> None:
         },
     })
     _write_json(output / "judgment_review_validation.json", {"state": "REVIEWED", "ceiling_verdict": "COMPETENT"})
+    _write_json(output / "judgment_review.json", {"ceiling_verdict": "COMPETENT", "fragile_leaps": [], "dimension_assessments": {}})
+
+
+def _pass_cjo_gates(output: Path) -> None:
+    _write_json(output / "analysis_contract.json", {"analysis_purpose": "COMPANY_JUDGMENT_ONLY"})
+    for gate, (filename, accepted) in CJO_REQUIRED_MACHINE_GATES.items():
+        state = sorted(accepted)[0]
+        key = "status" if gate in {"completion", "runtime_manifest", "absolute_quality"} else "state"
+        payload = {key: state}
+        if gate == "thesis_test":
+            payload.update({"forward_judgment_state": "DECISION_READY", "analysis_purpose": "COMPANY_JUDGMENT_ONLY"})
+        if gate == "financial_driver_bridge":
+            payload["analysis_purpose"] = "COMPANY_JUDGMENT_ONLY"
+        _write_json(output / filename, payload)
+    _write_json(output / "research_execution.json", {
+        "enforced": True,
+        "chapters": {
+            "2": {"enforced": True, "tool_counts": {"read_section": 2, "web_search": 2, "web_fetch": 1}, "fiscal_years": [2024, 2025], "sections": ["MDA", "SEG"]}
+        },
+    })
     _write_json(output / "judgment_review.json", {"ceiling_verdict": "COMPETENT", "fragile_leaps": [], "dimension_assessments": {}})
 
 
@@ -222,6 +243,37 @@ def test_machine_complete_report_stops_at_blind_review(tmp_path: Path) -> None:
     assert sample["hard_gates"]["passed"] is True
     assert sample["machine_status"] == "READY_FOR_BLIND_REVIEW"
     assert sample["research_execution"]["two_fiscal_years_observed"] is True
+
+
+def test_company_judgment_acceptance_requires_operating_gates_not_valuation_or_decision(tmp_path: Path) -> None:
+    output = tmp_path / "candidate"
+    _report(output)
+    _pass_cjo_gates(output)
+    config = _config(tmp_path / "config.json", output)
+
+    sample = evaluate_acceptance(config, acceptance_root=tmp_path / "acceptance", persist=False)["samples"][0]
+
+    assert sample["machine_status"] == "READY_FOR_BLIND_REVIEW"
+    assert sample["hard_gates"]["analysis_purpose"] == "COMPANY_JUDGMENT_ONLY"
+    assert "financial_driver_bridge" in sample["hard_gates"]["gates"]
+    assert "official_evidence" in sample["hard_gates"]["gates"]
+    assert "decision_ledger" not in sample["hard_gates"]["gates"]
+    assert "valuation_model" not in sample["hard_gates"]["gates"]
+
+
+def test_company_judgment_acceptance_rejects_investment_purpose_thesis(tmp_path: Path) -> None:
+    output = tmp_path / "candidate"
+    _report(output)
+    _pass_cjo_gates(output)
+    thesis = json.loads((output / "thesis_test_validation.json").read_text(encoding="utf-8"))
+    thesis["analysis_purpose"] = "INVESTMENT_DECISION"
+    _write_json(output / "thesis_test_validation.json", thesis)
+    config = _config(tmp_path / "config.json", output)
+
+    sample = evaluate_acceptance(config, acceptance_root=tmp_path / "acceptance", persist=False)["samples"][0]
+
+    assert sample["machine_status"] == "TECHNICALLY_BLOCKED"
+    assert "thesis_test:analysis_purpose:INVESTMENT_DECISION" in sample["hard_gates"]["blocking"]
 
 
 def test_new_gold_candidate_requires_forward_judgment_contract(tmp_path: Path) -> None:

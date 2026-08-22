@@ -22,6 +22,9 @@ except ModuleNotFoundError:
 
 SCHEMA_VERSION = "fact-observations.v1"
 STATUSES = {"CANDIDATE", "VERIFIED", "REJECTED", "CONFLICT"}
+OFFICIAL_DOCUMENT_AUTHORITIES = {
+    "issuer", "audited_filing", "company_filing", "official_statistics", "other_official",
+}
 
 
 def _now() -> str:
@@ -71,6 +74,16 @@ def _parse_accounting_number(value: str) -> float:
     return -number if negative else number
 
 
+def _parse_yoy_change(value: str) -> float:
+    """Parse a Chinese year-over-year direction without losing its sign."""
+    text = re.sub(r"\s+", "", str(value))
+    match = re.search(r"([\d.]+)%", text)
+    if not match:
+        raise ValueError(f"year_over_year_change_unparseable:{value}")
+    amount = _parse_number(match.group(1))
+    return -amount if "下降" in text or "微降" in text else amount
+
+
 def _page_blocks(text: str) -> list[dict[str, Any]]:
     markers = list(re.finditer(r"^##\s+第\s*(\d+)\s*页\s*$", text, re.MULTILINE))
     blocks: list[dict[str, Any]] = []
@@ -102,6 +115,8 @@ class PatternRule:
     currency: str | None = None
     transform: Callable[[str], Any] = lambda value: value.strip()
     min_page: int = 1
+    required_page_pattern: re.Pattern[str] | None = None
+    nearby_page_pattern: re.Pattern[str] | None = None
 
 
 _AUDITOR_NAMES = (
@@ -109,6 +124,11 @@ _AUDITOR_NAMES = (
     "信永中和", "立信", "天健", "大華", "大华", "大信", "中審", "中审",
     "Grant Thornton", "Ernst & Young", "KPMG", "Deloitte", "PwC", "PricewaterhouseCoopers",
 )
+
+_CONSOLIDATED_BALANCE_SHEET_PAGE = re.compile(r"合\s*并\s*资\s*产\s*负\s*债\s*表")
+_CASH_EQUIVALENTS_COMPOSITION_PAGE = re.compile(r"现金和现金等价物的构成")
+_BALANCE_SHEET_NOTE = r"(?:\s+(?:[（(][^）)\n]+[）)]\d*|[\u4e00-\u9fff]+、\d+))?"
+_BALANCE_SHEET_COMPARATIVE_VALUES = r"\s+([\d,]+\.\d+)\s+[\d,]+\.\d+(?:\s+[\d,]+\.\d+)?\s*$"
 
 _PATTERN_RULES = (
     PatternRule(
@@ -152,6 +172,242 @@ _PATTERN_RULES = (
         "net_profit_parent_rmb_m", "financial",
         re.compile(r"本公司擁有人應佔利潤(?:約為|约为)?人民幣\s*([\d.]+)\s*百萬元"),
         "RMB_m", "attributable_to_company_owners", currency="RMB", transform=_parse_number,
+    ),
+    PatternRule(
+        "residential_ac_industry_domestic_units_m", "operations",
+        re.compile(
+            r"(?:根据|据)产业在\s*线(?:数据)?[\s\S]{0,220}?家用空调(?:行业)?[\s\S]{0,220}?"
+            r"(?:其中[，,]?(?:空调)?内销(?:市场)?(?:销量|出货)?|内销(?:市场)?(?:销量|出货)?)\s*([\d,]+(?:\.\d+)?)\s*万\s*台",
+        ),
+        "million_units", "named_industry_provider_domestic_sales_or_shipments", transform=_parse_number,
+    ),
+    PatternRule(
+        "residential_ac_industry_domestic_units_yoy_pct", "operations",
+        re.compile(
+            r"(?:根据|据)产业在\s*线(?:数据)?[\s\S]{0,220}?家用空调(?:行业)?[\s\S]{0,220}?"
+            r"(?:其中[，,]?(?:空调)?内销(?:市场)?(?:销量|出货)?|内销(?:市场)?(?:销量|出货)?)\s*[\d,]+(?:\.\d+)?\s*万\s*台[，,]?"
+            r"((?:同比)?(?:增长|下降|微增|微降)\s*[\d.]+%)",
+        ),
+        "pct", "named_industry_provider_domestic_sales_or_shipments", transform=_parse_yoy_change,
+    ),
+    PatternRule(
+        "company_residential_ac_domestic_units_m", "operations",
+        re.compile(r"公司家用空调内销为\s*([\d,]+(?:\.\d+)?)\s*万台"),
+        "million_units", "company_disclosed_domestic_sales_volume", transform=_parse_number,
+    ),
+    PatternRule(
+        "company_residential_ac_domestic_units_yoy_pct", "operations",
+        re.compile(r"公司家用空调内销为\s*[\d,]+(?:\.\d+)?\s*万台[，,]?((?:同比)?(?:增长|下降|微增|微降)\s*[\d.]+%)"),
+        "pct", "company_disclosed_domestic_sales_volume", transform=_parse_yoy_change,
+    ),
+    # Chinese A-share annual reports often contain the items below only in the
+    # cash-flow notes.  Extract them separately so a headline OCF figure cannot
+    # be silently promoted into recurring owner cash.
+    PatternRule(
+        "operating_cash_flow_rmb_m", "financial",
+        re.compile(r"经营活动产生的现金流量净额\s+([\d,]+\.\d+)\s+[\d,]+\.\d+", re.MULTILINE),
+        "RMB_m", "consolidated_cash_flow", currency="RMB", transform=lambda value: _parse_number(value) / 1_000_000,
+    ),
+    PatternRule(
+        "cash_capex_rmb_m", "financial",
+        re.compile(r"购建固定资产、无形资产和其他长期资产支付的现金\s+([\d,]+\.\d+)\s+[\d,]+\.\d+", re.MULTILINE),
+        "RMB_m", "consolidated_cash_flow", currency="RMB", transform=lambda value: _parse_number(value) / 1_000_000,
+    ),
+    PatternRule(
+        "cash_receipts_from_customers_rmb_m", "financial",
+        re.compile(r"销售商品、提供劳务收到的现金\s+([\d,]+\.\d+)\s+[\d,]+\.\d+", re.MULTILINE),
+        "RMB_m", "consolidated_cash_flow", currency="RMB", transform=lambda value: _parse_number(value) / 1_000_000,
+    ),
+    PatternRule(
+        "operating_restricted_funds_release_rmb_m", "financial",
+        re.compile(r"票据、保函保证金等经营活动有关\s*\n\s*受限资金净减少额\s*\n\s*([\d,]+\.\d+)", re.MULTILINE),
+        "RMB_m", "operating_cash_flow_note", currency="RMB", transform=lambda value: _parse_number(value) / 1_000_000,
+    ),
+    PatternRule(
+        "operating_restricted_funds_release_rmb_m", "financial",
+        re.compile(r"票据、保函保证金等经营活动有关\s*\n\s*([\d,]+\.\d+)\s*\n\s*受限资金净减少额", re.MULTILINE),
+        "RMB_m", "operating_cash_flow_note", currency="RMB", transform=lambda value: _parse_number(value) / 1_000_000,
+    ),
+    PatternRule(
+        "operating_restricted_funds_release_rmb_m", "financial",
+        re.compile(r"票据质押保证金、保函保证金等净减少额\s+([\d,]+\.\d+)", re.MULTILINE),
+        "RMB_m", "operating_cash_flow_note", currency="RMB", transform=lambda value: _parse_number(value) / 1_000_000,
+    ),
+    PatternRule(
+        "operating_restricted_funds_addition_rmb_m", "financial",
+        re.compile(r"票据、保函保证金等经营活动有关\s*\n\s*([\d,]+\.\d+)(?:\s+[\d,]+\.\d+)?\s*\n\s*受限资金净增加额", re.MULTILINE),
+        "RMB_m", "operating_cash_flow_note", currency="RMB", transform=lambda value: _parse_number(value) / 1_000_000,
+    ),
+    # The cash-flow supplement is the only report location that separates
+    # immediately usable cash from term deposits and restricted deposits.
+    # This is a liquidity-state observation, not a claim that the balance is
+    # distributable owner cash (the finance subsidiary and capital needs still
+    # require their own evidence).
+    PatternRule(
+        "cash_and_cash_equivalents_rmb_m", "financial",
+        re.compile(r"^四、期末现金及现金等价物余额\s+([\d,]+\.\d+)\s+[\d,]+\.\d+\s*$", re.MULTILINE),
+        "RMB_m", "consolidated_cash_equivalents_composition", currency="RMB",
+        transform=lambda value: _parse_number(value) / 1_000_000,
+        nearby_page_pattern=_CASH_EQUIVALENTS_COMPOSITION_PAGE,
+    ),
+    # Some extracted CNInfo tables render the amount between a split word;
+    # others retain the full label ahead of the amount.  They are deliberately
+    # separate rules with one fact identity so only the first valid rendering
+    # on the identified cash-equivalents page is admitted.
+    PatternRule(
+        "term_deposits_excluded_from_cash_equivalents_rmb_m", "financial",
+        re.compile(r"^不属于现金及现金等价物范\s+([\d,]+\.\d+)\s+[\d,]+\.\d+\s+畴的定期存款及应计利息\s*$", re.MULTILINE),
+        "RMB_m", "consolidated_cash_equivalents_composition", currency="RMB",
+        transform=lambda value: _parse_number(value) / 1_000_000,
+        nearby_page_pattern=_CASH_EQUIVALENTS_COMPOSITION_PAGE,
+    ),
+    PatternRule(
+        "term_deposits_excluded_from_cash_equivalents_rmb_m", "financial",
+        re.compile(r"^不属于现金及现金等价物范\s*畴的定期存款及应计利息\s+([\d,]+\.\d+)\s+[\d,]+\.\d+\s*$", re.MULTILINE),
+        "RMB_m", "consolidated_cash_equivalents_composition", currency="RMB",
+        transform=lambda value: _parse_number(value) / 1_000_000,
+        nearby_page_pattern=_CASH_EQUIVALENTS_COMPOSITION_PAGE,
+    ),
+    PatternRule(
+        "restricted_monetary_funds_rmb_m", "financial",
+        re.compile(r"^使用受到限制的存款\s+([\d,]+\.\d+)\s+[\d,]+\.\d+\s*$", re.MULTILINE),
+        "RMB_m", "consolidated_cash_equivalents_composition", currency="RMB",
+        transform=lambda value: _parse_number(value) / 1_000_000,
+        nearby_page_pattern=_CASH_EQUIVALENTS_COMPOSITION_PAGE,
+    ),
+    PatternRule(
+        "financial_product_redemptions_rmb_m", "capital_allocation",
+        re.compile(r"货币性投资产品、大额存单、债务\s*\n?\s*([\d,]+\.\d+)\s+[\d,]+\.\d+\s*\n?\s*工具投资等产品赎回", re.MULTILINE),
+        "RMB_m", "investment_cash_flow_note", currency="RMB", transform=lambda value: _parse_number(value) / 1_000_000,
+    ),
+    PatternRule(
+        "financial_product_purchases_rmb_m", "capital_allocation",
+        re.compile(r"货币性投资产品、大额存单、债务\s*\n?\s*([\d,]+\.\d+)\s+[\d,]+\.\d+\s*\n?\s*工具投资等产品支付", re.MULTILINE),
+        "RMB_m", "investment_cash_flow_note", currency="RMB", transform=lambda value: _parse_number(value) / 1_000_000,
+    ),
+    PatternRule(
+        "net_new_term_deposits_rmb_m", "capital_allocation",
+        re.compile(r"定期存款净增加额\s+([\d,]+\.\d+)\s+[\d,]+\.\d+", re.MULTILINE),
+        "RMB_m", "investment_cash_flow_note", currency="RMB", transform=lambda value: _parse_number(value) / 1_000_000,
+    ),
+    PatternRule(
+        "gree_titanium_cip_impairment_rmb_m", "capital_allocation",
+        re.compile(r"在建工程的减值测试情况[\s\S]{0,1000}?格力钛工程\s+[\d,]+\.\d+\s+[\d,]+\.\d+\s+([\d,]+\.\d+)", re.MULTILINE),
+        "RMB_m", "construction_project_impairment_test", currency="RMB", transform=lambda value: _parse_number(value) / 1_000_000,
+    ),
+    PatternRule(
+        "accounts_receivable_rmb_m", "financial",
+        re.compile(r"^应收账款" + _BALANCE_SHEET_NOTE + _BALANCE_SHEET_COMPARATIVE_VALUES, re.MULTILINE),
+        "RMB_m", "consolidated_balance_sheet", currency="RMB", transform=lambda value: _parse_number(value) / 1_000_000,
+        required_page_pattern=_CONSOLIDATED_BALANCE_SHEET_PAGE,
+    ),
+    PatternRule(
+        "trading_financial_assets_rmb_m", "capital_allocation",
+        re.compile(r"^交易性金融资产" + _BALANCE_SHEET_NOTE + _BALANCE_SHEET_COMPARATIVE_VALUES, re.MULTILINE),
+        "RMB_m", "consolidated_balance_sheet", currency="RMB", transform=lambda value: _parse_number(value) / 1_000_000,
+        required_page_pattern=_CONSOLIDATED_BALANCE_SHEET_PAGE,
+    ),
+    PatternRule(
+        "inventory_rmb_m", "financial",
+        re.compile(r"^存货" + _BALANCE_SHEET_NOTE + _BALANCE_SHEET_COMPARATIVE_VALUES, re.MULTILINE),
+        "RMB_m", "consolidated_balance_sheet", currency="RMB", transform=lambda value: _parse_number(value) / 1_000_000,
+        required_page_pattern=_CONSOLIDATED_BALANCE_SHEET_PAGE,
+    ),
+    PatternRule(
+        "accounts_payable_rmb_m", "financial",
+        re.compile(r"^应付账款" + _BALANCE_SHEET_NOTE + _BALANCE_SHEET_COMPARATIVE_VALUES, re.MULTILINE),
+        "RMB_m", "consolidated_balance_sheet", currency="RMB", transform=lambda value: _parse_number(value) / 1_000_000,
+        required_page_pattern=_CONSOLIDATED_BALANCE_SHEET_PAGE,
+    ),
+    PatternRule(
+        "short_term_borrowings_rmb_m", "financial",
+        re.compile(r"^短期借款" + _BALANCE_SHEET_NOTE + _BALANCE_SHEET_COMPARATIVE_VALUES, re.MULTILINE),
+        "RMB_m", "consolidated_balance_sheet", currency="RMB", transform=lambda value: _parse_number(value) / 1_000_000,
+        required_page_pattern=_CONSOLIDATED_BALANCE_SHEET_PAGE,
+    ),
+    PatternRule(
+        "contract_liabilities_rmb_m", "financial",
+        re.compile(r"^合同负债" + _BALANCE_SHEET_NOTE + _BALANCE_SHEET_COMPARATIVE_VALUES, re.MULTILINE),
+        "RMB_m", "consolidated_balance_sheet", currency="RMB", transform=lambda value: _parse_number(value) / 1_000_000,
+        required_page_pattern=_CONSOLIDATED_BALANCE_SHEET_PAGE,
+    ),
+    # This is an accounting-note identification of the counterparty, not a
+    # conclusion about channel demand, inventory, or cash accessibility.
+    PatternRule(
+        "contract_liabilities_primary_counterparty", "financial",
+        re.compile(r"(合同负债主要是预收经销商的货款)"),
+        "text", "contract_liability_note", transform=lambda _value: "dealer_prepayments",
+    ),
+    # Sales rebates sit in other current liabilities.  Extract them separately
+    # from sales expense so research cannot silently treat a balance as a
+    # period promotion cost or infer a rebate rate without a revenue/channel bridge.
+    PatternRule(
+        "sales_rebates_payable_rmb_m", "financial",
+        re.compile(r"^销售返利\s+([\d,]+\.\d+)\s+[\d,]+\.\d+\s*$", re.MULTILINE),
+        "RMB_m", "other_current_liabilities_sales_rebates", currency="RMB",
+        transform=lambda value: _parse_number(value) / 1_000_000,
+    ),
+    PatternRule(
+        "sales_expense_rmb_m", "financial",
+        re.compile(r"^销售费用\s+五、\d+\s+([\d,]+\.\d+)\s+[\d,]+\.\d+\s*$", re.MULTILINE),
+        "RMB_m", "consolidated_sales_expense", currency="RMB",
+        transform=lambda value: _parse_number(value) / 1_000_000,
+    ),
+    # A later annual report can restate an earlier comparative amount because
+    # costs moved between sales expense and operating cost.  Preserve that
+    # signed movement as its own observation; never silently overwrite the
+    # original-period filing or call the difference a channel-cost trend.
+    PatternRule(
+        "sales_expense_policy_reclassification_rmb_m", "financial",
+        re.compile(r"销售费用\s+(-?[\d,]+\.\d+)\s*\n\s*营业成本\s+[\d,]+\.\d+", re.MULTILINE),
+        "RMB_m", "sales_expense_to_operating_cost_policy_reclassification", currency="RMB",
+        transform=lambda value: _parse_number(value) / 1_000_000,
+    ),
+    PatternRule(
+        "interest_expense_rmb_m", "financial",
+        re.compile(r"^其中：利息费用\s+([\d,]+\.\d+)\s+[\d,]+\.\d+\s*$", re.MULTILINE),
+        "RMB_m", "consolidated_income_statement", currency="RMB", transform=lambda value: _parse_number(value) / 1_000_000,
+    ),
+    PatternRule(
+        "interest_income_rmb_m", "financial",
+        re.compile(r"^利息收入\s+([\d,]+\.\d+)\s+[\d,]+\.\d+\s*$", re.MULTILINE),
+        "RMB_m", "consolidated_income_statement", currency="RMB", transform=lambda value: _parse_number(value) / 1_000_000,
+    ),
+    PatternRule(
+        "consumer_electrics_gross_margin_pct", "operations",
+        # The operating-analysis table places product revenue and cost before
+        # margin.  Requiring both monetary columns and the percentage keeps it
+        # distinct from the revenue-mix table with the same product label.
+        re.compile(r"^消费电器\s+[\d,]+\.\d+\s+[\d,]+\.\d+\s+([\d.]+)%\s+[-\d.]", re.MULTILINE),
+        "pct", "consumer_electrics_product_gross_margin", transform=_parse_number,
+    ),
+    PatternRule(
+        "consumer_electrics_revenue_yoy_pct", "operations",
+        re.compile(r"^消费电器\s+[\d,]+\.\d+\s+[\d,]+\.\d+\s+[\d.]+%\s+(-?[\d.]+)%", re.MULTILINE),
+        "pct", "consumer_electrics_product_revenue_year_over_year", transform=_parse_number,
+    ),
+    PatternRule(
+        "air_conditioner_product_gross_margin_pct", "operations",
+        re.compile(r"^空调\s+[\d,]+\.\d+\s+[\d,]+\.\d+\s+([\d.]+)%\s+-?[\d.]+%", re.MULTILINE),
+        "pct", "air_conditioner_product_gross_margin", transform=_parse_number,
+    ),
+    PatternRule(
+        "air_conditioner_product_revenue_yoy_pct", "operations",
+        re.compile(r"^空调\s+[\d,]+\.\d+\s+[\d,]+\.\d+\s+[\d.]+%\s+(-?[\d.]+)%", re.MULTILINE),
+        "pct", "air_conditioner_product_revenue_year_over_year", transform=_parse_number,
+    ),
+    PatternRule(
+        "domestic_main_business_revenue_yoy_pct", "operations",
+        re.compile(r"^内销-主营业\s*务\s+[\d,]+\.\d+\s+[\d,]+\.\d+\s+[\d.]+%\s+(-?[\d.]+)%", re.MULTILINE),
+        "pct", "domestic_main_business_revenue_year_over_year", transform=_parse_number,
+    ),
+    PatternRule(
+        "residential_ac_online_retail_share_pct", "operations",
+        # This is a named third-party market-data observation reproduced in an
+        # audited annual report.  It is a channel signal, not a proxy for total
+        # market share or a reason to infer a whole-company margin.
+        re.compile(r"家\s*用\s*空\s*调线上(?:市场)?零售额(?:市场)?(?:份额|占比)为\s*([\d.]+)%"),
+        "pct", "company_position_in_named_channel_market_data", transform=_parse_number,
     ),
     PatternRule(
         "goodwill_impairment_rmb_m", "capital_allocation",
@@ -250,14 +506,24 @@ def _document_text(output: Path, document: dict[str, Any]) -> tuple[Path | None,
 
 def _verified_observations(output: Path, document: dict[str, Any]) -> list[dict[str, Any]]:
     path, text = _document_text(output, document)
-    if path is None or not text or document.get("authority") == "derived":
+    if path is None or not text or document.get("authority") not in OFFICIAL_DOCUMENT_AUTHORITIES:
         return []
     observations: list[dict[str, Any]] = []
     seen_fact: set[str] = set()
+    blocks = _page_blocks(text)
     for rule in _PATTERN_RULES:
-        for block in _page_blocks(text):
+        for block_index, block in enumerate(blocks):
             if int(block["page"]) < rule.min_page:
                 continue
+            if rule.required_page_pattern and not rule.required_page_pattern.search(str(block["text"])):
+                continue
+            if rule.nearby_page_pattern:
+                previous_page_text = str(blocks[block_index - 1]["text"]) if block_index else ""
+                if (
+                    not rule.nearby_page_pattern.search(str(block["text"]))
+                    and not rule.nearby_page_pattern.search(previous_page_text)
+                ):
+                    continue
             match = rule.pattern.search(str(block["text"]))
             if not match:
                 continue
@@ -304,7 +570,7 @@ def _company_only_balance_sheet_observations(output: Path, document: dict[str, A
     consolidated statement.
     """
     path, text = _document_text(output, document)
-    if path is None or not text or document.get("authority") == "derived":
+    if path is None or not text or document.get("authority") not in OFFICIAL_DOCUMENT_AUTHORITIES:
         return []
     rules = (
         ("company_only_cash_and_cash_equivalents_rmb_m", re.compile(
@@ -472,8 +738,8 @@ def validate_fact_observations(
             quote = str(item.get("raw_text") or "")
             if not quote or not locator.get("page"):
                 invalid.append(f"{observation_id or prefix}:verified_locator_missing")
-            if doc.get("authority") == "derived":
-                invalid.append(f"{observation_id or prefix}:derived_source_cannot_verify")
+            if doc.get("authority") not in OFFICIAL_DOCUMENT_AUTHORITIES:
+                invalid.append(f"{observation_id or prefix}:non_official_source_cannot_verify")
             if output is not None and quote:
                 relative = doc.get("derived_text_path")
                 if not relative:
@@ -573,6 +839,8 @@ def verify_fact_from_quote(
     document = documents.get(str(doc_id))
     if not document:
         return {"verified": False, "error": "unknown_doc_id"}
+    if document.get("authority") not in OFFICIAL_DOCUMENT_AUTHORITIES:
+        return {"verified": False, "error": "non_official_source_cannot_verify"}
     _, text = _document_text(output, document)
     block = next((item for item in _page_blocks(text) if item["page"] == int(page)), None)
     exact_quote = str(quote or "").strip()
