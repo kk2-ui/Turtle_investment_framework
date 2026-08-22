@@ -1,6 +1,6 @@
 # R-78｜Ford 2006 Way Forward：制造业退出—产品—现金的多层时钟教学迭代卡
 
-状态：`SCOPED_EXPERIMENT / RESULT_KNOWN_REVIEW / OUTCOME_SELECTED_TRAINING_ONLY / NO_SELECTION_SCORE`。
+状态：`OUTCOME_RESOLVED_WITH_BOUNDARY_LIMITS / RESULT_KNOWN_TEACHING_ONLY / NO_PRIMARY / NO_SELECTION_SCORE / INDEPENDENT_REVIEW_PENDING`。
 
 ## 方法假设
 
@@ -11,7 +11,7 @@
 - **本轮训练的判断能力：** `问题界定 / 机制辨别 / 测量辨别 / 迁移`。
 - **最高验证等级：** `L2 单箭头诊断性`；不声称 L3 主路径选择、管理层能力、资本回报、L4 跨公司一般性或 L5 相对表现。
 - **JMEPLAN：** `NOT_APPLICABLE`。
-- **实验完成后应新增的区分：** “关闭能力是否改变了北美汽车经济性”必须依次分成 D1 实施、D2 客户／竞争、D3 单位经济、D4 现金来源与 D5 资本回收；前层成立不能填补后层。
+- **已实现的区分：** “关闭能力是否改变了北美汽车经济性”被分成 D1 实施、D2 客户／竞争、D3 单位经济、D4 现金来源与 D5 资本回收。结果只确认一部分 D1；D2 因零售／fleet 渠道混合而不可诊断，D3 受产品组合、价格、成本与宏观冲击共同影响，D4 缺北美责任单元现金，D5 仍未知。详见 [02 outcome resolution](02_outcome_resolution.md)。
 - **预期避免的材料性错误：** 将已宣布的关厂、一次性减值、总公司现金、金融服务现金或日后利润当成北美制造退出的 owner-cash／资本回收。
 - **经济边界：** `正常盈利 / 现金转换 / 资本配置 / 永久损失`。
 - **不成立时应看到什么：** 若同一官方结果不能使 H-A/H-B 在 D2、D3、D4 给出不同区域，或 Ford Credit／海外业务与北美汽车边界无法拆开，本轮只保留 `MEASUREMENT_MISMATCH / NOT_DIAGNOSTIC`。
