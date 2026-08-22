@@ -1,0 +1,26 @@
+{
+  "selection_policy_id": "R58-MIDEA-LITTLE-SWAN-2008-PRE-OUTCOME-SCREEN-V1",
+  "selection_reason": "Screen one bounded 2008 acquisition/control decision using the complete official CNINFO inventory through the 2008 annual-report cutoff. The screen asks whether pre-outcome records contain a same-entity mechanism from control/action through product, unit-economics and cash observations; it does not select a management winner or read the 2009 result period.",
+  "source_research_rationales": [
+    {
+      "source_id": "CNINFO:000527:ANN:20080205:37182318",
+      "selection_reason": "Locate the disclosed invitation and pre-action decision context for the Little Swan stake.",
+      "research_question_ids": ["R58-Q1-DECISION-AND-ALTERNATIVE"]
+    },
+    {
+      "source_id": "CNINFO:000527:ANN:20080228:37608703",
+      "selection_reason": "Read the official asset-acquisition terms, consideration and stated operating perimeter before using any later performance data.",
+      "research_question_ids": ["R58-Q1-DECISION-AND-ALTERNATIVE", "R58-Q2-TRANSMISSION"]
+    },
+    {
+      "source_id": "CNINFO:000527:ANN:20080409:38601586",
+      "selection_reason": "Confirm whether the control transfer was implemented; this is an action receipt, not an economic result.",
+      "research_question_ids": ["R58-Q2-TRANSMISSION"]
+    },
+    {
+      "source_id": "CNINFO:000527:ANN:20090310:49988835",
+      "selection_reason": "Establish the post-transfer 2008 operating and financial state available at cutoff, including any entity-boundary or reporting limitations that would govern a 2009 outcome contract.",
+      "research_question_ids": ["R58-Q2-TRANSMISSION", "R58-Q3-METRIC-CONTRACT"]
+    }
+  ]
+}
