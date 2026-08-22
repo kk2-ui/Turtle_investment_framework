@@ -596,6 +596,28 @@ def test_legacy_live_forward_rows_are_backfilled_from_their_frozen_contracts(tmp
     assert conn.execute("SELECT COUNT(*) FROM judgment_feedback_claims").fetchone()[0] == 9
 
 
+def test_live_forward_registration_rehomes_identical_frozen_worktree_files(tmp_path: Path) -> None:
+    """A linked-worktree move may update paths, never the frozen content."""
+    source = REPO_ROOT / "docs" / "development" / "research" / "experiments" / "R-05_prospective_operating_feedback"
+    old = tmp_path / "old-worktree" / source.name
+    current = tmp_path / "main-worktree" / source.name
+    old.mkdir(parents=True)
+    current.mkdir(parents=True)
+    for directory in (old, current):
+        for name in ("06_forward_freeze.md", "08_outcome_acquisition_contract.json"):
+            shutil.copy2(source / name, directory / name)
+    conn = _conn(tmp_path)
+    old_contract = old / "08_outcome_acquisition_contract.json"
+    new_contract = current / "08_outcome_acquisition_contract.json"
+    jfc.register_live_forward_contract(conn, contract_path=old_contract, registered_at="2026-08-22T12:00:00+08:00")
+    result = jfc.register_live_forward_contract(conn, contract_path=new_contract, registered_at="2026-08-22T12:01:00+08:00")
+    assert all(row.get("worktree_rehomed") is True for row in result["registered"])
+    item = "FBI:R-05:SBUX:NA_TRANSACTION_DURABILITY:20260821:R05-S1:EARLY_MECHANISM"
+    claim = jfc.show(conn, item)["claim"]
+    assert claim["source_contract_ref"] == str(new_contract.resolve())
+    assert claim["frozen_artifact_ref"] == str((current / "06_forward_freeze.md").resolve())
+
+
 def test_acquisition_retry_keeps_a_new_successful_receipt(tmp_path: Path) -> None:
     """A transient package failure must not make attempt two reuse BLOCKED JSON."""
     contract_path = REPO_ROOT / "docs" / "development" / "research" / "experiments" / "R-05_prospective_operating_feedback" / "08_outcome_acquisition_contract.json"
