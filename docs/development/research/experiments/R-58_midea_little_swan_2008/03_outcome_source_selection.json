@@ -1,0 +1,17 @@
+{
+  "selection_policy_id": "R58-LITTLE-SWAN-FY2009-OUTCOME-RESOLUTION-V1",
+  "selection_reason": "Resolve only the pre-registered D1–D5 clocks in the R-58 freeze. This selection permits exactly one statutory target-company result source and prohibits later years, Midea group results, market data, and all price or return materials.",
+  "source_research_rationales": [
+    {
+      "source_id": "CNINFO:000418:ANN:20100308:57658186",
+      "selection_reason": "The sole outcome source registered before results were read: Little Swan's FY2009 annual report. Extract only action/implementation, same-product washing-machine revenue-cost-margin, same-entity operating-cash and working-capital reconciliation, and capital-absorption boundary observations defined by R58 D1–D5.",
+      "research_question_ids": [
+        "R58-D1-IMPLEMENTATION",
+        "R58-D2-CUSTOMER-COMPETITION",
+        "R58-D3-UNIT-ECONOMICS",
+        "R58-D4-CASH-CONVERSION",
+        "R58-D5-CAPITAL-ABSORPTION"
+      ]
+    }
+  ]
+}
