@@ -154,8 +154,23 @@ def _complete_company_judgment_snapshot(tmp_path: Path, code: str = "600340.SH")
     bridge = _valid_bridge_payload(predecessor, analysis_purpose="COMPANY_JUDGMENT_ONLY")
     bridge["report_id"] = code
     bridge["as_of"] = "2026-08-02"
+    judgment_by_driver = {
+        "FDBDRV:demand": "fj.retention",
+        "FDBDRV:margin": "fj.retention",
+        "FDBDRV:cash": "fj.owner_cash",
+        "FDBDRV:allocation": "fj.value",
+    }
     for driver in bridge["drivers"]:
         driver.pop("model_bindings", None)
+        driver["monitoring_contract"]["forward_judgment_ids"] = [
+            judgment_by_driver[driver["driver_id"]]
+        ]
+    for event in bridge["allocation_events"]:
+        judgment_id = "fj.value"
+        realization = event["realization_contract"]
+        realization["forward_judgment_ids"] = [judgment_id]
+        realization["early_signal"]["forward_judgment_ids"] = [judgment_id]
+        realization["terminal_outcome"]["forward_judgment_ids"] = [judgment_id]
     initialize_financial_driver_bridge_policy(predecessor, run_id="cjo-run", enforced=True)
     bridge_result = persist_financial_driver_bridge(predecessor, bridge)
     assert bridge_result["validation"]["state"] == "REVIEWABLE"
