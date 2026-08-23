@@ -35,7 +35,13 @@ LEARNING_STATES = {"NONE", "DIAGNOSIS_PENDING", "NOTE_READY", "APPLICATION_PENDI
 SETTLEMENT_POLICIES = {"INITIAL_DISCLOSURE", "LATEST_OFFICIAL_AS_OF_EVALUATION"}
 EPISODE_CLASSES = {"JUDGMENT_SELECTION_EPISODE", "MECHANISM_SIGNAL_PROBE", "PIPELINE_REHEARSAL"}
 SELECTION_STATUSES = {"SELECTION_ADMITTED", "NO_PRIMARY"}
-LEARNING_ELIGIBILITIES = {"SELECTION_METHOD_ELIGIBLE", "MECHANISM_SETTLEMENT_ONLY"}
+LEARNING_ELIGIBILITIES = {
+    "SELECTION_METHOD_ELIGIBLE", "MECHANISM_SETTLEMENT_ONLY", "EVALUATION_ONLY", "TEACHING_ONLY",
+}
+PROGRAM_LANES = {
+    "UNASSIGNED", "HISTORICAL_TRAINING", "HISTORICAL_HOLDOUT", "HISTORICAL_TEACHING", "LIVE_SENTINEL",
+}
+OUTCOME_ACCESS_STATES = {"UNSPECIFIED", "PIT_OUTCOME_SEALED", "OUTCOME_EXPOSED", "NOT_YET_RELEASED"}
 CANDIDATE_CONDITION_STATUSES = {"PENDING"}
 CANDIDATE_CONDITION_NEXT_STEPS = {"ENUMERATE_OFFICIAL_CONDITION_SOURCE"}
 CANDIDATE_CONDITION_SOURCE_KINDS = {"CNINFO_ORDINARY_ANNOUNCEMENT"}
@@ -253,6 +259,9 @@ def initialize(conn: sqlite3.Connection) -> None:
           episode_class TEXT NOT NULL DEFAULT 'PIPELINE_REHEARSAL',
           selection_status TEXT NOT NULL DEFAULT 'NO_PRIMARY',
           learning_eligibility TEXT NOT NULL DEFAULT 'MECHANISM_SETTLEMENT_ONLY',
+          program_lane TEXT NOT NULL DEFAULT 'UNASSIGNED',
+          outcome_access TEXT NOT NULL DEFAULT 'UNSPECIFIED',
+          training_program_ref TEXT NOT NULL DEFAULT '',
           registered_at TEXT NOT NULL,
           UNIQUE (episode_id, claim_id, stage_id)
         );
@@ -300,6 +309,9 @@ def initialize(conn: sqlite3.Connection) -> None:
         ("episode_class", "TEXT NOT NULL DEFAULT 'PIPELINE_REHEARSAL'"),
         ("selection_status", "TEXT NOT NULL DEFAULT 'NO_PRIMARY'"),
         ("learning_eligibility", "TEXT NOT NULL DEFAULT 'MECHANISM_SETTLEMENT_ONLY'"),
+        ("program_lane", "TEXT NOT NULL DEFAULT 'UNASSIGNED'"),
+        ("outcome_access", "TEXT NOT NULL DEFAULT 'UNSPECIFIED'"),
+        ("training_program_ref", "TEXT NOT NULL DEFAULT ''"),
     ):
         if name not in existing_columns:
             conn.execute(f"ALTER TABLE judgment_feedback_claims ADD COLUMN {name} {definition}")
@@ -330,22 +342,62 @@ def _claim_fields(item: dict[str, Any], *, manifest: dict[str, Any], registered_
     learning_eligibility = str(
         item.get("learning_eligibility") or manifest.get("learning_eligibility") or "MECHANISM_SETTLEMENT_ONLY"
     ).upper()
+    program_lane = str(item.get("program_lane") or manifest.get("program_lane") or "UNASSIGNED").upper()
+    outcome_access = str(item.get("outcome_access") or manifest.get("outcome_access") or "UNSPECIFIED").upper()
+    training_program_ref = str(item.get("training_program_ref") or manifest.get("training_program_ref") or "").strip()
     if episode_class not in EPISODE_CLASSES:
         raise ControlPlaneError("episode_class_invalid", f"unsupported episode_class: {episode_class}")
     if selection_status not in SELECTION_STATUSES:
         raise ControlPlaneError("selection_status_invalid", f"unsupported selection_status: {selection_status}")
     if learning_eligibility not in LEARNING_ELIGIBILITIES:
         raise ControlPlaneError("learning_eligibility_invalid", f"unsupported learning_eligibility: {learning_eligibility}")
-    if selection_status == "SELECTION_ADMITTED":
-        if episode_class != "JUDGMENT_SELECTION_EPISODE" or learning_eligibility != "SELECTION_METHOD_ELIGIBLE":
+    if program_lane not in PROGRAM_LANES:
+        raise ControlPlaneError("program_lane_invalid", f"unsupported program_lane: {program_lane}")
+    if outcome_access not in OUTCOME_ACCESS_STATES:
+        raise ControlPlaneError("outcome_access_invalid", f"unsupported outcome_access: {outcome_access}")
+    if selection_status == "SELECTION_ADMITTED" and episode_class != "JUDGMENT_SELECTION_EPISODE":
+        raise ControlPlaneError(
+            "selection_episode_metadata_inconsistent",
+            "SELECTION_ADMITTED requires JUDGMENT_SELECTION_EPISODE",
+        )
+    if program_lane == "HISTORICAL_TRAINING":
+        if outcome_access != "PIT_OUTCOME_SEALED" or learning_eligibility not in {
+            "SELECTION_METHOD_ELIGIBLE", "MECHANISM_SETTLEMENT_ONLY",
+        }:
             raise ControlPlaneError(
-                "selection_episode_metadata_inconsistent",
-                "SELECTION_ADMITTED requires JUDGMENT_SELECTION_EPISODE and SELECTION_METHOD_ELIGIBLE",
+                "historical_training_identity_inconsistent",
+                "HISTORICAL_TRAINING requires sealed PIT outcomes and training-capable eligibility",
             )
-    elif learning_eligibility != "MECHANISM_SETTLEMENT_ONLY":
+        _require_artifact(training_program_ref, field="training_program_ref")
+    elif program_lane == "HISTORICAL_HOLDOUT":
+        if outcome_access != "PIT_OUTCOME_SEALED" or learning_eligibility != "EVALUATION_ONLY":
+            raise ControlPlaneError(
+                "historical_holdout_identity_inconsistent",
+                "HISTORICAL_HOLDOUT requires sealed PIT outcomes and EVALUATION_ONLY",
+            )
+        _require_artifact(training_program_ref, field="training_program_ref")
+    elif program_lane == "HISTORICAL_TEACHING":
+        if outcome_access != "OUTCOME_EXPOSED" or learning_eligibility != "TEACHING_ONLY" or selection_status != "NO_PRIMARY":
+            raise ControlPlaneError(
+                "historical_teaching_identity_inconsistent",
+                "HISTORICAL_TEACHING requires exposed outcomes, NO_PRIMARY and TEACHING_ONLY",
+            )
+        _require_artifact(training_program_ref, field="training_program_ref")
+    elif program_lane == "LIVE_SENTINEL":
+        if outcome_access != "NOT_YET_RELEASED":
+            raise ControlPlaneError("live_sentinel_outcome_access_invalid", "LIVE_SENTINEL requires NOT_YET_RELEASED")
+        expected = "SELECTION_METHOD_ELIGIBLE" if selection_status == "SELECTION_ADMITTED" else "MECHANISM_SETTLEMENT_ONLY"
+        if learning_eligibility != expected:
+            raise ControlPlaneError("live_sentinel_learning_identity_invalid", f"LIVE_SENTINEL requires {expected}")
+    elif selection_status == "SELECTION_ADMITTED" and learning_eligibility != "SELECTION_METHOD_ELIGIBLE":
+        raise ControlPlaneError(
+            "selection_episode_metadata_inconsistent",
+            "unassigned SELECTION_ADMITTED episodes require SELECTION_METHOD_ELIGIBLE",
+        )
+    elif selection_status == "NO_PRIMARY" and learning_eligibility != "MECHANISM_SETTLEMENT_ONLY":
         raise ControlPlaneError(
             "no_primary_learning_not_permitted",
-            "NO_PRIMARY episodes may settle mechanisms but cannot enter selection or method learning",
+            "unassigned NO_PRIMARY episodes may settle mechanisms but cannot enter method learning",
         )
     return {
         "feedback_item_id": _feedback_item_id(episode_id, claim_id, stage_id),
@@ -365,6 +417,9 @@ def _claim_fields(item: dict[str, Any], *, manifest: dict[str, Any], registered_
         "episode_class": episode_class,
         "selection_status": selection_status,
         "learning_eligibility": learning_eligibility,
+        "program_lane": program_lane,
+        "outcome_access": outcome_access,
+        "training_program_ref": training_program_ref,
         "registered_at": registered_at,
     }
 
@@ -494,6 +549,8 @@ def live_forward_registration_manifest(
             "episode_class": episode_class,
             "selection_status": selection_status,
             "learning_eligibility": learning_eligibility,
+            "program_lane": "LIVE_SENTINEL",
+            "outcome_access": "NOT_YET_RELEASED",
         })
     return {
         "schema_version": REGISTRATION_SCHEMA_VERSION,
@@ -503,6 +560,8 @@ def live_forward_registration_manifest(
         "episode_class": episode_class,
         "selection_status": selection_status,
         "learning_eligibility": learning_eligibility,
+        "program_lane": "LIVE_SENTINEL",
+        "outcome_access": "NOT_YET_RELEASED",
         "feedback_items": feedback_items,
     }
 
@@ -750,19 +809,35 @@ def register_manifest(conn: sqlite3.Connection, manifest: dict[str, Any], *, reg
                         )
                         results.append({"feedback_item_id": row["feedback_item_id"], "registered": False, "idempotent": True, "worktree_rehomed": True})
                         continue
-                    identity_columns = {"episode_class", "selection_status", "learning_eligibility"}
+                    identity_columns = {
+                        "episode_class", "selection_status", "learning_eligibility",
+                        "program_lane", "outcome_access", "training_program_ref",
+                    }
                     immutable_existing = {key: value for key, value in comparable.items() if key not in identity_columns}
                     immutable_intended = {key: value for key, value in intended.items() if key not in identity_columns}
-                    existing_identity = tuple(comparable[key] for key in ("episode_class", "selection_status", "learning_eligibility"))
-                    intended_identity = tuple(intended[key] for key in ("episode_class", "selection_status", "learning_eligibility"))
+                    core_fields = ("episode_class", "selection_status", "learning_eligibility")
+                    program_fields = ("program_lane", "outcome_access", "training_program_ref")
+                    existing_identity = tuple(comparable[key] for key in core_fields)
+                    intended_identity = tuple(intended[key] for key in core_fields)
+                    existing_program_identity = tuple(comparable[key] for key in program_fields)
+                    intended_program_identity = tuple(intended[key] for key in program_fields)
                     frozen_identity = _identity_from_frozen_contract(str(existing["source_contract_ref"]))
                     legacy_default = ("PIPELINE_REHEARSAL", "NO_PRIMARY", "MECHANISM_SETTLEMENT_ONLY")
-                    if immutable_existing == immutable_intended and existing_identity == legacy_default and frozen_identity == intended_identity:
+                    legacy_program_default = ("UNASSIGNED", "UNSPECIFIED", "")
+                    core_upgrade_allowed = existing_identity == intended_identity or (
+                        existing_identity == legacy_default and frozen_identity == intended_identity
+                    )
+                    program_upgrade_allowed = (
+                        existing_program_identity == intended_program_identity
+                        or existing_program_identity == legacy_program_default
+                    )
+                    if immutable_existing == immutable_intended and core_upgrade_allowed and program_upgrade_allowed:
                         conn.execute(
                             """UPDATE judgment_feedback_claims
-                               SET episode_class = ?, selection_status = ?, learning_eligibility = ?
+                               SET episode_class = ?, selection_status = ?, learning_eligibility = ?,
+                                   program_lane = ?, outcome_access = ?, training_program_ref = ?
                                WHERE feedback_item_id = ?""",
-                            (*intended_identity, row["feedback_item_id"]),
+                            (*intended_identity, *intended_program_identity, row["feedback_item_id"]),
                         )
                         results.append({"feedback_item_id": row["feedback_item_id"], "registered": False, "idempotent": True, "legacy_identity_upgraded": True})
                         continue
@@ -965,7 +1040,7 @@ def _validate_transition(conn: sqlite3.Connection, claim: dict[str, Any], events
         _validate_diagnosis(payload)
     if event_type == "LEARNING_NOTE_READY":
         if claim["learning_eligibility"] != "SELECTION_METHOD_ELIGIBLE":
-            raise ControlPlaneError("learning_not_permitted_for_episode", "mechanism-only episodes cannot create a method learning note")
+            raise ControlPlaneError("learning_not_permitted_for_episode", "mechanism-only, evaluation-only or teaching-only episodes cannot create a method learning note")
         if _event_exists(events, "OUTCOME_EXPOSURE_BREACH"):
             raise ControlPlaneError("learning_blocked_by_exposure_breach", "outcome exposure breach blocks learning")
         diagnosis = _last_effective_no_later_than(events, {"DIAGNOSIS_ACCEPTED"}, effective_at)
@@ -980,7 +1055,7 @@ def _validate_transition(conn: sqlite3.Connection, claim: dict[str, Any], events
         _require_artifact(_required_text(payload, "learning_note_ref"), field="learning_note_ref")
     if event_type == "LEARNING_APPLIED":
         if claim["learning_eligibility"] != "SELECTION_METHOD_ELIGIBLE":
-            raise ControlPlaneError("learning_not_permitted_for_episode", "mechanism-only episodes cannot apply selection or method learning")
+            raise ControlPlaneError("learning_not_permitted_for_episode", "mechanism-only, evaluation-only or teaching-only episodes cannot apply method learning")
         if _event_exists(events, "OUTCOME_EXPOSURE_BREACH"):
             raise ControlPlaneError("learning_blocked_by_exposure_breach", "outcome exposure breach blocks learning")
         note = _last_effective_no_later_than(events, {"LEARNING_NOTE_READY"}, effective_at)
@@ -993,7 +1068,7 @@ def _validate_transition(conn: sqlite3.Connection, claim: dict[str, Any], events
         _validate_learning_application(claim, payload, effective_at=effective_at)
     if event_type == "REPLICATION_ACCEPTED":
         if claim["learning_eligibility"] != "SELECTION_METHOD_ELIGIBLE":
-            raise ControlPlaneError("learning_not_permitted_for_episode", "mechanism-only episodes cannot close a method replication")
+            raise ControlPlaneError("learning_not_permitted_for_episode", "mechanism-only, evaluation-only or teaching-only episodes cannot close a method replication")
         application = _last_effective_no_later_than(events, {"LEARNING_APPLIED"}, effective_at)
         if not application or payload.get("learning_application_event_id") != application["event_id"]:
             raise ControlPlaneError("learning_application_required", "REPLICATION_ACCEPTED requires a learning application")
@@ -1220,7 +1295,7 @@ def _derived_states(claim: dict[str, Any], events: list[dict[str, Any]], *, as_o
 def _priority(states: dict[str, str], claim: dict[str, Any], *, as_of: datetime, due_soon_days: int) -> str:
     if states["time_state"] == "CLOSED":
         return "DONE"
-    if claim["learning_eligibility"] == "MECHANISM_SETTLEMENT_ONLY" and states["settlement_state"] != "UNSETTLED":
+    if claim["learning_eligibility"] != "SELECTION_METHOD_ELIGIBLE" and states["settlement_state"] != "UNSETTLED":
         return "DONE"
     if states["time_state"] == "OVERDUE" and states["evidence_state"] != "EXTRACTED":
         return "P0"
@@ -1258,6 +1333,9 @@ def reconcile(conn: sqlite3.Connection, *, as_of: str, due_soon_days: int = 7) -
             "episode_class": claim["episode_class"],
             "selection_status": claim["selection_status"],
             "learning_eligibility": claim["learning_eligibility"],
+            "program_lane": claim["program_lane"],
+            "outcome_access": claim["outcome_access"],
+            "training_program_ref": claim["training_program_ref"],
             "eligible_at": claim["eligible_at"],
             "overdue_at": claim["overdue_at"],
             "priority": _priority(states, claim, as_of=as_of_dt, due_soon_days=due_soon_days),

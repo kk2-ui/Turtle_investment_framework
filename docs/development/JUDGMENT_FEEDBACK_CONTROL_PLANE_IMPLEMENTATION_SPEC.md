@@ -42,6 +42,8 @@ Turtle 已具备中心路径、前瞻判断、结果采集、机械结算、错�
 
 `PIPELINE_REHEARSAL` 是本控制面数据库中“用合成或回放工件检验事件编排”的实现身份，不是所有 archive exercise 的研究资格标签。研究层的 `HISTORICAL_SELF_REPLAY`、`ARCHIVED_EX_ANTE_EXTERNAL`、`RESULT_KNOWN_TEACHING` 与 `HOLDOUT` 分工见[判断力验证与回测协议](research/TURTLE_JUDGMENT_VALIDATION_PROTOCOL.md#5-历史回放与真实前瞻的关系)；本模块只在需要持久化登记/事件时消费其明确边界，不用 `PIPELINE_REHEARSAL` 降级它们的训练价值。
 
+控制面 claim 现额外保存 `program_lane / outcome_access / training_program_ref`，与原 `episode_class / selection_status / learning_eligibility` 正交。历史开发训练只能是 `PIT_OUTCOME_SEALED`，历史留出只能是 `EVALUATION_ONLY`，结果已知教学只能是 `TEACHING_ONLY`，真实哨兵只能是 `NOT_YET_RELEASED`；前三类需要绑定已验证的训练计划。这样 `SELECTION_ADMITTED` 不再被误作“必然是真实最新披露”，也不会让 holdout 或教学案例绕入 method learning。
+
 只有未见结果的真实 `JUDGMENT_SELECTION_EPISODE` 完成未来结算，形成诊断并改变下一家不同公司的冻结卡，才开始形成**真实部署环境的外部有效性证据**。它不阻断已合格 archive cohort 的训练或历史留出结算。
 
 ## 3. 与当前 5 项修复的关系
@@ -697,6 +699,6 @@ PIT writer 对 handoff 的消费不是提示词约定。每次 prerequisite refr
 
 读者正文同时阻断 `MECHANISM_READY / NOT_EVIDENCED / LEARNING_APPLIED / JAX / FJ / RHP / FDB` 等控制面 ID/status 及明显英文 gate/ledger 面板。内部对象必须转换为自然语言的经济判断、证据边界和可证伪条件，技术附录仍可保留审计身份。
 
-截至 2026-08-23，上述工程通道已经接入合同包、普通 writer prompt、PIT allowlist 和 CJO prerequisite refresh。它没有启动真实昂贵报告运行，也没有改变能力状态：当前格力仍为 `PRE_FREEZE / NO_PRIMARY / NOT_FROZEN`；没有真实 V1/V2 配对黄金报告、真实未来经营结果、`MECHANISM_READY` 实例或 L1–L5 优势结论。下一项产品验收仍是一个真实公司在合法 cutoff 下完成 CJO 冻结、同 cutoff 投资增强、黄金报告独立审阅，并在未来按原合同结算后改变下一家不同公司的冻结字段。
+截至 2026-08-23，上述工程通道已经接入合同包、普通 writer prompt、PIT allowlist 和 CJO prerequisite refresh。历史优先训练控制层也已实现，第一版 program contract 已准备但未向生产数据库宣称注册；配置中的 R-62 是开发回放，R-61 是预留留出，R-56/R-58 仅为结果已知教学。当前格力仍为 `PRE_FREEZE / NO_PRIMARY / NOT_FROZEN`；没有真实 V1/V2 配对黄金报告、历史留出泛化结论、真实未来经营结算、`MECHANISM_READY` 实例或 L1–L5 优势结论。下一项训练验收是 R-62 历史开发回放形成受审 learning application，冻结方法版本后再揭盲 R-61；真实公司未来结算属于后续部署校准，不再阻断该训练链。
 
-当前实现导航：派生 read model 与正式 learning admission 在 `scripts/judgment_generation_handoff.py`、`scripts/judgment_learning.py`；追加事件快照与 cutoff replay 在 `scripts/judgment_feedback_control.py`；普通生成入口在 `scripts/turtle_agent/tools/read_tools.py` 和 `scripts/turtle_agent/agent_loop.py`；PIT generation receipt 在 `scripts/turtle_agent/tools/pit_production_write_tools.py`；CJO predecessor 建立与 completion 复核在 `scripts/turtle_agent/run.py`。结构契约为 `schemas/judgment_generation_handoff.schema.json`、`schemas/judgment_learning_admission.schema.json`、`schemas/judgment_learning_note.schema.json`。这些位置是执行入口，本文和路线图只解释职责与状态，不能替代运行时验证。
+当前实现导航：四通道计划、抽样边界和状态上卷在 `scripts/judgment_training_program.py`，契约为 `schemas/judgment_training_program.schema.json` 与 `config/judgment_training_program_v1.json`；派生 read model 与正式 learning admission 在 `scripts/judgment_generation_handoff.py`、`scripts/judgment_learning.py`；追加事件快照与 cutoff replay 在 `scripts/judgment_feedback_control.py`；普通生成入口在 `scripts/turtle_agent/tools/read_tools.py` 和 `scripts/turtle_agent/agent_loop.py`；PIT generation receipt 在 `scripts/turtle_agent/tools/pit_production_write_tools.py`；CJO predecessor 建立与 completion 复核在 `scripts/turtle_agent/run.py`。这些位置是执行入口，本文和路线图只解释职责与状态，不能替代运行时验证。
