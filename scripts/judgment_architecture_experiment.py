@@ -135,7 +135,7 @@ def _validate_outcome_contract(
 ) -> datetime | None:
     allowed = {
         "outcome_target_id", "source_contract_ref", "measurement_contract_ref",
-        "outcome_not_before", "simple_baseline",
+        "outcome_observation_identity", "outcome_not_before", "simple_baseline",
     }
     if not isinstance(contract, dict):
         incomplete.append(prefix + ":outcome_contract_missing")
@@ -144,24 +144,40 @@ def _validate_outcome_contract(
         prefix + ":outcome_contract:unsupported_field:" + field
         for field in _unsupported_fields(contract, allowed)
     )
-    for field in allowed - {"simple_baseline"}:
+    for field in allowed - {"simple_baseline", "outcome_observation_identity"}:
         if _missing_text(contract.get(field)):
             incomplete.append(prefix + ":outcome_contract:" + field + "_missing")
     outcome_not_before = _instant(contract.get("outcome_not_before"))
     if outcome_not_before is None:
         invalid.append(prefix + ":outcome_contract:outcome_not_before_invalid")
+    observation_identity = contract.get("outcome_observation_identity")
+    if not isinstance(observation_identity, dict):
+        incomplete.append(prefix + ":outcome_contract:outcome_observation_identity_missing")
+    else:
+        allowed_identity = {"observation_id", "metric", "unit"}
+        invalid.extend(
+            prefix + ":outcome_contract:outcome_observation_identity:unsupported_field:" + field
+            for field in _unsupported_fields(observation_identity, allowed_identity)
+        )
+        for field in allowed_identity:
+            if _missing_text(observation_identity.get(field)):
+                incomplete.append(
+                    prefix + ":outcome_contract:outcome_observation_identity:" + field + "_missing"
+                )
     baseline = contract.get("simple_baseline")
     if not isinstance(baseline, dict):
         incomplete.append(prefix + ":outcome_contract:simple_baseline_missing")
     else:
-        allowed_baseline = {"baseline_id", "method", "prediction_ref"}
+        allowed_baseline = {"baseline_id", "method", "prediction_ref", "prediction"}
         invalid.extend(
             prefix + ":outcome_contract:simple_baseline:unsupported_field:" + field
             for field in _unsupported_fields(baseline, allowed_baseline)
         )
-        for field in allowed_baseline:
+        for field in allowed_baseline - {"prediction"}:
             if _missing_text(baseline.get(field)):
                 incomplete.append(prefix + ":outcome_contract:simple_baseline:" + field + "_missing")
+        if not isinstance(baseline.get("prediction"), dict):
+            incomplete.append(prefix + ":outcome_contract:simple_baseline:prediction_invalid")
     return outcome_not_before
 
 
@@ -454,6 +470,12 @@ def validate_architecture_experiment_plan(plan: Any) -> dict[str, Any]:
                 f"{report_pair_id}:count={count};required=3-5"
             )
 
+    unseen_company_clusters = holdout_coverage["UNSEEN_COMPANY"]["company_clusters"]
+    unseen_time_clusters = holdout_coverage["UNSEEN_TIME"]["company_clusters"]
+    overlap = sorted(unseen_company_clusters.intersection(unseen_time_clusters))
+    if overlap:
+        invalid.append("dual_holdout_company_clusters_must_be_disjoint:" + ",".join(overlap))
+
     invalid = list(dict.fromkeys(invalid))
     incomplete = list(dict.fromkeys(incomplete))
     return {
@@ -734,8 +756,19 @@ def _arm_outcome(
     baseline = card.get("baseline") if isinstance(card.get("baseline"), dict) else {}
     if baseline.get("baseline_id") != expected_baseline_id:
         raise ArchitectureExperimentError("baseline_id_mismatch:" + unit_id + ":" + arm_key)
+    expected_baseline = ((unit.get("outcome_contract") or {}).get("simple_baseline") or {})
+    if baseline.get("method") != expected_baseline.get("method"):
+        raise ArchitectureExperimentError("baseline_method_mismatch:" + unit_id + ":" + arm_key)
+    if baseline.get("prediction") != expected_baseline.get("prediction"):
+        raise ArchitectureExperimentError("baseline_prediction_mismatch:" + unit_id + ":" + arm_key)
     if observation is None:
         raise ArchitectureExperimentError("calculated_arm_missing_actual_observation:" + unit_id + ":" + arm_key)
+    expected_observation = ((unit.get("outcome_contract") or {}).get("outcome_observation_identity") or {})
+    for field in ("observation_id", "metric", "unit"):
+        if observation.get(field) != expected_observation.get(field):
+            raise ArchitectureExperimentError(
+                "outcome_observation_identity_mismatch:" + unit_id + ":" + arm_key + ":" + field
+            )
     return {
         "state": "SETTLED", "met": met, "settlement_id": feedback.get("settlement_id"),
         "increment_vs_baseline": increment, "observation": observation,

@@ -159,6 +159,7 @@
         "outcome_target_id",
         "source_contract_ref",
         "measurement_contract_ref",
+        "outcome_observation_identity",
         "outcome_not_before",
         "simple_baseline"
       ],
@@ -166,15 +167,26 @@
         "outcome_target_id": {"type": "string", "minLength": 1},
         "source_contract_ref": {"type": "string", "minLength": 1},
         "measurement_contract_ref": {"type": "string", "minLength": 1},
+        "outcome_observation_identity": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["observation_id", "metric", "unit"],
+          "properties": {
+            "observation_id": {"type": "string", "minLength": 1},
+            "metric": {"type": "string", "minLength": 1},
+            "unit": {"type": "string", "minLength": 1}
+          }
+        },
         "outcome_not_before": {"type": "string", "format": "date-time"},
         "simple_baseline": {
           "type": "object",
           "additionalProperties": false,
-          "required": ["baseline_id", "method", "prediction_ref"],
+          "required": ["baseline_id", "method", "prediction_ref", "prediction"],
           "properties": {
             "baseline_id": {"type": "string", "minLength": 1},
             "method": {"type": "string", "minLength": 1},
-            "prediction_ref": {"type": "string", "minLength": 1}
+            "prediction_ref": {"type": "string", "minLength": 1},
+            "prediction": {"type": "object", "minProperties": 1}
           }
         }
       }

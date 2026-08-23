@@ -50,11 +50,24 @@ def _unit(
             "outcome_target_id": "OUTCOME:" + suffix + ":" + judgment,
             "source_contract_ref": "contracts/official-filing-only.json",
             "measurement_contract_ref": "contracts/owner-cash.json",
+            "outcome_observation_identity": {
+                "observation_id": "OBS:JAXUNIT:" + suffix + ":" + judgment,
+                "metric": "owner_cash",
+                "unit": "CNYm",
+            },
             "outcome_not_before": "2027-03-31T00:00:00+00:00",
             "simple_baseline": {
                 "baseline_id": "BASELINE:" + suffix + ":" + judgment,
                 "method": "SAME_BASIS_CARRY_FORWARD",
                 "prediction_ref": "predictions/" + suffix + "/" + judgment + "-baseline.json",
+                "prediction": {
+                    "metric": "owner_cash",
+                    "operator": "AT_LEAST",
+                    "value": 90.0,
+                    "unit": "CNYm",
+                    "horizon": "FY2026",
+                    "resolution_due": "2027-03-31",
+                },
             },
         },
         "arms": {
@@ -124,7 +137,11 @@ def _feedback(unit: dict, arm_key: str, outcome: str, *, increment: str = "JUDGM
         "baseline": (
             {"status": "NOT_EVALUATED"}
             if pending
-            else {"baseline_id": unit["outcome_contract"]["simple_baseline"]["baseline_id"]}
+            else {
+                "baseline_id": unit["outcome_contract"]["simple_baseline"]["baseline_id"],
+                "method": unit["outcome_contract"]["simple_baseline"]["method"],
+                "prediction": unit["outcome_contract"]["simple_baseline"]["prediction"],
+            }
         ),
         "increment_vs_baseline": "NOT_EVALUATED" if pending else increment,
         "selection_learning": {
@@ -135,7 +152,7 @@ def _feedback(unit: dict, arm_key: str, outcome: str, *, increment: str = "JUDGM
             None
             if pending
             else {
-                "observation_id": "OBS:" + unit["paired_unit_id"],
+                "observation_id": unit["outcome_contract"]["outcome_observation_identity"]["observation_id"],
                 "metric": "owner_cash",
                 "value": 100.0,
                 "unit": "CNYm",
@@ -409,6 +426,54 @@ def test_aggregation_rejects_different_actual_observations_or_a_missing_arm() ->
 
     with pytest.raises(ArchitectureExperimentError, match="planned_feedback_card_missing"):
         aggregate_architecture_experiment(plan, feedbacks[:-1])
+
+
+def test_aggregation_rejects_a_shared_observation_that_is_not_the_frozen_outcome_target() -> None:
+    plan = _plan()
+    feedbacks = _all_feedbacks(plan, [("MET", "MET")] * 12)
+    for feedback in feedbacks[:2]:
+        feedback["cards"][0]["actual_observation"]["observation_id"] = "OBS:UNRELATED:OTHER_CLAIM"
+
+    with pytest.raises(ArchitectureExperimentError, match="outcome_observation_identity_mismatch"):
+        aggregate_architecture_experiment(plan, feedbacks)
+
+
+def test_aggregation_rejects_a_baseline_that_only_reuses_the_planned_id() -> None:
+    plan = _plan()
+    feedbacks = _all_feedbacks(plan, [("MET", "MET")] * 12)
+    feedbacks[0]["cards"][0]["baseline"]["method"] = "POST_HOC_BENCHMARK"
+
+    with pytest.raises(ArchitectureExperimentError, match="baseline_method_mismatch"):
+        aggregate_architecture_experiment(plan, feedbacks)
+
+
+def test_aggregation_rejects_a_baseline_prediction_that_only_reuses_the_planned_id() -> None:
+    plan = _plan()
+    feedbacks = _all_feedbacks(plan, [("MET", "MET")] * 12)
+    feedbacks[0]["cards"][0]["baseline"]["prediction"] = {
+        **feedbacks[0]["cards"][0]["baseline"]["prediction"], "value": 1.0,
+    }
+
+    with pytest.raises(ArchitectureExperimentError, match="baseline_prediction_mismatch"):
+        aggregate_architecture_experiment(plan, feedbacks)
+
+
+def test_plan_rejects_company_clusters_reused_across_both_holdout_axes() -> None:
+    plan = _plan()
+    for unit in plan["paired_units"]:
+        if unit["report_pair_id"] == "JAXREPORT:charlie":
+            unit["company_cluster_id"] = "CLUSTER:alpha"
+        elif unit["report_pair_id"] == "JAXREPORT:delta":
+            unit["company_cluster_id"] = "CLUSTER:bravo"
+    plan = prepare_architecture_experiment_plan(plan, preregistered_at="2026-08-18T08:00:00+00:00")
+
+    result = validate_architecture_experiment_plan(plan)
+
+    assert result["state"] == "INVALID"
+    assert (
+        "dual_holdout_company_clusters_must_be_disjoint:CLUSTER:alpha,CLUSTER:bravo"
+        in result["invalid_findings"]
+    )
 
 
 def test_plan_rejects_price_probability_or_a_single_score_field() -> None:
