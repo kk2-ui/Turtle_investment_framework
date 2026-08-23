@@ -648,8 +648,8 @@ schemas/judgment_architecture_experiment.schema.json
 3. 两臂使用不同 author agent 与不同 context，均声明在冻结前未读取另一臂；公司臂禁止行业/宏观机制引用，增强臂至少引用一项具名机制或宏观情景；
 4. 计划必须先预注册，两臂必须分别在结果窗口前冻结；冻结后删除配对单位会导致 plan fingerprint 失配；
 5. 报告质量只在 `BLIND_A / BLIND_B` 下审阅，提交后才允许揭盲；两份报告均须满足黄金标准，结论只允许 `MATERIAL_IMPROVEMENT / NO_MATERIAL_GAIN / WORSE`；
-6. 经营结果只消费现有 `judgment-feedback-card.v2`，要求两臂指向同一官方 observation 和来源；保留简单基线增量、`PENDING` 与 `NOT_COMPARABLE`；
-7. 聚合只保存六类成对结果计数、判断单位数量、独立公司簇和公司/时间留出覆盖，不生成胜率、概率、准确率或总分；
+6. 经营结果只消费现有 `judgment-feedback-card.v2`，要求两臂指向同一官方 observation 和来源，并逐一匹配预注册的 observation ID、metric、unit、简单基线方法和冻结预测；保留简单基线增量、`PENDING` 与 `NOT_COMPARABLE`；
+7. 聚合只保存六类成对结果计数、判断单位数量、独立公司簇和公司/时间留出覆盖，不生成胜率、概率、准确率或总分；未见公司与未见时间两个留出轴不得复用公司集团；
 8. `DUAL_HOLDOUT_COMPARISON_READY` 只表示未见公司和未见时间两轴达到预注册的独立样本门，可提交独立方法审阅；它不自动授予一般优势或生产升格。
 
 该模块同时收紧行业机制升格：`MECHANISM_READY` 除原有跨公司候选和独立审阅外，还必须有至少两个独立公司集团的已结算支持 episode，以及至少一个 `CONTRADICTS` 或 `BOUNDARY` episode；每项都须保存 outcome/review 指针并由非机制作者独立复核。`NOT_DIAGNOSTIC` 保留在证据账本，但不冒充支持或边界。
