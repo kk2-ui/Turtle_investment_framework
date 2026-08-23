@@ -1,0 +1,32 @@
+{
+  "selection_policy_id": "r95-guoci-zirconia-price-action-pre-read.v1",
+  "selection_reason": "在完整 CNINFO 普通公告清单于 2026-07-21T00:00:00+08:00 冻结后，只读取界定氧化锆粉体调价行动、受影响业务的行动前基线及其现金和资本边界所必需的三份截止日前官方披露；不读取截止日后的经营结果。",
+  "source_research_rationales": [
+    {
+      "source_id": "CNINFO:300285:ANN:20260421:1225126921",
+      "selection_reason": "确认氧化锆粉体所属业务、原材料成本暴露、客户或产品口径，以及行动前的年度经营、现金和资本配置披露边界。",
+      "research_question_ids": [
+        "R95-Q2-affected-business-baseline",
+        "R95-Q4-cash-and-capital-boundary"
+      ]
+    },
+    {
+      "source_id": "CNINFO:300285:ANN:20260428:1225202237",
+      "selection_reason": "确认行动前最近一期经营、现金和营运资本披露是否可与受影响业务同口径衔接；若不能，明确保留 UNKNOWN。",
+      "research_question_ids": [
+        "R95-Q2-affected-business-baseline",
+        "R95-Q3-unit-economics-bridge",
+        "R95-Q4-cash-and-capital-boundary"
+      ]
+    },
+    {
+      "source_id": "CNINFO:300285:ANN:20260720:1225431974",
+      "selection_reason": "读取氧化锆粉体调价的生效时间、幅度、适用范围和管理层归因，以区分可归责的价格行动与共同原材料冲击。",
+      "research_question_ids": [
+        "R95-Q1-action-and-effective-date",
+        "R95-Q2-affected-business-baseline",
+        "R95-Q3-unit-economics-bridge"
+      ]
+    }
+  ]
+}
