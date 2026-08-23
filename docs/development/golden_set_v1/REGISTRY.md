@@ -1,7 +1,8 @@
-# Golden Set v1 注册表（G2 后）
+# Golden Set v1 注册表（历史 G2 预览）
 
-> 集合状态：`G3_NOT_READY`；状态传播更新：2026-08-16
-> 当前阶段：`G2_CROSS_REPORT_ADJUDICATION_COMPLETE`  
+> 文档定位：`HISTORICAL_G2_PREVIEW / NON_AUTHORITATIVE_FOR_CURRENT_STAGE`
+> 当前阶段真源：[`GOALS.md`](../../../GOALS.md)，当前为 `G1_CANDIDATE_MATURATION / IN_PROGRESS`；`G2` 为 `PLANNED`。
+> 下列集合状态与候选记录截至：2026-08-16
 > 正式 Golden 成员：`0`
 
 | 代码 | 公司 | 案例责任 | 当前候选状态 | 主路线 | 主价格身份 | G3资格 |
