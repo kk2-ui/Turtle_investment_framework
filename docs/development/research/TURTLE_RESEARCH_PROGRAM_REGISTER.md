@@ -60,7 +60,7 @@
 
 格力目前状态：`PAUSED_AS_METHOD_TEST_BENCH`。除非出现可改变 R-01 至 R-07 任一方法裁决的新资料，或被选为明确的复验对照，否则不再向格力添加主动研究任务。
 
-研究准备目前状态：`HISTORICAL_TRAINING_ACTIVE / HOLDOUT_RESERVED / FORWARD_SENTINELS_DUE_OR_WAITING`。四通道权威结构见[历史优先训练架构](TURTLE_HISTORICAL_FIRST_JUDGMENT_TRAINING_ARCHITECTURE.md)，机器入口为 `config/judgment_training_program_v1.json`。R-54 的截止日前源包、五层时钟和 CJO/PIT 预检均已冻结，但其选择准入在结果前被撤回；它只提供真实前瞻机制信号，并在到期时按原合同执行。不得以“继续完善框架”为理由新增模板、validator 或平行 schema；但这不暂停已经符合既有准入的 archive exercise。历史训练与留出队列以[历史 PIT cohort register](HISTORICAL_PIT_TRAINING_COHORT_REGISTER.md)为人读入口：R-62 是当前开发回放，R-61 是预留留出，R-56/R-58 只作结果已知教学；先隔离 outcome，再冻结机制、反方、基线和 D1--D5，最后结算并将诊断应用于另一家公司。任何 live 等待均不得上卷为全局 blocked。
+研究准备目前状态：`HISTORICAL_TRAINING_ACTIVE / HOLDOUT_RESERVED / FORWARD_SENTINELS_DUE_OR_WAITING`。四通道权威结构见[历史优先训练架构](TURTLE_HISTORICAL_FIRST_JUDGMENT_TRAINING_ARCHITECTURE.md)，机器入口为 `config/judgment_training_program_v1.json`。R-54 的截止日前源包、五层时钟和 CJO/PIT 预检均已冻结，但其选择准入在结果前被撤回；它只提供真实前瞻机制信号，并在到期时按原合同执行。不得以“继续完善框架”为理由新增模板、validator 或平行 schema；但这不暂停已经符合既有准入的 archive exercise。历史训练与留出队列以[历史 PIT cohort register](HISTORICAL_PIT_TRAINING_COHORT_REGISTER.md)为人读入口：R-62 目前只是待准入开发回放，筛查页不构成冻结工件；R-61 是预留留出，R-56/R-58 只作结果已知教学。只有 R-62 或替代历史 replay 通过结构化 case、选择准入、结果合同和独立审阅后，才可隔离 outcome、冻结机制并结算，随后将受审诊断应用于另一家公司。任何 live 等待均不得上卷为全局 blocked。
 
 ## 2. 样本选择规则
 
@@ -113,4 +113,4 @@ R-XX_method_name/
 - 每个新研究工作都能从方法假设进入，并以方法裁决或保守的 `INSUFFICIENT_TEST` 退出；
 - 报告和投资研究不会抢在方法学习之前主导方向。
 
-任何新对象只在满足相应准入条件后启动。当前并行队列是：运行 register 中已隔离的 R-62 历史开发回放，完成受审 learning application 后冻结方法，再揭盲 R-61 严格历史留出；R-56/R-58/R-25/R-21/R-78 仅作结果已知边界教学；R-54/R-93/R-94 则只在各自到期时执行真实前瞻合同。R-54 不能生成选择学习；下一条真实中国选择 episode 仍须在结果前通过 R-07，而不是继续补充格力材料。梅花生物价格竞争已登记为 intake，须先锁定具体产品、动作、竞争者、cutoff 和可分离结果链，不能用“价格战”名称直接准入。
+任何新对象只在满足相应准入条件后启动。当前并行队列是：先完成 R-62 的准入复核；若它仍为 `NO_PRIMARY`，立即切换到另一条结果隔离、选择证据合格的历史 replay，完成受审 learning application 后冻结方法，再揭盲 R-61 严格历史留出；R-56/R-58/R-25/R-21/R-78 仅作结果已知边界教学；R-54/R-93/R-94 则只在各自到期时执行真实前瞻合同。R-54 不能生成选择学习；下一条真实中国选择 episode 仍须在结果前通过 R-07，而不是继续补充格力材料。梅花生物价格竞争已登记为 intake，须先锁定具体产品、动作、竞争者、cutoff 和可分离结果链，不能用“价格战”名称直接准入。

@@ -469,8 +469,8 @@ Phase 08 只有同时具备以下结果才能完成：
 
 当前执行分为训练主线与黄金候选线，互不以等待状态阻断：
 
-1. 以 `config/judgment_training_program_v1.json` 启动 R-62 历史开发回放，先完成 PIT freeze、五层结算和材料性诊断；
-2. 将 R-62 learning 实际应用到不同公司冻结字段并独立复核；只有完成 application receipt，才一次性冻结 `enterprise-judgment-method-v1`；
+1. 以 `config/judgment_training_program_v1.json` 启动 R-62 历史开发回放，先完成准入复核；当前 R-62 的结果前筛查仍为 `NO_PRIMARY / NOT_FROZEN`，不得把筛查页当作 PIT freeze。只有结构化 case、H-A/H-B、结果合同、D1--D5 责任单元和独立准入审阅闭合后，才进入五层结算；若仍为 `NO_PRIMARY`，转入另一条合格历史 replay；
+2. 仅对真正 `SELECTION_ADMITTED` 且完成结算的开发样本形成 learning，并将其应用到不同公司冻结字段后独立复核；只有完成 application receipt，才一次性冻结 `enterprise-judgment-method-v1`；
 3. 方法冻结后揭盲 R-61 holdout，只评价、不回写同一版本；R-56/R-58/R-25/R-21/R-78 只提供边界教学；
 4. 将已接纳的窄方法改变经现有 handoff 接入 G1 黄金报告研究议程，检验其是否改善正常利润、owner cash、永久损失、价值和回报传播；
 5. 七个黄金候选的材料性修复继续推进，但不再等待 R-54/R-93/R-94 的最新披露；实时对象只在到期时执行原冻结采集合同；
