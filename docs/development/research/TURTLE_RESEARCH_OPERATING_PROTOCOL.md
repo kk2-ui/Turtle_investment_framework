@@ -172,7 +172,7 @@ QUESTION
 
 若行业、政策、宏观或竞争结构的变化会让 H-A/H-B 的因果顺序、指标含义或可比较性失效，须在机制实验和前瞻冻结附件写成一个具体的适用条件：cutoff 时状态、一手来源、受约束的 pair 箭头/FJ、可观察 break、允许结果来源、窗口和 `CONTINUE_AS_IN_SCOPE / CLOSE_AND_REFREEZE_NEW_EPISODE` 动作。一般周期、需求、价格、竞争或利率波动仍是机制本身要解释的共同状态，不是 break。没有预注册 condition 的“环境变了”只能开始下一研究问题，不能改写原 verdict；有合格 break 时仍保留 raw observation，但不得把它作为原环境下的主路径选择、迁移或 L3–L5 证据，必须在新 cutoff 重建 episode。learning review 只能把这类已经冻结且触发的事件记为 `STATE_REPRESENTATION: ENVIRONMENT_REGIME_BREAK`，不新增事后免责分数。
 
-前瞻表达默认使用方向、范围或 `NO_FORECAST`。CJO 的 `NO_PROBABILITY` 模式可冻结竞争机制、双边 FJ、信号与合同，但不能填写概率桶、权重、概率 ID 或“最高概率”中心路径；`NO_PRIMARY` 因而不设中心路径。只有选择准入已成立时，才可用定性 `selection_basis` 记录主路径。概率只有在迭代卡能列出同定义独立 episode/外部频率、事件定义和校准计划时才允许；缺任一项就保持 `NO_PROBABILITY`，不得把主观信心填成数字。机制对与主路径选择必须分开：没有 cutoff 前的方向性区分证据或合格外部经验时，实验只能标 `MECHANISM_SIGNAL_PROBE / NO_PRIMARY`，其结果只能验证信号，不得计入“选对公司路径”。
+前瞻表达默认使用方向、范围或 `NO_FORECAST`。CJO 的 `NO_PROBABILITY` 模式可冻结竞争机制、双边 FJ、信号与合同，但不能填写概率桶、权重、概率 ID 或“最高概率”中心路径；`NO_PRIMARY` 因而不设中心路径。只有选择准入已成立时，才可用定性 `selection_basis` 记录主路径。若选择理由是多层材料的联合含义，冻结的 evidence bundle 至少须覆盖决策实施与客户/竞争回应，来自两个独立来源组，逐项连到同一 early FJ 的已验证主箭头和双方共享阈值，并写出联合方向、反方排除及失真降级；它不是把同一事实换源复述，也不能把共同背景升格为方向性证据。概率只有在迭代卡能列出同定义独立 episode/外部频率、事件定义和校准计划时才允许；缺任一项就保持 `NO_PROBABILITY`，不得把主观信心填成数字。机制对与主路径选择必须分开：没有 cutoff 前的方向性区分证据或合格外部经验时，实验只能标 `MECHANISM_SIGNAL_PROBE / NO_PRIMARY`，其结果只能验证信号，不得计入“选对公司路径”。
 
 ### 4｜红队：优先攻击测量和传导
 

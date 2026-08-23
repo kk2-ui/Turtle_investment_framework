@@ -173,6 +173,28 @@ def test_adapter_projects_the_frozen_selection_admission_for_feedback_only(tmp_p
             "selection_entry_id": "CSRSEL:adapter", "company_id": "COMPANY:adapter",
             "company_cluster_id": "COMPANY:adapter",
         },
+        "selection_evidence_bundles": [{
+            "bundle_id": "SELB:adapter-receipt",
+            "supports_scenario_id": "primary", "forward_judgment_id": "fj.retention",
+            "leading_threshold_id": "th.reduce",
+            "joint_directional_reason": "Frozen only to verify that the adapter preserves the receipt.",
+            "joint_rival_exclusion_reason": "The adapter never interprets this field.",
+            "joint_distortion_downgrade": "The adapter never interprets this field.",
+            "components": [
+                {
+                    "evidence_id": "ev.implementation", "source_id": "DOC:company-q2",
+                    "source_group_id": "company-quarterly-disclosure",
+                    "component_role": "DECISION_IMPLEMENTATION",
+                    "primary_causal_edge_id": "RHPEDGE:implementation-to-retention",
+                },
+                {
+                    "evidence_id": "ev.customer", "source_id": "DOC:customer-q2",
+                    "source_group_id": "customer-operating-disclosure",
+                    "component_role": "CUSTOMER_OR_COMPETITOR_RESPONSE",
+                    "primary_causal_edge_id": "RHPEDGE:customer-to-retention",
+                },
+            ],
+        }],
     }
 
     ledger = build_calibration_ledger_from_forward_judgments(

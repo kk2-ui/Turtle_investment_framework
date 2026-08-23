@@ -931,9 +931,17 @@ def _selection_admission_findings(
             invalid.append("selection_admission:selection_forward_judgment_ids_invalid")
 
     selection_evidence = raw.get("selection_evidence")
-    if not isinstance(selection_evidence, list) or not selection_evidence:
-        incomplete.append("selection_admission:selection_evidence_missing")
+    if selection_evidence is not None and not isinstance(selection_evidence, list):
+        invalid.append("selection_admission:selection_evidence_not_array")
+    if not isinstance(selection_evidence, list):
         selection_evidence = []
+    selection_evidence_bundles = raw.get("selection_evidence_bundles")
+    if selection_evidence_bundles is not None and not isinstance(selection_evidence_bundles, list):
+        invalid.append("selection_admission:selection_evidence_bundles_not_array")
+    if not isinstance(selection_evidence_bundles, list):
+        selection_evidence_bundles = []
+    if not selection_evidence and not selection_evidence_bundles:
+        incomplete.append("selection_admission:selection_evidence_missing")
     common_fact_ids = {
         str(item) for item in (pair or {}).get("common_fact_evidence_ids") or []
         if str(item).strip()
@@ -952,18 +960,23 @@ def _selection_admission_findings(
     }
     selected_sequence_judgments: set[str] = set()
     supports_selected = False
-    for index, item in enumerate(selection_evidence):
-        prefix = f"selection_admission:selection_evidence[{index}]"
-        if not isinstance(item, dict):
-            invalid.append(prefix + ":not_object")
-            continue
+    seen_selection_evidence_ids: set[str] = set()
+    seen_bundle_ids: set[str] = set()
+
+    def validate_evidence_fact(item: dict[str, Any], prefix: str) -> tuple[str, str]:
+        """Validate one frozen source fact without requiring it to decide alone."""
+        nonlocal supports_selected
         evidence_id = str(item.get("evidence_id") or "").strip()
         source_id = str(item.get("source_id") or "").strip()
         source_group_id = str(item.get("source_group_id") or "").strip()
         evidence_row = evidence.get(evidence_id)
         if not evidence_id:
             incomplete.append(prefix + ":evidence_id_missing")
-        elif evidence_row is None:
+        elif evidence_id in seen_selection_evidence_ids:
+            invalid.append(prefix + ":evidence_id_reused_across_selection_admission")
+        else:
+            seen_selection_evidence_ids.add(evidence_id)
+        if evidence_id and evidence_row is None:
             invalid.append(prefix + ":evidence_unknown")
         elif evidence_id in common_fact_ids:
             invalid.append(prefix + ":common_fact_cannot_be_selection_evidence")
@@ -982,23 +995,13 @@ def _selection_admission_findings(
                 incomplete.append(prefix + ":evidence_pre_cutoff_dates_missing")
             elif central_as_of is not None and (published_at > central_as_of or data_as_of > central_as_of):
                 invalid.append(prefix + ":evidence_not_pre_cutoff")
-        supports_scenario_id = str(item.get("supports_scenario_id") or "").strip()
-        if supports_scenario_id not in candidate_ids:
-            invalid.append(prefix + ":supports_scenario_not_candidate")
-        elif supports_scenario_id == selected_scenario_id:
-            supports_selected = True
-        for key in (
-            "directional_reason", "why_rival_cannot_equally_explain", "distortion_downgrade",
-        ):
-            if not str(item.get(key) or "").strip():
-                incomplete.append(prefix + f":{key}_missing")
+        return evidence_id, source_group_id
 
-        # R-07 selection is not a second prose review.  The pre-cutoff fact
-        # must enter a verified primary arrow and pre-commit to the pair's
-        # early, two-sided discriminator and its shared leading threshold.
-        forward_judgment_id = str(item.get("forward_judgment_id") or "").strip()
-        primary_causal_edge_id = str(item.get("primary_causal_edge_id") or "").strip()
-        leading_threshold_id = str(item.get("leading_threshold_id") or "").strip()
+    def validate_selection_sequence(
+        *, prefix: str, forward_judgment_id: str, leading_threshold_id: str,
+        evidence_edges: list[tuple[str, str]],
+    ) -> bool:
+        """Bind a selection receipt to one early FJ and two-sided threshold."""
         sequence_valid = True
         if not forward_judgment_id:
             incomplete.append(prefix + ":forward_judgment_id_missing")
@@ -1038,26 +1041,30 @@ def _selection_admission_findings(
                     ):
                         invalid.append(prefix + f":{label}_early_signal_not_testable")
                         sequence_valid = False
-        if not primary_causal_edge_id:
-            incomplete.append(prefix + ":primary_causal_edge_id_missing")
-            sequence_valid = False
-        else:
+        for evidence_id, primary_causal_edge_id in evidence_edges:
+            edge_prefix = prefix
+            if len(evidence_edges) > 1:
+                edge_prefix += ":component[" + evidence_id + "]"
+            if not primary_causal_edge_id:
+                incomplete.append(edge_prefix + ":primary_causal_edge_id_missing")
+                sequence_valid = False
+                continue
             primary_edge = primary_trace_edges.get(primary_causal_edge_id)
             if primary_edge is None:
-                invalid.append(prefix + ":primary_causal_edge_unknown")
+                invalid.append(edge_prefix + ":primary_causal_edge_unknown")
                 sequence_valid = False
-            else:
-                if primary_edge.get("mechanism_side") != "PRIMARY" or primary_edge.get("status") != "VERIFIED":
-                    invalid.append(prefix + ":primary_causal_edge_not_primary_verified")
-                    sequence_valid = False
-                if primary_chain is not None and primary_edge.get("mechanism_chain_id") != primary_chain.get("chain_id"):
-                    invalid.append(prefix + ":primary_causal_edge_not_primary_mechanism")
-                    sequence_valid = False
-                if evidence_id and evidence_id not in {
-                    str(value) for value in primary_edge.get("evidence_ids") or []
-                }:
-                    invalid.append(prefix + ":primary_causal_edge_does_not_contain_evidence")
-                    sequence_valid = False
+                continue
+            if primary_edge.get("mechanism_side") != "PRIMARY" or primary_edge.get("status") != "VERIFIED":
+                invalid.append(edge_prefix + ":primary_causal_edge_not_primary_verified")
+                sequence_valid = False
+            if primary_chain is not None and primary_edge.get("mechanism_chain_id") != primary_chain.get("chain_id"):
+                invalid.append(edge_prefix + ":primary_causal_edge_not_primary_mechanism")
+                sequence_valid = False
+            if evidence_id and evidence_id not in {
+                str(value) for value in primary_edge.get("evidence_ids") or []
+            }:
+                invalid.append(edge_prefix + ":primary_causal_edge_does_not_contain_evidence")
+                sequence_valid = False
         if not leading_threshold_id:
             incomplete.append(prefix + ":leading_threshold_id_missing")
             sequence_valid = False
@@ -1086,8 +1093,99 @@ def _selection_admission_findings(
             if threshold is not None and threshold.get("discrimination_target") != (pair or {}).get("competitive_test_id"):
                 invalid.append(prefix + ":leading_threshold_not_pair_competitive_test")
                 sequence_valid = False
+        return sequence_valid
+
+    for index, item in enumerate(selection_evidence):
+        prefix = f"selection_admission:selection_evidence[{index}]"
+        if not isinstance(item, dict):
+            invalid.append(prefix + ":not_object")
+            continue
+        evidence_id, _ = validate_evidence_fact(item, prefix)
+        supports_scenario_id = str(item.get("supports_scenario_id") or "").strip()
+        if supports_scenario_id not in candidate_ids:
+            invalid.append(prefix + ":supports_scenario_not_candidate")
+        elif supports_scenario_id == selected_scenario_id:
+            supports_selected = True
+        for key in (
+            "directional_reason", "why_rival_cannot_equally_explain", "distortion_downgrade",
+        ):
+            if not str(item.get(key) or "").strip():
+                incomplete.append(prefix + f":{key}_missing")
+
+        forward_judgment_id = str(item.get("forward_judgment_id") or "").strip()
+        primary_causal_edge_id = str(item.get("primary_causal_edge_id") or "").strip()
+        leading_threshold_id = str(item.get("leading_threshold_id") or "").strip()
+        sequence_valid = validate_selection_sequence(
+            prefix=prefix,
+            forward_judgment_id=forward_judgment_id,
+            leading_threshold_id=leading_threshold_id,
+            evidence_edges=[(evidence_id, primary_causal_edge_id)],
+        )
         if sequence_valid:
             selected_sequence_judgments.add(forward_judgment_id)
+
+    allowed_bundle_roles = {
+        "DECISION_IMPLEMENTATION", "CUSTOMER_OR_COMPETITOR_RESPONSE", "UNIT_ECONOMICS",
+        "WORKING_CAPITAL_OR_CASH", "CAPITAL_RETURN",
+    }
+    for index, bundle in enumerate(selection_evidence_bundles):
+        prefix = f"selection_admission:selection_evidence_bundles[{index}]"
+        if not isinstance(bundle, dict):
+            invalid.append(prefix + ":not_object")
+            continue
+        bundle_id = str(bundle.get("bundle_id") or "").strip()
+        if not bundle_id:
+            incomplete.append(prefix + ":bundle_id_missing")
+        elif bundle_id in seen_bundle_ids:
+            invalid.append(prefix + ":bundle_id_reused")
+        else:
+            seen_bundle_ids.add(bundle_id)
+        supports_scenario_id = str(bundle.get("supports_scenario_id") or "").strip()
+        if supports_scenario_id not in candidate_ids:
+            invalid.append(prefix + ":supports_scenario_not_candidate")
+        elif supports_scenario_id == selected_scenario_id:
+            supports_selected = True
+        for key in (
+            "joint_directional_reason", "joint_rival_exclusion_reason", "joint_distortion_downgrade",
+        ):
+            if not str(bundle.get(key) or "").strip():
+                incomplete.append(prefix + f":{key}_missing")
+        components = bundle.get("components")
+        if not isinstance(components, list) or len(components) < 2:
+            incomplete.append(prefix + ":components_require_two_or_more")
+            components = []
+        roles: set[str] = set()
+        source_groups: set[str] = set()
+        evidence_edges: list[tuple[str, str]] = []
+        for component_index, component in enumerate(components):
+            component_prefix = prefix + f":components[{component_index}]"
+            if not isinstance(component, dict):
+                invalid.append(component_prefix + ":not_object")
+                continue
+            evidence_id, source_group_id = validate_evidence_fact(component, component_prefix)
+            if source_group_id:
+                source_groups.add(source_group_id)
+            role = str(component.get("component_role") or "").strip()
+            if not role:
+                incomplete.append(component_prefix + ":component_role_missing")
+            elif role not in allowed_bundle_roles:
+                invalid.append(component_prefix + ":component_role_invalid")
+            else:
+                roles.add(role)
+            evidence_edges.append((evidence_id, str(component.get("primary_causal_edge_id") or "").strip()))
+        required_roles = {"DECISION_IMPLEMENTATION", "CUSTOMER_OR_COMPETITOR_RESPONSE"}
+        if not required_roles.issubset(roles):
+            incomplete.append(prefix + ":decision_and_customer_or_competitor_roles_required")
+        if len(source_groups) < 2:
+            incomplete.append(prefix + ":two_independent_source_groups_required")
+        sequence_valid = validate_selection_sequence(
+            prefix=prefix,
+            forward_judgment_id=str(bundle.get("forward_judgment_id") or "").strip(),
+            leading_threshold_id=str(bundle.get("leading_threshold_id") or "").strip(),
+            evidence_edges=evidence_edges,
+        )
+        if sequence_valid:
+            selected_sequence_judgments.add(str(bundle.get("forward_judgment_id") or "").strip())
     if not supports_selected:
         incomplete.append("selection_admission:selected_path_directional_evidence_missing")
 

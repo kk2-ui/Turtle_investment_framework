@@ -676,6 +676,57 @@ def _no_probability_company_judgment_payload(
     return payload
 
 
+def _selection_bundle_payload(tmp_path: Path) -> dict:
+    """A synthetic bundle proves gate behavior; it is never a research case."""
+    payload = _no_probability_company_judgment_payload(
+        tmp_path, selection_status="SELECTION_ADMITTED",
+    )
+    evidence_path = tmp_path / "claim_evidence.json"
+    evidence = json.loads(evidence_path.read_text(encoding="utf-8"))
+    evidence["claims"][0]["raw_facts"].append({
+        "evidence_id": "ev.customer-response", "source_id": "DOC:customer-q2",
+        "source_group_id": "customer-operating-disclosure", "fact": "核心客户按原服务范围续约。",
+        "authority": "customer_filing", "claim_distance": "raw_data",
+        "published_at": "2026-07-25", "data_as_of": "2026-06-30",
+        "direct_support": True, "support_type": "supports", "basis_match": "exact",
+        "conflict_of_interest": "customer disclosure",
+    })
+    evidence_path.write_text(json.dumps(evidence), encoding="utf-8")
+    payload["rival_hypothesis_pairs"][0]["causal_trace"].append({
+        "edge_id": "RHPEDGE:selection-primary-customer-response-to-retention",
+        "mechanism_side": "PRIMARY", "mechanism_chain_id": "mechanism.retention_to_cash",
+        "from_state": "核心客户按原范围续约", "to_state": "客户留存首先恢复",
+        "why_diagnostic": "客户的冻结回应与实施完成率共同构成主机制的早期证据。",
+        "status": "VERIFIED", "evidence_ids": ["ev.customer-response"],
+    })
+    admission = payload["selection_admission"]
+    admission.pop("selection_evidence")
+    admission["selection_evidence_bundles"] = [{
+        "bundle_id": "SELB:implementation-and-customer-response",
+        "supports_scenario_id": "primary", "forward_judgment_id": "fj.retention",
+        "leading_threshold_id": "th.reduce",
+        "joint_directional_reason": "实施完成率回升后，独立客户披露的原范围续约共同支持项目组合恢复。",
+        "joint_rival_exclusion_reason": "持续性竞争侵蚀不能无额外解释同时预期实施改善与独立客户续约。",
+        "joint_distortion_downgrade": "任一指标口径变化、非核心客户驱动或确认不是同一服务范围时降为 NO_PRIMARY。",
+        "components": [
+            {
+                "evidence_id": "ev.directional", "source_id": "DOC:company-q2",
+                "source_group_id": "company-quarterly-disclosure",
+                "component_role": "DECISION_IMPLEMENTATION",
+                "primary_causal_edge_id": "RHPEDGE:selection-primary-installation-to-retention",
+            },
+            {
+                "evidence_id": "ev.customer-response", "source_id": "DOC:customer-q2",
+                "source_group_id": "customer-operating-disclosure",
+                "component_role": "CUSTOMER_OR_COMPETITOR_RESPONSE",
+                "primary_causal_edge_id": "RHPEDGE:selection-primary-customer-response-to-retention",
+            },
+        ],
+    }]
+    payload["freeze"]["fingerprint"] = thesis_test_fingerprint(payload)
+    return payload
+
+
 def _enable_industry_architecture_provenance(payload: dict) -> None:
     payload["freeze"]["industry_architecture_provenance_contract_version"] = (
         INDUSTRY_ARCHITECTURE_PROVENANCE_CONTRACT_VERSION
@@ -1018,6 +1069,108 @@ def test_cjo_selection_admission_rejects_common_fact_and_identical_baseline(tmp_
     assert validation["state"] == "INVALID"
     assert "selection_admission:selection_evidence[0]:common_fact_cannot_be_selection_evidence" in validation["selection_admission_invalid_findings"]
     assert "selection_admission:fj.retention:baseline_prediction_not_distinct" in validation["selection_admission_invalid_findings"]
+
+
+def test_cjo_selection_admission_accepts_a_two_source_multilayer_evidence_bundle(tmp_path: Path) -> None:
+    payload = _selection_bundle_payload(tmp_path)
+
+    validation = validate_thesis_test_ledger(payload, output_dir=tmp_path, enforced=False)
+
+    assert validation["state"] == "DECISION_READY"
+    assert validation["selection_admission"] == {"status": "SELECTION_ADMITTED"}
+
+
+def test_cjo_selection_bundle_rejects_common_single_source_missing_layer_and_duplicate_components(tmp_path: Path) -> None:
+    common = _selection_bundle_payload(tmp_path)
+    common["rival_hypothesis_pairs"][0]["common_fact_evidence_ids"].extend([
+        "ev.directional", "ev.customer-response",
+    ])
+    common_result = validate_thesis_test_ledger(common, output_dir=tmp_path, enforced=False)
+    assert (
+        "selection_admission:selection_evidence_bundles[0]:components[0]:common_fact_cannot_be_selection_evidence"
+        in common_result["selection_admission_invalid_findings"]
+    )
+
+    one_source = _selection_bundle_payload(tmp_path)
+    evidence_path = tmp_path / "claim_evidence.json"
+    evidence = json.loads(evidence_path.read_text(encoding="utf-8"))
+    next(
+        row for row in evidence["claims"][0]["raw_facts"]
+        if row["evidence_id"] == "ev.customer-response"
+    )["source_group_id"] = "company-quarterly-disclosure"
+    evidence_path.write_text(json.dumps(evidence), encoding="utf-8")
+    one_source["selection_admission"]["selection_evidence_bundles"][0]["components"][1]["source_group_id"] = (
+        "company-quarterly-disclosure"
+    )
+    one_source_result = validate_thesis_test_ledger(one_source, output_dir=tmp_path, enforced=False)
+    assert (
+        "selection_admission:selection_evidence_bundles[0]:two_independent_source_groups_required"
+        in one_source_result["selection_admission_incomplete_findings"]
+    )
+
+    missing_layer = _selection_bundle_payload(tmp_path)
+    missing_layer["selection_admission"]["selection_evidence_bundles"][0]["components"][1]["component_role"] = "UNIT_ECONOMICS"
+    missing_layer_result = validate_thesis_test_ledger(missing_layer, output_dir=tmp_path, enforced=False)
+    assert (
+        "selection_admission:selection_evidence_bundles[0]:decision_and_customer_or_competitor_roles_required"
+        in missing_layer_result["selection_admission_incomplete_findings"]
+    )
+
+    duplicate = _selection_bundle_payload(tmp_path)
+    duplicate_component = duplicate["selection_admission"]["selection_evidence_bundles"][0]["components"][1]
+    duplicate_component.update({
+        "evidence_id": "ev.directional", "source_id": "DOC:company-q2",
+        "source_group_id": "company-quarterly-disclosure",
+        "primary_causal_edge_id": "RHPEDGE:selection-primary-installation-to-retention",
+    })
+    duplicate_result = validate_thesis_test_ledger(duplicate, output_dir=tmp_path, enforced=False)
+    assert (
+        "selection_admission:selection_evidence_bundles[0]:components[1]:evidence_id_reused_across_selection_admission"
+        in duplicate_result["selection_admission_invalid_findings"]
+    )
+
+
+def test_cjo_selection_bundle_cannot_bypass_fj_threshold_edge_or_cutoff(tmp_path: Path) -> None:
+    terminal = _selection_bundle_payload(tmp_path)
+    terminal["selection_admission"]["selection_forward_judgment_ids"] = ["fj.owner_cash"]
+    terminal["selection_admission"]["selection_evidence_bundles"][0]["forward_judgment_id"] = "fj.owner_cash"
+    terminal_result = validate_thesis_test_ledger(terminal, output_dir=tmp_path, enforced=False)
+    assert (
+        "selection_admission:selection_evidence_bundles[0]:forward_judgment_not_early_mechanism"
+        in terminal_result["selection_admission_invalid_findings"]
+    )
+
+    wrong_threshold = _selection_bundle_payload(tmp_path)
+    wrong_threshold["selection_admission"]["selection_evidence_bundles"][0]["leading_threshold_id"] = "th.exit"
+    threshold_result = validate_thesis_test_ledger(wrong_threshold, output_dir=tmp_path, enforced=False)
+    assert (
+        "selection_admission:selection_evidence_bundles[0]:leading_threshold_not_forward_judgment_signal"
+        in threshold_result["selection_admission_invalid_findings"]
+    )
+
+    wrong_edge = _selection_bundle_payload(tmp_path)
+    wrong_edge["selection_admission"]["selection_evidence_bundles"][0]["components"][1]["primary_causal_edge_id"] = (
+        "RHPEDGE:retention-vs-erosion:rival-retention-to-unit-economics"
+    )
+    edge_result = validate_thesis_test_ledger(wrong_edge, output_dir=tmp_path, enforced=False)
+    assert (
+        "selection_admission:selection_evidence_bundles[0]:component[ev.customer-response]:primary_causal_edge_not_primary_verified"
+        in edge_result["selection_admission_invalid_findings"]
+    )
+
+    after_cutoff = _selection_bundle_payload(tmp_path)
+    evidence_path = tmp_path / "claim_evidence.json"
+    evidence = json.loads(evidence_path.read_text(encoding="utf-8"))
+    next(
+        row for row in evidence["claims"][0]["raw_facts"]
+        if row["evidence_id"] == "ev.customer-response"
+    )["published_at"] = "2026-08-03"
+    evidence_path.write_text(json.dumps(evidence), encoding="utf-8")
+    cutoff_result = validate_thesis_test_ledger(after_cutoff, output_dir=tmp_path, enforced=False)
+    assert (
+        "selection_admission:selection_evidence_bundles[0]:components[1]:evidence_not_pre_cutoff"
+        in cutoff_result["selection_admission_invalid_findings"]
+    )
 
 
 def test_cjo_can_freeze_no_primary_without_blocking_ordinary_mechanism_research(tmp_path: Path) -> None:
@@ -2227,6 +2380,13 @@ def test_thesis_writer_exposes_nested_schema_to_provider() -> None:
     for field in ("forward_judgment_id", "primary_causal_edge_id", "leading_threshold_id"):
         assert field in selection_evidence["properties"]
         assert field in selection_evidence["required"]
+    selection_bundles = params["selection_admission"]["properties"]["selection_evidence_bundles"]["items"]
+    for field in ("joint_directional_reason", "joint_rival_exclusion_reason", "joint_distortion_downgrade"):
+        assert field in selection_bundles["properties"]
+        assert field in selection_bundles["required"]
+    bundle_components = selection_bundles["properties"]["components"]["items"]
+    assert "component_role" in bundle_components["properties"]
+    assert "primary_causal_edge_id" in bundle_components["required"]
     assert "mechanism_chain_ids" in params["forward_judgments"]["items"]["properties"]
     assert "financial_driver_ids" in params["forward_judgments"]["items"]["properties"]
     assert "baseline" in params["forward_judgments"]["items"]["properties"]
