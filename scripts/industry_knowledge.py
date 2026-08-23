@@ -29,6 +29,7 @@ CONTEXT_SCHEMA_VERSION = "industry-knowledge-context.v1"
 
 CANDIDATE_STATUSES = {"PROPOSED", "CANDIDATE", "REJECTED"}
 MECHANISM_STATUSES = {"CANDIDATE", "CORROBORATED", "MECHANISM_READY", "RETIRED", "REJECTED"}
+SETTLED_MECHANISM_RELATIONSHIPS = {"SUPPORTS", "CONTRADICTS", "BOUNDARY", "NOT_DIAGNOSTIC"}
 DIRECT_EVIDENCE_TYPES = {"OBS", "DOC"}
 DIRECT_AUTHORITIES = {"audited_filing", "company_filing", "official_statistics", "industry_data", "regulator"}
 PROHIBITED_USES = ["company_fact", "valuation_parameter", "probability", "automatic_investment_conclusion"]
@@ -39,6 +40,19 @@ DEFAULT_LIBRARY_DIR = PROJECT_ROOT / "knowledge" / "industry"
 
 def _now() -> str:
     return datetime.now(timezone.utc).replace(microsecond=0).isoformat()
+
+
+def _instant(value: Any) -> datetime | None:
+    text = str(value or "").strip()
+    if not text:
+        return None
+    try:
+        parsed = datetime.fromisoformat(text.replace("Z", "+00:00"))
+    except ValueError:
+        return None
+    if parsed.tzinfo is None:
+        parsed = parsed.replace(tzinfo=timezone.utc)
+    return parsed.astimezone(timezone.utc)
 
 
 def _read_json(path: Path) -> dict[str, Any]:
@@ -70,6 +84,9 @@ def _default_policy() -> dict[str, Any]:
             "corroborated_minimum_independent_corporate_groups": 2,
             "concentrated_industry_minimum_distinct_reporting_periods": 3,
             "mechanism_ready_requires_independent_review": True,
+            "mechanism_ready_requires_settled_episode_evidence": True,
+            "mechanism_ready_minimum_independent_settled_corporate_groups": 2,
+            "mechanism_ready_requires_boundary_or_counterexample": True,
         },
         "independence_policy": {
             "same_corporate_group_not_independent": True,
@@ -376,6 +393,63 @@ def _mechanism_ready_review_findings(mechanism: dict[str, Any], policy: dict[str
                 invalid.append("mechanism_ready_reviewer_same_as_author")
     if not set(PROHIBITED_USES).issubset(set(_as_strings(mechanism.get("prohibited_uses")))):
         incomplete.append("mechanism_ready_explicit_prohibited_roles_incomplete")
+    if bool(promotion.get("mechanism_ready_requires_settled_episode_evidence", True)):
+        settled = mechanism.get("settled_episode_evidence")
+        if not isinstance(settled, list) or not settled:
+            incomplete.append("mechanism_ready_settled_episode_evidence_missing")
+        else:
+            supporting_groups: set[str] = set()
+            boundary_present = False
+            episode_ids: set[str] = set()
+            required_groups = int(
+                promotion.get("mechanism_ready_minimum_independent_settled_corporate_groups") or 2
+            )
+            for index, item in enumerate(settled):
+                prefix = f"settled_episode_evidence[{index}]"
+                if not isinstance(item, dict):
+                    invalid.append(prefix + ":not_object")
+                    continue
+                for field in (
+                    "episode_id", "company_id", "corporate_group_id", "information_cutoff",
+                    "claim_id", "settlement_id", "settled_at", "outcome_artifact_ref",
+                    "review_artifact_ref", "reviewer_id", "relationship_to_mechanism",
+                ):
+                    if not str(item.get(field) or "").strip():
+                        incomplete.append(prefix + ":missing:" + field)
+                episode_id = str(item.get("episode_id") or "")
+                if episode_id in episode_ids:
+                    invalid.append(prefix + ":episode_id_duplicate:" + episode_id)
+                episode_ids.add(episode_id)
+                relationship = str(item.get("relationship_to_mechanism") or "")
+                if relationship not in SETTLED_MECHANISM_RELATIONSHIPS:
+                    invalid.append(prefix + ":relationship_to_mechanism_invalid")
+                if item.get("independent_reviewed") is not True:
+                    incomplete.append(prefix + ":independent_review_required")
+                if author_id and str(item.get("reviewer_id") or "") == author_id:
+                    invalid.append(prefix + ":reviewer_same_as_mechanism_author")
+                information_cutoff = _instant(item.get("information_cutoff"))
+                settled_at = _instant(item.get("settled_at"))
+                if information_cutoff is None:
+                    invalid.append(prefix + ":information_cutoff_invalid")
+                if settled_at is None:
+                    invalid.append(prefix + ":settled_at_invalid")
+                if information_cutoff and settled_at and information_cutoff >= settled_at:
+                    invalid.append(prefix + ":settlement_not_after_information_cutoff")
+                group = str(item.get("corporate_group_id") or "")
+                if relationship == "SUPPORTS" and group:
+                    supporting_groups.add(group)
+                if relationship in {"CONTRADICTS", "BOUNDARY"}:
+                    boundary_present = True
+            if len(supporting_groups) < required_groups:
+                incomplete.append(
+                    "mechanism_ready_independent_settled_support_insufficient:"
+                    f"groups={len(supporting_groups)};required={required_groups}"
+                )
+            if (
+                bool(promotion.get("mechanism_ready_requires_boundary_or_counterexample", True))
+                and not boundary_present
+            ):
+                incomplete.append("mechanism_ready_boundary_or_counterexample_missing")
     return incomplete, invalid
 
 

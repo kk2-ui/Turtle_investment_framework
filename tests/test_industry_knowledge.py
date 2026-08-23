@@ -64,6 +64,50 @@ def _mechanism(status: str, candidate_ids: list[str]) -> dict:
             "outcome": "ACCEPTED",
             "independent": True,
         }
+        payload["settled_episode_evidence"] = [
+            {
+                "episode_id": "MEP:group-a-margin",
+                "company_id": "COMPANY:group-a",
+                "corporate_group_id": "group-a",
+                "information_cutoff": "2023-08-31",
+                "claim_id": "HBTCLM:group-a-margin",
+                "settlement_id": "HBTSETTLE:group-a-margin",
+                "settled_at": "2024-03-31",
+                "outcome_artifact_ref": "research/group-a/settlement.json",
+                "review_artifact_ref": "research/group-a/settlement-review.md",
+                "reviewer_id": "episode-reviewer-a",
+                "independent_reviewed": True,
+                "relationship_to_mechanism": "SUPPORTS",
+            },
+            {
+                "episode_id": "MEP:group-b-margin",
+                "company_id": "COMPANY:group-b",
+                "corporate_group_id": "group-b",
+                "information_cutoff": "2024-08-31",
+                "claim_id": "HBTCLM:group-b-margin",
+                "settlement_id": "HBTSETTLE:group-b-margin",
+                "settled_at": "2025-03-31",
+                "outcome_artifact_ref": "research/group-b/settlement.json",
+                "review_artifact_ref": "research/group-b/settlement-review.md",
+                "reviewer_id": "episode-reviewer-b",
+                "independent_reviewed": True,
+                "relationship_to_mechanism": "SUPPORTS",
+            },
+            {
+                "episode_id": "MEP:group-c-boundary",
+                "company_id": "COMPANY:group-c",
+                "corporate_group_id": "group-c",
+                "information_cutoff": "2025-08-31",
+                "claim_id": "HBTCLM:group-c-boundary",
+                "settlement_id": "HBTSETTLE:group-c-boundary",
+                "settled_at": "2026-03-31",
+                "outcome_artifact_ref": "research/group-c/settlement.json",
+                "review_artifact_ref": "research/group-c/settlement-review.md",
+                "reviewer_id": "episode-reviewer-c",
+                "independent_reviewed": True,
+                "relationship_to_mechanism": "BOUNDARY",
+            },
+        ]
     return payload
 
 
@@ -153,6 +197,47 @@ def test_mechanism_ready_requires_independent_review_and_only_yields_questions(t
     rejected = review_industry_mechanism(same_author, knowledge_dir=tmp_path / "same-author")
     assert rejected["written"] is False
     assert "mechanism_ready_reviewer_same_as_author" in rejected["validation"]["invalid_findings"]
+
+
+def test_mechanism_ready_requires_settled_cross_company_support_and_a_boundary(tmp_path):
+    library = tmp_path / "industry"
+    ids = ["IKC:a", "IKC:b", "IKC:c"]
+    for candidate, group, period in zip(ids, ("group-a", "group-b", "group-c"), ("FY2023", "FY2024", "FY2025"), strict=True):
+        assert write_industry_insight_candidate(
+            _candidate(candidate, group, period), knowledge_dir=library,
+        )["written"] is True
+
+    missing = _mechanism("MECHANISM_READY", ids)
+    missing.pop("settled_episode_evidence")
+    result = review_industry_mechanism(missing, knowledge_dir=library)
+    assert result["written"] is False
+    assert "mechanism_ready_settled_episode_evidence_missing" in result["validation"]["incomplete_findings"]
+
+    same_group = _mechanism("MECHANISM_READY", ids)
+    for item in same_group["settled_episode_evidence"]:
+        if item["relationship_to_mechanism"] == "SUPPORTS":
+            item["corporate_group_id"] = "group-a"
+    result = review_industry_mechanism(same_group, knowledge_dir=library)
+    assert result["written"] is False
+    assert (
+        "mechanism_ready_independent_settled_support_insufficient:groups=1;required=2"
+        in result["validation"]["incomplete_findings"]
+    )
+
+    no_boundary = _mechanism("MECHANISM_READY", ids)
+    no_boundary["settled_episode_evidence"][-1]["relationship_to_mechanism"] = "NOT_DIAGNOSTIC"
+    result = review_industry_mechanism(no_boundary, knowledge_dir=library)
+    assert result["written"] is False
+    assert "mechanism_ready_boundary_or_counterexample_missing" in result["validation"]["incomplete_findings"]
+
+    post_outcome = _mechanism("MECHANISM_READY", ids)
+    post_outcome["settled_episode_evidence"][0]["information_cutoff"] = "2024-04-01"
+    result = review_industry_mechanism(post_outcome, knowledge_dir=library)
+    assert result["written"] is False
+    assert (
+        "settled_episode_evidence[0]:settlement_not_after_information_cutoff"
+        in result["validation"]["invalid_findings"]
+    )
 
 
 def test_concentrated_industry_exception_is_explicit_and_limited(tmp_path):
