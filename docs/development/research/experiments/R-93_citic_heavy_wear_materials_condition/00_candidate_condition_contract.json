@@ -1,0 +1,24 @@
+{
+  "schema_version": "candidate-condition-due-registration.v1",
+  "candidate_id": "R-93",
+  "company_id": "CN:601608",
+  "cutoff_at": "2026-08-22T23:59:59+08:00",
+  "conditions": [
+    {
+      "condition_id": "D1_SHAREHOLDER_APPROVAL",
+      "due_at": "2026-08-31T23:59:59+08:00",
+      "official_source_query": {
+        "source_kind": "CNINFO_ORDINARY_ANNOUNCEMENT",
+        "issuer_code": "601608",
+        "published_after": "2026-08-22T23:59:59+08:00",
+        "required_title_terms": [
+          "2026",
+          "第二次临时股东大会",
+          "决议"
+        ]
+      },
+      "next_step": "ENUMERATE_OFFICIAL_CONDITION_SOURCE",
+      "status": "PENDING"
+    }
+  ]
+}

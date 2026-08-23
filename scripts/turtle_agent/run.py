@@ -291,12 +291,14 @@ def _surface_live_forward_due_inbox() -> dict[str, Any]:
     """
     try:
         from scripts.judgment_feedback_control import (
-            ControlPlaneError, connect, execute_due_claim, initialize, reconcile, sync_live_forward_contracts,
+            ControlPlaneError, connect, execute_due_claim, initialize, reconcile, reconcile_candidate_conditions,
+            sync_candidate_condition_contracts, sync_live_forward_contracts,
         )
         from scripts.config import get_db_path
     except ModuleNotFoundError:
         from judgment_feedback_control import (
-            ControlPlaneError, connect, execute_due_claim, initialize, reconcile, sync_live_forward_contracts,
+            ControlPlaneError, connect, execute_due_claim, initialize, reconcile, reconcile_candidate_conditions,
+            sync_candidate_condition_contracts, sync_live_forward_contracts,
         )
         from config import get_db_path
     contract_root = Path(_FRAMEWORK_DIR) / "docs" / "development" / "research" / "experiments"
@@ -314,7 +316,11 @@ def _surface_live_forward_due_inbox() -> dict[str, Any]:
     try:
         initialize(conn)
         sync = sync_live_forward_contracts(conn, contract_root=contract_root, registered_at=as_of)
+        candidate_condition_sync = sync_candidate_condition_contracts(
+            conn, contract_root=contract_root, registered_at=as_of,
+        )
         inbox = reconcile(conn, as_of=as_of)
+        candidate_condition_inbox = reconcile_candidate_conditions(conn, as_of=as_of)
         due_ids = {
             str(item.get("feedback_item_id") or "")
             for item in inbox.get("items") or []
@@ -365,7 +371,33 @@ def _surface_live_forward_due_inbox() -> dict[str, Any]:
             "  ↪ execution: "
             f"{execution.get('feedback_item_id')} → {execution.get('result', {}).get('status') or execution.get('status')}"
         )
-    return {"sync": sync, "inbox": inbox, "executions": executions}
+    candidate_rows = [
+        row
+        for item in candidate_condition_sync.get("registered", [])
+        for row in (item.get("result", {}).get("registered", []) or [])
+    ]
+    candidate_actionable = [
+        item for item in candidate_condition_inbox.get("items") or [] if item.get("time_state") == "DUE"
+    ]
+    print(
+        "[Candidate condition inbox] "
+        f"new={sum(1 for row in candidate_rows if row.get('registered'))}, tracked={len(candidate_rows)}, "
+        f"actionable={len(candidate_actionable)}, contract_issues={len(candidate_condition_sync.get('issues', []))}"
+    )
+    for issue in candidate_condition_sync.get("issues", []):
+        print(f"  ⚠ candidate condition contract: {issue.get('contract_path')} / {issue.get('code')}")
+    for item in candidate_actionable:
+        print(
+            "  ↪ "
+            f"DUE: {item.get('candidate_id')} / {item.get('condition_id')} "
+            "-> enumerate the declared official source; do not read an outcome or execute a settlement"
+        )
+    return {
+        "sync": sync,
+        "inbox": inbox,
+        "executions": executions,
+        "candidate_conditions": {"sync": candidate_condition_sync, "inbox": candidate_condition_inbox},
+    }
 
 
 def _load_tracking_comparison(output_dir: str) -> dict[str, Any]:

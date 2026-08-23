@@ -90,6 +90,30 @@ def _conn(tmp_path: Path):
     return conn
 
 
+def _candidate_condition_contract(tmp_path: Path, *, candidate_id: str = "R-CAND", due_at: str = "2026-03-31T23:59:59+08:00") -> Path:
+    contract = {
+        "schema_version": jfc.CANDIDATE_CONDITION_SCHEMA_VERSION,
+        "candidate_id": candidate_id,
+        "company_id": "CN:TEST",
+        "cutoff_at": "2026-01-01T09:00:00+08:00",
+        "conditions": [{
+            "condition_id": "D1_APPROVAL",
+            "due_at": due_at,
+            "official_source_query": {
+                "source_kind": "CNINFO_ORDINARY_ANNOUNCEMENT",
+                "issuer_code": "000001",
+                "published_after": "2026-01-01T09:00:00+08:00",
+                "required_title_terms": ["股东大会", "决议"],
+            },
+            "next_step": "ENUMERATE_OFFICIAL_CONDITION_SOURCE",
+            "status": "PENDING",
+        }],
+    }
+    path = tmp_path / "00_candidate_condition_contract.json"
+    path.write_text(json.dumps(contract), encoding="utf-8")
+    return path
+
+
 def _event(item: str, event_type: str, effective_at: str, *, key: str, payload: dict | None = None) -> dict:
     return {
         "event_id": f"EVT:{key}",
@@ -122,6 +146,47 @@ def test_registers_each_stage_and_derives_waiting_then_single_due_item(tmp_path:
     assert by_id[s1]["time_state"] == "DUE"
     assert by_id[s1]["priority"] == "P1"
     assert by_id[s2]["time_state"] == "WAITING"
+
+
+def test_candidate_condition_is_persistent_but_never_becomes_a_feedback_claim(tmp_path: Path) -> None:
+    conn = _conn(tmp_path)
+    contract = _candidate_condition_contract(tmp_path)
+    registered = jfc.register_candidate_condition_contract(
+        conn, contract_path=contract, registered_at="2026-01-02T00:00:00+08:00",
+    )
+    assert registered["registered"] == [{
+        "candidate_condition_item_id": "CCI:R-CAND:D1_APPROVAL", "registered": True, "idempotent": False,
+    }]
+    waiting = jfc.reconcile_candidate_conditions(conn, as_of="2026-03-30T23:59:59+08:00")
+    due = jfc.reconcile_candidate_conditions(conn, as_of="2026-04-01T00:00:00+08:00")
+    assert waiting["items"][0]["time_state"] == "WAITING"
+    assert due["items"][0]["time_state"] == "DUE"
+    assert "overdue_at" not in due["items"][0]
+    assert jfc.reconcile(conn, as_of="2026-04-01T00:00:00+08:00")["items"] == []
+
+
+def test_candidate_condition_rejects_outcome_or_learning_fields(tmp_path: Path) -> None:
+    conn = _conn(tmp_path)
+    contract = _candidate_condition_contract(tmp_path)
+    payload = json.loads(contract.read_text(encoding="utf-8"))
+    payload["conditions"][0]["settlement_verdict"] = "A_ONLY"
+    contract.write_text(json.dumps(payload), encoding="utf-8")
+    with pytest.raises(jfc.ControlPlaneError, match="forbidden fields: settlement_verdict"):
+        jfc.register_candidate_condition_contract(conn, contract_path=contract)
+
+
+def test_current_candidate_condition_contracts_register_without_feedback_claims(tmp_path: Path) -> None:
+    conn = _conn(tmp_path)
+    root = REPO_ROOT / "docs" / "development" / "research" / "experiments"
+    synced = jfc.sync_candidate_condition_contracts(conn, contract_root=root, registered_at="2026-08-23T12:00:00+08:00")
+    assert synced["issues"] == []
+    identifiers = {
+        row["candidate_condition_item_id"]
+        for item in synced["registered"]
+        for row in item["result"]["registered"]
+    }
+    assert {"CCI:R-93:D1_SHAREHOLDER_APPROVAL", "CCI:R-94:D1_SHAREHOLDER_APPROVAL"} <= identifiers
+    assert jfc.reconcile(conn, as_of="2026-09-01T12:00:00+08:00")["items"] == []
 
 
 def test_pre_due_outcome_acquisition_is_rejected(tmp_path: Path) -> None:
@@ -817,3 +882,55 @@ def test_cjo_entry_dispatches_only_an_explicit_due_execution_request(tmp_path: P
         run.datetime = original_datetime
     assert calls == [request]
     assert surfaced["executions"][0]["result"]["status"] == "BLOCKED"
+
+
+def test_cjo_entry_surfaces_due_candidate_conditions_without_dispatching_outcome_execution(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """A candidate reminder can only request official-source enumeration."""
+    import scripts.judgment_feedback_control as control_module
+
+    target = tmp_path / "docs" / "development" / "research" / "experiments" / "R-CAND"
+    target.mkdir(parents=True)
+    contract = _candidate_condition_contract(target, due_at="2026-03-31T23:59:59+08:00")
+    (target / "09_outcome_execution.json").write_text(
+        json.dumps({"schema_version": jfc.DUE_EXECUTION_SCHEMA_VERSION, "feedback_item_id": "CCI:R-CAND:D1_APPROVAL"}),
+        encoding="utf-8",
+    )
+    configured_db = tmp_path / "configured-production.db"
+    bootstrap = jfc.connect(configured_db)
+    jfc.initialize(bootstrap)
+    bootstrap.close()
+    calls: list[Path] = []
+
+    def _fake_execute(conn, *, execution_request_ref, actor_id, downloader=None):
+        calls.append(Path(execution_request_ref))
+        return {"status": "SHOULD_NOT_RUN"}
+
+    run_path = REPO_ROOT / "scripts" / "turtle_agent" / "run.py"
+    run_spec = importlib.util.spec_from_file_location("turtle_agent_run_candidate_condition_test", run_path)
+    assert run_spec and run_spec.loader
+    run = importlib.util.module_from_spec(run_spec)
+    run_spec.loader.exec_module(run)
+    previous_root = run._FRAMEWORK_DIR
+    original_datetime = run.datetime
+
+    class _FutureClock:
+        @classmethod
+        def now(cls):
+            return original_datetime.fromisoformat("2026-04-01T12:00:00+08:00")
+
+    monkeypatch.setenv("TURTLE_DB_PATH", str(configured_db))
+    monkeypatch.setattr(control_module, "execute_due_claim", _fake_execute)
+    run._FRAMEWORK_DIR = str(tmp_path)
+    run.datetime = _FutureClock
+    try:
+        surfaced = run._surface_live_forward_due_inbox()
+    finally:
+        run._FRAMEWORK_DIR = previous_root
+        run.datetime = original_datetime
+    assert calls == []
+    assert surfaced["inbox"]["items"] == []
+    condition = surfaced["candidate_conditions"]["inbox"]["items"]
+    assert condition[0]["candidate_condition_item_id"] == "CCI:R-CAND:D1_APPROVAL"
+    assert condition[0]["time_state"] == "DUE"

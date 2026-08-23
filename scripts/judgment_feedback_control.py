@@ -23,6 +23,8 @@ from typing import Any, Iterable
 
 SCHEMA_VERSION = "judgment-feedback-control.v1"
 REGISTRATION_SCHEMA_VERSION = "judgment-feedback-control-registration.v1"
+CANDIDATE_CONDITION_SCHEMA_VERSION = "candidate-condition-due-registration.v1"
+CANDIDATE_CONDITION_INBOX_SCHEMA_VERSION = "candidate-condition-due-inbox.v1"
 OPERATING_OUTCOME_RECORD_SCHEMA_VERSION = "judgment-feedback-operating-outcome-record.v1"
 DUE_EXECUTION_SCHEMA_VERSION = "judgment-feedback-due-execution.v1"
 TIME_STATES = {"WAITING", "DUE", "OVERDUE", "CLOSED"}
@@ -33,6 +35,9 @@ SETTLEMENT_POLICIES = {"INITIAL_DISCLOSURE", "LATEST_OFFICIAL_AS_OF_EVALUATION"}
 EPISODE_CLASSES = {"JUDGMENT_SELECTION_EPISODE", "MECHANISM_SIGNAL_PROBE", "PIPELINE_REHEARSAL"}
 SELECTION_STATUSES = {"SELECTION_ADMITTED", "NO_PRIMARY"}
 LEARNING_ELIGIBILITIES = {"SELECTION_METHOD_ELIGIBLE", "MECHANISM_SETTLEMENT_ONLY"}
+CANDIDATE_CONDITION_STATUSES = {"PENDING"}
+CANDIDATE_CONDITION_NEXT_STEPS = {"ENUMERATE_OFFICIAL_CONDITION_SOURCE"}
+CANDIDATE_CONDITION_SOURCE_KINDS = {"CNINFO_ORDINARY_ANNOUNCEMENT"}
 EVENT_TYPES = {
     "CLAIM_REGISTERED",
     "ACQUISITION_STARTED",
@@ -122,6 +127,10 @@ def _loads(value: str) -> Any:
 
 def _feedback_item_id(episode_id: str, claim_id: str, stage_id: str) -> str:
     return f"FBI:{episode_id}:{claim_id}:{stage_id}"
+
+
+def _candidate_condition_item_id(candidate_id: str, condition_id: str) -> str:
+    return f"CCI:{candidate_id}:{condition_id}"
 
 
 def connect(db_path: str | Path) -> sqlite3.Connection:
@@ -255,6 +264,22 @@ def initialize(conn: sqlite3.Connection) -> None:
         );
         CREATE INDEX IF NOT EXISTS idx_judgment_feedback_events_item_time
           ON judgment_feedback_events(feedback_item_id, effective_at, recorded_at);
+        CREATE TABLE IF NOT EXISTS judgment_candidate_conditions (
+          candidate_condition_item_id TEXT PRIMARY KEY,
+          candidate_id TEXT NOT NULL,
+          condition_id TEXT NOT NULL,
+          company_id TEXT NOT NULL,
+          cutoff_at TEXT NOT NULL,
+          due_at TEXT NOT NULL,
+          official_source_query_json TEXT NOT NULL,
+          next_step TEXT NOT NULL,
+          status TEXT NOT NULL,
+          condition_contract_ref TEXT NOT NULL,
+          registered_at TEXT NOT NULL,
+          UNIQUE (candidate_id, condition_id)
+        );
+        CREATE INDEX IF NOT EXISTS idx_judgment_candidate_conditions_due
+          ON judgment_candidate_conditions(due_at, candidate_condition_item_id);
         """
     )
     # The feedback control plane has already been initialized in development
@@ -502,6 +527,188 @@ def sync_live_forward_contracts(
         except ControlPlaneError as exc:
             issues.append({"contract_path": str(path), "code": exc.code, "detail": exc.detail})
     return {"schema_version": SCHEMA_VERSION, "registered": registered, "issues": issues}
+
+
+def _expect_exact_keys(value: dict[str, Any], *, expected: set[str], context: str) -> None:
+    unknown = sorted(set(value) - expected)
+    missing = sorted(expected - set(value))
+    if unknown:
+        raise ControlPlaneError("candidate_condition_field_forbidden", f"{context} contains forbidden fields: {', '.join(unknown)}")
+    if missing:
+        raise ControlPlaneError("candidate_condition_field_missing", f"{context} is missing fields: {', '.join(missing)}")
+
+
+def _candidate_condition_row(
+    manifest: dict[str, Any], *, condition: dict[str, Any], condition_contract_ref: str, registered_at: str,
+) -> dict[str, str]:
+    _expect_exact_keys(
+        condition,
+        expected={"condition_id", "due_at", "official_source_query", "next_step", "status"},
+        context="candidate condition",
+    )
+    candidate_id = _required_text(manifest, "candidate_id")
+    company_id = _required_text(manifest, "company_id")
+    cutoff_at = _iso(_parse_time(manifest.get("cutoff_at"), field="cutoff_at"))
+    condition_id = _required_text(condition, "condition_id")
+    due_at = _iso(_parse_time(condition.get("due_at"), field="due_at"))
+    if _parse_time(due_at, field="due_at") < _parse_time(cutoff_at, field="cutoff_at"):
+        raise ControlPlaneError("candidate_condition_due_before_cutoff", "condition due_at cannot precede cutoff_at")
+    next_step = _required_text(condition, "next_step").upper()
+    if next_step not in CANDIDATE_CONDITION_NEXT_STEPS:
+        raise ControlPlaneError("candidate_condition_next_step_invalid", f"unsupported next_step: {next_step}")
+    status = _required_text(condition, "status").upper()
+    if status not in CANDIDATE_CONDITION_STATUSES:
+        raise ControlPlaneError("candidate_condition_status_invalid", f"unsupported candidate status: {status}")
+    query = condition.get("official_source_query")
+    if not isinstance(query, dict):
+        raise ControlPlaneError("candidate_condition_query_invalid", "official_source_query must be an object")
+    _expect_exact_keys(
+        query,
+        expected={"source_kind", "issuer_code", "published_after", "required_title_terms"},
+        context="official_source_query",
+    )
+    source_kind = _required_text(query, "source_kind").upper()
+    if source_kind not in CANDIDATE_CONDITION_SOURCE_KINDS:
+        raise ControlPlaneError("candidate_condition_source_kind_invalid", f"unsupported official source kind: {source_kind}")
+    _required_text(query, "issuer_code")
+    published_after = _iso(_parse_time(query.get("published_after"), field="official_source_query.published_after"))
+    if _parse_time(published_after, field="official_source_query.published_after") < _parse_time(cutoff_at, field="cutoff_at"):
+        raise ControlPlaneError(
+            "candidate_condition_query_before_cutoff",
+            "official_source_query.published_after cannot precede cutoff_at",
+        )
+    title_terms = query.get("required_title_terms")
+    if not isinstance(title_terms, list) or not title_terms or any(not isinstance(term, str) or not term.strip() for term in title_terms):
+        raise ControlPlaneError("candidate_condition_title_terms_invalid", "required_title_terms must be a non-empty list of text")
+    return {
+        "candidate_condition_item_id": _candidate_condition_item_id(candidate_id, condition_id),
+        "candidate_id": candidate_id,
+        "condition_id": condition_id,
+        "company_id": company_id,
+        "cutoff_at": cutoff_at,
+        "due_at": due_at,
+        "official_source_query_json": _json({
+            "source_kind": source_kind,
+            "issuer_code": query["issuer_code"].strip(),
+            "published_after": published_after,
+            "required_title_terms": [term.strip() for term in title_terms],
+        }),
+        "next_step": next_step,
+        "status": status,
+        "condition_contract_ref": condition_contract_ref,
+        "registered_at": registered_at,
+    }
+
+
+def register_candidate_condition_contract(
+    conn: sqlite3.Connection, *, contract_path: str | Path, registered_at: str | None = None,
+) -> dict[str, Any]:
+    path = Path(contract_path).expanduser().resolve()
+    manifest = _read_json(path)
+    _expect_exact_keys(
+        manifest,
+        expected={"schema_version", "candidate_id", "company_id", "cutoff_at", "conditions"},
+        context="candidate condition contract",
+    )
+    if manifest.get("schema_version") != CANDIDATE_CONDITION_SCHEMA_VERSION:
+        raise ControlPlaneError(
+            "candidate_condition_schema_invalid",
+            f"expected schema_version {CANDIDATE_CONDITION_SCHEMA_VERSION}",
+        )
+    conditions = manifest.get("conditions")
+    if not isinstance(conditions, list) or not conditions:
+        raise ControlPlaneError("candidate_conditions_missing", "candidate condition contract requires a non-empty conditions list")
+    registered_at_iso = _iso(_parse_time(registered_at or _now(), field="registered_at"))
+    rows = [
+        _candidate_condition_row(
+            manifest, condition=condition, condition_contract_ref=str(path), registered_at=registered_at_iso,
+        )
+        for condition in conditions if isinstance(condition, dict)
+    ]
+    if len(rows) != len(conditions):
+        raise ControlPlaneError("candidate_condition_invalid", "each conditions entry must be an object")
+    if len({row["candidate_condition_item_id"] for row in rows}) != len(rows):
+        raise ControlPlaneError("candidate_condition_duplicate", "one contract cannot repeat a candidate condition")
+    results: list[dict[str, Any]] = []
+    columns = tuple(rows[0])
+    with conn:
+        for row in rows:
+            existing = conn.execute(
+                "SELECT * FROM judgment_candidate_conditions WHERE candidate_condition_item_id = ?",
+                (row["candidate_condition_item_id"],),
+            ).fetchone()
+            if existing:
+                comparable = {column: existing[column] for column in columns if column not in {"registered_at", "condition_contract_ref"}}
+                intended = {column: row[column] for column in columns if column not in {"registered_at", "condition_contract_ref"}}
+                if comparable != intended:
+                    raise ControlPlaneError(
+                        "candidate_condition_registration_conflict",
+                        f"candidate condition is already registered with different frozen fields: {row['candidate_condition_item_id']}",
+                    )
+                rehomed = existing["condition_contract_ref"] != row["condition_contract_ref"]
+                if rehomed:
+                    conn.execute(
+                        "UPDATE judgment_candidate_conditions SET condition_contract_ref = ? WHERE candidate_condition_item_id = ?",
+                        (row["condition_contract_ref"], row["candidate_condition_item_id"]),
+                    )
+                results.append({
+                    "candidate_condition_item_id": row["candidate_condition_item_id"],
+                    "registered": False,
+                    "idempotent": True,
+                    "worktree_rehomed": rehomed,
+                })
+                continue
+            conn.execute(
+                f"INSERT INTO judgment_candidate_conditions ({', '.join(columns)}) VALUES ({', '.join('?' for _ in columns)})",
+                tuple(row[column] for column in columns),
+            )
+            results.append({"candidate_condition_item_id": row["candidate_condition_item_id"], "registered": True, "idempotent": False})
+    return {"schema_version": CANDIDATE_CONDITION_INBOX_SCHEMA_VERSION, "registered": results}
+
+
+def sync_candidate_condition_contracts(
+    conn: sqlite3.Connection, *, contract_root: str | Path, registered_at: str | None = None,
+) -> dict[str, Any]:
+    root = Path(contract_root).expanduser()
+    if not root.is_dir():
+        raise ControlPlaneError("candidate_condition_contract_root_missing", f"candidate condition contract root is missing: {root}")
+    registered: list[dict[str, Any]] = []
+    issues: list[dict[str, str]] = []
+    for path in sorted(root.rglob("00_candidate_condition_contract.json")):
+        try:
+            result = register_candidate_condition_contract(conn, contract_path=path, registered_at=registered_at)
+            registered.append({"contract_path": str(path), "result": result})
+        except ControlPlaneError as exc:
+            issues.append({"contract_path": str(path), "code": exc.code, "detail": exc.detail})
+    return {"schema_version": CANDIDATE_CONDITION_INBOX_SCHEMA_VERSION, "registered": registered, "issues": issues}
+
+
+def reconcile_candidate_conditions(conn: sqlite3.Connection, *, as_of: str) -> dict[str, Any]:
+    as_of_dt = _parse_time(as_of, field="as_of", allow_date=True)
+    rows = conn.execute(
+        "SELECT * FROM judgment_candidate_conditions ORDER BY due_at, candidate_condition_item_id"
+    ).fetchall()
+    items: list[dict[str, Any]] = []
+    for row in rows:
+        item = dict(row)
+        due_at = _parse_time(item["due_at"], field="due_at")
+        items.append({
+            "candidate_condition_item_id": item["candidate_condition_item_id"],
+            "candidate_id": item["candidate_id"],
+            "condition_id": item["condition_id"],
+            "company_id": item["company_id"],
+            "cutoff_at": item["cutoff_at"],
+            "due_at": item["due_at"],
+            "official_source_query": _loads(item["official_source_query_json"]),
+            "next_step": item["next_step"],
+            "status": item["status"],
+            "time_state": "WAITING" if as_of_dt < due_at else "DUE",
+        })
+    return {
+        "schema_version": CANDIDATE_CONDITION_INBOX_SCHEMA_VERSION,
+        "as_of": _iso(as_of_dt),
+        "items": items,
+    }
 
 
 def register_manifest(conn: sqlite3.Connection, manifest: dict[str, Any], *, registered_at: str | None = None) -> dict[str, Any]:
@@ -1992,11 +2199,33 @@ def _command_sync_live_forward(args: argparse.Namespace) -> dict[str, Any]:
         conn.close()
 
 
+def _command_sync_candidate_conditions(args: argparse.Namespace) -> dict[str, Any]:
+    conn = connect(args.db)
+    try:
+        initialize(conn)
+        return sync_candidate_condition_contracts(
+            conn,
+            contract_root=args.contract_root,
+            registered_at=args.registered_at,
+        )
+    finally:
+        conn.close()
+
+
 def _command_reconcile(args: argparse.Namespace) -> dict[str, Any]:
     conn = connect(args.db)
     try:
         initialize(conn)
         return reconcile(conn, as_of=args.as_of, due_soon_days=args.due_soon_days)
+    finally:
+        conn.close()
+
+
+def _command_reconcile_candidate_conditions(args: argparse.Namespace) -> dict[str, Any]:
+    conn = connect(args.db)
+    try:
+        initialize(conn)
+        return reconcile_candidate_conditions(conn, as_of=args.as_of)
     finally:
         conn.close()
 
@@ -2057,6 +2286,14 @@ def _parser() -> argparse.ArgumentParser:
     sync.add_argument("--contract-root", required=True)
     sync.add_argument("--registered-at")
     sync.set_defaults(handler=_command_sync_live_forward)
+    candidate_sync = sub.add_parser(
+        "sync-candidate-condition-contracts",
+        help="register pending candidate conditions without creating feedback claims",
+    )
+    candidate_sync.add_argument("--db", required=True)
+    candidate_sync.add_argument("--contract-root", required=True)
+    candidate_sync.add_argument("--registered-at")
+    candidate_sync.set_defaults(handler=_command_sync_candidate_conditions)
     reconcile_cmd = sub.add_parser("reconcile", help="derive the feedback inbox without writing events")
     reconcile_cmd.add_argument("--db", required=True)
     reconcile_cmd.add_argument("--as-of", required=True)
@@ -2067,6 +2304,13 @@ def _parser() -> argparse.ArgumentParser:
     inbox.add_argument("--as-of", required=True)
     inbox.add_argument("--due-soon-days", type=int, default=7)
     inbox.set_defaults(handler=_command_reconcile)
+    candidate_inbox = sub.add_parser(
+        "candidate-condition-inbox",
+        help="derive pending candidate-condition reminders without executing an outcome path",
+    )
+    candidate_inbox.add_argument("--db", required=True)
+    candidate_inbox.add_argument("--as-of", required=True)
+    candidate_inbox.set_defaults(handler=_command_reconcile_candidate_conditions)
     append = sub.add_parser("append-event", help="append a reviewed non-outcome control event")
     append.add_argument("--db", required=True)
     append.add_argument("--input", required=True)

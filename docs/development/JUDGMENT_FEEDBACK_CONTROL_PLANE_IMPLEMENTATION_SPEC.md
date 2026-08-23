@@ -211,6 +211,12 @@ judgment_feedback_events
 - 不增加新的 hash、checksum、指纹文件或迁移框架；
 - 现有冻结工件的 fingerprint 可以作为来源身份引用。
 
+### 7.4 候选条件收件箱
+
+`NOT_FROZEN` 的前瞻候选可能只有一个可审计的准入条件，例如待股东会批准。它们不能伪装成未来结果 claim，也不能进入 FJ、选择判断、结果结算或方法学习。为防止这些日期只存在 Markdown 中，控制面可在同一数据库的独立 `judgment_candidate_conditions` 表中，从 `00_candidate_condition_contract.json` 持久登记 `candidate_id + condition_id` 与官方来源查询范围。
+
+此类 item 只有 `WAITING` / `DUE` 两种时间状态，并且到期时唯一允许的下一步为 `ENUMERATE_OFFICIAL_CONDITION_SOURCE`。控制面不为它们推断 `overdue_at`，不读取正文、不生成结果包，且 CJO 不得调用 `execute_due_claim`。候选转为正式冻结 episode 必须经过独立、后续的准入契约，不能修改该提醒以绕过冻结门。
+
 ## 8. 事件模型
 
 第一版至少支持：
@@ -322,6 +328,8 @@ S1、S2 使用不同 `stage_id` 和 `feedback_item_id`。每个阶段拥有独�
 .venv/bin/python scripts/judgment_feedback_control.py register-experiment --db stock_analysis.db --experiment-dir DIR
 .venv/bin/python scripts/judgment_feedback_control.py reconcile --db stock_analysis.db --as-of 2026-08-22
 .venv/bin/python scripts/judgment_feedback_control.py inbox --db stock_analysis.db --as-of 2026-08-22
+.venv/bin/python scripts/judgment_feedback_control.py sync-candidate-condition-contracts --db stock_analysis.db --contract-root docs/development/research/experiments
+.venv/bin/python scripts/judgment_feedback_control.py candidate-condition-inbox --db stock_analysis.db --as-of 2026-08-22
 .venv/bin/python scripts/judgment_feedback_control.py append-event --db stock_analysis.db --input EVENT.json
 .venv/bin/python scripts/judgment_feedback_control.py show --db stock_analysis.db --feedback-item-id ITEM_ID
 ```

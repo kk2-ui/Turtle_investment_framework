@@ -59,6 +59,12 @@
 
 `reconcile` 与 `inbox` 均为只读派生操作；持久状态来自 `stock_analysis.db` 的 `judgment_feedback_claims` 与 `judgment_feedback_events`。
 
+## 候选条件提醒
+
+尚未冻结为判断 episode 的候选，不能借用 feedback claim 登记。若只有待股东会批准、待交割或其他准入条件，实验目录可提供 `00_candidate_condition_contract.json`，并通过 `sync-candidate-condition-contracts` / `candidate-condition-inbox` 登记和查看。该合同仅允许候选身份、cutoff、条件到期日、官方公告查询范围及 `ENUMERATE_OFFICIAL_CONDITION_SOURCE` 下一步；其状态只能是 `PENDING`。
+
+候选条件到期时仅提示枚举声明的官方来源，不自动读取公告正文、不生成 outcome package、不追加结算事件，也不产生 FJ、selection score 或 learning 记录。它不属于 `reconcile` 的 feedback claim `items`，且不具有臆造的 `overdue_at`。
+
 ## 当前执行边界
 
 R05/R06、`outcome_acquisition.py`、`live_forward_signal_settlement.py` 与
