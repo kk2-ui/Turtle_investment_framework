@@ -12,6 +12,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 import sqlite3
 import sys
 import uuid
@@ -108,6 +109,12 @@ def _required_text(payload: dict[str, Any], field: str) -> str:
 
 def _reference_path(reference: str) -> Path:
     return Path(reference.split("#", 1)[0]).expanduser()
+
+
+def _same_artifact_reference(left: Any, right: str | Path) -> bool:
+    if not str(left or "").strip() or not str(right or "").strip():
+        return False
+    return _reference_path(str(left)).resolve() == _reference_path(str(right)).resolve()
 
 
 def _require_artifact(reference: str, *, field: str) -> str:
@@ -1275,6 +1282,108 @@ def show(conn: sqlite3.Connection, feedback_item_id: str, *, as_of: str | None =
     }
 
 
+def read_learning_note_ready_event(
+    db_path: str | Path, *, feedback_item_id: str, event_id: str,
+    information_cutoff: str,
+) -> dict[str, Any]:
+    """Read one learning receipt as it was knowable at the report cutoff.
+
+    A learning-note event is not permanently admissible merely because it was
+    valid when first recorded.  A later settlement can supersede its diagnosis,
+    and an outcome-exposure breach can invalidate method learning.  This read
+    therefore replays the narrow event history available at ``information_cutoff``.
+    """
+    path = Path(db_path).expanduser().resolve()
+    if not path.is_file():
+        return {}
+    findings: list[str] = []
+    cutoff_text = str(information_cutoff or "").strip()
+    try:
+        if re.fullmatch(r"\d{4}-\d{2}-\d{2}", cutoff_text):
+            cutoff = datetime.fromisoformat(cutoff_text).replace(
+                hour=23, minute=59, second=59,
+                tzinfo=timezone(timedelta(hours=8)),
+            ).astimezone(timezone.utc)
+        else:
+            cutoff = _parse_time(cutoff_text, field="information_cutoff")
+    except ControlPlaneError as exc:
+        return {
+            "admission_state": "BLOCKED",
+            "admission_findings": [exc.code],
+        }
+    conn = sqlite3.connect(path)
+    conn.row_factory = sqlite3.Row
+    try:
+        row = conn.execute(
+            """SELECT event.*, claim.episode_id, claim.claim_id
+               FROM judgment_feedback_events AS event
+               JOIN judgment_feedback_claims AS claim
+                 ON claim.feedback_item_id = event.feedback_item_id
+               WHERE event.feedback_item_id = ? AND event.event_id = ?
+                 AND event.event_type = 'LEARNING_NOTE_READY'""",
+            (str(feedback_item_id), str(event_id)),
+        ).fetchone()
+        history_rows = conn.execute(
+            """SELECT * FROM judgment_feedback_events
+               WHERE feedback_item_id = ?
+               ORDER BY effective_at, recorded_at, event_id""",
+            (str(feedback_item_id),),
+        ).fetchall()
+    except sqlite3.Error:
+        return {}
+    finally:
+        conn.close()
+    if not row:
+        return {}
+    value = dict(row)
+    value["artifact_refs"] = _loads(value.pop("artifact_refs_json"))
+    value["payload"] = _loads(value.pop("payload_json"))
+    value["control_claim"] = {
+        "episode_id": value.pop("episode_id"),
+        "claim_id": value.pop("claim_id"),
+    }
+    history: list[dict[str, Any]] = []
+    for history_row in history_rows:
+        event = dict(history_row)
+        try:
+            effective_at = _parse_time(event.get("effective_at"), field="event.effective_at")
+            recorded_at = _parse_time(event.get("recorded_at"), field="event.recorded_at")
+        except ControlPlaneError:
+            continue
+        if effective_at <= cutoff and recorded_at <= cutoff:
+            event["artifact_refs"] = _loads(event.pop("artifact_refs_json"))
+            event["payload"] = _loads(event.pop("payload_json"))
+            history.append(event)
+
+    available_by_id = {str(event.get("event_id") or ""): event for event in history}
+    selected = available_by_id.get(str(event_id))
+    if selected is None:
+        findings.append("learning_note_event_not_available_at_information_cutoff")
+    else:
+        ready_events = [
+            event for event in history if event.get("event_type") == "LEARNING_NOTE_READY"
+        ]
+        if ready_events and ready_events[-1].get("event_id") != event_id:
+            findings.append("learning_note_ready_event_not_latest_at_information_cutoff")
+        diagnosis_id = str((selected.get("payload") or {}).get("diagnosis_event_id") or "")
+        diagnosis = available_by_id.get(diagnosis_id)
+        settlements = [event for event in history if event.get("event_type") in OUTCOME_EVENTS]
+        latest_settlement = settlements[-1] if settlements else None
+        if (
+            diagnosis is None
+            or latest_settlement is None
+            or (diagnosis.get("payload") or {}).get("settlement_event_id")
+            != latest_settlement.get("event_id")
+        ):
+            findings.append("learning_note_stale_for_latest_settlement_at_information_cutoff")
+        if any(event.get("event_type") == "OUTCOME_EXPOSURE_BREACH" for event in history):
+            findings.append("learning_note_blocked_by_exposure_breach_at_information_cutoff")
+    value["admission_state"] = "REVIEWABLE" if not findings else "BLOCKED"
+    value["admission_findings"] = list(dict.fromkeys(findings))
+    value["admission_information_cutoff"] = cutoff.isoformat()
+    return value
+
+
 def _read_json(path: Path) -> dict[str, Any]:
     try:
         data = json.loads(path.read_text(encoding="utf-8"))
@@ -2016,14 +2125,30 @@ def record_learning_note(
     note_path = _reference_path(str(learning_note_ref)).resolve()
     _require_artifact(str(feedback_path), field="feedback_ref")
     _require_artifact(str(note_path), field="learning_note_ref")
-    validation = validate_judgment_learning_note(_read_json(note_path), _read_json(feedback_path))
+    note = _read_json(note_path)
+    feedback = _read_json(feedback_path)
+    validation = validate_judgment_learning_note(note, feedback)
     if validation.get("state") != "REVIEWABLE":
         raise ControlPlaneError("learning_note_not_reviewable", "; ".join(validation.get("findings") or []))
+    if _reference_path(str(note.get("feedback_ref") or "")).resolve() != feedback_path:
+        raise ControlPlaneError(
+            "learning_note_feedback_ref_mismatch",
+            "learning note feedback_ref must resolve to the validated feedback artifact",
+        )
+    if str(note.get("case_id") or "") != str(claim.get("episode_id") or ""):
+        raise ControlPlaneError("learning_note_case_mismatch", "learning note case_id must match the control-plane episode")
+    if str(note.get("claim_id") or "") != str(claim.get("claim_id") or ""):
+        raise ControlPlaneError("learning_note_claim_mismatch", "learning note claim_id must match the control-plane claim")
     at = _iso(_parse_time(effective_at, field="effective_at"))
     events = _events(conn, feedback_item_id)
     settlement = _last_effective_no_later_than(events, OUTCOME_EVENTS, _parse_time(at, field="effective_at"))
     if not settlement:
         raise ControlPlaneError("settlement_required", "learning note requires a completed settlement")
+    if not _same_artifact_reference(settlement["payload"].get("feedback_ref"), feedback_path):
+        raise ControlPlaneError(
+            "learning_note_settlement_feedback_mismatch",
+            "learning note feedback must be the feedback artifact emitted by the active settlement",
+        )
     diagnosis_event = _append_adapter_event(
         conn, feedback_item_id=feedback_item_id, event_type="DIAGNOSIS_ACCEPTED", effective_at=at,
         actor_id=actor_id, idempotency_key=f"DIAGNOSIS_ACCEPTED:{feedback_item_id}:{settlement['event_id']}",
@@ -2034,7 +2159,19 @@ def record_learning_note(
         conn, feedback_item_id=feedback_item_id, event_type="LEARNING_NOTE_READY", effective_at=at,
         actor_id=actor_id, idempotency_key=f"LEARNING_NOTE_READY:{feedback_item_id}:{diagnosis_event['event_id']}",
         artifact_refs=[str(feedback_path), str(note_path)],
-        payload={"diagnosis_event_id": diagnosis_event["event_id"], "learning_note_ref": str(note_path)},
+        payload={
+            "diagnosis_event_id": diagnosis_event["event_id"],
+            "learning_note_ref": str(note_path),
+            "learning_note_id": note.get("note_id"),
+            "feedback_ref": str(feedback_path),
+            "case_id": note.get("case_id"),
+            "claim_id": note.get("claim_id"),
+            "settlement_id": note.get("settlement_id"),
+            # The event is append-only; exact structural snapshots prevent a
+            # later rewrite at the same path from changing what was admitted.
+            "learning_note_snapshot": deepcopy(note),
+            "feedback_snapshot": deepcopy(feedback),
+        },
     )
     return {"schema_version": SCHEMA_VERSION, "status": "LEARNING_NOTE_READY", "event": note_event, "claim": claim}
 

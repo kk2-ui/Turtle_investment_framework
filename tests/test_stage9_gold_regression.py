@@ -48,6 +48,8 @@ def test_contract_pack_includes_question_led_research_plan(tmp_path: Path) -> No
         "causal_chain", "counter_evidence",
     }
     assert all("旧报告" not in item["pattern"] for item in chapter_plan["reasoning_examples"])
+    assert "research_agenda" in result["judgment_generation_handoff"]
+    assert "investment_enrichment" not in result["judgment_generation_handoff"]
 
 
 def test_topic_presence_uses_stable_topic_identities() -> None:

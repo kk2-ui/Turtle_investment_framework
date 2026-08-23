@@ -895,7 +895,8 @@ pit_read_source，且只可按 allowlist 路径调用 pit_read_framework。禁�
         allowed = {
             "pit_list_sources", "pit_read_source", "pit_read_framework",
             "pit_verify_official_fact", "pit_write_chapter", "pit_read_chapter",
-            "pit_read_report_contract_pack", "pit_read_structured_ledger_contract",
+            "pit_read_report_contract_pack", "pit_read_judgment_generation_handoff",
+            "pit_read_structured_ledger_contract",
             "pit_audit_chapter", "pit_write_claim_evidence_ledger",
             "pit_write_financial_driver_bridge",
             "pit_write_thesis_test_ledger",
@@ -919,11 +920,13 @@ pit_read_source，且只可按 allowlist 路径调用 pit_read_framework。禁�
         if hasattr(self._llm, "set_runtime_task"):
             self._llm.set_runtime_task("pit_production_freeze")
         purpose_instruction = (
-            "再读取pit_read_report_contract_pack取得当前V3合同及其公司判断前置物，必须原样继承其中的中心路径、经营FJ和正常化盈利/owner-cash传导；"
+            "再读取pit_read_report_contract_pack，并以其中judgment_generation_handoff为统一入口；必要时调用pit_read_judgment_generation_handoff刷新RESEARCH_AGENDA和INVESTMENT_ENRICHMENT。"
+            "必须原样继承同cutoff公司判断的中心路径、经营FJ、pair/card及正常化盈利/owner-cash传导；"
             "估值、条件回报和动作只能附加在该经营判断之后，若需要修改经营机制则停止本投资版本并先重做CJO；完成章节、估值后经营驱动桥和其余账本；"
-            "每项材料FJ必须绑定主/反 pair 的唯一 signal，每个材料 pair 必须有复用既有案例卡的 transfer card；近失效反例若没有可验证 PIT episode，必须标记 UNKNOWN 且 card 只能 QUESTION_ONLY；再调用pit_assemble_report。"
+            "每项材料FJ必须绑定主/反 pair 的唯一 signal，每个材料 pair 必须有复用既有案例卡的 transfer card；近失效反例若没有可验证 PIT episode，必须标记 UNKNOWN 且 card 只能 QUESTION_ONLY；账本冻结后调用pit_read_judgment_generation_handoff(view=JUDGMENT_SYNTHESIS)复核自然语言综合输入，再调用pit_assemble_report。"
             if self._config.analysis_purpose == "INVESTMENT_DECISION" else
-            "再读取pit_read_report_contract_pack取得公司判断合同，完成章节后先以 freeze=false 写入含计划 FJ ID 的 claim bootstrap，继而按 financial_driver→thesis→claim(freeze=true promote)→insight→judgment review 顺序冻结四层经营驱动桥、竞争反方、3—5条前瞻判断与案例 card；若无独立同定义 episode 或外部频率，thesis 必须写 probability_mode=NO_PROBABILITY、空 probability_sets 和完整双边 FJ/pair：没有 cutoff 前方向性证据则 NO_PRIMARY 且不写 central_path，有 P24 定向证据才用 selection_basis 作定性选择，绝不可填主观权重；仅 QUALIFIED_PROBABILITY 才可填概率及可追溯校准依据。近失效反例没有可验证 PIT episode 时必须 UNKNOWN/QUESTION_ONLY，再调用pit_assemble_report。"
+            "再读取pit_read_report_contract_pack，并以其中judgment_generation_handoff.research_agenda为统一研究入口；必要时调用pit_read_judgment_generation_handoff刷新RESEARCH_AGENDA。"
+            "READY_WITH_NO_PRIOR只表示可从官方证据继续，不表示选择判断或冻结完成。完成章节后先以 freeze=false 写入含计划 FJ ID 的 claim bootstrap，继而按 financial_driver→thesis→claim(freeze=true promote)→insight→judgment review 顺序冻结四层经营驱动桥、竞争反方、3—5条前瞻判断与案例 card；若无独立同定义 episode 或外部频率，thesis 必须写 probability_mode=NO_PROBABILITY、空 probability_sets 和完整双边 FJ/pair：没有 cutoff 前方向性证据则 NO_PRIMARY 且不写 central_path，有 P24 定向证据才用 selection_basis 作定性选择，绝不可填主观权重；仅 QUALIFIED_PROBABILITY 才可填概率及可追溯校准依据。近失效反例没有可验证 PIT episode 时必须 UNKNOWN/QUESTION_ONLY。账本冻结后调用pit_read_judgment_generation_handoff(view=JUDGMENT_SYNTHESIS)检查自然语言综合输入，再调用pit_assemble_report。"
         )
         purpose_boundary = (
             "CJO 严禁写入或讨论价格、估值、回报、仓位、交易动作、模型或 D-id；它只学习公司机制和可结算经营后果。"
@@ -1915,11 +1918,11 @@ Part C 的 Ch14 综合决策使用 5 状态合成矩阵。写 Ch14 前必须检�
 {reader_coverage_block}
 ## 分析方法论
 1. **了解数据**: 调用 list_documents 查看可用文档
-2. **读取官方证据、原型路由、行业机制、决定性问题与基准率上下文**: 调用 read_evidence_context 获取VERIFIED事实和observation_id，调用read_valuation_route读取主/次原型、适用与禁用模型，调用read_industry_knowledge_context读取匹配行业机制的反例与本公司必须验证字段，再调用read_decisive_question_plan读取框架已选的1-3个问题及按机制冻结的base_rate_context。行业机制只能提出问题、反例和取证清单：每个匹配项在本公司官方证据验证前均为NOT_EVIDENCED，禁止把它当作claim/evidence、估值参数、概率、价格或行动依据。search_report命中只属于CANDIDATE；未自动抽取的关键事实必须用read_section按页回读，再调用verify_official_fact逐字验证。未找到不得推断为不存在、规模很小或已经定价。基准率只能引用对应机制查询中的ELIGIBLE `CASE:`记录；少于5个合格案例时不得输出经验概率，130家估值模型只可帮助选择机制/模型，不是历史结果证据。逐项完成有界研究后必须调用write_decisive_question_findings，记录区分信号、解释更新及估值/动作变化；INCONCLUSIVE或PUBLIC_INFO_UNAVAILABLE也必须记录尝试来源且不得提高置信度。报告必须围绕入选question_id，不得另造自由问题
+2. **读取判断生成上下文与官方证据**: 以 read_report_contract_pack 中的 `judgment_generation_handoff` 为统一入口；上下文变化时可调用 read_judgment_generation_handoff 刷新受控视图。先用 RESEARCH_AGENDA 限定官方证据范围、1-3个决定性问题、行业验证提示和候选方法提示；若合同包提供 INVESTMENT_ENRICHMENT，再继承同cutoff且G1-J完整的公司判断前置物。READY_WITH_NO_PRIOR只表示可从官方证据继续，不表示判断已经冻结。随后调用read_evidence_context回读VERIFIED事实和observation_id；旧的read_valuation_route、read_industry_knowledge_context和read_decisive_question_plan保留为明细读取接口。行业机制只能提出问题、反例和取证清单，候选方法提示也不能成为公司事实、旧结果、估值参数、概率、价格或行动依据。search_report命中只属于CANDIDATE；未自动抽取的关键事实必须用read_section按页回读，再调用verify_official_fact逐字验证。未找到不得推断为不存在、规模很小或已经定价。基准率只能引用对应机制查询中的ELIGIBLE `CASE:`记录；少于5个合格案例时不得输出经验概率，130家估值模型只可帮助选择机制/模型，不是历史结果证据。逐项完成有界研究后必须调用write_decisive_question_findings，记录区分信号、解释更新及估值/动作变化；INCONCLUSIVE或PUBLIC_INFO_UNAVAILABLE也必须记录尝试来源且不得提高置信度。报告必须围绕入选question_id，不得另造自由问题
 {zone_methodology}
 3. **提取财务**: 调用 get_financial_statement 和 get_financial_trends 获取定量数据
 4. **定量计算**: 调用 compute_gg、compute_ddm、assess_moat 完成估值
-5. **写作报告**: 本轮开始一次调用 read_report_contract_pack；随后按合同包逐章 write_chapter，写完后审计（audit_chapter）
+5. **写作报告**: 本轮开始一次调用 read_report_contract_pack，并先处理其中判断handoff的readiness/findings；随后按合同包逐章 write_chapter，写完后审计（audit_chapter）
    - **Ch0 投资要点概览**：最后写（chapter_index=0），总结全部 14 章的核心发现
    - 其他章节 chapter_index 与模板序号一致（Ch12=内在价值合成与裁决，Ch13=DDM估值与仓位执行，Ch14=综合决策）
 6. **最终决策**: 综合各因子给出最终结论
@@ -1935,7 +1938,7 @@ Part C 的 Ch14 综合决策使用 5 状态合成矩阵。写 Ch14 前必须检�
 13. **固化洞见账本**: 先确认write_decisive_question_findings已覆盖全部入选question_id，再以合同包 decisive_question_plan、研究结论和 insight_research_brief 为起点。`decisive_question`必须逐字使用某个入选问题，`question_basis.question_id`必须引用对应ID；禁止绕开计划另造问题。调用 write_insight_ledger，仅保留1-3条能改变估值或动作的公司特异洞见；每条绑定 claim/evidence/decision，写出异常→机制链→最强替代解释→区分观察→估值与动作。必须用估值模型反推市场隐含经营路径，不能用“低PE/PB”代替逆向预期；必须说明潜在价值由谁控制、如何兑现、无催化剂时值多少；最强反方成立时动作如何改变。Ch0/Ch14用 `[insight: id]` 绑定。禁止仅因股价跌破某数无条件止损。
 14. **独立洞见上限评审**: 洞见账冻结后切换为反方审稿人，调用 write_judgment_review。必须区分“真正差异化洞见”和“只是合格的常规分析”，指出最脆弱跳跃、最需要的新证据，以及拿掉核心洞见后估值与动作是否改变。只能引用现有 insight/evidence/decision/model ID。裁决仅诊断，不得因自评为INSIGHTFUL而放宽任何发布门。
 15. **定向研究路由**: 调用 plan_judgment_research(max_tasks_per_run=3)，对execution_queue严格按顺序先调用begin_judgment_research_task，再执行该项required_tools，最后调用complete_judgment_research_task。执行账本会在工具层核验每项maximum tool calls、来源调用和mutation_scope；越界写章/账本与活动任务未完成时assemble会被拒绝。查不到公开信息是有效结果，必须以PUBLIC_INFO_UNAVAILABLE结束，禁止把“未找到”写成正面证据。只有新证据改变主张时才可重写mutation_scope.chapters；禁止全篇扩写、优化分数或修改无关章节。若涉及canonical决策，必须显式decision diff并重新验证全部账本；完成队列后重新调用write_judgment_review。
-16. **组装报告**: 调用 assemble_report；工具先从冻结账本单向编译关键决策区块，再执行完成契约。若返回free_critical_value、protected_block或decision_diff_approval错误，只修对应身份/证据/解释，不得绕过或手工修改受保护区块。新 unified run 自动生成精简投资备忘录与独立15章技术附录
+16. **组装报告**: 结构化账本冻结后调用 read_judgment_generation_handoff(view=JUDGMENT_SYNTHESIS)，以该受控投影复核最终自然语言是否忠实表达公司机制、反方、FJ和财务传导；它不能替代任何 canonical ledger。随后调用 assemble_report；工具先从冻结账本单向编译关键决策区块，再执行完成契约。若返回free_critical_value、protected_block或decision_diff_approval错误，只修对应身份/证据/解释，不得绕过或手工修改受保护区块。新 unified run 自动生成精简投资备忘录与独立15章技术附录
 
 ## 模板合约要求
 {template_raw if template_raw else '（模板未加载，按标准龟龟报告结构写作）'}

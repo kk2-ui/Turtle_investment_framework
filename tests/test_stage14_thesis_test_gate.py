@@ -380,6 +380,42 @@ def _attach_company_judgment_predecessor(output: Path, payload: dict) -> None:
     payload["freeze"]["fingerprint"] = thesis_test_fingerprint(payload)
 
 
+def _attach_complete_company_judgment_predecessor(output: Path, payload: dict) -> dict:
+    selection_admission = {"status": "NO_PRIMARY", "reason": "同 cutoff 没有合格的选择对照"}
+    predecessor = {
+        "schema_version": "company-judgment-predecessor.v2",
+        "identity": {"status": "G1J_COMPLETE", "missing_components": []},
+        "source": {
+            "snapshot_fingerprint": "complete-cjo-snapshot-fingerprint",
+            "thesis_sha256": "complete-cjo-thesis-sha256",
+            "financial_driver_bridge_sha256": "complete-cjo-fdb-sha256",
+        },
+        "central_path": deepcopy(payload["central_path"]),
+        "forward_judgments": deepcopy(payload["forward_judgments"]),
+        "mechanism_chains": deepcopy(payload["mechanism_chains"]),
+        "rival_hypothesis_pairs": deepcopy(payload["rival_hypothesis_pairs"]),
+        "analogy_transfer_cards": deepcopy(payload["analogy_transfer_cards"]),
+        "selection_admission": selection_admission,
+        "financial_driver_bridge": {"drivers": [], "allocation_events": []},
+    }
+    (output / "company_judgment_predecessor.json").write_text(
+        json.dumps(predecessor, ensure_ascii=False), encoding="utf-8",
+    )
+    payload["company_judgment_lineage"] = {
+        "predecessor_snapshot_fingerprint": "complete-cjo-snapshot-fingerprint",
+        "predecessor_thesis_sha256": "complete-cjo-thesis-sha256",
+        "predecessor_completeness_status": "G1J_COMPLETE",
+        "predecessor_financial_driver_bridge_sha256": "complete-cjo-fdb-sha256",
+        "central_path_id": payload["central_path"]["path_id"],
+        "forward_judgment_ids": sorted(item["judgment_id"] for item in payload["forward_judgments"]),
+        "rival_hypothesis_pair_ids": sorted(item["pair_id"] for item in payload["rival_hypothesis_pairs"]),
+        "analogy_transfer_card_ids": sorted(item["card_id"] for item in payload["analogy_transfer_cards"]),
+        "selection_admission": deepcopy(selection_admission),
+    }
+    payload["freeze"]["fingerprint"] = thesis_test_fingerprint(payload)
+    return predecessor
+
+
 def test_valid_thesis_test_reaches_decision_ready(tmp_path: Path) -> None:
     assert _validate(tmp_path, _payload(tmp_path))["state"] == "DECISION_READY"
 
@@ -422,6 +458,110 @@ def test_investment_thesis_rejects_rewriting_a_frozen_company_fj(tmp_path: Path)
 
     assert result["state"] == "INVALID"
     assert "company_judgment_lineage_forward_judgment_rewritten:fj.retention" in result["invalid_findings"]
+
+
+def test_complete_company_judgment_lineage_preserves_pairs_cards_and_selection(tmp_path: Path) -> None:
+    payload = _forward_payload(tmp_path)
+    _attach_complete_company_judgment_predecessor(tmp_path, payload)
+
+    result = validate_thesis_test_ledger(
+        payload, output_dir=tmp_path, report_text=_forward_report(), enforced=True,
+        monitoring_required=True, forward_judgment_required=True,
+        company_judgment_lineage_required=True,
+    )
+
+    assert result["state"] == "DECISION_READY"
+
+
+def test_complete_company_judgment_lineage_rejects_rewritten_pair_or_card(tmp_path: Path) -> None:
+    pair_payload = _forward_payload(tmp_path / "pair", freeze=False)
+    _attach_complete_company_judgment_predecessor(tmp_path / "pair", pair_payload)
+    pair_payload["rival_hypothesis_pairs"][0]["causal_trace"][0]["status"] = "UNKNOWN"
+    pair_result = validate_thesis_test_ledger(
+        pair_payload, output_dir=tmp_path / "pair", report_text=_forward_report(), enforced=True,
+        monitoring_required=True, forward_judgment_required=True,
+        company_judgment_lineage_required=True,
+    )
+    assert (
+        "company_judgment_lineage_rival_hypothesis_pair_rewritten:RHP:retention-vs-erosion"
+        in pair_result["invalid_findings"]
+    )
+
+    discriminator_payload = _forward_payload(tmp_path / "discriminator", freeze=False)
+    _attach_complete_company_judgment_predecessor(tmp_path / "discriminator", discriminator_payload)
+    discriminator_payload["rival_hypothesis_pairs"][0]["discriminators"][0]["rival_prediction"]["value"] = 1.0
+    discriminator_result = validate_thesis_test_ledger(
+        discriminator_payload, output_dir=tmp_path / "discriminator", report_text=_forward_report(), enforced=True,
+        monitoring_required=True, forward_judgment_required=True,
+        company_judgment_lineage_required=True,
+    )
+    assert (
+        "company_judgment_lineage_rival_hypothesis_pair_rewritten:RHP:retention-vs-erosion"
+        in discriminator_result["invalid_findings"]
+    )
+
+    card_payload = _forward_payload(tmp_path / "card", freeze=False)
+    _attach_complete_company_judgment_predecessor(tmp_path / "card", card_payload)
+    card_payload["analogy_transfer_cards"][0]["application_rule"]["when_to_apply"] = "改写迁移边界"
+    card_result = validate_thesis_test_ledger(
+        card_payload, output_dir=tmp_path / "card", report_text=_forward_report(), enforced=True,
+        monitoring_required=True, forward_judgment_required=True,
+        company_judgment_lineage_required=True,
+    )
+    assert (
+        "company_judgment_lineage_analogy_transfer_card_rewritten:ATC:retention-vs-erosion"
+        in card_result["invalid_findings"]
+    )
+
+
+def test_complete_company_judgment_lineage_rejects_missing_extra_and_selection_mismatch(tmp_path: Path) -> None:
+    payload = _forward_payload(tmp_path, freeze=False)
+    _attach_complete_company_judgment_predecessor(tmp_path, payload)
+    removed_pair = payload["rival_hypothesis_pairs"].pop(0)
+    missing_pair_id = removed_pair["pair_id"]
+    extra_pair = deepcopy(removed_pair)
+    extra_pair["pair_id"] = "RHP:extra"
+    payload["rival_hypothesis_pairs"].append(extra_pair)
+    removed_card = payload["analogy_transfer_cards"].pop(0)
+    missing_card_id = removed_card["card_id"]
+    extra_card = deepcopy(removed_card)
+    extra_card["card_id"] = "ATC:extra"
+    payload["analogy_transfer_cards"].append(extra_card)
+    payload["company_judgment_lineage"]["selection_admission"]["status"] = "SELECTION_ADMITTED"
+
+    result = validate_thesis_test_ledger(
+        payload, output_dir=tmp_path, report_text=_forward_report(), enforced=True,
+        monitoring_required=True, forward_judgment_required=True,
+        company_judgment_lineage_required=True,
+    )
+
+    assert f"company_judgment_lineage_rival_hypothesis_pair_missing:{missing_pair_id}" in result["invalid_findings"]
+    assert "company_judgment_lineage_rival_hypothesis_pair_extra:RHP:extra" in result["invalid_findings"]
+    assert f"company_judgment_lineage_analogy_transfer_card_missing:{missing_card_id}" in result["invalid_findings"]
+    assert "company_judgment_lineage_analogy_transfer_card_extra:ATC:extra" in result["invalid_findings"]
+    assert "company_judgment_lineage_selection_admission_mismatch" in result["invalid_findings"]
+
+
+def test_build_thesis_ledger_copies_complete_predecessor_lineage_receipts(tmp_path: Path) -> None:
+    original = _forward_payload(tmp_path, freeze=False)
+    predecessor = _attach_complete_company_judgment_predecessor(tmp_path, original)
+
+    rebuilt = build_thesis_test_ledger(
+        tmp_path,
+        original["competitive_tests"], original["thresholds"], original["probability_sets"],
+        central_path=original["central_path"], mechanism_chains=original["mechanism_chains"],
+        forward_judgments=original["forward_judgments"],
+        rival_hypothesis_pairs=original["rival_hypothesis_pairs"],
+        analogy_transfer_cards=original["analogy_transfer_cards"],
+        change_reason="bind complete predecessor", freeze=False,
+    )
+
+    lineage = rebuilt["company_judgment_lineage"]
+    assert lineage["predecessor_completeness_status"] == "G1J_COMPLETE"
+    assert lineage["predecessor_financial_driver_bridge_sha256"] == "complete-cjo-fdb-sha256"
+    assert lineage["selection_admission"] == predecessor["selection_admission"]
+    assert lineage["rival_hypothesis_pair_ids"] == ["RHP:retention-vs-erosion"]
+    assert lineage["analogy_transfer_card_ids"] == ["ATC:retention-vs-erosion"]
 
 
 def test_sensitivity_without_selected_central_path_cannot_pass_forward_gate(tmp_path: Path) -> None:

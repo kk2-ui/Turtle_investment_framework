@@ -425,6 +425,8 @@ G1.5 是 G2 的前置依赖，不得与 G1 并行启动，也不得用未接纳�
 
 统一入口必须能复现：证据采集、公司原型、PIT 围栏、行业机制检索、待验证问题、公司判断、宏观情景传导、确定性模型和连续黄金报告。系统不要求逐字复现，但必须复现经济身份与决定性结论。
 
+工程前置接缝（2026-08-23）：`judgment-generation-handoff.v1` 已把 `RESEARCH_AGENDA / JUDGMENT_SYNTHESIS / INVESTMENT_ENRICHMENT` 三个派生只读视图接入普通报告合同包与 PIT CJO/投资工具面。报告生成因此能够消费受控行业问题、正式反馈谱系准入的候选方法提示、冻结前判断内核及同 cutoff 的完整 CJO 前置物；PIT 在没有逐条 cutoff-safe 快照前禁用全局行业 prior 与经验基准率，组装与发布复核当前 refresh generation 的 handoff 读取收据；reader gate 会阻止内部 ID/status 进入读者正文。`NO_PRIMARY` 可保留为完整但不确定的 CJO，只有 `SELECTION_ADMITTED` 才进入投资增强。该接缝只是未来 G4 的必要接口，不等于 G4 已启动或完成：它尚未生产、复现或接纳 24 份黄金级产物，也没有真实配对和未来结算证据。当前格力继续保持 `PRE_FREEZE / NO_PRIMARY / NOT_FROZEN`。
+
 ### G5
 
 双 holdout 改为两个正交轴：未见公司和未见时间。公司轴仍包含同路线与混合路线；时间轴必须先冻结报告再结算未来经营与回报。任何一个轴失败都不得宣称泛化完成。

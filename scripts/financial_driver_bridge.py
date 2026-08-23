@@ -428,6 +428,71 @@ def initialize_financial_driver_bridge_policy(
     return payload
 
 
+def _validate_company_judgment_lineage(
+    payload: dict[str, Any], *, output_dir: str | Path | None,
+) -> list[str]:
+    """Keep the frozen CJO operating bridge intact while valuation binds it."""
+    if payload.get("analysis_purpose") != "INVESTMENT_DECISION" or output_dir is None:
+        return []
+    predecessor = _read_object(Path(output_dir) / "company_judgment_predecessor.json")
+    identity = predecessor.get("identity") if isinstance(predecessor.get("identity"), dict) else {}
+    if identity.get("status") != "G1J_COMPLETE":
+        return []
+    inherited_bridge = (
+        predecessor.get("financial_driver_bridge")
+        if isinstance(predecessor.get("financial_driver_bridge"), dict) else {}
+    )
+    if not inherited_bridge:
+        return ["company_judgment_predecessor_financial_driver_bridge_invalid"]
+
+    invalid: list[str] = []
+    for field in ("report_id", "as_of"):
+        if inherited_bridge.get(field) != payload.get(field):
+            invalid.append(f"company_judgment_lineage_financial_driver_bridge_{field}_mismatch")
+    inherited_drivers = {
+        str(item.get("driver_id")): item
+        for item in inherited_bridge.get("drivers") or []
+        if isinstance(item, dict) and item.get("driver_id")
+    }
+    current_drivers = {
+        str(item.get("driver_id")): item
+        for item in payload.get("drivers") or []
+        if isinstance(item, dict) and item.get("driver_id")
+    }
+    if not inherited_drivers:
+        invalid.append("company_judgment_predecessor_financial_drivers_invalid")
+    for driver_id in sorted(inherited_drivers.keys() - current_drivers.keys()):
+        invalid.append(f"company_judgment_lineage_financial_driver_missing:{driver_id}")
+    for driver_id in sorted(current_drivers.keys() - inherited_drivers.keys()):
+        invalid.append(f"company_judgment_lineage_financial_driver_extra:{driver_id}")
+    for driver_id in sorted(inherited_drivers.keys() & current_drivers.keys()):
+        inherited = deepcopy(inherited_drivers[driver_id])
+        current = deepcopy(current_drivers[driver_id])
+        inherited.pop("model_bindings", None)
+        current.pop("model_bindings", None)
+        if current != inherited:
+            invalid.append(f"company_judgment_lineage_financial_driver_rewritten:{driver_id}")
+
+    inherited_events = {
+        str(item.get("event_id")): item
+        for item in inherited_bridge.get("allocation_events") or []
+        if isinstance(item, dict) and item.get("event_id")
+    }
+    current_events = {
+        str(item.get("event_id")): item
+        for item in payload.get("allocation_events") or []
+        if isinstance(item, dict) and item.get("event_id")
+    }
+    for event_id in sorted(inherited_events.keys() - current_events.keys()):
+        invalid.append(f"company_judgment_lineage_allocation_event_missing:{event_id}")
+    for event_id in sorted(current_events.keys() - inherited_events.keys()):
+        invalid.append(f"company_judgment_lineage_allocation_event_extra:{event_id}")
+    for event_id in sorted(inherited_events.keys() & current_events.keys()):
+        if current_events[event_id] != inherited_events[event_id]:
+            invalid.append(f"company_judgment_lineage_allocation_event_rewritten:{event_id}")
+    return invalid
+
+
 def validate_financial_driver_bridge(
     payload: dict[str, Any], *, output_dir: str | Path | None = None,
     require_allocation_commitment_trace: bool = False,
@@ -695,6 +760,7 @@ def validate_financial_driver_bridge(
                 incomplete=incomplete,
             )
 
+    invalid.extend(_validate_company_judgment_lineage(payload, output_dir=output_dir))
     state = "INVALID" if invalid else "INCOMPLETE" if incomplete else "REVIEWABLE"
     return {
         "state": state,

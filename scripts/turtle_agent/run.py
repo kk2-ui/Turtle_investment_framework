@@ -54,6 +54,7 @@ except ImportError:
     REPORTS_SUBDIR  = "reports"
 
 _VALID_TRACKING_REPORT_TYPES = {"annual", "q1", "h1", "q3"}
+_PREDECESSOR_READY_STATES = {"REVIEWABLE", "DECISION_READY", "MONITORING"}
 _REPORT_TYPE_LABELS = {
     "annual": "年报",
     "q1": "一季报",
@@ -77,6 +78,126 @@ def _sha256_file(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
+def _investment_predecessor_findings(
+    predecessor: dict[str, Any], *, company_code: str, cutoff_at: str,
+    analysis_contract: dict[str, Any] | None = None,
+) -> list[str]:
+    """Return deterministic reasons a frozen CJO cannot precede investment."""
+    findings: list[str] = []
+    identity = predecessor.get("identity") if isinstance(predecessor.get("identity"), dict) else {}
+    source = predecessor.get("source") if isinstance(predecessor.get("source"), dict) else {}
+    contract = source.get("g1j_contract") if isinstance(source.get("g1j_contract"), dict) else {}
+    selection = (
+        predecessor.get("selection_admission")
+        if isinstance(predecessor.get("selection_admission"), dict) else {}
+    )
+    bridge = (
+        predecessor.get("financial_driver_bridge")
+        if isinstance(predecessor.get("financial_driver_bridge"), dict) else {}
+    )
+    forward_judgments = [
+        item for item in predecessor.get("forward_judgments") or []
+        if isinstance(item, dict) and item.get("judgment_id")
+    ]
+    mechanism_chains = [
+        item for item in predecessor.get("mechanism_chains") or []
+        if isinstance(item, dict) and item.get("chain_id")
+    ]
+    rival_pairs = [
+        item for item in predecessor.get("rival_hypothesis_pairs") or []
+        if isinstance(item, dict) and item.get("pair_id")
+    ]
+    analogy_cards = [
+        item for item in predecessor.get("analogy_transfer_cards") or []
+        if isinstance(item, dict) and item.get("card_id")
+    ]
+    if predecessor.get("schema_version") != "company-judgment-predecessor.v2":
+        findings.append("company_judgment_predecessor_schema_invalid")
+    if identity.get("status") != "G1J_COMPLETE" or identity.get("missing_components"):
+        findings.append("company_judgment_predecessor_not_g1j_complete")
+    if str(source.get("report_id") or "") != str(company_code):
+        findings.append("company_judgment_predecessor_company_mismatch")
+    if str(source.get("data_as_of") or "")[:10] != str(cutoff_at or "")[:10]:
+        findings.append("company_judgment_predecessor_cutoff_mismatch")
+    expected_contract = {
+        "thesis_policy_schema_version": "thesis-test-policy.v3",
+        "financial_driver_bridge_policy_schema_version": "financial-driver-bridge-policy.v4",
+        "thesis_validation_schema_version": "thesis-test-validation.v1",
+        "financial_driver_bridge_validation_schema_version": "financial-driver-bridge.v1",
+    }
+    for field, expected in expected_contract.items():
+        if contract.get(field) != expected:
+            findings.append("company_judgment_predecessor_g1j_contract_invalid:" + field)
+    if selection.get("status") != "SELECTION_ADMITTED":
+        findings.append("company_judgment_predecessor_not_investment_ready_selection")
+    if not isinstance(predecessor.get("central_path"), dict) or not predecessor.get("central_path"):
+        findings.append("company_judgment_predecessor_investment_central_path_missing")
+    if bridge.get("report_id") != company_code:
+        findings.append("company_judgment_predecessor_financial_driver_bridge_company_mismatch")
+    if str(bridge.get("as_of") or "")[:10] != str(cutoff_at or "")[:10]:
+        findings.append("company_judgment_predecessor_financial_driver_bridge_cutoff_mismatch")
+    if not forward_judgments:
+        findings.append("company_judgment_predecessor_forward_judgments_missing")
+    if not mechanism_chains:
+        findings.append("company_judgment_predecessor_mechanism_chains_missing")
+    if not rival_pairs:
+        findings.append("company_judgment_predecessor_rival_hypothesis_pairs_missing")
+    if not analogy_cards:
+        findings.append("company_judgment_predecessor_analogy_transfer_cards_missing")
+    if bridge.get("schema_version") != "financial-driver-bridge.v1":
+        findings.append("company_judgment_predecessor_financial_driver_bridge_schema_invalid")
+    if bridge.get("analysis_purpose") != "COMPANY_JUDGMENT_ONLY":
+        findings.append("company_judgment_predecessor_financial_driver_bridge_purpose_invalid")
+    bridge_validation = bridge.get("validation") if isinstance(bridge.get("validation"), dict) else {}
+    if bridge_validation.get("state") not in _PREDECESSOR_READY_STATES:
+        findings.append("company_judgment_predecessor_financial_driver_bridge_embedded_validation_invalid")
+    for field in (
+        "snapshot_fingerprint", "thesis_sha256", "thesis_freeze_fingerprint",
+        "financial_driver_bridge_sha256",
+    ):
+        if not str(source.get(field) or ""):
+            findings.append("company_judgment_predecessor_source_identity_missing:" + field)
+    for field in (
+        "thesis_validation_state", "financial_driver_bridge_validation_state",
+        "financial_driver_bridge_embedded_validation_state",
+    ):
+        if source.get(field) not in _PREDECESSOR_READY_STATES:
+            findings.append("company_judgment_predecessor_source_state_invalid:" + field)
+
+    if analysis_contract is not None:
+        marker = analysis_contract.get("company_judgment_predecessor")
+        if not isinstance(marker, dict):
+            findings.append("analysis_contract_company_judgment_predecessor_missing")
+        else:
+            expected_scalars = {
+                "completeness_status": identity.get("status"),
+                "missing_components": identity.get("missing_components") or [],
+                "snapshot_fingerprint": source.get("snapshot_fingerprint"),
+                "thesis_sha256": source.get("thesis_sha256"),
+                "thesis_freeze_fingerprint": source.get("thesis_freeze_fingerprint"),
+                "thesis_validation_state": source.get("thesis_validation_state"),
+                "financial_driver_bridge_sha256": source.get("financial_driver_bridge_sha256"),
+                "financial_driver_bridge_validation_state": source.get(
+                    "financial_driver_bridge_validation_state"
+                ),
+                "financial_driver_bridge_embedded_validation_state": source.get(
+                    "financial_driver_bridge_embedded_validation_state"
+                ),
+                "data_as_of": source.get("data_as_of"),
+                "central_path_id": (predecessor.get("central_path") or {}).get("path_id"),
+                "selection_admission_status": selection.get("status"),
+                "forward_judgment_ids": [item["judgment_id"] for item in forward_judgments],
+                "rival_hypothesis_pair_ids": sorted(str(item["pair_id"]) for item in rival_pairs),
+                "analogy_transfer_card_ids": sorted(str(item["card_id"]) for item in analogy_cards),
+            }
+            for field, expected in expected_scalars.items():
+                if marker.get(field) != expected:
+                    findings.append(
+                        "analysis_contract_company_judgment_predecessor_mismatch:" + field
+                    )
+    return list(dict.fromkeys(findings))
+
+
 def _load_company_judgment_predecessor(
     snapshot_path: str, *, company_code: str, cutoff_at: str,
 ) -> dict[str, Any]:
@@ -95,13 +216,37 @@ def _load_company_judgment_predecessor(
     source_root = path.parent
     source_contract = _load_json_file(str(source_root / "analysis_contract.json"))
     thesis_path = source_root / "thesis_test.json"
+    financial_driver_bridge_path = source_root / "financial_driver_bridge.json"
+    thesis_policy = _load_json_file(str(source_root / "thesis_test_policy.json"))
+    bridge_policy = _load_json_file(str(source_root / "financial_driver_bridge_policy.json"))
+    thesis_validation = _load_json_file(str(source_root / "thesis_test_validation.json"))
+    bridge_validation_artifact = _load_json_file(
+        str(source_root / "financial_driver_bridge_validation.json")
+    )
     thesis = _load_json_file(str(thesis_path))
-    expected_thesis_hash = str((snapshot.get("ledger_sha256") or {}).get("thesis_test") or "")
+    ledger_sha256 = snapshot.get("ledger_sha256") if isinstance(snapshot.get("ledger_sha256"), dict) else {}
+    gate_states = snapshot.get("gate_states") if isinstance(snapshot.get("gate_states"), dict) else {}
+    expected_thesis_hash = str(ledger_sha256.get("thesis_test") or "")
+    expected_financial_driver_bridge_hash = str(ledger_sha256.get("financial_driver_bridge") or "")
+    financial_driver_bridge = _load_json_file(str(financial_driver_bridge_path))
     findings: list[str] = []
+    report_text = ""
+    expected_report_hash = str(snapshot.get("report_sha256") or "")
+    if expected_report_hash:
+        for candidate in sorted((source_root / REPORTS_SUBDIR).glob("*.md")):
+            if _sha256_file(candidate) == expected_report_hash:
+                report_text = candidate.read_text(encoding="utf-8")
+                break
+    if not report_text:
+        findings.append("predecessor_report_for_current_validation_missing")
     if snapshot.get("analysis_purpose") != "COMPANY_JUDGMENT_ONLY":
         findings.append("snapshot_not_company_judgment_only")
     if source_contract.get("analysis_purpose") != "COMPANY_JUDGMENT_ONLY":
         findings.append("predecessor_contract_not_company_judgment_only")
+    if str(source_contract.get("ts_code") or source_contract.get("code") or "") != str(company_code):
+        findings.append("predecessor_contract_company_code_mismatch")
+    if str(source_contract.get("data_as_of") or source_contract.get("analysis_date") or "")[:10] != str(cutoff_at or "")[:10]:
+        findings.append("predecessor_contract_cutoff_mismatch")
     if str(snapshot.get("report_id") or "") != str(company_code):
         findings.append("predecessor_company_code_mismatch")
     if str(snapshot.get("data_as_of") or "")[:10] != str(cutoff_at or "")[:10]:
@@ -114,15 +259,131 @@ def _load_company_judgment_predecessor(
         findings.append("predecessor_snapshot_fingerprint_missing")
     if thesis.get("analysis_purpose") != "COMPANY_JUDGMENT_ONLY":
         findings.append("predecessor_thesis_not_company_judgment_only")
+    if thesis.get("schema_version") != "thesis-test-ledger.v1":
+        findings.append("predecessor_thesis_schema_invalid")
+    if str(thesis.get("report_id") or "") != str(company_code):
+        findings.append("predecessor_thesis_report_id_mismatch")
+    if str(thesis.get("as_of") or "")[:10] != str(cutoff_at or "")[:10]:
+        findings.append("predecessor_thesis_cutoff_mismatch")
     if not bool((thesis.get("freeze") or {}).get("frozen")):
         findings.append("predecessor_thesis_not_frozen")
     if not expected_thesis_hash or not thesis_path.is_file() or _sha256_file(thesis_path) != expected_thesis_hash:
         findings.append("predecessor_thesis_hash_mismatch")
+    if expected_financial_driver_bridge_hash:
+        if (
+            not financial_driver_bridge_path.is_file()
+            or _sha256_file(financial_driver_bridge_path) != expected_financial_driver_bridge_hash
+        ):
+            findings.append("predecessor_financial_driver_bridge_hash_mismatch")
+        elif financial_driver_bridge.get("analysis_purpose") != "COMPANY_JUDGMENT_ONLY":
+            findings.append("predecessor_financial_driver_bridge_not_company_judgment_only")
+    if financial_driver_bridge:
+        if financial_driver_bridge.get("schema_version") != "financial-driver-bridge.v1":
+            findings.append("predecessor_financial_driver_bridge_schema_invalid")
+        if str(financial_driver_bridge.get("report_id") or "") != str(company_code):
+            findings.append("predecessor_financial_driver_bridge_report_id_mismatch")
+        if str(financial_driver_bridge.get("as_of") or "")[:10] != str(cutoff_at or "")[:10]:
+            findings.append("predecessor_financial_driver_bridge_cutoff_mismatch")
+        bridge_company_id = str(
+            financial_driver_bridge.get("company_id")
+            or financial_driver_bridge.get("company_code") or ""
+        )
+        contract_company_id = str(source_contract.get("company_id") or company_code)
+        if bridge_company_id and bridge_company_id not in {str(company_code), contract_company_id}:
+            findings.append("predecessor_financial_driver_bridge_company_id_mismatch")
+    current_thesis_policy = (
+        thesis_policy.get("schema_version") == "thesis-test-policy.v3"
+        and thesis_policy.get("enforced") is True
+        and thesis_policy.get("monitoring_required") is True
+        and thesis_policy.get("forward_judgment_required") is True
+        and thesis_policy.get("rival_hypothesis_pair_required") is True
+        and thesis_policy.get("company_judgment_lineage_required") is False
+    )
+    if not current_thesis_policy:
+        findings.append("predecessor_thesis_policy_not_current_g1j")
+    current_bridge_policy = (
+        bridge_policy.get("schema_version") == "financial-driver-bridge-policy.v4"
+        and bridge_policy.get("enforced") is True
+        and bridge_policy.get("allocation_commitment_trace_required") is True
+        and bridge_policy.get("cash_normalization_contract_required") is True
+    )
+    if not current_bridge_policy:
+        findings.append("predecessor_financial_driver_bridge_policy_not_current_g1j")
+    current_thesis_validation = (
+        thesis_validation.get("schema_version") == "thesis-test-validation.v1"
+        and thesis_validation.get("state") in {"DECISION_READY", "MONITORING"}
+        and thesis_validation.get("analysis_purpose") == "COMPANY_JUDGMENT_ONLY"
+        and thesis_validation.get("enforced") is True
+        and thesis_validation.get("forward_judgment_required") is True
+        and thesis_validation.get("forward_judgment_state") == "DECISION_READY"
+        and thesis_validation.get("rival_hypothesis_pair_required") is True
+        and thesis_validation.get("rival_hypothesis_pair_state") == "DECISION_READY"
+        and thesis_validation.get("analogy_transfer_card_state") == "DECISION_READY"
+    )
+    if not current_thesis_validation:
+        findings.append("predecessor_thesis_validation_not_current_g1j")
+    current_bridge_validation = (
+        bridge_validation_artifact.get("schema_version") == "financial-driver-bridge.v1"
+        and bridge_validation_artifact.get("state") in {"REVIEWABLE", "DECISION_READY", "MONITORING"}
+        and bridge_validation_artifact.get("analysis_purpose") == "COMPANY_JUDGMENT_ONLY"
+        and bridge_validation_artifact.get("enforced") is True
+    )
+    if not current_bridge_validation:
+        findings.append("predecessor_financial_driver_bridge_validation_not_current_g1j")
+    try:
+        from scripts.thesis_test_gate import evaluate_output_thesis_test
+        from scripts.financial_driver_bridge import evaluate_output_financial_driver_bridge
+    except ModuleNotFoundError:
+        from thesis_test_gate import evaluate_output_thesis_test
+        from financial_driver_bridge import evaluate_output_financial_driver_bridge
+    fresh_thesis_validation = evaluate_output_thesis_test(
+        source_root, report_text=report_text, persist=False,
+    )
+    fresh_bridge_validation = evaluate_output_financial_driver_bridge(source_root, persist=False)
+    if fresh_thesis_validation.get("state") not in {"DECISION_READY", "MONITORING"}:
+        findings.append(
+            "predecessor_thesis_current_validation_failed:"
+            + str(fresh_thesis_validation.get("state") or "MISSING")
+        )
+        findings.extend(
+            "predecessor_thesis_current_validation:" + str(item)
+            for item in [
+                *(fresh_thesis_validation.get("invalid_findings") or []),
+                *(fresh_thesis_validation.get("incomplete_findings") or []),
+            ]
+        )
+    if fresh_bridge_validation.get("state") not in {"REVIEWABLE", "DECISION_READY", "MONITORING"}:
+        findings.append(
+            "predecessor_financial_driver_bridge_current_validation_failed:"
+            + str(fresh_bridge_validation.get("state") or "MISSING")
+        )
+        findings.extend(
+            "predecessor_financial_driver_bridge_current_validation:" + str(item)
+            for item in [
+                *(fresh_bridge_validation.get("invalid_findings") or []),
+                *(fresh_bridge_validation.get("incomplete_findings") or []),
+            ]
+        )
     central_path = thesis.get("central_path") if isinstance(thesis.get("central_path"), dict) else {}
     forward_judgments = thesis.get("forward_judgments") if isinstance(thesis.get("forward_judgments"), list) else []
     mechanism_chains = thesis.get("mechanism_chains") if isinstance(thesis.get("mechanism_chains"), list) else []
-    if not str(central_path.get("path_id") or ""):
+    rival_hypothesis_pairs = (
+        thesis.get("rival_hypothesis_pairs")
+        if isinstance(thesis.get("rival_hypothesis_pairs"), list) else []
+    )
+    analogy_transfer_cards = (
+        thesis.get("analogy_transfer_cards")
+        if isinstance(thesis.get("analogy_transfer_cards"), list) else []
+    )
+    selection_admission = (
+        thesis.get("selection_admission")
+        if isinstance(thesis.get("selection_admission"), dict) else {}
+    )
+    selection_status = str(selection_admission.get("status") or "")
+    if selection_status == "SELECTION_ADMITTED" and not str(central_path.get("path_id") or ""):
         findings.append("predecessor_central_path_missing")
+    if selection_status == "NO_PRIMARY" and central_path:
+        findings.append("predecessor_no_primary_cannot_carry_central_path")
     if not forward_judgments:
         findings.append("predecessor_forward_judgments_missing")
     if not mechanism_chains:
@@ -131,8 +392,47 @@ def _load_company_judgment_predecessor(
         raise RuntimeError(
             "投资 PIT 生产冻结的公司判断前置物无效: " + ", ".join(findings)
         )
+    thesis_freeze = thesis.get("freeze") if isinstance(thesis.get("freeze"), dict) else {}
+    thesis_validation_state = str(fresh_thesis_validation.get("state") or "")
+    bridge_validation = (
+        financial_driver_bridge.get("validation")
+        if isinstance(financial_driver_bridge.get("validation"), dict) else {}
+    )
+    financial_driver_bridge_embedded_validation_state = str(bridge_validation.get("state") or "")
+    financial_driver_bridge_validation_state = str(fresh_bridge_validation.get("state") or "")
+    missing_components: list[str] = []
+    if not str(thesis_freeze.get("fingerprint") or ""):
+        missing_components.append("thesis_freeze_fingerprint")
+    if thesis_validation_state not in {"DECISION_READY", "MONITORING"}:
+        missing_components.append("thesis_validation_state")
+    if not rival_hypothesis_pairs:
+        missing_components.append("rival_hypothesis_pairs")
+    if not analogy_transfer_cards:
+        missing_components.append("analogy_transfer_cards")
+    if not str(selection_admission.get("status") or ""):
+        missing_components.append("selection_admission")
+    if not expected_financial_driver_bridge_hash:
+        missing_components.append("financial_driver_bridge_sha256")
+    if not financial_driver_bridge:
+        missing_components.append("financial_driver_bridge")
+    elif financial_driver_bridge.get("analysis_purpose") != "COMPANY_JUDGMENT_ONLY":
+        missing_components.append("financial_driver_bridge_analysis_purpose")
+    if financial_driver_bridge_validation_state not in {"REVIEWABLE", "DECISION_READY", "MONITORING"}:
+        missing_components.append("financial_driver_bridge_validation_state")
+    if financial_driver_bridge_embedded_validation_state not in {"REVIEWABLE", "DECISION_READY", "MONITORING"}:
+        missing_components.append("financial_driver_bridge_embedded_validation_state")
+    identity_status = "G1J_COMPLETE" if not missing_components else "LEGACY_PARTIAL"
+    if identity_status != "G1J_COMPLETE":
+        raise RuntimeError(
+            "投资 PIT 生产冻结的公司判断前置物无效: predecessor_not_g1j_complete: "
+            + ", ".join(missing_components)
+        )
     return {
-        "schema_version": "company-judgment-predecessor.v1",
+        "schema_version": "company-judgment-predecessor.v2",
+        "identity": {
+            "status": identity_status,
+            "missing_components": missing_components,
+        },
         "source": {
             "snapshot_path": str(path),
             "snapshot_fingerprint": str(snapshot["snapshot_fingerprint"]),
@@ -140,10 +440,30 @@ def _load_company_judgment_predecessor(
             "data_as_of": str(snapshot["data_as_of"]),
             "thesis_path": str(thesis_path),
             "thesis_sha256": expected_thesis_hash,
+            "thesis_freeze_fingerprint": str(thesis_freeze.get("fingerprint") or ""),
+            "thesis_validation_state": thesis_validation_state,
+            "financial_driver_bridge_path": (
+                str(financial_driver_bridge_path) if financial_driver_bridge else ""
+            ),
+            "financial_driver_bridge_sha256": expected_financial_driver_bridge_hash,
+            "financial_driver_bridge_validation_state": financial_driver_bridge_validation_state,
+            "financial_driver_bridge_embedded_validation_state": (
+                financial_driver_bridge_embedded_validation_state
+            ),
+            "g1j_contract": {
+                "thesis_policy_schema_version": thesis_policy.get("schema_version"),
+                "financial_driver_bridge_policy_schema_version": bridge_policy.get("schema_version"),
+                "thesis_validation_schema_version": thesis_validation.get("schema_version"),
+                "financial_driver_bridge_validation_schema_version": bridge_validation_artifact.get("schema_version"),
+            },
         },
         "central_path": central_path,
         "forward_judgments": forward_judgments,
         "mechanism_chains": mechanism_chains,
+        "rival_hypothesis_pairs": rival_hypothesis_pairs,
+        "analogy_transfer_cards": analogy_transfer_cards,
+        "selection_admission": selection_admission,
+        "financial_driver_bridge": financial_driver_bridge,
     }
 
 
@@ -1388,6 +1708,15 @@ def _initialize_pit_production_output(
     cutoff_date = str(cutoff_at or "")[:10]
     if analysis_purpose == "INVESTMENT_DECISION" and not isinstance(company_judgment_predecessor, dict):
         raise RuntimeError("投资 PIT 生产冻结需要同 cutoff 的公司判断前置物")
+    if analysis_purpose == "INVESTMENT_DECISION":
+        predecessor_findings = _investment_predecessor_findings(
+            company_judgment_predecessor or {}, company_code=code, cutoff_at=cutoff_at,
+        )
+        if predecessor_findings:
+            raise RuntimeError(
+                "投资 PIT 生产冻结的公司判断前置物未通过运行时硬门: "
+                + ", ".join(predecessor_findings)
+            )
     contract = {
         "schema_version": "analysis-contract.v1",
         "ts_code": code,
@@ -1404,9 +1733,19 @@ def _initialize_pit_production_output(
         predecessor_path = Path(output_dir) / "company_judgment_predecessor.json"
         _write_json_file(str(predecessor_path), company_judgment_predecessor or {})
         source = (company_judgment_predecessor or {}).get("source") or {}
+        identity = (company_judgment_predecessor or {}).get("identity") or {}
         contract["company_judgment_predecessor"] = {
+            "completeness_status": identity.get("status"),
+            "missing_components": identity.get("missing_components") or [],
             "snapshot_fingerprint": source.get("snapshot_fingerprint"),
             "thesis_sha256": source.get("thesis_sha256"),
+            "thesis_freeze_fingerprint": source.get("thesis_freeze_fingerprint"),
+            "thesis_validation_state": source.get("thesis_validation_state"),
+            "financial_driver_bridge_sha256": source.get("financial_driver_bridge_sha256"),
+            "financial_driver_bridge_validation_state": source.get("financial_driver_bridge_validation_state"),
+            "financial_driver_bridge_embedded_validation_state": source.get(
+                "financial_driver_bridge_embedded_validation_state"
+            ),
             "data_as_of": source.get("data_as_of"),
             "central_path_id": ((company_judgment_predecessor or {}).get("central_path") or {}).get("path_id"),
             "forward_judgment_ids": [
@@ -1414,6 +1753,19 @@ def _initialize_pit_production_output(
                 for item in (company_judgment_predecessor or {}).get("forward_judgments") or []
                 if isinstance(item, dict) and item.get("judgment_id")
             ],
+            "rival_hypothesis_pair_ids": sorted(
+                str(item.get("pair_id"))
+                for item in (company_judgment_predecessor or {}).get("rival_hypothesis_pairs") or []
+                if isinstance(item, dict) and item.get("pair_id")
+            ),
+            "analogy_transfer_card_ids": sorted(
+                str(item.get("card_id"))
+                for item in (company_judgment_predecessor or {}).get("analogy_transfer_cards") or []
+                if isinstance(item, dict) and item.get("card_id")
+            ),
+            "selection_admission_status": (
+                ((company_judgment_predecessor or {}).get("selection_admission") or {}).get("status")
+            ),
         }
     _write_json_file(str(Path(output_dir) / "analysis_contract.json"), contract)
     from scripts.evidence_documents import initialize_official_evidence_policy
@@ -1483,6 +1835,29 @@ def _validate_pit_production_completion(
         raise RuntimeError("PIT production publication snapshot does not record a completed report")
     if snapshot.get("v3_enforced") is not True:
         raise RuntimeError("PIT production publication snapshot is not V3-enforced")
+    contract = _load_json_file(str(output / "analysis_contract.json"))
+    if analysis_purpose == "INVESTMENT_DECISION":
+        predecessor = _load_json_file(str(output / "company_judgment_predecessor.json"))
+        predecessor_findings = _investment_predecessor_findings(
+            predecessor,
+            company_code=str(contract.get("ts_code") or contract.get("code") or ""),
+            cutoff_at=str(contract.get("data_as_of") or contract.get("analysis_date") or ""),
+            analysis_contract=contract,
+        )
+        if predecessor_findings:
+            raise RuntimeError(
+                "PIT production completion company-judgment predecessor invalid: "
+                + ", ".join(predecessor_findings)
+            )
+    from turtle_agent.tools.pit_production_write_tools import validate_pit_handoff_receipts
+    handoff_receipts = validate_pit_handoff_receipts(
+        output_dir=output, analysis_purpose=analysis_purpose, run_id=run_id,
+    )
+    if handoff_receipts.get("state") != "READY":
+        raise RuntimeError(
+            "PIT production completion judgment handoff receipts invalid: "
+            + ", ".join(str(item) for item in handoff_receipts.get("findings") or [])
+        )
     attestation_path = output / "pit_runner_attestation.json"
     attestation = _load_json_file(str(attestation_path))
     writer = attestation.get("writer") if isinstance(attestation.get("writer"), dict) else {}
@@ -1541,7 +1916,8 @@ def _run_pit_production_freeze(
     tools.auto_discover("turtle_agent.tools.pit_read_tools")
     writer_tool_names = {
         "pit_verify_official_fact", "pit_write_chapter", "pit_read_chapter",
-        "pit_read_report_contract_pack", "pit_read_structured_ledger_contract",
+        "pit_read_report_contract_pack", "pit_read_judgment_generation_handoff",
+        "pit_read_structured_ledger_contract",
         "pit_audit_chapter", "pit_write_claim_evidence_ledger",
         "pit_write_financial_driver_bridge", "pit_write_thesis_test_ledger",
         "pit_write_insight_ledger", "pit_write_judgment_review", "pit_assemble_report",
@@ -1807,6 +2183,16 @@ def run_full_pipeline(
             company_judgment_predecessor = _load_company_judgment_predecessor(
                 company_judgment_snapshot, company_code=code, cutoff_at=str(pit_runner.cutoff_at),
             )
+            predecessor_findings = _investment_predecessor_findings(
+                company_judgment_predecessor,
+                company_code=code,
+                cutoff_at=str(pit_runner.cutoff_at),
+            )
+            if predecessor_findings:
+                raise RuntimeError(
+                    "投资 PIT 生产冻结的公司判断前置物未达到 INVESTMENT_READY: "
+                    + ", ".join(predecessor_findings)
+                )
             diagnostics["company_judgment_predecessor"] = {
                 key: value for key, value in (company_judgment_predecessor.get("source") or {}).items()
                 if key != "snapshot_path"

@@ -11,6 +11,7 @@ from scripts.judgment_learning import (
     persist_learning_application_receipt,
     persist_judgment_learning_note,
     validate_learning_application_receipt,
+    validate_judgment_learning_admission,
     validate_judgment_learning_note,
 )
 
@@ -27,6 +28,7 @@ def _feedback(*, settlement_status: str = "CALCULATED", rival_signal_verdict: st
         "case_id": "HBTCASE:gree:20211031",
         "freeze_id": "FREEZE:gree:20211031",
         "settlement_id": "HBTSETTLE:gree:20220731",
+        "settlement_as_of": "2026-08-20T00:00:00+00:00",
         "cards": [{
             "claim_id": "HBTCLM:gree:integration",
             "forward_judgment_id": "FJ:gree:integration",
@@ -42,6 +44,7 @@ def _note(feedback: dict, **overrides: object) -> dict:
     arguments = {
         "note_id": "LNOTE:gree:integration:20220731",
         "claim_id": "HBTCLM:gree:integration",
+        "feedback_ref": "/tmp/turtle-feedback.json",
         "disposition": "RETIRE",
         "state_scope": "Acquisitions with unquantified synergy claims.",
         "measurement_scope": "Post-control operating cash flow on a comparable reporting basis.",
@@ -56,6 +59,47 @@ def _note(feedback: dict, **overrides: object) -> dict:
     }
     arguments.update(overrides)
     return build_judgment_learning_note(feedback, **arguments)
+
+
+def _admission_fixture() -> tuple[dict, dict, dict, dict]:
+    feedback = _feedback()
+    note = _note(feedback)
+    admission = {
+        "schema_version": "judgment-learning-admission.v1",
+        "learning_note_ref": "/tmp/turtle-learning.json",
+        "feedback_ref": "/tmp/turtle-feedback.json",
+        "control_plane_db": "/tmp/turtle-control.db",
+        "feedback_item_id": "FBI:gree:integration",
+        "learning_note_event_id": "JFE:learning-ready",
+        "learning_note_effective_at": "2026-08-21T09:00:00+00:00",
+    }
+    event = {
+        "event_id": "JFE:learning-ready",
+        "feedback_item_id": "FBI:gree:integration",
+        "event_type": "LEARNING_NOTE_READY",
+        "effective_at": "2026-08-21T09:00:00+00:00",
+        "recorded_at": "2026-08-21T09:00:01+00:00",
+        "artifact_refs": [
+            "/tmp/turtle-feedback.json", "/tmp/turtle-learning.json",
+        ],
+        "payload": {
+            "learning_note_ref": "/tmp/turtle-learning.json",
+            "learning_note_id": note["note_id"],
+            "feedback_ref": "/tmp/turtle-feedback.json",
+            "case_id": note["case_id"],
+            "claim_id": note["claim_id"],
+            "settlement_id": note["settlement_id"],
+            "learning_note_snapshot": deepcopy(note),
+            "feedback_snapshot": deepcopy(feedback),
+        },
+        "control_claim": {
+            "episode_id": note["case_id"],
+            "claim_id": note["claim_id"],
+        },
+        "admission_state": "REVIEWABLE",
+        "admission_findings": [],
+    }
+    return admission, note, feedback, event
 
 
 def test_learning_note_is_linked_to_feedback_and_contains_only_a_next_cycle_action() -> None:
@@ -73,6 +117,76 @@ def test_learning_note_is_linked_to_feedback_and_contains_only_a_next_cycle_acti
     assert note["disposition"] == "RETIRE"
     assert note["failure_loci"] == ["MECHANISM", "EVIDENCE_ACQUISITION"]
     assert note["economic_failure_loci"] == ["DECISION", "TRANSMISSION"]
+
+
+def test_formal_learning_admission_binds_note_feedback_control_event_and_cutoff() -> None:
+    admission, note, feedback, event = _admission_fixture()
+
+    validation = validate_judgment_learning_admission(
+        admission, note=note, feedback=feedback, control_event=event,
+        information_cutoff="2026-08-22T00:00:00+00:00",
+    )
+
+    assert validation == {
+        "schema_version": "judgment-learning-admission-validation.v1",
+        "state": "REVIEWABLE",
+        "findings": [],
+    }
+
+
+def test_formal_learning_admission_rejects_backdated_post_cutoff_event() -> None:
+    admission, note, feedback, event = _admission_fixture()
+    event["recorded_at"] = "2026-08-23T00:00:00+00:00"
+
+    validation = validate_judgment_learning_admission(
+        admission, note=note, feedback=feedback, control_event=event,
+        information_cutoff="2026-08-22T00:00:00+00:00",
+    )
+
+    assert validation["state"] == "INVALID"
+    assert "learning_note_event_recorded_after_information_cutoff" in validation["findings"]
+
+
+def test_formal_learning_admission_rejects_changed_event_snapshots() -> None:
+    admission, note, feedback, event = _admission_fixture()
+    note["next_research_change"] = "A post-event rewrite must not be admitted."
+    feedback["cards"][0]["judgment_outcome"]["status"] = "HIT"
+
+    validation = validate_judgment_learning_admission(
+        admission, note=note, feedback=feedback, control_event=event,
+        information_cutoff="2026-08-22T00:00:00+00:00",
+    )
+
+    assert validation["state"] == "INVALID"
+    assert "learning_note_changed_after_ready_event" in validation["findings"]
+    assert "learning_feedback_changed_after_ready_event" in validation["findings"]
+
+
+def test_formal_learning_admission_requires_timezone_except_date_only_cutoff() -> None:
+    admission, note, feedback, event = _admission_fixture()
+    note["recorded_at"] = "2026-08-21T08:00:00"
+
+    validation = validate_judgment_learning_admission(
+        admission, note=note, feedback=feedback, control_event=event,
+        information_cutoff="2026-08-22",
+    )
+
+    assert validation["state"] == "INVALID"
+    assert "learning_note_recorded_at_timezone_missing" in validation["findings"]
+
+
+def test_formal_learning_admission_rejects_missing_event_and_extra_self_receipt() -> None:
+    admission, note, feedback, _ = _admission_fixture()
+    admission["self_reported_receipt"] = {"status": "accepted"}
+
+    validation = validate_judgment_learning_admission(
+        admission, note=note, feedback=feedback, control_event={},
+        information_cutoff="2026-08-22T00:00:00+00:00",
+    )
+
+    assert validation["state"] == "INVALID"
+    assert "learning_note_ready_event_missing" in validation["findings"]
+    assert "admission_unexpected_fields:self_reported_receipt" in validation["findings"]
 
 
 def test_learning_note_cannot_retire_an_unsettled_signal() -> None:
@@ -181,6 +295,7 @@ def test_learning_note_consumes_the_actual_feedback_builder_output() -> None:
         feedback,
         note_id="LNOTE:fixture:owner-cash:20220331",
         claim_id="HBTCLM:owner-cash",
+        feedback_ref="/tmp/turtle-feedback.json",
         disposition="RETIRE",
         state_scope="Cash conversion claims with a frozen simple baseline.",
         measurement_scope="Ordinary-share owner cash under the disclosed accounting definition.",

@@ -1,6 +1,6 @@
 # Turtle 当前协调目标：Phase 08 多黄金报告集合 v1
 
-> 状态日期：2026-08-20
+> 状态日期：2026-08-23
 > 当前目标：`GOLDEN_SET_V1`
 > 当前阶段：`G1_CANDIDATE_MATURATION / IN_PROGRESS`
 > 长期领域路线图：`docs/development/LONG_TERM_ROADMAP.md`
@@ -117,7 +117,7 @@ HTML 只负责渲染，不得另造投资事实、模型数值或结论。正文
 | 标的 | 案例责任 | 必须压测的机制 | 2026-08-13 当前成熟度 |
 |---|---|---|---|
 | 02669 中海物业 | 轻资产服务与关联地产生态 | 成熟业务与新业务回报、关联项目、应收与现金转换、普通分红和额外现金分层 | 当前 revision 的模型、报告和 HTML 待独立接纳 |
-| 000651 格力电器 | 成熟现金型消费制造 | 正常 owner earnings、金融资产可达性、回购、留存资本配置和治理接班 | `READY_FOR_AUDIT_RECHECK` |
+| 000651 格力电器 | 成熟现金型消费制造 | 正常 owner earnings、金融资产可达性、回购、留存资本配置和治理接班 | `READY_FOR_AUDIT_RECHECK / G1-J PRE_FREEZE · NO_PRIMARY · NOT_FROZEN` |
 | 00882 天津发展 | 地方国企综合控股平台 | SOTP、内部债权抵销、NCI、子公司外部资产归宿、现金上游和有限市场确认 | `RETURN_FOR_SCOPE_RECONCILIATION` |
 | 01522 | 项目型轨交科技与关联订单 | 项目资本、合同资产、owner cash、债务/利息口径、现金上游和低回报留存 | `LIMITED_REAUDIT_RETURN` |
 | 600585 海螺水泥 | 重资产周期品 | 周期正常利润、维护与替换资本、区域供需、净现金及跨周期资本配置 | `SOURCE_ONLY / REPORT_NOT_BUILT` |
@@ -180,6 +180,8 @@ G1-J 的最小产物不是新案例卡，而是统一的前瞻判断对象。每
 G1-J 退出要求：上述对象成为 G1 接纳工件和独立内容审阅的硬门；新冻结账本缺 pair/card、FJ 未绑定 signal、或卡片不能追至既有方法卡和合格反例时，验证器必须留下可执行缺口并阻断冻结；现有两类案例资产已有明确复用入口；没有任何重复“通用案例卡生产”任务；格力当前基础路径不得再只由方便计算的点值或并列敏感性默认选出；验证器必须能拒绝被明确标记为过程机制的情景被用作中心路径；点值与区间判断均能无损投影为待结算 claim，或被验证器明确阻断并留下可执行修复项。
 
 2026-08-20 实现进度：中心路径、3—5 项前瞻判断、概率/反方/领先信号、官方结果测量身份及正常利润—owner cash—估值—预期回报传导已接入现有 `thesis_test.json`，新 unified/PIT 运行默认强制；新 G1-J PIT policy 还要求材料 FJ 进入冻结的主/反 pair 与案例 transfer card，旧账本保持 legacy，不得冒充已覆盖。Phase 08/10 黄金接纳和独立盲评已读取同一判断门。本轮研究另发现“渠道/会计扰动”可与竞争恶化共存，不能充当互斥终局；已在研究 worktree 为终局范围、机制链及其对前瞻判断的绑定增加验证原型。结算适配复核曾发现 `historical_backtest` 只能结算单一 `value`；现已增加保留上下界的 `RANGE` 结算，并验证区间内/外身份及中点替换拒绝。生产 adapter 现可在 case spec 显式选择 `FROZEN_FORWARD_JUDGMENTS`，只从 publication snapshot 哈希完全匹配的 `thesis_test.json` 投影 claim；它拒绝手写平行账本、未准入来源、区间中点、价格和投资动作，并要求独立审阅同一投影契约。格力公司的 889 条 CNINFO inventory 与 41 项带逐源问题理由的官方正文已经是 `COMPLETE / REVIEWABLE` 的公司盲轨 source package；这不等于竞争数据齐备。财务驱动桥的 schema/验证器和官方年报采集规则已建立：格力 2025 年报的 463.83 亿 OCF 中 156.67 亿是经营相关受限资金释放，金融产品支付与格力钛减值也已能分别采集；正式格力 bridge 的 CJO 路径仍须以四层 `VERIFIED` observations 和 `FDBMON/FDBREAL → FJ` 写入，投资路径才另须模型和决策账本。剩余 `REASONING + MODEL + ACQUISITION_MODULE` 缺口是独立行业原始版本包、公司/行业同口径 bridge、中心机制与基线/判断、独立盲评和内容验收。G1-J 仍为 `IN_PROGRESS`，不能仅凭夹具或只读提取测试宣告退出。
+
+2026-08-23 报告生成接线：新增报告级派生 read model `judgment-generation-handoff.v1`，以 `RESEARCH_AGENDA / JUDGMENT_SYNTHESIS / INVESTMENT_ENRICHMENT` 三个受控视图，把官方证据范围、待验证行业问题、正式反馈谱系准入的候选方法提示、冻结前公司判断内核及同 cutoff CJO 前置物接入普通合同包和 PIT 工具面。历史 PIT 在没有可逐条证明 cutoff-safe 的正式快照前，不读取当前全局行业机制或基准率结果；writer 组装和 publication completion 都复核当前 refresh generation 的 handoff 读取收据。`company-judgment-predecessor.v2` 须按当前 G1-J policy/validator 复核；`NO_PRIMARY` 可以诚实完成 CJO 但不能进入投资增强，只有 `SELECTION_ADMITTED` 才是 `INVESTMENT_READY`，旧 `LEGACY_PARTIAL` 只能历史读取。读者正文新增内部 ID/status 泄漏门。该接线只说明黄金报告生成已经具备消费受控行业问题、公司判断前置物和候选方法学习的工程通道，不说明行业经验、公司判断或反馈能力已经验证；当前格力仍为 `PRE_FREEZE / NO_PRIMARY / NOT_FROZEN`，G1 与 G1-J 继续 `IN_PROGRESS`，G1.5 继续 `PLANNED`。
 
 ### 7.1 并行工作通道
 

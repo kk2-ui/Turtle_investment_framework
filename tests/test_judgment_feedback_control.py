@@ -260,6 +260,148 @@ def _diagnosis(settlement_event_id: str) -> dict:
     }
 
 
+def _formal_learning_artifacts(
+    tmp_path: Path, *, case_id: str = "R-TEST-01", claim_id: str = "FJ:DEMAND",
+    stem: str = "formal",
+) -> tuple[Path, Path, dict]:
+    from scripts.judgment_learning import build_judgment_learning_note
+
+    feedback_path = (tmp_path / f"{stem}_feedback.json").resolve()
+    feedback = {
+        "schema_version": "judgment-feedback-card.v2",
+        "case_id": case_id,
+        "freeze_id": f"FREEZE:{case_id}",
+        "settlement_id": f"SETTLEMENT:{case_id}:{claim_id}",
+        "settlement_as_of": "2026-04-01T00:00:00+08:00",
+        "cards": [{
+            "claim_id": claim_id,
+            "forward_judgment_id": claim_id,
+            "settlement_status": "CALCULATED",
+            "judgment_outcome": {"status": "MISSED"},
+            "increment_vs_baseline": "BASELINE_BETTER",
+            "rival_hypothesis_feedback": None,
+        }],
+    }
+    feedback_path.write_text(json.dumps(feedback), encoding="utf-8")
+    note = build_judgment_learning_note(
+        feedback,
+        note_id=f"LNOTE:{stem}",
+        claim_id=claim_id,
+        disposition="RETIRE",
+        state_scope="Comparable demand signals with a frozen baseline.",
+        measurement_scope="The issuer-defined demand measure at the declared reporting boundary.",
+        learning_basis="The frozen signal missed while its simple baseline remained adequate.",
+        next_research_change="Require an issuer-defined comparator before selecting this demand mechanism.",
+        feedback_ref=str(feedback_path),
+        experiment_id="R-CONTROL",
+        company_cluster_id="COMPANY:CONTROL",
+        root_cause_classes=["REASONING"],
+        failure_loci=["MECHANISM"],
+        economic_failure_loci=["MECHANISM"],
+        recorded_at="2026-04-01T00:30:00+08:00",
+    )
+    note_path = (tmp_path / f"{stem}_note.json").resolve()
+    note_path.write_text(json.dumps(note), encoding="utf-8")
+    return feedback_path, note_path, note
+
+
+def _settle_with_feedback(conn, feedback_item_id: str, feedback_ref: Path) -> None:
+    at = "2026-04-01T00:00:00+08:00"
+    for event_type, key in (
+        ("ACQUISITION_STARTED", "formal-a"),
+        ("OUTCOME_PACKAGE_READY", "formal-p"),
+        ("READ_ATTESTED", "formal-r"),
+        ("OUTCOME_EXTRACTED", "formal-x"),
+    ):
+        jfc.append_event(conn, _event(feedback_item_id, event_type, at, key=key))
+    jfc.append_event(conn, _event(
+        feedback_item_id, "CLAIM_SETTLED", at, key="formal-settle",
+        payload={"settlement_verdict": "B_ONLY", "feedback_ref": str(feedback_ref)},
+    ))
+
+
+def test_record_learning_note_emits_a_formally_bound_ready_event(tmp_path: Path) -> None:
+    conn, s1, _ = _registered(tmp_path, selection=True)
+    feedback_path, note_path, note = _formal_learning_artifacts(tmp_path)
+    _settle_with_feedback(conn, s1, feedback_path)
+
+    result = jfc.record_learning_note(
+        conn,
+        feedback_item_id=s1,
+        feedback_ref=feedback_path,
+        learning_note_ref=note_path,
+        diagnosis_payload=_diagnosis("EVT:formal-settle"),
+        effective_at="2026-04-01T01:00:00+08:00",
+    )
+
+    read_back = jfc.read_learning_note_ready_event(
+        tmp_path / "stock_analysis.db", feedback_item_id=s1,
+        event_id=result["event"]["event_id"],
+        information_cutoff="2099-04-02T00:00:00+08:00",
+    )
+    payload = read_back["payload"]
+    assert payload["learning_note_id"] == note["note_id"]
+    assert payload["feedback_ref"] == str(feedback_path)
+    assert payload["case_id"] == "R-TEST-01"
+    assert payload["claim_id"] == "FJ:DEMAND"
+    assert payload["settlement_id"] == note["settlement_id"]
+    assert payload["learning_note_snapshot"] == note
+    assert read_back["admission_state"] == "REVIEWABLE"
+    assert read_back["payload"] == payload
+    assert read_back["control_claim"] == {
+        "episode_id": "R-TEST-01", "claim_id": "FJ:DEMAND",
+    }
+
+
+@pytest.mark.parametrize(
+    ("case_id", "claim_id", "error"),
+    [
+        ("R-OTHER", "FJ:DEMAND", "learning_note_case_mismatch"),
+        ("R-TEST-01", "FJ:OTHER", "learning_note_claim_mismatch"),
+    ],
+)
+def test_record_learning_note_rejects_control_identity_mismatch(
+    tmp_path: Path, case_id: str, claim_id: str, error: str,
+) -> None:
+    conn, s1, _ = _registered(tmp_path, selection=True)
+    feedback_path, note_path, _ = _formal_learning_artifacts(
+        tmp_path, case_id=case_id, claim_id=claim_id, stem="mismatch",
+    )
+    _settle_with_feedback(conn, s1, feedback_path)
+
+    with pytest.raises(jfc.ControlPlaneError) as exc_info:
+        jfc.record_learning_note(
+            conn,
+            feedback_item_id=s1,
+            feedback_ref=feedback_path,
+            learning_note_ref=note_path,
+            diagnosis_payload=_diagnosis("EVT:formal-settle"),
+            effective_at="2026-04-01T01:00:00+08:00",
+        )
+    assert exc_info.value.code == error
+
+
+def test_record_learning_note_rejects_feedback_not_emitted_by_active_settlement(
+    tmp_path: Path,
+) -> None:
+    conn, s1, _ = _registered(tmp_path, selection=True)
+    feedback_path, note_path, _ = _formal_learning_artifacts(tmp_path)
+    unrelated_feedback = tmp_path / "unrelated_feedback.json"
+    unrelated_feedback.write_text("{}\n", encoding="utf-8")
+    _settle_with_feedback(conn, s1, unrelated_feedback)
+
+    with pytest.raises(jfc.ControlPlaneError) as exc_info:
+        jfc.record_learning_note(
+            conn,
+            feedback_item_id=s1,
+            feedback_ref=feedback_path,
+            learning_note_ref=note_path,
+            diagnosis_payload=_diagnosis("EVT:formal-settle"),
+            effective_at="2026-04-01T01:00:00+08:00",
+        )
+    assert exc_info.value.code == "learning_note_settlement_feedback_mismatch"
+
+
 def test_learning_application_requires_real_cross_company_change_and_reviewer(tmp_path: Path) -> None:
     conn, s1, _ = _registered(tmp_path, selection=True)
     at = "2026-04-01T00:00:00+08:00"

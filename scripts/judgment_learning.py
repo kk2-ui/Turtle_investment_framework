@@ -11,12 +11,13 @@ from __future__ import annotations
 
 import json
 import re
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any
 
 
 SCHEMA_VERSION = "judgment-learning-note.v2"
+ADMISSION_SCHEMA_VERSION = "judgment-learning-admission.v1"
 APPLICATION_RECEIPT_SCHEMA_VERSION = "judgment-learning-application-receipt.v1"
 DISPOSITIONS = {"RETAIN", "RETIRE", "INSUFFICIENT_EVIDENCE"}
 ROOT_CAUSE_CLASSES = {
@@ -76,6 +77,7 @@ def build_judgment_learning_note(
     learning_basis: str,
     next_research_change: str,
     *,
+    feedback_ref: str,
     experiment_id: str | None = None,
     company_cluster_id: str | None = None,
     root_cause_classes: list[str] | None = None,
@@ -96,6 +98,7 @@ def build_judgment_learning_note(
         "freeze_id": feedback.get("freeze_id"),
         "settlement_id": feedback.get("settlement_id"),
         "claim_id": str(claim_id or "").strip(),
+        "feedback_ref": str(feedback_ref or "").strip(),
         "disposition": str(disposition or "").upper(),
         "applicability": {
             "state_scope": str(state_scope or "").strip(),
@@ -152,6 +155,7 @@ def validate_judgment_learning_note(note: dict[str, Any], feedback: dict[str, An
     if note_id and not re.fullmatch(r"LNOTE:[A-Za-z0-9._:-]+", note_id):
         findings.append("note_id_invalid")
     claim_id = _required_text(note.get("claim_id"), "claim_id", findings)
+    _required_text(note.get("feedback_ref"), "feedback_ref", findings)
     for field in ("case_id", "freeze_id", "settlement_id"):
         value = _required_text(note.get(field), field, findings)
         if value and value != str(feedback.get(field) or ""):
@@ -227,6 +231,171 @@ def validate_judgment_learning_note(note: dict[str, Any], feedback: dict[str, An
         "schema_version": "judgment-learning-note-validation.v1",
         "state": "INVALID" if findings else "REVIEWABLE",
         "findings": findings,
+    }
+
+
+def _instant(
+    value: Any, field: str, findings: list[str], *, allow_date_cutoff: bool = False,
+) -> datetime | None:
+    text = str(value or "").strip()
+    if not text:
+        findings.append(field + "_missing")
+        return None
+    if allow_date_cutoff and re.fullmatch(r"\d{4}-\d{2}-\d{2}", text):
+        return datetime.fromisoformat(text).replace(
+            hour=23, minute=59, second=59,
+            tzinfo=timezone(timedelta(hours=8)),
+        ).astimezone(timezone.utc)
+    try:
+        parsed = datetime.fromisoformat(text.replace("Z", "+00:00"))
+    except ValueError:
+        findings.append(field + "_invalid")
+        return None
+    if parsed.tzinfo is None:
+        findings.append(field + "_timezone_missing")
+        return None
+    return parsed.astimezone(timezone.utc)
+
+
+def _same_reference(left: Any, right: Any) -> bool:
+    if not str(left or "").strip() or not str(right or "").strip():
+        return False
+    return Path(str(left)).expanduser().resolve() == Path(str(right)).expanduser().resolve()
+
+
+def validate_judgment_learning_admission(
+    admission: dict[str, Any], *, note: dict[str, Any], feedback: dict[str, Any],
+    control_event: dict[str, Any], information_cutoff: str,
+) -> dict[str, Any]:
+    """Admit a note only through its validated feedback and control-plane event.
+
+    The event's recorded time is checked as well as its effective time.  This
+    prevents a note created after a historical cutoff from being made eligible
+    merely by assigning it an earlier effective date.
+    """
+    findings: list[str] = []
+    if not isinstance(admission, dict):
+        return {
+            "schema_version": "judgment-learning-admission-validation.v1",
+            "state": "INVALID", "findings": ["admission_not_object"],
+        }
+    if admission.get("schema_version") != ADMISSION_SCHEMA_VERSION:
+        findings.append("admission_schema_version_invalid")
+    expected_fields = {
+        "schema_version", "learning_note_ref", "feedback_ref", "control_plane_db",
+        "feedback_item_id", "learning_note_event_id", "learning_note_effective_at",
+    }
+    unexpected_fields = sorted(set(admission) - expected_fields)
+    if unexpected_fields:
+        findings.append("admission_unexpected_fields:" + ",".join(unexpected_fields))
+    note_ref = _required_text(admission.get("learning_note_ref"), "learning_note_ref", findings)
+    feedback_ref = _required_text(admission.get("feedback_ref"), "feedback_ref", findings)
+    _required_text(admission.get("control_plane_db"), "control_plane_db", findings)
+    feedback_item_id = _required_text(
+        admission.get("feedback_item_id"), "feedback_item_id", findings,
+    )
+    event_id = _required_text(
+        admission.get("learning_note_event_id"), "learning_note_event_id", findings,
+    )
+    declared_effective_text = _required_text(
+        admission.get("learning_note_effective_at"), "learning_note_effective_at", findings,
+    )
+    note_validation = validate_judgment_learning_note(note, feedback)
+    if note_validation.get("state") != "REVIEWABLE":
+        findings.extend(
+            "learning_note_invalid:" + str(item)
+            for item in note_validation.get("findings") or []
+        )
+    if feedback_ref and not _same_reference(note.get("feedback_ref"), feedback_ref):
+        findings.append("learning_note_feedback_ref_mismatch")
+
+    if not isinstance(control_event, dict) or not control_event:
+        findings.append("learning_note_ready_event_missing")
+        control_event = {}
+    if event_id and control_event.get("event_id") != event_id:
+        findings.append("learning_note_event_id_mismatch")
+    if control_event.get("event_type") != "LEARNING_NOTE_READY":
+        findings.append("learning_note_event_type_invalid")
+    if feedback_item_id and control_event.get("feedback_item_id") != feedback_item_id:
+        findings.append("learning_note_feedback_item_mismatch")
+    control_claim = (
+        control_event.get("control_claim")
+        if isinstance(control_event.get("control_claim"), dict) else {}
+    )
+    if control_claim.get("episode_id") != note.get("case_id"):
+        findings.append("learning_note_control_case_mismatch")
+    if control_claim.get("claim_id") != note.get("claim_id"):
+        findings.append("learning_note_control_claim_mismatch")
+    payload = control_event.get("payload") if isinstance(control_event.get("payload"), dict) else {}
+    admission_findings = control_event.get("admission_findings")
+    if control_event and control_event.get("admission_state") != "REVIEWABLE":
+        if isinstance(admission_findings, list) and admission_findings:
+            findings.extend(str(item) for item in admission_findings)
+        else:
+            findings.append("learning_note_event_cutoff_replay_missing")
+    if note_ref and not _same_reference(payload.get("learning_note_ref"), note_ref):
+        findings.append("learning_note_event_note_ref_mismatch")
+    if feedback_ref and not _same_reference(payload.get("feedback_ref"), feedback_ref):
+        findings.append("learning_note_event_feedback_ref_mismatch")
+    if note.get("note_id") and payload.get("learning_note_id") != note.get("note_id"):
+        findings.append("learning_note_event_note_id_mismatch")
+    for field in ("case_id", "claim_id", "settlement_id"):
+        if payload.get(field) != note.get(field):
+            findings.append("learning_note_event_" + field + "_mismatch")
+    note_snapshot = payload.get("learning_note_snapshot")
+    if not isinstance(note_snapshot, dict):
+        findings.append("learning_note_event_snapshot_missing")
+    elif note_snapshot != note:
+        findings.append("learning_note_changed_after_ready_event")
+    feedback_snapshot = payload.get("feedback_snapshot")
+    if not isinstance(feedback_snapshot, dict):
+        findings.append("learning_feedback_event_snapshot_missing")
+    elif feedback_snapshot != feedback:
+        findings.append("learning_feedback_changed_after_ready_event")
+    artifact_refs = control_event.get("artifact_refs")
+    if not isinstance(artifact_refs, list):
+        findings.append("learning_note_event_artifact_refs_invalid")
+    else:
+        for label, reference in (("note", note_ref), ("feedback", feedback_ref)):
+            if reference and not any(_same_reference(item, reference) for item in artifact_refs):
+                findings.append(f"learning_note_event_{label}_artifact_missing")
+
+    cutoff = _instant(
+        information_cutoff, "information_cutoff", findings, allow_date_cutoff=True,
+    )
+    note_recorded = _instant(note.get("recorded_at"), "learning_note_recorded_at", findings)
+    feedback_settled = _instant(
+        feedback.get("settlement_as_of"), "feedback_settlement_as_of", findings,
+    )
+    event_effective = _instant(
+        control_event.get("effective_at"), "learning_note_event_effective_at", findings,
+    )
+    declared_effective = _instant(
+        declared_effective_text, "declared_learning_note_effective_at", findings,
+    )
+    event_recorded = _instant(
+        control_event.get("recorded_at"), "learning_note_event_recorded_at", findings,
+    )
+    if cutoff is not None:
+        if note_recorded is not None and note_recorded > cutoff:
+            findings.append("learning_note_after_information_cutoff")
+        if feedback_settled is not None and feedback_settled > cutoff:
+            findings.append("learning_feedback_after_information_cutoff")
+        if event_effective is not None and event_effective > cutoff:
+            findings.append("learning_note_event_effective_after_information_cutoff")
+        if event_recorded is not None and event_recorded > cutoff:
+            findings.append("learning_note_event_recorded_after_information_cutoff")
+    if (
+        declared_effective is not None and event_effective is not None
+        and declared_effective != event_effective
+    ):
+        findings.append("learning_note_event_effective_at_mismatch")
+    if note_recorded is not None and event_recorded is not None and note_recorded > event_recorded:
+        findings.append("learning_note_recorded_after_ready_event")
+    return {
+        "schema_version": "judgment-learning-admission-validation.v1",
+        "state": "INVALID" if findings else "REVIEWABLE",
+        "findings": list(dict.fromkeys(findings)),
     }
 
 

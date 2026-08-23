@@ -380,6 +380,24 @@ def _validate_company_judgment_lineage(
         invalid.append("company_judgment_lineage_snapshot_mismatch")
     if lineage.get("predecessor_thesis_sha256") != thesis_sha256:
         invalid.append("company_judgment_lineage_thesis_hash_mismatch")
+    identity = predecessor.get("identity") if isinstance(predecessor.get("identity"), dict) else {}
+    complete_predecessor = identity.get("status") == "G1J_COMPLETE"
+    if complete_predecessor:
+        financial_driver_bridge_sha256 = str(source.get("financial_driver_bridge_sha256") or "")
+        if lineage.get("predecessor_completeness_status") != "G1J_COMPLETE":
+            invalid.append("company_judgment_lineage_completeness_status_mismatch")
+        if not financial_driver_bridge_sha256:
+            invalid.append("company_judgment_predecessor_financial_driver_bridge_identity_invalid")
+        elif lineage.get("predecessor_financial_driver_bridge_sha256") != financial_driver_bridge_sha256:
+            invalid.append("company_judgment_lineage_financial_driver_bridge_hash_mismatch")
+        inherited_selection = (
+            predecessor.get("selection_admission")
+            if isinstance(predecessor.get("selection_admission"), dict) else {}
+        )
+        if not inherited_selection:
+            invalid.append("company_judgment_predecessor_selection_admission_invalid")
+        elif lineage.get("selection_admission") != inherited_selection:
+            invalid.append("company_judgment_lineage_selection_admission_mismatch")
     central = payload.get("central_path") if isinstance(payload.get("central_path"), dict) else {}
     inherited_central = predecessor.get("central_path") if isinstance(predecessor.get("central_path"), dict) else {}
     if not inherited_central:
@@ -422,6 +440,34 @@ def _validate_company_judgment_lineage(
             invalid.append(f"company_judgment_lineage_mechanism_chain_missing:{chain_id}")
         elif _operating_chain_projection(current) != _operating_chain_projection(inherited):
             invalid.append(f"company_judgment_lineage_mechanism_chain_rewritten:{chain_id}")
+    if complete_predecessor:
+        for collection, id_key, singular in (
+            ("rival_hypothesis_pairs", "pair_id", "rival_hypothesis_pair"),
+            ("analogy_transfer_cards", "card_id", "analogy_transfer_card"),
+        ):
+            inherited_objects = {
+                str(item.get(id_key)): item
+                for item in predecessor.get(collection) or []
+                if isinstance(item, dict) and item.get(id_key)
+            }
+            current_objects = {
+                str(item.get(id_key)): item
+                for item in payload.get(collection) or []
+                if isinstance(item, dict) and item.get(id_key)
+            }
+            if not inherited_objects:
+                invalid.append(f"company_judgment_predecessor_{collection}_invalid")
+                continue
+            inherited_ids = sorted(inherited_objects)
+            if lineage.get(collection.removesuffix("s") + "_ids") != inherited_ids:
+                invalid.append(f"company_judgment_lineage_{singular}_ids_mismatch")
+            for object_id in sorted(inherited_objects.keys() - current_objects.keys()):
+                invalid.append(f"company_judgment_lineage_{singular}_missing:{object_id}")
+            for object_id in sorted(current_objects.keys() - inherited_objects.keys()):
+                invalid.append(f"company_judgment_lineage_{singular}_extra:{object_id}")
+            for object_id in sorted(inherited_objects.keys() & current_objects.keys()):
+                if current_objects[object_id] != inherited_objects[object_id]:
+                    invalid.append(f"company_judgment_lineage_{singular}_rewritten:{object_id}")
     return invalid, incomplete
 
 
@@ -564,6 +610,7 @@ def build_thesis_test_ledger(
         predecessor = _read_json(output / "company_judgment_predecessor.json")
         source = predecessor.get("source") if isinstance(predecessor.get("source"), dict) else {}
         if predecessor:
+            identity = predecessor.get("identity") if isinstance(predecessor.get("identity"), dict) else {}
             payload["company_judgment_lineage"] = {
                 "predecessor_snapshot_fingerprint": source.get("snapshot_fingerprint"),
                 "predecessor_thesis_sha256": source.get("thesis_sha256"),
@@ -574,6 +621,22 @@ def build_thesis_test_ledger(
                     if isinstance(item, dict) and item.get("judgment_id")
                 ),
             }
+            if identity.get("status") == "G1J_COMPLETE":
+                payload["company_judgment_lineage"].update({
+                    "predecessor_completeness_status": "G1J_COMPLETE",
+                    "predecessor_financial_driver_bridge_sha256": source.get("financial_driver_bridge_sha256"),
+                    "selection_admission": deepcopy(predecessor.get("selection_admission") or {}),
+                    "rival_hypothesis_pair_ids": sorted(
+                        str(item.get("pair_id"))
+                        for item in predecessor.get("rival_hypothesis_pairs") or []
+                        if isinstance(item, dict) and item.get("pair_id")
+                    ),
+                    "analogy_transfer_card_ids": sorted(
+                        str(item.get("card_id"))
+                        for item in predecessor.get("analogy_transfer_cards") or []
+                        if isinstance(item, dict) and item.get("card_id")
+                    ),
+                })
     payload["freeze"] = {
         "frozen": bool(freeze),
         "fingerprint": thesis_test_fingerprint(payload) if freeze else "",

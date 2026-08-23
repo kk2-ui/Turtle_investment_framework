@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+from copy import deepcopy
 from pathlib import Path
 
 from scripts.financial_driver_bridge import (
@@ -110,6 +111,21 @@ def _payload(output: Path, *, analysis_purpose: str = "INVESTMENT_DECISION") -> 
     return payload
 
 
+def _attach_complete_company_bridge_predecessor(output: Path, payload: dict) -> dict:
+    inherited_bridge = deepcopy(payload)
+    inherited_bridge["analysis_purpose"] = "COMPANY_JUDGMENT_ONLY"
+    for driver in inherited_bridge["drivers"]:
+        driver.pop("model_bindings", None)
+    predecessor = {
+        "schema_version": "company-judgment-predecessor.v2",
+        "identity": {"status": "G1J_COMPLETE", "missing_components": []},
+        "source": {"financial_driver_bridge_sha256": "frozen-cjo-bridge-sha256"},
+        "financial_driver_bridge": inherited_bridge,
+    }
+    _write(output / "company_judgment_predecessor.json", predecessor)
+    return predecessor
+
+
 def test_bridge_requires_all_four_economic_layers_and_verified_bindings(tmp_path: Path) -> None:
     _prepare(tmp_path)
     result = validate_financial_driver_bridge(_payload(tmp_path), output_dir=tmp_path)
@@ -127,6 +143,88 @@ def test_company_judgment_bridge_uses_frozen_monitoring_not_model_or_trade_bindi
 
     assert result["state"] == "REVIEWABLE"
     assert result["analysis_purpose"] == "COMPANY_JUDGMENT_ONLY"
+
+
+def test_investment_bridge_may_add_model_bindings_without_rewriting_company_drivers(tmp_path: Path) -> None:
+    _prepare(tmp_path)
+    payload = _payload(tmp_path)
+    _attach_complete_company_bridge_predecessor(tmp_path, payload)
+
+    result = validate_financial_driver_bridge(payload, output_dir=tmp_path)
+
+    assert result["state"] == "REVIEWABLE"
+    assert not any(
+        item.startswith("company_judgment_lineage_")
+        for item in result["invalid_findings"]
+    )
+
+
+def test_investment_bridge_rejects_rewritten_company_driver_and_allocation_event(tmp_path: Path) -> None:
+    _prepare(tmp_path)
+    payload = _payload(tmp_path)
+    _attach_complete_company_bridge_predecessor(tmp_path, payload)
+    payload["drivers"][2]["cash_normalization_contract"]["conservative_treatment"] = "改写现金形成口径"
+    payload["allocation_events"][0]["classification"] = "OPERATING_REINVESTMENT"
+
+    result = validate_financial_driver_bridge(payload, output_dir=tmp_path)
+
+    assert "company_judgment_lineage_financial_driver_rewritten:FDBDRV:cash" in result["invalid_findings"]
+    assert "company_judgment_lineage_allocation_event_rewritten:FDBEV:financial-products" in result["invalid_findings"]
+
+
+def test_investment_bridge_preserves_company_and_cutoff_identity(tmp_path: Path) -> None:
+    _prepare(tmp_path)
+    payload = _payload(tmp_path)
+    _attach_complete_company_bridge_predecessor(tmp_path, payload)
+    payload["report_id"] = "000333.SZ"
+    payload["as_of"] = "2026-04-29"
+
+    result = validate_financial_driver_bridge(payload, output_dir=tmp_path)
+
+    assert "company_judgment_lineage_financial_driver_bridge_report_id_mismatch" in result["invalid_findings"]
+    assert "company_judgment_lineage_financial_driver_bridge_as_of_mismatch" in result["invalid_findings"]
+
+
+def test_investment_bridge_rejects_missing_or_extra_company_operating_objects(tmp_path: Path) -> None:
+    _prepare(tmp_path)
+    payload = _payload(tmp_path)
+    _attach_complete_company_bridge_predecessor(tmp_path, payload)
+    missing_driver_id = payload["drivers"].pop(0)["driver_id"]
+    extra_driver = deepcopy(payload["drivers"][0])
+    extra_driver["driver_id"] = "FDBDRV:extra"
+    extra_driver["monitoring_contract"]["contract_id"] = "FDBMON:extra"
+    payload["drivers"].append(extra_driver)
+    missing_event_id = payload["allocation_events"].pop(0)["event_id"]
+    extra_event = deepcopy(payload["allocation_events"][0])
+    extra_event["event_id"] = "FDBEV:extra"
+    extra_event["realization_contract"]["contract_id"] = "FDBREAL:extra"
+    extra_event["realization_contract"]["early_signal"]["contract_id"] = "FDBMON:extra:early"
+    extra_event["realization_contract"]["terminal_outcome"]["contract_id"] = "FDBMON:extra:terminal"
+    payload["allocation_events"].append(extra_event)
+
+    result = validate_financial_driver_bridge(payload, output_dir=tmp_path)
+
+    assert f"company_judgment_lineage_financial_driver_missing:{missing_driver_id}" in result["invalid_findings"]
+    assert "company_judgment_lineage_financial_driver_extra:FDBDRV:extra" in result["invalid_findings"]
+    assert f"company_judgment_lineage_allocation_event_missing:{missing_event_id}" in result["invalid_findings"]
+    assert "company_judgment_lineage_allocation_event_extra:FDBEV:extra" in result["invalid_findings"]
+
+
+def test_legacy_predecessor_does_not_claim_or_enforce_complete_bridge_lineage(tmp_path: Path) -> None:
+    _prepare(tmp_path)
+    payload = _payload(tmp_path)
+    predecessor = _attach_complete_company_bridge_predecessor(tmp_path, payload)
+    predecessor["schema_version"] = "company-judgment-predecessor.v1"
+    predecessor.pop("identity")
+    _write(tmp_path / "company_judgment_predecessor.json", predecessor)
+    payload["drivers"][0]["statement"] = "legacy predecessor permits the existing compatibility path"
+
+    result = validate_financial_driver_bridge(payload, output_dir=tmp_path)
+
+    assert not any(
+        item.startswith("company_judgment_lineage_")
+        for item in result["invalid_findings"]
+    )
 
 
 def test_company_judgment_bridge_rejects_hidden_model_or_decision_binding(tmp_path: Path) -> None:

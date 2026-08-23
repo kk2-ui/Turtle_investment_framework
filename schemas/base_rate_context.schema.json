@@ -11,6 +11,7 @@
     "library_path_label": {"type": "string"},
     "library_fingerprint": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
     "archetype_ids": {"type": "array", "items": {"type": "string"}},
+    "availability": {"type": "object"},
     "queries": {"type": "object", "additionalProperties": {"type": "object"}},
     "policy": {"type": "object"},
     "warnings": {"type": "array", "items": {"type": "string"}},

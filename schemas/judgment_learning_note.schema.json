@@ -1,0 +1,117 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://turtle.local/schemas/judgment_learning_note.schema.json",
+  "title": "Judgment Learning Note",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "note_id",
+    "case_id",
+    "freeze_id",
+    "settlement_id",
+    "claim_id",
+    "feedback_ref",
+    "disposition",
+    "applicability",
+    "learning_basis",
+    "next_research_change",
+    "experiment_id",
+    "company_cluster_id",
+    "root_cause_classes",
+    "failure_loci",
+    "economic_failure_loci",
+    "recorded_at",
+    "policy_note",
+    "feedback_context"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "judgment-learning-note.v2"
+    },
+    "note_id": {
+      "type": "string",
+      "pattern": "^LNOTE:[A-Za-z0-9._:-]+$"
+    },
+    "case_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "freeze_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "settlement_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "claim_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "feedback_ref": {
+      "type": "string",
+      "minLength": 1
+    },
+    "disposition": {
+      "enum": ["RETAIN", "RETIRE", "INSUFFICIENT_EVIDENCE"]
+    },
+    "applicability": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["state_scope", "measurement_scope"],
+      "properties": {
+        "state_scope": {"type": "string", "minLength": 1},
+        "measurement_scope": {"type": "string", "minLength": 1}
+      }
+    },
+    "learning_basis": {"type": "string", "minLength": 1},
+    "next_research_change": {"type": "string", "minLength": 1},
+    "experiment_id": {"type": "string", "minLength": 1},
+    "company_cluster_id": {"type": "string", "minLength": 1},
+    "root_cause_classes": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "enum": ["DATA_COVERAGE", "ACQUISITION_MODULE", "REASONING", "MODEL", "WRITING"]
+      }
+    },
+    "failure_loci": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "enum": ["STATE_REPRESENTATION", "MECHANISM", "EVIDENCE_ACQUISITION", "FINANCIAL_TRANSMISSION", "VALUATION_DECISION"]
+      }
+    },
+    "economic_failure_loci": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "enum": ["STATE", "DECISION", "MEASUREMENT", "MECHANISM", "TRANSMISSION", "ENVIRONMENT"]
+      }
+    },
+    "recorded_at": {"type": "string", "format": "date-time"},
+    "policy_note": {"type": "string", "minLength": 1},
+    "feedback_context": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "forward_judgment_id",
+        "settlement_status",
+        "judgment_outcome_status",
+        "increment_vs_baseline",
+        "rival_hypothesis_feedback"
+      ],
+      "properties": {
+        "forward_judgment_id": {"type": ["string", "null"]},
+        "settlement_status": {"type": ["string", "null"]},
+        "judgment_outcome_status": {"type": ["string", "null"]},
+        "increment_vs_baseline": {"type": ["string", "null"]},
+        "rival_hypothesis_feedback": {"type": ["object", "null"]}
+      }
+    }
+  }
+}

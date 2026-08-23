@@ -34,6 +34,7 @@ PROBABILITY_KINDS = {"frequency", "base_rate", "analyst_subjective", "scenario_w
 EVENT_TYPES = {"outcome", "eligibility_review", "exclusion"}
 EPISODE_SETTLEMENT_STATUSES = {"OPEN", "SETTLED", "UNRESOLVED"}
 CASE_SELECTION_OUTCOME_ISOLATIONS = {"PIT_PRE_OUTCOME", "OUTCOME_SELECTED_RESEARCH_ONLY"}
+PIT_BASE_RATE_DEGRADATION = "pit_global_base_rate_library_forbidden_without_case_level_admission"
 
 
 def _now() -> str:
@@ -72,6 +73,33 @@ def _day(value: Any) -> date | None:
 
 def _library_dir(value: str | Path | None = None) -> Path:
     return Path(value or get_base_rate_library_dir()).resolve()
+
+
+def _pit_contract(output_dir: str | Path | None) -> dict[str, Any]:
+    if output_dir is None:
+        return {}
+    contract = _load(Path(output_dir) / "analysis_contract.json")
+    pit = contract.get("pit_production")
+    return {"_present": True, **pit} if isinstance(pit, dict) else {}
+
+
+def _empty_pit_query(
+    mechanism_key: str, archetype_ids: list[str], variable_keys: list[str],
+) -> dict[str, Any]:
+    return {
+        "mechanism_key": mechanism_key,
+        "archetype_ids": list(archetype_ids),
+        "variable_keys": sorted({str(item) for item in variable_keys if str(item).strip()}),
+        "eligible_sample_size": 0,
+        "independent_company_sample_size": 0,
+        "independence_qualified": False,
+        "common_question_set_ids": [],
+        "terminal_outcome_scopes": [],
+        "outcome_counts": {},
+        "empirical_base_rate": None,
+        "eligible_cases": [],
+        "warnings": [PIT_BASE_RATE_DEGRADATION, f"sample_too_small:0<{MIN_EMPIRICAL_SAMPLE}"],
+    }
 
 
 def _record_fingerprint(record: dict[str, Any], field: str) -> str:
@@ -636,29 +664,43 @@ def build_base_rate_context(
     questions: list[dict[str, Any]], library_dir: str | Path | None = None,
     persist: bool = True,
 ) -> dict[str, Any]:
-    root = _library_dir(library_dir)
-    cases, case_errors = _read_jsonl(root / "cases.jsonl")
-    events, event_errors = _read_jsonl(root / "events.jsonl")
+    pit = _pit_contract(output_dir)
+    pit_isolated = bool(pit)
+    root = None if pit_isolated else _library_dir(library_dir)
+    cases, case_errors = ([], []) if root is None else _read_jsonl(root / "cases.jsonl")
+    events, event_errors = ([], []) if root is None else _read_jsonl(root / "events.jsonl")
     queries: dict[str, Any] = {}
     for question in questions:
         mechanism = str(question.get("mechanism_key") or "")
         variables = list((question.get("decision_link") or {}).get("affected_metric_ids") or [])
         if mechanism and mechanism not in queries:
-            queries[mechanism] = query_cases(
-                mechanism_key=mechanism, archetype_ids=archetype_ids,
-                variable_keys=variables, library_dir=root,
+            queries[mechanism] = (
+                _empty_pit_query(mechanism, archetype_ids, variables)
+                if pit_isolated else query_cases(
+                    mechanism_key=mechanism, archetype_ids=archetype_ids,
+                    variable_keys=variables, library_dir=root,
+                )
             )
     payload = {
         "schema_version": CONTEXT_SCHEMA_VERSION, "generated_at": _now(),
-        "library_path_label": root.name,
+        "library_path_label": "PIT_NO_ADMITTED_SNAPSHOT" if root is None else root.name,
         "library_fingerprint": library_fingerprint(cases, events),
         "archetype_ids": archetype_ids, "queries": queries,
+        "availability": {
+            "mode": "PIT_EVIDENCE_ONLY" if pit_isolated else "CURRENT_LIBRARY",
+            "cutoff_at": str(pit.get("cutoff_at") or "") if pit_isolated else "",
+            "base_rate_library": (
+                "UNAVAILABLE_NO_CASE_LEVEL_ADMISSION" if pit_isolated else "AVAILABLE"
+            ),
+        },
         "policy": {
             "minimum_empirical_sample": MIN_EMPIRICAL_SAMPLE,
             "mechanism_match_required": True, "company_name_matching_forbidden": True,
             "base_rate_is_prior_not_company_evidence": True,
         },
-        "warnings": list(dict.fromkeys(case_errors + event_errors + [
+        "warnings": list(dict.fromkeys(
+            ([PIT_BASE_RATE_DEGRADATION] if pit_isolated else [])
+            + case_errors + event_errors + [
             warning for result in queries.values() for warning in result.get("warnings") or []
         ])),
     }
@@ -701,8 +743,17 @@ def validate_base_rate_context(
     queries = context.get("queries")
     if not isinstance(queries, dict):
         invalid.append("queries_not_object"); queries = {}
-    cases, case_errors = _read_jsonl(_library_dir(library_dir) / "cases.jsonl")
-    events, event_errors = _read_jsonl(_library_dir(library_dir) / "events.jsonl")
+    pit = _pit_contract(output_dir)
+    if pit:
+        availability = context.get("availability") if isinstance(context.get("availability"), dict) else {}
+        if availability.get("mode") != "PIT_EVIDENCE_ONLY":
+            invalid.append("pit_base_rate_context_lacks_isolation_proof")
+        if availability.get("base_rate_library") != "UNAVAILABLE_NO_CASE_LEVEL_ADMISSION":
+            invalid.append("pit_base_rate_library_must_be_unavailable")
+        cases, events, case_errors, event_errors = [], [], [], []
+    else:
+        cases, case_errors = _read_jsonl(_library_dir(library_dir) / "cases.jsonl")
+        events, event_errors = _read_jsonl(_library_dir(library_dir) / "events.jsonl")
     invalid.extend(case_errors + event_errors)
     case_map = {str(item.get("case_id")): item for item in cases}
     eligible_ids: set[str] = set()
@@ -712,6 +763,8 @@ def validate_base_rate_context(
         sample = int(query.get("eligible_sample_size") or 0)
         independent_sample = int(query.get("independent_company_sample_size", sample) or 0)
         refs = query.get("eligible_cases") or []
+        if pit and (sample or independent_sample or refs or query.get("empirical_base_rate") is not None):
+            invalid.append("pit_base_rate_query_must_be_empty:" + str(mechanism))
         if sample != len(refs):
             invalid.append("eligible_sample_count_mismatch:" + str(mechanism))
         if independent_sample < MIN_EMPIRICAL_SAMPLE and query.get("empirical_base_rate") is not None:
@@ -800,7 +853,9 @@ def evaluate_output_base_rate(
             result["invalid_findings"].append("policy_context_fingerprint_mismatch")
             result["state"] = "INVALID"; result["status"] = "FAIL"
         if policy.get("require_episode_identity") or policy.get("require_case_selection_identity"):
-            cases, _ = _read_jsonl(_library_dir(library_dir) / "cases.jsonl")
+            cases = [] if _pit_contract(output) else _read_jsonl(
+                _library_dir(library_dir) / "cases.jsonl"
+            )[0]
             case_map = {str(item.get("case_id")): item for item in cases}
             for case_id in result.get("eligible_case_ids") or []:
                 case = case_map.get(str(case_id))

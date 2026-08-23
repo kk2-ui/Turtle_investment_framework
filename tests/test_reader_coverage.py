@@ -69,3 +69,69 @@ def test_prompt_names_unknown_and_reader_explanation() -> None:
     prompt = reader_coverage_prompt(archetype="general_operating")
     assert "UNKNOWN" in prompt
     assert "附录链接" in prompt
+    assert "内部对象ID" in prompt
+
+
+def test_reader_coverage_rejects_internal_workflow_status_and_object_ids(tmp_path: Path) -> None:
+    leaks = {
+        "MECHANISM_READY": "workflow_status",
+        "NOT_EVIDENCED": "workflow_status",
+        "LEARNING_APPLIED": "workflow_status",
+        "READY_WITH_NO_PRIOR": "workflow_status",
+        "G1J_COMPLETE": "workflow_status",
+        "LEGACY_PARTIAL": "workflow_status",
+        "NO_PRIMARY": "workflow_status",
+        "SELECTION_ADMITTED": "workflow_status",
+        "BINDING_PENDING": "workflow_status",
+        "REVIEWABLE": "workflow_status",
+        "DECISION_READY": "workflow_status",
+        "PIT_EVIDENCE_ONLY": "workflow_status",
+        "JAXREPORT:pair-a": "workflow_object_id",
+        "JAXUNIT:unit-a": "workflow_object_id",
+        "FJ:channel-share": "workflow_object_id",
+        "RHP:primary-rival": "workflow_object_id",
+        "RHPASM:assumption-a": "workflow_object_id",
+        "RHPSIG:channel": "workflow_object_id",
+        "FDB:cash": "workflow_object_id",
+        "FDBDRV:cash": "workflow_object_id",
+        "FDBEV:buyback": "workflow_object_id",
+        "FDBMON:cash": "workflow_object_id",
+    }
+
+    for token, category in leaks.items():
+        result = evaluate_reader_coverage(
+            _paragraphs() + f"\n\n内部审计引用 {token}，其他结论不变。",
+            tmp_path,
+        )
+        assert result["status"] == "BLOCKED", token
+        assert f"reader_internal_control_leak:{category}" in result["blocking_findings"]
+
+
+def test_reader_coverage_rejects_an_obvious_control_panel(tmp_path: Path) -> None:
+    text = _paragraphs() + "\n\n| validation gate | status |\n|---|---|\n| thesis_test | DECISION_READY |"
+
+    result = evaluate_reader_coverage(text, tmp_path)
+
+    assert result["status"] == "BLOCKED"
+    assert "reader_internal_control_leak:workflow_panel" in result["blocking_findings"]
+
+
+def test_reader_coverage_allows_plain_language_and_does_not_scan_technical_appendix(
+    tmp_path: Path,
+) -> None:
+    (tmp_path / "technical_appendix.md").write_text(
+        "MECHANISM_READY FJ:channel RHPSIG:channel\nstatus: DECISION_READY",
+        encoding="utf-8",
+    )
+    text = _paragraphs() + (
+        "\n\n当前经营状态仍有不确定性，因此这项判断只说明渠道机制需要继续验证，"
+        "不能提高报告结论的置信度。"
+    )
+
+    result = evaluate_reader_coverage(text, tmp_path)
+
+    assert result["status"] == "PASS"
+    assert not any(
+        item.startswith("reader_internal_control_leak:")
+        for item in result["blocking_findings"]
+    )

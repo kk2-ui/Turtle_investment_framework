@@ -38,6 +38,45 @@ _CAUSAL_RE = re.compile(
     re.I,
 )
 
+# Reader reports explain the economic judgment in ordinary language.  These
+# machine identities remain available in structured ledgers and technical
+# appendices, but exposing them in the reader body turns the report into an
+# internal control-plane panel rather than an investor-facing explanation.
+_INTERNAL_CONTROL_TOKEN_PATTERNS: tuple[tuple[str, re.Pattern[str]], ...] = (
+    (
+        "workflow_status",
+        re.compile(
+            r"\b(?:MECHANISM_READY|NOT_EVIDENCED|LEARNING_APPLIED|"
+            r"READY_WITH_NO_PRIOR|G1J_COMPLETE|LEGACY_PARTIAL|NO_PRIMARY|"
+            r"SELECTION_ADMITTED|NOT_SELECTION_ELIGIBLE|BINDING_PENDING|"
+            r"REVIEWABLE|DECISION_READY|PIT_EVIDENCE_ONLY|"
+            r"NO_DECISIVE_PLAN_EVIDENCE_ONLY|NO_MATCHING_MECHANISM_READY|"
+            r"NO_EXPLICIT_LEARNING_REFS|NOT_APPLICABLE_TO_VIEW)\b",
+            re.I,
+        ),
+    ),
+    (
+        "workflow_object_id",
+        re.compile(
+            r"(?<![A-Za-z0-9_])"
+            r"(?:JAX(?:REPORT|UNIT)?|FJ|RHP(?:ASM|EDGE|SIG)?|FDB(?:DRV|EV|MON|REAL)?)"
+            r":[A-Za-z0-9_.:@/-]+",
+            re.I,
+        ),
+    ),
+)
+_INTERNAL_CONTROL_PANEL_RE = re.compile(
+    r"^\s*(?:[-*]\s*)?"
+    r"(?:[a-z][a-z0-9_.-]*_)?(?:ledger|gate|status|validator|validation)"
+    r"\s*(?:[:=]|\|)",
+    re.I | re.M,
+)
+_INTERNAL_CONTROL_TABLE_RE = re.compile(
+    r"^\s*\|[^\n|]*(?:ledger|gate|validator|validation)[^\n]*\|"
+    r"[^\n|]*(?:status|state|verdict)[^\n]*\|",
+    re.I | re.M,
+)
+
 
 def _load(path: Path) -> dict[str, Any]:
     try:
@@ -323,6 +362,18 @@ def _identity_findings(text: str, output_dir: str | Path | None) -> list[str]:
     return findings
 
 
+def _internal_control_findings(text: str) -> list[str]:
+    """Detect machine control identities in the reader body, without broad prose keywords."""
+    findings = [
+        "reader_internal_control_leak:" + category
+        for category, pattern in _INTERNAL_CONTROL_TOKEN_PATTERNS
+        if pattern.search(text or "")
+    ]
+    if _INTERNAL_CONTROL_PANEL_RE.search(text or "") or _INTERNAL_CONTROL_TABLE_RE.search(text or ""):
+        findings.append("reader_internal_control_leak:workflow_panel")
+    return findings
+
+
 def _analysis_purpose(output_dir: str | Path | None, declared: str | None) -> str:
     """Resolve purpose without making a missing legacy contract invalid."""
     if declared:
@@ -378,6 +429,7 @@ def evaluate_reader_coverage(
         blocking.append("reader_source_anchor_missing")
     if purpose == "INVESTMENT_DECISION":
         blocking.extend(_identity_findings(report_text, output_dir))
+    blocking.extend(_internal_control_findings(report_text))
     result = {
         "schema_version": SCHEMA_VERSION,
         "status": "BLOCKED" if blocking else "PASS",
@@ -423,7 +475,8 @@ def reader_coverage_prompt(
     return (
         "读者层覆盖契约：在技术附录或ledger之外，正文必须用普通语言解释 "
         f"{labels}。每一项都要连接事实、机制与{implication}；证据不足时明确写UNKNOWN/未披露及其影响。"
-        "不得用附录链接、来源清单、字段名或数字表格代替解释。" + scope
+        "不得用附录链接、来源清单、字段名或数字表格代替解释；内部对象ID、工作流状态码和"
+        "ledger/gate/status面板只能留在结构化工件或技术附录。" + scope
     )
 
 

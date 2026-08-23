@@ -46,6 +46,8 @@ KNOWN_METRIC_IDS = {
     "margin.price", "margin.return", "decision.position.recommended", "trigger.buy",
     "trigger.reduce", "trigger.exit",
 }
+PIT_INDUSTRY_DEGRADATION = "pit_global_industry_knowledge_forbidden_without_object_level_admission"
+PIT_BASE_RATE_DEGRADATION = "pit_global_base_rate_library_forbidden_without_case_level_admission"
 
 
 def _now() -> str:
@@ -58,6 +60,34 @@ def _load(path: Path) -> dict[str, Any]:
     except (OSError, json.JSONDecodeError):
         return {}
     return value if isinstance(value, dict) else {}
+
+
+def _pit_contract(output_dir: str | Path) -> dict[str, Any]:
+    contract = _load(Path(output_dir) / "analysis_contract.json")
+    pit = contract.get("pit_production")
+    return {"_present": True, **pit} if isinstance(pit, dict) else {}
+
+
+def _pit_plan_knowledge_safe(plan: dict[str, Any]) -> bool:
+    industry = (
+        plan.get("industry_knowledge_context")
+        if isinstance(plan.get("industry_knowledge_context"), dict) else {}
+    )
+    availability = industry.get("availability") if isinstance(industry.get("availability"), dict) else {}
+    if availability.get("mode") != "PIT_EVIDENCE_ONLY" or industry.get("matched_mechanisms"):
+        return False
+    for item in plan.get("selected_questions") or []:
+        if not isinstance(item, dict):
+            return False
+        try:
+            sample_size = int(item.get("base_rate_sample_size") or 0)
+        except (TypeError, ValueError):
+            return False
+        if item.get("base_rate_refs") or sample_size != 0:
+            return False
+        if any(str(origin).startswith("industry_knowledge:") for origin in item.get("candidate_origins") or []):
+            return False
+    return True
 
 
 def _canonical(value: Any) -> str:
@@ -360,6 +390,21 @@ def build_industry_knowledge_context(output_dir: str | Path) -> dict[str, Any]:
     """
     output = Path(output_dir)
     usage_contract = _industry_usage_contract()
+    pit = _pit_contract(output)
+    if pit:
+        return {
+            "source": "industry_knowledge",
+            "profile": _industry_profile_summary({}),
+            "matched_mechanisms": [],
+            "validation_status": "PIT_EVIDENCE_ONLY",
+            "availability": {
+                "mode": "PIT_EVIDENCE_ONLY",
+                "cutoff_at": str(pit.get("cutoff_at") or ""),
+                "industry_knowledge": "UNAVAILABLE_NO_OBJECT_LEVEL_ADMISSION",
+            },
+            "usage_contract": usage_contract,
+            "warnings": [PIT_INDUSTRY_DEGRADATION],
+        }
     try:
         from scripts.industry_knowledge import (
             build_company_industry_profile,
@@ -480,6 +525,9 @@ def build_industry_knowledge_context(output_dir: str | Path) -> dict[str, Any]:
         "validation_status": str(
             raw_context.get("validation_status") or raw_context.get("state") or "AVAILABLE"
         ),
+        "availability": raw_context.get("availability") or {
+            "mode": "CURRENT_LIBRARY", "industry_knowledge": "AVAILABLE",
+        },
         "usage_contract": usage_contract,
         "warnings": warnings,
     }
@@ -2145,6 +2193,18 @@ def refresh_decisive_question_plan(
             initialize_decisive_question_policy(output, run_id=run_id, enforced=enforced)
         return {"refreshed": True, "reason": "initialized", "plan": candidate}
 
+    if _pit_contract(output) and not _pit_plan_knowledge_safe(old):
+        persist_base_rate_context(candidate)
+        _atomic_write_json(output / "decisive_question_plan.json", candidate)
+        _atomic_write_json(output / "decisive_question_validation.json", candidate["validation"])
+        if run_id is not None:
+            initialize_decisive_question_policy(output, run_id=run_id, enforced=enforced)
+        return {
+            "refreshed": True,
+            "reason": "pit_unsafe_upstream_plan_replaced",
+            "plan": candidate,
+        }
+
     compatible = _plan_semantics(old) == _plan_semantics(candidate)
     audit = {
         "schema_version": "decisive-question-plan-refresh.v1",
@@ -2267,6 +2327,10 @@ def validate_decisive_question_plan(
                     invalid.append("base_rate_library_fingerprint_mismatch")
                 base_rate_queries = context.get("queries") if isinstance(context.get("queries"), dict) else {}
                 warnings.extend(str(value) for value in context.get("warnings") or [] if str(value).strip())
+        if output_dir is not None and _pit_contract(output_dir):
+            availability = context.get("availability") if isinstance(context.get("availability"), dict) else {}
+            if availability.get("mode") != "PIT_EVIDENCE_ONLY":
+                invalid.append("pit_base_rate_context_lacks_isolation_proof")
     industry_context = payload.get("industry_knowledge_context")
     industry_matches: dict[str, dict[str, Any]] = {}
     if industry_context is not None:
@@ -2293,6 +2357,13 @@ def validate_decisive_question_plan(
                 invalid.append("industry_knowledge_company_evidence_requirement_missing")
         if not str(industry_context.get("validation_status") or "").strip():
             incomplete.append("industry_knowledge_validation_status_missing")
+        if output_dir is not None and _pit_contract(output_dir):
+            availability = (
+                industry_context.get("availability")
+                if isinstance(industry_context.get("availability"), dict) else {}
+            )
+            if availability.get("mode") != "PIT_EVIDENCE_ONLY":
+                invalid.append("pit_industry_context_lacks_isolation_proof")
         matches = industry_context.get("matched_mechanisms")
         if not isinstance(matches, list):
             invalid.append("industry_knowledge_matches_not_array")

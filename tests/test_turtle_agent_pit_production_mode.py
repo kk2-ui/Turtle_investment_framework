@@ -7,6 +7,19 @@ from pathlib import Path
 import pytest
 
 from scripts.turtle_agent import run as run_module
+from scripts.financial_driver_bridge import (
+    evaluate_output_financial_driver_bridge,
+    initialize_financial_driver_bridge_policy,
+    persist_financial_driver_bridge,
+)
+from scripts.thesis_test_gate import (
+    evaluate_output_thesis_test,
+    initialize_thesis_test_policy,
+    thesis_test_fingerprint,
+)
+from tests.test_financial_driver_bridge import _payload as _valid_bridge_payload
+from tests.test_financial_driver_bridge import _prepare as _prepare_bridge_dependencies
+from tests.test_stage14_thesis_test_gate import _no_probability_company_judgment_payload
 from turtle_agent.agent_loop import AgentConfig, TurtleAgent
 from turtle_agent.llm_client import LlmResponse, ToolCall
 from turtle_agent.tool_registry import ToolRegistry
@@ -100,39 +113,228 @@ def _company_judgment_snapshot(tmp_path: Path, code: str = "600340.SH") -> Path:
     return snapshot
 
 
+def _cjo_report(*, central_path: bool = True) -> str:
+    central = "[central-path: path.core] " if central_path else ""
+    return "\n\n".join([
+        "## Ch0 公司判断\n" + central,
+        "## Ch9 风险\n[thesis-test: test.core] [threshold: th.reduce] [threshold: th.exit]",
+        "## Ch13 监测\n[threshold: th.buy]",
+        "## Ch14 结论\n" + central + "[thesis-test: test.core]",
+    ])
+
+
+def _complete_company_judgment_snapshot(tmp_path: Path, code: str = "600340.SH") -> Path:
+    predecessor = tmp_path / "complete-company-judgment"
+    predecessor.mkdir()
+    _prepare_bridge_dependencies(predecessor)
+    thesis = _no_probability_company_judgment_payload(
+        predecessor, selection_status="SELECTION_ADMITTED",
+    )
+    thesis["report_id"] = code
+    thesis["as_of"] = "2026-08-02"
+    thesis["freeze"]["fingerprint"] = thesis_test_fingerprint(thesis)
+    thesis_path = predecessor / "thesis_test.json"
+    thesis_path.write_text(json.dumps(thesis, ensure_ascii=False), encoding="utf-8")
+    report_text = _cjo_report()
+    report_path = predecessor / "reports" / "cjo.md"
+    report_path.parent.mkdir()
+    report_path.write_text(report_text, encoding="utf-8")
+    (predecessor / "analysis_contract.json").write_text(json.dumps({
+        "analysis_purpose": "COMPANY_JUDGMENT_ONLY", "ts_code": code,
+        "company_id": code, "data_as_of": "2026-08-02",
+    }), encoding="utf-8")
+    initialize_thesis_test_policy(
+        predecessor, run_id="cjo-run", enforced=True, monitoring_required=True,
+        forward_judgment_required=True, rival_hypothesis_pair_required=True,
+    )
+    thesis_validation = evaluate_output_thesis_test(
+        predecessor, report_text=report_text, persist=True,
+    )
+    assert thesis_validation["state"] == "DECISION_READY"
+    bridge = _valid_bridge_payload(predecessor, analysis_purpose="COMPANY_JUDGMENT_ONLY")
+    bridge["report_id"] = code
+    bridge["as_of"] = "2026-08-02"
+    for driver in bridge["drivers"]:
+        driver.pop("model_bindings", None)
+    initialize_financial_driver_bridge_policy(predecessor, run_id="cjo-run", enforced=True)
+    bridge_result = persist_financial_driver_bridge(predecessor, bridge)
+    assert bridge_result["validation"]["state"] == "REVIEWABLE"
+    bridge_validation = evaluate_output_financial_driver_bridge(predecessor, persist=True)
+    assert bridge_validation["state"] == "REVIEWABLE"
+    bridge_path = predecessor / "financial_driver_bridge.json"
+    snapshot = predecessor / "publication_snapshot.json"
+    snapshot.write_text(json.dumps({
+        "analysis_purpose": "COMPANY_JUDGMENT_ONLY", "report_id": code,
+        "data_as_of": "2026-08-02", "v3_enforced": True,
+        "completion_status": "COMPLETE", "snapshot_fingerprint": "complete-cjo-freeze",
+        "report_sha256": hashlib.sha256(report_path.read_bytes()).hexdigest(),
+        "ledger_sha256": {
+            "thesis_test": hashlib.sha256(thesis_path.read_bytes()).hexdigest(),
+            "financial_driver_bridge": hashlib.sha256(bridge_path.read_bytes()).hexdigest(),
+        },
+        "gate_states": {
+            "thesis_test": "DECISION_READY",
+            "financial_driver_bridge": "REVIEWABLE",
+        },
+    }), encoding="utf-8")
+    return snapshot
+
+
 def test_investment_pit_predecessor_requires_same_cutoff_frozen_cjo(tmp_path: Path) -> None:
     with pytest.raises(RuntimeError, match="company-judgment-snapshot"):
         run_module._load_company_judgment_predecessor(
             "", company_code="600340.SH", cutoff_at="2020-04-27T18:00:00+08:00",
         )
     snapshot = _company_judgment_snapshot(tmp_path)
-    predecessor = run_module._load_company_judgment_predecessor(
-        str(snapshot), company_code="600340.SH", cutoff_at="2020-04-27T18:00:00+08:00",
-    )
-    assert predecessor["source"]["snapshot_fingerprint"] == "cjo-freeze"
+    with pytest.raises(RuntimeError, match="predecessor_thesis_schema_invalid"):
+        run_module._load_company_judgment_predecessor(
+            str(snapshot), company_code="600340.SH", cutoff_at="2020-04-27T18:00:00+08:00",
+        )
     with pytest.raises(RuntimeError, match="predecessor_cutoff_mismatch"):
         run_module._load_company_judgment_predecessor(
             str(snapshot), company_code="600340.SH", cutoff_at="2020-04-28T18:00:00+08:00",
         )
 
 
-def test_investment_pit_initialization_freezes_company_judgment_lineage(tmp_path: Path) -> None:
-    snapshot = _company_judgment_snapshot(tmp_path)
+def test_complete_company_judgment_predecessor_carries_the_full_g1j_identity(tmp_path: Path) -> None:
     predecessor = run_module._load_company_judgment_predecessor(
-        str(snapshot), company_code="600340.SH", cutoff_at="2020-04-27T18:00:00+08:00",
+        str(_complete_company_judgment_snapshot(tmp_path)),
+        company_code="600340.SH", cutoff_at="2026-08-02T18:00:00+08:00",
+    )
+
+    assert predecessor["identity"] == {"status": "G1J_COMPLETE", "missing_components": []}
+    assert predecessor["source"]["thesis_freeze_fingerprint"]
+    assert predecessor["source"]["financial_driver_bridge_validation_state"] == "REVIEWABLE"
+    assert predecessor["rival_hypothesis_pairs"][0]["pair_id"] == "RHP:retention-vs-erosion"
+    assert predecessor["analogy_transfer_cards"][0]["card_id"] == "ATC:retention-vs-erosion"
+    assert predecessor["selection_admission"]["status"] == "SELECTION_ADMITTED"
+    assert predecessor["financial_driver_bridge"]["drivers"][0]["driver_id"] == "FDBDRV:demand"
+
+
+def test_declared_company_judgment_bridge_hash_mismatch_is_not_downgraded(tmp_path: Path) -> None:
+    snapshot = _complete_company_judgment_snapshot(tmp_path)
+    bridge_path = snapshot.parent / "financial_driver_bridge.json"
+    bridge = json.loads(bridge_path.read_text(encoding="utf-8"))
+    bridge["drivers"][0]["statement"] = "冻结后被改写"
+    bridge_path.write_text(json.dumps(bridge, ensure_ascii=False), encoding="utf-8")
+
+    with pytest.raises(RuntimeError, match="predecessor_financial_driver_bridge_hash_mismatch"):
+        run_module._load_company_judgment_predecessor(
+            str(snapshot), company_code="600340.SH", cutoff_at="2026-08-02T18:00:00+08:00",
+        )
+
+
+@pytest.mark.parametrize(
+    ("mutation", "finding"),
+    [
+        ({"report_id": "000651.SZ"}, "predecessor_financial_driver_bridge_report_id_mismatch"),
+        ({"as_of": "2026-08-03"}, "predecessor_financial_driver_bridge_cutoff_mismatch"),
+    ],
+)
+def test_complete_predecessor_rejects_bridge_company_or_cutoff_mismatch(
+    tmp_path: Path, mutation: dict[str, str], finding: str,
+) -> None:
+    snapshot = _complete_company_judgment_snapshot(tmp_path)
+    bridge_path = snapshot.parent / "financial_driver_bridge.json"
+    bridge = json.loads(bridge_path.read_text(encoding="utf-8"))
+    bridge.update(mutation)
+    bridge_path.write_text(json.dumps(bridge, ensure_ascii=False), encoding="utf-8")
+    snapshot_payload = json.loads(snapshot.read_text(encoding="utf-8"))
+    snapshot_payload["ledger_sha256"]["financial_driver_bridge"] = hashlib.sha256(
+        bridge_path.read_bytes()
+    ).hexdigest()
+    snapshot.write_text(json.dumps(snapshot_payload), encoding="utf-8")
+
+    with pytest.raises(RuntimeError, match=finding):
+        run_module._load_company_judgment_predecessor(
+            str(snapshot), company_code="600340.SH", cutoff_at="2026-08-02T18:00:00+08:00",
+        )
+
+
+def test_complete_predecessor_rejects_legacy_generic_policy_state(tmp_path: Path) -> None:
+    snapshot = _complete_company_judgment_snapshot(tmp_path)
+    policy_path = snapshot.parent / "thesis_test_policy.json"
+    policy = json.loads(policy_path.read_text(encoding="utf-8"))
+    policy["schema_version"] = "thesis-test-policy.v1"
+    policy.pop("forward_judgment_required")
+    policy.pop("rival_hypothesis_pair_required")
+    policy_path.write_text(json.dumps(policy), encoding="utf-8")
+
+    with pytest.raises(RuntimeError, match="predecessor_thesis_policy_not_current_g1j"):
+        run_module._load_company_judgment_predecessor(
+            str(snapshot), company_code="600340.SH", cutoff_at="2026-08-02T18:00:00+08:00",
+        )
+
+
+def test_investment_initialization_rejects_injected_legacy_predecessor(tmp_path: Path) -> None:
+    with pytest.raises(RuntimeError, match="company_judgment_predecessor_not_g1j_complete"):
+        run_module._initialize_pit_production_output(
+            output_dir=str(tmp_path / "investment"), code="600340.SH", run_id="run",
+            cutoff_at="2020-04-27T18:00:00+08:00", analysis_purpose="INVESTMENT_DECISION",
+            company_judgment_predecessor={
+                "schema_version": "company-judgment-predecessor.v2",
+                "identity": {"status": "LEGACY_PARTIAL", "missing_components": ["financial_driver_bridge"]},
+            },
+        )
+
+
+def test_complete_no_primary_cjo_is_valid_but_not_investment_ready(tmp_path: Path) -> None:
+    snapshot = _complete_company_judgment_snapshot(tmp_path)
+    root = snapshot.parent
+    thesis_path = root / "thesis_test.json"
+    thesis = _no_probability_company_judgment_payload(root, selection_status="NO_PRIMARY")
+    thesis["report_id"] = "600340.SH"
+    thesis["as_of"] = "2026-08-02"
+    thesis["freeze"]["fingerprint"] = thesis_test_fingerprint(thesis)
+    thesis_path.write_text(json.dumps(thesis, ensure_ascii=False), encoding="utf-8")
+    no_primary_report = _cjo_report(central_path=False)
+    report_path = root / "reports" / "cjo.md"
+    report_path.write_text(no_primary_report, encoding="utf-8")
+    validation = evaluate_output_thesis_test(
+        root, report_text=no_primary_report, persist=True,
+    )
+    assert validation["state"] == "DECISION_READY"
+    snapshot_payload = json.loads(snapshot.read_text(encoding="utf-8"))
+    snapshot_payload["ledger_sha256"]["thesis_test"] = hashlib.sha256(thesis_path.read_bytes()).hexdigest()
+    snapshot_payload["report_sha256"] = hashlib.sha256(report_path.read_bytes()).hexdigest()
+    snapshot.write_text(json.dumps(snapshot_payload), encoding="utf-8")
+
+    predecessor = run_module._load_company_judgment_predecessor(
+        str(snapshot), company_code="600340.SH", cutoff_at="2026-08-02T18:00:00+08:00",
+    )
+    assert predecessor["identity"]["status"] == "G1J_COMPLETE"
+    assert predecessor["central_path"] == {}
+    assert predecessor["selection_admission"]["status"] == "NO_PRIMARY"
+    with pytest.raises(RuntimeError, match="company_judgment_predecessor_not_investment_ready_selection"):
+        run_module._initialize_pit_production_output(
+            output_dir=str(tmp_path / "investment"), code="600340.SH", run_id="run",
+            cutoff_at="2026-08-02T18:00:00+08:00", analysis_purpose="INVESTMENT_DECISION",
+            company_judgment_predecessor=predecessor,
+        )
+
+
+def test_investment_pit_initialization_freezes_company_judgment_lineage(tmp_path: Path) -> None:
+    snapshot = _complete_company_judgment_snapshot(tmp_path)
+    predecessor = run_module._load_company_judgment_predecessor(
+        str(snapshot), company_code="600340.SH", cutoff_at="2026-08-02T18:00:00+08:00",
     )
     output = tmp_path / "investment"
     run_module._initialize_pit_production_output(
-        output_dir=str(output), code="600340.SH", run_id="run", cutoff_at="2020-04-27T18:00:00+08:00",
+        output_dir=str(output), code="600340.SH", run_id="run", cutoff_at="2026-08-02T18:00:00+08:00",
         analysis_purpose="INVESTMENT_DECISION", company_judgment_predecessor=predecessor,
     )
 
     contract = json.loads((output / "analysis_contract.json").read_text(encoding="utf-8"))
     policy = json.loads((output / "thesis_test_policy.json").read_text(encoding="utf-8"))
     frozen_predecessor = json.loads((output / "company_judgment_predecessor.json").read_text(encoding="utf-8"))
-    assert contract["company_judgment_predecessor"]["central_path_id"] == "CJO:path.core"
+    assert contract["company_judgment_predecessor"]["central_path_id"] == "path.core"
+    assert contract["company_judgment_predecessor"]["completeness_status"] == "G1J_COMPLETE"
+    assert contract["company_judgment_predecessor"]["rival_hypothesis_pair_ids"] == ["RHP:retention-vs-erosion"]
+    assert contract["company_judgment_predecessor"]["analogy_transfer_card_ids"] == ["ATC:retention-vs-erosion"]
+    assert contract["company_judgment_predecessor"]["selection_admission_status"] == "SELECTION_ADMITTED"
+    assert contract["company_judgment_predecessor"]["financial_driver_bridge_sha256"]
     assert policy["company_judgment_lineage_required"] is True
-    assert frozen_predecessor["source"]["snapshot_fingerprint"] == "cjo-freeze"
+    assert frozen_predecessor["source"]["snapshot_fingerprint"] == "complete-cjo-freeze"
 
 
 @pytest.mark.parametrize(
@@ -174,7 +376,7 @@ def test_pit_production_freeze_uses_one_run_id_and_only_publishes_after_ready_ac
     package_root = tmp_path / "source-package"
     package_root.mkdir()
     output = tmp_path / "output"
-    cjo_snapshot = _company_judgment_snapshot(tmp_path)
+    cjo_snapshot = _complete_company_judgment_snapshot(tmp_path)
     observed: dict[str, object] = {}
 
     class FakeRunner:
@@ -186,7 +388,7 @@ def test_pit_production_freeze_uses_one_run_id_and_only_publishes_after_ready_ac
             self.invalid_findings: list[str] = []
             self.incomplete_findings: list[str] = []
             self.run_id = str(kwargs["run_id"])
-            self.cutoff_at = "2020-04-27T18:00:00+08:00"
+            self.cutoff_at = "2026-08-02T18:00:00+08:00"
 
     class FakeRuntimeManifest:
         def __init__(self, path: Path) -> None:
@@ -280,7 +482,10 @@ def test_pit_production_freeze_uses_one_run_id_and_only_publishes_after_ready_ac
     assert run_id == runtime_kwargs["run_id"]
     assert production_kwargs["pit_runner"].run_id == run_id
     assert production_kwargs["runtime"] is observed["runtime"]
-    assert production_kwargs["company_judgment_predecessor"]["source"]["snapshot_fingerprint"] == "cjo-freeze"
+    assert (
+        production_kwargs["company_judgment_predecessor"]["source"]["snapshot_fingerprint"]
+        == "complete-cjo-freeze"
+    )
     assert report_path == str(output / "report.md")
     runtime = observed["runtime"]
     assert isinstance(runtime, FakeRuntime)

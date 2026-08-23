@@ -36,6 +36,7 @@ PROHIBITED_USES = ["company_fact", "valuation_parameter", "probability", "automa
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_LIBRARY_DIR = PROJECT_ROOT / "knowledge" / "industry"
+PIT_INDUSTRY_DEGRADATION = "pit_global_industry_knowledge_forbidden_without_object_level_admission"
 
 
 def _now() -> str:
@@ -103,6 +104,12 @@ def _default_taxonomy() -> dict[str, Any]:
 def _library_dir(value: str | Path | None = None) -> Path:
     configured = str(value or os.environ.get("TURTLE_INDUSTRY_KNOWLEDGE_DIR", "")).strip()
     return Path(configured).expanduser().resolve() if configured else DEFAULT_LIBRARY_DIR
+
+
+def _pit_contract(output_dir: str | Path) -> dict[str, Any]:
+    contract = _read_json(Path(output_dir) / "analysis_contract.json")
+    pit = contract.get("pit_production")
+    return {"_present": True, **pit} if isinstance(pit, dict) else {}
 
 
 def initialize_industry_knowledge(knowledge_dir: str | Path | None = None) -> dict[str, Any]:
@@ -177,9 +184,29 @@ def load_company_industry_metadata(
     canonical taxonomy.
     """
     output = Path(output_dir)
+    contract = _read_json(output / "analysis_contract.json")
+    pit_value = contract.get("pit_production")
+    pit = {"_present": True, **pit_value} if isinstance(pit_value, dict) else {}
+    # A current global taxonomy or mechanism store has no historical
+    # availability identity.  Even taxonomy-based matching can reveal a
+    # post-cutoff mechanism family, so PIT output does not open the store.
+    if pit:
+        return {
+            "company_id": str(contract.get("ts_code") or contract.get("code") or output.name),
+            "industry_keys": [],
+            "mechanism_keys": [],
+            "archetype_ids": [],
+            "source_metadata_files": ["analysis_contract.json"],
+            "unmapped_industry_labels": [],
+            "pit_knowledge_isolation": {
+                "mode": "PIT_EVIDENCE_ONLY",
+                "cutoff_at": str(pit.get("cutoff_at") or ""),
+                "industry_knowledge": "UNAVAILABLE_NO_OBJECT_LEVEL_ADMISSION",
+                "reason": PIT_INDUSTRY_DEGRADATION,
+            },
+        }
     initialized = initialize_industry_knowledge(knowledge_dir)
     taxonomy = initialized["taxonomy"]
-    contract = _read_json(output / "analysis_contract.json")
     industry_context = _read_json(output / "industry_context.json")
     archetype = _read_json(output / "company_archetype.json")
     questions = _read_json(output / "decisive_question_plan.json")
@@ -622,6 +649,27 @@ def build_company_industry_profile(
 ) -> dict[str, Any]:
     """Build a company-specific research profile from ready industry mechanisms."""
     company_id, industries, mechanisms, archetypes, source_metadata = _company_arguments(company, industry_keys, mechanism_keys, knowledge_dir)
+    pit_isolation = (
+        source_metadata.get("pit_knowledge_isolation")
+        if isinstance(source_metadata, dict) and isinstance(source_metadata.get("pit_knowledge_isolation"), dict)
+        else {}
+    )
+    if pit_isolation:
+        return {
+            "schema_version": PROFILE_SCHEMA_VERSION,
+            "company_id": company_id,
+            "industry_keys": [],
+            "mechanism_keys": [],
+            "archetype_ids": [],
+            "profile_role": "research_prompt_prior_only",
+            "mechanisms": [],
+            "corroborated_mechanisms": [],
+            "source_metadata": source_metadata,
+            "required_company_verification_fields": [],
+            "prohibited_uses": list(PROHIBITED_USES),
+            "availability": pit_isolation,
+            "warnings": [PIT_INDUSTRY_DEGRADATION],
+        }
     found_ready = (
         search_industry_knowledge(
             industry_keys=industries, mechanism_keys=mechanisms, archetype_ids=archetypes,
@@ -677,6 +725,9 @@ def read_industry_knowledge_context(
     return {
         "schema_version": CONTEXT_SCHEMA_VERSION, "company_id": profile["company_id"], "profile": profile,
         "research_questions": questions,
+        "availability": profile.get("availability") or {
+            "mode": "CURRENT_LIBRARY", "industry_knowledge": "AVAILABLE",
+        },
         "usage_contract": {
             "can_generate_research_questions": True, "cannot_establish_company_fact": True,
             "cannot_supply_valuation_parameter": True, "cannot_supply_probability": True,

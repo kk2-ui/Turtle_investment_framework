@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import json
 import os
+from pathlib import Path
 import re
 import sys
 from typing import Any
@@ -247,6 +248,23 @@ def read_valuation_route(output_dir: str = ".") -> dict[str, Any]:
     }
 
 
+def read_judgment_generation_handoff(
+    output_dir: str = ".", view: str = "RESEARCH_AGENDA",
+) -> dict[str, Any]:
+    """Read the report-level judgment context without creating a second truth source.
+
+    Learning notes are admitted only through ``analysis_contract.json``.  The
+    model may choose the bounded view, but it may not select arbitrary files or
+    outcome records for a pre-cutoff generation context.
+    """
+    try:
+        from scripts.judgment_generation_handoff import build_judgment_generation_handoff
+    except ModuleNotFoundError:
+        from judgment_generation_handoff import build_judgment_generation_handoff
+
+    return build_judgment_generation_handoff(output_dir, view)
+
+
 def read_chapter_contract(
     output_dir: str = ".",
     chapter_index: int = 0,
@@ -289,6 +307,9 @@ def read_report_contract_pack(
     indexes = [int(item) for item in (chapter_indexes or sorted(_CHAPTER_TEMPLATE_TITLES))]
     analysis_contract = _read_json(os.path.join(output_dir, "analysis_contract.json")) or {}
     analysis_purpose = str(analysis_contract.get("analysis_purpose") or "INVESTMENT_DECISION")
+    research_agenda_handoff = read_judgment_generation_handoff(
+        output_dir, "RESEARCH_AGENDA",
+    )
     if analysis_purpose == "COMPANY_JUDGMENT_ONLY":
         titles = {
             0: "公司判断摘要", 1: "公司做的是什么生意", 2: "行业结构与公司位置",
@@ -341,6 +362,13 @@ def read_report_contract_pack(
                 "unresolved_gaps": evidence_context.get("unresolved_gaps") or [],
                 "instruction": "重大主张优先引用 VERIFIED observation；CANDIDATE 只能指导继续回读，不能支持冻结结论。",
             },
+            "judgment_generation_handoff": {
+                "research_agenda": research_agenda_handoff,
+                "instruction": (
+                    "这是报告生成的统一研究入口；READY_WITH_NO_PRIOR 只表示可从官方证据继续，"
+                    "不表示中心路径、选择判断或公司冻结已经完成。"
+                ),
+            },
             "char_count": sum(item["char_count"] for item in cjo_chapters.values()),
         }
     if analysis_purpose != "INVESTMENT_DECISION":
@@ -352,11 +380,20 @@ def read_report_contract_pack(
         predecessor_context = {
             "source": {
                 key: predecessor_source.get(key)
-                for key in ("snapshot_fingerprint", "report_id", "data_as_of", "thesis_sha256")
+                for key in (
+                    "snapshot_fingerprint", "report_id", "data_as_of", "thesis_sha256",
+                    "thesis_freeze_fingerprint", "thesis_validation_state",
+                    "financial_driver_bridge_sha256", "financial_driver_bridge_validation_state",
+                )
             },
+            "identity": predecessor.get("identity") or {},
             "central_path": predecessor.get("central_path") or {},
             "forward_judgments": predecessor.get("forward_judgments") or [],
             "mechanism_chains": predecessor.get("mechanism_chains") or [],
+            "rival_hypothesis_pairs": predecessor.get("rival_hypothesis_pairs") or [],
+            "analogy_transfer_cards": predecessor.get("analogy_transfer_cards") or [],
+            "selection_admission": predecessor.get("selection_admission") or {},
+            "financial_driver_bridge": predecessor.get("financial_driver_bridge") or {},
             "rule": "这是同 cutoff、已冻结的公司经营判断。投资账本必须原样保留其中心路径、经营 FJ 与正常化盈利/owner-cash 传导；只允许新增估值、条件回报和决策绑定，不能因价格或估值改写经营机制。若经营判断需要改变，先重做 CJO。",
         }
     chapters: dict[str, Any] = {}
@@ -391,6 +428,18 @@ def read_report_contract_pack(
         chapter_questions = read_decisive_question_plan(output_dir, idx)
         chapters[str(idx)]["decisive_questions"] = chapter_questions.get("selected_questions") or []
     evidence_context = _read_json(os.path.join(output_dir, "report_context.json")) or {}
+    generation_handoff: dict[str, Any] = {
+        "research_agenda": research_agenda_handoff,
+        "instruction": (
+            "先用研究议程限定问题；若本合同包提供investment_enrichment，再把同 cutoff "
+            "的 G1-J 完整公司判断作为不可改写前置物。已提供视图的 BLOCKED/INCOMPLETE "
+            "必须按 findings 修复，不能用估值或正文绕过。"
+        ),
+    }
+    if predecessor:
+        generation_handoff["investment_enrichment"] = read_judgment_generation_handoff(
+            output_dir, "INVESTMENT_ENRICHMENT",
+        )
     return {
         "ok": True,
         "template": os.path.basename(template_path),
@@ -403,6 +452,7 @@ def read_report_contract_pack(
         "industry_knowledge_context": industry_knowledge_context,
         "valuation_route": valuation_route,
         "company_judgment_predecessor": predecessor_context,
+        "judgment_generation_handoff": generation_handoff,
         "official_evidence": {
             "state": (evidence_context.get("validation") or {}).get("state", "UNAVAILABLE"),
             "coverage": evidence_context.get("coverage") or {},
@@ -438,6 +488,18 @@ read_valuation_route._tool_meta = {
     "name": "read_valuation_route",
     "description": "读取框架写作前确定的公司主/次原型、适用/压力/禁用估值模型、口径和脆弱性规则。",
     "parameters": {"output_dir": {"type": "string", "description": "股票输出目录"}},
+}
+read_judgment_generation_handoff._tool_meta = {
+    "name": "read_judgment_generation_handoff",
+    "description": "读取报告级判断生成上下文。RESEARCH_AGENDA给出受控行业问题、官方证据范围和候选方法提示；JUDGMENT_SYNTHESIS给出冻结前判断内核；INVESTMENT_ENRICHMENT给出不可改写的同cutoff公司判断前置物。它是派生只读模型，不是事实真源。",
+    "parameters": {
+        "output_dir": {"type": "string", "description": "股票输出目录"},
+        "view": {
+            "type": "string",
+            "enum": ["RESEARCH_AGENDA", "JUDGMENT_SYNTHESIS", "INVESTMENT_ENRICHMENT"],
+            "description": "本次读取的受控视图",
+        },
+    },
 }
 
 
@@ -1405,11 +1467,20 @@ def read_structured_ledger_contract(
         common["company_judgment_predecessor"] = {
             "source": {
                 key: source.get(key)
-                for key in ("snapshot_fingerprint", "report_id", "data_as_of", "thesis_sha256")
+                for key in (
+                    "snapshot_fingerprint", "report_id", "data_as_of", "thesis_sha256",
+                    "thesis_freeze_fingerprint", "thesis_validation_state",
+                    "financial_driver_bridge_sha256", "financial_driver_bridge_validation_state",
+                )
             },
+            "identity": predecessor.get("identity") or {},
             "central_path": predecessor.get("central_path") or {},
             "forward_judgments": predecessor.get("forward_judgments") or [],
             "mechanism_chains": predecessor.get("mechanism_chains") or [],
+            "rival_hypothesis_pairs": predecessor.get("rival_hypothesis_pairs") or [],
+            "analogy_transfer_cards": predecessor.get("analogy_transfer_cards") or [],
+            "selection_admission": predecessor.get("selection_admission") or {},
+            "financial_driver_bridge": predecessor.get("financial_driver_bridge") or {},
             "rule": "投资 thesis 必须保持上述经营对象不变；仅可在其后附加 valuation/expected-return/decision 传导。不得因价格、估值或回报改写任何经营预测、pair 或 chain；若确需改变，停止本投资版本并先建立新的 CJO。",
         }
     if internal_valuation and ledger in {"thesis", "decisive", "insight", "judgment"}:

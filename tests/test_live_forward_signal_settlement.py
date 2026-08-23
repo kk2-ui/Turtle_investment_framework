@@ -213,6 +213,7 @@ def test_live_forward_feedback_locks_learning_note_to_frozen_experiment_and_comp
         try:
             build_judgment_learning_note(
                 feedback, note_id="LNOTE:identity:mismatch", claim_id="R05-S1", disposition="RETAIN",
+                feedback_ref="/tmp/live-forward-feedback.json",
                 state_scope="Customer transactions.", measurement_scope="Frozen issuer metric.",
                 learning_basis="Derived signal.", next_research_change="Use a different company.",
                 experiment_id="R-06", company_cluster_id="COMPANY:WMT.US", root_cause_classes=["REASONING"],
@@ -292,6 +293,7 @@ def test_nonclaim_outcome_exposure_keeps_mechanical_settlement_but_blocks_learni
         try:
             build_judgment_learning_note(
                 feedback, note_id="LNOTE:exposed", claim_id="R05-S1", disposition="RETAIN",
+                feedback_ref="/tmp/live-forward-feedback.json",
                 state_scope="Customer transactions.", measurement_scope="Frozen issuer metric.",
                 learning_basis="This must not be accepted after outcome exposure.",
                 next_research_change="Use a different company.", experiment_id="R-05",

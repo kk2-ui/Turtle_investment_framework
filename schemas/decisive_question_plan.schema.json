@@ -155,6 +155,7 @@
           "items": {"$ref": "#/$defs/industryMechanismMatch"}
         },
         "validation_status": {"type": "string", "minLength": 1},
+        "availability": {"type": "object"},
         "usage_contract": {
           "type": "object",
           "additionalProperties": false,

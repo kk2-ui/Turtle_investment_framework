@@ -663,3 +663,41 @@ schemas/judgment_architecture_experiment.schema.json
 该模块同时收紧行业机制升格：`MECHANISM_READY` 除原有跨公司候选和独立审阅外，还必须有至少两个独立公司集团的已结算支持 episode，以及至少一个 `CONTRADICTS` 或 `BOUNDARY` episode；每项都须保存 outcome/review 指针并由非机制作者独立复核。`NOT_DIAGNOSTIC` 保留在证据账本，但不冒充支持或边界。
 
 当前只有执行器、schema 和合成回归。尚未运行真实 V1/V2 配对黄金报告，尚无真实未来经营结果，也没有 L1-L5 能力优势结论。真实运行继续服从 G1/G1.5 激活顺序和昂贵运行边界。
+
+## 24. 黄金报告生成消费接缝
+
+判断反馈只有改变下一份报告的研究问题、公司判断或传导表达，才对产品有用。为此，控制面与报告生成之间增加单一派生 read model：
+
+```text
+官方证据 + 受控行业机制 + 显式准入 learning note
+                         ↓
+          judgment-generation-handoff.v1
+                         ↓
+公司判断冻结 → 同 cutoff 投资增强 → 黄金报告 → 未来结果反馈
+```
+
+该 handoff 不落盘为第二份事实真源，只在读取时从当前 report-local canonical artifacts 投影。三个视图权限如下：
+
+| 视图 | 报告阶段 | 允许内容 | 禁止解释 |
+|---|---|---|---|
+| `RESEARCH_AGENDA` | 取证与问题选择 | `VERIFIED` evidence 范围、1–3 个决定性问题、`MECHANISM_READY + NOT_EVIDENCED` 行业验证提示、显式准入且早于 cutoff 的 `CANDIDATE_METHOD_PROMPT` | 行业机制不是公司事实；候选方法提示不是 `LEARNING_APPLIED` |
+| `JUDGMENT_SYNTHESIS` | 结构化判断完成后的自然语言综合 | claim、四层 financial driver、central path/FJ/pair/card、insight 与最强反方的受控投影 | 不得替代 canonical ledger，不得携带结算结果、价格、动作或回报 |
+| `INVESTMENT_ENRICHMENT` | 公司判断之后的估值与决策 | 同公司、同 cutoff、`G1J_COMPLETE` 的 `company-judgment-predecessor.v2` 及 valuation route | 估值、价格和回报不得改写 CJO 的机制、pair、driver、event 或 cutoff |
+
+普通报告合同包总是提供 `RESEARCH_AGENDA`；只有检测到 CJO predecessor 时才提供 `INVESTMENT_ENRICHMENT`，从而保持旧单阶段入口兼容但不伪称其已有完整谱系。PIT CJO 与投资入口额外暴露绑定输出目录的 `pit_read_judgment_generation_handoff`；模型不能选择任意文件或输出目录。PIT 当前不信任仓库中的全局行业机制库或基准率结果库：在没有逐条证明 case admission、outcome、review 与机制可用时间均不晚于 cutoff 的正式快照契约前，历史运行一律降级为 `EVIDENCE_ONLY / READY_WITH_NO_PRIOR`，基准率样本为零且不得生成经验概率。已存在的 decisive plan 也不能绕过该消费门。
+
+learning 不是凭一份可回填日期的 note 自行生效。`analysis_contract.json` 必须显式准入 note、对应的 immutable feedback 与控制面 `LEARNING_NOTE_READY` 事件；note 必须通过 `validate_judgment_learning_note(note, feedback)`，case/claim/settlement、失败位置、根因与 next-cycle change 必须一致。`LEARNING_NOTE_READY` 的追加事件保存完整 note 与 feedback 结构快照，报告读取时必须与当前同路径文件逐字段相等；事件后原地改写 `applicability`、`next_research_change` 或 feedback 结论都会阻断，不用 hash 代替结构比较。
+
+准入不是只检查事件创建当时是否合法，而是按本报告 `information_cutoff` 重放该 feedback item 当时可见的窄事件史。被引用的 ready event 必须在 cutoff 前已经记录和生效，必须连接到 cutoff 时最新 settlement 的 diagnosis，且 cutoff 前不得存在 `OUTCOME_EXPOSURE_BREACH`；cutoff 前出现 superseding settlement 会使旧 note 失效，cutoff 后出现则不污染历史 PIT。纯日期 cutoff 统一解释为 Asia/Shanghai 当日日终；所有 datetime 必须显式携带时区，无时区 note、feedback、event 或 cutoff 一律拒绝。任一谱系缺失、错配、过期或事后回填都会使 `RESEARCH_AGENDA` 阻断。
+
+`READY_WITH_NO_PRIOR` 是合法生成状态，只表示当前没有可用决定性计划或已升格行业先验、仍可从官方证据继续研究；它绝不表示 `SELECTION_ADMITTED`、中心路径存在、公司判断已冻结或报告可接纳。`G1J_COMPLETE` 与 `INVESTMENT_READY` 分开：一个证据不足的 CJO 可以用 `NO_PRIMARY` 完整冻结竞争解释、FJ、pair/card 与 financial driver bridge，并且不得伪造 central path；但只有当前 G1-J policy/validator 复核通过且 selection 为 `SELECTION_ADMITTED` 的同公司、同 cutoff predecessor 才能进入投资增强。旧 `LEGACY_PARTIAL` 只允许历史读取，不能进入生产或发布。
+
+PIT reader 的合同包也不再暴露普通运行的研究计划、insight brief、原始行业上下文或估值字段；历史模型只能看到仓库静态章节合同、report-local 官方证据摘要和 cutoff-safe handoff 视图。这样即使旧 decisive plan 或当前行业库仍在目录中，也不能经合同包旁路进入历史判断。
+
+PIT writer 对 handoff 的消费不是提示词约定。每次 prerequisite refresh 都推进 generation；CJO 在组装前必须于当前 generation 读取 `RESEARCH_AGENDA` 与账本冻结后的 `JUDGMENT_SYNTHESIS`，投资运行还必须读取 `INVESTMENT_ENRICHMENT`。缺读、视图 `BLOCKED`、或读取后又 refresh 都会在 assemble 前失败。publication completion 会再次复核同一 run/generation 收据，并按当前 G1-J 契约完整复核 `company-judgment-predecessor.v2`：selection、central path、FJ、mechanism chain、主/反 pair、transfer card、financial-driver bridge 的公司/cutoff/用途/validation 身份，以及 analysis contract 中的全部绑定；只保留一个 ID 或旧 `G1J_COMPLETE` 标签不能完成发布。
+
+读者正文同时阻断 `MECHANISM_READY / NOT_EVIDENCED / LEARNING_APPLIED / JAX / FJ / RHP / FDB` 等控制面 ID/status 及明显英文 gate/ledger 面板。内部对象必须转换为自然语言的经济判断、证据边界和可证伪条件，技术附录仍可保留审计身份。
+
+截至 2026-08-23，上述工程通道已经接入合同包、普通 writer prompt、PIT allowlist 和 CJO prerequisite refresh。它没有启动真实昂贵报告运行，也没有改变能力状态：当前格力仍为 `PRE_FREEZE / NO_PRIMARY / NOT_FROZEN`；没有真实 V1/V2 配对黄金报告、真实未来经营结果、`MECHANISM_READY` 实例或 L1–L5 优势结论。下一项产品验收仍是一个真实公司在合法 cutoff 下完成 CJO 冻结、同 cutoff 投资增强、黄金报告独立审阅，并在未来按原合同结算后改变下一家不同公司的冻结字段。
+
+当前实现导航：派生 read model 与正式 learning admission 在 `scripts/judgment_generation_handoff.py`、`scripts/judgment_learning.py`；追加事件快照与 cutoff replay 在 `scripts/judgment_feedback_control.py`；普通生成入口在 `scripts/turtle_agent/tools/read_tools.py` 和 `scripts/turtle_agent/agent_loop.py`；PIT generation receipt 在 `scripts/turtle_agent/tools/pit_production_write_tools.py`；CJO predecessor 建立与 completion 复核在 `scripts/turtle_agent/run.py`。结构契约为 `schemas/judgment_generation_handoff.schema.json`、`schemas/judgment_learning_admission.schema.json`、`schemas/judgment_learning_note.schema.json`。这些位置是执行入口，本文和路线图只解释职责与状态，不能替代运行时验证。
