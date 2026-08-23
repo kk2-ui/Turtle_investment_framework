@@ -1,10 +1,10 @@
 # R-56｜2010 晶科一体化扩产的企业系统判断微演练：迭代卡
 
-状态：`SCOPED_EXPERIMENT / ARCHIVED_EX_ANTE_EXTERNAL / OUTCOME_UNREAD / NOT_FROZEN_AS_SELECTION`。
+状态：`SCOPED_EXPERIMENT / HISTORICAL_SELF_REPLAY / OUTCOME_UNREAD / NOT_FROZEN_AS_SELECTION`。
 
 ## 方法假设
 
-- 反馈等级：`ARCHIVED_EX_ANTE_EXTERNAL`。本次只表示研究者在冻结前未读取 FY2010 的业绩正文；不表示 Turtle 当时作过真实预测，也不计入准确率或概率校准。
+- 反馈等级：`HISTORICAL_SELF_REPLAY`。本卡没有第三方在 2010 cutoff 时留下、可定位且独立于 Turtle 的原始预测，故不能标为 `ARCHIVED_EX_ANTE_EXTERNAL`；结果未读只允许历史条件下的机制训练，不表示 Turtle 当时作过真实预测，也不计入准确率或概率校准。
 - 当前盲点：把制造业扩产写成“规模、出货或融资是否增加”的单点故事，遗漏客户—价格/成本—营运资本—外部融资的先后关系；尤其容易把 IPO 后的现金余额误作经营自立。
 - 本轮步骤：应用 P-102 的条件化扩产骨架，将一项资源承诺拆成 `客户/需求状态 → 实施 → 产品交付 → 单位经济 → 营运资本/现金 → 资本吸收` 六层；任何一层不可重建均不得由相邻层替代。
 - 训练能力：`问题界定 / 机制辨别 / 测量辨别`。

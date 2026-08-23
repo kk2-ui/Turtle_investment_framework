@@ -60,7 +60,7 @@
 
 格力目前状态：`PAUSED_AS_METHOD_TEST_BENCH`。除非出现可改变 R-01 至 R-07 任一方法裁决的新资料，或被选为明确的复验对照，否则不再向格力添加主动研究任务。
 
-研究准备目前状态：`L1_TRUE_FORWARD_MECHANISM_PROBE_FROZEN / SELECTION_ADMISSION_STILL_OPEN`。R-54 的截止日前源包、五层时钟和 CJO/PIT 预检均已冻结，但其选择准入在结果前被撤回；它只提供真实前瞻机制信号。不得以“继续完善框架”为理由新增模板、validator、schema 或公司材料；下一项工作只能是它已到期 signal 的结果期执行，或在此执行中定位到的材料性流程失效。环境断裂的生产接线仍是未来首次具有冻结 condition 的正式 CJO episode 的准入条件，而不是现在为没有该 condition 的对象预建平行流程。
+研究准备目前状态：`L0_ARCHITECTURE_STOPPED / HISTORICAL_PIT_COHORT_ACTIVE / FORWARD_SENTINELS_WAITING`。R-54 的截止日前源包、五层时钟和 CJO/PIT 预检均已冻结，但其选择准入在结果前被撤回；它只提供真实前瞻机制信号，并在到期时按原合同执行。不得以“继续完善框架”为理由新增模板、validator 或平行 schema；但这不暂停已经符合既有准入的 archive exercise。历史训练与留出队列以[历史 PIT cohort register](HISTORICAL_PIT_TRAINING_COHORT_REGISTER.md)为入口：先隔离 outcome，再冻结机制、反方、基线和 D1--D5，最后结算并将诊断应用于另一家公司。环境断裂的生产接线仍是未来首次具有冻结 condition 的正式 CJO episode 的准入条件，而不是现在为没有该 condition 的对象预建平行流程。
 
 ## 2. 样本选择规则
 
@@ -113,4 +113,4 @@ R-XX_method_name/
 - 每个新研究工作都能从方法假设进入，并以方法裁决或保守的 `INSUFFICIENT_TEST` 退出；
 - 报告和投资研究不会抢在方法学习之前主导方向。
 
-任何新对象只在满足相应准入条件后启动；当前优先是等待并执行 R-54 的首个客户/竞争反应与现金时钟。它不能生成选择学习；下一条真正的中国选择 episode 仍须在结果前通过 R-07，而不是继续补充格力材料。
+任何新对象只在满足相应准入条件后启动。当前并行队列是：运行 register 中已隔离的 R-58 开发回放，规则冻结后才揭盲 R-56 严格历史留出；R-54/R-93/R-94 则只在各自到期时执行真实前瞻合同。R-54 不能生成选择学习；下一条真实中国选择 episode 仍须在结果前通过 R-07，而不是继续补充格力材料。梅花生物价格竞争已登记为 intake，须先锁定具体产品、动作、竞争者、cutoff 和可分离结果链，不能用“价格战”名称直接准入。

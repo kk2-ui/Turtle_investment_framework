@@ -38,13 +38,11 @@ Turtle 已具备中心路径、前瞻判断、结果采集、机械结算、错�
 - 自动改变估值、仓位或行动；
 - 真实前瞻判断力已经得到外部验证。
 
-历史自回放可以用于验证控制面，但只能标记为：
+历史回放不是等待真实前瞻期间的空档，也不等同于“只验证控制面”。它可以在严格 PIT 边界内训练机制拆解、反方、计量合同、D1--D5 时钟和把复盘迁移到下一家公司；其结论必须标为**历史条件下的训练与迁移证据**，不得包装成 Turtle 在未知结果环境中的预测优势。
 
-```text
-L0 / PIPELINE_REHEARSAL / HISTORICAL_SELF_REPLAY
-```
+`PIPELINE_REHEARSAL` 是本控制面数据库中“用合成或回放工件检验事件编排”的实现身份，不是所有 archive exercise 的研究资格标签。研究层的 `HISTORICAL_SELF_REPLAY`、`ARCHIVED_EX_ANTE_EXTERNAL`、`RESULT_KNOWN_TEACHING` 与 `HOLDOUT` 分工见[判断力验证与回测协议](research/TURTLE_JUDGMENT_VALIDATION_PROTOCOL.md#5-历史回放与真实前瞻的关系)；本模块只在需要持久化登记/事件时消费其明确边界，不用 `PIPELINE_REHEARSAL` 降级它们的训练价值。
 
-只有未见结果的真实 `JUDGMENT_SELECTION_EPISODE` 完成未来结算，形成诊断并改变下一家不同公司的冻结卡，才开始形成真实判断训练证据。
+只有未见结果的真实 `JUDGMENT_SELECTION_EPISODE` 完成未来结算，形成诊断并改变下一家不同公司的冻结卡，才开始形成**真实部署环境的外部有效性证据**。它不阻断已合格 archive cohort 的训练或历史留出结算。
 
 ## 3. 与当前 5 项修复的关系
 
@@ -530,10 +528,11 @@ schemas/judgment_learning_application.schema.json
 
 ### 18.6 阶段边界
 
-25. 历史 self-replay 跑通全链后只产生 `L0 / PIPELINE_REHEARSAL`；
-26. 至少登记一个真实中国企业 `JUDGMENT_SELECTION_EPISODE`；
-27. 真实 episode 未到期时保持等待，不用历史结果提前结算；
-28. 控制面事件中不复制股价、持仓、组合收益或交易账本。
+25. 历史 PIT 回放完成后，可形成带 provenance 的历史训练、误差归因和迁移约束；若控制面用回放工件检验编排，另记 `L0 / PIPELINE_REHEARSAL`，不得以该实现标签抹去前者；
+26. 历史 `HOLDOUT` 必须在规则版本冻结后才可揭盲，其结果不得反向修改同一版本的规则；
+27. 至少登记一个真实中国企业 `JUDGMENT_SELECTION_EPISODE`，用于未来的未知结果部署校准；
+28. 真实 episode 未到期时保持等待，不用历史结果提前结算它；但不得阻断已隔离的 archive exercise；
+29. 控制面事件中不复制股价、持仓、组合收益或交易账本。
 
 ## 19. 分阶段实施顺序
 
