@@ -15,6 +15,8 @@
 
 公司经验如何从历史案例逐步积累、又如何避免被报告数量和已知结局伪造，见[公司经验积累协议](TURTLE_COMPANY_EXPERIENCE_ACCUMULATION_PROTOCOL.md)。
 
+当前可执行的历史训练、严格留出与真实前瞻分工，见[历史 PIT cohort register](HISTORICAL_PIT_TRAINING_COHORT_REGISTER.md)。
+
 ## 1. 研究的目标
 
 目标不是更快写出结论、预测股价或堆出更多资料，而是逐步获得下面三种能力：

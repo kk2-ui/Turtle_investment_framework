@@ -1,0 +1,118 @@
+{
+  "schema_version": "judgment-training-program.v1",
+  "program_state": "ACTIVE",
+  "program_id": "JTP:turtle-historical-primary-v1",
+  "method_version": "enterprise-judgment-method-v1",
+  "registered_at": "2026-08-23T17:30:00+08:00",
+  "method_frozen_at": null,
+  "sampling_policy": {
+    "universe_ref": "../docs/development/research/HISTORICAL_PIT_TRAINING_COHORT_REGISTER.md",
+    "cohort_formed_as_of_cutoff": true,
+    "outcome_used_for_selection": false,
+    "terminal_status_coverage": "ALL_CUTOFF_ELIGIBLE_STATES",
+    "same_company_periods_count_as_independent": false
+  },
+  "episodes": [
+    {
+      "training_episode_id": "JTE:R-62:pengding-automotive-pcb-2023",
+      "case_id": "HBTCASE:R-62:pengding-automotive-pcb-2023",
+      "company_id": "CN:002938",
+      "company_cluster_id": "COMPANY:pengding",
+      "industry_id": "CN_PCB_MANUFACTURING",
+      "decision_domain": "AUTOMOTIVE_AND_SERVER_CAPACITY_EXPANSION",
+      "cutoff_at": "2023-03-30T23:59:59+08:00",
+      "outcome_not_before": "2024-04-01T00:00:00+08:00",
+      "lane": "HISTORICAL_TRAINING",
+      "provenance_role": "HISTORICAL_SELF_REPLAY",
+      "outcome_access": "PIT_OUTCOME_SEALED",
+      "artifacts": {
+        "freeze_ref": "../docs/development/research/experiments/R-62_pengding_automotive_pcb_2023_screen/01_pre_outcome_admission_screen.md"
+      }
+    },
+    {
+      "training_episode_id": "JTE:R-56:jinkosolar-2010",
+      "case_id": "TEACHING:R-56:jinkosolar-2010",
+      "company_id": "US:JKS",
+      "company_cluster_id": "COMPANY:jinkosolar",
+      "industry_id": "SOLAR_MANUFACTURING",
+      "decision_domain": "CAPACITY_AND_VERTICAL_INTEGRATION",
+      "cutoff_at": "2010-05-13T23:59:59+08:00",
+      "outcome_not_before": "2011-04-25T00:00:00-04:00",
+      "lane": "HISTORICAL_TEACHING",
+      "provenance_role": "RESULT_KNOWN_TEACHING",
+      "outcome_access": "OUTCOME_EXPOSED"
+    },
+    {
+      "training_episode_id": "JTE:R-25:midea-capacity-2004",
+      "case_id": "TEACHING:R-25:midea-capacity-2004",
+      "company_id": "CN:000333",
+      "company_cluster_id": "COMPANY:midea",
+      "industry_id": "CN_HOME_APPLIANCE",
+      "decision_domain": "CAPACITY_EXPANSION",
+      "cutoff_at": "2004-12-31T23:59:59+08:00",
+      "outcome_not_before": "2005-04-01T00:00:00+08:00",
+      "lane": "HISTORICAL_TEACHING",
+      "provenance_role": "RESULT_KNOWN_TEACHING",
+      "outcome_access": "OUTCOME_EXPOSED"
+    },
+    {
+      "training_episode_id": "JTE:R-61:shanghai-silicon-2025-holdout",
+      "case_id": "HOLDOUT:R-61:shanghai-silicon-2025",
+      "company_id": "CN:688126",
+      "company_cluster_id": "COMPANY:shanghai-silicon",
+      "industry_id": "CN_SEMICONDUCTOR_MATERIALS",
+      "decision_domain": "MINORITY_TO_FULL_OWNERSHIP",
+      "cutoff_at": "2025-05-30T23:59:59+08:00",
+      "outcome_not_before": "2026-04-01T00:00:00+08:00",
+      "lane": "HISTORICAL_HOLDOUT",
+      "provenance_role": "HISTORICAL_SELF_REPLAY",
+      "outcome_access": "PIT_OUTCOME_SEALED",
+      "holdout_axis": "COMPANY_AND_TIME",
+      "artifacts": {
+        "freeze_ref": "../docs/development/research/experiments/R-61_shanghai_silicon_2025_minorities_screen/01_pre_outcome_admission_screen.md"
+      }
+    },
+    {
+      "training_episode_id": "JTE:R-21:changhong-apex-2003",
+      "case_id": "TEACHING:R-21:changhong-apex-2003",
+      "company_id": "CN:600839",
+      "company_cluster_id": "COMPANY:changhong",
+      "industry_id": "CN_CONSUMER_ELECTRONICS",
+      "decision_domain": "CUSTOMER_CREDIT_AND_GROWTH",
+      "cutoff_at": "2003-12-31T23:59:59+08:00",
+      "outcome_not_before": "2004-04-01T00:00:00+08:00",
+      "lane": "HISTORICAL_TEACHING",
+      "provenance_role": "RESULT_KNOWN_TEACHING",
+      "outcome_access": "OUTCOME_EXPOSED"
+    },
+    {
+      "training_episode_id": "JTE:R-78:ford-way-forward-2006",
+      "case_id": "TEACHING:R-78:ford-way-forward-2006",
+      "company_id": "US:F",
+      "company_cluster_id": "COMPANY:ford",
+      "industry_id": "US_AUTOMOTIVE",
+      "decision_domain": "NETWORK_EXIT_AND_RESTRUCTURING",
+      "cutoff_at": "2006-01-23T23:59:59-05:00",
+      "outcome_not_before": "2007-02-01T00:00:00-05:00",
+      "lane": "HISTORICAL_TEACHING",
+      "provenance_role": "RESULT_KNOWN_TEACHING",
+      "outcome_access": "OUTCOME_EXPOSED"
+    },
+    {
+      "training_episode_id": "JTE:R-54:midea-2026-live",
+      "case_id": "R-54",
+      "company_id": "CN:000333",
+      "company_cluster_id": "COMPANY:midea",
+      "industry_id": "DIVERSIFIED_MANUFACTURING",
+      "decision_domain": "PORTFOLIO_GROWTH_AND_COMPLEXITY",
+      "cutoff_at": "2026-04-30T23:59:59+08:00",
+      "outcome_not_before": "2026-08-23T00:00:00+08:00",
+      "lane": "LIVE_SENTINEL",
+      "provenance_role": "REAL_FORWARD",
+      "outcome_access": "NOT_YET_RELEASED",
+      "artifacts": {
+        "freeze_ref": "../docs/development/research/experiments/R-54_midea_core_growth_20260430/00_judgment_selection_episode.md"
+      }
+    }
+  ]
+}

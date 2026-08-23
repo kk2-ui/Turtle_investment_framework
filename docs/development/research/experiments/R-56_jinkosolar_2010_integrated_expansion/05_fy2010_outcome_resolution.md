@@ -1,6 +1,6 @@
 # R-56｜晶科 2010 一体化扩产：FY2010 结果期分层结算
 
-状态：`ARCHIVED_EX_ANTE_EXTERNAL / OUTCOME_RESOLVED / MECHANISM_SIGNAL_PROBE / NO_PRIMARY`。
+状态：`HISTORICAL_SELF_REPLAY / OUTCOME_RESOLVED / MECHANISM_SIGNAL_PROBE / NO_PRIMARY`。
 
 这是一份历史教学结算：冻结时未读结果，而本次只读取冻结时唯一预登记的 FY2010 Form 20-F。它不表示 Turtle 在 2010 年作出了预测，不进入选择准确率、概率校准、估值、证券价格或回报研究。
 

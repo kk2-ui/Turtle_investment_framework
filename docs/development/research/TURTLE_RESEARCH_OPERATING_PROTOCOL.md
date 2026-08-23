@@ -47,6 +47,8 @@
 
 这里的停止规则只暂停**L0 方法架构的无触发扩张**，不是暂停判断训练本身。研究者仍可在不改动 L0 架构的前提下运行一个已符合现有准入门的 archive exercise：先隔离 outcome、使用既有的机制/反方/指标合同冻结，再由结果包结算，并把 learning note 约束到下一题。它必须标明 `HISTORICAL_SELF_REPLAY` 或 `ARCHIVED_EX_ANTE_EXTERNAL`，不得算作 Turtle 的实时命中；但“真实前瞻尚未到期”绝不能成为停止这种训练的理由。相反，重读更多没有结果合同的旧材料、或为了练习而新增平行 schema，仍是本节所禁止的伪进展。
 
+当前训练运行必须先进入 `config/judgment_training_program_v1.json` 的四通道计划。`HISTORICAL_TRAINING` 可形成受审方法改变；`HISTORICAL_HOLDOUT` 在 `freeze-method` 前不得揭盲且永远不能回写同一版本；`HISTORICAL_TEACHING` 只训练边界；`LIVE_SENTINEL` 的等待是局部外部状态。总状态由 `scripts/judgment_training_program.py status` 投影，不得再把某个 live claim 的 `BLOCKED_ON_OFFICIAL_RESULT_RELEASE` 写成整个训练目标 blocked。
+
 ### 1.3｜训练层：先练判断动作，再升级为正式 episode
 
 正式 CJO/前瞻冻结要求完整的 PIT 包、来源合同与结算工件；它们是结算门，不是每一次练习的入口。日常 archive 训练先使用[机制判断微演练](../../../templates/research_mechanism_micro_drill.md)：

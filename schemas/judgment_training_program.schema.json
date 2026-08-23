@@ -1,0 +1,103 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://turtle.local/schemas/judgment_training_program.schema.json",
+  "title": "Turtle Judgment Training Program",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "program_state",
+    "program_id",
+    "method_version",
+    "registered_at",
+    "sampling_policy",
+    "episodes"
+  ],
+  "properties": {
+    "schema_version": {"const": "judgment-training-program.v1"},
+    "program_state": {"enum": ["DRAFT", "ACTIVE"]},
+    "program_id": {"type": "string", "pattern": "^JTP:[A-Za-z0-9._:-]+$"},
+    "method_version": {"type": "string", "minLength": 1},
+    "registered_at": {"type": "string", "format": "date-time"},
+    "method_frozen_at": {"type": ["string", "null"], "format": "date-time"},
+    "sampling_policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "universe_ref",
+        "cohort_formed_as_of_cutoff",
+        "outcome_used_for_selection",
+        "terminal_status_coverage",
+        "same_company_periods_count_as_independent"
+      ],
+      "properties": {
+        "universe_ref": {"type": "string", "minLength": 1},
+        "cohort_formed_as_of_cutoff": {"const": true},
+        "outcome_used_for_selection": {"const": false},
+        "terminal_status_coverage": {"const": "ALL_CUTOFF_ELIGIBLE_STATES"},
+        "same_company_periods_count_as_independent": {"const": false}
+      }
+    },
+    "episodes": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "training_episode_id",
+          "case_id",
+          "company_id",
+          "company_cluster_id",
+          "industry_id",
+          "decision_domain",
+          "cutoff_at",
+          "outcome_not_before",
+          "lane",
+          "provenance_role",
+          "outcome_access"
+        ],
+        "properties": {
+          "training_episode_id": {"type": "string", "pattern": "^JTE:[A-Za-z0-9._:-]+$"},
+          "case_id": {"type": "string", "minLength": 1},
+          "company_id": {"type": "string", "minLength": 1},
+          "company_cluster_id": {"type": "string", "minLength": 1},
+          "industry_id": {"type": "string", "minLength": 1},
+          "decision_domain": {"type": "string", "minLength": 1},
+          "cutoff_at": {"type": "string", "format": "date-time"},
+          "outcome_not_before": {"type": "string", "format": "date-time"},
+          "lane": {
+            "enum": [
+              "HISTORICAL_TRAINING",
+              "HISTORICAL_HOLDOUT",
+              "HISTORICAL_TEACHING",
+              "LIVE_SENTINEL"
+            ]
+          },
+          "provenance_role": {
+            "enum": [
+              "HISTORICAL_SELF_REPLAY",
+              "ARCHIVED_EX_ANTE_EXTERNAL",
+              "RESULT_KNOWN_TEACHING",
+              "REAL_FORWARD"
+            ]
+          },
+          "outcome_access": {
+            "enum": ["PIT_OUTCOME_SEALED", "OUTCOME_EXPOSED", "NOT_YET_RELEASED"]
+          },
+          "holdout_axis": {
+            "enum": ["COMPANY", "TIME", "COMPANY_AND_TIME"]
+          },
+          "artifacts": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "freeze_ref": {"type": "string", "minLength": 1},
+              "case_ref": {"type": "string", "minLength": 1}
+            }
+          }
+        }
+      }
+    }
+  }
+}
