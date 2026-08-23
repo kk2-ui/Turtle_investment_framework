@@ -107,6 +107,8 @@ CNINFO_STATIC_HOST = "static.cninfo.com.cn"
 # bounded announcement inventory rather than merely making acquisition slower.
 CNINFO_MAX_PAGE_SIZE = 30
 CNINFO_QUERY_TABS = frozenset({"fulltext", "relation"})
+CNINFO_SSE_CODE_PREFIXES = ("600", "601", "603", "605", "688")
+CNINFO_SZSE_CODE_PREFIXES = ("000", "001", "002", "003", "300", "301")
 
 POST_CUTOFF_CLAIM_TITLE_TERMS: dict[str, tuple[str, ...]] = {
     "HBTCLM:600340:P10B:ORDINARY_CASH": (
@@ -1630,6 +1632,16 @@ def _validate_cninfo_page(
     return total, records
 
 
+def _cninfo_query_market(company_code: str) -> tuple[str, str]:
+    """Return the CNINFO exchange routing required by one supported A-share code."""
+    code = str(company_code or "").strip()
+    if code.startswith(CNINFO_SSE_CODE_PREFIXES):
+        return "sse", "sh"
+    if code.startswith(CNINFO_SZSE_CODE_PREFIXES):
+        return "szse", "sz"
+    raise ValueError("company_code must use a supported Shanghai or Shenzhen A-share prefix")
+
+
 def fetch_cninfo_announcement_records(
     *, company_code: str, org_id: str, begin_date: str, end_date: str,
     page_size: int = 30, tab_name: str = "fulltext",
@@ -1659,6 +1671,7 @@ def fetch_cninfo_announcement_records(
         raise ValueError("page_size must be a positive integer")
     if page_size > CNINFO_MAX_PAGE_SIZE:
         raise ValueError(f"CNINFO page_size must be at most {CNINFO_MAX_PAGE_SIZE}")
+    column, plate = _cninfo_query_market(company_code)
     fetch_page = request or _default_cninfo_request
     records: list[dict[str, Any]] = []
     source_ids: set[str] = set()
@@ -1670,9 +1683,9 @@ def fetch_cninfo_announcement_records(
             "tabName": tab,
             "pageSize": str(page_size),
             "pageNum": str(page_no),
-            "column": "szse",
+            "column": column,
             "category": "",
-            "plate": "sz",
+            "plate": plate,
             "seDate": f"{start.isoformat()}~{end.isoformat()}",
             "searchkey": "",
             "secid": "",

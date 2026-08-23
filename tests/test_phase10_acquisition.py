@@ -715,6 +715,7 @@ def test_cninfo_fetch_paginates_complete_official_metadata_and_builds_manifest()
     assert all(item["sortName"] == "announcementTime" for item in requested)
     assert all(item["sortType"] == "desc" for item in requested)
     assert all(item["tabName"] == "fulltext" for item in requested)
+    assert all(item["column"] == "szse" and item["plate"] == "sz" for item in requested)
 
     manifest = fetch_cninfo_manifest(
         company_code="000651", org_id="gssz0000651", begin_date="2025-01-01",
@@ -723,6 +724,33 @@ def test_cninfo_fetch_paginates_complete_official_metadata_and_builds_manifest()
     assert manifest["acquisition_status"] == "CNINFO_FULL_ENUMERATION_DATE_FILTER_VERIFIED"
     assert manifest["cninfo_query"]["record_count"] == 2
     assert validate_source_manifest(manifest)["state"] == "REVIEWABLE"
+
+
+def test_cninfo_fetch_routes_shanghai_codes_to_sse_query_parameters() -> None:
+    rows = [{
+        "secCode": "601608", "orgId": "9900022870", "announcementId": "S1",
+        "announcementTitle": "中信重工：关于项目调整的公告", "announcementTime": "2026-08-21",
+        "adjunctUrl": "finalpage/2026-08-22/S1.PDF",
+    }]
+    requested: list[dict[str, str]] = []
+
+    def request(params: dict[str, str]) -> dict[str, object]:
+        requested.append(params)
+        return _cninfo_payload(rows, total=1)
+
+    result = fetch_cninfo_announcement_records(
+        company_code="601608", org_id="9900022870", begin_date="2026-08-21", end_date="2026-08-21",
+        request=request,
+    )
+
+    assert result["record_count"] == 1
+    assert requested == [
+        {
+            "stock": "601608,9900022870", "tabName": "fulltext", "pageSize": "30", "pageNum": "1",
+            "column": "sse", "category": "", "plate": "sh", "seDate": "2026-08-21~2026-08-21",
+            "searchkey": "", "secid": "", "sortName": "announcementTime", "sortType": "desc", "isHLtitle": "true",
+        },
+    ]
 
 
 def test_cninfo_relation_fetch_enumerates_investor_activity_records_separately() -> None:
