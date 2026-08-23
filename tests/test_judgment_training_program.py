@@ -372,3 +372,23 @@ def test_live_wait_is_separate_from_completed_historical_evaluation(
     assert status["system_state"] == "HISTORICAL_EVALUATION_COMPLETE"
     assert status["historical_method_state"] == "HISTORICAL_EVALUATION_COMPLETE"
     assert status["deployment_calibration_state"] == "WAITING_EXTERNAL"
+
+
+def test_r62_admission_screen_is_not_seeded_as_a_freeze_artifact(tmp_path: Path) -> None:
+    contract = Path(__file__).parents[1] / "config" / "judgment_training_program_v1.json"
+    payload = json.loads(contract.read_text(encoding="utf-8"))
+    r62 = next(item for item in payload["episodes"] if item["training_episode_id"].startswith("JTE:R-62:"))
+    assert "artifacts" not in r62
+
+    conn = jtp.connect(tmp_path / "r62-config-regression.sqlite")
+    jtp.initialize(conn)
+    jtp.register_program(conn, contract)
+    status = jtp.reconcile(
+        conn,
+        program_id=payload["program_id"],
+        as_of="2026-08-23T12:00:00+08:00",
+    )
+    conn.close()
+
+    r62_status = next(item for item in status["items"] if item["training_episode_id"] == r62["training_episode_id"])
+    assert r62_status["state"] == "READY_TO_FREEZE"

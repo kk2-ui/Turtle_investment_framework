@@ -131,13 +131,13 @@ Turtle 的“训练”不是在本仓库中重新训练基础模型权重。它�
 
 第一版计划契约已定义以下职责；只有在生产数据库执行 `register` 后，才可称为已登记：
 
-- R-62 鹏鼎汽车／服务器 PCB 扩产：`HISTORICAL_TRAINING`，先完成 cutoff replay 和正式 control-plane 结算；
+- R-62 鹏鼎汽车／服务器 PCB 扩产：`HISTORICAL_TRAINING` 预注册对象，但当前筛查仍为 `NO_PRIMARY / NOT_FROZEN`；必须先完成 PIT case、责任单元结果合同和独立准入审阅，不能直接当作选择学习样本；
 - R-61 沪硅少数股权收购：`HISTORICAL_HOLDOUT`，已预留 cutoff 冻结文件，方法冻结前保持 `WAITING_FOR_METHOD_FREEZE`；
 - R-56 晶科与 R-58 美的—小天鹅：`HISTORICAL_TEACHING`，结果已知或曾参与规则形成，只训练边界，不能产生正式 method learning；
 - R-25、R-21、R-78：`HISTORICAL_TEACHING`；
 - R-54：`LIVE_SENTINEL`，只按原合同处理官方结果。
 
-下一阶段不以案例数量或最新披露为出口，而以一条完整历史学习链为出口：
+下一阶段不以案例数量或最新披露为出口，而以一条完整历史学习链为出口。当前 R-62 的数据覆盖返回见其[训练准入返回](experiments/R-62_pengding_automotive_pcb_2023_screen/02_training_readiness_return.md)；若补证后仍为 `NO_PRIMARY`，必须改由另一条合格的历史 replay 形成跨公司 method learning：
 
 ```text
 R-62 PIT freeze

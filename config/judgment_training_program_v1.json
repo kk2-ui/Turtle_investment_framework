@@ -24,10 +24,7 @@
       "outcome_not_before": "2024-04-01T00:00:00+08:00",
       "lane": "HISTORICAL_TRAINING",
       "provenance_role": "HISTORICAL_SELF_REPLAY",
-      "outcome_access": "PIT_OUTCOME_SEALED",
-      "artifacts": {
-        "freeze_ref": "../docs/development/research/experiments/R-62_pengding_automotive_pcb_2023_screen/01_pre_outcome_admission_screen.md"
-      }
+      "outcome_access": "PIT_OUTCOME_SEALED"
     },
     {
       "training_episode_id": "JTE:R-56:jinkosolar-2010",
