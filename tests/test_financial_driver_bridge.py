@@ -14,6 +14,7 @@ from scripts.report_completion import evaluate_report_completion
 from scripts.turtle_agent.tools.read_tools import read_structured_ledger_contract
 from scripts.turtle_agent.tools.write_tools import write_financial_driver_bridge as write_driver_bridge_tool
 import scripts.research_calibration as research_calibration
+from tests.test_stage14_thesis_test_gate import _forward_payload, _selection_bundle_payload
 
 
 def _write(path: Path, value: dict) -> None:
@@ -110,6 +111,22 @@ def _payload(output: Path, *, analysis_purpose: str = "INVESTMENT_DECISION") -> 
     return payload
 
 
+def _set_all_bridge_forward_judgments(payload: dict, judgment_id: str) -> None:
+    for driver in payload["drivers"]:
+        driver["monitoring_contract"]["forward_judgment_ids"] = [judgment_id]
+    for event in payload["allocation_events"]:
+        realization = event["realization_contract"]
+        realization["forward_judgment_ids"] = [judgment_id]
+        realization["early_signal"]["forward_judgment_ids"] = [judgment_id]
+        realization["terminal_outcome"]["forward_judgment_ids"] = [judgment_id]
+
+
+def _write_valid_frozen_thesis(output: Path, *, selection_admitted: bool = False) -> dict:
+    thesis = _selection_bundle_payload(output) if selection_admitted else _forward_payload(output)
+    _write(output / "thesis_test.json", thesis)
+    return thesis
+
+
 def test_bridge_requires_all_four_economic_layers_and_verified_bindings(tmp_path: Path) -> None:
     _prepare(tmp_path)
     result = validate_financial_driver_bridge(_payload(tmp_path), output_dir=tmp_path)
@@ -135,19 +152,18 @@ def test_output_evaluation_rejects_bridge_monitoring_that_is_not_in_thesis_ledge
     payload = _payload(tmp_path, analysis_purpose="COMPANY_JUDGMENT_ONLY")
     for driver in payload["drivers"]:
         driver.pop("model_bindings")
+    _set_all_bridge_forward_judgments(payload, "fj.retention")
+    payload["drivers"][1]["monitoring_contract"]["forward_judgment_ids"] = ["fj.not-in-frozen-thesis"]
     persist_financial_driver_bridge(tmp_path, payload)
 
-    _write(tmp_path / "thesis_test.json", {
-        "forward_judgments": [{"judgment_id": "fj.demand"}],
-    })
+    _write_valid_frozen_thesis(tmp_path)
     result = evaluate_output_financial_driver_bridge(tmp_path, persist=False)
 
     assert result["state"] == "INVALID"
-    assert "FDBDRV:margin:forward_judgment_unbound:fj.margin" in result["invalid_findings"]
-    assert "FDBEV:titanium:terminal_outcome:forward_judgment_unbound:fj.titanium" in result["invalid_findings"]
+    assert "FDBDRV:margin:forward_judgment_unbound:fj.not-in-frozen-thesis" in result["invalid_findings"]
 
 
-def test_output_evaluation_accepts_only_realized_thesis_judgment_ids(tmp_path: Path) -> None:
+def test_output_evaluation_requires_a_valid_frozen_thesis_not_an_id_list(tmp_path: Path) -> None:
     _prepare(tmp_path)
     initialize_financial_driver_bridge_policy(tmp_path, run_id="run", enforced=True)
     payload = _payload(tmp_path, analysis_purpose="COMPANY_JUDGMENT_ONLY")
@@ -164,6 +180,21 @@ def test_output_evaluation_accepts_only_realized_thesis_judgment_ids(tmp_path: P
             )
         ],
     })
+
+    result = evaluate_output_financial_driver_bridge(tmp_path, persist=False)
+    assert result["state"] == "INVALID"
+    assert "frozen_thesis_ledger_not_validated:INVALID" in result["invalid_findings"]
+
+
+def test_output_evaluation_accepts_fully_validated_frozen_thesis_judgments(tmp_path: Path) -> None:
+    _prepare(tmp_path)
+    initialize_financial_driver_bridge_policy(tmp_path, run_id="run", enforced=True)
+    payload = _payload(tmp_path, analysis_purpose="COMPANY_JUDGMENT_ONLY")
+    for driver in payload["drivers"]:
+        driver.pop("model_bindings")
+    _set_all_bridge_forward_judgments(payload, "fj.retention")
+    persist_financial_driver_bridge(tmp_path, payload)
+    _write_valid_frozen_thesis(tmp_path)
 
     assert evaluate_output_financial_driver_bridge(tmp_path, persist=False)["state"] == "REVIEWABLE"
 
@@ -257,7 +288,9 @@ def test_policy_fails_closed_only_when_enabled(tmp_path: Path) -> None:
     assert evaluate_output_financial_driver_bridge(tmp_path, persist=False)["state"] == "INCOMPLETE"
     result = persist_financial_driver_bridge(tmp_path, _payload(tmp_path))
     assert result["validation"]["state"] == "REVIEWABLE"
-    assert evaluate_output_financial_driver_bridge(tmp_path, persist=False)["state"] == "REVIEWABLE"
+    result = evaluate_output_financial_driver_bridge(tmp_path, persist=False)
+    assert result["state"] == "INCOMPLETE"
+    assert "frozen_thesis_ledger_missing" in result["incomplete_findings"]
 
 
 def test_new_policy_requires_a_source_bound_initial_commitment_and_movement(tmp_path: Path) -> None:
@@ -297,6 +330,7 @@ def test_new_policy_requires_cash_to_state_whether_it_is_normal_owner_cash(tmp_p
     initialize_financial_driver_bridge_policy(tmp_path, run_id="run", enforced=True)
     payload = _payload(tmp_path)
     payload["drivers"][2].pop("cash_normalization_contract")
+    payload["drivers"][2].pop("model_bindings")
 
     result = persist_financial_driver_bridge(tmp_path, payload)
 
@@ -333,10 +367,56 @@ def test_new_policy_allows_an_unknown_cash_normalization_without_inventing_owner
         "unknown_reason": "受限资金、金融子公司资本、维持性 Capex 与营运资本尚未在同口径桥中闭合。",
         "conservative_treatment": "不把 OCF、货币资金或 OCF–Capex 用作 normal owner cash。",
     }
+    payload["drivers"][2].pop("model_bindings")
 
     result = persist_financial_driver_bridge(tmp_path, payload)
 
     assert result["validation"]["state"] == "REVIEWABLE"
+
+
+def test_non_normalized_cash_cannot_carry_a_model_or_decision_binding(tmp_path: Path) -> None:
+    _prepare(tmp_path)
+    initialize_financial_driver_bridge_policy(tmp_path, run_id="run", enforced=True)
+    payload = _payload(tmp_path)
+    payload["drivers"][2]["cash_normalization_contract"] = {
+        "state": "REPORTED_CASH_STATE_ONLY",
+        "reported_cash_metric": "operating_cash_flow",
+        "reported_cash_observation_ids": ["OBS:reported-ocf"],
+        "conservative_treatment": "OCF 只保留为报表现金状态，不作为 normal owner cash。",
+    }
+
+    result = persist_financial_driver_bridge(tmp_path, payload)
+
+    assert result["validation"]["state"] == "INVALID"
+    assert "FDBDRV:cash:non_normalized_cash_cannot_carry_model_bindings" in result["validation"]["invalid_findings"]
+
+
+def test_unresolved_allocation_event_is_monitoring_only_and_cannot_support_selection(tmp_path: Path) -> None:
+    _prepare(tmp_path)
+    initialize_financial_driver_bridge_policy(tmp_path, run_id="run", enforced=True)
+    payload = _payload(tmp_path, analysis_purpose="COMPANY_JUDGMENT_ONLY")
+    for driver in payload["drivers"]:
+        driver.pop("model_bindings")
+    _set_all_bridge_forward_judgments(payload, "fj.owner_cash")
+    unresolved = payload["allocation_events"][1]
+    unresolved["classification"] = "UNRESOLVED"
+    unresolved["conservative_treatment"] = "不把减值、期末余额或未知后续动作当作资本回收或价值判断。"
+    unresolved["realization_contract"]["forward_judgment_ids"] = ["fj.retention"]
+    unresolved["realization_contract"]["early_signal"]["forward_judgment_ids"] = ["fj.retention"]
+    unresolved["realization_contract"]["terminal_outcome"]["forward_judgment_ids"] = ["fj.retention"]
+
+    result = persist_financial_driver_bridge(tmp_path, payload)
+    assert result["validation"]["state"] == "INVALID"
+    assert "FDBEV:titanium:realization_contract:unresolved_must_be_monitoring_only" in result["validation"]["invalid_findings"]
+
+    unresolved["realization_contract"]["monitoring_only"] = True
+    result = persist_financial_driver_bridge(tmp_path, payload)
+    assert result["validation"]["state"] == "REVIEWABLE"
+    _write_valid_frozen_thesis(tmp_path, selection_admitted=True)
+    result = evaluate_output_financial_driver_bridge(tmp_path, persist=False)
+
+    assert result["state"] == "INVALID"
+    assert "FDBEV:titanium:monitoring_only_forward_judgment_selected:fj.retention" in result["invalid_findings"]
 
 
 def test_new_policy_applies_the_same_commitment_trace_to_company_judgment_only(tmp_path: Path) -> None:
@@ -430,7 +510,8 @@ def test_agent_writer_and_contract_expose_the_bridge_without_price_inference(tmp
         as_of="2026-04-30",
         change_reason="connect company drivers to the existing valuation inputs",
     )
-    assert result["validation"]["state"] == "REVIEWABLE"
+    assert result["validation"]["state"] == "INCOMPLETE"
+    assert "frozen_thesis_ledger_missing" in result["validation"]["incomplete_findings"]
     contract = read_structured_ledger_contract(str(tmp_path), ledger="financial_driver")
     assert contract["contract"]["rules"].startswith("Cover all four economic layers")
     assert "price" in contract["contract"]["rules"].lower()
