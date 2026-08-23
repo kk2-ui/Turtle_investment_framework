@@ -129,6 +129,45 @@ def test_company_judgment_bridge_uses_frozen_monitoring_not_model_or_trade_bindi
     assert result["analysis_purpose"] == "COMPANY_JUDGMENT_ONLY"
 
 
+def test_output_evaluation_rejects_bridge_monitoring_that_is_not_in_thesis_ledger(tmp_path: Path) -> None:
+    _prepare(tmp_path)
+    initialize_financial_driver_bridge_policy(tmp_path, run_id="run", enforced=True)
+    payload = _payload(tmp_path, analysis_purpose="COMPANY_JUDGMENT_ONLY")
+    for driver in payload["drivers"]:
+        driver.pop("model_bindings")
+    persist_financial_driver_bridge(tmp_path, payload)
+
+    _write(tmp_path / "thesis_test.json", {
+        "forward_judgments": [{"judgment_id": "fj.demand"}],
+    })
+    result = evaluate_output_financial_driver_bridge(tmp_path, persist=False)
+
+    assert result["state"] == "INVALID"
+    assert "FDBDRV:margin:forward_judgment_unbound:fj.margin" in result["invalid_findings"]
+    assert "FDBEV:titanium:terminal_outcome:forward_judgment_unbound:fj.titanium" in result["invalid_findings"]
+
+
+def test_output_evaluation_accepts_only_realized_thesis_judgment_ids(tmp_path: Path) -> None:
+    _prepare(tmp_path)
+    initialize_financial_driver_bridge_policy(tmp_path, run_id="run", enforced=True)
+    payload = _payload(tmp_path, analysis_purpose="COMPANY_JUDGMENT_ONLY")
+    for driver in payload["drivers"]:
+        driver.pop("model_bindings")
+    persist_financial_driver_bridge(tmp_path, payload)
+
+    _write(tmp_path / "thesis_test.json", {
+        "forward_judgments": [
+            {"judgment_id": judgment_id}
+            for judgment_id in (
+                "fj.demand", "fj.margin", "fj.cash", "fj.allocation",
+                "fj.financial-products", "fj.titanium",
+            )
+        ],
+    })
+
+    assert evaluate_output_financial_driver_bridge(tmp_path, persist=False)["state"] == "REVIEWABLE"
+
+
 def test_company_judgment_bridge_rejects_hidden_model_or_decision_binding(tmp_path: Path) -> None:
     _prepare(tmp_path)
     payload = _payload(tmp_path, analysis_purpose="COMPANY_JUDGMENT_ONLY")
@@ -364,6 +403,19 @@ def test_legacy_policy_does_not_retroactively_require_the_commitment_trace(tmp_p
     result = persist_financial_driver_bridge(tmp_path, payload)
 
     assert result["validation"]["state"] == "REVIEWABLE"
+
+
+def test_legacy_policy_does_not_retroactively_require_frozen_judgment_bindings(tmp_path: Path) -> None:
+    _prepare(tmp_path)
+    _write(tmp_path / "financial_driver_bridge_policy.json", {
+        "schema_version": "financial-driver-bridge-policy.v1", "enforced": True,
+    })
+    persist_financial_driver_bridge(tmp_path, _payload(tmp_path))
+    _write(tmp_path / "thesis_test.json", {
+        "forward_judgments": [{"judgment_id": "fj.demand"}],
+    })
+
+    assert evaluate_output_financial_driver_bridge(tmp_path, persist=False)["state"] == "REVIEWABLE"
 
 
 def test_agent_writer_and_contract_expose_the_bridge_without_price_inference(tmp_path: Path) -> None:

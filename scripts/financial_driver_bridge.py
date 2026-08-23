@@ -102,6 +102,14 @@ def _policy_requires_cash_normalization_contract(policy: dict[str, Any]) -> bool
     )
 
 
+def _policy_requires_forward_judgment_binding(policy: dict[str, Any]) -> bool:
+    """Apply the cross-ledger binding only to new, enforced bridge policies."""
+    return bool(
+        policy.get("enforced")
+        and policy.get("schema_version") == POLICY_VERSION
+    )
+
+
 def _verified_observations(
     value: Any, *, prefix: str, observation_ids: set[str], verify_observations: bool,
     invalid: list[str], incomplete: list[str],
@@ -384,6 +392,49 @@ def _known_bindings(output: Path) -> tuple[set[str], set[str], set[str]]:
         if isinstance(item, dict) and item.get("entry_id")
     }
     return observation_ids, model_ids, decision_ids
+
+
+def _forward_judgment_binding_findings(
+    bridge: dict[str, Any], thesis: dict[str, Any],
+) -> list[str]:
+    """Verify that bridge monitoring contracts point to actual frozen FJs.
+
+    The bridge is deliberately written before the thesis ledger, so this
+    check belongs to output evaluation rather than initial persistence.  Once
+    a thesis ledger exists, an arbitrary FJ-looking string must not keep the
+    bridge eligible for a report snapshot or settlement.
+    """
+    known_judgment_ids = {
+        str(item.get("judgment_id") or "").strip()
+        for item in thesis.get("forward_judgments") or []
+        if isinstance(item, dict) and str(item.get("judgment_id") or "").strip()
+    }
+    referenced: list[tuple[str, str]] = []
+
+    def collect(contract: Any, prefix: str) -> None:
+        if not isinstance(contract, dict):
+            return
+        for judgment_id in _ids(contract.get("forward_judgment_ids")):
+            referenced.append((prefix, judgment_id))
+
+    for item in bridge.get("drivers") or []:
+        if isinstance(item, dict):
+            collect(item.get("monitoring_contract"), str(item.get("driver_id") or "driver"))
+    for item in bridge.get("allocation_events") or []:
+        if not isinstance(item, dict):
+            continue
+        prefix = str(item.get("event_id") or "allocation_event")
+        realization = item.get("realization_contract")
+        collect(realization, prefix + ":realization")
+        if isinstance(realization, dict):
+            collect(realization.get("early_signal"), prefix + ":early_signal")
+            collect(realization.get("terminal_outcome"), prefix + ":terminal_outcome")
+
+    findings: list[str] = []
+    for prefix, judgment_id in referenced:
+        if judgment_id not in known_judgment_ids:
+            findings.append(prefix + ":forward_judgment_unbound:" + judgment_id)
+    return list(dict.fromkeys(findings))
 
 
 def build_financial_driver_bridge(
@@ -741,6 +792,21 @@ def evaluate_output_financial_driver_bridge(
             require_allocation_commitment_trace=_policy_requires_allocation_commitment_trace(policy),
             require_cash_normalization_contract=_policy_requires_cash_normalization_contract(policy),
         )
+        thesis = _read_object(output / "thesis_test.json")
+        if (
+            _policy_requires_forward_judgment_binding(policy)
+            and thesis
+            and result["state"] != "INVALID"
+        ):
+            binding_findings = _forward_judgment_binding_findings(bridge, thesis)
+            if binding_findings:
+                result = {
+                    **result,
+                    "state": "INVALID",
+                    "invalid_findings": list(dict.fromkeys(
+                        list(result.get("invalid_findings") or []) + binding_findings
+                    )),
+                }
     result = {"schema_version": SCHEMA_VERSION, "status": result["state"], "enforced": bool(policy.get("enforced")), **result}
     if persist:
         _write_object(output / "financial_driver_bridge_validation.json", result)
