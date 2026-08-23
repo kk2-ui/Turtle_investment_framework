@@ -616,11 +616,16 @@ def _validate_calibration_ledger(
                 invalid.append(receipt_prefix + ":schema_version_invalid")
             if gate_receipt.get("state") != "GATE_VALIDATED":
                 invalid.append(receipt_prefix + ":state_invalid")
+            if gate_receipt.get("origin_kind") != "FROZEN_THESIS_GATE_REPLAY":
+                invalid.append(receipt_prefix + ":origin_kind_invalid")
             if gate_receipt.get("selection_status") != "SELECTION_ADMITTED":
                 invalid.append(receipt_prefix + ":selection_status_invalid")
             fingerprint = str(gate_receipt.get("thesis_fingerprint") or "")
             if len(fingerprint) != 64 or any(char not in "0123456789abcdef" for char in fingerprint):
                 invalid.append(receipt_prefix + ":thesis_fingerprint_invalid")
+            thesis_sha256 = str(gate_receipt.get("thesis_ledger_sha256") or "")
+            if len(thesis_sha256) != 64 or any(char not in "0123456789abcdef" for char in thesis_sha256):
+                invalid.append(receipt_prefix + ":thesis_ledger_sha256_invalid")
             receipt_judgment_ids = sorted({
                 str(judgment_id).strip()
                 for judgment_id in gate_receipt.get("selection_forward_judgment_ids") or []
@@ -628,6 +633,30 @@ def _validate_calibration_ledger(
             })
             if receipt_judgment_ids != sorted(selection_judgment_ids):
                 invalid.append(receipt_prefix + ":forward_judgment_ids_do_not_match_admission")
+            report_freeze = record.get("report_freeze") if isinstance(record.get("report_freeze"), dict) else {}
+            if report_freeze.get("mode") == "PRODUCTION_PIPELINE":
+                frozen_report = report_freeze.get("frozen_report") if isinstance(report_freeze.get("frozen_report"), dict) else {}
+                origin = frozen_report.get("origin") if isinstance(frozen_report.get("origin"), dict) else {}
+                output_dir = str(origin.get("output_dir") or "").strip()
+                snapshot_path = str(origin.get("publication_snapshot_path") or "").strip()
+                root = Path(__file__).resolve().parents[1]
+                output_path = (root / output_dir).resolve()
+                snapshot_file = (root / snapshot_path).resolve()
+                thesis_file = output_path / "thesis_test.json"
+                if not output_dir or not snapshot_path or not thesis_file.is_file() or not snapshot_file.is_file():
+                    incomplete.append(receipt_prefix + ":frozen_thesis_artifact_missing")
+                else:
+                    try:
+                        snapshot = json.loads(snapshot_file.read_text(encoding="utf-8"))
+                    except (OSError, UnicodeDecodeError, json.JSONDecodeError):
+                        invalid.append(receipt_prefix + ":publication_snapshot_unreadable")
+                    else:
+                        expected_sha256 = str(((snapshot.get("ledger_sha256") or {}).get("thesis_test") or ""))
+                        actual_sha256 = hashlib.sha256(thesis_file.read_bytes()).hexdigest()
+                        if not expected_sha256 or expected_sha256 != actual_sha256:
+                            invalid.append(receipt_prefix + ":frozen_thesis_snapshot_identity_invalid")
+                        if thesis_sha256 != actual_sha256:
+                            invalid.append(receipt_prefix + ":thesis_ledger_sha256_does_not_match_frozen_artifact")
     claim_ids: set[str] = set()
     frozen_judgment_ids: set[str] = set()
     for index, claim in enumerate(claims):

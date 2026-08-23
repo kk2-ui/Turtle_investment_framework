@@ -1181,6 +1181,10 @@ def _selection_admission_findings(
                 incomplete.append(component_prefix + ":forward_judgment_id_missing")
             elif component_forward_judgment_id != str(bundle.get("forward_judgment_id") or "").strip():
                 invalid.append(component_prefix + ":forward_judgment_id_does_not_match_bundle")
+            elif evidence_id and evidence_id not in {
+                str(value) for value in (judgments_by_id.get(component_forward_judgment_id) or {}).get("evidence_ids") or []
+            }:
+                invalid.append(component_prefix + ":evidence_not_bound_to_forward_judgment")
             evidence_edges.append((evidence_id, str(component.get("primary_causal_edge_id") or "").strip()))
         required_roles = {"DECISION_IMPLEMENTATION", "CUSTOMER_OR_COMPETITOR_RESPONSE"}
         if not required_roles.issubset(roles):

@@ -363,9 +363,10 @@
               "register_id": {"type": "string", "pattern": "^CSR:"}, "register_fingerprint": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
               "selection_entry_id": {"type": "string", "pattern": "^CSRSEL:"}, "company_id": {"type": "string", "minLength": 1}, "company_cluster_id": {"type": "string", "minLength": 1}
             }},
-            "gate_receipt": {"type": "object", "required": ["schema_version", "state", "thesis_fingerprint", "selection_status", "selection_forward_judgment_ids"], "properties": {
+            "gate_receipt": {"type": "object", "required": ["schema_version", "state", "origin_kind", "thesis_fingerprint", "thesis_ledger_sha256", "selection_status", "selection_forward_judgment_ids"], "properties": {
               "schema_version": {"const": "selection-admission-gate-receipt.v1"}, "state": {"const": "GATE_VALIDATED"},
-              "thesis_fingerprint": {"type": "string", "pattern": "^[0-9a-f]{64}$"}, "selection_status": {"const": "SELECTION_ADMITTED"},
+              "origin_kind": {"const": "FROZEN_THESIS_GATE_REPLAY"}, "thesis_fingerprint": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+              "thesis_ledger_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}, "selection_status": {"const": "SELECTION_ADMITTED"},
               "selection_forward_judgment_ids": {"type": "array", "minItems": 1, "items": {"type": "string"}}
             }},
             "selection_forward_judgment_ids": {"type": "array", "items": {"type": "string"}},

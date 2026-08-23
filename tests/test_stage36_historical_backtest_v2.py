@@ -15,7 +15,8 @@ from tests.test_stage36_historical_backtest_pilot import _case, _settlement
 def _selection_gate_receipt(*forward_judgment_ids: str) -> dict:
     return {
         "schema_version": "selection-admission-gate-receipt.v1",
-        "state": "GATE_VALIDATED", "thesis_fingerprint": "a" * 64,
+        "state": "GATE_VALIDATED", "origin_kind": "FROZEN_THESIS_GATE_REPLAY",
+        "thesis_fingerprint": "a" * 64, "thesis_ledger_sha256": "b" * 64,
         "selection_status": "SELECTION_ADMITTED",
         "selection_forward_judgment_ids": list(forward_judgment_ids),
     }
@@ -379,6 +380,42 @@ def test_selected_fj_requires_its_frozen_reported_label_and_locator() -> None:
     assert (
         "actual_outcomes.operating_observations[0]:reported_disclosure_does_not_match_metric_reconstruction_contract"
         in result["invalid_findings"]
+    )
+
+
+def test_production_selection_receipt_requires_the_frozen_thesis_artifact() -> None:
+    case = _v2_case()
+    claim = case["calibration_ledger"]["claims"][0]
+    claim["forward_judgment_id"] = "fj.owner-cash"
+    claim["observable_outcome"]["metric_reconstruction_contract"] = {
+        "source_targets": [{
+            "source_type": "ANNUAL_REPORT",
+            "file_scope": "FY2021 annual report",
+            "reported_label": "ordinary-share owner cash per share",
+            "reported_locator": "Cash conversion note / ordinary-share bridge",
+        }],
+        "prohibited_substitutes": ["revenue"],
+        "definition_change_action": "MEASUREMENT_MISMATCH",
+    }
+    case["calibration_ledger"]["selection_admission"] = {
+        "status": "SELECTION_ADMITTED",
+        "selection_forward_judgment_ids": ["fj.owner-cash"],
+        "gate_receipt": _selection_gate_receipt("fj.owner-cash"),
+    }
+    assert validate_case(case)["state"] == "REVIEWABLE"
+
+    case["report_freeze"]["mode"] = "PRODUCTION_PIPELINE"
+    case["report_freeze"]["frozen_report"]["origin"] = {
+        "kind": "TURTLE_PIPELINE",
+        "output_dir": "output/missing-selection-replay",
+        "publication_snapshot_path": "output/missing-selection-replay/publication_snapshot.json",
+    }
+    result = validate_case(case)
+
+    assert result["state"] != "REVIEWABLE"
+    assert (
+        "calibration_ledger.selection_admission.gate_receipt:frozen_thesis_artifact_missing"
+        in result["incomplete_findings"]
     )
 
 

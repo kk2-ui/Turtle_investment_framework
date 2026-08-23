@@ -274,7 +274,7 @@ def _frozen_forward_judgment_ledger(
         simulation_cutoff=simulation_cutoff,
         known_source_ids=set(known_sources),
         known_sources=known_sources,
-        selection_admission_gate_receipt=_selection_admission_gate_receipt(thesis_ledger, output),
+        selection_admission_gate_output_dir=output,
         known_financial_driver_ids=set(driver_links) if frozen_financial_driver_bridge is not None else None,
         financial_driver_monitoring_links=driver_links if frozen_financial_driver_bridge is not None else None,
         financial_driver_monitoring_source_types=driver_monitoring_source_types if frozen_financial_driver_bridge is not None else None,
@@ -290,7 +290,14 @@ def _selection_admission_gate_receipt(thesis_ledger: dict[str, Any], output: Pat
     admission = thesis_ledger.get("selection_admission")
     if not isinstance(admission, dict) or admission.get("status") != "SELECTION_ADMITTED":
         return None
-    validation = validate_thesis_test_ledger(thesis_ledger, output_dir=output, enforced=False)
+    thesis_path = output / "thesis_test.json"
+    if not thesis_path.is_file():
+        raise ProductionFreezeCaseError("selection admission replay requires frozen thesis_test.json")
+    frozen_thesis = _load_object(thesis_path, "frozen thesis_test ledger")
+    if frozen_thesis != thesis_ledger:
+        raise ProductionFreezeCaseError("selection admission replay thesis differs from projection input")
+    thesis_sha256 = hashlib.sha256(thesis_path.read_bytes()).hexdigest()
+    validation = validate_thesis_test_ledger(frozen_thesis, output_dir=output, enforced=False)
     if validation.get("state") not in {"DECISION_READY", "MONITORING"}:
         findings = list(validation.get("selection_admission_invalid_findings") or [])
         findings.extend(validation.get("selection_admission_incomplete_findings") or [])
@@ -312,7 +319,9 @@ def _selection_admission_gate_receipt(thesis_ledger: dict[str, Any], output: Pat
     return {
         "schema_version": SELECTION_ADMISSION_GATE_RECEIPT_VERSION,
         "state": "GATE_VALIDATED",
+        "origin_kind": "FROZEN_THESIS_GATE_REPLAY",
         "thesis_fingerprint": fingerprint,
+        "thesis_ledger_sha256": thesis_sha256,
         "selection_status": "SELECTION_ADMITTED",
         "selection_forward_judgment_ids": selection_judgment_ids,
     }
@@ -578,7 +587,7 @@ def _validate_production_artifacts(
 def build_calibration_ledger_from_forward_judgments(
     thesis_ledger: dict[str, Any], *, simulation_cutoff: str, known_source_ids: set[str],
     known_sources: dict[str, dict[str, Any]] | None = None,
-    selection_admission_gate_receipt: dict[str, Any] | None = None,
+    selection_admission_gate_output_dir: str | Path | None = None,
     known_financial_driver_ids: set[str] | None = None,
     financial_driver_monitoring_links: dict[str, set[str]] | None = None,
     financial_driver_monitoring_source_types: dict[str, set[str]] | None = None,
@@ -611,7 +620,13 @@ def build_calibration_ledger_from_forward_judgments(
     if selection_admission.get("status") == "SELECTION_ADMITTED" and not selection_judgment_ids:
         raise ProductionFreezeCaseError("SELECTION_ADMITTED requires selection_forward_judgment_ids")
     if selection_admission.get("status") == "SELECTION_ADMITTED":
-        receipt = selection_admission_gate_receipt if isinstance(selection_admission_gate_receipt, dict) else {}
+        if selection_admission_gate_output_dir is None:
+            raise ProductionFreezeCaseError(
+                "SELECTION_ADMITTED must originate from frozen thesis gate replay"
+            )
+        receipt = _selection_admission_gate_receipt(
+            thesis_ledger, Path(selection_admission_gate_output_dir),
+        ) or {}
         expected_fingerprint = str(((thesis_ledger.get("freeze") or {}).get("fingerprint") or ""))
         receipt_judgment_ids = sorted({
             str(judgment_id).strip()

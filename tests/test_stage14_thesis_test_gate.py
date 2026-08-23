@@ -692,6 +692,11 @@ def _selection_bundle_payload(tmp_path: Path) -> dict:
         "conflict_of_interest": "customer disclosure",
     })
     evidence_path.write_text(json.dumps(evidence), encoding="utf-8")
+    retention = next(
+        judgment for judgment in payload["forward_judgments"]
+        if judgment["judgment_id"] == "fj.retention"
+    )
+    retention["evidence_ids"].extend(["ev.directional", "ev.customer-response"])
     payload["rival_hypothesis_pairs"][0]["causal_trace"].append({
         "edge_id": "RHPEDGE:selection-primary-customer-response-to-retention",
         "mechanism_side": "PRIMARY", "mechanism_chain_id": "mechanism.retention_to_cash",
@@ -1170,10 +1175,32 @@ def test_cjo_selection_bundle_cannot_bypass_fj_threshold_edge_or_cutoff(tmp_path
     )
 
     unrelated_component = _selection_bundle_payload(tmp_path)
-    unrelated_component["selection_admission"]["selection_evidence_bundles"][0]["components"][1]["forward_judgment_id"] = "fj.owner_cash"
+    evidence_path = tmp_path / "claim_evidence.json"
+    evidence = json.loads(evidence_path.read_text(encoding="utf-8"))
+    evidence["claims"][0]["raw_facts"].append({
+        "evidence_id": "ev.unrelated-primary", "source_id": "DOC:unrelated-primary",
+        "source_group_id": "unrelated-primary-disclosure", "fact": "同一主机制链上的背景经营事实。",
+        "authority": "company_filing", "claim_distance": "raw_data",
+        "published_at": "2026-07-28", "data_as_of": "2026-06-30",
+        "direct_support": True, "support_type": "supports", "basis_match": "exact",
+        "conflict_of_interest": "company disclosure",
+    })
+    evidence_path.write_text(json.dumps(evidence), encoding="utf-8")
+    unrelated_component["rival_hypothesis_pairs"][0]["causal_trace"].append({
+        "edge_id": "RHPEDGE:selection-primary-unrelated-to-revenue", "mechanism_side": "PRIMARY",
+        "mechanism_chain_id": "mechanism.retention_to_cash", "from_state": "背景事实",
+        "to_state": "收入与毛利回到正常区间", "why_diagnostic": "故意不属于留存 FJ 的背景箭头。",
+        "status": "VERIFIED", "evidence_ids": ["ev.unrelated-primary"],
+    })
+    unrelated_component["selection_admission"]["selection_evidence_bundles"][0]["components"][1]["evidence_id"] = "ev.unrelated-primary"
+    unrelated_component["selection_admission"]["selection_evidence_bundles"][0]["components"][1]["source_id"] = "DOC:unrelated-primary"
+    unrelated_component["selection_admission"]["selection_evidence_bundles"][0]["components"][1]["source_group_id"] = "unrelated-primary-disclosure"
+    unrelated_component["selection_admission"]["selection_evidence_bundles"][0]["components"][1]["primary_causal_edge_id"] = (
+        "RHPEDGE:selection-primary-unrelated-to-revenue"
+    )
     unrelated_result = validate_thesis_test_ledger(unrelated_component, output_dir=tmp_path, enforced=False)
     assert (
-        "selection_admission:selection_evidence_bundles[0]:components[1]:forward_judgment_id_does_not_match_bundle"
+        "selection_admission:selection_evidence_bundles[0]:components[1]:evidence_not_bound_to_forward_judgment"
         in unrelated_result["selection_admission_invalid_findings"]
     )
 
