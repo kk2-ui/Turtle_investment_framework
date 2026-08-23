@@ -12,6 +12,15 @@ from scripts.historical_backtest import (
 from tests.test_stage36_historical_backtest_pilot import _case, _settlement
 
 
+def _selection_gate_receipt(*forward_judgment_ids: str) -> dict:
+    return {
+        "schema_version": "selection-admission-gate-receipt.v1",
+        "state": "GATE_VALIDATED", "thesis_fingerprint": "a" * 64,
+        "selection_status": "SELECTION_ADMITTED",
+        "selection_forward_judgment_ids": list(forward_judgment_ids),
+    }
+
+
 def _v2_case() -> dict:
     case = deepcopy(_case())
     case["schema_version"] = CASE_SCHEMA_VERSION_V2
@@ -341,6 +350,7 @@ def test_selected_fj_requires_its_frozen_reported_label_and_locator() -> None:
     case["calibration_ledger"]["selection_admission"] = {
         "status": "SELECTION_ADMITTED",
         "selection_forward_judgment_ids": ["fj.owner-cash"],
+        "gate_receipt": _selection_gate_receipt("fj.owner-cash"),
     }
     claim["observable_outcome"]["metric_reconstruction_contract"] = {
         "source_targets": [{

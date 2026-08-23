@@ -1156,6 +1156,7 @@ def _selection_admission_findings(
             components = []
         roles: set[str] = set()
         source_groups: set[str] = set()
+        source_ids: set[str] = set()
         evidence_edges: list[tuple[str, str]] = []
         for component_index, component in enumerate(components):
             component_prefix = prefix + f":components[{component_index}]"
@@ -1165,6 +1166,9 @@ def _selection_admission_findings(
             evidence_id, source_group_id = validate_evidence_fact(component, component_prefix)
             if source_group_id:
                 source_groups.add(source_group_id)
+            source_id = str(component.get("source_id") or "").strip()
+            if source_id:
+                source_ids.add(source_id)
             role = str(component.get("component_role") or "").strip()
             if not role:
                 incomplete.append(component_prefix + ":component_role_missing")
@@ -1172,12 +1176,19 @@ def _selection_admission_findings(
                 invalid.append(component_prefix + ":component_role_invalid")
             else:
                 roles.add(role)
+            component_forward_judgment_id = str(component.get("forward_judgment_id") or "").strip()
+            if not component_forward_judgment_id:
+                incomplete.append(component_prefix + ":forward_judgment_id_missing")
+            elif component_forward_judgment_id != str(bundle.get("forward_judgment_id") or "").strip():
+                invalid.append(component_prefix + ":forward_judgment_id_does_not_match_bundle")
             evidence_edges.append((evidence_id, str(component.get("primary_causal_edge_id") or "").strip()))
         required_roles = {"DECISION_IMPLEMENTATION", "CUSTOMER_OR_COMPETITOR_RESPONSE"}
         if not required_roles.issubset(roles):
             incomplete.append(prefix + ":decision_and_customer_or_competitor_roles_required")
         if len(source_groups) < 2:
             incomplete.append(prefix + ":two_independent_source_groups_required")
+        if len(source_ids) < 2:
+            incomplete.append(prefix + ":two_distinct_source_ids_required")
         sequence_valid = validate_selection_sequence(
             prefix=prefix,
             forward_judgment_id=str(bundle.get("forward_judgment_id") or "").strip(),

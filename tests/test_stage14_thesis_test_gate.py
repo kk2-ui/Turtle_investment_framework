@@ -713,12 +713,14 @@ def _selection_bundle_payload(tmp_path: Path) -> dict:
                 "evidence_id": "ev.directional", "source_id": "DOC:company-q2",
                 "source_group_id": "company-quarterly-disclosure",
                 "component_role": "DECISION_IMPLEMENTATION",
+                "forward_judgment_id": "fj.retention",
                 "primary_causal_edge_id": "RHPEDGE:selection-primary-installation-to-retention",
             },
             {
                 "evidence_id": "ev.customer-response", "source_id": "DOC:customer-q2",
                 "source_group_id": "customer-operating-disclosure",
                 "component_role": "CUSTOMER_OR_COMPETITOR_RESPONSE",
+                "forward_judgment_id": "fj.retention",
                 "primary_causal_edge_id": "RHPEDGE:selection-primary-customer-response-to-retention",
             },
         ],
@@ -1129,6 +1131,15 @@ def test_cjo_selection_bundle_rejects_common_single_source_missing_layer_and_dup
         in duplicate_result["selection_admission_invalid_findings"]
     )
 
+    same_source = _selection_bundle_payload(tmp_path)
+    same_source_component = same_source["selection_admission"]["selection_evidence_bundles"][0]["components"][1]
+    same_source_component["source_id"] = "DOC:company-q2"
+    same_source_result = validate_thesis_test_ledger(same_source, output_dir=tmp_path, enforced=False)
+    assert (
+        "selection_admission:selection_evidence_bundles[0]:two_distinct_source_ids_required"
+        in same_source_result["selection_admission_incomplete_findings"]
+    )
+
 
 def test_cjo_selection_bundle_cannot_bypass_fj_threshold_edge_or_cutoff(tmp_path: Path) -> None:
     terminal = _selection_bundle_payload(tmp_path)
@@ -1156,6 +1167,14 @@ def test_cjo_selection_bundle_cannot_bypass_fj_threshold_edge_or_cutoff(tmp_path
     assert (
         "selection_admission:selection_evidence_bundles[0]:component[ev.customer-response]:primary_causal_edge_not_primary_verified"
         in edge_result["selection_admission_invalid_findings"]
+    )
+
+    unrelated_component = _selection_bundle_payload(tmp_path)
+    unrelated_component["selection_admission"]["selection_evidence_bundles"][0]["components"][1]["forward_judgment_id"] = "fj.owner_cash"
+    unrelated_result = validate_thesis_test_ledger(unrelated_component, output_dir=tmp_path, enforced=False)
+    assert (
+        "selection_admission:selection_evidence_bundles[0]:components[1]:forward_judgment_id_does_not_match_bundle"
+        in unrelated_result["selection_admission_invalid_findings"]
     )
 
     after_cutoff = _selection_bundle_payload(tmp_path)
@@ -2386,6 +2405,7 @@ def test_thesis_writer_exposes_nested_schema_to_provider() -> None:
         assert field in selection_bundles["required"]
     bundle_components = selection_bundles["properties"]["components"]["items"]
     assert "component_role" in bundle_components["properties"]
+    assert "forward_judgment_id" in bundle_components["required"]
     assert "primary_causal_edge_id" in bundle_components["required"]
     assert "mechanism_chain_ids" in params["forward_judgments"]["items"]["properties"]
     assert "financial_driver_ids" in params["forward_judgments"]["items"]["properties"]

@@ -3412,9 +3412,9 @@ write_thesis_test_ledger._tool_meta = {
                 "joint_directional_reason": {"type": "string"}, "joint_rival_exclusion_reason": {"type": "string"}, "joint_distortion_downgrade": {"type": "string"},
                 "components": {"type": "array", "minItems": 2, "items": {"type": "object", "properties": {
                     "evidence_id": {"type": "string"}, "source_id": {"type": "string"}, "source_group_id": {"type": "string"},
-                    "component_role": {"type": "string", "enum": ["DECISION_IMPLEMENTATION", "CUSTOMER_OR_COMPETITOR_RESPONSE", "UNIT_ECONOMICS", "WORKING_CAPITAL_OR_CASH", "CAPITAL_RETURN"]},
+                    "component_role": {"type": "string", "enum": ["DECISION_IMPLEMENTATION", "CUSTOMER_OR_COMPETITOR_RESPONSE", "UNIT_ECONOMICS", "WORKING_CAPITAL_OR_CASH", "CAPITAL_RETURN"]}, "forward_judgment_id": {"type": "string"},
                     "primary_causal_edge_id": {"type": "string"}
-                }, "required": ["evidence_id", "source_id", "source_group_id", "component_role", "primary_causal_edge_id"]}}
+                }, "required": ["evidence_id", "source_id", "source_group_id", "component_role", "forward_judgment_id", "primary_causal_edge_id"]}}
             }, "required": ["bundle_id", "supports_scenario_id", "forward_judgment_id", "leading_threshold_id", "joint_directional_reason", "joint_rival_exclusion_reason", "joint_distortion_downgrade", "components"]}}
         }, "required": ["status"]},
         "forward_judgments": {"type": "array", "minItems": 3, "maxItems": 5, "description": "3-5项可证伪、可结算的关键前瞻判断；CJO只传导至经营结果", "items": {"type": "object", "properties": {

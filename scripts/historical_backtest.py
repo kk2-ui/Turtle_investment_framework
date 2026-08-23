@@ -606,6 +606,28 @@ def _validate_calibration_ledger(
     selection_admitted = selection_admission.get("status") == "SELECTION_ADMITTED"
     if selection_admitted and not selection_judgment_ids:
         incomplete.append("calibration_ledger.selection_admission:selection_forward_judgment_ids_missing")
+    if selection_admitted:
+        gate_receipt = selection_admission.get("gate_receipt")
+        receipt_prefix = "calibration_ledger.selection_admission.gate_receipt"
+        if not isinstance(gate_receipt, dict):
+            incomplete.append(receipt_prefix + ":missing")
+        else:
+            if gate_receipt.get("schema_version") != "selection-admission-gate-receipt.v1":
+                invalid.append(receipt_prefix + ":schema_version_invalid")
+            if gate_receipt.get("state") != "GATE_VALIDATED":
+                invalid.append(receipt_prefix + ":state_invalid")
+            if gate_receipt.get("selection_status") != "SELECTION_ADMITTED":
+                invalid.append(receipt_prefix + ":selection_status_invalid")
+            fingerprint = str(gate_receipt.get("thesis_fingerprint") or "")
+            if len(fingerprint) != 64 or any(char not in "0123456789abcdef" for char in fingerprint):
+                invalid.append(receipt_prefix + ":thesis_fingerprint_invalid")
+            receipt_judgment_ids = sorted({
+                str(judgment_id).strip()
+                for judgment_id in gate_receipt.get("selection_forward_judgment_ids") or []
+                if str(judgment_id).strip()
+            })
+            if receipt_judgment_ids != sorted(selection_judgment_ids):
+                invalid.append(receipt_prefix + ":forward_judgment_ids_do_not_match_admission")
     claim_ids: set[str] = set()
     frozen_judgment_ids: set[str] = set()
     for index, claim in enumerate(claims):
