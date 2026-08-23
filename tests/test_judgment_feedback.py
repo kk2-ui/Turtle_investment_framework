@@ -12,6 +12,7 @@ from tests.test_stage36_historical_backtest_v2 import (
     _licensed_industry_series_contract,
     _pre_cutoff_licensed_industry_source,
     _rival_pair_settlement,
+    _selection_gate_receipt,
     _v2_case,
     _v2_settlement,
 )
@@ -161,6 +162,7 @@ def test_feedback_marks_an_identical_baseline_nondiscriminating_not_selection_su
     case["calibration_ledger"]["selection_admission"] = {
         "status": "SELECTION_ADMITTED",
         "selection_forward_judgment_ids": ["fj.owner_cash"],
+        "gate_receipt": _selection_gate_receipt("fj.owner_cash"),
     }
     claim["observable_outcome"]["metric_reconstruction_contract"] = {
         "source_targets": [{
@@ -185,6 +187,17 @@ def test_feedback_marks_an_identical_baseline_nondiscriminating_not_selection_su
     assert card["selection_learning"]["outcome"] == "BASELINE_NONDISCRIMINATING"
 
 
+def test_feedback_rejects_a_selection_status_without_gate_receipt() -> None:
+    case = _forward_case()
+    case["calibration_ledger"]["selection_admission"] = {
+        "status": "SELECTION_ADMITTED",
+        "selection_forward_judgment_ids": ["fj.owner_cash"],
+    }
+
+    with pytest.raises(JudgmentFeedbackError, match="frozen case is not reviewable"):
+        build_judgment_feedback_cards(case, _v2_settlement())
+
+
 def test_feedback_marks_a_selected_metric_definition_change_not_diagnostic() -> None:
     case = _forward_case()
     claim = case["calibration_ledger"]["claims"][0]
@@ -201,6 +214,7 @@ def test_feedback_marks_a_selected_metric_definition_change_not_diagnostic() -> 
     case["calibration_ledger"]["selection_admission"] = {
         "status": "SELECTION_ADMITTED",
         "selection_forward_judgment_ids": ["fj.owner_cash"],
+        "gate_receipt": _selection_gate_receipt("fj.owner_cash"),
     }
     settlement = _v2_settlement()
     settlement["model_forecast_error"]["status"] = "NOT_CALCULABLE"
@@ -263,6 +277,7 @@ def test_feedback_marks_a_selected_licensed_series_mismatch_not_diagnostic() -> 
     })
     case["calibration_ledger"]["selection_admission"] = {
         "status": "SELECTION_ADMITTED", "selection_forward_judgment_ids": ["fj.retail-share"],
+        "gate_receipt": _selection_gate_receipt("fj.retail-share"),
     }
     settlement = _company_judgment_early_settlement()
     settlement["report_coverage"]["claim_reviews"][0]["source_ids"] = [pre_cutoff_source["source_id"]]

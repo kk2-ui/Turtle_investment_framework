@@ -42,6 +42,7 @@ from scripts.real_report_acceptance import (
     evaluate_phase10_production_freeze_acceptance,
     resolve_report_variant,
 )
+from scripts.thesis_test_gate import thesis_test_fingerprint, validate_thesis_test_ledger
 
 
 READY_ACCEPTANCE_STATES = {
@@ -80,6 +81,7 @@ INVESTMENT_FROZEN_REPORT_SECTIONS = (
     "## Evidence", "## Operating forecast", "## Valuation", "## Risks and unknowns", "## Decision",
 )
 FORWARD_JUDGMENT_LEDGER_SOURCE = "FROZEN_FORWARD_JUDGMENTS"
+SELECTION_ADMISSION_GATE_RECEIPT_VERSION = "selection-admission-gate-receipt.v1"
 
 
 class ProductionFreezeCaseError(ValueError):
@@ -266,11 +268,13 @@ def _frozen_forward_judgment_ledger(
         for source in sources
         if isinstance(source, dict) and str(source.get("source_id") or "").strip()
     }
+    thesis_ledger = _load_object(thesis_path, "frozen thesis_test ledger")
     return build_calibration_ledger_from_forward_judgments(
-        _load_object(thesis_path, "frozen thesis_test ledger"),
+        thesis_ledger,
         simulation_cutoff=simulation_cutoff,
         known_source_ids=set(known_sources),
         known_sources=known_sources,
+        selection_admission_gate_output_dir=output,
         known_financial_driver_ids=set(driver_links) if frozen_financial_driver_bridge is not None else None,
         financial_driver_monitoring_links=driver_links if frozen_financial_driver_bridge is not None else None,
         financial_driver_monitoring_source_types=driver_monitoring_source_types if frozen_financial_driver_bridge is not None else None,
@@ -279,6 +283,48 @@ def _frozen_forward_judgment_ledger(
         financial_driver_cash_normalization_states=cash_normalization_states if frozen_financial_driver_bridge is not None else None,
         financial_driver_realization_judgment_ids=realization_links if frozen_financial_driver_bridge is not None else None,
     )
+
+
+def _selection_admission_gate_receipt(thesis_ledger: dict[str, Any], output: Path) -> dict[str, Any] | None:
+    """Return a projection receipt only after replaying the frozen thesis gate."""
+    admission = thesis_ledger.get("selection_admission")
+    if not isinstance(admission, dict) or admission.get("status") != "SELECTION_ADMITTED":
+        return None
+    thesis_path = output / "thesis_test.json"
+    if not thesis_path.is_file():
+        raise ProductionFreezeCaseError("selection admission replay requires frozen thesis_test.json")
+    frozen_thesis = _load_object(thesis_path, "frozen thesis_test ledger")
+    if frozen_thesis != thesis_ledger:
+        raise ProductionFreezeCaseError("selection admission replay thesis differs from projection input")
+    thesis_sha256 = hashlib.sha256(thesis_path.read_bytes()).hexdigest()
+    validation = validate_thesis_test_ledger(frozen_thesis, output_dir=output, enforced=False)
+    if validation.get("state") not in {"DECISION_READY", "MONITORING"}:
+        findings = list(validation.get("selection_admission_invalid_findings") or [])
+        findings.extend(validation.get("selection_admission_incomplete_findings") or [])
+        raise ProductionFreezeCaseError(
+            "frozen thesis selection admission is not gate-valid"
+            + (": " + "; ".join(findings) if findings else "")
+        )
+    freeze = thesis_ledger.get("freeze") if isinstance(thesis_ledger.get("freeze"), dict) else {}
+    fingerprint = str(freeze.get("fingerprint") or "")
+    if len(fingerprint) != 64 or fingerprint != thesis_test_fingerprint(thesis_ledger):
+        raise ProductionFreezeCaseError("frozen thesis selection admission fingerprint is invalid")
+    selection_judgment_ids = sorted({
+        str(judgment_id).strip()
+        for judgment_id in admission.get("selection_forward_judgment_ids") or []
+        if str(judgment_id).strip()
+    })
+    if not selection_judgment_ids:
+        raise ProductionFreezeCaseError("gate-valid selection admission has no selected forward judgment")
+    return {
+        "schema_version": SELECTION_ADMISSION_GATE_RECEIPT_VERSION,
+        "state": "GATE_VALIDATED",
+        "origin_kind": "FROZEN_THESIS_GATE_REPLAY",
+        "thesis_fingerprint": fingerprint,
+        "thesis_ledger_sha256": thesis_sha256,
+        "selection_status": "SELECTION_ADMITTED",
+        "selection_forward_judgment_ids": selection_judgment_ids,
+    }
 
 
 def _future_fields(value: Any, *, path: str = "case_spec") -> list[str]:
@@ -541,6 +587,7 @@ def _validate_production_artifacts(
 def build_calibration_ledger_from_forward_judgments(
     thesis_ledger: dict[str, Any], *, simulation_cutoff: str, known_source_ids: set[str],
     known_sources: dict[str, dict[str, Any]] | None = None,
+    selection_admission_gate_output_dir: str | Path | None = None,
     known_financial_driver_ids: set[str] | None = None,
     financial_driver_monitoring_links: dict[str, set[str]] | None = None,
     financial_driver_monitoring_source_types: dict[str, set[str]] | None = None,
@@ -564,7 +611,7 @@ def build_calibration_ledger_from_forward_judgments(
     if not isinstance(judgments, list) or not judgments:
         raise ProductionFreezeCaseError("thesis_ledger has no forward_judgments")
     selection_admission = thesis_ledger.get("selection_admission")
-    selection_admission = selection_admission if isinstance(selection_admission, dict) else {}
+    selection_admission = deepcopy(selection_admission) if isinstance(selection_admission, dict) else {}
     selection_judgment_ids = {
         str(judgment_id).strip()
         for judgment_id in selection_admission.get("selection_forward_judgment_ids") or []
@@ -572,6 +619,32 @@ def build_calibration_ledger_from_forward_judgments(
     }
     if selection_admission.get("status") == "SELECTION_ADMITTED" and not selection_judgment_ids:
         raise ProductionFreezeCaseError("SELECTION_ADMITTED requires selection_forward_judgment_ids")
+    if selection_admission.get("status") == "SELECTION_ADMITTED":
+        if selection_admission_gate_output_dir is None:
+            raise ProductionFreezeCaseError(
+                "SELECTION_ADMITTED must originate from frozen thesis gate replay"
+            )
+        receipt = _selection_admission_gate_receipt(
+            thesis_ledger, Path(selection_admission_gate_output_dir),
+        ) or {}
+        expected_fingerprint = str(((thesis_ledger.get("freeze") or {}).get("fingerprint") or ""))
+        receipt_judgment_ids = sorted({
+            str(judgment_id).strip()
+            for judgment_id in receipt.get("selection_forward_judgment_ids") or []
+            if str(judgment_id).strip()
+        })
+        if (
+            receipt.get("schema_version") != SELECTION_ADMISSION_GATE_RECEIPT_VERSION
+            or receipt.get("state") != "GATE_VALIDATED"
+            or receipt.get("selection_status") != "SELECTION_ADMITTED"
+            or not expected_fingerprint
+            or receipt.get("thesis_fingerprint") != expected_fingerprint
+            or receipt_judgment_ids != sorted(selection_judgment_ids)
+        ):
+            raise ProductionFreezeCaseError(
+                "SELECTION_ADMITTED requires a matching gate-validated frozen thesis receipt"
+            )
+        selection_admission["gate_receipt"] = deepcopy(receipt)
     central = thesis_ledger.get("central_path") if isinstance(thesis_ledger.get("central_path"), dict) else {}
     central_path_id = str(central.get("path_id") or "").strip()
     tests = {

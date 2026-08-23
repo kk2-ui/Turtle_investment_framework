@@ -363,6 +363,12 @@
               "register_id": {"type": "string", "pattern": "^CSR:"}, "register_fingerprint": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
               "selection_entry_id": {"type": "string", "pattern": "^CSRSEL:"}, "company_id": {"type": "string", "minLength": 1}, "company_cluster_id": {"type": "string", "minLength": 1}
             }},
+            "gate_receipt": {"type": "object", "required": ["schema_version", "state", "origin_kind", "thesis_fingerprint", "thesis_ledger_sha256", "selection_status", "selection_forward_judgment_ids"], "properties": {
+              "schema_version": {"const": "selection-admission-gate-receipt.v1"}, "state": {"const": "GATE_VALIDATED"},
+              "origin_kind": {"const": "FROZEN_THESIS_GATE_REPLAY"}, "thesis_fingerprint": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+              "thesis_ledger_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}, "selection_status": {"const": "SELECTION_ADMITTED"},
+              "selection_forward_judgment_ids": {"type": "array", "minItems": 1, "items": {"type": "string"}}
+            }},
             "selection_forward_judgment_ids": {"type": "array", "items": {"type": "string"}},
             "selection_evidence": {
               "type": "array",
@@ -372,6 +378,22 @@
                 "directional_reason": {"type": "string"},
                 "why_rival_cannot_equally_explain": {"type": "string"},
                 "distortion_downgrade": {"type": "string"}
+              }}
+            },
+            "selection_evidence_bundles": {
+              "description": "Optional multi-layer pre-cutoff selection receipt. A bundle must independently bind its components to a shared early discriminator; it does not turn common facts into directional evidence.",
+              "type": "array",
+              "items": {"type": "object", "required": ["bundle_id", "supports_scenario_id", "forward_judgment_id", "leading_threshold_id", "joint_directional_reason", "joint_rival_exclusion_reason", "joint_distortion_downgrade", "components"], "properties": {
+                "bundle_id": {"type": "string"}, "supports_scenario_id": {"type": "string"},
+                "forward_judgment_id": {"type": "string"}, "leading_threshold_id": {"type": "string"},
+                "joint_directional_reason": {"type": "string"}, "joint_rival_exclusion_reason": {"type": "string"},
+                "joint_distortion_downgrade": {"type": "string"},
+                "components": {"type": "array", "minItems": 2, "items": {"type": "object", "required": ["evidence_id", "source_id", "source_group_id", "component_role", "forward_judgment_id", "primary_causal_edge_id"], "properties": {
+                  "evidence_id": {"type": "string"}, "source_id": {"type": "string"}, "source_group_id": {"type": "string"},
+                  "component_role": {"enum": ["DECISION_IMPLEMENTATION", "CUSTOMER_OR_COMPETITOR_RESPONSE", "UNIT_ECONOMICS", "WORKING_CAPITAL_OR_CASH", "CAPITAL_RETURN"]},
+                  "forward_judgment_id": {"type": "string"},
+                  "primary_causal_edge_id": {"type": "string"}
+                }}}
               }}
             }
           }

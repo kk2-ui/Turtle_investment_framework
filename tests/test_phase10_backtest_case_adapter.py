@@ -12,6 +12,7 @@ import scripts.phase10_pit_runner as phase10_pit_runner
 from scripts.phase10_acquisition import enumerate_sse_announcements
 from scripts.phase10_backtest_case_adapter import (
     ProductionFreezeCaseError,
+    _selection_admission_gate_receipt,
     _frozen_financial_driver_bridge,
     _required_snapshot_gates,
     _source_map,
@@ -25,8 +26,9 @@ from scripts.real_report_acceptance import (
     evaluate_phase10_production_freeze_acceptance,
     resolve_report_variant,
 )
+from scripts.thesis_test_gate import thesis_test_fingerprint
 from tests.test_stage36_historical_backtest_pilot import _case, _settlement
-from tests.test_stage14_thesis_test_gate import _forward_payload
+from tests.test_stage14_thesis_test_gate import _forward_payload, _selection_bundle_payload
 
 
 def _v2_case_spec(*, review_artifact_path: str = "") -> dict:
@@ -153,47 +155,62 @@ def test_adapter_projects_forward_judgments_without_retyping_or_range_midpoint(t
 
 
 def test_adapter_projects_the_frozen_selection_admission_for_feedback_only(tmp_path: Path) -> None:
-    payload = _forward_payload(tmp_path, freeze=False)
+    payload = _selection_bundle_payload(tmp_path)
     selected = next(item for item in payload["forward_judgments"] if item["judgment_id"] == "fj.retention")
-    selected["observable_outcome"]["metric_reconstruction_contract"] = {
-        "source_targets": [{
-            "source_type": "ANNUAL_REPORT",
-            "file_scope": "FY2027 H1 annual filing",
-            "reported_label": "same_scope_retention",
-            "reported_locator": "Operating KPI table / retention",
-        }],
-        "prohibited_substitutes": ["revenue", "management commentary"],
-        "definition_change_action": "MEASUREMENT_MISMATCH",
-    }
-    payload["selection_admission"] = {
-        "status": "SELECTION_ADMITTED",
-        "selection_forward_judgment_ids": ["fj.retention"],
-        "selection_register_binding": {
-            "register_id": "CSR:adapter", "register_fingerprint": "a" * 64,
-            "selection_entry_id": "CSRSEL:adapter", "company_id": "COMPANY:adapter",
-            "company_cluster_id": "COMPANY:adapter",
-        },
-    }
+    with pytest.raises(
+        ProductionFreezeCaseError,
+        match="must originate from frozen thesis gate replay",
+    ):
+        build_calibration_ledger_from_forward_judgments(
+            payload,
+            simulation_cutoff="2026-08-02T00:00:00+08:00",
+            known_source_ids={"AR:TEST:2026", "DOC:company-q2", "DOC:customer-q2"},
+        )
 
+    _write_json(tmp_path / "thesis_test.json", payload)
     ledger = build_calibration_ledger_from_forward_judgments(
         payload,
         simulation_cutoff="2026-08-02T00:00:00+08:00",
-        known_source_ids={"AR:TEST:2026"},
+        known_source_ids={"AR:TEST:2026", "DOC:company-q2", "DOC:customer-q2"},
+        selection_admission_gate_output_dir=tmp_path,
     )
 
-    assert ledger["selection_admission"] == payload["selection_admission"]
+    assert ledger["selection_admission"] == {
+        **payload["selection_admission"],
+        "gate_receipt": _selection_admission_gate_receipt(payload, tmp_path),
+    }
     assert (
         ledger["claims"][0]["observable_outcome"]["metric_reconstruction_contract"]
         == selected["observable_outcome"]["metric_reconstruction_contract"]
     )
-
     selected["observable_outcome"].pop("metric_reconstruction_contract")
-    with pytest.raises(ProductionFreezeCaseError, match="metric_reconstruction_contract is incomplete"):
+    payload["freeze"]["fingerprint"] = thesis_test_fingerprint(payload)
+    _write_json(tmp_path / "thesis_test.json", payload)
+    with pytest.raises(ProductionFreezeCaseError, match="not gate-valid"):
         build_calibration_ledger_from_forward_judgments(
             payload,
             simulation_cutoff="2026-08-02T00:00:00+08:00",
-            known_source_ids={"AR:TEST:2026"},
+            known_source_ids={"AR:TEST:2026", "DOC:company-q2", "DOC:customer-q2"},
+            selection_admission_gate_output_dir=tmp_path,
         )
+
+
+def test_production_selection_receipt_replays_the_frozen_thesis_gate(tmp_path: Path) -> None:
+    payload = _selection_bundle_payload(tmp_path)
+    _write_json(tmp_path / "thesis_test.json", payload)
+
+    receipt = _selection_admission_gate_receipt(payload, tmp_path)
+
+    assert receipt is not None
+    assert receipt["selection_forward_judgment_ids"] == ["fj.retention"]
+
+    invalid = deepcopy(payload)
+    invalid["selection_admission"]["selection_evidence_bundles"][0]["components"] = []
+    invalid["freeze"]["fingerprint"] = thesis_test_fingerprint(invalid)
+    invalid_output = tmp_path / "invalid"
+    _write_json(invalid_output / "thesis_test.json", invalid)
+    with pytest.raises(ProductionFreezeCaseError, match="not gate-valid"):
+        _selection_admission_gate_receipt(invalid, invalid_output)
 
 
 def test_adapter_refuses_to_infer_a_pit_source_for_forward_judgment(tmp_path: Path) -> None:

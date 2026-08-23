@@ -3405,7 +3405,17 @@ write_thesis_test_ledger._tool_meta = {
                 "forward_judgment_id": {"type": "string"},
                 "primary_causal_edge_id": {"type": "string"},
                 "leading_threshold_id": {"type": "string"}
-            }, "required": ["evidence_id", "source_id", "source_group_id", "supports_scenario_id", "directional_reason", "why_rival_cannot_equally_explain", "distortion_downgrade", "forward_judgment_id", "primary_causal_edge_id", "leading_threshold_id"]}}
+            }, "required": ["evidence_id", "source_id", "source_group_id", "supports_scenario_id", "directional_reason", "why_rival_cannot_equally_explain", "distortion_downgrade", "forward_judgment_id", "primary_causal_edge_id", "leading_threshold_id"]}},
+            "selection_evidence_bundles": {"type": "array", "minItems": 1, "optional": True, "description": "仅 SELECTION_ADMITTED：多层判断只能以一个冻结组合表达，至少包含决策实施与客户/竞争回应、两个独立 source group、共同的 EARLY_MECHANISM FJ 与共享竞争阈值。每个 component 必须进入 PRIMARY VERIFIED 箭头；共同事实不得作为 component。组合必须解释为何整体支持主路径、为何反方不能同样解释，以及何种失真会降级。", "items": {"type": "object", "properties": {
+                "bundle_id": {"type": "string"}, "supports_scenario_id": {"type": "string"},
+                "forward_judgment_id": {"type": "string"}, "leading_threshold_id": {"type": "string"},
+                "joint_directional_reason": {"type": "string"}, "joint_rival_exclusion_reason": {"type": "string"}, "joint_distortion_downgrade": {"type": "string"},
+                "components": {"type": "array", "minItems": 2, "items": {"type": "object", "properties": {
+                    "evidence_id": {"type": "string"}, "source_id": {"type": "string"}, "source_group_id": {"type": "string"},
+                    "component_role": {"type": "string", "enum": ["DECISION_IMPLEMENTATION", "CUSTOMER_OR_COMPETITOR_RESPONSE", "UNIT_ECONOMICS", "WORKING_CAPITAL_OR_CASH", "CAPITAL_RETURN"]}, "forward_judgment_id": {"type": "string"},
+                    "primary_causal_edge_id": {"type": "string"}
+                }, "required": ["evidence_id", "source_id", "source_group_id", "component_role", "forward_judgment_id", "primary_causal_edge_id"]}}
+            }, "required": ["bundle_id", "supports_scenario_id", "forward_judgment_id", "leading_threshold_id", "joint_directional_reason", "joint_rival_exclusion_reason", "joint_distortion_downgrade", "components"]}}
         }, "required": ["status"]},
         "forward_judgments": {"type": "array", "minItems": 3, "maxItems": 5, "description": "3-5项可证伪、可结算的关键前瞻判断；CJO只传导至经营结果", "items": {"type": "object", "properties": {
             "judgment_id": {"type": "string"}, "statement": {"type": "string"},

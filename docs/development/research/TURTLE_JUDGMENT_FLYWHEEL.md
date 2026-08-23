@@ -146,7 +146,7 @@ R-27 的格力压力测试没有通过这个门：动作清楚，产品收入和
 | 部件 | 当前角色 | 还不能声称什么 |
 |---|---|---|
 | R-05 Starbucks、R-06 Walmart | 已冻结的实时 `MECHANISM_SIGNAL_PROBE`；训练来源读取、同口径交易量信号和早期结算。 | 研究者已选对机制、公司结论或判断力准确率。 |
-| R-07 选择准入 | 要求候选机制、方向性选择证据、反方、不同基线及每个入选 FJ 的结果期 metric-reconstruction contract；选择证据还必须连到已验证主机制箭头、双方共同的早期竞争信号与同一测试阈值。冻结、结果 observation 与 feedback 均核对这些合同。 | 一次冻结或一次命中已证明方法优于基线。 |
+| R-07 选择准入 | 要求候选机制、方向性选择证据、反方、不同基线及每个入选 FJ 的结果期 metric-reconstruction contract；选择证据还必须连到已验证主机制箭头、双方共同的早期竞争信号与同一测试阈值。若判断依赖多层材料，必须冻结为一个 evidence bundle：至少包含决策实施和客户/竞争回应、两个不同 source ID 与来源组、共同的 FJ/阈值、逐项主箭头与该 FJ 的显式组件绑定，以及联合反方排除理由；共同事实、重复事实或单一来源组合均不得借此升级。生产投影必须重跑冻结 thesis gate 并写入 matching gate receipt；v2 case、结果 observation 与 feedback 均核对该收据和合同。 | 一次冻结、一个组合或一次命中已证明方法优于基线。 |
 | P-28 概率表达分流 | CJO 可在没有频率依据时以 `NO_PROBABILITY` 冻结 `NO_PRIMARY` 探针或有充分选择链的定性主路径；两者仍需 H-A/H-B、双边 FJ、来源、阈值和结果合同。若写数值概率，则需独立 episode/外部频率、事件定义和校准计划。 | 无依据的 60/40、最高概率标签，或单一公司材料已构成校准。 |
 | P-29 行业架构证据链 | 行业架构的 `VERIFIED` 要素必须逐项绑定到真实 evidence → source → document；持牌数据还绑定 canonical provider source。与本 pair 的早期行业结构信号和可检验箭头断链、或来源类别自报，均不能冻结。 | 公司自述、网点、垂直整合或排名已经证明接口控制/价值攫取。 |
 | P-33 外部发布者角色 | `COMPETITOR`、`SUPPLIER_OR_CUSTOMER`、`REGULATORY` 只可由冻结的发布者/目标实体 ID、相对角色、范围、一阶 basis，以及与已读 PIT source 一致的 DOC 推导；无契约即 `UNKNOWN`。 | 文件名、域名、公司名称、`OTHER_OFFICIAL`、关系叙述或作者标签已经证明外部角色。 |

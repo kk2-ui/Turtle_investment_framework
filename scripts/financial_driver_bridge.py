@@ -102,6 +102,14 @@ def _policy_requires_cash_normalization_contract(policy: dict[str, Any]) -> bool
     )
 
 
+def _policy_requires_forward_judgment_binding(policy: dict[str, Any]) -> bool:
+    """Apply the cross-ledger binding only to new, enforced bridge policies."""
+    return bool(
+        policy.get("enforced")
+        and policy.get("schema_version") == POLICY_VERSION
+    )
+
+
 def _verified_observations(
     value: Any, *, prefix: str, observation_ids: set[str], verify_observations: bool,
     invalid: list[str], incomplete: list[str],
@@ -386,6 +394,118 @@ def _known_bindings(output: Path) -> tuple[set[str], set[str], set[str]]:
     return observation_ids, model_ids, decision_ids
 
 
+def _forward_judgment_binding_findings(
+    bridge: dict[str, Any], thesis: dict[str, Any],
+) -> list[str]:
+    """Verify that bridge monitoring contracts point to actual frozen FJs.
+
+    The bridge is deliberately written before the thesis ledger, so this
+    check belongs to output evaluation rather than initial persistence.  Once
+    a thesis ledger exists, an arbitrary FJ-looking string must not keep the
+    bridge eligible for a report snapshot or settlement.
+    """
+    known_judgment_ids = {
+        str(item.get("judgment_id") or "").strip()
+        for item in thesis.get("forward_judgments") or []
+        if isinstance(item, dict) and str(item.get("judgment_id") or "").strip()
+    }
+    referenced: list[tuple[str, str]] = []
+
+    def collect(contract: Any, prefix: str) -> None:
+        if not isinstance(contract, dict):
+            return
+        for judgment_id in _ids(contract.get("forward_judgment_ids")):
+            referenced.append((prefix, judgment_id))
+
+    for item in bridge.get("drivers") or []:
+        if isinstance(item, dict):
+            collect(item.get("monitoring_contract"), str(item.get("driver_id") or "driver"))
+    for item in bridge.get("allocation_events") or []:
+        if not isinstance(item, dict):
+            continue
+        prefix = str(item.get("event_id") or "allocation_event")
+        realization = item.get("realization_contract")
+        collect(realization, prefix + ":realization")
+        if isinstance(realization, dict):
+            collect(realization.get("early_signal"), prefix + ":early_signal")
+            collect(realization.get("terminal_outcome"), prefix + ":terminal_outcome")
+
+    findings: list[str] = []
+    for prefix, judgment_id in referenced:
+        if judgment_id not in known_judgment_ids:
+            findings.append(prefix + ":forward_judgment_unbound:" + judgment_id)
+
+    # Monitoring remains valuable when cash is not normalized or an allocation
+    # event remains unresolved. It is not a basis for choosing the central
+    # path. The thesis must keep those FJs outside selection admission.
+    monitoring_only: list[tuple[str, str]] = []
+    for item in bridge.get("drivers") or []:
+        if not isinstance(item, dict) or item.get("layer") != "CASH_CONVERSION":
+            continue
+        contract = item.get("cash_normalization_contract")
+        if isinstance(contract, dict) and contract.get("state") != "NORMALIZED":
+            for judgment_id in _ids((item.get("monitoring_contract") or {}).get("forward_judgment_ids")):
+                monitoring_only.append((str(item.get("driver_id") or "driver"), judgment_id))
+    for item in bridge.get("allocation_events") or []:
+        if not isinstance(item, dict) or item.get("classification") != "UNRESOLVED":
+            continue
+        realization = item.get("realization_contract")
+        if not isinstance(realization, dict):
+            continue
+        for judgment_id in _ids(realization.get("forward_judgment_ids")):
+            monitoring_only.append((str(item.get("event_id") or "allocation_event"), judgment_id))
+        for stage in ("early_signal", "terminal_outcome"):
+            for judgment_id in _ids((realization.get(stage) or {}).get("forward_judgment_ids")):
+                monitoring_only.append((str(item.get("event_id") or "allocation_event") + ":" + stage, judgment_id))
+    selection = thesis.get("selection_admission")
+    selected_judgment_ids = set(_ids((selection or {}).get("selection_forward_judgment_ids"))) if isinstance(selection, dict) else set()
+    for prefix, judgment_id in monitoring_only:
+        if judgment_id in selected_judgment_ids:
+            findings.append(prefix + ":monitoring_only_forward_judgment_selected:" + judgment_id)
+    return list(dict.fromkeys(findings))
+
+
+def _frozen_thesis_validation(output: Path, thesis: dict[str, Any]) -> dict[str, Any]:
+    """Revalidate frozen FJs without treating report-anchor checks as bridge checks."""
+    try:
+        from scripts.thesis_test_gate import validate_thesis_test_ledger
+    except ModuleNotFoundError:
+        from thesis_test_gate import validate_thesis_test_ledger
+    validation = validate_thesis_test_ledger(
+        thesis,
+        output_dir=output,
+        enforced=True,
+        monitoring_required=True,
+        forward_judgment_required=True,
+        rival_hypothesis_pair_required=True,
+    )
+    # A bridge is produced before prose assembly, so it cannot require the
+    # eventual report markers. Those markers remain a separate thesis/report
+    # gate. Every other ledger, FJ, pair, and freeze failure remains binding.
+    report_anchor_prefixes = (
+        "central_path_reference_missing:",
+        "thesis_test_reference_missing:",
+        "threshold_reference_missing:",
+        "probability_reference_missing:",
+    )
+    substantive_incomplete = [
+        finding for finding in validation.get("incomplete_findings") or []
+        if not str(finding).startswith(report_anchor_prefixes)
+    ]
+    frozen = bool((thesis.get("freeze") or {}).get("frozen"))
+    if validation.get("invalid_findings"):
+        state = "INVALID"
+    elif substantive_incomplete or not frozen:
+        state = "INCOMPLETE"
+    else:
+        state = "MONITORING" if thesis.get("lifecycle") == "monitoring" else "DECISION_READY"
+    return {
+        **validation,
+        "state": state,
+        "incomplete_findings": substantive_incomplete,
+    }
+
+
 def build_financial_driver_bridge(
     output_dir: str | Path,
     drivers: list[dict[str, Any]],
@@ -631,6 +751,13 @@ def validate_financial_driver_bridge(
             if bindings not in (None, []):
                 invalid.append(f"{driver_id or prefix}:company_judgment_cannot_carry_model_bindings")
             bindings = []
+        elif (
+            layer == "CASH_CONVERSION"
+            and str((item.get("cash_normalization_contract") or {}).get("state") or "") != "NORMALIZED"
+        ):
+            if bindings not in (None, []):
+                invalid.append(f"{driver_id or prefix}:non_normalized_cash_cannot_carry_model_bindings")
+            bindings = []
         elif not isinstance(bindings, list) or not bindings:
             incomplete.append(f"{driver_id or prefix}:model_bindings_missing")
             bindings = []
@@ -721,6 +848,8 @@ def validate_financial_driver_bridge(
         elif realization_id in realization_contract_ids:
             invalid.append("duplicate_realization_contract_id:" + realization_id)
         realization_contract_ids.add(realization_id)
+        if item.get("classification") == "UNRESOLVED" and realization.get("monitoring_only") is not True:
+            invalid.append(realization_prefix + ":unresolved_must_be_monitoring_only")
         if not _ids(realization.get("forward_judgment_ids")):
             incomplete.append(realization_prefix + ":forward_judgment_ids_missing")
         early_invalid, early_incomplete = _validate_monitoring_contract(
@@ -807,6 +936,39 @@ def evaluate_output_financial_driver_bridge(
             require_allocation_commitment_trace=_policy_requires_allocation_commitment_trace(policy),
             require_cash_normalization_contract=_policy_requires_cash_normalization_contract(policy),
         )
+        if _policy_requires_forward_judgment_binding(policy) and result["state"] != "INVALID":
+            thesis = _read_object(output / "thesis_test.json")
+            if not thesis:
+                result = {
+                    **result,
+                    "state": "INCOMPLETE",
+                    "incomplete_findings": list(dict.fromkeys(
+                        list(result.get("incomplete_findings") or []) + ["frozen_thesis_ledger_missing"]
+                    )),
+                }
+            else:
+                thesis_validation = _frozen_thesis_validation(output, thesis)
+                thesis_state = str(thesis_validation.get("state") or "INVALID")
+                if thesis_state not in {"DECISION_READY", "MONITORING"}:
+                    key = "invalid_findings" if thesis_state == "INVALID" else "incomplete_findings"
+                    state = "INVALID" if thesis_state == "INVALID" else "INCOMPLETE"
+                    result = {
+                        **result,
+                        "state": state,
+                        key: list(dict.fromkeys(
+                            list(result.get(key) or []) + ["frozen_thesis_ledger_not_validated:" + thesis_state]
+                        )),
+                    }
+                else:
+                    binding_findings = _forward_judgment_binding_findings(bridge, thesis)
+                    if binding_findings:
+                        result = {
+                            **result,
+                            "state": "INVALID",
+                            "invalid_findings": list(dict.fromkeys(
+                                list(result.get("invalid_findings") or []) + binding_findings
+                            )),
+                        }
     result = {"schema_version": SCHEMA_VERSION, "status": result["state"], "enforced": bool(policy.get("enforced")), **result}
     if persist:
         _write_object(output / "financial_driver_bridge_validation.json", result)
