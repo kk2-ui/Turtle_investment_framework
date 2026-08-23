@@ -1429,6 +1429,21 @@ def _selected_source_identity(manifest: dict[str, Any]) -> set[tuple[str, str, s
     }
 
 
+def _blocked_acquisition_root_cause(acquired: dict[str, Any], validation: dict[str, Any]) -> str:
+    """Treat a complete official zero-enumeration as unavailable data, not an adapter failure."""
+    enumeration = acquired.get("enumeration") if isinstance(acquired.get("enumeration"), dict) else {}
+    if (
+        validation.get("state") == "INCOMPLETE"
+        and not validation.get("invalid_findings")
+        and enumeration.get("status") == "COMPLETE"
+        and enumeration.get("source_ids") == []
+        and acquired.get("inventory") == []
+        and acquired.get("selected_source_ids") == []
+    ):
+        return "DATA_COVERAGE"
+    return "ACQUISITION_MODULE"
+
+
 def _write_adapter_json(path: Path, value: dict[str, Any]) -> Path:
     """Persist an adapter receipt once; a repeated execution reads the receipt.
 
@@ -1678,7 +1693,7 @@ def run_outcome_acquisition(
         _write_adapter_json(receipt_path, failure)
         _append_adapter_event(
             conn, feedback_item_id=feedback_item_id, event_type="ACQUISITION_BLOCKED", effective_at=settled_as_of,
-            actor_id=actor_id, idempotency_key=f"ACQUISITION_BLOCKED:{feedback_item_id}:v{version}:{manifest_path}",
+            actor_id=actor_id, idempotency_key=f"ACQUISITION_BLOCKED:{feedback_item_id}:v{version}:a{attempt}:{manifest_path}",
             artifact_refs=[str(manifest_path), str(receipt_path)],
             payload={
                 "settlement_version": version, "acquisition_attempt": attempt,
@@ -1687,13 +1702,14 @@ def run_outcome_acquisition(
         )
         return {"schema_version": SCHEMA_VERSION, "status": "BLOCKED", "feedback_item_id": feedback_item_id, "receipt_ref": str(receipt_path)}
     if validation["state"] != "REVIEWABLE":
+        root_cause = _blocked_acquisition_root_cause(acquired, validation)
         _append_adapter_event(
             conn, feedback_item_id=feedback_item_id, event_type="ACQUISITION_BLOCKED", effective_at=settled_as_of,
-            actor_id=actor_id, idempotency_key=f"ACQUISITION_BLOCKED:{feedback_item_id}:v{version}:{manifest_path}",
+            actor_id=actor_id, idempotency_key=f"ACQUISITION_BLOCKED:{feedback_item_id}:v{version}:a{attempt}:{manifest_path}",
             artifact_refs=[str(manifest_path), str(receipt_path)],
             payload={
                 "settlement_version": version, "acquisition_attempt": attempt,
-                "package_manifest_ref": str(receipt_path), "root_cause": "ACQUISITION_MODULE",
+                "package_manifest_ref": str(receipt_path), "root_cause": root_cause,
                 "invalid_findings": validation.get("invalid_findings") or [],
                 "incomplete_findings": validation.get("incomplete_findings") or [],
             },

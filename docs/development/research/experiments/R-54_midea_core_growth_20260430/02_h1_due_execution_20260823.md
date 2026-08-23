@@ -25,3 +25,10 @@ R-54 的 `R54-S1`（客户／竞争反应）和 `R54-S3`（营运资本与现金
 ## 3. 飞轮纪律
 
 这是飞轮的一次真实“等待正确结果”的执行，不是研究停滞：D2 与 D4 有不同的到期时钟，但二者都不得因为当前未发布而被写成 0、未知结果的方向或管理层能力评价。下一次运行只重做结果源枚举，不重读或修改 2026-05-01 的冻结内容。
+
+## 4. 当日复枚举与控制面重试
+
+- 在 `2026-08-23T15:29:57+08:00`，对同一 `000333 / gssz0000333 / fulltext` 范围再次作完整 CNINFO 枚举，区间仍为 `2026-08-01` 至该时点，结果仍为 `0` 条。忽略产物为 `output/research/R-54_midea_core_growth_20260430/2026h1_outcome_inventory_20260823T152957.json`。
+- 随后以这个不变的官方零枚举分别运行 `R54-S1` 与 `R54-S3`。两条最新 receipt 均为 `v1 / attempt-07`，保留完整枚举、空 inventory 与空 selected-source 集；下层 package 因此没有可读的官方中报，不产生 reader、extraction 或结算。
+- 控制面将这两条最新阻断正确分类为 `DATA_COVERAGE`，而非 `ACQUISITION_MODULE`：这是“官方披露尚未出现”的可重试等待状态。两条项目继续为 `DUE / BLOCKED / UNSETTLED`，并保持 `MECHANISM_SIGNAL_PROBE / NO_PRIMARY / MECHANISM_SETTLEMENT_ONLY`。
+- 历史 attempt receipt 和事件保留为 append-only 审计记录；当前运行只以最新、来源绑定的零枚举作为下一次官方复枚举的基线。它不构成三项 ToB 收入、经营现金、客户反应、管理能力或投资选择的任何结论。

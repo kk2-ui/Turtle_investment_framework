@@ -653,7 +653,13 @@ def acquire_outcome_package(
     choice remains reviewable.  It supports the same first-party web/PDF and
     pre-acquired licensed-export source shapes as ``phase10_acquisition``.
     """
-    from scripts.phase10_acquisition import acquire_source_package
+    try:
+        from scripts.phase10_acquisition import acquire_source_package
+    except ModuleNotFoundError:
+        # ``python scripts/judgment_feedback_control.py`` loads this module
+        # from the scripts directory, where the package-qualified import is
+        # unavailable.
+        from phase10_acquisition import acquire_source_package
 
     inventory = manifest.get("inventory") if isinstance(manifest.get("inventory"), list) else []
     selected_ids = [str(item or "") for item in manifest.get("selected_source_ids") or []]

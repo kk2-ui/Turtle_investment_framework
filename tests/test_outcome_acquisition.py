@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 import json
+import subprocess
+import sys
 import tempfile
 from copy import deepcopy
 from pathlib import Path
@@ -26,6 +28,35 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 
 def _relative(path: Path) -> str:
     return path.resolve().relative_to(REPO_ROOT).as_posix()
+
+
+def test_acquisition_supports_control_plane_direct_cli_import_mode(tmp_path: Path) -> None:
+    """The due-runner's documented direct-script invocation must reach Phase 10 acquisition."""
+    script = """
+import json
+import sys
+import tempfile
+from pathlib import Path
+
+repo = Path(sys.argv[1]).resolve()
+scripts = repo / 'scripts'
+sys.path[:] = [str(scripts)] + [entry for entry in sys.path[1:] if Path(entry or '.').resolve() != repo]
+import outcome_acquisition
+manifest = {
+    'schema_version': outcome_acquisition.OUTCOME_PACKAGE_SCHEMA_VERSION,
+    'outcome_package_id': 'OUTPKG:DIRECT:EMPTY',
+    'enumeration': {'status': 'COMPLETE', 'query_identity': 'official archive', 'source_ids': []},
+    'inventory': [], 'selected_source_ids': [], 'source_package_status': 'INCOMPLETE',
+}
+with tempfile.TemporaryDirectory() as directory:
+    result = outcome_acquisition.acquire_outcome_package(manifest, directory)
+print(json.dumps({'source_package_status': result['source_package_status']}))
+"""
+    result = subprocess.run(
+        [sys.executable, "-c", script, str(REPO_ROOT)], cwd=REPO_ROOT,
+        capture_output=True, text=True, check=True,
+    )
+    assert json.loads(result.stdout)["source_package_status"] == "COMPLETE"
 
 
 def test_outcome_extraction_rejects_a_number_not_present_in_the_read_source() -> None:

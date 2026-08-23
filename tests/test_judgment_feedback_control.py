@@ -879,6 +879,61 @@ def test_acquisition_retry_keeps_a_new_successful_receipt(tmp_path: Path) -> Non
     assert attestation["status"] == "READ_ATTESTED"
 
 
+def test_acquisition_retry_with_same_manifest_keeps_a_new_blocked_receipt(tmp_path: Path) -> None:
+    """Retrying an unchanged official enumeration must not rebind its first failure."""
+    contract_path = REPO_ROOT / "docs" / "development" / "research" / "experiments" / "R-05_prospective_operating_feedback" / "08_outcome_acquisition_contract.json"
+    conn = _conn(tmp_path)
+    jfc.register_live_forward_contract(conn, contract_path=contract_path, registered_at="2026-08-22T12:00:00+08:00")
+    item = "FBI:R-05:SBUX:NA_TRANSACTION_DURABILITY:20260821:R05-S1:EARLY_MECHANISM"
+    manifest_path = tmp_path / "official-enumeration-without-result.json"
+    manifest_path.write_text("{}\n", encoding="utf-8")
+    package_root, event_root = tmp_path / "outcome_package", tmp_path / "events"
+    as_of = "2027-01-15T12:00:00-08:00"
+
+    first = jfc.run_outcome_acquisition(
+        conn, feedback_item_id=item, outcome_manifest_ref=manifest_path, package_root=package_root,
+        event_root=event_root, settlement_as_of=as_of,
+    )
+    second = jfc.run_outcome_acquisition(
+        conn, feedback_item_id=item, outcome_manifest_ref=manifest_path, package_root=package_root,
+        event_root=event_root, settlement_as_of=as_of,
+    )
+
+    assert first["status"] == second["status"] == "BLOCKED"
+    assert first["receipt_ref"] != second["receipt_ref"]
+    assert "/attempt-01/" in first["receipt_ref"].replace("\\", "/")
+    assert "/attempt-02/" in second["receipt_ref"].replace("\\", "/")
+    blocked = [event for event in jfc._events(conn, item) if event["event_type"] == "ACQUISITION_BLOCKED"]
+    assert sorted(event["payload"]["acquisition_attempt"] for event in blocked) == [1, 2]
+
+
+def test_complete_official_zero_enumeration_is_data_coverage_not_adapter_failure(tmp_path: Path) -> None:
+    """A due report that has not been published is a normal waiting state."""
+    contract_path = REPO_ROOT / "docs" / "development" / "research" / "experiments" / "R-05_prospective_operating_feedback" / "08_outcome_acquisition_contract.json"
+    contract = json.loads(contract_path.read_text(encoding="utf-8"))
+    conn = _conn(tmp_path)
+    jfc.register_live_forward_contract(conn, contract_path=contract_path, registered_at="2026-08-22T12:00:00+08:00")
+    item = "FBI:R-05:SBUX:NA_TRANSACTION_DURABILITY:20260821:R05-S1:EARLY_MECHANISM"
+    manifest_path = tmp_path / "complete-empty-official-enumeration.json"
+    manifest_path.write_text(json.dumps({
+        "schema_version": "turtle-post-cutoff-outcome-package.v1",
+        "outcome_package_id": "OUTPKG:R05:S1:EMPTY",
+        "case_id": contract["case_id"], "freeze_id": contract["report_freeze"]["freeze_id"],
+        "frozen_cutoff": contract["simulation_cutoff"],
+        "enumeration": {"status": "COMPLETE", "query_identity": "issuer result archive", "source_ids": []},
+        "inventory": [], "selected_source_ids": [], "source_package_status": "INCOMPLETE",
+    }), encoding="utf-8")
+
+    result = jfc.run_outcome_acquisition(
+        conn, feedback_item_id=item, outcome_manifest_ref=manifest_path, package_root=tmp_path / "package",
+        event_root=tmp_path / "events", settlement_as_of="2027-01-15T12:00:00-08:00",
+    )
+
+    assert result["status"] == "BLOCKED"
+    latest_block = next(event for event in jfc._events(conn, item) if event["event_type"] == "ACQUISITION_BLOCKED")
+    assert latest_block["payload"]["root_cause"] == "DATA_COVERAGE"
+
+
 def test_r54_cash_clock_records_an_operating_outcome_without_selection_learning(tmp_path: Path) -> None:
     """Cash is a real feedback clock even when it is not an A/B signal."""
     contract_path = REPO_ROOT / "docs" / "development" / "research" / "experiments" / "R-54_midea_core_growth_20260430" / "08_outcome_acquisition_contract.json"
