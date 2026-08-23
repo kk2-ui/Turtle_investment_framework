@@ -17,7 +17,10 @@
     "candidate_requires_direct_evidence": true,
     "corroborated_minimum_independent_corporate_groups": 2,
     "concentrated_industry_minimum_distinct_reporting_periods": 3,
-    "mechanism_ready_requires_independent_review": true
+    "mechanism_ready_requires_independent_review": true,
+    "mechanism_ready_requires_settled_episode_evidence": true,
+    "mechanism_ready_minimum_independent_settled_corporate_groups": 2,
+    "mechanism_ready_requires_boundary_or_counterexample": true
   },
   "independence_policy": {
     "same_corporate_group_not_independent": true,

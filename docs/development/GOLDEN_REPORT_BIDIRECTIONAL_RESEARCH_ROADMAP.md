@@ -335,6 +335,8 @@ R8 包含两个不可互相补偿的部分：
 
 `NO_MATERIAL_GAIN` 或 `WORSE` 必须按 `DATA_COVERAGE`、`ACQUISITION_MODULE`、`REASONING`、`MODEL`、`WRITING` 定位经济根因并给出可执行修复；不得用增加字数作为修复。
 
+实现状态（2026-08-23）：`scripts/judgment_architecture_experiment.py` 与 `schemas/judgment_architecture_experiment.schema.json` 已把 R8 从文字要求落实为预注册成对实验接口。每项材料判断分别登记 `COMPANY_ONLY` 和 `INDUSTRY_MACRO_ENHANCED` 两个独立冻结臂，强制同 cutoff、同公司 evidence package、同结果目标、同简单基线和同黄金标准；盲评提交后才允许用独立 receipt 揭盲，报告质量结论与后续 `judgment-feedback-card.v2` 经营结算分轨保存。聚合保留 `ENHANCED_ONLY_MET / COMPANY_ONLY_ONLY_MET / BOTH_MET / BOTH_MISSED / PENDING / NOT_COMPARABLE`、简单基线增量和公司/时间留出覆盖，不生成胜率、概率或总分。`DUAL_HOLDOUT_COMPARISON_READY` 仅表示可进入独立方法审阅，不代表 V2 已获得一般优势。当前没有真实配对报告或未来结果，R8 仍未完成。
+
 ### R9｜进入 G2–G4：裁决、冻结与流水线
 
 只有 V2 相对 V1 获得 `MATERIAL_IMPROVEMENT`，且 R3.5 没有显示行业机制主要来自事后解释或系统性错误，G1.5 的架构假说才进入：

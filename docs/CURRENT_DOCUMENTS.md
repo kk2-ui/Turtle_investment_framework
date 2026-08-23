@@ -2,7 +2,7 @@
 
 > 状态：`CURRENT / AUTHORITATIVE_NAVIGATION`
 >
-> 更新：2026-08-20
+> 更新：2026-08-23
 
 本文件只解决一件事：告诉后续 Agent 哪些文档可以决定当前状态、执行顺序和产品标准。`docs/History/` 中的文件只用于追溯，不能成为恢复入口、当前状态或实施授权。
 
@@ -41,6 +41,7 @@
 | `docs/turtle_valuation_routing_and_investor_styles.md` | 估值路由与投资体系方法真源 |
 | `docs/value_investing_from_graham_to_buffett_notes.md` | 书籍研究资料；不能单独覆盖现行模型契约 |
 | `docs/development/INDUSTRY_KNOWLEDGE_BASE.md` | 行业机制知识库权限、升格和隔离规则 |
+| `docs/development/JUDGMENT_FEEDBACK_CONTROL_PLANE_IMPLEMENTATION_SPEC.md` | 长期判断反馈、learning application 与 V1/V2 成对能力验证契约 |
 | `docs/ANALYSIS_HORIZON.md` | 自适应分析时域设计 |
 
 黄金报告的当前共同内容契约以 `GOALS.md` 第3、4节为准。质量评分、旧V12模板、旧盲评票、历史报告、敏感性完整或叙事流畅都不能单独授予黄金状态；G1-J完成后还必须通过中心路径和前瞻判断硬门。

@@ -18,7 +18,7 @@
         "library_role": {"const": "research_prompt_prior_only"},
         "allowed_output": {"type": "array", "minItems": 1, "items": {"type": "string"}},
         "prohibited_uses": {"type": "array", "minItems": 3, "items": {"type": "string"}},
-        "promotion_policy": {"type": "object", "required": ["candidate_requires_direct_evidence", "corroborated_minimum_independent_corporate_groups", "concentrated_industry_minimum_distinct_reporting_periods", "mechanism_ready_requires_independent_review"]},
+        "promotion_policy": {"type": "object", "required": ["candidate_requires_direct_evidence", "corroborated_minimum_independent_corporate_groups", "concentrated_industry_minimum_distinct_reporting_periods", "mechanism_ready_requires_independent_review", "mechanism_ready_requires_settled_episode_evidence", "mechanism_ready_minimum_independent_settled_corporate_groups", "mechanism_ready_requires_boundary_or_counterexample"]},
         "independence_policy": {"type": "object", "required": ["same_corporate_group_not_independent", "same_reporting_period_cannot_substitute_for_independent_review"]}
       }
     },
@@ -106,6 +106,29 @@
         "author_id": {"type": "string", "minLength": 1},
         "concentrated_industry_exception": {"type": "object", "required": ["enabled", "rationale", "external_validity_limitation"], "properties": {"enabled": {"type": "boolean"}, "rationale": {"type": "string", "minLength": 1}, "external_validity_limitation": {"type": "string", "minLength": 1}}},
         "independent_review": {"type": "object", "required": ["reviewer_id", "reviewed_at", "scope", "outcome", "independent"], "properties": {"reviewer_id": {"type": "string", "minLength": 1}, "reviewed_at": {"type": "string", "minLength": 1}, "scope": {"type": "string", "minLength": 1}, "outcome": {"const": "ACCEPTED"}, "independent": {"const": true}}},
+        "settled_episode_evidence": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["episode_id", "company_id", "corporate_group_id", "information_cutoff", "claim_id", "settlement_id", "settled_at", "outcome_artifact_ref", "review_artifact_ref", "reviewer_id", "independent_reviewed", "relationship_to_mechanism"],
+            "properties": {
+              "episode_id": {"type": "string", "minLength": 1},
+              "company_id": {"type": "string", "minLength": 1},
+              "corporate_group_id": {"type": "string", "minLength": 1},
+              "information_cutoff": {"type": "string", "minLength": 4},
+              "claim_id": {"type": "string", "minLength": 1},
+              "settlement_id": {"type": "string", "minLength": 1},
+              "settled_at": {"type": "string", "minLength": 1},
+              "outcome_artifact_ref": {"type": "string", "minLength": 1},
+              "review_artifact_ref": {"type": "string", "minLength": 1},
+              "reviewer_id": {"type": "string", "minLength": 1},
+              "independent_reviewed": {"const": true},
+              "relationship_to_mechanism": {"enum": ["SUPPORTS", "CONTRADICTS", "BOUNDARY", "NOT_DIAGNOSTIC"]}
+            }
+          }
+        },
         "created_at": {"type": "string", "minLength": 1},
         "updated_at": {"type": "string", "minLength": 1},
         "lifecycle_reason": {"type": "string", "minLength": 1},
