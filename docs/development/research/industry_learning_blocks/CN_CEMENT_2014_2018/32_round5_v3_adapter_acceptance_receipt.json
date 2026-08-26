@@ -20,7 +20,8 @@
     "acquisition": "outcome_measurement_acquisition.acquire_outcome_measurements",
     "acquisition_validation": "outcome_measurement_acquisition.validate_acquisition_result",
     "round5_submission": "outcome_measurement_round5_adapter.validate_custodian_submission",
-    "settlement": "outcome_measurement_settlement_adapter.register_acquisition_result"
+    "settlement": "outcome_measurement_settlement_adapter.register_acquisition_result",
+    "canonical_contract_resolver": "enterprise_judgment_training_control_plane.resolve_measurement_contract"
   },
   "enterprise_v3_adapter": {
     "contract_schema": "enterprise-outcome-measurement-contract.v3",
@@ -35,6 +36,7 @@
       "PERCENT_CHANGE"
     ],
     "unit_conversions_executed": true,
+    "settlement_requires_canonical_contract_match": true,
     "mismatch_propagation": "SIBLING_LOCAL",
     "forecast_objects_required": false,
     "j2_or_j3_content_read": false

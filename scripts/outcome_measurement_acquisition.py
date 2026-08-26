@@ -644,6 +644,10 @@ def _enterprise_raw_observation(
         }
     document, page_number, value_token, disclosed_unit = rows[0]
     source = _source_identity(document, page_number=page_number)
+    source["field_identity"] = raw_field["field_id"]
+    source["measurement_clock"] = deepcopy(raw_field["measurement_clock"])
+    source["responsibility_boundary"] = deepcopy(cell["responsibility_boundary"])
+    source["unit"] = raw_field["unit"]
     if disclosed_unit != raw_field["unit"]:
         return {
             **base, "status": "MEASUREMENT_MISMATCH", "reason": "RAW_FIELD_UNIT_DOES_NOT_MATCH_FROZEN_CONTRACT",
@@ -858,16 +862,24 @@ def _validate_enterprise_acquisition_result(
             ):
                 if raw_item.get(field) != expected:
                     findings.append(f"{raw_path}.{field}_must_match_frozen_raw_input")
-            if raw_status == "OBSERVED":
+            if raw_status in {"OBSERVED", "MEASUREMENT_MISMATCH"}:
                 value = raw_item.get("raw_value")
                 if frozen_raw.get("role") == "EVENT":
-                    if not isinstance(value, bool):
+                    if raw_status == "OBSERVED" and not isinstance(value, bool):
                         findings.append(raw_path + ".event_raw_value_must_be_explicit_boolean")
-                elif not isinstance(value, (int, float)) or isinstance(value, bool) or not math.isfinite(float(value)):
+                elif raw_status == "OBSERVED" and (not isinstance(value, (int, float)) or isinstance(value, bool) or not math.isfinite(float(value))):
                     findings.append(raw_path + ".numeric_raw_value_must_be_finite")
                 source = _mapping(raw_item.get("source"))
                 if source.get("source_id") != source_access.get("source_id") or source.get("source_url") != source_access.get("official_url"):
                     findings.append(raw_path + ".source_must_match_authorized_identity")
+                if source.get("field_identity") != frozen_raw["field_id"]:
+                    findings.append(raw_path + ".source_field_identity_must_match_frozen_raw_input")
+                if source.get("measurement_clock") != frozen_raw["measurement_clock"]:
+                    findings.append(raw_path + ".source_clock_must_match_frozen_raw_input")
+                if source.get("responsibility_boundary") != cell["responsibility_boundary"]:
+                    findings.append(raw_path + ".source_boundary_must_match_frozen_cell")
+                if source.get("unit") != frozen_raw["unit"]:
+                    findings.append(raw_path + ".source_unit_must_match_frozen_raw_input")
                 if not isinstance(source.get("pdf_page"), int) or source["pdf_page"] < 1:
                     findings.append(raw_path + ".pdf_page_required")
                 if source.get("field_ref") != f"PDF p.{source.get('pdf_page')}":

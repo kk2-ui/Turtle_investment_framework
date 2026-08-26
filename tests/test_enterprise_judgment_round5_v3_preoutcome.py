@@ -362,8 +362,12 @@ def test_real_acquisition_api_builds_value_free_projection_and_public_settlement
     assert settlement_adapter.register_acquisition_result.__name__ == "register_acquisition_result"
 
 
-def test_enterprise_v3_public_acquisition_submission_and_settlement_preflight(tmp_path: Path) -> None:
+def test_enterprise_v3_public_acquisition_submission_and_settlement_preflight(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch,
+) -> None:
     contract, authorization, inventory, reader = _enterprise_synthetic_custody(tmp_path)
+    monkeypatch.setattr(reconstruction, "CANONICAL_REGISTRY_PATH", tmp_path / "canonical.db")
+    assert control.register_measurement_contract(contract, frozen_at=FREEZE_AT)["registered"]
     result = acquisition.acquire_outcome_measurements(
         contract,
         inventory,
@@ -383,6 +387,13 @@ def test_enterprise_v3_public_acquisition_submission_and_settlement_preflight(tm
     price = by_cell["CELL:600802:20150415:CEMENT_REALIZED_PRICE"]
     assert len(price["raw_field_observations"]) == 4
     assert all(raw["source"]["pdf_page"] == 1 for raw in price["raw_field_observations"])
+    assert all(
+        raw["source"]["field_identity"] == raw["field_id"]
+        and raw["source"]["measurement_clock"] == raw["measurement_clock"]
+        and raw["source"]["responsibility_boundary"] == price["raw_field_observations"][0]["responsibility_boundary"]
+        and raw["source"]["unit"] == raw["unit"]
+        for raw in price["raw_field_observations"]
+    )
 
     projection = round5.build_value_free_custody_projection(_v3_package())
     submission = {
@@ -463,8 +474,12 @@ def test_enterprise_formula_supports_raw_value_and_frozen_conversion() -> None:
     }]) == 1.0
 
 
-def test_enterprise_public_settlement_keeps_acquisition_mismatch_sibling_local(tmp_path: Path) -> None:
+def test_enterprise_public_settlement_keeps_acquisition_mismatch_sibling_local(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch,
+) -> None:
     contract, authorization, inventory, reader = _enterprise_synthetic_custody(tmp_path)
+    monkeypatch.setattr(reconstruction, "CANONICAL_REGISTRY_PATH", tmp_path / "canonical.db")
+    assert control.register_measurement_contract(contract, frozen_at=FREEZE_AT)["registered"]
     pdf = Path(inventory["documents"][0]["local_pdf_path"])
     lines = pdf.read_text(encoding="utf-8").splitlines()
     lines = [

@@ -20,10 +20,12 @@ from typing import Any
 try:
     from scripts import judgment_pit_forecast as pit
     from scripts import judgment_pit_forecast_control_plane as control
+    from scripts import enterprise_judgment_training_control_plane as enterprise_control
     from scripts import outcome_measurement_acquisition as acquisition
 except ModuleNotFoundError:  # pragma: no cover - direct script import
     import judgment_pit_forecast as pit
     import judgment_pit_forecast_control_plane as control
+    import enterprise_judgment_training_control_plane as enterprise_control
     import outcome_measurement_acquisition as acquisition
 
 
@@ -259,6 +261,18 @@ def settle_enterprise_acquisition_result(
             "enterprise_authorization_invalid: " + "; ".join(authorization_validation["findings"])
         )
     authorization = authorization_validation["authorization"]
+    try:
+        canonical_contract = enterprise_control.resolve_measurement_contract(
+            measurement_contract["contract_set_id"],
+        )
+    except enterprise_control.TrainingControlPlaneError as exc:
+        raise OutcomeMeasurementSettlementAdapterError(
+            "enterprise_canonical_measurement_contract_unavailable: " + exc.code,
+        ) from exc
+    if canonical_contract != measurement_contract:
+        raise OutcomeMeasurementSettlementAdapterError(
+            "enterprise_measurement_contract_is_not_canonical_frozen_version",
+        )
     if authorization.get("content_read") is not True:
         raise OutcomeMeasurementSettlementAdapterError("enterprise_settlement_requires_recorded_content_read")
     result_validation = acquisition.validate_acquisition_result(
