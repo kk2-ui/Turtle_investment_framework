@@ -1,0 +1,42 @@
+{
+  "schema_version": "enterprise-judgment-continuation-feedback-settlement.v1",
+  "settlement_id": "CFS:000401:20170412:R2:001",
+  "application_ref": "TAR:CN:CEMENT:PERIMETER_FIRST:000401:20170412:V1",
+  "selection_ref": "R2SEL:CN:CEMENT:000401:20170412:V1",
+  "company_id": "CN:000401",
+  "cutoff_at": "2017-04-12T00:00:00+08:00",
+  "outcome_custodian_id": "ROLE:CEMENT:OUTCOME_CUSTODIAN",
+  "source_receipt": {
+    "source_ref": "CNINFO:000401:ANN:20180323:1204506085",
+    "published_on": "2018-03-23",
+    "official_url": "https://static.cninfo.com.cn/finalpage/2018-03-23/1204506085.PDF",
+    "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+    "custodian_access": "OUTCOME_ONLY",
+    "availability_precision": "DATE"
+  },
+  "observations": [
+    {
+      "outcome_cell_id": "CELL:000401:20170412:CASH",
+      "status": "MEASUREMENT_MISMATCH",
+      "reported_value": "SAME_BOUNDARY_OPERATING_CASH_NOT_ESTABLISHABLE",
+      "summary": "The FY2017 consolidated cash-flow statement reports the operating-cash-flow line, but the same report states that the consolidation scope changed from 65 entities to 70, through six newly established subsidiaries and one disposed subsidiary. It provides no quantified operating-cash-flow bridge or common-perimeter restatement; the contracted listed-consolidated cash cell is therefore not observed.",
+      "source_ref": "CNINFO:000401:ANN:20180323:1204506085"
+    }
+  ],
+  "next_cutoff_agenda_delta": [
+    {
+      "target_cutoff_at": "2018-04-22T00:00:00+08:00",
+      "change_id": "AGENDA:000401:20180422:CASH:PERIMETER_BRIDGE",
+      "change_type": "CHANGE_EVIDENCE_ORDER",
+      "statement": "Before extracting the operating-cash-flow cell, require an official common-perimeter bridge or explicitly restated listed-consolidated operating-cash-flow figure that accounts for additions and disposals in the consolidation scope.",
+      "reason": "The FY2017 annual report identifies the scope changes but does not quantify their operating-cash-flow effect or provide a same-boundary restatement."
+    }
+  ],
+  "original_episode_immutable": true,
+  "object_class": "ENTERPRISE_JUDGMENT_CONTINUATION_FEEDBACK_SETTLEMENT",
+  "claim_class": "CONTRACT_MATCHED_PREQUENTIAL_FEEDBACK",
+  "allowed_outputs": [
+    "FEEDBACK_READ_MODEL",
+    "RESEARCH_AGENDA"
+  ]
+}

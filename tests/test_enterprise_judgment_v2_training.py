@@ -243,3 +243,120 @@ def test_round2_selection_and_cross_company_perimeter_application_are_frozen_bef
     )
     assert not result["valid"]
     assert "transfer_application.source_must_be_real_mismatch_with_boundary_agenda_change" in result["findings"]
+
+
+def test_second_real_feedback_settles_only_the_frozen_cash_cell_and_localizes_measurement_mismatch() -> None:
+    # This catches a custodian result being bound to a different source/cell,
+    # and verifies that a cash comparability failure does not erase the target
+    # company's independent operating-state reconstruction.
+    h1, series, source_models, source_episodes, block, selection, target_models, target_episode, application, completed = _round2_inputs()
+    freeze = _pre_outcome_freeze()
+    settlement = json.loads((BLOCK_ROOT / "13_round2_continuation_feedback_settlement.json").read_text(encoding="utf-8"))
+    result = v2.validate_continuation_feedback_settlement(
+        settlement, application=application, selection=selection, block=block, pre_outcome_roster_freeze=freeze,
+        target_episode=target_episode, target_models=target_models, history_series=series, h1_package=h1,
+        source_feedback_settlement=completed[0], source_block_episodes=source_episodes, source_models=source_models,
+        completed_feedback_settlements=completed,
+    )
+    assert result["valid"], result["findings"]
+    assert settlement["observations"] == [{
+        "outcome_cell_id": "CELL:000401:20170412:CASH",
+        "status": "MEASUREMENT_MISMATCH",
+        "reported_value": "SAME_BOUNDARY_OPERATING_CASH_NOT_ESTABLISHABLE",
+        "summary": settlement["observations"][0]["summary"],
+        "source_ref": "CNINFO:000401:ANN:20180323:1204506085",
+    }]
+
+    read_model = v2.compile_continuation_feedback_read_model(
+        settlement, application=application, selection=selection, block=block, pre_outcome_roster_freeze=freeze,
+        target_episode=target_episode, target_models=target_models, history_series=series, h1_package=h1,
+        source_feedback_settlement=completed[0], source_block_episodes=source_episodes, source_models=source_models,
+        completed_feedback_settlements=completed,
+    )
+    assert read_model["valid"], read_model["findings"]
+    rows = {row["claim_id"]: row for row in read_model["continuation_feedback_read_model"]["claim_output_matrix"]}
+    assert rows["CLAIM:000401:R2:PERIMETER_CASH"]["allowed_outputs"] == ["RESEARCH_AGENDA"]
+    assert rows["CLAIM:000401:R2:CASH"]["allowed_outputs"] == ["RESEARCH_AGENDA"]
+    assert "STATE_VIEW" in rows["CLAIM:000401:R2:OPERATING"]["allowed_outputs"]
+
+    wrong_source = deepcopy(settlement)
+    wrong_source["source_receipt"]["source_ref"] = "CNINFO:600801:ANN:20180326:1204514309"
+    result = v2.validate_continuation_feedback_settlement(
+        wrong_source, application=application, selection=selection, block=block, pre_outcome_roster_freeze=freeze,
+        target_episode=target_episode, target_models=target_models, history_series=series, h1_package=h1,
+        source_feedback_settlement=completed[0], source_block_episodes=source_episodes, source_models=source_models,
+        completed_feedback_settlements=completed,
+    )
+    assert not result["valid"]
+    assert "continuation_feedback_settlement.source_receipt_must_match_declared_static_source" in result["findings"]
+
+
+def test_independent_review_creates_only_a_transfer_candidate_after_material_preoutcome_field_change() -> None:
+    # This catches an application owner self-certifying transfer and prevents a
+    # non-material or performance/valuation conclusion from becoming transfer
+    # validation.
+    h1, series, source_models, source_episodes, block, selection, target_models, target_episode, application, completed = _round2_inputs()
+    freeze = _pre_outcome_freeze()
+    settlement = json.loads((BLOCK_ROOT / "13_round2_continuation_feedback_settlement.json").read_text(encoding="utf-8"))
+    review = json.loads((BLOCK_ROOT / "14_transfer_application_independent_review.json").read_text(encoding="utf-8"))
+    result = v2.validate_transfer_application_review(
+        review, application=application, continuation_settlement=settlement, selection=selection,
+        block=block, pre_outcome_roster_freeze=freeze, target_episode=target_episode, target_models=target_models,
+        history_series=series, h1_package=h1, source_feedback_settlement=completed[0],
+        source_block_episodes=source_episodes, source_models=source_models, completed_feedback_settlements=completed,
+    )
+    assert result["valid"], result["findings"]
+    assert review["transfer_status"] == "TRANSFER_CANDIDATE_CREATED"
+    assert review["prohibited_conclusion"] == "NO_ENTERPRISE_PERFORMANCE_ACTION_CAUSALITY_OR_INVESTMENT_CONCLUSION"
+
+    self_review = deepcopy(review)
+    self_review["reviewer_id"] = application["roles"]["judgment_owner_id"]
+    result = v2.validate_transfer_application_review(
+        self_review, application=application, continuation_settlement=settlement, selection=selection,
+        block=block, pre_outcome_roster_freeze=freeze, target_episode=target_episode, target_models=target_models,
+        history_series=series, h1_package=h1, source_feedback_settlement=completed[0],
+        source_block_episodes=source_episodes, source_models=source_models, completed_feedback_settlements=completed,
+    )
+    assert not result["valid"]
+    assert "transfer_application_review.reviewer_must_be_independent" in result["findings"]
+
+    overclaimed = deepcopy(review)
+    overclaimed["prohibited_conclusion"] = "TRANSFER_VALIDATED"
+    result = v2.validate_transfer_application_review(
+        overclaimed, application=application, continuation_settlement=settlement, selection=selection,
+        block=block, pre_outcome_roster_freeze=freeze, target_episode=target_episode, target_models=target_models,
+        history_series=series, h1_package=h1, source_feedback_settlement=completed[0],
+        source_block_episodes=source_episodes, source_models=source_models, completed_feedback_settlements=completed,
+    )
+    assert not result["valid"]
+    assert "transfer_application_review.must_deny_enterprise_and_investment_conclusion" in result["findings"]
+
+
+def test_round2_completion_status_requires_both_real_feedback_and_independent_transfer_review() -> None:
+    # This catches premature status marking: a continuation settlement alone
+    # cannot create transfer candidacy, and candidacy cannot become validation.
+    h1, series, source_models, source_episodes, block, selection, target_models, target_episode, application, completed = _round2_inputs()
+    freeze = _pre_outcome_freeze()
+    settlement = json.loads((BLOCK_ROOT / "13_round2_continuation_feedback_settlement.json").read_text(encoding="utf-8"))
+    review = json.loads((BLOCK_ROOT / "14_transfer_application_independent_review.json").read_text(encoding="utf-8"))
+    completion = json.loads((BLOCK_ROOT / "15_round2_completion_receipt.json").read_text(encoding="utf-8"))
+    result = v2.validate_round2_completion_receipt(
+        completion, review=review, application=application, continuation_settlement=settlement, selection=selection,
+        block=block, pre_outcome_roster_freeze=freeze, target_episode=target_episode, target_models=target_models,
+        history_series=series, h1_package=h1, source_feedback_settlement=completed[0],
+        source_block_episodes=source_episodes, source_models=source_models, completed_feedback_settlements=completed,
+    )
+    assert result["valid"], result["findings"]
+    assert completion["feedback_turn_status"] == "REAL_FEEDBACK_TURN_2_COMPLETED"
+    assert completion["transfer_status"] == "TRANSFER_CANDIDATE_CREATED"
+
+    premature = deepcopy(completion)
+    premature["transfer_status"] = "TRANSFER_VALIDATED"
+    result = v2.validate_round2_completion_receipt(
+        premature, review=review, application=application, continuation_settlement=settlement, selection=selection,
+        block=block, pre_outcome_roster_freeze=freeze, target_episode=target_episode, target_models=target_models,
+        history_series=series, h1_package=h1, source_feedback_settlement=completed[0],
+        source_block_episodes=source_episodes, source_models=source_models, completed_feedback_settlements=completed,
+    )
+    assert not result["valid"]
+    assert "round2_completion.statuses_must_remain_narrow" in result["findings"]

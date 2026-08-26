@@ -38,6 +38,7 @@ ROUND2_SELECTION_SCHEMA_VERSION = "enterprise-judgment-round2-transition-selecti
 TRANSFER_APPLICATION_SCHEMA_VERSION = "enterprise-judgment-transfer-application-receipt.v1"
 CONTINUATION_SETTLEMENT_SCHEMA_VERSION = "enterprise-judgment-continuation-feedback-settlement.v1"
 TRANSFER_REVIEW_SCHEMA_VERSION = "enterprise-judgment-transfer-application-review.v1"
+ROUND2_COMPLETION_SCHEMA_VERSION = "enterprise-judgment-round2-completion-receipt.v1"
 
 CELL_STATES = {"OBSERVED", "INFERRED", "UNKNOWN", "EVIDENCE_INELIGIBLE", "NOT_APPLICABLE", "MEASUREMENT_MISMATCH"}
 PREOUTCOME_CELL_STATES = CELL_STATES - {"MEASUREMENT_MISMATCH"}
@@ -51,6 +52,7 @@ ALLOWED_SETTLEMENT_OUTPUTS = ["FEEDBACK_READ_MODEL", "RESEARCH_AGENDA"]
 ALLOWED_PROBE_OUTPUTS = ["MECHANISM_VIEW", "TEACHING_ONLY", "RESEARCH_AGENDA"]
 ALLOWED_APPLICATION_OUTPUTS = ["RESEARCH_AGENDA", "TRANSFER_CANDIDATE_PENDING_REVIEW"]
 ALLOWED_TRANSFER_REVIEW_OUTPUTS = ["TRANSFER_CANDIDATE_CREATED", "RESEARCH_AGENDA"]
+ALLOWED_ROUND2_COMPLETION_OUTPUTS = ["REAL_FEEDBACK_TURN_2_COMPLETED", "TRANSFER_CANDIDATE_CREATED"]
 
 _ROLE_KEYS = {"judgment_owner_id", "independent_challenger_id", "outcome_custodian_id"}
 _EPISODE_KEYS = {
@@ -112,6 +114,7 @@ _APPLICATION_FIELD_KEYS = {"field_id", "dimension", "definition", "claim_ids", "
 _FIELD_DELTA_KEYS = {"field_id", "change_kind", "baseline_gate", "enhanced_gate", "reason_ref", "materiality"}
 _CONTINUATION_SETTLEMENT_KEYS = {"schema_version", "settlement_id", "application_ref", "selection_ref", "company_id", "cutoff_at", "outcome_custodian_id", "source_receipt", "observations", "next_cutoff_agenda_delta", "original_episode_immutable", "object_class", "claim_class", "allowed_outputs"}
 _TRANSFER_REVIEW_KEYS = {"schema_version", "review_id", "application_ref", "source_feedback_id", "continuation_settlement_id", "reviewer_id", "verdict", "materiality_statement", "causal_trace_statement", "prohibited_conclusion", "transfer_status", "allowed_outputs", "object_class", "claim_class"}
+_ROUND2_COMPLETION_KEYS = {"schema_version", "completion_id", "block_id", "settlement_id", "review_id", "feedback_turn_status", "transfer_status", "object_class", "claim_class", "allowed_outputs"}
 _FORBIDDEN_KEYS = {
     "price", "market_price", "share_price", "stock_price", "entry_price", "valuation", "valuation_result",
     "expectation_gap", "buyband", "buy_band", "investment_instruction", "portfolio_action", "position",
@@ -1372,3 +1375,39 @@ def validate_transfer_application_review(
     for path in _forbidden_paths(item, "transfer_application_review"):
         _add(findings, "transfer_application_review.forbidden_field:" + path)
     return {"valid": not findings, "findings": findings, "transfer_application_review": deepcopy(item) if not findings else None}
+
+
+def validate_round2_completion_receipt(
+    completion: Any, *, review: Any, application: Any, continuation_settlement: Any, selection: Any, block: Any,
+    pre_outcome_roster_freeze: Any, target_episode: Any, target_models: list[Any], history_series: Any, h1_package: Any,
+    source_feedback_settlement: Any, source_block_episodes: list[Any], source_models: list[Any],
+    completed_feedback_settlements: list[Any],
+) -> dict[str, Any]:
+    """Allow the two narrow round-two statuses only after their bound evidence exists."""
+    findings: list[str] = []
+    review_result = validate_transfer_application_review(
+        review, application=application, continuation_settlement=continuation_settlement, selection=selection,
+        block=block, pre_outcome_roster_freeze=pre_outcome_roster_freeze, target_episode=target_episode,
+        target_models=target_models, history_series=history_series, h1_package=h1_package,
+        source_feedback_settlement=source_feedback_settlement, source_block_episodes=source_block_episodes,
+        source_models=source_models, completed_feedback_settlements=completed_feedback_settlements,
+    )
+    for finding in review_result["findings"]:
+        _add(findings, "transfer_application_review:" + finding)
+    item, block_item, review_item, settlement_item = (
+        _closed(completion, _ROUND2_COMPLETION_KEYS, "round2_completion", findings), _mapping(block),
+        _mapping(review), _mapping(continuation_settlement),
+    )
+    if item.get("schema_version") != ROUND2_COMPLETION_SCHEMA_VERSION:
+        _add(findings, "round2_completion.schema_version_invalid")
+    for field in ("completion_id", "block_id", "settlement_id", "review_id", "feedback_turn_status", "transfer_status"):
+        _required_text(item, field, "round2_completion", findings)
+    if item.get("object_class") != "ENTERPRISE_JUDGMENT_ROUND2_COMPLETION_RECEIPT" or item.get("claim_class") != "FEEDBACK_TURN_AND_TRANSFER_STATUS" or item.get("allowed_outputs") != ALLOWED_ROUND2_COMPLETION_OUTPUTS:
+        _add(findings, "round2_completion.object_or_permission_invalid")
+    if item.get("block_id") != block_item.get("block_id") or item.get("settlement_id") != settlement_item.get("settlement_id") or item.get("review_id") != review_item.get("review_id"):
+        _add(findings, "round2_completion.bindings_must_match_settlement_and_review")
+    if item.get("feedback_turn_status") != "REAL_FEEDBACK_TURN_2_COMPLETED" or item.get("transfer_status") != "TRANSFER_CANDIDATE_CREATED":
+        _add(findings, "round2_completion.statuses_must_remain_narrow")
+    for path in _forbidden_paths(item, "round2_completion"):
+        _add(findings, "round2_completion.forbidden_field:" + path)
+    return {"valid": not findings, "findings": findings, "round2_completion": deepcopy(item) if not findings else None}
