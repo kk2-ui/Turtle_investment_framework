@@ -2,7 +2,7 @@
 
 > 状态：`TOP_LEVEL_DECISION_ARCHITECTURE_ADOPTED / PIT_FORECAST_LEARNING_CONTROL_IMPLEMENTED / REGISTRY_AWARE_ADMISSION_IMPLEMENTED / REAL_H1_CARRIER_REGISTRY_OPEN / CEMENT_H2_NO_PRIMARY_ACTION_SCOPE`
 >
-> 日期：2026-08-25
+> 日期：2026-08-26
 >
 > 配套设计：[训练系统顶层架构](./TURTLE_TRAINING_SYSTEM_TOP_LEVEL_ARCHITECTURE.md)、[Turtle Agent 企业判断系统总设计](./TURTLE_AGENT_ENTERPRISE_JUDGMENT_SYSTEM_DESIGN.md)、[历史训练体系重构](./TURTLE_HISTORICAL_TRAINING_SYSTEM_REDESIGN.md)
 
@@ -65,7 +65,7 @@ H0–H10 是本仓当前执行状态；下方 G0–G8 只保留能力依赖视�
 | H0 合成控制接纳 | `COMPLETE` | V3/V5 offline control 与 legacy 回归已通过 |
 | H1 Industry History Universe | `MULTI_CUTOFF_RUNNER_IMPLEMENTED / CEMENT_H1_SIX_CUTOFF_SERIES_VALIDATED / SYNTHETIC_LIFECYCLE_VALIDATED` | 后续真实 lifecycle 事实须由独立 cutoff-visible source receipt 接入；不阻断 H2 |
 | H2 Teaching/Lifecycle runner | `LIFECYCLE_TEACHING_SYNTHETIC_ACCEPTED / R104_BOUNDARY_TEACHING_PROJECTED / REAL_HUAXIN_PERIMETER_CASE_ACCEPTED` | 单公司和消失公司可训练，且不会获得选择权限 |
-| H2A PIT Company Forecast | `CEMENT_2018_FIVE_COMPANY_FORECAST_FROZEN / THREE_COMPANY_REFERENCE_TOURNAMENT_FROZEN / FORECAST_LEARNING_CONTROL_IMPLEMENTED / R05_PROSPECTIVE_SIGNAL_SHADOW_REGISTERED` | 历史 pilot 只作 `MODEL_MEMORY_MITIGATED` 流程/反馈验证；独立 custodian 才能结算。结算可直接改校准/coverage/状态定义/不确定性 policy；证据与反方方法仍仅为 pair+holdout candidate，且不读 H2/R-103/outcome |
+| H2A PIT Company Forecast | `CEMENT_2018_FIVE_COMPANY_FORECAST_FROZEN / THREE_COMPANY_REFERENCE_TOURNAMENT_FROZEN / MINIMAL_HISTORICAL_EPISODE_CN600585_MECHANICALLY_SETTLED / FORECAST_LEARNING_CONTROL_IMPLEMENTED / R05_PROSPECTIVE_SIGNAL_SHADOW_REGISTERED` | 历史 pilot 只作 `MODEL_MEMORY_MITIGATED` 流程/反馈验证；独立 custodian 才能结算。另一个单公司、单指标 Minimal Episode 已证明 contract→blind observation→mechanical settlement 管线，但无 learning 或方法权利。结算可直接改校准/coverage/状态定义/不确定性 policy；证据与反方方法仍仅为 pair+holdout candidate，且不读 H2/R-103/outcome |
 | H3 Comparative intake | `ONE_CEMENT_H1_RECEIPT / REAL_H1_CARRIER_REGISTRY_OPEN / REGISTRY_AWARE_ADMISSION_IMPLEMENTED / H2_NO_PRIMARY_ACTION_SCOPE` | 等待另一条合格 H2 action screen 后，冻结 predicate 与静态 peer batch |
 | H4 第一条真实 Comparative Episode | `NOT_STARTED / NOT_GLOBAL_BLOCKER` | final panel、行动、反方和 outcome contract 独立冻结 |
 | H5 第一次真实结算与 learning | `NOT_STARTED` | 方向性结算改变不同公司冻结前字段 |
@@ -354,6 +354,10 @@ WP-R0 的离线控制基础和 registry-aware comparative epoch 已完成 synthe
 `Forecast V4` 是另一个新 epoch，而非对 V1--V3 的 retrofit：在 forecast 前，独立 curator 只能从同一已登记 H1 static-PDF packet 提交 closed、逐字段、逐页的 cutoff-visible extraction；control plane 将它编译并冻结为 evidence-only receipt。H1 仍是唯一 artifact allowlist，不得新增 PDF 或动态来源；receipt 的页码把既有官方 PDF 的具体原始字段、单位、责任边界和数值固定下来，但不授予 outcome、CJO、价格、报告或投资权限。V4 的每个 `MODEL_UNCERTAIN` 维度必须引用该 receipt 中精确的 `source_id × field_id`，receipt、Decision Contract、Measurement Contract 与 forecast 都须在 freeze 前同公司/issuer/cutoff/H1 ref 一致。另将既有 `R-05:SBUX:NA_TRANSACTION_DURABILITY:20260821` 的两个 2027 signal windows 登记为 current `MECHANISM_SIGNAL_PROBE` shadow；它只证明 prequential 时钟正在运行，不是 state-forecast holdout、因果样本、CJO 或报告授权。
 
 CN:600585 的 2018 `Forecast V4` 已在隔离开发 namespace 完成 contract-first 的独立 settlement。此处不记录预测或结果方向：可复用的唯一后续对象是 coverage / direct forecast policy，且只输出 `FORECAST_POLICY_ONLY + RESEARCH_AGENDA`。该 V4 在 outcome access 前没有冻结 Method Pairing 或 Decision-Utility Pairing；因此不得事后补冻，且永久不能作为 baseline-performance、evidence-priority、rival-hypothesis transfer、decision utility、method release、CJO、估值或报告授权证据。下一份可主张这些问题的对象必须是尚未 outcome-access 的新 V6：它须先冻结同一 source、Decision、Measurement、evidence 与 scope 合同，再在 outcome access 前精确冻结所需 pairing；真实 source package 仍是该前向对象的 acquisition blocker。
+
+### WP-F0A Minimal Historical Episode
+
+`Minimal Historical Episode v1` 是与 Forecast V1--V6、Comparative/V5 和教学 CJO 分离的窄管线验收 lane。它只接受一个公司、一个 cutoff、一个可由静态官方字段唯一测量的指标，并严格执行 `Decision Contract → Measurement Contract → cutoff-before static evidence → blind prediction → contract-only custodian access → official observation → mechanical settlement`。CN:600585 2018 已在隔离开发 namespace 完成这一链；登记只保留对象与链路身份，不记录预测、观测或机械结算方向。该 lane 的全部对象固定 `MECHANICAL_SETTLEMENT_ONLY + NO_METHOD_TRANSFER_RIGHTS`：它不能生成 Brier/RPS、learning、method pairing、Comparative 结论、CJO、估值、报告或投资权限。其价值是证明最小历史训练管线可在不先证明同行因果或方法泛化的条件下无泄漏运行；下一份 object 若要主张任何方法或决策效用，仍须走已冻结的 pairing、holdout 和独立审阅门。
 
 ### WP-D0 Decision Contract gate
 

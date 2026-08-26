@@ -469,14 +469,15 @@ Phase 08 只有同时具备以下结果才能完成：
 
 当前执行分为训练主线与黄金候选线，互不以等待状态阻断：
 
-1. 先对 `config/judgment_training_program_v1.json` 做 admission 和登记审计；R-62 维持 `NO_PRIMARY / NOT_FROZEN`，不得作为开发训练样本运行；
-2. 新增或重新筛选一个真实、结果隔离且 `SELECTION_ADMITTED` 的开发 episode，完成 PIT freeze、五层结算和材料性诊断；
-3. 将正式 learning 实际应用到不同公司冻结字段并独立复核；只有完成 application receipt，才一次性冻结 `enterprise-judgment-method-v1`；
-4. 方法冻结后才揭盲 R-61 holdout，只评价、不回写同一版本；R-56/R-58/R-25/R-21/R-78 只提供边界教学；
-5. 将已接纳的窄方法改变经现有 handoff 接入 G1 黄金报告研究议程，检验其是否改善正常利润、owner cash、永久损失、价值和回报传播；
-6. 七个黄金候选的材料性修复继续推进，但不再等待 R-54/R-93/R-94 的最新披露；实时对象只在到期时执行原冻结采集合同；
-7. 七案内容接纳后按 G1.5 激活条件预注册格力行业经验工厂；G1.5 通过后才进入 G2，不得提前写统一模板；
-8. 四个外部项目只保留为第 13 节的未来路由；G1 Agent 不安装、不集成，也不以其报告替代候选修复。
+1. 已完成 CN:600585 单公司、单指标 `Minimal Historical Episode v1` 的独立机械结算；它只证明 `Decision Contract → Measurement Contract → blind prediction → independent observation → mechanical settlement` 管线可闭合，固定为 `MECHANICAL_SETTLEMENT_ONLY + NO_METHOD_TRANSFER_RIGHTS`，不得将其表述为 method、CJO、估值、报告或投资成功；
+2. 先对 `config/judgment_training_program_v1.json` 做 admission 和登记审计；R-62 维持 `NO_PRIMARY / NOT_FROZEN`，不得作为开发训练样本运行；
+3. 新增或重新筛选一个真实、结果隔离且 `SELECTION_ADMITTED` 的开发 episode，完成 PIT freeze、五层结算和材料性诊断；
+4. 将正式 learning 实际应用到不同公司冻结字段并独立复核；只有完成 application receipt，才一次性冻结 `enterprise-judgment-method-v1`；
+5. 方法冻结后才揭盲 R-61 holdout，只评价、不回写同一版本；R-56/R-58/R-25/R-21/R-78 只提供边界教学；
+6. 将已接纳的窄方法改变经现有 handoff 接入 G1 黄金报告研究议程，检验其是否改善正常利润、owner cash、永久损失、价值和回报传播；
+7. 七个黄金候选的材料性修复继续推进，但不再等待 R-54/R-93/R-94 的最新披露；实时对象只在到期时执行原冻结采集合同；
+8. 七案内容接纳后按 G1.5 激活条件预注册格力行业经验工厂；G1.5 通过后才进入 G2，不得提前写统一模板；
+9. 四个外部项目只保留为第 13 节的未来路由；G1 Agent 不安装、不集成，也不以其报告替代候选修复。
 
 ## 16. 决策记录
 
