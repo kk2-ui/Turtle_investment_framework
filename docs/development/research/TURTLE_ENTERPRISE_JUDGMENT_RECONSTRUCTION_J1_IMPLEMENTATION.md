@@ -34,7 +34,8 @@ J1 只接受同一 `DecisionContract` 的公司、issuer、cutoff、source packe
 `validate_frozen_reconstruction_binding` 要求调用方对象与 registry 中的冻结对象逐项
 相同。这样不能通过同步修改 receipt、source package、spec 与 read model 来让一组
 新造对象互相自证。registry 只保存 cutoff 前研究对象，不读取 outcome，也不授予任何
-下游权限。
+下游权限。J3/J4 生产入口只接受 J1 identity，并从固定 canonical
+`stock_analysis.db` 只读解析；调用方不能把临时 SQLite connection 当成新真源。
 
 ## 2. PIT 与责任边界
 

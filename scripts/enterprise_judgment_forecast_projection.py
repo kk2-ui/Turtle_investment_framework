@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
 """J3 request projection from compiled J2 threads into forecast semantics.
 
-The adapter is deliberately pure and offline.  It selects explicitly eligible
-thread cells, preserves their J0/source/measurement identities, and emits
-requests for the existing forecast lane to answer later.  It does not produce
-probabilities, intervals, scores, settlements, causal claims, or downstream
-authority.
+The public entry resolves Frozen J1 from the canonical local control database;
+the projection compiler is deterministic and write-free.  It selects explicitly
+eligible thread cells, preserves their J0/source/measurement identities, and
+emits requests for the existing forecast lane to answer later.  It does not
+produce probabilities, intervals, scores, settlements, causal claims, or
+downstream authority.
 """
 
 from __future__ import annotations
@@ -17,10 +18,12 @@ from typing import Any
 try:
     from scripts import enterprise_judgment_episode as episode
     from scripts import enterprise_judgment_mechanism as mechanism
+    from scripts import enterprise_judgment_reconstruction as reconstruction
     from scripts import judgment_pit_forecast as pit
 except ModuleNotFoundError:  # pragma: no cover - direct script import
     import enterprise_judgment_episode as episode
     import enterprise_judgment_mechanism as mechanism
+    import enterprise_judgment_reconstruction as reconstruction
     import judgment_pit_forecast as pit
 
 
@@ -740,7 +743,7 @@ def _prepare(
 
     if reconstruction_registry is None:
         _add(findings, "projection_source.frozen_reconstruction_registry_required")
-    j2_result = mechanism.compile_mechanism_thread_projection(
+    j2_result = mechanism._compile_mechanism_thread_projection_with_registry(
         mechanism_thread_set,
         episode_manifest=episode_manifest,
         reconstruction_read_model=reconstruction_read_model,
@@ -842,14 +845,14 @@ def _prepare(
     }
 
 
-def validate_forecast_projection_source(
+def _validate_forecast_projection_source_with_registry(
     episode_manifest: Any,
     projection_source: Any,
     *,
     mechanism_thread_set: Any,
     reconstruction_read_model: Any,
     reconstruction_inputs: Any,
-    reconstruction_registry: Any | None = None,
+    reconstruction_registry: Any,
 ) -> dict[str, Any]:
     """Validate root lineage while retaining cell-local routing failures."""
     prepared = _prepare(
@@ -868,14 +871,14 @@ def validate_forecast_projection_source(
     }
 
 
-def compile_forecast_projection(
+def _compile_forecast_projection_with_registry(
     episode_manifest: Any,
     projection_source: Any,
     *,
     mechanism_thread_set: Any,
     reconstruction_read_model: Any,
     reconstruction_inputs: Any,
-    reconstruction_registry: Any | None = None,
+    reconstruction_registry: Any,
 ) -> dict[str, Any]:
     """Compile request-only J3 output without running or freezing a forecast."""
     prepared = _prepare(
@@ -917,3 +920,66 @@ def compile_forecast_projection(
         "findings": [],
         "forecast_projection": projection,
     }
+
+
+def validate_forecast_projection_source(
+    episode_manifest: Any,
+    projection_source: Any,
+    *,
+    mechanism_thread_set: Any,
+    reconstruction_ref: Any,
+) -> dict[str, Any]:
+    """Validate J3 after resolving J1 from the canonical control registry."""
+    try:
+        registry, frozen = reconstruction.resolve_canonical_frozen_reconstruction(
+            reconstruction_ref
+        )
+    except reconstruction.FrozenReconstructionRegistryError as exc:
+        return {
+            "valid": False,
+            "findings": ["reconstruction_registry:" + exc.code],
+            "projection_source": None,
+            "cell_rejections": [],
+        }
+    try:
+        return _validate_forecast_projection_source_with_registry(
+            episode_manifest,
+            projection_source,
+            mechanism_thread_set=mechanism_thread_set,
+            reconstruction_read_model=frozen["reconstruction"],
+            reconstruction_inputs=frozen["reconstruction_inputs"],
+            reconstruction_registry=registry,
+        )
+    finally:
+        registry.close()
+
+
+def compile_forecast_projection(
+    episode_manifest: Any,
+    projection_source: Any,
+    *,
+    mechanism_thread_set: Any,
+    reconstruction_ref: Any,
+) -> dict[str, Any]:
+    """Compile J3 using only a Frozen J1 identity at the public boundary."""
+    try:
+        registry, frozen = reconstruction.resolve_canonical_frozen_reconstruction(
+            reconstruction_ref
+        )
+    except reconstruction.FrozenReconstructionRegistryError as exc:
+        return {
+            "valid": False,
+            "findings": ["reconstruction_registry:" + exc.code],
+            "forecast_projection": None,
+        }
+    try:
+        return _compile_forecast_projection_with_registry(
+            episode_manifest,
+            projection_source,
+            mechanism_thread_set=mechanism_thread_set,
+            reconstruction_read_model=frozen["reconstruction"],
+            reconstruction_inputs=frozen["reconstruction_inputs"],
+            reconstruction_registry=registry,
+        )
+    finally:
+        registry.close()

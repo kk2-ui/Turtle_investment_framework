@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from copy import deepcopy
 from datetime import datetime, timedelta, timezone
+import inspect
 import json
 from pathlib import Path
 import sqlite3
@@ -180,7 +181,7 @@ def test_j3_projects_probability_interval_and_abstain_requests_without_running_f
     before_reconstruction = deepcopy(reconstruction_read_model)
     before_thread_set = deepcopy(thread_set)
 
-    result = projection.compile_forecast_projection(
+    result = projection._compile_forecast_projection_with_registry(
         manifest,
         source,
         mechanism_thread_set=thread_set,
@@ -234,7 +235,7 @@ def test_j3_selects_only_explicitly_eligible_threads_and_cells() -> None:
     thread_set["threads"][0]["source_refs"][0]["source_ref"] = "SRC:UNKNOWN"
     source["threads"][1]["cells"][0]["forecast_eligible"] = False
 
-    result = projection.compile_forecast_projection(
+    result = projection._compile_forecast_projection_with_registry(
         manifest,
         source,
         mechanism_thread_set=thread_set,
@@ -258,7 +259,7 @@ def test_j3_binary_probability_request_preserves_the_frozen_event_statement() ->
     cell["request_kind"] = "BINARY_PROBABILITY"
     cell["event_statement"] = "Normal earnings remain positive at the frozen one-year measurement date."
 
-    result = projection.compile_forecast_projection(
+    result = projection._compile_forecast_projection_with_registry(
         manifest,
         source,
         mechanism_thread_set=thread_set,
@@ -281,7 +282,7 @@ def test_j3_empty_eligible_set_is_explicit_and_preserves_e0_e1() -> None:
     source = _source(manifest, reconstruction_read_model, thread_set)
     source["threads"] = []
 
-    result = projection.compile_forecast_projection(
+    result = projection._compile_forecast_projection_with_registry(
         manifest,
         source,
         mechanism_thread_set=thread_set,
@@ -310,7 +311,7 @@ def test_j3_cell_identity_and_measurement_mismatches_remain_local() -> None:
     source["threads"][0]["cells"].append(missing)
     source["threads"][1]["cells"].append(mismatched)
 
-    result = projection.compile_forecast_projection(
+    result = projection._compile_forecast_projection_with_registry(
         manifest,
         source,
         mechanism_thread_set=thread_set,
@@ -339,7 +340,7 @@ def test_j3_rejects_post_cutoff_evidence_locally_without_dropping_siblings() -> 
     evidence["published_at"] = cutoff.date().isoformat()
     evidence["available_at"] = (cutoff + timedelta(seconds=1)).isoformat()
 
-    result = projection.compile_forecast_projection(
+    result = projection._compile_forecast_projection_with_registry(
         manifest,
         source,
         mechanism_thread_set=thread_set,
@@ -365,7 +366,7 @@ def test_j3_allows_publication_date_before_the_exact_cutoff_safe_availability_in
     available = datetime.fromisoformat(evidence["available_at"].replace("Z", "+00:00"))
     evidence["published_at"] = (available - timedelta(days=2)).date().isoformat()
 
-    result = projection.compile_forecast_projection(
+    result = projection._compile_forecast_projection_with_registry(
         manifest,
         source,
         mechanism_thread_set=thread_set,
@@ -386,7 +387,7 @@ def test_j3_rejects_forged_eligibility_source_and_economic_dimension_locally() -
     cash_cell["evidence_refs"][0]["source_id"] = "SOURCE:NOT-IN-J2"
     cash_cell["forecast_dimension_id"] = "PERMANENT_LOSS_RISK"
 
-    result = projection.compile_forecast_projection(
+    result = projection._compile_forecast_projection_with_registry(
         manifest,
         source,
         mechanism_thread_set=thread_set,
@@ -414,7 +415,7 @@ def test_j3_rejects_price_return_payload_and_episode_identity_replacement() -> N
     contaminated = _source(manifest, reconstruction_read_model, thread_set)
     contaminated["threads"][0]["cells"][0]["price"] = 12.5
 
-    result = projection.compile_forecast_projection(
+    result = projection._compile_forecast_projection_with_registry(
         manifest,
         contaminated,
         mechanism_thread_set=thread_set,
@@ -429,7 +430,7 @@ def test_j3_rejects_price_return_payload_and_episode_identity_replacement() -> N
 
     wrong_company = _source(manifest, reconstruction_read_model, thread_set)
     wrong_company["episode_ref"]["company_id"] = "CN:OTHER"
-    result = projection.compile_forecast_projection(
+    result = projection._compile_forecast_projection_with_registry(
         manifest,
         wrong_company,
         mechanism_thread_set=thread_set,
@@ -449,7 +450,7 @@ def test_j3_rejects_invented_source_packet_lineage() -> None:
         "receipt_version": 1,
     }]
 
-    result = projection.compile_forecast_projection(
+    result = projection._compile_forecast_projection_with_registry(
         manifest,
         source,
         mechanism_thread_set=thread_set,
@@ -480,7 +481,7 @@ def test_j3_rejects_a_synchronously_forged_j1_reconstruction(forgery: str) -> No
         forged_thread_set["threads"][0]["source_refs"][0]["source_ref"] = "SRC:INVENTED"
         source["threads"][0]["cells"][0]["evidence_refs"][0]["source_id"] = "SRC:INVENTED"
 
-    result = projection.compile_forecast_projection(
+    result = projection._compile_forecast_projection_with_registry(
         manifest,
         source,
         mechanism_thread_set=forged_thread_set,
@@ -522,7 +523,7 @@ def test_j3_rejects_a_fully_recompiled_replacement_of_registered_j1() -> None:
     assert compiled["valid"], compiled["findings"]
     source["source_packet_refs"] = [deepcopy(forged_ref)]
 
-    result = projection.compile_forecast_projection(
+    result = projection._compile_forecast_projection_with_registry(
         manifest,
         source,
         mechanism_thread_set=thread_set,
@@ -537,21 +538,65 @@ def test_j3_rejects_a_fully_recompiled_replacement_of_registered_j1() -> None:
     assert "j2:reconstruction_registry:reconstruction_inputs_must_match_frozen_registry_object" in result["findings"]
 
 
-def test_j3_requires_a_frozen_j1_registry_for_projection() -> None:
+def test_j3_public_api_resolves_only_a_frozen_j1_identity() -> None:
+    assert tuple(inspect.signature(projection.compile_forecast_projection).parameters) == (
+        "episode_manifest",
+        "projection_source",
+        "mechanism_thread_set",
+        "reconstruction_ref",
+    )
+
+
+def test_j3_requires_the_canonical_frozen_j1_registry_for_projection(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch,
+) -> None:
     manifest, reconstruction_read_model, reconstruction_inputs, thread_set, _ = _context()
     source = _source(manifest, reconstruction_read_model, thread_set)
+    monkeypatch.setattr(
+        reconstruction,
+        "CANONICAL_REGISTRY_PATH",
+        tmp_path / "missing-canonical.db",
+    )
 
     result = projection.compile_forecast_projection(
         manifest,
         source,
         mechanism_thread_set=thread_set,
-        reconstruction_read_model=reconstruction_read_model,
-        reconstruction_inputs=reconstruction_inputs,
+        reconstruction_ref=thread_set["reconstruction_ref"],
     )
 
     assert not result["valid"]
     assert result["forecast_projection"] is None
-    assert "projection_source.frozen_reconstruction_registry_required" in result["findings"]
+    assert result["findings"] == [
+        "reconstruction_registry:canonical_frozen_reconstruction_registry_unavailable"
+    ]
+
+
+def test_j3_public_api_reads_the_preexisting_canonical_registry(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    manifest, reconstruction_read_model, reconstruction_inputs, thread_set, _ = _context()
+    source = _source(manifest, reconstruction_read_model, thread_set)
+    registry_path = tmp_path / "canonical.db"
+    registry = sqlite3.connect(registry_path)
+    reconstruction.register_frozen_reconstruction(
+        registry,
+        reconstruction_read_model,
+        reconstruction_inputs,
+        frozen_at=datetime.now(timezone.utc).isoformat(),
+    )
+    registry.close()
+    monkeypatch.setattr(reconstruction, "CANONICAL_REGISTRY_PATH", registry_path)
+
+    result = projection.compile_forecast_projection(
+        manifest,
+        source,
+        mechanism_thread_set=thread_set,
+        reconstruction_ref=thread_set["reconstruction_ref"],
+    )
+
+    assert result["valid"], result["findings"]
+    assert result["forecast_projection"]["projection_state"] == "FORECAST_REQUESTS_READY"
 
 
 def test_j3_schema_is_closed_and_formalizes_the_minimal_serialized_source_protocol() -> None:

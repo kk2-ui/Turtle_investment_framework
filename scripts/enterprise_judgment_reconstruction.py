@@ -13,6 +13,7 @@ from __future__ import annotations
 from copy import deepcopy
 from datetime import datetime, timezone
 import json
+from pathlib import Path
 import sqlite3
 from typing import Any
 
@@ -26,6 +27,14 @@ SCHEMA_VERSION = "enterprise-judgment-reconstruction.v1"
 SPEC_SCHEMA_VERSION = "enterprise-judgment-reconstruction-spec.v1"
 ALLOWED_OUTPUTS = ["RECONSTRUCTION_READ_MODEL", "CJO_TRAINING_MIRROR", "RESEARCH_AGENDA"]
 REGISTRY_TABLE = "enterprise_judgment_frozen_reconstructions"
+CANONICAL_REGISTRY_PATH = Path(__file__).resolve().parents[1] / "stock_analysis.db"
+
+
+class FrozenReconstructionRegistryError(ValueError):
+    def __init__(self, code: str, detail: str) -> None:
+        super().__init__(detail)
+        self.code = code
+        self.detail = detail
 
 LOOP_DOMAINS = {"CUSTOMER", "COMPETITION", "OPERATIONS", "CASH", "CAPITAL_ALLOCATION", "PERMANENT_LOSS"}
 FIELD_STATES = {"OBSERVED", "INFERRED", "UNKNOWN", "EVIDENCE_INELIGIBLE", "NOT_APPLICABLE"}
@@ -915,3 +924,57 @@ def validate_frozen_reconstruction_binding(
     if _mapping(reconstruction_inputs) != _mapping(payload).get("reconstruction_inputs"):
         _add(findings, "reconstruction_inputs_must_match_frozen_registry_object")
     return {"valid": not findings, "findings": findings}
+
+
+def load_frozen_reconstruction(
+    conn: sqlite3.Connection,
+    reconstruction_ref: Any,
+) -> dict[str, Any]:
+    """Load one previously frozen J1 bundle by its formal object identity."""
+    reference = _mapping(reconstruction_ref)
+    if set(reference) != {"reconstruction_id", "schema_version"}:
+        raise FrozenReconstructionRegistryError(
+            "frozen_reconstruction_ref_invalid",
+            "Frozen J1 reference requires reconstruction_id and schema_version only",
+        )
+    try:
+        row = conn.execute(
+            f"""SELECT payload_json, frozen_at FROM {REGISTRY_TABLE}
+                WHERE reconstruction_id = ? AND schema_version = ?""",
+            (reference.get("reconstruction_id"), reference.get("schema_version")),
+        ).fetchone()
+    except sqlite3.OperationalError as exc:
+        raise FrozenReconstructionRegistryError(
+            "frozen_reconstruction_registry_not_initialized",
+            "The canonical Frozen J1 registry is not initialized",
+        ) from exc
+    if row is None:
+        raise FrozenReconstructionRegistryError(
+            "frozen_reconstruction_not_registered",
+            "The requested Frozen J1 identity is not registered",
+        )
+    payload = json.loads(row[0])
+    return {
+        "reconstruction": deepcopy(_mapping(payload).get("reconstruction")),
+        "reconstruction_inputs": deepcopy(_mapping(payload).get("reconstruction_inputs")),
+        "frozen_at": row[1],
+    }
+
+
+def resolve_canonical_frozen_reconstruction(
+    reconstruction_ref: Any,
+) -> tuple[sqlite3.Connection, dict[str, Any]]:
+    """Resolve Frozen J1 from the control-plane-owned production registry."""
+    path = CANONICAL_REGISTRY_PATH.resolve()
+    try:
+        conn = sqlite3.connect(f"file:{path}?mode=ro", uri=True)
+    except sqlite3.OperationalError as exc:
+        raise FrozenReconstructionRegistryError(
+            "canonical_frozen_reconstruction_registry_unavailable",
+            "The canonical Frozen J1 registry is unavailable",
+        ) from exc
+    try:
+        return conn, load_frozen_reconstruction(conn, reconstruction_ref)
+    except Exception:
+        conn.close()
+        raise

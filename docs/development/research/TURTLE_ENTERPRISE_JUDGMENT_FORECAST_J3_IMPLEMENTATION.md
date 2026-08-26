@@ -1,12 +1,14 @@
 # Turtle EnterpriseJudgmentEpisode J3 Forecast Projection
 
-> Status: `IMPLEMENTED / PURE_OFFLINE_REQUEST_ADAPTER`
+> Status: `IMPLEMENTED / READ_ONLY_CANONICAL_J1_RESOLVER / REQUEST_ONLY`
 >
 > Scope: `RESOLVED J2 THREAD VIEWS -> CELL-LEVEL FORECAST REQUESTS`
 
 ## Purpose
 
-J3 projects explicitly forecast-eligible mechanism-thread cells into requests
+J3's public resolver reads one pre-existing Frozen J1 bundle from the canonical
+local control database, then its deterministic compiler projects explicitly
+forecast-eligible mechanism-thread cells into requests
 that the existing PIT company-state forecast lane may answer later. It is not
 a second forecast engine: it does not generate probabilities or intervals,
 freeze a forecast, acquire outcomes, score a settlement, or persist policy.
@@ -26,22 +28,19 @@ compile_forecast_projection(
     episode_manifest,
     projection_source,
     mechanism_thread_set=serialized_j2_thread_set,
-    reconstruction_read_model=j1_reconstruction,
-    reconstruction_inputs=j1_compilation_inputs,
-    reconstruction_registry=frozen_j1_registry,
+    reconstruction_ref=frozen_j1_identity,
 )
 validate_forecast_projection_source(
     episode_manifest,
     projection_source,
     mechanism_thread_set=serialized_j2_thread_set,
-    reconstruction_read_model=j1_reconstruction,
-    reconstruction_inputs=j1_compilation_inputs,
-    reconstruction_registry=frozen_j1_registry,
+    reconstruction_ref=frozen_j1_identity,
 )
 ```
 
-The public adapter accepts the frozen J2 thread set, bound J1 reconstruction,
-its complete compilation inputs and the append-only Frozen J1 registry, then internally calls
+The public adapter accepts the frozen J2 thread set and only a Frozen J1 object
+identity. It resolves the bound reconstruction and complete compilation inputs
+from the control-plane-owned canonical registry, then internally calls
 `compile_mechanism_thread_projection`. It consumes only that compiler's read
 model: thread-set/company/issuer/cutoff identity, claim type and IDs,
 outcome-cell refs, resolved source refs, local status, evidence ceiling,
@@ -49,7 +48,9 @@ resolution, eligibility and unperformed/unauthorized state. A caller-supplied
 or hand-built J2 read model is not accepted, and J2 must exactly recompile J1
 and match the previously registered reconstruction/input bundle. Therefore a
 relative-causal/blocked thread or synchronized forged source cannot be
-activated by flipping or copying routing fields.
+activated by flipping or copying routing fields. The production API does not
+accept a SQLite connection; the injectable registry helper is private and used
+only by isolated tests.
 
 The separate closed projection source serializes this minimal request
 protocol:

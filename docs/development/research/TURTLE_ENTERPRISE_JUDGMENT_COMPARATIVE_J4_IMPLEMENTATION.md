@@ -1,6 +1,6 @@
 # Turtle Enterprise Judgment Comparative J4 Implementation
 
-> Status: `IMPLEMENTED / PURE_OFFLINE_PROJECTION / SYNTHETIC_REGRESSION_VERIFIED`
+> Status: `IMPLEMENTED / READ_ONLY_CANONICAL_J1_RESOLVER / SYNTHETIC_REGRESSION_VERIFIED`
 >
 > Date: 2026-08-26
 >
@@ -11,11 +11,13 @@
 J4 is the narrow bridge from one EnterpriseJudgmentEpisode mechanism thread to
 the existing V5 Comparative admission contract. It is not a second Comparative
 engine and does not create a candidate from episode prose, industry references,
-or partial evidence.
+or partial evidence. Its public resolver reads Frozen J1 from the canonical
+local control database; the projection compiler itself remains deterministic
+and write-free.
 
 The public J4 entry point requires:
 
-1. the J0 episode manifest, bound J1 reconstruction, complete J1 compilation inputs and Frozen J1 registry;
+1. the J0 episode manifest and one Frozen J1 identity resolved by the canonical control registry;
 2. the complete serialized J2 thread set and selected `thread_id`;
 3. six thread-local target-trial bindings; and
 4. one complete, unchanged `judgment-selection-admission-v5.v1` bundle.
@@ -36,8 +38,10 @@ economic admission authority.
 The standalone request protocol is an internal normalization shape. It is not
 a public route around J2. J4 does not modify the J0/J2 manifest.
 
-`compile_serialized_j2_thread_projection` accepts no caller-supplied J2 read
-model. It internally compiles the J0/J1/J2 sources, then requires exactly one
+`compile_serialized_j2_thread_projection` accepts no caller-supplied J1
+payload, registry connection or J2 read model. It resolves J1 by formal object
+identity from the control-plane-owned registry, internally compiles the
+J0/J1/J2 sources, then requires exactly one
 `RESOLVED`/J4-eligible view and consumes its role, claim type/IDs, H-A/H-B,
 responsibility boundary, outcome cells, source refs, local status, evidence
 ceiling, E3 request and frozen Comparative contract. This prevents a hand-built J2-shaped object, failed
@@ -45,7 +49,8 @@ thread, cross-thread-set splice or post-J2 identity change from entering V5.
 A synchronized forged J1 object also fails because J2 first replays its bound
 SourcePacketReceipt, source package, model, ledger, spec and DecisionContract,
 then compares the entire reconstruction/input bundle with the previously
-registered Frozen J1 object.
+registered Frozen J1 object. The registry-injectable compiler is private and
+exists only for isolated regression tests.
 A normal J2 thread therefore maps to
 `NOT_REQUESTED`; only `claim_type=RELATIVE_CAUSAL` together with
 `e3_comparative_requested=true` maps to the E3 request. Its responsibility unit

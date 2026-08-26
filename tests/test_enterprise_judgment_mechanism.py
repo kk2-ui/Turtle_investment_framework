@@ -2,8 +2,12 @@ from __future__ import annotations
 
 from copy import deepcopy
 from datetime import datetime, timedelta, timezone
+import inspect
 import json
 from pathlib import Path
+import sqlite3
+
+import pytest
 
 from scripts import enterprise_judgment_mechanism as mechanism
 from scripts import enterprise_judgment_reconstruction as reconstruction
@@ -192,7 +196,7 @@ def test_j2_projects_independent_thread_permissions_and_allows_e1_without_action
     before_manifest = deepcopy(manifest)
     before_reconstruction = deepcopy(reconstruction_read_model)
 
-    result = mechanism.compile_mechanism_thread_projection(
+    result = mechanism._compile_mechanism_thread_projection_with_registry(
         thread_set,
         episode_manifest=manifest,
         reconstruction_read_model=reconstruction_read_model,
@@ -223,7 +227,7 @@ def test_j2_localizes_unknown_source_binding_to_dependent_claim() -> None:
     thread_set = _thread_set(source_by_ref, manifest, reconstruction_read_model)
     thread_set["threads"][1]["source_refs"][0]["source_ref"] = "SRC:UNKNOWN"
 
-    result = mechanism.compile_mechanism_thread_projection(
+    result = mechanism._compile_mechanism_thread_projection_with_registry(
         thread_set,
         episode_manifest=manifest,
         reconstruction_read_model=reconstruction_read_model,
@@ -258,7 +262,7 @@ def test_j2_missing_episode_thread_detail_blocks_only_that_threads_claim() -> No
     manifest["mechanism_threads"].append(_episode_thread(extra_claim["claim_id"], "SUPPORTING"))
     thread_set = _thread_set(source_by_ref, manifest, reconstruction_read_model)
 
-    result = mechanism.compile_mechanism_thread_projection(
+    result = mechanism._compile_mechanism_thread_projection_with_registry(
         thread_set,
         episode_manifest=manifest,
         reconstruction_read_model=reconstruction_read_model,
@@ -305,7 +309,7 @@ def test_j2_marks_explicit_e3_request_without_running_comparative_or_forecast() 
         },
     }
 
-    result = mechanism.compile_mechanism_thread_projection(
+    result = mechanism._compile_mechanism_thread_projection_with_registry(
         thread_set,
         episode_manifest=manifest,
         reconstruction_read_model=reconstruction_read_model,
@@ -327,7 +331,7 @@ def test_j2_keeps_a_missing_comparative_bridge_local_to_j4() -> None:
     thread_set["threads"][0]["claim_type"] = "RELATIVE_CAUSAL"
     thread_set["threads"][0]["e3_comparative_requested"] = True
 
-    result = mechanism.compile_mechanism_thread_projection(
+    result = mechanism._compile_mechanism_thread_projection_with_registry(
         thread_set,
         episode_manifest=manifest,
         reconstruction_read_model=reconstruction_read_model,
@@ -350,7 +354,7 @@ def test_j2_rejects_price_return_post_cutoff_leakage_and_universal_quality_upgra
 
     price_leak = deepcopy(thread_set)
     price_leak["threads"][0]["hypotheses"][0]["statement"] = "The later stock return proves H-A."
-    result = mechanism.validate_mechanism_thread_set(
+    result = mechanism._validate_mechanism_thread_set_with_registry(
         price_leak, episode_manifest=manifest, reconstruction_read_model=reconstruction_read_model,
         reconstruction_inputs=reconstruction_inputs,
     )
@@ -361,7 +365,7 @@ def test_j2_rejects_price_return_post_cutoff_leakage_and_universal_quality_upgra
     operating_return["threads"][0]["hypotheses"][0]["statement"] = (
         "Capital investment return improves only if utilization and unit economics improve."
     )
-    result = mechanism.validate_mechanism_thread_set(
+    result = mechanism._validate_mechanism_thread_set_with_registry(
         operating_return, episode_manifest=manifest, reconstruction_read_model=reconstruction_read_model,
         reconstruction_inputs=reconstruction_inputs,
     )
@@ -370,7 +374,7 @@ def test_j2_rejects_price_return_post_cutoff_leakage_and_universal_quality_upgra
     post_cutoff = deepcopy(thread_set)
     cutoff = datetime.fromisoformat(manifest["cutoff_at"].replace("Z", "+00:00")).astimezone(timezone.utc)
     post_cutoff["threads"][1]["source_refs"][0]["available_at"] = (cutoff + timedelta(days=1)).isoformat()
-    result = mechanism.validate_mechanism_thread_set(
+    result = mechanism._validate_mechanism_thread_set_with_registry(
         post_cutoff, episode_manifest=manifest, reconstruction_read_model=reconstruction_read_model,
         reconstruction_inputs=reconstruction_inputs,
     )
@@ -379,7 +383,7 @@ def test_j2_rejects_price_return_post_cutoff_leakage_and_universal_quality_upgra
 
     universal = deepcopy(thread_set)
     universal["threads"][2]["hypotheses"][0]["statement"] = "This proves the issuer is an overall high-quality company."
-    result = mechanism.validate_mechanism_thread_set(
+    result = mechanism._validate_mechanism_thread_set_with_registry(
         universal, episode_manifest=manifest, reconstruction_read_model=reconstruction_read_model,
         reconstruction_inputs=reconstruction_inputs,
     )
@@ -395,7 +399,7 @@ def test_j2_rejects_unpaired_hypotheses_permissions_and_implicit_comparative_req
     malformed["threads"][0]["hypotheses"][1]["role"] = "H_A"
     malformed["threads"][1]["permitted_outputs"] = ["MECHANISM_CANDIDATE", "RESEARCH_AGENDA"]
     malformed["threads"][2]["e3_comparative_requested"] = True
-    result = mechanism.validate_mechanism_thread_set(
+    result = mechanism._validate_mechanism_thread_set_with_registry(
         malformed, episode_manifest=manifest, reconstruction_read_model=reconstruction_read_model,
         reconstruction_inputs=reconstruction_inputs,
     )
@@ -418,3 +422,57 @@ def test_j2_schema_is_closed_and_carries_no_forecast_or_comparative_output() -> 
     ]["maxItems"] == 1
     assert "FORECAST" not in mechanism.ALLOWED_OUTPUTS
     assert "COMPARATIVE" not in mechanism.ALLOWED_OUTPUTS
+
+
+def test_j2_public_api_accepts_only_a_frozen_j1_identity() -> None:
+    assert tuple(inspect.signature(mechanism.compile_mechanism_thread_projection).parameters) == (
+        "thread_set",
+        "episode_manifest",
+        "reconstruction_ref",
+    )
+
+
+def test_j2_public_api_reads_the_preexisting_canonical_registry(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    source_by_ref, manifest, reconstruction_read_model, _, reconstruction_inputs = _bound_inputs()
+    thread_set = _thread_set(source_by_ref, manifest, reconstruction_read_model)
+    registry_path = tmp_path / "canonical.db"
+    registry = sqlite3.connect(registry_path)
+    reconstruction.register_frozen_reconstruction(
+        registry,
+        reconstruction_read_model,
+        reconstruction_inputs,
+        frozen_at=datetime.now(timezone.utc).isoformat(),
+    )
+    registry.close()
+    monkeypatch.setattr(reconstruction, "CANONICAL_REGISTRY_PATH", registry_path)
+
+    result = mechanism.compile_mechanism_thread_projection(
+        thread_set,
+        episode_manifest=manifest,
+        reconstruction_ref=thread_set["reconstruction_ref"],
+    )
+
+    assert result["valid"], result["findings"]
+    assert result["mechanism_thread_read_model"]["thread_set_id"] == thread_set["thread_set_id"]
+
+
+def test_j2_public_api_rejects_when_the_canonical_registry_is_unavailable(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    source_by_ref, manifest, reconstruction_read_model, _, _ = _bound_inputs()
+    thread_set = _thread_set(source_by_ref, manifest, reconstruction_read_model)
+    monkeypatch.setattr(reconstruction, "CANONICAL_REGISTRY_PATH", tmp_path / "missing.db")
+
+    result = mechanism.compile_mechanism_thread_projection(
+        thread_set,
+        episode_manifest=manifest,
+        reconstruction_ref=thread_set["reconstruction_ref"],
+    )
+
+    assert not result["valid"]
+    assert result["mechanism_thread_read_model"] is None
+    assert result["findings"] == [
+        "reconstruction_registry:canonical_frozen_reconstruction_registry_unavailable"
+    ]

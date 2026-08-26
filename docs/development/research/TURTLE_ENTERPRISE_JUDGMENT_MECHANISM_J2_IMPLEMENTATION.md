@@ -20,21 +20,17 @@ J2 将 J0 已冻结的机制线程骨架补成可执行的局部研究合同，�
 validate_mechanism_thread_set(
     thread_set,
     episode_manifest=j0_manifest,
-    reconstruction_read_model=j1_reconstruction,
-    reconstruction_inputs=j1_compilation_inputs,
-    reconstruction_registry=frozen_j1_registry,
+    reconstruction_ref=frozen_j1_identity,
 )
 
 compile_mechanism_thread_projection(
     thread_set,
     episode_manifest=j0_manifest,
-    reconstruction_read_model=j1_reconstruction,
-    reconstruction_inputs=j1_compilation_inputs,
-    reconstruction_registry=frozen_j1_registry,
+    reconstruction_ref=frozen_j1_identity,
 )
 ```
 
-`reconstruction_inputs` 闭合保存 J1 spec、SourcePacketReceipt、SourcePackage、EnterpriseSystemModel、DecisionLedger 与 DecisionContract。J2 调用 J1 的 `validate_compiled_reconstruction` 重新编译并逐对象比较；提供 registry 时还要求 reconstruction 与 inputs 等于已登记的 Frozen J1 bundle。J3/J4 公共入口强制提供该 registry，因此不能让一份同步篡改 receipt/source 的 J1 read model 自证来源。两者均为 pure/offline API，不读网络、结果包、Forecast 或 Comparative，也不修改 J0/J1 输入；registry 仅作调用方提供的只读 trust root。
+`reconstruction_inputs` 闭合保存 J1 spec、SourcePacketReceipt、SourcePackage、EnterpriseSystemModel、DecisionLedger 与 DecisionContract。J2 调用 J1 的 `validate_compiled_reconstruction` 重新编译并逐对象比较；提供 registry 时还要求 reconstruction 与 inputs 等于已登记的 Frozen J1 bundle。J3/J4 生产公共入口不接受 registry connection，只接受 Frozen J1 identity，并由固定控制层从 canonical registry 回读完整对象后调用 J2；因此调用者不能换一张临时 registry 让同步篡改的 receipt/source 自证来源。私有注入入口仅用于隔离测试。两者均不读网络、结果包、Forecast 或 Comparative，也不修改 J0/J1 输入。
 
 ## 2. 闭合线程合同
 

@@ -425,7 +425,7 @@ def _validate_reconstruction_shape(value: Any, findings: list[str]) -> dict[str,
     return item
 
 
-def validate_mechanism_thread_set(
+def _validate_mechanism_thread_set_with_registry(
     thread_set: Any,
     *,
     episode_manifest: Any,
@@ -731,7 +731,7 @@ def _local_binding_reasons(
     return list(dict.fromkeys(reasons))
 
 
-def compile_mechanism_thread_projection(
+def _compile_mechanism_thread_projection_with_registry(
     thread_set: Any,
     *,
     episode_manifest: Any,
@@ -740,7 +740,7 @@ def compile_mechanism_thread_projection(
     reconstruction_registry: Any | None = None,
 ) -> dict[str, Any]:
     """Resolve J2 locally and derive thread/claim permissions without promotion."""
-    validation = validate_mechanism_thread_set(
+    validation = _validate_mechanism_thread_set_with_registry(
         thread_set,
         episode_manifest=episode_manifest,
         reconstruction_read_model=reconstruction_read_model,
@@ -922,3 +922,61 @@ def compile_mechanism_thread_projection(
             "investment_authorization": "NOT_AUTHORIZED",
         },
     }
+
+
+def validate_mechanism_thread_set(
+    thread_set: Any,
+    *,
+    episode_manifest: Any,
+    reconstruction_ref: Any,
+) -> dict[str, Any]:
+    """Validate J2 after resolving J1 from the canonical control registry."""
+    try:
+        registry, frozen = reconstruction.resolve_canonical_frozen_reconstruction(
+            reconstruction_ref
+        )
+    except reconstruction.FrozenReconstructionRegistryError as exc:
+        return {
+            "valid": False,
+            "findings": ["reconstruction_registry:" + exc.code],
+            "mechanism_thread_set": None,
+        }
+    try:
+        return _validate_mechanism_thread_set_with_registry(
+            thread_set,
+            episode_manifest=episode_manifest,
+            reconstruction_read_model=frozen["reconstruction"],
+            reconstruction_inputs=frozen["reconstruction_inputs"],
+            reconstruction_registry=registry,
+        )
+    finally:
+        registry.close()
+
+
+def compile_mechanism_thread_projection(
+    thread_set: Any,
+    *,
+    episode_manifest: Any,
+    reconstruction_ref: Any,
+) -> dict[str, Any]:
+    """Compile J2 using only a Frozen J1 identity at the public boundary."""
+    try:
+        registry, frozen = reconstruction.resolve_canonical_frozen_reconstruction(
+            reconstruction_ref
+        )
+    except reconstruction.FrozenReconstructionRegistryError as exc:
+        return {
+            "valid": False,
+            "findings": ["reconstruction_registry:" + exc.code],
+            "mechanism_thread_read_model": None,
+        }
+    try:
+        return _compile_mechanism_thread_projection_with_registry(
+            thread_set,
+            episode_manifest=episode_manifest,
+            reconstruction_read_model=frozen["reconstruction"],
+            reconstruction_inputs=frozen["reconstruction_inputs"],
+            reconstruction_registry=registry,
+        )
+    finally:
+        registry.close()

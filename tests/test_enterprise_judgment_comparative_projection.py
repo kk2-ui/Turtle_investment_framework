@@ -289,7 +289,7 @@ def _public_context(request: dict) -> tuple[dict, dict, dict, dict, str, sqlite3
 
 def _project_public(request: dict) -> dict:
     manifest, reconstruction_read_model, reconstruction_inputs, thread_set, thread_id, registry = _public_context(request)
-    return j4.compile_serialized_j2_thread_projection(
+    return j4._compile_serialized_j2_thread_projection_with_registry(
         manifest,
         reconstruction_read_model,
         reconstruction_inputs,
@@ -325,16 +325,14 @@ def test_j4_schema_declares_thread_local_candidate_only_authority() -> None:
     )
 
 
-def test_public_j4_api_accepts_j0_j1_j2_sources_without_a_claimed_read_model() -> None:
+def test_public_j4_api_accepts_only_a_frozen_j1_identity() -> None:
     assert tuple(inspect.signature(j4.compile_serialized_j2_thread_projection).parameters) == (
         "episode_manifest",
-        "reconstruction_read_model",
-        "reconstruction_inputs",
+        "reconstruction_ref",
         "mechanism_thread_set",
         "thread_id",
         "target_trial_bindings",
         "v5_candidate",
-        "reconstruction_registry",
     )
 
 
@@ -412,7 +410,7 @@ def test_public_j4_rejects_a_v5_candidate_that_no_longer_answers_the_j2_question
         )
         expected = "j2_v5_bridge.source_lineage_must_match_j1_j2_and_v5"
 
-    result = j4.compile_serialized_j2_thread_projection(
+    result = j4._compile_serialized_j2_thread_projection_with_registry(
         manifest,
         reconstruction_read_model,
         reconstruction_inputs,
@@ -435,7 +433,7 @@ def test_public_j4_rejects_a_caller_supplied_bridge_override() -> None:
         thread_set["threads"][0]["comparative_projection_contract"]
     )
 
-    result = j4.compile_serialized_j2_thread_projection(
+    result = j4._compile_serialized_j2_thread_projection_with_registry(
         manifest,
         reconstruction_read_model,
         reconstruction_inputs,
@@ -454,7 +452,7 @@ def test_public_j4_rejects_a_caller_supplied_bridge_override() -> None:
     )
 
 
-def test_public_j4_rejects_a_fully_recompiled_replacement_of_registered_j1() -> None:
+def test_j4_internal_adapter_rejects_a_fully_recompiled_replacement_of_registered_j1() -> None:
     request = _request()
     manifest, reconstruction_read_model, reconstruction_inputs, thread_set, thread_id, registry = _public_context(request)
     forged_inputs = deepcopy(reconstruction_inputs)
@@ -481,7 +479,7 @@ def test_public_j4_rejects_a_fully_recompiled_replacement_of_registered_j1() -> 
         "j1_source_packet_refs"
     ] = [deepcopy(forged_ref)]
 
-    result = j4.compile_serialized_j2_thread_projection(
+    result = j4._compile_serialized_j2_thread_projection_with_registry(
         manifest,
         compiled["reconstruction"],
         forged_inputs,
@@ -500,14 +498,16 @@ def test_public_j4_rejects_a_fully_recompiled_replacement_of_registered_j1() -> 
     )
 
 
-def test_public_j4_requires_a_frozen_j1_registry() -> None:
+def test_public_j4_requires_the_canonical_frozen_j1_registry(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch,
+) -> None:
     request = _request()
     manifest, reconstruction_read_model, reconstruction_inputs, thread_set, thread_id, _ = _public_context(request)
+    monkeypatch.setattr(j1, "CANONICAL_REGISTRY_PATH", tmp_path / "missing-canonical.db")
 
     result = j4.compile_serialized_j2_thread_projection(
         manifest,
-        reconstruction_read_model,
-        reconstruction_inputs,
+        thread_set["reconstruction_ref"],
         thread_set,
         thread_id,
         request["target_trial_bindings"],
@@ -516,7 +516,38 @@ def test_public_j4_requires_a_frozen_j1_registry() -> None:
 
     assert result["projection_status"] == j4.NOT_ADMITTED
     assert result["comparative_candidate"] is None
-    assert result["findings"] == ["serialized_j2.frozen_reconstruction_registry_required"]
+    assert result["findings"] == [
+        "reconstruction_registry:canonical_frozen_reconstruction_registry_unavailable"
+    ]
+
+
+def test_public_j4_reads_the_preexisting_canonical_registry(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    request = _request()
+    manifest, reconstruction_read_model, reconstruction_inputs, thread_set, thread_id, _ = _public_context(request)
+    registry_path = tmp_path / "canonical.db"
+    registry = sqlite3.connect(registry_path)
+    j1.register_frozen_reconstruction(
+        registry,
+        reconstruction_read_model,
+        reconstruction_inputs,
+        frozen_at=datetime.now(timezone.utc).isoformat(),
+    )
+    registry.close()
+    monkeypatch.setattr(j1, "CANONICAL_REGISTRY_PATH", registry_path)
+
+    result = j4.compile_serialized_j2_thread_projection(
+        manifest,
+        thread_set["reconstruction_ref"],
+        thread_set,
+        thread_id,
+        request["target_trial_bindings"],
+        request["v5_candidate"],
+    )
+
+    assert result["projection_status"] == j4.ADMISSION_CANDIDATE
+    assert result["comparative_candidate"] == request["v5_candidate"]
 
 
 def test_incomplete_handcrafted_j2_cannot_enter_the_public_v5_path() -> None:
@@ -530,7 +561,7 @@ def test_incomplete_handcrafted_j2_cannot_enter_the_public_v5_path() -> None:
         "outcome_access": "NONE",
     }
 
-    result = j4.compile_serialized_j2_thread_projection(
+    result = j4._compile_serialized_j2_thread_projection_with_registry(
         manifest,
         reconstruction_read_model,
         reconstruction_inputs,
@@ -553,7 +584,7 @@ def test_unresolved_complete_j2_thread_cannot_bypass_j2_and_enter_v5() -> None:
     thread_set["threads"][0]["source_refs"][0]["source_ref"] = "SRC:UNKNOWN"
     before = deepcopy((manifest, reconstruction_read_model, thread_set))
 
-    result = j4.compile_serialized_j2_thread_projection(
+    result = j4._compile_serialized_j2_thread_projection_with_registry(
         manifest,
         reconstruction_read_model,
         reconstruction_inputs,
@@ -588,7 +619,7 @@ def test_j4_allows_operating_capital_return_language() -> None:
     request["v5_candidate"]["action_scope"]["h_a"]["mechanism"] = statement
     _refresh_reviewed_selection_contract(request["v5_candidate"])
 
-    result = j4.compile_serialized_j2_thread_projection(
+    result = j4._compile_serialized_j2_thread_projection_with_registry(
         manifest,
         reconstruction_read_model,
         reconstruction_inputs,
@@ -608,7 +639,7 @@ def test_serialized_j2_nonrelative_thread_does_not_activate_j4() -> None:
     thread_set["threads"][0]["claim_type"] = "WITHIN_CASE_MECHANISM"
     thread_set["threads"][0]["e3_comparative_requested"] = False
 
-    result = j4.compile_serialized_j2_thread_projection(
+    result = j4._compile_serialized_j2_thread_projection_with_registry(
         manifest,
         reconstruction_read_model,
         reconstruction_inputs,
@@ -641,7 +672,7 @@ def test_serialized_j2_normalization_does_not_drop_preoutcome_leakage(leak_kind:
         )
         expected = "source_must_be_available_at_or_before_cutoff"
 
-    result = j4.compile_serialized_j2_thread_projection(
+    result = j4._compile_serialized_j2_thread_projection_with_registry(
         manifest,
         reconstruction_read_model,
         reconstruction_inputs,

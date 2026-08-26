@@ -80,7 +80,7 @@ def test_j2_routes_forecast_and_comparative_locally_without_global_promotion() -
         frozen_at=datetime.now(timezone.utc).isoformat(),
     )
 
-    j2_result = j2.compile_mechanism_thread_projection(
+    j2_result = j2._compile_mechanism_thread_projection_with_registry(
         thread_set,
         episode_manifest=manifest,
         reconstruction_read_model=reconstruction_read_model,
@@ -96,7 +96,7 @@ def test_j2_routes_forecast_and_comparative_locally_without_global_promotion() -
     assert views[relative_thread["thread_id"]]["j3_forecast_eligible"] is False
     assert views[relative_thread["thread_id"]]["resolution_status"] == "RESOLVED"
 
-    j3_result = j3.compile_forecast_projection(
+    j3_result = j3._compile_forecast_projection_with_registry(
         manifest,
         _forecast_source(
             manifest,
@@ -120,7 +120,7 @@ def test_j2_routes_forecast_and_comparative_locally_without_global_promotion() -
     ]
     assert set(forecast_projection["rights"].values()) == {"NOT_AUTHORIZED"}
 
-    j4_result = j4.compile_serialized_j2_thread_projection(
+    j4_result = j4._compile_serialized_j2_thread_projection_with_registry(
         episode_manifest=manifest,
         reconstruction_read_model=reconstruction_read_model,
         reconstruction_inputs=reconstruction_inputs,

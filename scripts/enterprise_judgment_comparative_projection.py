@@ -15,9 +15,11 @@ from typing import Any
 
 try:
     from scripts import enterprise_judgment_mechanism as mechanism
+    from scripts import enterprise_judgment_reconstruction as reconstruction
     from scripts import judgment_selection_v5 as v5
 except ModuleNotFoundError:  # pragma: no cover - direct script import
     import enterprise_judgment_mechanism as mechanism
+    import enterprise_judgment_reconstruction as reconstruction
     import judgment_selection_v5 as v5
 
 
@@ -718,7 +720,7 @@ def _compile_comparative_projection(projection_request: Any) -> dict[str, Any]:
     )
 
 
-def compile_serialized_j2_thread_projection(
+def _compile_serialized_j2_thread_projection_with_registry(
     episode_manifest: Any,
     reconstruction_read_model: Any,
     reconstruction_inputs: Any,
@@ -727,7 +729,7 @@ def compile_serialized_j2_thread_projection(
     target_trial_bindings: Any,
     v5_candidate: Any,
     *,
-    reconstruction_registry: Any | None = None,
+    reconstruction_registry: Any,
 ) -> dict[str, Any]:
     """Compile J2, then project one compiler-resolved thread into J4.
 
@@ -755,7 +757,7 @@ def compile_serialized_j2_thread_projection(
             status=NOT_ADMITTED,
             findings=["serialized_j2.frozen_reconstruction_registry_required"],
         )
-    compiled = mechanism.compile_mechanism_thread_projection(
+    compiled = mechanism._compile_mechanism_thread_projection_with_registry(
         mechanism_thread_set,
         episode_manifest=episode_manifest,
         reconstruction_read_model=reconstruction_read_model,
@@ -863,6 +865,53 @@ def compile_serialized_j2_thread_projection(
             findings=compiler_boundary_findings,
         )
     return _compile_comparative_projection(request)
+
+
+def compile_serialized_j2_thread_projection(
+    episode_manifest: Any,
+    reconstruction_ref: Any,
+    mechanism_thread_set: Any,
+    thread_id: str,
+    target_trial_bindings: Any,
+    v5_candidate: Any,
+) -> dict[str, Any]:
+    """Resolve canonical J1 by identity, then project one compiled J2 thread."""
+    episode = _mapping(episode_manifest)
+    failure_request = {
+        "schema_version": REQUEST_SCHEMA_VERSION,
+        "episode_ref": {
+            field: episode.get(field)
+            for field in ("episode_id", "company_id", "issuer_id", "cutoff_at")
+        },
+        "thread_ref": {
+            "thread_id": thread_id,
+            "claim_class": None,
+            "requested_admission_level": None,
+        },
+    }
+    try:
+        registry, frozen = reconstruction.resolve_canonical_frozen_reconstruction(
+            reconstruction_ref
+        )
+    except reconstruction.FrozenReconstructionRegistryError as exc:
+        return _projection_result(
+            failure_request,
+            status=NOT_ADMITTED,
+            findings=["reconstruction_registry:" + exc.code],
+        )
+    try:
+        return _compile_serialized_j2_thread_projection_with_registry(
+            episode_manifest,
+            frozen["reconstruction"],
+            frozen["reconstruction_inputs"],
+            mechanism_thread_set,
+            thread_id,
+            target_trial_bindings,
+            v5_candidate,
+            reconstruction_registry=registry,
+        )
+    finally:
+        registry.close()
 
 
 project_mechanism_thread_to_comparative = compile_serialized_j2_thread_projection
