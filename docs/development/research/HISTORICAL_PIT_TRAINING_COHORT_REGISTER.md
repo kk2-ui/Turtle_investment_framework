@@ -1,6 +1,6 @@
 # Turtle 历史训练对象与留出队列
 
-状态：`TRAINING_ACTIVE / LAYERED_REDESIGN_ADOPTED / MINIMAL_EPISODE_PIPELINE_SETTLED / REPORT_USE_NOT_RELEASED`
+状态：`TRAINING_ACTIVE / ENTERPRISE_JUDGMENT_V2_ADOPTED / FIRST_INDUSTRY_LEARNING_BLOCK_PLANNED / MINIMAL_EPISODE_PIPELINE_SETTLED / REPORT_USE_NOT_RELEASED`
 更新：2026-08-26
 上位协议：[历史训练体系重构](TURTLE_HISTORICAL_TRAINING_SYSTEM_REDESIGN.md)、[历史优先训练架构](TURTLE_HISTORICAL_FIRST_JUDGMENT_TRAINING_ARCHITECTURE.md)、[判断力验证与回测协议](TURTLE_JUDGMENT_VALIDATION_PROTOCOL.md)
 
@@ -54,7 +54,7 @@ DATA_CENSORED
 | `HTR-06` | [R-78 Ford Way Forward](experiments/R-78_ford_way_forward_2006/02_outcome_resolution.md) | `LIFECYCLE_CASE / LIFECYCLE_TRANSITION` | `HISTORICAL_TEACHING / TEACHING_ONLY` | 训练退出实施、客户、单位经济、现金和资本回收分离。 | 不把美国汽车参数迁为中国参数。 |
 | `HTR-07` | 梅花生物价格竞争 | `EVIDENCE_CARRIER / UNCLASSIFIED` | `INTAKE / CONTEXT_ONLY` | 等待核实具体时期、产品、行动和原始来源。 | 不能据二手评论、后来利润或股价判断价格权。 |
 | `HTR-08` | [R-104 重庆啤酒生产网络优化](experiments/R-104_chongqing_beer_network_pruning_unit_economics_20160430/11_independent_post_outcome_review.json) | `COMPARATIVE_EPISODE / WITHIN_CASE_MECHANISM` | `HISTORICAL_TRAINING / MECHANISM_SETTLEMENT_ONLY` | D3=`A_ONLY`、D4=`B_ONLY`、联合=`MIXED`；证明经营改善不自动传到正常 owner cash。 | 禁止方向性 learning、方法冻结、R-103 释放和报告授权。 |
-| `HTR-09` | [水泥 2018 H1 static package](cohorts/COHORT_CN_CEMENT_LISTED_20180430_h1_static_package.json) | `INDUSTRY_UNIVERSE + EVIDENCE_CARRIER / DESCRIPTIVE_STRUCTURE` | `HISTORICAL_TRAINING / CONTEXT_ONLY` | strict preflight=`STAGE0_FEASIBILITY_REVIEWABLE`；25 份 PDF、五家公司可作 universe/carrier seed；独立 curator 的 H2 仅返回 `NO_PRIMARY_ACTION_SCOPE`。 | 不是 final peer panel；两家 scope/control break 不得进入不匹配 comparator；不得把 H1 的地方性/例行事项硬解释为 company-wide intervention。 |
+| `HTR-09` | [水泥 2018 H1 static package](cohorts/COHORT_CN_CEMENT_LISTED_20180430_h1_static_package.json) | `INDUSTRY_UNIVERSE + EVIDENCE_CARRIER / DESCRIPTIVE_STRUCTURE` | `HISTORICAL_TRAINING / E0-E1_RECONSTRUCTION` | strict preflight=`STAGE0_FEASIBILITY_REVIEWABLE`；25 份 PDF、五家公司和既有六 cutoff series 作为首个真实 `IndustryLearningBlock` seed；独立 curator 的 H2 `NO_PRIMARY_ACTION_SCOPE` 只关闭其 Comparative 候选。 | 不是 final peer panel；两家 scope/control break 仍保留为 lifecycle/archetype，不得进入不匹配 comparator；不得把 E0/E1 或地方性/例行事项升级为 company-wide causal intervention。 |
 | `HTR-10` | [华新水泥 2017 perimeter-break teaching case](cohorts/TEACHING_LIFECYCLE_CN_600801_PERIMETER_BREAK_20170324.json) | `TEACHING_CASE / WITHIN_CASE_MECHANISM` | `HISTORICAL_TEACHING / TEACHING_ONLY` | 以 FY2016 年报 p9 的 15 家工厂收购批准训练“scope break 不等于经营退出”，并保留 action-window perimeter bridge 问题。 | 不得把收购批准当作已观察到的业务退出，或把该教学案例升级为 comparative/learning/report/investment 权限。 |
 | `HTR-11` | CN:600585 2018 `Forecast V4` contract-first receipt | `PIT_COMPANY_STATE_FORECAST / FORECAST_CALIBRATION_COVERAGE` | `HISTORICAL_TRAINING / FORECAST_POLICY_ONLY` | 已完成独立 settlement；仅保留 coverage / direct forecast policy 和 `RESEARCH_AGENDA`。 | outcome access 前没有 method 或 decision-utility pairing；不得回填，亦不得声称方法改善、跨公司迁移、决策效用、method release、CJO、估值或报告权限。 |
 | `HTR-12` | CN:600585 2018 `Minimal Historical Episode v1` | `PIT_COMPANY_STATE_FORECAST / FORECAST_CALIBRATION_COVERAGE` | `HISTORICAL_TRAINING / MECHANICAL_SETTLEMENT_ONLY` | 独立完成 `Decision Contract → Measurement Contract → static evidence → blind prediction → contract-only custodian access → mechanical settlement`；只证明单公司、单指标的无泄漏管线可闭合。 | 固定 `NO_METHOD_TRANSFER_RIGHTS`；不产生方法分数、learning、跨公司迁移、CJO、估值、报告或投资权限，也不替代 Comparative Episode。 |
@@ -71,7 +71,9 @@ R-61 是当前预留的 PIT outcome-sealed holdout；R-102 的联合结果与基
 
 新设计下五家公司都留在 2018 Industry History Universe；三家 `PENDING_ACTION_WINDOW_REVIEW` 可进入 H2 action screen，两家 `KNOWN_MATERIAL_SCOPE_OR_CONTROL_BREAK` 可继续承载行业史或 Teaching/Lifecycle。若 H2 找到已实施行动，未来实现应允许 curator 在结果读取前按冻结 eligibility predicate 追加 static peer-recruitment batch；最终仍不足则降级为 Teaching/Lifecycle，而非废弃整批资料。
 
-该追加能力尚未实现。当前 runtime 仍要求 H2 绑定原 H1 receipt 且不得新增公司，因此实现迁移前只能运行旧合同允许的 H2，不能手工补同行。
+在 Enterprise Judgment V2 下，该 H1 另承担首个真实 `IndustryLearningBlock` 的 E0/E1 输入。所有五家公司进入 cutoff risk set；E1 深挖按结果前的材料性、公司状态差异和字段覆盖选择，scope/control break 本身是 archetype/lifecycle 信息，不再被当作整批无效。E0/E1 只形成行业时期、公司状态、决策账本、关键未知和条件化研究问题；它不依赖 H2，也不能据此生成因果、方法、CJO、估值或投资权限。
+
+E0/E1 的组合读模型与 IndustryLearningBlock 是本轮实现目标；现有 H2 runtime 仍只负责其旧 Comparative action-screen，不能被用来承载新的行业重建，也不能手工补同行。两条能力边界并行存在，不互相阻断。
 
 ## 6. 并行运行顺序
 
@@ -103,7 +105,9 @@ R-61 是当前预留的 PIT outcome-sealed holdout；R-102 的联合结果与基
 短期成功不是“凑出五家公司”，而是完成三类互不冒充的闭环：
 
 ```text
-Industry Universe -> Lifecycle/Teaching Case -> 可复用问题与边界资产
+IndustryLearningBlock
+  -> Industry Epoch + company archetypes + longitudinal E0/E1 episodes
+  -> conditional mechanism synthesis + research agenda
 
 Minimal Historical Episode -> blind observation -> mechanical settlement
   -> 管线完整性证据（无方法迁移权）
@@ -113,4 +117,4 @@ Comparative Episode -> diagnostic settlement
   -> R-103 holdout -> Golden Report use decision
 ```
 
-第一条链现在就可持续训练；最小链已验证一项真实单公司结算的管线纪律；第三条链仍缺真实方向性 episode。三者都不能单独证明实时预测优势、投资收益或一般性的企业判断能力。
+第一条链现在是主线，并从水泥真实 block 开始；最小链已验证一项真实单公司结算的管线纪律；第三条链仍缺真实方向性 episode，但只是一条并行高级支线。三者都不能单独证明实时预测优势、投资收益或一般性的企业判断能力。

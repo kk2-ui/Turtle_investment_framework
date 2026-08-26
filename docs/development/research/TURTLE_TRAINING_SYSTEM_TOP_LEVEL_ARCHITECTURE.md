@@ -43,7 +43,7 @@ V2 的核心对象改为：
 
 ### 0.3 “完整”不等于“所有维度都硬结算”
 
-每个 `EnterpriseJudgmentEpisode` 必须维护四种不同状态：
+每个 `EnterpriseJudgmentEpisode` 必须维护五种不同状态：
 
 ```text
 OBSERVED         cutoff 前或结果后有同边界直接证据
@@ -204,6 +204,74 @@ EnterpriseContextSnapshot
 | `INVESTMENT_VIEW` | CJO/估值/买点 | 只有冻结 CJO 后的正常利润、owner cash、预期差和条件 BuyBand |
 
 视图之间只沿权限方向流动。`STATE_VIEW` 可以产生研究问题，不能产生当前公司事实；`FORECAST_VIEW` 可以产生校准 policy，不能产生因果箭头；`COMPARATIVE_VIEW` 可以产生局部机制 candidate，不能跳过 transfer；`INVESTMENT_VIEW` 不能把价格结果反写到前面的状态或机制。
+
+### 3.4 IndustryLearningBlock：行业认知的外层训练单位
+
+单个 `EnterpriseJudgmentEpisode` 只能形成指定公司、cutoff 和问题下的判断。真实行业认知需要一个更外层的编排单位：
+
+> **`IndustryLearningBlock = industry × mechanism-defined arena × structural epochs × company archetypes × longitudinal episodes`**
+
+它同样是组合读模型，不新增平行事实库。它编排已有 `IndustryHistoryUniverse`、生命周期账本和多个 `EnterpriseJudgmentEpisode`，回答四个问题：
+
+1. 行业的客户任务、价值链、供需约束、竞争规则和资本强度如何随时期改变；
+2. 不同自身条件的公司在同一外部环境下为什么选择不同决策；
+3. 决策质量、执行能力、适应能力、外部冲击和最终结果分别是什么；
+4. 哪些关系可在条件成立时迁移，哪些只是单公司、单时期事实。
+
+一个真实 block 至少包含以下结构，但不以固定公司数量作为全局门：
+
+```text
+IndustryEpochMap
+  + cutoff-by-cutoff risk set and lifecycle
+  + CompanyArchetypeMap
+  + company × cutoff EnterpriseJudgmentEpisode[]
+  + DecisionHeterogeneityMatrix
+  + ConditionalMechanismSynthesis
+  + unresolved questions and next sampling decision
+```
+
+`CompanyArchetypeMap` 按客户、成本/资本结构、渠道、资产负债表、控制与组织能力定义差异，不按“同省份”或表面行业标签自动分组。`DecisionHeterogeneityMatrix` 比较相似外部条件下的不同约束、可行选项、实际决策、资源承诺、执行和适应；它是参照系，不自动成为反事实 control。
+
+`ConditionalMechanismSynthesis` 的最小表达是：
+
+```text
+WHEN <industry epoch + company state + constraints>
+DECISION <action or no-action>
+MAY OPERATE THROUGH <mechanism thread>
+OBSERVED AS <customer / operating / cash / capital cells>
+UNLESS <moderators and break conditions>
+EVIDENCE CEILING <teaching / mechanism / comparative / transferred>
+```
+
+它禁止输出“扩产总是有效”“龙头管理层更优秀”或统一公司总分。公司差异和时期差异不是噪声，而是 `moderators / transport conditions / break conditions`。行业知识只有在不同公司或时期重现、保留反例并经独立审阅后，才可从 `RESEARCH_AGENDA` 升格为候选方法；否则只是一组有来源的条件化问题。
+
+### 3.5 历史训练的纵横运行顺序
+
+历史训练采用逐 cutoff 展开，而不是先阅读完整行业结局再回填：
+
+```text
+cutoff t: freeze IndustryEpoch + company risk set
+  -> freeze each selected company E0/E1 reconstruction
+  -> freeze 1 primary and 2--4 supporting questions
+  -> optionally freeze forecasts or mechanism probes
+  -> reveal only the next authorized disclosure window
+  -> settle outcome cells independently
+  -> compare company responses and update t+1 research questions
+```
+
+同一公司多个 cutoff 属于一个 `company_cluster_id`，用于学习适应和决策序列，不能冒充多个独立公司样本。行业 block 必须保留失败、退出、被收购和资料删失对象；不能只从幸存者中总结“成功经验”。历史回放标记 `MODEL_MEMORY_MITIGATED`，可以训练流程和条件化认识，但不能单独证明实时预测优势。
+
+首个真实 block 优先复用已登记的中国水泥 H1：五家公司和六个 cutoff 用于行业/生命周期与 E0 重建，按预声明的材料性和字段覆盖选择纵向 E1 深挖；H2 的 `NO_PRIMARY_ACTION_SCOPE` 只关闭该 Comparative 候选，不影响 block、公司重建或局部机制探针。任何后续 outcome 仍须在相应 freeze 后由独立角色按授权窗口揭示。
+
+### 3.6 三种“完成”不得混称
+
+训练进度必须区分三个事实：
+
+1. `REAL_SAMPLE_CREATED`：真实行业、真实公司和真实 cutoff 的 E0/E1 已冻结；这已经是训练样本，不要求 H2、行动或同行，但还没有证明判断正确；
+2. `REAL_FEEDBACK_TURN_COMPLETED`：至少一个预声明的公司 × cutoff 已按独立 measurement contract 揭示下一窗口，结算材料 outcome cells，并实际改变下一 cutoff 的问题、证据顺序或未知边界；这才完成一次真实学习反馈；
+3. `TRANSFER_VALIDATED`：学习在不同公司和未来时期改善同 cutoff 判断，并通过独立复核与 holdout；只有这一层才可讨论方法冻结和报告/投资用途。
+
+因此，缺少 Comparative 不得否认第 1、2 层已经发生；同样，完成一个真实 block 也不得冒充第 3 层。项目汇报必须明确使用上述状态，不再笼统地说“有样本”或“训练完成”。
 
 ## 4. 三种速度的训练与一种最终验证
 
@@ -373,7 +441,8 @@ judgment -> investment consequence
 | 工作包 | 目标 | 主要产物 | 不做什么 |
 |---|---|---|---|
 | `J0 CONTRACT` | 固定 EnterpriseJudgmentEpisode 的组合语义和权限梯度 | episode manifest、claim/output matrix、cell status 语义 | 不追溯升级既有 episode |
-| `J1 RECONSTRUCTION` | 让一家公司在一个 cutoff 形成多维企业状态和决策序列 | `EnterpriseContextSnapshot`、OperatingSystemModel、DecisionLedger slice | 不要求同行或已实施行动 |
+| `J1 INDUSTRY BLOCK` | 让一个行业按时期、公司状态和生命周期形成纵横训练框架 | IndustryLearningBlock manifest、epoch/archetype/heterogeneity/synthesis views | 不把行业叙事变成基准率或公司事实 |
+| `J1A RECONSTRUCTION` | 让一家公司在一个 cutoff 形成多维企业状态和决策序列 | `EnterpriseContextSnapshot`、OperatingSystemModel、DecisionLedger slice | 不要求同行或已实施行动 |
 | `J2 THREADS` | 将全景判断拆成 1 个 primary + 2--4 个 supporting mechanism threads | H-A/H-B、证据鉴别矩阵、观察时钟、结果合同 | 不把所有线程设为硬门 |
 | `J3 FORECAST` | 对状态向量做逐维概率、区间和弃权校准 | Forecast bundle、coverage、proper scores、error attribution | 不从 forecast 生成因果或 CJO |
 | `J4 COMPARATIVE` | 只有相对因果主张出现时启用 V5/target-trial 约束 | panel freeze、独立 settlement、estimand resolution | 不以 Comparative 阻断 J1--J3 |
@@ -381,7 +450,7 @@ judgment -> investment consequence
 | `J6 INVESTMENT` | 将冻结 CJO 的关键线程传播到价值和价格 | normal earnings、owner cash、ExpectationGap、BuyBand | 不用价格结果改写企业判断 |
 | `J7 DECISION_UTILITY` | 证明增强研究比简单基线更能改善用户判断 | same-cutoff paired receipt、holdout、materiality review | 不以报告长度或股价胜负评分 |
 
-实施顺序是 `J0 → J1/J2/J3`，`J4` 与其并行但独立，`J5 → J6 → J7` 逐级解锁。当前已有控制层和 Forecast/报告接线可复用；真实 Comparative 仍是 `J4` 的未完成支线，不再是 `J1` 的前置条件。
+实施顺序是 `J0 → J1/J1A/J2/J3`，`J4` 与其并行但独立，`J5 → J6 → J7` 逐级解锁。当前已有控制层和 Forecast/报告接线可复用；真实 Comparative 仍是 `J4` 的未完成支线，不再是 `J1/J1A` 的前置条件。
 
 ## 11. 立即停止的错误优化
 
@@ -416,6 +485,7 @@ judgment -> investment consequence
 6. 任何 learning transfer 都能指出下一家公司实际改变的字段、证据顺序、反方或停止规则，并由独立 reviewer 复核；
 7. CJO、估值和 BuyBand 只消费达到相应证据上限的线程，并能列出未覆盖维度和翻转条件；
 8. 同 cutoff、同证据预算下，增强研究相对简单基线的改进必须表现为材料未知、错误避免或判断区间变化，而不是文字增加。
+9. 一个 IndustryLearningBlock 能按 cutoff 保留行业时期、公司 archetype、生命周期和决策差异，并输出带 moderators、break conditions 与证据上限的条件化综合；不得输出统一公司总分或无条件行业格言。
 
 ## 13. 研究依据
 
