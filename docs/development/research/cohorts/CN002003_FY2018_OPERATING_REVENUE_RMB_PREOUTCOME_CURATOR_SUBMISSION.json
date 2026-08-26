@@ -1,0 +1,57 @@
+{
+  "schema_version": "static-pre-outcome-curator-field-submission.v1",
+  "submission_class": "JSON_CURATOR_FIELD_SUBMISSION",
+  "curator_identity": {
+    "curator_id": "CURATOR:CN002003:REVENUE:20260826",
+    "role": "INDEPENDENT_PRE_OUTCOME_STATIC_CURATOR"
+  },
+  "scope": {
+    "company_id": "CN:002003",
+    "issuer_id": "ISSUER:CN:002003",
+    "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:002003",
+    "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+    "cutoff_at": "2019-12-31T23:59:59+08:00",
+    "measurement_period_end": "2018-12-31",
+    "metric_id": "ISSUER_CONSOLIDATED_OPERATING_REVENUE_RMB",
+    "metric_definition": "Consolidated income-statement operating revenue (营业收入) for the fiscal year, in RMB.",
+    "unit": "RMB"
+  },
+  "source": {
+    "source_id": "CNINFO:002003:ANN:20190416:1206040618",
+    "source_url": "https://static.cninfo.com.cn/finalpage/2019-04-17/1206040618.PDF",
+    "source_type": "OFFICIAL_STATIC_FILING",
+    "published_at": "2019-04-16",
+    "issuer_id": "ISSUER:CN:002003",
+    "responsibility_boundary": "LISTED_CONSOLIDATED_ISSUER",
+    "unit": "RMB",
+    "field_ref": "FY2018 Zhejiang Weixing Industrial Development annual report, consolidated income statement, PDF p. 71, 营业收入.",
+    "exact_quote": "其中：营业收入                        2,711,568,243.99 2,624,372,910.75",
+    "numeric_value": 2711568243.99
+  },
+  "boundary_check": {
+    "control_group_id": "CONTROL:ZHANG_KAPENG_AND_ZHANG_SANYUN",
+    "control_evidence_source_id": "CNINFO:002003:ANN:20190416:1206040618",
+    "control_evidence_field_ref": "PDF p. 47, 公司报告期控股股东未发生变更；公司报告期实际控制人未发生变更。",
+    "conclusion": "NO_MATERIAL_SCOPE_OR_CONTROL_BREAK_OBSERVED_FOR_LISTED_CONSOLIDATED_FY2018_METRIC"
+  },
+  "information_boundary": {
+    "read_inputs": [
+      "H1:COHORT:CN:TEXTILE_APPAREL_EXPORT_MANUFACTURING:20191231:STATIC:V1@1",
+      "CNINFO:002003:ANN:20190416:1206040618"
+    ],
+    "prohibited_inputs": [
+      "OUTCOME_DOCUMENTS",
+      "FORECASTS",
+      "CUSTODIAN_MATERIAL",
+      "H2",
+      "R-103",
+      "PRICE",
+      "CJO",
+      "REPORT"
+    ]
+  },
+  "allowed_outputs": [
+    "PRE_OUTCOME_STATIC_FIELD_ONLY"
+  ],
+  "method_transfer_rights": "NO_METHOD_TRANSFER_RIGHTS"
+}
