@@ -25,7 +25,7 @@ SourcePacketReceipt
   -> bound J0 EnterpriseJudgmentEpisode manifest
 ```
 
-J1 只接受同一 `DecisionContract` 的公司、issuer、cutoff、source packet 和三角色。J0 在实际绑定时会重新编译 J1 并逐项比较 reconstruction、component refs、company/issuer/cutoff 与角色；不能用任意 ID、另一种 V3 bundle 或替换 custodian 冒充同一对象。
+J1 只接受同一 `DecisionContract` 的公司、issuer、cutoff、source packet 和三角色。`source_package` 不是可手写的旁路输入：它必须与 `compile_core_source_package(SourcePacketReceipt)` 的投影逐对象相等，receipt 的 ID/version、company、issuer、cutoff 也必须与 J1 spec 和 contract 精确一致。J0 在实际绑定时会重新编译 J1 并逐项比较 receipt、source package、reconstruction、component refs、company/issuer/cutoff 与角色；不能用任意 ID、另一种 V3 bundle 或替换 custodian 冒充同一对象。
 
 ## 2. PIT 与责任边界
 
@@ -52,7 +52,7 @@ compiler 为 variable、mechanism、financial transmission、decision 与 loop �
 | `NO_MATERIAL_DECISION_OBSERVED` | 仅在 reviewed source refs 与 materiality scope 内未观察到行动 | 必须为空 |
 | `INSUFFICIENT_EVIDENCE` | 资料不足，不能把沉默写成无行动 | 必须为空 |
 
-后两条路线不得选择带有 `management_decision_ids` 的 mechanism。若 manifest 的 claim 明确依赖该 observation，J0 机械要求 `NO_MATERIAL... -> NOT_APPLICABLE`、`INSUFFICIENT... -> UNKNOWN`；企业状态 claim 不依赖它时仍可获得自己的 E1 输出。因此“没有已识别行动”不阻断企业全景重建，也不会被升级为 J2/E3。
+`NO_MATERIAL_DECISION_OBSERVED` 的每个 reviewed source 还必须是 `ELIGIBLE`；只要资料本身不可用，就必须保留 `INSUFFICIENT_EVIDENCE`，不能把沉默当成无行动。后两条路线不得选择带有 `management_decision_ids` 的 mechanism。若 manifest 的 claim 明确依赖该 observation，J0 机械要求 `NO_MATERIAL... -> NOT_APPLICABLE`、`INSUFFICIENT... -> UNKNOWN`；企业状态 claim 不依赖它时仍可获得自己的 E1 输出。因此“没有已识别行动”不阻断企业全景重建，也不会被升级为 J2/E3。
 
 ## 4. 权限边界
 

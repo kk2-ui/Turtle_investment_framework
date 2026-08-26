@@ -6,6 +6,10 @@
 
 本文件只解决一件事：告诉后续 Agent 哪些文档可以决定当前状态、执行顺序和产品标准。`docs/History/` 中的文件只用于追溯，不能成为恢复入口、当前状态或实施授权。
 
+## EnterpriseJudgmentEpisode v2 当前实现状态
+
+`J0 CONTRACT + J1 RECONSTRUCTION` 已实现为独立、cutoff-safe 的新训练入口；它不等待水泥 H2、五家公司 panel、Comparative、R-103、估值或 BuyBand。首个真实、结果封存样本是 [孚日股份 `CN:002083 × 2019-05-01`](development/research/episodes/EJE_CN002083_20190501/README.md)：五份 cutoff 前官方年报经日期精度 receipt、同一上市公司合并责任边界、空决策账本与 `INSUFFICIENT_EVIDENCE` 决策观察，编译为 E1 read model。它只证明企业状态/有限现金桥的可审计重建；管理行动、客户反应、竞争因果、永久损失、Forecast、Comparative、迁移、方法冻结、估值和投资授权均未启动或保持未知。后续顺序是从该 J1 选择局部机制进入 J2，随后按需要进入 J3 或 J4；旧 action-first Comparative 生产线不能反向阻断此入口。
+
 ## 1. 新会话固定读取顺序
 
 1. 仓库根 `AGENTS.md`：工作方式、隔离开发、真实运行和报告生成规则；
@@ -68,6 +72,7 @@ retrofit 或发起新 custody flow。
 | `docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/08_investor_readout.md` | 首个真实水泥 V2 block 的投资者可读读出、feedback 与权限边界；底层 JSON 是该读出的可验证工件 |
 | `docs/development/research/TURTLE_ENTERPRISE_JUDGMENT_EPISODE_J0_IMPLEMENTATION.md` | `EnterpriseJudgmentEpisode` J0 的 read-only manifest、逐 claim/cell 权限矩阵与非追溯边界 |
 | `docs/development/research/TURTLE_ENTERPRISE_JUDGMENT_RECONSTRUCTION_J1_IMPLEMENTATION.md` | J1 的日期精度 SourcePacketReceipt、同一责任边界企业重建、局部证据状态、无材料行动路线与 J0 精确绑定 |
+| `docs/development/research/episodes/EJE_CN002083_20190501/README.md` | 首个真实 E0/E1 企业判断样本：孚日股份的 source receipt、DecisionContract、企业重建输入和 outcome-sealed J0 manifest |
 | `docs/development/research/TURTLE_HISTORICAL_TRAINING_SYSTEM_REDESIGN.md` | claim-specific 分层训练、生命周期/退出、反幸存者偏差、source registry 与实现路线图 |
 | `docs/development/research/TURTLE_HISTORICAL_FIRST_JUDGMENT_TRAINING_ARCHITECTURE.md` | 历史训练、历史留出、结果已知教学与真实前瞻哨兵的当前顶层架构 |
 | `docs/development/research/HISTORICAL_PIT_TRAINING_COHORT_REGISTER.md` | 第一批历史训练、留出与教学对象的人读队列 |

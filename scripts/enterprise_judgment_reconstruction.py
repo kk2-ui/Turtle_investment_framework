@@ -182,9 +182,34 @@ def _contract_module() -> Any:
     return contract_module
 
 
+def _source_packet_module() -> Any:
+    try:
+        from scripts import enterprise_judgment_source_packet as source_packet_module
+    except ModuleNotFoundError:  # pragma: no cover - direct script import
+        import enterprise_judgment_source_packet as source_packet_module
+    return source_packet_module
+
+
+def _validate_source_receipt_binding(
+    source_packet_receipt: Any,
+    source_package: Any,
+    findings: list[str],
+) -> dict[str, Any]:
+    """Require J1's core package to be the exact receipt projection."""
+    projected = _source_packet_module().compile_core_source_package(source_packet_receipt)
+    for finding in projected["findings"]:
+        _add(findings, "source_packet_receipt:" + finding)
+    if not projected["valid"]:
+        return {}
+    if _mapping(source_package) != projected["source_package"]:
+        _add(findings, "source_package_must_equal_bound_source_packet_receipt_projection")
+    return _mapping(source_packet_receipt)
+
+
 def validate_reconstruction_spec(
     spec: Any,
     *,
+    source_packet_receipt: Any,
     source_package: Any,
     enterprise_model: Any,
     decision_ledger: Any,
@@ -197,6 +222,7 @@ def validate_reconstruction_spec(
     not observed; only a selected observed decision needs a ledger entry.
     """
     findings: list[str] = []
+    receipt = _validate_source_receipt_binding(source_packet_receipt, source_package, findings)
     _validated_inputs(source_package, enterprise_model, decision_ledger, findings)
     item = _closed(spec, _ROOT_KEYS, "reconstruction_spec", findings)
     if item.get("schema_version") != SPEC_SCHEMA_VERSION:
@@ -243,8 +269,16 @@ def validate_reconstruction_spec(
     package = _mapping(source_package)
     model = _mapping(enterprise_model)
     ledger = _mapping(decision_ledger)
+    if (
+        source_packet_ref.get("receipt_id") != receipt.get("packet_id")
+        or source_packet_ref.get("receipt_version") != receipt.get("packet_version")
+    ):
+        _add(findings, "reconstruction_spec.source_packet_ref_must_match_bound_source_packet_receipt")
     if source_packet_ref.get("receipt_id") != package.get("source_package_id"):
         _add(findings, "reconstruction_spec.source_packet_ref_must_match_canonical_source_package")
+    for field in ("company_id", "issuer_id", "cutoff_at"):
+        if item.get(field) != receipt.get(field):
+            _add(findings, f"reconstruction_spec.{field}_must_match_bound_source_packet_receipt")
     for field, value in (
         ("company_id", package.get("company_id")),
         ("company_id", model.get("company_id")),
@@ -395,6 +429,11 @@ def validate_reconstruction_spec(
         _add(findings, "reconstruction_spec.observed_decisions_require_selected_ledger_entries")
     if observation_state in {"NO_MATERIAL_DECISION_OBSERVED", "INSUFFICIENT_EVIDENCE"} and declared_decisions:
         _add(findings, "reconstruction_spec.non_observed_decision_state_cannot_select_ledger_entries")
+    if observation_state == "NO_MATERIAL_DECISION_OBSERVED" and any(
+        source_by_ref.get(source_ref, {}).get("eligibility") != "ELIGIBLE"
+        for source_ref in observation_refs
+    ):
+        _add(findings, "reconstruction_spec.no_material_decision_observation_requires_eligible_reviewed_sources")
     if observation_state in {"NO_MATERIAL_DECISION_OBSERVED", "INSUFFICIENT_EVIDENCE"}:
         selected_mechanisms = {
             mechanism_id
@@ -641,6 +680,7 @@ def _context_dimension_coverage(coverage: dict[str, Any]) -> dict[str, str]:
 def compile_enterprise_reconstruction(
     spec: Any,
     *,
+    source_packet_receipt: Any,
     source_package: Any,
     enterprise_model: Any,
     decision_ledger: Any,
@@ -649,6 +689,7 @@ def compile_enterprise_reconstruction(
     """Compile J1's component read models with no canonical writes or promotion."""
     validation = validate_reconstruction_spec(
         spec,
+        source_packet_receipt=source_packet_receipt,
         source_package=source_package,
         enterprise_model=enterprise_model,
         decision_ledger=decision_ledger,
@@ -728,6 +769,7 @@ def validate_compiled_reconstruction(
     reconstruction: Any,
     *,
     spec: Any,
+    source_packet_receipt: Any,
     source_package: Any,
     enterprise_model: Any,
     decision_ledger: Any,
@@ -736,6 +778,7 @@ def validate_compiled_reconstruction(
     """Prove a supplied J1 read model is exactly the bound compilation."""
     compiled = compile_enterprise_reconstruction(
         spec,
+        source_packet_receipt=source_packet_receipt,
         source_package=source_package,
         enterprise_model=enterprise_model,
         decision_ledger=decision_ledger,

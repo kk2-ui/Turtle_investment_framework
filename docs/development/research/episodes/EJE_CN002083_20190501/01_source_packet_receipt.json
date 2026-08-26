@@ -1,0 +1,103 @@
+{
+  "schema_version": "enterprise-judgment-source-packet-receipt.v1",
+  "packet_id": "SP:CN002083:20190501:ANNUAL_REPORTS",
+  "packet_version": 1,
+  "company_id": "CN:002083",
+  "issuer_id": "ISSUER:CN:002083",
+  "cutoff_at": "2019-05-01T00:00:00+08:00",
+  "sources": [
+    {
+      "source_id": "CNINFO:002083:ANN:20150427:1200918435",
+      "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+      "official_url": "https://static.cninfo.com.cn/finalpage/2015-04-28/1200918435.PDF",
+      "published_on": "2015-04-27",
+      "available_on": "2015-04-28",
+      "availability_timezone": "Asia/Shanghai",
+      "eligibility": "ELIGIBLE",
+      "responsibility_boundary_ids": ["ISSUER_CONSOLIDATED:CN:002083"],
+      "responsibility_perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+      "unit": "RMB",
+      "access_mode": "REMOTE_OFFICIAL_LOCATOR",
+      "locators": [
+        {"research_question_id": "Q:CONSOLIDATED_EARNINGS_HISTORY", "locator": "D3 consolidated income statement — PDF p. 46"},
+        {"research_question_id": "Q:OPERATING_CASH_HISTORY", "locator": "D4 consolidated cash-flow statement — PDF p. 48"}
+      ]
+    },
+    {
+      "source_id": "CNINFO:002083:ANN:20160330:1202112583",
+      "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+      "official_url": "https://static.cninfo.com.cn/finalpage/2016-03-31/1202112583.PDF",
+      "published_on": "2016-03-30",
+      "available_on": "2016-03-31",
+      "availability_timezone": "Asia/Shanghai",
+      "eligibility": "ELIGIBLE",
+      "responsibility_boundary_ids": ["ISSUER_CONSOLIDATED:CN:002083"],
+      "responsibility_perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+      "unit": "RMB",
+      "access_mode": "REMOTE_OFFICIAL_LOCATOR",
+      "locators": [
+        {"research_question_id": "Q:CONSOLIDATED_EARNINGS_HISTORY", "locator": "D3 consolidated income statement — PDF p. 48"},
+        {"research_question_id": "Q:OPERATING_CASH_HISTORY", "locator": "D4 consolidated cash-flow statement — PDF p. 49"}
+      ]
+    },
+    {
+      "source_id": "CNINFO:002083:ANN:20170407:1203261862",
+      "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+      "official_url": "https://static.cninfo.com.cn/finalpage/2017-04-08/1203261862.PDF",
+      "published_on": "2017-04-07",
+      "available_on": "2017-04-08",
+      "availability_timezone": "Asia/Shanghai",
+      "eligibility": "ELIGIBLE",
+      "responsibility_boundary_ids": ["ISSUER_CONSOLIDATED:CN:002083"],
+      "responsibility_perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+      "unit": "RMB",
+      "access_mode": "REMOTE_OFFICIAL_LOCATOR",
+      "locators": [
+        {"research_question_id": "Q:EXPORT_EXPOSURE_HISTORY", "locator": "D2 export turnover — PDF p. 9"},
+        {"research_question_id": "Q:CONSOLIDATED_EARNINGS_HISTORY", "locator": "D3 consolidated income statement — PDF p. 46"},
+        {"research_question_id": "Q:OPERATING_CASH_HISTORY", "locator": "D4 consolidated cash-flow statement — PDF p. 48"}
+      ]
+    },
+    {
+      "source_id": "CNINFO:002083:ANN:20180402:1204575099",
+      "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+      "official_url": "https://static.cninfo.com.cn/finalpage/2018-04-03/1204575099.PDF",
+      "published_on": "2018-04-02",
+      "available_on": "2018-04-03",
+      "availability_timezone": "Asia/Shanghai",
+      "eligibility": "ELIGIBLE",
+      "responsibility_boundary_ids": ["ISSUER_CONSOLIDATED:CN:002083"],
+      "responsibility_perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+      "unit": "RMB",
+      "access_mode": "REMOTE_OFFICIAL_LOCATOR",
+      "locators": [
+        {"research_question_id": "Q:EXPORT_EXPOSURE_HISTORY", "locator": "D2 export turnover — PDF p. 8"},
+        {"research_question_id": "Q:CONSOLIDATED_EARNINGS_HISTORY", "locator": "D3 consolidated income statement — PDF p. 45"},
+        {"research_question_id": "Q:OPERATING_CASH_HISTORY", "locator": "D4 consolidated cash-flow statement — PDF p. 46"}
+      ]
+    },
+    {
+      "source_id": "CNINFO:002083:ANN:20190428:1206124458",
+      "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+      "official_url": "https://static.cninfo.com.cn/finalpage/2019-04-29/1206124458.PDF",
+      "published_on": "2019-04-28",
+      "available_on": "2019-04-29",
+      "availability_timezone": "Asia/Shanghai",
+      "eligibility": "ELIGIBLE",
+      "responsibility_boundary_ids": ["ISSUER_CONSOLIDATED:CN:002083"],
+      "responsibility_perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+      "unit": "RMB",
+      "access_mode": "REMOTE_OFFICIAL_LOCATOR",
+      "locators": [
+        {"research_question_id": "Q:BUSINESS_AND_CHANNEL_SCOPE", "locator": "Business, products, channels and overseas markets — PDF p. 10"},
+        {"research_question_id": "Q:EXPORT_EXPOSURE_HISTORY", "locator": "D2 export turnover — PDF p. 10"},
+        {"research_question_id": "Q:CONTROL_AND_RESPONSIBILITY_BOUNDARY", "locator": "Controller and control relationship — PDF p. 31"},
+        {"research_question_id": "Q:CONSOLIDATED_EARNINGS_HISTORY", "locator": "D3 consolidated income statement — PDF p. 52"},
+        {"research_question_id": "Q:OPERATING_CASH_HISTORY", "locator": "D4 consolidated cash-flow statement — PDF p. 55"}
+      ]
+    }
+  ],
+  "object_class": "SOURCE_PACKET_RECEIPT",
+  "claim_class": "CUTOFF_ELIGIBLE_SOURCE_RECEIPT",
+  "allowed_outputs": ["SOURCE_PACKET_READ_MODEL", "RESEARCH_AGENDA"]
+}

@@ -487,7 +487,10 @@ def _validate_bindings(
             import enterprise_judgment_reconstruction as reconstruction_module
         binding = _closed(
             reconstruction_binding,
-            {"reconstruction", "spec", "source_package", "enterprise_model", "decision_ledger"},
+            {
+                "reconstruction", "spec", "source_packet_receipt", "source_package",
+                "enterprise_model", "decision_ledger",
+            },
             "episode.reconstruction_binding",
             findings,
         )
@@ -497,6 +500,7 @@ def _validate_bindings(
         validation = reconstruction_module.validate_compiled_reconstruction(
             binding.get("reconstruction"),
             spec=binding.get("spec"),
+            source_packet_receipt=binding.get("source_packet_receipt"),
             source_package=binding.get("source_package"),
             enterprise_model=binding.get("enterprise_model"),
             decision_ledger=binding.get("decision_ledger"),

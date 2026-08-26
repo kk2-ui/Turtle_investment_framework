@@ -186,7 +186,10 @@ def validate_source_packet_receipt(receipt: Any) -> dict[str, Any]:
             _require_text(source, field, path, findings)
         if not str(source.get("official_url", "")).startswith("https://"):
             _add(findings, path + ".official_url_must_be_https")
-        _date(source.get("published_on"), path + ".published_on", findings)
+        published_on = _date(source.get("published_on"), path + ".published_on", findings)
+        available_on = _date(source.get("available_on"), path + ".available_on", findings)
+        if published_on is not None and available_on is not None and published_on > available_on:
+            _add(findings, path + ".published_on_after_available_on")
         available_at = _local_day_end(
             source.get("available_on"), source.get("availability_timezone"), path + ".available_on", findings,
         )
@@ -194,6 +197,8 @@ def validate_source_packet_receipt(receipt: Any) -> dict[str, Any]:
             _add(findings, path + ".available_on_after_cutoff")
         if source.get("eligibility") not in core.SOURCE_ELIGIBILITY:
             _add(findings, path + ".eligibility_invalid")
+        if source.get("access_mode") not in {"REMOTE_OFFICIAL_LOCATOR", "LOCAL_MATERIALIZED_COPY"}:
+            _add(findings, path + ".access_mode_invalid")
         if source.get("eligibility") == "EVIDENCE_INELIGIBLE" and not _text(source.get("boundary_note")):
             _add(findings, path + ".boundary_note_required")
         _unique_texts(source.get("responsibility_boundary_ids"), path + ".responsibility_boundary_ids", findings)

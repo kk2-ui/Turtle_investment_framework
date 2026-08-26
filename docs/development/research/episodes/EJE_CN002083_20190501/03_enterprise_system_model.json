@@ -1,0 +1,124 @@
+{
+  "schema_version": "enterprise-system-model.v1",
+  "model_id": "ESM:CN002083:20190501",
+  "company_id": "CN:002083",
+  "version": "1",
+  "cutoff_at": "2019-05-01T00:00:00+08:00",
+  "method_version": "enterprise-judgment-source-packet-adapter.v1",
+  "source_package_id": "SP:CN002083:20190501:ANNUAL_REPORTS",
+  "responsibility_units": [
+    {
+      "unit_id": "ISSUER_CONSOLIDATED:CN:002083",
+      "unit_type": "COMPANY",
+      "parent_unit_id": null,
+      "accounting_perimeter": "listed-company consolidated financial statements",
+      "decision_scope": "issuer-level management and board disclosures only",
+      "economic_carrier": "consolidated home-textile products, channels and export sales",
+      "measurement_surface": "audited listed-company consolidated annual-report statements",
+      "legal_entity_ids": ["ISSUER:CN:002083"]
+    }
+  ],
+  "arenas": [
+    {
+      "arena_id": "ARENA:CN002083:HOME_TEXTILE_CHANNELS",
+      "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:002083",
+      "product_or_service_scope": "towels, bedding products and decorative textile products",
+      "customer_task": "supply home-textile products through overseas and domestic sales channels",
+      "competition_mechanism": "reported overseas-market and domestic-channel development amid external market competition",
+      "window": "FY2018 disclosure state",
+      "competitor_or_alternative_refs": [],
+      "evidence_refs": ["CNINFO:002083:ANN:20190428:1206124458"]
+    }
+  ],
+  "operating_variables": [
+    {
+      "variable_id": "VAR:CN002083:PRODUCT_CHANNEL_SCOPE",
+      "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:002083",
+      "arena_id": "ARENA:CN002083:HOME_TEXTILE_CHANNELS",
+      "name": "disclosed product and channel scope",
+      "observation_state": "OBSERVED",
+      "evidence_refs": ["CNINFO:002083:ANN:20190428:1206124458"]
+    },
+    {
+      "variable_id": "VAR:CN002083:EXPORT_EXPOSURE",
+      "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:002083",
+      "arena_id": "ARENA:CN002083:HOME_TEXTILE_CHANNELS",
+      "name": "reported export-turnover exposure history",
+      "observation_state": "OBSERVED",
+      "evidence_refs": ["CNINFO:002083:ANN:20170407:1203261862", "CNINFO:002083:ANN:20180402:1204575099", "CNINFO:002083:ANN:20190428:1206124458"]
+    },
+    {
+      "variable_id": "VAR:CN002083:CONSOLIDATED_EARNINGS",
+      "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:002083",
+      "arena_id": "ARENA:CN002083:HOME_TEXTILE_CHANNELS",
+      "name": "audited consolidated earnings history",
+      "observation_state": "OBSERVED",
+      "evidence_refs": ["CNINFO:002083:ANN:20150427:1200918435", "CNINFO:002083:ANN:20160330:1202112583", "CNINFO:002083:ANN:20170407:1203261862", "CNINFO:002083:ANN:20180402:1204575099", "CNINFO:002083:ANN:20190428:1206124458"]
+    },
+    {
+      "variable_id": "VAR:CN002083:OPERATING_CASH",
+      "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:002083",
+      "arena_id": "ARENA:CN002083:HOME_TEXTILE_CHANNELS",
+      "name": "audited consolidated operating-cash history",
+      "observation_state": "OBSERVED",
+      "evidence_refs": ["CNINFO:002083:ANN:20150427:1200918435", "CNINFO:002083:ANN:20160330:1202112583", "CNINFO:002083:ANN:20170407:1203261862", "CNINFO:002083:ANN:20180402:1204575099", "CNINFO:002083:ANN:20190428:1206124458"]
+    }
+  ],
+  "mechanisms": [
+    {
+      "mechanism_id": "MECH:CN002083:PRODUCT_EXPORT_TO_EARNINGS",
+      "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:002083",
+      "arena_id": "ARENA:CN002083:HOME_TEXTILE_CHANNELS",
+      "description": "The disclosed product/channel and export-exposure state is a bounded input to consolidated earnings, without attributing its direction to management or a competitor counterfactual.",
+      "reasoning_kind": "INFERENCE",
+      "from_variable_ids": ["VAR:CN002083:PRODUCT_CHANNEL_SCOPE", "VAR:CN002083:EXPORT_EXPOSURE"],
+      "to_variable_ids": ["VAR:CN002083:CONSOLIDATED_EARNINGS"],
+      "management_decision_ids": [],
+      "evidence_refs": ["CNINFO:002083:ANN:20170407:1203261862", "CNINFO:002083:ANN:20180402:1204575099", "CNINFO:002083:ANN:20190428:1206124458"]
+    },
+    {
+      "mechanism_id": "MECH:CN002083:EARNINGS_TO_OPERATING_CASH",
+      "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:002083",
+      "arena_id": "ARENA:CN002083:HOME_TEXTILE_CHANNELS",
+      "description": "Audited consolidated earnings and operating cash are reconstructed as separate linked state variables; the packet does not establish a causal attribution beyond that bounded bridge.",
+      "reasoning_kind": "INFERENCE",
+      "from_variable_ids": ["VAR:CN002083:CONSOLIDATED_EARNINGS"],
+      "to_variable_ids": ["VAR:CN002083:OPERATING_CASH"],
+      "management_decision_ids": [],
+      "evidence_refs": ["CNINFO:002083:ANN:20150427:1200918435", "CNINFO:002083:ANN:20160330:1202112583", "CNINFO:002083:ANN:20170407:1203261862", "CNINFO:002083:ANN:20180402:1204575099", "CNINFO:002083:ANN:20190428:1206124458"]
+    }
+  ],
+  "financial_transmissions": [
+    {
+      "transmission_id": "TX:CN002083:NORMAL_EARNINGS",
+      "mechanism_id": "MECH:CN002083:PRODUCT_EXPORT_TO_EARNINGS",
+      "layer": "NORMAL_EARNINGS",
+      "direction": "UNKNOWN",
+      "description": "The packet supports a same-boundary historical earnings bridge but not a directional causal conclusion.",
+      "evidence_refs": []
+    },
+    {
+      "transmission_id": "TX:CN002083:OPERATING_CASH",
+      "mechanism_id": "MECH:CN002083:EARNINGS_TO_OPERATING_CASH",
+      "layer": "OWNER_CASH",
+      "direction": "UNKNOWN",
+      "description": "The packet supports a same-boundary operating-cash bridge but not an owner-cash, valuation or return conclusion.",
+      "evidence_refs": []
+    }
+  ],
+  "operating_states": [
+    {
+      "state_id": "STATE:CN002083:FY2018_DISCLOSED",
+      "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:002083",
+      "observed_at": "2019-04-30T00:00:00+08:00",
+      "variable_states": {
+        "VAR:CN002083:PRODUCT_CHANNEL_SCOPE": "FY2018_DISCLOSED",
+        "VAR:CN002083:EXPORT_EXPOSURE": "FY2016_TO_FY2018_REPORTED",
+        "VAR:CN002083:CONSOLIDATED_EARNINGS": "FY2014_TO_FY2018_REPORTED",
+        "VAR:CN002083:OPERATING_CASH": "FY2014_TO_FY2018_REPORTED"
+      },
+      "evidence_refs": ["CNINFO:002083:ANN:20190428:1206124458"]
+    }
+  ],
+  "state_changes": []
+}

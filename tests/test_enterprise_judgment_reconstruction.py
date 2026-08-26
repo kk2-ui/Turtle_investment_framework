@@ -6,8 +6,42 @@ from pathlib import Path
 
 from scripts import enterprise_judgment_episode as episode
 from scripts import enterprise_judgment_reconstruction as reconstruction
+from scripts import enterprise_judgment_source_packet as source_packet
 from scripts import judgment_training_decision_contract as contract_module
 from tests.test_enterprise_judgment_core import _ledger, _model, _source_package
+
+
+def _source_inputs(*, cash_eligibility: str = "ELIGIBLE") -> tuple[dict, dict]:
+    core_source = _source_package(cash_eligibility=cash_eligibility)
+    receipt = {
+        "schema_version": source_packet.SCHEMA_VERSION,
+        "packet_id": core_source["source_package_id"],
+        "packet_version": 1,
+        "company_id": core_source["company_id"],
+        "issuer_id": core_source["company_id"],
+        "cutoff_at": core_source["cutoff_at"],
+        "sources": [{
+            "source_id": source["source_ref"],
+            "source_type": source["source_type"],
+            "official_url": "https://official.example/" + source["source_ref"] + ".pdf",
+            "published_on": source["available_at"][:10],
+            "available_on": source["available_at"][:10],
+            "availability_timezone": "UTC",
+            "eligibility": source["eligibility"],
+            "responsibility_boundary_ids": list(source["responsibility_boundary_ids"]),
+            "responsibility_perimeter_id": "PERIMETER:SYNTHETIC",
+            "unit": "RMB",
+            "access_mode": "REMOTE_OFFICIAL_LOCATOR",
+            "locators": [{"research_question_id": "Q:SYNTHETIC", "locator": source["locator"]}],
+            **({"boundary_note": source["boundary_note"]} if "boundary_note" in source else {}),
+        } for source in core_source["sources"]],
+        "object_class": "SOURCE_PACKET_RECEIPT",
+        "claim_class": "CUTOFF_ELIGIBLE_SOURCE_RECEIPT",
+        "allowed_outputs": list(source_packet.ALLOWED_OUTPUTS),
+    }
+    projected = source_packet.compile_core_source_package(receipt)
+    assert projected["valid"], projected["findings"]
+    return receipt, projected["source_package"]
 
 
 def _contract(source_package: dict) -> dict:
@@ -129,7 +163,7 @@ def _episode_manifest(source_package: dict, contract: dict, component_refs: list
 
 
 def test_j1_projects_cutoff_safe_context_operating_loops_and_decision_slice() -> None:
-    source_package = _source_package()
+    source_receipt, source_package = _source_inputs()
     decision_contract = _contract(source_package)
     model = _model(source_package=source_package)
     ledger = _ledger()
@@ -142,7 +176,8 @@ def test_j1_projects_cutoff_safe_context_operating_loops_and_decision_slice() ->
     before_model, before_ledger = deepcopy(model), deepcopy(ledger)
 
     result = reconstruction.compile_enterprise_reconstruction(
-        _spec(source_package, decision_contract), source_package=source_package, enterprise_model=model,
+        _spec(source_package, decision_contract), source_packet_receipt=source_receipt,
+        source_package=source_package, enterprise_model=model,
         decision_ledger=ledger, decision_contract=decision_contract,
     )
 
@@ -163,13 +198,14 @@ def test_j1_projects_cutoff_safe_context_operating_loops_and_decision_slice() ->
 
 
 def test_j1_components_are_a_valid_e1_input_to_j0_without_retroactive_promotion() -> None:
-    source_package = _source_package()
+    source_receipt, source_package = _source_inputs()
     decision_contract = _contract(source_package)
     model = _model(source_package=source_package)
     ledger = _ledger()
     spec = _spec(source_package, decision_contract)
     compiled = reconstruction.compile_enterprise_reconstruction(
-        spec, source_package=source_package, enterprise_model=model, decision_ledger=ledger,
+        spec, source_packet_receipt=source_receipt, source_package=source_package,
+        enterprise_model=model, decision_ledger=ledger,
         decision_contract=decision_contract,
     )
     assert compiled["valid"], compiled["findings"]
@@ -178,7 +214,8 @@ def test_j1_components_are_a_valid_e1_input_to_j0_without_retroactive_promotion(
         _episode_manifest(source_package, decision_contract, compiled["reconstruction"]["episode_component_refs"]),
         decision_contract=decision_contract,
         reconstruction_binding={
-            "reconstruction": compiled["reconstruction"], "spec": spec, "source_package": source_package,
+            "reconstruction": compiled["reconstruction"], "spec": spec,
+            "source_packet_receipt": source_receipt, "source_package": source_package,
             "enterprise_model": model, "decision_ledger": ledger,
         },
     )
@@ -188,12 +225,13 @@ def test_j1_components_are_a_valid_e1_input_to_j0_without_retroactive_promotion(
 
 
 def test_j1_rejects_uncovered_loop_variables_and_outcome_or_price_payloads() -> None:
-    source_package = _source_package()
+    source_receipt, source_package = _source_inputs()
     decision_contract = _contract(source_package)
     spec = _spec(source_package, decision_contract)
     spec["feedback_loops"][0]["variable_ids"].append("VAR:OWNER_CASH")
     result = reconstruction.validate_reconstruction_spec(
-        spec, source_package=source_package, enterprise_model=_model(source_package=source_package), decision_ledger=_ledger(),
+        spec, source_packet_receipt=source_receipt, source_package=source_package,
+        enterprise_model=_model(source_package=source_package), decision_ledger=_ledger(),
         decision_contract=decision_contract,
     )
     assert not result["valid"]
@@ -202,7 +240,8 @@ def test_j1_rejects_uncovered_loop_variables_and_outcome_or_price_payloads() -> 
     contaminated = _spec(source_package, decision_contract)
     contaminated["feedback_loops"][0]["outcome_value"] = 42
     result = reconstruction.validate_reconstruction_spec(
-        contaminated, source_package=source_package, enterprise_model=_model(source_package=source_package), decision_ledger=_ledger(),
+        contaminated, source_packet_receipt=source_receipt, source_package=source_package,
+        enterprise_model=_model(source_package=source_package), decision_ledger=_ledger(),
         decision_contract=decision_contract,
     )
     assert not result["valid"]
@@ -211,22 +250,24 @@ def test_j1_rejects_uncovered_loop_variables_and_outcome_or_price_payloads() -> 
 
 
 def test_j1_rejects_cross_boundary_loops_and_localizes_ineligible_evidence() -> None:
-    source_package = _source_package()
+    source_receipt, source_package = _source_inputs()
     decision_contract = _contract(source_package)
     model = _model(source_package=source_package)
     cross_boundary = _spec(source_package, decision_contract)
     model["operating_variables"][0]["responsibility_unit_id"] = "UNIT:GROUP"
     result = reconstruction.validate_reconstruction_spec(
-        cross_boundary, source_package=source_package, enterprise_model=model, decision_ledger=_ledger(),
+        cross_boundary, source_packet_receipt=source_receipt, source_package=source_package,
+        enterprise_model=model, decision_ledger=_ledger(),
         decision_contract=decision_contract,
     )
     assert not result["valid"]
     assert "reconstruction_spec.feedback_loops[0].must_remain_within_one_responsibility_boundary_and_arena" in result["findings"]
 
-    ineligible_package = _source_package(cash_eligibility="EVIDENCE_INELIGIBLE")
+    ineligible_receipt, ineligible_package = _source_inputs(cash_eligibility="EVIDENCE_INELIGIBLE")
     ineligible_contract = _contract(ineligible_package)
     compiled = reconstruction.compile_enterprise_reconstruction(
-        _spec(ineligible_package, ineligible_contract), source_package=ineligible_package,
+        _spec(ineligible_package, ineligible_contract), source_packet_receipt=ineligible_receipt,
+        source_package=ineligible_package,
         enterprise_model=_model(source_package=ineligible_package), decision_ledger=_ledger(),
         decision_contract=ineligible_contract,
     )
@@ -245,7 +286,8 @@ def test_j1_rejects_cross_boundary_loops_and_localizes_ineligible_evidence() -> 
         decision_contract=ineligible_contract,
         reconstruction_binding={
             "reconstruction": compiled["reconstruction"], "spec": _spec(ineligible_package, ineligible_contract),
-            "source_package": ineligible_package, "enterprise_model": _model(source_package=ineligible_package),
+            "source_packet_receipt": ineligible_receipt, "source_package": ineligible_package,
+            "enterprise_model": _model(source_package=ineligible_package),
             "decision_ledger": _ledger(),
         },
     )
@@ -254,7 +296,7 @@ def test_j1_rejects_cross_boundary_loops_and_localizes_ineligible_evidence() -> 
 
 
 def test_j1_allows_scoped_no_material_decision_without_promoting_it_to_an_action() -> None:
-    source_package = _source_package()
+    source_receipt, source_package = _source_inputs()
     decision_contract = _contract(source_package)
     model = _model(source_package=source_package)
     for mechanism in model["mechanisms"]:
@@ -272,7 +314,8 @@ def test_j1_allows_scoped_no_material_decision_without_promoting_it_to_an_action
     })
 
     compiled = reconstruction.compile_enterprise_reconstruction(
-        spec, source_package=source_package, enterprise_model=model, decision_ledger=ledger,
+        spec, source_packet_receipt=source_receipt, source_package=source_package,
+        enterprise_model=model, decision_ledger=ledger,
         decision_contract=decision_contract,
     )
     assert compiled["valid"], compiled["findings"]
@@ -291,7 +334,8 @@ def test_j1_allows_scoped_no_material_decision_without_promoting_it_to_an_action
         manifest,
         decision_contract=decision_contract,
         reconstruction_binding={
-            "reconstruction": compiled["reconstruction"], "spec": spec, "source_package": source_package,
+            "reconstruction": compiled["reconstruction"], "spec": spec,
+            "source_packet_receipt": source_receipt, "source_package": source_package,
             "enterprise_model": model, "decision_ledger": ledger,
         },
     )
@@ -301,14 +345,74 @@ def test_j1_allows_scoped_no_material_decision_without_promoting_it_to_an_action
     assert rows["CLAIM:CASH"]["allowed_outputs"] == ["RESEARCH_AGENDA"]
 
 
+def test_j1_requires_exact_receipt_projection_and_eligible_no_action_observation() -> None:
+    source_receipt, source_package = _source_inputs()
+    decision_contract = _contract(source_package)
+    model = _model(source_package=source_package)
+    ledger = _ledger()
+    spec = _spec(source_package, decision_contract)
+    substituted_package = deepcopy(source_package)
+    substituted_package["sources"][0]["locator"] = "a hand-written source package is not receipt provenance"
+    result = reconstruction.validate_reconstruction_spec(
+        spec, source_packet_receipt=source_receipt, source_package=substituted_package,
+        enterprise_model=model, decision_ledger=ledger, decision_contract=decision_contract,
+    )
+    assert not result["valid"]
+    assert "source_package_must_equal_bound_source_packet_receipt_projection" in result["findings"]
+
+    wrong_version = deepcopy(source_receipt)
+    wrong_version["packet_version"] = 2
+    result = reconstruction.validate_reconstruction_spec(
+        spec, source_packet_receipt=wrong_version, source_package=source_package,
+        enterprise_model=model, decision_ledger=ledger, decision_contract=decision_contract,
+    )
+    assert not result["valid"]
+    assert "reconstruction_spec.source_packet_ref_must_match_bound_source_packet_receipt" in result["findings"]
+
+    wrong_company = deepcopy(source_receipt)
+    wrong_company["company_id"] = "CN:OTHER"
+    result = reconstruction.validate_reconstruction_spec(
+        spec, source_packet_receipt=wrong_company, source_package=source_package,
+        enterprise_model=model, decision_ledger=ledger, decision_contract=decision_contract,
+    )
+    assert not result["valid"]
+    assert "reconstruction_spec.company_id_must_match_bound_source_packet_receipt" in result["findings"]
+
+    ineligible_receipt, ineligible_package = _source_inputs(cash_eligibility="EVIDENCE_INELIGIBLE")
+    ineligible_contract = _contract(ineligible_package)
+    no_action_model = _model(source_package=ineligible_package)
+    for mechanism in no_action_model["mechanisms"]:
+        mechanism["management_decision_ids"] = []
+    no_action_model["state_changes"][0]["management_decision_ids"] = []
+    no_action_ledger = _ledger()
+    no_action_ledger["events"] = []
+    no_action_spec = _spec(ineligible_package, ineligible_contract)
+    for loop in no_action_spec["feedback_loops"]:
+        loop["decision_ids"] = []
+    no_action_spec["decision_ids"] = []
+    no_action_spec["decision_observation"].update({
+        "status": "NO_MATERIAL_DECISION_OBSERVED",
+        "reviewed_source_refs": ["SRC:CASH"],
+        "rationale": "This must not turn ineligible source silence into a no-action conclusion.",
+    })
+    result = reconstruction.validate_reconstruction_spec(
+        no_action_spec, source_packet_receipt=ineligible_receipt, source_package=ineligible_package,
+        enterprise_model=no_action_model, decision_ledger=no_action_ledger,
+        decision_contract=ineligible_contract,
+    )
+    assert not result["valid"]
+    assert "reconstruction_spec.no_material_decision_observation_requires_eligible_reviewed_sources" in result["findings"]
+
+
 def test_j1_bound_reconstruction_rejects_custody_or_observation_substitution() -> None:
-    source_package = _source_package()
+    source_receipt, source_package = _source_inputs()
     decision_contract = _contract(source_package)
     model = _model(source_package=source_package)
     ledger = _ledger()
     spec = _spec(source_package, decision_contract)
     compiled = reconstruction.compile_enterprise_reconstruction(
-        spec, source_package=source_package, enterprise_model=model, decision_ledger=ledger,
+        spec, source_packet_receipt=source_receipt, source_package=source_package,
+        enterprise_model=model, decision_ledger=ledger,
         decision_contract=decision_contract,
     )
     assert compiled["valid"], compiled["findings"]
@@ -318,7 +422,8 @@ def test_j1_bound_reconstruction_rejects_custody_or_observation_substitution() -
         manifest,
         decision_contract=decision_contract,
         reconstruction_binding={
-            "reconstruction": compiled["reconstruction"], "spec": spec, "source_package": source_package,
+            "reconstruction": compiled["reconstruction"], "spec": spec,
+            "source_packet_receipt": source_receipt, "source_package": source_package,
             "enterprise_model": model, "decision_ledger": ledger,
         },
     )
@@ -332,7 +437,8 @@ def test_j1_bound_reconstruction_rejects_custody_or_observation_substitution() -
         manifest,
         decision_contract=decision_contract,
         reconstruction_binding={
-            "reconstruction": tampered, "spec": spec, "source_package": source_package,
+            "reconstruction": tampered, "spec": spec,
+            "source_packet_receipt": source_receipt, "source_package": source_package,
             "enterprise_model": model, "decision_ledger": ledger,
         },
     )

@@ -59,6 +59,18 @@ def test_source_packet_rejects_date_after_cutoff_and_outcome_payloads() -> None:
     assert not result["valid"]
     assert "source_packet_receipt.sources[0]_contains_unapproved_field:outcome_value" in result["findings"]
 
+    dynamic = _receipt()
+    dynamic["sources"][0]["access_mode"] = "DYNAMIC_CNINFO_DETAIL_PAGE"
+    result = packet.validate_source_packet_receipt(dynamic)
+    assert not result["valid"]
+    assert "source_packet_receipt.sources[0].access_mode_invalid" in result["findings"]
+
+    inverted = _receipt()
+    inverted["sources"][0]["published_on"] = "2025-02-02"
+    result = packet.validate_source_packet_receipt(inverted)
+    assert not result["valid"]
+    assert "source_packet_receipt.sources[0].published_on_after_available_on" in result["findings"]
+
 
 def test_source_packet_schema_is_closed() -> None:
     schema = json.loads(Path("schemas/enterprise_judgment_source_packet_receipt.schema.json").read_text(encoding="utf-8"))

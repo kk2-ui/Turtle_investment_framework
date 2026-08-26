@@ -1,0 +1,53 @@
+{
+  "schema_version": "enterprise-judgment-reconstruction-spec.v1",
+  "reconstruction_id": "RECON:CN002083:20190501",
+  "company_id": "CN:002083",
+  "issuer_id": "ISSUER:CN:002083",
+  "cutoff_at": "2019-05-01T00:00:00+08:00",
+  "decision_contract_ref": {"contract_id": "DC:CN002083:20190501:J1", "contract_version": 1},
+  "source_packet_ref": {"receipt_id": "SP:CN002083:20190501:ANNUAL_REPORTS", "receipt_version": 1},
+  "context_snapshot_id": "ECS:CN002083:20190501",
+  "operating_system_model_id": "OSM:CN002083:20190501",
+  "decision_ledger_slice_id": "MDLS:CN002083:20190501",
+  "feedback_loops": [
+    {
+      "loop_id": "LOOP:CN002083:PRODUCT_EXPORT_EARNINGS",
+      "domains": ["CUSTOMER", "COMPETITION", "OPERATIONS"],
+      "variable_ids": ["VAR:CN002083:PRODUCT_CHANNEL_SCOPE", "VAR:CN002083:EXPORT_EXPOSURE", "VAR:CN002083:CONSOLIDATED_EARNINGS"],
+      "mechanism_ids": ["MECH:CN002083:PRODUCT_EXPORT_TO_EARNINGS"],
+      "financial_transmission_ids": ["TX:CN002083:NORMAL_EARNINGS"],
+      "decision_ids": [],
+      "selection_rationale": "The cutoff packet directly identifies product/channel scope and a three-year export-exposure history, while earnings remains a separate same-boundary disclosed state rather than an attributed management result.",
+      "evidence_refs": ["CNINFO:002083:ANN:20170407:1203261862", "CNINFO:002083:ANN:20180402:1204575099", "CNINFO:002083:ANN:20190428:1206124458"]
+    },
+    {
+      "loop_id": "LOOP:CN002083:EARNINGS_OPERATING_CASH",
+      "domains": ["OPERATIONS", "CASH"],
+      "variable_ids": ["VAR:CN002083:CONSOLIDATED_EARNINGS", "VAR:CN002083:OPERATING_CASH"],
+      "mechanism_ids": ["MECH:CN002083:EARNINGS_TO_OPERATING_CASH"],
+      "financial_transmission_ids": ["TX:CN002083:OPERATING_CASH"],
+      "decision_ids": [],
+      "selection_rationale": "Five audited annual reports provide a repeated same-boundary earnings and operating-cash bridge, but not a permanent-loss measurement or a capital-allocation attribution.",
+      "evidence_refs": ["CNINFO:002083:ANN:20150427:1200918435", "CNINFO:002083:ANN:20160330:1202112583", "CNINFO:002083:ANN:20170407:1203261862", "CNINFO:002083:ANN:20180402:1204575099", "CNINFO:002083:ANN:20190428:1206124458"]
+    }
+  ],
+  "decision_observation": {
+    "observation_id": "MDO:CN002083:20190501",
+    "status": "INSUFFICIENT_EVIDENCE",
+    "responsibility_unit_ids": ["ISSUER_CONSOLIDATED:CN:002083"],
+    "arena_ids": ["ARENA:CN002083:HOME_TEXTILE_CHANNELS"],
+    "reviewed_source_refs": ["CNINFO:002083:ANN:20150427:1200918435", "CNINFO:002083:ANN:20160330:1202112583", "CNINFO:002083:ANN:20170407:1203261862", "CNINFO:002083:ANN:20180402:1204575099", "CNINFO:002083:ANN:20190428:1206124458"],
+    "materiality_scope": "A cutoff-visible issuer-consolidated management decision with a stated problem, alternatives or non-action option, commitment, execution timing and same-boundary mechanism.",
+    "rationale": "The reviewed annual reports disclose operating initiatives and results but do not provide a discrete, cutoff-safe decision sequence sufficient to attribute a material action to the selected operating mechanisms.",
+    "next_discriminating_evidence": "A cutoff-before official board, shareholder or implementation announcement that identifies the decision scope, responsibility boundary, timing and mechanism."
+  },
+  "decision_ids": [],
+  "roles": {
+    "judgment_owner_id": "ROLE:CN002083:20190501:JUDGMENT_OWNER",
+    "independent_challenger_id": "ROLE:CN002083:20190501:INDEPENDENT_CHALLENGER",
+    "outcome_custodian_id": "ROLE:CN002083:20190501:OUTCOME_CUSTODIAN"
+  },
+  "object_class": "ENTERPRISE_JUDGMENT_RECONSTRUCTION_SPEC",
+  "claim_class": "CUTOFF_ENTERPRISE_RECONSTRUCTION",
+  "allowed_outputs": ["RECONSTRUCTION_READ_MODEL", "CJO_TRAINING_MIRROR", "RESEARCH_AGENDA"]
+}
