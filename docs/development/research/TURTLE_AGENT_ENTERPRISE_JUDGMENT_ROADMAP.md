@@ -353,6 +353,8 @@ WP-R0 的离线控制基础和 registry-aware comparative epoch 已完成 synthe
 
 `Forecast V4` 是另一个新 epoch，而非对 V1--V3 的 retrofit：在 forecast 前，独立 curator 只能从同一已登记 H1 static-PDF packet 提交 closed、逐字段、逐页的 cutoff-visible extraction；control plane 将它编译并冻结为 evidence-only receipt。H1 仍是唯一 artifact allowlist，不得新增 PDF 或动态来源；receipt 的页码把既有官方 PDF 的具体原始字段、单位、责任边界和数值固定下来，但不授予 outcome、CJO、价格、报告或投资权限。V4 的每个 `MODEL_UNCERTAIN` 维度必须引用该 receipt 中精确的 `source_id × field_id`，receipt、Decision Contract、Measurement Contract 与 forecast 都须在 freeze 前同公司/issuer/cutoff/H1 ref 一致。另将既有 `R-05:SBUX:NA_TRANSACTION_DURABILITY:20260821` 的两个 2027 signal windows 登记为 current `MECHANISM_SIGNAL_PROBE` shadow；它只证明 prequential 时钟正在运行，不是 state-forecast holdout、因果样本、CJO 或报告授权。
 
+CN:600585 的 2018 `Forecast V4` 已在隔离开发 namespace 完成 contract-first 的独立 settlement。此处不记录预测或结果方向：可复用的唯一后续对象是 coverage / direct forecast policy，且只输出 `FORECAST_POLICY_ONLY + RESEARCH_AGENDA`。该 V4 在 outcome access 前没有冻结 Method Pairing 或 Decision-Utility Pairing；因此不得事后补冻，且永久不能作为 baseline-performance、evidence-priority、rival-hypothesis transfer、decision utility、method release、CJO、估值或报告授权证据。下一份可主张这些问题的对象必须是尚未 outcome-access 的新 V6：它须先冻结同一 source、Decision、Measurement、evidence 与 scope 合同，再在 outcome access 前精确冻结所需 pairing；真实 source package 仍是该前向对象的 acquisition blocker。
+
 ### WP-D0 Decision Contract gate
 
 `DecisionContract` 已作为 Forecast V2 的 forecast-first 前置门：它在 forecast 前冻结 `company × cutoff`、持有时域、永久损失约束、翻转问题、唯一 H1 source packet、三个独立角色，并禁止价格、机会成本和 outcome access。V2 forecast 必须引用 DB 中同公司/issuer/cutoff/source packet 的 contract，且 contract freeze 必须早于 forecast freeze；V1 不允许补挂。该门使历史 replay 不再只有预测对象。

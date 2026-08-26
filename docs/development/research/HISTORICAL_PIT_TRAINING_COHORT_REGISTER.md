@@ -1,7 +1,7 @@
 # Turtle 历史训练对象与留出队列
 
 状态：`TRAINING_ACTIVE / LAYERED_REDESIGN_ADOPTED / MIGRATION_PENDING / REPORT_USE_NOT_RELEASED`
-更新：2026-08-25
+更新：2026-08-26
 上位协议：[历史训练体系重构](TURTLE_HISTORICAL_TRAINING_SYSTEM_REDESIGN.md)、[历史优先训练架构](TURTLE_HISTORICAL_FIRST_JUDGMENT_TRAINING_ARCHITECTURE.md)、[判断力验证与回测协议](TURTLE_JUDGMENT_VALIDATION_PROTOCOL.md)
 
 ## 1. 目的
@@ -14,11 +14,11 @@
 
 | 维度 | 字段与可用值 | 约束 |
 |---|---|---|
-| 训练对象 | `object_class` | `INDUSTRY_UNIVERSE / EVIDENCE_CARRIER / TEACHING_CASE / LIFECYCLE_CASE / COMPARATIVE_EPISODE / LEARNING_EPISODE` |
-| 主张强度 | `claim_class` | `DESCRIPTIVE_STRUCTURE / WITHIN_CASE_MECHANISM / LIFECYCLE_TRANSITION / RELATIVE_CAUSAL / METHOD_GENERALIZATION / INVESTMENT_DECISION_UTILITY` |
+| 训练对象 | `object_class` | `INDUSTRY_UNIVERSE / EVIDENCE_CARRIER / TEACHING_CASE / LIFECYCLE_CASE / PIT_COMPANY_STATE_FORECAST / COMPARATIVE_EPISODE / LEARNING_EPISODE` |
+| 主张强度 | `claim_class` | `DESCRIPTIVE_STRUCTURE / WITHIN_CASE_MECHANISM / LIFECYCLE_TRANSITION / FORECAST_CALIBRATION_COVERAGE / RELATIVE_CAUSAL / METHOD_GENERALIZATION / INVESTMENT_DECISION_UTILITY` |
 | 运行通道 | `lane` | `HISTORICAL_TRAINING / HISTORICAL_HOLDOUT / HISTORICAL_TEACHING / LIVE_SENTINEL` |
 | 来源与结果隔离 | `provenance_role + outcome_access` | `HISTORICAL_SELF_REPLAY + PIT_OUTCOME_SEALED`、`RESULT_KNOWN_TEACHING + OUTCOME_EXPOSED`、`REAL_FORWARD + NOT_YET_RELEASED` |
-| 后续权限 | `learning_eligibility` | `BOUNDARY_METHOD_ELIGIBLE / SELECTION_METHOD_ELIGIBLE / EVALUATION_ONLY / TEACHING_ONLY / MECHANISM_SETTLEMENT_ONLY / CONTEXT_ONLY` |
+| 后续权限 | `learning_eligibility` | `BOUNDARY_METHOD_ELIGIBLE / FORECAST_POLICY_ONLY / SELECTION_METHOD_ELIGIBLE / EVALUATION_ONLY / TEACHING_ONLY / MECHANISM_SETTLEMENT_ONLY / CONTEXT_ONLY` |
 
 Industry Universe 和 Evidence Carrier 不自动成为 episode。Teaching/Lifecycle 可训练问题、机制边界、near miss 和 permanent-loss pattern，但不得进入选择成绩。只有 `RELATIVE_CAUSAL + COMPARATIVE_EPISODE + PIT_OUTCOME_SEALED` 才可能产生方向性 learning；`MIXED / NOT_DIAGNOSTIC / MEASUREMENT_MISMATCH` 只形成边界。
 
@@ -56,6 +56,7 @@ DATA_CENSORED
 | `HTR-08` | [R-104 重庆啤酒生产网络优化](experiments/R-104_chongqing_beer_network_pruning_unit_economics_20160430/11_independent_post_outcome_review.json) | `COMPARATIVE_EPISODE / WITHIN_CASE_MECHANISM` | `HISTORICAL_TRAINING / MECHANISM_SETTLEMENT_ONLY` | D3=`A_ONLY`、D4=`B_ONLY`、联合=`MIXED`；证明经营改善不自动传到正常 owner cash。 | 禁止方向性 learning、方法冻结、R-103 释放和报告授权。 |
 | `HTR-09` | [水泥 2018 H1 static package](cohorts/COHORT_CN_CEMENT_LISTED_20180430_h1_static_package.json) | `INDUSTRY_UNIVERSE + EVIDENCE_CARRIER / DESCRIPTIVE_STRUCTURE` | `HISTORICAL_TRAINING / CONTEXT_ONLY` | strict preflight=`STAGE0_FEASIBILITY_REVIEWABLE`；25 份 PDF、五家公司可作 universe/carrier seed；独立 curator 的 H2 仅返回 `NO_PRIMARY_ACTION_SCOPE`。 | 不是 final peer panel；两家 scope/control break 不得进入不匹配 comparator；不得把 H1 的地方性/例行事项硬解释为 company-wide intervention。 |
 | `HTR-10` | [华新水泥 2017 perimeter-break teaching case](cohorts/TEACHING_LIFECYCLE_CN_600801_PERIMETER_BREAK_20170324.json) | `TEACHING_CASE / WITHIN_CASE_MECHANISM` | `HISTORICAL_TEACHING / TEACHING_ONLY` | 以 FY2016 年报 p9 的 15 家工厂收购批准训练“scope break 不等于经营退出”，并保留 action-window perimeter bridge 问题。 | 不得把收购批准当作已观察到的业务退出，或把该教学案例升级为 comparative/learning/report/investment 权限。 |
+| `HTR-11` | CN:600585 2018 `Forecast V4` contract-first receipt | `PIT_COMPANY_STATE_FORECAST / FORECAST_CALIBRATION_COVERAGE` | `HISTORICAL_TRAINING / FORECAST_POLICY_ONLY` | 已完成独立 settlement；仅保留 coverage / direct forecast policy 和 `RESEARCH_AGENDA`。 | outcome access 前没有 method 或 decision-utility pairing；不得回填，亦不得声称方法改善、跨公司迁移、决策效用、method release、CJO、估值或报告权限。 |
 
 R-61 是当前预留的 PIT outcome-sealed holdout；R-102 的联合结果与基线均 `NOT_DIAGNOSTIC`，只保留 `MEASUREMENT_BOUNDARY`。R-56、R-58 及其他结果已知案例只能映射为 Teaching/Lifecycle，不得重新包装成 formal learning。
 
