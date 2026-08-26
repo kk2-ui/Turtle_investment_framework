@@ -81,6 +81,28 @@ def test_unsettled_outcome_cell_only_blocks_its_dependent_claim() -> None:
     assert "STATE_VIEW" in rows["CLAIM:600585:CASH"]["allowed_outputs"]
 
 
+def test_j2_probe_is_bound_to_e1_thread_and_cannot_claim_management_action() -> None:
+    h1, series, models, episodes, _ = _inputs()
+    huaxin = next(episode for episode in episodes if episode["episode_id"] == "EJE:CN:600801:20170412")
+    probe = json.loads((BLOCK_ROOT / "06_mechanism_probe.json").read_text(encoding="utf-8"))
+    result = v2.compile_mechanism_probe(probe, episode=huaxin, history_series=series, h1_package=h1, enterprise_models=models)
+    assert result["valid"], result["findings"]
+    assert result["mechanism_probe_read_model"]["action_effect_authority"] == "NONE"
+    assert result["mechanism_probe_read_model"]["investment_authorization"] == "NOT_AUTHORIZED"
+
+    action = deepcopy(probe)
+    action["action_effect_authority"] = "LOCAL_ONLY"
+    result = v2.validate_mechanism_probe(action, episode=huaxin, history_series=series, h1_package=h1, enterprise_models=models)
+    assert not result["valid"]
+    assert "mechanism_probe.state_transmission_must_not_claim_action_effect" in result["findings"]
+
+    pure_text_e2 = deepcopy(huaxin)
+    pure_text_e2["admission_level"] = "E2_MECHANISM_PROBE"
+    result = v2.validate_enterprise_judgment_episode(pure_text_e2, history_series=series, h1_package=h1, enterprise_models=models)
+    assert not result["valid"]
+    assert "episode.e2_must_be_compiled_as_a_bound_mechanism_probe" in result["findings"]
+
+
 def test_predeclared_company_cutoff_order_cannot_be_rewritten_and_brief_hides_hypotheses() -> None:
     h1, series, models, episodes, block = _inputs()
     reordered = deepcopy(block)

@@ -32,6 +32,7 @@ except ModuleNotFoundError:  # pragma: no cover - direct script import
 EPISODE_SCHEMA_VERSION = "enterprise-judgment-episode.v2"
 BLOCK_SCHEMA_VERSION = "industry-learning-block.v1"
 SETTLEMENT_SCHEMA_VERSION = "enterprise-judgment-feedback-settlement.v1"
+PROBE_SCHEMA_VERSION = "enterprise-judgment-mechanism-probe.v1"
 
 CELL_STATES = {"OBSERVED", "INFERRED", "UNKNOWN", "EVIDENCE_INELIGIBLE", "NOT_APPLICABLE", "MEASUREMENT_MISMATCH"}
 PREOUTCOME_CELL_STATES = CELL_STATES - {"MEASUREMENT_MISMATCH"}
@@ -42,6 +43,7 @@ DECISION_OBSERVATION_STATES = {"NOT_STARTED", "MATERIAL_DECISION_OBSERVED", "NO_
 ALLOWED_EPISODE_OUTPUTS = ["STATE_VIEW", "DECISION_VIEW", "MECHANISM_VIEW", "TEACHING_ONLY", "RESEARCH_AGENDA"]
 ALLOWED_BLOCK_OUTPUTS = ["INDUSTRY_CONTEXT", "TEACHING_ONLY", "MECHANISM_CANDIDATE", "RESEARCH_AGENDA"]
 ALLOWED_SETTLEMENT_OUTPUTS = ["FEEDBACK_READ_MODEL", "RESEARCH_AGENDA"]
+ALLOWED_PROBE_OUTPUTS = ["MECHANISM_VIEW", "TEACHING_ONLY", "RESEARCH_AGENDA"]
 
 _ROLE_KEYS = {"judgment_owner_id", "independent_challenger_id", "outcome_custodian_id"}
 _EPISODE_KEYS = {
@@ -88,6 +90,13 @@ _SETTLEMENT_KEYS = {"schema_version", "settlement_id", "block_id", "transition_i
 _SOURCE_RECEIPT_KEYS = {"source_ref", "published_on", "official_url", "source_type", "custodian_access", "availability_precision"}
 _OBSERVATION_KEYS = {"outcome_cell_id", "status", "reported_value", "summary", "source_ref"}
 _AGENDA_DELTA_KEYS = {"target_cutoff_at", "change_id", "change_type", "statement", "reason"}
+_PROBE_KEYS = {
+    "schema_version", "probe_id", "episode_id", "company_id", "issuer_id", "cutoff_at",
+    "thread_id", "anchor_kind", "responsibility_unit_id", "arena_id", "claim_ids", "hypothesis_ids",
+    "diagnostic_matrix", "direct_evidence_refs", "outcome_cell_ids", "outcome_access",
+    "action_effect_authority", "roles", "object_class", "claim_class", "allowed_outputs",
+}
+_PROBE_DIAGNOSTIC_KEYS = {"diagnostic_id", "diagnostic_kind", "h_a_prediction", "h_b_prediction"}
 _FORBIDDEN_KEYS = {
     "price", "market_price", "share_price", "stock_price", "entry_price", "valuation", "valuation_result",
     "expectation_gap", "buyband", "buy_band", "investment_instruction", "portfolio_action", "position",
@@ -267,6 +276,8 @@ def _validate_episode_structure(
     level = item.get("admission_level")
     if level not in ADMISSION_LEVELS:
         _add(findings, "episode.admission_level_invalid")
+    if level == "E2_MECHANISM_PROBE":
+        _add(findings, "episode.e2_must_be_compiled_as_a_bound_mechanism_probe")
     if item.get("schema_version") != EPISODE_SCHEMA_VERSION:
         _add(findings, "episode.schema_version_invalid")
     if item.get("object_class") != "ENTERPRISE_JUDGMENT_EPISODE":
@@ -504,6 +515,99 @@ def compile_enterprise_judgment_episode(
         outputs = ["RESEARCH_AGENDA"] if blockers else list(ALLOWED_EPISODE_OUTPUTS)
         rows.append({"claim_id": claim["claim_id"], "admission_level": claim["admission_level"], "allowed_outputs": outputs, "blocked_by": blockers})
     return {"valid": True, "findings": [], "episode_read_model": {"episode_id": item["episode_id"], "company_id": item["company_id"], "cutoff_at": item["cutoff_at"], "claim_output_matrix": rows, "investment_authorization": "NOT_AUTHORIZED"}}
+
+
+def validate_mechanism_probe(
+    probe: Any, *, episode: Any, history_series: Any, h1_package: Any, enterprise_models: list[Any] | None = None,
+) -> dict[str, Any]:
+    """Validate J2 as a bound, pre-outcome probe rather than free text.
+
+    E2 is represented by this narrow companion object.  An E1 episode can
+    carry teaching threads without becoming an action-effect or Comparative
+    object.  The binding below prevents a writer from upgrading one such
+    thread merely by restating H-A/H-B in prose.
+    """
+    findings: list[str] = []
+    episode_result = validate_enterprise_judgment_episode(
+        episode, history_series=history_series, h1_package=h1_package, enterprise_models=enterprise_models,
+    )
+    for finding in episode_result["findings"]:
+        _add(findings, "episode:" + finding)
+    series, catalog = _history_binding(history_series, h1_package, findings)
+    item = _closed(probe, _PROBE_KEYS, "mechanism_probe", findings)
+    if item.get("schema_version") != PROBE_SCHEMA_VERSION:
+        _add(findings, "mechanism_probe.schema_version_invalid")
+    for field in ("probe_id", "episode_id", "company_id", "issuer_id", "cutoff_at", "thread_id", "responsibility_unit_id", "arena_id"):
+        _required_text(item, field, "mechanism_probe", findings)
+    if item.get("object_class") != "MECHANISM_PROBE" or item.get("claim_class") != "LOCAL_PRE_OUTCOME_MECHANISM_TEST":
+        _add(findings, "mechanism_probe.object_or_claim_class_invalid")
+    if item.get("allowed_outputs") != ALLOWED_PROBE_OUTPUTS:
+        _add(findings, "mechanism_probe.allowed_outputs_must_remain_teaching_only")
+    if item.get("outcome_access") != "NONE":
+        _add(findings, "mechanism_probe.outcome_access_must_remain_none")
+    episode_item = _mapping(episode)
+    if any(item.get(field) != episode_item.get(field) for field in ("episode_id", "company_id", "issuer_id", "cutoff_at")):
+        _add(findings, "mechanism_probe.identity_must_match_bound_episode")
+    boundary = _mapping(episode_item.get("responsibility_boundary"))
+    if (item.get("responsibility_unit_id"), item.get("arena_id")) != (boundary.get("responsibility_unit_id"), boundary.get("arena_id")):
+        _add(findings, "mechanism_probe.responsibility_boundary_must_match_bound_episode")
+    thread = next((raw for raw in map(_mapping, _items(episode_item.get("mechanism_threads"))) if raw.get("thread_id") == item.get("thread_id")), {})
+    if not thread:
+        _add(findings, "mechanism_probe.thread_must_match_bound_episode")
+    else:
+        if item.get("anchor_kind") != thread.get("anchor_kind"):
+            _add(findings, "mechanism_probe.anchor_kind_must_match_bound_thread")
+        if _ids(item.get("claim_ids"), "mechanism_probe.claim_ids", findings) != _items(thread.get("claim_ids")):
+            _add(findings, "mechanism_probe.claim_ids_must_match_bound_thread")
+        expected_hypotheses = [entry.get("hypothesis_id") for entry in map(_mapping, _items(thread.get("hypotheses")))]
+        if _ids(item.get("hypothesis_ids"), "mechanism_probe.hypothesis_ids", findings) != expected_hypotheses:
+            _add(findings, "mechanism_probe.hypothesis_ids_must_match_bound_thread")
+        if _ids(item.get("outcome_cell_ids"), "mechanism_probe.outcome_cell_ids", findings) != _items(thread.get("outcome_cell_ids")):
+            _add(findings, "mechanism_probe.outcome_cells_must_match_bound_thread")
+    direct_refs = _ids(item.get("direct_evidence_refs"), "mechanism_probe.direct_evidence_refs", findings)
+    probe_boundary = {"issuer_id": item.get("issuer_id"), "responsibility_unit_id": item.get("responsibility_unit_id"), "perimeter_id": boundary.get("perimeter_id")}
+    _validate_source_refs(direct_refs, catalog=catalog, company_id=str(item.get("company_id")), boundary=probe_boundary, cutoff=_instant(item.get("cutoff_at"), "mechanism_probe.cutoff_at", findings), path="mechanism_probe.direct_evidence_refs", findings=findings)
+    if thread and not set(direct_refs).issubset(set(_items(thread.get("evidence_refs")))):
+        _add(findings, "mechanism_probe.direct_evidence_must_be_bound_thread_evidence")
+    diagnostics = [_closed(raw, _PROBE_DIAGNOSTIC_KEYS, f"mechanism_probe.diagnostic_matrix[{index}]", findings) for index, raw in enumerate(_items(item.get("diagnostic_matrix")))]
+    if not diagnostics:
+        _add(findings, "mechanism_probe.diagnostic_matrix_required")
+    for index, diagnostic in enumerate(diagnostics):
+        for field in _PROBE_DIAGNOSTIC_KEYS:
+            _required_text(diagnostic, field, f"mechanism_probe.diagnostic_matrix[{index}]", findings)
+        if diagnostic.get("diagnostic_kind") not in {"EARLY_DIAGNOSTIC", "TERMINAL_OUTCOME"}:
+            _add(findings, f"mechanism_probe.diagnostic_matrix[{index}].kind_invalid")
+        if diagnostic.get("h_a_prediction") == diagnostic.get("h_b_prediction"):
+            _add(findings, f"mechanism_probe.diagnostic_matrix[{index}].hypotheses_must_discriminate")
+    decision_status = _mapping(episode_item.get("management_decision_observation")).get("status")
+    if item.get("anchor_kind") == "MANAGEMENT_DECISION":
+        if decision_status != "MATERIAL_DECISION_OBSERVED" or item.get("action_effect_authority") != "LOCAL_ONLY":
+            _add(findings, "mechanism_probe.management_action_requires_observed_decision_and_local_authority")
+    elif item.get("anchor_kind") == "STATE_TRANSMISSION":
+        if item.get("action_effect_authority") != "NONE":
+            _add(findings, "mechanism_probe.state_transmission_must_not_claim_action_effect")
+    else:
+        _add(findings, "mechanism_probe.anchor_kind_invalid")
+    _validate_roles(item.get("roles"), expected=_mapping(episode_item.get("roles")), path="mechanism_probe.roles", findings=findings)
+    for path in _forbidden_paths(item, "mechanism_probe"):
+        _add(findings, "mechanism_probe.forbidden_field:" + path)
+    return {"valid": not findings, "findings": findings, "mechanism_probe": deepcopy(item) if not findings else None}
+
+
+def compile_mechanism_probe(
+    probe: Any, *, episode: Any, history_series: Any, h1_package: Any, enterprise_models: list[Any] | None = None,
+) -> dict[str, Any]:
+    validation = validate_mechanism_probe(
+        probe, episode=episode, history_series=history_series, h1_package=h1_package, enterprise_models=enterprise_models,
+    )
+    if not validation["valid"]:
+        return {"valid": False, "findings": validation["findings"], "mechanism_probe_read_model": None}
+    item = _mapping(probe)
+    return {"valid": True, "findings": [], "mechanism_probe_read_model": {
+        "probe_id": item["probe_id"], "episode_id": item["episode_id"], "thread_id": item["thread_id"],
+        "allowed_outputs": list(ALLOWED_PROBE_OUTPUTS), "action_effect_authority": item["action_effect_authority"],
+        "investment_authorization": "NOT_AUTHORIZED",
+    }}
 
 
 def validate_industry_learning_block(
