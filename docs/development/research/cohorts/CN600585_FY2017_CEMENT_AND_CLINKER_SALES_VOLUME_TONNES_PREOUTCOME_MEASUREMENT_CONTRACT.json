@@ -1,0 +1,28 @@
+{
+  "schema_version": "turtle-minimal-historical-episode-measurement-contract.v1",
+  "measurement_contract_id": "MHE:CONTRACT:CN600585:FY2018:V1",
+  "measurement_contract_version": 1,
+  "company_id": "CN:600585",
+  "issuer_id": "ISSUER:CN:600585",
+  "cutoff_at": "2018-04-30T23:59:59+08:00",
+  "metric_id": "CEMENT_AND_CLINKER_SALES_VOLUME_TONNES",
+  "window_id": "ONE_YEAR",
+  "decision_contract_ref": {
+    "decision_contract_id": "MHE:DECISION:CN600585:FY2017:V1",
+    "decision_contract_version": 1
+  },
+  "outcome_period_end": "2018-12-31",
+  "responsibility_boundary": "LISTED_CONSOLIDATED_ISSUER",
+  "unit": "tonnes",
+  "settlement_tolerance": 0,
+  "roles": {
+    "forecaster_id": "FORECASTER:CN600585:PREOUTCOME:20260826",
+    "custodian_id": "CUSTODIAN:CN600585:FUTURE:20260826"
+  },
+  "object_class": "MINIMAL_HISTORICAL_MEASUREMENT_CONTRACT",
+  "claim_class": "ONE_METRIC_PRE_OUTCOME_SCOPE",
+  "allowed_outputs": [
+    "MECHANICAL_SETTLEMENT_ONLY"
+  ],
+  "method_transfer_rights": "NO_METHOD_TRANSFER_RIGHTS"
+}
