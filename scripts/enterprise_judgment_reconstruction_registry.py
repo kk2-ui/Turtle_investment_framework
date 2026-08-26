@@ -65,6 +65,37 @@ def register_from_artifacts(
     )
 
 
+def register_canonical_from_artifacts(
+    *,
+    source_packet_receipt: dict[str, Any],
+    decision_contract: dict[str, Any],
+    enterprise_model: dict[str, Any],
+    decision_ledger: dict[str, Any],
+    spec: dict[str, Any],
+    frozen_at: str,
+) -> dict[str, Any]:
+    """Register one complete J1 bundle in the control-plane-owned registry."""
+    registry_path = reconstruction.CANONICAL_REGISTRY_PATH
+    registry_path.parent.mkdir(parents=True, exist_ok=True)
+    conn = sqlite3.connect(registry_path)
+    try:
+        result = register_from_artifacts(
+            conn,
+            source_packet_receipt=source_packet_receipt,
+            decision_contract=decision_contract,
+            enterprise_model=enterprise_model,
+            decision_ledger=decision_ledger,
+            spec=spec,
+            frozen_at=frozen_at,
+        )
+    finally:
+        conn.close()
+    return {
+        **result,
+        "registry_role": "CANONICAL_FROZEN_J1_CONTROL_PLANE",
+    }
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--db", type=Path, default=reconstruction.CANONICAL_REGISTRY_PATH)
