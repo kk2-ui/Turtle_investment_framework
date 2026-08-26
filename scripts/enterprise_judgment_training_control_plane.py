@@ -26,6 +26,8 @@ SCHEMA_VERSION = "enterprise-judgment-training-control-plane.v1"
 ROSTER_TABLE = "enterprise_judgment_training_roster_freezes"
 RECEIPT_TABLE = "enterprise_judgment_training_selection_receipts"
 MEASUREMENT_CONTRACT_TABLE = "enterprise_judgment_training_measurement_contracts"
+ENTERPRISE_OBSERVATION_TABLE = "enterprise_judgment_training_enterprise_observation_receipts"
+ENTERPRISE_SETTLEMENT_TABLE = "enterprise_judgment_training_enterprise_settlements"
 ROSTER_OBJECT_CLASS = "ENTERPRISE_JUDGMENT_PRE_OUTCOME_FREEZE"
 RECEIPT_SCHEMAS = {
     "enterprise-judgment-feedback-settlement.v1",
@@ -125,6 +127,27 @@ def initialize(conn: sqlite3.Connection) -> None:
                 cutoff_at TEXT NOT NULL,
                 payload_json TEXT NOT NULL,
                 frozen_at TEXT NOT NULL
+            )"""
+        )
+        conn.execute(
+            f"""CREATE TABLE IF NOT EXISTS {ENTERPRISE_OBSERVATION_TABLE} (
+                receipt_id TEXT PRIMARY KEY,
+                settlement_id TEXT NOT NULL,
+                contract_set_id TEXT NOT NULL,
+                company_id TEXT NOT NULL,
+                cutoff_at TEXT NOT NULL,
+                payload_json TEXT NOT NULL,
+                registered_at TEXT NOT NULL
+            )"""
+        )
+        conn.execute(
+            f"""CREATE TABLE IF NOT EXISTS {ENTERPRISE_SETTLEMENT_TABLE} (
+                settlement_id TEXT PRIMARY KEY,
+                contract_set_id TEXT NOT NULL,
+                company_id TEXT NOT NULL,
+                cutoff_at TEXT NOT NULL,
+                payload_json TEXT NOT NULL,
+                registered_at TEXT NOT NULL
             )"""
         )
         receipt_columns = {row[1] for row in conn.execute(f"PRAGMA table_info({RECEIPT_TABLE})")}
@@ -437,6 +460,250 @@ def resolve_measurement_contract(contract_set_id: str) -> dict[str, Any]:
         return _load(row["payload_json"], code="canonical_measurement_contract_payload_invalid")
     finally:
         conn.close()
+
+
+def _enterprise_contract_ref(value: Any) -> tuple[str, int]:
+    if not isinstance(value, dict) or set(value) != {"measurement_contract_id", "measurement_contract_version"}:
+        raise TrainingControlPlaneError(
+            "enterprise_contract_ref_invalid",
+            "enterprise receipt must carry a closed measurement contract reference",
+        )
+    contract_id = value.get("measurement_contract_id")
+    version = value.get("measurement_contract_version")
+    if not isinstance(contract_id, str) or not contract_id or version != 3:
+        raise TrainingControlPlaneError(
+            "enterprise_contract_ref_invalid",
+            "enterprise receipt must reference a frozen v3 measurement contract",
+        )
+    return contract_id, version
+
+
+def _enterprise_contract_cell(contract: dict[str, Any], cell_id: str) -> dict[str, Any]:
+    cells = [cell for cell in contract.get("atomic_cells", []) if cell.get("cell_id") == cell_id]
+    if len(cells) != 1:
+        raise TrainingControlPlaneError(
+            "enterprise_cell_not_in_canonical_contract",
+            f"cell {cell_id} is not uniquely present in the canonical contract",
+        )
+    return cells[0]
+
+
+def _enterprise_observation_shape(receipt: Any) -> tuple[dict[str, Any], dict[str, Any]]:
+    item = receipt if isinstance(receipt, dict) else {}
+    required = {
+        "schema_version", "receipt_id", "settlement_id", "measurement_contract_ref",
+        "company_id", "cutoff_at", "custodian_id", "authorization_receipt_id",
+        "cell_id", "field_id", "status", "measurement_clock",
+        "responsibility_boundary", "unit",
+    }
+    if set(item).difference(required | {"raw_value", "source", "reason", "sources_considered"}):
+        raise TrainingControlPlaneError(
+            "enterprise_observation_shape_invalid",
+            "enterprise observation receipt contains an unapproved field",
+        )
+    missing = required - set(item)
+    if missing:
+        raise TrainingControlPlaneError(
+            "enterprise_observation_shape_invalid",
+            "enterprise observation receipt is missing " + ",".join(sorted(missing)),
+        )
+    if item.get("schema_version") != "enterprise-observation-receipt.v1":
+        raise TrainingControlPlaneError("enterprise_observation_schema_invalid", "enterprise observation schema is invalid")
+    if item.get("status") not in {"OBSERVED", "UNKNOWN", "MEASUREMENT_MISMATCH"}:
+        raise TrainingControlPlaneError("enterprise_observation_status_invalid", "enterprise observation status is invalid")
+    contract_id, _ = _enterprise_contract_ref(item.get("measurement_contract_ref"))
+    contract = resolve_measurement_contract(contract_id)
+    cell = _enterprise_contract_cell(contract, item["cell_id"])
+    raw_ids = {raw.get("field_id") for raw in cell.get("raw_input_fields", [])}
+    if item["field_id"] not in raw_ids:
+        raise TrainingControlPlaneError(
+            "enterprise_observation_field_not_in_cell",
+            "enterprise observation field is not one of the frozen cell inputs",
+        )
+    raw = next(raw for raw in cell["raw_input_fields"] if raw["field_id"] == item["field_id"])
+    if item["company_id"] != contract.get("company_id") or item["cutoff_at"] != contract.get("cutoff_at"):
+        raise TrainingControlPlaneError("enterprise_observation_contract_binding_invalid", "company or cutoff does not match contract")
+    if item["measurement_clock"] != raw.get("measurement_clock") or item["responsibility_boundary"] != cell.get("responsibility_boundary"):
+        raise TrainingControlPlaneError("enterprise_observation_frozen_identity_mismatch", "clock or responsibility boundary differs from contract")
+    if item["unit"] != raw.get("unit"):
+        raise TrainingControlPlaneError("enterprise_observation_unit_mismatch", "raw observation unit differs from contract")
+    if item["status"] in {"OBSERVED", "MEASUREMENT_MISMATCH"}:
+        source = item.get("source")
+        if not isinstance(source, dict):
+            raise TrainingControlPlaneError("enterprise_observation_source_required", "source evidence is required for sourced observations")
+        required_source = {
+            "source_id", "source_url", "official_source_type", "issuer_id", "report_period_end",
+            "availability_precision", "field_identity", "measurement_clock",
+            "responsibility_boundary", "unit", "pdf_page", "field_ref",
+        }
+        if not required_source.issubset(source):
+            raise TrainingControlPlaneError("enterprise_observation_source_incomplete", "source evidence is not page-level complete")
+        if source["field_identity"] != item["field_id"] or source["measurement_clock"] != item["measurement_clock"]:
+            raise TrainingControlPlaneError("enterprise_observation_source_field_binding_invalid", "source field or clock binding is invalid")
+        if source["responsibility_boundary"] != item["responsibility_boundary"] or source["unit"] != item["unit"]:
+            raise TrainingControlPlaneError("enterprise_observation_source_boundary_or_unit_invalid", "source boundary or unit binding is invalid")
+        if not isinstance(source["pdf_page"], int) or source["pdf_page"] < 1 or source["field_ref"] != f"PDF p.{source['pdf_page']}":
+            raise TrainingControlPlaneError("enterprise_observation_page_binding_invalid", "source must identify a PDF page")
+    elif not isinstance(item.get("reason"), str) or not item["reason"]:
+        raise TrainingControlPlaneError("enterprise_observation_unknown_reason_required", "unknown observation needs a reason")
+    return item, contract
+
+
+def register_enterprise_observation_receipt(receipt: dict[str, Any], *, registered_at: str) -> dict[str, Any]:
+    """Append one canonical raw-field observation receipt.
+
+    The payload is stored as supplied after closed contract validation.  A
+    repeated receipt ID is idempotent only when its complete payload is equal;
+    there is no update path for an existing observation.
+    """
+    item, contract = _enterprise_observation_shape(receipt)
+    timestamp = _instant(registered_at, field="registered_at")
+    encoded = _json(item)
+    conn = _canonical_conn()
+    try:
+        initialize(conn)
+        existing = conn.execute(
+            f"SELECT payload_json FROM {ENTERPRISE_OBSERVATION_TABLE} WHERE receipt_id = ?",
+            (item["receipt_id"],),
+        ).fetchone()
+        if existing is not None:
+            if existing["payload_json"] != encoded:
+                raise TrainingControlPlaneError(
+                    "enterprise_observation_identity_conflict",
+                    "registered observation ID has different content",
+                )
+            return {
+                "registered": True, "receipt_id": item["receipt_id"], "idempotent": True,
+                "contract_set_id": contract["contract_set_id"],
+            }
+        with conn:
+            conn.execute(
+                f"""INSERT INTO {ENTERPRISE_OBSERVATION_TABLE}
+                    (receipt_id, settlement_id, contract_set_id, company_id, cutoff_at, payload_json, registered_at)
+                    VALUES (?, ?, ?, ?, ?, ?, ?)""",
+                (
+                    item["receipt_id"], item["settlement_id"], contract["contract_set_id"],
+                    item["company_id"], item["cutoff_at"], encoded, timestamp,
+                ),
+            )
+        return {
+            "registered": True, "receipt_id": item["receipt_id"], "idempotent": False,
+            "contract_set_id": contract["contract_set_id"],
+        }
+    finally:
+        conn.close()
+
+
+def _enterprise_settlement_shape(settlement: Any) -> tuple[dict[str, Any], dict[str, Any], list[dict[str, Any]]]:
+    item = settlement if isinstance(settlement, dict) else {}
+    required = {
+        "schema_version", "settled", "settlement_id", "measurement_contract_ref", "authorization_receipt_id",
+        "custodian_id", "company_id", "cutoff_at", "observed_at", "settled_at", "cell_results",
+        "raw_observation_receipts", "observation_receipt_ids", "coverage", "rights", "allowed_outputs",
+    }
+    if set(item) != required:
+        raise TrainingControlPlaneError("enterprise_settlement_shape_invalid", "enterprise settlement shape is not closed")
+    if item.get("schema_version") != "enterprise-outcome-measurement-settlement.v1" or item.get("settled") is not True:
+        raise TrainingControlPlaneError("enterprise_settlement_identity_invalid", "enterprise settlement identity is invalid")
+    contract_id, _ = _enterprise_contract_ref(item.get("measurement_contract_ref"))
+    contract = resolve_measurement_contract(contract_id)
+    if item.get("company_id") != contract.get("company_id") or item.get("cutoff_at") != contract.get("cutoff_at"):
+        raise TrainingControlPlaneError("enterprise_settlement_contract_binding_invalid", "settlement company or cutoff differs from contract")
+    cells = item.get("cell_results")
+    if not isinstance(cells, list) or len(cells) != len(contract.get("atomic_cells", [])):
+        raise TrainingControlPlaneError("enterprise_settlement_cell_coverage_invalid", "settlement must cover every frozen cell")
+    expected_cells = [cell["cell_id"] for cell in contract["atomic_cells"]]
+    supplied_cells = [row.get("cell_id") for row in cells if isinstance(row, dict)]
+    if supplied_cells != expected_cells or len(set(supplied_cells)) != len(expected_cells):
+        raise TrainingControlPlaneError("enterprise_settlement_cell_order_invalid", "settlement cell order must equal frozen contract order")
+    for row in cells:
+        if set(row) != {"cell_id", "status", "label", "computed_value", "mismatch_propagation"} and set(row) != {"cell_id", "status", "label", "computed_value", "mismatch_propagation", "formula_finding"}:
+            raise TrainingControlPlaneError("enterprise_settlement_cell_shape_invalid", "settlement cell contains unapproved fields")
+        if row["status"] not in {"OBSERVED", "UNKNOWN", "MEASUREMENT_MISMATCH"} or row["mismatch_propagation"] != "LOCAL_ONLY":
+            raise TrainingControlPlaneError("enterprise_settlement_cell_status_invalid", "settlement cell status or propagation is invalid")
+    raw_receipts = item.get("raw_observation_receipts")
+    if not isinstance(raw_receipts, list):
+        raise TrainingControlPlaneError("enterprise_settlement_raw_receipts_invalid", "raw observation receipts are required")
+    expected_raw_count = sum(len(cell["raw_input_fields"]) for cell in contract["atomic_cells"])
+    if len(raw_receipts) != expected_raw_count or len(item.get("observation_receipt_ids", [])) != expected_raw_count:
+        raise TrainingControlPlaneError("enterprise_settlement_raw_coverage_invalid", "settlement must reference every frozen raw input once")
+    raw_ids = [row.get("receipt_id") for row in raw_receipts if isinstance(row, dict)]
+    if raw_ids != item.get("observation_receipt_ids") or len(set(raw_ids)) != expected_raw_count:
+        raise TrainingControlPlaneError("enterprise_settlement_raw_receipt_order_invalid", "settlement raw receipt references are not exact")
+    return item, contract, raw_receipts
+
+
+def register_enterprise_settlement(settlement: dict[str, Any], *, registered_at: str) -> dict[str, Any]:
+    """Append a canonical Enterprise settlement after raw receipts exist."""
+    item, contract, raw_receipts = _enterprise_settlement_shape(settlement)
+    timestamp = _instant(registered_at, field="registered_at")
+    encoded = _json(item)
+    conn = _canonical_conn()
+    try:
+        initialize(conn)
+        for receipt in raw_receipts:
+            row = conn.execute(
+                f"SELECT payload_json, settlement_id, contract_set_id FROM {ENTERPRISE_OBSERVATION_TABLE} WHERE receipt_id = ?",
+                (receipt.get("receipt_id"),),
+            ).fetchone()
+            if row is None or row["payload_json"] != _json(receipt) or row["settlement_id"] != item["settlement_id"] or row["contract_set_id"] != contract["contract_set_id"]:
+                raise TrainingControlPlaneError("enterprise_settlement_observation_reference_invalid", "settlement does not reference canonical raw receipts")
+        existing = conn.execute(
+            f"SELECT payload_json FROM {ENTERPRISE_SETTLEMENT_TABLE} WHERE settlement_id = ?",
+            (item["settlement_id"],),
+        ).fetchone()
+        if existing is not None:
+            if existing["payload_json"] != encoded:
+                raise TrainingControlPlaneError("enterprise_settlement_identity_conflict", "registered settlement identity_conflict: ID has different content")
+            return {"registered": True, "settlement_id": item["settlement_id"], "idempotent": True, "coverage": deepcopy(item["coverage"])}
+        with conn:
+            conn.execute(
+                f"""INSERT INTO {ENTERPRISE_SETTLEMENT_TABLE}
+                    (settlement_id, contract_set_id, company_id, cutoff_at, payload_json, registered_at)
+                    VALUES (?, ?, ?, ?, ?, ?)""",
+                (item["settlement_id"], contract["contract_set_id"], item["company_id"], item["cutoff_at"], encoded, timestamp),
+            )
+        return {"registered": True, "settlement_id": item["settlement_id"], "idempotent": False, "coverage": deepcopy(item["coverage"])}
+    finally:
+        conn.close()
+
+
+def resolve_enterprise_settlement(settlement_id: str) -> dict[str, Any]:
+    """Read one immutable Enterprise settlement from the canonical plane."""
+    if not isinstance(settlement_id, str) or not settlement_id:
+        raise TrainingControlPlaneError("enterprise_settlement_id_invalid", "settlement_id is required")
+    conn = _canonical_conn(readonly=True)
+    try:
+        row = conn.execute(
+            f"SELECT payload_json FROM {ENTERPRISE_SETTLEMENT_TABLE} WHERE settlement_id = ?",
+            (settlement_id,),
+        ).fetchone()
+        if row is None:
+            raise TrainingControlPlaneError("enterprise_settlement_not_registered", "enterprise settlement is not canonical")
+        return _load(row["payload_json"], code="canonical_enterprise_settlement_payload_invalid")
+    finally:
+        conn.close()
+
+
+def replay_enterprise_settlement(settlement_id: str) -> dict[str, Any]:
+    """Replay the persisted settlement and its canonical raw observation set."""
+    settlement = resolve_enterprise_settlement(settlement_id)
+    conn = _canonical_conn(readonly=True)
+    try:
+        rows = conn.execute(
+            f"""SELECT payload_json FROM {ENTERPRISE_OBSERVATION_TABLE}
+                WHERE settlement_id = ? ORDER BY rowid""",
+            (settlement_id,),
+        ).fetchall()
+        receipts = [_load(row["payload_json"], code="canonical_enterprise_observation_payload_invalid") for row in rows]
+    finally:
+        conn.close()
+    replay = deepcopy(settlement)
+    replay["raw_observation_receipts"] = receipts
+    replay["observation_receipt_ids"] = [receipt["receipt_id"] for receipt in receipts]
+    if replay["raw_observation_receipts"] != settlement["raw_observation_receipts"]:
+        raise TrainingControlPlaneError("enterprise_settlement_replay_mismatch", "canonical raw receipts do not replay the settlement")
+    return replay
 
 
 def canonical_control_plane_path() -> str:

@@ -8,6 +8,7 @@ from copy import deepcopy
 from datetime import datetime
 import json
 from pathlib import Path
+import re
 from typing import Any
 
 try:
@@ -506,6 +507,23 @@ def _validate_v3_clock(clock: Any, *, path: str, findings: list[str]) -> dict[st
     return item
 
 
+def _clock_date(clock: dict[str, Any], key: str) -> str | None:
+    value = _mapping(clock.get(key)).get("period_end") if key == "flow_period" else _mapping(clock.get(key)).get("as_of")
+    if isinstance(value, str) and len(value) >= 10:
+        return value[:10]
+    return None
+
+
+def _event_end(clock: dict[str, Any]) -> str | None:
+    value = _mapping(clock.get("event_window")).get("event_end")
+    return value[:10] if isinstance(value, str) and len(value) >= 10 else None
+
+
+def _event_start(clock: dict[str, Any]) -> str | None:
+    value = _mapping(clock.get("event_window")).get("event_start")
+    return value[:10] if isinstance(value, str) and len(value) >= 10 else None
+
+
 def validate_outcome_measurement_contract_v3(contract: Any) -> dict[str, Any]:
     """Validate the v3 atomic contract with independent measurement clocks.
 
@@ -585,6 +603,26 @@ def validate_outcome_measurement_contract_v3(contract: Any) -> dict[str, Any]:
             if not _text(raw.get("unit")):
                 findings.append(f"{raw_path}.unit_required")
             _validate_v3_clock(raw.get("measurement_clock"), path=raw_path + ".measurement_clock", findings=findings)
+            raw_clock = _mapping(raw.get("measurement_clock"))
+            raw_field_id = _text(raw.get("field_id"))
+            fiscal_match = re.search(r":FY(\d{4}):", raw_field_id)
+            fiscal_year = fiscal_match.group(1) if fiscal_match else None
+            if raw.get("role") == "EVENT":
+                if raw_clock.get("clock_kind") != "EVENT_WINDOW":
+                    findings.append(raw_path + ".event_role_requires_event_window")
+                start = _event_start(raw_clock)
+                end = _event_end(raw_clock)
+                if start is None or end is None or (cutoff and start <= cutoff.date().isoformat()) or (period_end and end > period_end.date().isoformat()):
+                    findings.append(raw_path + ".event_window_must_follow_cutoff_and_end_in_outcome_window")
+            else:
+                expected_kind = "BALANCE_AS_OF" if cell.get("layer") in {"WORKING_CAPITAL", "FINANCING"} else "FLOW_PERIOD"
+                if raw_clock.get("clock_kind") != expected_kind:
+                    findings.append(raw_path + ".raw_role_clock_kind_mismatch")
+                if fiscal_year:
+                    expected_end = f"{fiscal_year}-12-31"
+                    actual_end = _clock_date(raw_clock, "balance_as_of" if expected_kind == "BALANCE_AS_OF" else "flow_period")
+                    if actual_end != expected_end:
+                        findings.append(raw_path + ".raw_fiscal_period_does_not_match_field_identity")
         formula = _closed(cell.get("formula"), _V3_FORMULA_KEYS, path + ".formula", findings)
         if formula.get("operator") not in {"RAW_VALUE", "EVENT_BOOLEAN", "RATIO_CHANGE", "DIFFERENCE", "PERCENT_CHANGE"}:
             findings.append(f"{path}.formula.operator_invalid")

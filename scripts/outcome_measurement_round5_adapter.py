@@ -18,10 +18,12 @@ from typing import Any
 
 try:
     from scripts import enterprise_judgment_real_mechanism_training as training
+    from scripts import enterprise_judgment_training_control_plane as enterprise_control
     from scripts import outcome_measurement_acquisition as acquisition
     from scripts import outcome_measurement_settlement_adapter as settlement_adapter
 except ModuleNotFoundError:  # pragma: no cover
     import enterprise_judgment_real_mechanism_training as training
+    import enterprise_judgment_training_control_plane as enterprise_control
     import outcome_measurement_acquisition as acquisition
     import outcome_measurement_settlement_adapter as settlement_adapter
 
@@ -37,6 +39,23 @@ FORBIDDEN_KEYS = {
 
 class Round5CustodyAdapterError(ValueError):
     """A custody projection or submission violates the value-free boundary."""
+
+
+ROUND5_ARTIFACT_DIR = (
+    Path(__file__).resolve().parents[1]
+    / "docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018"
+)
+ROUND5_ACTIVE_ARTIFACTS = {
+    "package": "29_round5_v3_preoutcome_mechanism_package.json",
+    "projection": "30_round5_v3_value_free_custody_projection.json",
+    "control": "31_round5_v3_preoutcome_control_plane_receipt.json",
+    "adapter": "32_round5_v3_adapter_acceptance_receipt.json",
+}
+ROUND5_ACTIVE_ARTIFACT_REFS = {
+    "package": ROUND5_ACTIVE_ARTIFACTS["package"],
+    "value_free_custody_projection": ROUND5_ACTIVE_ARTIFACTS["projection"],
+    "preoutcome_control_receipt": ROUND5_ACTIVE_ARTIFACTS["control"],
+}
 
 
 def _mapping(value: Any) -> dict[str, Any]:
@@ -290,6 +309,67 @@ def validate_value_free_custody_projection(projection: Any, *, package: Any) -> 
     return {"valid": True, "findings": [], "projection": deepcopy(expected)}
 
 
+def _read_active_artifact(name: str) -> dict[str, Any]:
+    path = ROUND5_ARTIFACT_DIR / name
+    try:
+        value = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        raise Round5CustodyAdapterError("canonical_round5_artifact_unavailable:" + name) from exc
+    if not isinstance(value, dict):
+        raise Round5CustodyAdapterError("canonical_round5_artifact_must_be_object:" + name)
+    return value
+
+
+def resolve_canonical_round5_bundle(
+    *, package_id: str, control_receipt_id: str, adapter_acceptance_receipt_id: str,
+) -> dict[str, Any]:
+    """Resolve the active Round 5 chain by identity, never by caller payload."""
+    if not all(isinstance(value, str) and value for value in (
+        package_id, control_receipt_id, adapter_acceptance_receipt_id,
+    )):
+        raise Round5CustodyAdapterError("canonical_round5_identity_required")
+    package = _read_active_artifact(ROUND5_ACTIVE_ARTIFACTS["package"])
+    projection = _read_active_artifact(ROUND5_ACTIVE_ARTIFACTS["projection"])
+    control_receipt = _read_active_artifact(ROUND5_ACTIVE_ARTIFACTS["control"])
+    adapter_receipt = _read_active_artifact(ROUND5_ACTIVE_ARTIFACTS["adapter"])
+    if package.get("package_id") != package_id:
+        raise Round5CustodyAdapterError("canonical_round5_package_identity_mismatch")
+    if control_receipt.get("receipt_id") != control_receipt_id:
+        raise Round5CustodyAdapterError("canonical_round5_control_receipt_identity_mismatch")
+    if adapter_receipt.get("receipt_id") != adapter_acceptance_receipt_id:
+        raise Round5CustodyAdapterError("canonical_round5_adapter_receipt_identity_mismatch")
+    package_ref = _mapping(control_receipt.get("preoutcome_package_ref"))
+    if package_ref.get("package_id") != package_id or package_ref.get("artifact") != ROUND5_ACTIVE_ARTIFACTS["package"]:
+        raise Round5CustodyAdapterError("canonical_round5_control_package_binding_invalid")
+    active_refs = _mapping(adapter_receipt.get("active_artifact_refs"))
+    if active_refs != ROUND5_ACTIVE_ARTIFACT_REFS:
+        raise Round5CustodyAdapterError("canonical_round5_adapter_artifact_binding_invalid")
+    package_contract = _mapping(package.get("outcome_measurement_contract"))
+    contract_validation = training.validate_outcome_measurement_contract(package_contract)
+    if not contract_validation["valid"]:
+        raise Round5CustodyAdapterError("canonical_round5_package_contract_invalid:" + ";".join(contract_validation["findings"]))
+    try:
+        canonical_contract = enterprise_control.resolve_measurement_contract(package_contract["contract_set_id"])
+    except enterprise_control.TrainingControlPlaneError as exc:
+        raise Round5CustodyAdapterError("canonical_round5_contract_unavailable:" + exc.code) from exc
+    if canonical_contract != package_contract:
+        raise Round5CustodyAdapterError("canonical_round5_contract_payload_mismatch")
+    expected_projection = build_value_free_custody_projection(package)
+    if projection != expected_projection:
+        raise Round5CustodyAdapterError("canonical_round5_projection_payload_mismatch")
+    if _mapping(control_receipt.get("value_free_custody")).get("artifact") != ROUND5_ACTIVE_ARTIFACTS["projection"]:
+        raise Round5CustodyAdapterError("canonical_round5_control_projection_binding_invalid")
+    if _mapping(control_receipt.get("canonical_measurement_contract_registration")).get("contract_set_id") != package_contract["contract_set_id"]:
+        raise Round5CustodyAdapterError("canonical_round5_control_contract_binding_invalid")
+    return {
+        "package": package,
+        "projection": projection,
+        "control_receipt": control_receipt,
+        "adapter_acceptance_receipt": adapter_receipt,
+        "measurement_contract": deepcopy(canonical_contract),
+    }
+
+
 def validate_custodian_submission(
     submission: Any,
     *,
@@ -338,6 +418,62 @@ def validate_custodian_submission(
     if _forbidden(item):
         findings.append("submission_contains_forecast_or_judgment_fields")
     return {"valid": not findings, "findings": findings, "submission": deepcopy(item) if not findings else None}
+
+
+def validate_canonical_custodian_submission(
+    *, package_id: str, control_receipt_id: str, adapter_acceptance_receipt_id: str,
+    acquisition_result: Any, outcome_access_authorization: Any,
+) -> dict[str, Any]:
+    """Validate a production submission after canonical identity resolution."""
+    bundle = resolve_canonical_round5_bundle(
+        package_id=package_id,
+        control_receipt_id=control_receipt_id,
+        adapter_acceptance_receipt_id=adapter_acceptance_receipt_id,
+    )
+    projection = bundle["projection"]
+    submission = {
+        "schema_version": "enterprise-round5-custodian-submission.v1",
+        "authorization_receipt_id": _mapping(outcome_access_authorization).get("authorization_receipt_id"),
+        "custodian_id": _mapping(outcome_access_authorization).get("custodian_id"),
+        "projection_id": projection.get("projection_id"),
+        "outcome_access_authorization": deepcopy(outcome_access_authorization),
+        "acquisition_result": deepcopy(acquisition_result),
+    }
+    return validate_custodian_submission(
+        submission,
+        projection=projection,
+        measurement_contract=bundle["measurement_contract"],
+    )
+
+
+def register_canonical_acquisition_result(
+    *, package_id: str, control_receipt_id: str, adapter_acceptance_receipt_id: str,
+    acquisition_result: Any, outcome_access_authorization: Any,
+    observed_at: str, settlement_id: str, settled_at: str,
+) -> dict[str, Any]:
+    """Enter the public Enterprise settlement adapter using canonical IDs only."""
+    bundle = resolve_canonical_round5_bundle(
+        package_id=package_id,
+        control_receipt_id=control_receipt_id,
+        adapter_acceptance_receipt_id=adapter_acceptance_receipt_id,
+    )
+    validation = validate_canonical_custodian_submission(
+        package_id=package_id,
+        control_receipt_id=control_receipt_id,
+        adapter_acceptance_receipt_id=adapter_acceptance_receipt_id,
+        acquisition_result=acquisition_result,
+        outcome_access_authorization=outcome_access_authorization,
+    )
+    if not validation["valid"]:
+        raise Round5CustodyAdapterError("canonical_round5_submission_invalid:" + ";".join(validation["findings"]))
+    return settlement_adapter.register_acquisition_result(
+        measurement_contract=bundle["measurement_contract"],
+        outcome_access_authorization=outcome_access_authorization,
+        acquisition_result=acquisition_result,
+        observed_at=observed_at,
+        settlement_id=settlement_id,
+        settled_at=settled_at,
+    )
 
 
 def settle_via_public_adapter(*args: Any, **kwargs: Any) -> dict[str, Any]:

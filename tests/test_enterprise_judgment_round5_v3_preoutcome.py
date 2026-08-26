@@ -503,3 +503,170 @@ def test_enterprise_public_settlement_keeps_acquisition_mismatch_sibling_local(
     assert by_cell["CELL:600802:20150415:SELLING_EXPENSE"]["status"] == "MEASUREMENT_MISMATCH"
     assert by_cell["CELL:600802:20150415:OPERATING_CASH"]["status"] == "OBSERVED"
     assert settled["coverage"]["measurement_mismatch_cells"] == 1
+
+
+def test_enterprise_field_record_protocol_is_exact_and_does_not_claim_pdf_automation(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    contract, authorization, inventory, reader = _enterprise_synthetic_custody(tmp_path)
+    monkeypatch.setattr(reconstruction, "CANONICAL_REGISTRY_PATH", tmp_path / "canonical.db")
+    assert control.register_measurement_contract(contract, frozen_at=FREEZE_AT)["registered"]
+    located = acquisition.acquire_outcome_measurements(
+        contract, inventory, page_reader=reader, outcome_access_authorization=authorization,
+    )
+    records = [
+        {
+            "cell_id": observation["measurement_id"],
+            "field_id": raw["field_id"],
+            "status": raw["status"],
+            "measurement_clock": deepcopy(raw["measurement_clock"]),
+            "responsibility_boundary": deepcopy(raw["responsibility_boundary"]),
+            "unit": raw["unit"],
+            **({"raw_value": raw["raw_value"], "source": deepcopy(raw["source"])} if raw["status"] == "OBSERVED" else {
+                "reason": raw["reason"], "sources_considered": deepcopy(raw["sources_considered"]),
+            }),
+        }
+        for observation in located["observations"]
+        for raw in observation["raw_field_observations"]
+    ]
+    rebuilt = acquisition.acquire_outcome_measurements(
+        contract, inventory, field_records=records, outcome_access_authorization=authorization,
+    )
+    validation = acquisition.validate_acquisition_result(
+        rebuilt, measurement_contract=contract, outcome_access_authorization=authorization,
+    )
+    assert validation["valid"], validation["findings"]
+    assert len(records) == 31
+    assert sum(item["status"] == "OBSERVED" for item in rebuilt["observations"]) == 13
+    assert sum(item["status"] == "UNKNOWN" for item in rebuilt["observations"]) == 1
+
+
+def test_enterprise_settlement_persists_replays_is_idempotent_and_rejects_tamper(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    contract, authorization, inventory, reader = _enterprise_synthetic_custody(tmp_path)
+    monkeypatch.setattr(reconstruction, "CANONICAL_REGISTRY_PATH", tmp_path / "canonical.db")
+    assert control.register_measurement_contract(contract, frozen_at=FREEZE_AT)["registered"]
+    result = acquisition.acquire_outcome_measurements(
+        contract, inventory, page_reader=reader, outcome_access_authorization=authorization,
+    )
+    first = settlement_adapter.register_acquisition_result(
+        measurement_contract=contract,
+        outcome_access_authorization=authorization,
+        acquisition_result=result,
+        observed_at="2016-04-27T02:00:00+00:00",
+        settlement_id="SETTLEMENT:CN600802:ROUND5:SYNTHETIC:PERSISTED",
+        settled_at="2016-04-27T03:00:00+00:00",
+    )
+    second = settlement_adapter.register_acquisition_result(
+        measurement_contract=contract,
+        outcome_access_authorization=authorization,
+        acquisition_result=result,
+        observed_at="2016-04-27T02:00:00+00:00",
+        settlement_id="SETTLEMENT:CN600802:ROUND5:SYNTHETIC:PERSISTED",
+        settled_at="2016-04-27T03:00:00+00:00",
+    )
+    resolved = control.resolve_enterprise_settlement(first["settlement_id"])
+    replayed = control.replay_enterprise_settlement(first["settlement_id"])
+    assert first["persisted"] is True
+    assert second["idempotent"] is True
+    assert resolved == replayed
+    assert len(resolved["raw_observation_receipts"]) == 31
+    tampered = deepcopy(resolved)
+    tampered["cell_results"][0]["label"] = "OBSERVED_INCREASE"
+    with pytest.raises(control.TrainingControlPlaneError, match="identity_conflict"):
+        control.register_enterprise_settlement(tampered, registered_at="2016-04-27T03:00:00+00:00")
+
+
+def test_round5_canonical_production_entry_resolves_ids_and_rejects_injected_identity(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    contract, authorization, inventory, reader = _enterprise_synthetic_custody(tmp_path)
+    monkeypatch.setattr(reconstruction, "CANONICAL_REGISTRY_PATH", tmp_path / "canonical.db")
+    assert control.register_measurement_contract(contract, frozen_at=FREEZE_AT)["registered"]
+    result = acquisition.acquire_outcome_measurements(
+        contract, inventory, page_reader=reader, outcome_access_authorization=authorization,
+    )
+    ids = {
+        "package_id": "EMFP:CN:CEMENT:600802:20150415:V3",
+        "control_receipt_id": "EMPCPR:CN:CEMENT:600802:20150415:V3",
+        "adapter_acceptance_receipt_id": "R5V3AR:CN600802:20150415:V1",
+    }
+    validated = round5.validate_canonical_custodian_submission(
+        **ids, acquisition_result=result, outcome_access_authorization=authorization,
+    )
+    assert validated["valid"], validated["findings"]
+    settled = round5.register_canonical_acquisition_result(
+        **ids,
+        acquisition_result=result,
+        outcome_access_authorization=authorization,
+        observed_at="2016-04-27T02:00:00+00:00",
+        settlement_id="SETTLEMENT:CN600802:ROUND5:SYNTHETIC:CANONICAL",
+        settled_at="2016-04-27T03:00:00+00:00",
+    )
+    assert settled["persisted"] is True
+    bad = deepcopy(result)
+    bad["observations"][2]["raw_field_observations"][0]["source"]["issuer_id"] = "ISSUER:CN:WRONG"
+    invalid = round5.validate_canonical_custodian_submission(
+        **ids, acquisition_result=bad, outcome_access_authorization=authorization,
+    )
+    assert not invalid["valid"]
+    with pytest.raises(TypeError):
+        round5.register_canonical_acquisition_result(**ids, measurement_contract=contract)  # type: ignore[call-arg]
+
+
+@pytest.mark.parametrize(
+    ("observed_at", "settled_at"),
+    [
+        ("2015-04-15T00:00:00+00:00", "2016-04-27T03:00:00+00:00"),
+        ("2016-04-26T00:00:00+00:00", "2016-04-26T00:00:00+00:00"),
+        ("2016-04-27T02:00:00+00:00", "2016-04-27T01:00:00+00:00"),
+    ],
+)
+def test_enterprise_settlement_rejects_invalid_measurement_clock_order(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, observed_at: str, settled_at: str,
+) -> None:
+    contract, authorization, inventory, reader = _enterprise_synthetic_custody(tmp_path)
+    monkeypatch.setattr(reconstruction, "CANONICAL_REGISTRY_PATH", tmp_path / "canonical.db")
+    assert control.register_measurement_contract(contract, frozen_at=FREEZE_AT)["registered"]
+    result = acquisition.acquire_outcome_measurements(
+        contract, inventory, page_reader=reader, outcome_access_authorization=authorization,
+    )
+    with pytest.raises(settlement_adapter.OutcomeMeasurementSettlementAdapterError, match="clock_invalid"):
+        settlement_adapter.register_acquisition_result(
+            measurement_contract=contract,
+            outcome_access_authorization=authorization,
+            acquisition_result=result,
+            observed_at=observed_at,
+            settlement_id="SETTLEMENT:CN600802:ROUND5:SYNTHETIC:CLOCK-INVALID",
+            settled_at=settled_at,
+        )
+
+
+@pytest.mark.parametrize(
+    "mutation",
+    ["fy2099", "non_official_url", "wrong_issuer", "wrong_period", "wrong_source_type", "availability_at_cutoff"],
+)
+def test_enterprise_inventory_rejects_noncanonical_source_identity_or_pit(
+    tmp_path: Path, mutation: str,
+) -> None:
+    contract, authorization, inventory, _reader = _enterprise_synthetic_custody(tmp_path)
+    document = inventory["documents"][0]
+    if mutation == "fy2099":
+        document["report_period_end"] = "2099-12-31"
+    elif mutation == "non_official_url":
+        document["source_url"] = "https://example.com/fy2015.pdf"
+    elif mutation == "wrong_issuer":
+        document["issuer_id"] = "ISSUER:CN:WRONG"
+    elif mutation == "wrong_period":
+        document["report_period_end"] = "2014-12-31"
+    elif mutation == "wrong_source_type":
+        document["official_source_type"] = "BLOG_POST"
+    else:
+        document["source_available_date"] = "2015-04-15"
+    validation = acquisition.validate_registered_local_pdf_inventory(
+        inventory,
+        measurement_contract=contract,
+        outcome_access_authorization=authorization,
+    )
+    assert not validation["valid"]

@@ -285,6 +285,16 @@ def settle_enterprise_acquisition_result(
             "enterprise_acquisition_result_invalid: " + "; ".join(result_validation["findings"])
         )
     result = result_validation["result"]
+    clock_validation = acquisition.validate_enterprise_settlement_clocks(
+        result,
+        measurement_contract=measurement_contract,
+        observed_at=observed_at,
+        settled_at=settled_at,
+    )
+    if not clock_validation["valid"]:
+        raise OutcomeMeasurementSettlementAdapterError(
+            "enterprise_settlement_clock_invalid: " + "; ".join(clock_validation["findings"])
+        )
     by_cell = {item["measurement_id"]: item for item in result["observations"]}
     cell_results: list[dict[str, Any]] = []
     raw_receipts: list[dict[str, Any]] = []
@@ -308,7 +318,14 @@ def settle_enterprise_acquisition_result(
             label, formula_finding = "MEASUREMENT_MISMATCH", None
         for raw in observation["raw_field_observations"]:
             raw_receipts.append({
+                "schema_version": "enterprise-observation-receipt.v1",
                 "receipt_id": f"OBS:ENTERPRISE:{settlement_id}:{cell['cell_id']}:{raw['field_id']}",
+                "settlement_id": settlement_id,
+                "measurement_contract_ref": deepcopy(result["measurement_contract_ref"]),
+                "company_id": measurement_contract["company_id"],
+                "cutoff_at": measurement_contract["cutoff_at"],
+                "custodian_id": authorization["custodian_id"],
+                "authorization_receipt_id": authorization["authorization_receipt_id"],
                 "cell_id": cell["cell_id"],
                 **deepcopy(raw),
             })
@@ -323,10 +340,12 @@ def settle_enterprise_acquisition_result(
             cell_result["formula_finding"] = formula_finding
         cell_results.append(cell_result)
     counts = {status: sum(row["status"] == status for row in cell_results) for status in acquisition.STATUSES}
-    return {
-        "schema_version": "enterprise-outcome-measurement-settlement-adapter.v1",
+    settlement = {
+        "schema_version": "enterprise-outcome-measurement-settlement.v1",
         "settled": True,
         "settlement_id": settlement_id,
+        "company_id": measurement_contract["company_id"],
+        "cutoff_at": measurement_contract["cutoff_at"],
         "measurement_contract_ref": deepcopy(result["measurement_contract_ref"]),
         "authorization_receipt_id": authorization["authorization_receipt_id"],
         "custodian_id": authorization["custodian_id"],
@@ -334,6 +353,7 @@ def settle_enterprise_acquisition_result(
         "settled_at": settled_timestamp,
         "cell_results": cell_results,
         "raw_observation_receipts": raw_receipts,
+        "observation_receipt_ids": [receipt["receipt_id"] for receipt in raw_receipts],
         "coverage": {
             "frozen_cells": len(measurement_contract["atomic_cells"]),
             "settled_cells": len(cell_results),
@@ -344,6 +364,16 @@ def settle_enterprise_acquisition_result(
         "rights": deepcopy(measurement_contract["rights"]),
         "allowed_outputs": ["ENTERPRISE_OUTCOME_SETTLEMENT_ONLY", "RESEARCH_AGENDA"],
     }
+    for receipt in raw_receipts:
+        enterprise_control.register_enterprise_observation_receipt(
+            receipt, registered_at=settled_timestamp,
+        )
+    persisted = enterprise_control.register_enterprise_settlement(
+        settlement, registered_at=settled_timestamp,
+    )
+    settlement["persisted"] = True
+    settlement["idempotent"] = persisted["idempotent"]
+    return settlement
 
 
 def register_acquisition_result(

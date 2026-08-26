@@ -87,6 +87,50 @@ def _date(value: Any) -> date | None:
         return None
 
 
+def _enterprise_cutoff(contract: dict[str, Any]) -> datetime | None:
+    return _instant(contract.get("cutoff_at"))
+
+
+def _enterprise_report_period(contract: dict[str, Any]) -> str | None:
+    window = _mapping(contract.get("outcome_window"))
+    period_end = window.get("period_end")
+    return period_end[:10] if isinstance(period_end, str) and len(period_end) >= 10 else None
+
+
+def _canonical_source_type(value: Any) -> str | None:
+    source_type = _text(value)
+    if source_type in {"OFFICIAL_ANNUAL_REPORT", "OFFICIAL_AUDITED_ANNUAL_REPORT"}:
+        return "OFFICIAL_AUDITED_ANNUAL_REPORT"
+    return source_type
+
+
+def _availability_after_cutoff(document: dict[str, Any], *, cutoff: datetime, path: str) -> list[str]:
+    findings: list[str] = []
+    precision = document.get("availability_precision")
+    if precision == "TIMESTAMP":
+        available = _instant(document.get("source_available_at"))
+        if available is not None and available <= cutoff:
+            findings.append(path + ".source_available_must_follow_cutoff")
+    elif precision == "DATE_ONLY":
+        available_date = _date(document.get("source_available_date"))
+        # A date-only publication has no intraday ordering.  Treat the whole
+        # date as unavailable for a cutoff on that date.
+        if available_date is not None and available_date <= cutoff.date():
+            findings.append(path + ".source_available_date_must_follow_cutoff")
+    return findings
+
+
+def _source_available_before_observation(source: dict[str, Any], *, observed_at: datetime) -> bool:
+    precision = source.get("availability_precision")
+    if precision == "TIMESTAMP":
+        available = _instant(source.get("source_available_at"))
+        return available is None or observed_at <= available
+    if precision == "DATE_ONLY":
+        available_date = _date(source.get("source_available_date"))
+        return available_date is None or observed_at.date() <= available_date
+    return True
+
+
 def _reference(contract: dict[str, Any]) -> dict[str, Any]:
     if contract.get("schema_version") == ENTERPRISE_CONTRACT_SCHEMA_VERSION:
         return {
@@ -324,6 +368,9 @@ def validate_registered_local_pdf_inventory(
     }
     source_ids: set[str] = set()
     documents: list[dict[str, Any]] = []
+    cutoff = _enterprise_cutoff(contract) if contract_kind == ENTERPRISE_CONTRACT_KIND else None
+    expected_report_period = _enterprise_report_period(contract) if contract_kind == ENTERPRISE_CONTRACT_KIND else None
+    expected_source_type = _canonical_source_type(_mapping(contract.get("source_access")).get("source_type"))
     for index, raw in enumerate(_items(item.get("documents"))):
         document = _mapping(raw)
         path = f"inventory.documents[{index}]"
@@ -353,7 +400,8 @@ def validate_registered_local_pdf_inventory(
         if _date(document.get("report_period_end")) is None:
             findings.append(f"{path}_report_period_end_invalid")
         if document.get("official_source_type") != "OFFICIAL_ANNUAL_REPORT":
-            findings.append(f"{path}_official_source_type_must_be_annual_report")
+            if document.get("official_source_type") != "OFFICIAL_AUDITED_ANNUAL_REPORT":
+                findings.append(f"{path}_official_source_type_must_be_annual_report")
         if document.get("report_scope") != "ISSUER_FILING":
             findings.append(f"{path}_report_scope_must_be_issuer_filing")
         if _normalised_unit(document.get("currency")) is None:
@@ -375,6 +423,12 @@ def validate_registered_local_pdf_inventory(
                 findings.append(f"{path}_date_only_cannot_include_source_available_at")
         else:
             findings.append(f"{path}_availability_precision_must_be_timestamp_or_date_only")
+        if cutoff is not None:
+            findings.extend(_availability_after_cutoff(document, cutoff=cutoff, path=path))
+        if expected_report_period is not None and document.get("report_period_end") != expected_report_period:
+            findings.append(f"{path}_report_period_must_match_enterprise_outcome_source")
+        if contract_kind == ENTERPRISE_CONTRACT_KIND and _canonical_source_type(document.get("official_source_type")) != expected_source_type:
+            findings.append(f"{path}_official_source_type_must_match_enterprise_contract")
         if contract_kind == ENTERPRISE_CONTRACT_KIND and authorization is not None:
             if document.get("source_id") != authorization.get("source_id"):
                 findings.append(f"{path}_source_id_must_match_enterprise_authorization")
@@ -704,6 +758,147 @@ def _observe_enterprise_cell(
     return result
 
 
+def _validate_enterprise_field_record(
+    record: Any, *, cell: dict[str, Any], raw_field: dict[str, Any],
+    documents: list[dict[str, Any]], contract: dict[str, Any],
+) -> dict[str, Any]:
+    """Validate one custodian-located raw field record.
+
+    This is the supported Enterprise production protocol.  The custodian may
+    use any PDF tooling, but Turtle receives only a page-located record and
+    verifies every identity against the frozen catalog and inventory.
+    """
+    item = _mapping(record)
+    required = {"cell_id", "field_id", "status", "measurement_clock", "responsibility_boundary", "unit"}
+    findings: list[str] = []
+    if set(item).difference(required | {"raw_value", "source", "reason", "sources_considered"}):
+        findings.append("field_record_contains_unapproved_field")
+    if set(item).intersection(required) != required:
+        findings.append("field_record_identity_incomplete")
+    if item.get("cell_id") != cell["cell_id"] or item.get("field_id") != raw_field["field_id"]:
+        findings.append("field_record_cell_or_field_identity_mismatch")
+    if item.get("measurement_clock") != raw_field["measurement_clock"]:
+        findings.append("field_record_clock_mismatch")
+    if item.get("responsibility_boundary") != cell["responsibility_boundary"]:
+        findings.append("field_record_boundary_mismatch")
+    if item.get("unit") != raw_field["unit"]:
+        findings.append("field_record_unit_mismatch")
+    status = item.get("status")
+    if status not in STATUSES:
+        findings.append("field_record_status_invalid")
+    if status == "OBSERVED":
+        if set(item) != required | {"raw_value", "source"}:
+            findings.append("field_record_observed_shape_invalid")
+        value = item.get("raw_value")
+        if raw_field.get("role") == "EVENT":
+            if not isinstance(value, bool):
+                findings.append("field_record_event_value_must_be_boolean")
+        elif isinstance(value, bool) or not isinstance(value, (int, float)) or not math.isfinite(float(value)):
+            findings.append("field_record_numeric_value_must_be_finite")
+    elif status == "UNKNOWN":
+        if set(item) != required | {"reason", "sources_considered"} or not _text(item.get("reason")):
+            findings.append("field_record_unknown_shape_invalid")
+    elif status == "MEASUREMENT_MISMATCH":
+        if set(item) != required | {"reason", "source"} or not _text(item.get("reason")):
+            findings.append("field_record_mismatch_shape_invalid")
+
+    source = _mapping(item.get("source"))
+    if status in {"OBSERVED", "MEASUREMENT_MISMATCH"}:
+        if not documents:
+            findings.append("field_record_source_document_missing")
+        else:
+            document = documents[0]
+            source_identity = _source_identity(document)
+            for key in ("source_id", "source_url", "issuer_id", "report_period_end", "availability_precision"):
+                if source.get(key) != source_identity.get(key):
+                    findings.append(f"field_record_source_{key}_mismatch")
+            if _canonical_source_type(source.get("official_source_type")) != _canonical_source_type(document.get("official_source_type")):
+                findings.append("field_record_source_official_source_type_mismatch")
+            if source.get("responsibility_boundary") != cell["responsibility_boundary"]:
+                findings.append("field_record_source_boundary_mismatch")
+            if source.get("field_identity") != raw_field["field_id"]:
+                findings.append("field_record_source_field_identity_mismatch")
+            if source.get("measurement_clock") != raw_field["measurement_clock"]:
+                findings.append("field_record_source_clock_mismatch")
+            if source.get("unit") != raw_field["unit"]:
+                findings.append("field_record_source_unit_mismatch")
+            page = source.get("pdf_page")
+            if not isinstance(page, int) or page < 1 or source.get("field_ref") != f"PDF p.{page}":
+                findings.append("field_record_source_page_binding_invalid")
+            if document.get("availability_precision") == "TIMESTAMP" and source.get("source_available_at") != document.get("source_available_at"):
+                findings.append("field_record_source_available_at_mismatch")
+            if document.get("availability_precision") == "DATE_ONLY" and source.get("source_available_date") != document.get("source_available_date"):
+                findings.append("field_record_source_available_date_mismatch")
+    return {"valid": not findings, "findings": findings, "record": deepcopy(item) if not findings else None}
+
+
+def acquire_outcome_measurements_from_field_records(
+    measurement_contract: dict[str, Any], inventory: dict[str, Any], field_records: Any,
+    *, outcome_access_authorization: Any,
+) -> dict[str, Any]:
+    """Build an Enterprise result from custodian-located field records.
+
+    No PDF is opened here.  This explicit boundary means the system does not
+    claim automatic PDF extraction; the public contract is strict validation
+    of the custodian's 31 located records.
+    """
+    contract_kind, contract, cells = _contract_context(measurement_contract)
+    if contract_kind != ENTERPRISE_CONTRACT_KIND:
+        raise OutcomeMeasurementAcquisitionError("field_records_require_enterprise_v3_contract")
+    if not isinstance(field_records, list):
+        raise OutcomeMeasurementAcquisitionError("field_records_must_be_list")
+    expected = [(cell["cell_id"], raw["field_id"]) for cell in cells for raw in cell["raw_input_fields"]]
+    supplied = [(record.get("cell_id"), record.get("field_id")) for record in field_records if isinstance(record, dict)]
+    if supplied != expected or len(supplied) != len(expected) or len(set(supplied)) != len(expected):
+        raise OutcomeMeasurementAcquisitionError("field_records_must_exactly_cover_frozen_cells_and_raw_inputs_in_order")
+    by_pair = {(record["cell_id"], record["field_id"]): record for record in field_records}
+    observations: list[dict[str, Any]] = []
+    for cell in cells:
+        raw_observations: list[dict[str, Any]] = []
+        for raw_field in cell["raw_input_fields"]:
+            validation = _validate_enterprise_field_record(
+                by_pair[(cell["cell_id"], raw_field["field_id"])],
+                cell=cell, raw_field=raw_field, documents=inventory["documents"], contract=contract,
+            )
+            if not validation["valid"]:
+                raise OutcomeMeasurementAcquisitionError(
+                    "field_record_invalid: " + "; ".join(validation["findings"])
+                )
+            record = validation["record"]
+            raw_observations.append({
+                key: deepcopy(record[key])
+                for key in set(record).intersection({
+                    "field_id", "status", "measurement_clock", "responsibility_boundary", "unit",
+                    "raw_value", "source", "reason", "sources_considered",
+                })
+            })
+        statuses = {raw["status"] for raw in raw_observations}
+        status = (
+            "MEASUREMENT_MISMATCH" if "MEASUREMENT_MISMATCH" in statuses
+            else "UNKNOWN" if "UNKNOWN" in statuses else "OBSERVED"
+        )
+        observation: dict[str, Any] = {
+            "measurement_id": cell["cell_id"],
+            "status": status,
+            "raw_field_observations": raw_observations,
+        }
+        if status != "OBSERVED":
+            observation["reason"] = "ONE_OR_MORE_RAW_FIELDS_REMAIN_" + status
+        observations.append(observation)
+    return {
+        "schema_version": SCHEMA_VERSION,
+        "measurement_contract_ref": _reference(contract),
+        "source_inventory_id": inventory["inventory_id"],
+        "custodian_id": inventory["custodian_id"],
+        "object_class": OBJECT_CLASS,
+        "claim_class": CLAIM_CLASS,
+        "allowed_outputs": _allowed_outputs(ENTERPRISE_CONTRACT_KIND),
+        "observations": observations,
+        "contract_kind": ENTERPRISE_CONTRACT_KIND,
+        "authorization_receipt_id": _mapping(outcome_access_authorization).get("authorization_receipt_id"),
+    }
+
+
 def acquire_outcome_measurements(
     measurement_contract: Any,
     registered_pdf_inventory: Any,
@@ -711,6 +906,7 @@ def acquire_outcome_measurements(
     measurement_ids: list[str] | None = None,
     page_reader: PageReader = _pdf_pages,
     outcome_access_authorization: Any = None,
+    field_records: Any = None,
 ) -> dict[str, Any]:
     """Acquire independent field observations from registered local PDFs.
 
@@ -740,6 +936,11 @@ def acquire_outcome_measurements(
             raise OutcomeMeasurementAcquisitionError("measurement_ids_must_be_unique_frozen_measurement_ids")
         selected = [by_id[value] for value in measurement_ids]
     if contract_kind == ENTERPRISE_CONTRACT_KIND:
+        if field_records is not None:
+            return acquire_outcome_measurements_from_field_records(
+                contract, inventory, field_records,
+                outcome_access_authorization=outcome_access_authorization,
+            )
         observations = [
             _observe_enterprise_cell(cell, documents=inventory["documents"], page_reader=page_reader)
             for cell in selected
@@ -872,6 +1073,23 @@ def _validate_enterprise_acquisition_result(
                 source = _mapping(raw_item.get("source"))
                 if source.get("source_id") != source_access.get("source_id") or source.get("source_url") != source_access.get("official_url"):
                     findings.append(raw_path + ".source_must_match_authorized_identity")
+                if not _is_static_official_pdf(source.get("source_url")):
+                    findings.append(raw_path + ".source_url_must_be_static_official_pdf")
+                if source.get("issuer_id") != "ISSUER:" + str(contract.get("company_id")):
+                    findings.append(raw_path + ".source_issuer_must_match_contract_company")
+                if source.get("report_period_end") != _enterprise_report_period(contract):
+                    findings.append(raw_path + ".source_report_period_must_match_contract")
+                if _canonical_source_type(source.get("official_source_type")) != _canonical_source_type(source_access.get("source_type")):
+                    findings.append(raw_path + ".source_official_source_type_must_match_contract")
+                precision = source.get("availability_precision")
+                if precision == "TIMESTAMP":
+                    if _instant(source.get("source_available_at")) is None or source.get("source_available_date") is not None:
+                        findings.append(raw_path + ".source_timestamp_availability_invalid")
+                elif precision == "DATE_ONLY":
+                    if _date(source.get("source_available_date")) is None or source.get("source_available_at") is not None:
+                        findings.append(raw_path + ".source_date_only_availability_invalid")
+                else:
+                    findings.append(raw_path + ".source_availability_precision_invalid")
                 if source.get("field_identity") != frozen_raw["field_id"]:
                     findings.append(raw_path + ".source_field_identity_must_match_frozen_raw_input")
                 if source.get("measurement_clock") != frozen_raw["measurement_clock"]:
@@ -880,6 +1098,10 @@ def _validate_enterprise_acquisition_result(
                     findings.append(raw_path + ".source_boundary_must_match_frozen_cell")
                 if source.get("unit") != frozen_raw["unit"]:
                     findings.append(raw_path + ".source_unit_must_match_frozen_raw_input")
+                source_clock_findings = _availability_after_cutoff(
+                    source, cutoff=_enterprise_cutoff(contract), path=raw_path + ".source"
+                ) if _enterprise_cutoff(contract) is not None else []
+                findings.extend(source_clock_findings)
                 if not isinstance(source.get("pdf_page"), int) or source["pdf_page"] < 1:
                     findings.append(raw_path + ".pdf_page_required")
                 if source.get("field_ref") != f"PDF p.{source.get('pdf_page')}":
@@ -894,6 +1116,34 @@ def _validate_enterprise_acquisition_result(
         if status != expected_status:
             findings.append(path + ".status_must_follow_raw_field_statuses")
     return {"valid": not findings, "findings": findings, "result": deepcopy(item) if not findings else None}
+
+
+def validate_enterprise_settlement_clocks(
+    result: Any, *, measurement_contract: Any, observed_at: Any, settled_at: Any,
+) -> dict[str, Any]:
+    """Check the PIT relation between cutoff, source, observation and settlement."""
+    findings: list[str] = []
+    contract_kind, contract, _ = _contract_context(measurement_contract)
+    if contract_kind != ENTERPRISE_CONTRACT_KIND:
+        return {"valid": False, "findings": ["enterprise_v3_contract_required"]}
+    cutoff = _enterprise_cutoff(contract)
+    observed = _instant(observed_at)
+    settled = _instant(settled_at)
+    if cutoff is None or observed is None or settled is None:
+        findings.append("enterprise_settlement_clock_must_be_timezone_aware")
+    else:
+        if observed <= cutoff:
+            findings.append("enterprise_observed_at_must_follow_cutoff")
+        if settled <= observed:
+            findings.append("enterprise_settled_at_must_follow_observed_at")
+    item = _mapping(result)
+    for cell_observation in _items(item.get("observations")):
+        for raw in _items(_mapping(cell_observation).get("raw_field_observations")):
+            source = _mapping(_mapping(raw).get("source"))
+            if _mapping(raw).get("status") in {"OBSERVED", "MEASUREMENT_MISMATCH"} and observed is not None:
+                if _source_available_before_observation(source, observed_at=observed):
+                    findings.append("enterprise_observed_at_must_follow_source_availability")
+    return {"valid": not findings, "findings": findings}
 
 
 def validate_acquisition_result(
