@@ -92,7 +92,7 @@ def test_valid_receipt_builds_only_an_action_blind_comparator_brief() -> None:
         },
         "static_evidence_conditions": [
             "OFFICIAL_STATIC_FINALPAGE_PDF_ONLY",
-            "TIMESTAMPED_SOURCE_STRICTLY_BEFORE_CUTOFF",
+            "AVAILABILITY_PRECISION_AWARE_SOURCE_STRICTLY_BEFORE_CUTOFF",
             "PAGE_LEVEL_CARRIER_IDENTITY_REQUIRED",
         ],
         "d2_or_cost_conditions": [
@@ -133,7 +133,7 @@ def test_valid_receipt_builds_only_an_action_blind_comparator_brief() -> None:
         (lambda item: item["action"].__setitem__("implementation_status", "PLANNED"), "action.implementation_status_must_be_implemented_material"),
         (lambda item: item["static_sources"][0].__setitem__("source_url", "https://www.cninfo.com.cn/new/disclosure/detail"), "static_sources[0].source_url_must_be_static_cninfo_finalpage_pdf"),
         (lambda item: item["static_sources"][0].__setitem__("published_at", "2020-06-30T23:59:59+08:00"), "static_sources[0].published_at_must_strictly_precede_cutoff"),
-        (lambda item: item["static_sources"][0].update({"availability_precision": "DATE_ONLY", "published_at": "2020-05-01"}), "static_sources[0].availability_precision_must_be_timestamp"),
+        (lambda item: item["static_sources"][0].__setitem__("availability_precision", "UNKNOWN"), "static_sources[0].availability_precision_must_be_timestamp_or_date_only"),
         (lambda item: item["static_sources"][0].__setitem__("issuer_id", "ISSUER:SYNTHETIC:TWO"), "static_sources[0].issuer_id_must_match_receipt"),
         (lambda item: item["action"].__setitem__("responsibility_unit_id", "RU:SYNTHETIC:OTHER"), "action.responsibility_unit_id_must_match_receipt"),
         (lambda item: item["static_sources"][0].__setitem__("page", "3"), "static_sources[0].page_must_be_positive_integer"),
@@ -147,6 +147,138 @@ def test_rejects_unimplemented_dynamic_timing_identity_and_type_failures(mutatio
 
     assert not result["valid"]
     assert finding in result["findings"]
+
+
+def test_accepts_date_only_source_strictly_before_cutoff_asia_shanghai_date() -> None:
+    receipt = _receipt()
+    receipt["static_sources"][0].update({
+        "availability_precision": action_first.DATE_ONLY,
+        "source_url": "https://static.cninfo.com.cn/finalpage/2020-06-30/1200000001.PDF",
+        "published_at": "2020-06-30",
+    })
+    receipt["cutoff_at"] = "2020-06-30T16:00:00Z"
+
+    result = action_first.validate_action_first_candidate_receipt(receipt)
+
+    assert result["valid"], result["findings"]
+
+
+def test_uses_asia_shanghai_date_for_timestamp_url_binding() -> None:
+    receipt = _receipt()
+    receipt["static_sources"][0].update({
+        "source_url": "https://static.cninfo.com.cn/finalpage/2020-05-02/1200000001.PDF",
+        "published_at": "2020-05-01T20:00:00-04:00",
+    })
+
+    result = action_first.validate_action_first_candidate_receipt(receipt)
+
+    assert result["valid"], result["findings"]
+
+
+def test_accepts_same_day_timestamp_strictly_before_cutoff() -> None:
+    receipt = _receipt()
+    receipt["static_sources"][0].update({
+        "source_url": "https://static.cninfo.com.cn/finalpage/2020-06-30/1200000001.PDF",
+        "published_at": "2020-06-30T08:00:00+08:00",
+    })
+
+    result = action_first.validate_action_first_candidate_receipt(receipt)
+
+    assert result["valid"], result["findings"]
+
+
+@pytest.mark.parametrize(
+    ("published_at", "source_url", "finding"),
+    [
+        (
+            "2020-06-30",
+            "https://static.cninfo.com.cn/finalpage/2020-06-30/1200000001.PDF",
+            "static_sources[0].published_at_date_must_strictly_precede_cutoff_asia_shanghai_date",
+        ),
+        (
+            "2020-07-01",
+            "https://static.cninfo.com.cn/finalpage/2020-07-01/1200000001.PDF",
+            "static_sources[0].published_at_date_must_strictly_precede_cutoff_asia_shanghai_date",
+        ),
+        (
+            "2020-06-30T08:00:00+08:00",
+            "https://static.cninfo.com.cn/finalpage/2020-06-30/1200000001.PDF",
+            "static_sources[0].published_at_must_be_exact_date_only",
+        ),
+    ],
+)
+def test_rejects_same_day_later_or_time_polluted_date_only_source(
+    published_at: str, source_url: str, finding: str,
+) -> None:
+    receipt = _receipt()
+    receipt["static_sources"][0].update({
+        "availability_precision": action_first.DATE_ONLY,
+        "published_at": published_at,
+        "source_url": source_url,
+    })
+
+    result = action_first.validate_action_first_candidate_receipt(receipt)
+
+    assert not result["valid"]
+    assert finding in result["findings"]
+
+
+@pytest.mark.parametrize(
+    "published_at",
+    ["2020-06-30T23:59:59+08:00", "2020-07-01T00:00:00+08:00"],
+)
+def test_rejects_timestamp_equal_to_or_later_than_cutoff(published_at: str) -> None:
+    receipt = _receipt()
+    receipt["static_sources"][0].update({
+        "source_url": "https://static.cninfo.com.cn/finalpage/2020-06-30/1200000001.PDF",
+        "published_at": published_at,
+    })
+
+    result = action_first.validate_action_first_candidate_receipt(receipt)
+
+    assert not result["valid"]
+    assert "static_sources[0].published_at_must_strictly_precede_cutoff" in result["findings"]
+
+
+def test_rejects_timestamp_without_timezone() -> None:
+    receipt = _receipt()
+    receipt["static_sources"][0]["published_at"] = "2020-05-01T12:00:00"
+
+    result = action_first.validate_action_first_candidate_receipt(receipt)
+
+    assert not result["valid"]
+    assert "static_sources[0].published_at_must_be_timezone_aware_iso8601" in result["findings"]
+
+
+@pytest.mark.parametrize(
+    ("availability_precision", "published_at", "source_url"),
+    [
+        (
+            action_first.TIMESTAMP,
+            "2020-05-01T20:00:00-04:00",
+            "https://static.cninfo.com.cn/finalpage/2020-05-01/1200000001.PDF",
+        ),
+        (
+            action_first.DATE_ONLY,
+            "2020-05-01",
+            "https://static.cninfo.com.cn/finalpage/2020-05-02/1200000001.PDF",
+        ),
+    ],
+)
+def test_rejects_source_url_date_mismatch_at_declared_precision(
+    availability_precision: str, published_at: str, source_url: str,
+) -> None:
+    receipt = _receipt()
+    receipt["static_sources"][0].update({
+        "availability_precision": availability_precision,
+        "published_at": published_at,
+        "source_url": source_url,
+    })
+
+    result = action_first.validate_action_first_candidate_receipt(receipt)
+
+    assert not result["valid"]
+    assert "static_sources[0].source_url_date_must_match_published_at_asia_shanghai_date" in result["findings"]
 
 
 @pytest.mark.parametrize("forbidden_field", ["outcome", "price", "return", "valuation", "peer_panel", "h2", "cjo", "report", "learning", "investment"])
@@ -223,3 +355,7 @@ def test_schema_is_closed_and_declares_the_same_single_a1_permission() -> None:
     assert schema["properties"]["allowed_outputs"]["const"] == [action_first.COMPARATOR_RECRUITMENT_BRIEF]
     assert schema["properties"]["method_transfer_rights"]["const"] == action_first.NO_METHOD_TRANSFER_RIGHTS
     assert schema["$defs"]["static_source"]["additionalProperties"] is False
+    assert schema["$defs"]["static_source"]["properties"]["availability_precision"]["enum"] == [
+        action_first.TIMESTAMP,
+        action_first.DATE_ONLY,
+    ]

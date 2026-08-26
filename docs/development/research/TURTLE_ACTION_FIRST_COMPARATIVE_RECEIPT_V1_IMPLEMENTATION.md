@@ -12,11 +12,11 @@
 - `scripts/judgment_selection_action_first.py`：纯 validator 与确定性 `build_comparator_recruitment_brief()`。
 - `scripts/judgment_action_first_control_plane.py`：只有一张 SQLite 追加式 receipt 表；支持幂等登记、精确 replay 和 brief 加载。
 
-一份 A1 receipt 必须同时固定 `candidate/company/issuer/RU/perimeter/cutoff`、行动 ID 与实施时点、材料性已实施行动、H-A、H-B、最强反方、topology，以及逐页官方 static CNINFO finalpage PDF 来源。来源要求有时区的可用时间、严格早于 cutoff，并且 URL 日期、发行方、RU、perimeter 和页面身份一致。
+一份 A1 receipt 必须同时固定 `candidate/company/issuer/RU/perimeter/cutoff`、行动 ID 与实施时点、材料性已实施行动、H-A、H-B、最强反方、topology，以及逐页官方 static CNINFO finalpage PDF 来源。来源可声明为 `TIMESTAMP` 或 `DATE_ONLY`：前者必须为有时区的 ISO instant、严格早于 cutoff，且 finalpage URL 日期等于该 instant 转为 Asia/Shanghai 后的日期；后者必须是精确 `YYYY-MM-DD` 官方日期，严格早于 cutoff 的 Asia/Shanghai 日历日期。`DATE_ONLY` 在 cutoff 当日不可用；同日但早于 cutoff 的 `TIMESTAMP` 可用。两种精度均要求 URL 日期、发行方、RU、perimeter 和页面身份一致。
 
 行动的 source 引用必须实际声明 `IMPLEMENTATION` 与 `MATERIALITY` 支持；H-A/H-B 的引用必须有 `HYPOTHESIS` 支持，最强反方的引用必须有 `RIVAL` 支持。因而一页只证明“行动发生了”的 PDF 不能被偷换为竞争机制或反方证据。
 
-`PLANNED`、动态 URL、date-only 来源、cutoff 当日或之后的来源、身份/类型错误都被拒绝。closed receipt 还拒绝 outcome、价格、回报、估值、H2、peer/panel、CJO、报告、learning、investment、method 或 R-103 字段。
+`PLANNED`、动态 URL、无时区 timestamp、带时间的 date-only、无法严格早于适用 cutoff 的来源、或身份/类型错误都被拒绝。closed receipt 还拒绝 outcome、价格、回报、估值、H2、peer/panel、CJO、报告、learning、investment、method 或 R-103 字段。
 
 ## 唯一输出与盲化边界
 
@@ -46,4 +46,4 @@ Focused checks:
 .venv/bin/python scripts/project_guard.py merge-check
 ```
 
-测试覆盖唯一 brief、无行动泄露、计划/动态/时间/来源身份/类型拒绝、禁止下游字段、实施与材料性来源要求，以及 SQLite immutable registration 与精确 replay。
+测试覆盖唯一 brief、无行动泄露、timestamp/date-only 的严格 cutoff 规则和 Asia/Shanghai URL 日期绑定、计划/动态/来源身份/类型拒绝、禁止下游字段、实施与材料性来源要求，以及 SQLite immutable registration 与精确 replay。

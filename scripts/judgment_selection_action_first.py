@@ -12,9 +12,10 @@ outcomes, or grant any learning, CJO, report, valuation, or investment right.
 from __future__ import annotations
 
 from copy import deepcopy
-from datetime import datetime, timezone
+from datetime import date, datetime, timezone
 import re
 from typing import Any, Iterable
+from zoneinfo import ZoneInfo
 
 
 SCHEMA_VERSION = "judgment-selection-action-first-candidate-receipt.v1"
@@ -25,6 +26,8 @@ NO_METHOD_TRANSFER_RIGHTS = "NO_METHOD_TRANSFER_RIGHTS"
 IMPLEMENTED_MATERIAL = "IMPLEMENTED_MATERIAL"
 OFFICIAL_STATIC_FINALPAGE_PDF = "OFFICIAL_STATIC_FINALPAGE_PDF"
 TIMESTAMP = "TIMESTAMP"
+DATE_ONLY = "DATE_ONLY"
+ASIA_SHANGHAI = ZoneInfo("Asia/Shanghai")
 
 SUPPORTED_TOPOLOGIES = {"CUSTOMER_RESPONSE", "COST_RESTRUCTURING"}
 SOURCE_SUPPORTS = {"IMPLEMENTATION", "MATERIALITY", "HYPOTHESIS", "RIVAL"}
@@ -173,6 +176,16 @@ def _require_instant(item: dict[str, Any], field: str, path: str, findings: list
     return parsed
 
 
+def _date_only(value: Any) -> date | None:
+    """Accept only an exact calendar date, never a time-bearing approximation."""
+    if not isinstance(value, str) or re.fullmatch(r"\d{4}-\d{2}-\d{2}", value) is None:
+        return None
+    try:
+        return date.fromisoformat(value)
+    except ValueError:
+        return None
+
+
 def _source_references(
     value: Any,
     *,
@@ -234,16 +247,26 @@ def _validate_source(
 
     if source.get("source_type") != OFFICIAL_STATIC_FINALPAGE_PDF:
         findings.append(f"{path}.source_type_must_be_official_static_finalpage_pdf")
-    if source.get("availability_precision") != TIMESTAMP:
-        findings.append(f"{path}.availability_precision_must_be_timestamp")
-    source_time = _require_instant(source, "published_at", path, findings)
+    availability_precision = source.get("availability_precision")
+    if availability_precision not in {TIMESTAMP, DATE_ONLY}:
+        findings.append(f"{path}.availability_precision_must_be_timestamp_or_date_only")
     url_match = _STATIC_FINALPAGE_URL.fullmatch(source_url) if source_url else None
     if url_match is None:
         findings.append(f"{path}.source_url_must_be_static_cninfo_finalpage_pdf")
-    elif source_time is not None and source_time.date().isoformat() != url_match.group(1):
-        findings.append(f"{path}.source_url_date_must_match_published_at")
-    if cutoff is not None and source_time is not None and source_time >= cutoff:
-        findings.append(f"{path}.published_at_must_strictly_precede_cutoff")
+    if availability_precision == TIMESTAMP:
+        source_time = _require_instant(source, "published_at", path, findings)
+        if url_match is not None and source_time is not None and source_time.astimezone(ASIA_SHANGHAI).date().isoformat() != url_match.group(1):
+            findings.append(f"{path}.source_url_date_must_match_published_at_asia_shanghai_date")
+        if cutoff is not None and source_time is not None and source_time >= cutoff:
+            findings.append(f"{path}.published_at_must_strictly_precede_cutoff")
+    elif availability_precision == DATE_ONLY:
+        source_date = _date_only(source.get("published_at"))
+        if source_date is None:
+            findings.append(f"{path}.published_at_must_be_exact_date_only")
+        if url_match is not None and source_date is not None and source_date.isoformat() != url_match.group(1):
+            findings.append(f"{path}.source_url_date_must_match_published_at_asia_shanghai_date")
+        if cutoff is not None and source_date is not None and source_date >= cutoff.astimezone(ASIA_SHANGHAI).date():
+            findings.append(f"{path}.published_at_date_must_strictly_precede_cutoff_asia_shanghai_date")
 
     if source.get("issuer_id") != issuer_id:
         findings.append(f"{path}.issuer_id_must_match_receipt")
@@ -414,7 +437,7 @@ def build_comparator_recruitment_brief(value: Any) -> dict[str, Any]:
         },
         "static_evidence_conditions": [
             "OFFICIAL_STATIC_FINALPAGE_PDF_ONLY",
-            "TIMESTAMPED_SOURCE_STRICTLY_BEFORE_CUTOFF",
+            "AVAILABILITY_PRECISION_AWARE_SOURCE_STRICTLY_BEFORE_CUTOFF",
             "PAGE_LEVEL_CARRIER_IDENTITY_REQUIRED",
         ],
         "d2_or_cost_conditions": [

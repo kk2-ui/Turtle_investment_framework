@@ -84,14 +84,24 @@
         "official_artifact_id": {"$ref": "#/$defs/nonempty"},
         "source_url": {"type": "string", "pattern": "^https://static\\.cninfo\\.com\\.cn/finalpage/[0-9]{4}-[0-9]{2}-[0-9]{2}/[^/?#\\s]+\\.PDF$"},
         "source_type": {"const": "OFFICIAL_STATIC_FINALPAGE_PDF"},
-        "availability_precision": {"const": "TIMESTAMP"},
-        "published_at": {"type": "string", "format": "date-time"},
+        "availability_precision": {"enum": ["TIMESTAMP", "DATE_ONLY"]},
+        "published_at": {"type": "string"},
         "issuer_id": {"$ref": "#/$defs/nonempty"},
         "responsibility_unit_id": {"$ref": "#/$defs/nonempty"},
         "perimeter_id": {"$ref": "#/$defs/nonempty"},
         "page": {"type": "integer", "minimum": 1},
         "supports": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"enum": ["IMPLEMENTATION", "MATERIALITY", "HYPOTHESIS", "RIVAL"]}}
-      }
+      },
+      "allOf": [
+        {
+          "if": {"properties": {"availability_precision": {"const": "TIMESTAMP"}}},
+          "then": {"properties": {"published_at": {"type": "string", "format": "date-time"}}}
+        },
+        {
+          "if": {"properties": {"availability_precision": {"const": "DATE_ONLY"}}},
+          "then": {"properties": {"published_at": {"type": "string", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"}}}
+        }
+      ]
     }
   }
 }
