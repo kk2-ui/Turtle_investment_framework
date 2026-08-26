@@ -1,0 +1,104 @@
+{
+  "package_id": "TURTLE_COMPARATIVE_NATIONAL_CONSUMER_DURABLES_2018_STATIC_SOURCE_PACKAGE_V1",
+  "scope_receipt_id": "TURTLE_COMPARATIVE_ACTION_SCOPE_RECEIPT_V1",
+  "range_id": "NATIONAL_CONSUMER_DURABLES_2018",
+  "research_cutoff_at": "2018-12-31T00:00:00+08:00",
+  "package_status": "CANDIDATE_DISCOVERY_ONLY",
+  "rights_granted": [],
+  "prohibited_access": [
+    "OUTCOME",
+    "PRICE",
+    "RETURN",
+    "R103",
+    "FORECAST",
+    "CJO",
+    "REPORT",
+    "EXISTING_CANDIDATE_PACKAGES"
+  ],
+  "candidates": [
+    {
+      "candidate_id": "NCD-2018-ACT-001",
+      "selection_state": "PREFERRED_CANDIDATE_ONLY",
+      "issuer_code": "002024",
+      "issuer_name": "苏宁易购集团股份有限公司",
+      "responsibility_unit": "中国大陆苏宁易购直营店网络；不含加盟零售云、社区店、物流、金融和非中国大陆业务",
+      "action_topology": "CUSTOMER_RESPONSE",
+      "implementation_state": "IMPLEMENTED_AS_OF_DISCLOSURE",
+      "implementation_period": "2018-01-01 through 2018-09-30",
+      "action_summary": "直营店经营管理强化，结合市场需求调整升级门店并丰富品类；披露同期新开、置换和关闭门店。",
+      "hypotheses": {
+        "H_A": "更匹配当地需求的门店网络和品类，可能改善客户触达、服务和门店单位经济，随后才可能影响合并利润与现金。",
+        "H_B": "同期线上线下扩张、加盟网络、其他业态和共同消费环境均可能解释后续变化；不得把任何结果归因给该直接门店行动。"
+      },
+      "comparator_concept": "拥有客户面对面实体网络、可确定责任边界、并面对相同零售环境的全国消费耐用品或家电3C零售商；此处不选择任何公司。",
+      "settlement_feasibility": "PLAUSIBLE_NOT_CONTRACTED",
+      "sources": [
+        {
+          "source_id": "CNINFO:002024:ANN:20181031:1205562833",
+          "official_metadata_publication_date": "2018-10-31",
+          "official_metadata_time_precision": "DATE_ONLY",
+          "title": "苏宁易购集团股份有限公司2018年第三季度报告全文",
+          "static_pdf_url": "https://static.cninfo.com.cn/finalpage/2018-10-31/1205562833.PDF",
+          "static_pdf_page": 1,
+          "evidence_roles": ["ISSUER_IDENTITY"],
+          "cutoff_before_status": "PASS"
+        },
+        {
+          "source_id": "CNINFO:002024:ANN:20181031:1205562833",
+          "official_metadata_publication_date": "2018-10-31",
+          "official_metadata_time_precision": "DATE_ONLY",
+          "title": "苏宁易购集团股份有限公司2018年第三季度报告全文",
+          "static_pdf_url": "https://static.cninfo.com.cn/finalpage/2018-10-31/1205562833.PDF",
+          "static_pdf_page": 11,
+          "evidence_roles": ["IMPLEMENTATION", "MATERIALITY", "RESPONSIBILITY_BOUNDARY"],
+          "cutoff_before_status": "PASS"
+        },
+        {
+          "source_id": "CNINFO:002024:ANN:20181031:1205562833",
+          "official_metadata_publication_date": "2018-10-31",
+          "official_metadata_time_precision": "DATE_ONLY",
+          "title": "苏宁易购集团股份有限公司2018年第三季度报告全文",
+          "static_pdf_url": "https://static.cninfo.com.cn/finalpage/2018-10-31/1205562833.PDF",
+          "static_pdf_page": 8,
+          "evidence_roles": ["HYPOTHESIS", "RIVAL"],
+          "cutoff_before_status": "PASS"
+        },
+        {
+          "source_id": "CNINFO:002024:ANN:20181031:1205562833",
+          "official_metadata_publication_date": "2018-10-31",
+          "official_metadata_time_precision": "DATE_ONLY",
+          "title": "苏宁易购集团股份有限公司2018年第三季度报告全文",
+          "static_pdf_url": "https://static.cninfo.com.cn/finalpage/2018-10-31/1205562833.PDF",
+          "static_pdf_page": 12,
+          "evidence_roles": ["RESPONSIBILITY_BOUNDARY", "HYPOTHESIS", "RIVAL"],
+          "cutoff_before_status": "PASS"
+        }
+      ]
+    }
+  ],
+  "screened_stops": [
+    {
+      "issuer_code": "000651",
+      "disposition": "BOUNDARY_OR_MATERIALITY_UNPROVEN",
+      "official_source_id": "CNINFO:000651:ANN:20180426:1204792505",
+      "static_pdf_url": "https://static.cninfo.com.cn/finalpage/2018-04-26/1204792505.PDF",
+      "static_pdf_page": 11,
+      "reason": "Completed action disclosed, but the overseas channel boundary is outside this range and the electronic-commerce passage is not a clean material operating unit."
+    },
+    {
+      "issuer_code": "000333",
+      "disposition": "NOT_IMPLEMENTED",
+      "official_source_id": "CNINFO:000333:ANN:20181024:1205526411",
+      "static_pdf_url": "https://static.cninfo.com.cn/finalpage/2018-10-24/1205526411.PDF",
+      "reason": "The cutoff-before official document is an absorption-merger draft, so it is not an implemented operating action at the cutoff."
+    }
+  ],
+  "next_legal_command": "INDEPENDENT_ACTION_RECEIPT_REVIEW_ONLY",
+  "stop_conditions": [
+    "NO_OUTCOME_ACCESS",
+    "NO_NAMED_COMPARATOR_SELECTION",
+    "NO_GROUP_TOTAL_AS_DIRECT_STORE_SUBSTITUTE",
+    "NO_CUTOFF_AFTER_EVIDENCE",
+    "NO_RIGHTS_UPGRADE_FROM_THIS_PACKAGE"
+  ]
+}
