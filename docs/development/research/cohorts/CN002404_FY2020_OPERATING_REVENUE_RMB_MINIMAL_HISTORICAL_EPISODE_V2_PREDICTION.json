@@ -1,0 +1,25 @@
+{
+  "schema_version": "turtle-minimal-historical-episode-prediction.v1",
+  "prediction_id": "MHE:PREDICTION:CN002404:FY2020:V2",
+  "measurement_contract_ref": {
+    "measurement_contract_id": "MHE:CONTRACT:CN002404:FY2020:V2",
+    "measurement_contract_version": 2
+  },
+  "evidence_receipt_ref": {
+    "evidence_receipt_id": "MHE:EVIDENCE:CN002404:FY2018:V2",
+    "evidence_receipt_version": 1
+  },
+  "company_id": "CN:002404",
+  "issuer_id": "ISSUER:CN:002404",
+  "cutoff_at": "2019-12-31T23:59:59+08:00",
+  "metric_id": "ISSUER_CONSOLIDATED_OPERATING_REVENUE_RMB",
+  "window_id": "ONE_YEAR",
+  "forecaster_id": "FORECASTER:CN002404:PREOUTCOME:20260826",
+  "predicted_direction": "INCREASE",
+  "object_class": "MINIMAL_HISTORICAL_PREDICTION",
+  "claim_class": "ONE_METRIC_DIRECTIONAL_PREDICTION",
+  "allowed_outputs": [
+    "MECHANICAL_SETTLEMENT_ONLY"
+  ],
+  "method_transfer_rights": "NO_METHOD_TRANSFER_RIGHTS"
+}
