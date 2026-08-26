@@ -1,0 +1,51 @@
+{
+  "schema_version": "static-pre-outcome-curator-field-submission.v1",
+  "submission_class": "JSON_CURATOR_FIELD_SUBMISSION",
+  "curator_identity": {
+    "curator_id": "CURATOR:CN600425:REVENUE:20260826",
+    "role": "INDEPENDENT_PRE_OUTCOME_STATIC_CURATOR"
+  },
+  "scope": {
+    "company_id": "CN:600425",
+    "issuer_id": "ISSUER:CN:600425",
+    "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600425",
+    "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+    "cutoff_at": "2018-04-30T23:59:59+08:00",
+    "measurement_period_end": "2017-12-31",
+    "metric_id": "ISSUER_CONSOLIDATED_OPERATING_REVENUE_RMB",
+    "metric_definition": "Consolidated income-statement operating revenue (营业收入) for the fiscal year, in RMB.",
+    "unit": "RMB"
+  },
+  "source": {
+    "source_id": "CNINFO:600425:ANN:20180421:1204677754",
+    "source_url": "https://static.cninfo.com.cn/finalpage/2018-04-21/1204677754.PDF",
+    "source_type": "OFFICIAL_STATIC_FILING",
+    "published_at": "2018-04-21",
+    "issuer_id": "ISSUER:CN:600425",
+    "responsibility_boundary": "LISTED_CONSOLIDATED_ISSUER",
+    "unit": "RMB",
+    "field_ref": "FY2017 Xinjiang Tianshan Cement annual report, consolidated income statement, PDF p. 61, 营业收入.",
+    "exact_quote": "其中：营业收入                         2,101,120,335.32 1,802,357,428.23",
+    "numeric_value": 2101120335.32
+  },
+  "information_boundary": {
+    "read_inputs": [
+      "COHORT:CN:CEMENT_LISTED:20180430:H1_STATIC",
+      "CNINFO:600425:ANN:20180421:1204677754"
+    ],
+    "prohibited_inputs": [
+      "OUTCOME_DOCUMENTS",
+      "FORECASTS",
+      "CUSTODIAN_MATERIAL",
+      "H2",
+      "R-103",
+      "PRICE",
+      "CJO",
+      "REPORT"
+    ]
+  },
+  "allowed_outputs": [
+    "PRE_OUTCOME_STATIC_FIELD_ONLY"
+  ],
+  "method_transfer_rights": "NO_METHOD_TRANSFER_RIGHTS"
+}
