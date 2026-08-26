@@ -1,0 +1,793 @@
+{
+  "schema_version": "enterprise-mechanism-feedback-preoutcome-package.v1",
+  "package_id": "EMFP:CN:CEMENT:600802:20140416:V1",
+  "selection": {
+    "selection_policy": "EARLIEST_UNSEEN_COMPANY_IN_FROZEN_ROSTER_AFTER_COMPLETED_COMPANIES",
+    "source_roster_ref": "EJPF:CN:CEMENT:2014_2018:PRE_OUTCOME:V1",
+    "completed_company_ids": ["CN:600801", "CN:600585", "CN:000401", "CN:600425"],
+    "selected_rank": 17,
+    "transition_id": "CCR:600802:20140416:20150415",
+    "company_id": "CN:600802",
+    "cutoff_at": "2014-04-16T00:00:00+08:00",
+    "next_cutoff_at": "2015-04-15T00:00:00+08:00",
+    "selection_used_outcome": false,
+    "selection_used_lifecycle_label": false,
+    "selection_used_source_convenience": false
+  },
+  "source_packet_receipt": {
+    "schema_version": "enterprise-judgment-source-packet-receipt.v1",
+    "packet_id": "SP:CN600802:20140416:FY2013",
+    "packet_version": 1,
+    "company_id": "CN:600802",
+    "issuer_id": "ISSUER:CN:600802",
+    "cutoff_at": "2014-04-16T00:00:00+08:00",
+    "sources": [
+      {
+        "source_id": "CNINFO:600802:ANN:20140318:63687174",
+        "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+        "official_url": "https://static.cninfo.com.cn/finalpage/2014-03-18/63687174.PDF",
+        "published_on": "2014-03-18",
+        "available_on": "2014-03-18",
+        "availability_timezone": "Asia/Shanghai",
+        "eligibility": "ELIGIBLE",
+        "responsibility_boundary_ids": ["ISSUER_CONSOLIDATED:CN:600802"],
+        "responsibility_perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+        "unit": "RMB",
+        "access_mode": "REMOTE_OFFICIAL_LOCATOR",
+        "locators": [
+          {
+            "research_question_id": "Q:600802:FY2013_BASELINE",
+            "locator": "FY2013 annual report PDF pp. 9-10: channel reorganization already reported for FY2013; sales volume, realized price, revenue, expense and operating-cash baseline."
+          },
+          {
+            "research_question_id": "Q:600802:WORKING_CAPITAL_AND_CAPITAL_BURDEN",
+            "locator": "FY2013 annual report PDF pp. 14-15: payment-before-shipment discipline, receivables, inventory, construction in progress, borrowings, network coverage and installed/in-build capacity."
+          },
+          {
+            "research_question_id": "Q:600802:FY2014_PLAN",
+            "locator": "FY2013 annual report PDF p. 19: FY2014 volume/revenue/cost budget; market, channel, logistics, cost, procurement and project plans; RMB 3.5bn financing need."
+          }
+        ]
+      }
+    ],
+    "object_class": "SOURCE_PACKET_RECEIPT",
+    "claim_class": "CUTOFF_ELIGIBLE_SOURCE_RECEIPT",
+    "allowed_outputs": ["SOURCE_PACKET_READ_MODEL", "RESEARCH_AGENDA"]
+  },
+  "decision_contract": {
+    "schema_version": "turtle-training-decision-contract.v1",
+    "contract_id": "DC:CN600802:20140416:MECHANISM",
+    "contract_version": 1,
+    "company_id": "CN:600802",
+    "issuer_id": "ISSUER:CN:600802",
+    "cutoff_at": "2014-04-16T00:00:00+08:00",
+    "decision_purpose": "HISTORICAL_TRAINING",
+    "holding_horizon": {"minimum_years": 1, "maximum_years": 5},
+    "permanent_loss_constraints": [
+      {
+        "constraint_id": "PLC:600802:VOLUME_WITHOUT_ECONOMICS",
+        "condition": "Volume growth does not establish value creation if price, unit economics, working capital, cash or capital burden deteriorate.",
+        "required_treatment": "Settle each layer separately and keep causal attribution and permanent-loss implications unknown unless directly supported."
+      }
+    ],
+    "decision_flip_questions": [
+      {
+        "question_id": "DQ:600802:CHANNEL_TO_VOLUME",
+        "statement": "Did the planned channel, terminal-partner and logistics expansion produce observable customer uptake and sales-volume progress?",
+        "decision_effect": "If not, the expansion mechanism is contradicted at its first operating link."
+      },
+      {
+        "question_id": "DQ:600802:VOLUME_TO_UNIT_ECONOMICS",
+        "statement": "Did any volume response survive realized-price, cost and selling-expense pressure?",
+        "decision_effect": "If not, scale cannot be treated as improved operating economics."
+      },
+      {
+        "question_id": "DQ:600802:CASH_AND_CAPITAL",
+        "statement": "Did working-capital discipline and operating cash absorb the expansion and project burden without worsening financing dependence?",
+        "decision_effect": "If not, the plan may increase capital and permanent-loss exposure despite higher reported volume."
+      }
+    ],
+    "evidence_budget": {
+      "evidence_budget_id": "BUDGET:CN600802:20140416:FY2013",
+      "source_packet_refs": [{"receipt_id": "SP:CN600802:20140416:FY2013", "receipt_version": 1}]
+    },
+    "price_and_opportunity_cost_policy": "PROHIBITED_FOR_HISTORICAL_TRAINING",
+    "outcome_access": "NONE",
+    "roles": {
+      "judgment_owner_id": "ROLE:CEMENT:MECHANISM:JUDGMENT_OWNER",
+      "independent_challenger_id": "ROLE:CEMENT:MECHANISM:INDEPENDENT_CHALLENGER",
+      "outcome_custodian_id": "ROLE:CEMENT:MECHANISM:OUTCOME_CUSTODIAN"
+    },
+    "object_class": "DECISION_CONTRACT",
+    "claim_class": "EX_ANTE_DECISION_SCOPE",
+    "allowed_outputs": ["CJO_TRAINING_MIRROR", "RESEARCH_AGENDA"]
+  },
+  "enterprise_system_model": {
+    "schema_version": "enterprise-system-model.v1",
+    "model_id": "ESM:CN600802:20140416:MECHANISM",
+    "company_id": "CN:600802",
+    "version": "1",
+    "cutoff_at": "2014-04-16T00:00:00+08:00",
+    "method_version": "enterprise-judgment-source-packet-adapter.v1",
+    "source_package_id": "SP:CN600802:20140416:FY2013",
+    "responsibility_units": [
+      {
+        "unit_id": "ISSUER_CONSOLIDATED:CN:600802",
+        "unit_type": "COMPANY",
+        "parent_unit_id": null,
+        "accounting_perimeter": "listed-company consolidated financial statements",
+        "decision_scope": "issuer-level management plan and consolidated operating execution",
+        "economic_carrier": "cement and clinker sold into Fujian delivered markets",
+        "measurement_surface": "official audited annual-report operating and financial disclosures",
+        "legal_entity_ids": ["ISSUER:CN:600802"]
+      }
+    ],
+    "arenas": [
+      {
+        "arena_id": "ARENA:CN600802:FUJIAN_DELIVERED_CEMENT",
+        "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600802",
+        "product_or_service_scope": "cement and commodity clinker manufactured and sold in Fujian",
+        "customer_task": "secure locally delivered cement supply for construction and distribution demand",
+        "competition_mechanism": "regional supply-demand, delivered price, channel reach, logistics availability and unit-cost competition",
+        "window": "FY2013 cutoff state and FY2014 management plan",
+        "competitor_or_alternative_refs": ["RIVAL:REGIONAL_DEMAND_AND_PRICE_CYCLE"],
+        "evidence_refs": ["CNINFO:600802:ANN:20140318:63687174"]
+      }
+    ],
+    "operating_variables": [
+      {
+        "variable_id": "VAR:600802:DISTRIBUTION_REACH",
+        "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600802",
+        "arena_id": "ARENA:CN600802:FUJIAN_DELIVERED_CEMENT",
+        "name": "reported provincial channel and distribution reach",
+        "observation_state": "OBSERVED",
+        "evidence_refs": ["CNINFO:600802:ANN:20140318:63687174"]
+      },
+      {
+        "variable_id": "VAR:600802:SALES_VOLUME",
+        "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600802",
+        "arena_id": "ARENA:CN600802:FUJIAN_DELIVERED_CEMENT",
+        "name": "reported cement and clinker sales volume",
+        "observation_state": "OBSERVED",
+        "evidence_refs": ["CNINFO:600802:ANN:20140318:63687174"]
+      },
+      {
+        "variable_id": "VAR:600802:REALIZED_PRICE",
+        "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600802",
+        "arena_id": "ARENA:CN600802:FUJIAN_DELIVERED_CEMENT",
+        "name": "reported average cement selling price",
+        "observation_state": "OBSERVED",
+        "evidence_refs": ["CNINFO:600802:ANN:20140318:63687174"]
+      },
+      {
+        "variable_id": "VAR:600802:UNIT_ECONOMICS",
+        "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600802",
+        "arena_id": "ARENA:CN600802:FUJIAN_DELIVERED_CEMENT",
+        "name": "reported price, cost, expense and cement-segment margin state",
+        "observation_state": "OBSERVED",
+        "evidence_refs": ["CNINFO:600802:ANN:20140318:63687174"]
+      },
+      {
+        "variable_id": "VAR:600802:WORKING_CAPITAL_DISCIPLINE",
+        "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600802",
+        "arena_id": "ARENA:CN600802:FUJIAN_DELIVERED_CEMENT",
+        "name": "reported payment-before-shipment, receivables and inventory state",
+        "observation_state": "OBSERVED",
+        "evidence_refs": ["CNINFO:600802:ANN:20140318:63687174"]
+      },
+      {
+        "variable_id": "VAR:600802:OPERATING_CASH",
+        "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600802",
+        "arena_id": "ARENA:CN600802:FUJIAN_DELIVERED_CEMENT",
+        "name": "audited consolidated net cash from operating activities",
+        "observation_state": "OBSERVED",
+        "evidence_refs": ["CNINFO:600802:ANN:20140318:63687174"]
+      },
+      {
+        "variable_id": "VAR:600802:CAPITAL_BURDEN",
+        "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600802",
+        "arena_id": "ARENA:CN600802:FUJIAN_DELIVERED_CEMENT",
+        "name": "construction-in-progress, planned capital spending and financing burden",
+        "observation_state": "OBSERVED",
+        "evidence_refs": ["CNINFO:600802:ANN:20140318:63687174"]
+      },
+      {
+        "variable_id": "VAR:600802:PERMANENT_LOSS_RISK",
+        "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600802",
+        "arena_id": "ARENA:CN600802:FUJIAN_DELIVERED_CEMENT",
+        "name": "permanent-loss exposure from expansion and financing dependence",
+        "observation_state": "UNKNOWN",
+        "evidence_refs": ["CNINFO:600802:ANN:20140318:63687174"]
+      }
+    ],
+    "mechanisms": [
+      {
+        "mechanism_id": "MECH:600802:CHANNEL_TO_VOLUME",
+        "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600802",
+        "arena_id": "ARENA:CN600802:FUJIAN_DELIVERED_CEMENT",
+        "description": "The FY2014 plan proposes deeper market integration, terminal partnerships and logistics support as a route from provincial distribution reach to customer uptake and sales volume; execution is not yet established.",
+        "reasoning_kind": "INFERENCE",
+        "from_variable_ids": ["VAR:600802:DISTRIBUTION_REACH"],
+        "to_variable_ids": ["VAR:600802:SALES_VOLUME"],
+        "management_decision_ids": ["DEC:600802:FY2014_CHANNEL_EXPANSION_PLAN"],
+        "evidence_refs": ["CNINFO:600802:ANN:20140318:63687174"]
+      },
+      {
+        "mechanism_id": "MECH:600802:VOLUME_PRICE_COST_TO_ECONOMICS",
+        "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600802",
+        "arena_id": "ARENA:CN600802:FUJIAN_DELIVERED_CEMENT",
+        "description": "Sales volume transmits to operating economics only after realized price, production cost and selling expense are measured separately.",
+        "reasoning_kind": "INFERENCE",
+        "from_variable_ids": ["VAR:600802:SALES_VOLUME", "VAR:600802:REALIZED_PRICE"],
+        "to_variable_ids": ["VAR:600802:UNIT_ECONOMICS"],
+        "management_decision_ids": ["DEC:600802:FY2014_CHANNEL_EXPANSION_PLAN"],
+        "evidence_refs": ["CNINFO:600802:ANN:20140318:63687174"]
+      },
+      {
+        "mechanism_id": "MECH:600802:ECONOMICS_WORKING_CAPITAL_TO_CASH",
+        "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600802",
+        "arena_id": "ARENA:CN600802:FUJIAN_DELIVERED_CEMENT",
+        "description": "Unit economics and payment discipline may transmit operating growth to cash, while aggregate cash changes do not by themselves identify the plan's effect.",
+        "reasoning_kind": "INFERENCE",
+        "from_variable_ids": ["VAR:600802:UNIT_ECONOMICS", "VAR:600802:WORKING_CAPITAL_DISCIPLINE"],
+        "to_variable_ids": ["VAR:600802:OPERATING_CASH"],
+        "management_decision_ids": ["DEC:600802:FY2014_CHANNEL_EXPANSION_PLAN"],
+        "evidence_refs": ["CNINFO:600802:ANN:20140318:63687174"]
+      },
+      {
+        "mechanism_id": "MECH:600802:CASH_CAPITAL_TO_LOSS",
+        "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600802",
+        "arena_id": "ARENA:CN600802:FUJIAN_DELIVERED_CEMENT",
+        "description": "Operating cash relative to project and financing burden may change capital-return and permanent-loss exposure; one annual outcome cannot establish permanence.",
+        "reasoning_kind": "INFERENCE",
+        "from_variable_ids": ["VAR:600802:OPERATING_CASH", "VAR:600802:CAPITAL_BURDEN"],
+        "to_variable_ids": ["VAR:600802:PERMANENT_LOSS_RISK"],
+        "management_decision_ids": ["DEC:600802:FY2014_CHANNEL_EXPANSION_PLAN"],
+        "evidence_refs": ["CNINFO:600802:ANN:20140318:63687174"]
+      }
+    ],
+    "financial_transmissions": [
+      {
+        "transmission_id": "TX:600802:VOLUME_PATH",
+        "mechanism_id": "MECH:600802:CHANNEL_TO_VOLUME",
+        "layer": "NORMAL_EARNINGS",
+        "direction": "UNKNOWN",
+        "description": "Customer and sales-volume response is only the first operating link and does not establish earnings direction before price and cost are observed.",
+        "evidence_refs": ["CNINFO:600802:ANN:20140318:63687174"]
+      },
+      {
+        "transmission_id": "TX:600802:NORMAL_EARNINGS",
+        "mechanism_id": "MECH:600802:VOLUME_PRICE_COST_TO_ECONOMICS",
+        "layer": "NORMAL_EARNINGS",
+        "direction": "UNKNOWN",
+        "description": "The plan targets volume and cost progress, but the net earnings direction remains outcome-unknown because price and expense can offset volume.",
+        "evidence_refs": ["CNINFO:600802:ANN:20140318:63687174"]
+      },
+      {
+        "transmission_id": "TX:600802:OWNER_CASH",
+        "mechanism_id": "MECH:600802:ECONOMICS_WORKING_CAPITAL_TO_CASH",
+        "layer": "OWNER_CASH",
+        "direction": "UNKNOWN",
+        "description": "Operating cash is measurable, but owner-cash conversion remains unknown until capital burden and working-capital movements are separated.",
+        "evidence_refs": ["CNINFO:600802:ANN:20140318:63687174"]
+      },
+      {
+        "transmission_id": "TX:600802:PERMANENT_LOSS",
+        "mechanism_id": "MECH:600802:CASH_CAPITAL_TO_LOSS",
+        "layer": "PERMANENT_LOSS",
+        "direction": "UNKNOWN",
+        "description": "The financing and project burden identifies a loss-risk question, not a directional permanent-loss conclusion.",
+        "evidence_refs": ["CNINFO:600802:ANN:20140318:63687174"]
+      }
+    ],
+    "operating_states": [
+      {
+        "state_id": "STATE:600802:FY2013_CUTOFF_VISIBLE",
+        "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600802",
+        "observed_at": "2014-03-19T00:00:00+08:00",
+        "variable_states": {
+          "VAR:600802:DISTRIBUTION_REACH": "PROVINCIAL_NETWORK_WITH_LONGYAN_GAP",
+          "VAR:600802:SALES_VOLUME": "FY2013_REPORTED_GROWTH",
+          "VAR:600802:REALIZED_PRICE": "FY2013_REPORTED_DECLINE",
+          "VAR:600802:UNIT_ECONOMICS": "FY2013_REPORTED_MARGIN_AND_COST_BASELINE",
+          "VAR:600802:WORKING_CAPITAL_DISCIPLINE": "PAYMENT_BEFORE_SHIPMENT_REPORTED",
+          "VAR:600802:OPERATING_CASH": "FY2013_AUDITED_BASELINE",
+          "VAR:600802:CAPITAL_BURDEN": "HIGH_CONSTRUCTION_AND_FINANCING_PLAN",
+          "VAR:600802:PERMANENT_LOSS_RISK": "UNKNOWN"
+        },
+        "evidence_refs": ["CNINFO:600802:ANN:20140318:63687174"]
+      }
+    ],
+    "state_changes": []
+  },
+  "management_decision_ledger": {
+    "schema_version": "management-decision-ledger.v1",
+    "ledger_id": "MDL:CN600802:20140416:MECHANISM",
+    "company_id": "CN:600802",
+    "created_at": "2014-03-19T00:00:00+08:00",
+    "append_policy": "EVENT_SUFFIX_ONLY",
+    "events": [
+      {
+        "event_id": "MDE:600802:FY2014_CHANNEL_PLAN:1",
+        "sequence": 1,
+        "decision_id": "DEC:600802:FY2014_CHANNEL_EXPANSION_PLAN",
+        "event_type": "DECISION_RECORDED",
+        "recorded_at": "2014-03-19T00:00:00+08:00",
+        "effective_at": "2014-03-18T00:00:00+08:00",
+        "status": "PLANNED",
+        "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600802",
+        "arena_id": "ARENA:CN600802:FUJIAN_DELIVERED_CEMENT",
+        "responsible_party": "issuer management",
+        "problem_statement": "Expand sales and absorb growing capacity in a Fujian market exposed to overcapacity and realized-price pressure.",
+        "expected_mechanism_ids": [
+          "MECH:600802:CHANNEL_TO_VOLUME",
+          "MECH:600802:VOLUME_PRICE_COST_TO_ECONOMICS",
+          "MECH:600802:ECONOMICS_WORKING_CAPITAL_TO_CASH",
+          "MECH:600802:CASH_CAPITAL_TO_LOSS"
+        ],
+        "strongest_counterargument": "Regional demand and the cement price cycle, rather than channel execution, may explain later volume or earnings; added capacity can also purchase volume at poor returns.",
+        "observable_signal_ids": [
+          "SIGNAL:600802:PLAN_STATUS",
+          "SIGNAL:600802:IMPLEMENTATION",
+          "SIGNAL:600802:EXECUTION",
+          "SIGNAL:600802:CUSTOMER_RESPONSE",
+          "SIGNAL:600802:UNIT_ECONOMICS",
+          "SIGNAL:600802:CASH",
+          "SIGNAL:600802:CAPITAL_RETURN",
+          "SIGNAL:600802:PERMANENT_LOSS"
+        ],
+        "financial_transmission_ids": [
+          "TX:600802:VOLUME_PATH",
+          "TX:600802:NORMAL_EARNINGS",
+          "TX:600802:OWNER_CASH",
+          "TX:600802:PERMANENT_LOSS"
+        ],
+        "unknowns": [
+          "whether the plan was implemented",
+          "whether channel reach changed customer uptake",
+          "whether volume retained price and unit economics",
+          "whether operating cash covered project and financing burden",
+          "whether any one-year result was durable"
+        ],
+        "evidence_refs": ["CNINFO:600802:ANN:20140318:63687174"]
+      }
+    ]
+  },
+  "reconstruction_spec": {
+    "schema_version": "enterprise-judgment-reconstruction-spec.v1",
+    "reconstruction_id": "RECON:CN600802:20140416:MECHANISM",
+    "company_id": "CN:600802",
+    "issuer_id": "ISSUER:CN:600802",
+    "cutoff_at": "2014-04-16T00:00:00+08:00",
+    "decision_contract_ref": {"contract_id": "DC:CN600802:20140416:MECHANISM", "contract_version": 1},
+    "source_packet_ref": {"receipt_id": "SP:CN600802:20140416:FY2013", "receipt_version": 1},
+    "context_snapshot_id": "ECS:CN600802:20140416:MECHANISM",
+    "operating_system_model_id": "OSM:CN600802:20140416:MECHANISM",
+    "decision_ledger_slice_id": "MDLS:CN600802:20140416:MECHANISM",
+    "feedback_loops": [
+      {
+        "loop_id": "LOOP:600802:CHANNEL_VOLUME",
+        "domains": ["CUSTOMER", "COMPETITION", "OPERATIONS"],
+        "variable_ids": ["VAR:600802:DISTRIBUTION_REACH", "VAR:600802:SALES_VOLUME"],
+        "mechanism_ids": ["MECH:600802:CHANNEL_TO_VOLUME"],
+        "financial_transmission_ids": ["TX:600802:VOLUME_PATH"],
+        "decision_ids": ["DEC:600802:FY2014_CHANNEL_EXPANSION_PLAN"],
+        "selection_rationale": "The cutoff source states the channel, terminal-partner and logistics plan and exposes future customer uptake and sales volume as its first observable link.",
+        "evidence_refs": ["CNINFO:600802:ANN:20140318:63687174"]
+      },
+      {
+        "loop_id": "LOOP:600802:VOLUME_UNIT_ECONOMICS",
+        "domains": ["OPERATIONS"],
+        "variable_ids": ["VAR:600802:SALES_VOLUME", "VAR:600802:REALIZED_PRICE", "VAR:600802:UNIT_ECONOMICS"],
+        "mechanism_ids": ["MECH:600802:VOLUME_PRICE_COST_TO_ECONOMICS"],
+        "financial_transmission_ids": ["TX:600802:NORMAL_EARNINGS"],
+        "decision_ids": ["DEC:600802:FY2014_CHANNEL_EXPANSION_PLAN"],
+        "selection_rationale": "FY2013 already shows that volume and revenue can diverge when price falls, so price, cost and expense must be settled separately before interpreting scale.",
+        "evidence_refs": ["CNINFO:600802:ANN:20140318:63687174"]
+      },
+      {
+        "loop_id": "LOOP:600802:CASH_CAPITAL_LOSS",
+        "domains": ["CASH", "CAPITAL_ALLOCATION", "PERMANENT_LOSS"],
+        "variable_ids": ["VAR:600802:UNIT_ECONOMICS", "VAR:600802:WORKING_CAPITAL_DISCIPLINE", "VAR:600802:OPERATING_CASH", "VAR:600802:CAPITAL_BURDEN", "VAR:600802:PERMANENT_LOSS_RISK"],
+        "mechanism_ids": ["MECH:600802:ECONOMICS_WORKING_CAPITAL_TO_CASH", "MECH:600802:CASH_CAPITAL_TO_LOSS"],
+        "financial_transmission_ids": ["TX:600802:OWNER_CASH", "TX:600802:PERMANENT_LOSS"],
+        "decision_ids": ["DEC:600802:FY2014_CHANNEL_EXPANSION_PLAN"],
+        "selection_rationale": "Payment discipline and audited operating cash are observable, while project spending and the stated financing need can offset operating progress and therefore require a separate capital/loss thread.",
+        "evidence_refs": ["CNINFO:600802:ANN:20140318:63687174"]
+      }
+    ],
+    "decision_observation": {
+      "observation_id": "MDO:CN600802:20140416:MECHANISM",
+      "status": "MATERIAL_DECISION_OBSERVED",
+      "responsibility_unit_ids": ["ISSUER_CONSOLIDATED:CN:600802"],
+      "arena_ids": ["ARENA:CN600802:FUJIAN_DELIVERED_CEMENT"],
+      "reviewed_source_refs": ["CNINFO:600802:ANN:20140318:63687174"],
+      "materiality_scope": "Issuer-level FY2014 channel, logistics, cost and project plan against the FY2013 consolidated operating baseline.",
+      "rationale": "The official FY2013 report states a quantified FY2014 budget and a management plan with explicit channel, terminal-partner, logistics, cost, procurement and project transmission paths. It is recorded only as PLANNED.",
+      "next_discriminating_evidence": "The next official annual report must separately identify implementation, execution, customer/volume response, price-cost-expense economics, cash and project/financing burden."
+    },
+    "decision_ids": ["DEC:600802:FY2014_CHANNEL_EXPANSION_PLAN"],
+    "roles": {
+      "judgment_owner_id": "ROLE:CEMENT:MECHANISM:JUDGMENT_OWNER",
+      "independent_challenger_id": "ROLE:CEMENT:MECHANISM:INDEPENDENT_CHALLENGER",
+      "outcome_custodian_id": "ROLE:CEMENT:MECHANISM:OUTCOME_CUSTODIAN"
+    },
+    "object_class": "ENTERPRISE_JUDGMENT_RECONSTRUCTION_SPEC",
+    "claim_class": "CUTOFF_ENTERPRISE_RECONSTRUCTION",
+    "allowed_outputs": ["RECONSTRUCTION_READ_MODEL", "CJO_TRAINING_MIRROR", "RESEARCH_AGENDA"]
+  },
+  "episode_manifest": {
+    "schema_version": "enterprise-judgment-episode-manifest.v1",
+    "episode_id": "EJE:CN600802:20140416:MECHANISM",
+    "company_id": "CN:600802",
+    "issuer_id": "ISSUER:CN:600802",
+    "cutoff_at": "2014-04-16T00:00:00+08:00",
+    "decision_contract_ref": {"contract_id": "DC:CN600802:20140416:MECHANISM", "contract_version": 1},
+    "component_refs": [
+      {"component_type": "ENTERPRISE_CONTEXT_SNAPSHOT", "component_id": "ECS:CN600802:20140416:MECHANISM", "component_version": "1", "admission_level": "E0_CONTEXT", "read_only": true},
+      {"component_type": "ENTERPRISE_SYSTEM_MODEL", "component_id": "ESM:CN600802:20140416:MECHANISM", "component_version": "1", "admission_level": "E1_RECONSTRUCTION", "read_only": true},
+      {"component_type": "MANAGEMENT_DECISION_LEDGER", "component_id": "MDL:CN600802:20140416:MECHANISM", "component_version": "management-decision-ledger.v1", "admission_level": "E1_RECONSTRUCTION", "read_only": true},
+      {"component_type": "MANAGEMENT_DECISION_OBSERVATION", "component_id": "MDO:CN600802:20140416:MECHANISM", "component_version": "1", "admission_level": "E1_RECONSTRUCTION", "read_only": true}
+    ],
+    "question_set": [
+      {
+        "question_id": "Q:600802:PRIMARY_MECHANISM",
+        "role": "PRIMARY",
+        "question": "Can the FY2014 channel, terminal-partner and logistics plan convert added market reach into economically useful volume without sacrificing price, cash or capital resilience?",
+        "claim_ids": ["CLAIM:600802:MANAGEMENT_PLAN", "CLAIM:600802:CUSTOMER_VOLUME"]
+      },
+      {
+        "question_id": "Q:600802:UNIT_ECONOMICS",
+        "role": "SUPPORTING",
+        "question": "Do realized price, unit cost and selling expense support or contradict the economics of any volume response?",
+        "claim_ids": ["CLAIM:600802:UNIT_ECONOMICS"]
+      },
+      {
+        "question_id": "Q:600802:CASH_CAPITAL",
+        "role": "SUPPORTING",
+        "question": "Do working capital and operating cash absorb the project and financing burden?",
+        "claim_ids": ["CLAIM:600802:CASH_CAPITAL"]
+      },
+      {
+        "question_id": "Q:600802:PERMANENT_LOSS",
+        "role": "SUPPORTING",
+        "question": "Does the next disclosure identify a durable permanent-loss implication rather than a one-year aggregate movement?",
+        "claim_ids": ["CLAIM:600802:PERMANENT_LOSS"]
+      }
+    ],
+    "claims": [
+      {
+        "claim_id": "CLAIM:600802:MANAGEMENT_PLAN",
+        "question_id": "Q:600802:PRIMARY_MECHANISM",
+        "domain": "ORGANIZATION",
+        "statement": "Management disclosed a quantified FY2014 operating budget and a channel/logistics/cost/project plan; the decision status is PLANNED, not implemented or executed.",
+        "cell_status": "OBSERVED",
+        "admission_level": "E2_MECHANISM_PROBE",
+        "evidence_refs": ["CNINFO:600802:ANN:20140318:63687174"],
+        "dependent_outcome_cell_ids": [],
+        "decision_observation_ref": "MDO:CN600802:20140416:MECHANISM",
+        "decision_observation_treatment": "OBSERVATION_BOUNDARY"
+      },
+      {
+        "claim_id": "CLAIM:600802:CUSTOMER_VOLUME",
+        "question_id": "Q:600802:PRIMARY_MECHANISM",
+        "domain": "CUSTOMER",
+        "statement": "Deeper channel coverage and logistics support may increase customer uptake and sales volume, but regional demand and price conditions are the strongest rival explanation.",
+        "cell_status": "INFERRED",
+        "admission_level": "E2_MECHANISM_PROBE",
+        "evidence_refs": ["CNINFO:600802:ANN:20140318:63687174"],
+        "dependent_outcome_cell_ids": []
+      },
+      {
+        "claim_id": "CLAIM:600802:UNIT_ECONOMICS",
+        "question_id": "Q:600802:UNIT_ECONOMICS",
+        "domain": "OPERATIONS",
+        "statement": "Any volume response must be separated from realized price, cost and selling-expense changes before it can support an operating-economics judgment.",
+        "cell_status": "INFERRED",
+        "admission_level": "E2_MECHANISM_PROBE",
+        "evidence_refs": ["CNINFO:600802:ANN:20140318:63687174"],
+        "dependent_outcome_cell_ids": []
+      },
+      {
+        "claim_id": "CLAIM:600802:CASH_CAPITAL",
+        "question_id": "Q:600802:CASH_CAPITAL",
+        "domain": "CASH",
+        "statement": "Payment discipline and operating cash must be read separately from project and financing burden; aggregate cash movement cannot be attributed to the channel plan.",
+        "cell_status": "INFERRED",
+        "admission_level": "E2_MECHANISM_PROBE",
+        "evidence_refs": ["CNINFO:600802:ANN:20140318:63687174"],
+        "dependent_outcome_cell_ids": []
+      },
+      {
+        "claim_id": "CLAIM:600802:PERMANENT_LOSS",
+        "question_id": "Q:600802:PERMANENT_LOSS",
+        "domain": "PERMANENT_LOSS",
+        "statement": "One next-period filing cannot establish a durable permanent-loss conclusion; the cell remains unknown unless a direct solvency or irreversible capital impairment condition appears.",
+        "cell_status": "INFERRED",
+        "admission_level": "E2_MECHANISM_PROBE",
+        "evidence_refs": ["CNINFO:600802:ANN:20140318:63687174"],
+        "dependent_outcome_cell_ids": []
+      }
+    ],
+    "mechanism_threads": [
+      {
+        "thread_id": "THREAD:600802:CHANNEL_VOLUME",
+        "role": "PRIMARY",
+        "claim_ids": ["CLAIM:600802:MANAGEMENT_PLAN", "CLAIM:600802:CUSTOMER_VOLUME"],
+        "hypotheses": [
+          {
+            "hypothesis_id": "H-A:600802:CHANNEL_VOLUME",
+            "role": "H_A",
+            "statement": "The FY2014 channel, terminal-partner and logistics plan is implemented and executed sufficiently to produce observable customer and sales-volume progress."
+          },
+          {
+            "hypothesis_id": "H-B:600802:CHANNEL_VOLUME",
+            "role": "H_B",
+            "statement": "The plan is not implemented or executed, or later volume is better explained by regional demand and price conditions than by channel progress."
+          }
+        ],
+        "observation_clock_ref": "CLOCK:600802:20140416:20150415",
+        "outcome_cell_ids": [
+          "CELL:600802:20140416:PLAN_STATUS",
+          "CELL:600802:20140416:IMPLEMENTATION",
+          "CELL:600802:20140416:EXECUTION",
+          "CELL:600802:20140416:CUSTOMER_RESPONSE",
+          "CELL:600802:20140416:SALES_VOLUME"
+        ]
+      },
+      {
+        "thread_id": "THREAD:600802:UNIT_ECONOMICS",
+        "role": "SUPPORTING",
+        "claim_ids": ["CLAIM:600802:UNIT_ECONOMICS"],
+        "hypotheses": [
+          {
+            "hypothesis_id": "H-A:600802:UNIT_ECONOMICS",
+            "role": "H_A",
+            "statement": "Any volume progress retains enough realized price and cost/expense discipline to improve or preserve operating economics."
+          },
+          {
+            "hypothesis_id": "H-B:600802:UNIT_ECONOMICS",
+            "role": "H_B",
+            "statement": "Price pressure or cost and selling-expense growth absorbs the benefit of any volume progress."
+          }
+        ],
+        "observation_clock_ref": "CLOCK:600802:20140416:20150415",
+        "outcome_cell_ids": ["CELL:600802:20140416:UNIT_ECONOMICS"]
+      },
+      {
+        "thread_id": "THREAD:600802:CASH_CAPITAL_LOSS",
+        "role": "SUPPORTING",
+        "claim_ids": ["CLAIM:600802:CASH_CAPITAL", "CLAIM:600802:PERMANENT_LOSS"],
+        "hypotheses": [
+          {
+            "hypothesis_id": "H-A:600802:CASH_CAPITAL_LOSS",
+            "role": "H_A",
+            "statement": "Working-capital discipline and operating cash absorb the expansion and project burden without a material increase in financing dependence."
+          },
+          {
+            "hypothesis_id": "H-B:600802:CASH_CAPITAL_LOSS",
+            "role": "H_B",
+            "statement": "Working capital, capex or financing burden consumes operating progress and leaves capital return or permanent-loss exposure unresolved or worse."
+          }
+        ],
+        "observation_clock_ref": "CLOCK:600802:20140416:20150415",
+        "outcome_cell_ids": ["CELL:600802:20140416:CASH", "CELL:600802:20140416:CAPITAL_RETURN", "CELL:600802:20140416:PERMANENT_LOSS"]
+      }
+    ],
+    "outcome_cells": [
+      {"outcome_cell_id": "CELL:600802:20140416:PLAN_STATUS", "dimension": "OPERATIONS", "status": "UNKNOWN", "measurement_contract_ref": "MC:600802:20140416:PLAN_STATUS:V1", "custodian_receipt_ref": ""},
+      {"outcome_cell_id": "CELL:600802:20140416:IMPLEMENTATION", "dimension": "OPERATIONS", "status": "UNKNOWN", "measurement_contract_ref": "MC:600802:20140416:IMPLEMENTATION:V1", "custodian_receipt_ref": ""},
+      {"outcome_cell_id": "CELL:600802:20140416:EXECUTION", "dimension": "OPERATIONS", "status": "UNKNOWN", "measurement_contract_ref": "MC:600802:20140416:EXECUTION:V1", "custodian_receipt_ref": ""},
+      {"outcome_cell_id": "CELL:600802:20140416:CUSTOMER_RESPONSE", "dimension": "CUSTOMER", "status": "UNKNOWN", "measurement_contract_ref": "MC:600802:20140416:CUSTOMER_RESPONSE:V1", "custodian_receipt_ref": ""},
+      {"outcome_cell_id": "CELL:600802:20140416:SALES_VOLUME", "dimension": "OPERATIONS", "status": "UNKNOWN", "measurement_contract_ref": "MC:600802:20140416:SALES_VOLUME:V1", "custodian_receipt_ref": ""},
+      {"outcome_cell_id": "CELL:600802:20140416:UNIT_ECONOMICS", "dimension": "OPERATIONS", "status": "UNKNOWN", "measurement_contract_ref": "MC:600802:20140416:UNIT_ECONOMICS:V1", "custodian_receipt_ref": ""},
+      {"outcome_cell_id": "CELL:600802:20140416:CASH", "dimension": "CASH", "status": "UNKNOWN", "measurement_contract_ref": "MC:600802:20140416:CASH:V1", "custodian_receipt_ref": ""},
+      {"outcome_cell_id": "CELL:600802:20140416:CAPITAL_RETURN", "dimension": "CAPITAL_RETURN", "status": "UNKNOWN", "measurement_contract_ref": "MC:600802:20140416:CAPITAL_RETURN:V1", "custodian_receipt_ref": ""},
+      {"outcome_cell_id": "CELL:600802:20140416:PERMANENT_LOSS", "dimension": "PERMANENT_LOSS", "status": "UNKNOWN", "measurement_contract_ref": "MC:600802:20140416:PERMANENT_LOSS:V1", "custodian_receipt_ref": ""}
+    ],
+    "roles": {
+      "judgment_owner_id": "ROLE:CEMENT:MECHANISM:JUDGMENT_OWNER",
+      "independent_challenger_id": "ROLE:CEMENT:MECHANISM:INDEPENDENT_CHALLENGER",
+      "outcome_custodian_id": "ROLE:CEMENT:MECHANISM:OUTCOME_CUSTODIAN"
+    },
+    "object_class": "ENTERPRISE_JUDGMENT_EPISODE_MANIFEST",
+    "claim_class": "COMPOSITE_ENTERPRISE_JUDGMENT",
+    "allowed_outputs": ["EPISODE_READ_MODEL", "RESEARCH_AGENDA"]
+  },
+  "mechanism_thread_set": {
+    "schema_version": "enterprise-judgment-mechanism-thread-set.v1",
+    "thread_set_id": "J2:CN600802:20140416:MECHANISM:V1",
+    "episode_ref": {"episode_id": "EJE:CN600802:20140416:MECHANISM", "schema_version": "enterprise-judgment-episode-manifest.v1"},
+    "reconstruction_ref": {"reconstruction_id": "RECON:CN600802:20140416:MECHANISM", "schema_version": "enterprise-judgment-reconstruction.v1"},
+    "threads": [
+      {
+        "thread_id": "THREAD:600802:CHANNEL_VOLUME",
+        "role": "PRIMARY",
+        "claim_ids": ["CLAIM:600802:MANAGEMENT_PLAN", "CLAIM:600802:CUSTOMER_VOLUME"],
+        "claim_type": "WITHIN_CASE_MECHANISM",
+        "hypotheses": [
+          {"hypothesis_id": "H-A:600802:CHANNEL_VOLUME", "role": "H_A", "statement": "The FY2014 channel, terminal-partner and logistics plan is implemented and executed sufficiently to produce observable customer and sales-volume progress."},
+          {"hypothesis_id": "H-B:600802:CHANNEL_VOLUME", "role": "H_B", "statement": "The plan is not implemented or executed, or later volume is better explained by regional demand and price conditions than by channel progress."}
+        ],
+        "responsibility_boundary": {"responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600802", "arena_id": "ARENA:CN600802:FUJIAN_DELIVERED_CEMENT"},
+        "reconstruction_loop_ids": ["LOOP:600802:CHANNEL_VOLUME"],
+        "evidence_discriminator": {
+          "discriminator_id": "DISC:600802:CHANNEL_VOLUME",
+          "observable": "Separate evidence of plan implementation/execution and disclosed customer or sales-volume response at the issuer-consolidated Fujian boundary.",
+          "expected_if_h_a": "Implementation and execution are visible and customer/volume response is consistent with broader reach without relying on narrative attribution.",
+          "expected_if_h_b": "Implementation or execution remains unverified, volume fails to respond, or market-cycle evidence is at least as plausible."
+        },
+        "observation_clock": {"clock_id": "CLOCK:600802:20140416:20150415", "opens_at": "2014-04-16T00:00:00+08:00", "due_at": "2015-04-15T00:00:00+08:00"},
+        "outcome_cell_refs": ["CELL:600802:20140416:PLAN_STATUS", "CELL:600802:20140416:IMPLEMENTATION", "CELL:600802:20140416:EXECUTION", "CELL:600802:20140416:CUSTOMER_RESPONSE", "CELL:600802:20140416:SALES_VOLUME"],
+        "source_refs": [{"source_ref": "CNINFO:600802:ANN:20140318:63687174", "available_at": "2014-03-18T15:59:59+00:00", "information_role": "CUTOFF_VISIBLE"}],
+        "local_status": "OBSERVED",
+        "evidence_ceiling": "MECHANISM",
+        "permitted_outputs": ["MECHANISM_VIEW", "TEACHING_ONLY", "MECHANISM_CANDIDATE", "RESEARCH_AGENDA"],
+        "e3_comparative_requested": false
+      },
+      {
+        "thread_id": "THREAD:600802:UNIT_ECONOMICS",
+        "role": "SUPPORTING",
+        "claim_ids": ["CLAIM:600802:UNIT_ECONOMICS"],
+        "claim_type": "WITHIN_CASE_MECHANISM",
+        "hypotheses": [
+          {"hypothesis_id": "H-A:600802:UNIT_ECONOMICS", "role": "H_A", "statement": "Any volume progress retains enough realized price and cost/expense discipline to improve or preserve operating economics."},
+          {"hypothesis_id": "H-B:600802:UNIT_ECONOMICS", "role": "H_B", "statement": "Price pressure or cost and selling-expense growth absorbs the benefit of any volume progress."}
+        ],
+        "responsibility_boundary": {"responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600802", "arena_id": "ARENA:CN600802:FUJIAN_DELIVERED_CEMENT"},
+        "reconstruction_loop_ids": ["LOOP:600802:VOLUME_UNIT_ECONOMICS"],
+        "evidence_discriminator": {
+          "discriminator_id": "DISC:600802:UNIT_ECONOMICS",
+          "observable": "Sales volume, realized price, cost and selling expense measured as separate cells at the same issuer boundary.",
+          "expected_if_h_a": "Volume is not offset by price and cost/expense deterioration, preserving or improving cement operating margin.",
+          "expected_if_h_b": "Price or cost/expense pressure offsets volume and compresses cement operating margin."
+        },
+        "observation_clock": {"clock_id": "CLOCK:600802:20140416:20150415", "opens_at": "2014-04-16T00:00:00+08:00", "due_at": "2015-04-15T00:00:00+08:00"},
+        "outcome_cell_refs": ["CELL:600802:20140416:UNIT_ECONOMICS"],
+        "source_refs": [{"source_ref": "CNINFO:600802:ANN:20140318:63687174", "available_at": "2014-03-18T15:59:59+00:00", "information_role": "CUTOFF_VISIBLE"}],
+        "local_status": "INFERRED",
+        "evidence_ceiling": "MECHANISM",
+        "permitted_outputs": ["MECHANISM_VIEW", "TEACHING_ONLY", "MECHANISM_CANDIDATE", "RESEARCH_AGENDA"],
+        "e3_comparative_requested": false
+      },
+      {
+        "thread_id": "THREAD:600802:CASH_CAPITAL_LOSS",
+        "role": "SUPPORTING",
+        "claim_ids": ["CLAIM:600802:CASH_CAPITAL", "CLAIM:600802:PERMANENT_LOSS"],
+        "claim_type": "WITHIN_CASE_MECHANISM",
+        "hypotheses": [
+          {"hypothesis_id": "H-A:600802:CASH_CAPITAL_LOSS", "role": "H_A", "statement": "Working-capital discipline and operating cash absorb the expansion and project burden without a material increase in financing dependence."},
+          {"hypothesis_id": "H-B:600802:CASH_CAPITAL_LOSS", "role": "H_B", "statement": "Working capital, capex or financing burden consumes operating progress and leaves capital return or permanent-loss exposure unresolved or worse."}
+        ],
+        "responsibility_boundary": {"responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600802", "arena_id": "ARENA:CN600802:FUJIAN_DELIVERED_CEMENT"},
+        "reconstruction_loop_ids": ["LOOP:600802:CASH_CAPITAL_LOSS"],
+        "evidence_discriminator": {
+          "discriminator_id": "DISC:600802:CASH_CAPITAL_LOSS",
+          "observable": "Receivables/inventory, audited operating cash, project spending, borrowing and direct impairment or solvency indicators are settled separately.",
+          "expected_if_h_a": "Working capital remains disciplined and operating cash covers more of the project burden without materially greater financing dependence.",
+          "expected_if_h_b": "Working capital or capital spending consumes cash, financing dependence rises, or permanent-loss evidence remains unresolved."
+        },
+        "observation_clock": {"clock_id": "CLOCK:600802:20140416:20150415", "opens_at": "2014-04-16T00:00:00+08:00", "due_at": "2015-04-15T00:00:00+08:00"},
+        "outcome_cell_refs": ["CELL:600802:20140416:CASH", "CELL:600802:20140416:CAPITAL_RETURN", "CELL:600802:20140416:PERMANENT_LOSS"],
+        "source_refs": [{"source_ref": "CNINFO:600802:ANN:20140318:63687174", "available_at": "2014-03-18T15:59:59+00:00", "information_role": "CUTOFF_VISIBLE"}],
+        "local_status": "INFERRED",
+        "evidence_ceiling": "MECHANISM",
+        "permitted_outputs": ["MECHANISM_VIEW", "TEACHING_ONLY", "MECHANISM_CANDIDATE", "RESEARCH_AGENDA"],
+        "e3_comparative_requested": false
+      }
+    ],
+    "outcome_access": "NONE",
+    "object_class": "ENTERPRISE_JUDGMENT_MECHANISM_THREAD_SET",
+    "claim_class": "LOCAL_MECHANISM_THREADS",
+    "allowed_outputs": ["MECHANISM_THREAD_READ_MODEL", "RESEARCH_AGENDA"]
+  },
+  "cell_measurement_contracts": [
+    {"cell_id": "CELL:600802:20140416:PLAN_STATUS", "layer": "PLAN", "measurement_contract_id": "MC:600802:20140416:PLAN_STATUS:V1", "question": "Does the next official filing identify the FY2014 plan as still planned, revised, cancelled or completed?", "allowed_evidence": ["explicit plan-status statement in the next official annual report"], "prohibited_inference": "Do not infer implementation from repeated aspirations or achieved aggregate results."},
+    {"cell_id": "CELL:600802:20140416:IMPLEMENTATION", "layer": "IMPLEMENTED", "measurement_contract_id": "MC:600802:20140416:IMPLEMENTATION:V1", "question": "Which planned channel, terminal-partner, logistics, cost or project actions entered service or received committed resources?", "allowed_evidence": ["explicit completed, launched, opened, signed, commissioned or resource-committed disclosure"], "prohibited_inference": "Do not treat a target, intention or budget as implementation."},
+    {"cell_id": "CELL:600802:20140416:EXECUTION", "layer": "EXECUTED", "measurement_contract_id": "MC:600802:20140416:EXECUTION:V1", "question": "Which implemented actions were operated at meaningful scope during FY2014?", "allowed_evidence": ["explicit operating scope, utilization, channel count, partner count, logistics coverage or project operation evidence"], "prohibited_inference": "Do not infer execution quality from management narrative or total revenue."},
+    {"cell_id": "CELL:600802:20140416:CUSTOMER_RESPONSE", "layer": "CUSTOMER_RESPONSE", "measurement_contract_id": "MC:600802:20140416:CUSTOMER_RESPONSE:V1", "question": "What direct customer, dealer, channel or demand response is disclosed?", "allowed_evidence": ["customer/channel counts, retention, order, market-share or directly attributed demand evidence"], "prohibited_inference": "Sales volume alone is not direct customer response."},
+    {"cell_id": "CELL:600802:20140416:SALES_VOLUME", "layer": "CUSTOMER_RESPONSE", "measurement_contract_id": "MC:600802:20140416:SALES_VOLUME:V1", "question": "What are FY2014 cement and clinker sales volumes on the disclosed issuer boundary?", "allowed_evidence": ["official annual-report sales-volume table or explicit annual sales-volume statement"], "prohibited_inference": "Do not attribute volume direction to the plan without implementation and rival-explanation evidence."},
+    {"cell_id": "CELL:600802:20140416:UNIT_ECONOMICS", "layer": "UNIT_ECONOMICS", "measurement_contract_id": "MC:600802:20140416:UNIT_ECONOMICS:V1", "question": "How did realized price, unit cost, selling expense and cement gross margin move?", "allowed_evidence": ["separate official annual-report price, cost, expense and cement-margin fields"], "prohibited_inference": "Revenue or profit alone cannot identify unit economics or action effect."},
+    {"cell_id": "CELL:600802:20140416:CASH", "layer": "CASH", "measurement_contract_id": "MC:600802:20140416:CASH:V1", "question": "How did receivables, inventory and audited net operating cash move?", "allowed_evidence": ["audited consolidated balance sheet and cash-flow statement with management explanation"], "prohibited_inference": "Aggregate operating cash cannot be attributed to the plan or treated as owner cash."},
+    {"cell_id": "CELL:600802:20140416:CAPITAL_RETURN", "layer": "CAPITAL_RETURN", "measurement_contract_id": "MC:600802:20140416:CAPITAL_RETURN:V1", "question": "Did operating progress cover capital spending and financing burden sufficiently to support a capital-return conclusion?", "allowed_evidence": ["capex, construction-in-progress, debt, finance cost and compatible operating-profit/cash fields"], "prohibited_inference": "One-year growth or aggregate cash is insufficient for causal ROIC attribution."},
+    {"cell_id": "CELL:600802:20140416:PERMANENT_LOSS", "layer": "PERMANENT_LOSS", "measurement_contract_id": "MC:600802:20140416:PERMANENT_LOSS:V1", "question": "Does the filing disclose a direct solvency, impairment, refinancing or irreversible capital-loss condition?", "allowed_evidence": ["direct official impairment, covenant, default, going-concern, refinancing or irreversible project-loss evidence"], "prohibited_inference": "A single weak or strong year does not establish permanent loss."}
+  ],
+  "forecast_projection_source": {
+    "schema_version": "enterprise-judgment-forecast-projection-source.v1",
+    "projection_id": "J3:CN600802:20140416:MECHANISM:V1",
+    "episode_ref": {"episode_id": "EJE:CN600802:20140416:MECHANISM", "company_id": "CN:600802", "issuer_id": "ISSUER:CN:600802", "cutoff_at": "2014-04-16T00:00:00+08:00"},
+    "mechanism_thread_set_ref": {"thread_set_id": "J2:CN600802:20140416:MECHANISM:V1", "schema_version": "enterprise-judgment-mechanism-thread-set.v1"},
+    "source_packet_refs": [{"receipt_id": "SP:CN600802:20140416:FY2013", "receipt_version": 1}],
+    "threads": [
+      {
+        "thread_id": "THREAD:600802:CHANNEL_VOLUME",
+        "cells": [
+          {
+            "request_id": "REQ:600802:SALES_VOLUME:ONE_YEAR",
+            "outcome_cell_id": "CELL:600802:20140416:SALES_VOLUME",
+            "forecast_eligible": true,
+            "forecast_dimension_id": "NORMAL_EARNINGS",
+            "window_id": "ONE_YEAR",
+            "request_kind": "ORDINAL_PROBABILITY",
+            "measurement_ref": {"measurement_contract_id": "MC:600802:20140416:SALES_VOLUME:V1", "measurement_contract_version": 1, "measurement_id": "MEASURE:600802:FY2014_SALES_VOLUME_DIRECTION"},
+            "evidence_refs": [{"source_id": "CNINFO:600802:ANN:20140318:63687174", "published_at": "2014-03-18", "available_at": "2014-03-18T15:59:59+00:00", "field_ref": "FY2013 annual report PDF pp. 9 and 19: FY2013 sales-volume baseline and FY2014 volume/channel plan.", "field_id": "FIELD:600802:SALES_VOLUME_PLAN"}],
+            "baseline_reference": "FY2013 official sales-volume baseline at the same issuer boundary."
+          }
+        ]
+      },
+      {
+        "thread_id": "THREAD:600802:UNIT_ECONOMICS",
+        "cells": [
+          {
+            "request_id": "REQ:600802:UNIT_ECONOMICS:ONE_YEAR",
+            "outcome_cell_id": "CELL:600802:20140416:UNIT_ECONOMICS",
+            "forecast_eligible": true,
+            "forecast_dimension_id": "ROIC_OR_OPERATING_MARGIN",
+            "window_id": "ONE_YEAR",
+            "request_kind": "ORDINAL_PROBABILITY",
+            "measurement_ref": {"measurement_contract_id": "MC:600802:20140416:UNIT_ECONOMICS:V1", "measurement_contract_version": 1, "measurement_id": "MEASURE:600802:FY2014_UNIT_ECONOMICS_DIRECTION"},
+            "evidence_refs": [{"source_id": "CNINFO:600802:ANN:20140318:63687174", "published_at": "2014-03-18", "available_at": "2014-03-18T15:59:59+00:00", "field_ref": "FY2013 annual report PDF pp. 10-13 and 19: price, cost, expense and margin baseline plus FY2014 cost plan.", "field_id": "FIELD:600802:UNIT_ECONOMICS_PLAN"}],
+            "baseline_reference": "FY2013 official realized-price, cost, expense and cement-margin baseline."
+          }
+        ]
+      },
+      {
+        "thread_id": "THREAD:600802:CASH_CAPITAL_LOSS",
+        "cells": [
+          {
+            "request_id": "REQ:600802:CASH:ONE_YEAR",
+            "outcome_cell_id": "CELL:600802:20140416:CASH",
+            "forecast_eligible": true,
+            "forecast_dimension_id": "CASH_CONVERSION_AND_CAPEX_BURDEN",
+            "window_id": "ONE_YEAR",
+            "request_kind": "NUMERIC_INTERVAL",
+            "measurement_ref": {"measurement_contract_id": "MC:600802:20140416:CASH:V1", "measurement_contract_version": 1, "measurement_id": "MEASURE:600802:FY2014_OPERATING_CASH_TO_REVENUE"},
+            "evidence_refs": [{"source_id": "CNINFO:600802:ANN:20140318:63687174", "published_at": "2014-03-18", "available_at": "2014-03-18T15:59:59+00:00", "field_ref": "FY2013 annual report PDF pp. 10, 14 and 19: operating cash, working capital and financing/project burden baseline.", "field_id": "FIELD:600802:CASH_CAPITAL_PLAN"}],
+            "baseline_reference": "FY2013 audited operating-cash-to-revenue ratio at the same issuer boundary.",
+            "interval_coverage": 0.8,
+            "interval_unit": "RATIO"
+          },
+          {
+            "request_id": "REQ:600802:PERMANENT_LOSS:ABSTAIN",
+            "outcome_cell_id": "CELL:600802:20140416:PERMANENT_LOSS",
+            "forecast_eligible": true,
+            "forecast_dimension_id": "PERMANENT_LOSS_RISK",
+            "window_id": "FIVE_YEAR",
+            "request_kind": "ABSTAIN",
+            "measurement_ref": {"measurement_contract_id": "MC:600802:20140416:PERMANENT_LOSS:V1", "measurement_contract_version": 1, "measurement_id": "MEASURE:600802:PERMANENT_LOSS_ABSTENTION"},
+            "evidence_refs": [{"source_id": "CNINFO:600802:ANN:20140318:63687174", "published_at": "2014-03-18", "available_at": "2014-03-18T15:59:59+00:00", "field_ref": "FY2013 annual report PDF pp. 14 and 19: financing and project burden without a durable loss observation.", "field_id": "FIELD:600802:LOSS_EVIDENCE_GAP"}],
+            "abstain_reason": "The cutoff packet identifies financing and project burden but cannot support a five-year permanent-loss probability without future solvency, impairment and refinancing evidence."
+          }
+        ]
+      }
+    ],
+    "object_class": "ENTERPRISE_JUDGMENT_FORECAST_PROJECTION_SOURCE",
+    "claim_class": "J2_FORECAST_ELIGIBILITY_ROUTING",
+    "allowed_outputs": ["FORECAST_REQUESTS_ONLY", "RESEARCH_AGENDA"]
+  },
+  "strongest_rival": {
+    "rival_id": "RIVAL:600802:REGIONAL_DEMAND_PRICE_AND_CAPACITY",
+    "statement": "Regional construction demand, the Fujian cement price cycle and capacity additions can explain sales or earnings changes without management channel execution; higher volume can coexist with weaker unit economics and capital returns.",
+    "break_conditions": [
+      "No explicit implementation or operating-scope evidence for the planned channel, partner or logistics changes.",
+      "Sales volume fails to improve or only improves while realized price and cement margin deteriorate.",
+      "Selling expense, receivables or inventory grow faster than the relevant operating base.",
+      "Operating cash fails to absorb project spending and financing dependence increases.",
+      "No direct evidence supports a durable capital-return or permanent-loss conclusion."
+    ]
+  },
+  "sealed_outcome_source": {
+    "source_id": "CNINFO:600802:ANN:20150324:1200733162",
+    "access_state": "SEALED_UNTIL_PREOUTCOME_COMMIT",
+    "outcome_content_read": false
+  },
+  "rights": {
+    "comparative": "NOT_AUTHORIZED",
+    "cjo": "NOT_AUTHORIZED",
+    "valuation": "NOT_AUTHORIZED",
+    "report": "NOT_AUTHORIZED",
+    "investment": "NOT_AUTHORIZED",
+    "enterprise_learning": "NOT_YET_CANDIDATE"
+  },
+  "allowed_outputs": ["MECHANISM_VIEW", "FORECAST_REQUESTS_ONLY", "RESEARCH_AGENDA"]
+}
