@@ -530,3 +530,19 @@ def test_j1_registry_cli_adapter_compiles_and_registers_approved_artifacts(tmp_p
     assert result["frozen"] is True
     assert loaded["reconstruction"]["source_packet_ref"] == spec["source_packet_ref"]
     assert loaded["reconstruction_inputs"]["decision_contract"] == decision_contract
+
+
+def test_linked_worktree_cannot_override_the_shared_canonical_registry(tmp_path: Path) -> None:
+    main = tmp_path / "main"
+    worktree = tmp_path / "worktrees" / "feature"
+    git_dir = main / ".git" / "worktrees" / "feature"
+    git_dir.mkdir(parents=True)
+    worktree.mkdir(parents=True)
+    (worktree / ".git").write_text(f"gitdir: {git_dir}\n", encoding="utf-8")
+    local_db = worktree / "stock_analysis.db"
+    local_db.touch()
+
+    resolved = reconstruction._canonical_registry_path_for_repo(worktree)
+
+    assert resolved == main / "stock_analysis.db"
+    assert resolved != local_db

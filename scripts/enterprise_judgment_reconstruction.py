@@ -29,20 +29,19 @@ ALLOWED_OUTPUTS = ["RECONSTRUCTION_READ_MODEL", "CJO_TRAINING_MIRROR", "RESEARCH
 REGISTRY_TABLE = "enterprise_judgment_frozen_reconstructions"
 
 
-def _default_canonical_registry_path() -> Path:
-    repo_root = Path(__file__).resolve().parents[1]
-    local = repo_root / "stock_analysis.db"
-    if local.exists():
-        return local
+def _canonical_registry_path_for_repo(repo_root: Path) -> Path:
+    """Resolve a linked worktree to its shared main-worktree control DB."""
     git_metadata = repo_root / ".git"
     if git_metadata.is_file():
         marker = git_metadata.read_text(encoding="utf-8").strip()
         if marker.startswith("gitdir:"):
             git_dir = Path(marker.split(":", 1)[1].strip()).resolve()
-            shared = git_dir.parents[2] / "stock_analysis.db"
-            if shared.exists():
-                return shared
-    return local
+            return git_dir.parents[2] / "stock_analysis.db"
+    return repo_root / "stock_analysis.db"
+
+
+def _default_canonical_registry_path() -> Path:
+    return _canonical_registry_path_for_repo(Path(__file__).resolve().parents[1])
 
 
 CANONICAL_REGISTRY_PATH = _default_canonical_registry_path()
