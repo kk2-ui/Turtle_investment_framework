@@ -1,0 +1,36 @@
+{
+  "schema_version": "turtle-minimal-historical-episode-runtime-receipt.v1",
+  "measurement_contract_ref": {
+    "measurement_contract_id": "MHE:CN600585:FY2018:CEMENT_AND_CLINKER_SALES_VOLUME_TONNES:V1",
+    "measurement_contract_version": 1
+  },
+  "company_id": "CN:600585",
+  "metric_id": "CEMENT_AND_CLINKER_SALES_VOLUME_TONNES",
+  "window_id": "ONE_YEAR",
+  "roles": {
+    "custodian_id": "CUSTODIAN:MINIMAL_HISTORICAL:CN600585:20260826",
+    "forecaster_id": "FORECASTER:MINIMAL_HISTORICAL:CN600585:20260826"
+  },
+  "chronology": {
+    "measurement_contract": {
+      "measurement_contract_id": "MHE:CN600585:FY2018:CEMENT_AND_CLINKER_SALES_VOLUME_TONNES:V1",
+      "frozen_at": "2026-08-26T03:13:55+00:00"
+    },
+    "static_evidence": {
+      "evidence_receipt_id": "MHE:EVIDENCE:CN600585:FY2017:CEMENT_AND_CLINKER_SALES_VOLUME_TONNES:V1",
+      "frozen_at": "2026-08-26T03:13:56+00:00"
+    },
+    "prediction": {
+      "prediction_id": "MHE:PREDICTION:CN600585:FY2018:CEMENT_AND_CLINKER_SALES_VOLUME_TONNES:V1",
+      "frozen_at": "2026-08-26T03:13:57+00:00"
+    },
+    "outcome_access": null,
+    "observation": null,
+    "settlement": null
+  },
+  "settlement": null,
+  "allowed_outputs": [
+    "MECHANICAL_SETTLEMENT_ONLY"
+  ],
+  "method_transfer_rights": "NO_METHOD_TRANSFER_RIGHTS"
+}

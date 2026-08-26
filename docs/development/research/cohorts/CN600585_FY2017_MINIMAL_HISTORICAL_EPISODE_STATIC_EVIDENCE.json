@@ -1,0 +1,33 @@
+{
+  "schema_version": "turtle-minimal-historical-episode-static-evidence.v1",
+  "evidence_receipt_id": "MHE:EVIDENCE:CN600585:FY2017:CEMENT_AND_CLINKER_SALES_VOLUME_TONNES:V1",
+  "evidence_receipt_version": 1,
+  "measurement_contract_ref": {
+    "measurement_contract_id": "MHE:CN600585:FY2018:CEMENT_AND_CLINKER_SALES_VOLUME_TONNES:V1",
+    "measurement_contract_version": 1
+  },
+  "company_id": "CN:600585",
+  "issuer_id": "ISSUER:CN:600585",
+  "cutoff_at": "2018-04-30T23:59:59+08:00",
+  "metric_id": "CEMENT_AND_CLINKER_SALES_VOLUME_TONNES",
+  "window_id": "ONE_YEAR",
+  "curator_id": "CURATOR:CN600585:STATIC:20260826",
+  "source": {
+    "source_id": "CNINFO:600585:ANN:20180323:1204507132",
+    "source_url": "https://static.cninfo.com.cn/finalpage/2018-03-23/1204507132.PDF",
+    "source_type": "OFFICIAL_STATIC_FILING",
+    "published_at": "2018-03-23",
+    "issuer_id": "ISSUER:CN:600585",
+    "metric_id": "CEMENT_AND_CLINKER_SALES_VOLUME_TONNES",
+    "responsibility_boundary": "ISSUER_CONSOLIDATED:CN:600585",
+    "unit": "tonnes",
+    "field_ref": "FY2017 Anhui Conch Cement annual report, PDF p. 22, 本集团水泥和熟料合计净销量",
+    "numeric_value": 295000000
+  },
+  "object_class": "MINIMAL_HISTORICAL_STATIC_EVIDENCE",
+  "claim_class": "CUTOFF_VISIBLE_OFFICIAL_FIELD",
+  "allowed_outputs": [
+    "MECHANICAL_SETTLEMENT_ONLY"
+  ],
+  "method_transfer_rights": "NO_METHOD_TRANSFER_RIGHTS"
+}
