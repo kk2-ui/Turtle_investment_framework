@@ -35,11 +35,13 @@ identity、availability precision 与 page locator，或保留 value-free
 报告或投资权限。
 
 对下一份新 Minimal object，Measurement Contract v2 还必须在 forecast 前冻结
-CNINFO provider/version、security code、official-metadata-bound organization ID、
-annual-report category、bounded query dates/page size 与 static-finalpage policy；
-custodian inventory 只能从 stored contract 导出该 route。缺少这组结果前路由事实时，
-不得授权 outcome access。既有 v1 artifacts 仅保留 history/readability，不能 retrofit
-或发起新 custody flow。
+CNINFO provider/version、security code、organization ID、annual-report category、
+bounded query dates/page size 与 static-finalpage policy。该 organization ID 来自独立的
+`TECHNICAL_ROUTE_IDENTITY`：它仅记录官方 stock-map 的 `code -> orgId`、resolver
+endpoint/version 与观察时间，不含公司名称、公告、PDF 或任何 outcome，且必须精确绑定已冻结的
+公司/issuer。custodian inventory 只能从 stored contract 导出该 route。缺少或不匹配该技术
+路由身份时，不得授权 outcome access。既有 v1 artifacts 仅保留 history/readability，不能
+retrofit 或发起新 custody flow。
 
 当前状态是 `G1_CANDIDATE_MATURATION + G1-T_LAYERED_HISTORICAL_TRAINING / FORECAST_EPOCH_IMPLEMENTED / MINIMAL_HISTORICAL_EPISODE_MECHANICALLY_SETTLED / CN600802_MINIMAL_EPISODE_MEASUREMENT_MISMATCH / CN600425_MINIMAL_EPISODE_MEASUREMENT_MISMATCH / FORECAST_LEARNING_CONTROL_IMPLEMENTED / DECISION_CONTRACT_GATE_IMPLEMENTED / CJO_TEACHING_MIRROR_VALIDATED / CJO_VALUATION_SETTLEMENT_VALIDATED / DECISION_UTILITY_CONTROL_IMPLEMENTED / REGISTRY_AWARE_ADMISSION_IMPLEMENTED / CEMENT_H2_NO_PRIMARY_ACTION_SCOPE`。训练对象已按 Industry Universe、Evidence Carrier、Teaching/Lifecycle、Forecast、Comparative 和 Learning 分层；固定公司数量只约束特定 comparative topology。当前 R-62/R-69 均为 `NO_PRIMARY / NOT_FROZEN` 的结果前筛查，不能登记为 boundary 或 selection learning；R-61 仍是 outcome-sealed 预留留出，只有真实 `SELECTION_ADMITTED` 开发链完成、跨公司 application 复核并冻结方法后才可评价。R-102 只保留 `MEASUREMENT_BOUNDARY`，R-104 的 D3/D4 `MIXED` 只保留无权利边界。水泥 H1 已通过 strict source intake，H2 为 `NO_PRIMARY_ACTION_SCOPE`；这允许 Forecast/Teaching/Lifecycle 继续，不构成 Comparative 准入。CN:600585 的 2018 `Forecast V4` 已在隔离开发控制面完成独立 settlement；唯一有效的后续产物是 coverage / direct forecast policy，且输出严格限于 `FORECAST_POLICY_ONLY + RESEARCH_AGENDA`。该对象在 outcome access 前没有冻结 method 或 decision-utility pairing，故不得回填，也不能证明方法提升、决策效用、跨公司迁移、method release、CJO、估值或报告使用。另一个独立的 CN:600585 `Minimal Historical Episode v1` 已完成 `Decision Contract → Measurement Contract → cutoff-before static evidence → blind prediction → contract-only custodian access → mechanical settlement`；它只证明最小管线可闭合，固定为 `MECHANICAL_SETTLEMENT_ONLY + NO_METHOD_TRANSFER_RIGHTS`，不产生评分、learning、CJO、估值、报告或投资权限。CN:600802 的同类对象已冻结并获得 contract-only outcome access，但 custodian 不能从允许入口唯一定位 FY2018 官方静态 PDF 及逐页指标字段，故保持 `MEASUREMENT_MISMATCH`：没有 observation、settlement 或 outcome label。CN:600425 的 FY2018 operating-revenue 同类对象在授权 contract-only access 后，由 value-free inventory 正确返回 `MEASUREMENT_MISMATCH / NO_UNIQUE_DIRECT_ANNUAL_REPORT`，同样没有 observation、settlement 或 outcome label；这是保护性的 `ACQUISITION_MODULE + DATA_COVERAGE` 终态，不是企业经营表现的负面结论，不是已结算训练样本，也不得触发任意来源替换。两者均固定为 `MECHANICAL_SETTLEMENT_ONLY + NO_METHOD_TRANSFER_RIGHTS`，不产生方法分数、learning、CJO、估值、报告或投资权限。Forecast、Measurement Contract、独立 settlement、paired evaluation、CJO core、Overlay 和报告只读 handoff 的工程控制已接通，但无真实 `SELECTION_METHOD_ELIGIBLE` 样本、无正式方法 release，也无 `MECHANISM_READY` 或投资授权实例。当前格力仍为 `PRE_FREEZE / NO_PRIMARY / NOT_FROZEN`；新前瞻只作为部署哨兵，G1.5 仍为 `PLANNED`。Agent 不得以动态 CNINFO、结果后同行、价格或 outcome 资料补齐这些缺口。
 

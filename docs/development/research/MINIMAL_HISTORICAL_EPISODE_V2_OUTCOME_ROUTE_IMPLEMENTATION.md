@@ -14,6 +14,7 @@ route before static evidence and prediction:
 
 ```text
 Decision Contract
+  -> Technical Route Identity (official code -> orgId routing only)
   -> Measurement Contract v2 (frozen CNINFO route)
   -> static evidence
   -> prediction
@@ -44,6 +45,28 @@ investment rights. All objects remain
 The query dates must form a closed range, and its start must follow the frozen
 outcome period end. The contract does not contain an annual-report title,
 selected announcement, PDF quote, outcome value, price, or prediction.
+
+### Technical Route Identity
+
+An annual report PDF cannot reliably disclose CNINFO's internal `orgId`.  For
+new v2 episodes, the controller therefore freezes one separate
+`TECHNICAL_ROUTE_IDENTITY` after the Decision Contract and before the
+Measurement Contract or prediction. It comes from CNINFO's official stock-map
+resolver and is deliberately *not* a cutoff-era company-evidence claim.
+
+Its closed receipt contains only the exact six-digit code, matching frozen
+issuer/company identity, `organization_id`, resolver endpoint/version, and
+`observed_at`. It cannot carry an issuer name, announcement title, metadata
+row, PDF, body, outcome, price, or return. The resolver is called with the
+frozen code alone and must return exactly that code and one `organization_id`;
+unavailability, an identity disagreement, or extra response material produces
+a value-free pre-outcome `MEASUREMENT_MISMATCH` instead of a guessed route.
+
+The Measurement Contract stores a reference to that receipt and must exactly
+match its code and `organization_id`. A caller cannot substitute either field.
+This technical routing lookup does not relax the separate cutoff rule for
+static evidence: all company facts used for a forecast remain restricted to
+cutoff-before official static sources.
 
 The custodian adapter accepts only an authorization ID and derives every route
 parameter from the stored contract. The production runner may additionally
@@ -80,11 +103,13 @@ forecaster reads or freezes a prediction:
 
 1. The exact `CN:<six-digit security code>` and matching
    `ISSUER:CN:<six-digit security code>` identity.
-2. A cutoff-before official CNINFO metadata identity that binds that same
-   security code to its `organization_id`. The curator records the official
-   metadata source identity, publication/availability date, and the issuer-code
-   and organization-ID fields used for the binding. This is routing metadata,
-   not an outcome report.
+2. Permission for the controller to make the narrowly scoped official CNINFO
+   stock-map resolution for that exact code. The resulting technical receipt
+   records only the code, org ID, resolver endpoint/version, and observation
+   time; it deliberately records no company name, title, announcement, body,
+   or outcome. It is current routing provenance, not historical economic
+   evidence, and it must exactly bind the frozen `CN:<code>` /
+   `ISSUER:CN:<code>` identity.
 3. The one bounded annual-report enumeration window following the frozen
    outcome-period end, using the fixed v2 provider, `fulltext` tab,
    `ANNUAL_REPORT` category, page size, and static-finalpage policy.
@@ -93,10 +118,10 @@ forecaster reads or freezes a prediction:
 
 The curator must not enumerate the outcome window, select an outcome annual
 report, open an outcome PDF, read a result value, price, return, H2, R-103,
-CJO, or report. If the cutoff-before metadata cannot bind an official
-organization ID, the correct result is a pre-outcome invalid contract / new
-candidate request—not an after-access `MEASUREMENT_MISMATCH` and not a guessed
-organization route.
+CJO, or report. If the official technical resolver cannot return one exact
+code-to-orgId mapping, the correct result is a value-free pre-outcome mismatch
+/ new candidate request—not an after-access `MEASUREMENT_MISMATCH` and not a
+guessed organization route.
 
 `cohorts/MINIMAL_HISTORICAL_EPISODE_V2_ROUTE_FIXTURE_TEMPLATE.json` is a
 non-real, `.invalid` synthetic template that validates this pre-outcome shape.

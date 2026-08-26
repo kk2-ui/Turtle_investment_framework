@@ -13,6 +13,7 @@ from scripts import minimal_historical_episode as episode
 from scripts import minimal_historical_episode_control_plane as control
 from scripts import minimal_historical_episode_runner as runner
 from scripts import minimal_historical_outcome_acquisition as outcome_acquisition
+from scripts import minimal_historical_technical_route_identity as route_identity_adapter
 
 
 def _conn() -> sqlite3.Connection:
@@ -52,8 +53,43 @@ def _decision_contract_ref(decision_contract: dict) -> dict:
     }
 
 
+def _technical_route_identity(decision_contract: dict) -> dict:
+    code = decision_contract["company_id"].split(":", 1)[1]
+    return {
+        "schema_version": episode.TECHNICAL_ROUTE_IDENTITY_SCHEMA_VERSION,
+        "technical_route_identity_id": f"MHE:ROUTE:{code}:SYNTHETIC:V1",
+        "technical_route_identity_version": 1,
+        "decision_contract_ref": _decision_contract_ref(decision_contract),
+        "company_id": decision_contract["company_id"],
+        "issuer_id": decision_contract["issuer_id"],
+        "security_code": code,
+        "organization_id": "SYNTHETIC-ORG",
+        "resolver_endpoint": episode.CNINFO_TECHNICAL_ROUTE_RESOLVER_ENDPOINT,
+        "resolver_version": episode.CNINFO_TECHNICAL_ROUTE_RESOLVER_VERSION,
+        "observed_at": "2021-01-01T12:00:00+00:00",
+        "object_class": "MINIMAL_HISTORICAL_TECHNICAL_ROUTE_IDENTITY",
+        "claim_class": "TECHNICAL_ROUTE_IDENTITY",
+        "allowed_outputs": list(episode.ALLOWED_OUTPUTS),
+        "method_transfer_rights": episode.NO_METHOD_TRANSFER_RIGHTS,
+    }
+
+
+def _synthetic_technical_route_resolver(security_code: str) -> dict:
+    """Fixture resolver; production runner alone uses CNINFO's stock map."""
+    return {"security_code": security_code, "organization_id": "SYNTHETIC-ORG"}
+
+
+def _register_technical_route_identity(conn: sqlite3.Connection, decision_contract: dict) -> dict:
+    route_identity = _technical_route_identity(decision_contract)
+    assert control.register_technical_route_identity(
+        conn, route_identity, frozen_at="2021-01-01T12:00:00+00:00",
+    )["frozen"]
+    return route_identity
+
+
 def _contract(decision_contract: dict | None = None) -> dict:
     decision_contract = decision_contract or _decision_contract()
+    route_identity = _technical_route_identity(decision_contract)
     return {
         "schema_version": episode.MEASUREMENT_CONTRACT_SCHEMA_VERSION,
         "measurement_contract_id": "MHE:CONTRACT:SYNTHETIC:V2",
@@ -68,6 +104,10 @@ def _contract(decision_contract: dict | None = None) -> dict:
         "responsibility_boundary": "LISTED_ISSUER_CONSOLIDATED",
         "unit": "PERCENT",
         "settlement_tolerance": 0.5,
+        "technical_route_identity_ref": {
+            "technical_route_identity_id": route_identity["technical_route_identity_id"],
+            "technical_route_identity_version": route_identity["technical_route_identity_version"],
+        },
         "outcome_acquisition_route": {
             "provider": episode.CNINFO_OUTCOME_ROUTE_PROVIDER,
             "provider_version": episode.CNINFO_OUTCOME_ROUTE_PROVIDER_VERSION,
@@ -92,6 +132,54 @@ def _contract_ref(contract: dict) -> dict:
     return {
         "measurement_contract_id": contract["measurement_contract_id"],
         "measurement_contract_version": contract["measurement_contract_version"],
+    }
+
+
+def test_technical_route_identity_projects_only_code_org_and_resolver_provenance() -> None:
+    decision = _decision_contract()
+    result = route_identity_adapter.resolve_technical_route_identity(
+        technical_route_identity_id="MHE:ROUTE:SYNTHETIC:V1",
+        technical_route_identity_version=1,
+        decision_contract=decision,
+        observed_at="2021-01-01T12:00:00+00:00",
+        resolver=lambda code: {"security_code": code, "organization_id": "SYNTHETIC-ORG"},
+    )
+    assert result["status"] == "TECHNICAL_ROUTE_IDENTITY_READY"
+    receipt = result["technical_route_identity"]
+    assert episode.validate_technical_route_identity(receipt, decision_contract=decision)["valid"]
+    assert receipt["security_code"] == "600585"
+    assert receipt["organization_id"] == "SYNTHETIC-ORG"
+    assert receipt["resolver_endpoint"] == episode.CNINFO_TECHNICAL_ROUTE_RESOLVER_ENDPOINT
+    assert receipt["resolver_version"] == episode.CNINFO_TECHNICAL_ROUTE_RESOLVER_VERSION
+    serialized = json.dumps(receipt)
+    for forbidden in ("company_name", "name", "title", "announcement", "pdf", "body", "outcome", "price"):
+        assert forbidden not in serialized.casefold()
+
+
+@pytest.mark.parametrize(
+    ("resolver", "rule"),
+    [
+        (lambda code: {"security_code": code, "organization_id": "SYNTHETIC-ORG", "company_name": "forbidden"}, "CNINFO_TECHNICAL_ROUTE_RESOLVER_RESPONSE_INVALID"),
+        (lambda _code: {"security_code": "600000", "organization_id": "SYNTHETIC-ORG"}, "CNINFO_TECHNICAL_ROUTE_IDENTITY_MISMATCH"),
+        (lambda _code: (_ for _ in ()).throw(RuntimeError("unavailable")), "CNINFO_TECHNICAL_ROUTE_RESOLVER_UNAVAILABLE"),
+    ],
+)
+def test_technical_route_identity_resolver_failure_or_identity_drift_is_value_free_mismatch(
+    resolver, rule: str,
+) -> None:
+    result = route_identity_adapter.resolve_technical_route_identity(
+        technical_route_identity_id="MHE:ROUTE:SYNTHETIC:V1",
+        technical_route_identity_version=1,
+        decision_contract=_decision_contract(),
+        observed_at="2021-01-01T12:00:00+00:00",
+        resolver=resolver,
+    )
+    assert result["status"] == "MEASUREMENT_MISMATCH"
+    assert result["mismatch_rule"] == rule
+    assert "technical_route_identity" not in result
+    assert set(result) == {
+        "schema_version", "status", "mismatch_rule", "mismatch_detail", "object_class", "claim_class",
+        "allowed_outputs", "method_transfer_rights",
     }
 
 
@@ -248,6 +336,7 @@ def _frozen_chain() -> tuple[sqlite3.Connection, dict, dict, dict]:
     assert control.register_decision_contract(
         conn, decision_contract, frozen_at="2021-01-01T00:00:00+00:00",
     )["frozen"]
+    _register_technical_route_identity(conn, decision_contract)
     assert control.register_measurement_contract(conn, contract, frozen_at="2021-01-02T00:00:00+00:00")["frozen"]
     assert control.register_static_evidence(conn, evidence, frozen_at="2021-01-03T00:00:00+00:00")["frozen"]
     assert control.register_prediction(conn, prediction, frozen_at="2021-01-04T00:00:00+00:00")["frozen"]
@@ -268,6 +357,7 @@ def test_initialize_supports_a_vanilla_sqlite_connection_for_the_pre_outcome_cha
         assert control.register_decision_contract(
             conn, decision_contract, frozen_at="2021-01-01T00:00:00+00:00",
         )["frozen"]
+        _register_technical_route_identity(conn, decision_contract)
         assert control.register_measurement_contract(
             conn, contract, frozen_at="2021-01-02T00:00:00+00:00",
         )["frozen"]
@@ -295,9 +385,40 @@ def test_measurement_contract_requires_a_prior_frozen_matching_decision_contract
         assert control.register_decision_contract(
             conn, decision_contract, frozen_at="2021-01-01T00:00:00+00:00",
         )["frozen"]
+        _register_technical_route_identity(conn, decision_contract)
         assert control.register_measurement_contract(
             conn, contract, frozen_at="2021-01-02T00:00:00+00:00",
         )["frozen"]
+    finally:
+        conn.close()
+
+
+def test_v2_measurement_contract_requires_matching_frozen_technical_route_identity() -> None:
+    conn = _conn()
+    decision = _decision_contract()
+    contract = _contract(decision)
+    try:
+        assert control.register_decision_contract(
+            conn, decision, frozen_at="2021-01-01T00:00:00+00:00",
+        )["frozen"]
+        with pytest.raises(control.MinimalHistoricalEpisodeError) as exc_info:
+            control.register_measurement_contract(
+                conn, contract, frozen_at="2021-01-02T00:00:00+00:00",
+            )
+        assert exc_info.value.code == "technical_route_identity_not_found"
+        route_identity = _register_technical_route_identity(conn, decision)
+        drifted = deepcopy(contract)
+        drifted["outcome_acquisition_route"]["organization_id"] = "CALLER-OVERRIDE"
+        with pytest.raises(control.MinimalHistoricalEpisodeError) as exc_info:
+            control.register_measurement_contract(
+                conn, drifted, frozen_at="2021-01-02T00:00:00+00:00",
+            )
+        assert exc_info.value.code == "measurement_contract_invalid"
+        assert "measurement_contract.outcome_acquisition_route.organization_id_must_match_route_identity" in exc_info.value.detail
+        assert control.register_measurement_contract(
+            conn, contract, frozen_at="2021-01-02T00:00:00+00:00",
+        )["frozen"]
+        assert route_identity["organization_id"] == contract["outcome_acquisition_route"]["organization_id"]
     finally:
         conn.close()
 
@@ -511,6 +632,7 @@ def test_source_metric_mismatch_is_rejected_before_persistence_or_settlement(sta
             assert control.register_decision_contract(
                 conn, decision_contract, frozen_at="2021-01-01T00:00:00+00:00",
             )["frozen"]
+            _register_technical_route_identity(conn, decision_contract)
             assert control.register_measurement_contract(
                 conn, contract, frozen_at="2021-01-02T00:00:00+00:00",
             )["frozen"]
@@ -581,6 +703,7 @@ def test_nonfinite_numeric_values_are_rejected_before_persistence_or_settlement(
             assert control.register_decision_contract(
                 conn, decision_contract, frozen_at="2021-01-01T00:00:00+00:00",
             )["frozen"]
+            _register_technical_route_identity(conn, decision_contract)
             assert control.register_measurement_contract(
                 conn, contract, frozen_at="2021-01-02T00:00:00+00:00",
             )["frozen"]
@@ -793,7 +916,10 @@ def test_fixture_only_v2_preoutcome_template_is_closed_and_route_bound() -> None
     decision = template["decision_contract"]
     contract = template["measurement_contract"]
     assert episode.validate_decision_contract(decision)["valid"]
-    assert episode.validate_measurement_contract(contract, decision_contract=decision)["valid"]
+    assert episode.validate_technical_route_identity(template["technical_route_identity"], decision_contract=decision)["valid"]
+    assert episode.validate_measurement_contract(
+        contract, decision_contract=decision, technical_route_identity=template["technical_route_identity"],
+    )["valid"]
     assert episode.validate_static_evidence(template["static_evidence"], measurement_contract=contract)["valid"]
     assert episode.validate_prediction(
         template["prediction"], measurement_contract=contract, static_evidence=template["static_evidence"],
@@ -847,6 +973,7 @@ def test_persistent_runner_separates_preoutcome_and_custodian_phases(tmp_path: P
     frozen = runner.freeze_preoutcome(
         database,
         contract_path=_write_json(tmp_path / "contract.json", contract),
+        technical_route_resolver=_synthetic_technical_route_resolver,
         evidence_path=_write_json(tmp_path / "evidence.json", evidence),
         prediction_path=_write_json(tmp_path / "prediction.json", prediction),
         source_verification_path=_write_json(tmp_path / "evidence-verification.json", evidence_verification),
@@ -925,6 +1052,7 @@ def test_runner_requires_stored_access_before_opening_observation_or_source_inpu
     runner.freeze_preoutcome(
         database,
         contract_path=_write_json(tmp_path / "contract.json", contract),
+        technical_route_resolver=_synthetic_technical_route_resolver,
         evidence_path=_write_json(tmp_path / "evidence.json", evidence),
         prediction_path=_write_json(tmp_path / "prediction.json", prediction),
         source_verification_path=_write_json(
@@ -1015,7 +1143,7 @@ def _cn600425_revenue_preoutcome_chain() -> tuple[dict, dict, dict, dict]:
             "provider": episode.CNINFO_OUTCOME_ROUTE_PROVIDER,
             "provider_version": episode.CNINFO_OUTCOME_ROUTE_PROVIDER_VERSION,
             "security_code": "600425",
-            "organization_id": "SYNTHETIC-ORG-600425",
+            "organization_id": "SYNTHETIC-ORG",
             "tab_name": episode.CNINFO_OUTCOME_ROUTE_TAB,
             "announcement_category": episode.CNINFO_OUTCOME_ROUTE_CATEGORY,
             "begin_date": "2019-01-01",
@@ -1101,6 +1229,7 @@ def test_real_runner_freezes_cn600425_rmb_revenue_preoutcome_chain_only(
     frozen = runner.freeze_preoutcome(
         database,
         decision_contract_path=_write_json(tmp_path / "decision.json", decision),
+        technical_route_resolver=_synthetic_technical_route_resolver,
         contract_path=_write_json(tmp_path / "contract.json", contract),
         evidence_path=_write_json(tmp_path / "evidence.json", evidence),
         prediction_path=_write_json(tmp_path / "prediction.json", prediction),
@@ -1191,6 +1320,7 @@ def _authorized_cninfo_database(tmp_path: Path) -> tuple[Path, dict]:
     runner.freeze_preoutcome(
         database,
         contract_path=_write_json(tmp_path / "contract.json", contract),
+        technical_route_resolver=_synthetic_technical_route_resolver,
         evidence_path=_write_json(tmp_path / "evidence.json", evidence),
         prediction_path=_write_json(tmp_path / "prediction.json", prediction),
         source_verification_path=_write_json(
@@ -1353,6 +1483,58 @@ def test_outcome_acquisition_interface_never_accepts_caller_route_drift() -> Non
         ])
 
 
+def test_preoutcome_runner_derives_technical_route_identity_and_rejects_manual_override(
+    tmp_path: Path,
+) -> None:
+    """No supported freeze input can inject a hand-authored orgId receipt."""
+    contract = _contract()
+    evidence = _static_evidence(contract)
+    prediction = _prediction(contract, evidence)
+    parameters = set(inspect.signature(runner.freeze_preoutcome).parameters)
+    assert "technical_route_identity_path" not in parameters
+    assert "organization_id" not in parameters
+    with pytest.raises(SystemExit):
+        runner._parser().parse_args([
+            "freeze-preoutcome",
+            "--database", "synthetic.db",
+            "--technical-route-identity", "caller-authored.json",
+        ])
+
+    database = tmp_path / "route-override.db"
+    with pytest.raises(control.MinimalHistoricalEpisodeError) as exc_info:
+        runner.freeze_preoutcome(
+            database,
+            contract_path=_write_json(tmp_path / "contract.json", contract),
+            evidence_path=_write_json(tmp_path / "evidence.json", evidence),
+            prediction_path=_write_json(tmp_path / "prediction.json", prediction),
+            source_verification_path=_write_json(
+                tmp_path / "verification.json",
+                _source_verification(
+                    evidence["source"],
+                    subject_ref={
+                        "object_type": "STATIC_EVIDENCE",
+                        "object_id": evidence["evidence_receipt_id"],
+                        "object_version": evidence["evidence_receipt_version"],
+                    },
+                ),
+            ),
+            source_verifier=_synthetic_source_verifier,
+            technical_route_resolver=lambda code: {
+                "security_code": code, "organization_id": "CALLER-OVERRIDE",
+            },
+        )
+    assert exc_info.value.code == "measurement_contract_invalid"
+    assert "organization_id_must_match_route_identity" in exc_info.value.detail
+    conn = sqlite3.connect(database)
+    try:
+        control.initialize(conn)
+        assert conn.execute(f"SELECT COUNT(*) FROM {control.TECHNICAL_ROUTE_IDENTITY_TABLE}").fetchone()[0] == 0
+        assert conn.execute(f"SELECT COUNT(*) FROM {control.CONTRACT_TABLE}").fetchone()[0] == 0
+        assert conn.execute(f"SELECT COUNT(*) FROM {control.PREDICTION_TABLE}").fetchone()[0] == 0
+    finally:
+        conn.close()
+
+
 def test_runner_converts_outside_route_metadata_to_value_free_mismatch_before_observation(
     tmp_path: Path,
 ) -> None:
@@ -1434,6 +1616,7 @@ def test_legacy_v1_measurement_contract_is_readable_history_but_cannot_open_new_
         "measurement_contract_version": 1,
     })
     legacy.pop("outcome_acquisition_route")
+    legacy.pop("technical_route_identity_ref")
     assert episode.validate_measurement_contract(legacy, decision_contract=decision)["valid"]
     conn = _conn()
     try:
@@ -1459,6 +1642,7 @@ def test_existing_v1_exact_replay_is_readable_but_cannot_authorize_new_access() 
         "measurement_contract_version": 1,
     })
     legacy.pop("outcome_acquisition_route")
+    legacy.pop("technical_route_identity_ref")
     frozen_at = "2021-01-02T00:00:00+00:00"
     conn = _conn()
     try:
@@ -1592,6 +1776,7 @@ def test_persistent_runner_rejects_caller_authored_prediction_or_result_fields(
     runner.freeze_preoutcome(
         database,
         contract_path=_write_json(tmp_path / "contract.json", contract),
+        technical_route_resolver=_synthetic_technical_route_resolver,
         evidence_path=_write_json(tmp_path / "evidence.json", evidence),
         prediction_path=_write_json(tmp_path / "prediction.json", prediction),
         source_verification_path=_write_json(
@@ -1659,6 +1844,7 @@ def test_real_runner_rejects_fixture_only_source_before_creating_database(tmp_pa
         runner.freeze_preoutcome(
             database,
             contract_path=_write_json(tmp_path / "contract.json", contract),
+            technical_route_resolver=_synthetic_technical_route_resolver,
             evidence_path=_write_json(tmp_path / "evidence.json", evidence),
             prediction_path=_write_json(tmp_path / "prediction.json", prediction),
             source_verification_path=_write_json(
@@ -1720,6 +1906,7 @@ def test_source_verification_rejects_nonfinite_contract_bound_numbers_before_pdf
         runner.freeze_preoutcome(
             tmp_path / "nonfinite.db",
             decision_contract_path=_write_json(tmp_path / "decision.json", decision),
+            technical_route_resolver=_synthetic_technical_route_resolver,
             contract_path=_write_json(tmp_path / "contract.json", contract),
             evidence_path=_write_json(tmp_path / "evidence.json", evidence),
             prediction_path=_write_json(tmp_path / "prediction.json", prediction),
@@ -1741,6 +1928,7 @@ def test_source_verification_subject_must_match_frozen_object(tmp_path: Path) ->
         runner.freeze_preoutcome(
             tmp_path / "minimal-episode.db",
             contract_path=_write_json(tmp_path / "contract.json", contract),
+            technical_route_resolver=_synthetic_technical_route_resolver,
             evidence_path=_write_json(tmp_path / "evidence.json", evidence),
             prediction_path=_write_json(tmp_path / "prediction.json", prediction),
             source_verification_path=_write_json(tmp_path / "verification.json", verification),

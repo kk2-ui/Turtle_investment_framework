@@ -29,10 +29,12 @@ try:
     from scripts import minimal_historical_episode as episode
     from scripts import minimal_historical_episode_control_plane as control
     from scripts import minimal_historical_outcome_acquisition as outcome_acquisition
+    from scripts import minimal_historical_technical_route_identity as route_identity_adapter
 except ModuleNotFoundError:  # pragma: no cover - direct script import
     import minimal_historical_episode as episode
     import minimal_historical_episode_control_plane as control
     import minimal_historical_outcome_acquisition as outcome_acquisition
+    import minimal_historical_technical_route_identity as route_identity_adapter
 
 
 RUNTIME_RECEIPT_SCHEMA_VERSION = "turtle-minimal-historical-episode-runtime-receipt.v1"
@@ -47,6 +49,7 @@ _RMB_OPERATING_REVENUE_ROW = re.compile(
     r"(?:其中[:：])?营业收入\s*(?P<current_period>[0-9][0-9,，]*(?:\.[0-9]+)?)"
 )
 SourceVerifier = Callable[[dict[str, Any], dict[str, Any]], dict[str, Any]]
+TechnicalRouteResolver = route_identity_adapter.RouteResolver
 
 
 def _read_object(path: str | Path) -> dict[str, Any]:
@@ -357,6 +360,7 @@ def freeze_preoutcome(
     source_verification_path: str | Path,
     decision_contract_path: str | Path | None = None,
     source_verifier: SourceVerifier = verify_official_pdf_source,
+    technical_route_resolver: TechnicalRouteResolver = route_identity_adapter.resolve_cninfo_stock_map_code_to_org_id,
     source_receipt_output_path: str | Path | None = None,
 ) -> dict[str, Any]:
     """Freeze the only controller phase allowed to read a prediction payload."""
@@ -371,7 +375,9 @@ def freeze_preoutcome(
     # Reject legacy/malformed contracts before this runner opens even the
     # pre-cutoff PDF.  A new episode cannot first freeze a v1 prediction and
     # only later discover that its outcome route was never frozen.
-    preflight = episode.validate_measurement_contract(contract, decision_contract=decision_contract)
+    preflight = episode.validate_measurement_contract(
+        contract, decision_contract=decision_contract,
+    )
     if not preflight["valid"]:
         raise control.MinimalHistoricalEpisodeError(
             "measurement_contract_invalid", "; ".join(preflight["findings"]),
@@ -381,6 +387,9 @@ def freeze_preoutcome(
             "measurement_contract_v2_required",
             "new minimal episodes require Measurement Contract v2 with a frozen outcome acquisition route",
         )
+    # The cited pre-cutoff static source must still be locally valid before
+    # creating controller state. This does not enumerate an outcome route or
+    # read an outcome; it preserves the existing fixture rejection boundary.
     verification = _verification_input(
         source_verification_path,
         evidence.get("source", {}),
@@ -396,6 +405,35 @@ def freeze_preoutcome(
         decision_frozen_at = _now()
         decision_result = control.register_decision_contract(
             conn, decision_contract, frozen_at=decision_frozen_at,
+        )
+        technical_route_identity_frozen_at = _now()
+        route_ref = contract.get("technical_route_identity_ref")
+        if not isinstance(route_ref, dict):  # pragma: no cover - preflight rejects v2 first
+            raise control.MinimalHistoricalEpisodeError(
+                "technical_route_identity_required", "Measurement Contract v2 requires a technical route identity",
+            )
+        resolved_route = route_identity_adapter.resolve_technical_route_identity(
+            technical_route_identity_id=str(route_ref.get("technical_route_identity_id") or ""),
+            technical_route_identity_version=route_ref.get("technical_route_identity_version"),
+            decision_contract=decision_contract,
+            observed_at=technical_route_identity_frozen_at,
+            resolver=technical_route_resolver,
+        )
+        if resolved_route["status"] != "TECHNICAL_ROUTE_IDENTITY_READY":
+            raise control.MinimalHistoricalEpisodeError(
+                "technical_route_identity_preoutcome_mismatch",
+                resolved_route["mismatch_rule"],
+            )
+        technical_route_identity = resolved_route["technical_route_identity"]
+        route_preflight = episode.validate_measurement_contract(
+            contract, decision_contract=decision_contract, technical_route_identity=technical_route_identity,
+        )
+        if not route_preflight["valid"]:
+            raise control.MinimalHistoricalEpisodeError(
+                "measurement_contract_invalid", "; ".join(route_preflight["findings"]),
+            )
+        technical_route_identity_result = control.register_technical_route_identity(
+            conn, technical_route_identity, frozen_at=technical_route_identity_frozen_at,
         )
         contract_frozen_at = _now()
         contract_result = control.register_measurement_contract(
@@ -416,11 +454,13 @@ def freeze_preoutcome(
     return {
         "stage": "PRE_OUTCOME_FROZEN",
         "decision_contract_id": decision_result["decision_contract_id"],
+        "technical_route_identity_id": technical_route_identity_result["technical_route_identity_id"],
         "measurement_contract_id": contract_result["measurement_contract_id"],
         "evidence_receipt_id": evidence_result["evidence_receipt_id"],
         "prediction_id": prediction_result["prediction_id"],
         "recorded_chronology": {
             "decision_contract_frozen_at": decision_frozen_at,
+            "technical_route_identity_frozen_at": technical_route_identity_frozen_at,
             "contract_frozen_at": contract_frozen_at,
             "evidence_frozen_at": evidence_frozen_at,
             "prediction_frozen_at": prediction_frozen_at,
@@ -665,6 +705,14 @@ def public_receipt(
             key,
         ).fetchone()
         contract = json.loads(contract_row["payload_json"])
+        route_ref = contract.get("technical_route_identity_ref")
+        route_identity_row = None
+        if isinstance(route_ref, dict):
+            route_identity_row = conn.execute(
+                f"""SELECT * FROM {control.TECHNICAL_ROUTE_IDENTITY_TABLE}
+                    WHERE technical_route_identity_id = ? AND technical_route_identity_version = ?""",
+                (route_ref.get("technical_route_identity_id"), route_ref.get("technical_route_identity_version")),
+            ).fetchone()
         settlement = json.loads(settlement_row["payload_json"]) if settlement_row is not None else None
         receipt = {
             "schema_version": RUNTIME_RECEIPT_SCHEMA_VERSION,
@@ -679,6 +727,9 @@ def public_receipt(
             "chronology": {
                 "measurement_contract": _identity(
                     contract_row, id_field="measurement_contract_id", at_field="frozen_at",
+                ),
+                "technical_route_identity": _identity(
+                    route_identity_row, id_field="technical_route_identity_id", at_field="frozen_at",
                 ),
                 "static_evidence": _identity(
                     evidence_row, id_field="evidence_receipt_id", at_field="frozen_at",

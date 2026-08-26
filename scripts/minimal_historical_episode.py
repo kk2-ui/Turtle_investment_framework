@@ -16,6 +16,7 @@ from typing import Any
 
 
 DECISION_CONTRACT_SCHEMA_VERSION = "turtle-minimal-historical-episode-decision-contract.v1"
+TECHNICAL_ROUTE_IDENTITY_SCHEMA_VERSION = "turtle-minimal-historical-episode-technical-route-identity.v1"
 # Measurement-contract v1 remains a readable historical record format.  New
 # episodes must use v2: it freezes the bounded official-acquisition route
 # before a forecaster can freeze a prediction.
@@ -47,10 +48,13 @@ CNINFO_OUTCOME_ROUTE_PROVIDER_VERSION = "phase10-cninfo-announcement-query.v1"
 CNINFO_OUTCOME_ROUTE_TAB = "fulltext"
 CNINFO_OUTCOME_ROUTE_CATEGORY = "ANNUAL_REPORT"
 CNINFO_OUTCOME_ROUTE_URL_POLICY = "CNINFO_STATIC_FINALPAGE_PDF"
+CNINFO_TECHNICAL_ROUTE_RESOLVER_ENDPOINT = "http://www.cninfo.com.cn/new/data/szse_stock.json"
+CNINFO_TECHNICAL_ROUTE_RESOLVER_VERSION = "cninfo-stock-map-code-orgid.v1"
 
 _DECISION_REFERENCE_KEYS = {"decision_contract_id", "decision_contract_version"}
 _REFERENCE_KEYS = {"measurement_contract_id", "measurement_contract_version"}
 _EVIDENCE_REFERENCE_KEYS = {"evidence_receipt_id", "evidence_receipt_version"}
+_TECHNICAL_ROUTE_IDENTITY_REFERENCE_KEYS = {"technical_route_identity_id", "technical_route_identity_version"}
 _ROLE_KEYS = {"forecaster_id", "custodian_id"}
 _SOURCE_KEYS = {
     "source_id", "source_url", "source_type", "published_at", "issuer_id",
@@ -71,7 +75,12 @@ _OUTCOME_ACQUISITION_ROUTE_KEYS = {
     "provider", "provider_version", "security_code", "organization_id", "tab_name",
     "announcement_category", "begin_date", "end_date", "page_size", "static_pdf_url_policy",
 }
-_CONTRACT_KEYS = _CONTRACT_V1_KEYS | {"outcome_acquisition_route"}
+_TECHNICAL_ROUTE_IDENTITY_KEYS = {
+    "schema_version", "technical_route_identity_id", "technical_route_identity_version", "decision_contract_ref",
+    "company_id", "issuer_id", "security_code", "organization_id", "resolver_endpoint", "resolver_version",
+    "observed_at", "object_class", "claim_class", "allowed_outputs", "method_transfer_rights",
+}
+_CONTRACT_KEYS = _CONTRACT_V1_KEYS | {"technical_route_identity_ref", "outcome_acquisition_route"}
 _DECISION_CONTRACT_KEYS = {
     "schema_version", "decision_contract_id", "decision_contract_version", "company_id", "issuer_id",
     "cutoff_at", "metric_id", "window_id", "decision_purpose", "roles", "object_class", "claim_class",
@@ -203,6 +212,19 @@ def _evidence_reference(value: Any, path: str, findings: list[str]) -> dict[str,
         findings.append(f"{path}.evidence_receipt_version_must_be_positive_integer")
         return None
     return {"evidence_receipt_id": receipt_id, "evidence_receipt_version": version} if receipt_id else None
+
+
+def _technical_route_identity_reference(value: Any, path: str, findings: list[str]) -> dict[str, Any] | None:
+    item = _closed(value, _TECHNICAL_ROUTE_IDENTITY_REFERENCE_KEYS, path, findings)
+    identity_id = _require_text(item, "technical_route_identity_id", path, findings)
+    version = item.get("technical_route_identity_version")
+    if not isinstance(version, int) or isinstance(version, bool) or version < 1:
+        findings.append(f"{path}.technical_route_identity_version_must_be_positive_integer")
+        return None
+    return {
+        "technical_route_identity_id": identity_id,
+        "technical_route_identity_version": version,
+    } if identity_id else None
 
 
 def _fixed_permissions(item: dict[str, Any], path: str, findings: list[str]) -> None:
@@ -375,6 +397,62 @@ def validate_decision_contract(decision_contract: Any) -> dict[str, Any]:
     return _result(findings, decision_contract=deepcopy(item) if not findings else None)
 
 
+def validate_technical_route_identity(
+    route_identity: Any, *, decision_contract: Any | None = None,
+) -> dict[str, Any]:
+    """Validate a code-to-orgId routing receipt with no economic evidence.
+
+    The closed receipt intentionally cannot carry a name, title, announcement,
+    PDF text, result, price, or any outcome payload. It is technical routing
+    provenance only, and binds to a pre-existing frozen Decision Contract.
+    """
+    findings: list[str] = []
+    item = _closed(route_identity, _TECHNICAL_ROUTE_IDENTITY_KEYS, "technical_route_identity", findings)
+    if item.get("schema_version") != TECHNICAL_ROUTE_IDENTITY_SCHEMA_VERSION:
+        findings.append("technical_route_identity.schema_version_invalid")
+    _require_text(item, "technical_route_identity_id", "technical_route_identity", findings)
+    version = item.get("technical_route_identity_version")
+    if not isinstance(version, int) or isinstance(version, bool) or version < 1:
+        findings.append("technical_route_identity.technical_route_identity_version_must_be_positive_integer")
+    for field in ("company_id", "issuer_id", "security_code", "organization_id", "resolver_endpoint", "resolver_version"):
+        _require_text(item, field, "technical_route_identity", findings)
+    security_code = str(item.get("security_code") or "").strip()
+    if not re.fullmatch(r"\d{6}", security_code):
+        findings.append("technical_route_identity.security_code_must_be_six_digits")
+    else:
+        if item.get("company_id") != f"CN:{security_code}":
+            findings.append("technical_route_identity.security_code_must_match_company_id")
+        if item.get("issuer_id") != f"ISSUER:CN:{security_code}":
+            findings.append("technical_route_identity.security_code_must_match_issuer_id")
+    if item.get("resolver_endpoint") != CNINFO_TECHNICAL_ROUTE_RESOLVER_ENDPOINT:
+        findings.append("technical_route_identity.resolver_endpoint_invalid")
+    if item.get("resolver_version") != CNINFO_TECHNICAL_ROUTE_RESOLVER_VERSION:
+        findings.append("technical_route_identity.resolver_version_invalid")
+    _instant(item.get("observed_at"), "technical_route_identity.observed_at", findings)
+    decision_ref = _decision_reference(
+        item.get("decision_contract_ref"), "technical_route_identity.decision_contract_ref", findings,
+    )
+    if decision_contract is not None:
+        decision_result = validate_decision_contract(decision_contract)
+        findings.extend(f"technical_route_identity.decision_contract:{finding}" for finding in decision_result["findings"])
+        decision = _mapping(decision_result.get("decision_contract"))
+        if decision_ref != {
+            "decision_contract_id": decision.get("decision_contract_id"),
+            "decision_contract_version": decision.get("decision_contract_version"),
+        }:
+            findings.append("technical_route_identity.decision_contract_ref_must_match_decision_contract")
+        _identity_matches_contract(
+            item, decision, "technical_route_identity", findings,
+            fields=("company_id", "issuer_id"), contract_name="decision_contract",
+        )
+    if item.get("object_class") != "MINIMAL_HISTORICAL_TECHNICAL_ROUTE_IDENTITY":
+        findings.append("technical_route_identity.object_class_invalid")
+    if item.get("claim_class") != "TECHNICAL_ROUTE_IDENTITY":
+        findings.append("technical_route_identity.claim_class_invalid")
+    _fixed_permissions(item, "technical_route_identity", findings)
+    return _result(findings, technical_route_identity=deepcopy(item) if not findings else None)
+
+
 def _outcome_acquisition_route(
     value: Any, *, contract: dict[str, Any], path: str, findings: list[str],
 ) -> dict[str, Any]:
@@ -421,7 +499,7 @@ def _outcome_acquisition_route(
 
 
 def validate_measurement_contract(
-    contract: Any, *, decision_contract: Any | None = None,
+    contract: Any, *, decision_contract: Any | None = None, technical_route_identity: Any | None = None,
 ) -> dict[str, Any]:
     """Validate one company/issuer/cutoff/metric/window measurement contract."""
     findings: list[str] = []
@@ -473,10 +551,34 @@ def validate_measurement_contract(
     if item.get("claim_class") != "ONE_METRIC_PRE_OUTCOME_SCOPE":
         findings.append("measurement_contract.claim_class_invalid")
     if schema_version == MEASUREMENT_CONTRACT_SCHEMA_VERSION:
-        _outcome_acquisition_route(
+        route = _outcome_acquisition_route(
             item.get("outcome_acquisition_route"), contract=item,
             path="measurement_contract.outcome_acquisition_route", findings=findings,
         )
+        route_ref = _technical_route_identity_reference(
+            item.get("technical_route_identity_ref"), "measurement_contract.technical_route_identity_ref", findings,
+        )
+        if technical_route_identity is not None:
+            route_identity_result = validate_technical_route_identity(
+                technical_route_identity, decision_contract=decision_contract,
+            )
+            findings.extend(
+                f"measurement_contract.technical_route_identity:{finding}"
+                for finding in route_identity_result["findings"]
+            )
+            route_identity = _mapping(route_identity_result.get("technical_route_identity"))
+            if route_ref != {
+                "technical_route_identity_id": route_identity.get("technical_route_identity_id"),
+                "technical_route_identity_version": route_identity.get("technical_route_identity_version"),
+            }:
+                findings.append("measurement_contract.technical_route_identity_ref_must_match_route_identity")
+            for field in ("company_id", "issuer_id"):
+                if item.get(field) != route_identity.get(field):
+                    findings.append(f"measurement_contract.{field}_must_match_route_identity")
+            if route.get("security_code") != route_identity.get("security_code"):
+                findings.append("measurement_contract.outcome_acquisition_route.security_code_must_match_route_identity")
+            if route.get("organization_id") != route_identity.get("organization_id"):
+                findings.append("measurement_contract.outcome_acquisition_route.organization_id_must_match_route_identity")
     _fixed_permissions(item, "measurement_contract", findings)
     return _result(findings, measurement_contract=deepcopy(item) if not findings else None)
 

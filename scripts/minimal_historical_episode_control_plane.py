@@ -23,6 +23,7 @@ except ModuleNotFoundError:  # pragma: no cover - direct script import
 
 
 DECISION_CONTRACT_TABLE = "minimal_historical_decision_contracts"
+TECHNICAL_ROUTE_IDENTITY_TABLE = "minimal_historical_technical_route_identities"
 CONTRACT_TABLE = "minimal_historical_measurement_contracts"
 EVIDENCE_TABLE = "minimal_historical_static_evidence"
 PREDICTION_TABLE = "minimal_historical_predictions"
@@ -115,6 +116,32 @@ def initialize(conn: sqlite3.Connection) -> None:
                     BEFORE {operation} ON {DECISION_CONTRACT_TABLE}
                     BEGIN
                         SELECT RAISE(ABORT, 'minimal historical decision contracts are append-only');
+                    END"""
+            )
+        conn.execute(
+            f"""CREATE TABLE IF NOT EXISTS {TECHNICAL_ROUTE_IDENTITY_TABLE} (
+                technical_route_identity_id TEXT NOT NULL,
+                technical_route_identity_version INTEGER NOT NULL,
+                decision_contract_id TEXT NOT NULL,
+                decision_contract_version INTEGER NOT NULL,
+                company_id TEXT NOT NULL,
+                issuer_id TEXT NOT NULL,
+                security_code TEXT NOT NULL,
+                organization_id TEXT NOT NULL,
+                payload_json TEXT NOT NULL,
+                frozen_at TEXT NOT NULL,
+                PRIMARY KEY (technical_route_identity_id, technical_route_identity_version),
+                UNIQUE (decision_contract_id, decision_contract_version),
+                FOREIGN KEY (decision_contract_id, decision_contract_version)
+                    REFERENCES {DECISION_CONTRACT_TABLE}(decision_contract_id, decision_contract_version)
+            )"""
+        )
+        for operation in ("UPDATE", "DELETE"):
+            conn.execute(
+                f"""CREATE TRIGGER IF NOT EXISTS {TECHNICAL_ROUTE_IDENTITY_TABLE}_{operation.lower()}_blocked
+                    BEFORE {operation} ON {TECHNICAL_ROUTE_IDENTITY_TABLE}
+                    BEGIN
+                        SELECT RAISE(ABORT, 'minimal historical technical route identities are append-only');
                     END"""
             )
         conn.execute(
@@ -242,6 +269,15 @@ def _decision_reference(value: Any, *, field: str) -> tuple[str, int]:
     return contract_id, version
 
 
+def _technical_route_identity_reference(value: Any, *, field: str) -> tuple[str, int]:
+    if not isinstance(value, dict):
+        raise MinimalHistoricalEpisodeError(f"{field}_invalid", f"{field} must be a technical route identity reference")
+    identity_id, version = value.get("technical_route_identity_id"), value.get("technical_route_identity_version")
+    if not isinstance(identity_id, str) or not identity_id.strip() or not isinstance(version, int) or isinstance(version, bool) or version < 1:
+        raise MinimalHistoricalEpisodeError(f"{field}_invalid", f"{field} must name a positive technical route identity")
+    return identity_id, version
+
+
 def _decision_contract_row(conn: sqlite3.Connection, reference: Any) -> sqlite3.Row:
     contract_id, version = _decision_reference(reference, field="decision_contract_ref")
     row = conn.execute(
@@ -251,6 +287,18 @@ def _decision_contract_row(conn: sqlite3.Connection, reference: Any) -> sqlite3.
     ).fetchone()
     if row is None:
         raise MinimalHistoricalEpisodeError("decision_contract_not_found", "decision contract is not frozen")
+    return row
+
+
+def _technical_route_identity_row(conn: sqlite3.Connection, reference: Any) -> sqlite3.Row:
+    identity_id, version = _technical_route_identity_reference(reference, field="technical_route_identity_ref")
+    row = conn.execute(
+        f"""SELECT * FROM {TECHNICAL_ROUTE_IDENTITY_TABLE}
+            WHERE technical_route_identity_id = ? AND technical_route_identity_version = ?""",
+        (identity_id, version),
+    ).fetchone()
+    if row is None:
+        raise MinimalHistoricalEpisodeError("technical_route_identity_not_found", "technical route identity is not frozen")
     return row
 
 
@@ -362,6 +410,78 @@ def register_decision_contract(
     return {"frozen": True, "decision_contract_id": payload["decision_contract_id"], "idempotent": False}
 
 
+def register_technical_route_identity(
+    conn: sqlite3.Connection, route_identity: dict[str, Any], *, frozen_at: str,
+) -> dict[str, Any]:
+    """Freeze one value-free code-to-orgId route receipt before measurement."""
+    timestamp = _instant(frozen_at, "technical_route_identity.frozen_at")
+    _not_future(timestamp, "technical_route_identity.frozen_at")
+    decision_row = _decision_contract_row(
+        conn, route_identity.get("decision_contract_ref") if isinstance(route_identity, dict) else None,
+    )
+    decision_contract = _load(decision_row["payload_json"])
+    result = episode.validate_technical_route_identity(route_identity, decision_contract=decision_contract)
+    _invalid("technical_route_identity_invalid", result)
+    payload = result["technical_route_identity"]
+    observed_at = _instant(payload["observed_at"], "technical_route_identity.observed_at")
+    _not_future(observed_at, "technical_route_identity.observed_at")
+    if not _before(decision_row["frozen_at"], timestamp):
+        raise MinimalHistoricalEpisodeError(
+            "decision_contract_must_precede_technical_route_identity",
+            "decision contract must precede technical route identity",
+        )
+    if datetime.fromisoformat(observed_at) > datetime.fromisoformat(timestamp):
+        raise MinimalHistoricalEpisodeError(
+            "technical_route_identity_observed_after_freeze",
+            "technical route identity observed_at cannot follow its freeze",
+        )
+    encoded = _json(payload)
+    with conn:
+        existing = conn.execute(
+            f"""SELECT * FROM {TECHNICAL_ROUTE_IDENTITY_TABLE}
+                WHERE technical_route_identity_id = ? AND technical_route_identity_version = ?""",
+            (payload["technical_route_identity_id"], payload["technical_route_identity_version"]),
+        ).fetchone()
+        if existing is not None:
+            if existing["payload_json"] != encoded or existing["frozen_at"] != timestamp:
+                raise MinimalHistoricalEpisodeError(
+                    "technical_route_identity_immutable_conflict",
+                    "technical route identity already has different content",
+                )
+            return {
+                "frozen": True,
+                "technical_route_identity_id": payload["technical_route_identity_id"],
+                "idempotent": True,
+            }
+        if conn.execute(
+            f"""SELECT 1 FROM {TECHNICAL_ROUTE_IDENTITY_TABLE}
+                WHERE decision_contract_id = ? AND decision_contract_version = ?""",
+            (decision_contract["decision_contract_id"], decision_contract["decision_contract_version"]),
+        ).fetchone() is not None:
+            raise MinimalHistoricalEpisodeError(
+                "decision_contract_technical_route_identity_already_frozen",
+                "decision contract already has one technical route identity",
+            )
+        conn.execute(
+            f"""INSERT INTO {TECHNICAL_ROUTE_IDENTITY_TABLE} (
+                technical_route_identity_id, technical_route_identity_version,
+                decision_contract_id, decision_contract_version, company_id, issuer_id,
+                security_code, organization_id, payload_json, frozen_at
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+            (
+                payload["technical_route_identity_id"], payload["technical_route_identity_version"],
+                decision_contract["decision_contract_id"], decision_contract["decision_contract_version"],
+                payload["company_id"], payload["issuer_id"], payload["security_code"],
+                payload["organization_id"], encoded, timestamp,
+            ),
+        )
+    return {
+        "frozen": True,
+        "technical_route_identity_id": payload["technical_route_identity_id"],
+        "idempotent": False,
+    }
+
+
 def register_measurement_contract(
     conn: sqlite3.Connection, contract: dict[str, Any], *, frozen_at: str,
 ) -> dict[str, Any]:
@@ -369,12 +489,27 @@ def register_measurement_contract(
     _not_future(timestamp, "measurement_contract.frozen_at")
     decision_row = _decision_contract_row(conn, contract.get("decision_contract_ref") if isinstance(contract, dict) else None)
     decision_contract = _load(decision_row["payload_json"])
-    result = episode.validate_measurement_contract(contract, decision_contract=decision_contract)
+    precheck = episode.validate_measurement_contract(contract, decision_contract=decision_contract)
+    _invalid("measurement_contract_invalid", precheck)
+    is_v2 = isinstance(contract, dict) and contract.get("schema_version") == episode.MEASUREMENT_CONTRACT_SCHEMA_VERSION
+    route_identity_row: sqlite3.Row | None = None
+    route_identity: dict[str, Any] | None = None
+    if is_v2:
+        route_identity_row = _technical_route_identity_row(
+            conn, contract.get("technical_route_identity_ref") if isinstance(contract, dict) else None,
+        )
+        route_identity = _load(route_identity_row["payload_json"])
+    result = episode.validate_measurement_contract(contract, decision_contract=decision_contract, technical_route_identity=route_identity)
     _invalid("measurement_contract_invalid", result)
     payload = result["measurement_contract"]
     if not _before(decision_row["frozen_at"], timestamp):
         raise MinimalHistoricalEpisodeError(
             "decision_contract_must_precede_measurement_contract", "decision contract must precede measurement contract",
+        )
+    if route_identity_row is not None and not _before(route_identity_row["frozen_at"], timestamp):
+        raise MinimalHistoricalEpisodeError(
+            "technical_route_identity_must_precede_measurement_contract",
+            "technical route identity must precede measurement contract",
         )
     if not _before(_instant(payload["cutoff_at"], "measurement_contract.cutoff_at"), timestamp):
         raise MinimalHistoricalEpisodeError("measurement_contract_cutoff_not_before_freeze", "contract cutoff must precede freeze")
