@@ -4,6 +4,7 @@ from copy import deepcopy
 import json
 from pathlib import Path
 import sqlite3
+from types import SimpleNamespace
 
 import pytest
 
@@ -651,6 +652,7 @@ def test_persistent_runner_separates_preoutcome_and_custodian_phases(tmp_path: P
     assert authorized["outcome_access"]["authorized_at"] != access["authorized_at"]
     settled = runner.controller_record_and_settle(
         database,
+        outcome_access_authorization_id=access["authorization_id"],
         observation_path=_write_json(tmp_path / "observation.json", _observation(contract)),
         source_verification_path=_write_json(
             tmp_path / "observation-verification.json",
@@ -679,6 +681,135 @@ def test_persistent_runner_separates_preoutcome_and_custodian_phases(tmp_path: P
     assert "predicted_direction" not in serialized
     assert "realised_direction" not in serialized
     assert receipt["method_transfer_rights"] == "NO_METHOD_TRANSFER_RIGHTS"
+
+
+def test_runner_requires_stored_access_before_opening_observation_or_source_input(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """A missing authorization cannot turn the runner into an outcome reader."""
+    contract = _contract()
+    evidence = _static_evidence(contract)
+    prediction = _prediction(contract, evidence)
+    database = tmp_path / "minimal-episode.db"
+    runner.freeze_preoutcome(
+        database,
+        contract_path=_write_json(tmp_path / "contract.json", contract),
+        evidence_path=_write_json(tmp_path / "evidence.json", evidence),
+        prediction_path=_write_json(tmp_path / "prediction.json", prediction),
+        source_verification_path=_write_json(
+            tmp_path / "evidence-verification.json",
+            _source_verification(
+                evidence["source"],
+                subject_ref={
+                    "object_type": "STATIC_EVIDENCE",
+                    "object_id": evidence["evidence_receipt_id"],
+                    "object_version": evidence["evidence_receipt_version"],
+                },
+            ),
+        ),
+        source_verifier=_synthetic_source_verifier,
+    )
+    reads: list[Path] = []
+    verifications: list[dict] = []
+
+    def forbidden_read(path: str | Path) -> dict:
+        reads.append(Path(path))
+        raise AssertionError("outcome payload was opened before stored authorization")
+
+    def forbidden_verifier(source: dict, verification: dict) -> dict:
+        verifications.append(verification)
+        raise AssertionError("outcome source was verified before stored authorization")
+
+    monkeypatch.setattr(runner, "_read_object", forbidden_read)
+    with pytest.raises(control.MinimalHistoricalEpisodeError) as exc_info:
+        runner.controller_record_and_settle(
+            database,
+            outcome_access_authorization_id="MHE:ACCESS:DOES-NOT-EXIST",
+            observation_path=tmp_path / "outcome.json",
+            source_verification_path=tmp_path / "source-verification.json",
+            settlement_id="MHE:SETTLEMENT:SYNTHETIC:V1",
+            source_verifier=forbidden_verifier,
+        )
+    assert exc_info.value.code == "outcome_access_not_authorized"
+    assert reads == []
+    assert verifications == []
+
+
+def test_real_source_verifier_reads_only_declared_pdf_page_and_rejects_other_pages(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    quote = "本集团水泥和熟料合计净销量为2.95亿吨"
+    source = {
+        "source_id": "CNINFO:SYNTHETIC:PAGE2",
+        "source_url": "https://static.cninfo.com.cn/finalpage/2020-01-01/SYNTHETIC.PDF",
+        "field_ref": "Synthetic annual report, PDF p. 2: net sales volume",
+        "numeric_value": 295000000,
+        "unit": "tonnes",
+    }
+    verification = {
+        "exact_quote": quote,
+        "numeric_value": 295000000,
+        "unit": "tonnes",
+        "subject_ref": {"object_type": "OUTCOME_OBSERVATION", "object_id": "SYNTHETIC:OBSERVATION"},
+    }
+
+    class FakePdfResponse:
+        def __enter__(self) -> "FakePdfResponse":
+            return self
+
+        def __exit__(self, *_: object) -> None:
+            return None
+
+        def geturl(self) -> str:
+            return source["source_url"]
+
+        def read(self) -> bytes:
+            return b"%PDF-synthetic-multi-page"
+
+    selected_pages: list[tuple[str, str]] = []
+
+    def fake_pdftotext(args: list[str], **_: object) -> SimpleNamespace:
+        start = args[args.index("-f") + 1]
+        end = args[args.index("-l") + 1]
+        selected_pages.append((start, end))
+        return SimpleNamespace(stdout=quote if start == end == "2" else "page one without field")
+
+    monkeypatch.setattr(runner, "urlopen", lambda *_args, **_kwargs: FakePdfResponse())
+    monkeypatch.setattr(runner.subprocess, "run", fake_pdftotext)
+
+    receipt = runner.verify_official_pdf_source(source, verification)
+    assert receipt["verification_state"] == "OPENED_OFFICIAL_PDF_FIELD_MATCHED"
+    assert selected_pages == [("2", "2")]
+
+    wrong_page = deepcopy(source)
+    wrong_page["field_ref"] = "Synthetic annual report, PDF p. 1: net sales volume"
+    with pytest.raises(ValueError, match="does not contain the exact cited field quote"):
+        runner.verify_official_pdf_source(wrong_page, verification)
+    assert selected_pages == [("2", "2"), ("1", "1")]
+
+
+@pytest.mark.parametrize("field_ref", [None, "Synthetic annual report, page twenty-one", "PDF p. 1 and p. 2"])
+def test_real_source_verifier_requires_one_parseable_declared_page(
+    field_ref: object, monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    source = {
+        "source_id": "CNINFO:SYNTHETIC:BAD-PAGE",
+        "source_url": "https://static.cninfo.com.cn/finalpage/2020-01-01/SYNTHETIC.PDF",
+        "field_ref": field_ref,
+        "numeric_value": 295000000,
+        "unit": "tonnes",
+    }
+    verification = {
+        "exact_quote": "本集团水泥和熟料合计净销量为2.95亿吨",
+        "numeric_value": 295000000,
+        "unit": "tonnes",
+    }
+    opened: list[bool] = []
+    monkeypatch.setattr(runner, "urlopen", lambda *_args, **_kwargs: opened.append(True))
+
+    with pytest.raises(ValueError, match="field_ref must declare one"):
+        runner.verify_official_pdf_source(source, verification)
+    assert opened == []
 
 
 @pytest.mark.parametrize("stage", ["access", "observation"])
@@ -724,6 +855,7 @@ def test_persistent_runner_rejects_caller_authored_prediction_or_result_fields(
     with pytest.raises(ValueError, match="caller-authored fields"):
         runner.controller_record_and_settle(
             database,
+            outcome_access_authorization_id=access["authorization_id"],
             observation_path=_write_json(tmp_path / "observation.json", observation),
             source_verification_path=_write_json(
                 tmp_path / "observation-verification.json",

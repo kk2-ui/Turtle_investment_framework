@@ -59,6 +59,21 @@ requests likewise contain no prediction content. Settlement resolves the stored
 baseline/evidence/prediction/observation internally and emits only a bound
 `MATCH` or `MISS` result with technical object identities.
 
+The persistent outcome runner requires the already-stored
+`outcome_access_authorization_id` before it opens either an observation JSON or
+its source-verification input. It first resolves that authorization's contract
+and custodian identity from the controller database, then rejects an observation
+whose contract or custodian differs before any PDF retrieval. A missing or
+unknown authorization raises `outcome_access_not_authorized`; it cannot be used
+to probe an outcome source.
+
+Official static CNINFO source verification is page-bound. `source.field_ref`
+must declare exactly one positive physical PDF page (for example `PDF p. 21`
+or `page_21`). The runner invokes `pdftotext` with that page as both its first
+and last page and matches the frozen exact quote only in that extraction. A
+missing, ambiguous, or unparseable page reference—and a quote found only on a
+different page—fails verification before an observation can be persisted.
+
 ## Mechanical result
 
 The static and observed numeric values are compared with the frozen tolerance:

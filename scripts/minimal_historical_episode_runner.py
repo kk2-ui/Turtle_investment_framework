@@ -35,6 +35,10 @@ RUNTIME_RECEIPT_SCHEMA_VERSION = "turtle-minimal-historical-episode-runtime-rece
 SOURCE_RECEIPT_SCHEMA_VERSION = "turtle-minimal-historical-episode-official-source-receipt.v1"
 SOURCE_VERIFICATION_INPUT_SCHEMA_VERSION = "turtle-minimal-historical-episode-source-verification-input.v1"
 _WHITESPACE = re.compile(r"\s+")
+_FIELD_REF_PAGE = re.compile(
+    r"(?:\bpdf\s*)?\bp\.?\s*(\d+)\b|\bpage[_\s-]*(\d+)\b",
+    re.IGNORECASE,
+)
 SourceVerifier = Callable[[dict[str, Any], dict[str, Any]], dict[str, Any]]
 
 
@@ -127,6 +131,53 @@ def _verify_quote_value(verification: dict[str, Any]) -> None:
         raise ValueError("official source quote and declared numeric_value do not match")
 
 
+def _declared_pdf_page(field_ref: Any) -> int:
+    """Return the one physical PDF page frozen in the source field reference."""
+    if not isinstance(field_ref, str):
+        raise ValueError("official source field_ref must declare one PDF page")
+    pages = {
+        int(page)
+        for match in _FIELD_REF_PAGE.finditer(field_ref)
+        for page in match.groups()
+        if page is not None
+    }
+    if len(pages) != 1 or next(iter(pages), 0) < 1:
+        raise ValueError("official source field_ref must declare one parseable positive PDF page")
+    return pages.pop()
+
+
+def _stored_outcome_access(
+    database: str | Path, *, authorization_id: str,
+) -> dict[str, Any]:
+    """Read only contract-only authorization identity before any outcome input."""
+    if not isinstance(authorization_id, str) or not authorization_id.strip():
+        raise control.MinimalHistoricalEpisodeError(
+            "outcome_access_not_authorized", "a stored outcome-access authorization_id is required",
+        )
+    conn = _connect(database)
+    try:
+        row = conn.execute(
+            f"""SELECT authorization_id, measurement_contract_id,
+                       measurement_contract_version, custodian_id
+                FROM {control.ACCESS_TABLE} WHERE authorization_id = ?""",
+            (authorization_id,),
+        ).fetchone()
+    finally:
+        conn.close()
+    if row is None:
+        raise control.MinimalHistoricalEpisodeError(
+            "outcome_access_not_authorized", "stored contract-only outcome access is required before observation input",
+        )
+    return {
+        "authorization_id": row["authorization_id"],
+        "measurement_contract_ref": {
+            "measurement_contract_id": row["measurement_contract_id"],
+            "measurement_contract_version": row["measurement_contract_version"],
+        },
+        "custodian_id": row["custodian_id"],
+    }
+
+
 def verify_official_pdf_source(
     source: dict[str, Any], verification: dict[str, Any],
 ) -> dict[str, Any]:
@@ -141,6 +192,7 @@ def verify_official_pdf_source(
     ):
         raise ValueError("real runner requires an official static.cninfo.com.cn/finalpage PDF")
     quote = verification["exact_quote"]
+    page = _declared_pdf_page(source.get("field_ref"))
     _verify_quote_value(verification)
     request = Request(url, headers={"User-Agent": "Mozilla/5.0"})
     with urlopen(request, timeout=60) as response:
@@ -153,7 +205,7 @@ def verify_official_pdf_source(
         handle.write(payload)
         handle.flush()
         extracted = subprocess.run(
-            ["pdftotext", "-layout", handle.name, "-"],
+            ["pdftotext", "-f", str(page), "-l", str(page), "-layout", handle.name, "-"],
             check=True,
             capture_output=True,
             text=True,
@@ -268,6 +320,7 @@ def controller_authorize_outcome(
 def controller_record_and_settle(
     database: str | Path,
     *,
+    outcome_access_authorization_id: str,
     observation_path: str | Path,
     source_verification_path: str | Path,
     settlement_id: str,
@@ -276,11 +329,27 @@ def controller_record_and_settle(
     source_receipt_output_path: str | Path | None = None,
     source_verifier: SourceVerifier = verify_official_pdf_source,
 ) -> dict[str, Any]:
-    """Record a custodian observation and create the blank request internally."""
+    """Record one authorized custodian observation and settle it mechanically.
+
+    The stored contract-only authorization is resolved before this function opens
+    an observation payload or source-verification input.  That ordering keeps an
+    unauthorized caller from using this runner as an outcome-source reader.
+    """
+    access = _stored_outcome_access(
+        database, authorization_id=outcome_access_authorization_id,
+    )
     observation = _read_object(observation_path)
     forbidden = {"prediction_id", "predicted_direction", "realised_direction", "status"}.intersection(observation)
     if forbidden:
         raise ValueError(f"observation contains forbidden caller-authored fields: {sorted(forbidden)}")
+    if observation.get("measurement_contract_ref") != access["measurement_contract_ref"]:
+        raise control.MinimalHistoricalEpisodeError(
+            "outcome_access_not_authorized", "observation must match the stored outcome-access contract",
+        )
+    if observation.get("custodian_id") != access["custodian_id"]:
+        raise control.MinimalHistoricalEpisodeError(
+            "outcome_access_not_authorized", "observation custodian must match stored outcome access",
+        )
     verification = _verification_input(
         source_verification_path,
         observation.get("source", {}),
@@ -459,6 +528,7 @@ def _parser() -> argparse.ArgumentParser:
 
     settle = commands.add_parser("controller-record-and-settle")
     settle.add_argument("--database", required=True)
+    settle.add_argument("--outcome-access-authorization-id", required=True)
     settle.add_argument("--observation", required=True)
     settle.add_argument("--source-verification", required=True)
     settle.add_argument("--settlement-id", required=True)
@@ -498,6 +568,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     elif args.command == "controller-record-and-settle":
         result = controller_record_and_settle(
             args.database,
+            outcome_access_authorization_id=args.outcome_access_authorization_id,
             observation_path=args.observation,
             source_verification_path=args.source_verification,
             settlement_id=args.settlement_id,
