@@ -27,6 +27,7 @@ CONTRACT_TABLE = "minimal_historical_measurement_contracts"
 EVIDENCE_TABLE = "minimal_historical_static_evidence"
 PREDICTION_TABLE = "minimal_historical_predictions"
 ACCESS_TABLE = "minimal_historical_outcome_access"
+OUTCOME_SOURCE_INVENTORY_TABLE = "minimal_historical_outcome_source_inventory"
 OBSERVATION_TABLE = "minimal_historical_observations"
 SETTLEMENT_TABLE = "minimal_historical_settlements"
 
@@ -164,6 +165,28 @@ def initialize(conn: sqlite3.Connection) -> None:
             )"""
         )
         conn.execute(
+            f"""CREATE TABLE IF NOT EXISTS {OUTCOME_SOURCE_INVENTORY_TABLE} (
+                inventory_receipt_id TEXT PRIMARY KEY,
+                measurement_contract_id TEXT NOT NULL,
+                measurement_contract_version INTEGER NOT NULL,
+                custodian_id TEXT NOT NULL,
+                status TEXT NOT NULL,
+                payload_json TEXT NOT NULL,
+                inventoried_at TEXT NOT NULL,
+                UNIQUE (measurement_contract_id, measurement_contract_version),
+                FOREIGN KEY (measurement_contract_id, measurement_contract_version)
+                    REFERENCES {CONTRACT_TABLE}(measurement_contract_id, measurement_contract_version)
+            )"""
+        )
+        for operation in ("UPDATE", "DELETE"):
+            conn.execute(
+                f"""CREATE TRIGGER IF NOT EXISTS {OUTCOME_SOURCE_INVENTORY_TABLE}_{operation.lower()}_blocked
+                    BEFORE {operation} ON {OUTCOME_SOURCE_INVENTORY_TABLE}
+                    BEGIN
+                        SELECT RAISE(ABORT, 'minimal historical outcome source inventory is append-only');
+                    END"""
+            )
+        conn.execute(
             f"""CREATE TABLE IF NOT EXISTS {OBSERVATION_TABLE} (
                 observation_id TEXT PRIMARY KEY,
                 measurement_contract_id TEXT NOT NULL,
@@ -247,6 +270,46 @@ def _row_for_contract_or_none(
             WHERE measurement_contract_id = ? AND measurement_contract_version = ?""",
         (contract["measurement_contract_id"], contract["measurement_contract_version"]),
     ).fetchone()
+
+
+def resolve_authorized_outcome_access(
+    conn: sqlite3.Connection, *, authorization_id: str,
+) -> dict[str, Any]:
+    """Return only the stored access identity and its measurement contract.
+
+    This is deliberately the narrow handoff used by custodial acquisition.  It
+    never resolves a prediction, static evidence value, or settlement result.
+    """
+    if not isinstance(authorization_id, str) or not authorization_id.strip():
+        raise MinimalHistoricalEpisodeError(
+            "outcome_access_not_authorized", "a stored outcome-access authorization_id is required",
+        )
+    access_row = conn.execute(
+        f"""SELECT authorization_id, measurement_contract_id,
+                   measurement_contract_version, custodian_id
+            FROM {ACCESS_TABLE} WHERE authorization_id = ?""",
+        (authorization_id,),
+    ).fetchone()
+    if access_row is None:
+        raise MinimalHistoricalEpisodeError(
+            "outcome_access_not_authorized", "stored contract-only outcome access is required before outcome input",
+        )
+    contract_row = conn.execute(
+        f"""SELECT payload_json FROM {CONTRACT_TABLE}
+            WHERE measurement_contract_id = ? AND measurement_contract_version = ?""",
+        (access_row["measurement_contract_id"], access_row["measurement_contract_version"]),
+    ).fetchone()
+    if contract_row is None:  # pragma: no cover - foreign key invariant
+        raise MinimalHistoricalEpisodeError("measurement_contract_not_found", "authorized contract is not frozen")
+    return {
+        "authorization_id": access_row["authorization_id"],
+        "measurement_contract_ref": {
+            "measurement_contract_id": access_row["measurement_contract_id"],
+            "measurement_contract_version": access_row["measurement_contract_version"],
+        },
+        "custodian_id": access_row["custodian_id"],
+        "measurement_contract": _load(contract_row["payload_json"]),
+    }
 
 
 def register_decision_contract(
@@ -432,19 +495,103 @@ def authorize_outcome_access(conn: sqlite3.Connection, authorization: dict[str, 
     return {"authorized": True, "authorization_id": payload["authorization_id"], "idempotent": False}
 
 
+def register_outcome_source_inventory(
+    conn: sqlite3.Connection, inventory: dict[str, Any], *, inventoried_at: str,
+) -> dict[str, Any]:
+    """Freeze one value-free custodian source-readiness result after access."""
+    timestamp = _instant(inventoried_at, "outcome_source_inventory.inventoried_at")
+    _not_future(timestamp, "outcome_source_inventory.inventoried_at")
+    row = _contract_row(conn, inventory.get("measurement_contract_ref") if isinstance(inventory, dict) else None)
+    contract = _load(row["payload_json"])
+    payload_candidate = deepcopy(inventory) if isinstance(inventory, dict) else inventory
+    if isinstance(payload_candidate, dict):
+        payload_candidate["inventoried_at"] = timestamp
+    result = episode.validate_outcome_source_inventory(
+        payload_candidate, measurement_contract=contract,
+    )
+    _invalid("outcome_source_inventory_invalid", result)
+    payload = result["outcome_source_inventory"]
+    access_row = _row_for_contract(conn, ACCESS_TABLE, contract, code="outcome_access_not_authorized")
+    if payload["custodian_id"] != access_row["custodian_id"]:
+        raise MinimalHistoricalEpisodeError(
+            "outcome_source_inventory_custodian_does_not_match_access",
+            "outcome source inventory custodian must match access authorization",
+        )
+    if not _before(access_row["authorized_at"], timestamp):
+        raise MinimalHistoricalEpisodeError(
+            "outcome_source_inventory_must_follow_outcome_access",
+            "outcome source inventory must follow custodian access",
+        )
+    encoded = _json(payload)
+    with conn:
+        existing = conn.execute(
+            f"SELECT * FROM {OUTCOME_SOURCE_INVENTORY_TABLE} WHERE inventory_receipt_id = ?",
+            (payload["inventory_receipt_id"],),
+        ).fetchone()
+        if existing is not None:
+            if existing["payload_json"] != encoded or existing["inventoried_at"] != timestamp:
+                raise MinimalHistoricalEpisodeError(
+                    "outcome_source_inventory_immutable_conflict",
+                    "outcome source inventory identity already has different content",
+                )
+            return {
+                "recorded": True,
+                "inventory_receipt_id": payload["inventory_receipt_id"],
+                "status": payload["status"],
+                "idempotent": True,
+            }
+        if _row_for_contract_or_none(conn, OUTCOME_SOURCE_INVENTORY_TABLE, contract) is not None:
+            raise MinimalHistoricalEpisodeError(
+                "measurement_contract_outcome_source_inventory_already_recorded",
+                "contract already has one outcome source inventory receipt",
+            )
+        conn.execute(
+            f"""INSERT INTO {OUTCOME_SOURCE_INVENTORY_TABLE} (
+                inventory_receipt_id, measurement_contract_id, measurement_contract_version, custodian_id,
+                status, payload_json, inventoried_at
+            ) VALUES (?, ?, ?, ?, ?, ?, ?)""",
+            (
+                payload["inventory_receipt_id"], contract["measurement_contract_id"],
+                contract["measurement_contract_version"], payload["custodian_id"], payload["status"], encoded, timestamp,
+            ),
+        )
+    return {
+        "recorded": True,
+        "inventory_receipt_id": payload["inventory_receipt_id"],
+        "status": payload["status"],
+        "idempotent": False,
+    }
+
+
 def register_observation(conn: sqlite3.Connection, observation: dict[str, Any]) -> dict[str, Any]:
     row = _contract_row(conn, observation.get("measurement_contract_ref") if isinstance(observation, dict) else None)
     contract = _load(row["payload_json"])
-    result = episode.validate_observation(observation, measurement_contract=contract)
+    access_row = _row_for_contract(conn, ACCESS_TABLE, contract, code="outcome_access_not_authorized")
+    inventory_row = _row_for_contract(
+        conn, OUTCOME_SOURCE_INVENTORY_TABLE, contract, code="outcome_source_inventory_not_found",
+    )
+    inventory = _load(inventory_row["payload_json"])
+    if inventory.get("status") != "FIELD_READY":
+        raise MinimalHistoricalEpisodeError(
+            "outcome_source_inventory_measurement_mismatch",
+            "a measurement-mismatch inventory cannot authorize an observation or settlement",
+        )
+    result = episode.validate_observation(
+        observation, measurement_contract=contract, outcome_source_inventory=inventory,
+    )
     _invalid("observation_invalid", result)
     payload = result["observation"]
-    access_row = _row_for_contract(conn, ACCESS_TABLE, contract, code="outcome_access_not_authorized")
     timestamp = _instant(payload["observed_at"], "observation.observed_at")
     _not_future(timestamp, "observation.observed_at")
     if payload["custodian_id"] != access_row["custodian_id"]:
         raise MinimalHistoricalEpisodeError("observation_custodian_does_not_match_access", "observation custodian must match access authorization")
     if not _before(access_row["authorized_at"], timestamp):
         raise MinimalHistoricalEpisodeError("observation_must_follow_outcome_access", "observation must follow custodian access")
+    if not _before(inventory_row["inventoried_at"], timestamp):
+        raise MinimalHistoricalEpisodeError(
+            "observation_must_follow_outcome_source_inventory",
+            "observation must follow the stored outcome source inventory",
+        )
     encoded = _json(payload)
     with conn:
         existing = conn.execute(f"SELECT * FROM {OBSERVATION_TABLE} WHERE observation_id = ?", (payload["observation_id"],)).fetchone()
@@ -475,6 +622,15 @@ def settle(conn: sqlite3.Connection, request: dict[str, Any]) -> dict[str, Any]:
     evidence = _load(_row_for_contract(conn, EVIDENCE_TABLE, contract, code="static_evidence_not_found")["payload_json"])
     prediction = _load(_row_for_contract(conn, PREDICTION_TABLE, contract, code="prediction_not_found")["payload_json"])
     access_row = _row_for_contract(conn, ACCESS_TABLE, contract, code="outcome_access_not_authorized")
+    inventory_row = _row_for_contract(
+        conn, OUTCOME_SOURCE_INVENTORY_TABLE, contract, code="outcome_source_inventory_not_found",
+    )
+    inventory = _load(inventory_row["payload_json"])
+    if inventory.get("status") != "FIELD_READY":
+        raise MinimalHistoricalEpisodeError(
+            "outcome_source_inventory_measurement_mismatch",
+            "a measurement-mismatch inventory cannot authorize settlement",
+        )
     observation_row = _row_for_contract(conn, OBSERVATION_TABLE, contract, code="observation_not_found")
     observation = _load(observation_row["payload_json"])
     payload = request_result["settlement_request"]
@@ -486,6 +642,7 @@ def settle(conn: sqlite3.Connection, request: dict[str, Any]) -> dict[str, Any]:
         raise MinimalHistoricalEpisodeError("settlement_must_follow_observation", "settlement must follow the recorded observation")
     derived = episode.mechanical_settlement(
         payload, measurement_contract=contract, static_evidence=evidence, prediction=prediction, observation=observation,
+        outcome_source_inventory=inventory,
     )
     _invalid("mechanical_settlement_invalid", derived)
     settlement = derived["settlement"]

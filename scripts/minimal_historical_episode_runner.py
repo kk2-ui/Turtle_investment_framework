@@ -150,32 +150,85 @@ def _stored_outcome_access(
     database: str | Path, *, authorization_id: str,
 ) -> dict[str, Any]:
     """Read only contract-only authorization identity before any outcome input."""
-    if not isinstance(authorization_id, str) or not authorization_id.strip():
+    conn = _connect(database)
+    try:
+        context = control.resolve_authorized_outcome_access(conn, authorization_id=authorization_id)
+    finally:
+        conn.close()
+    return {
+        "authorization_id": context["authorization_id"],
+        "measurement_contract_ref": context["measurement_contract_ref"],
+        "custodian_id": context["custodian_id"],
+        "measurement_contract": context["measurement_contract"],
+    }
+
+
+def _stored_field_ready_inventory(
+    database: str | Path, *, inventory_receipt_id: str,
+    outcome_access: dict[str, Any],
+) -> dict[str, Any]:
+    """Resolve the exact FIELD_READY source before opening an observation."""
+    if not isinstance(inventory_receipt_id, str) or not inventory_receipt_id.strip():
         raise control.MinimalHistoricalEpisodeError(
-            "outcome_access_not_authorized", "a stored outcome-access authorization_id is required",
+            "outcome_source_inventory_not_found", "a stored outcome source inventory receipt is required",
         )
     conn = _connect(database)
     try:
         row = conn.execute(
-            f"""SELECT authorization_id, measurement_contract_id,
-                       measurement_contract_version, custodian_id
-                FROM {control.ACCESS_TABLE} WHERE authorization_id = ?""",
-            (authorization_id,),
+            f"""SELECT * FROM {control.OUTCOME_SOURCE_INVENTORY_TABLE}
+                WHERE inventory_receipt_id = ?""",
+            (inventory_receipt_id,),
         ).fetchone()
     finally:
         conn.close()
     if row is None:
         raise control.MinimalHistoricalEpisodeError(
-            "outcome_access_not_authorized", "stored contract-only outcome access is required before observation input",
+            "outcome_source_inventory_not_found", "stored outcome source inventory is required before observation input",
         )
-    return {
-        "authorization_id": row["authorization_id"],
-        "measurement_contract_ref": {
-            "measurement_contract_id": row["measurement_contract_id"],
-            "measurement_contract_version": row["measurement_contract_version"],
-        },
-        "custodian_id": row["custodian_id"],
-    }
+    if (
+        row["measurement_contract_id"] != outcome_access["measurement_contract_ref"]["measurement_contract_id"]
+        or row["measurement_contract_version"] != outcome_access["measurement_contract_ref"]["measurement_contract_version"]
+        or row["custodian_id"] != outcome_access["custodian_id"]
+    ):
+        raise control.MinimalHistoricalEpisodeError(
+            "outcome_source_inventory_does_not_match_access",
+            "outcome source inventory must match the stored outcome access",
+        )
+    inventory = json.loads(row["payload_json"])
+    if inventory.get("status") != "FIELD_READY":
+        raise control.MinimalHistoricalEpisodeError(
+            "outcome_source_inventory_measurement_mismatch",
+            "a measurement-mismatch inventory cannot open an observation source",
+        )
+    return inventory
+
+
+def _stored_inventory_timestamp(
+    database: str | Path, *, inventory_receipt_id: str, outcome_access: dict[str, Any],
+) -> str | None:
+    """Return a prior controller timestamp only for an exact receipt replay."""
+    conn = _connect(database)
+    try:
+        row = conn.execute(
+            f"""SELECT measurement_contract_id, measurement_contract_version, custodian_id, inventoried_at
+                FROM {control.OUTCOME_SOURCE_INVENTORY_TABLE}
+                WHERE inventory_receipt_id = ?""",
+            (inventory_receipt_id,),
+        ).fetchone()
+    finally:
+        conn.close()
+    if row is None:
+        return None
+    if (
+        row["measurement_contract_id"] != outcome_access["measurement_contract_ref"]["measurement_contract_id"]
+        or row["measurement_contract_version"] != outcome_access["measurement_contract_ref"]["measurement_contract_version"]
+        or row["custodian_id"] != outcome_access["custodian_id"]
+    ):
+        raise control.MinimalHistoricalEpisodeError(
+            "outcome_source_inventory_does_not_match_access",
+            "outcome source inventory identity must match the stored outcome access",
+        )
+    return row["inventoried_at"]
 
 
 def verify_official_pdf_source(
@@ -317,10 +370,54 @@ def controller_authorize_outcome(
     return {**result, "outcome_access": access}
 
 
+def controller_register_outcome_source_inventory(
+    database: str | Path,
+    *,
+    outcome_access_authorization_id: str,
+    inventory_path: str | Path,
+    output_path: str | Path | None = None,
+) -> dict[str, Any]:
+    """Record one post-access, value-free custodian source-readiness receipt."""
+    access = _stored_outcome_access(
+        database, authorization_id=outcome_access_authorization_id,
+    )
+    inventory = _read_object(inventory_path)
+    forbidden = {
+        "prediction_id", "predicted_direction", "realised_direction", "numeric_value", "exact_quote",
+        "price", "cjo", "report", "learning",
+    }.intersection(inventory)
+    if forbidden:
+        raise ValueError(f"outcome source inventory contains forbidden fields: {sorted(forbidden)}")
+    if inventory.get("measurement_contract_ref") != access["measurement_contract_ref"]:
+        raise control.MinimalHistoricalEpisodeError(
+            "outcome_access_not_authorized", "inventory must match the stored outcome-access contract",
+        )
+    if inventory.get("custodian_id") != access["custodian_id"]:
+        raise control.MinimalHistoricalEpisodeError(
+            "outcome_access_not_authorized", "inventory custodian must match stored outcome access",
+        )
+    inventory["inventoried_at"] = _stored_inventory_timestamp(
+        database,
+        inventory_receipt_id=str(inventory.get("inventory_receipt_id") or ""),
+        outcome_access=access,
+    ) or _now()
+    conn = _connect(database)
+    try:
+        result = control.register_outcome_source_inventory(
+            conn, inventory, inventoried_at=inventory["inventoried_at"],
+        )
+    finally:
+        conn.close()
+    if output_path is not None:
+        _write_json(output_path, inventory)
+    return {**result, "outcome_source_inventory": inventory}
+
+
 def controller_record_and_settle(
     database: str | Path,
     *,
     outcome_access_authorization_id: str,
+    outcome_source_inventory_receipt_id: str,
     observation_path: str | Path,
     source_verification_path: str | Path,
     settlement_id: str,
@@ -338,6 +435,11 @@ def controller_record_and_settle(
     access = _stored_outcome_access(
         database, authorization_id=outcome_access_authorization_id,
     )
+    inventory = _stored_field_ready_inventory(
+        database,
+        inventory_receipt_id=outcome_source_inventory_receipt_id,
+        outcome_access=access,
+    )
     observation = _read_object(observation_path)
     forbidden = {"prediction_id", "predicted_direction", "realised_direction", "status"}.intersection(observation)
     if forbidden:
@@ -349,6 +451,15 @@ def controller_record_and_settle(
     if observation.get("custodian_id") != access["custodian_id"]:
         raise control.MinimalHistoricalEpisodeError(
             "outcome_access_not_authorized", "observation custodian must match stored outcome access",
+        )
+    observation_validation = episode.validate_observation(
+        observation,
+        measurement_contract=access["measurement_contract"],
+        outcome_source_inventory=inventory,
+    )
+    if not observation_validation["valid"]:
+        raise control.MinimalHistoricalEpisodeError(
+            "observation_invalid", "; ".join(observation_validation["findings"]),
         )
     verification = _verification_input(
         source_verification_path,
@@ -424,6 +535,10 @@ def public_receipt(
             f"SELECT * FROM {control.ACCESS_TABLE} WHERE measurement_contract_id = ? AND measurement_contract_version = ?",
             key,
         ).fetchone()
+        inventory_row = conn.execute(
+            f"SELECT * FROM {control.OUTCOME_SOURCE_INVENTORY_TABLE} WHERE measurement_contract_id = ? AND measurement_contract_version = ?",
+            key,
+        ).fetchone()
         observation_row = conn.execute(
             f"SELECT * FROM {control.OBSERVATION_TABLE} WHERE measurement_contract_id = ? AND measurement_contract_version = ?",
             key,
@@ -457,6 +572,9 @@ def public_receipt(
                 "outcome_access": _identity(
                     access_row, id_field="authorization_id", at_field="authorized_at",
                 ),
+                "outcome_source_inventory": _identity(
+                    inventory_row, id_field="inventory_receipt_id", at_field="inventoried_at",
+                ),
                 "observation": _identity(
                     observation_row, id_field="observation_id", at_field="observed_at",
                 ),
@@ -487,13 +605,8 @@ def verify_source_object(
             "object_id": value.get("evidence_receipt_id"),
             "object_version": value.get("evidence_receipt_version"),
         }
-    elif value.get("schema_version") == episode.OBSERVATION_SCHEMA_VERSION:
-        subject_ref = {
-            "object_type": "OUTCOME_OBSERVATION",
-            "object_id": value.get("observation_id"),
-        }
     else:
-        raise ValueError("source verification supports only static evidence or outcome observation")
+        raise ValueError("direct source verification supports only static evidence; outcome verification requires stored FIELD_READY inventory")
     verification = _verification_input(
         source_verification_path, source, expected_subject_ref=subject_ref,
     )
@@ -526,9 +639,16 @@ def _parser() -> argparse.ArgumentParser:
     authorize.add_argument("--access", required=True)
     authorize.add_argument("--output", required=True)
 
+    inventory = commands.add_parser("controller-register-outcome-source-inventory")
+    inventory.add_argument("--database", required=True)
+    inventory.add_argument("--outcome-access-authorization-id", required=True)
+    inventory.add_argument("--inventory", required=True)
+    inventory.add_argument("--output", required=True)
+
     settle = commands.add_parser("controller-record-and-settle")
     settle.add_argument("--database", required=True)
     settle.add_argument("--outcome-access-authorization-id", required=True)
+    settle.add_argument("--outcome-source-inventory-receipt-id", required=True)
     settle.add_argument("--observation", required=True)
     settle.add_argument("--source-verification", required=True)
     settle.add_argument("--settlement-id", required=True)
@@ -565,10 +685,18 @@ def main(argv: Sequence[str] | None = None) -> int:
         result = controller_authorize_outcome(
             args.database, access_path=args.access, output_path=args.output,
         )
+    elif args.command == "controller-register-outcome-source-inventory":
+        result = controller_register_outcome_source_inventory(
+            args.database,
+            outcome_access_authorization_id=args.outcome_access_authorization_id,
+            inventory_path=args.inventory,
+            output_path=args.output,
+        )
     elif args.command == "controller-record-and-settle":
         result = controller_record_and_settle(
             args.database,
             outcome_access_authorization_id=args.outcome_access_authorization_id,
+            outcome_source_inventory_receipt_id=args.outcome_source_inventory_receipt_id,
             observation_path=args.observation,
             source_verification_path=args.source_verification,
             settlement_id=args.settlement_id,

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from copy import deepcopy
+import inspect
 import json
 from pathlib import Path
 import sqlite3
@@ -11,6 +12,7 @@ import pytest
 from scripts import minimal_historical_episode as episode
 from scripts import minimal_historical_episode_control_plane as control
 from scripts import minimal_historical_episode_runner as runner
+from scripts import minimal_historical_outcome_acquisition as outcome_acquisition
 
 
 def _conn() -> sqlite3.Connection:
@@ -163,9 +165,10 @@ def _observation(contract: dict) -> dict:
         "observed_at": "2022-04-01T00:00:00+00:00",
         "source": {
             "source_id": "SYNTHETIC:OUTCOME:2021",
-            "source_url": "https://official.example.invalid/synthetic/outcome.pdf",
+            "source_url": "https://static.cninfo.com.cn/finalpage/2022-03-30/SYNTHETIC.PDF",
             "source_type": episode.OFFICIAL_STATIC_FILING,
             "source_available_at": "2022-03-30T00:00:00+00:00",
+            "source_available_precision": "TIMESTAMP",
             "issuer_id": contract["issuer_id"],
             "metric_id": contract["metric_id"],
             "measurement_period_end": contract["outcome_period_end"],
@@ -179,6 +182,35 @@ def _observation(contract: dict) -> dict:
         "allowed_outputs": list(episode.ALLOWED_OUTPUTS),
         "method_transfer_rights": episode.NO_METHOD_TRANSFER_RIGHTS,
     }
+
+
+def _field_ready_inventory(contract: dict, observation: dict | None = None) -> dict:
+    observation = observation or _observation(contract)
+    source = {
+        key: value for key, value in observation["source"].items()
+        if key != "numeric_value"
+    }
+    return {
+        "schema_version": episode.OUTCOME_SOURCE_INVENTORY_SCHEMA_VERSION,
+        "inventory_receipt_id": "MHE:INVENTORY:SYNTHETIC:V1",
+        "measurement_contract_ref": _contract_ref(contract),
+        "custodian_id": contract["roles"]["custodian_id"],
+        "inventoried_at": "2022-03-31T00:00:01+00:00",
+        "status": "FIELD_READY",
+        "source": source,
+        "object_class": "MINIMAL_HISTORICAL_OUTCOME_SOURCE_INVENTORY_RECEIPT",
+        "claim_class": "CUSTODIAN_VALUE_FREE_SOURCE_READINESS",
+        "allowed_outputs": list(episode.ALLOWED_OUTPUTS),
+        "method_transfer_rights": episode.NO_METHOD_TRANSFER_RIGHTS,
+    }
+
+
+def _register_field_ready_inventory(conn: sqlite3.Connection, contract: dict) -> dict:
+    inventory = _field_ready_inventory(contract)
+    assert control.register_outcome_source_inventory(
+        conn, inventory, inventoried_at=inventory["inventoried_at"],
+    )["recorded"]
+    return inventory
 
 
 def _settlement_request(contract: dict) -> dict:
@@ -352,6 +384,8 @@ def test_one_metric_fixture_chain_is_contract_only_for_custodian_and_mechanicall
         ).fetchone()[0])
         assert stored_access == access
         assert "prediction_id" not in stored_access and "predicted_direction" not in stored_access
+        inventory = _register_field_ready_inventory(conn, contract)
+        assert inventory["status"] == "FIELD_READY"
         observation = _observation(contract)
         assert control.register_observation(conn, observation)["recorded"]
         result = control.settle(conn, _settlement_request(contract))
@@ -438,6 +472,7 @@ def test_control_plane_rejects_wrong_chain_time_and_observation_measurement_mism
         assert exc_info.value.code == "outcome_access_must_follow_prediction"
 
         assert control.authorize_outcome_access(conn, _access(contract))["authorized"]
+        _register_field_ready_inventory(conn, contract)
         mismatch = _observation(contract)
         mismatch["source"]["unit"] = "RMB"
         with pytest.raises(control.MinimalHistoricalEpisodeError) as exc_info:
@@ -482,6 +517,7 @@ def test_source_metric_mismatch_is_rejected_before_persistence_or_settlement(sta
     conn, contract, _, _ = _frozen_chain()
     try:
         assert control.authorize_outcome_access(conn, _access(contract))["authorized"]
+        _register_field_ready_inventory(conn, contract)
         observation = _observation(contract)
         observation["source"]["metric_id"] = "OTHER_OPERATING_METRIC"
         with pytest.raises(control.MinimalHistoricalEpisodeError) as exc_info:
@@ -498,6 +534,7 @@ def test_outcome_source_period_mismatch_is_rejected_before_persistence_or_settle
     conn, contract, _, _ = _frozen_chain()
     try:
         assert control.authorize_outcome_access(conn, _access(contract))["authorized"]
+        _register_field_ready_inventory(conn, contract)
         observation = _observation(contract)
         observation["source"]["measurement_period_end"] = "2020-12-31"
         with pytest.raises(control.MinimalHistoricalEpisodeError) as exc_info:
@@ -550,6 +587,7 @@ def test_nonfinite_numeric_values_are_rejected_before_persistence_or_settlement(
     conn, contract, _, _ = _frozen_chain()
     try:
         assert control.authorize_outcome_access(conn, _access(contract))["authorized"]
+        _register_field_ready_inventory(conn, contract)
         observation = _observation(contract)
         observation["source"]["numeric_value"] = numeric_value
         with pytest.raises(control.MinimalHistoricalEpisodeError) as exc_info:
@@ -558,6 +596,132 @@ def test_nonfinite_numeric_values_are_rejected_before_persistence_or_settlement(
         assert "observation.source.numeric_value_must_be_finite_numeric" in exc_info.value.detail
         assert conn.execute(f"SELECT COUNT(*) FROM {control.OBSERVATION_TABLE}").fetchone()[0] == 0
         assert conn.execute(f"SELECT COUNT(*) FROM {control.SETTLEMENT_TABLE}").fetchone()[0] == 0
+    finally:
+        conn.close()
+
+
+def test_outcome_source_inventory_is_value_free_append_only_and_exact_replay_is_idempotent() -> None:
+    conn, contract, _, _ = _frozen_chain()
+    try:
+        with pytest.raises(control.MinimalHistoricalEpisodeError) as exc_info:
+            control.register_outcome_source_inventory(
+                conn, _field_ready_inventory(contract), inventoried_at="2022-03-31T00:00:01+00:00",
+            )
+        assert exc_info.value.code == "outcome_access_not_authorized"
+
+        assert control.authorize_outcome_access(conn, _access(contract))["authorized"]
+        inventory = _field_ready_inventory(contract)
+        wrong_custodian = deepcopy(inventory)
+        wrong_custodian["custodian_id"] = "SYNTHETIC:CUSTODIAN:OTHER"
+        with pytest.raises(control.MinimalHistoricalEpisodeError) as exc_info:
+            control.register_outcome_source_inventory(
+                conn, wrong_custodian, inventoried_at=wrong_custodian["inventoried_at"],
+            )
+        assert exc_info.value.code == "outcome_source_inventory_invalid"
+        assert "outcome_source_inventory.custodian_id_must_match_measurement_contract" in exc_info.value.detail
+        inventory["source"]["numeric_value"] = 11.0
+        invalid = episode.validate_outcome_source_inventory(inventory, measurement_contract=contract)
+        assert not invalid["valid"]
+        assert "outcome_source_inventory.source_contains_unapproved_field:numeric_value" in invalid["findings"]
+        inventory["source"].pop("numeric_value")
+
+        assert control.register_outcome_source_inventory(
+            conn, inventory, inventoried_at=inventory["inventoried_at"],
+        ) == {
+            "recorded": True,
+            "inventory_receipt_id": inventory["inventory_receipt_id"],
+            "status": "FIELD_READY",
+            "idempotent": False,
+        }
+        assert control.register_outcome_source_inventory(
+            conn, deepcopy(inventory), inventoried_at=inventory["inventoried_at"],
+        )["idempotent"]
+        changed = deepcopy(inventory)
+        changed["source"]["field_ref"] = "Synthetic official filing PDF p. 39."
+        with pytest.raises(control.MinimalHistoricalEpisodeError) as exc_info:
+            control.register_outcome_source_inventory(
+                conn, changed, inventoried_at=inventory["inventoried_at"],
+            )
+        assert exc_info.value.code == "outcome_source_inventory_immutable_conflict"
+        with pytest.raises(sqlite3.IntegrityError, match="append-only"):
+            conn.execute(f"DELETE FROM {control.OUTCOME_SOURCE_INVENTORY_TABLE}")
+    finally:
+        conn.close()
+
+
+@pytest.mark.parametrize(
+    ("path", "value", "expected"),
+    [
+        (("source", "source_available_at"), "2020-12-31T23:59:59+00:00", "source_available_at_must_follow_cutoff"),
+        (("source", "measurement_period_end"), "2020-12-31", "measurement_period_end_must_match_measurement_contract_outcome_period_end"),
+        (("source", "source_url"), "https://static.cninfo.com.cn/not-finalpage/SYNTHETIC.PDF", "source_url_must_be_exact_static_cninfo_finalpage_pdf"),
+        (("source", "field_ref"), "PDF p. 1 and p. 2", "field_ref_must_include_one_parseable_pdf_page"),
+    ],
+)
+def test_field_ready_inventory_rejects_early_or_nonunique_source_identity(
+    path: tuple[str, str], value: str, expected: str,
+) -> None:
+    contract = _contract()
+    inventory = _field_ready_inventory(contract)
+    inventory[path[0]][path[1]] = value
+    result = episode.validate_outcome_source_inventory(inventory, measurement_contract=contract)
+    assert not result["valid"]
+    assert f"outcome_source_inventory.{path[0]}.{expected}" in result["findings"]
+
+
+def test_measurement_mismatch_inventory_is_retained_but_blocks_observation_and_settlement() -> None:
+    conn, contract, _, _ = _frozen_chain()
+    try:
+        assert control.authorize_outcome_access(conn, _access(contract))["authorized"]
+        mismatch = {
+            "schema_version": episode.OUTCOME_SOURCE_INVENTORY_SCHEMA_VERSION,
+            "inventory_receipt_id": "MHE:INVENTORY:SYNTHETIC:MISMATCH",
+            "measurement_contract_ref": _contract_ref(contract),
+            "custodian_id": contract["roles"]["custodian_id"],
+            "inventoried_at": "2022-03-31T00:00:01+00:00",
+            "status": "MEASUREMENT_MISMATCH",
+            "mismatch_rule": "DIRECT_FIELD_UNAVAILABLE",
+            "mismatch_detail": "the official annual report does not expose one direct field under the frozen definition",
+            "object_class": "MINIMAL_HISTORICAL_OUTCOME_SOURCE_INVENTORY_RECEIPT",
+            "claim_class": "CUSTODIAN_VALUE_FREE_SOURCE_READINESS",
+            "allowed_outputs": list(episode.ALLOWED_OUTPUTS),
+            "method_transfer_rights": episode.NO_METHOD_TRANSFER_RIGHTS,
+        }
+        assert control.register_outcome_source_inventory(
+            conn, mismatch, inventoried_at=mismatch["inventoried_at"],
+        )["status"] == "MEASUREMENT_MISMATCH"
+        with pytest.raises(control.MinimalHistoricalEpisodeError) as exc_info:
+            control.register_observation(conn, _observation(contract))
+        assert exc_info.value.code == "outcome_source_inventory_measurement_mismatch"
+        with pytest.raises(control.MinimalHistoricalEpisodeError) as exc_info:
+            control.settle(conn, _settlement_request(contract))
+        assert exc_info.value.code == "outcome_source_inventory_measurement_mismatch"
+        assert conn.execute(f"SELECT COUNT(*) FROM {control.OBSERVATION_TABLE}").fetchone()[0] == 0
+        assert conn.execute(f"SELECT COUNT(*) FROM {control.SETTLEMENT_TABLE}").fetchone()[0] == 0
+    finally:
+        conn.close()
+
+
+@pytest.mark.parametrize(
+    ("field", "value", "expected"),
+    [
+        ("source_id", "SYNTHETIC:OUTCOME:OTHER", "observation.source.source_id_must_match_field_ready_inventory"),
+        ("field_ref", "Synthetic official filing PDF p. 39.", "observation.source.field_ref_must_match_field_ready_inventory"),
+    ],
+)
+def test_observation_must_match_the_field_ready_inventory_exactly(
+    field: str, value: str, expected: str,
+) -> None:
+    conn, contract, _, _ = _frozen_chain()
+    try:
+        assert control.authorize_outcome_access(conn, _access(contract))["authorized"]
+        _register_field_ready_inventory(conn, contract)
+        observation = _observation(contract)
+        observation["source"][field] = value
+        with pytest.raises(control.MinimalHistoricalEpisodeError) as exc_info:
+            control.register_observation(conn, observation)
+        assert exc_info.value.code == "observation_invalid"
+        assert expected in exc_info.value.detail
     finally:
         conn.close()
 
@@ -578,6 +742,8 @@ def test_public_schema_keeps_the_contract_only_access_and_no_transfer_rights() -
         "schema_version", "authorization_id", "measurement_contract_ref", "custodian_id", "authorized_at",
         "object_class", "claim_class", "allowed_outputs", "method_transfer_rights",
     }
+    inventory = schema["$defs"]["outcome_source_inventory"]
+    assert "numeric_value" not in json.dumps(inventory)
     for name in ("decision_contract", "measurement_contract", "static_evidence", "prediction", "outcome_access", "observation", "settlement_request", "settlement"):
         properties = schema["$defs"][name]["properties"]
         assert properties["allowed_outputs"]["const"] == ["MECHANICAL_SETTLEMENT_ONLY"]
@@ -650,9 +816,22 @@ def test_persistent_runner_separates_preoutcome_and_custodian_phases(tmp_path: P
     )
     assert authorized["authorized"]
     assert authorized["outcome_access"]["authorized_at"] != access["authorized_at"]
+    inventory = _field_ready_inventory(contract)
+    registered_inventory = runner.controller_register_outcome_source_inventory(
+        database,
+        outcome_access_authorization_id=access["authorization_id"],
+        inventory_path=_write_json(tmp_path / "inventory.json", inventory),
+    )
+    assert registered_inventory["status"] == "FIELD_READY"
+    assert runner.controller_register_outcome_source_inventory(
+        database,
+        outcome_access_authorization_id=access["authorization_id"],
+        inventory_path=tmp_path / "inventory.json",
+    )["idempotent"]
     settled = runner.controller_record_and_settle(
         database,
         outcome_access_authorization_id=access["authorization_id"],
+        outcome_source_inventory_receipt_id=inventory["inventory_receipt_id"],
         observation_path=_write_json(tmp_path / "observation.json", _observation(contract)),
         source_verification_path=_write_json(
             tmp_path / "observation-verification.json",
@@ -676,6 +855,7 @@ def test_persistent_runner_separates_preoutcome_and_custodian_phases(tmp_path: P
     )
     assert receipt["chronology"]["prediction"]["prediction_id"] == prediction["prediction_id"]
     assert receipt["chronology"]["outcome_access"]["authorization_id"] == access["authorization_id"]
+    assert receipt["chronology"]["outcome_source_inventory"]["inventory_receipt_id"] == inventory["inventory_receipt_id"]
     assert receipt["settlement"]["status"] == "MATCH"
     serialized = json.dumps(receipt)
     assert "predicted_direction" not in serialized
@@ -725,6 +905,7 @@ def test_runner_requires_stored_access_before_opening_observation_or_source_inpu
         runner.controller_record_and_settle(
             database,
             outcome_access_authorization_id="MHE:ACCESS:DOES-NOT-EXIST",
+            outcome_source_inventory_receipt_id="MHE:INVENTORY:DOES-NOT-EXIST",
             observation_path=tmp_path / "outcome.json",
             source_verification_path=tmp_path / "source-verification.json",
             settlement_id="MHE:SETTLEMENT:SYNTHETIC:V1",
@@ -733,6 +914,181 @@ def test_runner_requires_stored_access_before_opening_observation_or_source_inpu
     assert exc_info.value.code == "outcome_access_not_authorized"
     assert reads == []
     assert verifications == []
+
+
+def _cninfo_bound_contract_chain() -> tuple[dict, dict, dict]:
+    decision = _decision_contract()
+    decision["company_id"] = "CN:600585"
+    decision["issuer_id"] = "ISSUER:CN:600585"
+    contract = _contract(decision)
+    contract["company_id"] = decision["company_id"]
+    contract["issuer_id"] = decision["issuer_id"]
+    evidence = _static_evidence(contract)
+    prediction = _prediction(contract, evidence)
+    return contract, evidence, prediction
+
+
+def _authorized_cninfo_database(tmp_path: Path) -> tuple[Path, dict]:
+    contract, evidence, prediction = _cninfo_bound_contract_chain()
+    database = tmp_path / "cninfo-minimal-episode.db"
+    runner.freeze_preoutcome(
+        database,
+        contract_path=_write_json(tmp_path / "contract.json", contract),
+        evidence_path=_write_json(tmp_path / "evidence.json", evidence),
+        prediction_path=_write_json(tmp_path / "prediction.json", prediction),
+        source_verification_path=_write_json(
+            tmp_path / "evidence-verification.json",
+            _source_verification(
+                evidence["source"],
+                subject_ref={
+                    "object_type": "STATIC_EVIDENCE",
+                    "object_id": evidence["evidence_receipt_id"],
+                    "object_version": evidence["evidence_receipt_version"],
+                },
+            ),
+        ),
+        source_verifier=_synthetic_source_verifier,
+    )
+    access = _access(contract)
+    runner.controller_authorize_outcome(
+        database, access_path=_write_json(tmp_path / "access.json", access),
+    )
+    return database, contract
+
+
+def _cninfo_row(*, title: str = "2021年年度报告", url: str = "finalpage/2022-03-30/SYNTHETIC.PDF") -> dict:
+    return {
+        "secCode": "600585",
+        "orgId": "SYNTHETIC-ORG",
+        "announcementTime": "2022-03-30",
+        "announcementId": "SYNTHETIC-2021-ANNUAL",
+        "announcementTitle": title,
+        "adjunctUrl": url,
+    }
+
+
+def _cninfo_request(records: list[dict]) -> Callable[[dict[str, str]], dict]:
+    def request(_: dict[str, str]) -> dict:
+        return {"totalAnnouncement": len(records), "announcements": deepcopy(records)}
+    return request
+
+
+def test_custodian_acquisition_enumerates_one_contract_bound_static_annual_report(tmp_path: Path) -> None:
+    database, contract = _authorized_cninfo_database(tmp_path)
+    candidate = outcome_acquisition.acquire_cninfo_outcome_source_candidate(
+        str(database),
+        outcome_access_authorization_id="MHE:ACCESS:SYNTHETIC:V1",
+        inventory_receipt_id="MHE:INVENTORY:CNINFO:V1",
+        cninfo_security_code="600585",
+        cninfo_org_id="SYNTHETIC-ORG",
+        begin_date="2022-01-01",
+        end_date="2022-12-31",
+        field_locator=lambda source, _: "FY2021 annual report, PDF p. 38",
+        request=_cninfo_request([_cninfo_row()]),
+    )
+    assert candidate["status"] == "FIELD_READY"
+    assert candidate["source"] == {
+        "source_id": "CNINFO:600585:ANN:20220330:SYNTHETIC-2021-ANNUAL",
+        "source_url": "https://static.cninfo.com.cn/finalpage/2022-03-30/SYNTHETIC.PDF",
+        "source_type": "OFFICIAL_STATIC_FILING",
+        "source_available_at": "2022-03-30",
+        "source_available_precision": "DATE_ONLY",
+        "issuer_id": contract["issuer_id"],
+        "metric_id": contract["metric_id"],
+        "measurement_period_end": contract["outcome_period_end"],
+        "responsibility_boundary": contract["responsibility_boundary"],
+        "unit": contract["unit"],
+        "field_ref": "FY2021 annual report, PDF p. 38",
+    }
+    serialized = json.dumps(candidate)
+    for forbidden in ("numeric_value", "exact_quote", "predicted_direction", "price", "cjo", "learning"):
+        assert forbidden not in serialized
+
+
+@pytest.mark.parametrize(
+    ("records", "locator", "rule"),
+    [
+        ([], None, "NO_UNIQUE_DIRECT_ANNUAL_REPORT"),
+        ([_cninfo_row(), {**_cninfo_row(), "announcementId": "SYNTHETIC-SECOND"}], None, "NO_UNIQUE_DIRECT_ANNUAL_REPORT"),
+        ([_cninfo_row(title="2021年年度报告（修订版）")], None, "ANNUAL_REPORT_REVISION_OR_CORRECTION_UNRESOLVED"),
+        ([_cninfo_row(), {**_cninfo_row(title="2021年年度报告更正后"), "announcementId": "SYNTHETIC-REVISED"}], None, "ANNUAL_REPORT_REVISION_OR_CORRECTION_UNRESOLVED"),
+        ([_cninfo_row(url="announcement/SYNTHETIC.PDF")], None, "ANNUAL_REPORT_NOT_STATIC_FINALPAGE"),
+        ([_cninfo_row(title="2020年年度报告")], None, "NO_UNIQUE_DIRECT_ANNUAL_REPORT"),
+        ([_cninfo_row()], None, "DIRECT_FIELD_PAGE_LOCATOR_UNAVAILABLE"),
+    ],
+)
+def test_custodian_acquisition_returns_value_free_mismatch_for_nonunique_or_unusable_candidates(
+    tmp_path: Path, records: list[dict], locator: object, rule: str,
+) -> None:
+    database, _ = _authorized_cninfo_database(tmp_path)
+    candidate = outcome_acquisition.acquire_cninfo_outcome_source_candidate(
+        str(database),
+        outcome_access_authorization_id="MHE:ACCESS:SYNTHETIC:V1",
+        inventory_receipt_id="MHE:INVENTORY:CNINFO:MISMATCH",
+        cninfo_security_code="600585",
+        cninfo_org_id="SYNTHETIC-ORG",
+        begin_date="2022-01-01",
+        end_date="2022-12-31",
+        field_locator=locator if callable(locator) else None,
+        request=_cninfo_request(records),
+    )
+    assert candidate["status"] == "MEASUREMENT_MISMATCH"
+    assert candidate["mismatch_rule"] == rule
+    assert "source" not in candidate and "numeric_value" not in json.dumps(candidate)
+
+
+def test_custodian_acquisition_does_not_enumerate_before_stored_access(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    enumerated: list[bool] = []
+
+    def forbidden_fetch(**_: object) -> dict:
+        enumerated.append(True)
+        raise AssertionError("CNINFO metadata was touched without access")
+
+    monkeypatch.setattr(outcome_acquisition.phase10, "fetch_cninfo_announcement_records", forbidden_fetch)
+    with pytest.raises(control.MinimalHistoricalEpisodeError) as exc_info:
+        outcome_acquisition.acquire_cninfo_outcome_source_candidate(
+            str(tmp_path / "missing.db"),
+            outcome_access_authorization_id="MHE:ACCESS:MISSING",
+            inventory_receipt_id="MHE:INVENTORY:MISSING",
+            cninfo_security_code="600585",
+            cninfo_org_id="SYNTHETIC-ORG",
+            begin_date="2022-01-01",
+            end_date="2022-12-31",
+        )
+    assert exc_info.value.code == "outcome_access_not_authorized"
+    assert enumerated == []
+
+
+def test_inventory_and_acquisition_interfaces_never_accept_prediction_payloads() -> None:
+    for function in (
+        runner.controller_register_outcome_source_inventory,
+        outcome_acquisition.acquire_cninfo_outcome_source_candidate,
+    ):
+        parameter_names = set(inspect.signature(function).parameters)
+        assert "prediction" not in parameter_names
+        assert "prediction_path" not in parameter_names
+        assert "predicted_direction" not in parameter_names
+
+
+def test_custodian_acquisition_converts_cninfo_metadata_identity_drift_to_mismatch(tmp_path: Path) -> None:
+    database, _ = _authorized_cninfo_database(tmp_path)
+    wrong_identity = _cninfo_row()
+    wrong_identity["secCode"] = "600000"
+    candidate = outcome_acquisition.acquire_cninfo_outcome_source_candidate(
+        str(database),
+        outcome_access_authorization_id="MHE:ACCESS:SYNTHETIC:V1",
+        inventory_receipt_id="MHE:INVENTORY:CNINFO:IDENTITY",
+        cninfo_security_code="600585",
+        cninfo_org_id="SYNTHETIC-ORG",
+        begin_date="2022-01-01",
+        end_date="2022-12-31",
+        field_locator=lambda *_: "PDF p. 38",
+        request=_cninfo_request([wrong_identity]),
+    )
+    assert candidate["status"] == "MEASUREMENT_MISMATCH"
+    assert candidate["mismatch_rule"] == "CNINFO_METADATA_ENUMERATION_INVALID"
 
 
 def test_real_source_verifier_reads_only_declared_pdf_page_and_rejects_other_pages(
@@ -850,12 +1206,19 @@ def test_persistent_runner_rejects_caller_authored_prediction_or_result_fields(
     runner.controller_authorize_outcome(
         database, access_path=_write_json(tmp_path / "access.json", access),
     )
+    inventory = _field_ready_inventory(contract)
+    runner.controller_register_outcome_source_inventory(
+        database,
+        outcome_access_authorization_id=access["authorization_id"],
+        inventory_path=_write_json(tmp_path / "inventory.json", inventory),
+    )
     observation = _observation(contract)
     observation["status"] = "MATCH"
     with pytest.raises(ValueError, match="caller-authored fields"):
         runner.controller_record_and_settle(
             database,
             outcome_access_authorization_id=access["authorization_id"],
+            outcome_source_inventory_receipt_id=inventory["inventory_receipt_id"],
             observation_path=_write_json(tmp_path / "observation.json", observation),
             source_verification_path=_write_json(
                 tmp_path / "observation-verification.json",

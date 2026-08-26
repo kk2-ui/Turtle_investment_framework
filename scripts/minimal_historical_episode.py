@@ -20,6 +20,7 @@ MEASUREMENT_CONTRACT_SCHEMA_VERSION = "turtle-minimal-historical-episode-measure
 STATIC_EVIDENCE_SCHEMA_VERSION = "turtle-minimal-historical-episode-static-evidence.v1"
 PREDICTION_SCHEMA_VERSION = "turtle-minimal-historical-episode-prediction.v1"
 OUTCOME_ACCESS_SCHEMA_VERSION = "turtle-minimal-historical-episode-outcome-access.v1"
+OUTCOME_SOURCE_INVENTORY_SCHEMA_VERSION = "turtle-minimal-historical-episode-outcome-source-inventory.v1"
 OBSERVATION_SCHEMA_VERSION = "turtle-minimal-historical-episode-observation.v1"
 SETTLEMENT_REQUEST_SCHEMA_VERSION = "turtle-minimal-historical-episode-settlement-request.v1"
 SETTLEMENT_SCHEMA_VERSION = "turtle-minimal-historical-episode-settlement.v1"
@@ -31,6 +32,12 @@ NO_METHOD_TRANSFER_RIGHTS = "NO_METHOD_TRANSFER_RIGHTS"
 ALLOWED_OUTPUTS = ["MECHANICAL_SETTLEMENT_ONLY"]
 DECISION_PURPOSE = "ONE_METRIC_DIRECTIONAL_PREDICTION"
 PAGE_REFERENCE = re.compile(r"\bp(?:age)?\.?\s*\d+\b", re.IGNORECASE)
+PAGE_NUMBER_REFERENCE = re.compile(
+    r"(?:\bpdf\s*)?\bp\.?\s*(\d+)\b|\bpage[_\s-]*(\d+)\b",
+    re.IGNORECASE,
+)
+INVENTORY_STATUSES = {"FIELD_READY", "MEASUREMENT_MISMATCH"}
+AVAILABILITY_PRECISIONS = {"DATE_ONLY", "TIMESTAMP"}
 
 _DECISION_REFERENCE_KEYS = {"decision_contract_id", "decision_contract_version"}
 _REFERENCE_KEYS = {"measurement_contract_id", "measurement_contract_version"}
@@ -40,7 +47,11 @@ _SOURCE_KEYS = {
     "source_id", "source_url", "source_type", "published_at", "issuer_id",
     "metric_id", "responsibility_boundary", "unit", "field_ref", "numeric_value",
 }
-_OUTCOME_SOURCE_KEYS = _SOURCE_KEYS - {"published_at"} | {"source_available_at", "measurement_period_end"}
+_OUTCOME_SOURCE_IDENTITY_KEYS = {
+    "source_id", "source_url", "source_type", "source_available_at", "source_available_precision",
+    "issuer_id", "metric_id", "measurement_period_end", "responsibility_boundary", "unit", "field_ref",
+}
+_OUTCOME_SOURCE_KEYS = _OUTCOME_SOURCE_IDENTITY_KEYS | {"numeric_value"}
 _CONTRACT_KEYS = {
     "schema_version", "measurement_contract_id", "measurement_contract_version", "company_id", "issuer_id",
     "cutoff_at", "metric_id", "window_id", "decision_contract_ref", "outcome_period_end", "responsibility_boundary", "unit",
@@ -65,6 +76,14 @@ _PREDICTION_KEYS = {
 _ACCESS_KEYS = {
     "schema_version", "authorization_id", "measurement_contract_ref", "custodian_id", "authorized_at",
     "object_class", "claim_class", "allowed_outputs", "method_transfer_rights",
+}
+_OUTCOME_SOURCE_INVENTORY_COMMON_KEYS = {
+    "schema_version", "inventory_receipt_id", "measurement_contract_ref", "custodian_id", "inventoried_at",
+    "status", "object_class", "claim_class", "allowed_outputs", "method_transfer_rights",
+}
+_OUTCOME_SOURCE_INVENTORY_READY_KEYS = _OUTCOME_SOURCE_INVENTORY_COMMON_KEYS | {"source"}
+_OUTCOME_SOURCE_INVENTORY_MISMATCH_KEYS = _OUTCOME_SOURCE_INVENTORY_COMMON_KEYS | {
+    "mismatch_rule", "mismatch_detail", "checked_source",
 }
 _OBSERVATION_KEYS = {
     "schema_version", "observation_id", "measurement_contract_ref", "company_id", "issuer_id", "cutoff_at",
@@ -226,36 +245,88 @@ def _static_source(
     return source
 
 
-def _outcome_source(value: Any, *, contract: dict[str, Any], path: str, findings: list[str]) -> dict[str, Any]:
-    source = _closed(value, _OUTCOME_SOURCE_KEYS, path, findings)
+def _is_static_cninfo_finalpage_url(value: Any) -> bool:
+    if not _text(value):
+        return False
+    from urllib.parse import urlparse
+
+    parsed = urlparse(str(value))
+    return (
+        parsed.scheme == "https"
+        and parsed.hostname == "static.cninfo.com.cn"
+        and parsed.path.startswith("/finalpage/")
+        and parsed.path.lower().endswith(".pdf")
+        and not parsed.params
+        and not parsed.query
+        and not parsed.fragment
+    )
+
+
+def _one_pdf_page_locator(value: Any, path: str, findings: list[str]) -> None:
+    if not _text(value):
+        return
+    pages = {
+        int(page)
+        for match in PAGE_NUMBER_REFERENCE.finditer(str(value))
+        for page in match.groups()
+        if page is not None
+    }
+    if len(pages) != 1 or next(iter(pages), 0) < 1:
+        findings.append(f"{path}_must_include_one_parseable_pdf_page")
+
+
+def _outcome_source_identity(
+    value: Any, *, contract: dict[str, Any], path: str, findings: list[str],
+    require_contract_match: bool, allow_numeric_value: bool = False,
+) -> dict[str, Any]:
+    source = _closed(
+        value, _OUTCOME_SOURCE_KEYS if allow_numeric_value else _OUTCOME_SOURCE_IDENTITY_KEYS, path, findings,
+    )
     for field in (
         "source_id", "source_url", "issuer_id", "metric_id", "measurement_period_end",
-        "responsibility_boundary", "unit", "field_ref",
+        "responsibility_boundary", "unit", "field_ref", "source_available_precision",
     ):
         _require_text(source, field, path, findings)
     if source.get("source_type") != OFFICIAL_STATIC_FILING:
         findings.append(f"{path}.source_type_must_be_official_static_filing")
-    source_url = source.get("source_url")
-    if _text(source_url) and (not str(source_url).startswith("https://") or not str(source_url).lower().endswith(".pdf")):
-        findings.append(f"{path}.source_url_must_be_https_static_pdf")
-    available_at = _instant(source.get("source_available_at"), f"{path}.source_available_at", findings)
+    if not _is_static_cninfo_finalpage_url(source.get("source_url")):
+        findings.append(f"{path}.source_url_must_be_exact_static_cninfo_finalpage_pdf")
+    precision = source.get("source_available_precision")
+    available_at: datetime | None = None
+    available_date: date | None = None
+    if precision == "TIMESTAMP":
+        available_at = _instant(source.get("source_available_at"), f"{path}.source_available_at", findings)
+        if available_at is not None:
+            available_date = available_at.date()
+    elif precision == "DATE_ONLY":
+        available_date = _date(source.get("source_available_at"), f"{path}.source_available_at", findings)
+    else:
+        findings.append(f"{path}.source_available_precision_invalid")
     _date(source.get("measurement_period_end"), f"{path}.measurement_period_end", findings)
     cutoff = _instant(contract.get("cutoff_at"), "measurement_contract.cutoff_at", findings)
     outcome_period_end = _date(contract.get("outcome_period_end"), "measurement_contract.outcome_period_end", findings)
     if available_at and cutoff and available_at <= cutoff:
         findings.append(f"{path}.source_available_at_must_follow_cutoff")
-    if available_at and outcome_period_end and available_at.date() <= outcome_period_end:
+    if available_date and cutoff and available_date <= cutoff.date():
+        findings.append(f"{path}.source_available_at_must_follow_cutoff")
+    if available_date and outcome_period_end and available_date <= outcome_period_end:
         findings.append(f"{path}.source_available_at_must_follow_outcome_period_end")
-    if source.get("issuer_id") != contract.get("issuer_id"):
-        findings.append(f"{path}.issuer_id_must_match_measurement_contract")
-    if source.get("measurement_period_end") != contract.get("outcome_period_end"):
-        findings.append(f"{path}.measurement_period_end_must_match_measurement_contract_outcome_period_end")
-    for field in ("metric_id", "responsibility_boundary", "unit"):
-        if source.get(field) != contract.get(field):
-            findings.append(f"{path}.{field}_must_match_measurement_contract")
-    field_ref = source.get("field_ref")
-    if _text(field_ref) and not PAGE_REFERENCE.search(str(field_ref)):
-        findings.append(f"{path}.field_ref_must_include_pdf_page")
+    if require_contract_match:
+        if source.get("issuer_id") != contract.get("issuer_id"):
+            findings.append(f"{path}.issuer_id_must_match_measurement_contract")
+        if source.get("measurement_period_end") != contract.get("outcome_period_end"):
+            findings.append(f"{path}.measurement_period_end_must_match_measurement_contract_outcome_period_end")
+        for field in ("metric_id", "responsibility_boundary", "unit"):
+            if source.get(field) != contract.get(field):
+                findings.append(f"{path}.{field}_must_match_measurement_contract")
+    _one_pdf_page_locator(source.get("field_ref"), f"{path}.field_ref", findings)
+    return source
+
+
+def _outcome_source(value: Any, *, contract: dict[str, Any], path: str, findings: list[str]) -> dict[str, Any]:
+    source = _outcome_source_identity(
+        value, contract=contract, path=path, findings=findings, require_contract_match=True, allow_numeric_value=True,
+    )
     _numeric(source.get("numeric_value"), f"{path}.numeric_value", findings)
     return source
 
@@ -449,7 +520,92 @@ def validate_outcome_access(authorization: Any, *, measurement_contract: Any) ->
     return _result(findings, outcome_access=deepcopy(item) if not findings else None)
 
 
-def validate_observation(observation: Any, *, measurement_contract: Any) -> dict[str, Any]:
+def validate_outcome_source_inventory(
+    inventory: Any, *, measurement_contract: Any,
+) -> dict[str, Any]:
+    """Validate a value-free, custodian-only source readiness receipt.
+
+    A FIELD_READY receipt identifies exactly one direct official source before
+    any value or quote is permitted.  A MEASUREMENT_MISMATCH receipt records
+    why no direct field can be observed without inventing a label.
+    """
+    findings: list[str] = []
+    item = _mapping(inventory)
+    if not isinstance(inventory, dict):
+        findings.append("outcome_source_inventory_must_be_object")
+    status = item.get("status")
+    allowed = (
+        _OUTCOME_SOURCE_INVENTORY_READY_KEYS
+        if status == "FIELD_READY"
+        else _OUTCOME_SOURCE_INVENTORY_MISMATCH_KEYS
+        if status == "MEASUREMENT_MISMATCH"
+        else _OUTCOME_SOURCE_INVENTORY_COMMON_KEYS
+    )
+    for field in sorted(set(item).difference(allowed)):
+        findings.append(f"outcome_source_inventory_contains_unapproved_field:{field}")
+    for field in sorted(_OUTCOME_SOURCE_INVENTORY_COMMON_KEYS.difference(item)):
+        findings.append(f"outcome_source_inventory_missing_required_field:{field}")
+    contract_result = validate_measurement_contract(measurement_contract)
+    findings.extend(f"outcome_source_inventory.measurement_contract:{finding}" for finding in contract_result["findings"])
+    contract = _mapping(contract_result.get("measurement_contract"))
+    if item.get("schema_version") != OUTCOME_SOURCE_INVENTORY_SCHEMA_VERSION:
+        findings.append("outcome_source_inventory.schema_version_invalid")
+    _require_text(item, "inventory_receipt_id", "outcome_source_inventory", findings)
+    reference = _measurement_reference(
+        item.get("measurement_contract_ref"), "outcome_source_inventory.measurement_contract_ref", findings,
+    )
+    if reference != {
+        "measurement_contract_id": contract.get("measurement_contract_id"),
+        "measurement_contract_version": contract.get("measurement_contract_version"),
+    }:
+        findings.append("outcome_source_inventory.measurement_contract_ref_must_match_contract")
+    if item.get("custodian_id") != _mapping(contract.get("roles")).get("custodian_id"):
+        findings.append("outcome_source_inventory.custodian_id_must_match_measurement_contract")
+    _instant(item.get("inventoried_at"), "outcome_source_inventory.inventoried_at", findings)
+    if status not in INVENTORY_STATUSES:
+        findings.append("outcome_source_inventory.status_invalid")
+    elif status == "FIELD_READY":
+        if "source" not in item:
+            findings.append("outcome_source_inventory.source_required_for_field_ready")
+        _outcome_source_identity(
+            item.get("source"), contract=contract, path="outcome_source_inventory.source", findings=findings,
+            require_contract_match=True,
+        )
+    else:
+        _require_text(item, "mismatch_rule", "outcome_source_inventory", findings)
+        _require_text(item, "mismatch_detail", "outcome_source_inventory", findings)
+        if "checked_source" in item:
+            _outcome_source_identity(
+                item.get("checked_source"), contract=contract,
+                path="outcome_source_inventory.checked_source", findings=findings,
+                require_contract_match=False,
+            )
+    if item.get("object_class") != "MINIMAL_HISTORICAL_OUTCOME_SOURCE_INVENTORY_RECEIPT":
+        findings.append("outcome_source_inventory.object_class_invalid")
+    if item.get("claim_class") != "CUSTODIAN_VALUE_FREE_SOURCE_READINESS":
+        findings.append("outcome_source_inventory.claim_class_invalid")
+    _fixed_permissions(item, "outcome_source_inventory", findings)
+    return _result(findings, outcome_source_inventory=deepcopy(item) if not findings else None)
+
+
+def _observation_matches_field_ready_inventory(
+    source: dict[str, Any], inventory: dict[str, Any], findings: list[str],
+) -> None:
+    if inventory.get("status") != "FIELD_READY":
+        findings.append("observation.outcome_source_inventory_must_be_field_ready")
+        return
+    inventory_source = _mapping(inventory.get("source"))
+    for field in (
+        "source_id", "source_url", "source_available_at", "source_available_precision", "issuer_id",
+        "metric_id", "measurement_period_end", "responsibility_boundary", "unit", "field_ref",
+    ):
+        if source.get(field) != inventory_source.get(field):
+            findings.append(f"observation.source.{field}_must_match_field_ready_inventory")
+
+
+def validate_observation(
+    observation: Any, *, measurement_contract: Any, outcome_source_inventory: Any,
+) -> dict[str, Any]:
     """Validate one custodian-only post-cutoff metric observation."""
     findings: list[str] = []
     item = _closed(observation, _OBSERVATION_KEYS, "observation", findings)
@@ -473,9 +629,21 @@ def validate_observation(observation: Any, *, measurement_contract: Any) -> dict
         findings.append("observation.custodian_id_must_match_measurement_contract")
     observed_at = _instant(item.get("observed_at"), "observation.observed_at", findings)
     source = _outcome_source(item.get("source"), contract=contract, path="observation.source", findings=findings)
-    source_at = _instant(source.get("source_available_at"), "observation.source.source_available_at", findings)
-    if observed_at and source_at and source_at > observed_at:
-        findings.append("observation.source_cannot_follow_observation_receipt")
+    inventory_result = validate_outcome_source_inventory(
+        outcome_source_inventory, measurement_contract=contract,
+    )
+    findings.extend(f"observation.outcome_source_inventory:{finding}" for finding in inventory_result["findings"])
+    inventory = _mapping(inventory_result.get("outcome_source_inventory"))
+    if inventory:
+        _observation_matches_field_ready_inventory(source, inventory, findings)
+    if source.get("source_available_precision") == "DATE_ONLY":
+        source_date = _date(source.get("source_available_at"), "observation.source.source_available_at", findings)
+        if observed_at and source_date and source_date > observed_at.date():
+            findings.append("observation.source_cannot_follow_observation_receipt")
+    elif source.get("source_available_precision") == "TIMESTAMP":
+        source_at = _instant(source.get("source_available_at"), "observation.source.source_available_at", findings)
+        if observed_at and source_at and source_at > observed_at:
+            findings.append("observation.source_cannot_follow_observation_receipt")
     if item.get("object_class") != "MINIMAL_HISTORICAL_OUTCOME_OBSERVATION":
         findings.append("observation.object_class_invalid")
     if item.get("claim_class") != "CUSTODIAN_OBSERVED_OFFICIAL_FIELD":
@@ -513,6 +681,7 @@ def validate_settlement_request(request: Any, *, measurement_contract: Any) -> d
 
 def mechanical_settlement(
     request: Any, *, measurement_contract: Any, static_evidence: Any, prediction: Any, observation: Any,
+    outcome_source_inventory: Any,
 ) -> dict[str, Any]:
     """Derive MATCH/MISS from stored numeric values; caller supplies no result."""
     findings: list[str] = []
@@ -525,7 +694,9 @@ def mechanical_settlement(
     findings.extend(f"settlement.static_evidence:{finding}" for finding in evidence_result["findings"])
     prediction_result = validate_prediction(prediction, measurement_contract=contract, static_evidence=static_evidence)
     findings.extend(f"settlement.prediction:{finding}" for finding in prediction_result["findings"])
-    observation_result = validate_observation(observation, measurement_contract=contract)
+    observation_result = validate_observation(
+        observation, measurement_contract=contract, outcome_source_inventory=outcome_source_inventory,
+    )
     findings.extend(f"settlement.observation:{finding}" for finding in observation_result["findings"])
     if findings:
         return _result(findings, settlement=None)

@@ -21,6 +21,7 @@ one frozen Decision Contract
   -> one static official pre-cutoff field
   -> one directional prediction
   -> independent custodian contract-only access
+  -> value-free OutcomeSourceInventoryReceipt
   -> one official outcome observation
   -> one mechanical MATCH / MISS settlement
 ```
@@ -60,12 +61,27 @@ baseline/evidence/prediction/observation internally and emits only a bound
 `MATCH` or `MISS` result with technical object identities.
 
 The persistent outcome runner requires the already-stored
-`outcome_access_authorization_id` before it opens either an observation JSON or
-its source-verification input. It first resolves that authorization's contract
-and custodian identity from the controller database, then rejects an observation
-whose contract or custodian differs before any PDF retrieval. A missing or
-unknown authorization raises `outcome_access_not_authorized`; it cannot be used
-to probe an outcome source.
+`outcome_access_authorization_id` before it opens any outcome-candidate,
+observation JSON, or source-verification input. After that authorization, an
+independent custodian must append one closed, value-free
+`OutcomeSourceInventoryReceipt`. `FIELD_READY` names exactly one direct
+official `static.cninfo.com.cn/finalpage` annual-report PDF, its declared
+availability precision and one physical page locator; it contains no numeric
+value, quote, label, prediction, price, CJO, report, or learning payload.
+`MEASUREMENT_MISMATCH` records only the applicable mapping rule and detail and
+blocks observation and settlement. The receipt is append-only, contract- and
+custodian-bound, and controller-timed. An observation must reproduce every
+frozen source identity field and page locator before the later official PDF
+verifier is allowed to inspect its numeric field.
+
+`scripts/minimal_historical_outcome_acquisition.py` is the corresponding
+custodian-only metadata adapter for future objects. It uses the existing
+bounded Phase10 CNINFO enumerator after stored access, accepts only one direct
+outcome-period `ANNUAL_REPORT` with an exact static-finalpage URL, and otherwise
+emits the value-free mismatch candidate. Any PDF/page-reader work remains
+custodian-temporary; the runner's post-inventory verifier continues to be the
+only numeric/quote gate. This is additive for new minimal objects and does not
+rewrite existing episodes.
 
 Official static CNINFO source verification is page-bound. `source.field_ref`
 must declare exactly one positive physical PDF page (for example `PDF p. 21`
@@ -94,6 +110,7 @@ claim is produced.
 - JSON schema: `schemas/minimal_historical_episode.schema.json`
 - Synthetic acceptance tests: `tests/test_minimal_historical_episode.py`
 - Controller-owned persistent runner: `scripts/minimal_historical_episode_runner.py`
+- Custodian-only bounded source metadata adapter: `scripts/minimal_historical_outcome_acquisition.py`
 
 Synthetic tests use in-memory and temporary on-disk SQLite plus `.invalid`
 URLs. They cover the Decision Contract-first identity/role/replay controls
