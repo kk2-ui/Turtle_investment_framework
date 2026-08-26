@@ -1,0 +1,32 @@
+{
+  "schema_version": "static-pre-outcome-curator-field-submission.v1",
+  "submission_class": "JSON_CURATOR_FIELD_SUBMISSION",
+  "curator_identity": {
+    "curator_id": "CURATOR:CN600802:STATIC:20260826",
+    "role": "INDEPENDENT_PRE_OUTCOME_STATIC_CURATOR"
+  },
+  "cutoff_at": "2018-04-30T23:59:59+08:00",
+  "source": {
+    "source_id": "CNINFO:600802:ANN:20180417:1204639756",
+    "source_url": "https://static.cninfo.com.cn/finalpage/2018-04-17/1204639756.PDF",
+    "published_at": "2018-04-17",
+    "issuer_id": "ISSUER:CN:600802",
+    "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600802",
+    "perimeter_id": "LISTED_CONSOLIDATED_ISSUER"
+  },
+  "baseline_field": {
+    "period_end": "2017-12-31",
+    "metric_id": "CEMENT_AND_CLINKER_SALES_VOLUME_TONNES",
+    "unit": "tonnes",
+    "field_ref": "FY2017 Fujian Cement annual report PDF p11: \"实现商品销售 754.24 万吨\".",
+    "page": 11,
+    "numeric_value": 7542400
+  },
+  "permissions": {
+    "pre_outcome_only": true,
+    "forecast_authoring_permitted": false,
+    "allowed_outputs": [
+      "CURATED_CUTOFF_BASELINE_FIELD"
+    ]
+  }
+}
