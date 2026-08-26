@@ -10,7 +10,9 @@
     {"$ref": "#/$defs/outcome_access"},
     {"$ref": "#/$defs/observation"},
     {"$ref": "#/$defs/settlement_request"},
-    {"$ref": "#/$defs/settlement"}
+    {"$ref": "#/$defs/settlement"},
+    {"$ref": "#/$defs/source_verification_input"},
+    {"$ref": "#/$defs/official_source_receipt"}
   ],
   "$defs": {
     "nonempty": {"type": "string", "minLength": 1},
@@ -75,6 +77,48 @@
       "type": "object",
       "required": ["allowed_outputs", "method_transfer_rights"],
       "properties": {
+        "allowed_outputs": {"const": ["MECHANICAL_SETTLEMENT_ONLY"]},
+        "method_transfer_rights": {"const": "NO_METHOD_TRANSFER_RIGHTS"}
+      }
+    },
+    "source_verification_subject": {
+      "type": "object", "additionalProperties": false,
+      "required": ["object_type", "object_id"],
+      "properties": {
+        "object_type": {"enum": ["STATIC_EVIDENCE", "OUTCOME_OBSERVATION"]},
+        "object_id": {"$ref": "#/$defs/nonempty"},
+        "object_version": {"type": "integer", "minimum": 1}
+      }
+    },
+    "source_verification_input": {
+      "type": "object", "additionalProperties": false,
+      "required": ["schema_version", "subject_ref", "source_id", "source_url", "exact_quote", "numeric_value", "unit", "allowed_outputs", "method_transfer_rights"],
+      "properties": {
+        "schema_version": {"const": "turtle-minimal-historical-episode-source-verification-input.v1"},
+        "subject_ref": {"$ref": "#/$defs/source_verification_subject"},
+        "source_id": {"$ref": "#/$defs/nonempty"},
+        "source_url": {"type": "string", "pattern": "^https://static\\.cninfo\\.com\\.cn/finalpage/.+\\.pdf$"},
+        "exact_quote": {"$ref": "#/$defs/nonempty"},
+        "numeric_value": {"type": "number"},
+        "unit": {"const": "tonnes"},
+        "allowed_outputs": {"const": ["MECHANICAL_SETTLEMENT_ONLY"]},
+        "method_transfer_rights": {"const": "NO_METHOD_TRANSFER_RIGHTS"}
+      }
+    },
+    "official_source_receipt": {
+      "type": "object", "additionalProperties": false,
+      "required": ["schema_version", "verification_state", "retrieved_at", "subject_ref", "source_id", "source_url", "field_ref", "exact_quote", "numeric_value", "unit", "allowed_outputs", "method_transfer_rights"],
+      "properties": {
+        "schema_version": {"const": "turtle-minimal-historical-episode-official-source-receipt.v1"},
+        "verification_state": {"const": "OPENED_OFFICIAL_PDF_FIELD_MATCHED"},
+        "retrieved_at": {"type": "string", "format": "date-time"},
+        "subject_ref": {"$ref": "#/$defs/source_verification_subject"},
+        "source_id": {"$ref": "#/$defs/nonempty"},
+        "source_url": {"type": "string", "pattern": "^https://static\\.cninfo\\.com\\.cn/finalpage/.+\\.pdf$"},
+        "field_ref": {"$ref": "#/$defs/nonempty"},
+        "exact_quote": {"$ref": "#/$defs/nonempty"},
+        "numeric_value": {"type": "number"},
+        "unit": {"const": "tonnes"},
         "allowed_outputs": {"const": ["MECHANICAL_SETTLEMENT_ONLY"]},
         "method_transfer_rights": {"const": "NO_METHOD_TRANSFER_RIGHTS"}
       }

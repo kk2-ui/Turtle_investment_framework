@@ -1,0 +1,59 @@
+{
+  "schema_version": "turtle-minimal-historical-episode-acceptance.v1",
+  "acceptance_state": "PENDING_FINAL_INDEPENDENT_REVIEW",
+  "measurement_contract_ref": {
+    "measurement_contract_id": "MHE:CN600585:FY2018:CEMENT_AND_CLINKER_SALES_VOLUME_TONNES:V1",
+    "measurement_contract_version": 1
+  },
+  "preoutcome_checkpoint": {
+    "git_commit": "cbd0aa03c715c49d6e97a2df657088c3b41af3e3",
+    "state": "CONTRACT_EVIDENCE_AND_PREDICTION_FROZEN_BEFORE_CUSTODIAN_TASK"
+  },
+  "custody_execution": {
+    "custodian_id": "CUSTODIAN:MINIMAL_HISTORICAL:CN600585:20260826",
+    "agent_task": "/root/minimal_episode_custodian",
+    "visible_inputs": [
+      "CN600585_FY2018_MINIMAL_HISTORICAL_EPISODE_MEASUREMENT_CONTRACT.json",
+      "CN600585_FY2018_MINIMAL_HISTORICAL_EPISODE_OUTCOME_ACCESS.json",
+      "minimal_historical_episode.schema.json"
+    ],
+    "prohibited_inputs": [
+      "PREDICTION",
+      "SEALED_SQLITE_DATABASE",
+      "V4_V5_V6",
+      "TRAINING_LEARNING_HOLDOUT",
+      "PRICE_VALUATION_REPORT"
+    ],
+    "returned_object": "CN600585_FY2018_MINIMAL_HISTORICAL_EPISODE_OUTCOME_OBSERVATION.json"
+  },
+  "official_source_receipts": [
+    "CN600585_FY2017_MINIMAL_HISTORICAL_EPISODE_OFFICIAL_SOURCE_RECEIPT.json",
+    "CN600585_FY2018_MINIMAL_HISTORICAL_EPISODE_OFFICIAL_SOURCE_RECEIPT.json"
+  ],
+  "persistent_runtime": {
+    "database_class": "ISOLATED_SQLITE_APPEND_ONLY_NAMESPACE",
+    "repository_policy": "RUNTIME_DATABASE_IGNORED; AUDITABLE_JSON_RECEIPTS_COMMITTED",
+    "runtime_receipt": "CN600585_FY2018_MINIMAL_HISTORICAL_EPISODE_RUNTIME_RECEIPT.json"
+  },
+  "mechanical_settlement": {
+    "settlement_id": "MHE:SETTLEMENT:CN600585:FY2018:CEMENT_AND_CLINKER_SALES_VOLUME_TONNES:V1",
+    "status": "MATCH",
+    "caller_authored_result": false
+  },
+  "allowed_outputs": [
+    "MECHANICAL_SETTLEMENT_ONLY"
+  ],
+  "method_transfer_rights": "NO_METHOD_TRANSFER_RIGHTS",
+  "explicit_non_authorizations": [
+    "NO_LEARNING_TRANSFER",
+    "NO_FORECAST_V6_AUTHORIZATION",
+    "NO_METHOD_PAIRING_OR_HOLDOUT_CLAIM",
+    "NO_CJO_OR_VALUATION_HANDOFF",
+    "NO_REPORT_OR_TRADING_AUTHORIZATION"
+  ],
+  "review": {
+    "reviewer_id": null,
+    "reviewed_at": null,
+    "decision": "PENDING"
+  }
+}

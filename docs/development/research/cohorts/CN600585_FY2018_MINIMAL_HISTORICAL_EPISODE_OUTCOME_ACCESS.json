@@ -1,0 +1,16 @@
+{
+  "schema_version": "turtle-minimal-historical-episode-outcome-access.v1",
+  "authorization_id": "MHE:ACCESS:CN600585:FY2018:CEMENT_AND_CLINKER_SALES_VOLUME_TONNES:V1",
+  "measurement_contract_ref": {
+    "measurement_contract_id": "MHE:CN600585:FY2018:CEMENT_AND_CLINKER_SALES_VOLUME_TONNES:V1",
+    "measurement_contract_version": 1
+  },
+  "custodian_id": "CUSTODIAN:MINIMAL_HISTORICAL:CN600585:20260826",
+  "authorized_at": "2026-08-26T03:14:54Z",
+  "object_class": "MINIMAL_HISTORICAL_OUTCOME_ACCESS",
+  "claim_class": "CUSTODIAN_CONTRACT_ONLY_ACCESS",
+  "allowed_outputs": [
+    "MECHANICAL_SETTLEMENT_ONLY"
+  ],
+  "method_transfer_rights": "NO_METHOD_TRANSFER_RIGHTS"
+}
