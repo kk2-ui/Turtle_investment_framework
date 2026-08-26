@@ -1,12 +1,59 @@
 # Turtle 企业判断与训练系统顶层架构
 
-> 状态：`TOP_LEVEL_DESIGN_DECISION / FORECAST_LEARNING_CONTROL_IMPLEMENTED / DECISION_CONTRACT_GATE_IMPLEMENTED / CJO_TEACHING_MIRROR_VALIDATED / CJO_VALUATION_SETTLEMENT_VALIDATED / DECISION_UTILITY_PAIRING_VALIDATED / CONTRACT_FIRST_PROSPECTIVE_SHADOW_GATE_VALIDATED`
+> 状态：`TOP_LEVEL_DESIGN_DECISION_V2 / MULTI_DIMENSIONAL_ENTERPRISE_EPISODE_DESIGNED / FORECAST_LEARNING_CONTROL_IMPLEMENTED / DECISION_CONTRACT_GATE_IMPLEMENTED / CJO_TEACHING_MIRROR_VALIDATED / CJO_VALUATION_SETTLEMENT_VALIDATED / DECISION_UTILITY_PAIRING_VALIDATED / CONTRACT_FIRST_PROSPECTIVE_SHADOW_GATE_VALIDATED`
 >
-> 日期：2026-08-25
+> 日期：2026-08-26
 >
 > 本文裁决顶层目标、系统边界、学习闭环和路线优先级。现有 Forecast epoch、H1/H2/V5、schema、validator 和控制面仍由各自实施文档管理。2026-08-25 已按用户授权完成 C（Forecast Learning 与逐层错误归因）、D 的 contract-first CJO teaching mirror，及 E 的 synthetic valuation/return settlement：经营兑现、owner-cash valuation identity 和市场回报已各自结算且不回写 CJO。它们不创建 canonical CJO、不读取真实结果，也不授予 report 或投资动作；决策效用、真实独立结算和前瞻验证仍须独立工作包和验收，不能提前宣称已闭环。
 
 > 已新增一条 synthetic 顶层整合回归：`DecisionContract → Forecast V2 → contract-first prospective shadow`、teaching-only CJO mirror、investment-only valuation settlement 与 candidate-only decision-utility evaluation 必须保持单向权限。它通过不代表全仓回归已恢复：当前全量 pytest 另被缺失的 `prompts/coordinator.md` 和未冻结的香港 risk-free-rate fixture 阻断，均不属于上述 Turtle contract 的修改面。
+
+## 0. V2 重构裁决：从“训练轨道”回到“企业判断对象”
+
+上一版设计已经正确解决了 PIT、防结果泄漏、生命周期、结果隔离和 Comparative 的因果识别边界，但仍有一个顶层缺口：实践中容易把 `PIT Company State Forecast` 或 `V5 Comparative Episode` 当成训练的主要入口。这样会产生两个相反问题：
+
+1. 第一条训练样本被要求同时具备完整因果比较、同行、D3/D4 和现金结算，准入过重；
+2. 公司经营被压缩成单公司、单指标或单一行动，无法承载客户、竞争、组织、资本配置和永久损失的共同判断。
+
+V2 的核心对象改为：
+
+> **`EnterpriseJudgmentEpisode = company × cutoff × enterprise state × decision sequence × mechanism threads × outcome vector`**
+
+它不是第四张图，也不是替换现有 schema 的新数据库真源，而是对现有 `EnterpriseSystemModel`、`ManagementDecisionLedger`、Evidence/Mechanism/Investment Graph 和各类合同的**组合读模型**。一个 episode 可以有完整的公司全景、多个机制线程和多个结果单元；每个线程和结果单元拥有自己的证据上限与结算状态，不再用一个总门把整家公司压成 `PASS/FAIL`。
+
+### 0.1 三个必须同时成立的设计原则
+
+**企业判断是多维的。** 训练对象至少要能描述商业模式、客户与竞争、经营活动、组织能力、资本占用、现金可达性、管理层决策和永久损失边界。缺一个字段只能限制相应主张，不能抹掉其他已成立的判断。
+
+**因果验证是局部的。** Comparative 是验证某条关键机制的低频实验室，不是认识整家公司的总入口。它需要 target trial 式的 eligibility、time zero、intervention、comparator、outcome、follow-up、censoring、interference 和 estimand，但这些条件只对 `RELATIVE_CAUSAL` 主张生效。
+
+**投资授权是逐步的。** 全景重建可以先形成 `TEACHING / RESEARCH_AGENDA`；窄机制可以形成 `MECHANISM_CANDIDATE`；只有跨公司迁移、留出和决策效用验证后，才可进入 CJO、估值、报告或买点。低层证据不因不完整而作废，高层权限也不因叙事完整而自动获得。
+
+### 0.2 V2 对现有轨道的重新定位
+
+| 现有对象/轨道 | V2 中的职责 | 不再承担的职责 |
+|---|---|---|
+| Industry / Lifecycle | 建立公司 × cutoff 的风险集合、行业结构、进入退出和永久损失路径 | 不再等待 Comparative 才能产生训练价值 |
+| Teaching / Boundary | 训练状态重建、管理决策、反方、测量边界和失败模式 | 不再被误报为选择能力或方向性 learning |
+| PIT Company State Forecast | 对企业状态向量做概率、区间和弃权校准 | 不再代表完整企业判断，也不直接生成 CJO |
+| Mechanism Probe | 对一个经营传导线程做过程和结果检查 | 不要求先凑完整同行 panel |
+| Comparative / V5 | 在确有相对因果主张时冻结反事实和结果 | 不再是全系统的第一入口 |
+| Learning Transfer | 把已诊断错误变成下一家公司冻结前的字段变化 | 不再把整家公司结论复制到下一家公司 |
+| Investment Overlay | 读取冻结 CJO，传播到正常利润、owner cash、价值和价格 | 不得用价格结果回写企业事实 |
+
+### 0.3 “完整”不等于“所有维度都硬结算”
+
+每个 `EnterpriseJudgmentEpisode` 必须维护四种不同状态：
+
+```text
+OBSERVED         cutoff 前或结果后有同边界直接证据
+INFERRED         有明确关系和来源，但仍不是直接观测
+UNKNOWN          当前证据不足，下一步可继续研究或保守处理
+EVIDENCE_INELIGIBLE  来源/口径不允许进入该判断单元
+NOT_APPLICABLE   该公司、时期或问题不适用
+```
+
+`UNKNOWN` 和 `EVIDENCE_INELIGIBLE` 只阻断依赖它们的 claim；不会把公司全景、其他机制线程或行业史一起标成无效。相反，`MEASUREMENT_MISMATCH` 不得被解释成经营失败，`MIXED` 不得被压成支持或反对。这样既不会为凑样本放松证据，也不会因为一项指标缺失而丢掉公司的其他训练价值。
 
 ## 1. 总裁决
 
@@ -102,6 +149,61 @@ CJO 是指定 cutoff 下企业判断的冻结快照。经营判断必须单向�
 6. 冻结经营判断怎样进入正常利润、owner cash、预期差和买点。
 
 一个任务可以使用多种 episode；一个 episode 也可以训练多个任务。公司消失、没有明确行动公告或 comparator 不足，都不再使该公司失去训练价值。
+
+### 3.1 EnterpriseJudgmentEpisode：一个公司判断，多个证据线程
+
+训练对象的最小综合单位不再是“公司 × 一个指标”，也不要求“公司 × 一个行动”承担整家公司结论。`EnterpriseJudgmentEpisode` 由以下部分组成：
+
+```text
+EnterpriseContextSnapshot
+  + OperatingSystemModel
+  + ManagementDecisionLedgerSlice
+  + JudgmentQuestionSet
+  + EvidenceCoverageMatrix
+  + MechanismThread[]
+  + ForecastBundle (optional)
+  + OutcomeVector[] (cell-level)
+  + ResolutionAndLearning
+```
+
+其中：
+
+- `EnterpriseContextSnapshot` 描述 cutoff 时的商业模式、客户、竞争经济体、生命周期、责任边界和资本结构；
+- `OperatingSystemModel` 保留 2--3 条最重要的客户、经营、竞争、现金和资本反馈回路，不建立与事实脱节的大型仿真；
+- `ManagementDecisionLedgerSlice` 记录当时的问题、可行替代、不作为选项、资源承诺、执行、适应和资本配置；
+- `JudgmentQuestionSet` 通常包含 3--5 个公司级问题，其中只有 1 个是本轮 primary question，其余是支持性问题或未知边界；
+- `MechanismThread` 是一条可检验的局部传导，例如“渠道重构 → 回款质量 → 经营现金”，每条线程有自己的 H-A/H-B、证据上限和观察时钟；
+- `OutcomeVector` 将客户、运营、竞争、现金、资本回报、杠杆和永久损失拆成独立结算单元，不生成无意义的总分；
+- `ResolutionAndLearning` 记录哪些判断得到支持、被削弱、无法诊断，以及下一家公司具体改变了什么。
+
+这使系统同时保留**公司全景**和**局部可证伪性**：公司可以在多个维度形成有边界的判断，但只有某条线程真正具备比较和结果合同，才获得相应的因果权限。单项 `UNKNOWN` 不得把整个 episode 降成 `NO_PRIMARY`；同样，多项局部支持也不得自动升级为“管理层优秀”或“企业整体高质量”。
+
+### 3.2 四级准入：证据深度逐步增加，而不是一票否决
+
+| 层级 | 研究问题 | 最小条件 | 允许产物 | 禁止升级 |
+|---|---|---|---|---|
+| `E0_CONTEXT` | 当时公司和行业是什么状态？ | cutoff、身份、来源时间角色 | 行业史、生命周期、企业画像、研究议程 | 经营效果、选择方法 |
+| `E1_RECONSTRUCTION` | 公司如何赚钱、竞争、占用资本？ | 责任边界、经营系统图、决策账本、关键未知 | 多维企业判断练习、Teaching/CJO mirror | 因果归因、方法迁移 |
+| `E2_MECHANISM_PROBE` | 一个关键行动或机制是否沿预写箭头传导？ | 行动/状态、H-A/H-B、至少一个可结算中介或终局结果 | 窄机制结算、边界 learning candidate | 整家公司因果结论 |
+| `E3_COMPARATIVE_LAB` | 相对反方或同行是否更好？ | 仅针对该 estimand 的 target-trial 条件、独立结果和公平基线 | 方向性 Comparative candidate | 自动方法冻结、CJO、买点 |
+| `E4_TRANSFER_AND_UTILITY` | 这条学习是否改善下一家公司和投资决策？ | 不同公司应用、公司/时间 holdout、决策效用 A/B | 方法候选、有限报告授权 | 以单案证明普遍能力 |
+
+`E0/E1` 不需要等 H2 或完整同行；`E2` 只需为一个机制线程补齐相称证据；`E3` 才启用 V5 的严格 panel 和结果防火墙；`E4` 才讨论方法发布和报告消费。这个层级解决“第一个样本太严格”和“训练判断太单一”两个问题，但不放松 PIT 或结果隔离。
+
+### 3.3 同一 episode 的六种训练视图
+
+同一份冻结 episode 可以投影成不同训练视图，视图不复制经济事实，也不改变权限：
+
+| 视图 | 训练对象 | 主要输出 |
+|---|---|---|
+| `STATE_VIEW` | 行业/生命周期/企业重建 | 当时的公司状态、进入退出、关键约束 |
+| `DECISION_VIEW` | 管理层与经营者训练 | 可选方案、资源承诺、执行、适应和停止条件 |
+| `MECHANISM_VIEW` | 机制线程/Teaching | H-A/H-B、反方、证据鉴别力、边界 |
+| `FORECAST_VIEW` | 状态预测/轨迹参照 | 概率、区间、弃权、校准和 coverage |
+| `COMPARATIVE_VIEW` | V5/因果实验室 | 单个 estimand 的相对结算 |
+| `INVESTMENT_VIEW` | CJO/估值/买点 | 只有冻结 CJO 后的正常利润、owner cash、预期差和条件 BuyBand |
+
+视图之间只沿权限方向流动。`STATE_VIEW` 可以产生研究问题，不能产生当前公司事实；`FORECAST_VIEW` 可以产生校准 policy，不能产生因果箭头；`COMPARATIVE_VIEW` 可以产生局部机制 candidate，不能跳过 transfer；`INVESTMENT_VIEW` 不能把价格结果反写到前面的状态或机制。
 
 ## 4. 三种速度的训练与一种最终验证
 
@@ -210,7 +312,9 @@ training-enhanced research
 
 ### 8.1 Episode
 
-主训练单位是 `公司 x cutoff x 判断任务 x 时域`。`DecisionEpisode` 只保留为行动因果研究对象，不再定义全系统训练。
+主训练单位是 `EnterpriseJudgmentEpisode = 公司 x cutoff x 企业状态 x 决策序列 x 机制线程 x 结果向量`。它是现有 canonical artifacts 的组合读模型，不新增第四张图；`DecisionEpisode` 只保留为其中一条 `MechanismThread` 的行动因果研究对象。
+
+因此，一个公司可以在同一个 cutoff 形成多维的企业重建，同时只有一条线程进入 `Comparative`；一个结果指标无法结算，也只影响对应 `OutcomeCell`，不会抹掉其他已具备证据的判断。实现上应优先提供 `episode_manifest`/read model 和 cell-level status，不应先建立全局综合评分。
 
 ### 8.2 Graph
 
@@ -264,6 +368,21 @@ judgment -> investment consequence
 
 `Causal Action Lab` 与 B--G 并行、按机会运行。第一条严格因果样本何时出现，不再决定整个路线是否前进。
 
+### 10.1 V2 实施工作包
+
+| 工作包 | 目标 | 主要产物 | 不做什么 |
+|---|---|---|---|
+| `J0 CONTRACT` | 固定 EnterpriseJudgmentEpisode 的组合语义和权限梯度 | episode manifest、claim/output matrix、cell status 语义 | 不追溯升级既有 episode |
+| `J1 RECONSTRUCTION` | 让一家公司在一个 cutoff 形成多维企业状态和决策序列 | `EnterpriseContextSnapshot`、OperatingSystemModel、DecisionLedger slice | 不要求同行或已实施行动 |
+| `J2 THREADS` | 将全景判断拆成 1 个 primary + 2--4 个 supporting mechanism threads | H-A/H-B、证据鉴别矩阵、观察时钟、结果合同 | 不把所有线程设为硬门 |
+| `J3 FORECAST` | 对状态向量做逐维概率、区间和弃权校准 | Forecast bundle、coverage、proper scores、error attribution | 不从 forecast 生成因果或 CJO |
+| `J4 COMPARATIVE` | 只有相对因果主张出现时启用 V5/target-trial 约束 | panel freeze、独立 settlement、estimand resolution | 不以 Comparative 阻断 J1--J3 |
+| `J5 TRANSFER` | 将一条已诊断学习改变不同公司的冻结前字段 | TransportContract、application receipt、review | 不复制整家公司结论 |
+| `J6 INVESTMENT` | 将冻结 CJO 的关键线程传播到价值和价格 | normal earnings、owner cash、ExpectationGap、BuyBand | 不用价格结果改写企业判断 |
+| `J7 DECISION_UTILITY` | 证明增强研究比简单基线更能改善用户判断 | same-cutoff paired receipt、holdout、materiality review | 不以报告长度或股价胜负评分 |
+
+实施顺序是 `J0 → J1/J2/J3`，`J4` 与其并行但独立，`J5 → J6 → J7` 逐级解锁。当前已有控制层和 Forecast/报告接线可复用；真实 Comparative 仍是 `J4` 的未完成支线，不再是 `J1` 的前置条件。
+
 ## 11. 立即停止的错误优化
 
 - 不再以 H2、公告、固定公司数量或 comparator 作为全局训练入口；
@@ -287,6 +406,17 @@ judgment -> investment consequence
 5. 企业判断能单向、可复算地改善正常利润、owner cash、预期差和条件化买点；
 6. 用户得到更少的重大遗漏、更清楚的未知和更可执行的判断，而不是更多流程工件。
 
+### 12.1 V2 额外验收
+
+1. 一个没有 comparator 的公司，可以完成 `E0_CONTEXT` 和 `E1_RECONSTRUCTION`，并产出多维状态、决策账本、关键未知和研究议程；
+2. 一个结果指标的 `MEASUREMENT_MISMATCH` 不会让同一 episode 的其他证据线程被删除或获得伪造结论；
+3. 一个缺少完整同行的行动，可以降级为 `E2_MECHANISM_PROBE / TEACHING_ONLY`，而不是被误报为全局训练阻塞；
+4. `Comparative` 只冻结自身 estimand、panel 和 outcome contract，不改变 episode 的企业全景或其他线程；
+5. `Forecast` 可以对多个企业维度逐项评分和弃权，但不产生“总冠军”、因果结论或投资授权；
+6. 任何 learning transfer 都能指出下一家公司实际改变的字段、证据顺序、反方或停止规则，并由独立 reviewer 复核；
+7. CJO、估值和 BuyBand 只消费达到相应证据上限的线程，并能列出未覆盖维度和翻转条件；
+8. 同 cutoff、同证据预算下，增强研究相对简单基线的改进必须表现为材料未知、错误避免或判断区间变化，而不是文字增加。
+
 ## 13. 研究依据
 
 - [Dawid, The Prequential Approach](https://doi.org/10.2307/2981683)：按真实时间顺序冻结、结算和更新。
@@ -300,5 +430,11 @@ judgment -> investment consequence
 - [Blaskowitz and Herwartz, Economic Evaluation of Directional Forecasts](https://ideas.repec.org/a/eee/intfor/v27y2011i4p1058-1065.html)：预测价值还要按其改善的经济决策评价。
 - [Selling Fast and Buying Slow](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=3301277)：研究、买入和卖出能力必须分开归因。
 - [ForecastBench GitHub](https://github.com/forecastingresearch/forecastbench)、[FinRobot](https://github.com/AI4Finance-Foundation/FinRobot)、[Inspect AI](https://github.com/UKGovernmentBEIS/inspect_ai)：借鉴动态评价、确定性计算与叙述分离、task/solver/scorer/log 边界；不借鉴多 Agent 数量或交易回报作为判断能力证明。
+- [Hernán and Robins, Target Trial Emulation](https://doi.org/10.1093/aje/kwv254)：只在 Comparative 线程冻结 eligibility、time zero、intervention、comparator、outcome、follow-up 和 censoring；不把年报叙事自动变成因果识别。
+- [Pearl and Bareinboim, Transportability](https://arxiv.org/abs/1503.01603)：跨公司迁移必须声明 invariants、moderators、目标差异和 break conditions；不迁移整案结论。
+- [Collier, Understanding Process Tracing](https://www.cambridge.org/core/journals/ps-political-science-and-politics/article/understanding-process-tracing/183A057AD6A36783E678CB37440346D1) 与 [Heuer, Psychology of Intelligence Analysis](https://www.cia.gov/resources/csi/books-monographs/psychology-of-intelligence-analysis-2/)：支持竞争解释和证据鉴别矩阵，但不把证据条数加总为因果分数。
+- [Shumway, The Delisting Bias in CRSP Data](https://doi.org/10.1111/j.1540-6261.1997.tb03818.x)：支持保留退出对象、显式处理删失和竞争事件；不提供企业失败概率。
+- [Qlib](https://github.com/microsoft/qlib) 与 [FinGPT](https://github.com/AI4Finance-Foundation/FinGPT)：分别借鉴数据集、时间切分、模型、回测/记录和金融语言模型工具的工程分层；它们不是企业因果判断或投资能力的证据。
+- [FActScore](https://github.com/shmsw25/FActScore)：借鉴长报告拆成原子主张并关联证据的发布前检查；事实支持率不能替代经济机制和投资决策效用。
 
 这些依据只支持系统设计，不构成任何公司、行业、估值或买点的投资证据。

@@ -6,6 +6,8 @@
 >
 > 中心目标：让 Agent 更好地辅助用户判断企业经营、管理决策、永久损失与长期价值，并在公司判断冻结后改善正常利润、owner cash、预期差和买点；训练样本数量、报告数量和流程通过率都不是目标。
 
+> 顶层关系：整体训练系统的 V2 语义以[`TURTLE_TRAINING_SYSTEM_TOP_LEVEL_ARCHITECTURE.md`](TURTLE_TRAINING_SYSTEM_TOP_LEVEL_ARCHITECTURE.md)的 `EnterpriseJudgmentEpisode`、E0--E4 准入和多视图权限为准。本文只负责历史训练、生命周期、source registry 和 claim-specific Comparative 的实现细节；若本文把某一历史 lane 写成全局入口，应按顶层 V2 解释为该 lane 的局部门。
+
 ## 1. 重构结论
 
 第一条正式方向性 action 样本难，并不反常。它试图同时满足历史信息隔离、公司整体已实施行动、责任边界、竞争反事实、D3/D4 结果合同和独立审阅，本质上是在做一个小型历史准实验。真正的问题是旧路线把这套最昂贵的门误挂在了所有训练之前，导致：
