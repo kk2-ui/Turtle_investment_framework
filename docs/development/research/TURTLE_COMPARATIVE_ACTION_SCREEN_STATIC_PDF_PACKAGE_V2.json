@@ -1,0 +1,141 @@
+{
+  "schema_version": "turtle-comparative-action-screen-static-pdf-package.v2",
+  "package_id": "TURTLE_COMPARATIVE_ACTION_SCREEN_STATIC_PDF_PACKAGE_V2",
+  "scope_receipt_id": "TURTLE_COMPARATIVE_ACTION_SCOPE_RECEIPT_V1",
+  "status": "PREFERRED_CANDIDATE_ONLY",
+  "purpose": "Pre-outcome screen of implemented operating decisions. It is not an H2 or V5 admission, a final peer panel, a valuation, or a result review.",
+  "scope_controls": {
+    "permitted_topologies": [
+      "CUSTOMER_RESPONSE",
+      "COST_RESTRUCTURING"
+    ],
+    "evidence_rule": "Each substantive fact below is grounded only in the cited, cutoff-before static.cninfo.com.cn PDF page. CNInfo announcement metadata was used only to enumerate the static identity and date.",
+    "forbidden_material": [
+      "post-cutoff company materials",
+      "periodic reports",
+      "outcomes",
+      "prices",
+      "returns",
+      "valuations",
+      "peer selection after any outcome"
+    ],
+    "candidate_status_meaning": "A retained candidate is only eligible for a later action-blind comparator screen if that later screen independently passes its generic predicate."
+  },
+  "candidates": [
+    {
+      "candidate_id": "C-ACT-001",
+      "range_id": "REGIONAL_CEMENT_PRICE_ZONE_2017",
+      "screen_status": "RETAINED_SCREEN_ONLY",
+      "cutoff_at": "2017-12-31T00:00:00+08:00",
+      "static_pdf": {
+        "official_metadata_identity": {
+          "announcement_id": "1204133144",
+          "static_release_date": "2017-11-13",
+          "date_only_on_cutoff": false
+        },
+        "url": "https://static.cninfo.com.cn/finalpage/2017-11-13/1204133144.PDF",
+        "page": 1,
+        "title": "广东塔牌集团股份有限公司关于文福万吨线项目第一条生产线点火的公告",
+        "page_anchor_cn": "于2017年11月11日顺利点火试生产成功，标志着该项目逐步进入生产运营阶段。"
+      },
+      "implemented_operating_decision": "The company's first line in its company project entered successful ignition and trial production; this is an observed physical operating start, not an approval or proposal.",
+      "responsibility_boundary": "Company project / first production line. The notice does not identify a separate line-level operating legal entity or a line-level P&L owner.",
+      "mechanisms": {
+        "H_A": "The integrated waste-heat power configuration and new dry-process line may lower the relevant operating energy burden, supporting a cost-restructuring channel.",
+        "H_B": "The principal economic effect may instead be additional regional cement supply and scale, with no separable cost mechanism.",
+        "strongest_rival_explanation": "Capacity and supply expansion can explain the same implementation fact without inferring a cost advantage."
+      },
+      "official_result_settlability_possibility": "Possible only if a later official, like-for-like disclosure separately identifies this line's energy use or energy-recovery output and operating utilisation; no such material was read for this screen.",
+      "candidate_only_stop_rules": [
+        "STOP if a later admissibility record cannot identify the line operator and a line-consistent official measurement.",
+        "STOP if the only observable continuation is aggregate capacity or aggregate company performance; it cannot distinguish H-A from H-B.",
+        "STOP if any candidate-specific post-cutoff fact is encountered before the later selection freeze."
+      ]
+    },
+    {
+      "candidate_id": "C-ACT-002",
+      "range_id": "NATIONAL_CONSUMER_DURABLES_2018",
+      "screen_status": "RETAINED_SCREEN_ONLY",
+      "cutoff_at": "2018-12-31T00:00:00+08:00",
+      "static_pdf": {
+        "official_metadata_identity": {
+          "announcement_id": "1205461561",
+          "static_release_date": "2018-09-22",
+          "date_only_on_cutoff": false
+        },
+        "url": "https://static.cninfo.com.cn/finalpage/2018-09-22/1205461561.PDF",
+        "page": 1,
+        "title": "浙江苏泊尔股份有限公司关于对外投资设立子公司的进展公告",
+        "page_anchor_cn": "工商登记手续已办理完成并取得了……营业执照。"
+      },
+      "implemented_operating_decision": "A wholly owned home-products sales entity completed registration. Its stated business scope includes wholesale and retail of household products and appliances, so the completed implementation is a customer-facing operating-unit formation rather than the underlying board approval.",
+      "responsibility_boundary": "Wholly owned Zhejiang Shaoxing Supor Home Products Co., Ltd.; registered scope covers household-product wholesale/retail and related services. The notice does not evidence sales transactions or a transferred customer book.",
+      "mechanisms": {
+        "H_A": "A dedicated customer-facing entity could improve channel execution and retail response.",
+        "H_B": "The registration may be a legal or administrative reorganisation with no changed customer interaction.",
+        "strongest_rival_explanation": "Completion of registration alone does not prove the entity operated a channel or changed customer access."
+      },
+      "official_result_settlability_possibility": "Possible only if a later official disclosure uses the same entity or a clearly mapped channel measure, such as retail coverage or customer-order responsibility, without substituting aggregate company figures. No such material was read for this screen.",
+      "candidate_only_stop_rules": [
+        "STOP if no pre-specified official record can establish that the registered entity actually assumed a customer-facing operating responsibility.",
+        "STOP if the only later measures are consolidated sales, profit, price, or return figures.",
+        "STOP if any candidate-specific post-cutoff fact is encountered before the later selection freeze."
+      ]
+    },
+    {
+      "candidate_id": "C-ACT-003",
+      "range_id": "EXPORT_MANUFACTURING_CURRENCY_AND_INPUT_COSTS_2019",
+      "screen_status": "PREFERRED_CANDIDATE_ONLY_SCREEN",
+      "cutoff_at": "2019-12-31T00:00:00+08:00",
+      "static_pdf": {
+        "official_metadata_identity": {
+          "announcement_id": "1207047557",
+          "static_release_date": "2019-10-31",
+          "date_only_on_cutoff": false
+        },
+        "url": "https://static.cninfo.com.cn/finalpage/2019-10-31/1207047557.PDF",
+        "page": 1,
+        "title": "新凤鸣集团股份有限公司关于公司全资子公司独山能源年产220万吨PTA项目进入试生产阶段的公告",
+        "page_anchors_cn": [
+          "年产220万吨PTA项目于近日进入试生产阶段。",
+          "向上游延伸产业链，进一步降低主营业务成本。",
+          "保障公司PTA原料的供应……大幅降低PTA原料的外部采购。"
+        ]
+      },
+      "implemented_operating_decision": "After installation and successive commissioning stages, the wholly owned subsidiary's PTA project entered trial production. The stated operating purpose is upstream input supply, lower external procurement, and lower main-business cost; it is not a financing decision, a plan, or an approval.",
+      "responsibility_boundary": "Wholly owned Dushan Energy; the boundary is the PTA feedstock project and its supply to the group's main business, not an undifferentiated group-finance allocation.",
+      "mechanisms": {
+        "H_A": "Upstream internal supply and the stated lower-energy, lower-cost process can reduce exposure to external PTA procurement and support a cost-restructuring response to input-cost pressure.",
+        "H_B": "The decisive effect may be volume, capacity utilisation, or PTA market conditions rather than lower internal procurement exposure.",
+        "strongest_rival_explanation": "The same trial-production fact can be explained by capacity expansion and commodity-market conditions without showing a durable cost-restructuring effect."
+      },
+      "official_result_settlability_possibility": "Potentially settleable only through a later official static disclosure that preserves a like-for-like measure of PTA external procurement, internal supply, or unit energy/input cost for the defined operating boundary. The current notice supplies no later measurement and none was accessed.",
+      "candidate_only_stop_rules": [
+        "STOP if a later action-blind H1 screen cannot independently establish membership in the requested export-manufacturing arena at the cutoff; this package makes no such admission.",
+        "STOP if full commissioning or a same-boundary official metric cannot be established without substituting consolidated performance.",
+        "STOP if the metric cannot distinguish internal-procurement / process-cost change from capacity utilisation or commodity-price effects.",
+        "STOP if any candidate-specific post-cutoff fact is encountered before the later selection freeze."
+      ]
+    }
+  ],
+  "preferred_static_pdf_package": {
+    "preferred_candidate_id": "C-ACT-003",
+    "fixed_source_set": [
+      {
+        "source_id": "STATIC_PDF_1207047557_P1",
+        "official_domain": "static.cninfo.com.cn",
+        "static_url": "https://static.cninfo.com.cn/finalpage/2019-10-31/1207047557.PDF",
+        "page": 1,
+        "availability_basis": "Official CNInfo metadata identifies this static PDF as 2019-10-31, strictly before the 2019-12-31 cutoff."
+      }
+    ],
+    "allowed_use": "Verify only implementation, operating boundary, and the two competing pre-outcome mechanism readings above.",
+    "not_an_admission": [
+      "No H2 admission",
+      "No V5 admission",
+      "No final peer panel",
+      "No outcome, price, return, valuation, or investment conclusion"
+    ]
+  },
+  "screen_close_condition": "Selection must freeze before any post-cutoff material is opened. Any later peer selection must be made by a separate action-blind H1 curator using the companion generic predicate."
+}
