@@ -28,7 +28,8 @@ tolerance, forecaster, and custodian. The static evidence receipt must be an
 official HTTPS PDF, published strictly before cutoff, with the same issuer,
 metric, boundary, unit and a page reference. Its curator must differ from both
 the forecaster and custodian. The outcome source carries the same closed
-source-level metric identity and must match the contract exactly as well.
+source-level metric identity and measurement-period end, both of which must
+match the contract exactly.
 Baseline and outcome numeric values must be finite before the controller can
 serialize or persist either receipt.
 

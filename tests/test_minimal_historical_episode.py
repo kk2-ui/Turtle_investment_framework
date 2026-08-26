@@ -138,6 +138,7 @@ def _observation(contract: dict) -> dict:
             "source_available_at": "2022-03-30T00:00:00+00:00",
             "issuer_id": contract["issuer_id"],
             "metric_id": contract["metric_id"],
+            "measurement_period_end": contract["outcome_period_end"],
             "responsibility_boundary": contract["responsibility_boundary"],
             "unit": contract["unit"],
             "field_ref": "Synthetic official filing p38.",
@@ -325,6 +326,25 @@ def test_source_metric_mismatch_is_rejected_before_persistence_or_settlement(sta
             control.register_observation(conn, observation)
         assert exc_info.value.code == "observation_invalid"
         assert "observation.source.metric_id_must_match_measurement_contract" in exc_info.value.detail
+        assert conn.execute(f"SELECT COUNT(*) FROM {control.OBSERVATION_TABLE}").fetchone()[0] == 0
+        assert conn.execute(f"SELECT COUNT(*) FROM {control.SETTLEMENT_TABLE}").fetchone()[0] == 0
+    finally:
+        conn.close()
+
+
+def test_outcome_source_period_mismatch_is_rejected_before_persistence_or_settlement() -> None:
+    conn, contract, _, _ = _frozen_chain()
+    try:
+        assert control.authorize_outcome_access(conn, _access(contract))["authorized"]
+        observation = _observation(contract)
+        observation["source"]["measurement_period_end"] = "2020-12-31"
+        with pytest.raises(control.MinimalHistoricalEpisodeError) as exc_info:
+            control.register_observation(conn, observation)
+        assert exc_info.value.code == "observation_invalid"
+        assert (
+            "observation.source.measurement_period_end_must_match_measurement_contract_outcome_period_end"
+            in exc_info.value.detail
+        )
         assert conn.execute(f"SELECT COUNT(*) FROM {control.OBSERVATION_TABLE}").fetchone()[0] == 0
         assert conn.execute(f"SELECT COUNT(*) FROM {control.SETTLEMENT_TABLE}").fetchone()[0] == 0
     finally:

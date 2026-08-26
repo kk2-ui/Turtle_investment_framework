@@ -37,7 +37,7 @@ _SOURCE_KEYS = {
     "source_id", "source_url", "source_type", "published_at", "issuer_id",
     "metric_id", "responsibility_boundary", "unit", "field_ref", "numeric_value",
 }
-_OUTCOME_SOURCE_KEYS = _SOURCE_KEYS - {"published_at"} | {"source_available_at"}
+_OUTCOME_SOURCE_KEYS = _SOURCE_KEYS - {"published_at"} | {"source_available_at", "measurement_period_end"}
 _CONTRACT_KEYS = {
     "schema_version", "measurement_contract_id", "measurement_contract_version", "company_id", "issuer_id",
     "cutoff_at", "metric_id", "window_id", "outcome_period_end", "responsibility_boundary", "unit",
@@ -206,7 +206,10 @@ def _static_source(
 
 def _outcome_source(value: Any, *, contract: dict[str, Any], path: str, findings: list[str]) -> dict[str, Any]:
     source = _closed(value, _OUTCOME_SOURCE_KEYS, path, findings)
-    for field in ("source_id", "source_url", "issuer_id", "metric_id", "responsibility_boundary", "unit", "field_ref"):
+    for field in (
+        "source_id", "source_url", "issuer_id", "metric_id", "measurement_period_end",
+        "responsibility_boundary", "unit", "field_ref",
+    ):
         _require_text(source, field, path, findings)
     if source.get("source_type") != OFFICIAL_STATIC_FILING:
         findings.append(f"{path}.source_type_must_be_official_static_filing")
@@ -214,6 +217,7 @@ def _outcome_source(value: Any, *, contract: dict[str, Any], path: str, findings
     if _text(source_url) and (not str(source_url).startswith("https://") or not str(source_url).lower().endswith(".pdf")):
         findings.append(f"{path}.source_url_must_be_https_static_pdf")
     available_at = _instant(source.get("source_available_at"), f"{path}.source_available_at", findings)
+    _date(source.get("measurement_period_end"), f"{path}.measurement_period_end", findings)
     cutoff = _instant(contract.get("cutoff_at"), "measurement_contract.cutoff_at", findings)
     outcome_period_end = _date(contract.get("outcome_period_end"), "measurement_contract.outcome_period_end", findings)
     if available_at and cutoff and available_at <= cutoff:
@@ -222,6 +226,8 @@ def _outcome_source(value: Any, *, contract: dict[str, Any], path: str, findings
         findings.append(f"{path}.source_available_at_must_follow_outcome_period_end")
     if source.get("issuer_id") != contract.get("issuer_id"):
         findings.append(f"{path}.issuer_id_must_match_measurement_contract")
+    if source.get("measurement_period_end") != contract.get("outcome_period_end"):
+        findings.append(f"{path}.measurement_period_end_must_match_measurement_contract_outcome_period_end")
     for field in ("metric_id", "responsibility_boundary", "unit"):
         if source.get(field) != contract.get(field):
             findings.append(f"{path}.{field}_must_match_measurement_contract")
