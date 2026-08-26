@@ -334,17 +334,22 @@ The non-retrospective repair is now implemented:
 - the production builder has no caller database connection and registers the
   complete J1 bundle through the canonical control layer;
 - J2 and J3 are called only through their public Frozen-J1 APIs;
-- Outcome Measurement Contract v2 uses atomic fields with frozen period,
-  boundary, field identity, unit, formula, threshold/event rule, ordered labels,
-  conflicts and local UNKNOWN/MISMATCH propagation;
-- synthetic validation proves one mismatch leaves observed and unknown siblings
-  unchanged.
+- Outcome Measurement Contract v3 separates cutoff from `FLOW_PERIOD`,
+  `BALANCE_AS_OF` and `EVENT_WINDOW`, and freezes every raw input, conversion,
+  formula, threshold/event rule and local UNKNOWN/MISMATCH propagation;
+- the existing public acquisition and settlement adapters now accept Enterprise
+  V3 without constructing Forecast objects. A 14-cell synthetic PDF/text
+  preflight covers 31 raw-field receipts, all five formula operators, exact
+  submission coverage and sibling-local mismatch.
 
 Formal receipts mechanically selected rank 18, CN:600802
-`2015-04-15 -> 2016-04-27`. The new pre-outcome package is frozen at
-`26_round5_preoutcome_mechanism_package.json`; its complete J1 is canonical and
-its public J2/J3 projections are recorded in
-`27_round5_preoutcome_control_plane_receipt.json`. The FY2015 outcome source
-remains sealed. No custodian, settlement or outcome label exists at this state,
-and no directional-learning, enterprise-learning, Comparative, CJO, valuation,
-report or investment permission is granted.
+`2015-04-15 -> 2016-04-27`. `28_round5_v2_preoutcome_superseding_adjudication.json`
+marks `26/27` as superseded historical artifacts. The active chain is now
+`29_round5_v3_preoutcome_mechanism_package.json`,
+`30_round5_v3_value_free_custody_projection.json`,
+`31_round5_v3_preoutcome_control_plane_receipt.json` and
+`32_round5_v3_adapter_acceptance_receipt.json`. The synthetic adapter preflight
+does not authorize or read the real FY2015 source. Real outcome authorization,
+content read, custodian start and settlement all remain false; no directional-
+learning, enterprise-learning, Comparative, CJO, valuation, report or investment
+permission is granted.

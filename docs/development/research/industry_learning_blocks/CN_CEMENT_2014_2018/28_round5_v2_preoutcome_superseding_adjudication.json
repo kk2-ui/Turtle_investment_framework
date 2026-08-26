@@ -65,7 +65,15 @@
   "replacement": {
     "package_id": "EMFP:CN:CEMENT:600802:20150415:V3",
     "package_artifact": "29_round5_v3_preoutcome_mechanism_package.json",
-    "custody_projection_artifact": "30_round5_v3_value_free_custody_projection.json"
+    "custody_projection_artifact": "30_round5_v3_value_free_custody_projection.json",
+    "control_plane_receipt_artifact": "31_round5_v3_preoutcome_control_plane_receipt.json",
+    "adapter_acceptance_receipt_artifact": "32_round5_v3_adapter_acceptance_receipt.json",
+    "active_artifacts": [
+      "29_round5_v3_preoutcome_mechanism_package.json",
+      "30_round5_v3_value_free_custody_projection.json",
+      "31_round5_v3_preoutcome_control_plane_receipt.json",
+      "32_round5_v3_adapter_acceptance_receipt.json"
+    ]
   },
   "rights": {
     "directional_learning": "NOT_AUTHORIZED",

@@ -1,0 +1,92 @@
+{
+  "schema_version": "enterprise-round5-v3-adapter-acceptance-receipt.v1",
+  "receipt_id": "R5V3AR:CN600802:20150415:V1",
+  "recorded_at": "2026-08-27T00:30:00+08:00",
+  "active_artifact_refs": {
+    "package": "29_round5_v3_preoutcome_mechanism_package.json",
+    "value_free_custody_projection": "30_round5_v3_value_free_custody_projection.json",
+    "preoutcome_control_receipt": "31_round5_v3_preoutcome_control_plane_receipt.json"
+  },
+  "superseded_artifact_refs": {
+    "package": "26_round5_preoutcome_mechanism_package.json",
+    "control_receipt": "27_round5_preoutcome_control_plane_receipt.json",
+    "superseding_adjudication": "28_round5_v2_preoutcome_superseding_adjudication.json"
+  },
+  "implementation_commits": {
+    "enterprise_v3_public_adapter": "7cc3ecb",
+    "canonical_receipt_validation": "a7d5aac"
+  },
+  "public_apis": {
+    "acquisition": "outcome_measurement_acquisition.acquire_outcome_measurements",
+    "acquisition_validation": "outcome_measurement_acquisition.validate_acquisition_result",
+    "round5_submission": "outcome_measurement_round5_adapter.validate_custodian_submission",
+    "settlement": "outcome_measurement_settlement_adapter.register_acquisition_result"
+  },
+  "enterprise_v3_adapter": {
+    "contract_schema": "enterprise-outcome-measurement-contract.v3",
+    "contract_set_id": "OMC:CN600802:20150415:MECHANISM:V3",
+    "atomic_cell_count": 14,
+    "raw_input_receipt_count": 31,
+    "formula_operators": [
+      "RAW_VALUE",
+      "EVENT_BOOLEAN",
+      "RATIO_CHANGE",
+      "DIFFERENCE",
+      "PERCENT_CHANGE"
+    ],
+    "unit_conversions_executed": true,
+    "mismatch_propagation": "SIBLING_LOCAL",
+    "forecast_objects_required": false,
+    "j2_or_j3_content_read": false
+  },
+  "synthetic_public_preflight": {
+    "source_class": "SYNTHETIC_PDF_TEXT_FIXTURE_ONLY",
+    "real_fy2015_source_used": false,
+    "acquisition_to_submission_to_settlement_completed": true,
+    "settled_cell_count": 14,
+    "observed_cell_count": 13,
+    "unknown_cell_count": 1,
+    "measurement_mismatch_cell_count": 0,
+    "missing_event_disposition": "UNKNOWN",
+    "explicit_negative_event_disposition": "OBSERVED_NO",
+    "sibling_local_probe": {
+      "one_cell": "MEASUREMENT_MISMATCH",
+      "unrelated_neighbor": "OBSERVED"
+    },
+    "rejected_submission_mutations": [
+      "FAKE_CELL",
+      "MISSING_CELL",
+      "DUPLICATE_CELL",
+      "SINGLE_VALUE_SUBSTITUTED_FOR_MULTI_INPUT_CELL"
+    ]
+  },
+  "canonical_selection_receipts": {
+    "production_validators_executed": true,
+    "immutable_roster_ref": "EJPF:CN:CEMENT:2014_2018:PRE_OUTCOME:V1",
+    "validated_receipt_count": 5,
+    "structurally_forged_adjudication_rejected_before_registration": true,
+    "derived_selected_rank": 18,
+    "derived_transition_id": "CCR:600802:20150415:20160427"
+  },
+  "real_outcome_state": {
+    "authorized": false,
+    "content_read": false,
+    "custodian_started": false,
+    "settlement_created": false
+  },
+  "rights": {
+    "directional_learning": "NOT_AUTHORIZED",
+    "enterprise_learning": "NOT_AUTHORIZED",
+    "comparative": "NOT_AUTHORIZED",
+    "cjo": "NOT_AUTHORIZED",
+    "valuation": "NOT_AUTHORIZED",
+    "report": "NOT_AUTHORIZED",
+    "investment": "NOT_AUTHORIZED"
+  },
+  "object_class": "ENTERPRISE_ROUND5_V3_ADAPTER_ACCEPTANCE_RECEIPT",
+  "claim_class": "SYNTHETIC_PUBLIC_ADAPTER_PREFLIGHT_AND_REAL_OUTCOME_SEAL",
+  "allowed_outputs": [
+    "PREOUTCOME_ENGINEERING_ACCEPTANCE",
+    "OUTCOME_CUSTODY_REQUEST"
+  ]
+}

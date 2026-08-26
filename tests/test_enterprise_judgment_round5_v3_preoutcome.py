@@ -22,6 +22,7 @@ V2_PACKAGE = BLOCK_DIR / "26_round5_preoutcome_mechanism_package.json"
 V3_PACKAGE = BLOCK_DIR / "29_round5_v3_preoutcome_mechanism_package.json"
 CUSTODY_PROJECTION = BLOCK_DIR / "30_round5_v3_value_free_custody_projection.json"
 CONTROL_RECEIPT = BLOCK_DIR / "31_round5_v3_preoutcome_control_plane_receipt.json"
+ADAPTER_RECEIPT = BLOCK_DIR / "32_round5_v3_adapter_acceptance_receipt.json"
 FREEZE_AT = "2026-08-26T16:30:00+00:00"
 RECEIPT_FILES = [
     "05_feedback_settlement_001.json",
@@ -226,6 +227,25 @@ def test_committed_control_receipt_replays_canonical_ids_and_keeps_outcome_seale
     assert receipt["value_free_custody"]["submission_api"] == _load(CUSTODY_PROJECTION)["submission_api"]
     assert receipt["value_free_custody"]["settlement_api"] == _load(CUSTODY_PROJECTION)["settlement_api"]
     assert receipt["outcome_access"] == {
+        "authorized": False,
+        "content_read": False,
+        "custodian_started": False,
+        "settlement_created": False,
+    }
+    assert set(receipt["rights"].values()) == {"NOT_AUTHORIZED"}
+
+
+def test_adapter_acceptance_receipt_keeps_only_v3_active_and_real_outcome_sealed() -> None:
+    receipt = _load(ADAPTER_RECEIPT)
+    assert set(receipt["active_artifact_refs"].values()) == {
+        "29_round5_v3_preoutcome_mechanism_package.json",
+        "30_round5_v3_value_free_custody_projection.json",
+        "31_round5_v3_preoutcome_control_plane_receipt.json",
+    }
+    assert receipt["synthetic_public_preflight"]["acquisition_to_submission_to_settlement_completed"] is True
+    assert receipt["synthetic_public_preflight"]["settled_cell_count"] == 14
+    assert receipt["enterprise_v3_adapter"]["raw_input_receipt_count"] == 31
+    assert receipt["real_outcome_state"] == {
         "authorized": False,
         "content_read": False,
         "custodian_started": False,
