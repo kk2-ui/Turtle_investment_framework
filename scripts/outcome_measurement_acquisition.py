@@ -186,7 +186,8 @@ def validate_registered_local_pdf_inventory(
     document_keys = {
         "source_id", "source_url", "local_pdf_path", "issuer_id", "responsibility_boundary",
         "report_period_end", "official_source_type", "report_scope", "currency", "revision_policy",
-        "consolidation_or_restatement_note",
+        "consolidation_or_restatement_note", "availability_precision", "source_available_at",
+        "source_available_date",
     }
     source_ids: set[str] = set()
     documents: list[dict[str, Any]] = []
@@ -225,6 +226,19 @@ def validate_registered_local_pdf_inventory(
             findings.append(f"{path}_revision_policy_must_be_original_vintage")
         if not _text(document.get("consolidation_or_restatement_note")):
             findings.append(f"{path}_consolidation_or_restatement_note_required")
+        precision = document.get("availability_precision")
+        if precision == "TIMESTAMP":
+            if _instant(document.get("source_available_at")) is None:
+                findings.append(f"{path}_timestamp_source_available_at_must_be_timezone_aware")
+            if document.get("source_available_date") is not None:
+                findings.append(f"{path}_timestamp_cannot_include_source_available_date")
+        elif precision == "DATE_ONLY":
+            if _date(document.get("source_available_date")) is None:
+                findings.append(f"{path}_date_only_source_available_date_invalid")
+            if document.get("source_available_at") is not None:
+                findings.append(f"{path}_date_only_cannot_include_source_available_at")
+        else:
+            findings.append(f"{path}_availability_precision_must_be_timestamp_or_date_only")
         documents.append(deepcopy(document))
     if not documents:
         findings.append("inventory_documents_must_be_nonempty")
@@ -326,7 +340,12 @@ def _source_identity(document: dict[str, Any], *, page_number: int | None = None
         "official_source_type": document["official_source_type"],
         "issuer_id": document["issuer_id"],
         "responsibility_boundary": document["responsibility_boundary"],
+        "availability_precision": document["availability_precision"],
     }
+    if document["availability_precision"] == "TIMESTAMP":
+        result["source_available_at"] = document["source_available_at"]
+    else:
+        result["source_available_date"] = document["source_available_date"]
     if page_number is not None:
         result["pdf_page"] = page_number
         result["field_ref"] = f"PDF p.{page_number}"

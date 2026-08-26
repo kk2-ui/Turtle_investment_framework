@@ -74,6 +74,7 @@ def _inventory(
     period_end: str = "2015-12-31",
     source_id: str = "SSE:600660:ANN:20160321:600660_2015_n",
     source_url: str = "https://static.sse.com.cn/disclosure/listedinfo/announcement/c/2016-03-21/600660_2015_n.pdf",
+    source_available_date: str = "2016-03-21",
 ) -> dict:
     return {
         "schema_version": acquisition.INVENTORY_SCHEMA_VERSION,
@@ -96,6 +97,9 @@ def _inventory(
             "currency": "RMB",
             "revision_policy": "ORIGINAL_VINTAGE",
             "consolidation_or_restatement_note": "registered original annual report; no restatement note on the located statement page",
+            "availability_precision": "DATE_ONLY",
+            "source_available_date": source_available_date,
+            "source_available_at": None,
         }],
         "object_class": acquisition.INVENTORY_OBJECT_CLASS,
         "claim_class": acquisition.INVENTORY_CLAIM_CLASS,
@@ -220,6 +224,7 @@ def test_real_registered_static_annual_reports_are_field_level_observable() -> N
         period_end="2014-12-31",
         source_id="SSE:600660:ANN:20150217:600660_2014_n",
         source_url="https://static.sse.com.cn/disclosure/listedinfo/announcement/c/2015-02-16/600660_2014_n.pdf",
+        source_available_date="2015-02-17",
     )
     inventory["documents"].append({
         "source_id": "SSE:600660:ANN:20160321:600660_2015_n",
@@ -233,6 +238,9 @@ def test_real_registered_static_annual_reports_are_field_level_observable() -> N
         "currency": "RMB",
         "revision_policy": "ORIGINAL_VINTAGE",
         "consolidation_or_restatement_note": "registered original SSE annual report; no restatement note on the located statement page",
+        "availability_precision": "DATE_ONLY",
+        "source_available_date": "2016-03-21",
+        "source_available_at": None,
     })
 
     result = acquisition.acquire_outcome_measurements(

@@ -150,6 +150,7 @@ _DIMENSION_SETTLEMENT_KEYS = {
 _OUTCOME_SOURCE_KEYS = {"source_id", "source_available_at", "field_ref"}
 _OUTCOME_SOURCE_KEYS_V2 = _OUTCOME_SOURCE_KEYS | {
     "source_url", "source_field_id", "official_source_type", "issuer_id", "responsibility_boundary", "unit", "outcome_period_end",
+    "source_available_date", "source_available_precision",
 }
 _REALIZED_MEASUREMENT_KEYS = {
     "measurement_id", "measurement_kind", "numeric_value", "boolean_value", "unit",
@@ -157,8 +158,10 @@ _REALIZED_MEASUREMENT_KEYS = {
 }
 _OUTCOME_SOURCE_COMPONENT_KEYS = {
     "source_id", "source_url", "source_available_at", "field_id", "field_ref", "official_source_type", "numeric_value",
-    "issuer_id", "responsibility_boundary", "unit", "outcome_period_end",
+    "issuer_id", "responsibility_boundary", "unit", "outcome_period_end", "source_available_date", "source_available_precision",
 }
+_OUTCOME_SOURCE_V2_REQUIRED_KEYS = _OUTCOME_SOURCE_KEYS_V2 - {"source_available_at", "source_available_date", "source_available_precision"}
+_OUTCOME_SOURCE_COMPONENT_REQUIRED_KEYS = _OUTCOME_SOURCE_COMPONENT_KEYS - {"source_available_at", "source_available_date", "source_available_precision"}
 _OUTCOME_MEASUREMENT_CONTRACT_KEYS = {
     "schema_version", "measurement_contract_id", "measurement_contract_version", "decision_contract_ref",
     "company_id", "issuer_id", "cutoff_at", "custodian_id", "applied_policy_change_ids", "cells",
@@ -336,6 +339,39 @@ def _source_date(value: Any, path: str, findings: list[str]) -> date | None:
     except ValueError:
         findings.append(f"{path}_must_be_iso_date_or_datetime")
         return None
+
+
+def _outcome_source_availability(
+    source: dict[str, Any], path: str, findings: list[str],
+) -> tuple[datetime | None, date | None]:
+    """Resolve an exact timestamp or a conservative date-only availability bound.
+
+    Older receipts retain their timestamp-only shape.  Static exchange records
+    that canonically expose only a publication date may use ``DATE_ONLY``;
+    later chronology checks then require a strictly later calendar day instead
+    of inventing an intraday publication time.
+    """
+    precision = source.get("source_available_precision")
+    if precision is None:
+        return _instant(source.get("source_available_at"), path + ".source_available_at", findings), None
+    if precision == "TIMESTAMP":
+        if source.get("source_available_date") is not None:
+            findings.append(path + ".timestamp_cannot_include_source_available_date")
+        return _instant(source.get("source_available_at"), path + ".source_available_at", findings), None
+    if precision == "DATE_ONLY":
+        if source.get("source_available_at") is not None:
+            findings.append(path + ".date_only_cannot_include_source_available_at")
+        return None, _source_date(source.get("source_available_date"), path + ".source_available_date", findings)
+    findings.append(path + ".source_available_precision_invalid")
+    return None, None
+
+
+def _source_follows_cutoff(source_at: datetime | None, source_day: date | None, cutoff: datetime) -> bool:
+    return source_at > cutoff if source_at is not None else source_day is not None and source_day > cutoff.date()
+
+
+def _source_precedes_receipt(source_at: datetime | None, source_day: date | None, receipt_at: datetime) -> bool:
+    return source_at <= receipt_at if source_at is not None else source_day is not None and source_day < receipt_at.date()
 
 
 def _reference(value: Any, path: str, findings: list[str]) -> tuple[str, int] | None:
@@ -685,7 +721,10 @@ def validate_forecast_outcome_observation_receipt(
         _require_text(item, "mismatch_detail", "outcome_observation", findings)
         if mismatch_rule and mismatch_rule not in _items(cell.get("mismatch_rules")):
             findings.append("outcome_observation.mismatch_rule_must_be_frozen_in_measurement_contract")
-        source = _closed(item.get("outcome_source"), _OUTCOME_SOURCE_KEYS_V2, "outcome_observation.outcome_source", findings)
+        source = _closed(
+            item.get("outcome_source"), _OUTCOME_SOURCE_KEYS_V2, "outcome_observation.outcome_source", findings,
+            required=_OUTCOME_SOURCE_V2_REQUIRED_KEYS,
+        )
         _require_text(source, "source_id", "outcome_observation.outcome_source", findings)
         source_url = _require_text(source, "source_url", "outcome_observation.outcome_source", findings)
         if source_url and not source_url.startswith("https://"):
@@ -696,23 +735,23 @@ def validate_forecast_outcome_observation_receipt(
         if source.get("official_source_type") != cell.get("official_source_type"):
             findings.append("outcome_observation.outcome_source.official_source_type_must_match_measurement_contract")
     source = _mapping(item.get("outcome_source"))
-    source_at = _instant(source.get("source_available_at"), "outcome_observation.outcome_source.source_available_at", findings)
+    source_at, source_day = _outcome_source_availability(source, "outcome_observation.outcome_source", findings)
     cutoff = _instant(frozen.get("cutoff_at"), "forecast.cutoff_at", findings)
-    if cutoff and source_at and source_at <= cutoff:
+    if cutoff and not _source_follows_cutoff(source_at, source_day, cutoff):
         findings.append("outcome_observation.source_must_follow_forecast_cutoff")
-    if observed_at and source_at and source_at > observed_at:
+    if observed_at and not _source_precedes_receipt(source_at, source_day, observed_at):
         findings.append("outcome_observation.source_cannot_follow_observation_receipt")
     if observation_status == "OBSERVED_MEASUREMENT":
         measurement = _mapping(item.get("realized_measurement"))
         for component_index, raw_component in enumerate(_items(measurement.get("source_components"))):
             component = _mapping(raw_component)
-            component_at = _instant(
-                component.get("source_available_at"),
-                f"outcome_observation.realized_measurement.source_components[{component_index}].source_available_at", findings,
+            component_at, component_day = _outcome_source_availability(
+                component,
+                f"outcome_observation.realized_measurement.source_components[{component_index}]", findings,
             )
-            if cutoff and component_at and component_at <= cutoff:
+            if cutoff and not _source_follows_cutoff(component_at, component_day, cutoff):
                 findings.append(f"outcome_observation.realized_measurement.source_components[{component_index}].source_must_follow_forecast_cutoff")
-            if observed_at and component_at and component_at > observed_at:
+            if observed_at and not _source_precedes_receipt(component_at, component_day, observed_at):
                 findings.append(f"outcome_observation.realized_measurement.source_components[{component_index}].source_cannot_follow_observation_receipt")
     if item.get("object_class") != "FORECAST_OUTCOME_OBSERVATION_RECEIPT":
         findings.append("outcome_observation.object_class_invalid")
@@ -1765,12 +1804,15 @@ def _validate_v3_realized_measurement(
     entry: dict[str, Any], *, cell: dict[str, Any], path: str, findings: list[str], require_label: bool = True,
     expected_issuer_id: Any = None,
 ) -> None:
-    source = _closed(entry.get("outcome_source"), _OUTCOME_SOURCE_KEYS_V2, f"{path}.outcome_source", findings)
+    source = _closed(
+        entry.get("outcome_source"), _OUTCOME_SOURCE_KEYS_V2, f"{path}.outcome_source", findings,
+        required=_OUTCOME_SOURCE_V2_REQUIRED_KEYS,
+    )
     _require_text(source, "source_id", f"{path}.outcome_source", findings)
     source_url = _require_text(source, "source_url", f"{path}.outcome_source", findings)
     if source_url and not source_url.startswith("https://"):
         findings.append(f"{path}.outcome_source.source_url_must_be_https_official_artifact")
-    _instant(source.get("source_available_at"), f"{path}.outcome_source.source_available_at", findings)
+    _outcome_source_availability(source, f"{path}.outcome_source", findings)
     field_ref = _require_text(source, "field_ref", f"{path}.outcome_source", findings)
     if field_ref and not PAGE_REFERENCE.search(field_ref):
         findings.append(f"{path}.outcome_source.field_ref_must_be_paged_reference")
@@ -1813,6 +1855,7 @@ def _validate_v3_realized_measurement(
             component = _closed(
                 raw_component, _OUTCOME_SOURCE_COMPONENT_KEYS,
                 f"{path}.realized_measurement.source_components[{component_index}]", findings,
+                required=_OUTCOME_SOURCE_COMPONENT_REQUIRED_KEYS,
             )
             field_id = _require_text(
                 component, "field_id", f"{path}.realized_measurement.source_components[{component_index}]", findings,
@@ -1825,7 +1868,9 @@ def _validate_v3_realized_measurement(
                 findings.append(
                     f"{path}.realized_measurement.source_components[{component_index}].source_url_must_be_https_official_artifact"
                 )
-            _instant(component.get("source_available_at"), f"{path}.realized_measurement.source_components[{component_index}].source_available_at", findings)
+            _outcome_source_availability(
+                component, f"{path}.realized_measurement.source_components[{component_index}]", findings,
+            )
             field_ref = _require_text(
                 component, "field_ref", f"{path}.realized_measurement.source_components[{component_index}]", findings)
             if field_ref and not PAGE_REFERENCE.search(field_ref):
@@ -2041,15 +2086,25 @@ def settle_company_state_forecast(
                         findings.append(f"settlement.dimension_settlements[{index}].observation_receipt_cell_mismatch")
                     observation_entry = {**entry, "outcome_source": receipt.get("outcome_source"), "realized_measurement": receipt.get("realized_measurement")}
             source_keys = _OUTCOME_SOURCE_KEYS_V2 if is_v3_forecast else _OUTCOME_SOURCE_KEYS
-            source = _closed(observation_entry.get("outcome_source"), source_keys, f"settlement.dimension_settlements[{index}].outcome_source", findings)
+            source = _closed(
+                observation_entry.get("outcome_source"), source_keys,
+                f"settlement.dimension_settlements[{index}].outcome_source", findings,
+                required=_OUTCOME_SOURCE_V2_REQUIRED_KEYS if is_v3_forecast else None,
+            )
             source_id = _require_text(source, "source_id", f"settlement.dimension_settlements[{index}].outcome_source", findings)
-            source_at = _instant(source.get("source_available_at"), f"settlement.dimension_settlements[{index}].outcome_source.source_available_at", findings)
+            if is_v3_forecast:
+                source_at, source_day = _outcome_source_availability(
+                    source, f"settlement.dimension_settlements[{index}].outcome_source", findings,
+                )
+            else:
+                source_at = _instant(source.get("source_available_at"), f"settlement.dimension_settlements[{index}].outcome_source.source_available_at", findings)
+                source_day = None
             field_ref = _require_text(source, "field_ref", f"settlement.dimension_settlements[{index}].outcome_source", findings)
             if field_ref and not PAGE_REFERENCE.search(field_ref):
                 findings.append(f"settlement.dimension_settlements[{index}].outcome_source.field_ref_must_be_paged_reference")
-            if cutoff and source_at and source_at <= cutoff:
+            if cutoff and not _source_follows_cutoff(source_at, source_day, cutoff):
                 findings.append(f"settlement.dimension_settlements[{index}].outcome_source_must_follow_forecast_cutoff")
-            if settled_at and source_at and source_at > settled_at:
+            if settled_at and not _source_precedes_receipt(source_at, source_day, settled_at):
                 findings.append(f"settlement.dimension_settlements[{index}].outcome_source_cannot_follow_settlement")
             window = next((candidate for candidate in _items(frozen_dimension.get("forecast_by_window")) if _mapping(candidate).get("window_id") == window_id), None)
             if isinstance(window, dict) and source_id:
@@ -2592,8 +2647,10 @@ def validate_prequential_feedback(settlements: list[dict[str, Any]], *, next_cut
             source = _mapping(_mapping(entry).get("outcome_source"))
             if _mapping(entry).get("status") != "OBSERVED":
                 continue
-            source_at = _instant(source.get("source_available_at"), f"settlements[{settlement_index}].dimension_settlements[{entry_index}].outcome_source.source_available_at", findings)
-            if next_cutoff and source_at and source_at > next_cutoff:
+            source_at, source_day = _outcome_source_availability(
+                source, f"settlements[{settlement_index}].dimension_settlements[{entry_index}].outcome_source", findings,
+            )
+            if next_cutoff and not _source_precedes_receipt(source_at, source_day, next_cutoff):
                 findings.append("prequential_feedback_cannot_consume_result_not_yet_public_at_next_cutoff")
     return _result(findings)
 
