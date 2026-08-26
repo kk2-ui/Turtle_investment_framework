@@ -9,6 +9,7 @@ import pytest
 
 from scripts import minimal_historical_episode as episode
 from scripts import minimal_historical_episode_control_plane as control
+from scripts import minimal_historical_episode_runner as runner
 
 
 def _conn() -> sqlite3.Connection:
@@ -583,3 +584,214 @@ def test_public_schema_keeps_the_contract_only_access_and_no_transfer_rights() -
     serialized = json.dumps(schema)
     assert "turtle-pit-company-state-forecast" not in serialized
     assert "turtle-pit-forecast-pairing" not in serialized
+
+
+def _write_json(path: Path, value: dict) -> Path:
+    path.write_text(json.dumps(value, ensure_ascii=False), encoding="utf-8")
+    return path
+
+
+def _source_verification(source: dict, *, subject_ref: dict) -> dict:
+    return {
+        "schema_version": runner.SOURCE_VERIFICATION_INPUT_SCHEMA_VERSION,
+        "subject_ref": subject_ref,
+        "source_id": source["source_id"],
+        "source_url": source["source_url"],
+        "exact_quote": "本集团水泥和熟料合计净销量为2.95亿吨",
+        "numeric_value": source["numeric_value"],
+        "unit": source["unit"],
+        "allowed_outputs": ["MECHANICAL_SETTLEMENT_ONLY"],
+        "method_transfer_rights": "NO_METHOD_TRANSFER_RIGHTS",
+    }
+
+
+def _synthetic_source_verifier(source: dict, verification: dict) -> dict:
+    return {
+        "schema_version": runner.SOURCE_RECEIPT_SCHEMA_VERSION,
+        "verification_state": "SYNTHETIC_TEST_DOUBLE",
+        "subject_ref": verification["subject_ref"],
+        "source_id": source["source_id"],
+        "allowed_outputs": ["MECHANICAL_SETTLEMENT_ONLY"],
+        "method_transfer_rights": "NO_METHOD_TRANSFER_RIGHTS",
+    }
+
+
+def test_persistent_runner_separates_preoutcome_and_custodian_phases(tmp_path: Path) -> None:
+    contract = _contract()
+    evidence = _static_evidence(contract)
+    prediction = _prediction(contract, evidence)
+    database = tmp_path / "minimal-episode.db"
+    evidence_verification = _source_verification(
+        evidence["source"],
+        subject_ref={
+            "object_type": "STATIC_EVIDENCE",
+            "object_id": evidence["evidence_receipt_id"],
+            "object_version": evidence["evidence_receipt_version"],
+        },
+    )
+
+    frozen = runner.freeze_preoutcome(
+        database,
+        contract_path=_write_json(tmp_path / "contract.json", contract),
+        evidence_path=_write_json(tmp_path / "evidence.json", evidence),
+        prediction_path=_write_json(tmp_path / "prediction.json", prediction),
+        source_verification_path=_write_json(tmp_path / "evidence-verification.json", evidence_verification),
+        source_verifier=_synthetic_source_verifier,
+    )
+    assert frozen["stage"] == "PRE_OUTCOME_FROZEN"
+    assert database.is_file()
+    chronology = frozen["recorded_chronology"]
+    assert chronology["contract_frozen_at"] < chronology["evidence_frozen_at"] < chronology["prediction_frozen_at"]
+
+    access = _access(contract)
+    authorized = runner.controller_authorize_outcome(
+        database, access_path=_write_json(tmp_path / "access.json", access),
+    )
+    assert authorized["authorized"]
+    assert authorized["outcome_access"]["authorized_at"] != access["authorized_at"]
+    settled = runner.controller_record_and_settle(
+        database,
+        observation_path=_write_json(tmp_path / "observation.json", _observation(contract)),
+        source_verification_path=_write_json(
+            tmp_path / "observation-verification.json",
+            _source_verification(
+                _observation(contract)["source"],
+                subject_ref={
+                    "object_type": "OUTCOME_OBSERVATION",
+                    "object_id": _observation(contract)["observation_id"],
+                },
+            ),
+        ),
+        settlement_id="MHE:SETTLEMENT:SYNTHETIC:V1",
+        source_verifier=_synthetic_source_verifier,
+    )
+    assert settled["settlement"]["status"] == "MATCH"
+
+    receipt = runner.public_receipt(
+        database,
+        measurement_contract_id=contract["measurement_contract_id"],
+        measurement_contract_version=contract["measurement_contract_version"],
+    )
+    assert receipt["chronology"]["prediction"]["prediction_id"] == prediction["prediction_id"]
+    assert receipt["chronology"]["outcome_access"]["authorization_id"] == access["authorization_id"]
+    assert receipt["settlement"]["status"] == "MATCH"
+    serialized = json.dumps(receipt)
+    assert "predicted_direction" not in serialized
+    assert "realised_direction" not in serialized
+    assert receipt["method_transfer_rights"] == "NO_METHOD_TRANSFER_RIGHTS"
+
+
+@pytest.mark.parametrize("stage", ["access", "observation"])
+def test_persistent_runner_rejects_caller_authored_prediction_or_result_fields(
+    tmp_path: Path, stage: str,
+) -> None:
+    contract = _contract()
+    evidence = _static_evidence(contract)
+    prediction = _prediction(contract, evidence)
+    database = tmp_path / "minimal-episode.db"
+    runner.freeze_preoutcome(
+        database,
+        contract_path=_write_json(tmp_path / "contract.json", contract),
+        evidence_path=_write_json(tmp_path / "evidence.json", evidence),
+        prediction_path=_write_json(tmp_path / "prediction.json", prediction),
+        source_verification_path=_write_json(
+            tmp_path / "evidence-verification.json",
+            _source_verification(
+                evidence["source"],
+                subject_ref={
+                    "object_type": "STATIC_EVIDENCE",
+                    "object_id": evidence["evidence_receipt_id"],
+                    "object_version": evidence["evidence_receipt_version"],
+                },
+            ),
+        ),
+        source_verifier=_synthetic_source_verifier,
+    )
+    access = _access(contract)
+    if stage == "access":
+        access["predicted_direction"] = "INCREASE"
+        with pytest.raises(ValueError, match="forbidden fields"):
+            runner.controller_authorize_outcome(
+                database, access_path=_write_json(tmp_path / "access.json", access),
+            )
+        return
+
+    runner.controller_authorize_outcome(
+        database, access_path=_write_json(tmp_path / "access.json", access),
+    )
+    observation = _observation(contract)
+    observation["status"] = "MATCH"
+    with pytest.raises(ValueError, match="caller-authored fields"):
+        runner.controller_record_and_settle(
+            database,
+            observation_path=_write_json(tmp_path / "observation.json", observation),
+            source_verification_path=_write_json(
+                tmp_path / "observation-verification.json",
+                _source_verification(
+                    observation["source"],
+                    subject_ref={
+                        "object_type": "OUTCOME_OBSERVATION",
+                        "object_id": observation["observation_id"],
+                    },
+                ),
+            ),
+            settlement_id="MHE:SETTLEMENT:SYNTHETIC:V1",
+            source_verifier=_synthetic_source_verifier,
+        )
+
+
+def test_real_runner_rejects_fixture_only_source_before_creating_database(tmp_path: Path) -> None:
+    contract = _contract()
+    evidence = _static_evidence(contract)
+    prediction = _prediction(contract, evidence)
+    database = tmp_path / "minimal-episode.db"
+    with pytest.raises(ValueError, match="official static.cninfo.com.cn"):
+        runner.freeze_preoutcome(
+            database,
+            contract_path=_write_json(tmp_path / "contract.json", contract),
+            evidence_path=_write_json(tmp_path / "evidence.json", evidence),
+            prediction_path=_write_json(tmp_path / "prediction.json", prediction),
+            source_verification_path=_write_json(
+                tmp_path / "evidence-verification.json",
+                _source_verification(
+                    evidence["source"],
+                    subject_ref={
+                        "object_type": "STATIC_EVIDENCE",
+                        "object_id": evidence["evidence_receipt_id"],
+                        "object_version": evidence["evidence_receipt_version"],
+                    },
+                ),
+            ),
+        )
+    assert not database.exists()
+
+
+def test_official_source_quote_must_reconcile_to_declared_tonnes() -> None:
+    verification = {
+        "unit": "tonnes",
+        "numeric_value": 295000000,
+        "exact_quote": "本集团水泥和熟料合计净销量为2.95亿吨",
+    }
+    runner._verify_quote_value(verification)
+    verification["numeric_value"] = 296000000
+    with pytest.raises(ValueError, match="do not match"):
+        runner._verify_quote_value(verification)
+
+
+def test_source_verification_subject_must_match_frozen_object(tmp_path: Path) -> None:
+    contract = _contract()
+    evidence = _static_evidence(contract)
+    prediction = _prediction(contract, evidence)
+    verification = _source_verification(
+        evidence["source"],
+        subject_ref={"object_type": "STATIC_EVIDENCE", "object_id": "WRONG", "object_version": 1},
+    )
+    with pytest.raises(ValueError, match="subject_ref must match"):
+        runner.freeze_preoutcome(
+            tmp_path / "minimal-episode.db",
+            contract_path=_write_json(tmp_path / "contract.json", contract),
+            evidence_path=_write_json(tmp_path / "evidence.json", evidence),
+            prediction_path=_write_json(tmp_path / "prediction.json", prediction),
+            source_verification_path=_write_json(tmp_path / "verification.json", verification),
+            source_verifier=_synthetic_source_verifier,
+        )

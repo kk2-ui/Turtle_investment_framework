@@ -1,0 +1,20 @@
+{
+  "schema_version": "turtle-minimal-historical-episode-official-source-receipt.v1",
+  "verification_state": "OPENED_OFFICIAL_PDF_FIELD_MATCHED",
+  "retrieved_at": "2026-08-26T03:35:40.193914+00:00",
+  "subject_ref": {
+    "object_type": "STATIC_EVIDENCE",
+    "object_id": "MHE:EVIDENCE:CN600585:FY2017:CEMENT_AND_CLINKER_SALES_VOLUME_TONNES:V1",
+    "object_version": 1
+  },
+  "source_id": "CNINFO:600585:ANN:20180323:1204507132",
+  "source_url": "https://static.cninfo.com.cn/finalpage/2018-03-23/1204507132.PDF",
+  "field_ref": "FY2017 Anhui Conch Cement annual report, PDF p. 22, 本集团水泥和熟料合计净销量",
+  "exact_quote": "本集团水泥和熟料合计净销量为2.95亿吨",
+  "numeric_value": 295000000,
+  "unit": "tonnes",
+  "allowed_outputs": [
+    "MECHANICAL_SETTLEMENT_ONLY"
+  ],
+  "method_transfer_rights": "NO_METHOD_TRANSFER_RIGHTS"
+}

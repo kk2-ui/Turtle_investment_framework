@@ -1,8 +1,15 @@
 # Minimal Historical Episode v1
 
-Status: synthetic, in-memory control coverage only. This is a new isolated
-namespace and does not modify or consume V5, V6, H1, training-program,
-selection, CJO, valuation, price, report, pairing, or holdout objects.
+Status:
+
+- synthetic control acceptance: `PASSED`;
+- V1 real-data run: `LEGACY_MECHANICAL_RUN / POST_SETTLEMENT_SOURCE_REVIEW`;
+- V2 real-data episode: `MECHANICALLY_SETTLED / ACCEPTED_FOR_PIPELINE_COVERAGE`;
+- method-transfer authorization: `NONE`.
+
+This remains an isolated namespace and does not modify or consume V5, V6, H1,
+training-program, selection, CJO, valuation, price, report, pairing, or holdout
+objects.
 
 ## Purpose
 
@@ -71,9 +78,63 @@ claim is produced.
 - Append-only controller: `scripts/minimal_historical_episode_control_plane.py`
 - JSON schema: `schemas/minimal_historical_episode.schema.json`
 - Synthetic acceptance tests: `tests/test_minimal_historical_episode.py`
+- Controller-owned persistent runner: `scripts/minimal_historical_episode_runner.py`
 
-The tests use `sqlite3.connect(":memory:")` and `.invalid` URLs. They cover the
-Decision Contract-first chain, decision/measurement identity and role drift,
-and changed versus exact decision replay. They never open a source, browser,
-outcome, or production database, and create no actual forecast or freeze
-artifact outside the test process.
+Synthetic tests use in-memory and temporary on-disk SQLite plus `.invalid`
+URLs. They cover the Decision Contract-first identity/role/replay controls
+without opening real sources, and create no committed production artifact.
+
+The persistent runner is a separate real-data entrypoint. It rejects `.invalid`
+fixtures, opens the cited `static.cninfo.com.cn/finalpage` PDF, reconciles the
+exact disclosed quote to the numeric tonnes value, and emits an official-source
+receipt. The sealed SQLite database belongs only to the controller. A custodian
+receives the Measurement Contract plus contract-only outcome authorization and
+returns one observation; the custodian does not run the database commands.
+Freeze, authorization, observation receipt, and settlement persistence times
+are generated from the runner execution clock rather than accepted from CLI
+arguments.
+
+## First real-data episode
+
+The V1 run is retained as a legacy mechanical record only. Its official-source
+verification was performed after settlement, so it cannot prove the real
+runner's source-before-persistence property.
+
+The accepted V2 episode fixes the same issuer and metric:
+
+```text
+CN:600585
+FY2017 consolidated cement-and-clinker sales volume: 295,000,000 tonnes
+  -> FY2018 directional prediction frozen
+  -> independent contract-only custodian
+FY2018 consolidated cement-and-clinker sales volume: 368,000,000 tonnes
+  -> mechanical MISS
+```
+
+The V2 pre-outcome objects and source-before-freeze receipt were committed at
+`d503bc3` before the independent V2 custodian task received its allowed inputs.
+The controller then verified the outcome source before writing the observation,
+and generated observation/settlement chronology from its own execution clock.
+
+Official source receipts:
+
+- `cohorts/CN600585_FY2017_MINIMAL_HISTORICAL_EPISODE_OFFICIAL_SOURCE_RECEIPT.json`;
+- `cohorts/CN600585_FY2018_MINIMAL_HISTORICAL_EPISODE_OFFICIAL_SOURCE_RECEIPT.json`.
+
+V2 source and execution receipts:
+
+- `cohorts/CN600585_FY2017_MINIMAL_HISTORICAL_EPISODE_V2_OFFICIAL_SOURCE_RECEIPT.json`;
+- `cohorts/CN600585_FY2018_MINIMAL_HISTORICAL_EPISODE_V2_OUTCOME_OFFICIAL_SOURCE_RECEIPT.json`;
+- `cohorts/CN600585_FY2018_MINIMAL_HISTORICAL_EPISODE_V2_RUNTIME_RECEIPT.json`.
+
+Runtime and acceptance receipts:
+
+- `cohorts/CN600585_FY2018_MINIMAL_HISTORICAL_EPISODE_PREOUTCOME_FREEZE_RECEIPT.json`;
+- `cohorts/CN600585_FY2018_MINIMAL_HISTORICAL_EPISODE_RUNTIME_RECEIPT.json`;
+- `cohorts/CN600585_FY2018_MINIMAL_HISTORICAL_EPISODE_ACCEPTANCE.json`.
+
+The V2 `MISS` is visible to the post-settlement reviewer. The prediction was sealed
+from the custodian until the observation had been returned; it is not treated
+as permanently secret after settlement. Neither the result nor its source
+receipts grant learning, method release, V6, pairing, holdout, CJO, valuation,
+report, or trading rights.

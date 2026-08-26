@@ -60,11 +60,11 @@ def _instant(value: Any, field: str) -> str:
         raise MinimalHistoricalEpisodeError(f"{field}_invalid", f"{field} must be a timezone-aware ISO-8601 instant") from exc
     if parsed.tzinfo is None or parsed.utcoffset() is None:
         raise MinimalHistoricalEpisodeError(f"{field}_invalid", f"{field} must be a timezone-aware ISO-8601 instant")
-    return parsed.astimezone(timezone.utc).replace(microsecond=0).isoformat()
+    return parsed.astimezone(timezone.utc).isoformat()
 
 
 def _not_future(value: str, field: str) -> None:
-    if datetime.fromisoformat(value) > datetime.now(timezone.utc).replace(microsecond=0):
+    if datetime.fromisoformat(value) > datetime.now(timezone.utc):
         raise MinimalHistoricalEpisodeError(f"{field}_cannot_be_in_future", f"{field} cannot be in the future")
 
 
