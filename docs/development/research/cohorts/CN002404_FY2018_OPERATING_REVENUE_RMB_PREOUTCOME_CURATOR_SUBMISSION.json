@@ -1,0 +1,62 @@
+{
+  "schema_version": "static-pre-outcome-curator-field-submission.v1",
+  "submission_class": "JSON_CURATOR_FIELD_SUBMISSION",
+  "curator_identity": {
+    "curator_id": "CURATOR:CN002404:REVENUE:20260826",
+    "role": "INDEPENDENT_PRE_OUTCOME_STATIC_CURATOR"
+  },
+  "scope": {
+    "company_id": "CN:002404",
+    "issuer_id": "ISSUER:CN:002404",
+    "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:002404",
+    "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+    "cutoff_at": "2019-12-31T23:59:59+08:00",
+    "measurement_period_end": "2018-12-31",
+    "metric_id": "ISSUER_CONSOLIDATED_OPERATING_REVENUE_RMB",
+    "metric_definition": "Consolidated income-statement operating revenue (营业收入) for the fiscal year, in RMB.",
+    "unit": "RMB"
+  },
+  "source": {
+    "source_id": "CNINFO:002404:ANN:20190319:1205917192",
+    "source_url": "https://static.cninfo.com.cn/finalpage/2019-03-20/1205917192.PDF",
+    "source_type": "OFFICIAL_STATIC_FILING",
+    "published_at": "2019-03-19",
+    "issuer_id": "ISSUER:CN:002404",
+    "responsibility_boundary": "LISTED_CONSOLIDATED_ISSUER",
+    "unit": "RMB",
+    "field_ref": "FY2018 Zhejiang Jiaxin Silk annual report, consolidated income statement, PDF p. 86, 营业收入.",
+    "exact_quote": "其中：营业收入                3,181,203,702.67             2,773,166,625.53",
+    "numeric_value": 3181203702.67
+  },
+  "boundary_check": {
+    "control_group_id": "CONTROL:ZHOU_GUOJIAN",
+    "control_evidence_source_id": "CNINFO:002404:ANN:20190319:1205917192",
+    "control_evidence_field_ref": "PDF p. 58, 公司报告期控股股东未发生变更；公司报告期实际控制人未发生变更。",
+    "conclusion": "NO_MATERIAL_SCOPE_OR_CONTROL_BREAK_OBSERVED_FOR_LISTED_CONSOLIDATED_FY2018_METRIC"
+  },
+  "controller_handoff": {
+    "next_legal_step": "After an independent Decision Contract is frozen, the v2 controller resolves the value-free CNINFO technical route identity for CN:002404 before the Measurement Contract or prediction is frozen.",
+    "curator_scope": "STATIC_BASELINE_ONLY_NO_TECHNICAL_ROUTE_OR_OUTCOME_METADATA"
+  },
+  "information_boundary": {
+    "read_inputs": [
+      "H1:COHORT:CN:TEXTILE_APPAREL_EXPORT_MANUFACTURING:20191231:STATIC:V1@1",
+      "CNINFO:002404:ANN:20190319:1205917192"
+    ],
+    "prohibited_inputs": [
+      "OUTCOME_DOCUMENTS",
+      "OUTCOME_METADATA",
+      "FORECASTS",
+      "CUSTODIAN_MATERIAL",
+      "H2",
+      "R-103",
+      "PRICE",
+      "CJO",
+      "REPORT"
+    ]
+  },
+  "allowed_outputs": [
+    "PRE_OUTCOME_STATIC_FIELD_ONLY"
+  ],
+  "method_transfer_rights": "NO_METHOD_TRANSFER_RIGHTS"
+}
