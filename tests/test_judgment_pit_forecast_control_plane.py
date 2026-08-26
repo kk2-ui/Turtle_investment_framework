@@ -553,6 +553,11 @@ def test_v3_prospective_company_shadow_binds_measurement_and_closes_access_until
     with pytest.raises(control.ForecastControlError) as exc_info:
         control.register_prospective_shadow_episode(conn, historical_relabel, registered_at="2026-08-25T00:00:00+00:00")
     assert exc_info.value.code == "shadow_outcome_period_already_started"
+    same_day_outcome = deepcopy(shadow)
+    same_day_outcome["shadow_episode_id"] = "SHADOW:SYNTHETIC:V3:SAME-DAY-OUTCOME"
+    with pytest.raises(control.ForecastControlError) as exc_info:
+        control.register_prospective_shadow_episode(conn, same_day_outcome, registered_at="2026-08-18T00:00:00+00:00")
+    assert exc_info.value.code == "shadow_outcome_period_already_started"
     access = {
         "schema_version": pit.OUTCOME_ACCESS_SCHEMA_VERSION_V2,
         "authorization_id": "OUTCOME-ACCESS:SYNTHETIC:SHADOW:V3",
@@ -839,6 +844,11 @@ def test_current_mechanism_signal_shadow_is_persisted_without_forecast_or_outcom
     assert control.register_prospective_signal_source_freeze(
         conn, shadow["source_freeze_ref"], registered_at="2026-08-25T00:00:00+08:00",
     )["registered"]
+    with pytest.raises(control.ForecastControlError) as exc_info:
+        control.register_prospective_signal_shadow_episode(
+            conn, shadow, registered_at="2026-08-25T00:00:00+08:00",
+        )
+    assert exc_info.value.code == "signal_source_freeze_must_precede_shadow_registration"
     source_drift = deepcopy(shadow)
     source_drift["shadow_episode_id"] = "SHADOW:R05:SYNTHETIC:SOURCE-DRIFT"
     source_drift["source_freeze_ref"]["allowed_source_ids"].append("STATIC:UNDECLARED")
@@ -848,10 +858,10 @@ def test_current_mechanism_signal_shadow_is_persisted_without_forecast_or_outcom
         )
     assert exc_info.value.code == "signal_source_freeze_mismatch"
     first = control.register_prospective_signal_shadow_episode(
-        conn, shadow, registered_at="2026-08-25T00:00:00+08:00",
+        conn, shadow, registered_at="2026-08-25T00:00:01+08:00",
     )
     replay = control.register_prospective_signal_shadow_episode(
-        conn, deepcopy(shadow), registered_at="2026-08-25T00:00:00+08:00",
+        conn, deepcopy(shadow), registered_at="2026-08-25T00:00:01+08:00",
     )
     assert first["registered"] and not first["idempotent"]
     assert replay["registered"] and replay["idempotent"]

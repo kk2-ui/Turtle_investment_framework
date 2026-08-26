@@ -33,9 +33,10 @@ Historical Forecasts without this shadow retain their existing outcome access
 path and cannot be retroactively represented as prospective evidence.
 
 R05 remains an independent signal probe. Its static source allowlist is first
-stored in `judgment_pit_prospective_signal_source_freezes`; its shadow must
-then cite the exact stored receipt. This does not turn a signal probe into a
-CompanyStateForecast or a valuation input.
+stored immutably in `judgment_pit_prospective_signal_source_freezes`; its
+shadow must then cite that exact receipt at a strictly later registration time.
+This does not turn a signal probe into a CompanyStateForecast or a valuation
+input.
 
 ## Canonical company-and-time holdout binding
 

@@ -867,10 +867,10 @@ def register_prospective_shadow_episode(
                 outcome_period_end = datetime.fromisoformat(cell["outcome_period_end"]).date()
             except (KeyError, TypeError, ValueError) as exc:  # stored Measurement Contract invariant
                 raise ForecastControlError("stored_measurement_contract_invalid", "outcome period end must be an ISO date") from exc
-            if outcome_period_end < datetime.fromisoformat(timestamp).date():
+            if outcome_period_end <= datetime.fromisoformat(timestamp).date():
                 raise ForecastControlError(
                     "shadow_outcome_period_already_started",
-                    "a prospective shadow must be registered before every Measurement Contract outcome period ends",
+                    "a prospective shadow must be registered while every Measurement Contract outcome period is still future",
                 )
         if _instant(measurement_row["frozen_at"], "measurement_contract.frozen_at") >= timestamp:
             raise ForecastControlError(
@@ -969,10 +969,10 @@ def register_prospective_signal_shadow_episode(
             "signal_source_freeze_mismatch",
             "signal shadow source-freeze content must exactly match the registered immutable receipt",
         )
-    if _instant(freeze_row["registered_at"], "signal_source_freeze.registered_at") > timestamp:
+    if _instant(freeze_row["registered_at"], "signal_source_freeze.registered_at") >= timestamp:
         raise ForecastControlError(
             "signal_source_freeze_must_precede_shadow_registration",
-            "source-freeze receipt must be registered before its signal shadow",
+            "source-freeze receipt must be registered strictly before its signal shadow",
         )
     with conn:
         existing = conn.execute(
