@@ -51,7 +51,8 @@ _CONTRACT_KEYS = {
 _WINDOW_KEYS = {"period_start", "period_end", "fiscal_period", "settlement_due_at"}
 _SOURCE_ACCESS_KEYS = {
     "source_id", "source_type", "official_url", "published_after_cutoff",
-    "access_state", "custodian_access",
+    "access_state", "custodian_access", "issuer_id", "report_period_end",
+    "availability_precision", "source_available_at", "source_available_date",
 }
 _CELL_KEYS = {
     "cell_id", "thread_id", "layer", "outcome_period", "responsibility_boundary",

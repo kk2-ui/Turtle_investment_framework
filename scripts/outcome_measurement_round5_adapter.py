@@ -336,6 +336,8 @@ def build_value_free_custody_projection(package: Any) -> dict[str, Any]:
     findings = _forbidden(projection)
     if findings:
         raise Round5CustodyAdapterError("value_free_projection_contains_forbidden_fields: " + ", ".join(findings))
+    projection["submission_api"] = "outcome_measurement_round5_adapter.validate_canonical_custodian_submission"
+    projection["settlement_api"] = "outcome_measurement_round5_adapter.settle_via_public_adapter"
     return projection
 
 

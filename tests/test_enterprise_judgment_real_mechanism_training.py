@@ -11,8 +11,8 @@ from scripts import enterprise_judgment_reconstruction_registry as reconstructio
 
 ROOT = Path(__file__).resolve().parents[1]
 BLOCK_DIR = ROOT / "docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018"
-ROUND5_PACKAGE_PATH = BLOCK_DIR / "26_round5_preoutcome_mechanism_package.json"
-ROUND5_CONTROL_RECEIPT_PATH = BLOCK_DIR / "27_round5_preoutcome_control_plane_receipt.json"
+ROUND5_PACKAGE_PATH = BLOCK_DIR / "29_round5_v3_preoutcome_mechanism_package.json"
+ROUND5_CONTROL_RECEIPT_PATH = BLOCK_DIR / "31_round5_v3_preoutcome_control_plane_receipt.json"
 
 
 def _load(path: Path) -> dict:
@@ -149,10 +149,15 @@ def _contract() -> dict:
         "source_access": {
             "source_id": "SOURCE:SYNTHETIC:FY2020",
             "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
-            "official_url": "https://static.example.invalid/fy2020.pdf",
+            "official_url": "https://static.cninfo.com.cn/finalpage/2021-04-01/1200000000.PDF",
             "published_after_cutoff": True,
             "access_state": "SEALED_UNTIL_PREOUTCOME_COMMIT",
             "custodian_access": "OUTCOME_ONLY",
+            "issuer_id": "ISSUER:CN:SYNTHETIC",
+            "report_period_end": "2020-12-31",
+            "availability_precision": "DATE_ONLY",
+            "source_available_at": None,
+            "source_available_date": "2021-04-01",
         },
         "atomic_cells": cells,
         "thread_combination_rules": [
@@ -366,7 +371,7 @@ def test_real_round5_contract_splits_the_mechanism_into_atomic_fields() -> None:
 def test_real_round5_j2_and_j3_bind_only_atomic_contract_cells() -> None:
     package = _load(ROUND5_PACKAGE_PATH)
     contract_ids = {
-        cell["cell_id"]: "MC:" + cell["cell_id"].removeprefix("CELL:") + ":V2"
+        cell["cell_id"]: "MC:" + cell["cell_id"].removeprefix("CELL:") + ":V3"
         for cell in package["outcome_measurement_contract"]["atomic_cells"]
     }
     episode_cells = {
@@ -397,20 +402,20 @@ def test_real_round5_control_receipt_proves_canonical_public_preoutcome_path() -
     package = _load(ROUND5_PACKAGE_PATH)
     receipt = _load(ROUND5_CONTROL_RECEIPT_PATH)
 
-    assert receipt["preoutcome_package_ref"] == {
-        "package_id": package["package_id"],
-        "commit": "d0bd094",
-        "transition_id": package["selection"]["transition_id"],
-        "selected_rank": 18,
-    }
+    package_ref = receipt["preoutcome_package_ref"]
+    assert package_ref["package_id"] == package["package_id"]
+    assert package_ref["schema_version"] == package["schema_version"]
+    assert package_ref["artifact"] == "29_round5_v3_preoutcome_mechanism_package.json"
+    assert package_ref["transition_id"] == package["selection"]["transition_id"]
+    assert package_ref["selected_rank"] == 18
     registration = receipt["canonical_j1_registration"]
     assert registration["frozen"] is True
     assert registration["registry_role"] == "CANONICAL_FROZEN_J1_CONTROL_PLANE"
     assert registration["reconstruction_id"] == package["reconstruction_spec"]["reconstruction_id"]
     projections = receipt["public_projections"]
-    assert projections["j2"]["api"] == "compile_mechanism_thread_projection"
+    assert projections["j2"]["api"] == "enterprise_judgment_mechanism.compile_mechanism_thread_projection"
     assert projections["j2"]["valid"] is True
-    assert projections["j3"]["api"] == "compile_forecast_projection"
+    assert projections["j3"]["api"] == "enterprise_judgment_forecast_projection.compile_forecast_projection"
     assert projections["j3"]["projection_state"] == "FORECAST_REQUESTS_READY"
     assert projections["j3"]["valid"] is True
     assert receipt["outcome_access"] == {

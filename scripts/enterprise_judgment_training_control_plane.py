@@ -46,6 +46,16 @@ class TrainingControlPlaneError(ValueError):
         self.detail = detail
 
 
+def _mapping(value: Any) -> dict[str, Any]:
+    return value if isinstance(value, dict) else {}
+
+
+def _canonical_source_type(value: Any) -> Any:
+    if value in {"OFFICIAL_ANNUAL_REPORT", "OFFICIAL_AUDITED_ANNUAL_REPORT"}:
+        return "OFFICIAL_ANNUAL_REPORT"
+    return value
+
+
 def _json(value: Any) -> str:
     return json.dumps(value, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
 
@@ -556,7 +566,14 @@ def _enterprise_observation_shape(receipt: Any) -> tuple[dict[str, Any], dict[st
             "source_available_at": authorized.get("source_available_at"),
             "source_available_date": authorized.get("source_available_date"),
         }
-        if any(source.get(key) != expected for key, expected in expected_source.items()):
+        if any(
+            (
+                _canonical_source_type(source.get(key)) != _canonical_source_type(expected)
+                if key == "official_source_type"
+                else source.get(key) != expected
+            )
+            for key, expected in expected_source.items()
+        ):
             raise TrainingControlPlaneError("enterprise_observation_authorized_source_mismatch", "source is not the canonical authorized source identity")
         if source.get("availability_precision") == "TIMESTAMP":
             if not isinstance(source.get("source_available_at"), str) or source.get("source_available_date") is not None:
@@ -682,18 +699,26 @@ def register_enterprise_settlement(settlement: dict[str, Any], *, registered_at:
         elif precision == "DATE_ONLY":
             try:
                 available_day = datetime.fromisoformat(str(source.get("source_available_date"))).date()
+                observed_day = datetime.fromisoformat(observed).date()
             except (TypeError, ValueError) as exc:
                 raise TrainingControlPlaneError("enterprise_source_available_date_invalid", "source availability date is invalid") from exc
-            if observed.date() < available_day:
+            if observed_day < available_day:
                 raise TrainingControlPlaneError("enterprise_observed_at_must_follow_source_availability", "observed_at precedes source availability")
         else:
             raise TrainingControlPlaneError("enterprise_source_availability_invalid", "source availability precision is invalid")
-        if any(source.get(key) != authorized.get(expected) for key, expected in {
+        if any(
+            (
+                _canonical_source_type(source.get(key)) != _canonical_source_type(authorized.get(expected))
+                if key == "official_source_type"
+                else source.get(key) != authorized.get(expected)
+            )
+            for key, expected in {
             "source_id": "source_id", "source_url": "official_url", "official_source_type": "source_type",
             "issuer_id": "issuer_id", "report_period_end": "report_period_end",
             "availability_precision": "availability_precision", "source_available_at": "source_available_at",
             "source_available_date": "source_available_date",
-        }.items()):
+            }.items()
+        ):
             raise TrainingControlPlaneError("enterprise_settlement_authorized_source_mismatch", "settlement source is not canonical")
     encoded = _json(item)
     conn = _canonical_conn()

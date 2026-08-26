@@ -93,8 +93,8 @@
     "artifact": "30_round5_v3_value_free_custody_projection.json",
     "projection_id": "CUSTODY:CCR:600802:20150415:20160427:V3",
     "generation_api": "outcome_measurement_acquisition.build_value_free_custody_projection",
-    "submission_api": "outcome_measurement_acquisition.validate_acquisition_result",
-    "settlement_api": "outcome_measurement_settlement_adapter.register_acquisition_result",
+    "submission_api": "outcome_measurement_round5_adapter.validate_canonical_custodian_submission",
+    "settlement_api": "outcome_measurement_round5_adapter.settle_via_public_adapter",
     "atomic_measurement_contract_count": 14,
     "contains_forecast_direction_or_value": false
   },

@@ -24,6 +24,11 @@ CUSTODY_PROJECTION = BLOCK_DIR / "30_round5_v3_value_free_custody_projection.jso
 CONTROL_RECEIPT = BLOCK_DIR / "31_round5_v3_preoutcome_control_plane_receipt.json"
 ADAPTER_RECEIPT = BLOCK_DIR / "32_round5_v3_adapter_acceptance_receipt.json"
 FREEZE_AT = "2026-08-26T16:30:00+00:00"
+ROUND5_IDS = {
+    "package_id": "EMFP:CN:CEMENT:600802:20150415:V3",
+    "control_receipt_id": "EMPCPR:CN:CEMENT:600802:20150415:V3",
+    "adapter_acceptance_receipt_id": "R5V3AR:CN600802:20150415:V1",
+}
 RECEIPT_FILES = [
     "05_feedback_settlement_001.json",
     "07_feedback_settlement_002.json",
@@ -350,8 +355,8 @@ def test_real_acquisition_api_builds_value_free_projection_and_public_settlement
     projection = round5.build_value_free_custody_projection(package)
 
     assert projection["schema_version"] == "outcome-measurement-value-free-custody-projection.v1"
-    assert projection["submission_api"] == "outcome_measurement_acquisition.validate_acquisition_result"
-    assert projection["settlement_api"] == "outcome_measurement_settlement_adapter.register_acquisition_result"
+    assert projection["submission_api"] == "outcome_measurement_round5_adapter.validate_canonical_custodian_submission"
+    assert projection["settlement_api"] == "outcome_measurement_round5_adapter.settle_via_public_adapter"
     assert projection["outcome_access"] == {"authorized": False, "content_read": False, "custodian_started": False}
     assert len(projection["atomic_measurement_contracts"]) == 14
     encoded = json.dumps(projection, sort_keys=True).casefold()
@@ -396,20 +401,14 @@ def test_enterprise_v3_public_acquisition_submission_and_settlement_preflight(
     )
 
     projection = round5.build_value_free_custody_projection(_v3_package())
-    submission = {
-        "schema_version": "enterprise-round5-custodian-submission.v1",
-        "authorization_receipt_id": authorization["authorization_receipt_id"],
-        "custodian_id": projection["custodian_id"],
-        "projection_id": projection["projection_id"],
-        "outcome_access_authorization": authorization,
-        "acquisition_result": result,
-    }
-    validated = round5.validate_custodian_submission(
-        submission, projection=projection, measurement_contract=contract,
+    validated = round5.validate_canonical_custodian_submission(
+        **ROUND5_IDS,
+        acquisition_result=result,
+        outcome_access_authorization=authorization,
     )
     assert validated["valid"], validated["findings"]
     settled = round5.settle_via_public_adapter(
-        measurement_contract=contract,
+        **ROUND5_IDS,
         outcome_access_authorization=authorization,
         acquisition_result=result,
         observed_at="2016-04-27T02:00:00+00:00",
@@ -491,8 +490,8 @@ def test_enterprise_public_settlement_keeps_acquisition_mismatch_sibling_local(
     result = acquisition.acquire_outcome_measurements(
         contract, inventory, page_reader=reader, outcome_access_authorization=authorization,
     )
-    settled = settlement_adapter.register_acquisition_result(
-        measurement_contract=contract,
+    settled = round5.register_canonical_acquisition_result(
+        **ROUND5_IDS,
         outcome_access_authorization=authorization,
         acquisition_result=result,
         observed_at="2016-04-27T02:00:00+00:00",
@@ -550,16 +549,16 @@ def test_enterprise_settlement_persists_replays_is_idempotent_and_rejects_tamper
     result = acquisition.acquire_outcome_measurements(
         contract, inventory, page_reader=reader, outcome_access_authorization=authorization,
     )
-    first = settlement_adapter.register_acquisition_result(
-        measurement_contract=contract,
+    first = round5.register_canonical_acquisition_result(
+        **ROUND5_IDS,
         outcome_access_authorization=authorization,
         acquisition_result=result,
         observed_at="2016-04-27T02:00:00+00:00",
         settlement_id="SETTLEMENT:CN600802:ROUND5:SYNTHETIC:PERSISTED",
         settled_at="2016-04-27T03:00:00+00:00",
     )
-    second = settlement_adapter.register_acquisition_result(
-        measurement_contract=contract,
+    second = round5.register_canonical_acquisition_result(
+        **ROUND5_IDS,
         outcome_access_authorization=authorization,
         acquisition_result=result,
         observed_at="2016-04-27T02:00:00+00:00",
@@ -587,11 +586,7 @@ def test_round5_canonical_production_entry_resolves_ids_and_rejects_injected_ide
     result = acquisition.acquire_outcome_measurements(
         contract, inventory, page_reader=reader, outcome_access_authorization=authorization,
     )
-    ids = {
-        "package_id": "EMFP:CN:CEMENT:600802:20150415:V3",
-        "control_receipt_id": "EMPCPR:CN:CEMENT:600802:20150415:V3",
-        "adapter_acceptance_receipt_id": "R5V3AR:CN600802:20150415:V1",
-    }
+    ids = ROUND5_IDS
     validated = round5.validate_canonical_custodian_submission(
         **ids, acquisition_result=result, outcome_access_authorization=authorization,
     )
@@ -633,8 +628,8 @@ def test_enterprise_settlement_rejects_invalid_measurement_clock_order(
         contract, inventory, page_reader=reader, outcome_access_authorization=authorization,
     )
     with pytest.raises(settlement_adapter.OutcomeMeasurementSettlementAdapterError, match="clock_invalid"):
-        settlement_adapter.register_acquisition_result(
-            measurement_contract=contract,
+        round5.register_canonical_acquisition_result(
+            **ROUND5_IDS,
             outcome_access_authorization=authorization,
             acquisition_result=result,
             observed_at=observed_at,

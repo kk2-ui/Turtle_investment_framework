@@ -1838,8 +1838,8 @@
       ]
     }
   ],
-  "submission_api": "outcome_measurement_acquisition.validate_acquisition_result",
-  "settlement_api": "outcome_measurement_settlement_adapter.register_acquisition_result",
+  "submission_api": "outcome_measurement_round5_adapter.validate_canonical_custodian_submission",
+  "settlement_api": "outcome_measurement_round5_adapter.settle_via_public_adapter",
   "outcome_access": {
     "authorized": false,
     "content_read": false,
