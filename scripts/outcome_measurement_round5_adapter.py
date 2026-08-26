@@ -14,6 +14,7 @@ import argparse
 from copy import deepcopy
 import json
 from pathlib import Path
+import re
 from typing import Any
 
 try:
@@ -104,8 +105,29 @@ def _event_clock() -> dict[str, Any]:
     }
 
 
-def _input(field_id: str, *, role: str, unit: str, clock: dict[str, Any]) -> dict[str, Any]:
-    return {"field_id": field_id, "role": role, "unit": unit, "measurement_clock": deepcopy(clock)}
+def _raw_locator(cell: dict[str, Any], clock: dict[str, Any]) -> dict[str, str]:
+    field = cell["field_identity"]
+    if clock["clock_kind"] == "EVENT_WINDOW":
+        event = clock["event_window"]
+        period_column = f"{event['event_start']}..{event['event_end']}"
+    else:
+        period = clock.get("flow_period") or clock.get("balance_as_of")
+        period_column = period.get("fiscal_period") or period.get("as_of")
+    return {
+        "table_or_note": field["table_or_note"],
+        "line_item": field["line_item"],
+        "period_column": period_column,
+    }
+
+
+def _input(field_id: str, *, role: str, unit: str, clock: dict[str, Any], cell: dict[str, Any]) -> dict[str, Any]:
+    return {
+        "field_id": field_id,
+        "role": role,
+        "unit": unit,
+        "measurement_clock": deepcopy(clock),
+        "locator": _raw_locator(cell, clock),
+    }
 
 
 def _conversion(field_id: str, unit: str) -> dict[str, str]:
@@ -125,7 +147,7 @@ def _raw_contract(cell: dict[str, Any]) -> tuple[dict[str, Any], list[dict[str, 
     unit = cell["unit"]["scale"] if cell["unit"]["currency"] == "NOT_APPLICABLE" else cell["unit"]["currency"]
 
     if event:
-        raw = [_input(outcome_id, role="EVENT", unit="BOOLEAN_EVENT", clock=outcome_clock)]
+        raw = [_input(outcome_id, role="EVENT", unit="BOOLEAN_EVENT", clock=outcome_clock, cell=cell)]
         formula = {
             "operator": "EVENT_BOOLEAN",
             "input_field_ids": [outcome_id],
@@ -170,7 +192,10 @@ def _raw_contract(cell: dict[str, Any]) -> tuple[dict[str, Any], list[dict[str, 
     if cell_id in derived:
         specifications, operator, expression = derived[cell_id]
         raw = [
-            _input(field_id, role="BASELINE" if year == 2014 else "OUTCOME", unit=raw_unit, clock=_flow_clock(year))
+            _input(
+                field_id, role="BASELINE" if year == 2014 else "OUTCOME", unit=raw_unit,
+                clock=_flow_clock(year), cell=cell,
+            )
             for field_id, raw_unit, year in specifications
         ]
         formula = {
@@ -183,8 +208,8 @@ def _raw_contract(cell: dict[str, Any]) -> tuple[dict[str, Any], list[dict[str, 
         return outcome_clock, raw, formula
 
     raw = [
-        _input(baseline_id, role="BASELINE", unit=unit, clock=baseline_clock),
-        _input(outcome_id, role="OUTCOME", unit=unit, clock=outcome_clock),
+        _input(baseline_id, role="BASELINE", unit=unit, clock=baseline_clock, cell=cell),
+        _input(outcome_id, role="OUTCOME", unit=unit, clock=outcome_clock, cell=cell),
     ]
     formula = {
         "operator": "PERCENT_CHANGE",
@@ -223,6 +248,13 @@ def build_round5_v3_package(v2_package: Any, *, frozen_at: str) -> dict[str, Any
     }
     contract["source_access"]["authorization_receipt_id"] = "CUSTODY-AUTH:CN600802:20150415:FY2015:V3"
     contract["source_access"]["access_state"] = "SEALED_UNTIL_PREOUTCOME_COMMIT"
+    contract["source_access"].update({
+        "issuer_id": "ISSUER:CN:600802",
+        "report_period_end": "2015-12-31",
+        "availability_precision": "DATE_ONLY",
+        "source_available_at": None,
+        "source_available_date": "2016-04-26",
+    })
     for cell in contract["atomic_cells"]:
         clock, raw_inputs, formula = _raw_contract(cell)
         cell["outcome_period"] = {
@@ -289,6 +321,11 @@ def build_value_free_custody_projection(package: Any) -> dict[str, Any]:
             "source_id": source_access.get("source_id"),
             "source_type": source_access.get("source_type"),
             "official_url": source_access.get("official_url"),
+            "issuer_id": source_access.get("issuer_id"),
+            "report_period_end": source_access.get("report_period_end"),
+            "availability_precision": source_access.get("availability_precision"),
+            "source_available_at": source_access.get("source_available_at"),
+            "source_available_date": source_access.get("source_available_date"),
             "published_after_cutoff": source_access.get("published_after_cutoff"),
             "access_state": source_access.get("access_state"),
             "custodian_access": source_access.get("custodian_access"),
@@ -466,7 +503,7 @@ def register_canonical_acquisition_result(
     )
     if not validation["valid"]:
         raise Round5CustodyAdapterError("canonical_round5_submission_invalid:" + ";".join(validation["findings"]))
-    return settlement_adapter.register_acquisition_result(
+    return settlement_adapter.settle_enterprise_acquisition_result(
         measurement_contract=bundle["measurement_contract"],
         outcome_access_authorization=outcome_access_authorization,
         acquisition_result=acquisition_result,
@@ -476,14 +513,22 @@ def register_canonical_acquisition_result(
     )
 
 
-def settle_via_public_adapter(*args: Any, **kwargs: Any) -> dict[str, Any]:
-    """Delegate future settlement to the reusable public v1 adapter.
-
-    This function intentionally has no Round 5 scoring logic.  It is not
-    callable from the pre-outcome freeze path and is left as a named bridge so
-    the custodian cannot accidentally acquire a second settlement engine.
-    """
-    return settlement_adapter.register_acquisition_result(*args, **kwargs)
+def settle_via_public_adapter(
+    *, package_id: str, control_receipt_id: str, adapter_acceptance_receipt_id: str,
+    acquisition_result: Any, outcome_access_authorization: Any,
+    observed_at: str, settlement_id: str, settled_at: str,
+) -> dict[str, Any]:
+    """Settle Enterprise Round 5 only through canonical artifact identities."""
+    return register_canonical_acquisition_result(
+        package_id=package_id,
+        control_receipt_id=control_receipt_id,
+        adapter_acceptance_receipt_id=adapter_acceptance_receipt_id,
+        acquisition_result=acquisition_result,
+        outcome_access_authorization=outcome_access_authorization,
+        observed_at=observed_at,
+        settlement_id=settlement_id,
+        settled_at=settled_at,
+    )
 
 
 def _read(path: Path) -> dict[str, Any]:

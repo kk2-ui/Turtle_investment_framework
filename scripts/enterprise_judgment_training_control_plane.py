@@ -535,6 +535,7 @@ def _enterprise_observation_shape(receipt: Any) -> tuple[dict[str, Any], dict[st
             "source_id", "source_url", "official_source_type", "issuer_id", "report_period_end",
             "availability_precision", "field_identity", "measurement_clock",
             "responsibility_boundary", "unit", "pdf_page", "field_ref",
+            "table_or_note", "line_item", "period_column",
         }
         if not required_source.issubset(source):
             raise TrainingControlPlaneError("enterprise_observation_source_incomplete", "source evidence is not page-level complete")
@@ -544,6 +545,30 @@ def _enterprise_observation_shape(receipt: Any) -> tuple[dict[str, Any], dict[st
             raise TrainingControlPlaneError("enterprise_observation_source_boundary_or_unit_invalid", "source boundary or unit binding is invalid")
         if not isinstance(source["pdf_page"], int) or source["pdf_page"] < 1 or source["field_ref"] != f"PDF p.{source['pdf_page']}":
             raise TrainingControlPlaneError("enterprise_observation_page_binding_invalid", "source must identify a PDF page")
+        authorized = _mapping(contract.get("source_access"))
+        expected_source = {
+            "source_id": authorized.get("source_id"),
+            "source_url": authorized.get("official_url"),
+            "official_source_type": authorized.get("source_type"),
+            "issuer_id": authorized.get("issuer_id"),
+            "report_period_end": authorized.get("report_period_end"),
+            "availability_precision": authorized.get("availability_precision"),
+            "source_available_at": authorized.get("source_available_at"),
+            "source_available_date": authorized.get("source_available_date"),
+        }
+        if any(source.get(key) != expected for key, expected in expected_source.items()):
+            raise TrainingControlPlaneError("enterprise_observation_authorized_source_mismatch", "source is not the canonical authorized source identity")
+        if source.get("availability_precision") == "TIMESTAMP":
+            if not isinstance(source.get("source_available_at"), str) or source.get("source_available_date") is not None:
+                raise TrainingControlPlaneError("enterprise_observation_source_availability_invalid", "timestamp source availability is invalid")
+        elif source.get("availability_precision") == "DATE_ONLY":
+            if not isinstance(source.get("source_available_date"), str) or source.get("source_available_at") is not None:
+                raise TrainingControlPlaneError("enterprise_observation_source_availability_invalid", "date-only source availability is invalid")
+        else:
+            raise TrainingControlPlaneError("enterprise_observation_source_availability_invalid", "source availability precision is invalid")
+        locator = _mapping(raw.get("locator"))
+        if any(source.get(key) != locator.get(key) for key in ("table_or_note", "line_item", "period_column")):
+            raise TrainingControlPlaneError("enterprise_observation_locator_mismatch", "source locator differs from frozen raw field locator")
     elif not isinstance(item.get("reason"), str) or not item["reason"]:
         raise TrainingControlPlaneError("enterprise_observation_unknown_reason_required", "unknown observation needs a reason")
     return item, contract
@@ -637,6 +662,39 @@ def register_enterprise_settlement(settlement: dict[str, Any], *, registered_at:
     """Append a canonical Enterprise settlement after raw receipts exist."""
     item, contract, raw_receipts = _enterprise_settlement_shape(settlement)
     timestamp = _instant(registered_at, field="registered_at")
+    observed = _instant(item["observed_at"], field="observed_at")
+    settled = _instant(item["settled_at"], field="settled_at")
+    cutoff = _instant(contract["cutoff_at"], field="cutoff_at")
+    if observed <= cutoff:
+        raise TrainingControlPlaneError("enterprise_observed_at_must_follow_cutoff", "observed_at must follow cutoff")
+    if settled < observed:
+        raise TrainingControlPlaneError("enterprise_settled_at_must_follow_observed_at", "settled_at must not precede observed_at")
+    authorized = _mapping(contract.get("source_access"))
+    for receipt in raw_receipts:
+        if receipt.get("status") not in {"OBSERVED", "MEASUREMENT_MISMATCH"}:
+            continue
+        source = _mapping(receipt.get("source"))
+        precision = source.get("availability_precision")
+        if precision == "TIMESTAMP":
+            available = _instant(source.get("source_available_at"), field="source_available_at")
+            if observed < available:
+                raise TrainingControlPlaneError("enterprise_observed_at_must_follow_source_availability", "observed_at precedes source availability")
+        elif precision == "DATE_ONLY":
+            try:
+                available_day = datetime.fromisoformat(str(source.get("source_available_date"))).date()
+            except (TypeError, ValueError) as exc:
+                raise TrainingControlPlaneError("enterprise_source_available_date_invalid", "source availability date is invalid") from exc
+            if observed.date() < available_day:
+                raise TrainingControlPlaneError("enterprise_observed_at_must_follow_source_availability", "observed_at precedes source availability")
+        else:
+            raise TrainingControlPlaneError("enterprise_source_availability_invalid", "source availability precision is invalid")
+        if any(source.get(key) != authorized.get(expected) for key, expected in {
+            "source_id": "source_id", "source_url": "official_url", "official_source_type": "source_type",
+            "issuer_id": "issuer_id", "report_period_end": "report_period_end",
+            "availability_precision": "availability_precision", "source_available_at": "source_available_at",
+            "source_available_date": "source_available_date",
+        }.items()):
+            raise TrainingControlPlaneError("enterprise_settlement_authorized_source_mismatch", "settlement source is not canonical")
     encoded = _json(item)
     conn = _canonical_conn()
     try:

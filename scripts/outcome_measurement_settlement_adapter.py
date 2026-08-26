@@ -405,6 +405,10 @@ def register_acquisition_result(
             raise OutcomeMeasurementSettlementAdapterError(
                 "enterprise_settlement_requires_contract_and_authorization"
             )
+        if measurement_contract.get("schema_version") == acquisition.ENTERPRISE_CONTRACT_SCHEMA_VERSION:
+            raise OutcomeMeasurementSettlementAdapterError(
+                "enterprise_settlement_requires_canonical_round5_identity_entry"
+            )
         return settle_enterprise_acquisition_result(
             measurement_contract=measurement_contract,
             outcome_access_authorization=outcome_access_authorization,

@@ -10,6 +10,7 @@ import json
 from pathlib import Path
 import re
 from typing import Any
+from urllib.parse import urlparse
 
 try:
     from scripts import enterprise_judgment_forecast_projection as forecast_projection
@@ -74,12 +75,16 @@ _CLOCK_KEYS = {"clock_kind", "flow_period", "balance_as_of", "event_window"}
 _FLOW_KEYS = {"period_start", "period_end", "fiscal_period"}
 _BALANCE_KEYS = {"as_of", "fiscal_period"}
 _EVENT_KEYS = {"event_start", "event_end", "window_name"}
+_V3_RAW_LOCATOR_KEYS = {"table_or_note", "line_item", "period_column"}
 _V3_CELL_KEYS = _CELL_KEYS | {"measurement_clock", "raw_input_fields"}
-_V3_RAW_INPUT_KEYS = {"field_id", "role", "unit", "measurement_clock"}
+_V3_RAW_INPUT_KEYS = {"field_id", "role", "unit", "measurement_clock", "locator"}
 _V3_FORMULA_KEYS = {"operator", "input_field_ids", "expression", "unit_conversions", "zero_baseline_rule"}
 _V3_UNIT_CONVERSION_KEYS = {"field_id", "from_unit", "to_unit", "scale"}
 _V3_CONTRACT_KEYS = _CONTRACT_KEYS | {"freeze_state", "contract_frozen_at", "clock_policy"}
-_V3_SOURCE_ACCESS_KEYS = _SOURCE_ACCESS_KEYS | {"authorization_receipt_id"}
+_V3_SOURCE_ACCESS_KEYS = _SOURCE_ACCESS_KEYS | {
+    "authorization_receipt_id", "issuer_id", "report_period_end",
+    "availability_precision", "source_available_at", "source_available_date",
+}
 _COMBINATION_KEYS = {
     "rule_id", "thread_id", "input_cell_ids", "evaluation_order", "rule",
     "conflict_rule", "authorization",
@@ -375,6 +380,44 @@ def validate_outcome_measurement_contract(contract: Any) -> dict[str, Any]:
         findings.append("measurement_contract.outcome_source_must_be_sealed")
     if source_access.get("published_after_cutoff") is not True or source_access.get("custodian_access") != "OUTCOME_ONLY":
         findings.append("measurement_contract.outcome_source_access_invalid")
+    source_url = _text(source_access.get("official_url"))
+    parsed_url = urlparse(source_url or "")
+    if (
+        parsed_url.scheme != "https"
+        or parsed_url.netloc.casefold() not in {"static.cninfo.com.cn", "static.sse.com.cn"}
+        or not parsed_url.path.casefold().endswith(".pdf")
+    ):
+        findings.append("measurement_contract.source_access.official_url_must_be_static_official_pdf")
+    if source_access.get("source_type") != "OFFICIAL_AUDITED_ANNUAL_REPORT":
+        findings.append("measurement_contract.source_access.source_type_invalid")
+    if source_access.get("issuer_id") != "ISSUER:" + str(item.get("company_id")):
+        findings.append("measurement_contract.source_access.issuer_id_must_match_company")
+    expected_period = _text(window.get("period_end"))
+    expected_period = expected_period[:10] if expected_period else None
+    if source_access.get("report_period_end") != expected_period:
+        findings.append("measurement_contract.source_access.report_period_must_match_outcome_window")
+    precision = source_access.get("availability_precision")
+    if precision == "TIMESTAMP":
+        available = _instant(
+            source_access.get("source_available_at"),
+            "measurement_contract.source_access.source_available_at", findings,
+        )
+        if source_access.get("source_available_date") is not None:
+            findings.append("measurement_contract.source_access.timestamp_cannot_include_date")
+        if cutoff and available and available <= cutoff:
+            findings.append("measurement_contract.source_access.availability_must_follow_cutoff")
+    elif precision == "DATE_ONLY":
+        available_day: Any = None
+        try:
+            available_day = datetime.fromisoformat(str(source_access.get("source_available_date"))).date()
+        except (TypeError, ValueError):
+            findings.append("measurement_contract.source_access.source_available_date_invalid")
+        if source_access.get("source_available_at") is not None:
+            findings.append("measurement_contract.source_access.date_only_cannot_include_timestamp")
+        if cutoff and available_day and available_day <= cutoff.date():
+            findings.append("measurement_contract.source_access.availability_must_follow_cutoff")
+    else:
+        findings.append("measurement_contract.source_access.availability_precision_invalid")
 
     cells = [_closed(raw, _CELL_KEYS, f"measurement_contract.atomic_cells[{index}]", findings) for index, raw in enumerate(_items(item.get("atomic_cells")))]
     cell_ids = [_text(cell.get("cell_id")) for cell in cells]
@@ -602,6 +645,9 @@ def validate_outcome_measurement_contract_v3(contract: Any) -> dict[str, Any]:
                 findings.append(f"{raw_path}.role_invalid")
             if not _text(raw.get("unit")):
                 findings.append(f"{raw_path}.unit_required")
+            locator = _closed(raw.get("locator"), _V3_RAW_LOCATOR_KEYS, raw_path + ".locator", findings)
+            if not all(_text(locator.get(key)) for key in _V3_RAW_LOCATOR_KEYS):
+                findings.append(raw_path + ".locator_incomplete")
             _validate_v3_clock(raw.get("measurement_clock"), path=raw_path + ".measurement_clock", findings=findings)
             raw_clock = _mapping(raw.get("measurement_clock"))
             raw_field_id = _text(raw.get("field_id"))
@@ -623,6 +669,19 @@ def validate_outcome_measurement_contract_v3(contract: Any) -> dict[str, Any]:
                     actual_end = _clock_date(raw_clock, "balance_as_of" if expected_kind == "BALANCE_AS_OF" else "flow_period")
                     if actual_end != expected_end:
                         findings.append(raw_path + ".raw_fiscal_period_does_not_match_field_identity")
+            expected_period_column = (
+                f"{_event_start(raw_clock)}..{_event_end(raw_clock)}"
+                if raw_clock.get("clock_kind") == "EVENT_WINDOW"
+                else _mapping(raw_clock.get("flow_period") or raw_clock.get("balance_as_of")).get("fiscal_period")
+                or _mapping(raw_clock.get("balance_as_of")).get("as_of")
+            )
+            field_identity = _mapping(cell.get("field_identity"))
+            if locator.get("table_or_note") != field_identity.get("table_or_note"):
+                findings.append(raw_path + ".locator.table_or_note_must_match_frozen_field_identity")
+            if locator.get("line_item") != field_identity.get("line_item"):
+                findings.append(raw_path + ".locator.line_item_must_match_frozen_field_identity")
+            if locator.get("period_column") != expected_period_column:
+                findings.append(raw_path + ".locator.period_column_must_match_measurement_clock")
         formula = _closed(cell.get("formula"), _V3_FORMULA_KEYS, path + ".formula", findings)
         if formula.get("operator") not in {"RAW_VALUE", "EVENT_BOOLEAN", "RATIO_CHANGE", "DIFFERENCE", "PERCENT_CHANGE"}:
             findings.append(f"{path}.formula.operator_invalid")
