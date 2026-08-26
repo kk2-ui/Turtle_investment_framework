@@ -311,3 +311,40 @@ This completes the two Goal milestones (`REAL_SAMPLE_CREATED` and
 `REAL_FEEDBACK_TURN_COMPLETED`). It does not complete `TRANSFER_VALIDATED` and
 does not grant any E3, method-freeze, CJO, valuation, report or investment
 permission.
+
+## 12. 2026-08-26 Mechanism-Training Correction And Next Freeze
+
+Section 11 remains the record of the first block and feedback turn. Subsequent
+work validated only the narrow `PERIMETER_FIRST_MEASUREMENT_METHOD`; it did not
+validate enterprise judgment or action-effect learning.
+
+The first CN:600802 mechanism settlement attempt is not an accepted training
+turn. The FY2014 outcome was read after commit `2cb242b`, but independent review
+found that the package used a caller-owned in-memory J1 registry, private J2/J3
+compilers, self-reported completed companies and non-mechanical composite
+measurement cells. `25_round4_contract_insufficiency_adjudication.json`
+therefore permanently supersedes the attempted settlement as
+`CONTRACT_INVALID_POST_OUTCOME_TEACHING_ONLY`. Raw official values may be used
+only for `POST_OUTCOME_TEACHING`, `DATA_COVERAGE` and `RESEARCH_AGENDA`.
+
+The non-retrospective repair is now implemented:
+
+- `enterprise_judgment_real_mechanism_training.py` derives selection only from
+  formal completion/settlement/adjudication receipts plus the immutable roster;
+- the production builder has no caller database connection and registers the
+  complete J1 bundle through the canonical control layer;
+- J2 and J3 are called only through their public Frozen-J1 APIs;
+- Outcome Measurement Contract v2 uses atomic fields with frozen period,
+  boundary, field identity, unit, formula, threshold/event rule, ordered labels,
+  conflicts and local UNKNOWN/MISMATCH propagation;
+- synthetic validation proves one mismatch leaves observed and unknown siblings
+  unchanged.
+
+Formal receipts mechanically selected rank 18, CN:600802
+`2015-04-15 -> 2016-04-27`. The new pre-outcome package is frozen at
+`26_round5_preoutcome_mechanism_package.json`; its complete J1 is canonical and
+its public J2/J3 projections are recorded in
+`27_round5_preoutcome_control_plane_receipt.json`. The FY2015 outcome source
+remains sealed. No custodian, settlement or outcome label exists at this state,
+and no directional-learning, enterprise-learning, Comparative, CJO, valuation,
+report or investment permission is granted.

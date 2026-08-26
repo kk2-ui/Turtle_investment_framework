@@ -502,3 +502,5 @@ Phase 08 只有同时具备以下结果才能完成：
 | 2026-08-23 | 激活 G1-T：历史训练主导、历史留出验收、真实前瞻后置校准 | 大量历史 PIT 可高频训练判断；最新披露的等待只检验成熟系统的部署有效性，不能阻断训练 |
 | 2026-08-26 | G1-T 改用多维 EnterpriseJudgmentEpisode 和 IndustryLearningBlock；Comparative 降为局部 E3 支线 | 企业差异、时期差异和决策序列是训练对象，不是可比性噪声；旧 action-first 全局入口造成样本过严、判断狭窄且无法形成行业洞察 |
 | 2026-08-26 | 完成首个真实水泥 V2 block 与独立 feedback 闭环 | 五公司、六 cutoff 和 20 条 roster 保留；华新 perimeter mismatch 改变下一 cutoff 的边界议程后，按冻结顺序继续结算海螺合并经营现金。没有方法迁移或投资权限。 |
+| 2026-08-26 | perimeter-first 只取得窄测量方法迁移；福建水泥 Round 4 机制结算永久降为结果后教学 | 独立审阅确认 outcome 已读，且 canonical J1、机械 measurement contract 和 receipt-derived selection 三项前置均不成立；原始官方值可保留，所有方向、机制、forecast 和完成标签无效。 |
+| 2026-08-26 | 非追溯冻结福建水泥 rank 18 的 canonical pre-outcome 机制对象 | 正式 receipts 与 immutable roster 机械选择下一未见 transition；14 个原子 cell、sibling-local mismatch、canonical Frozen J1 及公共 J2/J3 已接通。FY2015 outcome 仍封存，无企业学习或投资权限。 |

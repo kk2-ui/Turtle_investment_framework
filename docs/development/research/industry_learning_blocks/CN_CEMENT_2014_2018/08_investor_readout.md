@@ -60,3 +60,28 @@ commit。任何在结算时的重排、即使重新编号为连续 rank，也不
 `RESEARCH_AGENDA`。它没有 H2 action-first Comparative、最终同行 panel、方法冻结、
 R-61/R-103、CJO、估值、黄金报告或投资授权；所有 read model 都明确输出
 `investment_authorization = NOT_AUTHORIZED`。
+
+## 2026-08-26 机制训练纠偏与下一冻结点
+
+投资者最需要知道的不是“福建水泥 2014 年结果好不好”，而是系统能否区分经营结果、
+管理行动和行动效果。第一次尝试没有做到：`2014-04-16 → 2015-04-15` 的 FY2014
+结果在合同完整前已经被读取。原始官方数值仍可说明哪些字段公开可得，但九个 cell 标签、
+局部 H-A、forecast observed 值和“机制反馈完成”全部被独立审阅撤销。该 transition 已永久
+标为 `CONTRACT_INVALID_POST_OUTCOME_TEACHING_ONLY`，不能重冻、不能产生方向性学习。
+
+根因有三个：J1 当时只进入调用方内存数据库而没有进入 canonical Frozen J1；九个复合
+cell 没有冻结期别、责任边界、字段身份、单位、公式、阈值和冲突顺序；样本选择还使用了
+package 自报的 completed companies。经济后果是同一份年报可能被研究者主观结算成不同的
+执行、客户或现金结论，并把生产线投产错误归给渠道计划。
+
+修复后，正式 settlement/adjudication receipts 与 immutable roster 机械选出 rank 18：
+福建水泥 `2015-04-15 → 2016-04-27`。起点只使用 cutoff 前 FY2014 官方年报：2015 年
+2 月统一销售已经启动，但运营范围、客户响应和行动效果仍未知；进一步渠道、汽运物流和
+成本安排仍按计划处理。研究问题被拆成 14 个原子字段，包括 Furun 运营范围、直接客户
+响应、水泥与熟料各自销量、价格、单位成本、销售费用、水泥毛利率、应收、库存、经营
+现金、现金资本开支、短期借款和直接损失事件。任何一个 mismatch 只影响自身，不再终止
+整条企业 episode。
+
+完整 J1 已登记进 canonical registry，J2/J3 只由 Frozen J1 identity 经公共 API 投影。
+FY2015 官方年报仍封存，custodian 尚未启动；所以当前只能说“新的问题和测量尺已经冻结”，
+不能说已获得管理执行反馈，更不能产生企业学习、CJO、估值、报告或投资权限。

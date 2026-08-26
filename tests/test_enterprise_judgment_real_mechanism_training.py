@@ -12,6 +12,7 @@ from scripts import enterprise_judgment_reconstruction_registry as reconstructio
 ROOT = Path(__file__).resolve().parents[1]
 BLOCK_DIR = ROOT / "docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018"
 ROUND5_PACKAGE_PATH = BLOCK_DIR / "26_round5_preoutcome_mechanism_package.json"
+ROUND5_CONTROL_RECEIPT_PATH = BLOCK_DIR / "27_round5_preoutcome_control_plane_receipt.json"
 
 
 def _load(path: Path) -> dict:
@@ -391,3 +392,32 @@ def test_real_round5_j2_and_j3_bind_only_atomic_contract_cells() -> None:
         "FORECAST_REQUESTS_ONLY",
         "RESEARCH_AGENDA",
     ]
+
+
+def test_real_round5_control_receipt_proves_canonical_public_preoutcome_path() -> None:
+    package = _load(ROUND5_PACKAGE_PATH)
+    receipt = _load(ROUND5_CONTROL_RECEIPT_PATH)
+
+    assert receipt["preoutcome_package_ref"] == {
+        "package_id": package["package_id"],
+        "commit": "d0bd094",
+        "transition_id": package["selection"]["transition_id"],
+        "selected_rank": 18,
+    }
+    registration = receipt["canonical_j1_registration"]
+    assert registration["frozen"] is True
+    assert registration["registry_role"] == "CANONICAL_FROZEN_J1_CONTROL_PLANE"
+    assert registration["reconstruction_id"] == package["reconstruction_spec"]["reconstruction_id"]
+    projections = receipt["public_projections"]
+    assert projections["j2"]["api"] == "compile_mechanism_thread_projection"
+    assert projections["j2"]["valid"] is True
+    assert projections["j3"]["api"] == "compile_forecast_projection"
+    assert projections["j3"]["projection_state"] == "FORECAST_REQUESTS_READY"
+    assert projections["j3"]["valid"] is True
+    assert receipt["outcome_access"] == {
+        "authorized": False,
+        "content_read": False,
+        "custodian_started": False,
+        "settlement_created": False,
+    }
+    assert set(receipt["rights"].values()) == {"NOT_AUTHORIZED"}

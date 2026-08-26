@@ -1,0 +1,75 @@
+{
+  "schema_version": "enterprise-real-mechanism-preoutcome-control-plane-receipt.v1",
+  "receipt_id": "EMPCPR:CN:CEMENT:600802:20150415:V1",
+  "preoutcome_package_ref": {
+    "package_id": "EMFP:CN:CEMENT:600802:20150415:V2",
+    "commit": "d0bd094",
+    "transition_id": "CCR:600802:20150415:20160427",
+    "selected_rank": 18
+  },
+  "selection_control": {
+    "policy": "FIRST_RECEIPT_ELIGIBLE_IMMUTABLE_ROSTER_ROW_NO_OUTCOME_FILTER",
+    "source_roster_ref": "EJPF:CN:CEMENT:2014_2018:PRE_OUTCOME:V1",
+    "derived_from_formal_receipts": true,
+    "caller_completed_company_ids_accepted": false,
+    "prior_invalid_transition_permanently_excluded": "CCR:600802:20140416:20150415"
+  },
+  "canonical_j1_registration": {
+    "frozen": true,
+    "idempotent": true,
+    "reconstruction_id": "RECON:CN600802:20150415:MECHANISM",
+    "schema_version": "enterprise-judgment-reconstruction.v1",
+    "registry_role": "CANONICAL_FROZEN_J1_CONTROL_PLANE",
+    "registered_at": "2026-08-26T15:30:00+00:00"
+  },
+  "public_projections": {
+    "j2": {
+      "api": "compile_mechanism_thread_projection",
+      "thread_set_id": "J2:CN600802:20150415:MECHANISM:V2",
+      "input_identity": {
+        "reconstruction_id": "RECON:CN600802:20150415:MECHANISM",
+        "schema_version": "enterprise-judgment-reconstruction.v1"
+      },
+      "valid": true
+    },
+    "j3": {
+      "api": "compile_forecast_projection",
+      "projection_id": "J3:CN600802:20150415:MECHANISM:V2",
+      "projection_state": "FORECAST_REQUESTS_READY",
+      "input_identity": {
+        "reconstruction_id": "RECON:CN600802:20150415:MECHANISM",
+        "schema_version": "enterprise-judgment-reconstruction.v1"
+      },
+      "valid": true
+    }
+  },
+  "measurement_contract_control": {
+    "contract_set_id": "OMC:CN600802:20150415:FY2015:V2",
+    "atomic_cell_count": 14,
+    "composite_result_cells": 0,
+    "mismatch_propagation": "SIBLING_LOCAL",
+    "outcome_source_id": "CNINFO:600802:ANN:20160426:1202245558",
+    "outcome_source_state": "SEALED_UNTIL_PREOUTCOME_COMMIT"
+  },
+  "outcome_access": {
+    "authorized": false,
+    "content_read": false,
+    "custodian_started": false,
+    "settlement_created": false
+  },
+  "rights": {
+    "directional_learning": "NOT_AUTHORIZED",
+    "enterprise_learning": "NOT_AUTHORIZED",
+    "comparative": "NOT_AUTHORIZED",
+    "cjo": "NOT_AUTHORIZED",
+    "valuation": "NOT_AUTHORIZED",
+    "report": "NOT_AUTHORIZED",
+    "investment": "NOT_AUTHORIZED"
+  },
+  "object_class": "ENTERPRISE_REAL_MECHANISM_PREOUTCOME_CONTROL_PLANE_RECEIPT",
+  "claim_class": "CANONICAL_J1_PUBLIC_J2_J3_PREOUTCOME_FREEZE",
+  "allowed_outputs": [
+    "PREOUTCOME_CONTROL_PLANE_RECEIPT",
+    "OUTCOME_CUSTODY_REQUEST"
+  ]
+}
