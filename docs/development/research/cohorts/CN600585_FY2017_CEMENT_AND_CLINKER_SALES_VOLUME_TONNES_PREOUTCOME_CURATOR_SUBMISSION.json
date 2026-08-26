@@ -1,0 +1,32 @@
+{
+  "schema_version": "static-pre-outcome-curator-field-submission.v1",
+  "submission_class": "JSON_CURATOR_FIELD_SUBMISSION",
+  "curator_identity": {
+    "curator_id": "CURATOR:CN600585:STATIC:20260826",
+    "role": "INDEPENDENT_PRE_OUTCOME_STATIC_CURATOR"
+  },
+  "cutoff_at": "2018-04-30T23:59:59+08:00",
+  "source": {
+    "source_id": "CNINFO:600585:ANN:20180323:1204507132",
+    "source_url": "https://static.cninfo.com.cn/finalpage/2018-03-23/1204507132.PDF",
+    "published_at": "2018-03-23",
+    "issuer_id": "ISSUER:CN:600585",
+    "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600585",
+    "perimeter_id": "LISTED_CONSOLIDATED_ISSUER"
+  },
+  "baseline_field": {
+    "period_end": "2017-12-31",
+    "metric_id": "CEMENT_AND_CLINKER_SALES_VOLUME_TONNES",
+    "unit": "tonnes",
+    "field_ref": "FY2017 Anhui Conch Cement annual report, PDF p. 22, 分行业销售情况：本集团水泥和熟料合计净销量",
+    "page": 22,
+    "numeric_value": 295000000
+  },
+  "permissions": {
+    "pre_outcome_only": true,
+    "forecast_authoring_permitted": false,
+    "allowed_outputs": [
+      "CURATED_CUTOFF_BASELINE_FIELD"
+    ]
+  }
+}
