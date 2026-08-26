@@ -338,9 +338,11 @@ The non-retrospective repair is now implemented:
   `BALANCE_AS_OF` and `EVENT_WINDOW`, and freezes every raw input, conversion,
   formula, threshold/event rule and local UNKNOWN/MISMATCH propagation;
 - the existing public acquisition and settlement adapters now accept Enterprise
-  V3 without constructing Forecast objects. A 14-cell synthetic PDF/text
-  preflight covers 31 raw-field receipts, all five formula operators, exact
-  submission coverage and sibling-local mismatch.
+  V3 without constructing Forecast objects. The supported production boundary
+  is custodian-located field records, not automatic PDF extraction: a strict
+  14-cell synthetic preflight covers 31 raw-field records, all five formula
+  operators, exact submission coverage, canonical persistence/replay,
+  idempotency, PIT clocks and sibling-local mismatch.
 
 Formal receipts mechanically selected rank 18, CN:600802
 `2015-04-15 -> 2016-04-27`. `28_round5_v2_preoutcome_superseding_adjudication.json`
@@ -348,7 +350,8 @@ marks `26/27` as superseded historical artifacts. The active chain is now
 `29_round5_v3_preoutcome_mechanism_package.json`,
 `30_round5_v3_value_free_custody_projection.json`,
 `31_round5_v3_preoutcome_control_plane_receipt.json` and
-`32_round5_v3_adapter_acceptance_receipt.json`. The synthetic adapter preflight
+`32_round5_v3_adapter_acceptance_receipt.json`. The synthetic field-record
+preflight
 does not authorize or read the real FY2015 source. Real outcome authorization,
 content read, custodian start and settlement all remain false; no directional-
 learning, enterprise-learning, Comparative, CJO, valuation, report or investment

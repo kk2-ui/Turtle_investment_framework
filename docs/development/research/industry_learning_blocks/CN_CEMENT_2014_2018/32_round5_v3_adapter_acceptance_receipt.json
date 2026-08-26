@@ -17,10 +17,10 @@
     "canonical_receipt_validation": "a7d5aac"
   },
   "public_apis": {
-    "acquisition": "outcome_measurement_acquisition.acquire_outcome_measurements",
+    "acquisition": "outcome_measurement_acquisition.acquire_outcome_measurements_from_field_records",
     "acquisition_validation": "outcome_measurement_acquisition.validate_acquisition_result",
-    "round5_submission": "outcome_measurement_round5_adapter.validate_custodian_submission",
-    "settlement": "outcome_measurement_settlement_adapter.register_acquisition_result",
+    "round5_submission": "outcome_measurement_round5_adapter.validate_canonical_custodian_submission",
+    "settlement": "outcome_measurement_round5_adapter.register_canonical_acquisition_result",
     "canonical_contract_resolver": "enterprise_judgment_training_control_plane.resolve_measurement_contract"
   },
   "enterprise_v3_adapter": {
@@ -42,7 +42,7 @@
     "j2_or_j3_content_read": false
   },
   "synthetic_public_preflight": {
-    "source_class": "SYNTHETIC_PDF_TEXT_FIXTURE_ONLY",
+    "source_class": "SYNTHETIC_CUSTODIAN_LOCATED_FIELD_RECORDS_ONLY",
     "real_fy2015_source_used": false,
     "acquisition_to_submission_to_settlement_completed": true,
     "settled_cell_count": 14,
@@ -61,6 +61,40 @@
       "DUPLICATE_CELL",
       "SINGLE_VALUE_SUBSTITUTED_FOR_MULTI_INPUT_CELL"
     ]
+  },
+  "field_record_protocol": {
+    "automatic_pdf_extraction": false,
+    "custodian_must_submit_located_records": true,
+    "record_count": 31,
+    "required_bindings": [
+      "field_identity",
+      "table_or_note_and_line_item_locator",
+      "pdf_page",
+      "measurement_clock",
+      "responsibility_boundary",
+      "unit",
+      "raw_value_or_explicit_unknown",
+      "canonical_source_identity"
+    ],
+    "ordinary_page_fixture": true
+  },
+  "canonical_enterprise_persistence": {
+    "control_plane_path": "/Users/xiami/workspace/analy/Turtle_investment_framework/stock_analysis.db",
+    "observation_receipt_table": "enterprise_judgment_training_enterprise_observation_receipts",
+    "settlement_table": "enterprise_judgment_training_enterprise_settlements",
+    "observation_receipt_count": 31,
+    "persisted_settlement_count": 1,
+    "resolve_api": "enterprise_judgment_training_control_plane.resolve_enterprise_settlement",
+    "replay_api": "enterprise_judgment_training_control_plane.replay_enterprise_settlement",
+    "duplicate_submission_is_idempotent": true,
+    "tampered_settlement_rejected": true
+  },
+  "pit_clock_preflight": {
+    "source_available_must_follow_cutoff": true,
+    "observed_must_follow_source_available": true,
+    "settled_must_follow_observed": true,
+    "date_only_is_conservative_calendar_day_order": true,
+    "wrong_issuer_period_source_type_and_non_official_url_rejected": true
   },
   "canonical_selection_receipts": {
     "production_validators_executed": true,

@@ -114,6 +114,16 @@ retrofit 或发起新 custody flow。
 - G1.5 激活后登记的6公司×3时点PIT黄金报告是受限研究例外，不等于Phase 10全面启动；
 - Phase 10现行契约位于 `docs/development/PHASE10_*.md` 与 `docs/development/HISTORICAL_BACKTEST_PILOT.md`；旧“启动交接”和未登记首案提案已归档。
 
+## Round 5 Enterprise V3 当前边界
+
+活动链仍为 `29/30/31/32`，`26/27` 只由 `28` 标记为 superseded。Enterprise
+结果采集的生产协议是 custodian 提交已定位的 field records；本轮不宣称自动
+解析 PDF。14 个 cell、31 个 raw input 的 synthetic preflight 已覆盖公共
+acquisition、canonical persistence/replay、重复提交幂等、篡改拒绝、PIT clock
+和 sibling-local mismatch；不需要 Forecast 伪对象。真实 FY2015 的
+`authorized/content_read/custodian_started/settlement_created` 仍全部为 `false`，
+不产生训练、企业判断、CJO、估值、报告或投资权限。
+
 ## 6. History使用规则
 
 `docs/History/` 保存被替代的交接、旧状态日志、V12入口、迁移规划和历史设计。使用规则：

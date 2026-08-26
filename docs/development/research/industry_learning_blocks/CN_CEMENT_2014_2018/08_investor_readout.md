@@ -86,9 +86,10 @@ package 自报的 completed companies。经济后果是同一份年报可能被�
 `26/27` 已被 `28` 明确降为历史对象；活动链只指向 `29` 的 V3 package、`30` 的
 value-free custody projection、`31` 的控制收据和 `32` 的 adapter 验收收据。
 
-现有公共 acquisition/submission/settlement 链已用 synthetic PDF/text 跑完全部 14 个
-cell 和 31 个 raw fields，包括价格、单位成本与毛利率的多输入公式。缺少明确正反证的事件
-保持 `UNKNOWN`，一个字段 mismatch 也只影响自身。该结果只证明未来 custodian 的机械路径
-不再丢失 Enterprise V3 契约，不是福建水泥的真实反馈。FY2015 官方年报仍封存，真实 outcome
+现有公共 acquisition/submission/settlement 链已用 synthetic custodian-located field records
+跑完全部 14 个 cell 和 31 个 raw fields，包括价格、单位成本与毛利率的多输入公式；系统明确
+不宣称自动解析 PDF。缺少明确正反证的事件保持 `UNKNOWN`，一个字段 mismatch 也只影响自身。
+该结果只证明未来 custodian 的机械路径、canonical 持久化与 PIT 时钟不再丢失 Enterprise V3
+契约，不是福建水泥的真实反馈。FY2015 官方年报仍封存，真实 outcome
 的 authorized、content_read、custodian_started、settlement_created 均为 false；因此仍不能
 产生企业学习、CJO、估值、报告或投资权限。
