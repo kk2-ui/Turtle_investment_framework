@@ -1,0 +1,70 @@
+[
+  {
+    "model_id": "ESM:CN:600585:20170412",
+    "company_id": "ISSUER:CN:600585",
+    "version": "1",
+    "as_of": "2017-04-12T00:00:00+08:00",
+    "responsibility_unit_ids": ["ISSUER_CONSOLIDATED:CN:600585"],
+    "competitive_arena_ids": ["ARENA:CN:CEMENT:MULTI_REGION_DELIVERED_MARKET"],
+    "nodes": [
+      {"node_id": "NODE:600585:SALES_VOLUME", "observation_state": "OBSERVED", "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600585", "measurement_scope_id": "ISSUER_CONSOLIDATED_CEMENT_AND_CLINKER_NET_SALES_VOLUME", "evidence": [{"ref": "CNINFO:600585:ANN:20170324:1203189438", "available_at": "2017-03-24T23:59:59+08:00"}]},
+      {"node_id": "NODE:600585:OPERATING_STATE", "observation_state": "OBSERVED", "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600585", "measurement_scope_id": "ISSUER_CONSOLIDATED_D3", "evidence": [{"ref": "CNINFO:600585:ANN:20170324:1203189438", "available_at": "2017-03-24T23:59:59+08:00"}]},
+      {"node_id": "NODE:600585:OPERATING_CASH", "observation_state": "OBSERVED", "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600585", "measurement_scope_id": "ISSUER_CONSOLIDATED_D4", "evidence": [{"ref": "CNINFO:600585:ANN:20170324:1203189438", "available_at": "2017-03-24T23:59:59+08:00"}]}
+    ],
+    "edges": [
+      {"edge_id": "EDGE:600585:VOLUME_TO_OPERATING", "from_node_id": "NODE:600585:SALES_VOLUME", "to_node_id": "NODE:600585:OPERATING_STATE", "relationship": "product_volume_to_consolidated_operating_state", "actor_side": "ISSUER", "interface": "cement and clinker products", "cross_side_effect": "volume is a bounded input and not an attributed management effect", "measurement_scope_id": "ISSUER_CONSOLIDATED_D3", "observation_state": "INFERRED", "evidence": [{"ref": "CNINFO:600585:ANN:20170324:1203189438", "available_at": "2017-03-24T23:59:59+08:00"}]},
+      {"edge_id": "EDGE:600585:OPERATING_TO_CASH", "from_node_id": "NODE:600585:OPERATING_STATE", "to_node_id": "NODE:600585:OPERATING_CASH", "relationship": "operating_state_to_cash_boundary", "actor_side": "ISSUER", "interface": "consolidated statements", "cross_side_effect": "cash is reconstructed separately from operating state", "measurement_scope_id": "ISSUER_CONSOLIDATED_D4", "observation_state": "INFERRED", "evidence": [{"ref": "CNINFO:600585:ANN:20170324:1203189438", "available_at": "2017-03-24T23:59:59+08:00"}]}
+    ]
+  },
+  {
+    "model_id": "ESM:CN:600801:20170412",
+    "company_id": "ISSUER:CN:600801",
+    "version": "1",
+    "as_of": "2017-04-12T00:00:00+08:00",
+    "responsibility_unit_ids": ["ISSUER_CONSOLIDATED:CN:600801"],
+    "competitive_arena_ids": ["ARENA:CN:CEMENT:MULTI_REGION_DELIVERED_MARKET"],
+    "nodes": [
+      {"node_id": "NODE:600801:SALES_VOLUME", "observation_state": "OBSERVED", "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600801", "measurement_scope_id": "ISSUER_CONSOLIDATED_CEMENT_AND_CLINKER_SALES", "evidence": [{"ref": "CNINFO:600801:ANN:20170324:1203190337", "available_at": "2017-03-24T23:59:59+08:00"}]},
+      {"node_id": "NODE:600801:PERIMETER_CONTINUITY", "observation_state": "UNKNOWN", "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600801", "measurement_scope_id": "ACQUIRED_PLANT_PERIMETER_CONTINUITY", "evidence": [{"ref": "CNINFO:600801:ANN:20170324:1203190337", "available_at": "2017-03-24T23:59:59+08:00"}]},
+      {"node_id": "NODE:600801:OPERATING_CASH", "observation_state": "OBSERVED", "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600801", "measurement_scope_id": "ISSUER_CONSOLIDATED_D4", "evidence": [{"ref": "CNINFO:600801:ANN:20170324:1203190337", "available_at": "2017-03-24T23:59:59+08:00"}]}
+    ],
+    "edges": [
+      {"edge_id": "EDGE:600801:PERIMETER_TO_OPERATING", "from_node_id": "NODE:600801:PERIMETER_CONTINUITY", "to_node_id": "NODE:600801:SALES_VOLUME", "relationship": "perimeter_change_to_measured_sales_boundary", "actor_side": "ISSUER", "interface": "acquired cement plants", "cross_side_effect": "approved acquisition may change reporting perimeter without proving an operating effect", "measurement_scope_id": "ACQUIRED_PLANT_PERIMETER_CONTINUITY", "observation_state": "UNKNOWN", "evidence": [{"ref": "CNINFO:600801:ANN:20170324:1203190337", "available_at": "2017-03-24T23:59:59+08:00"}]},
+      {"edge_id": "EDGE:600801:OPERATING_TO_CASH", "from_node_id": "NODE:600801:SALES_VOLUME", "to_node_id": "NODE:600801:OPERATING_CASH", "relationship": "operating_state_to_cash_boundary", "actor_side": "ISSUER", "interface": "consolidated statements", "cross_side_effect": "cash cannot be attributed to acquisition approval from this source packet", "measurement_scope_id": "ISSUER_CONSOLIDATED_D4", "observation_state": "INFERRED", "evidence": [{"ref": "CNINFO:600801:ANN:20170324:1203190337", "available_at": "2017-03-24T23:59:59+08:00"}]}
+    ]
+  },
+  {
+    "model_id": "ESM:CN:600801:20180422",
+    "company_id": "ISSUER:CN:600801",
+    "version": "1",
+    "as_of": "2018-04-22T00:00:00+08:00",
+    "responsibility_unit_ids": ["ISSUER_CONSOLIDATED:CN:600801"],
+    "competitive_arena_ids": ["ARENA:CN:CEMENT:MULTI_REGION_DELIVERED_MARKET"],
+    "nodes": [
+      {"node_id": "NODE:600801:SALES_VOLUME", "observation_state": "OBSERVED", "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600801", "measurement_scope_id": "ISSUER_CONSOLIDATED_CEMENT_AND_CLINKER_SALES", "evidence": [{"ref": "CNINFO:600801:ANN:20180326:1204514309", "available_at": "2018-03-26T23:59:59+08:00"}]},
+      {"node_id": "NODE:600801:PERIMETER_CONTINUITY", "observation_state": "UNKNOWN", "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600801", "measurement_scope_id": "ACQUIRED_PLANT_PERIMETER_CONTINUITY", "evidence": [{"ref": "CNINFO:600801:ANN:20170324:1203190337", "available_at": "2017-03-24T23:59:59+08:00"}]},
+      {"node_id": "NODE:600801:OPERATING_CASH", "observation_state": "OBSERVED", "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600801", "measurement_scope_id": "ISSUER_CONSOLIDATED_D4", "evidence": [{"ref": "CNINFO:600801:ANN:20180326:1204514309", "available_at": "2018-03-26T23:59:59+08:00"}]}
+    ],
+    "edges": [
+      {"edge_id": "EDGE:600801:PERIMETER_TO_OPERATING", "from_node_id": "NODE:600801:PERIMETER_CONTINUITY", "to_node_id": "NODE:600801:SALES_VOLUME", "relationship": "perimeter_change_to_measured_sales_boundary", "actor_side": "ISSUER", "interface": "acquired cement plants", "cross_side_effect": "perimeter continuity remains an agenda question rather than an action-effect result", "measurement_scope_id": "ACQUIRED_PLANT_PERIMETER_CONTINUITY", "observation_state": "UNKNOWN", "evidence": [{"ref": "CNINFO:600801:ANN:20170324:1203190337", "available_at": "2017-03-24T23:59:59+08:00"}]},
+      {"edge_id": "EDGE:600801:OPERATING_TO_CASH", "from_node_id": "NODE:600801:SALES_VOLUME", "to_node_id": "NODE:600801:OPERATING_CASH", "relationship": "operating_state_to_cash_boundary", "actor_side": "ISSUER", "interface": "consolidated statements", "cross_side_effect": "consolidated cash remains separate from acquisition-effect attribution", "measurement_scope_id": "ISSUER_CONSOLIDATED_D4", "observation_state": "INFERRED", "evidence": [{"ref": "CNINFO:600801:ANN:20180326:1204514309", "available_at": "2018-03-26T23:59:59+08:00"}]}
+    ]
+  },
+  {
+    "model_id": "ESM:CN:000401:20180430",
+    "company_id": "ISSUER:CN:000401",
+    "version": "1",
+    "as_of": "2018-04-30T23:59:59+08:00",
+    "responsibility_unit_ids": ["ISSUER_CONSOLIDATED:CN:000401"],
+    "competitive_arena_ids": ["ARENA:CN:CEMENT:MULTI_REGION_DELIVERED_MARKET"],
+    "nodes": [
+      {"node_id": "NODE:000401:SALES_VOLUME", "observation_state": "OBSERVED", "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:000401", "measurement_scope_id": "ISSUER_CONSOLIDATED_CEMENT_AND_CLINKER_SALES", "evidence": [{"ref": "CNINFO:000401:ANN:20180323:1204506085", "available_at": "2018-03-23T23:59:59+08:00"}]},
+      {"node_id": "NODE:000401:RESTRUCTURING_PERIMETER", "observation_state": "UNKNOWN", "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:000401", "measurement_scope_id": "JOINT_VENTURE_AND_RESTRUCTURING_PERIMETER", "evidence": [{"ref": "CNINFO:000401:ANN:20180323:1204506085", "available_at": "2018-03-23T23:59:59+08:00"}]},
+      {"node_id": "NODE:000401:OPERATING_CASH", "observation_state": "OBSERVED", "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:000401", "measurement_scope_id": "ISSUER_CONSOLIDATED_D4", "evidence": [{"ref": "CNINFO:000401:ANN:20180323:1204506085", "available_at": "2018-03-23T23:59:59+08:00"}]}
+    ],
+    "edges": [
+      {"edge_id": "EDGE:000401:PERIMETER_TO_OPERATING", "from_node_id": "NODE:000401:RESTRUCTURING_PERIMETER", "to_node_id": "NODE:000401:SALES_VOLUME", "relationship": "restructuring_to_measured_operating_boundary", "actor_side": "ISSUER", "interface": "ongoing asset restructuring and joint venture", "cross_side_effect": "restructuring changes the continuity question without proving a business effect", "measurement_scope_id": "JOINT_VENTURE_AND_RESTRUCTURING_PERIMETER", "observation_state": "UNKNOWN", "evidence": [{"ref": "CNINFO:000401:ANN:20180323:1204506085", "available_at": "2018-03-23T23:59:59+08:00"}]},
+      {"edge_id": "EDGE:000401:OPERATING_TO_CASH", "from_node_id": "NODE:000401:SALES_VOLUME", "to_node_id": "NODE:000401:OPERATING_CASH", "relationship": "operating_state_to_cash_boundary", "actor_side": "ISSUER", "interface": "consolidated statements", "cross_side_effect": "cash is observable but not assigned to restructuring quality", "measurement_scope_id": "ISSUER_CONSOLIDATED_D4", "observation_state": "INFERRED", "evidence": [{"ref": "CNINFO:000401:ANN:20180323:1204506085", "available_at": "2018-03-23T23:59:59+08:00"}]}
+    ]
+  }
+]
