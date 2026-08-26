@@ -65,7 +65,7 @@ H0–H10 是本仓当前执行状态；下方 G0–G8 只保留能力依赖视�
 | H0 合成控制接纳 | `COMPLETE` | V3/V5 offline control 与 legacy 回归已通过 |
 | H1 Industry History Universe | `MULTI_CUTOFF_RUNNER_IMPLEMENTED / CEMENT_H1_SIX_CUTOFF_SERIES_VALIDATED / SYNTHETIC_LIFECYCLE_VALIDATED` | 后续真实 lifecycle 事实须由独立 cutoff-visible source receipt 接入；不阻断 H2 |
 | H2 Teaching/Lifecycle runner | `LIFECYCLE_TEACHING_SYNTHETIC_ACCEPTED / R104_BOUNDARY_TEACHING_PROJECTED / REAL_HUAXIN_PERIMETER_CASE_ACCEPTED` | 单公司和消失公司可训练，且不会获得选择权限 |
-| H2A PIT Company Forecast | `CEMENT_2018_FIVE_COMPANY_FORECAST_FROZEN / THREE_COMPANY_REFERENCE_TOURNAMENT_FROZEN / MINIMAL_HISTORICAL_EPISODE_CN600585_MECHANICALLY_SETTLED / FORECAST_LEARNING_CONTROL_IMPLEMENTED / R05_PROSPECTIVE_SIGNAL_SHADOW_REGISTERED` | 历史 pilot 只作 `MODEL_MEMORY_MITIGATED` 流程/反馈验证；独立 custodian 才能结算。另一个单公司、单指标 Minimal Episode 已证明 contract→blind observation→mechanical settlement 管线，但无 learning 或方法权利。结算可直接改校准/coverage/状态定义/不确定性 policy；证据与反方方法仍仅为 pair+holdout candidate，且不读 H2/R-103/outcome |
+| H2A PIT Company Forecast | `CEMENT_2018_FIVE_COMPANY_FORECAST_FROZEN / THREE_COMPANY_REFERENCE_TOURNAMENT_FROZEN / MINIMAL_HISTORICAL_EPISODE_CN600585_MECHANICALLY_SETTLED / CN600802_MINIMAL_EPISODE_MEASUREMENT_MISMATCH / FORECAST_LEARNING_CONTROL_IMPLEMENTED / R05_PROSPECTIVE_SIGNAL_SHADOW_REGISTERED` | 历史 pilot 只作 `MODEL_MEMORY_MITIGATED` 流程/反馈验证；独立 custodian 才能结算。另一个单公司、单指标 Minimal Episode 已证明 contract→blind observation→mechanical settlement 管线，CN:600802 的同类对象则因结果期官方静态来源未能唯一页级映射而无标签；二者均无 learning 或方法权利。结算可直接改校准/coverage/状态定义/不确定性 policy；证据与反方方法仍仅为 pair+holdout candidate，且不读 H2/R-103/outcome |
 | H3 Comparative intake | `ONE_CEMENT_H1_RECEIPT / REAL_H1_CARRIER_REGISTRY_OPEN / REGISTRY_AWARE_ADMISSION_IMPLEMENTED / H2_NO_PRIMARY_ACTION_SCOPE` | 等待另一条合格 H2 action screen 后，冻结 predicate 与静态 peer batch |
 | H4 第一条真实 Comparative Episode | `NOT_STARTED / NOT_GLOBAL_BLOCKER` | final panel、行动、反方和 outcome contract 独立冻结 |
 | H5 第一次真实结算与 learning | `NOT_STARTED` | 方向性结算改变不同公司冻结前字段 |
@@ -357,7 +357,7 @@ CN:600585 的 2018 `Forecast V4` 已在隔离开发 namespace 完成 contract-fi
 
 ### WP-F0A Minimal Historical Episode
 
-`Minimal Historical Episode v1` 是与 Forecast V1--V6、Comparative/V5 和教学 CJO 分离的窄管线验收 lane。它只接受一个公司、一个 cutoff、一个可由静态官方字段唯一测量的指标，并严格执行 `Decision Contract → Measurement Contract → cutoff-before static evidence → blind prediction → contract-only custodian access → official observation → mechanical settlement`。CN:600585 2018 已在隔离开发 namespace 完成这一链；登记只保留对象与链路身份，不记录预测、观测或机械结算方向。该 lane 的全部对象固定 `MECHANICAL_SETTLEMENT_ONLY + NO_METHOD_TRANSFER_RIGHTS`：它不能生成 Brier/RPS、learning、method pairing、Comparative 结论、CJO、估值、报告或投资权限。其价值是证明最小历史训练管线可在不先证明同行因果或方法泛化的条件下无泄漏运行；下一份 object 若要主张任何方法或决策效用，仍须走已冻结的 pairing、holdout 和独立审阅门。
+`Minimal Historical Episode v1` 是与 Forecast V1--V6、Comparative/V5 和教学 CJO 分离的窄管线验收 lane。它只接受一个公司、一个 cutoff、一个可由静态官方字段唯一测量的指标，并严格执行 `Decision Contract → Measurement Contract → cutoff-before static evidence → blind prediction → contract-only custodian access → official observation → mechanical settlement`。CN:600585 2018 已在隔离开发 namespace 完成这一链；登记只保留对象与链路身份，不记录预测、观测或机械结算方向。CN:600802 2018 的同类对象已停止在 contract-only access：允许入口不能唯一定位 FY2018 官方 static-PDF 的页级字段，因而正确保留 `MEASUREMENT_MISMATCH`，没有 observation 或 settlement。该 lane 的全部对象固定 `MECHANICAL_SETTLEMENT_ONLY + NO_METHOD_TRANSFER_RIGHTS`：它不能生成 Brier/RPS、learning、method pairing、Comparative 结论、CJO、估值、报告或投资权限。其价值是证明最小历史训练管线可在不先证明同行因果或方法泛化的条件下无泄漏运行；下一份 object 若要主张任何方法或决策效用，仍须走已冻结的 pairing、holdout 和独立审阅门。
 
 ### WP-D0 Decision Contract gate
 

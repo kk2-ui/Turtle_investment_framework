@@ -469,7 +469,7 @@ Phase 08 只有同时具备以下结果才能完成：
 
 当前执行分为训练主线与黄金候选线，互不以等待状态阻断：
 
-1. 已完成 CN:600585 单公司、单指标 `Minimal Historical Episode v1` 的独立机械结算；它只证明 `Decision Contract → Measurement Contract → blind prediction → independent observation → mechanical settlement` 管线可闭合，固定为 `MECHANICAL_SETTLEMENT_ONLY + NO_METHOD_TRANSFER_RIGHTS`，不得将其表述为 method、CJO、估值、报告或投资成功；
+1. 已完成 CN:600585 单公司、单指标 `Minimal Historical Episode v1` 的独立机械结算；它只证明 `Decision Contract → Measurement Contract → blind prediction → independent observation → mechanical settlement` 管线可闭合，固定为 `MECHANICAL_SETTLEMENT_ONLY + NO_METHOD_TRANSFER_RIGHTS`，不得将其表述为 method、CJO、估值、报告或投资成功。CN:600802 同类对象已验证 access 边界，但因官方 static-PDF 结果字段不能唯一页级定位而为 `MEASUREMENT_MISMATCH`，不得以二手副本或搜索摘要补标签；
 2. 先对 `config/judgment_training_program_v1.json` 做 admission 和登记审计；R-62 维持 `NO_PRIMARY / NOT_FROZEN`，不得作为开发训练样本运行；
 3. 新增或重新筛选一个真实、结果隔离且 `SELECTION_ADMITTED` 的开发 episode，完成 PIT freeze、五层结算和材料性诊断；
 4. 将正式 learning 实际应用到不同公司冻结字段并独立复核；只有完成 application receipt，才一次性冻结 `enterprise-judgment-method-v1`；
