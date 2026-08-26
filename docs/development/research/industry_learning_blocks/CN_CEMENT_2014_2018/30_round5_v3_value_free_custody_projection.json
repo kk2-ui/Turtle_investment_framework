@@ -13,6 +13,11 @@
     "source_id": "CNINFO:600802:ANN:20160426:1202245558",
     "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
     "official_url": "https://static.cninfo.com.cn/finalpage/2016-04-26/1202245558.PDF",
+    "issuer_id": "ISSUER:CN:600802",
+    "report_period_end": "2015-12-31",
+    "availability_precision": "DATE_ONLY",
+    "source_available_at": null,
+    "source_available_date": "2016-04-26",
     "published_after_cutoff": true,
     "access_state": "SEALED_UNTIL_PREOUTCOME_COMMIT",
     "custodian_access": "OUTCOME_ONLY",
@@ -55,6 +60,11 @@
               "event_end": "2015-12-31",
               "window_name": "POST_CUTOFF_FY2015_EVENT_WINDOW"
             }
+          },
+          "locator": {
+            "table_or_note": "FY2015 operating review or material commercial-action disclosure",
+            "line_item": "explicit operating scope, covered products, regions, channels or duration of Furun unified sales",
+            "period_column": "2015-04-16..2015-12-31"
           }
         }
       ],
@@ -149,6 +159,11 @@
               "event_end": "2015-12-31",
               "window_name": "POST_CUTOFF_FY2015_EVENT_WINDOW"
             }
+          },
+          "locator": {
+            "table_or_note": "FY2015 customer, sales-channel or market-share disclosure",
+            "line_item": "explicit customer count, dealer/channel count, retention, orders or market-share response",
+            "period_column": "2015-04-16..2015-12-31"
           }
         }
       ],
@@ -243,6 +258,11 @@
               "period_end": "2014-12-31",
               "fiscal_period": "FY2014"
             }
+          },
+          "locator": {
+            "table_or_note": "production-sales-inventory product table",
+            "line_item": "cement sales volume",
+            "period_column": "FY2014"
           }
         },
         {
@@ -256,6 +276,11 @@
               "period_end": "2015-12-31",
               "fiscal_period": "FY2015"
             }
+          },
+          "locator": {
+            "table_or_note": "production-sales-inventory product table",
+            "line_item": "cement sales volume",
+            "period_column": "FY2015"
           }
         }
       ],
@@ -358,6 +383,11 @@
               "period_end": "2014-12-31",
               "fiscal_period": "FY2014"
             }
+          },
+          "locator": {
+            "table_or_note": "production-sales-inventory product table",
+            "line_item": "clinker sales volume",
+            "period_column": "FY2014"
           }
         },
         {
@@ -371,6 +401,11 @@
               "period_end": "2015-12-31",
               "fiscal_period": "FY2015"
             }
+          },
+          "locator": {
+            "table_or_note": "production-sales-inventory product table",
+            "line_item": "clinker sales volume",
+            "period_column": "FY2015"
           }
         }
       ],
@@ -473,6 +508,11 @@
               "period_end": "2014-12-31",
               "fiscal_period": "FY2014"
             }
+          },
+          "locator": {
+            "table_or_note": "cement product revenue and sales-volume disclosure",
+            "line_item": "cement realized pretax revenue per sales tonne",
+            "period_column": "FY2014"
           }
         },
         {
@@ -486,6 +526,11 @@
               "period_end": "2014-12-31",
               "fiscal_period": "FY2014"
             }
+          },
+          "locator": {
+            "table_or_note": "cement product revenue and sales-volume disclosure",
+            "line_item": "cement realized pretax revenue per sales tonne",
+            "period_column": "FY2014"
           }
         },
         {
@@ -499,6 +544,11 @@
               "period_end": "2015-12-31",
               "fiscal_period": "FY2015"
             }
+          },
+          "locator": {
+            "table_or_note": "cement product revenue and sales-volume disclosure",
+            "line_item": "cement realized pretax revenue per sales tonne",
+            "period_column": "FY2015"
           }
         },
         {
@@ -512,6 +562,11 @@
               "period_end": "2015-12-31",
               "fiscal_period": "FY2015"
             }
+          },
+          "locator": {
+            "table_or_note": "cement product revenue and sales-volume disclosure",
+            "line_item": "cement realized pretax revenue per sales tonne",
+            "period_column": "FY2015"
           }
         }
       ],
@@ -628,6 +683,11 @@
               "period_end": "2014-12-31",
               "fiscal_period": "FY2014"
             }
+          },
+          "locator": {
+            "table_or_note": "cement product cost and sales-volume disclosure",
+            "line_item": "cement operating cost per sales tonne",
+            "period_column": "FY2014"
           }
         },
         {
@@ -641,6 +701,11 @@
               "period_end": "2014-12-31",
               "fiscal_period": "FY2014"
             }
+          },
+          "locator": {
+            "table_or_note": "cement product cost and sales-volume disclosure",
+            "line_item": "cement operating cost per sales tonne",
+            "period_column": "FY2014"
           }
         },
         {
@@ -654,6 +719,11 @@
               "period_end": "2015-12-31",
               "fiscal_period": "FY2015"
             }
+          },
+          "locator": {
+            "table_or_note": "cement product cost and sales-volume disclosure",
+            "line_item": "cement operating cost per sales tonne",
+            "period_column": "FY2015"
           }
         },
         {
@@ -667,6 +737,11 @@
               "period_end": "2015-12-31",
               "fiscal_period": "FY2015"
             }
+          },
+          "locator": {
+            "table_or_note": "cement product cost and sales-volume disclosure",
+            "line_item": "cement operating cost per sales tonne",
+            "period_column": "FY2015"
           }
         }
       ],
@@ -783,6 +858,11 @@
               "period_end": "2014-12-31",
               "fiscal_period": "FY2014"
             }
+          },
+          "locator": {
+            "table_or_note": "consolidated income statement or selling-expense note",
+            "line_item": "selling expense",
+            "period_column": "FY2014"
           }
         },
         {
@@ -796,6 +876,11 @@
               "period_end": "2015-12-31",
               "fiscal_period": "FY2015"
             }
+          },
+          "locator": {
+            "table_or_note": "consolidated income statement or selling-expense note",
+            "line_item": "selling expense",
+            "period_column": "FY2015"
           }
         }
       ],
@@ -898,6 +983,11 @@
               "period_end": "2014-12-31",
               "fiscal_period": "FY2014"
             }
+          },
+          "locator": {
+            "table_or_note": "principal-business cement product table",
+            "line_item": "cement gross margin",
+            "period_column": "FY2014"
           }
         },
         {
@@ -911,6 +1001,11 @@
               "period_end": "2014-12-31",
               "fiscal_period": "FY2014"
             }
+          },
+          "locator": {
+            "table_or_note": "principal-business cement product table",
+            "line_item": "cement gross margin",
+            "period_column": "FY2014"
           }
         },
         {
@@ -924,6 +1019,11 @@
               "period_end": "2015-12-31",
               "fiscal_period": "FY2015"
             }
+          },
+          "locator": {
+            "table_or_note": "principal-business cement product table",
+            "line_item": "cement gross margin",
+            "period_column": "FY2015"
           }
         },
         {
@@ -937,6 +1037,11 @@
               "period_end": "2015-12-31",
               "fiscal_period": "FY2015"
             }
+          },
+          "locator": {
+            "table_or_note": "principal-business cement product table",
+            "line_item": "cement gross margin",
+            "period_column": "FY2015"
           }
         }
       ],
@@ -1051,6 +1156,11 @@
               "as_of": "2014-12-31",
               "fiscal_period": "FY2014"
             }
+          },
+          "locator": {
+            "table_or_note": "consolidated balance sheet accounts-receivable line",
+            "line_item": "accounts receivable",
+            "period_column": "FY2014"
           }
         },
         {
@@ -1063,6 +1173,11 @@
               "as_of": "2015-12-31",
               "fiscal_period": "FY2015"
             }
+          },
+          "locator": {
+            "table_or_note": "consolidated balance sheet accounts-receivable line",
+            "line_item": "accounts receivable",
+            "period_column": "FY2015"
           }
         }
       ],
@@ -1163,6 +1278,11 @@
               "as_of": "2014-12-31",
               "fiscal_period": "FY2014"
             }
+          },
+          "locator": {
+            "table_or_note": "consolidated balance sheet inventory line",
+            "line_item": "inventory",
+            "period_column": "FY2014"
           }
         },
         {
@@ -1175,6 +1295,11 @@
               "as_of": "2015-12-31",
               "fiscal_period": "FY2015"
             }
+          },
+          "locator": {
+            "table_or_note": "consolidated balance sheet inventory line",
+            "line_item": "inventory",
+            "period_column": "FY2015"
           }
         }
       ],
@@ -1277,6 +1402,11 @@
               "period_end": "2014-12-31",
               "fiscal_period": "FY2014"
             }
+          },
+          "locator": {
+            "table_or_note": "consolidated cash-flow statement",
+            "line_item": "net cash flows from operating activities",
+            "period_column": "FY2014"
           }
         },
         {
@@ -1290,6 +1420,11 @@
               "period_end": "2015-12-31",
               "fiscal_period": "FY2015"
             }
+          },
+          "locator": {
+            "table_or_note": "consolidated cash-flow statement",
+            "line_item": "net cash flows from operating activities",
+            "period_column": "FY2015"
           }
         }
       ],
@@ -1392,6 +1527,11 @@
               "period_end": "2014-12-31",
               "fiscal_period": "FY2014"
             }
+          },
+          "locator": {
+            "table_or_note": "consolidated cash-flow statement",
+            "line_item": "cash paid to acquire and construct fixed assets, intangible assets and other long-term assets",
+            "period_column": "FY2014"
           }
         },
         {
@@ -1405,6 +1545,11 @@
               "period_end": "2015-12-31",
               "fiscal_period": "FY2015"
             }
+          },
+          "locator": {
+            "table_or_note": "consolidated cash-flow statement",
+            "line_item": "cash paid to acquire and construct fixed assets, intangible assets and other long-term assets",
+            "period_column": "FY2015"
           }
         }
       ],
@@ -1505,6 +1650,11 @@
               "as_of": "2014-12-31",
               "fiscal_period": "FY2014"
             }
+          },
+          "locator": {
+            "table_or_note": "consolidated balance sheet short-term-borrowings line",
+            "line_item": "short-term borrowings",
+            "period_column": "FY2014"
           }
         },
         {
@@ -1517,6 +1667,11 @@
               "as_of": "2015-12-31",
               "fiscal_period": "FY2015"
             }
+          },
+          "locator": {
+            "table_or_note": "consolidated balance sheet short-term-borrowings line",
+            "line_item": "short-term borrowings",
+            "period_column": "FY2015"
           }
         }
       ],
@@ -1619,6 +1774,11 @@
               "event_end": "2015-12-31",
               "window_name": "POST_CUTOFF_FY2015_EVENT_WINDOW"
             }
+          },
+          "locator": {
+            "table_or_note": "audit opinion, impairment, borrowings, covenant, default or going-concern disclosure",
+            "line_item": "direct issuer-level irreversible capital-loss or solvency event",
+            "period_column": "2015-04-16..2015-12-31"
           }
         }
       ],
