@@ -67,6 +67,73 @@ def _v3_package() -> dict:
     return round5.build_round5_v3_package(_load(V2_PACKAGE), frozen_at=FREEZE_AT)
 
 
+def _enterprise_synthetic_custody(
+    tmp_path: Path,
+) -> tuple[dict, dict, dict, callable]:
+    package = _v3_package()
+    contract = package["outcome_measurement_contract"]
+    projection = round5.build_value_free_custody_projection(package)
+    source = projection["authorized_source_identity"]
+    authorization = {
+        "schema_version": acquisition.ENTERPRISE_AUTHORIZATION_SCHEMA_VERSION,
+        "authorization_receipt_id": source["authorization_receipt_id"],
+        "measurement_contract_ref": {
+            "measurement_contract_id": contract["contract_set_id"],
+            "measurement_contract_version": 3,
+        },
+        "company_id": contract["company_id"],
+        "custodian_id": projection["custodian_id"],
+        "source_id": source["source_id"],
+        "authorized": True,
+        "content_read": True,
+    }
+    values: dict[str, tuple[str, str]] = {}
+    omitted_event = "FIELD:600802:FY2015:DIRECT_LOSS_EVENT"
+    for cell in contract["atomic_cells"]:
+        for index, raw in enumerate(cell["raw_input_fields"]):
+            if raw["field_id"] == omitted_event:
+                continue
+            if raw["role"] == "EVENT":
+                token = "EVENT_FALSE" if "CUSTOMER_RESPONSE" in raw["field_id"] else "EVENT_TRUE"
+            else:
+                token = str(1000 + index + (100 if "FY2015" in raw["field_id"] else 0))
+            values.setdefault(raw["field_id"], (token, raw["unit"]))
+    text = "\n".join(f"{field_id} | {token} | {unit}" for field_id, (token, unit) in values.items())
+    pdf = tmp_path / "synthetic-enterprise-outcome.pdf"
+    pdf.write_bytes(b"%PDF-1.7\n" + text.encode("utf-8"))
+    inventory = {
+        "schema_version": acquisition.INVENTORY_SCHEMA_VERSION,
+        "inventory_id": "INV:CN600802:ROUND5:SYNTHETIC:V3",
+        "measurement_contract_ref": authorization["measurement_contract_ref"],
+        "custodian_id": authorization["custodian_id"],
+        "registered_at": "2016-04-27T01:00:00+00:00",
+        "documents": [{
+            "source_id": source["source_id"],
+            "source_url": source["official_url"],
+            "local_pdf_path": str(pdf),
+            "issuer_id": "ISSUER:CN:600802",
+            "responsibility_boundary": "ISSUER_CONSOLIDATED:CN:600802",
+            "report_period_end": "2015-12-31",
+            "official_source_type": "OFFICIAL_ANNUAL_REPORT",
+            "report_scope": "ISSUER_FILING",
+            "currency": "RMB",
+            "revision_policy": "ORIGINAL_VINTAGE",
+            "consolidation_or_restatement_note": "synthetic unchanged-boundary fixture",
+            "availability_precision": "DATE_ONLY",
+            "source_available_at": None,
+            "source_available_date": "2016-04-26",
+        }],
+        "object_class": acquisition.INVENTORY_OBJECT_CLASS,
+        "claim_class": acquisition.INVENTORY_CLAIM_CLASS,
+        "allowed_outputs": ["ENTERPRISE_OUTCOME_ACQUISITION_ONLY"],
+    }
+
+    def reader(path: Path) -> list[str]:
+        return [path.read_bytes()[9:].decode("utf-8")]
+
+    return contract, authorization, inventory, reader
+
+
 def test_committed_round5_v3_package_is_the_generated_valid_package() -> None:
     committed = _load(V3_PACKAGE)
     assert committed == _v3_package()
@@ -221,40 +288,129 @@ def test_real_acquisition_api_builds_value_free_projection_and_public_settlement
     assert settlement_adapter.register_acquisition_result.__name__ == "register_acquisition_result"
 
 
-def test_missing_event_cannot_be_submitted_as_observed_no() -> None:
+def test_enterprise_v3_public_acquisition_submission_and_settlement_preflight(tmp_path: Path) -> None:
+    contract, authorization, inventory, reader = _enterprise_synthetic_custody(tmp_path)
+    result = acquisition.acquire_outcome_measurements(
+        contract,
+        inventory,
+        page_reader=reader,
+        outcome_access_authorization=authorization,
+    )
+    validation = acquisition.validate_acquisition_result(
+        result,
+        measurement_contract=contract,
+        outcome_access_authorization=authorization,
+    )
+    assert validation["valid"], validation["findings"]
+    assert len(result["observations"]) == 14
+    by_cell = {item["measurement_id"]: item for item in result["observations"]}
+    assert by_cell["CELL:600802:20150415:DIRECT_LOSS_EVENT"]["status"] == "UNKNOWN"
+    assert by_cell["CELL:600802:20150415:CUSTOMER_RESPONSE_EVENT"]["status"] == "OBSERVED"
+    price = by_cell["CELL:600802:20150415:CEMENT_REALIZED_PRICE"]
+    assert len(price["raw_field_observations"]) == 4
+    assert all(raw["source"]["pdf_page"] == 1 for raw in price["raw_field_observations"])
+
     projection = round5.build_value_free_custody_projection(_v3_package())
-    result = {
-        "schema_version": acquisition.SCHEMA_VERSION,
-        "measurement_contract_ref": {
-            "measurement_contract_id": projection["measurement_contract_ref"]["contract_set_id"],
-            "measurement_contract_version": 3,
-        },
-        "source_inventory_id": "INV:ROUND5:SEALED:V3",
-        "custodian_id": projection["custodian_id"],
-        "object_class": acquisition.OBJECT_CLASS,
-        "claim_class": acquisition.CLAIM_CLASS,
-        "allowed_outputs": ["FORECAST_OUTCOME_ACQUISITION_ONLY"],
-        "observations": [{
-            "measurement_id": "CELL:600802:20150415:CUSTOMER_RESPONSE_EVENT",
-            "status": "UNKNOWN",
-            "metric_id": "FIELD:600802:FY2015:DIRECT_CUSTOMER_RESPONSE_EVENT",
-            "metric_definition": "Direct customer response event",
-            "report_period_end": "2015-12-31",
-            "unit": "BOOLEAN_EVENT",
-            "currency": None,
-            "reporting_scope": None,
-            "sources_considered": [],
-            "reason": "EVENT_NOT_FOUND_IN_AUTHORIZED_SOURCE",
-        }],
-    }
     submission = {
         "schema_version": "enterprise-round5-custodian-submission.v1",
-        "authorization_receipt_id": projection["authorized_source_identity"]["authorization_receipt_id"],
+        "authorization_receipt_id": authorization["authorization_receipt_id"],
         "custodian_id": projection["custodian_id"],
         "projection_id": projection["projection_id"],
+        "outcome_access_authorization": authorization,
         "acquisition_result": result,
-        "observation_receipt_bindings": [],
     }
-    validated = round5.validate_custodian_submission(submission, projection=projection)
+    validated = round5.validate_custodian_submission(
+        submission, projection=projection, measurement_contract=contract,
+    )
     assert validated["valid"], validated["findings"]
-    assert result["observations"][0]["status"] == "UNKNOWN"
+    settled = round5.settle_via_public_adapter(
+        measurement_contract=contract,
+        outcome_access_authorization=authorization,
+        acquisition_result=result,
+        observed_at="2016-04-27T02:00:00+00:00",
+        settlement_id="SETTLEMENT:CN600802:ROUND5:SYNTHETIC:V3",
+        settled_at="2016-04-27T03:00:00+00:00",
+    )
+    assert settled["coverage"] == {
+        "frozen_cells": 14,
+        "settled_cells": 14,
+        "observed_cells": 13,
+        "unknown_cells": 1,
+        "measurement_mismatch_cells": 0,
+    }
+    settled_cells = {item["cell_id"]: item for item in settled["cell_results"]}
+    assert settled_cells["CELL:600802:20150415:DIRECT_LOSS_EVENT"]["label"] == "UNKNOWN"
+    assert settled_cells["CELL:600802:20150415:CUSTOMER_RESPONSE_EVENT"]["label"] == "OBSERVED_NO"
+    assert len(settled["raw_observation_receipts"]) == sum(
+        len(cell["raw_input_fields"]) for cell in contract["atomic_cells"]
+    )
+
+
+@pytest.mark.parametrize("mutation", ["fake_cell", "missing_cell", "duplicate_cell", "missing_raw_input"])
+def test_enterprise_submission_rejects_nonexact_cell_or_raw_input_coverage(
+    tmp_path: Path, mutation: str,
+) -> None:
+    contract, authorization, inventory, reader = _enterprise_synthetic_custody(tmp_path)
+    result = acquisition.acquire_outcome_measurements(
+        contract, inventory, page_reader=reader, outcome_access_authorization=authorization,
+    )
+    if mutation == "fake_cell":
+        fake = deepcopy(result["observations"][0])
+        fake["measurement_id"] = "CELL:FAKE"
+        result["observations"].append(fake)
+    elif mutation == "missing_cell":
+        result["observations"].pop()
+    elif mutation == "duplicate_cell":
+        result["observations"].append(deepcopy(result["observations"][0]))
+    else:
+        multi = next(item for item in result["observations"] if len(item["raw_field_observations"]) == 4)
+        multi["raw_field_observations"] = multi["raw_field_observations"][:1]
+    validation = acquisition.validate_acquisition_result(
+        result, measurement_contract=contract, outcome_access_authorization=authorization,
+    )
+    assert not validation["valid"]
+
+
+def test_enterprise_formula_supports_raw_value_and_frozen_conversion() -> None:
+    cell = deepcopy(_v3_package()["outcome_measurement_contract"]["atomic_cells"][2])
+    raw = deepcopy(cell["raw_input_fields"][0])
+    cell["raw_input_fields"] = [raw]
+    cell["formula"] = {
+        "operator": "RAW_VALUE",
+        "input_field_ids": [raw["field_id"]],
+        "expression": raw["field_id"],
+        "unit_conversions": [{
+            "field_id": raw["field_id"], "from_unit": raw["unit"], "to_unit": raw["unit"], "scale": "0.001",
+        }],
+        "zero_baseline_rule": "NOT_APPLICABLE",
+    }
+    assert settlement_adapter.execute_enterprise_formula(cell, [{
+        "field_id": raw["field_id"], "unit": raw["unit"], "raw_value": 1000.0,
+    }]) == 1.0
+
+
+def test_enterprise_public_settlement_keeps_acquisition_mismatch_sibling_local(tmp_path: Path) -> None:
+    contract, authorization, inventory, reader = _enterprise_synthetic_custody(tmp_path)
+    pdf = Path(inventory["documents"][0]["local_pdf_path"])
+    lines = pdf.read_text(encoding="utf-8").splitlines()
+    lines = [
+        line.removesuffix("RMB") + "USD"
+        if line.startswith("FIELD:600802:FY2015:SELLING_EXPENSE_RMB |") else line
+        for line in lines
+    ]
+    pdf.write_text("\n".join(lines), encoding="utf-8")
+    result = acquisition.acquire_outcome_measurements(
+        contract, inventory, page_reader=reader, outcome_access_authorization=authorization,
+    )
+    settled = settlement_adapter.register_acquisition_result(
+        measurement_contract=contract,
+        outcome_access_authorization=authorization,
+        acquisition_result=result,
+        observed_at="2016-04-27T02:00:00+00:00",
+        settlement_id="SETTLEMENT:CN600802:ROUND5:SYNTHETIC:MISMATCH",
+        settled_at="2016-04-27T03:00:00+00:00",
+    )
+    by_cell = {item["cell_id"]: item for item in settled["cell_results"]}
+    assert by_cell["CELL:600802:20150415:SELLING_EXPENSE"]["status"] == "MEASUREMENT_MISMATCH"
+    assert by_cell["CELL:600802:20150415:OPERATING_CASH"]["status"] == "OBSERVED"
+    assert settled["coverage"]["measurement_mismatch_cells"] == 1

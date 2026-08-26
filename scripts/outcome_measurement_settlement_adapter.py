@@ -12,6 +12,7 @@ from __future__ import annotations
 
 from copy import deepcopy
 from datetime import datetime, timezone
+from decimal import Decimal, InvalidOperation
 import json
 import sqlite3
 from typing import Any
@@ -141,14 +142,206 @@ def _mismatch_rule(observation: dict[str, Any], *, cell: dict[str, Any]) -> str:
     return reason
 
 
-def register_acquisition_result(
-    conn: sqlite3.Connection,
+def _finite_decimal(value: Any, *, code: str) -> Decimal:
+    if isinstance(value, bool) or not isinstance(value, (int, float)):
+        raise OutcomeMeasurementSettlementAdapterError(code)
+    try:
+        numeric = Decimal(str(value))
+    except InvalidOperation as exc:  # pragma: no cover - guarded by acquisition validation
+        raise OutcomeMeasurementSettlementAdapterError(code) from exc
+    if not numeric.is_finite():
+        raise OutcomeMeasurementSettlementAdapterError(code)
+    return numeric
+
+
+def execute_enterprise_formula(
+    cell: dict[str, Any], raw_field_observations: list[dict[str, Any]],
+) -> bool | float:
+    """Execute only the five operators frozen by Enterprise Measurement V3."""
+    by_id = {item["field_id"]: item for item in raw_field_observations}
+    formula = cell["formula"]
+    input_ids = formula["input_field_ids"]
+    if set(by_id) != set(input_ids) or len(by_id) != len(input_ids):
+        raise OutcomeMeasurementSettlementAdapterError("enterprise_formula_raw_input_coverage_invalid")
+    conversions = formula["unit_conversions"]
+    if [item.get("field_id") for item in conversions] != input_ids:
+        raise OutcomeMeasurementSettlementAdapterError("enterprise_formula_unit_conversion_order_invalid")
+    converted: list[Decimal | bool] = []
+    for field_id, conversion in zip(input_ids, conversions, strict=True):
+        observation = by_id[field_id]
+        value = observation["raw_value"]
+        if isinstance(value, bool):
+            if conversion.get("from_unit") != observation.get("unit") or conversion.get("scale") != "1":
+                raise OutcomeMeasurementSettlementAdapterError("enterprise_event_unit_conversion_invalid")
+            converted.append(value)
+            continue
+        if conversion.get("from_unit") != observation.get("unit"):
+            raise OutcomeMeasurementSettlementAdapterError("enterprise_formula_source_unit_mismatch")
+        try:
+            scale = Decimal(str(conversion.get("scale")))
+        except InvalidOperation as exc:
+            raise OutcomeMeasurementSettlementAdapterError("enterprise_formula_unit_scale_invalid") from exc
+        if not scale.is_finite():
+            raise OutcomeMeasurementSettlementAdapterError("enterprise_formula_unit_scale_invalid")
+        converted.append(_finite_decimal(value, code="enterprise_formula_raw_value_invalid") * scale)
+
+    operator = formula["operator"]
+    if operator == "EVENT_BOOLEAN":
+        if len(converted) != 1 or not isinstance(converted[0], bool):
+            raise OutcomeMeasurementSettlementAdapterError("enterprise_event_formula_requires_one_boolean")
+        return converted[0]
+    if any(isinstance(value, bool) for value in converted):
+        raise OutcomeMeasurementSettlementAdapterError("enterprise_numeric_formula_cannot_use_boolean")
+    numeric = [value for value in converted if isinstance(value, Decimal)]
+    if operator == "RAW_VALUE":
+        if len(numeric) != 1:
+            raise OutcomeMeasurementSettlementAdapterError("enterprise_raw_value_formula_requires_one_input")
+        result = numeric[0]
+    elif operator == "PERCENT_CHANGE":
+        if len(numeric) != 2 or numeric[0] == 0:
+            raise OutcomeMeasurementSettlementAdapterError("enterprise_percent_change_zero_or_invalid_baseline")
+        result = (numeric[1] - numeric[0]) / abs(numeric[0])
+    elif operator == "RATIO_CHANGE":
+        if len(numeric) != 4 or numeric[1] == 0 or numeric[3] == 0:
+            raise OutcomeMeasurementSettlementAdapterError("enterprise_ratio_change_zero_or_invalid_denominator")
+        baseline_ratio = numeric[0] / numeric[1]
+        if baseline_ratio == 0:
+            raise OutcomeMeasurementSettlementAdapterError("enterprise_ratio_change_zero_baseline_ratio")
+        result = ((numeric[2] / numeric[3]) - baseline_ratio) / abs(baseline_ratio)
+    elif operator == "DIFFERENCE":
+        if len(numeric) == 2:
+            result = numeric[1] - numeric[0]
+        elif len(numeric) == 4:
+            if numeric[0] == 0 or numeric[2] == 0:
+                raise OutcomeMeasurementSettlementAdapterError("enterprise_difference_zero_revenue_denominator")
+            result = ((numeric[2] - numeric[3]) / numeric[2]) - ((numeric[0] - numeric[1]) / numeric[0])
+        else:
+            raise OutcomeMeasurementSettlementAdapterError("enterprise_difference_input_count_invalid")
+    else:
+        raise OutcomeMeasurementSettlementAdapterError("enterprise_formula_operator_unsupported")
+    if not result.is_finite():
+        raise OutcomeMeasurementSettlementAdapterError("enterprise_formula_result_not_finite")
+    return float(result)
+
+
+def _enterprise_label(cell: dict[str, Any], value: bool | float) -> str:
+    rule = cell["label_rule"]
+    if rule["type"] == "EVENT_PRESENCE":
+        if not isinstance(value, bool):
+            raise OutcomeMeasurementSettlementAdapterError("enterprise_event_label_requires_boolean")
+        return "OBSERVED_YES" if value else "OBSERVED_NO"
+    if isinstance(value, bool):
+        raise OutcomeMeasurementSettlementAdapterError("enterprise_numeric_label_requires_number")
+    if value <= float(rule["decrease_lte"]):
+        return "OBSERVED_DECREASE"
+    if value >= float(rule["increase_gte"]):
+        return "OBSERVED_INCREASE"
+    return "OBSERVED_STABLE"
+
+
+def settle_enterprise_acquisition_result(
     *,
-    outcome_access_authorization_id: str,
+    measurement_contract: dict[str, Any],
+    outcome_access_authorization: dict[str, Any],
     acquisition_result: dict[str, Any],
     observed_at: str,
     settlement_id: str,
     settled_at: str,
+) -> dict[str, Any]:
+    """Settle Enterprise V3 raw fields without constructing Forecast objects."""
+    observed_timestamp = _instant(observed_at, field="observed_at")
+    settled_timestamp = _instant(settled_at, field="settled_at")
+    authorization_validation = acquisition.validate_enterprise_outcome_access_authorization(
+        outcome_access_authorization, measurement_contract=measurement_contract,
+    )
+    if not authorization_validation["valid"]:
+        raise OutcomeMeasurementSettlementAdapterError(
+            "enterprise_authorization_invalid: " + "; ".join(authorization_validation["findings"])
+        )
+    authorization = authorization_validation["authorization"]
+    if authorization.get("content_read") is not True:
+        raise OutcomeMeasurementSettlementAdapterError("enterprise_settlement_requires_recorded_content_read")
+    result_validation = acquisition.validate_acquisition_result(
+        acquisition_result,
+        measurement_contract=measurement_contract,
+        outcome_access_authorization=authorization,
+    )
+    if not result_validation["valid"]:
+        raise OutcomeMeasurementSettlementAdapterError(
+            "enterprise_acquisition_result_invalid: " + "; ".join(result_validation["findings"])
+        )
+    result = result_validation["result"]
+    by_cell = {item["measurement_id"]: item for item in result["observations"]}
+    cell_results: list[dict[str, Any]] = []
+    raw_receipts: list[dict[str, Any]] = []
+    for cell in measurement_contract["atomic_cells"]:
+        observation = by_cell[cell["cell_id"]]
+        status = observation["status"]
+        label: str
+        computed_value: bool | float | None = None
+        if status == "OBSERVED":
+            try:
+                computed_value = execute_enterprise_formula(cell, observation["raw_field_observations"])
+            except OutcomeMeasurementSettlementAdapterError as exc:
+                status, label = "MEASUREMENT_MISMATCH", "MEASUREMENT_MISMATCH"
+                formula_finding = str(exc)
+            else:
+                label = _enterprise_label(cell, computed_value)
+                formula_finding = None
+        elif status == "UNKNOWN":
+            label, formula_finding = "UNKNOWN", None
+        else:
+            label, formula_finding = "MEASUREMENT_MISMATCH", None
+        for raw in observation["raw_field_observations"]:
+            raw_receipts.append({
+                "receipt_id": f"OBS:ENTERPRISE:{settlement_id}:{cell['cell_id']}:{raw['field_id']}",
+                "cell_id": cell["cell_id"],
+                **deepcopy(raw),
+            })
+        cell_result = {
+            "cell_id": cell["cell_id"],
+            "status": status,
+            "label": label,
+            "computed_value": computed_value,
+            "mismatch_propagation": "LOCAL_ONLY",
+        }
+        if formula_finding is not None:
+            cell_result["formula_finding"] = formula_finding
+        cell_results.append(cell_result)
+    counts = {status: sum(row["status"] == status for row in cell_results) for status in acquisition.STATUSES}
+    return {
+        "schema_version": "enterprise-outcome-measurement-settlement-adapter.v1",
+        "settled": True,
+        "settlement_id": settlement_id,
+        "measurement_contract_ref": deepcopy(result["measurement_contract_ref"]),
+        "authorization_receipt_id": authorization["authorization_receipt_id"],
+        "custodian_id": authorization["custodian_id"],
+        "observed_at": observed_timestamp,
+        "settled_at": settled_timestamp,
+        "cell_results": cell_results,
+        "raw_observation_receipts": raw_receipts,
+        "coverage": {
+            "frozen_cells": len(measurement_contract["atomic_cells"]),
+            "settled_cells": len(cell_results),
+            "observed_cells": counts["OBSERVED"],
+            "unknown_cells": counts["UNKNOWN"],
+            "measurement_mismatch_cells": counts["MEASUREMENT_MISMATCH"],
+        },
+        "rights": deepcopy(measurement_contract["rights"]),
+        "allowed_outputs": ["ENTERPRISE_OUTCOME_SETTLEMENT_ONLY", "RESEARCH_AGENDA"],
+    }
+
+
+def register_acquisition_result(
+    conn: sqlite3.Connection | None = None,
+    *,
+    outcome_access_authorization_id: str | None = None,
+    acquisition_result: dict[str, Any],
+    observed_at: str,
+    settlement_id: str,
+    settled_at: str,
+    measurement_contract: dict[str, Any] | None = None,
+    outcome_access_authorization: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     """Persist acquired fields and settle them through the existing V3 engine.
 
@@ -159,6 +352,25 @@ def register_acquisition_result(
     ``MEASUREMENT_MISMATCH`` receives the existing value-free observation
     receipt required by the settlement engine.
     """
+    if measurement_contract is not None or outcome_access_authorization is not None:
+        if conn is not None or outcome_access_authorization_id is not None:
+            raise OutcomeMeasurementSettlementAdapterError(
+                "enterprise_settlement_cannot_accept_forecast_registry_inputs"
+            )
+        if measurement_contract is None or outcome_access_authorization is None:
+            raise OutcomeMeasurementSettlementAdapterError(
+                "enterprise_settlement_requires_contract_and_authorization"
+            )
+        return settle_enterprise_acquisition_result(
+            measurement_contract=measurement_contract,
+            outcome_access_authorization=outcome_access_authorization,
+            acquisition_result=acquisition_result,
+            observed_at=observed_at,
+            settlement_id=settlement_id,
+            settled_at=settled_at,
+        )
+    if conn is None or outcome_access_authorization_id is None:
+        raise OutcomeMeasurementSettlementAdapterError("forecast_settlement_requires_registry_and_authorization_id")
     observed_timestamp = _instant(observed_at, field="observed_at")
     settled_timestamp = _instant(settled_at, field="settled_at")
     access_row = _row(

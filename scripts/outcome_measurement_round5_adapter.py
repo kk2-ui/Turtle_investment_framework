@@ -294,20 +294,28 @@ def validate_custodian_submission(
     submission: Any,
     *,
     projection: Any,
+    measurement_contract: Any,
 ) -> dict[str, Any]:
-    """Validate a future value-bearing submission without settling it."""
+    """Map a Round 5 envelope into the public contract-aware validator."""
     item = _mapping(submission)
     required = {
         "schema_version", "authorization_receipt_id", "custodian_id", "projection_id",
-        "acquisition_result", "observation_receipt_bindings",
+        "outcome_access_authorization", "acquisition_result",
     }
     findings = [f"submission.missing:{key}" for key in sorted(required - set(item))]
+    if set(item).difference(required):
+        findings.append("submission.contains_unapproved_fields")
     if item.get("schema_version") != "enterprise-round5-custodian-submission.v1":
         findings.append("submission.schema_version_invalid")
     if item.get("projection_id") != _mapping(projection).get("projection_id"):
         findings.append("submission.projection_id_mismatch")
+    authorization = _mapping(item.get("outcome_access_authorization"))
     acquisition_result = item.get("acquisition_result")
-    result = acquisition.validate_acquisition_result(acquisition_result)
+    result = acquisition.validate_acquisition_result(
+        acquisition_result,
+        measurement_contract=measurement_contract,
+        outcome_access_authorization=authorization,
+    )
     if not result["valid"]:
         findings.extend("acquisition:" + finding for finding in result["findings"])
     source_identity = _mapping(_mapping(projection).get("authorized_source_identity"))
@@ -315,6 +323,10 @@ def validate_custodian_submission(
         findings.append("submission.custodian_id_must_match_projection")
     if item.get("authorization_receipt_id") != source_identity.get("authorization_receipt_id"):
         findings.append("submission.authorization_receipt_must_match_projection")
+    if authorization.get("authorization_receipt_id") != item.get("authorization_receipt_id"):
+        findings.append("submission.authorization_object_must_match_receipt")
+    if authorization.get("custodian_id") != item.get("custodian_id"):
+        findings.append("submission.authorization_object_must_match_custodian")
     expected_contract_ref = {
         "measurement_contract_id": _mapping(projection).get("measurement_contract_ref", {}).get("contract_set_id"),
         "measurement_contract_version": _mapping(projection).get("measurement_contract_ref", {}).get("contract_version"),
@@ -323,47 +335,6 @@ def validate_custodian_submission(
         findings.append("submission.acquisition_contract_ref_must_match_projection")
     if _mapping(acquisition_result).get("custodian_id") != item.get("custodian_id"):
         findings.append("submission.acquisition_custodian_must_match_submission")
-    observations = {
-        observation.get("measurement_id"): observation
-        for observation in _mapping(acquisition_result).get("observations", [])
-        if isinstance(observation, dict)
-    }
-    bindings = item.get("observation_receipt_bindings")
-    if not isinstance(bindings, list):
-        findings.append("submission.observation_receipt_bindings_must_be_list")
-        bindings = []
-    bound_ids: set[str] = set()
-    for index, raw_binding in enumerate(bindings):
-        binding = _mapping(raw_binding)
-        measurement_id = binding.get("measurement_id")
-        observation = observations.get(measurement_id)
-        if not isinstance(measurement_id, str) or measurement_id in bound_ids or observation is None:
-            findings.append(f"submission.observation_receipt_bindings[{index}].measurement_identity_invalid")
-            continue
-        bound_ids.add(measurement_id)
-        if observation.get("status") == "UNKNOWN":
-            findings.append(f"submission.observation_receipt_bindings[{index}].unknown_must_not_create_observation_receipt")
-            continue
-        for key, expected in (
-            ("custodian_id", item.get("custodian_id")),
-            ("authorization_receipt_id", item.get("authorization_receipt_id")),
-            ("source_id", source_identity.get("source_id")),
-            ("field_identity", observation.get("metric_id")),
-            ("unit", observation.get("unit")),
-        ):
-            if binding.get(key) != expected:
-                findings.append(f"submission.observation_receipt_bindings[{index}].{key}_mismatch")
-        if not isinstance(binding.get("pdf_page"), int) or binding["pdf_page"] < 1:
-            findings.append(f"submission.observation_receipt_bindings[{index}].pdf_page_required")
-        if not isinstance(binding.get("measurement_clock_evidence"), dict) or not binding["measurement_clock_evidence"]:
-            findings.append(f"submission.observation_receipt_bindings[{index}].measurement_clock_evidence_required")
-        if not isinstance(binding.get("responsibility_boundary"), dict) or not binding["responsibility_boundary"]:
-            findings.append(f"submission.observation_receipt_bindings[{index}].responsibility_boundary_required")
-        if observation.get("status") == "OBSERVED" and not isinstance(binding.get("raw_value"), (int, float, bool)):
-            findings.append(f"submission.observation_receipt_bindings[{index}].raw_value_required")
-    expected_bound = {measurement_id for measurement_id, observation in observations.items() if observation.get("status") != "UNKNOWN"}
-    if bound_ids != expected_bound:
-        findings.append("submission.observation_receipt_bindings_must_cover_each_non_unknown_observation_once")
     if _forbidden(item):
         findings.append("submission_contains_forecast_or_judgment_fields")
     return {"valid": not findings, "findings": findings, "submission": deepcopy(item) if not findings else None}

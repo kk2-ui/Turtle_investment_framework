@@ -41,6 +41,9 @@ INVENTORY_OBJECT_CLASS = "OUTCOME_MEASUREMENT_STATIC_PDF_INVENTORY"
 CLAIM_CLASS = "CUSTODIAN_FIELD_ACQUISITION_ONLY"
 INVENTORY_CLAIM_CLASS = "REGISTERED_LOCAL_OFFICIAL_ANNUAL_REPORTS_ONLY"
 STATUSES = {"OBSERVED", "UNKNOWN", "MEASUREMENT_MISMATCH"}
+ENTERPRISE_CONTRACT_SCHEMA_VERSION = "enterprise-outcome-measurement-contract.v3"
+ENTERPRISE_AUTHORIZATION_SCHEMA_VERSION = "enterprise-outcome-access-authorization.v1"
+ENTERPRISE_CONTRACT_KIND = "ENTERPRISE_V3"
 _PDF_PAGE_BREAK = "\f"
 _NUMBER = re.compile(r"(?<![\d,])(?:-?\d{1,3}(?:[,，]\d{3})+(?:\.\d+)?|-?\d+(?:\.\d+)?)(?![\d,])")
 _UNIT = re.compile(r"单\s*位\s*[:：]\s*(人民币)?\s*(元|万元|百万元|亿元)")
@@ -85,6 +88,11 @@ def _date(value: Any) -> date | None:
 
 
 def _reference(contract: dict[str, Any]) -> dict[str, Any]:
+    if contract.get("schema_version") == ENTERPRISE_CONTRACT_SCHEMA_VERSION:
+        return {
+            "measurement_contract_id": contract.get("contract_set_id"),
+            "measurement_contract_version": 3,
+        }
     return {
         "measurement_contract_id": contract.get("measurement_contract_id"),
         "measurement_contract_version": contract.get("measurement_contract_version"),
@@ -101,7 +109,11 @@ def _normalised_unit(value: Any) -> str | None:
 
 
 def _allowed_outputs(contract_kind: str) -> list[str]:
-    return ["FORECAST_OUTCOME_ACQUISITION_ONLY"] if contract_kind == "FORECAST" else ["MECHANICAL_SETTLEMENT_ONLY"]
+    if contract_kind == "FORECAST":
+        return ["FORECAST_OUTCOME_ACQUISITION_ONLY"]
+    if contract_kind == ENTERPRISE_CONTRACT_KIND:
+        return ["ENTERPRISE_OUTCOME_ACQUISITION_ONLY"]
+    return ["MECHANICAL_SETTLEMENT_ONLY"]
 
 
 def build_value_free_custody_projection(
@@ -159,7 +171,7 @@ def build_value_free_custody_projection(
 
 
 def _contract_context(contract: Any) -> tuple[str, dict[str, Any], list[dict[str, Any]]]:
-    """Normalise the project's two frozen Measurement Contract shapes.
+    """Normalise the project's frozen Measurement Contract shapes.
 
     Forecast contracts already carry independent cells.  Minimal contracts are
     one-cell contracts, so their exact identity is projected into a single
@@ -183,9 +195,64 @@ def _contract_context(contract: Any) -> tuple[str, dict[str, Any], list[dict[str
             "official_source_type": "OFFICIAL_ANNUAL_REPORT",
         }]
 
+    try:
+        from scripts import enterprise_judgment_real_mechanism_training as enterprise
+    except ModuleNotFoundError:  # pragma: no cover - direct script import
+        import enterprise_judgment_real_mechanism_training as enterprise
+    enterprise_result = enterprise.validate_outcome_measurement_contract(contract)
+    if enterprise_result["valid"] and _mapping(contract).get("schema_version") == ENTERPRISE_CONTRACT_SCHEMA_VERSION:
+        payload = enterprise_result["contract"]
+        return ENTERPRISE_CONTRACT_KIND, payload, deepcopy(payload["atomic_cells"])
+
     raise OutcomeMeasurementAcquisitionError(
         "measurement_contract_invalid: "
-        + "; ".join(forecast_result["findings"][:3] or minimal_result["findings"][:3])
+        + "; ".join(
+            forecast_result["findings"][:3]
+            or minimal_result["findings"][:3]
+            or enterprise_result["findings"][:3]
+        )
+    )
+
+
+def _validate_enterprise_authorization(
+    authorization: Any, *, contract: dict[str, Any], require_authorized: bool,
+) -> dict[str, Any]:
+    item = _mapping(authorization)
+    required = {
+        "schema_version", "authorization_receipt_id", "measurement_contract_ref", "company_id",
+        "custodian_id", "source_id", "authorized", "content_read",
+    }
+    findings: list[str] = []
+    if set(item) != required:
+        findings.append("enterprise_authorization_shape_invalid")
+    if item.get("schema_version") != ENTERPRISE_AUTHORIZATION_SCHEMA_VERSION:
+        findings.append("enterprise_authorization_schema_invalid")
+    if item.get("authorization_receipt_id") != _mapping(contract.get("source_access")).get("authorization_receipt_id"):
+        findings.append("enterprise_authorization_receipt_mismatch")
+    if item.get("measurement_contract_ref") != _reference(contract):
+        findings.append("enterprise_authorization_contract_ref_mismatch")
+    if item.get("company_id") != contract.get("company_id"):
+        findings.append("enterprise_authorization_company_mismatch")
+    if not _text(item.get("custodian_id")):
+        findings.append("enterprise_authorization_custodian_required")
+    if item.get("source_id") != _mapping(contract.get("source_access")).get("source_id"):
+        findings.append("enterprise_authorization_source_mismatch")
+    if require_authorized and item.get("authorized") is not True:
+        findings.append("enterprise_outcome_access_not_authorized")
+    if not isinstance(item.get("content_read"), bool):
+        findings.append("enterprise_authorization_content_read_must_be_boolean")
+    return {"valid": not findings, "findings": findings, "authorization": deepcopy(item) if not findings else None}
+
+
+def validate_enterprise_outcome_access_authorization(
+    authorization: Any, *, measurement_contract: Any, require_authorized: bool = True,
+) -> dict[str, Any]:
+    """Public contract-bound authorization check for acquisition and settlement."""
+    contract_kind, contract, _ = _contract_context(measurement_contract)
+    if contract_kind != ENTERPRISE_CONTRACT_KIND:
+        return {"valid": False, "findings": ["enterprise_v3_contract_required"], "authorization": None}
+    return _validate_enterprise_authorization(
+        authorization, contract=contract, require_authorized=require_authorized,
     )
 
 
@@ -197,7 +264,7 @@ def _is_static_official_pdf(url: Any) -> bool:
 
 
 def validate_registered_local_pdf_inventory(
-    inventory: Any, *, measurement_contract: Any,
+    inventory: Any, *, measurement_contract: Any, outcome_access_authorization: Any = None,
 ) -> dict[str, Any]:
     """Validate a closed, contract-bound local official-PDF inventory.
 
@@ -207,6 +274,13 @@ def validate_registered_local_pdf_inventory(
     """
     contract_kind, contract, _ = _contract_context(measurement_contract)
     findings: list[str] = []
+    authorization: dict[str, Any] | None = None
+    if contract_kind == ENTERPRISE_CONTRACT_KIND:
+        authorization_result = _validate_enterprise_authorization(
+            outcome_access_authorization, contract=contract, require_authorized=True,
+        )
+        findings.extend(authorization_result["findings"])
+        authorization = authorization_result["authorization"]
     item = _mapping(inventory)
     allowed = {
         "schema_version", "inventory_id", "measurement_contract_ref", "custodian_id", "registered_at",
@@ -225,7 +299,12 @@ def validate_registered_local_pdf_inventory(
         findings.append("inventory_id_required")
     if item.get("measurement_contract_ref") != _reference(contract):
         findings.append("inventory_measurement_contract_ref_mismatch")
-    expected_custodian = contract.get("custodian_id") if contract_kind == "FORECAST" else _mapping(contract.get("roles")).get("custodian_id")
+    if contract_kind == "FORECAST":
+        expected_custodian = contract.get("custodian_id")
+    elif contract_kind == ENTERPRISE_CONTRACT_KIND:
+        expected_custodian = _mapping(authorization).get("custodian_id")
+    else:
+        expected_custodian = _mapping(contract.get("roles")).get("custodian_id")
     if item.get("custodian_id") != expected_custodian:
         findings.append("inventory_custodian_must_match_measurement_contract")
     if _instant(item.get("registered_at")) is None:
@@ -264,7 +343,10 @@ def validate_registered_local_pdf_inventory(
             findings.append(f"{path}_local_pdf_path_must_be_existing_pdf")
         elif not Path(local_path).read_bytes()[:4] == b"%PDF":
             findings.append(f"{path}_local_pdf_path_must_point_to_pdf_bytes")
-        if document.get("issuer_id") != contract.get("issuer_id"):
+        expected_issuer_id = contract.get("issuer_id")
+        if contract_kind == ENTERPRISE_CONTRACT_KIND:
+            expected_issuer_id = "ISSUER:" + str(contract.get("company_id"))
+        if document.get("issuer_id") != expected_issuer_id:
             findings.append(f"{path}_issuer_id_must_match_measurement_contract")
         if not _text(document.get("responsibility_boundary")):
             findings.append(f"{path}_responsibility_boundary_required")
@@ -293,6 +375,11 @@ def validate_registered_local_pdf_inventory(
                 findings.append(f"{path}_date_only_cannot_include_source_available_at")
         else:
             findings.append(f"{path}_availability_precision_must_be_timestamp_or_date_only")
+        if contract_kind == ENTERPRISE_CONTRACT_KIND and authorization is not None:
+            if document.get("source_id") != authorization.get("source_id"):
+                findings.append(f"{path}_source_id_must_match_enterprise_authorization")
+            if document.get("source_url") != _mapping(contract.get("source_access")).get("official_url"):
+                findings.append(f"{path}_source_url_must_match_enterprise_contract")
         documents.append(deepcopy(document))
     if not documents:
         findings.append("inventory_documents_must_be_nonempty")
@@ -501,12 +588,125 @@ def _observe_cell(
     }
 
 
+def _enterprise_field_rows(
+    pages: list[str], field_id: str,
+) -> list[tuple[int, str, str]]:
+    """Read the explicit field-id fixture format used by a registered extractor.
+
+    Production PDF extraction may supply the same page strings after locating a
+    table row.  The adapter still requires the frozen field identity verbatim;
+    it never guesses a nearby line item.
+    """
+    rows: list[tuple[int, str, str]] = []
+    for page_number, page in enumerate(pages, start=1):
+        for line in page.splitlines():
+            parts = [part.strip() for part in line.split("|")]
+            if len(parts) == 3 and parts[0] == field_id:
+                rows.append((page_number, parts[1], parts[2]))
+    return rows
+
+
+def _enterprise_raw_observation(
+    raw_field: dict[str, Any], *, cell: dict[str, Any], documents: list[dict[str, Any]], page_reader: PageReader,
+) -> dict[str, Any]:
+    base = {
+        "field_id": raw_field["field_id"],
+        "measurement_clock": deepcopy(raw_field["measurement_clock"]),
+        "responsibility_boundary": deepcopy(cell["responsibility_boundary"]),
+        "unit": raw_field["unit"],
+    }
+    if not documents:
+        return {
+            **base, "status": "UNKNOWN", "reason": "NO_AUTHORIZED_ANNUAL_REPORT_FOR_ENTERPRISE_CONTRACT",
+            "sources_considered": [],
+        }
+    rows: list[tuple[dict[str, Any], int, str, str]] = []
+    for document in documents:
+        try:
+            pages = page_reader(Path(document["local_pdf_path"]))
+        except (OSError, subprocess.SubprocessError):
+            return {
+                **base, "status": "MEASUREMENT_MISMATCH", "reason": "LOCAL_OFFICIAL_PDF_TEXT_EXTRACTION_FAILED",
+                "source": _source_identity(document),
+            }
+        for page_number, raw_value, disclosed_unit in _enterprise_field_rows(pages, raw_field["field_id"]):
+            rows.append((document, page_number, raw_value, disclosed_unit))
+    if not rows:
+        return {
+            **base, "status": "UNKNOWN", "reason": "FROZEN_RAW_FIELD_NOT_FOUND_IN_AUTHORIZED_SOURCE",
+            "sources_considered": [_source_identity(document) for document in documents],
+        }
+    if len(rows) != 1:
+        document, page_number, *_ = rows[0]
+        return {
+            **base, "status": "MEASUREMENT_MISMATCH", "reason": "NON_UNIQUE_FROZEN_RAW_FIELD",
+            "source": _source_identity(document, page_number=page_number),
+        }
+    document, page_number, value_token, disclosed_unit = rows[0]
+    source = _source_identity(document, page_number=page_number)
+    if disclosed_unit != raw_field["unit"]:
+        return {
+            **base, "status": "MEASUREMENT_MISMATCH", "reason": "RAW_FIELD_UNIT_DOES_NOT_MATCH_FROZEN_CONTRACT",
+            "source": source,
+        }
+    if raw_field.get("role") == "EVENT":
+        if value_token == "EVENT_TRUE":
+            value: bool | float = True
+        elif value_token == "EVENT_FALSE":
+            value = False
+        else:
+            return {
+                **base, "status": "UNKNOWN", "reason": "EVENT_HAS_NO_EXPLICIT_POSITIVE_OR_NEGATIVE_EVIDENCE",
+                "sources_considered": [source],
+            }
+    else:
+        try:
+            parsed = Decimal(value_token.replace(",", ""))
+        except InvalidOperation:
+            return {
+                **base, "status": "MEASUREMENT_MISMATCH", "reason": "RAW_FIELD_VALUE_IS_NOT_NUMERIC",
+                "source": source,
+            }
+        if not parsed.is_finite():
+            return {
+                **base, "status": "MEASUREMENT_MISMATCH", "reason": "RAW_FIELD_VALUE_IS_NOT_FINITE",
+                "source": source,
+            }
+        value = float(parsed)
+    return {**base, "status": "OBSERVED", "raw_value": value, "source": source}
+
+
+def _observe_enterprise_cell(
+    cell: dict[str, Any], *, documents: list[dict[str, Any]], page_reader: PageReader,
+) -> dict[str, Any]:
+    raw_observations = [
+        _enterprise_raw_observation(raw, cell=cell, documents=documents, page_reader=page_reader)
+        for raw in cell["raw_input_fields"]
+    ]
+    statuses = {item["status"] for item in raw_observations}
+    if "MEASUREMENT_MISMATCH" in statuses:
+        status, reason = "MEASUREMENT_MISMATCH", "ONE_OR_MORE_RAW_FIELDS_MISMATCH_THE_FROZEN_CELL"
+    elif "UNKNOWN" in statuses:
+        status, reason = "UNKNOWN", "ONE_OR_MORE_RAW_FIELDS_REMAIN_UNKNOWN"
+    else:
+        status, reason = "OBSERVED", None
+    result = {
+        "measurement_id": cell["cell_id"],
+        "status": status,
+        "raw_field_observations": raw_observations,
+    }
+    if reason is not None:
+        result["reason"] = reason
+    return result
+
+
 def acquire_outcome_measurements(
     measurement_contract: Any,
     registered_pdf_inventory: Any,
     *,
     measurement_ids: list[str] | None = None,
     page_reader: PageReader = _pdf_pages,
+    outcome_access_authorization: Any = None,
 ) -> dict[str, Any]:
     """Acquire independent field observations from registered local PDFs.
 
@@ -516,22 +716,33 @@ def acquire_outcome_measurements(
     """
     contract_kind, contract, cells = _contract_context(measurement_contract)
     inventory_result = validate_registered_local_pdf_inventory(
-        registered_pdf_inventory, measurement_contract=contract,
+        registered_pdf_inventory,
+        measurement_contract=contract,
+        outcome_access_authorization=outcome_access_authorization,
     )
     if not inventory_result["valid"]:
         raise OutcomeMeasurementAcquisitionError("registered_pdf_inventory_invalid: " + "; ".join(inventory_result["findings"]))
     inventory = inventory_result["inventory"]
-    by_id = {str(cell["measurement_id"]): cell for cell in cells}
+    id_field = "cell_id" if contract_kind == ENTERPRISE_CONTRACT_KIND else "measurement_id"
+    by_id = {str(cell[id_field]): cell for cell in cells}
     if measurement_ids is None:
         selected = list(cells)
     else:
+        if contract_kind == ENTERPRISE_CONTRACT_KIND:
+            raise OutcomeMeasurementAcquisitionError("enterprise_acquisition_must_cover_all_frozen_cells")
         if not isinstance(measurement_ids, list) or not measurement_ids or any(not _text(value) for value in measurement_ids):
             raise OutcomeMeasurementAcquisitionError("measurement_ids_must_be_nonempty_text_list_when_supplied")
         if len(set(measurement_ids)) != len(measurement_ids) or any(value not in by_id for value in measurement_ids):
             raise OutcomeMeasurementAcquisitionError("measurement_ids_must_be_unique_frozen_measurement_ids")
         selected = [by_id[value] for value in measurement_ids]
-    observations = [_observe_cell(cell, documents=inventory["documents"], page_reader=page_reader) for cell in selected]
-    return {
+    if contract_kind == ENTERPRISE_CONTRACT_KIND:
+        observations = [
+            _observe_enterprise_cell(cell, documents=inventory["documents"], page_reader=page_reader)
+            for cell in selected
+        ]
+    else:
+        observations = [_observe_cell(cell, documents=inventory["documents"], page_reader=page_reader) for cell in selected]
+    result = {
         "schema_version": SCHEMA_VERSION,
         "measurement_contract_ref": _reference(contract),
         "source_inventory_id": inventory["inventory_id"],
@@ -541,10 +752,148 @@ def acquire_outcome_measurements(
         "allowed_outputs": _allowed_outputs(contract_kind),
         "observations": observations,
     }
+    if contract_kind == ENTERPRISE_CONTRACT_KIND:
+        authorization = _mapping(outcome_access_authorization)
+        result["contract_kind"] = ENTERPRISE_CONTRACT_KIND
+        result["authorization_receipt_id"] = authorization.get("authorization_receipt_id")
+    return result
 
 
-def validate_acquisition_result(result: Any) -> dict[str, Any]:
+def _validate_enterprise_acquisition_result(
+    result: Any, *, measurement_contract: Any, outcome_access_authorization: Any,
+) -> dict[str, Any]:
+    findings: list[str] = []
+    try:
+        contract_kind, contract, cells = _contract_context(measurement_contract)
+    except OutcomeMeasurementAcquisitionError as exc:
+        return {"valid": False, "findings": [str(exc)], "result": None}
+    if contract_kind != ENTERPRISE_CONTRACT_KIND:
+        return {"valid": False, "findings": ["enterprise_acquisition_requires_enterprise_v3_contract"], "result": None}
+    authorization_result = _validate_enterprise_authorization(
+        outcome_access_authorization, contract=contract, require_authorized=True,
+    )
+    findings.extend(authorization_result["findings"])
+    authorization = _mapping(authorization_result.get("authorization"))
+    item = _mapping(result)
+    root_keys = {
+        "schema_version", "measurement_contract_ref", "source_inventory_id", "custodian_id",
+        "object_class", "claim_class", "allowed_outputs", "observations", "contract_kind",
+        "authorization_receipt_id",
+    }
+    if set(item) != root_keys:
+        findings.append("enterprise_acquisition_result_shape_invalid")
+    if item.get("schema_version") != SCHEMA_VERSION:
+        findings.append("result_schema_version_invalid")
+    if item.get("object_class") != OBJECT_CLASS or item.get("claim_class") != CLAIM_CLASS:
+        findings.append("result_identity_invalid")
+    if item.get("measurement_contract_ref") != _reference(contract):
+        findings.append("enterprise_acquisition_contract_ref_mismatch")
+    if item.get("authorization_receipt_id") != authorization.get("authorization_receipt_id"):
+        findings.append("enterprise_acquisition_authorization_receipt_mismatch")
+    if item.get("custodian_id") != authorization.get("custodian_id"):
+        findings.append("enterprise_acquisition_custodian_mismatch")
+    if item.get("allowed_outputs") != _allowed_outputs(ENTERPRISE_CONTRACT_KIND):
+        findings.append("enterprise_acquisition_allowed_outputs_invalid")
+    observations = _items(item.get("observations"))
+    by_cell: dict[str, dict[str, Any]] = {}
+    for index, raw_observation in enumerate(observations):
+        observation = _mapping(raw_observation)
+        measurement_id = observation.get("measurement_id")
+        if not isinstance(measurement_id, str) or measurement_id in by_cell:
+            findings.append(f"enterprise_acquisition.observations[{index}].cell_id_missing_or_duplicate")
+        else:
+            by_cell[measurement_id] = observation
+    expected_cell_ids = [cell["cell_id"] for cell in cells]
+    if set(by_cell) != set(expected_cell_ids) or len(observations) != len(expected_cell_ids):
+        findings.append("enterprise_acquisition_must_cover_each_frozen_cell_once")
+    source_access = _mapping(contract.get("source_access"))
+    for cell_index, cell in enumerate(cells):
+        observation = _mapping(by_cell.get(cell["cell_id"]))
+        path = f"enterprise_acquisition.cells[{cell_index}]"
+        status = observation.get("status")
+        if status not in STATUSES:
+            findings.append(path + ".status_invalid")
+        allowed_cell_keys = {"measurement_id", "status", "raw_field_observations"}
+        if status != "OBSERVED":
+            allowed_cell_keys.add("reason")
+            if not _text(observation.get("reason")):
+                findings.append(path + ".reason_required")
+        if set(observation) != allowed_cell_keys:
+            findings.append(path + ".shape_invalid")
+        raw_observations = _items(observation.get("raw_field_observations"))
+        by_field: dict[str, dict[str, Any]] = {}
+        for raw_index, raw_value in enumerate(raw_observations):
+            raw_item = _mapping(raw_value)
+            field_id = raw_item.get("field_id")
+            if not isinstance(field_id, str) or field_id in by_field:
+                findings.append(f"{path}.raw_fields[{raw_index}].field_id_missing_or_duplicate")
+            else:
+                by_field[field_id] = raw_item
+        frozen_raws = cell["raw_input_fields"]
+        expected_raw_ids = [raw["field_id"] for raw in frozen_raws]
+        if set(by_field) != set(expected_raw_ids) or len(raw_observations) != len(expected_raw_ids):
+            findings.append(path + ".must_cover_each_frozen_raw_input_once")
+        raw_statuses: set[str] = set()
+        for raw_index, frozen_raw in enumerate(frozen_raws):
+            raw_item = _mapping(by_field.get(frozen_raw["field_id"]))
+            raw_path = f"{path}.raw_fields[{raw_index}]"
+            raw_status = raw_item.get("status")
+            raw_statuses.add(str(raw_status))
+            common = {"field_id", "status", "measurement_clock", "responsibility_boundary", "unit"}
+            if raw_status == "OBSERVED":
+                expected_keys = common | {"raw_value", "source"}
+            elif raw_status == "UNKNOWN":
+                expected_keys = common | {"reason", "sources_considered"}
+            elif raw_status == "MEASUREMENT_MISMATCH":
+                expected_keys = common | {"reason", "source"}
+            else:
+                expected_keys = common
+                findings.append(raw_path + ".status_invalid")
+            if set(raw_item) != expected_keys:
+                findings.append(raw_path + ".shape_invalid")
+            for field, expected in (
+                ("measurement_clock", frozen_raw["measurement_clock"]),
+                ("responsibility_boundary", cell["responsibility_boundary"]),
+                ("unit", frozen_raw["unit"]),
+            ):
+                if raw_item.get(field) != expected:
+                    findings.append(f"{raw_path}.{field}_must_match_frozen_raw_input")
+            if raw_status == "OBSERVED":
+                value = raw_item.get("raw_value")
+                if frozen_raw.get("role") == "EVENT":
+                    if not isinstance(value, bool):
+                        findings.append(raw_path + ".event_raw_value_must_be_explicit_boolean")
+                elif not isinstance(value, (int, float)) or isinstance(value, bool) or not math.isfinite(float(value)):
+                    findings.append(raw_path + ".numeric_raw_value_must_be_finite")
+                source = _mapping(raw_item.get("source"))
+                if source.get("source_id") != source_access.get("source_id") or source.get("source_url") != source_access.get("official_url"):
+                    findings.append(raw_path + ".source_must_match_authorized_identity")
+                if not isinstance(source.get("pdf_page"), int) or source["pdf_page"] < 1:
+                    findings.append(raw_path + ".pdf_page_required")
+                if source.get("field_ref") != f"PDF p.{source.get('pdf_page')}":
+                    findings.append(raw_path + ".field_ref_must_match_pdf_page")
+            elif raw_status in {"UNKNOWN", "MEASUREMENT_MISMATCH"} and not _text(raw_item.get("reason")):
+                findings.append(raw_path + ".reason_required")
+        expected_status = (
+            "MEASUREMENT_MISMATCH" if "MEASUREMENT_MISMATCH" in raw_statuses
+            else "UNKNOWN" if "UNKNOWN" in raw_statuses
+            else "OBSERVED"
+        )
+        if status != expected_status:
+            findings.append(path + ".status_must_follow_raw_field_statuses")
+    return {"valid": not findings, "findings": findings, "result": deepcopy(item) if not findings else None}
+
+
+def validate_acquisition_result(
+    result: Any, *, measurement_contract: Any = None, outcome_access_authorization: Any = None,
+) -> dict[str, Any]:
     """Validate the narrow output shape without re-reading any PDF."""
+    if _mapping(result).get("contract_kind") == ENTERPRISE_CONTRACT_KIND:
+        return _validate_enterprise_acquisition_result(
+            result,
+            measurement_contract=measurement_contract,
+            outcome_access_authorization=outcome_access_authorization,
+        )
     findings: list[str] = []
     item = _mapping(result)
     allowed = {
