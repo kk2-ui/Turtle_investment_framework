@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "judgment-cjo-valuation-return.v1",
+  "title": "Turtle CJO valuation and return evaluation contracts",
+  "$defs": {
+    "source": {"type": "object", "additionalProperties": false, "required": ["source_id", "source_available_at", "field_ref"], "properties": {"source_id": {"type": "string", "minLength": 1}, "source_available_at": {"type": "string", "format": "date-time"}, "field_ref": {"type": "string", "minLength": 1}}},
+    "snapshot": {
+      "type": "object", "additionalProperties": false,
+      "required": ["schema_version", "snapshot_id", "cjo_ref", "financial_contract", "outcome_contract", "roles", "frozen_at", "object_class", "claim_class", "allowed_outputs"],
+      "properties": {
+        "schema_version": {"const": "turtle-cjo-valuation-return-snapshot.v1"}, "snapshot_id": {"type": "string", "minLength": 1},
+        "cjo_ref": {"type": "object", "additionalProperties": false, "required": ["cjo_id", "model_id", "frozen_at"], "properties": {"cjo_id": {"type": "string", "minLength": 1}, "model_id": {"type": "string", "minLength": 1}, "frozen_at": {"type": "string", "format": "date-time"}}},
+        "financial_contract": {"type": "object", "additionalProperties": false, "required": ["base_normalized_earnings", "base_owner_cash", "share_count", "required_return", "market_price", "holding_years", "annual_distribution"], "properties": {"base_normalized_earnings": {"type": "number"}, "base_owner_cash": {"type": "number"}, "share_count": {"type": "number", "exclusiveMinimum": 0}, "required_return": {"type": "number", "exclusiveMinimum": 0}, "market_price": {"type": "number"}, "holding_years": {"type": "integer", "minimum": 1}, "annual_distribution": {"type": "number"}}},
+        "outcome_contract": {"type": "object", "additionalProperties": false, "required": ["operating_window_ends_at", "market_window_ends_at", "settlement_policy", "expected_dimensions"], "properties": {"operating_window_ends_at": {"type": "string", "format": "date-time"}, "market_window_ends_at": {"type": "string", "format": "date-time"}, "settlement_policy": {"const": "SEPARATE_OPERATING_VALUE_AND_MARKET"}, "expected_dimensions": {"const": ["NORMALIZED_EARNINGS", "OWNER_CASH", "PERMANENT_LOSS", "MARKET_RETURN"]}}},
+        "roles": {"type": "object", "additionalProperties": false, "required": ["valuation_owner_id", "independent_challenger_id", "outcome_custodian_id"], "properties": {"valuation_owner_id": {"type": "string", "minLength": 1}, "independent_challenger_id": {"type": "string", "minLength": 1}, "outcome_custodian_id": {"type": "string", "minLength": 1}}},
+        "frozen_at": {"type": "string", "format": "date-time"}, "object_class": {"const": "CJO_VALUATION_RETURN_SNAPSHOT"}, "claim_class": {"const": "CJO_DERIVED_VALUATION_IDENTITY"}, "allowed_outputs": {"const": ["VALUATION_EVALUATION_ONLY", "RESEARCH_AGENDA"]}
+      }
+    },
+    "settlement": {
+      "type": "object", "additionalProperties": false,
+      "required": ["schema_version", "settlement_id", "snapshot_id", "settled_at", "outcome_custodian_id", "operating_result", "permanent_loss_result", "market_result", "object_class", "claim_class", "allowed_outputs"],
+      "properties": {
+        "schema_version": {"const": "turtle-cjo-valuation-return-settlement.v1"}, "settlement_id": {"type": "string", "minLength": 1}, "snapshot_id": {"type": "string", "minLength": 1}, "settled_at": {"type": "string", "format": "date-time"}, "outcome_custodian_id": {"type": "string", "minLength": 1},
+        "operating_result": {"type": "object", "additionalProperties": false, "required": ["status", "normalized_earnings", "owner_cash"], "properties": {"status": {"enum": ["OBSERVED", "CENSORED", "UNKNOWN"]}, "normalized_earnings": {"type": ["object", "null"]}, "owner_cash": {"type": ["object", "null"]}}},
+        "permanent_loss_result": {"type": "object", "additionalProperties": false, "required": ["status", "source"], "properties": {"status": {"enum": ["OBSERVED_NO", "OBSERVED_YES", "UNKNOWN", "CENSORED"]}, "source": {"type": ["object", "null"]}}},
+        "market_result": {"type": "object", "additionalProperties": false, "required": ["status", "terminal_price", "terminal_price_source", "annual_cash_flows"], "properties": {"status": {"enum": ["OBSERVED", "CENSORED", "UNKNOWN"]}, "terminal_price": {"type": ["number", "null"]}, "terminal_price_source": {"type": ["object", "null"]}, "annual_cash_flows": {"type": ["array", "null"]}}},
+        "object_class": {"const": "CJO_VALUATION_RETURN_SETTLEMENT"}, "claim_class": {"const": "SEPARATE_OPERATING_VALUE_MARKET_RECONCILIATION"}, "allowed_outputs": {"const": ["VALUATION_EVALUATION_ONLY", "RESEARCH_AGENDA"]}
+      }
+    }
+  }
+}

@@ -1,0 +1,173 @@
+{
+  "schema_version": "judgment-selection-outcome.v1",
+  "case_id": "SELECTIONCASE:R-104:chongqing-beer-network-pruning-unit-economics-20160430",
+  "freeze_id": "JFREEZE:R-104:20160430",
+  "settlement_id": "JSELOUTCOME:R-104:20260824:V1",
+  "settlement_as_of": "2026-08-24T02:59:25Z",
+  "first_outcome_accessed_at": "2026-08-24T02:55:26Z",
+  "activation_id": "JSELRESACT:SELECTIONCASE:R-104:chongqing-beer-network-pruning-unit-economics-20160430:JSELRES:R-104:PRE-OUTCOME-V1",
+  "amendment_review_id": "JSELRESREVIEW:R-104:INDEPENDENT:20260824:V1-ACCEPTED",
+  "custodian_id": "codex-r104-independent-outcome-custodian-20260824",
+  "selection_status": "SELECTION_ADMITTED",
+  "measurement_contract_identity": {
+    "schema_version": "judgment-selection-measurement-contract.v1",
+    "case_id": "SELECTIONCASE:R-104:chongqing-beer-network-pruning-unit-economics-20160430",
+    "freeze_id": "JFREEZE:R-104:20160430"
+  },
+  "official_source_enumeration": {
+    "provider": "CNINFO",
+    "endpoint": "https://www.cninfo.com.cn/new/hisAnnouncement/query",
+    "security_code": "600132",
+    "enumerated_at": "2026-08-24T02:55:26Z",
+    "union_query_window": {
+      "begin_date": "2016-05-01",
+      "end_date": "2019-05-31"
+    },
+    "sort": "pubdate_ascending",
+    "page_size": 30,
+    "page_row_counts": [
+      6
+    ],
+    "total_official_announcements": 6,
+    "selected_sources": [
+      {
+        "source_id": "CNINFO:600132:ANN:20170414:1203295881",
+        "source_type": "CNINFO_OFFICIAL_AUDITED_ANNUAL_REPORT",
+        "published_at": "2017-04-14",
+        "title": "重庆啤酒股份有限公司2016年年度报告",
+        "url": "https://static.cninfo.com.cn/finalpage/2017-04-14/1203295881.PDF"
+      },
+      {
+        "source_id": "CNINFO:600132:ANN:20180414:1204627297",
+        "source_type": "CNINFO_OFFICIAL_AUDITED_ANNUAL_REPORT",
+        "published_at": "2018-04-14",
+        "title": "重庆啤酒股份有限公司2017年年度报告",
+        "url": "https://static.cninfo.com.cn/finalpage/2018-04-14/1204627297.PDF"
+      },
+      {
+        "source_id": "CNINFO:600132:ANN:20190413:1206015424",
+        "source_type": "CNINFO_OFFICIAL_AUDITED_ANNUAL_REPORT",
+        "published_at": "2019-04-13",
+        "title": "重庆啤酒股份有限公司2018年年度报告",
+        "url": "https://static.cninfo.com.cn/finalpage/2019-04-13/1206015424.PDF"
+      }
+    ]
+  },
+  "registered_claim_ids": [
+    "R-104:D1-TERMINAL",
+    "R-104:D2-TERMINAL",
+    "R-104:D3-TERMINAL",
+    "R-104:D4-CASH",
+    "R-104:D5-CAPITAL"
+  ],
+  "claims": [
+    {
+      "claim_id": "R-104:D1-TERMINAL",
+      "predicate_id": "R104-D1-NETWORK-IMPLEMENTATION",
+      "stage_id": "D1_IMPLEMENTATION",
+      "status": "OBSERVED",
+      "source_ids": [
+        "CNINFO:600132:ANN:20170414:1203295881"
+      ],
+      "measurement_scope": "implementation or reversal of the six-brewery production closure, equivalent capacity rebuild, material supply interruption and transition burden inside the consolidated listed issuer",
+      "prohibited_substitutes": [
+        "management intention",
+        "company survival",
+        "group sales volume",
+        "industry capacity"
+      ],
+      "observed_measurement": "implementation or reversal of the six-brewery production closure, equivalent capacity rebuild, material supply interruption and transition burden inside the consolidated listed issuer",
+      "observation_summary": "The FY2016 audited annual report states that the production-network optimization continued, records impairment on newly closed Bozhou and two persistently loss-making operations, and says that by the financial-statement approval date seven subsidiaries or branches had been closed. It supplies no disclosure of an equivalent-capacity rebuild or material supply interruption. This is a same-issuer implementation observation only and has no selection vote."
+    },
+    {
+      "claim_id": "R-104:D2-TERMINAL",
+      "predicate_id": "R104-D2-BEER-VOLUME-AND-PRICE-MIX",
+      "stage_id": "D2_CUSTOMER_ABSORPTION",
+      "status": "OBSERVED",
+      "source_ids": [
+        "CNINFO:600132:ANN:20170414:1203295881"
+      ],
+      "measurement_scope": "FY2016 recurring annual headline beer sales volume and consolidated revenue per headline kl",
+      "prohibited_substitutes": [
+        "production volume",
+        "brand narrative",
+        "industry beer volume",
+        "management sales target"
+      ],
+      "observed_measurement": "FY2016 recurring annual headline beer sales volume and consolidated revenue per headline kl",
+      "observation_summary": "The FY2016 audited annual report discloses headline beer sales of 946,200 kl and consolidated operating revenue of RMB3,195,921,515.50, equivalent to RMB3,377.63846491 per headline kl. The report describes the 7.87% sales-volume decline versus FY2015 and separately says the decline excluding plant closures was about 2%. This remains diagnostic context and is not an adapter-scored selection test."
+    },
+    {
+      "claim_id": "R-104:D3-TERMINAL",
+      "predicate_id": "R104-D3-UNIT-OPERATING-CONTRIBUTION",
+      "stage_id": "D3_UNIT_ECONOMICS",
+      "status": "OBSERVED",
+      "source_ids": [
+        "CNINFO:600132:ANN:20170414:1203295881"
+      ],
+      "measurement_scope": "FY2016 whole-issuer operating-contribution amount: consolidated revenue less consolidated operating cost, taxes and surcharges, selling expense and administrative expense",
+      "prohibited_substitutes": [
+        "operating contribution divided by beer sales volume",
+        "standalone gross margin",
+        "net profit per kl",
+        "EBITDA without a bridge",
+        "brand margin",
+        "security price"
+      ],
+      "observed_measurement": "FY2016 whole-issuer operating-contribution amount: consolidated revenue less consolidated operating cost, taxes and surcharges, selling expense and administrative expense",
+      "observed_value": 357305713.71,
+      "observed_unit": "RMB",
+      "observation_summary": "FY2016 consolidated revenue RMB3,195,921,515.50 minus operating cost RMB1,939,694,949.44, taxes and surcharges RMB269,738,755.10, selling expense RMB445,553,542.47, and administrative expense RMB183,628,554.78 equals RMB357,305,713.71. All components are from the audited consolidated income statement and share the frozen whole-issuer perimeter."
+    },
+    {
+      "claim_id": "R-104:D4-CASH",
+      "predicate_id": "R104-D4-CASH-AND-WORKING-CAPITAL",
+      "stage_id": "D4_WORKING_CAPITAL_AND_CASH",
+      "status": "OBSERVED",
+      "source_ids": [
+        "CNINFO:600132:ANN:20170414:1203295881"
+      ],
+      "measurement_scope": "FY2016 whole-issuer owner cash after removing any positive cash-working-capital release",
+      "prohibited_substitutes": [
+        "net profit",
+        "parent-only OCF",
+        "cash balance",
+        "debt reduction",
+        "inventory alone",
+        "an estimated maintenance-capex allocation",
+        "OCF less capex without removing positive working-capital release"
+      ],
+      "observed_measurement": "FY2016 whole-issuer owner cash after removing any positive cash-working-capital release",
+      "observed_value": 127470465.2,
+      "observed_unit": "RMB",
+      "observation_summary": "Audited consolidated OCF RMB569,431,361.68 less all cash paid to acquire fixed, intangible and other long-term assets RMB165,043,028.20 less the positive five-account cash-working-capital release of RMB276,917,868.28 equals RMB127,470,465.20. The opening working capital is RMB736,504,427.96; the ending value is RMB459,586,559.68 = AR 51,244,805.19 + prepayments 15,397,017.41 + inventory 825,981,328.38 - AP 345,850,595.32 - customer advances 87,185,995.98."
+    },
+    {
+      "claim_id": "R-104:D5-CAPITAL",
+      "predicate_id": "R104-D5-CAPITAL-RETURN",
+      "stage_id": "D5_CAPITAL_RETURN",
+      "status": "UNKNOWN",
+      "source_ids": [
+        "CNINFO:600132:ANN:20170414:1203295881",
+        "CNINFO:600132:ANN:20180414:1204627297",
+        "CNINFO:600132:ANN:20190413:1206015424"
+      ],
+      "measurement_scope": "FY2016-FY2018 cumulative OCF less maintenance-oriented capital expenditure, with working-capital change, closure-related permanent loss/disposal proceeds and opening/average operating capital explicitly bridged",
+      "prohibited_substitutes": [
+        "net income called owner cash",
+        "asset impairment double deduction",
+        "market capitalization",
+        "share price or return"
+      ],
+      "resolution_reason": "The three audited annual reports disclose consolidated OCF, total cash paid to acquire long-term assets and balance-sheet accounts, but do not allocate total capex into maintenance versus expansion or provide a fully compatible closure-related permanent-loss/disposal and opening/average operating-capital bridge. Estimating a maintenance share or treating impairment as both cash capex and a second capital loss would violate the frozen contract. The continuous capital-return diagnostic therefore remains UNKNOWN and carries no binary verdict."
+    }
+  ],
+  "prohibited_outputs": [
+    "selection_accuracy",
+    "probability",
+    "win_rate",
+    "investment_return",
+    "security_return",
+    "portfolio_conclusion"
+  ]
+}

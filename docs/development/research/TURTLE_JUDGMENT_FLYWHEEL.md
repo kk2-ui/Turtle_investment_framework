@@ -4,6 +4,8 @@
 
 目标不是累计报告、案例、数据或“正确观点”，而是让每一轮公司研究都留下一个可迁移的判断改进：下一次更早看见真正的机制分歧、更少把噪声误作因果，并在错的时候知道究竟该改什么。
 
+训练对象和 claim-specific admission 以[历史训练体系重构](TURTLE_HISTORICAL_TRAINING_SYSTEM_REDESIGN.md)为准。飞轮不要求每个对象都成为方向性 episode；它要求对象获得与证据强度一致的反馈和权限。
+
 ## 飞轮本体
 
 ```text
@@ -26,6 +28,17 @@
 ```
 
 它是一个研究—反馈机制，不是报告生产流水线。任何一环的正确产出都可以是 `UNKNOWN`、`NO_PRIMARY`、`NOT_DIAGNOSTIC` 或停止；这些不是飞轮失败，而是避免错误确信的反馈。
+
+## 四种反馈回路
+
+| 回路 | 输入 | 反馈 | 最高权限 |
+|---|---|---|---|
+| Industry History | company-time risk set、进入退出、结构断点 | 行业范围和研究议程是否遗漏失败者、退出者或新进入者 | `CONTEXT_ONLY` |
+| Teaching/Lifecycle | 单公司、已知结果、near miss、消失公司 | 哪条过程链、proxy、perimeter 或永久损失路径需要改进 | `TEACHING_ONLY` |
+| Comparative | outcome-sealed 行动、反方、comparator、D3/D4 | 冻结判断相对反方是方向性、混合还是不诊断 | `SELECTION_METHOD_ELIGIBLE` 候选 |
+| Learning/Holdout | 诊断结果、TransportContract、未见公司 | 窄改变是否真的迁移，冻结版本是否泛化 | `REPORT_USE_AUTHORIZED` 候选 |
+
+没有 comparator 的高质量单案仍可让前两条回路运行；它不能因此进入后两条回路。退出公司必须留在 Industry History 和 Lifecycle 回路，后续资料中断用 `CENSORED` 表达，不能删除或自动判输。
 
 按不同决策域把这条机制落到可读原件，见[企业经营判断取证路线](TURTLE_ENTERPRISE_JUDGMENT_SOURCE_ROUTING.md)。
 
@@ -183,11 +196,12 @@ R-27 的格力压力测试没有通过这个门：动作清楚，产品收入和
 
 不能用一个总分衡量飞轮。它逐步成熟的证据是：
 
-1. 新研究在结果前就能写出更少、但真正不同的机制和观察；
-2. 越来越多冻结信号可按原口径结算，而不是到期后改用代理指标；
-3. 早期结果能在终局前指出具体错误位置；
-4. 同一错误在不同公司簇中被识别后，下一轮模板、取证顺序或禁用项确实改变；
-5. 只有累积多个独立、同定义、相对简单基线有不同预测的 out-of-sample 选择 episode 后，才可讨论校准或相对预测表现。
+1. 行业 risk set 不再只剩当前幸存者，退出、并购和删失有明确身份；
+2. 新研究在结果前就能写出更少、但真正不同的机制和观察；
+3. 越来越多冻结信号可按原口径结算，而不是到期后改用代理指标；
+4. 早期结果能在终局前指出具体错误位置；
+5. 同一错误在不同公司簇中被识别后，下一轮模板、取证顺序或禁用项确实改变；
+6. 只有累积多个独立、同定义、相对简单基线有不同预测的 out-of-sample 选择 episode 后，才可讨论校准或相对预测表现。
 
 在此之前，最诚实的状态是：飞轮已在运行、会产生可复盘经验，但尚未证明一般性的判断优势。
 
@@ -197,6 +211,7 @@ R-27 的格力压力测试没有通过这个门：动作清楚，产品收入和
 
 | 等级 | 真正被检验的内容 | 可以得出的结论 | 仍然不能得出的结论 |
 |---|---|---|---|
+| `K0 行业/教学资产` | 历史宇宙、生命周期、过程机制、near miss 和禁止替代是否可追溯。 | 系统积累了更完整的行业问题和失败模式，并能保留退出/删失对象。 | 相对因果、选择能力、方法表现或报告使用权。 |
 | `L0 流程完整性` | PIT 边界、H-A/H-B、反方、来源和计量合同、冻结、拒绝路径是否按设计运行。 | 系统能拦截已知的伪反馈；`NO_PRIMARY`、`UNKNOWN` 与 `MEASUREMENT_MISMATCH` 会保留下来。 | 信号有用、主路径选对、公司结论正确，或研究者判断更强。 |
 | `L1 结果采集完整性` | 到期后能否以完整候选源枚举、raw/reader、读取审计和逐字 extraction 取得冻结指标。 | 该一次经营观察没有靠手填值、相近 KPI 或选择性版本结算。 | 观察本身具有机制诊断性。 |
 | `L2 单箭头诊断性` | 同一 pair 的早期/终局 FJ 是否按原谓词给出 `A_ONLY / B_ONLY / MIXED / NOT_DIAGNOSTIC`。 | 哪一条被冻结的箭头暂获支持、削弱或不可判定；可修正信号或测量合同。 | 研究者当时有资格选择 H-A，或同一机制能迁移。 |
@@ -204,6 +219,6 @@ R-27 的格力压力测试没有通过这个门：动作清楚，产品收入和
 | `L4 跨公司迁移` | 已结算的 `LNOTE → multi-company review → 不同公司冻结前字段改变`，以及新案的同定义结算。 | 一个具体的错误教训确实改变了下一对象的机制、来源、信号或计量边界，并可检验该改变。 | 改变本身已在所有行业有效，或飞轮已有总体优势。 |
 | `L5 方法相对表现` | 多个独立 `L3` episode 与相对简单基线，按结果前冻结的样本边界、聚合规则和全部失败/不可判定分母进行比较；显式飞轮 batch 还须逐一保留 universe 内的 `INCLUDED/EXCLUDED` screen entry。 | 仅在完整登记的非价格经营结果下讨论校准或相对表现。 | 以报告数量、单公司多季、价格/回报、事后案例或隐藏的候选筛选代替方法证据。 |
 
-当前状态：P01–P50 的生产门和定向回归、P-51/P-52 的合成类比输入/交接复测、P-53–P-55 的假设空间与环境边界合成复测、P-56 的真实 pre-outcome 筛查、P-57 的候选重入阻断与 P-58 的准备停止规则，都只属于 `L0`；系统状态为 `L0_ARCHITECTURE_STABLE / HISTORICAL_TRAINING_ACTIVE`。这只是停止无触发的架构扩张，绝不是停止判断训练。R-05/R-06 继续作为未来部署校准哨兵；同时，[历史 PIT cohort register](HISTORICAL_PIT_TRAINING_COHORT_REGISTER.md) 已把 R-62 置为开发回放、R-61 置为严格留出，R-56/R-58/R-25/R-21/R-78 均因结果已知只作教学边界。它们应按冻结顺序运行历史采集、结算与复盘；历史结果可检验训练/迁移约束，但不进入 Turtle 的实时准确率。R-03 以 `MEASUREMENT_MISMATCH` 证明了应当停止，不能充当 `L2` 命中；R-07 仍没有 `SELECTION_ADMITTED` 对象，故尚无真实部署 `L3`，但这不妨碍 archive cohort 完成其训练和留出职责。L4/L5 的实时部署有效性仍为 `NOT_YET_TESTED`。这不是缺少报告，而是必须把历史训练、历史留出与未知结果部署校准分开报告。
+当前状态：分层训练上层设计与控制面已接通，水泥 H1 已提供五家 carriers 和 2018 universe seed，但不是 final comparator panel。R-62/R-69 仍为 `NO_PRIMARY / NOT_FROZEN` 的结果前筛查，不能冻结 boundary 或 selection method；R-61 继续作为 outcome-sealed holdout。R-104 的 `MIXED` 只能保留机制边界，不能释放方法或报告使用权。新的真实 Comparative Episode 仍需完成 freeze、settlement、application 和独立复核后，才可形成选择方法版本；L4/L5 的实时部署有效性仍为 `NOT_YET_TESTED`。
 
-这条阶梯把四项研究发现落实为操作纪律：Kahneman 与 Klein 的判断专长前提是可学习规律及迅速、清晰的反馈；Hirt 与 Markman 的多重解释要求反方也能被检验；Baron 与 Hershey 说明后见的好/坏结果会扭曲对当初判断的评价；Ericsson 等人把改造下一任务而非仅回顾上一任务视为刻意练习的核心。它们支持飞轮的验证次序，不替 Turtle 证明任何公司机制或方法优越性。[Kahneman & Klein (2009)](https://doi.org/10.1037/a0016755)、[Hirt & Markman (1995)](https://doi.org/10.1037/0022-3514.69.6.1069)、[Baron & Hershey (1988)](https://doi.org/10.1037/0022-3514.54.4.569)、[Ericsson, Krampe & Tesch-Römer (1993)](https://doi.org/10.1037/0033-295X.100.3.363)。
+这条阶梯把研究发现落实为操作纪律：Shumway 与 Brown 等说明退出缺失和幸存者截断会制造偏差；Kahneman 与 Klein 的判断专长前提是可学习规律及清晰反馈；Hirt 与 Markman 要求主动构造多种可行解释；Baron 与 Hershey 说明结果会污染对原决策的评价；Ericsson 等人把针对弱点改造下一任务视为刻意练习核心。它们支持飞轮的验证次序，不替 Turtle 证明任何公司机制或方法优越性。[Shumway (1997)](https://doi.org/10.1111/j.1540-6261.1997.tb03818.x)、[Brown et al. (1992)](https://doi.org/10.1093/rfs/5.4.553)、[Kahneman & Klein (2009)](https://doi.org/10.1037/a0016755)、[Hirt & Markman (1995)](https://doi.org/10.1037/0022-3514.69.6.1069)、[Baron & Hershey (1988)](https://doi.org/10.1037/0022-3514.54.4.569)、[Ericsson et al. (1993)](https://doi.org/10.1037/0033-295X.100.3.363)。

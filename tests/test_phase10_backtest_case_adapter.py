@@ -11,6 +11,7 @@ import scripts.historical_backtest as historical_backtest
 import scripts.phase10_pit_runner as phase10_pit_runner
 from scripts.phase10_acquisition import enumerate_sse_announcements
 from scripts.phase10_backtest_case_adapter import (
+    DEFAULT_CREDIBILITY,
     ProductionFreezeCaseError,
     _selection_admission_gate_receipt,
     _frozen_financial_driver_bridge,
@@ -78,6 +79,35 @@ def _v2_case_spec(*, review_artifact_path: str = "") -> dict:
             "primary_price_identity": "UNKNOWN",
             "prices": [],
         },
+    }
+
+
+def _mitigated_credibility(root: Path) -> dict:
+    artifact = root / "evidence" / "model_memory_mitigation.md"
+    artifact.parent.mkdir(parents=True, exist_ok=True)
+    artifact.write_text(
+        "\n".join((
+            "Evidence ID: HBTMEM:TEST:mitigated",
+            "Method: isolated-context replay",
+            "Verifier ID: reviewer:memory-control",
+            "Scope: historical PIT test fixture",
+        )),
+        encoding="utf-8",
+    )
+    return {
+        "model_memory_control": "MITIGATED",
+        "backtest_credibility": "QUALIFIED",
+        "assessment_basis": "Independent isolation controls mitigate, but cannot eliminate, historical-model memory.",
+        "control_evidence": [{
+            "evidence_id": "HBTMEM:TEST:mitigated",
+            "artifact_path": "evidence/model_memory_mitigation.md",
+            "artifact_sha256": hashlib.sha256(artifact.read_bytes()).hexdigest(),
+            "control_level": "MITIGATION",
+            "method": "isolated-context replay",
+            "verifier_id": "reviewer:memory-control",
+            "scope": "historical PIT test fixture",
+        }],
+        "calibration_role": "ENGINEERING_DIAGNOSTIC_ONLY",
     }
 
 
@@ -798,6 +828,9 @@ def _write_pass_review(paths: dict[str, Path], review_path: Path, *, case_spec: 
             "purpose", "route", "forecast", "inputs", "calibration_ledger", "taxes_fees_fx", "price_identity",
         )
     }
+    frozen_case_contract["credibility"] = deepcopy(
+        reviewed_spec.get("credibility", DEFAULT_CREDIBILITY)
+    )
     snapshot = json.loads((paths["output"] / "publication_snapshot.json").read_text(encoding="utf-8"))
     frozen_driver_bridge = _frozen_financial_driver_bridge(
         paths["output"],
@@ -882,6 +915,37 @@ def test_adapter_writes_reviewable_v2_case_without_action_or_future_inputs(
     assert "investment_return_outcome:company_judgment_only_requires_not_applicable" in settlement_findings
     assert "frozen_investment_decision_required_for_return_settlement" not in settlement_findings
     assert sentinel.read_bytes() == original_v1
+
+
+def test_adapter_preserves_independently_attested_memory_mitigation_in_reviewed_case(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    paths = _production_fixture(tmp_path, monkeypatch)
+    review = paths["root"] / "reviews" / "independent.json"
+    case_spec = _v2_case_spec(review_artifact_path="reviews/independent.json")
+    case_spec["credibility"] = _mitigated_credibility(paths["root"])
+    _write_pass_review(paths, review, case_spec=case_spec)
+
+    result = _derive(paths, case_spec, paths["root"] / "historical" / "mitigated.v2.json")
+
+    assert result["validation"]["state"] == "REVIEWABLE"
+    assert result["case"]["credibility"] == case_spec["credibility"]
+    assert result["case"]["credibility"]["calibration_role"] == "ENGINEERING_DIAGNOSTIC_ONLY"
+
+
+def test_memory_mitigation_cannot_change_after_independent_review(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    paths = _production_fixture(tmp_path, monkeypatch)
+    review = paths["root"] / "reviews" / "independent.json"
+    reviewed_spec = _v2_case_spec(review_artifact_path="reviews/independent.json")
+    reviewed_spec["credibility"] = _mitigated_credibility(paths["root"])
+    _write_pass_review(paths, review, case_spec=reviewed_spec)
+    replayed_spec = deepcopy(reviewed_spec)
+    replayed_spec["credibility"]["assessment_basis"] = "Changed after independent review."
+
+    with pytest.raises(ProductionFreezeCaseError, match="independent review frozen contract differs"):
+        _derive(paths, replayed_spec)
 
 
 def test_adapter_returns_identified_incomplete_candidate_before_review(

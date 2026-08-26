@@ -1,0 +1,164 @@
+{
+  "schema_version": "historical-selection-cohort-screen-and-source-package.v1",
+  "selection_policy_id": "R104-CHONGQING-BEER-NETWORK-PRUNING-PRE-READ-V1",
+  "cutoff_at": "2016-04-30T23:59:59+08:00",
+  "candidate_universe_policy": {
+    "sampling_method": "CUTOFF_BEFORE_THEORY_SAMPLE_NOT_COMPLETE_INDUSTRY_CENSUS",
+    "description": "A bounded comparison slice of three exchange-listed beer issuers: a national operator, a multi-region operator and a regional operator with a disclosed production-network intervention. The slice tests whether a whole-listed-entity responsibility unit has both recurring annual-report measurements and a non-common directional fact. It is not represented as every listed Chinese brewer.",
+    "provider": "CNINFO",
+    "query_end_date": "2016-04-30",
+    "post_cutoff_metadata_policy": "PROHIBITED"
+  },
+  "cohort_screen": [
+    {
+      "company_id": "CN:600132",
+      "company_name": "重庆啤酒股份有限公司",
+      "screen_role": "REGIONAL_OPERATOR_WITH_IMPLEMENTED_NETWORK_PRUNING",
+      "cutoff_before_annual_reports_observed": [
+        2013,
+        2014,
+        2015
+      ],
+      "decision": "SELECTED_FOR_R104",
+      "reason": "The whole listed group disclosed the same annual beer-volume, consolidated operating statement, operating-cash-flow and working-capital identities for three consecutive years. Before cutoff it had also closed production operations at six breweries, while realized revenue per kilolitre and cash working-capital release moved in a direction not shared by a mechanical last-observed baseline."
+    },
+    {
+      "company_id": "CN:600600",
+      "company_name": "青岛啤酒股份有限公司",
+      "screen_role": "NATIONAL_OPERATOR_COMPARATOR",
+      "cutoff_before_annual_reports_observed": [
+        2013,
+        2014,
+        2015
+      ],
+      "decision": "REJECT_FOR_R104_NOT_PERMANENTLY_INELIGIBLE",
+      "root_cause": "REASONING",
+      "reason": "The bounded 2015 report disclosed growth in high-value product volume, but this minimal screen did not identify a finite, already implemented resource commitment whose central unit-economics prediction differed from simply carrying the last observed mix direction forward. Selecting it here would require an arbitrary threshold or turn the baseline into the primary."
+    },
+    {
+      "company_id": "CN:000729",
+      "company_name": "北京燕京啤酒股份有限公司",
+      "screen_role": "MULTI_REGION_OPERATOR_COMPARATOR",
+      "cutoff_before_annual_reports_observed": [
+        2013,
+        2014,
+        2015
+      ],
+      "decision": "REJECT_FOR_R104_NOT_PERMANENTLY_INELIGIBLE",
+      "root_cause": "REASONING",
+      "reason": "The bounded 2015 report disclosed can-volume and fresh-beer growth, but the minimal packet did not establish a discrete intervention boundary that made a central operating result differ from last-observed continuation without importing a management plan. It remains a possible later episode after a separately bounded event search."
+    }
+  ],
+  "selection_reason": "Select the consolidated listed issuer rather than an acquired subsidiary or a management-defined future project. The directional case rests on an implemented six-brewery production-network pruning, realized revenue-per-kilolitre improvement and recurring cash-working-capital release, while the rival remains live because beer volume, operating-contribution margin and selling-cost pressure were adverse. No management sales target is used.",
+  "company_id": "CN:600132",
+  "company_name": "重庆啤酒股份有限公司",
+  "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600132",
+  "proposed_disposition": "SELECTION_ADMITTED_PENDING_INDEPENDENT_PRE_OUTCOME_REVIEW",
+  "outcome_firewall": {
+    "state": "PIT_OUTCOME_SEALED",
+    "selector_visible_source_universe": {
+      "provider": "CNINFO",
+      "security_code": "600132",
+      "begin_date": "2013-01-01",
+      "end_date": "2016-04-30",
+      "official_announcement_count": 301,
+      "enumerated_count": 301,
+      "post_cutoff_rows": 0,
+      "query_endpoint": "https://www.cninfo.com.cn/new/hisAnnouncement/query"
+    },
+    "post_cutoff_metadata_access": "NONE",
+    "prohibited_access": [
+      "post-cutoff title, filename, snippet or body",
+      "post-cutoff annual-report existence or field availability",
+      "later brewery closure, reopening, volume, unit economics, cash or capital return",
+      "security price, valuation or investment return"
+    ],
+    "attestation": "The selector enumerated only the CNINFO universe whose query end date was 2016-04-30 and programmatically asserted that no returned row exceeded the cutoff. No post-cutoff outcome title, filename, snippet, body, price or result was queried or viewed."
+  },
+  "pre_admission_recurring_disclosure_gate": {
+    "state": "PASS_CUTOFF_BEFORE_EVIDENCE_ONLY",
+    "responsibility_unit": "The legal consolidated listed issuer CN:600132, not a subsidiary, plant, brand or post-acquisition segment.",
+    "proof_periods": [
+      "FY2013",
+      "FY2014",
+      "FY2015"
+    ],
+    "proof": "Three consecutive ordinary annual reports repeat annual company beer sales volume, consolidated revenue, cost, taxes and surcharges, selling expense, administrative expense, operating cash flow, cash paid to acquire fixed/intangible/other long-term assets and the balance-sheet working-capital accounts. Plant closures alter the operating configuration inside this fixed issuer perimeter; they do not change the responsibility-unit identity.",
+    "central_discriminator_identities": [
+      {
+        "predicate_id": "R104-D3-UNIT-OPERATING-CONTRIBUTION",
+        "responsibility_unit": "ISSUER_CONSOLIDATED:CN:600132",
+        "metric_identity": "consolidated operating revenue - consolidated operating cost - taxes and surcharges - selling expense - administrative expense",
+        "unit": "RMB",
+        "segment_boundary": "Whole consolidated issuer for every numerator component; no product-volume denominator or plant/brand allocation.",
+        "cutoff_before_repetitions": 3,
+        "expected_official_document_type": "CNINFO_OFFICIAL_AUDITED_ANNUAL_REPORT",
+        "disclosure_change_risk": "The 2015 report reclassified supply-chain expense from administrative expense into manufacturing cost. The whole-issuer amount includes both accounts plus recurring taxes and surcharges and is invariant to that transfer. Beer-only volume and standalone gross margin cannot settle the selection."
+      },
+      {
+        "predicate_id": "R104-D4-CASH-AND-WORKING-CAPITAL",
+        "responsibility_unit": "ISSUER_CONSOLIDATED:CN:600132",
+        "metric_identity": "consolidated OCF less cash paid to acquire fixed/intangible/other long-term assets less max(opening cash working capital - ending cash working capital, 0), where cash working capital is accounts receivable + prepayments + inventory - accounts payable - customer advances",
+        "unit": "RMB",
+        "segment_boundary": "Whole consolidated issuer and the same consolidated statements as D3. Opening and ending working capital are formula inputs; the settled observation is owner cash excluding positive working-capital release.",
+        "cutoff_before_repetitions": 3,
+        "expected_official_document_type": "CNINFO_OFFICIAL_AUDITED_ANNUAL_REPORT",
+        "disclosure_change_risk": "A future accounting-label change may require an explicit issuer bridge. Missing opening/ending customer-advance, comparable working-capital or long-term-asset-acquisition cash-flow fields produces MEASUREMENT_MISMATCH or UNKNOWN; no subsidiary, parent-only or group-survival proxy is allowed."
+      }
+    ],
+    "why_r102_failure_does_not_repeat": "R-104 does not rely on a newly acquired subsidiary remaining separately disclosed. Both central discriminators are measured at the legal consolidated issuer perimeter that already carried the same recurring identities in three cutoff-before ordinary annual reports.",
+    "prohibited_assumption": "This gate does not assert that a particular post-cutoff report or value exists. It admits the case from cutoff-before recurring legal-reporting identity only."
+  },
+  "production_throughput_observability_gate": {
+    "state": "UNKNOWN_OPTIONAL_NON_VOTER",
+    "required_identity": "Whole-consolidated-issuer beer production throughput, sell-through or capacity utilization distinct from sales volume",
+    "cutoff_before_findings": {
+      "FY2013": "The annual report gives annual beer sales volume but no whole-issuer production volume, sell-through or capacity-utilization series.",
+      "FY2014": "The annual report gives annual beer sales volume but no whole-issuer production volume, sell-through or capacity-utilization series.",
+      "FY2015": "The annual report first gives a product-table production total of 88.77 ten-thousand kl and a rounded minus-6-percent year-on-year change. The rounded comparison cannot reconstruct an exact FY2014 production value or create a recurring FY2013-FY2015 identity.",
+      "plant_capacity": "The disclosed Yibin future relocation design capacity is a single-plant commitment and cannot represent whole-issuer utilization."
+    },
+    "prohibited_response": "Do not copy D2 sales volume into a D3 product-volume claim and do not derive an exact prior-year production value from a rounded percentage.",
+    "admission_impact": "The product contract defines five mandatory D1-D5 layers and treats D3_PRODUCT_VOLUME as optional. R-104 therefore preserves production throughput as UNKNOWN and a non-voter. The refrozen central D3 measures whole-issuer operating-contribution amount and does not claim to isolate the production-utilization arrow.",
+    "detail_ref": "06_pre_cutoff_product_volume_observability.json"
+  },
+  "selected_sources": [
+    {
+      "source_id": "CNINFO:600132:ANN:20140409:63807671",
+      "title": "2013年年度报告",
+      "published_at": "2014-04-09",
+      "url": "https://static.cninfo.com.cn/finalpage/2014-04-09/63807671.PDF",
+      "selection_reason": "Establish FY2013 beer volume, consolidated operating statement, OCF, long-term-asset acquisition cash and working capital, with FY2012 comparatives, before the later network-pruning decision.",
+      "locators": [
+        "report pages 9-11 annual beer volume, revenue, costs and operating expenses",
+        "audited consolidated financial statements, cash-flow statement and working-capital notes"
+      ]
+    },
+    {
+      "source_id": "CNINFO:600132:ANN:20150410:1200803967",
+      "title": "2014年年度报告",
+      "published_at": "2015-04-10",
+      "url": "https://static.cninfo.com.cn/finalpage/2015-04-10/1200803967.PDF",
+      "selection_reason": "Provide a second ordinary-year repetition of beer volume, consolidated expense identities, OCF, long-term-asset acquisition cash and working capital, including FY2013 comparatives.",
+      "locators": [
+        "report pages 5-12 three-year headline data, beer volume, operating statement and OCF",
+        "report pages 48-50 audited consolidated balance sheet and working-capital accounts"
+      ]
+    },
+    {
+      "source_id": "CNINFO:600132:ANN:20160409:1202154919",
+      "title": "2015年年度报告",
+      "published_at": "2016-04-09",
+      "url": "https://static.cninfo.com.cn/finalpage/2016-04-09/1202154919.PDF",
+      "selection_reason": "Freeze the implemented six-brewery production closure and fixed-asset impairment, FY2015 volume and price/mix realization, the expense-classification bridge, OCF, long-term-asset acquisition cash and working-capital release at the same consolidated issuer.",
+      "locators": [
+        "report pages 8-12 six production-business closures, beer volume, revenue, operating costs and 2015 expense reclassification",
+        "report pages 43-49 consolidated balance sheet and cash-flow statement",
+        "report page 112 OCF bridge including inventory, operating receivables and operating payables"
+      ]
+    }
+  ],
+  "selected_source_count": 3,
+  "source_selection_boundary": "The annual reports are used for realized facts and recurring measurement identities. Management targets, the stated 2016 sales plan, later disclosure availability, stock prices and post-cutoff events are excluded.",
+  "selection_stop_rule": "Stop after three consecutive ordinary annual reports prove the whole-issuer D3/D4 identities and the 2015 report supplies an implemented resource commitment plus a live rival. Do not enumerate any post-cutoff inventory until a genuinely independent pre-outcome reviewer accepts the exact freeze and measurement contract."
+}

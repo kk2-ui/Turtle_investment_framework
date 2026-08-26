@@ -1,0 +1,141 @@
+{
+  "schema_version": "judgment-selection-review-receipt.v1",
+  "receipt_id": "JSELREVIEW:R-104:INDEPENDENT-PRE-OUTCOME:20260824:REJECTED",
+  "case_id": "SELECTIONCASE:R-104:chongqing-beer-network-pruning-unit-economics-20160430",
+  "reviewer_id": "codex-independent-pre-outcome-reviewer-r104-20260824",
+  "reviewed_at": "2026-08-24T00:59:13+08:00",
+  "selection_scope": "Independent cutoff-before review of the current R-104 cohort screen, case freeze, outcome-acquisition contract, measurement contract, pre-cutoff workpaper, the three frozen CNINFO annual-report sources, and the production selection validators/tests. No post-cutoff outcome body, title, filename, snippet, value, price, result or metadata was accessed.",
+  "verdict": "SELECTION_REJECTED_PRE_OUTCOME",
+  "outcome_body_access": "UNREAD_AND_PROHIBITED",
+  "outcome_metadata_access": "NONE",
+  "reviewed_artifacts": [
+    "00_cohort_screen_and_source_selection.json",
+    "01_case_freeze.json",
+    "03_outcome_acquisition_contract.json",
+    "04_measurement_contract.json",
+    "05_pre_cutoff_measurement_workpaper.json",
+    "CNINFO:600132:ANN:20140409:63807671",
+    "CNINFO:600132:ANN:20150410:1200803967",
+    "CNINFO:600132:ANN:20160409:1202154919",
+    "scripts/judgment_selection_candidate.py",
+    "scripts/judgment_feedback_control.py",
+    "scripts/judgment_selection_feedback.py",
+    "tests/test_judgment_selection_control.py",
+    "tests/test_judgment_selection_feedback.py",
+    "tests/test_judgment_training_program.py"
+  ],
+  "review_answers": {
+    "directional_preference_without_prohibited_inputs": "YES_WITH_RESERVATION: cutoff-before implemented closures, rising revenue per headline beer-sales kilolitre and recurring working-capital release support a non-common H-A to test without management targets or later facts.",
+    "strongest_rival_preserved": "YES: falling contribution margin, rising selling expense, continuing volume contraction, impairment and the potentially non-recurring working-capital release leave H-B genuinely live.",
+    "fair_baseline_distinct": "NO: the FY2015 carry-forward arithmetic is reproducible and D3 is directionally different, but the packet omits the production adapter's separate D3_PRODUCT_VOLUME baseline claim, D4's primary range includes its baseline point, and the D3 point uses a mismatched activity numerator and denominator.",
+    "responsibility_unit_and_unknown_boundary": "NO: D3 and D4 consistently name the consolidated listed issuer and D4 forbids survival/parent-only proxies, but D3 subtracts all consolidated costs from all consolidated revenue while dividing only by headline beer sales volume that excludes separately identified commissioned-processing volume. Legal-entity identity alone does not establish the same economic activity perimeter.",
+    "golden_report_materiality": "YES_WITH_BLOCKING_MEASUREMENT_RISK: network pruning is material to normal profit, owner cash and permanent loss, but the current claim bundle, D3 activity mismatch and economically unsupported central thresholds can reverse the operating conclusion a golden report would draw."
+  },
+  "rejected_selection_basis": {
+    "primary_hypothesis_id": "R104-H-A",
+    "strongest_rival_id": "R104-H-B",
+    "simple_baseline_id": "R104-BASELINE-LAST-OBSERVED-FY2015",
+    "state": "NOT_ACCEPTED_PENDING_REFREEZE_AND_REVIEW"
+  },
+  "root_cause_classifications": [
+    "MODEL",
+    "REASONING"
+  ],
+  "material_findings": [
+    {
+      "finding_id": "R104-REVIEW-F1-SIX-CLAIM-BUNDLE-MISSING",
+      "root_causes": [
+        "MODEL",
+        "REASONING"
+      ],
+      "why_below_standard": "The frozen candidate, source contract and measurement contract contain five claims: D1, D2, D3_UNIT_ECONOMICS, D4 and D5. The production selection adapter requires the ordered six-claim bundle D1_IMPLEMENTATION, D2_CUSTOMER_ABSORPTION, D3_PRODUCT_VOLUME, D3_UNIT_ECONOMICS, D4_WORKING_CAPITAL_AND_CASH and D5_CAPITAL_RETURN. The generic candidate validator only checks that clocks D1-D5 are represented, so its REVIEWABLE result is a false negative for production registration.",
+      "economic_impact": "Customer/mix absorption and product-volume output cannot be diagnosed separately, and the packet cannot be registered or settled by the current control plane. Treating D2's combined volume/price-mix observation as the missing D3 product-volume claim would conceal whether volume deleveraging or unit economics caused the result, directly weakening the H-A/H-B distinction.",
+      "missing_facts": [
+        "a separately frozen issuer-level D3_PRODUCT_VOLUME predicate, claim id, clock and measurement rule",
+        "an explicit product-volume primary/rival/baseline comparison that does not silently reuse D2",
+        "ordered six-claim identity alignment across 01_case_freeze.json, 03_outcome_acquisition_contract.json and 04_measurement_contract.json"
+      ],
+      "prohibited_assumptions": [
+        "D2_CUSTOMER_ABSORPTION may substitute for D3_PRODUCT_VOLUME",
+        "the production adapter can be weakened for this candidate without a separately justified product decision"
+      ],
+      "executable_remediation": "Split customer/price-mix absorption from product volume, freeze a distinct D3_PRODUCT_VOLUME claim using a cutoff-before recurring issuer identity, and bind all six claims in the exact production order across the candidate, source contract and measurement contract. Keep the common six-claim contract unchanged unless a separate product-level change demonstrates that volume is economically redundant across all selection episodes.",
+      "acceptance_criteria": "All three artifacts expose the exact ordered six stages, each stage has one stable predicate/claim identity and measurement boundary, the simple baseline contains distinct product-volume and unit-economics point identities, and both the candidate validator and production registration tests reject any five-claim variant."
+    },
+    {
+      "finding_id": "R104-REVIEW-F2-D3-ACTIVITY-PERIMETER-MISMATCH",
+      "root_causes": [
+        "MODEL"
+      ],
+      "why_below_standard": "D3 uses consolidated revenue less consolidated cost, taxes and surcharges, selling expense and administrative expense, then divides by recurring headline beer-sales volume. The same cutoff-before report states that the product-table volume includes 3.75 ten-thousand kilolitres of commissioned processing while the headline volume is 98.95 ten-thousand kilolitres, and the consolidated numerator also includes commissioned-processing and non-beer activities. The legal issuer is the same, but numerator and denominator do not cover the same economic activity.",
+      "economic_impact": "The frozen 5% D3 step equals only about RMB11.574 million at FY2015 volume, or about 0.348% of FY2015 revenue. Changes in included non-beer or commissioned-processing contribution can therefore cross the central threshold without proving that brewery-network pruning improved beer unit economics, creating a false A_ONLY or B_ONLY result and a wrong normal-profit conclusion.",
+      "missing_facts": [
+        "a cutoff-before bridge aligning the D3 numerator to the beer-volume denominator, including commissioned processing",
+        "or a demonstrated conservative bound showing excluded/included activity differences cannot cross either frozen D3 threshold"
+      ],
+      "prohibited_assumptions": [
+        "non-beer and commissioned-processing contribution is immaterial or stable merely because the legal consolidation perimeter is stable",
+        "whole-issuer identity automatically makes a beer-only volume denominator economically commensurate"
+      ],
+      "executable_remediation": "Refreeze D3 with an activity-aligned numerator and denominator. If audited public disclosure cannot support the allocation, use a whole-issuer margin/amount identity that does not divide by beer-only volume, or freeze an explicit MEASUREMENT_MISMATCH/UNKNOWN rule whenever the activity bridge is unavailable.",
+      "acceptance_criteria": "A cutoff-before workpaper reproduces the aligned D3 identity for FY2013-FY2015, commissioned-processing treatment is symmetric between numerator and denominator, non-beer effects are bridged or conservatively bounded below the decision interval, and the same rule is frozen for later settlement without a proxy."
+    },
+    {
+      "finding_id": "R104-REVIEW-F3-CENTRAL-THRESHOLD-ECONOMICS-NOT-ESTABLISHED",
+      "root_causes": [
+        "REASONING",
+        "MODEL"
+      ],
+      "why_below_standard": "The corrected D3 workpaper says FY2014-to-FY2015 contribution per kilolitre changed by about 0.29%, but the frozen corrected values RMB233.5431 and RMB233.9353 imply about 0.1679%. More importantly, choosing 5% only because it exceeds the prior change does not show why RMB11.574 million is material to network savings, normal profit or permanent loss. D4's 13% primary OCF-margin floor and 10% rival floor have no stated cutoff-before economic derivation; the primary D4 range also includes the simple-baseline point.",
+      "economic_impact": "D3 and D4 are the only central voters. Unsupported thresholds can determine A_ONLY, B_ONLY or MIXED even when the economic benefit is trivial relative to closure losses/capital employed, or when cash performance merely repeats the baseline. That can change the golden report's normal-profit and owner-cash conclusion.",
+      "missing_facts": [
+        "a cutoff-before materiality bridge from the D3 improvement to avoidable network cost, recurring normal profit or capital at risk",
+        "a cutoff-before derivation for the D4 13% and 10% OCF-margin boundaries",
+        "a corrected FY2014-to-FY2015 change calculation under the taxes-and-surcharges-inclusive formula"
+      ],
+      "prohibited_assumptions": [
+        "5%, 13% or 10% is economically material merely because it is round or exceeds one historical movement",
+        "meeting a D4 range that contains the baseline proves incremental cash efficiency"
+      ],
+      "executable_remediation": "Translate each central threshold into cutoff-before RMB normal-profit/owner-cash and capital-at-risk consequences, tie the boundary to disclosed network economics or a conservative predeclared materiality rule, correct the historical comparison, and preserve a middle/UNKNOWN state where public evidence cannot justify a binary boundary.",
+      "acceptance_criteria": "Every central threshold is reproducible from cutoff-before inputs, has a stated economic consequence material to normal profit, owner cash or permanent loss, distinguishes the primary from the simple baseline where claimed, and requires no post-cutoff calibration."
+    },
+    {
+      "finding_id": "R104-REVIEW-F4-PACKET-NOT-FROZEN-BEFORE-REVIEW",
+      "root_causes": [
+        "REASONING"
+      ],
+      "why_below_standard": "The D3 definition and values were materially changed during this independent review, while 01_case_freeze.json still records freeze_recorded_at as 2026-08-24T00:44:23+08:00. The reviewed packet files show later modification times between 00:53:54 and 00:55:52 +08:00. The old freeze receipt therefore does not describe the current packet.",
+      "economic_impact": "The central D3 baseline moved from a pre-tax-and-surcharge composite to a taxes-and-surcharges-inclusive composite. A receipt bound to the old freeze time could authorize outcome access for a measurement rule that was not actually frozen, undermining the pre-outcome firewall and allowing the central operating conclusion to drift.",
+      "missing_facts": [
+        "a final internally consistent packet with a freeze_recorded_at no earlier than its last material edit",
+        "a fresh independent review begun after that final freeze"
+      ],
+      "prohibited_assumptions": [
+        "the original freeze timestamp remains valid after a material formula and threshold change",
+        "this rejection receipt authorizes outcome access for a later revision"
+      ],
+      "executable_remediation": "Complete all cutoff-before corrections, update the freeze receipt time after the final material edit, rerun the candidate and six-claim contract validators, and assign a fresh independent pre-outcome review of that final packet.",
+      "acceptance_criteria": "The next reviewer starts after the final recorded freeze, observes no material packet edits during review, and records a review time later than the final freeze time."
+    }
+  ],
+  "non_blocking_positive_findings": [
+    "The three cutoff-before annual reports substantiate the implemented six-brewery closure, recurring issuer-level statements, declining beer volume, rising revenue per headline kilolitre, working-capital release and adverse selling-cost/contribution evidence.",
+    "H-A is non-common and H-B remains live; no management sales target, securities price, valuation, investment return or post-cutoff disclosure was needed to frame the pair.",
+    "D4 is defined at the consolidated listed issuer and expressly forbids parent-only cash, net profit, debt reduction and company survival as substitutes.",
+    "The selection question is material to normal profit, owner cash and permanent loss, so remediation should preserve the episode rather than discard it."
+  ],
+  "admission_boundary": {
+    "state": "NOT_ADMITTED",
+    "does_not_grant": [
+      "outcome inventory enumeration or acquisition",
+      "post-cutoff title, filename, snippet, body, value, result or metadata access",
+      "training-program or feedback-control registration",
+      "SELECTION_METHOD_ELIGIBLE learning status",
+      "outcome settlement, diagnosis or learning transfer",
+      "method win, accuracy or probability claims",
+      "security-price, valuation, return or portfolio conclusions",
+      "permission for a later packet revision to rely on this receipt"
+    ]
+  }
+}

@@ -1,0 +1,59 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://turtle.local/schemas/cjo_quantitative_investment_overlay_v1.schema.json",
+  "title": "Turtle CJO Quantitative Investment Overlay v1",
+  "description": "Candidate-only, synthetic/offline read model. It consumes a Frozen CJO but never becomes enterprise, report, training, or trading truth.",
+  "type": "object",
+  "required": [
+    "schema_version", "object_class", "overlay_id", "mode", "valuation_as_of", "cjo_ref", "cjo_admission_ref",
+    "financial_ranges", "asset_accessibility", "value_identities", "price_snapshot_ref",
+    "price_overlay", "buy_band", "reversal_conditions", "research_questions", "authority"
+  ],
+  "properties": {
+    "schema_version": {"const": "cjo-quantitative-investment-overlay.v1"},
+    "object_class": {"const": "CJO_QUANTITATIVE_INVESTMENT_OVERLAY"},
+    "overlay_id": {"type": "string", "minLength": 1},
+    "mode": {"const": "SYNTHETIC_OFFLINE"},
+    "valuation_as_of": {"type": "string", "format": "date-time"},
+    "cjo_ref": {
+      "type": "object",
+      "required": ["cjo_id", "company_id", "cutoff_at", "method_version", "resolution"]
+    },
+    "cjo_admission_ref": {
+      "type": "object",
+      "required": ["admission_id", "status", "cjo_ref"],
+      "properties": {
+        "admission_id": {"type": "string", "minLength": 1},
+        "status": {"const": "PRIMARY_ADMITTED"},
+        "cjo_ref": {"type": "object"}
+      },
+      "additionalProperties": false
+    },
+    "financial_ranges": {"type": "object"},
+    "asset_accessibility": {"type": "object"},
+    "value_identities": {"type": "array", "minItems": 3, "maxItems": 3},
+    "price_snapshot_ref": {"type": "object"},
+    "price_overlay": {"type": "object"},
+    "buy_band": {"type": "object"},
+    "reversal_conditions": {"type": "array"},
+    "research_questions": {"type": "array"},
+    "authority": {
+      "type": "object",
+      "required": [
+        "overlay_status", "production_status", "may_modify_frozen_cjo", "may_modify_training",
+        "may_modify_report_truth", "may_authorize_trading", "report_read_allowed"
+      ],
+      "properties": {
+        "overlay_status": {"const": "CANDIDATE_ONLY"},
+        "production_status": {"const": "PRODUCTION_PENDING"},
+        "may_modify_frozen_cjo": {"const": false},
+        "may_modify_training": {"const": false},
+        "may_modify_report_truth": {"const": false},
+        "may_authorize_trading": {"const": false},
+        "report_read_allowed": {"const": true}
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

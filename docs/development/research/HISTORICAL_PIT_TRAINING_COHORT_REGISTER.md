@@ -1,57 +1,107 @@
-# Turtle 历史 PIT 训练与留出队列
+# Turtle 历史训练对象与留出队列
 
-状态：`ACTIVE / FIRST_COHORT_QUEUED / NO_REALTIME_ABILITY_CLAIM`  
-更新：2026-08-23  
-上位协议：[历史优先训练架构](TURTLE_HISTORICAL_FIRST_JUDGMENT_TRAINING_ARCHITECTURE.md)、[判断力验证与回测协议](TURTLE_JUDGMENT_VALIDATION_PROTOCOL.md)、[研究操作流程](TURTLE_RESEARCH_OPERATING_PROTOCOL.md)
+状态：`TRAINING_ACTIVE / LAYERED_REDESIGN_ADOPTED / MIGRATION_PENDING / REPORT_USE_NOT_RELEASED`
+更新：2026-08-25
+上位协议：[历史训练体系重构](TURTLE_HISTORICAL_TRAINING_SYSTEM_REDESIGN.md)、[历史优先训练架构](TURTLE_HISTORICAL_FIRST_JUDGMENT_TRAINING_ARCHITECTURE.md)、[判断力验证与回测协议](TURTLE_JUDGMENT_VALIDATION_PROTOCOL.md)
 
 ## 1. 目的
 
-这个 register 把已有案例从“结果已知的文档集合”变成可运行的训练队列。机器真源为 `config/judgment_training_program_v1.json`，由 `judgment-training-program.v1` 管理通道、抽样、留出和状态上卷；本文件负责解释对象选择和经济训练职责。它不增加评分、概率或报告任务，也不另造结算语义。
+这个 register 同时登记行业历史、evidence carriers、教学/生命周期案例、正式 Comparative Episodes 和留出。它不再把所有对象压成一个“必须先凑齐固定 cohort 才能训练”的队列。
 
-历史案例足以训练研究动作：还原当时状态、构造竞争机制、写最强反方、冻结 D1--D5 时钟和结果合同、在揭盲后给出错误归因，并把一条具体约束迁移到下一家公司。它不能单独证明 Agent 在未知结果环境中已经具有投资或预测优势。
+机器真源仍是各 program config、不可变 receipts 和控制数据库；本文件解释对象身份、允许产物和下一门。分层 schema/validator 尚未实现，因此凡是新设计与当前 H1/H2/V5 运行时冲突，执行时仍以当前 validator 为准，禁止手工绕过。
 
-## 2. 两个正交维度
+## 2. 五个正交维度
 
-案例不能只按“历史/前瞻”一列管理。每项都必须有一个 `provenance_role` 和一个 `cohort_allocation`。
-
-| 维度 | 可用值 | 约束 |
+| 维度 | 字段与可用值 | 约束 |
 |---|---|---|
-| `provenance_role` | `HISTORICAL_SELF_REPLAY`、`ARCHIVED_EX_ANTE_EXTERNAL`、`RESULT_KNOWN_TEACHING`、`REAL_FORWARD` | 决定结果能形成哪一种证据。`RESULT_KNOWN_REVIEW` 是已有文件的历史名称，在本 register 中归为 `RESULT_KNOWN_TEACHING`。 |
-| `cohort_allocation` | `DEVELOPMENT`、`HOLDOUT`、`TEACHING_ONLY`、`INTAKE` | 决定何时可以看 outcome、能否改变规则。`HOLDOUT` 必须同时有 provenance_role，不能作为独立的能力标签。 |
+| 训练对象 | `object_class` | `INDUSTRY_UNIVERSE / EVIDENCE_CARRIER / TEACHING_CASE / LIFECYCLE_CASE / COMPARATIVE_EPISODE / LEARNING_EPISODE` |
+| 主张强度 | `claim_class` | `DESCRIPTIVE_STRUCTURE / WITHIN_CASE_MECHANISM / LIFECYCLE_TRANSITION / RELATIVE_CAUSAL / METHOD_GENERALIZATION / INVESTMENT_DECISION_UTILITY` |
+| 运行通道 | `lane` | `HISTORICAL_TRAINING / HISTORICAL_HOLDOUT / HISTORICAL_TEACHING / LIVE_SENTINEL` |
+| 来源与结果隔离 | `provenance_role + outcome_access` | `HISTORICAL_SELF_REPLAY + PIT_OUTCOME_SEALED`、`RESULT_KNOWN_TEACHING + OUTCOME_EXPOSED`、`REAL_FORWARD + NOT_YET_RELEASED` |
+| 后续权限 | `learning_eligibility` | `BOUNDARY_METHOD_ELIGIBLE / SELECTION_METHOD_ELIGIBLE / EVALUATION_ONLY / TEACHING_ONLY / MECHANISM_SETTLEMENT_ONLY / CONTEXT_ONLY` |
 
-`DEVELOPMENT` 可以产生一条被 reviewer 接纳的历史学习约束；在其规则版本冻结后，`HOLDOUT` 才能揭盲。任何 HOLDOUT 的公司集团、时间段和行业/机制结构都不能与同一规则的 development evidence 混同。`TEACHING_ONLY` 可训练反例和禁止替代，但不可作为本轮规则效果的分子或分母。
+Industry Universe 和 Evidence Carrier 不自动成为 episode。Teaching/Lifecycle 可训练问题、机制边界、near miss 和 permanent-loss pattern，但不得进入选择成绩。只有 `RELATIVE_CAUSAL + COMPARATIVE_EPISODE + PIT_OUTCOME_SEALED` 才可能产生方向性 learning；`MIXED / NOT_DIAGNOSTIC / MEASUREMENT_MISMATCH` 只形成边界。
 
-## 3. 第一队列
+## 3. 生命周期身份
 
-| register ID | 现有工件 | provenance_role | cohort_allocation | 允许做的工作 | 当前禁止事项与下一门 |
-|---|---|---|---|---|---|
-| `HPIT-01` | [R-62 鹏鼎 2023 cutoff screen](experiments/R-62_pengding_automotive_pcb_2023_screen/01_pre_outcome_admission_screen.md)；[训练准入返回](experiments/R-62_pengding_automotive_pcb_2023_screen/02_training_readiness_return.md) | `HISTORICAL_SELF_REPLAY` | `DEVELOPMENT` | 以同一责任单元检查项目实施、客户吸收、产品单位经济、现金桥和资本边界；结果只在冻结后按官方窗口读取。当前仍是 `NOT_READY_FOR_CONTROL_REGISTRATION`，返回关闭后才能进入正式结算。 | 不把项目模型 IRR、认证、集团 OCF 或后续行业景气当作项目成功。完成前必须补齐 PIT case、结果合同和 reviewer outcome-read 权限。 |
-| `HPIT-02` | [R-61 沪硅 2025 cutoff screen](experiments/R-61_shanghai_silicon_2025_minorities_screen/01_pre_outcome_admission_screen.md) | `HISTORICAL_SELF_REPLAY` | `HOLDOUT` | 在 HPIT-01 的正式 learning application 和方法版本冻结后，检验未参与规则形成的公司轴／时间轴对象是否仍能正确结算或保留 UNKNOWN。 | 这是当前唯一预留的干净留出：结果、诊断和派生规则未进入 HPIT-01；方法冻结前不得读取 outcome，任何提前读取永久使该对象失去 holdout 身份。R-56/R-58 已揭盲，只能作教学。 |
-| `HPIT-03` | [R-25 美的 2004 扩产卡](experiments/R-25_midea_2004_capacity_chain_teaching/01_2004_pre_outcome_capacity_card.md)；[结果复盘](experiments/R-25_midea_2004_capacity_chain_teaching/02_2005_2006_outcome_resolution.md) | `RESULT_KNOWN_TEACHING` | `TEACHING_ONLY` | 训练“产能吸收、部件单位经济、现金转换、资本回收必须分开”的边界和反例。 | 不用于 HPIT-02 的规则生成、留出评价、选择准确率或管理层总评。 |
-| `HPIT-04` | [R-21 长虹 APEX 信用卡](experiments/R-21_changhong_apex_credit_growth/01_2003_pre_outcome_enterprise_judgment_card.md) | `RESULT_KNOWN_TEACHING` | `TEACHING_ONLY` | 训练增长、单一客户信用、现金和继续扩张之间的非嵌套反方。 | 不以已知坏账判定当时授信管理的全部优劣；不可计入选对/选错。 |
-| `HPIT-05` | [R-78 Ford Way Forward freeze](experiments/R-78_ford_way_forward_2006/01_pre_outcome_enterprise_system_freeze.md)；[结果结算](experiments/R-78_ford_way_forward_2006/02_outcome_resolution.md) | `RESULT_KNOWN_TEACHING` | `TEACHING_ONLY` | 作为中国制造训练规则的海外边界/近失效：退出实施不等于客户、单位经济、现金或资本回收已经改善。 | 不把美国汽车案例迁为中国参数，也不作为中国样本数量替代。 |
-| `HPIT-06` | 梅花生物价格竞争 | `UNCLASSIFIED` | `INTAKE` | 先核实用户指向的具体时期、产品、公司实际动作、竞争者、cutoff 前原始来源和独立结果文件。 | 目前不能假定“价格战”指 2020、2021 或 2025 的任一轮价格变化，更不能据二手评论、后来利润或股价直接判断价格权/出清/管理能力。 |
-
-本批次刻意不硬凑 `ARCHIVED_EX_ANTE_EXTERNAL`。现有文件若没有第三方在 cutoff 时留下、可定位且与结果隔离的判断，就保持 `HISTORICAL_SELF_REPLAY` 或 `RESULT_KNOWN_TEACHING`，而不是为了提高样本等级改写来源身份。
-
-## 4. 运行顺序
-
-1. curator 仅从 cutoff 前原件建立 `FROZEN_METRIC_SLICE` 和 source package；研究者先写 H-A/H-B、最强反方、简单基线、D1--D5 和停止条件。
-2. reviewer 确认 outcome firewall、允许来源与计量合同后，才允许读取单一预登记 outcome package。
-3. 结果只能追加到冻结卡，逐箭头结算为 `SUPPORTS_PRIMARY`、`SUPPORTS_RIVAL`、`MIXED`、`NOT_DIAGNOSTIC` 或 `MEASUREMENT_MISMATCH`；不得回写冻结机制或阈值。
-4. 只有材料性诊断改变不同公司冻结字段且 reviewer 确认，才写 learning note。该约束须以版本号冻结后，才允许揭盲 HPIT-02。
-5. HOLDOUT 若不支持规则，正确结果是收窄、修改或拒绝规则；不能再挑选已知结果案例补回“成功率”。
-
-## 5. 当前成功定义
-
-本队列的第一个完成标准不是“做了多少案例”，而是留下这条可审计链：
+历史 risk set 必须保留后来退出的公司，并区分：
 
 ```text
-R-62 PIT freeze
-  -> independent outcome read and multi-clock settlement
-  -> diagnosis with an explicit economic boundary
-  -> rule version applied to a different company
-  -> R-61 HOLDOUT reveal without rewriting that rule
+SURVIVED
+ACQUIRED
+MERGED_OR_PERIMETER_TRANSFERRED
+DELISTED_BUT_OPERATING
+BANKRUPTCY_FILED
+REORGANIZING
+EMERGED_FROM_REORGANIZATION
+RESTRUCTURING_FAILED
+LIQUIDATED
+EXITED_BUSINESS
+DATA_CENSORED
 ```
 
-这可以证明历史训练是否真正改变了下一次研究行为，以及该改变在一个预先隔离对象上是否仍有诊断性。它仍不能证明实时预测优势；R-54、R-93、R-94 等 `REAL_FORWARD` episode 继续在到期后按原合同提供部署校准。R-56 和 R-58 的历史结果已公开且曾参与规则形成，不能重新包装为留出。
+观察状态另记 `OBSERVED / CENSORED / COMPETING_EVENT_OBSERVED / UNKNOWN / NOT_DIAGNOSTIC / MEASUREMENT_MISMATCH`。退出公司不能因资料难找被删除，`CENSORED` 不能自动判输，并购、破产重组、清算或退市也不能统一解释为失败。`economic_entity / legal_entity / listed_security / reporting_perimeter / successor_entity` 分开并带有效期；经营结果、owner-cash recovery 和证券 terminal return 分开结算。后续资料只能作为 `POST_CUTOFF_CONTEXT` 或 `OUTCOME`，不得倒灌 cutoff 前判断。
+
+## 4. 当前对象
+
+| ID | 对象与工件 | object / claim | lane / permission | 当前价值 | 禁止事项与下一门 |
+|---|---|---|---|---|---|
+| `HTR-01` | [R-62 鹏鼎 2023 cutoff screen](experiments/R-62_pengding_automotive_pcb_2023_screen/01_pre_outcome_admission_screen.md) | `EVIDENCE_CARRIER / WITHIN_CASE_MECHANISM` | `HISTORICAL_TRAINING / CONTEXT_ONLY` | 当前为 `NO_PRIMARY / NOT_FROZEN`；可训练“不要以项目审批、认证或集团代理越过责任单元”的拒绝边界。 | 未形成 PIT case、结果合同或独立审阅；不得登记 control、读取 outcome 或生成 learning。 |
+| `HTR-02` | R-69 联赢激光 backlog／扩产 screen | `EVIDENCE_CARRIER / WITHIN_CASE_MECHANISM` | `HISTORICAL_TRAINING / CONTEXT_ONLY` | 当前同样保持 `NO_PRIMARY / NOT_FROZEN`；订单和建设期不能替代订单—产能—现金的可结算链。 | 不得以未冻结 case 或后来结果声称 boundary application。 |
+| `HTR-03` | [R-61 沪硅历史留出](experiments/R-61_shanghai_silicon_2025_minorities_screen/01_pre_outcome_admission_screen.md) | `COMPARATIVE_EPISODE / METHOD_GENERALIZATION` | `HISTORICAL_HOLDOUT / EVALUATION_ONLY` | 当前保持 PIT outcome sealed，等待有效选择方法冻结。 | 不得读取 outcome；R-62/R-69 筛查或边界教学不能释放它。 |
+| `HTR-04` | [R-25 美的扩产教学](experiments/R-25_midea_2004_capacity_chain_teaching/01_2004_pre_outcome_capacity_card.md) | `TEACHING_CASE / WITHIN_CASE_MECHANISM` | `HISTORICAL_TEACHING / TEACHING_ONLY` | 训练产能吸收、单位经济、现金转换、资本回收分层。 | 不用于方法效果、选择准确率或管理层总评。 |
+| `HTR-05` | [R-21 长虹 APEX](experiments/R-21_changhong_apex_credit_growth/01_2003_pre_outcome_enterprise_judgment_card.md) | `TEACHING_CASE / WITHIN_CASE_MECHANISM` | `HISTORICAL_TEACHING / TEACHING_ONLY` | 训练增长、客户信用、现金和继续扩张的非嵌套反方。 | 不用后来坏账倒推当时全部决策质量。 |
+| `HTR-06` | [R-78 Ford Way Forward](experiments/R-78_ford_way_forward_2006/02_outcome_resolution.md) | `LIFECYCLE_CASE / LIFECYCLE_TRANSITION` | `HISTORICAL_TEACHING / TEACHING_ONLY` | 训练退出实施、客户、单位经济、现金和资本回收分离。 | 不把美国汽车参数迁为中国参数。 |
+| `HTR-07` | 梅花生物价格竞争 | `EVIDENCE_CARRIER / UNCLASSIFIED` | `INTAKE / CONTEXT_ONLY` | 等待核实具体时期、产品、行动和原始来源。 | 不能据二手评论、后来利润或股价判断价格权。 |
+| `HTR-08` | [R-104 重庆啤酒生产网络优化](experiments/R-104_chongqing_beer_network_pruning_unit_economics_20160430/11_independent_post_outcome_review.json) | `COMPARATIVE_EPISODE / WITHIN_CASE_MECHANISM` | `HISTORICAL_TRAINING / MECHANISM_SETTLEMENT_ONLY` | D3=`A_ONLY`、D4=`B_ONLY`、联合=`MIXED`；证明经营改善不自动传到正常 owner cash。 | 禁止方向性 learning、方法冻结、R-103 释放和报告授权。 |
+| `HTR-09` | [水泥 2018 H1 static package](cohorts/COHORT_CN_CEMENT_LISTED_20180430_h1_static_package.json) | `INDUSTRY_UNIVERSE + EVIDENCE_CARRIER / DESCRIPTIVE_STRUCTURE` | `HISTORICAL_TRAINING / CONTEXT_ONLY` | strict preflight=`STAGE0_FEASIBILITY_REVIEWABLE`；25 份 PDF、五家公司可作 universe/carrier seed；独立 curator 的 H2 仅返回 `NO_PRIMARY_ACTION_SCOPE`。 | 不是 final peer panel；两家 scope/control break 不得进入不匹配 comparator；不得把 H1 的地方性/例行事项硬解释为 company-wide intervention。 |
+| `HTR-10` | [华新水泥 2017 perimeter-break teaching case](cohorts/TEACHING_LIFECYCLE_CN_600801_PERIMETER_BREAK_20170324.json) | `TEACHING_CASE / WITHIN_CASE_MECHANISM` | `HISTORICAL_TEACHING / TEACHING_ONLY` | 以 FY2016 年报 p9 的 15 家工厂收购批准训练“scope break 不等于经营退出”，并保留 action-window perimeter bridge 问题。 | 不得把收购批准当作已观察到的业务退出，或把该教学案例升级为 comparative/learning/report/investment 权限。 |
+
+R-61 是当前预留的 PIT outcome-sealed holdout；R-102 的联合结果与基线均 `NOT_DIAGNOSTIC`，只保留 `MEASUREMENT_BOUNDARY`。R-56、R-58 及其他结果已知案例只能映射为 Teaching/Lifecycle，不得重新包装成 formal learning。
+
+## 5. 水泥 cohort 裁决
+
+[旧 feasibility prototype](cohorts/COHORT_CN_CEMENT_LISTED_20180430_feasibility.json) 的 `STAGE0_REJECTED` 只说明旧包缺 curator attestation、static identity 和机制 arena，不能覆盖新 H1 receipt。新 H1 已通过 source intake，但这也不等于其 final comparator 容量闭合。
+
+新设计下五家公司都留在 2018 Industry History Universe；三家 `PENDING_ACTION_WINDOW_REVIEW` 可进入 H2 action screen，两家 `KNOWN_MATERIAL_SCOPE_OR_CONTROL_BREAK` 可继续承载行业史或 Teaching/Lifecycle。若 H2 找到已实施行动，未来实现应允许 curator 在结果读取前按冻结 eligibility predicate 追加 static peer-recruitment batch；最终仍不足则降级为 Teaching/Lifecycle，而非废弃整批资料。
+
+该追加能力尚未实现。当前 runtime 仍要求 H2 绑定原 H1 receipt 且不得新增公司，因此实现迁移前只能运行旧合同允许的 H2，不能手工补同行。
+
+## 6. 并行运行顺序
+
+### A. Universe / Lifecycle
+
+1. 以 cutoff 和机制定义 risk set；
+2. 记录覆盖边界、进入退出、实体/证券/业务连续性；
+3. 对 outcome 写 `OBSERVED/CENSORED/UNKNOWN`；
+4. 只向 `RESEARCH_AGENDA` 输出 cutoff-safe 行业结构和生命周期问题。
+
+### B. Teaching / Boundary
+
+1. 对一个公司或一个行动冻结企业状态、机制、最强反方和 process evidence；
+2. 允许已知结果，但过程判断与结果评价分开；
+3. 形成 near miss、禁止替代、测量边界和 acquisition 改进；
+4. 不生成 selection learning、method freeze 或 report-use。
+
+### C. Comparative / Learning
+
+1. 登记 `RELATIVE_CAUSAL`、intervention、time zero 和 comparator eligibility；
+2. 只读 cutoff-before static receipts，闭合 target/peer D3/D4 和 cash bridge；
+3. Comparative Panel Freeze 后关闭 roster、顺序、来源和结果合同；
+4. 独立 custodian 结算；只有方向性诊断可申请 learning；
+5. learning 必须改变不同公司的冻结前字段并独立复核；
+6. method freeze 后才由隔离 evaluator 处理 R-103。
+
+## 7. 当前成功定义
+
+短期成功不是“凑出五家公司”，而是完成两类互不冒充的闭环：
+
+```text
+Industry Universe -> Lifecycle/Teaching Case -> 可复用问题与边界资产
+
+Comparative Episode -> diagnostic settlement
+  -> cross-company application -> method freeze
+  -> R-103 holdout -> Golden Report use decision
+```
+
+第一条链现在就可持续训练；第二条链仍缺真实方向性 episode。两者都不能单独证明实时预测优势、投资收益或一般性的企业判断能力。

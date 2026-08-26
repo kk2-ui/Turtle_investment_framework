@@ -1,0 +1,154 @@
+{
+  "schema_version": "judgment-selection-refreeze-remediation.v1",
+  "case_id": "SELECTIONCASE:R-104:chongqing-beer-network-pruning-unit-economics-20160430",
+  "freeze_id": "JFREEZE:R-104:20160430",
+  "status": "REVISED_REFREEZE_PENDING_FRESH_INDEPENDENT_REVIEW",
+  "prior_review_ref": "02a_independent_pre_outcome_review_v1_rejection.json",
+  "prior_review_receipt_id": "JSELREVIEW:R-104:INDEPENDENT-PRE-OUTCOME:20260824:REJECTED",
+  "prior_review_verdict": "SELECTION_REJECTED_PRE_OUTCOME",
+  "prior_review_preservation": "02a_independent_pre_outcome_review_v1_rejection.json preserves the rejection receipt verbatim, remains authoritative for the packet it reviewed and grants no rights to this revision.",
+  "current_product_contract": {
+    "decision": "Five D1-D5 layers are mandatory; D3_PRODUCT_VOLUME is optional.",
+    "required_stage_order": [
+      "D1_IMPLEMENTATION",
+      "D2_CUSTOMER_ABSORPTION",
+      "D3_UNIT_ECONOMICS",
+      "D4_WORKING_CAPITAL_AND_CASH",
+      "D5_CAPITAL_RETURN"
+    ],
+    "optional_stage": "D3_PRODUCT_VOLUME",
+    "r104_optional_stage_state": "UNKNOWN_NOT_REGISTERED_NON_VOTER",
+    "prohibited_substitute": "D2 sales volume",
+    "implementation_refs": [
+      "scripts/judgment_feedback_control.py#REQUIRED_SELECTION_STAGE_IDS",
+      "scripts/judgment_feedback_control.py#SELECTION_STAGE_ORDERS",
+      "scripts/judgment_selection_feedback.py#REQUIRED_SELECTION_STAGE_IDS",
+      "tests/test_judgment_selection_control.py#FIVE_CLAIM_STAGES"
+    ]
+  },
+  "material_finding_remediations": [
+    {
+      "finding_id": "R104-REVIEW-F1-SIX-CLAIM-BUNDLE-MISSING",
+      "root_causes": [
+        "MODEL",
+        "REASONING"
+      ],
+      "disposition": "PRODUCT_CONTRACT_PREMISE_SUPERSEDED",
+      "why_the_prior_packet_was_below_standard": "At the time of review, production registration required a separate D3_PRODUCT_VOLUME claim, while R-104 carried only the five D1-D5 layers.",
+      "economic_impact": "Copying D2 sales volume into a product-throughput claim would falsely claim observability and could misattribute volume deleveraging or fixed-cost absorption.",
+      "missing_facts": [
+        "recurring exact FY2013-FY2015 whole-issuer production throughput",
+        "recurring whole-issuer sell-through or capacity utilization"
+      ],
+      "prohibited_assumptions": [
+        "D2 sales volume equals production throughput",
+        "FY2015 rounded production growth reconstructs an exact FY2014 amount"
+      ],
+      "executable_remediation": "Apply the subsequent product decision consistently: retain the five mandatory layers, leave optional D3_PRODUCT_VOLUME UNKNOWN, do not register it and give it no vote.",
+      "implemented_evidence": [
+        "00_cohort_screen_and_source_selection.json#production_throughput_observability_gate",
+        "01_case_freeze.json#known_unobservable_layers",
+        "03_outcome_acquisition_contract.json#optional_product_volume_layer",
+        "04_measurement_contract.json#product_contract_decision",
+        "06_pre_cutoff_product_volume_observability.json"
+      ],
+      "acceptance_criteria": "A fresh reviewer confirms the current control plane accepts the ordered five mandatory stages, no R-104 artifact creates a product-volume claim, D2 cannot substitute and the UNKNOWN layer is non-voting."
+    },
+    {
+      "finding_id": "R104-REVIEW-F2-D3-ACTIVITY-PERIMETER-MISMATCH",
+      "root_causes": [
+        "MODEL"
+      ],
+      "disposition": "REMEDIATED_IN_REFREEZE",
+      "why_the_prior_packet_was_below_standard": "The prior D3 divided a whole-issuer contribution numerator by headline beer sales volume with a different activity perimeter.",
+      "economic_impact": "Non-beer or commissioned-processing activity could cross a per-kilolitre threshold without proving network-pruning economics.",
+      "missing_facts": [
+        "an audited allocation bridge from whole-issuer accounts to beer-only and commissioned-processing activity"
+      ],
+      "prohibited_assumptions": [
+        "legal consolidation alone aligns a whole-issuer numerator with a beer-only denominator"
+      ],
+      "executable_remediation": "Remove the denominator. D3 now measures revenue less cost, taxes and surcharges, selling expense and administrative expense as a whole-issuer RMB amount for FY2013-FY2016.",
+      "implemented_evidence": [
+        "00_cohort_screen_and_source_selection.json#pre_admission_recurring_disclosure_gate",
+        "01_case_freeze.json#measurement_boundary.D3",
+        "03_outcome_acquisition_contract.json#clocks[R-104:D3-TERMINAL]",
+        "04_measurement_contract.json#measurement_rules[R104-D3-UNIT-OPERATING-CONTRIBUTION]",
+        "05_pre_cutoff_measurement_workpaper.json#observations"
+      ],
+      "acceptance_criteria": "Every D3 component uses the consolidated issuer perimeter, no activity denominator remains in the central test, and the FY2013-FY2015 amounts reproduce exactly."
+    },
+    {
+      "finding_id": "R104-REVIEW-F3-CENTRAL-THRESHOLD-ECONOMICS-NOT-ESTABLISHED",
+      "root_causes": [
+        "REASONING",
+        "MODEL"
+      ],
+      "disposition": "REMEDIATED_IN_REFREEZE",
+      "why_the_prior_packet_was_below_standard": "The prior 5%, 13% and 10% boundaries were not tied to network capital at risk, overlapped the simple baseline and misstated the FY2014-FY2015 per-kilolitre change.",
+      "economic_impact": "Arbitrary or overlapping central voter ranges could create A_ONLY or B_ONLY without a material normal-profit or owner-cash consequence.",
+      "missing_facts": [],
+      "prohibited_assumptions": [
+        "a round percentage is economically material",
+        "repeating the baseline demonstrates incremental cash efficiency"
+      ],
+      "executable_remediation": "Use the cutoff-before RMB204,449,973.25 six-plant fixed-asset impairment as capital at risk. One annual five-year recovery step is RMB40,889,994.65; add or subtract that step from the FY2015 D3 and D4 baselines and preserve all middle observations as MIXED. D4 first removes positive working-capital release from OCF less all long-term-asset acquisition cash.",
+      "implemented_evidence": [
+        "01_case_freeze.json#frozen_prediction_order",
+        "04_measurement_contract.json#cutoff_before_materiality_anchor",
+        "04_measurement_contract.json#joint_hypothesis_comparison",
+        "05_pre_cutoff_measurement_workpaper.json#frozen_threshold_derivation"
+      ],
+      "acceptance_criteria": "A fresh reviewer independently reproduces the RMB40,889,994.65 step, all D3/D4 boundaries and the RMB30,667,495.99 illustrative after-tax consequence; D4 is the scalar owner cash after removing positive working-capital release, and the H-A, baseline, H-B and MIXED regions are non-overlapping."
+    },
+    {
+      "finding_id": "R104-REVIEW-F4-PACKET-NOT-FROZEN-BEFORE-REVIEW",
+      "root_causes": [
+        "REASONING"
+      ],
+      "disposition": "REMEDIATED_ONLY_AFTER_FINAL_TIMESTAMP_AND_FRESH_REVIEW",
+      "why_the_prior_packet_was_below_standard": "The old review began before material D3 edits were complete, so its freeze timestamp did not identify the reviewed packet.",
+      "economic_impact": "A stale receipt could authorize outcome access under a central economic rule that had not actually been frozen.",
+      "missing_facts": [
+        "a valid final freeze_recorded_at in 01_case_freeze.json",
+        "a separate independent review recorded after that timestamp"
+      ],
+      "prohibited_assumptions": [
+        "the old rejection receipt accepts this revision",
+        "self-validation grants outcome access"
+      ],
+      "executable_remediation": "After the last material packet edit, record a timezone-aware freeze timestamp in 01_case_freeze.json, run targeted validation, then have the fresh independent reviewer write the current v2 receipt in 02_independent_pre_outcome_review.json while leaving 02a_independent_pre_outcome_review_v1_rejection.json unchanged.",
+      "acceptance_criteria": "The final freeze timestamp is valid and earlier than the fresh reviewed_at; no material packet edit occurs between them; the new receipt reviews all current packet files and separately attests zero post-cutoff metadata/body access."
+    }
+  ],
+  "fresh_review_requirement": {
+    "state": "REQUIRED_NOT_SELF_GRANTED",
+    "review_must_begin_after": "01_case_freeze.json#freeze_recorded_at",
+    "required_review_scope": [
+      "00_cohort_screen_and_source_selection.json",
+      "01_case_freeze.json",
+      "02a_independent_pre_outcome_review_v1_rejection.json",
+      "03_outcome_acquisition_contract.json",
+      "04_measurement_contract.json",
+      "05_pre_cutoff_measurement_workpaper.json",
+      "06_pre_cutoff_product_volume_observability.json",
+      "07_rejection_remediation_and_refreeze.json"
+    ],
+    "required_new_artifact": "02_independent_pre_outcome_review.json as the current v2 independent receipt; the selector must not write it and 02a_independent_pre_outcome_review_v1_rejection.json must remain unchanged",
+    "does_not_grant": [
+      "outcome inventory enumeration or acquisition",
+      "post-cutoff title, filename, snippet, body, value, result or metadata access",
+      "training-program or feedback-control registration",
+      "SELECTION_METHOD_ELIGIBLE learning status",
+      "outcome settlement, diagnosis or learning transfer",
+      "method win, accuracy or probability claims",
+      "security-price, valuation, return or portfolio conclusions"
+    ]
+  },
+  "outcome_access_attestation": {
+    "state": "PIT_OUTCOME_SEALED",
+    "metadata_leakage_detected": false,
+    "outcome_acquisition_authorized": false,
+    "attestation": "This remediation used only the already selected cutoff-before packet, the preserved rejection and the current local product contract. No post-cutoff title, filename, snippet, body, report existence, value, security price, valuation or result was queried or read."
+  }
+}

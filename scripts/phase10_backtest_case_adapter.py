@@ -69,6 +69,7 @@ CASE_SPEC_FIELDS = {
     "case_id", "experiment_id", "sample_id", "company_code", "simulation_cutoff", "frozen_at",
     "report_id", "writer_id", "writer_provenance", "review_artifact_path", "route", "forecast",
     "purpose", "inputs", "calibration_ledger", "taxes_fees_fx", "price_identity", "investment_decision",
+    "credibility",
 }
 FROZEN_CASE_CONTRACT_FIELDS = (
     "purpose", "route", "forecast", "inputs", "calibration_ledger", "taxes_fees_fx", "price_identity",
@@ -82,6 +83,13 @@ INVESTMENT_FROZEN_REPORT_SECTIONS = (
 )
 FORWARD_JUDGMENT_LEDGER_SOURCE = "FROZEN_FORWARD_JUDGMENTS"
 SELECTION_ADMISSION_GATE_RECEIPT_VERSION = "selection-admission-gate-receipt.v1"
+DEFAULT_CREDIBILITY = {
+    "model_memory_control": "UNCONTROLLED",
+    "backtest_credibility": "EXPLORATORY",
+    "assessment_basis": "PIT production boundary is replayable, but deployment-level model-memory control is unavailable.",
+    "control_evidence": [],
+    "calibration_role": "ENGINEERING_DIAGNOSTIC_ONLY",
+}
 
 
 class ProductionFreezeCaseError(ValueError):
@@ -124,6 +132,22 @@ def _required(record: dict[str, Any], fields: tuple[str, ...], label: str) -> No
 def _uses_frozen_forward_judgments(value: Any) -> bool:
     """Return true only for the explicit no-retyping settlement mode."""
     return value == {"source": FORWARD_JUDGMENT_LEDGER_SOURCE}
+
+
+def _case_credibility(case_spec: dict[str, Any]) -> dict[str, Any]:
+    """Keep an independently attested memory-control claim in the freeze.
+
+    Historical replay stays explicitly uncontrolled unless the caller provides
+    the existing ``historical_backtest`` credibility shape.  That validator
+    verifies any HBTMEM artifact; this adapter merely preserves it in the same
+    reviewed contract as the source and judgment identities.
+    """
+    if "credibility" not in case_spec:
+        return deepcopy(DEFAULT_CREDIBILITY)
+    value = case_spec.get("credibility")
+    if not isinstance(value, dict):
+        raise ProductionFreezeCaseError("case_spec credibility must be an object")
+    return deepcopy(value)
 
 
 def _frozen_financial_driver_bridge(
@@ -971,6 +995,7 @@ def derive_v2_case(
     if case_spec.get("purpose") not in CASE_PURPOSES:
         raise ProductionFreezeCaseError("case_spec purpose is invalid")
     _require_company_judgment_boundary(case_spec)
+    credibility = _case_credibility(case_spec)
 
     output, output_rel = _repo_path(production_output_dir, "production_output_dir")
     acceptance, acceptance_rel = _repo_path(acceptance_root, "acceptance_root")
@@ -1051,6 +1076,7 @@ def derive_v2_case(
         field: deepcopy(case_spec[field])
         for field in FROZEN_CASE_CONTRACT_FIELDS
     }
+    frozen_case_contract["credibility"] = deepcopy(credibility)
     frozen_case_contract["calibration_ledger"] = deepcopy(calibration_ledger)
     if frozen_driver_bridge is not None:
         frozen_case_contract["financial_driver_bridge"] = deepcopy(frozen_driver_bridge)
@@ -1136,13 +1162,7 @@ def derive_v2_case(
             "independent_review": review,
             "quality_failure": None,
         },
-        "credibility": {
-            "model_memory_control": "UNCONTROLLED",
-            "backtest_credibility": "EXPLORATORY",
-            "assessment_basis": "PIT production boundary is replayable, but deployment-level model-memory control is unavailable.",
-            "control_evidence": [],
-            "calibration_role": "ENGINEERING_DIAGNOSTIC_ONLY",
-        },
+        "credibility": deepcopy(credibility),
         "route": "DUAL",
         "forecast": deepcopy(case_spec["forecast"]),
         "sources": sources,

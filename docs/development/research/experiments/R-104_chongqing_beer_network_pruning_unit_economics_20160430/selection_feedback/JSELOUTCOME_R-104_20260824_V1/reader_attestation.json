@@ -1,0 +1,14 @@
+{
+  "schema_version": "judgment-selection-reader-attestation.v1",
+  "state": "REVIEWABLE",
+  "case_id": "SELECTIONCASE:R-104:chongqing-beer-network-pruning-unit-economics-20160430",
+  "settlement_id": "JSELOUTCOME:R-104:20260824:V1",
+  "outcome_ref": "/Users/xiami/workspace/analy/worktrees/Turtle_investment_framework/feat-historical-training-primary-loop/docs/development/research/experiments/R-104_chongqing_beer_network_pruning_unit_economics_20160430/10_independent_outcome.json",
+  "activation_id": "JSELRESACT:SELECTIONCASE:R-104:chongqing-beer-network-pruning-unit-economics-20160430:JSELRES:R-104:PRE-OUTCOME-V1",
+  "custodian_id": "codex-r104-independent-outcome-custodian-20260824",
+  "source_ids": [
+    "CNINFO:600132:ANN:20170414:1203295881",
+    "CNINFO:600132:ANN:20180414:1204627297",
+    "CNINFO:600132:ANN:20190413:1206015424"
+  ]
+}

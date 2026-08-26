@@ -1,0 +1,55 @@
+{
+  "schema_version": "turtle-lifecycle-teaching-case.v1",
+  "teaching_case_id": "TEACHING:LIFECYCLE:CN:600801:PERIMETER-BREAK:20170324:V1",
+  "subject_id": "ECONOMIC_ENTITY:CN:600801",
+  "lifecycle_event": {
+    "schema_version": "turtle-lifecycle-event.v1",
+    "lifecycle_event_id": "LIFECYCLE:CN:600801:PERIMETER-CONTINUITY-UNRESOLVED:20170324:V1",
+    "subject_id": "ECONOMIC_ENTITY:CN:600801",
+    "event_type": "PERIMETER_CONTINUITY_UNRESOLVED",
+    "effective_at": "2017-03-24T23:59:59+08:00",
+    "known_at": "2017-03-24T23:59:59+08:00",
+    "source_available_at": "2017-03-24T23:59:59+08:00",
+    "source": {
+      "source_id": "CNINFO:600801:ANN:20170324:1203190337",
+      "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+      "url": "https://static.cninfo.com.cn/finalpage/2017-03-24/1203190337.PDF",
+      "published_at": "2017-03-24T23:59:59+08:00",
+      "field_ref": "FY2016 Huaxin Cement annual report PDF p9, disclosed acquisition approval for 15 LafargeHolcim cement plants.",
+      "source_subject_id": "ECONOMIC_ENTITY:CN:600801"
+    },
+    "information_role": "CUTOFF_VISIBLE",
+    "observation_status": "NOT_DIAGNOSTIC",
+    "absorbing_for": [],
+    "successor_subject_id": null,
+    "identity_mappings": [
+      {"identity_kind": "ECONOMIC_ENTITY", "identity_id": "ECONOMIC_ENTITY:CN:600801", "effective_from": "2013-01-01T00:00:00+08:00", "effective_through": "2018-04-30T23:59:59+08:00"},
+      {"identity_kind": "LEGAL_ENTITY", "identity_id": "LEGAL_ENTITY:CN:600801", "effective_from": "2013-01-01T00:00:00+08:00", "effective_through": "2018-04-30T23:59:59+08:00"},
+      {"identity_kind": "LISTED_SECURITY", "identity_id": "LISTED_SECURITY:CN:600801", "effective_from": "2013-01-01T00:00:00+08:00", "effective_through": "2018-04-30T23:59:59+08:00"},
+      {"identity_kind": "REPORTING_PERIMETER", "identity_id": "REPORTING_PERIMETER:CN:600801", "effective_from": "2013-01-01T00:00:00+08:00", "effective_through": "2018-04-30T23:59:59+08:00"}
+    ],
+    "time_origin": "2013-01-01T00:00:00+08:00",
+    "observation_entry_at": "2014-01-01T00:00:00+08:00",
+    "risk_start_at": "2014-01-01T00:00:00+08:00",
+    "interval_start": "2017-03-24T23:59:59+08:00",
+    "interval_stop": "2018-04-30T23:59:59+08:00",
+    "covariate_as_of": "2016-12-31T23:59:59+08:00",
+    "object_class": "LIFECYCLE_CASE",
+    "claim_class": "LIFECYCLE_TRANSITION",
+    "allowed_outputs": ["LIFECYCLE_ONLY", "RESEARCH_AGENDA"]
+  },
+  "source_packet_refs": [
+    {"receipt_id": "H1:COHORT:CN:CEMENT_LISTED:20180430:STATIC:V1", "receipt_version": 1}
+  ],
+  "teaching_question": "When an annual report discloses a material plant-acquisition approval, what must be kept unresolved before using the issuer as a comparative carrier?",
+  "mechanism_hypothesis": "A disclosed consolidation-scope break is a perimeter-continuity question, not evidence that the operating business exited or that a later comparative result is directional learning.",
+  "prohibited_substitutes": [
+    "Treating acquisition approval as an observed operating-business exit",
+    "Treating the issuer as a continuous comparative carrier without an action-window perimeter bridge",
+    "Converting this teaching case into selection, learning, report, or investment authority"
+  ],
+  "outcome_knowledge_role": "HISTORICAL_OUTCOME_KNOWN",
+  "object_class": "TEACHING_CASE",
+  "claim_class": "WITHIN_CASE_MECHANISM",
+  "allowed_outputs": ["TEACHING_ONLY", "BOUNDARY_ASSET", "RESEARCH_AGENDA"]
+}

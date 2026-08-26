@@ -72,6 +72,12 @@ def _admission_fixture() -> tuple[dict, dict, dict, dict]:
         "feedback_item_id": "FBI:gree:integration",
         "learning_note_event_id": "JFE:learning-ready",
         "learning_note_effective_at": "2026-08-21T09:00:00+00:00",
+        "application_event_id": "JFE:learning-applied",
+        "program_id": "JTP:fixture:v1",
+        "method_version": "enterprise-judgment-fixture-v1",
+        "method_scope": "SELECTION_AND_BOUNDARY",
+        "method_release_id": "JMREL:fixture:v1",
+        "method_released_at": "2026-08-21T10:00:00+00:00",
     }
     event = {
         "event_id": "JFE:learning-ready",
@@ -253,6 +259,60 @@ def test_learning_note_can_act_on_a_derived_diagnostic_early_signal() -> None:
     assert note["feedback_context"]["rival_hypothesis_feedback"]["signal_verdict"] == "SUPPORTS_PRIMARY"
 
 
+def test_selection_feedback_can_create_learning_only_from_a_diagnostic_joint_verdict() -> None:
+    feedback = {
+        "schema_version": "judgment-selection-feedback-card.v1",
+        "case_id": "SELECTIONCASE:R-102",
+        "freeze_id": "JFREEZE:R-102:20201231",
+        "settlement_id": "JSELSET:R-102:v1",
+        "settlement_as_of": "2026-08-23T12:00:00+08:00",
+        "cards": [{
+            "claim_id": "R-102:D3B-TERMINAL",
+            "predicate_id": "R102-D3B-RARE-EARTH-GROSS-MARGIN",
+            "observation": {"status": "OBSERVED"},
+            "comparison": {"verdict": "A_ONLY", "role": "CENTRAL_DISCRIMINATOR"},
+        }],
+        "joint_comparison": {"overall_verdict": "A_ONLY"},
+        "simple_baseline_resolution": {"state": "BASELINE_POINT_LOSS"},
+    }
+    note = build_judgment_learning_note(
+        feedback,
+        note_id="LNOTE:R-102:selection",
+        claim_id="R-102:D3B-TERMINAL",
+        disposition="RETAIN",
+        state_scope="Contracted customer volume with same-unit margin and cash evidence.",
+        measurement_scope="Joint D3B unit economics and D4 attributable cash.",
+        learning_basis="The frozen joint mapping supported the primary mechanism without replacing cash with volume.",
+        next_research_change="Require same-unit margin and attributable cash before selecting contracted volume as an earnings engine.",
+        feedback_ref="/tmp/r102-selection-feedback.json",
+        experiment_id="R-102",
+        company_cluster_id="COMPANY:huahong-technology",
+        root_cause_classes=["REASONING"],
+        failure_loci=["MECHANISM"],
+        economic_failure_loci=["MECHANISM"],
+        recorded_at="2026-08-23T13:00:00+08:00",
+    )
+
+    assert note["feedback_context"]["judgment_outcome_status"] == "A_ONLY"
+    assert note["feedback_context"]["rival_hypothesis_feedback"]["overall_verdict"] == "A_ONLY"
+
+    feedback["joint_comparison"]["overall_verdict"] = "MIXED"
+    with pytest.raises(JudgmentLearningError, match="diagnostic_overall_verdict"):
+        build_judgment_learning_note(
+            feedback,
+            note_id="LNOTE:R-102:mixed",
+            claim_id="R-102:D3B-TERMINAL",
+            disposition="RETAIN",
+            state_scope="Same scope.", measurement_scope="Same measurement.",
+            learning_basis="Mixed evidence cannot support retention.",
+            next_research_change="Preserve the competing explanations.",
+            feedback_ref="/tmp/r102-selection-feedback.json",
+            experiment_id="R-102", company_cluster_id="COMPANY:huahong-technology",
+            root_cause_classes=["REASONING"], failure_loci=["MECHANISM"],
+            economic_failure_loci=["MECHANISM"], recorded_at="2026-08-23T13:01:00+08:00",
+        )
+
+
 def test_learning_note_rejects_attempts_to_rewrite_frozen_prediction() -> None:
     note = _note(_feedback())
     note["prediction"] = {"operator": "AT_LEAST", "value": 1}
@@ -363,6 +423,7 @@ def test_learning_application_receipt_proves_a_cross_company_pre_freeze_change(t
     receipt = {
         "schema_version": "judgment-learning-application-receipt.v1",
         "receipt_id": "LAPP:target:20260822",
+        "application_basis": "MULTI_COMPANY_METHOD_TRANSFER",
         "source_note_ids": [first["note_id"], second["note_id"]],
         "method_review_decision": {
             "decision_id": "MDEC:customer-response:001",
@@ -406,3 +467,59 @@ def test_learning_application_receipt_proves_a_cross_company_pre_freeze_change(t
     )
     assert invalid["state"] == "INVALID"
     assert "applications[0]:frozen_field_changes[0]:new_value_not_in_target_freeze" in invalid["findings"]
+
+
+def test_single_company_learning_can_only_make_a_provisional_holdout_bound_transfer() -> None:
+    note = _note(_feedback())
+    review = build_method_feedback_review([note])
+    target_freeze = {
+        "freeze_id": "FREEZE:unseen-target:20260823",
+        "research_contract": {"customer_response_required": True},
+    }
+    receipt = {
+        "schema_version": "judgment-learning-application-receipt.v1",
+        "receipt_id": "LAPP:unseen-target:provisional",
+        "application_basis": "PROVISIONAL_SINGLE_COMPANY_TRANSFER",
+        "replication_requirement": "HOLDOUT_REQUIRED",
+        "production_rights": "NONE_PENDING_HOLDOUT",
+        "source_note_ids": [note["note_id"]],
+        "method_review_decision": {
+            "decision_id": "MDEC:provisional-customer-response",
+            "disposition": "APPLIED",
+            "rationale": "One development case supports a provisional research-order change, not a general method claim.",
+        },
+        "target": {
+            "experiment_id": "R-UNSEEN-TARGET",
+            "company_cluster_id": "COMPANY:unseen-target",
+            "freeze_id": "FREEZE:unseen-target:20260823",
+        },
+        "applications": [{
+            "note_id": note["note_id"],
+            "disposition": "APPLIED",
+            "scope_rationale": "The target also requires customer response before unit economics.",
+            "counterexample_or_boundary": "The rule remains provisional until the reserved holdout supports it.",
+            "frozen_field_changes": [{
+                "json_pointer": "/research_contract/customer_response_required",
+                "prior_rule": "Customer response was not mandatory before unit-economics selection.",
+                "new_frozen_value": True,
+            }],
+        }],
+        "prepared_by": "target-author",
+        "independent_reviewer": {
+            "reviewer_id": "independent-transfer-reviewer",
+            "verdict": "CONFIRMED_FIELD_CHANGE",
+            "review_note": "The different-company frozen field changed before its result window.",
+        },
+    }
+
+    accepted = validate_learning_application_receipt(
+        receipt, notes=[note], method_review=review, target_freeze=target_freeze,
+    )
+    assert accepted["state"] == "REVIEWABLE"
+
+    receipt["production_rights"] = "REPORT_USE_ALLOWED"
+    rejected = validate_learning_application_receipt(
+        receipt, notes=[note], method_review=review, target_freeze=target_freeze,
+    )
+    assert rejected["state"] == "INVALID"
+    assert "provisional_transfer_cannot_grant_production_rights" in rejected["findings"]

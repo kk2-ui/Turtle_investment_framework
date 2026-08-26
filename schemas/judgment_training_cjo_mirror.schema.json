@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "judgment-training-cjo-mirror.v1",
+  "title": "Turtle historical Decision Contract to CJO teaching mirror",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "mirror_id", "decision_contract_ref", "forecast_ref", "enterprise_model_ref", "cjo_ref", "forecast_dimension_routing", "overlay_boundary", "roles", "object_class", "claim_class", "allowed_outputs"],
+  "properties": {
+    "schema_version": {"const": "turtle-training-cjo-mirror.v1"},
+    "mirror_id": {"type": "string", "minLength": 1},
+    "decision_contract_ref": {"$ref": "#/$defs/contract_ref"},
+    "forecast_ref": {"type": "object", "additionalProperties": false, "required": ["forecast_id"], "properties": {"forecast_id": {"type": "string", "minLength": 1}}},
+    "enterprise_model_ref": {"type": "object", "additionalProperties": false, "required": ["model_id", "version", "as_of"], "properties": {"model_id": {"type": "string", "minLength": 1}, "version": {"type": "string", "minLength": 1}, "as_of": {"type": "string", "format": "date-time"}}},
+    "cjo_ref": {"type": "object", "additionalProperties": false, "required": ["cjo_id"], "properties": {"cjo_id": {"type": "string", "minLength": 1}}},
+    "forecast_dimension_routing": {"type": "array", "minItems": 6, "maxItems": 6, "items": {"type": "object", "additionalProperties": false, "required": ["dimension_id", "treatment", "question_or_guardrail"], "properties": {"dimension_id": {"enum": ["NORMAL_EARNINGS", "ROIC_OR_OPERATING_MARGIN", "CASH_CONVERSION_AND_CAPEX_BURDEN", "LEVERAGE_AND_FINANCIAL_RESILIENCE", "COMPETITIVE_POSITION", "PERMANENT_LOSS_RISK"]}, "treatment": {"enum": ["CJO_REVIEW_QUESTION", "CJO_UNKNOWN_GUARDRAIL"]}, "question_or_guardrail": {"type": "string", "minLength": 1}}}},
+    "overlay_boundary": {"type": "object", "additionalProperties": false, "required": ["status", "prohibited_outputs", "next_step"], "properties": {"status": {"const": "NOT_AUTHORIZED"}, "prohibited_outputs": {"const": ["NORMALIZED_EARNINGS", "OWNER_CASH", "EXPECTATION_GAP", "BUYBAND", "INVESTMENT_INPUT", "REPORT_USE"]}, "next_step": {"const": "RESEARCH_AGENDA_ONLY"}}},
+    "roles": {"type": "object", "additionalProperties": false, "required": ["judgment_owner_id", "independent_challenger_id"], "properties": {"judgment_owner_id": {"type": "string", "minLength": 1}, "independent_challenger_id": {"type": "string", "minLength": 1}}},
+    "object_class": {"const": "HISTORICAL_CJO_TRAINING_MIRROR"},
+    "claim_class": {"const": "CONTRACT_FIRST_CJO_REPLAY"},
+    "allowed_outputs": {"const": ["CJO_TRAINING_MIRROR", "RESEARCH_AGENDA"]}
+  },
+  "$defs": {
+    "contract_ref": {"type": "object", "additionalProperties": false, "required": ["contract_id", "contract_version"], "properties": {"contract_id": {"type": "string", "minLength": 1}, "contract_version": {"type": "integer", "minimum": 1}}}
+  }
+}

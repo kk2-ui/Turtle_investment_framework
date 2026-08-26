@@ -1,10 +1,16 @@
 import json
+from copy import deepcopy
+from datetime import datetime, timedelta
 from pathlib import Path
 
 import pytest
 
 from scripts import judgment_feedback_control as jfc
-from scripts.judgment_learning import build_judgment_learning_note
+from scripts import judgment_training_program as jtp
+from scripts.judgment_learning import (
+    build_judgment_learning_note,
+    build_method_feedback_review,
+)
 from judgment_generation_handoff import (
     build_judgment_generation_handoff,
     validate_judgment_generation_handoff,
@@ -112,17 +118,41 @@ def _formal_learning_admission(
     measurement_ref = output / "learning_measurement_contract.json"
     for path in (thesis_ref, source_ref, measurement_ref):
         _write(path, {"fixture": path.stem})
+    program_ref = (output / "learning_training_program.json").resolve()
+    _write(program_ref, {"fixture": "active-handoff-training-program"})
     db_path = output / "judgment_feedback_control.db"
     conn = jfc.connect(db_path)
-    jfc.initialize(conn)
+    jtp.initialize(conn)
+    program_id = "JTP:handoff:v1"
+    method_version = "handoff-learning-method-v1"
+    method_scope = "SELECTION_AND_BOUNDARY"
+    conn.execute(
+        """INSERT INTO judgment_training_programs
+             (program_id, program_state, method_version, method_scope, registered_at,
+              method_frozen_at, method_freeze_recorded_at, sampling_policy_json, contract_ref)
+             VALUES (?, 'ACTIVE', ?, ?, ?, ?, ?, '{}', ?)""",
+        (
+            program_id,
+            method_version,
+            method_scope,
+            "2026-01-01T00:00:00+08:00",
+            "2026-05-10T00:00:00+08:00",
+            "2026-05-10T00:00:01+08:00",
+            str(program_ref),
+        ),
+    )
+    conn.commit()
     manifest = {
         "schema_version": "judgment-feedback-control-registration.v1",
         "episode_id": "R-HANDOFF-01",
-        "company_id": "CN:000651",
+        "company_id": "COMPANY:SOURCE",
         "frozen_at": "2026-01-01T00:00:00+08:00",
         "episode_class": "JUDGMENT_SELECTION_EPISODE",
         "selection_status": "SELECTION_ADMITTED",
         "learning_eligibility": "SELECTION_METHOD_ELIGIBLE",
+        "program_lane": "UNASSIGNED",
+        "outcome_access": "UNSPECIFIED",
+        "training_program_ref": str(program_ref),
         "claims": [{
             "claim_id": "FJ:CHANNEL",
             "stages": [{
@@ -169,7 +199,7 @@ def _formal_learning_admission(
         next_research_change="先取得全渠道同口径数据，再选择渠道重配或竞争恶化机制。",
         feedback_ref=str(feedback_path),
         experiment_id="R-HANDOFF",
-        company_cluster_id="COMPANY:CHANNEL",
+        company_cluster_id="COMPANY:SOURCE",
         root_cause_classes=["DATA_COVERAGE", "REASONING"],
         failure_loci=["EVIDENCE_ACQUISITION", "MECHANISM"],
         economic_failure_loci=["MEASUREMENT", "MECHANISM"],
@@ -226,6 +256,134 @@ def _formal_learning_admission(
         (event_recorded_at, feedback_item_id),
     )
     conn.commit()
+
+    peer_note = deepcopy(note)
+    peer_note.update({
+        "note_id": "LNOTE:channel-peer",
+        "case_id": "R-HANDOFF-PEER",
+        "freeze_id": "FREEZE:R-HANDOFF-PEER",
+        "settlement_id": "SETTLEMENT:R-HANDOFF-PEER:FJ:CHANNEL",
+        "experiment_id": "R-HANDOFF-PEER",
+        "company_cluster_id": "COMPANY:PEER",
+    })
+    peer_note_path = (output / "peer_learning_note.json").resolve()
+    _write(peer_note_path, peer_note)
+    method_review_path = (output / "learning_method_review.json").resolve()
+    _write(method_review_path, build_method_feedback_review([note, peer_note]))
+    target_freeze_path = (output / "learning_target_freeze.json").resolve()
+    _write(target_freeze_path, {
+        "freeze_id": "FREEZE:R-HANDOFF-TARGET",
+        "research_contract": {"full_channel_evidence_required": True},
+    })
+    application_receipt_path = (output / "learning_application_receipt.json").resolve()
+    application_receipt = {
+        "schema_version": "judgment-learning-application-receipt.v1",
+        "receipt_id": "LAPP:handoff:channel-method",
+        "application_basis": "MULTI_COMPANY_METHOD_TRANSFER",
+        "source_note_ids": [note["note_id"], peer_note["note_id"]],
+        "method_review_decision": {
+            "decision_id": "MDEC:handoff:channel-method",
+            "disposition": "APPLIED",
+            "rationale": "两家公司都暴露了单一渠道证据无法识别竞争位置的问题。",
+        },
+        "target": {
+            "experiment_id": "R-HANDOFF-TARGET",
+            "company_cluster_id": "CN:000651",
+            "freeze_id": "FREEZE:R-HANDOFF-TARGET",
+        },
+        "applications": [
+            {
+                "note_id": note["note_id"],
+                "disposition": "APPLIED",
+                "scope_rationale": "目标公司同样需要在机制选择前取得全渠道同口径证据。",
+                "counterexample_or_boundary": "若已有可核验的全渠道量价，则无需保持该退路。",
+                "frozen_field_changes": [{
+                    "json_pointer": "/research_contract/full_channel_evidence_required",
+                    "prior_rule": "全渠道证据不是机制选择前的硬门。",
+                    "new_frozen_value": True,
+                }],
+            },
+            {
+                "note_id": peer_note["note_id"],
+                "disposition": "NARROWED",
+                "scope_rationale": "只迁移证据顺序，不迁移来源公司的方向结论。",
+                "counterexample_or_boundary": "商业模式不同，不能迁移公司判断。",
+            },
+        ],
+        "prepared_by": "handoff-target-author",
+        "independent_reviewer": {
+            "reviewer_id": "handoff-independent-reviewer",
+            "verdict": "CONFIRMED_FIELD_CHANGE",
+            "review_note": "目标冻结字段存在，且变更发生在目标结果窗口之前。",
+        },
+    }
+    _write(application_receipt_path, application_receipt)
+
+    latest_lineage_time = max(
+        datetime.fromisoformat(event_effective_at),
+        datetime.fromisoformat(event_recorded_at),
+    )
+    target_frozen_at = (latest_lineage_time + timedelta(hours=1)).isoformat()
+    application_at = (latest_lineage_time + timedelta(hours=2)).isoformat()
+    applied = jfc.record_learning_application(
+        conn,
+        feedback_item_id=feedback_item_id,
+        application_receipt_ref=application_receipt_path,
+        note_refs=[note_path, peer_note_path],
+        method_review_ref=method_review_path,
+        target_freeze_ref=target_freeze_path,
+        target_frozen_at=target_frozen_at,
+        effective_at=application_at,
+        actor_id="handoff-fixture",
+    )
+    application_event_id = applied["event"]["event_id"]
+    conn.execute(
+        "UPDATE judgment_feedback_events SET recorded_at = ? WHERE event_id = ?",
+        (application_at, application_event_id),
+    )
+
+    release_id = "JMREL:handoff:v1"
+    released_at = (latest_lineage_time + timedelta(hours=4)).isoformat()
+    method_frozen_at = (latest_lineage_time + timedelta(hours=3)).isoformat()
+    release_receipt = {
+        "schema_version": "judgment-method-report-release.v1",
+        "release_id": release_id,
+        "program_id": program_id,
+        "method_version": method_version,
+        "method_scope": method_scope,
+        "method_frozen_at": method_frozen_at,
+        "released_at": released_at,
+        "released_by": "handoff-release-owner",
+        "release_decision": "METHOD_RELEASED_FOR_REPORT_USE",
+        "accepted_holdout_receipt_ids": ["HRECEIPT:handoff:supported"],
+    }
+    release_receipt_path = (output / "learning_method_release.json").resolve()
+    _write(release_receipt_path, release_receipt)
+    conn.execute(
+        """UPDATE judgment_training_programs
+              SET method_frozen_at = ?, method_freeze_recorded_at = ?
+            WHERE program_id = ?""",
+        (method_frozen_at, method_frozen_at, program_id),
+    )
+    conn.execute(
+        """INSERT INTO judgment_training_method_releases
+             (program_id, release_id, method_version, method_scope, method_frozen_at,
+              released_at, recorded_at, released_by, release_decision, receipt_ref, receipt_json)
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'METHOD_RELEASED_FOR_REPORT_USE', ?, ?)""",
+        (
+            program_id,
+            release_id,
+            method_version,
+            method_scope,
+            method_frozen_at,
+            released_at,
+            released_at,
+            "handoff-release-owner",
+            str(release_receipt_path),
+            json.dumps(release_receipt, ensure_ascii=False, sort_keys=True),
+        ),
+    )
+    conn.commit()
     conn.close()
     return {
         "schema_version": "judgment-learning-admission.v1",
@@ -235,6 +393,12 @@ def _formal_learning_admission(
         "feedback_item_id": feedback_item_id,
         "learning_note_event_id": event_id,
         "learning_note_effective_at": event_effective_at,
+        "application_event_id": application_event_id,
+        "program_id": program_id,
+        "method_version": method_version,
+        "method_scope": method_scope,
+        "method_release_id": release_id,
+        "method_released_at": released_at,
     }
 
 

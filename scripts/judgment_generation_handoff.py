@@ -10,10 +10,20 @@ ledger updates, review, settlement, and learning application.
 from __future__ import annotations
 
 import argparse
+from copy import deepcopy
 import json
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any
+
+try:
+    from scripts import enterprise_judgment_core as enterprise_core
+    from scripts import cjo_quantitative_investment_overlay as quantitative_overlay
+    from scripts import current_company_cjo_admission as current_cjo_admission
+except ImportError:  # pragma: no cover - direct script import fallback
+    import enterprise_judgment_core as enterprise_core
+    import cjo_quantitative_investment_overlay as quantitative_overlay
+    import current_company_cjo_admission as current_cjo_admission
 
 
 SCHEMA_VERSION = "judgment-generation-handoff.v1"
@@ -32,7 +42,7 @@ _READY_LEDGER_STATES = {"REVIEWABLE", "DECISION_READY", "MONITORING"}
 _VIEW_PROJECTION_KEYS = {
     "RESEARCH_AGENDA": {
         "agenda_mode", "official_evidence", "decisive_questions", "industry_priors",
-        "learning_prompts",
+        "learning_prompts", "industry_snapshot",
     },
     "JUDGMENT_SYNTHESIS": {
         "ledger_states", "claims", "financial_drivers", "allocation_events", "thesis",
@@ -42,11 +52,19 @@ _VIEW_PROJECTION_KEYS = {
         "company_judgment_predecessor", "valuation_route",
     },
 }
+_VIEW_OPTIONAL_PROJECTION_KEYS = {
+    "JUDGMENT_SYNTHESIS": {"frozen_cjo"},
+    "INVESTMENT_ENRICHMENT": {"quantitative_overlay"},
+}
 _USAGE_CONTRACT_TRUE_FIELDS = {
     "derived_read_model_only",
     "canonical_artifacts_remain_authoritative",
     "must_return_to_source_before_citation_or_mutation",
     "pre_cutoff_outcomes_prices_and_actions_forbidden",
+}
+CANONICAL_JUDGMENT_REFS_FIELD = "canonical_judgment_refs"
+_CANONICAL_JUDGMENT_REF_FIELDS = {
+    "frozen_cjo_ref", "investment_overlay_ref", "current_company_cjo_admission_ref",
 }
 
 
@@ -137,8 +155,10 @@ def _forbidden_paths(value: Any, prefix: str = "$") -> list[str]:
 def _identity(contract: dict[str, Any]) -> dict[str, str]:
     report_id = str(contract.get("ts_code") or contract.get("code") or contract.get("report_id") or "").strip()
     company_id = str(contract.get("company_id") or report_id).strip()
+    pit = contract.get("pit_production") if isinstance(contract.get("pit_production"), dict) else {}
     cutoff = str(
-        contract.get("data_as_of") or contract.get("analysis_date")
+        pit.get("cutoff_at")
+        or contract.get("data_as_of") or contract.get("analysis_date")
         or contract.get("cutoff_at") or contract.get("pit_cutoff_at") or ""
     ).strip()
     return {
@@ -187,12 +207,6 @@ def _project_industry_prior(item: dict[str, Any]) -> dict[str, Any]:
 
 
 def _fallback_industry_context(output: Path, warnings: list[str]) -> dict[str, Any]:
-    contract = _read_json(output / "analysis_contract.json")
-    if isinstance(contract.get("pit_production"), dict):
-        warnings.append(
-            "pit_global_industry_knowledge_forbidden_without_object_level_admission"
-        )
-        return {}
     try:
         from decisive_question import build_industry_knowledge_context
     except ModuleNotFoundError:
@@ -214,6 +228,43 @@ def _resolve_explicit_ref(output: Path, reference: str | Path) -> Path:
     return path.resolve() if path.is_absolute() else (output / path).resolve()
 
 
+def _canonical_judgment_refs(contract: dict[str, Any], invalid: list[str]) -> dict[str, str]:
+    """Resolve the report contract's sole optional CJO/overlay truth bindings.
+
+    A report may remain on the legacy ledger path while no canonical CJO is
+    declared.  Once it declares this field, production reads must use exactly
+    these references; callers may not substitute a path at read time.
+    """
+    raw = contract.get(CANONICAL_JUDGMENT_REFS_FIELD)
+    if raw is None:
+        return {}
+    if not isinstance(raw, dict):
+        invalid.append("analysis_contract.canonical_judgment_refs_invalid")
+        return {}
+    unexpected = sorted(set(raw) - _CANONICAL_JUDGMENT_REF_FIELDS)
+    if unexpected:
+        invalid.append(
+            "analysis_contract.canonical_judgment_refs_unexpected_fields:" + ",".join(unexpected)
+        )
+    refs: dict[str, str] = {}
+    for field in _CANONICAL_JUDGMENT_REF_FIELDS:
+        value = raw.get(field)
+        if value is None:
+            continue
+        text = str(value).strip()
+        if not text:
+            invalid.append("analysis_contract.canonical_judgment_refs." + field + "_invalid")
+            continue
+        refs[field] = text
+    if "investment_overlay_ref" in refs:
+        for required in ("frozen_cjo_ref", "current_company_cjo_admission_ref"):
+            if required not in refs:
+                invalid.append("analysis_contract.canonical_judgment_refs.overlay_requires_" + required)
+    if "current_company_cjo_admission_ref" in refs and "frozen_cjo_ref" not in refs:
+        invalid.append("analysis_contract.canonical_judgment_refs.admission_requires_frozen_cjo")
+    return refs
+
+
 def _validated_learning_note_refs(
     output: Path, raw_admissions: Any, *, information_cutoff: str,
 ) -> tuple[list[str], list[str]]:
@@ -228,9 +279,14 @@ def _validated_learning_note_refs(
     except ModuleNotFoundError:
         from judgment_feedback_control import read_learning_note_ready_event
         from judgment_learning import validate_judgment_learning_admission
+    try:
+        from scripts.judgment_learning_admission import select_judgment_learning_admissions
+    except ModuleNotFoundError:
+        from judgment_learning_admission import select_judgment_learning_admissions
 
     accepted: list[str] = []
     findings: list[str] = []
+    release_selections: dict[str, dict[str, Any]] = {}
     for index, raw in enumerate(raw_admissions):
         prefix = f"judgment_learning_admissions[{index}]"
         if not isinstance(raw, dict):
@@ -239,6 +295,7 @@ def _validated_learning_note_refs(
         admission = dict(raw)
         for field in ("learning_note_ref", "feedback_ref", "control_plane_db"):
             admission[field] = str(_resolve_explicit_ref(output, admission.get(field) or ""))
+        database = admission["control_plane_db"]
         note = _read_json(Path(admission["learning_note_ref"]))
         feedback = _read_json(Path(admission["feedback_ref"]))
         event = read_learning_note_ready_event(
@@ -256,6 +313,24 @@ def _validated_learning_note_refs(
                 prefix + ":" + str(item) for item in validation.get("findings") or []
             )
             continue
+        if database not in release_selections:
+            release_selections[database] = select_judgment_learning_admissions(
+                database, information_cutoff=information_cutoff,
+            )
+        identity_fields = (
+            "learning_note_ref", "feedback_ref", "feedback_item_id",
+            "learning_note_event_id", "application_event_id", "program_id",
+            "method_version", "method_scope", "method_release_id",
+            "method_released_at",
+        )
+        released = any(
+            all(str(candidate.get(field) or "") == str(admission.get(field) or "") for field in identity_fields)
+            for candidate in release_selections[database].get("admissions") or []
+            if isinstance(candidate, dict)
+        )
+        if not released:
+            findings.append(prefix + ":method_not_released_for_report_use")
+            continue
         accepted.append(admission["learning_note_ref"])
     return accepted, list(dict.fromkeys(findings))
 
@@ -270,11 +345,33 @@ def _pit_plan_knowledge_safe(output: Path, plan: dict[str, Any]) -> bool:
     base_availability = (
         base_rate.get("availability") if isinstance(base_rate.get("availability"), dict) else {}
     )
-    if availability.get("mode") != "PIT_EVIDENCE_ONLY":
-        return False
+    mode = str(availability.get("mode") or "")
     if base_availability.get("mode") != "PIT_EVIDENCE_ONLY":
         return False
-    if industry.get("matched_mechanisms"):
+    matches = industry.get("matched_mechanisms")
+    if not isinstance(matches, list):
+        return False
+    if mode == "PIT_EVIDENCE_ONLY":
+        if matches:
+            return False
+        snapshot_ids: set[str] = set()
+    elif mode == "PIT_PROMOTION_SNAPSHOT":
+        contract = _read_json(output / "analysis_contract.json")
+        pit = contract.get("pit_production") if isinstance(contract.get("pit_production"), dict) else {}
+        cutoff = _instant(pit.get("cutoff_at"), allow_date_cutoff=True)
+        snapshot = _instant(availability.get("knowledge_snapshot_at"), allow_date_cutoff=True)
+        if cutoff is None or snapshot is None or cutoff != snapshot:
+            return False
+        snapshot_ids = set()
+        for mechanism in matches:
+            if not isinstance(mechanism, dict):
+                return False
+            mechanism_id = str(mechanism.get("mechanism_id") or "")
+            available_at = _instant(mechanism.get("available_at"), allow_date_cutoff=True)
+            if not mechanism_id or available_at is None or available_at > snapshot:
+                return False
+            snapshot_ids.add(mechanism_id)
+    else:
         return False
     for item in plan.get("selected_questions") or []:
         if not isinstance(item, dict):
@@ -285,11 +382,10 @@ def _pit_plan_knowledge_safe(output: Path, plan: dict[str, Any]) -> bool:
             return False
         if item.get("base_rate_refs") or sample_size != 0:
             return False
-        if any(
-            str(origin).startswith("industry_knowledge:")
-            for origin in item.get("candidate_origins") or []
-        ):
-            return False
+        for origin in item.get("candidate_origins") or []:
+            if str(origin).startswith("industry_knowledge:"):
+                if str(origin).split(":", 1)[1] not in snapshot_ids:
+                    return False
     return True
 
 
@@ -311,10 +407,7 @@ def _build_research_agenda(
     contract = _read_json(output / "analysis_contract.json")
     pit_mode = isinstance(contract.get("pit_production"), dict)
     if pit_mode:
-        warnings.extend([
-            "pit_global_base_rate_library_forbidden_without_case_level_admission",
-            "pit_global_industry_knowledge_forbidden_without_object_level_admission",
-        ])
+        warnings.append("pit_global_base_rate_library_forbidden_without_case_level_admission")
     if pit_mode and plan and not _pit_plan_knowledge_safe(output, plan):
         warnings.append("pit_upstream_decisive_plan_rejected_unproven_knowledge_isolation")
         plan = {}
@@ -376,6 +469,10 @@ def _build_research_agenda(
                 "Canonical mechanism IDs and issuer-verification prompts only; resolve the mechanism before use.",
             ))
     matches = [item for item in industry_context.get("matched_mechanisms") or [] if isinstance(item, dict)]
+    industry_availability = (
+        industry_context.get("availability")
+        if isinstance(industry_context.get("availability"), dict) else {}
+    )
     priors = [
         _project_industry_prior(item) for item in matches
         if item.get("status") == "MECHANISM_READY" and item.get("company_assessment") == "NOT_EVIDENCED"
@@ -449,6 +546,11 @@ def _build_research_agenda(
         },
         "decisive_questions": [_project_question(item) for item in selected],
         "industry_priors": priors,
+        "industry_snapshot": {
+            "mode": str(industry_availability.get("mode") or "CURRENT_LIBRARY"),
+            "knowledge_snapshot_at": str(industry_availability.get("knowledge_snapshot_at") or ""),
+            "mechanism_ids": [str(item.get("mechanism_id") or "") for item in priors],
+        },
         "learning_prompts": learning_prompts,
     }, empty_states
 
@@ -550,6 +652,58 @@ def _build_judgment_synthesis(
         "insights": _safe_projection(insight.get("insights") or []),
         "adversarial_review": _safe_projection(insight.get("adversarial_review") or {}),
     }, {
+        "industry_priors": "NOT_APPLICABLE_TO_VIEW",
+        "learning_prompts": "NOT_APPLICABLE_TO_VIEW",
+    }
+
+
+def _build_frozen_cjo_judgment_synthesis(
+    output: Path,
+    frozen_cjo_path: str | Path,
+    identity: dict[str, str],
+    invalid: list[str],
+    incomplete: list[str],
+    sources: list[dict[str, Any]],
+) -> tuple[dict[str, Any], dict[str, str]]:
+    """Read the independently frozen canonical CJO instead of report-local ledgers."""
+    path = _resolve_explicit_ref(output, frozen_cjo_path)
+    if not path.is_file():
+        incomplete.append("artifact_missing:frozen_cjo:" + str(path))
+        return {}, {
+            "industry_priors": "NOT_APPLICABLE_TO_VIEW",
+            "learning_prompts": "NOT_APPLICABLE_TO_VIEW",
+        }
+    payload = _read_json(path)
+    if not payload:
+        invalid.append("artifact_invalid_json_or_object:frozen_cjo")
+        return {}, {
+            "industry_priors": "NOT_APPLICABLE_TO_VIEW",
+            "learning_prompts": "NOT_APPLICABLE_TO_VIEW",
+        }
+    validation = enterprise_core.validate_frozen_cjo(payload)
+    if validation["state"] != "VALID":
+        invalid.extend("frozen_cjo_invalid:" + item for item in validation["findings"])
+        return {}, {
+            "industry_priors": "NOT_APPLICABLE_TO_VIEW",
+            "learning_prompts": "NOT_APPLICABLE_TO_VIEW",
+        }
+    _identity_match("frozen_cjo.company_id", payload.get("company_id"), identity["company_id"], invalid)
+    cjo_cutoff = str(payload.get("cutoff_at") or "")[:10]
+    identity_cutoff = identity["information_cutoff"][:10]
+    if cjo_cutoff and identity_cutoff and cjo_cutoff != identity_cutoff:
+        invalid.append("identity_mismatch:frozen_cjo.information_cutoff")
+    sources.append(_source_ref(
+        "FROZEN_CJO",
+        str(path),
+        "",
+        "Read-only canonical enterprise judgment for narrative synthesis; report prose cannot mutate or replace it.",
+    ))
+    try:
+        projection = enterprise_core.project_frozen_cjo_to_judgment_synthesis(payload)
+    except enterprise_core.EnterpriseJudgmentCoreError as exc:
+        invalid.append("frozen_cjo_projection_failed:" + str(exc))
+        projection = {}
+    return projection, {
         "industry_priors": "NOT_APPLICABLE_TO_VIEW",
         "learning_prompts": "NOT_APPLICABLE_TO_VIEW",
     }
@@ -667,6 +821,132 @@ def _build_investment_enrichment(
     }
 
 
+def _build_frozen_cjo_investment_enrichment(
+    output: Path,
+    frozen_cjo_path: str | Path,
+    investment_overlay_path: str | Path,
+    current_company_cjo_admission_path: str | Path,
+    identity: dict[str, str],
+    invalid: list[str],
+    incomplete: list[str],
+    sources: list[dict[str, Any]],
+) -> tuple[dict[str, Any], dict[str, str]]:
+    """Project a candidate-only quantitative overlay without reopening CJO truth."""
+    frozen_path = _resolve_explicit_ref(output, frozen_cjo_path)
+    frozen_cjo = _read_json(frozen_path)
+    if not frozen_path.is_file():
+        incomplete.append("artifact_missing:frozen_cjo:" + str(frozen_path))
+    elif not frozen_cjo:
+        invalid.append("artifact_invalid_json_or_object:frozen_cjo")
+    else:
+        frozen_validation = enterprise_core.validate_frozen_cjo(frozen_cjo)
+        if frozen_validation["state"] != "VALID":
+            invalid.extend("frozen_cjo_invalid:" + item for item in frozen_validation["findings"])
+        else:
+            _identity_match("frozen_cjo.company_id", frozen_cjo.get("company_id"), identity["company_id"], invalid)
+            frozen_cutoff = str(frozen_cjo.get("cutoff_at") or "")[:10]
+            if frozen_cutoff and identity["information_cutoff"][:10] and frozen_cutoff != identity["information_cutoff"][:10]:
+                invalid.append("identity_mismatch:frozen_cjo.information_cutoff")
+            sources.append(_source_ref(
+                "FROZEN_CJO", str(frozen_path), "",
+                "Read-only canonical enterprise judgment bound by analysis_contract; report prose cannot mutate or replace it.",
+            ))
+    admission_path = _resolve_explicit_ref(output, current_company_cjo_admission_path)
+    admission_receipt = _read_json(admission_path)
+    if not admission_path.is_file():
+        incomplete.append("artifact_missing:current_company_cjo_admission:" + str(admission_path))
+    elif not admission_receipt:
+        invalid.append("artifact_invalid_json_or_object:current_company_cjo_admission")
+    elif frozen_cjo:
+        admission_validation = current_cjo_admission.validate_frozen_current_company_cjo_admission(
+            frozen_cjo=frozen_cjo,
+            admission_receipt=admission_receipt,
+            require_overlay=True,
+        )
+        if admission_validation["state"] != "VALID":
+            invalid.extend(
+                "current_company_cjo_admission_invalid:" + item
+                for item in admission_validation["findings"]
+            )
+        else:
+            sources.append(_source_ref(
+                "CURRENT_COMPANY_CJO_ADMISSION", str(admission_path), "",
+                "Read-only PRIMARY admission receipt; it binds the Frozen CJO to closed cash, driver, and rival-thesis prerequisites.",
+            ))
+    path = _resolve_explicit_ref(output, investment_overlay_path)
+    if not path.is_file():
+        incomplete.append("artifact_missing:investment_overlay:" + str(path))
+        return {}, {
+            "industry_priors": "NOT_APPLICABLE_TO_VIEW",
+            "learning_prompts": "NOT_APPLICABLE_TO_VIEW",
+        }
+    payload = _read_json(path)
+    if not payload:
+        invalid.append("artifact_invalid_json_or_object:investment_overlay")
+        return {}, {
+            "industry_priors": "NOT_APPLICABLE_TO_VIEW",
+            "learning_prompts": "NOT_APPLICABLE_TO_VIEW",
+        }
+    validation = quantitative_overlay.validate_investment_overlay(payload)
+    if validation["state"] != "VALID":
+        invalid.extend("investment_overlay_invalid:" + item for item in validation["findings"])
+        return {}, {
+            "industry_priors": "NOT_APPLICABLE_TO_VIEW",
+            "learning_prompts": "NOT_APPLICABLE_TO_VIEW",
+        }
+    cjo_ref = payload["cjo_ref"]
+    _identity_match("investment_overlay.company_id", cjo_ref.get("company_id"), identity["company_id"], invalid)
+    overlay_cutoff = str(cjo_ref.get("cutoff_at") or "")[:10]
+    identity_cutoff = identity["information_cutoff"][:10]
+    if overlay_cutoff and identity_cutoff and overlay_cutoff != identity_cutoff:
+        invalid.append("identity_mismatch:investment_overlay.information_cutoff")
+    if identity["analysis_purpose"] != "INVESTMENT_DECISION":
+        invalid.append("investment_enrichment_requires_investment_decision_purpose")
+    if frozen_cjo:
+        for field in ("cjo_id", "company_id", "cutoff_at", "method_version", "resolution"):
+            if cjo_ref.get(field) != frozen_cjo.get(field):
+                invalid.append("identity_mismatch:investment_overlay.frozen_cjo." + field)
+    payload_admission_ref = payload.get("cjo_admission_ref") if isinstance(payload.get("cjo_admission_ref"), dict) else {}
+    if payload_admission_ref != {
+        "admission_id": admission_receipt.get("admission_id"),
+        "status": admission_receipt.get("status"),
+        "cjo_ref": deepcopy(admission_receipt.get("cjo_ref")),
+    }:
+        invalid.append("identity_mismatch:investment_overlay.current_company_cjo_admission")
+    sources.append(_source_ref(
+        "CJO_QUANTITATIVE_OVERLAY",
+        str(path),
+        "",
+        "Read-only candidate-only valuation projection. It cannot amend the Frozen CJO, report truth, or trading authority.",
+    ))
+    try:
+        report_projection = quantitative_overlay.build_overlay_report_projection(payload)
+    except quantitative_overlay.CJOQuantitativeInvestmentOverlayError as exc:
+        invalid.append("investment_overlay_projection_failed:" + str(exc))
+        report_projection = {}
+    return {
+        "company_judgment_predecessor": {
+            "source": "FROZEN_CJO",
+            "cjo_id": cjo_ref["cjo_id"],
+            "company_id": cjo_ref["company_id"],
+            "cutoff_at": cjo_ref["cutoff_at"],
+            "resolution": cjo_ref["resolution"],
+            "read_only": True,
+        },
+        "valuation_route": {
+            "overlay_id": payload["overlay_id"],
+            "mode": payload["mode"],
+            "valuation_method_ids": [item["method_id"] for item in payload["value_identities"]],
+            "status": payload["authority"]["overlay_status"],
+            "production_status": payload["authority"]["production_status"],
+        },
+        "quantitative_overlay": report_projection,
+    }, {
+        "industry_priors": "NOT_APPLICABLE_TO_VIEW",
+        "learning_prompts": "NOT_APPLICABLE_TO_VIEW",
+    }
+
+
 def _shape_findings(handoff: Any) -> tuple[list[str], list[str]]:
     invalid: list[str] = []
     incomplete: list[str] = []
@@ -705,9 +985,10 @@ def _shape_findings(handoff: Any) -> tuple[list[str], list[str]]:
         incomplete.append("projection_missing")
     elif handoff.get("view") in _VIEW_PROJECTION_KEYS:
         expected_keys = _VIEW_PROJECTION_KEYS[str(handoff["view"])]
+        optional_keys = _VIEW_OPTIONAL_PROJECTION_KEYS.get(str(handoff["view"]), set())
         for key in sorted(expected_keys - set(projection)):
             incomplete.append("projection_missing:" + key)
-        for key in sorted(set(projection) - expected_keys):
+        for key in sorted(set(projection) - expected_keys - optional_keys):
             invalid.append("projection_field_not_allowed_for_view:" + key)
     usage = handoff.get("usage_contract")
     if not isinstance(usage, dict):
@@ -798,6 +1079,9 @@ def validate_judgment_generation_handoff(
 def build_judgment_generation_handoff(
     output_dir: str | Path,
     view: str,
+    *,
+    frozen_cjo_path: str | Path | None = None,
+    investment_overlay_path: str | Path | None = None,
 ) -> dict[str, Any]:
     """Build an in-memory handoff from admitted report-local artifacts."""
     output = Path(output_dir).expanduser().resolve()
@@ -822,6 +1106,20 @@ def build_judgment_generation_handoff(
         identity["information_cutoff"], allow_date_cutoff=True,
     ) is None:
         invalid.append("information_cutoff_invalid")
+    canonical_judgment_refs = _canonical_judgment_refs(contract, invalid)
+    bound_frozen_cjo = canonical_judgment_refs.get("frozen_cjo_ref")
+    bound_overlay = canonical_judgment_refs.get("investment_overlay_ref")
+    bound_current_company_admission = canonical_judgment_refs.get("current_company_cjo_admission_ref")
+    if frozen_cjo_path is not None:
+        if bound_frozen_cjo is None:
+            invalid.append("frozen_cjo_must_be_bound_in_analysis_contract")
+        elif _resolve_explicit_ref(output, frozen_cjo_path) != _resolve_explicit_ref(output, bound_frozen_cjo):
+            invalid.append("frozen_cjo_path_must_match_analysis_contract")
+    if investment_overlay_path is not None:
+        if bound_overlay is None:
+            invalid.append("investment_overlay_must_be_bound_in_analysis_contract")
+        elif _resolve_explicit_ref(output, investment_overlay_path) != _resolve_explicit_ref(output, bound_overlay):
+            invalid.append("investment_overlay_path_must_match_analysis_contract")
     learning_note_refs, admission_findings = _validated_learning_note_refs(
         output,
         contract.get("judgment_learning_admissions"),
@@ -840,13 +1138,28 @@ def build_judgment_generation_handoff(
             output, identity, learning_note_refs, invalid, incomplete, warnings, sources,
         )
     elif normalized_view == "JUDGMENT_SYNTHESIS":
-        projection, empty_states = _build_judgment_synthesis(
-            output, identity, invalid, incomplete, sources,
-        )
+        if bound_frozen_cjo is not None:
+            projection, empty_states = _build_frozen_cjo_judgment_synthesis(
+                output, bound_frozen_cjo, identity, invalid, incomplete, sources,
+            )
+        else:
+            projection, empty_states = _build_judgment_synthesis(
+                output, identity, invalid, incomplete, sources,
+            )
     elif normalized_view == "INVESTMENT_ENRICHMENT":
-        projection, empty_states = _build_investment_enrichment(
-            output, identity, invalid, incomplete, sources,
-        )
+        if (
+            bound_overlay is not None
+            and bound_frozen_cjo is not None
+            and bound_current_company_admission is not None
+        ):
+            projection, empty_states = _build_frozen_cjo_investment_enrichment(
+                output, bound_frozen_cjo, bound_overlay, bound_current_company_admission,
+                identity, invalid, incomplete, sources,
+            )
+        else:
+            projection, empty_states = _build_investment_enrichment(
+                output, identity, invalid, incomplete, sources,
+            )
 
     invalid.extend("pre_cutoff_field_forbidden:" + path for path in _forbidden_paths(projection))
     invalid = list(dict.fromkeys(invalid))
@@ -890,12 +1203,25 @@ def _parser() -> argparse.ArgumentParser:
         command = sub.add_parser(name)
         command.add_argument("--output-dir", required=True)
         command.add_argument("--view", required=True, choices=sorted(VIEWS))
+        command.add_argument(
+            "--frozen-cjo",
+            help="Explicit canonical Frozen CJO path for the JUDGMENT_SYNTHESIS read-only view.",
+        )
+        command.add_argument(
+            "--investment-overlay",
+            help="Explicit candidate-only quantitative overlay for the INVESTMENT_ENRICHMENT read-only view.",
+        )
     return parser
 
 
 def main(argv: list[str] | None = None) -> int:
     args = _parser().parse_args(argv)
-    handoff = build_judgment_generation_handoff(args.output_dir, args.view)
+    handoff = build_judgment_generation_handoff(
+        args.output_dir,
+        args.view,
+        frozen_cjo_path=args.frozen_cjo,
+        investment_overlay_path=args.investment_overlay,
+    )
     result = (
         validate_judgment_generation_handoff(handoff, output_dir=args.output_dir)
         if args.command == "validate" else handoff

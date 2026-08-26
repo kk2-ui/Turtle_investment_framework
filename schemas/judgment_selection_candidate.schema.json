@@ -1,0 +1,691 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://turtle.local/schemas/judgment_selection_candidate.schema.json",
+  "title": "Turtle Judgment Selection Candidate admission extension",
+  "description": "The Python validator remains the executable contract. A sealed v1 candidate without selection_admission_contract is legacy-compatible. V3 requires independently observable D2 and, where H-A claims it, a recurrent D3-to-D4 owner-cash path. V4 retains those gates and adds a fixed same-industry peer panel plus mechanically recomputed D3/D4 materiality steps from five target pre-action annual observations. An action exposure admits materiality only when it is already implemented or irrevocably incurred on the same boundary; forecasts, design capacity, CIP, loans and post-cutoff evidence are prohibited.",
+  "type": "object",
+  "required": ["schema_version"],
+  "properties": {
+    "schema_version": {"const": "judgment-selection-candidate.v1"},
+    "selection_admission_contract": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["version", "customer_absorption_requirement", "cash_transmission_requirement"],
+      "properties": {
+        "version": {"enum": ["JUDGMENT_SELECTION_ADMISSION_V3", "JUDGMENT_SELECTION_ADMISSION_V4"]},
+        "mechanism_topology": {"enum": ["CUSTOMER_RESPONSE_CHAIN", "COST_RESTRUCTURING_CHAIN"]},
+        "customer_absorption_requirement": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["required", "trigger", "rationale"],
+          "properties": {
+            "required": {"type": "boolean"},
+            "trigger": {"type": "string", "minLength": 1},
+            "rationale": {"type": "string", "minLength": 1}
+          }
+        },
+        "cash_transmission_requirement": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["required", "trigger", "rationale"],
+          "properties": {
+            "required": {"type": "boolean"},
+            "trigger": {
+              "enum": [
+                "H_A_OPERATING_IMPROVEMENT_REACHES_NORMAL_OWNER_CASH",
+                "H_A_DOES_NOT_CLAIM_D3_TO_NORMAL_OWNER_CASH"
+              ]
+            },
+            "rationale": {"type": "string", "minLength": 1}
+          }
+        }
+      }
+    },
+    "customer_absorption_observability": {"$ref": "#/$defs/customer_observability"},
+    "cost_driver_observability": {"$ref": "#/$defs/cost_driver_observability"},
+    "d2_non_voter_contract": {"$ref": "#/$defs/d2_non_voter_contract"},
+    "cash_transmission_observability": {"$ref": "#/$defs/observability"},
+    "peer_panel_observability": {"$ref": "#/$defs/peer_panel_observability"},
+    "discovery_binding": {"$ref": "#/$defs/discovery_binding"}
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "selection_admission_contract": {
+            "properties": {
+              "customer_absorption_requirement": {
+                "properties": {"required": {"const": true}}
+              }
+            }
+          }
+        },
+        "required": ["selection_admission_contract"]
+      },
+      "then": {"required": ["customer_absorption_observability"]}
+    },
+    {
+      "if": {
+        "properties": {
+          "selection_admission_contract": {
+            "properties": {
+              "cash_transmission_requirement": {
+                "properties": {"required": {"const": true}}
+              }
+            }
+          }
+        },
+        "required": ["selection_admission_contract"]
+      },
+      "then": {"required": ["cash_transmission_observability"]}
+    },
+    {
+      "if": {
+        "properties": {
+          "selection_admission_contract": {
+            "properties": {"version": {"const": "JUDGMENT_SELECTION_ADMISSION_V4"}}
+          }
+        },
+        "required": ["selection_admission_contract"]
+      },
+      "then": {
+        "required": ["peer_panel_observability", "cash_transmission_observability", "discovery_binding"],
+        "properties": {
+          "selection_admission_contract": {
+            "properties": {
+              "cash_transmission_requirement": {"properties": {"required": {"const": true}}}
+            }
+          },
+          "cash_transmission_observability": {
+            "required": ["d4_cash_bridge_coverage"],
+            "properties": {
+              "gate_version": {"const": "JUDGMENT_SELECTION_ADMISSION_V4"},
+              "materiality_anchors": {
+                "required": ["action_exposure", "D3_UNIT_ECONOMICS", "D4_WORKING_CAPITAL_AND_CASH"],
+                "properties": {
+                  "D3_UNIT_ECONOMICS": {"required": ["relative_peer_threshold"]},
+                  "D4_WORKING_CAPITAL_AND_CASH": {"required": ["relative_peer_threshold"]}
+                }
+              }
+            }
+          },
+          "peer_panel_observability": {
+            "properties": {"gate_version": {"const": "JUDGMENT_SELECTION_ADMISSION_V4"}}
+          }
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "boundary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["responsibility_unit_id", "perimeter_id", "unit"],
+      "properties": {
+        "responsibility_unit_id": {"type": "string", "minLength": 1},
+        "perimeter_id": {"type": "string", "minLength": 1},
+        "unit": {"type": "string", "minLength": 1}
+      }
+    },
+    "discovery_binding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schema_version", "stage0_static_package", "action_screen_extension"],
+      "properties": {
+        "schema_version": {"const": "judgment-selection-discovery-binding.v1"},
+        "stage0_static_package": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "schema_version", "entry_kind", "cohort_id", "industry_id", "selection_as_of",
+            "mechanism_topology", "cohort_eligibility_as_of", "arena_family",
+            "current_admission_assessment", "curator_attestation", "universe",
+            "competitive_arena", "static_pdf_sources", "members"
+          ],
+          "properties": {
+            "schema_version": {"const": "judgment-selection-stage0-static-package.v1"},
+            "entry_kind": {"const": "CURATOR_SUPPLIED_CUTOFF_BEFORE_STATIC_CNINFO_PDF_PACKAGE"},
+            "cohort_id": {"type": "string", "minLength": 1},
+            "industry_id": {"type": "string", "minLength": 1},
+            "selection_as_of": {"type": "string", "format": "date-time"},
+            "mechanism_topology": {"enum": ["CUSTOMER_RESPONSE", "COST_RESTRUCTURING"]},
+            "cohort_eligibility_as_of": {"type": "string", "format": "date-time"},
+            "arena_family": {"type": "string", "minLength": 1},
+            "current_admission_assessment": {"type": "object"},
+            "curator_attestation": {"type": "object"},
+            "universe": {"type": "object"},
+            "competitive_arena": {"type": "object"},
+            "static_pdf_sources": {"type": "array", "minItems": 1, "items": {"type": "object"}},
+            "members": {"type": "array", "minItems": 5, "items": {"type": "object"}}
+          }
+        },
+        "action_screen_extension": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "schema_version", "screen_id", "stage0_cohort_id", "stage0_selection_as_of",
+            "curator_id", "cutoff_at", "mechanism_topology", "candidate_identity",
+            "static_pdf_sources", "source_firewall_attestation", "action",
+            "cutoff_before_facts", "hypothesis_pair"
+          ],
+          "properties": {
+            "schema_version": {"const": "judgment-selection-action-screen-static-extension.v1"},
+            "screen_id": {"type": "string", "minLength": 1},
+            "stage0_cohort_id": {"type": "string", "minLength": 1},
+            "stage0_selection_as_of": {"type": "string", "format": "date-time"},
+            "curator_id": {"type": "string", "minLength": 1},
+            "cutoff_at": {"type": "string", "format": "date-time"},
+            "mechanism_topology": {"enum": ["CUSTOMER_RESPONSE_CHAIN", "COST_RESTRUCTURING_CHAIN"]},
+            "candidate_identity": {"type": "object"},
+            "static_pdf_sources": {"type": "array", "minItems": 1, "items": {"type": "object"}},
+            "source_firewall_attestation": {"type": "object"},
+            "action": {"type": "object"},
+            "cutoff_before_facts": {"type": "array", "minItems": 1, "items": {"type": "object"}},
+            "hypothesis_pair": {"type": "object"},
+            "d2_observability": {"type": "object"},
+            "cost_driver_observability": {"type": "object"}
+          }
+        }
+      }
+    },
+    "repetition": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["period_end", "published_at", "source_id", "field_ref"],
+      "properties": {
+        "period_end": {"type": "string", "format": "date"},
+        "published_at": {"oneOf": [{"type": "string", "format": "date"}, {"type": "string", "format": "date-time"}]},
+        "source_id": {"type": "string", "minLength": 1},
+        "field_ref": {"type": "string", "minLength": 1},
+        "raw_observation": {"$ref": "#/$defs/customer_raw_observation"}
+      }
+    },
+    "customer_raw_observation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["value", "unit", "definition", "channel_position", "evidence"],
+      "properties": {
+        "value": {"type": "number"},
+        "unit": {"type": "string", "minLength": 1},
+        "definition": {"type": "string", "minLength": 1},
+        "channel_position": {"enum": ["END_CUSTOMER", "INDEPENDENT_MARKET_PANEL", "DISCLOSED_CUSTOMER_BOOKING"]},
+        "evidence": {"$ref": "#/$defs/v4_evidence"}
+      }
+    },
+    "threshold": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["operator", "value", "unit"],
+      "properties": {
+        "operator": {"type": "string", "minLength": 1},
+        "value": {"type": "number"},
+        "unit": {"type": "string", "minLength": 1}
+      }
+    },
+    "anchor": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["stage", "predicate_id", "anchor_id", "anchor_statement", "source_ids", "primary_threshold", "rival_threshold"],
+      "properties": {
+        "stage": {"enum": ["D3_UNIT_ECONOMICS", "D4_WORKING_CAPITAL_AND_CASH"]},
+        "predicate_id": {"type": "string", "minLength": 1},
+        "anchor_id": {"type": "string", "minLength": 1},
+        "anchor_statement": {"type": "string", "minLength": 1},
+        "source_ids": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}},
+        "frozen_target_reference_period_end": {"type": "string", "format": "date"},
+        "baseline_value": {"type": "number"},
+        "calculation": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["method", "scale", "input_clock", "conversion_mapping_prohibited", "median", "median_absolute_deviation", "absolute_step"],
+          "properties": {
+            "method": {"const": "SCALED_MEDIAN_ABSOLUTE_DEVIATION"},
+            "scale": {"const": 1.4826},
+            "input_clock": {"enum": ["D3", "D4"]},
+            "conversion_mapping_prohibited": {"const": true},
+            "median": {"type": "number"},
+            "median_absolute_deviation": {"type": "number", "minimum": 0},
+            "absolute_step": {"type": "number", "exclusiveMinimum": 0}
+          }
+        },
+        "relative_peer_threshold": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["formula", "target_reference_period_end", "target_reference_revenue", "target_absolute_ratio_step", "common_preaction_period_ends", "relative_delta_median", "relative_delta_median_absolute_deviation", "peer_preaction_relative_scaled_mad", "relative_ratio_step", "unit"],
+          "properties": {
+            "formula": {"const": "MAX_TARGET_ABSOLUTE_STEP_PER_REFERENCE_REVENUE_AND_PREACTION_PEER_RELATIVE_SCALED_MAD"},
+            "target_reference_period_end": {"type": "string", "format": "date"},
+            "target_reference_revenue": {"type": "number", "exclusiveMinimum": 0},
+            "target_absolute_ratio_step": {"type": "number", "exclusiveMinimum": 0},
+            "common_preaction_period_ends": {"type": "array", "minItems": 3, "items": {"type": "string", "format": "date"}},
+            "relative_delta_median": {"type": "number"},
+            "relative_delta_median_absolute_deviation": {"type": "number", "minimum": 0},
+            "peer_preaction_relative_scaled_mad": {"type": "number", "minimum": 0},
+            "relative_ratio_step": {"type": "number", "exclusiveMinimum": 0},
+            "unit": {"const": "ratio"}
+          }
+        },
+        "primary_threshold": {"$ref": "#/$defs/threshold"},
+        "rival_threshold": {"$ref": "#/$defs/threshold"}
+      }
+    },
+    "customer_observability": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "gate_version", "primary_hypothesis_id", "d2_predicate_id", "failure_disposition",
+        "observation_kind", "not_mechanically_changed_by_action", "prohibited_substitutes",
+        "boundary", "official_field_identity", "hypothesis_signs", "cutoff_before_repetitions"
+      ],
+      "properties": {
+        "gate_version": {"enum": ["JUDGMENT_SELECTION_ADMISSION_V3", "JUDGMENT_SELECTION_ADMISSION_V4"]},
+        "primary_hypothesis_id": {"type": "string", "minLength": 1},
+        "d2_predicate_id": {"type": "string", "minLength": 1},
+        "failure_disposition": {"const": "NO_PRIMARY_IF_CUSTOMER_ABSORPTION_NOT_INDEPENDENTLY_OBSERVABLE"},
+        "observation_kind": {
+          "enum": ["UNITS_SOLD", "SHIPMENTS", "ACTIVE_CUSTOMERS", "CUSTOMER_REORDER_RATE", "CHANNEL_INVENTORY", "INDEPENDENT_VOLUME_PRICE_DECOMPOSITION"]
+        },
+        "not_mechanically_changed_by_action": {"const": true},
+        "prohibited_substitutes": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
+          "items": {"enum": ["REVENUE_ALONE_WHEN_PRICE_OR_MIX_ACTION", "ANNOUNCED_OR_DESIGN_CAPACITY_AS_ACTUAL_DEMAND"]}
+        },
+        "boundary": {"$ref": "#/$defs/boundary"},
+        "official_field_identity": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["field_id", "definition", "source_class", "formula_or_field"],
+          "properties": {
+            "field_id": {"type": "string", "minLength": 1},
+            "definition": {"type": "string", "minLength": 1},
+            "source_class": {"const": "OFFICIAL_DISCLOSURE"},
+            "formula_or_field": {"type": "string", "minLength": 1}
+          }
+        },
+        "hypothesis_signs": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["H_A", "H_B"],
+          "properties": {"H_A": {"type": "string", "minLength": 1}, "H_B": {"type": "string", "minLength": 1}}
+        },
+        "cutoff_before_repetitions": {"type": "array", "minItems": 3, "items": {"$ref": "#/$defs/repetition"}}
+      }
+    },
+    "cost_driver_observability": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["gate_version", "primary_hypothesis_id", "d3_predicate_id", "failure_disposition", "observation_kind", "boundary", "official_field_identity", "hypothesis_signs", "cutoff_before_repetitions"],
+      "properties": {
+        "gate_version": {"const": "JUDGMENT_SELECTION_ADMISSION_V4"},
+        "primary_hypothesis_id": {"type": "string", "minLength": 1},
+        "d3_predicate_id": {"type": "string", "minLength": 1},
+        "failure_disposition": {"const": "NO_PRIMARY_IF_COST_DRIVER_NOT_RECURRENTLY_OBSERVABLE"},
+        "observation_kind": {"enum": ["UNIT_INPUT_COST", "FIXED_COST_ABSORPTION", "ENERGY_INTENSITY", "LABOR_PRODUCTIVITY", "ASSET_UTILIZATION"]},
+        "boundary": {"$ref": "#/$defs/boundary"},
+        "official_field_identity": {"type": "object", "additionalProperties": false, "required": ["field_id", "definition", "source_class", "formula_or_field"], "properties": {"field_id": {"type": "string", "minLength": 1}, "definition": {"type": "string", "minLength": 1}, "source_class": {"const": "OFFICIAL_DISCLOSURE"}, "formula_or_field": {"type": "string", "minLength": 1}}},
+        "hypothesis_signs": {"type": "object", "additionalProperties": false, "required": ["H_A", "H_B"], "properties": {"H_A": {"type": "string", "minLength": 1}, "H_B": {"type": "string", "minLength": 1}}},
+        "cutoff_before_repetitions": {"type": "array", "minItems": 3, "items": {"$ref": "#/$defs/repetition"}}
+      }
+    },
+    "d2_non_voter_contract": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["d2_predicate_id", "verdict", "customer_absorption_conclusion_prohibited"],
+      "properties": {
+        "d2_predicate_id": {"type": "string", "minLength": 1},
+        "verdict": {"const": "NOT_CAUSALLY_CENTRAL_PRE_OUTCOME"},
+        "customer_absorption_conclusion_prohibited": {"const": true}
+      }
+    },
+    "observability": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "gate_version", "primary_hypothesis_id", "failure_disposition", "d3_d4_substitution_prohibited",
+        "common_boundary", "transmission_legs", "d3_to_d4_linkage", "d4_formula", "materiality_anchors"
+      ],
+      "properties": {
+        "gate_version": {"enum": ["JUDGMENT_SELECTION_ADMISSION_V3", "JUDGMENT_SELECTION_ADMISSION_V4"]},
+        "primary_hypothesis_id": {"type": "string", "minLength": 1},
+        "failure_disposition": {"const": "NO_PRIMARY_IF_ANY_LEG_NOT_RECURRENTLY_OBSERVABLE"},
+        "d3_d4_substitution_prohibited": {"const": true},
+        "common_boundary": {"$ref": "#/$defs/boundary"},
+        "d4_cash_bridge_coverage": {"$ref": "#/$defs/d4_cash_bridge_coverage"},
+        "transmission_legs": {
+          "type": "array",
+          "minItems": 3,
+          "maxItems": 3,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["leg_id", "clock", "stage", "hypothesis_signs", "official_field_identity", "boundary", "cutoff_before_repetitions"],
+            "properties": {
+              "leg_id": {"enum": ["OPERATING_CONTRIBUTION", "CASH_WORKING_CAPITAL", "CAPEX_RESTRUCTURING_CASH"]},
+              "clock": {"enum": ["D3", "D4"]},
+              "stage": {"enum": ["D3_UNIT_ECONOMICS", "D4_WORKING_CAPITAL_AND_CASH"]},
+              "hypothesis_signs": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["H_A", "H_B"],
+                "properties": {"H_A": {"type": "string", "minLength": 1}, "H_B": {"type": "string", "minLength": 1}}
+              },
+              "official_field_identity": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["field_id", "definition", "source_class", "formula_or_field"],
+                "properties": {
+                  "field_id": {"type": "string", "minLength": 1},
+                  "definition": {"type": "string", "minLength": 1},
+                  "source_class": {"const": "OFFICIAL_DISCLOSURE"},
+                  "formula_or_field": {"type": "string", "minLength": 1}
+                }
+              },
+              "boundary": {"$ref": "#/$defs/boundary"},
+              "cutoff_before_repetitions": {"type": "array", "minItems": 3, "items": {"$ref": "#/$defs/repetition"}}
+            }
+          }
+        },
+        "d3_to_d4_linkage": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["d3_predicate_id", "d4_predicate_id"],
+          "properties": {"d3_predicate_id": {"type": "string", "minLength": 1}, "d4_predicate_id": {"type": "string", "minLength": 1}}
+        },
+        "d4_formula": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["formula_id", "formula", "positive_working_capital_release_treatment", "capex_restructuring_cash_treatment"],
+          "properties": {
+            "formula_id": {"type": "string", "minLength": 1},
+            "formula": {"type": "string", "minLength": 1},
+            "positive_working_capital_release_treatment": {"const": "SUBTRACT_POSITIVE_RELEASE"},
+            "capex_restructuring_cash_treatment": {"const": "SUBTRACT_OBSERVED_CASH_NEVER_ASSUME_ZERO"}
+          }
+        },
+        "materiality_anchors": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["D3_UNIT_ECONOMICS", "D4_WORKING_CAPITAL_AND_CASH"],
+          "properties": {
+            "action_exposure": {"$ref": "#/$defs/action_exposure"},
+            "D3_UNIT_ECONOMICS": {"$ref": "#/$defs/anchor"},
+            "D4_WORKING_CAPITAL_AND_CASH": {"$ref": "#/$defs/anchor"}
+          }
+        }
+      }
+    },
+    "official_annual_raw_field": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["value", "unit", "source_id", "source_type", "issuer_id", "perimeter_id", "period_end", "published_at", "field_ref"],
+      "properties": {
+        "value": {"type": "number"},
+        "unit": {"type": "string", "minLength": 1},
+        "source_id": {"type": "string", "minLength": 1},
+        "source_type": {"const": "OFFICIAL_AUDITED_ANNUAL_REPORT"},
+        "issuer_id": {"type": "string", "minLength": 1},
+        "perimeter_id": {"const": "LISTED_CONSOLIDATED_ISSUER"},
+        "period_end": {"type": "string", "format": "date"},
+        "published_at": {"oneOf": [{"type": "string", "format": "date"}, {"type": "string", "format": "date-time"}]},
+        "field_ref": {"type": "string", "minLength": 1}
+      }
+    },
+    "annual_d3_d4_raw_observation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["period_end", "reporting_frequency", "d3_formula_id", "d4_formula_id", "d3_raw_fields", "d4_raw_fields"],
+      "properties": {
+        "period_end": {"type": "string", "format": "date"},
+        "reporting_frequency": {"const": "ANNUAL"},
+        "d3_formula_id": {"type": "string", "minLength": 1},
+        "d4_formula_id": {"type": "string", "minLength": 1},
+        "d3_raw_fields": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["operating_revenue_rmb", "operating_cost_rmb", "taxes_and_surcharges_rmb", "selling_expense_rmb", "administrative_expense_rmb"],
+          "properties": {
+            "operating_revenue_rmb": {"$ref": "#/$defs/official_annual_raw_field"},
+            "operating_cost_rmb": {"$ref": "#/$defs/official_annual_raw_field"},
+            "taxes_and_surcharges_rmb": {"$ref": "#/$defs/official_annual_raw_field"},
+            "selling_expense_rmb": {"$ref": "#/$defs/official_annual_raw_field"},
+            "administrative_expense_rmb": {"$ref": "#/$defs/official_annual_raw_field"}
+          }
+        },
+        "d4_raw_fields": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["operating_cash_flow_rmb", "cash_paid_to_acquire_fixed_intangible_and_other_long_term_assets_rmb", "opening_accounts_receivable_rmb", "opening_prepayments_rmb", "opening_inventory_rmb", "opening_accounts_payable_rmb", "opening_customer_advances_rmb", "ending_accounts_receivable_rmb", "ending_prepayments_rmb", "ending_inventory_rmb", "ending_accounts_payable_rmb", "ending_customer_advances_rmb"],
+          "properties": {
+            "operating_cash_flow_rmb": {"$ref": "#/$defs/official_annual_raw_field"},
+            "cash_paid_to_acquire_fixed_intangible_and_other_long_term_assets_rmb": {"$ref": "#/$defs/official_annual_raw_field"},
+            "opening_accounts_receivable_rmb": {"$ref": "#/$defs/official_annual_raw_field"},
+            "opening_prepayments_rmb": {"$ref": "#/$defs/official_annual_raw_field"},
+            "opening_inventory_rmb": {"$ref": "#/$defs/official_annual_raw_field"},
+            "opening_accounts_payable_rmb": {"$ref": "#/$defs/official_annual_raw_field"},
+            "opening_customer_advances_rmb": {"$ref": "#/$defs/official_annual_raw_field"},
+            "ending_accounts_receivable_rmb": {"$ref": "#/$defs/official_annual_raw_field"},
+            "ending_prepayments_rmb": {"$ref": "#/$defs/official_annual_raw_field"},
+            "ending_inventory_rmb": {"$ref": "#/$defs/official_annual_raw_field"},
+            "ending_accounts_payable_rmb": {"$ref": "#/$defs/official_annual_raw_field"},
+            "ending_customer_advances_rmb": {"$ref": "#/$defs/official_annual_raw_field"}
+          }
+        }
+      }
+    },
+    "v4_evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["source_id", "source_type", "issuer_id", "perimeter_id", "responsibility_unit_id", "unit", "published_at", "field_ref"],
+      "properties": {
+        "source_id": {"type": "string", "minLength": 1},
+        "source_type": {"enum": ["OFFICIAL_AUDITED_ANNUAL_REPORT", "OFFICIAL_LISTED_DISCLOSURE"]},
+        "issuer_id": {"type": "string", "minLength": 1},
+        "perimeter_id": {"const": "LISTED_CONSOLIDATED_ISSUER"},
+        "responsibility_unit_id": {"type": "string", "minLength": 1},
+        "unit": {"type": "string", "minLength": 1},
+        "published_at": {"oneOf": [{"type": "string", "format": "date"}, {"type": "string", "format": "date-time"}]},
+        "field_ref": {"type": "string", "minLength": 1}
+      }
+    },
+    "v4_control_evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["source_id", "source_type", "issuer_id", "perimeter_id", "published_at", "field_ref", "observed_control_group_id"],
+      "properties": {
+        "source_id": {"type": "string", "minLength": 1},
+        "source_type": {"enum": ["OFFICIAL_AUDITED_ANNUAL_REPORT", "OFFICIAL_LISTED_DISCLOSURE"]},
+        "issuer_id": {"type": "string", "minLength": 1},
+        "perimeter_id": {"const": "LISTED_CONSOLIDATED_ISSUER"},
+        "published_at": {"oneOf": [{"type": "string", "format": "date"}, {"type": "string", "format": "date-time"}]},
+        "field_ref": {"type": "string", "minLength": 1},
+        "observed_control_group_id": {"type": "string", "minLength": 1}
+      }
+    },
+    "comparability_register": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["verdict", "reviewed_period_ends", "dimensions", "material_breaks_excluded_from_window"],
+      "properties": {
+        "verdict": {"const": "COMPARABLE_PRE_ACTION_WINDOW"},
+        "reviewed_period_ends": {"type": "array", "minItems": 3, "items": {"type": "string", "format": "date"}},
+        "dimensions": {"type": "array", "minItems": 3, "maxItems": 3, "items": {"type": "object", "additionalProperties": false, "required": ["dimension_id", "period_statuses"], "properties": {"dimension_id": {"enum": ["CONSOLIDATION_SCOPE", "ACCOUNTING_PRESENTATION", "OPERATING_PERIMETER"]}, "period_statuses": {"type": "array", "minItems": 3, "items": {"type": "object", "additionalProperties": false, "required": ["period_end", "status", "evidence"], "properties": {"period_end": {"type": "string", "format": "date"}, "status": {"const": "COMPARABLE"}, "evidence": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/v4_evidence"}}}}}}}},
+        "material_breaks_excluded_from_window": {"type": "array", "items": {"type": "object", "additionalProperties": false, "required": ["event_id", "period_end", "evidence"], "properties": {"event_id": {"type": "string", "minLength": 1}, "period_end": {"type": "string", "format": "date"}, "evidence": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/v4_evidence"}}}}}
+      }
+    },
+    "d4_cash_bridge_coverage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["verdict", "accounting_perimeter", "reviewed_period_ends", "components", "unmodeled_material_cash_items"],
+      "properties": {
+        "verdict": {"const": "COMPLETE_PRE_OUTCOME"},
+        "accounting_perimeter": {"const": "LISTED_CONSOLIDATED_ISSUER"},
+        "reviewed_period_ends": {"type": "array", "minItems": 5, "items": {"type": "string", "format": "date"}},
+        "components": {"type": "array", "minItems": 4, "maxItems": 4, "items": {"type": "object", "additionalProperties": false, "required": ["component_id", "treatment"], "properties": {"component_id": {"enum": ["OPERATING_CASH_FLOW", "LONG_LIVED_ASSET_CASH", "CASH_WORKING_CAPITAL", "ACTION_RELATED_CASH"]}, "treatment": {"enum": ["INCLUDED_FROM_FROZEN_D4_RAW_FIELDS", "OBSERVED_AND_DEDUCTED", "NOT_APPLICABLE_SOURCE_CONFIRMED"]}, "evidence": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/v4_evidence"}}}}},
+        "unmodeled_material_cash_items": {"type": "array", "maxItems": 0}
+      }
+    },
+    "action_exposure": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["action_id", "action_statement", "action_state", "economic_action_type", "implemented_or_incurred_at", "boundary", "issuer_scope_bridge", "decision_specificity", "explicitly_immaterial", "implementation_evidence", "prohibited_substitutes", "exposure"],
+      "properties": {
+        "action_id": {"type": "string", "minLength": 1},
+        "action_statement": {"type": "string", "minLength": 1},
+        "action_state": {"const": "IMPLEMENTED_OR_IRREVOCABLY_INCURRED"},
+        "economic_action_type": {"enum": ["OPERATING_NETWORK_RESTRUCTURING", "OPERATING_PRICE_EXECUTION", "OPERATING_PROCESS_EFFICIENCY"]},
+        "implemented_or_incurred_at": {"oneOf": [{"type": "string", "format": "date"}, {"type": "string", "format": "date-time"}]},
+        "boundary": {"$ref": "#/$defs/boundary"},
+        "issuer_scope_bridge": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["outcome_scope", "action_scope_relation", "issuer_level_mechanism_only", "evidence"],
+          "properties": {
+            "outcome_scope": {"const": "LISTED_CONSOLIDATED_ISSUER"},
+            "action_scope_relation": {"const": "ISSUER_WIDE_OPERATING_DECISION"},
+            "issuer_level_mechanism_only": {"const": true},
+            "evidence": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/v4_evidence"}}
+          }
+        },
+        "decision_specificity": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["decision_class", "incremental_to_maintenance_or_mandated_baseline", "evidence"],
+          "properties": {
+            "decision_class": {"const": "DISCRETIONARY_OPERATING_DECISION"},
+            "incremental_to_maintenance_or_mandated_baseline": {"const": true},
+            "evidence": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/v4_evidence"}}
+          }
+        },
+        "explicitly_immaterial": {"const": false},
+        "implementation_evidence": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/v4_evidence"}},
+        "prohibited_substitutes": {"type": "array", "minItems": 5, "maxItems": 5, "items": {"enum": ["FORECAST", "DESIGN_CAPACITY", "CIP", "LOANS", "POST_CUTOFF"]}},
+        "exposure": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["kind", "amount", "unit", "evidence"],
+          "properties": {
+            "kind": {"enum": ["ACTUAL_CASH_OR_RECOGNIZED_ASSET", "IMPLEMENTED_NET_PRICE_DELTA_X_PREACTION_ACTUAL_UNITS"]},
+            "amount": {"type": "number", "exclusiveMinimum": 0},
+            "unit": {"type": "string", "minLength": 1},
+            "evidence": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/v4_evidence"}},
+            "actual_basis": {"enum": ["ACTUAL_CASH_PAID", "RECOGNIZED_ASSET"]},
+            "implemented_net_price_delta": {"type": "number"},
+            "preaction_actual_units": {"type": "number"},
+            "price_delta_field_ref": {"type": "string", "minLength": 1},
+            "preaction_actual_units_field_ref": {"type": "string", "minLength": 1}
+          }
+        }
+      }
+    },
+    "peer_panel_observability": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["gate_version", "primary_hypothesis_id", "failure_disposition", "panel_contract_id", "same_industry_requirement", "common_market_context", "frozen_panel", "relative_method", "target", "peers"],
+      "properties": {
+        "gate_version": {"const": "JUDGMENT_SELECTION_ADMISSION_V4"},
+        "primary_hypothesis_id": {"type": "string", "minLength": 1},
+        "failure_disposition": {"const": "NO_PRIMARY_IF_FIXED_PEER_PANEL_OR_TARGET_HISTORY_NOT_RECURRENTLY_OBSERVABLE"},
+        "panel_contract_id": {"type": "string", "minLength": 1},
+        "same_industry_requirement": {"const": "TARGET_AND_ALL_PEERS_MATCH_CANDIDATE_INDUSTRY"},
+        "common_market_context": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["market_id", "product_or_service_scope", "geographic_scope", "customer_end_market_scope", "same_exogenous_shock_required"],
+          "properties": {
+            "market_id": {"type": "string", "minLength": 1},
+            "product_or_service_scope": {"type": "string", "minLength": 1},
+            "geographic_scope": {"type": "string", "minLength": 1},
+            "customer_end_market_scope": {"type": "string", "minLength": 1},
+            "same_exogenous_shock_required": {"const": true}
+          }
+        },
+        "frozen_panel": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["frozen_order", "universe", "exclusions", "no_replacement", "replacement_policy"],
+          "properties": {
+            "frozen_order": {"type": "array", "minItems": 4, "maxItems": 8, "items": {"type": "string", "minLength": 1}},
+            "universe": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["universe_id", "industry_id", "as_of", "membership_rule", "eligible_company_ids"],
+              "properties": {
+                "universe_id": {"type": "string", "minLength": 1},
+                "industry_id": {"type": "string", "minLength": 1},
+                "as_of": {"oneOf": [{"type": "string", "format": "date"}, {"type": "string", "format": "date-time"}]},
+                "membership_rule": {"type": "string", "minLength": 1},
+                "eligible_company_ids": {"type": "array", "minItems": 4, "items": {"type": "string", "minLength": 1}}
+              }
+            },
+            "exclusions": {"type": "array", "items": {"type": "object", "additionalProperties": false, "required": ["company_id", "reason"], "properties": {"company_id": {"type": "string", "minLength": 1}, "reason": {"type": "string", "minLength": 1}}}},
+            "no_replacement": {"const": true},
+            "replacement_policy": {"const": "NO_REPLACEMENT"}
+          }
+        },
+        "relative_method": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["method", "reference_period_end", "unit", "conjunction"],
+          "properties": {
+            "method": {"const": "DELTA_VS_PEER_MEDIAN"},
+            "reference_period_end": {"type": "string", "format": "date"},
+            "unit": {"const": "ratio"},
+            "conjunction": {"const": "D3_AND_D4"}
+          }
+        },
+        "target": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["company_id", "issuer_id", "control_group_id", "control_group_evidence", "responsibility_unit_id", "boundary", "market_exposure", "annual_d3_d4_raw_observations", "comparability_register"],
+          "properties": {
+            "company_id": {"type": "string", "minLength": 1},
+            "issuer_id": {"type": "string", "minLength": 1},
+            "control_group_id": {"type": "string", "minLength": 1},
+            "control_group_evidence": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/v4_control_evidence"}},
+            "responsibility_unit_id": {"type": "string", "minLength": 1},
+            "boundary": {"$ref": "#/$defs/boundary"},
+            "market_exposure": {"$ref": "#/$defs/market_exposure"},
+            "annual_d3_d4_raw_observations": {"type": "array", "minItems": 5, "items": {"$ref": "#/$defs/annual_d3_d4_raw_observation"}},
+            "comparability_register": {"$ref": "#/$defs/comparability_register"}
+          }
+        },
+        "peers": {
+          "type": "array",
+          "minItems": 3,
+          "maxItems": 7,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["company_id", "issuer_id", "control_group_id", "control_group_evidence", "industry_id", "responsibility_unit_id", "boundary", "market_exposure", "annual_d3_d4_raw_observations", "comparability_register"],
+            "properties": {
+              "company_id": {"type": "string", "minLength": 1},
+              "issuer_id": {"type": "string", "minLength": 1},
+              "control_group_id": {"type": "string", "minLength": 1},
+              "control_group_evidence": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/v4_control_evidence"}},
+              "industry_id": {"type": "string", "minLength": 1},
+              "responsibility_unit_id": {"type": "string", "minLength": 1},
+              "boundary": {"$ref": "#/$defs/boundary"},
+              "market_exposure": {"$ref": "#/$defs/market_exposure"},
+              "annual_d3_d4_raw_observations": {"type": "array", "minItems": 3, "items": {"$ref": "#/$defs/annual_d3_d4_raw_observation"}},
+              "comparability_register": {"$ref": "#/$defs/comparability_register"}
+            }
+          }
+        }
+      }
+    },
+    "market_exposure": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["market_id", "product_or_service_scope", "geographic_scope", "customer_end_market_scope", "evidence"],
+      "properties": {
+        "market_id": {"type": "string", "minLength": 1},
+        "product_or_service_scope": {"type": "string", "minLength": 1},
+        "geographic_scope": {"type": "string", "minLength": 1},
+        "customer_end_market_scope": {"type": "string", "minLength": 1},
+        "evidence": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/v4_evidence"}}
+      }
+    }
+  }
+}

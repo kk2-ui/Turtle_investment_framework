@@ -262,7 +262,20 @@ def read_judgment_generation_handoff(
     except ModuleNotFoundError:
         from judgment_generation_handoff import build_judgment_generation_handoff
 
-    return build_judgment_generation_handoff(output_dir, view)
+    handoff = build_judgment_generation_handoff(output_dir, view)
+    if str(view or "").upper() in {"JUDGMENT_SYNTHESIS", "INVESTMENT_ENRICHMENT"}:
+        try:
+            from scripts.judgment_handoff_receipts import (
+                record_judgment_handoff_read_receipt,
+            )
+        except ModuleNotFoundError:
+            from judgment_handoff_receipts import (
+                record_judgment_handoff_read_receipt,
+            )
+        receipt = record_judgment_handoff_read_receipt(output_dir, handoff)
+        if receipt.get("state") == "RECORDED":
+            handoff["read_receipt"] = receipt
+    return handoff
 
 
 def read_chapter_contract(

@@ -4,6 +4,8 @@ import argparse
 import importlib.util
 import json
 import shutil
+from copy import deepcopy
+from datetime import datetime
 from pathlib import Path
 
 import pytest
@@ -29,6 +31,31 @@ def _append_transition(conn, event: dict):
 
 
 jfc.append_event = _append_transition
+
+
+@pytest.fixture(autouse=True)
+def _fixed_control_clock(monkeypatch: pytest.MonkeyPatch) -> None:
+    now = datetime.fromisoformat("2027-01-16T12:00:00-08:00")
+    monkeypatch.setattr(jfc, "_now_dt", lambda: now)
+    import scripts.judgment_feedback_control as packaged_jfc
+    monkeypatch.setattr(packaged_jfc, "_now_dt", lambda: now)
+
+
+def _boundary_manifest(tmp_path: Path, *, episode_id: str = "R-BOUNDARY-01", company_id: str = "CN:BOUNDARY") -> dict:
+    manifest = _manifest(tmp_path)
+    manifest.update({
+        "episode_id": episode_id,
+        "company_id": company_id,
+        "episode_class": "MECHANISM_SIGNAL_PROBE",
+        "selection_status": "NO_PRIMARY",
+        "learning_eligibility": "BOUNDARY_METHOD_ELIGIBLE",
+        "program_lane": "HISTORICAL_TRAINING",
+        "outcome_access": "PIT_OUTCOME_SEALED",
+        "training_program_ref": str(tmp_path / "training-program.json"),
+    })
+    manifest["claims"][0]["claim_id"] = f"{episode_id}:D1"
+    (tmp_path / "training-program.json").write_text("{}\n", encoding="utf-8")
+    return manifest
 
 
 def _artifact(tmp_path: Path, name: str) -> str:
@@ -219,6 +246,81 @@ def test_event_sequence_and_idempotency_are_append_only(tmp_path: Path) -> None:
         jfc.append_event(conn, _event(s1, "CLAIM_SETTLED", at, key="settle-2", payload={"settlement_verdict": "B_ONLY"}))
 
 
+def test_boundary_method_learning_preserves_no_primary_and_accepts_not_diagnostic_settlement(tmp_path: Path) -> None:
+    from scripts.judgment_boundary_feedback import build_boundary_feedback
+    from scripts.judgment_learning import build_judgment_learning_note
+
+    conn = _conn(tmp_path)
+    manifest = _boundary_manifest(tmp_path)
+    jfc.register_manifest(conn, manifest, registered_at="2026-01-01T10:00:00+08:00")
+    item = "FBI:R-BOUNDARY-01:R-BOUNDARY-01:D1:S1_DECISION"
+    at = "2026-04-01T00:00:00+08:00"
+    outcome = {
+        "schema_version": "judgment-boundary-outcome.v1", "case_id": "R-BOUNDARY-01",
+        "freeze_id": "BFREEZE:R-BOUNDARY-01", "settlement_id": "BSETTLE:R-BOUNDARY-01",
+        "settlement_as_of": at, "selection_status": "NO_PRIMARY",
+        "sources": [{"source_id": "official:later", "official": True}],
+        "clocks": [{"clock": clock, "status": "NOT_DIAGNOSTIC", "measurement_scope": "same responsibility unit", "missing_facts": "project-level field unavailable", "prohibited_substitutes": "group revenue cannot replace project evidence", "source_ids": ["official:later"]} for clock in ("D1", "D2", "D3", "D4", "D5")],
+    }
+    feedback = build_boundary_feedback(outcome)
+    feedback_path = tmp_path / "boundary-feedback.json"
+    feedback_path.write_text(json.dumps(feedback), encoding="utf-8")
+    for event_type, key in (("ACQUISITION_STARTED", "a"), ("OUTCOME_PACKAGE_READY", "p"), ("READ_ATTESTED", "r"), ("OUTCOME_EXTRACTED", "x")):
+        jfc.append_event(conn, _event(item, event_type, at, key=key))
+    settlement_event = _event(
+        item,
+        "CLAIM_SETTLED",
+        at,
+        key="settle",
+        payload={"settlement_verdict": "NOT_DIAGNOSTIC", "feedback_ref": str(feedback_path)},
+    )
+    jfc.append_event(conn, settlement_event)
+    assert jfc.append_event(conn, settlement_event)["idempotent"] is True
+    note = build_judgment_learning_note(
+        feedback, "LNOTE:R-BOUNDARY-01:measurement", "R-BOUNDARY-01:D1",
+        "INSUFFICIENT_EVIDENCE", "NO_PRIMARY", "project-level D1-D5", "The frozen evidence contract stayed incomplete across all clocks.",
+        "Require responsibility-unit customer, unit economics, cash and capital fields before selecting a path.",
+        feedback_ref=str(feedback_path), experiment_id="R-BOUNDARY-01", company_cluster_id="COMPANY:boundary",
+        root_cause_classes=["DATA_COVERAGE"], failure_loci=["EVIDENCE_ACQUISITION"], economic_failure_loci=["MEASUREMENT"], recorded_at=at,
+    )
+    note_path = tmp_path / "boundary-note.json"
+    note_path.write_text(json.dumps(note), encoding="utf-8")
+    result = jfc.record_learning_note(
+        conn, feedback_item_id=item, feedback_ref=feedback_path, learning_note_ref=note_path,
+        diagnosis_payload=_diagnosis("EVT:settle"), effective_at=at,
+    )
+    assert result["status"] == "LEARNING_NOTE_READY"
+    shown = jfc.show(conn, item, as_of=at)
+    assert shown["claim"]["selection_status"] == "NO_PRIMARY"
+    assert shown["claim"]["learning_eligibility"] == "BOUNDARY_METHOD_ELIGIBLE"
+    assert shown["states"]["learning_state"] == "APPLICATION_PENDING"
+
+
+def test_register_experiment_resolves_top_level_training_program_ref_relative_to_experiment(
+    tmp_path: Path,
+) -> None:
+    experiment = tmp_path / "docs" / "development" / "research" / "experiments" / "R-BOUNDARY"
+    experiment.mkdir(parents=True)
+    for name in ("thesis.json", "outcome.json", "measurement.json"):
+        (experiment / name).write_text("{}\n", encoding="utf-8")
+    program = tmp_path / "config" / "judgment_training_program_v1.json"
+    program.parent.mkdir(parents=True)
+    program.write_text("{}\n", encoding="utf-8")
+    manifest = _boundary_manifest(tmp_path, episode_id="R-BOUNDARY-02")
+    manifest["training_program_ref"] = "../../../../../config/judgment_training_program_v1.json"
+    stage = manifest["claims"][0]["stages"][0]
+    stage["frozen_artifact_ref"] = "thesis.json"
+    stage["source_contract_ref"] = "outcome.json"
+    stage["measurement_contract_ref"] = "measurement.json"
+    (experiment / "judgment_feedback_control.json").write_text(
+        json.dumps(manifest), encoding="utf-8",
+    )
+
+    resolved = jfc._resolve_manifest_artifact_refs(manifest, experiment)
+
+    assert resolved["training_program_ref"] == str(program.resolve())
+
+
 def test_a_later_acquisition_cannot_retroactively_authorize_an_earlier_package(tmp_path: Path) -> None:
     conn, s1, _ = _registered(tmp_path)
     jfc.append_event(conn, _event(s1, "ACQUISITION_STARTED", "2026-04-02T00:00:00+08:00", key="late-acquire"))
@@ -351,6 +453,48 @@ def test_record_learning_note_emits_a_formally_bound_ready_event(tmp_path: Path)
     assert read_back["control_claim"] == {
         "episode_id": "R-TEST-01", "claim_id": "FJ:DEMAND",
     }
+
+
+@pytest.mark.parametrize(
+    ("recorded_at", "expected_finding"),
+    [
+        ("2026-04-01T00:59:59+08:00", "event_effective_after_recorded"),
+        ("2027-01-17T00:00:00-08:00", "event_recorded_in_future"),
+    ],
+)
+def test_learning_note_admission_blocks_legacy_invalid_double_clock_chain(
+    tmp_path: Path, recorded_at: str, expected_finding: str,
+) -> None:
+    conn, s1, _ = _registered(tmp_path, selection=True)
+    feedback_path, note_path, _ = _formal_learning_artifacts(tmp_path)
+    _settle_with_feedback(conn, s1, feedback_path)
+    result = jfc.record_learning_note(
+        conn,
+        feedback_item_id=s1,
+        feedback_ref=feedback_path,
+        learning_note_ref=note_path,
+        diagnosis_payload=_diagnosis("EVT:formal-settle"),
+        effective_at="2026-04-01T01:00:00+08:00",
+    )
+    conn.execute(
+        "UPDATE judgment_feedback_events SET recorded_at = ? WHERE event_id = ?",
+        (recorded_at, result["event"]["event_id"]),
+    )
+    conn.commit()
+
+    read_back = jfc.read_learning_note_ready_event(
+        tmp_path / "stock_analysis.db",
+        feedback_item_id=s1,
+        event_id=result["event"]["event_id"],
+        information_cutoff="2099-04-02T00:00:00+08:00",
+    )
+
+    assert read_back["admission_state"] == "BLOCKED"
+    assert "invalid_learning_chain" in read_back["admission_findings"]
+    assert any(
+        finding.startswith(expected_finding + ":")
+        for finding in read_back["admission_findings"]
+    )
 
 
 @pytest.mark.parametrize(
@@ -498,6 +642,122 @@ def test_measurement_mismatch_cannot_create_learning_note(tmp_path: Path) -> Non
         jfc.append_event(conn, _event(s1, "LEARNING_NOTE_READY", at, key="note", payload={
             "diagnosis_event_id": "EVT:diagnosis",
             "learning_note_ref": _artifact(tmp_path, "learning_note.json"),
+        }))
+
+
+def test_measurement_mismatch_can_capture_only_an_insufficient_evidence_boundary_note(tmp_path: Path) -> None:
+    conn, s1, _ = _registered(tmp_path, selection=True)
+    at = "2026-04-01T00:00:00+08:00"
+    for event_type, key in (("ACQUISITION_STARTED", "a"), ("OUTCOME_PACKAGE_READY", "p"), ("READ_ATTESTED", "r"), ("OUTCOME_EXTRACTED", "x")):
+        jfc.append_event(conn, _event(s1, event_type, at, key=key))
+    jfc.append_event(conn, _event(s1, "MEASUREMENT_MISMATCH", at, key="mismatch"))
+    jfc.append_event(conn, _event(s1, "DIAGNOSIS_ACCEPTED", at, key="diagnosis", payload=_diagnosis("EVT:mismatch")))
+    note_ref = _artifact(tmp_path, "measurement_boundary_note.json")
+    note_snapshot = {
+        "disposition": "INSUFFICIENT_EVIDENCE",
+        "economic_failure_loci": ["MEASUREMENT", "TRANSMISSION"],
+        "feedback_context": {
+            "judgment_outcome_status": "NOT_DIAGNOSTIC",
+            "rival_hypothesis_feedback": {"overall_verdict": "NOT_DIAGNOSTIC"},
+        },
+    }
+    note = jfc.append_event(conn, _event(s1, "LEARNING_NOTE_READY", at, key="measurement-note", payload={
+        "diagnosis_event_id": "EVT:diagnosis",
+        "learning_note_ref": note_ref,
+        "learning_scope": "MEASUREMENT_BOUNDARY",
+        "permitted_change_targets": ["CANDIDATE_OBSERVABILITY_GATE", "SOURCE_GATE"],
+        "learning_note_snapshot": note_snapshot,
+        "feedback_snapshot": {"joint_comparison": {"overall_verdict": "NOT_DIAGNOSTIC"}},
+    }))
+
+    state = jfc.show(conn, s1, as_of=at)
+    assert state["states"]["learning_state"] == "MEASUREMENT_BOUNDARY_READY"
+    with pytest.raises(jfc.ControlPlaneError, match="cannot create method applications"):
+        jfc.append_event(conn, _event(s1, "LEARNING_APPLIED", at, key="forbidden-application", payload={
+            "learning_note_event_id": note["event_id"],
+            "learning_scope": "SELECTION_METHOD",
+        }))
+
+
+@pytest.mark.parametrize(
+    "mutation",
+    [
+        lambda payload: payload["learning_note_snapshot"].__setitem__("disposition", "RETAIN"),
+        lambda payload: payload.__setitem__("permitted_change_targets", ["SOURCE_GATE", "METHOD_FREEZE"]),
+        lambda payload: payload["feedback_snapshot"]["joint_comparison"].__setitem__("overall_verdict", "A_ONLY"),
+    ],
+)
+def test_measurement_boundary_note_rejects_directional_or_privileged_payloads(
+    tmp_path: Path, mutation,
+) -> None:
+    conn, s1, _ = _registered(tmp_path, selection=True)
+    at = "2026-04-01T00:00:00+08:00"
+    for event_type, key in (("ACQUISITION_STARTED", "a"), ("OUTCOME_PACKAGE_READY", "p"), ("READ_ATTESTED", "r"), ("OUTCOME_EXTRACTED", "x")):
+        jfc.append_event(conn, _event(s1, event_type, at, key=key))
+    jfc.append_event(conn, _event(s1, "MEASUREMENT_MISMATCH", at, key="mismatch"))
+    jfc.append_event(conn, _event(s1, "DIAGNOSIS_ACCEPTED", at, key="diagnosis", payload=_diagnosis("EVT:mismatch")))
+    payload = {
+        "diagnosis_event_id": "EVT:diagnosis",
+        "learning_note_ref": _artifact(tmp_path, "measurement_boundary_note.json"),
+        "learning_scope": "MEASUREMENT_BOUNDARY",
+        "permitted_change_targets": ["CANDIDATE_OBSERVABILITY_GATE", "SOURCE_GATE"],
+        "learning_note_snapshot": {
+            "disposition": "INSUFFICIENT_EVIDENCE",
+            "economic_failure_loci": ["MEASUREMENT"],
+            "feedback_context": {
+                "judgment_outcome_status": "NOT_DIAGNOSTIC",
+                "rival_hypothesis_feedback": {"overall_verdict": "NOT_DIAGNOSTIC"},
+            },
+        },
+        "feedback_snapshot": {"joint_comparison": {"overall_verdict": "NOT_DIAGNOSTIC"}},
+    }
+    mutation(payload)
+
+    with pytest.raises(jfc.ControlPlaneError, match="measurement-boundary"):
+        jfc.append_event(conn, _event(s1, "LEARNING_NOTE_READY", at, key="invalid-measurement-note", payload=payload))
+
+
+def test_mixed_selection_allows_only_a_no_rights_mechanism_boundary_note(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    conn, s1, _ = _registered(tmp_path, selection=True)
+    monkeypatch.setattr(jfc, "selection_joint_feedback_verdict", lambda *_args, **_kwargs: "MIXED")
+    at = "2026-04-01T00:00:00+08:00"
+    for event_type, key in (
+        ("ACQUISITION_STARTED", "mixed-a"), ("OUTCOME_PACKAGE_READY", "mixed-p"),
+        ("READ_ATTESTED", "mixed-r"), ("OUTCOME_EXTRACTED", "mixed-x"),
+    ):
+        jfc.append_event(conn, _event(s1, event_type, at, key=key))
+    jfc.append_event(conn, _event(s1, "CLAIM_SETTLED", at, key="mixed-settle", payload={"settlement_verdict": "A_ONLY"}))
+    diagnosis = {
+        **_diagnosis("EVT:mixed-settle"),
+        "diagnosis_scope": "MIXED_MECHANISM_BOUNDARY",
+    }
+    jfc.append_event(conn, _event(s1, "DIAGNOSIS_ACCEPTED", at, key="mixed-diagnosis", payload=diagnosis))
+    base = {
+        "diagnosis_event_id": "EVT:mixed-diagnosis",
+        "learning_note_ref": _artifact(tmp_path, "mixed_boundary_note.json"),
+        "learning_scope": "MIXED_MECHANISM_BOUNDARY",
+        "permitted_change_targets": [],
+        "prohibited_rights": list(jfc.SELECTION_BOUNDARY_PROHIBITED_RIGHTS),
+        "learning_note_snapshot": {
+            "disposition": "INSUFFICIENT_EVIDENCE",
+            "feedback_context": {
+                "rival_hypothesis_feedback": {"overall_verdict": "MIXED"},
+            },
+        },
+        "feedback_snapshot": {"joint_comparison": {"overall_verdict": "MIXED"}},
+    }
+    privileged = deepcopy(base)
+    privileged["permitted_change_targets"] = ["METHOD_FREEZE"]
+    with pytest.raises(jfc.ControlPlaneError, match="grants no directional"):
+        jfc.append_event(conn, _event(s1, "LEARNING_NOTE_READY", at, key="mixed-privileged", payload=privileged))
+
+    note = jfc.append_event(conn, _event(s1, "LEARNING_NOTE_READY", at, key="mixed-boundary", payload=base))
+    assert jfc.show(conn, s1, as_of=at)["states"]["learning_state"] == "MIXED_MECHANISM_BOUNDARY_READY"
+    with pytest.raises(jfc.ControlPlaneError, match="mixed selection feedback cannot create method applications"):
+        jfc.append_event(conn, _event(s1, "LEARNING_APPLIED", at, key="mixed-application", payload={
+            "learning_note_event_id": note["event_id"], "learning_scope": "SELECTION_METHOD",
         }))
 
 

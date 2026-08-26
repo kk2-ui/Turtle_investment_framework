@@ -48,6 +48,9 @@
               "FINANCIAL_DRIVER_BRIDGE",
               "THESIS_TEST",
               "INSIGHT_LEDGER",
+              "FROZEN_CJO",
+              "CURRENT_COMPANY_CJO_ADMISSION",
+              "CJO_QUANTITATIVE_OVERLAY",
               "CJO_PREDECESSOR",
               "VALUATION_ROUTE"
             ]
@@ -135,7 +138,8 @@
               "allocation_events": {"type": "array", "items": {"type": "object"}},
               "thesis": {"type": "object"},
               "insights": {"type": "array", "items": {"type": "object"}},
-              "adversarial_review": {"type": "object"}
+              "adversarial_review": {"type": "object"},
+              "frozen_cjo": {"type": "object"}
             }
           }
         }
@@ -151,7 +155,8 @@
             "required": ["company_judgment_predecessor", "valuation_route"],
             "properties": {
               "company_judgment_predecessor": {"type": "object"},
-              "valuation_route": {"type": "object"}
+              "valuation_route": {"type": "object"},
+              "quantitative_overlay": {"type": "object"}
             }
           }
         }

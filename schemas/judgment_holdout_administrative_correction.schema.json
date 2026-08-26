@@ -1,0 +1,76 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://turtle.local/schemas/judgment_holdout_administrative_correction.schema.json",
+  "title": "Turtle R-103 append-only administrative prerequisite overlay",
+  "oneOf": [
+    {"$ref": "#/$defs/correction"},
+    {"$ref": "#/$defs/review"}
+  ],
+  "$defs": {
+    "correction": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version", "correction_id", "program_id", "source_program_id",
+        "training_episode_id", "case_id", "method_version", "method_scope",
+        "method_frozen_at", "method_freeze_recorded_at", "method_application_event_id",
+        "independent_method_review_ref", "correction_author_id", "method_designer_id",
+        "r102_learner_id", "future_evaluator_id", "outcome_custodian_id", "corrected_at",
+        "superseded_prerequisite", "replacement_prerequisite", "sealed_core_mutation",
+        "outcome_body_access", "authorization_effect"
+      ],
+      "properties": {
+        "schema_version": {"const": "judgment-holdout-administrative-prerequisite-correction.v1"},
+        "correction_id": {"type": "string", "minLength": 1},
+        "program_id": {"type": "string", "pattern": "^JTP:[A-Za-z0-9._:-]+$"},
+        "source_program_id": {"type": "string", "pattern": "^JTP:[A-Za-z0-9._:-]+$"},
+        "training_episode_id": {"type": "string", "pattern": "^JTE:[A-Za-z0-9._:-]+$"},
+        "case_id": {"const": "HOLDOUT:R-103:yinlun-nev-nomination-20201231"},
+        "method_version": {"type": "string", "minLength": 1},
+        "method_scope": {"const": "SELECTION_AND_BOUNDARY"},
+        "method_frozen_at": {"type": "string", "format": "date-time"},
+        "method_freeze_recorded_at": {"type": "string", "format": "date-time"},
+        "method_application_event_id": {"type": "string", "minLength": 1},
+        "independent_method_review_ref": {"type": "string", "minLength": 1},
+        "correction_author_id": {"type": "string", "minLength": 1},
+        "method_designer_id": {"type": "string", "minLength": 1},
+        "r102_learner_id": {"type": "string", "minLength": 1},
+        "future_evaluator_id": {"type": "string", "minLength": 1},
+        "outcome_custodian_id": {"type": "string", "minLength": 1},
+        "corrected_at": {"type": "string", "format": "date-time"},
+        "superseded_prerequisite": {"type": "string", "minLength": 1},
+        "replacement_prerequisite": {"type": "string", "minLength": 1},
+        "sealed_core_mutation": {"const": "NONE"},
+        "outcome_body_access": {"const": "NOT_OPENED"},
+        "authorization_effect": {"const": "NO_APPLICATION_CONTROL_OR_OUTCOME_REVEAL"}
+      }
+    },
+    "review": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version", "review_id", "correction_id", "program_id",
+        "training_episode_id", "case_id", "correction_ref", "reviewed_correction",
+        "reviewer_id", "reviewer_acceptance", "reviewed_at", "verdict",
+        "sealed_core_mutation", "outcome_body_access", "authorization_effect"
+      ],
+      "properties": {
+        "schema_version": {"const": "judgment-holdout-administrative-prerequisite-review.v1"},
+        "review_id": {"type": "string", "minLength": 1},
+        "correction_id": {"type": "string", "minLength": 1},
+        "program_id": {"type": "string", "pattern": "^JTP:[A-Za-z0-9._:-]+$"},
+        "training_episode_id": {"type": "string", "pattern": "^JTE:[A-Za-z0-9._:-]+$"},
+        "case_id": {"const": "HOLDOUT:R-103:yinlun-nev-nomination-20201231"},
+        "correction_ref": {"type": "string", "minLength": 1},
+        "reviewed_correction": {"$ref": "#/$defs/correction"},
+        "reviewer_id": {"type": "string", "minLength": 1},
+        "reviewer_acceptance": {"const": "ACCEPTED"},
+        "reviewed_at": {"type": "string", "format": "date-time"},
+        "verdict": {"const": "ADMINISTRATIVE_PREREQUISITE_CORRECTION_ACCEPTED"},
+        "sealed_core_mutation": {"const": "NONE"},
+        "outcome_body_access": {"const": "NOT_OPENED"},
+        "authorization_effect": {"const": "NO_APPLICATION_CONTROL_OR_OUTCOME_REVEAL"}
+      }
+    }
+  }
+}

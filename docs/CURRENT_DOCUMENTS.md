@@ -2,7 +2,7 @@
 
 > 状态：`CURRENT / AUTHORITATIVE_NAVIGATION`
 >
-> 更新：2026-08-23
+> 更新：2026-08-25
 
 本文件只解决一件事：告诉后续 Agent 哪些文档可以决定当前状态、执行顺序和产品标准。`docs/History/` 中的文件只用于追溯，不能成为恢复入口、当前状态或实施授权。
 
@@ -27,9 +27,9 @@
 | `docs/development/stages/08_REAL_REPORT_ACCEPTANCE_AND_QUALITY_CALIBRATION.md` | 当前Phase 08产品与验收规范 |
 | `progress-dashboard.html` | 当前状态的人读摘要；派生视图 |
 
-当前状态是 `G1_CANDIDATE_MATURATION + G1-T_HISTORICAL_TRAINING / IN_PROGRESS`。G1-J 继续负责中心路径、可证伪前瞻判断和追加式结果结算的黄金接纳契约；G1-T 以历史 PIT 开发回放为训练主线，预留历史 holdout，真实前瞻只作部署哨兵。G1.5 已进入正式路线但仍为 `PLANNED`；路线落库不等于已启动24份报告生产。
+当前状态是 `G1_CANDIDATE_MATURATION + G1-T_LAYERED_HISTORICAL_TRAINING / FORECAST_EPOCH_IMPLEMENTED / FORECAST_LEARNING_CONTROL_IMPLEMENTED / DECISION_CONTRACT_GATE_IMPLEMENTED / CJO_TEACHING_MIRROR_VALIDATED / CJO_VALUATION_SETTLEMENT_VALIDATED / DECISION_UTILITY_CONTROL_IMPLEMENTED / REGISTRY_AWARE_ADMISSION_IMPLEMENTED / CEMENT_H2_NO_PRIMARY_ACTION_SCOPE`。训练对象已按 Industry Universe、Evidence Carrier、Teaching/Lifecycle、Forecast、Comparative 和 Learning 分层；固定公司数量只约束特定 comparative topology。当前 R-62/R-69 均为 `NO_PRIMARY / NOT_FROZEN` 的结果前筛查，不能登记为 boundary 或 selection learning；R-61 仍是 outcome-sealed 预留留出，只有真实 `SELECTION_ADMITTED` 开发链完成、跨公司 application 复核并冻结方法后才可评价。R-102 只保留 `MEASUREMENT_BOUNDARY`，R-104 的 D3/D4 `MIXED` 只保留无权利边界。水泥 H1 已通过 strict source intake，H2 为 `NO_PRIMARY_ACTION_SCOPE`；这允许 Forecast/Teaching/Lifecycle 继续，不构成 Comparative 准入。Forecast、Measurement Contract、独立 settlement、paired evaluation、CJO core、Overlay 和报告只读 handoff 的工程控制已接通，但无真实 `SELECTION_METHOD_ELIGIBLE` 样本、无正式方法 release，也无 `MECHANISM_READY` 或投资授权实例。当前格力仍为 `PRE_FREEZE / NO_PRIMARY / NOT_FROZEN`；新前瞻只作为部署哨兵，G1.5 仍为 `PLANNED`。Agent 不得以动态 CNINFO、结果后同行、价格或 outcome 资料补齐这些缺口。
 
-截至 2026-08-23，G1-J 的结构化契约、运行时验证、黄金机器门和独立盲评维度已经接通；报告生成另已具备 `RESEARCH_AGENDA / JUDGMENT_SYNTHESIS / INVESTMENT_ENRICHMENT` 三个派生只读视图，普通合同包和 PIT CJO/投资工具面可以消费受控行业问题、正式 feedback/control-event 谱系准入的候选方法提示及同 cutoff 公司判断前置物。PIT 在没有逐条 cutoff-safe 快照前禁用全局行业 prior 与经验基准率，并以 refresh generation 的读取收据阻止模型忽略 handoff。现行报告仍须冻结 3—5 项可结算判断；有方向性证据时才可选择中心路径，无方向性证据必须保留 `NO_PRIMARY`。`NO_PRIMARY` 可以是完整 CJO，但不能成为投资增强前置物。该工程接线不等于内容或训练效果通过：当前格力仍是 `PRE_FREEZE / NO_PRIMARY / NOT_FROZEN`，须在不读取未来结果的条件下完成全链路生成与独立复核；仓库仍无真实 V1/V2 配对黄金报告、真实未来经营结算、`MECHANISM_READY` 实例或 L1–L5 能力优势结论。
+截至 2026-08-25，G1-J 的结构化契约、运行时验证、黄金机器门和独立盲评维度已经接通；报告生成具备 `RESEARCH_AGENDA / JUDGMENT_SYNTHESIS / INVESTMENT_ENRICHMENT` 三个派生只读视图。若分析合同声明 canonical CJO/Overlay，它是生产读取、read receipt 与报告装配的唯一引用；`INVESTMENT_ENRICHMENT` 还必须绑定 current-company `PRIMARY_ADMITTED` receipt，并让 admission、Frozen CJO 和 Overlay 精确复现 CJO 的 ID、公司、cutoff、方法与 resolution。裸 generic CJO、`NO_PRIMARY` 或 `MIXED` 可以被 synthesis 只读呈现，不能进入 Overlay。这只证明受控读取，不授予发布或交易权限。分层重构只允许 cutoff-safe Industry/Lifecycle 摘要进入 `RESEARCH_AGENDA`，历史结局不能成为当前公司事实；选择方法仍须经 Comparative Episode、跨公司 application 和 R-103 holdout 后授权。现行报告仍须冻结 3—5 项可结算判断；有方向性证据时才可选择中心路径，无方向性证据必须保留 `NO_PRIMARY`。该工程接线不等于内容或训练效果通过：当前格力仍是 `PRE_FREEZE / NO_PRIMARY / NOT_FROZEN`，仓库仍无真实 V1/V2 配对黄金报告、真实未来经营结算、`MECHANISM_READY` 实例或 L1–L5 能力优势结论。服务定位与三视图边界以[训练反馈到黄金报告的服务定位设计](development/research/TURTLE_GOLDEN_REPORT_SERVICE_DESIGN.md)、[current-company CJO admission v1](development/research/TURTLE_CURRENT_COMPANY_CJO_ADMISSION_V1_IMPLEMENTATION.md)和[canonical CJO report binding v1](development/research/TURTLE_CANONICAL_CJO_REPORT_BINDING_V1_IMPLEMENTATION.md)为准。
 
 ## 3. 当前产品与研究规范
 
@@ -42,8 +42,22 @@
 | `docs/value_investing_from_graham_to_buffett_notes.md` | 书籍研究资料；不能单独覆盖现行模型契约 |
 | `docs/development/INDUSTRY_KNOWLEDGE_BASE.md` | 行业机制知识库权限、升格和隔离规则 |
 | `docs/development/JUDGMENT_FEEDBACK_CONTROL_PLANE_IMPLEMENTATION_SPEC.md` | 长期判断反馈、learning application 与 V1/V2 成对能力验证契约 |
+| `docs/development/research/TURTLE_DECISION_UTILITY_CONTROL_V1_IMPLEMENTATION.md` | 已冻结 Forecast Pairing V2 与 paired evaluation 的候选性决策效用审阅控制；不授予方法、报告或投资权限 |
+| `docs/development/research/TURTLE_GOLDEN_REPORT_SERVICE_DESIGN.md` | 训练反馈到黄金报告生成的服务定位、十模块边界与三视图 handoff 契约 |
+| `docs/development/research/TURTLE_CANONICAL_CJO_REPORT_BINDING_V1_IMPLEMENTATION.md` | Frozen CJO/Overlay 的 analysis-contract 唯一引用、read receipt 与报告装配受控消费边界 |
+| `docs/development/research/TURTLE_CURRENT_COMPANY_CJO_ADMISSION_V1_IMPLEMENTATION.md` | current-company PRIMARY 的 driver/cash/rival-thesis 审阅绑定，以及 Overlay/投资报告必经 admission receipt |
+| `docs/development/research/TURTLE_SYSTEM_OVERVIEW_AND_INVESTMENT_PHILOSOPHY.md` | Turtle 面向投资者的总体架构、中心目标、训练分层、估值边界和 Turtle/年糕职责导航；不覆盖动态项目状态 |
+| `docs/development/research/TURTLE_TRAINING_SYSTEM_TOP_LEVEL_ARCHITECTURE.md` | 企业承保判断为中心的顶层真源：Decision Contract → CJO → Investment Overlay；Forecast 为受限校准工具，V5 为低频因果实验室 |
+| `docs/development/research/TURTLE_HISTORICAL_TRAINING_SYSTEM_REDESIGN.md` | claim-specific 分层训练、生命周期/退出、反幸存者偏差、source registry 与实现路线图 |
 | `docs/development/research/TURTLE_HISTORICAL_FIRST_JUDGMENT_TRAINING_ARCHITECTURE.md` | 历史训练、历史留出、结果已知教学与真实前瞻哨兵的当前顶层架构 |
 | `docs/development/research/HISTORICAL_PIT_TRAINING_COHORT_REGISTER.md` | 第一批历史训练、留出与教学对象的人读队列 |
+| `docs/development/research/TURTLE_AGENT_ENTERPRISE_JUDGMENT_SYSTEM_DESIGN.md` | 企业判断 M1–M10、V3/V5 边界和 canonical read-model 权限 |
+| `docs/development/research/TURTLE_AGENT_ENTERPRISE_JUDGMENT_ROADMAP.md` | H0–H10 执行门；Universe/Teaching/Comparative/Quant 分轨与 WP-R0 迁移顺序 |
+| `docs/development/research/TURTLE_AGENT_ENTERPRISE_JUDGMENT_V3_DESIGN_VALIDATION.md` | V3 offline synthetic 验收和真实 PIT/canonical adoption 边界 |
+| `docs/development/research/TURTLE_STAGE0_STATIC_SOURCE_INTAKE_DESIGN.md` | curator-only strict Stage-0 static-PDF package 契约 |
+| `docs/development/research/TURTLE_PIT_DISCOVERY_ENTRY_POLICY.md` | PIT source firewall 与禁止的 CNINFO 页面入口 |
+| `docs/development/research/SELECTION_ADMISSION_DISCOVERY_LEDGER.md` | 已拒绝/暴露对象与 H1→H2 source-package 顺序 |
+| `docs/development/research/TURTLE_SELECTION_MATERIALITY_AND_PEER_COUNTERFACTUAL_PROTOCOL.md` | 新 v3 program 的 V4 选择准入、独立材料性与固定同行反事实契约 |
 | `docs/ANALYSIS_HORIZON.md` | 自适应分析时域设计 |
 
 黄金报告的当前共同内容契约以 `GOALS.md` 第3、4节为准。质量评分、旧V12模板、旧盲评票、历史报告、敏感性完整或叙事流畅都不能单独授予黄金状态；G1-J完成后还必须通过中心路径和前瞻判断硬门。

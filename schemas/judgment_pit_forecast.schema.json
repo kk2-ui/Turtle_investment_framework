@@ -1,0 +1,600 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "judgment-pit-forecast.v1",
+  "title": "Turtle PIT company-state forecast epoch",
+  "oneOf": [
+    {"$ref": "#/$defs/company_state_forecast"},
+    {"$ref": "#/$defs/preforecast_evidence_receipt"},
+    {"$ref": "#/$defs/relative_trajectory_tournament"},
+    {"$ref": "#/$defs/forecast_outcome_measurement_contract"},
+    {"$ref": "#/$defs/forecast_acquisition_scope"},
+    {"$ref": "#/$defs/forecast_outcome_access_authorization"},
+    {"$ref": "#/$defs/forecast_outcome_observation_receipt"},
+    {"$ref": "#/$defs/forecast_settlement"},
+    {"$ref": "#/$defs/prospective_shadow_episode"},
+    {"$ref": "#/$defs/prospective_signal_shadow_episode"},
+    {"$ref": "#/$defs/forecast_method_pairing"},
+    {"$ref": "#/$defs/forecast_paired_evaluation"},
+    {"$ref": "#/$defs/forecast_error_attribution"}
+  ],
+  "$defs": {
+    "nonempty": {"type": "string", "minLength": 1},
+    "reference": {
+      "type": "object", "additionalProperties": false,
+      "required": ["receipt_id", "receipt_version"],
+      "properties": {"receipt_id": {"$ref": "#/$defs/nonempty"}, "receipt_version": {"type": "integer", "minimum": 1}}
+    },
+    "evidence_ref": {
+      "type": "object", "additionalProperties": false,
+      "required": ["source_id", "published_at", "field_ref"],
+      "properties": {
+        "source_id": {"$ref": "#/$defs/nonempty"},
+        "published_at": {"type": "string"},
+        "field_ref": {"$ref": "#/$defs/nonempty"},
+        "field_id": {"$ref": "#/$defs/nonempty"}
+      }
+    },
+    "probability": {
+      "type": "object", "additionalProperties": false,
+      "required": ["label", "probability"],
+      "properties": {"label": {"$ref": "#/$defs/nonempty"}, "probability": {"type": "number", "minimum": 0, "maximum": 1}}
+    },
+    "forecast_window": {
+      "type": "object", "additionalProperties": false,
+      "required": ["window_id", "baseline_reference"],
+      "properties": {
+        "window_id": {"enum": ["ONE_YEAR", "THREE_YEAR", "FIVE_YEAR"]},
+        "baseline_reference": {"$ref": "#/$defs/nonempty"},
+        "probabilities": {"type": "array", "minItems": 3, "items": {"$ref": "#/$defs/probability"}},
+        "event_statement": {"$ref": "#/$defs/nonempty"},
+        "event_occurs_probability": {"type": "number", "minimum": 0, "maximum": 1}
+      },
+      "oneOf": [
+        {"required": ["probabilities"], "not": {"anyOf": [{"required": ["event_statement"]}, {"required": ["event_occurs_probability"]}]}},
+        {"required": ["event_statement", "event_occurs_probability"], "not": {"required": ["probabilities"]}}
+      ]
+    },
+    "measurement_gap": {
+      "type": "object", "additionalProperties": false,
+      "required": ["measurement_id", "reason", "evidence_refs"],
+      "properties": {
+        "measurement_id": {"$ref": "#/$defs/nonempty"},
+        "reason": {"$ref": "#/$defs/nonempty"},
+        "evidence_refs": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/evidence_ref"}}
+      }
+    },
+    "forecast_dimension": {
+      "type": "object", "additionalProperties": false,
+      "required": ["dimension_id", "evidence_status", "evidence_refs", "forecast_by_window", "rationale"],
+      "properties": {
+        "dimension_id": {"enum": ["NORMAL_EARNINGS", "ROIC_OR_OPERATING_MARGIN", "CASH_CONVERSION_AND_CAPEX_BURDEN", "LEVERAGE_AND_FINANCIAL_RESILIENCE", "COMPETITIVE_POSITION", "PERMANENT_LOSS_RISK"]},
+        "evidence_status": {"enum": ["MODEL_UNCERTAIN", "EVIDENCE_INELIGIBLE"]},
+        "evidence_refs": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/evidence_ref"}},
+        "forecast_by_window": {"type": "array", "items": {"$ref": "#/$defs/forecast_window"}},
+        "rationale": {"$ref": "#/$defs/nonempty"},
+        "measurement_gaps": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/measurement_gap"}}
+      }
+    },
+    "memory_mitigation": {
+      "type": "object", "additionalProperties": false,
+      "required": ["mode", "isolated_forecaster_id", "known_outcome_access", "price_access", "post_cutoff_access", "network_route", "notes"],
+      "properties": {
+        "mode": {"const": "MODEL_MEMORY_MITIGATED"},
+        "isolated_forecaster_id": {"$ref": "#/$defs/nonempty"},
+        "known_outcome_access": {"const": "NONE"},
+        "price_access": {"const": "NONE"},
+        "post_cutoff_access": {"const": "NONE"},
+        "network_route": {"const": "H1_DECLARED_STATIC_PDF_ONLY"},
+        "notes": {"$ref": "#/$defs/nonempty"}
+      }
+    },
+    "company_state_forecast": {
+      "type": "object", "additionalProperties": false,
+      "required": ["schema_version", "forecast_id", "forecast_epoch_id", "company_id", "issuer_id", "subject_id", "cutoff_at", "forecast_windows", "source_packet_refs", "model_memory_mitigation", "dimensions", "object_class", "claim_class", "allowed_outputs"],
+      "properties": {
+        "schema_version": {"enum": ["turtle-pit-company-state-forecast.v1", "turtle-pit-company-state-forecast.v2", "turtle-pit-company-state-forecast.v3", "turtle-pit-company-state-forecast.v4", "turtle-pit-company-state-forecast.v5", "turtle-pit-company-state-forecast.v6"]},
+        "forecast_id": {"$ref": "#/$defs/nonempty"},
+        "forecast_epoch_id": {"enum": ["TURTLE_PIT_COMPANY_FORECAST_EPOCH_V1", "TURTLE_PIT_COMPANY_FORECAST_EPOCH_V2", "TURTLE_PIT_COMPANY_FORECAST_EPOCH_V3", "TURTLE_PIT_COMPANY_FORECAST_EPOCH_V4", "TURTLE_PIT_COMPANY_FORECAST_EPOCH_V5", "TURTLE_PIT_COMPANY_FORECAST_EPOCH_V6"]},
+        "company_id": {"$ref": "#/$defs/nonempty"},
+        "issuer_id": {"$ref": "#/$defs/nonempty"},
+        "subject_id": {"$ref": "#/$defs/nonempty"},
+        "cutoff_at": {"type": "string", "format": "date-time"},
+        "forecast_windows": {"type": "array", "minItems": 3, "maxItems": 3, "items": {"enum": ["ONE_YEAR", "THREE_YEAR", "FIVE_YEAR"]}},
+        "source_packet_refs": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/reference"}},
+        "model_memory_mitigation": {"$ref": "#/$defs/memory_mitigation"},
+        "decision_contract_ref": {"type": "object", "additionalProperties": false, "required": ["contract_id", "contract_version"], "properties": {"contract_id": {"$ref": "#/$defs/nonempty"}, "contract_version": {"type": "integer", "minimum": 1}}},
+        "outcome_measurement_contract_ref": {"type": "object", "additionalProperties": false, "required": ["measurement_contract_id", "measurement_contract_version"], "properties": {"measurement_contract_id": {"$ref": "#/$defs/nonempty"}, "measurement_contract_version": {"type": "integer", "minimum": 1}}},
+        "preforecast_evidence_receipt_ref": {"type": "object", "additionalProperties": false, "required": ["evidence_receipt_id", "evidence_receipt_version"], "properties": {"evidence_receipt_id": {"$ref": "#/$defs/nonempty"}, "evidence_receipt_version": {"type": "integer", "minimum": 1}}},
+        "forecast_acquisition_scope_ref": {"$ref": "#/$defs/forecast_acquisition_scope_ref"},
+        "forecast_method_ref": {"type": "object", "additionalProperties": false, "required": ["program_id", "method_version", "method_frozen_at", "method_freeze_recorded_at"], "properties": {"program_id": {"$ref": "#/$defs/nonempty"}, "method_version": {"$ref": "#/$defs/nonempty"}, "method_frozen_at": {"type": "string", "format": "date-time"}, "method_freeze_recorded_at": {"type": "string", "format": "date-time"}}},
+        "applied_policy_change_ids": {"type": "array", "items": {"$ref": "#/$defs/nonempty"}, "uniqueItems": true},
+        "dimensions": {"type": "array", "minItems": 6, "maxItems": 6, "items": {"$ref": "#/$defs/forecast_dimension"}},
+        "object_class": {"const": "PIT_COMPANY_STATE_FORECAST"},
+        "claim_class": {"const": "PROSPECTIVE_STATE_TRAJECTORY"},
+        "allowed_outputs": {"const": ["FORECAST_EVALUATION_ONLY", "RESEARCH_AGENDA"]}
+      },
+      "allOf": [
+        {"if": {"properties": {"schema_version": {"const": "turtle-pit-company-state-forecast.v1"}}}, "then": {"properties": {"forecast_epoch_id": {"const": "TURTLE_PIT_COMPANY_FORECAST_EPOCH_V1"}}, "not": {"required": ["decision_contract_ref"]}}},
+        {"if": {"properties": {"schema_version": {"const": "turtle-pit-company-state-forecast.v2"}}}, "then": {"properties": {"forecast_epoch_id": {"const": "TURTLE_PIT_COMPANY_FORECAST_EPOCH_V2"}}, "required": ["decision_contract_ref"]}},
+        {"if": {"properties": {"schema_version": {"const": "turtle-pit-company-state-forecast.v3"}}}, "then": {"properties": {"forecast_epoch_id": {"const": "TURTLE_PIT_COMPANY_FORECAST_EPOCH_V3"}}, "required": ["decision_contract_ref", "outcome_measurement_contract_ref", "applied_policy_change_ids"]}},
+        {"if": {"properties": {"schema_version": {"const": "turtle-pit-company-state-forecast.v4"}}}, "then": {"properties": {"forecast_epoch_id": {"const": "TURTLE_PIT_COMPANY_FORECAST_EPOCH_V4"}}, "required": ["decision_contract_ref", "outcome_measurement_contract_ref", "preforecast_evidence_receipt_ref", "applied_policy_change_ids"]}},
+        {"if": {"properties": {"schema_version": {"const": "turtle-pit-company-state-forecast.v5"}}}, "then": {"properties": {"forecast_epoch_id": {"const": "TURTLE_PIT_COMPANY_FORECAST_EPOCH_V5"}}, "required": ["decision_contract_ref", "outcome_measurement_contract_ref", "preforecast_evidence_receipt_ref", "forecast_acquisition_scope_ref", "applied_policy_change_ids"]}},
+        {"if": {"properties": {"schema_version": {"const": "turtle-pit-company-state-forecast.v6"}}}, "then": {"properties": {"forecast_epoch_id": {"const": "TURTLE_PIT_COMPANY_FORECAST_EPOCH_V6"}}, "required": ["decision_contract_ref", "outcome_measurement_contract_ref", "preforecast_evidence_receipt_ref", "forecast_acquisition_scope_ref", "forecast_method_ref", "applied_policy_change_ids"]}}
+      ]
+    },
+    "preforecast_evidence_field": {
+      "type": "object", "additionalProperties": false,
+      "required": ["field_id", "source_id", "source_url", "source_type", "published_at", "period_end", "issuer_id", "responsibility_unit_id", "perimeter_id", "unit", "field_ref", "numeric_value", "label"],
+      "properties": {
+        "field_id": {"$ref": "#/$defs/nonempty"},
+        "source_id": {"$ref": "#/$defs/nonempty"},
+        "source_url": {"type": "string", "pattern": "^https://static\\.cninfo\\.com\\.cn/finalpage/.+\\.PDF$"},
+        "source_type": {"const": "OFFICIAL_AUDITED_ANNUAL_REPORT"},
+        "published_at": {"type": "string", "format": "date"},
+        "period_end": {"type": "string", "format": "date"},
+        "issuer_id": {"$ref": "#/$defs/nonempty"},
+        "responsibility_unit_id": {"$ref": "#/$defs/nonempty"},
+        "perimeter_id": {"$ref": "#/$defs/nonempty"},
+        "unit": {"$ref": "#/$defs/nonempty"},
+        "field_ref": {"$ref": "#/$defs/nonempty"},
+        "numeric_value": {"type": "number"},
+        "label": {"$ref": "#/$defs/nonempty"}
+      }
+    },
+    "preforecast_evidence_receipt": {
+      "type": "object", "additionalProperties": false,
+      "required": ["schema_version", "evidence_receipt_id", "evidence_receipt_version", "h1_source_packet_ref", "company_id", "issuer_id", "cutoff_at", "curator_id", "fields", "object_class", "claim_class", "allowed_outputs"],
+      "properties": {
+        "schema_version": {"const": "turtle-pit-preforecast-evidence-receipt.v1"},
+        "evidence_receipt_id": {"$ref": "#/$defs/nonempty"},
+        "evidence_receipt_version": {"type": "integer", "minimum": 1},
+        "h1_source_packet_ref": {"$ref": "#/$defs/reference"},
+        "company_id": {"$ref": "#/$defs/nonempty"},
+        "issuer_id": {"$ref": "#/$defs/nonempty"},
+        "cutoff_at": {"type": "string", "format": "date-time"},
+        "curator_id": {"$ref": "#/$defs/nonempty"},
+        "fields": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/preforecast_evidence_field"}},
+        "object_class": {"const": "PIT_PREFORCAST_EVIDENCE_RECEIPT"},
+        "claim_class": {"const": "CUTOFF_VISIBLE_FIELD_OBSERVATION"},
+        "allowed_outputs": {"const": ["FORECAST_EVIDENCE_ONLY"]}
+      }
+    },
+    "dimension_ranking": {
+      "type": "object", "additionalProperties": false,
+      "required": ["dimension_id", "ordered_company_ids", "unranked_company_ids", "rationale"],
+      "properties": {
+        "dimension_id": {"enum": ["NORMAL_EARNINGS", "ROIC_OR_OPERATING_MARGIN", "CASH_CONVERSION_AND_CAPEX_BURDEN", "LEVERAGE_AND_FINANCIAL_RESILIENCE", "COMPETITIVE_POSITION", "PERMANENT_LOSS_RISK"]},
+        "ordered_company_ids": {"type": "array", "items": {"$ref": "#/$defs/nonempty"}},
+        "unranked_company_ids": {"type": "array", "items": {"$ref": "#/$defs/nonempty"}},
+        "rationale": {"$ref": "#/$defs/nonempty"}
+      }
+    },
+    "relative_trajectory_tournament": {
+      "type": "object", "additionalProperties": false,
+      "required": ["schema_version", "tournament_id", "forecast_epoch_id", "cutoff_at", "universe_id", "source_packet_refs", "ranked_company_ids", "forecast_ids", "dimension_rankings", "object_class", "claim_class", "allowed_outputs"],
+      "properties": {
+        "schema_version": {"const": "turtle-relative-trajectory-tournament.v1"},
+        "tournament_id": {"$ref": "#/$defs/nonempty"},
+        "forecast_epoch_id": {"enum": ["TURTLE_PIT_COMPANY_FORECAST_EPOCH_V1", "TURTLE_PIT_COMPANY_FORECAST_EPOCH_V2", "TURTLE_PIT_COMPANY_FORECAST_EPOCH_V3", "TURTLE_PIT_COMPANY_FORECAST_EPOCH_V4", "TURTLE_PIT_COMPANY_FORECAST_EPOCH_V5"]},
+        "cutoff_at": {"type": "string", "format": "date-time"},
+        "universe_id": {"$ref": "#/$defs/nonempty"},
+        "source_packet_refs": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/reference"}},
+        "ranked_company_ids": {"type": "array", "minItems": 2, "items": {"$ref": "#/$defs/nonempty"}},
+        "forecast_ids": {"type": "array", "minItems": 2, "items": {"$ref": "#/$defs/nonempty"}},
+        "dimension_rankings": {"type": "array", "minItems": 6, "maxItems": 6, "items": {"$ref": "#/$defs/dimension_ranking"}},
+        "object_class": {"const": "RELATIVE_TRAJECTORY_TOURNAMENT"},
+        "claim_class": {"const": "RELATIVE_TRAJECTORY_REFERENCE"},
+        "allowed_outputs": {"const": ["FORECAST_EVALUATION_ONLY", "RESEARCH_AGENDA"]}
+      }
+    },
+    "outcome_source": {
+      "type": "object", "additionalProperties": false,
+      "required": ["source_id", "source_available_at", "field_ref"],
+      "properties": {"source_id": {"$ref": "#/$defs/nonempty"}, "source_url": {"type": "string", "format": "uri", "pattern": "^https://"}, "source_available_at": {"type": "string", "format": "date-time"}, "field_ref": {"$ref": "#/$defs/nonempty"}, "source_field_id": {"$ref": "#/$defs/nonempty"}, "official_source_type": {"const": "OFFICIAL_ANNUAL_REPORT"}, "issuer_id": {"$ref": "#/$defs/nonempty"}, "responsibility_boundary": {"$ref": "#/$defs/nonempty"}, "unit": {"$ref": "#/$defs/nonempty"}, "outcome_period_end": {"type": "string", "format": "date"}}
+    },
+    "outcome_measurement_contract_ref": {
+      "type": "object", "additionalProperties": false,
+      "required": ["measurement_contract_id", "measurement_contract_version"],
+      "properties": {"measurement_contract_id": {"$ref": "#/$defs/nonempty"}, "measurement_contract_version": {"type": "integer", "minimum": 1}}
+    },
+    "forecast_acquisition_scope_ref": {
+      "type": "object", "additionalProperties": false,
+      "required": ["scope_id", "scope_version"],
+      "properties": {
+        "scope_id": {"$ref": "#/$defs/nonempty"},
+        "scope_version": {"type": "integer", "minimum": 1}
+      }
+    },
+    "realized_measurement": {
+      "type": "object", "additionalProperties": false,
+      "required": ["measurement_id", "measurement_kind", "unit", "outcome_period_end", "responsibility_boundary"],
+      "properties": {
+        "measurement_id": {"$ref": "#/$defs/nonempty"},
+        "measurement_kind": {"enum": ["ORDINAL_THRESHOLD", "BINARY_EVENT"]},
+        "numeric_value": {"type": "number"},
+        "boolean_value": {"type": "boolean"},
+        "unit": {"$ref": "#/$defs/nonempty"},
+        "outcome_period_end": {"type": "string", "format": "date"},
+        "responsibility_boundary": {"$ref": "#/$defs/nonempty"},
+        "source_components": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/outcome_source_component"}}
+      }
+    },
+    "outcome_source_component": {
+      "type": "object", "additionalProperties": false,
+      "required": ["source_id", "source_url", "source_available_at", "field_id", "field_ref", "official_source_type", "issuer_id", "responsibility_boundary", "unit", "outcome_period_end", "numeric_value"],
+      "properties": {
+        "source_id": {"$ref": "#/$defs/nonempty"},
+        "source_url": {"type": "string", "format": "uri", "pattern": "^https://"},
+        "source_available_at": {"type": "string", "format": "date-time"},
+        "field_id": {"$ref": "#/$defs/nonempty"},
+        "field_ref": {"$ref": "#/$defs/nonempty"},
+        "official_source_type": {"const": "OFFICIAL_ANNUAL_REPORT"},
+        "issuer_id": {"$ref": "#/$defs/nonempty"},
+        "responsibility_boundary": {"$ref": "#/$defs/nonempty"},
+        "unit": {"$ref": "#/$defs/nonempty"},
+        "outcome_period_end": {"type": "string", "format": "date"},
+        "numeric_value": {"type": "number"}
+      }
+    },
+    "outcome_observation_ref": {
+      "type": "object", "additionalProperties": false,
+      "required": ["observation_id"],
+      "properties": {"observation_id": {"$ref": "#/$defs/nonempty"}}
+    },
+    "outcome_measurement_contract_cell": {
+      "type": "object", "additionalProperties": false,
+      "required": ["dimension_id", "window_id", "measurement_id", "measurement_kind", "outcome_period_end", "responsibility_boundary", "unit", "official_source_type", "source_field_id", "metric_definition", "mismatch_rules"],
+      "properties": {
+        "dimension_id": {"enum": ["NORMAL_EARNINGS", "ROIC_OR_OPERATING_MARGIN", "CASH_CONVERSION_AND_CAPEX_BURDEN", "LEVERAGE_AND_FINANCIAL_RESILIENCE", "COMPETITIVE_POSITION", "PERMANENT_LOSS_RISK"]},
+        "window_id": {"enum": ["ONE_YEAR", "THREE_YEAR", "FIVE_YEAR"]},
+        "measurement_id": {"$ref": "#/$defs/nonempty"},
+        "measurement_kind": {"enum": ["ORDINAL_THRESHOLD", "BINARY_EVENT"]},
+        "outcome_period_end": {"type": "string", "format": "date"},
+        "responsibility_boundary": {"$ref": "#/$defs/nonempty"},
+        "unit": {"$ref": "#/$defs/nonempty"},
+        "official_source_type": {"const": "OFFICIAL_ANNUAL_REPORT"},
+        "source_field_id": {"$ref": "#/$defs/nonempty"},
+        "metric_definition": {"$ref": "#/$defs/nonempty"},
+        "measurement_formula": {"$ref": "#/$defs/measurement_formula"},
+        "mismatch_rules": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/nonempty"}},
+        "lower_threshold": {"type": "number"},
+        "upper_threshold": {"type": "number"},
+        "label_order": {"type": "array", "minItems": 3, "maxItems": 3, "items": {"$ref": "#/$defs/nonempty"}},
+        "event_definition": {"$ref": "#/$defs/nonempty"}
+      },
+      "allOf": [
+        {"if": {"properties": {"measurement_kind": {"const": "ORDINAL_THRESHOLD"}}}, "then": {"required": ["measurement_formula", "lower_threshold", "upper_threshold", "label_order"], "not": {"required": ["event_definition"]}}},
+        {"if": {"properties": {"measurement_kind": {"const": "BINARY_EVENT"}}}, "then": {"required": ["event_definition"], "not": {"anyOf": [{"required": ["measurement_formula"]}, {"required": ["lower_threshold"]}, {"required": ["upper_threshold"]}, {"required": ["label_order"]}]}}}
+      ]
+    },
+    "measurement_formula": {
+      "type": "object", "additionalProperties": false,
+      "required": ["formula_kind"],
+      "properties": {
+        "formula_kind": {"enum": ["DIRECT_NUMERIC", "RATIO"]},
+        "value_field_id": {"$ref": "#/$defs/nonempty"},
+        "numerator_field_id": {"$ref": "#/$defs/nonempty"},
+        "denominator_field_id": {"$ref": "#/$defs/nonempty"}
+      },
+      "oneOf": [
+        {"properties": {"formula_kind": {"const": "DIRECT_NUMERIC"}}, "required": ["value_field_id"], "not": {"anyOf": [{"required": ["numerator_field_id"]}, {"required": ["denominator_field_id"]}]}},
+        {"properties": {"formula_kind": {"const": "RATIO"}}, "required": ["numerator_field_id", "denominator_field_id"], "not": {"required": ["value_field_id"]}}
+      ]
+    },
+    "forecast_outcome_measurement_contract": {
+      "type": "object", "additionalProperties": false,
+      "required": ["schema_version", "measurement_contract_id", "measurement_contract_version", "decision_contract_ref", "company_id", "issuer_id", "cutoff_at", "custodian_id", "applied_policy_change_ids", "cells", "object_class", "claim_class", "allowed_outputs"],
+      "properties": {
+        "schema_version": {"const": "turtle-pit-forecast-outcome-measurement-contract.v1"},
+        "measurement_contract_id": {"$ref": "#/$defs/nonempty"},
+        "measurement_contract_version": {"type": "integer", "minimum": 1},
+        "decision_contract_ref": {"type": "object", "additionalProperties": false, "required": ["contract_id", "contract_version"], "properties": {"contract_id": {"$ref": "#/$defs/nonempty"}, "contract_version": {"type": "integer", "minimum": 1}}},
+        "company_id": {"$ref": "#/$defs/nonempty"},
+        "issuer_id": {"$ref": "#/$defs/nonempty"},
+        "cutoff_at": {"type": "string", "format": "date-time"},
+        "custodian_id": {"$ref": "#/$defs/nonempty"},
+        "applied_policy_change_ids": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/nonempty"}},
+        "cells": {"type": "array", "minItems": 18, "maxItems": 18, "items": {"$ref": "#/$defs/outcome_measurement_contract_cell"}},
+        "object_class": {"const": "FORECAST_OUTCOME_MEASUREMENT_CONTRACT"},
+        "claim_class": {"const": "PRE_OUTCOME_SETTLEMENT_DEFINITION"},
+        "allowed_outputs": {"const": ["FORECAST_OUTCOME_ACQUISITION_ONLY"]}
+      }
+    },
+    "forecast_acquisition_scope_cell": {
+      "type": "object", "additionalProperties": false,
+      "required": ["dimension_id", "window_id", "measurement_id"],
+      "properties": {
+        "dimension_id": {"enum": ["NORMAL_EARNINGS", "ROIC_OR_OPERATING_MARGIN", "CASH_CONVERSION_AND_CAPEX_BURDEN", "LEVERAGE_AND_FINANCIAL_RESILIENCE", "COMPETITIVE_POSITION", "PERMANENT_LOSS_RISK"]},
+        "window_id": {"enum": ["ONE_YEAR", "THREE_YEAR", "FIVE_YEAR"]},
+        "measurement_id": {"$ref": "#/$defs/nonempty"}
+      }
+    },
+    "forecast_acquisition_scope": {
+      "type": "object", "additionalProperties": false,
+      "required": ["schema_version", "scope_id", "scope_version", "decision_contract_ref", "outcome_measurement_contract_ref", "company_id", "issuer_id", "cutoff_at", "custodian_id", "cells", "object_class", "claim_class", "allowed_outputs"],
+      "properties": {
+        "schema_version": {"const": "turtle-pit-forecast-acquisition-scope.v1"},
+        "scope_id": {"$ref": "#/$defs/nonempty"},
+        "scope_version": {"type": "integer", "minimum": 1},
+        "decision_contract_ref": {"type": "object", "additionalProperties": false, "required": ["contract_id", "contract_version"], "properties": {"contract_id": {"$ref": "#/$defs/nonempty"}, "contract_version": {"type": "integer", "minimum": 1}}},
+        "outcome_measurement_contract_ref": {"$ref": "#/$defs/outcome_measurement_contract_ref"},
+        "company_id": {"$ref": "#/$defs/nonempty"},
+        "issuer_id": {"$ref": "#/$defs/nonempty"},
+        "cutoff_at": {"type": "string", "format": "date-time"},
+        "custodian_id": {"$ref": "#/$defs/nonempty"},
+        "cells": {"type": "array", "minItems": 1, "maxItems": 18, "items": {"$ref": "#/$defs/forecast_acquisition_scope_cell"}},
+        "object_class": {"const": "FORECAST_ACQUISITION_SCOPE"},
+        "claim_class": {"const": "PRE_OUTCOME_CUSTODIAN_COLLECTION_SCOPE"},
+        "allowed_outputs": {"const": ["FORECAST_OUTCOME_ACQUISITION_ONLY"]}
+      }
+    },
+    "forecast_outcome_observation_receipt": {
+      "type": "object", "additionalProperties": false,
+      "required": ["schema_version", "observation_id", "forecast_id", "outcome_measurement_contract_ref", "company_id", "issuer_id", "cutoff_at", "custodian_id", "observed_at", "dimension_id", "window_id", "outcome_source", "observation_status", "object_class", "claim_class", "allowed_outputs"],
+      "properties": {
+        "schema_version": {"const": "turtle-pit-forecast-outcome-observation-receipt.v1"},
+        "observation_id": {"$ref": "#/$defs/nonempty"},
+        "forecast_id": {"$ref": "#/$defs/nonempty"},
+        "outcome_measurement_contract_ref": {"$ref": "#/$defs/outcome_measurement_contract_ref"},
+        "company_id": {"$ref": "#/$defs/nonempty"},
+        "issuer_id": {"$ref": "#/$defs/nonempty"},
+        "cutoff_at": {"type": "string", "format": "date-time"},
+        "custodian_id": {"$ref": "#/$defs/nonempty"},
+        "observed_at": {"type": "string", "format": "date-time"},
+        "dimension_id": {"enum": ["NORMAL_EARNINGS", "ROIC_OR_OPERATING_MARGIN", "CASH_CONVERSION_AND_CAPEX_BURDEN", "LEVERAGE_AND_FINANCIAL_RESILIENCE", "COMPETITIVE_POSITION", "PERMANENT_LOSS_RISK"]},
+        "window_id": {"enum": ["ONE_YEAR", "THREE_YEAR", "FIVE_YEAR"]},
+        "outcome_source": {"$ref": "#/$defs/outcome_source"},
+        "observation_status": {"enum": ["OBSERVED_MEASUREMENT", "MEASUREMENT_MISMATCH"]},
+        "realized_measurement": {"$ref": "#/$defs/realized_measurement"},
+        "mismatch_rule": {"$ref": "#/$defs/nonempty"},
+        "mismatch_detail": {"$ref": "#/$defs/nonempty"},
+        "object_class": {"const": "FORECAST_OUTCOME_OBSERVATION_RECEIPT"},
+        "claim_class": {"const": "CUSTODIAN_EXTRACTED_OUTCOME_FIELD"},
+        "allowed_outputs": {"const": ["FORECAST_OUTCOME_ACQUISITION_ONLY"]}
+      },
+      "oneOf": [
+        {"properties": {"observation_status": {"const": "OBSERVED_MEASUREMENT"}}, "required": ["realized_measurement"], "not": {"anyOf": [{"required": ["mismatch_rule"]}, {"required": ["mismatch_detail"]}]}},
+        {"properties": {"observation_status": {"const": "MEASUREMENT_MISMATCH"}}, "required": ["mismatch_rule", "mismatch_detail"], "not": {"required": ["realized_measurement"]}}
+      ]
+    },
+    "dimension_settlement": {
+      "type": "object", "additionalProperties": false,
+      "required": ["dimension_id", "window_id", "status", "realized_label"],
+      "properties": {
+        "dimension_id": {"enum": ["NORMAL_EARNINGS", "ROIC_OR_OPERATING_MARGIN", "CASH_CONVERSION_AND_CAPEX_BURDEN", "LEVERAGE_AND_FINANCIAL_RESILIENCE", "COMPETITIVE_POSITION", "PERMANENT_LOSS_RISK"]},
+        "window_id": {"enum": ["ONE_YEAR", "THREE_YEAR", "FIVE_YEAR"]},
+        "status": {"enum": ["OBSERVED", "CENSORED", "UNKNOWN", "NOT_DIAGNOSTIC", "MEASUREMENT_MISMATCH", "EVIDENCE_INELIGIBLE"]},
+        "realized_label": {"type": ["string", "boolean", "null"]},
+        "outcome_source": {"$ref": "#/$defs/outcome_source"},
+        "realized_measurement": {"$ref": "#/$defs/realized_measurement"},
+        "outcome_observation_ref": {"$ref": "#/$defs/outcome_observation_ref"}
+      }
+    },
+    "forecast_settlement": {
+      "type": "object", "additionalProperties": false,
+      "required": ["schema_version", "settlement_id", "forecast_id", "company_id", "cutoff_at", "settled_at", "custodian_id", "outcome_access_authorized", "dimension_settlements", "object_class", "claim_class", "allowed_outputs"],
+      "properties": {
+        "schema_version": {"enum": ["turtle-pit-forecast-settlement.v1", "turtle-pit-forecast-settlement.v2"]},
+        "settlement_id": {"$ref": "#/$defs/nonempty"},
+        "forecast_id": {"$ref": "#/$defs/nonempty"},
+        "company_id": {"$ref": "#/$defs/nonempty"},
+        "cutoff_at": {"type": "string", "format": "date-time"},
+        "settled_at": {"type": "string", "format": "date-time"},
+        "custodian_id": {"$ref": "#/$defs/nonempty"},
+        "outcome_access_authorized": {"const": true},
+        "outcome_measurement_contract_ref": {"$ref": "#/$defs/outcome_measurement_contract_ref"},
+        "dimension_settlements": {"type": "array", "minItems": 18, "maxItems": 18, "items": {"$ref": "#/$defs/dimension_settlement"}},
+        "object_class": {"const": "FORECAST_SETTLEMENT"},
+        "claim_class": {"const": "PREQUENTIAL_FEEDBACK"},
+        "allowed_outputs": {"const": ["FORECAST_EVALUATION_ONLY", "RESEARCH_AGENDA"]}
+      },
+      "allOf": [
+        {"if": {"properties": {"schema_version": {"const": "turtle-pit-forecast-settlement.v2"}}}, "then": {"required": ["outcome_measurement_contract_ref"]}}
+      ]
+    },
+    "forecast_outcome_access_authorization": {
+      "type": "object", "additionalProperties": false,
+      "required": ["schema_version", "authorization_id", "forecast_id", "company_id", "cutoff_at", "custodian_id", "authorized_at", "outcome_windows", "object_class", "claim_class", "allowed_outputs"],
+      "properties": {
+        "schema_version": {"enum": ["turtle-pit-forecast-outcome-access-authorization.v1", "turtle-pit-forecast-outcome-access-authorization.v2", "turtle-pit-forecast-outcome-access-authorization.v3"]},
+        "authorization_id": {"$ref": "#/$defs/nonempty"},
+        "forecast_id": {"$ref": "#/$defs/nonempty"},
+        "company_id": {"$ref": "#/$defs/nonempty"},
+        "cutoff_at": {"type": "string", "format": "date-time"},
+        "custodian_id": {"$ref": "#/$defs/nonempty"},
+        "authorized_at": {"type": "string", "format": "date-time"},
+        "outcome_windows": {"const": ["ONE_YEAR", "THREE_YEAR", "FIVE_YEAR"]},
+        "outcome_measurement_contract_ref": {"$ref": "#/$defs/outcome_measurement_contract_ref"},
+        "forecast_acquisition_scope_ref": {"$ref": "#/$defs/forecast_acquisition_scope_ref"},
+        "object_class": {"const": "FORECAST_OUTCOME_ACCESS_AUTHORIZATION"},
+        "claim_class": {"const": "CUSTODIAN_ONLY_OUTCOME_ACQUISITION"},
+        "allowed_outputs": {"const": ["FORECAST_OUTCOME_ACQUISITION_ONLY"]}
+      },
+      "allOf": [
+        {"if": {"properties": {"schema_version": {"const": "turtle-pit-forecast-outcome-access-authorization.v2"}}}, "then": {"required": ["outcome_measurement_contract_ref"]}},
+        {"if": {"properties": {"schema_version": {"const": "turtle-pit-forecast-outcome-access-authorization.v3"}}}, "then": {"required": ["outcome_measurement_contract_ref", "forecast_acquisition_scope_ref"]}}
+      ]
+    },
+    "prospective_shadow_episode": {
+      "type": "object", "additionalProperties": false,
+      "required": ["schema_version", "shadow_episode_id", "forecast_epoch_id", "company_id", "issuer_id", "cutoff_at", "forecast_id", "outcome_windows", "custodian_id", "status", "object_class", "claim_class", "allowed_outputs"],
+      "properties": {
+        "schema_version": {"enum": ["turtle-prospective-shadow-episode.v1", "turtle-prospective-shadow-episode.v2", "turtle-prospective-shadow-episode.v3"]},
+        "shadow_episode_id": {"$ref": "#/$defs/nonempty"},
+        "forecast_epoch_id": {"enum": ["TURTLE_PIT_COMPANY_FORECAST_EPOCH_V1", "TURTLE_PIT_COMPANY_FORECAST_EPOCH_V2", "TURTLE_PIT_COMPANY_FORECAST_EPOCH_V3", "TURTLE_PIT_COMPANY_FORECAST_EPOCH_V4", "TURTLE_PIT_COMPANY_FORECAST_EPOCH_V5"]},
+        "company_id": {"$ref": "#/$defs/nonempty"},
+        "issuer_id": {"$ref": "#/$defs/nonempty"},
+        "cutoff_at": {"type": "string", "format": "date-time"},
+        "forecast_id": {"$ref": "#/$defs/nonempty"},
+        "outcome_windows": {"type": "array", "minItems": 3, "maxItems": 3, "items": {"enum": ["ONE_YEAR", "THREE_YEAR", "FIVE_YEAR"]}},
+        "custodian_id": {"$ref": "#/$defs/nonempty"},
+        "status": {"const": "WAITING_EXTERNAL_OUTCOME"},
+        "object_class": {"const": "PROSPECTIVE_SHADOW_EPISODE"},
+        "claim_class": {"const": "PREQUENTIAL_EVALUATION"},
+        "allowed_outputs": {"const": ["FORECAST_EVALUATION_ONLY"]},
+        "decision_contract_ref": {"type": "object", "additionalProperties": false, "required": ["contract_id", "contract_version"], "properties": {"contract_id": {"$ref": "#/$defs/nonempty"}, "contract_version": {"type": "integer", "minimum": 1}}},
+        "outcome_measurement_contract_ref": {"$ref": "#/$defs/outcome_measurement_contract_ref"},
+        "preforecast_evidence_receipt_ref": {"$ref": "#/$defs/preforecast_evidence_receipt_ref"},
+        "forecast_acquisition_scope_ref": {"$ref": "#/$defs/forecast_acquisition_scope_ref"},
+        "resolution_calendar": {"type": "array", "minItems": 3, "maxItems": 3, "items": {"type": "object", "additionalProperties": false, "required": ["window_id", "resolution_due_at"], "properties": {"window_id": {"enum": ["ONE_YEAR", "THREE_YEAR", "FIVE_YEAR"]}, "resolution_due_at": {"type": "string", "format": "date-time"}}}}
+      },
+      "allOf": [
+        {"if": {"properties": {"schema_version": {"const": "turtle-prospective-shadow-episode.v2"}}}, "then": {"required": ["decision_contract_ref"], "properties": {"forecast_epoch_id": {"const": "TURTLE_PIT_COMPANY_FORECAST_EPOCH_V2"}}}},
+        {"if": {"properties": {"schema_version": {"const": "turtle-prospective-shadow-episode.v3"}}}, "then": {"required": ["decision_contract_ref", "outcome_measurement_contract_ref", "resolution_calendar"], "properties": {"forecast_epoch_id": {"enum": ["TURTLE_PIT_COMPANY_FORECAST_EPOCH_V3", "TURTLE_PIT_COMPANY_FORECAST_EPOCH_V4", "TURTLE_PIT_COMPANY_FORECAST_EPOCH_V5", "TURTLE_PIT_COMPANY_FORECAST_EPOCH_V6"]}}}},
+        {"if": {"properties": {"forecast_epoch_id": {"const": "TURTLE_PIT_COMPANY_FORECAST_EPOCH_V4"}}}, "then": {"required": ["preforecast_evidence_receipt_ref"]}},
+        {"if": {"properties": {"forecast_epoch_id": {"const": "TURTLE_PIT_COMPANY_FORECAST_EPOCH_V5"}}}, "then": {"required": ["preforecast_evidence_receipt_ref", "forecast_acquisition_scope_ref"]}},
+        {"if": {"properties": {"forecast_epoch_id": {"const": "TURTLE_PIT_COMPANY_FORECAST_EPOCH_V6"}}}, "then": {"required": ["preforecast_evidence_receipt_ref", "forecast_acquisition_scope_ref"]}}
+      ]
+    },
+    "prospective_signal_shadow_window": {
+      "type": "object", "additionalProperties": false,
+      "required": ["signal_id", "metric", "window_label", "resolution_due_at"],
+      "properties": {
+        "signal_id": {"$ref": "#/$defs/nonempty"},
+        "metric": {"$ref": "#/$defs/nonempty"},
+        "window_label": {"$ref": "#/$defs/nonempty"},
+        "resolution_due_at": {"type": "string", "format": "date-time"}
+      }
+    },
+    "prospective_signal_freeze_ref": {
+      "type": "object", "additionalProperties": false,
+      "required": ["freeze_id", "freeze_path", "cutoff_at", "frozen_at", "allowed_source_ids"],
+      "properties": {
+        "freeze_id": {"$ref": "#/$defs/nonempty"},
+        "freeze_path": {"$ref": "#/$defs/nonempty"},
+        "cutoff_at": {"type": "string", "format": "date-time"},
+        "frozen_at": {"type": "string", "format": "date-time"},
+        "allowed_source_ids": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/nonempty"}}
+      }
+    },
+    "prospective_signal_shadow_episode": {
+      "type": "object", "additionalProperties": false,
+      "required": ["schema_version", "shadow_episode_id", "source_freeze_ref", "company_id", "cutoff_at", "outcome_windows", "custodian_id", "status", "object_class", "claim_class", "allowed_outputs"],
+      "properties": {
+        "schema_version": {"const": "turtle-prospective-shadow-episode.v1"},
+        "shadow_episode_id": {"$ref": "#/$defs/nonempty"},
+        "source_freeze_ref": {"$ref": "#/$defs/prospective_signal_freeze_ref"},
+        "company_id": {"$ref": "#/$defs/nonempty"},
+        "cutoff_at": {"type": "string", "format": "date-time"},
+        "outcome_windows": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/prospective_signal_shadow_window"}},
+        "custodian_id": {"$ref": "#/$defs/nonempty"},
+        "status": {"const": "WAITING_EXTERNAL_OUTCOME"},
+        "object_class": {"const": "PROSPECTIVE_SHADOW_EPISODE"},
+        "claim_class": {"const": "PREQUENTIAL_EVALUATION"},
+        "allowed_outputs": {"const": ["FORECAST_EVALUATION_ONLY"]}
+      }
+    },
+    "baseline_cell": {
+      "type": "object", "additionalProperties": false,
+      "required": ["dimension_id", "window_id"],
+      "properties": {
+        "dimension_id": {"enum": ["NORMAL_EARNINGS", "ROIC_OR_OPERATING_MARGIN", "CASH_CONVERSION_AND_CAPEX_BURDEN", "LEVERAGE_AND_FINANCIAL_RESILIENCE", "COMPETITIVE_POSITION", "PERMANENT_LOSS_RISK"]},
+        "window_id": {"enum": ["ONE_YEAR", "THREE_YEAR", "FIVE_YEAR"]},
+        "probabilities": {"type": "array", "minItems": 3, "items": {"$ref": "#/$defs/probability"}},
+        "event_statement": {"$ref": "#/$defs/nonempty"},
+        "event_occurs_probability": {"type": "number", "minimum": 0, "maximum": 1}
+      },
+      "oneOf": [
+        {"required": ["probabilities"], "not": {"anyOf": [{"required": ["event_statement"]}, {"required": ["event_occurs_probability"]}]}},
+        {"required": ["event_statement", "event_occurs_probability"], "not": {"required": ["probabilities"]}}
+      ]
+    },
+    "forecast_method_pairing": {
+      "type": "object", "additionalProperties": false,
+      "required": ["schema_version", "pairing_id", "forecast_id", "company_id", "cutoff_at", "task_contract_ref", "evidence_budget_id", "source_packet_refs", "baseline_method_id", "enhanced_method_id", "baseline_cells", "object_class", "claim_class", "allowed_outputs"],
+      "properties": {
+        "schema_version": {"enum": ["turtle-pit-forecast-pairing.v1", "turtle-pit-forecast-pairing.v2"]},
+        "pairing_id": {"$ref": "#/$defs/nonempty"},
+        "forecast_id": {"$ref": "#/$defs/nonempty"},
+        "company_id": {"$ref": "#/$defs/nonempty"},
+        "cutoff_at": {"type": "string", "format": "date-time"},
+        "task_contract_ref": {"$ref": "#/$defs/nonempty"},
+        "evidence_budget_id": {"$ref": "#/$defs/nonempty"},
+        "source_packet_refs": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/reference"}},
+        "baseline_method_id": {"$ref": "#/$defs/nonempty"},
+        "enhanced_method_id": {"$ref": "#/$defs/nonempty"},
+        "baseline_cells": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/baseline_cell"}},
+        "holdout_binding": {
+          "type": "object", "additionalProperties": false,
+          "required": ["program_id", "method_version", "holdout_training_episode_id", "company_id", "company_cluster_id", "cutoff_at", "outcome_not_before", "method_frozen_at", "method_freeze_recorded_at", "evaluated_cells"],
+          "properties": {
+            "program_id": {"$ref": "#/$defs/nonempty"}, "method_version": {"$ref": "#/$defs/nonempty"},
+            "holdout_training_episode_id": {"$ref": "#/$defs/nonempty"}, "company_id": {"$ref": "#/$defs/nonempty"},
+            "company_cluster_id": {"$ref": "#/$defs/nonempty"}, "cutoff_at": {"type": "string", "format": "date-time"},
+            "outcome_not_before": {"type": "string", "format": "date-time"}, "method_frozen_at": {"type": "string", "format": "date-time"},
+            "method_freeze_recorded_at": {"type": "string", "format": "date-time"},
+            "evaluated_cells": {"type": "array", "minItems": 1, "items": {"type": "object", "additionalProperties": false, "required": ["dimension_id", "window_id", "outcome_period_end"], "properties": {"dimension_id": {"enum": ["NORMAL_EARNINGS", "ROIC_OR_OPERATING_MARGIN", "CASH_CONVERSION_AND_CAPEX_BURDEN", "LEVERAGE_AND_FINANCIAL_RESILIENCE", "COMPETITIVE_POSITION", "PERMANENT_LOSS_RISK"]}, "window_id": {"enum": ["ONE_YEAR", "THREE_YEAR", "FIVE_YEAR"]}, "outcome_period_end": {"type": "string", "format": "date"}}}}
+          }
+        },
+        "object_class": {"const": "FORECAST_METHOD_PAIRING"},
+        "claim_class": {"const": "PAIRED_FORECAST_ABLATION"},
+        "allowed_outputs": {"const": ["FORECAST_EVALUATION_ONLY", "RESEARCH_AGENDA"]}
+      },
+      "allOf": [{"if": {"properties": {"schema_version": {"const": "turtle-pit-forecast-pairing.v2"}}}, "then": {"required": ["holdout_binding"]}}]
+    },
+    "forecast_paired_evaluation": {
+      "type": "object", "additionalProperties": false,
+      "required": ["schema_version", "evaluation_id", "pairing_id", "forecast_id", "settlement_id", "evaluated_at", "object_class", "claim_class", "allowed_outputs"],
+      "properties": {
+        "schema_version": {"const": "turtle-pit-forecast-paired-evaluation.v1"},
+        "evaluation_id": {"$ref": "#/$defs/nonempty"},
+        "pairing_id": {"$ref": "#/$defs/nonempty"},
+        "forecast_id": {"$ref": "#/$defs/nonempty"},
+        "settlement_id": {"$ref": "#/$defs/nonempty"},
+        "evaluated_at": {"type": "string", "format": "date-time"},
+        "object_class": {"const": "FORECAST_PAIRED_EVALUATION"},
+        "claim_class": {"const": "PAIRED_METHOD_COMPARISON"},
+        "allowed_outputs": {"const": ["FORECAST_EVALUATION_ONLY", "RESEARCH_AGENDA"]}
+      }
+    },
+    "forecast_cell_ref": {
+      "type": "object", "additionalProperties": false,
+      "required": ["dimension_id", "window_id"],
+      "properties": {
+        "dimension_id": {"enum": ["NORMAL_EARNINGS", "ROIC_OR_OPERATING_MARGIN", "CASH_CONVERSION_AND_CAPEX_BURDEN", "LEVERAGE_AND_FINANCIAL_RESILIENCE", "COMPETITIVE_POSITION", "PERMANENT_LOSS_RISK"]},
+        "window_id": {"enum": ["ONE_YEAR", "THREE_YEAR", "FIVE_YEAR"]}
+      }
+    },
+    "forecast_policy_change": {
+      "type": "object", "additionalProperties": false,
+      "required": ["change_id", "statement", "effective_from_cutoff_at"],
+      "properties": {
+        "change_id": {"$ref": "#/$defs/nonempty"},
+        "statement": {"$ref": "#/$defs/nonempty"},
+        "effective_from_cutoff_at": {"type": "string", "format": "date-time"}
+      }
+    },
+    "forecast_dual_axis_holdout": {
+      "type": "object", "additionalProperties": false,
+      "required": ["training_company_ids", "holdout_company_ids", "training_cutoff_through", "holdout_cutoff_from"],
+      "properties": {
+        "training_company_ids": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/nonempty"}},
+        "holdout_company_ids": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/nonempty"}},
+        "training_cutoff_through": {"type": "string", "format": "date-time"},
+        "holdout_cutoff_from": {"type": "string", "format": "date-time"}
+      }
+    },
+    "forecast_error_attribution": {
+      "type": "object", "additionalProperties": false,
+      "required": ["schema_version", "attribution_id", "forecast_id", "settlement_id", "attributed_at", "reviewer_id", "learning_scope", "disposition", "failure_locus", "cell_refs", "object_class", "claim_class", "allowed_outputs"],
+      "properties": {
+        "schema_version": {"const": "turtle-pit-forecast-error-attribution.v1"},
+        "attribution_id": {"$ref": "#/$defs/nonempty"},
+        "forecast_id": {"$ref": "#/$defs/nonempty"},
+        "settlement_id": {"$ref": "#/$defs/nonempty"},
+        "attributed_at": {"type": "string", "format": "date-time"},
+        "reviewer_id": {"$ref": "#/$defs/nonempty"},
+        "learning_scope": {"enum": ["CALIBRATION", "COVERAGE", "STATE_DEFINITION", "UNCERTAINTY_POLICY", "BASELINE_PERFORMANCE", "EVIDENCE_PRIORITY", "RIVAL_HYPOTHESIS_METHOD", "NOT_DIAGNOSTIC"]},
+        "disposition": {"enum": ["DIRECT_FORECAST_POLICY", "CANDIDATE_REQUIRES_PAIRED_HOLDOUT", "NOT_DIAGNOSTIC"]},
+        "failure_locus": {"enum": ["CALIBRATION", "COVERAGE", "STATE_DEFINITION", "UNCERTAINTY", "BASELINE_PERFORMANCE", "EVIDENCE_PRIORITY", "RIVAL_HYPOTHESIS_METHOD", "OUTCOME_MEASUREMENT"]},
+        "cell_refs": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/forecast_cell_ref"}},
+        "policy_change": {"$ref": "#/$defs/forecast_policy_change"},
+        "paired_evaluation_id": {"$ref": "#/$defs/nonempty"},
+        "holdout": {"$ref": "#/$defs/forecast_dual_axis_holdout"},
+        "object_class": {"const": "FORECAST_ERROR_ATTRIBUTION"},
+        "claim_class": {"const": "FORECAST_METHOD_FEEDBACK"},
+        "allowed_outputs": {"const": ["FORECAST_POLICY_ONLY", "RESEARCH_AGENDA"]}
+      }
+    }
+  }
+}

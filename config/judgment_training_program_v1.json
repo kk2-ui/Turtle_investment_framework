@@ -3,6 +3,7 @@
   "program_state": "ACTIVE",
   "program_id": "JTP:turtle-historical-primary-v1",
   "method_version": "enterprise-judgment-method-v1",
+  "method_scope": "BOUNDARY_ONLY",
   "registered_at": "2026-08-23T17:30:00+08:00",
   "method_frozen_at": null,
   "sampling_policy": {

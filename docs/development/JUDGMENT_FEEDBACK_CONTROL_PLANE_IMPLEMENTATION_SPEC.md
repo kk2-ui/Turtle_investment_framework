@@ -296,6 +296,8 @@ APPLIED / REPLICATION_PENDING / CLOSED
 11. exposure breach 不得生成有效方法学习；
 12. `NOT_DIAGNOSTIC` 和 `MEASUREMENT_MISMATCH` 不得变成支持或反对中心假设。
 
+`SELECTION_METHOD_ELIGIBLE` 的非诊断结算有一个严格的非方向性出口：`LEARNING_NOTE_READY.learning_scope=MEASUREMENT_BOUNDARY`。它必须绑定最新 diagnosis、`INSUFFICIENT_EVIDENCE` note、联合 `NOT_DIAGNOSTIC` feedback 和 `MEASUREMENT` 经济失败位置；只允许改变下一候选的 `CANDIDATE_OBSERVABILITY_GATE / SOURCE_GATE`。控制面将其投影为 `MEASUREMENT_BOUNDARY_READY`，并拒绝任何 `LEARNING_APPLIED`，所以它不能参与方法冻结、留出释放、报告准入或黄金报告生成。
+
 ## 11. 多阶段与结算版本
 
 ### 11.1 S1/S2 不得覆盖
@@ -521,7 +523,7 @@ schemas/judgment_learning_application.schema.json
 ### 18.5 诊断与学习
 
 18. `MEASUREMENT_MISMATCH` 保留 UNKNOWN，不生成伪方向结论；
-19. `NOT_DIAGNOSTIC` 不得进入方法学习；
+19. `NOT_DIAGNOSTIC` 不得进入方向性方法学习；只可按上节窄权限保存 `MEASUREMENT_BOUNDARY`；
 20. 失败诊断缺少经济影响、事实、禁止假设、修复或验收标准时拒绝；
 21. learning application 必须列出下一张卡真实改变的字段；
 22. `METHOD_TRANSFER` 指向同一公司时拒绝；
@@ -661,7 +663,7 @@ schemas/judgment_architecture_experiment.schema.json
 7. 聚合只保存六类成对结果计数、判断单位数量、独立公司簇和公司/时间留出覆盖，不生成胜率、概率、准确率或总分；未见公司与未见时间两个留出轴不得复用公司集团；
 8. `DUAL_HOLDOUT_COMPARISON_READY` 只表示未见公司和未见时间两轴达到预注册的独立样本门，可提交独立方法审阅；它不自动授予一般优势或生产升格。
 
-该模块同时收紧行业机制升格：`MECHANISM_READY` 除原有跨公司候选和独立审阅外，还必须有至少两个独立公司集团的已结算支持 episode，以及至少一个 `CONTRADICTS` 或 `BOUNDARY` episode；每项都须保存 outcome/review 指针并由非机制作者独立复核。`NOT_DIAGNOSTIC` 保留在证据账本，但不冒充支持或边界。
+该模块同时收紧行业机制升格：`MECHANISM_READY` 除原有跨公司候选和独立审阅外，还必须有至少两个独立公司集团的已结算支持 episode，以及至少一个 `CONTRADICTS` 或 `BOUNDARY` episode；每项都须保存并只读回放同一 `selection_freeze → outcome → independent post-outcome review` 谱系，核对 case、freeze、settlement、公司、reviewer 与关系身份。`NOT_DIAGNOSTIC` 保留在证据账本，但不冒充支持或边界；悬空路径、不同 case 或自由填写的关系一律不能升格。
 
 当前只有执行器、schema 和合成回归。尚未运行真实 V1/V2 配对黄金报告，尚无真实未来经营结果，也没有 L1-L5 能力优势结论。真实运行继续服从 G1/G1.5 激活顺序和昂贵运行边界。
 
@@ -681,7 +683,7 @@ schemas/judgment_architecture_experiment.schema.json
 
 | 视图 | 报告阶段 | 允许内容 | 禁止解释 |
 |---|---|---|---|
-| `RESEARCH_AGENDA` | 取证与问题选择 | `VERIFIED` evidence 范围、1–3 个决定性问题、`MECHANISM_READY + NOT_EVIDENCED` 行业验证提示、显式准入且早于 cutoff 的 `CANDIDATE_METHOD_PROMPT` | 行业机制不是公司事实；候选方法提示不是 `LEARNING_APPLIED` |
+| `RESEARCH_AGENDA` | 取证与问题选择 | `VERIFIED` evidence 范围、1–3 个决定性问题、`MECHANISM_READY + NOT_EVIDENCED` 行业验证提示；当前研究还可显示 `CORROBORATED` 的 retrieval-only 提示、显式准入且早于 cutoff 的 `CANDIDATE_METHOD_PROMPT` | 行业机制不是公司事实；`CORROBORATED` 不自动进入问题排序；候选方法提示不是 `LEARNING_APPLIED` |
 | `JUDGMENT_SYNTHESIS` | 结构化判断完成后的自然语言综合 | claim、四层 financial driver、central path/FJ/pair/card、insight 与最强反方的受控投影 | 不得替代 canonical ledger，不得携带结算结果、价格、动作或回报 |
 | `INVESTMENT_ENRICHMENT` | 公司判断之后的估值与决策 | 同公司、同 cutoff、`G1J_COMPLETE` 的 `company-judgment-predecessor.v2` 及 valuation route | 估值、价格和回报不得改写 CJO 的机制、pair、driver、event 或 cutoff |
 
@@ -699,6 +701,6 @@ PIT writer 对 handoff 的消费不是提示词约定。每次 prerequisite refr
 
 读者正文同时阻断 `MECHANISM_READY / NOT_EVIDENCED / LEARNING_APPLIED / JAX / FJ / RHP / FDB` 等控制面 ID/status 及明显英文 gate/ledger 面板。内部对象必须转换为自然语言的经济判断、证据边界和可证伪条件，技术附录仍可保留审计身份。
 
-截至 2026-08-23，上述工程通道已经接入合同包、普通 writer prompt、PIT allowlist 和 CJO prerequisite refresh。历史优先训练控制层也已实现，第一版 program contract 已准备但未向生产数据库宣称注册；配置中的 R-62 是开发回放，R-61 是预留留出，R-56/R-58 仅为结果已知教学。当前格力仍为 `PRE_FREEZE / NO_PRIMARY / NOT_FROZEN`；没有真实 V1/V2 配对黄金报告、历史留出泛化结论、真实未来经营结算、`MECHANISM_READY` 实例或 L1–L5 优势结论。下一项训练验收是 R-62 历史开发回放形成受审 learning application，冻结方法版本后再揭盲 R-61；真实公司未来结算属于后续部署校准，不再阻断该训练链。
+截至 2026-08-24，上述工程通道已经接入合同包、普通 writer prompt、PIT allowlist 和 CJO prerequisite refresh，并新增留出支持后的显式 `METHOD_RELEASED_FOR_REPORT_USE` 门。R-61 仍为 outcome-sealed 预留留出；R-62/R-69 的当前筛查均是 `NO_PRIMARY / NOT_FROZEN`，不得生成 learning、方法冻结或报告放行。R-102 的联合结果和简单基线均为 `NOT_DIAGNOSTIC`，所以开发库只记录 `MEASUREMENT_BOUNDARY_CAPTURED`。R-104 已完成独立预审、控制注册、结果结算和 post-outcome review：D3 为 `A_ONLY`、D4 为 `B_ONLY`、联合为 `MIXED`；它只留下“经营改善不自动传导为正常 owner cash”的无权利边界。当前格力仍为 `PRE_FREEZE / NO_PRIMARY / NOT_FROZEN`；没有真实 V1/V2 配对黄金报告、经历史留出支持的选择能力、真实未来经营结算、`MECHANISM_READY` 实例或 L1–L5 优势结论。
 
 当前实现导航：四通道计划、抽样边界和状态上卷在 `scripts/judgment_training_program.py`，契约为 `schemas/judgment_training_program.schema.json` 与 `config/judgment_training_program_v1.json`；派生 read model 与正式 learning admission 在 `scripts/judgment_generation_handoff.py`、`scripts/judgment_learning.py`；追加事件快照与 cutoff replay 在 `scripts/judgment_feedback_control.py`；普通生成入口在 `scripts/turtle_agent/tools/read_tools.py` 和 `scripts/turtle_agent/agent_loop.py`；PIT generation receipt 在 `scripts/turtle_agent/tools/pit_production_write_tools.py`；CJO predecessor 建立与 completion 复核在 `scripts/turtle_agent/run.py`。这些位置是执行入口，本文和路线图只解释职责与状态，不能替代运行时验证。

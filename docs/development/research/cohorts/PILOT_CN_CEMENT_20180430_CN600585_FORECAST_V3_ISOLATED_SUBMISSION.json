@@ -1,0 +1,349 @@
+{
+  "schema_version": "turtle-pit-company-state-forecast.v3",
+  "forecast_id": "FORECAST:PILOT:CN:CEMENT:20180430:CN:600585:V3:ISOLATED",
+  "forecast_epoch_id": "TURTLE_PIT_COMPANY_FORECAST_EPOCH_V3",
+  "company_id": "CN:600585",
+  "issuer_id": "ISSUER:CN:600585",
+  "subject_id": "ECONOMIC_ENTITY:CN:600585",
+  "cutoff_at": "2018-04-30T23:59:59+08:00",
+  "forecast_windows": [
+    "ONE_YEAR",
+    "THREE_YEAR",
+    "FIVE_YEAR"
+  ],
+  "source_packet_refs": [
+    {
+      "receipt_id": "H1:COHORT:CN:CEMENT_LISTED:20180430:STATIC:V1",
+      "receipt_version": 1
+    }
+  ],
+  "model_memory_mitigation": {
+    "mode": "MODEL_MEMORY_MITIGATED",
+    "isolated_forecaster_id": "JUDGMENT_OWNER:CN:CEMENT:20180430:FORECAST_LANE",
+    "known_outcome_access": "NONE",
+    "price_access": "NONE",
+    "post_cutoff_access": "NONE",
+    "network_route": "H1_DECLARED_STATIC_PDF_ONLY",
+    "notes": "Used only the assigned H1 static packet and the frozen decision and pre-outcome measurement contracts; no outcome, price, post-cutoff, H2, R-103, database, web, or prior-forecast material was accessed."
+  },
+  "decision_contract_ref": {
+    "contract_id": "DC:PILOT:CN:CEMENT:20180430:CN:600585",
+    "contract_version": 1
+  },
+  "outcome_measurement_contract_ref": {
+    "measurement_contract_id": "OMC:PILOT:CN:CEMENT:20180430:CN:600585:V3",
+    "measurement_contract_version": 1
+  },
+  "applied_policy_change_ids": [],
+  "dimensions": [
+    {
+      "dimension_id": "NORMAL_EARNINGS",
+      "evidence_status": "EVIDENCE_INELIGIBLE",
+      "evidence_refs": [
+        {
+          "source_id": "CNINFO:600585:ANN:20180323:1204507132",
+          "published_at": "2018-03-23",
+          "field_ref": "FY2017 Anhui Conch Cement consolidated D3/D4 identity: balance sheet, income statement and cash-flow statement, PDF p74, p80, p84."
+        }
+      ],
+      "forecast_by_window": [],
+      "rationale": "The H1 record establishes only that consolidated statements are present; it supplies no operating-profit, revenue, margin, or normal-earnings value from which to assert a one-, three-, or five-year trajectory.",
+      "measurement_gaps": [
+        {
+          "measurement_id": "MEASURE:CN:600585:NORMAL_EARNINGS:ONE_YEAR",
+          "reason": "No cutoff operating-profit-margin observation or normal-earnings baseline is contained in the H1 static record.",
+          "evidence_refs": [
+            {
+              "source_id": "CNINFO:600585:ANN:20180323:1204507132",
+              "published_at": "2018-03-23",
+              "field_ref": "FY2017 Anhui Conch Cement consolidated D3/D4 identity: balance sheet, income statement and cash-flow statement, PDF p74, p80, p84."
+            }
+          ]
+        },
+        {
+          "measurement_id": "MEASURE:CN:600585:NORMAL_EARNINGS:THREE_YEAR",
+          "reason": "No cutoff operating-profit-margin observation or normal-earnings baseline is contained in the H1 static record.",
+          "evidence_refs": [
+            {
+              "source_id": "CNINFO:600585:ANN:20180323:1204507132",
+              "published_at": "2018-03-23",
+              "field_ref": "FY2017 Anhui Conch Cement consolidated D3/D4 identity: balance sheet, income statement and cash-flow statement, PDF p74, p80, p84."
+            }
+          ]
+        },
+        {
+          "measurement_id": "MEASURE:CN:600585:NORMAL_EARNINGS:FIVE_YEAR",
+          "reason": "No cutoff operating-profit-margin observation or normal-earnings baseline is contained in the H1 static record.",
+          "evidence_refs": [
+            {
+              "source_id": "CNINFO:600585:ANN:20180323:1204507132",
+              "published_at": "2018-03-23",
+              "field_ref": "FY2017 Anhui Conch Cement consolidated D3/D4 identity: balance sheet, income statement and cash-flow statement, PDF p74, p80, p84."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "dimension_id": "ROIC_OR_OPERATING_MARGIN",
+      "evidence_status": "EVIDENCE_INELIGIBLE",
+      "evidence_refs": [
+        {
+          "source_id": "CNINFO:600585:ANN:20180323:1204507132",
+          "published_at": "2018-03-23",
+          "field_ref": "FY2017 Anhui Conch Cement consolidated D3/D4 identity: balance sheet, income statement and cash-flow statement, PDF p74, p80, p84."
+        }
+      ],
+      "forecast_by_window": [],
+      "rationale": "The H1 record identifies consolidated financial-statement availability but contains neither reported operating margin nor invested-capital inputs, so it cannot support an operating-margin or ROIC trajectory.",
+      "measurement_gaps": [
+        {
+          "measurement_id": "MEASURE:CN:600585:ROIC_OR_OPERATING_MARGIN:ONE_YEAR",
+          "reason": "The H1 static record has no cutoff operating-profit-margin value or ROIC baseline.",
+          "evidence_refs": [
+            {
+              "source_id": "CNINFO:600585:ANN:20180323:1204507132",
+              "published_at": "2018-03-23",
+              "field_ref": "FY2017 Anhui Conch Cement consolidated D3/D4 identity: balance sheet, income statement and cash-flow statement, PDF p74, p80, p84."
+            }
+          ]
+        },
+        {
+          "measurement_id": "MEASURE:CN:600585:ROIC_OR_OPERATING_MARGIN:THREE_YEAR",
+          "reason": "The H1 static record has no cutoff operating-profit-margin value or ROIC baseline.",
+          "evidence_refs": [
+            {
+              "source_id": "CNINFO:600585:ANN:20180323:1204507132",
+              "published_at": "2018-03-23",
+              "field_ref": "FY2017 Anhui Conch Cement consolidated D3/D4 identity: balance sheet, income statement and cash-flow statement, PDF p74, p80, p84."
+            }
+          ]
+        },
+        {
+          "measurement_id": "MEASURE:CN:600585:ROIC_OR_OPERATING_MARGIN:FIVE_YEAR",
+          "reason": "The H1 static record has no cutoff operating-profit-margin value or ROIC baseline.",
+          "evidence_refs": [
+            {
+              "source_id": "CNINFO:600585:ANN:20180323:1204507132",
+              "published_at": "2018-03-23",
+              "field_ref": "FY2017 Anhui Conch Cement consolidated D3/D4 identity: balance sheet, income statement and cash-flow statement, PDF p74, p80, p84."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "dimension_id": "CASH_CONVERSION_AND_CAPEX_BURDEN",
+      "evidence_status": "EVIDENCE_INELIGIBLE",
+      "evidence_refs": [
+        {
+          "source_id": "CNINFO:600585:ANN:20180323:1204507132",
+          "published_at": "2018-03-23",
+          "field_ref": "FY2017 Anhui Conch Cement consolidated D3/D4 identity: balance sheet, income statement and cash-flow statement, PDF p74, p80, p84."
+        }
+      ],
+      "forecast_by_window": [],
+      "rationale": "The H1 record does not disclose a cash-flow value, operating-profit value, capital-expenditure value, or a cutoff cash-conversion baseline; a cash-conversion or capex-burden forecast would invent the missing inputs.",
+      "measurement_gaps": [
+        {
+          "measurement_id": "MEASURE:CN:600585:CASH_CONVERSION_AND_CAPEX_BURDEN:ONE_YEAR",
+          "reason": "No cutoff operating-cash-flow-to-operating-profit value or capex-burden baseline is in the H1 static record.",
+          "evidence_refs": [
+            {
+              "source_id": "CNINFO:600585:ANN:20180323:1204507132",
+              "published_at": "2018-03-23",
+              "field_ref": "FY2017 Anhui Conch Cement consolidated D3/D4 identity: balance sheet, income statement and cash-flow statement, PDF p74, p80, p84."
+            }
+          ]
+        },
+        {
+          "measurement_id": "MEASURE:CN:600585:CASH_CONVERSION_AND_CAPEX_BURDEN:THREE_YEAR",
+          "reason": "No cutoff operating-cash-flow-to-operating-profit value or capex-burden baseline is in the H1 static record.",
+          "evidence_refs": [
+            {
+              "source_id": "CNINFO:600585:ANN:20180323:1204507132",
+              "published_at": "2018-03-23",
+              "field_ref": "FY2017 Anhui Conch Cement consolidated D3/D4 identity: balance sheet, income statement and cash-flow statement, PDF p74, p80, p84."
+            }
+          ]
+        },
+        {
+          "measurement_id": "MEASURE:CN:600585:CASH_CONVERSION_AND_CAPEX_BURDEN:FIVE_YEAR",
+          "reason": "No cutoff operating-cash-flow-to-operating-profit value or capex-burden baseline is in the H1 static record.",
+          "evidence_refs": [
+            {
+              "source_id": "CNINFO:600585:ANN:20180323:1204507132",
+              "published_at": "2018-03-23",
+              "field_ref": "FY2017 Anhui Conch Cement consolidated D3/D4 identity: balance sheet, income statement and cash-flow statement, PDF p74, p80, p84."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "dimension_id": "LEVERAGE_AND_FINANCIAL_RESILIENCE",
+      "evidence_status": "EVIDENCE_INELIGIBLE",
+      "evidence_refs": [
+        {
+          "source_id": "CNINFO:600585:ANN:20180323:1204507132",
+          "published_at": "2018-03-23",
+          "field_ref": "FY2017 Anhui Conch Cement consolidated D3/D4 identity: balance sheet, income statement and cash-flow statement, PDF p74, p80, p84."
+        }
+      ],
+      "forecast_by_window": [],
+      "rationale": "The H1 record establishes balance-sheet availability only. It supplies no cash, current-liabilities, debt, or liquidity-coverage values to support a resilience trajectory.",
+      "measurement_gaps": [
+        {
+          "measurement_id": "MEASURE:CN:600585:LEVERAGE_AND_FINANCIAL_RESILIENCE:ONE_YEAR",
+          "reason": "No cutoff cash-to-current-liabilities value or leverage baseline is present in the H1 static record.",
+          "evidence_refs": [
+            {
+              "source_id": "CNINFO:600585:ANN:20180323:1204507132",
+              "published_at": "2018-03-23",
+              "field_ref": "FY2017 Anhui Conch Cement consolidated D3/D4 identity: balance sheet, income statement and cash-flow statement, PDF p74, p80, p84."
+            }
+          ]
+        },
+        {
+          "measurement_id": "MEASURE:CN:600585:LEVERAGE_AND_FINANCIAL_RESILIENCE:THREE_YEAR",
+          "reason": "No cutoff cash-to-current-liabilities value or leverage baseline is present in the H1 static record.",
+          "evidence_refs": [
+            {
+              "source_id": "CNINFO:600585:ANN:20180323:1204507132",
+              "published_at": "2018-03-23",
+              "field_ref": "FY2017 Anhui Conch Cement consolidated D3/D4 identity: balance sheet, income statement and cash-flow statement, PDF p74, p80, p84."
+            }
+          ]
+        },
+        {
+          "measurement_id": "MEASURE:CN:600585:LEVERAGE_AND_FINANCIAL_RESILIENCE:FIVE_YEAR",
+          "reason": "No cutoff cash-to-current-liabilities value or leverage baseline is present in the H1 static record.",
+          "evidence_refs": [
+            {
+              "source_id": "CNINFO:600585:ANN:20180323:1204507132",
+              "published_at": "2018-03-23",
+              "field_ref": "FY2017 Anhui Conch Cement consolidated D3/D4 identity: balance sheet, income statement and cash-flow statement, PDF p74, p80, p84."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "dimension_id": "COMPETITIVE_POSITION",
+      "evidence_status": "EVIDENCE_INELIGIBLE",
+      "evidence_refs": [
+        {
+          "source_id": "CNINFO:600585:ANN:20160324:1202069257",
+          "published_at": "2016-03-24",
+          "field_ref": "FY2015 Anhui Conch Cement annual report PDF p21, group cement-and-clinker aggregate net sales volume."
+        },
+        {
+          "source_id": "CNINFO:600585:ANN:20170324:1203189438",
+          "published_at": "2017-03-24",
+          "field_ref": "FY2016 Anhui Conch Cement annual report PDF p21, group cement-and-clinker aggregate net sales volume."
+        },
+        {
+          "source_id": "CNINFO:600585:ANN:20180323:1204507132",
+          "published_at": "2018-03-23",
+          "field_ref": "FY2017 Anhui Conch Cement annual report PDF p22, group cement-and-clinker aggregate net sales volume."
+        }
+      ],
+      "forecast_by_window": [],
+      "rationale": "H1 confirms recurring availability of a consolidated volume field but gives no volume values, growth calculation, regional or peer context, or evidence that the field is a non-mechanical competitive-position measure.",
+      "measurement_gaps": [
+        {
+          "measurement_id": "MEASURE:CN:600585:COMPETITIVE_POSITION:ONE_YEAR",
+          "reason": "The H1 record contains no cutoff volume-growth calculation or validated competitive-position baseline.",
+          "evidence_refs": [
+            {
+              "source_id": "CNINFO:600585:ANN:20180323:1204507132",
+              "published_at": "2018-03-23",
+              "field_ref": "FY2017 Anhui Conch Cement annual report PDF p22, group cement-and-clinker aggregate net sales volume."
+            }
+          ]
+        },
+        {
+          "measurement_id": "MEASURE:CN:600585:COMPETITIVE_POSITION:THREE_YEAR",
+          "reason": "The H1 record contains no cutoff volume-growth calculation or validated competitive-position baseline.",
+          "evidence_refs": [
+            {
+              "source_id": "CNINFO:600585:ANN:20180323:1204507132",
+              "published_at": "2018-03-23",
+              "field_ref": "FY2017 Anhui Conch Cement annual report PDF p22, group cement-and-clinker aggregate net sales volume."
+            }
+          ]
+        },
+        {
+          "measurement_id": "MEASURE:CN:600585:COMPETITIVE_POSITION:FIVE_YEAR",
+          "reason": "The H1 record contains no cutoff volume-growth calculation or validated competitive-position baseline.",
+          "evidence_refs": [
+            {
+              "source_id": "CNINFO:600585:ANN:20180323:1204507132",
+              "published_at": "2018-03-23",
+              "field_ref": "FY2017 Anhui Conch Cement annual report PDF p22, group cement-and-clinker aggregate net sales volume."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "dimension_id": "PERMANENT_LOSS_RISK",
+      "evidence_status": "EVIDENCE_INELIGIBLE",
+      "evidence_refs": [
+        {
+          "source_id": "CNINFO:600585:ANN:20180323:1204507132",
+          "published_at": "2018-03-23",
+          "field_ref": "FY2017 Anhui Conch Cement annual report PDF p44: Anhui SASAC is the issuer's actual controller."
+        },
+        {
+          "source_id": "CNINFO:600585:ANN:20180323:1204507132",
+          "published_at": "2018-03-23",
+          "field_ref": "FY2017 Anhui Conch Cement annual report PDF p22, group cement-and-clinker sales and product/market discussion."
+        }
+      ],
+      "forecast_by_window": [],
+      "rationale": "H1 identifies the cutoff controller and an issuer-level business discussion, but it does not establish operating continuity, owner-cash access, or consolidation-perimeter continuity; the Decision Contract therefore requires the guardrail to remain an explicit coverage gap rather than a probability.",
+      "measurement_gaps": [
+        {
+          "measurement_id": "MEASURE:CN:600585:PERMANENT_LOSS_RISK:ONE_YEAR",
+          "reason": "The H1 static record does not establish a cutoff-visible operating or listed-consolidation-perimeter continuity baseline.",
+          "evidence_refs": [
+            {
+              "source_id": "CNINFO:600585:ANN:20180323:1204507132",
+              "published_at": "2018-03-23",
+              "field_ref": "FY2017 Anhui Conch Cement annual report PDF p44: Anhui SASAC is the issuer's actual controller."
+            }
+          ]
+        },
+        {
+          "measurement_id": "MEASURE:CN:600585:PERMANENT_LOSS_RISK:THREE_YEAR",
+          "reason": "The H1 static record does not establish a cutoff-visible operating or listed-consolidation-perimeter continuity baseline.",
+          "evidence_refs": [
+            {
+              "source_id": "CNINFO:600585:ANN:20180323:1204507132",
+              "published_at": "2018-03-23",
+              "field_ref": "FY2017 Anhui Conch Cement annual report PDF p44: Anhui SASAC is the issuer's actual controller."
+            }
+          ]
+        },
+        {
+          "measurement_id": "MEASURE:CN:600585:PERMANENT_LOSS_RISK:FIVE_YEAR",
+          "reason": "The H1 static record does not establish a cutoff-visible operating or listed-consolidation-perimeter continuity baseline.",
+          "evidence_refs": [
+            {
+              "source_id": "CNINFO:600585:ANN:20180323:1204507132",
+              "published_at": "2018-03-23",
+              "field_ref": "FY2017 Anhui Conch Cement annual report PDF p44: Anhui SASAC is the issuer's actual controller."
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "object_class": "PIT_COMPANY_STATE_FORECAST",
+  "claim_class": "PROSPECTIVE_STATE_TRAJECTORY",
+  "allowed_outputs": [
+    "FORECAST_EVALUATION_ONLY",
+    "RESEARCH_AGENDA"
+  ]
+}

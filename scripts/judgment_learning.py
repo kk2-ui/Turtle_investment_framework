@@ -17,8 +17,17 @@ from typing import Any
 
 
 SCHEMA_VERSION = "judgment-learning-note.v2"
+FEEDBACK_SCHEMA_VERSIONS = {
+    "judgment-feedback-card.v2",
+    "judgment-boundary-feedback-card.v1",
+    "judgment-selection-feedback-card.v1",
+}
 ADMISSION_SCHEMA_VERSION = "judgment-learning-admission.v1"
 APPLICATION_RECEIPT_SCHEMA_VERSION = "judgment-learning-application-receipt.v1"
+APPLICATION_BASES = {
+    "PROVISIONAL_SINGLE_COMPANY_TRANSFER",
+    "MULTI_COMPANY_METHOD_TRANSFER",
+}
 DISPOSITIONS = {"RETAIN", "RETIRE", "INSUFFICIENT_EVIDENCE"}
 ROOT_CAUSE_CLASSES = {
     "DATA_COVERAGE", "ACQUISITION_MODULE", "REASONING", "MODEL", "WRITING",
@@ -128,13 +137,27 @@ def build_judgment_learning_note(
 
     card = _feedback_card(feedback, note["claim_id"])
     assert card is not None  # validated above; keeps the output field order local.
-    note["feedback_context"] = {
-        "forward_judgment_id": card.get("forward_judgment_id"),
-        "settlement_status": card.get("settlement_status"),
-        "judgment_outcome_status": (card.get("judgment_outcome") or {}).get("status"),
-        "increment_vs_baseline": card.get("increment_vs_baseline"),
-        "rival_hypothesis_feedback": card.get("rival_hypothesis_feedback"),
-    }
+    if feedback.get("schema_version") == "judgment-selection-feedback-card.v1":
+        comparison = card.get("comparison") if isinstance(card.get("comparison"), dict) else {}
+        note["feedback_context"] = {
+            "forward_judgment_id": card.get("predicate_id"),
+            "settlement_status": (card.get("observation") or {}).get("status"),
+            "judgment_outcome_status": comparison.get("verdict"),
+            "increment_vs_baseline": (feedback.get("simple_baseline_resolution") or {}).get("state"),
+            "rival_hypothesis_feedback": {
+                "state": "DERIVED_FROM_FROZEN_HYPOTHESIS_SIGNAL",
+                "signal_verdict": comparison.get("verdict"),
+                "overall_verdict": (feedback.get("joint_comparison") or {}).get("overall_verdict"),
+            },
+        }
+    else:
+        note["feedback_context"] = {
+            "forward_judgment_id": card.get("forward_judgment_id"),
+            "settlement_status": card.get("settlement_status"),
+            "judgment_outcome_status": (card.get("judgment_outcome") or {}).get("status"),
+            "increment_vs_baseline": card.get("increment_vs_baseline"),
+            "rival_hypothesis_feedback": card.get("rival_hypothesis_feedback"),
+        }
     return note
 
 
@@ -149,7 +172,7 @@ def validate_judgment_learning_note(note: dict[str, Any], feedback: dict[str, An
         }
     if note.get("schema_version") != SCHEMA_VERSION:
         findings.append("schema_version_invalid")
-    if feedback.get("schema_version") != "judgment-feedback-card.v2":
+    if feedback.get("schema_version") not in FEEDBACK_SCHEMA_VERSIONS:
         findings.append("feedback_schema_version_invalid")
     note_id = _required_text(note.get("note_id"), "note_id", findings)
     if note_id and not re.fullmatch(r"LNOTE:[A-Za-z0-9._:-]+", note_id):
@@ -213,20 +236,35 @@ def validate_judgment_learning_note(note: dict[str, Any], feedback: dict[str, An
     if forbidden:
         findings.append("frozen_or_investment_fields_forbidden:" + ",".join(forbidden))
     if card is not None and disposition in {"RETAIN", "RETIRE"}:
-        if card.get("settlement_status") != "CALCULATED":
-            findings.append("retain_or_retire_requires_calculated_settlement")
-        rival_feedback = card.get("rival_hypothesis_feedback")
-        if isinstance(rival_feedback, dict):
-            rival_state = rival_feedback.get("state")
-            if rival_state != "NOT_PRESENT_IN_LEGACY_FROZEN_CASE":
-                accepted = {
-                    "DERIVED_FROM_FROZEN_RIVAL_SIGNAL": {"SUPPORTS_PRIMARY", "SUPPORTS_RIVAL"},
-                    "DERIVED_FROM_FROZEN_HYPOTHESIS_SIGNAL": {"A_ONLY", "B_ONLY"},
-                }
-                if rival_state not in accepted:
-                    findings.append("retain_or_retire_requires_derived_rival_signal")
-                elif rival_feedback.get("signal_verdict") not in accepted[rival_state]:
-                    findings.append("retain_or_retire_requires_diagnostic_rival_signal")
+        if feedback.get("schema_version") == "judgment-selection-feedback-card.v1":
+            comparison = card.get("comparison") if isinstance(card.get("comparison"), dict) else {}
+            overall = (
+                feedback.get("joint_comparison", {}).get("overall_verdict")
+                if isinstance(feedback.get("joint_comparison"), dict) else None
+            )
+            if comparison.get("role") != "CENTRAL_DISCRIMINATOR":
+                findings.append("selection_learning_requires_central_discriminator")
+            if overall not in {"A_ONLY", "B_ONLY"}:
+                findings.append("selection_learning_requires_diagnostic_overall_verdict")
+            elif disposition == "RETAIN" and overall != "A_ONLY":
+                findings.append("retain_requires_primary_only_selection_verdict")
+            elif disposition == "RETIRE" and overall != "B_ONLY":
+                findings.append("retire_requires_rival_only_selection_verdict")
+        else:
+            if card.get("settlement_status") != "CALCULATED":
+                findings.append("retain_or_retire_requires_calculated_settlement")
+            rival_feedback = card.get("rival_hypothesis_feedback")
+            if isinstance(rival_feedback, dict):
+                rival_state = rival_feedback.get("state")
+                if rival_state != "NOT_PRESENT_IN_LEGACY_FROZEN_CASE":
+                    accepted = {
+                        "DERIVED_FROM_FROZEN_RIVAL_SIGNAL": {"SUPPORTS_PRIMARY", "SUPPORTS_RIVAL"},
+                        "DERIVED_FROM_FROZEN_HYPOTHESIS_SIGNAL": {"A_ONLY", "B_ONLY"},
+                    }
+                    if rival_state not in accepted:
+                        findings.append("retain_or_retire_requires_derived_rival_signal")
+                    elif rival_feedback.get("signal_verdict") not in accepted[rival_state]:
+                        findings.append("retain_or_retire_requires_diagnostic_rival_signal")
     return {
         "schema_version": "judgment-learning-note-validation.v1",
         "state": "INVALID" if findings else "REVIEWABLE",
@@ -284,6 +322,8 @@ def validate_judgment_learning_admission(
     expected_fields = {
         "schema_version", "learning_note_ref", "feedback_ref", "control_plane_db",
         "feedback_item_id", "learning_note_event_id", "learning_note_effective_at",
+        "application_event_id", "program_id", "method_version", "method_scope",
+        "method_release_id", "method_released_at",
     }
     unexpected_fields = sorted(set(admission) - expected_fields)
     if unexpected_fields:
@@ -291,6 +331,11 @@ def validate_judgment_learning_admission(
     note_ref = _required_text(admission.get("learning_note_ref"), "learning_note_ref", findings)
     feedback_ref = _required_text(admission.get("feedback_ref"), "feedback_ref", findings)
     _required_text(admission.get("control_plane_db"), "control_plane_db", findings)
+    for field in (
+        "application_event_id", "program_id", "method_version", "method_scope",
+        "method_release_id", "method_released_at",
+    ):
+        _required_text(admission.get(field), field, findings)
     feedback_item_id = _required_text(
         admission.get("feedback_item_id"), "feedback_item_id", findings,
     )
@@ -530,8 +575,22 @@ def validate_learning_application_receipt(
         findings.append("receipt_id_invalid")
     if method_review.get("schema_version") != "method-feedback-review.v1":
         findings.append("method_review_schema_invalid")
-    if method_review.get("state") != "MULTI_COMPANY_METHOD_REVIEW_REQUIRED":
-        findings.append("method_review_not_cross_company")
+    application_basis = _required_text(
+        receipt.get("application_basis"), "application_basis", findings,
+    )
+    if application_basis not in APPLICATION_BASES:
+        findings.append("application_basis_invalid")
+    review_state = method_review.get("state")
+    if application_basis == "PROVISIONAL_SINGLE_COMPANY_TRANSFER":
+        if review_state != "SINGLE_COMPANY_ACTION_ONLY":
+            findings.append("provisional_transfer_requires_single_company_review")
+        if receipt.get("replication_requirement") != "HOLDOUT_REQUIRED":
+            findings.append("provisional_transfer_requires_holdout")
+        if receipt.get("production_rights") != "NONE_PENDING_HOLDOUT":
+            findings.append("provisional_transfer_cannot_grant_production_rights")
+    elif application_basis == "MULTI_COMPANY_METHOD_TRANSFER":
+        if review_state != "MULTI_COMPANY_METHOD_REVIEW_REQUIRED":
+            findings.append("multi_company_transfer_requires_cross_company_review")
     source_note_ids = receipt.get("source_note_ids")
     note_map = {str(note.get("note_id") or ""): note for note in notes if isinstance(note, dict)}
     review_note_ids = {str(note_id) for note_id in method_review.get("note_ids") or []}
@@ -566,6 +625,7 @@ def validate_learning_application_receipt(
         findings.append("target_company_must_differ_from_source_notes")
     applications = receipt.get("applications")
     applied_note_ids: set[str] = set()
+    applied_count = 0
     if not isinstance(applications, list) or not applications:
         findings.append("applications_missing")
     else:
@@ -585,6 +645,7 @@ def validate_learning_application_receipt(
             _required_text(application.get("counterexample_or_boundary"), prefix + ":counterexample_or_boundary", findings)
             changes = application.get("frozen_field_changes")
             if disposition == "APPLIED":
+                applied_count += 1
                 if not isinstance(changes, list) or not changes:
                     findings.append(prefix + ":applied_requires_frozen_field_change")
                     continue
@@ -605,6 +666,8 @@ def validate_learning_application_receipt(
                 findings.append(prefix + ":non_applied_cannot_claim_frozen_field_change")
     if {str(item) for item in source_note_ids} != applied_note_ids:
         findings.append("every_source_note_requires_explicit_application_disposition")
+    if applied_count < 1:
+        findings.append("at_least_one_application_must_be_applied")
     review = receipt.get("independent_reviewer")
     preparer = str(receipt.get("prepared_by") or "").strip()
     if not preparer:

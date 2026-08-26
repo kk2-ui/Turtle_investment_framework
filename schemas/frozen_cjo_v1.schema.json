@@ -1,0 +1,84 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://turtle.local/schemas/frozen_cjo_v1.schema.json",
+  "title": "Turtle Frozen Company Judgment Object v1",
+  "type": "object",
+  "required": [
+    "schema_version", "object_class", "cjo_id", "company_id", "cutoff_at",
+    "method_version", "compiled_at", "judgment_owner_id", "state", "frozen_at",
+    "resolution", "central_path", "forward_judgments", "key_operating_drivers",
+    "normal_earnings_transmission", "owner_cash_transmission", "permanent_loss_paths",
+    "strongest_counterargument", "unknowns", "monitoring_contract", "traceability",
+    "source_package", "enterprise_system_ref", "management_decision_ledger_ref",
+    "independent_review_receipt", "authority"
+  ],
+  "properties": {
+    "schema_version": {"const": "frozen-company-judgment-object.v1"},
+    "object_class": {"const": "FROZEN_COMPANY_JUDGMENT_OBJECT"},
+    "cjo_id": {"type": "string", "minLength": 1},
+    "company_id": {"type": "string", "minLength": 1},
+    "cutoff_at": {"type": "string", "format": "date-time"},
+    "method_version": {"type": "string", "minLength": 1},
+    "compiled_at": {"type": "string", "format": "date-time"},
+    "judgment_owner_id": {"type": "string", "minLength": 1},
+    "state": {"const": "FROZEN"},
+    "frozen_at": {"type": "string", "format": "date-time"},
+    "resolution": {"enum": ["PRIMARY", "NO_PRIMARY", "MIXED", "UNKNOWN"]},
+    "central_path": {"type": "object"},
+    "forward_judgments": {
+      "type": "array", "minItems": 3, "maxItems": 5,
+      "items": {
+        "type": "object",
+        "required": ["judgment_id", "claim", "horizon", "observable_condition", "evidence_state", "direction", "status", "trace_ids"]
+      }
+    },
+    "key_operating_drivers": {"type": "array", "minItems": 1, "items": {"type": "object"}},
+    "normal_earnings_transmission": {"$ref": "#/$defs/transmission_summary"},
+    "owner_cash_transmission": {"$ref": "#/$defs/transmission_summary"},
+    "permanent_loss_paths": {"type": "array", "items": {"type": "object"}},
+    "strongest_counterargument": {"type": "object", "required": ["claim", "trace_ids"]},
+    "unknowns": {"type": "array", "items": {"type": "object"}},
+    "monitoring_contract": {"type": "object", "required": ["contract_id", "signals"]},
+    "traceability": {
+      "type": "array", "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["trace_id", "source_ref", "responsibility_unit_id", "mechanism_id", "reasoning_kind", "financial_transmission_ids"]
+      }
+    },
+    "source_package": {"type": "object"},
+    "enterprise_system_ref": {"type": "object"},
+    "management_decision_ledger_ref": {"type": "object"},
+    "independent_review_receipt": {
+      "type": "object",
+      "required": ["review_id", "candidate_id", "company_id", "cutoff_at", "method_version", "reviewer_id", "reviewed_at", "decision", "accepted_criteria"],
+      "properties": {"decision": {"const": "ACCEPTED"}}
+    },
+    "authority": {
+      "type": "object",
+      "required": ["canonical", "append_only_predecessors", "report_read_allowed", "quantitative_read_allowed", "training_write_allowed", "price_write_allowed", "valuation_write_allowed", "investment_authorization"],
+      "properties": {
+        "canonical": {"const": true},
+        "append_only_predecessors": {"const": true},
+        "report_read_allowed": {"const": true},
+        "quantitative_read_allowed": {"const": true},
+        "training_write_allowed": {"const": false},
+        "price_write_allowed": {"const": false},
+        "valuation_write_allowed": {"const": false},
+        "investment_authorization": {"const": false}
+      },
+      "additionalProperties": false
+    }
+  },
+  "$defs": {
+    "transmission_summary": {
+      "type": "object",
+      "required": ["direction", "transmission_ids"],
+      "properties": {
+        "direction": {"enum": ["IMPROVES", "DETERIORATES", "MIXED", "UNKNOWN", "NONE"]},
+        "transmission_ids": {"type": "array", "items": {"type": "string"}}
+      },
+      "additionalProperties": false
+    }
+  }
+}

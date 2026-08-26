@@ -1894,6 +1894,30 @@ def assemble_report(
     analysis_purpose = _analysis_purpose(output_dir)
     company_judgment_only = analysis_purpose == "COMPANY_JUDGMENT_ONLY"
 
+    try:
+        from scripts.judgment_handoff_receipts import (
+            validate_judgment_handoff_read_receipt,
+        )
+    except ModuleNotFoundError:
+        from judgment_handoff_receipts import (
+            validate_judgment_handoff_read_receipt,
+        )
+    synthesis_receipt = validate_judgment_handoff_read_receipt(output_dir)
+    if synthesis_receipt.get("state") == "BLOCKED":
+        raise RuntimeError(
+            "Report assembly requires a current READY JUDGMENT_SYNTHESIS read receipt: "
+            + ", ".join(str(item) for item in synthesis_receipt.get("findings") or [])
+        )
+    if analysis_purpose == "INVESTMENT_DECISION":
+        investment_receipt = validate_judgment_handoff_read_receipt(
+            output_dir, view="INVESTMENT_ENRICHMENT",
+        )
+        if investment_receipt.get("state") == "BLOCKED":
+            raise RuntimeError(
+                "Investment report assembly requires a current READY INVESTMENT_ENRICHMENT read receipt: "
+                + ", ".join(str(item) for item in investment_receipt.get("findings") or [])
+            )
+
     # Phase 04: canonical values/actions are compiled immediately before any
     # chapter bytes are read.  Legacy directories without an enforcement
     # policy remain unchanged; new unified runs cannot publish free-form
@@ -2232,6 +2256,13 @@ def assemble_report(
         from scripts.research_calibration import create_publication_snapshot
     except ModuleNotFoundError:
         from research_calibration import create_publication_snapshot
+    synthesis_receipt = validate_judgment_handoff_read_receipt(output_dir)
+    if synthesis_receipt.get("state") == "BLOCKED":
+        raise RuntimeError(
+            "Publication requires the current JUDGMENT_SYNTHESIS generation: "
+            + ", ".join(str(item) for item in synthesis_receipt.get("findings") or [])
+        )
+    completion_dict["validators"]["judgment_handoff_read_receipt"] = synthesis_receipt
     publication_snapshot = create_publication_snapshot(
         output_dir,
         report_text,

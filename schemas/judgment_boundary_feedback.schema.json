@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://turtle.local/schemas/judgment_boundary_feedback.schema.json",
+  "title": "Boundary Feedback Card",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "case_id", "freeze_id", "settlement_id", "settlement_as_of", "selection_status", "settlement_status", "cards", "learning_scope", "prohibited_outputs"],
+  "properties": {
+    "schema_version": {"const": "judgment-boundary-feedback-card.v1"},
+    "case_id": {"type": "string"},
+    "freeze_id": {"type": "string"},
+    "settlement_id": {"type": "string"},
+    "settlement_as_of": {"type": "string", "format": "date-time"},
+    "selection_status": {"const": "NO_PRIMARY"},
+    "settlement_status": {"const": "CALCULATED"},
+    "cards": {"type": "array", "minItems": 5},
+    "learning_scope": {"const": "BOUNDARY_OR_ABSTENTION"},
+    "prohibited_outputs": {"type": "array", "minItems": 1}
+  }
+}

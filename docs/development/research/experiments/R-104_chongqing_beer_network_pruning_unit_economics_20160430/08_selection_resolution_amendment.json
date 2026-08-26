@@ -1,0 +1,157 @@
+{
+  "schema_version": "judgment-selection-resolution-amendment.v1",
+  "amendment_id": "JSELRES:R-104:PRE-OUTCOME-V1",
+  "case_id": "SELECTIONCASE:R-104:chongqing-beer-network-pruning-unit-economics-20160430",
+  "freeze_id": "JFREEZE:R-104:20160430",
+  "created_at": "2026-08-24T01:37:53+08:00",
+  "author_id": "turtle-main-r104-resolution-author",
+  "selector_id": "codex-r104-cutoff-selector",
+  "amendment_status": "CANDIDATE_PENDING_INDEPENDENT_REVIEW",
+  "append_only_scope": "RESOLUTION_RULES_ONLY_NO_FROZEN_PREDICTION_OR_MEASUREMENT_CHANGE",
+  "amended_artifacts": [
+    "01_case_freeze.json",
+    "03_outcome_acquisition_contract.json",
+    "04_measurement_contract.json"
+  ],
+  "pre_outcome_review_ref": "02_independent_pre_outcome_review.json",
+  "registered_claim_ids": [
+    "R-104:D1-TERMINAL",
+    "R-104:D2-TERMINAL",
+    "R-104:D3-TERMINAL",
+    "R-104:D4-CASH",
+    "R-104:D5-CAPITAL"
+  ],
+  "joint_selection_resolution": {
+    "input_claim_ids": [
+      "R-104:D3-TERMINAL",
+      "R-104:D4-CASH"
+    ],
+    "input_predicate_ids": [
+      "R104-D3-UNIT-OPERATING-CONTRIBUTION",
+      "R104-D4-CASH-AND-WORKING-CAPITAL"
+    ],
+    "input_verdict_vocabulary": [
+      "A_ONLY",
+      "B_ONLY",
+      "MIXED",
+      "NOT_DIAGNOSTIC"
+    ],
+    "mapping_key_order": [
+      "R-104:D3-TERMINAL",
+      "R-104:D4-CASH"
+    ],
+    "mapping": {
+      "A_ONLY|A_ONLY": "A_ONLY",
+      "A_ONLY|B_ONLY": "MIXED",
+      "A_ONLY|MIXED": "MIXED",
+      "A_ONLY|NOT_DIAGNOSTIC": "NOT_DIAGNOSTIC",
+      "B_ONLY|A_ONLY": "MIXED",
+      "B_ONLY|B_ONLY": "B_ONLY",
+      "B_ONLY|MIXED": "MIXED",
+      "B_ONLY|NOT_DIAGNOSTIC": "NOT_DIAGNOSTIC",
+      "MIXED|A_ONLY": "MIXED",
+      "MIXED|B_ONLY": "MIXED",
+      "MIXED|MIXED": "MIXED",
+      "MIXED|NOT_DIAGNOSTIC": "NOT_DIAGNOSTIC",
+      "NOT_DIAGNOSTIC|A_ONLY": "NOT_DIAGNOSTIC",
+      "NOT_DIAGNOSTIC|B_ONLY": "NOT_DIAGNOSTIC",
+      "NOT_DIAGNOSTIC|MIXED": "NOT_DIAGNOSTIC",
+      "NOT_DIAGNOSTIC|NOT_DIAGNOSTIC": "NOT_DIAGNOSTIC"
+    },
+    "unknown_or_mismatch_rule": "UNKNOWN, MEASUREMENT_MISMATCH or NOT_DIAGNOSTIC in either central discriminator yields that claim's NOT_DIAGNOSTIC verdict and therefore a joint NOT_DIAGNOSTIC result.",
+    "economic_identity": "D3 tests whether the consolidated issuer recovered a material annual portion of the six-plant capital loss in recurring operating contribution; D4 tests whether the same economic improvement reached owner cash after stripping positive working-capital release. Neither can substitute for the other.",
+    "prohibited_aggregation": [
+      "majority vote across D1-D5",
+      "probability or win-rate calibration",
+      "D1 closure continuation or D2 volume and mix as a substitute for D3 or D4",
+      "optional product throughput inferred from D2 sales volume",
+      "D5 continuous capital recovery as a binary selection hit",
+      "security price, investment return or portfolio outcome"
+    ]
+  },
+  "simple_baseline_resolution": {
+    "role": "SEPARATE_POINT_FORECAST_COMPARATOR_NOT_SELECTION_DECIDER",
+    "input_claim_ids": [
+      "R-104:D3-TERMINAL",
+      "R-104:D4-CASH"
+    ],
+    "point_identities": [
+      {
+        "claim_id": "R-104:D3-TERMINAL",
+        "predicate_id": "R104-D3-UNIT-OPERATING-CONTRIBUTION",
+        "point_value": 231478984.88,
+        "unit": "RMB"
+      },
+      {
+        "claim_id": "R-104:D4-CASH",
+        "predicate_id": "R104-D4-CASH-AND-WORKING-CAPITAL",
+        "point_value": 196326607.01,
+        "unit": "RMB"
+      }
+    ],
+    "loss_function": {
+      "name": "MEAN_ABSOLUTE_RELATIVE_POINT_LOSS",
+      "component": {
+        "operator": "ABSOLUTE_RELATIVE_ERROR",
+        "denominator": "ABS_POINT_VALUE"
+      },
+      "aggregate": {
+        "operator": "ARITHMETIC_MEAN",
+        "weights": "EQUAL_COMPONENT_WEIGHT"
+      },
+      "rounding": "NONE_BEFORE_RESOLUTION"
+    },
+    "resolution_rule": {
+      "zero_loss": {
+        "state": "ZERO_BASELINE_POINT_LOSS",
+        "operator": "EQUALS",
+        "value": 0.0
+      },
+      "positive_loss": {
+        "state": "BASELINE_POINT_LOSS",
+        "operator": "GREATER_THAN",
+        "value": 0.0
+      },
+      "non_diagnostic": {
+        "state": "NOT_DIAGNOSTIC",
+        "input_statuses": [
+          "UNKNOWN",
+          "MEASUREMENT_MISMATCH",
+          "NOT_DIAGNOSTIC"
+        ],
+        "require_all_inputs_observed": true
+      }
+    },
+    "interpretation_limit": "The baseline loss vector evaluates only the two frozen FY2015 point forecasts. It cannot create or reverse the D3+D4 joint selection verdict, become a probability or method win, or use a fabricated point forecast for H-A or H-B."
+  },
+  "diagnostic_only_claims": [
+    {
+      "claim_id": "R-104:D1-TERMINAL",
+      "reason": "Closure implementation or reversal diagnoses whether the action persisted but does not decide recurring contribution or owner cash."
+    },
+    {
+      "claim_id": "R-104:D2-TERMINAL",
+      "reason": "Sales volume and realized revenue per headline kilolitre provide customer and mix context but are explicitly non-voting."
+    },
+    {
+      "claim_id": "R-104:D5-CAPITAL",
+      "reason": "Three-year capital recovery remains a continuous permanent-loss reading without a frozen binary threshold."
+    }
+  ],
+  "status_preservation": {
+    "allowed": [
+      "OBSERVED",
+      "UNKNOWN",
+      "MEASUREMENT_MISMATCH",
+      "NOT_DIAGNOSTIC"
+    ],
+    "rule": "UNKNOWN, MEASUREMENT_MISMATCH and NOT_DIAGNOSTIC remain explicit; no missing issuer-perimeter input may be imputed from sales volume, net profit, group survival, security price or another claim."
+  },
+  "outcome_firewall_attestation": {
+    "post_cutoff_metadata_access": "NONE",
+    "post_cutoff_body_access": "NONE",
+    "attestation": "This amendment was authored only from the final frozen R-104 cutoff packet and its accepted independent pre-outcome review. No post-cutoff title, filename, snippet, report existence, body, value or result was enumerated, opened or inferred."
+  },
+  "independent_review_required": true,
+  "execution_authorized": false
+}
