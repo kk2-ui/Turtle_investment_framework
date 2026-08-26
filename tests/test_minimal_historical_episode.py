@@ -744,6 +744,12 @@ def test_public_schema_keeps_the_contract_only_access_and_no_transfer_rights() -
     }
     inventory = schema["$defs"]["outcome_source_inventory"]
     assert "numeric_value" not in json.dumps(inventory)
+    assert schema["$defs"]["source_verification_input"]["properties"]["unit"] == {
+        "$ref": "#/$defs/nonempty",
+    }
+    assert schema["$defs"]["official_source_receipt"]["properties"]["unit"] == {
+        "$ref": "#/$defs/nonempty",
+    }
     for name in ("decision_contract", "measurement_contract", "static_evidence", "prediction", "outcome_access", "observation", "settlement_request", "settlement"):
         properties = schema["$defs"][name]["properties"]
         assert properties["allowed_outputs"]["const"] == ["MECHANICAL_SETTLEMENT_ONLY"]
@@ -926,6 +932,162 @@ def _cninfo_bound_contract_chain() -> tuple[dict, dict, dict]:
     evidence = _static_evidence(contract)
     prediction = _prediction(contract, evidence)
     return contract, evidence, prediction
+
+
+_CN600425_FY2017_OPERATING_REVENUE_QUOTE = (
+    "其中：营业收入                         2,101,120,335.32 1,802,357,428.23"
+)
+
+
+def _cn600425_revenue_preoutcome_chain() -> tuple[dict, dict, dict, dict]:
+    """The independent curator's result-free FY2017 static field, as test data."""
+    decision = _decision_contract()
+    decision.update({
+        "decision_contract_id": "MHE:DECISION:CN600425:FY2017:V1",
+        "company_id": "CN:600425",
+        "issuer_id": "ISSUER:CN:600425",
+        "cutoff_at": "2018-04-30T23:59:59+08:00",
+        "metric_id": "ISSUER_CONSOLIDATED_OPERATING_REVENUE_RMB",
+        "roles": {
+            "forecaster_id": "FORECASTER:CN600425:PREOUTCOME:TEST",
+            "custodian_id": "CUSTODIAN:CN600425:FUTURE:TEST",
+        },
+    })
+    contract = _contract(decision)
+    contract.update({
+        "measurement_contract_id": "MHE:CONTRACT:CN600425:FY2018:V1",
+        "company_id": decision["company_id"],
+        "issuer_id": decision["issuer_id"],
+        "cutoff_at": decision["cutoff_at"],
+        "metric_id": decision["metric_id"],
+        "outcome_period_end": "2018-12-31",
+        "responsibility_boundary": "LISTED_CONSOLIDATED_ISSUER",
+        "unit": "RMB",
+        "settlement_tolerance": 0.01,
+        "roles": deepcopy(decision["roles"]),
+    })
+    evidence = _static_evidence(contract)
+    evidence.update({
+        "evidence_receipt_id": "MHE:EVIDENCE:CN600425:FY2017:V1",
+        "company_id": contract["company_id"],
+        "issuer_id": contract["issuer_id"],
+        "cutoff_at": contract["cutoff_at"],
+        "metric_id": contract["metric_id"],
+        "curator_id": "CURATOR:CN600425:REVENUE:TEST",
+        "source": {
+            "source_id": "CNINFO:600425:ANN:20180421:1204677754",
+            "source_url": "https://static.cninfo.com.cn/finalpage/2018-04-21/1204677754.PDF",
+            "source_type": episode.OFFICIAL_STATIC_FILING,
+            "published_at": "2018-04-21",
+            "issuer_id": contract["issuer_id"],
+            "metric_id": contract["metric_id"],
+            "responsibility_boundary": contract["responsibility_boundary"],
+            "unit": contract["unit"],
+            "field_ref": (
+                "FY2017 Xinjiang Tianshan Cement annual report, consolidated income statement, "
+                "PDF p. 61, 营业收入."
+            ),
+            "numeric_value": 2101120335.32,
+        },
+    })
+    prediction = _prediction(contract, evidence)
+    prediction["prediction_id"] = "MHE:PREDICTION:CN600425:FY2018:V1"
+    return decision, contract, evidence, prediction
+
+
+def _rmb_source_verification(source: dict, *, subject_ref: dict) -> dict:
+    return {
+        "schema_version": runner.SOURCE_VERIFICATION_INPUT_SCHEMA_VERSION,
+        "subject_ref": subject_ref,
+        "source_id": source["source_id"],
+        "source_url": source["source_url"],
+        "exact_quote": _CN600425_FY2017_OPERATING_REVENUE_QUOTE,
+        "numeric_value": source["numeric_value"],
+        "unit": source["unit"],
+        "allowed_outputs": ["MECHANICAL_SETTLEMENT_ONLY"],
+        "method_transfer_rights": "NO_METHOD_TRANSFER_RIGHTS",
+    }
+
+
+def test_real_runner_freezes_cn600425_rmb_revenue_preoutcome_chain_only(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Mock only the PDF transport: no outcome object is opened or written."""
+    decision, contract, evidence, prediction = _cn600425_revenue_preoutcome_chain()
+    database = tmp_path / "cn600425-minimal-episode.db"
+    source_receipt_path = tmp_path / "cn600425-preoutcome-source-receipt.json"
+
+    class FakePdfResponse:
+        def __enter__(self) -> "FakePdfResponse":
+            return self
+
+        def __exit__(self, *_: object) -> None:
+            return None
+
+        def geturl(self) -> str:
+            return evidence["source"]["source_url"]
+
+        def read(self) -> bytes:
+            return b"%PDF-synthetic-cn600425-page-61"
+
+    selected_pages: list[tuple[str, str]] = []
+
+    def fake_pdftotext(args: list[str], **_: object) -> SimpleNamespace:
+        start = args[args.index("-f") + 1]
+        end = args[args.index("-l") + 1]
+        selected_pages.append((start, end))
+        return SimpleNamespace(stdout=_CN600425_FY2017_OPERATING_REVENUE_QUOTE)
+
+    monkeypatch.setattr(runner, "urlopen", lambda *_args, **_kwargs: FakePdfResponse())
+    monkeypatch.setattr(runner.subprocess, "run", fake_pdftotext)
+    frozen = runner.freeze_preoutcome(
+        database,
+        decision_contract_path=_write_json(tmp_path / "decision.json", decision),
+        contract_path=_write_json(tmp_path / "contract.json", contract),
+        evidence_path=_write_json(tmp_path / "evidence.json", evidence),
+        prediction_path=_write_json(tmp_path / "prediction.json", prediction),
+        source_verification_path=_write_json(
+            tmp_path / "evidence-verification.json",
+            _rmb_source_verification(
+                evidence["source"],
+                subject_ref={
+                    "object_type": "STATIC_EVIDENCE",
+                    "object_id": evidence["evidence_receipt_id"],
+                    "object_version": evidence["evidence_receipt_version"],
+                },
+            ),
+        ),
+        source_receipt_output_path=source_receipt_path,
+    )
+    assert frozen["stage"] == "PRE_OUTCOME_FROZEN"
+    assert frozen["source_acquisition"]["unit"] == "RMB"
+    assert selected_pages == [("61", "61")]
+    assert json.loads(source_receipt_path.read_text(encoding="utf-8"))["numeric_value"] == 2101120335.32
+
+    conn = sqlite3.connect(database)
+    try:
+        preoutcome_count = sum(
+            conn.execute(f"SELECT COUNT(*) FROM {table}").fetchone()[0]
+            for table in (
+                control.DECISION_CONTRACT_TABLE,
+                control.CONTRACT_TABLE,
+                control.EVIDENCE_TABLE,
+                control.PREDICTION_TABLE,
+            )
+        )
+        outcome_count = sum(
+            conn.execute(f"SELECT COUNT(*) FROM {table}").fetchone()[0]
+            for table in (
+                control.ACCESS_TABLE,
+                control.OUTCOME_SOURCE_INVENTORY_TABLE,
+                control.OBSERVATION_TABLE,
+                control.SETTLEMENT_TABLE,
+            )
+        )
+    finally:
+        conn.close()
+    assert preoutcome_count == 4
+    assert outcome_count == 0
 
 
 def _authorized_cninfo_database(tmp_path: Path) -> tuple[Path, dict]:
@@ -1271,6 +1433,47 @@ def test_official_source_quote_must_reconcile_to_declared_tonnes() -> None:
     verification["numeric_value"] = 296000000
     with pytest.raises(ValueError, match="do not match"):
         runner._verify_quote_value(verification)
+
+
+def test_official_rmb_revenue_quote_uses_only_the_selected_consolidated_current_period_column() -> None:
+    _, _, evidence, _ = _cn600425_revenue_preoutcome_chain()
+    verification = _rmb_source_verification(
+        evidence["source"],
+        subject_ref={"object_type": "STATIC_EVIDENCE", "object_id": evidence["evidence_receipt_id"], "object_version": 1},
+    )
+    runner._verify_quote_value(verification, source=evidence["source"])
+
+    # The second disclosed amount is the comparative-period column.  It cannot
+    # be substituted merely because it occurs in the same exact quote.
+    verification["numeric_value"] = 1802357428.23
+    with pytest.raises(ValueError, match="do not match"):
+        runner._verify_quote_value(verification, source=evidence["source"])
+
+
+def test_source_verification_rejects_nonfinite_contract_bound_numbers_before_pdf_access(tmp_path: Path) -> None:
+    decision, contract, evidence, prediction = _cn600425_revenue_preoutcome_chain()
+    evidence["source"]["numeric_value"] = float("nan")
+    verification = _rmb_source_verification(
+        evidence["source"],
+        subject_ref={
+            "object_type": "STATIC_EVIDENCE",
+            "object_id": evidence["evidence_receipt_id"],
+            "object_version": evidence["evidence_receipt_version"],
+        },
+    )
+    opened: list[bool] = []
+
+    with pytest.raises(ValueError, match="finite numeric"):
+        runner.freeze_preoutcome(
+            tmp_path / "nonfinite.db",
+            decision_contract_path=_write_json(tmp_path / "decision.json", decision),
+            contract_path=_write_json(tmp_path / "contract.json", contract),
+            evidence_path=_write_json(tmp_path / "evidence.json", evidence),
+            prediction_path=_write_json(tmp_path / "prediction.json", prediction),
+            source_verification_path=_write_json(tmp_path / "verification.json", verification),
+            source_verifier=lambda *_: opened.append(True),
+        )
+    assert opened == []
 
 
 def test_source_verification_subject_must_match_frozen_object(tmp_path: Path) -> None:

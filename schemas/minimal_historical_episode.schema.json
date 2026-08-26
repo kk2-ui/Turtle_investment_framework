@@ -148,7 +148,7 @@
         "source_url": {"type": "string", "pattern": "^https://static\\.cninfo\\.com\\.cn/finalpage/.+\\.pdf$"},
         "exact_quote": {"$ref": "#/$defs/nonempty"},
         "numeric_value": {"type": "number"},
-        "unit": {"const": "tonnes"},
+        "unit": {"$ref": "#/$defs/nonempty"},
         "allowed_outputs": {"const": ["MECHANICAL_SETTLEMENT_ONLY"]},
         "method_transfer_rights": {"const": "NO_METHOD_TRANSFER_RIGHTS"}
       }
@@ -166,7 +166,7 @@
         "field_ref": {"$ref": "#/$defs/nonempty"},
         "exact_quote": {"$ref": "#/$defs/nonempty"},
         "numeric_value": {"type": "number"},
-        "unit": {"const": "tonnes"},
+        "unit": {"$ref": "#/$defs/nonempty"},
         "allowed_outputs": {"const": ["MECHANICAL_SETTLEMENT_ONLY"]},
         "method_transfer_rights": {"const": "NO_METHOD_TRANSFER_RIGHTS"}
       }

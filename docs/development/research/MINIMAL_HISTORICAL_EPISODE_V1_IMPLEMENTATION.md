@@ -117,9 +117,15 @@ URLs. They cover the Decision Contract-first identity/role/replay controls
 without opening real sources, and create no committed production artifact.
 
 The persistent runner is a separate real-data entrypoint. It rejects `.invalid`
-fixtures, opens the cited `static.cninfo.com.cn/finalpage` PDF, reconciles the
-exact disclosed quote to the numeric tonnes value, and emits an official-source
-receipt. The sealed SQLite database belongs only to the controller. A custodian
+fixtures, opens the cited `static.cninfo.com.cn/finalpage` PDF, and reconciles
+the exact disclosed quote to the contract-bound finite numeric value before
+emitting an official-source receipt. It has deterministic quote rules for the
+existing `tonnes` disclosure form and for
+`ISSUER_CONSOLIDATED_OPERATING_REVENUE_RMB`: the latter requires the declared
+consolidated income-statement revenue field and maps only the first numeric
+column immediately following `营业收入` (commas permitted). Other units remain
+unverifiable until a similarly explicit rule exists; the runner never guesses a
+scale or selects a comparative column. The sealed SQLite database belongs only to the controller. A custodian
 receives the Measurement Contract plus contract-only outcome authorization and
 returns one observation; the custodian does not run the database commands.
 Freeze, authorization, observation receipt, and settlement persistence times

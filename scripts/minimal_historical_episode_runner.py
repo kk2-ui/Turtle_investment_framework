@@ -13,7 +13,9 @@ from __future__ import annotations
 import argparse
 from copy import deepcopy
 from datetime import datetime, timezone
+from decimal import Decimal, InvalidOperation
 import json
+import math
 from pathlib import Path
 import re
 import sqlite3
@@ -38,6 +40,9 @@ _WHITESPACE = re.compile(r"\s+")
 _FIELD_REF_PAGE = re.compile(
     r"(?:\bpdf\s*)?\bp\.?\s*(\d+)\b|\bpage[_\s-]*(\d+)\b",
     re.IGNORECASE,
+)
+_RMB_OPERATING_REVENUE_ROW = re.compile(
+    r"(?:其中[:：])?营业收入\s*(?P<current_period>[0-9][0-9,，]*(?:\.[0-9]+)?)"
 )
 SourceVerifier = Callable[[dict[str, Any], dict[str, Any]], dict[str, Any]]
 
@@ -66,6 +71,21 @@ def _normalized_text(value: str) -> str:
     return _WHITESPACE.sub("", value).replace(",", "").replace("，", "")
 
 
+def _finite_decimal(value: Any, *, field: str) -> Decimal:
+    """Return one finite declared number without silently coercing booleans."""
+    if not isinstance(value, (int, float)) or isinstance(value, bool):
+        raise ValueError(f"{field} must be finite numeric")
+    if isinstance(value, float) and not math.isfinite(value):
+        raise ValueError(f"{field} must be finite numeric")
+    try:
+        decimal = Decimal(str(value))
+    except (InvalidOperation, ValueError) as exc:  # pragma: no cover - guarded numeric shape
+        raise ValueError(f"{field} must be finite numeric") from exc
+    if not decimal.is_finite():
+        raise ValueError(f"{field} must be finite numeric")
+    return decimal
+
+
 def _verification_input(
     path: str | Path, source: dict[str, Any], *, expected_subject_ref: dict[str, Any],
 ) -> dict[str, Any]:
@@ -78,9 +98,14 @@ def _verification_input(
         raise ValueError("source verification input must have the closed v1 shape")
     if verification.get("schema_version") != SOURCE_VERIFICATION_INPUT_SCHEMA_VERSION:
         raise ValueError("source verification input schema is invalid")
-    for field in ("source_id", "source_url", "numeric_value", "unit"):
+    for field in ("source_id", "source_url", "unit"):
         if verification.get(field) != source.get(field):
             raise ValueError(f"source verification input {field} must match the frozen source")
+    if (
+        _finite_decimal(verification.get("numeric_value"), field="source verification input numeric_value")
+        != _finite_decimal(source.get("numeric_value"), field="frozen source numeric_value")
+    ):
+        raise ValueError("source verification input numeric_value must match the frozen source")
     if verification.get("allowed_outputs") != episode.ALLOWED_OUTPUTS:
         raise ValueError("source verification input must remain mechanical-settlement-only")
     if verification.get("method_transfer_rights") != episode.NO_METHOD_TRANSFER_RIGHTS:
@@ -120,14 +145,54 @@ def _decision_contract_from_measurement(contract: dict[str, Any]) -> dict[str, A
     }
 
 
-def _verify_quote_value(verification: dict[str, Any]) -> None:
-    if verification.get("unit") != "tonnes":
-        raise ValueError("real source verifier currently supports the frozen tonnes metric only")
-    match = re.search(r"([0-9]+(?:\.[0-9]+)?)亿吨", _normalized_text(verification["exact_quote"]))
-    if match is None:
-        raise ValueError("official source quote must contain the disclosed value in 亿吨")
-    quoted_tonnes = float(match.group(1)) * 100_000_000
-    if quoted_tonnes != float(verification.get("numeric_value")):
+def _verify_quote_value(
+    verification: dict[str, Any], *, source: dict[str, Any] | None = None,
+) -> None:
+    """Reconcile a finite contract-bound number with a registered quote rule.
+
+    The contract may name any nonempty unit.  A real source is accepted only
+    when this runner has a deterministic, unit-specific mapping from its exact
+    quote to the frozen numeric field.  This intentionally supports the
+    existing tonnes form and one consolidated RMB operating-revenue form; it
+    does not guess scales or columns for other units.
+    """
+    declared_value = _finite_decimal(
+        verification.get("numeric_value"), field="source verification input numeric_value",
+    )
+    unit = verification.get("unit")
+    if unit == "tonnes":
+        match = re.search(r"([0-9]+(?:\.[0-9]+)?)亿吨", _normalized_text(verification["exact_quote"]))
+        if match is None:
+            raise ValueError("official source quote must contain the disclosed value in 亿吨")
+        quoted_value = Decimal(match.group(1)) * Decimal("100000000")
+    elif unit == "RMB":
+        if not isinstance(source, dict):
+            raise ValueError("RMB source verification requires the frozen source identity")
+        field_ref = source.get("field_ref")
+        if (
+            source.get("metric_id") != "ISSUER_CONSOLIDATED_OPERATING_REVENUE_RMB"
+            or source.get("responsibility_boundary") != "LISTED_CONSOLIDATED_ISSUER"
+            or not isinstance(field_ref, str)
+            or "consolidated income statement" not in field_ref.casefold()
+            or "营业收入" not in field_ref
+        ):
+            raise ValueError("RMB source must be the declared consolidated operating-revenue field")
+        # In a consolidated income-statement revenue row, the first amount
+        # immediately following 营业收入 is the explicitly selected current-period
+        # column.  The later comparative column is never considered a match.
+        # Preserve the cell separator: collapsing whitespace would let the
+        # first current-period amount absorb the following comparative column.
+        quote = verification["exact_quote"]
+        match = _RMB_OPERATING_REVENUE_ROW.search(quote)
+        if match is None:
+            raise ValueError("official RMB revenue quote must expose the selected consolidated current-period column")
+        try:
+            quoted_value = Decimal(match.group("current_period").replace(",", "").replace("，", ""))
+        except InvalidOperation as exc:  # pragma: no cover - regex restricts the input
+            raise ValueError("official RMB revenue quote has an invalid selected column") from exc
+    else:
+        raise ValueError("real source verifier has no deterministic quote rule for this contract-bound unit")
+    if quoted_value != declared_value:
         raise ValueError("official source quote and declared numeric_value do not match")
 
 
@@ -246,7 +311,7 @@ def verify_official_pdf_source(
         raise ValueError("real runner requires an official static.cninfo.com.cn/finalpage PDF")
     quote = verification["exact_quote"]
     page = _declared_pdf_page(source.get("field_ref"))
-    _verify_quote_value(verification)
+    _verify_quote_value(verification, source=source)
     request = Request(url, headers={"User-Agent": "Mozilla/5.0"})
     with urlopen(request, timeout=60) as response:
         final_url = response.geturl()
