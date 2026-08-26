@@ -10,6 +10,7 @@ from __future__ import annotations
 
 from copy import deepcopy
 from datetime import date, datetime, timezone
+import math
 import re
 from typing import Any
 
@@ -34,7 +35,7 @@ _EVIDENCE_REFERENCE_KEYS = {"evidence_receipt_id", "evidence_receipt_version"}
 _ROLE_KEYS = {"forecaster_id", "custodian_id"}
 _SOURCE_KEYS = {
     "source_id", "source_url", "source_type", "published_at", "issuer_id",
-    "responsibility_boundary", "unit", "field_ref", "numeric_value",
+    "metric_id", "responsibility_boundary", "unit", "field_ref", "numeric_value",
 }
 _OUTCOME_SOURCE_KEYS = _SOURCE_KEYS - {"published_at"} | {"source_available_at"}
 _CONTRACT_KEYS = {
@@ -169,14 +170,18 @@ def _numeric(value: Any, path: str, findings: list[str]) -> float | None:
     if not isinstance(value, (int, float)) or isinstance(value, bool):
         findings.append(f"{path}_must_be_numeric")
         return None
-    return float(value)
+    number = float(value)
+    if not math.isfinite(number):
+        findings.append(f"{path}_must_be_finite_numeric")
+        return None
+    return number
 
 
 def _static_source(
     value: Any, *, contract: dict[str, Any], path: str, findings: list[str],
 ) -> dict[str, Any]:
     source = _closed(value, _SOURCE_KEYS, path, findings)
-    for field in ("source_id", "source_url", "issuer_id", "responsibility_boundary", "unit", "field_ref"):
+    for field in ("source_id", "source_url", "issuer_id", "metric_id", "responsibility_boundary", "unit", "field_ref"):
         _require_text(source, field, path, findings)
     if source.get("source_type") != OFFICIAL_STATIC_FILING:
         findings.append(f"{path}.source_type_must_be_official_static_filing")
@@ -189,7 +194,7 @@ def _static_source(
         findings.append(f"{path}.published_at_must_precede_cutoff")
     if source.get("issuer_id") != contract.get("issuer_id"):
         findings.append(f"{path}.issuer_id_must_match_measurement_contract")
-    for field in ("responsibility_boundary", "unit"):
+    for field in ("metric_id", "responsibility_boundary", "unit"):
         if source.get(field) != contract.get(field):
             findings.append(f"{path}.{field}_must_match_measurement_contract")
     field_ref = source.get("field_ref")
@@ -201,7 +206,7 @@ def _static_source(
 
 def _outcome_source(value: Any, *, contract: dict[str, Any], path: str, findings: list[str]) -> dict[str, Any]:
     source = _closed(value, _OUTCOME_SOURCE_KEYS, path, findings)
-    for field in ("source_id", "source_url", "issuer_id", "responsibility_boundary", "unit", "field_ref"):
+    for field in ("source_id", "source_url", "issuer_id", "metric_id", "responsibility_boundary", "unit", "field_ref"):
         _require_text(source, field, path, findings)
     if source.get("source_type") != OFFICIAL_STATIC_FILING:
         findings.append(f"{path}.source_type_must_be_official_static_filing")
@@ -217,7 +222,7 @@ def _outcome_source(value: Any, *, contract: dict[str, Any], path: str, findings
         findings.append(f"{path}.source_available_at_must_follow_outcome_period_end")
     if source.get("issuer_id") != contract.get("issuer_id"):
         findings.append(f"{path}.issuer_id_must_match_measurement_contract")
-    for field in ("responsibility_boundary", "unit"):
+    for field in ("metric_id", "responsibility_boundary", "unit"):
         if source.get(field) != contract.get(field):
             findings.append(f"{path}.{field}_must_match_measurement_contract")
     field_ref = source.get("field_ref")

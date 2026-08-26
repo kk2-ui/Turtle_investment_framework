@@ -26,8 +26,11 @@ The contract names precisely one company, issuer, cutoff, metric, and window.
 It also freezes the issuer responsibility boundary, unit, outcome-period end,
 tolerance, forecaster, and custodian. The static evidence receipt must be an
 official HTTPS PDF, published strictly before cutoff, with the same issuer,
-boundary, unit and a page reference. Its curator must differ from both the
-forecaster and custodian.
+metric, boundary, unit and a page reference. Its curator must differ from both
+the forecaster and custodian. The outcome source carries the same closed
+source-level metric identity and must match the contract exactly as well.
+Baseline and outcome numeric values must be finite before the controller can
+serialize or persist either receipt.
 
 ## Custody boundary
 

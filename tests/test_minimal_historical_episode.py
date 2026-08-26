@@ -69,6 +69,7 @@ def _static_evidence(contract: dict) -> dict:
             "source_type": episode.OFFICIAL_STATIC_FILING,
             "published_at": "2020-03-31",
             "issuer_id": contract["issuer_id"],
+            "metric_id": contract["metric_id"],
             "responsibility_boundary": contract["responsibility_boundary"],
             "unit": contract["unit"],
             "field_ref": "Synthetic official filing p12.",
@@ -136,6 +137,7 @@ def _observation(contract: dict) -> dict:
             "source_type": episode.OFFICIAL_STATIC_FILING,
             "source_available_at": "2022-03-30T00:00:00+00:00",
             "issuer_id": contract["issuer_id"],
+            "metric_id": contract["metric_id"],
             "responsibility_boundary": contract["responsibility_boundary"],
             "unit": contract["unit"],
             "field_ref": "Synthetic official filing p38.",
@@ -222,6 +224,7 @@ def test_static_evidence_rejects_nonstatic_late_or_identity_drift() -> None:
         (lambda value: value["source"].update({"source_type": "NEWS"}), "static_evidence.source.source_type_must_be_official_static_filing"),
         (lambda value: value["source"].update({"published_at": "2020-12-31"}), "static_evidence.source.published_at_must_precede_cutoff"),
         (lambda value: value.update({"issuer_id": "SYNTHETIC:ISSUER:OTHER"}), "static_evidence.issuer_id_must_match_measurement_contract"),
+        (lambda value: value["source"].update({"metric_id": "OTHER_OPERATING_METRIC"}), "static_evidence.source.metric_id_must_match_measurement_contract"),
     ):
         invalid = deepcopy(evidence)
         mutate(invalid)
@@ -288,6 +291,87 @@ def test_control_plane_rejects_wrong_chain_time_and_observation_measurement_mism
         with pytest.raises(control.MinimalHistoricalEpisodeError) as exc_info:
             control.register_observation(conn, early_observation)
         assert exc_info.value.code == "observation_must_follow_outcome_access"
+    finally:
+        conn.close()
+
+
+@pytest.mark.parametrize("stage", ["baseline", "outcome"])
+def test_source_metric_mismatch_is_rejected_before_persistence_or_settlement(stage: str) -> None:
+    if stage == "baseline":
+        conn = _conn()
+        contract = _contract()
+        try:
+            assert control.register_measurement_contract(
+                conn, contract, frozen_at="2021-01-02T00:00:00+00:00",
+            )["frozen"]
+            evidence = _static_evidence(contract)
+            evidence["source"]["metric_id"] = "OTHER_OPERATING_METRIC"
+            with pytest.raises(control.MinimalHistoricalEpisodeError) as exc_info:
+                control.register_static_evidence(conn, evidence, frozen_at="2021-01-03T00:00:00+00:00")
+            assert exc_info.value.code == "static_evidence_invalid"
+            assert "static_evidence.source.metric_id_must_match_measurement_contract" in exc_info.value.detail
+            assert conn.execute(f"SELECT COUNT(*) FROM {control.EVIDENCE_TABLE}").fetchone()[0] == 0
+            assert conn.execute(f"SELECT COUNT(*) FROM {control.SETTLEMENT_TABLE}").fetchone()[0] == 0
+        finally:
+            conn.close()
+        return
+
+    conn, contract, _, _ = _frozen_chain()
+    try:
+        assert control.authorize_outcome_access(conn, _access(contract))["authorized"]
+        observation = _observation(contract)
+        observation["source"]["metric_id"] = "OTHER_OPERATING_METRIC"
+        with pytest.raises(control.MinimalHistoricalEpisodeError) as exc_info:
+            control.register_observation(conn, observation)
+        assert exc_info.value.code == "observation_invalid"
+        assert "observation.source.metric_id_must_match_measurement_contract" in exc_info.value.detail
+        assert conn.execute(f"SELECT COUNT(*) FROM {control.OBSERVATION_TABLE}").fetchone()[0] == 0
+        assert conn.execute(f"SELECT COUNT(*) FROM {control.SETTLEMENT_TABLE}").fetchone()[0] == 0
+    finally:
+        conn.close()
+
+
+@pytest.mark.parametrize(
+    ("stage", "numeric_value"),
+    [
+        pytest.param("baseline", float("nan"), id="baseline-nan"),
+        pytest.param("outcome", float("inf"), id="outcome-positive-infinity"),
+        pytest.param("outcome", float("-inf"), id="outcome-negative-infinity"),
+    ],
+)
+def test_nonfinite_numeric_values_are_rejected_before_persistence_or_settlement(
+    stage: str, numeric_value: float,
+) -> None:
+    if stage == "baseline":
+        conn = _conn()
+        contract = _contract()
+        try:
+            assert control.register_measurement_contract(
+                conn, contract, frozen_at="2021-01-02T00:00:00+00:00",
+            )["frozen"]
+            evidence = _static_evidence(contract)
+            evidence["source"]["numeric_value"] = numeric_value
+            with pytest.raises(control.MinimalHistoricalEpisodeError) as exc_info:
+                control.register_static_evidence(conn, evidence, frozen_at="2021-01-03T00:00:00+00:00")
+            assert exc_info.value.code == "static_evidence_invalid"
+            assert "static_evidence.source.numeric_value_must_be_finite_numeric" in exc_info.value.detail
+            assert conn.execute(f"SELECT COUNT(*) FROM {control.EVIDENCE_TABLE}").fetchone()[0] == 0
+            assert conn.execute(f"SELECT COUNT(*) FROM {control.SETTLEMENT_TABLE}").fetchone()[0] == 0
+        finally:
+            conn.close()
+        return
+
+    conn, contract, _, _ = _frozen_chain()
+    try:
+        assert control.authorize_outcome_access(conn, _access(contract))["authorized"]
+        observation = _observation(contract)
+        observation["source"]["numeric_value"] = numeric_value
+        with pytest.raises(control.MinimalHistoricalEpisodeError) as exc_info:
+            control.register_observation(conn, observation)
+        assert exc_info.value.code == "observation_invalid"
+        assert "observation.source.numeric_value_must_be_finite_numeric" in exc_info.value.detail
+        assert conn.execute(f"SELECT COUNT(*) FROM {control.OBSERVATION_TABLE}").fetchone()[0] == 0
+        assert conn.execute(f"SELECT COUNT(*) FROM {control.SETTLEMENT_TABLE}").fetchone()[0] == 0
     finally:
         conn.close()
 
