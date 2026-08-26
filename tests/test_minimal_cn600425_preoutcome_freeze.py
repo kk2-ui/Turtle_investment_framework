@@ -2,10 +2,15 @@
 
 from __future__ import annotations
 
+from copy import deepcopy
 import json
 from pathlib import Path
 import sqlite3
+import subprocess
 
+import pytest
+
+from scripts import minimal_historical_episode as episode
 from scripts import minimal_historical_episode_control_plane as control
 from scripts import minimal_historical_episode_runner as runner
 
@@ -17,12 +22,16 @@ def _load(name: str) -> dict:
     return json.loads((COHORTS / name).read_text(encoding="utf-8"))
 
 
-def test_cn600425_revenue_runner_freezes_only_the_preoutcome_chain(tmp_path: Path) -> None:
+def test_cn600425_revenue_runner_freezes_only_the_preoutcome_chain(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch,
+) -> None:
     """The real runner verifies the frozen static field before it seals four records."""
     decision = _load("CN600425_FY2017_OPERATING_REVENUE_RMB_MINIMAL_HISTORICAL_EPISODE_DECISION_CONTRACT.json")
     contract = _load("CN600425_FY2018_OPERATING_REVENUE_RMB_MINIMAL_HISTORICAL_EPISODE_MEASUREMENT_CONTRACT.json")
     evidence = _load("CN600425_FY2017_OPERATING_REVENUE_RMB_MINIMAL_HISTORICAL_EPISODE_STATIC_EVIDENCE.json")
     prediction = _load("CN600425_FY2018_OPERATING_REVENUE_RMB_MINIMAL_HISTORICAL_EPISODE_PREDICTION.json")
+    curator_submission = _load("CN600425_FY2017_OPERATING_REVENUE_RMB_PREOUTCOME_CURATOR_SUBMISSION.json")
+    curator_source = curator_submission["source"]
 
     assert decision["company_id"] == "CN:600425"
     assert decision["issuer_id"] == "ISSUER:CN:600425"
@@ -38,6 +47,11 @@ def test_cn600425_revenue_runner_freezes_only_the_preoutcome_chain(tmp_path: Pat
     assert evidence["source"]["source_id"] == "CNINFO:600425:ANN:20180421:1204677754"
     assert evidence["source"]["source_url"] == "https://static.cninfo.com.cn/finalpage/2018-04-21/1204677754.PDF"
     assert evidence["source"]["field_ref"].endswith("PDF p. 61, 营业收入.")
+    assert evidence["source"]["source_id"] == curator_source["source_id"]
+    assert evidence["source"]["source_url"] == curator_source["source_url"]
+    assert evidence["source"]["field_ref"] == curator_source["field_ref"]
+    assert evidence["source"]["numeric_value"] == curator_source["numeric_value"]
+    assert curator_source["exact_quote"] == "其中：营业收入                         2,101,120,335.32 1,802,357,428.23"
     for value in (decision, contract, evidence, prediction):
         assert value["allowed_outputs"] == ["MECHANICAL_SETTLEMENT_ONLY"]
         assert value["method_transfer_rights"] == "NO_METHOD_TRANSFER_RIGHTS"
@@ -65,11 +79,11 @@ def test_cn600425_revenue_runner_freezes_only_the_preoutcome_chain(tmp_path: Pat
             "object_id": evidence["evidence_receipt_id"],
             "object_version": evidence["evidence_receipt_version"],
         },
-        "source_id": "CNINFO:600425:ANN:20180421:1204677754",
-        "source_url": "https://static.cninfo.com.cn/finalpage/2018-04-21/1204677754.PDF",
-        "exact_quote": "其中：营业收入 2,101,120,335.32 1,803,015,198.11",
-        "numeric_value": 2101120335.32,
-        "unit": "RMB",
+        "source_id": curator_source["source_id"],
+        "source_url": curator_source["source_url"],
+        "exact_quote": curator_source["exact_quote"],
+        "numeric_value": curator_source["numeric_value"],
+        "unit": curator_source["unit"],
         "allowed_outputs": ["MECHANICAL_SETTLEMENT_ONLY"],
         "method_transfer_rights": "NO_METHOD_TRANSFER_RIGHTS",
     }
@@ -78,26 +92,32 @@ def test_cn600425_revenue_runner_freezes_only_the_preoutcome_chain(tmp_path: Pat
     database = tmp_path / "cn600425-preoutcome.sqlite"
     verification_path.write_text(json.dumps(verification), encoding="utf-8")
 
-    def mocked_official_pdf_source(source: dict, source_verification: dict) -> dict:
-        """Model the official PDF retriever without opening any external source."""
-        assert source == evidence["source"]
-        assert source_verification == verification
-        assert runner._declared_pdf_page(source["field_ref"]) == 61
-        runner._verify_quote_value(source_verification, source=source)
-        return {
-            "schema_version": runner.SOURCE_RECEIPT_SCHEMA_VERSION,
-            "verification_state": "OPENED_OFFICIAL_PDF_FIELD_MATCHED",
-            "retrieved_at": "2026-08-26T13:10:00+00:00",
-            "subject_ref": source_verification["subject_ref"],
-            "source_id": source["source_id"],
-            "source_url": source["source_url"],
-            "field_ref": source["field_ref"],
-            "exact_quote": source_verification["exact_quote"],
-            "numeric_value": source["numeric_value"],
-            "unit": source["unit"],
-            "allowed_outputs": source_verification["allowed_outputs"],
-            "method_transfer_rights": source_verification["method_transfer_rights"],
-        }
+    class MockPdfResponse:
+        def __enter__(self) -> "MockPdfResponse":
+            return self
+
+        def __exit__(self, *args: object) -> None:
+            return None
+
+        def geturl(self) -> str:
+            return curator_source["source_url"]
+
+        def read(self) -> bytes:
+            return b"%PDF-1.7 mocked official source"
+
+    def mocked_urlopen(request: object, *, timeout: int) -> MockPdfResponse:
+        assert getattr(request, "full_url") == curator_source["source_url"]
+        assert timeout == 60
+        return MockPdfResponse()
+
+    def mocked_pdftotext(command: list[str], **kwargs: object) -> subprocess.CompletedProcess[str]:
+        assert command[:6] == ["pdftotext", "-f", "61", "-l", "61", "-layout"]
+        assert command[-1] == "-"
+        assert kwargs == {"check": True, "capture_output": True, "text": True}
+        return subprocess.CompletedProcess(command, 0, stdout=f"page 61\n{curator_source['exact_quote']}\n", stderr="")
+
+    monkeypatch.setattr(runner, "urlopen", mocked_urlopen)
+    monkeypatch.setattr(runner.subprocess, "run", mocked_pdftotext)
 
     result = runner.freeze_preoutcome(
         database,
@@ -106,7 +126,6 @@ def test_cn600425_revenue_runner_freezes_only_the_preoutcome_chain(tmp_path: Pat
         evidence_path=COHORTS / "CN600425_FY2017_OPERATING_REVENUE_RMB_MINIMAL_HISTORICAL_EPISODE_STATIC_EVIDENCE.json",
         prediction_path=COHORTS / "CN600425_FY2018_OPERATING_REVENUE_RMB_MINIMAL_HISTORICAL_EPISODE_PREDICTION.json",
         source_verification_path=verification_path,
-        source_verifier=mocked_official_pdf_source,
         source_receipt_output_path=receipt_path,
     )
 
@@ -129,3 +148,26 @@ def test_cn600425_revenue_runner_freezes_only_the_preoutcome_chain(tmp_path: Pat
         assert conn.execute(f"SELECT COUNT(*) FROM {control.SETTLEMENT_TABLE}").fetchone()[0] == 0
     finally:
         conn.close()
+
+
+@pytest.mark.parametrize(
+    ("source_field", "drifted_value"),
+    [
+        ("metric_id", "OTHER_REVENUE_METRIC"),
+        ("responsibility_boundary", "PARENT_COMPANY_ONLY"),
+        ("unit", "CNY_MILLIONS"),
+    ],
+)
+def test_cn600425_static_evidence_rejects_measurement_field_drift(
+    source_field: str, drifted_value: str,
+) -> None:
+    """A seemingly similar field cannot replace the contract-bound revenue measurement."""
+    contract = _load("CN600425_FY2018_OPERATING_REVENUE_RMB_MINIMAL_HISTORICAL_EPISODE_MEASUREMENT_CONTRACT.json")
+    evidence = _load("CN600425_FY2017_OPERATING_REVENUE_RMB_MINIMAL_HISTORICAL_EPISODE_STATIC_EVIDENCE.json")
+    evidence = deepcopy(evidence)
+    evidence["source"][source_field] = drifted_value
+
+    validation = episode.validate_static_evidence(evidence, measurement_contract=contract)
+
+    assert not validation["valid"]
+    assert f"static_evidence.source.{source_field}_must_match_measurement_contract" in validation["findings"]
