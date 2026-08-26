@@ -1,0 +1,93 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "enterprise-judgment-episode-manifest.v1",
+  "title": "Turtle Enterprise Judgment Episode Manifest",
+  "description": "Read-only composition contract; actual outcomes, price, valuation and investment authority are deliberately absent.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "episode_id", "company_id", "issuer_id", "cutoff_at", "decision_contract_ref", "component_refs", "question_set", "claims", "mechanism_threads", "outcome_cells", "roles", "object_class", "claim_class", "allowed_outputs"],
+  "properties": {
+    "schema_version": {"const": "enterprise-judgment-episode-manifest.v1"},
+    "episode_id": {"type": "string", "minLength": 1},
+    "company_id": {"type": "string", "minLength": 1},
+    "issuer_id": {"type": "string", "minLength": 1},
+    "cutoff_at": {"type": "string", "format": "date-time"},
+    "decision_contract_ref": {"$ref": "#/$defs/decision_contract_ref"},
+    "component_refs": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/component_ref"}},
+    "question_set": {"type": "array", "minItems": 3, "maxItems": 5, "items": {"$ref": "#/$defs/question"}},
+    "claims": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/claim"}},
+    "mechanism_threads": {"type": "array", "items": {"$ref": "#/$defs/mechanism_thread"}},
+    "outcome_cells": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/outcome_cell"}},
+    "roles": {"$ref": "#/$defs/roles"},
+    "object_class": {"const": "ENTERPRISE_JUDGMENT_EPISODE_MANIFEST"},
+    "claim_class": {"const": "COMPOSITE_ENTERPRISE_JUDGMENT"},
+    "allowed_outputs": {"const": ["EPISODE_READ_MODEL", "RESEARCH_AGENDA"]}
+  },
+  "$defs": {
+    "decision_contract_ref": {
+      "type": "object", "additionalProperties": false,
+      "required": ["contract_id", "contract_version"],
+      "properties": {"contract_id": {"type": "string", "minLength": 1}, "contract_version": {"type": "integer", "minimum": 1}}
+    },
+    "component_ref": {
+      "type": "object", "additionalProperties": false,
+      "required": ["component_type", "component_id", "component_version", "admission_level", "read_only"],
+      "properties": {
+        "component_type": {"enum": ["ENTERPRISE_CONTEXT_SNAPSHOT", "ENTERPRISE_SYSTEM_MODEL", "MANAGEMENT_DECISION_LEDGER", "FORECAST_BUNDLE", "COMPARATIVE_EPISODE", "OUTCOME_MEASUREMENT_CONTRACT"]},
+        "component_id": {"type": "string", "minLength": 1},
+        "component_version": {"type": "string", "minLength": 1},
+        "admission_level": {"enum": ["E0_CONTEXT", "E1_RECONSTRUCTION", "E2_MECHANISM_PROBE", "E3_COMPARATIVE_LAB", "E4_TRANSFER_AND_UTILITY"]},
+        "read_only": {"const": true}
+      }
+    },
+    "question": {
+      "type": "object", "additionalProperties": false,
+      "required": ["question_id", "role", "question", "claim_ids"],
+      "properties": {"question_id": {"type": "string", "minLength": 1}, "role": {"enum": ["PRIMARY", "SUPPORTING"]}, "question": {"type": "string", "minLength": 1}, "claim_ids": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}}}
+    },
+    "claim": {
+      "type": "object", "additionalProperties": false,
+      "required": ["claim_id", "question_id", "domain", "statement", "cell_status", "admission_level", "evidence_refs", "dependent_outcome_cell_ids"],
+      "properties": {
+        "claim_id": {"type": "string", "minLength": 1}, "question_id": {"type": "string", "minLength": 1},
+        "domain": {"enum": ["CUSTOMER", "COMPETITION", "OPERATIONS", "ORGANIZATION", "CAPITAL_ALLOCATION", "CASH", "PERMANENT_LOSS", "LIFECYCLE"]},
+        "statement": {"type": "string", "minLength": 1},
+        "cell_status": {"enum": ["OBSERVED", "INFERRED", "UNKNOWN", "EVIDENCE_INELIGIBLE", "NOT_APPLICABLE"]},
+        "admission_level": {"enum": ["E0_CONTEXT", "E1_RECONSTRUCTION", "E2_MECHANISM_PROBE", "E3_COMPARATIVE_LAB", "E4_TRANSFER_AND_UTILITY"]},
+        "evidence_refs": {"type": "array", "items": {"type": "string", "minLength": 1}},
+        "dependent_outcome_cell_ids": {"type": "array", "items": {"type": "string", "minLength": 1}}
+      }
+    },
+    "mechanism_thread": {
+      "type": "object", "additionalProperties": false,
+      "required": ["thread_id", "role", "claim_ids", "hypotheses", "observation_clock_ref", "outcome_cell_ids"],
+      "properties": {
+        "thread_id": {"type": "string", "minLength": 1}, "role": {"enum": ["PRIMARY", "SUPPORTING"]},
+        "claim_ids": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}},
+        "hypotheses": {"type": "array", "minItems": 2, "maxItems": 2, "items": {"$ref": "#/$defs/hypothesis"}},
+        "observation_clock_ref": {"type": "string", "minLength": 1},
+        "outcome_cell_ids": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}}
+      }
+    },
+    "hypothesis": {
+      "type": "object", "additionalProperties": false,
+      "required": ["hypothesis_id", "role", "statement"],
+      "properties": {"hypothesis_id": {"type": "string", "minLength": 1}, "role": {"enum": ["H_A", "H_B"]}, "statement": {"type": "string", "minLength": 1}}
+    },
+    "outcome_cell": {
+      "type": "object", "additionalProperties": false,
+      "required": ["outcome_cell_id", "dimension", "status", "measurement_contract_ref", "custodian_receipt_ref"],
+      "properties": {
+        "outcome_cell_id": {"type": "string", "minLength": 1},
+        "dimension": {"enum": ["CUSTOMER", "OPERATIONS", "COMPETITION", "CASH", "CAPITAL_RETURN", "LEVERAGE", "PERMANENT_LOSS"]},
+        "status": {"enum": ["OBSERVED", "INFERRED", "UNKNOWN", "EVIDENCE_INELIGIBLE", "NOT_APPLICABLE", "MEASUREMENT_MISMATCH"]},
+        "measurement_contract_ref": {"type": "string"}, "custodian_receipt_ref": {"type": "string"}
+      }
+    },
+    "roles": {
+      "type": "object", "additionalProperties": false,
+      "required": ["judgment_owner_id", "independent_challenger_id", "outcome_custodian_id"],
+      "properties": {"judgment_owner_id": {"type": "string", "minLength": 1}, "independent_challenger_id": {"type": "string", "minLength": 1}, "outcome_custodian_id": {"type": "string", "minLength": 1}}
+    }
+  }
+}
