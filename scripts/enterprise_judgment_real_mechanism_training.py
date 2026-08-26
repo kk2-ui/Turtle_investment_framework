@@ -14,14 +14,18 @@ try:
     from scripts import enterprise_judgment_forecast_projection as forecast_projection
     from scripts import enterprise_judgment_mechanism as mechanism
     from scripts import enterprise_judgment_reconstruction_registry as reconstruction_registry
+    from scripts import enterprise_judgment_training_control_plane as training_control
 except ModuleNotFoundError:  # pragma: no cover - direct script import
     import enterprise_judgment_forecast_projection as forecast_projection
     import enterprise_judgment_mechanism as mechanism
     import enterprise_judgment_reconstruction_registry as reconstruction_registry
+    import enterprise_judgment_training_control_plane as training_control
 
 
 PACKAGE_SCHEMA_VERSION = "enterprise-real-mechanism-preoutcome-package.v2"
+PACKAGE_SCHEMA_VERSION_V3 = "enterprise-real-mechanism-preoutcome-package.v3"
 CONTRACT_SCHEMA_VERSION = "enterprise-outcome-measurement-contract.v2"
+CONTRACT_SCHEMA_VERSION_V3 = "enterprise-outcome-measurement-contract.v3"
 SELECTION_POLICY = "FIRST_RECEIPT_ELIGIBLE_IMMUTABLE_ROSTER_ROW_NO_OUTCOME_FILTER"
 
 _COMPLETION_RECEIPT_SCHEMAS = {
@@ -65,6 +69,16 @@ _LABEL_KEYS = {"type", "decrease_lte", "increase_gte", "ordered_labels"}
 _CONFLICT_KEYS = {"multiple_values", "boundary_conflict", "period_conflict"}
 _UNKNOWN_KEYS = {"conditions", "label"}
 _MISMATCH_KEYS = {"conditions", "label", "propagation", "dependent_cell_ids"}
+_CLOCK_KEYS = {"clock_kind", "flow_period", "balance_as_of", "event_window"}
+_FLOW_KEYS = {"period_start", "period_end", "fiscal_period"}
+_BALANCE_KEYS = {"as_of", "fiscal_period"}
+_EVENT_KEYS = {"event_start", "event_end", "window_name"}
+_V3_CELL_KEYS = _CELL_KEYS | {"measurement_clock", "raw_input_fields"}
+_V3_RAW_INPUT_KEYS = {"field_id", "role", "unit", "measurement_clock"}
+_V3_FORMULA_KEYS = {"operator", "input_field_ids", "expression", "unit_conversions", "zero_baseline_rule"}
+_V3_UNIT_CONVERSION_KEYS = {"field_id", "from_unit", "to_unit", "scale"}
+_V3_CONTRACT_KEYS = _CONTRACT_KEYS | {"freeze_state", "contract_frozen_at", "clock_policy"}
+_V3_SOURCE_ACCESS_KEYS = _SOURCE_ACCESS_KEYS | {"authorization_receipt_id"}
 _COMBINATION_KEYS = {
     "rule_id", "thread_id", "input_cell_ids", "evaluation_order", "rule",
     "conflict_rule", "authorization",
@@ -222,6 +236,8 @@ def derive_receipt_backed_selection(
 
 
 def validate_outcome_measurement_contract(contract: Any) -> dict[str, Any]:
+    if _mapping(contract).get("schema_version") == CONTRACT_SCHEMA_VERSION_V3:
+        return validate_outcome_measurement_contract_v3(contract)
     findings: list[str] = []
     item = _closed(contract, _CONTRACT_KEYS, "measurement_contract", findings)
     if item.get("schema_version") != CONTRACT_SCHEMA_VERSION:
@@ -341,6 +357,174 @@ def validate_outcome_measurement_contract(contract: Any) -> dict[str, Any]:
     }
 
 
+def _validate_v3_clock(clock: Any, *, path: str, findings: list[str]) -> dict[str, Any]:
+    item = _mapping(clock)
+    if set(item).difference(_CLOCK_KEYS):
+        findings.append(f"{path}.extra:{','.join(sorted(set(item).difference(_CLOCK_KEYS)))}")
+    if "clock_kind" not in item:
+        findings.append(path + ".clock_kind_required")
+    kind = item.get("clock_kind")
+    if kind == "FLOW_PERIOD":
+        flow = _mapping(item.get("flow_period"))
+        if set(flow).difference(_FLOW_KEYS):
+            findings.append(f"{path}.flow_period.extra:{','.join(sorted(set(flow).difference(_FLOW_KEYS)))}")
+        if not _text(flow.get("period_start")) or not _text(flow.get("period_end")) or not _text(flow.get("fiscal_period")):
+            findings.append(path + ".flow_period_incomplete")
+        if item.get("balance_as_of") is not None or item.get("event_window") is not None:
+            findings.append(path + ".flow_period_cannot_include_balance_or_event_clock")
+    elif kind == "BALANCE_AS_OF":
+        balance = _mapping(item.get("balance_as_of"))
+        if set(balance).difference(_BALANCE_KEYS):
+            findings.append(f"{path}.balance_as_of.extra:{','.join(sorted(set(balance).difference(_BALANCE_KEYS)))}")
+        if not _text(balance.get("as_of")) or not _text(balance.get("fiscal_period")):
+            findings.append(path + ".balance_as_of_incomplete")
+        if item.get("flow_period") is not None or item.get("event_window") is not None:
+            findings.append(path + ".balance_as_of_cannot_include_flow_or_event_clock")
+    elif kind == "EVENT_WINDOW":
+        event = _mapping(item.get("event_window"))
+        if set(event).difference(_EVENT_KEYS):
+            findings.append(f"{path}.event_window.extra:{','.join(sorted(set(event).difference(_EVENT_KEYS)))}")
+        if not all(_text(event.get(key)) for key in _EVENT_KEYS):
+            findings.append(path + ".event_window_incomplete")
+        if item.get("flow_period") is not None or item.get("balance_as_of") is not None:
+            findings.append(path + ".event_window_cannot_include_flow_or_balance_clock")
+    else:
+        findings.append(path + ".clock_kind_invalid")
+    return item
+
+
+def validate_outcome_measurement_contract_v3(contract: Any) -> dict[str, Any]:
+    """Validate the v3 atomic contract with independent measurement clocks.
+
+    A v3 contract is frozen before outcome access.  It records raw source
+    fields for derived metrics, so a later adapter cannot replace a ratio or
+    margin with a convenient year-over-year number.
+    """
+    findings: list[str] = []
+    item = _closed(contract, _V3_CONTRACT_KEYS, "measurement_contract", findings)
+    if item.get("schema_version") != CONTRACT_SCHEMA_VERSION_V3:
+        findings.append("measurement_contract.schema_version_invalid")
+    if item.get("freeze_state") != "PRE_OUTCOME_FROZEN":
+        findings.append("measurement_contract.freeze_state_must_be_pre_outcome_frozen")
+    if not _text(item.get("contract_frozen_at")):
+        findings.append("measurement_contract.contract_frozen_at_required")
+    if item.get("clock_policy") != "CUT_OFF_CLOCK_SEPARATE_FROM_MEASUREMENT_CLOCK":
+        findings.append("measurement_contract.clock_policy_invalid")
+    for field in ("contract_set_id", "package_ref", "company_id", "cutoff_at"):
+        if not _text(item.get(field)):
+            findings.append(f"measurement_contract.{field}_required")
+    cutoff = _instant(item.get("cutoff_at"), "measurement_contract.cutoff_at", findings)
+    frozen_at = _instant(item.get("contract_frozen_at"), "measurement_contract.contract_frozen_at", findings)
+    if cutoff and frozen_at and frozen_at <= cutoff:
+        findings.append("measurement_contract.contract_frozen_at_must_follow_cutoff")
+    window = _closed(item.get("outcome_window"), _WINDOW_KEYS, "measurement_contract.outcome_window", findings)
+    period_start = _instant(window.get("period_start"), "measurement_contract.outcome_window.period_start", findings)
+    period_end = _instant(window.get("period_end"), "measurement_contract.outcome_window.period_end", findings)
+    due_at = _instant(window.get("settlement_due_at"), "measurement_contract.outcome_window.settlement_due_at", findings)
+    if period_start and period_end and period_end <= period_start:
+        findings.append("measurement_contract.outcome_window_order_invalid")
+    if period_end and due_at and due_at <= period_end:
+        findings.append("measurement_contract.settlement_due_must_follow_period_end")
+    source_access = _closed(item.get("source_access"), _V3_SOURCE_ACCESS_KEYS, "measurement_contract.source_access", findings)
+    if not _text(source_access.get("authorization_receipt_id")):
+        findings.append("measurement_contract.source_access.authorization_receipt_id_required")
+    if source_access.get("access_state") != "SEALED_UNTIL_PREOUTCOME_COMMIT":
+        findings.append("measurement_contract.outcome_source_must_be_sealed")
+    if source_access.get("published_after_cutoff") is not True or source_access.get("custodian_access") != "OUTCOME_ONLY":
+        findings.append("measurement_contract.outcome_source_access_invalid")
+
+    cells = [_closed(raw, _V3_CELL_KEYS, f"measurement_contract.atomic_cells[{index}]", findings)
+             for index, raw in enumerate(_items(item.get("atomic_cells")))]
+    cell_ids = [_text(cell.get("cell_id")) for cell in cells]
+    if not cells or "" in cell_ids or len(cell_ids) != len(set(cell_ids)):
+        findings.append("measurement_contract.atomic_cell_ids_must_be_unique")
+    outcome_field_ids: list[str] = []
+    for index, cell in enumerate(cells):
+        path = f"measurement_contract.atomic_cells[{index}]"
+        if cell.get("layer") not in _LAYERS:
+            findings.append(f"{path}.layer_invalid")
+        if not _text(cell.get("thread_id")) or not _text(cell.get("prohibited_inference")):
+            findings.append(f"{path}.thread_and_prohibited_inference_required")
+        cell_period = _closed(cell.get("outcome_period"), _WINDOW_KEYS - {"settlement_due_at"}, path + ".outcome_period", findings)
+        if not all(_text(cell_period.get(key)) for key in _WINDOW_KEYS - {"settlement_due_at"}):
+            findings.append(f"{path}.outcome_period_incomplete")
+        _validate_v3_clock(cell.get("measurement_clock"), path=path + ".measurement_clock", findings=findings)
+        boundary = _closed(cell.get("responsibility_boundary"), _BOUNDARY_KEYS, path + ".responsibility_boundary", findings)
+        if not all(_text(boundary.get(key)) for key in _BOUNDARY_KEYS):
+            findings.append(f"{path}.responsibility_boundary_incomplete")
+        field = _closed(cell.get("field_identity"), _FIELD_KEYS, path + ".field_identity", findings)
+        outcome_field_id = _text(field.get("outcome_field_id"))
+        outcome_field_ids.append(outcome_field_id)
+        if not outcome_field_id or not all(_text(field.get(key)) for key in _FIELD_KEYS - {"baseline_field_id"}):
+            findings.append(f"{path}.field_identity_incomplete")
+        unit = _closed(cell.get("unit"), _UNIT_KEYS, path + ".unit", findings)
+        if not all(_text(unit.get(key)) for key in _UNIT_KEYS):
+            findings.append(f"{path}.unit_incomplete")
+        raw_inputs = [_closed(raw, _V3_RAW_INPUT_KEYS, f"{path}.raw_input_fields[{raw_index}]", findings)
+                      for raw_index, raw in enumerate(_items(cell.get("raw_input_fields")))]
+        raw_ids = [_text(raw.get("field_id")) for raw in raw_inputs]
+        if not raw_inputs or "" in raw_ids or len(raw_ids) != len(set(raw_ids)):
+            findings.append(f"{path}.raw_input_fields_must_be_unique")
+        for raw_index, raw in enumerate(raw_inputs):
+            raw_path = f"{path}.raw_input_fields[{raw_index}]"
+            if raw.get("role") not in {"OUTCOME", "BASELINE", "NUMERATOR", "DENOMINATOR", "EVENT"}:
+                findings.append(f"{raw_path}.role_invalid")
+            if not _text(raw.get("unit")):
+                findings.append(f"{raw_path}.unit_required")
+            _validate_v3_clock(raw.get("measurement_clock"), path=raw_path + ".measurement_clock", findings=findings)
+        formula = _closed(cell.get("formula"), _V3_FORMULA_KEYS, path + ".formula", findings)
+        if formula.get("operator") not in {"RAW_VALUE", "EVENT_BOOLEAN", "RATIO_CHANGE", "DIFFERENCE", "PERCENT_CHANGE"}:
+            findings.append(f"{path}.formula.operator_invalid")
+        input_ids = [_text(value) for value in _items(formula.get("input_field_ids"))]
+        if input_ids != raw_ids or not _text(formula.get("expression")) or not _text(formula.get("zero_baseline_rule")):
+            findings.append(f"{path}.formula_must_bind_raw_input_fields")
+        conversions = [_closed(raw, _V3_UNIT_CONVERSION_KEYS, f"{path}.formula.unit_conversions[{conversion_index}]", findings)
+                       for conversion_index, raw in enumerate(_items(formula.get("unit_conversions")))]
+        if [conversion.get("field_id") for conversion in conversions] != raw_ids:
+            findings.append(f"{path}.formula.unit_conversions_must_cover_raw_inputs_in_order")
+        for conversion in conversions:
+            if not all(_text(conversion.get(key)) for key in ("field_id", "from_unit", "to_unit", "scale")):
+                findings.append(f"{path}.formula.unit_conversion_incomplete")
+        labels = _closed(cell.get("label_rule"), _LABEL_KEYS, path + ".label_rule", findings)
+        label_type = labels.get("type")
+        if label_type not in _LABEL_SEQUENCES or labels.get("ordered_labels") != _LABEL_SEQUENCES.get(label_type):
+            findings.append(f"{path}.label_rule_invalid_or_order_not_frozen")
+        if label_type == "EVENT_PRESENCE" and formula.get("operator") != "EVENT_BOOLEAN":
+            findings.append(f"{path}.event_formula_operator_invalid")
+        if label_type != "EVENT_PRESENCE":
+            if not isinstance(labels.get("decrease_lte"), (int, float)) or not isinstance(labels.get("increase_gte"), (int, float)) or labels["decrease_lte"] >= labels["increase_gte"]:
+                findings.append(f"{path}.direction_thresholds_invalid")
+        conflict = _closed(cell.get("conflict_rule"), _CONFLICT_KEYS, path + ".conflict_rule", findings)
+        if set(conflict.values()) != {"MEASUREMENT_MISMATCH"}:
+            findings.append(f"{path}.conflict_rule_must_resolve_to_mismatch")
+        unknown = _closed(cell.get("unknown_rule"), _UNKNOWN_KEYS, path + ".unknown_rule", findings)
+        if unknown.get("label") != "UNKNOWN" or not _items(unknown.get("conditions")):
+            findings.append(f"{path}.unknown_rule_invalid")
+        mismatch = _closed(cell.get("mismatch_rule"), _MISMATCH_KEYS, path + ".mismatch_rule", findings)
+        if mismatch.get("label") != "MEASUREMENT_MISMATCH" or mismatch.get("propagation") != "LOCAL_ONLY" or _items(mismatch.get("dependent_cell_ids")):
+            findings.append(f"{path}.mismatch_must_be_sibling_local")
+        if not _items(mismatch.get("conditions")):
+            findings.append(f"{path}.mismatch_conditions_required")
+        if _items(cell.get("allowed_source_types")) != ["OFFICIAL_AUDITED_ANNUAL_REPORT"]:
+            findings.append(f"{path}.allowed_source_types_invalid")
+    if "" in outcome_field_ids or len(outcome_field_ids) != len(set(outcome_field_ids)):
+        findings.append("measurement_contract.outcome_field_ids_must_be_unique")
+    combination_rules = [_closed(raw, _COMBINATION_KEYS, f"measurement_contract.thread_combination_rules[{index}]", findings)
+                         for index, raw in enumerate(_items(item.get("thread_combination_rules")))]
+    for index, rule in enumerate(combination_rules):
+        path = f"measurement_contract.thread_combination_rules[{index}]"
+        ids = [_text(value) for value in _items(rule.get("input_cell_ids"))]
+        if not ids or any(value not in cell_ids for value in ids) or rule.get("evaluation_order") != ids:
+            findings.append(f"{path}.input_cells_or_evaluation_order_invalid")
+        if not _text(rule.get("rule")) or not _text(rule.get("conflict_rule")) or rule.get("authorization") != "TEACHING_ONLY_NO_CAUSAL_UPGRADE":
+            findings.append(f"{path}.combination_rule_invalid")
+    if item.get("rights") != _RIGHTS:
+        findings.append("measurement_contract.rights_invalid")
+    if item.get("allowed_outputs") != ["OUTCOME_CUSTODY_REQUEST", "RESEARCH_AGENDA"]:
+        findings.append("measurement_contract.allowed_outputs_invalid")
+    return {"valid": not findings, "findings": findings, "contract": deepcopy(item) if not findings else None}
+
+
 def settle_synthetic_atomic_observations(contract: Any, observations: Any) -> dict[str, Any]:
     """Exercise deterministic labels without granting real-outcome authority."""
     validation = validate_outcome_measurement_contract(contract)
@@ -405,7 +589,7 @@ def validate_preoutcome_package(
 ) -> dict[str, Any]:
     findings: list[str] = []
     item = _closed(package, _PACKAGE_KEYS, "preoutcome_package", findings)
-    if item.get("schema_version") != PACKAGE_SCHEMA_VERSION:
+    if item.get("schema_version") not in {PACKAGE_SCHEMA_VERSION, PACKAGE_SCHEMA_VERSION_V3}:
         findings.append("preoutcome_package.schema_version_invalid")
     selection_result = derive_receipt_backed_selection(block, roster_freeze, receipts)
     if not selection_result["valid"]:
@@ -440,32 +624,89 @@ def validate_preoutcome_package(
     }
 
 
+def validate_canonical_preoutcome_package(
+    package: Any,
+    *,
+    roster_freeze_ref: dict[str, Any],
+    receipt_refs: list[dict[str, Any]],
+) -> dict[str, Any]:
+    """Validate production input only after canonical ID resolution."""
+    try:
+        bundle, receipts = training_control.resolve_canonical_selection_inputs(roster_freeze_ref, receipt_refs)
+    except training_control.TrainingControlPlaneError as exc:
+        return {"valid": False, "findings": [exc.code + ":" + exc.detail], "package": None, "derived_selection": None}
+    result = validate_preoutcome_package(
+        package,
+        block=bundle["block"],
+        roster_freeze=bundle["roster_freeze"],
+        receipts=receipts,
+    )
+    if result["valid"] and _mapping(package).get("selection", {}).get("source_roster_ref") != roster_freeze_ref.get("freeze_id"):
+        result["valid"] = False
+        result["findings"].append("preoutcome_package.selection.source_roster_ref_must_be_canonical_freeze_id")
+        result["package"] = None
+    return result
+
+
 def register_and_project_preoutcome_package(
     package: Any,
     *,
-    block: Any,
-    roster_freeze: Any,
-    receipts: list[Any],
+    roster_freeze_ref: dict[str, Any],
+    receipt_refs: list[dict[str, Any]],
     frozen_at: str,
 ) -> dict[str, Any]:
-    """Register canonical J1, then call only the public Frozen-J1 J2/J3 APIs."""
-    validation = validate_preoutcome_package(
+    """Resolve canonical IDs, register J1, then call public Frozen-J1 J2/J3 APIs."""
+    validation = validate_canonical_preoutcome_package(
         package,
-        block=block,
-        roster_freeze=roster_freeze,
-        receipts=receipts,
+        roster_freeze_ref=roster_freeze_ref,
+        receipt_refs=receipt_refs,
     )
     if not validation["valid"]:
         return {"valid": False, "findings": validation["findings"], "control_plane_receipt": None}
     item = validation["package"]
-    registration = reconstruction_registry.register_canonical_from_artifacts(
-        source_packet_receipt=item["source_packet_receipt"],
-        decision_contract=item["decision_contract"],
-        enterprise_model=item["enterprise_system_model"],
-        decision_ledger=item["management_decision_ledger"],
-        spec=item["reconstruction_spec"],
-        frozen_at=frozen_at,
-    )
+    reconstruction_ref = {
+        "reconstruction_id": item["reconstruction_spec"]["reconstruction_id"],
+        "schema_version": "enterprise-judgment-reconstruction.v1",
+    }
+    try:
+        canonical_conn, frozen_bundle = reconstruction_registry.reconstruction.resolve_canonical_frozen_reconstruction(
+            reconstruction_ref
+        )
+    except reconstruction_registry.reconstruction.FrozenReconstructionRegistryError as exc:
+        if exc.code not in {"frozen_reconstruction_not_registered", "canonical_frozen_reconstruction_registry_unavailable"}:
+            return {"valid": False, "findings": ["j1:" + exc.code], "control_plane_receipt": None}
+        registration = reconstruction_registry.register_canonical_from_artifacts(
+            source_packet_receipt=item["source_packet_receipt"],
+            decision_contract=item["decision_contract"],
+            enterprise_model=item["enterprise_system_model"],
+            decision_ledger=item["management_decision_ledger"],
+            spec=item["reconstruction_spec"],
+            frozen_at=frozen_at,
+        )
+    else:
+        canonical_conn.close()
+        expected_inputs = {
+            "spec": item["reconstruction_spec"],
+            "source_packet_receipt": item["source_packet_receipt"],
+            "enterprise_model": item["enterprise_system_model"],
+            "decision_ledger": item["management_decision_ledger"],
+            "decision_contract": item["decision_contract"],
+        }
+        stored_inputs = _mapping(frozen_bundle.get("reconstruction_inputs"))
+        if any(stored_inputs.get(key) != value for key, value in expected_inputs.items()):
+            return {"valid": False, "findings": ["j1:canonical_inputs_do_not_match_package"], "control_plane_receipt": None}
+        registration = {
+            "frozen": True,
+            **reconstruction_ref,
+            "idempotent": True,
+            "registry_role": "CANONICAL_FROZEN_J1_CONTROL_PLANE",
+        }
+    try:
+        measurement_registration = training_control.register_measurement_contract(
+            item["outcome_measurement_contract"], frozen_at=frozen_at,
+        )
+    except training_control.TrainingControlPlaneError as exc:
+        return {"valid": False, "findings": ["measurement_contract:" + exc.code], "control_plane_receipt": None}
     reconstruction_ref = {
         "reconstruction_id": registration["reconstruction_id"],
         "schema_version": registration["schema_version"],
@@ -491,7 +732,13 @@ def register_and_project_preoutcome_package(
         "control_plane_receipt": {
             "package_id": item["package_id"],
             "selection": deepcopy(item["selection"]),
+            "canonical_selection_inputs": {
+                "roster_freeze_ref": deepcopy(roster_freeze_ref),
+                "receipt_refs": deepcopy(receipt_refs),
+                "control_plane": training_control.canonical_control_plane_path(),
+            },
             "canonical_j1_registration": registration,
+            "canonical_measurement_contract_registration": measurement_registration,
             "frozen_j1_ref": reconstruction_ref,
             "public_j2_projection": {
                 "thread_set_id": j2["mechanism_thread_read_model"]["thread_set_id"],
@@ -519,29 +766,29 @@ def _read(path: str | Path) -> dict[str, Any]:
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--package", type=Path, required=True)
-    parser.add_argument("--block", type=Path, required=True)
-    parser.add_argument("--roster-freeze", type=Path, required=True)
-    parser.add_argument("--receipt", type=Path, action="append", required=True)
+    parser.add_argument("--roster-freeze-id", required=True)
+    parser.add_argument("--receipt-ref", action="append", required=True, help="canonical receipt ID@version")
     parser.add_argument("--frozen-at", required=True)
     parser.add_argument("--validate-only", action="store_true")
     args = parser.parse_args()
     package = _read(args.package)
-    block = _read(args.block)
-    roster_freeze = _read(args.roster_freeze)
-    receipts = [_read(path) for path in args.receipt]
+    receipt_refs: list[dict[str, Any]] = []
+    for raw_ref in args.receipt_ref:
+        receipt_id, separator, raw_version = raw_ref.rpartition("@")
+        if not separator or not raw_version.isdigit():
+            parser.error("--receipt-ref must use RECEIPT_ID@VERSION")
+        receipt_refs.append({"receipt_id": receipt_id, "receipt_version": int(raw_version)})
     if args.validate_only:
-        result = validate_preoutcome_package(
+        result = validate_canonical_preoutcome_package(
             package,
-            block=block,
-            roster_freeze=roster_freeze,
-            receipts=receipts,
+            roster_freeze_ref={"freeze_id": args.roster_freeze_id},
+            receipt_refs=receipt_refs,
         )
     else:
         result = register_and_project_preoutcome_package(
             package,
-            block=block,
-            roster_freeze=roster_freeze,
-            receipts=receipts,
+            roster_freeze_ref={"freeze_id": args.roster_freeze_id},
+            receipt_refs=receipt_refs,
             frozen_at=args.frozen_at,
         )
     print(json.dumps(result, ensure_ascii=False, sort_keys=True))

@@ -287,9 +287,8 @@ def test_production_builder_has_no_caller_connection_or_private_compiler_surface
     )
     assert tuple(inspect.signature(training.register_and_project_preoutcome_package).parameters) == (
         "package",
-        "block",
-        "roster_freeze",
-        "receipts",
+        "roster_freeze_ref",
+        "receipt_refs",
         "frozen_at",
     )
     source = inspect.getsource(training.register_and_project_preoutcome_package)

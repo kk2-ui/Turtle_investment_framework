@@ -104,6 +104,60 @@ def _allowed_outputs(contract_kind: str) -> list[str]:
     return ["FORECAST_OUTCOME_ACQUISITION_ONLY"] if contract_kind == "FORECAST" else ["MECHANICAL_SETTLEMENT_ONLY"]
 
 
+def build_value_free_custody_projection(
+    *,
+    projection_id: str,
+    company_id: str,
+    custodian_id: str,
+    cutoff_at: str,
+    next_cutoff_at: str,
+    measurement_contract_ref: dict[str, Any],
+    authorized_source_identity: dict[str, Any],
+    atomic_measurement_contracts: list[dict[str, Any]],
+) -> dict[str, Any]:
+    """Build a value-free custodian view without opening any source.
+
+    This public acquisition API intentionally accepts contract identities and
+    atomic field definitions only.  It rejects forecast/judgment payloads and
+    contains no local PDF path, result value, direction, probability or label.
+    """
+    required_source = {
+        "source_id", "source_type", "official_url", "published_after_cutoff",
+        "access_state", "custodian_access", "authorization_receipt_id",
+    }
+    if not all(isinstance(value, str) and value for value in (projection_id, company_id, custodian_id, cutoff_at, next_cutoff_at)):
+        raise OutcomeMeasurementAcquisitionError("custody_projection_identity_required")
+    if not isinstance(measurement_contract_ref, dict) or set(measurement_contract_ref) != {"contract_set_id", "contract_version"}:
+        raise OutcomeMeasurementAcquisitionError("custody_projection_contract_ref_invalid")
+    if not isinstance(authorized_source_identity, dict) or set(authorized_source_identity) != required_source:
+        raise OutcomeMeasurementAcquisitionError("custody_projection_source_identity_invalid")
+    if authorized_source_identity.get("access_state") != "SEALED_UNTIL_PREOUTCOME_COMMIT":
+        raise OutcomeMeasurementAcquisitionError("custody_projection_source_must_remain_sealed")
+    if not isinstance(atomic_measurement_contracts, list) or not atomic_measurement_contracts:
+        raise OutcomeMeasurementAcquisitionError("custody_projection_atomic_contracts_required")
+    forbidden = {"forecast", "forecast_direction", "forecast_value", "probabilities", "hypotheses", "j2", "j3", "price", "cjo", "valuation", "report"}
+    for index, cell in enumerate(atomic_measurement_contracts):
+        if not isinstance(cell, dict) or forbidden.intersection(key.casefold() for key in cell):
+            raise OutcomeMeasurementAcquisitionError(f"custody_projection.atomic_measurement_contracts[{index}]_contains_forbidden_field")
+    return {
+        "schema_version": "outcome-measurement-value-free-custody-projection.v1",
+        "projection_id": projection_id,
+        "company_id": company_id,
+        "custodian_id": custodian_id,
+        "cutoff_at": cutoff_at,
+        "next_cutoff_at": next_cutoff_at,
+        "measurement_contract_ref": deepcopy(measurement_contract_ref),
+        "authorized_source_identity": deepcopy(authorized_source_identity),
+        "atomic_measurement_contracts": deepcopy(atomic_measurement_contracts),
+        "submission_api": "outcome_measurement_acquisition.validate_acquisition_result",
+        "settlement_api": "outcome_measurement_settlement_adapter.register_acquisition_result",
+        "outcome_access": {"authorized": False, "content_read": False, "custodian_started": False},
+        "object_class": "VALUE_FREE_OUTCOME_CUSTODY_PROJECTION",
+        "claim_class": "CUSTODIAN_ATOMIC_MEASUREMENT_ONLY",
+        "allowed_outputs": ["CUSTODIAN_SUBMISSION_ONLY", "RESEARCH_AGENDA"],
+    }
+
+
 def _contract_context(contract: Any) -> tuple[str, dict[str, Any], list[dict[str, Any]]]:
     """Normalise the project's two frozen Measurement Contract shapes.
 
