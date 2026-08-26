@@ -1,0 +1,214 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "minimal-historical-episode.v1",
+  "title": "Turtle minimal historical episode",
+  "description": "One company/issuer/cutoff/metric/window fixture-only chain. It has no method-transfer right and no V5/V6, action, peer, CJO, valuation, price, or report fields.",
+  "oneOf": [
+    {"$ref": "#/$defs/measurement_contract"},
+    {"$ref": "#/$defs/static_evidence"},
+    {"$ref": "#/$defs/prediction"},
+    {"$ref": "#/$defs/outcome_access"},
+    {"$ref": "#/$defs/observation"},
+    {"$ref": "#/$defs/settlement_request"},
+    {"$ref": "#/$defs/settlement"}
+  ],
+  "$defs": {
+    "nonempty": {"type": "string", "minLength": 1},
+    "contract_ref": {
+      "type": "object", "additionalProperties": false,
+      "required": ["measurement_contract_id", "measurement_contract_version"],
+      "properties": {
+        "measurement_contract_id": {"$ref": "#/$defs/nonempty"},
+        "measurement_contract_version": {"type": "integer", "minimum": 1}
+      }
+    },
+    "evidence_ref": {
+      "type": "object", "additionalProperties": false,
+      "required": ["evidence_receipt_id", "evidence_receipt_version"],
+      "properties": {
+        "evidence_receipt_id": {"$ref": "#/$defs/nonempty"},
+        "evidence_receipt_version": {"type": "integer", "minimum": 1}
+      }
+    },
+    "roles": {
+      "type": "object", "additionalProperties": false,
+      "required": ["forecaster_id", "custodian_id"],
+      "properties": {
+        "forecaster_id": {"$ref": "#/$defs/nonempty"},
+        "custodian_id": {"$ref": "#/$defs/nonempty"}
+      }
+    },
+    "static_source": {
+      "type": "object", "additionalProperties": false,
+      "required": ["source_id", "source_url", "source_type", "published_at", "issuer_id", "responsibility_boundary", "unit", "field_ref", "numeric_value"],
+      "properties": {
+        "source_id": {"$ref": "#/$defs/nonempty"},
+        "source_url": {"type": "string", "pattern": "^https://.+\\.pdf$"},
+        "source_type": {"const": "OFFICIAL_STATIC_FILING"},
+        "published_at": {"type": "string", "format": "date"},
+        "issuer_id": {"$ref": "#/$defs/nonempty"},
+        "responsibility_boundary": {"$ref": "#/$defs/nonempty"},
+        "unit": {"$ref": "#/$defs/nonempty"},
+        "field_ref": {"$ref": "#/$defs/nonempty"},
+        "numeric_value": {"type": "number"}
+      }
+    },
+    "outcome_source": {
+      "type": "object", "additionalProperties": false,
+      "required": ["source_id", "source_url", "source_type", "source_available_at", "issuer_id", "responsibility_boundary", "unit", "field_ref", "numeric_value"],
+      "properties": {
+        "source_id": {"$ref": "#/$defs/nonempty"},
+        "source_url": {"type": "string", "pattern": "^https://.+\\.pdf$"},
+        "source_type": {"const": "OFFICIAL_STATIC_FILING"},
+        "source_available_at": {"type": "string", "format": "date-time"},
+        "issuer_id": {"$ref": "#/$defs/nonempty"},
+        "responsibility_boundary": {"$ref": "#/$defs/nonempty"},
+        "unit": {"$ref": "#/$defs/nonempty"},
+        "field_ref": {"$ref": "#/$defs/nonempty"},
+        "numeric_value": {"type": "number"}
+      }
+    },
+    "fixed_rights": {
+      "type": "object",
+      "required": ["allowed_outputs", "method_transfer_rights"],
+      "properties": {
+        "allowed_outputs": {"const": ["MECHANICAL_SETTLEMENT_ONLY"]},
+        "method_transfer_rights": {"const": "NO_METHOD_TRANSFER_RIGHTS"}
+      }
+    },
+    "measurement_contract": {
+      "type": "object", "additionalProperties": false,
+      "required": ["schema_version", "measurement_contract_id", "measurement_contract_version", "company_id", "issuer_id", "cutoff_at", "metric_id", "window_id", "outcome_period_end", "responsibility_boundary", "unit", "settlement_tolerance", "roles", "object_class", "claim_class", "allowed_outputs", "method_transfer_rights"],
+      "properties": {
+        "schema_version": {"const": "turtle-minimal-historical-episode-measurement-contract.v1"},
+        "measurement_contract_id": {"$ref": "#/$defs/nonempty"},
+        "measurement_contract_version": {"type": "integer", "minimum": 1},
+        "company_id": {"$ref": "#/$defs/nonempty"},
+        "issuer_id": {"$ref": "#/$defs/nonempty"},
+        "cutoff_at": {"type": "string", "format": "date-time"},
+        "metric_id": {"$ref": "#/$defs/nonempty"},
+        "window_id": {"enum": ["ONE_YEAR", "THREE_YEAR", "FIVE_YEAR"]},
+        "outcome_period_end": {"type": "string", "format": "date"},
+        "responsibility_boundary": {"$ref": "#/$defs/nonempty"},
+        "unit": {"$ref": "#/$defs/nonempty"},
+        "settlement_tolerance": {"type": "number", "minimum": 0},
+        "roles": {"$ref": "#/$defs/roles"},
+        "object_class": {"const": "MINIMAL_HISTORICAL_MEASUREMENT_CONTRACT"},
+        "claim_class": {"const": "ONE_METRIC_PRE_OUTCOME_SCOPE"},
+        "allowed_outputs": {"const": ["MECHANICAL_SETTLEMENT_ONLY"]},
+        "method_transfer_rights": {"const": "NO_METHOD_TRANSFER_RIGHTS"}
+      }
+    },
+    "static_evidence": {
+      "type": "object", "additionalProperties": false,
+      "required": ["schema_version", "evidence_receipt_id", "evidence_receipt_version", "measurement_contract_ref", "company_id", "issuer_id", "cutoff_at", "metric_id", "window_id", "curator_id", "source", "object_class", "claim_class", "allowed_outputs", "method_transfer_rights"],
+      "properties": {
+        "schema_version": {"const": "turtle-minimal-historical-episode-static-evidence.v1"},
+        "evidence_receipt_id": {"$ref": "#/$defs/nonempty"},
+        "evidence_receipt_version": {"type": "integer", "minimum": 1},
+        "measurement_contract_ref": {"$ref": "#/$defs/contract_ref"},
+        "company_id": {"$ref": "#/$defs/nonempty"},
+        "issuer_id": {"$ref": "#/$defs/nonempty"},
+        "cutoff_at": {"type": "string", "format": "date-time"},
+        "metric_id": {"$ref": "#/$defs/nonempty"},
+        "window_id": {"enum": ["ONE_YEAR", "THREE_YEAR", "FIVE_YEAR"]},
+        "curator_id": {"$ref": "#/$defs/nonempty"},
+        "source": {"$ref": "#/$defs/static_source"},
+        "object_class": {"const": "MINIMAL_HISTORICAL_STATIC_EVIDENCE"},
+        "claim_class": {"const": "CUTOFF_VISIBLE_OFFICIAL_FIELD"},
+        "allowed_outputs": {"const": ["MECHANICAL_SETTLEMENT_ONLY"]},
+        "method_transfer_rights": {"const": "NO_METHOD_TRANSFER_RIGHTS"}
+      }
+    },
+    "prediction": {
+      "type": "object", "additionalProperties": false,
+      "required": ["schema_version", "prediction_id", "measurement_contract_ref", "evidence_receipt_ref", "company_id", "issuer_id", "cutoff_at", "metric_id", "window_id", "forecaster_id", "predicted_direction", "object_class", "claim_class", "allowed_outputs", "method_transfer_rights"],
+      "properties": {
+        "schema_version": {"const": "turtle-minimal-historical-episode-prediction.v1"},
+        "prediction_id": {"$ref": "#/$defs/nonempty"},
+        "measurement_contract_ref": {"$ref": "#/$defs/contract_ref"},
+        "evidence_receipt_ref": {"$ref": "#/$defs/evidence_ref"},
+        "company_id": {"$ref": "#/$defs/nonempty"},
+        "issuer_id": {"$ref": "#/$defs/nonempty"},
+        "cutoff_at": {"type": "string", "format": "date-time"},
+        "metric_id": {"$ref": "#/$defs/nonempty"},
+        "window_id": {"enum": ["ONE_YEAR", "THREE_YEAR", "FIVE_YEAR"]},
+        "forecaster_id": {"$ref": "#/$defs/nonempty"},
+        "predicted_direction": {"enum": ["INCREASE", "STABLE", "DECREASE"]},
+        "object_class": {"const": "MINIMAL_HISTORICAL_PREDICTION"},
+        "claim_class": {"const": "ONE_METRIC_DIRECTIONAL_PREDICTION"},
+        "allowed_outputs": {"const": ["MECHANICAL_SETTLEMENT_ONLY"]},
+        "method_transfer_rights": {"const": "NO_METHOD_TRANSFER_RIGHTS"}
+      }
+    },
+    "outcome_access": {
+      "type": "object", "additionalProperties": false,
+      "required": ["schema_version", "authorization_id", "measurement_contract_ref", "custodian_id", "authorized_at", "object_class", "claim_class", "allowed_outputs", "method_transfer_rights"],
+      "properties": {
+        "schema_version": {"const": "turtle-minimal-historical-episode-outcome-access.v1"},
+        "authorization_id": {"$ref": "#/$defs/nonempty"},
+        "measurement_contract_ref": {"$ref": "#/$defs/contract_ref"},
+        "custodian_id": {"$ref": "#/$defs/nonempty"},
+        "authorized_at": {"type": "string", "format": "date-time"},
+        "object_class": {"const": "MINIMAL_HISTORICAL_OUTCOME_ACCESS"},
+        "claim_class": {"const": "CUSTODIAN_CONTRACT_ONLY_ACCESS"},
+        "allowed_outputs": {"const": ["MECHANICAL_SETTLEMENT_ONLY"]},
+        "method_transfer_rights": {"const": "NO_METHOD_TRANSFER_RIGHTS"}
+      }
+    },
+    "observation": {
+      "type": "object", "additionalProperties": false,
+      "required": ["schema_version", "observation_id", "measurement_contract_ref", "company_id", "issuer_id", "cutoff_at", "metric_id", "window_id", "custodian_id", "observed_at", "source", "object_class", "claim_class", "allowed_outputs", "method_transfer_rights"],
+      "properties": {
+        "schema_version": {"const": "turtle-minimal-historical-episode-observation.v1"},
+        "observation_id": {"$ref": "#/$defs/nonempty"},
+        "measurement_contract_ref": {"$ref": "#/$defs/contract_ref"},
+        "company_id": {"$ref": "#/$defs/nonempty"},
+        "issuer_id": {"$ref": "#/$defs/nonempty"},
+        "cutoff_at": {"type": "string", "format": "date-time"},
+        "metric_id": {"$ref": "#/$defs/nonempty"},
+        "window_id": {"enum": ["ONE_YEAR", "THREE_YEAR", "FIVE_YEAR"]},
+        "custodian_id": {"$ref": "#/$defs/nonempty"},
+        "observed_at": {"type": "string", "format": "date-time"},
+        "source": {"$ref": "#/$defs/outcome_source"},
+        "object_class": {"const": "MINIMAL_HISTORICAL_OUTCOME_OBSERVATION"},
+        "claim_class": {"const": "CUSTODIAN_OBSERVED_OFFICIAL_FIELD"},
+        "allowed_outputs": {"const": ["MECHANICAL_SETTLEMENT_ONLY"]},
+        "method_transfer_rights": {"const": "NO_METHOD_TRANSFER_RIGHTS"}
+      }
+    },
+    "settlement_request": {
+      "type": "object", "additionalProperties": false,
+      "required": ["schema_version", "settlement_id", "measurement_contract_ref", "custodian_id", "settled_at", "object_class", "claim_class", "allowed_outputs", "method_transfer_rights"],
+      "properties": {
+        "schema_version": {"const": "turtle-minimal-historical-episode-settlement-request.v1"},
+        "settlement_id": {"$ref": "#/$defs/nonempty"},
+        "measurement_contract_ref": {"$ref": "#/$defs/contract_ref"},
+        "custodian_id": {"$ref": "#/$defs/nonempty"},
+        "settled_at": {"type": "string", "format": "date-time"},
+        "object_class": {"const": "MINIMAL_HISTORICAL_SETTLEMENT_REQUEST"},
+        "claim_class": {"const": "CUSTODIAN_MECHANICAL_SETTLEMENT_REQUEST"},
+        "allowed_outputs": {"const": ["MECHANICAL_SETTLEMENT_ONLY"]},
+        "method_transfer_rights": {"const": "NO_METHOD_TRANSFER_RIGHTS"}
+      }
+    },
+    "settlement": {
+      "type": "object", "additionalProperties": false,
+      "required": ["schema_version", "settlement_id", "measurement_contract_ref", "prediction_id", "observation_id", "custodian_id", "settled_at", "status", "object_class", "claim_class", "allowed_outputs", "method_transfer_rights"],
+      "properties": {
+        "schema_version": {"const": "turtle-minimal-historical-episode-settlement.v1"},
+        "settlement_id": {"$ref": "#/$defs/nonempty"},
+        "measurement_contract_ref": {"$ref": "#/$defs/contract_ref"},
+        "prediction_id": {"$ref": "#/$defs/nonempty"},
+        "observation_id": {"$ref": "#/$defs/nonempty"},
+        "custodian_id": {"$ref": "#/$defs/nonempty"},
+        "settled_at": {"type": "string", "format": "date-time"},
+        "status": {"enum": ["MATCH", "MISS"]},
+        "object_class": {"const": "MINIMAL_HISTORICAL_MECHANICAL_SETTLEMENT"},
+        "claim_class": {"const": "ONE_METRIC_MECHANICAL_RESULT"},
+        "allowed_outputs": {"const": ["MECHANICAL_SETTLEMENT_ONLY"]},
+        "method_transfer_rights": {"const": "NO_METHOD_TRANSFER_RIGHTS"}
+      }
+    }
+  }
+}
