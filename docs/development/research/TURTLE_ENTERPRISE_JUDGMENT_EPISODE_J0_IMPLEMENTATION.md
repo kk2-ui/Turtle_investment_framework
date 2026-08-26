@@ -32,7 +32,7 @@ manifest 只保存一个 `company × cutoff` 的既有 artifact 引用、3--5 �
 
 ## 3. 既有真源的绑定
 
-J0 能可选地把 manifest 绑定到当前 `DecisionContract` 与 `enterprise-judgment-v3` bundle；绑定时公司、issuer、cutoff、企业模型和决策账本 ID 必须精确一致。所有 component reference 都强制 `read_only=true`，compiler 返回深拷贝的 read model，不写入、不升级既有 Forecast、CJO、Comparative、settlement 或 learning artifact。
+J0 能可选地把 manifest 绑定到当前 `DecisionContract` 与 `enterprise-judgment-v3` bundle；也能绑定 J1 的 `SourcePackage + EnterpriseSystemModel + ManagementDecisionLedger + Reconstruction`。后一条路径会重新编译 J1，逐项验证 company、issuer、cutoff、source packet、component refs、角色和 reconstruction 内容；同一次绑定不能混用 V3 bundle 与 J1 reconstruction。J1 若有日期精度或局部 evidence/decision-observation 限制，E1 claim 也必须继承其局部状态。所有 component reference 都强制 `read_only=true`，compiler 返回深拷贝的 read model，不写入、不升级既有 Forecast、CJO、Comparative、settlement 或 learning artifact。
 
 `E1` 必须已有 `EnterpriseSystemModel` 和 `ManagementDecisionLedger` 引用。`E2` 和 `E3` 的 claim 必须进入一个包含 H-A/H-B、观察时钟与 outcome cell 的线程；只有精确的 `E3` claim 才要求 Comparative 引用。`E4` 的 Forecast/效用迁移路径只要求自己的 Forecast 引用，不被错误强制通过 Comparative。
 

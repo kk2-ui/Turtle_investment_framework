@@ -67,6 +67,7 @@ retrofit 或发起新 custody flow。
 | `docs/development/research/TURTLE_ENTERPRISE_JUDGMENT_V2_REAL_TRAINING_GOAL.md` | 已完成的 J0/J1/J1A/J2 首个真实工作包及其完成记录；水泥真实多公司、多 cutoff block 不等待 H2 或 Comparative |
 | `docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/08_investor_readout.md` | 首个真实水泥 V2 block 的投资者可读读出、feedback 与权限边界；底层 JSON 是该读出的可验证工件 |
 | `docs/development/research/TURTLE_ENTERPRISE_JUDGMENT_EPISODE_J0_IMPLEMENTATION.md` | `EnterpriseJudgmentEpisode` J0 的 read-only manifest、逐 claim/cell 权限矩阵与非追溯边界 |
+| `docs/development/research/TURTLE_ENTERPRISE_JUDGMENT_RECONSTRUCTION_J1_IMPLEMENTATION.md` | J1 的日期精度 SourcePacketReceipt、同一责任边界企业重建、局部证据状态、无材料行动路线与 J0 精确绑定 |
 | `docs/development/research/TURTLE_HISTORICAL_TRAINING_SYSTEM_REDESIGN.md` | claim-specific 分层训练、生命周期/退出、反幸存者偏差、source registry 与实现路线图 |
 | `docs/development/research/TURTLE_HISTORICAL_FIRST_JUDGMENT_TRAINING_ARCHITECTURE.md` | 历史训练、历史留出、结果已知教学与真实前瞻哨兵的当前顶层架构 |
 | `docs/development/research/HISTORICAL_PIT_TRAINING_COHORT_REGISTER.md` | 第一批历史训练、留出与教学对象的人读队列 |

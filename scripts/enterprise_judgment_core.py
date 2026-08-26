@@ -527,9 +527,10 @@ def validate_management_decision_ledger(ledger: Any, *, source_package: Any) -> 
         _add(findings, "management_decision_ledger.append_policy_invalid")
     if _instant(value.get("created_at")) is None:
         _add(findings, "management_decision_ledger.created_at_invalid")
+    # An empty append-only ledger is valid for J1.  Its meaning is established
+    # only by J1's separately evidence-bound decision observation; it is not
+    # permission to invent a decision merely to enter reconstruction.
     events = [_mapping(item) for item in _items(value.get("events"))]
-    if not events:
-        _add(findings, "management_decision_ledger.events_missing")
     event_ids = _unique_ids(events, "event_id", "management_decision_ledger.events", findings)
     source_refs = package_validation["source_refs"]
     source_available_at = package_validation["source_available_at"]

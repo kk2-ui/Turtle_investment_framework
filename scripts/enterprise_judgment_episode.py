@@ -65,6 +65,7 @@ COMPONENT_TYPES = {
     "ENTERPRISE_CONTEXT_SNAPSHOT",
     "ENTERPRISE_SYSTEM_MODEL",
     "MANAGEMENT_DECISION_LEDGER",
+    "MANAGEMENT_DECISION_OBSERVATION",
     "FORECAST_BUNDLE",
     "COMPARATIVE_EPISODE",
     "OUTCOME_MEASUREMENT_CONTRACT",
@@ -101,6 +102,8 @@ _CLAIM_KEYS = {
     "admission_level",
     "evidence_refs",
     "dependent_outcome_cell_ids",
+    "decision_observation_ref",
+    "decision_observation_treatment",
 }
 _THREAD_KEYS = {
     "thread_id",
@@ -167,14 +170,21 @@ def _add(findings: list[str], finding: str) -> None:
         findings.append(finding)
 
 
-def _closed(value: Any, allowed: set[str], path: str, findings: list[str]) -> dict[str, Any]:
+def _closed(
+    value: Any,
+    allowed: set[str],
+    path: str,
+    findings: list[str],
+    *,
+    required: set[str] | None = None,
+) -> dict[str, Any]:
     item = _mapping(value)
     if not isinstance(value, dict):
         _add(findings, f"{path}_must_be_object")
         return item
     for field in sorted(set(item).difference(allowed)):
         _add(findings, f"{path}_contains_unapproved_field:{field}")
-    for field in sorted(allowed.difference(item)):
+    for field in sorted((allowed if required is None else required).difference(item)):
         _add(findings, f"{path}_missing_required_field:{field}")
     return item
 
@@ -303,7 +313,13 @@ def _validate_claims(value: Any, question_ids: set[str], findings: list[str]) ->
     raw_items = _items(value)
     if not raw_items:
         _add(findings, "episode.claims_required")
-    claims = [_closed(raw, _CLAIM_KEYS, f"episode.claims[{index}]", findings) for index, raw in enumerate(raw_items)]
+    claims = [
+        _closed(
+            raw, _CLAIM_KEYS, f"episode.claims[{index}]", findings,
+            required=_CLAIM_KEYS - {"decision_observation_ref", "decision_observation_treatment"},
+        )
+        for index, raw in enumerate(raw_items)
+    ]
     ids = _unique_ids(claims, "claim_id", "episode.claims", findings)
     for index, claim in enumerate(claims):
         question_id = _require_text(claim, "question_id", f"episode.claims[{index}]", findings)
@@ -324,6 +340,14 @@ def _validate_claims(value: Any, question_ids: set[str], findings: list[str]) ->
         dependencies = claim.get("dependent_outcome_cell_ids")
         if not isinstance(dependencies, list) or any(not _text(item) for item in dependencies):
             _add(findings, f"episode.claims[{index}].dependent_outcome_cell_ids_invalid")
+        observation_ref = claim.get("decision_observation_ref", "")
+        treatment = claim.get("decision_observation_treatment", "")
+        if observation_ref not in {"", None} and not _text(observation_ref):
+            _add(findings, f"episode.claims[{index}].decision_observation_ref_invalid")
+        if observation_ref and treatment not in {"ACTION_DEPENDENT", "OBSERVATION_BOUNDARY"}:
+            _add(findings, f"episode.claims[{index}].decision_observation_treatment_invalid")
+        if not observation_ref and treatment not in {"", None}:
+            _add(findings, f"episode.claims[{index}].decision_observation_treatment_requires_ref")
     return claims, ids
 
 
@@ -402,6 +426,7 @@ def _validate_bindings(
     *,
     decision_contract: Any | None,
     enterprise_bundle: Any | None,
+    reconstruction_binding: Any | None,
     findings: list[str],
 ) -> None:
     """Optionally prove manifest references against existing canonical objects."""
@@ -453,12 +478,89 @@ def _validate_bindings(
         if model_ref and item.get("cutoff_at") != model.get("as_of"):
             _add(findings, "episode.cutoff_at_must_match_bound_enterprise_model")
 
+    if reconstruction_binding is not None:
+        if enterprise_bundle is not None:
+            _add(findings, "episode.enterprise_bundle_and_reconstruction_binding_are_mutually_exclusive")
+        try:
+            from scripts import enterprise_judgment_reconstruction as reconstruction_module
+        except ModuleNotFoundError:  # pragma: no cover - direct script import
+            import enterprise_judgment_reconstruction as reconstruction_module
+        binding = _closed(
+            reconstruction_binding,
+            {"reconstruction", "spec", "source_package", "enterprise_model", "decision_ledger"},
+            "episode.reconstruction_binding",
+            findings,
+        )
+        if decision_contract is None:
+            _add(findings, "episode.reconstruction_binding_requires_bound_decision_contract")
+            return
+        validation = reconstruction_module.validate_compiled_reconstruction(
+            binding.get("reconstruction"),
+            spec=binding.get("spec"),
+            source_package=binding.get("source_package"),
+            enterprise_model=binding.get("enterprise_model"),
+            decision_ledger=binding.get("decision_ledger"),
+            decision_contract=decision_contract,
+        )
+        for finding in validation["findings"]:
+            _add(findings, "reconstruction_binding:" + finding)
+        reconstruction = _mapping(binding.get("reconstruction"))
+        component_by_type = {
+            _mapping(raw).get("component_type"): _mapping(raw)
+            for raw in _items(item.get("component_refs"))
+        }
+        for reference in _items(reconstruction.get("episode_component_refs")):
+            expected = _mapping(reference)
+            actual = component_by_type.get(expected.get("component_type"))
+            if actual != expected:
+                _add(findings, "episode.component_refs_must_match_bound_reconstruction")
+        for field in ("company_id", "issuer_id", "cutoff_at"):
+            if item.get(field) != reconstruction.get(field):
+                _add(findings, f"episode.{field}_must_match_bound_reconstruction")
+        if _mapping(item.get("roles")) != _mapping(reconstruction.get("roles")):
+            _add(findings, "episode.roles_must_match_bound_reconstruction")
+
+        source_status_by_ref = {
+            entry.get("source_ref"): entry.get("status")
+            for entry in map(_mapping, _items(_mapping(reconstruction.get("evidence_coverage")).get("sources")))
+        }
+        observation = _mapping(_mapping(reconstruction.get("management_decision_ledger_slice")).get("decision_observation"))
+        observation_id = observation.get("observation_id")
+        observation_status = observation.get("status")
+        for index, claim in enumerate(_items(item.get("claims"))):
+            claim_value = _mapping(claim)
+            if claim_value.get("admission_level") != "E1_RECONSTRUCTION":
+                continue
+            claim_refs = _items(claim_value.get("evidence_refs"))
+            if any(ref not in source_status_by_ref for ref in claim_refs):
+                _add(findings, f"episode.claims[{index}].evidence_refs_must_be_in_bound_reconstruction")
+            known_ref_states = [source_status_by_ref.get(ref) for ref in claim_refs if ref in source_status_by_ref]
+            if known_ref_states and all(state == "EVIDENCE_INELIGIBLE" for state in known_ref_states):
+                if claim_value.get("cell_status") not in {"EVIDENCE_INELIGIBLE", "UNKNOWN"}:
+                    _add(findings, f"episode.claims[{index}].ineligible_evidence_cannot_support_active_claim")
+            observation_ref = claim_value.get("decision_observation_ref", "")
+            treatment = claim_value.get("decision_observation_treatment", "")
+            if observation_ref:
+                if observation_ref != observation_id:
+                    _add(findings, f"episode.claims[{index}].decision_observation_ref_must_match_bound_reconstruction")
+                elif treatment == "ACTION_DEPENDENT":
+                    required_status = {
+                        "NO_MATERIAL_DECISION_OBSERVED": "NOT_APPLICABLE",
+                        "INSUFFICIENT_EVIDENCE": "UNKNOWN",
+                    }.get(observation_status)
+                    if required_status and claim_value.get("cell_status") != required_status:
+                        _add(findings, f"episode.claims[{index}].action_claim_must_localize_bound_decision_observation")
+                elif treatment == "OBSERVATION_BOUNDARY" and observation_status == "INSUFFICIENT_EVIDENCE":
+                    if claim_value.get("cell_status") not in {"UNKNOWN", "EVIDENCE_INELIGIBLE"}:
+                        _add(findings, f"episode.claims[{index}].insufficient_decision_observation_must_remain_unknown")
+
 
 def validate_episode_manifest(
     manifest: Any,
     *,
     decision_contract: Any | None = None,
     enterprise_bundle: Any | None = None,
+    reconstruction_binding: Any | None = None,
 ) -> dict[str, Any]:
     """Validate a closed, read-only episode composition contract.
 
@@ -541,6 +643,7 @@ def validate_episode_manifest(
         item,
         decision_contract=decision_contract,
         enterprise_bundle=enterprise_bundle,
+        reconstruction_binding=reconstruction_binding,
         findings=findings,
     )
     return {"valid": not findings, "findings": findings, "episode_manifest": deepcopy(item) if not findings else None}
@@ -572,12 +675,14 @@ def compile_episode_read_model(
     *,
     decision_contract: Any | None = None,
     enterprise_bundle: Any | None = None,
+    reconstruction_binding: Any | None = None,
 ) -> dict[str, Any]:
     """Derive cell-level permissions without creating or upgrading an artifact."""
     validation = validate_episode_manifest(
         manifest,
         decision_contract=decision_contract,
         enterprise_bundle=enterprise_bundle,
+        reconstruction_binding=reconstruction_binding,
     )
     if not validation["valid"]:
         return {"valid": False, "findings": validation["findings"], "episode_read_model": None}

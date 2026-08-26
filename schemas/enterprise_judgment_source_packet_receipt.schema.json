@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "enterprise-judgment-source-packet-receipt.v1",
+  "title": "Turtle Enterprise Judgment Source Packet Receipt",
+  "description": "One cutoff-safe official-source packet with calendar-day availability preserved explicitly.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "packet_id", "packet_version", "company_id", "issuer_id", "cutoff_at", "sources", "object_class", "claim_class", "allowed_outputs"],
+  "properties": {
+    "schema_version": {"const": "enterprise-judgment-source-packet-receipt.v1"},
+    "packet_id": {"type": "string", "minLength": 1},
+    "packet_version": {"type": "integer", "minimum": 1},
+    "company_id": {"type": "string", "minLength": 1},
+    "issuer_id": {"type": "string", "minLength": 1},
+    "cutoff_at": {"type": "string", "format": "date-time"},
+    "sources": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/source"}},
+    "object_class": {"const": "SOURCE_PACKET_RECEIPT"},
+    "claim_class": {"const": "CUTOFF_ELIGIBLE_SOURCE_RECEIPT"},
+    "allowed_outputs": {"const": ["SOURCE_PACKET_READ_MODEL", "RESEARCH_AGENDA"]}
+  },
+  "$defs": {
+    "source": {
+      "type": "object", "additionalProperties": false,
+      "required": ["source_id", "source_type", "official_url", "published_on", "available_on", "availability_timezone", "eligibility", "responsibility_boundary_ids", "responsibility_perimeter_id", "unit", "access_mode", "locators"],
+      "properties": {
+        "source_id": {"type": "string", "minLength": 1},
+        "source_type": {"type": "string", "minLength": 1},
+        "official_url": {"type": "string", "format": "uri"},
+        "published_on": {"type": "string", "format": "date"},
+        "available_on": {"type": "string", "format": "date"},
+        "availability_timezone": {"type": "string", "minLength": 1},
+        "eligibility": {"enum": ["ELIGIBLE", "EVIDENCE_INELIGIBLE"]},
+        "responsibility_boundary_ids": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}},
+        "responsibility_perimeter_id": {"type": "string", "minLength": 1},
+        "unit": {"type": "string", "minLength": 1},
+        "access_mode": {"enum": ["REMOTE_OFFICIAL_LOCATOR", "LOCAL_MATERIALIZED_COPY"]},
+        "locators": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/locator"}},
+        "boundary_note": {"type": "string", "minLength": 1}
+      }
+    },
+    "locator": {
+      "type": "object", "additionalProperties": false,
+      "required": ["research_question_id", "locator"],
+      "properties": {
+        "research_question_id": {"type": "string", "minLength": 1},
+        "locator": {"type": "string", "minLength": 1}
+      }
+    }
+  }
+}

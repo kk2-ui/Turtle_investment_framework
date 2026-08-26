@@ -33,7 +33,7 @@
       "type": "object", "additionalProperties": false,
       "required": ["component_type", "component_id", "component_version", "admission_level", "read_only"],
       "properties": {
-        "component_type": {"enum": ["ENTERPRISE_CONTEXT_SNAPSHOT", "ENTERPRISE_SYSTEM_MODEL", "MANAGEMENT_DECISION_LEDGER", "FORECAST_BUNDLE", "COMPARATIVE_EPISODE", "OUTCOME_MEASUREMENT_CONTRACT"]},
+        "component_type": {"enum": ["ENTERPRISE_CONTEXT_SNAPSHOT", "ENTERPRISE_SYSTEM_MODEL", "MANAGEMENT_DECISION_LEDGER", "MANAGEMENT_DECISION_OBSERVATION", "FORECAST_BUNDLE", "COMPARATIVE_EPISODE", "OUTCOME_MEASUREMENT_CONTRACT"]},
         "component_id": {"type": "string", "minLength": 1},
         "component_version": {"type": "string", "minLength": 1},
         "admission_level": {"enum": ["E0_CONTEXT", "E1_RECONSTRUCTION", "E2_MECHANISM_PROBE", "E3_COMPARATIVE_LAB", "E4_TRANSFER_AND_UTILITY"]},
@@ -55,7 +55,9 @@
         "cell_status": {"enum": ["OBSERVED", "INFERRED", "UNKNOWN", "EVIDENCE_INELIGIBLE", "NOT_APPLICABLE"]},
         "admission_level": {"enum": ["E0_CONTEXT", "E1_RECONSTRUCTION", "E2_MECHANISM_PROBE", "E3_COMPARATIVE_LAB", "E4_TRANSFER_AND_UTILITY"]},
         "evidence_refs": {"type": "array", "items": {"type": "string", "minLength": 1}},
-        "dependent_outcome_cell_ids": {"type": "array", "items": {"type": "string", "minLength": 1}}
+        "dependent_outcome_cell_ids": {"type": "array", "items": {"type": "string", "minLength": 1}},
+        "decision_observation_ref": {"type": "string", "minLength": 1},
+        "decision_observation_treatment": {"enum": ["ACTION_DEPENDENT", "OBSERVATION_BOUNDARY"]}
       }
     },
     "mechanism_thread": {
