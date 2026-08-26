@@ -18,6 +18,7 @@ ROOT = Path(__file__).resolve().parents[1]
 BLOCK_DIR = ROOT / "docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018"
 PACKAGE_PATH = BLOCK_DIR / "23_round4_preoutcome_mechanism_package.json"
 SETTLEMENT_PATH = BLOCK_DIR / "24_round4_mechanism_feedback_settlement.json"
+ADJUDICATION_PATH = BLOCK_DIR / "25_round4_contract_insufficiency_adjudication.json"
 ROSTER_PATH = BLOCK_DIR / "04_pre_outcome_roster_freeze.json"
 BLOCK_PATH = BLOCK_DIR / "04_industry_learning_block.json"
 
@@ -261,7 +262,7 @@ def test_round4_feedback_preserves_plan_execution_and_causal_boundaries() -> Non
     assert threads["THREAD:600802:CASH_CAPITAL_LOSS"]["resolution"] == "MIXED_AND_CAPITAL_BURDEN_UNRESOLVED"
 
 
-def test_round4_feedback_does_not_score_request_only_forecasts_or_grant_rights() -> None:
+def test_round4_historical_feedback_artifact_records_what_was_attempted() -> None:
     settlement = _load(SETTLEMENT_PATH)
     requests = {item["request_id"]: item for item in settlement["forecast_request_settlement"]}
 
@@ -284,3 +285,62 @@ def test_round4_feedback_does_not_score_request_only_forecasts_or_grant_rights()
         "TEACHING_ONLY",
         "RESEARCH_AGENDA",
     ]
+
+
+def test_round4_superseding_adjudication_removes_every_invalid_training_projection() -> None:
+    adjudication = _load(ADJUDICATION_PATH)
+
+    assert adjudication["supersedes"] == {
+        "commit": "ee3f4c3",
+        "artifact_ref": "EMFS:CN:CEMENT:600802:20140416:V1",
+        "transition_id": "CCR:600802:20140416:20150415",
+        "selected_rank": 17,
+    }
+    assert adjudication["adjudication_status"] == "CONTRACT_INVALID_POST_OUTCOME_TEACHING_ONLY"
+    assert adjudication["outcome_access_confirmed"] is True
+    assert adjudication["permanent_no_refreeze"] is True
+    assert adjudication["training_admission"] == "DENIED"
+    assert set(adjudication["invalidated_claims"]) == {
+        "ALL_NINE_CELL_SETTLEMENT_LABELS",
+        "LOCAL_H_A_SUPPORTED_WITHOUT_ACTION_ATTRIBUTION",
+        "FORECAST_OBSERVED_DIRECTION",
+        "FORECAST_OBSERVED_VALUE",
+        "REAL_CELL_LEVEL_MECHANISM_FEEDBACK_COMPLETED",
+        "MECHANISM_FEEDBACK",
+    }
+    projection = adjudication["active_training_projection"]
+    assert projection == {
+        "transition_status": "CONTRACT_INVALID_POST_OUTCOME_TEACHING_ONLY",
+        "allowed_outputs": ["POST_OUTCOME_TEACHING", "DATA_COVERAGE", "RESEARCH_AGENDA"],
+        "cell_settlements": [],
+        "forecast_settlements": [],
+        "mechanism_feedback": None,
+        "enterprise_learning_status": "DENIED",
+    }
+    assert set(adjudication["rights"].values()) == {"NOT_AUTHORIZED"}
+    assert adjudication["allowed_outputs"] == [
+        "POST_OUTCOME_TEACHING",
+        "DATA_COVERAGE",
+        "RESEARCH_AGENDA",
+    ]
+
+
+def test_round4_adjudication_records_material_root_causes_and_remediation() -> None:
+    adjudication = _load(ADJUDICATION_PATH)
+    findings = {finding["finding_id"]: finding for finding in adjudication["independent_review_findings"]}
+
+    assert set(findings) == {
+        "P1:CANONICAL_J1_BYPASSED",
+        "P1:MEASUREMENT_CONTRACT_NOT_MECHANICAL",
+        "P2:SELECTION_SELF_REPORTED_COMPLETIONS",
+    }
+    assert {finding["root_cause_class"] for finding in findings.values()} == {"MODEL", "REASONING"}
+    required = {
+        "economic_impact",
+        "missing_facts",
+        "prohibited_assumption",
+        "executable_remediation",
+        "acceptance_criteria",
+    }
+    assert all(required <= set(finding) for finding in findings.values())
+    assert "Production-line and technical-upgrade" in adjudication["specific_attribution_correction"]
