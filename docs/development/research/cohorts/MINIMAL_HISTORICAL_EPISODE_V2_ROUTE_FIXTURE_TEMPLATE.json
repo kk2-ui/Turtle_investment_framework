@@ -21,6 +21,26 @@
     "allowed_outputs": ["MECHANICAL_SETTLEMENT_ONLY"],
     "method_transfer_rights": "NO_METHOD_TRANSFER_RIGHTS"
   },
+  "technical_route_identity": {
+    "schema_version": "turtle-minimal-historical-episode-technical-route-identity.v1",
+    "technical_route_identity_id": "MHE:ROUTE:FIXTURE:CN000000:V1",
+    "technical_route_identity_version": 1,
+    "decision_contract_ref": {
+      "decision_contract_id": "MHE:DECISION:FIXTURE:CN000000:V1",
+      "decision_contract_version": 1
+    },
+    "company_id": "CN:000000",
+    "issuer_id": "ISSUER:CN:000000",
+    "security_code": "000000",
+    "organization_id": "FIXTURE-CNINFO-ORG-ID",
+    "resolver_endpoint": "http://www.cninfo.com.cn/new/data/szse_stock.json",
+    "resolver_version": "cninfo-stock-map-code-orgid.v1",
+    "observed_at": "2021-01-01T00:00:00+08:00",
+    "object_class": "MINIMAL_HISTORICAL_TECHNICAL_ROUTE_IDENTITY",
+    "claim_class": "TECHNICAL_ROUTE_IDENTITY",
+    "allowed_outputs": ["MECHANICAL_SETTLEMENT_ONLY"],
+    "method_transfer_rights": "NO_METHOD_TRANSFER_RIGHTS"
+  },
   "measurement_contract": {
     "schema_version": "turtle-minimal-historical-episode-measurement-contract.v2",
     "measurement_contract_id": "MHE:CONTRACT:FIXTURE:CN000000:V2",
@@ -38,6 +58,10 @@
     "responsibility_boundary": "FIXTURE_LISTED_CONSOLIDATED_ISSUER",
     "unit": "FIXTURE_UNIT",
     "settlement_tolerance": 0.0,
+    "technical_route_identity_ref": {
+      "technical_route_identity_id": "MHE:ROUTE:FIXTURE:CN000000:V1",
+      "technical_route_identity_version": 1
+    },
     "outcome_acquisition_route": {
       "provider": "CNINFO_ANNOUNCEMENT_METADATA",
       "provider_version": "phase10-cninfo-announcement-query.v1",
