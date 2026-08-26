@@ -1,0 +1,143 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "enterprise-judgment-comparative-projection.v1",
+  "title": "Turtle Enterprise Judgment Comparative J4 Projection",
+  "description": "Thread-local, read-only projection result produced only after internal J2 compilation. The embedded Comparative candidate, when present, is the unchanged input governed by the existing judgment-selection-admission-v5 contract.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "object_class",
+    "episode_ref",
+    "thread_ref",
+    "projection_status",
+    "comparative_candidate",
+    "v5_validation",
+    "findings",
+    "locality",
+    "authority"
+  ],
+  "properties": {
+    "schema_version": {"const": "enterprise-judgment-comparative-projection.v1"},
+    "object_class": {"const": "ENTERPRISE_JUDGMENT_COMPARATIVE_PROJECTION"},
+    "episode_ref": {"$ref": "#/$defs/episode_ref"},
+    "thread_ref": {"$ref": "#/$defs/thread_ref"},
+    "projection_status": {"enum": ["NOT_REQUESTED", "NOT_ADMITTED", "ADMISSION_CANDIDATE"]},
+    "comparative_candidate": {
+      "description": "An unchanged V5 candidate object only after the executable V5 validator returns SELECTION_ADMITTED; null otherwise.",
+      "type": ["object", "null"]
+    },
+    "v5_validation": {"$ref": "#/$defs/v5_validation"},
+    "findings": {"type": "array", "items": {"type": "string", "minLength": 1}},
+    "locality": {"$ref": "#/$defs/locality"},
+    "authority": {"$ref": "#/$defs/authority"}
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"projection_status": {"const": "ADMISSION_CANDIDATE"}}, "required": ["projection_status"]},
+      "then": {
+        "properties": {
+          "comparative_candidate": {"type": "object"},
+          "v5_validation": {
+            "allOf": [
+              {"properties": {"valid": {"const": true}, "admission_status": {"const": "SELECTION_ADMITTED"}}}
+            ]
+          }
+        }
+      },
+      "else": {"properties": {"comparative_candidate": {"type": "null"}}}
+    }
+  ],
+  "$defs": {
+    "nullable_nonempty": {"type": ["string", "null"], "minLength": 1},
+    "episode_ref": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["episode_id", "company_id", "issuer_id", "cutoff_at"],
+      "properties": {
+        "episode_id": {"$ref": "#/$defs/nullable_nonempty"},
+        "company_id": {"$ref": "#/$defs/nullable_nonempty"},
+        "issuer_id": {"$ref": "#/$defs/nullable_nonempty"},
+        "cutoff_at": {"$ref": "#/$defs/nullable_nonempty"}
+      }
+    },
+    "thread_ref": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["thread_id", "claim_class", "requested_admission_level"],
+      "properties": {
+        "thread_id": {"$ref": "#/$defs/nullable_nonempty"},
+        "claim_class": {"$ref": "#/$defs/nullable_nonempty"},
+        "requested_admission_level": {"$ref": "#/$defs/nullable_nonempty"}
+      }
+    },
+    "v5_validation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schema_version", "method_epoch_id", "candidate_id", "valid", "admission_status", "findings"],
+      "properties": {
+        "schema_version": {"$ref": "#/$defs/nullable_nonempty"},
+        "method_epoch_id": {"$ref": "#/$defs/nullable_nonempty"},
+        "candidate_id": {"$ref": "#/$defs/nullable_nonempty"},
+        "valid": {"type": "boolean"},
+        "admission_status": {
+          "enum": [
+            "NOT_EVALUATED",
+            "STAGE0_REJECTED",
+            "NO_PRIMARY",
+            "NOT_ADMITTED",
+            "TEACHING_ONLY",
+            "SELECTION_ADMITTED"
+          ]
+        },
+        "findings": {"type": "array", "items": {"type": "string", "minLength": 1}}
+      }
+    },
+    "locality": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "applies_only_to_thread_id",
+        "e0_e2_unaffected",
+        "other_threads_unaffected",
+        "industry_block_unaffected"
+      ],
+      "properties": {
+        "applies_only_to_thread_id": {"$ref": "#/$defs/nullable_nonempty"},
+        "e0_e2_unaffected": {"const": true},
+        "other_threads_unaffected": {"const": true},
+        "industry_block_unaffected": {"const": true}
+      }
+    },
+    "authority": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "pre_outcome_projection_only",
+        "database_writes_authorized",
+        "outcome_reads_authorized",
+        "peer_recruitment_authorized",
+        "h2_fabrication_authorized",
+        "selection_seal_authorized",
+        "method_freeze_authorized",
+        "cjo_authorized",
+        "report_authorized",
+        "valuation_authorized",
+        "investment_authorized"
+      ],
+      "properties": {
+        "pre_outcome_projection_only": {"const": true},
+        "database_writes_authorized": {"const": false},
+        "outcome_reads_authorized": {"const": false},
+        "peer_recruitment_authorized": {"const": false},
+        "h2_fabrication_authorized": {"const": false},
+        "selection_seal_authorized": {"const": false},
+        "method_freeze_authorized": {"const": false},
+        "cjo_authorized": {"const": false},
+        "report_authorized": {"const": false},
+        "valuation_authorized": {"const": false},
+        "investment_authorized": {"const": false}
+      }
+    }
+  }
+}

@@ -3,6 +3,7 @@ from __future__ import annotations
 from copy import deepcopy
 import json
 from pathlib import Path
+import sqlite3
 
 from scripts import enterprise_judgment_episode as episode
 from scripts import enterprise_judgment_reconstruction as reconstruction
@@ -175,8 +176,9 @@ def test_j1_projects_cutoff_safe_context_operating_loops_and_decision_slice() ->
     ledger["events"].append(after_cutoff)
     before_model, before_ledger = deepcopy(model), deepcopy(ledger)
 
+    spec = _spec(source_package, decision_contract)
     result = reconstruction.compile_enterprise_reconstruction(
-        _spec(source_package, decision_contract), source_packet_receipt=source_receipt,
+        spec, source_packet_receipt=source_receipt,
         source_package=source_package, enterprise_model=model,
         decision_ledger=ledger, decision_contract=decision_contract,
     )
@@ -192,6 +194,7 @@ def test_j1_projects_cutoff_safe_context_operating_loops_and_decision_slice() ->
     assert decision["field_statuses"]["ALTERNATIVES"] == "UNKNOWN"
     assert decision["field_statuses"]["NON_ACTION_OPTION"] == "UNKNOWN"
     assert decision["field_statuses"]["EXECUTION"] == "OBSERVED"
+    assert compiled["source_packet_ref"] == spec["source_packet_ref"]
     assert compiled["investment_authorization"] == "NOT_AUTHORIZED"
     assert model == before_model
     assert ledger == before_ledger
@@ -451,3 +454,47 @@ def test_j1_schema_is_closed_and_limits_the_operating_system_to_two_or_three_loo
     assert schema["additionalProperties"] is False
     assert schema["properties"]["feedback_loops"]["maxItems"] == 3
     assert schema["properties"]["allowed_outputs"]["const"] == reconstruction.ALLOWED_OUTPUTS
+
+
+def test_j1_registry_rejects_a_synchronized_replacement_of_the_frozen_bundle() -> None:
+    source_receipt, source_package = _source_inputs()
+    decision_contract = _contract(source_package)
+    model = _model(source_package=source_package)
+    ledger = _ledger()
+    spec = _spec(source_package, decision_contract)
+    compiled = reconstruction.compile_enterprise_reconstruction(
+        spec,
+        source_packet_receipt=source_receipt,
+        source_package=source_package,
+        enterprise_model=model,
+        decision_ledger=ledger,
+        decision_contract=decision_contract,
+    )
+    assert compiled["valid"], compiled["findings"]
+    inputs = {
+        "spec": spec,
+        "source_packet_receipt": source_receipt,
+        "source_package": source_package,
+        "enterprise_model": model,
+        "decision_ledger": ledger,
+        "decision_contract": decision_contract,
+    }
+    registry = sqlite3.connect(":memory:")
+    reconstruction.register_frozen_reconstruction(
+        registry,
+        compiled["reconstruction"],
+        inputs,
+        frozen_at="2026-08-26T00:00:00+00:00",
+    )
+
+    assert reconstruction.validate_frozen_reconstruction_binding(
+        registry, compiled["reconstruction"], inputs,
+    )["valid"]
+    substituted_inputs = deepcopy(inputs)
+    substituted_inputs["source_packet_receipt"]["sources"][0]["source_id"] = "SRC:INVENTED"
+    result = reconstruction.validate_frozen_reconstruction_binding(
+        registry, compiled["reconstruction"], substituted_inputs,
+    )
+
+    assert not result["valid"]
+    assert result["findings"] == ["reconstruction_inputs_must_match_frozen_registry_object"]

@@ -22,10 +22,19 @@ SourcePacketReceipt
   -> conservative core SourcePackage
   -> EnterpriseSystemModel + append-only ManagementDecisionLedger
   -> J1 Reconstruction
+  -> append-only Frozen Reconstruction Registry receipt
   -> bound J0 EnterpriseJudgmentEpisode manifest
 ```
 
-J1 只接受同一 `DecisionContract` 的公司、issuer、cutoff、source packet 和三角色。`source_package` 不是可手写的旁路输入：它必须与 `compile_core_source_package(SourcePacketReceipt)` 的投影逐对象相等，receipt 的 ID/version、company、issuer、cutoff 也必须与 J1 spec 和 contract 精确一致。J0 在实际绑定时会重新编译 J1 并逐项比较 receipt、source package、reconstruction、component refs、company/issuer/cutoff 与角色；不能用任意 ID、另一种 V3 bundle 或替换 custodian 冒充同一对象。
+J1 只接受同一 `DecisionContract` 的公司、issuer、cutoff、source packet 和三角色。`source_package` 不是可手写的旁路输入：它必须与 `compile_core_source_package(SourcePacketReceipt)` 的投影逐对象相等，receipt 的 ID/version、company、issuer、cutoff 也必须与 J1 spec 和 contract 精确一致。编译后的 reconstruction 保留这份精确 `source_packet_ref`，供 J2/J3 继续验证同一来源血缘。J0 在实际绑定时会重新编译 J1 并逐项比较 receipt、source package、reconstruction、component refs、company/issuer/cutoff 与角色；不能用任意 ID、另一种 V3 bundle 或替换 custodian 冒充同一对象。
+
+在 J3/J4 消费前，`register_frozen_reconstruction` 还会把完整 reconstruction 与
+六项 compilation inputs 作为一份 append-only bundle 登记。相同
+`reconstruction_id × schema_version` 只能幂等重放同一内容；
+`validate_frozen_reconstruction_binding` 要求调用方对象与 registry 中的冻结对象逐项
+相同。这样不能通过同步修改 receipt、source package、spec 与 read model 来让一组
+新造对象互相自证。registry 只保存 cutoff 前研究对象，不读取 outcome，也不授予任何
+下游权限。
 
 ## 2. PIT 与责任边界
 
@@ -62,4 +71,4 @@ Comparative、同行 panel、Forecast、估值、BuyBand、价格、结果 value
 
 ## 5. 验收覆盖
 
-定向回归覆盖日期精度/PIT、post-cutoff source、同一责任边界、不可用现金证据的局部降级、cutoff 后 ledger event 排除、无材料行动与资料不足边界、DecisionContract/custodian/reconstruction 替换，以及 J1 到 J0 的真实绑定。 
+定向回归覆盖日期精度/PIT、post-cutoff source、同一责任边界、不可用现金证据的局部降级、cutoff 后 ledger event 排除、无材料行动与资料不足边界、DecisionContract/custodian/reconstruction 替换、append-only registry 冲突与未登记/同步篡改拒绝，以及 J1 到 J0 的真实绑定。

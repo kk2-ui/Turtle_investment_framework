@@ -12,6 +12,8 @@ from __future__ import annotations
 
 from copy import deepcopy
 from datetime import datetime, timezone
+import json
+import sqlite3
 from typing import Any
 
 try:
@@ -23,6 +25,7 @@ except ModuleNotFoundError:  # pragma: no cover - direct script import
 SCHEMA_VERSION = "enterprise-judgment-reconstruction.v1"
 SPEC_SCHEMA_VERSION = "enterprise-judgment-reconstruction-spec.v1"
 ALLOWED_OUTPUTS = ["RECONSTRUCTION_READ_MODEL", "CJO_TRAINING_MIRROR", "RESEARCH_AGENDA"]
+REGISTRY_TABLE = "enterprise_judgment_frozen_reconstructions"
 
 LOOP_DOMAINS = {"CUSTOMER", "COMPETITION", "OPERATIONS", "CASH", "CAPITAL_ALLOCATION", "PERMANENT_LOSS"}
 FIELD_STATES = {"OBSERVED", "INFERRED", "UNKNOWN", "EVIDENCE_INELIGIBLE", "NOT_APPLICABLE"}
@@ -746,6 +749,7 @@ def compile_enterprise_reconstruction(
         "company_id": item["company_id"],
         "issuer_id": item["issuer_id"],
         "cutoff_at": item["cutoff_at"],
+        "source_packet_ref": deepcopy(item["source_packet_ref"]),
         "enterprise_context_snapshot": context,
         "operating_system_model": operating_system,
         "management_decision_ledger_slice": ledger_slice,
@@ -788,3 +792,126 @@ def validate_compiled_reconstruction(
     if compiled["valid"] and _mapping(reconstruction) != compiled["reconstruction"]:
         _add(findings, "reconstruction_must_equal_bound_cutoff_safe_compilation")
     return {"valid": not findings, "findings": findings, "reconstruction": deepcopy(_mapping(reconstruction)) if not findings else None}
+
+
+def initialize_reconstruction_registry(conn: sqlite3.Connection) -> None:
+    """Create the append-only J1 trust root used by downstream projections."""
+    with conn:
+        conn.execute(
+            f"""CREATE TABLE IF NOT EXISTS {REGISTRY_TABLE} (
+                reconstruction_id TEXT NOT NULL,
+                schema_version TEXT NOT NULL,
+                company_id TEXT NOT NULL,
+                cutoff_at TEXT NOT NULL,
+                payload_json TEXT NOT NULL,
+                frozen_at TEXT NOT NULL,
+                PRIMARY KEY (reconstruction_id, schema_version)
+            )"""
+        )
+
+
+def _canonical_json(value: Any) -> str:
+    return json.dumps(value, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
+
+
+def register_frozen_reconstruction(
+    conn: sqlite3.Connection,
+    reconstruction_read_model: Any,
+    reconstruction_inputs: Any,
+    *,
+    frozen_at: str,
+) -> dict[str, Any]:
+    """Freeze one fully replayable J1 object before J2/J3/J4 consume it."""
+    inputs = _mapping(reconstruction_inputs)
+    expected_input_keys = {
+        "spec",
+        "source_packet_receipt",
+        "source_package",
+        "enterprise_model",
+        "decision_ledger",
+        "decision_contract",
+    }
+    if set(inputs) != expected_input_keys:
+        raise ValueError("frozen reconstruction requires the complete J1 compilation inputs")
+    validation = validate_compiled_reconstruction(
+        reconstruction_read_model,
+        spec=inputs["spec"],
+        source_packet_receipt=inputs["source_packet_receipt"],
+        source_package=inputs["source_package"],
+        enterprise_model=inputs["enterprise_model"],
+        decision_ledger=inputs["decision_ledger"],
+        decision_contract=inputs["decision_contract"],
+    )
+    if not validation["valid"]:
+        raise ValueError("invalid reconstruction freeze: " + "; ".join(validation["findings"]))
+    item = validation["reconstruction"]
+    freeze_instant = _instant(frozen_at, "frozen_reconstruction.frozen_at", [])
+    cutoff_instant = _instant(item.get("cutoff_at"), "frozen_reconstruction.cutoff_at", [])
+    if freeze_instant is None or cutoff_instant is None or freeze_instant <= cutoff_instant:
+        raise ValueError("frozen reconstruction must be registered after its cutoff")
+    payload = {
+        "reconstruction": deepcopy(item),
+        "reconstruction_inputs": deepcopy(inputs),
+    }
+    encoded = _canonical_json(payload)
+    initialize_reconstruction_registry(conn)
+    identity = (item["reconstruction_id"], item["schema_version"])
+    existing = conn.execute(
+        f"SELECT payload_json, frozen_at FROM {REGISTRY_TABLE} WHERE reconstruction_id = ? AND schema_version = ?",
+        identity,
+    ).fetchone()
+    if existing is not None:
+        if existing[0] != encoded or existing[1] != freeze_instant.isoformat():
+            raise ValueError("frozen reconstruction identity already has different content")
+        return {
+            "frozen": True,
+            "reconstruction_id": identity[0],
+            "schema_version": identity[1],
+            "idempotent": True,
+        }
+    with conn:
+        conn.execute(
+            f"""INSERT INTO {REGISTRY_TABLE} (
+                reconstruction_id, schema_version, company_id, cutoff_at, payload_json, frozen_at
+            ) VALUES (?, ?, ?, ?, ?, ?)""",
+            (
+                identity[0],
+                identity[1],
+                item["company_id"],
+                item["cutoff_at"],
+                encoded,
+                freeze_instant.isoformat(),
+            ),
+        )
+    return {
+        "frozen": True,
+        "reconstruction_id": identity[0],
+        "schema_version": identity[1],
+        "idempotent": False,
+    }
+
+
+def validate_frozen_reconstruction_binding(
+    conn: sqlite3.Connection,
+    reconstruction_read_model: Any,
+    reconstruction_inputs: Any,
+) -> dict[str, Any]:
+    """Compare caller material with the previously frozen canonical J1 bundle."""
+    item = _mapping(reconstruction_read_model)
+    identity = (item.get("reconstruction_id"), item.get("schema_version"))
+    try:
+        row = conn.execute(
+            f"SELECT payload_json FROM {REGISTRY_TABLE} WHERE reconstruction_id = ? AND schema_version = ?",
+            identity,
+        ).fetchone()
+    except sqlite3.OperationalError:
+        return {"valid": False, "findings": ["frozen_reconstruction_registry_not_initialized"]}
+    if row is None:
+        return {"valid": False, "findings": ["frozen_reconstruction_not_registered"]}
+    payload = json.loads(row[0])
+    findings: list[str] = []
+    if item != _mapping(payload).get("reconstruction"):
+        _add(findings, "reconstruction_must_match_frozen_registry_object")
+    if _mapping(reconstruction_inputs) != _mapping(payload).get("reconstruction_inputs"):
+        _add(findings, "reconstruction_inputs_must_match_frozen_registry_object")
+    return {"valid": not findings, "findings": findings}

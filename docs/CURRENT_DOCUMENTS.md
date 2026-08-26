@@ -10,6 +10,8 @@
 
 `J0 CONTRACT + J1 RECONSTRUCTION` 已实现为独立、cutoff-safe 的新训练入口；它不等待水泥 H2、五家公司 panel、Comparative、R-103、估值或 BuyBand。首个真实、结果封存样本是 [孚日股份 `CN:002083 × 2019-05-01`](development/research/episodes/EJE_CN002083_20190501/README.md)：五份 cutoff 前官方年报经日期精度 receipt、同一上市公司合并责任边界、空决策账本与 `INSUFFICIENT_EVIDENCE` 决策观察，编译为 E1 read model。它只证明企业状态/有限现金桥的可审计重建；管理行动、客户反应、竞争因果、永久损失、Forecast、Comparative、迁移、方法冻结、估值和投资授权均未启动或保持未知。后续顺序是从该 J1 选择局部机制进入 J2，随后按需要进入 J3 或 J4；旧 action-first Comparative 生产线不能反向阻断此入口。
 
+`J2 THREADS + J3 FORECAST PROJECTION + J4 COMPARATIVE PROJECTION` 的离线工程通路已实现并完成 synthetic 回归：J2 将企业重建拆为一个 primary 与二至四个 supporting 局部线程，并以完整 J1 编译输入重放验证其来源；J3/J4 公共入口还要求 reconstruction 与 inputs 精确匹配预先登记的 Frozen J1 bundle。J3 先内部重编译 J2，再只把已解析且明确可预测的 cell 转为现有 Forecast 语义的概率、区间或弃权请求；J4 同样先内部重编译 J2，只让已解析且明确声明 `RELATIVE_CAUSAL / E3_COMPARATIVE_LAB` 的单一线程进入现有 V5 准入，并要求该线程已在 J2 source 内预冻结同一机制、逐 cell 完整测量合同和来源链，防止合法 V5 静默回答另一问题。V5 或该映射不通过只影响该线程。调用者不能提交手工拼接的 J2 read model、同步篡改的 J1 read model，或在 J4 调用时临时补 bridge 绕过这两层。三层均不创建第二套事实库、Forecast 或 Comparative 引擎，也不授予 CJO、估值、报告或投资权限。这里的完成只代表 engineering adapter 可用；尚未产生真实水泥 J3/J4 对象、真实 Forecast 结算或真实 Comparative admission，真实 feedback 与迁移状态以当前水泥 block 工件为准。
+
 ## 1. 新会话固定读取顺序
 
 1. 仓库根 `AGENTS.md`：工作方式、隔离开发、真实运行和报告生成规则；
@@ -72,7 +74,10 @@ retrofit 或发起新 custody flow。
 | `docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/08_investor_readout.md` | 首个真实水泥 V2 block 的投资者可读读出、feedback 与权限边界；底层 JSON 是该读出的可验证工件 |
 | `docs/development/research/TURTLE_ENTERPRISE_JUDGMENT_EPISODE_J0_IMPLEMENTATION.md` | `EnterpriseJudgmentEpisode` J0 的 read-only manifest、逐 claim/cell 权限矩阵与非追溯边界 |
 | `docs/development/research/TURTLE_ENTERPRISE_JUDGMENT_RECONSTRUCTION_J1_IMPLEMENTATION.md` | J1 的日期精度 SourcePacketReceipt、同一责任边界企业重建、局部证据状态、无材料行动路线与 J0 精确绑定 |
-| `docs/development/research/episodes/EJE_CN002083_20190501/README.md` | 首个真实 E0/E1 企业判断样本：孚日股份的 source receipt、DecisionContract、企业重建输入和 outcome-sealed J0 manifest |
+| `docs/development/research/TURTLE_ENTERPRISE_JUDGMENT_MECHANISM_J2_IMPLEMENTATION.md` | J2 局部机制线程、逐 claim 权限和 J3/J4 明示路由；线程失败不升级为企业或行业全局失败 |
+| `docs/development/research/TURTLE_ENTERPRISE_JUDGMENT_FORECAST_J3_IMPLEMENTATION.md` | J3 对现有 Forecast 语义的 request-only 投影、逐 cell coverage 与错误归因权限；不生成预测、因果或 CJO |
+| `docs/development/research/TURTLE_ENTERPRISE_JUDGMENT_COMPARATIVE_J4_IMPLEMENTATION.md` | J4 对现有 V5 的单线程准入投影；必须绑定已解析 J2 view，失败不阻断 E0-E2、其他线程或 IndustryLearningBlock |
+| `docs/development/research/episodes/EJE_CN002083_20190501/README.md` | 孚日股份单公司 E0/E1 工程样本：可复用其 source/DecisionContract/重建/J0 绑定，但它不是 V2 水泥 IndustryLearningBlock 主线 |
 | `docs/development/research/TURTLE_HISTORICAL_TRAINING_SYSTEM_REDESIGN.md` | claim-specific 分层训练、生命周期/退出、反幸存者偏差、source registry 与实现路线图 |
 | `docs/development/research/TURTLE_HISTORICAL_FIRST_JUDGMENT_TRAINING_ARCHITECTURE.md` | 历史训练、历史留出、结果已知教学与真实前瞻哨兵的当前顶层架构 |
 | `docs/development/research/HISTORICAL_PIT_TRAINING_COHORT_REGISTER.md` | 第一批历史训练、留出与教学对象的人读队列 |
