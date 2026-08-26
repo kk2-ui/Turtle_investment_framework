@@ -42,6 +42,26 @@ def _round2_inputs() -> tuple[dict, dict, list[dict], list[dict], dict, dict, di
     return h1, series, source_models, source_episodes, block, eligibility_register, selection, target_models, target_episode, application, completed
 
 
+def _round3_preoutcome_inputs() -> tuple[dict, dict, list[dict], list[dict], dict, list[dict], dict, dict, dict, list[dict], dict]:
+    h1, series, source_models, source_episodes, block, eligibility_register, selection, target_models, target_episode, application, completed = _round2_inputs()
+    round2_chain = {
+        "eligibility_register": eligibility_register,
+        "selection": selection,
+        "target_models": target_models,
+        "target_episode": target_episode,
+        "application": application,
+        "continuation_settlement": json.loads((BLOCK_ROOT / "13_round2_continuation_feedback_settlement.json").read_text(encoding="utf-8")),
+        "review": json.loads((BLOCK_ROOT / "14_transfer_application_independent_review.json").read_text(encoding="utf-8")),
+        "completion": json.loads((BLOCK_ROOT / "15_round2_completion_receipt.json").read_text(encoding="utf-8")),
+        "source_feedback_settlement": completed[0],
+    }
+    round3_models = json.loads((BLOCK_ROOT / "17_round3_enterprise_system_models.json").read_text(encoding="utf-8"))
+    round3_episode = json.loads((BLOCK_ROOT / "18_round3_preoutcome_episode.json").read_text(encoding="utf-8"))
+    round3_selection = json.loads((BLOCK_ROOT / "16_round3_method_transfer_selection.json").read_text(encoding="utf-8"))
+    round3_application = json.loads((BLOCK_ROOT / "19_round3_transfer_application_receipt.json").read_text(encoding="utf-8"))
+    return h1, series, source_models, source_episodes, block, completed, round2_chain, round3_selection, round3_episode, round3_models, round3_application
+
+
 def test_real_cement_e0_e1_block_freezes_h1_risk_set_and_read_only_training_views() -> None:
     h1, series, models, episodes, block = _inputs()
 
@@ -380,3 +400,90 @@ def test_round2_completion_status_requires_both_real_feedback_and_independent_tr
     )
     assert not result["valid"]
     assert "round2_completion.statuses_must_remain_narrow" in result["findings"]
+
+
+def test_round3_mechanically_selects_rank13_without_lifecycle_screening() -> None:
+    h1, series, source_models, source_episodes, block, completed, round2_chain, selection, episode, target_models, application = _round3_preoutcome_inputs()
+    freeze = _pre_outcome_freeze()
+    result = v2.validate_round3_method_transfer_selection(
+        selection, round2_chain=round2_chain, block=block, pre_outcome_roster_freeze=freeze,
+        history_series=series, h1_package=h1, source_block_episodes=source_episodes,
+        source_models=source_models, completed_feedback_settlements=completed,
+    )
+    assert result["valid"], result["findings"]
+    assert (selection["selected_rank"], selection["company_id"]) == (13, "CN:600425")
+    assert "LIFECYCLE" not in selection["selection_policy"]
+    assert "OUTCOME_FEATURE_FILTER" in selection["selection_policy"]
+    assert selection["outcome_access_status"] == "SEALED"
+
+    later = deepcopy(selection)
+    later.update({
+        "selected_transition_id": "CCR:600425:20150415:20160427",
+        "selected_rank": 14,
+        "cutoff_at": "2015-04-15T00:00:00+08:00",
+        "next_cutoff_at": "2016-04-27T00:00:00+08:00",
+    })
+    result = v2.validate_round3_method_transfer_selection(
+        later, round2_chain=round2_chain, block=block, pre_outcome_roster_freeze=freeze,
+        history_series=series, h1_package=h1, source_block_episodes=source_episodes,
+        source_models=source_models, completed_feedback_settlements=completed,
+    )
+    assert not result["valid"]
+    assert "round3_selection.must_mechanically_choose_earliest_unseen_frozen_row" in result["findings"]
+
+    outcome_screened = deepcopy(selection)
+    outcome_screened["lifecycle_condition"] = "KNOWN_SCOPE_CHANGE"
+    result = v2.validate_round3_method_transfer_selection(
+        outcome_screened, round2_chain=round2_chain, block=block, pre_outcome_roster_freeze=freeze,
+        history_series=series, h1_package=h1, source_block_episodes=source_episodes,
+        source_models=source_models, completed_feedback_settlements=completed,
+    )
+    assert not result["valid"]
+    assert "round3_selection_contains_unapproved_field:lifecycle_condition" in result["findings"]
+
+
+def test_round3_freezes_unchanged_perimeter_first_rule_before_outcome_access() -> None:
+    h1, series, source_models, source_episodes, block, completed, round2_chain, selection, episode, target_models, application = _round3_preoutcome_inputs()
+    freeze = _pre_outcome_freeze()
+    episode_result = v2.validate_enterprise_judgment_episode(
+        episode, history_series=series, h1_package=h1, enterprise_models=target_models,
+    )
+    assert episode_result["valid"], episode_result["findings"]
+    result = v2.validate_round3_transfer_application_receipt(
+        application, selection=selection, round2_chain=round2_chain, block=block,
+        pre_outcome_roster_freeze=freeze, target_episode=episode, target_models=target_models,
+        history_series=series, h1_package=h1, source_block_episodes=source_episodes,
+        source_models=source_models, completed_feedback_settlements=completed,
+    )
+    assert result["valid"], result["findings"]
+    assert application["learned_rule_id"] == "PERIMETER_FIRST_MEASUREMENT_GATE"
+    assert application["target_outcome_access"] == "SEALED"
+    assert application["frozen_before_outcome_access"] is True
+    assert [cell["dimension"] for cell in application["enhanced_after_learning"]] == ["CASH", "OPERATIONS"]
+    assert round2_chain["completion"]["transfer_status"] == "TRANSFER_CANDIDATE_CREATED"
+
+    changed_rule = deepcopy(application)
+    changed_rule["field_delta"][0]["materiality"] = "Company-specific rule tuned after reading FY2014."
+    result = v2.validate_round3_transfer_application_receipt(
+        changed_rule, selection=selection, round2_chain=round2_chain, block=block,
+        pre_outcome_roster_freeze=freeze, target_episode=episode, target_models=target_models,
+        history_series=series, h1_package=h1, source_block_episodes=source_episodes,
+        source_models=source_models, completed_feedback_settlements=completed,
+    )
+    assert not result["valid"]
+    assert "round3_transfer_application.perimeter_first_rule_must_be_semantically_unchanged" in result["findings"]
+
+    rewritten_round2 = deepcopy(round2_chain)
+    rewritten_round2["completion"]["transfer_status"] = "TRANSFER_VALIDATED"
+    result = v2.validate_round3_transfer_application_receipt(
+        application, selection=selection, round2_chain=rewritten_round2, block=block,
+        pre_outcome_roster_freeze=freeze, target_episode=episode, target_models=target_models,
+        history_series=series, h1_package=h1, source_block_episodes=source_episodes,
+        source_models=source_models, completed_feedback_settlements=completed,
+    )
+    assert not result["valid"]
+    assert any("round2_completion.statuses_must_remain_narrow" in finding for finding in result["findings"])
+    serialized = json.dumps({"selection": selection, "application": application}, sort_keys=True)
+    assert "R-103" not in serialized
+    assert "CJO" not in serialized
+    assert "valuation" not in serialized.lower()

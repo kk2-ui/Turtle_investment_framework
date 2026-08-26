@@ -1,0 +1,199 @@
+{
+  "schema_version": "enterprise-judgment-episode.v2",
+  "episode_id": "EJE:CN:600425:20140416:R3",
+  "company_id": "CN:600425",
+  "issuer_id": "ISSUER:CN:600425",
+  "company_cluster_id": "COMPANY_CLUSTER:CN:CEMENT_LISTED:600425",
+  "cutoff_at": "2014-04-16T00:00:00+08:00",
+  "admission_level": "E1_RECONSTRUCTION",
+  "industry_block_id": "ILB:CN:CEMENT_LISTED:2014_2018:V1",
+  "risk_set_snapshot_ref": {
+    "universe_id": "UNIVERSE:COHORT:CN:CEMENT_LISTED:20180430:H1_STATIC:2014-04-16T00:00:00+08:00",
+    "cutoff_at": "2014-04-16T00:00:00+08:00",
+    "company_id": "CN:600425"
+  },
+  "source_packet_ref": {
+    "receipt_id": "H1:COHORT:CN:CEMENT_LISTED:20180430:STATIC:V1",
+    "receipt_version": 1
+  },
+  "responsibility_boundary": {
+    "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600425",
+    "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+    "arena_id": "ARENA:CN:CEMENT:MULTI_REGION_DELIVERED_MARKET"
+  },
+  "enterprise_system_model_ref": {
+    "model_id": "ESM:CN:600425:20140416:R3",
+    "version": "1"
+  },
+  "management_decision_observation": {
+    "status": "INSUFFICIENT_EVIDENCE",
+    "reviewed_source_refs": [
+      "CNINFO:600425:ANN:20140403:63781007"
+    ],
+    "materiality_scope": "A company-level operating decision with alternatives, committed resources, implementation and a measured economic mechanism.",
+    "next_discriminating_evidence": "A separate cutoff-visible implementation record; the perimeter-first application does not create a management-action claim."
+  },
+  "lifecycle_state": {
+    "risk_status": "IN_RISK_SET",
+    "note": "Selection is mechanical and does not require or assert a lifecycle event."
+  },
+  "question_set": [
+    {
+      "question_id": "Q:600425:R3:BOUNDARY_ORDER",
+      "role": "PRIMARY",
+      "question": "Is the next listed-consolidated operating and cash disclosure on a comparable perimeter before its values are interpreted?",
+      "claim_ids": [
+        "CLAIM:600425:R3:BOUNDARY_ORDER"
+      ]
+    },
+    {
+      "question_id": "Q:600425:R3:OPERATING",
+      "role": "SUPPORTING",
+      "question": "What same-basis listed-consolidated operating field is available after the boundary check?",
+      "claim_ids": [
+        "CLAIM:600425:R3:OPERATING"
+      ]
+    },
+    {
+      "question_id": "Q:600425:R3:CASH",
+      "role": "SUPPORTING",
+      "question": "What same-basis listed-consolidated operating-cash field is available after the boundary check?",
+      "claim_ids": [
+        "CLAIM:600425:R3:CASH"
+      ]
+    }
+  ],
+  "claims": [
+    {
+      "claim_id": "CLAIM:600425:R3:BOUNDARY_ORDER",
+      "question_id": "Q:600425:R3:BOUNDARY_ORDER",
+      "domain": "LIFECYCLE",
+      "statement": "The FY2013 official report establishes the starting listed-consolidated statement identity; it does not establish that the FY2014 perimeter will be stable.",
+      "cell_status": "OBSERVED",
+      "admission_level": "E1_RECONSTRUCTION",
+      "evidence_refs": [
+        "CNINFO:600425:ANN:20140403:63781007"
+      ],
+      "dependent_outcome_cell_ids": [
+        "CELL:600425:20140416:OPERATIONS",
+        "CELL:600425:20140416:CASH"
+      ]
+    },
+    {
+      "claim_id": "CLAIM:600425:R3:OPERATING",
+      "question_id": "Q:600425:R3:OPERATING",
+      "domain": "OPERATIONS",
+      "statement": "The FY2013 official report contains a listed-consolidated operating-revenue field at the frozen issuer boundary.",
+      "cell_status": "OBSERVED",
+      "admission_level": "E1_RECONSTRUCTION",
+      "evidence_refs": [
+        "CNINFO:600425:ANN:20140403:63781007"
+      ],
+      "dependent_outcome_cell_ids": [
+        "CELL:600425:20140416:OPERATIONS"
+      ]
+    },
+    {
+      "claim_id": "CLAIM:600425:R3:CASH",
+      "question_id": "Q:600425:R3:CASH",
+      "domain": "CASH",
+      "statement": "The FY2013 official report contains a listed-consolidated net-operating-cash field at the frozen issuer boundary.",
+      "cell_status": "OBSERVED",
+      "admission_level": "E1_RECONSTRUCTION",
+      "evidence_refs": [
+        "CNINFO:600425:ANN:20140403:63781007"
+      ],
+      "dependent_outcome_cell_ids": [
+        "CELL:600425:20140416:CASH"
+      ]
+    }
+  ],
+  "evidence_coverage": [
+    {"cell_id": "CUSTOMER", "status": "UNKNOWN", "evidence_refs": [], "boundary_note": "No customer response is measured."},
+    {"cell_id": "OPERATIONS", "status": "OBSERVED", "evidence_refs": ["CNINFO:600425:ANN:20140403:63781007"], "boundary_note": "Only the FY2013 listed-consolidated operating field identity is observed before outcome access."},
+    {"cell_id": "COMPETITION", "status": "UNKNOWN", "evidence_refs": [], "boundary_note": "No peer counterfactual is measured."},
+    {"cell_id": "CASH", "status": "OBSERVED", "evidence_refs": ["CNINFO:600425:ANN:20140403:63781007"], "boundary_note": "Only the FY2013 listed-consolidated operating-cash field identity is observed before outcome access."},
+    {"cell_id": "CAPITAL_RETURN", "status": "UNKNOWN", "evidence_refs": [], "boundary_note": "No capital-return attribution is made."},
+    {"cell_id": "LEVERAGE", "status": "UNKNOWN", "evidence_refs": [], "boundary_note": "No leverage conclusion is made."},
+    {"cell_id": "PERMANENT_LOSS", "status": "UNKNOWN", "evidence_refs": [], "boundary_note": "No ordinary-share permanent-loss conclusion is made."}
+  ],
+  "feedback_loops": [
+    {
+      "loop_id": "LOOP:600425:R3:BOUNDARY_OPERATING",
+      "domains": ["LIFECYCLE", "OPERATIONS"],
+      "node_ids": ["NODE:600425:R3:CONSOLIDATED_BOUNDARY", "NODE:600425:R3:OPERATING_FIELD"],
+      "edge_ids": ["EDGE:600425:R3:BOUNDARY_TO_OPERATING"],
+      "evidence_refs": ["CNINFO:600425:ANN:20140403:63781007"],
+      "selection_rationale": "The universal method checks the statement boundary before reading the operating field."
+    },
+    {
+      "loop_id": "LOOP:600425:R3:BOUNDARY_CASH",
+      "domains": ["LIFECYCLE", "CASH"],
+      "node_ids": ["NODE:600425:R3:CONSOLIDATED_BOUNDARY", "NODE:600425:R3:OPERATING_CASH_FIELD"],
+      "edge_ids": ["EDGE:600425:R3:BOUNDARY_TO_CASH"],
+      "evidence_refs": ["CNINFO:600425:ANN:20140403:63781007"],
+      "selection_rationale": "The universal method checks the statement boundary before reading the operating-cash field."
+    }
+  ],
+  "mechanism_threads": [
+    {
+      "thread_id": "THREAD:600425:R3:OPERATING",
+      "role": "PRIMARY",
+      "anchor_kind": "STATE_TRANSMISSION",
+      "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600425",
+      "arena_id": "ARENA:CN:CEMENT:MULTI_REGION_DELIVERED_MARKET",
+      "claim_ids": ["CLAIM:600425:R3:BOUNDARY_ORDER", "CLAIM:600425:R3:OPERATING"],
+      "hypotheses": [
+        {"hypothesis_id": "H-A:600425:R3:OPERATING", "role": "H_A", "statement": "The FY2014 report establishes a stable or bridged perimeter and permits reading the operating field."},
+        {"hypothesis_id": "H-B:600425:R3:OPERATING", "role": "H_B", "statement": "The FY2014 report shows an unbridged perimeter change and the operating field remains locally non-comparable."}
+      ],
+      "diagnostic_matrix": [],
+      "evidence_refs": ["CNINFO:600425:ANN:20140403:63781007"],
+      "observation_clock": "FY2014 official annual-report window only, with perimeter checked before the operating field.",
+      "outcome_cell_ids": ["CELL:600425:20140416:OPERATIONS"],
+      "evidence_ceiling": "TEACHING_ONLY",
+      "permitted_conclusion": "TEACHING_ONLY"
+    },
+    {
+      "thread_id": "THREAD:600425:R3:CASH",
+      "role": "SUPPORTING",
+      "anchor_kind": "STATE_TRANSMISSION",
+      "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600425",
+      "arena_id": "ARENA:CN:CEMENT:MULTI_REGION_DELIVERED_MARKET",
+      "claim_ids": ["CLAIM:600425:R3:BOUNDARY_ORDER", "CLAIM:600425:R3:CASH"],
+      "hypotheses": [
+        {"hypothesis_id": "H-A:600425:R3:CASH", "role": "H_A", "statement": "The FY2014 report establishes a stable or bridged perimeter and permits reading operating cash."},
+        {"hypothesis_id": "H-B:600425:R3:CASH", "role": "H_B", "statement": "The FY2014 report shows an unbridged perimeter change and operating cash remains locally non-comparable."}
+      ],
+      "diagnostic_matrix": [],
+      "evidence_refs": ["CNINFO:600425:ANN:20140403:63781007"],
+      "observation_clock": "FY2014 official annual-report window only, with perimeter checked before operating cash.",
+      "outcome_cell_ids": ["CELL:600425:20140416:CASH"],
+      "evidence_ceiling": "TEACHING_ONLY",
+      "permitted_conclusion": "TEACHING_ONLY"
+    }
+  ],
+  "outcome_cells": [
+    {"outcome_cell_id": "CELL:600425:20140416:CUSTOMER", "dimension": "CUSTOMER", "status": "NOT_APPLICABLE", "measurement_contract": {"contract_id": "OMC:600425:20140416:CUSTOMER", "definition": "FY2014 annual customer disclosure; not selected for this method application.", "window_start": "2014-04-17T00:00:00+08:00", "window_end": "2015-04-15T23:59:59+08:00", "allowed_source_types": ["OFFICIAL_AUDITED_ANNUAL_REPORT"], "prohibited_proxies": ["market price", "return"], "outcome_custodian_id": "ROLE:CEMENT:OUTCOME_CUSTODIAN"}},
+    {"outcome_cell_id": "CELL:600425:20140416:OPERATIONS", "dimension": "OPERATIONS", "status": "UNSETTLED", "measurement_contract": {"contract_id": "OMC:600425:20140416:OPERATIONS", "definition": "FY2014 annual-report listed-consolidated operating revenue at the frozen issuer boundary.", "window_start": "2014-04-17T00:00:00+08:00", "window_end": "2015-04-15T23:59:59+08:00", "allowed_source_types": ["OFFICIAL_AUDITED_ANNUAL_REPORT"], "prohibited_proxies": ["market price", "return"], "outcome_custodian_id": "ROLE:CEMENT:OUTCOME_CUSTODIAN"}},
+    {"outcome_cell_id": "CELL:600425:20140416:COMPETITION", "dimension": "COMPETITION", "status": "NOT_APPLICABLE", "measurement_contract": {"contract_id": "OMC:600425:20140416:COMPETITION", "definition": "FY2014 competition disclosure; not selected for this method application.", "window_start": "2014-04-17T00:00:00+08:00", "window_end": "2015-04-15T23:59:59+08:00", "allowed_source_types": ["OFFICIAL_AUDITED_ANNUAL_REPORT"], "prohibited_proxies": ["market price", "return"], "outcome_custodian_id": "ROLE:CEMENT:OUTCOME_CUSTODIAN"}},
+    {"outcome_cell_id": "CELL:600425:20140416:CASH", "dimension": "CASH", "status": "UNSETTLED", "measurement_contract": {"contract_id": "OMC:600425:20140416:CASH", "definition": "FY2014 annual-report listed-consolidated net cash flows from operating activities at the frozen issuer boundary.", "window_start": "2014-04-17T00:00:00+08:00", "window_end": "2015-04-15T23:59:59+08:00", "allowed_source_types": ["OFFICIAL_AUDITED_ANNUAL_REPORT"], "prohibited_proxies": ["market price", "return"], "outcome_custodian_id": "ROLE:CEMENT:OUTCOME_CUSTODIAN"}},
+    {"outcome_cell_id": "CELL:600425:20140416:CAPITAL_RETURN", "dimension": "CAPITAL_RETURN", "status": "NOT_APPLICABLE", "measurement_contract": {"contract_id": "OMC:600425:20140416:CAPITAL_RETURN", "definition": "FY2014 capital-return disclosure; not selected for this method application.", "window_start": "2014-04-17T00:00:00+08:00", "window_end": "2015-04-15T23:59:59+08:00", "allowed_source_types": ["OFFICIAL_AUDITED_ANNUAL_REPORT"], "prohibited_proxies": ["market price", "return"], "outcome_custodian_id": "ROLE:CEMENT:OUTCOME_CUSTODIAN"}},
+    {"outcome_cell_id": "CELL:600425:20140416:LEVERAGE", "dimension": "LEVERAGE", "status": "NOT_APPLICABLE", "measurement_contract": {"contract_id": "OMC:600425:20140416:LEVERAGE", "definition": "FY2014 leverage disclosure; not selected for this method application.", "window_start": "2014-04-17T00:00:00+08:00", "window_end": "2015-04-15T23:59:59+08:00", "allowed_source_types": ["OFFICIAL_AUDITED_ANNUAL_REPORT"], "prohibited_proxies": ["market price", "return"], "outcome_custodian_id": "ROLE:CEMENT:OUTCOME_CUSTODIAN"}},
+    {"outcome_cell_id": "CELL:600425:20140416:PERMANENT_LOSS", "dimension": "PERMANENT_LOSS", "status": "NOT_APPLICABLE", "measurement_contract": {"contract_id": "OMC:600425:20140416:PERMANENT_LOSS", "definition": "FY2014 permanent-loss disclosure; not selected for this method application.", "window_start": "2014-04-17T00:00:00+08:00", "window_end": "2015-04-15T23:59:59+08:00", "allowed_source_types": ["OFFICIAL_AUDITED_ANNUAL_REPORT"], "prohibited_proxies": ["market price", "return"], "outcome_custodian_id": "ROLE:CEMENT:OUTCOME_CUSTODIAN"}}
+  ],
+  "roles": {
+    "judgment_owner_id": "ROLE:CEMENT:JUDGMENT_OWNER",
+    "independent_challenger_id": "ROLE:CEMENT:INDEPENDENT_CHALLENGER",
+    "outcome_custodian_id": "ROLE:CEMENT:OUTCOME_CUSTODIAN"
+  },
+  "object_class": "ENTERPRISE_JUDGMENT_EPISODE",
+  "claim_class": "CUTOFF_ENTERPRISE_RECONSTRUCTION",
+  "allowed_outputs": [
+    "STATE_VIEW",
+    "DECISION_VIEW",
+    "MECHANISM_VIEW",
+    "TEACHING_ONLY",
+    "RESEARCH_AGENDA"
+  ]
+}

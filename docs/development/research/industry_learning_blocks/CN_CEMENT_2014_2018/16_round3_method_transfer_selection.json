@@ -1,0 +1,38 @@
+{
+  "schema_version": "enterprise-judgment-round3-method-transfer-selection.v1",
+  "selection_id": "R3SEL:CN:CEMENT:600425:20140416:V1",
+  "block_id": "ILB:CN:CEMENT_LISTED:2014_2018:V1",
+  "pre_outcome_freeze_ref": "EJPF:CN:CEMENT:2014_2018:PRE_OUTCOME:V1",
+  "round2_completion_ref": "R2COMP:CN:CEMENT:000401:20170412:V1",
+  "selection_policy": "EARLIEST_UNSETTLED_FROZEN_ROW_WITH_UNSEEN_COMPANY_NO_OUTCOME_FEATURE_FILTER",
+  "completed_company_ids": [
+    "CN:600801",
+    "CN:600585",
+    "CN:000401"
+  ],
+  "selected_transition_id": "CCR:600425:20140416:20150415",
+  "selected_rank": 13,
+  "company_id": "CN:600425",
+  "company_cluster_id": "COMPANY_CLUSTER:CN:CEMENT_LISTED:600425",
+  "cutoff_at": "2014-04-16T00:00:00+08:00",
+  "next_cutoff_at": "2015-04-15T00:00:00+08:00",
+  "target_episode_id": "EJE:CN:600425:20140416:R3",
+  "outcome_cell_ids": [
+    "CELL:600425:20140416:OPERATIONS",
+    "CELL:600425:20140416:CASH"
+  ],
+  "pre_outcome_source_refs": [
+    "CNINFO:600425:ANN:20140403:63781007"
+  ],
+  "outcome_access_status": "SEALED",
+  "roles": {
+    "judgment_owner_id": "ROLE:CEMENT:JUDGMENT_OWNER",
+    "independent_challenger_id": "ROLE:CEMENT:INDEPENDENT_CHALLENGER",
+    "outcome_custodian_id": "ROLE:CEMENT:OUTCOME_CUSTODIAN"
+  },
+  "object_class": "ENTERPRISE_JUDGMENT_ROUND3_METHOD_TRANSFER_SELECTION",
+  "claim_class": "OUTCOME_BLIND_UNIVERSAL_METHOD_APPLICATION",
+  "allowed_outputs": [
+    "PRE_OUTCOME_METHOD_APPLICATION_ONLY"
+  ]
+}
