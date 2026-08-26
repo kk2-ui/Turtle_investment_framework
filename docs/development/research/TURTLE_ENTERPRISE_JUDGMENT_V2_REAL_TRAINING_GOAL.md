@@ -292,7 +292,9 @@ The first real implementation is frozen at
 [`industry_learning_blocks/CN_CEMENT_2014_2018`](industry_learning_blocks/CN_CEMENT_2014_2018/):
 
 - `04_industry_learning_block.json` retains all five H1 companies, all six
-  cutoff snapshots and a sealed 20-row company-cutoff roster;
+  cutoff snapshots and a sealed 20-row company-cutoff roster; the separate
+  `04_pre_outcome_roster_freeze.json` binds its ordered projection to the
+  pre-outcome commit before custody may settle a row;
 - `01_e0_context_episodes.json` and `03_enterprise_judgment_episodes.json`
   provide real E0/E1 reconstructions; scope breaks and missing action evidence
   remain localized rather than excluding firms or fabricating management facts;

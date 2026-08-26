@@ -15,6 +15,10 @@ reconstruction episode，并以 20 条全量公司—cutoff 转换名单固定�
 两条与已完成 E1 精确绑定的转移组成最小 outcome 队列。缺 H2、完整同行、公司级行动
 或 Comparative 没有阻断这些工作。
 
+名单的有序 projection 还以 `04_pre_outcome_roster_freeze.json` 绑定到 pre-outcome
+commit。任何在结算时的重排、即使重新编号为连续 rank，也不能通过 outcome validator；
+这避免后来结果改变首先被揭示的 transition。
+
 ## 投资者此刻能学到的东西
 
 | 企业/层次 | 可保留的判断 | 不能提升为的结论 |
@@ -31,7 +35,9 @@ reconstruction episode，并以 20 条全量公司—cutoff 转换名单固定�
 1. 华新 `2017-04-12 → 2018-04-22`：独立 outcome custodian 在 FY2017 官方年报
    第 125 页发现本期获得控制权的合并范围变化。因此唯一目标 cell 被结算为
    `MEASUREMENT_MISMATCH`，而不是好或坏的经营结果。下一 cutoff 的新增要求是：先分别
-   定义收购前、收购后的 listed-consolidated 经营边界，再寻求连续性判断。
+   定义收购前、收购后的 listed-consolidated 经营边界，再寻求连续性判断。该 mismatch
+   只把关联的 perimeter 与 operating claims 降为 `RESEARCH_AGENDA`；同 episode 的 cash
+   claim 保持其原有会计边界权限。
 2. 按冻结队列继续到海螺 `2017-04-12 → 2018-04-22`：custodian 在 FY2017 官方年报
    第 84 页记录合并经营活动产生的现金流量净额为 `RMB 17,363,026,840`。这只观察到
    同一会计边界的现金字段；下一 cutoff 的工作顺序因而改为先检查审计合并现金流量表，

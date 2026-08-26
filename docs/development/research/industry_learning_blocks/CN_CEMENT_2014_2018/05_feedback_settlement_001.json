@@ -2,6 +2,8 @@
   "schema_version": "enterprise-judgment-feedback-settlement.v1",
   "settlement_id": "FBS:600801:20170412:001",
   "block_id": "ILB:CN:CEMENT_LISTED:2014_2018:V1",
+  "pre_outcome_freeze_ref": "EJPF:CN:CEMENT:2014_2018:PRE_OUTCOME:V1",
+  "frozen_transition_rank": 1,
   "transition_id": "TRN:600801:20170412:20180422:PERIMETER",
   "company_id": "CN:600801",
   "cutoff_at": "2017-04-12T00:00:00+08:00",

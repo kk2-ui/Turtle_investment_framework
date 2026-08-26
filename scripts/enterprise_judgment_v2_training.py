@@ -33,6 +33,7 @@ EPISODE_SCHEMA_VERSION = "enterprise-judgment-episode.v2"
 BLOCK_SCHEMA_VERSION = "industry-learning-block.v1"
 SETTLEMENT_SCHEMA_VERSION = "enterprise-judgment-feedback-settlement.v1"
 PROBE_SCHEMA_VERSION = "enterprise-judgment-mechanism-probe.v1"
+PRE_OUTCOME_FREEZE_SCHEMA_VERSION = "enterprise-judgment-pre-outcome-freeze.v1"
 
 CELL_STATES = {"OBSERVED", "INFERRED", "UNKNOWN", "EVIDENCE_INELIGIBLE", "NOT_APPLICABLE", "MEASUREMENT_MISMATCH"}
 PREOUTCOME_CELL_STATES = CELL_STATES - {"MEASUREMENT_MISMATCH"}
@@ -86,7 +87,7 @@ _CLUSTER_KEYS = {"company_id", "company_cluster_id"}
 _E1_SELECTION_KEYS = {"selection_rule_id", "criterion", "prohibited_selection_inputs"}
 _TRANSITION_KEYS = {"rank", "transition_id", "episode_id", "company_id", "cutoff_at", "outcome_cell_ids", "next_cutoff_at", "outcome_access_status"}
 _COMPANY_CUTOFF_TRANSITION_KEYS = {"rank", "transition_id", "company_id", "company_cluster_id", "cutoff_at", "next_cutoff_at", "outcome_access_status"}
-_SETTLEMENT_KEYS = {"schema_version", "settlement_id", "block_id", "transition_id", "company_id", "cutoff_at", "outcome_custodian_id", "source_receipt", "observations", "next_cutoff_agenda_delta", "original_episode_immutable", "object_class", "claim_class", "allowed_outputs"}
+_SETTLEMENT_KEYS = {"schema_version", "settlement_id", "block_id", "pre_outcome_freeze_ref", "frozen_transition_rank", "transition_id", "company_id", "cutoff_at", "outcome_custodian_id", "source_receipt", "observations", "next_cutoff_agenda_delta", "original_episode_immutable", "object_class", "claim_class", "allowed_outputs"}
 _SOURCE_RECEIPT_KEYS = {"source_ref", "published_on", "official_url", "source_type", "custodian_access", "availability_precision"}
 _OBSERVATION_KEYS = {"outcome_cell_id", "status", "reported_value", "summary", "source_ref"}
 _AGENDA_DELTA_KEYS = {"target_cutoff_at", "change_id", "change_type", "statement", "reason"}
@@ -97,6 +98,7 @@ _PROBE_KEYS = {
     "action_effect_authority", "roles", "object_class", "claim_class", "allowed_outputs",
 }
 _PROBE_DIAGNOSTIC_KEYS = {"diagnostic_id", "diagnostic_kind", "h_a_prediction", "h_b_prediction"}
+_PRE_OUTCOME_FREEZE_KEYS = {"schema_version", "freeze_id", "block_id", "pre_outcome_block_commit", "company_cutoff_transition_ids", "outcome_transition_ids", "object_class", "claim_class", "allowed_outputs"}
 _FORBIDDEN_KEYS = {
     "price", "market_price", "share_price", "stock_price", "entry_price", "valuation", "valuation_result",
     "expectation_gap", "buyband", "buy_band", "investment_instruction", "portfolio_action", "position",
@@ -864,19 +866,52 @@ def compile_outcome_custodian_brief(
     }}
 
 
+def validate_pre_outcome_roster_freeze(freeze: Any, *, block: Any) -> dict[str, Any]:
+    """Bind later custody work to the exact pre-outcome roster projection.
+
+    This is a human-auditable revision reference plus ordered identifiers, not
+    a second fact store or a checksum.  It gives an offline validator a stable
+    object against which to reject a reordered-and-renumbered live block.
+    """
+    findings: list[str] = []
+    item = _closed(freeze, _PRE_OUTCOME_FREEZE_KEYS, "pre_outcome_roster_freeze", findings)
+    if item.get("schema_version") != PRE_OUTCOME_FREEZE_SCHEMA_VERSION:
+        _add(findings, "pre_outcome_roster_freeze.schema_version_invalid")
+    for field in ("freeze_id", "block_id", "pre_outcome_block_commit"):
+        _required_text(item, field, "pre_outcome_roster_freeze", findings)
+    if item.get("object_class") != "ENTERPRISE_JUDGMENT_PRE_OUTCOME_FREEZE" or item.get("claim_class") != "ROSTER_IMMUTABILITY_BINDING":
+        _add(findings, "pre_outcome_roster_freeze.object_or_claim_class_invalid")
+    if item.get("allowed_outputs") != ["OUTCOME_CUSTODY_ONLY"]:
+        _add(findings, "pre_outcome_roster_freeze.allowed_outputs_invalid")
+    block_item = _mapping(block)
+    if item.get("block_id") != block_item.get("block_id"):
+        _add(findings, "pre_outcome_roster_freeze.block_must_match")
+    company_ids = _ids(item.get("company_cutoff_transition_ids"), "pre_outcome_roster_freeze.company_cutoff_transition_ids", findings)
+    outcome_ids = _ids(item.get("outcome_transition_ids"), "pre_outcome_roster_freeze.outcome_transition_ids", findings)
+    if company_ids != [entry.get("transition_id") for entry in map(_mapping, _items(block_item.get("company_cutoff_transition_roster")))]:
+        _add(findings, "pre_outcome_roster_freeze.company_cutoff_order_must_match_frozen_projection")
+    if outcome_ids != [entry.get("transition_id") for entry in map(_mapping, _items(block_item.get("transition_roster")))]:
+        _add(findings, "pre_outcome_roster_freeze.outcome_order_must_match_frozen_projection")
+    return {"valid": not findings, "findings": findings, "pre_outcome_roster_freeze": deepcopy(item) if not findings else None}
+
+
 def validate_feedback_settlement(
-    settlement: Any, *, block: Any, history_series: Any, h1_package: Any, episodes: list[Any], enterprise_models: list[Any] | None = None,
+    settlement: Any, *, block: Any, pre_outcome_roster_freeze: Any, history_series: Any, h1_package: Any, episodes: list[Any], enterprise_models: list[Any] | None = None,
 ) -> dict[str, Any]:
     """Validate a separately-accessed feedback turn and its agenda change."""
     findings: list[str] = []
     block_validation = validate_industry_learning_block(block, history_series=history_series, h1_package=h1_package, episodes=episodes, enterprise_models=enterprise_models)
     for finding in block_validation["findings"]:
         _add(findings, "industry_block:" + finding)
+    freeze_validation = validate_pre_outcome_roster_freeze(pre_outcome_roster_freeze, block=block)
+    for finding in freeze_validation["findings"]:
+        _add(findings, "pre_outcome_roster_freeze:" + finding)
     block_item = _mapping(block)
+    freeze_item = _mapping(pre_outcome_roster_freeze)
     item = _closed(settlement, _SETTLEMENT_KEYS, "feedback_settlement", findings)
     if item.get("schema_version") != SETTLEMENT_SCHEMA_VERSION:
         _add(findings, "feedback_settlement.schema_version_invalid")
-    for field in ("settlement_id", "block_id", "transition_id", "company_id", "cutoff_at", "outcome_custodian_id"):
+    for field in ("settlement_id", "block_id", "pre_outcome_freeze_ref", "transition_id", "company_id", "cutoff_at", "outcome_custodian_id"):
         _required_text(item, field, "feedback_settlement", findings)
     if item.get("object_class") != "ENTERPRISE_JUDGMENT_FEEDBACK_SETTLEMENT" or item.get("claim_class") != "CONTRACT_MATCHED_PREQUENTIAL_FEEDBACK":
         _add(findings, "feedback_settlement.object_or_claim_class_invalid")
@@ -884,9 +919,13 @@ def validate_feedback_settlement(
         _add(findings, "feedback_settlement.allowed_outputs_invalid")
     if item.get("original_episode_immutable") is not True:
         _add(findings, "feedback_settlement.must_preserve_original_episode_immutable")
+    if item.get("pre_outcome_freeze_ref") != freeze_item.get("freeze_id"):
+        _add(findings, "feedback_settlement.must_reference_bound_pre_outcome_roster_freeze")
     transition = next((entry for entry in map(_mapping, _items(block_item.get("transition_roster"))) if entry.get("transition_id") == item.get("transition_id")), {})
     if not transition or item.get("block_id") != block_item.get("block_id") or any(item.get(field) != transition.get(field) for field in ("company_id", "cutoff_at")):
         _add(findings, "feedback_settlement.must_match_frozen_block_transition")
+    if item.get("frozen_transition_rank") != transition.get("rank"):
+        _add(findings, "feedback_settlement.frozen_transition_rank_must_match_pre_outcome_projection")
     if item.get("outcome_custodian_id") != _mapping(block_item.get("roles")).get("outcome_custodian_id"):
         _add(findings, "feedback_settlement.custodian_must_match_frozen_roles")
     episode_by_id = {entry.get("episode_id"): entry for entry in map(_mapping, episodes)}
@@ -954,3 +993,53 @@ def validate_feedback_settlement(
     for path in _forbidden_paths(item, "feedback_settlement"):
         _add(findings, "feedback_settlement.forbidden_field:" + path)
     return {"valid": not findings, "findings": findings, "feedback_settlement": deepcopy(item) if not findings else None}
+
+
+def compile_feedback_read_model(
+    settlement: Any, *, block: Any, pre_outcome_roster_freeze: Any, history_series: Any, h1_package: Any, episodes: list[Any], enterprise_models: list[Any] | None = None,
+) -> dict[str, Any]:
+    """Project post-outcome effects locally without modifying the E0/E1 record."""
+    validation = validate_feedback_settlement(
+        settlement, block=block, pre_outcome_roster_freeze=pre_outcome_roster_freeze,
+        history_series=history_series, h1_package=h1_package, episodes=episodes, enterprise_models=enterprise_models,
+    )
+    if not validation["valid"]:
+        return {"valid": False, "findings": validation["findings"], "feedback_read_model": None}
+    block_item, settlement_item = _mapping(block), _mapping(settlement)
+    transition = next((entry for entry in map(_mapping, _items(block_item.get("transition_roster"))) if entry.get("transition_id") == settlement_item.get("transition_id")), {})
+    episode = next((entry for entry in map(_mapping, episodes) if entry.get("episode_id") == transition.get("episode_id")), {})
+    episode_result = compile_enterprise_judgment_episode(
+        episode, history_series=history_series, h1_package=h1_package, enterprise_models=enterprise_models,
+    )
+    if not episode_result["valid"]:
+        return {"valid": False, "findings": ["feedback_read_model:bound_episode_invalid", *episode_result["findings"]], "feedback_read_model": None}
+    outcome_status = {entry.get("outcome_cell_id"): entry.get("status") for entry in map(_mapping, _items(settlement_item.get("observations")))}
+    non_diagnostic = {"MEASUREMENT_MISMATCH", "CENSORED", "UNKNOWN", "NOT_DIAGNOSTIC"}
+    thread_rows = []
+    claim_blockers: dict[str, list[dict[str, str]]] = {}
+    for thread in map(_mapping, _items(_mapping(episode).get("mechanism_threads"))):
+        blockers = [
+            {"kind": "OUTCOME_SETTLEMENT", "ref": cell_id, "status": str(outcome_status[cell_id])}
+            for cell_id in _items(thread.get("outcome_cell_ids"))
+            if outcome_status.get(cell_id) in non_diagnostic
+        ]
+        for claim_id in _items(thread.get("claim_ids")):
+            claim_blockers.setdefault(claim_id, []).extend(blockers)
+        thread_rows.append({
+            "thread_id": thread.get("thread_id"), "outcome_cell_ids": list(_items(thread.get("outcome_cell_ids"))),
+            "allowed_outputs": ["RESEARCH_AGENDA"] if blockers else list(ALLOWED_PROBE_OUTPUTS), "blocked_by": blockers,
+        })
+    claim_rows = []
+    for row in _items(_mapping(episode_result.get("episode_read_model")).get("claim_output_matrix")):
+        item = _mapping(row)
+        blockers = list(_items(item.get("blocked_by"))) + claim_blockers.get(item.get("claim_id"), [])
+        claim_rows.append({
+            "claim_id": item.get("claim_id"), "admission_level": item.get("admission_level"),
+            "allowed_outputs": ["RESEARCH_AGENDA"] if blockers else list(_items(item.get("allowed_outputs"))),
+            "blocked_by": blockers,
+        })
+    return {"valid": True, "findings": [], "feedback_read_model": {
+        "settlement_id": settlement_item.get("settlement_id"), "episode_id": _mapping(episode).get("episode_id"),
+        "claim_output_matrix": claim_rows, "thread_output_matrix": thread_rows,
+        "original_episode_immutable": True, "investment_authorization": "NOT_AUTHORIZED",
+    }}
