@@ -78,6 +78,17 @@ def _invalid(code: str, result: dict[str, Any]) -> None:
         raise MinimalHistoricalEpisodeError(code, "; ".join(result["findings"]))
 
 
+def _require_v2_outcome_route(contract: dict[str, Any], *, code: str) -> None:
+    """Reject a new custody step unless the stored contract froze a v2 route."""
+    try:
+        episode.outcome_acquisition_route_from_measurement_contract(contract)
+    except ValueError as exc:
+        raise MinimalHistoricalEpisodeError(
+            code,
+            "new minimal-episode custody requires a frozen Measurement Contract v2 outcome acquisition route",
+        ) from exc
+
+
 def initialize(conn: sqlite3.Connection) -> None:
     """Configure the expected row shape and create the minimal-episode tables."""
     conn.row_factory = sqlite3.Row
@@ -368,6 +379,23 @@ def register_measurement_contract(
     if not _before(_instant(payload["cutoff_at"], "measurement_contract.cutoff_at"), timestamp):
         raise MinimalHistoricalEpisodeError("measurement_contract_cutoff_not_before_freeze", "contract cutoff must precede freeze")
     encoded = _json(payload)
+    # A v1 row that was frozen by an older controller remains replayable as an
+    # immutable historical record.  This branch never inserts it and cannot
+    # begin a new custody flow; new identities below must be v2.
+    existing = conn.execute(
+        f"""SELECT * FROM {CONTRACT_TABLE}
+            WHERE measurement_contract_id = ? AND measurement_contract_version = ?""",
+        (payload["measurement_contract_id"], payload["measurement_contract_version"]),
+    ).fetchone()
+    if existing is not None:
+        if existing["payload_json"] != encoded or existing["frozen_at"] != timestamp:
+            raise MinimalHistoricalEpisodeError("measurement_contract_immutable_conflict", "contract identity already has different content")
+        return {"frozen": True, "measurement_contract_id": payload["measurement_contract_id"], "idempotent": True}
+    if payload["schema_version"] != episode.MEASUREMENT_CONTRACT_SCHEMA_VERSION:
+        raise MinimalHistoricalEpisodeError(
+            "measurement_contract_v2_required",
+            "new minimal episodes require Measurement Contract v2 with a frozen outcome acquisition route",
+        )
     with conn:
         existing = conn.execute(
             f"""SELECT * FROM {CONTRACT_TABLE}
@@ -466,6 +494,7 @@ def authorize_outcome_access(conn: sqlite3.Connection, authorization: dict[str, 
     """Open the custodian's contract-only observation lane after one prediction."""
     row = _contract_row(conn, authorization.get("measurement_contract_ref") if isinstance(authorization, dict) else None)
     contract = _load(row["payload_json"])
+    _require_v2_outcome_route(contract, code="outcome_acquisition_route_v2_required_before_access")
     result = episode.validate_outcome_access(authorization, measurement_contract=contract)
     _invalid("outcome_access_invalid", result)
     payload = result["outcome_access"]
@@ -503,6 +532,7 @@ def register_outcome_source_inventory(
     _not_future(timestamp, "outcome_source_inventory.inventoried_at")
     row = _contract_row(conn, inventory.get("measurement_contract_ref") if isinstance(inventory, dict) else None)
     contract = _load(row["payload_json"])
+    _require_v2_outcome_route(contract, code="outcome_acquisition_route_v2_required_before_inventory")
     payload_candidate = deepcopy(inventory) if isinstance(inventory, dict) else inventory
     if isinstance(payload_candidate, dict):
         payload_candidate["inventoried_at"] = timestamp

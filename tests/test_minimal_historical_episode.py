@@ -28,8 +28,8 @@ def _decision_contract() -> dict:
         "schema_version": episode.DECISION_CONTRACT_SCHEMA_VERSION,
         "decision_contract_id": "MHE:DECISION:SYNTHETIC:V1",
         "decision_contract_version": 1,
-        "company_id": "SYNTHETIC:COMPANY:ONE",
-        "issuer_id": "SYNTHETIC:ISSUER:ONE",
+        "company_id": "CN:600585",
+        "issuer_id": "ISSUER:CN:600585",
         "cutoff_at": "2020-12-31T23:59:59+00:00",
         "metric_id": "OPERATING_MARGIN",
         "window_id": "ONE_YEAR",
@@ -56,10 +56,10 @@ def _contract(decision_contract: dict | None = None) -> dict:
     decision_contract = decision_contract or _decision_contract()
     return {
         "schema_version": episode.MEASUREMENT_CONTRACT_SCHEMA_VERSION,
-        "measurement_contract_id": "MHE:CONTRACT:SYNTHETIC:V1",
-        "measurement_contract_version": 1,
-        "company_id": "SYNTHETIC:COMPANY:ONE",
-        "issuer_id": "SYNTHETIC:ISSUER:ONE",
+        "measurement_contract_id": "MHE:CONTRACT:SYNTHETIC:V2",
+        "measurement_contract_version": 2,
+        "company_id": decision_contract["company_id"],
+        "issuer_id": decision_contract["issuer_id"],
         "cutoff_at": "2020-12-31T23:59:59+00:00",
         "metric_id": "OPERATING_MARGIN",
         "window_id": "ONE_YEAR",
@@ -68,6 +68,18 @@ def _contract(decision_contract: dict | None = None) -> dict:
         "responsibility_boundary": "LISTED_ISSUER_CONSOLIDATED",
         "unit": "PERCENT",
         "settlement_tolerance": 0.5,
+        "outcome_acquisition_route": {
+            "provider": episode.CNINFO_OUTCOME_ROUTE_PROVIDER,
+            "provider_version": episode.CNINFO_OUTCOME_ROUTE_PROVIDER_VERSION,
+            "security_code": decision_contract["company_id"].split(":", 1)[1],
+            "organization_id": "SYNTHETIC-ORG",
+            "tab_name": episode.CNINFO_OUTCOME_ROUTE_TAB,
+            "announcement_category": episode.CNINFO_OUTCOME_ROUTE_CATEGORY,
+            "begin_date": "2022-01-01",
+            "end_date": "2022-12-31",
+            "page_size": 30,
+            "static_pdf_url_policy": episode.CNINFO_OUTCOME_ROUTE_URL_POLICY,
+        },
         "roles": deepcopy(decision_contract["roles"]),
         "object_class": "MINIMAL_HISTORICAL_MEASUREMENT_CONTRACT",
         "claim_class": "ONE_METRIC_PRE_OUTCOME_SCOPE",
@@ -164,11 +176,11 @@ def _observation(contract: dict) -> dict:
         "custodian_id": contract["roles"]["custodian_id"],
         "observed_at": "2022-04-01T00:00:00+00:00",
         "source": {
-            "source_id": "SYNTHETIC:OUTCOME:2021",
+            "source_id": "CNINFO:600585:ANN:20220330:SYNTHETIC-2021-ANNUAL",
             "source_url": "https://static.cninfo.com.cn/finalpage/2022-03-30/SYNTHETIC.PDF",
             "source_type": episode.OFFICIAL_STATIC_FILING,
-            "source_available_at": "2022-03-30T00:00:00+00:00",
-            "source_available_precision": "TIMESTAMP",
+            "source_available_at": "2022-03-30",
+            "source_available_precision": "DATE_ONLY",
             "issuer_id": contract["issuer_id"],
             "metric_id": contract["metric_id"],
             "measurement_period_end": contract["outcome_period_end"],
@@ -652,7 +664,7 @@ def test_outcome_source_inventory_is_value_free_append_only_and_exact_replay_is_
 @pytest.mark.parametrize(
     ("path", "value", "expected"),
     [
-        (("source", "source_available_at"), "2020-12-31T23:59:59+00:00", "source_available_at_must_follow_cutoff"),
+        (("source", "source_available_at"), "2020-12-31", "source_available_at_must_follow_cutoff"),
         (("source", "measurement_period_end"), "2020-12-31", "measurement_period_end_must_match_measurement_contract_outcome_period_end"),
         (("source", "source_url"), "https://static.cninfo.com.cn/not-finalpage/SYNTHETIC.PDF", "source_url_must_be_exact_static_cninfo_finalpage_pdf"),
         (("source", "field_ref"), "PDF p. 1 and p. 2", "field_ref_must_include_one_parseable_pdf_page"),
@@ -737,6 +749,18 @@ def test_public_schema_keeps_the_contract_only_access_and_no_transfer_rights() -
     }
     measurement = schema["$defs"]["measurement_contract"]
     assert measurement["properties"]["decision_contract_ref"] == {"$ref": "#/$defs/decision_contract_ref"}
+    assert measurement["properties"]["schema_version"] == {
+        "const": "turtle-minimal-historical-episode-measurement-contract.v2",
+    }
+    assert measurement["properties"]["outcome_acquisition_route"] == {
+        "$ref": "#/$defs/outcome_acquisition_route",
+    }
+    assert schema["$defs"]["measurement_contract_v1"]["properties"]["schema_version"] == {
+        "const": "turtle-minimal-historical-episode-measurement-contract.v1",
+    }
+    assert schema["$defs"]["outcome_acquisition_route"]["properties"]["provider"] == {
+        "const": "CNINFO_ANNOUNCEMENT_METADATA",
+    }
     access = schema["$defs"]["outcome_access"]
     assert set(access["properties"]) == {
         "schema_version", "authorization_id", "measurement_contract_ref", "custodian_id", "authorized_at",
@@ -757,6 +781,23 @@ def test_public_schema_keeps_the_contract_only_access_and_no_transfer_rights() -
     serialized = json.dumps(schema)
     assert "turtle-pit-company-state-forecast" not in serialized
     assert "turtle-pit-forecast-pairing" not in serialized
+
+
+def test_fixture_only_v2_preoutcome_template_is_closed_and_route_bound() -> None:
+    root = Path(__file__).resolve().parents[1]
+    template = json.loads((
+        root / "docs/development/research/cohorts/MINIMAL_HISTORICAL_EPISODE_V2_ROUTE_FIXTURE_TEMPLATE.json"
+    ).read_text(encoding="utf-8"))
+    assert template["template_kind"] == "MINIMAL_HISTORICAL_EPISODE_V2_PREOUTCOME_FIXTURE_ONLY"
+    assert template["not_real_company_or_source"] is True
+    decision = template["decision_contract"]
+    contract = template["measurement_contract"]
+    assert episode.validate_decision_contract(decision)["valid"]
+    assert episode.validate_measurement_contract(contract, decision_contract=decision)["valid"]
+    assert episode.validate_static_evidence(template["static_evidence"], measurement_contract=contract)["valid"]
+    assert episode.validate_prediction(
+        template["prediction"], measurement_contract=contract, static_evidence=template["static_evidence"],
+    )["valid"]
 
 
 def _write_json(path: Path, value: dict) -> Path:
@@ -823,16 +864,20 @@ def test_persistent_runner_separates_preoutcome_and_custodian_phases(tmp_path: P
     assert authorized["authorized"]
     assert authorized["outcome_access"]["authorized_at"] != access["authorized_at"]
     inventory = _field_ready_inventory(contract)
-    registered_inventory = runner.controller_register_outcome_source_inventory(
+    registered_inventory = runner.controller_acquire_and_register_outcome_source_inventory(
         database,
         outcome_access_authorization_id=access["authorization_id"],
-        inventory_path=_write_json(tmp_path / "inventory.json", inventory),
+        inventory_receipt_id=inventory["inventory_receipt_id"],
+        field_locator=lambda *_: inventory["source"]["field_ref"],
+        request=_cninfo_request([_cninfo_row()]),
     )
     assert registered_inventory["status"] == "FIELD_READY"
-    assert runner.controller_register_outcome_source_inventory(
+    assert runner.controller_acquire_and_register_outcome_source_inventory(
         database,
         outcome_access_authorization_id=access["authorization_id"],
-        inventory_path=tmp_path / "inventory.json",
+        inventory_receipt_id=inventory["inventory_receipt_id"],
+        field_locator=lambda *_: inventory["source"]["field_ref"],
+        request=_cninfo_request([_cninfo_row()]),
     )["idempotent"]
     settled = runner.controller_record_and_settle(
         database,
@@ -955,7 +1000,8 @@ def _cn600425_revenue_preoutcome_chain() -> tuple[dict, dict, dict, dict]:
     })
     contract = _contract(decision)
     contract.update({
-        "measurement_contract_id": "MHE:CONTRACT:CN600425:FY2018:V1",
+        "measurement_contract_id": "MHE:CONTRACT:CN600425:FY2018:V2",
+        "measurement_contract_version": 2,
         "company_id": decision["company_id"],
         "issuer_id": decision["issuer_id"],
         "cutoff_at": decision["cutoff_at"],
@@ -965,6 +1011,18 @@ def _cn600425_revenue_preoutcome_chain() -> tuple[dict, dict, dict, dict]:
         "unit": "RMB",
         "settlement_tolerance": 0.01,
         "roles": deepcopy(decision["roles"]),
+        "outcome_acquisition_route": {
+            "provider": episode.CNINFO_OUTCOME_ROUTE_PROVIDER,
+            "provider_version": episode.CNINFO_OUTCOME_ROUTE_PROVIDER_VERSION,
+            "security_code": "600425",
+            "organization_id": "SYNTHETIC-ORG-600425",
+            "tab_name": episode.CNINFO_OUTCOME_ROUTE_TAB,
+            "announcement_category": episode.CNINFO_OUTCOME_ROUTE_CATEGORY,
+            "begin_date": "2019-01-01",
+            "end_date": "2019-12-31",
+            "page_size": 30,
+            "static_pdf_url_policy": episode.CNINFO_OUTCOME_ROUTE_URL_POLICY,
+        },
     })
     evidence = _static_evidence(contract)
     evidence.update({
@@ -1090,6 +1148,43 @@ def test_real_runner_freezes_cn600425_rmb_revenue_preoutcome_chain_only(
     assert outcome_count == 0
 
 
+def test_runner_rejects_missing_v2_route_before_opening_the_static_source(tmp_path: Path) -> None:
+    decision = _decision_contract()
+    contract = _contract(decision)
+    contract.pop("outcome_acquisition_route")
+    evidence = _static_evidence(contract)
+    prediction = _prediction(contract, evidence)
+    opened: list[bool] = []
+
+    def forbidden_source_verifier(*_: object) -> dict:
+        opened.append(True)
+        raise AssertionError("route-less contract must fail before source verification")
+
+    with pytest.raises(control.MinimalHistoricalEpisodeError) as exc_info:
+        runner.freeze_preoutcome(
+            tmp_path / "route-less.db",
+            decision_contract_path=_write_json(tmp_path / "decision.json", decision),
+            contract_path=_write_json(tmp_path / "contract.json", contract),
+            evidence_path=_write_json(tmp_path / "evidence.json", evidence),
+            prediction_path=_write_json(tmp_path / "prediction.json", prediction),
+            source_verification_path=_write_json(
+                tmp_path / "verification.json",
+                _source_verification(
+                    evidence["source"],
+                    subject_ref={
+                        "object_type": "STATIC_EVIDENCE",
+                        "object_id": evidence["evidence_receipt_id"],
+                        "object_version": evidence["evidence_receipt_version"],
+                    },
+                ),
+            ),
+            source_verifier=forbidden_source_verifier,
+        )
+    assert exc_info.value.code == "measurement_contract_invalid"
+    assert "measurement_contract_missing_required_field:outcome_acquisition_route" in exc_info.value.detail
+    assert opened == []
+
+
 def _authorized_cninfo_database(tmp_path: Path) -> tuple[Path, dict]:
     contract, evidence, prediction = _cninfo_bound_contract_chain()
     database = tmp_path / "cninfo-minimal-episode.db"
@@ -1137,16 +1232,18 @@ def _cninfo_request(records: list[dict]) -> Callable[[dict[str, str]], dict]:
 
 def test_custodian_acquisition_enumerates_one_contract_bound_static_annual_report(tmp_path: Path) -> None:
     database, contract = _authorized_cninfo_database(tmp_path)
+    captured_params: list[dict[str, str]] = []
+
+    def request(params: dict[str, str]) -> dict:
+        captured_params.append(deepcopy(params))
+        return _cninfo_request([_cninfo_row()])(params)
+
     candidate = outcome_acquisition.acquire_cninfo_outcome_source_candidate(
         str(database),
         outcome_access_authorization_id="MHE:ACCESS:SYNTHETIC:V1",
         inventory_receipt_id="MHE:INVENTORY:CNINFO:V1",
-        cninfo_security_code="600585",
-        cninfo_org_id="SYNTHETIC-ORG",
-        begin_date="2022-01-01",
-        end_date="2022-12-31",
         field_locator=lambda source, _: "FY2021 annual report, PDF p. 38",
-        request=_cninfo_request([_cninfo_row()]),
+        request=request,
     )
     assert candidate["status"] == "FIELD_READY"
     assert candidate["source"] == {
@@ -1165,6 +1262,21 @@ def test_custodian_acquisition_enumerates_one_contract_bound_static_annual_repor
     serialized = json.dumps(candidate)
     for forbidden in ("numeric_value", "exact_quote", "predicted_direction", "price", "cjo", "learning"):
         assert forbidden not in serialized
+    assert captured_params == [{
+        "stock": "600585,SYNTHETIC-ORG",
+        "tabName": "fulltext",
+        "pageSize": "30",
+        "pageNum": "1",
+        "column": "sse",
+        "category": "",
+        "plate": "sh",
+        "seDate": "2022-01-01~2022-12-31",
+        "searchkey": "",
+        "secid": "",
+        "sortName": "announcementTime",
+        "sortType": "desc",
+        "isHLtitle": "true",
+    }]
 
 
 @pytest.mark.parametrize(
@@ -1187,10 +1299,6 @@ def test_custodian_acquisition_returns_value_free_mismatch_for_nonunique_or_unus
         str(database),
         outcome_access_authorization_id="MHE:ACCESS:SYNTHETIC:V1",
         inventory_receipt_id="MHE:INVENTORY:CNINFO:MISMATCH",
-        cninfo_security_code="600585",
-        cninfo_org_id="SYNTHETIC-ORG",
-        begin_date="2022-01-01",
-        end_date="2022-12-31",
         field_locator=locator if callable(locator) else None,
         request=_cninfo_request(records),
     )
@@ -1214,10 +1322,6 @@ def test_custodian_acquisition_does_not_enumerate_before_stored_access(
             str(tmp_path / "missing.db"),
             outcome_access_authorization_id="MHE:ACCESS:MISSING",
             inventory_receipt_id="MHE:INVENTORY:MISSING",
-            cninfo_security_code="600585",
-            cninfo_org_id="SYNTHETIC-ORG",
-            begin_date="2022-01-01",
-            end_date="2022-12-31",
         )
     assert exc_info.value.code == "outcome_access_not_authorized"
     assert enumerated == []
@@ -1225,13 +1329,164 @@ def test_custodian_acquisition_does_not_enumerate_before_stored_access(
 
 def test_inventory_and_acquisition_interfaces_never_accept_prediction_payloads() -> None:
     for function in (
-        runner.controller_register_outcome_source_inventory,
+        runner.controller_acquire_and_register_outcome_source_inventory,
         outcome_acquisition.acquire_cninfo_outcome_source_candidate,
     ):
         parameter_names = set(inspect.signature(function).parameters)
         assert "prediction" not in parameter_names
         assert "prediction_path" not in parameter_names
         assert "predicted_direction" not in parameter_names
+
+
+def test_outcome_acquisition_interface_never_accepts_caller_route_drift() -> None:
+    for function in (
+        outcome_acquisition.acquire_cninfo_outcome_source_candidate,
+        runner.controller_acquire_and_register_outcome_source_inventory,
+    ):
+        parameter_names = set(inspect.signature(function).parameters)
+        assert {"cninfo_security_code", "cninfo_org_id", "begin_date", "end_date", "route", "inventory_path"}.isdisjoint(parameter_names)
+    assert not hasattr(runner, "controller_register_outcome_source_inventory")
+    with pytest.raises(SystemExit):
+        runner._parser().parse_args([
+            "controller-register-outcome-source-inventory",
+            "--database", "synthetic.db",
+        ])
+
+
+def test_runner_converts_outside_route_metadata_to_value_free_mismatch_before_observation(
+    tmp_path: Path,
+) -> None:
+    database, contract = _authorized_cninfo_database(tmp_path)
+    outside_route = _cninfo_row()
+    outside_route["announcementTime"] = "2023-03-30"
+    candidate = runner.controller_acquire_and_register_outcome_source_inventory(
+        database,
+        outcome_access_authorization_id="MHE:ACCESS:SYNTHETIC:V1",
+        inventory_receipt_id="MHE:INVENTORY:CNINFO:OUTSIDE-ROUTE",
+        field_locator=lambda *_: "PDF p. 38",
+        request=_cninfo_request([outside_route]),
+    )
+    assert candidate["status"] == "MEASUREMENT_MISMATCH"
+    assert candidate["outcome_source_inventory"]["mismatch_rule"] == "CNINFO_METADATA_ENUMERATION_INVALID"
+    assert "source" not in candidate["outcome_source_inventory"]
+    conn = sqlite3.connect(database)
+    try:
+        row = conn.execute(
+            f"SELECT payload_json FROM {control.OUTCOME_SOURCE_INVENTORY_TABLE}"
+        ).fetchone()
+        assert row is not None
+        assert "2023" not in row[0]
+        assert "source" not in json.loads(row[0])
+        assert conn.execute(f"SELECT COUNT(*) FROM {control.OBSERVATION_TABLE}").fetchone()[0] == 0
+        assert conn.execute(f"SELECT COUNT(*) FROM {control.SETTLEMENT_TABLE}").fetchone()[0] == 0
+    finally:
+        conn.close()
+    with pytest.raises(control.MinimalHistoricalEpisodeError) as exc_info:
+        runner.controller_record_and_settle(
+            database,
+            outcome_access_authorization_id="MHE:ACCESS:SYNTHETIC:V1",
+            outcome_source_inventory_receipt_id="MHE:INVENTORY:CNINFO:OUTSIDE-ROUTE",
+            observation_path=tmp_path / "not-read.json",
+            source_verification_path=tmp_path / "not-read-verification.json",
+            settlement_id="MHE:SETTLEMENT:OUTSIDE-ROUTE",
+        )
+    assert exc_info.value.code == "outcome_source_inventory_measurement_mismatch"
+    assert candidate["outcome_source_inventory"]["measurement_contract_ref"] == _contract_ref(contract)
+
+
+@pytest.mark.parametrize(
+    ("route_field", "value", "expected"),
+    [
+        ("organization_id", "", "measurement_contract.outcome_acquisition_route.organization_id_required"),
+        ("security_code", "600000", "measurement_contract.outcome_acquisition_route.security_code_must_match_company_id"),
+        ("begin_date", "2021-12-31", "measurement_contract.outcome_acquisition_route.begin_date_must_follow_outcome_period_end"),
+    ],
+)
+def test_v2_route_missing_or_mismatched_is_rejected_before_access(
+    route_field: str, value: str, expected: str,
+) -> None:
+    conn = _conn()
+    try:
+        decision = _decision_contract()
+        contract = _contract(decision)
+        contract["outcome_acquisition_route"][route_field] = value
+        assert control.register_decision_contract(
+            conn, decision, frozen_at="2021-01-01T00:00:00+00:00",
+        )["frozen"]
+        with pytest.raises(control.MinimalHistoricalEpisodeError) as exc_info:
+            control.register_measurement_contract(
+                conn, contract, frozen_at="2021-01-02T00:00:00+00:00",
+            )
+        assert exc_info.value.code == "measurement_contract_invalid"
+        assert expected in exc_info.value.detail
+        assert conn.execute(f"SELECT COUNT(*) FROM {control.CONTRACT_TABLE}").fetchone()[0] == 0
+        assert conn.execute(f"SELECT COUNT(*) FROM {control.ACCESS_TABLE}").fetchone()[0] == 0
+    finally:
+        conn.close()
+
+
+def test_legacy_v1_measurement_contract_is_readable_history_but_cannot_open_new_custody() -> None:
+    decision = _decision_contract()
+    legacy = _contract(decision)
+    legacy.update({
+        "schema_version": episode.MEASUREMENT_CONTRACT_V1_SCHEMA_VERSION,
+        "measurement_contract_id": "MHE:CONTRACT:SYNTHETIC:V1",
+        "measurement_contract_version": 1,
+    })
+    legacy.pop("outcome_acquisition_route")
+    assert episode.validate_measurement_contract(legacy, decision_contract=decision)["valid"]
+    conn = _conn()
+    try:
+        assert control.register_decision_contract(
+            conn, decision, frozen_at="2021-01-01T00:00:00+00:00",
+        )["frozen"]
+        with pytest.raises(control.MinimalHistoricalEpisodeError) as exc_info:
+            control.register_measurement_contract(
+                conn, legacy, frozen_at="2021-01-02T00:00:00+00:00",
+            )
+        assert exc_info.value.code == "measurement_contract_v2_required"
+        assert conn.execute(f"SELECT COUNT(*) FROM {control.CONTRACT_TABLE}").fetchone()[0] == 0
+    finally:
+        conn.close()
+
+
+def test_existing_v1_exact_replay_is_readable_but_cannot_authorize_new_access() -> None:
+    decision = _decision_contract()
+    legacy = _contract(decision)
+    legacy.update({
+        "schema_version": episode.MEASUREMENT_CONTRACT_V1_SCHEMA_VERSION,
+        "measurement_contract_id": "MHE:CONTRACT:SYNTHETIC:LEGACY:V1",
+        "measurement_contract_version": 1,
+    })
+    legacy.pop("outcome_acquisition_route")
+    frozen_at = "2021-01-02T00:00:00+00:00"
+    conn = _conn()
+    try:
+        assert control.register_decision_contract(
+            conn, decision, frozen_at="2021-01-01T00:00:00+00:00",
+        )["frozen"]
+        conn.execute(
+            f"""INSERT INTO {control.CONTRACT_TABLE} (
+                measurement_contract_id, measurement_contract_version, decision_contract_id, decision_contract_version,
+                company_id, issuer_id, cutoff_at, metric_id, window_id, payload_json, frozen_at
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+            (
+                legacy["measurement_contract_id"], legacy["measurement_contract_version"],
+                decision["decision_contract_id"], decision["decision_contract_version"],
+                legacy["company_id"], legacy["issuer_id"], legacy["cutoff_at"], legacy["metric_id"],
+                legacy["window_id"], json.dumps(legacy, ensure_ascii=False, sort_keys=True, separators=(",", ":")), frozen_at,
+            ),
+        )
+        assert control.register_measurement_contract(conn, legacy, frozen_at=frozen_at) == {
+            "frozen": True,
+            "measurement_contract_id": legacy["measurement_contract_id"],
+            "idempotent": True,
+        }
+        with pytest.raises(control.MinimalHistoricalEpisodeError) as exc_info:
+            control.authorize_outcome_access(conn, _access(legacy))
+        assert exc_info.value.code == "outcome_acquisition_route_v2_required_before_access"
+    finally:
+        conn.close()
 
 
 def test_custodian_acquisition_converts_cninfo_metadata_identity_drift_to_mismatch(tmp_path: Path) -> None:
@@ -1242,10 +1497,6 @@ def test_custodian_acquisition_converts_cninfo_metadata_identity_drift_to_mismat
         str(database),
         outcome_access_authorization_id="MHE:ACCESS:SYNTHETIC:V1",
         inventory_receipt_id="MHE:INVENTORY:CNINFO:IDENTITY",
-        cninfo_security_code="600585",
-        cninfo_org_id="SYNTHETIC-ORG",
-        begin_date="2022-01-01",
-        end_date="2022-12-31",
         field_locator=lambda *_: "PDF p. 38",
         request=_cninfo_request([wrong_identity]),
     )
@@ -1369,10 +1620,12 @@ def test_persistent_runner_rejects_caller_authored_prediction_or_result_fields(
         database, access_path=_write_json(tmp_path / "access.json", access),
     )
     inventory = _field_ready_inventory(contract)
-    runner.controller_register_outcome_source_inventory(
+    runner.controller_acquire_and_register_outcome_source_inventory(
         database,
         outcome_access_authorization_id=access["authorization_id"],
-        inventory_path=_write_json(tmp_path / "inventory.json", inventory),
+        inventory_receipt_id=inventory["inventory_receipt_id"],
+        field_locator=lambda *_: inventory["source"]["field_ref"],
+        request=_cninfo_request([_cninfo_row()]),
     )
     observation = _observation(contract)
     observation["status"] = "MATCH"

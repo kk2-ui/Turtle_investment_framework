@@ -1,10 +1,11 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "minimal-historical-episode.v1",
+  "$id": "minimal-historical-episode.v2",
   "title": "Turtle minimal historical episode",
-  "description": "One company/issuer/cutoff/metric/window fixture-only chain, frozen from Decision Contract through mechanical settlement. It has no method-transfer right and no V5/V6, action, peer, CJO, valuation, price, or report fields.",
+  "description": "One company/issuer/cutoff/metric/window chain. New episodes freeze a Measurement Contract v2 CNINFO acquisition route before prediction; v1 contracts remain readable historical records only. It has no method-transfer right and no V5/V6, action, peer, CJO, valuation, price, or report fields.",
   "oneOf": [
     {"$ref": "#/$defs/decision_contract"},
+    {"$ref": "#/$defs/measurement_contract_v1"},
     {"$ref": "#/$defs/measurement_contract"},
     {"$ref": "#/$defs/static_evidence"},
     {"$ref": "#/$defs/prediction"},
@@ -171,7 +172,7 @@
         "method_transfer_rights": {"const": "NO_METHOD_TRANSFER_RIGHTS"}
       }
     },
-    "measurement_contract": {
+    "measurement_contract_v1": {
       "type": "object", "additionalProperties": false,
       "required": ["schema_version", "measurement_contract_id", "measurement_contract_version", "company_id", "issuer_id", "cutoff_at", "metric_id", "window_id", "decision_contract_ref", "outcome_period_end", "responsibility_boundary", "unit", "settlement_tolerance", "roles", "object_class", "claim_class", "allowed_outputs", "method_transfer_rights"],
       "properties": {
@@ -188,6 +189,47 @@
         "responsibility_boundary": {"$ref": "#/$defs/nonempty"},
         "unit": {"$ref": "#/$defs/nonempty"},
         "settlement_tolerance": {"type": "number", "minimum": 0},
+        "roles": {"$ref": "#/$defs/roles"},
+        "object_class": {"const": "MINIMAL_HISTORICAL_MEASUREMENT_CONTRACT"},
+        "claim_class": {"const": "ONE_METRIC_PRE_OUTCOME_SCOPE"},
+        "allowed_outputs": {"const": ["MECHANICAL_SETTLEMENT_ONLY"]},
+        "method_transfer_rights": {"const": "NO_METHOD_TRANSFER_RIGHTS"}
+      }
+    },
+    "outcome_acquisition_route": {
+      "type": "object", "additionalProperties": false,
+      "required": ["provider", "provider_version", "security_code", "organization_id", "tab_name", "announcement_category", "begin_date", "end_date", "page_size", "static_pdf_url_policy"],
+      "properties": {
+        "provider": {"const": "CNINFO_ANNOUNCEMENT_METADATA"},
+        "provider_version": {"const": "phase10-cninfo-announcement-query.v1"},
+        "security_code": {"type": "string", "pattern": "^[0-9]{6}$"},
+        "organization_id": {"$ref": "#/$defs/nonempty"},
+        "tab_name": {"const": "fulltext"},
+        "announcement_category": {"const": "ANNUAL_REPORT"},
+        "begin_date": {"type": "string", "format": "date"},
+        "end_date": {"type": "string", "format": "date"},
+        "page_size": {"type": "integer", "minimum": 1, "maximum": 30},
+        "static_pdf_url_policy": {"const": "CNINFO_STATIC_FINALPAGE_PDF"}
+      }
+    },
+    "measurement_contract": {
+      "type": "object", "additionalProperties": false,
+      "required": ["schema_version", "measurement_contract_id", "measurement_contract_version", "company_id", "issuer_id", "cutoff_at", "metric_id", "window_id", "decision_contract_ref", "outcome_period_end", "responsibility_boundary", "unit", "settlement_tolerance", "outcome_acquisition_route", "roles", "object_class", "claim_class", "allowed_outputs", "method_transfer_rights"],
+      "properties": {
+        "schema_version": {"const": "turtle-minimal-historical-episode-measurement-contract.v2"},
+        "measurement_contract_id": {"$ref": "#/$defs/nonempty"},
+        "measurement_contract_version": {"type": "integer", "minimum": 1},
+        "company_id": {"type": "string", "pattern": "^CN:[0-9]{6}$"},
+        "issuer_id": {"type": "string", "pattern": "^ISSUER:CN:[0-9]{6}$"},
+        "cutoff_at": {"type": "string", "format": "date-time"},
+        "metric_id": {"$ref": "#/$defs/nonempty"},
+        "window_id": {"enum": ["ONE_YEAR", "THREE_YEAR", "FIVE_YEAR"]},
+        "decision_contract_ref": {"$ref": "#/$defs/decision_contract_ref"},
+        "outcome_period_end": {"type": "string", "format": "date"},
+        "responsibility_boundary": {"$ref": "#/$defs/nonempty"},
+        "unit": {"$ref": "#/$defs/nonempty"},
+        "settlement_tolerance": {"type": "number", "minimum": 0},
+        "outcome_acquisition_route": {"$ref": "#/$defs/outcome_acquisition_route"},
         "roles": {"$ref": "#/$defs/roles"},
         "object_class": {"const": "MINIMAL_HISTORICAL_MEASUREMENT_CONTRACT"},
         "claim_class": {"const": "ONE_METRIC_PRE_OUTCOME_SCOPE"},

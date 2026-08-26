@@ -83,6 +83,14 @@ custodian-temporary; the runner's post-inventory verifier continues to be the
 only numeric/quote gate. This is additive for new minimal objects and does not
 rewrite existing episodes.
 
+New Minimal episodes now require the separate
+[Outcome Acquisition Route v2](MINIMAL_HISTORICAL_EPISODE_V2_OUTCOME_ROUTE_IMPLEMENTATION.md):
+the Measurement Contract freezes the contract-bound CNINFO security code,
+organization ID, bounded query dates, annual-report category, and static-PDF
+policy before prediction. The adapter derives that route only from the stored
+v2 contract. Existing v1 artifacts stay readable historical records and cannot
+be retrofitted or used to start a new custody flow.
+
 Official static CNINFO source verification is page-bound. `source.field_ref`
 must declare exactly one positive physical PDF page (for example `PDF p. 21`
 or `page_21`). The runner invokes `pdftotext` with that page as both its first

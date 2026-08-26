@@ -22,10 +22,10 @@ def _load(name: str) -> dict:
     return json.loads((COHORTS / name).read_text(encoding="utf-8"))
 
 
-def test_cn600425_revenue_runner_freezes_only_the_preoutcome_chain(
+def test_cn600425_v1_artifacts_remain_readable_but_cannot_start_a_new_episode(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    """The real runner verifies the frozen static field before it seals four records."""
+    """Legacy records remain inspectable, but a new v1 freeze is prohibited."""
     decision = _load("CN600425_FY2017_OPERATING_REVENUE_RMB_MINIMAL_HISTORICAL_EPISODE_DECISION_CONTRACT.json")
     contract = _load("CN600425_FY2018_OPERATING_REVENUE_RMB_MINIMAL_HISTORICAL_EPISODE_MEASUREMENT_CONTRACT.json")
     evidence = _load("CN600425_FY2017_OPERATING_REVENUE_RMB_MINIMAL_HISTORICAL_EPISODE_STATIC_EVIDENCE.json")
@@ -119,35 +119,20 @@ def test_cn600425_revenue_runner_freezes_only_the_preoutcome_chain(
     monkeypatch.setattr(runner, "urlopen", mocked_urlopen)
     monkeypatch.setattr(runner.subprocess, "run", mocked_pdftotext)
 
-    result = runner.freeze_preoutcome(
-        database,
-        decision_contract_path=COHORTS / "CN600425_FY2017_OPERATING_REVENUE_RMB_MINIMAL_HISTORICAL_EPISODE_DECISION_CONTRACT.json",
-        contract_path=COHORTS / "CN600425_FY2018_OPERATING_REVENUE_RMB_MINIMAL_HISTORICAL_EPISODE_MEASUREMENT_CONTRACT.json",
-        evidence_path=COHORTS / "CN600425_FY2017_OPERATING_REVENUE_RMB_MINIMAL_HISTORICAL_EPISODE_STATIC_EVIDENCE.json",
-        prediction_path=COHORTS / "CN600425_FY2018_OPERATING_REVENUE_RMB_MINIMAL_HISTORICAL_EPISODE_PREDICTION.json",
-        source_verification_path=verification_path,
-        source_receipt_output_path=receipt_path,
-    )
-
-    assert result["stage"] == "PRE_OUTCOME_FROZEN"
-    assert result["source_acquisition"]["verification_state"] == "OPENED_OFFICIAL_PDF_FIELD_MATCHED"
-    assert result["source_acquisition"]["source_id"] == evidence["source"]["source_id"]
-    assert result["source_acquisition"]["field_ref"] == evidence["source"]["field_ref"]
-    assert json.loads(receipt_path.read_text(encoding="utf-8")) == result["source_acquisition"]
-
-    conn = sqlite3.connect(database)
-    try:
-        control.initialize(conn)
-        assert conn.execute(f"SELECT COUNT(*) FROM {control.DECISION_CONTRACT_TABLE}").fetchone()[0] == 1
-        assert conn.execute(f"SELECT COUNT(*) FROM {control.CONTRACT_TABLE}").fetchone()[0] == 1
-        assert conn.execute(f"SELECT COUNT(*) FROM {control.EVIDENCE_TABLE}").fetchone()[0] == 1
-        assert conn.execute(f"SELECT COUNT(*) FROM {control.PREDICTION_TABLE}").fetchone()[0] == 1
-        assert conn.execute(f"SELECT COUNT(*) FROM {control.ACCESS_TABLE}").fetchone()[0] == 0
-        assert conn.execute(f"SELECT COUNT(*) FROM {control.OUTCOME_SOURCE_INVENTORY_TABLE}").fetchone()[0] == 0
-        assert conn.execute(f"SELECT COUNT(*) FROM {control.OBSERVATION_TABLE}").fetchone()[0] == 0
-        assert conn.execute(f"SELECT COUNT(*) FROM {control.SETTLEMENT_TABLE}").fetchone()[0] == 0
-    finally:
-        conn.close()
+    assert episode.validate_measurement_contract(contract, decision_contract=decision)["valid"]
+    with pytest.raises(control.MinimalHistoricalEpisodeError) as exc_info:
+        runner.freeze_preoutcome(
+            database,
+            decision_contract_path=COHORTS / "CN600425_FY2017_OPERATING_REVENUE_RMB_MINIMAL_HISTORICAL_EPISODE_DECISION_CONTRACT.json",
+            contract_path=COHORTS / "CN600425_FY2018_OPERATING_REVENUE_RMB_MINIMAL_HISTORICAL_EPISODE_MEASUREMENT_CONTRACT.json",
+            evidence_path=COHORTS / "CN600425_FY2017_OPERATING_REVENUE_RMB_MINIMAL_HISTORICAL_EPISODE_STATIC_EVIDENCE.json",
+            prediction_path=COHORTS / "CN600425_FY2018_OPERATING_REVENUE_RMB_MINIMAL_HISTORICAL_EPISODE_PREDICTION.json",
+            source_verification_path=verification_path,
+            source_receipt_output_path=receipt_path,
+        )
+    assert exc_info.value.code == "measurement_contract_v2_required"
+    assert not receipt_path.exists()
+    assert not database.exists()
 
 
 @pytest.mark.parametrize(

@@ -28,9 +28,11 @@ from urllib.request import Request, urlopen
 try:
     from scripts import minimal_historical_episode as episode
     from scripts import minimal_historical_episode_control_plane as control
+    from scripts import minimal_historical_outcome_acquisition as outcome_acquisition
 except ModuleNotFoundError:  # pragma: no cover - direct script import
     import minimal_historical_episode as episode
     import minimal_historical_episode_control_plane as control
+    import minimal_historical_outcome_acquisition as outcome_acquisition
 
 
 RUNTIME_RECEIPT_SCHEMA_VERSION = "turtle-minimal-historical-episode-runtime-receipt.v1"
@@ -366,6 +368,19 @@ def freeze_preoutcome(
     )
     evidence = _read_object(evidence_path)
     prediction = _read_object(prediction_path)
+    # Reject legacy/malformed contracts before this runner opens even the
+    # pre-cutoff PDF.  A new episode cannot first freeze a v1 prediction and
+    # only later discover that its outcome route was never frozen.
+    preflight = episode.validate_measurement_contract(contract, decision_contract=decision_contract)
+    if not preflight["valid"]:
+        raise control.MinimalHistoricalEpisodeError(
+            "measurement_contract_invalid", "; ".join(preflight["findings"]),
+        )
+    if contract.get("schema_version") != episode.MEASUREMENT_CONTRACT_SCHEMA_VERSION:
+        raise control.MinimalHistoricalEpisodeError(
+            "measurement_contract_v2_required",
+            "new minimal episodes require Measurement Contract v2 with a frozen outcome acquisition route",
+        )
     verification = _verification_input(
         source_verification_path,
         evidence.get("source", {}),
@@ -435,18 +450,23 @@ def controller_authorize_outcome(
     return {**result, "outcome_access": access}
 
 
-def controller_register_outcome_source_inventory(
+def _controller_register_outcome_source_inventory_candidate(
     database: str | Path,
     *,
     outcome_access_authorization_id: str,
-    inventory_path: str | Path,
+    inventory: dict[str, Any],
     output_path: str | Path | None = None,
 ) -> dict[str, Any]:
-    """Record one post-access, value-free custodian source-readiness receipt."""
+    """Persist an adapter-produced, value-free source-readiness candidate.
+
+    This is deliberately private: the public runner API below first derives
+    the candidate from the frozen v2 route.  It exists only to separate the
+    controller-timed append from the custodian adapter and must not become a
+    caller-selected source-registration interface.
+    """
     access = _stored_outcome_access(
         database, authorization_id=outcome_access_authorization_id,
     )
-    inventory = _read_object(inventory_path)
     forbidden = {
         "prediction_id", "predicted_direction", "realised_direction", "numeric_value", "exact_quote",
         "price", "cjo", "report", "learning",
@@ -476,6 +496,38 @@ def controller_register_outcome_source_inventory(
     if output_path is not None:
         _write_json(output_path, inventory)
     return {**result, "outcome_source_inventory": inventory}
+
+
+def controller_acquire_and_register_outcome_source_inventory(
+    database: str | Path,
+    *,
+    outcome_access_authorization_id: str,
+    inventory_receipt_id: str,
+    field_locator: outcome_acquisition.PageLocator | None = None,
+    request: outcome_acquisition.CNInfoRequest | None = None,
+    output_path: str | Path | None = None,
+) -> dict[str, Any]:
+    """Enumerate and append an inventory using only the stored v2 route.
+
+    ``field_locator`` may return a page marker after the custodian opens the
+    one route-selected PDF. It cannot supply a source ID, URL, issuer, org ID,
+    date range, or availability date. The optional ``request`` seam is only a
+    deterministic transport adapter for tests; it receives the route-derived
+    request parameters and returns an official-shaped response.
+    """
+    inventory = outcome_acquisition.acquire_cninfo_outcome_source_candidate(
+        str(database),
+        outcome_access_authorization_id=outcome_access_authorization_id,
+        inventory_receipt_id=inventory_receipt_id,
+        field_locator=field_locator,
+        request=request,
+    )
+    return _controller_register_outcome_source_inventory_candidate(
+        database,
+        outcome_access_authorization_id=outcome_access_authorization_id,
+        inventory=inventory,
+        output_path=output_path,
+    )
 
 
 def controller_record_and_settle(
@@ -704,10 +756,14 @@ def _parser() -> argparse.ArgumentParser:
     authorize.add_argument("--access", required=True)
     authorize.add_argument("--output", required=True)
 
-    inventory = commands.add_parser("controller-register-outcome-source-inventory")
+    inventory = commands.add_parser("controller-acquire-and-register-outcome-source-inventory")
     inventory.add_argument("--database", required=True)
     inventory.add_argument("--outcome-access-authorization-id", required=True)
-    inventory.add_argument("--inventory", required=True)
+    inventory.add_argument("--inventory-receipt-id", required=True)
+    # A custodian may name only the page that it located in the one PDF chosen
+    # by the stored-route enumerator. Source identity and query routing remain
+    # controller-derived.
+    inventory.add_argument("--field-locator", required=True)
     inventory.add_argument("--output", required=True)
 
     settle = commands.add_parser("controller-record-and-settle")
@@ -750,11 +806,12 @@ def main(argv: Sequence[str] | None = None) -> int:
         result = controller_authorize_outcome(
             args.database, access_path=args.access, output_path=args.output,
         )
-    elif args.command == "controller-register-outcome-source-inventory":
-        result = controller_register_outcome_source_inventory(
+    elif args.command == "controller-acquire-and-register-outcome-source-inventory":
+        result = controller_acquire_and_register_outcome_source_inventory(
             args.database,
             outcome_access_authorization_id=args.outcome_access_authorization_id,
-            inventory_path=args.inventory,
+            inventory_receipt_id=args.inventory_receipt_id,
+            field_locator=lambda *_: args.field_locator,
             output_path=args.output,
         )
     elif args.command == "controller-record-and-settle":

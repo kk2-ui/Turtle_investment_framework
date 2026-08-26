@@ -88,20 +88,11 @@ def _mismatch(
     return candidate
 
 
-def _company_code_matches_contract(company_code: str, contract: dict[str, Any]) -> bool:
-    """Bind a CNINFO query to the explicit CN company identity, never its name."""
-    return contract.get("company_id") == f"CN:{company_code}"
-
-
 def acquire_cninfo_outcome_source_candidate(
     database: str,
     *,
     outcome_access_authorization_id: str,
     inventory_receipt_id: str,
-    cninfo_security_code: str,
-    cninfo_org_id: str,
-    begin_date: str,
-    end_date: str,
     field_locator: PageLocator | None = None,
     request: CNInfoRequest | None = None,
 ) -> dict[str, Any]:
@@ -112,30 +103,32 @@ def acquire_cninfo_outcome_source_candidate(
     exact quote, and numeric value remain temporary and are not accepted by
     this adapter.
     """
-    # Resolve persistent authorization before handling caller-supplied source
-    # routing or touching the official metadata enumerator.
+    # Resolve persistent authorization before touching the official metadata
+    # enumerator.  The entire query route is then read from the stored v2
+    # Measurement Contract; this API intentionally has no caller route
+    # parameters that could drift after the prediction freeze.
     context = _context(database, outcome_access_authorization_id=outcome_access_authorization_id)
     contract = context["measurement_contract"]
-    company_code = str(cninfo_security_code or "").strip()
-    org_id = str(cninfo_org_id or "").strip()
-    if not company_code or not org_id:
-        raise ValueError("cninfo_security_code and cninfo_org_id are required")
-    start, end = _date(begin_date, name="begin_date"), _date(end_date, name="end_date")
-    if start > end:
-        raise ValueError("begin_date must not be after end_date")
-    if not _company_code_matches_contract(company_code, contract):
-        return _mismatch(
-            context,
-            inventory_receipt_id=inventory_receipt_id,
-            rule="CNINFO_SECURITY_CODE_CONTRACT_MISMATCH",
-            detail="the bounded CNINFO security code is not bound to the frozen company identity",
-        )
+    try:
+        route = episode.outcome_acquisition_route_from_measurement_contract(contract)
+    except ValueError as exc:
+        raise control.MinimalHistoricalEpisodeError(
+            "outcome_acquisition_route_v2_required",
+            "custodian metadata enumeration requires the stored Measurement Contract v2 route",
+        ) from exc
+    company_code = route["security_code"]
+    org_id = route["organization_id"]
+    start, end = _date(route["begin_date"], name="stored route begin_date"), _date(
+        route["end_date"], name="stored route end_date",
+    )
     try:
         acquisition = phase10.fetch_cninfo_announcement_records(
             company_code=company_code,
             org_id=org_id,
             begin_date=start.isoformat(),
             end_date=end.isoformat(),
+            page_size=route["page_size"],
+            tab_name=route["tab_name"],
             request=request,
         )
         normalized = [
@@ -153,7 +146,7 @@ def acquire_cninfo_outcome_source_candidate(
     outcome_period_end = contract["outcome_period_end"]
     candidates = [
         source for source in normalized
-        if source.get("source_type") == "ANNUAL_REPORT"
+        if source.get("source_type") == route["announcement_category"]
         and source.get("data_as_of") == outcome_period_end
     ]
     # The general Phase10 normalizer intentionally preserves the supplied

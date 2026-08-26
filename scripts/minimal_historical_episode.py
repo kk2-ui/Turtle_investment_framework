@@ -16,7 +16,11 @@ from typing import Any
 
 
 DECISION_CONTRACT_SCHEMA_VERSION = "turtle-minimal-historical-episode-decision-contract.v1"
-MEASUREMENT_CONTRACT_SCHEMA_VERSION = "turtle-minimal-historical-episode-measurement-contract.v1"
+# Measurement-contract v1 remains a readable historical record format.  New
+# episodes must use v2: it freezes the bounded official-acquisition route
+# before a forecaster can freeze a prediction.
+MEASUREMENT_CONTRACT_V1_SCHEMA_VERSION = "turtle-minimal-historical-episode-measurement-contract.v1"
+MEASUREMENT_CONTRACT_SCHEMA_VERSION = "turtle-minimal-historical-episode-measurement-contract.v2"
 STATIC_EVIDENCE_SCHEMA_VERSION = "turtle-minimal-historical-episode-static-evidence.v1"
 PREDICTION_SCHEMA_VERSION = "turtle-minimal-historical-episode-prediction.v1"
 OUTCOME_ACCESS_SCHEMA_VERSION = "turtle-minimal-historical-episode-outcome-access.v1"
@@ -38,6 +42,11 @@ PAGE_NUMBER_REFERENCE = re.compile(
 )
 INVENTORY_STATUSES = {"FIELD_READY", "MEASUREMENT_MISMATCH"}
 AVAILABILITY_PRECISIONS = {"DATE_ONLY", "TIMESTAMP"}
+CNINFO_OUTCOME_ROUTE_PROVIDER = "CNINFO_ANNOUNCEMENT_METADATA"
+CNINFO_OUTCOME_ROUTE_PROVIDER_VERSION = "phase10-cninfo-announcement-query.v1"
+CNINFO_OUTCOME_ROUTE_TAB = "fulltext"
+CNINFO_OUTCOME_ROUTE_CATEGORY = "ANNUAL_REPORT"
+CNINFO_OUTCOME_ROUTE_URL_POLICY = "CNINFO_STATIC_FINALPAGE_PDF"
 
 _DECISION_REFERENCE_KEYS = {"decision_contract_id", "decision_contract_version"}
 _REFERENCE_KEYS = {"measurement_contract_id", "measurement_contract_version"}
@@ -52,12 +61,17 @@ _OUTCOME_SOURCE_IDENTITY_KEYS = {
     "issuer_id", "metric_id", "measurement_period_end", "responsibility_boundary", "unit", "field_ref",
 }
 _OUTCOME_SOURCE_KEYS = _OUTCOME_SOURCE_IDENTITY_KEYS | {"numeric_value"}
-_CONTRACT_KEYS = {
+_CONTRACT_V1_KEYS = {
     "schema_version", "measurement_contract_id", "measurement_contract_version", "company_id", "issuer_id",
     "cutoff_at", "metric_id", "window_id", "decision_contract_ref", "outcome_period_end", "responsibility_boundary", "unit",
     "settlement_tolerance", "roles", "object_class", "claim_class", "allowed_outputs",
     "method_transfer_rights",
 }
+_OUTCOME_ACQUISITION_ROUTE_KEYS = {
+    "provider", "provider_version", "security_code", "organization_id", "tab_name",
+    "announcement_category", "begin_date", "end_date", "page_size", "static_pdf_url_policy",
+}
+_CONTRACT_KEYS = _CONTRACT_V1_KEYS | {"outcome_acquisition_route"}
 _DECISION_CONTRACT_KEYS = {
     "schema_version", "decision_contract_id", "decision_contract_version", "company_id", "issuer_id",
     "cutoff_at", "metric_id", "window_id", "decision_purpose", "roles", "object_class", "claim_class",
@@ -361,13 +375,61 @@ def validate_decision_contract(decision_contract: Any) -> dict[str, Any]:
     return _result(findings, decision_contract=deepcopy(item) if not findings else None)
 
 
+def _outcome_acquisition_route(
+    value: Any, *, contract: dict[str, Any], path: str, findings: list[str],
+) -> dict[str, Any]:
+    """Validate the exact, pre-prediction CNINFO enumeration route for v2.
+
+    This is an acquisition identity, not outcome evidence.  It deliberately
+    contains no title, result value, PDF quote, or selected source identity.
+    The later custodian can only enumerate this frozen route and then apply the
+    already-existing value-free FIELD_READY / MEASUREMENT_MISMATCH gate.
+    """
+    route = _closed(value, _OUTCOME_ACQUISITION_ROUTE_KEYS, path, findings)
+    for field in ("provider", "provider_version", "security_code", "organization_id", "tab_name",
+                  "announcement_category", "static_pdf_url_policy"):
+        _require_text(route, field, path, findings)
+    if route.get("provider") != CNINFO_OUTCOME_ROUTE_PROVIDER:
+        findings.append(f"{path}.provider_must_be_cninfo_announcement_metadata")
+    if route.get("provider_version") != CNINFO_OUTCOME_ROUTE_PROVIDER_VERSION:
+        findings.append(f"{path}.provider_version_invalid")
+    if route.get("tab_name") != CNINFO_OUTCOME_ROUTE_TAB:
+        findings.append(f"{path}.tab_name_must_be_fulltext")
+    if route.get("announcement_category") != CNINFO_OUTCOME_ROUTE_CATEGORY:
+        findings.append(f"{path}.announcement_category_must_be_annual_report")
+    if route.get("static_pdf_url_policy") != CNINFO_OUTCOME_ROUTE_URL_POLICY:
+        findings.append(f"{path}.static_pdf_url_policy_must_be_cninfo_static_finalpage_pdf")
+    security_code = str(route.get("security_code") or "").strip()
+    if not re.fullmatch(r"\d{6}", security_code):
+        findings.append(f"{path}.security_code_must_be_six_digits")
+    else:
+        if contract.get("company_id") != f"CN:{security_code}":
+            findings.append(f"{path}.security_code_must_match_company_id")
+        if contract.get("issuer_id") != f"ISSUER:CN:{security_code}":
+            findings.append(f"{path}.security_code_must_match_issuer_id")
+    begin_date = _date(route.get("begin_date"), f"{path}.begin_date", findings)
+    end_date = _date(route.get("end_date"), f"{path}.end_date", findings)
+    if begin_date and end_date and begin_date > end_date:
+        findings.append(f"{path}.begin_date_must_not_follow_end_date")
+    outcome_period_end = _date(contract.get("outcome_period_end"), "measurement_contract.outcome_period_end", findings)
+    if begin_date and outcome_period_end and begin_date <= outcome_period_end:
+        findings.append(f"{path}.begin_date_must_follow_outcome_period_end")
+    page_size = route.get("page_size")
+    if not isinstance(page_size, int) or isinstance(page_size, bool) or page_size < 1 or page_size > 30:
+        findings.append(f"{path}.page_size_must_be_between_1_and_30")
+    return route
+
+
 def validate_measurement_contract(
     contract: Any, *, decision_contract: Any | None = None,
 ) -> dict[str, Any]:
     """Validate one company/issuer/cutoff/metric/window measurement contract."""
     findings: list[str] = []
-    item = _closed(contract, _CONTRACT_KEYS, "measurement_contract", findings)
-    if item.get("schema_version") != MEASUREMENT_CONTRACT_SCHEMA_VERSION:
+    raw = _mapping(contract)
+    schema_version = raw.get("schema_version")
+    allowed_keys = _CONTRACT_V1_KEYS if schema_version == MEASUREMENT_CONTRACT_V1_SCHEMA_VERSION else _CONTRACT_KEYS
+    item = _closed(contract, allowed_keys, "measurement_contract", findings)
+    if schema_version not in {MEASUREMENT_CONTRACT_V1_SCHEMA_VERSION, MEASUREMENT_CONTRACT_SCHEMA_VERSION}:
         findings.append("measurement_contract.schema_version_invalid")
     _require_text(item, "measurement_contract_id", "measurement_contract", findings)
     version = item.get("measurement_contract_version")
@@ -410,8 +472,30 @@ def validate_measurement_contract(
         findings.append("measurement_contract.object_class_invalid")
     if item.get("claim_class") != "ONE_METRIC_PRE_OUTCOME_SCOPE":
         findings.append("measurement_contract.claim_class_invalid")
+    if schema_version == MEASUREMENT_CONTRACT_SCHEMA_VERSION:
+        _outcome_acquisition_route(
+            item.get("outcome_acquisition_route"), contract=item,
+            path="measurement_contract.outcome_acquisition_route", findings=findings,
+        )
     _fixed_permissions(item, "measurement_contract", findings)
     return _result(findings, measurement_contract=deepcopy(item) if not findings else None)
+
+
+def outcome_acquisition_route_from_measurement_contract(contract: Any) -> dict[str, Any]:
+    """Return the v2 route already frozen in a valid Measurement Contract.
+
+    Callers cannot supplement this route.  The function is intentionally the
+    only supported bridge between a stored contract and the CNINFO metadata
+    adapter, so a caller cannot steer post-prediction enumeration with a new
+    security code, organization, date window, or source policy.
+    """
+    result = validate_measurement_contract(contract)
+    if not result["valid"]:
+        raise ValueError("measurement contract is invalid")
+    payload = result["measurement_contract"]
+    if payload.get("schema_version") != MEASUREMENT_CONTRACT_SCHEMA_VERSION:
+        raise ValueError("measurement contract v2 outcome acquisition route is required")
+    return deepcopy(payload["outcome_acquisition_route"])
 
 
 def validate_static_evidence(evidence: Any, *, measurement_contract: Any) -> dict[str, Any]:

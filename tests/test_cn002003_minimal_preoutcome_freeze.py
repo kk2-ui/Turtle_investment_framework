@@ -5,6 +5,8 @@ from pathlib import Path
 import sqlite3
 from types import SimpleNamespace
 
+import pytest
+
 from scripts import minimal_historical_episode as episode
 from scripts import minimal_historical_episode_control_plane as control
 from scripts import minimal_historical_episode_runner as runner
@@ -22,14 +24,10 @@ def _load(path: Path) -> dict:
     return json.loads(path.read_text(encoding="utf-8"))
 
 
-def test_cn002003_revenue_chain_freezes_only_four_preoutcome_rows(
+def test_cn002003_v1_artifacts_remain_readable_but_cannot_start_a_new_episode(
     tmp_path: Path, monkeypatch,
 ) -> None:
-    """A page-bound official source is checked before the four closed objects freeze.
-
-    This test deliberately substitutes only PDF transport and text extraction.
-    It does not create, open, or register an outcome object.
-    """
+    """The v1 record is readable history, never a route-less new custody flow."""
     curator = _load(_CURATOR_PATH)
     decision = _load(_DECISION_PATH)
     contract = _load(_CONTRACT_PATH)
@@ -94,49 +92,24 @@ def test_cn002003_revenue_chain_freezes_only_four_preoutcome_rows(
 
     database = tmp_path / "cn002003-minimal-episode.db"
     source_receipt_path = tmp_path / "cn002003-preoutcome-source-receipt.json"
-    frozen = runner.freeze_preoutcome(
-        database,
-        decision_contract_path=_DECISION_PATH,
-        contract_path=_CONTRACT_PATH,
-        evidence_path=_EVIDENCE_PATH,
-        prediction_path=_PREDICTION_PATH,
-        source_verification_path=_write_json(tmp_path / "source-verification.json", verification),
-        source_receipt_output_path=source_receipt_path,
-    )
-
-    assert frozen["stage"] == "PRE_OUTCOME_FROZEN"
-    assert frozen["source_acquisition"]["verification_state"] == "OPENED_OFFICIAL_PDF_FIELD_MATCHED"
-    assert selected_pages == [("71", "71")]
-    assert json.loads(source_receipt_path.read_text(encoding="utf-8"))["subject_ref"] == verification["subject_ref"]
     assert episode.validate_decision_contract(decision)["valid"]
     assert episode.validate_measurement_contract(contract, decision_contract=decision)["valid"]
     assert episode.validate_static_evidence(evidence, measurement_contract=contract)["valid"]
     assert episode.validate_prediction(prediction, measurement_contract=contract, static_evidence=evidence)["valid"]
-
-    conn = sqlite3.connect(database)
-    try:
-        preoutcome_count = sum(
-            conn.execute(f"SELECT COUNT(*) FROM {table}").fetchone()[0]
-            for table in (
-                control.DECISION_CONTRACT_TABLE,
-                control.CONTRACT_TABLE,
-                control.EVIDENCE_TABLE,
-                control.PREDICTION_TABLE,
-            )
+    with pytest.raises(control.MinimalHistoricalEpisodeError) as exc_info:
+        runner.freeze_preoutcome(
+            database,
+            decision_contract_path=_DECISION_PATH,
+            contract_path=_CONTRACT_PATH,
+            evidence_path=_EVIDENCE_PATH,
+            prediction_path=_PREDICTION_PATH,
+            source_verification_path=_write_json(tmp_path / "source-verification.json", verification),
+            source_receipt_output_path=source_receipt_path,
         )
-        outcome_count = sum(
-            conn.execute(f"SELECT COUNT(*) FROM {table}").fetchone()[0]
-            for table in (
-                control.ACCESS_TABLE,
-                control.OUTCOME_SOURCE_INVENTORY_TABLE,
-                control.OBSERVATION_TABLE,
-                control.SETTLEMENT_TABLE,
-            )
-        )
-    finally:
-        conn.close()
-    assert preoutcome_count == 4
-    assert outcome_count == 0
+    assert exc_info.value.code == "measurement_contract_v2_required"
+    assert selected_pages == []
+    assert not source_receipt_path.exists()
+    assert not database.exists()
 
 
 def _write_json(path: Path, payload: dict) -> Path:

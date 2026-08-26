@@ -1,0 +1,116 @@
+{
+  "template_kind": "MINIMAL_HISTORICAL_EPISODE_V2_PREOUTCOME_FIXTURE_ONLY",
+  "not_real_company_or_source": true,
+  "use": "Synthetic validator and controller examples only. Do not submit this object for a real episode or contact a custodian with it.",
+  "decision_contract": {
+    "schema_version": "turtle-minimal-historical-episode-decision-contract.v1",
+    "decision_contract_id": "MHE:DECISION:FIXTURE:CN000000:V1",
+    "decision_contract_version": 1,
+    "company_id": "CN:000000",
+    "issuer_id": "ISSUER:CN:000000",
+    "cutoff_at": "2020-12-31T23:59:59+08:00",
+    "metric_id": "FIXTURE_CONSOLIDATED_METRIC",
+    "window_id": "ONE_YEAR",
+    "decision_purpose": "ONE_METRIC_DIRECTIONAL_PREDICTION",
+    "roles": {
+      "forecaster_id": "FIXTURE:FORECASTER",
+      "custodian_id": "FIXTURE:CUSTODIAN"
+    },
+    "object_class": "MINIMAL_HISTORICAL_DECISION_CONTRACT",
+    "claim_class": "ONE_METRIC_DIRECTIONAL_DECISION_SCOPE",
+    "allowed_outputs": ["MECHANICAL_SETTLEMENT_ONLY"],
+    "method_transfer_rights": "NO_METHOD_TRANSFER_RIGHTS"
+  },
+  "measurement_contract": {
+    "schema_version": "turtle-minimal-historical-episode-measurement-contract.v2",
+    "measurement_contract_id": "MHE:CONTRACT:FIXTURE:CN000000:V2",
+    "measurement_contract_version": 2,
+    "company_id": "CN:000000",
+    "issuer_id": "ISSUER:CN:000000",
+    "cutoff_at": "2020-12-31T23:59:59+08:00",
+    "metric_id": "FIXTURE_CONSOLIDATED_METRIC",
+    "window_id": "ONE_YEAR",
+    "decision_contract_ref": {
+      "decision_contract_id": "MHE:DECISION:FIXTURE:CN000000:V1",
+      "decision_contract_version": 1
+    },
+    "outcome_period_end": "2021-12-31",
+    "responsibility_boundary": "FIXTURE_LISTED_CONSOLIDATED_ISSUER",
+    "unit": "FIXTURE_UNIT",
+    "settlement_tolerance": 0.0,
+    "outcome_acquisition_route": {
+      "provider": "CNINFO_ANNOUNCEMENT_METADATA",
+      "provider_version": "phase10-cninfo-announcement-query.v1",
+      "security_code": "000000",
+      "organization_id": "FIXTURE-CNINFO-ORG-ID",
+      "tab_name": "fulltext",
+      "announcement_category": "ANNUAL_REPORT",
+      "begin_date": "2022-01-01",
+      "end_date": "2022-12-31",
+      "page_size": 30,
+      "static_pdf_url_policy": "CNINFO_STATIC_FINALPAGE_PDF"
+    },
+    "roles": {
+      "forecaster_id": "FIXTURE:FORECASTER",
+      "custodian_id": "FIXTURE:CUSTODIAN"
+    },
+    "object_class": "MINIMAL_HISTORICAL_MEASUREMENT_CONTRACT",
+    "claim_class": "ONE_METRIC_PRE_OUTCOME_SCOPE",
+    "allowed_outputs": ["MECHANICAL_SETTLEMENT_ONLY"],
+    "method_transfer_rights": "NO_METHOD_TRANSFER_RIGHTS"
+  },
+  "static_evidence": {
+    "schema_version": "turtle-minimal-historical-episode-static-evidence.v1",
+    "evidence_receipt_id": "MHE:EVIDENCE:FIXTURE:CN000000:V1",
+    "evidence_receipt_version": 1,
+    "measurement_contract_ref": {
+      "measurement_contract_id": "MHE:CONTRACT:FIXTURE:CN000000:V2",
+      "measurement_contract_version": 2
+    },
+    "company_id": "CN:000000",
+    "issuer_id": "ISSUER:CN:000000",
+    "cutoff_at": "2020-12-31T23:59:59+08:00",
+    "metric_id": "FIXTURE_CONSOLIDATED_METRIC",
+    "window_id": "ONE_YEAR",
+    "curator_id": "FIXTURE:CURATOR",
+    "source": {
+      "source_id": "FIXTURE:STATIC:2020",
+      "source_url": "https://official.example.invalid/fixture/static.pdf",
+      "source_type": "OFFICIAL_STATIC_FILING",
+      "published_at": "2020-03-31",
+      "issuer_id": "ISSUER:CN:000000",
+      "metric_id": "FIXTURE_CONSOLIDATED_METRIC",
+      "responsibility_boundary": "FIXTURE_LISTED_CONSOLIDATED_ISSUER",
+      "unit": "FIXTURE_UNIT",
+      "field_ref": "Fixture PDF p. 1",
+      "numeric_value": 1.0
+    },
+    "object_class": "MINIMAL_HISTORICAL_STATIC_EVIDENCE",
+    "claim_class": "CUTOFF_VISIBLE_OFFICIAL_FIELD",
+    "allowed_outputs": ["MECHANICAL_SETTLEMENT_ONLY"],
+    "method_transfer_rights": "NO_METHOD_TRANSFER_RIGHTS"
+  },
+  "prediction": {
+    "schema_version": "turtle-minimal-historical-episode-prediction.v1",
+    "prediction_id": "MHE:PREDICTION:FIXTURE:CN000000:V2",
+    "measurement_contract_ref": {
+      "measurement_contract_id": "MHE:CONTRACT:FIXTURE:CN000000:V2",
+      "measurement_contract_version": 2
+    },
+    "evidence_receipt_ref": {
+      "evidence_receipt_id": "MHE:EVIDENCE:FIXTURE:CN000000:V1",
+      "evidence_receipt_version": 1
+    },
+    "company_id": "CN:000000",
+    "issuer_id": "ISSUER:CN:000000",
+    "cutoff_at": "2020-12-31T23:59:59+08:00",
+    "metric_id": "FIXTURE_CONSOLIDATED_METRIC",
+    "window_id": "ONE_YEAR",
+    "forecaster_id": "FIXTURE:FORECASTER",
+    "predicted_direction": "STABLE",
+    "object_class": "MINIMAL_HISTORICAL_PREDICTION",
+    "claim_class": "ONE_METRIC_DIRECTIONAL_PREDICTION",
+    "allowed_outputs": ["MECHANICAL_SETTLEMENT_ONLY"],
+    "method_transfer_rights": "NO_METHOD_TRANSFER_RIGHTS"
+  }
+}
