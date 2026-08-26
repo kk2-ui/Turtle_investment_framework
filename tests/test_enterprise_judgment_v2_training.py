@@ -28,8 +28,9 @@ def _pre_outcome_freeze() -> dict:
     return json.loads((BLOCK_ROOT / "04_pre_outcome_roster_freeze.json").read_text(encoding="utf-8"))
 
 
-def _round2_inputs() -> tuple[dict, dict, list[dict], list[dict], dict, dict, list[dict], dict, dict, list[dict]]:
+def _round2_inputs() -> tuple[dict, dict, list[dict], list[dict], dict, dict, dict, list[dict], dict, dict, list[dict]]:
     h1, series, source_models, source_episodes, block = _inputs()
+    eligibility_register = json.loads((BLOCK_ROOT / "11a_round2_eligibility_register.json").read_text(encoding="utf-8"))
     selection = json.loads((BLOCK_ROOT / "11_round2_transition_selection.json").read_text(encoding="utf-8"))
     target_models = json.loads((BLOCK_ROOT / "09_round2_enterprise_system_models.json").read_text(encoding="utf-8"))
     target_episode = json.loads((BLOCK_ROOT / "10_round2_preoutcome_episode.json").read_text(encoding="utf-8"))
@@ -38,7 +39,7 @@ def _round2_inputs() -> tuple[dict, dict, list[dict], list[dict], dict, dict, li
         json.loads((BLOCK_ROOT / "05_feedback_settlement_001.json").read_text(encoding="utf-8")),
         json.loads((BLOCK_ROOT / "07_feedback_settlement_002.json").read_text(encoding="utf-8")),
     ]
-    return h1, series, source_models, source_episodes, block, selection, target_models, target_episode, application, completed
+    return h1, series, source_models, source_episodes, block, eligibility_register, selection, target_models, target_episode, application, completed
 
 
 def test_real_cement_e0_e1_block_freezes_h1_risk_set_and_read_only_training_views() -> None:
@@ -188,11 +189,11 @@ def test_round2_selection_and_cross_company_perimeter_application_are_frozen_bef
     # This catches outcome-guided row skipping and a transfer receipt that
     # rewrites the frozen target field rather than adding the first-round
     # perimeter measurement gate.
-    h1, series, source_models, source_episodes, block, selection, target_models, target_episode, application, completed = _round2_inputs()
+    h1, series, source_models, source_episodes, block, eligibility_register, selection, target_models, target_episode, application, completed = _round2_inputs()
     freeze = _pre_outcome_freeze()
 
     selection_result = v2.validate_round2_transition_selection(
-        selection, block=block, pre_outcome_roster_freeze=freeze, history_series=series, h1_package=h1,
+        selection, eligibility_register=eligibility_register, block=block, pre_outcome_roster_freeze=freeze, history_series=series, h1_package=h1,
         completed_feedback_settlements=completed, source_block_episodes=source_episodes, source_models=source_models,
     )
     assert selection_result["valid"], selection_result["findings"]
@@ -203,7 +204,7 @@ def test_round2_selection_and_cross_company_perimeter_application_are_frozen_bef
     episode_result = v2.validate_enterprise_judgment_episode(target_episode, history_series=series, h1_package=h1, enterprise_models=target_models)
     assert episode_result["valid"], episode_result["findings"]
     result = v2.validate_transfer_application_receipt(
-        application, selection=selection, block=block, pre_outcome_roster_freeze=freeze,
+        application, selection=selection, eligibility_register=eligibility_register, block=block, pre_outcome_roster_freeze=freeze,
         target_episode=target_episode, target_models=target_models, history_series=series, h1_package=h1,
         source_feedback_settlement=completed[0], source_block_episodes=source_episodes, source_models=source_models,
         completed_feedback_settlements=completed,
@@ -216,7 +217,7 @@ def test_round2_selection_and_cross_company_perimeter_application_are_frozen_bef
     skipped = deepcopy(selection)
     skipped["completed_company_cutoff_transition_ids"].append("CCR:000401:20140416:20150415")
     result = v2.validate_round2_transition_selection(
-        skipped, block=block, pre_outcome_roster_freeze=freeze, history_series=series, h1_package=h1,
+        skipped, eligibility_register=eligibility_register, block=block, pre_outcome_roster_freeze=freeze, history_series=series, h1_package=h1,
         completed_feedback_settlements=completed, source_block_episodes=source_episodes, source_models=source_models,
     )
     assert not result["valid"]
@@ -225,7 +226,7 @@ def test_round2_selection_and_cross_company_perimeter_application_are_frozen_bef
     mutated = deepcopy(application)
     mutated["enhanced_after_learning"][0]["definition"] = "Interpret operating cash as proof that the 2017 plan worked."
     result = v2.validate_transfer_application_receipt(
-        mutated, selection=selection, block=block, pre_outcome_roster_freeze=freeze,
+        mutated, selection=selection, eligibility_register=eligibility_register, block=block, pre_outcome_roster_freeze=freeze,
         target_episode=target_episode, target_models=target_models, history_series=series, h1_package=h1,
         source_feedback_settlement=completed[0], source_block_episodes=source_episodes, source_models=source_models,
         completed_feedback_settlements=completed,
@@ -236,7 +237,7 @@ def test_round2_selection_and_cross_company_perimeter_application_are_frozen_bef
     wrong_source = deepcopy(application)
     wrong_source["source_feedback_id"] = completed[1]["settlement_id"]
     result = v2.validate_transfer_application_receipt(
-        wrong_source, selection=selection, block=block, pre_outcome_roster_freeze=freeze,
+        wrong_source, selection=selection, eligibility_register=eligibility_register, block=block, pre_outcome_roster_freeze=freeze,
         target_episode=target_episode, target_models=target_models, history_series=series, h1_package=h1,
         source_feedback_settlement=completed[1], source_block_episodes=source_episodes, source_models=source_models,
         completed_feedback_settlements=completed,
@@ -244,16 +245,35 @@ def test_round2_selection_and_cross_company_perimeter_application_are_frozen_bef
     assert not result["valid"]
     assert "transfer_application.source_must_be_real_mismatch_with_boundary_agenda_change" in result["findings"]
 
+    later_row = next(row for row in block["company_cutoff_transition_roster"] if row["rank"] == 13)
+    later = deepcopy(selection)
+    later.update({
+        "selected_transition_id": later_row["transition_id"], "selected_rank": later_row["rank"],
+        "company_id": later_row["company_id"], "company_cluster_id": later_row["company_cluster_id"],
+        "cutoff_at": later_row["cutoff_at"], "next_cutoff_at": later_row["next_cutoff_at"],
+    })
+    later["ineligible_prior_rows"].append({
+        "rank": 12, "transition_id": "CCR:000401:20170412:20180422",
+        "reason": "NO_CUTOFF_VISIBLE_MATERIAL_LIFECYCLE_CONDITION",
+    })
+    result = v2.validate_round2_transition_selection(
+        later, eligibility_register=eligibility_register, block=block, pre_outcome_roster_freeze=freeze,
+        history_series=series, h1_package=h1, completed_feedback_settlements=completed,
+        source_block_episodes=source_episodes, source_models=source_models,
+    )
+    assert not result["valid"]
+    assert "round2_selection.must_be_exact_derivation_of_first_eligible_binding" in result["findings"]
+
 
 def test_second_real_feedback_settles_only_the_frozen_cash_cell_and_localizes_measurement_mismatch() -> None:
     # This catches a custodian result being bound to a different source/cell,
     # and verifies that a cash comparability failure does not erase the target
     # company's independent operating-state reconstruction.
-    h1, series, source_models, source_episodes, block, selection, target_models, target_episode, application, completed = _round2_inputs()
+    h1, series, source_models, source_episodes, block, eligibility_register, selection, target_models, target_episode, application, completed = _round2_inputs()
     freeze = _pre_outcome_freeze()
     settlement = json.loads((BLOCK_ROOT / "13_round2_continuation_feedback_settlement.json").read_text(encoding="utf-8"))
     result = v2.validate_continuation_feedback_settlement(
-        settlement, application=application, selection=selection, block=block, pre_outcome_roster_freeze=freeze,
+        settlement, application=application, selection=selection, eligibility_register=eligibility_register, block=block, pre_outcome_roster_freeze=freeze,
         target_episode=target_episode, target_models=target_models, history_series=series, h1_package=h1,
         source_feedback_settlement=completed[0], source_block_episodes=source_episodes, source_models=source_models,
         completed_feedback_settlements=completed,
@@ -268,7 +288,7 @@ def test_second_real_feedback_settles_only_the_frozen_cash_cell_and_localizes_me
     }]
 
     read_model = v2.compile_continuation_feedback_read_model(
-        settlement, application=application, selection=selection, block=block, pre_outcome_roster_freeze=freeze,
+        settlement, application=application, selection=selection, eligibility_register=eligibility_register, block=block, pre_outcome_roster_freeze=freeze,
         target_episode=target_episode, target_models=target_models, history_series=series, h1_package=h1,
         source_feedback_settlement=completed[0], source_block_episodes=source_episodes, source_models=source_models,
         completed_feedback_settlements=completed,
@@ -282,7 +302,7 @@ def test_second_real_feedback_settles_only_the_frozen_cash_cell_and_localizes_me
     wrong_source = deepcopy(settlement)
     wrong_source["source_receipt"]["source_ref"] = "CNINFO:600801:ANN:20180326:1204514309"
     result = v2.validate_continuation_feedback_settlement(
-        wrong_source, application=application, selection=selection, block=block, pre_outcome_roster_freeze=freeze,
+        wrong_source, application=application, selection=selection, eligibility_register=eligibility_register, block=block, pre_outcome_roster_freeze=freeze,
         target_episode=target_episode, target_models=target_models, history_series=series, h1_package=h1,
         source_feedback_settlement=completed[0], source_block_episodes=source_episodes, source_models=source_models,
         completed_feedback_settlements=completed,
@@ -295,12 +315,12 @@ def test_independent_review_creates_only_a_transfer_candidate_after_material_pre
     # This catches an application owner self-certifying transfer and prevents a
     # non-material or performance/valuation conclusion from becoming transfer
     # validation.
-    h1, series, source_models, source_episodes, block, selection, target_models, target_episode, application, completed = _round2_inputs()
+    h1, series, source_models, source_episodes, block, eligibility_register, selection, target_models, target_episode, application, completed = _round2_inputs()
     freeze = _pre_outcome_freeze()
     settlement = json.loads((BLOCK_ROOT / "13_round2_continuation_feedback_settlement.json").read_text(encoding="utf-8"))
     review = json.loads((BLOCK_ROOT / "14_transfer_application_independent_review.json").read_text(encoding="utf-8"))
     result = v2.validate_transfer_application_review(
-        review, application=application, continuation_settlement=settlement, selection=selection,
+        review, application=application, continuation_settlement=settlement, selection=selection, eligibility_register=eligibility_register,
         block=block, pre_outcome_roster_freeze=freeze, target_episode=target_episode, target_models=target_models,
         history_series=series, h1_package=h1, source_feedback_settlement=completed[0],
         source_block_episodes=source_episodes, source_models=source_models, completed_feedback_settlements=completed,
@@ -312,7 +332,7 @@ def test_independent_review_creates_only_a_transfer_candidate_after_material_pre
     self_review = deepcopy(review)
     self_review["reviewer_id"] = application["roles"]["judgment_owner_id"]
     result = v2.validate_transfer_application_review(
-        self_review, application=application, continuation_settlement=settlement, selection=selection,
+        self_review, application=application, continuation_settlement=settlement, selection=selection, eligibility_register=eligibility_register,
         block=block, pre_outcome_roster_freeze=freeze, target_episode=target_episode, target_models=target_models,
         history_series=series, h1_package=h1, source_feedback_settlement=completed[0],
         source_block_episodes=source_episodes, source_models=source_models, completed_feedback_settlements=completed,
@@ -323,7 +343,7 @@ def test_independent_review_creates_only_a_transfer_candidate_after_material_pre
     overclaimed = deepcopy(review)
     overclaimed["prohibited_conclusion"] = "TRANSFER_VALIDATED"
     result = v2.validate_transfer_application_review(
-        overclaimed, application=application, continuation_settlement=settlement, selection=selection,
+        overclaimed, application=application, continuation_settlement=settlement, selection=selection, eligibility_register=eligibility_register,
         block=block, pre_outcome_roster_freeze=freeze, target_episode=target_episode, target_models=target_models,
         history_series=series, h1_package=h1, source_feedback_settlement=completed[0],
         source_block_episodes=source_episodes, source_models=source_models, completed_feedback_settlements=completed,
@@ -335,13 +355,13 @@ def test_independent_review_creates_only_a_transfer_candidate_after_material_pre
 def test_round2_completion_status_requires_both_real_feedback_and_independent_transfer_review() -> None:
     # This catches premature status marking: a continuation settlement alone
     # cannot create transfer candidacy, and candidacy cannot become validation.
-    h1, series, source_models, source_episodes, block, selection, target_models, target_episode, application, completed = _round2_inputs()
+    h1, series, source_models, source_episodes, block, eligibility_register, selection, target_models, target_episode, application, completed = _round2_inputs()
     freeze = _pre_outcome_freeze()
     settlement = json.loads((BLOCK_ROOT / "13_round2_continuation_feedback_settlement.json").read_text(encoding="utf-8"))
     review = json.loads((BLOCK_ROOT / "14_transfer_application_independent_review.json").read_text(encoding="utf-8"))
     completion = json.loads((BLOCK_ROOT / "15_round2_completion_receipt.json").read_text(encoding="utf-8"))
     result = v2.validate_round2_completion_receipt(
-        completion, review=review, application=application, continuation_settlement=settlement, selection=selection,
+        completion, review=review, application=application, continuation_settlement=settlement, selection=selection, eligibility_register=eligibility_register,
         block=block, pre_outcome_roster_freeze=freeze, target_episode=target_episode, target_models=target_models,
         history_series=series, h1_package=h1, source_feedback_settlement=completed[0],
         source_block_episodes=source_episodes, source_models=source_models, completed_feedback_settlements=completed,
@@ -353,7 +373,7 @@ def test_round2_completion_status_requires_both_real_feedback_and_independent_tr
     premature = deepcopy(completion)
     premature["transfer_status"] = "TRANSFER_VALIDATED"
     result = v2.validate_round2_completion_receipt(
-        premature, review=review, application=application, continuation_settlement=settlement, selection=selection,
+        premature, review=review, application=application, continuation_settlement=settlement, selection=selection, eligibility_register=eligibility_register,
         block=block, pre_outcome_roster_freeze=freeze, target_episode=target_episode, target_models=target_models,
         history_series=series, h1_package=h1, source_feedback_settlement=completed[0],
         source_block_episodes=source_episodes, source_models=source_models, completed_feedback_settlements=completed,

@@ -34,6 +34,7 @@ BLOCK_SCHEMA_VERSION = "industry-learning-block.v1"
 SETTLEMENT_SCHEMA_VERSION = "enterprise-judgment-feedback-settlement.v1"
 PROBE_SCHEMA_VERSION = "enterprise-judgment-mechanism-probe.v1"
 PRE_OUTCOME_FREEZE_SCHEMA_VERSION = "enterprise-judgment-pre-outcome-freeze.v1"
+ROUND2_ELIGIBILITY_SCHEMA_VERSION = "enterprise-judgment-round2-eligibility-register.v1"
 ROUND2_SELECTION_SCHEMA_VERSION = "enterprise-judgment-round2-transition-selection.v1"
 TRANSFER_APPLICATION_SCHEMA_VERSION = "enterprise-judgment-transfer-application-receipt.v1"
 CONTINUATION_SETTLEMENT_SCHEMA_VERSION = "enterprise-judgment-continuation-feedback-settlement.v1"
@@ -50,6 +51,7 @@ ALLOWED_EPISODE_OUTPUTS = ["STATE_VIEW", "DECISION_VIEW", "MECHANISM_VIEW", "TEA
 ALLOWED_BLOCK_OUTPUTS = ["INDUSTRY_CONTEXT", "TEACHING_ONLY", "MECHANISM_CANDIDATE", "RESEARCH_AGENDA"]
 ALLOWED_SETTLEMENT_OUTPUTS = ["FEEDBACK_READ_MODEL", "RESEARCH_AGENDA"]
 ALLOWED_PROBE_OUTPUTS = ["MECHANISM_VIEW", "TEACHING_ONLY", "RESEARCH_AGENDA"]
+ALLOWED_ELIGIBILITY_OUTPUTS = ["PRE_OUTCOME_SELECTION_ONLY"]
 ALLOWED_APPLICATION_OUTPUTS = ["RESEARCH_AGENDA", "TRANSFER_CANDIDATE_PENDING_REVIEW"]
 ALLOWED_TRANSFER_REVIEW_OUTPUTS = ["TRANSFER_CANDIDATE_CREATED", "RESEARCH_AGENDA"]
 ALLOWED_ROUND2_COMPLETION_OUTPUTS = ["REAL_FEEDBACK_TURN_2_COMPLETED", "TRANSFER_CANDIDATE_CREATED"]
@@ -107,7 +109,10 @@ _PROBE_KEYS = {
 }
 _PROBE_DIAGNOSTIC_KEYS = {"diagnostic_id", "diagnostic_kind", "h_a_prediction", "h_b_prediction"}
 _PRE_OUTCOME_FREEZE_KEYS = {"schema_version", "freeze_id", "block_id", "pre_outcome_block_commit", "company_cutoff_transition_ids", "outcome_transition_ids", "object_class", "claim_class", "allowed_outputs"}
-_ROUND2_SELECTION_KEYS = {"schema_version", "selection_id", "block_id", "pre_outcome_freeze_ref", "selection_policy", "completed_company_cutoff_transition_ids", "ineligible_prior_rows", "selected_transition_id", "selected_rank", "company_id", "company_cluster_id", "cutoff_at", "next_cutoff_at", "target_episode_id", "outcome_cell_ids", "cutoff_visible_evidence_refs", "outcome_access_status", "roles", "object_class", "claim_class", "allowed_outputs"}
+_ELIGIBILITY_REGISTER_KEYS = {"schema_version", "register_id", "block_id", "pre_outcome_freeze_ref", "selection_policy", "completed_feedback_settlement_ids", "entries", "first_eligible_target_binding", "roles", "object_class", "claim_class", "allowed_outputs"}
+_ELIGIBILITY_ENTRY_KEYS = {"rank", "transition_id", "company_id", "company_cluster_id", "cutoff_at", "next_cutoff_at", "disposition", "reviewed_source_refs", "rationale"}
+_ELIGIBILITY_TARGET_BINDING_KEYS = {"transition_id", "target_episode_id", "outcome_cell_ids"}
+_ROUND2_SELECTION_KEYS = {"schema_version", "selection_id", "block_id", "pre_outcome_freeze_ref", "eligibility_register_ref", "selection_policy", "completed_company_cutoff_transition_ids", "ineligible_prior_rows", "selected_transition_id", "selected_rank", "company_id", "company_cluster_id", "cutoff_at", "next_cutoff_at", "target_episode_id", "outcome_cell_ids", "cutoff_visible_evidence_refs", "outcome_access_status", "roles", "object_class", "claim_class", "allowed_outputs"}
 _INELIGIBLE_ROW_KEYS = {"rank", "transition_id", "reason"}
 _APPLICATION_KEYS = {"schema_version", "application_id", "block_id", "pre_outcome_freeze_ref", "selection_ref", "source_feedback_id", "source_observation_cell_id", "source_agenda_change_id", "learned_rule_id", "target_episode_id", "baseline_before_learning", "enhanced_after_learning", "field_delta", "target_outcome_access", "frozen_before_outcome_access", "roles", "object_class", "claim_class", "allowed_outputs"}
 _APPLICATION_FIELD_KEYS = {"field_id", "dimension", "definition", "claim_ids", "measurement_gate"}
@@ -1061,32 +1066,30 @@ def compile_feedback_read_model(
     }}
 
 
-def validate_round2_transition_selection(
-    selection: Any, *, block: Any, pre_outcome_roster_freeze: Any, history_series: Any, h1_package: Any,
+def validate_round2_eligibility_register(
+    register: Any, *, block: Any, pre_outcome_roster_freeze: Any, history_series: Any, h1_package: Any,
     completed_feedback_settlements: list[Any], source_block_episodes: list[Any], source_models: list[Any],
 ) -> dict[str, Any]:
-    """Validate an outcome-blind continuation choice from the original 20-row roster."""
+    """Freeze source-bound eligibility for every roster row before round-two outcome access."""
     findings: list[str] = []
     freeze_result = validate_pre_outcome_roster_freeze(pre_outcome_roster_freeze, block=block)
     for finding in freeze_result["findings"]:
         _add(findings, "pre_outcome_roster_freeze:" + finding)
-    item, block_item = _closed(selection, _ROUND2_SELECTION_KEYS, "round2_selection", findings), _mapping(block)
-    if item.get("schema_version") != ROUND2_SELECTION_SCHEMA_VERSION:
-        _add(findings, "round2_selection.schema_version_invalid")
-    for field in ("selection_id", "block_id", "pre_outcome_freeze_ref", "selection_policy", "selected_transition_id", "company_id", "company_cluster_id", "cutoff_at", "next_cutoff_at", "target_episode_id"):
-        _required_text(item, field, "round2_selection", findings)
-    if item.get("object_class") != "ENTERPRISE_JUDGMENT_ROUND2_TRANSITION_SELECTION" or item.get("claim_class") != "OUTCOME_BLIND_ROSTER_CONTINUATION":
-        _add(findings, "round2_selection.object_or_claim_class_invalid")
-    if item.get("allowed_outputs") != ["PRE_OUTCOME_APPLICATION_ONLY"] or item.get("outcome_access_status") != "SEALED":
-        _add(findings, "round2_selection.permissions_invalid")
+    item, block_item = _closed(register, _ELIGIBILITY_REGISTER_KEYS, "round2_eligibility_register", findings), _mapping(block)
+    if item.get("schema_version") != ROUND2_ELIGIBILITY_SCHEMA_VERSION:
+        _add(findings, "round2_eligibility_register.schema_version_invalid")
+    for field in ("register_id", "block_id", "pre_outcome_freeze_ref", "selection_policy"):
+        _required_text(item, field, "round2_eligibility_register", findings)
+    if item.get("object_class") != "ENTERPRISE_JUDGMENT_ROUND2_ELIGIBILITY_REGISTER" or item.get("claim_class") != "SOURCE_BOUND_ROSTER_ELIGIBILITY" or item.get("allowed_outputs") != ALLOWED_ELIGIBILITY_OUTPUTS:
+        _add(findings, "round2_eligibility_register.object_or_permission_invalid")
     if item.get("block_id") != block_item.get("block_id") or item.get("pre_outcome_freeze_ref") != _mapping(pre_outcome_roster_freeze).get("freeze_id"):
-        _add(findings, "round2_selection.must_bind_frozen_block_and_roster")
+        _add(findings, "round2_eligibility_register.must_bind_frozen_block_and_roster")
     if item.get("selection_policy") != "EARLIEST_UNSETTLED_FROZEN_ROW_AFTER_COMPLETED_QUEUE_WITH_UNSEEN_COMPANY_AND_CUTOFF_VISIBLE_LIFECYCLE_CONDITION":
-        _add(findings, "round2_selection.policy_invalid")
+        _add(findings, "round2_eligibility_register.policy_invalid")
     roster = list(map(_mapping, _items(block_item.get("company_cutoff_transition_roster"))))
     by_id = {entry.get("transition_id"): entry for entry in roster}
-    completed = _ids(item.get("completed_company_cutoff_transition_ids"), "round2_selection.completed_company_cutoff_transition_ids", findings)
     derived_completed: list[str] = []
+    derived_feedback_ids: list[tuple[int, str]] = []
     for index, settlement in enumerate(completed_feedback_settlements):
         settlement_result = validate_feedback_settlement(
             settlement, block=block, pre_outcome_roster_freeze=pre_outcome_roster_freeze,
@@ -1102,10 +1105,126 @@ def validate_round2_transition_selection(
             and entry.get("cutoff_at") == settlement_item.get("cutoff_at")
         ]
         if len(matching_rows) != 1:
-            _add(findings, f"round2_selection.completed_feedback_settlements[{index}].must_map_to_one_frozen_row")
+            _add(findings, f"round2_eligibility_register.completed_feedback_settlements[{index}].must_map_to_one_frozen_row")
         elif matching_rows[0].get("transition_id") not in derived_completed:
             derived_completed.append(str(matching_rows[0].get("transition_id")))
+            derived_feedback_ids.append((int(matching_rows[0].get("rank")), str(settlement_item.get("settlement_id"))))
     derived_completed.sort(key=lambda transition_id: int(_mapping(by_id.get(transition_id)).get("rank", 0)))
+    derived_feedback_ids.sort()
+    feedback_ids = _ids(item.get("completed_feedback_settlement_ids"), "round2_eligibility_register.completed_feedback_settlement_ids", findings)
+    if feedback_ids != [feedback_id for _, feedback_id in derived_feedback_ids]:
+        _add(findings, "round2_eligibility_register.completed_feedback_must_equal_actual_prior_feedback_projection")
+    entries = [_closed(raw, _ELIGIBILITY_ENTRY_KEYS, f"round2_eligibility_register.entries[{index}]", findings) for index, raw in enumerate(_items(item.get("entries")))]
+    expected_tuples = [
+        (entry.get("rank"), entry.get("transition_id"), entry.get("company_id"), entry.get("company_cluster_id"), entry.get("cutoff_at"), entry.get("next_cutoff_at"))
+        for entry in roster
+    ]
+    actual_tuples = [
+        (entry.get("rank"), entry.get("transition_id"), entry.get("company_id"), entry.get("company_cluster_id"), entry.get("cutoff_at"), entry.get("next_cutoff_at"))
+        for entry in entries
+    ]
+    if actual_tuples != expected_tuples:
+        _add(findings, "round2_eligibility_register.entries_must_exactly_cover_frozen_roster_in_order")
+    dispositions = {
+        "COMPLETED_FEEDBACK", "EXCLUDED_COMPLETED_COMPANY",
+        "EXCLUDED_NO_CUTOFF_VISIBLE_MATERIAL_LIFECYCLE_CONDITION",
+        "ELIGIBLE_CUTOFF_VISIBLE_MATERIAL_LIFECYCLE_CONDITION", "NOT_REVIEWED_AFTER_FIRST_ELIGIBLE",
+    }
+    catalog = _source_catalog(h1_package)
+    completed_companies = {by_id[transition_id].get("company_id") for transition_id in derived_completed if transition_id in by_id}
+    eligible_entries: list[dict[str, Any]] = []
+    for index, entry in enumerate(entries):
+        disposition = entry.get("disposition")
+        _required_text(entry, "disposition", f"round2_eligibility_register.entries[{index}]", findings)
+        _required_text(entry, "rationale", f"round2_eligibility_register.entries[{index}]", findings)
+        if disposition not in dispositions:
+            _add(findings, f"round2_eligibility_register.entries[{index}].disposition_invalid")
+        refs = _ids(
+            entry.get("reviewed_source_refs"), f"round2_eligibility_register.entries[{index}].reviewed_source_refs", findings,
+            required=disposition in {"EXCLUDED_NO_CUTOFF_VISIBLE_MATERIAL_LIFECYCLE_CONDITION", "ELIGIBLE_CUTOFF_VISIBLE_MATERIAL_LIFECYCLE_CONDITION"},
+        )
+        try:
+            cutoff_day = date.fromisoformat(str(entry.get("cutoff_at"))[:10])
+        except ValueError:
+            _add(findings, f"round2_eligibility_register.entries[{index}].cutoff_at_must_start_with_iso8601_date")
+            cutoff_day = None
+        for ref in refs:
+            source = _mapping(catalog.get(ref))
+            try:
+                published_day = date.fromisoformat(str(source.get("published_at")))
+            except ValueError:
+                published_day = None
+            if not source or source.get("issuer_id") != f"ISSUER:{entry.get('company_id')}" or (cutoff_day is not None and (published_day is None or published_day >= cutoff_day)):
+                _add(findings, f"round2_eligibility_register.entries[{index}].source_must_match_company_and_cutoff")
+        transition_id = entry.get("transition_id")
+        if disposition == "COMPLETED_FEEDBACK" and transition_id not in derived_completed:
+            _add(findings, f"round2_eligibility_register.entries[{index}].completed_disposition_must_match_actual_feedback")
+        if disposition != "COMPLETED_FEEDBACK" and transition_id in derived_completed:
+            _add(findings, f"round2_eligibility_register.entries[{index}].actual_feedback_must_be_marked_completed")
+        if disposition == "EXCLUDED_COMPLETED_COMPANY" and entry.get("company_id") not in completed_companies:
+            _add(findings, f"round2_eligibility_register.entries[{index}].completed_company_exclusion_invalid")
+        if disposition == "ELIGIBLE_CUTOFF_VISIBLE_MATERIAL_LIFECYCLE_CONDITION":
+            eligible_entries.append(entry)
+    if len(eligible_entries) != 1:
+        _add(findings, "round2_eligibility_register.must_name_exactly_one_first_eligible_row")
+    first_eligible = eligible_entries[0] if len(eligible_entries) == 1 else {}
+    if first_eligible:
+        first_rank = first_eligible.get("rank")
+        for entry in entries:
+            if isinstance(entry.get("rank"), int) and entry["rank"] < first_rank and entry.get("disposition") in {"ELIGIBLE_CUTOFF_VISIBLE_MATERIAL_LIFECYCLE_CONDITION", "NOT_REVIEWED_AFTER_FIRST_ELIGIBLE"}:
+                _add(findings, "round2_eligibility_register.each_earlier_row_must_have_a_valid_exclusion")
+        for entry in entries:
+            if isinstance(entry.get("rank"), int) and entry["rank"] > first_rank and entry.get("disposition") != "NOT_REVIEWED_AFTER_FIRST_ELIGIBLE":
+                _add(findings, "round2_eligibility_register.rows_after_first_eligible_must_not_drive_selection")
+    binding = _closed(item.get("first_eligible_target_binding"), _ELIGIBILITY_TARGET_BINDING_KEYS, "round2_eligibility_register.first_eligible_target_binding", findings)
+    for field in ("transition_id", "target_episode_id"):
+        _required_text(binding, field, "round2_eligibility_register.first_eligible_target_binding", findings)
+    _ids(binding.get("outcome_cell_ids"), "round2_eligibility_register.first_eligible_target_binding.outcome_cell_ids", findings)
+    if binding.get("transition_id") != first_eligible.get("transition_id"):
+        _add(findings, "round2_eligibility_register.target_binding_must_match_first_eligible_row")
+    _validate_roles(item.get("roles"), expected=None, path="round2_eligibility_register.roles", findings=findings)
+    for path in _forbidden_paths(item, "round2_eligibility_register"):
+        _add(findings, "round2_eligibility_register.forbidden_field:" + path)
+    return {
+        "valid": not findings, "findings": findings,
+        "round2_eligibility_register": deepcopy(item) if not findings else None,
+        "derived_completed_transition_ids": derived_completed,
+    }
+
+
+def validate_round2_transition_selection(
+    selection: Any, *, eligibility_register: Any, block: Any, pre_outcome_roster_freeze: Any, history_series: Any, h1_package: Any,
+    completed_feedback_settlements: list[Any], source_block_episodes: list[Any], source_models: list[Any],
+) -> dict[str, Any]:
+    """Derive the round-two selection from the frozen source-bound eligibility register."""
+    findings: list[str] = []
+    register_result = validate_round2_eligibility_register(
+        eligibility_register, block=block, pre_outcome_roster_freeze=pre_outcome_roster_freeze,
+        history_series=history_series, h1_package=h1_package,
+        completed_feedback_settlements=completed_feedback_settlements,
+        source_block_episodes=source_block_episodes, source_models=source_models,
+    )
+    for finding in register_result["findings"]:
+        _add(findings, "round2_eligibility_register:" + finding)
+    item, block_item, register_item = (
+        _closed(selection, _ROUND2_SELECTION_KEYS, "round2_selection", findings), _mapping(block), _mapping(eligibility_register),
+    )
+    if item.get("schema_version") != ROUND2_SELECTION_SCHEMA_VERSION:
+        _add(findings, "round2_selection.schema_version_invalid")
+    for field in ("selection_id", "block_id", "pre_outcome_freeze_ref", "eligibility_register_ref", "selection_policy", "selected_transition_id", "company_id", "company_cluster_id", "cutoff_at", "next_cutoff_at", "target_episode_id"):
+        _required_text(item, field, "round2_selection", findings)
+    if item.get("object_class") != "ENTERPRISE_JUDGMENT_ROUND2_TRANSITION_SELECTION" or item.get("claim_class") != "OUTCOME_BLIND_ROSTER_CONTINUATION":
+        _add(findings, "round2_selection.object_or_claim_class_invalid")
+    if item.get("allowed_outputs") != ["PRE_OUTCOME_APPLICATION_ONLY"] or item.get("outcome_access_status") != "SEALED":
+        _add(findings, "round2_selection.permissions_invalid")
+    if item.get("block_id") != block_item.get("block_id") or item.get("pre_outcome_freeze_ref") != _mapping(pre_outcome_roster_freeze).get("freeze_id") or item.get("eligibility_register_ref") != register_item.get("register_id"):
+        _add(findings, "round2_selection.must_bind_frozen_block_roster_and_eligibility_register")
+    if item.get("selection_policy") != register_item.get("selection_policy"):
+        _add(findings, "round2_selection.policy_must_match_eligibility_register")
+    roster = list(map(_mapping, _items(block_item.get("company_cutoff_transition_roster"))))
+    by_id = {entry.get("transition_id"): entry for entry in roster}
+    completed = _ids(item.get("completed_company_cutoff_transition_ids"), "round2_selection.completed_company_cutoff_transition_ids", findings)
+    derived_completed = _items(register_result.get("derived_completed_transition_ids"))
     if completed != derived_completed:
         _add(findings, "round2_selection.completed_transitions_must_equal_actual_prior_feedback_projection")
     if any(transition_id not in by_id for transition_id in completed):
@@ -1119,24 +1238,29 @@ def validate_round2_transition_selection(
     if selected.get("company_id") in completed_companies:
         _add(findings, "round2_selection.target_company_must_differ_from_completed_feedback_companies")
     prior_rows = [_closed(raw, _INELIGIBLE_ROW_KEYS, f"round2_selection.ineligible_prior_rows[{index}]", findings) for index, raw in enumerate(_items(item.get("ineligible_prior_rows")))]
-    expected_prior = [entry for entry in roster if isinstance(entry.get("rank"), int) and entry["rank"] < selected.get("rank", 0) and entry.get("transition_id") not in completed]
-    if [(entry.get("rank"), entry.get("transition_id")) for entry in prior_rows] != [(entry.get("rank"), entry.get("transition_id")) for entry in expected_prior]:
+    reason_by_disposition = {
+        "EXCLUDED_COMPLETED_COMPANY": "SAME_COMPANY_AS_COMPLETED_FEEDBACK",
+        "EXCLUDED_NO_CUTOFF_VISIBLE_MATERIAL_LIFECYCLE_CONDITION": "NO_CUTOFF_VISIBLE_MATERIAL_LIFECYCLE_CONDITION",
+    }
+    register_entries = list(map(_mapping, _items(register_item.get("entries"))))
+    expected_prior = [
+        (entry.get("rank"), entry.get("transition_id"), reason_by_disposition.get(entry.get("disposition")))
+        for entry in register_entries
+        if isinstance(entry.get("rank"), int) and entry["rank"] < selected.get("rank", 0)
+        and entry.get("disposition") in reason_by_disposition
+    ]
+    if [(entry.get("rank"), entry.get("transition_id"), entry.get("reason")) for entry in prior_rows] != expected_prior:
         _add(findings, "round2_selection.must_account_for_every_earlier_unsettled_row")
     for index, entry in enumerate(prior_rows):
         _required_text(entry, "reason", f"round2_selection.ineligible_prior_rows[{index}]", findings)
         if entry.get("reason") not in {"SAME_COMPANY_AS_COMPLETED_FEEDBACK", "NO_CUTOFF_VISIBLE_MATERIAL_LIFECYCLE_CONDITION"}:
             _add(findings, f"round2_selection.ineligible_prior_rows[{index}].reason_invalid")
+    binding = _mapping(register_item.get("first_eligible_target_binding"))
+    first_entry = next((entry for entry in register_entries if entry.get("transition_id") == binding.get("transition_id")), {})
     source_refs = _ids(item.get("cutoff_visible_evidence_refs"), "round2_selection.cutoff_visible_evidence_refs", findings)
-    catalog = _source_catalog(h1_package)
-    # The block does not repeat universe members; source identity and cutoff
-    # still constrain the selection receipt, while the target episode later
-    # binds the full responsibility boundary.
-    cutoff = _instant(item.get("cutoff_at"), "round2_selection.cutoff_at", findings)
-    for ref in source_refs:
-        source = _mapping(catalog.get(ref))
-        if not source or source.get("issuer_id") != f"ISSUER:{item.get('company_id')}" or (cutoff is not None and not _source_before_cutoff(source, cutoff)):
-            _add(findings, "round2_selection.cutoff_visible_evidence_must_match_selected_company_and_cutoff")
-    _validate_roles(item.get("roles"), expected=None, path="round2_selection.roles", findings=findings)
+    if item.get("selected_transition_id") != binding.get("transition_id") or item.get("target_episode_id") != binding.get("target_episode_id") or _items(item.get("outcome_cell_ids")) != _items(binding.get("outcome_cell_ids")) or source_refs != _items(first_entry.get("reviewed_source_refs")):
+        _add(findings, "round2_selection.must_be_exact_derivation_of_first_eligible_binding")
+    _validate_roles(item.get("roles"), expected=_mapping(register_item.get("roles")), path="round2_selection.roles", findings=findings)
     for path in _forbidden_paths(item, "round2_selection"):
         _add(findings, "round2_selection.forbidden_field:" + path)
     return {"valid": not findings, "findings": findings, "round2_selection": deepcopy(item) if not findings else None}
@@ -1183,14 +1307,14 @@ def _validate_application_fields(item: dict[str, Any], *, target_episode: dict[s
 
 
 def validate_transfer_application_receipt(
-    application: Any, *, selection: Any, block: Any, pre_outcome_roster_freeze: Any, target_episode: Any, target_models: list[Any],
+    application: Any, *, selection: Any, eligibility_register: Any, block: Any, pre_outcome_roster_freeze: Any, target_episode: Any, target_models: list[Any],
     history_series: Any, h1_package: Any, source_feedback_settlement: Any, source_block_episodes: list[Any], source_models: list[Any],
     completed_feedback_settlements: list[Any],
 ) -> dict[str, Any]:
     """Validate a cross-company measurement-method application before target outcome access."""
     findings: list[str] = []
     selection_result = validate_round2_transition_selection(
-        selection, block=block, pre_outcome_roster_freeze=pre_outcome_roster_freeze,
+        selection, eligibility_register=eligibility_register, block=block, pre_outcome_roster_freeze=pre_outcome_roster_freeze,
         history_series=history_series, h1_package=h1_package,
         completed_feedback_settlements=completed_feedback_settlements,
         source_block_episodes=source_block_episodes, source_models=source_models,
@@ -1233,7 +1357,7 @@ def validate_transfer_application_receipt(
 
 
 def validate_continuation_feedback_settlement(
-    settlement: Any, *, application: Any, selection: Any, block: Any, pre_outcome_roster_freeze: Any, target_episode: Any,
+    settlement: Any, *, application: Any, selection: Any, eligibility_register: Any, block: Any, pre_outcome_roster_freeze: Any, target_episode: Any,
     target_models: list[Any], history_series: Any, h1_package: Any, source_feedback_settlement: Any,
     source_block_episodes: list[Any], source_models: list[Any],
     completed_feedback_settlements: list[Any],
@@ -1241,7 +1365,7 @@ def validate_continuation_feedback_settlement(
     """Settle the selected round-two cell while retaining the original block unchanged."""
     findings: list[str] = []
     application_result = validate_transfer_application_receipt(
-        application, selection=selection, block=block, pre_outcome_roster_freeze=pre_outcome_roster_freeze,
+        application, selection=selection, eligibility_register=eligibility_register, block=block, pre_outcome_roster_freeze=pre_outcome_roster_freeze,
         target_episode=target_episode, target_models=target_models, history_series=history_series, h1_package=h1_package,
         source_feedback_settlement=source_feedback_settlement, source_block_episodes=source_block_episodes, source_models=source_models,
         completed_feedback_settlements=completed_feedback_settlements,
@@ -1311,13 +1435,13 @@ def validate_continuation_feedback_settlement(
 
 
 def compile_continuation_feedback_read_model(
-    settlement: Any, *, application: Any, selection: Any, block: Any, pre_outcome_roster_freeze: Any, target_episode: Any,
+    settlement: Any, *, application: Any, selection: Any, eligibility_register: Any, block: Any, pre_outcome_roster_freeze: Any, target_episode: Any,
     target_models: list[Any], history_series: Any, h1_package: Any, source_feedback_settlement: Any,
     source_block_episodes: list[Any], source_models: list[Any],
     completed_feedback_settlements: list[Any],
 ) -> dict[str, Any]:
     validation = validate_continuation_feedback_settlement(
-        settlement, application=application, selection=selection, block=block, pre_outcome_roster_freeze=pre_outcome_roster_freeze,
+        settlement, application=application, selection=selection, eligibility_register=eligibility_register, block=block, pre_outcome_roster_freeze=pre_outcome_roster_freeze,
         target_episode=target_episode, target_models=target_models, history_series=history_series, h1_package=h1_package,
         source_feedback_settlement=source_feedback_settlement, source_block_episodes=source_block_episodes, source_models=source_models,
         completed_feedback_settlements=completed_feedback_settlements,
@@ -1341,7 +1465,7 @@ def compile_continuation_feedback_read_model(
 
 
 def validate_transfer_application_review(
-    review: Any, *, application: Any, continuation_settlement: Any, selection: Any, block: Any, pre_outcome_roster_freeze: Any,
+    review: Any, *, application: Any, continuation_settlement: Any, selection: Any, eligibility_register: Any, block: Any, pre_outcome_roster_freeze: Any,
     target_episode: Any, target_models: list[Any], history_series: Any, h1_package: Any, source_feedback_settlement: Any,
     source_block_episodes: list[Any], source_models: list[Any],
     completed_feedback_settlements: list[Any],
@@ -1349,7 +1473,7 @@ def validate_transfer_application_review(
     """Independent adjudication of method transfer, explicitly not enterprise transfer."""
     findings: list[str] = []
     continuation_result = validate_continuation_feedback_settlement(
-        continuation_settlement, application=application, selection=selection, block=block, pre_outcome_roster_freeze=pre_outcome_roster_freeze,
+        continuation_settlement, application=application, selection=selection, eligibility_register=eligibility_register, block=block, pre_outcome_roster_freeze=pre_outcome_roster_freeze,
         target_episode=target_episode, target_models=target_models, history_series=history_series, h1_package=h1_package,
         source_feedback_settlement=source_feedback_settlement, source_block_episodes=source_block_episodes, source_models=source_models,
         completed_feedback_settlements=completed_feedback_settlements,
@@ -1378,7 +1502,7 @@ def validate_transfer_application_review(
 
 
 def validate_round2_completion_receipt(
-    completion: Any, *, review: Any, application: Any, continuation_settlement: Any, selection: Any, block: Any,
+    completion: Any, *, review: Any, application: Any, continuation_settlement: Any, selection: Any, eligibility_register: Any, block: Any,
     pre_outcome_roster_freeze: Any, target_episode: Any, target_models: list[Any], history_series: Any, h1_package: Any,
     source_feedback_settlement: Any, source_block_episodes: list[Any], source_models: list[Any],
     completed_feedback_settlements: list[Any],
@@ -1386,7 +1510,7 @@ def validate_round2_completion_receipt(
     """Allow the two narrow round-two statuses only after their bound evidence exists."""
     findings: list[str] = []
     review_result = validate_transfer_application_review(
-        review, application=application, continuation_settlement=continuation_settlement, selection=selection,
+        review, application=application, continuation_settlement=continuation_settlement, selection=selection, eligibility_register=eligibility_register,
         block=block, pre_outcome_roster_freeze=pre_outcome_roster_freeze, target_episode=target_episode,
         target_models=target_models, history_series=history_series, h1_package=h1_package,
         source_feedback_settlement=source_feedback_settlement, source_block_episodes=source_block_episodes,
