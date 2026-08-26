@@ -10,7 +10,10 @@ acquisition module; future settlement delegates to its public v1 adapter.
 
 from __future__ import annotations
 
+import argparse
 from copy import deepcopy
+import json
+from pathlib import Path
 from typing import Any
 
 try:
@@ -374,3 +377,40 @@ def settle_via_public_adapter(*args: Any, **kwargs: Any) -> dict[str, Any]:
     the custodian cannot accidentally acquire a second settlement engine.
     """
     return settlement_adapter.register_acquisition_result(*args, **kwargs)
+
+
+def _read(path: Path) -> dict[str, Any]:
+    value = json.loads(path.read_text(encoding="utf-8"))
+    if not isinstance(value, dict):
+        raise Round5CustodyAdapterError(f"{path} must contain one JSON object")
+    return value
+
+
+def _write(path: Path, value: dict[str, Any]) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    temporary = path.with_suffix(path.suffix + ".tmp")
+    temporary.write_text(json.dumps(value, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    temporary.replace(path)
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--v2-package", type=Path, required=True)
+    parser.add_argument("--v3-package", type=Path, required=True)
+    parser.add_argument("--custody-projection", type=Path, required=True)
+    parser.add_argument("--frozen-at", required=True)
+    args = parser.parse_args()
+    package = build_round5_v3_package(_read(args.v2_package), frozen_at=args.frozen_at)
+    custody = build_value_free_custody_projection(package)
+    _write(args.v3_package, package)
+    _write(args.custody_projection, custody)
+    print(json.dumps({
+        "package_id": package["package_id"],
+        "custody_projection_id": custody["projection_id"],
+        "outcome_access": custody["outcome_access"],
+    }, ensure_ascii=False, sort_keys=True))
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

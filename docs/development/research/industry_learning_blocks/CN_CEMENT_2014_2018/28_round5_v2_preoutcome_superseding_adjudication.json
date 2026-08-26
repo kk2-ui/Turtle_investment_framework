@@ -1,0 +1,82 @@
+{
+  "schema_version": "enterprise-round5-preoutcome-superseding-adjudication.v1",
+  "adjudication_id": "R5ADJ:CN600802:20150415:V2_TO_V3",
+  "supersedes": {
+    "package_id": "EMFP:CN:CEMENT:600802:20150415:V2",
+    "package_artifact": "26_round5_preoutcome_mechanism_package.json",
+    "control_artifact": "27_round5_preoutcome_control_plane_receipt.json"
+  },
+  "disposition": "SUPERSEDED_PREOUTCOME_NOT_ELIGIBLE_FOR_CUSTODY_OR_SETTLEMENT",
+  "transition_id": "CCR:600802:20150415:20160427",
+  "company_id": "CN:600802",
+  "cutoff_at": "2015-04-15T00:00:00+08:00",
+  "outcome_access": false,
+  "outcome_content_read": false,
+  "findings": [
+    {
+      "finding_id": "P1:MEASUREMENT_CLOCK_COLLAPSED",
+      "priority": "P1",
+      "root_cause_class": "MODEL",
+      "why_below_standard": "V2 treated the forecast cutoff and every outcome field as one window beginning at the cutoff. Full-year flows, year-end balances and post-cutoff events are different economic measurements.",
+      "economic_impact": "A partial-year interpretation could reverse volume, margin, cash or working-capital direction and train the investor on the wrong operating period.",
+      "missing_facts": [
+        "FLOW_PERIOD 2015-01-01 through 2015-12-31",
+        "BALANCE_AS_OF 2015-12-31",
+        "explicit post-cutoff EVENT_WINDOW",
+        "raw numerator and denominator identities for derived fields"
+      ],
+      "prohibited_assumption": "The forecast cutoff is also the accounting measurement-period start.",
+      "remediation": "Freeze V3 atomic clocks and complete raw-field formulas before any source is opened.",
+      "acceptance_criteria": "All 14 cells validate under V3 and include exactly one FLOW_PERIOD, BALANCE_AS_OF or EVENT_WINDOW clock; derived fields bind raw inputs, units, conversions and full formulas."
+    },
+    {
+      "finding_id": "P1:CUSTODY_NOT_PRODUCTION_BOUND",
+      "priority": "P1",
+      "root_cause_class": "ACQUISITION_MODULE",
+      "why_below_standard": "V2 named a custodian but did not project a value-free source/field package through the accepted acquisition and settlement adapter APIs.",
+      "economic_impact": "A custodian could see forecast content or return an unpaged, wrong-boundary value that looks mechanically settled, contaminating enterprise-learning evidence.",
+      "missing_facts": [
+        "custodian identity",
+        "source authorization receipt identity",
+        "PDF page and raw field identity",
+        "period/as-of/event evidence",
+        "boundary, unit and raw value binding"
+      ],
+      "prohibited_assumption": "Naming OUTCOME_ONLY access is equivalent to a value-free custody submission contract.",
+      "remediation": "Use outcome_measurement_acquisition.build_value_free_custody_projection and keep future settlement delegated to outcome_measurement_settlement_adapter.register_acquisition_result.",
+      "acceptance_criteria": "The projection contains all 14 atomic contracts and no J2/J3 hypotheses, forecast direction/value or probabilities; UNKNOWN events create no negative observation receipt."
+    },
+    {
+      "finding_id": "P2:CALLER_SELECTION_INPUTS",
+      "priority": "P2",
+      "root_cause_class": "REASONING",
+      "why_below_standard": "V2 recomputed selection from caller-supplied roster and receipt payloads rather than resolving immutable identities from the shared canonical control plane.",
+      "economic_impact": "A substituted completion receipt or reordered roster could choose an easier company transition and create selection bias in the learned method.",
+      "missing_facts": [
+        "canonical roster-freeze registration",
+        "canonical completion/adjudication receipt registrations",
+        "ID-only resolver receipt"
+      ],
+      "prohibited_assumption": "A JSON object supplied at call time is the same object that was formally registered.",
+      "remediation": "Register the formal roster and receipts once; production selection accepts only canonical IDs and resolves rank 18 from shared storage.",
+      "acceptance_criteria": "Unknown receipt IDs and inline roster payloads fail; registered formal IDs reproduce CN:600802 rank 18."
+    }
+  ],
+  "replacement": {
+    "package_id": "EMFP:CN:CEMENT:600802:20150415:V3",
+    "package_artifact": "29_round5_v3_preoutcome_mechanism_package.json",
+    "custody_projection_artifact": "30_round5_v3_value_free_custody_projection.json"
+  },
+  "rights": {
+    "directional_learning": "NOT_AUTHORIZED",
+    "enterprise_learning": "NOT_AUTHORIZED",
+    "cjo": "NOT_AUTHORIZED",
+    "valuation": "NOT_AUTHORIZED",
+    "report": "NOT_AUTHORIZED",
+    "investment": "NOT_AUTHORIZED"
+  },
+  "allowed_outputs": [
+    "PREOUTCOME_CONTRACT_CORRECTION",
+    "RESEARCH_AGENDA"
+  ]
+}

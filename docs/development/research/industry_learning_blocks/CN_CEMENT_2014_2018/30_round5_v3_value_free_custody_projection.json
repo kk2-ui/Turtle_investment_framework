@@ -1,0 +1,1694 @@
+{
+  "schema_version": "outcome-measurement-value-free-custody-projection.v1",
+  "projection_id": "CUSTODY:CCR:600802:20150415:20160427:V3",
+  "company_id": "CN:600802",
+  "custodian_id": "ROLE:CEMENT:ROUND5:OUTCOME_CUSTODIAN",
+  "cutoff_at": "2015-04-15T00:00:00+08:00",
+  "next_cutoff_at": "2016-04-27T00:00:00+08:00",
+  "measurement_contract_ref": {
+    "contract_set_id": "OMC:CN600802:20150415:MECHANISM:V3",
+    "contract_version": 3
+  },
+  "authorized_source_identity": {
+    "source_id": "CNINFO:600802:ANN:20160426:1202245558",
+    "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+    "official_url": "https://static.cninfo.com.cn/finalpage/2016-04-26/1202245558.PDF",
+    "published_after_cutoff": true,
+    "access_state": "SEALED_UNTIL_PREOUTCOME_COMMIT",
+    "custodian_access": "OUTCOME_ONLY",
+    "authorization_receipt_id": "CUSTODY-AUTH:CN600802:20150415:FY2015:V3"
+  },
+  "atomic_measurement_contracts": [
+    {
+      "cell_id": "CELL:600802:20150415:FURUN_OPERATING_SCOPE",
+      "measurement_clock": {
+        "clock_kind": "EVENT_WINDOW",
+        "event_window": {
+          "event_start": "2015-04-16",
+          "event_end": "2015-12-31",
+          "window_name": "POST_CUTOFF_FY2015_EVENT_WINDOW"
+        }
+      },
+      "responsibility_boundary": {
+        "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600802",
+        "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+        "arena_id": "ARENA:CN600802:FUJIAN_DELIVERED_CEMENT",
+        "scope_requirement": "issuer commercial participation in Furun unified sales, not production-project operation"
+      },
+      "field_identity": {
+        "outcome_field_id": "FIELD:600802:FY2015:FURUN_OPERATING_SCOPE_EVENT",
+        "baseline_field_id": "",
+        "statement_scope": "ISSUER_COMMERCIAL_ACTION",
+        "table_or_note": "FY2015 operating review or material commercial-action disclosure",
+        "line_item": "explicit operating scope, covered products, regions, channels or duration of Furun unified sales",
+        "field_kind": "DISCLOSED_EVENT"
+      },
+      "raw_input_fields": [
+        {
+          "field_id": "FIELD:600802:FY2015:FURUN_OPERATING_SCOPE_EVENT",
+          "role": "EVENT",
+          "unit": "BOOLEAN_EVENT",
+          "measurement_clock": {
+            "clock_kind": "EVENT_WINDOW",
+            "event_window": {
+              "event_start": "2015-04-16",
+              "event_end": "2015-12-31",
+              "window_name": "POST_CUTOFF_FY2015_EVENT_WINDOW"
+            }
+          }
+        }
+      ],
+      "unit": {
+        "kind": "BOOLEAN_EVENT",
+        "currency": "NOT_APPLICABLE",
+        "scale": "ONE"
+      },
+      "formula": {
+        "operator": "EVENT_BOOLEAN",
+        "input_field_ids": [
+          "FIELD:600802:FY2015:FURUN_OPERATING_SCOPE_EVENT"
+        ],
+        "expression": "event := explicit_disclosure(FIELD:600802:FY2015:FURUN_OPERATING_SCOPE_EVENT) within 2015-04-16..2015-12-31",
+        "unit_conversions": [
+          {
+            "field_id": "FIELD:600802:FY2015:FURUN_OPERATING_SCOPE_EVENT",
+            "from_unit": "BOOLEAN_EVENT",
+            "to_unit": "BOOLEAN_EVENT",
+            "scale": "1"
+          }
+        ],
+        "zero_baseline_rule": "NOT_APPLICABLE"
+      },
+      "label_rule": {
+        "type": "EVENT_PRESENCE",
+        "decrease_lte": null,
+        "increase_gte": null,
+        "ordered_labels": [
+          "MEASUREMENT_MISMATCH",
+          "OBSERVED_YES",
+          "OBSERVED_NO",
+          "UNKNOWN"
+        ]
+      },
+      "conflict_rule": {
+        "multiple_values": "MEASUREMENT_MISMATCH",
+        "boundary_conflict": "MEASUREMENT_MISMATCH",
+        "period_conflict": "MEASUREMENT_MISMATCH"
+      },
+      "unknown_rule": {
+        "conditions": [
+          "the contracted source neither states nor denies FY2015 Furun operating scope"
+        ],
+        "label": "UNKNOWN"
+      },
+      "mismatch_rule": {
+        "conditions": [
+          "disclosure covers only production projects, a different sales entity, a different period or an unbound geography"
+        ],
+        "label": "MEASUREMENT_MISMATCH",
+        "propagation": "LOCAL_ONLY",
+        "dependent_cell_ids": []
+      },
+      "allowed_source_types": [
+        "OFFICIAL_AUDITED_ANNUAL_REPORT"
+      ]
+    },
+    {
+      "cell_id": "CELL:600802:20150415:CUSTOMER_RESPONSE_EVENT",
+      "measurement_clock": {
+        "clock_kind": "EVENT_WINDOW",
+        "event_window": {
+          "event_start": "2015-04-16",
+          "event_end": "2015-12-31",
+          "window_name": "POST_CUTOFF_FY2015_EVENT_WINDOW"
+        }
+      },
+      "responsibility_boundary": {
+        "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600802",
+        "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+        "arena_id": "ARENA:CN600802:FUJIAN_DELIVERED_CEMENT",
+        "scope_requirement": "direct issuer customer, dealer, channel, order or market-share response in Fujian delivered cement"
+      },
+      "field_identity": {
+        "outcome_field_id": "FIELD:600802:FY2015:DIRECT_CUSTOMER_RESPONSE_EVENT",
+        "baseline_field_id": "",
+        "statement_scope": "ISSUER_COMMERCIAL_RESPONSE",
+        "table_or_note": "FY2015 customer, sales-channel or market-share disclosure",
+        "line_item": "explicit customer count, dealer/channel count, retention, orders or market-share response",
+        "field_kind": "DISCLOSED_EVENT"
+      },
+      "raw_input_fields": [
+        {
+          "field_id": "FIELD:600802:FY2015:DIRECT_CUSTOMER_RESPONSE_EVENT",
+          "role": "EVENT",
+          "unit": "BOOLEAN_EVENT",
+          "measurement_clock": {
+            "clock_kind": "EVENT_WINDOW",
+            "event_window": {
+              "event_start": "2015-04-16",
+              "event_end": "2015-12-31",
+              "window_name": "POST_CUTOFF_FY2015_EVENT_WINDOW"
+            }
+          }
+        }
+      ],
+      "unit": {
+        "kind": "BOOLEAN_EVENT",
+        "currency": "NOT_APPLICABLE",
+        "scale": "ONE"
+      },
+      "formula": {
+        "operator": "EVENT_BOOLEAN",
+        "input_field_ids": [
+          "FIELD:600802:FY2015:DIRECT_CUSTOMER_RESPONSE_EVENT"
+        ],
+        "expression": "event := explicit_disclosure(FIELD:600802:FY2015:DIRECT_CUSTOMER_RESPONSE_EVENT) within 2015-04-16..2015-12-31",
+        "unit_conversions": [
+          {
+            "field_id": "FIELD:600802:FY2015:DIRECT_CUSTOMER_RESPONSE_EVENT",
+            "from_unit": "BOOLEAN_EVENT",
+            "to_unit": "BOOLEAN_EVENT",
+            "scale": "1"
+          }
+        ],
+        "zero_baseline_rule": "NOT_APPLICABLE"
+      },
+      "label_rule": {
+        "type": "EVENT_PRESENCE",
+        "decrease_lte": null,
+        "increase_gte": null,
+        "ordered_labels": [
+          "MEASUREMENT_MISMATCH",
+          "OBSERVED_YES",
+          "OBSERVED_NO",
+          "UNKNOWN"
+        ]
+      },
+      "conflict_rule": {
+        "multiple_values": "MEASUREMENT_MISMATCH",
+        "boundary_conflict": "MEASUREMENT_MISMATCH",
+        "period_conflict": "MEASUREMENT_MISMATCH"
+      },
+      "unknown_rule": {
+        "conditions": [
+          "no direct customer-response field appears in the contracted source"
+        ],
+        "label": "UNKNOWN"
+      },
+      "mismatch_rule": {
+        "conditions": [
+          "only aggregate sales, management attribution or customer concentration without response direction is disclosed"
+        ],
+        "label": "MEASUREMENT_MISMATCH",
+        "propagation": "LOCAL_ONLY",
+        "dependent_cell_ids": []
+      },
+      "allowed_source_types": [
+        "OFFICIAL_AUDITED_ANNUAL_REPORT"
+      ]
+    },
+    {
+      "cell_id": "CELL:600802:20150415:CEMENT_SALES_VOLUME",
+      "measurement_clock": {
+        "clock_kind": "FLOW_PERIOD",
+        "flow_period": {
+          "period_start": "2015-01-01",
+          "period_end": "2015-12-31",
+          "fiscal_period": "FY2015"
+        }
+      },
+      "responsibility_boundary": {
+        "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600802",
+        "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+        "arena_id": "ARENA:CN600802:FUJIAN_DELIVERED_CEMENT",
+        "scope_requirement": "issuer consolidated cement sales volume with FY2014 comparative on the same product definition"
+      },
+      "field_identity": {
+        "outcome_field_id": "FIELD:600802:FY2015:CEMENT_SALES_VOLUME_TONNES",
+        "baseline_field_id": "FIELD:600802:FY2014:CEMENT_SALES_VOLUME_TONNES",
+        "statement_scope": "CONSOLIDATED",
+        "table_or_note": "production-sales-inventory product table",
+        "line_item": "cement sales volume",
+        "field_kind": "OPERATING_STATISTICAL_LINE_ITEM"
+      },
+      "raw_input_fields": [
+        {
+          "field_id": "FIELD:600802:FY2014:CEMENT_SALES_VOLUME_TONNES",
+          "role": "BASELINE",
+          "unit": "TONNE",
+          "measurement_clock": {
+            "clock_kind": "FLOW_PERIOD",
+            "flow_period": {
+              "period_start": "2014-01-01",
+              "period_end": "2014-12-31",
+              "fiscal_period": "FY2014"
+            }
+          }
+        },
+        {
+          "field_id": "FIELD:600802:FY2015:CEMENT_SALES_VOLUME_TONNES",
+          "role": "OUTCOME",
+          "unit": "TONNE",
+          "measurement_clock": {
+            "clock_kind": "FLOW_PERIOD",
+            "flow_period": {
+              "period_start": "2015-01-01",
+              "period_end": "2015-12-31",
+              "fiscal_period": "FY2015"
+            }
+          }
+        }
+      ],
+      "unit": {
+        "kind": "PHYSICAL_VOLUME",
+        "currency": "NOT_APPLICABLE",
+        "scale": "TONNE"
+      },
+      "formula": {
+        "operator": "PERCENT_CHANGE",
+        "input_field_ids": [
+          "FIELD:600802:FY2014:CEMENT_SALES_VOLUME_TONNES",
+          "FIELD:600802:FY2015:CEMENT_SALES_VOLUME_TONNES"
+        ],
+        "expression": "(FIELD:600802:FY2015:CEMENT_SALES_VOLUME_TONNES - FIELD:600802:FY2014:CEMENT_SALES_VOLUME_TONNES) / abs(FIELD:600802:FY2014:CEMENT_SALES_VOLUME_TONNES)",
+        "unit_conversions": [
+          {
+            "field_id": "FIELD:600802:FY2014:CEMENT_SALES_VOLUME_TONNES",
+            "from_unit": "TONNE",
+            "to_unit": "TONNE",
+            "scale": "1"
+          },
+          {
+            "field_id": "FIELD:600802:FY2015:CEMENT_SALES_VOLUME_TONNES",
+            "from_unit": "TONNE",
+            "to_unit": "TONNE",
+            "scale": "1"
+          }
+        ],
+        "zero_baseline_rule": "RETURN_MEASUREMENT_MISMATCH"
+      },
+      "label_rule": {
+        "type": "PERCENT_CHANGE_BAND",
+        "decrease_lte": -0.01,
+        "increase_gte": 0.01,
+        "ordered_labels": [
+          "MEASUREMENT_MISMATCH",
+          "OBSERVED_DECREASE",
+          "OBSERVED_STABLE",
+          "OBSERVED_INCREASE",
+          "UNKNOWN"
+        ]
+      },
+      "conflict_rule": {
+        "multiple_values": "MEASUREMENT_MISMATCH",
+        "boundary_conflict": "MEASUREMENT_MISMATCH",
+        "period_conflict": "MEASUREMENT_MISMATCH"
+      },
+      "unknown_rule": {
+        "conditions": [
+          "separate cement sales volume is absent after contracted table review"
+        ],
+        "label": "UNKNOWN"
+      },
+      "mismatch_rule": {
+        "conditions": [
+          "only combined cement-plus-clinker volume, production volume or a different perimeter is disclosed"
+        ],
+        "label": "MEASUREMENT_MISMATCH",
+        "propagation": "LOCAL_ONLY",
+        "dependent_cell_ids": []
+      },
+      "allowed_source_types": [
+        "OFFICIAL_AUDITED_ANNUAL_REPORT"
+      ]
+    },
+    {
+      "cell_id": "CELL:600802:20150415:CLINKER_SALES_VOLUME",
+      "measurement_clock": {
+        "clock_kind": "FLOW_PERIOD",
+        "flow_period": {
+          "period_start": "2015-01-01",
+          "period_end": "2015-12-31",
+          "fiscal_period": "FY2015"
+        }
+      },
+      "responsibility_boundary": {
+        "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600802",
+        "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+        "arena_id": "ARENA:CN600802:FUJIAN_DELIVERED_CEMENT",
+        "scope_requirement": "issuer consolidated clinker sales volume with FY2014 comparative on the same product definition"
+      },
+      "field_identity": {
+        "outcome_field_id": "FIELD:600802:FY2015:CLINKER_SALES_VOLUME_TONNES",
+        "baseline_field_id": "FIELD:600802:FY2014:CLINKER_SALES_VOLUME_TONNES",
+        "statement_scope": "CONSOLIDATED",
+        "table_or_note": "production-sales-inventory product table",
+        "line_item": "clinker sales volume",
+        "field_kind": "OPERATING_STATISTICAL_LINE_ITEM"
+      },
+      "raw_input_fields": [
+        {
+          "field_id": "FIELD:600802:FY2014:CLINKER_SALES_VOLUME_TONNES",
+          "role": "BASELINE",
+          "unit": "TONNE",
+          "measurement_clock": {
+            "clock_kind": "FLOW_PERIOD",
+            "flow_period": {
+              "period_start": "2014-01-01",
+              "period_end": "2014-12-31",
+              "fiscal_period": "FY2014"
+            }
+          }
+        },
+        {
+          "field_id": "FIELD:600802:FY2015:CLINKER_SALES_VOLUME_TONNES",
+          "role": "OUTCOME",
+          "unit": "TONNE",
+          "measurement_clock": {
+            "clock_kind": "FLOW_PERIOD",
+            "flow_period": {
+              "period_start": "2015-01-01",
+              "period_end": "2015-12-31",
+              "fiscal_period": "FY2015"
+            }
+          }
+        }
+      ],
+      "unit": {
+        "kind": "PHYSICAL_VOLUME",
+        "currency": "NOT_APPLICABLE",
+        "scale": "TONNE"
+      },
+      "formula": {
+        "operator": "PERCENT_CHANGE",
+        "input_field_ids": [
+          "FIELD:600802:FY2014:CLINKER_SALES_VOLUME_TONNES",
+          "FIELD:600802:FY2015:CLINKER_SALES_VOLUME_TONNES"
+        ],
+        "expression": "(FIELD:600802:FY2015:CLINKER_SALES_VOLUME_TONNES - FIELD:600802:FY2014:CLINKER_SALES_VOLUME_TONNES) / abs(FIELD:600802:FY2014:CLINKER_SALES_VOLUME_TONNES)",
+        "unit_conversions": [
+          {
+            "field_id": "FIELD:600802:FY2014:CLINKER_SALES_VOLUME_TONNES",
+            "from_unit": "TONNE",
+            "to_unit": "TONNE",
+            "scale": "1"
+          },
+          {
+            "field_id": "FIELD:600802:FY2015:CLINKER_SALES_VOLUME_TONNES",
+            "from_unit": "TONNE",
+            "to_unit": "TONNE",
+            "scale": "1"
+          }
+        ],
+        "zero_baseline_rule": "RETURN_MEASUREMENT_MISMATCH"
+      },
+      "label_rule": {
+        "type": "PERCENT_CHANGE_BAND",
+        "decrease_lte": -0.01,
+        "increase_gte": 0.01,
+        "ordered_labels": [
+          "MEASUREMENT_MISMATCH",
+          "OBSERVED_DECREASE",
+          "OBSERVED_STABLE",
+          "OBSERVED_INCREASE",
+          "UNKNOWN"
+        ]
+      },
+      "conflict_rule": {
+        "multiple_values": "MEASUREMENT_MISMATCH",
+        "boundary_conflict": "MEASUREMENT_MISMATCH",
+        "period_conflict": "MEASUREMENT_MISMATCH"
+      },
+      "unknown_rule": {
+        "conditions": [
+          "separate clinker sales volume is absent after contracted table review"
+        ],
+        "label": "UNKNOWN"
+      },
+      "mismatch_rule": {
+        "conditions": [
+          "only combined cement-plus-clinker volume, production volume or a different perimeter is disclosed"
+        ],
+        "label": "MEASUREMENT_MISMATCH",
+        "propagation": "LOCAL_ONLY",
+        "dependent_cell_ids": []
+      },
+      "allowed_source_types": [
+        "OFFICIAL_AUDITED_ANNUAL_REPORT"
+      ]
+    },
+    {
+      "cell_id": "CELL:600802:20150415:CEMENT_REALIZED_PRICE",
+      "measurement_clock": {
+        "clock_kind": "FLOW_PERIOD",
+        "flow_period": {
+          "period_start": "2015-01-01",
+          "period_end": "2015-12-31",
+          "fiscal_period": "FY2015"
+        }
+      },
+      "responsibility_boundary": {
+        "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600802",
+        "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+        "arena_id": "ARENA:CN600802:FUJIAN_DELIVERED_CEMENT",
+        "scope_requirement": "issuer cement sales revenue and volume on the same product and tax basis"
+      },
+      "field_identity": {
+        "outcome_field_id": "FIELD:600802:FY2015:CEMENT_REALIZED_PRICE_RMB_PER_TONNE",
+        "baseline_field_id": "FIELD:600802:FY2014:CEMENT_REALIZED_PRICE_RMB_PER_TONNE",
+        "statement_scope": "CONSOLIDATED",
+        "table_or_note": "cement product revenue and sales-volume disclosure",
+        "line_item": "cement realized pretax revenue per sales tonne",
+        "field_kind": "COMPUTED_FROM_CONTRACTED_FIELDS"
+      },
+      "raw_input_fields": [
+        {
+          "field_id": "FIELD:600802:FY2014:CEMENT_REVENUE_RMB",
+          "role": "BASELINE",
+          "unit": "RMB",
+          "measurement_clock": {
+            "clock_kind": "FLOW_PERIOD",
+            "flow_period": {
+              "period_start": "2014-01-01",
+              "period_end": "2014-12-31",
+              "fiscal_period": "FY2014"
+            }
+          }
+        },
+        {
+          "field_id": "FIELD:600802:FY2014:CEMENT_SALES_VOLUME_TONNES",
+          "role": "BASELINE",
+          "unit": "TONNE",
+          "measurement_clock": {
+            "clock_kind": "FLOW_PERIOD",
+            "flow_period": {
+              "period_start": "2014-01-01",
+              "period_end": "2014-12-31",
+              "fiscal_period": "FY2014"
+            }
+          }
+        },
+        {
+          "field_id": "FIELD:600802:FY2015:CEMENT_REVENUE_RMB",
+          "role": "OUTCOME",
+          "unit": "RMB",
+          "measurement_clock": {
+            "clock_kind": "FLOW_PERIOD",
+            "flow_period": {
+              "period_start": "2015-01-01",
+              "period_end": "2015-12-31",
+              "fiscal_period": "FY2015"
+            }
+          }
+        },
+        {
+          "field_id": "FIELD:600802:FY2015:CEMENT_SALES_VOLUME_TONNES",
+          "role": "OUTCOME",
+          "unit": "TONNE",
+          "measurement_clock": {
+            "clock_kind": "FLOW_PERIOD",
+            "flow_period": {
+              "period_start": "2015-01-01",
+              "period_end": "2015-12-31",
+              "fiscal_period": "FY2015"
+            }
+          }
+        }
+      ],
+      "unit": {
+        "kind": "UNIT_PRICE",
+        "currency": "RMB",
+        "scale": "RMB_PER_TONNE"
+      },
+      "formula": {
+        "operator": "RATIO_CHANGE",
+        "input_field_ids": [
+          "FIELD:600802:FY2014:CEMENT_REVENUE_RMB",
+          "FIELD:600802:FY2014:CEMENT_SALES_VOLUME_TONNES",
+          "FIELD:600802:FY2015:CEMENT_REVENUE_RMB",
+          "FIELD:600802:FY2015:CEMENT_SALES_VOLUME_TONNES"
+        ],
+        "expression": "((FY2015_CEMENT_REVENUE_RMB / FY2015_CEMENT_SALES_VOLUME_TONNES) - (FY2014_CEMENT_REVENUE_RMB / FY2014_CEMENT_SALES_VOLUME_TONNES)) / abs(FY2014_CEMENT_REVENUE_RMB / FY2014_CEMENT_SALES_VOLUME_TONNES)",
+        "unit_conversions": [
+          {
+            "field_id": "FIELD:600802:FY2014:CEMENT_REVENUE_RMB",
+            "from_unit": "RMB",
+            "to_unit": "RMB",
+            "scale": "1"
+          },
+          {
+            "field_id": "FIELD:600802:FY2014:CEMENT_SALES_VOLUME_TONNES",
+            "from_unit": "TONNE",
+            "to_unit": "TONNE",
+            "scale": "1"
+          },
+          {
+            "field_id": "FIELD:600802:FY2015:CEMENT_REVENUE_RMB",
+            "from_unit": "RMB",
+            "to_unit": "RMB",
+            "scale": "1"
+          },
+          {
+            "field_id": "FIELD:600802:FY2015:CEMENT_SALES_VOLUME_TONNES",
+            "from_unit": "TONNE",
+            "to_unit": "TONNE",
+            "scale": "1"
+          }
+        ],
+        "zero_baseline_rule": "RETURN_MEASUREMENT_MISMATCH"
+      },
+      "label_rule": {
+        "type": "PERCENT_CHANGE_BAND",
+        "decrease_lte": -0.01,
+        "increase_gte": 0.01,
+        "ordered_labels": [
+          "MEASUREMENT_MISMATCH",
+          "OBSERVED_DECREASE",
+          "OBSERVED_STABLE",
+          "OBSERVED_INCREASE",
+          "UNKNOWN"
+        ]
+      },
+      "conflict_rule": {
+        "multiple_values": "MEASUREMENT_MISMATCH",
+        "boundary_conflict": "MEASUREMENT_MISMATCH",
+        "period_conflict": "MEASUREMENT_MISMATCH"
+      },
+      "unknown_rule": {
+        "conditions": [
+          "contracted cement revenue or cement sales volume is absent"
+        ],
+        "label": "UNKNOWN"
+      },
+      "mismatch_rule": {
+        "conditions": [
+          "revenue and volume use different product, tax, period or responsibility boundaries"
+        ],
+        "label": "MEASUREMENT_MISMATCH",
+        "propagation": "LOCAL_ONLY",
+        "dependent_cell_ids": []
+      },
+      "allowed_source_types": [
+        "OFFICIAL_AUDITED_ANNUAL_REPORT"
+      ]
+    },
+    {
+      "cell_id": "CELL:600802:20150415:CEMENT_UNIT_COST",
+      "measurement_clock": {
+        "clock_kind": "FLOW_PERIOD",
+        "flow_period": {
+          "period_start": "2015-01-01",
+          "period_end": "2015-12-31",
+          "fiscal_period": "FY2015"
+        }
+      },
+      "responsibility_boundary": {
+        "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600802",
+        "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+        "arena_id": "ARENA:CN600802:FUJIAN_DELIVERED_CEMENT",
+        "scope_requirement": "issuer cement product cost and sales volume on the same product boundary"
+      },
+      "field_identity": {
+        "outcome_field_id": "FIELD:600802:FY2015:CEMENT_COST_RMB_PER_TONNE",
+        "baseline_field_id": "FIELD:600802:FY2014:CEMENT_COST_RMB_PER_TONNE",
+        "statement_scope": "CONSOLIDATED",
+        "table_or_note": "cement product cost and sales-volume disclosure",
+        "line_item": "cement operating cost per sales tonne",
+        "field_kind": "COMPUTED_FROM_CONTRACTED_FIELDS"
+      },
+      "raw_input_fields": [
+        {
+          "field_id": "FIELD:600802:FY2014:CEMENT_OPERATING_COST_RMB",
+          "role": "BASELINE",
+          "unit": "RMB",
+          "measurement_clock": {
+            "clock_kind": "FLOW_PERIOD",
+            "flow_period": {
+              "period_start": "2014-01-01",
+              "period_end": "2014-12-31",
+              "fiscal_period": "FY2014"
+            }
+          }
+        },
+        {
+          "field_id": "FIELD:600802:FY2014:CEMENT_SALES_VOLUME_TONNES",
+          "role": "BASELINE",
+          "unit": "TONNE",
+          "measurement_clock": {
+            "clock_kind": "FLOW_PERIOD",
+            "flow_period": {
+              "period_start": "2014-01-01",
+              "period_end": "2014-12-31",
+              "fiscal_period": "FY2014"
+            }
+          }
+        },
+        {
+          "field_id": "FIELD:600802:FY2015:CEMENT_OPERATING_COST_RMB",
+          "role": "OUTCOME",
+          "unit": "RMB",
+          "measurement_clock": {
+            "clock_kind": "FLOW_PERIOD",
+            "flow_period": {
+              "period_start": "2015-01-01",
+              "period_end": "2015-12-31",
+              "fiscal_period": "FY2015"
+            }
+          }
+        },
+        {
+          "field_id": "FIELD:600802:FY2015:CEMENT_SALES_VOLUME_TONNES",
+          "role": "OUTCOME",
+          "unit": "TONNE",
+          "measurement_clock": {
+            "clock_kind": "FLOW_PERIOD",
+            "flow_period": {
+              "period_start": "2015-01-01",
+              "period_end": "2015-12-31",
+              "fiscal_period": "FY2015"
+            }
+          }
+        }
+      ],
+      "unit": {
+        "kind": "UNIT_COST",
+        "currency": "RMB",
+        "scale": "RMB_PER_TONNE"
+      },
+      "formula": {
+        "operator": "RATIO_CHANGE",
+        "input_field_ids": [
+          "FIELD:600802:FY2014:CEMENT_OPERATING_COST_RMB",
+          "FIELD:600802:FY2014:CEMENT_SALES_VOLUME_TONNES",
+          "FIELD:600802:FY2015:CEMENT_OPERATING_COST_RMB",
+          "FIELD:600802:FY2015:CEMENT_SALES_VOLUME_TONNES"
+        ],
+        "expression": "((FY2015_CEMENT_OPERATING_COST_RMB / FY2015_CEMENT_SALES_VOLUME_TONNES) - (FY2014_CEMENT_OPERATING_COST_RMB / FY2014_CEMENT_SALES_VOLUME_TONNES)) / abs(FY2014_CEMENT_OPERATING_COST_RMB / FY2014_CEMENT_SALES_VOLUME_TONNES)",
+        "unit_conversions": [
+          {
+            "field_id": "FIELD:600802:FY2014:CEMENT_OPERATING_COST_RMB",
+            "from_unit": "RMB",
+            "to_unit": "RMB",
+            "scale": "1"
+          },
+          {
+            "field_id": "FIELD:600802:FY2014:CEMENT_SALES_VOLUME_TONNES",
+            "from_unit": "TONNE",
+            "to_unit": "TONNE",
+            "scale": "1"
+          },
+          {
+            "field_id": "FIELD:600802:FY2015:CEMENT_OPERATING_COST_RMB",
+            "from_unit": "RMB",
+            "to_unit": "RMB",
+            "scale": "1"
+          },
+          {
+            "field_id": "FIELD:600802:FY2015:CEMENT_SALES_VOLUME_TONNES",
+            "from_unit": "TONNE",
+            "to_unit": "TONNE",
+            "scale": "1"
+          }
+        ],
+        "zero_baseline_rule": "RETURN_MEASUREMENT_MISMATCH"
+      },
+      "label_rule": {
+        "type": "PERCENT_CHANGE_BAND",
+        "decrease_lte": -0.01,
+        "increase_gte": 0.01,
+        "ordered_labels": [
+          "MEASUREMENT_MISMATCH",
+          "OBSERVED_DECREASE",
+          "OBSERVED_STABLE",
+          "OBSERVED_INCREASE",
+          "UNKNOWN"
+        ]
+      },
+      "conflict_rule": {
+        "multiple_values": "MEASUREMENT_MISMATCH",
+        "boundary_conflict": "MEASUREMENT_MISMATCH",
+        "period_conflict": "MEASUREMENT_MISMATCH"
+      },
+      "unknown_rule": {
+        "conditions": [
+          "contracted cement cost or cement sales volume is absent"
+        ],
+        "label": "UNKNOWN"
+      },
+      "mismatch_rule": {
+        "conditions": [
+          "cost and volume use different product, period or responsibility boundaries"
+        ],
+        "label": "MEASUREMENT_MISMATCH",
+        "propagation": "LOCAL_ONLY",
+        "dependent_cell_ids": []
+      },
+      "allowed_source_types": [
+        "OFFICIAL_AUDITED_ANNUAL_REPORT"
+      ]
+    },
+    {
+      "cell_id": "CELL:600802:20150415:SELLING_EXPENSE",
+      "measurement_clock": {
+        "clock_kind": "FLOW_PERIOD",
+        "flow_period": {
+          "period_start": "2015-01-01",
+          "period_end": "2015-12-31",
+          "fiscal_period": "FY2015"
+        }
+      },
+      "responsibility_boundary": {
+        "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600802",
+        "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+        "arena_id": "ARENA:CN600802:FUJIAN_DELIVERED_CEMENT",
+        "scope_requirement": "audited issuer consolidated selling expense with FY2014 comparative"
+      },
+      "field_identity": {
+        "outcome_field_id": "FIELD:600802:FY2015:SELLING_EXPENSE_RMB",
+        "baseline_field_id": "FIELD:600802:FY2014:SELLING_EXPENSE_RMB",
+        "statement_scope": "CONSOLIDATED",
+        "table_or_note": "consolidated income statement or selling-expense note",
+        "line_item": "selling expense",
+        "field_kind": "AUDITED_FINANCIAL_LINE_ITEM"
+      },
+      "raw_input_fields": [
+        {
+          "field_id": "FIELD:600802:FY2014:SELLING_EXPENSE_RMB",
+          "role": "BASELINE",
+          "unit": "RMB",
+          "measurement_clock": {
+            "clock_kind": "FLOW_PERIOD",
+            "flow_period": {
+              "period_start": "2014-01-01",
+              "period_end": "2014-12-31",
+              "fiscal_period": "FY2014"
+            }
+          }
+        },
+        {
+          "field_id": "FIELD:600802:FY2015:SELLING_EXPENSE_RMB",
+          "role": "OUTCOME",
+          "unit": "RMB",
+          "measurement_clock": {
+            "clock_kind": "FLOW_PERIOD",
+            "flow_period": {
+              "period_start": "2015-01-01",
+              "period_end": "2015-12-31",
+              "fiscal_period": "FY2015"
+            }
+          }
+        }
+      ],
+      "unit": {
+        "kind": "MONETARY",
+        "currency": "RMB",
+        "scale": "ONE"
+      },
+      "formula": {
+        "operator": "PERCENT_CHANGE",
+        "input_field_ids": [
+          "FIELD:600802:FY2014:SELLING_EXPENSE_RMB",
+          "FIELD:600802:FY2015:SELLING_EXPENSE_RMB"
+        ],
+        "expression": "(FIELD:600802:FY2015:SELLING_EXPENSE_RMB - FIELD:600802:FY2014:SELLING_EXPENSE_RMB) / abs(FIELD:600802:FY2014:SELLING_EXPENSE_RMB)",
+        "unit_conversions": [
+          {
+            "field_id": "FIELD:600802:FY2014:SELLING_EXPENSE_RMB",
+            "from_unit": "RMB",
+            "to_unit": "RMB",
+            "scale": "1"
+          },
+          {
+            "field_id": "FIELD:600802:FY2015:SELLING_EXPENSE_RMB",
+            "from_unit": "RMB",
+            "to_unit": "RMB",
+            "scale": "1"
+          }
+        ],
+        "zero_baseline_rule": "RETURN_MEASUREMENT_MISMATCH"
+      },
+      "label_rule": {
+        "type": "PERCENT_CHANGE_BAND",
+        "decrease_lte": -0.01,
+        "increase_gte": 0.01,
+        "ordered_labels": [
+          "MEASUREMENT_MISMATCH",
+          "OBSERVED_DECREASE",
+          "OBSERVED_STABLE",
+          "OBSERVED_INCREASE",
+          "UNKNOWN"
+        ]
+      },
+      "conflict_rule": {
+        "multiple_values": "MEASUREMENT_MISMATCH",
+        "boundary_conflict": "MEASUREMENT_MISMATCH",
+        "period_conflict": "MEASUREMENT_MISMATCH"
+      },
+      "unknown_rule": {
+        "conditions": [
+          "audited selling expense is absent"
+        ],
+        "label": "UNKNOWN"
+      },
+      "mismatch_rule": {
+        "conditions": [
+          "only parent-company, segment-incompatible or non-comparative expense is disclosed"
+        ],
+        "label": "MEASUREMENT_MISMATCH",
+        "propagation": "LOCAL_ONLY",
+        "dependent_cell_ids": []
+      },
+      "allowed_source_types": [
+        "OFFICIAL_AUDITED_ANNUAL_REPORT"
+      ]
+    },
+    {
+      "cell_id": "CELL:600802:20150415:CEMENT_GROSS_MARGIN",
+      "measurement_clock": {
+        "clock_kind": "FLOW_PERIOD",
+        "flow_period": {
+          "period_start": "2015-01-01",
+          "period_end": "2015-12-31",
+          "fiscal_period": "FY2015"
+        }
+      },
+      "responsibility_boundary": {
+        "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600802",
+        "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+        "arena_id": "ARENA:CN600802:FUJIAN_DELIVERED_CEMENT",
+        "scope_requirement": "issuer cement product revenue and cost on the same product boundary"
+      },
+      "field_identity": {
+        "outcome_field_id": "FIELD:600802:FY2015:CEMENT_GROSS_MARGIN_RATIO",
+        "baseline_field_id": "FIELD:600802:FY2014:CEMENT_GROSS_MARGIN_RATIO",
+        "statement_scope": "CONSOLIDATED",
+        "table_or_note": "principal-business cement product table",
+        "line_item": "cement gross margin",
+        "field_kind": "COMPUTED_FROM_CONTRACTED_FIELDS"
+      },
+      "raw_input_fields": [
+        {
+          "field_id": "FIELD:600802:FY2014:CEMENT_REVENUE_RMB",
+          "role": "BASELINE",
+          "unit": "RMB",
+          "measurement_clock": {
+            "clock_kind": "FLOW_PERIOD",
+            "flow_period": {
+              "period_start": "2014-01-01",
+              "period_end": "2014-12-31",
+              "fiscal_period": "FY2014"
+            }
+          }
+        },
+        {
+          "field_id": "FIELD:600802:FY2014:CEMENT_OPERATING_COST_RMB",
+          "role": "BASELINE",
+          "unit": "RMB",
+          "measurement_clock": {
+            "clock_kind": "FLOW_PERIOD",
+            "flow_period": {
+              "period_start": "2014-01-01",
+              "period_end": "2014-12-31",
+              "fiscal_period": "FY2014"
+            }
+          }
+        },
+        {
+          "field_id": "FIELD:600802:FY2015:CEMENT_REVENUE_RMB",
+          "role": "OUTCOME",
+          "unit": "RMB",
+          "measurement_clock": {
+            "clock_kind": "FLOW_PERIOD",
+            "flow_period": {
+              "period_start": "2015-01-01",
+              "period_end": "2015-12-31",
+              "fiscal_period": "FY2015"
+            }
+          }
+        },
+        {
+          "field_id": "FIELD:600802:FY2015:CEMENT_OPERATING_COST_RMB",
+          "role": "OUTCOME",
+          "unit": "RMB",
+          "measurement_clock": {
+            "clock_kind": "FLOW_PERIOD",
+            "flow_period": {
+              "period_start": "2015-01-01",
+              "period_end": "2015-12-31",
+              "fiscal_period": "FY2015"
+            }
+          }
+        }
+      ],
+      "unit": {
+        "kind": "RATIO",
+        "currency": "NOT_APPLICABLE",
+        "scale": "DECIMAL"
+      },
+      "formula": {
+        "operator": "DIFFERENCE",
+        "input_field_ids": [
+          "FIELD:600802:FY2014:CEMENT_REVENUE_RMB",
+          "FIELD:600802:FY2014:CEMENT_OPERATING_COST_RMB",
+          "FIELD:600802:FY2015:CEMENT_REVENUE_RMB",
+          "FIELD:600802:FY2015:CEMENT_OPERATING_COST_RMB"
+        ],
+        "expression": "((FY2015_CEMENT_REVENUE_RMB - FY2015_CEMENT_OPERATING_COST_RMB) / FY2015_CEMENT_REVENUE_RMB) - ((FY2014_CEMENT_REVENUE_RMB - FY2014_CEMENT_OPERATING_COST_RMB) / FY2014_CEMENT_REVENUE_RMB)",
+        "unit_conversions": [
+          {
+            "field_id": "FIELD:600802:FY2014:CEMENT_REVENUE_RMB",
+            "from_unit": "RMB",
+            "to_unit": "RMB",
+            "scale": "1"
+          },
+          {
+            "field_id": "FIELD:600802:FY2014:CEMENT_OPERATING_COST_RMB",
+            "from_unit": "RMB",
+            "to_unit": "RMB",
+            "scale": "1"
+          },
+          {
+            "field_id": "FIELD:600802:FY2015:CEMENT_REVENUE_RMB",
+            "from_unit": "RMB",
+            "to_unit": "RMB",
+            "scale": "1"
+          },
+          {
+            "field_id": "FIELD:600802:FY2015:CEMENT_OPERATING_COST_RMB",
+            "from_unit": "RMB",
+            "to_unit": "RMB",
+            "scale": "1"
+          }
+        ],
+        "zero_baseline_rule": "RETURN_MEASUREMENT_MISMATCH"
+      },
+      "label_rule": {
+        "type": "ABSOLUTE_CHANGE_BAND",
+        "decrease_lte": -0.005,
+        "increase_gte": 0.005,
+        "ordered_labels": [
+          "MEASUREMENT_MISMATCH",
+          "OBSERVED_DECREASE",
+          "OBSERVED_STABLE",
+          "OBSERVED_INCREASE",
+          "UNKNOWN"
+        ]
+      },
+      "conflict_rule": {
+        "multiple_values": "MEASUREMENT_MISMATCH",
+        "boundary_conflict": "MEASUREMENT_MISMATCH",
+        "period_conflict": "MEASUREMENT_MISMATCH"
+      },
+      "unknown_rule": {
+        "conditions": [
+          "cement product revenue or cost is absent"
+        ],
+        "label": "UNKNOWN"
+      },
+      "mismatch_rule": {
+        "conditions": [
+          "revenue and cost use different product, period or responsibility boundaries"
+        ],
+        "label": "MEASUREMENT_MISMATCH",
+        "propagation": "LOCAL_ONLY",
+        "dependent_cell_ids": []
+      },
+      "allowed_source_types": [
+        "OFFICIAL_AUDITED_ANNUAL_REPORT"
+      ]
+    },
+    {
+      "cell_id": "CELL:600802:20150415:ACCOUNTS_RECEIVABLE",
+      "measurement_clock": {
+        "clock_kind": "BALANCE_AS_OF",
+        "balance_as_of": {
+          "as_of": "2015-12-31",
+          "fiscal_period": "FY2015"
+        }
+      },
+      "responsibility_boundary": {
+        "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600802",
+        "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+        "arena_id": "ARENA:CN600802:FUJIAN_DELIVERED_CEMENT",
+        "scope_requirement": "audited consolidated trade accounts receivable with FY2014 comparative"
+      },
+      "field_identity": {
+        "outcome_field_id": "FIELD:600802:FY2015:ACCOUNTS_RECEIVABLE_RMB",
+        "baseline_field_id": "FIELD:600802:FY2014:ACCOUNTS_RECEIVABLE_RMB",
+        "statement_scope": "CONSOLIDATED",
+        "table_or_note": "consolidated balance sheet accounts-receivable line",
+        "line_item": "accounts receivable",
+        "field_kind": "AUDITED_FINANCIAL_LINE_ITEM"
+      },
+      "raw_input_fields": [
+        {
+          "field_id": "FIELD:600802:FY2014:ACCOUNTS_RECEIVABLE_RMB",
+          "role": "BASELINE",
+          "unit": "RMB",
+          "measurement_clock": {
+            "clock_kind": "BALANCE_AS_OF",
+            "balance_as_of": {
+              "as_of": "2014-12-31",
+              "fiscal_period": "FY2014"
+            }
+          }
+        },
+        {
+          "field_id": "FIELD:600802:FY2015:ACCOUNTS_RECEIVABLE_RMB",
+          "role": "OUTCOME",
+          "unit": "RMB",
+          "measurement_clock": {
+            "clock_kind": "BALANCE_AS_OF",
+            "balance_as_of": {
+              "as_of": "2015-12-31",
+              "fiscal_period": "FY2015"
+            }
+          }
+        }
+      ],
+      "unit": {
+        "kind": "MONETARY",
+        "currency": "RMB",
+        "scale": "ONE"
+      },
+      "formula": {
+        "operator": "PERCENT_CHANGE",
+        "input_field_ids": [
+          "FIELD:600802:FY2014:ACCOUNTS_RECEIVABLE_RMB",
+          "FIELD:600802:FY2015:ACCOUNTS_RECEIVABLE_RMB"
+        ],
+        "expression": "(FIELD:600802:FY2015:ACCOUNTS_RECEIVABLE_RMB - FIELD:600802:FY2014:ACCOUNTS_RECEIVABLE_RMB) / abs(FIELD:600802:FY2014:ACCOUNTS_RECEIVABLE_RMB)",
+        "unit_conversions": [
+          {
+            "field_id": "FIELD:600802:FY2014:ACCOUNTS_RECEIVABLE_RMB",
+            "from_unit": "RMB",
+            "to_unit": "RMB",
+            "scale": "1"
+          },
+          {
+            "field_id": "FIELD:600802:FY2015:ACCOUNTS_RECEIVABLE_RMB",
+            "from_unit": "RMB",
+            "to_unit": "RMB",
+            "scale": "1"
+          }
+        ],
+        "zero_baseline_rule": "RETURN_MEASUREMENT_MISMATCH"
+      },
+      "label_rule": {
+        "type": "PERCENT_CHANGE_BAND",
+        "decrease_lte": -0.01,
+        "increase_gte": 0.01,
+        "ordered_labels": [
+          "MEASUREMENT_MISMATCH",
+          "OBSERVED_DECREASE",
+          "OBSERVED_STABLE",
+          "OBSERVED_INCREASE",
+          "UNKNOWN"
+        ]
+      },
+      "conflict_rule": {
+        "multiple_values": "MEASUREMENT_MISMATCH",
+        "boundary_conflict": "MEASUREMENT_MISMATCH",
+        "period_conflict": "MEASUREMENT_MISMATCH"
+      },
+      "unknown_rule": {
+        "conditions": [
+          "audited consolidated accounts receivable is absent"
+        ],
+        "label": "UNKNOWN"
+      },
+      "mismatch_rule": {
+        "conditions": [
+          "only parent-company, notes-receivable-combined or different-boundary balance is disclosed"
+        ],
+        "label": "MEASUREMENT_MISMATCH",
+        "propagation": "LOCAL_ONLY",
+        "dependent_cell_ids": []
+      },
+      "allowed_source_types": [
+        "OFFICIAL_AUDITED_ANNUAL_REPORT"
+      ]
+    },
+    {
+      "cell_id": "CELL:600802:20150415:INVENTORY",
+      "measurement_clock": {
+        "clock_kind": "BALANCE_AS_OF",
+        "balance_as_of": {
+          "as_of": "2015-12-31",
+          "fiscal_period": "FY2015"
+        }
+      },
+      "responsibility_boundary": {
+        "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600802",
+        "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+        "arena_id": "ARENA:CN600802:FUJIAN_DELIVERED_CEMENT",
+        "scope_requirement": "audited consolidated inventory with FY2014 comparative"
+      },
+      "field_identity": {
+        "outcome_field_id": "FIELD:600802:FY2015:INVENTORY_RMB",
+        "baseline_field_id": "FIELD:600802:FY2014:INVENTORY_RMB",
+        "statement_scope": "CONSOLIDATED",
+        "table_or_note": "consolidated balance sheet inventory line",
+        "line_item": "inventory",
+        "field_kind": "AUDITED_FINANCIAL_LINE_ITEM"
+      },
+      "raw_input_fields": [
+        {
+          "field_id": "FIELD:600802:FY2014:INVENTORY_RMB",
+          "role": "BASELINE",
+          "unit": "RMB",
+          "measurement_clock": {
+            "clock_kind": "BALANCE_AS_OF",
+            "balance_as_of": {
+              "as_of": "2014-12-31",
+              "fiscal_period": "FY2014"
+            }
+          }
+        },
+        {
+          "field_id": "FIELD:600802:FY2015:INVENTORY_RMB",
+          "role": "OUTCOME",
+          "unit": "RMB",
+          "measurement_clock": {
+            "clock_kind": "BALANCE_AS_OF",
+            "balance_as_of": {
+              "as_of": "2015-12-31",
+              "fiscal_period": "FY2015"
+            }
+          }
+        }
+      ],
+      "unit": {
+        "kind": "MONETARY",
+        "currency": "RMB",
+        "scale": "ONE"
+      },
+      "formula": {
+        "operator": "PERCENT_CHANGE",
+        "input_field_ids": [
+          "FIELD:600802:FY2014:INVENTORY_RMB",
+          "FIELD:600802:FY2015:INVENTORY_RMB"
+        ],
+        "expression": "(FIELD:600802:FY2015:INVENTORY_RMB - FIELD:600802:FY2014:INVENTORY_RMB) / abs(FIELD:600802:FY2014:INVENTORY_RMB)",
+        "unit_conversions": [
+          {
+            "field_id": "FIELD:600802:FY2014:INVENTORY_RMB",
+            "from_unit": "RMB",
+            "to_unit": "RMB",
+            "scale": "1"
+          },
+          {
+            "field_id": "FIELD:600802:FY2015:INVENTORY_RMB",
+            "from_unit": "RMB",
+            "to_unit": "RMB",
+            "scale": "1"
+          }
+        ],
+        "zero_baseline_rule": "RETURN_MEASUREMENT_MISMATCH"
+      },
+      "label_rule": {
+        "type": "PERCENT_CHANGE_BAND",
+        "decrease_lte": -0.01,
+        "increase_gte": 0.01,
+        "ordered_labels": [
+          "MEASUREMENT_MISMATCH",
+          "OBSERVED_DECREASE",
+          "OBSERVED_STABLE",
+          "OBSERVED_INCREASE",
+          "UNKNOWN"
+        ]
+      },
+      "conflict_rule": {
+        "multiple_values": "MEASUREMENT_MISMATCH",
+        "boundary_conflict": "MEASUREMENT_MISMATCH",
+        "period_conflict": "MEASUREMENT_MISMATCH"
+      },
+      "unknown_rule": {
+        "conditions": [
+          "audited consolidated inventory is absent"
+        ],
+        "label": "UNKNOWN"
+      },
+      "mismatch_rule": {
+        "conditions": [
+          "only product subset, parent-company or different-boundary inventory is disclosed"
+        ],
+        "label": "MEASUREMENT_MISMATCH",
+        "propagation": "LOCAL_ONLY",
+        "dependent_cell_ids": []
+      },
+      "allowed_source_types": [
+        "OFFICIAL_AUDITED_ANNUAL_REPORT"
+      ]
+    },
+    {
+      "cell_id": "CELL:600802:20150415:OPERATING_CASH",
+      "measurement_clock": {
+        "clock_kind": "FLOW_PERIOD",
+        "flow_period": {
+          "period_start": "2015-01-01",
+          "period_end": "2015-12-31",
+          "fiscal_period": "FY2015"
+        }
+      },
+      "responsibility_boundary": {
+        "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600802",
+        "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+        "arena_id": "ARENA:CN600802:FUJIAN_DELIVERED_CEMENT",
+        "scope_requirement": "audited consolidated net cash from operating activities with FY2014 comparative"
+      },
+      "field_identity": {
+        "outcome_field_id": "FIELD:600802:FY2015:NET_OPERATING_CASH_RMB",
+        "baseline_field_id": "FIELD:600802:FY2014:NET_OPERATING_CASH_RMB",
+        "statement_scope": "CONSOLIDATED",
+        "table_or_note": "consolidated cash-flow statement",
+        "line_item": "net cash flows from operating activities",
+        "field_kind": "AUDITED_FINANCIAL_LINE_ITEM"
+      },
+      "raw_input_fields": [
+        {
+          "field_id": "FIELD:600802:FY2014:NET_OPERATING_CASH_RMB",
+          "role": "BASELINE",
+          "unit": "RMB",
+          "measurement_clock": {
+            "clock_kind": "FLOW_PERIOD",
+            "flow_period": {
+              "period_start": "2014-01-01",
+              "period_end": "2014-12-31",
+              "fiscal_period": "FY2014"
+            }
+          }
+        },
+        {
+          "field_id": "FIELD:600802:FY2015:NET_OPERATING_CASH_RMB",
+          "role": "OUTCOME",
+          "unit": "RMB",
+          "measurement_clock": {
+            "clock_kind": "FLOW_PERIOD",
+            "flow_period": {
+              "period_start": "2015-01-01",
+              "period_end": "2015-12-31",
+              "fiscal_period": "FY2015"
+            }
+          }
+        }
+      ],
+      "unit": {
+        "kind": "MONETARY",
+        "currency": "RMB",
+        "scale": "ONE"
+      },
+      "formula": {
+        "operator": "PERCENT_CHANGE",
+        "input_field_ids": [
+          "FIELD:600802:FY2014:NET_OPERATING_CASH_RMB",
+          "FIELD:600802:FY2015:NET_OPERATING_CASH_RMB"
+        ],
+        "expression": "(FIELD:600802:FY2015:NET_OPERATING_CASH_RMB - FIELD:600802:FY2014:NET_OPERATING_CASH_RMB) / abs(FIELD:600802:FY2014:NET_OPERATING_CASH_RMB)",
+        "unit_conversions": [
+          {
+            "field_id": "FIELD:600802:FY2014:NET_OPERATING_CASH_RMB",
+            "from_unit": "RMB",
+            "to_unit": "RMB",
+            "scale": "1"
+          },
+          {
+            "field_id": "FIELD:600802:FY2015:NET_OPERATING_CASH_RMB",
+            "from_unit": "RMB",
+            "to_unit": "RMB",
+            "scale": "1"
+          }
+        ],
+        "zero_baseline_rule": "RETURN_MEASUREMENT_MISMATCH"
+      },
+      "label_rule": {
+        "type": "PERCENT_CHANGE_BAND",
+        "decrease_lte": -0.01,
+        "increase_gte": 0.01,
+        "ordered_labels": [
+          "MEASUREMENT_MISMATCH",
+          "OBSERVED_DECREASE",
+          "OBSERVED_STABLE",
+          "OBSERVED_INCREASE",
+          "UNKNOWN"
+        ]
+      },
+      "conflict_rule": {
+        "multiple_values": "MEASUREMENT_MISMATCH",
+        "boundary_conflict": "MEASUREMENT_MISMATCH",
+        "period_conflict": "MEASUREMENT_MISMATCH"
+      },
+      "unknown_rule": {
+        "conditions": [
+          "audited consolidated operating cash is absent"
+        ],
+        "label": "UNKNOWN"
+      },
+      "mismatch_rule": {
+        "conditions": [
+          "only parent-company cash, indirect proxy or different-boundary cash is disclosed"
+        ],
+        "label": "MEASUREMENT_MISMATCH",
+        "propagation": "LOCAL_ONLY",
+        "dependent_cell_ids": []
+      },
+      "allowed_source_types": [
+        "OFFICIAL_AUDITED_ANNUAL_REPORT"
+      ]
+    },
+    {
+      "cell_id": "CELL:600802:20150415:CASH_CAPEX",
+      "measurement_clock": {
+        "clock_kind": "FLOW_PERIOD",
+        "flow_period": {
+          "period_start": "2015-01-01",
+          "period_end": "2015-12-31",
+          "fiscal_period": "FY2015"
+        }
+      },
+      "responsibility_boundary": {
+        "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600802",
+        "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+        "arena_id": "ARENA:CN600802:FUJIAN_DELIVERED_CEMENT",
+        "scope_requirement": "audited consolidated cash paid for fixed, intangible and other long-term assets with FY2014 comparative"
+      },
+      "field_identity": {
+        "outcome_field_id": "FIELD:600802:FY2015:CASH_CAPEX_RMB",
+        "baseline_field_id": "FIELD:600802:FY2014:CASH_CAPEX_RMB",
+        "statement_scope": "CONSOLIDATED",
+        "table_or_note": "consolidated cash-flow statement",
+        "line_item": "cash paid to acquire and construct fixed assets, intangible assets and other long-term assets",
+        "field_kind": "AUDITED_FINANCIAL_LINE_ITEM"
+      },
+      "raw_input_fields": [
+        {
+          "field_id": "FIELD:600802:FY2014:CASH_CAPEX_RMB",
+          "role": "BASELINE",
+          "unit": "RMB",
+          "measurement_clock": {
+            "clock_kind": "FLOW_PERIOD",
+            "flow_period": {
+              "period_start": "2014-01-01",
+              "period_end": "2014-12-31",
+              "fiscal_period": "FY2014"
+            }
+          }
+        },
+        {
+          "field_id": "FIELD:600802:FY2015:CASH_CAPEX_RMB",
+          "role": "OUTCOME",
+          "unit": "RMB",
+          "measurement_clock": {
+            "clock_kind": "FLOW_PERIOD",
+            "flow_period": {
+              "period_start": "2015-01-01",
+              "period_end": "2015-12-31",
+              "fiscal_period": "FY2015"
+            }
+          }
+        }
+      ],
+      "unit": {
+        "kind": "MONETARY",
+        "currency": "RMB",
+        "scale": "ONE"
+      },
+      "formula": {
+        "operator": "PERCENT_CHANGE",
+        "input_field_ids": [
+          "FIELD:600802:FY2014:CASH_CAPEX_RMB",
+          "FIELD:600802:FY2015:CASH_CAPEX_RMB"
+        ],
+        "expression": "(FIELD:600802:FY2015:CASH_CAPEX_RMB - FIELD:600802:FY2014:CASH_CAPEX_RMB) / abs(FIELD:600802:FY2014:CASH_CAPEX_RMB)",
+        "unit_conversions": [
+          {
+            "field_id": "FIELD:600802:FY2014:CASH_CAPEX_RMB",
+            "from_unit": "RMB",
+            "to_unit": "RMB",
+            "scale": "1"
+          },
+          {
+            "field_id": "FIELD:600802:FY2015:CASH_CAPEX_RMB",
+            "from_unit": "RMB",
+            "to_unit": "RMB",
+            "scale": "1"
+          }
+        ],
+        "zero_baseline_rule": "RETURN_MEASUREMENT_MISMATCH"
+      },
+      "label_rule": {
+        "type": "PERCENT_CHANGE_BAND",
+        "decrease_lte": -0.01,
+        "increase_gte": 0.01,
+        "ordered_labels": [
+          "MEASUREMENT_MISMATCH",
+          "OBSERVED_DECREASE",
+          "OBSERVED_STABLE",
+          "OBSERVED_INCREASE",
+          "UNKNOWN"
+        ]
+      },
+      "conflict_rule": {
+        "multiple_values": "MEASUREMENT_MISMATCH",
+        "boundary_conflict": "MEASUREMENT_MISMATCH",
+        "period_conflict": "MEASUREMENT_MISMATCH"
+      },
+      "unknown_rule": {
+        "conditions": [
+          "audited consolidated cash capex is absent"
+        ],
+        "label": "UNKNOWN"
+      },
+      "mismatch_rule": {
+        "conditions": [
+          "only accounting additions, project budget or different-boundary capex is disclosed"
+        ],
+        "label": "MEASUREMENT_MISMATCH",
+        "propagation": "LOCAL_ONLY",
+        "dependent_cell_ids": []
+      },
+      "allowed_source_types": [
+        "OFFICIAL_AUDITED_ANNUAL_REPORT"
+      ]
+    },
+    {
+      "cell_id": "CELL:600802:20150415:SHORT_TERM_DEBT",
+      "measurement_clock": {
+        "clock_kind": "BALANCE_AS_OF",
+        "balance_as_of": {
+          "as_of": "2015-12-31",
+          "fiscal_period": "FY2015"
+        }
+      },
+      "responsibility_boundary": {
+        "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600802",
+        "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+        "arena_id": "ARENA:CN600802:FUJIAN_DELIVERED_CEMENT",
+        "scope_requirement": "audited consolidated short-term borrowings with FY2014 comparative"
+      },
+      "field_identity": {
+        "outcome_field_id": "FIELD:600802:FY2015:SHORT_TERM_BORROWINGS_RMB",
+        "baseline_field_id": "FIELD:600802:FY2014:SHORT_TERM_BORROWINGS_RMB",
+        "statement_scope": "CONSOLIDATED",
+        "table_or_note": "consolidated balance sheet short-term-borrowings line",
+        "line_item": "short-term borrowings",
+        "field_kind": "AUDITED_FINANCIAL_LINE_ITEM"
+      },
+      "raw_input_fields": [
+        {
+          "field_id": "FIELD:600802:FY2014:SHORT_TERM_BORROWINGS_RMB",
+          "role": "BASELINE",
+          "unit": "RMB",
+          "measurement_clock": {
+            "clock_kind": "BALANCE_AS_OF",
+            "balance_as_of": {
+              "as_of": "2014-12-31",
+              "fiscal_period": "FY2014"
+            }
+          }
+        },
+        {
+          "field_id": "FIELD:600802:FY2015:SHORT_TERM_BORROWINGS_RMB",
+          "role": "OUTCOME",
+          "unit": "RMB",
+          "measurement_clock": {
+            "clock_kind": "BALANCE_AS_OF",
+            "balance_as_of": {
+              "as_of": "2015-12-31",
+              "fiscal_period": "FY2015"
+            }
+          }
+        }
+      ],
+      "unit": {
+        "kind": "MONETARY",
+        "currency": "RMB",
+        "scale": "ONE"
+      },
+      "formula": {
+        "operator": "PERCENT_CHANGE",
+        "input_field_ids": [
+          "FIELD:600802:FY2014:SHORT_TERM_BORROWINGS_RMB",
+          "FIELD:600802:FY2015:SHORT_TERM_BORROWINGS_RMB"
+        ],
+        "expression": "(FIELD:600802:FY2015:SHORT_TERM_BORROWINGS_RMB - FIELD:600802:FY2014:SHORT_TERM_BORROWINGS_RMB) / abs(FIELD:600802:FY2014:SHORT_TERM_BORROWINGS_RMB)",
+        "unit_conversions": [
+          {
+            "field_id": "FIELD:600802:FY2014:SHORT_TERM_BORROWINGS_RMB",
+            "from_unit": "RMB",
+            "to_unit": "RMB",
+            "scale": "1"
+          },
+          {
+            "field_id": "FIELD:600802:FY2015:SHORT_TERM_BORROWINGS_RMB",
+            "from_unit": "RMB",
+            "to_unit": "RMB",
+            "scale": "1"
+          }
+        ],
+        "zero_baseline_rule": "RETURN_MEASUREMENT_MISMATCH"
+      },
+      "label_rule": {
+        "type": "PERCENT_CHANGE_BAND",
+        "decrease_lte": -0.01,
+        "increase_gte": 0.01,
+        "ordered_labels": [
+          "MEASUREMENT_MISMATCH",
+          "OBSERVED_DECREASE",
+          "OBSERVED_STABLE",
+          "OBSERVED_INCREASE",
+          "UNKNOWN"
+        ]
+      },
+      "conflict_rule": {
+        "multiple_values": "MEASUREMENT_MISMATCH",
+        "boundary_conflict": "MEASUREMENT_MISMATCH",
+        "period_conflict": "MEASUREMENT_MISMATCH"
+      },
+      "unknown_rule": {
+        "conditions": [
+          "audited consolidated short-term borrowings are absent"
+        ],
+        "label": "UNKNOWN"
+      },
+      "mismatch_rule": {
+        "conditions": [
+          "only parent-company, total debt or different-maturity balance is disclosed"
+        ],
+        "label": "MEASUREMENT_MISMATCH",
+        "propagation": "LOCAL_ONLY",
+        "dependent_cell_ids": []
+      },
+      "allowed_source_types": [
+        "OFFICIAL_AUDITED_ANNUAL_REPORT"
+      ]
+    },
+    {
+      "cell_id": "CELL:600802:20150415:DIRECT_LOSS_EVENT",
+      "measurement_clock": {
+        "clock_kind": "EVENT_WINDOW",
+        "event_window": {
+          "event_start": "2015-04-16",
+          "event_end": "2015-12-31",
+          "window_name": "POST_CUTOFF_FY2015_EVENT_WINDOW"
+        }
+      },
+      "responsibility_boundary": {
+        "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600802",
+        "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+        "arena_id": "ARENA:CN600802:FUJIAN_DELIVERED_CEMENT",
+        "scope_requirement": "direct issuer-level impairment, default, covenant, refinancing or going-concern event"
+      },
+      "field_identity": {
+        "outcome_field_id": "FIELD:600802:FY2015:DIRECT_LOSS_EVENT",
+        "baseline_field_id": "",
+        "statement_scope": "CONSOLIDATED",
+        "table_or_note": "audit opinion, impairment, borrowings, covenant, default or going-concern disclosure",
+        "line_item": "direct issuer-level irreversible capital-loss or solvency event",
+        "field_kind": "DISCLOSED_EVENT"
+      },
+      "raw_input_fields": [
+        {
+          "field_id": "FIELD:600802:FY2015:DIRECT_LOSS_EVENT",
+          "role": "EVENT",
+          "unit": "BOOLEAN_EVENT",
+          "measurement_clock": {
+            "clock_kind": "EVENT_WINDOW",
+            "event_window": {
+              "event_start": "2015-04-16",
+              "event_end": "2015-12-31",
+              "window_name": "POST_CUTOFF_FY2015_EVENT_WINDOW"
+            }
+          }
+        }
+      ],
+      "unit": {
+        "kind": "BOOLEAN_EVENT",
+        "currency": "NOT_APPLICABLE",
+        "scale": "ONE"
+      },
+      "formula": {
+        "operator": "EVENT_BOOLEAN",
+        "input_field_ids": [
+          "FIELD:600802:FY2015:DIRECT_LOSS_EVENT"
+        ],
+        "expression": "event := explicit_disclosure(FIELD:600802:FY2015:DIRECT_LOSS_EVENT) within 2015-04-16..2015-12-31",
+        "unit_conversions": [
+          {
+            "field_id": "FIELD:600802:FY2015:DIRECT_LOSS_EVENT",
+            "from_unit": "BOOLEAN_EVENT",
+            "to_unit": "BOOLEAN_EVENT",
+            "scale": "1"
+          }
+        ],
+        "zero_baseline_rule": "NOT_APPLICABLE"
+      },
+      "label_rule": {
+        "type": "EVENT_PRESENCE",
+        "decrease_lte": null,
+        "increase_gte": null,
+        "ordered_labels": [
+          "MEASUREMENT_MISMATCH",
+          "OBSERVED_YES",
+          "OBSERVED_NO",
+          "UNKNOWN"
+        ]
+      },
+      "conflict_rule": {
+        "multiple_values": "MEASUREMENT_MISMATCH",
+        "boundary_conflict": "MEASUREMENT_MISMATCH",
+        "period_conflict": "MEASUREMENT_MISMATCH"
+      },
+      "unknown_rule": {
+        "conditions": [
+          "the source lacks sufficient direct evidence to confirm or deny the contracted event"
+        ],
+        "label": "UNKNOWN"
+      },
+      "mismatch_rule": {
+        "conditions": [
+          "only subsidiary-local, reversible, different-period or non-issuer event is disclosed"
+        ],
+        "label": "MEASUREMENT_MISMATCH",
+        "propagation": "LOCAL_ONLY",
+        "dependent_cell_ids": []
+      },
+      "allowed_source_types": [
+        "OFFICIAL_AUDITED_ANNUAL_REPORT"
+      ]
+    }
+  ],
+  "submission_api": "outcome_measurement_acquisition.validate_acquisition_result",
+  "settlement_api": "outcome_measurement_settlement_adapter.register_acquisition_result",
+  "outcome_access": {
+    "authorized": false,
+    "content_read": false,
+    "custodian_started": false
+  },
+  "object_class": "VALUE_FREE_OUTCOME_CUSTODY_PROJECTION",
+  "claim_class": "CUSTODIAN_ATOMIC_MEASUREMENT_ONLY",
+  "allowed_outputs": [
+    "CUSTODIAN_SUBMISSION_ONLY",
+    "RESEARCH_AGENDA"
+  ]
+}
