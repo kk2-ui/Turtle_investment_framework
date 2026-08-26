@@ -3,7 +3,8 @@
 Status:
 
 - synthetic control acceptance: `PASSED`;
-- first real-data episode: `MECHANICALLY_SETTLED / PENDING_FINAL_INDEPENDENT_REVIEW`;
+- V1 real-data run: `LEGACY_MECHANICAL_RUN / POST_SETTLEMENT_SOURCE_REVIEW`;
+- V2 real-data episode: `MECHANICALLY_SETTLED / ACCEPTED_FOR_PIPELINE_COVERAGE`;
 - method-transfer authorization: `NONE`.
 
 This remains an isolated namespace and does not modify or consume V5, V6, H1,
@@ -70,9 +71,9 @@ claim is produced.
 - Synthetic acceptance tests: `tests/test_minimal_historical_episode.py`
 - Controller-owned persistent runner: `scripts/minimal_historical_episode_runner.py`
 
-The tests use `sqlite3.connect(":memory:")` and `.invalid` URLs. They never
-open a source, browser, outcome, or production database, and create no actual
-forecast or freeze artifact outside the test process.
+Synthetic tests use `sqlite3.connect(":memory:")`, temporary on-disk SQLite,
+and `.invalid` URLs. They never open a source, browser, outcome, or production
+database, and create no committed production artifact.
 
 The persistent runner is a separate real-data entrypoint. It rejects `.invalid`
 fixtures, opens the cited `static.cninfo.com.cn/finalpage` PDF, reconciles the
@@ -86,7 +87,11 @@ arguments.
 
 ## First real-data episode
 
-The first episode fixes one issuer and metric:
+The V1 run is retained as a legacy mechanical record only. Its official-source
+verification was performed after settlement, so it cannot prove the real
+runner's source-before-persistence property.
+
+The accepted V2 episode fixes the same issuer and metric:
 
 ```text
 CN:600585
@@ -94,21 +99,24 @@ FY2017 consolidated cement-and-clinker sales volume: 295,000,000 tonnes
   -> FY2018 directional prediction frozen
   -> independent contract-only custodian
 FY2018 consolidated cement-and-clinker sales volume: 368,000,000 tonnes
-  -> mechanical MATCH
+  -> mechanical MISS
 ```
 
-The pre-outcome objects were committed at
-`cbd0aa03c715c49d6e97a2df657088c3b41af3e3` before the independent custodian
-task received its allowed inputs. That commit is the anti-backfill checkpoint
-for this first execution. The original v1 SQLite timestamps were supplied to
-the controller immediately around those actions; after review, the reusable
-runner was tightened so future persistent executions accept no caller-authored
-chronology.
+The V2 pre-outcome objects and source-before-freeze receipt were committed at
+`d503bc3` before the independent V2 custodian task received its allowed inputs.
+The controller then verified the outcome source before writing the observation,
+and generated observation/settlement chronology from its own execution clock.
 
 Official source receipts:
 
 - `cohorts/CN600585_FY2017_MINIMAL_HISTORICAL_EPISODE_OFFICIAL_SOURCE_RECEIPT.json`;
 - `cohorts/CN600585_FY2018_MINIMAL_HISTORICAL_EPISODE_OFFICIAL_SOURCE_RECEIPT.json`.
+
+V2 source and execution receipts:
+
+- `cohorts/CN600585_FY2017_MINIMAL_HISTORICAL_EPISODE_V2_OFFICIAL_SOURCE_RECEIPT.json`;
+- `cohorts/CN600585_FY2018_MINIMAL_HISTORICAL_EPISODE_V2_OUTCOME_OFFICIAL_SOURCE_RECEIPT.json`;
+- `cohorts/CN600585_FY2018_MINIMAL_HISTORICAL_EPISODE_V2_RUNTIME_RECEIPT.json`.
 
 Runtime and acceptance receipts:
 
@@ -116,7 +124,7 @@ Runtime and acceptance receipts:
 - `cohorts/CN600585_FY2018_MINIMAL_HISTORICAL_EPISODE_RUNTIME_RECEIPT.json`;
 - `cohorts/CN600585_FY2018_MINIMAL_HISTORICAL_EPISODE_ACCEPTANCE.json`.
 
-`MATCH` is visible to the post-settlement reviewer. The prediction was sealed
+The V2 `MISS` is visible to the post-settlement reviewer. The prediction was sealed
 from the custodian until the observation had been returned; it is not treated
 as permanently secret after settlement. Neither the result nor its source
 receipts grant learning, method release, V6, pairing, holdout, CJO, valuation,
