@@ -4,6 +4,7 @@ from copy import deepcopy
 import inspect
 import json
 from pathlib import Path
+import sqlite3
 
 import pytest
 
@@ -23,6 +24,11 @@ V3_PACKAGE = BLOCK_DIR / "29_round5_v3_preoutcome_mechanism_package.json"
 CUSTODY_PROJECTION = BLOCK_DIR / "30_round5_v3_value_free_custody_projection.json"
 CONTROL_RECEIPT = BLOCK_DIR / "31_round5_v3_preoutcome_control_plane_receipt.json"
 ADAPTER_RECEIPT = BLOCK_DIR / "32_round5_v3_adapter_acceptance_receipt.json"
+REAL_FIELD_RECORDS = BLOCK_DIR / "33_round5_custodian_field_records.json"
+REAL_OUTCOME_AUTHORIZATION = BLOCK_DIR / "34a_round5_outcome_access_authorization.json"
+REAL_SETTLEMENT = BLOCK_DIR / "34_round5_real_feedback_settlement.json"
+REAL_POSTOUTCOME_REVIEW = BLOCK_DIR / "35_round5_independent_postoutcome_review.json"
+REAL_COMPLETION_RECEIPT = BLOCK_DIR / "36_round5_real_feedback_completion_receipt.json"
 FREEZE_AT = "2026-08-26T16:30:00+00:00"
 ROUND5_IDS = {
     "package_id": "EMFP:CN:CEMENT:600802:20150415:V3",
@@ -181,6 +187,31 @@ def _enterprise_synthetic_custody(
         return [path.read_bytes()[9:].decode("utf-8")]
 
     return contract, authorization, inventory, reader
+
+
+def _clone_settlement_for_registration(settlement: dict, *, settlement_id: str) -> dict:
+    cloned = deepcopy(settlement)
+    previous_id = cloned["settlement_id"]
+    cloned["settlement_id"] = settlement_id
+    for receipt in cloned["raw_observation_receipts"]:
+        receipt["settlement_id"] = settlement_id
+        receipt["receipt_id"] = receipt["receipt_id"].replace(previous_id, settlement_id, 1)
+    cloned["observation_receipt_ids"] = [
+        receipt["receipt_id"] for receipt in cloned["raw_observation_receipts"]
+    ]
+    return cloned
+
+
+def _register_settlement_raw_receipts(settlement: dict) -> None:
+    for receipt in settlement["raw_observation_receipts"]:
+        control.register_enterprise_observation_receipt(
+            receipt, registered_at=settlement["settled_at"],
+        )
+
+
+def _register_contract_and_round5_route(contract: dict) -> dict:
+    assert control.register_measurement_contract(contract, frozen_at=FREEZE_AT)["registered"]
+    return round5.bootstrap_canonical_round5_route()
 
 
 def test_committed_round5_v3_package_is_the_generated_valid_package() -> None:
@@ -342,7 +373,7 @@ def test_registered_v3_contract_rejects_post_freeze_mutation(
 ) -> None:
     monkeypatch.setattr(reconstruction, "CANONICAL_REGISTRY_PATH", tmp_path / "canonical.db")
     contract = _v3_package()["outcome_measurement_contract"]
-    assert control.register_measurement_contract(contract, frozen_at=FREEZE_AT)["registered"]
+    _register_contract_and_round5_route(contract)
     mutated = deepcopy(contract)
     mutated["atomic_cells"][0]["unknown_rule"]["conditions"].append("post-result mutation")
     with pytest.raises(control.TrainingControlPlaneError) as exc:
@@ -367,12 +398,93 @@ def test_real_acquisition_api_builds_value_free_projection_and_public_settlement
     assert settlement_adapter.register_acquisition_result.__name__ == "register_acquisition_result"
 
 
+def test_round5_settlement_records_the_canonical_route_and_generic_entry_is_rejected(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    contract, authorization, inventory, reader = _enterprise_synthetic_custody(tmp_path)
+    monkeypatch.setattr(reconstruction, "CANONICAL_REGISTRY_PATH", tmp_path / "canonical.db")
+    _register_contract_and_round5_route(contract)
+    result = acquisition.acquire_outcome_measurements(
+        contract, inventory, page_reader=reader, outcome_access_authorization=authorization,
+    )
+    settled = round5.register_canonical_acquisition_result(
+        **ROUND5_IDS,
+        outcome_access_authorization=authorization,
+        acquisition_result=result,
+        observed_at="2016-04-27T02:00:00+00:00",
+        settlement_id="SETTLEMENT:CN600802:ROUND5:SYNTHETIC:ROUTE",
+        settled_at="2016-04-27T03:00:00+00:00",
+    )
+    assert settled["canonical_round5_binding"] == {
+        "package_id": ROUND5_IDS["package_id"],
+        "control_receipt_id": ROUND5_IDS["control_receipt_id"],
+        "adapter_acceptance_receipt_id": ROUND5_IDS["adapter_acceptance_receipt_id"],
+    }
+    with pytest.raises(
+        settlement_adapter.OutcomeMeasurementSettlementAdapterError,
+        match="enterprise_round5_requires_canonical_round5_entry",
+    ):
+        settlement_adapter.settle_enterprise_acquisition_result(
+            measurement_contract=contract,
+            outcome_access_authorization=authorization,
+            acquisition_result=result,
+            observed_at="2016-04-27T02:00:00+00:00",
+            settlement_id="SETTLEMENT:CN600802:ROUND5:SYNTHETIC:GENERIC",
+            settled_at="2016-04-27T03:00:00+00:00",
+        )
+
+
+def test_round5_outcome_path_cannot_create_or_forge_the_preoutcome_route(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    contract, authorization, inventory, reader = _enterprise_synthetic_custody(tmp_path)
+    registry = tmp_path / "canonical.db"
+    monkeypatch.setattr(reconstruction, "CANONICAL_REGISTRY_PATH", registry)
+    assert control.register_measurement_contract(contract, frozen_at=FREEZE_AT)["registered"]
+    result = acquisition.acquire_outcome_measurements(
+        contract, inventory, page_reader=reader, outcome_access_authorization=authorization,
+    )
+    with pytest.raises(
+        settlement_adapter.OutcomeMeasurementSettlementAdapterError,
+        match="canonical_route_unavailable",
+    ):
+        round5.register_canonical_acquisition_result(
+            **ROUND5_IDS,
+            outcome_access_authorization=authorization,
+            acquisition_result=result,
+            observed_at="2016-04-27T02:00:00+00:00",
+            settlement_id="SETTLEMENT:ROUND5:NO-PREOUTCOME-ROUTE",
+            settled_at="2016-04-27T03:00:00+00:00",
+        )
+    forged_control = _load(CONTROL_RECEIPT)
+    forged_adapter = _load(ADAPTER_RECEIPT)
+    forged_control["receipt_id"] = "FORGED:CONTROL:FIRST-WRITER"
+    forged_adapter["receipt_id"] = "FORGED:ADAPTER:FIRST-WRITER"
+    assert not hasattr(control, "register_round5_route")
+    with pytest.raises(TypeError):
+        control.bootstrap_round5_route(  # type: ignore[call-arg]
+            package=_load(V3_PACKAGE),
+            control_receipt=forged_control,
+            adapter_acceptance_receipt=forged_adapter,
+        )
+    with pytest.raises(control.TrainingControlPlaneError) as unresolved:
+        control.resolve_round5_route(ROUND5_IDS["package_id"])
+    assert unresolved.value.code == "round5_route_not_registered"
+    conn = sqlite3.connect(registry)
+    try:
+        assert conn.execute(f"SELECT COUNT(*) FROM {control.ROUND5_ROUTE_TABLE}").fetchone()[0] == 0
+        assert conn.execute(f"SELECT COUNT(*) FROM {control.ENTERPRISE_OBSERVATION_TABLE}").fetchone()[0] == 0
+        assert conn.execute(f"SELECT COUNT(*) FROM {control.ENTERPRISE_SETTLEMENT_TABLE}").fetchone()[0] == 0
+    finally:
+        conn.close()
+
+
 def test_enterprise_v3_public_acquisition_submission_and_settlement_preflight(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     contract, authorization, inventory, reader = _enterprise_synthetic_custody(tmp_path)
     monkeypatch.setattr(reconstruction, "CANONICAL_REGISTRY_PATH", tmp_path / "canonical.db")
-    assert control.register_measurement_contract(contract, frozen_at=FREEZE_AT)["registered"]
+    _register_contract_and_round5_route(contract)
     result = acquisition.acquire_outcome_measurements(
         contract,
         inventory,
@@ -478,7 +590,7 @@ def test_enterprise_public_settlement_keeps_acquisition_mismatch_sibling_local(
 ) -> None:
     contract, authorization, inventory, reader = _enterprise_synthetic_custody(tmp_path)
     monkeypatch.setattr(reconstruction, "CANONICAL_REGISTRY_PATH", tmp_path / "canonical.db")
-    assert control.register_measurement_contract(contract, frozen_at=FREEZE_AT)["registered"]
+    _register_contract_and_round5_route(contract)
     pdf = Path(inventory["documents"][0]["local_pdf_path"])
     lines = pdf.read_text(encoding="utf-8").splitlines()
     lines = [
@@ -509,7 +621,7 @@ def test_enterprise_field_record_protocol_is_exact_and_does_not_claim_pdf_automa
 ) -> None:
     contract, authorization, inventory, reader = _enterprise_synthetic_custody(tmp_path)
     monkeypatch.setattr(reconstruction, "CANONICAL_REGISTRY_PATH", tmp_path / "canonical.db")
-    assert control.register_measurement_contract(contract, frozen_at=FREEZE_AT)["registered"]
+    _register_contract_and_round5_route(contract)
     located = acquisition.acquire_outcome_measurements(
         contract, inventory, page_reader=reader, outcome_access_authorization=authorization,
     )
@@ -528,6 +640,12 @@ def test_enterprise_field_record_protocol_is_exact_and_does_not_claim_pdf_automa
         for observation in located["observations"]
         for raw in observation["raw_field_observations"]
     ]
+    for record in records:
+        if "source" in record:
+            source = record["source"]
+            source["custodian_locator"] = {
+                key: source[key] for key in ("table_or_note", "line_item", "period_column")
+            }
     rebuilt = acquisition.acquire_outcome_measurements(
         contract, inventory, field_records=records, outcome_access_authorization=authorization,
     )
@@ -540,12 +658,133 @@ def test_enterprise_field_record_protocol_is_exact_and_does_not_claim_pdf_automa
     assert sum(item["status"] == "UNKNOWN" for item in rebuilt["observations"]) == 1
 
 
+def test_custody_facing_field_records_preserve_actual_and_frozen_locators() -> None:
+    package = _v3_package()
+    projection = round5.build_value_free_custody_projection(package)
+    cell = projection["atomic_measurement_contracts"][0]
+    raw = cell["raw_input_fields"][0]
+    source = projection["authorized_source_identity"]
+    records = []
+    for projected_cell in projection["atomic_measurement_contracts"]:
+        for projected_raw in projected_cell["raw_input_fields"]:
+            records.append({
+                "cell_id": projected_cell["cell_id"],
+                "field_id": projected_raw["field_id"],
+                "status": "UNKNOWN",
+                "measurement_clock": deepcopy(projected_raw["measurement_clock"]),
+                "responsibility_boundary": deepcopy(projected_cell["responsibility_boundary"]),
+                "unit": projected_raw["unit"],
+                "reason": "No uniquely matching field was disclosed.",
+                "sources_considered": [],
+            })
+    records[0] = {
+        "cell_id": cell["cell_id"],
+        "field_id": raw["field_id"],
+        "status": "OBSERVED",
+        "measurement_clock": deepcopy(raw["measurement_clock"]),
+        "responsibility_boundary": deepcopy(cell["responsibility_boundary"]),
+        "unit": raw["unit"],
+        "raw_value": False,
+        "source": {
+            "source_id": source["source_id"],
+            "source_type": source["source_type"],
+            "official_url": source["official_url"],
+            "issuer_id": source["issuer_id"],
+            "report_period_end": source["report_period_end"],
+            "availability_precision": source["availability_precision"],
+            "source_available_at": source["source_available_at"],
+            "source_available_date": source["source_available_date"],
+            "pdf_page": 14,
+            "table_or_note": "Actual management discussion table",
+            "line_item": "Actual Furun year-end operating status",
+            "period_column": "As of 2015-12-31",
+        },
+    }
+    normalized = round5.normalize_custodian_field_records(records, projection=projection)
+    normalized_source = normalized[0]["source"]
+    assert normalized_source["custodian_locator"] == {
+        "table_or_note": "Actual management discussion table",
+        "line_item": "Actual Furun year-end operating status",
+        "period_column": "As of 2015-12-31",
+    }
+    assert {
+        key: normalized_source[key] for key in ("table_or_note", "line_item", "period_column")
+    } == raw["locator"]
+
+
+def test_committed_real_round5_feedback_replays_from_custodian_records(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    contract, _synthetic_authorization, inventory, _reader = _enterprise_synthetic_custody(tmp_path)
+    authorization = _load(REAL_OUTCOME_AUTHORIZATION)
+    projection = _load(CUSTODY_PROJECTION)
+    records = round5.normalize_custodian_field_records(
+        _load(REAL_FIELD_RECORDS), projection=projection,
+    )
+    monkeypatch.setattr(reconstruction, "CANONICAL_REGISTRY_PATH", tmp_path / "canonical.db")
+    _register_contract_and_round5_route(contract)
+    acquired = acquisition.acquire_outcome_measurements(
+        contract,
+        inventory,
+        field_records=records,
+        outcome_access_authorization=authorization,
+    )
+    produced = round5.register_canonical_acquisition_result(
+        **ROUND5_IDS,
+        outcome_access_authorization=authorization,
+        acquisition_result=acquired,
+        observed_at="2016-04-27T00:00:00+00:00",
+        settlement_id="EMFS:CN:CEMENT:600802:20150415:V3",
+        settled_at="2016-04-27T01:00:00+00:00",
+    )
+    produced.pop("persisted")
+    produced.pop("idempotent")
+    committed = _load(REAL_SETTLEMENT)
+    assert produced == committed
+    assert control.resolve_enterprise_settlement(produced["settlement_id"]) == committed
+    assert committed["coverage"] == {
+        "frozen_cells": 14,
+        "settled_cells": 14,
+        "observed_cells": 8,
+        "unknown_cells": 6,
+        "measurement_mismatch_cells": 0,
+    }
+    assert {row["status"] for row in committed["cell_results"]} == {"OBSERVED", "UNKNOWN"}
+
+
+def test_round5_independent_review_accepts_only_the_local_execution_scope_change() -> None:
+    settlement = _load(REAL_SETTLEMENT)
+    review = _load(REAL_POSTOUTCOME_REVIEW)
+    completion = _load(REAL_COMPLETION_RECEIPT)
+    assert review["verdict"] == "ACCEPT_LOCAL_MATERIAL_JUDGMENT_CHANGE_ONLY"
+    assert review["material_judgment_change"]["accepted_scope"] == "ISSUER_CONTROLLED_EXECUTION_SCOPE_ONLY"
+    assert review["layer_findings"]["customer_response"]["verdict"] == "UNKNOWN"
+    assert review["layer_findings"]["capital_return_and_permanent_loss"]["verdict"] == "UNKNOWN"
+    assert review["causality_boundary"]["furun_action_effect"] == "NOT_IDENTIFIED"
+    assert review["management_quality_boundary"]["overall_management_quality"] == "UNKNOWN"
+    assert set(review["rights"].values()).difference({
+        "NOT_AUTHORIZED", "ACCEPTED_WITH_BOUNDARIES", "AUTHORIZED",
+    }) == set()
+    assert completion["settlement_ref"]["settlement_id"] == settlement["settlement_id"]
+    assert completion["independent_review_ref"]["review_id"] == review["review_id"]
+    assert completion["feedback_turn_status"] == "REAL_FEEDBACK_TURN_5_COMPLETED"
+    assert completion["accepted_feedback_scope"] == "LOCAL_ISSUER_CONTROLLED_EXECUTION_SCOPE"
+    assert set(completion["rights"].values()) == {"NOT_AUTHORIZED"}
+    assert {
+        "DIRECT_CUSTOMER_RESPONSE",
+        "FURUN_ACTION_EFFECT",
+        "OVERALL_MANAGEMENT_QUALITY",
+        "CAPITAL_RETURN",
+        "PERMANENT_LOSS",
+    }.issubset(completion["unknowns_preserved"])
+
+
 def test_enterprise_settlement_persists_replays_is_idempotent_and_rejects_tamper(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     contract, authorization, inventory, reader = _enterprise_synthetic_custody(tmp_path)
     monkeypatch.setattr(reconstruction, "CANONICAL_REGISTRY_PATH", tmp_path / "canonical.db")
-    assert control.register_measurement_contract(contract, frozen_at=FREEZE_AT)["registered"]
+    _register_contract_and_round5_route(contract)
     result = acquisition.acquire_outcome_measurements(
         contract, inventory, page_reader=reader, outcome_access_authorization=authorization,
     )
@@ -571,10 +810,126 @@ def test_enterprise_settlement_persists_replays_is_idempotent_and_rejects_tamper
     assert second["idempotent"] is True
     assert resolved == replayed
     assert len(resolved["raw_observation_receipts"]) == 31
+    assert control.resolve_round5_route(ROUND5_IDS["package_id"]) == {
+        **ROUND5_IDS,
+        "contract_set_id": contract["contract_set_id"],
+    }
+    missing_required = deepcopy(resolved)
+    missing_required.pop("coverage")
+    with pytest.raises(control.TrainingControlPlaneError, match="shape is not closed"):
+        control.register_enterprise_settlement(
+            missing_required, registered_at="2016-04-27T03:00:00+00:00",
+        )
+    missing_route = deepcopy(resolved)
+    missing_route.pop("canonical_round5_binding")
+    with pytest.raises(control.TrainingControlPlaneError, match="retain the canonical package"):
+        control.register_enterprise_settlement(
+            missing_route, registered_at="2016-04-27T03:00:00+00:00",
+        )
     tampered = deepcopy(resolved)
     tampered["cell_results"][0]["label"] = "OBSERVED_INCREASE"
-    with pytest.raises(control.TrainingControlPlaneError, match="identity_conflict"):
+    with pytest.raises(control.TrainingControlPlaneError, match="differs from the frozen contract"):
         control.register_enterprise_settlement(tampered, registered_at="2016-04-27T03:00:00+00:00")
+
+
+@pytest.mark.parametrize(
+    "route_field",
+    ["package_id", "control_receipt_id", "adapter_acceptance_receipt_id"],
+)
+def test_enterprise_settlement_rejects_each_forged_round5_route_id(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, route_field: str,
+) -> None:
+    contract, authorization, inventory, reader = _enterprise_synthetic_custody(tmp_path)
+    registry = tmp_path / "canonical.db"
+    monkeypatch.setattr(reconstruction, "CANONICAL_REGISTRY_PATH", registry)
+    _register_contract_and_round5_route(contract)
+    result = acquisition.acquire_outcome_measurements(
+        contract, inventory, page_reader=reader, outcome_access_authorization=authorization,
+    )
+    forged_route = deepcopy(ROUND5_IDS)
+    forged_route[route_field] = "FORGED:" + route_field
+    with pytest.raises(
+        settlement_adapter.OutcomeMeasurementSettlementAdapterError,
+        match="route_(package_mismatch|does_not_match_canonical_registration)",
+    ):
+        settlement_adapter._settle_enterprise_acquisition_result(
+            measurement_contract=contract,
+            outcome_access_authorization=authorization,
+            acquisition_result=result,
+            observed_at="2016-04-27T02:00:00+00:00",
+            settlement_id=f"SETTLEMENT:ROUND5:ROUTE:{route_field}",
+            settled_at="2016-04-27T03:00:00+00:00",
+            canonical_round5_binding=forged_route,
+        )
+    conn = sqlite3.connect(registry)
+    try:
+        assert conn.execute(f"SELECT COUNT(*) FROM {control.ROUND5_ROUTE_TABLE}").fetchone()[0] == 1
+        assert conn.execute(f"SELECT COUNT(*) FROM {control.ENTERPRISE_OBSERVATION_TABLE}").fetchone()[0] == 0
+        assert conn.execute(f"SELECT COUNT(*) FROM {control.ENTERPRISE_SETTLEMENT_TABLE}").fetchone()[0] == 0
+    finally:
+        conn.close()
+
+
+@pytest.mark.parametrize(
+    ("mutation", "expected_code"),
+    [
+        ("label", "enterprise_settlement_semantics_invalid"),
+        ("computed_value", "enterprise_settlement_semantics_invalid"),
+        ("coverage", "enterprise_settlement_coverage_invalid"),
+        ("rights", "enterprise_settlement_rights_invalid"),
+        ("allowed_outputs", "enterprise_settlement_allowed_outputs_invalid"),
+        ("duplicate_field_pair", "enterprise_settlement_raw_field_coverage_invalid"),
+        ("missing_field_pair", "enterprise_settlement_raw_coverage_invalid"),
+    ],
+)
+def test_enterprise_settlement_rederives_semantics_before_persistence(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, mutation: str, expected_code: str,
+) -> None:
+    contract, authorization, inventory, reader = _enterprise_synthetic_custody(tmp_path)
+    monkeypatch.setattr(reconstruction, "CANONICAL_REGISTRY_PATH", tmp_path / "canonical.db")
+    _register_contract_and_round5_route(contract)
+    result = acquisition.acquire_outcome_measurements(
+        contract, inventory, page_reader=reader, outcome_access_authorization=authorization,
+    )
+    original = round5.register_canonical_acquisition_result(
+        **ROUND5_IDS,
+        outcome_access_authorization=authorization,
+        acquisition_result=result,
+        observed_at="2016-04-27T02:00:00+00:00",
+        settlement_id="SETTLEMENT:ROUND5:SEMANTICS:SOURCE",
+        settled_at="2016-04-27T03:00:00+00:00",
+    )
+    candidate_id = "SETTLEMENT:ROUND5:SEMANTICS:" + mutation
+    candidate = _clone_settlement_for_registration(original, settlement_id=candidate_id)
+    candidate.pop("persisted")
+    candidate.pop("idempotent")
+    if mutation == "label":
+        candidate["cell_results"][0]["label"] = "OBSERVED_NO"
+    elif mutation == "computed_value":
+        candidate["cell_results"][0]["computed_value"] = False
+    elif mutation == "coverage":
+        candidate["coverage"]["observed_cells"] += 1
+    elif mutation == "rights":
+        candidate["rights"]["enterprise_learning"] = "AUTHORIZED"
+    elif mutation == "allowed_outputs":
+        candidate["allowed_outputs"] = ["ENTERPRISE_LEARNING", "RESEARCH_AGENDA"]
+    elif mutation == "duplicate_field_pair":
+        duplicate = deepcopy(candidate["raw_observation_receipts"][0])
+        duplicate["receipt_id"] += ":DUPLICATE"
+        candidate["raw_observation_receipts"][-1] = duplicate
+        candidate["observation_receipt_ids"][-1] = duplicate["receipt_id"]
+    else:
+        candidate["raw_observation_receipts"].pop()
+        candidate["observation_receipt_ids"].pop()
+    _register_settlement_raw_receipts(candidate)
+    with pytest.raises(control.TrainingControlPlaneError) as exc_info:
+        control.register_enterprise_settlement(
+            candidate, registered_at="2016-04-27T03:00:00+00:00",
+        )
+    assert exc_info.value.code == expected_code
+    with pytest.raises(control.TrainingControlPlaneError) as unresolved:
+        control.resolve_enterprise_settlement(candidate_id)
+    assert unresolved.value.code == "enterprise_settlement_not_registered"
 
 
 def test_round5_canonical_production_entry_resolves_ids_and_rejects_injected_identity(
@@ -582,7 +937,7 @@ def test_round5_canonical_production_entry_resolves_ids_and_rejects_injected_ide
 ) -> None:
     contract, authorization, inventory, reader = _enterprise_synthetic_custody(tmp_path)
     monkeypatch.setattr(reconstruction, "CANONICAL_REGISTRY_PATH", tmp_path / "canonical.db")
-    assert control.register_measurement_contract(contract, frozen_at=FREEZE_AT)["registered"]
+    _register_contract_and_round5_route(contract)
     result = acquisition.acquire_outcome_measurements(
         contract, inventory, page_reader=reader, outcome_access_authorization=authorization,
     )
@@ -623,7 +978,7 @@ def test_enterprise_settlement_rejects_invalid_measurement_clock_order(
 ) -> None:
     contract, authorization, inventory, reader = _enterprise_synthetic_custody(tmp_path)
     monkeypatch.setattr(reconstruction, "CANONICAL_REGISTRY_PATH", tmp_path / "canonical.db")
-    assert control.register_measurement_contract(contract, frozen_at=FREEZE_AT)["registered"]
+    _register_contract_and_round5_route(contract)
     result = acquisition.acquire_outcome_measurements(
         contract, inventory, page_reader=reader, outcome_access_authorization=authorization,
     )

@@ -705,6 +705,7 @@ def _enterprise_raw_observation(
     source["responsibility_boundary"] = deepcopy(cell["responsibility_boundary"])
     source["unit"] = raw_field["unit"]
     source.update(deepcopy(raw_field["locator"]))
+    source["custodian_locator"] = deepcopy(raw_field["locator"])
     if disclosed_unit != raw_field["unit"]:
         return {
             **base, "status": "MEASUREMENT_MISMATCH", "reason": "RAW_FIELD_UNIT_DOES_NOT_MATCH_FROZEN_CONTRACT",
@@ -829,6 +830,12 @@ def _validate_enterprise_field_record(
             for key in ("table_or_note", "line_item", "period_column"):
                 if source.get(key) != locator.get(key):
                     findings.append(f"field_record_source_{key}_locator_mismatch")
+            actual_locator = _mapping(source.get("custodian_locator"))
+            if set(actual_locator) != {"table_or_note", "line_item", "period_column"} or any(
+                not _text(actual_locator.get(key))
+                for key in ("table_or_note", "line_item", "period_column")
+            ):
+                findings.append("field_record_source_custodian_locator_invalid")
             page = source.get("pdf_page")
             if not isinstance(page, int) or page < 1 or source.get("field_ref") != f"PDF p.{page}":
                 findings.append("field_record_source_page_binding_invalid")
@@ -1109,6 +1116,12 @@ def _validate_enterprise_acquisition_result(
                 for locator_key in ("table_or_note", "line_item", "period_column"):
                     if source.get(locator_key) != locator.get(locator_key):
                         findings.append(raw_path + f".source_{locator_key}_locator_must_match_frozen_raw_input")
+                actual_locator = _mapping(source.get("custodian_locator"))
+                if set(actual_locator) != {"table_or_note", "line_item", "period_column"} or any(
+                    not _text(actual_locator.get(locator_key))
+                    for locator_key in ("table_or_note", "line_item", "period_column")
+                ):
+                    findings.append(raw_path + ".source_custodian_locator_invalid")
                 source_clock_findings = _availability_after_cutoff(
                     source, cutoff=_enterprise_cutoff(contract), path=raw_path + ".source"
                 ) if _enterprise_cutoff(contract) is not None else []

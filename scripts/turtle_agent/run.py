@@ -74,6 +74,19 @@ def _load_json_file(path: str) -> dict[str, Any]:
         return {}
 
 
+def _refresh_report_learning_admissions(output_dir: str) -> dict[str, Any]:
+    """Project cutoff-safe control-plane learning into the report contract."""
+    try:
+        from scripts.judgment_learning_admission import (
+            refresh_analysis_contract_learning_admissions,
+        )
+    except ModuleNotFoundError:
+        from judgment_learning_admission import (
+            refresh_analysis_contract_learning_admissions,
+        )
+    return refresh_analysis_contract_learning_admissions(output_dir)
+
+
 def _sha256_file(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
@@ -1768,6 +1781,7 @@ def _initialize_pit_production_output(
             ),
         }
     _write_json_file(str(Path(output_dir) / "analysis_contract.json"), contract)
+    _refresh_report_learning_admissions(output_dir)
     from scripts.evidence_documents import initialize_official_evidence_policy
     from scripts.claim_evidence import initialize_claim_evidence_policy
     from scripts.financial_driver_bridge import initialize_financial_driver_bridge_policy
@@ -2803,6 +2817,13 @@ def run_full_pipeline(
             except ModuleNotFoundError:
                 from insight_ledger import initialize_insight_policy
             initialize_insight_policy(output_dir, run_id=run_id, enforced=True)
+
+            learning_admission = _refresh_report_learning_admissions(output_dir)
+            print(
+                "[Phase 3.97] 判断学习准入: "
+                f"{learning_admission.get('state') or 'UNAVAILABLE'}, "
+                f"selected={int(learning_admission.get('selected_count') or 0)}"
+            )
 
         from turtle_agent.tool_registry import ToolRegistry
         from turtle_agent.agent_loop import TurtleAgent, AgentConfig

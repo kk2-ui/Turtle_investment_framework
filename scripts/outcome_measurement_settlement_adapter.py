@@ -33,6 +33,54 @@ class OutcomeMeasurementSettlementAdapterError(ValueError):
     """An acquisition result cannot legally enter the stored settlement lane."""
 
 
+_ROUND5_ROUTE_KEYS = {
+    "package_id",
+    "control_receipt_id",
+    "adapter_acceptance_receipt_id",
+}
+
+
+def _is_round5_package(contract: Any) -> bool:
+    package_ref = contract.get("package_ref") if isinstance(contract, dict) else None
+    return isinstance(package_ref, str) and package_ref.startswith("EMFP:")
+
+
+def _validate_round5_route_binding(
+    binding: Any, *, measurement_contract: dict[str, Any], required: bool,
+) -> dict[str, Any] | None:
+    if binding is None:
+        if required:
+            raise OutcomeMeasurementSettlementAdapterError(
+                "enterprise_round5_canonical_entry_required"
+            )
+        return None
+    if not isinstance(binding, dict) or set(binding) != _ROUND5_ROUTE_KEYS:
+        raise OutcomeMeasurementSettlementAdapterError(
+            "enterprise_round5_route_binding_shape_invalid"
+        )
+    if any(not isinstance(value, str) or not value for value in binding.values()):
+        raise OutcomeMeasurementSettlementAdapterError(
+            "enterprise_round5_route_binding_identity_required"
+        )
+    if binding["package_id"] != measurement_contract.get("package_ref"):
+        raise OutcomeMeasurementSettlementAdapterError(
+            "enterprise_round5_route_package_mismatch"
+        )
+    if required:
+        try:
+            registered = enterprise_control.resolve_round5_route(binding["package_id"])
+        except enterprise_control.TrainingControlPlaneError as exc:
+            raise OutcomeMeasurementSettlementAdapterError(
+                "enterprise_round5_canonical_route_unavailable:" + exc.code
+            ) from exc
+        expected = {**binding, "contract_set_id": measurement_contract.get("contract_set_id")}
+        if registered != expected:
+            raise OutcomeMeasurementSettlementAdapterError(
+                "enterprise_round5_route_does_not_match_canonical_registration"
+            )
+    return deepcopy(binding)
+
+
 def _load(payload_json: str, *, code: str) -> dict[str, Any]:
     try:
         value = json.loads(payload_json)
@@ -241,7 +289,7 @@ def _enterprise_label(cell: dict[str, Any], value: bool | float) -> str:
     return "OBSERVED_STABLE"
 
 
-def settle_enterprise_acquisition_result(
+def _settle_enterprise_acquisition_result(
     *,
     measurement_contract: dict[str, Any],
     outcome_access_authorization: dict[str, Any],
@@ -249,8 +297,14 @@ def settle_enterprise_acquisition_result(
     observed_at: str,
     settlement_id: str,
     settled_at: str,
+    canonical_round5_binding: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     """Settle Enterprise V3 raw fields without constructing Forecast objects."""
+    route_binding = _validate_round5_route_binding(
+        canonical_round5_binding,
+        measurement_contract=measurement_contract,
+        required=_is_round5_package(measurement_contract),
+    )
     observed_timestamp = _instant(observed_at, field="observed_at")
     settled_timestamp = _instant(settled_at, field="settled_at")
     authorization_validation = acquisition.validate_enterprise_outcome_access_authorization(
@@ -364,6 +418,8 @@ def settle_enterprise_acquisition_result(
         "rights": deepcopy(measurement_contract["rights"]),
         "allowed_outputs": ["ENTERPRISE_OUTCOME_SETTLEMENT_ONLY", "RESEARCH_AGENDA"],
     }
+    if route_binding is not None:
+        settlement["canonical_round5_binding"] = route_binding
     for receipt in raw_receipts:
         enterprise_control.register_enterprise_observation_receipt(
             receipt, registered_at=settled_timestamp,
@@ -374,6 +430,34 @@ def settle_enterprise_acquisition_result(
     settlement["persisted"] = True
     settlement["idempotent"] = persisted["idempotent"]
     return settlement
+
+
+def settle_enterprise_acquisition_result(
+    *,
+    measurement_contract: dict[str, Any],
+    outcome_access_authorization: dict[str, Any],
+    acquisition_result: dict[str, Any],
+    observed_at: str,
+    settlement_id: str,
+    settled_at: str,
+) -> dict[str, Any]:
+    """Settle a generic Enterprise V3 contract outside the Round 5 route.
+
+    Round 5 contracts are package-bound and must enter through the canonical
+    adapter, which supplies and records the complete route identity.
+    """
+    if _is_round5_package(measurement_contract):
+        raise OutcomeMeasurementSettlementAdapterError(
+            "enterprise_round5_requires_canonical_round5_entry"
+        )
+    return _settle_enterprise_acquisition_result(
+        measurement_contract=measurement_contract,
+        outcome_access_authorization=outcome_access_authorization,
+        acquisition_result=acquisition_result,
+        observed_at=observed_at,
+        settlement_id=settlement_id,
+        settled_at=settled_at,
+    )
 
 
 def register_acquisition_result(

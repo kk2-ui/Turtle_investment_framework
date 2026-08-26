@@ -1,0 +1,1093 @@
+[
+  {
+    "cell_id": "CELL:600802:20150415:FURUN_OPERATING_SCOPE",
+    "field_id": "FIELD:600802:FY2015:FURUN_OPERATING_SCOPE_EVENT",
+    "status": "OBSERVED",
+    "measurement_clock": {
+      "clock_kind": "EVENT_WINDOW",
+      "event_window": {
+        "event_start": "2015-04-16",
+        "event_end": "2015-12-31",
+        "window_name": "POST_CUTOFF_FY2015_EVENT_WINDOW"
+      }
+    },
+    "responsibility_boundary": {
+      "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600802",
+      "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+      "arena_id": "ARENA:CN600802:FUJIAN_DELIVERED_CEMENT",
+      "scope_requirement": "issuer commercial participation in Furun unified sales, not production-project operation"
+    },
+    "unit": "BOOLEAN_EVENT",
+    "raw_value": false,
+    "source": {
+      "source_id": "CNINFO:600802:ANN:20160426:1202245558",
+      "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+      "official_url": "https://static.cninfo.com.cn/finalpage/2016-04-26/1202245558.PDF",
+      "issuer_id": "ISSUER:CN:600802",
+      "report_period_end": "2015-12-31",
+      "availability_precision": "DATE_ONLY",
+      "source_available_at": null,
+      "source_available_date": "2016-04-26",
+      "pdf_page": 14,
+      "table_or_note": "Management discussion and analysis - material equity investment - establishment of Furun Sales",
+      "line_item": "Furun unified-sales positioning, incomplete integration, products sold, actual-control and consolidation scope",
+      "period_column": "2015 reporting period / as of 2015-12-31"
+    }
+  },
+  {
+    "cell_id": "CELL:600802:20150415:CUSTOMER_RESPONSE_EVENT",
+    "field_id": "FIELD:600802:FY2015:DIRECT_CUSTOMER_RESPONSE_EVENT",
+    "status": "UNKNOWN",
+    "measurement_clock": {
+      "clock_kind": "EVENT_WINDOW",
+      "event_window": {
+        "event_start": "2015-04-16",
+        "event_end": "2015-12-31",
+        "window_name": "POST_CUTOFF_FY2015_EVENT_WINDOW"
+      }
+    },
+    "responsibility_boundary": {
+      "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600802",
+      "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+      "arena_id": "ARENA:CN600802:FUJIAN_DELIVERED_CEMENT",
+      "scope_requirement": "direct issuer customer, dealer, channel, order or market-share response in Fujian delivered cement"
+    },
+    "unit": "BOOLEAN_EVENT",
+    "reason": "The contracted source does not disclose a direct customer, dealer, channel, order, retention or market-share response within the frozen event window. Aggregate cement sales volume does not answer the missing atomic customer-response field.",
+    "sources_considered": [
+      {
+      "source_id": "CNINFO:600802:ANN:20160426:1202245558",
+      "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+      "official_url": "https://static.cninfo.com.cn/finalpage/2016-04-26/1202245558.PDF",
+      "issuer_id": "ISSUER:CN:600802",
+      "report_period_end": "2015-12-31",
+      "availability_precision": "DATE_ONLY",
+      "source_available_at": null,
+      "source_available_date": "2016-04-26",
+      "pdf_page": 11,
+      "table_or_note": "Production, sales and inventory analysis table",
+      "line_item": "Cement aggregate sales volume and year-over-year change",
+        "period_column": "FY2015 aggregate sales volume / year-over-year change"
+      }
+    ]
+  },
+  {
+    "cell_id": "CELL:600802:20150415:CEMENT_SALES_VOLUME",
+    "field_id": "FIELD:600802:FY2014:CEMENT_SALES_VOLUME_TONNES",
+    "status": "UNKNOWN",
+    "measurement_clock": {
+      "clock_kind": "FLOW_PERIOD",
+      "flow_period": {
+        "period_start": "2014-01-01",
+        "period_end": "2014-12-31",
+        "fiscal_period": "FY2014"
+      }
+    },
+    "responsibility_boundary": {
+      "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600802",
+      "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+      "arena_id": "ARENA:CN600802:FUJIAN_DELIVERED_CEMENT",
+      "scope_requirement": "issuer consolidated cement sales volume with FY2014 comparative on the same product definition"
+    },
+    "unit": "TONNE",
+    "reason": "The product table gives the FY2015 absolute cement sales volume and a percentage change from FY2014, but no FY2014 absolute cement sales volume. The missing atomic value was not reverse-engineered from the percentage.",
+    "sources_considered": [
+      {
+        "source_id": "CNINFO:600802:ANN:20160426:1202245558",
+        "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+        "official_url": "https://static.cninfo.com.cn/finalpage/2016-04-26/1202245558.PDF",
+        "issuer_id": "ISSUER:CN:600802",
+        "report_period_end": "2015-12-31",
+        "availability_precision": "DATE_ONLY",
+        "source_available_at": null,
+        "source_available_date": "2016-04-26",
+        "pdf_page": 11,
+        "table_or_note": "Production, sales and inventory analysis table (unit: ten thousand tonnes)",
+        "line_item": "Cement - sales volume",
+        "period_column": "FY2014 absolute value not disclosed; only year-over-year change of -12.21%"
+      }
+    ]
+  },
+  {
+    "cell_id": "CELL:600802:20150415:CEMENT_SALES_VOLUME",
+    "field_id": "FIELD:600802:FY2015:CEMENT_SALES_VOLUME_TONNES",
+    "status": "OBSERVED",
+    "measurement_clock": {
+      "clock_kind": "FLOW_PERIOD",
+      "flow_period": {
+        "period_start": "2015-01-01",
+        "period_end": "2015-12-31",
+        "fiscal_period": "FY2015"
+      }
+    },
+    "responsibility_boundary": {
+      "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600802",
+      "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+      "arena_id": "ARENA:CN600802:FUJIAN_DELIVERED_CEMENT",
+      "scope_requirement": "issuer consolidated cement sales volume with FY2014 comparative on the same product definition"
+    },
+    "unit": "TONNE",
+    "raw_value": 6623300,
+    "source": {
+      "source_id": "CNINFO:600802:ANN:20160426:1202245558",
+      "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+      "official_url": "https://static.cninfo.com.cn/finalpage/2016-04-26/1202245558.PDF",
+      "issuer_id": "ISSUER:CN:600802",
+      "report_period_end": "2015-12-31",
+      "availability_precision": "DATE_ONLY",
+      "source_available_at": null,
+      "source_available_date": "2016-04-26",
+      "pdf_page": 11,
+      "table_or_note": "Production, sales and inventory analysis table (unit: ten thousand tonnes)",
+      "line_item": "Cement - sales volume",
+      "period_column": "FY2015 sales volume; disclosed value 662.33 ten thousand tonnes; converted by multiplying by 10,000"
+    }
+  },
+  {
+    "cell_id": "CELL:600802:20150415:CLINKER_SALES_VOLUME",
+    "field_id": "FIELD:600802:FY2014:CLINKER_SALES_VOLUME_TONNES",
+    "status": "UNKNOWN",
+    "measurement_clock": {
+      "clock_kind": "FLOW_PERIOD",
+      "flow_period": {
+        "period_start": "2014-01-01",
+        "period_end": "2014-12-31",
+        "fiscal_period": "FY2014"
+      }
+    },
+    "responsibility_boundary": {
+      "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600802",
+      "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+      "arena_id": "ARENA:CN600802:FUJIAN_DELIVERED_CEMENT",
+      "scope_requirement": "issuer consolidated clinker sales volume with FY2014 comparative on the same product definition"
+    },
+    "unit": "TONNE",
+    "reason": "The product table gives the FY2015 absolute clinker sales volume and a percentage change from FY2014, but no FY2014 absolute clinker sales volume. The missing atomic value was not reverse-engineered from the percentage.",
+    "sources_considered": [
+      {
+        "source_id": "CNINFO:600802:ANN:20160426:1202245558",
+        "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+        "official_url": "https://static.cninfo.com.cn/finalpage/2016-04-26/1202245558.PDF",
+        "issuer_id": "ISSUER:CN:600802",
+        "report_period_end": "2015-12-31",
+        "availability_precision": "DATE_ONLY",
+        "source_available_at": null,
+        "source_available_date": "2016-04-26",
+        "pdf_page": 11,
+        "table_or_note": "Production, sales and inventory analysis table (unit: ten thousand tonnes)",
+        "line_item": "Clinker - sales volume",
+        "period_column": "FY2014 absolute value not disclosed; only year-over-year change of -69.83%"
+      }
+    ]
+  },
+  {
+    "cell_id": "CELL:600802:20150415:CLINKER_SALES_VOLUME",
+    "field_id": "FIELD:600802:FY2015:CLINKER_SALES_VOLUME_TONNES",
+    "status": "OBSERVED",
+    "measurement_clock": {
+      "clock_kind": "FLOW_PERIOD",
+      "flow_period": {
+        "period_start": "2015-01-01",
+        "period_end": "2015-12-31",
+        "fiscal_period": "FY2015"
+      }
+    },
+    "responsibility_boundary": {
+      "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600802",
+      "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+      "arena_id": "ARENA:CN600802:FUJIAN_DELIVERED_CEMENT",
+      "scope_requirement": "issuer consolidated clinker sales volume with FY2014 comparative on the same product definition"
+    },
+    "unit": "TONNE",
+    "raw_value": 84700,
+    "source": {
+      "source_id": "CNINFO:600802:ANN:20160426:1202245558",
+      "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+      "official_url": "https://static.cninfo.com.cn/finalpage/2016-04-26/1202245558.PDF",
+      "issuer_id": "ISSUER:CN:600802",
+      "report_period_end": "2015-12-31",
+      "availability_precision": "DATE_ONLY",
+      "source_available_at": null,
+      "source_available_date": "2016-04-26",
+      "pdf_page": 11,
+      "table_or_note": "Production, sales and inventory analysis table (unit: ten thousand tonnes)",
+      "line_item": "Clinker - sales volume",
+      "period_column": "FY2015 sales volume; disclosed value 8.47 ten thousand tonnes; converted by multiplying by 10,000"
+    }
+  },
+  {
+    "cell_id": "CELL:600802:20150415:CEMENT_REALIZED_PRICE",
+    "field_id": "FIELD:600802:FY2014:CEMENT_REVENUE_RMB",
+    "status": "OBSERVED",
+    "measurement_clock": {
+      "clock_kind": "FLOW_PERIOD",
+      "flow_period": {
+        "period_start": "2014-01-01",
+        "period_end": "2014-12-31",
+        "fiscal_period": "FY2014"
+      }
+    },
+    "responsibility_boundary": {
+      "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600802",
+      "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+      "arena_id": "ARENA:CN600802:FUJIAN_DELIVERED_CEMENT",
+      "scope_requirement": "issuer cement sales revenue and volume on the same product and tax basis"
+    },
+    "unit": "RMB",
+    "raw_value": 1990701757.01,
+    "source": {
+      "source_id": "CNINFO:600802:ANN:20160426:1202245558",
+      "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+      "official_url": "https://static.cninfo.com.cn/finalpage/2016-04-26/1202245558.PDF",
+      "issuer_id": "ISSUER:CN:600802",
+      "report_period_end": "2015-12-31",
+      "availability_precision": "DATE_ONLY",
+      "source_available_at": null,
+      "source_available_date": "2016-04-26",
+      "pdf_page": 109,
+      "table_or_note": "Note 61 - operating revenue and operating cost - principal business by product (unit: RMB)",
+      "line_item": "Cement - principal business revenue",
+      "period_column": "Prior-period amount (FY2014)"
+    }
+  },
+  {
+    "cell_id": "CELL:600802:20150415:CEMENT_REALIZED_PRICE",
+    "field_id": "FIELD:600802:FY2014:CEMENT_SALES_VOLUME_TONNES",
+    "status": "UNKNOWN",
+    "measurement_clock": {
+      "clock_kind": "FLOW_PERIOD",
+      "flow_period": {
+        "period_start": "2014-01-01",
+        "period_end": "2014-12-31",
+        "fiscal_period": "FY2014"
+      }
+    },
+    "responsibility_boundary": {
+      "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600802",
+      "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+      "arena_id": "ARENA:CN600802:FUJIAN_DELIVERED_CEMENT",
+      "scope_requirement": "issuer cement sales revenue and volume on the same product and tax basis"
+    },
+    "unit": "TONNE",
+    "reason": "The sales-volume table does not disclose the FY2014 absolute cement sales volume required to pair with FY2014 cement revenue. The value was not reconstructed from the year-over-year percentage.",
+    "sources_considered": [
+      {
+        "source_id": "CNINFO:600802:ANN:20160426:1202245558",
+        "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+        "official_url": "https://static.cninfo.com.cn/finalpage/2016-04-26/1202245558.PDF",
+        "issuer_id": "ISSUER:CN:600802",
+        "report_period_end": "2015-12-31",
+        "availability_precision": "DATE_ONLY",
+        "source_available_at": null,
+        "source_available_date": "2016-04-26",
+        "pdf_page": 11,
+        "table_or_note": "Production, sales and inventory analysis table (unit: ten thousand tonnes)",
+        "line_item": "Cement - sales volume",
+        "period_column": "FY2014 absolute value not disclosed; only year-over-year change of -12.21%"
+      }
+    ]
+  },
+  {
+    "cell_id": "CELL:600802:20150415:CEMENT_REALIZED_PRICE",
+    "field_id": "FIELD:600802:FY2015:CEMENT_REVENUE_RMB",
+    "status": "OBSERVED",
+    "measurement_clock": {
+      "clock_kind": "FLOW_PERIOD",
+      "flow_period": {
+        "period_start": "2015-01-01",
+        "period_end": "2015-12-31",
+        "fiscal_period": "FY2015"
+      }
+    },
+    "responsibility_boundary": {
+      "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600802",
+      "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+      "arena_id": "ARENA:CN600802:FUJIAN_DELIVERED_CEMENT",
+      "scope_requirement": "issuer cement sales revenue and volume on the same product and tax basis"
+    },
+    "unit": "RMB",
+    "raw_value": 1495684560.45,
+    "source": {
+      "source_id": "CNINFO:600802:ANN:20160426:1202245558",
+      "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+      "official_url": "https://static.cninfo.com.cn/finalpage/2016-04-26/1202245558.PDF",
+      "issuer_id": "ISSUER:CN:600802",
+      "report_period_end": "2015-12-31",
+      "availability_precision": "DATE_ONLY",
+      "source_available_at": null,
+      "source_available_date": "2016-04-26",
+      "pdf_page": 109,
+      "table_or_note": "Note 61 - operating revenue and operating cost - principal business by product (unit: RMB)",
+      "line_item": "Cement - principal business revenue",
+      "period_column": "Current-period amount (FY2015)"
+    }
+  },
+  {
+    "cell_id": "CELL:600802:20150415:CEMENT_REALIZED_PRICE",
+    "field_id": "FIELD:600802:FY2015:CEMENT_SALES_VOLUME_TONNES",
+    "status": "OBSERVED",
+    "measurement_clock": {
+      "clock_kind": "FLOW_PERIOD",
+      "flow_period": {
+        "period_start": "2015-01-01",
+        "period_end": "2015-12-31",
+        "fiscal_period": "FY2015"
+      }
+    },
+    "responsibility_boundary": {
+      "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600802",
+      "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+      "arena_id": "ARENA:CN600802:FUJIAN_DELIVERED_CEMENT",
+      "scope_requirement": "issuer cement sales revenue and volume on the same product and tax basis"
+    },
+    "unit": "TONNE",
+    "raw_value": 6623300,
+    "source": {
+      "source_id": "CNINFO:600802:ANN:20160426:1202245558",
+      "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+      "official_url": "https://static.cninfo.com.cn/finalpage/2016-04-26/1202245558.PDF",
+      "issuer_id": "ISSUER:CN:600802",
+      "report_period_end": "2015-12-31",
+      "availability_precision": "DATE_ONLY",
+      "source_available_at": null,
+      "source_available_date": "2016-04-26",
+      "pdf_page": 11,
+      "table_or_note": "Production, sales and inventory analysis table (unit: ten thousand tonnes)",
+      "line_item": "Cement - sales volume",
+      "period_column": "FY2015 sales volume; disclosed value 662.33 ten thousand tonnes; converted by multiplying by 10,000"
+    }
+  },
+  {
+    "cell_id": "CELL:600802:20150415:CEMENT_UNIT_COST",
+    "field_id": "FIELD:600802:FY2014:CEMENT_OPERATING_COST_RMB",
+    "status": "OBSERVED",
+    "measurement_clock": {
+      "clock_kind": "FLOW_PERIOD",
+      "flow_period": {
+        "period_start": "2014-01-01",
+        "period_end": "2014-12-31",
+        "fiscal_period": "FY2014"
+      }
+    },
+    "responsibility_boundary": {
+      "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600802",
+      "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+      "arena_id": "ARENA:CN600802:FUJIAN_DELIVERED_CEMENT",
+      "scope_requirement": "issuer cement product cost and sales volume on the same product boundary"
+    },
+    "unit": "RMB",
+    "raw_value": 1657611250.16,
+    "source": {
+      "source_id": "CNINFO:600802:ANN:20160426:1202245558",
+      "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+      "official_url": "https://static.cninfo.com.cn/finalpage/2016-04-26/1202245558.PDF",
+      "issuer_id": "ISSUER:CN:600802",
+      "report_period_end": "2015-12-31",
+      "availability_precision": "DATE_ONLY",
+      "source_available_at": null,
+      "source_available_date": "2016-04-26",
+      "pdf_page": 109,
+      "table_or_note": "Note 61 - operating revenue and operating cost - principal business by product (unit: RMB)",
+      "line_item": "Cement - principal business cost",
+      "period_column": "Prior-period amount (FY2014)"
+    }
+  },
+  {
+    "cell_id": "CELL:600802:20150415:CEMENT_UNIT_COST",
+    "field_id": "FIELD:600802:FY2014:CEMENT_SALES_VOLUME_TONNES",
+    "status": "UNKNOWN",
+    "measurement_clock": {
+      "clock_kind": "FLOW_PERIOD",
+      "flow_period": {
+        "period_start": "2014-01-01",
+        "period_end": "2014-12-31",
+        "fiscal_period": "FY2014"
+      }
+    },
+    "responsibility_boundary": {
+      "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600802",
+      "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+      "arena_id": "ARENA:CN600802:FUJIAN_DELIVERED_CEMENT",
+      "scope_requirement": "issuer cement product cost and sales volume on the same product boundary"
+    },
+    "unit": "TONNE",
+    "reason": "The sales-volume table does not disclose the FY2014 absolute cement sales volume required to pair with FY2014 cement product cost. The value was not reconstructed from the year-over-year percentage.",
+    "sources_considered": [
+      {
+        "source_id": "CNINFO:600802:ANN:20160426:1202245558",
+        "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+        "official_url": "https://static.cninfo.com.cn/finalpage/2016-04-26/1202245558.PDF",
+        "issuer_id": "ISSUER:CN:600802",
+        "report_period_end": "2015-12-31",
+        "availability_precision": "DATE_ONLY",
+        "source_available_at": null,
+        "source_available_date": "2016-04-26",
+        "pdf_page": 11,
+        "table_or_note": "Production, sales and inventory analysis table (unit: ten thousand tonnes)",
+        "line_item": "Cement - sales volume",
+        "period_column": "FY2014 absolute value not disclosed; only year-over-year change of -12.21%"
+      }
+    ]
+  },
+  {
+    "cell_id": "CELL:600802:20150415:CEMENT_UNIT_COST",
+    "field_id": "FIELD:600802:FY2015:CEMENT_OPERATING_COST_RMB",
+    "status": "OBSERVED",
+    "measurement_clock": {
+      "clock_kind": "FLOW_PERIOD",
+      "flow_period": {
+        "period_start": "2015-01-01",
+        "period_end": "2015-12-31",
+        "fiscal_period": "FY2015"
+      }
+    },
+    "responsibility_boundary": {
+      "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600802",
+      "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+      "arena_id": "ARENA:CN600802:FUJIAN_DELIVERED_CEMENT",
+      "scope_requirement": "issuer cement product cost and sales volume on the same product boundary"
+    },
+    "unit": "RMB",
+    "raw_value": 1463706542.81,
+    "source": {
+      "source_id": "CNINFO:600802:ANN:20160426:1202245558",
+      "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+      "official_url": "https://static.cninfo.com.cn/finalpage/2016-04-26/1202245558.PDF",
+      "issuer_id": "ISSUER:CN:600802",
+      "report_period_end": "2015-12-31",
+      "availability_precision": "DATE_ONLY",
+      "source_available_at": null,
+      "source_available_date": "2016-04-26",
+      "pdf_page": 109,
+      "table_or_note": "Note 61 - operating revenue and operating cost - principal business by product (unit: RMB)",
+      "line_item": "Cement - principal business cost",
+      "period_column": "Current-period amount (FY2015)"
+    }
+  },
+  {
+    "cell_id": "CELL:600802:20150415:CEMENT_UNIT_COST",
+    "field_id": "FIELD:600802:FY2015:CEMENT_SALES_VOLUME_TONNES",
+    "status": "OBSERVED",
+    "measurement_clock": {
+      "clock_kind": "FLOW_PERIOD",
+      "flow_period": {
+        "period_start": "2015-01-01",
+        "period_end": "2015-12-31",
+        "fiscal_period": "FY2015"
+      }
+    },
+    "responsibility_boundary": {
+      "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600802",
+      "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+      "arena_id": "ARENA:CN600802:FUJIAN_DELIVERED_CEMENT",
+      "scope_requirement": "issuer cement product cost and sales volume on the same product boundary"
+    },
+    "unit": "TONNE",
+    "raw_value": 6623300,
+    "source": {
+      "source_id": "CNINFO:600802:ANN:20160426:1202245558",
+      "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+      "official_url": "https://static.cninfo.com.cn/finalpage/2016-04-26/1202245558.PDF",
+      "issuer_id": "ISSUER:CN:600802",
+      "report_period_end": "2015-12-31",
+      "availability_precision": "DATE_ONLY",
+      "source_available_at": null,
+      "source_available_date": "2016-04-26",
+      "pdf_page": 11,
+      "table_or_note": "Production, sales and inventory analysis table (unit: ten thousand tonnes)",
+      "line_item": "Cement - sales volume",
+      "period_column": "FY2015 sales volume; disclosed value 662.33 ten thousand tonnes; converted by multiplying by 10,000"
+    }
+  },
+  {
+    "cell_id": "CELL:600802:20150415:SELLING_EXPENSE",
+    "field_id": "FIELD:600802:FY2014:SELLING_EXPENSE_RMB",
+    "status": "OBSERVED",
+    "measurement_clock": {
+      "clock_kind": "FLOW_PERIOD",
+      "flow_period": {
+        "period_start": "2014-01-01",
+        "period_end": "2014-12-31",
+        "fiscal_period": "FY2014"
+      }
+    },
+    "responsibility_boundary": {
+      "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600802",
+      "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+      "arena_id": "ARENA:CN600802:FUJIAN_DELIVERED_CEMENT",
+      "scope_requirement": "audited issuer consolidated selling expense with FY2014 comparative"
+    },
+    "unit": "RMB",
+    "raw_value": 58883643.20,
+    "source": {
+      "source_id": "CNINFO:600802:ANN:20160426:1202245558",
+      "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+      "official_url": "https://static.cninfo.com.cn/finalpage/2016-04-26/1202245558.PDF",
+      "issuer_id": "ISSUER:CN:600802",
+      "report_period_end": "2015-12-31",
+      "availability_precision": "DATE_ONLY",
+      "source_available_at": null,
+      "source_available_date": "2016-04-26",
+      "pdf_page": 48,
+      "table_or_note": "Consolidated income statement (unit: RMB)",
+      "line_item": "Selling expense",
+      "period_column": "Prior-period amount (FY2014)"
+    }
+  },
+  {
+    "cell_id": "CELL:600802:20150415:SELLING_EXPENSE",
+    "field_id": "FIELD:600802:FY2015:SELLING_EXPENSE_RMB",
+    "status": "OBSERVED",
+    "measurement_clock": {
+      "clock_kind": "FLOW_PERIOD",
+      "flow_period": {
+        "period_start": "2015-01-01",
+        "period_end": "2015-12-31",
+        "fiscal_period": "FY2015"
+      }
+    },
+    "responsibility_boundary": {
+      "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600802",
+      "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+      "arena_id": "ARENA:CN600802:FUJIAN_DELIVERED_CEMENT",
+      "scope_requirement": "audited issuer consolidated selling expense with FY2014 comparative"
+    },
+    "unit": "RMB",
+    "raw_value": 51417734.41,
+    "source": {
+      "source_id": "CNINFO:600802:ANN:20160426:1202245558",
+      "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+      "official_url": "https://static.cninfo.com.cn/finalpage/2016-04-26/1202245558.PDF",
+      "issuer_id": "ISSUER:CN:600802",
+      "report_period_end": "2015-12-31",
+      "availability_precision": "DATE_ONLY",
+      "source_available_at": null,
+      "source_available_date": "2016-04-26",
+      "pdf_page": 48,
+      "table_or_note": "Consolidated income statement (unit: RMB)",
+      "line_item": "Selling expense",
+      "period_column": "Current-period amount (FY2015)"
+    }
+  },
+  {
+    "cell_id": "CELL:600802:20150415:CEMENT_GROSS_MARGIN",
+    "field_id": "FIELD:600802:FY2014:CEMENT_REVENUE_RMB",
+    "status": "OBSERVED",
+    "measurement_clock": {
+      "clock_kind": "FLOW_PERIOD",
+      "flow_period": {
+        "period_start": "2014-01-01",
+        "period_end": "2014-12-31",
+        "fiscal_period": "FY2014"
+      }
+    },
+    "responsibility_boundary": {
+      "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600802",
+      "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+      "arena_id": "ARENA:CN600802:FUJIAN_DELIVERED_CEMENT",
+      "scope_requirement": "issuer cement product revenue and cost on the same product boundary"
+    },
+    "unit": "RMB",
+    "raw_value": 1990701757.01,
+    "source": {
+      "source_id": "CNINFO:600802:ANN:20160426:1202245558",
+      "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+      "official_url": "https://static.cninfo.com.cn/finalpage/2016-04-26/1202245558.PDF",
+      "issuer_id": "ISSUER:CN:600802",
+      "report_period_end": "2015-12-31",
+      "availability_precision": "DATE_ONLY",
+      "source_available_at": null,
+      "source_available_date": "2016-04-26",
+      "pdf_page": 109,
+      "table_or_note": "Note 61 - operating revenue and operating cost - principal business by product (unit: RMB)",
+      "line_item": "Cement - principal business revenue",
+      "period_column": "Prior-period amount (FY2014)"
+    }
+  },
+  {
+    "cell_id": "CELL:600802:20150415:CEMENT_GROSS_MARGIN",
+    "field_id": "FIELD:600802:FY2014:CEMENT_OPERATING_COST_RMB",
+    "status": "OBSERVED",
+    "measurement_clock": {
+      "clock_kind": "FLOW_PERIOD",
+      "flow_period": {
+        "period_start": "2014-01-01",
+        "period_end": "2014-12-31",
+        "fiscal_period": "FY2014"
+      }
+    },
+    "responsibility_boundary": {
+      "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600802",
+      "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+      "arena_id": "ARENA:CN600802:FUJIAN_DELIVERED_CEMENT",
+      "scope_requirement": "issuer cement product revenue and cost on the same product boundary"
+    },
+    "unit": "RMB",
+    "raw_value": 1657611250.16,
+    "source": {
+      "source_id": "CNINFO:600802:ANN:20160426:1202245558",
+      "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+      "official_url": "https://static.cninfo.com.cn/finalpage/2016-04-26/1202245558.PDF",
+      "issuer_id": "ISSUER:CN:600802",
+      "report_period_end": "2015-12-31",
+      "availability_precision": "DATE_ONLY",
+      "source_available_at": null,
+      "source_available_date": "2016-04-26",
+      "pdf_page": 109,
+      "table_or_note": "Note 61 - operating revenue and operating cost - principal business by product (unit: RMB)",
+      "line_item": "Cement - principal business cost",
+      "period_column": "Prior-period amount (FY2014)"
+    }
+  },
+  {
+    "cell_id": "CELL:600802:20150415:CEMENT_GROSS_MARGIN",
+    "field_id": "FIELD:600802:FY2015:CEMENT_REVENUE_RMB",
+    "status": "OBSERVED",
+    "measurement_clock": {
+      "clock_kind": "FLOW_PERIOD",
+      "flow_period": {
+        "period_start": "2015-01-01",
+        "period_end": "2015-12-31",
+        "fiscal_period": "FY2015"
+      }
+    },
+    "responsibility_boundary": {
+      "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600802",
+      "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+      "arena_id": "ARENA:CN600802:FUJIAN_DELIVERED_CEMENT",
+      "scope_requirement": "issuer cement product revenue and cost on the same product boundary"
+    },
+    "unit": "RMB",
+    "raw_value": 1495684560.45,
+    "source": {
+      "source_id": "CNINFO:600802:ANN:20160426:1202245558",
+      "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+      "official_url": "https://static.cninfo.com.cn/finalpage/2016-04-26/1202245558.PDF",
+      "issuer_id": "ISSUER:CN:600802",
+      "report_period_end": "2015-12-31",
+      "availability_precision": "DATE_ONLY",
+      "source_available_at": null,
+      "source_available_date": "2016-04-26",
+      "pdf_page": 109,
+      "table_or_note": "Note 61 - operating revenue and operating cost - principal business by product (unit: RMB)",
+      "line_item": "Cement - principal business revenue",
+      "period_column": "Current-period amount (FY2015)"
+    }
+  },
+  {
+    "cell_id": "CELL:600802:20150415:CEMENT_GROSS_MARGIN",
+    "field_id": "FIELD:600802:FY2015:CEMENT_OPERATING_COST_RMB",
+    "status": "OBSERVED",
+    "measurement_clock": {
+      "clock_kind": "FLOW_PERIOD",
+      "flow_period": {
+        "period_start": "2015-01-01",
+        "period_end": "2015-12-31",
+        "fiscal_period": "FY2015"
+      }
+    },
+    "responsibility_boundary": {
+      "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600802",
+      "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+      "arena_id": "ARENA:CN600802:FUJIAN_DELIVERED_CEMENT",
+      "scope_requirement": "issuer cement product revenue and cost on the same product boundary"
+    },
+    "unit": "RMB",
+    "raw_value": 1463706542.81,
+    "source": {
+      "source_id": "CNINFO:600802:ANN:20160426:1202245558",
+      "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+      "official_url": "https://static.cninfo.com.cn/finalpage/2016-04-26/1202245558.PDF",
+      "issuer_id": "ISSUER:CN:600802",
+      "report_period_end": "2015-12-31",
+      "availability_precision": "DATE_ONLY",
+      "source_available_at": null,
+      "source_available_date": "2016-04-26",
+      "pdf_page": 109,
+      "table_or_note": "Note 61 - operating revenue and operating cost - principal business by product (unit: RMB)",
+      "line_item": "Cement - principal business cost",
+      "period_column": "Current-period amount (FY2015)"
+    }
+  },
+  {
+    "cell_id": "CELL:600802:20150415:ACCOUNTS_RECEIVABLE",
+    "field_id": "FIELD:600802:FY2014:ACCOUNTS_RECEIVABLE_RMB",
+    "status": "OBSERVED",
+    "measurement_clock": {
+      "clock_kind": "BALANCE_AS_OF",
+      "balance_as_of": {
+        "as_of": "2014-12-31",
+        "fiscal_period": "FY2014"
+      }
+    },
+    "responsibility_boundary": {
+      "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600802",
+      "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+      "arena_id": "ARENA:CN600802:FUJIAN_DELIVERED_CEMENT",
+      "scope_requirement": "audited consolidated trade accounts receivable with FY2014 comparative"
+    },
+    "unit": "RMB",
+    "raw_value": 7768783.22,
+    "source": {
+      "source_id": "CNINFO:600802:ANN:20160426:1202245558",
+      "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+      "official_url": "https://static.cninfo.com.cn/finalpage/2016-04-26/1202245558.PDF",
+      "issuer_id": "ISSUER:CN:600802",
+      "report_period_end": "2015-12-31",
+      "availability_precision": "DATE_ONLY",
+      "source_available_at": null,
+      "source_available_date": "2016-04-26",
+      "pdf_page": 44,
+      "table_or_note": "Consolidated balance sheet as of 2015-12-31 (unit: RMB)",
+      "line_item": "Accounts receivable",
+      "period_column": "Opening balance (2014-12-31)"
+    }
+  },
+  {
+    "cell_id": "CELL:600802:20150415:ACCOUNTS_RECEIVABLE",
+    "field_id": "FIELD:600802:FY2015:ACCOUNTS_RECEIVABLE_RMB",
+    "status": "OBSERVED",
+    "measurement_clock": {
+      "clock_kind": "BALANCE_AS_OF",
+      "balance_as_of": {
+        "as_of": "2015-12-31",
+        "fiscal_period": "FY2015"
+      }
+    },
+    "responsibility_boundary": {
+      "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600802",
+      "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+      "arena_id": "ARENA:CN600802:FUJIAN_DELIVERED_CEMENT",
+      "scope_requirement": "audited consolidated trade accounts receivable with FY2014 comparative"
+    },
+    "unit": "RMB",
+    "raw_value": 2570257.85,
+    "source": {
+      "source_id": "CNINFO:600802:ANN:20160426:1202245558",
+      "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+      "official_url": "https://static.cninfo.com.cn/finalpage/2016-04-26/1202245558.PDF",
+      "issuer_id": "ISSUER:CN:600802",
+      "report_period_end": "2015-12-31",
+      "availability_precision": "DATE_ONLY",
+      "source_available_at": null,
+      "source_available_date": "2016-04-26",
+      "pdf_page": 44,
+      "table_or_note": "Consolidated balance sheet as of 2015-12-31 (unit: RMB)",
+      "line_item": "Accounts receivable",
+      "period_column": "Closing balance (2015-12-31)"
+    }
+  },
+  {
+    "cell_id": "CELL:600802:20150415:INVENTORY",
+    "field_id": "FIELD:600802:FY2014:INVENTORY_RMB",
+    "status": "OBSERVED",
+    "measurement_clock": {
+      "clock_kind": "BALANCE_AS_OF",
+      "balance_as_of": {
+        "as_of": "2014-12-31",
+        "fiscal_period": "FY2014"
+      }
+    },
+    "responsibility_boundary": {
+      "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600802",
+      "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+      "arena_id": "ARENA:CN600802:FUJIAN_DELIVERED_CEMENT",
+      "scope_requirement": "audited consolidated inventory with FY2014 comparative"
+    },
+    "unit": "RMB",
+    "raw_value": 224430964.24,
+    "source": {
+      "source_id": "CNINFO:600802:ANN:20160426:1202245558",
+      "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+      "official_url": "https://static.cninfo.com.cn/finalpage/2016-04-26/1202245558.PDF",
+      "issuer_id": "ISSUER:CN:600802",
+      "report_period_end": "2015-12-31",
+      "availability_precision": "DATE_ONLY",
+      "source_available_at": null,
+      "source_available_date": "2016-04-26",
+      "pdf_page": 44,
+      "table_or_note": "Consolidated balance sheet as of 2015-12-31 (unit: RMB)",
+      "line_item": "Inventory",
+      "period_column": "Opening balance (2014-12-31)"
+    }
+  },
+  {
+    "cell_id": "CELL:600802:20150415:INVENTORY",
+    "field_id": "FIELD:600802:FY2015:INVENTORY_RMB",
+    "status": "OBSERVED",
+    "measurement_clock": {
+      "clock_kind": "BALANCE_AS_OF",
+      "balance_as_of": {
+        "as_of": "2015-12-31",
+        "fiscal_period": "FY2015"
+      }
+    },
+    "responsibility_boundary": {
+      "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600802",
+      "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+      "arena_id": "ARENA:CN600802:FUJIAN_DELIVERED_CEMENT",
+      "scope_requirement": "audited consolidated inventory with FY2014 comparative"
+    },
+    "unit": "RMB",
+    "raw_value": 167934687.20,
+    "source": {
+      "source_id": "CNINFO:600802:ANN:20160426:1202245558",
+      "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+      "official_url": "https://static.cninfo.com.cn/finalpage/2016-04-26/1202245558.PDF",
+      "issuer_id": "ISSUER:CN:600802",
+      "report_period_end": "2015-12-31",
+      "availability_precision": "DATE_ONLY",
+      "source_available_at": null,
+      "source_available_date": "2016-04-26",
+      "pdf_page": 44,
+      "table_or_note": "Consolidated balance sheet as of 2015-12-31 (unit: RMB)",
+      "line_item": "Inventory",
+      "period_column": "Closing balance (2015-12-31)"
+    }
+  },
+  {
+    "cell_id": "CELL:600802:20150415:OPERATING_CASH",
+    "field_id": "FIELD:600802:FY2014:NET_OPERATING_CASH_RMB",
+    "status": "OBSERVED",
+    "measurement_clock": {
+      "clock_kind": "FLOW_PERIOD",
+      "flow_period": {
+        "period_start": "2014-01-01",
+        "period_end": "2014-12-31",
+        "fiscal_period": "FY2014"
+      }
+    },
+    "responsibility_boundary": {
+      "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600802",
+      "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+      "arena_id": "ARENA:CN600802:FUJIAN_DELIVERED_CEMENT",
+      "scope_requirement": "audited consolidated net cash from operating activities with FY2014 comparative"
+    },
+    "unit": "RMB",
+    "raw_value": 295225962.66,
+    "source": {
+      "source_id": "CNINFO:600802:ANN:20160426:1202245558",
+      "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+      "official_url": "https://static.cninfo.com.cn/finalpage/2016-04-26/1202245558.PDF",
+      "issuer_id": "ISSUER:CN:600802",
+      "report_period_end": "2015-12-31",
+      "availability_precision": "DATE_ONLY",
+      "source_available_at": null,
+      "source_available_date": "2016-04-26",
+      "pdf_page": 51,
+      "table_or_note": "Consolidated cash-flow statement for 2015 (unit: RMB)",
+      "line_item": "Net cash flows from operating activities",
+      "period_column": "Prior-period amount (FY2014)"
+    }
+  },
+  {
+    "cell_id": "CELL:600802:20150415:OPERATING_CASH",
+    "field_id": "FIELD:600802:FY2015:NET_OPERATING_CASH_RMB",
+    "status": "OBSERVED",
+    "measurement_clock": {
+      "clock_kind": "FLOW_PERIOD",
+      "flow_period": {
+        "period_start": "2015-01-01",
+        "period_end": "2015-12-31",
+        "fiscal_period": "FY2015"
+      }
+    },
+    "responsibility_boundary": {
+      "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600802",
+      "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+      "arena_id": "ARENA:CN600802:FUJIAN_DELIVERED_CEMENT",
+      "scope_requirement": "audited consolidated net cash from operating activities with FY2014 comparative"
+    },
+    "unit": "RMB",
+    "raw_value": 108423482.34,
+    "source": {
+      "source_id": "CNINFO:600802:ANN:20160426:1202245558",
+      "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+      "official_url": "https://static.cninfo.com.cn/finalpage/2016-04-26/1202245558.PDF",
+      "issuer_id": "ISSUER:CN:600802",
+      "report_period_end": "2015-12-31",
+      "availability_precision": "DATE_ONLY",
+      "source_available_at": null,
+      "source_available_date": "2016-04-26",
+      "pdf_page": 51,
+      "table_or_note": "Consolidated cash-flow statement for 2015 (unit: RMB)",
+      "line_item": "Net cash flows from operating activities",
+      "period_column": "Current-period amount (FY2015)"
+    }
+  },
+  {
+    "cell_id": "CELL:600802:20150415:CASH_CAPEX",
+    "field_id": "FIELD:600802:FY2014:CASH_CAPEX_RMB",
+    "status": "OBSERVED",
+    "measurement_clock": {
+      "clock_kind": "FLOW_PERIOD",
+      "flow_period": {
+        "period_start": "2014-01-01",
+        "period_end": "2014-12-31",
+        "fiscal_period": "FY2014"
+      }
+    },
+    "responsibility_boundary": {
+      "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600802",
+      "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+      "arena_id": "ARENA:CN600802:FUJIAN_DELIVERED_CEMENT",
+      "scope_requirement": "audited consolidated cash paid for fixed, intangible and other long-term assets with FY2014 comparative"
+    },
+    "unit": "RMB",
+    "raw_value": 334224573.37,
+    "source": {
+      "source_id": "CNINFO:600802:ANN:20160426:1202245558",
+      "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+      "official_url": "https://static.cninfo.com.cn/finalpage/2016-04-26/1202245558.PDF",
+      "issuer_id": "ISSUER:CN:600802",
+      "report_period_end": "2015-12-31",
+      "availability_precision": "DATE_ONLY",
+      "source_available_at": null,
+      "source_available_date": "2016-04-26",
+      "pdf_page": 51,
+      "table_or_note": "Consolidated cash-flow statement for 2015 (unit: RMB)",
+      "line_item": "Cash paid to acquire and construct fixed assets, intangible assets and other long-term assets",
+      "period_column": "Prior-period amount (FY2014)"
+    }
+  },
+  {
+    "cell_id": "CELL:600802:20150415:CASH_CAPEX",
+    "field_id": "FIELD:600802:FY2015:CASH_CAPEX_RMB",
+    "status": "OBSERVED",
+    "measurement_clock": {
+      "clock_kind": "FLOW_PERIOD",
+      "flow_period": {
+        "period_start": "2015-01-01",
+        "period_end": "2015-12-31",
+        "fiscal_period": "FY2015"
+      }
+    },
+    "responsibility_boundary": {
+      "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600802",
+      "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+      "arena_id": "ARENA:CN600802:FUJIAN_DELIVERED_CEMENT",
+      "scope_requirement": "audited consolidated cash paid for fixed, intangible and other long-term assets with FY2014 comparative"
+    },
+    "unit": "RMB",
+    "raw_value": 210369490.66,
+    "source": {
+      "source_id": "CNINFO:600802:ANN:20160426:1202245558",
+      "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+      "official_url": "https://static.cninfo.com.cn/finalpage/2016-04-26/1202245558.PDF",
+      "issuer_id": "ISSUER:CN:600802",
+      "report_period_end": "2015-12-31",
+      "availability_precision": "DATE_ONLY",
+      "source_available_at": null,
+      "source_available_date": "2016-04-26",
+      "pdf_page": 51,
+      "table_or_note": "Consolidated cash-flow statement for 2015 (unit: RMB)",
+      "line_item": "Cash paid to acquire and construct fixed assets, intangible assets and other long-term assets",
+      "period_column": "Current-period amount (FY2015)"
+    }
+  },
+  {
+    "cell_id": "CELL:600802:20150415:SHORT_TERM_DEBT",
+    "field_id": "FIELD:600802:FY2014:SHORT_TERM_BORROWINGS_RMB",
+    "status": "OBSERVED",
+    "measurement_clock": {
+      "clock_kind": "BALANCE_AS_OF",
+      "balance_as_of": {
+        "as_of": "2014-12-31",
+        "fiscal_period": "FY2014"
+      }
+    },
+    "responsibility_boundary": {
+      "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600802",
+      "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+      "arena_id": "ARENA:CN600802:FUJIAN_DELIVERED_CEMENT",
+      "scope_requirement": "audited consolidated short-term borrowings with FY2014 comparative"
+    },
+    "unit": "RMB",
+    "raw_value": 1814500000.00,
+    "source": {
+      "source_id": "CNINFO:600802:ANN:20160426:1202245558",
+      "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+      "official_url": "https://static.cninfo.com.cn/finalpage/2016-04-26/1202245558.PDF",
+      "issuer_id": "ISSUER:CN:600802",
+      "report_period_end": "2015-12-31",
+      "availability_precision": "DATE_ONLY",
+      "source_available_at": null,
+      "source_available_date": "2016-04-26",
+      "pdf_page": 44,
+      "table_or_note": "Consolidated balance sheet as of 2015-12-31 (unit: RMB)",
+      "line_item": "Short-term borrowings",
+      "period_column": "Opening balance (2014-12-31)"
+    }
+  },
+  {
+    "cell_id": "CELL:600802:20150415:SHORT_TERM_DEBT",
+    "field_id": "FIELD:600802:FY2015:SHORT_TERM_BORROWINGS_RMB",
+    "status": "OBSERVED",
+    "measurement_clock": {
+      "clock_kind": "BALANCE_AS_OF",
+      "balance_as_of": {
+        "as_of": "2015-12-31",
+        "fiscal_period": "FY2015"
+      }
+    },
+    "responsibility_boundary": {
+      "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600802",
+      "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+      "arena_id": "ARENA:CN600802:FUJIAN_DELIVERED_CEMENT",
+      "scope_requirement": "audited consolidated short-term borrowings with FY2014 comparative"
+    },
+    "unit": "RMB",
+    "raw_value": 1960500000.00,
+    "source": {
+      "source_id": "CNINFO:600802:ANN:20160426:1202245558",
+      "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+      "official_url": "https://static.cninfo.com.cn/finalpage/2016-04-26/1202245558.PDF",
+      "issuer_id": "ISSUER:CN:600802",
+      "report_period_end": "2015-12-31",
+      "availability_precision": "DATE_ONLY",
+      "source_available_at": null,
+      "source_available_date": "2016-04-26",
+      "pdf_page": 44,
+      "table_or_note": "Consolidated balance sheet as of 2015-12-31 (unit: RMB)",
+      "line_item": "Short-term borrowings",
+      "period_column": "Closing balance (2015-12-31)"
+    }
+  },
+  {
+    "cell_id": "CELL:600802:20150415:DIRECT_LOSS_EVENT",
+    "field_id": "FIELD:600802:FY2015:DIRECT_LOSS_EVENT",
+    "status": "UNKNOWN",
+    "measurement_clock": {
+      "clock_kind": "EVENT_WINDOW",
+      "event_window": {
+        "event_start": "2015-04-16",
+        "event_end": "2015-12-31",
+        "window_name": "POST_CUTOFF_FY2015_EVENT_WINDOW"
+      }
+    },
+    "responsibility_boundary": {
+      "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600802",
+      "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+      "arena_id": "ARENA:CN600802:FUJIAN_DELIVERED_CEMENT",
+      "scope_requirement": "direct issuer-level impairment, default, covenant, refinancing or going-concern event"
+    },
+    "unit": "BOOLEAN_EVENT",
+    "reason": "The contracted source does not explicitly disclose an issuer-level irreversible capital loss, default, payment failure or going-concern event within the frozen event window. The aggregate impairment total does not answer or substitute for that atomic event field.",
+    "sources_considered": [
+      {
+      "source_id": "CNINFO:600802:ANN:20160426:1202245558",
+      "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+      "official_url": "https://static.cninfo.com.cn/finalpage/2016-04-26/1202245558.PDF",
+      "issuer_id": "ISSUER:CN:600802",
+      "report_period_end": "2015-12-31",
+      "availability_precision": "DATE_ONLY",
+      "source_available_at": null,
+      "source_available_date": "2016-04-26",
+      "pdf_page": 110,
+      "table_or_note": "Note 66 - asset impairment loss (unit: RMB)",
+      "line_item": "Consolidated FY2015 bad-debt, inventory, fixed-asset, construction-in-progress, intangible-asset and other impairment losses",
+        "period_column": "Current-period amount (FY2015)"
+      }
+    ]
+  }
+]

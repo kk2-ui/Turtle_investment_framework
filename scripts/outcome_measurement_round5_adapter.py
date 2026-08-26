@@ -348,6 +348,87 @@ def validate_value_free_custody_projection(projection: Any, *, package: Any) -> 
     return {"valid": True, "findings": [], "projection": deepcopy(expected)}
 
 
+def normalize_custodian_field_records(records: Any, *, projection: Any) -> list[dict[str, Any]]:
+    """Translate custody-facing source names without changing a value or state.
+
+    The custodian records where a value was actually found.  The acquisition
+    protocol also needs the frozen semantic locator.  Both are retained: the
+    frozen locator remains the contract binding, while ``custodian_locator``
+    preserves the page-local table, line and period reported by the reader.
+    """
+    projected = _mapping(projection)
+    contracts = projected.get("atomic_measurement_contracts")
+    if not isinstance(records, list) or not isinstance(contracts, list):
+        raise Round5CustodyAdapterError("custodian_field_records_or_projection_invalid")
+    expected = [
+        (cell["cell_id"], raw["field_id"], cell, raw)
+        for cell in contracts
+        for raw in cell.get("raw_input_fields", [])
+    ]
+    supplied = [
+        (record.get("cell_id"), record.get("field_id"))
+        for record in records if isinstance(record, dict)
+    ]
+    if supplied != [(cell_id, field_id) for cell_id, field_id, _, _ in expected]:
+        raise Round5CustodyAdapterError(
+            "custodian_field_records_must_cover_frozen_raw_inputs_in_order"
+        )
+    source_identity = _mapping(projected.get("authorized_source_identity"))
+    normalized: list[dict[str, Any]] = []
+    for record, (_, _, cell, raw) in zip(records, expected, strict=True):
+        item = deepcopy(record)
+        if item.get("measurement_clock") != raw.get("measurement_clock"):
+            raise Round5CustodyAdapterError("custodian_field_record_clock_mismatch")
+        if item.get("responsibility_boundary") != cell.get("responsibility_boundary"):
+            raise Round5CustodyAdapterError("custodian_field_record_boundary_mismatch")
+        if item.get("unit") != raw.get("unit"):
+            raise Round5CustodyAdapterError("custodian_field_record_unit_mismatch")
+        if item.get("status") in {"OBSERVED", "MEASUREMENT_MISMATCH"}:
+            source = _mapping(item.get("source"))
+            actual_locator = {
+                key: source.get(key) for key in ("table_or_note", "line_item", "period_column")
+            }
+            if any(not isinstance(value, str) or not value.strip() for value in actual_locator.values()):
+                raise Round5CustodyAdapterError("custodian_field_record_actual_locator_required")
+            page = source.get("pdf_page")
+            if not isinstance(page, int) or isinstance(page, bool) or page < 1:
+                raise Round5CustodyAdapterError("custodian_field_record_pdf_page_required")
+            for custody_key, canonical_key in (
+                ("source_id", "source_id"),
+                ("source_type", "source_type"),
+                ("official_url", "official_url"),
+                ("issuer_id", "issuer_id"),
+                ("report_period_end", "report_period_end"),
+                ("availability_precision", "availability_precision"),
+                ("source_available_at", "source_available_at"),
+                ("source_available_date", "source_available_date"),
+            ):
+                if source.get(custody_key) != source_identity.get(canonical_key):
+                    raise Round5CustodyAdapterError(
+                        "custodian_field_record_authorized_source_mismatch:" + custody_key
+                    )
+            item["source"] = {
+                "source_id": source_identity["source_id"],
+                "source_url": source_identity["official_url"],
+                "official_source_type": source_identity["source_type"],
+                "issuer_id": source_identity["issuer_id"],
+                "report_period_end": source_identity["report_period_end"],
+                "availability_precision": source_identity["availability_precision"],
+                "source_available_at": source_identity["source_available_at"],
+                "source_available_date": source_identity["source_available_date"],
+                "field_identity": item["field_id"],
+                "measurement_clock": deepcopy(item["measurement_clock"]),
+                "responsibility_boundary": deepcopy(item["responsibility_boundary"]),
+                "unit": item["unit"],
+                "pdf_page": page,
+                "field_ref": f"PDF p.{page}",
+                **deepcopy(raw["locator"]),
+                "custodian_locator": actual_locator,
+            }
+        normalized.append(item)
+    return normalized
+
+
 def _read_active_artifact(name: str) -> dict[str, Any]:
     path = ROUND5_ARTIFACT_DIR / name
     try:
@@ -407,6 +488,25 @@ def resolve_canonical_round5_bundle(
         "adapter_acceptance_receipt": adapter_receipt,
         "measurement_contract": deepcopy(canonical_contract),
     }
+
+
+def bootstrap_canonical_round5_route() -> dict[str, Any]:
+    """Register the fixed 29/31/32 route before any outcome access begins."""
+    bundle = resolve_canonical_round5_bundle(
+        package_id="EMFP:CN:CEMENT:600802:20150415:V3",
+        control_receipt_id="EMPCPR:CN:CEMENT:600802:20150415:V3",
+        adapter_acceptance_receipt_id="R5V3AR:CN600802:20150415:V1",
+    )
+    result = enterprise_control.bootstrap_round5_route()
+    expected = {
+        "package_id": bundle["package"]["package_id"],
+        "control_receipt_id": bundle["control_receipt"]["receipt_id"],
+        "adapter_acceptance_receipt_id": bundle["adapter_acceptance_receipt"]["receipt_id"],
+        "contract_set_id": bundle["measurement_contract"]["contract_set_id"],
+    }
+    if any(result.get(key) != value for key, value in expected.items()):
+        raise Round5CustodyAdapterError("canonical_round5_bootstrap_route_mismatch")
+    return result
 
 
 def validate_custodian_submission(
@@ -505,13 +605,18 @@ def register_canonical_acquisition_result(
     )
     if not validation["valid"]:
         raise Round5CustodyAdapterError("canonical_round5_submission_invalid:" + ";".join(validation["findings"]))
-    return settlement_adapter.settle_enterprise_acquisition_result(
+    return settlement_adapter._settle_enterprise_acquisition_result(
         measurement_contract=bundle["measurement_contract"],
         outcome_access_authorization=outcome_access_authorization,
         acquisition_result=acquisition_result,
         observed_at=observed_at,
         settlement_id=settlement_id,
         settled_at=settled_at,
+        canonical_round5_binding={
+            "package_id": package_id,
+            "control_receipt_id": control_receipt_id,
+            "adapter_acceptance_receipt_id": adapter_acceptance_receipt_id,
+        },
     )
 
 

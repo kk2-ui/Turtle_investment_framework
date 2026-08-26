@@ -11,6 +11,7 @@ from __future__ import annotations
 
 from copy import deepcopy
 from datetime import datetime, timezone
+from decimal import Decimal, InvalidOperation
 import json
 from pathlib import Path
 import sqlite3
@@ -28,6 +29,16 @@ RECEIPT_TABLE = "enterprise_judgment_training_selection_receipts"
 MEASUREMENT_CONTRACT_TABLE = "enterprise_judgment_training_measurement_contracts"
 ENTERPRISE_OBSERVATION_TABLE = "enterprise_judgment_training_enterprise_observation_receipts"
 ENTERPRISE_SETTLEMENT_TABLE = "enterprise_judgment_training_enterprise_settlements"
+ROUND5_ROUTE_TABLE = "enterprise_judgment_training_round5_routes"
+ROUND5_ROUTE_ARTIFACT_DIR = (
+    Path(__file__).resolve().parents[1]
+    / "docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018"
+)
+ROUND5_ROUTE_ARTIFACTS = {
+    "package": "29_round5_v3_preoutcome_mechanism_package.json",
+    "control": "31_round5_v3_preoutcome_control_plane_receipt.json",
+    "adapter": "32_round5_v3_adapter_acceptance_receipt.json",
+}
 ROSTER_OBJECT_CLASS = "ENTERPRISE_JUDGMENT_PRE_OUTCOME_FREEZE"
 RECEIPT_SCHEMAS = {
     "enterprise-judgment-feedback-settlement.v1",
@@ -157,6 +168,16 @@ def initialize(conn: sqlite3.Connection) -> None:
                 company_id TEXT NOT NULL,
                 cutoff_at TEXT NOT NULL,
                 payload_json TEXT NOT NULL,
+                registered_at TEXT NOT NULL
+            )"""
+        )
+        conn.execute(
+            f"""CREATE TABLE IF NOT EXISTS {ROUND5_ROUTE_TABLE} (
+                package_id TEXT PRIMARY KEY,
+                control_receipt_id TEXT NOT NULL UNIQUE,
+                adapter_acceptance_receipt_id TEXT NOT NULL UNIQUE,
+                contract_set_id TEXT NOT NULL UNIQUE,
+                accepted_at TEXT NOT NULL,
                 registered_at TEXT NOT NULL
             )"""
         )
@@ -472,6 +493,171 @@ def resolve_measurement_contract(contract_set_id: str) -> dict[str, Any]:
         conn.close()
 
 
+def _round5_route_from_artifacts(
+    *,
+    package: Any,
+    control_receipt: Any,
+    adapter_acceptance_receipt: Any,
+) -> tuple[dict[str, str], dict[str, Any]]:
+    package_item = package if isinstance(package, dict) else {}
+    control_item = control_receipt if isinstance(control_receipt, dict) else {}
+    adapter_item = adapter_acceptance_receipt if isinstance(adapter_acceptance_receipt, dict) else {}
+    if package_item.get("schema_version") != "enterprise-real-mechanism-preoutcome-package.v3":
+        raise TrainingControlPlaneError("round5_route_package_invalid", "Round 5 route requires the canonical v3 package")
+    if control_item.get("schema_version") != "enterprise-real-mechanism-preoutcome-control-plane-receipt.v3":
+        raise TrainingControlPlaneError("round5_route_control_receipt_invalid", "Round 5 route requires the canonical v3 control receipt")
+    if adapter_item.get("schema_version") != "enterprise-round5-v3-adapter-acceptance-receipt.v1":
+        raise TrainingControlPlaneError("round5_route_adapter_receipt_invalid", "Round 5 route requires the canonical adapter acceptance receipt")
+    package_id = package_item.get("package_id")
+    control_receipt_id = control_item.get("receipt_id")
+    adapter_receipt_id = adapter_item.get("receipt_id")
+    contract = _mapping(package_item.get("outcome_measurement_contract"))
+    contract_set_id = contract.get("contract_set_id")
+    identities = (package_id, control_receipt_id, adapter_receipt_id, contract_set_id)
+    if any(not isinstance(value, str) or not value for value in identities):
+        raise TrainingControlPlaneError("round5_route_identity_missing", "Round 5 route identities are required")
+    package_ref = _mapping(control_item.get("preoutcome_package_ref"))
+    contract_registration = _mapping(control_item.get("canonical_measurement_contract_registration"))
+    adapter_contract = _mapping(adapter_item.get("enterprise_v3_adapter"))
+    active_refs = _mapping(adapter_item.get("active_artifact_refs"))
+    if (
+        package_ref.get("package_id") != package_id
+        or package_ref.get("schema_version") != package_item.get("schema_version")
+        or contract.get("package_ref") != package_id
+        or contract_registration.get("contract_set_id") != contract_set_id
+        or adapter_contract.get("contract_set_id") != contract_set_id
+        or active_refs.get("package") != package_ref.get("artifact")
+        or not isinstance(active_refs.get("preoutcome_control_receipt"), str)
+        or not active_refs["preoutcome_control_receipt"]
+    ):
+        raise TrainingControlPlaneError(
+            "round5_route_artifact_binding_invalid",
+            "Round 5 package, control receipt, adapter receipt and contract do not form one route",
+        )
+    canonical_contract = resolve_measurement_contract(contract_set_id)
+    if canonical_contract != contract:
+        raise TrainingControlPlaneError(
+            "round5_route_contract_not_canonical",
+            "Round 5 route contract differs from the canonical frozen contract",
+        )
+    return {
+        "package_id": package_id,
+        "control_receipt_id": control_receipt_id,
+        "adapter_acceptance_receipt_id": adapter_receipt_id,
+        "contract_set_id": contract_set_id,
+    }, contract
+
+
+def _read_round5_route_artifact(name: str) -> dict[str, Any]:
+    filename = ROUND5_ROUTE_ARTIFACTS[name]
+    path = ROUND5_ROUTE_ARTIFACT_DIR / filename
+    try:
+        value = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        raise TrainingControlPlaneError(
+            "round5_route_canonical_artifact_unavailable",
+            f"cannot read canonical Round 5 route artifact {filename}",
+        ) from exc
+    if not isinstance(value, dict):
+        raise TrainingControlPlaneError(
+            "round5_route_canonical_artifact_invalid",
+            f"canonical Round 5 route artifact {filename} must be an object",
+        )
+    return value
+
+
+def bootstrap_round5_route() -> dict[str, Any]:
+    """Project the fixed pre-outcome 29/31/32 artifact route into canonical storage."""
+    package = _read_round5_route_artifact("package")
+    control_receipt = _read_round5_route_artifact("control")
+    adapter_acceptance_receipt = _read_round5_route_artifact("adapter")
+    route, _contract = _round5_route_from_artifacts(
+        package=package,
+        control_receipt=control_receipt,
+        adapter_acceptance_receipt=adapter_acceptance_receipt,
+    )
+    package_ref = _mapping(control_receipt.get("preoutcome_package_ref"))
+    active_refs = _mapping(adapter_acceptance_receipt.get("active_artifact_refs"))
+    if (
+        package_ref.get("artifact") != ROUND5_ROUTE_ARTIFACTS["package"]
+        or active_refs.get("package") != ROUND5_ROUTE_ARTIFACTS["package"]
+        or active_refs.get("preoutcome_control_receipt") != ROUND5_ROUTE_ARTIFACTS["control"]
+    ):
+        raise TrainingControlPlaneError(
+            "round5_route_canonical_artifact_binding_invalid",
+            "fixed Round 5 artifacts do not identify the canonical 29/31/32 route",
+        )
+    accepted_at = _instant(adapter_acceptance_receipt.get("recorded_at"), field="accepted_at")
+    registered_at = datetime.now(timezone.utc).replace(microsecond=0).isoformat()
+    conn = _canonical_conn()
+    try:
+        initialize(conn)
+        existing = conn.execute(
+            f"""SELECT package_id, control_receipt_id, adapter_acceptance_receipt_id,
+                       contract_set_id, accepted_at, registered_at
+                FROM {ROUND5_ROUTE_TABLE}
+                WHERE package_id = ? OR control_receipt_id = ?
+                   OR adapter_acceptance_receipt_id = ? OR contract_set_id = ?""",
+            (
+                route["package_id"], route["control_receipt_id"],
+                route["adapter_acceptance_receipt_id"], route["contract_set_id"],
+            ),
+        ).fetchall()
+        if existing:
+            if len(existing) != 1 or any(
+                row[key] != value for row in existing for key, value in route.items()
+            ) or existing[0]["accepted_at"] != accepted_at:
+                raise TrainingControlPlaneError(
+                    "round5_route_identity_conflict",
+                    "a registered Round 5 route identity is bound to different artifacts",
+                )
+            return {
+                "registered": True, "idempotent": True, "accepted_at": accepted_at,
+                "registered_at": existing[0]["registered_at"], **deepcopy(route),
+            }
+        with conn:
+            conn.execute(
+                f"""INSERT INTO {ROUND5_ROUTE_TABLE}
+                    (package_id, control_receipt_id, adapter_acceptance_receipt_id,
+                     contract_set_id, accepted_at, registered_at)
+                    VALUES (?, ?, ?, ?, ?, ?)""",
+                (
+                    route["package_id"], route["control_receipt_id"],
+                    route["adapter_acceptance_receipt_id"], route["contract_set_id"],
+                    accepted_at, registered_at,
+                ),
+            )
+        return {
+            "registered": True, "idempotent": False, "accepted_at": accepted_at,
+            "registered_at": registered_at, **deepcopy(route),
+        }
+    finally:
+        conn.close()
+
+
+def resolve_round5_route(package_id: str) -> dict[str, str]:
+    if not isinstance(package_id, str) or not package_id:
+        raise TrainingControlPlaneError("round5_route_package_id_invalid", "package_id is required")
+    conn = _canonical_conn(readonly=True)
+    try:
+        row = conn.execute(
+            f"""SELECT package_id, control_receipt_id, adapter_acceptance_receipt_id,
+                       contract_set_id
+                FROM {ROUND5_ROUTE_TABLE} WHERE package_id = ?""",
+            (package_id,),
+        ).fetchone()
+        if row is None:
+            raise TrainingControlPlaneError("round5_route_not_registered", "Round 5 route is not canonical")
+        return {
+            "package_id": row["package_id"],
+            "control_receipt_id": row["control_receipt_id"],
+            "adapter_acceptance_receipt_id": row["adapter_acceptance_receipt_id"],
+            "contract_set_id": row["contract_set_id"],
+        }
+    finally:
+        conn.close()
+
+
 def _enterprise_contract_ref(value: Any) -> tuple[str, int]:
     if not isinstance(value, dict) or set(value) != {"measurement_contract_id", "measurement_contract_version"}:
         raise TrainingControlPlaneError(
@@ -545,7 +731,7 @@ def _enterprise_observation_shape(receipt: Any) -> tuple[dict[str, Any], dict[st
             "source_id", "source_url", "official_source_type", "issuer_id", "report_period_end",
             "availability_precision", "field_identity", "measurement_clock",
             "responsibility_boundary", "unit", "pdf_page", "field_ref",
-            "table_or_note", "line_item", "period_column",
+            "table_or_note", "line_item", "period_column", "custodian_locator",
         }
         if not required_source.issubset(source):
             raise TrainingControlPlaneError("enterprise_observation_source_incomplete", "source evidence is not page-level complete")
@@ -586,6 +772,15 @@ def _enterprise_observation_shape(receipt: Any) -> tuple[dict[str, Any], dict[st
         locator = _mapping(raw.get("locator"))
         if any(source.get(key) != locator.get(key) for key in ("table_or_note", "line_item", "period_column")):
             raise TrainingControlPlaneError("enterprise_observation_locator_mismatch", "source locator differs from frozen raw field locator")
+        actual_locator = _mapping(source.get("custodian_locator"))
+        if set(actual_locator) != {"table_or_note", "line_item", "period_column"} or any(
+            not isinstance(actual_locator.get(key), str) or not actual_locator[key].strip()
+            for key in ("table_or_note", "line_item", "period_column")
+        ):
+            raise TrainingControlPlaneError(
+                "enterprise_observation_custodian_locator_invalid",
+                "source must preserve the custodian's actual table, line and period locator",
+            )
     elif not isinstance(item.get("reason"), str) or not item["reason"]:
         raise TrainingControlPlaneError("enterprise_observation_unknown_reason_required", "unknown observation needs a reason")
     return item, contract
@@ -636,6 +831,170 @@ def register_enterprise_observation_receipt(receipt: dict[str, Any], *, register
         conn.close()
 
 
+def _enterprise_decimal(value: Any, *, code: str) -> Decimal:
+    if isinstance(value, bool) or not isinstance(value, (int, float)):
+        raise ValueError(code)
+    try:
+        numeric = Decimal(str(value))
+    except InvalidOperation as exc:
+        raise ValueError(code) from exc
+    if not numeric.is_finite():
+        raise ValueError(code)
+    return numeric
+
+
+def _execute_enterprise_formula(
+    cell: dict[str, Any], raw_receipts: list[dict[str, Any]],
+) -> bool | float:
+    formula = cell["formula"]
+    input_ids = formula["input_field_ids"]
+    by_id = {receipt["field_id"]: receipt for receipt in raw_receipts}
+    if list(by_id) != input_ids or len(by_id) != len(input_ids):
+        raise ValueError("enterprise_formula_raw_input_coverage_invalid")
+    conversions = formula["unit_conversions"]
+    if [conversion.get("field_id") for conversion in conversions] != input_ids:
+        raise ValueError("enterprise_formula_unit_conversion_order_invalid")
+    converted: list[Decimal | bool] = []
+    for field_id, conversion in zip(input_ids, conversions, strict=True):
+        receipt = by_id[field_id]
+        value = receipt.get("raw_value")
+        if isinstance(value, bool):
+            if conversion.get("from_unit") != receipt.get("unit") or conversion.get("scale") != "1":
+                raise ValueError("enterprise_event_unit_conversion_invalid")
+            converted.append(value)
+            continue
+        if conversion.get("from_unit") != receipt.get("unit"):
+            raise ValueError("enterprise_formula_source_unit_mismatch")
+        try:
+            scale = Decimal(str(conversion.get("scale")))
+        except InvalidOperation as exc:
+            raise ValueError("enterprise_formula_unit_scale_invalid") from exc
+        if not scale.is_finite():
+            raise ValueError("enterprise_formula_unit_scale_invalid")
+        converted.append(_enterprise_decimal(value, code="enterprise_formula_raw_value_invalid") * scale)
+
+    operator = formula["operator"]
+    if operator == "EVENT_BOOLEAN":
+        if len(converted) != 1 or not isinstance(converted[0], bool):
+            raise ValueError("enterprise_event_formula_requires_one_boolean")
+        return converted[0]
+    if any(isinstance(value, bool) for value in converted):
+        raise ValueError("enterprise_numeric_formula_cannot_use_boolean")
+    numeric = [value for value in converted if isinstance(value, Decimal)]
+    if operator == "RAW_VALUE":
+        if len(numeric) != 1:
+            raise ValueError("enterprise_raw_value_formula_requires_one_input")
+        result = numeric[0]
+    elif operator == "PERCENT_CHANGE":
+        if len(numeric) != 2 or numeric[0] == 0:
+            raise ValueError("enterprise_percent_change_zero_or_invalid_baseline")
+        result = (numeric[1] - numeric[0]) / abs(numeric[0])
+    elif operator == "RATIO_CHANGE":
+        if len(numeric) != 4 or numeric[1] == 0 or numeric[3] == 0:
+            raise ValueError("enterprise_ratio_change_zero_or_invalid_denominator")
+        baseline_ratio = numeric[0] / numeric[1]
+        if baseline_ratio == 0:
+            raise ValueError("enterprise_ratio_change_zero_baseline_ratio")
+        result = ((numeric[2] / numeric[3]) - baseline_ratio) / abs(baseline_ratio)
+    elif operator == "DIFFERENCE":
+        if len(numeric) == 2:
+            result = numeric[1] - numeric[0]
+        elif len(numeric) == 4:
+            if numeric[0] == 0 or numeric[2] == 0:
+                raise ValueError("enterprise_difference_zero_revenue_denominator")
+            result = ((numeric[2] - numeric[3]) / numeric[2]) - ((numeric[0] - numeric[1]) / numeric[0])
+        else:
+            raise ValueError("enterprise_difference_input_count_invalid")
+    else:
+        raise ValueError("enterprise_formula_operator_unsupported")
+    if not result.is_finite():
+        raise ValueError("enterprise_formula_result_not_finite")
+    return float(result)
+
+
+def _enterprise_label(cell: dict[str, Any], value: bool | float) -> str:
+    rule = cell["label_rule"]
+    if rule["type"] == "EVENT_PRESENCE":
+        if not isinstance(value, bool):
+            raise ValueError("enterprise_event_label_requires_boolean")
+        return "OBSERVED_YES" if value else "OBSERVED_NO"
+    if isinstance(value, bool):
+        raise ValueError("enterprise_numeric_label_requires_number")
+    if value <= float(rule["decrease_lte"]):
+        return "OBSERVED_DECREASE"
+    if value >= float(rule["increase_gte"]):
+        return "OBSERVED_INCREASE"
+    return "OBSERVED_STABLE"
+
+
+def _derive_enterprise_settlement_semantics(
+    contract: dict[str, Any], raw_receipts: list[dict[str, Any]],
+) -> tuple[list[dict[str, Any]], dict[str, int]]:
+    expected_pairs = [
+        (cell["cell_id"], raw["field_id"])
+        for cell in contract["atomic_cells"]
+        for raw in cell["raw_input_fields"]
+    ]
+    supplied_pairs = [
+        (receipt.get("cell_id"), receipt.get("field_id"))
+        for receipt in raw_receipts
+        if isinstance(receipt, dict)
+    ]
+    if supplied_pairs != expected_pairs or len(set(supplied_pairs)) != len(expected_pairs):
+        raise TrainingControlPlaneError(
+            "enterprise_settlement_raw_field_coverage_invalid",
+            "settlement must preserve the exact frozen cell and raw-field order",
+        )
+    offset = 0
+    cell_results: list[dict[str, Any]] = []
+    for cell in contract["atomic_cells"]:
+        count = len(cell["raw_input_fields"])
+        cell_receipts = raw_receipts[offset:offset + count]
+        offset += count
+        statuses = {receipt.get("status") for receipt in cell_receipts}
+        computed_value: bool | float | None = None
+        formula_finding: str | None = None
+        if "MEASUREMENT_MISMATCH" in statuses:
+            status, label = "MEASUREMENT_MISMATCH", "MEASUREMENT_MISMATCH"
+        elif "UNKNOWN" in statuses:
+            status, label = "UNKNOWN", "UNKNOWN"
+        elif statuses == {"OBSERVED"}:
+            try:
+                computed_value = _execute_enterprise_formula(cell, cell_receipts)
+                label = _enterprise_label(cell, computed_value)
+                status = "OBSERVED"
+            except ValueError as exc:
+                status, label = "MEASUREMENT_MISMATCH", "MEASUREMENT_MISMATCH"
+                formula_finding = str(exc)
+        else:
+            raise TrainingControlPlaneError(
+                "enterprise_settlement_raw_status_invalid",
+                "raw observation statuses cannot derive a frozen cell result",
+            )
+        row: dict[str, Any] = {
+            "cell_id": cell["cell_id"],
+            "status": status,
+            "label": label,
+            "computed_value": computed_value,
+            "mismatch_propagation": "LOCAL_ONLY",
+        }
+        if formula_finding is not None:
+            row["formula_finding"] = formula_finding
+        cell_results.append(row)
+    counts = {
+        status: sum(row["status"] == status for row in cell_results)
+        for status in ("OBSERVED", "UNKNOWN", "MEASUREMENT_MISMATCH")
+    }
+    coverage = {
+        "frozen_cells": len(contract["atomic_cells"]),
+        "settled_cells": len(cell_results),
+        "observed_cells": counts["OBSERVED"],
+        "unknown_cells": counts["UNKNOWN"],
+        "measurement_mismatch_cells": counts["MEASUREMENT_MISMATCH"],
+    }
+    return cell_results, coverage
+
+
 def _enterprise_settlement_shape(settlement: Any) -> tuple[dict[str, Any], dict[str, Any], list[dict[str, Any]]]:
     item = settlement if isinstance(settlement, dict) else {}
     required = {
@@ -643,12 +1002,41 @@ def _enterprise_settlement_shape(settlement: Any) -> tuple[dict[str, Any], dict[
         "custodian_id", "company_id", "cutoff_at", "observed_at", "settled_at", "cell_results",
         "raw_observation_receipts", "observation_receipt_ids", "coverage", "rights", "allowed_outputs",
     }
-    if set(item) != required:
+    allowed = required | {"canonical_round5_binding"}
+    if required.difference(item) or set(item).difference(allowed):
         raise TrainingControlPlaneError("enterprise_settlement_shape_invalid", "enterprise settlement shape is not closed")
     if item.get("schema_version") != "enterprise-outcome-measurement-settlement.v1" or item.get("settled") is not True:
         raise TrainingControlPlaneError("enterprise_settlement_identity_invalid", "enterprise settlement identity is invalid")
     contract_id, _ = _enterprise_contract_ref(item.get("measurement_contract_ref"))
     contract = resolve_measurement_contract(contract_id)
+    package_ref = contract.get("package_ref")
+    route_binding = item.get("canonical_round5_binding")
+    if isinstance(package_ref, str) and package_ref.startswith("EMFP:"):
+        expected_route_keys = {"package_id", "control_receipt_id", "adapter_acceptance_receipt_id"}
+        if not isinstance(route_binding, dict) or set(route_binding) != expected_route_keys:
+            raise TrainingControlPlaneError(
+                "enterprise_settlement_round5_route_binding_required",
+                "Round 5 settlement must retain the canonical package/control/adapter route identity",
+            )
+        if route_binding.get("package_id") != package_ref or any(
+            not isinstance(value, str) or not value for value in route_binding.values()
+        ):
+            raise TrainingControlPlaneError(
+                "enterprise_settlement_round5_route_binding_invalid",
+                "Round 5 settlement route identity is invalid",
+            )
+        registered_route = resolve_round5_route(package_ref)
+        expected_route = {**route_binding, "contract_set_id": contract_id}
+        if registered_route != expected_route:
+            raise TrainingControlPlaneError(
+                "enterprise_settlement_round5_route_binding_invalid",
+                "Round 5 settlement route does not match the canonical registered route",
+            )
+    elif route_binding is not None:
+        raise TrainingControlPlaneError(
+            "enterprise_settlement_route_binding_not_allowed",
+            "non-Round-5 Enterprise settlement cannot claim a Round 5 route",
+        )
     if item.get("company_id") != contract.get("company_id") or item.get("cutoff_at") != contract.get("cutoff_at"):
         raise TrainingControlPlaneError("enterprise_settlement_contract_binding_invalid", "settlement company or cutoff differs from contract")
     cells = item.get("cell_results")
@@ -672,6 +1060,27 @@ def _enterprise_settlement_shape(settlement: Any) -> tuple[dict[str, Any], dict[
     raw_ids = [row.get("receipt_id") for row in raw_receipts if isinstance(row, dict)]
     if raw_ids != item.get("observation_receipt_ids") or len(set(raw_ids)) != expected_raw_count:
         raise TrainingControlPlaneError("enterprise_settlement_raw_receipt_order_invalid", "settlement raw receipt references are not exact")
+    expected_cells, expected_coverage = _derive_enterprise_settlement_semantics(contract, raw_receipts)
+    if _json(cells) != _json(expected_cells):
+        raise TrainingControlPlaneError(
+            "enterprise_settlement_semantics_invalid",
+            "cell status, computed value or label differs from the frozen contract and raw observations",
+        )
+    if _json(item.get("coverage")) != _json(expected_coverage):
+        raise TrainingControlPlaneError(
+            "enterprise_settlement_coverage_invalid",
+            "settlement coverage differs from the derived cell statuses",
+        )
+    if _json(item.get("rights")) != _json(contract.get("rights")):
+        raise TrainingControlPlaneError(
+            "enterprise_settlement_rights_invalid",
+            "settlement rights must equal the frozen measurement contract rights",
+        )
+    if item.get("allowed_outputs") != ["ENTERPRISE_OUTCOME_SETTLEMENT_ONLY", "RESEARCH_AGENDA"]:
+        raise TrainingControlPlaneError(
+            "enterprise_settlement_allowed_outputs_invalid",
+            "enterprise settlement outputs are fixed and cannot grant downstream authority",
+        )
     return item, contract, raw_receipts
 
 

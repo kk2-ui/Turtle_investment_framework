@@ -1,6 +1,6 @@
 # 中国水泥 H1：首个 Enterprise Judgment V2 真实训练读出
 
-> 状态：`REAL_SAMPLE_CREATED + REAL_FEEDBACK_TURN_COMPLETED`
+> 状态：`REAL_SAMPLE_CREATED + REAL_FEEDBACK_TURN_5_COMPLETED + LOCAL_MECHANISM_SCOPE_FEEDBACK_ACCEPTED`
 > 边界：真实历史公司与官方年报；`E0/E1 + J2 Teaching`，不是 Comparative、估值或投资建议。
 
 ## 这轮产生了什么
@@ -89,7 +89,31 @@ value-free custody projection、`31` 的控制收据和 `32` 的 adapter 验收�
 现有公共 acquisition/submission/settlement 链已用 synthetic custodian-located field records
 跑完全部 14 个 cell 和 31 个 raw fields，包括价格、单位成本与毛利率的多输入公式；系统明确
 不宣称自动解析 PDF。缺少明确正反证的事件保持 `UNKNOWN`，一个字段 mismatch 也只影响自身。
-该结果只证明未来 custodian 的机械路径、canonical 持久化与 PIT 时钟不再丢失 Enterprise V3
-契约，不是福建水泥的真实反馈。FY2015 官方年报仍封存，真实 outcome
-的 authorized、content_read、custodian_started、settlement_created 均为 false；因此仍不能
-产生企业学习、CJO、估值、报告或投资权限。
+在 `32` 收口时，该结果只证明未来 custodian 的机械路径、canonical 持久化与 PIT 时钟
+不再丢失 Enterprise V3 契约；当时 FY2015 官方年报仍封存，真实 outcome 的
+authorized、content_read、custodian_started、settlement_created 均为 false。这个状态是
+真实读取前的历史检查点；随后只有 `33--36` 按冻结路径改变了 outcome 状态，没有回写
+`29--32` 的前置判断。
+
+## Round 5：首个企业机制/管理执行 cell-level 真实反馈
+
+独立 custodian 随后只读取 `30` 的无预测 custody projection 和 FY2015 官方年报。31 个
+冻结 raw field 全部得到记录：14 个 cell 中 8 个可观察、6 个保持 `UNKNOWN`，没有新的
+`MEASUREMENT_MISMATCH`。机械结算与独立 post-outcome review 分别记录在 `34` 和 `35`。
+
+对投资者真正有用的变化只有一项，但它是材料性的：福润统一销售在 cutoff 时已形式启动；
+到 FY2015 年末，业务和人员整合仍未到位，全年销售产品全部来自华润水泥，福建水泥没有
+实际控制，福润也未纳入其合并范围。因此，福润不能再被视为福建水泥当年已经掌握、可归责
+并能获得经营信用的商业执行杠杆。这不是“行动从未实施”，也不是“管理层整体执行失败”。
+
+同期公司状态显示，销售费用下降约 12.68%，水泥毛利率下降约 14.59 个百分点，应收和
+存货分别下降约 66.92% 和 25.17%，经营现金下降约 63.27%，现金资本开支下降约 37.06%，
+短期借款上升约 8.05%。这些是福建水泥合并口径的公司状态，不是福润行动效果。客户反应、
+水泥和熟料销量方向、实现价格、单位成本、资本回报、永久损失以及整体管理质量仍为
+`UNKNOWN`。
+
+下一次研究不再用一个 `EXECUTED` 布尔值包住整个联合安排，而是在结果前分别冻结：法律
+设立、实际决策控制、福建水泥产品参与、直接客户反馈。销量、价格和单位成本还须在结果前
+取得绝对基期字段，或先冻结允许披露舍入误差的区间推导规则。Round 5 只形成
+`LOCAL_MECHANISM_SCOPE_FEEDBACK` 和下一研究议程；Comparative、方向性学习、方法迁移、
+CJO、估值、报告与投资权限全部仍未授权。

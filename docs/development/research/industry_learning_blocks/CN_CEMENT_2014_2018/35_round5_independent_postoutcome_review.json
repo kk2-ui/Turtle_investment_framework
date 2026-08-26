@@ -1,0 +1,301 @@
+{
+  "schema_version": "enterprise-judgment-round5-independent-postoutcome-review.v1",
+  "review_id": "R5IPOR:CN600802:20150415:FY2015:V1",
+  "reviewer_id": "ROLE:CEMENT:ROUND5:INDEPENDENT_POSTOUTCOME_REVIEWER:CODEX",
+  "reviewed_artifacts": [
+    {
+      "artifact": "29_round5_v3_preoutcome_mechanism_package.json",
+      "role": "PREOUTCOME_FROZEN_BASELINE"
+    },
+    {
+      "artifact": "30_round5_v3_value_free_custody_projection.json",
+      "role": "VALUE_FREE_CUSTODY_PROJECTION"
+    },
+    {
+      "artifact": "31_round5_v3_preoutcome_control_plane_receipt.json",
+      "role": "PREOUTCOME_CANONICAL_CONTROL_RECEIPT"
+    },
+    {
+      "artifact": "32_round5_v3_adapter_acceptance_receipt.json",
+      "role": "PREOUTCOME_ADAPTER_ACCEPTANCE"
+    },
+    {
+      "artifact": "33_round5_custodian_field_records.json",
+      "role": "ACCEPTED_CUSTODIAN_FIELD_RECORDS"
+    },
+    {
+      "artifact": "33a_round5_custodian_field_records_v1_rejected.json",
+      "role": "REJECTED_PRIOR_SUBMISSION_CONTEXT_ONLY"
+    },
+    {
+      "artifact": "34a_round5_outcome_access_authorization.json",
+      "role": "OUTCOME_ACCESS_AUTHORIZATION"
+    },
+    {
+      "artifact": "34_round5_real_feedback_settlement.json",
+      "role": "CANONICAL_CELL_LEVEL_SETTLEMENT"
+    }
+  ],
+  "independence_attestation": {
+    "review_mode": "READ_ONLY_POSTOUTCOME",
+    "files_modified": false,
+    "formal_role_overlap": [],
+    "artifact_authorship_in_this_review": false,
+    "evidence_scope": "ONLY_THE_EIGHT_LISTED_ARTIFACTS",
+    "source_pdf_reopened": false,
+    "excluded_inputs": [
+      "PRICE_OR_RETURN",
+      "POST_FY2015_PERIODS",
+      "R-103",
+      "CJO",
+      "OTHER_OUTCOMES"
+    ],
+    "integrity_observation": {
+      "frozen_cells": 14,
+      "settled_cells": 14,
+      "frozen_raw_inputs": 31,
+      "custodian_field_records": 31,
+      "observation_receipts": 31,
+      "identity_coverage": "EXACT"
+    }
+  },
+  "verdict": "ACCEPT_LOCAL_MATERIAL_JUDGMENT_CHANGE_ONLY",
+  "material_judgment_change": {
+    "is_material": true,
+    "accepted_scope": "ISSUER_CONTROLLED_EXECUTION_SCOPE_ONLY",
+    "preoutcome_judgment": "福润统一销售已于2015年2月形式启动，但实际经营范围、福建水泥产品参与、客户响应和作用效果均未知。",
+    "postoutcome_judgment": "形式启动没有被推翻，但结果期证据显示福润整合未完成、销售产品为华润水泥产品、福建水泥没有实际控制且福润不在其合并范围内。因此不能再把福润视为福建水泥在FY2015已经掌握并可归责的商业执行杠杆。",
+    "why_material": "该证据切断了预设机制的第一环。投资者不应把福润统一销售计入福建水泥客户、销量、利润或现金改善的已执行驱动。",
+    "change_ceiling": "LOCAL_MECHANISM_SCOPE",
+    "explicitly_rejected_changes": [
+      "福润行动从未正式启动",
+      "福建水泥管理层整体执行能力已被证明低劣",
+      "福润行动导致了福建水泥FY2015财务恶化",
+      "福润行动已经产生客户、销量、利润或现金效果",
+      "一次弱年度已经构成资本永久损失"
+    ]
+  },
+  "layer_findings": {
+    "action_implementation_and_issuer_control": {
+      "verdict": "PARTIAL_ACCEPT_MATERIAL_CHANGE",
+      "formal_launch": "IMPLEMENTED_AT_CUTOFF_UNCHANGED",
+      "issuer_controlled_execution": "OBSERVED_NO_WITH_NARROW_INTERPRETATION",
+      "finding": "接受的局部变化是：福润作为安排已经启动，但没有成为福建水泥控制、合并并由其产品承载的商业执行机制。",
+      "management_implication": "不能给予行动执行成功信用；也不能仅凭无控制和未并表认定管理层失职。"
+    },
+    "customer_response": {
+      "verdict": "UNKNOWN",
+      "finding": "没有直接客户、经销渠道、订单、留存或市场份额反馈。",
+      "material_judgment_change": false,
+      "prohibited_substitute": "不得以合并销量、收入或管理层叙述替代客户响应。"
+    },
+    "volume_price_and_unit_economics": {
+      "verdict": "PARTIAL_COMPANY_STATE_OBSERVED_ACTION_EFFECT_UNKNOWN",
+      "cement_volume_direction": "UNKNOWN",
+      "clinker_volume_direction": "UNKNOWN",
+      "cement_realized_price_direction": "UNKNOWN",
+      "cement_unit_cost_direction": "UNKNOWN",
+      "selling_expense": {
+        "label": "OBSERVED_DECREASE",
+        "change_ratio": -0.1267908774707065,
+        "interpretation": "仅代表合并销售费用绝对额下降，不能证明销售效率改善。"
+      },
+      "cement_gross_margin": {
+        "label": "OBSERVED_DECREASE",
+        "fy2014_ratio": 0.16732315912067922,
+        "fy2015_ratio": 0.021380188366976936,
+        "change_percentage_points": -14.594297075370238,
+        "interpretation": "福建水泥水泥业务单位经济明显恶化，但不能归因于福润行动。"
+      },
+      "material_to_company_condition": true,
+      "material_to_furun_causality": false
+    },
+    "working_capital_and_cash": {
+      "verdict": "MIXED_COMPANY_STATE_ACTION_EFFECT_UNKNOWN",
+      "accounts_receivable_change": -0.6691556737761567,
+      "inventory_change": -0.25173120487770356,
+      "operating_cash_change": -0.6327440806252294,
+      "cash_capex_change": -0.3705744358087263,
+      "short_term_debt_change": 0.08046293744833287,
+      "finding": "应收和存货下降，但经营现金流大幅下降、短期借款上升。资本开支下降不能自动转化为所有者现金改善。",
+      "material_to_cash_resilience": true,
+      "material_to_furun_causality": false,
+      "prohibited_inferences": [
+        "应收和存货下降必然代表运营改善",
+        "资本开支下降必然代表自由现金流改善",
+        "经营现金流下降或短债上升由福润行动造成"
+      ]
+    },
+    "capital_return_and_permanent_loss": {
+      "verdict": "UNKNOWN",
+      "direct_loss_event": "UNKNOWN",
+      "capital_return": "UNKNOWN",
+      "permanent_loss": "UNKNOWN",
+      "finding": "一年期现金下降、融资依赖和汇总减值信息不足以证明永久损失；没有明确事件也不能证明永久损失风险不存在。",
+      "material_judgment_change": false
+    }
+  },
+  "causality_boundary": {
+    "furun_action_effect": "NOT_IDENTIFIED",
+    "reasons": [
+      "福润没有纳入福建水泥合并范围，且发行人没有实际控制。",
+      "没有发行人产品通过福润销售及对应客户响应的直接证据。",
+      "财务指标是福建水泥合并口径，而非福润行动归因口径。",
+      "FY2015流量指标包含完整年度，不能单独识别冻结后窗口的行动效果。",
+      "区域需求、行业价格、产能利用率和投入成本仍是同样或更强的解释。"
+    ],
+    "allowed_statement": "福建水泥FY2015单位经济和现金韧性恶化，同时福润没有形成可观察的发行人控制型执行范围。",
+    "prohibited_statement": "福润统一销售导致福建水泥FY2015经营和现金恶化。"
+  },
+  "management_quality_boundary": {
+    "overall_management_quality": "UNKNOWN",
+    "accepted_local_assessment": "管理层没有在结果期证明其已将福润安排转化为福建水泥可控制、可测量、可归责的经营杠杆。",
+    "not_established": [
+      "行动设计质量",
+      "谈判及治理安排质量",
+      "管理层实际投入和执行努力",
+      "面对整合未完成时的适应能力",
+      "客户获取能力",
+      "资本配置能力",
+      "长期经营能力"
+    ],
+    "prohibited_labels": [
+      "MANAGEMENT_EXECUTION_SUCCESS",
+      "MANAGEMENT_EXECUTION_FAILURE",
+      "MANAGEMENT_QUALITY_GOOD",
+      "MANAGEMENT_QUALITY_BAD"
+    ]
+  },
+  "rights": {
+    "local_postoutcome_review": "ACCEPTED_WITH_BOUNDARIES",
+    "research_agenda": "AUTHORIZED",
+    "directional_learning": "NOT_AUTHORIZED",
+    "enterprise_learning": "NOT_AUTHORIZED",
+    "comparative": "NOT_AUTHORIZED",
+    "method_transfer": "NOT_AUTHORIZED",
+    "cjo": "NOT_AUTHORIZED",
+    "valuation": "NOT_AUTHORIZED",
+    "report": "NOT_AUTHORIZED",
+    "investment": "NOT_AUTHORIZED"
+  },
+  "root_cause_reviews": [
+    {
+      "classification": [
+        "MODEL",
+        "REASONING"
+      ],
+      "issue": "单一EXECUTED布尔单元容易混淆形式启动、发行人实际控制和发行人产品参与。",
+      "economic_impact": "可能把联合安排的控制边界错误解释为行动从未实施，进而错误评价管理层。",
+      "missing_facts": [
+        "福润治理和决策权",
+        "福建水泥产品实际销售范围",
+        "双方人员和业务整合进度"
+      ],
+      "prohibited_assumptions": [
+        "未并表等于行动不存在",
+        "持股或参与等于实际经营控制"
+      ],
+      "executable_remediation": "未来预冻结时把形式设立、发行人控制权、发行人产品参与拆成独立原子单元；不得追溯改写本轮合同。",
+      "acceptance_criteria": "官方证据分别回答法律启动、决策控制和发行人产品商业参与，并各自绑定时间窗口。"
+    },
+    {
+      "classification": [
+        "DATA_COVERAGE"
+      ],
+      "issue": "客户响应完全缺失。",
+      "economic_impact": "无法判断统一销售是否改善真实市场接受度，也无法评价商业执行质量。",
+      "missing_facts": [
+        "客户或经销商变化",
+        "订单或留存",
+        "渠道覆盖",
+        "发行人相关市场份额"
+      ],
+      "prohibited_assumptions": [
+        "销量代表客户响应",
+        "管理层计划代表客户接受"
+      ],
+      "executable_remediation": "后续仅在取得发行人边界内的官方客户、渠道、订单或市场份额证据时重新研究该层。",
+      "acceptance_criteria": "证据必须直接绑定福建水泥、福润行动和明确期间；否则继续UNKNOWN。"
+    },
+    {
+      "classification": [
+        "DATA_COVERAGE",
+        "ACQUISITION_MODULE"
+      ],
+      "issue": "缺少FY2014水泥和熟料绝对销量，导致销量、实现价格和单位成本无法结算。",
+      "economic_impact": "无法拆分价格、销量和成本驱动，容易把毛利率恶化误判成单一经营原因。",
+      "missing_facts": [
+        "同产品口径FY2014绝对销量",
+        "同口径销量与收入成本配对"
+      ],
+      "prohibited_assumptions": [
+        "把四舍五入同比百分比反推值当作精确披露值",
+        "用收入替代销量"
+      ],
+      "executable_remediation": "未来合同预先允许带披露舍入规则的区间反推，或取得同边界绝对基期销量。",
+      "acceptance_criteria": "基期和结果期销量均有官方绝对值，或结果前冻结的区间反推规则能给出唯一方向。"
+    },
+    {
+      "classification": [
+        "REASONING"
+      ],
+      "issue": "合并财务变化不具备福润行动归因条件。",
+      "economic_impact": "错误归因会同时扭曲管理层判断、正常盈利能力和永久损失评估。",
+      "missing_facts": [
+        "行动特定收入成本",
+        "行动特定客户反馈",
+        "行动特定现金桥",
+        "可信反事实"
+      ],
+      "prohibited_assumptions": [
+        "同期发生等于因果",
+        "未并表主体能直接解释发行人全部合并指标"
+      ],
+      "executable_remediation": "本轮只保留公司状态反馈；只有取得行动边界桥或预声明相对因果设计后才讨论作用效果。",
+      "acceptance_criteria": "行动暴露、结果字段和责任边界可直接连接，并能排除主要区域市场替代解释。"
+    },
+    {
+      "classification": [
+        "DATA_COVERAGE"
+      ],
+      "issue": "资本回报和永久损失证据不足。",
+      "economic_impact": "不能判断现金恶化是短期周期压力还是不可逆资本损失。",
+      "missing_facts": [
+        "维护与扩张资本开支",
+        "债务到期和偿付能力",
+        "契约或违约事件",
+        "减值的可逆性和持续性"
+      ],
+      "prohibited_assumptions": [
+        "一年经营现金下降等于永久损失",
+        "没有明确违约等于没有永久损失风险"
+      ],
+      "executable_remediation": "在新的结果前合同中单独研究债务偿付、资本开支性质和资产损失持续性；本轮停止于UNKNOWN。",
+      "acceptance_criteria": "存在发行人层面的直接损失事件，或预声明多期证据足以区分暂时压力与永久损失。"
+    }
+  ],
+  "investor_conclusion": {
+    "headline": "福润统一销售从“已启动但范围未知”变成“已形式启动，但没有成为福建水泥可控制、可归责的经营杠杆”。",
+    "what_changed": "投资者应撤销对福润行动可能直接改善福建水泥客户、销量和利润的默认信用。",
+    "what_did_not_change": "不能说福润造成了毛利率和现金恶化，也不能据此评价管理层整体优劣或认定永久损失。",
+    "company_state": "福建水泥FY2015水泥毛利率和经营现金流明显恶化，短期借款上升；应收、存货和资本开支下降提供部分缓冲，但不足以证明经营质量改善。",
+    "investment_authority": "NONE"
+  },
+  "next_research_action": {
+    "objective": "在不追溯改写Round 5的前提下，把联合销售安排的形式启动、控制权、发行人产品参与和客户反馈分开研究。",
+    "actions": [
+      "将本轮结论固化为LOCAL_MECHANISM_SCOPE反馈，不升级为行动效果或管理层总评。",
+      "未来新episode预冻结福润治理权、发行人产品销售范围和直接客户反馈三个独立单元。",
+      "为销量、价格和单位成本预先取得绝对基期字段，或冻结允许舍入区间的推导规则。",
+      "资本回报和永久损失另设多期、发行人层面的研究合同。"
+    ],
+    "stop_condition": "在没有行动边界桥、客户反馈和行动特定经济数据时，保持作用效果、管理层质量和永久损失为UNKNOWN。",
+    "prohibited_next_steps": [
+      "读取价格或回报",
+      "读取本次授权范围外的后续年份",
+      "启动R-103",
+      "创建或修改CJO",
+      "授予估值、报告或投资权限"
+    ]
+  }
+}

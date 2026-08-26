@@ -356,3 +356,41 @@ does not authorize or read the real FY2015 source. Real outcome authorization,
 content read, custodian start and settlement all remain false; no directional-
 learning, enterprise-learning, Comparative, CJO, valuation, report or investment
 permission is granted.
+
+## 13. 2026-08-27 Round 5 Real Cell-Level Feedback
+
+The sealed Round 5 V3 route has now completed one real outcome turn without
+rewriting its pre-outcome package. An independent custodian read only the
+value-free projection and the authorized FY2015 static official PDF. The
+corrected custody records are `33_round5_custodian_field_records.json`; the
+first over-broad mismatch submission remains as the rejected historical
+`33a` artifact. The canonical settlement in `34` covers all 14 cells and 31
+raw inputs: eight cells are `OBSERVED`, six remain `UNKNOWN`, and no local
+missing field became a negative label or stopped a sibling cell.
+
+The independent post-outcome review in `35` accepts one material local change.
+Furun remained formally launched, but by FY2015 year-end it had not become an
+issuer-controlled, issuer-product-bearing or attributable operating lever for
+CN:600802. This removes execution credit for that mechanism; it does not prove
+that the action never existed, that management quality was poor, or that Furun
+caused the issuer's weaker margin and cash state. Customer response, action
+effect, overall management quality, capital return and permanent loss remain
+`UNKNOWN`.
+
+`36_round5_real_feedback_completion_receipt.json` records
+`REAL_FEEDBACK_TURN_5_COMPLETED` with an evidence ceiling of
+`LOCAL_ISSUER_CONTROLLED_EXECUTION_SCOPE`. It authorizes only a research-agenda
+change: future joint-arrangement episodes must freeze legal launch, decision
+control, issuer-product participation and customer response separately. It
+does not grant Comparative, directional or enterprise learning, method
+transfer, CJO, valuation, report or investment rights.
+
+Final control-plane acceptance also projects the exact fixed `29 -> 31 -> 32
+-> measurement-contract` route during pre-outcome adapter acceptance. Outcome
+settlement can only read that route; it cannot create it or supply replacement
+artifact identities. Before a Round 5 settlement can be stored, the canonical
+control independently re-executes the five frozen formula operators from the
+exact ordered `cell_id x field_id` receipts and verifies cell status, value,
+label, coverage, rights and allowed outputs. Caller-supplied route IDs, labels
+or permissions therefore cannot turn the local feedback into a broader
+training or investment claim.

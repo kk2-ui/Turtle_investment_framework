@@ -1,0 +1,82 @@
+{
+  "schema_version": "enterprise-judgment-round5-real-feedback-completion-receipt.v1",
+  "completion_id": "R5COMP:CN:CEMENT:600802:20150415:FY2015:V1",
+  "block_id": "ILB:CN:CEMENT_LISTED:2014_2018:V1",
+  "company_id": "CN:600802",
+  "cutoff_at": "2015-04-15T00:00:00+08:00",
+  "preoutcome_package_ref": {
+    "package_id": "EMFP:CN:CEMENT:600802:20150415:V3",
+    "artifact": "29_round5_v3_preoutcome_mechanism_package.json"
+  },
+  "custody_refs": {
+    "projection": "30_round5_v3_value_free_custody_projection.json",
+    "control_receipt": "31_round5_v3_preoutcome_control_plane_receipt.json",
+    "adapter_acceptance_receipt": "32_round5_v3_adapter_acceptance_receipt.json",
+    "accepted_field_records": "33_round5_custodian_field_records.json",
+    "rejected_prior_field_records": "33a_round5_custodian_field_records_v1_rejected.json",
+    "outcome_access_authorization": "34a_round5_outcome_access_authorization.json"
+  },
+  "settlement_ref": {
+    "settlement_id": "EMFS:CN:CEMENT:600802:20150415:V3",
+    "artifact": "34_round5_real_feedback_settlement.json",
+    "frozen_cells": 14,
+    "observed_cells": 8,
+    "unknown_cells": 6,
+    "measurement_mismatch_cells": 0
+  },
+  "independent_review_ref": {
+    "review_id": "R5IPOR:CN600802:20150415:FY2015:V1",
+    "artifact": "35_round5_independent_postoutcome_review.json",
+    "verdict": "ACCEPT_LOCAL_MATERIAL_JUDGMENT_CHANGE_ONLY"
+  },
+  "feedback_turn_status": "REAL_FEEDBACK_TURN_5_COMPLETED",
+  "accepted_feedback_scope": "LOCAL_ISSUER_CONTROLLED_EXECUTION_SCOPE",
+  "material_judgment_change": {
+    "before": "FURUN_FORMALLY_LAUNCHED_OPERATING_SCOPE_UNKNOWN",
+    "after": "FURUN_FORMALLY_LAUNCHED_BUT_NOT_ISSUER_CONTROLLED_OR_ATTRIBUTABLE_AT_FY2015_END",
+    "investor_effect": "Do not credit Furun as an executed driver of the issuer's customer, volume, profit or cash outcome."
+  },
+  "separate_company_state_observations": [
+    "SELLING_EXPENSE_DECREASED_12_68_PERCENT",
+    "CEMENT_GROSS_MARGIN_DECREASED_14_59_PERCENTAGE_POINTS",
+    "ACCOUNTS_RECEIVABLE_DECREASED_66_92_PERCENT",
+    "INVENTORY_DECREASED_25_17_PERCENT",
+    "OPERATING_CASH_DECREASED_63_27_PERCENT",
+    "CASH_CAPEX_DECREASED_37_06_PERCENT",
+    "SHORT_TERM_DEBT_INCREASED_8_05_PERCENT"
+  ],
+  "unknowns_preserved": [
+    "DIRECT_CUSTOMER_RESPONSE",
+    "CEMENT_AND_CLINKER_VOLUME_DIRECTION",
+    "CEMENT_REALIZED_PRICE_DIRECTION",
+    "CEMENT_UNIT_COST_DIRECTION",
+    "FURUN_ACTION_EFFECT",
+    "OVERALL_MANAGEMENT_QUALITY",
+    "CAPITAL_RETURN",
+    "PERMANENT_LOSS"
+  ],
+  "causality_boundary": "The issuer-level FY2015 financial changes and the absence of issuer-controlled Furun operating scope are simultaneous observations, not an identified causal chain.",
+  "next_research_action": [
+    "Freeze legal launch, decision control, issuer-product participation and customer response as separate cells in a future episode.",
+    "Obtain absolute same-definition baseline volume fields or freeze an interval inference rule before outcome access.",
+    "Study capital-return and permanent-loss persistence under a separate multi-period issuer-level contract."
+  ],
+  "transfer_status": "NOT_AUTHORIZED",
+  "rights": {
+    "comparative": "NOT_AUTHORIZED",
+    "directional_learning": "NOT_AUTHORIZED",
+    "enterprise_learning": "NOT_AUTHORIZED",
+    "method_transfer": "NOT_AUTHORIZED",
+    "cjo": "NOT_AUTHORIZED",
+    "valuation": "NOT_AUTHORIZED",
+    "report": "NOT_AUTHORIZED",
+    "investment": "NOT_AUTHORIZED"
+  },
+  "object_class": "ENTERPRISE_JUDGMENT_ROUND5_REAL_FEEDBACK_COMPLETION_RECEIPT",
+  "claim_class": "CELL_LEVEL_REAL_FEEDBACK_AND_LOCAL_JUDGMENT_CHANGE",
+  "allowed_outputs": [
+    "REAL_FEEDBACK_TURN_5_COMPLETED",
+    "LOCAL_MECHANISM_SCOPE_FEEDBACK",
+    "RESEARCH_AGENDA"
+  ]
+}
