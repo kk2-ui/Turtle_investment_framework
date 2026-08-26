@@ -1,0 +1,1366 @@
+{
+  "schema_version": "judgment-selection-stage0-static-package.v1",
+  "entry_kind": "CURATOR_SUPPLIED_CUTOFF_BEFORE_STATIC_CNINFO_PDF_PACKAGE",
+  "cohort_id": "COHORT:CN:TEXTILE_APPAREL_EXPORT_MANUFACTURING:20191231",
+  "industry_id": "CN:TEXTILE_APPAREL_EXPORT_MANUFACTURING",
+  "selection_as_of": "2019-12-31T00:00:00+08:00",
+  "cohort_eligibility_as_of": "2019-12-31T00:00:00+08:00",
+  "arena_family": "EXPORT_MANUFACTURING_CURRENCY_AND_INPUT_COSTS_2019",
+  "mechanism_topology": "CUSTOMER_RESPONSE",
+  "current_admission_assessment": {
+    "status": "FEASIBLE_FOR_H1_STATIC_SOURCE_PACKAGE",
+    "reason": "Five independently controlled listed-consolidated disclosure carriers have cutoff-before annual-report coverage for the generic textile/apparel export-manufacturing arena; one is retained as a disclosure-only material-scope break."
+  },
+  "curator_attestation": {
+    "curator_id": "STATIC_H1_CURATOR_EXPORT_MANUFACTURING_2019",
+    "issuer_code_or_name_submitted_to_cninfo_fulltext": false,
+    "cninfo_issuer_stock_or_detail_page_opened": false,
+    "post_identification_access": "PREDECLARED_CUTOFF_BEFORE_STATIC_CNINFO_PDF_PACKAGE_ONLY",
+    "post_cutoff_metadata_or_body_read": false
+  },
+  "universe": {
+    "universe_id": "UNIVERSE:CN:TEXTILE_APPAREL_EXPORT_MANUFACTURING:20191231",
+    "membership_rule": "Cutoff-before listed-consolidated annual-report carriers with documented textile/apparel manufacturing and export-market evidence.",
+    "cohort_scope": "PRE_ACTION_DISCLOSURE_FEASIBILITY_SAMPLE",
+    "not_final_peer_universe": true,
+    "listed_company_ids": [
+      "CN:002003",
+      "CN:002404",
+      "CN:002083",
+      "CN:002394",
+      "CN:600070"
+    ]
+  },
+  "competitive_arena": {
+    "competitive_arena_id": "CN:TEXTILE_APPAREL_EXPORT_MANUFACTURING",
+    "market_scope_type": "EXPORT",
+    "product_or_service_scope": "TEXTILE_APPAREL_AND_ASSOCIATED_MANUFACTURED_PRODUCTS",
+    "geographic_scope": "Documented overseas export customer markets and international sales channels.",
+    "customer_end_market_scope": "APPAREL_AND_HOME_TEXTILE_CUSTOMERS",
+    "evidence": [
+      {
+        "source_id": "CNINFO:002003:ANN:20190416:1206040618",
+        "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+        "issuer_id": "ISSUER:CN:002003",
+        "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+        "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:002003",
+        "unit": "RMB",
+        "published_at": "2019-04-16",
+        "field_ref": "Business and arena evidence — PDF p. 17"
+      },
+      {
+        "source_id": "CNINFO:002404:ANN:20190319:1205917192",
+        "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+        "issuer_id": "ISSUER:CN:002404",
+        "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+        "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:002404",
+        "unit": "RMB",
+        "published_at": "2019-03-19",
+        "field_ref": "Business and arena evidence — PDF p. 9"
+      },
+      {
+        "source_id": "CNINFO:002083:ANN:20190428:1206124458",
+        "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+        "issuer_id": "ISSUER:CN:002083",
+        "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+        "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:002083",
+        "unit": "RMB",
+        "published_at": "2019-04-28",
+        "field_ref": "Business and arena evidence — PDF p. 10"
+      },
+      {
+        "source_id": "CNINFO:002394:ANN:20190422:1206068393",
+        "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+        "issuer_id": "ISSUER:CN:002394",
+        "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+        "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:002394",
+        "unit": "RMB",
+        "published_at": "2019-04-22",
+        "field_ref": "Business and arena evidence — PDF p. 13"
+      },
+      {
+        "source_id": "CNINFO:600070:ANN:20190416:1206041964",
+        "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+        "issuer_id": "ISSUER:CN:600070",
+        "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+        "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600070",
+        "unit": "RMB",
+        "published_at": "2019-04-16",
+        "field_ref": "Business and arena evidence — PDF p. 9"
+      }
+    ]
+  },
+  "static_pdf_sources": [
+    {
+      "source_id": "CNINFO:002003:ANN:20150406:1200787688",
+      "url": "https://static.cninfo.com.cn/finalpage/2015-04-07/1200787688.PDF",
+      "published_at": "2015-04-06",
+      "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+      "period_end": "2014-12-31",
+      "issuer_id": "ISSUER:CN:002003",
+      "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:002003",
+      "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+      "unit": "RMB",
+      "field_refs": ["D3 consolidated income statement — PDF p. 59", "D4 consolidated cash-flow statement — PDF p. 61"]
+    },
+    {
+      "source_id": "CNINFO:002003:ANN:20160311:1202039126",
+      "url": "https://static.cninfo.com.cn/finalpage/2016-03-12/1202039126.PDF",
+      "published_at": "2016-03-11",
+      "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+      "period_end": "2015-12-31",
+      "issuer_id": "ISSUER:CN:002003",
+      "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:002003",
+      "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+      "unit": "RMB",
+      "field_refs": ["D3 consolidated income statement — PDF p. 60", "D4 consolidated cash-flow statement — PDF p. 63"]
+    },
+    {
+      "source_id": "CNINFO:002003:ANN:20170419:1203331670",
+      "url": "https://static.cninfo.com.cn/finalpage/2017-04-20/1203331670.PDF",
+      "published_at": "2017-04-19",
+      "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+      "period_end": "2016-12-31",
+      "issuer_id": "ISSUER:CN:002003",
+      "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:002003",
+      "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+      "unit": "RMB",
+      "field_refs": ["D2 international regional revenue — PDF p. 14", "D3 consolidated income statement — PDF p. 69", "D4 consolidated cash-flow statement — PDF p. 71"]
+    },
+    {
+      "source_id": "CNINFO:002003:ANN:20180413:1204625011",
+      "url": "https://static.cninfo.com.cn/finalpage/2018-04-14/1204625011.PDF",
+      "published_at": "2018-04-13",
+      "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+      "period_end": "2017-12-31",
+      "issuer_id": "ISSUER:CN:002003",
+      "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:002003",
+      "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+      "unit": "RMB",
+      "field_refs": ["D2 international regional revenue — PDF p. 16", "D3 consolidated income statement — PDF p. 70", "D4 consolidated cash-flow statement — PDF p. 73"]
+    },
+    {
+      "source_id": "CNINFO:002003:ANN:20190416:1206040618",
+      "url": "https://static.cninfo.com.cn/finalpage/2019-04-17/1206040618.PDF",
+      "published_at": "2019-04-16",
+      "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+      "period_end": "2018-12-31",
+      "issuer_id": "ISSUER:CN:002003",
+      "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:002003",
+      "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+      "unit": "RMB",
+      "field_refs": ["Business and arena evidence — PDF p. 17", "D2 international regional revenue — PDF p. 17", "Control evidence — PDF p. 47", "D3 consolidated income statement — PDF p. 71", "D4 consolidated cash-flow statement — PDF p. 74"]
+    },
+    {
+      "source_id": "CNINFO:002404:ANN:20150323:1200730795",
+      "url": "https://static.cninfo.com.cn/finalpage/2015-03-24/1200730795.PDF",
+      "published_at": "2015-03-23",
+      "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+      "period_end": "2014-12-31",
+      "issuer_id": "ISSUER:CN:002404",
+      "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:002404",
+      "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+      "unit": "RMB",
+      "field_refs": ["D3 consolidated income statement — PDF p. 74", "D4 consolidated cash-flow statement — PDF p. 78"]
+    },
+    {
+      "source_id": "CNINFO:002404:ANN:20160318:1202057300",
+      "url": "https://static.cninfo.com.cn/finalpage/2016-03-19/1202057300.PDF",
+      "published_at": "2016-03-18",
+      "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+      "period_end": "2015-12-31",
+      "issuer_id": "ISSUER:CN:002404",
+      "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:002404",
+      "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+      "unit": "RMB",
+      "field_refs": ["D3 consolidated income statement — PDF p. 69", "D4 consolidated cash-flow statement — PDF p. 73"]
+    },
+    {
+      "source_id": "CNINFO:002404:ANN:20170320:1203179712",
+      "url": "https://static.cninfo.com.cn/finalpage/2017-03-21/1203179712.PDF",
+      "published_at": "2017-03-20",
+      "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+      "period_end": "2016-12-31",
+      "issuer_id": "ISSUER:CN:002404",
+      "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:002404",
+      "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+      "unit": "RMB",
+      "field_refs": ["D2 export turnover — PDF p. 11", "D3 consolidated income statement — PDF p. 69", "D4 consolidated cash-flow statement — PDF p. 73"]
+    },
+    {
+      "source_id": "CNINFO:002404:ANN:20180426:1204799365",
+      "url": "https://static.cninfo.com.cn/finalpage/2018-04-27/1204799365.PDF",
+      "published_at": "2018-04-26",
+      "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+      "period_end": "2017-12-31",
+      "issuer_id": "ISSUER:CN:002404",
+      "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:002404",
+      "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+      "unit": "RMB",
+      "field_refs": ["D2 export turnover — PDF p. 9", "D3 consolidated income statement — PDF p. 79", "D4 consolidated cash-flow statement — PDF p. 83"]
+    },
+    {
+      "source_id": "CNINFO:002404:ANN:20190319:1205917192",
+      "url": "https://static.cninfo.com.cn/finalpage/2019-03-20/1205917192.PDF",
+      "published_at": "2019-03-19",
+      "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+      "period_end": "2018-12-31",
+      "issuer_id": "ISSUER:CN:002404",
+      "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:002404",
+      "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+      "unit": "RMB",
+      "field_refs": ["Business and arena evidence — PDF p. 9", "D2 export turnover — PDF p. 11", "Control evidence — PDF p. 58", "D3 consolidated income statement — PDF p. 86", "D4 consolidated cash-flow statement — PDF p. 90"]
+    },
+    {
+      "source_id": "CNINFO:002083:ANN:20150427:1200918435",
+      "url": "https://static.cninfo.com.cn/finalpage/2015-04-28/1200918435.PDF",
+      "published_at": "2015-04-27",
+      "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+      "period_end": "2014-12-31",
+      "issuer_id": "ISSUER:CN:002083",
+      "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:002083",
+      "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+      "unit": "RMB",
+      "field_refs": ["D3 consolidated income statement — PDF p. 46", "D4 consolidated cash-flow statement — PDF p. 48"]
+    },
+    {
+      "source_id": "CNINFO:002083:ANN:20160330:1202112583",
+      "url": "https://static.cninfo.com.cn/finalpage/2016-03-31/1202112583.PDF",
+      "published_at": "2016-03-30",
+      "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+      "period_end": "2015-12-31",
+      "issuer_id": "ISSUER:CN:002083",
+      "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:002083",
+      "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+      "unit": "RMB",
+      "field_refs": ["D3 consolidated income statement — PDF p. 48", "D4 consolidated cash-flow statement — PDF p. 49"]
+    },
+    {
+      "source_id": "CNINFO:002083:ANN:20170407:1203261862",
+      "url": "https://static.cninfo.com.cn/finalpage/2017-04-08/1203261862.PDF",
+      "published_at": "2017-04-07",
+      "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+      "period_end": "2016-12-31",
+      "issuer_id": "ISSUER:CN:002083",
+      "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:002083",
+      "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+      "unit": "RMB",
+      "field_refs": ["D2 export turnover — PDF p. 9", "D3 consolidated income statement — PDF p. 46", "D4 consolidated cash-flow statement — PDF p. 48"]
+    },
+    {
+      "source_id": "CNINFO:002083:ANN:20180402:1204575099",
+      "url": "https://static.cninfo.com.cn/finalpage/2018-04-03/1204575099.PDF",
+      "published_at": "2018-04-02",
+      "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+      "period_end": "2017-12-31",
+      "issuer_id": "ISSUER:CN:002083",
+      "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:002083",
+      "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+      "unit": "RMB",
+      "field_refs": ["D2 export turnover — PDF p. 8", "D3 consolidated income statement — PDF p. 45", "D4 consolidated cash-flow statement — PDF p. 46"]
+    },
+    {
+      "source_id": "CNINFO:002083:ANN:20190428:1206124458",
+      "url": "https://static.cninfo.com.cn/finalpage/2019-04-29/1206124458.PDF",
+      "published_at": "2019-04-28",
+      "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+      "period_end": "2018-12-31",
+      "issuer_id": "ISSUER:CN:002083",
+      "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:002083",
+      "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+      "unit": "RMB",
+      "field_refs": ["Business and arena evidence — PDF p. 10", "D2 export turnover — PDF p. 10", "Control evidence — PDF p. 31", "D3 consolidated income statement — PDF p. 52", "D4 consolidated cash-flow statement — PDF p. 55"]
+    },
+    {
+      "source_id": "CNINFO:002394:ANN:20150420:1200873013",
+      "url": "https://static.cninfo.com.cn/finalpage/2015-04-21/1200873013.PDF",
+      "published_at": "2015-04-20",
+      "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+      "period_end": "2014-12-31",
+      "issuer_id": "ISSUER:CN:002394",
+      "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:002394",
+      "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+      "unit": "RMB",
+      "field_refs": ["D3 consolidated income statement — PDF p. 82", "D4 consolidated cash-flow statement — PDF p. 84"]
+    },
+    {
+      "source_id": "CNINFO:002394:ANN:20160421:1202218930",
+      "url": "https://static.cninfo.com.cn/finalpage/2016-04-22/1202218930.PDF",
+      "published_at": "2016-04-21",
+      "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+      "period_end": "2015-12-31",
+      "issuer_id": "ISSUER:CN:002394",
+      "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:002394",
+      "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+      "unit": "RMB",
+      "field_refs": ["D3 consolidated income statement — PDF p. 92", "D4 consolidated cash-flow statement — PDF p. 95"]
+    },
+    {
+      "source_id": "CNINFO:002394:ANN:20170424:1203372599",
+      "url": "https://static.cninfo.com.cn/finalpage/2017-04-25/1203372599.PDF",
+      "published_at": "2017-04-24",
+      "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+      "period_end": "2016-12-31",
+      "issuer_id": "ISSUER:CN:002394",
+      "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:002394",
+      "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+      "unit": "RMB",
+      "field_refs": ["D2 export-sales share — PDF p. 27", "D3 consolidated income statement — PDF p. 89", "D4 consolidated cash-flow statement — PDF p. 92"]
+    },
+    {
+      "source_id": "CNINFO:002394:ANN:20180420:1204675995",
+      "url": "https://static.cninfo.com.cn/finalpage/2018-04-21/1204675995.PDF",
+      "published_at": "2018-04-20",
+      "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+      "period_end": "2017-12-31",
+      "issuer_id": "ISSUER:CN:002394",
+      "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:002394",
+      "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+      "unit": "RMB",
+      "field_refs": ["D2 export-sales share — PDF p. 26", "D3 consolidated income statement — PDF p. 83", "D4 consolidated cash-flow statement — PDF p. 86"]
+    },
+    {
+      "source_id": "CNINFO:002394:ANN:20190422:1206068393",
+      "url": "https://static.cninfo.com.cn/finalpage/2019-04-23/1206068393.PDF",
+      "published_at": "2019-04-22",
+      "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+      "period_end": "2018-12-31",
+      "issuer_id": "ISSUER:CN:002394",
+      "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:002394",
+      "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+      "unit": "RMB",
+      "field_refs": ["Business and arena evidence — PDF p. 13", "D2 export-sales share — PDF p. 25", "Control evidence — PDF p. 57", "D3 consolidated income statement — PDF p. 85", "D4 consolidated cash-flow statement — PDF p. 89"]
+    },
+    {
+      "source_id": "CNINFO:600070:ANN:20150330:1200764400",
+      "url": "https://static.cninfo.com.cn/finalpage/2015-03-31/1200764400.PDF",
+      "published_at": "2015-03-30",
+      "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+      "period_end": "2014-12-31",
+      "issuer_id": "ISSUER:CN:600070",
+      "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600070",
+      "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+      "unit": "RMB",
+      "field_refs": ["D3 consolidated income statement — PDF p. 37", "D4 consolidated cash-flow statement — PDF p. 40"]
+    },
+    {
+      "source_id": "CNINFO:600070:ANN:20160229:1202007395",
+      "url": "https://static.cninfo.com.cn/finalpage/2016-03-01/1202007395.PDF",
+      "published_at": "2016-02-29",
+      "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+      "period_end": "2015-12-31",
+      "issuer_id": "ISSUER:CN:600070",
+      "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600070",
+      "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+      "unit": "RMB",
+      "field_refs": ["D3 consolidated income statement — PDF p. 39", "D4 consolidated cash-flow statement — PDF p. 42"]
+    },
+    {
+      "source_id": "CNINFO:600070:ANN:20170320:1203178988",
+      "url": "https://static.cninfo.com.cn/finalpage/2017-03-21/1203178988.PDF",
+      "published_at": "2017-03-20",
+      "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+      "period_end": "2016-12-31",
+      "issuer_id": "ISSUER:CN:600070",
+      "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600070",
+      "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+      "unit": "RMB",
+      "field_refs": ["D2 export-sales geography — PDF p. 10", "D3 consolidated income statement — PDF p. 44", "D4 consolidated cash-flow statement — PDF p. 47"]
+    },
+    {
+      "source_id": "CNINFO:600070:ANN:20180412:1204621453",
+      "url": "https://static.cninfo.com.cn/finalpage/2018-04-13/1204621453.PDF",
+      "published_at": "2018-04-12",
+      "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+      "period_end": "2017-12-31",
+      "issuer_id": "ISSUER:CN:600070",
+      "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600070",
+      "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+      "unit": "RMB",
+      "field_refs": ["D2 export-sales geography — PDF p. 12", "D3 consolidated income statement — PDF p. 60", "D4 consolidated cash-flow statement — PDF p. 62"]
+    },
+    {
+      "source_id": "CNINFO:600070:ANN:20190416:1206041964",
+      "url": "https://static.cninfo.com.cn/finalpage/2019-04-17/1206041964.PDF",
+      "published_at": "2019-04-16",
+      "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+      "period_end": "2018-12-31",
+      "issuer_id": "ISSUER:CN:600070",
+      "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600070",
+      "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+      "unit": "RMB",
+      "field_refs": ["Business and arena evidence — PDF p. 9", "D2 export-sales geography — PDF p. 14", "Control evidence — PDF p. 44", "Material scope break evidence — PDF p. 9", "D3 consolidated income statement — PDF p. 65", "D4 consolidated cash-flow statement — PDF p. 68"]
+    }
+  ],
+  "members": [
+    {
+      "company_id": "CN:002003",
+      "issuer_id": "ISSUER:CN:002003",
+      "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:002003",
+      "control_group_id": "CONTROL:ZHANG_KAPENG_AND_ZHANG_SANYUN",
+      "industry_id": "CN:TEXTILE_APPAREL_EXPORT_MANUFACTURING",
+      "boundary": {
+        "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:002003",
+        "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+        "unit": "RMB"
+      },
+      "industry_business_evidence": [
+        {
+          "source_id": "CNINFO:002003:ANN:20190416:1206040618",
+          "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+          "issuer_id": "ISSUER:CN:002003",
+          "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+          "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:002003",
+          "unit": "RMB",
+          "published_at": "2019-04-16",
+          "field_ref": "Business and arena evidence — PDF p. 17"
+        }
+      ],
+      "control_group_evidence": [
+        {
+          "source_id": "CNINFO:002003:ANN:20190416:1206040618",
+          "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+          "issuer_id": "ISSUER:CN:002003",
+          "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+          "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:002003",
+          "unit": "RMB",
+          "published_at": "2019-04-16",
+          "field_ref": "Control evidence — PDF p. 47",
+          "observed_control_group_id": "CONTROL:ZHANG_KAPENG_AND_ZHANG_SANYUN"
+        }
+      ],
+      "final_peer_panel_disposition": "PENDING_ACTION_WINDOW_REVIEW",
+      "final_peer_panel_rationale": "Only generic static-source eligibility is recorded; later action-window comparability is unassessed.",
+      "d2_field_availability": {
+        "field_id": "INTERNATIONAL_REGIONAL_REVENUE",
+        "definition": "Listed-consolidated annual report regional revenue identified as international.",
+        "repetitions": [
+          {"period_end": "2016-12-31", "evidence": [{"source_id": "CNINFO:002003:ANN:20170419:1203331670", "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT", "issuer_id": "ISSUER:CN:002003", "perimeter_id": "LISTED_CONSOLIDATED_ISSUER", "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:002003", "unit": "RMB", "published_at": "2017-04-19", "field_ref": "D2 international regional revenue — PDF p. 14"}]},
+          {"period_end": "2017-12-31", "evidence": [{"source_id": "CNINFO:002003:ANN:20180413:1204625011", "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT", "issuer_id": "ISSUER:CN:002003", "perimeter_id": "LISTED_CONSOLIDATED_ISSUER", "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:002003", "unit": "RMB", "published_at": "2018-04-13", "field_ref": "D2 international regional revenue — PDF p. 16"}]},
+          {"period_end": "2018-12-31", "evidence": [{"source_id": "CNINFO:002003:ANN:20190416:1206040618", "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT", "issuer_id": "ISSUER:CN:002003", "perimeter_id": "LISTED_CONSOLIDATED_ISSUER", "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:002003", "unit": "RMB", "published_at": "2019-04-16", "field_ref": "D2 international regional revenue — PDF p. 17"}]}
+        ]
+      },
+      "annual_d3_d4_availability": [
+        {"period_end": "2014-12-31", "evidence": [{"source_id": "CNINFO:002003:ANN:20150406:1200787688", "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT", "issuer_id": "ISSUER:CN:002003", "perimeter_id": "LISTED_CONSOLIDATED_ISSUER", "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:002003", "unit": "RMB", "published_at": "2015-04-06", "field_ref": "D3 consolidated income statement — PDF p. 59"}, {"source_id": "CNINFO:002003:ANN:20150406:1200787688", "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT", "issuer_id": "ISSUER:CN:002003", "perimeter_id": "LISTED_CONSOLIDATED_ISSUER", "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:002003", "unit": "RMB", "published_at": "2015-04-06", "field_ref": "D4 consolidated cash-flow statement — PDF p. 61"}]},
+        {"period_end": "2015-12-31", "evidence": [{"source_id": "CNINFO:002003:ANN:20160311:1202039126", "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT", "issuer_id": "ISSUER:CN:002003", "perimeter_id": "LISTED_CONSOLIDATED_ISSUER", "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:002003", "unit": "RMB", "published_at": "2016-03-11", "field_ref": "D3 consolidated income statement — PDF p. 60"}, {"source_id": "CNINFO:002003:ANN:20160311:1202039126", "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT", "issuer_id": "ISSUER:CN:002003", "perimeter_id": "LISTED_CONSOLIDATED_ISSUER", "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:002003", "unit": "RMB", "published_at": "2016-03-11", "field_ref": "D4 consolidated cash-flow statement — PDF p. 63"}]},
+        {"period_end": "2016-12-31", "evidence": [{"source_id": "CNINFO:002003:ANN:20170419:1203331670", "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT", "issuer_id": "ISSUER:CN:002003", "perimeter_id": "LISTED_CONSOLIDATED_ISSUER", "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:002003", "unit": "RMB", "published_at": "2017-04-19", "field_ref": "D3 consolidated income statement — PDF p. 69"}, {"source_id": "CNINFO:002003:ANN:20170419:1203331670", "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT", "issuer_id": "ISSUER:CN:002003", "perimeter_id": "LISTED_CONSOLIDATED_ISSUER", "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:002003", "unit": "RMB", "published_at": "2017-04-19", "field_ref": "D4 consolidated cash-flow statement — PDF p. 71"}]},
+        {"period_end": "2017-12-31", "evidence": [{"source_id": "CNINFO:002003:ANN:20180413:1204625011", "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT", "issuer_id": "ISSUER:CN:002003", "perimeter_id": "LISTED_CONSOLIDATED_ISSUER", "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:002003", "unit": "RMB", "published_at": "2018-04-13", "field_ref": "D3 consolidated income statement — PDF p. 70"}, {"source_id": "CNINFO:002003:ANN:20180413:1204625011", "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT", "issuer_id": "ISSUER:CN:002003", "perimeter_id": "LISTED_CONSOLIDATED_ISSUER", "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:002003", "unit": "RMB", "published_at": "2018-04-13", "field_ref": "D4 consolidated cash-flow statement — PDF p. 73"}]},
+        {"period_end": "2018-12-31", "evidence": [{"source_id": "CNINFO:002003:ANN:20190416:1206040618", "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT", "issuer_id": "ISSUER:CN:002003", "perimeter_id": "LISTED_CONSOLIDATED_ISSUER", "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:002003", "unit": "RMB", "published_at": "2019-04-16", "field_ref": "D3 consolidated income statement — PDF p. 71"}, {"source_id": "CNINFO:002003:ANN:20190416:1206040618", "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT", "issuer_id": "ISSUER:CN:002003", "perimeter_id": "LISTED_CONSOLIDATED_ISSUER", "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:002003", "unit": "RMB", "published_at": "2019-04-16", "field_ref": "D4 consolidated cash-flow statement — PDF p. 74"}]}
+      ],
+      "competitive_arena_id": "CN:TEXTILE_APPAREL_EXPORT_MANUFACTURING",
+      "carrier_identity_source_ids": ["CNINFO:002003:ANN:20150406:1200787688", "CNINFO:002003:ANN:20160311:1202039126", "CNINFO:002003:ANN:20170419:1203331670", "CNINFO:002003:ANN:20180413:1204625011", "CNINFO:002003:ANN:20190416:1206040618"]
+    },
+    {
+      "company_id": "CN:600070",
+      "issuer_id": "ISSUER:CN:600070",
+      "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600070",
+      "control_group_id": "CONTROL:ZHAO_LINZHONG_AND_HUIFENG_SHAREHOLDERS",
+      "industry_id": "CN:TEXTILE_APPAREL_EXPORT_MANUFACTURING",
+      "boundary": {
+        "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600070",
+        "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+        "unit": "RMB"
+      },
+      "industry_business_evidence": [
+        {
+          "source_id": "CNINFO:600070:ANN:20190416:1206041964",
+          "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+          "issuer_id": "ISSUER:CN:600070",
+          "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+          "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600070",
+          "unit": "RMB",
+          "published_at": "2019-04-16",
+          "field_ref": "Business and arena evidence — PDF p. 9"
+        }
+      ],
+      "control_group_evidence": [
+        {
+          "source_id": "CNINFO:600070:ANN:20190416:1206041964",
+          "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+          "issuer_id": "ISSUER:CN:600070",
+          "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+          "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600070",
+          "unit": "RMB",
+          "published_at": "2019-04-16",
+          "field_ref": "Control evidence — PDF p. 44",
+          "observed_control_group_id": "CONTROL:ZHAO_LINZHONG_AND_HUIFENG_SHAREHOLDERS"
+        }
+      ],
+      "final_peer_panel_disposition": "KNOWN_MATERIAL_SCOPE_OR_CONTROL_BREAK",
+      "final_peer_panel_rationale": "Cutoff-before report identifies textile processing alongside steel processing and internet marketing/data services at the listed-consolidated boundary; retained only as a disclosure carrier.",
+      "d2_field_availability": {
+        "field_id": "EXPORT_TURNOVER_OR_EXPORT_SALES_SHARE",
+        "definition": "Listed-consolidated annual report export turnover, export-sales geography, or recurring export-sales share.",
+        "repetitions": [
+          {
+            "period_end": "2016-12-31",
+            "evidence": [
+              {
+                "source_id": "CNINFO:600070:ANN:20170320:1203178988",
+                "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+                "issuer_id": "ISSUER:CN:600070",
+                "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+                "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600070",
+                "unit": "RMB",
+                "published_at": "2017-03-20",
+                "field_ref": "D2 export-sales geography — PDF p. 10"
+              }
+            ]
+          },
+          {
+            "period_end": "2017-12-31",
+            "evidence": [
+              {
+                "source_id": "CNINFO:600070:ANN:20180412:1204621453",
+                "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+                "issuer_id": "ISSUER:CN:600070",
+                "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+                "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600070",
+                "unit": "RMB",
+                "published_at": "2018-04-12",
+                "field_ref": "D2 export-sales geography — PDF p. 12"
+              }
+            ]
+          },
+          {
+            "period_end": "2018-12-31",
+            "evidence": [
+              {
+                "source_id": "CNINFO:600070:ANN:20190416:1206041964",
+                "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+                "issuer_id": "ISSUER:CN:600070",
+                "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+                "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600070",
+                "unit": "RMB",
+                "published_at": "2019-04-16",
+                "field_ref": "D2 export-sales geography — PDF p. 14"
+              }
+            ]
+          }
+        ]
+      },
+      "annual_d3_d4_availability": [
+        {
+          "period_end": "2014-12-31",
+          "evidence": [
+            {
+              "source_id": "CNINFO:600070:ANN:20150330:1200764400",
+              "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+              "issuer_id": "ISSUER:CN:600070",
+              "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+              "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600070",
+              "unit": "RMB",
+              "published_at": "2015-03-30",
+              "field_ref": "D3 consolidated income statement — PDF p. 37"
+            },
+            {
+              "source_id": "CNINFO:600070:ANN:20150330:1200764400",
+              "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+              "issuer_id": "ISSUER:CN:600070",
+              "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+              "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600070",
+              "unit": "RMB",
+              "published_at": "2015-03-30",
+              "field_ref": "D4 consolidated cash-flow statement — PDF p. 40"
+            }
+          ]
+        },
+        {
+          "period_end": "2015-12-31",
+          "evidence": [
+            {
+              "source_id": "CNINFO:600070:ANN:20160229:1202007395",
+              "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+              "issuer_id": "ISSUER:CN:600070",
+              "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+              "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600070",
+              "unit": "RMB",
+              "published_at": "2016-02-29",
+              "field_ref": "D3 consolidated income statement — PDF p. 39"
+            },
+            {
+              "source_id": "CNINFO:600070:ANN:20160229:1202007395",
+              "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+              "issuer_id": "ISSUER:CN:600070",
+              "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+              "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600070",
+              "unit": "RMB",
+              "published_at": "2016-02-29",
+              "field_ref": "D4 consolidated cash-flow statement — PDF p. 42"
+            }
+          ]
+        },
+        {
+          "period_end": "2016-12-31",
+          "evidence": [
+            {
+              "source_id": "CNINFO:600070:ANN:20170320:1203178988",
+              "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+              "issuer_id": "ISSUER:CN:600070",
+              "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+              "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600070",
+              "unit": "RMB",
+              "published_at": "2017-03-20",
+              "field_ref": "D3 consolidated income statement — PDF p. 44"
+            },
+            {
+              "source_id": "CNINFO:600070:ANN:20170320:1203178988",
+              "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+              "issuer_id": "ISSUER:CN:600070",
+              "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+              "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600070",
+              "unit": "RMB",
+              "published_at": "2017-03-20",
+              "field_ref": "D4 consolidated cash-flow statement — PDF p. 47"
+            }
+          ]
+        },
+        {
+          "period_end": "2017-12-31",
+          "evidence": [
+            {
+              "source_id": "CNINFO:600070:ANN:20180412:1204621453",
+              "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+              "issuer_id": "ISSUER:CN:600070",
+              "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+              "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600070",
+              "unit": "RMB",
+              "published_at": "2018-04-12",
+              "field_ref": "D3 consolidated income statement — PDF p. 60"
+            },
+            {
+              "source_id": "CNINFO:600070:ANN:20180412:1204621453",
+              "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+              "issuer_id": "ISSUER:CN:600070",
+              "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+              "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600070",
+              "unit": "RMB",
+              "published_at": "2018-04-12",
+              "field_ref": "D4 consolidated cash-flow statement — PDF p. 62"
+            }
+          ]
+        },
+        {
+          "period_end": "2018-12-31",
+          "evidence": [
+            {
+              "source_id": "CNINFO:600070:ANN:20190416:1206041964",
+              "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+              "issuer_id": "ISSUER:CN:600070",
+              "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+              "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600070",
+              "unit": "RMB",
+              "published_at": "2019-04-16",
+              "field_ref": "D3 consolidated income statement — PDF p. 65"
+            },
+            {
+              "source_id": "CNINFO:600070:ANN:20190416:1206041964",
+              "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+              "issuer_id": "ISSUER:CN:600070",
+              "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+              "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600070",
+              "unit": "RMB",
+              "published_at": "2019-04-16",
+              "field_ref": "D4 consolidated cash-flow statement — PDF p. 68"
+            }
+          ]
+        }
+      ],
+      "competitive_arena_id": "CN:TEXTILE_APPAREL_EXPORT_MANUFACTURING",
+      "carrier_identity_source_ids": [
+        "CNINFO:600070:ANN:20150330:1200764400",
+        "CNINFO:600070:ANN:20160229:1202007395",
+        "CNINFO:600070:ANN:20170320:1203178988",
+        "CNINFO:600070:ANN:20180412:1204621453",
+        "CNINFO:600070:ANN:20190416:1206041964"
+      ],
+      "comparability_break_evidence": [
+        {
+          "source_id": "CNINFO:600070:ANN:20190416:1206041964",
+          "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+          "issuer_id": "ISSUER:CN:600070",
+          "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+          "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600070",
+          "unit": "RMB",
+          "published_at": "2019-04-16",
+          "field_ref": "Material scope break evidence — PDF p. 9"
+        }
+      ]
+    },
+    {
+      "company_id": "CN:002404",
+      "issuer_id": "ISSUER:CN:002404",
+      "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:002404",
+      "control_group_id": "CONTROL:ZHOU_GUOJIAN",
+      "industry_id": "CN:TEXTILE_APPAREL_EXPORT_MANUFACTURING",
+      "boundary": {
+        "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:002404",
+        "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+        "unit": "RMB"
+      },
+      "industry_business_evidence": [
+        {
+          "source_id": "CNINFO:002404:ANN:20190319:1205917192",
+          "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+          "issuer_id": "ISSUER:CN:002404",
+          "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+          "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:002404",
+          "unit": "RMB",
+          "published_at": "2019-03-19",
+          "field_ref": "Business and arena evidence — PDF p. 9"
+        }
+      ],
+      "control_group_evidence": [
+        {
+          "source_id": "CNINFO:002404:ANN:20190319:1205917192",
+          "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+          "issuer_id": "ISSUER:CN:002404",
+          "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+          "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:002404",
+          "unit": "RMB",
+          "published_at": "2019-03-19",
+          "field_ref": "Control evidence — PDF p. 58",
+          "observed_control_group_id": "CONTROL:ZHOU_GUOJIAN"
+        }
+      ],
+      "final_peer_panel_disposition": "PENDING_ACTION_WINDOW_REVIEW",
+      "final_peer_panel_rationale": "Only generic static-source eligibility is recorded; later action-window comparability is unassessed.",
+      "d2_field_availability": {
+        "field_id": "EXPORT_TURNOVER_OR_EXPORT_SALES_SHARE",
+        "definition": "Listed-consolidated annual report export turnover, export-sales geography, or recurring export-sales share.",
+        "repetitions": [
+          {
+            "period_end": "2016-12-31",
+            "evidence": [
+              {
+                "source_id": "CNINFO:002404:ANN:20170320:1203179712",
+                "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+                "issuer_id": "ISSUER:CN:002404",
+                "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+                "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:002404",
+                "unit": "RMB",
+                "published_at": "2017-03-20",
+                "field_ref": "D2 export turnover — PDF p. 11"
+              }
+            ]
+          },
+          {
+            "period_end": "2017-12-31",
+            "evidence": [
+              {
+                "source_id": "CNINFO:002404:ANN:20180426:1204799365",
+                "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+                "issuer_id": "ISSUER:CN:002404",
+                "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+                "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:002404",
+                "unit": "RMB",
+                "published_at": "2018-04-26",
+                "field_ref": "D2 export turnover — PDF p. 9"
+              }
+            ]
+          },
+          {
+            "period_end": "2018-12-31",
+            "evidence": [
+              {
+                "source_id": "CNINFO:002404:ANN:20190319:1205917192",
+                "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+                "issuer_id": "ISSUER:CN:002404",
+                "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+                "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:002404",
+                "unit": "RMB",
+                "published_at": "2019-03-19",
+                "field_ref": "D2 export turnover — PDF p. 11"
+              }
+            ]
+          }
+        ]
+      },
+      "annual_d3_d4_availability": [
+        {
+          "period_end": "2014-12-31",
+          "evidence": [
+            {
+              "source_id": "CNINFO:002404:ANN:20150323:1200730795",
+              "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+              "issuer_id": "ISSUER:CN:002404",
+              "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+              "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:002404",
+              "unit": "RMB",
+              "published_at": "2015-03-23",
+              "field_ref": "D3 consolidated income statement — PDF p. 74"
+            },
+            {
+              "source_id": "CNINFO:002404:ANN:20150323:1200730795",
+              "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+              "issuer_id": "ISSUER:CN:002404",
+              "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+              "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:002404",
+              "unit": "RMB",
+              "published_at": "2015-03-23",
+              "field_ref": "D4 consolidated cash-flow statement — PDF p. 78"
+            }
+          ]
+        },
+        {
+          "period_end": "2015-12-31",
+          "evidence": [
+            {
+              "source_id": "CNINFO:002404:ANN:20160318:1202057300",
+              "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+              "issuer_id": "ISSUER:CN:002404",
+              "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+              "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:002404",
+              "unit": "RMB",
+              "published_at": "2016-03-18",
+              "field_ref": "D3 consolidated income statement — PDF p. 69"
+            },
+            {
+              "source_id": "CNINFO:002404:ANN:20160318:1202057300",
+              "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+              "issuer_id": "ISSUER:CN:002404",
+              "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+              "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:002404",
+              "unit": "RMB",
+              "published_at": "2016-03-18",
+              "field_ref": "D4 consolidated cash-flow statement — PDF p. 73"
+            }
+          ]
+        },
+        {
+          "period_end": "2016-12-31",
+          "evidence": [
+            {
+              "source_id": "CNINFO:002404:ANN:20170320:1203179712",
+              "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+              "issuer_id": "ISSUER:CN:002404",
+              "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+              "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:002404",
+              "unit": "RMB",
+              "published_at": "2017-03-20",
+              "field_ref": "D3 consolidated income statement — PDF p. 69"
+            },
+            {
+              "source_id": "CNINFO:002404:ANN:20170320:1203179712",
+              "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+              "issuer_id": "ISSUER:CN:002404",
+              "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+              "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:002404",
+              "unit": "RMB",
+              "published_at": "2017-03-20",
+              "field_ref": "D4 consolidated cash-flow statement — PDF p. 73"
+            }
+          ]
+        },
+        {
+          "period_end": "2017-12-31",
+          "evidence": [
+            {
+              "source_id": "CNINFO:002404:ANN:20180426:1204799365",
+              "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+              "issuer_id": "ISSUER:CN:002404",
+              "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+              "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:002404",
+              "unit": "RMB",
+              "published_at": "2018-04-26",
+              "field_ref": "D3 consolidated income statement — PDF p. 79"
+            },
+            {
+              "source_id": "CNINFO:002404:ANN:20180426:1204799365",
+              "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+              "issuer_id": "ISSUER:CN:002404",
+              "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+              "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:002404",
+              "unit": "RMB",
+              "published_at": "2018-04-26",
+              "field_ref": "D4 consolidated cash-flow statement — PDF p. 83"
+            }
+          ]
+        },
+        {
+          "period_end": "2018-12-31",
+          "evidence": [
+            {
+              "source_id": "CNINFO:002404:ANN:20190319:1205917192",
+              "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+              "issuer_id": "ISSUER:CN:002404",
+              "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+              "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:002404",
+              "unit": "RMB",
+              "published_at": "2019-03-19",
+              "field_ref": "D3 consolidated income statement — PDF p. 86"
+            },
+            {
+              "source_id": "CNINFO:002404:ANN:20190319:1205917192",
+              "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+              "issuer_id": "ISSUER:CN:002404",
+              "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+              "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:002404",
+              "unit": "RMB",
+              "published_at": "2019-03-19",
+              "field_ref": "D4 consolidated cash-flow statement — PDF p. 90"
+            }
+          ]
+        }
+      ],
+      "competitive_arena_id": "CN:TEXTILE_APPAREL_EXPORT_MANUFACTURING",
+      "carrier_identity_source_ids": [
+        "CNINFO:002404:ANN:20150323:1200730795",
+        "CNINFO:002404:ANN:20160318:1202057300",
+        "CNINFO:002404:ANN:20170320:1203179712",
+        "CNINFO:002404:ANN:20180426:1204799365",
+        "CNINFO:002404:ANN:20190319:1205917192"
+      ]
+    },
+    {
+      "company_id": "CN:002083",
+      "issuer_id": "ISSUER:CN:002083",
+      "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:002083",
+      "control_group_id": "CONTROL:SUN_RIGUI",
+      "industry_id": "CN:TEXTILE_APPAREL_EXPORT_MANUFACTURING",
+      "boundary": {
+        "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:002083",
+        "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+        "unit": "RMB"
+      },
+      "industry_business_evidence": [
+        {
+          "source_id": "CNINFO:002083:ANN:20190428:1206124458",
+          "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+          "issuer_id": "ISSUER:CN:002083",
+          "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+          "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:002083",
+          "unit": "RMB",
+          "published_at": "2019-04-28",
+          "field_ref": "Business and arena evidence — PDF p. 10"
+        }
+      ],
+      "control_group_evidence": [
+        {
+          "source_id": "CNINFO:002083:ANN:20190428:1206124458",
+          "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+          "issuer_id": "ISSUER:CN:002083",
+          "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+          "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:002083",
+          "unit": "RMB",
+          "published_at": "2019-04-28",
+          "field_ref": "Control evidence — PDF p. 31",
+          "observed_control_group_id": "CONTROL:SUN_RIGUI"
+        }
+      ],
+      "final_peer_panel_disposition": "PENDING_ACTION_WINDOW_REVIEW",
+      "final_peer_panel_rationale": "Only generic static-source eligibility is recorded; later action-window comparability is unassessed.",
+      "d2_field_availability": {
+        "field_id": "EXPORT_TURNOVER_OR_EXPORT_SALES_SHARE",
+        "definition": "Listed-consolidated annual report export turnover, export-sales geography, or recurring export-sales share.",
+        "repetitions": [
+          {
+            "period_end": "2016-12-31",
+            "evidence": [
+              {
+                "source_id": "CNINFO:002083:ANN:20170407:1203261862",
+                "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+                "issuer_id": "ISSUER:CN:002083",
+                "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+                "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:002083",
+                "unit": "RMB",
+                "published_at": "2017-04-07",
+                "field_ref": "D2 export turnover — PDF p. 9"
+              }
+            ]
+          },
+          {
+            "period_end": "2017-12-31",
+            "evidence": [
+              {
+                "source_id": "CNINFO:002083:ANN:20180402:1204575099",
+                "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+                "issuer_id": "ISSUER:CN:002083",
+                "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+                "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:002083",
+                "unit": "RMB",
+                "published_at": "2018-04-02",
+                "field_ref": "D2 export turnover — PDF p. 8"
+              }
+            ]
+          },
+          {
+            "period_end": "2018-12-31",
+            "evidence": [
+              {
+                "source_id": "CNINFO:002083:ANN:20190428:1206124458",
+                "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+                "issuer_id": "ISSUER:CN:002083",
+                "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+                "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:002083",
+                "unit": "RMB",
+                "published_at": "2019-04-28",
+                "field_ref": "D2 export turnover — PDF p. 10"
+              }
+            ]
+          }
+        ]
+      },
+      "annual_d3_d4_availability": [
+        {
+          "period_end": "2014-12-31",
+          "evidence": [
+            {
+              "source_id": "CNINFO:002083:ANN:20150427:1200918435",
+              "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+              "issuer_id": "ISSUER:CN:002083",
+              "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+              "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:002083",
+              "unit": "RMB",
+              "published_at": "2015-04-27",
+              "field_ref": "D3 consolidated income statement — PDF p. 46"
+            },
+            {
+              "source_id": "CNINFO:002083:ANN:20150427:1200918435",
+              "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+              "issuer_id": "ISSUER:CN:002083",
+              "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+              "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:002083",
+              "unit": "RMB",
+              "published_at": "2015-04-27",
+              "field_ref": "D4 consolidated cash-flow statement — PDF p. 48"
+            }
+          ]
+        },
+        {
+          "period_end": "2015-12-31",
+          "evidence": [
+            {
+              "source_id": "CNINFO:002083:ANN:20160330:1202112583",
+              "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+              "issuer_id": "ISSUER:CN:002083",
+              "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+              "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:002083",
+              "unit": "RMB",
+              "published_at": "2016-03-30",
+              "field_ref": "D3 consolidated income statement — PDF p. 48"
+            },
+            {
+              "source_id": "CNINFO:002083:ANN:20160330:1202112583",
+              "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+              "issuer_id": "ISSUER:CN:002083",
+              "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+              "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:002083",
+              "unit": "RMB",
+              "published_at": "2016-03-30",
+              "field_ref": "D4 consolidated cash-flow statement — PDF p. 49"
+            }
+          ]
+        },
+        {
+          "period_end": "2016-12-31",
+          "evidence": [
+            {
+              "source_id": "CNINFO:002083:ANN:20170407:1203261862",
+              "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+              "issuer_id": "ISSUER:CN:002083",
+              "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+              "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:002083",
+              "unit": "RMB",
+              "published_at": "2017-04-07",
+              "field_ref": "D3 consolidated income statement — PDF p. 46"
+            },
+            {
+              "source_id": "CNINFO:002083:ANN:20170407:1203261862",
+              "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+              "issuer_id": "ISSUER:CN:002083",
+              "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+              "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:002083",
+              "unit": "RMB",
+              "published_at": "2017-04-07",
+              "field_ref": "D4 consolidated cash-flow statement — PDF p. 48"
+            }
+          ]
+        },
+        {
+          "period_end": "2017-12-31",
+          "evidence": [
+            {
+              "source_id": "CNINFO:002083:ANN:20180402:1204575099",
+              "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+              "issuer_id": "ISSUER:CN:002083",
+              "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+              "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:002083",
+              "unit": "RMB",
+              "published_at": "2018-04-02",
+              "field_ref": "D3 consolidated income statement — PDF p. 45"
+            },
+            {
+              "source_id": "CNINFO:002083:ANN:20180402:1204575099",
+              "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+              "issuer_id": "ISSUER:CN:002083",
+              "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+              "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:002083",
+              "unit": "RMB",
+              "published_at": "2018-04-02",
+              "field_ref": "D4 consolidated cash-flow statement — PDF p. 46"
+            }
+          ]
+        },
+        {
+          "period_end": "2018-12-31",
+          "evidence": [
+            {
+              "source_id": "CNINFO:002083:ANN:20190428:1206124458",
+              "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+              "issuer_id": "ISSUER:CN:002083",
+              "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+              "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:002083",
+              "unit": "RMB",
+              "published_at": "2019-04-28",
+              "field_ref": "D3 consolidated income statement — PDF p. 52"
+            },
+            {
+              "source_id": "CNINFO:002083:ANN:20190428:1206124458",
+              "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+              "issuer_id": "ISSUER:CN:002083",
+              "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+              "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:002083",
+              "unit": "RMB",
+              "published_at": "2019-04-28",
+              "field_ref": "D4 consolidated cash-flow statement — PDF p. 55"
+            }
+          ]
+        }
+      ],
+      "competitive_arena_id": "CN:TEXTILE_APPAREL_EXPORT_MANUFACTURING",
+      "carrier_identity_source_ids": [
+        "CNINFO:002083:ANN:20150427:1200918435",
+        "CNINFO:002083:ANN:20160330:1202112583",
+        "CNINFO:002083:ANN:20170407:1203261862",
+        "CNINFO:002083:ANN:20180402:1204575099",
+        "CNINFO:002083:ANN:20190428:1206124458"
+      ]
+    },
+    {
+      "company_id": "CN:002394",
+      "issuer_id": "ISSUER:CN:002394",
+      "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:002394",
+      "control_group_id": "CONTROL:KONG_XIANGJUN_AND_CONCERT_PARTIES",
+      "industry_id": "CN:TEXTILE_APPAREL_EXPORT_MANUFACTURING",
+      "boundary": {
+        "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:002394",
+        "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+        "unit": "RMB"
+      },
+      "industry_business_evidence": [
+        {
+          "source_id": "CNINFO:002394:ANN:20190422:1206068393",
+          "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+          "issuer_id": "ISSUER:CN:002394",
+          "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+          "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:002394",
+          "unit": "RMB",
+          "published_at": "2019-04-22",
+          "field_ref": "Business and arena evidence — PDF p. 13"
+        }
+      ],
+      "control_group_evidence": [
+        {
+          "source_id": "CNINFO:002394:ANN:20190422:1206068393",
+          "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+          "issuer_id": "ISSUER:CN:002394",
+          "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+          "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:002394",
+          "unit": "RMB",
+          "published_at": "2019-04-22",
+          "field_ref": "Control evidence — PDF p. 57",
+          "observed_control_group_id": "CONTROL:KONG_XIANGJUN_AND_CONCERT_PARTIES"
+        }
+      ],
+      "final_peer_panel_disposition": "PENDING_ACTION_WINDOW_REVIEW",
+      "final_peer_panel_rationale": "Only generic static-source eligibility is recorded; later action-window comparability is unassessed.",
+      "d2_field_availability": {
+        "field_id": "EXPORT_TURNOVER_OR_EXPORT_SALES_SHARE",
+        "definition": "Listed-consolidated annual report export turnover, export-sales geography, or recurring export-sales share.",
+        "repetitions": [
+          {
+            "period_end": "2016-12-31",
+            "evidence": [
+              {
+                "source_id": "CNINFO:002394:ANN:20170424:1203372599",
+                "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+                "issuer_id": "ISSUER:CN:002394",
+                "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+                "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:002394",
+                "unit": "RMB",
+                "published_at": "2017-04-24",
+                "field_ref": "D2 export-sales share — PDF p. 27"
+              }
+            ]
+          },
+          {
+            "period_end": "2017-12-31",
+            "evidence": [
+              {
+                "source_id": "CNINFO:002394:ANN:20180420:1204675995",
+                "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+                "issuer_id": "ISSUER:CN:002394",
+                "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+                "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:002394",
+                "unit": "RMB",
+                "published_at": "2018-04-20",
+                "field_ref": "D2 export-sales share — PDF p. 26"
+              }
+            ]
+          },
+          {
+            "period_end": "2018-12-31",
+            "evidence": [
+              {
+                "source_id": "CNINFO:002394:ANN:20190422:1206068393",
+                "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+                "issuer_id": "ISSUER:CN:002394",
+                "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+                "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:002394",
+                "unit": "RMB",
+                "published_at": "2019-04-22",
+                "field_ref": "D2 export-sales share — PDF p. 25"
+              }
+            ]
+          }
+        ]
+      },
+      "annual_d3_d4_availability": [
+        {
+          "period_end": "2014-12-31",
+          "evidence": [
+            {
+              "source_id": "CNINFO:002394:ANN:20150420:1200873013",
+              "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+              "issuer_id": "ISSUER:CN:002394",
+              "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+              "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:002394",
+              "unit": "RMB",
+              "published_at": "2015-04-20",
+              "field_ref": "D3 consolidated income statement — PDF p. 82"
+            },
+            {
+              "source_id": "CNINFO:002394:ANN:20150420:1200873013",
+              "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+              "issuer_id": "ISSUER:CN:002394",
+              "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+              "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:002394",
+              "unit": "RMB",
+              "published_at": "2015-04-20",
+              "field_ref": "D4 consolidated cash-flow statement — PDF p. 84"
+            }
+          ]
+        },
+        {
+          "period_end": "2015-12-31",
+          "evidence": [
+            {
+              "source_id": "CNINFO:002394:ANN:20160421:1202218930",
+              "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+              "issuer_id": "ISSUER:CN:002394",
+              "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+              "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:002394",
+              "unit": "RMB",
+              "published_at": "2016-04-21",
+              "field_ref": "D3 consolidated income statement — PDF p. 92"
+            },
+            {
+              "source_id": "CNINFO:002394:ANN:20160421:1202218930",
+              "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+              "issuer_id": "ISSUER:CN:002394",
+              "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+              "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:002394",
+              "unit": "RMB",
+              "published_at": "2016-04-21",
+              "field_ref": "D4 consolidated cash-flow statement — PDF p. 95"
+            }
+          ]
+        },
+        {
+          "period_end": "2016-12-31",
+          "evidence": [
+            {
+              "source_id": "CNINFO:002394:ANN:20170424:1203372599",
+              "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+              "issuer_id": "ISSUER:CN:002394",
+              "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+              "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:002394",
+              "unit": "RMB",
+              "published_at": "2017-04-24",
+              "field_ref": "D3 consolidated income statement — PDF p. 89"
+            },
+            {
+              "source_id": "CNINFO:002394:ANN:20170424:1203372599",
+              "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+              "issuer_id": "ISSUER:CN:002394",
+              "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+              "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:002394",
+              "unit": "RMB",
+              "published_at": "2017-04-24",
+              "field_ref": "D4 consolidated cash-flow statement — PDF p. 92"
+            }
+          ]
+        },
+        {
+          "period_end": "2017-12-31",
+          "evidence": [
+            {
+              "source_id": "CNINFO:002394:ANN:20180420:1204675995",
+              "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+              "issuer_id": "ISSUER:CN:002394",
+              "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+              "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:002394",
+              "unit": "RMB",
+              "published_at": "2018-04-20",
+              "field_ref": "D3 consolidated income statement — PDF p. 83"
+            },
+            {
+              "source_id": "CNINFO:002394:ANN:20180420:1204675995",
+              "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+              "issuer_id": "ISSUER:CN:002394",
+              "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+              "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:002394",
+              "unit": "RMB",
+              "published_at": "2018-04-20",
+              "field_ref": "D4 consolidated cash-flow statement — PDF p. 86"
+            }
+          ]
+        },
+        {
+          "period_end": "2018-12-31",
+          "evidence": [
+            {
+              "source_id": "CNINFO:002394:ANN:20190422:1206068393",
+              "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+              "issuer_id": "ISSUER:CN:002394",
+              "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+              "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:002394",
+              "unit": "RMB",
+              "published_at": "2019-04-22",
+              "field_ref": "D3 consolidated income statement — PDF p. 85"
+            },
+            {
+              "source_id": "CNINFO:002394:ANN:20190422:1206068393",
+              "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+              "issuer_id": "ISSUER:CN:002394",
+              "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+              "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:002394",
+              "unit": "RMB",
+              "published_at": "2019-04-22",
+              "field_ref": "D4 consolidated cash-flow statement — PDF p. 89"
+            }
+          ]
+        }
+      ],
+      "competitive_arena_id": "CN:TEXTILE_APPAREL_EXPORT_MANUFACTURING",
+      "carrier_identity_source_ids": [
+        "CNINFO:002394:ANN:20150420:1200873013",
+        "CNINFO:002394:ANN:20160421:1202218930",
+        "CNINFO:002394:ANN:20170424:1203372599",
+        "CNINFO:002394:ANN:20180420:1204675995",
+        "CNINFO:002394:ANN:20190422:1206068393"
+      ]
+    }
+  ]
+}
