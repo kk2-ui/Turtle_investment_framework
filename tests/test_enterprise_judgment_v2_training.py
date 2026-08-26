@@ -667,3 +667,24 @@ def test_round3_independent_review_can_grant_only_narrow_method_transfer() -> No
     result = v2.validate_round3_transfer_validation(overreach, review=review, **common)
     assert not result["valid"]
     assert "round3_validation.status_or_authority_scope_invalid" in result["findings"]
+
+
+def test_real_round3_review_and_validation_grant_only_perimeter_first_method() -> None:
+    h1, series, source_models, source_episodes, block, completed, round2_chain, selection, episode, target_models, application = _round3_preoutcome_inputs()
+    settlement = json.loads((BLOCK_ROOT / "20_round3_feedback_settlement.json").read_text(encoding="utf-8"))
+    review = json.loads((BLOCK_ROOT / "21_round3_transfer_review.json").read_text(encoding="utf-8"))
+    validation = json.loads((BLOCK_ROOT / "22_perimeter_first_transfer_validation.json").read_text(encoding="utf-8"))
+    common = {
+        "settlement": settlement, "application": application, "selection": selection,
+        "round2_chain": round2_chain, "block": block, "pre_outcome_roster_freeze": _pre_outcome_freeze(),
+        "target_episode": episode, "target_models": target_models, "history_series": series,
+        "h1_package": h1, "source_block_episodes": source_episodes, "source_models": source_models,
+        "completed_feedback_settlements": completed,
+    }
+    review_result = v2.validate_round3_transfer_review(review, **common)
+    assert review_result["valid"], review_result["findings"]
+    result = v2.validate_round3_transfer_validation(validation, review=review, **common)
+    assert result["valid"], result["findings"]
+    assert validation["transfer_status"] == "TRANSFER_VALIDATED"
+    assert validation["authority_scope"] == "PERIMETER_FIRST_MEASUREMENT_METHOD_ONLY"
+    assert set(validation["denied_authorities"]) >= {"ENTERPRISE_JUDGMENT", "COMPARATIVE", "CJO", "VALUATION", "REPORT", "INVESTMENT_AUTHORIZATION", "R-103"}
