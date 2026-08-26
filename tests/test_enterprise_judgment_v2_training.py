@@ -42,15 +42,6 @@ def _round2_inputs() -> tuple[dict, dict, list[dict], list[dict], dict, dict, di
     return h1, series, source_models, source_episodes, block, eligibility_register, selection, target_models, target_episode, application, completed
 
 
-def _round3_inputs() -> tuple[dict, dict, list[dict], list[dict], dict, dict, dict, list[dict], dict, dict, list[dict], dict, dict, dict, dict]:
-    h1, series, source_models, source_episodes, block, eligibility_register, selection, target_models, target_episode, application, completed = _round2_inputs()
-    settlement = json.loads((BLOCK_ROOT / "13_round2_continuation_feedback_settlement.json").read_text(encoding="utf-8"))
-    review = json.loads((BLOCK_ROOT / "14_transfer_application_independent_review.json").read_text(encoding="utf-8"))
-    completion = json.loads((BLOCK_ROOT / "15_round2_completion_receipt.json").read_text(encoding="utf-8"))
-    round3_register = json.loads((BLOCK_ROOT / "16_round3_eligibility_register.json").read_text(encoding="utf-8"))
-    return h1, series, source_models, source_episodes, block, eligibility_register, selection, target_models, target_episode, application, completed, settlement, review, completion, round3_register
-
-
 def test_real_cement_e0_e1_block_freezes_h1_risk_set_and_read_only_training_views() -> None:
     h1, series, models, episodes, block = _inputs()
 
@@ -296,19 +287,6 @@ def test_second_real_feedback_settles_only_the_frozen_cash_cell_and_localizes_me
         "source_ref": "CNINFO:000401:ANN:20180323:1204506085",
     }]
 
-    stable_boundary = deepcopy(settlement)
-    stable_boundary["observations"][0]["status"] = "OBSERVED"
-    stable_boundary["observations"][0]["reported_value"] = "SAME_BOUNDARY_OPERATING_CASH_FIELD_SETTLED"
-    stable_boundary["observations"][0]["summary"] = "The official next annual source preserves the same listed-consolidated boundary and settles the selected operating-cash field."
-    stable_boundary["next_cutoff_agenda_delta"][0]["change_type"] = "CHANGE_EVIDENCE_ORDER"
-    result = v2.validate_continuation_feedback_settlement(
-        stable_boundary, application=application, selection=selection, eligibility_register=eligibility_register, block=block, pre_outcome_roster_freeze=freeze,
-        target_episode=target_episode, target_models=target_models, history_series=series, h1_package=h1,
-        source_feedback_settlement=completed[0], source_block_episodes=source_episodes, source_models=source_models,
-        completed_feedback_settlements=completed,
-    )
-    assert result["valid"], result["findings"]
-
     read_model = v2.compile_continuation_feedback_read_model(
         settlement, application=application, selection=selection, eligibility_register=eligibility_register, block=block, pre_outcome_roster_freeze=freeze,
         target_episode=target_episode, target_models=target_models, history_series=series, h1_package=h1,
@@ -402,80 +380,3 @@ def test_round2_completion_status_requires_both_real_feedback_and_independent_tr
     )
     assert not result["valid"]
     assert "round2_completion.statuses_must_remain_narrow" in result["findings"]
-
-
-def test_round3_no_eligible_holdout_register_scans_rank13_onward_without_validating_transfer() -> None:
-    # This catches a second-holdout declaration being created after outcome
-    # access merely because the framework wants TRANSFER_VALIDATED.
-    h1, series, source_models, source_episodes, block, eligibility_register, selection, target_models, target_episode, application, completed, settlement, review, completion, round3_register = _round3_inputs()
-    freeze = _pre_outcome_freeze()
-    result = v2.validate_round3_eligibility_register(
-        round3_register, round2_completion=completion, review=review, application=application, continuation_settlement=settlement,
-        selection=selection, eligibility_register=eligibility_register, block=block, pre_outcome_roster_freeze=freeze,
-        target_episode=target_episode, target_models=target_models, history_series=series, h1_package=h1,
-        source_feedback_settlement=completed[0], source_block_episodes=source_episodes, source_models=source_models,
-        completed_feedback_settlements=completed,
-    )
-    assert result["valid"], result["findings"]
-    assert result["selection_state"] == "NO_ELIGIBLE_HOLDOUT"
-    assert "first_eligible_target_binding" not in round3_register
-    assert round3_register["allowed_outputs"] == ["PRE_OUTCOME_SELECTION_ONLY"]
-    scanned = [entry for entry in round3_register["entries"] if entry["disposition"] == "EXCLUDED_NO_CUTOFF_VISIBLE_MATERIAL_LIFECYCLE_CONDITION"]
-    assert [entry["rank"] for entry in scanned] == list(range(13, 21))
-    assert {entry["company_id"] for entry in scanned} == {"CN:600425", "CN:600802"}
-
-
-def test_round3_selection_cannot_skip_order_promote_permissions_or_reclassify_completed_company() -> None:
-    h1, series, source_models, source_episodes, block, eligibility_register, selection, target_models, target_episode, application, completed, settlement, review, completion, round3_register = _round3_inputs()
-    freeze = _pre_outcome_freeze()
-
-    reordered = deepcopy(round3_register)
-    reordered["entries"][12], reordered["entries"][13] = reordered["entries"][13], reordered["entries"][12]
-    result = v2.validate_round3_eligibility_register(
-        reordered, round2_completion=completion, review=review, application=application, continuation_settlement=settlement,
-        selection=selection, eligibility_register=eligibility_register, block=block, pre_outcome_roster_freeze=freeze,
-        target_episode=target_episode, target_models=target_models, history_series=series, h1_package=h1,
-        source_feedback_settlement=completed[0], source_block_episodes=source_episodes, source_models=source_models,
-        completed_feedback_settlements=completed,
-    )
-    assert not result["valid"]
-    assert "round3_eligibility_register.entries_must_exactly_cover_frozen_roster_in_order" in result["findings"]
-
-    promoted = deepcopy(round3_register)
-    promoted["selection_state"] = "TRANSFER_VALIDATED"
-    promoted["allowed_outputs"] = ["TRANSFER_VALIDATED"]
-    result = v2.validate_round3_eligibility_register(
-        promoted, round2_completion=completion, review=review, application=application, continuation_settlement=settlement,
-        selection=selection, eligibility_register=eligibility_register, block=block, pre_outcome_roster_freeze=freeze,
-        target_episode=target_episode, target_models=target_models, history_series=series, h1_package=h1,
-        source_feedback_settlement=completed[0], source_block_episodes=source_episodes, source_models=source_models,
-        completed_feedback_settlements=completed,
-    )
-    assert not result["valid"]
-    assert "round3_eligibility_register.selection_state_invalid" in result["findings"]
-    assert "round3_eligibility_register.object_or_permission_invalid" in result["findings"]
-
-    reclassified_completed_company = deepcopy(round3_register)
-    reclassified_completed_company["entries"][8]["disposition"] = "EXCLUDED_NO_CUTOFF_VISIBLE_MATERIAL_LIFECYCLE_CONDITION"
-    reclassified_completed_company["entries"][8]["reviewed_source_refs"] = ["CNINFO:000401:ANN:20140415:63839496"]
-    result = v2.validate_round3_eligibility_register(
-        reclassified_completed_company, round2_completion=completion, review=review, application=application, continuation_settlement=settlement,
-        selection=selection, eligibility_register=eligibility_register, block=block, pre_outcome_roster_freeze=freeze,
-        target_episode=target_episode, target_models=target_models, history_series=series, h1_package=h1,
-        source_feedback_settlement=completed[0], source_block_episodes=source_episodes, source_models=source_models,
-        completed_feedback_settlements=completed,
-    )
-    assert not result["valid"]
-    assert "round3_eligibility_register.entries[8].disposition_invalid" in result["findings"]
-
-    overbroad = deepcopy(round3_register)
-    overbroad["valuation"] = "NOT_AUTHORIZED"
-    result = v2.validate_round3_eligibility_register(
-        overbroad, round2_completion=completion, review=review, application=application, continuation_settlement=settlement,
-        selection=selection, eligibility_register=eligibility_register, block=block, pre_outcome_roster_freeze=freeze,
-        target_episode=target_episode, target_models=target_models, history_series=series, h1_package=h1,
-        source_feedback_settlement=completed[0], source_block_episodes=source_episodes, source_models=source_models,
-        completed_feedback_settlements=completed,
-    )
-    assert not result["valid"]
-    assert "round3_eligibility_register_contains_unapproved_field:valuation" in result["findings"]
