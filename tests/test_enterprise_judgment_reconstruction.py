@@ -7,6 +7,7 @@ import sqlite3
 
 from scripts import enterprise_judgment_episode as episode
 from scripts import enterprise_judgment_reconstruction as reconstruction
+from scripts import enterprise_judgment_reconstruction_registry as reconstruction_registry
 from scripts import enterprise_judgment_source_packet as source_packet
 from scripts import judgment_training_decision_contract as contract_module
 from tests.test_enterprise_judgment_core import _ledger, _model, _source_package
@@ -498,3 +499,34 @@ def test_j1_registry_rejects_a_synchronized_replacement_of_the_frozen_bundle() -
 
     assert not result["valid"]
     assert result["findings"] == ["reconstruction_inputs_must_match_frozen_registry_object"]
+
+
+def test_j1_registry_cli_adapter_compiles_and_registers_approved_artifacts(tmp_path: Path) -> None:
+    source_receipt, source_package = _source_inputs()
+    decision_contract = _contract(source_package)
+    model = _model(source_package=source_package)
+    ledger = _ledger()
+    spec = _spec(source_package, decision_contract)
+    conn = sqlite3.connect(tmp_path / "canonical.db")
+
+    result = reconstruction_registry.register_from_artifacts(
+        conn,
+        source_packet_receipt=source_receipt,
+        decision_contract=decision_contract,
+        enterprise_model=model,
+        decision_ledger=ledger,
+        spec=spec,
+        frozen_at="2026-08-26T00:00:00+00:00",
+    )
+    loaded = reconstruction.load_frozen_reconstruction(
+        conn,
+        {
+            "reconstruction_id": spec["reconstruction_id"],
+            "schema_version": reconstruction.SCHEMA_VERSION,
+        },
+    )
+    conn.close()
+
+    assert result["frozen"] is True
+    assert loaded["reconstruction"]["source_packet_ref"] == spec["source_packet_ref"]
+    assert loaded["reconstruction_inputs"]["decision_contract"] == decision_contract

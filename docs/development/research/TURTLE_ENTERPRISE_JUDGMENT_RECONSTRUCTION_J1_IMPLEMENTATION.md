@@ -12,6 +12,7 @@ J1 把一个 `company × cutoff` 的企业重建投影为只读 read model；它
 
 - 日期精度 source receipt：`schemas/enterprise_judgment_source_packet_receipt.schema.json`、`scripts/enterprise_judgment_source_packet.py`；
 - J1 spec：`schemas/enterprise_judgment_reconstruction.schema.json`、`scripts/enterprise_judgment_reconstruction.py`；
+- canonical 登记命令：`scripts/enterprise_judgment_reconstruction_registry.py`；
 - J0 binding：`scripts/enterprise_judgment_episode.py`；
 - 回归：`tests/test_enterprise_judgment_source_packet.py`、`tests/test_enterprise_judgment_reconstruction.py`。
 
@@ -36,6 +37,26 @@ J1 只接受同一 `DecisionContract` 的公司、issuer、cutoff、source packe
 新造对象互相自证。registry 只保存 cutoff 前研究对象，不读取 outcome，也不授予任何
 下游权限。J3/J4 生产入口只接受 J1 identity，并从固定 canonical
 `stock_analysis.db` 只读解析；调用方不能把临时 SQLite connection 当成新真源。
+linked worktree 在本地没有数据库时会只读定位共享主工作树的 canonical DB，不创建
+fallback DB。
+
+生产登记使用五份已批准、cutoff-visible 的 J1 输入，不接受调用方提交 read model：
+
+```bash
+.venv/bin/python scripts/enterprise_judgment_reconstruction_registry.py \
+  --db stock_analysis.db \
+  --receipt <01_source_packet_receipt.json> \
+  --decision-contract <02_decision_contract.json> \
+  --enterprise-model <03_enterprise_system_model.json> \
+  --decision-ledger <04_management_decision_ledger.json> \
+  --spec <05_j1_reconstruction_spec.json> \
+  --frozen-at <ISO-8601>
+```
+
+截至 2026-08-26，canonical main DB 已登记
+`RECON:CN002083:20190501 × enterprise-judgment-reconstruction.v1`；默认 resolver
+已在 linked worktree 无 monkeypatch 回读成功。该对象仍只有 J1/E1 权限，没有借登记
+动作生成 J2、Forecast、Comparative 或投资结论。
 
 ## 2. PIT 与责任边界
 

@@ -27,7 +27,25 @@ SCHEMA_VERSION = "enterprise-judgment-reconstruction.v1"
 SPEC_SCHEMA_VERSION = "enterprise-judgment-reconstruction-spec.v1"
 ALLOWED_OUTPUTS = ["RECONSTRUCTION_READ_MODEL", "CJO_TRAINING_MIRROR", "RESEARCH_AGENDA"]
 REGISTRY_TABLE = "enterprise_judgment_frozen_reconstructions"
-CANONICAL_REGISTRY_PATH = Path(__file__).resolve().parents[1] / "stock_analysis.db"
+
+
+def _default_canonical_registry_path() -> Path:
+    repo_root = Path(__file__).resolve().parents[1]
+    local = repo_root / "stock_analysis.db"
+    if local.exists():
+        return local
+    git_metadata = repo_root / ".git"
+    if git_metadata.is_file():
+        marker = git_metadata.read_text(encoding="utf-8").strip()
+        if marker.startswith("gitdir:"):
+            git_dir = Path(marker.split(":", 1)[1].strip()).resolve()
+            shared = git_dir.parents[2] / "stock_analysis.db"
+            if shared.exists():
+                return shared
+    return local
+
+
+CANONICAL_REGISTRY_PATH = _default_canonical_registry_path()
 
 
 class FrozenReconstructionRegistryError(ValueError):
