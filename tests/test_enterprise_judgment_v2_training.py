@@ -622,6 +622,22 @@ def test_round3_settlement_accepts_both_predeclared_stable_and_mismatch_paths() 
     assert "round3_settlement.observations[0].comparable_perimeter_requires_field_read" in result["findings"]
 
 
+def test_real_round3_custodian_stops_before_fields_on_unbridged_perimeter_change() -> None:
+    h1, series, source_models, source_episodes, block, completed, round2_chain, selection, episode, target_models, application = _round3_preoutcome_inputs()
+    settlement = json.loads((BLOCK_ROOT / "20_round3_feedback_settlement.json").read_text(encoding="utf-8"))
+    result = v2.validate_round3_feedback_settlement(
+        settlement, application=application, selection=selection, round2_chain=round2_chain, block=block,
+        pre_outcome_roster_freeze=_pre_outcome_freeze(), target_episode=episode, target_models=target_models,
+        history_series=series, h1_package=h1, source_block_episodes=source_episodes,
+        source_models=source_models, completed_feedback_settlements=completed,
+    )
+    assert result["valid"], result["findings"]
+    assert settlement["perimeter_assessment"]["status"] == "CHANGED_WITHOUT_BRIDGE"
+    assert [entry["status"] for entry in settlement["observations"]] == ["MEASUREMENT_MISMATCH", "MEASUREMENT_MISMATCH"]
+    assert all("RMB " not in entry["reported_value"] for entry in settlement["observations"])
+    assert settlement["research_order"][0] == "CHECK_LISTED_CONSOLIDATED_PERIMETER"
+
+
 def test_round3_independent_review_can_grant_only_narrow_method_transfer() -> None:
     h1, series, source_models, source_episodes, block, completed, round2_chain, selection, episode, target_models, application = _round3_preoutcome_inputs()
     settlement = _synthetic_round3_settlement("STABLE")

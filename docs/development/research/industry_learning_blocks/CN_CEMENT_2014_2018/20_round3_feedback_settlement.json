@@ -1,0 +1,62 @@
+{
+  "schema_version": "enterprise-judgment-round3-feedback-settlement.v1",
+  "settlement_id": "R3FBS:600425:20140416:V1",
+  "application_ref": "TAR:CN:CEMENT:PERIMETER_FIRST:600425:20140416:R3:V1",
+  "selection_ref": "R3SEL:CN:CEMENT:600425:20140416:V1",
+  "company_id": "CN:600425",
+  "cutoff_at": "2014-04-16T00:00:00+08:00",
+  "outcome_custodian_id": "ROLE:CEMENT:OUTCOME_CUSTODIAN",
+  "method_rule_id": "PERIMETER_FIRST_MEASUREMENT_GATE",
+  "research_order": [
+    "CHECK_LISTED_CONSOLIDATED_PERIMETER",
+    "ASSESS_COMMON_BASIS_OR_BRIDGE",
+    "READ_FROZEN_OPERATING_AND_CASH_FIELDS_IF_COMPARABLE"
+  ],
+  "perimeter_assessment": {
+    "status": "CHANGED_WITHOUT_BRIDGE",
+    "statement": "The FY2014 annual report's consolidation-scope note (PDF pp. 125-126) records a disposed subsidiary and three subsidiaries newly included in the annual consolidation scope. The report does not provide a FY2013-to-FY2014 common-perimeter restatement or quantified bridge for the frozen operating and operating-cash fields.",
+    "evidence_refs": [
+      "CNINFO:600425:ANN:20150411:1200812468"
+    ]
+  },
+  "source_receipt": {
+    "source_ref": "CNINFO:600425:ANN:20150411:1200812468",
+    "published_on": "2015-04-11",
+    "official_url": "https://static.cninfo.com.cn/finalpage/2015-04-11/1200812468.PDF",
+    "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+    "custodian_access": "OUTCOME_ONLY",
+    "availability_precision": "DATE"
+  },
+  "observations": [
+    {
+      "outcome_cell_id": "CELL:600425:20140416:OPERATIONS",
+      "status": "MEASUREMENT_MISMATCH",
+      "reported_value": "SAME_BOUNDARY_OPERATING_NOT_ESTABLISHABLE",
+      "summary": "The perimeter check stopped field extraction before the FY2014 consolidated operating-revenue value was read. The changed consolidation scope lacks a common-basis bridge, so only this operating comparison is locally non-comparable; no execution or market conclusion follows.",
+      "source_ref": "CNINFO:600425:ANN:20150411:1200812468"
+    },
+    {
+      "outcome_cell_id": "CELL:600425:20140416:CASH",
+      "status": "MEASUREMENT_MISMATCH",
+      "reported_value": "SAME_BOUNDARY_OPERATING_CASH_NOT_ESTABLISHABLE",
+      "summary": "The perimeter check stopped field extraction before the FY2014 consolidated net-operating-cash value was read. The changed consolidation scope lacks a common-basis bridge, so only this cash comparison is locally non-comparable; no cash attribution follows.",
+      "source_ref": "CNINFO:600425:ANN:20150411:1200812468"
+    }
+  ],
+  "next_cutoff_agenda_delta": [
+    {
+      "target_cutoff_at": "2015-04-15T00:00:00+08:00",
+      "change_id": "AGENDA:600425:20150415:PERIMETER_BEFORE_OPERATING_AND_CASH",
+      "change_type": "CHANGE_EVIDENCE_ORDER",
+      "statement": "Continue to check the listed-consolidated perimeter before reading operating revenue or net operating cash; open comparison only if an official common-perimeter bridge, restated comparative or equivalent reconciliation is available.",
+      "reason": "The FY2014 report records additions and a disposal in consolidation scope without a FY2013-to-FY2014 bridge for either frozen field."
+    }
+  ],
+  "original_episode_immutable": true,
+  "object_class": "ENTERPRISE_JUDGMENT_ROUND3_FEEDBACK_SETTLEMENT",
+  "claim_class": "CONTRACT_MATCHED_METHOD_ORDER_FEEDBACK",
+  "allowed_outputs": [
+    "FEEDBACK_READ_MODEL",
+    "RESEARCH_AGENDA"
+  ]
+}
