@@ -1,0 +1,262 @@
+{
+  "schema_version": "enterprise-judgment-round3-eligibility-register.v1",
+  "register_id": "R3ER:CN:CEMENT:2014_2018:V1",
+  "block_id": "ILB:CN:CEMENT_LISTED:2014_2018:V1",
+  "pre_outcome_freeze_ref": "EJPF:CN:CEMENT:2014_2018:PRE_OUTCOME:V1",
+  "round2_completion_ref": "R2COMP:CN:CEMENT:000401:20170412:V1",
+  "selection_policy": "EARLIEST_UNSETTLED_FROZEN_ROW_AFTER_COMPLETED_QUEUE_WITH_UNSEEN_COMPANY_AND_CUTOFF_VISIBLE_LIFECYCLE_CONDITION",
+  "completed_feedback_settlement_ids": [
+    "FBS:600585:20170412:002",
+    "FBS:600801:20170412:001",
+    "CFS:000401:20170412:R2:001"
+  ],
+  "entries": [
+    {
+      "rank": 1,
+      "transition_id": "CCR:600801:20160427:20170412",
+      "company_id": "CN:600801",
+      "company_cluster_id": "COMPANY_CLUSTER:CN:CEMENT_LISTED:600801",
+      "cutoff_at": "2016-04-27T00:00:00+08:00",
+      "next_cutoff_at": "2017-04-12T00:00:00+08:00",
+      "disposition": "EXCLUDED_COMPLETED_COMPANY",
+      "reviewed_source_refs": [],
+      "rationale": "CN:600801 is already a completed-feedback company before Round 3 eligibility is opened."
+    },
+    {
+      "rank": 2,
+      "transition_id": "CCR:600585:20170412:20180422",
+      "company_id": "CN:600585",
+      "company_cluster_id": "COMPANY_CLUSTER:CN:CEMENT_LISTED:600585",
+      "cutoff_at": "2017-04-12T00:00:00+08:00",
+      "next_cutoff_at": "2018-04-22T00:00:00+08:00",
+      "disposition": "COMPLETED_FEEDBACK",
+      "reviewed_source_refs": [],
+      "rationale": "This exact company-cutoff has an independently settled feedback record."
+    },
+    {
+      "rank": 3,
+      "transition_id": "CCR:600585:20140416:20150415",
+      "company_id": "CN:600585",
+      "company_cluster_id": "COMPANY_CLUSTER:CN:CEMENT_LISTED:600585",
+      "cutoff_at": "2014-04-16T00:00:00+08:00",
+      "next_cutoff_at": "2015-04-15T00:00:00+08:00",
+      "disposition": "EXCLUDED_COMPLETED_COMPANY",
+      "reviewed_source_refs": [],
+      "rationale": "CN:600585 is already a completed-feedback company before Round 3 eligibility is opened."
+    },
+    {
+      "rank": 4,
+      "transition_id": "CCR:600585:20150415:20160427",
+      "company_id": "CN:600585",
+      "company_cluster_id": "COMPANY_CLUSTER:CN:CEMENT_LISTED:600585",
+      "cutoff_at": "2015-04-15T00:00:00+08:00",
+      "next_cutoff_at": "2016-04-27T00:00:00+08:00",
+      "disposition": "EXCLUDED_COMPLETED_COMPANY",
+      "reviewed_source_refs": [],
+      "rationale": "CN:600585 is already a completed-feedback company before Round 3 eligibility is opened."
+    },
+    {
+      "rank": 5,
+      "transition_id": "CCR:600585:20160427:20170412",
+      "company_id": "CN:600585",
+      "company_cluster_id": "COMPANY_CLUSTER:CN:CEMENT_LISTED:600585",
+      "cutoff_at": "2016-04-27T00:00:00+08:00",
+      "next_cutoff_at": "2017-04-12T00:00:00+08:00",
+      "disposition": "EXCLUDED_COMPLETED_COMPANY",
+      "reviewed_source_refs": [],
+      "rationale": "CN:600585 is already a completed-feedback company before Round 3 eligibility is opened."
+    },
+    {
+      "rank": 6,
+      "transition_id": "CCR:600801:20140416:20150415",
+      "company_id": "CN:600801",
+      "company_cluster_id": "COMPANY_CLUSTER:CN:CEMENT_LISTED:600801",
+      "cutoff_at": "2014-04-16T00:00:00+08:00",
+      "next_cutoff_at": "2015-04-15T00:00:00+08:00",
+      "disposition": "EXCLUDED_COMPLETED_COMPANY",
+      "reviewed_source_refs": [],
+      "rationale": "CN:600801 is already a completed-feedback company before Round 3 eligibility is opened."
+    },
+    {
+      "rank": 7,
+      "transition_id": "CCR:600801:20150415:20160427",
+      "company_id": "CN:600801",
+      "company_cluster_id": "COMPANY_CLUSTER:CN:CEMENT_LISTED:600801",
+      "cutoff_at": "2015-04-15T00:00:00+08:00",
+      "next_cutoff_at": "2016-04-27T00:00:00+08:00",
+      "disposition": "EXCLUDED_COMPLETED_COMPANY",
+      "reviewed_source_refs": [],
+      "rationale": "CN:600801 is already a completed-feedback company before Round 3 eligibility is opened."
+    },
+    {
+      "rank": 8,
+      "transition_id": "CCR:600801:20170412:20180422",
+      "company_id": "CN:600801",
+      "company_cluster_id": "COMPANY_CLUSTER:CN:CEMENT_LISTED:600801",
+      "cutoff_at": "2017-04-12T00:00:00+08:00",
+      "next_cutoff_at": "2018-04-22T00:00:00+08:00",
+      "disposition": "COMPLETED_FEEDBACK",
+      "reviewed_source_refs": [],
+      "rationale": "This exact company-cutoff has an independently settled feedback record."
+    },
+    {
+      "rank": 9,
+      "transition_id": "CCR:000401:20140416:20150415",
+      "company_id": "CN:000401",
+      "company_cluster_id": "COMPANY_CLUSTER:CN:CEMENT_LISTED:000401",
+      "cutoff_at": "2014-04-16T00:00:00+08:00",
+      "next_cutoff_at": "2015-04-15T00:00:00+08:00",
+      "disposition": "EXCLUDED_COMPLETED_COMPANY",
+      "reviewed_source_refs": [],
+      "rationale": "CN:000401 is already a completed-feedback company after the Round 2 application."
+    },
+    {
+      "rank": 10,
+      "transition_id": "CCR:000401:20150415:20160427",
+      "company_id": "CN:000401",
+      "company_cluster_id": "COMPANY_CLUSTER:CN:CEMENT_LISTED:000401",
+      "cutoff_at": "2015-04-15T00:00:00+08:00",
+      "next_cutoff_at": "2016-04-27T00:00:00+08:00",
+      "disposition": "EXCLUDED_COMPLETED_COMPANY",
+      "reviewed_source_refs": [],
+      "rationale": "CN:000401 is already a completed-feedback company after the Round 2 application."
+    },
+    {
+      "rank": 11,
+      "transition_id": "CCR:000401:20160427:20170412",
+      "company_id": "CN:000401",
+      "company_cluster_id": "COMPANY_CLUSTER:CN:CEMENT_LISTED:000401",
+      "cutoff_at": "2016-04-27T00:00:00+08:00",
+      "next_cutoff_at": "2017-04-12T00:00:00+08:00",
+      "disposition": "EXCLUDED_COMPLETED_COMPANY",
+      "reviewed_source_refs": [],
+      "rationale": "CN:000401 is already a completed-feedback company after the Round 2 application."
+    },
+    {
+      "rank": 12,
+      "transition_id": "CCR:000401:20170412:20180422",
+      "company_id": "CN:000401",
+      "company_cluster_id": "COMPANY_CLUSTER:CN:CEMENT_LISTED:000401",
+      "cutoff_at": "2017-04-12T00:00:00+08:00",
+      "next_cutoff_at": "2018-04-22T00:00:00+08:00",
+      "disposition": "COMPLETED_FEEDBACK",
+      "reviewed_source_refs": [],
+      "rationale": "This exact company-cutoff has an independently settled Round 2 feedback record."
+    },
+    {
+      "rank": 13,
+      "transition_id": "CCR:600425:20140416:20150415",
+      "company_id": "CN:600425",
+      "company_cluster_id": "COMPANY_CLUSTER:CN:CEMENT_LISTED:600425",
+      "cutoff_at": "2014-04-16T00:00:00+08:00",
+      "next_cutoff_at": "2015-04-15T00:00:00+08:00",
+      "disposition": "EXCLUDED_NO_CUTOFF_VISIBLE_MATERIAL_LIFECYCLE_CONDITION",
+      "reviewed_source_refs": [
+        "CNINFO:600425:ANN:20140403:63781007"
+      ],
+      "rationale": "The cutoff-visible H1 annual-report packet supplies listed-consolidated accounting identity only; it does not record a material lifecycle, perimeter, reorganisation, entry or exit condition under the frozen selection rule."
+    },
+    {
+      "rank": 14,
+      "transition_id": "CCR:600425:20150415:20160427",
+      "company_id": "CN:600425",
+      "company_cluster_id": "COMPANY_CLUSTER:CN:CEMENT_LISTED:600425",
+      "cutoff_at": "2015-04-15T00:00:00+08:00",
+      "next_cutoff_at": "2016-04-27T00:00:00+08:00",
+      "disposition": "EXCLUDED_NO_CUTOFF_VISIBLE_MATERIAL_LIFECYCLE_CONDITION",
+      "reviewed_source_refs": [
+        "CNINFO:600425:ANN:20150411:1200812468"
+      ],
+      "rationale": "The cutoff-visible H1 annual-report packet supplies listed-consolidated accounting identity only; it does not record a material lifecycle, perimeter, reorganisation, entry or exit condition under the frozen selection rule."
+    },
+    {
+      "rank": 15,
+      "transition_id": "CCR:600425:20160427:20170412",
+      "company_id": "CN:600425",
+      "company_cluster_id": "COMPANY_CLUSTER:CN:CEMENT_LISTED:600425",
+      "cutoff_at": "2016-04-27T00:00:00+08:00",
+      "next_cutoff_at": "2017-04-12T00:00:00+08:00",
+      "disposition": "EXCLUDED_NO_CUTOFF_VISIBLE_MATERIAL_LIFECYCLE_CONDITION",
+      "reviewed_source_refs": [
+        "CNINFO:600425:ANN:20160409:1202157712"
+      ],
+      "rationale": "The cutoff-visible H1 annual-report packet supplies production/sales and listed-consolidated accounting identity; it does not record a material lifecycle, perimeter, reorganisation, entry or exit condition under the frozen selection rule."
+    },
+    {
+      "rank": 16,
+      "transition_id": "CCR:600425:20170412:20180422",
+      "company_id": "CN:600425",
+      "company_cluster_id": "COMPANY_CLUSTER:CN:CEMENT_LISTED:600425",
+      "cutoff_at": "2017-04-12T00:00:00+08:00",
+      "next_cutoff_at": "2018-04-22T00:00:00+08:00",
+      "disposition": "EXCLUDED_NO_CUTOFF_VISIBLE_MATERIAL_LIFECYCLE_CONDITION",
+      "reviewed_source_refs": [
+        "CNINFO:600425:ANN:20170408:1203264291"
+      ],
+      "rationale": "The cutoff-visible H1 annual-report packet supplies production/sales and listed-consolidated accounting identity; it does not record a material lifecycle, perimeter, reorganisation, entry or exit condition under the frozen selection rule."
+    },
+    {
+      "rank": 17,
+      "transition_id": "CCR:600802:20140416:20150415",
+      "company_id": "CN:600802",
+      "company_cluster_id": "COMPANY_CLUSTER:CN:CEMENT_LISTED:600802",
+      "cutoff_at": "2014-04-16T00:00:00+08:00",
+      "next_cutoff_at": "2015-04-15T00:00:00+08:00",
+      "disposition": "EXCLUDED_NO_CUTOFF_VISIBLE_MATERIAL_LIFECYCLE_CONDITION",
+      "reviewed_source_refs": [
+        "CNINFO:600802:ANN:20140318:63687174"
+      ],
+      "rationale": "The cutoff-visible H1 annual-report packet supplies listed-consolidated accounting identity only; it does not record a material lifecycle, perimeter, reorganisation, entry or exit condition under the frozen selection rule."
+    },
+    {
+      "rank": 18,
+      "transition_id": "CCR:600802:20150415:20160427",
+      "company_id": "CN:600802",
+      "company_cluster_id": "COMPANY_CLUSTER:CN:CEMENT_LISTED:600802",
+      "cutoff_at": "2015-04-15T00:00:00+08:00",
+      "next_cutoff_at": "2016-04-27T00:00:00+08:00",
+      "disposition": "EXCLUDED_NO_CUTOFF_VISIBLE_MATERIAL_LIFECYCLE_CONDITION",
+      "reviewed_source_refs": [
+        "CNINFO:600802:ANN:20150324:1200733162"
+      ],
+      "rationale": "The cutoff-visible H1 annual-report packet supplies listed-consolidated accounting identity only; it does not record a material lifecycle, perimeter, reorganisation, entry or exit condition under the frozen selection rule."
+    },
+    {
+      "rank": 19,
+      "transition_id": "CCR:600802:20160427:20170412",
+      "company_id": "CN:600802",
+      "company_cluster_id": "COMPANY_CLUSTER:CN:CEMENT_LISTED:600802",
+      "cutoff_at": "2016-04-27T00:00:00+08:00",
+      "next_cutoff_at": "2017-04-12T00:00:00+08:00",
+      "disposition": "EXCLUDED_NO_CUTOFF_VISIBLE_MATERIAL_LIFECYCLE_CONDITION",
+      "reviewed_source_refs": [
+        "CNINFO:600802:ANN:20160426:1202245558"
+      ],
+      "rationale": "The cutoff-visible H1 annual-report packet supplies cement/clinker operating fields and listed-consolidated accounting identity; it does not record a material lifecycle, perimeter, reorganisation, entry or exit condition under the frozen selection rule."
+    },
+    {
+      "rank": 20,
+      "transition_id": "CCR:600802:20170412:20180422",
+      "company_id": "CN:600802",
+      "company_cluster_id": "COMPANY_CLUSTER:CN:CEMENT_LISTED:600802",
+      "cutoff_at": "2017-04-12T00:00:00+08:00",
+      "next_cutoff_at": "2018-04-22T00:00:00+08:00",
+      "disposition": "EXCLUDED_NO_CUTOFF_VISIBLE_MATERIAL_LIFECYCLE_CONDITION",
+      "reviewed_source_refs": [
+        "CNINFO:600802:ANN:20170411:1203274263"
+      ],
+      "rationale": "The cutoff-visible H1 annual-report packet supplies cement/clinker operating fields and listed-consolidated accounting identity; it does not record a material lifecycle, perimeter, reorganisation, entry or exit condition under the frozen selection rule."
+    }
+  ],
+  "selection_state": "NO_ELIGIBLE_HOLDOUT",
+  "roles": {
+    "judgment_owner_id": "ROLE:CEMENT:JUDGMENT_OWNER",
+    "independent_challenger_id": "ROLE:CEMENT:INDEPENDENT_CHALLENGER",
+    "outcome_custodian_id": "ROLE:CEMENT:OUTCOME_CUSTODIAN"
+  },
+  "object_class": "ENTERPRISE_JUDGMENT_ROUND3_ELIGIBILITY_REGISTER",
+  "claim_class": "SOURCE_BOUND_ROSTER_ELIGIBILITY",
+  "allowed_outputs": [
+    "PRE_OUTCOME_SELECTION_ONLY"
+  ]
+}

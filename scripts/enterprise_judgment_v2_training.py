@@ -40,6 +40,8 @@ TRANSFER_APPLICATION_SCHEMA_VERSION = "enterprise-judgment-transfer-application-
 CONTINUATION_SETTLEMENT_SCHEMA_VERSION = "enterprise-judgment-continuation-feedback-settlement.v1"
 TRANSFER_REVIEW_SCHEMA_VERSION = "enterprise-judgment-transfer-application-review.v1"
 ROUND2_COMPLETION_SCHEMA_VERSION = "enterprise-judgment-round2-completion-receipt.v1"
+ROUND3_ELIGIBILITY_SCHEMA_VERSION = "enterprise-judgment-round3-eligibility-register.v1"
+ROUND3_NO_ELIGIBLE_HOLDOUT = "NO_ELIGIBLE_HOLDOUT"
 
 CELL_STATES = {"OBSERVED", "INFERRED", "UNKNOWN", "EVIDENCE_INELIGIBLE", "NOT_APPLICABLE", "MEASUREMENT_MISMATCH"}
 PREOUTCOME_CELL_STATES = CELL_STATES - {"MEASUREMENT_MISMATCH"}
@@ -112,6 +114,11 @@ _PRE_OUTCOME_FREEZE_KEYS = {"schema_version", "freeze_id", "block_id", "pre_outc
 _ELIGIBILITY_REGISTER_KEYS = {"schema_version", "register_id", "block_id", "pre_outcome_freeze_ref", "selection_policy", "completed_feedback_settlement_ids", "entries", "first_eligible_target_binding", "roles", "object_class", "claim_class", "allowed_outputs"}
 _ELIGIBILITY_ENTRY_KEYS = {"rank", "transition_id", "company_id", "company_cluster_id", "cutoff_at", "next_cutoff_at", "disposition", "reviewed_source_refs", "rationale"}
 _ELIGIBILITY_TARGET_BINDING_KEYS = {"transition_id", "target_episode_id", "outcome_cell_ids"}
+_ROUND3_ELIGIBILITY_KEYS = {
+    "schema_version", "register_id", "block_id", "pre_outcome_freeze_ref", "round2_completion_ref",
+    "selection_policy", "completed_feedback_settlement_ids", "entries", "selection_state",
+    "first_eligible_target_binding", "roles", "object_class", "claim_class", "allowed_outputs",
+}
 _ROUND2_SELECTION_KEYS = {"schema_version", "selection_id", "block_id", "pre_outcome_freeze_ref", "eligibility_register_ref", "selection_policy", "completed_company_cutoff_transition_ids", "ineligible_prior_rows", "selected_transition_id", "selected_rank", "company_id", "company_cluster_id", "cutoff_at", "next_cutoff_at", "target_episode_id", "outcome_cell_ids", "cutoff_visible_evidence_refs", "outcome_access_status", "roles", "object_class", "claim_class", "allowed_outputs"}
 _INELIGIBLE_ROW_KEYS = {"rank", "transition_id", "reason"}
 _APPLICATION_KEYS = {"schema_version", "application_id", "block_id", "pre_outcome_freeze_ref", "selection_ref", "source_feedback_id", "source_observation_cell_id", "source_agenda_change_id", "learned_rule_id", "target_episode_id", "baseline_before_learning", "enhanced_after_learning", "field_delta", "target_outcome_access", "frozen_before_outcome_access", "roles", "object_class", "claim_class", "allowed_outputs"}
@@ -1535,3 +1542,141 @@ def validate_round2_completion_receipt(
     for path in _forbidden_paths(item, "round2_completion"):
         _add(findings, "round2_completion.forbidden_field:" + path)
     return {"valid": not findings, "findings": findings, "round2_completion": deepcopy(item) if not findings else None}
+
+
+def validate_round3_eligibility_register(
+    register: Any, *, round2_completion: Any, review: Any, application: Any, continuation_settlement: Any, selection: Any, eligibility_register: Any,
+    block: Any, pre_outcome_roster_freeze: Any, target_episode: Any, target_models: list[Any], history_series: Any, h1_package: Any,
+    source_feedback_settlement: Any, source_block_episodes: list[Any], source_models: list[Any],
+    completed_feedback_settlements: list[Any],
+) -> dict[str, Any]:
+    """Validate the post-round-two eligibility scan and preserve the no-holdout stop."""
+    findings: list[str] = []
+    completion_result = validate_round2_completion_receipt(
+        round2_completion, review=review, application=application, continuation_settlement=continuation_settlement, selection=selection,
+        eligibility_register=eligibility_register, block=block, pre_outcome_roster_freeze=pre_outcome_roster_freeze,
+        target_episode=target_episode, target_models=target_models, history_series=history_series, h1_package=h1_package,
+        source_feedback_settlement=source_feedback_settlement, source_block_episodes=source_block_episodes, source_models=source_models,
+        completed_feedback_settlements=completed_feedback_settlements,
+    )
+    for finding in completion_result["findings"]:
+        _add(findings, "round2_completion:" + finding)
+
+    item, block_item, completion_item = (
+        _closed(register, _ROUND3_ELIGIBILITY_KEYS, "round3_eligibility_register", findings, required=_ROUND3_ELIGIBILITY_KEYS - {"first_eligible_target_binding"}),
+        _mapping(block), _mapping(round2_completion),
+    )
+    if item.get("schema_version") != ROUND3_ELIGIBILITY_SCHEMA_VERSION:
+        _add(findings, "round3_eligibility_register.schema_version_invalid")
+    for field in ("register_id", "block_id", "pre_outcome_freeze_ref", "round2_completion_ref", "selection_policy", "selection_state"):
+        _required_text(item, field, "round3_eligibility_register", findings)
+    if item.get("object_class") != "ENTERPRISE_JUDGMENT_ROUND3_ELIGIBILITY_REGISTER" or item.get("claim_class") != "SOURCE_BOUND_ROSTER_ELIGIBILITY" or item.get("allowed_outputs") != ALLOWED_ELIGIBILITY_OUTPUTS:
+        _add(findings, "round3_eligibility_register.object_or_permission_invalid")
+    if item.get("block_id") != block_item.get("block_id") or item.get("pre_outcome_freeze_ref") != _mapping(pre_outcome_roster_freeze).get("freeze_id") or item.get("round2_completion_ref") != completion_item.get("completion_id"):
+        _add(findings, "round3_eligibility_register.must_bind_frozen_block_roster_and_round2_completion")
+    if item.get("selection_state") != ROUND3_NO_ELIGIBLE_HOLDOUT:
+        _add(findings, "round3_eligibility_register.selection_state_invalid")
+    if item.get("selection_policy") != "EARLIEST_UNSETTLED_FROZEN_ROW_AFTER_COMPLETED_QUEUE_WITH_UNSEEN_COMPANY_AND_CUTOFF_VISIBLE_LIFECYCLE_CONDITION":
+        _add(findings, "round3_eligibility_register.policy_invalid")
+
+    roster = list(map(_mapping, _items(block_item.get("company_cutoff_transition_roster"))))
+    completed_by_rank: list[tuple[int, str, str]] = []
+    completed_transition_ids: set[str] = set()
+    completed_company_ids: set[str] = set()
+    for settlement in [*completed_feedback_settlements, continuation_settlement]:
+        settlement_item = _mapping(settlement)
+        matching_rows = [
+            entry for entry in roster
+            if entry.get("company_id") == settlement_item.get("company_id")
+            and entry.get("cutoff_at") == settlement_item.get("cutoff_at")
+        ]
+        if len(matching_rows) != 1:
+            _add(findings, "round3_eligibility_register.completed_feedback_must_map_to_one_frozen_row")
+            continue
+        row = matching_rows[0]
+        completed_by_rank.append((int(row.get("rank", 0)), str(row.get("transition_id")), str(settlement_item.get("settlement_id"))))
+        completed_transition_ids.add(str(row.get("transition_id")))
+        completed_company_ids.add(str(row.get("company_id")))
+    completed_by_rank.sort()
+    feedback_ids = _ids(item.get("completed_feedback_settlement_ids"), "round3_eligibility_register.completed_feedback_settlement_ids", findings)
+    if feedback_ids != [settlement_id for _, _, settlement_id in completed_by_rank]:
+        _add(findings, "round3_eligibility_register.completed_feedback_must_equal_actual_prior_feedback_projection")
+
+    entries = [_closed(raw, _ELIGIBILITY_ENTRY_KEYS, f"round3_eligibility_register.entries[{index}]", findings) for index, raw in enumerate(_items(item.get("entries")))]
+    expected_tuples = [
+        (entry.get("rank"), entry.get("transition_id"), entry.get("company_id"), entry.get("company_cluster_id"), entry.get("cutoff_at"), entry.get("next_cutoff_at"))
+        for entry in _items(block_item.get("company_cutoff_transition_roster"))
+    ]
+    actual_tuples = [
+        (entry.get("rank"), entry.get("transition_id"), entry.get("company_id"), entry.get("company_cluster_id"), entry.get("cutoff_at"), entry.get("next_cutoff_at"))
+        for entry in entries
+    ]
+    if actual_tuples != expected_tuples:
+        _add(findings, "round3_eligibility_register.entries_must_exactly_cover_frozen_roster_in_order")
+
+    expected_refs = {
+        13: ["CNINFO:600425:ANN:20140403:63781007"],
+        14: ["CNINFO:600425:ANN:20150411:1200812468"],
+        15: ["CNINFO:600425:ANN:20160409:1202157712"],
+        16: ["CNINFO:600425:ANN:20170408:1203264291"],
+        17: ["CNINFO:600802:ANN:20140318:63687174"],
+        18: ["CNINFO:600802:ANN:20150324:1200733162"],
+        19: ["CNINFO:600802:ANN:20160426:1202245558"],
+        20: ["CNINFO:600802:ANN:20170411:1203274263"],
+    }
+    catalog = _source_catalog(h1_package)
+    eligible_entries: list[dict[str, Any]] = []
+    for index, entry in enumerate(entries):
+        rank = entry.get("rank")
+        transition_id = str(entry.get("transition_id"))
+        company_id = str(entry.get("company_id"))
+        expected_disposition = (
+            "COMPLETED_FEEDBACK" if transition_id in completed_transition_ids
+            else "EXCLUDED_COMPLETED_COMPANY" if company_id in completed_company_ids
+            else "EXCLUDED_NO_CUTOFF_VISIBLE_MATERIAL_LIFECYCLE_CONDITION"
+        )
+        if expected_disposition != entry.get("disposition"):
+            _add(findings, f"round3_eligibility_register.entries[{index}].disposition_invalid")
+        if entry.get("disposition") == "ELIGIBLE_CUTOFF_VISIBLE_MATERIAL_LIFECYCLE_CONDITION":
+            eligible_entries.append(entry)
+        refs = _ids(
+            entry.get("reviewed_source_refs"), f"round3_eligibility_register.entries[{index}].reviewed_source_refs", findings,
+            required=entry.get("disposition") in {"EXCLUDED_NO_CUTOFF_VISIBLE_MATERIAL_LIFECYCLE_CONDITION", "ELIGIBLE_CUTOFF_VISIBLE_MATERIAL_LIFECYCLE_CONDITION"},
+        )
+        if expected_refs.get(rank) is not None and refs != expected_refs[rank]:
+            _add(findings, f"round3_eligibility_register.entries[{index}].reviewed_source_refs_must_match_frozen_static_source")
+        if entry.get("disposition") == "EXCLUDED_NO_CUTOFF_VISIBLE_MATERIAL_LIFECYCLE_CONDITION" and expected_refs.get(rank) is None:
+            _add(findings, f"round3_eligibility_register.entries[{index}].unexpected_unseen_row")
+        try:
+            cutoff_day = date.fromisoformat(str(entry.get("cutoff_at"))[:10])
+        except ValueError:
+            _add(findings, f"round3_eligibility_register.entries[{index}].cutoff_at_must_start_with_iso8601_date")
+            cutoff_day = None
+        for ref in refs:
+            source = _mapping(catalog.get(ref))
+            try:
+                published_day = date.fromisoformat(str(source.get("published_at")))
+            except ValueError:
+                published_day = None
+            if not source or source.get("issuer_id") != f"ISSUER:{entry.get('company_id')}" or (cutoff_day is not None and (published_day is None or published_day >= cutoff_day)):
+                _add(findings, f"round3_eligibility_register.entries[{index}].source_must_match_company_and_cutoff")
+        _required_text(entry, "rationale", f"round3_eligibility_register.entries[{index}]", findings)
+
+    if eligible_entries:
+        binding = _closed(item.get("first_eligible_target_binding"), _ELIGIBILITY_TARGET_BINDING_KEYS, "round3_eligibility_register.first_eligible_target_binding", findings)
+        for field in ("transition_id", "target_episode_id"):
+            _required_text(binding, field, "round3_eligibility_register.first_eligible_target_binding", findings)
+        _ids(binding.get("outcome_cell_ids"), "round3_eligibility_register.first_eligible_target_binding.outcome_cell_ids", findings)
+    elif item.get("first_eligible_target_binding") not in (None, {}, []):
+        _add(findings, "round3_eligibility_register.first_eligible_binding_must_remain_absent_when_no_holdout_exists")
+    if item.get("selection_state") == ROUND3_NO_ELIGIBLE_HOLDOUT and eligible_entries:
+        _add(findings, "round3_eligibility_register.no_holdout_state_cannot_name_eligible_row")
+
+    _validate_roles(item.get("roles"), expected=None, path="round3_eligibility_register.roles", findings=findings)
+    for path in _forbidden_paths(item, "round3_eligibility_register"):
+        _add(findings, "round3_eligibility_register.forbidden_field:" + path)
+    return {
+        "valid": not findings, "findings": findings,
+        "round3_eligibility_register": deepcopy(item) if not findings else None,
+        "selection_state": ROUND3_NO_ELIGIBLE_HOLDOUT if not findings else None,
+    }
