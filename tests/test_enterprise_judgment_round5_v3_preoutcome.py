@@ -10,6 +10,7 @@ import pytest
 from scripts import enterprise_judgment_real_mechanism_training as training
 from scripts import enterprise_judgment_reconstruction as reconstruction
 from scripts import enterprise_judgment_training_control_plane as control
+from scripts import judgment_historical_training as history
 from scripts import outcome_measurement_acquisition as acquisition
 from scripts import outcome_measurement_round5_adapter as round5
 from scripts import outcome_measurement_settlement_adapter as settlement_adapter
@@ -29,6 +30,7 @@ RECEIPT_FILES = [
     "20_round3_feedback_settlement.json",
     "25_round4_contract_insufficiency_adjudication.json",
 ]
+H1_RECEIPT = {"receipt_id": "H1:COHORT:CN:CEMENT_LISTED:20180430:STATIC:V1", "receipt_version": 1}
 
 
 def _load(name_or_path: str | Path) -> dict:
@@ -48,6 +50,43 @@ def _receipt_refs(receipts: list[dict]) -> list[dict]:
     ]
 
 
+def _selection_validation_context() -> dict:
+    h1 = _load(ROOT / "docs/development/research/cohorts/COHORT_CN_CEMENT_LISTED_20180430_h1_static_package.json")
+    series = history.build_industry_history_series_from_h1(h1, h1_receipt_ref=H1_RECEIPT)
+    assert series["valid"], series["findings"]
+    source_episodes = _load("01_e0_context_episodes.json") + _load("03_enterprise_judgment_episodes.json")
+    completed = [_load(RECEIPT_FILES[0]), _load(RECEIPT_FILES[1])]
+    round2_chain = {
+        "eligibility_register": _load("11a_round2_eligibility_register.json"),
+        "selection": _load("11_round2_transition_selection.json"),
+        "target_models": _load("09_round2_enterprise_system_models.json"),
+        "target_episode": _load("10_round2_preoutcome_episode.json"),
+        "application": _load("12_transfer_application_receipt.json"),
+        "continuation_settlement": _load("13_round2_continuation_feedback_settlement.json"),
+        "review": _load("14_transfer_application_independent_review.json"),
+        "completion": _load("15_round2_completion_receipt.json"),
+        "source_feedback_settlement": completed[0],
+    }
+    return {
+        "h1_package": h1,
+        "history_series": series["industry_history_series"],
+        "source_models": _load("02_enterprise_system_models.json"),
+        "source_block_episodes": source_episodes,
+        "completed_feedback_settlements": completed,
+        "source_feedback_settlement": completed[0],
+        "round2_eligibility_register": round2_chain["eligibility_register"],
+        "round2_selection": round2_chain["selection"],
+        "round2_target_models": round2_chain["target_models"],
+        "round2_target_episode": round2_chain["target_episode"],
+        "round2_application": round2_chain["application"],
+        "round2_chain": round2_chain,
+        "round3_selection": _load("16_round3_method_transfer_selection.json"),
+        "round3_target_models": _load("17_round3_enterprise_system_models.json"),
+        "round3_target_episode": _load("18_round3_preoutcome_episode.json"),
+        "round3_application": _load("19_round3_transfer_application_receipt.json"),
+    }
+
+
 def _register_selection_inputs(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> tuple[dict, list[dict]]:
     monkeypatch.setattr(reconstruction, "CANONICAL_REGISTRY_PATH", tmp_path / "canonical.db")
     block = _load("04_industry_learning_block.json")
@@ -56,9 +95,13 @@ def _register_selection_inputs(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) 
     assert control.register_roster_freeze(
         {"block": block, "roster_freeze": freeze}, registered_at="2026-08-26T16:20:00+00:00",
     )["registered"]
+    validation_context = _selection_validation_context()
     for index, receipt in enumerate(receipts):
         assert control.register_selection_receipt(
-            receipt, registered_at=f"2026-08-26T16:{21 + index:02d}:00+00:00",
+            receipt,
+            roster_freeze_ref={"freeze_id": freeze["freeze_id"]},
+            validation_context=validation_context,
+            registered_at=f"2026-08-26T16:{21 + index:02d}:00+00:00",
         )["registered"]
     return {"freeze_id": freeze["freeze_id"]}, _receipt_refs(receipts)
 
@@ -256,6 +299,17 @@ def test_canonical_resolver_selects_rank18_and_rejects_fake_receipts_or_inline_r
     )
     assert not inline["valid"]
     assert inline["findings"][0].startswith("roster_freeze_ref_invalid:")
+
+    forged = _load("25_round4_contract_insufficiency_adjudication.json")
+    forged["independent_review_findings"] = []
+    with pytest.raises(control.TrainingControlPlaneError) as exc:
+        control.register_selection_receipt(
+            forged,
+            roster_freeze_ref=roster_ref,
+            validation_context=_selection_validation_context(),
+            registered_at="2026-08-26T16:25:00+00:00",
+        )
+    assert exc.value.code == "selection_receipt_production_validation_failed"
 
 
 def test_registered_v3_contract_rejects_post_freeze_mutation(

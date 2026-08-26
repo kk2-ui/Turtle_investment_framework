@@ -147,6 +147,119 @@ def _company_from_receipt(receipt: dict[str, Any]) -> str:
     return ""
 
 
+def validate_superseding_adjudication(
+    adjudication: Any, *, block: Any, roster_freeze: Any,
+) -> dict[str, Any]:
+    """Validate the complete post-outcome quarantine before it affects selection."""
+    findings: list[str] = []
+    root_keys = {
+        "schema_version", "adjudication_id", "supersedes", "adjudication_status",
+        "outcome_access_confirmed", "permanent_no_refreeze", "training_admission",
+        "invalidated_claims", "specific_attribution_correction", "independent_review_findings",
+        "retained_post_outcome_data", "active_training_projection", "rights", "object_class",
+        "claim_class", "allowed_outputs",
+    }
+    item = _closed(adjudication, root_keys, "superseding_adjudication", findings)
+    if item.get("schema_version") != _ADJUDICATION_SCHEMA:
+        findings.append("superseding_adjudication.schema_version_invalid")
+    if not _text(item.get("adjudication_id")):
+        findings.append("superseding_adjudication.adjudication_id_required")
+    supersedes = _closed(
+        item.get("supersedes"), {"commit", "artifact_ref", "transition_id", "selected_rank"},
+        "superseding_adjudication.supersedes", findings,
+    )
+    block_item, freeze_item = _mapping(block), _mapping(roster_freeze)
+    roster = [_mapping(row) for row in _items(block_item.get("company_cutoff_transition_roster"))]
+    frozen_ids = _items(freeze_item.get("company_cutoff_transition_ids"))
+    if block_item.get("block_id") != freeze_item.get("block_id"):
+        findings.append("superseding_adjudication.block_must_match_roster_freeze")
+    if [row.get("transition_id") for row in roster] != frozen_ids:
+        findings.append("superseding_adjudication.roster_must_match_immutable_freeze")
+    transition = next((row for row in roster if row.get("transition_id") == supersedes.get("transition_id")), {})
+    if not transition or supersedes.get("selected_rank") != transition.get("rank"):
+        findings.append("superseding_adjudication.transition_and_rank_must_match_frozen_roster")
+    if not _text(supersedes.get("commit")) or not _text(supersedes.get("artifact_ref")):
+        findings.append("superseding_adjudication.superseded_commit_and_artifact_required")
+    if (
+        item.get("adjudication_status") != "CONTRACT_INVALID_POST_OUTCOME_TEACHING_ONLY"
+        or item.get("outcome_access_confirmed") is not True
+        or item.get("permanent_no_refreeze") is not True
+        or item.get("training_admission") != "DENIED"
+    ):
+        findings.append("superseding_adjudication.quarantine_disposition_invalid")
+    invalidated = _items(item.get("invalidated_claims"))
+    required_invalidated = {
+        "ALL_NINE_CELL_SETTLEMENT_LABELS", "LOCAL_H_A_SUPPORTED_WITHOUT_ACTION_ATTRIBUTION",
+        "FORECAST_OBSERVED_DIRECTION", "FORECAST_OBSERVED_VALUE",
+        "REAL_CELL_LEVEL_MECHANISM_FEEDBACK_COMPLETED", "MECHANISM_FEEDBACK",
+    }
+    if set(invalidated) != required_invalidated or len(invalidated) != len(required_invalidated):
+        findings.append("superseding_adjudication.invalidated_claims_incomplete")
+    if not _text(item.get("specific_attribution_correction")):
+        findings.append("superseding_adjudication.specific_attribution_correction_required")
+    review_keys = {
+        "finding_id", "priority", "root_cause_class", "why_below_standard", "economic_impact",
+        "missing_facts", "prohibited_assumption", "executable_remediation", "acceptance_criteria",
+    }
+    reviews = [_closed(raw, review_keys, f"superseding_adjudication.independent_review_findings[{index}]", findings)
+               for index, raw in enumerate(_items(item.get("independent_review_findings")))]
+    if len(reviews) != 3:
+        findings.append("superseding_adjudication.three_independent_findings_required")
+    for index, review in enumerate(reviews):
+        path = f"superseding_adjudication.independent_review_findings[{index}]"
+        if review.get("priority") not in {"P1", "P2"} or review.get("root_cause_class") not in {"MODEL", "REASONING"}:
+            findings.append(path + ".priority_or_root_cause_invalid")
+        for field in review_keys - {"missing_facts"}:
+            if not _text(review.get(field)):
+                findings.append(f"{path}.{field}_required")
+        if not _items(review.get("missing_facts")) or any(not _text(value) for value in _items(review.get("missing_facts"))):
+            findings.append(path + ".missing_facts_required")
+    retained = _closed(
+        item.get("retained_post_outcome_data"),
+        {"source_ref", "retention_reason", "retained_classes", "prohibited_uses"},
+        "superseding_adjudication.retained_post_outcome_data", findings,
+    )
+    if not _text(retained.get("source_ref")) or not _text(retained.get("retention_reason")):
+        findings.append("superseding_adjudication.retained_source_and_reason_required")
+    if retained.get("retained_classes") != ["POST_OUTCOME_TEACHING", "DATA_COVERAGE"]:
+        findings.append("superseding_adjudication.retained_classes_invalid")
+    required_prohibited = {
+        "DIRECTIONAL_LEARNING", "FORECAST_SCORING", "MANAGEMENT_EXECUTION_LABEL",
+        "ACTION_EFFECT_ATTRIBUTION", "ENTERPRISE_LEARNING_CANDIDATE", "METHOD_TRANSFER",
+    }
+    if set(_items(retained.get("prohibited_uses"))) != required_prohibited:
+        findings.append("superseding_adjudication.prohibited_uses_incomplete")
+    active = _closed(
+        item.get("active_training_projection"),
+        {"transition_status", "allowed_outputs", "cell_settlements", "forecast_settlements", "mechanism_feedback", "enterprise_learning_status"},
+        "superseding_adjudication.active_training_projection", findings,
+    )
+    if (
+        active.get("transition_status") != "CONTRACT_INVALID_POST_OUTCOME_TEACHING_ONLY"
+        or active.get("allowed_outputs") != ["POST_OUTCOME_TEACHING", "DATA_COVERAGE", "RESEARCH_AGENDA"]
+        or active.get("cell_settlements") != []
+        or active.get("forecast_settlements") != []
+        or active.get("mechanism_feedback") is not None
+        or active.get("enterprise_learning_status") != "DENIED"
+    ):
+        findings.append("superseding_adjudication.active_projection_must_remain_quarantined")
+    expected_rights = {**_RIGHTS, "mechanism_feedback": "NOT_AUTHORIZED"}
+    if item.get("rights") != expected_rights:
+        findings.append("superseding_adjudication.rights_invalid")
+    if (
+        item.get("object_class") != "ENTERPRISE_MECHANISM_FEEDBACK_SUPERSEDING_ADJUDICATION"
+        or item.get("claim_class") != "CONTRACT_INSUFFICIENCY_AND_POST_OUTCOME_QUARANTINE"
+        or item.get("allowed_outputs") != ["POST_OUTCOME_TEACHING", "DATA_COVERAGE", "RESEARCH_AGENDA"]
+    ):
+        findings.append("superseding_adjudication.object_claim_or_outputs_invalid")
+    return {
+        "valid": not findings,
+        "findings": findings,
+        "adjudication": deepcopy(item) if not findings else None,
+        "bound_transition": deepcopy(transition) if not findings else None,
+    }
+
+
 def derive_receipt_backed_selection(
     block: Any,
     roster_freeze: Any,

@@ -110,6 +110,10 @@ def initialize(conn: sqlite3.Connection) -> None:
                 schema_version TEXT NOT NULL,
                 payload_json TEXT NOT NULL,
                 registered_at TEXT NOT NULL,
+                freeze_id TEXT,
+                block_id TEXT,
+                company_id TEXT,
+                transition_id TEXT,
                 PRIMARY KEY (receipt_id, receipt_version)
             )"""
         )
@@ -123,6 +127,10 @@ def initialize(conn: sqlite3.Connection) -> None:
                 frozen_at TEXT NOT NULL
             )"""
         )
+        receipt_columns = {row[1] for row in conn.execute(f"PRAGMA table_info({RECEIPT_TABLE})")}
+        for column in ("freeze_id", "block_id", "company_id", "transition_id"):
+            if column not in receipt_columns:
+                conn.execute(f"ALTER TABLE {RECEIPT_TABLE} ADD COLUMN {column} TEXT")
 
 
 def _validate_roster_bundle(bundle: Any) -> dict[str, Any]:
@@ -188,27 +196,140 @@ def _receipt_identity(receipt: dict[str, Any]) -> tuple[str, int]:
     return receipt_id, version
 
 
-def register_selection_receipt(receipt: dict[str, Any], *, registered_at: str) -> dict[str, Any]:
+def _receipt_validation_and_binding(
+    receipt: dict[str, Any], *, bundle: dict[str, Any], validation_context: dict[str, Any],
+) -> dict[str, Any]:
+    try:
+        from scripts import enterprise_judgment_real_mechanism_training as real_training
+        from scripts import enterprise_judgment_v2_training as v2
+    except ModuleNotFoundError:  # pragma: no cover
+        import enterprise_judgment_real_mechanism_training as real_training
+        import enterprise_judgment_v2_training as v2
+    block = bundle["block"]
+    freeze = bundle["roster_freeze"]
+    context = validation_context if isinstance(validation_context, dict) else {}
+    schema = receipt.get("schema_version")
+    common = {
+        "block": block,
+        "pre_outcome_roster_freeze": freeze,
+        "history_series": context.get("history_series"),
+        "h1_package": context.get("h1_package"),
+        "source_block_episodes": context.get("source_block_episodes"),
+        "source_models": context.get("source_models"),
+    }
+    if schema == "enterprise-judgment-feedback-settlement.v1":
+        validation = v2.validate_feedback_settlement(
+            receipt,
+            block=block,
+            pre_outcome_roster_freeze=freeze,
+            history_series=context.get("history_series"),
+            h1_package=context.get("h1_package"),
+            episodes=context.get("source_block_episodes"),
+            enterprise_models=context.get("source_models"),
+        )
+    elif schema == "enterprise-judgment-continuation-feedback-settlement.v1":
+        validation = v2.validate_continuation_feedback_settlement(
+            receipt,
+            application=context.get("round2_application"),
+            selection=context.get("round2_selection"),
+            eligibility_register=context.get("round2_eligibility_register"),
+            target_episode=context.get("round2_target_episode"),
+            target_models=context.get("round2_target_models"),
+            source_feedback_settlement=context.get("source_feedback_settlement"),
+            completed_feedback_settlements=context.get("completed_feedback_settlements"),
+            **common,
+        )
+    elif schema == "enterprise-judgment-round3-feedback-settlement.v1":
+        validation = v2.validate_round3_feedback_settlement(
+            receipt,
+            application=context.get("round3_application"),
+            selection=context.get("round3_selection"),
+            round2_chain=context.get("round2_chain"),
+            target_episode=context.get("round3_target_episode"),
+            target_models=context.get("round3_target_models"),
+            completed_feedback_settlements=context.get("completed_feedback_settlements"),
+            **common,
+        )
+    elif schema == "enterprise-mechanism-feedback-superseding-adjudication.v1":
+        validation = real_training.validate_superseding_adjudication(
+            receipt, block=block, roster_freeze=freeze,
+        )
+    else:  # guarded by _receipt_identity
+        raise TrainingControlPlaneError("receipt_schema_unsupported", "no production validator for receipt schema")
+    if not validation["valid"]:
+        raise TrainingControlPlaneError(
+            "selection_receipt_production_validation_failed", "; ".join(validation["findings"]),
+        )
+    roster = bundle["block"]["company_cutoff_transition_roster"]
+    if schema == "enterprise-mechanism-feedback-superseding-adjudication.v1":
+        transition_id = receipt["supersedes"]["transition_id"]
+        matches = [row for row in roster if row.get("transition_id") == transition_id]
+    else:
+        matches = [
+            row for row in roster
+            if row.get("company_id") == receipt.get("company_id") and row.get("cutoff_at") == receipt.get("cutoff_at")
+        ]
+    if len(matches) != 1:
+        raise TrainingControlPlaneError(
+            "selection_receipt_roster_binding_not_unique",
+            "validated receipt must bind exactly one immutable company-cutoff transition",
+        )
+    transition = matches[0]
+    return {
+        "freeze_id": freeze["freeze_id"],
+        "block_id": block["block_id"],
+        "company_id": transition["company_id"],
+        "transition_id": transition["transition_id"],
+    }
+
+
+def register_selection_receipt(
+    receipt: dict[str, Any], *, roster_freeze_ref: dict[str, Any], validation_context: dict[str, Any], registered_at: str,
+) -> dict[str, Any]:
     receipt_id, version = _receipt_identity(receipt)
     timestamp = _instant(registered_at, field="registered_at")
     encoded = _json(receipt)
+    bundle, _ = resolve_canonical_selection_inputs(roster_freeze_ref, [])
+    binding = _receipt_validation_and_binding(
+        receipt, bundle=bundle, validation_context=validation_context,
+    )
     conn = _canonical_conn()
     try:
         initialize(conn)
         existing = conn.execute(
-            f"SELECT payload_json, schema_version, registered_at FROM {RECEIPT_TABLE} WHERE receipt_id = ? AND receipt_version = ?",
+            f"""SELECT payload_json, schema_version, registered_at, freeze_id, block_id, company_id, transition_id
+                FROM {RECEIPT_TABLE} WHERE receipt_id = ? AND receipt_version = ?""",
             (receipt_id, version),
         ).fetchone()
         if existing is not None:
             if existing["payload_json"] != encoded or existing["schema_version"] != receipt["schema_version"] or existing["registered_at"] != timestamp:
                 raise TrainingControlPlaneError("selection_receipt_identity_conflict", "registered receipt identity has different content")
-            return {"registered": True, "receipt_id": receipt_id, "receipt_version": version, "idempotent": True}
+            stored_binding = {key: existing[key] for key in binding}
+            if any(stored_binding.values()) and stored_binding != binding:
+                raise TrainingControlPlaneError("selection_receipt_binding_conflict", "registered receipt has a different immutable roster binding")
+            if stored_binding != binding:
+                with conn:
+                    conn.execute(
+                        f"""UPDATE {RECEIPT_TABLE}
+                            SET freeze_id = ?, block_id = ?, company_id = ?, transition_id = ?
+                            WHERE receipt_id = ? AND receipt_version = ?""",
+                        (*binding.values(), receipt_id, version),
+                    )
+            return {
+                "registered": True, "receipt_id": receipt_id, "receipt_version": version,
+                "idempotent": True, "binding": binding,
+            }
         with conn:
             conn.execute(
-                f"INSERT INTO {RECEIPT_TABLE} (receipt_id, receipt_version, schema_version, payload_json, registered_at) VALUES (?, ?, ?, ?, ?)",
-                (receipt_id, version, receipt["schema_version"], encoded, timestamp),
+                f"""INSERT INTO {RECEIPT_TABLE}
+                    (receipt_id, receipt_version, schema_version, payload_json, registered_at, freeze_id, block_id, company_id, transition_id)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+                (receipt_id, version, receipt["schema_version"], encoded, timestamp, *binding.values()),
             )
-        return {"registered": True, "receipt_id": receipt_id, "receipt_version": version, "idempotent": False}
+        return {
+            "registered": True, "receipt_id": receipt_id, "receipt_version": version,
+            "idempotent": False, "binding": binding,
+        }
     finally:
         conn.close()
 
@@ -228,15 +349,31 @@ def resolve_canonical_selection_inputs(
         if row is None:
             raise TrainingControlPlaneError("roster_freeze_not_registered", "requested roster freeze is not canonical")
         bundle = _load(row["payload_json"], code="canonical_roster_payload_invalid")
+        roster_by_id = {
+            item.get("transition_id"): item
+            for item in bundle["block"]["company_cutoff_transition_roster"]
+        }
         resolved: list[dict[str, Any]] = []
         for index, ref in enumerate(receipt_refs):
             receipt_id, version = _ref(ref, field=f"receipt_refs[{index}]")
             receipt_row = conn.execute(
-                f"SELECT payload_json FROM {RECEIPT_TABLE} WHERE receipt_id = ? AND receipt_version = ?",
+                f"""SELECT payload_json, freeze_id, block_id, company_id, transition_id
+                    FROM {RECEIPT_TABLE} WHERE receipt_id = ? AND receipt_version = ?""",
                 (receipt_id, version),
             ).fetchone()
             if receipt_row is None:
                 raise TrainingControlPlaneError("selection_receipt_not_registered", f"receipt {receipt_id}@{version} is not canonical")
+            transition = roster_by_id.get(receipt_row["transition_id"])
+            if (
+                receipt_row["freeze_id"] != freeze_id
+                or receipt_row["block_id"] != bundle["block"]["block_id"]
+                or not isinstance(transition, dict)
+                or transition.get("company_id") != receipt_row["company_id"]
+            ):
+                raise TrainingControlPlaneError(
+                    "selection_receipt_canonical_binding_invalid",
+                    f"receipt {receipt_id}@{version} lacks a valid immutable roster binding",
+                )
             resolved.append(_load(receipt_row["payload_json"], code="canonical_receipt_payload_invalid"))
         return bundle, resolved
     finally:
