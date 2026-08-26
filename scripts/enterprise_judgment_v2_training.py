@@ -41,6 +41,9 @@ CONTINUATION_SETTLEMENT_SCHEMA_VERSION = "enterprise-judgment-continuation-feedb
 TRANSFER_REVIEW_SCHEMA_VERSION = "enterprise-judgment-transfer-application-review.v1"
 ROUND2_COMPLETION_SCHEMA_VERSION = "enterprise-judgment-round2-completion-receipt.v1"
 ROUND3_SELECTION_SCHEMA_VERSION = "enterprise-judgment-round3-method-transfer-selection.v1"
+ROUND3_SETTLEMENT_SCHEMA_VERSION = "enterprise-judgment-round3-feedback-settlement.v1"
+ROUND3_REVIEW_SCHEMA_VERSION = "enterprise-judgment-round3-transfer-review.v1"
+ROUND3_VALIDATION_SCHEMA_VERSION = "enterprise-judgment-round3-transfer-validation.v1"
 
 CELL_STATES = {"OBSERVED", "INFERRED", "UNKNOWN", "EVIDENCE_INELIGIBLE", "NOT_APPLICABLE", "MEASUREMENT_MISMATCH"}
 PREOUTCOME_CELL_STATES = CELL_STATES - {"MEASUREMENT_MISMATCH"}
@@ -57,6 +60,8 @@ ALLOWED_APPLICATION_OUTPUTS = ["RESEARCH_AGENDA", "TRANSFER_CANDIDATE_PENDING_RE
 ALLOWED_TRANSFER_REVIEW_OUTPUTS = ["TRANSFER_CANDIDATE_CREATED", "RESEARCH_AGENDA"]
 ALLOWED_ROUND2_COMPLETION_OUTPUTS = ["REAL_FEEDBACK_TURN_2_COMPLETED", "TRANSFER_CANDIDATE_CREATED"]
 ALLOWED_ROUND3_SELECTION_OUTPUTS = ["PRE_OUTCOME_METHOD_APPLICATION_ONLY"]
+ALLOWED_ROUND3_REVIEW_OUTPUTS = ["METHOD_TRANSFER_REVIEW_ONLY"]
+ALLOWED_ROUND3_VALIDATION_OUTPUTS = ["TRANSFER_VALIDATED", "PERIMETER_FIRST_MEASUREMENT_METHOD_ONLY"]
 
 _ROLE_KEYS = {"judgment_owner_id", "independent_challenger_id", "outcome_custodian_id"}
 _EPISODE_KEYS = {
@@ -131,6 +136,24 @@ _ROUND3_SELECTION_KEYS = {
     "selection_policy", "completed_company_ids", "selected_transition_id", "selected_rank", "company_id",
     "company_cluster_id", "cutoff_at", "next_cutoff_at", "target_episode_id", "outcome_cell_ids",
     "pre_outcome_source_refs", "outcome_access_status", "roles", "object_class", "claim_class", "allowed_outputs",
+}
+_ROUND3_SETTLEMENT_KEYS = {
+    "schema_version", "settlement_id", "application_ref", "selection_ref", "company_id", "cutoff_at",
+    "outcome_custodian_id", "method_rule_id", "research_order", "perimeter_assessment", "source_receipt",
+    "observations", "next_cutoff_agenda_delta", "original_episode_immutable", "object_class", "claim_class",
+    "allowed_outputs",
+}
+_PERIMETER_ASSESSMENT_KEYS = {"status", "statement", "evidence_refs"}
+_ROUND3_REVIEW_KEYS = {
+    "schema_version", "review_id", "application_ref", "feedback_ref", "prior_review_ref", "reviewer_id",
+    "review_scope", "verdict", "research_order_changed", "rule_unchanged", "materiality_statement",
+    "prohibited_conclusion", "object_class", "claim_class", "allowed_outputs",
+}
+_ROUND3_VALIDATION_KEYS = {
+    "schema_version", "validation_id", "method_rule_id", "source_feedback_ref", "round2_application_ref",
+    "round2_review_ref", "round2_completion_ref", "round3_selection_ref", "round3_application_ref",
+    "round3_settlement_ref", "round3_review_ref", "transfer_status", "authority_scope", "denied_authorities",
+    "object_class", "claim_class", "allowed_outputs",
 }
 _FORBIDDEN_KEYS = {
     "price", "market_price", "share_price", "stock_price", "entry_price", "valuation", "valuation_result",
@@ -1744,3 +1767,229 @@ def validate_round3_transfer_application_receipt(
     for path in _forbidden_paths(item, "round3_transfer_application"):
         _add(findings, "round3_transfer_application.forbidden_field:" + path)
     return {"valid": not findings, "findings": findings, "round3_transfer_application": deepcopy(item) if not findings else None}
+
+
+def validate_round3_feedback_settlement(
+    settlement: Any, *, application: Any, selection: Any, round2_chain: Any, block: Any,
+    pre_outcome_roster_freeze: Any, target_episode: Any, target_models: list[Any], history_series: Any,
+    h1_package: Any, source_block_episodes: list[Any], source_models: list[Any],
+    completed_feedback_settlements: list[Any],
+) -> dict[str, Any]:
+    """Execute perimeter-first in the frozen order, accepting stable and mismatch outcomes."""
+    application_result = validate_round3_transfer_application_receipt(
+        application, selection=selection, round2_chain=round2_chain, block=block,
+        pre_outcome_roster_freeze=pre_outcome_roster_freeze, target_episode=target_episode,
+        target_models=target_models, history_series=history_series, h1_package=h1_package,
+        source_block_episodes=source_block_episodes, source_models=source_models,
+        completed_feedback_settlements=completed_feedback_settlements,
+    )
+    findings = ["round3_transfer_application:" + finding for finding in application_result["findings"]]
+    item = _closed(settlement, _ROUND3_SETTLEMENT_KEYS, "round3_settlement", findings)
+    app = _mapping(application)
+    selected = _mapping(selection)
+    episode = _mapping(target_episode)
+    if item.get("schema_version") != ROUND3_SETTLEMENT_SCHEMA_VERSION:
+        _add(findings, "round3_settlement.schema_version_invalid")
+    for field in (
+        "settlement_id", "application_ref", "selection_ref", "company_id", "cutoff_at",
+        "outcome_custodian_id", "method_rule_id",
+    ):
+        _required_text(item, field, "round3_settlement", findings)
+    if item.get("object_class") != "ENTERPRISE_JUDGMENT_ROUND3_FEEDBACK_SETTLEMENT" or item.get("claim_class") != "CONTRACT_MATCHED_METHOD_ORDER_FEEDBACK" or item.get("allowed_outputs") != ALLOWED_SETTLEMENT_OUTPUTS:
+        _add(findings, "round3_settlement.object_or_permission_invalid")
+    if item.get("original_episode_immutable") is not True:
+        _add(findings, "round3_settlement.must_preserve_original_episode")
+    if (
+        item.get("application_ref") != app.get("application_id")
+        or item.get("selection_ref") != selected.get("selection_id")
+        or item.get("company_id") != episode.get("company_id")
+        or item.get("cutoff_at") != episode.get("cutoff_at")
+        or item.get("outcome_custodian_id") != _mapping(episode.get("roles")).get("outcome_custodian_id")
+        or item.get("method_rule_id") != "PERIMETER_FIRST_MEASUREMENT_GATE"
+    ):
+        _add(findings, "round3_settlement.must_match_frozen_application_target_and_method")
+    expected_order = [
+        "CHECK_LISTED_CONSOLIDATED_PERIMETER",
+        "ASSESS_COMMON_BASIS_OR_BRIDGE",
+        "READ_FROZEN_OPERATING_AND_CASH_FIELDS_IF_COMPARABLE",
+    ]
+    if _items(item.get("research_order")) != expected_order:
+        _add(findings, "round3_settlement.must_execute_perimeter_before_fields")
+
+    receipt = _closed(item.get("source_receipt"), _SOURCE_RECEIPT_KEYS, "round3_settlement.source_receipt", findings)
+    for field in _SOURCE_RECEIPT_KEYS:
+        _required_text(receipt, field, "round3_settlement.source_receipt", findings)
+    cutoff = _instant(item.get("cutoff_at"), "round3_settlement.cutoff_at", findings)
+    published = _date(receipt.get("published_on"), "round3_settlement.source_receipt.published_on", findings)
+    if cutoff is not None and published is not None and published <= cutoff.date():
+        _add(findings, "round3_settlement.source_must_be_post_cutoff")
+    if receipt.get("custodian_access") != "OUTCOME_ONLY" or receipt.get("availability_precision") != "DATE":
+        _add(findings, "round3_settlement.source_access_or_precision_invalid")
+    catalog_source = _mapping(_source_catalog(h1_package).get(receipt.get("source_ref")))
+    if not catalog_source or any(
+        catalog_source.get(source_field) != receipt.get(receipt_field)
+        for source_field, receipt_field in (("published_at", "published_on"), ("url", "official_url"), ("source_type", "source_type"))
+    ):
+        _add(findings, "round3_settlement.source_must_match_h1_static_catalog")
+    elif (
+        catalog_source.get("issuer_id") != episode.get("issuer_id")
+        or catalog_source.get("responsibility_unit_id") != _mapping(episode.get("responsibility_boundary")).get("responsibility_unit_id")
+        or catalog_source.get("perimeter_id") != _mapping(episode.get("responsibility_boundary")).get("perimeter_id")
+    ):
+        _add(findings, "round3_settlement.source_boundary_mismatch")
+
+    perimeter = _closed(item.get("perimeter_assessment"), _PERIMETER_ASSESSMENT_KEYS, "round3_settlement.perimeter_assessment", findings)
+    perimeter_status = perimeter.get("status")
+    if perimeter_status not in {"STABLE", "CHANGED_WITH_BRIDGE", "CHANGED_WITHOUT_BRIDGE"}:
+        _add(findings, "round3_settlement.perimeter_status_invalid")
+    _required_text(perimeter, "statement", "round3_settlement.perimeter_assessment", findings)
+    perimeter_refs = _ids(perimeter.get("evidence_refs"), "round3_settlement.perimeter_assessment.evidence_refs", findings)
+    if perimeter_refs != [receipt.get("source_ref")]:
+        _add(findings, "round3_settlement.perimeter_must_be_checked_from_outcome_source_first")
+
+    selected_cells = _items(selected.get("outcome_cell_ids"))
+    allowed_cells = {entry.get("outcome_cell_id"): entry for entry in map(_mapping, _items(episode.get("outcome_cells")))}
+    observations = [
+        _closed(raw, _OBSERVATION_KEYS, f"round3_settlement.observations[{index}]", findings)
+        for index, raw in enumerate(_items(item.get("observations")))
+    ]
+    if [entry.get("outcome_cell_id") for entry in observations] != selected_cells:
+        _add(findings, "round3_settlement.observations_must_match_frozen_operating_cash_order")
+    for index, observation in enumerate(observations):
+        cell_id = observation.get("outcome_cell_id")
+        if cell_id not in allowed_cells:
+            _add(findings, f"round3_settlement.observations[{index}].cell_not_frozen")
+        _required_text(observation, "summary", f"round3_settlement.observations[{index}]", findings)
+        if observation.get("source_ref") != receipt.get("source_ref"):
+            _add(findings, f"round3_settlement.observations[{index}].source_must_match_receipt")
+        if perimeter_status == "CHANGED_WITHOUT_BRIDGE":
+            if observation.get("status") != "MEASUREMENT_MISMATCH" or not _text(observation.get("reported_value")):
+                _add(findings, f"round3_settlement.observations[{index}].unbridged_change_requires_local_mismatch")
+        elif observation.get("status") != "OBSERVED" or not _text(observation.get("reported_value")):
+            _add(findings, f"round3_settlement.observations[{index}].comparable_perimeter_requires_field_read")
+        contract = _mapping(_mapping(allowed_cells.get(cell_id)).get("measurement_contract"))
+        if receipt.get("source_type") not in _items(contract.get("allowed_source_types")):
+            _add(findings, f"round3_settlement.observations[{index}].source_type_not_allowed")
+        window_end = _instant(contract.get("window_end"), f"round3_settlement.observations[{index}].window_end", findings)
+        if published is not None and window_end is not None and published > window_end.date():
+            _add(findings, f"round3_settlement.observations[{index}].source_outside_window")
+
+    deltas = [
+        _closed(raw, _AGENDA_DELTA_KEYS, f"round3_settlement.next_cutoff_agenda_delta[{index}]", findings)
+        for index, raw in enumerate(_items(item.get("next_cutoff_agenda_delta")))
+    ]
+    if not deltas:
+        _add(findings, "round3_settlement.next_cutoff_agenda_required")
+    for index, delta in enumerate(deltas):
+        for field in _AGENDA_DELTA_KEYS:
+            _required_text(delta, field, f"round3_settlement.next_cutoff_agenda_delta[{index}]", findings)
+        if delta.get("target_cutoff_at") != selected.get("next_cutoff_at") or delta.get("change_type") not in {"CHANGE_EVIDENCE_ORDER", "ADD_BOUNDARY", "RETAIN_UNKNOWN"}:
+            _add(findings, f"round3_settlement.next_cutoff_agenda_delta[{index}].invalid")
+    for path in _forbidden_paths(item, "round3_settlement"):
+        _add(findings, "round3_settlement.forbidden_field:" + path)
+    return {"valid": not findings, "findings": findings, "round3_settlement": deepcopy(item) if not findings else None}
+
+
+def validate_round3_transfer_review(
+    review: Any, *, settlement: Any, application: Any, selection: Any, round2_chain: Any, block: Any,
+    pre_outcome_roster_freeze: Any, target_episode: Any, target_models: list[Any], history_series: Any,
+    h1_package: Any, source_block_episodes: list[Any], source_models: list[Any],
+    completed_feedback_settlements: list[Any],
+) -> dict[str, Any]:
+    """Review only whether the unchanged method changed research order a second time."""
+    settlement_result = validate_round3_feedback_settlement(
+        settlement, application=application, selection=selection, round2_chain=round2_chain, block=block,
+        pre_outcome_roster_freeze=pre_outcome_roster_freeze, target_episode=target_episode,
+        target_models=target_models, history_series=history_series, h1_package=h1_package,
+        source_block_episodes=source_block_episodes, source_models=source_models,
+        completed_feedback_settlements=completed_feedback_settlements,
+    )
+    findings = ["round3_settlement:" + finding for finding in settlement_result["findings"]]
+    item = _closed(review, _ROUND3_REVIEW_KEYS, "round3_review", findings)
+    app = _mapping(application)
+    prior_review = _mapping(_mapping(round2_chain).get("review"))
+    if item.get("schema_version") != ROUND3_REVIEW_SCHEMA_VERSION:
+        _add(findings, "round3_review.schema_version_invalid")
+    for field in (
+        "review_id", "application_ref", "feedback_ref", "prior_review_ref", "reviewer_id", "review_scope",
+        "verdict", "materiality_statement", "prohibited_conclusion",
+    ):
+        _required_text(item, field, "round3_review", findings)
+    if item.get("object_class") != "ENTERPRISE_JUDGMENT_ROUND3_TRANSFER_REVIEW" or item.get("claim_class") != "INDEPENDENT_RESEARCH_ORDER_ADJUDICATION" or item.get("allowed_outputs") != ALLOWED_ROUND3_REVIEW_OUTPUTS:
+        _add(findings, "round3_review.object_or_permission_invalid")
+    if (
+        item.get("application_ref") != app.get("application_id")
+        or item.get("feedback_ref") != _mapping(settlement).get("settlement_id")
+        or item.get("prior_review_ref") != prior_review.get("review_id")
+    ):
+        _add(findings, "round3_review.bindings_must_match_two_applications")
+    role_ids = set(_mapping(app.get("roles")).values())
+    if item.get("reviewer_id") in role_ids:
+        _add(findings, "round3_review.reviewer_must_be_independent")
+    if item.get("review_scope") != "SECOND_CROSS_COMPANY_RESEARCH_ORDER_CHANGE_ONLY":
+        _add(findings, "round3_review.scope_must_remain_method_order_only")
+    if (
+        item.get("verdict") != "SECOND_CROSS_COMPANY_RESEARCH_ORDER_CHANGE_CONFIRMED"
+        or item.get("research_order_changed") is not True
+        or item.get("rule_unchanged") is not True
+    ):
+        _add(findings, "round3_review.verdict_requires_changed_order_and_unchanged_rule")
+    if item.get("prohibited_conclusion") != "NO_ENTERPRISE_PERFORMANCE_ACTION_CAUSALITY_CJO_VALUATION_REPORT_OR_INVESTMENT_CONCLUSION":
+        _add(findings, "round3_review.must_deny_enterprise_and_investment_conclusions")
+    if _method_application_signature(app) != _method_application_signature(_mapping(round2_chain).get("application")):
+        _add(findings, "round3_review.rule_was_not_unchanged")
+    for path in _forbidden_paths(item, "round3_review"):
+        _add(findings, "round3_review.forbidden_field:" + path)
+    return {"valid": not findings, "findings": findings, "round3_review": deepcopy(item) if not findings else None}
+
+
+def validate_round3_transfer_validation(
+    validation: Any, *, review: Any, settlement: Any, application: Any, selection: Any, round2_chain: Any,
+    block: Any, pre_outcome_roster_freeze: Any, target_episode: Any, target_models: list[Any],
+    history_series: Any, h1_package: Any, source_block_episodes: list[Any], source_models: list[Any],
+    completed_feedback_settlements: list[Any],
+) -> dict[str, Any]:
+    """Grant only the narrow perimeter-first measurement-method authority."""
+    review_result = validate_round3_transfer_review(
+        review, settlement=settlement, application=application, selection=selection, round2_chain=round2_chain,
+        block=block, pre_outcome_roster_freeze=pre_outcome_roster_freeze, target_episode=target_episode,
+        target_models=target_models, history_series=history_series, h1_package=h1_package,
+        source_block_episodes=source_block_episodes, source_models=source_models,
+        completed_feedback_settlements=completed_feedback_settlements,
+    )
+    findings = ["round3_review:" + finding for finding in review_result["findings"]]
+    item = _closed(validation, _ROUND3_VALIDATION_KEYS, "round3_validation", findings)
+    chain = _mapping(round2_chain)
+    source_feedback = _mapping(chain.get("source_feedback_settlement"))
+    source_observation = next((entry for entry in map(_mapping, _items(source_feedback.get("observations"))) if entry.get("status") == "MEASUREMENT_MISMATCH"), {})
+    if item.get("schema_version") != ROUND3_VALIDATION_SCHEMA_VERSION:
+        _add(findings, "round3_validation.schema_version_invalid")
+    for field in _ROUND3_VALIDATION_KEYS - {"denied_authorities", "allowed_outputs"}:
+        _required_text(item, field, "round3_validation", findings)
+    if item.get("object_class") != "ENTERPRISE_JUDGMENT_ROUND3_TRANSFER_VALIDATION" or item.get("claim_class") != "NARROW_MEASUREMENT_METHOD_AUTHORITY" or item.get("allowed_outputs") != ALLOWED_ROUND3_VALIDATION_OUTPUTS:
+        _add(findings, "round3_validation.object_or_permission_invalid")
+    expected_bindings = {
+        "source_feedback_ref": source_feedback.get("settlement_id"),
+        "round2_application_ref": _mapping(chain.get("application")).get("application_id"),
+        "round2_review_ref": _mapping(chain.get("review")).get("review_id"),
+        "round2_completion_ref": _mapping(chain.get("completion")).get("completion_id"),
+        "round3_selection_ref": _mapping(selection).get("selection_id"),
+        "round3_application_ref": _mapping(application).get("application_id"),
+        "round3_settlement_ref": _mapping(settlement).get("settlement_id"),
+        "round3_review_ref": _mapping(review).get("review_id"),
+    }
+    if any(item.get(field) != value for field, value in expected_bindings.items()):
+        _add(findings, "round3_validation.must_bind_complete_source_two_application_review_chain")
+    if not source_observation or not _mapping(application).get("frozen_before_outcome_access"):
+        _add(findings, "round3_validation.requires_material_misread_and_preoutcome_freeze")
+    if item.get("method_rule_id") != "PERIMETER_FIRST_MEASUREMENT_GATE" or item.get("transfer_status") != "TRANSFER_VALIDATED" or item.get("authority_scope") != "PERIMETER_FIRST_MEASUREMENT_METHOD_ONLY":
+        _add(findings, "round3_validation.status_or_authority_scope_invalid")
+    denied = [
+        "ENTERPRISE_JUDGMENT", "COMPARATIVE", "METHOD_WIDE_RELEASE", "CJO", "VALUATION", "REPORT",
+        "INVESTMENT_AUTHORIZATION", "R-61", "R-103",
+    ]
+    if _items(item.get("denied_authorities")) != denied:
+        _add(findings, "round3_validation.denied_authorities_must_remain_complete")
+    for path in _forbidden_paths(item, "round3_validation"):
+        _add(findings, "round3_validation.forbidden_field:" + path)
+    return {"valid": not findings, "findings": findings, "round3_validation": deepcopy(item) if not findings else None}

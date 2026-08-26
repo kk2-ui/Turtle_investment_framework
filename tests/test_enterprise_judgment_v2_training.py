@@ -62,6 +62,110 @@ def _round3_preoutcome_inputs() -> tuple[dict, dict, list[dict], list[dict], dic
     return h1, series, source_models, source_episodes, block, completed, round2_chain, round3_selection, round3_episode, round3_models, round3_application
 
 
+def _synthetic_round3_settlement(perimeter_status: str = "STABLE") -> dict:
+    observed = perimeter_status != "CHANGED_WITHOUT_BRIDGE"
+    return {
+        "schema_version": "enterprise-judgment-round3-feedback-settlement.v1",
+        "settlement_id": "R3FBS:600425:20140416:SYNTHETIC",
+        "application_ref": "TAR:CN:CEMENT:PERIMETER_FIRST:600425:20140416:R3:V1",
+        "selection_ref": "R3SEL:CN:CEMENT:600425:20140416:V1",
+        "company_id": "CN:600425",
+        "cutoff_at": "2014-04-16T00:00:00+08:00",
+        "outcome_custodian_id": "ROLE:CEMENT:OUTCOME_CUSTODIAN",
+        "method_rule_id": "PERIMETER_FIRST_MEASUREMENT_GATE",
+        "research_order": [
+            "CHECK_LISTED_CONSOLIDATED_PERIMETER",
+            "ASSESS_COMMON_BASIS_OR_BRIDGE",
+            "READ_FROZEN_OPERATING_AND_CASH_FIELDS_IF_COMPARABLE",
+        ],
+        "perimeter_assessment": {
+            "status": perimeter_status,
+            "statement": "Synthetic validator fixture for the predeclared stable/mismatch branches.",
+            "evidence_refs": ["CNINFO:600425:ANN:20150411:1200812468"],
+        },
+        "source_receipt": {
+            "source_ref": "CNINFO:600425:ANN:20150411:1200812468",
+            "published_on": "2015-04-11",
+            "official_url": "https://static.cninfo.com.cn/finalpage/2015-04-11/1200812468.PDF",
+            "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+            "custodian_access": "OUTCOME_ONLY",
+            "availability_precision": "DATE",
+        },
+        "observations": [
+            {
+                "outcome_cell_id": "CELL:600425:20140416:OPERATIONS",
+                "status": "OBSERVED" if observed else "MEASUREMENT_MISMATCH",
+                "reported_value": "RMB 1" if observed else "SAME_BOUNDARY_OPERATING_NOT_ESTABLISHABLE",
+                "summary": "Synthetic operating-field branch.",
+                "source_ref": "CNINFO:600425:ANN:20150411:1200812468",
+            },
+            {
+                "outcome_cell_id": "CELL:600425:20140416:CASH",
+                "status": "OBSERVED" if observed else "MEASUREMENT_MISMATCH",
+                "reported_value": "RMB 2" if observed else "SAME_BOUNDARY_OPERATING_CASH_NOT_ESTABLISHABLE",
+                "summary": "Synthetic operating-cash branch.",
+                "source_ref": "CNINFO:600425:ANN:20150411:1200812468",
+            },
+        ],
+        "next_cutoff_agenda_delta": [{
+            "target_cutoff_at": "2015-04-15T00:00:00+08:00",
+            "change_id": "AGENDA:600425:20150415:SYNTHETIC",
+            "change_type": "CHANGE_EVIDENCE_ORDER",
+            "statement": "Keep checking perimeter before fields.",
+            "reason": "Synthetic branch coverage.",
+        }],
+        "original_episode_immutable": True,
+        "object_class": "ENTERPRISE_JUDGMENT_ROUND3_FEEDBACK_SETTLEMENT",
+        "claim_class": "CONTRACT_MATCHED_METHOD_ORDER_FEEDBACK",
+        "allowed_outputs": ["FEEDBACK_READ_MODEL", "RESEARCH_AGENDA"],
+    }
+
+
+def _synthetic_round3_review(settlement_id: str) -> dict:
+    return {
+        "schema_version": "enterprise-judgment-round3-transfer-review.v1",
+        "review_id": "R3TRR:CN:CEMENT:600425:20140416:SYNTHETIC",
+        "application_ref": "TAR:CN:CEMENT:PERIMETER_FIRST:600425:20140416:R3:V1",
+        "feedback_ref": settlement_id,
+        "prior_review_ref": "TRR:CN:CEMENT:PERIMETER_FIRST:000401:20170412:V1",
+        "reviewer_id": "ROLE:CEMENT:ROUND3_TRANSFER_REVIEWER",
+        "review_scope": "SECOND_CROSS_COMPANY_RESEARCH_ORDER_CHANGE_ONLY",
+        "verdict": "SECOND_CROSS_COMPANY_RESEARCH_ORDER_CHANGE_CONFIRMED",
+        "research_order_changed": True,
+        "rule_unchanged": True,
+        "materiality_statement": "The gate moved the boundary check ahead of both frozen fields without changing their definitions.",
+        "prohibited_conclusion": "NO_ENTERPRISE_PERFORMANCE_ACTION_CAUSALITY_CJO_VALUATION_REPORT_OR_INVESTMENT_CONCLUSION",
+        "object_class": "ENTERPRISE_JUDGMENT_ROUND3_TRANSFER_REVIEW",
+        "claim_class": "INDEPENDENT_RESEARCH_ORDER_ADJUDICATION",
+        "allowed_outputs": ["METHOD_TRANSFER_REVIEW_ONLY"],
+    }
+
+
+def _synthetic_round3_validation(settlement_id: str, review_id: str) -> dict:
+    return {
+        "schema_version": "enterprise-judgment-round3-transfer-validation.v1",
+        "validation_id": "R3TV:CN:CEMENT:PERIMETER_FIRST:SYNTHETIC",
+        "method_rule_id": "PERIMETER_FIRST_MEASUREMENT_GATE",
+        "source_feedback_ref": "FBS:600801:20170412:001",
+        "round2_application_ref": "TAR:CN:CEMENT:PERIMETER_FIRST:000401:20170412:V1",
+        "round2_review_ref": "TRR:CN:CEMENT:PERIMETER_FIRST:000401:20170412:V1",
+        "round2_completion_ref": "R2COMP:CN:CEMENT:000401:20170412:V1",
+        "round3_selection_ref": "R3SEL:CN:CEMENT:600425:20140416:V1",
+        "round3_application_ref": "TAR:CN:CEMENT:PERIMETER_FIRST:600425:20140416:R3:V1",
+        "round3_settlement_ref": settlement_id,
+        "round3_review_ref": review_id,
+        "transfer_status": "TRANSFER_VALIDATED",
+        "authority_scope": "PERIMETER_FIRST_MEASUREMENT_METHOD_ONLY",
+        "denied_authorities": [
+            "ENTERPRISE_JUDGMENT", "COMPARATIVE", "METHOD_WIDE_RELEASE", "CJO", "VALUATION", "REPORT",
+            "INVESTMENT_AUTHORIZATION", "R-61", "R-103",
+        ],
+        "object_class": "ENTERPRISE_JUDGMENT_ROUND3_TRANSFER_VALIDATION",
+        "claim_class": "NARROW_MEASUREMENT_METHOD_AUTHORITY",
+        "allowed_outputs": ["TRANSFER_VALIDATED", "PERIMETER_FIRST_MEASUREMENT_METHOD_ONLY"],
+    }
+
+
 def test_real_cement_e0_e1_block_freezes_h1_risk_set_and_read_only_training_views() -> None:
     h1, series, models, episodes, block = _inputs()
 
@@ -487,3 +591,63 @@ def test_round3_freezes_unchanged_perimeter_first_rule_before_outcome_access() -
     assert "R-103" not in serialized
     assert "CJO" not in serialized
     assert "valuation" not in serialized.lower()
+
+
+def test_round3_settlement_accepts_both_predeclared_stable_and_mismatch_paths() -> None:
+    h1, series, source_models, source_episodes, block, completed, round2_chain, selection, episode, target_models, application = _round3_preoutcome_inputs()
+    common = {
+        "application": application, "selection": selection, "round2_chain": round2_chain, "block": block,
+        "pre_outcome_roster_freeze": _pre_outcome_freeze(), "target_episode": episode,
+        "target_models": target_models, "history_series": series, "h1_package": h1,
+        "source_block_episodes": source_episodes, "source_models": source_models,
+        "completed_feedback_settlements": completed,
+    }
+    stable = _synthetic_round3_settlement("STABLE")
+    result = v2.validate_round3_feedback_settlement(stable, **common)
+    assert result["valid"], result["findings"]
+    mismatch = _synthetic_round3_settlement("CHANGED_WITHOUT_BRIDGE")
+    result = v2.validate_round3_feedback_settlement(mismatch, **common)
+    assert result["valid"], result["findings"]
+
+    tuned = deepcopy(stable)
+    tuned["research_order"].reverse()
+    result = v2.validate_round3_feedback_settlement(tuned, **common)
+    assert not result["valid"]
+    assert "round3_settlement.must_execute_perimeter_before_fields" in result["findings"]
+
+    inconsistent = deepcopy(stable)
+    inconsistent["observations"][0]["status"] = "MEASUREMENT_MISMATCH"
+    result = v2.validate_round3_feedback_settlement(inconsistent, **common)
+    assert not result["valid"]
+    assert "round3_settlement.observations[0].comparable_perimeter_requires_field_read" in result["findings"]
+
+
+def test_round3_independent_review_can_grant_only_narrow_method_transfer() -> None:
+    h1, series, source_models, source_episodes, block, completed, round2_chain, selection, episode, target_models, application = _round3_preoutcome_inputs()
+    settlement = _synthetic_round3_settlement("STABLE")
+    review = _synthetic_round3_review(settlement["settlement_id"])
+    common = {
+        "settlement": settlement, "application": application, "selection": selection,
+        "round2_chain": round2_chain, "block": block, "pre_outcome_roster_freeze": _pre_outcome_freeze(),
+        "target_episode": episode, "target_models": target_models, "history_series": series,
+        "h1_package": h1, "source_block_episodes": source_episodes, "source_models": source_models,
+        "completed_feedback_settlements": completed,
+    }
+    result = v2.validate_round3_transfer_review(review, **common)
+    assert result["valid"], result["findings"]
+    validation = _synthetic_round3_validation(settlement["settlement_id"], review["review_id"])
+    result = v2.validate_round3_transfer_validation(validation, review=review, **common)
+    assert result["valid"], result["findings"]
+    assert validation["authority_scope"] == "PERIMETER_FIRST_MEASUREMENT_METHOD_ONLY"
+
+    self_review = deepcopy(review)
+    self_review["reviewer_id"] = application["roles"]["judgment_owner_id"]
+    result = v2.validate_round3_transfer_review(self_review, **common)
+    assert not result["valid"]
+    assert "round3_review.reviewer_must_be_independent" in result["findings"]
+
+    overreach = deepcopy(validation)
+    overreach["authority_scope"] = "ENTERPRISE_JUDGMENT"
+    result = v2.validate_round3_transfer_validation(overreach, review=review, **common)
+    assert not result["valid"]
+    assert "round3_validation.status_or_authority_scope_invalid" in result["findings"]
