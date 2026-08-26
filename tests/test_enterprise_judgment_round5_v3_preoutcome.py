@@ -18,6 +18,9 @@ from scripts import outcome_measurement_settlement_adapter as settlement_adapter
 ROOT = Path(__file__).resolve().parents[1]
 BLOCK_DIR = ROOT / "docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018"
 V2_PACKAGE = BLOCK_DIR / "26_round5_preoutcome_mechanism_package.json"
+V3_PACKAGE = BLOCK_DIR / "29_round5_v3_preoutcome_mechanism_package.json"
+CUSTODY_PROJECTION = BLOCK_DIR / "30_round5_v3_value_free_custody_projection.json"
+CONTROL_RECEIPT = BLOCK_DIR / "31_round5_v3_preoutcome_control_plane_receipt.json"
 FREEZE_AT = "2026-08-26T16:30:00+00:00"
 RECEIPT_FILES = [
     "05_feedback_settlement_001.json",
@@ -62,6 +65,63 @@ def _register_selection_inputs(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) 
 
 def _v3_package() -> dict:
     return round5.build_round5_v3_package(_load(V2_PACKAGE), frozen_at=FREEZE_AT)
+
+
+def test_committed_round5_v3_package_is_the_generated_valid_package() -> None:
+    committed = _load(V3_PACKAGE)
+    assert committed == _v3_package()
+    assert committed["schema_version"] == training.PACKAGE_SCHEMA_VERSION_V3
+    validation = training.validate_outcome_measurement_contract(committed["outcome_measurement_contract"])
+    assert validation["valid"], validation["findings"]
+
+
+def test_committed_custody_artifact_is_the_real_value_free_api_projection() -> None:
+    package = _load(V3_PACKAGE)
+    committed = _load(CUSTODY_PROJECTION)
+    assert committed == round5.build_value_free_custody_projection(package)
+    validation = round5.validate_value_free_custody_projection(committed, package=package)
+    assert validation["valid"], validation["findings"]
+
+
+def test_committed_control_receipt_replays_canonical_ids_and_keeps_outcome_sealed(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path,
+) -> None:
+    roster_ref, receipt_refs = _register_selection_inputs(monkeypatch, tmp_path)
+    package = _load(V3_PACKAGE)
+    receipt = _load(CONTROL_RECEIPT)
+    result = training.register_and_project_preoutcome_package(
+        package,
+        roster_freeze_ref=roster_ref,
+        receipt_refs=receipt_refs,
+        frozen_at=FREEZE_AT,
+    )
+
+    assert result["valid"], result["findings"]
+    produced = result["control_plane_receipt"]
+    control_record = receipt["canonical_selection_control"]
+    assert control_record["roster_freeze_ref"] == roster_ref
+    assert control_record["formal_receipt_refs"] == receipt_refs
+    for key, value in control_record["selection_result"].items():
+        assert produced["selection"][key] == value
+    assert produced["frozen_j1_ref"]["reconstruction_id"] == receipt["canonical_j1_registration"]["reconstruction_id"]
+    contract_id = receipt["canonical_measurement_contract_registration"]["contract_set_id"]
+    assert produced["canonical_measurement_contract_registration"]["contract_set_id"] == contract_id
+    assert control.resolve_measurement_contract(contract_id) == package["outcome_measurement_contract"]
+    resolved_bundle, resolved_receipts = control.resolve_canonical_selection_inputs(roster_ref, receipt_refs)
+    assert resolved_bundle["roster_freeze"]["freeze_id"] == roster_ref["freeze_id"]
+    assert _receipt_refs(resolved_receipts) == receipt_refs
+    assert receipt["value_free_custody"]["generation_api"] == (
+        "outcome_measurement_acquisition.build_value_free_custody_projection"
+    )
+    assert receipt["value_free_custody"]["submission_api"] == _load(CUSTODY_PROJECTION)["submission_api"]
+    assert receipt["value_free_custody"]["settlement_api"] == _load(CUSTODY_PROJECTION)["settlement_api"]
+    assert receipt["outcome_access"] == {
+        "authorized": False,
+        "content_read": False,
+        "custodian_started": False,
+        "settlement_created": False,
+    }
+    assert set(receipt["rights"].values()) == {"NOT_AUTHORIZED"}
 
 
 def test_v3_contract_separates_cutoff_from_all_three_measurement_clocks() -> None:
@@ -198,4 +258,3 @@ def test_missing_event_cannot_be_submitted_as_observed_no() -> None:
     validated = round5.validate_custodian_submission(submission, projection=projection)
     assert validated["valid"], validated["findings"]
     assert result["observations"][0]["status"] == "UNKNOWN"
-

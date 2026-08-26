@@ -673,7 +673,11 @@ def register_and_project_preoutcome_package(
             reconstruction_ref
         )
     except reconstruction_registry.reconstruction.FrozenReconstructionRegistryError as exc:
-        if exc.code not in {"frozen_reconstruction_not_registered", "canonical_frozen_reconstruction_registry_unavailable"}:
+        if exc.code not in {
+            "frozen_reconstruction_registry_not_initialized",
+            "frozen_reconstruction_not_registered",
+            "canonical_frozen_reconstruction_registry_unavailable",
+        }:
             return {"valid": False, "findings": ["j1:" + exc.code], "control_plane_receipt": None}
         registration = reconstruction_registry.register_canonical_from_artifacts(
             source_packet_receipt=item["source_packet_receipt"],
