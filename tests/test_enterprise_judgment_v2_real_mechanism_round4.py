@@ -17,6 +17,7 @@ from scripts import judgment_training_decision_contract as decision_contract
 ROOT = Path(__file__).resolve().parents[1]
 BLOCK_DIR = ROOT / "docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018"
 PACKAGE_PATH = BLOCK_DIR / "23_round4_preoutcome_mechanism_package.json"
+SETTLEMENT_PATH = BLOCK_DIR / "24_round4_mechanism_feedback_settlement.json"
 ROSTER_PATH = BLOCK_DIR / "04_pre_outcome_roster_freeze.json"
 BLOCK_PATH = BLOCK_DIR / "04_industry_learning_block.json"
 
@@ -197,3 +198,89 @@ def test_round4_contracts_keep_feedback_layers_local_and_prohibit_attribution_sh
         "investment": "NOT_AUTHORIZED",
         "enterprise_learning": "NOT_YET_CANDIDATE",
     }
+
+
+def test_round4_feedback_is_bound_to_the_frozen_package_and_independent_custody() -> None:
+    package = _load(PACKAGE_PATH)
+    settlement = _load(SETTLEMENT_PATH)
+    binding = settlement["preoutcome_package_ref"]
+    custody = settlement["outcome_custody"]
+
+    assert binding == {
+        "package_id": package["package_id"],
+        "frozen_commit": "2cb242b",
+        "transition_id": package["selection"]["transition_id"],
+        "selected_rank": 17,
+        "company_id": "CN:600802",
+        "cutoff_at": package["selection"]["cutoff_at"],
+        "next_cutoff_at": package["selection"]["next_cutoff_at"],
+    }
+    assert custody["custodian_id"] == package["decision_contract"]["roles"]["outcome_custodian_id"]
+    assert custody["outcome_access_after_frozen_commit"] is True
+    assert custody["forecast_values_visible_to_custodian"] is False
+    assert custody["comparative_identities_visible_to_custodian"] is False
+    assert settlement["source_receipt"]["source_id"] == package["sealed_outcome_source"]["source_id"]
+
+
+def test_round4_feedback_settles_every_contract_cell_without_one_episode_verdict() -> None:
+    package = _load(PACKAGE_PATH)
+    settlement = _load(SETTLEMENT_PATH)
+    contracts = {contract["cell_id"]: contract for contract in package["cell_measurement_contracts"]}
+    cells = {cell["cell_id"]: cell for cell in settlement["cell_settlements"]}
+
+    assert set(cells) == set(contracts)
+    assert len(cells) == 9
+    assert all(cells[cell_id]["measurement_contract_id"] == contract["measurement_contract_id"] for cell_id, contract in contracts.items())
+    assert {cell["status"] for cell in cells.values()} == {
+        "OBSERVED_PARTIAL",
+        "UNKNOWN",
+        "MEASUREMENT_MISMATCH",
+        "OBSERVED",
+        "OBSERVED_MIXED",
+    }
+    assert cells["CELL:600802:20140416:SALES_VOLUME"]["status"] == "MEASUREMENT_MISMATCH"
+    assert cells["CELL:600802:20140416:UNIT_ECONOMICS"]["status"] == "OBSERVED"
+    assert cells["CELL:600802:20140416:CASH"]["status"] == "OBSERVED_MIXED"
+    assert cells["CELL:600802:20140416:CAPITAL_RETURN"]["status"] == "UNKNOWN"
+    assert cells["CELL:600802:20140416:PERMANENT_LOSS"]["status"] == "UNKNOWN"
+    assert "episode_verdict" not in settlement
+
+
+def test_round4_feedback_preserves_plan_execution_and_causal_boundaries() -> None:
+    settlement = _load(SETTLEMENT_PATH)
+    cells = {cell["cell_id"]: cell for cell in settlement["cell_settlements"]}
+    threads = {thread["thread_id"]: thread for thread in settlement["thread_feedback"]}
+
+    assert cells["CELL:600802:20140416:PLAN_STATUS"]["status"] == "OBSERVED_PARTIAL"
+    assert cells["CELL:600802:20140416:IMPLEMENTATION"]["status"] == "OBSERVED_PARTIAL"
+    assert cells["CELL:600802:20140416:EXECUTION"]["status"] == "OBSERVED_PARTIAL"
+    assert cells["CELL:600802:20140416:CUSTOMER_RESPONSE"]["status"] == "UNKNOWN"
+    assert all(cell["action_attribution"] == "NOT_AUTHORIZED" for cell in cells.values())
+    assert threads["THREAD:600802:CHANNEL_VOLUME"]["resolution"] == "INCONCLUSIVE_WITH_PRIMARY_EXECUTION_UNVERIFIED"
+    assert threads["THREAD:600802:UNIT_ECONOMICS"]["resolution"] == "LOCAL_H_A_SUPPORTED_WITHOUT_ACTION_ATTRIBUTION"
+    assert threads["THREAD:600802:CASH_CAPITAL_LOSS"]["resolution"] == "MIXED_AND_CAPITAL_BURDEN_UNRESOLVED"
+
+
+def test_round4_feedback_does_not_score_request_only_forecasts_or_grant_rights() -> None:
+    settlement = _load(SETTLEMENT_PATH)
+    requests = {item["request_id"]: item for item in settlement["forecast_request_settlement"]}
+
+    assert requests["REQ:600802:SALES_VOLUME:ONE_YEAR"]["state"] == "REQUEST_ONLY_NOT_SCORED"
+    assert requests["REQ:600802:UNIT_ECONOMICS:ONE_YEAR"]["observed_direction"] == "IMPROVED"
+    assert requests["REQ:600802:CASH:ONE_YEAR"]["observed_value"] == 0.143186
+    assert requests["REQ:600802:PERMANENT_LOSS:ABSTAIN"]["state"] == "ABSTENTION_PRESERVED"
+    assert settlement["episode_status"] == "REAL_CELL_LEVEL_MECHANISM_FEEDBACK_COMPLETED"
+    assert settlement["enterprise_learning_status"] == "NOT_YET_CANDIDATE"
+    assert settlement["rights"] == {
+        "comparative": "NOT_AUTHORIZED",
+        "enterprise_learning": "NOT_YET_CANDIDATE",
+        "cjo": "NOT_AUTHORIZED",
+        "valuation": "NOT_AUTHORIZED",
+        "report": "NOT_AUTHORIZED",
+        "investment": "NOT_AUTHORIZED",
+    }
+    assert settlement["allowed_outputs"] == [
+        "MECHANISM_FEEDBACK",
+        "TEACHING_ONLY",
+        "RESEARCH_AGENDA",
+    ]
