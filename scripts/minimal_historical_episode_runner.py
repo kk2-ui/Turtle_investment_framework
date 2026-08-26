@@ -444,7 +444,9 @@ def _parser() -> argparse.ArgumentParser:
     freeze = commands.add_parser("freeze-preoutcome")
     freeze.add_argument("--database", required=True)
     freeze.add_argument("--contract", required=True)
-    freeze.add_argument("--decision-contract")
+    # The real persistent entrypoint must receive the independently frozen
+    # decision object; the function-level fallback is limited to tests.
+    freeze.add_argument("--decision-contract", required=True)
     freeze.add_argument("--evidence", required=True)
     freeze.add_argument("--prediction", required=True)
     freeze.add_argument("--source-verification", required=True)
