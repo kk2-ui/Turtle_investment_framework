@@ -78,7 +78,8 @@ def _invalid(code: str, result: dict[str, Any]) -> None:
 
 
 def initialize(conn: sqlite3.Connection) -> None:
-    """Create only the minimal-episode namespace tables."""
+    """Configure the expected row shape and create the minimal-episode tables."""
+    conn.row_factory = sqlite3.Row
     conn.execute("PRAGMA foreign_keys = ON")
     with conn:
         conn.execute(

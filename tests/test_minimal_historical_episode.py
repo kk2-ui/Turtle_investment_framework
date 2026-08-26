@@ -208,6 +208,34 @@ def _frozen_chain() -> tuple[sqlite3.Connection, dict, dict, dict]:
     return conn, contract, evidence, prediction
 
 
+def test_initialize_supports_a_vanilla_sqlite_connection_for_the_pre_outcome_chain() -> None:
+    """Callers need not know that controller lookups use named sqlite rows."""
+    conn = sqlite3.connect(":memory:")
+    assert conn.row_factory is None
+    control.initialize(conn)
+    assert conn.row_factory is sqlite3.Row
+    decision_contract = _decision_contract()
+    contract = _contract(decision_contract)
+    evidence = _static_evidence(contract)
+    prediction = _prediction(contract, evidence)
+    try:
+        assert control.register_decision_contract(
+            conn, decision_contract, frozen_at="2021-01-01T00:00:00+00:00",
+        )["frozen"]
+        assert control.register_measurement_contract(
+            conn, contract, frozen_at="2021-01-02T00:00:00+00:00",
+        )["frozen"]
+        assert control.register_static_evidence(
+            conn, evidence, frozen_at="2021-01-03T00:00:00+00:00",
+        )["frozen"]
+        assert control.register_prediction(
+            conn, prediction, frozen_at="2021-01-04T00:00:00+00:00",
+        )["frozen"]
+        assert conn.execute(f"SELECT COUNT(*) FROM {control.PREDICTION_TABLE}").fetchone()[0] == 1
+    finally:
+        conn.close()
+
+
 def test_measurement_contract_requires_a_prior_frozen_matching_decision_contract() -> None:
     conn = _conn()
     decision_contract = _decision_contract()
