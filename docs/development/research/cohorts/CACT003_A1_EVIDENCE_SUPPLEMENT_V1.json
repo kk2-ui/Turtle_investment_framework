@@ -1,0 +1,108 @@
+{
+  "schema_version": "turtle-action-first-evidence-supplement.v1",
+  "supplement_id": "A1:SUPPLEMENT:C-ACT-003:V1",
+  "status": "EVIDENCE_SUPPLEMENT_ONLY",
+  "purpose": "A narrow, pre-outcome evidence supplement for an independent future A1 curator. It supplies carrier identity and two separately sourced mechanism readings. It is not an A1 receipt, an H1/H2 package, a peer panel, an outcome, a settlement, a method result, a CJO, a valuation, a report, or an investment permission.",
+  "package_boundary": "This is not an amendment to TURTLE_COMPARATIVE_ACTION_SCREEN_STATIC_PDF_PACKAGE_V2. Its annual-report sources remain outside that action-screen package's low-cost discovery scope and gain no admission status from this supplement.",
+  "candidate_binding": {
+    "candidate_id": "C-ACT-003",
+    "candidate_package_id": "TURTLE_COMPARATIVE_ACTION_SCREEN_STATIC_PDF_PACKAGE_V2",
+    "cutoff_at": "2019-12-31T00:00:00+08:00",
+    "cutoff_rule": "Every listed static source has a CNInfo finalpage date strictly before the cutoff. CNInfo metadata was used only to enumerate the source identity and date; page facts are from the named static PDFs."
+  },
+  "canonical_carrier": {
+    "company_id": "COMPANY:CN:603225",
+    "issuer_id": "ISSUER:CN:603225",
+    "responsibility_unit_id": "RU:ISSUER:CN:603225:DUSHAN_ENERGY_PTA_INPUT_SUPPLY",
+    "perimeter_id": "PERIMETER:ISSUER:CN:603225:CONSOLIDATED_GROUP",
+    "identity_sources": [
+      {
+        "source_id": "SOURCE:C-ACT-003:IDENTITY:2018_ANNUAL:P1",
+        "official_artifact_id": "CNINFO:603225:1205821336",
+        "source_url": "https://static.cninfo.com.cn/finalpage/2019-02-02/1205821336.PDF",
+        "source_type": "OFFICIAL_STATIC_FINALPAGE_PDF",
+        "metadata_release_date": "2019-02-02",
+        "page": 1,
+        "support_tags": [
+          "CARRIER_IDENTITY"
+        ],
+        "page_anchor_cn": "公司代码：603225；公司简称：新凤鸣；新凤鸣集团股份有限公司。",
+        "bounded_fact": "This page identifies the listed issuer, not the project-level responsibility unit."
+      },
+      {
+        "source_id": "SOURCE:C-ACT-003:PERIMETER:2018_ANNUAL:P5",
+        "official_artifact_id": "CNINFO:603225:1205821336",
+        "source_url": "https://static.cninfo.com.cn/finalpage/2019-02-02/1205821336.PDF",
+        "source_type": "OFFICIAL_STATIC_FINALPAGE_PDF",
+        "metadata_release_date": "2019-02-02",
+        "page": 5,
+        "support_tags": [
+          "RESPONSIBILITY_UNIT_IDENTITY",
+          "PERIMETER_IDENTITY"
+        ],
+        "page_anchor_cn": "中石科技指新凤鸣集团湖州中石科技有限公司，公司全资子公司；独山能源指浙江独山能源有限公司，中石科技全资子公司。",
+        "bounded_fact": "The page supports an indirect wholly owned group path to Zhejiang Dushan Energy Co., Ltd.; it does not create a separately reported project P&L."
+      }
+    ]
+  },
+  "original_action_source_reference": {
+    "source_id": "STATIC_PDF_1207047557_P1",
+    "official_artifact_id": "CNINFO:603225:1207047557",
+    "source_url": "https://static.cninfo.com.cn/finalpage/2019-10-31/1207047557.PDF",
+    "source_type": "OFFICIAL_STATIC_FINALPAGE_PDF",
+    "metadata_release_date": "2019-10-31",
+    "page": 1,
+    "support_tags": [
+      "IMPLEMENTATION",
+      "MATERIALITY"
+    ],
+    "page_anchors_cn": [
+      "年产220万吨PTA项目于近日进入试生产阶段。",
+      "向上游延伸产业链，进一步降低主营业务成本。",
+      "保障公司PTA原料的供应……大幅降低PTA原料的外部采购。"
+    ],
+    "bounded_fact": "This is the fixed original action screen source from the C-ACT-003 V2 package. It is retained only for implementation and materiality, and is not relabelled as HYPOTHESIS or RIVAL evidence here."
+  },
+  "separate_mechanism_evidence": [
+    {
+      "evidence_id": "A1:C-ACT-003:H-A:PREEXISTING_PTA_PROCUREMENT:V1",
+      "hypothesis_id": "H-A:C-ACT-003:INTERNAL_PTA_SUPPLY_REDUCES_EXTERNAL_PROCUREMENT_EXPOSURE",
+      "source_id": "SOURCE:C-ACT-003:HYPOTHESIS:2018_ANNUAL:P12",
+      "official_artifact_id": "CNINFO:603225:1205821336",
+      "source_url": "https://static.cninfo.com.cn/finalpage/2019-02-02/1205821336.PDF",
+      "source_type": "OFFICIAL_STATIC_FINALPAGE_PDF",
+      "metadata_release_date": "2019-02-02",
+      "page": 12,
+      "support_tags": [
+        "HYPOTHESIS"
+      ],
+      "page_anchor_cn": "公司采购 PTA 和 MEG 等主要原材料，由原料供应部确定供应商，各相关公司分别与其签订采购合同。",
+      "bounded_inference": "Before the trial-production notice, the issuer described PTA as a purchased principal input. That supports a falsifiable internal-supply/external-procurement exposure channel; it does not establish any subsequent reduction, margin effect, or cash effect."
+    },
+    {
+      "evidence_id": "A1:C-ACT-003:H-B:MARKET_AND_SUPPLY_DEMAND_DRIVERS:V1",
+      "hypothesis_id": "H-B:C-ACT-003:MARKET_SUPPLY_DEMAND_AND_INPUT_PRICES_EXPLAIN_OPERATING_CHANGE",
+      "source_id": "SOURCE:C-ACT-003:RIVAL:2018_ANNUAL:P26",
+      "official_artifact_id": "CNINFO:603225:1205821336",
+      "source_url": "https://static.cninfo.com.cn/finalpage/2019-02-02/1205821336.PDF",
+      "source_type": "OFFICIAL_STATIC_FINALPAGE_PDF",
+      "metadata_release_date": "2019-02-02",
+      "page": 26,
+      "support_tags": [
+        "RIVAL"
+      ],
+      "page_anchor_cn": "涤纶长丝的价格主要影响因素为原油等上游原料行情、本行业供需结构和下游纺织行业景气度。",
+      "bounded_inference": "The issuer itself identifies market and supply-demand drivers that can move operating conditions independently of an internal-supply change. This is the strongest pre-outcome rival reading, not proof that the rival explains any later observation."
+    }
+  ],
+  "limits_and_required_next_gate": [
+    "The two separate mechanism pages are from a cutoff-before annual report and establish operating context only. They do not supply a Dushan-project measurement, a customer response field, a peer, a control, a counterfactual, or an outcome contract.",
+    "This supplement deliberately does not create an A1 candidate receipt. A later independent A1 curator must independently satisfy the A1 schema, including its timestamped source-availability rule, rather than treating date-only metadata in this supplement as an A1 timing grant.",
+    "No post-cutoff material, outcome, price, return, valuation, R-103, forecast, CJO, report, H1/H2 stop receipt, peer result, or settlement was accessed in creating this supplement.",
+    "The next legal consumer may review this package together with the original C-ACT-003 screen to decide whether an independent timestamp-qualified A1 receipt is possible; it must stop rather than substitute consolidated performance for a same-boundary metric."
+  ],
+  "allowed_outputs": [
+    "A1_EVIDENCE_REVIEW_ONLY"
+  ],
+  "method_transfer_rights": "NO_METHOD_TRANSFER_RIGHTS"
+}
