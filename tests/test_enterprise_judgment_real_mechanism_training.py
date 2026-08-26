@@ -11,6 +11,7 @@ from scripts import enterprise_judgment_reconstruction_registry as reconstructio
 
 ROOT = Path(__file__).resolve().parents[1]
 BLOCK_DIR = ROOT / "docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018"
+ROUND5_PACKAGE_PATH = BLOCK_DIR / "26_round5_preoutcome_mechanism_package.json"
 
 
 def _load(path: Path) -> dict:
@@ -308,3 +309,85 @@ def test_atomic_mismatch_cannot_be_configured_to_invalidate_a_sibling() -> None:
 
     assert not result["valid"]
     assert "measurement_contract.atomic_cells[1].atomic_cell_cannot_invalidate_siblings" in result["findings"]
+
+
+def test_real_round5_package_is_receipt_derived_and_stops_before_outcome() -> None:
+    block, freeze, receipts = _selection_inputs()
+    package = _load(ROUND5_PACKAGE_PATH)
+
+    result = training.validate_preoutcome_package(
+        package,
+        block=block,
+        roster_freeze=freeze,
+        receipts=receipts,
+    )
+
+    assert result["valid"], result["findings"]
+    assert result["derived_selection"] == package["selection"]
+    assert package["selection"]["selected_rank"] == 18
+    assert package["selection"]["transition_id"] == "CCR:600802:20150415:20160427"
+    assert package["sealed_outcome_source"] == {
+        "source_id": "CNINFO:600802:ANN:20160426:1202245558",
+        "access_state": "SEALED_UNTIL_PREOUTCOME_COMMIT",
+        "outcome_content_read": False,
+    }
+    assert set(package["rights"].values()) == {"NOT_AUTHORIZED"}
+
+
+def test_real_round5_contract_splits_the_mechanism_into_atomic_fields() -> None:
+    package = _load(ROUND5_PACKAGE_PATH)
+    contract = package["outcome_measurement_contract"]
+    result = training.validate_outcome_measurement_contract(contract)
+
+    assert result["valid"], result["findings"]
+    cells = {cell["cell_id"]: cell for cell in contract["atomic_cells"]}
+    assert len(cells) == 14
+    assert {
+        "EXECUTED",
+        "CUSTOMER_RESPONSE",
+        "SALES_VOLUME",
+        "PRICE",
+        "UNIT_COST",
+        "SELLING_EXPENSE",
+        "GROSS_MARGIN",
+        "WORKING_CAPITAL",
+        "CASH",
+        "CAPITAL_BURDEN",
+        "FINANCING",
+        "PERMANENT_LOSS",
+    } == {cell["layer"] for cell in cells.values()}
+    assert cells["CELL:600802:20150415:CEMENT_SALES_VOLUME"]["field_identity"]["line_item"] == "cement sales volume"
+    assert cells["CELL:600802:20150415:CLINKER_SALES_VOLUME"]["field_identity"]["line_item"] == "clinker sales volume"
+    assert "production-line commissioning" in cells["CELL:600802:20150415:FURUN_OPERATING_SCOPE"]["prohibited_inference"]
+    assert all(cell["mismatch_rule"]["propagation"] == "LOCAL_ONLY" for cell in cells.values())
+    assert all(cell["mismatch_rule"]["dependent_cell_ids"] == [] for cell in cells.values())
+
+
+def test_real_round5_j2_and_j3_bind_only_atomic_contract_cells() -> None:
+    package = _load(ROUND5_PACKAGE_PATH)
+    contract_ids = {
+        cell["cell_id"]: "MC:" + cell["cell_id"].removeprefix("CELL:") + ":V2"
+        for cell in package["outcome_measurement_contract"]["atomic_cells"]
+    }
+    episode_cells = {
+        cell["outcome_cell_id"]: cell["measurement_contract_ref"]
+        for cell in package["episode_manifest"]["outcome_cells"]
+    }
+    j2_cells = {
+        cell_id
+        for thread in package["mechanism_thread_set"]["threads"]
+        for cell_id in thread["outcome_cell_refs"]
+    }
+    j3_cells = {
+        cell["outcome_cell_id"]
+        for thread in package["forecast_projection_source"]["threads"]
+        for cell in thread["cells"]
+    }
+
+    assert episode_cells == contract_ids
+    assert j2_cells == set(contract_ids)
+    assert j3_cells <= set(contract_ids)
+    assert package["forecast_projection_source"]["allowed_outputs"] == [
+        "FORECAST_REQUESTS_ONLY",
+        "RESEARCH_AGENDA",
+    ]
