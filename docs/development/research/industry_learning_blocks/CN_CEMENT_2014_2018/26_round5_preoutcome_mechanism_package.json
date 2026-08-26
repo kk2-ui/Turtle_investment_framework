@@ -429,9 +429,10 @@
         "e3_comparative_requested": false
       }
     ],
+    "outcome_access": "NONE",
     "object_class": "ENTERPRISE_JUDGMENT_MECHANISM_THREAD_SET",
-    "claim_class": "LOCAL_MECHANISM_THREAD_SELECTION",
-    "allowed_outputs": ["MECHANISM_VIEW", "TEACHING_ONLY", "MECHANISM_CANDIDATE", "RESEARCH_AGENDA"]
+    "claim_class": "LOCAL_MECHANISM_THREADS",
+    "allowed_outputs": ["MECHANISM_THREAD_READ_MODEL", "RESEARCH_AGENDA"]
   },
   "outcome_measurement_contract": {
     "schema_version": "enterprise-outcome-measurement-contract.v2",
