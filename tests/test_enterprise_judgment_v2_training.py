@@ -103,6 +103,28 @@ def test_j2_probe_is_bound_to_e1_thread_and_cannot_claim_management_action() -> 
     assert "episode.e2_must_be_compiled_as_a_bound_mechanism_probe" in result["findings"]
 
 
+def test_independent_mismatch_settlement_is_preserved_and_changes_next_cutoff_agenda() -> None:
+    h1, series, models, episodes, block = _inputs()
+    settlement = json.loads((BLOCK_ROOT / "05_feedback_settlement_001.json").read_text(encoding="utf-8"))
+    result = v2.validate_feedback_settlement(settlement, block=block, history_series=series, h1_package=h1, episodes=episodes, enterprise_models=models)
+    assert result["valid"], result["findings"]
+    assert settlement["observations"][0]["status"] == "MEASUREMENT_MISMATCH"
+    assert settlement["next_cutoff_agenda_delta"][0]["change_type"] == "ADD_BOUNDARY"
+
+    continued = json.loads((BLOCK_ROOT / "07_feedback_settlement_002.json").read_text(encoding="utf-8"))
+    result = v2.validate_feedback_settlement(continued, block=block, history_series=series, h1_package=h1, episodes=episodes, enterprise_models=models)
+    assert result["valid"], result["findings"]
+    assert continued["transition_id"] == "TRN:600585:20170412:20180422:CASH"
+    assert continued["observations"][0]["status"] == "OBSERVED"
+    assert continued["next_cutoff_agenda_delta"][0]["change_type"] == "CHANGE_EVIDENCE_ORDER"
+
+    substituted = deepcopy(settlement)
+    substituted["source_receipt"]["source_ref"] = "CNINFO:600585:ANN:20180323:1204507132"
+    result = v2.validate_feedback_settlement(substituted, block=block, history_series=series, h1_package=h1, episodes=episodes, enterprise_models=models)
+    assert not result["valid"]
+    assert "feedback_settlement.source_receipt_must_match_declared_static_source" in result["findings"]
+
+
 def test_predeclared_company_cutoff_order_cannot_be_rewritten_and_brief_hides_hypotheses() -> None:
     h1, series, models, episodes, block = _inputs()
     reordered = deepcopy(block)

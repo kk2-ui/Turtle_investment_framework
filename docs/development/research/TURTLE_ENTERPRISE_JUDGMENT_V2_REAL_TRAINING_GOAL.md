@@ -1,6 +1,6 @@
 # Turtle Enterprise Judgment V2 Real Training Goal
 
-> Status: `APPROVED_IMPLEMENTATION_GOAL / NOT_STARTED`
+> Status: `COMPLETED_REAL_SAMPLE_AND_FEEDBACK / TRANSFER_NOT_VALIDATED`
 >
 > Date: 2026-08-26
 >
@@ -285,3 +285,27 @@ The completion statement must tell the investor:
 - what remains unknown;
 - what changed in the next cutoff's research behavior;
 - what permissions remain explicitly unavailable.
+
+## 11. 2026-08-26 Completion Record
+
+The first real implementation is frozen at
+[`industry_learning_blocks/CN_CEMENT_2014_2018`](industry_learning_blocks/CN_CEMENT_2014_2018/):
+
+- `04_industry_learning_block.json` retains all five H1 companies, all six
+  cutoff snapshots and a sealed 20-row company-cutoff roster;
+- `01_e0_context_episodes.json` and `03_enterprise_judgment_episodes.json`
+  provide real E0/E1 reconstructions; scope breaks and missing action evidence
+  remain localized rather than excluding firms or fabricating management facts;
+- `06_mechanism_probe.json` is a J2 state-transmission teaching probe with a
+  bound H-A/H-B diagnostic; it has `action_effect_authority = NONE`;
+- independent outcome custody first preserved a Huaxin perimeter
+  `MEASUREMENT_MISMATCH`, then continued the frozen queue and observed the
+  contract-matched Conch consolidated operating-cash cell.  Both agenda deltas
+  are recorded without rewriting their original episodes;
+- [`08_investor_readout.md`](industry_learning_blocks/CN_CEMENT_2014_2018/08_investor_readout.md)
+  is the human-readable handoff.
+
+This completes the two Goal milestones (`REAL_SAMPLE_CREATED` and
+`REAL_FEEDBACK_TURN_COMPLETED`). It does not complete `TRANSFER_VALIDATED` and
+does not grant any E3, method-freeze, CJO, valuation, report or investment
+permission.

@@ -189,7 +189,7 @@ def _forbidden_paths(value: Any, path: str) -> list[str]:
             lowered = str(key).lower()
             child = f"{path}.{key}"
             if (
-                lowered in _FORBIDDEN_KEYS or lowered.startswith("actual_") or lowered.startswith("settlement_")
+                lowered in _FORBIDDEN_KEYS or lowered.startswith("actual_") or (lowered.startswith("settlement_") and lowered != "settlement_id")
                 or lowered.endswith("_market_price") or lowered.endswith("_share_price")
             ):
                 paths.append(child)
@@ -889,6 +889,8 @@ def validate_feedback_settlement(
         _add(findings, "feedback_settlement.must_match_frozen_block_transition")
     if item.get("outcome_custodian_id") != _mapping(block_item.get("roles")).get("outcome_custodian_id"):
         _add(findings, "feedback_settlement.custodian_must_match_frozen_roles")
+    episode_by_id = {entry.get("episode_id"): entry for entry in map(_mapping, episodes)}
+    episode = _mapping(episode_by_id.get(transition.get("episode_id")))
     receipt = _closed(item.get("source_receipt"), _SOURCE_RECEIPT_KEYS, "feedback_settlement.source_receipt", findings)
     for field in _SOURCE_RECEIPT_KEYS:
         _required_text(receipt, field, "feedback_settlement.source_receipt", findings)
@@ -900,12 +902,20 @@ def validate_feedback_settlement(
         _add(findings, "feedback_settlement.source_receipt_must_be_outcome_only")
     if receipt.get("availability_precision") != "DATE":
         _add(findings, "feedback_settlement.source_receipt_must_preserve_date_precision")
-    episode_by_id = {entry.get("episode_id"): entry for entry in map(_mapping, episodes)}
-    episode = _mapping(episode_by_id.get(transition.get("episode_id")))
+    catalog_source = _mapping(_source_catalog(h1_package).get(receipt.get("source_ref")))
+    if not catalog_source:
+        _add(findings, "feedback_settlement.source_receipt_source_must_be_declared_h1_static_source")
+    elif any(catalog_source.get(source_field) != receipt.get(receipt_field) for source_field, receipt_field in (
+        ("published_at", "published_on"), ("url", "official_url"), ("source_type", "source_type"),
+    )):
+        _add(findings, "feedback_settlement.source_receipt_must_match_declared_static_source")
+    elif catalog_source.get("issuer_id") != episode.get("issuer_id") or catalog_source.get("responsibility_unit_id") != _mapping(episode.get("responsibility_boundary")).get("responsibility_unit_id") or catalog_source.get("perimeter_id") != _mapping(episode.get("responsibility_boundary")).get("perimeter_id"):
+        _add(findings, "feedback_settlement.source_receipt_responsibility_boundary_mismatch")
     allowed_cells = {entry.get("outcome_cell_id"): entry for entry in map(_mapping, _items(episode.get("outcome_cells")))}
     observations = [_closed(raw, _OBSERVATION_KEYS, f"feedback_settlement.observations[{index}]", findings) for index, raw in enumerate(_items(item.get("observations")))]
     if not observations:
         _add(findings, "feedback_settlement.observations_required")
+    observed_cell_ids: list[str] = []
     matched = 0
     for index, observation in enumerate(observations):
         cell_id = _required_text(observation, "outcome_cell_id", f"feedback_settlement.observations[{index}]", findings)
@@ -918,7 +928,17 @@ def validate_feedback_settlement(
             _add(findings, f"feedback_settlement.observations[{index}].source_must_match_custodian_receipt")
         if observation.get("status") == "OBSERVED" and observation.get("reported_value") in {None, ""}:
             _add(findings, f"feedback_settlement.observations[{index}].observed_status_requires_reported_value")
+        cell = _mapping(allowed_cells.get(cell_id))
+        contract = _mapping(cell.get("measurement_contract"))
+        if receipt.get("source_type") not in _items(contract.get("allowed_source_types")):
+            _add(findings, f"feedback_settlement.observations[{index}].source_type_not_allowed_by_frozen_measurement_contract")
+        end = _instant(contract.get("window_end"), f"feedback_settlement.observations[{index}].measurement_contract.window_end", findings)
+        if published is not None and end is not None and published > end.date():
+            _add(findings, f"feedback_settlement.observations[{index}].source_must_be_within_frozen_measurement_window")
+        observed_cell_ids.append(cell_id)
         matched += observation.get("status") == "OBSERVED"
+    if observed_cell_ids != _items(transition.get("outcome_cell_ids")) or len(set(observed_cell_ids)) != len(observed_cell_ids):
+        _add(findings, "feedback_settlement.observations_must_exactly_match_frozen_transition_cells")
     delta = [_closed(raw, _AGENDA_DELTA_KEYS, f"feedback_settlement.next_cutoff_agenda_delta[{index}]", findings) for index, raw in enumerate(_items(item.get("next_cutoff_agenda_delta")))]
     if not delta:
         _add(findings, "feedback_settlement.next_cutoff_agenda_delta_required")

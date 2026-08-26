@@ -137,7 +137,7 @@ HTML 只负责渲染，不得另造投资事实、模型数值或结论。正文
 | G0 多黄金路线激活 | 本文件、覆盖矩阵、质量契约和状态语义成为当前路线 | COMPLETE |
 | G1 候选内容成熟与逐案接纳 | 七个指定案例完成材料性修复和独立接纳 | **IN_PROGRESS** |
 | G1-J 判断契约与已有案例资产接线 | 复用书籍方法案例卡和基准率候选，补齐中心路径、前瞻判断与历史结算硬门 | **IN_PROGRESS / G1内部前置门** |
-| G1-T 历史判断训练与留出 | 先完成真实 `IndustryLearningBlock + EnterpriseJudgmentEpisode` 的 E0/E1 多维重建；Comparative 仅为局部 E3 支线，有效方法冻结后再揭盲 R-61 | **IN_PROGRESS / J0-J1 REAL IMPLEMENTATION** |
+| G1-T 历史判断训练与留出 | 已完成首个真实 `IndustryLearningBlock + EnterpriseJudgmentEpisode` 的 E0/E1 多维重建与独立 feedback；Comparative 仅为局部 E3 支线，有效方法冻结后再揭盲 R-61 | **IN_PROGRESS / REAL_SAMPLE_CREATED + REAL_FEEDBACK_TURN_COMPLETED / TRANSFER_NOT_VALIDATED** |
 | G1.5 格力行业经验工厂试验 | 24 份黄金级产物验证公司→行业→宏观传导→公司的双向研究架构 | PLANNED |
 | G2 跨报告裁决与路线规范 | 统一共同规则，裁决公司、行业、基准率和宏观层的权限与路线差异 | PLANNED |
 | G3 Golden Set v1 与行业经验包冻结 | 多份内容黄金报告、完整案例包及 `Industry Experience Pack v1` 形成版本化集合 | PLANNED |
@@ -474,8 +474,8 @@ Phase 08 只有同时具备以下结果才能完成：
 当前执行分为训练主线与黄金候选线，互不以等待状态阻断：
 
 1. Minimal Historical Episode 已在当前验收点封口：一条独立机械结算只证明 `Decision Contract → Measurement Contract → blind prediction → independent observation → mechanical settlement` 管线可闭合；CN:600802、CN:600425、CN:002003 与 CN:002404 均在授权边界内正确终止为 `MEASUREMENT_MISMATCH`，没有第二个 `FIELD_READY`。全部对象固定为 `MECHANICAL_SETTLEMENT_ONLY + NO_METHOD_TRANSFER_RIGHTS`，不得表述为 method、Comparative、CJO、估值、报告或投资成功。除非发现会阻止唯一官方字段映射的可复用 acquisition-contract deficiency，不再为追逐另一条结算扩展该 lane 的 schema、control、adapter 或候选；
-2. 训练主线立即实施 `J0 CONTRACT → J1 INDUSTRY BLOCK → J1A RECONSTRUCTION`：先冻结 `EnterpriseJudgmentEpisode`/`IndustryLearningBlock` 的组合读模型、claim 权限和 cell 状态，再用真实 cutoff-before 官方材料形成行业时期、公司 archetype、生命周期、经营系统和管理决策序列；不等待 H2、完整同行或 `SELECTION_ADMITTED`；
-3. 首个真实 IndustryLearningBlock 优先复用中国水泥 H1 的五家公司、六个 cutoff 和既有 lifecycle/source receipts。五家公司都进入 E0；E1 深挖对象按结果前声明的材料性、公司状态差异和字段覆盖选择，不按后来结果或“最容易通过”选择。水泥 `H2_NO_PRIMARY_ACTION_SCOPE` 只关闭其 action-first Comparative 候选；
+2. 已完成 `J0 CONTRACT → J1 INDUSTRY BLOCK → J1A RECONSTRUCTION → J2 Teaching Probe`：水泥 H1 的五家公司、六个 cutoff、E0/E1 重建和 20 条 company-cutoff roster 已冻结；首条 `MEASUREMENT_MISMATCH` 已保留并按名单继续至第二条机械结算。下一训练工作应复用该合同扩大真实 block，而不回退等待 H2、完整同行或 `SELECTION_ADMITTED`；
+3. 首个真实 IndustryLearningBlock 已复用中国水泥 H1 的五家公司、六个 cutoff 和既有 lifecycle/source receipts。五家公司都进入 E0；E1 深挖对象按结果前声明的材料性、公司状态差异和字段覆盖选择，不按后来结果或“最容易通过”选择。水泥 `H2_NO_PRIMARY_ACTION_SCOPE` 只关闭其 action-first Comparative 候选；
 4. 每个 E1 episode 冻结一个 primary question、2--4 个 supporting questions、2--3 条关键经营反馈回路、管理层可行替代/资源承诺/执行/适应，以及客户、运营、竞争、现金、资本回报、杠杆和永久损失的 cell-level outcome contract。未知只限制对应 claim，不允许把整家公司压成 `NO_PRIMARY`；
 5. 在 E0/E1 基础上运行 `E2_MECHANISM_PROBE` 和逐 cutoff reveal；只有明确提出相对因果 estimand 时，才由独立 curator 启动 action-first `E3_COMPARATIVE_LAB`，冻结 comparator eligibility、static peer batch 和 outcome contract。该支线失败或等待不阻断 Industry/E1；
 6. IndustryLearningBlock 必须输出带时期、公司条件、moderators、break conditions、反例和 evidence ceiling 的 `ConditionalMechanismSynthesis`。它只进入 `RESEARCH_AGENDA`；没有跨公司/跨期应用和独立复核，不得升格为行业规律、经验概率或投资参数；
@@ -501,3 +501,4 @@ Phase 08 只有同时具备以下结果才能完成：
 | 2026-08-19 | G5 改为公司轴与时间轴双 holdout | 同时检验跨公司迁移和对未来时期的真实泛化，避免已见历史结果冒充预测能力 |
 | 2026-08-23 | 激活 G1-T：历史训练主导、历史留出验收、真实前瞻后置校准 | 大量历史 PIT 可高频训练判断；最新披露的等待只检验成熟系统的部署有效性，不能阻断训练 |
 | 2026-08-26 | G1-T 改用多维 EnterpriseJudgmentEpisode 和 IndustryLearningBlock；Comparative 降为局部 E3 支线 | 企业差异、时期差异和决策序列是训练对象，不是可比性噪声；旧 action-first 全局入口造成样本过严、判断狭窄且无法形成行业洞察 |
+| 2026-08-26 | 完成首个真实水泥 V2 block 与独立 feedback 闭环 | 五公司、六 cutoff 和 20 条 roster 保留；华新 perimeter mismatch 改变下一 cutoff 的边界议程后，按冻结顺序继续结算海螺合并经营现金。没有方法迁移或投资权限。 |

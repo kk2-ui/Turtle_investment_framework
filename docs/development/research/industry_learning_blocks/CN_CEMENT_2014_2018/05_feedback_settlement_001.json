@@ -1,0 +1,42 @@
+{
+  "schema_version": "enterprise-judgment-feedback-settlement.v1",
+  "settlement_id": "FBS:600801:20170412:001",
+  "block_id": "ILB:CN:CEMENT_LISTED:2014_2018:V1",
+  "transition_id": "TRN:600801:20170412:20180422:PERIMETER",
+  "company_id": "CN:600801",
+  "cutoff_at": "2017-04-12T00:00:00+08:00",
+  "outcome_custodian_id": "ROLE:CEMENT:OUTCOME_CUSTODIAN",
+  "source_receipt": {
+    "source_ref": "CNINFO:600801:ANN:20180326:1204514309",
+    "published_on": "2018-03-26",
+    "official_url": "https://static.cninfo.com.cn/finalpage/2018-03-26/1204514309.PDF",
+    "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+    "custodian_access": "OUTCOME_ONLY",
+    "availability_precision": "DATE"
+  },
+  "observations": [
+    {
+      "outcome_cell_id": "CELL:600801:20170412:OPERATIONS",
+      "status": "MEASUREMENT_MISMATCH",
+      "reported_value": "SAME_BOUNDARY_CONTINUITY_NOT_ESTABLISHABLE",
+      "summary": "The FY2017 audited report records a non-common-control acquisition with control transferred during FY2017 (p. 125), so its consolidated disclosure does not establish a same-boundary operating/perimeter-continuity reading against the frozen 2017-04-12 perimeter.",
+      "source_ref": "CNINFO:600801:ANN:20180326:1204514309"
+    }
+  ],
+  "next_cutoff_agenda_delta": [
+    {
+      "target_cutoff_at": "2018-04-22T00:00:00+08:00",
+      "change_id": "AGENDA:600801:20180422:ADD_BOUNDARY:POST_2017_ACQUISITION",
+      "change_type": "ADD_BOUNDARY",
+      "statement": "At the 2018-04-22 cutoff, separately define the pre-acquisition and post-acquisition listed-consolidated-issuer operating boundaries before seeking a continuity observation.",
+      "reason": "The FY2017 audited report records new control obtained during the measurement window, preventing this cell from carrying a same-boundary continuity reading."
+    }
+  ],
+  "original_episode_immutable": true,
+  "object_class": "ENTERPRISE_JUDGMENT_FEEDBACK_SETTLEMENT",
+  "claim_class": "CONTRACT_MATCHED_PREQUENTIAL_FEEDBACK",
+  "allowed_outputs": [
+    "FEEDBACK_READ_MODEL",
+    "RESEARCH_AGENDA"
+  ]
+}
