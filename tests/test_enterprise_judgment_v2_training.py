@@ -28,6 +28,19 @@ def _pre_outcome_freeze() -> dict:
     return json.loads((BLOCK_ROOT / "04_pre_outcome_roster_freeze.json").read_text(encoding="utf-8"))
 
 
+def _round2_inputs() -> tuple[dict, dict, list[dict], list[dict], dict, dict, list[dict], dict, dict, list[dict]]:
+    h1, series, source_models, source_episodes, block = _inputs()
+    selection = json.loads((BLOCK_ROOT / "11_round2_transition_selection.json").read_text(encoding="utf-8"))
+    target_models = json.loads((BLOCK_ROOT / "09_round2_enterprise_system_models.json").read_text(encoding="utf-8"))
+    target_episode = json.loads((BLOCK_ROOT / "10_round2_preoutcome_episode.json").read_text(encoding="utf-8"))
+    application = json.loads((BLOCK_ROOT / "12_transfer_application_receipt.json").read_text(encoding="utf-8"))
+    completed = [
+        json.loads((BLOCK_ROOT / "05_feedback_settlement_001.json").read_text(encoding="utf-8")),
+        json.loads((BLOCK_ROOT / "07_feedback_settlement_002.json").read_text(encoding="utf-8")),
+    ]
+    return h1, series, source_models, source_episodes, block, selection, target_models, target_episode, application, completed
+
+
 def test_real_cement_e0_e1_block_freezes_h1_risk_set_and_read_only_training_views() -> None:
     h1, series, models, episodes, block = _inputs()
 
@@ -169,3 +182,64 @@ def test_predeclared_company_cutoff_order_cannot_be_rewritten_and_brief_hides_hy
     # The contract may name a forbidden proxy ("market price") precisely to
     # exclude it; it must not project an actual price field or value.
     assert '"price"' not in json.dumps(projected, ensure_ascii=False).lower()
+
+
+def test_round2_selection_and_cross_company_perimeter_application_are_frozen_before_outcome_access() -> None:
+    # This catches outcome-guided row skipping and a transfer receipt that
+    # rewrites the frozen target field rather than adding the first-round
+    # perimeter measurement gate.
+    h1, series, source_models, source_episodes, block, selection, target_models, target_episode, application, completed = _round2_inputs()
+    freeze = _pre_outcome_freeze()
+
+    selection_result = v2.validate_round2_transition_selection(
+        selection, block=block, pre_outcome_roster_freeze=freeze, history_series=series, h1_package=h1,
+        completed_feedback_settlements=completed, source_block_episodes=source_episodes, source_models=source_models,
+    )
+    assert selection_result["valid"], selection_result["findings"]
+    assert selection["selected_rank"] == 12
+    assert selection["company_id"] == "CN:000401"
+    assert selection["outcome_access_status"] == "SEALED"
+
+    episode_result = v2.validate_enterprise_judgment_episode(target_episode, history_series=series, h1_package=h1, enterprise_models=target_models)
+    assert episode_result["valid"], episode_result["findings"]
+    result = v2.validate_transfer_application_receipt(
+        application, selection=selection, block=block, pre_outcome_roster_freeze=freeze,
+        target_episode=target_episode, target_models=target_models, history_series=series, h1_package=h1,
+        source_feedback_settlement=completed[0], source_block_episodes=source_episodes, source_models=source_models,
+        completed_feedback_settlements=completed,
+    )
+    assert result["valid"], result["findings"]
+    assert application["learned_rule_id"] == "PERIMETER_FIRST_MEASUREMENT_GATE"
+    assert application["enhanced_after_learning"][0]["definition"] == application["baseline_before_learning"][0]["definition"]
+    assert application["field_delta"][0]["reason_ref"] == application["source_agenda_change_id"]
+
+    skipped = deepcopy(selection)
+    skipped["completed_company_cutoff_transition_ids"].append("CCR:000401:20140416:20150415")
+    result = v2.validate_round2_transition_selection(
+        skipped, block=block, pre_outcome_roster_freeze=freeze, history_series=series, h1_package=h1,
+        completed_feedback_settlements=completed, source_block_episodes=source_episodes, source_models=source_models,
+    )
+    assert not result["valid"]
+    assert "round2_selection.completed_transitions_must_equal_actual_prior_feedback_projection" in result["findings"]
+
+    mutated = deepcopy(application)
+    mutated["enhanced_after_learning"][0]["definition"] = "Interpret operating cash as proof that the 2017 plan worked."
+    result = v2.validate_transfer_application_receipt(
+        mutated, selection=selection, block=block, pre_outcome_roster_freeze=freeze,
+        target_episode=target_episode, target_models=target_models, history_series=series, h1_package=h1,
+        source_feedback_settlement=completed[0], source_block_episodes=source_episodes, source_models=source_models,
+        completed_feedback_settlements=completed,
+    )
+    assert not result["valid"]
+    assert "transfer_application.enhanced_after_learning[0].may_only_add_measurement_gate" in result["findings"]
+
+    wrong_source = deepcopy(application)
+    wrong_source["source_feedback_id"] = completed[1]["settlement_id"]
+    result = v2.validate_transfer_application_receipt(
+        wrong_source, selection=selection, block=block, pre_outcome_roster_freeze=freeze,
+        target_episode=target_episode, target_models=target_models, history_series=series, h1_package=h1,
+        source_feedback_settlement=completed[1], source_block_episodes=source_episodes, source_models=source_models,
+        completed_feedback_settlements=completed,
+    )
+    assert not result["valid"]
+    assert "transfer_application.source_must_be_real_mismatch_with_boundary_agenda_change" in result["findings"]

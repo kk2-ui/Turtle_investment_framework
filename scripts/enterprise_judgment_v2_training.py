@@ -34,6 +34,10 @@ BLOCK_SCHEMA_VERSION = "industry-learning-block.v1"
 SETTLEMENT_SCHEMA_VERSION = "enterprise-judgment-feedback-settlement.v1"
 PROBE_SCHEMA_VERSION = "enterprise-judgment-mechanism-probe.v1"
 PRE_OUTCOME_FREEZE_SCHEMA_VERSION = "enterprise-judgment-pre-outcome-freeze.v1"
+ROUND2_SELECTION_SCHEMA_VERSION = "enterprise-judgment-round2-transition-selection.v1"
+TRANSFER_APPLICATION_SCHEMA_VERSION = "enterprise-judgment-transfer-application-receipt.v1"
+CONTINUATION_SETTLEMENT_SCHEMA_VERSION = "enterprise-judgment-continuation-feedback-settlement.v1"
+TRANSFER_REVIEW_SCHEMA_VERSION = "enterprise-judgment-transfer-application-review.v1"
 
 CELL_STATES = {"OBSERVED", "INFERRED", "UNKNOWN", "EVIDENCE_INELIGIBLE", "NOT_APPLICABLE", "MEASUREMENT_MISMATCH"}
 PREOUTCOME_CELL_STATES = CELL_STATES - {"MEASUREMENT_MISMATCH"}
@@ -45,6 +49,8 @@ ALLOWED_EPISODE_OUTPUTS = ["STATE_VIEW", "DECISION_VIEW", "MECHANISM_VIEW", "TEA
 ALLOWED_BLOCK_OUTPUTS = ["INDUSTRY_CONTEXT", "TEACHING_ONLY", "MECHANISM_CANDIDATE", "RESEARCH_AGENDA"]
 ALLOWED_SETTLEMENT_OUTPUTS = ["FEEDBACK_READ_MODEL", "RESEARCH_AGENDA"]
 ALLOWED_PROBE_OUTPUTS = ["MECHANISM_VIEW", "TEACHING_ONLY", "RESEARCH_AGENDA"]
+ALLOWED_APPLICATION_OUTPUTS = ["RESEARCH_AGENDA", "TRANSFER_CANDIDATE_PENDING_REVIEW"]
+ALLOWED_TRANSFER_REVIEW_OUTPUTS = ["TRANSFER_CANDIDATE_CREATED", "RESEARCH_AGENDA"]
 
 _ROLE_KEYS = {"judgment_owner_id", "independent_challenger_id", "outcome_custodian_id"}
 _EPISODE_KEYS = {
@@ -99,6 +105,13 @@ _PROBE_KEYS = {
 }
 _PROBE_DIAGNOSTIC_KEYS = {"diagnostic_id", "diagnostic_kind", "h_a_prediction", "h_b_prediction"}
 _PRE_OUTCOME_FREEZE_KEYS = {"schema_version", "freeze_id", "block_id", "pre_outcome_block_commit", "company_cutoff_transition_ids", "outcome_transition_ids", "object_class", "claim_class", "allowed_outputs"}
+_ROUND2_SELECTION_KEYS = {"schema_version", "selection_id", "block_id", "pre_outcome_freeze_ref", "selection_policy", "completed_company_cutoff_transition_ids", "ineligible_prior_rows", "selected_transition_id", "selected_rank", "company_id", "company_cluster_id", "cutoff_at", "next_cutoff_at", "target_episode_id", "outcome_cell_ids", "cutoff_visible_evidence_refs", "outcome_access_status", "roles", "object_class", "claim_class", "allowed_outputs"}
+_INELIGIBLE_ROW_KEYS = {"rank", "transition_id", "reason"}
+_APPLICATION_KEYS = {"schema_version", "application_id", "block_id", "pre_outcome_freeze_ref", "selection_ref", "source_feedback_id", "source_observation_cell_id", "source_agenda_change_id", "learned_rule_id", "target_episode_id", "baseline_before_learning", "enhanced_after_learning", "field_delta", "target_outcome_access", "frozen_before_outcome_access", "roles", "object_class", "claim_class", "allowed_outputs"}
+_APPLICATION_FIELD_KEYS = {"field_id", "dimension", "definition", "claim_ids", "measurement_gate"}
+_FIELD_DELTA_KEYS = {"field_id", "change_kind", "baseline_gate", "enhanced_gate", "reason_ref", "materiality"}
+_CONTINUATION_SETTLEMENT_KEYS = {"schema_version", "settlement_id", "application_ref", "selection_ref", "company_id", "cutoff_at", "outcome_custodian_id", "source_receipt", "observations", "next_cutoff_agenda_delta", "original_episode_immutable", "object_class", "claim_class", "allowed_outputs"}
+_TRANSFER_REVIEW_KEYS = {"schema_version", "review_id", "application_ref", "source_feedback_id", "continuation_settlement_id", "reviewer_id", "verdict", "materiality_statement", "causal_trace_statement", "prohibited_conclusion", "transfer_status", "allowed_outputs", "object_class", "claim_class"}
 _FORBIDDEN_KEYS = {
     "price", "market_price", "share_price", "stock_price", "entry_price", "valuation", "valuation_result",
     "expectation_gap", "buyband", "buy_band", "investment_instruction", "portfolio_action", "position",
@@ -1043,3 +1056,319 @@ def compile_feedback_read_model(
         "claim_output_matrix": claim_rows, "thread_output_matrix": thread_rows,
         "original_episode_immutable": True, "investment_authorization": "NOT_AUTHORIZED",
     }}
+
+
+def validate_round2_transition_selection(
+    selection: Any, *, block: Any, pre_outcome_roster_freeze: Any, history_series: Any, h1_package: Any,
+    completed_feedback_settlements: list[Any], source_block_episodes: list[Any], source_models: list[Any],
+) -> dict[str, Any]:
+    """Validate an outcome-blind continuation choice from the original 20-row roster."""
+    findings: list[str] = []
+    freeze_result = validate_pre_outcome_roster_freeze(pre_outcome_roster_freeze, block=block)
+    for finding in freeze_result["findings"]:
+        _add(findings, "pre_outcome_roster_freeze:" + finding)
+    item, block_item = _closed(selection, _ROUND2_SELECTION_KEYS, "round2_selection", findings), _mapping(block)
+    if item.get("schema_version") != ROUND2_SELECTION_SCHEMA_VERSION:
+        _add(findings, "round2_selection.schema_version_invalid")
+    for field in ("selection_id", "block_id", "pre_outcome_freeze_ref", "selection_policy", "selected_transition_id", "company_id", "company_cluster_id", "cutoff_at", "next_cutoff_at", "target_episode_id"):
+        _required_text(item, field, "round2_selection", findings)
+    if item.get("object_class") != "ENTERPRISE_JUDGMENT_ROUND2_TRANSITION_SELECTION" or item.get("claim_class") != "OUTCOME_BLIND_ROSTER_CONTINUATION":
+        _add(findings, "round2_selection.object_or_claim_class_invalid")
+    if item.get("allowed_outputs") != ["PRE_OUTCOME_APPLICATION_ONLY"] or item.get("outcome_access_status") != "SEALED":
+        _add(findings, "round2_selection.permissions_invalid")
+    if item.get("block_id") != block_item.get("block_id") or item.get("pre_outcome_freeze_ref") != _mapping(pre_outcome_roster_freeze).get("freeze_id"):
+        _add(findings, "round2_selection.must_bind_frozen_block_and_roster")
+    if item.get("selection_policy") != "EARLIEST_UNSETTLED_FROZEN_ROW_AFTER_COMPLETED_QUEUE_WITH_UNSEEN_COMPANY_AND_CUTOFF_VISIBLE_LIFECYCLE_CONDITION":
+        _add(findings, "round2_selection.policy_invalid")
+    roster = list(map(_mapping, _items(block_item.get("company_cutoff_transition_roster"))))
+    by_id = {entry.get("transition_id"): entry for entry in roster}
+    completed = _ids(item.get("completed_company_cutoff_transition_ids"), "round2_selection.completed_company_cutoff_transition_ids", findings)
+    derived_completed: list[str] = []
+    for index, settlement in enumerate(completed_feedback_settlements):
+        settlement_result = validate_feedback_settlement(
+            settlement, block=block, pre_outcome_roster_freeze=pre_outcome_roster_freeze,
+            history_series=history_series, h1_package=h1_package, episodes=source_block_episodes,
+            enterprise_models=source_models,
+        )
+        for finding in settlement_result["findings"]:
+            _add(findings, f"round2_selection.completed_feedback_settlements[{index}]:" + finding)
+        settlement_item = _mapping(settlement)
+        matching_rows = [
+            entry for entry in roster
+            if entry.get("company_id") == settlement_item.get("company_id")
+            and entry.get("cutoff_at") == settlement_item.get("cutoff_at")
+        ]
+        if len(matching_rows) != 1:
+            _add(findings, f"round2_selection.completed_feedback_settlements[{index}].must_map_to_one_frozen_row")
+        elif matching_rows[0].get("transition_id") not in derived_completed:
+            derived_completed.append(str(matching_rows[0].get("transition_id")))
+    derived_completed.sort(key=lambda transition_id: int(_mapping(by_id.get(transition_id)).get("rank", 0)))
+    if completed != derived_completed:
+        _add(findings, "round2_selection.completed_transitions_must_equal_actual_prior_feedback_projection")
+    if any(transition_id not in by_id for transition_id in completed):
+        _add(findings, "round2_selection.completed_transition_not_in_frozen_roster")
+    selected = _mapping(by_id.get(item.get("selected_transition_id")))
+    if not selected or any(item.get(field) != selected.get(field) for field in ("company_id", "company_cluster_id", "cutoff_at", "next_cutoff_at")) or item.get("selected_rank") != selected.get("rank"):
+        _add(findings, "round2_selection.selected_tuple_must_match_frozen_roster")
+    if selected.get("transition_id") in completed:
+        _add(findings, "round2_selection.selected_transition_must_be_unsettled")
+    completed_companies = {by_id[transition_id].get("company_id") for transition_id in completed if transition_id in by_id}
+    if selected.get("company_id") in completed_companies:
+        _add(findings, "round2_selection.target_company_must_differ_from_completed_feedback_companies")
+    prior_rows = [_closed(raw, _INELIGIBLE_ROW_KEYS, f"round2_selection.ineligible_prior_rows[{index}]", findings) for index, raw in enumerate(_items(item.get("ineligible_prior_rows")))]
+    expected_prior = [entry for entry in roster if isinstance(entry.get("rank"), int) and entry["rank"] < selected.get("rank", 0) and entry.get("transition_id") not in completed]
+    if [(entry.get("rank"), entry.get("transition_id")) for entry in prior_rows] != [(entry.get("rank"), entry.get("transition_id")) for entry in expected_prior]:
+        _add(findings, "round2_selection.must_account_for_every_earlier_unsettled_row")
+    for index, entry in enumerate(prior_rows):
+        _required_text(entry, "reason", f"round2_selection.ineligible_prior_rows[{index}]", findings)
+        if entry.get("reason") not in {"SAME_COMPANY_AS_COMPLETED_FEEDBACK", "NO_CUTOFF_VISIBLE_MATERIAL_LIFECYCLE_CONDITION"}:
+            _add(findings, f"round2_selection.ineligible_prior_rows[{index}].reason_invalid")
+    source_refs = _ids(item.get("cutoff_visible_evidence_refs"), "round2_selection.cutoff_visible_evidence_refs", findings)
+    catalog = _source_catalog(h1_package)
+    # The block does not repeat universe members; source identity and cutoff
+    # still constrain the selection receipt, while the target episode later
+    # binds the full responsibility boundary.
+    cutoff = _instant(item.get("cutoff_at"), "round2_selection.cutoff_at", findings)
+    for ref in source_refs:
+        source = _mapping(catalog.get(ref))
+        if not source or source.get("issuer_id") != f"ISSUER:{item.get('company_id')}" or (cutoff is not None and not _source_before_cutoff(source, cutoff)):
+            _add(findings, "round2_selection.cutoff_visible_evidence_must_match_selected_company_and_cutoff")
+    _validate_roles(item.get("roles"), expected=None, path="round2_selection.roles", findings=findings)
+    for path in _forbidden_paths(item, "round2_selection"):
+        _add(findings, "round2_selection.forbidden_field:" + path)
+    return {"valid": not findings, "findings": findings, "round2_selection": deepcopy(item) if not findings else None}
+
+
+def _validate_application_fields(item: dict[str, Any], *, target_episode: dict[str, Any], source_agenda_change_id: str, findings: list[str]) -> None:
+    baseline = [_closed(raw, _APPLICATION_FIELD_KEYS, f"transfer_application.baseline_before_learning[{index}]", findings) for index, raw in enumerate(_items(item.get("baseline_before_learning")))]
+    enhanced = [_closed(raw, _APPLICATION_FIELD_KEYS, f"transfer_application.enhanced_after_learning[{index}]", findings) for index, raw in enumerate(_items(item.get("enhanced_after_learning")))]
+    if not baseline or len(baseline) != len(enhanced):
+        _add(findings, "transfer_application.baseline_and_enhanced_fields_must_be_nonempty_and_aligned")
+    target_claim_ids = {entry.get("claim_id") for entry in map(_mapping, _items(target_episode.get("claims")))}
+    baseline_by_id = {entry.get("field_id"): entry for entry in baseline}
+    baseline_ids = [entry.get("field_id") for entry in baseline]
+    enhanced_ids = [entry.get("field_id") for entry in enhanced]
+    if len(set(baseline_ids)) != len(baseline_ids) or enhanced_ids != baseline_ids:
+        _add(findings, "transfer_application.fields_must_preserve_unique_baseline_order")
+    for index, before in enumerate(baseline):
+        for field in _APPLICATION_FIELD_KEYS:
+            if field == "claim_ids":
+                _ids(before.get(field), f"transfer_application.baseline_before_learning[{index}].{field}", findings)
+            else:
+                _required_text(before, field, f"transfer_application.baseline_before_learning[{index}]", findings)
+        if before.get("measurement_gate") != "NO_PERIMETER_BRIDGE_GATE":
+            _add(findings, f"transfer_application.baseline_before_learning[{index}].baseline_gate_invalid")
+        if any(claim_id not in target_claim_ids for claim_id in _items(before.get("claim_ids"))):
+            _add(findings, f"transfer_application.baseline_before_learning[{index}].claim_unknown_in_target_episode")
+    for index, after in enumerate(enhanced):
+        before = _mapping(baseline_by_id.get(after.get("field_id")))
+        if not before:
+            _add(findings, f"transfer_application.enhanced_after_learning[{index}].field_not_in_baseline")
+            continue
+        if any(after.get(field) != before.get(field) for field in _APPLICATION_FIELD_KEYS - {"measurement_gate"}):
+            _add(findings, f"transfer_application.enhanced_after_learning[{index}].may_only_add_measurement_gate")
+        if after.get("measurement_gate") != "REQUIRE_PERIMETER_BRIDGE_BEFORE_INTERPRETING_SAME_BOUNDARY_FIELD":
+            _add(findings, f"transfer_application.enhanced_after_learning[{index}].enhanced_gate_invalid")
+    deltas = [_closed(raw, _FIELD_DELTA_KEYS, f"transfer_application.field_delta[{index}]", findings) for index, raw in enumerate(_items(item.get("field_delta")))]
+    if [entry.get("field_id") for entry in deltas] != baseline_ids:
+        _add(findings, "transfer_application.field_delta_must_cover_each_changed_field_once")
+    for index, delta in enumerate(deltas):
+        for field in _FIELD_DELTA_KEYS:
+            _required_text(delta, field, f"transfer_application.field_delta[{index}]", findings)
+        if delta.get("change_kind") != "ADD_MEASUREMENT_GATE" or delta.get("baseline_gate") != "NO_PERIMETER_BRIDGE_GATE" or delta.get("enhanced_gate") != "REQUIRE_PERIMETER_BRIDGE_BEFORE_INTERPRETING_SAME_BOUNDARY_FIELD" or delta.get("reason_ref") != source_agenda_change_id:
+            _add(findings, f"transfer_application.field_delta[{index}].must_be_perimeter_first_change_from_source_agenda")
+
+
+def validate_transfer_application_receipt(
+    application: Any, *, selection: Any, block: Any, pre_outcome_roster_freeze: Any, target_episode: Any, target_models: list[Any],
+    history_series: Any, h1_package: Any, source_feedback_settlement: Any, source_block_episodes: list[Any], source_models: list[Any],
+    completed_feedback_settlements: list[Any],
+) -> dict[str, Any]:
+    """Validate a cross-company measurement-method application before target outcome access."""
+    findings: list[str] = []
+    selection_result = validate_round2_transition_selection(
+        selection, block=block, pre_outcome_roster_freeze=pre_outcome_roster_freeze,
+        history_series=history_series, h1_package=h1_package,
+        completed_feedback_settlements=completed_feedback_settlements,
+        source_block_episodes=source_block_episodes, source_models=source_models,
+    )
+    for finding in selection_result["findings"]:
+        _add(findings, "round2_selection:" + finding)
+    source_result = validate_feedback_settlement(
+        source_feedback_settlement, block=block, pre_outcome_roster_freeze=pre_outcome_roster_freeze,
+        history_series=history_series, h1_package=h1_package, episodes=source_block_episodes, enterprise_models=source_models,
+    )
+    for finding in source_result["findings"]:
+        _add(findings, "source_feedback_settlement:" + finding)
+    target_result = validate_enterprise_judgment_episode(target_episode, history_series=history_series, h1_package=h1_package, enterprise_models=target_models)
+    for finding in target_result["findings"]:
+        _add(findings, "target_episode:" + finding)
+    item, target_item, selection_item, source_item = _closed(application, _APPLICATION_KEYS, "transfer_application", findings), _mapping(target_episode), _mapping(selection), _mapping(source_feedback_settlement)
+    if item.get("schema_version") != TRANSFER_APPLICATION_SCHEMA_VERSION:
+        _add(findings, "transfer_application.schema_version_invalid")
+    for field in ("application_id", "block_id", "pre_outcome_freeze_ref", "selection_ref", "source_feedback_id", "source_observation_cell_id", "source_agenda_change_id", "learned_rule_id", "target_episode_id", "target_outcome_access"):
+        _required_text(item, field, "transfer_application", findings)
+    if item.get("object_class") != "ENTERPRISE_JUDGMENT_TRANSFER_APPLICATION" or item.get("claim_class") != "CROSS_COMPANY_MEASUREMENT_METHOD_APPLICATION" or item.get("allowed_outputs") != ALLOWED_APPLICATION_OUTPUTS:
+        _add(findings, "transfer_application.object_or_permission_invalid")
+    if item.get("block_id") != _mapping(block).get("block_id") or item.get("pre_outcome_freeze_ref") != _mapping(pre_outcome_roster_freeze).get("freeze_id") or item.get("selection_ref") != selection_item.get("selection_id") or item.get("target_episode_id") != target_item.get("episode_id"):
+        _add(findings, "transfer_application.bindings_must_match_frozen_target")
+    source_observation = next((entry for entry in map(_mapping, _items(source_item.get("observations"))) if entry.get("outcome_cell_id") == item.get("source_observation_cell_id")), {})
+    source_delta = next((entry for entry in map(_mapping, _items(source_item.get("next_cutoff_agenda_delta"))) if entry.get("change_id") == item.get("source_agenda_change_id")), {})
+    if item.get("source_feedback_id") != source_item.get("settlement_id") or not source_observation or source_observation.get("status") != "MEASUREMENT_MISMATCH" or not source_delta or source_delta.get("change_type") != "ADD_BOUNDARY":
+        _add(findings, "transfer_application.source_must_be_real_mismatch_with_boundary_agenda_change")
+    if item.get("learned_rule_id") != "PERIMETER_FIRST_MEASUREMENT_GATE" or item.get("target_outcome_access") != "SEALED" or item.get("frozen_before_outcome_access") is not True:
+        _add(findings, "transfer_application.must_remain_pre_outcome_perimeter_first_method_change")
+    if target_item.get("company_id") == source_item.get("company_id") or target_item.get("company_id") != selection_item.get("company_id") or target_item.get("cutoff_at") != selection_item.get("cutoff_at"):
+        _add(findings, "transfer_application.target_must_be_different_company_and_match_selection")
+    _validate_application_fields(item, target_episode=target_item, source_agenda_change_id=str(item.get("source_agenda_change_id")), findings=findings)
+    roles = _validate_roles(item.get("roles"), expected=None, path="transfer_application.roles", findings=findings)
+    if roles.get("judgment_owner_id") != _mapping(target_item.get("roles")).get("judgment_owner_id") or roles.get("outcome_custodian_id") != _mapping(target_item.get("roles")).get("outcome_custodian_id"):
+        _add(findings, "transfer_application.owner_and_custodian_must_match_target_episode")
+    for path in _forbidden_paths(item, "transfer_application"):
+        _add(findings, "transfer_application.forbidden_field:" + path)
+    return {"valid": not findings, "findings": findings, "transfer_application": deepcopy(item) if not findings else None}
+
+
+def validate_continuation_feedback_settlement(
+    settlement: Any, *, application: Any, selection: Any, block: Any, pre_outcome_roster_freeze: Any, target_episode: Any,
+    target_models: list[Any], history_series: Any, h1_package: Any, source_feedback_settlement: Any,
+    source_block_episodes: list[Any], source_models: list[Any],
+    completed_feedback_settlements: list[Any],
+) -> dict[str, Any]:
+    """Settle the selected round-two cell while retaining the original block unchanged."""
+    findings: list[str] = []
+    application_result = validate_transfer_application_receipt(
+        application, selection=selection, block=block, pre_outcome_roster_freeze=pre_outcome_roster_freeze,
+        target_episode=target_episode, target_models=target_models, history_series=history_series, h1_package=h1_package,
+        source_feedback_settlement=source_feedback_settlement, source_block_episodes=source_block_episodes, source_models=source_models,
+        completed_feedback_settlements=completed_feedback_settlements,
+    )
+    for finding in application_result["findings"]:
+        _add(findings, "transfer_application:" + finding)
+    item, app, selection_item, episode = _closed(settlement, _CONTINUATION_SETTLEMENT_KEYS, "continuation_feedback_settlement", findings), _mapping(application), _mapping(selection), _mapping(target_episode)
+    if item.get("schema_version") != CONTINUATION_SETTLEMENT_SCHEMA_VERSION:
+        _add(findings, "continuation_feedback_settlement.schema_version_invalid")
+    for field in ("settlement_id", "application_ref", "selection_ref", "company_id", "cutoff_at", "outcome_custodian_id"):
+        _required_text(item, field, "continuation_feedback_settlement", findings)
+    if item.get("object_class") != "ENTERPRISE_JUDGMENT_CONTINUATION_FEEDBACK_SETTLEMENT" or item.get("claim_class") != "CONTRACT_MATCHED_PREQUENTIAL_FEEDBACK" or item.get("allowed_outputs") != ALLOWED_SETTLEMENT_OUTPUTS:
+        _add(findings, "continuation_feedback_settlement.object_or_permission_invalid")
+    if item.get("original_episode_immutable") is not True:
+        _add(findings, "continuation_feedback_settlement.must_preserve_original_episode_immutable")
+    if item.get("application_ref") != app.get("application_id") or item.get("selection_ref") != selection_item.get("selection_id") or item.get("company_id") != episode.get("company_id") or item.get("cutoff_at") != episode.get("cutoff_at") or item.get("outcome_custodian_id") != _mapping(episode.get("roles")).get("outcome_custodian_id"):
+        _add(findings, "continuation_feedback_settlement.must_match_frozen_application_and_target")
+    receipt = _closed(item.get("source_receipt"), _SOURCE_RECEIPT_KEYS, "continuation_feedback_settlement.source_receipt", findings)
+    for field in _SOURCE_RECEIPT_KEYS:
+        _required_text(receipt, field, "continuation_feedback_settlement.source_receipt", findings)
+    cutoff = _instant(item.get("cutoff_at"), "continuation_feedback_settlement.cutoff_at", findings)
+    published = _date(receipt.get("published_on"), "continuation_feedback_settlement.source_receipt.published_on", findings)
+    if cutoff is not None and published is not None and published <= cutoff.date():
+        _add(findings, "continuation_feedback_settlement.source_must_be_post_cutoff")
+    if receipt.get("custodian_access") != "OUTCOME_ONLY" or receipt.get("availability_precision") != "DATE":
+        _add(findings, "continuation_feedback_settlement.source_receipt_access_or_precision_invalid")
+    catalog_source = _mapping(_source_catalog(h1_package).get(receipt.get("source_ref")))
+    if not catalog_source or any(catalog_source.get(source_field) != receipt.get(receipt_field) for source_field, receipt_field in (("published_at", "published_on"), ("url", "official_url"), ("source_type", "source_type"))):
+        _add(findings, "continuation_feedback_settlement.source_receipt_must_match_declared_static_source")
+    elif catalog_source.get("issuer_id") != episode.get("issuer_id") or catalog_source.get("responsibility_unit_id") != _mapping(episode.get("responsibility_boundary")).get("responsibility_unit_id") or catalog_source.get("perimeter_id") != _mapping(episode.get("responsibility_boundary")).get("perimeter_id"):
+        _add(findings, "continuation_feedback_settlement.source_responsibility_boundary_mismatch")
+    allowed_cells = {entry.get("outcome_cell_id"): entry for entry in map(_mapping, _items(episode.get("outcome_cells")))}
+    selected_cells = _items(selection_item.get("outcome_cell_ids"))
+    observations = [_closed(raw, _OBSERVATION_KEYS, f"continuation_feedback_settlement.observations[{index}]", findings) for index, raw in enumerate(_items(item.get("observations")))]
+    seen_cells: list[str] = []
+    for index, observation in enumerate(observations):
+        cell_id = _required_text(observation, "outcome_cell_id", f"continuation_feedback_settlement.observations[{index}]", findings)
+        if cell_id not in selected_cells or cell_id not in allowed_cells:
+            _add(findings, f"continuation_feedback_settlement.observations[{index}].cell_not_in_frozen_selection")
+        if observation.get("status") not in {"OBSERVED", "MEASUREMENT_MISMATCH", "CENSORED", "UNKNOWN", "NOT_DIAGNOSTIC"}:
+            _add(findings, f"continuation_feedback_settlement.observations[{index}].status_invalid")
+        if observation.get("source_ref") != receipt.get("source_ref"):
+            _add(findings, f"continuation_feedback_settlement.observations[{index}].source_must_match_receipt")
+        _required_text(observation, "summary", f"continuation_feedback_settlement.observations[{index}]", findings)
+        if observation.get("status") == "OBSERVED" and observation.get("reported_value") in {None, ""}:
+            _add(findings, f"continuation_feedback_settlement.observations[{index}].observed_requires_reported_value")
+        contract = _mapping(_mapping(allowed_cells.get(cell_id)).get("measurement_contract"))
+        if receipt.get("source_type") not in _items(contract.get("allowed_source_types")):
+            _add(findings, f"continuation_feedback_settlement.observations[{index}].source_type_not_allowed")
+        end = _instant(contract.get("window_end"), f"continuation_feedback_settlement.observations[{index}].window_end", findings)
+        if published is not None and end is not None and published > end.date():
+            _add(findings, f"continuation_feedback_settlement.observations[{index}].source_outside_measurement_window")
+        seen_cells.append(cell_id)
+    if seen_cells != selected_cells or len(set(seen_cells)) != len(seen_cells):
+        _add(findings, "continuation_feedback_settlement.observations_must_exactly_match_selected_cells")
+    delta = [_closed(raw, _AGENDA_DELTA_KEYS, f"continuation_feedback_settlement.next_cutoff_agenda_delta[{index}]", findings) for index, raw in enumerate(_items(item.get("next_cutoff_agenda_delta")))]
+    if not delta:
+        _add(findings, "continuation_feedback_settlement.next_cutoff_agenda_delta_required")
+    for index, change in enumerate(delta):
+        for field in _AGENDA_DELTA_KEYS:
+            _required_text(change, field, f"continuation_feedback_settlement.next_cutoff_agenda_delta[{index}]", findings)
+        if change.get("target_cutoff_at") != selection_item.get("next_cutoff_at") or change.get("change_type") not in {"ADD_QUESTION", "CHANGE_EVIDENCE_ORDER", "ADD_BOUNDARY", "RETAIN_UNKNOWN"}:
+            _add(findings, f"continuation_feedback_settlement.next_cutoff_agenda_delta[{index}].invalid_target_or_type")
+    for path in _forbidden_paths(item, "continuation_feedback_settlement"):
+        _add(findings, "continuation_feedback_settlement.forbidden_field:" + path)
+    return {"valid": not findings, "findings": findings, "continuation_feedback_settlement": deepcopy(item) if not findings else None}
+
+
+def compile_continuation_feedback_read_model(
+    settlement: Any, *, application: Any, selection: Any, block: Any, pre_outcome_roster_freeze: Any, target_episode: Any,
+    target_models: list[Any], history_series: Any, h1_package: Any, source_feedback_settlement: Any,
+    source_block_episodes: list[Any], source_models: list[Any],
+    completed_feedback_settlements: list[Any],
+) -> dict[str, Any]:
+    validation = validate_continuation_feedback_settlement(
+        settlement, application=application, selection=selection, block=block, pre_outcome_roster_freeze=pre_outcome_roster_freeze,
+        target_episode=target_episode, target_models=target_models, history_series=history_series, h1_package=h1_package,
+        source_feedback_settlement=source_feedback_settlement, source_block_episodes=source_block_episodes, source_models=source_models,
+        completed_feedback_settlements=completed_feedback_settlements,
+    )
+    if not validation["valid"]:
+        return {"valid": False, "findings": validation["findings"], "continuation_feedback_read_model": None}
+    episode_result = compile_enterprise_judgment_episode(target_episode, history_series=history_series, h1_package=h1_package, enterprise_models=target_models)
+    statuses = {entry.get("outcome_cell_id"): entry.get("status") for entry in map(_mapping, _items(_mapping(settlement).get("observations")))}
+    non_diagnostic = {"MEASUREMENT_MISMATCH", "CENSORED", "UNKNOWN", "NOT_DIAGNOSTIC"}
+    thread_blockers: dict[str, list[dict[str, str]]] = {}
+    for thread in map(_mapping, _items(_mapping(target_episode).get("mechanism_threads"))):
+        blockers = [{"kind": "OUTCOME_SETTLEMENT", "ref": cell_id, "status": str(statuses[cell_id])} for cell_id in _items(thread.get("outcome_cell_ids")) if statuses.get(cell_id) in non_diagnostic]
+        for claim_id in _items(thread.get("claim_ids")):
+            thread_blockers.setdefault(claim_id, []).extend(blockers)
+    claim_rows = []
+    for row in _items(_mapping(episode_result.get("episode_read_model")).get("claim_output_matrix")):
+        base = _mapping(row)
+        blockers = list(_items(base.get("blocked_by"))) + thread_blockers.get(base.get("claim_id"), [])
+        claim_rows.append({"claim_id": base.get("claim_id"), "admission_level": base.get("admission_level"), "allowed_outputs": ["RESEARCH_AGENDA"] if blockers else list(_items(base.get("allowed_outputs"))), "blocked_by": blockers})
+    return {"valid": True, "findings": [], "continuation_feedback_read_model": {"settlement_id": _mapping(settlement).get("settlement_id"), "episode_id": _mapping(target_episode).get("episode_id"), "claim_output_matrix": claim_rows, "original_episode_immutable": True, "investment_authorization": "NOT_AUTHORIZED"}}
+
+
+def validate_transfer_application_review(
+    review: Any, *, application: Any, continuation_settlement: Any, selection: Any, block: Any, pre_outcome_roster_freeze: Any,
+    target_episode: Any, target_models: list[Any], history_series: Any, h1_package: Any, source_feedback_settlement: Any,
+    source_block_episodes: list[Any], source_models: list[Any],
+    completed_feedback_settlements: list[Any],
+) -> dict[str, Any]:
+    """Independent adjudication of method transfer, explicitly not enterprise transfer."""
+    findings: list[str] = []
+    continuation_result = validate_continuation_feedback_settlement(
+        continuation_settlement, application=application, selection=selection, block=block, pre_outcome_roster_freeze=pre_outcome_roster_freeze,
+        target_episode=target_episode, target_models=target_models, history_series=history_series, h1_package=h1_package,
+        source_feedback_settlement=source_feedback_settlement, source_block_episodes=source_block_episodes, source_models=source_models,
+        completed_feedback_settlements=completed_feedback_settlements,
+    )
+    for finding in continuation_result["findings"]:
+        _add(findings, "continuation_feedback_settlement:" + finding)
+    item, app, source = _closed(review, _TRANSFER_REVIEW_KEYS, "transfer_application_review", findings), _mapping(application), _mapping(source_feedback_settlement)
+    if item.get("schema_version") != TRANSFER_REVIEW_SCHEMA_VERSION:
+        _add(findings, "transfer_application_review.schema_version_invalid")
+    for field in ("review_id", "application_ref", "source_feedback_id", "continuation_settlement_id", "reviewer_id", "verdict", "materiality_statement", "causal_trace_statement", "prohibited_conclusion", "transfer_status"):
+        _required_text(item, field, "transfer_application_review", findings)
+    if item.get("object_class") != "ENTERPRISE_JUDGMENT_TRANSFER_APPLICATION_REVIEW" or item.get("claim_class") != "INDEPENDENT_METHOD_TRANSFER_ADJUDICATION" or item.get("allowed_outputs") != ALLOWED_TRANSFER_REVIEW_OUTPUTS:
+        _add(findings, "transfer_application_review.object_or_permission_invalid")
+    if item.get("application_ref") != app.get("application_id") or item.get("source_feedback_id") != source.get("settlement_id") or item.get("continuation_settlement_id") != _mapping(continuation_settlement).get("settlement_id"):
+        _add(findings, "transfer_application_review.bindings_must_match_inputs")
+    application_roles = _mapping(app.get("roles"))
+    if item.get("reviewer_id") in set(application_roles.values()):
+        _add(findings, "transfer_application_review.reviewer_must_be_independent")
+    if item.get("verdict") != "MATERIAL_METHOD_CHANGE_CAUSALLY_ATTRIBUTABLE" or item.get("transfer_status") != "TRANSFER_CANDIDATE_CREATED":
+        _add(findings, "transfer_application_review.verdict_or_status_invalid")
+    if item.get("prohibited_conclusion") != "NO_ENTERPRISE_PERFORMANCE_ACTION_CAUSALITY_OR_INVESTMENT_CONCLUSION":
+        _add(findings, "transfer_application_review.must_deny_enterprise_and_investment_conclusion")
+    for path in _forbidden_paths(item, "transfer_application_review"):
+        _add(findings, "transfer_application_review.forbidden_field:" + path)
+    return {"valid": not findings, "findings": findings, "transfer_application_review": deepcopy(item) if not findings else None}

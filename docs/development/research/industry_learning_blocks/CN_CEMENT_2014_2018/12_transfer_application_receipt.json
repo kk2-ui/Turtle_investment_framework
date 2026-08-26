@@ -1,0 +1,87 @@
+{
+  "schema_version": "enterprise-judgment-transfer-application-receipt.v1",
+  "application_id": "TAR:CN:CEMENT:PERIMETER_FIRST:000401:20170412:V1",
+  "block_id": "ILB:CN:CEMENT_LISTED:2014_2018:V1",
+  "pre_outcome_freeze_ref": "EJPF:CN:CEMENT:2014_2018:PRE_OUTCOME:V1",
+  "selection_ref": "R2SEL:CN:CEMENT:000401:20170412:V1",
+  "source_feedback_id": "FBS:600801:20170412:001",
+  "source_observation_cell_id": "CELL:600801:20170412:OPERATIONS",
+  "source_agenda_change_id": "AGENDA:600801:20180422:ADD_BOUNDARY:POST_2017_ACQUISITION",
+  "learned_rule_id": "PERIMETER_FIRST_MEASUREMENT_GATE",
+  "target_episode_id": "EJE:CN:000401:20170412:R2",
+  "baseline_before_learning": [
+    {
+      "field_id": "FIELD:000401:R2:OPERATING_CASH_COMPARABILITY",
+      "dimension": "CASH",
+      "definition": "Read the next official listed-consolidated operating-cash field as reported, without a preceding same-boundary bridge check.",
+      "claim_ids": [
+        "CLAIM:000401:R2:PERIMETER_CASH",
+        "CLAIM:000401:R2:CASH"
+      ],
+      "measurement_gate": "NO_PERIMETER_BRIDGE_GATE"
+    },
+    {
+      "field_id": "FIELD:000401:R2:OPERATING_COMPARABILITY",
+      "dimension": "OPERATIONS",
+      "definition": "Read the next official listed-consolidated operating field as reported, without a preceding same-boundary bridge check.",
+      "claim_ids": [
+        "CLAIM:000401:R2:PERIMETER_CASH",
+        "CLAIM:000401:R2:OPERATING"
+      ],
+      "measurement_gate": "NO_PERIMETER_BRIDGE_GATE"
+    }
+  ],
+  "enhanced_after_learning": [
+    {
+      "field_id": "FIELD:000401:R2:OPERATING_CASH_COMPARABILITY",
+      "dimension": "CASH",
+      "definition": "Read the next official listed-consolidated operating-cash field as reported, without a preceding same-boundary bridge check.",
+      "claim_ids": [
+        "CLAIM:000401:R2:PERIMETER_CASH",
+        "CLAIM:000401:R2:CASH"
+      ],
+      "measurement_gate": "REQUIRE_PERIMETER_BRIDGE_BEFORE_INTERPRETING_SAME_BOUNDARY_FIELD"
+    },
+    {
+      "field_id": "FIELD:000401:R2:OPERATING_COMPARABILITY",
+      "dimension": "OPERATIONS",
+      "definition": "Read the next official listed-consolidated operating field as reported, without a preceding same-boundary bridge check.",
+      "claim_ids": [
+        "CLAIM:000401:R2:PERIMETER_CASH",
+        "CLAIM:000401:R2:OPERATING"
+      ],
+      "measurement_gate": "REQUIRE_PERIMETER_BRIDGE_BEFORE_INTERPRETING_SAME_BOUNDARY_FIELD"
+    }
+  ],
+  "field_delta": [
+    {
+      "field_id": "FIELD:000401:R2:OPERATING_CASH_COMPARABILITY",
+      "change_kind": "ADD_MEASUREMENT_GATE",
+      "baseline_gate": "NO_PERIMETER_BRIDGE_GATE",
+      "enhanced_gate": "REQUIRE_PERIMETER_BRIDGE_BEFORE_INTERPRETING_SAME_BOUNDARY_FIELD",
+      "reason_ref": "AGENDA:600801:20180422:ADD_BOUNDARY:POST_2017_ACQUISITION",
+      "materiality": "A changed listed-consolidated perimeter can make an operating-cash comparison look like an economic change when it is a boundary change."
+    },
+    {
+      "field_id": "FIELD:000401:R2:OPERATING_COMPARABILITY",
+      "change_kind": "ADD_MEASUREMENT_GATE",
+      "baseline_gate": "NO_PERIMETER_BRIDGE_GATE",
+      "enhanced_gate": "REQUIRE_PERIMETER_BRIDGE_BEFORE_INTERPRETING_SAME_BOUNDARY_FIELD",
+      "reason_ref": "AGENDA:600801:20180422:ADD_BOUNDARY:POST_2017_ACQUISITION",
+      "materiality": "A changed listed-consolidated perimeter can make an operating comparison look like execution or market change when it is a boundary change."
+    }
+  ],
+  "target_outcome_access": "SEALED",
+  "frozen_before_outcome_access": true,
+  "roles": {
+    "judgment_owner_id": "ROLE:CEMENT:JUDGMENT_OWNER",
+    "independent_challenger_id": "ROLE:CEMENT:INDEPENDENT_CHALLENGER",
+    "outcome_custodian_id": "ROLE:CEMENT:OUTCOME_CUSTODIAN"
+  },
+  "object_class": "ENTERPRISE_JUDGMENT_TRANSFER_APPLICATION",
+  "claim_class": "CROSS_COMPANY_MEASUREMENT_METHOD_APPLICATION",
+  "allowed_outputs": [
+    "RESEARCH_AGENDA",
+    "TRANSFER_CANDIDATE_PENDING_REVIEW"
+  ]
+}
