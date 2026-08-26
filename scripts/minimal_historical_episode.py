@@ -15,6 +15,7 @@ import re
 from typing import Any
 
 
+DECISION_CONTRACT_SCHEMA_VERSION = "turtle-minimal-historical-episode-decision-contract.v1"
 MEASUREMENT_CONTRACT_SCHEMA_VERSION = "turtle-minimal-historical-episode-measurement-contract.v1"
 STATIC_EVIDENCE_SCHEMA_VERSION = "turtle-minimal-historical-episode-static-evidence.v1"
 PREDICTION_SCHEMA_VERSION = "turtle-minimal-historical-episode-prediction.v1"
@@ -28,8 +29,10 @@ DIRECTIONS = {"INCREASE", "STABLE", "DECREASE"}
 OFFICIAL_STATIC_FILING = "OFFICIAL_STATIC_FILING"
 NO_METHOD_TRANSFER_RIGHTS = "NO_METHOD_TRANSFER_RIGHTS"
 ALLOWED_OUTPUTS = ["MECHANICAL_SETTLEMENT_ONLY"]
+DECISION_PURPOSE = "ONE_METRIC_DIRECTIONAL_PREDICTION"
 PAGE_REFERENCE = re.compile(r"\bp(?:age)?\.?\s*\d+\b", re.IGNORECASE)
 
+_DECISION_REFERENCE_KEYS = {"decision_contract_id", "decision_contract_version"}
 _REFERENCE_KEYS = {"measurement_contract_id", "measurement_contract_version"}
 _EVIDENCE_REFERENCE_KEYS = {"evidence_receipt_id", "evidence_receipt_version"}
 _ROLE_KEYS = {"forecaster_id", "custodian_id"}
@@ -40,9 +43,14 @@ _SOURCE_KEYS = {
 _OUTCOME_SOURCE_KEYS = _SOURCE_KEYS - {"published_at"} | {"source_available_at", "measurement_period_end"}
 _CONTRACT_KEYS = {
     "schema_version", "measurement_contract_id", "measurement_contract_version", "company_id", "issuer_id",
-    "cutoff_at", "metric_id", "window_id", "outcome_period_end", "responsibility_boundary", "unit",
+    "cutoff_at", "metric_id", "window_id", "decision_contract_ref", "outcome_period_end", "responsibility_boundary", "unit",
     "settlement_tolerance", "roles", "object_class", "claim_class", "allowed_outputs",
     "method_transfer_rights",
+}
+_DECISION_CONTRACT_KEYS = {
+    "schema_version", "decision_contract_id", "decision_contract_version", "company_id", "issuer_id",
+    "cutoff_at", "metric_id", "window_id", "decision_purpose", "roles", "object_class", "claim_class",
+    "allowed_outputs", "method_transfer_rights",
 }
 _STATIC_EVIDENCE_KEYS = {
     "schema_version", "evidence_receipt_id", "evidence_receipt_version", "measurement_contract_ref",
@@ -141,6 +149,19 @@ def _measurement_reference(value: Any, path: str, findings: list[str]) -> dict[s
     } if contract_id else None
 
 
+def _decision_reference(value: Any, path: str, findings: list[str]) -> dict[str, Any] | None:
+    item = _closed(value, _DECISION_REFERENCE_KEYS, path, findings)
+    contract_id = _require_text(item, "decision_contract_id", path, findings)
+    version = item.get("decision_contract_version")
+    if not isinstance(version, int) or isinstance(version, bool) or version < 1:
+        findings.append(f"{path}.decision_contract_version_must_be_positive_integer")
+        return None
+    return {
+        "decision_contract_id": contract_id,
+        "decision_contract_version": version,
+    } if contract_id else None
+
+
 def _evidence_reference(value: Any, path: str, findings: list[str]) -> dict[str, Any] | None:
     item = _closed(value, _EVIDENCE_REFERENCE_KEYS, path, findings)
     receipt_id = _require_text(item, "evidence_receipt_id", path, findings)
@@ -160,10 +181,11 @@ def _fixed_permissions(item: dict[str, Any], path: str, findings: list[str]) -> 
 
 def _identity_matches_contract(
     item: dict[str, Any], contract: dict[str, Any], path: str, findings: list[str], *, fields: tuple[str, ...],
+    contract_name: str = "measurement_contract",
 ) -> None:
     for field in fields:
         if item.get(field) != contract.get(field):
-            findings.append(f"{path}.{field}_must_match_measurement_contract")
+            findings.append(f"{path}.{field}_must_match_{contract_name}")
 
 
 def _numeric(value: Any, path: str, findings: list[str]) -> float | None:
@@ -238,7 +260,39 @@ def _outcome_source(value: Any, *, contract: dict[str, Any], path: str, findings
     return source
 
 
-def validate_measurement_contract(contract: Any) -> dict[str, Any]:
+def validate_decision_contract(decision_contract: Any) -> dict[str, Any]:
+    """Validate the immutable, one-metric decision intent for a minimal episode."""
+    findings: list[str] = []
+    item = _closed(decision_contract, _DECISION_CONTRACT_KEYS, "decision_contract", findings)
+    if item.get("schema_version") != DECISION_CONTRACT_SCHEMA_VERSION:
+        findings.append("decision_contract.schema_version_invalid")
+    _require_text(item, "decision_contract_id", "decision_contract", findings)
+    version = item.get("decision_contract_version")
+    if not isinstance(version, int) or isinstance(version, bool) or version < 1:
+        findings.append("decision_contract.decision_contract_version_must_be_positive_integer")
+    for field in ("company_id", "issuer_id", "metric_id"):
+        _require_text(item, field, "decision_contract", findings)
+    _instant(item.get("cutoff_at"), "decision_contract.cutoff_at", findings)
+    if item.get("window_id") not in WINDOW_IDS:
+        findings.append("decision_contract.window_id_invalid")
+    if item.get("decision_purpose") != DECISION_PURPOSE:
+        findings.append("decision_contract.decision_purpose_invalid")
+    roles = _closed(item.get("roles"), _ROLE_KEYS, "decision_contract.roles", findings)
+    forecaster = _require_text(roles, "forecaster_id", "decision_contract.roles", findings)
+    custodian = _require_text(roles, "custodian_id", "decision_contract.roles", findings)
+    if forecaster and custodian and forecaster == custodian:
+        findings.append("decision_contract.roles_must_be_independent")
+    if item.get("object_class") != "MINIMAL_HISTORICAL_DECISION_CONTRACT":
+        findings.append("decision_contract.object_class_invalid")
+    if item.get("claim_class") != "ONE_METRIC_DIRECTIONAL_DECISION_SCOPE":
+        findings.append("decision_contract.claim_class_invalid")
+    _fixed_permissions(item, "decision_contract", findings)
+    return _result(findings, decision_contract=deepcopy(item) if not findings else None)
+
+
+def validate_measurement_contract(
+    contract: Any, *, decision_contract: Any | None = None,
+) -> dict[str, Any]:
     """Validate one company/issuer/cutoff/metric/window measurement contract."""
     findings: list[str] = []
     item = _closed(contract, _CONTRACT_KEYS, "measurement_contract", findings)
@@ -256,6 +310,23 @@ def validate_measurement_contract(contract: Any) -> dict[str, Any]:
         findings.append("measurement_contract.outcome_period_end_must_follow_cutoff")
     if item.get("window_id") not in WINDOW_IDS:
         findings.append("measurement_contract.window_id_invalid")
+    decision_ref = _decision_reference(item.get("decision_contract_ref"), "measurement_contract.decision_contract_ref", findings)
+    if decision_contract is not None:
+        decision_result = validate_decision_contract(decision_contract)
+        findings.extend(f"measurement_contract.decision_contract:{finding}" for finding in decision_result["findings"])
+        decision = _mapping(decision_result.get("decision_contract"))
+        if decision_ref != {
+            "decision_contract_id": decision.get("decision_contract_id"),
+            "decision_contract_version": decision.get("decision_contract_version"),
+        }:
+            findings.append("measurement_contract.decision_contract_ref_must_match_decision_contract")
+        _identity_matches_contract(
+            item, decision, "measurement_contract", findings,
+            fields=("company_id", "issuer_id", "cutoff_at", "metric_id", "window_id"),
+            contract_name="decision_contract",
+        )
+        if item.get("roles") != decision.get("roles"):
+            findings.append("measurement_contract.roles_must_match_decision_contract")
     tolerance = _numeric(item.get("settlement_tolerance"), "measurement_contract.settlement_tolerance", findings)
     if tolerance is not None and tolerance < 0:
         findings.append("measurement_contract.settlement_tolerance_must_be_nonnegative")

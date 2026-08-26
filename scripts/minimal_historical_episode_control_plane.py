@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
 """Append-only in-memory-compatible control plane for minimal historical episodes.
 
-The controller deliberately stores no peers, action facts, prices, reports,
-method pairings, holdouts, or transfer rights.  Custodian APIs resolve their
-own stored inputs and never accept a prediction or outcome value in an access
-or settlement request.
+The controller freezes Decision Contract -> Measurement Contract -> static
+evidence -> prediction -> custodian -> settlement. It deliberately stores no
+peers, action facts, prices, reports, method pairings, holdouts, or transfer
+rights. Custodian APIs resolve their own stored inputs and never accept a
+prediction or outcome value in an access or settlement request.
 """
 
 from __future__ import annotations
@@ -21,6 +22,7 @@ except ModuleNotFoundError:  # pragma: no cover - direct script import
     import minimal_historical_episode as episode
 
 
+DECISION_CONTRACT_TABLE = "minimal_historical_decision_contracts"
 CONTRACT_TABLE = "minimal_historical_measurement_contracts"
 EVIDENCE_TABLE = "minimal_historical_static_evidence"
 PREDICTION_TABLE = "minimal_historical_predictions"
@@ -80,9 +82,34 @@ def initialize(conn: sqlite3.Connection) -> None:
     conn.execute("PRAGMA foreign_keys = ON")
     with conn:
         conn.execute(
+            f"""CREATE TABLE IF NOT EXISTS {DECISION_CONTRACT_TABLE} (
+                decision_contract_id TEXT NOT NULL,
+                decision_contract_version INTEGER NOT NULL,
+                company_id TEXT NOT NULL,
+                issuer_id TEXT NOT NULL,
+                cutoff_at TEXT NOT NULL,
+                metric_id TEXT NOT NULL,
+                window_id TEXT NOT NULL,
+                payload_json TEXT NOT NULL,
+                frozen_at TEXT NOT NULL,
+                PRIMARY KEY (decision_contract_id, decision_contract_version),
+                UNIQUE (company_id, issuer_id, cutoff_at, metric_id, window_id)
+            )"""
+        )
+        for operation in ("UPDATE", "DELETE"):
+            conn.execute(
+                f"""CREATE TRIGGER IF NOT EXISTS {DECISION_CONTRACT_TABLE}_{operation.lower()}_blocked
+                    BEFORE {operation} ON {DECISION_CONTRACT_TABLE}
+                    BEGIN
+                        SELECT RAISE(ABORT, 'minimal historical decision contracts are append-only');
+                    END"""
+            )
+        conn.execute(
             f"""CREATE TABLE IF NOT EXISTS {CONTRACT_TABLE} (
                 measurement_contract_id TEXT NOT NULL,
                 measurement_contract_version INTEGER NOT NULL,
+                decision_contract_id TEXT NOT NULL,
+                decision_contract_version INTEGER NOT NULL,
                 company_id TEXT NOT NULL,
                 issuer_id TEXT NOT NULL,
                 cutoff_at TEXT NOT NULL,
@@ -91,7 +118,9 @@ def initialize(conn: sqlite3.Connection) -> None:
                 payload_json TEXT NOT NULL,
                 frozen_at TEXT NOT NULL,
                 PRIMARY KEY (measurement_contract_id, measurement_contract_version),
-                UNIQUE (company_id, issuer_id, cutoff_at, metric_id, window_id)
+                UNIQUE (company_id, issuer_id, cutoff_at, metric_id, window_id),
+                FOREIGN KEY (decision_contract_id, decision_contract_version)
+                    REFERENCES {DECISION_CONTRACT_TABLE}(decision_contract_id, decision_contract_version)
             )"""
         )
         conn.execute(
@@ -169,6 +198,27 @@ def _reference(value: Any, *, field: str) -> tuple[str, int]:
     return contract_id, version
 
 
+def _decision_reference(value: Any, *, field: str) -> tuple[str, int]:
+    if not isinstance(value, dict):
+        raise MinimalHistoricalEpisodeError(f"{field}_invalid", f"{field} must be a decision contract reference")
+    contract_id, version = value.get("decision_contract_id"), value.get("decision_contract_version")
+    if not isinstance(contract_id, str) or not contract_id.strip() or not isinstance(version, int) or isinstance(version, bool) or version < 1:
+        raise MinimalHistoricalEpisodeError(f"{field}_invalid", f"{field} must name a positive decision contract identity")
+    return contract_id, version
+
+
+def _decision_contract_row(conn: sqlite3.Connection, reference: Any) -> sqlite3.Row:
+    contract_id, version = _decision_reference(reference, field="decision_contract_ref")
+    row = conn.execute(
+        f"""SELECT * FROM {DECISION_CONTRACT_TABLE}
+            WHERE decision_contract_id = ? AND decision_contract_version = ?""",
+        (contract_id, version),
+    ).fetchone()
+    if row is None:
+        raise MinimalHistoricalEpisodeError("decision_contract_not_found", "decision contract is not frozen")
+    return row
+
+
 def _contract_row(conn: sqlite3.Connection, reference: Any) -> sqlite3.Row:
     contract_id, version = _reference(reference, field="measurement_contract_ref")
     row = conn.execute(
@@ -198,14 +248,59 @@ def _row_for_contract_or_none(
     ).fetchone()
 
 
+def register_decision_contract(
+    conn: sqlite3.Connection, decision_contract: dict[str, Any], *, frozen_at: str,
+) -> dict[str, Any]:
+    """Freeze one closed decision intent before the measurement contract exists."""
+    timestamp = _instant(frozen_at, "decision_contract.frozen_at")
+    _not_future(timestamp, "decision_contract.frozen_at")
+    result = episode.validate_decision_contract(decision_contract)
+    _invalid("decision_contract_invalid", result)
+    payload = result["decision_contract"]
+    if not _before(_instant(payload["cutoff_at"], "decision_contract.cutoff_at"), timestamp):
+        raise MinimalHistoricalEpisodeError(
+            "decision_contract_cutoff_not_before_freeze", "decision contract cutoff must precede freeze",
+        )
+    encoded = _json(payload)
+    with conn:
+        existing = conn.execute(
+            f"""SELECT * FROM {DECISION_CONTRACT_TABLE}
+                WHERE decision_contract_id = ? AND decision_contract_version = ?""",
+            (payload["decision_contract_id"], payload["decision_contract_version"]),
+        ).fetchone()
+        if existing is not None:
+            if existing["payload_json"] != encoded or existing["frozen_at"] != timestamp:
+                raise MinimalHistoricalEpisodeError(
+                    "decision_contract_immutable_conflict", "decision contract identity already has different content",
+                )
+            return {"frozen": True, "decision_contract_id": payload["decision_contract_id"], "idempotent": True}
+        conn.execute(
+            f"""INSERT INTO {DECISION_CONTRACT_TABLE} (
+                decision_contract_id, decision_contract_version, company_id, issuer_id, cutoff_at, metric_id,
+                window_id, payload_json, frozen_at
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+            (
+                payload["decision_contract_id"], payload["decision_contract_version"], payload["company_id"],
+                payload["issuer_id"], payload["cutoff_at"], payload["metric_id"], payload["window_id"], encoded, timestamp,
+            ),
+        )
+    return {"frozen": True, "decision_contract_id": payload["decision_contract_id"], "idempotent": False}
+
+
 def register_measurement_contract(
     conn: sqlite3.Connection, contract: dict[str, Any], *, frozen_at: str,
 ) -> dict[str, Any]:
     timestamp = _instant(frozen_at, "measurement_contract.frozen_at")
     _not_future(timestamp, "measurement_contract.frozen_at")
-    result = episode.validate_measurement_contract(contract)
+    decision_row = _decision_contract_row(conn, contract.get("decision_contract_ref") if isinstance(contract, dict) else None)
+    decision_contract = _load(decision_row["payload_json"])
+    result = episode.validate_measurement_contract(contract, decision_contract=decision_contract)
     _invalid("measurement_contract_invalid", result)
     payload = result["measurement_contract"]
+    if not _before(decision_row["frozen_at"], timestamp):
+        raise MinimalHistoricalEpisodeError(
+            "decision_contract_must_precede_measurement_contract", "decision contract must precede measurement contract",
+        )
     if not _before(_instant(payload["cutoff_at"], "measurement_contract.cutoff_at"), timestamp):
         raise MinimalHistoricalEpisodeError("measurement_contract_cutoff_not_before_freeze", "contract cutoff must precede freeze")
     encoded = _json(payload)
@@ -221,12 +316,15 @@ def register_measurement_contract(
             return {"frozen": True, "measurement_contract_id": payload["measurement_contract_id"], "idempotent": True}
         conn.execute(
             f"""INSERT INTO {CONTRACT_TABLE} (
-                measurement_contract_id, measurement_contract_version, company_id, issuer_id, cutoff_at, metric_id,
-                window_id, payload_json, frozen_at
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+                measurement_contract_id, measurement_contract_version, decision_contract_id, decision_contract_version,
+                company_id, issuer_id, cutoff_at, metric_id, window_id, payload_json, frozen_at
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
             (
-                payload["measurement_contract_id"], payload["measurement_contract_version"], payload["company_id"],
-                payload["issuer_id"], payload["cutoff_at"], payload["metric_id"], payload["window_id"], encoded, timestamp,
+                payload["measurement_contract_id"], payload["measurement_contract_version"],
+                payload["decision_contract_ref"]["decision_contract_id"],
+                payload["decision_contract_ref"]["decision_contract_version"],
+                payload["company_id"], payload["issuer_id"], payload["cutoff_at"], payload["metric_id"],
+                payload["window_id"], encoded, timestamp,
             ),
         )
     return {"frozen": True, "measurement_contract_id": payload["measurement_contract_id"], "idempotent": False}

@@ -19,7 +19,37 @@ def _conn() -> sqlite3.Connection:
     return conn
 
 
-def _contract() -> dict:
+def _decision_contract() -> dict:
+    return {
+        "schema_version": episode.DECISION_CONTRACT_SCHEMA_VERSION,
+        "decision_contract_id": "MHE:DECISION:SYNTHETIC:V1",
+        "decision_contract_version": 1,
+        "company_id": "SYNTHETIC:COMPANY:ONE",
+        "issuer_id": "SYNTHETIC:ISSUER:ONE",
+        "cutoff_at": "2020-12-31T23:59:59+00:00",
+        "metric_id": "OPERATING_MARGIN",
+        "window_id": "ONE_YEAR",
+        "decision_purpose": episode.DECISION_PURPOSE,
+        "roles": {
+            "forecaster_id": "SYNTHETIC:FORECASTER",
+            "custodian_id": "SYNTHETIC:CUSTODIAN",
+        },
+        "object_class": "MINIMAL_HISTORICAL_DECISION_CONTRACT",
+        "claim_class": "ONE_METRIC_DIRECTIONAL_DECISION_SCOPE",
+        "allowed_outputs": list(episode.ALLOWED_OUTPUTS),
+        "method_transfer_rights": episode.NO_METHOD_TRANSFER_RIGHTS,
+    }
+
+
+def _decision_contract_ref(decision_contract: dict) -> dict:
+    return {
+        "decision_contract_id": decision_contract["decision_contract_id"],
+        "decision_contract_version": decision_contract["decision_contract_version"],
+    }
+
+
+def _contract(decision_contract: dict | None = None) -> dict:
+    decision_contract = decision_contract or _decision_contract()
     return {
         "schema_version": episode.MEASUREMENT_CONTRACT_SCHEMA_VERSION,
         "measurement_contract_id": "MHE:CONTRACT:SYNTHETIC:V1",
@@ -29,14 +59,12 @@ def _contract() -> dict:
         "cutoff_at": "2020-12-31T23:59:59+00:00",
         "metric_id": "OPERATING_MARGIN",
         "window_id": "ONE_YEAR",
+        "decision_contract_ref": _decision_contract_ref(decision_contract),
         "outcome_period_end": "2021-12-31",
         "responsibility_boundary": "LISTED_ISSUER_CONSOLIDATED",
         "unit": "PERCENT",
         "settlement_tolerance": 0.5,
-        "roles": {
-            "forecaster_id": "SYNTHETIC:FORECASTER",
-            "custodian_id": "SYNTHETIC:CUSTODIAN",
-        },
+        "roles": deepcopy(decision_contract["roles"]),
         "object_class": "MINIMAL_HISTORICAL_MEASUREMENT_CONTRACT",
         "claim_class": "ONE_METRIC_PRE_OUTCOME_SCOPE",
         "allowed_outputs": list(episode.ALLOWED_OUTPUTS),
@@ -167,13 +195,113 @@ def _settlement_request(contract: dict) -> dict:
 
 def _frozen_chain() -> tuple[sqlite3.Connection, dict, dict, dict]:
     conn = _conn()
-    contract = _contract()
+    decision_contract = _decision_contract()
+    contract = _contract(decision_contract)
     evidence = _static_evidence(contract)
     prediction = _prediction(contract, evidence)
+    assert control.register_decision_contract(
+        conn, decision_contract, frozen_at="2021-01-01T00:00:00+00:00",
+    )["frozen"]
     assert control.register_measurement_contract(conn, contract, frozen_at="2021-01-02T00:00:00+00:00")["frozen"]
     assert control.register_static_evidence(conn, evidence, frozen_at="2021-01-03T00:00:00+00:00")["frozen"]
     assert control.register_prediction(conn, prediction, frozen_at="2021-01-04T00:00:00+00:00")["frozen"]
     return conn, contract, evidence, prediction
+
+
+def test_measurement_contract_requires_a_prior_frozen_matching_decision_contract() -> None:
+    conn = _conn()
+    decision_contract = _decision_contract()
+    contract = _contract(decision_contract)
+    try:
+        with pytest.raises(control.MinimalHistoricalEpisodeError) as exc_info:
+            control.register_measurement_contract(conn, contract, frozen_at="2021-01-02T00:00:00+00:00")
+        assert exc_info.value.code == "decision_contract_not_found"
+        assert conn.execute(f"SELECT COUNT(*) FROM {control.CONTRACT_TABLE}").fetchone()[0] == 0
+
+        assert control.register_decision_contract(
+            conn, decision_contract, frozen_at="2021-01-01T00:00:00+00:00",
+        )["frozen"]
+        assert control.register_measurement_contract(
+            conn, contract, frozen_at="2021-01-02T00:00:00+00:00",
+        )["frozen"]
+    finally:
+        conn.close()
+
+
+@pytest.mark.parametrize(
+    ("field", "drifted_value", "expected"),
+    [
+        ("company_id", "SYNTHETIC:COMPANY:OTHER", "measurement_contract.company_id_must_match_decision_contract"),
+        ("issuer_id", "SYNTHETIC:ISSUER:OTHER", "measurement_contract.issuer_id_must_match_decision_contract"),
+        ("cutoff_at", "2020-12-30T23:59:59+00:00", "measurement_contract.cutoff_at_must_match_decision_contract"),
+        ("metric_id", "OTHER_OPERATING_METRIC", "measurement_contract.metric_id_must_match_decision_contract"),
+        ("window_id", "THREE_YEAR", "measurement_contract.window_id_must_match_decision_contract"),
+    ],
+)
+def test_measurement_contract_rejects_decision_identity_drift(field: str, drifted_value: str, expected: str) -> None:
+    conn = _conn()
+    decision_contract = _decision_contract()
+    contract = _contract(decision_contract)
+    contract[field] = drifted_value
+    try:
+        assert control.register_decision_contract(
+            conn, decision_contract, frozen_at="2021-01-01T00:00:00+00:00",
+        )["frozen"]
+        with pytest.raises(control.MinimalHistoricalEpisodeError) as exc_info:
+            control.register_measurement_contract(conn, contract, frozen_at="2021-01-02T00:00:00+00:00")
+        assert exc_info.value.code == "measurement_contract_invalid"
+        assert expected in exc_info.value.detail
+        assert conn.execute(f"SELECT COUNT(*) FROM {control.CONTRACT_TABLE}").fetchone()[0] == 0
+    finally:
+        conn.close()
+
+
+def test_measurement_contract_rejects_decision_role_drift() -> None:
+    conn = _conn()
+    decision_contract = _decision_contract()
+    contract = _contract(decision_contract)
+    contract["roles"]["custodian_id"] = "SYNTHETIC:CUSTODIAN:OTHER"
+    try:
+        assert control.register_decision_contract(
+            conn, decision_contract, frozen_at="2021-01-01T00:00:00+00:00",
+        )["frozen"]
+        with pytest.raises(control.MinimalHistoricalEpisodeError) as exc_info:
+            control.register_measurement_contract(conn, contract, frozen_at="2021-01-02T00:00:00+00:00")
+        assert exc_info.value.code == "measurement_contract_invalid"
+        assert "measurement_contract.roles_must_match_decision_contract" in exc_info.value.detail
+        assert conn.execute(f"SELECT COUNT(*) FROM {control.CONTRACT_TABLE}").fetchone()[0] == 0
+    finally:
+        conn.close()
+
+
+def test_decision_contract_is_append_only_and_exact_replay_is_idempotent() -> None:
+    conn = _conn()
+    decision_contract = _decision_contract()
+    try:
+        assert control.register_decision_contract(
+            conn, decision_contract, frozen_at="2021-01-01T00:00:00+00:00",
+        ) == {
+            "frozen": True,
+            "decision_contract_id": decision_contract["decision_contract_id"],
+            "idempotent": False,
+        }
+        assert control.register_decision_contract(
+            conn, deepcopy(decision_contract), frozen_at="2021-01-01T00:00:00+00:00",
+        )["idempotent"]
+
+        modified = deepcopy(decision_contract)
+        modified["roles"]["custodian_id"] = "SYNTHETIC:CUSTODIAN:OTHER"
+        with pytest.raises(control.MinimalHistoricalEpisodeError) as exc_info:
+            control.register_decision_contract(conn, modified, frozen_at="2021-01-01T00:00:00+00:00")
+        assert exc_info.value.code == "decision_contract_immutable_conflict"
+
+        with pytest.raises(sqlite3.IntegrityError, match="append-only"):
+            conn.execute(
+                f"UPDATE {control.DECISION_CONTRACT_TABLE} SET payload_json = ?",
+                ("{}",),
+            )
+    finally:
+        conn.close()
 
 
 def test_one_metric_fixture_chain_is_contract_only_for_custodian_and_mechanically_settles() -> None:
@@ -300,8 +428,12 @@ def test_control_plane_rejects_wrong_chain_time_and_observation_measurement_mism
 def test_source_metric_mismatch_is_rejected_before_persistence_or_settlement(stage: str) -> None:
     if stage == "baseline":
         conn = _conn()
-        contract = _contract()
+        decision_contract = _decision_contract()
+        contract = _contract(decision_contract)
         try:
+            assert control.register_decision_contract(
+                conn, decision_contract, frozen_at="2021-01-01T00:00:00+00:00",
+            )["frozen"]
             assert control.register_measurement_contract(
                 conn, contract, frozen_at="2021-01-02T00:00:00+00:00",
             )["frozen"]
@@ -364,8 +496,12 @@ def test_nonfinite_numeric_values_are_rejected_before_persistence_or_settlement(
 ) -> None:
     if stage == "baseline":
         conn = _conn()
-        contract = _contract()
+        decision_contract = _decision_contract()
+        contract = _contract(decision_contract)
         try:
+            assert control.register_decision_contract(
+                conn, decision_contract, frozen_at="2021-01-01T00:00:00+00:00",
+            )["frozen"]
             assert control.register_measurement_contract(
                 conn, contract, frozen_at="2021-01-02T00:00:00+00:00",
             )["frozen"]
@@ -399,12 +535,20 @@ def test_nonfinite_numeric_values_are_rejected_before_persistence_or_settlement(
 def test_public_schema_keeps_the_contract_only_access_and_no_transfer_rights() -> None:
     root = Path(__file__).resolve().parents[1]
     schema = json.loads((root / "schemas" / "minimal_historical_episode.schema.json").read_text(encoding="utf-8"))
+    decision = schema["$defs"]["decision_contract"]
+    assert set(decision["properties"]) == {
+        "schema_version", "decision_contract_id", "decision_contract_version", "company_id", "issuer_id",
+        "cutoff_at", "metric_id", "window_id", "decision_purpose", "roles", "object_class", "claim_class",
+        "allowed_outputs", "method_transfer_rights",
+    }
+    measurement = schema["$defs"]["measurement_contract"]
+    assert measurement["properties"]["decision_contract_ref"] == {"$ref": "#/$defs/decision_contract_ref"}
     access = schema["$defs"]["outcome_access"]
     assert set(access["properties"]) == {
         "schema_version", "authorization_id", "measurement_contract_ref", "custodian_id", "authorized_at",
         "object_class", "claim_class", "allowed_outputs", "method_transfer_rights",
     }
-    for name in ("measurement_contract", "static_evidence", "prediction", "outcome_access", "observation", "settlement_request", "settlement"):
+    for name in ("decision_contract", "measurement_contract", "static_evidence", "prediction", "outcome_access", "observation", "settlement_request", "settlement"):
         properties = schema["$defs"][name]["properties"]
         assert properties["allowed_outputs"]["const"] == ["MECHANICAL_SETTLEMENT_ONLY"]
         assert properties["method_transfer_rights"]["const"] == "NO_METHOD_TRANSFER_RIGHTS"

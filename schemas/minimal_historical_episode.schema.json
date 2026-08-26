@@ -2,8 +2,9 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "minimal-historical-episode.v1",
   "title": "Turtle minimal historical episode",
-  "description": "One company/issuer/cutoff/metric/window fixture-only chain. It has no method-transfer right and no V5/V6, action, peer, CJO, valuation, price, or report fields.",
+  "description": "One company/issuer/cutoff/metric/window fixture-only chain, frozen from Decision Contract through mechanical settlement. It has no method-transfer right and no V5/V6, action, peer, CJO, valuation, price, or report fields.",
   "oneOf": [
+    {"$ref": "#/$defs/decision_contract"},
     {"$ref": "#/$defs/measurement_contract"},
     {"$ref": "#/$defs/static_evidence"},
     {"$ref": "#/$defs/prediction"},
@@ -20,6 +21,14 @@
       "properties": {
         "measurement_contract_id": {"$ref": "#/$defs/nonempty"},
         "measurement_contract_version": {"type": "integer", "minimum": 1}
+      }
+    },
+    "decision_contract_ref": {
+      "type": "object", "additionalProperties": false,
+      "required": ["decision_contract_id", "decision_contract_version"],
+      "properties": {
+        "decision_contract_id": {"$ref": "#/$defs/nonempty"},
+        "decision_contract_version": {"type": "integer", "minimum": 1}
       }
     },
     "evidence_ref": {
@@ -79,9 +88,29 @@
         "method_transfer_rights": {"const": "NO_METHOD_TRANSFER_RIGHTS"}
       }
     },
+    "decision_contract": {
+      "type": "object", "additionalProperties": false,
+      "required": ["schema_version", "decision_contract_id", "decision_contract_version", "company_id", "issuer_id", "cutoff_at", "metric_id", "window_id", "decision_purpose", "roles", "object_class", "claim_class", "allowed_outputs", "method_transfer_rights"],
+      "properties": {
+        "schema_version": {"const": "turtle-minimal-historical-episode-decision-contract.v1"},
+        "decision_contract_id": {"$ref": "#/$defs/nonempty"},
+        "decision_contract_version": {"type": "integer", "minimum": 1},
+        "company_id": {"$ref": "#/$defs/nonempty"},
+        "issuer_id": {"$ref": "#/$defs/nonempty"},
+        "cutoff_at": {"type": "string", "format": "date-time"},
+        "metric_id": {"$ref": "#/$defs/nonempty"},
+        "window_id": {"enum": ["ONE_YEAR", "THREE_YEAR", "FIVE_YEAR"]},
+        "decision_purpose": {"const": "ONE_METRIC_DIRECTIONAL_PREDICTION"},
+        "roles": {"$ref": "#/$defs/roles"},
+        "object_class": {"const": "MINIMAL_HISTORICAL_DECISION_CONTRACT"},
+        "claim_class": {"const": "ONE_METRIC_DIRECTIONAL_DECISION_SCOPE"},
+        "allowed_outputs": {"const": ["MECHANICAL_SETTLEMENT_ONLY"]},
+        "method_transfer_rights": {"const": "NO_METHOD_TRANSFER_RIGHTS"}
+      }
+    },
     "measurement_contract": {
       "type": "object", "additionalProperties": false,
-      "required": ["schema_version", "measurement_contract_id", "measurement_contract_version", "company_id", "issuer_id", "cutoff_at", "metric_id", "window_id", "outcome_period_end", "responsibility_boundary", "unit", "settlement_tolerance", "roles", "object_class", "claim_class", "allowed_outputs", "method_transfer_rights"],
+      "required": ["schema_version", "measurement_contract_id", "measurement_contract_version", "company_id", "issuer_id", "cutoff_at", "metric_id", "window_id", "decision_contract_ref", "outcome_period_end", "responsibility_boundary", "unit", "settlement_tolerance", "roles", "object_class", "claim_class", "allowed_outputs", "method_transfer_rights"],
       "properties": {
         "schema_version": {"const": "turtle-minimal-historical-episode-measurement-contract.v1"},
         "measurement_contract_id": {"$ref": "#/$defs/nonempty"},
@@ -91,6 +120,7 @@
         "cutoff_at": {"type": "string", "format": "date-time"},
         "metric_id": {"$ref": "#/$defs/nonempty"},
         "window_id": {"enum": ["ONE_YEAR", "THREE_YEAR", "FIVE_YEAR"]},
+        "decision_contract_ref": {"$ref": "#/$defs/decision_contract_ref"},
         "outcome_period_end": {"type": "string", "format": "date"},
         "responsibility_boundary": {"$ref": "#/$defs/nonempty"},
         "unit": {"$ref": "#/$defs/nonempty"},
