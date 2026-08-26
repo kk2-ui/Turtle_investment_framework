@@ -469,15 +469,16 @@ Phase 08 只有同时具备以下结果才能完成：
 
 当前执行分为训练主线与黄金候选线，互不以等待状态阻断：
 
-1. 已完成 CN:600585 单公司、单指标 `Minimal Historical Episode v1` 的独立机械结算；它只证明 `Decision Contract → Measurement Contract → blind prediction → independent observation → mechanical settlement` 管线可闭合，固定为 `MECHANICAL_SETTLEMENT_ONLY + NO_METHOD_TRANSFER_RIGHTS`，不得将其表述为 method、CJO、估值、报告或投资成功。CN:600802 同类对象已验证 access 边界，但因官方 static-PDF 结果字段不能唯一页级定位而为 `MEASUREMENT_MISMATCH`，不得以二手副本或搜索摘要补标签；
-2. 先对 `config/judgment_training_program_v1.json` 做 admission 和登记审计；R-62 维持 `NO_PRIMARY / NOT_FROZEN`，不得作为开发训练样本运行；
-3. 新增或重新筛选一个真实、结果隔离且 `SELECTION_ADMITTED` 的开发 episode，完成 PIT freeze、五层结算和材料性诊断；
-4. 将正式 learning 实际应用到不同公司冻结字段并独立复核；只有完成 application receipt，才一次性冻结 `enterprise-judgment-method-v1`；
-5. 方法冻结后才揭盲 R-61 holdout，只评价、不回写同一版本；R-56/R-58/R-25/R-21/R-78 只提供边界教学；
-6. 将已接纳的窄方法改变经现有 handoff 接入 G1 黄金报告研究议程，检验其是否改善正常利润、owner cash、永久损失、价值和回报传播；
-7. 七个黄金候选的材料性修复继续推进，但不再等待 R-54/R-93/R-94 的最新披露；实时对象只在到期时执行原冻结采集合同；
-8. 七案内容接纳后按 G1.5 激活条件预注册格力行业经验工厂；G1.5 通过后才进入 G2，不得提前写统一模板；
-9. 四个外部项目只保留为第 13 节的未来路由；G1 Agent 不安装、不集成，也不以其报告替代候选修复。
+1. Minimal Historical Episode 已在当前验收点封口：一条独立机械结算只证明 `Decision Contract → Measurement Contract → blind prediction → independent observation → mechanical settlement` 管线可闭合；CN:600802、CN:600425、CN:002003 与 CN:002404 均在授权边界内正确终止为 `MEASUREMENT_MISMATCH`，没有第二个 `FIELD_READY`。全部对象固定为 `MECHANICAL_SETTLEMENT_ONLY + NO_METHOD_TRANSFER_RIGHTS`，不得表述为 method、Comparative、CJO、估值、报告或投资成功。除非发现会阻止唯一官方字段映射的可复用 acquisition-contract deficiency，不再为追逐另一条结算扩展该 lane 的 schema、control、adapter 或候选；
+2. 训练主线现在转为 action-first Comparative intake：独立 curator 在任一预先声明行业中冻结 cutoff-before 的已实施、可反驳经营行动；接纳后才冻结 comparator eligibility predicate、static peer batch 和 outcome contract。水泥 `H2_NO_PRIMARY_ACTION_SCOPE` 只终止水泥候选，不阻断换行业；
+3. 对 `config/judgment_training_program_v1.json` 做 admission 和登记审计；R-62 维持 `NO_PRIMARY / NOT_FROZEN`，不得作为开发训练样本运行；
+4. 新增或重新筛选一个真实、结果隔离且 `SELECTION_ADMITTED` 的开发 episode，完成 PIT freeze、五层结算和材料性诊断；
+5. 将正式 learning 实际应用到不同公司冻结字段并独立复核；只有完成 application receipt，才一次性冻结 `enterprise-judgment-method-v1`；
+6. 方法冻结后才揭盲 R-61 holdout，只评价、不回写同一版本；R-56/R-58/R-25/R-21/R-78 只提供边界教学；
+7. 将已接纳的窄方法改变经现有 handoff 接入 G1 黄金报告研究议程，检验其是否改善正常利润、owner cash、永久损失、价值和回报传播；
+8. 七个黄金候选的材料性修复继续推进，但不再等待 R-54/R-93/R-94 的最新披露；实时对象只在到期时执行原冻结采集合同；
+9. 七案内容接纳后按 G1.5 激活条件预注册格力行业经验工厂；G1.5 通过后才进入 G2，不得提前写统一模板；
+10. 四个外部项目只保留为第 13 节的未来路由；G1 Agent 不安装、不集成，也不以其报告替代候选修复。
 
 ## 16. 决策记录
 

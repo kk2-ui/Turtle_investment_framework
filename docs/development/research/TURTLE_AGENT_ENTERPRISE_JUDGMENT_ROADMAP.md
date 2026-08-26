@@ -50,7 +50,8 @@
 行业史/生命周期：schema、validator、carrier-control 与 multi-cutoff runner 已实现；水泥 H1 已生成 six-cutoff history series，退出/删失只由 synthetic lifecycle 回归验证，未对真实公司推断 lifecycle 结论
 机制/边界设计：已有资产可继续运行
 企业整体模型/管理层纵向账本：离线控制与 synthetic fixture 已实现，尚未成为生产 canonical truth
-正式 PIT 入口：已有一个水泥 H1 receipt、五 carrier 的隔离开发 registry、claim-specific/carrier-registry control foundation 和 registry-aware comparative epoch；等待 curator H2 action screen
+最小历史管线：一条独立机械结算已证明 blind chain capability；CN600802、CN600425、CN002003 与 CN002404 均保护性终止为 `MEASUREMENT_MISMATCH`，未产生第二个 `FIELD_READY`；该 lane 已在当前验收点封口
+正式 Comparative 入口：action-first intake 是下一条生产主线；水泥 `H2_NO_PRIMARY_ACTION_SCOPE` 只终止水泥候选，不阻断其他行业的已实施行动筛选
 跨公司迁移：契约与 synthetic 反例已实现，真实迁移尚未证明
 方法冻结：未开始
 定量买点接线：离线 directionality 已验收；生产授权仍要求 canonical 冻结 CJO 与 D4 闭合
@@ -65,8 +66,8 @@ H0–H10 是本仓当前执行状态；下方 G0–G8 只保留能力依赖视�
 | H0 合成控制接纳 | `COMPLETE` | V3/V5 offline control 与 legacy 回归已通过 |
 | H1 Industry History Universe | `MULTI_CUTOFF_RUNNER_IMPLEMENTED / CEMENT_H1_SIX_CUTOFF_SERIES_VALIDATED / SYNTHETIC_LIFECYCLE_VALIDATED` | 后续真实 lifecycle 事实须由独立 cutoff-visible source receipt 接入；不阻断 H2 |
 | H2 Teaching/Lifecycle runner | `LIFECYCLE_TEACHING_SYNTHETIC_ACCEPTED / R104_BOUNDARY_TEACHING_PROJECTED / REAL_HUAXIN_PERIMETER_CASE_ACCEPTED` | 单公司和消失公司可训练，且不会获得选择权限 |
-| H2A PIT Company Forecast | `CEMENT_2018_FIVE_COMPANY_FORECAST_FROZEN / THREE_COMPANY_REFERENCE_TOURNAMENT_FROZEN / MINIMAL_HISTORICAL_EPISODE_CN600585_MECHANICALLY_SETTLED / CN600802_MINIMAL_EPISODE_MEASUREMENT_MISMATCH / FORECAST_LEARNING_CONTROL_IMPLEMENTED / R05_PROSPECTIVE_SIGNAL_SHADOW_REGISTERED` | 历史 pilot 只作 `MODEL_MEMORY_MITIGATED` 流程/反馈验证；独立 custodian 才能结算。另一个单公司、单指标 Minimal Episode 已证明 contract→blind observation→mechanical settlement 管线，CN:600802 的同类对象则因结果期官方静态来源未能唯一页级映射而无标签；二者均无 learning 或方法权利。结算可直接改校准/coverage/状态定义/不确定性 policy；证据与反方方法仍仅为 pair+holdout candidate，且不读 H2/R-103/outcome |
-| H3 Comparative intake | `ONE_CEMENT_H1_RECEIPT / REAL_H1_CARRIER_REGISTRY_OPEN / REGISTRY_AWARE_ADMISSION_IMPLEMENTED / H2_NO_PRIMARY_ACTION_SCOPE` | 等待另一条合格 H2 action screen 后，冻结 predicate 与静态 peer batch |
+| H2A PIT Company Forecast | `CEMENT_2018_FIVE_COMPANY_FORECAST_FROZEN / THREE_COMPANY_REFERENCE_TOURNAMENT_FROZEN / MINIMAL_HISTORICAL_EPISODE_ONE_INDEPENDENT_MECHANICAL_SETTLEMENT / CN600802_CN600425_CN002003_CN002404_PROTECTIVE_MEASUREMENT_MISMATCH / MINIMAL_LANE_BOUNDED_CLOSED / FORECAST_LEARNING_CONTROL_IMPLEMENTED / R05_PROSPECTIVE_SIGNAL_SHADOW_REGISTERED` | 历史 pilot 只作 `MODEL_MEMORY_MITIGATED` 流程/反馈验证；独立 custodian 才能结算。Minimal lane 已证明一次 contract→blind observation→mechanical settlement，也以四个 `MEASUREMENT_MISMATCH` 保留无标签终态；没有第二个 `FIELD_READY`。除非发现可复用 acquisition-contract 缺口，不再为追逐第二个结算扩展其 schema、control 或 adapter。其对象始终无 learning、方法、Comparative、CJO、估值、报告或投资权利；下一生产出口转入 H3 |
+| H3 Comparative intake | `ACTION_FIRST_PRIMARY / ONE_CEMENT_H1_RECEIPT / REAL_H1_CARRIER_REGISTRY_OPEN / REGISTRY_AWARE_ADMISSION_IMPLEMENTED / CEMENT_H2_NO_PRIMARY_ACTION_SCOPE` | 独立 curator 先提交任一行业的 cutoff-before 已实施行动和可反驳机制；接纳后冻结 comparator eligibility predicate、static peer batch 与 outcome contract。水泥 H2 的 `NO_PRIMARY` 不阻断其他行业 |
 | H4 第一条真实 Comparative Episode | `NOT_STARTED / NOT_GLOBAL_BLOCKER` | final panel、行动、反方和 outcome contract 独立冻结 |
 | H5 第一次真实结算与 learning | `NOT_STARTED` | 方向性结算改变不同公司冻结前字段 |
 | H6 方法冻结与 R-103 留出 | `LOCKED` | H5 后的隔离 evaluator 结算 |
@@ -357,9 +358,9 @@ CN:600585 的 2018 `Forecast V4` 已在隔离开发 namespace 完成 contract-fi
 
 ### WP-F0A Minimal Historical Episode
 
-`Minimal Historical Episode v1` 是与 Forecast V1--V6、Comparative/V5 和教学 CJO 分离的窄管线验收 lane。它只接受一个公司、一个 cutoff、一个可由静态官方字段唯一测量的指标，并严格执行 `Decision Contract → Measurement Contract → cutoff-before static evidence → blind prediction → contract-only custodian access → value-free OutcomeSourceInventoryReceipt → official observation → mechanical settlement`。CN:600585 2018 已在隔离开发 namespace 完成这一链；登记只保留对象与链路身份，不记录预测、观测或机械结算方向。CN:600802 2018 的同类对象已停止在 contract-only access：允许入口不能唯一定位 FY2018 官方 static-PDF 的页级字段，因而正确保留 `MEASUREMENT_MISMATCH`，没有 observation 或 settlement。对下一份新对象，source inventory gate 只允许一个 contract-bound、outcome-period 的官方 static-finalpage annual-report 来源和一个可解析 PDF 页；它先于观察值和数字/引文读取，`MEASUREMENT_MISMATCH` 会停止后续结算。该 gate 只改善可复用 acquisition/measurement 边界，不回填既有对象。该 lane 的全部对象固定 `MECHANICAL_SETTLEMENT_ONLY + NO_METHOD_TRANSFER_RIGHTS`：它不能生成 Brier/RPS、learning、method pairing、Comparative 结论、CJO、估值、报告或投资权限。其价值是证明最小历史训练管线可在不先证明同行因果或方法泛化的条件下无泄漏运行；下一份 object 若要主张任何方法或决策效用，仍须走已冻结的 pairing、holdout 和独立审阅门。
+`Minimal Historical Episode v1` 是与 Forecast V1--V6、Comparative/V5 和教学 CJO 分离的窄管线验收 lane。它只接受一个公司、一个 cutoff、一个可由静态官方字段唯一测量的指标，并严格执行 `Decision Contract → Measurement Contract → cutoff-before static evidence → blind prediction → contract-only custodian access → value-free OutcomeSourceInventoryReceipt → official observation → mechanical settlement`。CN:600585 已在隔离开发 namespace 完成一条独立机械结算，证明该 blind chain 的管线能力，而不是预测、机制或投资方法有效。CN:600802、CN:600425、CN:002003 与 CN:002404 均在授权范围内正确终止为 `MEASUREMENT_MISMATCH`，没有 observation、settlement 或 outcome label；它们证明 acquisition gate 会保留未知而非伪造标签。没有第二个 `FIELD_READY`。
 
-下一份新 Minimal object 必须使用 `Measurement Contract v2`，在 forecast 前冻结 `CNINFO provider/version × security code × organization id × fulltext annual-report category × bounded query dates/page size × static-finalpage policy`。其 `organization id` 先由一个独立、value-free 的 `TECHNICAL_ROUTE_IDENTITY` 记录官方 stock-map 的 exact `code -> orgId`、resolver endpoint/version 和 `observed_at`；它严格绑定 frozen issuer/code，不可携带公司名称、公告、PDF、body、结果或价格，也不改变 static evidence 的 cutoff 规则。resolver 不可用、返回额外字段或 mapping 不匹配即是 pre-outcome mismatch，不得猜测路由。custodian 的 inventory adapter 只能从 stored contract 导出这一路由，不能接受 caller supplied code、org、日期或 route。既有 v1 artifacts 仅可作 historical read/replay，不能 upgrade 或发起新的 custody flow。详见 [Outcome Acquisition Route v2](MINIMAL_HISTORICAL_EPISODE_V2_OUTCOME_ROUTE_IMPLEMENTATION.md)。
+因此此 lane 在当前验收点封口。不得为追逐另一条结算继续新增 Minimal schema、control-plane rule、adapter 或候选。只有新发现的、会阻止唯一官方字段映射的**可复用 acquisition-contract deficiency**，才允许单独重开相应模块；不得以候选特例、来源替换、动态页面、结果后资料或放宽 mapping 作为重开理由。所有已冻结 Minimal object 固定为 `MECHANICAL_SETTLEMENT_ONLY + NO_METHOD_TRANSFER_RIGHTS`：它们不能生成 Brier/RPS、learning、method pairing、Comparative 结论、CJO、估值、报告或投资权限。下一生产工作转为 action-first Comparative intake；其首个 episode 仍须另行冻结已实施行动、反方、comparator eligibility、静态 peer batch 与 outcome contract，Minimal 结果不能替代任一门。
 
 ### WP-D0 Decision Contract gate
 

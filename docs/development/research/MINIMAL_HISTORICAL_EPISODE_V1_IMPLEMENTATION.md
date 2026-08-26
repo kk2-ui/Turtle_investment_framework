@@ -4,12 +4,42 @@ Status:
 
 - synthetic control acceptance: `PASSED`;
 - V1 real-data run: `LEGACY_MECHANICAL_RUN / POST_SETTLEMENT_SOURCE_REVIEW`;
-- V2 real-data episode: `MECHANICALLY_SETTLED / ACCEPTED_FOR_PIPELINE_COVERAGE`;
+- V2 real-data episode: `ONE_INDEPENDENT_MECHANICAL_SETTLEMENT / ACCEPTED_FOR_PIPELINE_COVERAGE`;
+- protective terminals: `CN600802 / CN600425 / CN002003 / CN002404 = MEASUREMENT_MISMATCH`;
+- bounded lane state: `CLOSED_AT_CURRENT_ACCEPTANCE_POINT / NO_SECOND_FIELD_READY`;
 - method-transfer authorization: `NONE`.
 
 This remains an isolated namespace and does not modify or consume V5, V6, H1,
 training-program, selection, CJO, valuation, price, report, pairing, or holdout
 objects.
+
+## Bounded acceptance and next production lane
+
+From an investor's perspective, this lane has proved one narrow thing: Turtle
+can freeze a single historical operating claim before the result is read, let a
+separate custodian observe the permitted official disclosure, and settle the
+claim mechanically. It has not proved that a forecasting method improves
+enterprise judgment, explains an operating mechanism, or supports a valuation
+or a buy decision.
+
+The lane is therefore closed at its current acceptance point. One independent
+mechanical settlement proves the chain capability. `CN600802`, `CN600425`,
+`CN002003`, and `CN002404` each ended in a value-free
+`MEASUREMENT_MISMATCH`; together they show that the acquisition gates refuse
+to manufacture a label when an official result cannot be mapped uniquely. None
+reached a second `FIELD_READY` observation.
+
+Do not add another schema, control-plane rule, adapter capability, or Minimal
+candidate merely to pursue a second settlement. Reopen this lane only when a
+newly identified **reusable acquisition-contract deficiency** would otherwise
+make a uniquely mappable official field unavailable. The remediation must be
+bounded to that reusable contract deficiency; a candidate-specific source
+substitution, outcome search, or relaxed mapping is not a reason to reopen.
+
+The next production lane is action-first `Comparative`: independently freeze
+an implemented, falsifiable operating action, then the comparator eligibility
+predicate and result contract before a directional settlement. The Minimal lane
+does not gate that work and cannot substitute for it.
 
 ## Purpose
 
