@@ -129,18 +129,30 @@ def _v6_chain() -> tuple[sqlite3.Connection, dict, dict, dict, dict]:
     conn.execute(
         """INSERT INTO judgment_training_episodes
            (training_episode_id, program_id, case_id, company_id, company_cluster_id, industry_id,
-            decision_domain, cutoff_at, outcome_not_before, lane, provenance_role, outcome_access,
+            decision_domain, cutoff_at, outcome_not_before, outcome_window_ends_at, lane, provenance_role, outcome_access,
             holdout_axis, artifacts_json)
            VALUES (?, ?, 'HOLDOUT:SYNTHETIC:DECISION-UTILITY', ?, 'COMPANY:SYNTHETIC:DECISION-UTILITY',
-                   'SYNTHETIC', 'FORECAST', ?, '2022-01-01T00:00:00+00:00', 'HISTORICAL_HOLDOUT',
+                   'SYNTHETIC', 'FORECAST', ?, '2022-01-01T00:00:00+00:00', '2023-01-01T00:00:00+00:00', 'HISTORICAL_HOLDOUT',
                    'HISTORICAL_SELF_REPLAY', 'PIT_OUTCOME_SEALED', 'COMPANY_AND_TIME', '{}')""",
         (
             "JTE:SYNTHETIC:DECISION-UTILITY", method_ref["program_id"], forecast["company_id"], forecast["cutoff_at"],
         ),
     )
+    conn.execute(
+        """INSERT INTO judgment_training_episodes
+           (training_episode_id, program_id, case_id, company_id, company_cluster_id, industry_id,
+            decision_domain, cutoff_at, outcome_not_before, outcome_window_ends_at, lane, provenance_role,
+            outcome_access, holdout_axis, artifacts_json)
+           VALUES ('JTE:SYNTHETIC:DECISION-UTILITY:TRAINING', ?, 'TRAINING:SYNTHETIC:DECISION-UTILITY',
+                   'CN:SYNTHETIC:TRAIN', 'COMPANY:SYNTHETIC:DECISION-UTILITY:TRAIN', 'SYNTHETIC',
+                   'FORECAST', '2019-12-31T23:59:59+00:00', '2020-01-01T00:00:00+00:00',
+                   '2021-01-01T00:00:00+00:00', 'HISTORICAL_TRAINING', 'HISTORICAL_SELF_REPLAY',
+                   'PIT_OUTCOME_SEALED', NULL, '{}')""",
+        (method_ref["program_id"],),
+    )
     conn.commit()
     forecast_pairing = _pairing(forecast)
-    forecast_pairing["schema_version"] = pit.PAIRING_SCHEMA_VERSION_V2
+    forecast_pairing["schema_version"] = pit.PAIRING_SCHEMA_VERSION_V3
     forecast_pairing["holdout_binding"] = {
         "program_id": method_ref["program_id"],
         "holdout_training_episode_id": "JTE:SYNTHETIC:DECISION-UTILITY",

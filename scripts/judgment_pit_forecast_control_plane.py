@@ -1244,14 +1244,16 @@ def register_forecast_method_pairing(
             _outcome_measurement_contract_row(conn, forecast.get("outcome_measurement_contract_ref"))["payload_json"],
         )
     prepared_pairing = deepcopy(pairing)
-    if prepared_pairing.get("schema_version") == pit.PAIRING_SCHEMA_VERSION_V2:
+    if prepared_pairing.get("schema_version") in {
+        pit.PAIRING_SCHEMA_VERSION_V2, pit.PAIRING_SCHEMA_VERSION_V3,
+    }:
         raw_binding = prepared_pairing.get("holdout_binding")
         if not isinstance(raw_binding, dict) or set(raw_binding) != {
             "program_id", "holdout_training_episode_id", "evaluated_cell_refs",
         }:
             raise ForecastControlError(
                 "pairing_holdout_binding_invalid",
-                "V2 pairing must request exactly a program, COMPANY_AND_TIME episode and evaluated cell refs",
+                "V2/V3 pairing must request exactly a program, COMPANY_AND_TIME episode and evaluated cell refs",
             )
         if not isinstance(raw_binding.get("evaluated_cell_refs"), list):
             raise ForecastControlError("pairing_holdout_binding_invalid", "evaluated_cell_refs must be a list")
@@ -1261,6 +1263,9 @@ def register_forecast_method_pairing(
                 program_id=str(raw_binding.get("program_id") or ""),
                 training_episode_id=str(raw_binding.get("holdout_training_episode_id") or ""),
                 as_of=timestamp,
+                require_outcome_window=(
+                    prepared_pairing.get("schema_version") == pit.PAIRING_SCHEMA_VERSION_V3
+                ),
             )
         except training_program.TrainingProgramError as exc:
             raise ForecastControlError("pairing_holdout_binding_invalid", str(exc)) from exc
@@ -1285,7 +1290,7 @@ def register_forecast_method_pairing(
         if measurement_contract is None:
             raise ForecastControlError(
                 "pairing_holdout_requires_measurement_contract",
-                "V2 pairing needs the forecast's frozen Measurement Contract",
+                "V2/V3 pairing needs the forecast's frozen Measurement Contract",
             )
         measurement_cells = {
             (cell["dimension_id"], cell["window_id"]): cell
@@ -1331,6 +1336,14 @@ def register_forecast_method_pairing(
             if existing["payload_json"] != encoded or existing["frozen_at"] != timestamp:
                 raise ForecastControlError("pairing_immutable_conflict", "pairing_id already identifies different frozen content")
             return {"frozen": True, "pairing_id": payload["pairing_id"], "idempotent": True}
+        if (
+            forecast.get("schema_version") == pit.FORECAST_SCHEMA_VERSION_V6
+            and payload.get("schema_version") != pit.PAIRING_SCHEMA_VERSION_V3
+        ):
+            raise ForecastControlError(
+                "pairing_requires_frozen_company_time_outcome_window_binding",
+                "new Forecast V6 method pairings require the training-program-derived V3 binding",
+            )
         if conn.execute(
             f"SELECT settlement_id FROM {SETTLEMENT_TABLE} WHERE forecast_id = ?", (payload["forecast_id"],),
         ).fetchone() is not None:
@@ -1423,7 +1436,7 @@ def register_decision_utility_pairing(
 ) -> dict[str, Any]:
     """Freeze a qualitative method comparison before custodian access opens.
 
-    This is an append-only companion to Forecast Pairing V2.  It never
+    This is an append-only companion to Forecast Pairing V3.  It never
     creates a policy, changes a CJO, or permits report or investment use.
     """
     if not isinstance(pairing, dict):
@@ -1453,7 +1466,7 @@ def register_decision_utility_pairing(
     if timestamp < _instant(forecast_pairing_row["frozen_at"], "forecast_pairing.frozen_at"):
         raise ForecastControlError(
             "decision_utility_pairing_precedes_forecast_pairing",
-            "decision utility pairing must follow its immutable Forecast Pairing V2",
+            "decision utility pairing must follow its immutable Forecast Pairing V3",
         )
     holdout = forecast_pairing.get("holdout_binding") if isinstance(forecast_pairing.get("holdout_binding"), dict) else {}
     if timestamp >= _instant(holdout.get("outcome_not_before"), "forecast_pairing.holdout.outcome_not_before"):
@@ -1489,7 +1502,7 @@ def register_decision_utility_pairing(
         ).fetchone() is not None:
             raise ForecastControlError(
                 "forecast_pairing_already_has_decision_utility_pairing",
-                "a Forecast Pairing V2 has one immutable decision-utility pairing",
+                "a Forecast Pairing V3 has one immutable decision-utility pairing",
             )
         ref = payload["decision_contract_ref"]
         conn.execute(

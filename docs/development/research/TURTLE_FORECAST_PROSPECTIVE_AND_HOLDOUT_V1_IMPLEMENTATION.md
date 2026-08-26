@@ -41,32 +41,40 @@ input.
 ## Canonical company-and-time holdout binding
 
 Pairing V2 replaces caller-authored `training_company_ids` / cutoff assertions
-for candidate transfer claims. Before outcome access, the controller resolves
-one `HISTORICAL_HOLDOUT` episode from `judgment_training_programs` and
+with a canonical company-and-time request. Pairing V3 is the learning-transfer
+form: before outcome access, the controller resolves one `HISTORICAL_HOLDOUT`
+episode and its historical-training lane from `judgment_training_programs` and
 `judgment_training_episodes`. It requires:
 
 - active program, `COMPANY_AND_TIME` axis, sealed historical PIT provenance;
 - both effective and recorded immutable method-freeze times before pairing;
-- exact company/cutoff and enhanced method-version match; and
+- exact company/cutoff and enhanced method-version match;
 - one or more unique `MODEL_UNCERTAIN` Measurement Contract cells.
+- for V3, an unseen economic `company_cluster_id` and non-overlapping frozen
+  half-open outcome-resolution windows for the holdout and every training
+  episode.
 
-The append-only pairing stores the resolved economic `company_cluster_id` and
-each cell's frozen `outcome_period_end`. Candidate `EVIDENCE_PRIORITY` and
-`RIVAL_HYPOTHESIS_METHOD` attributions must use Pairing V2 and may cite only
+The append-only V3 pairing stores the resolved economic `company_cluster_id`,
+the historical training clusters and frozen outcome windows, and each cell's
+frozen `outcome_period_end`. Candidate `EVIDENCE_PRIORITY` and
+`RIVAL_HYPOTHESIS_METHOD` attributions must use Pairing V3 and may cite only
 these pre-registered cells. A caller-authored legacy `holdout` object can no
 longer support candidate method transfer. The V6 Forecast epoch adds the
 immutable producing-method identity (`program_id`, method version, and both
-method-freeze times); Pairing V2 must exactly reproduce all four fields rather
-than treating a reused method-version string as identity. V1--V5 Forecasts
+method-freeze times); Pairing V3 must exactly reproduce all four fields rather
+than treating a reused method-version string as identity. A V6 Minimal
+Historical Episode may open independent custodian outcome access without any
+pairing. A learning-transfer or decision-utility pairing must freeze before
+outcome access; a new pairing after access is rejected, while
+exact replay of an existing immutable pairing remains allowed. V1--V5 Forecasts
 cannot be retroactively upgraded, and remain in the direct calibration or
 coverage lane only. Direct calibration and coverage feedback remain separate
 and retain no transfer claim.
 
-The legacy training program currently lacks historical outcome-window end
-metadata for its training episodes. Accordingly Pairing V2 proves a canonical
-company and forecast-cutoff split, but does not claim non-overlap between an
-older training label and a holdout label. Such a claim requires a later
-frozen-resolution-span extension in the training-program truth model.
+Legacy programs without frozen `outcome_window_ends_at` values remain valid for
+their existing V2 records and exact replays, but cannot produce a V3 learning
+transfer pairing. The span metadata belongs to the existing training-program
+truth; no caller-declared company list or cutoff proves this separation.
 
 ## Boundaries
 

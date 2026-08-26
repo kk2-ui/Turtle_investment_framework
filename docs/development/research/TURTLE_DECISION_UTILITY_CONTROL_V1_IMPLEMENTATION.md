@@ -13,7 +13,7 @@ evidence budget.  Its only possible output is `CANDIDATE_ONLY`.
 
 ```text
 Forecast V6 + frozen Decision Contract
-  -> Forecast Pairing V2 (canonical company-and-time holdout, before outcome access)
+  -> Forecast Pairing V3 (frozen company-and-time outcome-window holdout, before outcome access)
   -> Decision Utility Pairing (before outcome access)
   -> independent custodian settlement
   -> registered Forecast paired evaluation
@@ -28,9 +28,11 @@ cannot supply an alternative settlement reference or an ad-hoc holdout.
 
 - Only Forecast V6 is accepted: the enhanced method therefore has a frozen
   program/version/freeze identity, rather than a reused string label.
-- The utility pairing must use the exact Forecast Pairing V2, its same
+- The utility pairing must use the exact Forecast Pairing V3, its same frozen
   company-and-time holdout, the same Decision Contract and its one H1 evidence
-  budget, plus exactly the pairing's baseline and enhanced method IDs.
+  budget, plus exactly the pairing's baseline and enhanced method IDs. V3
+  derives the unseen economic cluster and non-overlapping outcome windows from
+  the registered training program.
 - A new utility pairing is rejected at or after the canonical holdout outcome
   window, and after custodian outcome access. Its payload timestamp must equal
   the append-only control-plane timestamp; exact immutable replay remains

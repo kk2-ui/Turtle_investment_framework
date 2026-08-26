@@ -446,6 +446,23 @@ def test_v6_forecast_binds_the_preexisting_immutable_method_identity() -> None:
                 f"HOLDOUT:SYNTHETIC:METHOD:{program_id.rsplit('-', 1)[-1]}", v6["company_id"], v6["cutoff_at"],
             ),
         )
+    conn.execute(
+        """UPDATE judgment_training_episodes
+              SET outcome_window_ends_at = ?
+            WHERE training_episode_id = ?""",
+        ("2023-01-01T00:00:00+00:00", "JTE:synthetic-forecast-method:method"),
+    )
+    conn.execute(
+        """INSERT INTO judgment_training_episodes
+               (training_episode_id, program_id, case_id, company_id, company_cluster_id, industry_id,
+                decision_domain, cutoff_at, outcome_not_before, outcome_window_ends_at, lane, provenance_role,
+                outcome_access, holdout_axis, artifacts_json)
+               VALUES ('JTE:synthetic-forecast-method:training', 'JTP:synthetic-forecast-method',
+                       'TRAINING:SYNTHETIC:METHOD', 'CN:SYNTHETIC:TRAIN', 'COMPANY:SYNTHETIC:TRAIN',
+                       'SYNTHETIC', 'FORECAST', '2019-12-31T23:59:59+00:00',
+                       '2020-01-01T00:00:00+00:00', '2021-01-01T00:00:00+00:00',
+                       'HISTORICAL_TRAINING', 'HISTORICAL_SELF_REPLAY', 'PIT_OUTCOME_SEALED', NULL, '{}')""",
+    )
     conn.commit()
     pairing = _pairing(v6)
     pairing["schema_version"] = pit.PAIRING_SCHEMA_VERSION_V2
@@ -458,14 +475,67 @@ def test_v6_forecast_binds_the_preexisting_immutable_method_identity() -> None:
         control.register_forecast_method_pairing(conn, pairing, frozen_at="2021-01-06T00:00:00+00:00")
     assert exc_info.value.code == "pairing_invalid"
     assert "program_id_must_match_forecast_method_identity" in str(exc_info.value)
+    pairing["schema_version"] = pit.PAIRING_SCHEMA_VERSION_V3
     pairing["holdout_binding"] = {
         "program_id": "JTP:synthetic-forecast-method",
         "holdout_training_episode_id": "JTE:synthetic-forecast-method:method",
         "evaluated_cell_refs": [{"dimension_id": "NORMAL_EARNINGS", "window_id": "ONE_YEAR"}],
     }
-    assert control.register_forecast_method_pairing(
-        conn, pairing, frozen_at="2021-01-06T00:00:00+00:00",
-    )["frozen"]
+    conn.execute(
+        """UPDATE judgment_training_episodes
+              SET company_cluster_id = ?
+            WHERE training_episode_id = ?""",
+        ("COMPANY:SYNTHETIC:METHOD", "JTE:synthetic-forecast-method:training"),
+    )
+    with pytest.raises(control.ForecastControlError) as exc_info:
+        control.register_forecast_method_pairing(conn, pairing, frozen_at="2021-01-06T00:00:00+00:00")
+    assert exc_info.value.code == "pairing_holdout_binding_invalid"
+    assert "reuses a historical training company cluster" in str(exc_info.value)
+    conn.execute(
+        """UPDATE judgment_training_episodes
+              SET company_cluster_id = ?, outcome_window_ends_at = ?
+            WHERE training_episode_id = ?""",
+        (
+            "COMPANY:SYNTHETIC:TRAIN", "2023-01-01T00:00:00+00:00",
+            "JTE:synthetic-forecast-method:training",
+        ),
+    )
+    with pytest.raises(control.ForecastControlError) as exc_info:
+        control.register_forecast_method_pairing(conn, pairing, frozen_at="2021-01-06T00:00:00+00:00")
+    assert exc_info.value.code == "pairing_holdout_binding_invalid"
+    assert "outcome window overlaps a historical training outcome window" in str(exc_info.value)
+    conn.execute(
+        """UPDATE judgment_training_episodes
+              SET outcome_window_ends_at = ?
+            WHERE training_episode_id = ?""",
+        ("2021-01-01T00:00:00+00:00", "JTE:synthetic-forecast-method:training"),
+    )
+    conn.commit()
+    legacy_v2 = deepcopy(pairing)
+    legacy_v2["schema_version"] = pit.PAIRING_SCHEMA_VERSION_V2
+    legacy_v2["pairing_id"] += ":V2"
+    with pytest.raises(control.ForecastControlError) as exc_info:
+        control.register_forecast_method_pairing(conn, legacy_v2, frozen_at="2021-01-06T00:00:00+00:00")
+    assert exc_info.value.code == "pairing_requires_frozen_company_time_outcome_window_binding"
+    access = {
+        "schema_version": pit.OUTCOME_ACCESS_SCHEMA_VERSION_V3,
+        "authorization_id": "OUTCOME-ACCESS:SYNTHETIC:METHOD:V6",
+        "forecast_id": v6["forecast_id"], "company_id": v6["company_id"], "cutoff_at": v6["cutoff_at"],
+        "custodian_id": decision_contract["roles"]["outcome_custodian_id"],
+        "authorized_at": "2021-01-07T00:00:00+00:00",
+        "outcome_windows": list(pit.FORECAST_WINDOWS),
+        "outcome_measurement_contract_ref": deepcopy(v6["outcome_measurement_contract_ref"]),
+        "forecast_acquisition_scope_ref": deepcopy(v6["forecast_acquisition_scope_ref"]),
+        "object_class": "FORECAST_OUTCOME_ACCESS_AUTHORIZATION",
+        "claim_class": "CUSTODIAN_ONLY_OUTCOME_ACQUISITION",
+        "allowed_outputs": list(pit.OUTCOME_ACCESS_ALLOWED_OUTPUTS),
+    }
+    assert control.authorize_forecast_outcome_access(conn, access)["authorized"]
+    with pytest.raises(control.ForecastControlError) as exc_info:
+        control.register_forecast_method_pairing(
+            conn, pairing, frozen_at="2021-01-06T00:00:00+00:00",
+        )
+    assert exc_info.value.code == "pairing_must_precede_outcome_access_authorization"
     conn.close()
 
 
@@ -720,6 +790,9 @@ def test_pairing_precedes_outcome_and_only_direct_forecast_policy_becomes_active
         "allowed_outputs": list(pit.OUTCOME_ACCESS_ALLOWED_OUTPUTS),
     }
     control.authorize_forecast_outcome_access(conn, access)
+    assert control.register_forecast_method_pairing(
+        conn, deepcopy(pairing), frozen_at="2021-01-03T12:00:00+00:00",
+    )["idempotent"]
     post_access_pairing = deepcopy(pairing)
     post_access_pairing["pairing_id"] = "PAIRING:POST_ACCESS:REJECTED"
     with pytest.raises(control.ForecastControlError) as exc_info:

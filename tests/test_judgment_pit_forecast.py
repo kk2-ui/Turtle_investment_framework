@@ -1082,7 +1082,7 @@ def test_forecast_learning_routes_direct_feedback_and_holds_method_changes_as_ca
         measurement_contract=measurement_contract, observation_receipts=observations,
     )
     assert not candidate_result["valid"]
-    assert "attribution.candidate_scope_requires_canonical_company_time_holdout_binding" in candidate_result["findings"]
+    assert "attribution.candidate_scope_requires_frozen_company_time_outcome_window_binding" in candidate_result["findings"]
 
     pairing_v2 = deepcopy(pairing)
     pairing_v2["schema_version"] = pit.PAIRING_SCHEMA_VERSION_V2
@@ -1112,7 +1112,7 @@ def test_forecast_learning_routes_direct_feedback_and_holds_method_changes_as_ca
         measurement_contract=measurement_contract, observation_receipts=observations,
     )
     assert not candidate_result["valid"]
-    assert "attribution.candidate_scope_requires_forecast_method_identity_epoch" in candidate_result["findings"]
+    assert "attribution.candidate_scope_requires_frozen_company_time_outcome_window_binding" in candidate_result["findings"]
 
     no_pair = deepcopy(candidate)
     no_pair.pop("paired_evaluation_id")

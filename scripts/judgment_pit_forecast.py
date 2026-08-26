@@ -49,6 +49,7 @@ SHADOW_SCHEMA_VERSION_V2 = "turtle-prospective-shadow-episode.v2"
 SHADOW_SCHEMA_VERSION_V3 = "turtle-prospective-shadow-episode.v3"
 PAIRING_SCHEMA_VERSION = "turtle-pit-forecast-pairing.v1"
 PAIRING_SCHEMA_VERSION_V2 = "turtle-pit-forecast-pairing.v2"
+PAIRING_SCHEMA_VERSION_V3 = "turtle-pit-forecast-pairing.v3"
 PAIRED_EVALUATION_SCHEMA_VERSION = "turtle-pit-forecast-paired-evaluation.v1"
 ATTRIBUTION_SCHEMA_VERSION = "turtle-pit-forecast-error-attribution.v1"
 
@@ -209,8 +210,14 @@ _HOLDOUT_BINDING_KEYS = {
     "program_id", "method_version", "holdout_training_episode_id", "company_id", "company_cluster_id",
     "cutoff_at", "outcome_not_before", "method_frozen_at", "method_freeze_recorded_at", "evaluated_cells",
 }
+_HOLDOUT_BINDING_V3_KEYS = _HOLDOUT_BINDING_KEYS | {
+    "outcome_window_ends_at", "training_company_cluster_ids", "training_outcome_windows",
+}
 _HOLDOUT_BINDING_REQUEST_KEYS = {"program_id", "holdout_training_episode_id", "evaluated_cell_refs"}
 _HOLDOUT_BINDING_CELL_KEYS = {"dimension_id", "window_id", "outcome_period_end"}
+_HOLDOUT_TRAINING_WINDOW_KEYS = {
+    "training_episode_id", "company_cluster_id", "opens_after", "closes_at",
+}
 _SHADOW_KEYS = {
     "schema_version", "shadow_episode_id", "forecast_epoch_id", "company_id", "issuer_id", "cutoff_at",
     "forecast_id", "outcome_windows", "custodian_id", "status", "object_class", "claim_class", "allowed_outputs",
@@ -2133,7 +2140,7 @@ def validate_forecast_pairing(
     item = _closed(pairing, _PAIRING_KEYS, "pairing", findings, required=_PAIRING_KEYS - {"holdout_binding"})
     frozen = _mapping(forecast)
     schema_version = item.get("schema_version")
-    if schema_version not in {PAIRING_SCHEMA_VERSION, PAIRING_SCHEMA_VERSION_V2}:
+    if schema_version not in {PAIRING_SCHEMA_VERSION, PAIRING_SCHEMA_VERSION_V2, PAIRING_SCHEMA_VERSION_V3}:
         findings.append("pairing.schema_version_invalid")
     _require_text(item, "pairing_id", "pairing", findings)
     for field in ("forecast_id", "company_id", "cutoff_at"):
@@ -2191,10 +2198,14 @@ def validate_forecast_pairing(
     if schema_version == PAIRING_SCHEMA_VERSION:
         if item.get("holdout_binding") is not None:
             findings.append("pairing.v1_cannot_retrofit_canonical_holdout_binding")
-    elif schema_version == PAIRING_SCHEMA_VERSION_V2:
+    elif schema_version in {PAIRING_SCHEMA_VERSION_V2, PAIRING_SCHEMA_VERSION_V3}:
         if frozen.get("schema_version") not in MEASUREMENT_CONTRACT_FORECAST_SCHEMA_VERSIONS:
-            findings.append("pairing.v2_requires_measurement_contract_forecast")
-        binding = _closed(item.get("holdout_binding"), _HOLDOUT_BINDING_KEYS, "pairing.holdout_binding", findings)
+            findings.append("pairing.v2_v3_requires_measurement_contract_forecast")
+        binding_keys = (
+            _HOLDOUT_BINDING_V3_KEYS
+            if schema_version == PAIRING_SCHEMA_VERSION_V3 else _HOLDOUT_BINDING_KEYS
+        )
+        binding = _closed(item.get("holdout_binding"), binding_keys, "pairing.holdout_binding", findings)
         for field in (
             "program_id", "method_version", "holdout_training_episode_id", "company_id", "company_cluster_id",
         ):
@@ -2213,6 +2224,72 @@ def validate_forecast_pairing(
         freeze_recorded = _instant(binding.get("method_freeze_recorded_at"), "pairing.holdout_binding.method_freeze_recorded_at", findings)
         if method_frozen and freeze_recorded and method_frozen > freeze_recorded:
             findings.append("pairing.holdout_binding.method_freeze_time_order_invalid")
+        if schema_version == PAIRING_SCHEMA_VERSION_V3:
+            if frozen.get("schema_version") != FORECAST_SCHEMA_VERSION_V6:
+                findings.append("pairing.v3_requires_forecast_method_identity_epoch")
+            holdout_opens = _instant(
+                binding.get("outcome_not_before"), "pairing.holdout_binding.outcome_not_before", findings,
+            )
+            holdout_closes = _instant(
+                binding.get("outcome_window_ends_at"),
+                "pairing.holdout_binding.outcome_window_ends_at", findings,
+            )
+            if holdout_opens and holdout_closes and holdout_closes <= holdout_opens:
+                findings.append("pairing.holdout_binding.outcome_window_must_end_after_open")
+            training_clusters = _items(binding.get("training_company_cluster_ids"))
+            if (
+                not training_clusters
+                or any(not _text(cluster) for cluster in training_clusters)
+                or len(set(training_clusters)) != len(training_clusters)
+            ):
+                findings.append("pairing.holdout_binding.training_company_cluster_ids_invalid")
+            elif binding.get("company_cluster_id") in training_clusters:
+                findings.append("pairing.holdout_binding.company_cluster_must_be_unseen_in_training")
+            training_windows = _items(binding.get("training_outcome_windows"))
+            window_clusters: set[str] = set()
+            window_episodes: set[str] = set()
+            if not training_windows:
+                findings.append("pairing.holdout_binding.training_outcome_windows_must_be_nonempty")
+            for index, raw_window in enumerate(training_windows):
+                window = _closed(
+                    raw_window, _HOLDOUT_TRAINING_WINDOW_KEYS,
+                    f"pairing.holdout_binding.training_outcome_windows[{index}]", findings,
+                )
+                episode_id = _require_text(
+                    window, "training_episode_id",
+                    f"pairing.holdout_binding.training_outcome_windows[{index}]", findings,
+                )
+                cluster_id = _require_text(
+                    window, "company_cluster_id",
+                    f"pairing.holdout_binding.training_outcome_windows[{index}]", findings,
+                )
+                if episode_id in window_episodes:
+                    findings.append(
+                        f"pairing.holdout_binding.training_outcome_windows[{index}].training_episode_id_must_not_repeat"
+                    )
+                window_episodes.add(episode_id)
+                window_clusters.add(cluster_id)
+                opens_after = _instant(
+                    window.get("opens_after"),
+                    f"pairing.holdout_binding.training_outcome_windows[{index}].opens_after", findings,
+                )
+                closes_at = _instant(
+                    window.get("closes_at"),
+                    f"pairing.holdout_binding.training_outcome_windows[{index}].closes_at", findings,
+                )
+                if opens_after and closes_at and closes_at <= opens_after:
+                    findings.append(
+                        f"pairing.holdout_binding.training_outcome_windows[{index}].must_end_after_open"
+                    )
+                if (
+                    opens_after and closes_at and holdout_opens and holdout_closes
+                    and opens_after < holdout_closes and holdout_opens < closes_at
+                ):
+                    findings.append(
+                        f"pairing.holdout_binding.training_outcome_windows[{index}].must_not_overlap_holdout_outcome_window"
+                    )
+            if set(training_clusters) != window_clusters:
+                findings.append("pairing.holdout_binding.training_clusters_must_match_outcome_windows")
         if frozen.get("schema_version") == FORECAST_SCHEMA_VERSION_V6:
             method_ref = _mapping(frozen.get("forecast_method_ref"))
             if binding.get("program_id") != method_ref.get("program_id"):
@@ -2474,8 +2551,8 @@ def validate_forecast_error_attribution(
                 comparison = _mapping(comparison_by_cell.get(key))
                 if not comparison or float(comparison.get("enhanced_minus_baseline_brier", 0.0)) >= 0.0:
                     findings.append("attribution.candidate_scope_requires_strict_paired_brier_improvement")
-            if pair.get("schema_version") != PAIRING_SCHEMA_VERSION_V2:
-                findings.append("attribution.candidate_scope_requires_canonical_company_time_holdout_binding")
+            if pair.get("schema_version") != PAIRING_SCHEMA_VERSION_V3:
+                findings.append("attribution.candidate_scope_requires_frozen_company_time_outcome_window_binding")
             elif frozen.get("schema_version") != FORECAST_SCHEMA_VERSION_V6:
                 findings.append("attribution.candidate_scope_requires_forecast_method_identity_epoch")
             else:

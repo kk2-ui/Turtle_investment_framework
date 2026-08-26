@@ -127,8 +127,8 @@ def validate_decision_utility_control_pairing(
 
     The existing v1 objects remain useful for fixture-only design exercises.
     A control-plane pairing is deliberately different: it can only cite the
-    pre-outcome Forecast Pairing V2 that already owns the canonical
-    company-and-time holdout binding.
+    pre-outcome Forecast Pairing V3 that already owns the frozen
+    company-and-time outcome-window binding.
     """
     findings: list[str] = []
     item = _closed(pairing, _CONTROL_PAIRING_KEYS, "decision_utility_control_pairing", findings)
@@ -151,8 +151,8 @@ def validate_decision_utility_control_pairing(
         findings.append("decision_utility_control_pairing.requires_forecast_v6_method_identity")
     if item.get("forecast_pairing_id") != forecast_pair.get("pairing_id"):
         findings.append("decision_utility_control_pairing.forecast_pairing_id_must_match_registered_pairing")
-    if forecast_pair.get("schema_version") != "turtle-pit-forecast-pairing.v2":
-        findings.append("decision_utility_control_pairing.requires_canonical_forecast_pairing_v2")
+    if forecast_pair.get("schema_version") != "turtle-pit-forecast-pairing.v3":
+        findings.append("decision_utility_control_pairing.requires_frozen_forecast_pairing_v3")
     if forecast_pair.get("forecast_id") != frozen.get("forecast_id"):
         findings.append("decision_utility_control_pairing.forecast_pairing_must_match_frozen_forecast")
     if not isinstance(forecast_pair.get("holdout_binding"), dict):
@@ -190,7 +190,7 @@ def validate_decision_utility_control_evaluation(
     """Validate an independent decision review from exact persisted outcomes.
 
     The input intentionally has no caller-authored settlement reference or
-    holdout.  Both are resolved from the immutable Forecast Pairing V2 and
+    holdout.  Both are resolved from the immutable Forecast Pairing V3 and
     its registered paired evaluation by the control plane.
     """
     pairing_result = validate_decision_utility_control_pairing(

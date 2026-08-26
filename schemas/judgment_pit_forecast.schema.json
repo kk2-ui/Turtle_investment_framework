@@ -503,7 +503,7 @@
       "type": "object", "additionalProperties": false,
       "required": ["schema_version", "pairing_id", "forecast_id", "company_id", "cutoff_at", "task_contract_ref", "evidence_budget_id", "source_packet_refs", "baseline_method_id", "enhanced_method_id", "baseline_cells", "object_class", "claim_class", "allowed_outputs"],
       "properties": {
-        "schema_version": {"enum": ["turtle-pit-forecast-pairing.v1", "turtle-pit-forecast-pairing.v2"]},
+        "schema_version": {"enum": ["turtle-pit-forecast-pairing.v1", "turtle-pit-forecast-pairing.v2", "turtle-pit-forecast-pairing.v3"]},
         "pairing_id": {"$ref": "#/$defs/nonempty"},
         "forecast_id": {"$ref": "#/$defs/nonempty"},
         "company_id": {"$ref": "#/$defs/nonempty"},
@@ -523,6 +523,9 @@
             "company_cluster_id": {"$ref": "#/$defs/nonempty"}, "cutoff_at": {"type": "string", "format": "date-time"},
             "outcome_not_before": {"type": "string", "format": "date-time"}, "method_frozen_at": {"type": "string", "format": "date-time"},
             "method_freeze_recorded_at": {"type": "string", "format": "date-time"},
+            "outcome_window_ends_at": {"type": "string", "format": "date-time"},
+            "training_company_cluster_ids": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/nonempty"}},
+            "training_outcome_windows": {"type": "array", "minItems": 1, "items": {"type": "object", "additionalProperties": false, "required": ["training_episode_id", "company_cluster_id", "opens_after", "closes_at"], "properties": {"training_episode_id": {"$ref": "#/$defs/nonempty"}, "company_cluster_id": {"$ref": "#/$defs/nonempty"}, "opens_after": {"type": "string", "format": "date-time"}, "closes_at": {"type": "string", "format": "date-time"}}}},
             "evaluated_cells": {"type": "array", "minItems": 1, "items": {"type": "object", "additionalProperties": false, "required": ["dimension_id", "window_id", "outcome_period_end"], "properties": {"dimension_id": {"enum": ["NORMAL_EARNINGS", "ROIC_OR_OPERATING_MARGIN", "CASH_CONVERSION_AND_CAPEX_BURDEN", "LEVERAGE_AND_FINANCIAL_RESILIENCE", "COMPETITIVE_POSITION", "PERMANENT_LOSS_RISK"]}, "window_id": {"enum": ["ONE_YEAR", "THREE_YEAR", "FIVE_YEAR"]}, "outcome_period_end": {"type": "string", "format": "date"}}}}
           }
         },
@@ -530,7 +533,10 @@
         "claim_class": {"const": "PAIRED_FORECAST_ABLATION"},
         "allowed_outputs": {"const": ["FORECAST_EVALUATION_ONLY", "RESEARCH_AGENDA"]}
       },
-      "allOf": [{"if": {"properties": {"schema_version": {"const": "turtle-pit-forecast-pairing.v2"}}}, "then": {"required": ["holdout_binding"]}}]
+      "allOf": [
+        {"if": {"properties": {"schema_version": {"enum": ["turtle-pit-forecast-pairing.v2", "turtle-pit-forecast-pairing.v3"]}}}, "then": {"required": ["holdout_binding"]}},
+        {"if": {"properties": {"schema_version": {"const": "turtle-pit-forecast-pairing.v3"}}}, "then": {"properties": {"holdout_binding": {"required": ["outcome_window_ends_at", "training_company_cluster_ids", "training_outcome_windows"]}}}}
+      ]
     },
     "forecast_paired_evaluation": {
       "type": "object", "additionalProperties": false,

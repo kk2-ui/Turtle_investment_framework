@@ -94,6 +94,7 @@
           "decision_domain": {"type": "string", "minLength": 1},
           "cutoff_at": {"type": "string", "format": "date-time"},
           "outcome_not_before": {"type": "string", "format": "date-time"},
+          "outcome_window_ends_at": {"type": ["string", "null"], "format": "date-time"},
           "lane": {
             "enum": [
               "HISTORICAL_TRAINING",

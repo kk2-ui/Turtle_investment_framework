@@ -106,6 +106,20 @@ def _iso(value: datetime) -> str:
     return value.astimezone(timezone.utc).replace(microsecond=0).isoformat()
 
 
+def _outcome_windows_overlap(
+    left_opens: datetime | None, left_closes: datetime | None,
+    right_opens: datetime | None, right_closes: datetime | None,
+) -> bool:
+    """Return whether two frozen outcome-resolution spans intersect.
+
+    Resolution windows are half-open: a later window may open at the instant an
+    earlier one closes without sharing an observable outcome period.
+    """
+    if None in {left_opens, left_closes, right_opens, right_closes}:
+        return False
+    return left_opens < right_closes and right_opens < left_closes
+
+
 def _now_dt() -> datetime:
     return datetime.now(timezone.utc).replace(microsecond=0)
 
@@ -144,7 +158,7 @@ def _validate_episode(
         return [prefix + "_not_object"], None
     allowed = {
         "training_episode_id", "case_id", "company_id", "company_cluster_id",
-        "industry_id", "decision_domain", "cutoff_at", "outcome_not_before",
+        "industry_id", "decision_domain", "cutoff_at", "outcome_not_before", "outcome_window_ends_at",
         "lane", "provenance_role", "outcome_access", "holdout_axis", "artifacts",
     }
     unexpected = sorted(set(episode) - allowed)
@@ -160,10 +174,19 @@ def _validate_episode(
         findings.append(prefix + ".training_episode_id_invalid")
     cutoff = _parse_time(episode.get("cutoff_at"), prefix + ".cutoff_at")
     outcome_not_before = _parse_time(episode.get("outcome_not_before"), prefix + ".outcome_not_before")
+    outcome_window_ends_at = None
     if cutoff is None:
         findings.append(prefix + ".cutoff_at_invalid")
     if outcome_not_before is None:
         findings.append(prefix + ".outcome_not_before_invalid")
+    if episode.get("outcome_window_ends_at") is not None:
+        outcome_window_ends_at = _parse_time(
+            episode.get("outcome_window_ends_at"), prefix + ".outcome_window_ends_at",
+        )
+        if outcome_window_ends_at is None:
+            findings.append(prefix + ".outcome_window_ends_at_invalid")
+        elif outcome_not_before is not None and outcome_window_ends_at <= outcome_not_before:
+            findings.append(prefix + ".outcome_window_must_end_after_open")
     if cutoff is not None and outcome_not_before is not None and outcome_not_before <= cutoff:
         findings.append(prefix + ".outcome_not_after_cutoff")
 
@@ -372,16 +395,29 @@ def validate_program(
     training = [item for item in normalized if item.get("lane") == "HISTORICAL_TRAINING"]
     holdouts = [item for item in normalized if item.get("lane") == "HISTORICAL_HOLDOUT"]
     training_clusters = {str(item.get("company_cluster_id")) for item in training}
-    training_cutoffs = [_parse_time(item.get("cutoff_at"), "cutoff_at") for item in training]
-    latest_training_cutoff = max((item for item in training_cutoffs if item is not None), default=None)
     for item in holdouts:
         axis = item.get("holdout_axis")
         prefix = "episodes[" + str(episodes.index(item)) + "]"
         if axis in {"COMPANY", "COMPANY_AND_TIME"} and item.get("company_cluster_id") in training_clusters:
             findings.append(prefix + ".company_holdout_cluster_seen_in_training")
-        cutoff = _parse_time(item.get("cutoff_at"), prefix + ".cutoff_at")
-        if axis in {"TIME", "COMPANY_AND_TIME"} and latest_training_cutoff and cutoff and cutoff <= latest_training_cutoff:
-            findings.append(prefix + ".time_holdout_not_after_training_cutoffs")
+        if axis in {"TIME", "COMPANY_AND_TIME"} and item.get("outcome_window_ends_at") is not None:
+            holdout_opens = _parse_time(item.get("outcome_not_before"), prefix + ".outcome_not_before")
+            holdout_closes = _parse_time(item.get("outcome_window_ends_at"), prefix + ".outcome_window_ends_at")
+            missing_training_span = any(
+                training_item.get("outcome_window_ends_at") is None for training_item in training
+            )
+            if missing_training_span or holdout_opens is None or holdout_closes is None:
+                findings.append(prefix + ".time_holdout_requires_frozen_outcome_windows")
+            elif any(
+                _outcome_windows_overlap(
+                    _parse_time(training_item.get("outcome_not_before"), "training.outcome_not_before"),
+                    _parse_time(training_item.get("outcome_window_ends_at"), "training.outcome_window_ends_at"),
+                    holdout_opens,
+                    holdout_closes,
+                )
+                for training_item in training
+            ):
+                findings.append(prefix + ".time_holdout_outcome_window_overlaps_training")
 
     return {
         "schema_version": "judgment-training-program-validation.v1",
@@ -431,6 +467,7 @@ def initialize(conn: sqlite3.Connection) -> None:
           decision_domain TEXT NOT NULL,
           cutoff_at TEXT NOT NULL,
           outcome_not_before TEXT NOT NULL,
+          outcome_window_ends_at TEXT,
           lane TEXT NOT NULL,
           provenance_role TEXT NOT NULL,
           outcome_access TEXT NOT NULL,
@@ -492,6 +529,11 @@ def initialize(conn: sqlite3.Connection) -> None:
         conn.execute("ALTER TABLE judgment_training_programs ADD COLUMN required_selection_admission_version TEXT")
     if "method_freeze_recorded_at" not in existing_program_columns:
         conn.execute("ALTER TABLE judgment_training_programs ADD COLUMN method_freeze_recorded_at TEXT")
+    existing_episode_columns = {
+        row[1] for row in conn.execute("PRAGMA table_info(judgment_training_episodes)").fetchall()
+    }
+    if "outcome_window_ends_at" not in existing_episode_columns:
+        conn.execute("ALTER TABLE judgment_training_episodes ADD COLUMN outcome_window_ends_at TEXT")
     conn.commit()
     feedback_control.initialize(conn)
 
@@ -697,10 +739,6 @@ def _resolve_holdout_link_rows(
     links: list[dict[str, Any]] = []
     training_rows = [row for row in episode_rows if row["lane"] == "HISTORICAL_TRAINING"]
     training_clusters = {row["company_cluster_id"] for row in training_rows}
-    latest_training_cutoff = max(
-        (_parse_time(row["cutoff_at"], "cutoff_at") for row in training_rows),
-        default=None,
-    )
     outcome_event_types = sorted(
         feedback_control.OUTCOME_PIPELINE_EVENTS
         | feedback_control.OUTCOME_EVENTS
@@ -757,16 +795,35 @@ def _resolve_holdout_link_rows(
             raise TrainingProgramError(
                 "linked company holdout cannot reuse a successor training company cluster"
             )
-        source_cutoff = _parse_time(source["cutoff_at"], "source_holdout.cutoff_at")
+        # Outcome-window metadata was added after the original linked-program
+        # contract. Preserve linked legacy programs; a V3 Forecast pairing is
+        # the operation that requires a complete window proof.
         if (
             source["holdout_axis"] in {"TIME", "COMPANY_AND_TIME"}
-            and latest_training_cutoff is not None
-            and source_cutoff is not None
-            and source_cutoff <= latest_training_cutoff
+            and source.get("outcome_window_ends_at") is not None
         ):
-            raise TrainingProgramError(
-                "linked time holdout must be later than successor training cutoffs"
+            source_opens = _parse_time(source["outcome_not_before"], "source_holdout.outcome_not_before")
+            source_closes = _parse_time(
+                source.get("outcome_window_ends_at"), "source_holdout.outcome_window_ends_at",
             )
+            training_windows = [
+                (
+                    _parse_time(item["outcome_not_before"], "training.outcome_not_before"),
+                    _parse_time(item.get("outcome_window_ends_at"), "training.outcome_window_ends_at"),
+                )
+                for item in training_rows
+            ]
+            if source_opens is None or source_closes is None or any(None in window for window in training_windows):
+                raise TrainingProgramError(
+                    "linked time holdout requires frozen outcome-window ends for itself and every successor training episode"
+                )
+            if any(
+                _outcome_windows_overlap(training_opens, training_closes, source_opens, source_closes)
+                for training_opens, training_closes in training_windows
+            ):
+                raise TrainingProgramError(
+                    "linked time holdout outcome window overlaps a successor training outcome window"
+                )
         freeze_event = conn.execute(
             """SELECT artifact_ref, recorded_at, content_json, content_text
                  FROM judgment_training_artifact_events
@@ -884,6 +941,10 @@ def register_program(conn: sqlite3.Connection, contract_path: str | Path) -> dic
             "program_id": program["program_id"],
             "cutoff_at": _iso(_parse_time(episode["cutoff_at"], "cutoff_at")),
             "outcome_not_before": _iso(_parse_time(episode["outcome_not_before"], "outcome_not_before")),
+            "outcome_window_ends_at": (
+                _iso(_parse_time(episode["outcome_window_ends_at"], "outcome_window_ends_at"))
+                if episode.get("outcome_window_ends_at") is not None else None
+            ),
             "holdout_axis": episode.get("holdout_axis"),
             "artifacts_json": json.dumps(artifacts, ensure_ascii=False, sort_keys=True),
         })
@@ -1221,6 +1282,10 @@ def reserve_holdout(
         "program_id": program_id,
         "cutoff_at": _iso(_parse_time(episode["cutoff_at"], "cutoff_at")),
         "outcome_not_before": _iso(_parse_time(episode["outcome_not_before"], "outcome_not_before")),
+        "outcome_window_ends_at": (
+            _iso(_parse_time(episode["outcome_window_ends_at"], "outcome_window_ends_at"))
+            if episode.get("outcome_window_ends_at") is not None else None
+        ),
         "holdout_axis": episode["holdout_axis"],
         "artifacts_json": json.dumps(artifacts, ensure_ascii=False, sort_keys=True),
     }
@@ -1689,6 +1754,7 @@ def freeze_method(conn: sqlite3.Connection, *, program_id: str, method_version: 
 
 def resolve_frozen_company_time_holdout(
     conn: sqlite3.Connection, *, program_id: str, training_episode_id: str, as_of: str,
+    require_outcome_window: bool = False,
 ) -> dict[str, Any]:
     """Return the canonical pre-outcome holdout identity for Forecast pairing.
 
@@ -1727,7 +1793,7 @@ def resolve_frozen_company_time_holdout(
     outcome_not_before = _parse_time(row["outcome_not_before"], "holdout.outcome_not_before")
     if cutoff_at is None or outcome_not_before is None or cutoff_at >= outcome_not_before:
         raise TrainingProgramError("company-and-time holdout has invalid frozen time metadata")
-    return {
+    resolved = {
         "program_id": row["program_id"],
         "method_version": row["method_version"],
         "holdout_training_episode_id": row["training_episode_id"],
@@ -1737,6 +1803,51 @@ def resolve_frozen_company_time_holdout(
         "outcome_not_before": _iso(outcome_not_before),
         "method_frozen_at": _iso(method_frozen_at),
         "method_freeze_recorded_at": _iso(receipt_at),
+    }
+    if not require_outcome_window:
+        return resolved
+
+    training_rows = [dict(item) for item in conn.execute(
+        """SELECT training_episode_id, company_cluster_id, outcome_not_before, outcome_window_ends_at
+             FROM judgment_training_episodes
+            WHERE program_id = ? AND lane = 'HISTORICAL_TRAINING'
+            ORDER BY training_episode_id""",
+        (program_id,),
+    ).fetchall()]
+    if not training_rows:
+        raise TrainingProgramError("company-and-time holdout program has no historical training truth")
+    training_clusters = {str(item["company_cluster_id"]) for item in training_rows}
+    if row["company_cluster_id"] in training_clusters:
+        raise TrainingProgramError("company-and-time holdout reuses a historical training company cluster")
+
+    holdout_closes = _parse_time(row["outcome_window_ends_at"], "holdout.outcome_window_ends_at")
+    if holdout_closes is None or holdout_closes <= outcome_not_before:
+        raise TrainingProgramError("company-and-time holdout requires a valid frozen outcome-window end")
+    training_windows: list[dict[str, str]] = []
+    for training in training_rows:
+        training_opens = _parse_time(training["outcome_not_before"], "training.outcome_not_before")
+        training_closes = _parse_time(
+            training["outcome_window_ends_at"], "training.outcome_window_ends_at",
+        )
+        if training_opens is None or training_closes is None or training_closes <= training_opens:
+            raise TrainingProgramError(
+                "company-and-time holdout requires a valid frozen outcome window for every historical training episode"
+            )
+        if _outcome_windows_overlap(training_opens, training_closes, outcome_not_before, holdout_closes):
+            raise TrainingProgramError(
+                "company-and-time holdout outcome window overlaps a historical training outcome window"
+            )
+        training_windows.append({
+            "training_episode_id": training["training_episode_id"],
+            "company_cluster_id": training["company_cluster_id"],
+            "opens_after": _iso(training_opens),
+            "closes_at": _iso(training_closes),
+        })
+    return {
+        **resolved,
+        "outcome_window_ends_at": _iso(holdout_closes),
+        "training_company_cluster_ids": sorted(training_clusters),
+        "training_outcome_windows": training_windows,
     }
 
 
