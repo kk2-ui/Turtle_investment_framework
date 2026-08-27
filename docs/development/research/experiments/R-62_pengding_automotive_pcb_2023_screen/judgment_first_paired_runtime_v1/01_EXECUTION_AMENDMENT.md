@@ -14,6 +14,10 @@ in the original contract:
 - Model: `gpt-5.6-sol`.
 - Reasoning effort: `high`.
 - Sandbox: read-only.
+- Prompt transport: because `codex exec` exposes one input channel, the frozen
+  shared system instruction, arm-specific block, user task, and evidence packet
+  are concatenated in that order into one immutable input. The concatenation is
+  identical across arms except for the declared treatment block.
 - Tool instruction: the model is explicitly prohibited from calling tools.
 - Runtime acceptance: the JSON event stream must show no tool call. Any tool
   call invalidates that arm and ends the experiment without a semantic retry.
