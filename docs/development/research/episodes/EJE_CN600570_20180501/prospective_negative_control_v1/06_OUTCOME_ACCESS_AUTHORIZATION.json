@@ -1,0 +1,45 @@
+{
+  "schema_version": "prospective-enterprise-judgment-outcome-authorization.v1",
+  "authorization_id": "PEJOA:CN600570:20180501:FY2018:NEGATIVE_CONTROL:V1",
+  "campaign_id": "JUDGMENT_FIRST_12H_20260828",
+  "roster_rank": 3,
+  "company_id": "CN:600570",
+  "issuer_id": "ISSUER:CN:600570",
+  "cutoff_at": "2018-05-01T00:00:00+08:00",
+  "period": "FY2018",
+  "baseline_source_commit": "a6505af",
+  "initial_application_commit": "048a37a",
+  "final_preoutcome_method_commit": "594f42c",
+  "preoutcome_review_ref": "05_INDEPENDENT_PREOUTCOME_REVIEW.md",
+  "review_verdict": "ACCEPT",
+  "authorized_outcome_source": {
+    "publisher": "CNINFO",
+    "document_type": "OFFICIAL_FULL_ANNUAL_REPORT",
+    "fiscal_year": 2018,
+    "published_no_later_than": "2019-05-01",
+    "selection_rule": "UNIQUE_QUALIFYING_FULL_REPORT; EXCLUDE_SUMMARY; IF_MULTIPLE_FULL_REPORTS_USE_THE_LATEST_CORRECTED_OR_REVISED_VERSION_PUBLISHED_WITHIN_THE_WINDOW"
+  },
+  "authorized_field_set": "UNION_OF_02_BASELINE_AND_03_ENHANCED_CONTRACT_FIELDS_ONLY",
+  "custodian_instructions": [
+    "FRESH_OUTCOME_ONLY_CONTEXT",
+    "DO_NOT_READ_ENTERPRISE_JUDGMENT_APPLICATION_PAIRED_UTILITY_OR_INVESTMENT_THESIS_BEYOND_THE_FIELD_CONTRACTS",
+    "USE_CUSTOMER_DEPLOYMENT_REPLACEMENT_REPEAT_REVENUE_R_AND_D_AND_CASH_FIELDS_NOT_PHYSICAL_CAPACITY_PRODUCTION_OR_INVENTORY",
+    "KEEP_CORE_BUSINESS_LINES_NEW_OPTIONS_ACQUISITIONS_AND_GROUP_CASH_RESPONSIBILITY_BOUNDARIES_SEPARATE",
+    "DO_NOT_TREAT_PRODUCT_RELEASE_PROTOTYPE_SINGLE_CASE_OR_BROAD_INTERNET_REVENUE_AS_REPEAT_NEW_OPTION_ECONOMICS",
+    "DO_NOT_DOUBLE_SUBTRACT_EXPENSED_R_AND_D_FROM_OCF",
+    "EXCLUDE_FINANCIAL_CASH_MANAGEMENT_PRINCIPAL_FROM_STRATEGIC_EXTERNAL_INVESTMENT_CASH",
+    "SETTLE_UNKNOWN_CASH_TERM_SIGN_AND_BOUND_WITHOUT_INVENTING_MAGNITUDE_OR_CAUSALITY",
+    "DO_NOT_READ_PRICE_RETURN_COMPARATIVE_FORMAL_VALUATION_OR_INVESTMENT_MATERIAL"
+  ],
+  "outcome_access": "AUTHORIZED_FOR_FRESH_CUSTODIAN_ONLY",
+  "permissions": {
+    "transfer_validated": "NOT_GRANTED",
+    "method_frozen": "NOT_GRANTED",
+    "comparative": "NOT_GRANTED",
+    "cjo": "NOT_GRANTED",
+    "formal_valuation": "NOT_GRANTED",
+    "buyband": "NOT_GRANTED",
+    "report": "NOT_GRANTED",
+    "investment_action": "NOT_GRANTED"
+  }
+}
