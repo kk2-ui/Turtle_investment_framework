@@ -31,7 +31,10 @@ except ModuleNotFoundError:  # pragma: no cover - direct script import
 OUTCOME_SOURCE_ACQUISITION_SCHEMA_VERSION = "turtle-minimal-historical-episode-outcome-source-acquisition.v1"
 PageLocator = Callable[[dict[str, Any], dict[str, Any]], str | None]
 CNInfoRequest = Callable[[dict[str, str]], dict[str, Any]]
-_REVISION_TITLE = re.compile(r"修订|更正|更新", re.IGNORECASE)
+_UNRESOLVED_ANNUAL_DISCLOSURE_TITLE = re.compile(
+    r"修订|更正|更新|已取消|取消|已撤销|撤销|撤回",
+    re.IGNORECASE,
+)
 _DIRECT_ANNUAL_REPORT_TITLE = re.compile(
     r"^20\d{2}年年度报告(?:（原始版）|\(原始版\))?$",
 )
@@ -171,12 +174,12 @@ def acquire_cninfo_outcome_source_candidate(
     # is the version to settle, even when it is the only row in a bounded
     # response.  This narrow adapter therefore records a mismatch rather than
     # choosing a revision or silently preferring an earlier title.
-    if any(_REVISION_TITLE.search(str(source.get("title") or "")) for source in annual_period_candidates):
+    if any(_UNRESOLVED_ANNUAL_DISCLOSURE_TITLE.search(str(source.get("title") or "")) for source in annual_period_candidates):
         return _mismatch(
             context,
             inventory_receipt_id=inventory_receipt_id,
-            rule="ANNUAL_REPORT_REVISION_OR_CORRECTION_UNRESOLVED",
-            detail="the bounded official metadata enumeration includes a revised, corrected, or updated annual report title",
+            rule="ANNUAL_REPORT_REVISION_OR_WITHDRAWAL_UNRESOLVED",
+            detail="the bounded official metadata enumeration includes a revised, corrected, updated, cancelled, withdrawn, or revoked annual-report disclosure",
         )
     candidates = [
         source for source in annual_period_candidates
