@@ -1,0 +1,74 @@
+{
+  "schema_version": "runtime-judgment-prompt-paired-eval-contract.v1",
+  "experiment_id": "RJPPE:CN603589:FY2019:20260828:V1",
+  "campaign_id": "JUDGMENT_FIRST_12H_20260828",
+  "purpose": "TEST_WHETHER_THE_ACTIVE_COMPACT_JUDGMENT_CORRECTIONS_CHANGE_RESULT_AFTER_ENTERPRISE_SYNTHESIS_UNDER_IDENTICAL_EVIDENCE_AND_OUTPUT_BUDGET",
+  "evaluation_type": "RETROSPECTIVE_SAME_EVIDENCE_PROMPT_BEHAVIOR_EVAL_NOT_PROSPECTIVE_TRANSFER_VALIDATION",
+  "company_id": "CN:603589",
+  "cutoff_at": "2019-05-01T00:00:00+08:00",
+  "outcome_period": "FY2019",
+  "identical_evidence_refs": [
+    "../../episodes/EJE_CN603589_20190501/prospective_extension_replication_v1/01_PREOUTCOME_EVIDENCE_AND_JUDGMENT_FREEZE.md",
+    "../../episodes/EJE_CN603589_20190501/prospective_extension_replication_v1/03_DIRECT_JUDGMENT_CALIBRATION_FREEZE.json",
+    "../../episodes/EJE_CN603589_20190501/prospective_extension_replication_v1/06_CUSTODIAN_OUTCOME_SETTLEMENT.json"
+  ],
+  "excluded_refs": [
+    "../../episodes/EJE_CN603589_20190501/prospective_extension_replication_v1/07_INDEPENDENT_POSTOUTCOME_JUDGMENT_REVIEW.md",
+    "../../episodes/EJE_CN603589_20190501/prospective_extension_replication_v1/08_INVESTOR_READOUT.md",
+    "../../episodes/EJE_CN603589_20190501/prospective_extension_replication_v1/09_FEEDBACK_COMPLETION_RECEIPT.json",
+    "../../episodes/EJE_CN603589_20190501/prospective_extension_replication_v1/10_POSTOUTCOME_SCENARIO_MODEL_CORRECTION.md"
+  ],
+  "evidence_projection": {
+    "preoutcome_markdown": "FULL_FILE",
+    "calibration_json_keys": [
+      "material_judgment_predictions",
+      "probability_semantics",
+      "mutually_exclusive_outcome_cells",
+      "scenario_probabilities"
+    ],
+    "custodian_settlement": "FULL_FILE",
+    "same_for_both_arms": true
+  },
+  "arms": {
+    "baseline": {
+      "prompt_source_commit": "3e78a7904ed0be345b4fbdde6ff30c136ece0f1a",
+      "prompt_block": "_judgment_first_prompt_block(synthesis)",
+      "output": "runtime_prompt_paired_eval_v1/01_BASELINE_OUTPUT.md"
+    },
+    "enhanced": {
+      "prompt_source_commit": "c372d8dc843afc291d786263e6f11584a6a1169c",
+      "prompt_block": "_judgment_first_prompt_block(synthesis)",
+      "output": "runtime_prompt_paired_eval_v1/02_ENHANCED_OUTPUT.md"
+    }
+  },
+  "model_contract": {
+    "provider": "ANTHROPIC",
+    "model": "claude-sonnet-4-20250514",
+    "temperature": 0.0,
+    "maximum_calls": 2,
+    "maximum_output_tokens_per_call": 5000,
+    "retry_on_transport_error": false,
+    "semantic_replay": false
+  },
+  "identical_task": [
+    "STATE_THE_THREE_MOST_IMPORTANT_POSTOUTCOME_ENTERPRISE_JUDGMENTS",
+    "EXPLAIN_MECHANISM_STRONGEST_RIVAL_AND_WHAT_CHANGED_FROM_PREOUTCOME",
+    "ASSESS_MANAGEMENT_CUSTOMER_OR_OPERATIONS_OWNER_CASH_AND_PERMANENT_LOSS",
+    "GIVE_OPTIMISTIC_BASE_AND_PESSIMISTIC_NEXT_PERIOD_TREATMENTS_WITHOUT_FALSE_PRECISION",
+    "GIVE_DIRECTIONAL_VALUATION_TREATMENT_AND_REVERSAL_FACTS_WITHOUT_FORMAL_VALUE_OR_BUYBAND",
+    "FLAG_ANY_DEFECT_IN_THE_FROZEN_SCENARIO_MAPPING_OR_SCORE_IF_MATERIAL"
+  ],
+  "material_hypothesis": "THE_ENHANCED_ARM_SHOULD_NOT_PROPAGATE_STRONG_FUNDING_TO_ALL_BRAND_REGION_OR_INVENTORY_RISKS_SHOULD_NOT_TREAT_A_COARSE_BASE_LABEL_AS_SUCCESS_AND_SHOULD_PRESERVE_UPWARD_OUTSIDE_ANHUI_EVIDENCE_WITHOUT_ERASING_CORE_VOLUME_OR_AGED_CAPITAL_RISKS",
+  "utility_rule": "CREDIT_ONLY_A_MATERIAL_DIFFERENCE_IN_MANAGEMENT_OWNER_CASH_PERMANENT_LOSS_SCENARIO_OR_VALUATION_TREATMENT; DO_NOT_CREDIT_LENGTH_CLARITY_FORMAT_MORE_CAVEATS_OR_RULE_RECITATION",
+  "independent_review_output": "runtime_prompt_paired_eval_v1/03_INDEPENDENT_PAIRED_REVIEW.md",
+  "permissions": {
+    "transfer_validated": "NOT_GRANTED",
+    "method_frozen": "NOT_GRANTED",
+    "comparative": "NOT_GRANTED",
+    "cjo": "NOT_GRANTED",
+    "formal_valuation": "NOT_GRANTED",
+    "buyband": "NOT_GRANTED",
+    "report": "NOT_GRANTED",
+    "investment_action": "NOT_GRANTED"
+  }
+}
