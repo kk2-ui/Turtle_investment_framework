@@ -228,7 +228,6 @@ def _validate_industry_universe(
     companies: set[str] = set()
     seen_cutoffs: set[str] = set()
     core_companies: set[str] = set()
-    contextual_companies: set[str] = set()
     for index, raw in enumerate(members):
         path = f"appliance_j234.industry_universe[{index}]"
         member = _closed(raw, _UNIVERSE_MEMBER_KEYS, path, findings)
@@ -262,8 +261,6 @@ def _validate_industry_universe(
             _add(findings, f"{path}.universe_role_invalid")
         elif role == "CORE_SYSTEM_RECONSTRUCTION":
             core_companies.add(company_id)
-        else:
-            contextual_companies.add(company_id)
         state = member.get("evidence_state")
         if state not in UNIVERSE_EVIDENCE_STATES:
             _add(findings, f"{path}.evidence_state_invalid")
@@ -286,12 +283,10 @@ def _validate_industry_universe(
         _add(findings, "appliance_j234.industry_universe_requires_multiple_cutoffs")
     if len(core_companies) < 3:
         _add(findings, "appliance_j234.industry_universe_requires_three_core_companies")
-    if len(contextual_companies) < 2:
-        _add(findings, "appliance_j234.industry_universe_requires_two_contextual_members")
     for company_id in companies:
         if not all((company_id, cutoff_id) in by_key for cutoff_id in cutoffs):
             _add(findings, f"appliance_j234.industry_universe_missing_company_cutoff:{company_id}")
-    return by_key, core_companies, contextual_companies
+    return by_key, core_companies, set()
 
 
 def validate_appliance_j234(block: Any, *, source_register: Any) -> dict[str, Any]:
