@@ -1,0 +1,141 @@
+{
+  "schema_version": "real-judgment-feedback-completion-receipt.v1",
+  "receipt_id": "RJFC:CN603589:20190501:FY2019:V1",
+  "campaign_id": "JUDGMENT_FIRST_12H_20260828",
+  "company_id": "CN:603589",
+  "issuer_id": "ISSUER:CN:603589",
+  "cutoff_at": "2019-05-01T00:00:00+08:00",
+  "outcome_period": "FY2019",
+  "inputs": {
+    "judgment_freeze": "01_PREOUTCOME_EVIDENCE_AND_JUDGMENT_FREEZE.md",
+    "fair_baseline": "02_BASELINE_BEFORE_LEARNING_CONTRACT.json",
+    "direct_calibration_freeze": "03_DIRECT_JUDGMENT_CALIBRATION_FREEZE.json",
+    "preoutcome_review": "04_INDEPENDENT_PREOUTCOME_REVIEW.md",
+    "outcome_authorization": "05_OUTCOME_ACCESS_AUTHORIZATION.json",
+    "custodian_settlement": "06_CUSTODIAN_OUTCOME_SETTLEMENT.json"
+  },
+  "outcome_access_compliance": {
+    "price_or_return_used": false,
+    "fy2020_or_later_used": false,
+    "external_commentary_used": false,
+    "thresholds_changed_after_outcome": false,
+    "probabilities_changed_before_scoring": false,
+    "story_or_mapping_changed_after_outcome": false
+  },
+  "judgment_feedback": [
+    {
+      "judgment_id": "J1_HIGH_END_AND_ANHUI_CORE",
+      "realized_class": "MIXED_CORE_ABSORPTION",
+      "frozen_mapping": "PARTIAL",
+      "calibration": "MODERATELY_OVERCONFIDENT_ON_CONTINUED_PHYSICAL_ABSORPTION_BUT_NOT_WRONG_ON_MATURE_CORE_EARNINGS",
+      "confidence_before": 0.74,
+      "confidence_after_for_revised_proposition": 0.66,
+      "postoutcome_judgment": "ANHUI_MATURE_CORE_REMAINS_STRONG_BUT_INCREMENTAL_GROWTH_IS_MORE_PRICE_AND_MIX_LED_THAN_VOLUME_LED",
+      "management_update": "RETAIN_STRONG_CORE_EXECUTION_WITH_INDUSTRY_TAILWIND_AND_VOLUME_CAUTION",
+      "owner_cash_update": "RETAIN_MATURE_CORE_CASH_CAPACITY_SUBJECT_TO_GROUP_CASH_AND_NORMALIZATION_LIMITS",
+      "permanent_loss_update": "RETAIN_REGION_AND_AGED_CAPITAL_CONCENTRATION_WITHOUT_CALLING_CORE_FAILURE",
+      "valuation_update": "RETAIN_MATURE_ANHUI_NORMAL_EARNINGS_BUT_DO_NOT_EXTRAPOLATE_REVENUE_GROWTH_AS_PHYSICAL_DEMAND"
+    },
+    {
+      "judgment_id": "J2_OUTSIDE_ANHUI_NATIONALIZATION",
+      "realized_class": "BREADTH_AND_ECONOMICS_IMPROVE",
+      "frozen_mapping": "REFUTE_UP",
+      "calibration": "TOO_CONSERVATIVE_ON_THE_SPEED_AT_WHICH_CHANNEL_CLEANING_COULD_BECOME_BREADTH_IMPROVEMENT",
+      "confidence_before_in_structure_led_judgment": 0.68,
+      "confidence_after_for_revised_proposition": 0.63,
+      "postoutcome_judgment": "OUTSIDE_ANHUI_HAS_EARLY_BREADTH_AND_ECONOMIC_IMPROVEMENT_BUT_REPEATABLE_NATIONALIZATION_IS_NOT_YET_PROVEN",
+      "management_update": "UPGRADE_OUTSIDE_EXECUTION_TO_MEDIUM_HIGH_CONDITIONAL_SUBJECT_TO_REPEATABILITY",
+      "owner_cash_update": "RESEARCH_FUTURE_OUTSIDE_CASH_WITHOUT_ATTRIBUTING_CURRENT_GROUP_CASH_TO_THE_REGION",
+      "permanent_loss_update": "REGION_CONCENTRATION_RISK_DECLINES_ONLY_MARGINALLY_UNTIL_REPEAT_EVIDENCE",
+      "valuation_update": "ALLOW_LIMITED_OUTSIDE_ANHUI_GROWTH_OPTION_RESEARCH_WITHOUT_AUTOMATIC_BASE_VALUE"
+    },
+    {
+      "judgment_id": "J3_AGED_INVENTORY_PROJECT_CAPITAL_AND_CASH",
+      "realized_class": "SELF_FUNDED_BUT_CONCENTRATION_RISES_OR_ABSORPTION_IS_MIXED",
+      "frozen_mapping": "PARTIAL",
+      "calibration": "REASONABLE_ON_SELF_FUNDING_AND_LONG_TERM_CONCENTRATION_BUT_SLIGHTLY_OPTIMISTIC_ON_MATCHED_ABSORPTION",
+      "confidence_before": 0.70,
+      "confidence_after_for_self_funding_proposition": 0.76,
+      "postoutcome_judgment": "PROJECT_AND_AGED_INVENTORY_CAPITAL_ARE_STRONGLY_SELF_FUNDED_BUT_THE_UNRESOLVED_RISK_IS_FUTURE_ABSORPTION_AND_OPPORTUNITY_COST",
+      "management_update": "RETAIN_MEDIUM_HIGH_CONDITIONAL_CAPITAL_ALLOCATION_CREDIT",
+      "owner_cash_update": "UPGRADE_DIRECTIONAL_GROUP_CASH_CAPACITY_BUT_DO_NOT_LABEL_IT_NORMALIZED_OWNER_CASH_OR_AGED_COHORT_RETURN",
+      "permanent_loss_update": "RETAIN_LOW_NEAR_TERM_AND_MEDIUM_LONG_TERM_BRAND_REGION_AND_AGED_CAPITAL_RISK",
+      "valuation_update": "NO_SEPARATE_INVENTORY_MARKUP_AND_NO_ADDITIONAL_FUNDING_DISCOUNT"
+    }
+  ],
+  "postoutcome_top_three_judgments": [
+    "ANHUI_MATURE_CORE_REMAINS_PROFITABLE_BUT_INCREMENTAL_GROWTH_IS_MORE_PRICE_AND_MIX_LED_THAN_HIGH_END_VOLUME_LED",
+    "OUTSIDE_ANHUI_SHOWS_EARLY_BREADTH_REVENUE_VOLUME_MARGIN_AND_DISTRIBUTOR_IMPROVEMENT_BUT_NOT_YET_REPEATABLE_NATIONALIZATION",
+    "AGED_INVENTORY_AND_INDUSTRIAL_PARK_CAPITAL_HAVE_LOW_NEAR_TERM_FUNDING_RISK_BUT_MEDIUM_LONG_TERM_ABSORPTION_AND_OPPORTUNITY_COST_RISK"
+  ],
+  "management_assessment": {
+    "anhui_and_high_end_operations": "STRONG_WITH_INDUSTRY_TAILWIND_AND_VOLUME_CAUTION",
+    "outside_anhui": "MEDIUM_HIGH_EARLY_BREADTH_EVIDENCE_SUBJECT_TO_REPEATABILITY",
+    "capital_allocation": "MEDIUM_HIGH_CONDITIONAL_WITH_STRONG_SELF_FUNDING_BUT_UNPROVEN_AGED_CAPITAL_RETURN"
+  },
+  "owner_cash_and_permanent_loss": {
+    "owner_cash_direction": "STRONGER_DIRECTIONAL_GROUP_CASH_CAPACITY_WITHOUT_NORMALIZED_OWNER_CASH_LABEL",
+    "near_term_permanent_loss": "LOW",
+    "long_term_permanent_loss": "MEDIUM_FROM_BRAND_REGION_AGED_INVENTORY_AND_FIXED_CAPITAL_CONCENTRATION",
+    "risk_locus_change": "FROM_NEAR_TERM_FUNDING_CAPACITY_TO_FUTURE_BRAND_ABSORPTION_AND_CAPITAL_OPPORTUNITY_COST"
+  },
+  "scenario_probability_update": {
+    "before": {"OPTIMISTIC": 0.25, "BASE": 0.60, "PESSIMISTIC": 0.15},
+    "after_for_next_period": {"OPTIMISTIC": 0.30, "BASE": 0.62, "PESSIMISTIC": 0.08},
+    "changes_percentage_points": {"OPTIMISTIC": 5, "BASE": 2, "PESSIMISTIC": -7},
+    "reason": "OUTSIDE_BREADTH_IMPROVEMENT_RAISES_UPSIDE_STRONG_NET_CASH_AND_SELF_FUNDING_REDUCE_FUNDING_DOWNSIDE_WHILE_FLAT_HIGH_END_VOLUME_AND_FASTER_INVENTORY_GROWTH_KEEP_BASE_DOMINANT"
+  },
+  "valuation_direction": {
+    "change": "MODEST_UPWARD_DIRECTIONAL_UPDATE",
+    "source": "BETTER_OUTSIDE_ANHUI_OPTION_QUALITY_AND_LOWER_NEAR_TERM_FUNDING_RISK",
+    "prohibitions": [
+      "NO_PERMANENT_EXTRAPOLATION_OF_FY2019_REVENUE_GROWTH",
+      "NO_AUTOMATIC_BASE_VALUE_FOR_NATIONALIZATION",
+      "NO_SEPARATE_MARKUP_FOR_AGED_INVENTORY",
+      "NO_FORMAL_VALUATION_OR_MAXIMUM_BUY_PRICE"
+    ]
+  },
+  "brier_style_diagnostic": {
+    "high_end_and_anhui_core": 0.9458,
+    "outside_anhui": 0.6950,
+    "aged_inventory_project_capital_and_cash": 0.7350,
+    "three_cell_arithmetic_mean": 0.791933333333,
+    "scenario_score": 0.2450,
+    "interpretation": "DIAGNOSTIC_ONLY_THE_COARSE_BASE_SCENARIO_HIT_MASKS_OVERCONFIDENCE_IN_CORE_PHYSICAL_ABSORPTION_AND_UNDERCONFIDENCE_IN_OUTSIDE_BREADTH",
+    "method_validation_claim": false
+  },
+  "next_company_application": {
+    "company_id": "CN:603444",
+    "outcome_access_at_receipt": "SEALED",
+    "changes": [
+      "SEPARATE_CORE_WENDAO_DURABILITY_FROM_NON_WENDAO_PORTFOLIO_BREADTH_BEFORE_SCORING",
+      "DO_NOT_USE_TOTAL_OR_OPERATION_MODE_REVENUE_AND_MARGIN_AS_A_SUBSTITUTE_FOR_ACTIVE_RECHARGE_REPEAT_CONTRIBUTION_OR_PRODUCT_LIFECYCLE",
+      "TREAT_PRODUCT_EXIT_LICENSED_REVENUE_DECLINE_OR_TITLE_COUNT_AS_TWO_SIDED_PORTFOLIO_SIGNALS_NOT_MECHANICAL_FAILURE",
+      "SEPARATE_THE_ABILITY_TO_SELF_FUND_OFFICE_AND_PARK_CAPEX_FROM_THE_ECONOMIC_MERIT_OF_THAT_CAPITAL_ALLOCATION",
+      "ALLOCATE_EXPLICIT_PROBABILITY_TO_MIXED_CORE_PORTFOLIO_AND_CAPITAL_OUTCOMES_INSTEAD_OF_ALLOWING_A_SINGLE_BASE_LABEL_TO_HIDE_OFFSETTING_ERRORS"
+    ],
+    "more_fields_as_learning": false
+  },
+  "defensive_writing_verdict": {
+    "verdict": "PASS_WITH_ACTIVE_UPWARD_CORRECTION_REQUIRED",
+    "local_unknowns": ["TERMINAL_SELL_THROUGH", "DISTRIBUTOR_INVENTORY", "AGED_INVENTORY_COHORT_ROIC", "PRECISE_NORMALIZED_OWNER_CASH"],
+    "company_judgments_cancelled_by_unknowns": false,
+    "warning": "CONTINUING_TO_CALL_OUTSIDE_ANHUI_MERELY_STRUCTURE_LED_AFTER_REVENUE_VOLUME_MARGIN_AND_DISTRIBUTOR_BREADTH_IMPROVED_WOULD_BE_DEFENSIVE_UNDERJUDGMENT"
+  },
+  "completion": {
+    "status": "REAL_JUDGMENT_FEEDBACK_COMPLETED",
+    "basis": "THE_OUTCOME_MATERIALLY_CHANGED_CORE_VOLUME_CONFIDENCE_OUTSIDE_MANAGEMENT_AND_GROWTH_OPTION_TREATMENT_OWNER_CASH_RISK_LOCUS_SCENARIO_PROBABILITIES_AND_THE_NEXT_COMPANY_RESEARCH_BEHAVIOR",
+    "field_completion_is_not_the_basis": true,
+    "score_is_not_the_basis": true
+  },
+  "permissions": {
+    "transfer_validated": "NOT_GRANTED",
+    "method_frozen": "NOT_GRANTED",
+    "comparative": "NOT_GRANTED",
+    "cjo": "NOT_GRANTED",
+    "formal_valuation": "NOT_GRANTED",
+    "buyband": "NOT_GRANTED",
+    "report": "NOT_GRANTED",
+    "investment_action": "NOT_GRANTED"
+  }
+}
