@@ -1,10 +1,10 @@
 # Turtle Judgment-First × Decision-Focused Enterprise Judgment 统一设计
 
-> 状态：`RUNTIME_CONSTITUTION_IMPLEMENTED / PAIRED_RUNTIME_ACCEPTANCE_PENDING / PROSPECTIVE_TRAINING_NOT_YET_PROVED`
+> 状态：`RUNTIME_CONSTITUTION_IMPLEMENTED / PAIRED_RUNTIME_NO_MATERIAL_DIFFERENCE / PROSPECTIVE_DEVELOPMENT_EPISODE_ACTIVE`
 >
 > 日期：2026-08-27（Asia/Shanghai）
 >
-> 下一唯一动作：一次同 cutoff、同证据预算的旧提示词与 Judgment-First 提示词 paired run
+> 下一唯一动作：冻结并结算一条结果未读的 Judgment-First 企业判断开发 episode
 >
 > 权限：不授予 Comparative、CJO、正式估值、BuyBand、报告发布或投资动作
 
@@ -18,7 +18,7 @@ Turtle 只保留一个最高目标：
 
 | 层级 | 正式对象 | 解决的问题 | 当前状态 |
 | --- | --- | --- | --- |
-| 运行时行为 | [Judgment-First Agent Constitution](TURTLE_JUDGMENT_FIRST_AGENT_CONSTITUTION.md)、`AGENTS.md`、`agent_loop.py` | Agent 在每次研究、综合、报告和审阅中必须怎样判断 | 已实现，真实 paired 验收待做 |
+| 运行时行为 | [Judgment-First Agent Constitution](TURTLE_JUDGMENT_FIRST_AGENT_CONSTITUTION.md)、`AGENTS.md`、`agent_loop.py` | Agent 在每次研究、综合、报告和审阅中必须怎样判断 | 已实现；R-62 paired 未证明提示块的增量效用 |
 | 训练与评价 | [Decision-Focused Enterprise Judgment Training Architecture](TURTLE_DECISION_FOCUSED_ENTERPRISE_JUDGMENT_TRAINING_ARCHITECTURE.md) | episode 训练什么、怎样结算判断、何时算跨公司学习 | 设计完成，前瞻训练尚未证明 |
 | 证据底座 | PIT、source、responsibility boundary、outcome custodian、lifecycle | 哪些事实、比较和归因可以进入判断 | 继续保留，不再作为训练产品 |
 
@@ -167,7 +167,7 @@ LEARN / APPLY
 
 只有既有 calculation/valuation contract 允许时才输出数值区间。Judgment-First 不绕过 CJO、估值、BuyBand 或投资权限。
 
-## 6. 下一次唯一 paired runtime acceptance
+## 6. 已完成的 paired runtime diagnosis
 
 ### 6.1 测试对象
 
@@ -261,9 +261,17 @@ JUDGMENT_FIRST_RUNTIME_PAIRED_ACCEPTED
 - 方法冻结；
 - CJO、正式估值、BuyBand、报告发布或投资权限。
 
+### 6.7 2026-08-27 实际结果
+
+R-62 已按冻结合同完成两次主调用和一次独立盲审。Baseline 与 Enhanced 都把汽车/服务器 PCB 扩产处理为“已有产业入口、但客户吸收、单位经济和现金回收未获承保的资本密集型增长选择权”；两者都不把项目 IRR、成熟利润或增长溢价放入基准情景，并给出相同的升级证据。
+
+Enhanced 更明确写出最强乐观反方、融资来源不改变资本成本和产能闲置的永久损失机制；Baseline 对“计划投资不等于已经支付”略严谨。独立结论为 `NO_MATERIAL_DIFFERENCE`，因此不得标记 `JUDGMENT_FIRST_RUNTIME_PAIRED_ACCEPTED`。完整工件位于 [R-62 paired runtime v1](experiments/R-62_pengding_automotive_pcb_2023_screen/judgment_first_paired_runtime_v1/04_COMPLETION_RECEIPT.md)。
+
+这个结果只否定“新增提示块已经证明增量效用”。它不否定两臂都已达到判断优先的行为底线，也不应成为真实企业训练的新全局门槛。共同任务已经明确要求当前、可反驳、投资有用的判断，说明任务合同本身可能比重复宪法更接近有效干预。
+
 ## 7. Paired acceptance 之后的训练顺序
 
-只有上述运行时 paired test 通过，才进入一个真正未污染的公司/cutoff：
+paired test 决定能否把增量效用归功于新增提示块，不决定真实企业训练是否可以继续。只要实际输出已经形成有边界的当前判断，且没有材料性越界，即可进入一条 outcome 未读的开发公司/cutoff：
 
 1. 结果前冻结三项企业判断、最强反方和三种经营情景；
 2. 冻结管理层信用、owner-cash、永久损失和估值方向；
@@ -287,11 +295,11 @@ JUDGMENT_FIRST_RUNTIME_PAIRED_ACCEPTED
 
 尚未完成：
 
-- R-62 同证据预算 paired runtime acceptance；
+- 任何可归因于新增 prompt block 的 paired runtime acceptance；
 - 新未污染 episode 的 judgment settlement；
 - 跨公司 prospective decision-utility 验证；
 - 任何方法冻结或投资权限。
 
 因此当前最准确结论是：
 
-> **目标函数和运行时行为已经纠偏，但训练是否真正改善企业判断，仍需从一次 paired runtime 验收开始，用未见案例继续证明。**
+> **目标函数和运行时行为已经纠偏；R-62 没有证明新增提示块的独立增益。下一步不再优化措辞，而是在 outcome 未读的开发 episode 中结算企业判断本身，并把“更多字段但无 decision delta”继续判为无效学习。**
