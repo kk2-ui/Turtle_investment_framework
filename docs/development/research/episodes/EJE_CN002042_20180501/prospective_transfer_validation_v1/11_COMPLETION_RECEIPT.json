@@ -1,0 +1,81 @@
+{
+  "schema_version": "judgment-first-cross-company-transfer-completion.v1",
+  "receipt_id": "JFTCR:CN002394:CN002042:20180501:V1",
+  "status": "TRANSFER_VALIDATED",
+  "validation_scope": [
+    "LR:CN002394:ECONOMIC_ABSORPTION_AFTER_BUILD",
+    "LR:CN002394:TREND_REQUIRES_COMPARABLE_BASE"
+  ],
+  "source_episode": {
+    "company_id": "CN:002394",
+    "cutoff_at": "2019-05-01T00:00:00+08:00",
+    "completion_ref": "EJE_CN002394_20190501/prospective_judgment_v1/08_COMPLETION_RECEIPT.json"
+  },
+  "target_episode": {
+    "company_id": "CN:002042",
+    "cutoff_at": "2018-05-01T00:00:00+08:00",
+    "outcome_period": "FY2018",
+    "official_outcome_announcement_id": "1206093259",
+    "official_outcome_url": "https://static.cninfo.com.cn/finalpage/2019-04-25/1206093259.PDF"
+  },
+  "commit_chain": {
+    "preoutcome_freeze": "8f5e8b8",
+    "outcome_authorization": "d4d2834",
+    "coordinator_contamination_localization": "a02897b",
+    "independent_custodian_settlement": "69aaeb7",
+    "independent_paired_utility_review": "18e70aa"
+  },
+  "artifacts": {
+    "selection": "00_SELECTION_AND_CONTAMINATION_RECORD.md",
+    "preoutcome_judgment": "01_PREOUTCOME_EVIDENCE_AND_JUDGMENT_FREEZE.md",
+    "baseline_contract": "02_BASELINE_BEFORE_LEARNING_CONTRACT.json",
+    "enhanced_contract": "03_ENHANCED_AFTER_LEARNING_CONTRACT.json",
+    "application_freeze": "04_TRANSFER_APPLICATION_FREEZE.json",
+    "preoutcome_review": "05_INDEPENDENT_PREOUTCOME_TRANSFER_REVIEW.md",
+    "outcome_authorization": "06_OUTCOME_ACCESS_AUTHORIZATION.json",
+    "coordinator_contamination_record": "07_COORDINATOR_POST_AUTH_CONTAMINATION_RECORD.md",
+    "custodian_settlement": "08_CUSTODIAN_OUTCOME_SETTLEMENT.json",
+    "paired_utility_review": "09_INDEPENDENT_PAIRED_UTILITY_REVIEW.md",
+    "investor_readout": "10_INVESTOR_READOUT.md"
+  },
+  "baseline_result": {
+    "capital_allocation": "UNRESOLVED_WITH_PROJECT_VALUE_WITHHELD",
+    "owner_cash": "CURRENT_FY2018_NEGATIVE_WITHOUT_DIRECTIONAL_NORMALIZATION",
+    "permanent_loss": "VISIBLE_FINANCING_RISK_WITHOUT_CLOSED_ABSORPTION_MECHANISM",
+    "scenario": "PROJECT_EXECUTION_AND_CURRENT_LEVELS_WITH_CASH_PRESSURE",
+    "research_action": "PROJECT_STATUS_REPORTED_BENEFIT_AND_CURRENT_LEVELS"
+  },
+  "enhanced_result": {
+    "capital_allocation": "LOW_TO_CONDITIONAL_WITH_MATERIAL_NEGATIVE_COMPANY_LEVEL_ABSORPTION_EVIDENCE",
+    "owner_cash": "DIRECTIONAL_PROXY_NEGATIVE_AND_NOT_NORMALIZED_UPWARD",
+    "permanent_loss": "SUPPLY_TO_PHYSICAL_INVENTORY_TO_NEGATIVE_OWNER_CASH_TO_SHORT_TERM_FINANCING_PATH_SUPPORTED_AT_COMPANY_LEVEL",
+    "scenario": "BASE_CASE_REMAINS_FIRST_BUT_PESSIMISTIC_OUTRANKS_OPTIMISTIC_UNTIL_ABSORPTION_REVERSES",
+    "valuation_direction": "NO_NEW_CAPACITY_GROWTH_PREMIUM_PLUS_EXPLICIT_ABSORPTION_RISK_DISCOUNT",
+    "research_action": "PROJECT_UTILIZATION_UNIT_ECONOMICS_INVENTORY_TURNOVER_AND_CASH_RECOVERY"
+  },
+  "material_utility": [
+    "CAPITAL_ALLOCATION_MOVED_FROM_DIRECTIONALLY_UNRESOLVED_TO_LOW_CONDITIONAL_WITH_NEGATIVE_EVIDENCE",
+    "CUSTOMER_JUDGMENT_DISTINGUISHED_REAL_DEMAND_FROM_INSUFFICIENT_SUPPLY_ABSORPTION",
+    "PERMANENT_LOSS_MECHANISM_MADE_OPERATIONAL",
+    "PESSIMISTIC_SCENARIO_RANKED_ABOVE_OPTIMISTIC",
+    "EXPLICIT_ABSORPTION_RISK_DISCOUNT_ADDED",
+    "NEXT_RESEARCH_MOVED_FROM_BUILD_STATUS_TO_ECONOMIC_ABSORPTION"
+  ],
+  "non_attributable_prior_knowledge": [
+    "BUILD_COMPLETION_IS_NOT_CAPITAL_RETURN",
+    "FY2017_CASH_PRESSURE_WAS_ALREADY_VISIBLE",
+    "NEW_CAPACITY_ALREADY_RECEIVED_NO_GROWTH_PREMIUM",
+    "PERIMETER_FIRST_MEASUREMENT_GATE"
+  ],
+  "local_measurement_limit": "SEVEN_FY2018_SCOPE_ADDITIONS_LIMIT_CLEAN_GROUP_TRENDS_ONLY; CURRENT_LEVELS_PRODUCT_PHYSICAL_TONNES_AND_PROJECT_EVENTS_CONTINUE",
+  "defensive_writing_audit": "PASS",
+  "method_freeze": "NOT_AUTHORIZED",
+  "permissions": {
+    "comparative": "NOT_GRANTED",
+    "cjo": "NOT_GRANTED",
+    "formal_valuation": "NOT_GRANTED",
+    "buyband": "NOT_GRANTED",
+    "report": "NOT_GRANTED",
+    "investment_action": "NOT_GRANTED"
+  }
+}

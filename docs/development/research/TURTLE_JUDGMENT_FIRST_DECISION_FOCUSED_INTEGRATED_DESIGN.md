@@ -1,10 +1,10 @@
 # Turtle Judgment-First × Decision-Focused Enterprise Judgment 统一设计
 
-> 状态：`RUNTIME_CONSTITUTION_IMPLEMENTED / PAIRED_RUNTIME_NO_MATERIAL_DIFFERENCE / PROSPECTIVE_FEEDBACK_MATERIAL_DELTA_COMPLETED / TRANSFER_NOT_STARTED`
+> 状态：`RUNTIME_CONSTITUTION_IMPLEMENTED / PAIRED_RUNTIME_NO_MATERIAL_DIFFERENCE / PROSPECTIVE_FEEDBACK_MATERIAL_DELTA_COMPLETED / NARROW_TRANSFER_VALIDATED`
 >
 > 日期：2026-08-27（Asia/Shanghai）
 >
-> 下一唯一动作：把已观察到的判断/测量变化前瞻应用到另一家公司，再读取其结果
+> 下一动作：停止扩建 gate；在自然出现的后续公司 episode 中继续复验两条候选规则，不冻结方法
 >
 > 权限：不授予 Comparative、CJO、正式估值、BuyBand、报告发布或投资动作
 
@@ -19,7 +19,7 @@ Turtle 只保留一个最高目标：
 | 层级 | 正式对象 | 解决的问题 | 当前状态 |
 | --- | --- | --- | --- |
 | 运行时行为 | [Judgment-First Agent Constitution](TURTLE_JUDGMENT_FIRST_AGENT_CONSTITUTION.md)、`AGENTS.md`、`agent_loop.py` | Agent 在每次研究、综合、报告和审阅中必须怎样判断 | 已实现；R-62 paired 未证明提示块的增量效用 |
-| 训练与评价 | [Decision-Focused Enterprise Judgment Training Architecture](TURTLE_DECISION_FOCUSED_ENTERPRISE_JUDGMENT_TRAINING_ARCHITECTURE.md) | episode 训练什么、怎样结算判断、何时算跨公司学习 | 设计完成，前瞻训练尚未证明 |
+| 训练与评价 | [Decision-Focused Enterprise Judgment Training Architecture](TURTLE_DECISION_FOCUSED_ENTERPRISE_JUDGMENT_TRAINING_ARCHITECTURE.md) | episode 训练什么、怎样结算判断、何时算跨公司学习 | 两条规则已完成一次独立跨公司前瞻验证；方法尚未冻结 |
 | 证据底座 | PIT、source、responsibility boundary、outcome custodian、lifecycle | 哪些事实、比较和归因可以进入判断 | 继续保留，不再作为训练产品 |
 
 因此不新建训练 lane、不新增全局 gate，也不要求把两份详细文档压成一个巨大运行时提示词。运行时只注入紧凑宪法；完整训练 episode 才消费八项企业判断和反馈合同。
@@ -293,13 +293,14 @@ paired test 决定能否把增量效用归功于新增提示块，不决定真�
 - 决策导向 episode、UNKNOWN、反馈和 transfer 语义已经设计；
 - Round 6--10 已作为奖励错位的真实诊断证据。
 - CN:002394 × 2019-05-01 结果未读开发 episode 已完成 FY2019 独立结算；管理层执行信用、owner-cash 金额判断和下一 cutoff 研究问题发生材料性变化。
+- CN:002042 × 2018-05-01 已在 FY2018 结果读取前冻结合理 baseline 与 enhanced 字段；独立 custodian 和 reviewer 确认，同定义产销存比较与建成后经济吸收链把资本配置从方向未决收窄为已有材料性负面证据，并改变永久损失机制、情景排序、估值折扣和研究动作。
+- `LR:CN002394:ECONOMIC_ABSORPTION_AFTER_BUILD` 与 `LR:CN002394:TREND_REQUIRES_COMPARABLE_BASE` 获得一次有界 `TRANSFER_VALIDATED`；共同使用的 perimeter-first 只是一项测量修正，未被计作企业洞察。
 
 尚未完成：
 
 - 任何可归因于新增 prompt block 的 paired runtime acceptance；
-- 跨公司 prospective decision-utility 验证；
 - 任何方法冻结或投资权限。
 
 因此当前最准确结论是：
 
-> **目标函数和运行时行为已经纠偏；R-62 没有证明新增提示块的独立增益，但 CN:002394 的前瞻开发 episode 已产生真实 decision delta。下一步不是继续增加 gate，而是把“趋势主张同时冻结可比基期”及“建成后转查经济吸收”应用到另一家 outcome 未读公司，检验能否改善后续判断。**
+> **目标函数和运行时行为已经纠偏；R-62 仍未证明新增提示块的独立增益，但 CN:002394 的真实反馈已在 CN:002042 的未读结果 episode 中产生材料性的跨公司判断改善。当前应停止扩建训练门槛，把“趋势主张冻结可比基期”和“建成后转查经济吸收”作为有界候选规则继续自然复验；一次迁移验证不等于方法冻结或投资授权。**
