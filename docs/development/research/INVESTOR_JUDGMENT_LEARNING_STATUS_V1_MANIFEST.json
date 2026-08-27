@@ -1,0 +1,51 @@
+{
+  "schema_version": "investor-judgment-learning-input-manifest.v1",
+  "as_of": "2026-08-27",
+  "protocol_refs": [
+    "docs/development/research/TURTLE_JUDGMENT_FLYWHEEL.md",
+    "docs/development/research/TURTLE_JUDGMENT_VALIDATION_PROTOCOL.md",
+    "docs/development/research/TURTLE_RESEARCH_PREPARATION_ITERATION_LOG.md#P-38"
+  ],
+  "entries": [
+    {
+      "round_id": "ROUND5",
+      "projection_type": "ROUND5_LOCAL_JUDGMENT_CHANGE",
+      "completion_artifact": "docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/36_round5_real_feedback_completion_receipt.json",
+      "settlement_artifact": "docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/34_round5_real_feedback_settlement.json",
+      "independent_review_artifact": "docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/35_round5_independent_postoutcome_review.json",
+      "invalidation_artifact": ""
+    },
+    {
+      "round_id": "ROUND6",
+      "projection_type": "ROUND6_CROSS_COMPANY_DEVELOPMENT_UTILITY",
+      "completion_artifact": "docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/44_round6_completion_receipt.json",
+      "settlement_artifact": "docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/42_round6_canonical_field_settlement.json",
+      "independent_review_artifact": "docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/43_round6_independent_paired_utility_review.json",
+      "invalidation_artifact": ""
+    },
+    {
+      "round_id": "ROUND7",
+      "projection_type": "ROUND7_MULTIDIMENSIONAL_DEVELOPMENT_UTILITY",
+      "completion_artifact": "docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/53_round7_completion_receipt.json",
+      "settlement_artifact": "docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/51_round7_canonical_field_settlement.json",
+      "independent_review_artifact": "docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/52_round7_independent_multidimensional_review.json",
+      "invalidation_artifact": ""
+    },
+    {
+      "round_id": "ROUND8",
+      "projection_type": "ROUND8_CROSS_INDUSTRY_NO_ADVANTAGE",
+      "completion_artifact": "docs/development/research/industry_learning_blocks/CN_FRANCHISE_EXPRESS_2018_2019/12_round8_completion_receipt.json",
+      "settlement_artifact": "docs/development/research/industry_learning_blocks/CN_FRANCHISE_EXPRESS_2018_2019/08_outcome_settlement.json",
+      "independent_review_artifact": "docs/development/research/industry_learning_blocks/CN_FRANCHISE_EXPRESS_2018_2019/11a_independent_utility_review_acceptance.json",
+      "invalidation_artifact": ""
+    },
+    {
+      "round_id": "ROUND9",
+      "projection_type": "ROUND9_METHOD_COMPARISON_INVALID",
+      "completion_artifact": "docs/development/research/industry_learning_blocks/CN_APPLIANCE_CHANGHONG_2018_2019_ROUND9/19_round9_completion_receipt.json",
+      "settlement_artifact": "docs/development/research/industry_learning_blocks/CN_APPLIANCE_CHANGHONG_2018_2019_ROUND9/15_outcome_settlement.json",
+      "independent_review_artifact": "docs/development/research/industry_learning_blocks/CN_APPLIANCE_CHANGHONG_2018_2019_ROUND9/18_independent_postoutcome_review.json",
+      "invalidation_artifact": "docs/development/research/industry_learning_blocks/CN_APPLIANCE_CHANGHONG_2018_2019_ROUND9/17_method_feedback_invalidation.json"
+    }
+  ]
+}

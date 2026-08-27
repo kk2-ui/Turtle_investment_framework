@@ -1,0 +1,523 @@
+{
+  "schema_version": "investor-judgment-learning-read-model.v1",
+  "as_of": "2026-08-27",
+  "manifest_ref": "docs/development/research/INVESTOR_JUDGMENT_LEARNING_STATUS_V1_MANIFEST.json",
+  "protocol_refs": [
+    "docs/development/research/TURTLE_JUDGMENT_FLYWHEEL.md",
+    "docs/development/research/TURTLE_JUDGMENT_VALIDATION_PROTOCOL.md",
+    "docs/development/research/TURTLE_RESEARCH_PREPARATION_ITERATION_LOG.md#P-38"
+  ],
+  "purpose": "Separate completed pipeline work from evidence that investor judgment or method transfer improved.",
+  "current_ceiling": {
+    "strict_validation_level": "L1",
+    "investor_statement": "Turtle can repeatedly obtain and settle real company outcomes, and it has produced bounded company and development-method findings. It has not yet proved a diagnostic mechanism choice, transferable judgment method, or relative method advantage.",
+    "next_unmet_level": "L2",
+    "evidence_needed": [
+      "One frozen mechanism pair with distinct outcome predicates and an independently accepted diagnostic verdict.",
+      "UNKNOWN, MIXED, NOT_DIAGNOSTIC and MEASUREMENT_MISMATCH retained without replacement.",
+      "No use of the same settled outcome to repair and re-credit a method rule."
+    ]
+  },
+  "validation_ladder": [
+    {
+      "level": "K0",
+      "status": "AVAILABLE",
+      "definition": "Industry and teaching assets are traceable.",
+      "basis": "The manifest points to industry-block training receipts and bounded investor findings."
+    },
+    {
+      "level": "L0",
+      "status": "SUBSTANTIATED_FOR_RECORDED_EPISODES",
+      "definition": "PIT, freeze, refusal and boundary controls operate for the recorded episodes.",
+      "basis": "All projected entries preserve closed rights and explicit unresolved outcomes."
+    },
+    {
+      "level": "L1",
+      "status": "SUBSTANTIATED_FOR_RECORDED_EPISODES",
+      "definition": "Frozen outcome fields are acquired and mechanically settled from official sources.",
+      "basis": "5 company-cutoff settlements contain structured cell-level outcomes."
+    },
+    {
+      "level": "L2",
+      "status": "NOT_ESTABLISHED",
+      "definition": "A frozen mechanism pair receives an accepted diagnostic verdict under its original predicate.",
+      "basis": "No accepted same-pair A_ONLY/B_ONLY/MIXED/NOT_DIAGNOSTIC receipt under an original frozen predicate is present."
+    },
+    {
+      "level": "L3",
+      "status": "NOT_ESTABLISHED",
+      "definition": "A pre-outcome admitted primary path is compared with its strongest rival and fair baseline.",
+      "basis": "No accepted SELECTION_ADMITTED primary-path episode versus a fair baseline is present."
+    },
+    {
+      "level": "L4",
+      "status": "NOT_ESTABLISHED_DEVELOPMENT_EVIDENCE_PRESENT",
+      "definition": "A settled lesson changes a different company before freeze and is settled under the same definition.",
+      "basis": "Round 6 shows bounded cross-company utility, but not a formal same-definition learning-note application chain."
+    },
+    {
+      "level": "L5",
+      "status": "NOT_ESTABLISHED",
+      "definition": "Multiple independent L3 episodes are compared with a frozen simple baseline and complete denominator.",
+      "basis": "There are no multiple independent accepted L3 episodes under a frozen cohort aggregation plan."
+    }
+  ],
+  "evidence_inventory": [
+    {
+      "round_id": "ROUND5",
+      "projection_type": "ROUND5_LOCAL_JUDGMENT_CHANGE",
+      "evidence_id": "R5COMP:CN:CEMENT:600802:20150415:FY2015:V1",
+      "company_id": "CN:600802",
+      "cutoff_at": "2015-04-15T00:00:00+08:00",
+      "source_artifacts": {
+        "completion": "docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/36_round5_real_feedback_completion_receipt.json",
+        "settlement": "docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/34_round5_real_feedback_settlement.json",
+        "independent_review": "docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/35_round5_independent_postoutcome_review.json",
+        "invalidation": null
+      },
+      "independent_review_present": true,
+      "pipeline_proof": {
+        "status": "ACCEPTED",
+        "strict_level": "L1",
+        "statement": "14 frozen outcome cells were mechanically settled; unresolved and mismatched cells remain explicit."
+      },
+      "measurement_denominator": {
+        "total_cells": 14,
+        "status_counts": {
+          "OBSERVED": 8,
+          "UNKNOWN": 6
+        }
+      },
+      "diagnostic_denominator": {
+        "total_findings": 5,
+        "status_counts": {
+          "MIXED": 1,
+          "PARTIAL": 2,
+          "UNKNOWN": 2
+        }
+      },
+      "strict_level_ceiling": "L1",
+      "rights": {
+        "directional_learning": "NOT_AUTHORIZED",
+        "enterprise_learning": "NOT_AUTHORIZED",
+        "comparative": "NOT_AUTHORIZED",
+        "method_transfer": "NOT_AUTHORIZED",
+        "cjo": "NOT_AUTHORIZED",
+        "valuation": "NOT_AUTHORIZED",
+        "report": "NOT_AUTHORIZED",
+        "investment": "NOT_AUTHORIZED"
+      },
+      "company_finding": {
+        "status": "ACCEPTED_LOCAL_FINDING",
+        "statement": "Do not credit Furun as an executed driver of the issuer's customer, volume, profit or cash outcome."
+      },
+      "measurement_learning": {
+        "status": "SUPPORTED",
+        "statement": "Observed fields remain usable while UNKNOWN and MEASUREMENT_MISMATCH stay in the denominator."
+      },
+      "method_utility": {
+        "status": "NOT_EVALUATED",
+        "statement": "This round changed one issuer-level judgment boundary; it did not compare methods."
+      },
+      "transfer_evidence": {
+        "status": "NOT_EVALUATED",
+        "statement": "No different-company pre-freeze application was tested in this round."
+      },
+      "invalidated_evidence": null,
+      "what_remains_unproved": [
+        "DIRECT_CUSTOMER_RESPONSE",
+        "CEMENT_AND_CLINKER_VOLUME_DIRECTION",
+        "CEMENT_REALIZED_PRICE_DIRECTION",
+        "CEMENT_UNIT_COST_DIRECTION",
+        "FURUN_ACTION_EFFECT",
+        "OVERALL_MANAGEMENT_QUALITY",
+        "CAPITAL_RETURN",
+        "PERMANENT_LOSS"
+      ],
+      "next_evidence": [
+        "Freeze legal launch, decision control, issuer-product participation and customer response as separate cells in a future episode.",
+        "Obtain absolute same-definition baseline volume fields or freeze an interval inference rule before outcome access.",
+        "Study capital-return and permanent-loss persistence under a separate multi-period issuer-level contract."
+      ]
+    },
+    {
+      "round_id": "ROUND6",
+      "projection_type": "ROUND6_CROSS_COMPANY_DEVELOPMENT_UTILITY",
+      "evidence_id": "R6COMP:CN:CEMENT:600801:20160427:FY2016:V1",
+      "company_id": "CN:600801",
+      "cutoff_at": "2016-04-27T00:00:00+08:00",
+      "source_artifacts": {
+        "completion": "docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/44_round6_completion_receipt.json",
+        "settlement": "docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/42_round6_canonical_field_settlement.json",
+        "independent_review": "docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/43_round6_independent_paired_utility_review.json",
+        "invalidation": null
+      },
+      "independent_review_present": true,
+      "pipeline_proof": {
+        "status": "ACCEPTED",
+        "strict_level": "L1",
+        "statement": "11 frozen outcome cells were mechanically settled; unresolved and mismatched cells remain explicit."
+      },
+      "measurement_denominator": {
+        "total_cells": 11,
+        "status_counts": {
+          "OBSERVED": 6,
+          "UNKNOWN": 5
+        }
+      },
+      "diagnostic_denominator": {
+        "total_findings": 8,
+        "status_counts": {
+          "NOT_DIAGNOSTIC": 2,
+          "NO_DIFFERENCE": 2,
+          "POSITIVE_DEVELOPMENT_UTILITY": 1,
+          "UNKNOWN": 3
+        }
+      },
+      "strict_level_ceiling": "L1",
+      "rights": {
+        "directional_learning": "NOT_AUTHORIZED",
+        "enterprise_learning": "NOT_AUTHORIZED",
+        "comparative": "NOT_AUTHORIZED",
+        "method_transfer": "NOT_AUTHORIZED",
+        "cjo": "NOT_AUTHORIZED",
+        "valuation": "NOT_AUTHORIZED",
+        "report": "NOT_AUTHORIZED",
+        "investment": "NOT_AUTHORIZED"
+      },
+      "company_finding": {
+        "status": "ACCEPTED_BOUNDED_FINDING",
+        "statement": "华新在 2016 年推进了拉法基资产收购审批并提供运营支持服务，但相关资产年末仍未交割、未由华新控制、未进入华新合并报表。同期华新经营现金流改善、现金资本开支和短期借款下降，只能说明华新自身状态改善，不能证明并购效果或管理层整体质量。"
+      },
+      "measurement_learning": {
+        "status": "SUPPORTED",
+        "statement": "Observed fields remain usable while UNKNOWN and MEASUREMENT_MISMATCH stay in the denominator."
+      },
+      "method_utility": {
+        "status": "POSITIVE_DEVELOPMENT_UTILITY",
+        "statement": "The enhanced method materially improves the enterprise boundary: FY2016 contains formal acquisition progress and fee-based support, but not issuer control or consolidation. It prevents premature attribution of capacity, cash improvement or integration quality while identifying the next evidence required."
+      },
+      "transfer_evidence": {
+        "status": "DEVELOPMENT_EVIDENCE_ONLY",
+        "statement": "A prior boundary lesson was useful on a different company, but repository-memory exposure and the absence of a formal same-definition L4 chain prevent transfer validation."
+      },
+      "invalidated_evidence": null,
+      "what_remains_unproved": [
+        "并购最终成功、协同实现或管理层执行能力优秀。",
+        "支持范围内的华新产品参与、客户响应、owner cash 或永久损失结论。",
+        "方法已经通过真实盲法 holdout、跨公司迁移验证或可进入 CJO、估值和报告。"
+      ],
+      "next_evidence": [
+        "在下一 cutoff 核对实际交割日期、六个法律实体与十五家工厂的范围桥以及首次并表口径。",
+        "分别寻找被并购范围的华新产品、客户、单位经济和现金证据，不用华新整体指标代替。",
+        "在没有历史摘要污染的新公司和 cutoff 上重复同证据预算配对，建立真正的迁移验证。"
+      ]
+    },
+    {
+      "round_id": "ROUND7",
+      "projection_type": "ROUND7_MULTIDIMENSIONAL_DEVELOPMENT_UTILITY",
+      "evidence_id": "R7COMP:CN:CEMENT:600585:20140416:FY2014:V1",
+      "company_id": "CN:600585",
+      "cutoff_at": "2014-04-16T00:00:00+08:00",
+      "source_artifacts": {
+        "completion": "docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/53_round7_completion_receipt.json",
+        "settlement": "docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/51_round7_canonical_field_settlement.json",
+        "independent_review": "docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/52_round7_independent_multidimensional_review.json",
+        "invalidation": null
+      },
+      "independent_review_present": true,
+      "pipeline_proof": {
+        "status": "ACCEPTED",
+        "strict_level": "L1",
+        "statement": "17 frozen outcome cells were mechanically settled; unresolved and mismatched cells remain explicit."
+      },
+      "measurement_denominator": {
+        "total_cells": 17,
+        "status_counts": {
+          "MEASUREMENT_MISMATCH": 1,
+          "OBSERVED": 9,
+          "UNKNOWN": 7
+        }
+      },
+      "diagnostic_denominator": {
+        "total_findings": 8,
+        "status_counts": {
+          "NOT_DIAGNOSTIC": 1,
+          "NO_DIFFERENCE": 3,
+          "POSITIVE_DEVELOPMENT_UTILITY": 4
+        }
+      },
+      "strict_level_ceiling": "L1",
+      "rights": {
+        "directional_learning": "NOT_AUTHORIZED",
+        "enterprise_learning": "NOT_AUTHORIZED",
+        "comparative": "NOT_AUTHORIZED",
+        "method_transfer": "NOT_AUTHORIZED",
+        "cjo": "NOT_AUTHORIZED",
+        "valuation": "NOT_AUTHORIZED",
+        "report": "NOT_AUTHORIZED",
+        "investment": "NOT_AUTHORIZED"
+      },
+      "company_finding": {
+        "status": "ACCEPTED_BOUNDED_FINDING",
+        "statement": "海螺 FY2014 在行业增速放缓时仍录得更强销量、现金覆盖和更低净负债，但扩产、收购与外部成本变化尚未与企业自身能力分开；客户优势、owner cash、适应能力和永久损失结论继续保持未知。"
+      },
+      "measurement_learning": {
+        "status": "SUPPORTED",
+        "statement": "Observed fields remain usable while UNKNOWN and MEASUREMENT_MISMATCH stay in the denominator."
+      },
+      "method_utility": {
+        "status": "POSITIVE_DEVELOPMENT_UTILITY",
+        "statement": "Enhanced materially improves decision discipline by preventing industry and perimeter effects from becoming management, customer, or unit-economics credit. The settlement supports a narrower picture of relative volume and funding-capacity improvement, but it does not establish organic execution, customer advantage, durable unit economics, owner cash, adaptation success, or permanent-loss resilience."
+      },
+      "transfer_evidence": {
+        "status": "NOT_ESTABLISHED",
+        "statement": "One company-cutoff can show development utility but cannot establish cross-company transfer."
+      },
+      "invalidated_evidence": null,
+      "what_remains_unproved": [
+        "销量增长来自客户护城河、有机执行或管理层整体能力。",
+        "经营现金改善等同普通股 owner cash，或一年的降杠杆已经排除永久损失。",
+        "该方法已经通过无记忆污染的跨公司 holdout、可迁移至 CJO、估值、报告或投资动作。"
+      ],
+      "next_evidence": [
+        "下一 cutoff 先冻结新增与收购产能、存量有机销量以及具名计划里程碑的范围桥。",
+        "补充直接客户响应、同口径价格组合和水泥熟料毛利字段，不用公司总销量替代客户证据。",
+        "拆分维护性与增长性资本开支，并把营运资本变化桥接到保守 owner-cash 候选。",
+        "在未被后期摘要污染的不同公司和时期重复同证据预算测试，才判断是否允许方法迁移。"
+      ]
+    },
+    {
+      "round_id": "ROUND8",
+      "projection_type": "ROUND8_CROSS_INDUSTRY_NO_ADVANTAGE",
+      "evidence_id": "R8COMPLETE:CN002120:20190501:FY2019:V1",
+      "company_id": "CN:002120",
+      "cutoff_at": "2019-05-01T00:00:00+08:00",
+      "source_artifacts": {
+        "completion": "docs/development/research/industry_learning_blocks/CN_FRANCHISE_EXPRESS_2018_2019/12_round8_completion_receipt.json",
+        "settlement": "docs/development/research/industry_learning_blocks/CN_FRANCHISE_EXPRESS_2018_2019/08_outcome_settlement.json",
+        "independent_review": "docs/development/research/industry_learning_blocks/CN_FRANCHISE_EXPRESS_2018_2019/11a_independent_utility_review_acceptance.json",
+        "invalidation": null
+      },
+      "independent_review_present": true,
+      "pipeline_proof": {
+        "status": "ACCEPTED",
+        "strict_level": "L1",
+        "statement": "15 frozen outcome cells were mechanically settled; unresolved and mismatched cells remain explicit."
+      },
+      "measurement_denominator": {
+        "total_cells": 15,
+        "status_counts": {
+          "MEASUREMENT_MISMATCH": 6,
+          "OBSERVED": 6,
+          "UNKNOWN": 3
+        }
+      },
+      "diagnostic_denominator": {
+        "total_findings": 16,
+        "status_counts": {
+          "NOT_DIAGNOSTIC": 6,
+          "NO_DIFFERENCE": 10
+        }
+      },
+      "strict_level_ceiling": "L1",
+      "rights": {
+        "directional_learning": "NOT_AUTHORIZED",
+        "enterprise_learning": "NOT_AUTHORIZED",
+        "comparative": "NOT_AUTHORIZED",
+        "method_transfer": "NOT_AUTHORIZED",
+        "cjo": "NOT_AUTHORIZED",
+        "valuation": "NOT_AUTHORIZED",
+        "report": "NOT_AUTHORIZED",
+        "investment": "NOT_AUTHORIZED"
+      },
+      "company_finding": {
+        "status": "ACCEPTED_BOUNDED_FINDING",
+        "statement": "Round 8 completed real cross-industry feedback but did not prove that the Enhanced method outperformed the Baseline. The eight dimensions exposed boundary, unit and causal-attribution problems; without frozen method-specific resolution rules, those protections cannot be credited as a measured method advantage."
+      },
+      "measurement_learning": {
+        "status": "SUPPORTED",
+        "statement": "Observed fields remain usable while UNKNOWN and MEASUREMENT_MISMATCH stay in the denominator."
+      },
+      "method_utility": {
+        "status": "NO_ADVANTAGE_PROVED",
+        "statement": "The cross-industry comparison is valid negative evidence: it did not prove a material advantage for the enhanced method."
+      },
+      "transfer_evidence": {
+        "status": "NOT_ESTABLISHED",
+        "statement": "A valid no-advantage result cannot be promoted into method transfer."
+      },
+      "invalidated_evidence": null,
+      "what_remains_unproved": [
+        "The eight-dimensional Enhanced method has material overall utility versus an independent simple baseline.",
+        "The Enhanced method avoided an error that the frozen Baseline would mechanically have made.",
+        "The issuer outperformed a correctly bounded industry reference in the frozen result contract.",
+        "Customer loyalty or pricing power caused the volume and share gains.",
+        "Post-cutoff automation or network execution caused the FY2019 observations.",
+        "Headquarters cash represents distributable owner cash or healthy franchisee cash economics.",
+        "The franchise network avoided irreversible loss or established a durable moat.",
+        "The eight-dimensional method is cross-industry or prospectively validated.",
+        "The method is authorized for CJO, valuation, report or investment use."
+      ],
+      "next_evidence": [
+        "Repeat the same eight-dimensional skeleton on a second unseen industry/company cutoff.",
+        "Freeze a genuinely simple independent Baseline that does not reuse the Enhanced mechanism questions or rivals.",
+        "Freeze separate outcome resolution rules for Baseline and Enhanced before opening any result source.",
+        "Bind industry context to an industry responsibility perimeter rather than the issuer perimeter.",
+        "Make causal eligibility machine-readable and require evaluation findings to cite eligible cells.",
+        "Freeze complaints per million parcels as its own unit rather than a generic ratio.",
+        "Freeze a definitionally comparable per-parcel revenue, cost and gross-margin bridge before outcome access.",
+        "Add dated post-cutoff operating-event evidence when the official source provides it; otherwise retain UNKNOWN.",
+        "Keep franchisee economics and ordinary-share owner cash as separate evidence targets."
+      ]
+    },
+    {
+      "round_id": "ROUND9",
+      "projection_type": "ROUND9_METHOD_COMPARISON_INVALID",
+      "evidence_id": "R9CLOSEOUT:CN600839:20180930:FY2019:V2",
+      "company_id": "CN:600839",
+      "cutoff_at": "2018-09-30T23:59:59+08:00",
+      "source_artifacts": {
+        "completion": "docs/development/research/industry_learning_blocks/CN_APPLIANCE_CHANGHONG_2018_2019_ROUND9/19_round9_completion_receipt.json",
+        "settlement": "docs/development/research/industry_learning_blocks/CN_APPLIANCE_CHANGHONG_2018_2019_ROUND9/15_outcome_settlement.json",
+        "independent_review": "docs/development/research/industry_learning_blocks/CN_APPLIANCE_CHANGHONG_2018_2019_ROUND9/18_independent_postoutcome_review.json",
+        "invalidation": "docs/development/research/industry_learning_blocks/CN_APPLIANCE_CHANGHONG_2018_2019_ROUND9/17_method_feedback_invalidation.json"
+      },
+      "independent_review_present": true,
+      "pipeline_proof": {
+        "status": "ACCEPTED",
+        "strict_level": "L1",
+        "statement": "11 frozen outcome cells were mechanically settled; unresolved and mismatched cells remain explicit."
+      },
+      "measurement_denominator": {
+        "total_cells": 11,
+        "status_counts": {
+          "OBSERVED": 10,
+          "UNKNOWN": 1
+        }
+      },
+      "diagnostic_denominator": {
+        "total_findings": 1,
+        "status_counts": {
+          "INVALIDATED": 1
+        }
+      },
+      "strict_level_ceiling": "L1",
+      "rights": {
+        "directional_learning": "NOT_AUTHORIZED",
+        "enterprise_learning": "NOT_AUTHORIZED",
+        "comparative": "NOT_AUTHORIZED",
+        "method_transfer": "NOT_AUTHORIZED",
+        "cjo": "NOT_AUTHORIZED",
+        "valuation": "NOT_AUTHORIZED",
+        "report": "NOT_AUTHORIZED",
+        "investment": "NOT_AUTHORIZED"
+      },
+      "company_finding": {
+        "status": "ACCEPTED_OUTCOME_FINDING",
+        "statement": "FY2019 outcome facts support separating consolidated growth from white-goods economics, but the blind method comparison is invalid because the frozen resolver contains a model error."
+      },
+      "measurement_learning": {
+        "status": "SUPPORTED",
+        "statement": "Observed fields remain usable while UNKNOWN and MEASUREMENT_MISMATCH stay in the denominator."
+      },
+      "method_utility": {
+        "status": "INVALIDATED",
+        "statement": "Round 9 cannot establish whether the simple Baseline or the eight-dimensional method would have produced the better investment treatment under an unchanged blind resolver."
+      },
+      "transfer_evidence": {
+        "status": "INVALIDATED",
+        "statement": "The invalid comparison contributes no method or transfer evidence."
+      },
+      "invalidated_evidence": {
+        "status": "INVALIDATED",
+        "root_causes": [
+          "MODEL"
+        ],
+        "prohibited_claims": [
+          "METHOD_FEEDBACK_COMPLETED",
+          "NO_MATERIAL_METHOD_ADVANTAGE_PROVED",
+          "AVOIDED_ERROR",
+          "MATERIAL_IMPROVEMENT",
+          "METHOD_TRANSFER"
+        ],
+        "remediation": "Freeze a corrected scalar resolver and unique treatment-delta accounting in a new method epoch, then test it only on a different unseen company-cutoff."
+      },
+      "what_remains_unproved": [
+        "Either method produced the better investment treatment in a valid blind comparison.",
+        "Implemented actions caused better white-goods execution, customer preference or durable advantage.",
+        "Consolidated cash represents residual ordinary-share owner cash.",
+        "The portfolio disposal increased or reduced permanent-loss risk by itself.",
+        "Any method transfer, CJO, valuation, report conclusion, buy band or investment action."
+      ],
+      "next_evidence": [
+        "Freeze the corrected V2 method epoch before selecting a different unseen company-cutoff.",
+        "Count one treatment change once even when several dimensions explain it.",
+        "Require an external review artifact as input; implementation may generate only a review candidate.",
+        "Keep volume, price, customer share and ordinary-share owner cash as priority evidence targets."
+      ]
+    }
+  ],
+  "evidence_counts": {
+    "recorded_company_cutoff_settlements": 5,
+    "method_utility_statuses": {
+      "INVALIDATED": 1,
+      "NOT_EVALUATED": 1,
+      "NO_ADVANTAGE_PROVED": 1,
+      "POSITIVE_DEVELOPMENT_UTILITY": 2
+    },
+    "transfer_evidence_statuses": {
+      "DEVELOPMENT_EVIDENCE_ONLY": 1,
+      "INVALIDATED": 1,
+      "NOT_ESTABLISHED": 2,
+      "NOT_EVALUATED": 1
+    }
+  },
+  "preserved_denominator": {
+    "measurement_cells": {
+      "total": 68,
+      "status_counts": {
+        "MEASUREMENT_MISMATCH": 7,
+        "OBSERVED": 39,
+        "UNKNOWN": 22
+      }
+    },
+    "diagnostic_findings": {
+      "total": 38,
+      "status_counts": {
+        "INVALIDATED": 1,
+        "MIXED": 1,
+        "NOT_DIAGNOSTIC": 9,
+        "NO_DIFFERENCE": 15,
+        "PARTIAL": 2,
+        "POSITIVE_DEVELOPMENT_UTILITY": 5,
+        "UNKNOWN": 5
+      }
+    }
+  },
+  "investor_readout": {
+    "proved": [
+      "Real official outcome fields can be settled without forcing missing or mismatched fields into labels.",
+      "Several bounded company findings changed what an investor should and should not credit to management.",
+      "Round 6 and Round 7 provide positive development utility, while Round 8 honestly records no proved advantage.",
+      "Round 9 outcome facts survive even though its method comparison is invalidated."
+    ],
+    "not_proved": [
+      "A selected enterprise mechanism has passed formal L2/L3 validation.",
+      "The eight-dimensional method transfers reliably across companies or industries.",
+      "The training evidence may alter CJO, valuation, reports, buy bands or investment actions."
+    ],
+    "next_decisive_step": "Complete one clean L2 mechanism-pair settlement, then use its accepted lesson in a different pre-outcome company episode before attempting L4 or any multi-episode L5 comparison."
+  },
+  "rights": {
+    "directional_learning": "NOT_AUTHORIZED",
+    "enterprise_learning": "NOT_AUTHORIZED",
+    "comparative": "NOT_AUTHORIZED",
+    "method_transfer": "NOT_AUTHORIZED",
+    "cjo": "NOT_AUTHORIZED",
+    "valuation": "NOT_AUTHORIZED",
+    "report": "NOT_AUTHORIZED",
+    "investment": "NOT_AUTHORIZED"
+  },
+  "aggregation_policy": "COUNTS_AND_EVIDENCE_CLASSES_ONLY_NO_TOTAL_RANKING"
+}
