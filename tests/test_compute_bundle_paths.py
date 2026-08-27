@@ -94,6 +94,74 @@ def test_compute_json_mode_emits_gg_metadata(tmp_path, monkeypatch):
     assert "trading_info" not in bundle
 
 
+def test_compute_json_mode_missing_market_inputs_keeps_enterprise_computation(
+    tmp_path, monkeypatch,
+):
+    output_dir = tmp_path / "anonymous_missing_market"
+    output_dir.mkdir()
+    captured_market = {}
+    monkeypatch.setattr(cb, "DB_PATH", str(tmp_path / "missing.db"))
+    monkeypatch.setattr(cb, "load_threshold", lambda _: {"II": 5.5})
+    monkeypatch.setattr(cb, "load_input_data", lambda _: {"ts_code": "", "currency": "HKD", "years": ["2025"]})
+    monkeypatch.setattr(cb, "normalize_input_data", lambda raw: {"ts_code": "", "currency": "HKD"})
+    monkeypatch.setattr(cb, "load_hk_fallback", lambda _: None)
+    monkeypatch.setattr(cb, "load_data_pack", lambda _: None)
+    monkeypatch.setattr(cb, "load_gg_override", lambda _: {})
+    monkeypatch.setattr(cb, "load_labor_disclosure_summary", lambda _: {})
+    monkeypatch.setattr(cb, "compute_factor2", lambda *args, **kwargs: _stub_factor2())
+
+    def factor3_stub(fin, market, *args, **kwargs):
+        captured_market.update(market)
+        return {
+            "rejection": {"market_cap": "unresolved"}, "M": 0.62,
+            "gg": {"base": None, "pessimistic": None, "optimistic": None},
+            "gg_unavailable": True,
+        }
+
+    monkeypatch.setattr(cb, "compute_factor3", factor3_stub)
+    monkeypatch.setattr(cb, "compute_factor4", lambda *args, **kwargs: {
+        "valuation_status": "UNRESOLVED_VALUATION",
+        "rejection": {"valuation_input": "unresolved"},
+    })
+    monkeypatch.setattr(cb, "_build_calculation_trace", lambda *args, **kwargs: {})
+    monkeypatch.setattr(cb, "_check_gg_guard", lambda *args, **kwargs: None)
+
+    bundle = cb.compute(str(output_dir))
+
+    assert captured_market["price_rmb"] is None
+    assert captured_market["shares_m"] is None
+    assert captured_market["mc_rmb"] == 0
+    assert bundle["market"]["market_cap_status"] == "UNAVAILABLE"
+    assert bundle["rejection_summary"]["overall"] == "unresolved"
+
+
+def test_calculation_trace_with_missing_market_cap_contains_nulls_not_fake_zero_returns():
+    factor2 = {
+        "r_np": None, "r_oe": None, "np_avg_3y": 100.0, "oe_avg_3y": 90.0,
+    }
+    factor3 = {
+        "M": 0.62, "g_adj": 1.5, "g_base": 2.0,
+        "gg": {"base": None, "pessimistic": None, "optimistic": None},
+        "gg_raw": {}, "aa_avg": {"3y": 80.0}, "lambda": {},
+    }
+    factor4 = {
+        "valuation_status": "UNRESOLVED_VALUATION",
+        "valuation_unresolved_reason": "current price missing",
+    }
+    market = {"price_rmb": None, "shares_m": None, "mc_rmb": 0, "fx": 1.0}
+
+    trace = cb._build_calculation_trace(
+        factor2, factor3, factor4, market,
+        {"II": 5.5, "Q": 0.1, "dps_latest": None},
+    )
+
+    assert trace["factor2_r_np"]["result"] is None
+    assert trace["factor2_r_oe"]["result"] is None
+    assert trace["factor2_r_np_after_tax"]["result"] is None
+    assert trace["factor2_r_np_after_tax"]["steps"] == []
+    assert trace["factor4_ddm"]["status"] == "UNRESOLVED_VALUATION"
+
+
 def test_compute_paths_share_same_gg_metadata(tmp_path, monkeypatch):
     output_dir = tmp_path / "02669_sample"
     output_dir.mkdir()
@@ -134,6 +202,109 @@ def test_compute_paths_share_same_gg_metadata(tmp_path, monkeypatch):
 
     assert json_bundle["gg_labor"] == db_bundle["gg_labor"]
     assert json_bundle["gg_override"] == db_bundle["gg_override"]
+
+
+def test_compute_from_db_missing_quote_never_invents_one_currency_unit_price(
+    tmp_path, monkeypatch,
+):
+    output_dir = tmp_path / "02669_missing_quote"
+    output_dir.mkdir()
+    fin_data = {
+        "ts_code": "02669.HK", "currency": "HKD", "financial_source_code": "02669.HK",
+        "income": [{"depr_fa_coga_dpba": 1.0}], "balance_sheet": [], "cashflow": [],
+        "dividends": [{"dps": 0.1, "dividends_paid": 10.0}],
+    }
+    stock_info = {"shares_m": 100.0, "currency": "HKD"}
+    captured_market = {}
+
+    monkeypatch.setattr(cb, "DB_PATH", str(tmp_path / "missing.db"))
+    monkeypatch.setattr(cb, "load_from_db", lambda *args, **kwargs: {
+        **fin_data, "_threshold": {"II": 5.5}, "_stock": stock_info,
+    })
+    monkeypatch.setattr(cb, "find_stock_output_dir", lambda _: str(output_dir))
+    monkeypatch.setattr(cb, "fetch_market_from_tushare", lambda _: None)
+    monkeypatch.setattr(cb, "_extract_annual_report_dividend_plan", lambda _: {})
+    monkeypatch.setattr(cb, "_load_dividend_evidence", lambda _: {})
+    monkeypatch.setattr(cb, "_resolve_dividend_evidence", lambda _: {})
+    monkeypatch.setattr(cb, "load_gg_override", lambda _: {})
+    monkeypatch.setattr(cb, "load_labor_disclosure_summary", lambda _: {})
+    monkeypatch.setattr(cb, "compute_factor2", lambda *args, **kwargs: _stub_factor2())
+
+    def factor3_stub(fin, market, *args, **kwargs):
+        captured_market.update(market)
+        return {
+            "rejection": {"market_cap": "unresolved"}, "M": 0.62,
+            "gg": {"base": None, "pessimistic": None, "optimistic": None},
+            "gg_unavailable": True, "gg_unavailable_reason": "market cap unavailable",
+        }
+
+    monkeypatch.setattr(cb, "compute_factor3", factor3_stub)
+    monkeypatch.setattr(cb, "compute_factor4", lambda *args, **kwargs: {
+        "valuation_status": "UNRESOLVED_VALUATION",
+        "rejection": {"valuation_input": "unresolved"},
+    })
+    monkeypatch.setattr(cb, "_build_calculation_trace", lambda *args, **kwargs: {})
+    monkeypatch.setattr(cb, "_check_gg_guard", lambda *args, **kwargs: None)
+
+    bundle = cb.compute_from_db("02669.HK")
+
+    assert captured_market["price_native"] is None
+    assert captured_market["price_rmb"] is None
+    assert captured_market["mc_rmb"] == 0
+    assert bundle["market"]["price_status"] == "UNAVAILABLE"
+    assert bundle["market"]["price_source"] == "unavailable"
+    assert bundle["rejection_summary"]["overall"] == "unresolved"
+
+
+def test_compute_from_db_missing_shares_and_dps_keeps_enterprise_computation(
+    tmp_path, monkeypatch,
+):
+    output_dir = tmp_path / "02669_missing_per_share_inputs"
+    output_dir.mkdir()
+    fin_data = {
+        "ts_code": "02669.HK", "currency": "HKD", "financial_source_code": "02669.HK",
+        "income": [{"depr_fa_coga_dpba": 1.0}], "balance_sheet": [], "cashflow": [],
+        "dividends": [{}],
+    }
+    stock_info = {"shares_m": None, "currency": "HKD"}
+    captured = {}
+    monkeypatch.setattr(cb, "DB_PATH", str(tmp_path / "missing.db"))
+    monkeypatch.setattr(cb, "load_from_db", lambda *args, **kwargs: {
+        **fin_data, "_threshold": {"II": 5.5}, "_stock": stock_info,
+    })
+    monkeypatch.setattr(cb, "find_stock_output_dir", lambda _: str(output_dir))
+    monkeypatch.setattr(cb, "fetch_market_from_tushare", lambda _: {"price": 8.0, "source": "test"})
+    monkeypatch.setattr(cb, "_extract_annual_report_dividend_plan", lambda _: {})
+    monkeypatch.setattr(cb, "_load_dividend_evidence", lambda _: {})
+    monkeypatch.setattr(cb, "_resolve_dividend_evidence", lambda _: {})
+    monkeypatch.setattr(cb, "load_gg_override", lambda _: {})
+    monkeypatch.setattr(cb, "load_labor_disclosure_summary", lambda _: {})
+    monkeypatch.setattr(cb, "compute_factor2", lambda *args, **kwargs: _stub_factor2())
+
+    def factor3_stub(fin, market, params, *args, **kwargs):
+        captured.update({"market": market, "params": params})
+        return {
+            "rejection": {"market_cap": "unresolved"}, "M": 0.62,
+            "gg": {"base": None, "pessimistic": None, "optimistic": None},
+            "gg_unavailable": True,
+        }
+
+    monkeypatch.setattr(cb, "compute_factor3", factor3_stub)
+    monkeypatch.setattr(cb, "compute_factor4", lambda *args, **kwargs: {
+        "valuation_status": "UNRESOLVED_VALUATION",
+        "rejection": {"valuation_input": "unresolved"},
+    })
+    monkeypatch.setattr(cb, "_build_calculation_trace", lambda *args, **kwargs: {})
+    monkeypatch.setattr(cb, "_check_gg_guard", lambda *args, **kwargs: None)
+
+    bundle = cb.compute_from_db("02669.HK")
+
+    assert captured["market"]["price_rmb"] is not None
+    assert captured["market"]["shares_m"] is None
+    assert captured["market"]["mc_rmb"] == 0
+    assert captured["params"]["dps_latest"] is None
+    assert bundle["market"]["shares_status"] == "UNAVAILABLE"
+    assert bundle["rejection_summary"]["overall"] == "unresolved"
 
 
 def test_compute_with_missing_dps_writes_unresolved_trace_instead_of_crashing(tmp_path, monkeypatch):

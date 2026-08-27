@@ -10,7 +10,9 @@ if str(SCRIPTS_DIR) not in sys.path:
 
 from compute_bundle import (  # noqa: E402
     _normalized_aa_value,
+    compute_factor2,
     compute_factor3,
+    compute_factor4,
     load_gg_override,
     load_zone_j_params,
 )
@@ -188,6 +190,21 @@ def test_missing_data_discount_does_not_reduce_gg_point_estimate():
     assert result["gg_discounted"] == result["gg"]
 
 
+def test_missing_normalization_coefficient_does_not_erase_observed_conservative_gg():
+    fin_data = _sample_fin_data()
+    for row in fin_data["cashflow"]:
+        row["cash_paid_employees"] = 10.0
+    params = _sample_params()
+    assert "_g_coef" not in params
+
+    result = compute_factor3(fin_data, _sample_market(), params)
+
+    assert result["gg_raw"]["aa_based"] == 5.35
+    assert result["gg"]["base"] == 5.3
+    assert result.get("gg_unavailable") is not True
+    assert "gg_normalized" not in result
+
+
 def test_observed_economic_discount_still_reduces_gg_point_estimate():
     fin_data = _sample_fin_data()
     for row in fin_data["cashflow"]:
@@ -299,6 +316,74 @@ def test_compute_factor3_prefers_pdf_override_for_direct_labor():
     assert result["gg_override_years"] == ["2023", "2024", "2025"]
     assert result["w_breakdown"]["w1_dedup_years"]["2025"]["source"] == "pdf_override"
     assert result["w_breakdown"]["w1_dedup_years"]["2025"]["direct_labor_cost"] == 300.0
+
+
+def test_compute_factor3_missing_market_cap_keeps_operating_work_and_withholds_gg():
+    market = _sample_market()
+    market.update({"price_rmb": None, "price_hkd": None, "mc_rmb": 0, "mc_hkd": 0})
+
+    result = compute_factor3(_sample_fin_data(), market, _sample_params())
+
+    assert result["aa_avg"]["3y"] is not None
+    assert result["gg"] == {"pessimistic": None, "base": None, "optimistic": None}
+    assert result["gg_unavailable"] is True
+    assert result["rejection"]["market_cap"] == "unresolved"
+
+
+def test_compute_factor3_observed_zero_aa_is_negative_gg_not_missing_data():
+    result = compute_factor3(_sample_fin_data(), _sample_market(), _sample_params())
+
+    assert result["aa_avg"]["3y"] == 0.0
+    assert result["gg_raw"]["aa_based"] == 0.0
+    assert result["gg"]["base"] == 0.0
+    assert result.get("gg_unavailable") is not True
+
+
+def test_observed_zero_gg_full_factor_chain_resolves_to_avoid():
+    fin_data = _sample_fin_data()
+    market = _sample_market()
+    params = _sample_params()
+    factor2 = compute_factor2(fin_data, market, params)
+    params["_g_coef"] = factor2["oe_maintenance_G"]["coefficient"]
+    factor3 = compute_factor3(
+        fin_data, market, params,
+        factor2.get("M"), factor2.get("r_np"), factor2.get("r_np_penetration"),
+    )
+
+    factor4 = compute_factor4(factor3, market, params)
+
+    assert factor3["gg"]["base"] == 0.0
+    assert factor4["valuation_status"] == "RESOLVED"
+    assert factor4["verdict"]["final"] == "AVOID"
+
+
+def test_factor2_observed_zero_profit_and_owner_earnings_are_not_missing():
+    fin_data = _sample_fin_data()
+    for row in fin_data["income"]:
+        row["n_income_attr_p"] = 0.0
+        row["depr_fa_coga_dpba"] = 20.0
+    for row in fin_data["cashflow"]:
+        row["c_pay_acq_const_fiolta"] = 20.0
+
+    result = compute_factor2(fin_data, _sample_market(), _sample_params())
+
+    assert result["np_avg_3y"] == 0.0
+    assert result["oe_avg_3y"] == 0.0
+    assert result["r_np"] == 0.0
+    assert result["r_oe"] == 0.0
+    assert result["r_np_penetration"] == 0.0
+    assert result["r_oe_penetration"] == 0.0
+
+
+def test_factor2_missing_profit_field_is_not_relabelled_as_observed_zero():
+    fin_data = _sample_fin_data()
+    fin_data["income"][-1]["n_income_attr_p"] = None
+
+    result = compute_factor2(fin_data, _sample_market(), _sample_params())
+
+    assert result["np_avg_3y"] is None
+    assert result["r_np"] is None
+    assert result["r_np_penetration"] is None
 
 
 def test_compute_factor3_derives_direct_labor_from_note_sga_and_db_total():

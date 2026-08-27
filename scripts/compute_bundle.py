@@ -1132,7 +1132,8 @@ def compute_factor2(fin_data: dict, market: dict, params: dict) -> dict:
     divs = fin_data.get("dividends", [])
     indicators = fin_data.get("fina_indicators", [])
 
-    np_years = [safe_float(r.get("n_income_attr_p"), 0) for r in inc]
+    np_observations = [safe_float(r.get("n_income_attr_p")) for r in inc]
+    np_years = [value if value is not None else 0 for value in np_observations]
     ocf_years = [safe_float(r.get("n_cashflow_act"), 0) for r in cf]
     # V12 fix: load_from_db 存 dividends_paid(总额,百万元) 和 dps(每股,元), cash_div_tax 也可能存在
     dps_years = [safe_float(r.get("dividends_paid"), 0) or safe_float(r.get("cash_div_tax"), 0) for r in divs]
@@ -1147,8 +1148,14 @@ def compute_factor2(fin_data: dict, market: dict, params: dict) -> dict:
     shares = [safe_float(r.get("base_share"), 0) for r in divs]
 
     # NP average
-    np_avg_3y = avg_last_n(np_years, 3)
-    result["np_avg_3y"] = round(np_avg_3y, 2) if np_avg_3y else None
+    np_recent_observations = np_observations[-3:]
+    np_avg_3y = (
+        avg(np_recent_observations)
+        if len(np_recent_observations) == 3
+        and all(value is not None for value in np_recent_observations)
+        else None
+    )
+    result["np_avg_3y"] = round(np_avg_3y, 2) if np_avg_3y is not None else None
     result["np_avg_5y"] = round(avg(np_years), 2) if np_years else None
 
     # OCF/NP ratio — V12.18: 双口径输出（原始+调整）
@@ -1275,14 +1282,14 @@ def compute_factor2(fin_data: dict, market: dict, params: dict) -> dict:
 
     # R(NP)_raw = NP_avg_3y / Market_Cap (裸收益率, 诊断用)
     mc = market.get("mc_rmb", 0)
-    if mc > 0 and np_avg_3y:
+    if mc > 0 and np_avg_3y is not None:
         result["r_np"] = round(_d_ratio_pct(np_avg_3y, mc), 2)
     else:
         result["r_np"] = None
 
     # R(OE)_raw = OE_avg_3y / Market_Cap (裸收益率, 诊断用)
     oe_avg = result.get("oe_avg_3y")
-    if mc > 0 and oe_avg:
+    if mc > 0 and oe_avg is not None:
         result["r_oe"] = round(_d_ratio_pct(oe_avg, mc), 2)
     else:
         result["r_oe"] = None
@@ -1292,11 +1299,11 @@ def compute_factor2(fin_data: dict, market: dict, params: dict) -> dict:
     M_val = result.get("M", 0.55)
     Q = params.get("Q", 0.10)
     O_val = params.get("O", 0)
-    if mc > 0 and np_avg_3y:
+    if mc > 0 and np_avg_3y is not None:
         result["r_np_penetration"] = round(_d_penetration_pct(np_avg_3y, M_val, Q, O_val, mc), 2)
     else:
         result["r_np_penetration"] = None
-    if mc > 0 and oe_avg:
+    if mc > 0 and oe_avg is not None:
         result["r_oe_penetration"] = round(_d_penetration_pct(oe_avg, M_val, Q, O_val, mc), 2)
     else:
         result["r_oe_penetration"] = None
@@ -1997,15 +2004,19 @@ def compute_factor3(fin_data: dict, market: dict, params: dict, factor2_M: float
     O_val = params.get("O", 0)  # buyback contribution
 
     if mc > 0:
-        gg_np = _d_penetration_pct(np_avg_3y, M_val, Q, O_val, mc) if np_avg_3y else None
-        gg_oe = _d_penetration_pct(oe_avg_3y, M_val, Q, O_val, mc) if oe_avg_3y else None
+        gg_np = _d_penetration_pct(np_avg_3y, M_val, Q, O_val, mc) if np_avg_3y is not None else None
+        gg_oe = _d_penetration_pct(oe_avg_3y, M_val, Q, O_val, mc) if oe_avg_3y is not None else None
         aa3y = avg_last_n(aa_values, 3)
-        gg_aa = _d_penetration_pct(aa3y, M_val, Q, O_val, mc) if aa3y else None
+        aa3y_covered = len([value for value in aa_values if value is not None]) >= 3
+        gg_aa = (
+            _d_penetration_pct(aa3y, M_val, Q, O_val, mc)
+            if aa3y_covered and aa3y is not None else None
+        )
 
         result["gg_raw"] = {
-            "np_based": round(gg_np, 2) if gg_np else None,
-            "oe_based": round(gg_oe, 2) if gg_oe else None,
-            "aa_based": round(gg_aa, 2) if gg_aa else None,
+            "np_based": round(gg_np, 2) if gg_np is not None else None,
+            "oe_based": round(gg_oe, 2) if gg_oe is not None else None,
+            "aa_based": round(gg_aa, 2) if gg_aa is not None else None,
         }
 
         # ── HH 偏离检查：粗算穿透 R(NP)_penetration vs 精算 GG(AA) ──
@@ -2042,6 +2053,14 @@ def compute_factor3(fin_data: dict, market: dict, params: dict, factor2_M: float
                 "base": round(gg_aa, 1),
                 "optimistic": round(gg_aa + g_base * 0.5, 1),
             }
+        else:
+            result["gg"] = {
+                "pessimistic": None,
+                "base": None,
+                "optimistic": None,
+            }
+            result["gg_unavailable"] = True
+            result["gg_unavailable_reason"] = "AA₃y数据不足（<3年），无法计算GG"
 
         # ── V12.13: FCFE GG（股权自由现金流路径，绕开 W 倒挤法的保守性）──
         # 适用场景：高 OCF/NP、低 OCF/Rev 公司（如装瓶商），AA 路径过于保守
@@ -2105,15 +2124,6 @@ def compute_factor3(fin_data: dict, market: dict, params: dict, factor2_M: float
                         "note": "正常化口径：只扣维持性Capex(D&A×G)。适用于低capex公司，避免极端保守GG过于悲观",
                         "formula": "AA_norm = AA_conservative + (full_capex - D&A×G)"
                     }
-        else:
-            result["gg"] = {
-                "pessimistic": None,
-                "base": None,
-                "optimistic": None,
-            }
-            result["gg_unavailable"] = True
-            result["gg_unavailable_reason"] = "AA₃y数据不足（<3年），无法计算GG"
-
         # Zone J data discount represents an observed economic loss carrier,
         # not missing-disclosure pessimism.  Missing assessment therefore
         # leaves the point estimate unchanged; uncertainty belongs in the
@@ -2143,6 +2153,13 @@ def compute_factor3(fin_data: dict, market: dict, params: dict, factor2_M: float
                 result["total_discount_used"] = round(total_disc, 1)
         else:
             result["gg_discounted"] = {"pessimistic": None, "base": None, "optimistic": None}
+    else:
+        result["gg_raw"] = {"np_based": None, "oe_based": None, "aa_based": None}
+        result["gg"] = {"pessimistic": None, "base": None, "optimistic": None}
+        result["gg_discounted"] = {"pessimistic": None, "base": None, "optimistic": None}
+        result["gg_unavailable"] = True
+        result["gg_unavailable_reason"] = "current market capitalization unavailable"
+        result["rejection"]["market_cap"] = "unresolved"
 
     # Step 13: Error Propagation — 使用实际数据范围，不用固定±%
     np_std = None
@@ -2795,6 +2812,8 @@ def _build_calculation_trace(factor2, factor3, factor4, market, params):
     native_currency = str(market.get("native_currency") or "RMB").upper()
 
     ddm_value = safe_float(factor4.get("ddm_v_native", factor4.get("ddm_v_hkd")))
+    r_np_value = safe_float(factor2.get("r_np"))
+    r_oe_value = safe_float(factor2.get("r_oe"))
     ddm_resolved = (
         factor4.get("valuation_status") != "UNRESOLVED_VALUATION"
         and dps_native is not None
@@ -2835,19 +2854,19 @@ def _build_calculation_trace(factor2, factor3, factor4, market, params):
             "formula": "R(NP)税前 = NP₃y / MC_rmb × 100",
             "substitutions": {"NP₃y": round(np_3y, 2), "MC_rmb": round(mc_rmb, 2)},
             "steps": [f"NP₃y / MC_rmb = {np_3y:.2f} / {mc_rmb:.2f} = {np_3y/mc_rmb*100:.2f}%"] if mc_rmb > 0 else [],
-            "result": round(factor2.get("r_np", 0), 2), "unit": "%"
+            "result": round(r_np_value, 2) if r_np_value is not None else None, "unit": "%"
         },
         "factor2_r_oe": {
             "formula": "R(OE)税前 = OE₃y / MC_rmb × 100",
             "substitutions": {"OE₃y": round(oe_3y, 2), "MC_rmb": round(mc_rmb, 2)},
             "steps": [f"OE₃y / MC_rmb = {oe_3y:.2f} / {mc_rmb:.2f} = {oe_3y/mc_rmb*100:.2f}%"] if mc_rmb > 0 else [],
-            "result": round(factor2.get("r_oe") or 0, 2), "unit": "%"
+            "result": round(r_oe_value, 2) if r_oe_value is not None else None, "unit": "%"
         },
         "factor2_r_np_after_tax": {
             "formula": "R(NP)税后 = R(NP)税前 × (1 - Q)",
-            "substitutions": {"R(NP)税前": round(factor2.get("r_np", 0), 2), "Q": Q},
-            "steps": [f"{factor2.get('r_np',0):.2f}% × (1-{Q}) = {factor2.get('r_np',0)*(1-Q):.2f}%"],
-            "result": round(factor2.get("r_np", 0) * (1 - Q), 2), "unit": "%"
+            "substitutions": {"R(NP)税前": round(r_np_value, 2) if r_np_value is not None else None, "Q": Q},
+            "steps": [f"{r_np_value:.2f}% × (1-{Q}) = {r_np_value*(1-Q):.2f}%"] if r_np_value is not None else [],
+            "result": round(r_np_value * (1 - Q), 2) if r_np_value is not None else None, "unit": "%"
         },
         "factor2_rough": {
             "formula": "R(NP)粗算 = NP₃y / MC_rmb × 100",
@@ -2964,20 +2983,25 @@ def compute(output_dir: str, params_override: Optional[dict] = None,
                 print(f"📊 yfinance auto: price={_price_hkd}, shares={_shares_m}M", file=sys.stderr)
         except Exception:
             pass
-    if _price_hkd is None:
-        print("ERROR: Cannot determine current price. Use --from-db mode, --price, or provide data_pack_market.md", file=sys.stderr)
-        return {"error": "no_price_data"}
-    if _shares_m is None:
-        print("ERROR: Cannot determine shares outstanding. Use --from-db mode, --shares, or provide threshold.json", file=sys.stderr)
-        return {"error": "no_shares_data"}
+    price_available = isinstance(_price_hkd, (int, float)) and _price_hkd > 0
+    shares_available = isinstance(_shares_m, (int, float)) and _shares_m > 0
+    if not price_available:
+        print("⚠️  当前股价不可用；企业经营计算继续，估值与价格动作 unresolved。", file=sys.stderr)
+    if not shares_available:
+        print("⚠️  总股本不可用；企业经营计算继续，每股估值与价格动作 unresolved。", file=sys.stderr)
+    market_cap_available = price_available and shares_available
 
     market = {
+        "price_native": _price_hkd if price_available else None,
         "price_hkd": _price_hkd,
-        "price_rmb": round(_price_hkd * fx, 2),
-        "shares_m": _shares_m,
-        "mc_hkd": round(_price_hkd * _shares_m, 2),
-        "mc_rmb": round(_price_hkd * _shares_m * fx, 2),
+        "price_rmb": round(_price_hkd * fx, 2) if price_available else None,
+        "shares_m": _shares_m if shares_available else None,
+        "mc_hkd": round(_price_hkd * _shares_m, 2) if market_cap_available else 0,
+        "mc_rmb": round(_price_hkd * _shares_m * fx, 2) if market_cap_available else 0,
         "fx": fx,
+        "price_status": "AVAILABLE" if price_available else "UNAVAILABLE",
+        "shares_status": "AVAILABLE" if shares_available else "UNAVAILABLE",
+        "market_cap_status": "AVAILABLE" if market_cap_available else "UNAVAILABLE",
     }
 
     # Base params
@@ -3341,14 +3365,17 @@ def compute_from_db(ts_code: str, params_override: dict = None, price_hkd: float
     if not shares_m:
         shares_m = params_override.get("shares_m") if params_override else None
     if not shares_m:
-        raise ValueError(
-            f"Cannot determine shares outstanding for pricing code {pricing_code}. "
-            f"DB stock_info.shares_m is NULL, yfinance/Tushare unavailable. "
-            f"Provide --shares or populate DB stock_info."
+        shares_m = None
+        print(
+            f"⚠️  {pricing_code}: 总股本不可用；保留企业经营计算，"
+            "市值、每股估值和价格动作标记为 unresolved。",
+            file=sys.stderr,
         )
 
-    # Price: manual → Tushare/yfinance → default
-    price_fetch_source = "manual" if price_hkd else "default"
+    # Price: manual → provider → explicit unresolved. A made-up fallback price
+    # changes market cap, GG, DDM upside and the final action simultaneously;
+    # missing price therefore cannot be represented by a numeric placeholder.
+    price_fetch_source = "manual" if price_hkd else "unavailable"
     if price_hkd is None:
         if tushare_data and tushare_data.get("price"):
             price_hkd = tushare_data["price"]
@@ -3359,10 +3386,19 @@ def compute_from_db(ts_code: str, params_override: dict = None, price_hkd: float
                 price_hkd = params_override["price"]
                 price_fetch_source = "override"
             else:
-                # V12.18: Tushare不可用时，不影响核心计算(GG不依赖price)
-                price_hkd = 1.0
-                price_fetch_source = "fallback(1.0)"
-                print(f"⚠️  {pricing_code}: 无法获取股价(Tushare/yfinance不可用)，使用fallback=1.0。DDM/upside不可靠，GG计算不受影响。", file=sys.stderr)
+                price_hkd = None
+                price_fetch_source = "unavailable"
+                print(
+                    f"⚠️  {pricing_code}: 当前股价不可用；保留企业经营计算，"
+                    "GG、DDM、价格动作与仓位标记为 unresolved。",
+                    file=sys.stderr,
+                )
+
+    price_available = isinstance(price_hkd, (int, float)) and price_hkd > 0
+    shares_available = isinstance(shares_m, (int, float)) and shares_m > 0
+    market_cap_available = price_available and shares_available
+    market_cap_native = round(price_hkd * shares_m, 2) if market_cap_available else 0
+    market_cap_rmb = round(price_hkd * shares_m * fx, 2) if market_cap_available else 0
 
     market = {
         "analysis_code": ts_code,
@@ -3370,14 +3406,17 @@ def compute_from_db(ts_code: str, params_override: dict = None, price_hkd: float
         "native_currency": stock_currency,
         "price_native": price_hkd,
         "price_hkd": price_hkd,
-        "price_rmb": round(price_hkd * fx, 2),
+        "price_rmb": round(price_hkd * fx, 2) if price_available else None,
         "shares_m": shares_m,
-        "mc_native": round(price_hkd * shares_m, 2),
-        "mc_hkd": round(price_hkd * shares_m, 2),
-        "mc_rmb": round(price_hkd * shares_m * fx, 2),
+        "mc_native": market_cap_native,
+        "mc_hkd": market_cap_native,
+        "mc_rmb": market_cap_rmb,
         "fx": fx,
         "shares_warning": pricing_stock_info.get("shares_m") is None,
         "price_source": price_fetch_source,
+        "price_status": "AVAILABLE" if price_available else "UNAVAILABLE",
+        "shares_status": "AVAILABLE" if shares_available else "UNAVAILABLE",
+        "market_cap_status": "AVAILABLE" if market_cap_available else "UNAVAILABLE",
     }
 
     # Try to get DPS: override → dividends_paid/shares (全息,含中期) → DB dps列 → error
@@ -3462,9 +3501,11 @@ def compute_from_db(ts_code: str, params_override: dict = None, price_hkd: float
     elif dps_fy_ref is None:
         dps_fy_ref = db_dps_ref or dps_latest
     if dps_latest is None:
-        raise ValueError(
-            f"Cannot determine DPS for {ts_code}. "
-            f"DB dps column is NULL/empty. Provide --dps."
+        dps_fy_source = "unavailable"
+        dps_ttm_source = "unavailable"
+        print(
+            f"⚠️  {ts_code}: DPS 不可用；保留企业经营与现金计算，DDM 和价格动作 unresolved。",
+            file=sys.stderr,
         )
 
     params = {
