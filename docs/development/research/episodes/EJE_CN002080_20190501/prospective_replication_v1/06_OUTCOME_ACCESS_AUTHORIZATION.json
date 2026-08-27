@@ -1,0 +1,34 @@
+{
+  "schema_version": "prospective-enterprise-judgment-outcome-authorization.v1",
+  "authorization_id": "PEJOA:CN002080:20190501:FY2019:REPLICATION:V1",
+  "final_preoutcome_freeze_commit": "ca0ec42",
+  "preoutcome_commit_chain": [
+    "b48678d",
+    "114f3d5",
+    "6ee19b3",
+    "ca0ec42"
+  ],
+  "selection_ref": "00_SELECTION_AND_CONTAMINATION_RECORD.md",
+  "preoutcome_judgment_ref": "01_PREOUTCOME_EVIDENCE_AND_JUDGMENT_FREEZE.md",
+  "baseline_contract_ref": "02_BASELINE_BEFORE_LEARNING_CONTRACT.json",
+  "enhanced_contract_ref": "03_ENHANCED_AFTER_LEARNING_CONTRACT.json",
+  "application_ref": "04_TRANSFER_APPLICATION_FREEZE.json",
+  "independent_review_ref": "05_INDEPENDENT_PREOUTCOME_REVIEW.md",
+  "independent_reviewer": "/root/candidate_counterexample",
+  "independent_review_status": "TRANSFER_REPLICATION_CANDIDATE_CREATED_PREOUTCOME",
+  "authorized_source_scope": "ONE_UNIQUE_OFFICIAL_FULL_FY2019_ANNUAL_REPORT_FOR_CN002080_PUBLISHED_BY_2020_05_01",
+  "authorized_fields": "UNION_OF_BASELINE_AND_ENHANCED_CONTRACT_FIELDS_ONLY",
+  "custodian_context": "BASELINE_AND_ENHANCED_MEASUREMENT_CONTRACTS_PLUS_THIS_AUTHORIZATION_WITHOUT_PREOUTCOME_JUDGMENTS_APPLICATION_SOURCE_LEARNING_OR_UTILITY_STANDARD",
+  "custodian_requirements": [
+    "RESOLVE_PRODUCT_SUBSIDIARY_PROJECT_AND_GROUP_SCOPE_SEPARATELY",
+    "SETTLE_ONLY_EXPLICIT_CONTRACT_MATCHED_FIELDS",
+    "NOT_DISCLOSED_IS_UNKNOWN_NOT_ZERO",
+    "DO_NOT_INTERPRET_ENTERPRISE_PERFORMANCE_MANAGEMENT_UTILITY_OR_INVESTMENT_MEANING"
+  ],
+  "outcome_access": "AUTHORIZED_ONLY_AFTER_THIS_ARTIFACT_IS_COMMITTED",
+  "price_access": "PROHIBITED",
+  "comparative_access": "PROHIBITED",
+  "formal_valuation_access": "PROHIBITED",
+  "investment_access": "PROHIBITED",
+  "transfer_validation": "NOT_YET_GRANTED"
+}
