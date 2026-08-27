@@ -1,0 +1,41 @@
+{
+  "schema_version": "enterprise-judgment-round10-batch-completion.v1",
+  "completion_receipt_id": "R10:BATCH-COMPLETION:CN_APPLIANCE:20180930:V2",
+  "batch_ref": "R10:BATCH:CN_APPLIANCE:20180930:V2",
+  "review_ref": "R10:EXTERNAL-METHOD-REVIEW:CN_APPLIANCE:20180930:V2",
+  "completion_status": "ROUND10_COMPLETE_NO_METHOD_TRANSFER",
+  "field_outcome_summary": [
+    {
+      "company_id": "CN:002035",
+      "mechanically_settled_field_count": 3,
+      "measurement_mismatch_field_count": 0,
+      "terminal_state": "MECHANICALLY_SETTLED"
+    },
+    {
+      "company_id": "CN:002508",
+      "mechanically_settled_field_count": 0,
+      "measurement_mismatch_field_count": 3,
+      "terminal_state": "MEASUREMENT_MISMATCH"
+    },
+    {
+      "company_id": "CN:002677",
+      "mechanically_settled_field_count": 3,
+      "measurement_mismatch_field_count": 0,
+      "terminal_state": "MECHANICALLY_SETTLED"
+    }
+  ],
+  "mechanically_settled_field_count": 6,
+  "measurement_mismatch_field_count": 3,
+  "method_utility_status": "NO_MATERIAL_UTILITY",
+  "method_transfer": "NOT_AUTHORIZED",
+  "next_unseen_sample_requirement": "Use independently settleable evidence for a material mechanism or boundary, not only issuer-level financial context.",
+  "allowed_outputs": ["RESEARCH_AGENDA"],
+  "rights": {
+    "method_transfer": "NOT_AUTHORIZED",
+    "cjo": "NOT_AUTHORIZED",
+    "valuation": "NOT_AUTHORIZED",
+    "report": "NOT_AUTHORIZED",
+    "buy_band": "NOT_AUTHORIZED",
+    "investment": "NOT_AUTHORIZED"
+  }
+}
