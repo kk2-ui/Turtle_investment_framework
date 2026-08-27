@@ -1795,7 +1795,7 @@ pit_read_source，且只可按 allowlist 路径调用 pit_read_framework。禁�
 
 **决策优先级规则（V12.18 更新）**：
 - 当定性决定与定量决定冲突时，**定量决定（GG/DDM/否决门）为第一优先**
-- 定性决定只能调整仓位（Continue→仓位加满，Pause→仓位减半），不能在定量否决时"拉回"决策
+- 定性判断只有经材料经济机制进入 normal earnings、owner cash、永久损失或估值范围后，才可调整动作或仓位；`Continue` / `Pause` 状态标签本身不产生固定比例，也不能在定量否决时无证据“拉回”决策
 - **例外（V12.18 逆向覆盖）**：若 compute_bundle 中 `contrarian_override.active=true`，说明定量 Avoid 仅因一次性扰动（S2 扰动豁免）触发，且 PE 已极度压缩（<12x）。此时 Agent 应在 Ch14 中讨论逆向机会——市场对已知风险的过度定价本身构成安全边际，决策可升级为 Cautious Watch（1-2%仓位）
 - **定性风险传导**：若定量=STRONG_BUY，但观察到的结构性风险会材料改变 normal earnings、owner cash、永久损失或估值区间，Agent 必须先把该载体进入模型敏感性和决策依据，再据更新后的范围调整动作。字段未披露、一般性待验证或 `Pause` 标签本身不能自动把仓位压到固定比例。
 - **定性"Continue/Pause边界"处理**：若 Agent 自评处于边界，必须拆出已观察的经济风险、局部未知和翻转事实。只有材料风险或估值范围变化可推动动作；不能仅因边界措辞机械取更悲观一侧。

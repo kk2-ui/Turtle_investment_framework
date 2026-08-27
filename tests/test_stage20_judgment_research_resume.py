@@ -216,6 +216,8 @@ def test_v12_report_prompt_does_not_reintroduce_defensive_decision_bias(tmp_path
     assert "说不清楚 → 仓位打五折" not in prompt
     assert "答案是\"不确定\" → 决策降一级" not in prompt
     assert "必须给出概率判断**（百分比）" not in prompt
+    assert "Continue→仓位加满" not in prompt
+    assert "Pause→仓位减半" not in prompt
     assert "对乐观与悲观解释使用相同证据标准" in prompt
     assert "缺失本身不是固定 15% 价值毁灭" in prompt
     assert "相对旧锚稳定不得写成最新一期稳定" in prompt
