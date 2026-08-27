@@ -1,0 +1,45 @@
+{
+  "schema_version": "judgment-first-real-feedback-completion-receipt.v1",
+  "receipt_id": "JFRFC:CN603939:20180501:FY2018:V1",
+  "campaign_id": "JUDGMENT_FIRST_12H_20260828",
+  "company_id": "CN:603939",
+  "cutoff_at": "2018-05-01T00:00:00+08:00",
+  "outcome_period": "FY2018",
+  "selection_rank": 4,
+  "archetype": "DIRECT_RETAIL_PHARMACY_NETWORK_WITH_ORGANIC_STORES_ACQUISITIONS_AND_SUPPLIER_FINANCE",
+  "preoutcome_freeze_ref": "01_PREOUTCOME_EVIDENCE_AND_JUDGMENT_FREEZE.md",
+  "fair_baseline_ref": "02_BASELINE_BEFORE_LEARNING_CONTRACT.json",
+  "enhanced_ref": "03_ENHANCED_AFTER_THREE_FEEDBACK_LOOPS_CONTRACT.json",
+  "application_ref": "04_REVISED_RULE_APPLICATION_FREEZE.json",
+  "preoutcome_review_ref": "05_INDEPENDENT_PREOUTCOME_REVIEW.md",
+  "authorization_ref": "06_OUTCOME_ACCESS_AUTHORIZATION.json",
+  "outcome_settlement_ref": "07_CUSTODIAN_OUTCOME_SETTLEMENT.json",
+  "paired_review_ref": "08_INDEPENDENT_PAIRED_UTILITY_REVIEW.md",
+  "investor_readout_ref": "09_INVESTOR_READOUT.md",
+  "real_feedback_status": "REAL_FEEDBACK_LOOP_4_COMPLETED_NO_MATERIAL_UTILITY",
+  "paired_utility": "NO_MATERIAL_UTILITY",
+  "utility_cause": "THE_ONLY_CREDITABLE_SIGNED_BOUNDED_UNCERTAINTY_INTERVENTION_DID_NOT_ACTIVATE_AND_BOTH_ARMS_REACHED_THE_SAME_MATERIAL_INVESTMENT_TREATMENT_AND_RESEARCH_ACTION",
+  "enterprise_judgment_after_feedback": {
+    "company_network": "MIXED_WITH_STRONG_DEPLOYMENT_AND_WEAKER_NEAR_TERM_UNIT_ABSORPTION",
+    "management": "STRONG_DEPLOYMENT_POSITIVE_CUSTOMER_COVERAGE_MIXED_UNIT_ABSORPTION_AND_AGGRESSIVE_UNPROVEN_CAPITAL_ALLOCATION",
+    "cash": "CURRENT_OPERATIONS_COVER_ALL_CAPEX_BUT_NOT_THE_CHOSEN_ACQUISITION_AND_STRATEGIC_DEPLOYMENT_SCALE",
+    "permanent_loss": "LOW_IMMEDIATE_SOLVENCY_RISK_AND_MEDIUM_HIGH_ACQUISITION_INTEGRATION_AND_FUNDING_RISK",
+    "valuation_direction": "CONSERVATIVE_EXISTING_NETWORK_VALUE_ZERO_BASE_GROWTH_VALUE_FOR_UNPROVEN_NEW_AND_ACQUIRED_COHORTS_AND_HIGHER_ACQUISITION_AND_PERMANENT_LOSS_DISCOUNT"
+  },
+  "campaign_utility_counts_after_this_receipt": {
+    "material_utility": 0,
+    "no_material_utility": 3,
+    "harmful": 1
+  },
+  "rule_state": "REVISED_RULE_NOT_VALIDATED_AND_THE_ONLY_NEW_INTERVENTION_NOT_ACTIVATED_IN_THIS_PROSPECTIVE_REPLICATION",
+  "permissions": {
+    "transfer_validated": "NOT_GRANTED",
+    "method_frozen": "NOT_GRANTED",
+    "comparative": "NOT_GRANTED",
+    "cjo": "NOT_GRANTED",
+    "formal_valuation": "NOT_GRANTED",
+    "buyband": "NOT_GRANTED",
+    "report": "NOT_GRANTED",
+    "investment_action": "NOT_GRANTED"
+  }
+}
