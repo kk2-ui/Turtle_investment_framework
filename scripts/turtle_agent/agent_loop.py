@@ -1264,7 +1264,7 @@ pit_read_source，且只可按 allowlist 路径调用 pit_read_framework。禁�
             "moat_assessment": "护城河评估",
             "capex_classification": "资本开支分类",
             "earnings_quality": "盈利质量",
-            "data_discount": "数据折价",
+            "data_discount": "已观察经济损失折价（非披露缺口）",
         }
         zone_j_status = []
         for key, label in zone_j_files.items():
@@ -1680,12 +1680,11 @@ pit_read_source，且只可按 allowlist 路径调用 pit_read_framework。禁�
 
 ### 可比公司分析增强（V12.20）
 
-同行对比表必须增加"调整系数"列：
-- **增长差异调整**：目标公司 3y 营收 CAGR vs 同行中位数 → 每 5pp 差异调整 PE 10%
-- **风险差异调整**：目标公司负债率 vs 同行中位数 → 每 10pp 差异调整 PE 5%
-- **盈利差异调整**：目标公司 ROE vs 同行中位数 → 每 5pp 差异调整 PE 10%
-
-格式：`调整后合理PE = 同行中位PE × (1 + 增长调整 + 风险调整 + 盈利调整)`
+同行对比用于解释商业模式、生命周期、单位经济和资本结构差异，不自动生成估值。只有存在责任边界、
+会计定义和时期可比的同行数据时才制作对比表。不得用固定的“每 5pp 增长/ROE 调整 PE 10%”或
+“每 10pp 负债率调整 PE 5%”制造合理 PE；任何估值调整都必须进入已选估值模型的显式敏感性，并有
+公司经济机制依据。同行数据不足时，保留公司级当前判断，写明无法比较的具体变量和会推翻判断的新事实，
+不要补伪同行、伪百分位或机械占位表。
 
 ### 行业对比分析框架（V12.17 强化）
 
@@ -1696,7 +1695,7 @@ pit_read_source，且只可按 allowlist 路径调用 pit_read_framework。禁�
 - **营收增速落后行业** → Ch4 近期变化里追问：市场份额流失还是主动收缩？
 - **OCF/NP 与行业背离** → Ch6 追问：盈利质量差异还是营运资本管理不同？
 
-**行业对比必须跨章联动**：
+**只有 `peer_comparison_status=VERIFIED` 且该指标同定义时，行业对比才跨章联动**：
 - Ch2（行业位置）：行业关键竞争变量 + 公司在变量上的位置
 - Ch3（护城河）：用 ROE/毛利率的行业分位支撑护城河证据
 - Ch5（经营表现）：用营收增速/周转率分位判断经营效率
@@ -1707,13 +1706,13 @@ pit_read_source，且只可按 allowlist 路径调用 pit_read_framework。禁�
 - "毛利率 P57，处于行业中等水平" — 没有任何判断价值
 - 只列排名不解释差异原因
 - 把行业对比数据只放在 Ch2，不在 Ch3/Ch5/Ch6 引用
-- 因为同行数据缺失就跳过对比（至少做国内同行 × 基本指标）
+- 用披露缺失替代已有的公司级经营判断，或为了满足表格数量而拼入责任边界/生命周期不匹配的同行
 
 ### 国际对标分析（V12.15 新增）
-当公司有全球可比同行时（如装瓶商 vs CCEP/太古可口可乐），必须在 Ch2 中做国际对标：
+当公司有真实、责任边界和商业模式可比的全球同行，且可取得同定义来源时，可在 Ch2 中做国际对标：
 - 写 Ch2 前调用 `get_global_benchmarks` 获取国际对标搜索方案
-- 用 `web_search` 按 search_queries 获取实时财务数据
-- 构建 ≥3 家国际同行 × ≥4 项指标的对比表
+- `CANDIDATE_ONLY` 的 search_queries 只用于发现；只有随后取得责任边界、生命周期、会计定义、时期和一手来源，才可把候选升级为比较证据
+- 只使用实际取得且同定义的指标；样本不足时直接给出有界比较，不凑满公司数或指标数
 - 分析框架：差异来源 → 商业模式差异 vs 竞争劣势 vs 市场环境
 - 派息率差距是重点——如果国际同行派息率显著更高，可能是管理层资本配置效率低下的证据
 
@@ -1779,7 +1778,7 @@ pit_read_source，且只可按 allowlist 路径调用 pit_read_framework。禁�
 
 ### 定性→定量桥接
 完成 Part A 全部 9 章并审计通过后：
-1. 读取所有定性章节，提取 qualitative_summary.json（包含 moat_rating, moat_sources, b_penalty_evidence, g_base_context, earnings_quality, data_discount_signals, veto_level_risks 等关键字段）
+1. 读取所有定性章节，提取 qualitative_summary.json（包含 moat_rating, moat_sources, b_penalty_evidence, g_base_context, earnings_quality, data_discount_signals, veto_level_risks 等关键字段）。`data_discount_signals` 只登记已观察的现金不可达、价值转移、资本损失等经济载体；披露缺失只进局部置信度，不得登记为折价信号。
 2. 这些字段将用于增强 Zone J 参数估计（moat/capex/earnings_quality/data_quality）
 
 ### 统一决策合成 — 来自 Dayu write_research_decision.md
@@ -2077,9 +2076,9 @@ Zone B 提取结果写入 audit.json / governance.json。写作 Agent 在相关�
 ## 写作流程（重要）
 **本轮写作前**，必须一次调用 `read_report_contract_pack` 读取全部目标章合同；每章再调用相关数据工具，不要逐章重复读取合同，也不要只依赖记忆：
 {qual_chapter_prep}
-  - Ch2-3 行业/护城河章：必须调用 get_peer_comparison + **get_global_benchmarks** 获取同行列表+百分位排名+国际对标
-  - 护城河分析**必须引用百分位数据**（如'毛利率 P16，显著低于行业中位数 19.19%'），不得只做定性描述
-  - 每定性章至少嵌入 **1 张同行/行业对比表**（≥4 家可比公司 × ≥5 项指标）
+  - Ch2-3 行业/护城河章：调用 get_peer_comparison + **get_global_benchmarks** 检查是否存在责任匹配的同行和国际对标；工具返回空/stub/定义不匹配时保留公司判断并明确局部比较缺口
+  - 护城河分析只在真实百分位数据存在时引用百分位；百分位缺失不得写 Pxx、不得把缺失本身当负面
+  - 定性章只在有足够同定义数据时嵌入同行/行业对比表；没有数据时不做机械填充，也不因此停止企业判断
 - Ch8 治理章：若 `compute_bundle.factor3.minority_adjustment` 存在（parent_ratio < 0.90），**必须检查 governance.json 的 minority_shareholder_structure 和 dual_role_shareholders**，评估少数股东治理张力。若 Zone J 已生成 `governance_tension.json`，优先引用其分析结论。
 - Ch4 最近变化：至少建立“变化→来源→对利润/现金流影响→持续性判断”的证据链；每个核心变化分别引用最新年 mda/segments/financial_trends，不得只在章末来源表集中列名。
 - Ch9 风险与否决：每条主要风险必须包含“当前暴露值→触发阈值→验证窗口→来源”；历史事实和未来阈值要明确分开，风险监控表每一行至少能回溯到年报、Zone B 或 compute_bundle。
@@ -2099,9 +2098,9 @@ Zone B 提取结果写入 audit.json / governance.json。写作 Agent 在相关�
   **λ 收入敏感性**（V12.5新增）：展示 λ = median(ΔAA/ΔS) 和临界收入倍数（收入需跌到多少GG才跌破II）。
   调 compute_bundle 检查：
   - `factor3.minority_adjustment` → 引用归母比例和 AA 调整幅度
-  - `factor3.data_discount_used` → 标注数据折价
+  - `factor3.data_discount_used` → 仅可标注为“已观察经济损失载体折价”；不得写成数据缺失、资料不足或信息质量折价
   - `factor3.governance_discount_used` → V12.15: 标注治理折价（如有）
-  - `factor3.total_discount_used` → V12.15: 展示总折价（数据+治理）
+  - `factor3.total_discount_used` → V12.15: 展示总折价（已观察经济损失载体+治理经济损失，不含披露缺口）
   - `factor3.gg_discounted` → 展示折价后 GG（如存在）
   - Ch11 结尾必须做**反向压力测试**：列出至少 2 个能让 GG<II 的极端情景及所需条件。如果所有合理情景均不改变方向，结论更可信。
   - Ch11 GG 章展示**三种 GG 视角**（V12.13）：
@@ -2123,7 +2122,7 @@ Zone B 提取结果写入 audit.json / governance.json。写作 Agent 在相关�
   - **DDM 估值前提限定（Ch12 强制）**：每次出现 DDM 公允价时，必须附带限定说明："DDM 理论价值反映永续分红折现，不代表目标价，仅作为估值上限参考。实际交易价格受市场情绪、流动性、公司治理等多因素影响。"不可将 DDM 公允价等同于"应该值多少钱"。
   - Ch12 DDM 章展示 **P_base 目标价**（V12.5新增）：P_base = MC×(GG/II)/shares，即GG恰好等于II时的公允价。若存在 EV 双轨，同时展示 P_EV。若存在 FCFE GG，同时展示 P_FCFE 作为参考视角。
   - **数值偏差标注**：报告中引用的 DDM/GG/P_base 等计算值，若与 compute_bundle 精确值偏差超过 ±5%，必须加注说明原因（如 DPS 取整、汇率四舍五入）。例："DDM公允价 6.69 HKD（基于DPS=0.282精确计算；若以DPS=0.276计算为6.26 HKD，偏差来自DPS取整差异）"
-  - Ch12 章展示 **PE 估值对比**（V12.14）：当前 PE = compute_bundle.factor4.current_pe。用 get_peer_comparison 读取行业 PE 中位数，做对比表。差距>30%时分析来源：归母vs合并口径混淆？少数股东折价？低增长预期？
+  - Ch12 **仅在 `get_peer_comparison.peer_comparison_status=VERIFIED` 且 PE 的利润归属、期间和会计定义相同时**展示 PE 估值对比；否则保留公司估值判断并写明不可比原因，不得引用候选同行中位数或 Pxx。差距>30%时分析来源：归母vs合并口径混淆？少数股东折价？低增长预期？
   - **框架局限性标注（V12.18 强制）**：若 compute_bundle.factor2.framework_limitations 存在，必须在 Ch0（投资要点概览）和 Ch13（综合决策）中以醒目方式展示局限性警告。格式："⚠️ 框架局限性提示：该公司属于[控股平台/轻资产服务/零分红/强周期]类型，Turtle量化模型的底层假设部分不成立。以下GG/DDM结论仅供参考，最终判断以定性分析为准。" 不可隐藏或淡化此警告。
 - **写每章前，先读该章的 ITEM_RULE 列表（模板中 `<!-- ITEM_RULE ... -->` 块），逐个检查 `when` 条件是否成立**
   - 成立 → 写入该条目
@@ -4367,7 +4366,10 @@ def _format_qualitative_context(qualitative_summary: dict | None) -> str:
         parts.append(f"- 评级: {ch8.get('governance_rating', 'N/A')}")
         signals = ch8.get("data_discount_signals", [])
         if signals:
-            parts.append(f"- 数据折扣信号: {', '.join(signals)}")
+            parts.append(
+                "- 待验证经济损失候选（裸字符串不进入折价）: "
+                + ", ".join(str(item) for item in signals)
+            )
         parts.append("")
 
     ch9 = qualitative_summary.get("ch9_risks", {})

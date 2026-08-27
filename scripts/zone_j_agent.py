@@ -38,23 +38,31 @@ def validate_economic_discount_semantics(agent_name: str, data: dict) -> list[st
     if data.get("discount_basis") != DATA_DISCOUNT_BASIS:
         return ["MISSING_OR_STALE: discount_basis"]
     if agent_name == "data_quality":
-        return []
-
-    discount = data.get("governance_discount")
-    if not isinstance(discount, dict):
-        return ["FORMAT: governance_discount must be an object"]
+        discount = data.get("total_discount_pct")
+        if not isinstance(discount, dict):
+            return ["FORMAT: total_discount_pct must be an object"]
+        pct_field = "value"
+        pct_limit = 30
+        carrier_prefix = "total_discount_pct"
+    else:
+        discount = data.get("governance_discount")
+        if not isinstance(discount, dict):
+            return ["FORMAT: governance_discount must be an object"]
+        pct_field = "additional_discount_pct"
+        pct_limit = 10
+        carrier_prefix = "governance_discount"
     try:
-        pct = float(discount.get("additional_discount_pct", 0))
+        pct = float(discount.get(pct_field, 0))
     except (TypeError, ValueError):
-        return ["FORMAT: governance_discount.additional_discount_pct"]
-    if not 0 <= pct <= 10:
-        return ["RANGE: governance_discount.additional_discount_pct must be 0..10"]
+        return [f"FORMAT: {carrier_prefix}.{pct_field}"]
+    if not 0 <= pct <= pct_limit:
+        return [f"RANGE: {carrier_prefix}.{pct_field} must be 0..{pct_limit}"]
     if pct <= 0:
         return []
 
     carrier = discount.get("economic_carrier")
     if not isinstance(carrier, dict) or carrier.get("status") != "OBSERVED":
-        return ["MISSING: observed governance economic_carrier"]
+        return [f"MISSING: observed {carrier_prefix} economic_carrier"]
     required = (
         "responsibility_unit",
         "amount_or_range",
@@ -295,7 +303,10 @@ def _format_qualitative_context(qualitative_summary: dict | None) -> str:
         parts.append("## 治理（来自定性Ch8）")
         parts.append(f"- 治理评级: {ch8.get('governance_rating', 'N/A')}")
         parts.append(f"- 关键关注点: {', '.join(ch8.get('key_concerns', []))}")
-        parts.append(f"- 数据折扣信号: {', '.join(ch8.get('data_discount_signals', []))}")
+        parts.append(
+            "- 待验证经济损失候选（裸字符串不进入折价，须回到来源验证）: "
+            + ", ".join(ch8.get("data_discount_signals", []))
+        )
         parts.append("")
 
     # 风险

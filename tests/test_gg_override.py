@@ -239,13 +239,43 @@ def test_zone_j_loader_accepts_marked_observed_economic_discount(tmp_path):
         json.dumps(
             {
                 "discount_basis": "observed_economic_carrier_v1",
-                "total_discount_pct": 8,
+                "total_discount_pct": {
+                    "value": 8,
+                    "rationale": "observed related-party cash extraction",
+                    "evidence_ref": ["audit.json:related_party"],
+                    "confidence": "high",
+                    "economic_carrier": {
+                        "status": "OBSERVED",
+                        "responsibility_unit": "listed parent",
+                        "amount_or_range": "RMB 500m",
+                        "period": "FY2024",
+                        "cash_transmission": "cash unavailable to ordinary shareholders",
+                        "evidence_ref": ["audit.json:related_party"],
+                    },
+                },
             }
         ),
         encoding="utf-8",
     )
 
     assert load_zone_j_params(str(tmp_path))["total_discount_pct"] == 8
+
+
+def test_zone_j_loader_rejects_marked_nonzero_data_discount_without_carrier(tmp_path):
+    (tmp_path / "data_discount.json").write_text(
+        json.dumps({
+            "discount_basis": "observed_economic_carrier_v1",
+            "total_discount_pct": {
+                "value": 8,
+                "rationale": "missing disclosure",
+                "evidence_ref": ["audit.json"],
+                "confidence": "low",
+            },
+        }),
+        encoding="utf-8",
+    )
+
+    assert "total_discount_pct" not in load_zone_j_params(str(tmp_path))
 
 
 def test_zone_j_loader_ignores_legacy_governance_discount(tmp_path):

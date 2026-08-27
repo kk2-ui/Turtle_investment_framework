@@ -224,6 +224,13 @@ def test_v12_report_prompt_does_not_reintroduce_defensive_decision_bias(tmp_path
     assert "项目完成只结算实施里程碑" in prompt
     assert "governance_tension=high，考虑降为 Hold" not in prompt
     assert "治理评级本身不改变 Buy/Hold/Avoid" in prompt
+    assert "每定性章至少嵌入 **1 张同行/行业对比表**" not in prompt
+    assert "因为同行数据缺失就跳过对比（至少做国内同行" not in prompt
+    assert "每 5pp 差异调整 PE 10%" not in prompt
+    assert "不得写 Pxx、不得把缺失本身当负面" in prompt
+    assert "没有数据时不做机械填充，也不因此停止企业判断" in prompt
+    assert "已观察经济损失载体折价" in prompt
+    assert "不得写成数据缺失、资料不足或信息质量折价" in prompt
 
 
 def test_active_schema_hides_mutations_until_required_routes_are_attempted(tmp_path: Path) -> None:

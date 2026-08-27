@@ -29,7 +29,15 @@
     "value": 0,
     "rationale": "综合折价理由",
     "evidence_ref": ["来源1"],
-    "confidence": "high|medium|low"
+    "confidence": "high|medium|low",
+    "economic_carrier": {{
+      "status": "OBSERVED|NOT_OBSERVED",
+      "responsibility_unit": "非零时必填",
+      "amount_or_range": "非零时必须是有来源的数值或区间",
+      "period": "非零时必填",
+      "cash_transmission": "非零时说明如何损害 owner cash 或永久损失保护",
+      "evidence_ref": ["非零时必填"]
+    }}
   }},
   "confidence_by_section": {{
     "factor2": "high|medium|low",
@@ -43,7 +51,7 @@
 
 【规则】
 1. 缺失披露或未取得字段只降低相关 `confidence`、扩大合理区间或取消对应溢价承保；不能仅凭字段数量给负向折价。
-2. 没有责任匹配的经济损失载体时，`total_discount_pct.value` 必须为 0。非零折价只允许来自已观察且有来源的现金不可达、关联方价值转移、持续异常占款、资本损失、减值或同类直接损害，并说明它如何传导到 owner cash 或永久损失。
+2. 没有责任匹配的经济损失载体时，`total_discount_pct.value` 必须为 0，`economic_carrier.status=NOT_OBSERVED`。非零折价只允许来自已观察且有来源的现金不可达、关联方价值转移、持续异常占款、资本损失、减值或同类直接损害；此时 `economic_carrier` 五个责任/金额/时期/现金传导/来源字段必须完整。
 3. 有 PDF 年报、有高质量审计、跨年口径一致，可提高置信度；它们不凭自身创造估值溢价。
 4. 不能因为喜欢商业模式而忽略已观察的经济损失，也不能因资料不完美而把未知方向写成负方向。
 5. `discount_basis` 必须原样输出 `observed_economic_carrier_v1`。`total_discount_pct` 必须使用 `{{value, rationale, evidence_ref, confidence}}` 包装格式输出；`discount_factors` 中资料缺口项的 `discount_pct` 应为 0，并在 rationale 中写明其局部置信度/区间处理。

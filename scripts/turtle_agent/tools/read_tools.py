@@ -1096,7 +1096,7 @@ def get_peer_comparison(output_dir: str = ".") -> dict[str, Any]:
 
     Agent 在写定性章节（Ch2 行业位置、Ch3 护城河、Ch5 经营表现）前调用，
     用于嵌入同行对比表。返回的 comparable_peers 包含完整财务指标，
-    Agent 可直接用来构建 ≥4家同行 × ≥8项指标的对比表。
+    Agent 可在责任边界、时期和定义可比时用来构建同行表；不足时返回局部比较缺口。
 
     V12.17: 保留完整同行财务数据（不再剥离），新增行业集中度信息。
     """
@@ -1109,11 +1109,33 @@ def get_peer_comparison(output_dir: str = ".") -> dict[str, Any]:
     with open(path, encoding="utf-8") as f:
         data = _json.load(f)
 
-    peers = data.get("comparable_peers", [])
-    percentiles = data.get("percentiles", {})
-    signals = data.get("signals", [])
+    raw_peers = data.get("comparable_peers", [])
+    raw_percentiles = data.get("percentiles", {})
+    raw_signals = data.get("signals", [])
     meta = data.get("meta", {})
     target = data.get("target_metrics", {})
+    eligibility = data.get("comparison_eligibility") or {}
+    source_status = str(
+        data.get("_source")
+        or (data.get("_provenance") or {}).get("script")
+        or "UNSPECIFIED"
+    )
+    eligibility_fields = (
+        "responsibility_boundary_basis",
+        "lifecycle_basis",
+        "accounting_definition_basis",
+        "period_basis",
+    )
+    peer_comparison_eligible = (
+        isinstance(eligibility, dict)
+        and eligibility.get("status") == "VERIFIED"
+        and all(str(eligibility.get(field) or "").strip() for field in eligibility_fields)
+        and "stub" not in source_status.lower()
+        and bool(raw_peers)
+    )
+    peers = raw_peers if peer_comparison_eligible else []
+    percentiles = raw_percentiles if peer_comparison_eligible else {}
+    signals = raw_signals if peer_comparison_eligible else []
 
     # 百分位摘要
     pct_summary = {}
@@ -1129,22 +1151,25 @@ def get_peer_comparison(output_dir: str = ".") -> dict[str, Any]:
 
     return {
         "ok": True,
+        "peer_comparison_status": "VERIFIED" if peer_comparison_eligible else "CANDIDATE_UNVERIFIED",
+        "source_status": source_status,
+        "comparison_eligibility": eligibility,
         "industry": meta.get("industry_l2") or meta.get("industry_group", "未知"),
         "industry_l1": meta.get("industry_l1", ""),
         "peer_count_total": meta.get("total_industry_peers", 0),
         "fiscal_year": meta.get("fiscal_year", ""),
         "target_metrics": target,
         "comparable_peers": peers,
+        "candidate_peers": raw_peers if not peer_comparison_eligible else [],
         "percentiles": pct_summary,
         "signals": [
             {"type": s.get("type"), "detail": s.get("detail")}
             for s in signals
         ],
         "usage_hint": (
-            "同行财务数据已包含在 comparable_peers 中。"
-            "Agent 应在 Ch2/Ch3/Ch5 中构建对比表（≥4家同行 × 各指标），"
-            "关键是解释公司与行业中位数的差异来源（商业模式差异/竞争优势/生命周期阶段），"
-            "而非仅罗列排名数字。"
+            "peer_comparison_status=VERIFIED 时 comparable_peers/percentiles 才可用于报告。"
+            "CANDIDATE_UNVERIFIED 时 candidate_peers 只供发现与补证据，不得生成表、Pxx、"
+            "行业中位数或估值调整。关键是解释差异的经济来源，而非凑公司数或用缺失替代公司判断。"
         ),
     }
 
@@ -1213,18 +1238,21 @@ def get_global_benchmarks(output_dir: str = ".") -> dict[str, Any]:
                     search_queries.insert(0, f"{p['name']} {p.get('ticker','')} FY2024 revenue margin dividend")
                 break
 
+    curated_candidates = bool(curated_peers)
     return {
         "ok": True,
-        "matched": True,
+        "matched": False,
+        "match_status": "CURATED_CANDIDATES_UNVERIFIED" if curated_candidates else "DISCOVERY_ONLY",
+        "usage_status": "CANDIDATE_ONLY",
         "industry": industry,
         "peer_group": peer_group,
         "curated_peers": curated_peers,
         "business_model_note": business_note,
         "search_queries": search_queries,
         "note": (
-            f"行业={search_label}。search_queries 为自动生成的 web 搜索语句，适用于任何行业。"
+            f"行业={search_label}。search_queries 只用于发现候选，不证明责任边界、生命周期或指标定义可比。"
             + (f" 另有 {len(curated_peers)} 家精选对标公司。" if curated_peers else "")
-            + " Agent 须用 web_search 获取实时财务数据，标注 [source: web_search → {域名} {日期}]。"
+            + " 只有补齐责任边界、生命周期、会计定义、时期和一手来源后才可使用；否则不得生成表、Pxx或估值调整。"
         ),
     }
 

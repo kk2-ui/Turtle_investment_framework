@@ -100,6 +100,19 @@ def test_data_quality_missing_inputs_lower_confidence_without_fixed_discount(tmp
     assert "默认15%" not in hint
 
 
+def test_governance_summary_keeps_raw_discount_strings_as_unverified_candidates():
+    text = zone_j_agent._format_qualitative_context({
+        "ch8_governance": {
+            "governance_rating": "mixed",
+            "key_concerns": ["controller capital allocation"],
+            "data_discount_signals": ["客户集中度未披露"],
+        },
+    })
+
+    assert "待验证经济损失候选（裸字符串不进入折价" in text
+    assert "已观察经济损失载体" not in text
+
+
 def test_governance_missing_inputs_do_not_create_governance_haircut(tmp_path):
     context = build_context("governance_tension", str(tmp_path), "000001.SZ")
 
@@ -175,6 +188,35 @@ def test_unified_zone_j_runtime_regenerates_legacy_data_discount(tmp_path, monke
     assert calls == 1
 
 
+def test_unified_zone_j_runtime_rejects_nonzero_missing_disclosure_haircut_without_carrier(
+    tmp_path, monkeypatch,
+):
+    stock_dir = tmp_path / "000001_示例公司"
+    stock_dir.mkdir()
+    calls = 0
+
+    class _Response:
+        content = '{"discount_basis":"observed_economic_carrier_v1","total_discount_pct":{"value":8,"rationale":"missing disclosure","evidence_ref":["audit.json"],"confidence":"low"}}'
+
+    class _Client:
+        def chat_with_retry(self, *, messages, temperature):
+            nonlocal calls
+            calls += 1
+            return _Response()
+
+    monkeypatch.setattr(
+        zone_j_agent,
+        "AGENTS",
+        {"data_quality": dict(zone_j_agent.AGENTS["data_quality"])},
+    )
+
+    result = extract_zone_j("000001.SZ", str(stock_dir), _Client())
+
+    assert result["ok"] is False
+    assert calls == 2
+    assert not (stock_dir / "data_discount.json").exists()
+
+
 def test_unified_zone_j_runtime_regenerates_legacy_governance_discount(tmp_path, monkeypatch):
     stock_dir = tmp_path / "000001_示例公司"
     stock_dir.mkdir()
@@ -223,6 +265,44 @@ def test_governance_discount_rejects_unknown_sentinel_carrier():
     }
 
     assert validate_economic_discount_semantics("governance_tension", data)
+
+
+def test_data_quality_nonzero_discount_requires_observed_economic_carrier():
+    data = {
+        "discount_basis": "observed_economic_carrier_v1",
+        "total_discount_pct": {
+            "value": 8,
+            "rationale": "some disclosures are missing",
+            "evidence_ref": ["audit.json"],
+            "confidence": "low",
+        },
+    }
+
+    assert validate_economic_discount_semantics("data_quality", data) == [
+        "MISSING: observed total_discount_pct economic_carrier"
+    ]
+
+
+def test_data_quality_nonzero_discount_accepts_complete_observed_cash_carrier():
+    data = {
+        "discount_basis": "observed_economic_carrier_v1",
+        "total_discount_pct": {
+            "value": 8,
+            "rationale": "controller affiliate cash occupation",
+            "evidence_ref": ["audit.json:related_party"],
+            "confidence": "high",
+            "economic_carrier": {
+                "status": "OBSERVED",
+                "responsibility_unit": "listed parent",
+                "amount_or_range": "RMB 500m",
+                "period": "FY2024",
+                "cash_transmission": "cash unavailable to ordinary shareholders",
+                "evidence_ref": ["audit.json:related_party"],
+            },
+        },
+    }
+
+    assert validate_economic_discount_semantics("data_quality", data) == []
 
 
 def test_governance_discount_rejects_out_of_range_haircut():

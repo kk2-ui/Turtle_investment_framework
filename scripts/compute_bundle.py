@@ -152,6 +152,14 @@ def load_zone_j_params(zone_j_dir: str) -> dict:
         ):
             continue
 
+        if fname == "data_discount.json":
+            try:
+                from zone_j_agent import validate_economic_discount_semantics
+            except ImportError:
+                from scripts.zone_j_agent import validate_economic_discount_semantics
+            if validate_economic_discount_semantics("data_quality", data):
+                continue
+
         if fname == "governance_tension.json":
             try:
                 from zone_j_agent import validate_economic_discount_semantics
