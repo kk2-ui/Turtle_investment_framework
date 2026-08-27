@@ -1,10 +1,10 @@
 # Turtle Judgment-First × Decision-Focused Enterprise Judgment 统一设计
 
-> 状态：`RUNTIME_CONSTITUTION_IMPLEMENTED / PAIRED_RUNTIME_NO_MATERIAL_DIFFERENCE / PROSPECTIVE_DEVELOPMENT_EPISODE_ACTIVE`
+> 状态：`RUNTIME_CONSTITUTION_IMPLEMENTED / PAIRED_RUNTIME_NO_MATERIAL_DIFFERENCE / PROSPECTIVE_FEEDBACK_MATERIAL_DELTA_COMPLETED / TRANSFER_NOT_STARTED`
 >
 > 日期：2026-08-27（Asia/Shanghai）
 >
-> 下一唯一动作：冻结并结算一条结果未读的 Judgment-First 企业判断开发 episode
+> 下一唯一动作：把已观察到的判断/测量变化前瞻应用到另一家公司，再读取其结果
 >
 > 权限：不授予 Comparative、CJO、正式估值、BuyBand、报告发布或投资动作
 
@@ -292,14 +292,14 @@ paired test 决定能否把增量效用归功于新增提示块，不决定真�
 - PIT-only 角色保持隔离；
 - 决策导向 episode、UNKNOWN、反馈和 transfer 语义已经设计；
 - Round 6--10 已作为奖励错位的真实诊断证据。
+- CN:002394 × 2019-05-01 结果未读开发 episode 已完成 FY2019 独立结算；管理层执行信用、owner-cash 金额判断和下一 cutoff 研究问题发生材料性变化。
 
 尚未完成：
 
 - 任何可归因于新增 prompt block 的 paired runtime acceptance；
-- 新未污染 episode 的 judgment settlement；
 - 跨公司 prospective decision-utility 验证；
 - 任何方法冻结或投资权限。
 
 因此当前最准确结论是：
 
-> **目标函数和运行时行为已经纠偏；R-62 没有证明新增提示块的独立增益。下一步不再优化措辞，而是在 outcome 未读的开发 episode 中结算企业判断本身，并把“更多字段但无 decision delta”继续判为无效学习。**
+> **目标函数和运行时行为已经纠偏；R-62 没有证明新增提示块的独立增益，但 CN:002394 的前瞻开发 episode 已产生真实 decision delta。下一步不是继续增加 gate，而是把“趋势主张同时冻结可比基期”及“建成后转查经济吸收”应用到另一家 outcome 未读公司，检验能否改善后续判断。**

@@ -1,0 +1,66 @@
+{
+  "schema_version": "prospective-enterprise-judgment-completion-receipt.v1",
+  "receipt_id": "PEJCR:CN002394:20190501:FY2019:V1",
+  "company_id": "CN:002394",
+  "cutoff_at": "2019-05-01T00:00:00+08:00",
+  "observation_period": "FY2019",
+  "status": "PROSPECTIVE_JUDGMENT_FEEDBACK_COMPLETED_MATERIAL_DELTA",
+  "preoutcome_commit": "2c8adb9",
+  "outcome_authorization_commit": "9ddf38a",
+  "field_settlement_commit": "f7ccf12",
+  "artifacts": {
+    "selection": "00_SELECTION_RECORD.md",
+    "preoutcome_judgment": "01_PREOUTCOME_JUDGMENT_FREEZE.md",
+    "outcome_contract": "02_OUTCOME_MEASUREMENT_CONTRACT.json",
+    "authorization": "03_OUTCOME_ACCESS_AUTHORIZATION.json",
+    "source_receipt": "04_OUTCOME_SOURCE_RECEIPT.json",
+    "custodian_settlement": "05_CUSTODIAN_FIELD_SETTLEMENT.json",
+    "independent_judgment_settlement": "06_INDEPENDENT_JUDGMENT_SETTLEMENT.md",
+    "investor_readout": "07_INVESTOR_READOUT.md"
+  },
+  "judgment_settlements": [
+    {"judgment_id": "J1_CUSTOMER_REGION_REBALANCING", "status": "WEAKENED"},
+    {"judgment_id": "J2_XINJIANG_CAPITAL_CHOICE", "status": "SUPPORTED"},
+    {"judgment_id": "J3_CASH_NORMALIZATION_AND_LOSS", "status": "SUPPORTED"}
+  ],
+  "material_deltas": [
+    "MANAGEMENT_EXECUTION_CREDIT_UP_FROM_PLAN_TO_OBSERVED_MILESTONE",
+    "OWNER_CASH_AMOUNT_EXPECTATION_DOWN_WHILE_METHOD_UNCHANGED",
+    "NEXT_RESEARCH_MOVED_FROM_BUILD_STATUS_TO_ECONOMIC_ABSORPTION"
+  ],
+  "acquisition_learning": "Trend claims in the next prospective episode must pre-register both the current-period level and a same-definition baseline or reported comparable change; this is a local contract improvement, not a new global gate.",
+  "independent_runs": {
+    "outcome_custodian": {
+      "model": "gpt-5.6-sol",
+      "reasoning_effort": "high",
+      "fresh_ephemeral_context": true,
+      "input_scope": "OUTCOME_CONTRACT_AND_ONE_OFFICIAL_PDF_ONLY",
+      "tool_scope": "LOCAL_PDF_EXTRACTION_ONLY",
+      "input_tokens": 406623,
+      "cached_input_tokens": 359936,
+      "output_tokens": 5415,
+      "reasoning_output_tokens": 1228
+    },
+    "judgment_reviewer": {
+      "model": "gpt-5.6-sol",
+      "reasoning_effort": "high",
+      "fresh_ephemeral_context": true,
+      "input_scope": "PREOUTCOME_FREEZE_CONTRACT_AND_CUSTODIAN_SETTLEMENT_ONLY",
+      "network_access": "NOT_USED",
+      "input_tokens": 39647,
+      "cached_input_tokens": 26112,
+      "output_tokens": 6723,
+      "reasoning_output_tokens": 4221
+    }
+  },
+  "transfer_status": "NOT_STARTED",
+  "method_freeze": "NOT_AUTHORIZED",
+  "permissions": {
+    "comparative": "NOT_GRANTED",
+    "cjo": "NOT_GRANTED",
+    "valuation": "NOT_GRANTED",
+    "buyband": "NOT_GRANTED",
+    "report": "NOT_GRANTED",
+    "investment_action": "NOT_GRANTED"
+  }
+}
