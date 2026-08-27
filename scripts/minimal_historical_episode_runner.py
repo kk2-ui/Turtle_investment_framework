@@ -194,6 +194,8 @@ def _verify_quote_value(
         boundary = source.get("responsibility_boundary")
         issuer_suffix = str(source.get("issuer_id", "")).removeprefix("ISSUER:")
         issuer_code = issuer_suffix.rsplit(":", 1)[-1]
+        normalized_field_ref = field_ref.casefold().replace("-", " ") if isinstance(field_ref, str) else ""
+        normalized_marker = rule["field_ref_marker"].replace("-", " ") if rule is not None else ""
         if (
             rule is None
             or boundary not in {
@@ -202,7 +204,7 @@ def _verify_quote_value(
                 f"LISTED_ISSUER_CONSOLIDATED:{issuer_code}",
             }
             or not isinstance(field_ref, str)
-            or rule["field_ref_marker"] not in field_ref.casefold()
+            or normalized_marker not in normalized_field_ref
             or rule["field_ref_label"] not in field_ref
         ):
             raise ValueError("RMB source must be a declared supported consolidated financial-statement field")

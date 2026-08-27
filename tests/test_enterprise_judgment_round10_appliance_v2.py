@@ -116,6 +116,17 @@ def test_round10_existing_runner_verifies_all_three_frozen_rmb_field_kinds() -> 
             }, source=source)
 
 
+def test_round10_runner_treats_cash_flow_hyphenation_as_the_same_frozen_statement_marker() -> None:
+    chain = round10.build_real_preoutcome_batch()["company_packages"][0]["minimal_field_chains"][1]
+    source = deepcopy(chain["static_evidence"]["source"])
+    source["field_ref"] = source["field_ref"].replace("cash-flow", "cash flow")
+    runner._verify_quote_value({
+        "exact_quote": chain["exact_quote"],
+        "numeric_value": source["numeric_value"],
+        "unit": source["unit"],
+    }, source=source)
+
+
 def test_round10_three_company_applications_still_count_one_method_delta() -> None:
     batch = round10.build_batch_freeze([_package(row["company_id"]) for row in round10.ROSTER])
     settlements = [
