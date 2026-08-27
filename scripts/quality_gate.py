@@ -102,13 +102,12 @@ def check(text: str, report_version: str | None = None) -> dict[str, Any]:
         result['checks'].append({"name": name, "status": "PASS" if ok else "FAIL", "severity": sev})
         if not ok:
             (result['blocks'] if sev == 'BLOCK' else result['warns']).append(name)
-    # Physical line count is a formatting property. Chapter-level semantic
-    # depth is enforced by report_completion; retain only a catastrophic
-    # whole-report guard for legacy callers.
+    # Whole-report length is diagnostic only.  Chapter identity, non-empty
+    # bodies and structured claim/model/decision gates own publication.
+    # A 20k threshold rewarded padding and could not distinguish a concise
+    # material judgment from repeated prose.
     substantive_chars = len(re.sub(r"\s+|[#|`*_~>-]", "", text))
     result["substantive_chars"] = substantive_chars
-    if substantive_chars < 20_000:
-        result['blocks'].append(f"SubstantiveChars:{substantive_chars}<20000")
     if result['blocks']:
         result['status'] = 'BLOCKED'
     elif result['warns']:

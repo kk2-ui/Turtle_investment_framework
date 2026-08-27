@@ -35,7 +35,7 @@ def test_completion_blocks_missing_and_short_chapters(tmp_path: Path) -> None:
     )
 
 
-def test_completion_blocks_missing_gg_derivation(tmp_path: Path) -> None:
+def test_completion_does_not_use_gg_keyword_stuffing_as_a_model_gate(tmp_path: Path) -> None:
     out = tmp_path / "stock"
     chapters = out / "chapters"
     for idx in range(15):
@@ -53,7 +53,9 @@ def test_completion_blocks_missing_gg_derivation(tmp_path: Path) -> None:
     (out / "chapter_audit_ledger.json").write_text(json.dumps(ledger), encoding="utf-8")
     result = evaluate_report_completion("draft", str(out))
     assert result.status == "BLOCKED"
-    assert any("gg_derivation_missing" in item for item in result.blocking_findings)
+    assert not any("gg_derivation_missing" in item for item in result.blocking_findings)
+    assert result.validators["gg_derivation"]["status"] == "SKIP"
+    assert result.validators["gg_derivation"]["reason"].startswith("structured_valuation_model")
 
 
 def test_company_judgment_completion_skips_investment_manifest_and_gg_contract(tmp_path: Path) -> None:
@@ -84,6 +86,20 @@ def test_quality_gate_detects_v13_structure() -> None:
     text = "## 投资要点概览\n" + "\n".join(f"## Ch{i} 标题" for i in range(1, 15)) + "\n## 来源清单\n" + ("有效分析内容123。" * 3000)
     result = check(text)
     assert result["report_version"] == "v13"
+    assert result["status"] in {"PASS", "WARN"}
+
+
+def test_quality_gate_does_not_reward_twenty_thousand_character_padding() -> None:
+    judgments = "\n".join(
+        f"## Ch{idx} 标题\n当前判断说明经营机制、最强反方、投资影响与翻转事实。"
+        for idx in range(1, 15)
+    )
+    text = "## 投资要点概览\n当前最重要的判断已有明确边界。\n" + judgments + "\n## 来源清单\n"
+
+    result = check(text)
+
+    assert result["substantive_chars"] < 20_000
+    assert not any(str(item).startswith("SubstantiveChars:") for item in result["blocks"])
     assert result["status"] in {"PASS", "WARN"}
 
 

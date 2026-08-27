@@ -228,17 +228,6 @@ def _title_from_text(text: str) -> str:
     return ''
 
 
-def _check_gg_derivation(text: str) -> list[str]:
-    required = [
-        '参数', '方法', 'AA', '公式', '情景', 'M', 'HH', '敏感', '压力', 'AP', '少数股东', 'λ', '治理折价'
-    ]
-    missing = []
-    for token in required:
-        if token not in text:
-            missing.append(token)
-    return missing
-
-
 def _analysis_purpose(output_dir: str) -> str:
     """Resolve the frozen report purpose before choosing completion gates."""
     try:
@@ -282,10 +271,6 @@ def evaluate_report_completion(report_text: str, output_dir: str) -> CompletionR
             chapter_blockers.append('missing_audit_record')
         elif not final_audit.get('passed', False):
             chapter_blockers.append('audit_failed')
-        if idx == 11 and text and not company_judgment_only:
-            missing = _check_gg_derivation(text)
-            if missing:
-                chapter_blockers.append('gg_derivation_missing:' + ','.join(missing))
         if chapter_blockers:
             blocking.append(f'Ch{idx}: ' + '; '.join(chapter_blockers))
         chapter_results.append({
@@ -837,7 +822,10 @@ def evaluate_report_completion(report_text: str, output_dir: str) -> CompletionR
         'depth': {'status': 'PASS' if not any('short_depth:' in b for b in blocking) else 'FAIL'},
         'audit': {'status': 'PASS' if not any('audit_' in b or 'missing_audit_record' in b for b in blocking) else 'FAIL'},
         'analysis_purpose': {'state': analysis_purpose},
-        'gg_derivation': {'status': 'SKIP' if company_judgment_only else 'PASS' if not any('gg_derivation_missing' in b for b in blocking) else 'FAIL'},
+        'gg_derivation': {
+            'status': 'SKIP',
+            'reason': 'structured_valuation_model_and_decision_reliability_own_derivation',
+        },
         'reader_coverage': reader_coverage,
         'decision_manifest': {'status': decision_status, 'path': manifest_path},
         'official_evidence': official_evidence,

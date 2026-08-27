@@ -2743,9 +2743,9 @@ Zone B 提取结果写入 audit.json / governance.json。写作 Agent 在相关�
         governance research for Ch8.
         """
         try:
-            from scripts.research_plan import CHAPTER_RESEARCH_SPECS
+            from scripts.research_plan import CHAPTER_RESEARCH_SPECS, available_annual_years
         except ModuleNotFoundError:
-            from research_plan import CHAPTER_RESEARCH_SPECS
+            from research_plan import CHAPTER_RESEARCH_SPECS, available_annual_years
         spec = CHAPTER_RESEARCH_SPECS.get(int(chapter_index), {})
         required = [str(item).upper() for item in spec.get("sections", [])]
         chapter_calls = self._source_calls_for_chapter(chapter_index)
@@ -2769,6 +2769,19 @@ Zone B 提取结果写入 audit.json / governance.json。写作 Agent 在相关�
             if item.get("tool") in {"read_section", "search_report"}
             and item.get("gate_eligible", True)
             and item.get("year") not in (None, "")
+        })
+        available_years = available_annual_years(self._config.output_dir)
+        required_fiscal_year_count = min(2, len(available_years)) if available_years else 2
+        attempted_unavailable_tools = sorted({
+            str(item.get("tool"))
+            for item in chapter_calls
+            if item.get("tool") in {"search_report", "web_search", "web_fetch"}
+            and not item.get("gate_eligible", True)
+            and (
+                bool(item.get("error"))
+                or item.get("result_count") == 0
+                or item.get("total_hits") == 0
+            )
         })
         payload = {
             "version": 3,
@@ -2808,6 +2821,8 @@ Zone B 提取结果写入 audit.json / governance.json。写作 Agent 在相关�
                 for name in sorted(unavailable_sections)
             ],
             "fiscal_years": fiscal_years,
+            "required_fiscal_year_count": required_fiscal_year_count,
+            "attempted_unavailable_tools": attempted_unavailable_tools,
             "tool_counts": {
                 name: sum(
                     item.get("tool") == name and item.get("gate_eligible", True)

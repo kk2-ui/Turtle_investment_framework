@@ -147,6 +147,67 @@ def test_web_plan_requires_search_and_fetched_body(tmp_path: Path) -> None:
     assert "required_web_fetch_missing:0/1" in result["chapters"][2]["hard_failures"]
 
 
+def test_one_effective_external_attempt_per_required_type_closes_research(tmp_path: Path) -> None:
+    import json
+
+    _write_strong_set(tmp_path)
+    (tmp_path / "research_execution.json").write_text(json.dumps({
+        "version": 3,
+        "run_id": "current-run",
+        "enforced": True,
+        "expected_chapters": [2, 4],
+        "chapters": {
+            "2": {
+                "enforced": True,
+                "missing_sections": [],
+                "fiscal_years": [2025],
+                "required_fiscal_year_count": 1,
+                "tool_counts": {"read_section": 2, "web_search": 1, "web_fetch": 1},
+                "attempted_unavailable_tools": [],
+            },
+            "4": {
+                "enforced": True,
+                "missing_sections": [],
+                "fiscal_years": [2025],
+                "required_fiscal_year_count": 1,
+                "tool_counts": {"read_section": 2, "search_report": 1},
+                "attempted_unavailable_tools": [],
+            },
+        },
+    }), encoding="utf-8")
+
+    result = evaluate_absolute_quality(tmp_path, persist=False)
+
+    assert result["chapters"][2]["hard_failures"] == []
+    assert result["chapters"][4]["hard_failures"] == []
+
+
+def test_audited_external_unavailability_is_local_not_a_repeat_quota(tmp_path: Path) -> None:
+    import json
+
+    _write_strong_set(tmp_path)
+    (tmp_path / "research_execution.json").write_text(json.dumps({
+        "version": 3,
+        "run_id": "current-run",
+        "enforced": True,
+        "expected_chapters": [2],
+        "chapters": {
+            "2": {
+                "enforced": True,
+                "missing_sections": [],
+                "fiscal_years": [2025],
+                "required_fiscal_year_count": 1,
+                "tool_counts": {"read_section": 2, "web_search": 0, "web_fetch": 0},
+                "attempted_unavailable_tools": ["web_search", "web_fetch"],
+            },
+        },
+    }), encoding="utf-8")
+
+    result = evaluate_absolute_quality(tmp_path, persist=False)
+
+    assert result["chapters"][2]["hard_failures"] == []
+
+
 def test_keyword_stuffing_does_not_pass_research_questions(tmp_path: Path) -> None:
     _write_strong_set(tmp_path)
     keywords = " ".join(

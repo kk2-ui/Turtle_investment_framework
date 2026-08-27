@@ -697,6 +697,12 @@ def test_true_external_source_failure_is_not_a_permanent_chapter_stop(tmp_path: 
     assert len(agent._source_research_calls) == 4
     assert all(not item["gate_eligible"] for item in agent._source_research_calls[2:])
     assert agent._source_research_missing(2) == []
+    agent._persist_research_execution(2)
+    entry = json.loads(
+        (tmp_path / "research_execution.json").read_text(encoding="utf-8")
+    )["chapters"]["2"]
+    assert entry["required_fiscal_year_count"] == 1
+    assert entry["attempted_unavailable_tools"] == ["web_fetch", "web_search"]
 
 
 def test_failed_notes_read_can_use_two_year_official_report_search_fallback(tmp_path: Path) -> None:

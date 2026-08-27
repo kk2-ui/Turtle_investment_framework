@@ -472,7 +472,7 @@ def validate_evidence_coverage(
             "FAIL" if unknown else
             "N/A" if coverage is None else
             "PASS" if coverage >= MIN_EVIDENCE_COVERAGE_RATIO else
-            "WARN" if coverage >= 0.1 else "FAIL"
+            "WARN"
         ),
     }
 

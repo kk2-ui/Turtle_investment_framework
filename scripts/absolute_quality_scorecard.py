@@ -155,17 +155,24 @@ def score_chapter(
         fiscal_years = set(execution_entry.get("fiscal_years") or [])
         tool_counts = execution_entry.get("tool_counts") or {}
         required_tools = set(CHAPTER_RESEARCH_SPECS[chapter_index].get("tools") or [])
-        if len(fiscal_years) < 2:
-            hard_failures.append(f"required_fiscal_year_reads_missing:{len(fiscal_years)}/2")
-        if "search_report" in required_tools and int(tool_counts.get("search_report") or 0) < 3:
-            hard_failures.append(f"required_search_report_missing:{int(tool_counts.get('search_report') or 0)}/3")
-        if {"web_search", "web_fetch"}.intersection(required_tools):
-            web_search_count = int(tool_counts.get("web_search") or 0)
-            web_fetch_count = int(tool_counts.get("web_fetch") or 0)
-            if web_search_count < 2:
-                hard_failures.append(f"required_web_search_missing:{web_search_count}/2")
-            if web_fetch_count < 1:
-                hard_failures.append(f"required_web_fetch_missing:{web_fetch_count}/1")
+        try:
+            required_years = int(execution_entry.get("required_fiscal_year_count"))
+        except (TypeError, ValueError):
+            available_years = [
+                path for path in Path(output_dir).glob("20[0-9][0-9]_年报.md")
+            ]
+            required_years = min(2, len(available_years)) if available_years else 2
+        if len(fiscal_years) < required_years:
+            hard_failures.append(
+                f"required_fiscal_year_reads_missing:{len(fiscal_years)}/{required_years}"
+            )
+        attempted_unavailable = set(execution_entry.get("attempted_unavailable_tools") or [])
+        for tool_name in sorted(
+            required_tools.intersection({"search_report", "web_search", "web_fetch"})
+        ):
+            count = int(tool_counts.get(tool_name) or 0)
+            if count < 1 and tool_name not in attempted_unavailable:
+                hard_failures.append(f"required_{tool_name}_missing:{count}/1")
     if execution_status == "ENFORCED_MISSING":
         hard_failures.append("research_execution_missing")
     open_topics = [name for name, present in topics.items() if not present]

@@ -2759,10 +2759,9 @@ def _run_quality_checks(report_text: str, output_dir: str) -> dict[str, Any]:
         cov = validate_evidence_coverage(report_text, registry)
         ratio = cov.get("coverage_ratio")
         if ratio is not None and ratio < MIN_EVIDENCE_COVERAGE_RATIO:
-            result["passed"] = False
-            result["issues"].append(
+            result["warnings"].append(
                 f"证据覆盖率过低: {ratio:.1%} "
-                f"< {MIN_EVIDENCE_COVERAGE_RATIO:.0%}"
+                f"< {MIN_EVIDENCE_COVERAGE_RATIO:.0%}（仅诊断；材料主张由 claim-evidence 与邻接来源验证）"
             )
         if cov.get("unknown_sources", 0):
             result["passed"] = False

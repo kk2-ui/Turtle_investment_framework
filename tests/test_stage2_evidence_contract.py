@@ -8,7 +8,7 @@ from scripts.evidence_citation import (
 )
 from scripts.quality_gate import _check_dps_consistency
 from scripts.source_list_builder import build_source_list
-from scripts.turtle_agent.tools.write_tools import _extract_sources
+from scripts.turtle_agent.tools.write_tools import _extract_sources, _run_quality_checks
 from scripts.report_audit import _classify_metric
 from scripts.citation_verifier import _collect_gross_margin_candidates, _is_scenario_claim
 
@@ -169,6 +169,30 @@ def test_evidence_coverage_counts_numeric_claim_lines_not_every_number(tmp_path:
     assert MIN_EVIDENCE_COVERAGE_RATIO == 0.45
     assert coverage["unknown_sources"] == 0
     assert coverage["status"] == "PASS"
+
+
+def test_table_level_source_does_not_fail_a_global_anchor_ratio(tmp_path: Path) -> None:
+    (tmp_path / "2025_年报.md").write_text("# FY2025", encoding="utf-8")
+    table = "\n".join(
+        ["| 年度 | 指标 |", "|---|---:|"]
+        + [f"| {2015 + idx} | {100 + idx}亿元 |" for idx in range(10)]
+        + ["[table-source: 2025_年报.md]"]
+    )
+    report = (
+        "## 投资要点概览\n当前判断。\n"
+        + "\n".join(f"## Ch{idx} 标题" for idx in range(1, 15))
+        + "\n"
+        + table
+        + "\n## 来源清单\n"
+    )
+
+    coverage = validate_evidence_coverage(report, _registry(tmp_path))
+    quality = _run_quality_checks(report, str(tmp_path))
+
+    assert coverage["coverage_ratio"] == 0.1
+    assert coverage["status"] == "WARN"
+    assert quality["passed"] is True
+    assert any("仅诊断" in item for item in quality["warnings"])
 
 
 def test_historical_dps_series_is_not_a_consistency_failure() -> None:
