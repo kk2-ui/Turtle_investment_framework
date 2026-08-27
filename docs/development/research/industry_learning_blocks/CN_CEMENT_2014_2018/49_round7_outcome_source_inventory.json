@@ -1,0 +1,33 @@
+{
+  "schema_version": "turtle-outcome-measurement-static-pdf-inventory.v1",
+  "inventory_id": "OMINV:CN600585:FY2014:R7:V1",
+  "measurement_contract_ref": {
+    "measurement_contract_id": "OMC:CN600585:20140416:MULTIDIMENSIONAL:V3",
+    "measurement_contract_version": 3
+  },
+  "custodian_id": "ROLE:CEMENT:ROUND7:OUTCOME_CUSTODIAN",
+  "registered_at": "2026-08-27T08:45:00+00:00",
+  "documents": [
+    {
+      "source_id": "CNINFO:600585:ANN:20150324:1200733224",
+      "source_url": "https://static.cninfo.com.cn/finalpage/2015-03-24/1200733224.PDF",
+      "local_pdf_path": "/tmp/CN600585_FY2014_1200733224.pdf",
+      "issuer_id": "ISSUER:CN:600585",
+      "responsibility_boundary": "ISSUER_CONSOLIDATED:CN:600585",
+      "report_period_end": "2014-12-31",
+      "official_source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+      "report_scope": "ISSUER_FILING",
+      "currency": "RMB",
+      "revision_policy": "ORIGINAL_VINTAGE",
+      "consolidation_or_restatement_note": "FY2014 issuer-consolidated original annual-report vintage; each field retains its own scope result.",
+      "availability_precision": "DATE_ONLY",
+      "source_available_at": null,
+      "source_available_date": "2015-03-24"
+    }
+  ],
+  "object_class": "OUTCOME_MEASUREMENT_STATIC_PDF_INVENTORY",
+  "claim_class": "REGISTERED_LOCAL_OFFICIAL_ANNUAL_REPORTS_ONLY",
+  "allowed_outputs": [
+    "ENTERPRISE_OUTCOME_ACQUISITION_ONLY"
+  ]
+}

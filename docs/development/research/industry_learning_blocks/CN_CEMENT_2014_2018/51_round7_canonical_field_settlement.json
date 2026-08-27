@@ -1,0 +1,2208 @@
+{
+  "schema_version": "enterprise-outcome-measurement-settlement.v1",
+  "settled": true,
+  "settlement_id": "R7SETTLE:CN600585:20140416:FY2014:V1",
+  "company_id": "CN:600585",
+  "cutoff_at": "2014-04-16T00:00:00+08:00",
+  "measurement_contract_ref": {
+    "measurement_contract_id": "OMC:CN600585:20140416:MULTIDIMENSIONAL:V3",
+    "measurement_contract_version": 3
+  },
+  "authorization_receipt_id": "OAA:CN600585:20140416:FY2014:R7:V1",
+  "custodian_id": "ROLE:CEMENT:ROUND7:OUTCOME_CUSTODIAN",
+  "observed_at": "2026-08-27T08:46:00+00:00",
+  "settled_at": "2026-08-27T08:47:00+00:00",
+  "cell_results": [
+    {
+      "cell_id": "CELL:600585:20140416:ISSUER_VS_INDUSTRY_VOLUME_SPREAD",
+      "status": "OBSERVED",
+      "label": "OBSERVED_INCREASE",
+      "computed_value": 0.0749,
+      "mismatch_propagation": "LOCAL_ONLY"
+    },
+    {
+      "cell_id": "CELL:600585:20140416:IMPLEMENTED_ACTION_EVENT",
+      "status": "OBSERVED",
+      "label": "OBSERVED_YES",
+      "computed_value": true,
+      "mismatch_propagation": "LOCAL_ONLY"
+    },
+    {
+      "cell_id": "CELL:600585:20140416:NAMED_PLAN_MILESTONE_DELIVERED",
+      "status": "UNKNOWN",
+      "label": "UNKNOWN",
+      "computed_value": null,
+      "mismatch_propagation": "LOCAL_ONLY"
+    },
+    {
+      "cell_id": "CELL:600585:20140416:DIRECT_CUSTOMER_RESPONSE",
+      "status": "UNKNOWN",
+      "label": "UNKNOWN",
+      "computed_value": null,
+      "mismatch_propagation": "LOCAL_ONLY"
+    },
+    {
+      "cell_id": "CELL:600585:20140416:CEMENT_CLINKER_SALES_VOLUME",
+      "status": "UNKNOWN",
+      "label": "UNKNOWN",
+      "computed_value": null,
+      "mismatch_propagation": "LOCAL_ONLY"
+    },
+    {
+      "cell_id": "CELL:600585:20140416:SALES_VOLUME_PLAN_DELIVERY",
+      "status": "UNKNOWN",
+      "label": "UNKNOWN",
+      "computed_value": null,
+      "mismatch_propagation": "LOCAL_ONLY"
+    },
+    {
+      "cell_id": "CELL:600585:20140416:REALIZED_REVENUE_PER_TONNE",
+      "status": "UNKNOWN",
+      "label": "UNKNOWN",
+      "computed_value": null,
+      "mismatch_propagation": "LOCAL_ONLY"
+    },
+    {
+      "cell_id": "CELL:600585:20140416:COMBINED_UNIT_COST",
+      "status": "OBSERVED",
+      "label": "OBSERVED_STABLE",
+      "computed_value": -0.02150129640169481,
+      "mismatch_propagation": "LOCAL_ONLY"
+    },
+    {
+      "cell_id": "CELL:600585:20140416:COMBINED_GROSS_MARGIN",
+      "status": "MEASUREMENT_MISMATCH",
+      "label": "MEASUREMENT_MISMATCH",
+      "computed_value": null,
+      "mismatch_propagation": "LOCAL_ONLY"
+    },
+    {
+      "cell_id": "CELL:600585:20140416:ACCOUNTS_RECEIVABLE",
+      "status": "OBSERVED",
+      "label": "OBSERVED_DECREASE",
+      "computed_value": -0.07137569128050417,
+      "mismatch_propagation": "LOCAL_ONLY"
+    },
+    {
+      "cell_id": "CELL:600585:20140416:INVENTORY",
+      "status": "OBSERVED",
+      "label": "OBSERVED_INCREASE",
+      "computed_value": 0.18503767055140252,
+      "mismatch_propagation": "LOCAL_ONLY"
+    },
+    {
+      "cell_id": "CELL:600585:20140416:OPERATING_CASH",
+      "status": "OBSERVED",
+      "label": "OBSERVED_INCREASE",
+      "computed_value": 0.1615906925755836,
+      "mismatch_propagation": "LOCAL_ONLY"
+    },
+    {
+      "cell_id": "CELL:600585:20140416:CASH_CAPEX",
+      "status": "OBSERVED",
+      "label": "OBSERVED_DECREASE",
+      "computed_value": -0.07776471045961675,
+      "mismatch_propagation": "LOCAL_ONLY"
+    },
+    {
+      "cell_id": "CELL:600585:20140416:OCF_TO_CASH_CAPEX",
+      "status": "OBSERVED",
+      "label": "OBSERVED_INCREASE",
+      "computed_value": 0.2595383257937229,
+      "mismatch_propagation": "LOCAL_ONLY"
+    },
+    {
+      "cell_id": "CELL:600585:20140416:NET_DEBT_RATIO",
+      "status": "OBSERVED",
+      "label": "OBSERVED_DECREASE",
+      "computed_value": -0.16,
+      "mismatch_propagation": "LOCAL_ONLY"
+    },
+    {
+      "cell_id": "CELL:600585:20140416:ADAPTATION_ACTION_EVENT",
+      "status": "UNKNOWN",
+      "label": "UNKNOWN",
+      "computed_value": null,
+      "mismatch_propagation": "LOCAL_ONLY"
+    },
+    {
+      "cell_id": "CELL:600585:20140416:DIRECT_LOSS_EVENT",
+      "status": "UNKNOWN",
+      "label": "UNKNOWN",
+      "computed_value": null,
+      "mismatch_propagation": "LOCAL_ONLY"
+    }
+  ],
+  "raw_observation_receipts": [
+    {
+      "schema_version": "enterprise-observation-receipt.v1",
+      "receipt_id": "OBS:ENTERPRISE:R7SETTLE:CN600585:20140416:FY2014:V1:CELL:600585:20140416:ISSUER_VS_INDUSTRY_VOLUME_SPREAD:FIELD:600585:FY2014:ISSUER_VS_INDUSTRY_VOLUME_SPREAD_FIRST",
+      "settlement_id": "R7SETTLE:CN600585:20140416:FY2014:V1",
+      "measurement_contract_ref": {
+        "measurement_contract_id": "OMC:CN600585:20140416:MULTIDIMENSIONAL:V3",
+        "measurement_contract_version": 3
+      },
+      "company_id": "CN:600585",
+      "cutoff_at": "2014-04-16T00:00:00+08:00",
+      "custodian_id": "ROLE:CEMENT:ROUND7:OUTCOME_CUSTODIAN",
+      "authorization_receipt_id": "OAA:CN600585:20140416:FY2014:R7:V1",
+      "cell_id": "CELL:600585:20140416:ISSUER_VS_INDUSTRY_VOLUME_SPREAD",
+      "field_id": "FIELD:600585:FY2014:ISSUER_VS_INDUSTRY_VOLUME_SPREAD_FIRST",
+      "unit": "RATIO",
+      "source": {
+        "source_id": "CNINFO:600585:ANN:20150324:1200733224",
+        "source_url": "https://static.cninfo.com.cn/finalpage/2015-03-24/1200733224.PDF",
+        "report_period_end": "2014-12-31",
+        "official_source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+        "issuer_id": "ISSUER:CN:600585",
+        "responsibility_boundary": {
+          "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600585",
+          "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+          "arena_id": "ARENA:CN:CEMENT:MULTI_REGION_DELIVERED_MARKET",
+          "scope_requirement": "industry context and issuer state are compared descriptively, never as a causal control"
+        },
+        "availability_precision": "DATE_ONLY",
+        "source_available_date": "2015-03-24",
+        "pdf_page": 12,
+        "field_ref": "PDF p.12",
+        "field_identity": "FIELD:600585:FY2014:ISSUER_VS_INDUSTRY_VOLUME_SPREAD_FIRST",
+        "measurement_clock": {
+          "clock_kind": "FLOW_PERIOD",
+          "flow_period": {
+            "period_start": "2014-01-01",
+            "period_end": "2014-12-31",
+            "fiscal_period": "FY2014"
+          }
+        },
+        "unit": "RATIO",
+        "table_or_note": "FY2014 macro and industry review / FY2014 operating review",
+        "line_item": "issuer cement and clinker net sales volume growth rate minus national cement output growth rate",
+        "period_column": "FY2014",
+        "custodian_locator": {
+          "table_or_note": "三、管理层研讨与分析 / 宏观环境",
+          "line_item": "全国水泥产量同比增长 1.8%",
+          "period_column": "FY2014"
+        }
+      },
+      "raw_value": 0.018,
+      "measurement_clock": {
+        "clock_kind": "FLOW_PERIOD",
+        "flow_period": {
+          "period_start": "2014-01-01",
+          "period_end": "2014-12-31",
+          "fiscal_period": "FY2014"
+        }
+      },
+      "status": "OBSERVED",
+      "responsibility_boundary": {
+        "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600585",
+        "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+        "arena_id": "ARENA:CN:CEMENT:MULTI_REGION_DELIVERED_MARKET",
+        "scope_requirement": "industry context and issuer state are compared descriptively, never as a causal control"
+      }
+    },
+    {
+      "schema_version": "enterprise-observation-receipt.v1",
+      "receipt_id": "OBS:ENTERPRISE:R7SETTLE:CN600585:20140416:FY2014:V1:CELL:600585:20140416:ISSUER_VS_INDUSTRY_VOLUME_SPREAD:FIELD:600585:FY2014:ISSUER_VS_INDUSTRY_VOLUME_SPREAD_SECOND",
+      "settlement_id": "R7SETTLE:CN600585:20140416:FY2014:V1",
+      "measurement_contract_ref": {
+        "measurement_contract_id": "OMC:CN600585:20140416:MULTIDIMENSIONAL:V3",
+        "measurement_contract_version": 3
+      },
+      "company_id": "CN:600585",
+      "cutoff_at": "2014-04-16T00:00:00+08:00",
+      "custodian_id": "ROLE:CEMENT:ROUND7:OUTCOME_CUSTODIAN",
+      "authorization_receipt_id": "OAA:CN600585:20140416:FY2014:R7:V1",
+      "cell_id": "CELL:600585:20140416:ISSUER_VS_INDUSTRY_VOLUME_SPREAD",
+      "field_id": "FIELD:600585:FY2014:ISSUER_VS_INDUSTRY_VOLUME_SPREAD_SECOND",
+      "unit": "RATIO",
+      "source": {
+        "source_id": "CNINFO:600585:ANN:20150324:1200733224",
+        "source_url": "https://static.cninfo.com.cn/finalpage/2015-03-24/1200733224.PDF",
+        "report_period_end": "2014-12-31",
+        "official_source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+        "issuer_id": "ISSUER:CN:600585",
+        "responsibility_boundary": {
+          "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600585",
+          "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+          "arena_id": "ARENA:CN:CEMENT:MULTI_REGION_DELIVERED_MARKET",
+          "scope_requirement": "industry context and issuer state are compared descriptively, never as a causal control"
+        },
+        "availability_precision": "DATE_ONLY",
+        "source_available_date": "2015-03-24",
+        "pdf_page": 13,
+        "field_ref": "PDF p.13",
+        "field_identity": "FIELD:600585:FY2014:ISSUER_VS_INDUSTRY_VOLUME_SPREAD_SECOND",
+        "measurement_clock": {
+          "clock_kind": "FLOW_PERIOD",
+          "flow_period": {
+            "period_start": "2014-01-01",
+            "period_end": "2014-12-31",
+            "fiscal_period": "FY2014"
+          }
+        },
+        "unit": "RATIO",
+        "table_or_note": "FY2014 macro and industry review / FY2014 operating review",
+        "line_item": "issuer cement and clinker net sales volume growth rate minus national cement output growth rate",
+        "period_column": "FY2014",
+        "custodian_locator": {
+          "table_or_note": "三、管理层研讨与分析 / 销售市场情况",
+          "line_item": "本集团水泥和熟料合计净销量同比增长 9.29%",
+          "period_column": "FY2014"
+        }
+      },
+      "raw_value": 0.0929,
+      "measurement_clock": {
+        "clock_kind": "FLOW_PERIOD",
+        "flow_period": {
+          "period_start": "2014-01-01",
+          "period_end": "2014-12-31",
+          "fiscal_period": "FY2014"
+        }
+      },
+      "status": "OBSERVED",
+      "responsibility_boundary": {
+        "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600585",
+        "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+        "arena_id": "ARENA:CN:CEMENT:MULTI_REGION_DELIVERED_MARKET",
+        "scope_requirement": "industry context and issuer state are compared descriptively, never as a causal control"
+      }
+    },
+    {
+      "schema_version": "enterprise-observation-receipt.v1",
+      "receipt_id": "OBS:ENTERPRISE:R7SETTLE:CN600585:20140416:FY2014:V1:CELL:600585:20140416:IMPLEMENTED_ACTION_EVENT:FIELD:600585:FY2014:IMPLEMENTED_ACTION_EVENT_EVENT",
+      "settlement_id": "R7SETTLE:CN600585:20140416:FY2014:V1",
+      "measurement_contract_ref": {
+        "measurement_contract_id": "OMC:CN600585:20140416:MULTIDIMENSIONAL:V3",
+        "measurement_contract_version": 3
+      },
+      "company_id": "CN:600585",
+      "cutoff_at": "2014-04-16T00:00:00+08:00",
+      "custodian_id": "ROLE:CEMENT:ROUND7:OUTCOME_CUSTODIAN",
+      "authorization_receipt_id": "OAA:CN600585:20140416:FY2014:R7:V1",
+      "cell_id": "CELL:600585:20140416:IMPLEMENTED_ACTION_EVENT",
+      "field_id": "FIELD:600585:FY2014:IMPLEMENTED_ACTION_EVENT_EVENT",
+      "unit": "BOOLEAN_EVENT",
+      "source": {
+        "source_id": "CNINFO:600585:ANN:20150324:1200733224",
+        "source_url": "https://static.cninfo.com.cn/finalpage/2015-03-24/1200733224.PDF",
+        "report_period_end": "2014-12-31",
+        "official_source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+        "issuer_id": "ISSUER:CN:600585",
+        "responsibility_boundary": {
+          "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600585",
+          "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+          "arena_id": "ARENA:CN:CEMENT:MULTI_REGION_DELIVERED_MARKET",
+          "scope_requirement": "issuer-specific implemented action and execution milestone; narrative plans are insufficient"
+        },
+        "availability_precision": "DATE_ONLY",
+        "source_available_date": "2015-03-24",
+        "pdf_page": 25,
+        "field_ref": "PDF p.25",
+        "field_identity": "FIELD:600585:FY2014:IMPLEMENTED_ACTION_EVENT_EVENT",
+        "measurement_clock": {
+          "clock_kind": "EVENT_WINDOW",
+          "event_window": {
+            "event_start": "2014-04-17",
+            "event_end": "2014-12-31",
+            "window_name": "POST_CUTOFF_FY2014_EVENT_WINDOW"
+          }
+        },
+        "unit": "BOOLEAN_EVENT",
+        "table_or_note": "FY2014 management discussion, project delivery or material investment disclosure",
+        "line_item": "explicit post-cutoff implementation of a capacity, acquisition, market, procurement, digital or environmental action",
+        "period_column": "2014-04-17..2014-12-31",
+        "custodian_locator": {
+          "table_or_note": "报告期内收购的项目公司",
+          "line_item": "昆明宏熙股权转让和工商变更手续全部办理完毕",
+          "period_column": "2014-05-23"
+        }
+      },
+      "raw_value": true,
+      "measurement_clock": {
+        "clock_kind": "EVENT_WINDOW",
+        "event_window": {
+          "event_start": "2014-04-17",
+          "event_end": "2014-12-31",
+          "window_name": "POST_CUTOFF_FY2014_EVENT_WINDOW"
+        }
+      },
+      "status": "OBSERVED",
+      "responsibility_boundary": {
+        "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600585",
+        "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+        "arena_id": "ARENA:CN:CEMENT:MULTI_REGION_DELIVERED_MARKET",
+        "scope_requirement": "issuer-specific implemented action and execution milestone; narrative plans are insufficient"
+      }
+    },
+    {
+      "schema_version": "enterprise-observation-receipt.v1",
+      "receipt_id": "OBS:ENTERPRISE:R7SETTLE:CN600585:20140416:FY2014:V1:CELL:600585:20140416:NAMED_PLAN_MILESTONE_DELIVERED:FIELD:600585:FY2014:NAMED_PLAN_MILESTONE_DELIVERED_EVENT",
+      "settlement_id": "R7SETTLE:CN600585:20140416:FY2014:V1",
+      "measurement_contract_ref": {
+        "measurement_contract_id": "OMC:CN600585:20140416:MULTIDIMENSIONAL:V3",
+        "measurement_contract_version": 3
+      },
+      "company_id": "CN:600585",
+      "cutoff_at": "2014-04-16T00:00:00+08:00",
+      "custodian_id": "ROLE:CEMENT:ROUND7:OUTCOME_CUSTODIAN",
+      "authorization_receipt_id": "OAA:CN600585:20140416:FY2014:R7:V1",
+      "cell_id": "CELL:600585:20140416:NAMED_PLAN_MILESTONE_DELIVERED",
+      "reason": "FY2013_NAMED_FORWARD_PLAN_MILESTONE_NOT_IDENTIFIABLE_FROM_AUTHORIZED_FY2014_SOURCE",
+      "sources_considered": [
+        {
+          "source_id": "CNINFO:600585:ANN:20150324:1200733224",
+          "source_url": "https://static.cninfo.com.cn/finalpage/2015-03-24/1200733224.PDF",
+          "report_period_end": "2014-12-31",
+          "official_source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+          "issuer_id": "ISSUER:CN:600585",
+          "responsibility_boundary": "ISSUER_CONSOLIDATED:CN:600585",
+          "availability_precision": "DATE_ONLY",
+          "source_available_date": "2015-03-24"
+        }
+      ],
+      "field_id": "FIELD:600585:FY2014:NAMED_PLAN_MILESTONE_DELIVERED_EVENT",
+      "unit": "BOOLEAN_EVENT",
+      "measurement_clock": {
+        "clock_kind": "EVENT_WINDOW",
+        "event_window": {
+          "event_start": "2014-04-17",
+          "event_end": "2014-12-31",
+          "window_name": "POST_CUTOFF_FY2014_EVENT_WINDOW"
+        }
+      },
+      "status": "UNKNOWN",
+      "responsibility_boundary": {
+        "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600585",
+        "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+        "arena_id": "ARENA:CN:CEMENT:MULTI_REGION_DELIVERED_MARKET",
+        "scope_requirement": "issuer-specific implemented action and execution milestone; narrative plans are insufficient"
+      }
+    },
+    {
+      "schema_version": "enterprise-observation-receipt.v1",
+      "receipt_id": "OBS:ENTERPRISE:R7SETTLE:CN600585:20140416:FY2014:V1:CELL:600585:20140416:DIRECT_CUSTOMER_RESPONSE:FIELD:600585:FY2014:DIRECT_CUSTOMER_RESPONSE_EVENT",
+      "settlement_id": "R7SETTLE:CN600585:20140416:FY2014:V1",
+      "measurement_contract_ref": {
+        "measurement_contract_id": "OMC:CN600585:20140416:MULTIDIMENSIONAL:V3",
+        "measurement_contract_version": 3
+      },
+      "company_id": "CN:600585",
+      "cutoff_at": "2014-04-16T00:00:00+08:00",
+      "custodian_id": "ROLE:CEMENT:ROUND7:OUTCOME_CUSTODIAN",
+      "authorization_receipt_id": "OAA:CN600585:20140416:FY2014:R7:V1",
+      "cell_id": "CELL:600585:20140416:DIRECT_CUSTOMER_RESPONSE",
+      "reason": "NO_DIRECT_CUSTOMER_RESPONSE_FIELD_WITH_CONFIRMED_POST_CUTOFF_TIMING_FOUND",
+      "sources_considered": [
+        {
+          "source_id": "CNINFO:600585:ANN:20150324:1200733224",
+          "source_url": "https://static.cninfo.com.cn/finalpage/2015-03-24/1200733224.PDF",
+          "report_period_end": "2014-12-31",
+          "official_source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+          "issuer_id": "ISSUER:CN:600585",
+          "responsibility_boundary": "ISSUER_CONSOLIDATED:CN:600585",
+          "availability_precision": "DATE_ONLY",
+          "source_available_date": "2015-03-24"
+        }
+      ],
+      "field_id": "FIELD:600585:FY2014:DIRECT_CUSTOMER_RESPONSE_EVENT",
+      "unit": "BOOLEAN_EVENT",
+      "measurement_clock": {
+        "clock_kind": "EVENT_WINDOW",
+        "event_window": {
+          "event_start": "2014-04-17",
+          "event_end": "2014-12-31",
+          "window_name": "POST_CUTOFF_FY2014_EVENT_WINDOW"
+        }
+      },
+      "status": "UNKNOWN",
+      "responsibility_boundary": {
+        "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600585",
+        "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+        "arena_id": "ARENA:CN:CEMENT:MULTI_REGION_DELIVERED_MARKET",
+        "scope_requirement": "issuer-specific implemented action and execution milestone; narrative plans are insufficient"
+      }
+    },
+    {
+      "schema_version": "enterprise-observation-receipt.v1",
+      "receipt_id": "OBS:ENTERPRISE:R7SETTLE:CN600585:20140416:FY2014:V1:CELL:600585:20140416:CEMENT_CLINKER_SALES_VOLUME:FIELD:600585:FY2013:CEMENT_CLINKER_SALES_VOLUME",
+      "settlement_id": "R7SETTLE:CN600585:20140416:FY2014:V1",
+      "measurement_contract_ref": {
+        "measurement_contract_id": "OMC:CN600585:20140416:MULTIDIMENSIONAL:V3",
+        "measurement_contract_version": 3
+      },
+      "company_id": "CN:600585",
+      "cutoff_at": "2014-04-16T00:00:00+08:00",
+      "custodian_id": "ROLE:CEMENT:ROUND7:OUTCOME_CUSTODIAN",
+      "authorization_receipt_id": "OAA:CN600585:20140416:FY2014:R7:V1",
+      "cell_id": "CELL:600585:20140416:CEMENT_CLINKER_SALES_VOLUME",
+      "reason": "FY2013_CEMENT_AND_CLINKER_NET_SALES_VOLUME_NOT_SEPARATELY_DISCLOSED",
+      "sources_considered": [
+        {
+          "source_id": "CNINFO:600585:ANN:20150324:1200733224",
+          "source_url": "https://static.cninfo.com.cn/finalpage/2015-03-24/1200733224.PDF",
+          "report_period_end": "2014-12-31",
+          "official_source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+          "issuer_id": "ISSUER:CN:600585",
+          "responsibility_boundary": "ISSUER_CONSOLIDATED:CN:600585",
+          "availability_precision": "DATE_ONLY",
+          "source_available_date": "2015-03-24"
+        }
+      ],
+      "field_id": "FIELD:600585:FY2013:CEMENT_CLINKER_SALES_VOLUME",
+      "unit": "TONNE",
+      "measurement_clock": {
+        "clock_kind": "FLOW_PERIOD",
+        "flow_period": {
+          "period_start": "2013-01-01",
+          "period_end": "2013-12-31",
+          "fiscal_period": "FY2013"
+        }
+      },
+      "status": "UNKNOWN",
+      "responsibility_boundary": {
+        "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600585",
+        "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+        "arena_id": "ARENA:CN:CEMENT:MULTI_REGION_DELIVERED_MARKET",
+        "scope_requirement": "issuer-consolidated same-definition field; causal attribution prohibited"
+      }
+    },
+    {
+      "schema_version": "enterprise-observation-receipt.v1",
+      "receipt_id": "OBS:ENTERPRISE:R7SETTLE:CN600585:20140416:FY2014:V1:CELL:600585:20140416:CEMENT_CLINKER_SALES_VOLUME:FIELD:600585:FY2014:CEMENT_CLINKER_SALES_VOLUME",
+      "settlement_id": "R7SETTLE:CN600585:20140416:FY2014:V1",
+      "measurement_contract_ref": {
+        "measurement_contract_id": "OMC:CN600585:20140416:MULTIDIMENSIONAL:V3",
+        "measurement_contract_version": 3
+      },
+      "company_id": "CN:600585",
+      "cutoff_at": "2014-04-16T00:00:00+08:00",
+      "custodian_id": "ROLE:CEMENT:ROUND7:OUTCOME_CUSTODIAN",
+      "authorization_receipt_id": "OAA:CN600585:20140416:FY2014:R7:V1",
+      "cell_id": "CELL:600585:20140416:CEMENT_CLINKER_SALES_VOLUME",
+      "field_id": "FIELD:600585:FY2014:CEMENT_CLINKER_SALES_VOLUME",
+      "unit": "TONNE",
+      "source": {
+        "source_id": "CNINFO:600585:ANN:20150324:1200733224",
+        "source_url": "https://static.cninfo.com.cn/finalpage/2015-03-24/1200733224.PDF",
+        "report_period_end": "2014-12-31",
+        "official_source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+        "issuer_id": "ISSUER:CN:600585",
+        "responsibility_boundary": {
+          "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600585",
+          "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+          "arena_id": "ARENA:CN:CEMENT:MULTI_REGION_DELIVERED_MARKET",
+          "scope_requirement": "issuer-consolidated same-definition field; causal attribution prohibited"
+        },
+        "availability_precision": "DATE_ONLY",
+        "source_available_date": "2015-03-24",
+        "pdf_page": 13,
+        "field_ref": "PDF p.13",
+        "field_identity": "FIELD:600585:FY2014:CEMENT_CLINKER_SALES_VOLUME",
+        "measurement_clock": {
+          "clock_kind": "FLOW_PERIOD",
+          "flow_period": {
+            "period_start": "2014-01-01",
+            "period_end": "2014-12-31",
+            "fiscal_period": "FY2014"
+          }
+        },
+        "unit": "TONNE",
+        "table_or_note": "production-sales-inventory analysis",
+        "line_item": "cement and clinker net sales volume",
+        "period_column": "FY2014",
+        "custodian_locator": {
+          "table_or_note": "三、管理层研讨与分析 / 销售市场情况",
+          "line_item": "本集团水泥和熟料合计净销量为 2.49 亿吨",
+          "period_column": "FY2014"
+        }
+      },
+      "raw_value": 249000000,
+      "measurement_clock": {
+        "clock_kind": "FLOW_PERIOD",
+        "flow_period": {
+          "period_start": "2014-01-01",
+          "period_end": "2014-12-31",
+          "fiscal_period": "FY2014"
+        }
+      },
+      "status": "OBSERVED",
+      "responsibility_boundary": {
+        "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600585",
+        "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+        "arena_id": "ARENA:CN:CEMENT:MULTI_REGION_DELIVERED_MARKET",
+        "scope_requirement": "issuer-consolidated same-definition field; causal attribution prohibited"
+      }
+    },
+    {
+      "schema_version": "enterprise-observation-receipt.v1",
+      "receipt_id": "OBS:ENTERPRISE:R7SETTLE:CN600585:20140416:FY2014:V1:CELL:600585:20140416:SALES_VOLUME_PLAN_DELIVERY:FIELD:600585:FY2013:SALES_VOLUME_PLAN_DELIVERY",
+      "settlement_id": "R7SETTLE:CN600585:20140416:FY2014:V1",
+      "measurement_contract_ref": {
+        "measurement_contract_id": "OMC:CN600585:20140416:MULTIDIMENSIONAL:V3",
+        "measurement_contract_version": 3
+      },
+      "company_id": "CN:600585",
+      "cutoff_at": "2014-04-16T00:00:00+08:00",
+      "custodian_id": "ROLE:CEMENT:ROUND7:OUTCOME_CUSTODIAN",
+      "authorization_receipt_id": "OAA:CN600585:20140416:FY2014:R7:V1",
+      "cell_id": "CELL:600585:20140416:SALES_VOLUME_PLAN_DELIVERY",
+      "reason": "FY2013_CEMENT_AND_CLINKER_NET_SALES_VOLUME_NOT_SEPARATELY_DISCLOSED",
+      "sources_considered": [
+        {
+          "source_id": "CNINFO:600585:ANN:20150324:1200733224",
+          "source_url": "https://static.cninfo.com.cn/finalpage/2015-03-24/1200733224.PDF",
+          "report_period_end": "2014-12-31",
+          "official_source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+          "issuer_id": "ISSUER:CN:600585",
+          "responsibility_boundary": "ISSUER_CONSOLIDATED:CN:600585",
+          "availability_precision": "DATE_ONLY",
+          "source_available_date": "2015-03-24"
+        }
+      ],
+      "field_id": "FIELD:600585:FY2013:SALES_VOLUME_PLAN_DELIVERY",
+      "unit": "TONNE",
+      "measurement_clock": {
+        "clock_kind": "FLOW_PERIOD",
+        "flow_period": {
+          "period_start": "2013-01-01",
+          "period_end": "2013-12-31",
+          "fiscal_period": "FY2013"
+        }
+      },
+      "status": "UNKNOWN",
+      "responsibility_boundary": {
+        "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600585",
+        "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+        "arena_id": "ARENA:CN:CEMENT:MULTI_REGION_DELIVERED_MARKET",
+        "scope_requirement": "issuer-consolidated same-definition field; causal attribution prohibited"
+      }
+    },
+    {
+      "schema_version": "enterprise-observation-receipt.v1",
+      "receipt_id": "OBS:ENTERPRISE:R7SETTLE:CN600585:20140416:FY2014:V1:CELL:600585:20140416:SALES_VOLUME_PLAN_DELIVERY:FIELD:600585:FY2014:SALES_VOLUME_PLAN_DELIVERY",
+      "settlement_id": "R7SETTLE:CN600585:20140416:FY2014:V1",
+      "measurement_contract_ref": {
+        "measurement_contract_id": "OMC:CN600585:20140416:MULTIDIMENSIONAL:V3",
+        "measurement_contract_version": 3
+      },
+      "company_id": "CN:600585",
+      "cutoff_at": "2014-04-16T00:00:00+08:00",
+      "custodian_id": "ROLE:CEMENT:ROUND7:OUTCOME_CUSTODIAN",
+      "authorization_receipt_id": "OAA:CN600585:20140416:FY2014:R7:V1",
+      "cell_id": "CELL:600585:20140416:SALES_VOLUME_PLAN_DELIVERY",
+      "field_id": "FIELD:600585:FY2014:SALES_VOLUME_PLAN_DELIVERY",
+      "unit": "TONNE",
+      "source": {
+        "source_id": "CNINFO:600585:ANN:20150324:1200733224",
+        "source_url": "https://static.cninfo.com.cn/finalpage/2015-03-24/1200733224.PDF",
+        "report_period_end": "2014-12-31",
+        "official_source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+        "issuer_id": "ISSUER:CN:600585",
+        "responsibility_boundary": {
+          "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600585",
+          "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+          "arena_id": "ARENA:CN:CEMENT:MULTI_REGION_DELIVERED_MARKET",
+          "scope_requirement": "issuer-consolidated same-definition field; causal attribution prohibited"
+        },
+        "availability_precision": "DATE_ONLY",
+        "source_available_date": "2015-03-24",
+        "pdf_page": 13,
+        "field_ref": "PDF p.13",
+        "field_identity": "FIELD:600585:FY2014:SALES_VOLUME_PLAN_DELIVERY",
+        "measurement_clock": {
+          "clock_kind": "FLOW_PERIOD",
+          "flow_period": {
+            "period_start": "2014-01-01",
+            "period_end": "2014-12-31",
+            "fiscal_period": "FY2014"
+          }
+        },
+        "unit": "TONNE",
+        "table_or_note": "production-sales-inventory analysis",
+        "line_item": "cement and clinker net sales volume",
+        "period_column": "FY2014",
+        "custodian_locator": {
+          "table_or_note": "三、管理层研讨与分析 / 销售市场情况",
+          "line_item": "本集团水泥和熟料合计净销量为 2.49 亿吨",
+          "period_column": "FY2014"
+        }
+      },
+      "raw_value": 249000000,
+      "measurement_clock": {
+        "clock_kind": "FLOW_PERIOD",
+        "flow_period": {
+          "period_start": "2014-01-01",
+          "period_end": "2014-12-31",
+          "fiscal_period": "FY2014"
+        }
+      },
+      "status": "OBSERVED",
+      "responsibility_boundary": {
+        "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600585",
+        "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+        "arena_id": "ARENA:CN:CEMENT:MULTI_REGION_DELIVERED_MARKET",
+        "scope_requirement": "issuer-consolidated same-definition field; causal attribution prohibited"
+      }
+    },
+    {
+      "schema_version": "enterprise-observation-receipt.v1",
+      "receipt_id": "OBS:ENTERPRISE:R7SETTLE:CN600585:20140416:FY2014:V1:CELL:600585:20140416:REALIZED_REVENUE_PER_TONNE:FIELD:600585:FY2013:REALIZED_REVENUE_PER_TONNE_NUMERATOR",
+      "settlement_id": "R7SETTLE:CN600585:20140416:FY2014:V1",
+      "measurement_contract_ref": {
+        "measurement_contract_id": "OMC:CN600585:20140416:MULTIDIMENSIONAL:V3",
+        "measurement_contract_version": 3
+      },
+      "company_id": "CN:600585",
+      "cutoff_at": "2014-04-16T00:00:00+08:00",
+      "custodian_id": "ROLE:CEMENT:ROUND7:OUTCOME_CUSTODIAN",
+      "authorization_receipt_id": "OAA:CN600585:20140416:FY2014:R7:V1",
+      "cell_id": "CELL:600585:20140416:REALIZED_REVENUE_PER_TONNE",
+      "reason": "FY2013_CEMENT_AND_CLINKER_PRINCIPAL_BUSINESS_REVENUE_NOT_SEPARATELY_DISCLOSED",
+      "sources_considered": [
+        {
+          "source_id": "CNINFO:600585:ANN:20150324:1200733224",
+          "source_url": "https://static.cninfo.com.cn/finalpage/2015-03-24/1200733224.PDF",
+          "report_period_end": "2014-12-31",
+          "official_source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+          "issuer_id": "ISSUER:CN:600585",
+          "responsibility_boundary": "ISSUER_CONSOLIDATED:CN:600585",
+          "availability_precision": "DATE_ONLY",
+          "source_available_date": "2015-03-24"
+        }
+      ],
+      "field_id": "FIELD:600585:FY2013:REALIZED_REVENUE_PER_TONNE_NUMERATOR",
+      "unit": "RMB",
+      "measurement_clock": {
+        "clock_kind": "FLOW_PERIOD",
+        "flow_period": {
+          "period_start": "2013-01-01",
+          "period_end": "2013-12-31",
+          "fiscal_period": "FY2013"
+        }
+      },
+      "status": "UNKNOWN",
+      "responsibility_boundary": {
+        "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600585",
+        "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+        "arena_id": "ARENA:CN:CEMENT:MULTI_REGION_DELIVERED_MARKET",
+        "scope_requirement": "issuer-consolidated ratio assembled from same-period, same-boundary raw fields"
+      }
+    },
+    {
+      "schema_version": "enterprise-observation-receipt.v1",
+      "receipt_id": "OBS:ENTERPRISE:R7SETTLE:CN600585:20140416:FY2014:V1:CELL:600585:20140416:REALIZED_REVENUE_PER_TONNE:FIELD:600585:FY2013:REALIZED_REVENUE_PER_TONNE_DENOMINATOR",
+      "settlement_id": "R7SETTLE:CN600585:20140416:FY2014:V1",
+      "measurement_contract_ref": {
+        "measurement_contract_id": "OMC:CN600585:20140416:MULTIDIMENSIONAL:V3",
+        "measurement_contract_version": 3
+      },
+      "company_id": "CN:600585",
+      "cutoff_at": "2014-04-16T00:00:00+08:00",
+      "custodian_id": "ROLE:CEMENT:ROUND7:OUTCOME_CUSTODIAN",
+      "authorization_receipt_id": "OAA:CN600585:20140416:FY2014:R7:V1",
+      "cell_id": "CELL:600585:20140416:REALIZED_REVENUE_PER_TONNE",
+      "reason": "FY2013_CEMENT_AND_CLINKER_NET_SALES_VOLUME_NOT_SEPARATELY_DISCLOSED",
+      "sources_considered": [
+        {
+          "source_id": "CNINFO:600585:ANN:20150324:1200733224",
+          "source_url": "https://static.cninfo.com.cn/finalpage/2015-03-24/1200733224.PDF",
+          "report_period_end": "2014-12-31",
+          "official_source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+          "issuer_id": "ISSUER:CN:600585",
+          "responsibility_boundary": "ISSUER_CONSOLIDATED:CN:600585",
+          "availability_precision": "DATE_ONLY",
+          "source_available_date": "2015-03-24"
+        }
+      ],
+      "field_id": "FIELD:600585:FY2013:REALIZED_REVENUE_PER_TONNE_DENOMINATOR",
+      "unit": "TONNE",
+      "measurement_clock": {
+        "clock_kind": "FLOW_PERIOD",
+        "flow_period": {
+          "period_start": "2013-01-01",
+          "period_end": "2013-12-31",
+          "fiscal_period": "FY2013"
+        }
+      },
+      "status": "UNKNOWN",
+      "responsibility_boundary": {
+        "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600585",
+        "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+        "arena_id": "ARENA:CN:CEMENT:MULTI_REGION_DELIVERED_MARKET",
+        "scope_requirement": "issuer-consolidated ratio assembled from same-period, same-boundary raw fields"
+      }
+    },
+    {
+      "schema_version": "enterprise-observation-receipt.v1",
+      "receipt_id": "OBS:ENTERPRISE:R7SETTLE:CN600585:20140416:FY2014:V1:CELL:600585:20140416:REALIZED_REVENUE_PER_TONNE:FIELD:600585:FY2014:REALIZED_REVENUE_PER_TONNE_NUMERATOR",
+      "settlement_id": "R7SETTLE:CN600585:20140416:FY2014:V1",
+      "measurement_contract_ref": {
+        "measurement_contract_id": "OMC:CN600585:20140416:MULTIDIMENSIONAL:V3",
+        "measurement_contract_version": 3
+      },
+      "company_id": "CN:600585",
+      "cutoff_at": "2014-04-16T00:00:00+08:00",
+      "custodian_id": "ROLE:CEMENT:ROUND7:OUTCOME_CUSTODIAN",
+      "authorization_receipt_id": "OAA:CN600585:20140416:FY2014:R7:V1",
+      "cell_id": "CELL:600585:20140416:REALIZED_REVENUE_PER_TONNE",
+      "field_id": "FIELD:600585:FY2014:REALIZED_REVENUE_PER_TONNE_NUMERATOR",
+      "unit": "RMB",
+      "source": {
+        "source_id": "CNINFO:600585:ANN:20150324:1200733224",
+        "source_url": "https://static.cninfo.com.cn/finalpage/2015-03-24/1200733224.PDF",
+        "report_period_end": "2014-12-31",
+        "official_source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+        "issuer_id": "ISSUER:CN:600585",
+        "responsibility_boundary": {
+          "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600585",
+          "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+          "arena_id": "ARENA:CN:CEMENT:MULTI_REGION_DELIVERED_MARKET",
+          "scope_requirement": "issuer-consolidated ratio assembled from same-period, same-boundary raw fields"
+        },
+        "availability_precision": "DATE_ONLY",
+        "source_available_date": "2015-03-24",
+        "pdf_page": 15,
+        "field_ref": "PDF p.15",
+        "field_identity": "FIELD:600585:FY2014:REALIZED_REVENUE_PER_TONNE_NUMERATOR",
+        "measurement_clock": {
+          "clock_kind": "FLOW_PERIOD",
+          "flow_period": {
+            "period_start": "2014-01-01",
+            "period_end": "2014-12-31",
+            "fiscal_period": "FY2014"
+          }
+        },
+        "unit": "RMB",
+        "table_or_note": "principal business by product / production-sales-inventory analysis",
+        "line_item": "cement and clinker principal business revenue divided by cement and clinker net sales volume",
+        "period_column": "FY2014",
+        "custodian_locator": {
+          "table_or_note": "2014 年分品种毛利及同比变动",
+          "line_item": "42.5级水泥、32.5级水泥及熟料三行主营业务收入合计",
+          "period_column": "FY2014"
+        }
+      },
+      "raw_value": 58856410000,
+      "measurement_clock": {
+        "clock_kind": "FLOW_PERIOD",
+        "flow_period": {
+          "period_start": "2014-01-01",
+          "period_end": "2014-12-31",
+          "fiscal_period": "FY2014"
+        }
+      },
+      "status": "OBSERVED",
+      "responsibility_boundary": {
+        "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600585",
+        "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+        "arena_id": "ARENA:CN:CEMENT:MULTI_REGION_DELIVERED_MARKET",
+        "scope_requirement": "issuer-consolidated ratio assembled from same-period, same-boundary raw fields"
+      }
+    },
+    {
+      "schema_version": "enterprise-observation-receipt.v1",
+      "receipt_id": "OBS:ENTERPRISE:R7SETTLE:CN600585:20140416:FY2014:V1:CELL:600585:20140416:REALIZED_REVENUE_PER_TONNE:FIELD:600585:FY2014:REALIZED_REVENUE_PER_TONNE_DENOMINATOR",
+      "settlement_id": "R7SETTLE:CN600585:20140416:FY2014:V1",
+      "measurement_contract_ref": {
+        "measurement_contract_id": "OMC:CN600585:20140416:MULTIDIMENSIONAL:V3",
+        "measurement_contract_version": 3
+      },
+      "company_id": "CN:600585",
+      "cutoff_at": "2014-04-16T00:00:00+08:00",
+      "custodian_id": "ROLE:CEMENT:ROUND7:OUTCOME_CUSTODIAN",
+      "authorization_receipt_id": "OAA:CN600585:20140416:FY2014:R7:V1",
+      "cell_id": "CELL:600585:20140416:REALIZED_REVENUE_PER_TONNE",
+      "field_id": "FIELD:600585:FY2014:REALIZED_REVENUE_PER_TONNE_DENOMINATOR",
+      "unit": "TONNE",
+      "source": {
+        "source_id": "CNINFO:600585:ANN:20150324:1200733224",
+        "source_url": "https://static.cninfo.com.cn/finalpage/2015-03-24/1200733224.PDF",
+        "report_period_end": "2014-12-31",
+        "official_source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+        "issuer_id": "ISSUER:CN:600585",
+        "responsibility_boundary": {
+          "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600585",
+          "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+          "arena_id": "ARENA:CN:CEMENT:MULTI_REGION_DELIVERED_MARKET",
+          "scope_requirement": "issuer-consolidated ratio assembled from same-period, same-boundary raw fields"
+        },
+        "availability_precision": "DATE_ONLY",
+        "source_available_date": "2015-03-24",
+        "pdf_page": 13,
+        "field_ref": "PDF p.13",
+        "field_identity": "FIELD:600585:FY2014:REALIZED_REVENUE_PER_TONNE_DENOMINATOR",
+        "measurement_clock": {
+          "clock_kind": "FLOW_PERIOD",
+          "flow_period": {
+            "period_start": "2014-01-01",
+            "period_end": "2014-12-31",
+            "fiscal_period": "FY2014"
+          }
+        },
+        "unit": "TONNE",
+        "table_or_note": "principal business by product / production-sales-inventory analysis",
+        "line_item": "cement and clinker principal business revenue divided by cement and clinker net sales volume",
+        "period_column": "FY2014",
+        "custodian_locator": {
+          "table_or_note": "三、管理层研讨与分析 / 销售市场情况",
+          "line_item": "本集团水泥和熟料合计净销量为 2.49 亿吨",
+          "period_column": "FY2014"
+        }
+      },
+      "raw_value": 249000000,
+      "measurement_clock": {
+        "clock_kind": "FLOW_PERIOD",
+        "flow_period": {
+          "period_start": "2014-01-01",
+          "period_end": "2014-12-31",
+          "fiscal_period": "FY2014"
+        }
+      },
+      "status": "OBSERVED",
+      "responsibility_boundary": {
+        "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600585",
+        "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+        "arena_id": "ARENA:CN:CEMENT:MULTI_REGION_DELIVERED_MARKET",
+        "scope_requirement": "issuer-consolidated ratio assembled from same-period, same-boundary raw fields"
+      }
+    },
+    {
+      "schema_version": "enterprise-observation-receipt.v1",
+      "receipt_id": "OBS:ENTERPRISE:R7SETTLE:CN600585:20140416:FY2014:V1:CELL:600585:20140416:COMBINED_UNIT_COST:FIELD:600585:FY2013:COMBINED_UNIT_COST",
+      "settlement_id": "R7SETTLE:CN600585:20140416:FY2014:V1",
+      "measurement_contract_ref": {
+        "measurement_contract_id": "OMC:CN600585:20140416:MULTIDIMENSIONAL:V3",
+        "measurement_contract_version": 3
+      },
+      "company_id": "CN:600585",
+      "cutoff_at": "2014-04-16T00:00:00+08:00",
+      "custodian_id": "ROLE:CEMENT:ROUND7:OUTCOME_CUSTODIAN",
+      "authorization_receipt_id": "OAA:CN600585:20140416:FY2014:R7:V1",
+      "cell_id": "CELL:600585:20140416:COMBINED_UNIT_COST",
+      "field_id": "FIELD:600585:FY2013:COMBINED_UNIT_COST",
+      "unit": "RMB_PER_TONNE",
+      "source": {
+        "source_id": "CNINFO:600585:ANN:20150324:1200733224",
+        "source_url": "https://static.cninfo.com.cn/finalpage/2015-03-24/1200733224.PDF",
+        "report_period_end": "2014-12-31",
+        "official_source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+        "issuer_id": "ISSUER:CN:600585",
+        "responsibility_boundary": {
+          "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600585",
+          "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+          "arena_id": "ARENA:CN:CEMENT:MULTI_REGION_DELIVERED_MARKET",
+          "scope_requirement": "issuer-consolidated same-definition field; causal attribution prohibited"
+        },
+        "availability_precision": "DATE_ONLY",
+        "source_available_date": "2015-03-24",
+        "pdf_page": 15,
+        "field_ref": "PDF p.15",
+        "field_identity": "FIELD:600585:FY2013:COMBINED_UNIT_COST",
+        "measurement_clock": {
+          "clock_kind": "FLOW_PERIOD",
+          "flow_period": {
+            "period_start": "2013-01-01",
+            "period_end": "2013-12-31",
+            "fiscal_period": "FY2013"
+          }
+        },
+        "unit": "RMB_PER_TONNE",
+        "table_or_note": "cement and clinker combined cost analysis",
+        "line_item": "cement and clinker combined unit cost",
+        "period_column": "FY2013",
+        "custodian_locator": {
+          "table_or_note": "2014 年水泥熟料综合成本及同比变动",
+          "line_item": "合计单位成本",
+          "period_column": "FY2013"
+        }
+      },
+      "raw_value": 158.13,
+      "measurement_clock": {
+        "clock_kind": "FLOW_PERIOD",
+        "flow_period": {
+          "period_start": "2013-01-01",
+          "period_end": "2013-12-31",
+          "fiscal_period": "FY2013"
+        }
+      },
+      "status": "OBSERVED",
+      "responsibility_boundary": {
+        "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600585",
+        "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+        "arena_id": "ARENA:CN:CEMENT:MULTI_REGION_DELIVERED_MARKET",
+        "scope_requirement": "issuer-consolidated same-definition field; causal attribution prohibited"
+      }
+    },
+    {
+      "schema_version": "enterprise-observation-receipt.v1",
+      "receipt_id": "OBS:ENTERPRISE:R7SETTLE:CN600585:20140416:FY2014:V1:CELL:600585:20140416:COMBINED_UNIT_COST:FIELD:600585:FY2014:COMBINED_UNIT_COST",
+      "settlement_id": "R7SETTLE:CN600585:20140416:FY2014:V1",
+      "measurement_contract_ref": {
+        "measurement_contract_id": "OMC:CN600585:20140416:MULTIDIMENSIONAL:V3",
+        "measurement_contract_version": 3
+      },
+      "company_id": "CN:600585",
+      "cutoff_at": "2014-04-16T00:00:00+08:00",
+      "custodian_id": "ROLE:CEMENT:ROUND7:OUTCOME_CUSTODIAN",
+      "authorization_receipt_id": "OAA:CN600585:20140416:FY2014:R7:V1",
+      "cell_id": "CELL:600585:20140416:COMBINED_UNIT_COST",
+      "field_id": "FIELD:600585:FY2014:COMBINED_UNIT_COST",
+      "unit": "RMB_PER_TONNE",
+      "source": {
+        "source_id": "CNINFO:600585:ANN:20150324:1200733224",
+        "source_url": "https://static.cninfo.com.cn/finalpage/2015-03-24/1200733224.PDF",
+        "report_period_end": "2014-12-31",
+        "official_source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+        "issuer_id": "ISSUER:CN:600585",
+        "responsibility_boundary": {
+          "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600585",
+          "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+          "arena_id": "ARENA:CN:CEMENT:MULTI_REGION_DELIVERED_MARKET",
+          "scope_requirement": "issuer-consolidated same-definition field; causal attribution prohibited"
+        },
+        "availability_precision": "DATE_ONLY",
+        "source_available_date": "2015-03-24",
+        "pdf_page": 15,
+        "field_ref": "PDF p.15",
+        "field_identity": "FIELD:600585:FY2014:COMBINED_UNIT_COST",
+        "measurement_clock": {
+          "clock_kind": "FLOW_PERIOD",
+          "flow_period": {
+            "period_start": "2014-01-01",
+            "period_end": "2014-12-31",
+            "fiscal_period": "FY2014"
+          }
+        },
+        "unit": "RMB_PER_TONNE",
+        "table_or_note": "cement and clinker combined cost analysis",
+        "line_item": "cement and clinker combined unit cost",
+        "period_column": "FY2014",
+        "custodian_locator": {
+          "table_or_note": "2014 年水泥熟料综合成本及同比变动",
+          "line_item": "合计单位成本",
+          "period_column": "FY2014"
+        }
+      },
+      "raw_value": 154.73,
+      "measurement_clock": {
+        "clock_kind": "FLOW_PERIOD",
+        "flow_period": {
+          "period_start": "2014-01-01",
+          "period_end": "2014-12-31",
+          "fiscal_period": "FY2014"
+        }
+      },
+      "status": "OBSERVED",
+      "responsibility_boundary": {
+        "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600585",
+        "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+        "arena_id": "ARENA:CN:CEMENT:MULTI_REGION_DELIVERED_MARKET",
+        "scope_requirement": "issuer-consolidated same-definition field; causal attribution prohibited"
+      }
+    },
+    {
+      "schema_version": "enterprise-observation-receipt.v1",
+      "receipt_id": "OBS:ENTERPRISE:R7SETTLE:CN600585:20140416:FY2014:V1:CELL:600585:20140416:COMBINED_GROSS_MARGIN:FIELD:600585:FY2013:COMBINED_GROSS_MARGIN",
+      "settlement_id": "R7SETTLE:CN600585:20140416:FY2014:V1",
+      "measurement_contract_ref": {
+        "measurement_contract_id": "OMC:CN600585:20140416:MULTIDIMENSIONAL:V3",
+        "measurement_contract_version": 3
+      },
+      "company_id": "CN:600585",
+      "cutoff_at": "2014-04-16T00:00:00+08:00",
+      "custodian_id": "ROLE:CEMENT:ROUND7:OUTCOME_CUSTODIAN",
+      "authorization_receipt_id": "OAA:CN600585:20140416:FY2014:R7:V1",
+      "cell_id": "CELL:600585:20140416:COMBINED_GROSS_MARGIN",
+      "reason": "DISCLOSED_COMBINED_GROSS_MARGIN_INCLUDES_AGGREGATES_AND_STONE_OUTSIDE_FROZEN_CEMENT_AND_CLINKER_SCOPE",
+      "field_id": "FIELD:600585:FY2013:COMBINED_GROSS_MARGIN",
+      "unit": "RATIO",
+      "source": {
+        "source_id": "CNINFO:600585:ANN:20150324:1200733224",
+        "source_url": "https://static.cninfo.com.cn/finalpage/2015-03-24/1200733224.PDF",
+        "report_period_end": "2014-12-31",
+        "official_source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+        "issuer_id": "ISSUER:CN:600585",
+        "responsibility_boundary": {
+          "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600585",
+          "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+          "arena_id": "ARENA:CN:CEMENT:MULTI_REGION_DELIVERED_MARKET",
+          "scope_requirement": "issuer-consolidated same-definition field; causal attribution prohibited"
+        },
+        "availability_precision": "DATE_ONLY",
+        "source_available_date": "2015-03-24",
+        "pdf_page": 15,
+        "field_ref": "PDF p.15",
+        "field_identity": "FIELD:600585:FY2013:COMBINED_GROSS_MARGIN",
+        "measurement_clock": {
+          "clock_kind": "FLOW_PERIOD",
+          "flow_period": {
+            "period_start": "2013-01-01",
+            "period_end": "2013-12-31",
+            "fiscal_period": "FY2013"
+          }
+        },
+        "unit": "RATIO",
+        "table_or_note": "principal business by product",
+        "line_item": "cement and clinker combined gross margin",
+        "period_column": "FY2013",
+        "custodian_locator": {
+          "table_or_note": "2014 年分品种毛利及同比变动",
+          "line_item": "合计（含42.5级水泥、32.5级水泥、熟料、骨料及石子）上年同期毛利率",
+          "period_column": "FY2013"
+        }
+      },
+      "measurement_clock": {
+        "clock_kind": "FLOW_PERIOD",
+        "flow_period": {
+          "period_start": "2013-01-01",
+          "period_end": "2013-12-31",
+          "fiscal_period": "FY2013"
+        }
+      },
+      "status": "MEASUREMENT_MISMATCH",
+      "responsibility_boundary": {
+        "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600585",
+        "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+        "arena_id": "ARENA:CN:CEMENT:MULTI_REGION_DELIVERED_MARKET",
+        "scope_requirement": "issuer-consolidated same-definition field; causal attribution prohibited"
+      }
+    },
+    {
+      "schema_version": "enterprise-observation-receipt.v1",
+      "receipt_id": "OBS:ENTERPRISE:R7SETTLE:CN600585:20140416:FY2014:V1:CELL:600585:20140416:COMBINED_GROSS_MARGIN:FIELD:600585:FY2014:COMBINED_GROSS_MARGIN",
+      "settlement_id": "R7SETTLE:CN600585:20140416:FY2014:V1",
+      "measurement_contract_ref": {
+        "measurement_contract_id": "OMC:CN600585:20140416:MULTIDIMENSIONAL:V3",
+        "measurement_contract_version": 3
+      },
+      "company_id": "CN:600585",
+      "cutoff_at": "2014-04-16T00:00:00+08:00",
+      "custodian_id": "ROLE:CEMENT:ROUND7:OUTCOME_CUSTODIAN",
+      "authorization_receipt_id": "OAA:CN600585:20140416:FY2014:R7:V1",
+      "cell_id": "CELL:600585:20140416:COMBINED_GROSS_MARGIN",
+      "field_id": "FIELD:600585:FY2014:COMBINED_GROSS_MARGIN",
+      "unit": "RATIO",
+      "source": {
+        "source_id": "CNINFO:600585:ANN:20150324:1200733224",
+        "source_url": "https://static.cninfo.com.cn/finalpage/2015-03-24/1200733224.PDF",
+        "report_period_end": "2014-12-31",
+        "official_source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+        "issuer_id": "ISSUER:CN:600585",
+        "responsibility_boundary": {
+          "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600585",
+          "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+          "arena_id": "ARENA:CN:CEMENT:MULTI_REGION_DELIVERED_MARKET",
+          "scope_requirement": "issuer-consolidated same-definition field; causal attribution prohibited"
+        },
+        "availability_precision": "DATE_ONLY",
+        "source_available_date": "2015-03-24",
+        "pdf_page": 15,
+        "field_ref": "PDF p.15",
+        "field_identity": "FIELD:600585:FY2014:COMBINED_GROSS_MARGIN",
+        "measurement_clock": {
+          "clock_kind": "FLOW_PERIOD",
+          "flow_period": {
+            "period_start": "2014-01-01",
+            "period_end": "2014-12-31",
+            "fiscal_period": "FY2014"
+          }
+        },
+        "unit": "RATIO",
+        "table_or_note": "principal business by product",
+        "line_item": "cement and clinker combined gross margin",
+        "period_column": "FY2014",
+        "custodian_locator": {
+          "table_or_note": "2014 年分品种毛利及同比变动",
+          "line_item": "42.5级水泥、32.5级水泥及熟料三行主营业务收入与成本合计后计算毛利率",
+          "period_column": "FY2014"
+        }
+      },
+      "raw_value": 0.34467097126719076,
+      "measurement_clock": {
+        "clock_kind": "FLOW_PERIOD",
+        "flow_period": {
+          "period_start": "2014-01-01",
+          "period_end": "2014-12-31",
+          "fiscal_period": "FY2014"
+        }
+      },
+      "status": "OBSERVED",
+      "responsibility_boundary": {
+        "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600585",
+        "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+        "arena_id": "ARENA:CN:CEMENT:MULTI_REGION_DELIVERED_MARKET",
+        "scope_requirement": "issuer-consolidated same-definition field; causal attribution prohibited"
+      }
+    },
+    {
+      "schema_version": "enterprise-observation-receipt.v1",
+      "receipt_id": "OBS:ENTERPRISE:R7SETTLE:CN600585:20140416:FY2014:V1:CELL:600585:20140416:ACCOUNTS_RECEIVABLE:FIELD:600585:FY2013:ACCOUNTS_RECEIVABLE",
+      "settlement_id": "R7SETTLE:CN600585:20140416:FY2014:V1",
+      "measurement_contract_ref": {
+        "measurement_contract_id": "OMC:CN600585:20140416:MULTIDIMENSIONAL:V3",
+        "measurement_contract_version": 3
+      },
+      "company_id": "CN:600585",
+      "cutoff_at": "2014-04-16T00:00:00+08:00",
+      "custodian_id": "ROLE:CEMENT:ROUND7:OUTCOME_CUSTODIAN",
+      "authorization_receipt_id": "OAA:CN600585:20140416:FY2014:R7:V1",
+      "cell_id": "CELL:600585:20140416:ACCOUNTS_RECEIVABLE",
+      "field_id": "FIELD:600585:FY2013:ACCOUNTS_RECEIVABLE",
+      "unit": "RMB",
+      "source": {
+        "source_id": "CNINFO:600585:ANN:20150324:1200733224",
+        "source_url": "https://static.cninfo.com.cn/finalpage/2015-03-24/1200733224.PDF",
+        "report_period_end": "2014-12-31",
+        "official_source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+        "issuer_id": "ISSUER:CN:600585",
+        "responsibility_boundary": {
+          "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600585",
+          "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+          "arena_id": "ARENA:CN:CEMENT:MULTI_REGION_DELIVERED_MARKET",
+          "scope_requirement": "issuer-consolidated same-definition field; causal attribution prohibited"
+        },
+        "availability_precision": "DATE_ONLY",
+        "source_available_date": "2015-03-24",
+        "pdf_page": 70,
+        "field_ref": "PDF p.70",
+        "field_identity": "FIELD:600585:FY2013:ACCOUNTS_RECEIVABLE",
+        "measurement_clock": {
+          "clock_kind": "BALANCE_AS_OF",
+          "balance_as_of": {
+            "as_of": "2013-12-31",
+            "fiscal_period": "FY2013"
+          }
+        },
+        "unit": "RMB",
+        "table_or_note": "consolidated balance sheet",
+        "line_item": "accounts receivable",
+        "period_column": "FY2013",
+        "custodian_locator": {
+          "table_or_note": "合并资产负债表",
+          "line_item": "应收账款",
+          "period_column": "2013年"
+        }
+      },
+      "raw_value": 358861379,
+      "measurement_clock": {
+        "clock_kind": "BALANCE_AS_OF",
+        "balance_as_of": {
+          "as_of": "2013-12-31",
+          "fiscal_period": "FY2013"
+        }
+      },
+      "status": "OBSERVED",
+      "responsibility_boundary": {
+        "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600585",
+        "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+        "arena_id": "ARENA:CN:CEMENT:MULTI_REGION_DELIVERED_MARKET",
+        "scope_requirement": "issuer-consolidated same-definition field; causal attribution prohibited"
+      }
+    },
+    {
+      "schema_version": "enterprise-observation-receipt.v1",
+      "receipt_id": "OBS:ENTERPRISE:R7SETTLE:CN600585:20140416:FY2014:V1:CELL:600585:20140416:ACCOUNTS_RECEIVABLE:FIELD:600585:FY2014:ACCOUNTS_RECEIVABLE",
+      "settlement_id": "R7SETTLE:CN600585:20140416:FY2014:V1",
+      "measurement_contract_ref": {
+        "measurement_contract_id": "OMC:CN600585:20140416:MULTIDIMENSIONAL:V3",
+        "measurement_contract_version": 3
+      },
+      "company_id": "CN:600585",
+      "cutoff_at": "2014-04-16T00:00:00+08:00",
+      "custodian_id": "ROLE:CEMENT:ROUND7:OUTCOME_CUSTODIAN",
+      "authorization_receipt_id": "OAA:CN600585:20140416:FY2014:R7:V1",
+      "cell_id": "CELL:600585:20140416:ACCOUNTS_RECEIVABLE",
+      "field_id": "FIELD:600585:FY2014:ACCOUNTS_RECEIVABLE",
+      "unit": "RMB",
+      "source": {
+        "source_id": "CNINFO:600585:ANN:20150324:1200733224",
+        "source_url": "https://static.cninfo.com.cn/finalpage/2015-03-24/1200733224.PDF",
+        "report_period_end": "2014-12-31",
+        "official_source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+        "issuer_id": "ISSUER:CN:600585",
+        "responsibility_boundary": {
+          "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600585",
+          "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+          "arena_id": "ARENA:CN:CEMENT:MULTI_REGION_DELIVERED_MARKET",
+          "scope_requirement": "issuer-consolidated same-definition field; causal attribution prohibited"
+        },
+        "availability_precision": "DATE_ONLY",
+        "source_available_date": "2015-03-24",
+        "pdf_page": 70,
+        "field_ref": "PDF p.70",
+        "field_identity": "FIELD:600585:FY2014:ACCOUNTS_RECEIVABLE",
+        "measurement_clock": {
+          "clock_kind": "BALANCE_AS_OF",
+          "balance_as_of": {
+            "as_of": "2014-12-31",
+            "fiscal_period": "FY2014"
+          }
+        },
+        "unit": "RMB",
+        "table_or_note": "consolidated balance sheet",
+        "line_item": "accounts receivable",
+        "period_column": "FY2014",
+        "custodian_locator": {
+          "table_or_note": "合并资产负债表",
+          "line_item": "应收账款",
+          "period_column": "2014年"
+        }
+      },
+      "raw_value": 333247400,
+      "measurement_clock": {
+        "clock_kind": "BALANCE_AS_OF",
+        "balance_as_of": {
+          "as_of": "2014-12-31",
+          "fiscal_period": "FY2014"
+        }
+      },
+      "status": "OBSERVED",
+      "responsibility_boundary": {
+        "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600585",
+        "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+        "arena_id": "ARENA:CN:CEMENT:MULTI_REGION_DELIVERED_MARKET",
+        "scope_requirement": "issuer-consolidated same-definition field; causal attribution prohibited"
+      }
+    },
+    {
+      "schema_version": "enterprise-observation-receipt.v1",
+      "receipt_id": "OBS:ENTERPRISE:R7SETTLE:CN600585:20140416:FY2014:V1:CELL:600585:20140416:INVENTORY:FIELD:600585:FY2013:INVENTORY",
+      "settlement_id": "R7SETTLE:CN600585:20140416:FY2014:V1",
+      "measurement_contract_ref": {
+        "measurement_contract_id": "OMC:CN600585:20140416:MULTIDIMENSIONAL:V3",
+        "measurement_contract_version": 3
+      },
+      "company_id": "CN:600585",
+      "cutoff_at": "2014-04-16T00:00:00+08:00",
+      "custodian_id": "ROLE:CEMENT:ROUND7:OUTCOME_CUSTODIAN",
+      "authorization_receipt_id": "OAA:CN600585:20140416:FY2014:R7:V1",
+      "cell_id": "CELL:600585:20140416:INVENTORY",
+      "field_id": "FIELD:600585:FY2013:INVENTORY",
+      "unit": "RMB",
+      "source": {
+        "source_id": "CNINFO:600585:ANN:20150324:1200733224",
+        "source_url": "https://static.cninfo.com.cn/finalpage/2015-03-24/1200733224.PDF",
+        "report_period_end": "2014-12-31",
+        "official_source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+        "issuer_id": "ISSUER:CN:600585",
+        "responsibility_boundary": {
+          "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600585",
+          "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+          "arena_id": "ARENA:CN:CEMENT:MULTI_REGION_DELIVERED_MARKET",
+          "scope_requirement": "issuer-consolidated same-definition field; causal attribution prohibited"
+        },
+        "availability_precision": "DATE_ONLY",
+        "source_available_date": "2015-03-24",
+        "pdf_page": 70,
+        "field_ref": "PDF p.70",
+        "field_identity": "FIELD:600585:FY2013:INVENTORY",
+        "measurement_clock": {
+          "clock_kind": "BALANCE_AS_OF",
+          "balance_as_of": {
+            "as_of": "2013-12-31",
+            "fiscal_period": "FY2013"
+          }
+        },
+        "unit": "RMB",
+        "table_or_note": "consolidated balance sheet",
+        "line_item": "inventory",
+        "period_column": "FY2013",
+        "custodian_locator": {
+          "table_or_note": "合并资产负债表",
+          "line_item": "存货",
+          "period_column": "2013年"
+        }
+      },
+      "raw_value": 3692689510,
+      "measurement_clock": {
+        "clock_kind": "BALANCE_AS_OF",
+        "balance_as_of": {
+          "as_of": "2013-12-31",
+          "fiscal_period": "FY2013"
+        }
+      },
+      "status": "OBSERVED",
+      "responsibility_boundary": {
+        "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600585",
+        "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+        "arena_id": "ARENA:CN:CEMENT:MULTI_REGION_DELIVERED_MARKET",
+        "scope_requirement": "issuer-consolidated same-definition field; causal attribution prohibited"
+      }
+    },
+    {
+      "schema_version": "enterprise-observation-receipt.v1",
+      "receipt_id": "OBS:ENTERPRISE:R7SETTLE:CN600585:20140416:FY2014:V1:CELL:600585:20140416:INVENTORY:FIELD:600585:FY2014:INVENTORY",
+      "settlement_id": "R7SETTLE:CN600585:20140416:FY2014:V1",
+      "measurement_contract_ref": {
+        "measurement_contract_id": "OMC:CN600585:20140416:MULTIDIMENSIONAL:V3",
+        "measurement_contract_version": 3
+      },
+      "company_id": "CN:600585",
+      "cutoff_at": "2014-04-16T00:00:00+08:00",
+      "custodian_id": "ROLE:CEMENT:ROUND7:OUTCOME_CUSTODIAN",
+      "authorization_receipt_id": "OAA:CN600585:20140416:FY2014:R7:V1",
+      "cell_id": "CELL:600585:20140416:INVENTORY",
+      "field_id": "FIELD:600585:FY2014:INVENTORY",
+      "unit": "RMB",
+      "source": {
+        "source_id": "CNINFO:600585:ANN:20150324:1200733224",
+        "source_url": "https://static.cninfo.com.cn/finalpage/2015-03-24/1200733224.PDF",
+        "report_period_end": "2014-12-31",
+        "official_source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+        "issuer_id": "ISSUER:CN:600585",
+        "responsibility_boundary": {
+          "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600585",
+          "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+          "arena_id": "ARENA:CN:CEMENT:MULTI_REGION_DELIVERED_MARKET",
+          "scope_requirement": "issuer-consolidated same-definition field; causal attribution prohibited"
+        },
+        "availability_precision": "DATE_ONLY",
+        "source_available_date": "2015-03-24",
+        "pdf_page": 70,
+        "field_ref": "PDF p.70",
+        "field_identity": "FIELD:600585:FY2014:INVENTORY",
+        "measurement_clock": {
+          "clock_kind": "BALANCE_AS_OF",
+          "balance_as_of": {
+            "as_of": "2014-12-31",
+            "fiscal_period": "FY2014"
+          }
+        },
+        "unit": "RMB",
+        "table_or_note": "consolidated balance sheet",
+        "line_item": "inventory",
+        "period_column": "FY2014",
+        "custodian_locator": {
+          "table_or_note": "合并资产负债表",
+          "line_item": "存货",
+          "period_column": "2014年"
+        }
+      },
+      "raw_value": 4375976175,
+      "measurement_clock": {
+        "clock_kind": "BALANCE_AS_OF",
+        "balance_as_of": {
+          "as_of": "2014-12-31",
+          "fiscal_period": "FY2014"
+        }
+      },
+      "status": "OBSERVED",
+      "responsibility_boundary": {
+        "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600585",
+        "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+        "arena_id": "ARENA:CN:CEMENT:MULTI_REGION_DELIVERED_MARKET",
+        "scope_requirement": "issuer-consolidated same-definition field; causal attribution prohibited"
+      }
+    },
+    {
+      "schema_version": "enterprise-observation-receipt.v1",
+      "receipt_id": "OBS:ENTERPRISE:R7SETTLE:CN600585:20140416:FY2014:V1:CELL:600585:20140416:OPERATING_CASH:FIELD:600585:FY2013:OPERATING_CASH",
+      "settlement_id": "R7SETTLE:CN600585:20140416:FY2014:V1",
+      "measurement_contract_ref": {
+        "measurement_contract_id": "OMC:CN600585:20140416:MULTIDIMENSIONAL:V3",
+        "measurement_contract_version": 3
+      },
+      "company_id": "CN:600585",
+      "cutoff_at": "2014-04-16T00:00:00+08:00",
+      "custodian_id": "ROLE:CEMENT:ROUND7:OUTCOME_CUSTODIAN",
+      "authorization_receipt_id": "OAA:CN600585:20140416:FY2014:R7:V1",
+      "cell_id": "CELL:600585:20140416:OPERATING_CASH",
+      "field_id": "FIELD:600585:FY2013:OPERATING_CASH",
+      "unit": "RMB",
+      "source": {
+        "source_id": "CNINFO:600585:ANN:20150324:1200733224",
+        "source_url": "https://static.cninfo.com.cn/finalpage/2015-03-24/1200733224.PDF",
+        "report_period_end": "2014-12-31",
+        "official_source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+        "issuer_id": "ISSUER:CN:600585",
+        "responsibility_boundary": {
+          "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600585",
+          "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+          "arena_id": "ARENA:CN:CEMENT:MULTI_REGION_DELIVERED_MARKET",
+          "scope_requirement": "issuer-consolidated same-definition field; causal attribution prohibited"
+        },
+        "availability_precision": "DATE_ONLY",
+        "source_available_date": "2015-03-24",
+        "pdf_page": 80,
+        "field_ref": "PDF p.80",
+        "field_identity": "FIELD:600585:FY2013:OPERATING_CASH",
+        "measurement_clock": {
+          "clock_kind": "FLOW_PERIOD",
+          "flow_period": {
+            "period_start": "2013-01-01",
+            "period_end": "2013-12-31",
+            "fiscal_period": "FY2013"
+          }
+        },
+        "unit": "RMB",
+        "table_or_note": "consolidated cash-flow statement",
+        "line_item": "net cash flows from operating activities",
+        "period_column": "FY2013",
+        "custodian_locator": {
+          "table_or_note": "合并现金流量表",
+          "line_item": "经营活动产生的现金流量净额",
+          "period_column": "2013年"
+        }
+      },
+      "raw_value": 15198545169,
+      "measurement_clock": {
+        "clock_kind": "FLOW_PERIOD",
+        "flow_period": {
+          "period_start": "2013-01-01",
+          "period_end": "2013-12-31",
+          "fiscal_period": "FY2013"
+        }
+      },
+      "status": "OBSERVED",
+      "responsibility_boundary": {
+        "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600585",
+        "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+        "arena_id": "ARENA:CN:CEMENT:MULTI_REGION_DELIVERED_MARKET",
+        "scope_requirement": "issuer-consolidated same-definition field; causal attribution prohibited"
+      }
+    },
+    {
+      "schema_version": "enterprise-observation-receipt.v1",
+      "receipt_id": "OBS:ENTERPRISE:R7SETTLE:CN600585:20140416:FY2014:V1:CELL:600585:20140416:OPERATING_CASH:FIELD:600585:FY2014:OPERATING_CASH",
+      "settlement_id": "R7SETTLE:CN600585:20140416:FY2014:V1",
+      "measurement_contract_ref": {
+        "measurement_contract_id": "OMC:CN600585:20140416:MULTIDIMENSIONAL:V3",
+        "measurement_contract_version": 3
+      },
+      "company_id": "CN:600585",
+      "cutoff_at": "2014-04-16T00:00:00+08:00",
+      "custodian_id": "ROLE:CEMENT:ROUND7:OUTCOME_CUSTODIAN",
+      "authorization_receipt_id": "OAA:CN600585:20140416:FY2014:R7:V1",
+      "cell_id": "CELL:600585:20140416:OPERATING_CASH",
+      "field_id": "FIELD:600585:FY2014:OPERATING_CASH",
+      "unit": "RMB",
+      "source": {
+        "source_id": "CNINFO:600585:ANN:20150324:1200733224",
+        "source_url": "https://static.cninfo.com.cn/finalpage/2015-03-24/1200733224.PDF",
+        "report_period_end": "2014-12-31",
+        "official_source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+        "issuer_id": "ISSUER:CN:600585",
+        "responsibility_boundary": {
+          "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600585",
+          "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+          "arena_id": "ARENA:CN:CEMENT:MULTI_REGION_DELIVERED_MARKET",
+          "scope_requirement": "issuer-consolidated same-definition field; causal attribution prohibited"
+        },
+        "availability_precision": "DATE_ONLY",
+        "source_available_date": "2015-03-24",
+        "pdf_page": 80,
+        "field_ref": "PDF p.80",
+        "field_identity": "FIELD:600585:FY2014:OPERATING_CASH",
+        "measurement_clock": {
+          "clock_kind": "FLOW_PERIOD",
+          "flow_period": {
+            "period_start": "2014-01-01",
+            "period_end": "2014-12-31",
+            "fiscal_period": "FY2014"
+          }
+        },
+        "unit": "RMB",
+        "table_or_note": "consolidated cash-flow statement",
+        "line_item": "net cash flows from operating activities",
+        "period_column": "FY2014",
+        "custodian_locator": {
+          "table_or_note": "合并现金流量表",
+          "line_item": "经营活动产生的现金流量净额",
+          "period_column": "2014年"
+        }
+      },
+      "raw_value": 17654488609,
+      "measurement_clock": {
+        "clock_kind": "FLOW_PERIOD",
+        "flow_period": {
+          "period_start": "2014-01-01",
+          "period_end": "2014-12-31",
+          "fiscal_period": "FY2014"
+        }
+      },
+      "status": "OBSERVED",
+      "responsibility_boundary": {
+        "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600585",
+        "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+        "arena_id": "ARENA:CN:CEMENT:MULTI_REGION_DELIVERED_MARKET",
+        "scope_requirement": "issuer-consolidated same-definition field; causal attribution prohibited"
+      }
+    },
+    {
+      "schema_version": "enterprise-observation-receipt.v1",
+      "receipt_id": "OBS:ENTERPRISE:R7SETTLE:CN600585:20140416:FY2014:V1:CELL:600585:20140416:CASH_CAPEX:FIELD:600585:FY2013:CASH_CAPEX",
+      "settlement_id": "R7SETTLE:CN600585:20140416:FY2014:V1",
+      "measurement_contract_ref": {
+        "measurement_contract_id": "OMC:CN600585:20140416:MULTIDIMENSIONAL:V3",
+        "measurement_contract_version": 3
+      },
+      "company_id": "CN:600585",
+      "cutoff_at": "2014-04-16T00:00:00+08:00",
+      "custodian_id": "ROLE:CEMENT:ROUND7:OUTCOME_CUSTODIAN",
+      "authorization_receipt_id": "OAA:CN600585:20140416:FY2014:R7:V1",
+      "cell_id": "CELL:600585:20140416:CASH_CAPEX",
+      "field_id": "FIELD:600585:FY2013:CASH_CAPEX",
+      "unit": "RMB",
+      "source": {
+        "source_id": "CNINFO:600585:ANN:20150324:1200733224",
+        "source_url": "https://static.cninfo.com.cn/finalpage/2015-03-24/1200733224.PDF",
+        "report_period_end": "2014-12-31",
+        "official_source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+        "issuer_id": "ISSUER:CN:600585",
+        "responsibility_boundary": {
+          "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600585",
+          "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+          "arena_id": "ARENA:CN:CEMENT:MULTI_REGION_DELIVERED_MARKET",
+          "scope_requirement": "issuer-consolidated same-definition field; causal attribution prohibited"
+        },
+        "availability_precision": "DATE_ONLY",
+        "source_available_date": "2015-03-24",
+        "pdf_page": 80,
+        "field_ref": "PDF p.80",
+        "field_identity": "FIELD:600585:FY2013:CASH_CAPEX",
+        "measurement_clock": {
+          "clock_kind": "FLOW_PERIOD",
+          "flow_period": {
+            "period_start": "2013-01-01",
+            "period_end": "2013-12-31",
+            "fiscal_period": "FY2013"
+          }
+        },
+        "unit": "RMB",
+        "table_or_note": "consolidated cash-flow statement",
+        "line_item": "cash paid to acquire and construct fixed assets, intangible assets and other long-term assets",
+        "period_column": "FY2013",
+        "custodian_locator": {
+          "table_or_note": "合并现金流量表",
+          "line_item": "购建固定资产、无形资产和其他长期资产支付的现金",
+          "period_column": "2013年"
+        }
+      },
+      "raw_value": 7561568564,
+      "measurement_clock": {
+        "clock_kind": "FLOW_PERIOD",
+        "flow_period": {
+          "period_start": "2013-01-01",
+          "period_end": "2013-12-31",
+          "fiscal_period": "FY2013"
+        }
+      },
+      "status": "OBSERVED",
+      "responsibility_boundary": {
+        "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600585",
+        "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+        "arena_id": "ARENA:CN:CEMENT:MULTI_REGION_DELIVERED_MARKET",
+        "scope_requirement": "issuer-consolidated same-definition field; causal attribution prohibited"
+      }
+    },
+    {
+      "schema_version": "enterprise-observation-receipt.v1",
+      "receipt_id": "OBS:ENTERPRISE:R7SETTLE:CN600585:20140416:FY2014:V1:CELL:600585:20140416:CASH_CAPEX:FIELD:600585:FY2014:CASH_CAPEX",
+      "settlement_id": "R7SETTLE:CN600585:20140416:FY2014:V1",
+      "measurement_contract_ref": {
+        "measurement_contract_id": "OMC:CN600585:20140416:MULTIDIMENSIONAL:V3",
+        "measurement_contract_version": 3
+      },
+      "company_id": "CN:600585",
+      "cutoff_at": "2014-04-16T00:00:00+08:00",
+      "custodian_id": "ROLE:CEMENT:ROUND7:OUTCOME_CUSTODIAN",
+      "authorization_receipt_id": "OAA:CN600585:20140416:FY2014:R7:V1",
+      "cell_id": "CELL:600585:20140416:CASH_CAPEX",
+      "field_id": "FIELD:600585:FY2014:CASH_CAPEX",
+      "unit": "RMB",
+      "source": {
+        "source_id": "CNINFO:600585:ANN:20150324:1200733224",
+        "source_url": "https://static.cninfo.com.cn/finalpage/2015-03-24/1200733224.PDF",
+        "report_period_end": "2014-12-31",
+        "official_source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+        "issuer_id": "ISSUER:CN:600585",
+        "responsibility_boundary": {
+          "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600585",
+          "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+          "arena_id": "ARENA:CN:CEMENT:MULTI_REGION_DELIVERED_MARKET",
+          "scope_requirement": "issuer-consolidated same-definition field; causal attribution prohibited"
+        },
+        "availability_precision": "DATE_ONLY",
+        "source_available_date": "2015-03-24",
+        "pdf_page": 80,
+        "field_ref": "PDF p.80",
+        "field_identity": "FIELD:600585:FY2014:CASH_CAPEX",
+        "measurement_clock": {
+          "clock_kind": "FLOW_PERIOD",
+          "flow_period": {
+            "period_start": "2014-01-01",
+            "period_end": "2014-12-31",
+            "fiscal_period": "FY2014"
+          }
+        },
+        "unit": "RMB",
+        "table_or_note": "consolidated cash-flow statement",
+        "line_item": "cash paid to acquire and construct fixed assets, intangible assets and other long-term assets",
+        "period_column": "FY2014",
+        "custodian_locator": {
+          "table_or_note": "合并现金流量表",
+          "line_item": "购建固定资产、无形资产和其他长期资产支付的现金",
+          "period_column": "2014年"
+        }
+      },
+      "raw_value": 6973545374,
+      "measurement_clock": {
+        "clock_kind": "FLOW_PERIOD",
+        "flow_period": {
+          "period_start": "2014-01-01",
+          "period_end": "2014-12-31",
+          "fiscal_period": "FY2014"
+        }
+      },
+      "status": "OBSERVED",
+      "responsibility_boundary": {
+        "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600585",
+        "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+        "arena_id": "ARENA:CN:CEMENT:MULTI_REGION_DELIVERED_MARKET",
+        "scope_requirement": "issuer-consolidated same-definition field; causal attribution prohibited"
+      }
+    },
+    {
+      "schema_version": "enterprise-observation-receipt.v1",
+      "receipt_id": "OBS:ENTERPRISE:R7SETTLE:CN600585:20140416:FY2014:V1:CELL:600585:20140416:OCF_TO_CASH_CAPEX:FIELD:600585:FY2013:OCF_TO_CASH_CAPEX_NUMERATOR",
+      "settlement_id": "R7SETTLE:CN600585:20140416:FY2014:V1",
+      "measurement_contract_ref": {
+        "measurement_contract_id": "OMC:CN600585:20140416:MULTIDIMENSIONAL:V3",
+        "measurement_contract_version": 3
+      },
+      "company_id": "CN:600585",
+      "cutoff_at": "2014-04-16T00:00:00+08:00",
+      "custodian_id": "ROLE:CEMENT:ROUND7:OUTCOME_CUSTODIAN",
+      "authorization_receipt_id": "OAA:CN600585:20140416:FY2014:R7:V1",
+      "cell_id": "CELL:600585:20140416:OCF_TO_CASH_CAPEX",
+      "field_id": "FIELD:600585:FY2013:OCF_TO_CASH_CAPEX_NUMERATOR",
+      "unit": "RMB",
+      "source": {
+        "source_id": "CNINFO:600585:ANN:20150324:1200733224",
+        "source_url": "https://static.cninfo.com.cn/finalpage/2015-03-24/1200733224.PDF",
+        "report_period_end": "2014-12-31",
+        "official_source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+        "issuer_id": "ISSUER:CN:600585",
+        "responsibility_boundary": {
+          "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600585",
+          "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+          "arena_id": "ARENA:CN:CEMENT:MULTI_REGION_DELIVERED_MARKET",
+          "scope_requirement": "issuer-consolidated ratio assembled from same-period, same-boundary raw fields"
+        },
+        "availability_precision": "DATE_ONLY",
+        "source_available_date": "2015-03-24",
+        "pdf_page": 80,
+        "field_ref": "PDF p.80",
+        "field_identity": "FIELD:600585:FY2013:OCF_TO_CASH_CAPEX_NUMERATOR",
+        "measurement_clock": {
+          "clock_kind": "FLOW_PERIOD",
+          "flow_period": {
+            "period_start": "2013-01-01",
+            "period_end": "2013-12-31",
+            "fiscal_period": "FY2013"
+          }
+        },
+        "unit": "RMB",
+        "table_or_note": "consolidated cash-flow statement / consolidated cash-flow statement",
+        "line_item": "net cash flows from operating activities divided by cash paid to acquire and construct fixed assets, intangible assets and other long-term assets",
+        "period_column": "FY2013",
+        "custodian_locator": {
+          "table_or_note": "合并现金流量表",
+          "line_item": "经营活动产生的现金流量净额",
+          "period_column": "2013年"
+        }
+      },
+      "raw_value": 15198545169,
+      "measurement_clock": {
+        "clock_kind": "FLOW_PERIOD",
+        "flow_period": {
+          "period_start": "2013-01-01",
+          "period_end": "2013-12-31",
+          "fiscal_period": "FY2013"
+        }
+      },
+      "status": "OBSERVED",
+      "responsibility_boundary": {
+        "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600585",
+        "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+        "arena_id": "ARENA:CN:CEMENT:MULTI_REGION_DELIVERED_MARKET",
+        "scope_requirement": "issuer-consolidated ratio assembled from same-period, same-boundary raw fields"
+      }
+    },
+    {
+      "schema_version": "enterprise-observation-receipt.v1",
+      "receipt_id": "OBS:ENTERPRISE:R7SETTLE:CN600585:20140416:FY2014:V1:CELL:600585:20140416:OCF_TO_CASH_CAPEX:FIELD:600585:FY2013:OCF_TO_CASH_CAPEX_DENOMINATOR",
+      "settlement_id": "R7SETTLE:CN600585:20140416:FY2014:V1",
+      "measurement_contract_ref": {
+        "measurement_contract_id": "OMC:CN600585:20140416:MULTIDIMENSIONAL:V3",
+        "measurement_contract_version": 3
+      },
+      "company_id": "CN:600585",
+      "cutoff_at": "2014-04-16T00:00:00+08:00",
+      "custodian_id": "ROLE:CEMENT:ROUND7:OUTCOME_CUSTODIAN",
+      "authorization_receipt_id": "OAA:CN600585:20140416:FY2014:R7:V1",
+      "cell_id": "CELL:600585:20140416:OCF_TO_CASH_CAPEX",
+      "field_id": "FIELD:600585:FY2013:OCF_TO_CASH_CAPEX_DENOMINATOR",
+      "unit": "RMB",
+      "source": {
+        "source_id": "CNINFO:600585:ANN:20150324:1200733224",
+        "source_url": "https://static.cninfo.com.cn/finalpage/2015-03-24/1200733224.PDF",
+        "report_period_end": "2014-12-31",
+        "official_source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+        "issuer_id": "ISSUER:CN:600585",
+        "responsibility_boundary": {
+          "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600585",
+          "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+          "arena_id": "ARENA:CN:CEMENT:MULTI_REGION_DELIVERED_MARKET",
+          "scope_requirement": "issuer-consolidated ratio assembled from same-period, same-boundary raw fields"
+        },
+        "availability_precision": "DATE_ONLY",
+        "source_available_date": "2015-03-24",
+        "pdf_page": 80,
+        "field_ref": "PDF p.80",
+        "field_identity": "FIELD:600585:FY2013:OCF_TO_CASH_CAPEX_DENOMINATOR",
+        "measurement_clock": {
+          "clock_kind": "FLOW_PERIOD",
+          "flow_period": {
+            "period_start": "2013-01-01",
+            "period_end": "2013-12-31",
+            "fiscal_period": "FY2013"
+          }
+        },
+        "unit": "RMB",
+        "table_or_note": "consolidated cash-flow statement / consolidated cash-flow statement",
+        "line_item": "net cash flows from operating activities divided by cash paid to acquire and construct fixed assets, intangible assets and other long-term assets",
+        "period_column": "FY2013",
+        "custodian_locator": {
+          "table_or_note": "合并现金流量表",
+          "line_item": "购建固定资产、无形资产和其他长期资产支付的现金",
+          "period_column": "2013年"
+        }
+      },
+      "raw_value": 7561568564,
+      "measurement_clock": {
+        "clock_kind": "FLOW_PERIOD",
+        "flow_period": {
+          "period_start": "2013-01-01",
+          "period_end": "2013-12-31",
+          "fiscal_period": "FY2013"
+        }
+      },
+      "status": "OBSERVED",
+      "responsibility_boundary": {
+        "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600585",
+        "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+        "arena_id": "ARENA:CN:CEMENT:MULTI_REGION_DELIVERED_MARKET",
+        "scope_requirement": "issuer-consolidated ratio assembled from same-period, same-boundary raw fields"
+      }
+    },
+    {
+      "schema_version": "enterprise-observation-receipt.v1",
+      "receipt_id": "OBS:ENTERPRISE:R7SETTLE:CN600585:20140416:FY2014:V1:CELL:600585:20140416:OCF_TO_CASH_CAPEX:FIELD:600585:FY2014:OCF_TO_CASH_CAPEX_NUMERATOR",
+      "settlement_id": "R7SETTLE:CN600585:20140416:FY2014:V1",
+      "measurement_contract_ref": {
+        "measurement_contract_id": "OMC:CN600585:20140416:MULTIDIMENSIONAL:V3",
+        "measurement_contract_version": 3
+      },
+      "company_id": "CN:600585",
+      "cutoff_at": "2014-04-16T00:00:00+08:00",
+      "custodian_id": "ROLE:CEMENT:ROUND7:OUTCOME_CUSTODIAN",
+      "authorization_receipt_id": "OAA:CN600585:20140416:FY2014:R7:V1",
+      "cell_id": "CELL:600585:20140416:OCF_TO_CASH_CAPEX",
+      "field_id": "FIELD:600585:FY2014:OCF_TO_CASH_CAPEX_NUMERATOR",
+      "unit": "RMB",
+      "source": {
+        "source_id": "CNINFO:600585:ANN:20150324:1200733224",
+        "source_url": "https://static.cninfo.com.cn/finalpage/2015-03-24/1200733224.PDF",
+        "report_period_end": "2014-12-31",
+        "official_source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+        "issuer_id": "ISSUER:CN:600585",
+        "responsibility_boundary": {
+          "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600585",
+          "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+          "arena_id": "ARENA:CN:CEMENT:MULTI_REGION_DELIVERED_MARKET",
+          "scope_requirement": "issuer-consolidated ratio assembled from same-period, same-boundary raw fields"
+        },
+        "availability_precision": "DATE_ONLY",
+        "source_available_date": "2015-03-24",
+        "pdf_page": 80,
+        "field_ref": "PDF p.80",
+        "field_identity": "FIELD:600585:FY2014:OCF_TO_CASH_CAPEX_NUMERATOR",
+        "measurement_clock": {
+          "clock_kind": "FLOW_PERIOD",
+          "flow_period": {
+            "period_start": "2014-01-01",
+            "period_end": "2014-12-31",
+            "fiscal_period": "FY2014"
+          }
+        },
+        "unit": "RMB",
+        "table_or_note": "consolidated cash-flow statement / consolidated cash-flow statement",
+        "line_item": "net cash flows from operating activities divided by cash paid to acquire and construct fixed assets, intangible assets and other long-term assets",
+        "period_column": "FY2014",
+        "custodian_locator": {
+          "table_or_note": "合并现金流量表",
+          "line_item": "经营活动产生的现金流量净额",
+          "period_column": "2014年"
+        }
+      },
+      "raw_value": 17654488609,
+      "measurement_clock": {
+        "clock_kind": "FLOW_PERIOD",
+        "flow_period": {
+          "period_start": "2014-01-01",
+          "period_end": "2014-12-31",
+          "fiscal_period": "FY2014"
+        }
+      },
+      "status": "OBSERVED",
+      "responsibility_boundary": {
+        "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600585",
+        "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+        "arena_id": "ARENA:CN:CEMENT:MULTI_REGION_DELIVERED_MARKET",
+        "scope_requirement": "issuer-consolidated ratio assembled from same-period, same-boundary raw fields"
+      }
+    },
+    {
+      "schema_version": "enterprise-observation-receipt.v1",
+      "receipt_id": "OBS:ENTERPRISE:R7SETTLE:CN600585:20140416:FY2014:V1:CELL:600585:20140416:OCF_TO_CASH_CAPEX:FIELD:600585:FY2014:OCF_TO_CASH_CAPEX_DENOMINATOR",
+      "settlement_id": "R7SETTLE:CN600585:20140416:FY2014:V1",
+      "measurement_contract_ref": {
+        "measurement_contract_id": "OMC:CN600585:20140416:MULTIDIMENSIONAL:V3",
+        "measurement_contract_version": 3
+      },
+      "company_id": "CN:600585",
+      "cutoff_at": "2014-04-16T00:00:00+08:00",
+      "custodian_id": "ROLE:CEMENT:ROUND7:OUTCOME_CUSTODIAN",
+      "authorization_receipt_id": "OAA:CN600585:20140416:FY2014:R7:V1",
+      "cell_id": "CELL:600585:20140416:OCF_TO_CASH_CAPEX",
+      "field_id": "FIELD:600585:FY2014:OCF_TO_CASH_CAPEX_DENOMINATOR",
+      "unit": "RMB",
+      "source": {
+        "source_id": "CNINFO:600585:ANN:20150324:1200733224",
+        "source_url": "https://static.cninfo.com.cn/finalpage/2015-03-24/1200733224.PDF",
+        "report_period_end": "2014-12-31",
+        "official_source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+        "issuer_id": "ISSUER:CN:600585",
+        "responsibility_boundary": {
+          "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600585",
+          "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+          "arena_id": "ARENA:CN:CEMENT:MULTI_REGION_DELIVERED_MARKET",
+          "scope_requirement": "issuer-consolidated ratio assembled from same-period, same-boundary raw fields"
+        },
+        "availability_precision": "DATE_ONLY",
+        "source_available_date": "2015-03-24",
+        "pdf_page": 80,
+        "field_ref": "PDF p.80",
+        "field_identity": "FIELD:600585:FY2014:OCF_TO_CASH_CAPEX_DENOMINATOR",
+        "measurement_clock": {
+          "clock_kind": "FLOW_PERIOD",
+          "flow_period": {
+            "period_start": "2014-01-01",
+            "period_end": "2014-12-31",
+            "fiscal_period": "FY2014"
+          }
+        },
+        "unit": "RMB",
+        "table_or_note": "consolidated cash-flow statement / consolidated cash-flow statement",
+        "line_item": "net cash flows from operating activities divided by cash paid to acquire and construct fixed assets, intangible assets and other long-term assets",
+        "period_column": "FY2014",
+        "custodian_locator": {
+          "table_or_note": "合并现金流量表",
+          "line_item": "购建固定资产、无形资产和其他长期资产支付的现金",
+          "period_column": "2014年"
+        }
+      },
+      "raw_value": 6973545374,
+      "measurement_clock": {
+        "clock_kind": "FLOW_PERIOD",
+        "flow_period": {
+          "period_start": "2014-01-01",
+          "period_end": "2014-12-31",
+          "fiscal_period": "FY2014"
+        }
+      },
+      "status": "OBSERVED",
+      "responsibility_boundary": {
+        "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600585",
+        "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+        "arena_id": "ARENA:CN:CEMENT:MULTI_REGION_DELIVERED_MARKET",
+        "scope_requirement": "issuer-consolidated ratio assembled from same-period, same-boundary raw fields"
+      }
+    },
+    {
+      "schema_version": "enterprise-observation-receipt.v1",
+      "receipt_id": "OBS:ENTERPRISE:R7SETTLE:CN600585:20140416:FY2014:V1:CELL:600585:20140416:NET_DEBT_RATIO:FIELD:600585:FY2013:NET_DEBT_RATIO",
+      "settlement_id": "R7SETTLE:CN600585:20140416:FY2014:V1",
+      "measurement_contract_ref": {
+        "measurement_contract_id": "OMC:CN600585:20140416:MULTIDIMENSIONAL:V3",
+        "measurement_contract_version": 3
+      },
+      "company_id": "CN:600585",
+      "cutoff_at": "2014-04-16T00:00:00+08:00",
+      "custodian_id": "ROLE:CEMENT:ROUND7:OUTCOME_CUSTODIAN",
+      "authorization_receipt_id": "OAA:CN600585:20140416:FY2014:R7:V1",
+      "cell_id": "CELL:600585:20140416:NET_DEBT_RATIO",
+      "field_id": "FIELD:600585:FY2013:NET_DEBT_RATIO",
+      "unit": "RATIO",
+      "source": {
+        "source_id": "CNINFO:600585:ANN:20150324:1200733224",
+        "source_url": "https://static.cninfo.com.cn/finalpage/2015-03-24/1200733224.PDF",
+        "report_period_end": "2014-12-31",
+        "official_source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+        "issuer_id": "ISSUER:CN:600585",
+        "responsibility_boundary": {
+          "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600585",
+          "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+          "arena_id": "ARENA:CN:CEMENT:MULTI_REGION_DELIVERED_MARKET",
+          "scope_requirement": "issuer-consolidated same-definition field; causal attribution prohibited"
+        },
+        "availability_precision": "DATE_ONLY",
+        "source_available_date": "2015-03-24",
+        "pdf_page": 17,
+        "field_ref": "PDF p.17",
+        "field_identity": "FIELD:600585:FY2013:NET_DEBT_RATIO",
+        "measurement_clock": {
+          "clock_kind": "BALANCE_AS_OF",
+          "balance_as_of": {
+            "as_of": "2013-12-31",
+            "fiscal_period": "FY2013"
+          }
+        },
+        "unit": "RATIO",
+        "table_or_note": "liquidity and funding discussion",
+        "line_item": "net debt ratio",
+        "period_column": "FY2013",
+        "custodian_locator": {
+          "table_or_note": "管理层研讨与分析 / 财务状况",
+          "line_item": "净负债率（去年同期）",
+          "period_column": "FY2013"
+        }
+      },
+      "raw_value": 0.27,
+      "measurement_clock": {
+        "clock_kind": "BALANCE_AS_OF",
+        "balance_as_of": {
+          "as_of": "2013-12-31",
+          "fiscal_period": "FY2013"
+        }
+      },
+      "status": "OBSERVED",
+      "responsibility_boundary": {
+        "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600585",
+        "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+        "arena_id": "ARENA:CN:CEMENT:MULTI_REGION_DELIVERED_MARKET",
+        "scope_requirement": "issuer-consolidated same-definition field; causal attribution prohibited"
+      }
+    },
+    {
+      "schema_version": "enterprise-observation-receipt.v1",
+      "receipt_id": "OBS:ENTERPRISE:R7SETTLE:CN600585:20140416:FY2014:V1:CELL:600585:20140416:NET_DEBT_RATIO:FIELD:600585:FY2014:NET_DEBT_RATIO",
+      "settlement_id": "R7SETTLE:CN600585:20140416:FY2014:V1",
+      "measurement_contract_ref": {
+        "measurement_contract_id": "OMC:CN600585:20140416:MULTIDIMENSIONAL:V3",
+        "measurement_contract_version": 3
+      },
+      "company_id": "CN:600585",
+      "cutoff_at": "2014-04-16T00:00:00+08:00",
+      "custodian_id": "ROLE:CEMENT:ROUND7:OUTCOME_CUSTODIAN",
+      "authorization_receipt_id": "OAA:CN600585:20140416:FY2014:R7:V1",
+      "cell_id": "CELL:600585:20140416:NET_DEBT_RATIO",
+      "field_id": "FIELD:600585:FY2014:NET_DEBT_RATIO",
+      "unit": "RATIO",
+      "source": {
+        "source_id": "CNINFO:600585:ANN:20150324:1200733224",
+        "source_url": "https://static.cninfo.com.cn/finalpage/2015-03-24/1200733224.PDF",
+        "report_period_end": "2014-12-31",
+        "official_source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+        "issuer_id": "ISSUER:CN:600585",
+        "responsibility_boundary": {
+          "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600585",
+          "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+          "arena_id": "ARENA:CN:CEMENT:MULTI_REGION_DELIVERED_MARKET",
+          "scope_requirement": "issuer-consolidated same-definition field; causal attribution prohibited"
+        },
+        "availability_precision": "DATE_ONLY",
+        "source_available_date": "2015-03-24",
+        "pdf_page": 17,
+        "field_ref": "PDF p.17",
+        "field_identity": "FIELD:600585:FY2014:NET_DEBT_RATIO",
+        "measurement_clock": {
+          "clock_kind": "BALANCE_AS_OF",
+          "balance_as_of": {
+            "as_of": "2014-12-31",
+            "fiscal_period": "FY2014"
+          }
+        },
+        "unit": "RATIO",
+        "table_or_note": "liquidity and funding discussion",
+        "line_item": "net debt ratio",
+        "period_column": "FY2014",
+        "custodian_locator": {
+          "table_or_note": "管理层研讨与分析 / 财务状况",
+          "line_item": "净负债率",
+          "period_column": "FY2014"
+        }
+      },
+      "raw_value": 0.11,
+      "measurement_clock": {
+        "clock_kind": "BALANCE_AS_OF",
+        "balance_as_of": {
+          "as_of": "2014-12-31",
+          "fiscal_period": "FY2014"
+        }
+      },
+      "status": "OBSERVED",
+      "responsibility_boundary": {
+        "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600585",
+        "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+        "arena_id": "ARENA:CN:CEMENT:MULTI_REGION_DELIVERED_MARKET",
+        "scope_requirement": "issuer-consolidated same-definition field; causal attribution prohibited"
+      }
+    },
+    {
+      "schema_version": "enterprise-observation-receipt.v1",
+      "receipt_id": "OBS:ENTERPRISE:R7SETTLE:CN600585:20140416:FY2014:V1:CELL:600585:20140416:ADAPTATION_ACTION_EVENT:FIELD:600585:FY2014:ADAPTATION_ACTION_EVENT_EVENT",
+      "settlement_id": "R7SETTLE:CN600585:20140416:FY2014:V1",
+      "measurement_contract_ref": {
+        "measurement_contract_id": "OMC:CN600585:20140416:MULTIDIMENSIONAL:V3",
+        "measurement_contract_version": 3
+      },
+      "company_id": "CN:600585",
+      "cutoff_at": "2014-04-16T00:00:00+08:00",
+      "custodian_id": "ROLE:CEMENT:ROUND7:OUTCOME_CUSTODIAN",
+      "authorization_receipt_id": "OAA:CN600585:20140416:FY2014:R7:V1",
+      "cell_id": "CELL:600585:20140416:ADAPTATION_ACTION_EVENT",
+      "reason": "POST_CUTOFF_TIMING_OF_DISCLOSED_ADAPTATION_ACTIONS_NOT_CONFIRMED",
+      "sources_considered": [
+        {
+          "source_id": "CNINFO:600585:ANN:20150324:1200733224",
+          "source_url": "https://static.cninfo.com.cn/finalpage/2015-03-24/1200733224.PDF",
+          "report_period_end": "2014-12-31",
+          "official_source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+          "issuer_id": "ISSUER:CN:600585",
+          "responsibility_boundary": "ISSUER_CONSOLIDATED:CN:600585",
+          "availability_precision": "DATE_ONLY",
+          "source_available_date": "2015-03-24"
+        }
+      ],
+      "field_id": "FIELD:600585:FY2014:ADAPTATION_ACTION_EVENT_EVENT",
+      "unit": "BOOLEAN_EVENT",
+      "measurement_clock": {
+        "clock_kind": "EVENT_WINDOW",
+        "event_window": {
+          "event_start": "2014-04-17",
+          "event_end": "2014-12-31",
+          "window_name": "POST_CUTOFF_FY2014_EVENT_WINDOW"
+        }
+      },
+      "status": "UNKNOWN",
+      "responsibility_boundary": {
+        "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600585",
+        "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+        "arena_id": "ARENA:CN:CEMENT:MULTI_REGION_DELIVERED_MARKET",
+        "scope_requirement": "issuer-specific implemented action and execution milestone; narrative plans are insufficient"
+      }
+    },
+    {
+      "schema_version": "enterprise-observation-receipt.v1",
+      "receipt_id": "OBS:ENTERPRISE:R7SETTLE:CN600585:20140416:FY2014:V1:CELL:600585:20140416:DIRECT_LOSS_EVENT:FIELD:600585:FY2014:DIRECT_LOSS_EVENT_EVENT",
+      "settlement_id": "R7SETTLE:CN600585:20140416:FY2014:V1",
+      "measurement_contract_ref": {
+        "measurement_contract_id": "OMC:CN600585:20140416:MULTIDIMENSIONAL:V3",
+        "measurement_contract_version": 3
+      },
+      "company_id": "CN:600585",
+      "cutoff_at": "2014-04-16T00:00:00+08:00",
+      "custodian_id": "ROLE:CEMENT:ROUND7:OUTCOME_CUSTODIAN",
+      "authorization_receipt_id": "OAA:CN600585:20140416:FY2014:R7:V1",
+      "cell_id": "CELL:600585:20140416:DIRECT_LOSS_EVENT",
+      "reason": "NO_EXPLICIT_BOOLEAN_EVIDENCE_COVERING_ALL_CONTRACTED_DIRECT_LOSS_EVENT_TYPES_AND_EVENT_WINDOW",
+      "sources_considered": [
+        {
+          "source_id": "CNINFO:600585:ANN:20150324:1200733224",
+          "source_url": "https://static.cninfo.com.cn/finalpage/2015-03-24/1200733224.PDF",
+          "report_period_end": "2014-12-31",
+          "official_source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+          "issuer_id": "ISSUER:CN:600585",
+          "responsibility_boundary": "ISSUER_CONSOLIDATED:CN:600585",
+          "availability_precision": "DATE_ONLY",
+          "source_available_date": "2015-03-24"
+        }
+      ],
+      "field_id": "FIELD:600585:FY2014:DIRECT_LOSS_EVENT_EVENT",
+      "unit": "BOOLEAN_EVENT",
+      "measurement_clock": {
+        "clock_kind": "EVENT_WINDOW",
+        "event_window": {
+          "event_start": "2014-04-17",
+          "event_end": "2014-12-31",
+          "window_name": "POST_CUTOFF_FY2014_EVENT_WINDOW"
+        }
+      },
+      "status": "UNKNOWN",
+      "responsibility_boundary": {
+        "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600585",
+        "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+        "arena_id": "ARENA:CN:CEMENT:MULTI_REGION_DELIVERED_MARKET",
+        "scope_requirement": "issuer-specific implemented action and execution milestone; narrative plans are insufficient"
+      }
+    }
+  ],
+  "observation_receipt_ids": [
+    "OBS:ENTERPRISE:R7SETTLE:CN600585:20140416:FY2014:V1:CELL:600585:20140416:ISSUER_VS_INDUSTRY_VOLUME_SPREAD:FIELD:600585:FY2014:ISSUER_VS_INDUSTRY_VOLUME_SPREAD_FIRST",
+    "OBS:ENTERPRISE:R7SETTLE:CN600585:20140416:FY2014:V1:CELL:600585:20140416:ISSUER_VS_INDUSTRY_VOLUME_SPREAD:FIELD:600585:FY2014:ISSUER_VS_INDUSTRY_VOLUME_SPREAD_SECOND",
+    "OBS:ENTERPRISE:R7SETTLE:CN600585:20140416:FY2014:V1:CELL:600585:20140416:IMPLEMENTED_ACTION_EVENT:FIELD:600585:FY2014:IMPLEMENTED_ACTION_EVENT_EVENT",
+    "OBS:ENTERPRISE:R7SETTLE:CN600585:20140416:FY2014:V1:CELL:600585:20140416:NAMED_PLAN_MILESTONE_DELIVERED:FIELD:600585:FY2014:NAMED_PLAN_MILESTONE_DELIVERED_EVENT",
+    "OBS:ENTERPRISE:R7SETTLE:CN600585:20140416:FY2014:V1:CELL:600585:20140416:DIRECT_CUSTOMER_RESPONSE:FIELD:600585:FY2014:DIRECT_CUSTOMER_RESPONSE_EVENT",
+    "OBS:ENTERPRISE:R7SETTLE:CN600585:20140416:FY2014:V1:CELL:600585:20140416:CEMENT_CLINKER_SALES_VOLUME:FIELD:600585:FY2013:CEMENT_CLINKER_SALES_VOLUME",
+    "OBS:ENTERPRISE:R7SETTLE:CN600585:20140416:FY2014:V1:CELL:600585:20140416:CEMENT_CLINKER_SALES_VOLUME:FIELD:600585:FY2014:CEMENT_CLINKER_SALES_VOLUME",
+    "OBS:ENTERPRISE:R7SETTLE:CN600585:20140416:FY2014:V1:CELL:600585:20140416:SALES_VOLUME_PLAN_DELIVERY:FIELD:600585:FY2013:SALES_VOLUME_PLAN_DELIVERY",
+    "OBS:ENTERPRISE:R7SETTLE:CN600585:20140416:FY2014:V1:CELL:600585:20140416:SALES_VOLUME_PLAN_DELIVERY:FIELD:600585:FY2014:SALES_VOLUME_PLAN_DELIVERY",
+    "OBS:ENTERPRISE:R7SETTLE:CN600585:20140416:FY2014:V1:CELL:600585:20140416:REALIZED_REVENUE_PER_TONNE:FIELD:600585:FY2013:REALIZED_REVENUE_PER_TONNE_NUMERATOR",
+    "OBS:ENTERPRISE:R7SETTLE:CN600585:20140416:FY2014:V1:CELL:600585:20140416:REALIZED_REVENUE_PER_TONNE:FIELD:600585:FY2013:REALIZED_REVENUE_PER_TONNE_DENOMINATOR",
+    "OBS:ENTERPRISE:R7SETTLE:CN600585:20140416:FY2014:V1:CELL:600585:20140416:REALIZED_REVENUE_PER_TONNE:FIELD:600585:FY2014:REALIZED_REVENUE_PER_TONNE_NUMERATOR",
+    "OBS:ENTERPRISE:R7SETTLE:CN600585:20140416:FY2014:V1:CELL:600585:20140416:REALIZED_REVENUE_PER_TONNE:FIELD:600585:FY2014:REALIZED_REVENUE_PER_TONNE_DENOMINATOR",
+    "OBS:ENTERPRISE:R7SETTLE:CN600585:20140416:FY2014:V1:CELL:600585:20140416:COMBINED_UNIT_COST:FIELD:600585:FY2013:COMBINED_UNIT_COST",
+    "OBS:ENTERPRISE:R7SETTLE:CN600585:20140416:FY2014:V1:CELL:600585:20140416:COMBINED_UNIT_COST:FIELD:600585:FY2014:COMBINED_UNIT_COST",
+    "OBS:ENTERPRISE:R7SETTLE:CN600585:20140416:FY2014:V1:CELL:600585:20140416:COMBINED_GROSS_MARGIN:FIELD:600585:FY2013:COMBINED_GROSS_MARGIN",
+    "OBS:ENTERPRISE:R7SETTLE:CN600585:20140416:FY2014:V1:CELL:600585:20140416:COMBINED_GROSS_MARGIN:FIELD:600585:FY2014:COMBINED_GROSS_MARGIN",
+    "OBS:ENTERPRISE:R7SETTLE:CN600585:20140416:FY2014:V1:CELL:600585:20140416:ACCOUNTS_RECEIVABLE:FIELD:600585:FY2013:ACCOUNTS_RECEIVABLE",
+    "OBS:ENTERPRISE:R7SETTLE:CN600585:20140416:FY2014:V1:CELL:600585:20140416:ACCOUNTS_RECEIVABLE:FIELD:600585:FY2014:ACCOUNTS_RECEIVABLE",
+    "OBS:ENTERPRISE:R7SETTLE:CN600585:20140416:FY2014:V1:CELL:600585:20140416:INVENTORY:FIELD:600585:FY2013:INVENTORY",
+    "OBS:ENTERPRISE:R7SETTLE:CN600585:20140416:FY2014:V1:CELL:600585:20140416:INVENTORY:FIELD:600585:FY2014:INVENTORY",
+    "OBS:ENTERPRISE:R7SETTLE:CN600585:20140416:FY2014:V1:CELL:600585:20140416:OPERATING_CASH:FIELD:600585:FY2013:OPERATING_CASH",
+    "OBS:ENTERPRISE:R7SETTLE:CN600585:20140416:FY2014:V1:CELL:600585:20140416:OPERATING_CASH:FIELD:600585:FY2014:OPERATING_CASH",
+    "OBS:ENTERPRISE:R7SETTLE:CN600585:20140416:FY2014:V1:CELL:600585:20140416:CASH_CAPEX:FIELD:600585:FY2013:CASH_CAPEX",
+    "OBS:ENTERPRISE:R7SETTLE:CN600585:20140416:FY2014:V1:CELL:600585:20140416:CASH_CAPEX:FIELD:600585:FY2014:CASH_CAPEX",
+    "OBS:ENTERPRISE:R7SETTLE:CN600585:20140416:FY2014:V1:CELL:600585:20140416:OCF_TO_CASH_CAPEX:FIELD:600585:FY2013:OCF_TO_CASH_CAPEX_NUMERATOR",
+    "OBS:ENTERPRISE:R7SETTLE:CN600585:20140416:FY2014:V1:CELL:600585:20140416:OCF_TO_CASH_CAPEX:FIELD:600585:FY2013:OCF_TO_CASH_CAPEX_DENOMINATOR",
+    "OBS:ENTERPRISE:R7SETTLE:CN600585:20140416:FY2014:V1:CELL:600585:20140416:OCF_TO_CASH_CAPEX:FIELD:600585:FY2014:OCF_TO_CASH_CAPEX_NUMERATOR",
+    "OBS:ENTERPRISE:R7SETTLE:CN600585:20140416:FY2014:V1:CELL:600585:20140416:OCF_TO_CASH_CAPEX:FIELD:600585:FY2014:OCF_TO_CASH_CAPEX_DENOMINATOR",
+    "OBS:ENTERPRISE:R7SETTLE:CN600585:20140416:FY2014:V1:CELL:600585:20140416:NET_DEBT_RATIO:FIELD:600585:FY2013:NET_DEBT_RATIO",
+    "OBS:ENTERPRISE:R7SETTLE:CN600585:20140416:FY2014:V1:CELL:600585:20140416:NET_DEBT_RATIO:FIELD:600585:FY2014:NET_DEBT_RATIO",
+    "OBS:ENTERPRISE:R7SETTLE:CN600585:20140416:FY2014:V1:CELL:600585:20140416:ADAPTATION_ACTION_EVENT:FIELD:600585:FY2014:ADAPTATION_ACTION_EVENT_EVENT",
+    "OBS:ENTERPRISE:R7SETTLE:CN600585:20140416:FY2014:V1:CELL:600585:20140416:DIRECT_LOSS_EVENT:FIELD:600585:FY2014:DIRECT_LOSS_EVENT_EVENT"
+  ],
+  "coverage": {
+    "frozen_cells": 17,
+    "settled_cells": 17,
+    "observed_cells": 9,
+    "unknown_cells": 7,
+    "measurement_mismatch_cells": 1
+  },
+  "rights": {
+    "directional_learning": "NOT_AUTHORIZED",
+    "enterprise_learning": "NOT_AUTHORIZED",
+    "comparative": "NOT_AUTHORIZED",
+    "cjo": "NOT_AUTHORIZED",
+    "valuation": "NOT_AUTHORIZED",
+    "report": "NOT_AUTHORIZED",
+    "investment": "NOT_AUTHORIZED"
+  },
+  "allowed_outputs": [
+    "ENTERPRISE_OUTCOME_SETTLEMENT_ONLY",
+    "RESEARCH_AGENDA"
+  ]
+}

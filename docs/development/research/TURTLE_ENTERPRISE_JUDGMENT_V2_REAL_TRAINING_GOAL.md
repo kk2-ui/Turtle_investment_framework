@@ -1,10 +1,10 @@
 # Turtle Enterprise Judgment V2 Real Training Goal
 
-> Status: `COMPLETED_REAL_SAMPLE_AND_FEEDBACK / TRANSFER_NOT_VALIDATED`
+> Status: `COMPLETED_REAL_SAMPLE_AND_ROUND7_MULTIDIMENSIONAL_FEEDBACK / TRANSFER_NOT_VALIDATED`
 >
-> Date: 2026-08-26
+> Date: 2026-08-27
 >
-> Scope: `J0 CONTRACT + J1 INDUSTRY BLOCK + J1A RECONSTRUCTION + J2 THREADS`
+> Scope: `J0 CONTRACT + J1 INDUSTRY BLOCK + J1A RECONSTRUCTION + J2 THREADS + ROUNDS 5-7 FEEDBACK`
 
 ## 1. Objective
 
@@ -430,3 +430,44 @@ needed. Because later Huaxin summaries already exist in repository history,
 the turn is explicitly `MODEL_MEMORY_MITIGATED / DEVELOPMENT_TRANSFER_UTILITY_ONLY`
 with `score_authority = NONE`. It does not authorize method transfer,
 Comparative, CJO, valuation, report or investment use.
+
+## 15. 2026-08-27 Round 7 Multidimensional Enterprise Judgment
+
+Round 7 tests the larger architecture question left open by the earlier local
+mechanism turns: whether the training method can reason across the full
+enterprise instead of reducing a company to one action or one accounting
+field. The frozen roster mechanically selects rank 3, CN:600585
+`2014-04-16 -> 2015-04-15`. Baseline and Enhanced use the same FY2013 official
+report, fact set and outcome contract. The Enhanced method must cover initial
+conditions, implemented action, execution, customer and competitive response,
+unit economics, working capital and cash-capital, adaptation and permanent
+loss, and the strongest alternative explanation.
+
+The independent custodian records 33 raw fields from the authorized FY2014
+official report. Mechanical settlement covers all 17 cells: nine are
+`OBSERVED`, seven remain `UNKNOWN`, and one is a local
+`MEASUREMENT_MISMATCH`. The issuer outgrows national cement output by about
+7.49 percentage points; operating cash and OCF-to-cash-capex rise, cash capex
+falls and net debt ratio declines. Inventory also rises 18.5%. The FY2013
+gross-margin baseline includes aggregates and stone, so it cannot be compared
+with the frozen cement-and-clinker scope. That mismatch does not stop any
+unrelated cell.
+
+The independent paired review finds the Enhanced method materially better in
+four of eight dimensions: initial-condition attribution, execution,
+customer/competition response and unit economics. It finds no material
+difference for implemented action, cash-capital or the strongest rival, and
+the one-year evidence is not diagnostic for adaptation/permanent loss. The
+useful result is therefore narrower than a company-quality score: the method
+prevents industry tailwinds, acquired/new capacity and aggregate accounting
+cash from becoming unsupported management, moat, durable-economics or owner-
+cash credit.
+
+Artifacts `45--53` preserve the pre-outcome freeze, access authorization,
+field records, canonical settlement, independent review and completion
+receipt. The round remains `MODEL_MEMORY_MITIGATED` with `score_authority =
+NONE`; it does not authorize method transfer, Comparative, CJO, valuation,
+report or investment use. The next real turn must test the same chain on a
+different company and period while freezing an organic-versus-acquired volume
+bridge, direct customer evidence, same-scope unit economics and a conservative
+owner-cash bridge before outcome access.

@@ -17,17 +17,21 @@ from pathlib import Path
 from typing import Any
 
 try:
+    from scripts import enterprise_judgment_reconstruction as reconstruction
     from scripts import enterprise_judgment_real_mechanism_training as mechanism_training
     from scripts import enterprise_judgment_round6_transfer_utility as round6
     from scripts import enterprise_judgment_source_packet as source_packet
+    from scripts import enterprise_judgment_training_control_plane as enterprise_control
     from scripts import judgment_decision_utility as decision_utility
     from scripts import judgment_training_decision_contract as decision_contract
     from scripts import outcome_measurement_acquisition as measurement_acquisition
     from scripts import outcome_measurement_settlement_adapter as settlement_adapter
 except ModuleNotFoundError:  # pragma: no cover - direct script import
+    import enterprise_judgment_reconstruction as reconstruction
     import enterprise_judgment_real_mechanism_training as mechanism_training
     import enterprise_judgment_round6_transfer_utility as round6
     import enterprise_judgment_source_packet as source_packet
+    import enterprise_judgment_training_control_plane as enterprise_control
     import judgment_decision_utility as decision_utility
     import judgment_training_decision_contract as decision_contract
     import outcome_measurement_acquisition as measurement_acquisition
@@ -1325,6 +1329,64 @@ def build_source_inventory(
     }
 
 
+def settle_custodian_field_records(
+    package: dict[str, Any],
+    field_records: list[dict[str, Any]],
+    *,
+    local_pdf_path: Path,
+    registry_db: Path,
+    registered_at: str,
+    observed_at: str,
+    settled_at: str,
+) -> dict[str, Any]:
+    """Validate exact custodian records and settle them through Enterprise V3."""
+    contract = package["outcome_measurement_contract"]
+    authorization = build_outcome_authorization(package)
+    inventory = build_source_inventory(
+        package,
+        local_pdf_path=local_pdf_path,
+        registered_at=registered_at,
+    )
+    inventory_validation = measurement_acquisition.validate_registered_local_pdf_inventory(
+        inventory,
+        measurement_contract=contract,
+        outcome_access_authorization=authorization,
+    )
+    if not inventory_validation["valid"]:
+        raise ValueError("round7 source inventory invalid: " + "; ".join(inventory_validation["findings"]))
+    acquisition_result = measurement_acquisition.acquire_outcome_measurements_from_field_records(
+        contract,
+        inventory,
+        field_records,
+        outcome_access_authorization=authorization,
+    )
+    previous_registry = reconstruction.CANONICAL_REGISTRY_PATH
+    reconstruction.CANONICAL_REGISTRY_PATH = registry_db
+    try:
+        enterprise_control.register_measurement_contract(
+            contract,
+            frozen_at=contract["contract_frozen_at"],
+        )
+        settlement = settlement_adapter.settle_enterprise_acquisition_result(
+            measurement_contract=contract,
+            outcome_access_authorization=authorization,
+            acquisition_result=acquisition_result,
+            observed_at=observed_at,
+            settlement_id="R7SETTLE:CN600585:20140416:FY2014:V1",
+            settled_at=settled_at,
+        )
+    finally:
+        reconstruction.CANONICAL_REGISTRY_PATH = previous_registry
+    settlement.pop("persisted", None)
+    settlement.pop("idempotent", None)
+    return {
+        "authorization": authorization,
+        "inventory": inventory,
+        "field_records": deepcopy(field_records),
+        "settlement": settlement,
+    }
+
+
 def validate_review(review: Any, *, package: Any, settlement: Any) -> dict[str, Any]:
     findings: list[str] = []
     item = _closed(review, _REVIEW_KEYS, "round7_review", findings)
@@ -1409,6 +1471,55 @@ def validate_completion(
     if item.get("claim_class") != "REAL_MULTIDIMENSIONAL_PAIRED_UTILITY_COMPLETION":
         findings.append("round7_completion.claim_class_invalid")
     return {"valid": not findings, "findings": findings, "receipt": deepcopy(item) if not findings else None}
+
+
+def build_real_completion_receipt(
+    package: dict[str, Any], settlement: dict[str, Any], review: dict[str, Any],
+) -> dict[str, Any]:
+    review_validation = validate_review(review, package=package, settlement=settlement)
+    if not review_validation["valid"]:
+        raise ValueError("round7 review invalid: " + "; ".join(review_validation["findings"]))
+    receipt = {
+        "schema_version": COMPLETION_SCHEMA_VERSION,
+        "completion_id": "R7COMP:CN:CEMENT:600585:20140416:FY2014:V1",
+        "package_ref": package["package_id"],
+        "settlement_ref": settlement["settlement_id"],
+        "review_ref": review["review_id"],
+        "company_id": package["selection"]["company_id"],
+        "cutoff_at": package["selection"]["cutoff_at"],
+        "status": "ROUND7_REAL_MULTIDIMENSIONAL_FEEDBACK_COMPLETED",
+        "investor_summary": (
+            "海螺 FY2014 在行业增速放缓时仍录得更强销量、现金覆盖和更低净负债，"
+            "但扩产、收购与外部成本变化尚未与企业自身能力分开；客户优势、owner cash、"
+            "适应能力和永久损失结论继续保持未知。"
+        ),
+        "proved": [
+            "同一 cutoff 与同一证据预算下，多维判断能把行业条件、已实施行动、执行、客户响应、单位经济、现金资本和永久损失边界分别保留。",
+            "FY2014 公司销量增速高于行业约 7.49 个百分点，经营现金流和 OCF/现金资本开支上升，净负债率下降，同时存货上升。",
+            "FY2013 毛利率口径包含骨料及石子，局部口径不匹配没有阻断其他十六个判断单元。",
+        ],
+        "not_proved": [
+            "销量增长来自客户护城河、有机执行或管理层整体能力。",
+            "经营现金改善等同普通股 owner cash，或一年的降杠杆已经排除永久损失。",
+            "该方法已经通过无记忆污染的跨公司 holdout、可迁移至 CJO、估值、报告或投资动作。",
+        ],
+        "next_research_action": [
+            "下一 cutoff 先冻结新增与收购产能、存量有机销量以及具名计划里程碑的范围桥。",
+            "补充直接客户响应、同口径价格组合和水泥熟料毛利字段，不用公司总销量替代客户证据。",
+            "拆分维护性与增长性资本开支，并把营运资本变化桥接到保守 owner-cash 候选。",
+            "在未被后期摘要污染的不同公司和时期重复同证据预算测试，才判断是否允许方法迁移。",
+        ],
+        "rights": deepcopy(RIGHTS),
+        "object_class": "ENTERPRISE_JUDGMENT_ROUND7_COMPLETION_RECEIPT",
+        "claim_class": "REAL_MULTIDIMENSIONAL_PAIRED_UTILITY_COMPLETION",
+        "allowed_outputs": COMPLETION_OUTPUTS,
+    }
+    validation = validate_completion(
+        receipt, package=package, settlement=settlement, review=review,
+    )
+    if not validation["valid"]:
+        raise ValueError("round7 completion invalid: " + "; ".join(validation["findings"]))
+    return receipt
 
 
 def main(argv: list[str] | None = None) -> int:
