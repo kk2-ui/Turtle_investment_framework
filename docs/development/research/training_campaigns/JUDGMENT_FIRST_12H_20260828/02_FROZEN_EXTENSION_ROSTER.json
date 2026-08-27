@@ -1,0 +1,83 @@
+{
+  "schema_version": "judgment-first-training-extension-roster.v1",
+  "campaign_id": "JUDGMENT_FIRST_12H_20260828",
+  "roster_id": "JUDGMENT_FIRST_12H_20260828_EXTENSION_1",
+  "freeze_state": "FROZEN_AFTER_FEEDBACK_LOOP_1_AND_BEFORE_FEEDBACK_LOOP_2_OUTCOME",
+  "selection_policy": "USE_ONLY_IF_ORIGINAL_RANKS_1_THROUGH_4_COMPLETE_BEFORE_THE_CAMPAIGN_WORK_WINDOW; THEN_TAKE_FIRST_UNSETTLED_ROW_IN_THIS_FIXED_ORDER",
+  "selection_basis": "ARCHETYPE_HETEROGENEITY_PREOUTCOME_OFFICIAL_DATA_SUFFICIENCY_AND_NO_EXISTING_REPOSITORY_EPISODE_OR_OUTCOME_ARTIFACT",
+  "forbidden_selection_basis": [
+    "OUTCOME_DIRECTION",
+    "PRICE_OR_RETURN",
+    "SUPPORT_FOR_THE_CURRENT_RULE",
+    "EXPECTED_PAIRED_UTILITY"
+  ],
+  "cutoff_at": "2019-05-01T00:00:00+08:00",
+  "outcome_period": "FY2019",
+  "outcome_access": "SEALED",
+  "candidates": [
+    {
+      "extension_rank": 1,
+      "company_id": "CN:603589",
+      "company_name": "口子窖",
+      "archetype": "CONSUMER_BRAND_AND_DISTRIBUTOR_NETWORK_WITH_AGED_INVENTORY",
+      "decision_carriers": [
+        "HIGH_END_PRODUCT_REVENUE_VOLUME_AND_MARGIN",
+        "IN_PROVINCE_AND_OUT_OF_PROVINCE_REVENUE_AND_DISTRIBUTOR_ROLL_FORWARD",
+        "ADVANCE_RECEIPTS_FINISHED_AND_SEMI_FINISHED_INVENTORY_AND_OWNER_CASH"
+      ],
+      "preoutcome_sources": [
+        {"fiscal_year": 2016, "announcement_id": "1203416438", "published_at": "2017-04-28", "url": "https://static.cninfo.com.cn/finalpage/2017-04-28/1203416438.PDF"},
+        {"fiscal_year": 2017, "announcement_id": "1204801599", "published_at": "2018-04-27", "url": "https://static.cninfo.com.cn/finalpage/2018-04-27/1204801599.PDF"},
+        {"fiscal_year": 2018, "announcement_id": "1206046316", "published_at": "2019-04-18", "url": "https://static.cninfo.com.cn/finalpage/2019-04-18/1206046316.PDF"}
+      ]
+    },
+    {
+      "extension_rank": 2,
+      "company_id": "CN:603444",
+      "company_name": "吉比特",
+      "archetype": "DIGITAL_CONTENT_IP_LIFECYCLE_AND_REAL_ESTATE_LIKE_CAPITAL_ALLOCATION",
+      "decision_carriers": [
+        "SELF_OPERATED_LICENSED_AND_JOINT_OPERATION_REVENUE",
+        "CORE_GAME_DEPENDENCE_USER_AND_PLATFORM_DISCLOSURES",
+        "EXPENSED_R_AND_D_OCF_AND_LONG_TERM_ASSET_INVESTMENT"
+      ],
+      "preoutcome_sources": [
+        {"fiscal_year": 2016, "announcement_id": "1203213101", "published_at": "2017-03-28", "url": "https://static.cninfo.com.cn/finalpage/2017-03-28/1203213101.PDF"},
+        {"fiscal_year": 2017, "announcement_id": "1204574481", "published_at": "2018-04-03", "url": "https://static.cninfo.com.cn/finalpage/2018-04-03/1204574481.PDF"},
+        {"fiscal_year": 2018, "announcement_id": "1206001436", "published_at": "2019-04-10", "url": "https://static.cninfo.com.cn/finalpage/2019-04-10/1206001436.PDF"}
+      ]
+    },
+    {
+      "extension_rank": 3,
+      "company_id": "CN:603039",
+      "company_name": "泛微网络",
+      "archetype": "LICENSE_IMPLEMENTATION_AND_PARTIALLY_DISCLOSED_SAAS_SERVICE",
+      "decision_carriers": [
+        "SOFTWARE_TECHNICAL_SERVICE_AND_THIRD_PARTY_REVENUE",
+        "SALES_R_AND_D_IMPLEMENTATION_COST_AND_HEADCOUNT",
+        "ADVANCE_RECEIPTS_WORKING_CAPITAL_AND_POST_INVESTMENT_OWNER_CASH"
+      ],
+      "preoutcome_sources": [
+        {"fiscal_year": 2016, "announcement_id": "1203202072", "published_at": "2017-03-27", "url": "https://static.cninfo.com.cn/finalpage/2017-03-27/1203202072.PDF"},
+        {"fiscal_year": 2017, "announcement_id": "1204514194", "published_at": "2018-03-26", "url": "https://static.cninfo.com.cn/finalpage/2018-03-26/1204514194.PDF"},
+        {"fiscal_year": 2018, "announcement_id": "1205959466", "published_at": "2019-03-29", "url": "https://static.cninfo.com.cn/finalpage/2019-03-29/1205959466.PDF"}
+      ]
+    }
+  ],
+  "contamination_scan": {
+    "repository_terms": ["603589", "口子窖", "603444", "吉比特", "603039", "泛微网络"],
+    "result": "NO_EXISTING_EPISODE_OUTCOME_SETTLEMENT_REPORT_OR_TRAINING_RECORD_FOUND_AT_FREEZE",
+    "outcome_reports_accessed": false,
+    "price_or_return_accessed": false
+  },
+  "permissions": {
+    "transfer_validated": "NOT_GRANTED",
+    "method_frozen": "NOT_GRANTED",
+    "comparative": "NOT_GRANTED",
+    "cjo": "NOT_GRANTED",
+    "formal_valuation": "NOT_GRANTED",
+    "buyband": "NOT_GRANTED",
+    "report": "NOT_GRANTED",
+    "investment_action": "NOT_GRANTED"
+  }
+}
