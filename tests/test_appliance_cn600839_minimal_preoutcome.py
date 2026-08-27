@@ -120,4 +120,3 @@ def test_cn600839_static_evidence_rejects_metric_or_boundary_drift() -> None:
         drifted["source"][field] = invalid
         result = episode.validate_static_evidence(drifted, measurement_contract=contract)
         assert result["valid"] is False
-
