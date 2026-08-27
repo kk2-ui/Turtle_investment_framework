@@ -1,0 +1,39 @@
+{
+  "schema_version": "prospective-enterprise-judgment-outcome-contract.v1",
+  "contract_id": "PEJOC:CN000726:20190501:FY2019:ENHANCED_AFTER_LEARNING:V1",
+  "learning_refs": [
+    "LR:CN002394:ECONOMIC_ABSORPTION_AFTER_BUILD",
+    "LR:CN002394:TREND_REQUIRES_COMPARABLE_BASE"
+  ],
+  "company_id": "CN:000726",
+  "cutoff_at": "2019-05-01T00:00:00+08:00",
+  "period": "FY2019",
+  "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:000726",
+  "primary_research_action": "SETTLE_ECONOMIC_ABSORPTION_AFTER_EXISTING_BUILD_MILESTONES",
+  "management_credit_rule": "BUILD_MILESTONE_ONLY_SETTLES_EXECUTION; CAPITAL_ALLOCATION_REQUIRES_VOLUME_MARGIN_INVENTORY_AND_CASH_ABSORPTION",
+  "fields": [
+    {"field_id": "FABRIC_SALES_VOLUME", "unit": "TEN_THOUSAND_METERS", "fy2018_baseline": 25494.21, "settles": "CUSTOMER_ABSORPTION"},
+    {"field_id": "FABRIC_PRODUCTION_VOLUME", "unit": "TEN_THOUSAND_METERS", "fy2018_baseline": 28752.73, "settles": "SUPPLY_EXPANSION_RELATIVE_TO_SALES"},
+    {"field_id": "FABRIC_ENDING_INVENTORY_VOLUME", "unit": "TEN_THOUSAND_METERS", "fy2018_baseline": 3640.18, "settles": "PHYSICAL_OUTPUT_NOT_ABSORBED"},
+    {"field_id": "FABRIC_REVENUE_RMB", "unit": "RMB", "fy2018_baseline": 4926081389.35, "settles": "PRODUCT_DEMAND_AND_MIX"},
+    {"field_id": "FABRIC_GROSS_MARGIN_PCT", "unit": "PERCENT", "fy2018_baseline": 30.69, "settles": "UNIT_ECONOMICS"},
+    {"field_id": "TOP5_CUSTOMER_SALES_SHARE_PCT", "unit": "PERCENT", "fy2018_baseline": 19.78, "settles": "CONCENTRATION_TREND_NOT_LOYALTY"},
+    {"field_id": "ACCOUNTS_RECEIVABLE_RMB", "unit": "RMB", "fy2018_baseline": 374607116.55, "settles": "COLLECTION_CAPITAL"},
+    {"field_id": "CONSOLIDATED_INVENTORY_RMB", "unit": "RMB", "fy2018_baseline": 2093366992.30, "settles": "CONSOLIDATED_WORKING_CAPITAL_NOT_PHYSICAL_FABRIC"},
+    {"field_id": "NET_OPERATING_CASH_RMB", "unit": "RMB", "fy2018_baseline": 1430341663.16, "settles": "OPERATING_CASH_CONVERSION"},
+    {"field_id": "CASH_CAPEX_RMB", "unit": "RMB", "fy2018_baseline": 928794291.04, "settles": "CASH_REINVESTMENT_BURDEN"},
+    {"field_id": "DIRECTIONAL_OCF_LESS_CAPEX_RMB", "unit": "RMB", "fy2018_baseline": 501547372.12, "derived_from": ["NET_OPERATING_CASH_RMB", "CASH_CAPEX_RMB"], "settles": "DIRECTIONAL_OWNER_CASH_PROXY_ONLY"},
+    {"field_id": "CASH_BALANCE_RMB", "unit": "RMB", "fy2018_baseline": 545502709.36, "settles": "CASH_BUFFER"},
+    {"field_id": "SHORT_TERM_BORROWINGS_RMB", "unit": "RMB", "fy2018_baseline": 1325273780.05, "settles": "SHORT_TERM_FINANCING"},
+    {"field_id": "LONG_TERM_BORROWINGS_RMB", "unit": "RMB", "fy2018_baseline": 170019083.89, "settles": "LONG_TERM_FINANCING"},
+    {"field_id": "VIETNAM_COLOR_WOVEN_FIRST_COMMERCIAL_PRODUCTION_EVENT", "unit": "EVENT", "fy2018_baseline": "CONSTRUCTION_76_PERCENT_AND_EQUIPMENT_INSTALLATION_NEXT", "settles": "EXECUTION_ONLY"},
+    {"field_id": "VIETNAM_COLOR_WOVEN_PROJECT_ACTUAL_PRODUCTION_VOLUME", "unit": "TEN_THOUSAND_METERS", "fy2018_baseline": "NOT_APPLICABLE_FIRST_OPERATING_PERIOD", "settles": "PROJECT_PHYSICAL_UTILIZATION_LEVEL"},
+    {"field_id": "VIETNAM_COLOR_WOVEN_PROJECT_ACTUAL_SALES_VOLUME", "unit": "TEN_THOUSAND_METERS", "fy2018_baseline": "NOT_APPLICABLE_FIRST_OPERATING_PERIOD", "settles": "DIRECT_PROJECT_ABSORPTION_LEVEL"},
+    {"field_id": "VIETNAM_COLOR_WOVEN_PROJECT_GROSS_MARGIN_PCT", "unit": "PERCENT", "fy2018_baseline": "NOT_APPLICABLE_FIRST_OPERATING_PERIOD", "settles": "PROJECT_UNIT_ECONOMICS_LEVEL"}
+  ],
+  "local_resolution_rule": "UNDISCLOSED_PROJECT_FIELDS_LIMIT_PROJECT_CREDIT_ONLY; COMPANY_LEVEL_ABSORPTION_AND_CASH_JUDGMENTS_CONTINUE",
+  "allowed_outcome_source": "ONE_OFFICIAL_FULL_FY2019_CNINFO_ANNUAL_REPORT",
+  "outcome_access": "SEALED",
+  "price_access": "PROHIBITED"
+}
+
