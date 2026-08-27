@@ -6,6 +6,8 @@
 >
 > Scope: research, historical training, report generation, and review behavior. This document does not grant CJO, valuation, report, BuyBand, publication, or investment authority.
 
+> Integrated entry: [Turtle Judgment-First × Decision-Focused Enterprise Judgment Integrated Design](TURTLE_JUDGMENT_FIRST_DECISION_FOCUSED_INTEGRATED_DESIGN.md). This constitution owns agent behavior and prompt propagation; the companion [Decision-Focused Enterprise Judgment Training Architecture](TURTLE_DECISION_FOCUSED_ENTERPRISE_JUDGMENT_TRAINING_ARCHITECTURE.md) owns episode, feedback, and transfer semantics.
+
 ## 1. Decision
 
 Turtle will optimize agents for **useful enterprise and investment judgment under uncertainty**. Evidence integrity, PIT isolation, reproducibility, and auditability remain mandatory constraints, but they are no longer treated as the product or as a substitute for judgment.
@@ -182,11 +184,12 @@ The following work informed the constitution. The papers do not prescribe Turtle
 
 The prompt change should be tested before deeper schema changes:
 
-1. Select a small set of previously difficult company cases with the same cutoff and evidence budget.
-2. Run the prior prompt and the judgment-first constitution separately.
+1. First run the single bounded Pengding automotive-PCB paired test specified in the integrated design, with the same cutoff, source packet, model settings, tool permissions, and evidence budget in both arms.
+2. Run the prior prompt and the judgment-first constitution separately without outcome, price, repair-loop, or cross-arm context.
 3. Compare whether the enhanced return identifies a better mechanism, surfaces a stronger rival, localizes unknowns, and changes or clarifies investment treatment.
 4. Reject the change if it merely adds confident prose, hides evidence gaps, or produces no material decision delta.
-5. Only after repeated paired improvement should lower-level workflow prompts or training read models adopt additional fields.
+5. Treat a pass as runtime prompt acceptance only. It does not prove prospective learning or transfer.
+6. Only after repeated improvement on genuinely unseen company/cutoff episodes should lower-level workflow prompts or training read models adopt additional fields.
 
 Acceptance is qualitative and material: an experienced investor should be able to say what the agent currently believes, why, what could make it wrong, and how that affects underwriting. More artifacts are not acceptance evidence.
 

@@ -1,12 +1,14 @@
 # Turtle 决策导向企业判断训练架构
 
-> 状态：`DESIGN_PROPOSAL / NOT_YET_ACTIVATED`
+> 状态：`INTEGRATED_DESIGN_COMPANION / RUNTIME_CONSTITUTION_IMPLEMENTED / TRAINING_ACCEPTANCE_PENDING`
 >
 > 日期：2026-08-27（Asia/Shanghai）
 >
 > 适用对象：`EnterpriseJudgmentEpisode`、真实历史反馈、跨公司学习应用与投资者读出
 >
 > 核心裁决：保留 PIT、结果隔离、责任边界、独立 custodian、生命周期与退出公司；停止把合规完整度当作训练效用。训练的首要产出改为在证据不完美时形成当前最合理、可反驳、可更新并能传播到 owner cash、永久损失和估值的企业判断。
+
+> 统一入口：[Turtle Judgment-First × Decision-Focused Enterprise Judgment Integrated Design](TURTLE_JUDGMENT_FIRST_DECISION_FOCUSED_INTEGRATED_DESIGN.md)。本文负责 episode、反馈与 transfer 语义；[Judgment-First Agent Constitution](TURTLE_JUDGMENT_FIRST_AGENT_CONSTITUTION.md)负责 Agent 行为和活跃运行时提示词。
 
 本文提出训练系统上层目标与验收逻辑的修订方案。它建立在现有[训练顶层架构](TURTLE_TRAINING_SYSTEM_TOP_LEVEL_ARCHITECTURE.md)、[Enterprise Judgment V2 真实训练 Goal](TURTLE_ENTERPRISE_JUDGMENT_V2_REAL_TRAINING_GOAL.md)以及 Round 6--10 的真实运行结果之上。
 
@@ -176,7 +178,7 @@ Gneiting、Balabdaoui 与 Raftery提出，概率预测应在保持 calibration �
 对 Turtle 的含义是：
 
 - PIT、边界与 proper scoring 负责 calibration；
-- 当前最合理判断、概率、区间和情景分化负责 sharpness；
+- 当前最合理判断、有依据的概率或范围、以及情景分化负责 sharpness；没有校准基础时使用定性置信与相对可能性，不为显得果断而制造百分比；
 - `UNKNOWN` 不能成为零成本弃权；
 - 系统应奖励有证据约束的更窄范围，而不是无条件奖励更保守的措辞。
 
@@ -265,7 +267,7 @@ subject to:
 方法变化必须在结果揭示前实际改变至少一项：
 
 - 三项核心企业判断的内容或排序；
-- 乐观、基准、悲观情景的概率或范围；
+- 乐观、基准、悲观情景的相对可能性、有依据的概率或范围；
 - 管理层决策、执行或适应信用；
 - 正常盈利或 owner-cash 范围；
 - 永久损失路径及其权重；
@@ -356,7 +358,7 @@ E2、E3、E4 的缺失不得阻断 E1 判断综合。E1 的判断也不得冒充
 ```text
 当前最佳判断：
 判断期限：
-主观概率或概率区间：
+主观概率/区间（有校准基础时）或定性置信：
 经济材料性：
 ```
 
@@ -390,7 +392,7 @@ E2、E3、E4 的缺失不得阻断 E1 判断综合。E1 的判断也不得冒充
 
 ### 7.4 乐观、基准、悲观三种经营情景
 
-三种情景必须处于相同期限，并分配合计为 100% 的权重。允许使用近似概率或区间，禁止用虚假精度掩盖证据不足。
+三种情景必须处于相同期限，并明确当前相对可能性。只有具备可解释基准率、可观察结果定义或足够校准基础时，才冻结合计为 100% 的概率或概率区间；否则使用有顺序的定性置信，并说明为何基准情景优先。禁止用虚假精度掩盖证据不足。
 
 每种情景至少传播：
 
@@ -442,7 +444,7 @@ E2、E3、E4 的缺失不得阻断 E1 判断综合。E1 的判断也不得冒充
 
 ### 7.8 对估值区间和最高可接受买价的方向性影响
 
-未来 episode 必须产出训练用途的 `ValuationConsequence`，至少说明：
+未来 episode 必须产出不越过当前任务权限的 `ValuationConsequence`，至少说明：
 
 - 哪部分盈利可以进入正常盈利，哪部分应剔除；
 - owner-cash 转化采用什么范围；
@@ -450,9 +452,9 @@ E2、E3、E4 的缺失不得阻断 E1 判断综合。E1 的判断也不得冒充
 - 乐观、基准、悲观情景怎样改变价值区间；
 - 关键 UNKNOWN 使最高可接受买价相对证据完整情形上调、下调或保持，以及原因。
 
-`ValuationConsequence` 是企业判断训练的一部分，不等于正式估值、BuyBand 或投资授权。当前市场价格可以继续隔离；最高买价由企业经济和要求回报推出，不需要先读取市场价格。
+`ValuationConsequence` 是企业判断训练的一部分，不等于正式估值、BuyBand 或投资授权。方向、折扣机制和需要的估值输入必须表达；数值价值区间或最高买价只有在既有 calculation/valuation 权限允许时才可生成。当前市场价格可以继续隔离，企业经济判断不得由价格反向选择。
 
-如果现行权限尚不允许数值区间，最低也必须冻结方向、折扣机制和未来数值化所需输入。下一版正式激活时，应增加独立的 `TRAINING_ONLY_SHADOW_VALUATION` 权限，而不是继续让估值传播永久缺席。
+如果现行权限尚不允许数值区间，最低也必须冻结方向、折扣机制和未来数值化所需输入。是否需要独立的 training-only 数值权限，只能在 paired test 证明方向性传播不足后另行裁决；本文不预设新权限或新 gate。
 
 ---
 
@@ -464,7 +466,7 @@ E2、E3、E4 的缺失不得阻断 E1 判断综合。E1 的判断也不得冒充
 
 1. **经济暴露**：它影响客户、单位经济、现金、永久损失还是估值；
 2. **当前默认处理**：基准情景按什么保守解释处理；
-3. **范围后果**：它使哪个区间扩大或哪个概率下降；
+3. **范围后果**：它使哪个区间扩大、哪个情景相对可能性下降，或在有校准基础时使哪个概率下降；
 4. **区分证据**：什么新事实最可能改变处理；
 5. **停止规则**：若公开证据不可得或不会改变决策，何时停止继续获取。
 
@@ -552,7 +554,7 @@ custodian 继续只读取合同允许的 outcome window 和字段，不接收投
 
 ### 10.3 概率结算
 
-对结果期可观察、定义匹配的离散或方向性预测使用 proper scoring rule。评分只评价冻结概率与真实结果，不评价叙事长度。
+对结果期可观察、定义匹配且事前冻结了概率的离散或方向性预测使用 proper scoring rule。评分只评价冻结概率与真实结果，不评价叙事长度；只有定性置信的判断不伪装成可评分预测。
 
 定性长期判断尚未到期时，不强行评分；只结算到期的领先指标和机制单元。
 
@@ -594,7 +596,7 @@ custodian 继续只读取合同允许的 outcome window 和字段，不接收投
 Baseline 与 Enhanced 必须在结果前分别冻结：
 
 - 三项核心判断；
-- 情景与概率；
+- 情景、相对可能性，以及有校准基础时的概率；
 - 管理层信用；
 - owner-cash、永久损失和估值后果；
 - outcome resolution rule。
@@ -680,7 +682,7 @@ Baseline 与 Enhanced 必须在结果前分别冻结：
 - 没有三项材料企业判断；
 - 只罗列事实，没有当前最佳解释；
 - 只有主解释，没有最强反方；
-- 三种情景只是敏感性表，没有概率和经济机制；
+- 三种情景只是敏感性表，没有相对可能性和经济机制；
 - 管理层评价没有区分决策、执行、客户反馈与资本纪律；
 - owner cash 被集团 OCF 替代；
 - 永久损失只写一般风险；
@@ -731,21 +733,21 @@ Snapshot 必须让投资者在三分钟内回答：
 
 先用两个真实 episode 证明这一对象有用，再决定是否值得 schema 化。禁止先为所有未来可能字段建设完整控制平面。
 
-### 14.3 第一轮：现有 Round 10 只作 retrospective demonstration
+### 14.3 第一轮：Judgment-First 运行时 paired acceptance
 
-可使用 Round 10 已有 cutoff packet，分别重写一个 Baseline 与一个 Enhanced `Judgment Snapshot`，检验文档结构是否能强制产生企业判断和投资传播。
+第一轮不再泛化为重写 Round 10。使用 R-62 鹏鼎汽车 PCB 旧阻断案例，按[统一设计](TURTLE_JUDGMENT_FIRST_DECISION_FOCUSED_INTEGRATED_DESIGN.md)冻结一次同 cutoff、同 evidence budget 的旧提示词与新提示词 paired run。它只检验活跃运行时是否从“不能冻结”改善为诚实、有边界且具投资含义的当前判断。
 
-因为结果已知且模型已经接触过 outcome，该轮只能作为写作与评审演练，不计训练成绩，不授 transfer candidate。
+该对象已参与规则形成，且本轮不揭示新 outcome，因此只能授予 runtime prompt acceptance。它不计 prospective training 成绩，不授 `REAL_FEEDBACK_TURN_COMPLETED`、transfer candidate 或任何投资权限。
 
 ### 14.4 第二轮：新的未污染公司/cutoff
 
 选择一个结果仍密封、但 E1 证据足以形成完整判断的公司/cutoff。结果前必须完成：
 
 1. 三项核心企业判断；
-2. 三种情景及权重；
+2. 三种情景及相对可能性，在有校准基础时再给概率；
 3. 管理层信用；
 4. owner-cash 与永久损失范围；
-5. training-only valuation consequence；
+5. 权限内的 valuation consequence（至少方向与折扣机制）；
 6. 最强反方和翻转条件；
 7. Baseline/Enhanced 各自 resolution rule；
 8. 最高信息价值的 1--3 项 outcome contract。
@@ -754,7 +756,7 @@ Snapshot 必须让投资者在三分钟内回答：
 
 ### 14.5 第三轮：不同公司前瞻应用
 
-只把第二轮真正产生材料性判断变化的 `JudgmentPolicyDelta` 应用于不同公司。必须在结果前显示该规则具体改变了哪个判断、概率、现金范围、损失路径、估值或研究行动。
+只把第二轮真正产生材料性判断变化的 `JudgmentPolicyDelta` 应用于不同公司。必须在结果前显示该规则具体改变了哪个判断、相对可能性或概率、现金范围、损失路径、估值或研究行动。
 
 若没有变化，诚实结论应是“规则在该公司不具材料性”，而不是新增更多字段寻找胜利。
 
@@ -780,7 +782,7 @@ Snapshot 必须让投资者在三分钟内回答：
 
 ```text
 当前最佳判断：收入恢复主要由行业价格改善驱动，企业自身份额优势尚未证明。
-概率：基准解释 60%，企业份额增强 25%，需求重新恶化 15%。
+相对可能性：基准解释最高，企业份额增强次之，需求重新恶化最低；若存在可解释基准率，再冻结概率范围。
 机制：供给约束 → 行业价格 → 收入/毛利；公司行动不是必要条件。
 最强反方：渠道和产品升级已经带来结构性份额提升。
 翻转事实：同区域、同产品、同期间的销量/价格/份额联合数据持续优于同行。
@@ -839,4 +841,3 @@ Snapshot 必须让投资者在三分钟内回答：
 7. Jonathan Baron and John C. Hershey, [Outcome Bias in Decision Evaluation](https://doi.org/10.1037/0022-3514.54.4.569), *Journal of Personality and Social Psychology*, 1988.
 8. A. P. Dawid, [The Prequential Approach](https://www.jstor.org/stable/2981683), *Journal of the Royal Statistical Society A*, 1984.
 9. Dario Amodei et al., [Concrete Problems in AI Safety](https://arxiv.org/abs/1606.06565), 2016.
-

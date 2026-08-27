@@ -60,7 +60,13 @@ Distinguish confidence in the evidence or inference from the probability of the 
 4. Review must not respond to uncertainty by demanding exhaustive proof, adding a global gate, or converting a local defect into a whole-case refusal. The preferred repair is the smallest change that improves the investor's judgment.
 5. Coordinators must carry this objective hierarchy and return contract into delegated prompts. A narrower workflow may strengthen evidence requirements for its claim, but must not redefine local uncertainty or missing authority as whole-case failure.
 
-The rationale and research basis for this constitution are recorded in `docs/development/research/TURTLE_JUDGMENT_FIRST_AGENT_CONSTITUTION.md`.
+The unified objective hierarchy, runtime/training split, and next paired acceptance
+test are recorded in
+`docs/development/research/TURTLE_JUDGMENT_FIRST_DECISION_FOCUSED_INTEGRATED_DESIGN.md`.
+The detailed runtime rationale remains in
+`docs/development/research/TURTLE_JUDGMENT_FIRST_AGENT_CONSTITUTION.md`; the
+episode, feedback, and transfer semantics remain in
+`docs/development/research/TURTLE_DECISION_FOCUSED_ENTERPRISE_JUDGMENT_TRAINING_ARCHITECTURE.md`.
 
 ## Primary Workflows
 
