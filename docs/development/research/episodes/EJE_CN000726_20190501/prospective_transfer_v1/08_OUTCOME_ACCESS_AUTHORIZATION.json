@@ -1,0 +1,21 @@
+{
+  "schema_version": "prospective-enterprise-judgment-outcome-authorization.v1",
+  "authorization_id": "PEJOA:CN000726:20190501:FY2019:TRANSFER:V1",
+  "preoutcome_evidence_commit": "efecb70",
+  "application_freeze_commit": "91c8aa4",
+  "selection_ref": "00_SELECTION_AND_CONTAMINATION_RECORD.md",
+  "baseline_contract_ref": "04_BASELINE_BEFORE_LEARNING_CONTRACT.json",
+  "enhanced_contract_ref": "05_ENHANCED_AFTER_LEARNING_CONTRACT.json",
+  "application_ref": "06_TRANSFER_APPLICATION_FREEZE.json",
+  "independent_review_ref": "07_INDEPENDENT_PREOUTCOME_TRANSFER_REVIEW.md",
+  "independent_review_status": "TRANSFER_CANDIDATE_CREATED_PREOUTCOME",
+  "authorized_source_scope": "ONE_UNIQUE_OFFICIAL_FULL_FY2019_ANNUAL_REPORT_FOR_CN000726_PUBLISHED_BY_2020_05_01",
+  "authorized_fields": "UNION_OF_BASELINE_AND_ENHANCED_CONTRACT_FIELDS_ONLY",
+  "custodian_context": "BOTH_MEASUREMENT_CONTRACTS_WITHOUT_JUDGMENTS_OR_LEARNING_NOTE",
+  "outcome_access": "AUTHORIZED_AFTER_THIS_ARTIFACT_IS_COMMITTED",
+  "price_access": "PROHIBITED",
+  "comparative_access": "PROHIBITED",
+  "valuation_access": "PROHIBITED",
+  "investment_access": "PROHIBITED",
+  "transfer_validation": "NOT_YET_GRANTED"
+}
