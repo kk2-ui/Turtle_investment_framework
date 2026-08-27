@@ -28,6 +28,14 @@
     {"field_id": "ORGANIC_NEW_STORE_COUNT", "unit": "COUNT", "ordinary_fy2017_comparison_allowed": true},
     {"field_id": "ACQUIRED_AND_CONSOLIDATED_STORE_COUNT", "unit": "COUNT", "ordinary_fy2017_comparison_allowed": true},
     {"field_id": "CLOSED_STORE_COUNT_AND_DISCLOSED_REASON", "unit": "COUNT_AND_EVENT", "ordinary_fy2017_comparison_allowed": true},
+    {"field_id": "ORGANIC_COHORT_REVENUE_OR_SAME_STORE_SALES_RMB", "unit": "RMB_OR_PERCENT", "ordinary_fy2017_comparison_allowed": true},
+    {"field_id": "ORGANIC_COHORT_STORE_PROFIT_RMB", "unit": "RMB", "ordinary_fy2017_comparison_allowed": true},
+    {"field_id": "ORGANIC_COHORT_CASH_CAPEX_AND_PAYBACK", "unit": "RMB_AND_PERIOD", "ordinary_fy2017_comparison_allowed": true},
+    {"field_id": "ORGANIC_COHORT_CLOSURE_IMPAIRMENT_OR_TRANSFER_EVENT", "unit": "COUNT_RMB_OR_EVENT", "ordinary_fy2017_comparison_allowed": true},
+    {"field_id": "ACQUIRED_COHORT_REVENUE_RMB", "unit": "RMB", "ordinary_fy2017_comparison_allowed": true},
+    {"field_id": "ACQUIRED_COHORT_OPERATING_PROFIT_RMB", "unit": "RMB", "ordinary_fy2017_comparison_allowed": true},
+    {"field_id": "ACQUIRED_COHORT_OCF_AND_PAYBACK", "unit": "RMB_AND_PERIOD", "ordinary_fy2017_comparison_allowed": true},
+    {"field_id": "ACQUIRED_COHORT_CLOSURE_DISPOSAL_OR_IMPAIRMENT_EVENT", "unit": "COUNT_RMB_OR_EVENT", "ordinary_fy2017_comparison_allowed": true},
     {"field_id": "RETAIL_REVENUE_RMB_AND_GROWTH", "unit": "RMB_AND_PERCENT", "ordinary_fy2017_comparison_allowed": true},
     {"field_id": "RETAIL_GROSS_MARGIN_PERCENT", "unit": "PERCENT", "ordinary_fy2017_comparison_allowed": true},
     {"field_id": "DIRECT_STORE_DAILY_SALES_PER_SQUARE_METER", "unit": "RMB_PER_SQUARE_METER_PER_DAY", "ordinary_fy2017_comparison_allowed": true},
@@ -69,6 +77,7 @@
     "permanent_loss": "INCREASE_IF_NEGATIVE_EXPANSION_CASH_REPEATS_WITH_GOODWILL_OR_RESTRICTED_CASH_GROWTH_STORE_CLOSURE_OR_FINANCING_PRESSURE"
   },
   "fair_baseline_comparison_rule": "THE_BASELINE_MAY_USE_EVERY_FY2017_FACT_AND_JUDGMENT_ALREADY_FROZEN_IN_01_AND_ORDINARY_SAME_BUDGET_FY2018_COMPARISONS; THE_ENHANCED_ARM_GETS_CREDIT_ONLY_FOR_A_MATERIAL_DIFFERENCE CAUSED_BY_A_LATER_FROZEN_RULE_NOT_FOR_MORE_FIELDS_STRUCTURE_SPEED_OR_CONFIDENCE",
+  "shared_outcome_fact_budget": "THE_CUSTODIAN_SETTLES_THE_UNION_OF_02_AND_03_FIELDS_ONCE_AND_BOTH_ARMS_MAY_USE_EVERY_SETTLED_FACT; A_FIELD_BEING_UNSTRUCTURED_IN_THE_ORIGINAL_NARRATIVE_CANNOT_PREVENT_THE_FAIR_BASELINE_FROM_NOTICING_IT",
   "three_scenarios": {
     "optimistic": "NETWORK_EFFICIENCY_AND_MARGIN_HOLD_OR_IMPROVE_AND_POST_CAPEX_POST_ACQUISITION_INTERNAL_CASH_BECOMES_NONNEGATIVE_WITHOUT_WORKING_CAPITAL_STRESS",
     "base": "COMPANY_LEVEL_ABSORPTION_HOLDS_BUT_ACQUISITION_AFTER_CASH_REMAINS_SLIGHTLY_NEGATIVE; MATURE_NETWORK_ONLY_AND_NEW_COHORTS_ZERO_OR_LIMITED_OPTION_VALUE",
