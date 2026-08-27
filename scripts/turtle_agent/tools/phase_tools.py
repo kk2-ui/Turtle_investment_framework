@@ -455,7 +455,50 @@ def compute_bundle_db(
         snapshot = write_snapshot(output_dir, quote_code, max_age_minutes=60)
         args.extend(["--market-snapshot", os.path.join(output_dir, "market_snapshot.json")])
     except ValueError as exc:
-        return {"ok": False, "error": f"fresh_niangao_market_required:{exc}"}
+        # A missing current quote withdraws price/valuation actions; it does
+        # not erase the company's operating evidence.  Persist an explicit
+        # unresolved bundle so Phase 1.5, PDF extraction and synthesis can
+        # continue without inventing a stale or fallback price.
+        unresolved_reason = f"fresh_niangao_market_required:{exc}"
+        unresolved_bundle = {
+            "meta": {"code": code, "quantitative_status": "UNRESOLVED_CURRENT_MARKET"},
+            "market": {"status": "UNAVAILABLE", "reason": unresolved_reason},
+            "factor3": {
+                "gg": {"pessimistic": None, "base": None, "optimistic": None},
+                "gg_discounted": {"pessimistic": None, "base": None, "optimistic": None},
+                "gg_unavailable": True,
+                "gg_unavailable_reason": "current market capitalization unavailable",
+            },
+            "factor4": {
+                "valuation_status": "UNRESOLVED_VALUATION",
+                "valuation_unresolved_reason": unresolved_reason,
+                "position": {"status": "UNRESOLVED_VALUATION", "recommended": None},
+                "verdict": {
+                    "final": "UNRESOLVED_VALUATION",
+                    "framework": "企业判断继续；估值与当前价格动作暂不承保",
+                },
+            },
+            "rejection_summary": {
+                "valuation": "unresolved",
+                "enterprise_judgment": "continue",
+            },
+        }
+        os.makedirs(output_dir, exist_ok=True)
+        with open(bundle_path, "w", encoding="utf-8") as f:
+            json.dump(unresolved_bundle, f, indent=2, ensure_ascii=False)
+        return {
+            "ok": True,
+            "degraded": True,
+            "quantitative_status": "UNRESOLVED_CURRENT_MARKET",
+            "bundle_path": bundle_path,
+            "gg": unresolved_bundle["factor3"]["gg"],
+            "gg_discounted": unresolved_bundle["factor3"]["gg_discounted"],
+            "ddm": {"fair_value": None},
+            "ii": None,
+            "rf": None,
+            "rejection": unresolved_bundle["rejection_summary"],
+            "error": unresolved_reason,
+        }
     # V12.19: 卫星标的 — 传递 data_source
     if data_source:
         args.extend(["--data-source", data_source])
@@ -803,7 +846,12 @@ def extract_zone_j(
         return {"ok": False, "error": "需要 llm_client 参数"}
 
     try:
-        from zone_j_agent import AGENTS, DATA_DISCOUNT_BASIS, build_context, build_prompt
+        from zone_j_agent import (
+            AGENTS,
+            validate_economic_discount_semantics,
+            build_context,
+            build_prompt,
+        )
     except ImportError as exc:
         return {"ok": False, "error": f"无法导入 zone_j_agent: {exc}"}
 
@@ -834,9 +882,10 @@ def extract_zone_j(
                 with open(out_path, encoding="utf-8") as f:
                     existing = json.load(f)
                 expected = REQUIRED_CHECK.get(agent_name, [])
-                if agent_name == "data_quality" and existing.get("discount_basis") != DATA_DISCOUNT_BASIS:
+                semantic_errors = validate_economic_discount_semantics(agent_name, existing)
+                if semantic_errors:
                     print(
-                        "  ♻️  Zone J/data_quality 现有文件使用旧折价语义，按当前经济载体规则重新生成",
+                        f"  ♻️  Zone J/{agent_name} 现有文件使用旧折价语义，按当前经济载体规则重新生成",
                         file=sys.stderr,
                     )
                 elif expected and not any(k in existing for k in expected):
@@ -882,10 +931,7 @@ def extract_zone_j(
             parse_ok = False
             try:
                 data = json.loads(content)
-                semantic_ok = (
-                    agent_name != "data_quality"
-                    or data.get("discount_basis") == DATA_DISCOUNT_BASIS
-                )
+                semantic_ok = not validate_economic_discount_semantics(agent_name, data)
                 if (expected and not any(k in data for k in expected)) or not semantic_ok:
                     print(f"  ⚠️  Zone J/{agent_name} JSON合法但字段不对: {list(data.keys())[:5]} (需要 {expected})", file=sys.stderr)
                 else:
@@ -903,10 +949,7 @@ def extract_zone_j(
                 repaired += "}" * open_braces + "]" * open_brackets
                 try:
                     data = json.loads(repaired)
-                    semantic_ok = (
-                        agent_name != "data_quality"
-                        or data.get("discount_basis") == DATA_DISCOUNT_BASIS
-                    )
+                    semantic_ok = not validate_economic_discount_semantics(agent_name, data)
                     if (expected and not any(k in data for k in expected)) or not semantic_ok:
                         raise ValueError(f"Repaired JSON still missing {expected}")
                     parse_ok = True
@@ -930,10 +973,7 @@ def extract_zone_j(
                         content2 = content2[:-3]
                 try:
                     data = json.loads(content2)
-                    if (
-                        agent_name == "data_quality"
-                        and data.get("discount_basis") != DATA_DISCOUNT_BASIS
-                    ):
+                    if validate_economic_discount_semantics(agent_name, data):
                         return {
                             "agent": agent_name,
                             "error": "重试结果缺少当前经济载体折价语义标记",
@@ -1446,17 +1486,30 @@ def extract_zone_b_years(
         futures = {pool.submit(_extract_with_agent, y): y for y in available_years}
         for f in as_completed(futures):
             r = f.result()
+            r.setdefault("year", futures[f])
             results.append(r)
             if "error" in r:
                 errors.append(r)
 
+    results.sort(key=lambda item: int(item.get("year") or 0))
+    succeeded = [item for item in results if item.get("ok")]
+    failed_years = sorted(int(item["year"]) for item in errors if item.get("year") is not None)
+    status = "COMPLETE" if not errors else "PARTIAL" if succeeded else "UNAVAILABLE"
     return {
-        "ok": len(errors) == 0,
+        # One failed extractor is a local year gap, not a reason to discard
+        # every successfully materialized year or stop enterprise judgment.
+        "ok": bool(succeeded),
+        "degraded": bool(errors and succeeded),
+        "coverage_status": status,
+        "years_requested": list(available_years),
+        "years_succeeded": sorted(int(item["year"]) for item in succeeded),
+        "failed_years": failed_years,
         "years_processed": len(results),
         "years_skipped": sum(1 for r in results if r.get("skipped")),
         "years_failed": len(errors),
         "results": results,
         "errors": errors if errors else None,
+        "error": "all Zone B annual-year extractions failed" if not succeeded else None,
     }
 
 def extract_zone_b_master(
@@ -1506,10 +1559,24 @@ def extract_zone_b_master(
 
     write_zone_b_jsons(master_output, stock_dir, partials)
     written = [f for f in zone_b_files + optional_outputs if os.path.exists(os.path.join(stock_dir, f))]
+    available_years = sorted(
+        int(match.group(1))
+        for name in os.listdir(stock_dir)
+        if (match := re.fullmatch(r"(20\d{2})_年报\.md", name))
+    )
+    partial_years = sorted(int(year) for year in partials if str(year).isdigit())
     return {
         "ok": True,
         "files_written": written,
         "missing": [f for f in zone_b_files if f not in written],
+        "source_years": partial_years,
+        "available_annual_years": available_years,
+        "unextracted_years": sorted(set(available_years) - set(partial_years)),
+        "coverage_status": (
+            "COMPLETE"
+            if not set(available_years) - set(partial_years)
+            else "PARTIAL"
+        ),
     }
 
 

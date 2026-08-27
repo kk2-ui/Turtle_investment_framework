@@ -101,17 +101,20 @@ def evaluate_pending_valuation_decision_revision(output_dir: str) -> dict[str, A
         str(canonical_manifest.get('quantitative_decision') or '').lower(),
         str(canonical_manifest.get('unified_decision') or '').lower(),
     }
-    try:
-        position_matches = abs(
-            float(canonical_manifest.get('position_pct'))
-            - float(proposed.get('position_pct'))
-        ) <= 1e-9
-        value_matches = abs(
-            float(chosen_entry.get('value'))
-            - float(proposed.get('chosen_value_per_share'))
-        ) <= 1e-9
-    except (TypeError, ValueError):
-        position_matches = False; value_matches = False
+    def same_optional_number(left: Any, right: Any) -> bool:
+        if left is None or right is None:
+            return left is None and right is None
+        try:
+            return abs(float(left) - float(right)) <= 1e-9
+        except (TypeError, ValueError):
+            return False
+
+    position_matches = same_optional_number(
+        canonical_manifest.get('position_pct'), proposed.get('position_pct')
+    )
+    value_matches = same_optional_number(
+        chosen_entry.get('value'), proposed.get('chosen_value_per_share')
+    )
     valuation_metadata = {
         'revision', 'lifecycle', 'change_reason', 'generated_at', 'freeze',
     }

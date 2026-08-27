@@ -29,7 +29,7 @@ BUSINESS_TYPES = {
     "cyclical", "utility", "pre_revenue_biotech", "conglomerate",
 }
 ROLES = {"primary", "corroborative", "stress"}
-ACTIONS = {"buy", "hold", "avoid"}
+ACTIONS = {"buy", "hold", "avoid", "unresolved"}
 MIN_R_G_BUFFER_PCT = 3.0
 HIGH_TERMINAL_SHARE_PCT = 70.0
 _PERPETUITY_MODELS = {"DCF", "DDM", "EPV", "RNPV"}
@@ -196,6 +196,8 @@ def _num(value: Any) -> float | None:
 
 
 def _same(left: Any, right: Any, tolerance: float = 1e-4) -> bool:
+    if left is None and right is None:
+        return True
     lval, rval = _num(left), _num(right)
     return lval is not None and rval is not None and math.isclose(lval, rval, rel_tol=tolerance, abs_tol=tolerance)
 
@@ -437,6 +439,13 @@ def validate_valuation_model_ledger(
         invalid.append("asset_intensity_invalid")
     if not str(profile.get("valuation_route") or "").strip(): incomplete.append("valuation_route_missing")
     if not str(profile.get("route_reasoning") or "").strip(): incomplete.append("route_reasoning_missing")
+
+    synthesis = payload.get("synthesis")
+    if not isinstance(synthesis, dict):
+        invalid.append("synthesis_invalid")
+        synthesis = {}
+    action = str(synthesis.get("action") or "")
+    valuation_unresolved = action == "unresolved"
 
     models = payload.get("models")
     if not isinstance(models, list): invalid.append("models_not_array"); models = []
@@ -696,9 +705,9 @@ def validate_valuation_model_ledger(
             incomplete.append("routed_rejection_not_recorded:" + route_model_id)
     known_model_ids = {str(m.get("model_id")) for m in models if isinstance(m, dict)}
     for ref in sorted(set(_VALUATION_REF_RE.findall(report_text)) - known_model_ids): invalid.append("unknown_valuation_reference:" + ref)
-    if enforced and not primary: incomplete.append("primary_model_missing")
+    if enforced and not primary and not valuation_unresolved: incomplete.append("primary_model_missing")
     if primary and all(m.get("model_type") == "RELATIVE" for m in primary): invalid.append("relative_valuation_cannot_be_sole_primary")
-    if enforced and len(groups) < min_independent_groups:
+    if enforced and not valuation_unresolved and len(groups) < min_independent_groups:
         incomplete.append(f"independent_model_groups_insufficient:{len(groups)}/{min_independent_groups}")
     group_names = sorted(group_assumptions)
     for i, left in enumerate(group_names):
@@ -716,12 +725,16 @@ def validate_valuation_model_ledger(
     if fragile_primary and len(groups) < 2:
         incomplete.append("fragile_primary_without_independent_corroboration")
 
-    synthesis = payload.get("synthesis")
-    if not isinstance(synthesis, dict): invalid.append("synthesis_invalid"); synthesis = {}
-    action = str(synthesis.get("action") or "")
     if action not in ACTIONS: invalid.append("synthesis_action_invalid")
     chosen = _num(synthesis.get("chosen_value_per_share")); low = _num(synthesis.get("range_low")); high = _num(synthesis.get("range_high"))
-    if None in {chosen, low, high} or not (low <= chosen <= high): invalid.append("synthesis_value_range_invalid")
+    if valuation_unresolved:
+        if any(value is not None for value in (chosen, low, high)):
+            invalid.append("unresolved_synthesis_must_not_state_value_range")
+        raw_position = synthesis.get("position_pct")
+        if raw_position is not None and _num(raw_position) != 0.0:
+            invalid.append("unresolved_synthesis_position_invalid")
+    elif None in {chosen, low, high} or not (low <= chosen <= high):
+        invalid.append("synthesis_value_range_invalid")
     if not str(synthesis.get("decision_rule") or "").strip(): incomplete.append("synthesis_decision_rule_missing")
     values = [_num((m.get("result") or {}).get("value_per_share")) for m in active]
     values = [v for v in values if v is not None and v > 0]
@@ -805,7 +818,7 @@ def validate_valuation_model_ledger(
         if manifest and not _same(synthesis.get("position_pct"), manifest.get("position_pct")): invalid.append("synthesis_manifest_position_mismatch")
         ref = str(synthesis.get("decision_entry_id") or "")
         entry = decisions.get(ref)
-        if enforced and not ref: incomplete.append("synthesis_decision_entry_missing")
+        if enforced and not ref and not valuation_unresolved: incomplete.append("synthesis_decision_entry_missing")
         elif ref and entry is None: invalid.append("synthesis_unknown_decision_entry")
         elif entry and entry.get("metric_id") != "valuation.v_final": invalid.append("synthesis_decision_entry_not_v_final")
         elif entry and chosen is not None and not _same(chosen, entry.get("value")): invalid.append("synthesis_v_final_mismatch")

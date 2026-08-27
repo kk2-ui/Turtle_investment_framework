@@ -134,3 +134,72 @@ def test_compute_paths_share_same_gg_metadata(tmp_path, monkeypatch):
 
     assert json_bundle["gg_labor"] == db_bundle["gg_labor"]
     assert json_bundle["gg_override"] == db_bundle["gg_override"]
+
+
+def test_compute_with_missing_dps_writes_unresolved_trace_instead_of_crashing(tmp_path, monkeypatch):
+    output_dir = tmp_path / "02669_missing_dps"
+    output_dir.mkdir()
+
+    monkeypatch.setattr(cb, "load_threshold", lambda _: {"II": 5.5, "shares_m": 100.0})
+    monkeypatch.setattr(cb, "load_input_data", lambda _: {"ts_code": "02669.HK", "currency": "HKD", "years": ["2025"]})
+    monkeypatch.setattr(cb, "normalize_input_data", lambda raw: {"ts_code": raw["ts_code"], "currency": raw["currency"]})
+    monkeypatch.setattr(cb, "load_hk_fallback", lambda _: None)
+    monkeypatch.setattr(cb, "load_data_pack", lambda _: None)
+    monkeypatch.setattr(cb, "load_gg_override", lambda _: {})
+    monkeypatch.setattr(cb, "load_labor_disclosure_summary", lambda _: {})
+    monkeypatch.setattr(cb, "compute_factor2", lambda *args, **kwargs: {
+        "rejection": {}, "M": 0.62, "r_np": 8.0, "r_oe": 7.0,
+        "np_avg_3y": 100.0, "oe_avg_3y": 90.0,
+    })
+    monkeypatch.setattr(cb, "compute_factor3", lambda *args, **kwargs: {
+        "rejection": {}, "M": 0.62, "g_adj": 1.5, "g_base": 2.0,
+        "gg": {"base": 8.0, "pessimistic": 7.0, "optimistic": 9.0},
+        "gg_raw": {}, "aa_avg": {"3y": 80.0}, "lambda": {},
+    })
+    monkeypatch.setattr(cb, "_check_gg_guard", lambda *args, **kwargs: {"status": "pass"})
+
+    bundle = cb.compute(str(output_dir), price_hkd=1.0, shares_m=100.0)
+
+    assert bundle["factor4"]["valuation_status"] == "UNRESOLVED_VALUATION"
+    assert bundle["calculation_trace"]["factor4_ddm"]["status"] == "UNRESOLVED_VALUATION"
+    assert bundle["calculation_trace"]["factor4_ddm"]["result"] is None
+    assert bundle["calculation_trace"]["factor4_ddm"]["steps"] == []
+    assert bundle["rejection_summary"]["overall"] == "unresolved"
+
+
+def test_unverified_high_gg_identity_withdraws_valuation_without_stopping_bundle(tmp_path, monkeypatch):
+    output_dir = tmp_path / "02669_unverified_high_gg"
+    output_dir.mkdir()
+    monkeypatch.setattr(cb, "load_threshold", lambda _: {"II": 5.5, "shares_m": 100.0})
+    monkeypatch.setattr(cb, "load_input_data", lambda _: {"ts_code": "02669.HK", "currency": "HKD", "years": ["2025"]})
+    monkeypatch.setattr(cb, "normalize_input_data", lambda raw: {"ts_code": raw["ts_code"], "currency": raw["currency"]})
+    monkeypatch.setattr(cb, "load_hk_fallback", lambda _: None)
+    monkeypatch.setattr(cb, "load_data_pack", lambda _: None)
+    monkeypatch.setattr(cb, "load_gg_override", lambda _: {})
+    monkeypatch.setattr(cb, "load_labor_disclosure_summary", lambda _: {})
+    monkeypatch.setattr(cb, "compute_factor2", lambda *args, **kwargs: {
+        "rejection": {}, "M": 0.62, "r_np": 12.0, "r_oe": 11.0,
+        "np_avg_3y": 100.0, "oe_avg_3y": 90.0,
+    })
+    monkeypatch.setattr(cb, "compute_factor3", lambda *args, **kwargs: {
+        "rejection": {}, "M": 0.62, "g_adj": 1.5, "g_base": 2.0,
+        "gg": {"base": 12.0, "pessimistic": 11.0, "optimistic": 13.0},
+        "gg_raw": {}, "aa_avg": {"3y": 100.0}, "lambda": {},
+    })
+    monkeypatch.setattr(cb, "_check_gg_guard", lambda *args, **kwargs: {
+        "error": "gg_base_requires_annual_report_recheck",
+        "message": "shares identity not verified",
+    })
+
+    bundle = cb.compute(
+        str(output_dir),
+        params_override={"dps_latest": 0.1},
+        price_hkd=1.0,
+        shares_m=100.0,
+    )
+
+    assert "error" not in bundle
+    assert bundle["factor3"]["gg_diagnostic_unverified"]["base"] == 12.0
+    assert bundle["factor3"]["gg"]["base"] is None
+    assert bundle["factor4"]["valuation_status"] == "UNRESOLVED_VALUATION"
+    assert bundle["rejection_summary"]["overall"] == "unresolved"

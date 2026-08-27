@@ -231,6 +231,52 @@ def test_zone_j_loader_accepts_marked_observed_economic_discount(tmp_path):
     assert load_zone_j_params(str(tmp_path))["total_discount_pct"] == 8
 
 
+def test_zone_j_loader_ignores_legacy_governance_discount(tmp_path):
+    (tmp_path / "governance_tension.json").write_text(
+        json.dumps({"governance_discount": 5}), encoding="utf-8"
+    )
+
+    assert "governance_discount" not in load_zone_j_params(str(tmp_path))
+
+
+def test_zone_j_loader_requires_observed_carrier_for_governance_discount(tmp_path):
+    (tmp_path / "governance_tension.json").write_text(
+        json.dumps(
+            {
+                "discount_basis": "observed_economic_carrier_v1",
+                "governance_discount": {"additional_discount_pct": 5},
+            }
+        ),
+        encoding="utf-8",
+    )
+
+    assert "governance_discount" not in load_zone_j_params(str(tmp_path))
+
+
+def test_zone_j_loader_accepts_observed_governance_cash_carrier(tmp_path):
+    (tmp_path / "governance_tension.json").write_text(
+        json.dumps(
+            {
+                "discount_basis": "observed_economic_carrier_v1",
+                "governance_discount": {
+                    "additional_discount_pct": 5,
+                    "economic_carrier": {
+                        "status": "OBSERVED",
+                        "responsibility_unit": "listed parent",
+                        "amount_or_range": "RMB 500m",
+                        "period": "FY2023-FY2024",
+                        "cash_transmission": "cash advanced to controller affiliate remains unavailable",
+                        "evidence_ref": ["governance.json:related_party_advance"],
+                    },
+                },
+            }
+        ),
+        encoding="utf-8",
+    )
+
+    assert load_zone_j_params(str(tmp_path))["governance_discount"] == 5
+
+
 def test_compute_factor3_prefers_pdf_override_for_direct_labor():
     override = {
         "years": {

@@ -260,6 +260,31 @@ def compute_gg(output_dir: str = ".") -> dict[str, Any]:
     r_np = f2.get("r_np")
     r_oe = f2.get("r_oe")
     gg_from_bundle = f3.get("gg", {}).get("base")
+    gg_available = (
+        not f3.get("gg_unavailable", False)
+        and isinstance(gg_from_bundle, (int, float))
+    )
+
+    if not gg_available:
+        return {
+            "valuation_status": "UNRESOLVED_VALUATION",
+            "gg_status": "UNRESOLVED",
+            "gg_base": None,
+            "gg_pessimistic": None,
+            "gg_optimistic": None,
+            "diagnostic_reference": {
+                "r_np_pre_tax": r_np,
+                "r_oe_pre_tax": r_oe,
+                "authority": "DIAGNOSTIC_ONLY_NOT_CANONICAL_GG",
+            },
+            "II": p.get("II"),
+            "reason": str(
+                f3.get("gg_unavailable_reason")
+                or f3.get("error")
+                or "canonical GG input unavailable"
+            ),
+            "summary": "Canonical GG is unresolved; Factor2 profitability yields remain diagnostic and do not create a price action.",
+        }
 
     # 如果 compute_bundle 用了 yfinance 的错误 MC，手动重算 R(NP)/R(OE)
     if mc_rmb_corrected != mc_rmb_yf and mc_rmb_corrected > 0:
@@ -275,8 +300,8 @@ def compute_gg(output_dir: str = ".") -> dict[str, Any]:
             r_oe = round(r_oe * ratio, 1) if r_oe else round(oe_avg * M_val * (1 - Q) / mc_rmb_corrected * 100, 1)
             gg_base = round((r_np + r_oe) / 2 + f3.get("g_adj", 0), 1)
             correction_note += f"\nGG已重新计算(R(NP)×{ratio:.2f}): R(NP)={r_np}%, R(OE)={r_oe}%, GG={gg_base}%"
-    elif gg_base is None and r_np and r_oe:
-        gg_base = round((r_np + r_oe) / 2 + f3.get("g_adj", 0), 1)
+    # A missing canonical GG is never reconstructed from Factor2.  Factor2 is
+    # a profitability diagnostic with a different economic identity.
 
     # HH must compare like with like.  Raw NP/MC is pre-distribution and
     # pre-tax, while GG already includes M and (1-Q); comparing those two
@@ -447,6 +472,8 @@ def compute_ddm(output_dir: str = ".") -> dict[str, Any]:
     tiers = f4.get("tiers", [])
 
     return {
+        "valuation_status": f4.get("valuation_status", "RESOLVED"),
+        "price_action_authorized": f4.get("valuation_status") != "UNRESOLVED_VALUATION",
         "ddm_price_hkd": f4.get("ddm_v_hkd"),
         "ddm_price_rmb": f4.get("ddm_v_rmb"),
         "current_price_hkd": m.get("price_hkd"),
@@ -574,13 +601,12 @@ def evaluate_decision(output_dir: str = ".") -> dict[str, Any]:
     rej = cb.get("rejection_summary", {})
     trace = cb.get("calculation_trace", {})
 
-    gg_final = f3.get("gg", {}).get("base")  # V12 fix: 从 factor3 直接读
-    if gg_final is None:
-        # fallback: 从 factor2 推算
-        r_np = cb.get("factor2", {}).get("r_np")
-        r_oe = cb.get("factor2", {}).get("r_oe")
-        if r_np and r_oe:
-            gg_final = round((r_np + r_oe) / 2 + f3.get("g_adj", 0), 1)
+    gg_final = f3.get("gg", {}).get("base")  # canonical Factor3 identity only
+    valuation_unresolved = (
+        f4.get("valuation_status") == "UNRESOLVED_VALUATION"
+        or f3.get("gg_unavailable", False)
+        or not isinstance(gg_final, (int, float))
+    )
     ii = p.get("II", 0)
     rejected = rej.get("overall") == "block"
 
@@ -589,10 +615,11 @@ def evaluate_decision(output_dir: str = ".") -> dict[str, Any]:
     v_trap = f4.get("value_trap", {})
 
     # 规则决策
-    if gg_final is None:
-        # GG 不可用 → 不基于 GG 做决策，依赖 DDM + 其他指标
-        verdict, confidence = "Hold", "low"
-        rationale = ["GG 数据不可用——净现金/市值过高或股本数据异常，无法基于穿透回报率判断。请手动评估DDM+PB+股息率。"]
+    if valuation_unresolved:
+        verdict, confidence = "Unresolved", "bounded"
+        rationale = [
+            "核心估值或当前价格输入不可用；企业经营判断继续，但当前价格动作与仓位暂不承保。"
+        ]
     elif rejected:
         verdict, confidence = "Abandon", "high"
         rationale = ["否决门触发: " + ", ".join(rej.get("blocks", []))]
@@ -615,6 +642,8 @@ def evaluate_decision(output_dir: str = ".") -> dict[str, Any]:
 
     result = {
         "verdict": verdict,
+        "valuation_status": "UNRESOLVED_VALUATION" if valuation_unresolved else "RESOLVED",
+        "position_pct": None if valuation_unresolved else f4.get("position", {}).get("capped_pct"),
         "confidence": confidence,
         "rationale": rationale,
         "gg": gg_final,
@@ -628,6 +657,8 @@ def evaluate_decision(output_dir: str = ".") -> dict[str, Any]:
 
     # V12: 事后一致性验证（来自 decision_synthesizer.validate_decision）
     try:
+        if valuation_unresolved:
+            return result
         from scripts.decision_synthesizer import validate_decision as _vd
         from scripts.models import DecisionInput, DecisionOutput
         di = DecisionInput(
@@ -652,10 +683,11 @@ def evaluate_decision(output_dir: str = ".") -> dict[str, Any]:
 
 # 元数据
 def compute_data_quality(output_dir: str = ".") -> dict[str, Any]:
-    """评估数据完整性——对标海螺水泥"36/36字段，0%折价"。
+    """评估数据完整性，不从文件数量推导估值方向。
 
     检查 stock_dir 下所有 Zone A/B/J JSON 的字段覆盖率，
-    输出完整性得分 + 折价建议。
+    输出完整性得分和局部置信度处理。经济折价必须由观察到的
+    owner-cash/永久损失载体另行支持。
     """
     expected_files = {
         "Zone A": ["compute_bundle.json", "financial_trends.json", "industry_context.json"],
@@ -691,20 +723,26 @@ def compute_data_quality(output_dir: str = ".") -> dict[str, Any]:
         result["total_expected"] += total
 
     pct = result["total_present"] / result["total_expected"] * 100 if result["total_expected"] > 0 else 0
-    if pct >= 100:
-        discount = "0%（数据完整，无需折价）"
-    elif pct >= 80:
-        discount = f"5-10%（{result['total_expected'] - result['total_present']} 个文件缺失）"
-    elif pct >= 60:
-        discount = f"10-15%（{result['total_expected'] - result['total_present']} 个文件缺失）"
+    missing_count = result["total_expected"] - result["total_present"]
+    if missing_count:
+        confidence_treatment = (
+            "逐项定位缺失文件影响的主张；降低该主张置信度，必要时扩大对应估值区间或取消未证明溢价。"
+            "缺失没有先验方向，不自动降低估值中枢。"
+        )
     else:
-        discount = f"15-25%（{result['total_expected'] - result['total_present']} 个文件缺失，数据严重不完整）"
+        confidence_treatment = (
+            "文件层覆盖完整；仍按事实质量和经济机制判断，不因完整性本身增加估值溢价。"
+        )
 
     result["completeness_pct"] = round(pct, 1)
-    result["discount_recommendation"] = discount
+    # Retain the legacy field name for consumers, but make its semantics
+    # explicit: completeness alone never supplies an economic haircut.
+    result["automatic_discount_pct"] = 0.0
+    result["discount_recommendation"] = "0% automatic point-estimate adjustment"
+    result["confidence_treatment"] = confidence_treatment
     result["summary"] = (
-        f"数据完整性={result['total_present']}/{result['total_expected']}字段({pct:.0f}%)，"
-        f"建议折价={discount}"
+        f"数据完整性={result['total_present']}/{result['total_expected']}文件({pct:.0f}%)，"
+        f"缺失={missing_count}；估值中枢自动折价=0%，局部置信度处理={confidence_treatment}"
     )
     return result
 
@@ -713,7 +751,7 @@ verify_market_cap._tool_meta = {"name": "verify_market_cap", "description": "验
 cross_validate_data._tool_meta = {"name": "cross_validate_data", "description": "对同一财务字段做多源交叉验证并输出共识值。", "parameters": {"field": {"type": "string", "description": "字段名"}, "sources_json": {"type": "string", "description": "JSON: {来源: 数值}"}, "unit": {"type": "string", "description": "单位", "optional": True}, "tolerance": {"type": "number", "description": "容差百分比", "optional": True}}}  # type: ignore[attr-defined]
 check_benford._tool_meta = {"name": "check_benford", "description": "对一组财务数字做 Benford 定律检测。", "parameters": {"values_json": {"type": "string", "description": "JSON数组"}}}  # type: ignore[attr-defined]
 compute_aa._tool_meta = {"name": "compute_aa", "description": "展示AA(可支配现金)完整构建链路—逐年FCF+收款比率+收入还原。用于GG章节推导过程。", "parameters": {"output_dir": {"type": "string", "description": "股票输出目录"}}}  # type: ignore[attr-defined]
-compute_data_quality._tool_meta = {"name": "compute_data_quality", "description": "评估数据完整性—统计Zone A/B/J文件覆盖率+折价建议。对标海螺'36/36字段0%折价'。", "parameters": {"output_dir": {"type": "string", "description": "股票输出目录"}}}  # type: ignore[attr-defined]
+compute_data_quality._tool_meta = {"name": "compute_data_quality", "description": "评估数据完整性—统计Zone A/B/J文件覆盖率并给出局部置信度处理；文件缺失不自动产生估值折价。", "parameters": {"output_dir": {"type": "string", "description": "股票输出目录"}}}  # type: ignore[attr-defined]
 compute_gg._tool_meta = {"name": "compute_gg", "description": "计算穿透回报率GG(GG_np/GG_oe/GG_base/II/Rf/G_adj/scenarios)—含yfinance股本自动修正", "parameters": {"output_dir": {"type": "string", "description": "股票输出目录"}}}  # type: ignore[attr-defined]
 compute_ddm._tool_meta = {"name": "compute_ddm", "description": "计算DDM估值(公允价/tiers/安全边际/止损)", "parameters": {"output_dir": {"type": "string", "description": "股票输出目录"}}}  # type: ignore[attr-defined]
 assess_moat._tool_meta = {"name": "assess_moat", "description": "护城河评级(从moat_assessment或compute_bundle推断)", "parameters": {"output_dir": {"type": "string", "description": "股票输出目录"}}}  # type: ignore[attr-defined]

@@ -1,3 +1,4 @@
+import json
 from pathlib import Path
 
 import pytest
@@ -7,6 +8,7 @@ from scripts.turtle_agent.tools.write_tools import (
     _check_dividend_identity,
     write_decision_manifest,
 )
+from scripts.turtle_agent.tools.calc_tools import compute_ddm, compute_gg, evaluate_decision
 
 
 def test_hk_annual_report_dividend_preserves_reported_currency(tmp_path: Path) -> None:
@@ -52,6 +54,64 @@ def test_factor4_normalizes_rmb_dps_to_hkd_before_yield() -> None:
     assert identity["dps_native"] == pytest.approx(0.1551, abs=0.0001)
     assert identity["yield_pretax_pct"] == pytest.approx(7.68, abs=0.01)
     assert factor4["ddm_v_native"] == pytest.approx(4.52, abs=0.02)
+
+
+def test_factor4_does_not_convert_unavailable_gg_into_avoid() -> None:
+    factor4 = compute_factor4(
+        factor3={
+            "gg_unavailable": True,
+            "gg": {"base": None},
+            "aa_avg": {"3y": None},
+            "extrapolation_rating": {"overall": "low"},
+        },
+        market={
+            "native_currency": "RMB",
+            "price_rmb": 10.0,
+            "mc_rmb": 1000.0,
+            "shares_m": 100.0,
+            "fx": 1.0,
+        },
+        params={"II": 5.5, "Q": 0.10, "dps_latest": 0.3},
+    )
+
+    assert factor4["valuation_status"] == "UNRESOLVED_VALUATION"
+    assert factor4["verdict"]["final"] == "UNRESOLVED_VALUATION"
+    assert factor4["verdict"]["gg_layer"]["gate"] == "UNAVAILABLE"
+    assert factor4["position"]["recommended"] is None
+
+
+def test_factor4_preserves_observed_zero_gg_as_negative_result() -> None:
+    factor4 = compute_factor4(
+        factor3={
+            "gg": {"base": 0.0},
+            "aa_avg": {"3y": 0.0},
+            "extrapolation_rating": {"overall": "medium"},
+        },
+        market={
+            "native_currency": "RMB",
+            "price_rmb": 10.0,
+            "mc_rmb": 1000.0,
+            "shares_m": 100.0,
+            "fx": 1.0,
+        },
+        params={"II": 5.5, "Q": 0.10, "dps_latest": 0.3},
+    )
+
+    assert factor4["valuation_status"] == "RESOLVED"
+    assert factor4["verdict"]["gg_layer"]["gate"] == "不达标"
+    assert factor4["verdict"]["final"] == "AVOID"
+
+
+def test_factor4_missing_current_price_withdraws_action_not_company_judgment() -> None:
+    factor4 = compute_factor4(
+        factor3={"gg": {"base": 6.0}},
+        market={"mc_rmb": 1000.0, "shares_m": 100.0, "fx": 1.0},
+        params={"II": 5.5, "Q": 0.10, "dps_latest": 0.3},
+    )
+
+    assert factor4["verdict"]["final"] == "UNRESOLVED_VALUATION"
+    assert factor4["position"]["base_pct"] is None
+    assert factor4["valuation_unresolved_reason"] == "current price missing"
 
 
 def test_dividend_identity_is_a_hard_consistency_check() -> None:
@@ -106,3 +166,73 @@ def test_decision_manifest_commits_display_identity_and_observation_position(tmp
     assert manifest["decision_family"] == "Hold"
     assert manifest["position_pct"] == pytest.approx(1.5)
     assert (tmp_path / "decision_manifest.json").exists()
+
+
+def test_decision_manifest_supports_research_only_when_valuation_is_unresolved(tmp_path: Path) -> None:
+    result = write_decision_manifest(
+        output_dir=str(tmp_path),
+        qualitative_decision="continue",
+        quantitative_decision="unresolved",
+        qualitative_rationale="企业经营判断仍可形成",
+        quantitative_rationale="GG 所需现金序列不可用",
+    )
+
+    manifest = result["manifest"]
+    assert manifest["unified_decision"] == "research_only"
+    assert manifest["decision_family"] == "Research Only"
+    assert manifest["position_pct"] is None
+
+
+def test_fundamental_abandon_keeps_zero_position_when_valuation_is_unresolved(tmp_path: Path) -> None:
+    result = write_decision_manifest(
+        output_dir=str(tmp_path),
+        qualitative_decision="abandon",
+        quantitative_decision="unresolved",
+        qualitative_rationale="永久损失否决来自企业事实，不依赖当前价格",
+        quantitative_rationale="当前估值输入不可用",
+    )
+
+    manifest = result["manifest"]
+    assert manifest["unified_decision"] == "avoid"
+    assert manifest["display_label"] == "Fundamental Avoid — Valuation Unresolved"
+    assert manifest["position_pct"] == 0.0
+
+
+def test_active_calc_tools_do_not_reconstruct_or_label_unavailable_valuation(tmp_path: Path) -> None:
+    bundle = {
+        "factor2": {"r_np": 8.0, "r_oe": 7.0},
+        "factor3": {
+            "gg_unavailable": True,
+            "gg_unavailable_reason": "owner cash series unavailable",
+            "gg": {"base": None, "pessimistic": None, "optimistic": None},
+            "g_adj": 1.5,
+        },
+        "factor4": {
+            "valuation_status": "UNRESOLVED_VALUATION",
+            "ddm_v_hkd": None,
+            "ddm_v_rmb": None,
+            "position": {"capped_pct": None, "recommended": None},
+            "verdict": {"final": "UNRESOLVED_VALUATION"},
+            "tiers": [],
+        },
+        "params": {"II": 5.5},
+        "market": {"price_hkd": None, "price_rmb": None},
+        "rejection_summary": {"overall": "unresolved", "blocks": [], "warnings": []},
+        "calculation_trace": {"factor4_ddm": {"status": "UNRESOLVED_VALUATION", "steps": []}},
+    }
+    (tmp_path / "compute_bundle.json").write_text(
+        json.dumps(bundle, ensure_ascii=False), encoding="utf-8"
+    )
+
+    gg = compute_gg(str(tmp_path))
+    ddm = compute_ddm(str(tmp_path))
+    decision = evaluate_decision(str(tmp_path))
+
+    assert gg["valuation_status"] == "UNRESOLVED_VALUATION"
+    assert gg["gg_base"] is None
+    assert gg["diagnostic_reference"]["authority"] == "DIAGNOSTIC_ONLY_NOT_CANONICAL_GG"
+    assert ddm["valuation_status"] == "UNRESOLVED_VALUATION"
+    assert ddm["position"]["recommended"] is None
+    assert decision["verdict"] == "Unresolved"
+    assert decision["position_pct"] is None
+    assert not any(label in decision["verdict"] for label in ("Buy", "Hold", "Avoid"))

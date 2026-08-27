@@ -20,6 +20,7 @@ Agents: moat | capex | earnings_quality | data_quality | governance_tension
 import argparse
 import json
 import os
+import re
 import sys
 from datetime import datetime
 from pathlib import Path
@@ -28,6 +29,63 @@ from typing import Any, Optional
 OUTPUT_BASE = os.path.join(os.path.dirname(os.path.dirname(__file__)), "output")
 SHARED_QUALITATIVE_BASE = Path(__file__).resolve().parent.parent / "shared" / "qualitative"
 DATA_DISCOUNT_BASIS = "observed_economic_carrier_v1"
+
+
+def validate_economic_discount_semantics(agent_name: str, data: dict) -> list[str]:
+    """Validate only the local semantics that authorize a point haircut."""
+    if agent_name not in {"data_quality", "governance_tension"}:
+        return []
+    if data.get("discount_basis") != DATA_DISCOUNT_BASIS:
+        return ["MISSING_OR_STALE: discount_basis"]
+    if agent_name == "data_quality":
+        return []
+
+    discount = data.get("governance_discount")
+    if not isinstance(discount, dict):
+        return ["FORMAT: governance_discount must be an object"]
+    try:
+        pct = float(discount.get("additional_discount_pct", 0))
+    except (TypeError, ValueError):
+        return ["FORMAT: governance_discount.additional_discount_pct"]
+    if not 0 <= pct <= 10:
+        return ["RANGE: governance_discount.additional_discount_pct must be 0..10"]
+    if pct <= 0:
+        return []
+
+    carrier = discount.get("economic_carrier")
+    if not isinstance(carrier, dict) or carrier.get("status") != "OBSERVED":
+        return ["MISSING: observed governance economic_carrier"]
+    required = (
+        "responsibility_unit",
+        "amount_or_range",
+        "period",
+        "cash_transmission",
+        "evidence_ref",
+    )
+    sentinel_values = {
+        "unknown", "not_observed", "not observed", "n/a", "na",
+        "not available", "未披露", "未知", "不适用", "无", "未观察",
+    }
+
+    def _unsupported(value: Any) -> bool:
+        return not value or str(value).strip().lower() in sentinel_values
+
+    errors = [f"MISSING: economic_carrier.{key}" for key in required if _unsupported(carrier.get(key))]
+    amount = str(carrier.get("amount_or_range") or "")
+    if amount and not re.search(r"\d", amount):
+        errors.append("FORMAT: economic_carrier.amount_or_range must contain a sourced number or range")
+    if carrier.get("evidence_ref") and not isinstance(carrier["evidence_ref"], list):
+        errors.append("FORMAT: economic_carrier.evidence_ref")
+    elif isinstance(carrier.get("evidence_ref"), list) and (
+        not carrier["evidence_ref"]
+        or any(_unsupported(item) for item in carrier["evidence_ref"])
+    ):
+        errors.append("FORMAT: economic_carrier.evidence_ref contains no usable source")
+    return errors
+
+
+# Backward-compatible internal name for direct callers in older tests/scripts.
+_validate_economic_discount_semantics = validate_economic_discount_semantics
 
 AGENTS = {
     "moat": {
@@ -150,6 +208,13 @@ def build_context(agent_name: str, stock_dir: str, ts_code: str, qualitative_sum
                 f"以下输入文件不可用: {missing}。降低相关主张置信度并扩大估值区间；"
                 "不要仅因缺失降低估值中枢。若没有已观察、责任匹配的经济损失载体，"
                 "total_discount_pct.value=0；非零折价必须引用该经济载体及其传导。"
+            )
+        elif agent_name == "governance_tension":
+            hint = (
+                f"以下输入文件不可用: {missing}。降低治理主张置信度并保留风险情景；"
+                "不得从缺失、控制权集中、少数股东比例或双重身份本身推导负向经济折价。"
+                "没有已观察且责任匹配的普通股东现金损失载体时，"
+                "governance_discount.additional_discount_pct=0。"
             )
         else:
             hint = (

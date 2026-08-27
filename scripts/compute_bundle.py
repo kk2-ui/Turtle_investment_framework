@@ -152,6 +152,18 @@ def load_zone_j_params(zone_j_dir: str) -> dict:
         ):
             continue
 
+        if fname == "governance_tension.json":
+            try:
+                from zone_j_agent import validate_economic_discount_semantics
+            except ImportError:
+                from scripts.zone_j_agent import validate_economic_discount_semantics
+            if validate_economic_discount_semantics("governance_tension", data):
+                continue
+            discount = data.get("governance_discount")
+            pct = float(discount.get("additional_discount_pct", 0))
+            params["governance_discount"] = pct
+            continue
+
         for json_key, override_key in mappings:
             val = data.get(json_key)
             if val is None:
@@ -2384,19 +2396,56 @@ def compute_factor4(factor3: dict, market: dict, params: dict, cycle_type: str =
     result["cycle_adjustment"] = cycle_adjustment if cycle_adjustment else "无周期调整"
     II = II_adjusted  # 使用调整后的II
 
+    def _unresolved_valuation(reason: str) -> dict:
+        unresolved_rejection = dict(result.get("rejection") or {})
+        unresolved_rejection["s1"] = "unresolved"
+        return {
+            **result,
+            "valuation_status": "UNRESOLVED_VALUATION",
+            "valuation_unresolved_reason": reason,
+            "ddm_v_hkd": None,
+            "ddm_v_rmb": None,
+            "buy_ladder": [],
+            "position": {
+                "status": "UNRESOLVED_VALUATION",
+                "jj_pct": None,
+                "ii_adjusted_pct": round(II, 1),
+                "base_pct": None,
+                "capped_pct": None,
+                "recommended": None,
+                "rationale": "估值或价格输入不可用；撤回当前价格动作，不把未知写成0%或AVOID",
+            },
+            "verdict": {
+                "gg_layer": {"gate": "UNAVAILABLE", "gg_pct": None, "ii_pct": round(II, 1)},
+                "ddm_layer": {"gate": "UNAVAILABLE", "upside_pct": None},
+                "asset_layer": {"gate": "UNAVAILABLE", "net_cash_pct_mc": None},
+                "final": "UNRESOLVED_VALUATION",
+                "framework": "企业判断继续；估值与当前价格动作暂不承保",
+            },
+            "rejection": unresolved_rejection,
+            "error": reason,
+        }
+
     dps = params.get("dps_latest")
     if dps is None:
-        return {"ddm_v_hkd": None, "ddm_v_rmb": None, "buy_ladder": [], "error": "dps_latest missing"}
+        return _unresolved_valuation("dps_latest missing")
     g = _d(factor3.get("g_adj", 1.5)) / Decimal("100")
     # II already computed above with cycle adjustment
     r = _d(II) / Decimal("100")  # required return = II (cycle-adjusted, as decimal)
     Q = params.get("Q", 0.10)
-    gg_base = factor3.get("gg", {}).get("base", 21.2)
+    gg_base_raw = factor3.get("gg", {}).get("base")
+    gg_available = (
+        not factor3.get("gg_unavailable", False)
+        and isinstance(gg_base_raw, (int, float))
+    )
+    gg_base = float(gg_base_raw) if gg_available else None
     mc = market.get("mc_rmb", 0)
-    price_rmb = market.get("price_rmb", 1.83)
+    price_rmb = market.get("price_rmb")
+    if not isinstance(price_rmb, (int, float)) or price_rmb <= 0:
+        return _unresolved_valuation("current price missing")
     shares = market.get("shares_m")
     if shares is None:
-        return {"ddm_v_hkd": None, "ddm_v_rmb": None, "buy_ladder": [], "error": "shares_m missing"}
+        return _unresolved_valuation("shares_m missing")
 
     # DDM: V = DPS * (1+g) / (r - g)
     dps_dec = _d(dps)
@@ -2562,18 +2611,20 @@ def compute_factor4(factor3: dict, market: dict, params: dict, cycle_type: str =
         "triggers": [k for k, v in vt.items() if v is True],
         "non_triggers": [k for k, v in vt.items() if v is False],
         "unknown": [k for k, v in vt.items() if v is None],
-        "exclude": vt_score_known >= 2 and gg_base < II * 100 * 1.5,
+        "exclude": bool(gg_available and vt_score_known >= 2 and gg_base < II * 100 * 1.5),
         "note": f"{vt_total_known}/7 criteria computable from data; {len([k for k,v in vt.items() if v is None])} require LLM judgment",
     }
 
     # ── V12.7: 动态仓位矩阵（Spec Factor4 Step3）──
-    gg_base_val = factor3.get("gg", {}).get("base") or 0
-    jj = gg_base_val - II  # JJ = GG - II（pct points，II已是周期调整后的值）
+    gg_base_val = gg_base
+    jj = gg_base_val - II if gg_available else None  # JJ = GG - II（pct points）
     extrap_rating = factor3.get("extrapolation_rating", {}).get("overall", "medium")
     vt_exclude = result.get("value_trap", {}).get("exclude", False)
     cap = params.get("PORTFOLIO_CAP_PCT", 5)
 
-    if vt_exclude:
+    if not gg_available:
+        position_pct, position_label = None, "GG不可用；撤回当前价格动作，不把未知写成0%"
+    elif vt_exclude:
         position_pct, position_label = 0.0, "排除(价值陷阱)"
     elif jj >= 1.5 and extrap_rating == "high":
         position_pct, position_label = 5.0, "标准仓位(KK≥1.5pp+高可信度)"
@@ -2590,13 +2641,14 @@ def compute_factor4(factor3: dict, market: dict, params: dict, cycle_type: str =
         position_pct, position_label = 0.0, "不建仓(KK<0)"
 
     result["position"] = {
-        "jj_pct": round(jj, 1),
+        "status": "RESOLVED" if gg_available else "UNRESOLVED_VALUATION",
+        "jj_pct": round(jj, 1) if jj is not None else None,
         "ii_adjusted_pct": round(II, 1),
         "extrapolation_rating": extrap_rating,
         "value_trap_excluded": vt_exclude,
-        "base_pct": round(position_pct, 1),
-        "capped_pct": round(min(position_pct, cap), 1),
-        "recommended": f"{min(position_pct, cap):.1f}%",
+        "base_pct": round(position_pct, 1) if position_pct is not None else None,
+        "capped_pct": round(min(position_pct, cap), 1) if position_pct is not None else None,
+        "recommended": f"{min(position_pct, cap):.1f}%" if position_pct is not None else None,
         "rationale": position_label,
     }
 
@@ -2637,26 +2689,38 @@ def compute_factor4(factor3: dict, market: dict, params: dict, cycle_type: str =
         result["current_pe_note"] = "PE = MC / NP(归母口径)。Agent应在Ch12中与industry_context的行业PE中位数对比，揭示折价来源(少数股东/流动性/增长)"
 
     # ── V12.8: 三视角统一裁决（Spec Factor4 层级决策）──
-    jj = result["position"].get("jj_pct", 0)
+    jj = result["position"].get("jj_pct")
     _tiers = result.get("tiers", [])
     ddm_upside = _tiers[0].get("upside_pct", 0) if _tiers else 0
     vt_exclude_final = result.get("value_trap", {}).get("exclude", False)
     # GG层
-    gg_gate = "准入" if (gg_base_val and gg_base_val >= II and not vt_exclude_final) else ("边界" if gg_base_val and gg_base_val > 0 else "不达标")
+    if not gg_available:
+        gg_gate = "UNAVAILABLE"
+    elif gg_base_val >= II and not vt_exclude_final:
+        gg_gate = "准入"
+    elif gg_base_val > 0:
+        gg_gate = "边界"
+    else:
+        gg_gate = "不达标"
     # DDM层
     if ddm_upside >= 30: ddm_gate = "便宜"
     elif ddm_upside >= 0: ddm_gate = "合理"
     elif ddm_upside >= -20: ddm_gate = "偏贵"
     else: ddm_gate = "贵"
     # 资产层: 净现金/MC 保护
-    net_cash_pct_f4 = factor3.get("net_cash_pct_mc") or 0
-    if net_cash_pct_f4 > 40: asset_gate = "极强保护"
+    net_cash_pct_raw = factor3.get("net_cash_pct_mc")
+    net_cash_available = isinstance(net_cash_pct_raw, (int, float))
+    net_cash_pct_f4 = float(net_cash_pct_raw) if net_cash_available else None
+    if not net_cash_available: asset_gate = "UNAVAILABLE"
+    elif net_cash_pct_f4 > 40: asset_gate = "极强保护"
     elif net_cash_pct_f4 > 20: asset_gate = "强保护"
     elif net_cash_pct_f4 > 0: asset_gate = "轻度保护"
     else: asset_gate = "无保护"
     # 统一裁决
     if vt_exclude_final:
         verdict = "AVOID"
+    elif not gg_available:
+        verdict = "UNRESOLVED_VALUATION"
     elif gg_gate == "准入" and ddm_gate in ("便宜", "合理") and jj >= 2.0 and ddm_upside >= 30:
         verdict = "STRONG_BUY"
     elif gg_gate == "准入" and ddm_gate in ("便宜", "合理") and jj >= 1.5:
@@ -2675,7 +2739,7 @@ def compute_factor4(factor3: dict, market: dict, params: dict, cycle_type: str =
     pert_waiver = result.get("perturbation_waiver", {}).get("active", False)
     current_pe = result.get("current_pe")
     if (verdict == "AVOID" and pert_waiver and s2_status == "warn"
-            and gg_base_val and gg_base_val > II * 0.5
+            and gg_available and gg_base_val > II * 0.5
             and current_pe and current_pe < 12):
         verdict = "CAUTIOUS_WATCH"
         result["contrarian_override"] = {
@@ -2691,15 +2755,16 @@ def compute_factor4(factor3: dict, market: dict, params: dict, cycle_type: str =
         }
 
     result["verdict"] = {
-        "gg_layer": {"gate": gg_gate, "gg_pct": round(gg_base_val, 1), "ii_pct": round(II, 1)},
+        "gg_layer": {"gate": gg_gate, "gg_pct": round(gg_base_val, 1) if gg_available else None, "ii_pct": round(II, 1)},
         "ddm_layer": {"gate": ddm_gate, "upside_pct": round(ddm_upside, 1)},
-        "asset_layer": {"gate": asset_gate, "net_cash_pct_mc": round(net_cash_pct_f4, 1)},
+        "asset_layer": {"gate": asset_gate, "net_cash_pct_mc": round(net_cash_pct_f4, 1) if net_cash_available else None},
         "final": verdict,
         "framework": "GG层准入→DDM层定价→资产层仓位上限→统一裁决"
     }
 
     # Rejection
-    result["rejection"]["s1"] = "pass"  # GG > II
+    result["valuation_status"] = "RESOLVED" if gg_available else "UNRESOLVED_VALUATION"
+    result["rejection"]["s1"] = "pass" if gg_available else "unresolved"
     result["rejection"]["s2"] = "warn_not_exclude" if vt_score_known >= 2 else "pass"
 
     return result
@@ -2721,11 +2786,49 @@ def _build_calculation_trace(factor2, factor3, factor4, market, params):
     II = params.get("II", 5.5) / 100
     dps = params.get("dps_latest", 0)
     dividend_identity = factor4.get("dividend_identity", {}) or {}
-    dps_native = safe_float(dividend_identity.get("dps_native")) or dps
+    dps_native = safe_float(dividend_identity.get("dps_native"))
+    if dps_native is None:
+        dps_native = safe_float(dps)
     gg = factor3.get("gg", {})
     gg_raw = factor3.get("gg_raw", {})
     lamb = factor3.get("lambda", {})
     native_currency = str(market.get("native_currency") or "RMB").upper()
+
+    ddm_value = safe_float(factor4.get("ddm_v_native", factor4.get("ddm_v_hkd")))
+    ddm_resolved = (
+        factor4.get("valuation_status") != "UNRESOLVED_VALUATION"
+        and dps_native is not None
+        and dps_native > 0
+        and ddm_value is not None
+    )
+    ddm_trace = {
+        "formula": "V = DPS × (1 + g_adj/100) / (II - g_adj/100)",
+        "substitutions": {
+            "DPS_native": round(dps_native, 4) if dps_native is not None else None,
+            "DPS_currency": dividend_identity.get("price_currency", native_currency),
+            "g": round(g_adj/100, 4),
+            "II": round(II, 4),
+        },
+        "steps": (
+            [
+                f"DPS_native₁ = {dps_native:.4f} × (1+{g_adj/100:.4f}) = "
+                f"{dps_native*(1+g_adj/100):.4f} {native_currency}",
+                f"V = {dps_native*(1+g_adj/100):.4f} / "
+                f"({II:.4f}-{g_adj/100:.4f}) = {ddm_value:.2f} {native_currency}",
+            ]
+            if ddm_resolved and II > g_adj/100
+            else []
+        ),
+        "result": round(ddm_value, 2) if ddm_resolved else None,
+        "unit": native_currency,
+        "status": "RESOLVED" if ddm_resolved else "UNRESOLVED_VALUATION",
+    }
+    if not ddm_resolved:
+        ddm_trace["reason"] = str(
+            factor4.get("valuation_unresolved_reason")
+            or factor4.get("error")
+            or "DPS or current valuation input unavailable"
+        )
 
     return {
         "factor2_r_np": {
@@ -2781,20 +2884,7 @@ def _build_calculation_trace(factor2, factor3, factor4, market, params):
             "result": factor3.get("lambda", {}).get("neutral"),
             "unit": "百万元 RMB"
         },
-        "factor4_ddm": {
-            "formula": "V = DPS × (1 + g_adj/100) / (II - g_adj/100)",
-            "substitutions": {
-                "DPS_native": round(dps_native, 4),
-                "DPS_currency": dividend_identity.get("price_currency", native_currency),
-                "g": round(g_adj/100, 4),
-                "II": round(II, 4),
-            },
-            "steps": [
-                f"DPS_native₁ = {dps_native:.4f} × (1+{g_adj/100:.4f}) = {dps_native*(1+g_adj/100):.4f} {native_currency}",
-                f"V = {dps_native*(1+g_adj/100):.4f} / ({II:.4f}-{g_adj/100:.4f}) = {factor4.get('ddm_v_native', factor4.get('ddm_v_hkd', 0)):.2f} {native_currency}"
-            ] if II > g_adj/100 and dps_native > 0 else [],
-            "result": round(factor4.get("ddm_v_native", factor4.get("ddm_v_hkd", 0)), 2), "unit": native_currency
-        },
+        "factor4_ddm": ddm_trace,
     }
 
 
@@ -2931,7 +3021,11 @@ def compute(output_dir: str, params_override: Optional[dict] = None,
     )
     gg_guard = _check_gg_guard(ts_code, factor3, market, output_dir=output_dir)
     if gg_guard and gg_guard.get("error"):
-        return gg_guard
+        factor3["gg_diagnostic_unverified"] = dict(factor3.get("gg") or {})
+        factor3["gg"] = {"pessimistic": None, "base": None, "optimistic": None}
+        factor3["gg_unavailable"] = True
+        factor3["gg_unavailable_reason"] = str(gg_guard.get("error"))
+        factor3.setdefault("rejection", {})["gg_identity"] = "unresolved"
     # Merge M from factor3 into factor2 if available
     if "M" not in factor2 or factor2["M"] == 0.55:
         factor2["M"] = factor3.get("M", factor2["M"])
@@ -2953,6 +3047,10 @@ def compute(output_dir: str, params_override: Optional[dict] = None,
                 rejection_summary["overall"] = "block"
             elif status == "warn" or status == "warn_not_exclude":
                 rejection_summary["warnings"].append(f"{f_name}.{gate}")
+            elif status == "unresolved":
+                rejection_summary["warnings"].append(f"{f_name}.{gate}:unresolved")
+                if rejection_summary["overall"] != "block":
+                    rejection_summary["overall"] = "unresolved"
 
     bundle = {
         "meta": {
@@ -3416,7 +3514,11 @@ def compute_from_db(ts_code: str, params_override: dict = None, price_hkd: float
     output_dir = find_stock_output_dir(ts_code)
     gg_guard = _check_gg_guard(ts_code, factor3, market, output_dir=output_dir)
     if gg_guard and gg_guard.get("error"):
-        return gg_guard
+        factor3["gg_diagnostic_unverified"] = dict(factor3.get("gg") or {})
+        factor3["gg"] = {"pessimistic": None, "base": None, "optimistic": None}
+        factor3["gg_unavailable"] = True
+        factor3["gg_unavailable_reason"] = str(gg_guard.get("error"))
+        factor3.setdefault("rejection", {})["gg_identity"] = "unresolved"
     cycle_type = contract.get("cyclicality_profile", {}).get("label", "") if contract else ""
     factor4 = compute_factor4(factor3, market, params, cycle_type=cycle_type)
     # V9.3: Conservative PE cap
@@ -3434,6 +3536,10 @@ def compute_from_db(ts_code: str, params_override: dict = None, price_hkd: float
                 rejection_summary["overall"] = "block"
             elif status in ("warn", "warn_not_exclude"):
                 rejection_summary["warnings"].append(f"{f_name}.{gate}")
+            elif status == "unresolved":
+                rejection_summary["warnings"].append(f"{f_name}.{gate}:unresolved")
+                if rejection_summary["overall"] != "block":
+                    rejection_summary["overall"] = "unresolved"
 
     financial_currency = fin_data.get("currency", "RMB")
     bundle = {

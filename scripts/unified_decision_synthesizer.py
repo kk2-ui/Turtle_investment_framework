@@ -37,6 +37,7 @@ class QuantitativeDecision(str, Enum):
     BUY = "buy"
     HOLD = "hold"
     AVOID = "avoid"
+    UNRESOLVED = "unresolved"
 
 
 class UnifiedDecision(str, Enum):
@@ -46,6 +47,7 @@ class UnifiedDecision(str, Enum):
     HOLD = "hold"
     AVOID = "avoid"
     STRONG_REJECT = "strong_reject"
+    RESEARCH_ONLY = "research_only"
 
 
 # 合成矩阵: (qualitative, quantitative) → (unified, consistency_note)
@@ -86,6 +88,18 @@ SYNTHESIS_MATRIX: dict[tuple[str, str], tuple[str, str]] = {
         UnifiedDecision.STRONG_REJECT,
         "定性定量双重否决：公司存在致命缺陷且估值不具吸引力，强烈建议回避",
     ),
+    (QualitativeDecision.CONTINUE, QuantitativeDecision.UNRESOLVED): (
+        UnifiedDecision.RESEARCH_ONLY,
+        "企业经营判断继续；核心估值或价格输入不可用，当前价格动作暂不承保",
+    ),
+    (QualitativeDecision.PAUSE, QuantitativeDecision.UNRESOLVED): (
+        UnifiedDecision.RESEARCH_ONLY,
+        "企业经营判断保留局部疑点；核心估值或价格输入不可用，当前价格动作暂不承保",
+    ),
+    (QualitativeDecision.ABANDON, QuantitativeDecision.UNRESOLVED): (
+        UnifiedDecision.AVOID,
+        "企业经营已有独立的永久损失否决证据；估值未结算不抵消该经营否决",
+    ),
 }
 
 
@@ -122,7 +136,7 @@ class UnifiedDecisionInput:
     quantitative_rationale: str = ""
     qualitative_quantitative_consistent: bool = True
     root_divergence: str = ""
-    position_pct: float = 0.0
+    position_pct: float | None = 0.0
     key_risks: list[str] = field(default_factory=list)
     key_assumptions: list[dict[str, str]] = field(default_factory=list)
     monitor_triggers: list[str] = field(default_factory=list)
@@ -149,7 +163,7 @@ class UnifiedDecisionOutput:
     qualitative_decision: str
     quantitative_decision: str
     rationales: list[str] = field(default_factory=list)
-    position_pct: float = 0.0
+    position_pct: float | None = 0.0
     monitor_triggers: list[str] = field(default_factory=list)
     exit_conditions: list[str] = field(default_factory=list)
 
@@ -210,7 +224,7 @@ def synthesize_decision(input_data: UnifiedDecisionInput) -> UnifiedDecisionOutp
     # 只有在买入决策时才保留仓位
     position_pct = input_data.position_pct if unified in (
         UnifiedDecision.STRONG_BUY, UnifiedDecision.BUY
-    ) else 0.0
+    ) else (None if unified == UnifiedDecision.RESEARCH_ONLY else 0.0)
 
     return UnifiedDecisionOutput(
         unified_decision=unified,
@@ -231,6 +245,7 @@ def _fallback_quantitative_only(input_data: UnifiedDecisionInput) -> UnifiedDeci
         QuantitativeDecision.BUY: (UnifiedDecision.BUY, "仅定量判断：估值有吸引力（未进行定性分析）"),
         QuantitativeDecision.HOLD: (UnifiedDecision.HOLD, "仅定量判断：估值处于观望区间（未进行定性分析）"),
         QuantitativeDecision.AVOID: (UnifiedDecision.AVOID, "仅定量判断：估值不具吸引力（未进行定性分析）"),
+        QuantitativeDecision.UNRESOLVED: (UnifiedDecision.RESEARCH_ONLY, "仅定量判断：估值或价格输入不可用，当前价格动作暂不承保"),
     }
     unified, note = mapping.get(quant, (UnifiedDecision.HOLD, "仅定量判断：无法确定"))
     return UnifiedDecisionOutput(
@@ -239,7 +254,11 @@ def _fallback_quantitative_only(input_data: UnifiedDecisionInput) -> UnifiedDeci
         qualitative_decision="",
         quantitative_decision=quant,
         rationales=[f"[定量] {input_data.quantitative_rationale}"] if input_data.quantitative_rationale else [],
-        position_pct=input_data.position_pct if unified in (UnifiedDecision.STRONG_BUY, UnifiedDecision.BUY) else 0.0,
+        position_pct=(
+            input_data.position_pct
+            if unified in (UnifiedDecision.STRONG_BUY, UnifiedDecision.BUY)
+            else (None if unified == UnifiedDecision.RESEARCH_ONLY else 0.0)
+        ),
         monitor_triggers=list(input_data.monitor_triggers),
         exit_conditions=list(input_data.exit_conditions),
     )
@@ -255,9 +274,9 @@ def validate_decision(output: UnifiedDecisionOutput) -> list[str]:
         警告消息列表（空列表表示无问题）。
     """
     warnings: list[str] = []
-    if output.unified_decision in (UnifiedDecision.STRONG_BUY, UnifiedDecision.BUY) and output.position_pct <= 0:
+    if output.unified_decision in (UnifiedDecision.STRONG_BUY, UnifiedDecision.BUY) and (output.position_pct or 0) <= 0:
         warnings.append("买入决策但仓位为0%")
-    if output.unified_decision == UnifiedDecision.STRONG_REJECT and output.position_pct > 0:
+    if output.unified_decision == UnifiedDecision.STRONG_REJECT and (output.position_pct or 0) > 0:
         warnings.append("强回避决策但仓位>0")
     if not output.rationales:
         warnings.append("决策缺乏核心理由")
@@ -275,7 +294,7 @@ def main() -> None:
     ap = argparse.ArgumentParser(description="V12 统一决策合成器")
     ap.add_argument("--qualitative-decision", default="", help="Dayu 定性研究决定 (continue/pause/abandon)")
     ap.add_argument("--qualitative-rationale", default="", help="定性决定核心理由")
-    ap.add_argument("--quantitative-decision", default="hold", help="Turtle 定量投资决定 (buy/hold/avoid)")
+    ap.add_argument("--quantitative-decision", default="hold", help="Turtle 定量投资决定 (buy/hold/avoid/unresolved)")
     ap.add_argument("--quantitative-rationale", default="", help="定量决定核心理由")
     ap.add_argument("--position-pct", type=float, default=0.0, help="建议仓位百分比")
     ap.add_argument("--output", required=True, help="输出 unified_decision.json 路径")
@@ -289,7 +308,8 @@ def main() -> None:
         qual_rationale = raw.get("qualitative_rationale", "")
         quant_decision = raw.get("quantitative_decision", "hold")
         quant_rationale = raw.get("quantitative_rationale", "")
-        position_pct = float(raw.get("position_pct", 0))
+        raw_position = raw.get("position_pct")
+        position_pct = None if raw_position is None else float(raw_position)
     else:
         qual_decision = args.qualitative_decision
         qual_rationale = args.qualitative_rationale
@@ -328,12 +348,13 @@ def main() -> None:
         "hold": "🟡 观望",
         "avoid": "🔴 回避",
         "strong_reject": "⛔ 强回避",
+        "research_only": "🔎 仅研究（当前价格动作未承保）",
     }
     label = unified_labels.get(output.unified_decision, output.unified_decision)
     print(f"✅ 统一决策: {label}")
     print(f"   定性: {output.qualitative_decision or '未提供'} | 定量: {output.quantitative_decision}")
     print(f"   一致性: {output.consistency_note}")
-    if output.position_pct > 0:
+    if (output.position_pct or 0) > 0:
         print(f"   仓位: {output.position_pct}%")
     print(f"   输出: {output_path}")
 

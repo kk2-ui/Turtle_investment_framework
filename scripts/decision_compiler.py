@@ -249,7 +249,9 @@ _CHAPTER_METRICS = {
 
 def _format_value(entry: dict[str, Any]) -> str:
     value = entry.get("value")
-    if isinstance(value, float):
+    if value is None:
+        rendered = "当前未结算"
+    elif isinstance(value, float):
         rendered = f"{value:.6f}".rstrip("0").rstrip(".")
     else:
         rendered = str(value)
@@ -270,9 +272,19 @@ def render_protected_block(
         f"### {title}", "",
     ]
     if chapter in {0, 14}:
-        lines.append(
-            f"- **统一判断**：{manifest.get('display_label')} / 目标仓位 {manifest.get('position_pct')}%"
-        )
+        if manifest.get("position_pct") is None:
+            lines.append(
+                f"- **统一判断**：{manifest.get('display_label')} / 当前价格动作暂不承保"
+            )
+        elif manifest.get("quantitative_decision") == "unresolved":
+            lines.append(
+                f"- **统一判断**：{manifest.get('display_label')} / "
+                f"企业否决对应仓位 {manifest.get('position_pct')}%；估值仍未结算"
+            )
+        else:
+            lines.append(
+                f"- **统一判断**：{manifest.get('display_label')} / 目标仓位 {manifest.get('position_pct')}%"
+            )
     for metric_id in _CHAPTER_METRICS[chapter]:
         entry = selected[metric_id]
         source_ids = [

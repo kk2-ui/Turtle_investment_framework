@@ -10,7 +10,11 @@ if str(SCRIPTS_DIR) not in sys.path:
 from boundary_validator import ZONE_J_SCHEMAS, validate_file  # noqa: E402
 import zone_j_agent  # noqa: E402
 from turtle_agent.tools.phase_tools import extract_zone_j  # noqa: E402
-from zone_j_agent import _validate_param_wrapper, build_context  # noqa: E402
+from zone_j_agent import (  # noqa: E402
+    _validate_param_wrapper,
+    build_context,
+    validate_economic_discount_semantics,
+)
 
 
 def test_boundary_validator_accepts_wrapped_moat_params_without_moat_rating():
@@ -96,6 +100,14 @@ def test_data_quality_missing_inputs_lower_confidence_without_fixed_discount(tmp
     assert "默认15%" not in hint
 
 
+def test_governance_missing_inputs_do_not_create_governance_haircut(tmp_path):
+    context = build_context("governance_tension", str(tmp_path), "000001.SZ")
+
+    hint = context["_degraded"]["hint"]
+    assert "governance_discount.additional_discount_pct=0" in hint
+    assert "不得从缺失" in hint
+
+
 def test_unified_zone_j_runtime_sends_materialized_lilu_prompt(tmp_path, monkeypatch):
     stock_dir = tmp_path / "000001_示例公司"
     stock_dir.mkdir()
@@ -161,3 +173,64 @@ def test_unified_zone_j_runtime_regenerates_legacy_data_discount(tmp_path, monke
     assert reused["ok"] is True
     assert reused["results"][0]["skipped"] is True
     assert calls == 1
+
+
+def test_unified_zone_j_runtime_regenerates_legacy_governance_discount(tmp_path, monkeypatch):
+    stock_dir = tmp_path / "000001_示例公司"
+    stock_dir.mkdir()
+    (stock_dir / "governance_tension.json").write_text(
+        '{"governance_discount":5}', encoding="utf-8"
+    )
+    calls = 0
+
+    class _Response:
+        content = '{"discount_basis":"observed_economic_carrier_v1","governance_discount":{"additional_discount_pct":0,"economic_carrier":{"status":"NOT_OBSERVED"}}}'
+
+    class _Client:
+        def chat_with_retry(self, *, messages, temperature):
+            nonlocal calls
+            calls += 1
+            return _Response()
+
+    monkeypatch.setattr(
+        zone_j_agent,
+        "AGENTS",
+        {"governance_tension": dict(zone_j_agent.AGENTS["governance_tension"])},
+    )
+
+    regenerated = extract_zone_j("000001.SZ", str(stock_dir), _Client())
+    reused = extract_zone_j("000001.SZ", str(stock_dir), _Client())
+
+    assert regenerated["ok"] is True
+    assert reused["results"][0]["skipped"] is True
+    assert calls == 1
+
+
+def test_governance_discount_rejects_unknown_sentinel_carrier():
+    data = {
+        "discount_basis": "observed_economic_carrier_v1",
+        "governance_discount": {
+            "additional_discount_pct": 5,
+            "economic_carrier": {
+                "status": "OBSERVED",
+                "responsibility_unit": "UNKNOWN",
+                "amount_or_range": "NOT_OBSERVED",
+                "period": "UNKNOWN",
+                "cash_transmission": "UNKNOWN",
+                "evidence_ref": ["UNKNOWN"],
+            },
+        },
+    }
+
+    assert validate_economic_discount_semantics("governance_tension", data)
+
+
+def test_governance_discount_rejects_out_of_range_haircut():
+    data = {
+        "discount_basis": "observed_economic_carrier_v1",
+        "governance_discount": {"additional_discount_pct": 49},
+    }
+
+    assert validate_economic_discount_semantics("governance_tension", data) == [
+        "RANGE: governance_discount.additional_discount_pct must be 0..10"
+    ]

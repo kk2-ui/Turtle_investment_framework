@@ -47,6 +47,9 @@ _DECISION_DISPLAY_LABELS = {
     ("abandon", "buy"): "数据冲突",
     ("abandon", "hold"): "Slow Fade",
     ("abandon", "avoid"): "Strong Reject",
+    ("continue", "unresolved"): "Research Only — Valuation Unresolved",
+    ("pause", "unresolved"): "Research Only — Valuation Unresolved",
+    ("abandon", "unresolved"): "Fundamental Avoid — Valuation Unresolved",
 }
 
 _CANONICAL_CHAPTER_TITLES = {
@@ -69,6 +72,19 @@ _CJO_CANONICAL_CHAPTER_TITLES = {
 }
 
 ANALYSIS_PURPOSES = {"INVESTMENT_DECISION", "COMPANY_JUDGMENT_ONLY"}
+
+
+def _current_observed_governance_discount(data: dict[str, Any]) -> dict[str, Any] | None:
+    try:
+        from zone_j_agent import validate_economic_discount_semantics
+    except ImportError:
+        from scripts.zone_j_agent import validate_economic_discount_semantics
+    if validate_economic_discount_semantics("governance_tension", data):
+        return None
+    discount = data.get("governance_discount")
+    if not isinstance(discount, dict) or float(discount.get("additional_discount_pct", 0)) <= 0:
+        return None
+    return discount
 
 # Product pricing is a normal company-mechanism input and is deliberately not
 # prohibited here.  These patterns identify a security-price, valuation,
@@ -206,7 +222,7 @@ def write_decision_manifest(
     output_dir: str = ".",
     qualitative_decision: str = "",
     quantitative_decision: str = "",
-    position_pct: float = 0.0,
+    position_pct: float | None = None,
     qualitative_rationale: str = "",
     quantitative_rationale: str = "",
     monitor_triggers: list[str] | None = None,
@@ -217,14 +233,14 @@ def write_decision_manifest(
     quant = str(quantitative_decision).strip().lower()
     if qual not in {"continue", "pause", "abandon"}:
         return {"error": f"invalid qualitative_decision: {qual!r}"}
-    if quant not in {"buy", "hold", "avoid"}:
+    if quant not in {"buy", "hold", "avoid", "unresolved"}:
         return {"error": f"invalid quantitative_decision: {quant!r}"}
     try:
         from scripts.unified_decision_synthesizer import UnifiedDecisionInput, synthesize_decision
     except ModuleNotFoundError:
         from unified_decision_synthesizer import UnifiedDecisionInput, synthesize_decision
 
-    raw_position = max(0.0, float(position_pct or 0.0))
+    raw_position = None if quant == "unresolved" else max(0.0, float(position_pct or 0.0))
     synthesized = synthesize_decision(UnifiedDecisionInput(
         qualitative_decision=qual,
         quantitative_decision=quant,
@@ -235,6 +251,9 @@ def write_decision_manifest(
         exit_conditions=list(exit_conditions or []),
     )).to_dict()
     unified_value = getattr(synthesized.get("unified_decision"), "value", synthesized.get("unified_decision"))
+    manifest_position = (
+        synthesized.get("position_pct") if quant == "unresolved" else raw_position
+    )
     display_label = _DECISION_DISPLAY_LABELS[(qual, quant)]
     family = {
         "strong_buy": "Strong Buy",
@@ -242,6 +261,7 @@ def write_decision_manifest(
         "hold": "Hold",
         "avoid": "Avoid",
         "strong_reject": "Strong Reject",
+        "research_only": "Research Only",
     }.get(str(unified_value), "Hold")
     manifest = {
         "schema_version": "decision-manifest.v1",
@@ -251,7 +271,7 @@ def write_decision_manifest(
         "display_label": display_label,
         "decision_family": family,
         # 观察仓也属于报告承诺，不能被旧 synthesizer 的 buy-only 仓位规则吞掉。
-        "position_pct": raw_position,
+        "position_pct": manifest_position,
         "consistency_note": synthesized.get("consistency_note", ""),
         "rationales": synthesized.get("rationales", []),
         "monitor_triggers": list(monitor_triggers or []),
@@ -1255,7 +1275,7 @@ def _infer_and_write_decision_manifest(output_dir: str) -> dict[str, Any] | None
     except OSError:
         return None
     qual = _decision_from_section(text, "定性研究决定", ("Continue", "Pause", "Abandon"))
-    quant = _decision_from_section(text, "定量投资决定", ("Buy", "Hold", "Avoid"))
+    quant = _decision_from_section(text, "定量投资决定", ("Buy", "Hold", "Avoid", "Unresolved"))
     if not qual or not quant:
         return None
     pos_match = re.search(r"(?:建议仓位|观察仓|仓位)[^\n%]{0,40}?(\d+(?:\.\d+)?)\s*%", text)
@@ -2884,8 +2904,8 @@ def _run_quality_checks(report_text: str, output_dir: str) -> dict[str, Any]:
                     import json as _json
                     with open(gt_path) as f:
                         gt = _json.load(f)
-                    gov_discount = gt.get("governance_discount", {})
-                    if isinstance(gov_discount, dict) and gov_discount.get("additional_discount_pct", 0) > 0:
+                    gov_discount = _current_observed_governance_discount(gt)
+                    if gov_discount:
                         if "治理折价" not in ch_text and "governance_discount" not in ch_text:
                             result["warnings"].append(
                                 f"Ch11: governance_tension.json 存在治理折价 "
@@ -3026,8 +3046,8 @@ def _run_quality_checks(report_text: str, output_dir: str) -> dict[str, Any]:
                 import json as _json
                 with open(gt_path) as f:
                     gt = _json.load(f)
-                gov_discount = gt.get("governance_discount", {})
-                if isinstance(gov_discount, dict):
+                gov_discount = _current_observed_governance_discount(gt)
+                if gov_discount:
                     gt_disc = gov_discount.get("additional_discount_pct", 0)
                     if gt_disc > 0:
                         # 检查报告中是否提及了治理折价
@@ -3091,7 +3111,7 @@ verify_official_fact._tool_meta = {
         "currency": {"type": "string", "optional": True}
     }
 }  # type: ignore[attr-defined]
-write_decision_manifest._tool_meta = {"name": "write_decision_manifest", "description": "提交结构化最终决策；必须在 assemble_report 前调用，Ch0/Ch14/数据库以此为准", "parameters": {"output_dir": {"type": "string", "description": "股票输出目录"}, "qualitative_decision": {"type": "string", "enum": ["continue", "pause", "abandon"]}, "quantitative_decision": {"type": "string", "enum": ["buy", "hold", "avoid"]}, "position_pct": {"type": "number", "description": "建议仓位百分比，观察仓也要填写"}, "qualitative_rationale": {"type": "string", "optional": True}, "quantitative_rationale": {"type": "string", "optional": True}, "monitor_triggers": {"type": "array", "items": {"type": "string"}, "optional": True}, "exit_conditions": {"type": "array", "items": {"type": "string"}, "optional": True}}}  # type: ignore[attr-defined]
+write_decision_manifest._tool_meta = {"name": "write_decision_manifest", "description": "提交结构化最终决策；必须在 assemble_report 前调用，Ch0/Ch14/数据库以此为准", "parameters": {"output_dir": {"type": "string", "description": "股票输出目录"}, "qualitative_decision": {"type": "string", "enum": ["continue", "pause", "abandon"]}, "quantitative_decision": {"type": "string", "enum": ["buy", "hold", "avoid", "unresolved"]}, "position_pct": {"type": "number", "description": "建议仓位百分比；quantitative_decision=unresolved 时省略", "optional": True}, "qualitative_rationale": {"type": "string", "optional": True}, "quantitative_rationale": {"type": "string", "optional": True}, "monitor_triggers": {"type": "array", "items": {"type": "string"}, "optional": True}, "exit_conditions": {"type": "array", "items": {"type": "string"}, "optional": True}}}  # type: ignore[attr-defined]
 write_decision_ledger._tool_meta = {
     "name": "write_decision_ledger",
     "description": "提交V3全报告唯一决策参数账本；正文关键值必须用[decision: entry_id]绑定，冻结后局部修复不可漂移",
@@ -3234,7 +3254,7 @@ write_valuation_model_ledger._tool_meta = {
             "sensitivity_tests": {"type": "array", "items": {"type": "object", "properties": {"case_id": {"type": "string", "enum": ["discount_rate_up_1pp", "growth_down_1pp", "combined_stress"]}, "value_per_share": {"type": "number"}, "action": {"type": "string", "enum": ["buy", "hold", "avoid"]}}}},
             "fragility_mitigation": {"type": "string"}, "source_ids": {"type": "array", "items": {"type": "string"}}, "decision_entry_ids": {"type": "array", "items": {"type": "string"}}
         }, "required": ["model_id", "route_model_id", "model_type", "role", "status"]}},
-        "synthesis": {"type": "object", "properties": {"action": {"type": "string", "enum": ["buy", "hold", "avoid"]}, "position_pct": {"type": "number"}, "range_low": {"type": "number"}, "range_base": {"type": "number"}, "range_high": {"type": "number"}, "chosen_value_per_share": {"type": "number"}, "decision_rule": {"type": "string"}, "divergence_explanation": {"type": "string"}, "decision_entry_id": {"type": "string"}}, "required": ["action", "position_pct", "range_low", "range_high", "chosen_value_per_share", "decision_rule", "divergence_explanation", "decision_entry_id"]},
+        "synthesis": {"type": "object", "properties": {"action": {"type": "string", "enum": ["buy", "hold", "avoid", "unresolved"]}, "position_pct": {"type": "number", "optional": True}, "range_low": {"type": "number", "optional": True}, "range_base": {"type": "number", "optional": True}, "range_high": {"type": "number", "optional": True}, "chosen_value_per_share": {"type": "number", "optional": True}, "decision_rule": {"type": "string"}, "divergence_explanation": {"type": "string"}, "decision_entry_id": {"type": "string", "optional": True}}, "required": ["action", "decision_rule", "divergence_explanation"]},
         "cash_access_bridge": {"type": "object", "description": "现金法律实体/受限性/母公司可分配储备桥；未验证现金在主估值中必须100%折价", "properties": {
             "as_of": {"type": "string"}, "unit": {"type": "string"}, "gross_cash_amount": {"type": "number"}, "conservative_accessible_cash_amount": {"type": "number", "description": "若母公司可分派储备不是VERIFIED，必须为0；合并银行存款存在不等于外部股东法律可分配"},
             "components": {"type": "array", "items": {"type": "object", "properties": {

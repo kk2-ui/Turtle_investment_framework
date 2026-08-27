@@ -231,6 +231,8 @@ def _line_numbers(line: str) -> list[float]:
 
 
 def _line_supports_value(line: str, expected: Any) -> bool:
+    if expected is None:
+        return bool(re.search(r"当前未结算|暂不承保|UNRESOLVED", line, re.I))
     if isinstance(expected, (int, float)) and not isinstance(expected, bool):
         return any(_values_equal(number, expected) for number in _line_numbers(line))
     expected_text = str(expected or "").strip()

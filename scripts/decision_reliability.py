@@ -720,6 +720,13 @@ def validate_decision_reliability(
     warnings: list[str] = []
     if not valuation:
         incomplete.append("valuation_model_missing")
+    elif str((valuation.get("synthesis") or {}).get("action") or "") == "unresolved":
+        # Reliability here means the product faithfully withholds a price
+        # action.  Do not require a fabricated primary model, stress grid, or
+        # value range merely to make an unavailable valuation look complete.
+        if not str((valuation.get("synthesis") or {}).get("decision_rule") or "").strip():
+            incomplete.append("unresolved_synthesis_decision_rule_missing")
+        warnings.append("valuation_unresolved_current_price_action_withheld")
     else:
         verified_ids = _verified_source_ids(output)
         verified_fact_names = _verified_fact_names(output)

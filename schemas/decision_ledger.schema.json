@@ -37,11 +37,16 @@
       ],
       "properties": {
         "qualitative_decision": {"enum": ["continue", "pause", "abandon"]},
-        "quantitative_decision": {"enum": ["buy", "hold", "avoid"]},
+        "quantitative_decision": {"enum": ["buy", "hold", "avoid", "unresolved"]},
         "unified_decision": {"type": "string", "minLength": 1},
         "display_label": {"type": "string", "minLength": 1},
         "decision_family": {"type": "string", "minLength": 1},
-        "position_pct": {"type": "number", "minimum": 0, "maximum": 100}
+        "position_pct": {
+          "anyOf": [
+            {"type": "number", "minimum": 0, "maximum": 100},
+            {"type": "null"}
+          ]
+        }
       }
     },
     "entries": {
@@ -98,7 +103,7 @@
             "trigger.exit"
           ]
         },
-        "value": {"type": ["number", "string", "boolean"]},
+        "value": {"type": ["number", "string", "boolean", "null"]},
         "unit": {"type": "string", "minLength": 1},
         "scenario": {"type": "string", "minLength": 1},
         "basis": {"type": "string", "minLength": 1},

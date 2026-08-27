@@ -222,6 +222,8 @@ def test_v12_report_prompt_does_not_reintroduce_defensive_decision_bias(tmp_path
     assert "缺失本身不是固定 15% 价值毁灭" in prompt
     assert "相对旧锚稳定不得写成最新一期稳定" in prompt
     assert "项目完成只结算实施里程碑" in prompt
+    assert "governance_tension=high，考虑降为 Hold" not in prompt
+    assert "治理评级本身不改变 Buy/Hold/Avoid" in prompt
 
 
 def test_active_schema_hides_mutations_until_required_routes_are_attempted(tmp_path: Path) -> None:

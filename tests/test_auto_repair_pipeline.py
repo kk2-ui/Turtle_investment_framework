@@ -450,7 +450,7 @@ def test_source_deepening_blocks_write_until_primary_reads(tmp_path: Path) -> No
     assert calls == []
     payload = json.loads(agent._messages[-1]["content"][0]["content"])
     assert payload["value"]["source_research_required"] is True
-    assert any("read_section" in item for item in payload["value"]["missing"])
+    assert any("未实际读取 MDA" in item for item in payload["value"]["missing"])
 
 
 def test_source_blocked_draft_is_replayed_after_reads_without_regeneration(tmp_path: Path) -> None:
@@ -604,7 +604,7 @@ def test_low_authority_social_fetch_cannot_satisfy_external_body_gate(tmp_path: 
         },
     ]
 
-    assert any("web_fetch有效调用 0/1" in item for item in agent._source_research_missing(2))
+    assert any("web_fetch合格结果或真实不可用尝试 0/1" in item for item in agent._source_research_missing(2))
 
 
 def test_unrelated_fiscal_year_does_not_satisfy_chapter_year_gate(tmp_path: Path) -> None:
@@ -620,6 +620,83 @@ def test_unrelated_fiscal_year_does_not_satisfy_chapter_year_gate(tmp_path: Path
     ]
 
     assert any("年报原文覆盖财年 1/2" in item for item in agent._source_research_missing(6))
+
+
+def test_single_available_annual_report_requires_one_year_not_an_impossible_second_year(
+    tmp_path: Path,
+) -> None:
+    (tmp_path / "2025_年报.md").write_text("官方年报正文", encoding="utf-8")
+    agent = TurtleAgent(
+        _DummyLlm(),  # type: ignore[arg-type]
+        ToolRegistry(),
+        AgentConfig(output_dir=str(tmp_path), source_deepening=True),
+    )
+    agent._source_research_calls = [
+        {"tool": "read_section", "section": "STMT", "year": 2025,
+         "gate_eligible": True, "research_for_chapters": [11]},
+        {"tool": "read_section", "section": "NOTES", "year": 2025,
+         "gate_eligible": True, "research_for_chapters": [11]},
+    ]
+
+    assert agent._source_research_missing(11) == []
+
+
+def test_failed_section_attempt_can_be_localized_but_all_failed_reads_still_block(
+    tmp_path: Path,
+) -> None:
+    (tmp_path / "2025_年报.md").write_text("官方年报正文", encoding="utf-8")
+    agent = TurtleAgent(
+        _DummyLlm(),  # type: ignore[arg-type]
+        ToolRegistry(),
+        AgentConfig(output_dir=str(tmp_path), source_deepening=True),
+    )
+    agent._source_research_calls = [
+        {"tool": "read_section", "section": "STMT", "year": 2025,
+         "gate_eligible": True, "research_for_chapters": [6]},
+        {"tool": "read_section", "section": "NOTES", "year": 2025,
+         "gate_eligible": False, "error": "section boundary unavailable",
+         "research_for_chapters": [6]},
+    ]
+    assert agent._source_research_missing(6) == []
+
+    agent._source_research_calls = [
+        {"tool": "read_section", "section": "STMT", "year": 2025,
+         "gate_eligible": False, "error": "extract failed", "research_for_chapters": [6]},
+        {"tool": "read_section", "section": "NOTES", "year": 2025,
+         "gate_eligible": False, "error": "extract failed", "research_for_chapters": [6]},
+    ]
+    missing = agent._source_research_missing(6)
+    assert any("年报原文覆盖财年 0/1" in item for item in missing)
+    assert any("未实际读取 STMT" in item for item in missing)
+
+
+def test_true_external_source_failure_is_not_a_permanent_chapter_stop(tmp_path: Path) -> None:
+    (tmp_path / "2025_年报.md").write_text("官方年报正文", encoding="utf-8")
+    agent = TurtleAgent(
+        _DummyLlm(),  # type: ignore[arg-type]
+        ToolRegistry(),
+        AgentConfig(output_dir=str(tmp_path), source_deepening=True),
+    )
+    for section in ("MDA", "SEG"):
+        agent._record_source_research(
+            "read_section",
+            {"section": section, "year": 2025, "research_for_chapters": [2]},
+            {"value": {"text": "official report body", "char_count": 20}},
+        )
+    agent._record_source_research(
+        "web_search",
+        {"query": "行业竞争", "research_for_chapters": [2]},
+        {"value": {"error": "all_search_providers_failed", "results": []}},
+    )
+    agent._record_source_research(
+        "web_fetch",
+        {"url": "https://official.example", "research_for_chapters": [2]},
+        {"value": {"error": "provider unavailable", "text": "", "char_count": 0}},
+    )
+
+    assert len(agent._source_research_calls) == 4
+    assert all(not item["gate_eligible"] for item in agent._source_research_calls[2:])
+    assert agent._source_research_missing(2) == []
 
 
 def test_failed_notes_read_can_use_two_year_official_report_search_fallback(tmp_path: Path) -> None:
@@ -650,7 +727,7 @@ def test_failed_notes_read_can_use_two_year_official_report_search_fallback(tmp_
     assert entry["missing_sections"] == []
 
 
-def test_notes_search_fallback_requires_failed_read_and_two_official_years(tmp_path: Path) -> None:
+def test_failed_notes_extractor_is_localized_when_other_official_body_is_available(tmp_path: Path) -> None:
     agent = TurtleAgent(
         _DummyLlm(),  # type: ignore[arg-type]
         ToolRegistry(),
@@ -674,7 +751,11 @@ def test_notes_search_fallback_requires_failed_read_and_two_official_years(tmp_p
         {"tool": "read_section", "section": "NOTES", "year": 2025,
          "gate_eligible": False, "research_for_chapters": [13]},
     ]
-    assert any("未实际读取 NOTES" in item for item in agent._source_research_missing(13))
+    assert agent._source_research_missing(13) == []
+    agent._persist_research_execution(13)
+    entry = json.loads((tmp_path / "research_execution.json").read_text(encoding="utf-8"))["chapters"]["13"]
+    assert entry["locally_unavailable_sections"] == ["NOTES"]
+    assert entry["coverage_warnings"]
 
 
 def test_persisted_research_execution_excludes_unrelated_calls(tmp_path: Path) -> None:

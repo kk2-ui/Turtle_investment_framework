@@ -1733,20 +1733,20 @@ pit_read_source，且只可按 allowlist 路径调用 pit_read_framework。禁�
 3. 此风险是估值折价还是资本毁灭？— 前者仓位打折，后者直接否决。
 
 ### 少数股东治理张力分析框架（V12.15 新增）
-当公司存在显著少数股东（parent_ratio < 0.90）且少数股东具有双重身份时，必须进行治理张力分析：
-- **识别信号**：parent_ratio < 0.90 / dual_role_shareholders 非空 / 关联交易占比 >10%
+当公司存在显著少数股东（parent_ratio < 0.90）且少数股东具有双重身份时，必须进行治理张力分析，但这些结构本身不是损失结论：
+- **识别信号**：parent_ratio < 0.90 / dual_role_shareholders 非空 / 关联交易占比 >10%；只触发机制分析，不自动产生折价或动作降级
 - **分析维度**：
   1. 利润上移能力：少数股东是否限制了利润上移和分红决策？
   2. 分红决策权：如果少数股东不同意提高派息率，控股股东能否单方面提高？
   3. 利益冲突：少数股东的双重身份（如供应浓缩液+持股35%）在利润分配中是否存在利益冲突？
   4. 历史行为：过去5年有无释放股东价值的先例？有无关联交易定价争议？
 - **估值影响**：
-  - 治理折价是结构性（永久）→ GG 折价应当永久化，不作为可改善的"期权价值"
-  - 治理折价可改善（如合资协议到期可重新谈判）→ 标注为期权价值 + 改善时间窗口
+  - 只有已观察、责任匹配的现金不可达、实际价值转移、持续异常占款或资本损失才可进入 GG/估值中枢；必须说明责任单元、金额或范围、期间和现金传导
+  - 仅有结构风险、披露缺口或潜在冲突时，降低对应主张置信度、扩大区间或保留风险情景，不把可能性写成永久折价
 - **跨章联动**：
   - Ch8（治理）→ 定性分析治理张力，回答三个核心问题
-  - Ch11（GG）→ 引用 governance_tension.json，展示治理折价对 GG 的定量影响
-  - Ch14（决策）→ 治理张力作为决策降级因素，如果定量说 Buy 但治理张力=high，考虑降为 Hold
+  - Ch11（GG）→ 只有 `discount_basis=observed_economic_carrier_v1` 且非零载体完整时，展示治理折价对 GG 的定量影响
+  - Ch14（决策）→ 治理评级本身不改变 Buy/Hold/Avoid；只有该经济载体材料改变 owner cash、永久损失或估值范围时才更新动作
 
 ### 创新业务 / 多业务线估值处理
 若 segment_data 或 mda 中存在增速显著高于传统主业的新业务线（如数字营销平台、智慧零售、D2C等），注意：
@@ -1794,23 +1794,23 @@ pit_read_source，且只可按 allowlist 路径调用 pit_read_framework。禁�
 3. **历史验证**：过去5年有无释放股东价值的先例？若从未发生，不应假设"这次会不同"。
 
 **决策优先级规则（V12.18 更新）**：
-- 当定性决定与定量决定冲突时，**定量决定（GG/DDM/否决门）为第一优先**
+- 当定性决定与定量决定冲突时，只有 `valuation_status=RESOLVED` 的定量决定（GG/DDM/否决门）才具有动作优先级；`UNRESOLVED_VALUATION` 不是 Avoid
 - 定性判断只有经材料经济机制进入 normal earnings、owner cash、永久损失或估值范围后，才可调整动作或仓位；`Continue` / `Pause` 状态标签本身不产生固定比例，也不能在定量否决时无证据“拉回”决策
 - **例外（V12.18 逆向覆盖）**：若 compute_bundle 中 `contrarian_override.active=true`，说明定量 Avoid 仅因一次性扰动（S2 扰动豁免）触发，且 PE 已极度压缩（<12x）。此时 Agent 应在 Ch14 中讨论逆向机会——市场对已知风险的过度定价本身构成安全边际，决策可升级为 Cautious Watch（1-2%仓位）
 - **定性风险传导**：若定量=STRONG_BUY，但观察到的结构性风险会材料改变 normal earnings、owner cash、永久损失或估值区间，Agent 必须先把该载体进入模型敏感性和决策依据，再据更新后的范围调整动作。字段未披露、一般性待验证或 `Pause` 标签本身不能自动把仓位压到固定比例。
 - **定性"Continue/Pause边界"处理**：若 Agent 自评处于边界，必须拆出已观察的经济风险、局部未知和翻转事实。只有材料风险或估值范围变化可推动动作；不能仅因边界措辞机械取更悲观一侧。
-- 禁止"取折中"——如果定量说 Avoid 且无 contrarian_override，最终必须是 Avoid 或 Strong Reject，不能变成 Hold
+- 禁止"取折中"——如果已结算定量证据说 Avoid 且无 contrarian_override，最终必须是 Avoid 或 Strong Reject，不能变成 Hold；GG、DDM或价格不可用时应写 `Unresolved`，撤回当前价格动作但继续企业判断
 
 Part C 的 Ch14 综合决策使用 5 状态合成矩阵。写 Ch14 前必须检查：
 - `compute_bundle.factor3.minority_adjustment` → 如存在，安全边际必须按归母 AA 重新评估
 - `compute_bundle.factor3.aa_avg.3y` → 确认是真 AA 还是已调整 AA
 - 若 Zone J 文件缺失且 `total_discount_pct=0`，必须指出受影响的具体参数，以保守区间、敏感性或不承保对应溢价处理。缺失本身不是固定 15% 价值毁灭；只有观察到的现金不可达、治理侵占、资本损失或其他责任匹配载体才允许折价，幅度来自模型敏感性。
 
-| | Turtle Buy | Turtle Hold | Turtle Avoid |
-|---|---|---|---|
-| **Dayu Continue** | Strong Buy | Cautious Watch | 好公司太贵 |
-| **Dayu Pause** | 价格错配 | Hold Review | Likely Avoid |
-| **Dayu Abandon** | 数据冲突 | Slow Fade | Strong Reject |
+| | Turtle Buy | Turtle Hold | Turtle Avoid | Turtle Unresolved |
+|---|---|---|---|---|
+| **Dayu Continue** | Strong Buy | Cautious Watch | 好公司太贵 | Research Only |
+| **Dayu Pause** | 价格错配 | Hold Review | Likely Avoid | Research Only |
+| **Dayu Abandon** | 数据冲突 | Slow Fade | Strong Reject | Fundamental Avoid |
 
 **决策写作约束（强制）**：
 - 先用前文章节完成当前判断，不要重新检索全公司
@@ -2118,7 +2118,7 @@ Zone B 提取结果写入 audit.json / governance.json。写作 Agent 在相关�
     - **GG vs 股息率背离（强制）**：当 GG > 2 × 股息率时，在 GG 数字旁加注说明："GG=X% 远高于股息率 Y%。差额来自 AA>NP（折旧回流产生的现金超过利润），股东当前实得 ≈ 股息率。GG 反映全部自由现金分给股东的理论值；若超额现金用于回购或高 ROE 再投资，gap 会转化为回报；若沉淀为低效资产，GG 会下行收敛至股息率。"
   - Ch11 结尾展示**外推可信度 5 维评级**（compute_bundle.factor3.extrapolation_rating）：收入波动率/利润调整偏差/HH偏离/商业模式变化/λ可靠性 → overall(high/medium/low)
   - Ch11 必须附上 **λ 敏感性推导**：λ = median(ΔAA/ΔS) over 近3年，含义是每1元收入变动导致的可支配现金变动。临界收入倍数 = 解 GG=II 时的收入 / 当前收入。格式："若营收下跌 X%，GG 将跌破 II"——不能只写结论不写推导。
-  - 报告需引用 compute_data_quality 的完整性得分（对标海螺'36/36字段，0%折价'）
+  - 报告需引用 compute_data_quality 的完整性得分作为来源覆盖诊断；只把缺口作用于受影响主张的置信度/区间，不得按文件数给估值中枢固定折价
   - GG 计算前必须调 get_market_data 检查股本数据可信度，yfinance 股本不准时用年报数据修正
   - **DDM 估值前提限定（Ch12 强制）**：每次出现 DDM 公允价时，必须附带限定说明："DDM 理论价值反映永续分红折现，不代表目标价，仅作为估值上限参考。实际交易价格受市场情绪、流动性、公司治理等多因素影响。"不可将 DDM 公允价等同于"应该值多少钱"。
   - Ch12 DDM 章展示 **P_base 目标价**（V12.5新增）：P_base = MC×(GG/II)/shares，即GG恰好等于II时的公允价。若存在 EV 双轨，同时展示 P_EV。若存在 FCFE GG，同时展示 P_FCFE 作为参考视角。
@@ -2645,11 +2645,32 @@ Zone B 提取结果写入 audit.json / governance.json。写作 Agent 在相关�
                 re.IGNORECASE,
             )
             valid = int(value.get("char_count") or 0) > 0 and bool(fetched_text) and not hostile_page
-        # Preserve failed primary-section attempts.  A small number of frozen
-        # chapter plans permit a targeted official-report search fallback when
-        # PDF/Markdown section boundaries are unavailable.  The failed attempt
-        # is part of the audit proof and is never counted as an effective read.
-        if not valid and tool_name != "read_section":
+        external_failure = False
+        failure_reason = str(value.get("error") or "").strip()
+        if tool_name == "search_report" and "total_hits" in value:
+            external_failure = int(value.get("total_hits") or 0) == 0
+            if external_failure and not failure_reason:
+                failure_reason = "zero report hits"
+        elif tool_name == "web_search" and "results" in value:
+            external_failure = len(value.get("results") or []) == 0
+            if external_failure and not failure_reason:
+                failure_reason = "zero search results"
+        elif tool_name == "web_fetch" and not valid:
+            # An empty body or a browser challenge is a real attempted fetch,
+            # not evidence about the company.  Preserve it so the affected
+            # external-source request can be localized instead of retried
+            # forever when official report body evidence is already present.
+            external_failure = bool(failure_reason) or not fetched_text or bool(hostile_page)
+            if external_failure and not failure_reason:
+                failure_reason = "hostile challenge page" if hostile_page else "empty response body"
+        elif tool_name in {"search_report", "web_search"}:
+            external_failure = bool(failure_reason)
+
+        # Preserve failed primary-section and explicit external-provider
+        # attempts. They are never counted as effective evidence. Successful
+        # low-authority pages remain recorded but cannot impersonate provider
+        # unavailability.
+        if not valid and tool_name != "read_section" and not external_failure:
             return
         raw_chapters = args.get("research_for_chapters")
         chapter_ids: list[int] = []
@@ -2693,7 +2714,7 @@ Zone B 提取结果写入 audit.json / governance.json。写作 Agent 在相关�
             "document_id": value.get("document_id"),
             "document_authority": value.get("document_authority"),
             "verification_eligible": value.get("verification_eligible"),
-            "error": str(value.get("error") or "")[:300],
+            "error": failure_reason[:300],
             "result_count": len(value.get("results", [])) if tool_name == "web_search" else None,
             "total_hits": value.get("total_hits") if tool_name == "search_report" else None,
             "char_count": value.get("char_count") if tool_name in {"read_section", "web_fetch"} else None,
@@ -2736,11 +2757,19 @@ Zone B 提取结果写入 audit.json / governance.json。写作 Agent 在相关�
             and item.get("gate_eligible", True)
         })
         fallback_sections = self._source_section_search_fallbacks(chapter_index, chapter_calls)
-        covered = [name for name in required if name in read_sections or name in fallback_sections]
+        unavailable_sections = self._source_sections_locally_unavailable(
+            chapter_index, chapter_calls
+        )
+        covered = [
+            name for name in required
+            if name in read_sections or name in fallback_sections or name in unavailable_sections
+        ]
         fiscal_years = sorted({
             int(item["year"])
             for item in chapter_calls
-            if item.get("tool") == "read_section" and item.get("year") not in (None, "")
+            if item.get("tool") in {"read_section", "search_report"}
+            and item.get("gate_eligible", True)
+            and item.get("year") not in (None, "")
         })
         payload = {
             "version": 3,
@@ -2774,6 +2803,11 @@ Zone B 提取结果写入 audit.json / governance.json。写作 Agent 在相关�
             "covered_sections": covered,
             "missing_sections": [name for name in required if name not in covered],
             "search_fallback_sections": sorted(fallback_sections),
+            "locally_unavailable_sections": sorted(unavailable_sections),
+            "coverage_warnings": [
+                f"{name}: extraction unavailable after a real attempt; keep claims local and do not infer absence"
+                for name in sorted(unavailable_sections)
+            ],
             "fiscal_years": fiscal_years,
             "tool_counts": {
                 name: sum(
@@ -2849,9 +2883,9 @@ Zone B 提取结果写入 audit.json / governance.json。写作 Agent 在相关�
         industry/governance chapters actually read external source bodies.
         """
         try:
-            from scripts.research_plan import CHAPTER_RESEARCH_SPECS
+            from scripts.research_plan import CHAPTER_RESEARCH_SPECS, available_annual_years
         except ModuleNotFoundError:
-            from research_plan import CHAPTER_RESEARCH_SPECS
+            from research_plan import CHAPTER_RESEARCH_SPECS, available_annual_years
         indexes = (
             [int(chapter_index)]
             if chapter_index is not None else
@@ -2872,10 +2906,23 @@ Zone B 提取结果写入 audit.json / governance.json。写作 Agent 在相关�
             )
             for name in ("read_section", "search_report", "web_search", "web_fetch")
         }
+        attempted_unavailable = {
+            name: any(
+                item.get("tool") == name
+                and not item.get("gate_eligible", True)
+                and (
+                    bool(item.get("error"))
+                    or item.get("result_count") == 0
+                    or item.get("total_hits") == 0
+                )
+                for item in chapter_calls
+            )
+            for name in ("search_report", "web_search", "web_fetch")
+        }
         years = {
             int(item["year"])
             for item in chapter_calls
-            if item.get("tool") == "read_section"
+            if item.get("tool") in {"read_section", "search_report"}
             and item.get("gate_eligible", True)
             and item.get("year") not in (None, "")
         }
@@ -2894,25 +2941,35 @@ Zone B 提取结果写入 audit.json / governance.json。写作 Agent 在相关�
             for idx in indexes
             for tool in CHAPTER_RESEARCH_SPECS.get(idx, {}).get("tools", [])
         }
-        requirements = {"read_section": max(2, len(required_sections))}
-        if "search_report" in required_tools:
-            requirements["search_report"] = 3
-        if "web_search" in required_tools or "web_fetch" in required_tools:
-            requirements["web_search"] = 2
-            requirements["web_fetch"] = 1
+        # A chapter needs a real attempt at its relevant source types, not a
+        # fixed call quota.  A failed attempt may localize that source as
+        # unavailable; a successful low-authority fetch may not.
+        required_external = {
+            name for name in ("search_report", "web_search", "web_fetch")
+            if name in required_tools
+        }
         missing = [
-            f"{name}有效调用 {counts[name]}/{minimum}"
-            for name, minimum in requirements.items()
-            if counts[name] < minimum
+            f"{name}合格结果或真实不可用尝试 0/1"
+            for name in sorted(required_external)
+            if counts[name] < 1 and not attempted_unavailable[name]
         ]
-        if len(years) < 2:
-            missing.append(f"年报原文覆盖财年 {len(years)}/2")
+        available_years = available_annual_years(self._config.output_dir)
+        required_years = min(2, len(available_years)) if available_years else 2
+        if len(years) < required_years:
+            missing.append(f"年报原文覆盖财年 {len(years)}/{required_years}")
         fallback_sections = self._source_section_search_fallbacks(
             int(chapter_index), chapter_calls
         )
+        unavailable_sections = self._source_sections_locally_unavailable(
+            int(chapter_index), chapter_calls
+        )
         for section in required_sections:
-            if section not in sections and section not in fallback_sections:
-                missing.append(f"未实际读取 {section} 原文")
+            if (
+                section not in sections
+                and section not in fallback_sections
+                and section not in unavailable_sections
+            ):
+                missing.append(f"未实际读取 {section} 原文，且未完成不可用尝试")
         return missing
 
     def _source_section_search_fallbacks(
@@ -2929,16 +2986,22 @@ Zone B 提取结果写入 audit.json / governance.json。写作 Agent 在相关�
         silently replace a section read when the section extractor works.
         """
         try:
-            from scripts.research_plan import CHAPTER_RESEARCH_SPECS
+            from scripts.research_plan import CHAPTER_RESEARCH_SPECS, available_annual_years
         except ModuleNotFoundError:
-            from research_plan import CHAPTER_RESEARCH_SPECS
+            from research_plan import CHAPTER_RESEARCH_SPECS, available_annual_years
         calls = chapter_calls if chapter_calls is not None else self._source_calls_for_chapter(chapter_index)
         rules = CHAPTER_RESEARCH_SPECS.get(int(chapter_index), {}).get(
             "section_search_fallbacks", {}
         )
+        available_years = available_annual_years(self._config.output_dir)
+        required_years = min(2, len(available_years)) if available_years else 2
         covered: set[str] = set()
-        for raw_section, raw_rule in rules.items():
-            section = str(raw_section).upper()
+        required_sections = {
+            str(item).upper()
+            for item in CHAPTER_RESEARCH_SPECS.get(int(chapter_index), {}).get("sections", [])
+        }
+        for section in sorted(required_sections):
+            raw_rule = rules.get(section, {})
             rule = raw_rule if isinstance(raw_rule, dict) else {}
             failed_attempt = any(
                 item.get("tool") == "read_section"
@@ -2957,12 +3020,65 @@ Zone B 提取结果写入 audit.json / governance.json。写作 Agent 在相关�
                 and item.get("year") not in (None, "")
             ]
             years = {int(item["year"]) for item in eligible_searches}
+            requested_calls = int(rule.get("minimum_calls", 1))
+            minimum_calls = min(
+                requested_calls,
+                max(1, len(available_years)) if available_years else requested_calls,
+            )
+            minimum_years = min(
+                int(rule.get("minimum_years", required_years)), required_years
+            )
             if (
-                len(eligible_searches) >= int(rule.get("minimum_calls", 2))
-                and len(years) >= int(rule.get("minimum_years", 2))
+                len(eligible_searches) >= minimum_calls
+                and len(years) >= minimum_years
             ):
                 covered.add(section)
         return covered
+
+    def _source_sections_locally_unavailable(
+        self,
+        chapter_index: int,
+        chapter_calls: list[dict[str, Any]] | None = None,
+    ) -> set[str]:
+        """Localize a failed section extractor without stopping the company.
+
+        At least one other eligible official-report body must be available for
+        the chapter.  This permits a bounded judgment with an explicit local
+        gap; it never turns non-disclosure into adverse evidence.
+        """
+        try:
+            from scripts.research_plan import CHAPTER_RESEARCH_SPECS
+        except ModuleNotFoundError:
+            from research_plan import CHAPTER_RESEARCH_SPECS
+        calls = chapter_calls if chapter_calls is not None else self._source_calls_for_chapter(chapter_index)
+        has_primary_body = any(
+            item.get("gate_eligible", True)
+            and (
+                item.get("tool") == "read_section"
+                or (
+                    item.get("tool") == "search_report"
+                    and bool(item.get("document_id"))
+                    and item.get("verification_eligible") is True
+                )
+            )
+            for item in calls
+        )
+        if not has_primary_body:
+            return set()
+        required = {
+            str(item).upper()
+            for item in CHAPTER_RESEARCH_SPECS.get(int(chapter_index), {}).get("sections", [])
+        }
+        return {
+            section
+            for section in required
+            if any(
+                item.get("tool") == "read_section"
+                and str(item.get("section") or "").upper() == section
+                and not item.get("gate_eligible", True)
+                for item in calls
+            )
+        }
 
     def _handle_tool_calls(self, resp: LlmResponse) -> None:
         """处理 LLM 返回的工具调用。"""

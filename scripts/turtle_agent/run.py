@@ -2467,7 +2467,10 @@ def run_full_pipeline(
             if not cb.get("ok"):
                 raise RuntimeError(f"Phase 1 失败: {cb.get('error')}")
             gg = cb.get("gg", {})
-            print(f"  ✅ GG(base)={gg.get('base', '?')}%, DDM={cb.get('ddm', {}).get('fair_value', '?')}")
+            if cb.get("quantitative_status") == "UNRESOLVED_CURRENT_MARKET":
+                print("  ⚠️ 当前报价不可用：继续企业研究，估值与价格动作暂不承保")
+            else:
+                print(f"  ✅ GG(base)={gg.get('base', '?')}%, DDM={cb.get('ddm', {}).get('fair_value', '?')}")
     
             # Phase 1.5: 财务趋势 + 行业上下文
             print("\n[Phase 1.5] 财务趋势 & 行业上下文...")
@@ -2525,7 +2528,13 @@ def run_full_pipeline(
                 print("\n[Phase 2.3] Zone B 年度 LLM 提取 (从 markdown)...")
                 zy = _run_phase_tracked("Phase 2.3 Zone B 年度提取", "zone_b_years", code, llm_client=llm)
                 if zy.get("ok"):
-                    print(f"  ✅ {zy.get('years_processed')} 年处理完成 (跳过 {zy.get('years_skipped', 0)}, 并行 LLM)")
+                    if zy.get("degraded"):
+                        print(
+                            f"  ⚠️ Zone B 局部完成：成功 {zy.get('years_succeeded', [])}，"
+                            f"失败 {zy.get('failed_years', [])}；缺失年份只降低对应比较置信度"
+                        )
+                    else:
+                        print(f"  ✅ {zy.get('years_processed')} 年处理完成 (跳过 {zy.get('years_skipped', 0)}, 并行 LLM)")
                 else:
                     print(f"  ⚠️ zone_b years: {zy.get('error', 'unknown')}")
                     if zy.get("errors"):
