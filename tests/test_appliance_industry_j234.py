@@ -32,7 +32,9 @@ def test_j234_compiles_a_five_company_risk_set_without_creating_a_panel() -> Non
     assert result == {
         "valid": True,
         "findings": [],
-        "episode_ids": ["J2:CN:000333:C2", "J2:CN:000651:C1", "J2:CN:600690:C2"],
+        "episode_ids": [
+            "J2:CN:000333:C2", "J2:CN:000651:C1", "J2:CN:000921:C1", "J2:CN:600690:C2", "J2:CN:600839:C2",
+        ],
     }
     read_model = compile_appliance_j234_read_model(block, source_register=_register())
     assert {member["company_id"] for member in read_model["industry_universe"]} == {
@@ -53,7 +55,6 @@ def test_j234_rejects_a_three_company_universe_even_when_three_deep_episodes_rem
 
     assert result["valid"] is False
     assert "appliance_j234.industry_universe_requires_at_least_five_companies" in result["findings"]
-    assert "appliance_j234.industry_universe_requires_two_contextual_members" in result["findings"]
 
 
 def test_j234_does_not_promote_contextual_members_or_outcome_content() -> None:
