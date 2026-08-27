@@ -1,0 +1,67 @@
+{
+  "schema_version": "judgment-first-real-feedback-completion.v1",
+  "receipt_id": "JFRFC:CN002080:20190501:FY2019:V1",
+  "campaign_id": "JUDGMENT_FIRST_12H_20260828",
+  "roster_rank": 1,
+  "company_id": "CN:002080",
+  "cutoff_at": "2019-05-01T00:00:00+08:00",
+  "outcome_period": "FY2019",
+  "status": "REAL_FEEDBACK_LOOP_1_COMPLETED_NO_MATERIAL_UTILITY",
+  "artifacts": {
+    "selection": "00_SELECTION_AND_CONTAMINATION_RECORD.md",
+    "preoutcome_judgment": "01_PREOUTCOME_EVIDENCE_AND_JUDGMENT_FREEZE.md",
+    "baseline_contract": "02_BASELINE_BEFORE_LEARNING_CONTRACT.json",
+    "enhanced_contract": "03_ENHANCED_AFTER_LEARNING_CONTRACT.json",
+    "application_freeze": "04_TRANSFER_APPLICATION_FREEZE.json",
+    "preoutcome_review": "05_INDEPENDENT_PREOUTCOME_REVIEW.md",
+    "outcome_authorization": "06_OUTCOME_ACCESS_AUTHORIZATION.json",
+    "custodian_settlement": "07_CUSTODIAN_OUTCOME_SETTLEMENT.json",
+    "paired_utility_review": "08_INDEPENDENT_PAIRED_UTILITY_REVIEW.md",
+    "investor_readout": "09_INVESTOR_READOUT.md"
+  },
+  "deterministic_signal_result": {
+    "product_signal": "UNAVAILABLE_LOCAL_PRODUCT_PERIMETER_MISMATCH",
+    "subsidiary_signal": "POSITIVE_OPERATING_LOSS_MATERIALLY_NARROWED_BUT_REMAINS_NEGATIVE",
+    "project_obligation_signal": "INCREASED_OR_REPLACED_DUE_TO_SEPARATE_PHASE_TWO_EXPANSION",
+    "management_treatment": "RETAIN_LOW_CONDITIONAL_AND_WITHHOLD_GROWTH_VALUE"
+  },
+  "enterprise_judgment_delta": [
+    "RESPONSIBILITY_UNIT_COMMERCIALIZATION_IMPROVED",
+    "CORE_OPERATING_ECONOMICS_NOT_YET_POSITIVE",
+    "PERMANENT_LOSS_RISK_MOVED_FROM_PHASE_ONE_BUILD_TO_PREMATURE_PHASE_TWO_EXPANSION"
+  ],
+  "baseline_result": {
+    "capital_allocation": "LOW_CONDITIONAL",
+    "valuation_direction": "WITHHOLD_LITHIUM_SEPARATOR_GROWTH_VALUE",
+    "next_research": "SUSTAINED_PROFIT_CASH_AND_NEW_EXPANSION_BURDEN"
+  },
+  "enhanced_result": {
+    "capital_allocation": "LOW_CONDITIONAL",
+    "valuation_direction": "WITHHOLD_LITHIUM_SEPARATOR_GROWTH_VALUE",
+    "next_research": "COMPARABLE_SUBSIDIARY_OPERATING_ECONOMICS_AND_PHASE_TWO_CAPITAL_RETURN"
+  },
+  "paired_utility": "NO_MATERIAL_UTILITY",
+  "utility_reason": "ENHANCED_IMPROVED_SCOPE_LOCALIZATION_AND_SPEED_BUT_DID_NOT_CHANGE_INVESTMENT_TREATMENT_OR_AVOID_A_MATERIAL_BASELINE_ERROR",
+  "rule_resolution": {
+    "economic_absorption_after_build": "RETAIN_NARROWLY",
+    "trend_requires_comparable_base": "RETAIN_AS_LOCAL_MEASUREMENT_METHOD",
+    "new_limit": "SYSTEMATIC_FIELDS_OR_A_CONDITION_TREE_COUNT_AS_UTILITY_ONLY_WHEN_THEY_CHANGE_INVESTMENT_TREATMENT_AVOID_A_MATERIAL_ERROR_OR_CHANGE_A_MATERIAL_RESEARCH_ACTION"
+  },
+  "defensive_writing_audit": "PASS_JUDGMENT_CONTINUED_THROUGH_LOCAL_PRODUCT_AND_GROUP_SCOPE_MISMATCHES",
+  "campaign_progress": {
+    "real_feedback_loops_completed": 1,
+    "minimum_required": 3,
+    "counterexample_or_no_utility_requirement": "SATISFIED_BY_THIS_NO_MATERIAL_UTILITY_RESULT",
+    "campaign_complete": false
+  },
+  "permissions": {
+    "transfer_validated": "NOT_GRANTED",
+    "method_frozen": "NOT_GRANTED",
+    "comparative": "NOT_GRANTED",
+    "cjo": "NOT_GRANTED",
+    "formal_valuation": "NOT_GRANTED",
+    "buyband": "NOT_GRANTED",
+    "report": "NOT_GRANTED",
+    "investment_action": "NOT_GRANTED"
+  }
+}
