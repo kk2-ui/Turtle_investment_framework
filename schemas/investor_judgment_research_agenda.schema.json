@@ -84,7 +84,7 @@
         "source_evidence_id": {"type": "string"},
         "source_round_id": {"type": "string"},
         "evidence_class": {"enum": ["LOCAL_COMPANY_JUDGMENT_CHANGE", "POSITIVE_DEVELOPMENT_METHOD_UTILITY", "VALID_NEGATIVE_METHOD_OR_MEASUREMENT_LESSON"]},
-        "status": {"enum": ["LOCAL_LESSON_REPLICATION_REQUIRED", "DEVELOPMENT_UTILITY_REPLICATION_REQUIRED", "NO_ADVANTAGE_REDESIGN_REQUIRED"]},
+        "status": {"enum": ["LOCAL_LESSON_REPLICATION_REQUIRED", "DEVELOPMENT_UTILITY_REPLICATION_REQUIRED", "NO_ADVANTAGE_REDESIGN_REQUIRED", "NO_MATERIAL_UTILITY_REDESIGN_REQUIRED"]},
         "research_change": {"type": "string", "minLength": 1},
         "allowed_use": {"const": "NEXT_EPISODE_QUESTION_OR_ACQUISITION_DESIGN_ONLY"},
         "acceptance_needed": {"type": "string", "minLength": 1},
@@ -113,7 +113,7 @@
       "properties": {
         "caution_id": {"type": "string"},
         "source_round_id": {"type": "string"},
-        "status": {"const": "NO_ADVANTAGE_PROVED"},
+        "status": {"enum": ["NO_ADVANTAGE_PROVED", "NO_MATERIAL_UTILITY"]},
         "statement": {"type": "string"},
         "research_effect": {"type": "string"}
       }

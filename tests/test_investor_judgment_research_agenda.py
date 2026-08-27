@@ -62,11 +62,12 @@ def test_current_agenda_is_ready_only_for_l2_research_design() -> None:
 def test_valid_lessons_are_replication_or_redesign_candidates_not_validated_rules() -> None:
     rules = _agenda()["candidate_research_rules"]
 
-    assert {rule["source_round_id"] for rule in rules} == {"ROUND5", "ROUND6", "ROUND7", "ROUND8"}
+    assert {rule["source_round_id"] for rule in rules} == {"ROUND5", "ROUND6", "ROUND7", "ROUND8", "ROUND10"}
     assert {rule["status"] for rule in rules} == {
         "LOCAL_LESSON_REPLICATION_REQUIRED",
         "DEVELOPMENT_UTILITY_REPLICATION_REQUIRED",
         "NO_ADVANTAGE_REDESIGN_REQUIRED",
+        "NO_MATERIAL_UTILITY_REDESIGN_REQUIRED",
     }
     assert all(rule["allowed_use"] == "NEXT_EPISODE_QUESTION_OR_ACQUISITION_DESIGN_ONLY" for rule in rules)
     assert all("validated method" in rule["prohibited_use"] for rule in rules)
@@ -75,7 +76,7 @@ def test_valid_lessons_are_replication_or_redesign_candidates_not_validated_rule
 def test_round8_no_advantage_is_a_caution_and_only_yields_redesign_rules() -> None:
     agenda = _agenda()
 
-    assert [item["source_round_id"] for item in agenda["method_cautions"]] == ["ROUND8"]
+    assert [item["source_round_id"] for item in agenda["method_cautions"]] == ["ROUND8", "ROUND10"]
     assert agenda["method_cautions"][0]["status"] == "NO_ADVANTAGE_PROVED"
     round8_rules = [rule for rule in agenda["candidate_research_rules"] if rule["source_round_id"] == "ROUND8"]
     assert len(round8_rules) == 9
@@ -83,6 +84,20 @@ def test_round8_no_advantage_is_a_caution_and_only_yields_redesign_rules() -> No
     assert {rule["evidence_class"] for rule in round8_rules} == {
         "VALID_NEGATIVE_METHOD_OR_MEASUREMENT_LESSON"
     }
+
+
+def test_round10_no_material_utility_only_yields_evidence_redesign_rules() -> None:
+    agenda = _agenda()
+    round10_rules = [rule for rule in agenda["candidate_research_rules"] if rule["source_round_id"] == "ROUND10"]
+    round10_caution = next(item for item in agenda["method_cautions"] if item["source_round_id"] == "ROUND10")
+
+    assert len(round10_rules) == 2
+    assert {rule["status"] for rule in round10_rules} == {"NO_MATERIAL_UTILITY_REDESIGN_REQUIRED"}
+    assert {rule["evidence_class"] for rule in round10_rules} == {
+        "VALID_NEGATIVE_METHOD_OR_MEASUREMENT_LESSON"
+    }
+    assert round10_caution["status"] == "NO_MATERIAL_UTILITY"
+    assert "ROUND10" not in {item["round_id"] for item in agenda["historical_company_context"]}
 
 
 def test_round9_is_quarantined_and_cannot_reenter_candidate_rules() -> None:

@@ -287,6 +287,28 @@
       "allowed_use": "NEXT_EPISODE_QUESTION_OR_ACQUISITION_DESIGN_ONLY",
       "acceptance_needed": "Apply before outcome access on a different eligible company-cutoff and settle under a declared same-definition contract with independent review.",
       "prohibited_use": "Not a company fact, validated method, probability, CJO amendment, valuation input, report conclusion, buy band or investment action."
+    },
+    {
+      "rule_candidate_id": "RESEARCH-RULE:ROUND10:1",
+      "source_evidence_id": "R10:BATCH-COMPLETION:CN_APPLIANCE:20180930:V2",
+      "source_round_id": "ROUND10",
+      "evidence_class": "VALID_NEGATIVE_METHOD_OR_MEASUREMENT_LESSON",
+      "status": "NO_MATERIAL_UTILITY_REDESIGN_REQUIRED",
+      "research_change": "Freeze a next unseen episode with an independently settleable field for the material mechanism or boundary.",
+      "allowed_use": "NEXT_EPISODE_QUESTION_OR_ACQUISITION_DESIGN_ONLY",
+      "acceptance_needed": "Apply before outcome access on a different eligible company-cutoff and settle under a declared same-definition contract with independent review.",
+      "prohibited_use": "Not a company fact, validated method, probability, CJO amendment, valuation input, report conclusion, buy band or investment action."
+    },
+    {
+      "rule_candidate_id": "RESEARCH-RULE:ROUND10:2",
+      "source_evidence_id": "R10:BATCH-COMPLETION:CN_APPLIANCE:20180930:V2",
+      "source_round_id": "ROUND10",
+      "evidence_class": "VALID_NEGATIVE_METHOD_OR_MEASUREMENT_LESSON",
+      "status": "NO_MATERIAL_UTILITY_REDESIGN_REQUIRED",
+      "research_change": "Improve original-version enumeration or select a later unseen episode whose authorized version family is resolvable before freeze.",
+      "allowed_use": "NEXT_EPISODE_QUESTION_OR_ACQUISITION_DESIGN_ONLY",
+      "acceptance_needed": "Apply before outcome access on a different eligible company-cutoff and settle under a declared same-definition contract with independent review.",
+      "prohibited_use": "Not a company fact, validated method, probability, CJO amendment, valuation input, report conclusion, buy band or investment action."
     }
   ],
   "company_continuation_agenda": [
@@ -317,7 +339,14 @@
       "source_round_id": "ROUND8",
       "status": "NO_ADVANTAGE_PROVED",
       "statement": "The cross-industry comparison is valid negative evidence: it did not prove a material advantage for the enhanced method.",
-      "research_effect": "Do not credit the enhanced method with material utility. A new unseen episode needs separate frozen Baseline and Enhanced resolution rules."
+      "research_effect": "Do not credit the enhanced method with material utility. A new unseen episode needs separate frozen Baseline and Enhanced resolution rules plus a field that can actually distinguish their treatment."
+    },
+    {
+      "caution_id": "METHOD-CAUTION:R10:BATCH-COMPLETION:CN_APPLIANCE:20180930:V2",
+      "source_round_id": "ROUND10",
+      "status": "NO_MATERIAL_UTILITY",
+      "statement": "The enhanced rule did not demonstrate a material investment-treatment change and did not prove that it avoided a baseline directional error.",
+      "research_effect": "Do not credit the enhanced method with material utility. A new unseen episode needs separate frozen Baseline and Enhanced resolution rules plus a field that can actually distinguish their treatment."
     }
   ],
   "quarantined_evidence": [
@@ -349,20 +378,21 @@
   "unreviewed_evidence": [],
   "preserved_denominator": {
     "measurement_cells": {
-      "total": 68,
+      "total": 77,
       "status_counts": {
-        "MEASUREMENT_MISMATCH": 7,
-        "OBSERVED": 39,
+        "MEASUREMENT_MISMATCH": 10,
+        "OBSERVED": 45,
         "UNKNOWN": 22
       }
     },
     "diagnostic_findings": {
-      "total": 38,
+      "total": 39,
       "status_counts": {
         "INVALIDATED": 1,
         "MIXED": 1,
         "NOT_DIAGNOSTIC": 9,
         "NO_DIFFERENCE": 15,
+        "NO_MATERIAL_UTILITY": 1,
         "PARTIAL": 2,
         "POSITIVE_DEVELOPMENT_UTILITY": 5,
         "UNKNOWN": 5
@@ -377,6 +407,7 @@
     "cjo": "NOT_AUTHORIZED",
     "valuation": "NOT_AUTHORIZED",
     "report": "NOT_AUTHORIZED",
+    "buy_band": "NOT_AUTHORIZED",
     "investment": "NOT_AUTHORIZED"
   },
   "allowed_outputs": [

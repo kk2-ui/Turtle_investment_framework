@@ -10,7 +10,7 @@
   "purpose": "Separate completed pipeline work from evidence that investor judgment or method transfer improved.",
   "current_ceiling": {
     "strict_validation_level": "L1",
-    "investor_statement": "Turtle can repeatedly obtain and settle real company outcomes, and it has produced bounded company and development-method findings. It has not yet proved a diagnostic mechanism choice, transferable judgment method, or relative method advantage.",
+    "investor_statement": "Turtle has mechanically observed real fields for 7 company-cutoffs while preserving unresolved cases, and it has produced bounded company and development-method findings. It has not yet proved a diagnostic mechanism choice, transferable judgment method, or relative method advantage.",
     "next_unmet_level": "L2",
     "evidence_needed": [
       "One frozen mechanism pair with distinct outcome predicates and an independently accepted diagnostic verdict.",
@@ -35,7 +35,7 @@
       "level": "L1",
       "status": "SUBSTANTIATED_FOR_RECORDED_EPISODES",
       "definition": "Frozen outcome fields are acquired and mechanically settled from official sources.",
-      "basis": "5 company-cutoff settlements contain structured cell-level outcomes."
+      "basis": "7 of 8 recorded company-cutoffs contain at least one mechanically observed field; 1 mismatch-only cutoff remains explicit."
     },
     {
       "level": "L2",
@@ -68,6 +68,9 @@
       "projection_type": "ROUND5_LOCAL_JUDGMENT_CHANGE",
       "evidence_id": "R5COMP:CN:CEMENT:600802:20150415:FY2015:V1",
       "company_id": "CN:600802",
+      "company_ids": [
+        "CN:600802"
+      ],
       "cutoff_at": "2015-04-15T00:00:00+08:00",
       "source_artifacts": {
         "completion": "docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/36_round5_real_feedback_completion_receipt.json",
@@ -96,6 +99,11 @@
           "UNKNOWN": 2
         }
       },
+      "company_cutoff_counts": {
+        "total": 1,
+        "with_mechanical_observation": 1,
+        "mismatch_only": 0
+      },
       "strict_level_ceiling": "L1",
       "rights": {
         "directional_learning": "NOT_AUTHORIZED",
@@ -105,6 +113,7 @@
         "cjo": "NOT_AUTHORIZED",
         "valuation": "NOT_AUTHORIZED",
         "report": "NOT_AUTHORIZED",
+        "buy_band": "NOT_AUTHORIZED",
         "investment": "NOT_AUTHORIZED"
       },
       "company_finding": {
@@ -145,6 +154,9 @@
       "projection_type": "ROUND6_CROSS_COMPANY_DEVELOPMENT_UTILITY",
       "evidence_id": "R6COMP:CN:CEMENT:600801:20160427:FY2016:V1",
       "company_id": "CN:600801",
+      "company_ids": [
+        "CN:600801"
+      ],
       "cutoff_at": "2016-04-27T00:00:00+08:00",
       "source_artifacts": {
         "completion": "docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/44_round6_completion_receipt.json",
@@ -174,6 +186,11 @@
           "UNKNOWN": 3
         }
       },
+      "company_cutoff_counts": {
+        "total": 1,
+        "with_mechanical_observation": 1,
+        "mismatch_only": 0
+      },
       "strict_level_ceiling": "L1",
       "rights": {
         "directional_learning": "NOT_AUTHORIZED",
@@ -183,6 +200,7 @@
         "cjo": "NOT_AUTHORIZED",
         "valuation": "NOT_AUTHORIZED",
         "report": "NOT_AUTHORIZED",
+        "buy_band": "NOT_AUTHORIZED",
         "investment": "NOT_AUTHORIZED"
       },
       "company_finding": {
@@ -218,6 +236,9 @@
       "projection_type": "ROUND7_MULTIDIMENSIONAL_DEVELOPMENT_UTILITY",
       "evidence_id": "R7COMP:CN:CEMENT:600585:20140416:FY2014:V1",
       "company_id": "CN:600585",
+      "company_ids": [
+        "CN:600585"
+      ],
       "cutoff_at": "2014-04-16T00:00:00+08:00",
       "source_artifacts": {
         "completion": "docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/53_round7_completion_receipt.json",
@@ -247,6 +268,11 @@
           "POSITIVE_DEVELOPMENT_UTILITY": 4
         }
       },
+      "company_cutoff_counts": {
+        "total": 1,
+        "with_mechanical_observation": 1,
+        "mismatch_only": 0
+      },
       "strict_level_ceiling": "L1",
       "rights": {
         "directional_learning": "NOT_AUTHORIZED",
@@ -256,6 +282,7 @@
         "cjo": "NOT_AUTHORIZED",
         "valuation": "NOT_AUTHORIZED",
         "report": "NOT_AUTHORIZED",
+        "buy_band": "NOT_AUTHORIZED",
         "investment": "NOT_AUTHORIZED"
       },
       "company_finding": {
@@ -292,6 +319,9 @@
       "projection_type": "ROUND8_CROSS_INDUSTRY_NO_ADVANTAGE",
       "evidence_id": "R8COMPLETE:CN002120:20190501:FY2019:V1",
       "company_id": "CN:002120",
+      "company_ids": [
+        "CN:002120"
+      ],
       "cutoff_at": "2019-05-01T00:00:00+08:00",
       "source_artifacts": {
         "completion": "docs/development/research/industry_learning_blocks/CN_FRANCHISE_EXPRESS_2018_2019/12_round8_completion_receipt.json",
@@ -320,6 +350,11 @@
           "NO_DIFFERENCE": 10
         }
       },
+      "company_cutoff_counts": {
+        "total": 1,
+        "with_mechanical_observation": 1,
+        "mismatch_only": 0
+      },
       "strict_level_ceiling": "L1",
       "rights": {
         "directional_learning": "NOT_AUTHORIZED",
@@ -329,6 +364,7 @@
         "cjo": "NOT_AUTHORIZED",
         "valuation": "NOT_AUTHORIZED",
         "report": "NOT_AUTHORIZED",
+        "buy_band": "NOT_AUTHORIZED",
         "investment": "NOT_AUTHORIZED"
       },
       "company_finding": {
@@ -376,6 +412,9 @@
       "projection_type": "ROUND9_METHOD_COMPARISON_INVALID",
       "evidence_id": "R9CLOSEOUT:CN600839:20180930:FY2019:V2",
       "company_id": "CN:600839",
+      "company_ids": [
+        "CN:600839"
+      ],
       "cutoff_at": "2018-09-30T23:59:59+08:00",
       "source_artifacts": {
         "completion": "docs/development/research/industry_learning_blocks/CN_APPLIANCE_CHANGHONG_2018_2019_ROUND9/19_round9_completion_receipt.json",
@@ -402,6 +441,11 @@
           "INVALIDATED": 1
         }
       },
+      "company_cutoff_counts": {
+        "total": 1,
+        "with_mechanical_observation": 1,
+        "mismatch_only": 0
+      },
       "strict_level_ceiling": "L1",
       "rights": {
         "directional_learning": "NOT_AUTHORIZED",
@@ -411,6 +455,7 @@
         "cjo": "NOT_AUTHORIZED",
         "valuation": "NOT_AUTHORIZED",
         "report": "NOT_AUTHORIZED",
+        "buy_band": "NOT_AUTHORIZED",
         "investment": "NOT_AUTHORIZED"
       },
       "company_finding": {
@@ -456,39 +501,124 @@
         "Require an external review artifact as input; implementation may generate only a review candidate.",
         "Keep volume, price, customer share and ordinary-share owner cash as priority evidence targets."
       ]
+    },
+    {
+      "round_id": "ROUND10",
+      "projection_type": "ROUND10_MULTI_COMPANY_NO_MATERIAL_UTILITY",
+      "evidence_id": "R10:BATCH-COMPLETION:CN_APPLIANCE:20180930:V2",
+      "company_id": null,
+      "company_ids": [
+        "CN:002035",
+        "CN:002508",
+        "CN:002677"
+      ],
+      "cutoff_at": "2018-09-30T23:59:59+08:00",
+      "source_artifacts": {
+        "preoutcome": "docs/development/research/industry_learning_blocks/CN_APPLIANCE_ROUND10_V2_PREOUTCOME/00_round10_v2_batch_freeze.md",
+        "completion": "docs/development/research/industry_learning_blocks/CN_APPLIANCE_ROUND10_V2_POSTOUTCOME/03_batch_completion_receipt.json",
+        "settlement": null,
+        "independent_review": "docs/development/research/industry_learning_blocks/CN_APPLIANCE_ROUND10_V2_POSTOUTCOME/02_external_method_review.json",
+        "invalidation": null
+      },
+      "independent_review_present": true,
+      "pipeline_proof": {
+        "status": "ACCEPTED",
+        "strict_level": "L1",
+        "statement": "9 frozen issuer-level fields reached a terminal lifecycle state across 3 companies: 6 were mechanically settled and 3 remained measurement mismatches."
+      },
+      "measurement_denominator": {
+        "total_cells": 9,
+        "status_counts": {
+          "MEASUREMENT_MISMATCH": 3,
+          "OBSERVED": 6
+        }
+      },
+      "diagnostic_denominator": {
+        "total_findings": 1,
+        "status_counts": {
+          "NO_MATERIAL_UTILITY": 1
+        }
+      },
+      "company_cutoff_counts": {
+        "total": 3,
+        "with_mechanical_observation": 2,
+        "mismatch_only": 1
+      },
+      "strict_level_ceiling": "L1",
+      "rights": {
+        "directional_learning": "NOT_AUTHORIZED",
+        "enterprise_learning": "NOT_AUTHORIZED",
+        "comparative": "NOT_AUTHORIZED",
+        "method_transfer": "NOT_AUTHORIZED",
+        "cjo": "NOT_AUTHORIZED",
+        "valuation": "NOT_AUTHORIZED",
+        "report": "NOT_AUTHORIZED",
+        "buy_band": "NOT_AUTHORIZED",
+        "investment": "NOT_AUTHORIZED"
+      },
+      "company_finding": {
+        "status": "ACCEPTED_BATCH_EVIDENCE_BOUNDARY",
+        "statement": "Huadi and Zhejiang Meida each add three replayable issuer-level FY2019 fields. Robam remains a three-field measurement mismatch because its ORIGINAL_ONLY annual-report version family was not uniquely resolved. None of these states proves customer response, action effect, unit economics, or ordinary-share owner cash."
+      },
+      "measurement_learning": {
+        "status": "SUPPORTED",
+        "statement": "Field-level settlement lets observable issuer facts proceed while annual-report version ambiguity remains an explicit measurement mismatch instead of becoming a business judgment."
+      },
+      "method_utility": {
+        "status": "NO_MATERIAL_UTILITY",
+        "statement": "The enhanced rule did not demonstrate a material investment-treatment change and did not prove that it avoided a baseline directional error."
+      },
+      "transfer_evidence": {
+        "status": "NOT_ESTABLISHED",
+        "statement": "No treatment delta was independently accepted, so this batch creates no method-transfer evidence."
+      },
+      "invalidated_evidence": null,
+      "what_remains_unproved": [
+        "No frozen field separately measures customer response, unit economics, ordinary-share owner cash, or an implemented-action effect.",
+        "The ORIGINAL_ONLY FY2019 annual-report version family was not uniquely resolved for the three contracted lines."
+      ],
+      "next_evidence": [
+        "Freeze a next unseen episode with an independently settleable field for the material mechanism or boundary.",
+        "Improve original-version enumeration or select a later unseen episode whose authorized version family is resolvable before freeze."
+      ]
     }
   ],
   "evidence_counts": {
-    "recorded_company_cutoff_settlements": 5,
+    "recorded_evidence_batches": 6,
+    "recorded_company_cutoffs": 8,
+    "recorded_company_cutoff_settlements": 7,
+    "mismatch_only_company_cutoffs": 1,
     "method_utility_statuses": {
       "INVALIDATED": 1,
       "NOT_EVALUATED": 1,
       "NO_ADVANTAGE_PROVED": 1,
+      "NO_MATERIAL_UTILITY": 1,
       "POSITIVE_DEVELOPMENT_UTILITY": 2
     },
     "transfer_evidence_statuses": {
       "DEVELOPMENT_EVIDENCE_ONLY": 1,
       "INVALIDATED": 1,
-      "NOT_ESTABLISHED": 2,
+      "NOT_ESTABLISHED": 3,
       "NOT_EVALUATED": 1
     }
   },
   "preserved_denominator": {
     "measurement_cells": {
-      "total": 68,
+      "total": 77,
       "status_counts": {
-        "MEASUREMENT_MISMATCH": 7,
-        "OBSERVED": 39,
+        "MEASUREMENT_MISMATCH": 10,
+        "OBSERVED": 45,
         "UNKNOWN": 22
       }
     },
     "diagnostic_findings": {
-      "total": 38,
+      "total": 39,
       "status_counts": {
         "INVALIDATED": 1,
         "MIXED": 1,
         "NOT_DIAGNOSTIC": 9,
         "NO_DIFFERENCE": 15,
+        "NO_MATERIAL_UTILITY": 1,
         "PARTIAL": 2,
         "POSITIVE_DEVELOPMENT_UTILITY": 5,
         "UNKNOWN": 5
@@ -500,7 +630,8 @@
       "Real official outcome fields can be settled without forcing missing or mismatched fields into labels.",
       "Several bounded company findings changed what an investor should and should not credit to management.",
       "Round 6 and Round 7 provide positive development utility, while Round 8 honestly records no proved advantage.",
-      "Round 9 outcome facts survive even though its method comparison is invalidated."
+      "Round 9 outcome facts survive even though its method comparison is invalidated.",
+      "Round 10 adds six issuer-level observations and three explicit version-route mismatches, but no material utility for the eight-dimensional method."
     ],
     "not_proved": [
       "A selected enterprise mechanism has passed formal L2/L3 validation.",
@@ -517,6 +648,7 @@
     "cjo": "NOT_AUTHORIZED",
     "valuation": "NOT_AUTHORIZED",
     "report": "NOT_AUTHORIZED",
+    "buy_band": "NOT_AUTHORIZED",
     "investment": "NOT_AUTHORIZED"
   },
   "aggregation_policy": "COUNTS_AND_EVIDENCE_CLASSES_ONLY_NO_TOTAL_RANKING"

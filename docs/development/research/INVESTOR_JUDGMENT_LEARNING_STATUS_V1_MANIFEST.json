@@ -46,6 +46,17 @@
       "settlement_artifact": "docs/development/research/industry_learning_blocks/CN_APPLIANCE_CHANGHONG_2018_2019_ROUND9/15_outcome_settlement.json",
       "independent_review_artifact": "docs/development/research/industry_learning_blocks/CN_APPLIANCE_CHANGHONG_2018_2019_ROUND9/18_independent_postoutcome_review.json",
       "invalidation_artifact": "docs/development/research/industry_learning_blocks/CN_APPLIANCE_CHANGHONG_2018_2019_ROUND9/17_method_feedback_invalidation.json"
+    },
+    {
+      "round_id": "ROUND10",
+      "projection_type": "ROUND10_MULTI_COMPANY_NO_MATERIAL_UTILITY",
+      "company_ids": ["CN:002035", "CN:002508", "CN:002677"],
+      "cutoff_at": "2018-09-30T23:59:59+08:00",
+      "preoutcome_artifact": "docs/development/research/industry_learning_blocks/CN_APPLIANCE_ROUND10_V2_PREOUTCOME/00_round10_v2_batch_freeze.md",
+      "completion_artifact": "docs/development/research/industry_learning_blocks/CN_APPLIANCE_ROUND10_V2_POSTOUTCOME/03_batch_completion_receipt.json",
+      "settlement_artifact": "",
+      "independent_review_artifact": "docs/development/research/industry_learning_blocks/CN_APPLIANCE_ROUND10_V2_POSTOUTCOME/02_external_method_review.json",
+      "invalidation_artifact": ""
     }
   ]
 }

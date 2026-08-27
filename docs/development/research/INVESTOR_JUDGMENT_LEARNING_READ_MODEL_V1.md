@@ -28,6 +28,9 @@ This means Turtle has repeatedly frozen, acquired and mechanically settled real 
 - Round 7 showed development utility from keeping industry conditions, execution, customer response, unit economics, cash and permanent loss separate;
 - Round 8 validly found no material method advantage;
 - Round 9 preserved useful company facts while invalidating the method comparison itself.
+- Round 10 expanded the real denominator to three more appliance company-cutoffs: Huadi and Zhejiang Meida added six replayable issuer-level fields, while Robam retained three annual-report-version mismatches. The external review found `NO_MATERIAL_UTILITY` for the eight-dimensional method.
+
+Across the six recorded batches, eight company-cutoffs are represented. Seven contain at least one mechanically observed field; one is mismatch-only. The field denominator is 77: 45 `OBSERVED`, 22 `UNKNOWN`, and 10 `MEASUREMENT_MISMATCH`.
 
 It has not yet produced a formally accepted `L2` mechanism-pair verdict, an `L3` admitted primary-path result, a validated `L4` learning transfer, or an `L5` multi-episode relative comparison.
 
@@ -35,21 +38,21 @@ It has not yet produced a formally accepted `L2` mechanism-pair verdict, an `L3`
 
 Positive development utility is not the same as formal transfer. Round 6 used a different company, but repository-memory exposure and the absence of a complete `LNOTE -> pre-freeze field change -> same-definition settlement` chain prevent an `L4` claim.
 
-Likewise, Round 8's `NO_ADVANTAGE_PROVED` is useful negative evidence, not a method success. Round 9's accepted outcome settlement does not rescue a comparison produced by a broken frozen resolver.
+Likewise, Round 8's `NO_ADVANTAGE_PROVED` is useful negative evidence, not a method success. Round 9's accepted outcome settlement does not rescue a comparison produced by a broken frozen resolver. Round 10 proves that issuer-level financial fields can be replayed without proving customer response, action effect, unit economics, owner cash, or a material advantage for the enhanced method.
 
 ## Structured inputs and output
 
-The read model consumes only the explicit JSON manifest at `docs/development/research/INVESTOR_JUDGMENT_LEARNING_STATUS_V1_MANIFEST.json`. Each entry binds a completion receipt, cell-level settlement, independent review and optional invalidation receipt. The implementation parses their structured fields; it does not infer status from Markdown prose.
+The read model consumes only the explicit JSON manifest at `docs/development/research/INVESTOR_JUDGMENT_LEARNING_STATUS_V1_MANIFEST.json`. Single-company entries bind a completion receipt, cell-level settlement, independent review and optional invalidation receipt. The Round 10 multi-company adapter binds its pre-outcome freeze, terminal field-count completion receipt and external method review. It consumes no outcome values or directions. The implementation does not infer evidence status from the investor readout.
 
 Generate or verify the current projection with:
 
 ```bash
-python3 scripts/investor_judgment_learning_read_model.py \
+.venv/bin/python scripts/investor_judgment_learning_read_model.py \
   --repo-root . \
   --manifest docs/development/research/INVESTOR_JUDGMENT_LEARNING_STATUS_V1_MANIFEST.json \
   --output docs/development/research/INVESTOR_JUDGMENT_LEARNING_STATUS_V1.json
 
-python3 scripts/investor_judgment_learning_read_model.py \
+.venv/bin/python scripts/investor_judgment_learning_read_model.py \
   --repo-root . \
   --manifest docs/development/research/INVESTOR_JUDGMENT_LEARNING_STATUS_V1_MANIFEST.json \
   --check-only
@@ -74,6 +77,7 @@ Only after that accepted lesson changes a different company's pre-outcome resear
 - issuer-specific follow-up remains in a company continuation agenda;
 - Round 8 remains a no-advantage caution while its valid measurement and experiment lessons may enter redesign-required candidates;
 - Round 9 remains quarantined and can inform only failure-mode design for a new method epoch;
+- Round 10 remains a no-material-utility caution; only its mechanism-field and annual-report-route remediations enter redesign candidates;
 - unreviewed evidence is excluded from both company context and candidate rules.
 
 The generated `INVESTOR_JUDGMENT_RESEARCH_AGENDA_V1.json` authorizes only `RESEARCH_AGENDA_ONLY`. It cannot amend CJO, valuation, reports, buy bands or investment actions.

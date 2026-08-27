@@ -27,6 +27,7 @@ PROJECTION_TYPES = {
     "ROUND7_MULTIDIMENSIONAL_DEVELOPMENT_UTILITY",
     "ROUND8_CROSS_INDUSTRY_NO_ADVANTAGE",
     "ROUND9_METHOD_COMPARISON_INVALID",
+    "ROUND10_MULTI_COMPANY_NO_MATERIAL_UTILITY",
 }
 
 DOWNSTREAM_RIGHTS = (
@@ -37,8 +38,11 @@ DOWNSTREAM_RIGHTS = (
     "cjo",
     "valuation",
     "report",
+    "buy_band",
     "investment",
 )
+
+SOURCE_REQUIRED_RIGHTS = tuple(right for right in DOWNSTREAM_RIGHTS if right != "buy_band")
 
 LEVEL_DEFINITIONS = {
     "K0": "Industry and teaching assets are traceable.",
@@ -108,7 +112,7 @@ def _assert_closed_rights(
 ) -> None:
     rights = _mapping(artifact.get("rights"))
     if require_all:
-        missing = [right for right in DOWNSTREAM_RIGHTS if right not in rights]
+        missing = [right for right in SOURCE_REQUIRED_RIGHTS if right not in rights]
         if missing:
             raise LearningReadModelError(f"{artifact_name}_rights_missing:" + ",".join(missing))
     for right in DOWNSTREAM_RIGHTS:
@@ -142,6 +146,8 @@ def _normalize_diagnostic_status(value: Any) -> str | None:
             return prefix
     if status.startswith(("REJECTED", "INVALID", "METHOD_COMPARISON_INVALID")):
         return "INVALIDATED"
+    if status.startswith("NO_MATERIAL_UTILITY"):
+        return "NO_MATERIAL_UTILITY"
     if status.startswith("PARTIAL"):
         return "PARTIAL"
     if status in {"ENHANCED_BETTER", "MATERIAL_IMPROVEMENT"}:
@@ -167,6 +173,8 @@ def _diagnostic_statuses(projection_type: str, review: dict[str, Any] | None) ->
             raw.extend((row.get("baseline_assessment"), row.get("enhanced_assessment")))
     elif projection_type == "ROUND9_METHOD_COMPARISON_INVALID":
         raw.append(review.get("method_feedback_status"))
+    elif projection_type == "ROUND10_MULTI_COMPANY_NO_MATERIAL_UTILITY":
+        raw.append(review.get("review_status"))
     return [status for value in raw if (status := _normalize_diagnostic_status(value)) is not None]
 
 
@@ -210,6 +218,7 @@ def _base_projection(
             "completion_id",
         ),
         "company_id": _required_text(completion.get("company_id"), "company_id"),
+        "company_ids": [_required_text(completion.get("company_id"), "company_id")],
         "cutoff_at": _required_text(completion.get("cutoff_at"), "cutoff_at"),
         "source_artifacts": {
             "completion": _required_text(entry.get("completion_artifact"), "completion_artifact"),
@@ -234,17 +243,223 @@ def _base_projection(
             "total_findings": sum(diagnostics.values()),
             "status_counts": dict(sorted(diagnostics.items())),
         },
+        "company_cutoff_counts": {
+            "total": 1,
+            "with_mechanical_observation": 1 if measurement_counts.get("OBSERVED", 0) else 0,
+            "mismatch_only": 0 if measurement_counts.get("OBSERVED", 0) else 1,
+        },
         "strict_level_ceiling": "L1",
         "rights": {right: "NOT_AUTHORIZED" for right in DOWNSTREAM_RIGHTS},
     }
 
 
+def _project_round10_entry(
+    entry: dict[str, Any],
+    completion: dict[str, Any],
+    review: dict[str, Any] | None,
+) -> dict[str, Any]:
+    round_id = _required_text(entry.get("round_id"), "round_id")
+    _require_equal(round_id, "ROUND10", "round10_round_id")
+    _require_equal(
+        entry.get("projection_type"),
+        "ROUND10_MULTI_COMPANY_NO_MATERIAL_UTILITY",
+        "round10_projection_type",
+    )
+    _require_equal(
+        completion.get("schema_version"),
+        "enterprise-judgment-round10-batch-completion.v1",
+        "round10_completion_schema",
+    )
+    _require_equal(
+        completion.get("completion_status"),
+        "ROUND10_COMPLETE_NO_METHOD_TRANSFER",
+        "round10_completion_status",
+    )
+    if review is None:
+        raise LearningReadModelError("round10_independent_review_missing")
+    _require_equal(
+        review.get("schema_version"),
+        "enterprise-judgment-round10-external-method-review.v1",
+        "round10_review_schema",
+    )
+    _require_equal(review.get("review_id"), completion.get("review_ref"), "round10_review_ref")
+    _require_equal(review.get("review_status"), "NO_MATERIAL_UTILITY", "round10_review_status")
+    _require_equal(review.get("accepted_treatment_delta_ids"), [], "round10_accepted_treatment_deltas")
+    _require_equal(review.get("utility_basis"), None, "round10_utility_basis")
+    _require_equal(completion.get("method_utility_status"), "NO_MATERIAL_UTILITY", "round10_method_status")
+    _require_equal(completion.get("method_transfer"), "NOT_AUTHORIZED", "round10_transfer_status")
+    _assert_closed_rights(completion, "ROUND10_completion")
+    _assert_closed_rights(review, "ROUND10_review")
+
+    expected_company_ids = _list_text(entry.get("company_ids"))
+    if not expected_company_ids:
+        raise LearningReadModelError("round10_company_ids_missing")
+    company_rows = [_mapping(item) for item in _items(completion.get("field_outcome_summary"))]
+    actual_company_ids = [_required_text(item.get("company_id"), "round10_company_id") for item in company_rows]
+    _require_equal(actual_company_ids, expected_company_ids, "round10_company_roster")
+
+    treatment_deltas = [_mapping(item) for item in _items(review.get("treatment_delta_ledger"))]
+    if len(treatment_deltas) != 1:
+        raise LearningReadModelError("round10_treatment_delta_ledger_invalid")
+    treatment_delta = treatment_deltas[0]
+    _required_text(treatment_delta.get("treatment_delta_id"), "round10_treatment_delta_id")
+    _require_equal(treatment_delta.get("method_advantage_count"), 1, "round10_treatment_delta_count")
+    _require_equal(
+        treatment_delta.get("status"),
+        "ONE_BATCH_LEVEL_REVIEW_CANDIDATE_ONLY",
+        "round10_treatment_delta_status",
+    )
+    application_company_ids = _list_text(treatment_delta.get("application_company_ids"))
+    if len(application_company_ids) != len(set(application_company_ids)):
+        raise LearningReadModelError("round10_treatment_delta_application_duplicate")
+
+    observed = 0
+    mismatched = 0
+    for company in company_rows:
+        settled_count = company.get("mechanically_settled_field_count")
+        mismatch_count = company.get("measurement_mismatch_field_count")
+        if not isinstance(settled_count, int) or settled_count < 0:
+            raise LearningReadModelError("round10_settled_count_invalid")
+        if not isinstance(mismatch_count, int) or mismatch_count < 0:
+            raise LearningReadModelError("round10_mismatch_count_invalid")
+        if settled_count + mismatch_count != 3:
+            raise LearningReadModelError("round10_company_field_denominator_invalid")
+        expected_terminal = "MECHANICALLY_SETTLED" if settled_count else "MEASUREMENT_MISMATCH"
+        _require_equal(company.get("terminal_state"), expected_terminal, "round10_terminal_state")
+        observed += settled_count
+        mismatched += mismatch_count
+    _require_equal(observed, completion.get("mechanically_settled_field_count"), "round10_observed_total")
+    _require_equal(mismatched, completion.get("measurement_mismatch_field_count"), "round10_mismatch_total")
+    _require_equal(
+        application_company_ids,
+        [
+            str(company["company_id"])
+            for company in company_rows
+            if int(company["mechanically_settled_field_count"]) > 0
+        ],
+        "round10_treatment_delta_applications",
+    )
+
+    review_summary = _mapping(review.get("terminal_field_summary"))
+    _require_equal(list(review_summary), expected_company_ids, "round10_review_company_roster")
+    for company in company_rows:
+        company_id = str(company["company_id"])
+        summary = _mapping(review_summary.get(company_id))
+        _require_equal(summary.get("terminal_state"), company.get("terminal_state"), "round10_review_terminal_state")
+        fields = _list_text(summary.get("fields"))
+        if len(fields) != 3 or len(set(fields)) != 3:
+            raise LearningReadModelError("round10_review_field_roster_invalid:" + company_id)
+
+    diagnostics = Counter(_diagnostic_statuses(str(entry["projection_type"]), review))
+    root_causes = [_mapping(item) for item in _items(_mapping(review.get("reasoning")).get("root_causes"))]
+    missing_facts = [
+        str(item.get("missing_facts")).strip()
+        for item in root_causes
+        if str(item.get("missing_facts") or "").strip()
+    ]
+    remediations = [
+        str(item.get("remediation")).strip()
+        for item in root_causes
+        if str(item.get("remediation") or "").strip()
+    ]
+    next_requirement = _required_text(
+        completion.get("next_unseen_sample_requirement"),
+        "round10_next_unseen_sample_requirement",
+    )
+    next_evidence = list(dict.fromkeys(remediations or [next_requirement]))
+    measurement_counts = {
+        key: count
+        for key, count in (("MEASUREMENT_MISMATCH", mismatched), ("OBSERVED", observed))
+        if count
+    }
+
+    return {
+        "round_id": round_id,
+        "projection_type": str(entry["projection_type"]),
+        "evidence_id": _required_text(completion.get("completion_receipt_id"), "round10_completion_receipt_id"),
+        "company_id": None,
+        "company_ids": expected_company_ids,
+        "cutoff_at": _required_text(entry.get("cutoff_at"), "round10_cutoff_at"),
+        "source_artifacts": {
+            "preoutcome": _required_text(entry.get("preoutcome_artifact"), "round10_preoutcome_artifact"),
+            "completion": _required_text(entry.get("completion_artifact"), "completion_artifact"),
+            "settlement": None,
+            "independent_review": _required_text(
+                entry.get("independent_review_artifact"),
+                "independent_review_artifact",
+            ),
+            "invalidation": None,
+        },
+        "independent_review_present": True,
+        "pipeline_proof": {
+            "status": "ACCEPTED",
+            "strict_level": "L1",
+            "statement": (
+                f"{observed + mismatched} frozen issuer-level fields reached a terminal lifecycle state across "
+                f"{len(expected_company_ids)} companies: {observed} were mechanically settled and {mismatched} "
+                "remained measurement mismatches."
+            ),
+        },
+        "measurement_denominator": {
+            "total_cells": observed + mismatched,
+            "status_counts": measurement_counts,
+        },
+        "diagnostic_denominator": {
+            "total_findings": sum(diagnostics.values()),
+            "status_counts": dict(sorted(diagnostics.items())),
+        },
+        "company_cutoff_counts": {
+            "total": len(expected_company_ids),
+            "with_mechanical_observation": sum(
+                int(company["mechanically_settled_field_count"]) > 0 for company in company_rows
+            ),
+            "mismatch_only": sum(
+                int(company["mechanically_settled_field_count"]) == 0 for company in company_rows
+            ),
+        },
+        "strict_level_ceiling": "L1",
+        "rights": {right: "NOT_AUTHORIZED" for right in DOWNSTREAM_RIGHTS},
+        "company_finding": {
+            "status": "ACCEPTED_BATCH_EVIDENCE_BOUNDARY",
+            "statement": (
+                "Huadi and Zhejiang Meida each add three replayable issuer-level FY2019 fields. Robam remains a "
+                "three-field measurement mismatch because its ORIGINAL_ONLY annual-report version family was not "
+                "uniquely resolved. None of these states proves customer response, action effect, unit economics, "
+                "or ordinary-share owner cash."
+            ),
+        },
+        "measurement_learning": {
+            "status": "SUPPORTED",
+            "statement": (
+                "Field-level settlement lets observable issuer facts proceed while annual-report version ambiguity "
+                "remains an explicit measurement mismatch instead of becoming a business judgment."
+            ),
+        },
+        "method_utility": {
+            "status": "NO_MATERIAL_UTILITY",
+            "statement": str(_mapping(review.get("reasoning")).get("decision") or ""),
+        },
+        "transfer_evidence": {
+            "status": "NOT_ESTABLISHED",
+            "statement": "No treatment delta was independently accepted, so this batch creates no method-transfer evidence.",
+        },
+        "invalidated_evidence": None,
+        "what_remains_unproved": missing_facts,
+        "next_evidence": next_evidence,
+    }
+
+
 def _project_entry(repo_root: Path, entry: dict[str, Any]) -> dict[str, Any]:
     completion = _load_json(repo_root, _required_text(entry.get("completion_artifact"), "completion_artifact"))
-    settlement = _load_json(repo_root, _required_text(entry.get("settlement_artifact"), "settlement_artifact"))
     review = _load_json(repo_root, str(entry.get("independent_review_artifact") or ""), required=False)
     invalidation = _load_json(repo_root, str(entry.get("invalidation_artifact") or ""), required=False)
-    assert completion is not None and settlement is not None
+    assert completion is not None
+
+    if entry.get("projection_type") == "ROUND10_MULTI_COMPANY_NO_MATERIAL_UTILITY":
+        return _project_round10_entry(entry, completion, review)
+
+    settlement = _load_json(repo_root, _required_text(entry.get("settlement_artifact"), "settlement_artifact"))
+    assert settlement is not None
 
     projection = _base_projection(entry, completion, settlement, review)
     projection_type = projection["projection_type"]
@@ -441,6 +656,15 @@ def build_learning_read_model(
     method_statuses = Counter(str(_mapping(item.get("method_utility")).get("status")) for item in entries)
     transfer_statuses = Counter(str(_mapping(item.get("transfer_evidence")).get("status")) for item in entries)
     rights = {right: "NOT_AUTHORIZED" for right in DOWNSTREAM_RIGHTS}
+    company_cutoffs = sum(int(_mapping(item.get("company_cutoff_counts")).get("total") or 0) for item in entries)
+    company_cutoff_settlements = sum(
+        int(_mapping(item.get("company_cutoff_counts")).get("with_mechanical_observation") or 0)
+        for item in entries
+    )
+    mismatch_only_company_cutoffs = sum(
+        int(_mapping(item.get("company_cutoff_counts")).get("mismatch_only") or 0)
+        for item in entries
+    )
 
     levels = [
         {"level": "K0", "status": "AVAILABLE", "definition": LEVEL_DEFINITIONS["K0"],
@@ -448,7 +672,10 @@ def build_learning_read_model(
         {"level": "L0", "status": "SUBSTANTIATED_FOR_RECORDED_EPISODES", "definition": LEVEL_DEFINITIONS["L0"],
          "basis": "All projected entries preserve closed rights and explicit unresolved outcomes."},
         {"level": "L1", "status": "SUBSTANTIATED_FOR_RECORDED_EPISODES", "definition": LEVEL_DEFINITIONS["L1"],
-         "basis": f"{len(entries)} company-cutoff settlements contain structured cell-level outcomes."},
+         "basis": (
+             f"{company_cutoff_settlements} of {company_cutoffs} recorded company-cutoffs contain at least one "
+             f"mechanically observed field; {mismatch_only_company_cutoffs} mismatch-only cutoff remains explicit."
+         )},
         {"level": "L2", "status": "NOT_ESTABLISHED", "definition": LEVEL_DEFINITIONS["L2"],
          "basis": "No accepted same-pair A_ONLY/B_ONLY/MIXED/NOT_DIAGNOSTIC receipt under an original frozen predicate is present."},
         {"level": "L3", "status": "NOT_ESTABLISHED", "definition": LEVEL_DEFINITIONS["L3"],
@@ -468,9 +695,10 @@ def build_learning_read_model(
         "current_ceiling": {
             "strict_validation_level": "L1",
             "investor_statement": (
-                "Turtle can repeatedly obtain and settle real company outcomes, and it has produced bounded company and "
-                "development-method findings. It has not yet proved a diagnostic mechanism choice, transferable judgment "
-                "method, or relative method advantage."
+                f"Turtle has mechanically observed real fields for {company_cutoff_settlements} company-cutoffs while "
+                "preserving unresolved cases, and it has produced bounded company and development-method findings. It "
+                "has not yet proved a diagnostic mechanism choice, transferable judgment method, or relative method "
+                "advantage."
             ),
             "next_unmet_level": "L2",
             "evidence_needed": [
@@ -482,7 +710,10 @@ def build_learning_read_model(
         "validation_ladder": levels,
         "evidence_inventory": entries,
         "evidence_counts": {
-            "recorded_company_cutoff_settlements": len(entries),
+            "recorded_evidence_batches": len(entries),
+            "recorded_company_cutoffs": company_cutoffs,
+            "recorded_company_cutoff_settlements": company_cutoff_settlements,
+            "mismatch_only_company_cutoffs": mismatch_only_company_cutoffs,
             "method_utility_statuses": dict(sorted(method_statuses.items())),
             "transfer_evidence_statuses": dict(sorted(transfer_statuses.items())),
         },
@@ -496,6 +727,7 @@ def build_learning_read_model(
                 "Several bounded company findings changed what an investor should and should not credit to management.",
                 "Round 6 and Round 7 provide positive development utility, while Round 8 honestly records no proved advantage.",
                 "Round 9 outcome facts survive even though its method comparison is invalidated.",
+                "Round 10 adds six issuer-level observations and three explicit version-route mismatches, but no material utility for the eight-dimensional method.",
             ],
             "not_proved": [
                 "A selected enterprise mechanism has passed formal L2/L3 validation.",
@@ -532,6 +764,11 @@ def validate_learning_read_model(read_model: dict[str, Any]) -> dict[str, Any]:
             findings.append("round8_method_status_invalid")
         if row.get("round_id") == "ROUND9" and not str(method_status).startswith("INVALIDATED"):
             findings.append("round9_method_status_invalid")
+        if row.get("round_id") == "ROUND10":
+            if method_status != "NO_MATERIAL_UTILITY":
+                findings.append("round10_method_status_invalid")
+            if row.get("company_id") is not None or len(_items(row.get("company_ids"))) != 3:
+                findings.append("round10_company_scope_invalid")
     return {"valid": not findings, "findings": findings}
 
 

@@ -54,6 +54,14 @@
         {"next_evidence_index": 4, "disposition": "INVALIDATION_REMEDIATION_ONLY"}
       ],
       "rationale": "The method comparison is invalid; its actions stay inside the quarantine and new-epoch remediation boundary."
+    },
+    {
+      "round_id": "ROUND10",
+      "dispositions": [
+        {"next_evidence_index": 1, "disposition": "CANDIDATE_RESEARCH_RULE"},
+        {"next_evidence_index": 2, "disposition": "CANDIDATE_RESEARCH_RULE"}
+      ],
+      "rationale": "The valid no-material-utility result may improve the next evidence and version-route design, but it supplies no company conclusion or method credit."
     }
   ]
 }

@@ -34,6 +34,7 @@ POLICY_SCHEMA_VERSION = "investor-judgment-research-agenda-policy.v1"
 ALLOWED_OUTPUTS = ["RESEARCH_AGENDA_ONLY"]
 REUSABLE_METHOD_STATUSES = {"POSITIVE_DEVELOPMENT_UTILITY"}
 LOCAL_LESSON_STATUSES = {"ACCEPTED_LOCAL_FINDING"}
+NEGATIVE_METHOD_STATUSES = {"NO_ADVANTAGE_PROVED", "NO_MATERIAL_UTILITY"}
 POLICY_DISPOSITIONS = {
     "CANDIDATE_RESEARCH_RULE",
     "COMPANY_CONTINUATION_ONLY",
@@ -73,6 +74,9 @@ def _company_context(entry: dict[str, Any]) -> dict[str, Any] | None:
     finding = _mapping(entry.get("company_finding"))
     status = str(finding.get("status") or "")
     if not status.startswith("ACCEPTED_"):
+        return None
+    company_ids = _items(entry.get("company_ids"))
+    if len(company_ids) != 1 or entry.get("company_id") != company_ids[0]:
         return None
     return {
         "context_id": "CONTEXT:" + _required_text(entry.get("evidence_id"), "evidence_id"),
@@ -162,8 +166,12 @@ def _candidate_rules(entry: dict[str, Any], policy_entry: dict[str, Any]) -> lis
     elif method_status in REUSABLE_METHOD_STATUSES:
         rule_status = "DEVELOPMENT_UTILITY_REPLICATION_REQUIRED"
         evidence_class = "POSITIVE_DEVELOPMENT_METHOD_UTILITY"
-    elif method_status == "NO_ADVANTAGE_PROVED":
-        rule_status = "NO_ADVANTAGE_REDESIGN_REQUIRED"
+    elif method_status in NEGATIVE_METHOD_STATUSES:
+        rule_status = (
+            "NO_MATERIAL_UTILITY_REDESIGN_REQUIRED"
+            if method_status == "NO_MATERIAL_UTILITY"
+            else "NO_ADVANTAGE_REDESIGN_REQUIRED"
+        )
         evidence_class = "VALID_NEGATIVE_METHOD_OR_MEASUREMENT_LESSON"
     else:
         return []
@@ -214,7 +222,7 @@ def _company_continuations(entry: dict[str, Any], policy_entry: dict[str, Any]) 
 def _method_caution(entry: dict[str, Any]) -> dict[str, Any] | None:
     method = _mapping(entry.get("method_utility"))
     status = str(method.get("status") or "")
-    if status != "NO_ADVANTAGE_PROVED":
+    if status not in NEGATIVE_METHOD_STATUSES:
         return None
     return {
         "caution_id": "METHOD-CAUTION:" + _required_text(entry.get("evidence_id"), "evidence_id"),
@@ -223,7 +231,7 @@ def _method_caution(entry: dict[str, Any]) -> dict[str, Any] | None:
         "statement": str(method.get("statement") or ""),
         "research_effect": (
             "Do not credit the enhanced method with material utility. A new unseen episode needs separate frozen "
-            "Baseline and Enhanced resolution rules."
+            "Baseline and Enhanced resolution rules plus a field that can actually distinguish their treatment."
         ),
     }
 
@@ -371,12 +379,13 @@ def validate_research_agenda(agenda: dict[str, Any]) -> dict[str, Any]:
         "LOCAL_LESSON_REPLICATION_REQUIRED",
         "DEVELOPMENT_UTILITY_REPLICATION_REQUIRED",
         "NO_ADVANTAGE_REDESIGN_REQUIRED",
+        "NO_MATERIAL_UTILITY_REDESIGN_REQUIRED",
     }
     for rule in _items(agenda.get("candidate_research_rules")):
         row = _mapping(rule)
         if row.get("status") not in allowed_rule_statuses:
             findings.append("candidate_rule_status_invalid:" + str(row.get("rule_candidate_id") or "UNKNOWN"))
-    if any(_mapping(item).get("status") != "NO_ADVANTAGE_PROVED" for item in _items(agenda.get("method_cautions"))):
+    if any(_mapping(item).get("status") not in NEGATIVE_METHOD_STATUSES for item in _items(agenda.get("method_cautions"))):
         findings.append("method_caution_status_invalid")
     if any(not str(_mapping(item).get("status") or "").startswith("INVALIDATED")
            for item in _items(agenda.get("quarantined_evidence"))):
