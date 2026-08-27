@@ -44,10 +44,14 @@ def test_source_register_is_static_cutoff_before_and_page_bound() -> None:
     cutoffs = {entry["cutoff_id"]: entry["cutoff_at"][:10] for entry in register["cutoffs"]}
 
     assert register["status"] == "E0_E1_RESEARCH_ONLY"
-    assert {"CN:000651", "CN:000333", "CN:600690"} == {
+    assert {"CN:000651", "CN:000333", "CN:600690"} <= {
         source["company_id"] for source in register["sources"]
     }
-    assert len(register["sources"]) >= 6
+    assert {"CN:000921", "CN:600839"} <= {
+        source["company_id"] for source in register["sources"]
+    }
+    assert len({source["company_id"] for source in register["sources"]}) >= 5
+    assert len(register["sources"]) >= 10
     assert register["allowed_outputs"] == ["INDUSTRY_LEARNING_BLOCK_ONLY", "RESEARCH_AGENDA_ONLY"]
 
     for source in register["sources"]:
