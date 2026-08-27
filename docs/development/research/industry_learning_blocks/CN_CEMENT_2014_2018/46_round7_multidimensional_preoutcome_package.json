@@ -1,0 +1,2967 @@
+{
+  "schema_version": "enterprise-judgment-round7-multidimensional-preoutcome.v1",
+  "package_id": "EJMD:CN:CEMENT:600585:20140416:V1",
+  "selection": {
+    "selection_policy": "EARLIEST_UNCONSUMED_IMMUTABLE_COMPANY_CUTOFF_TRANSITION",
+    "source_roster_ref": "EJPF:CN:CEMENT:2014_2018:PRE_OUTCOME:V1",
+    "consumed_transition_ids": [
+      "CCR:000401:20170412:20180422",
+      "CCR:600425:20140416:20150415",
+      "CCR:600585:20170412:20180422",
+      "CCR:600801:20160427:20170412",
+      "CCR:600801:20170412:20180422",
+      "CCR:600802:20140416:20150415",
+      "CCR:600802:20150415:20160427"
+    ],
+    "selected_rank": 3,
+    "transition_id": "CCR:600585:20140416:20150415",
+    "company_id": "CN:600585",
+    "company_cluster_id": "COMPANY_CLUSTER:CN:CEMENT_LISTED:600585",
+    "cutoff_at": "2014-04-16T00:00:00+08:00",
+    "next_cutoff_at": "2015-04-15T00:00:00+08:00",
+    "selection_used_outcome": false,
+    "selection_used_source_convenience": false
+  },
+  "source_packet_receipt": {
+    "schema_version": "enterprise-judgment-source-packet-receipt.v1",
+    "packet_id": "SP:CN600585:20140416:FY2013",
+    "packet_version": 1,
+    "company_id": "CN:600585",
+    "issuer_id": "ISSUER:CN:600585",
+    "cutoff_at": "2014-04-16T00:00:00+08:00",
+    "sources": [
+      {
+        "source_id": "CNINFO:600585:ANN:20140325:63719331",
+        "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+        "official_url": "https://static.cninfo.com.cn/finalpage/2014-03-25/63719331.PDF",
+        "published_on": "2014-03-25",
+        "available_on": "2014-03-25",
+        "availability_timezone": "Asia/Shanghai",
+        "eligibility": "ELIGIBLE",
+        "responsibility_boundary_ids": [
+          "ISSUER_CONSOLIDATED:CN:600585"
+        ],
+        "responsibility_perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+        "unit": "RMB",
+        "access_mode": "REMOTE_OFFICIAL_LOCATOR",
+        "locators": [
+          {
+            "research_question_id": "Q:R7:INITIAL_CONDITIONS",
+            "locator": "FY2013 annual report PDF pp.6,11-13: industry demand, energy-cost exposure, scale, regional sales and product mix."
+          },
+          {
+            "research_question_id": "Q:R7:ACTION_EXECUTION",
+            "locator": "FY2013 annual report PDF pp.11-12,19-20: commissioned lines and mills, acquisitions, environmental retrofit, 2014 plan and named projects."
+          },
+          {
+            "research_question_id": "Q:R7:UNIT_ECONOMICS",
+            "locator": "FY2013 annual report PDF pp.13-14: product gross margin, combined unit cost and fuel/power cost."
+          },
+          {
+            "research_question_id": "Q:R7:CASH_CAPITAL",
+            "locator": "FY2013 annual report PDF pp.15-17 and audited statements: leverage, operating cash, capex and capital commitments."
+          }
+        ]
+      }
+    ],
+    "object_class": "SOURCE_PACKET_RECEIPT",
+    "claim_class": "CUTOFF_ELIGIBLE_SOURCE_RECEIPT",
+    "allowed_outputs": [
+      "SOURCE_PACKET_READ_MODEL",
+      "RESEARCH_AGENDA"
+    ]
+  },
+  "decision_contract": {
+    "schema_version": "turtle-training-decision-contract.v1",
+    "contract_id": "DC:CN600585:20140416:MULTIDIMENSIONAL",
+    "contract_version": 1,
+    "company_id": "CN:600585",
+    "issuer_id": "ISSUER:CN:600585",
+    "cutoff_at": "2014-04-16T00:00:00+08:00",
+    "decision_purpose": "HISTORICAL_TRAINING",
+    "holding_horizon": {
+      "minimum_years": 1,
+      "maximum_years": 5
+    },
+    "permanent_loss_constraints": [
+      {
+        "constraint_id": "PLC:600585:VOLUME_MARGIN_CASH_NOT_MANAGEMENT_EFFECT",
+        "condition": "Industry demand, coal prices, new capacity and acquisitions can jointly improve reported volume, margin and cash without proving superior management or durable economics.",
+        "required_treatment": "Separate initial conditions, implemented action, execution, customer response, unit economics, cash-capital burden and adaptation; preserve causal credit as UNKNOWN unless directly discriminated."
+      }
+    ],
+    "decision_flip_questions": [
+      {
+        "question_id": "DQ:600585:EXTERNAL_VS_INTERNAL",
+        "statement": "How much of the operating improvement survives after separating industry demand, fuel-cost relief, acquisitions and new capacity?",
+        "decision_effect": "Only residual same-boundary evidence can support a stronger enterprise-quality hypothesis."
+      },
+      {
+        "question_id": "DQ:600585:CUSTOMER_UNIT_ECONOMICS",
+        "statement": "Did volume growth carry price-mix realization and unit economics rather than merely added capacity?",
+        "decision_effect": "Growth without customer absorption or unit economics cannot establish a durable competitive advantage."
+      },
+      {
+        "question_id": "DQ:600585:CASH_CAPITAL",
+        "statement": "Did operating progress fund capex and preserve balance-sheet resilience without relying on working-capital timing?",
+        "decision_effect": "Reported earnings that do not transmit to funding capacity have lower long-term owner value."
+      },
+      {
+        "question_id": "DQ:600585:ADAPTATION_LOSS",
+        "statement": "Did management adapt to demand, energy and environmental constraints without creating an irreversible capital-loss path?",
+        "decision_effect": "Adaptation and permanent-loss risk must be assessed separately from one-year performance."
+      }
+    ],
+    "evidence_budget": {
+      "evidence_budget_id": "BUDGET:CN600585:20140416:FY2013",
+      "source_packet_refs": [
+        {
+          "receipt_id": "SP:CN600585:20140416:FY2013",
+          "receipt_version": 1
+        }
+      ]
+    },
+    "price_and_opportunity_cost_policy": "PROHIBITED_FOR_HISTORICAL_TRAINING",
+    "outcome_access": "NONE",
+    "roles": {
+      "judgment_owner_id": "ROLE:CEMENT:ROUND7:JUDGMENT_OWNER",
+      "independent_challenger_id": "ROLE:CEMENT:ROUND7:INDEPENDENT_CHALLENGER",
+      "outcome_custodian_id": "ROLE:CEMENT:ROUND7:OUTCOME_CUSTODIAN"
+    },
+    "object_class": "DECISION_CONTRACT",
+    "claim_class": "EX_ANTE_DECISION_SCOPE",
+    "allowed_outputs": [
+      "CJO_TRAINING_MIRROR",
+      "RESEARCH_AGENDA"
+    ]
+  },
+  "shared_cutoff_facts": [
+    {
+      "fact_id": "FACT:R7:INDUSTRY_TAILWIND",
+      "dimension": "INITIAL_CONDITIONS",
+      "statement": "FY2013 national cement output grew 9.6%, new industry investment fell 6.5%, supply-demand conditions improved and lower coal prices reduced industry production cost.",
+      "evidence_refs": [
+        "CNINFO:600585:ANN:20140325:63719331"
+      ]
+    },
+    {
+      "fact_id": "FACT:R7:SCALE_NETWORK",
+      "dimension": "INITIAL_CONDITIONS",
+      "statement": "At FY2013 year-end the issuer reported 195 million tonnes of clinker capacity, 231 million tonnes of cement capacity and a multi-region delivered-market footprint.",
+      "evidence_refs": [
+        "CNINFO:600585:ANN:20140325:63719331"
+      ]
+    },
+    {
+      "fact_id": "FACT:R7:IMPLEMENTED_EXPANSION",
+      "dimension": "IMPLEMENTED_MANAGEMENT_ACTION",
+      "statement": "During FY2013 the issuer commissioned six clinker lines, 21 cement mills and two aggregate projects, acquired two cement companies and added 11.6 million tonnes of clinker and 24.3 million tonnes of cement capacity.",
+      "evidence_refs": [
+        "CNINFO:600585:ANN:20140325:63719331"
+      ]
+    },
+    {
+      "fact_id": "FACT:R7:EXECUTION_OUTPUT",
+      "dimension": "EXECUTION",
+      "statement": "FY2013 cement-and-clinker net sales volume reached 228 million tonnes, up 21.95%, with western-region volume up 40.17% after new and acquired projects entered operation.",
+      "evidence_refs": [
+        "CNINFO:600585:ANN:20140325:63719331"
+      ]
+    },
+    {
+      "fact_id": "FACT:R7:MIX_AND_CUSTOMER_BOUNDARY",
+      "dimension": "CUSTOMER_COMPETITION_RESPONSE",
+      "statement": "The issuer reduced clinker sales mix and raised 42.5-grade cement mix while regional volume rose; the packet does not directly establish customer retention, market share or price acceptance.",
+      "evidence_refs": [
+        "CNINFO:600585:ANN:20140325:63719331"
+      ]
+    },
+    {
+      "fact_id": "FACT:R7:UNIT_ECONOMICS",
+      "dimension": "UNIT_ECONOMICS",
+      "statement": "Combined unit cost fell 8.84% to RMB158.13 per tonne and combined gross margin rose 5.42 points to 33.42%; the issuer attributed cost relief to both lower coal prices and lower coal consumption.",
+      "evidence_refs": [
+        "CNINFO:600585:ANN:20140325:63719331"
+      ]
+    },
+    {
+      "fact_id": "FACT:R7:CASH_AND_CAPITAL",
+      "dimension": "WORKING_CAPITAL_CASH_CAPITAL",
+      "statement": "Operating cash was RMB15.199 billion, disclosed capital expenditure was RMB7.505 billion and committed equipment capital was RMB10.087 billion; maintenance versus growth capital was not separated.",
+      "evidence_refs": [
+        "CNINFO:600585:ANN:20140325:63719331"
+      ]
+    },
+    {
+      "fact_id": "FACT:R7:BALANCE_RESILIENCE",
+      "dimension": "ADAPTATION_PERMANENT_LOSS",
+      "statement": "Borrowings fell to RMB6.667 billion, outstanding bonds were RMB15.5 billion and the disclosed net-debt ratio was 0.27; one year does not establish permanent-loss resilience.",
+      "evidence_refs": [
+        "CNINFO:600585:ANN:20140325:63719331"
+      ]
+    },
+    {
+      "fact_id": "FACT:R7:ADAPTATION_ACTIONS",
+      "dimension": "ADAPTATION_PERMANENT_LOSS",
+      "statement": "The issuer reported regional sales coordination, procurement scale, benchmarking and 77 completed denitration retrofits, while tighter environmental standards were expected to raise operating cost.",
+      "evidence_refs": [
+        "CNINFO:600585:ANN:20140325:63719331"
+      ]
+    },
+    {
+      "fact_id": "FACT:R7:STRONGEST_RIVAL",
+      "dimension": "STRONGEST_ALTERNATIVE_EXPLANATION",
+      "statement": "Industry demand growth, lower coal prices, acquisitions and newly commissioned capacity can jointly explain much of the reported growth and margin improvement without requiring superior management quality.",
+      "evidence_refs": [
+        "CNINFO:600585:ANN:20140325:63719331"
+      ]
+    }
+  ],
+  "baseline_view": {
+    "method_id": "METHOD:CONSOLIDATED_TREND_AND_MANAGEMENT_NARRATIVE:V1",
+    "evidence_budget_id": "BUDGET:CN600585:20140416:FY2013",
+    "source_packet_refs": [
+      {
+        "receipt_id": "SP:CN600585:20140416:FY2013",
+        "receipt_version": 1
+      }
+    ],
+    "fact_ids": [
+      "FACT:R7:INDUSTRY_TAILWIND",
+      "FACT:R7:SCALE_NETWORK",
+      "FACT:R7:IMPLEMENTED_EXPANSION",
+      "FACT:R7:EXECUTION_OUTPUT",
+      "FACT:R7:MIX_AND_CUSTOMER_BOUNDARY",
+      "FACT:R7:UNIT_ECONOMICS",
+      "FACT:R7:CASH_AND_CAPITAL",
+      "FACT:R7:BALANCE_RESILIENCE",
+      "FACT:R7:ADAPTATION_ACTIONS",
+      "FACT:R7:STRONGEST_RIVAL"
+    ],
+    "enterprise_thesis": "The FY2013 record shows a scaled operator expanding volume, margin and cash while reducing leverage; management execution is a plausible aggregate contributor but not established causally.",
+    "judgment_cells": [
+      {
+        "judgment_id": "JUDGMENT:R7:BASELINE:INITIAL_CONDITIONS",
+        "dimension": "INITIAL_CONDITIONS",
+        "question": "What operating advantages and external tailwinds existed before the next observation window?",
+        "cutoff_assessment": "Large scale and a broad regional footprint coincide with an improving industry backdrop.",
+        "state": "INFERRED",
+        "evidence_refs": [
+          "CNINFO:600585:ANN:20140325:63719331"
+        ],
+        "dependent_outcome_cell_ids": [
+          "CELL:600585:20140416:ISSUER_VS_INDUSTRY_VOLUME_SPREAD"
+        ],
+        "causal_credit": "PARTIAL_CANDIDATE",
+        "next_discriminating_evidence": "FY2014 industry demand and issuer-versus-industry volume spread.",
+        "claim_scope": "ISSUER_AND_ARENA_CONTEXT",
+        "responsibility_boundary_ref": "ARENA:CN:CEMENT:MULTI_REGION_DELIVERED_MARKET"
+      },
+      {
+        "judgment_id": "JUDGMENT:R7:BASELINE:IMPLEMENTED_MANAGEMENT_ACTION",
+        "dimension": "IMPLEMENTED_MANAGEMENT_ACTION",
+        "question": "Which company-wide actions were actually implemented rather than planned or narrated?",
+        "cutoff_assessment": "The management narrative reports expansion, acquisitions, marketing coordination and cost controls as one broad action set.",
+        "state": "OBSERVED",
+        "evidence_refs": [
+          "CNINFO:600585:ANN:20140325:63719331"
+        ],
+        "dependent_outcome_cell_ids": [
+          "CELL:600585:20140416:IMPLEMENTED_ACTION_EVENT"
+        ],
+        "causal_credit": "PARTIAL_CANDIDATE",
+        "next_discriminating_evidence": "Page-located post-cutoff implemented actions, excluding forward plans.",
+        "claim_scope": "ISSUER_IMPLEMENTED_ACTION",
+        "responsibility_boundary_ref": "ISSUER_CONSOLIDATED:CN:600585"
+      },
+      {
+        "judgment_id": "JUDGMENT:R7:BASELINE:EXECUTION",
+        "dimension": "EXECUTION",
+        "question": "Which promised or named operating milestones were delivered, and at what perimeter?",
+        "cutoff_assessment": "Volume, profit and commissioned capacity improved together, suggesting positive aggregate execution.",
+        "state": "INFERRED",
+        "evidence_refs": [
+          "CNINFO:600585:ANN:20140325:63719331"
+        ],
+        "dependent_outcome_cell_ids": [
+          "CELL:600585:20140416:NAMED_PLAN_MILESTONE_DELIVERED",
+          "CELL:600585:20140416:CEMENT_CLINKER_SALES_VOLUME",
+          "CELL:600585:20140416:SALES_VOLUME_PLAN_DELIVERY"
+        ],
+        "causal_credit": "PARTIAL_CANDIDATE",
+        "next_discriminating_evidence": "Named FY2013 plan milestones and same-boundary FY2014 sales-volume delivery.",
+        "claim_scope": "ISSUER_EXECUTION",
+        "responsibility_boundary_ref": "ISSUER_CONSOLIDATED:CN:600585"
+      },
+      {
+        "judgment_id": "JUDGMENT:R7:BASELINE:CUSTOMER_COMPETITION_RESPONSE",
+        "dimension": "CUSTOMER_COMPETITION_RESPONSE",
+        "question": "Did customers absorb output with favorable price-mix and competitive response?",
+        "cutoff_assessment": "Regional volume and higher-grade mix are favorable operating signals, while direct customer response is unavailable.",
+        "state": "MIXED",
+        "evidence_refs": [
+          "CNINFO:600585:ANN:20140325:63719331"
+        ],
+        "dependent_outcome_cell_ids": [
+          "CELL:600585:20140416:DIRECT_CUSTOMER_RESPONSE",
+          "CELL:600585:20140416:REALIZED_REVENUE_PER_TONNE"
+        ],
+        "causal_credit": "UNKNOWN",
+        "next_discriminating_evidence": "Direct customer or market-share evidence plus realized revenue per tonne.",
+        "claim_scope": "CUSTOMER_AND_COMPETITION_RESPONSE",
+        "responsibility_boundary_ref": "ARENA:CN:CEMENT:MULTI_REGION_DELIVERED_MARKET"
+      },
+      {
+        "judgment_id": "JUDGMENT:R7:BASELINE:UNIT_ECONOMICS",
+        "dimension": "UNIT_ECONOMICS",
+        "question": "Did unit economics improve after separating fuel, mix, scale and perimeter effects?",
+        "cutoff_assessment": "Lower unit cost and higher gross margin indicate better aggregate economics.",
+        "state": "OBSERVED",
+        "evidence_refs": [
+          "CNINFO:600585:ANN:20140325:63719331"
+        ],
+        "dependent_outcome_cell_ids": [
+          "CELL:600585:20140416:COMBINED_UNIT_COST",
+          "CELL:600585:20140416:COMBINED_GROSS_MARGIN"
+        ],
+        "causal_credit": "PARTIAL_CANDIDATE",
+        "next_discriminating_evidence": "Same-definition unit cost and gross margin with external cost conditions retained.",
+        "claim_scope": "ISSUER_UNIT_ECONOMICS",
+        "responsibility_boundary_ref": "ISSUER_CONSOLIDATED:CN:600585"
+      },
+      {
+        "judgment_id": "JUDGMENT:R7:BASELINE:WORKING_CAPITAL_CASH_CAPITAL",
+        "dimension": "WORKING_CAPITAL_CASH_CAPITAL",
+        "question": "Did operating progress convert into cash funding capacity after working capital and capex?",
+        "cutoff_assessment": "Operating cash exceeded disclosed capex and leverage fell, but owner cash is not measured.",
+        "state": "MIXED",
+        "evidence_refs": [
+          "CNINFO:600585:ANN:20140325:63719331"
+        ],
+        "dependent_outcome_cell_ids": [
+          "CELL:600585:20140416:ACCOUNTS_RECEIVABLE",
+          "CELL:600585:20140416:INVENTORY",
+          "CELL:600585:20140416:OPERATING_CASH",
+          "CELL:600585:20140416:CASH_CAPEX",
+          "CELL:600585:20140416:OCF_TO_CASH_CAPEX"
+        ],
+        "causal_credit": "UNKNOWN",
+        "next_discriminating_evidence": "Receivable and inventory intensity, operating cash, cash capex and OCF-to-capex.",
+        "claim_scope": "ISSUER_CASH_CAPITAL_NOT_OWNER_CASH",
+        "responsibility_boundary_ref": "ISSUER_CONSOLIDATED:CN:600585"
+      },
+      {
+        "judgment_id": "JUDGMENT:R7:BASELINE:ADAPTATION_PERMANENT_LOSS",
+        "dimension": "ADAPTATION_PERMANENT_LOSS",
+        "question": "Did the company adapt without creating an irreversible capital or financing loss path?",
+        "cutoff_assessment": "Environmental retrofit and geographic expansion suggest adaptation; permanent loss remains unknown.",
+        "state": "MIXED",
+        "evidence_refs": [
+          "CNINFO:600585:ANN:20140325:63719331"
+        ],
+        "dependent_outcome_cell_ids": [
+          "CELL:600585:20140416:NET_DEBT_RATIO",
+          "CELL:600585:20140416:ADAPTATION_ACTION_EVENT",
+          "CELL:600585:20140416:DIRECT_LOSS_EVENT"
+        ],
+        "causal_credit": "UNKNOWN",
+        "next_discriminating_evidence": "Observed adaptation, net-debt movement and direct irreversible-loss events.",
+        "claim_scope": "ISSUER_ADAPTATION_AND_ORDINARY_SHARE_LOSS_BOUNDARY",
+        "responsibility_boundary_ref": "ISSUER_CONSOLIDATED:CN:600585"
+      },
+      {
+        "judgment_id": "JUDGMENT:R7:BASELINE:STRONGEST_ALTERNATIVE_EXPLANATION",
+        "dimension": "STRONGEST_ALTERNATIVE_EXPLANATION",
+        "question": "Can external demand, coal prices, acquisitions and new capacity explain the same outcome?",
+        "cutoff_assessment": "External demand, coal prices, acquisitions and added capacity may explain a material share of the improvement.",
+        "state": "INFERRED",
+        "evidence_refs": [
+          "CNINFO:600585:ANN:20140325:63719331"
+        ],
+        "dependent_outcome_cell_ids": [
+          "CELL:600585:20140416:ISSUER_VS_INDUSTRY_VOLUME_SPREAD",
+          "CELL:600585:20140416:COMBINED_UNIT_COST",
+          "CELL:600585:20140416:COMBINED_GROSS_MARGIN"
+        ],
+        "causal_credit": "NONE",
+        "next_discriminating_evidence": "Joint reading of industry spread, unit cost, margin and capacity/perimeter disclosures.",
+        "claim_scope": "CAUSAL_RIVAL_EXPLANATION",
+        "responsibility_boundary_ref": "ARENA:CN:CEMENT:MULTI_REGION_DELIVERED_MARKET"
+      }
+    ],
+    "interpretation_rule": "Read aggregate issuer trends and management narrative together, while withholding a final management-quality conclusion.",
+    "expected_outcome_cell_ids": [
+      "CELL:600585:20140416:ISSUER_VS_INDUSTRY_VOLUME_SPREAD",
+      "CELL:600585:20140416:IMPLEMENTED_ACTION_EVENT",
+      "CELL:600585:20140416:NAMED_PLAN_MILESTONE_DELIVERED",
+      "CELL:600585:20140416:DIRECT_CUSTOMER_RESPONSE",
+      "CELL:600585:20140416:CEMENT_CLINKER_SALES_VOLUME",
+      "CELL:600585:20140416:SALES_VOLUME_PLAN_DELIVERY",
+      "CELL:600585:20140416:REALIZED_REVENUE_PER_TONNE",
+      "CELL:600585:20140416:COMBINED_UNIT_COST",
+      "CELL:600585:20140416:COMBINED_GROSS_MARGIN",
+      "CELL:600585:20140416:ACCOUNTS_RECEIVABLE",
+      "CELL:600585:20140416:INVENTORY",
+      "CELL:600585:20140416:OPERATING_CASH",
+      "CELL:600585:20140416:CASH_CAPEX",
+      "CELL:600585:20140416:OCF_TO_CASH_CAPEX",
+      "CELL:600585:20140416:NET_DEBT_RATIO",
+      "CELL:600585:20140416:ADAPTATION_ACTION_EVENT",
+      "CELL:600585:20140416:DIRECT_LOSS_EVENT"
+    ],
+    "prohibited_inferences": [
+      "No one-year management-quality score.",
+      "No action effect from issuer-wide outcome direction alone.",
+      "No owner cash, moat or permanent-loss conclusion from an accounting proxy."
+    ]
+  },
+  "enhanced_view": {
+    "method_id": "METHOD:CUMULATIVE_ENTERPRISE_JUDGMENT_CHAIN:V1",
+    "evidence_budget_id": "BUDGET:CN600585:20140416:FY2013",
+    "source_packet_refs": [
+      {
+        "receipt_id": "SP:CN600585:20140416:FY2013",
+        "receipt_version": 1
+      }
+    ],
+    "fact_ids": [
+      "FACT:R7:INDUSTRY_TAILWIND",
+      "FACT:R7:SCALE_NETWORK",
+      "FACT:R7:IMPLEMENTED_EXPANSION",
+      "FACT:R7:EXECUTION_OUTPUT",
+      "FACT:R7:MIX_AND_CUSTOMER_BOUNDARY",
+      "FACT:R7:UNIT_ECONOMICS",
+      "FACT:R7:CASH_AND_CAPITAL",
+      "FACT:R7:BALANCE_RESILIENCE",
+      "FACT:R7:ADAPTATION_ACTIONS",
+      "FACT:R7:STRONGEST_RIVAL"
+    ],
+    "enterprise_thesis": "The FY2013 record shows a scaled operator expanding volume, margin and cash while reducing leverage; the evidence does not yet distinguish external tailwinds, acquired capacity, execution skill, customer response and cash economics well enough to rate management or durability.",
+    "judgment_cells": [
+      {
+        "judgment_id": "JUDGMENT:R7:ENHANCED:INITIAL_CONDITIONS",
+        "dimension": "INITIAL_CONDITIONS",
+        "question": "What operating advantages and external tailwinds existed before the next observation window?",
+        "cutoff_assessment": "Scale, multi-region distribution and balance-sheet capacity are initial advantages, while demand growth and cheaper coal are external tailwinds that must be removed from management credit.",
+        "state": "MIXED",
+        "evidence_refs": [
+          "CNINFO:600585:ANN:20140325:63719331"
+        ],
+        "dependent_outcome_cell_ids": [
+          "CELL:600585:20140416:ISSUER_VS_INDUSTRY_VOLUME_SPREAD"
+        ],
+        "causal_credit": "NONE",
+        "next_discriminating_evidence": "FY2014 industry demand and issuer-versus-industry volume spread.",
+        "claim_scope": "ISSUER_AND_ARENA_CONTEXT",
+        "responsibility_boundary_ref": "ARENA:CN:CEMENT:MULTI_REGION_DELIVERED_MARKET"
+      },
+      {
+        "judgment_id": "JUDGMENT:R7:ENHANCED:IMPLEMENTED_MANAGEMENT_ACTION",
+        "dimension": "IMPLEMENTED_MANAGEMENT_ACTION",
+        "question": "Which company-wide actions were actually implemented rather than planned or narrated?",
+        "cutoff_assessment": "Commissioned capacity, completed acquisitions, mix management, procurement and environmental retrofit are separately observed actions; the FY2014 plan is not an action.",
+        "state": "OBSERVED",
+        "evidence_refs": [
+          "CNINFO:600585:ANN:20140325:63719331"
+        ],
+        "dependent_outcome_cell_ids": [
+          "CELL:600585:20140416:IMPLEMENTED_ACTION_EVENT"
+        ],
+        "causal_credit": "PARTIAL_CANDIDATE",
+        "next_discriminating_evidence": "Page-located post-cutoff implemented actions, excluding forward plans.",
+        "claim_scope": "ISSUER_IMPLEMENTED_ACTION",
+        "responsibility_boundary_ref": "ISSUER_CONSOLIDATED:CN:600585"
+      },
+      {
+        "judgment_id": "JUDGMENT:R7:ENHANCED:EXECUTION",
+        "dimension": "EXECUTION",
+        "question": "Which promised or named operating milestones were delivered, and at what perimeter?",
+        "cutoff_assessment": "Physical project delivery and volume growth are observed, but acquired and new capacity prevent organic execution from being isolated.",
+        "state": "MIXED",
+        "evidence_refs": [
+          "CNINFO:600585:ANN:20140325:63719331"
+        ],
+        "dependent_outcome_cell_ids": [
+          "CELL:600585:20140416:NAMED_PLAN_MILESTONE_DELIVERED",
+          "CELL:600585:20140416:CEMENT_CLINKER_SALES_VOLUME",
+          "CELL:600585:20140416:SALES_VOLUME_PLAN_DELIVERY"
+        ],
+        "causal_credit": "UNKNOWN",
+        "next_discriminating_evidence": "Named FY2013 plan milestones and same-boundary FY2014 sales-volume delivery.",
+        "claim_scope": "ISSUER_EXECUTION",
+        "responsibility_boundary_ref": "ISSUER_CONSOLIDATED:CN:600585"
+      },
+      {
+        "judgment_id": "JUDGMENT:R7:ENHANCED:CUSTOMER_COMPETITION_RESPONSE",
+        "dimension": "CUSTOMER_COMPETITION_RESPONSE",
+        "question": "Did customers absorb output with favorable price-mix and competitive response?",
+        "cutoff_assessment": "Regional volume and mix show product absorption, but customer retention, market share and price acceptance remain UNKNOWN.",
+        "state": "MIXED",
+        "evidence_refs": [
+          "CNINFO:600585:ANN:20140325:63719331"
+        ],
+        "dependent_outcome_cell_ids": [
+          "CELL:600585:20140416:DIRECT_CUSTOMER_RESPONSE",
+          "CELL:600585:20140416:REALIZED_REVENUE_PER_TONNE"
+        ],
+        "causal_credit": "NONE",
+        "next_discriminating_evidence": "Direct customer or market-share evidence plus realized revenue per tonne.",
+        "claim_scope": "CUSTOMER_AND_COMPETITION_RESPONSE",
+        "responsibility_boundary_ref": "ARENA:CN:CEMENT:MULTI_REGION_DELIVERED_MARKET"
+      },
+      {
+        "judgment_id": "JUDGMENT:R7:ENHANCED:UNIT_ECONOMICS",
+        "dimension": "UNIT_ECONOMICS",
+        "question": "Did unit economics improve after separating fuel, mix, scale and perimeter effects?",
+        "cutoff_assessment": "Unit cost and margin improved, but coal-price relief, fuel efficiency, mix and perimeter contributions cannot yet be separated.",
+        "state": "MIXED",
+        "evidence_refs": [
+          "CNINFO:600585:ANN:20140325:63719331"
+        ],
+        "dependent_outcome_cell_ids": [
+          "CELL:600585:20140416:COMBINED_UNIT_COST",
+          "CELL:600585:20140416:COMBINED_GROSS_MARGIN"
+        ],
+        "causal_credit": "NONE",
+        "next_discriminating_evidence": "Same-definition unit cost and gross margin with external cost conditions retained.",
+        "claim_scope": "ISSUER_UNIT_ECONOMICS",
+        "responsibility_boundary_ref": "ISSUER_CONSOLIDATED:CN:600585"
+      },
+      {
+        "judgment_id": "JUDGMENT:R7:ENHANCED:WORKING_CAPITAL_CASH_CAPITAL",
+        "dimension": "WORKING_CAPITAL_CASH_CAPITAL",
+        "question": "Did operating progress convert into cash funding capacity after working capital and capex?",
+        "cutoff_assessment": "Operating cash funded disclosed capex in aggregate, but working-capital timing and maintenance-versus-growth capital prevent owner-cash attribution.",
+        "state": "MIXED",
+        "evidence_refs": [
+          "CNINFO:600585:ANN:20140325:63719331"
+        ],
+        "dependent_outcome_cell_ids": [
+          "CELL:600585:20140416:ACCOUNTS_RECEIVABLE",
+          "CELL:600585:20140416:INVENTORY",
+          "CELL:600585:20140416:OPERATING_CASH",
+          "CELL:600585:20140416:CASH_CAPEX",
+          "CELL:600585:20140416:OCF_TO_CASH_CAPEX"
+        ],
+        "causal_credit": "NONE",
+        "next_discriminating_evidence": "Receivable and inventory intensity, operating cash, cash capex and OCF-to-capex.",
+        "claim_scope": "ISSUER_CASH_CAPITAL_NOT_OWNER_CASH",
+        "responsibility_boundary_ref": "ISSUER_CONSOLIDATED:CN:600585"
+      },
+      {
+        "judgment_id": "JUDGMENT:R7:ENHANCED:ADAPTATION_PERMANENT_LOSS",
+        "dimension": "ADAPTATION_PERMANENT_LOSS",
+        "question": "Did the company adapt without creating an irreversible capital or financing loss path?",
+        "cutoff_assessment": "The issuer adapted operations and environmental equipment while retaining funding capacity; persistence and irreversible-loss conditions remain UNKNOWN.",
+        "state": "MIXED",
+        "evidence_refs": [
+          "CNINFO:600585:ANN:20140325:63719331"
+        ],
+        "dependent_outcome_cell_ids": [
+          "CELL:600585:20140416:NET_DEBT_RATIO",
+          "CELL:600585:20140416:ADAPTATION_ACTION_EVENT",
+          "CELL:600585:20140416:DIRECT_LOSS_EVENT"
+        ],
+        "causal_credit": "NONE",
+        "next_discriminating_evidence": "Observed adaptation, net-debt movement and direct irreversible-loss events.",
+        "claim_scope": "ISSUER_ADAPTATION_AND_ORDINARY_SHARE_LOSS_BOUNDARY",
+        "responsibility_boundary_ref": "ISSUER_CONSOLIDATED:CN:600585"
+      },
+      {
+        "judgment_id": "JUDGMENT:R7:ENHANCED:STRONGEST_ALTERNATIVE_EXPLANATION",
+        "dimension": "STRONGEST_ALTERNATIVE_EXPLANATION",
+        "question": "Can external demand, coal prices, acquisitions and new capacity explain the same outcome?",
+        "cutoff_assessment": "A joint external-and-perimeter explanation is currently at least as strong as a superior-management explanation and must be tested first.",
+        "state": "INFERRED",
+        "evidence_refs": [
+          "CNINFO:600585:ANN:20140325:63719331"
+        ],
+        "dependent_outcome_cell_ids": [
+          "CELL:600585:20140416:ISSUER_VS_INDUSTRY_VOLUME_SPREAD",
+          "CELL:600585:20140416:COMBINED_UNIT_COST",
+          "CELL:600585:20140416:COMBINED_GROSS_MARGIN"
+        ],
+        "causal_credit": "NONE",
+        "next_discriminating_evidence": "Joint reading of industry spread, unit cost, margin and capacity/perimeter disclosures.",
+        "claim_scope": "CAUSAL_RIVAL_EXPLANATION",
+        "responsibility_boundary_ref": "ARENA:CN:CEMENT:MULTI_REGION_DELIVERED_MARKET"
+      }
+    ],
+    "interpretation_rule": "Read the chain in order: initial conditions -> implemented action -> execution -> customer response -> unit economics -> cash/capital -> adaptation/loss; test the strongest rival before causal credit.",
+    "expected_outcome_cell_ids": [
+      "CELL:600585:20140416:ISSUER_VS_INDUSTRY_VOLUME_SPREAD",
+      "CELL:600585:20140416:IMPLEMENTED_ACTION_EVENT",
+      "CELL:600585:20140416:NAMED_PLAN_MILESTONE_DELIVERED",
+      "CELL:600585:20140416:DIRECT_CUSTOMER_RESPONSE",
+      "CELL:600585:20140416:CEMENT_CLINKER_SALES_VOLUME",
+      "CELL:600585:20140416:SALES_VOLUME_PLAN_DELIVERY",
+      "CELL:600585:20140416:REALIZED_REVENUE_PER_TONNE",
+      "CELL:600585:20140416:COMBINED_UNIT_COST",
+      "CELL:600585:20140416:COMBINED_GROSS_MARGIN",
+      "CELL:600585:20140416:ACCOUNTS_RECEIVABLE",
+      "CELL:600585:20140416:INVENTORY",
+      "CELL:600585:20140416:OPERATING_CASH",
+      "CELL:600585:20140416:CASH_CAPEX",
+      "CELL:600585:20140416:OCF_TO_CASH_CAPEX",
+      "CELL:600585:20140416:NET_DEBT_RATIO",
+      "CELL:600585:20140416:ADAPTATION_ACTION_EVENT",
+      "CELL:600585:20140416:DIRECT_LOSS_EVENT"
+    ],
+    "prohibited_inferences": [
+      "No one-year management-quality score.",
+      "No action effect from issuer-wide outcome direction alone.",
+      "No owner cash, moat or permanent-loss conclusion from an accounting proxy."
+    ]
+  },
+  "decision_utility_pairing": {
+    "schema_version": "turtle-decision-utility-pairing.v1",
+    "pairing_id": "DUPAIR:CN600585:20140416:R7:V1",
+    "decision_contract_ref": {
+      "contract_id": "DC:CN600585:20140416:MULTIDIMENSIONAL",
+      "contract_version": 1
+    },
+    "baseline": {
+      "method_id": "METHOD:CONSOLIDATED_TREND_AND_MANAGEMENT_NARRATIVE:V1",
+      "decision_status": "RESEARCH",
+      "material_unknown_ids": [
+        "UNKNOWN:ACTION_EFFECT",
+        "UNKNOWN:CUSTOMER_RESPONSE",
+        "UNKNOWN:OWNER_CASH",
+        "UNKNOWN:PERMANENT_LOSS"
+      ],
+      "evidence_budget_id": "BUDGET:CN600585:20140416:FY2013",
+      "source_packet_refs": [
+        {
+          "receipt_id": "SP:CN600585:20140416:FY2013",
+          "receipt_version": 1
+        }
+      ],
+      "research_cost_hours": 0
+    },
+    "enhanced": {
+      "method_id": "METHOD:CUMULATIVE_ENTERPRISE_JUDGMENT_CHAIN:V1",
+      "decision_status": "RESEARCH",
+      "material_unknown_ids": [
+        "UNKNOWN:EXTERNAL_VS_INTERNAL",
+        "UNKNOWN:ORGANIC_EXECUTION",
+        "UNKNOWN:DIRECT_CUSTOMER_RESPONSE",
+        "UNKNOWN:UNIT_ECONOMIC_ATTRIBUTION",
+        "UNKNOWN:OWNER_CASH",
+        "UNKNOWN:ADAPTATION_PERSISTENCE",
+        "UNKNOWN:PERMANENT_LOSS"
+      ],
+      "evidence_budget_id": "BUDGET:CN600585:20140416:FY2013",
+      "source_packet_refs": [
+        {
+          "receipt_id": "SP:CN600585:20140416:FY2013",
+          "receipt_version": 1
+        }
+      ],
+      "research_cost_hours": 0
+    },
+    "frozen_at": "2026-08-27T08:30:00+00:00",
+    "object_class": "DECISION_UTILITY_PAIRING",
+    "claim_class": "SAME_CONTRACT_METHOD_ABLATION",
+    "allowed_outputs": [
+      "DECISION_UTILITY_EVALUATION_ONLY",
+      "RESEARCH_AGENDA"
+    ]
+  },
+  "outcome_measurement_contract": {
+    "schema_version": "enterprise-outcome-measurement-contract.v3",
+    "contract_set_id": "OMC:CN600585:20140416:MULTIDIMENSIONAL:V3",
+    "package_ref": "EJMD:CN:CEMENT:600585:20140416:V1",
+    "company_id": "CN:600585",
+    "cutoff_at": "2014-04-16T00:00:00+08:00",
+    "outcome_window": {
+      "period_start": "2014-04-17T00:00:00+08:00",
+      "period_end": "2014-12-31T23:59:59+08:00",
+      "fiscal_period": "FY2014",
+      "settlement_due_at": "2015-04-16T00:00:00+08:00"
+    },
+    "source_access": {
+      "source_id": "CNINFO:600585:ANN:20150324:1200733224",
+      "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+      "official_url": "https://static.cninfo.com.cn/finalpage/2015-03-24/1200733224.PDF",
+      "published_after_cutoff": true,
+      "access_state": "SEALED_UNTIL_PREOUTCOME_COMMIT",
+      "custodian_access": "OUTCOME_ONLY",
+      "issuer_id": "ISSUER:CN:600585",
+      "report_period_end": "2014-12-31",
+      "availability_precision": "DATE_ONLY",
+      "source_available_at": null,
+      "source_available_date": "2015-03-24",
+      "authorization_receipt_id": "OAA:CN600585:20140416:FY2014:R7:V1"
+    },
+    "atomic_cells": [
+      {
+        "cell_id": "CELL:600585:20140416:ISSUER_VS_INDUSTRY_VOLUME_SPREAD",
+        "thread_id": "THREAD:600585:MARKET_CONTEXT",
+        "layer": "SALES_VOLUME",
+        "outcome_period": {
+          "period_start": "2014-04-17T00:00:00+08:00",
+          "period_end": "2014-12-31T23:59:59+08:00",
+          "fiscal_period": "FY2014"
+        },
+        "measurement_clock": {
+          "clock_kind": "FLOW_PERIOD",
+          "flow_period": {
+            "period_start": "2014-01-01",
+            "period_end": "2014-12-31",
+            "fiscal_period": "FY2014"
+          }
+        },
+        "responsibility_boundary": {
+          "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600585",
+          "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+          "arena_id": "ARENA:CN:CEMENT:MULTI_REGION_DELIVERED_MARKET",
+          "scope_requirement": "industry context and issuer state are compared descriptively, never as a causal control"
+        },
+        "field_identity": {
+          "outcome_field_id": "FIELD:600585:FY2014:ISSUER_VS_INDUSTRY_VOLUME_SPREAD_SECOND",
+          "baseline_field_id": "FIELD:600585:FY2014:ISSUER_VS_INDUSTRY_VOLUME_SPREAD_FIRST",
+          "statement_scope": "ISSUER_VERSUS_INDUSTRY_CONTEXT",
+          "table_or_note": "FY2014 macro and industry review / FY2014 operating review",
+          "line_item": "issuer cement and clinker net sales volume growth rate minus national cement output growth rate",
+          "field_kind": "CONTEXTUAL_SPREAD"
+        },
+        "unit": {
+          "kind": "ABSOLUTE_CHANGE",
+          "currency": "NOT_APPLICABLE",
+          "scale": "1"
+        },
+        "raw_input_fields": [
+          {
+            "field_id": "FIELD:600585:FY2014:ISSUER_VS_INDUSTRY_VOLUME_SPREAD_FIRST",
+            "role": "BASELINE",
+            "unit": "RATIO",
+            "measurement_clock": {
+              "clock_kind": "FLOW_PERIOD",
+              "flow_period": {
+                "period_start": "2014-01-01",
+                "period_end": "2014-12-31",
+                "fiscal_period": "FY2014"
+              }
+            },
+            "locator": {
+              "table_or_note": "FY2014 macro and industry review / FY2014 operating review",
+              "line_item": "issuer cement and clinker net sales volume growth rate minus national cement output growth rate",
+              "period_column": "FY2014"
+            }
+          },
+          {
+            "field_id": "FIELD:600585:FY2014:ISSUER_VS_INDUSTRY_VOLUME_SPREAD_SECOND",
+            "role": "OUTCOME",
+            "unit": "RATIO",
+            "measurement_clock": {
+              "clock_kind": "FLOW_PERIOD",
+              "flow_period": {
+                "period_start": "2014-01-01",
+                "period_end": "2014-12-31",
+                "fiscal_period": "FY2014"
+              }
+            },
+            "locator": {
+              "table_or_note": "FY2014 macro and industry review / FY2014 operating review",
+              "line_item": "issuer cement and clinker net sales volume growth rate minus national cement output growth rate",
+              "period_column": "FY2014"
+            }
+          }
+        ],
+        "formula": {
+          "operator": "DIFFERENCE",
+          "input_field_ids": [
+            "FIELD:600585:FY2014:ISSUER_VS_INDUSTRY_VOLUME_SPREAD_FIRST",
+            "FIELD:600585:FY2014:ISSUER_VS_INDUSTRY_VOLUME_SPREAD_SECOND"
+          ],
+          "expression": "issuer_growth - industry_growth",
+          "unit_conversions": [
+            {
+              "field_id": "FIELD:600585:FY2014:ISSUER_VS_INDUSTRY_VOLUME_SPREAD_FIRST",
+              "from_unit": "RATIO",
+              "to_unit": "RATIO",
+              "scale": "1"
+            },
+            {
+              "field_id": "FIELD:600585:FY2014:ISSUER_VS_INDUSTRY_VOLUME_SPREAD_SECOND",
+              "from_unit": "RATIO",
+              "to_unit": "RATIO",
+              "scale": "1"
+            }
+          ],
+          "zero_baseline_rule": "NOT_APPLICABLE"
+        },
+        "label_rule": {
+          "type": "ABSOLUTE_CHANGE_BAND",
+          "decrease_lte": -0.02,
+          "increase_gte": 0.02,
+          "ordered_labels": [
+            "MEASUREMENT_MISMATCH",
+            "OBSERVED_DECREASE",
+            "OBSERVED_STABLE",
+            "OBSERVED_INCREASE",
+            "UNKNOWN"
+          ]
+        },
+        "conflict_rule": {
+          "multiple_values": "MEASUREMENT_MISMATCH",
+          "boundary_conflict": "MEASUREMENT_MISMATCH",
+          "period_conflict": "MEASUREMENT_MISMATCH"
+        },
+        "unknown_rule": {
+          "conditions": [
+            "one or more contracted raw fields absent"
+          ],
+          "label": "UNKNOWN"
+        },
+        "mismatch_rule": {
+          "conditions": [
+            "scope, period, unit or unique-field conflict"
+          ],
+          "label": "MEASUREMENT_MISMATCH",
+          "propagation": "LOCAL_ONLY",
+          "dependent_cell_ids": []
+        },
+        "allowed_source_types": [
+          "OFFICIAL_AUDITED_ANNUAL_REPORT"
+        ],
+        "prohibited_inference": "A positive spread is not a peer-controlled market-share or moat result."
+      },
+      {
+        "cell_id": "CELL:600585:20140416:IMPLEMENTED_ACTION_EVENT",
+        "thread_id": "THREAD:600585:ACTION_EXECUTION_ADAPTATION",
+        "layer": "IMPLEMENTED",
+        "outcome_period": {
+          "period_start": "2014-04-17T00:00:00+08:00",
+          "period_end": "2014-12-31T23:59:59+08:00",
+          "fiscal_period": "FY2014"
+        },
+        "measurement_clock": {
+          "clock_kind": "EVENT_WINDOW",
+          "event_window": {
+            "event_start": "2014-04-17",
+            "event_end": "2014-12-31",
+            "window_name": "POST_CUTOFF_FY2014_EVENT_WINDOW"
+          }
+        },
+        "responsibility_boundary": {
+          "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600585",
+          "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+          "arena_id": "ARENA:CN:CEMENT:MULTI_REGION_DELIVERED_MARKET",
+          "scope_requirement": "issuer-specific implemented action and execution milestone; narrative plans are insufficient"
+        },
+        "field_identity": {
+          "outcome_field_id": "FIELD:600585:FY2014:IMPLEMENTED_ACTION_EVENT_EVENT",
+          "baseline_field_id": "",
+          "statement_scope": "ISSUER_IMPLEMENTED_ACTION_EVENT",
+          "table_or_note": "FY2014 management discussion, project delivery or material investment disclosure",
+          "line_item": "explicit post-cutoff implementation of a capacity, acquisition, market, procurement, digital or environmental action",
+          "field_kind": "DISCLOSED_EVENT"
+        },
+        "unit": {
+          "kind": "EVENT",
+          "currency": "NOT_APPLICABLE",
+          "scale": "BOOLEAN"
+        },
+        "raw_input_fields": [
+          {
+            "field_id": "FIELD:600585:FY2014:IMPLEMENTED_ACTION_EVENT_EVENT",
+            "role": "EVENT",
+            "unit": "BOOLEAN_EVENT",
+            "measurement_clock": {
+              "clock_kind": "EVENT_WINDOW",
+              "event_window": {
+                "event_start": "2014-04-17",
+                "event_end": "2014-12-31",
+                "window_name": "POST_CUTOFF_FY2014_EVENT_WINDOW"
+              }
+            },
+            "locator": {
+              "table_or_note": "FY2014 management discussion, project delivery or material investment disclosure",
+              "line_item": "explicit post-cutoff implementation of a capacity, acquisition, market, procurement, digital or environmental action",
+              "period_column": "2014-04-17..2014-12-31"
+            }
+          }
+        ],
+        "formula": {
+          "operator": "EVENT_BOOLEAN",
+          "input_field_ids": [
+            "FIELD:600585:FY2014:IMPLEMENTED_ACTION_EVENT_EVENT"
+          ],
+          "expression": "explicit_event(FIELD:600585:FY2014:IMPLEMENTED_ACTION_EVENT_EVENT)",
+          "unit_conversions": [
+            {
+              "field_id": "FIELD:600585:FY2014:IMPLEMENTED_ACTION_EVENT_EVENT",
+              "from_unit": "BOOLEAN_EVENT",
+              "to_unit": "BOOLEAN_EVENT",
+              "scale": "1"
+            }
+          ],
+          "zero_baseline_rule": "NOT_APPLICABLE"
+        },
+        "label_rule": {
+          "type": "EVENT_PRESENCE",
+          "decrease_lte": 0,
+          "increase_gte": 1,
+          "ordered_labels": [
+            "MEASUREMENT_MISMATCH",
+            "OBSERVED_YES",
+            "OBSERVED_NO",
+            "UNKNOWN"
+          ]
+        },
+        "conflict_rule": {
+          "multiple_values": "MEASUREMENT_MISMATCH",
+          "boundary_conflict": "MEASUREMENT_MISMATCH",
+          "period_conflict": "MEASUREMENT_MISMATCH"
+        },
+        "unknown_rule": {
+          "conditions": [
+            "one or more contracted raw fields absent"
+          ],
+          "label": "UNKNOWN"
+        },
+        "mismatch_rule": {
+          "conditions": [
+            "scope, period, unit or unique-field conflict"
+          ],
+          "label": "MEASUREMENT_MISMATCH",
+          "propagation": "LOCAL_ONLY",
+          "dependent_cell_ids": []
+        },
+        "allowed_source_types": [
+          "OFFICIAL_AUDITED_ANNUAL_REPORT"
+        ],
+        "prohibited_inference": "Management narrative or a future plan is not implemented action evidence."
+      },
+      {
+        "cell_id": "CELL:600585:20140416:NAMED_PLAN_MILESTONE_DELIVERED",
+        "thread_id": "THREAD:600585:ACTION_EXECUTION_ADAPTATION",
+        "layer": "EXECUTED",
+        "outcome_period": {
+          "period_start": "2014-04-17T00:00:00+08:00",
+          "period_end": "2014-12-31T23:59:59+08:00",
+          "fiscal_period": "FY2014"
+        },
+        "measurement_clock": {
+          "clock_kind": "EVENT_WINDOW",
+          "event_window": {
+            "event_start": "2014-04-17",
+            "event_end": "2014-12-31",
+            "window_name": "POST_CUTOFF_FY2014_EVENT_WINDOW"
+          }
+        },
+        "responsibility_boundary": {
+          "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600585",
+          "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+          "arena_id": "ARENA:CN:CEMENT:MULTI_REGION_DELIVERED_MARKET",
+          "scope_requirement": "issuer-specific implemented action and execution milestone; narrative plans are insufficient"
+        },
+        "field_identity": {
+          "outcome_field_id": "FIELD:600585:FY2014:NAMED_PLAN_MILESTONE_DELIVERED_EVENT",
+          "baseline_field_id": "",
+          "statement_scope": "ISSUER_IMPLEMENTED_ACTION_EVENT",
+          "table_or_note": "FY2014 management discussion, project delivery or material investment disclosure",
+          "line_item": "explicit post-cutoff delivery of a project or operating milestone named in the FY2013 forward plan",
+          "field_kind": "DISCLOSED_EVENT"
+        },
+        "unit": {
+          "kind": "EVENT",
+          "currency": "NOT_APPLICABLE",
+          "scale": "BOOLEAN"
+        },
+        "raw_input_fields": [
+          {
+            "field_id": "FIELD:600585:FY2014:NAMED_PLAN_MILESTONE_DELIVERED_EVENT",
+            "role": "EVENT",
+            "unit": "BOOLEAN_EVENT",
+            "measurement_clock": {
+              "clock_kind": "EVENT_WINDOW",
+              "event_window": {
+                "event_start": "2014-04-17",
+                "event_end": "2014-12-31",
+                "window_name": "POST_CUTOFF_FY2014_EVENT_WINDOW"
+              }
+            },
+            "locator": {
+              "table_or_note": "FY2014 management discussion, project delivery or material investment disclosure",
+              "line_item": "explicit post-cutoff delivery of a project or operating milestone named in the FY2013 forward plan",
+              "period_column": "2014-04-17..2014-12-31"
+            }
+          }
+        ],
+        "formula": {
+          "operator": "EVENT_BOOLEAN",
+          "input_field_ids": [
+            "FIELD:600585:FY2014:NAMED_PLAN_MILESTONE_DELIVERED_EVENT"
+          ],
+          "expression": "explicit_event(FIELD:600585:FY2014:NAMED_PLAN_MILESTONE_DELIVERED_EVENT)",
+          "unit_conversions": [
+            {
+              "field_id": "FIELD:600585:FY2014:NAMED_PLAN_MILESTONE_DELIVERED_EVENT",
+              "from_unit": "BOOLEAN_EVENT",
+              "to_unit": "BOOLEAN_EVENT",
+              "scale": "1"
+            }
+          ],
+          "zero_baseline_rule": "NOT_APPLICABLE"
+        },
+        "label_rule": {
+          "type": "EVENT_PRESENCE",
+          "decrease_lte": 0,
+          "increase_gte": 1,
+          "ordered_labels": [
+            "MEASUREMENT_MISMATCH",
+            "OBSERVED_YES",
+            "OBSERVED_NO",
+            "UNKNOWN"
+          ]
+        },
+        "conflict_rule": {
+          "multiple_values": "MEASUREMENT_MISMATCH",
+          "boundary_conflict": "MEASUREMENT_MISMATCH",
+          "period_conflict": "MEASUREMENT_MISMATCH"
+        },
+        "unknown_rule": {
+          "conditions": [
+            "one or more contracted raw fields absent"
+          ],
+          "label": "UNKNOWN"
+        },
+        "mismatch_rule": {
+          "conditions": [
+            "scope, period, unit or unique-field conflict"
+          ],
+          "label": "MEASUREMENT_MISMATCH",
+          "propagation": "LOCAL_ONLY",
+          "dependent_cell_ids": []
+        },
+        "allowed_source_types": [
+          "OFFICIAL_AUDITED_ANNUAL_REPORT"
+        ],
+        "prohibited_inference": "One delivered milestone is not proof that the full plan or management team succeeded."
+      },
+      {
+        "cell_id": "CELL:600585:20140416:DIRECT_CUSTOMER_RESPONSE",
+        "thread_id": "THREAD:600585:ACTION_EXECUTION_ADAPTATION",
+        "layer": "CUSTOMER_RESPONSE",
+        "outcome_period": {
+          "period_start": "2014-04-17T00:00:00+08:00",
+          "period_end": "2014-12-31T23:59:59+08:00",
+          "fiscal_period": "FY2014"
+        },
+        "measurement_clock": {
+          "clock_kind": "EVENT_WINDOW",
+          "event_window": {
+            "event_start": "2014-04-17",
+            "event_end": "2014-12-31",
+            "window_name": "POST_CUTOFF_FY2014_EVENT_WINDOW"
+          }
+        },
+        "responsibility_boundary": {
+          "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600585",
+          "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+          "arena_id": "ARENA:CN:CEMENT:MULTI_REGION_DELIVERED_MARKET",
+          "scope_requirement": "issuer-specific implemented action and execution milestone; narrative plans are insufficient"
+        },
+        "field_identity": {
+          "outcome_field_id": "FIELD:600585:FY2014:DIRECT_CUSTOMER_RESPONSE_EVENT",
+          "baseline_field_id": "",
+          "statement_scope": "ISSUER_IMPLEMENTED_ACTION_EVENT",
+          "table_or_note": "FY2014 management discussion, project delivery or material investment disclosure",
+          "line_item": "direct customer retention, order quality, market-share, price acceptance or channel response evidence",
+          "field_kind": "DISCLOSED_EVENT"
+        },
+        "unit": {
+          "kind": "EVENT",
+          "currency": "NOT_APPLICABLE",
+          "scale": "BOOLEAN"
+        },
+        "raw_input_fields": [
+          {
+            "field_id": "FIELD:600585:FY2014:DIRECT_CUSTOMER_RESPONSE_EVENT",
+            "role": "EVENT",
+            "unit": "BOOLEAN_EVENT",
+            "measurement_clock": {
+              "clock_kind": "EVENT_WINDOW",
+              "event_window": {
+                "event_start": "2014-04-17",
+                "event_end": "2014-12-31",
+                "window_name": "POST_CUTOFF_FY2014_EVENT_WINDOW"
+              }
+            },
+            "locator": {
+              "table_or_note": "FY2014 management discussion, project delivery or material investment disclosure",
+              "line_item": "direct customer retention, order quality, market-share, price acceptance or channel response evidence",
+              "period_column": "2014-04-17..2014-12-31"
+            }
+          }
+        ],
+        "formula": {
+          "operator": "EVENT_BOOLEAN",
+          "input_field_ids": [
+            "FIELD:600585:FY2014:DIRECT_CUSTOMER_RESPONSE_EVENT"
+          ],
+          "expression": "explicit_event(FIELD:600585:FY2014:DIRECT_CUSTOMER_RESPONSE_EVENT)",
+          "unit_conversions": [
+            {
+              "field_id": "FIELD:600585:FY2014:DIRECT_CUSTOMER_RESPONSE_EVENT",
+              "from_unit": "BOOLEAN_EVENT",
+              "to_unit": "BOOLEAN_EVENT",
+              "scale": "1"
+            }
+          ],
+          "zero_baseline_rule": "NOT_APPLICABLE"
+        },
+        "label_rule": {
+          "type": "EVENT_PRESENCE",
+          "decrease_lte": 0,
+          "increase_gte": 1,
+          "ordered_labels": [
+            "MEASUREMENT_MISMATCH",
+            "OBSERVED_YES",
+            "OBSERVED_NO",
+            "UNKNOWN"
+          ]
+        },
+        "conflict_rule": {
+          "multiple_values": "MEASUREMENT_MISMATCH",
+          "boundary_conflict": "MEASUREMENT_MISMATCH",
+          "period_conflict": "MEASUREMENT_MISMATCH"
+        },
+        "unknown_rule": {
+          "conditions": [
+            "one or more contracted raw fields absent"
+          ],
+          "label": "UNKNOWN"
+        },
+        "mismatch_rule": {
+          "conditions": [
+            "scope, period, unit or unique-field conflict"
+          ],
+          "label": "MEASUREMENT_MISMATCH",
+          "propagation": "LOCAL_ONLY",
+          "dependent_cell_ids": []
+        },
+        "allowed_source_types": [
+          "OFFICIAL_AUDITED_ANNUAL_REPORT"
+        ],
+        "prohibited_inference": "Aggregate sales volume or management assertions cannot substitute for direct customer response."
+      },
+      {
+        "cell_id": "CELL:600585:20140416:CEMENT_CLINKER_SALES_VOLUME",
+        "thread_id": "THREAD:600585:ENTERPRISE_STATE_TRANSMISSION",
+        "layer": "SALES_VOLUME",
+        "outcome_period": {
+          "period_start": "2014-04-17T00:00:00+08:00",
+          "period_end": "2014-12-31T23:59:59+08:00",
+          "fiscal_period": "FY2014"
+        },
+        "measurement_clock": {
+          "clock_kind": "FLOW_PERIOD",
+          "flow_period": {
+            "period_start": "2014-01-01",
+            "period_end": "2014-12-31",
+            "fiscal_period": "FY2014"
+          }
+        },
+        "responsibility_boundary": {
+          "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600585",
+          "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+          "arena_id": "ARENA:CN:CEMENT:MULTI_REGION_DELIVERED_MARKET",
+          "scope_requirement": "issuer-consolidated same-definition field; causal attribution prohibited"
+        },
+        "field_identity": {
+          "outcome_field_id": "FIELD:600585:FY2014:CEMENT_CLINKER_SALES_VOLUME",
+          "baseline_field_id": "FIELD:600585:FY2013:CEMENT_CLINKER_SALES_VOLUME",
+          "statement_scope": "CONSOLIDATED",
+          "table_or_note": "production-sales-inventory analysis",
+          "line_item": "cement and clinker net sales volume",
+          "field_kind": "AUDITED_OR_OPERATING_LINE_ITEM"
+        },
+        "unit": {
+          "kind": "PERCENT_CHANGE",
+          "currency": "NOT_APPLICABLE",
+          "scale": "1"
+        },
+        "raw_input_fields": [
+          {
+            "field_id": "FIELD:600585:FY2013:CEMENT_CLINKER_SALES_VOLUME",
+            "role": "BASELINE",
+            "unit": "TONNE",
+            "measurement_clock": {
+              "clock_kind": "FLOW_PERIOD",
+              "flow_period": {
+                "period_start": "2013-01-01",
+                "period_end": "2013-12-31",
+                "fiscal_period": "FY2013"
+              }
+            },
+            "locator": {
+              "table_or_note": "production-sales-inventory analysis",
+              "line_item": "cement and clinker net sales volume",
+              "period_column": "FY2013"
+            }
+          },
+          {
+            "field_id": "FIELD:600585:FY2014:CEMENT_CLINKER_SALES_VOLUME",
+            "role": "OUTCOME",
+            "unit": "TONNE",
+            "measurement_clock": {
+              "clock_kind": "FLOW_PERIOD",
+              "flow_period": {
+                "period_start": "2014-01-01",
+                "period_end": "2014-12-31",
+                "fiscal_period": "FY2014"
+              }
+            },
+            "locator": {
+              "table_or_note": "production-sales-inventory analysis",
+              "line_item": "cement and clinker net sales volume",
+              "period_column": "FY2014"
+            }
+          }
+        ],
+        "formula": {
+          "operator": "PERCENT_CHANGE",
+          "input_field_ids": [
+            "FIELD:600585:FY2013:CEMENT_CLINKER_SALES_VOLUME",
+            "FIELD:600585:FY2014:CEMENT_CLINKER_SALES_VOLUME"
+          ],
+          "expression": "(outcome - baseline) / abs(baseline)",
+          "unit_conversions": [
+            {
+              "field_id": "FIELD:600585:FY2013:CEMENT_CLINKER_SALES_VOLUME",
+              "from_unit": "TONNE",
+              "to_unit": "TONNE",
+              "scale": "1"
+            },
+            {
+              "field_id": "FIELD:600585:FY2014:CEMENT_CLINKER_SALES_VOLUME",
+              "from_unit": "TONNE",
+              "to_unit": "TONNE",
+              "scale": "1"
+            }
+          ],
+          "zero_baseline_rule": "RETURN_MEASUREMENT_MISMATCH"
+        },
+        "label_rule": {
+          "type": "PERCENT_CHANGE_BAND",
+          "decrease_lte": -0.05,
+          "increase_gte": 0.05,
+          "ordered_labels": [
+            "MEASUREMENT_MISMATCH",
+            "OBSERVED_DECREASE",
+            "OBSERVED_STABLE",
+            "OBSERVED_INCREASE",
+            "UNKNOWN"
+          ]
+        },
+        "conflict_rule": {
+          "multiple_values": "MEASUREMENT_MISMATCH",
+          "boundary_conflict": "MEASUREMENT_MISMATCH",
+          "period_conflict": "MEASUREMENT_MISMATCH"
+        },
+        "unknown_rule": {
+          "conditions": [
+            "one or more contracted raw fields absent"
+          ],
+          "label": "UNKNOWN"
+        },
+        "mismatch_rule": {
+          "conditions": [
+            "scope, period, unit or unique-field conflict"
+          ],
+          "label": "MEASUREMENT_MISMATCH",
+          "propagation": "LOCAL_ONLY",
+          "dependent_cell_ids": []
+        },
+        "allowed_source_types": [
+          "OFFICIAL_AUDITED_ANNUAL_REPORT"
+        ],
+        "prohibited_inference": "Volume growth may come from new capacity or acquisition and is not standalone execution quality."
+      },
+      {
+        "cell_id": "CELL:600585:20140416:SALES_VOLUME_PLAN_DELIVERY",
+        "thread_id": "THREAD:600585:ENTERPRISE_STATE_TRANSMISSION",
+        "layer": "SALES_VOLUME",
+        "outcome_period": {
+          "period_start": "2014-04-17T00:00:00+08:00",
+          "period_end": "2014-12-31T23:59:59+08:00",
+          "fiscal_period": "FY2014"
+        },
+        "measurement_clock": {
+          "clock_kind": "FLOW_PERIOD",
+          "flow_period": {
+            "period_start": "2014-01-01",
+            "period_end": "2014-12-31",
+            "fiscal_period": "FY2014"
+          }
+        },
+        "responsibility_boundary": {
+          "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600585",
+          "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+          "arena_id": "ARENA:CN:CEMENT:MULTI_REGION_DELIVERED_MARKET",
+          "scope_requirement": "issuer-consolidated same-definition field; causal attribution prohibited"
+        },
+        "field_identity": {
+          "outcome_field_id": "FIELD:600585:FY2014:SALES_VOLUME_PLAN_DELIVERY",
+          "baseline_field_id": "FIELD:600585:FY2013:SALES_VOLUME_PLAN_DELIVERY",
+          "statement_scope": "CONSOLIDATED",
+          "table_or_note": "production-sales-inventory analysis",
+          "line_item": "cement and clinker net sales volume",
+          "field_kind": "AUDITED_OR_OPERATING_LINE_ITEM"
+        },
+        "unit": {
+          "kind": "ABSOLUTE_CHANGE",
+          "currency": "NOT_APPLICABLE",
+          "scale": "1"
+        },
+        "raw_input_fields": [
+          {
+            "field_id": "FIELD:600585:FY2013:SALES_VOLUME_PLAN_DELIVERY",
+            "role": "BASELINE",
+            "unit": "TONNE",
+            "measurement_clock": {
+              "clock_kind": "FLOW_PERIOD",
+              "flow_period": {
+                "period_start": "2013-01-01",
+                "period_end": "2013-12-31",
+                "fiscal_period": "FY2013"
+              }
+            },
+            "locator": {
+              "table_or_note": "production-sales-inventory analysis",
+              "line_item": "cement and clinker net sales volume",
+              "period_column": "FY2013"
+            }
+          },
+          {
+            "field_id": "FIELD:600585:FY2014:SALES_VOLUME_PLAN_DELIVERY",
+            "role": "OUTCOME",
+            "unit": "TONNE",
+            "measurement_clock": {
+              "clock_kind": "FLOW_PERIOD",
+              "flow_period": {
+                "period_start": "2014-01-01",
+                "period_end": "2014-12-31",
+                "fiscal_period": "FY2014"
+              }
+            },
+            "locator": {
+              "table_or_note": "production-sales-inventory analysis",
+              "line_item": "cement and clinker net sales volume",
+              "period_column": "FY2014"
+            }
+          }
+        ],
+        "formula": {
+          "operator": "DIFFERENCE",
+          "input_field_ids": [
+            "FIELD:600585:FY2013:SALES_VOLUME_PLAN_DELIVERY",
+            "FIELD:600585:FY2014:SALES_VOLUME_PLAN_DELIVERY"
+          ],
+          "expression": "outcome - baseline",
+          "unit_conversions": [
+            {
+              "field_id": "FIELD:600585:FY2013:SALES_VOLUME_PLAN_DELIVERY",
+              "from_unit": "TONNE",
+              "to_unit": "TONNE",
+              "scale": "1"
+            },
+            {
+              "field_id": "FIELD:600585:FY2014:SALES_VOLUME_PLAN_DELIVERY",
+              "from_unit": "TONNE",
+              "to_unit": "TONNE",
+              "scale": "1"
+            }
+          ],
+          "zero_baseline_rule": "NOT_APPLICABLE"
+        },
+        "label_rule": {
+          "type": "ABSOLUTE_CHANGE_BAND",
+          "decrease_lte": 0,
+          "increase_gte": 28000000,
+          "ordered_labels": [
+            "MEASUREMENT_MISMATCH",
+            "OBSERVED_DECREASE",
+            "OBSERVED_STABLE",
+            "OBSERVED_INCREASE",
+            "UNKNOWN"
+          ]
+        },
+        "conflict_rule": {
+          "multiple_values": "MEASUREMENT_MISMATCH",
+          "boundary_conflict": "MEASUREMENT_MISMATCH",
+          "period_conflict": "MEASUREMENT_MISMATCH"
+        },
+        "unknown_rule": {
+          "conditions": [
+            "one or more contracted raw fields absent"
+          ],
+          "label": "UNKNOWN"
+        },
+        "mismatch_rule": {
+          "conditions": [
+            "scope, period, unit or unique-field conflict"
+          ],
+          "label": "MEASUREMENT_MISMATCH",
+          "propagation": "LOCAL_ONLY",
+          "dependent_cell_ids": []
+        },
+        "allowed_source_types": [
+          "OFFICIAL_AUDITED_ANNUAL_REPORT"
+        ],
+        "prohibited_inference": "Meeting an aggregate volume plan does not prove organic demand, pricing power or value creation."
+      },
+      {
+        "cell_id": "CELL:600585:20140416:REALIZED_REVENUE_PER_TONNE",
+        "thread_id": "THREAD:600585:ENTERPRISE_STATE_TRANSMISSION",
+        "layer": "PRICE",
+        "outcome_period": {
+          "period_start": "2014-04-17T00:00:00+08:00",
+          "period_end": "2014-12-31T23:59:59+08:00",
+          "fiscal_period": "FY2014"
+        },
+        "measurement_clock": {
+          "clock_kind": "FLOW_PERIOD",
+          "flow_period": {
+            "period_start": "2014-01-01",
+            "period_end": "2014-12-31",
+            "fiscal_period": "FY2014"
+          }
+        },
+        "responsibility_boundary": {
+          "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600585",
+          "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+          "arena_id": "ARENA:CN:CEMENT:MULTI_REGION_DELIVERED_MARKET",
+          "scope_requirement": "issuer-consolidated ratio assembled from same-period, same-boundary raw fields"
+        },
+        "field_identity": {
+          "outcome_field_id": "FIELD:600585:FY2014:REALIZED_REVENUE_PER_TONNE_NUMERATOR",
+          "baseline_field_id": "FIELD:600585:FY2013:REALIZED_REVENUE_PER_TONNE_NUMERATOR",
+          "statement_scope": "CONSOLIDATED_DERIVED_RATIO",
+          "table_or_note": "principal business by product / production-sales-inventory analysis",
+          "line_item": "cement and clinker principal business revenue divided by cement and clinker net sales volume",
+          "field_kind": "DERIVED_RATIO_FROM_FROZEN_RAW_FIELDS"
+        },
+        "unit": {
+          "kind": "RATIO_CHANGE",
+          "currency": "NOT_APPLICABLE",
+          "scale": "1"
+        },
+        "raw_input_fields": [
+          {
+            "field_id": "FIELD:600585:FY2013:REALIZED_REVENUE_PER_TONNE_NUMERATOR",
+            "role": "BASELINE",
+            "unit": "RMB",
+            "measurement_clock": {
+              "clock_kind": "FLOW_PERIOD",
+              "flow_period": {
+                "period_start": "2013-01-01",
+                "period_end": "2013-12-31",
+                "fiscal_period": "FY2013"
+              }
+            },
+            "locator": {
+              "table_or_note": "principal business by product / production-sales-inventory analysis",
+              "line_item": "cement and clinker principal business revenue divided by cement and clinker net sales volume",
+              "period_column": "FY2013"
+            }
+          },
+          {
+            "field_id": "FIELD:600585:FY2013:REALIZED_REVENUE_PER_TONNE_DENOMINATOR",
+            "role": "BASELINE",
+            "unit": "TONNE",
+            "measurement_clock": {
+              "clock_kind": "FLOW_PERIOD",
+              "flow_period": {
+                "period_start": "2013-01-01",
+                "period_end": "2013-12-31",
+                "fiscal_period": "FY2013"
+              }
+            },
+            "locator": {
+              "table_or_note": "principal business by product / production-sales-inventory analysis",
+              "line_item": "cement and clinker principal business revenue divided by cement and clinker net sales volume",
+              "period_column": "FY2013"
+            }
+          },
+          {
+            "field_id": "FIELD:600585:FY2014:REALIZED_REVENUE_PER_TONNE_NUMERATOR",
+            "role": "OUTCOME",
+            "unit": "RMB",
+            "measurement_clock": {
+              "clock_kind": "FLOW_PERIOD",
+              "flow_period": {
+                "period_start": "2014-01-01",
+                "period_end": "2014-12-31",
+                "fiscal_period": "FY2014"
+              }
+            },
+            "locator": {
+              "table_or_note": "principal business by product / production-sales-inventory analysis",
+              "line_item": "cement and clinker principal business revenue divided by cement and clinker net sales volume",
+              "period_column": "FY2014"
+            }
+          },
+          {
+            "field_id": "FIELD:600585:FY2014:REALIZED_REVENUE_PER_TONNE_DENOMINATOR",
+            "role": "OUTCOME",
+            "unit": "TONNE",
+            "measurement_clock": {
+              "clock_kind": "FLOW_PERIOD",
+              "flow_period": {
+                "period_start": "2014-01-01",
+                "period_end": "2014-12-31",
+                "fiscal_period": "FY2014"
+              }
+            },
+            "locator": {
+              "table_or_note": "principal business by product / production-sales-inventory analysis",
+              "line_item": "cement and clinker principal business revenue divided by cement and clinker net sales volume",
+              "period_column": "FY2014"
+            }
+          }
+        ],
+        "formula": {
+          "operator": "RATIO_CHANGE",
+          "input_field_ids": [
+            "FIELD:600585:FY2013:REALIZED_REVENUE_PER_TONNE_NUMERATOR",
+            "FIELD:600585:FY2013:REALIZED_REVENUE_PER_TONNE_DENOMINATOR",
+            "FIELD:600585:FY2014:REALIZED_REVENUE_PER_TONNE_NUMERATOR",
+            "FIELD:600585:FY2014:REALIZED_REVENUE_PER_TONNE_DENOMINATOR"
+          ],
+          "expression": "((outcome_numerator/outcome_denominator)-(baseline_numerator/baseline_denominator))/abs(baseline_ratio)",
+          "unit_conversions": [
+            {
+              "field_id": "FIELD:600585:FY2013:REALIZED_REVENUE_PER_TONNE_NUMERATOR",
+              "from_unit": "RMB",
+              "to_unit": "RMB",
+              "scale": "1"
+            },
+            {
+              "field_id": "FIELD:600585:FY2013:REALIZED_REVENUE_PER_TONNE_DENOMINATOR",
+              "from_unit": "TONNE",
+              "to_unit": "TONNE",
+              "scale": "1"
+            },
+            {
+              "field_id": "FIELD:600585:FY2014:REALIZED_REVENUE_PER_TONNE_NUMERATOR",
+              "from_unit": "RMB",
+              "to_unit": "RMB",
+              "scale": "1"
+            },
+            {
+              "field_id": "FIELD:600585:FY2014:REALIZED_REVENUE_PER_TONNE_DENOMINATOR",
+              "from_unit": "TONNE",
+              "to_unit": "TONNE",
+              "scale": "1"
+            }
+          ],
+          "zero_baseline_rule": "RETURN_MEASUREMENT_MISMATCH"
+        },
+        "label_rule": {
+          "type": "PERCENT_CHANGE_BAND",
+          "decrease_lte": -0.05,
+          "increase_gte": 0.05,
+          "ordered_labels": [
+            "MEASUREMENT_MISMATCH",
+            "OBSERVED_DECREASE",
+            "OBSERVED_STABLE",
+            "OBSERVED_INCREASE",
+            "UNKNOWN"
+          ]
+        },
+        "conflict_rule": {
+          "multiple_values": "MEASUREMENT_MISMATCH",
+          "boundary_conflict": "MEASUREMENT_MISMATCH",
+          "period_conflict": "MEASUREMENT_MISMATCH"
+        },
+        "unknown_rule": {
+          "conditions": [
+            "one or more contracted raw fields absent"
+          ],
+          "label": "UNKNOWN"
+        },
+        "mismatch_rule": {
+          "conditions": [
+            "scope, period, unit or unique-field conflict"
+          ],
+          "label": "MEASUREMENT_MISMATCH",
+          "propagation": "LOCAL_ONLY",
+          "dependent_cell_ids": []
+        },
+        "allowed_source_types": [
+          "OFFICIAL_AUDITED_ANNUAL_REPORT"
+        ],
+        "prohibited_inference": "Revenue per tonne is a price-mix realization proxy, not direct customer loyalty or moat evidence."
+      },
+      {
+        "cell_id": "CELL:600585:20140416:COMBINED_UNIT_COST",
+        "thread_id": "THREAD:600585:ENTERPRISE_STATE_TRANSMISSION",
+        "layer": "UNIT_COST",
+        "outcome_period": {
+          "period_start": "2014-04-17T00:00:00+08:00",
+          "period_end": "2014-12-31T23:59:59+08:00",
+          "fiscal_period": "FY2014"
+        },
+        "measurement_clock": {
+          "clock_kind": "FLOW_PERIOD",
+          "flow_period": {
+            "period_start": "2014-01-01",
+            "period_end": "2014-12-31",
+            "fiscal_period": "FY2014"
+          }
+        },
+        "responsibility_boundary": {
+          "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600585",
+          "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+          "arena_id": "ARENA:CN:CEMENT:MULTI_REGION_DELIVERED_MARKET",
+          "scope_requirement": "issuer-consolidated same-definition field; causal attribution prohibited"
+        },
+        "field_identity": {
+          "outcome_field_id": "FIELD:600585:FY2014:COMBINED_UNIT_COST",
+          "baseline_field_id": "FIELD:600585:FY2013:COMBINED_UNIT_COST",
+          "statement_scope": "CONSOLIDATED",
+          "table_or_note": "cement and clinker combined cost analysis",
+          "line_item": "cement and clinker combined unit cost",
+          "field_kind": "AUDITED_OR_OPERATING_LINE_ITEM"
+        },
+        "unit": {
+          "kind": "PERCENT_CHANGE",
+          "currency": "NOT_APPLICABLE",
+          "scale": "1"
+        },
+        "raw_input_fields": [
+          {
+            "field_id": "FIELD:600585:FY2013:COMBINED_UNIT_COST",
+            "role": "BASELINE",
+            "unit": "RMB_PER_TONNE",
+            "measurement_clock": {
+              "clock_kind": "FLOW_PERIOD",
+              "flow_period": {
+                "period_start": "2013-01-01",
+                "period_end": "2013-12-31",
+                "fiscal_period": "FY2013"
+              }
+            },
+            "locator": {
+              "table_or_note": "cement and clinker combined cost analysis",
+              "line_item": "cement and clinker combined unit cost",
+              "period_column": "FY2013"
+            }
+          },
+          {
+            "field_id": "FIELD:600585:FY2014:COMBINED_UNIT_COST",
+            "role": "OUTCOME",
+            "unit": "RMB_PER_TONNE",
+            "measurement_clock": {
+              "clock_kind": "FLOW_PERIOD",
+              "flow_period": {
+                "period_start": "2014-01-01",
+                "period_end": "2014-12-31",
+                "fiscal_period": "FY2014"
+              }
+            },
+            "locator": {
+              "table_or_note": "cement and clinker combined cost analysis",
+              "line_item": "cement and clinker combined unit cost",
+              "period_column": "FY2014"
+            }
+          }
+        ],
+        "formula": {
+          "operator": "PERCENT_CHANGE",
+          "input_field_ids": [
+            "FIELD:600585:FY2013:COMBINED_UNIT_COST",
+            "FIELD:600585:FY2014:COMBINED_UNIT_COST"
+          ],
+          "expression": "(outcome - baseline) / abs(baseline)",
+          "unit_conversions": [
+            {
+              "field_id": "FIELD:600585:FY2013:COMBINED_UNIT_COST",
+              "from_unit": "RMB_PER_TONNE",
+              "to_unit": "RMB_PER_TONNE",
+              "scale": "1"
+            },
+            {
+              "field_id": "FIELD:600585:FY2014:COMBINED_UNIT_COST",
+              "from_unit": "RMB_PER_TONNE",
+              "to_unit": "RMB_PER_TONNE",
+              "scale": "1"
+            }
+          ],
+          "zero_baseline_rule": "RETURN_MEASUREMENT_MISMATCH"
+        },
+        "label_rule": {
+          "type": "PERCENT_CHANGE_BAND",
+          "decrease_lte": -0.05,
+          "increase_gte": 0.05,
+          "ordered_labels": [
+            "MEASUREMENT_MISMATCH",
+            "OBSERVED_DECREASE",
+            "OBSERVED_STABLE",
+            "OBSERVED_INCREASE",
+            "UNKNOWN"
+          ]
+        },
+        "conflict_rule": {
+          "multiple_values": "MEASUREMENT_MISMATCH",
+          "boundary_conflict": "MEASUREMENT_MISMATCH",
+          "period_conflict": "MEASUREMENT_MISMATCH"
+        },
+        "unknown_rule": {
+          "conditions": [
+            "one or more contracted raw fields absent"
+          ],
+          "label": "UNKNOWN"
+        },
+        "mismatch_rule": {
+          "conditions": [
+            "scope, period, unit or unique-field conflict"
+          ],
+          "label": "MEASUREMENT_MISMATCH",
+          "propagation": "LOCAL_ONLY",
+          "dependent_cell_ids": []
+        },
+        "allowed_source_types": [
+          "OFFICIAL_AUDITED_ANNUAL_REPORT"
+        ],
+        "prohibited_inference": "Unit-cost direction must be separated from coal-price movement, mix and perimeter change."
+      },
+      {
+        "cell_id": "CELL:600585:20140416:COMBINED_GROSS_MARGIN",
+        "thread_id": "THREAD:600585:ENTERPRISE_STATE_TRANSMISSION",
+        "layer": "GROSS_MARGIN",
+        "outcome_period": {
+          "period_start": "2014-04-17T00:00:00+08:00",
+          "period_end": "2014-12-31T23:59:59+08:00",
+          "fiscal_period": "FY2014"
+        },
+        "measurement_clock": {
+          "clock_kind": "FLOW_PERIOD",
+          "flow_period": {
+            "period_start": "2014-01-01",
+            "period_end": "2014-12-31",
+            "fiscal_period": "FY2014"
+          }
+        },
+        "responsibility_boundary": {
+          "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600585",
+          "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+          "arena_id": "ARENA:CN:CEMENT:MULTI_REGION_DELIVERED_MARKET",
+          "scope_requirement": "issuer-consolidated same-definition field; causal attribution prohibited"
+        },
+        "field_identity": {
+          "outcome_field_id": "FIELD:600585:FY2014:COMBINED_GROSS_MARGIN",
+          "baseline_field_id": "FIELD:600585:FY2013:COMBINED_GROSS_MARGIN",
+          "statement_scope": "CONSOLIDATED",
+          "table_or_note": "principal business by product",
+          "line_item": "cement and clinker combined gross margin",
+          "field_kind": "AUDITED_OR_OPERATING_LINE_ITEM"
+        },
+        "unit": {
+          "kind": "ABSOLUTE_CHANGE",
+          "currency": "NOT_APPLICABLE",
+          "scale": "1"
+        },
+        "raw_input_fields": [
+          {
+            "field_id": "FIELD:600585:FY2013:COMBINED_GROSS_MARGIN",
+            "role": "BASELINE",
+            "unit": "RATIO",
+            "measurement_clock": {
+              "clock_kind": "FLOW_PERIOD",
+              "flow_period": {
+                "period_start": "2013-01-01",
+                "period_end": "2013-12-31",
+                "fiscal_period": "FY2013"
+              }
+            },
+            "locator": {
+              "table_or_note": "principal business by product",
+              "line_item": "cement and clinker combined gross margin",
+              "period_column": "FY2013"
+            }
+          },
+          {
+            "field_id": "FIELD:600585:FY2014:COMBINED_GROSS_MARGIN",
+            "role": "OUTCOME",
+            "unit": "RATIO",
+            "measurement_clock": {
+              "clock_kind": "FLOW_PERIOD",
+              "flow_period": {
+                "period_start": "2014-01-01",
+                "period_end": "2014-12-31",
+                "fiscal_period": "FY2014"
+              }
+            },
+            "locator": {
+              "table_or_note": "principal business by product",
+              "line_item": "cement and clinker combined gross margin",
+              "period_column": "FY2014"
+            }
+          }
+        ],
+        "formula": {
+          "operator": "DIFFERENCE",
+          "input_field_ids": [
+            "FIELD:600585:FY2013:COMBINED_GROSS_MARGIN",
+            "FIELD:600585:FY2014:COMBINED_GROSS_MARGIN"
+          ],
+          "expression": "outcome - baseline",
+          "unit_conversions": [
+            {
+              "field_id": "FIELD:600585:FY2013:COMBINED_GROSS_MARGIN",
+              "from_unit": "RATIO",
+              "to_unit": "RATIO",
+              "scale": "1"
+            },
+            {
+              "field_id": "FIELD:600585:FY2014:COMBINED_GROSS_MARGIN",
+              "from_unit": "RATIO",
+              "to_unit": "RATIO",
+              "scale": "1"
+            }
+          ],
+          "zero_baseline_rule": "NOT_APPLICABLE"
+        },
+        "label_rule": {
+          "type": "ABSOLUTE_CHANGE_BAND",
+          "decrease_lte": -0.02,
+          "increase_gte": 0.02,
+          "ordered_labels": [
+            "MEASUREMENT_MISMATCH",
+            "OBSERVED_DECREASE",
+            "OBSERVED_STABLE",
+            "OBSERVED_INCREASE",
+            "UNKNOWN"
+          ]
+        },
+        "conflict_rule": {
+          "multiple_values": "MEASUREMENT_MISMATCH",
+          "boundary_conflict": "MEASUREMENT_MISMATCH",
+          "period_conflict": "MEASUREMENT_MISMATCH"
+        },
+        "unknown_rule": {
+          "conditions": [
+            "one or more contracted raw fields absent"
+          ],
+          "label": "UNKNOWN"
+        },
+        "mismatch_rule": {
+          "conditions": [
+            "scope, period, unit or unique-field conflict"
+          ],
+          "label": "MEASUREMENT_MISMATCH",
+          "propagation": "LOCAL_ONLY",
+          "dependent_cell_ids": []
+        },
+        "allowed_source_types": [
+          "OFFICIAL_AUDITED_ANNUAL_REPORT"
+        ],
+        "prohibited_inference": "Gross-margin movement is not management effect without price, fuel, mix and scope attribution."
+      },
+      {
+        "cell_id": "CELL:600585:20140416:ACCOUNTS_RECEIVABLE",
+        "thread_id": "THREAD:600585:ENTERPRISE_STATE_TRANSMISSION",
+        "layer": "WORKING_CAPITAL",
+        "outcome_period": {
+          "period_start": "2014-04-17T00:00:00+08:00",
+          "period_end": "2014-12-31T23:59:59+08:00",
+          "fiscal_period": "FY2014"
+        },
+        "measurement_clock": {
+          "clock_kind": "BALANCE_AS_OF",
+          "balance_as_of": {
+            "as_of": "2014-12-31",
+            "fiscal_period": "FY2014"
+          }
+        },
+        "responsibility_boundary": {
+          "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600585",
+          "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+          "arena_id": "ARENA:CN:CEMENT:MULTI_REGION_DELIVERED_MARKET",
+          "scope_requirement": "issuer-consolidated same-definition field; causal attribution prohibited"
+        },
+        "field_identity": {
+          "outcome_field_id": "FIELD:600585:FY2014:ACCOUNTS_RECEIVABLE",
+          "baseline_field_id": "FIELD:600585:FY2013:ACCOUNTS_RECEIVABLE",
+          "statement_scope": "CONSOLIDATED",
+          "table_or_note": "consolidated balance sheet",
+          "line_item": "accounts receivable",
+          "field_kind": "AUDITED_OR_OPERATING_LINE_ITEM"
+        },
+        "unit": {
+          "kind": "PERCENT_CHANGE",
+          "currency": "RMB",
+          "scale": "1"
+        },
+        "raw_input_fields": [
+          {
+            "field_id": "FIELD:600585:FY2013:ACCOUNTS_RECEIVABLE",
+            "role": "BASELINE",
+            "unit": "RMB",
+            "measurement_clock": {
+              "clock_kind": "BALANCE_AS_OF",
+              "balance_as_of": {
+                "as_of": "2013-12-31",
+                "fiscal_period": "FY2013"
+              }
+            },
+            "locator": {
+              "table_or_note": "consolidated balance sheet",
+              "line_item": "accounts receivable",
+              "period_column": "FY2013"
+            }
+          },
+          {
+            "field_id": "FIELD:600585:FY2014:ACCOUNTS_RECEIVABLE",
+            "role": "OUTCOME",
+            "unit": "RMB",
+            "measurement_clock": {
+              "clock_kind": "BALANCE_AS_OF",
+              "balance_as_of": {
+                "as_of": "2014-12-31",
+                "fiscal_period": "FY2014"
+              }
+            },
+            "locator": {
+              "table_or_note": "consolidated balance sheet",
+              "line_item": "accounts receivable",
+              "period_column": "FY2014"
+            }
+          }
+        ],
+        "formula": {
+          "operator": "PERCENT_CHANGE",
+          "input_field_ids": [
+            "FIELD:600585:FY2013:ACCOUNTS_RECEIVABLE",
+            "FIELD:600585:FY2014:ACCOUNTS_RECEIVABLE"
+          ],
+          "expression": "(outcome - baseline) / abs(baseline)",
+          "unit_conversions": [
+            {
+              "field_id": "FIELD:600585:FY2013:ACCOUNTS_RECEIVABLE",
+              "from_unit": "RMB",
+              "to_unit": "RMB",
+              "scale": "1"
+            },
+            {
+              "field_id": "FIELD:600585:FY2014:ACCOUNTS_RECEIVABLE",
+              "from_unit": "RMB",
+              "to_unit": "RMB",
+              "scale": "1"
+            }
+          ],
+          "zero_baseline_rule": "RETURN_MEASUREMENT_MISMATCH"
+        },
+        "label_rule": {
+          "type": "PERCENT_CHANGE_BAND",
+          "decrease_lte": -0.05,
+          "increase_gte": 0.05,
+          "ordered_labels": [
+            "MEASUREMENT_MISMATCH",
+            "OBSERVED_DECREASE",
+            "OBSERVED_STABLE",
+            "OBSERVED_INCREASE",
+            "UNKNOWN"
+          ]
+        },
+        "conflict_rule": {
+          "multiple_values": "MEASUREMENT_MISMATCH",
+          "boundary_conflict": "MEASUREMENT_MISMATCH",
+          "period_conflict": "MEASUREMENT_MISMATCH"
+        },
+        "unknown_rule": {
+          "conditions": [
+            "one or more contracted raw fields absent"
+          ],
+          "label": "UNKNOWN"
+        },
+        "mismatch_rule": {
+          "conditions": [
+            "scope, period, unit or unique-field conflict"
+          ],
+          "label": "MEASUREMENT_MISMATCH",
+          "propagation": "LOCAL_ONLY",
+          "dependent_cell_ids": []
+        },
+        "allowed_source_types": [
+          "OFFICIAL_AUDITED_ANNUAL_REPORT"
+        ],
+        "prohibited_inference": "Receivables direction is a collection-intensity diagnostic, not direct customer quality."
+      },
+      {
+        "cell_id": "CELL:600585:20140416:INVENTORY",
+        "thread_id": "THREAD:600585:ENTERPRISE_STATE_TRANSMISSION",
+        "layer": "WORKING_CAPITAL",
+        "outcome_period": {
+          "period_start": "2014-04-17T00:00:00+08:00",
+          "period_end": "2014-12-31T23:59:59+08:00",
+          "fiscal_period": "FY2014"
+        },
+        "measurement_clock": {
+          "clock_kind": "BALANCE_AS_OF",
+          "balance_as_of": {
+            "as_of": "2014-12-31",
+            "fiscal_period": "FY2014"
+          }
+        },
+        "responsibility_boundary": {
+          "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600585",
+          "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+          "arena_id": "ARENA:CN:CEMENT:MULTI_REGION_DELIVERED_MARKET",
+          "scope_requirement": "issuer-consolidated same-definition field; causal attribution prohibited"
+        },
+        "field_identity": {
+          "outcome_field_id": "FIELD:600585:FY2014:INVENTORY",
+          "baseline_field_id": "FIELD:600585:FY2013:INVENTORY",
+          "statement_scope": "CONSOLIDATED",
+          "table_or_note": "consolidated balance sheet",
+          "line_item": "inventory",
+          "field_kind": "AUDITED_OR_OPERATING_LINE_ITEM"
+        },
+        "unit": {
+          "kind": "PERCENT_CHANGE",
+          "currency": "RMB",
+          "scale": "1"
+        },
+        "raw_input_fields": [
+          {
+            "field_id": "FIELD:600585:FY2013:INVENTORY",
+            "role": "BASELINE",
+            "unit": "RMB",
+            "measurement_clock": {
+              "clock_kind": "BALANCE_AS_OF",
+              "balance_as_of": {
+                "as_of": "2013-12-31",
+                "fiscal_period": "FY2013"
+              }
+            },
+            "locator": {
+              "table_or_note": "consolidated balance sheet",
+              "line_item": "inventory",
+              "period_column": "FY2013"
+            }
+          },
+          {
+            "field_id": "FIELD:600585:FY2014:INVENTORY",
+            "role": "OUTCOME",
+            "unit": "RMB",
+            "measurement_clock": {
+              "clock_kind": "BALANCE_AS_OF",
+              "balance_as_of": {
+                "as_of": "2014-12-31",
+                "fiscal_period": "FY2014"
+              }
+            },
+            "locator": {
+              "table_or_note": "consolidated balance sheet",
+              "line_item": "inventory",
+              "period_column": "FY2014"
+            }
+          }
+        ],
+        "formula": {
+          "operator": "PERCENT_CHANGE",
+          "input_field_ids": [
+            "FIELD:600585:FY2013:INVENTORY",
+            "FIELD:600585:FY2014:INVENTORY"
+          ],
+          "expression": "(outcome - baseline) / abs(baseline)",
+          "unit_conversions": [
+            {
+              "field_id": "FIELD:600585:FY2013:INVENTORY",
+              "from_unit": "RMB",
+              "to_unit": "RMB",
+              "scale": "1"
+            },
+            {
+              "field_id": "FIELD:600585:FY2014:INVENTORY",
+              "from_unit": "RMB",
+              "to_unit": "RMB",
+              "scale": "1"
+            }
+          ],
+          "zero_baseline_rule": "RETURN_MEASUREMENT_MISMATCH"
+        },
+        "label_rule": {
+          "type": "PERCENT_CHANGE_BAND",
+          "decrease_lte": -0.05,
+          "increase_gte": 0.05,
+          "ordered_labels": [
+            "MEASUREMENT_MISMATCH",
+            "OBSERVED_DECREASE",
+            "OBSERVED_STABLE",
+            "OBSERVED_INCREASE",
+            "UNKNOWN"
+          ]
+        },
+        "conflict_rule": {
+          "multiple_values": "MEASUREMENT_MISMATCH",
+          "boundary_conflict": "MEASUREMENT_MISMATCH",
+          "period_conflict": "MEASUREMENT_MISMATCH"
+        },
+        "unknown_rule": {
+          "conditions": [
+            "one or more contracted raw fields absent"
+          ],
+          "label": "UNKNOWN"
+        },
+        "mismatch_rule": {
+          "conditions": [
+            "scope, period, unit or unique-field conflict"
+          ],
+          "label": "MEASUREMENT_MISMATCH",
+          "propagation": "LOCAL_ONLY",
+          "dependent_cell_ids": []
+        },
+        "allowed_source_types": [
+          "OFFICIAL_AUDITED_ANNUAL_REPORT"
+        ],
+        "prohibited_inference": "Inventory direction cannot identify demand, production discipline or loss causally on its own."
+      },
+      {
+        "cell_id": "CELL:600585:20140416:OPERATING_CASH",
+        "thread_id": "THREAD:600585:ENTERPRISE_STATE_TRANSMISSION",
+        "layer": "CASH",
+        "outcome_period": {
+          "period_start": "2014-04-17T00:00:00+08:00",
+          "period_end": "2014-12-31T23:59:59+08:00",
+          "fiscal_period": "FY2014"
+        },
+        "measurement_clock": {
+          "clock_kind": "FLOW_PERIOD",
+          "flow_period": {
+            "period_start": "2014-01-01",
+            "period_end": "2014-12-31",
+            "fiscal_period": "FY2014"
+          }
+        },
+        "responsibility_boundary": {
+          "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600585",
+          "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+          "arena_id": "ARENA:CN:CEMENT:MULTI_REGION_DELIVERED_MARKET",
+          "scope_requirement": "issuer-consolidated same-definition field; causal attribution prohibited"
+        },
+        "field_identity": {
+          "outcome_field_id": "FIELD:600585:FY2014:OPERATING_CASH",
+          "baseline_field_id": "FIELD:600585:FY2013:OPERATING_CASH",
+          "statement_scope": "CONSOLIDATED",
+          "table_or_note": "consolidated cash-flow statement",
+          "line_item": "net cash flows from operating activities",
+          "field_kind": "AUDITED_OR_OPERATING_LINE_ITEM"
+        },
+        "unit": {
+          "kind": "PERCENT_CHANGE",
+          "currency": "RMB",
+          "scale": "1"
+        },
+        "raw_input_fields": [
+          {
+            "field_id": "FIELD:600585:FY2013:OPERATING_CASH",
+            "role": "BASELINE",
+            "unit": "RMB",
+            "measurement_clock": {
+              "clock_kind": "FLOW_PERIOD",
+              "flow_period": {
+                "period_start": "2013-01-01",
+                "period_end": "2013-12-31",
+                "fiscal_period": "FY2013"
+              }
+            },
+            "locator": {
+              "table_or_note": "consolidated cash-flow statement",
+              "line_item": "net cash flows from operating activities",
+              "period_column": "FY2013"
+            }
+          },
+          {
+            "field_id": "FIELD:600585:FY2014:OPERATING_CASH",
+            "role": "OUTCOME",
+            "unit": "RMB",
+            "measurement_clock": {
+              "clock_kind": "FLOW_PERIOD",
+              "flow_period": {
+                "period_start": "2014-01-01",
+                "period_end": "2014-12-31",
+                "fiscal_period": "FY2014"
+              }
+            },
+            "locator": {
+              "table_or_note": "consolidated cash-flow statement",
+              "line_item": "net cash flows from operating activities",
+              "period_column": "FY2014"
+            }
+          }
+        ],
+        "formula": {
+          "operator": "PERCENT_CHANGE",
+          "input_field_ids": [
+            "FIELD:600585:FY2013:OPERATING_CASH",
+            "FIELD:600585:FY2014:OPERATING_CASH"
+          ],
+          "expression": "(outcome - baseline) / abs(baseline)",
+          "unit_conversions": [
+            {
+              "field_id": "FIELD:600585:FY2013:OPERATING_CASH",
+              "from_unit": "RMB",
+              "to_unit": "RMB",
+              "scale": "1"
+            },
+            {
+              "field_id": "FIELD:600585:FY2014:OPERATING_CASH",
+              "from_unit": "RMB",
+              "to_unit": "RMB",
+              "scale": "1"
+            }
+          ],
+          "zero_baseline_rule": "RETURN_MEASUREMENT_MISMATCH"
+        },
+        "label_rule": {
+          "type": "PERCENT_CHANGE_BAND",
+          "decrease_lte": -0.05,
+          "increase_gte": 0.05,
+          "ordered_labels": [
+            "MEASUREMENT_MISMATCH",
+            "OBSERVED_DECREASE",
+            "OBSERVED_STABLE",
+            "OBSERVED_INCREASE",
+            "UNKNOWN"
+          ]
+        },
+        "conflict_rule": {
+          "multiple_values": "MEASUREMENT_MISMATCH",
+          "boundary_conflict": "MEASUREMENT_MISMATCH",
+          "period_conflict": "MEASUREMENT_MISMATCH"
+        },
+        "unknown_rule": {
+          "conditions": [
+            "one or more contracted raw fields absent"
+          ],
+          "label": "UNKNOWN"
+        },
+        "mismatch_rule": {
+          "conditions": [
+            "scope, period, unit or unique-field conflict"
+          ],
+          "label": "MEASUREMENT_MISMATCH",
+          "propagation": "LOCAL_ONLY",
+          "dependent_cell_ids": []
+        },
+        "allowed_source_types": [
+          "OFFICIAL_AUDITED_ANNUAL_REPORT"
+        ],
+        "prohibited_inference": "Operating cash is not owner cash and may include working-capital timing."
+      },
+      {
+        "cell_id": "CELL:600585:20140416:CASH_CAPEX",
+        "thread_id": "THREAD:600585:ENTERPRISE_STATE_TRANSMISSION",
+        "layer": "CAPITAL_BURDEN",
+        "outcome_period": {
+          "period_start": "2014-04-17T00:00:00+08:00",
+          "period_end": "2014-12-31T23:59:59+08:00",
+          "fiscal_period": "FY2014"
+        },
+        "measurement_clock": {
+          "clock_kind": "FLOW_PERIOD",
+          "flow_period": {
+            "period_start": "2014-01-01",
+            "period_end": "2014-12-31",
+            "fiscal_period": "FY2014"
+          }
+        },
+        "responsibility_boundary": {
+          "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600585",
+          "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+          "arena_id": "ARENA:CN:CEMENT:MULTI_REGION_DELIVERED_MARKET",
+          "scope_requirement": "issuer-consolidated same-definition field; causal attribution prohibited"
+        },
+        "field_identity": {
+          "outcome_field_id": "FIELD:600585:FY2014:CASH_CAPEX",
+          "baseline_field_id": "FIELD:600585:FY2013:CASH_CAPEX",
+          "statement_scope": "CONSOLIDATED",
+          "table_or_note": "consolidated cash-flow statement",
+          "line_item": "cash paid to acquire and construct fixed assets, intangible assets and other long-term assets",
+          "field_kind": "AUDITED_OR_OPERATING_LINE_ITEM"
+        },
+        "unit": {
+          "kind": "PERCENT_CHANGE",
+          "currency": "RMB",
+          "scale": "1"
+        },
+        "raw_input_fields": [
+          {
+            "field_id": "FIELD:600585:FY2013:CASH_CAPEX",
+            "role": "BASELINE",
+            "unit": "RMB",
+            "measurement_clock": {
+              "clock_kind": "FLOW_PERIOD",
+              "flow_period": {
+                "period_start": "2013-01-01",
+                "period_end": "2013-12-31",
+                "fiscal_period": "FY2013"
+              }
+            },
+            "locator": {
+              "table_or_note": "consolidated cash-flow statement",
+              "line_item": "cash paid to acquire and construct fixed assets, intangible assets and other long-term assets",
+              "period_column": "FY2013"
+            }
+          },
+          {
+            "field_id": "FIELD:600585:FY2014:CASH_CAPEX",
+            "role": "OUTCOME",
+            "unit": "RMB",
+            "measurement_clock": {
+              "clock_kind": "FLOW_PERIOD",
+              "flow_period": {
+                "period_start": "2014-01-01",
+                "period_end": "2014-12-31",
+                "fiscal_period": "FY2014"
+              }
+            },
+            "locator": {
+              "table_or_note": "consolidated cash-flow statement",
+              "line_item": "cash paid to acquire and construct fixed assets, intangible assets and other long-term assets",
+              "period_column": "FY2014"
+            }
+          }
+        ],
+        "formula": {
+          "operator": "PERCENT_CHANGE",
+          "input_field_ids": [
+            "FIELD:600585:FY2013:CASH_CAPEX",
+            "FIELD:600585:FY2014:CASH_CAPEX"
+          ],
+          "expression": "(outcome - baseline) / abs(baseline)",
+          "unit_conversions": [
+            {
+              "field_id": "FIELD:600585:FY2013:CASH_CAPEX",
+              "from_unit": "RMB",
+              "to_unit": "RMB",
+              "scale": "1"
+            },
+            {
+              "field_id": "FIELD:600585:FY2014:CASH_CAPEX",
+              "from_unit": "RMB",
+              "to_unit": "RMB",
+              "scale": "1"
+            }
+          ],
+          "zero_baseline_rule": "RETURN_MEASUREMENT_MISMATCH"
+        },
+        "label_rule": {
+          "type": "PERCENT_CHANGE_BAND",
+          "decrease_lte": -0.05,
+          "increase_gte": 0.05,
+          "ordered_labels": [
+            "MEASUREMENT_MISMATCH",
+            "OBSERVED_DECREASE",
+            "OBSERVED_STABLE",
+            "OBSERVED_INCREASE",
+            "UNKNOWN"
+          ]
+        },
+        "conflict_rule": {
+          "multiple_values": "MEASUREMENT_MISMATCH",
+          "boundary_conflict": "MEASUREMENT_MISMATCH",
+          "period_conflict": "MEASUREMENT_MISMATCH"
+        },
+        "unknown_rule": {
+          "conditions": [
+            "one or more contracted raw fields absent"
+          ],
+          "label": "UNKNOWN"
+        },
+        "mismatch_rule": {
+          "conditions": [
+            "scope, period, unit or unique-field conflict"
+          ],
+          "label": "MEASUREMENT_MISMATCH",
+          "propagation": "LOCAL_ONLY",
+          "dependent_cell_ids": []
+        },
+        "allowed_source_types": [
+          "OFFICIAL_AUDITED_ANNUAL_REPORT"
+        ],
+        "prohibited_inference": "Cash capex combines maintenance and growth and cannot be treated as destruction or owner cash by itself."
+      },
+      {
+        "cell_id": "CELL:600585:20140416:OCF_TO_CASH_CAPEX",
+        "thread_id": "THREAD:600585:ENTERPRISE_STATE_TRANSMISSION",
+        "layer": "CASH",
+        "outcome_period": {
+          "period_start": "2014-04-17T00:00:00+08:00",
+          "period_end": "2014-12-31T23:59:59+08:00",
+          "fiscal_period": "FY2014"
+        },
+        "measurement_clock": {
+          "clock_kind": "FLOW_PERIOD",
+          "flow_period": {
+            "period_start": "2014-01-01",
+            "period_end": "2014-12-31",
+            "fiscal_period": "FY2014"
+          }
+        },
+        "responsibility_boundary": {
+          "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600585",
+          "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+          "arena_id": "ARENA:CN:CEMENT:MULTI_REGION_DELIVERED_MARKET",
+          "scope_requirement": "issuer-consolidated ratio assembled from same-period, same-boundary raw fields"
+        },
+        "field_identity": {
+          "outcome_field_id": "FIELD:600585:FY2014:OCF_TO_CASH_CAPEX_NUMERATOR",
+          "baseline_field_id": "FIELD:600585:FY2013:OCF_TO_CASH_CAPEX_NUMERATOR",
+          "statement_scope": "CONSOLIDATED_DERIVED_RATIO",
+          "table_or_note": "consolidated cash-flow statement / consolidated cash-flow statement",
+          "line_item": "net cash flows from operating activities divided by cash paid to acquire and construct fixed assets, intangible assets and other long-term assets",
+          "field_kind": "DERIVED_RATIO_FROM_FROZEN_RAW_FIELDS"
+        },
+        "unit": {
+          "kind": "RATIO_CHANGE",
+          "currency": "NOT_APPLICABLE",
+          "scale": "1"
+        },
+        "raw_input_fields": [
+          {
+            "field_id": "FIELD:600585:FY2013:OCF_TO_CASH_CAPEX_NUMERATOR",
+            "role": "BASELINE",
+            "unit": "RMB",
+            "measurement_clock": {
+              "clock_kind": "FLOW_PERIOD",
+              "flow_period": {
+                "period_start": "2013-01-01",
+                "period_end": "2013-12-31",
+                "fiscal_period": "FY2013"
+              }
+            },
+            "locator": {
+              "table_or_note": "consolidated cash-flow statement / consolidated cash-flow statement",
+              "line_item": "net cash flows from operating activities divided by cash paid to acquire and construct fixed assets, intangible assets and other long-term assets",
+              "period_column": "FY2013"
+            }
+          },
+          {
+            "field_id": "FIELD:600585:FY2013:OCF_TO_CASH_CAPEX_DENOMINATOR",
+            "role": "BASELINE",
+            "unit": "RMB",
+            "measurement_clock": {
+              "clock_kind": "FLOW_PERIOD",
+              "flow_period": {
+                "period_start": "2013-01-01",
+                "period_end": "2013-12-31",
+                "fiscal_period": "FY2013"
+              }
+            },
+            "locator": {
+              "table_or_note": "consolidated cash-flow statement / consolidated cash-flow statement",
+              "line_item": "net cash flows from operating activities divided by cash paid to acquire and construct fixed assets, intangible assets and other long-term assets",
+              "period_column": "FY2013"
+            }
+          },
+          {
+            "field_id": "FIELD:600585:FY2014:OCF_TO_CASH_CAPEX_NUMERATOR",
+            "role": "OUTCOME",
+            "unit": "RMB",
+            "measurement_clock": {
+              "clock_kind": "FLOW_PERIOD",
+              "flow_period": {
+                "period_start": "2014-01-01",
+                "period_end": "2014-12-31",
+                "fiscal_period": "FY2014"
+              }
+            },
+            "locator": {
+              "table_or_note": "consolidated cash-flow statement / consolidated cash-flow statement",
+              "line_item": "net cash flows from operating activities divided by cash paid to acquire and construct fixed assets, intangible assets and other long-term assets",
+              "period_column": "FY2014"
+            }
+          },
+          {
+            "field_id": "FIELD:600585:FY2014:OCF_TO_CASH_CAPEX_DENOMINATOR",
+            "role": "OUTCOME",
+            "unit": "RMB",
+            "measurement_clock": {
+              "clock_kind": "FLOW_PERIOD",
+              "flow_period": {
+                "period_start": "2014-01-01",
+                "period_end": "2014-12-31",
+                "fiscal_period": "FY2014"
+              }
+            },
+            "locator": {
+              "table_or_note": "consolidated cash-flow statement / consolidated cash-flow statement",
+              "line_item": "net cash flows from operating activities divided by cash paid to acquire and construct fixed assets, intangible assets and other long-term assets",
+              "period_column": "FY2014"
+            }
+          }
+        ],
+        "formula": {
+          "operator": "RATIO_CHANGE",
+          "input_field_ids": [
+            "FIELD:600585:FY2013:OCF_TO_CASH_CAPEX_NUMERATOR",
+            "FIELD:600585:FY2013:OCF_TO_CASH_CAPEX_DENOMINATOR",
+            "FIELD:600585:FY2014:OCF_TO_CASH_CAPEX_NUMERATOR",
+            "FIELD:600585:FY2014:OCF_TO_CASH_CAPEX_DENOMINATOR"
+          ],
+          "expression": "((outcome_numerator/outcome_denominator)-(baseline_numerator/baseline_denominator))/abs(baseline_ratio)",
+          "unit_conversions": [
+            {
+              "field_id": "FIELD:600585:FY2013:OCF_TO_CASH_CAPEX_NUMERATOR",
+              "from_unit": "RMB",
+              "to_unit": "RMB",
+              "scale": "1"
+            },
+            {
+              "field_id": "FIELD:600585:FY2013:OCF_TO_CASH_CAPEX_DENOMINATOR",
+              "from_unit": "RMB",
+              "to_unit": "RMB",
+              "scale": "1"
+            },
+            {
+              "field_id": "FIELD:600585:FY2014:OCF_TO_CASH_CAPEX_NUMERATOR",
+              "from_unit": "RMB",
+              "to_unit": "RMB",
+              "scale": "1"
+            },
+            {
+              "field_id": "FIELD:600585:FY2014:OCF_TO_CASH_CAPEX_DENOMINATOR",
+              "from_unit": "RMB",
+              "to_unit": "RMB",
+              "scale": "1"
+            }
+          ],
+          "zero_baseline_rule": "RETURN_MEASUREMENT_MISMATCH"
+        },
+        "label_rule": {
+          "type": "PERCENT_CHANGE_BAND",
+          "decrease_lte": -0.05,
+          "increase_gte": 0.05,
+          "ordered_labels": [
+            "MEASUREMENT_MISMATCH",
+            "OBSERVED_DECREASE",
+            "OBSERVED_STABLE",
+            "OBSERVED_INCREASE",
+            "UNKNOWN"
+          ]
+        },
+        "conflict_rule": {
+          "multiple_values": "MEASUREMENT_MISMATCH",
+          "boundary_conflict": "MEASUREMENT_MISMATCH",
+          "period_conflict": "MEASUREMENT_MISMATCH"
+        },
+        "unknown_rule": {
+          "conditions": [
+            "one or more contracted raw fields absent"
+          ],
+          "label": "UNKNOWN"
+        },
+        "mismatch_rule": {
+          "conditions": [
+            "scope, period, unit or unique-field conflict"
+          ],
+          "label": "MEASUREMENT_MISMATCH",
+          "propagation": "LOCAL_ONLY",
+          "dependent_cell_ids": []
+        },
+        "allowed_source_types": [
+          "OFFICIAL_AUDITED_ANNUAL_REPORT"
+        ],
+        "prohibited_inference": "OCF-to-capex is a funding-capacity diagnostic, not distributable owner cash."
+      },
+      {
+        "cell_id": "CELL:600585:20140416:NET_DEBT_RATIO",
+        "thread_id": "THREAD:600585:ENTERPRISE_STATE_TRANSMISSION",
+        "layer": "FINANCING",
+        "outcome_period": {
+          "period_start": "2014-04-17T00:00:00+08:00",
+          "period_end": "2014-12-31T23:59:59+08:00",
+          "fiscal_period": "FY2014"
+        },
+        "measurement_clock": {
+          "clock_kind": "BALANCE_AS_OF",
+          "balance_as_of": {
+            "as_of": "2014-12-31",
+            "fiscal_period": "FY2014"
+          }
+        },
+        "responsibility_boundary": {
+          "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600585",
+          "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+          "arena_id": "ARENA:CN:CEMENT:MULTI_REGION_DELIVERED_MARKET",
+          "scope_requirement": "issuer-consolidated same-definition field; causal attribution prohibited"
+        },
+        "field_identity": {
+          "outcome_field_id": "FIELD:600585:FY2014:NET_DEBT_RATIO",
+          "baseline_field_id": "FIELD:600585:FY2013:NET_DEBT_RATIO",
+          "statement_scope": "CONSOLIDATED",
+          "table_or_note": "liquidity and funding discussion",
+          "line_item": "net debt ratio",
+          "field_kind": "AUDITED_OR_OPERATING_LINE_ITEM"
+        },
+        "unit": {
+          "kind": "ABSOLUTE_CHANGE",
+          "currency": "NOT_APPLICABLE",
+          "scale": "1"
+        },
+        "raw_input_fields": [
+          {
+            "field_id": "FIELD:600585:FY2013:NET_DEBT_RATIO",
+            "role": "BASELINE",
+            "unit": "RATIO",
+            "measurement_clock": {
+              "clock_kind": "BALANCE_AS_OF",
+              "balance_as_of": {
+                "as_of": "2013-12-31",
+                "fiscal_period": "FY2013"
+              }
+            },
+            "locator": {
+              "table_or_note": "liquidity and funding discussion",
+              "line_item": "net debt ratio",
+              "period_column": "FY2013"
+            }
+          },
+          {
+            "field_id": "FIELD:600585:FY2014:NET_DEBT_RATIO",
+            "role": "OUTCOME",
+            "unit": "RATIO",
+            "measurement_clock": {
+              "clock_kind": "BALANCE_AS_OF",
+              "balance_as_of": {
+                "as_of": "2014-12-31",
+                "fiscal_period": "FY2014"
+              }
+            },
+            "locator": {
+              "table_or_note": "liquidity and funding discussion",
+              "line_item": "net debt ratio",
+              "period_column": "FY2014"
+            }
+          }
+        ],
+        "formula": {
+          "operator": "DIFFERENCE",
+          "input_field_ids": [
+            "FIELD:600585:FY2013:NET_DEBT_RATIO",
+            "FIELD:600585:FY2014:NET_DEBT_RATIO"
+          ],
+          "expression": "outcome - baseline",
+          "unit_conversions": [
+            {
+              "field_id": "FIELD:600585:FY2013:NET_DEBT_RATIO",
+              "from_unit": "RATIO",
+              "to_unit": "RATIO",
+              "scale": "1"
+            },
+            {
+              "field_id": "FIELD:600585:FY2014:NET_DEBT_RATIO",
+              "from_unit": "RATIO",
+              "to_unit": "RATIO",
+              "scale": "1"
+            }
+          ],
+          "zero_baseline_rule": "NOT_APPLICABLE"
+        },
+        "label_rule": {
+          "type": "ABSOLUTE_CHANGE_BAND",
+          "decrease_lte": -0.03,
+          "increase_gte": 0.03,
+          "ordered_labels": [
+            "MEASUREMENT_MISMATCH",
+            "OBSERVED_DECREASE",
+            "OBSERVED_STABLE",
+            "OBSERVED_INCREASE",
+            "UNKNOWN"
+          ]
+        },
+        "conflict_rule": {
+          "multiple_values": "MEASUREMENT_MISMATCH",
+          "boundary_conflict": "MEASUREMENT_MISMATCH",
+          "period_conflict": "MEASUREMENT_MISMATCH"
+        },
+        "unknown_rule": {
+          "conditions": [
+            "one or more contracted raw fields absent"
+          ],
+          "label": "UNKNOWN"
+        },
+        "mismatch_rule": {
+          "conditions": [
+            "scope, period, unit or unique-field conflict"
+          ],
+          "label": "MEASUREMENT_MISMATCH",
+          "propagation": "LOCAL_ONLY",
+          "dependent_cell_ids": []
+        },
+        "allowed_source_types": [
+          "OFFICIAL_AUDITED_ANNUAL_REPORT"
+        ],
+        "prohibited_inference": "One-year net-debt movement does not prove solvency quality or permanent loss."
+      },
+      {
+        "cell_id": "CELL:600585:20140416:ADAPTATION_ACTION_EVENT",
+        "thread_id": "THREAD:600585:ACTION_EXECUTION_ADAPTATION",
+        "layer": "EXECUTED",
+        "outcome_period": {
+          "period_start": "2014-04-17T00:00:00+08:00",
+          "period_end": "2014-12-31T23:59:59+08:00",
+          "fiscal_period": "FY2014"
+        },
+        "measurement_clock": {
+          "clock_kind": "EVENT_WINDOW",
+          "event_window": {
+            "event_start": "2014-04-17",
+            "event_end": "2014-12-31",
+            "window_name": "POST_CUTOFF_FY2014_EVENT_WINDOW"
+          }
+        },
+        "responsibility_boundary": {
+          "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600585",
+          "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+          "arena_id": "ARENA:CN:CEMENT:MULTI_REGION_DELIVERED_MARKET",
+          "scope_requirement": "issuer-specific implemented action and execution milestone; narrative plans are insufficient"
+        },
+        "field_identity": {
+          "outcome_field_id": "FIELD:600585:FY2014:ADAPTATION_ACTION_EVENT_EVENT",
+          "baseline_field_id": "",
+          "statement_scope": "ISSUER_IMPLEMENTED_ACTION_EVENT",
+          "table_or_note": "FY2014 management discussion, project delivery or material investment disclosure",
+          "line_item": "explicit post-cutoff change in operating or capital action in response to demand, price, energy cost or environmental regulation",
+          "field_kind": "DISCLOSED_EVENT"
+        },
+        "unit": {
+          "kind": "EVENT",
+          "currency": "NOT_APPLICABLE",
+          "scale": "BOOLEAN"
+        },
+        "raw_input_fields": [
+          {
+            "field_id": "FIELD:600585:FY2014:ADAPTATION_ACTION_EVENT_EVENT",
+            "role": "EVENT",
+            "unit": "BOOLEAN_EVENT",
+            "measurement_clock": {
+              "clock_kind": "EVENT_WINDOW",
+              "event_window": {
+                "event_start": "2014-04-17",
+                "event_end": "2014-12-31",
+                "window_name": "POST_CUTOFF_FY2014_EVENT_WINDOW"
+              }
+            },
+            "locator": {
+              "table_or_note": "FY2014 management discussion, project delivery or material investment disclosure",
+              "line_item": "explicit post-cutoff change in operating or capital action in response to demand, price, energy cost or environmental regulation",
+              "period_column": "2014-04-17..2014-12-31"
+            }
+          }
+        ],
+        "formula": {
+          "operator": "EVENT_BOOLEAN",
+          "input_field_ids": [
+            "FIELD:600585:FY2014:ADAPTATION_ACTION_EVENT_EVENT"
+          ],
+          "expression": "explicit_event(FIELD:600585:FY2014:ADAPTATION_ACTION_EVENT_EVENT)",
+          "unit_conversions": [
+            {
+              "field_id": "FIELD:600585:FY2014:ADAPTATION_ACTION_EVENT_EVENT",
+              "from_unit": "BOOLEAN_EVENT",
+              "to_unit": "BOOLEAN_EVENT",
+              "scale": "1"
+            }
+          ],
+          "zero_baseline_rule": "NOT_APPLICABLE"
+        },
+        "label_rule": {
+          "type": "EVENT_PRESENCE",
+          "decrease_lte": 0,
+          "increase_gte": 1,
+          "ordered_labels": [
+            "MEASUREMENT_MISMATCH",
+            "OBSERVED_YES",
+            "OBSERVED_NO",
+            "UNKNOWN"
+          ]
+        },
+        "conflict_rule": {
+          "multiple_values": "MEASUREMENT_MISMATCH",
+          "boundary_conflict": "MEASUREMENT_MISMATCH",
+          "period_conflict": "MEASUREMENT_MISMATCH"
+        },
+        "unknown_rule": {
+          "conditions": [
+            "one or more contracted raw fields absent"
+          ],
+          "label": "UNKNOWN"
+        },
+        "mismatch_rule": {
+          "conditions": [
+            "scope, period, unit or unique-field conflict"
+          ],
+          "label": "MEASUREMENT_MISMATCH",
+          "propagation": "LOCAL_ONLY",
+          "dependent_cell_ids": []
+        },
+        "allowed_source_types": [
+          "OFFICIAL_AUDITED_ANNUAL_REPORT"
+        ],
+        "prohibited_inference": "A stated intention or generic risk response is not observed adaptation."
+      },
+      {
+        "cell_id": "CELL:600585:20140416:DIRECT_LOSS_EVENT",
+        "thread_id": "THREAD:600585:ACTION_EXECUTION_ADAPTATION",
+        "layer": "PERMANENT_LOSS",
+        "outcome_period": {
+          "period_start": "2014-04-17T00:00:00+08:00",
+          "period_end": "2014-12-31T23:59:59+08:00",
+          "fiscal_period": "FY2014"
+        },
+        "measurement_clock": {
+          "clock_kind": "EVENT_WINDOW",
+          "event_window": {
+            "event_start": "2014-04-17",
+            "event_end": "2014-12-31",
+            "window_name": "POST_CUTOFF_FY2014_EVENT_WINDOW"
+          }
+        },
+        "responsibility_boundary": {
+          "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600585",
+          "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+          "arena_id": "ARENA:CN:CEMENT:MULTI_REGION_DELIVERED_MARKET",
+          "scope_requirement": "issuer-specific implemented action and execution milestone; narrative plans are insufficient"
+        },
+        "field_identity": {
+          "outcome_field_id": "FIELD:600585:FY2014:DIRECT_LOSS_EVENT_EVENT",
+          "baseline_field_id": "",
+          "statement_scope": "ISSUER_IMPLEMENTED_ACTION_EVENT",
+          "table_or_note": "FY2014 management discussion, project delivery or material investment disclosure",
+          "line_item": "direct issuer-level irreversible capital loss, default, covenant breach or going-concern event",
+          "field_kind": "DISCLOSED_EVENT"
+        },
+        "unit": {
+          "kind": "EVENT",
+          "currency": "NOT_APPLICABLE",
+          "scale": "BOOLEAN"
+        },
+        "raw_input_fields": [
+          {
+            "field_id": "FIELD:600585:FY2014:DIRECT_LOSS_EVENT_EVENT",
+            "role": "EVENT",
+            "unit": "BOOLEAN_EVENT",
+            "measurement_clock": {
+              "clock_kind": "EVENT_WINDOW",
+              "event_window": {
+                "event_start": "2014-04-17",
+                "event_end": "2014-12-31",
+                "window_name": "POST_CUTOFF_FY2014_EVENT_WINDOW"
+              }
+            },
+            "locator": {
+              "table_or_note": "FY2014 management discussion, project delivery or material investment disclosure",
+              "line_item": "direct issuer-level irreversible capital loss, default, covenant breach or going-concern event",
+              "period_column": "2014-04-17..2014-12-31"
+            }
+          }
+        ],
+        "formula": {
+          "operator": "EVENT_BOOLEAN",
+          "input_field_ids": [
+            "FIELD:600585:FY2014:DIRECT_LOSS_EVENT_EVENT"
+          ],
+          "expression": "explicit_event(FIELD:600585:FY2014:DIRECT_LOSS_EVENT_EVENT)",
+          "unit_conversions": [
+            {
+              "field_id": "FIELD:600585:FY2014:DIRECT_LOSS_EVENT_EVENT",
+              "from_unit": "BOOLEAN_EVENT",
+              "to_unit": "BOOLEAN_EVENT",
+              "scale": "1"
+            }
+          ],
+          "zero_baseline_rule": "NOT_APPLICABLE"
+        },
+        "label_rule": {
+          "type": "EVENT_PRESENCE",
+          "decrease_lte": 0,
+          "increase_gte": 1,
+          "ordered_labels": [
+            "MEASUREMENT_MISMATCH",
+            "OBSERVED_YES",
+            "OBSERVED_NO",
+            "UNKNOWN"
+          ]
+        },
+        "conflict_rule": {
+          "multiple_values": "MEASUREMENT_MISMATCH",
+          "boundary_conflict": "MEASUREMENT_MISMATCH",
+          "period_conflict": "MEASUREMENT_MISMATCH"
+        },
+        "unknown_rule": {
+          "conditions": [
+            "one or more contracted raw fields absent"
+          ],
+          "label": "UNKNOWN"
+        },
+        "mismatch_rule": {
+          "conditions": [
+            "scope, period, unit or unique-field conflict"
+          ],
+          "label": "MEASUREMENT_MISMATCH",
+          "propagation": "LOCAL_ONLY",
+          "dependent_cell_ids": []
+        },
+        "allowed_source_types": [
+          "OFFICIAL_AUDITED_ANNUAL_REPORT"
+        ],
+        "prohibited_inference": "Absence of one disclosed event does not prove permanent-loss risk is absent."
+      }
+    ],
+    "thread_combination_rules": [],
+    "rights": {
+      "directional_learning": "NOT_AUTHORIZED",
+      "enterprise_learning": "NOT_AUTHORIZED",
+      "comparative": "NOT_AUTHORIZED",
+      "cjo": "NOT_AUTHORIZED",
+      "valuation": "NOT_AUTHORIZED",
+      "report": "NOT_AUTHORIZED",
+      "investment": "NOT_AUTHORIZED"
+    },
+    "allowed_outputs": [
+      "OUTCOME_CUSTODY_REQUEST",
+      "RESEARCH_AGENDA"
+    ],
+    "freeze_state": "PRE_OUTCOME_FROZEN",
+    "contract_frozen_at": "2026-08-27T08:30:00+00:00",
+    "clock_policy": "CUT_OFF_CLOCK_SEPARATE_FROM_MEASUREMENT_CLOCK"
+  },
+  "strongest_rival": "Industry demand growth, coal-price relief, acquired businesses and newly commissioned capacity may jointly explain volume, margin and cash improvement without superior management or durable customer economics.",
+  "contamination_boundary": {
+    "historical_replay_status": "MODEL_MEMORY_MITIGATED",
+    "repository_contains_later_summary": true,
+    "score_authority": "NONE",
+    "allowed_use": "DEVELOPMENT_MULTIDIMENSIONAL_UTILITY_ONLY"
+  },
+  "freeze_state": "PRE_OUTCOME_FROZEN",
+  "frozen_at": "2026-08-27T08:30:00+00:00",
+  "roles": {
+    "judgment_owner_id": "ROLE:CEMENT:ROUND7:JUDGMENT_OWNER",
+    "independent_challenger_id": "ROLE:CEMENT:ROUND7:INDEPENDENT_CHALLENGER",
+    "outcome_custodian_id": "ROLE:CEMENT:ROUND7:OUTCOME_CUSTODIAN"
+  },
+  "rights": {
+    "directional_learning": "NOT_AUTHORIZED",
+    "enterprise_learning": "NOT_AUTHORIZED",
+    "comparative": "NOT_AUTHORIZED",
+    "method_transfer": "NOT_AUTHORIZED",
+    "cjo": "NOT_AUTHORIZED",
+    "valuation": "NOT_AUTHORIZED",
+    "report": "NOT_AUTHORIZED",
+    "investment": "NOT_AUTHORIZED"
+  },
+  "allowed_outputs": [
+    "MULTIDIMENSIONAL_PAIRED_PREOUTCOME_RESEARCH",
+    "OUTCOME_CUSTODY_REQUEST",
+    "RESEARCH_AGENDA"
+  ]
+}
