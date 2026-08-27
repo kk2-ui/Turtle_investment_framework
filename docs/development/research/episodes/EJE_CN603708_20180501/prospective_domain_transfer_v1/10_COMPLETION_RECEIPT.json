@@ -1,0 +1,78 @@
+{
+  "schema_version": "judgment-first-real-feedback-completion.v1",
+  "receipt_id": "JFRFC:CN603708:20180501:FY2018:V1",
+  "campaign_id": "JUDGMENT_FIRST_12H_20260828",
+  "roster_rank": 2,
+  "company_id": "CN:603708",
+  "cutoff_at": "2018-05-01T00:00:00+08:00",
+  "outcome_period": "FY2018",
+  "status": "REAL_FEEDBACK_LOOP_2_COMPLETED_HARMFUL",
+  "artifacts": {
+    "selection": "00_SELECTION_AND_PREOUTCOME_SOURCE_RECORD.md",
+    "preoutcome_judgment": "01_PREOUTCOME_EVIDENCE_AND_JUDGMENT_FREEZE.md",
+    "baseline_contract": "02_BASELINE_BEFORE_LEARNING_CONTRACT.json",
+    "enhanced_contract": "03_ENHANCED_AFTER_LEARNING_CONTRACT.json",
+    "application_freeze": "04_TRANSFER_APPLICATION_FREEZE.json",
+    "preoutcome_review": "05_INDEPENDENT_PREOUTCOME_REVIEW.md",
+    "outcome_authorization": "06_OUTCOME_ACCESS_AUTHORIZATION.json",
+    "custodian_settlement": "07_CUSTODIAN_OUTCOME_SETTLEMENT.json",
+    "paired_utility_review": "08_INDEPENDENT_PAIRED_UTILITY_REVIEW.md",
+    "investor_readout": "09_INVESTOR_READOUT.md"
+  },
+  "deterministic_signal_result": {
+    "core_signal": "UNAVAILABLE_LOCAL_REPORTING_PERIMETER_LIMIT",
+    "weike_signal": "UNAVAILABLE_OPERATING_PROFIT_NOT_DISCLOSED",
+    "organic_new_region_and_micro_store_signal": "UNAVAILABLE_LOCAL_ECONOMIC_CONTRIBUTION_NOT_DISCLOSED",
+    "new_logistics_signal": "UNAVAILABLE_LOCAL_ECONOMIC_OR_SERVICE_CONTRIBUTION_NOT_DISCLOSED",
+    "new_domain_aggregate": "UNAVAILABLE",
+    "cash_signal_under_frozen_rule": "UNAVAILABLE_REQUIRED_OTHER_EXTERNAL_CASH_NOT_FULLY_DISCLOSED"
+  },
+  "fair_baseline_cash_bound": {
+    "pre_acquisition_conservative_proxy_rmb": -102209786.94,
+    "weike_acquisition_net_cash_rmb": 218498644.34,
+    "other_nonoverlapping_external_new_domain_cash_sign": "NONNEGATIVE_OUTFLOW",
+    "post_expansion_owner_cash_upper_bound_rmb": -320708431.28,
+    "direction": "NEGATIVE"
+  },
+  "baseline_result": {
+    "core_network": "CAUTIOUSLY_POSITIVE_WITH_PERIMETER_LIMIT",
+    "new_domain": "UNDERWRITTEN_AND_WITHHOLD_GROWTH_VALUE",
+    "capital_allocation": "DOWNGRADED_FOR_NEGATIVE_EXPANSION_AFTER_CASH",
+    "owner_cash": "NEGATIVE_UPPER_BOUND",
+    "permanent_loss": "INCREASE_RISK_DISCOUNT"
+  },
+  "enhanced_result": {
+    "core_network": "RETAIN_PRIOR_POSITIVE_WITH_AFFECTED_TREND_LOCALIZED",
+    "new_domain": "UNDERWRITTEN_AND_WITHHOLD_GROWTH_VALUE",
+    "capital_allocation": "UPGRADE_BLOCKED_BUT_NOT_DOWNGRADED",
+    "owner_cash": "CONDITIONAL_DUE_TO_UNAVAILABLE_FIRST",
+    "permanent_loss": "UNDERSTATED_RELATIVE_TO_FAIR_BASELINE"
+  },
+  "paired_utility": "HARMFUL",
+  "harm_reason": "AN_UNKNOWN_NONNEGATIVE_OUTFLOW_WAS_ALLOWED_TO_ERASE_AN_ALREADY_NEGATIVE_CASH_UPPER_BOUND_AND_WEAKEN_CAPITAL_ALLOCATION_OWNER_CASH_AND_PERMANENT_LOSS_TREATMENT",
+  "rule_resolution": {
+    "deployed_subdomain_locality": "RETAIN",
+    "economic_absorption_after_build": "RETAIN_NARROWLY",
+    "trend_requires_comparable_base": "RETAIN_AS_LOCAL_MEASUREMENT_METHOD",
+    "cash_unavailable_first": "REJECT",
+    "replacement_rule": "BOUNDED_UNKNOWN_PRESERVES_DIRECTION"
+  },
+  "replacement_rule_definition": "WHEN_A_MISSING_AMOUNT_HAS_A_KNOWN_SIGN_FIRST_COMPUTE_THE_FEASIBLE_INTERVAL; IF_THE_MOST_OPTIMISTIC_BOUND_IS_STILL_NEGATIVE_CLASSIFY_DIRECTION_NEGATIVE_WHILE_AMOUNT_REMAINS_UNKNOWN; USE_UNAVAILABLE_ONLY_IF_THE_MISSING_AMOUNT_CAN_CROSS_ZERO_OR_CHANGE_THE_MATERIAL_FINANCING_JUDGMENT",
+  "defensive_writing_audit": "FAIL_IN_ENHANCED_CASH_REASONING_AND_PASS_IN_FINAL_PAIRED_JUDGMENT",
+  "campaign_progress": {
+    "real_feedback_loops_completed": 2,
+    "minimum_required": 3,
+    "counterexample_or_no_utility_requirement": "SATISFIED_BY_LOOP_1_NO_MATERIAL_UTILITY_AND_LOOP_2_HARMFUL",
+    "campaign_complete": false
+  },
+  "permissions": {
+    "transfer_validated": "NOT_GRANTED",
+    "method_frozen": "NOT_GRANTED",
+    "comparative": "NOT_GRANTED",
+    "cjo": "NOT_GRANTED",
+    "formal_valuation": "NOT_GRANTED",
+    "buyband": "NOT_GRANTED",
+    "report": "NOT_GRANTED",
+    "investment_action": "NOT_GRANTED"
+  }
+}
