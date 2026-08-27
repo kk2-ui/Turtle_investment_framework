@@ -1,0 +1,59 @@
+{
+  "schema_version": "prospective-enterprise-judgment-outcome-contract.v1",
+  "contract_id": "PEJOC:CN002080:20190501:FY2019:BASELINE_BEFORE_LEARNING:V1",
+  "method_lineage": {
+    "policy_source": "EJE_CN002394_20190501/prospective_judgment_v1/02_OUTCOME_MEASUREMENT_CONTRACT.json",
+    "policy_state": "COMMITTED_BEFORE_CN002394_OUTCOME_FEEDBACK",
+    "projection_rule": "SAME_PROJECT_STATUS_AND_CURRENT_LEVEL_POLICY_ADAPTED_TO_CN002080_WITHOUT_LATER_LEARNING"
+  },
+  "standing_measurement_rule_refs": [
+    "PERIMETER_FIRST_MEASUREMENT_GATE"
+  ],
+  "company_id": "CN:002080",
+  "issuer_id": "ISSUER:CN:002080",
+  "cutoff_at": "2019-05-01T00:00:00+08:00",
+  "period": "FY2019",
+  "primary_responsibility_unit_id": "SUBSIDIARY:CN002080:ZHONGCAI_LITHIUM_FILM",
+  "consolidated_responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:002080",
+  "primary_research_action": "CHECK_PROJECT_OPERATION_CUSTOMER_ENTRY_AND_CURRENT_PERIOD_BUSINESS_LEVELS",
+  "management_credit_rule": "COMPLETED_LINES_AND_CUSTOMER_ENTRY_MAY_RAISE_EXECUTION_CREDIT_BUT_NEVER_CAPITAL_ALLOCATION_CREDIT_BY_THEMSELVES",
+  "fields": [
+    {"field_id": "LITHIUM_SEPARATOR_FOUR_LINE_STATUS_FY2019", "unit": "EVENT", "settles": "BUILD_AND_OPERATION_MILESTONE_ONLY"},
+    {"field_id": "LITHIUM_SEPARATOR_CUSTOMER_CERTIFICATION_ORDER_EVENT_FY2019", "unit": "EVENT", "settles": "CUSTOMER_ENTRY_ONLY_NOT_REPEAT_DEMAND_OR_ECONOMIC_RETURN"},
+    {"field_id": "LITHIUM_SEPARATOR_PRODUCT_REVENUE_RMB_FY2019_LEVEL", "unit": "RMB", "trend_baseline_registered": false},
+    {"field_id": "LITHIUM_SEPARATOR_SALES_SQM_FY2019_LEVEL", "unit": "SQUARE_METRES", "trend_baseline_registered": false},
+    {"field_id": "LITHIUM_SEPARATOR_PRODUCTION_SQM_FY2019_LEVEL", "unit": "SQUARE_METRES", "trend_baseline_registered": false},
+    {"field_id": "LITHIUM_SEPARATOR_ENDING_INVENTORY_SQM_FY2019_LEVEL", "unit": "SQUARE_METRES", "trend_baseline_registered": false},
+    {"field_id": "ZHONGCAI_LITHIUM_FILM_REVENUE_RMB_FY2019_LEVEL", "unit": "RMB", "trend_baseline_registered": false},
+    {"field_id": "ZHONGCAI_LITHIUM_FILM_OPERATING_PROFIT_RMB_FY2019_LEVEL", "unit": "RMB", "trend_baseline_registered": false},
+    {"field_id": "ZHONGCAI_LITHIUM_FILM_NET_PROFIT_RMB_FY2019_LEVEL", "unit": "RMB", "trend_baseline_registered": false},
+    {"field_id": "ZHONGCAI_LITHIUM_FILM_OCF_RMB_FY2019_LEVEL", "unit": "RMB", "trend_baseline_registered": false},
+    {"field_id": "LITHIUM_SEPARATOR_PROJECT_UNPAID_CONTRACT_RMB_FY2019_LEVEL", "unit": "RMB", "trend_baseline_registered": false},
+    {"field_id": "CONSOLIDATED_OCF_RMB_FY2019_LEVEL", "unit": "RMB", "trend_baseline_registered": false},
+    {"field_id": "CONSOLIDATED_CASH_CAPEX_RMB_FY2019_LEVEL", "unit": "RMB", "trend_baseline_registered": false},
+    {"field_id": "CONSOLIDATED_CASH_BALANCE_RMB_FY2019_LEVEL", "unit": "RMB", "trend_baseline_registered": false},
+    {"field_id": "CONSOLIDATED_ACCOUNTS_RECEIVABLE_RMB_FY2019_LEVEL", "unit": "RMB", "trend_baseline_registered": false},
+    {"field_id": "CONSOLIDATED_INVENTORY_RMB_FY2019_LEVEL", "unit": "RMB", "trend_baseline_registered": false},
+    {"field_id": "CONSOLIDATED_SHORT_TERM_BORROWINGS_RMB_FY2019_LEVEL", "unit": "RMB", "trend_baseline_registered": false},
+    {"field_id": "CONSOLIDATED_CURRENT_PORTION_NONCURRENT_LIABILITIES_RMB_FY2019_LEVEL", "unit": "RMB", "trend_baseline_registered": false},
+    {"field_id": "CONSOLIDATED_LONG_TERM_BORROWINGS_RMB_FY2019_LEVEL", "unit": "RMB", "trend_baseline_registered": false},
+    {"field_id": "CONSOLIDATION_PERIMETER_CONTINUITY_EVENT", "unit": "EVENT", "settles": "MEASUREMENT_COMPARABILITY_ONLY"}
+  ],
+  "fair_baseline_capabilities": [
+    "BUILD_COMPLETION_IS_NOT_CAPITAL_RETURN",
+    "CUSTOMER_CERTIFICATION_IS_NOT_REPEAT_DEMAND",
+    "CURRENT_PRODUCT_INVENTORY_LOSS_AND_CASH_LEVELS_CAN_INFORM_RISK",
+    "A_PROMINENT_PRODUCTION_INVENTORY_OR_LOSS_DISCLOSURE_MAY_BE_USED_EVEN_IF_NOT_SYSTEMATICALLY_PREREGISTERED_BUT_CANNOT_BE_CALLED_IMPROVEMENT_WITHOUT_A_COMPARATOR",
+    "NO_LITHIUM_SEPARATOR_GROWTH_VALUE_WITHOUT_ECONOMIC_EVIDENCE"
+  ],
+  "not_registered": [
+    "SYSTEMATIC_SAME_DEFINITION_FY2018_COMPARATORS",
+    "PRODUCT_REVENUE_PER_SALES_SQM_DIRECTION",
+    "DISCLOSED_PHYSICAL_FLOW_RECONCILIATION_GAP",
+    "PRECOMMITTED_PRODUCT_TO_SUBSIDIARY_TO_CAPITAL_OBLIGATION_ABSORPTION_CHAIN"
+  ],
+  "local_resolution_rule": "A_PERIMETER_OR_PHYSICAL_FLOW_MISMATCH_LIMITS_ONLY_THE_AFFECTED_TREND_OR_ATTRIBUTION; CURRENT_LEVELS_AND_OTHER_COMPANY_JUDGMENTS_CONTINUE",
+  "allowed_outcome_source": "ONE_OFFICIAL_FULL_FY2019_CNINFO_ANNUAL_REPORT_PUBLISHED_BY_2020_05_01",
+  "outcome_access": "SEALED",
+  "price_access": "PROHIBITED"
+}
