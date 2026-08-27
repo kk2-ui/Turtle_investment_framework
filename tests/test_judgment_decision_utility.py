@@ -177,6 +177,7 @@ def _evaluation(pairing: dict, contract: dict) -> dict:
             "dimension_id": dimension,
             "baseline_assessment": "NO_DIFFERENCE",
             "enhanced_assessment": assessments.get(dimension, "MATERIAL_IMPROVEMENT"),
+            "supporting_cell_ids": ["CELL:CN601933:FY2019:OPERATING_CASH"],
             "rationale": "The dimension is reviewed independently; local uncertainty does not reject the pair.",
         } for dimension in utility.DIMENSIONS],
         "holdout": {
@@ -292,6 +293,14 @@ def test_independent_review_preserves_local_unknown_and_candidate_only_authority
     assert {finding["enhanced_assessment"] for finding in evaluation["dimension_findings"]} >= {
         "UNKNOWN", "NOT_DIAGNOSTIC",
     }
+    unbound = deepcopy(evaluation)
+    unbound["dimension_findings"][0]["supporting_cell_ids"] = ["CELL:UNFROZEN"]
+    result = utility.validate_decision_utility_evaluation(
+        unbound, pairing=pairing, contract=contract,
+        baseline_episode=baseline, enhanced_episode=enhanced,
+    )
+    assert not result["valid"]
+    assert "decision_utility_evaluation.dimension_findings[0].supporting_cell_ids_invalid" in result["findings"]
     conflicted = deepcopy(evaluation)
     conflicted["reviewer_id"] = contract["roles"]["judgment_owner_id"]
     result = utility.validate_decision_utility_evaluation(

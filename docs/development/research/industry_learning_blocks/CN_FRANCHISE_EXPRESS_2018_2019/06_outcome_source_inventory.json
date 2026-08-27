@@ -1,0 +1,33 @@
+{
+  "schema_version": "turtle-outcome-measurement-static-pdf-inventory.v1",
+  "inventory_id": "OMINV:CN002120:FY2019:R8:V1",
+  "measurement_contract_ref": {
+    "measurement_contract_id": "OMC:CN002120:20190501:MULTIDIMENSIONAL:V3",
+    "measurement_contract_version": 3
+  },
+  "custodian_id": "ROLE:ROUND8:EXPRESS:OUTCOME_CUSTODIAN",
+  "registered_at": "2020-05-01T00:00:00+08:00",
+  "documents": [
+    {
+      "source_id": "CNINFO:002120:ANN:20200430:1207682788",
+      "source_url": "https://static.cninfo.com.cn/finalpage/2020-04-30/1207682788.PDF",
+      "local_pdf_path": "/tmp/CN002120_FY2019_1207682788.pdf",
+      "issuer_id": "ISSUER:CN:002120",
+      "responsibility_boundary": "ISSUER_CONSOLIDATED:CN:002120",
+      "report_period_end": "2019-12-31",
+      "official_source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+      "report_scope": "ISSUER_FILING",
+      "currency": "RMB",
+      "revision_policy": "ORIGINAL_VINTAGE",
+      "consolidation_or_restatement_note": "FY2019 issuer-consolidated original annual-report vintage. Express revenue and cost presentation added dispatch fees from 2019-01-01; affected unit-economics fields retain local MEASUREMENT_MISMATCH.",
+      "availability_precision": "DATE_ONLY",
+      "source_available_at": null,
+      "source_available_date": "2020-04-30"
+    }
+  ],
+  "object_class": "OUTCOME_MEASUREMENT_STATIC_PDF_INVENTORY",
+  "claim_class": "REGISTERED_LOCAL_OFFICIAL_ANNUAL_REPORTS_ONLY",
+  "allowed_outputs": [
+    "ENTERPRISE_OUTCOME_ACQUISITION_ONLY"
+  ]
+}

@@ -1,8 +1,8 @@
 # Turtle 企业判断与训练系统顶层架构
 
-> 状态：`TOP_LEVEL_DESIGN_DECISION_V2 / MULTI_DIMENSIONAL_ENTERPRISE_EPISODE_DESIGNED / FORECAST_LEARNING_CONTROL_IMPLEMENTED / DECISION_CONTRACT_GATE_IMPLEMENTED / CJO_TEACHING_MIRROR_VALIDATED / CJO_VALUATION_SETTLEMENT_VALIDATED / DECISION_UTILITY_PAIRING_VALIDATED / CONTRACT_FIRST_PROSPECTIVE_SHADOW_GATE_VALIDATED`
+> 状态：`TOP_LEVEL_DESIGN_DECISION_V2 / EIGHT_DIMENSION_JUDGMENT_LATTICE_ADOPTED / ROUND8_REAL_CROSS_INDUSTRY_FEEDBACK_COMPLETED / ARCHITECTURE_REVISION_REQUIRED / TRANSFER_NOT_VALIDATED`
 >
-> 日期：2026-08-26
+> 日期：2026-08-27
 >
 > 本文裁决顶层目标、系统边界、学习闭环和路线优先级。现有 Forecast epoch、H1/H2/V5、schema、validator 和控制面仍由各自实施文档管理。2026-08-25 已按用户授权完成 C（Forecast Learning 与逐层错误归因）、D 的 contract-first CJO teaching mirror，及 E 的 synthetic valuation/return settlement：经营兑现、owner-cash valuation identity 和市场回报已各自结算且不回写 CJO。它们不创建 canonical CJO、不读取真实结果，也不授予 report 或投资动作；决策效用、真实独立结算和前瞻验证仍须独立工作包和验收，不能提前宣称已闭环。
 
@@ -83,7 +83,7 @@ Decision Contract
 
 ### 1.1 当前整合度
 
-当前系统是**工程整合强、能力闭环弱**：PIT、来源、冻结、结果隔离、CJO/估值边界和报告接线已有较完整设计；Forecast 已具有限 learning control，但尚无真实独立结算、双轴 holdout 或配对决策效用证据，训练也尚未完整镜像生产决策。因此不能用控制面测试通过率宣称企业判断已经改善。
+当前系统是**工程整合强、能力闭环开始形成但尚未验证迁移**：PIT、来源、冻结、结果隔离、CJO/估值边界和报告接线已有较完整设计；水泥已完成真实反馈，快递 Round 8 已完成同 cutoff Baseline/Enhanced、页级数值核验、字段级结果结算和跨行业方法审阅。Round 8 没有证明八维方法的材料增量：Baseline 已经共享八维问题和多数反方约束，而且两种方法没有在结果前分别冻结 resolution rule，不能事后授予 Enhanced `AVOIDED_ERROR`。该轮暴露了行业责任边界、投诉单位、mixed-clock 因果资格和方法效果归因问题。因此不能把真实回放、控制面测试或更完整的研究覆盖宣称为方法迁移已验证。
 
 ### 1.2 材料性审计结论
 
@@ -178,7 +178,38 @@ EnterpriseContextSnapshot
 
 这使系统同时保留**公司全景**和**局部可证伪性**：公司可以在多个维度形成有边界的判断，但只有某条线程真正具备比较和结果合同，才获得相应的因果权限。单项 `UNKNOWN` 不得把整个 episode 降成 `NO_PRIMARY`；同样，多项局部支持也不得自动升级为“管理层优秀”或“企业整体高质量”。
 
-### 3.2 四级准入：证据深度逐步增加，而不是一票否决
+### 3.2 八维企业判断格架：标准骨架，不是评分表或八道硬门
+
+每个正式 `EnterpriseJudgmentEpisode` 都使用同一套八维问题骨架：
+
+1. `INITIAL_CONDITIONS`：公司在什么行业时期、客户任务、资产负债表和自身约束下出发；
+2. `IMPLEMENTED_MANAGEMENT_ACTION`：管理层实际做了什么，而不是计划、口号或事后概括；
+3. `EXECUTION`：资源是否部署、过程是否推进、瓶颈是否被解决；
+4. `CUSTOMER_COMPETITION_RESPONSE`：客户、渠道、平台和竞争者怎样响应，是否存在价格或共同需求解释；
+5. `UNIT_ECONOMICS`：量、价、成本、毛利和责任单元经济是否同口径改善；
+6. `WORKING_CAPITAL_CASH_CAPITAL`：营运资本、经营现金、资本开支、融资和普通股现金怎样变化；
+7. `ADAPTATION_PERMANENT_LOSS`：企业能否适应新信息，哪些资本、网络、信誉或普通股索取权可能不可逆损失；
+8. `STRONGEST_ALTERNATIVE_EXPLANATION`：什么外部冲击、行业红利、会计变化、价格竞争或运气能复现当前观察。
+
+八维的强制项是**问题覆盖与诚实状态**，不是八维全部 `OBSERVED`。每一维可以是 `OBSERVED / INFERRED / UNKNOWN / EVIDENCE_INELIGIBLE / NOT_APPLICABLE`；缺失只限制依赖该维度的 claim。禁止相加、加权、排名或生成企业总分，也禁止因任一维度未知而关闭 E0/E1、Industry、Teaching 或其他已成立线程。只有具体高权限主张所依赖的维度和结果合同才形成局部门。
+
+八维之间是累积判断格架，不是线性流水线。后维可以推翻前维的简单解释：规模增长可能来自行业红利；已实施行动可能尚未执行；客户份额可能由降价获得；总部现金可能由加盟商或供应商承担资本；短期结果可能增加永久损失。最强反方不是第八张附表，而是对前七维的持续约束。
+
+实现必须满足四条边界：
+
+- `claim -> field -> locator` 逐维绑定；Baseline 与 Enhanced 在同一 cutoff 使用相同 locator union，差异只能来自推理方法；
+- 行业、平台、客户、加盟商、公司合并主体和普通股分别拥有类型化责任边界，禁止把全国行业字段登记为发行人经营结果；
+- 每个结果单元机器声明 `measurement_use_class` 与 `causal_credit`。跨 cutoff 的全年 flow 一律为 `MIXED_CLOCK_CONTEXT / causal_credit=NONE`，只能支持描述、反方或错误避免；
+- 单位经济、现金和永久损失分别结算。会计展示变化保留局部 `MEASUREMENT_MISMATCH`，现金流不自动成为 owner cash，未披露加盟商经济不以总部数字替代。
+- 每个进入机械评分的 `OBSERVED raw_value` 必须绑定页级提取收据，并由官方 PDF 指定页的披露 token 重新计算；合法 URL、页码或 locator 不能替代数值核验。
+- Baseline 与 Enhanced 必须在结果访问前分别冻结 outcome resolution rule。没有规则时，事后解释只能形成研究议程或 `NOT_DIAGNOSTIC`，不能获得 `AVOIDED_ERROR / MATERIAL_IMPROVEMENT`。
+- Round completion 必须从 canonical settlement 复演 adjudication 与 evaluation，并绑定独立 reviewer acceptance；同步改写几个 JSON ID 不能闭合责任链。
+
+2026-08-27 的快递 Round 8 是首个真实八维跨行业回放。它观察到公司量、份额、经营现金、资本开支和杠杆变化，同时把新增派费导致的收入、单票成本和毛利口径断裂保留为局部 mismatch；投诉指标因“每百万件”被错误冻结为通用 `RATIO` 也局部降级。独立审阅确认八维仍可作为无总分、非硬门的完整问题骨架，但否决了任何方法优势：本轮 Baseline 已共享八维问题、现金边界和主要反方，且没有冻结双方法 resolution rule，不能把共同控制的谨慎或事后保守解释归功于 Enhanced。全国行业增速还错误绑定公司合并边界，FY2019 flow 覆盖 cutoff 前四个月。因此本轮结论为 `REAL_FEEDBACK_COMPLETED / NO_MATERIAL_METHOD_ADVANTAGE_PROVED / ARCHITECTURE_REVISION_REQUIRED`，不支持 `AVOIDED_ERROR`、整体材料效用、`TRANSFER_VALIDATED`、行动因果、CJO、估值、报告或投资权限。
+
+预先登记结果源的精确身份继续保留：它用于阻止结果后挑选来源；正文隔离是有记录的程序性角色边界，不宣称对抗式不可访问，也不另建隐藏来源发现流程。
+
+### 3.3 四级准入：证据深度逐步增加，而不是一票否决
 
 | 层级 | 研究问题 | 最小条件 | 允许产物 | 禁止升级 |
 |---|---|---|---|---|
@@ -190,7 +221,7 @@ EnterpriseContextSnapshot
 
 `E0/E1` 不需要等 H2 或完整同行；`E2` 只需为一个机制线程补齐相称证据；`E3` 才启用 V5 的严格 panel 和结果防火墙；`E4` 才讨论方法发布和报告消费。这个层级解决“第一个样本太严格”和“训练判断太单一”两个问题，但不放松 PIT 或结果隔离。
 
-### 3.3 同一 episode 的六种训练视图
+### 3.4 同一 episode 的六种训练视图
 
 同一份冻结 episode 可以投影成不同训练视图，视图不复制经济事实，也不改变权限：
 
@@ -205,7 +236,7 @@ EnterpriseContextSnapshot
 
 视图之间只沿权限方向流动。`STATE_VIEW` 可以产生研究问题，不能产生当前公司事实；`FORECAST_VIEW` 可以产生校准 policy，不能产生因果箭头；`COMPARATIVE_VIEW` 可以产生局部机制 candidate，不能跳过 transfer；`INVESTMENT_VIEW` 不能把价格结果反写到前面的状态或机制。
 
-### 3.4 IndustryLearningBlock：行业认知的外层训练单位
+### 3.5 IndustryLearningBlock：行业认知的外层训练单位
 
 单个 `EnterpriseJudgmentEpisode` 只能形成指定公司、cutoff 和问题下的判断。真实行业认知需要一个更外层的编排单位：
 
@@ -245,7 +276,7 @@ EVIDENCE CEILING <teaching / mechanism / comparative / transferred>
 
 它禁止输出“扩产总是有效”“龙头管理层更优秀”或统一公司总分。公司差异和时期差异不是噪声，而是 `moderators / transport conditions / break conditions`。行业知识只有在不同公司或时期重现、保留反例并经独立审阅后，才可从 `RESEARCH_AGENDA` 升格为候选方法；否则只是一组有来源的条件化问题。
 
-### 3.5 历史训练的纵横运行顺序
+### 3.6 历史训练的纵横运行顺序
 
 历史训练采用逐 cutoff 展开，而不是先阅读完整行业结局再回填：
 
@@ -263,7 +294,7 @@ cutoff t: freeze IndustryEpoch + company risk set
 
 首个真实 block 优先复用已登记的中国水泥 H1：五家公司和六个 cutoff 用于行业/生命周期与 E0 重建，按预声明的材料性和字段覆盖选择纵向 E1 深挖；H2 的 `NO_PRIMARY_ACTION_SCOPE` 只关闭该 Comparative 候选，不影响 block、公司重建或局部机制探针。任何后续 outcome 仍须在相应 freeze 后由独立角色按授权窗口揭示。
 
-### 3.6 三种“完成”不得混称
+### 3.7 三种“完成”不得混称
 
 训练进度必须区分三个事实：
 

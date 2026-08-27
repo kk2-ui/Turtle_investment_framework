@@ -43,6 +43,7 @@ INVENTORY_CLAIM_CLASS = "REGISTERED_LOCAL_OFFICIAL_ANNUAL_REPORTS_ONLY"
 STATUSES = {"OBSERVED", "UNKNOWN", "MEASUREMENT_MISMATCH"}
 ENTERPRISE_CONTRACT_SCHEMA_VERSION = "enterprise-outcome-measurement-contract.v3"
 ENTERPRISE_AUTHORIZATION_SCHEMA_VERSION = "enterprise-outcome-access-authorization.v1"
+PAGE_EXTRACTION_RECEIPT_SCHEMA_VERSION = "enterprise-page-extraction-receipt.v1"
 ENTERPRISE_CONTRACT_KIND = "ENTERPRISE_V3"
 _PDF_PAGE_BREAK = "\f"
 _NUMBER = re.compile(r"(?<![\d,])(?:-?\d{1,3}(?:[,，]\d{3})+(?:\.\d+)?|-?\d+(?:\.\d+)?)(?![\d,])")
@@ -449,6 +450,147 @@ def _pdf_pages(local_path: Path) -> list[str]:
     )
     pages = completed.stdout.split(_PDF_PAGE_BREAK)
     return pages[:-1] if pages and not pages[-1].strip() else pages
+
+
+def _receipt_decimal(token: Any) -> Decimal | None:
+    if not isinstance(token, str) or not token.strip():
+        return None
+    cleaned = token.strip().replace(",", "").replace("，", "")
+    if cleaned.endswith("%"):
+        cleaned = cleaned[:-1]
+    try:
+        value = Decimal(cleaned)
+    except InvalidOperation:
+        return None
+    return value if value.is_finite() else None
+
+
+def _evaluate_page_value_expression(expression: Any) -> Decimal | None:
+    item = _mapping(expression)
+    operator = item.get("operator")
+    tokens = _items(item.get("tokens"))
+    values = [_receipt_decimal(token) for token in tokens]
+    if any(value is None for value in values):
+        return None
+    numeric = [value for value in values if value is not None]
+    multiplier = _receipt_decimal(item.get("multiplier", "1"))
+    if multiplier is None:
+        return None
+    if operator == "SCALED_TOKEN" and len(numeric) == 1:
+        return numeric[0] * multiplier
+    if operator == "DIFFERENCE_SCALED_TOKENS" and len(numeric) == 2:
+        return (numeric[0] - numeric[1]) * multiplier
+    if operator == "RATIO_TOKENS" and len(numeric) == 2 and numeric[1] != 0:
+        return (numeric[0] / numeric[1]) * multiplier
+    return None
+
+
+def validate_page_bound_enterprise_field_records(
+    field_records: Any,
+    page_extraction_receipts: Any,
+    *,
+    measurement_contract: Any,
+    inventory: Any,
+    page_reader: PageReader = _pdf_pages,
+) -> dict[str, Any]:
+    """Verify every scored raw value against text extracted from its cited PDF page.
+
+    Custodian field records remain the acquisition input, while these receipts
+    provide the missing mechanical bridge to the source page.  The expression
+    language is deliberately small: it supports direct scaling, subtraction,
+    and ratios without guessing table semantics or nearby values.
+    """
+    contract = _mapping(measurement_contract)
+    records = _items(field_records)
+    receipts = _items(page_extraction_receipts)
+    documents = {
+        document.get("source_id"): document
+        for document in _items(_mapping(inventory).get("documents"))
+        if isinstance(document, dict) and _text(document.get("source_id"))
+    }
+    frozen_fields = {
+        raw.get("field_id"): (cell, raw)
+        for cell in _items(contract.get("atomic_cells"))
+        if isinstance(cell, dict)
+        for raw in _items(cell.get("raw_input_fields"))
+        if isinstance(raw, dict) and _text(raw.get("field_id"))
+    }
+    observed = [record for record in records if _mapping(record).get("status") == "OBSERVED"]
+    expected_ids = [record.get("field_id") for record in observed]
+    supplied_ids = [receipt.get("field_id") for receipt in receipts if isinstance(receipt, dict)]
+    findings: list[str] = []
+    if supplied_ids != expected_ids or len(set(supplied_ids)) != len(expected_ids):
+        findings.append("page_extraction_receipts_must_cover_observed_fields_in_order")
+    page_cache: dict[str, list[str]] = {}
+    required_keys = {
+        "schema_version", "receipt_id", "field_id", "source_id", "pdf_page",
+        "unit", "anchor_tokens", "value_expression", "object_class", "claim_class",
+    }
+    for index, receipt_value in enumerate(receipts):
+        path = f"page_extraction_receipts[{index}]"
+        receipt = _mapping(receipt_value)
+        if set(receipt) != required_keys:
+            findings.append(f"{path}_shape_invalid")
+            continue
+        if receipt.get("schema_version") != PAGE_EXTRACTION_RECEIPT_SCHEMA_VERSION:
+            findings.append(f"{path}_schema_version_invalid")
+        if receipt.get("object_class") != "ENTERPRISE_PAGE_EXTRACTION_RECEIPT" or receipt.get("claim_class") != "PDF_PAGE_VALUE_BINDING_ONLY":
+            findings.append(f"{path}_object_or_claim_class_invalid")
+        if not _text(receipt.get("receipt_id")):
+            findings.append(f"{path}_receipt_id_required")
+        field_id = receipt.get("field_id")
+        if field_id not in frozen_fields or index >= len(observed):
+            findings.append(f"{path}_field_not_frozen_or_unexpected")
+            continue
+        record = _mapping(observed[index])
+        cell, raw_field = frozen_fields[field_id]
+        source = _mapping(record.get("source"))
+        if record.get("cell_id") != cell.get("cell_id") or record.get("field_id") != raw_field.get("field_id"):
+            findings.append(f"{path}_record_identity_mismatch")
+        if record.get("unit") != raw_field.get("unit") or receipt.get("unit") != raw_field.get("unit"):
+            findings.append(f"{path}_unit_must_match_frozen_field")
+        if source.get("source_id") != receipt.get("source_id") or source.get("pdf_page") != receipt.get("pdf_page"):
+            findings.append(f"{path}_source_or_page_mismatch")
+        document = documents.get(receipt.get("source_id"))
+        if document is None:
+            findings.append(f"{path}_source_not_registered")
+            continue
+        local_path = Path(str(document.get("local_pdf_path", "")))
+        cache_key = str(local_path)
+        if cache_key not in page_cache:
+            try:
+                page_cache[cache_key] = page_reader(local_path)
+            except (OSError, subprocess.SubprocessError):
+                findings.append(f"{path}_pdf_text_extraction_failed")
+                continue
+        page_number = receipt.get("pdf_page")
+        pages = page_cache[cache_key]
+        if not isinstance(page_number, int) or page_number < 1 or page_number > len(pages):
+            findings.append(f"{path}_pdf_page_invalid")
+            continue
+        page_text = re.sub(r"\s+", "", pages[page_number - 1])
+        anchors = _items(receipt.get("anchor_tokens"))
+        expression = _mapping(receipt.get("value_expression"))
+        expression_tokens = _items(expression.get("tokens"))
+        if not anchors or any(
+            not isinstance(token, str) or re.sub(r"\s+", "", token) not in page_text
+            for token in anchors + expression_tokens
+        ):
+            findings.append(f"{path}_declared_tokens_not_found_on_pdf_page")
+        derived = _evaluate_page_value_expression(expression)
+        raw_value = record.get("raw_value")
+        if derived is None or isinstance(raw_value, bool) or not isinstance(raw_value, (int, float)):
+            findings.append(f"{path}_value_expression_invalid")
+            continue
+        observed_value = Decimal(str(raw_value))
+        tolerance = Decimal("1e-12") * max(Decimal(1), abs(derived))
+        if abs(observed_value - derived) > tolerance:
+            findings.append(f"{path}_raw_value_not_derived_from_pdf_page")
+    return {
+        "valid": not findings,
+        "findings": findings,
+        "verified_field_ids": expected_ids if not findings else [],
+    }
 
 
 def _field_spec(source_field_id: str) -> dict[str, Any] | None:

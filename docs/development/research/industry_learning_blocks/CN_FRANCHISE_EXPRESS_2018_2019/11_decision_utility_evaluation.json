@@ -1,0 +1,114 @@
+{
+  "schema_version": "turtle-decision-utility-evaluation.v3",
+  "evaluation_id": "UTILITY:EVAL:CN002120:20190501:ROUND8:V3",
+  "pairing_id": "UTILITY:PAIR:CN002120:20190501:ROUND8:V2",
+  "evaluated_at": "2020-05-01T00:03:00+08:00",
+  "reviewer_id": "ROLE:ROUND8:INDEPENDENT_UTILITY_REVIEWER",
+  "outcome_settlement_ref": "R8SETTLE:CN002120:20190501:FY2019:V1",
+  "dimension_findings": [
+    {
+      "dimension_id": "INITIAL_CONDITIONS",
+      "baseline_assessment": "NOT_DIAGNOSTIC",
+      "enhanced_assessment": "NOT_DIAGNOSTIC",
+      "supporting_cell_ids": [
+        "CELL:002120:FY2019:INDUSTRY_PARCEL_GROWTH",
+        "CELL:002120:FY2019:ISSUER_MINUS_INDUSTRY_GROWTH_SPREAD"
+      ],
+      "rationale": "Both methods saw rapid parcel demand, but the frozen national-industry cell used an issuer-consolidated boundary and settled MEASUREMENT_MISMATCH. The initial-condition comparison is therefore not diagnostic of method advantage."
+    },
+    {
+      "dimension_id": "IMPLEMENTED_MANAGEMENT_ACTION",
+      "baseline_assessment": "NO_DIFFERENCE",
+      "enhanced_assessment": "NO_DIFFERENCE",
+      "supporting_cell_ids": [
+        "CELL:002120:FY2019:NETWORK_SCALE_EVENT",
+        "CELL:002120:FY2019:AUTOMATION_SERVICE_EVENT"
+      ],
+      "rationale": "Both frozen methods faced the same undated FY2019 automation, route and franchise-support narrative. Neither method gained a dated post-cutoff action result."
+    },
+    {
+      "dimension_id": "EXECUTION",
+      "baseline_assessment": "NOT_DIAGNOSTIC",
+      "enhanced_assessment": "NOT_DIAGNOSTIC",
+      "supporting_cell_ids": [
+        "CELL:002120:FY2019:ISSUER_PARCEL_GROWTH",
+        "CELL:002120:FY2019:NETWORK_SCALE_EVENT",
+        "CELL:002120:FY2019:AUTOMATION_SERVICE_EVENT",
+        "CELL:002120:FY2019:PARCEL_COST"
+      ],
+      "rationale": "Parcel growth was observed, while both dated event cells remained UNKNOWN and parcel cost remained MEASUREMENT_MISMATCH. The pre-outcome package did not freeze separate method-specific outcome resolution rules, so neither method may receive execution credit or avoided-error credit after seeing these statuses."
+    },
+    {
+      "dimension_id": "CUSTOMER_COMPETITION_RESPONSE",
+      "baseline_assessment": "NO_DIFFERENCE",
+      "enhanced_assessment": "NO_DIFFERENCE",
+      "supporting_cell_ids": [
+        "CELL:002120:FY2019:ISSUER_MINUS_INDUSTRY_GROWTH_SPREAD",
+        "CELL:002120:FY2019:MARKET_SHARE_CHANGE",
+        "CELL:002120:FY2019:COMPLAINT_RATE_CHANGE"
+      ],
+      "rationale": "The market-share change settled OBSERVED_INCREASE; complaint change settled MEASUREMENT_MISMATCH because the frozen RATIO unit did not match complaints per million parcels. Both methods already preserved price, platform traffic and shipper mix as rivals, so no incremental customer conclusion exists."
+    },
+    {
+      "dimension_id": "UNIT_ECONOMICS",
+      "baseline_assessment": "NOT_DIAGNOSTIC",
+      "enhanced_assessment": "NOT_DIAGNOSTIC",
+      "supporting_cell_ids": [
+        "CELL:002120:FY2019:EXPRESS_REVENUE_PER_PARCEL",
+        "CELL:002120:FY2019:PARCEL_COST",
+        "CELL:002120:FY2019:EXPRESS_GROSS_MARGIN"
+      ],
+      "rationale": "FY2019 added dispatch-fee revenue and the corresponding service cost. Revenue per parcel, parcel cost and express gross margin therefore failed the frozen same-definition test locally. This protection belongs to the shared Measurement Contract, not to the Enhanced reasoning method."
+    },
+    {
+      "dimension_id": "WORKING_CAPITAL_CASH_CAPITAL",
+      "baseline_assessment": "NO_DIFFERENCE",
+      "enhanced_assessment": "NO_DIFFERENCE",
+      "supporting_cell_ids": [
+        "CELL:002120:FY2019:OPERATING_CASH_FLOW",
+        "CELL:002120:FY2019:CASH_CAPEX",
+        "CELL:002120:FY2019:OCF_TO_CASH_CAPEX"
+      ],
+      "rationale": "Operating cash, cash capex and OCF-to-cash-capex settled OBSERVED_INCREASE, OBSERVED_INCREASE and OBSERVED_STABLE. Both methods already kept these headquarters flows separate from owner cash and franchisee cash economics."
+    },
+    {
+      "dimension_id": "ADAPTATION_PERMANENT_LOSS",
+      "baseline_assessment": "NO_DIFFERENCE",
+      "enhanced_assessment": "NO_DIFFERENCE",
+      "supporting_cell_ids": [
+        "CELL:002120:FY2019:ASSET_LIABILITY_RATIO",
+        "CELL:002120:FY2019:FRANCHISE_NETWORK_ADVERSE_EVENT"
+      ],
+      "rationale": "Leverage change settled OBSERVED_INCREASE and the franchise adverse-event cell remained UNKNOWN. Both methods already kept network resilience and irreversible franchisee loss UNKNOWN."
+    },
+    {
+      "dimension_id": "STRONGEST_ALTERNATIVE_EXPLANATION",
+      "baseline_assessment": "NO_DIFFERENCE",
+      "enhanced_assessment": "NO_DIFFERENCE",
+      "supporting_cell_ids": [
+        "CELL:002120:FY2019:INDUSTRY_PARCEL_GROWTH",
+        "CELL:002120:FY2019:ISSUER_MINUS_INDUSTRY_GROWTH_SPREAD",
+        "CELL:002120:FY2019:EXPRESS_GROSS_MARGIN"
+      ],
+      "rationale": "Both frozen methods already retained industry demand, price-led volume and accounting presentation as rival explanations. The Enhanced text is more detailed but did not add a distinct rival or a settlement-backed discrimination in this turn."
+    }
+  ],
+  "holdout": {
+    "training_company_ids": [
+      "CN:600585",
+      "CN:600801",
+      "CN:600802"
+    ],
+    "holdout_company_ids": [
+      "CN:002120"
+    ],
+    "training_cutoff_through": "2018-04-30T23:59:59+08:00",
+    "holdout_cutoff_from": "2019-05-01T00:00:00+08:00"
+  },
+  "object_class": "DECISION_UTILITY_EVALUATION",
+  "claim_class": "MATERIAL_DECISION_UTILITY_REVIEW",
+  "allowed_outputs": [
+    "DECISION_UTILITY_EVALUATION_ONLY",
+    "RESEARCH_AGENDA"
+  ]
+}

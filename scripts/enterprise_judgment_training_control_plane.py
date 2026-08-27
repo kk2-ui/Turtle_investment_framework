@@ -447,7 +447,10 @@ def register_measurement_contract(contract: dict[str, Any], *, frozen_at: str) -
             "; ".join(validation["findings"] or ["only v3 contracts may enter this registry"]),
         )
     timestamp = _instant(frozen_at, field="frozen_at")
-    if contract.get("contract_frozen_at") != timestamp:
+    contract_timestamp = _instant(
+        contract.get("contract_frozen_at"), field="contract_frozen_at",
+    )
+    if contract_timestamp != timestamp:
         raise TrainingControlPlaneError("measurement_contract_freeze_time_mismatch", "payload freeze time must equal registry freeze time")
     encoded = _json(contract)
     contract_id = contract["contract_set_id"]

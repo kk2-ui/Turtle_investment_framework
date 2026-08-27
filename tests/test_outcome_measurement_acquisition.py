@@ -173,6 +173,92 @@ def test_inventory_must_be_local_static_contract_bound_and_is_checked_before_pdf
     assert calls == []
 
 
+def test_page_bound_enterprise_receipt_recomputes_raw_value_and_rejects_identity_drift(tmp_path: Path) -> None:
+    pdf = tmp_path / "registered-enterprise.pdf"
+    pdf.write_bytes(b"%PDF-1.7 synthetic page-bound enterprise report")
+    boundary = {
+        "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:000001",
+        "perimeter_id": "PERIMETER:CN:000001:FY2020",
+        "arena_id": "ARENA:CN:TEST",
+        "scope_requirement": "issuer consolidated revenue",
+    }
+    clock = {
+        "clock_kind": "FLOW_PERIOD",
+        "flow_period": {
+            "period_start": "2020-01-01", "period_end": "2020-12-31", "fiscal_period": "FY2020",
+        },
+    }
+    contract = {
+        "atomic_cells": [{
+            "cell_id": "CELL:CN000001:FY2020:REVENUE",
+            "raw_input_fields": [{
+                "field_id": "FIELD:CN000001:FY2020:REVENUE",
+                "measurement_clock": clock,
+                "unit": "RMB_MILLION",
+            }],
+        }],
+    }
+    inventory = {
+        "documents": [{
+            "source_id": "STATIC:CN000001:FY2020",
+            "local_pdf_path": str(pdf),
+        }],
+    }
+    record = {
+        "cell_id": "CELL:CN000001:FY2020:REVENUE",
+        "field_id": "FIELD:CN000001:FY2020:REVENUE",
+        "status": "OBSERVED",
+        "measurement_clock": clock,
+        "responsibility_boundary": boundary,
+        "unit": "RMB_MILLION",
+        "raw_value": 123.45,
+        "source": {"source_id": "STATIC:CN000001:FY2020", "pdf_page": 2},
+    }
+    receipt = {
+        "schema_version": acquisition.PAGE_EXTRACTION_RECEIPT_SCHEMA_VERSION,
+        "receipt_id": "PAGEEXTRACT:CN000001:FY2020:REVENUE",
+        "field_id": record["field_id"],
+        "source_id": "STATIC:CN000001:FY2020",
+        "pdf_page": 2,
+        "unit": "RMB_MILLION",
+        "anchor_tokens": ["营业收入", "123.45"],
+        "value_expression": {
+            "operator": "SCALED_TOKEN", "tokens": ["123.45"], "multiplier": "1",
+        },
+        "object_class": "ENTERPRISE_PAGE_EXTRACTION_RECEIPT",
+        "claim_class": "PDF_PAGE_VALUE_BINDING_ONLY",
+    }
+
+    def reader(_: Path) -> list[str]:
+        return ["cover", "合并利润表 营业收入 123.45 百万元"]
+
+    result = acquisition.validate_page_bound_enterprise_field_records(
+        [record], [receipt], measurement_contract=contract, inventory=inventory, page_reader=reader,
+    )
+    assert result["valid"], result["findings"]
+
+    changed_value = deepcopy(record)
+    changed_value["raw_value"] = 123.46
+    result = acquisition.validate_page_bound_enterprise_field_records(
+        [changed_value], [receipt], measurement_contract=contract, inventory=inventory, page_reader=reader,
+    )
+    assert "page_extraction_receipts[0]_raw_value_not_derived_from_pdf_page" in result["findings"]
+
+    changed_unit = deepcopy(record)
+    changed_unit["unit"] = "RMB"
+    result = acquisition.validate_page_bound_enterprise_field_records(
+        [changed_unit], [receipt], measurement_contract=contract, inventory=inventory, page_reader=reader,
+    )
+    assert "page_extraction_receipts[0]_unit_must_match_frozen_field" in result["findings"]
+
+    changed_page = deepcopy(receipt)
+    changed_page["pdf_page"] = 1
+    result = acquisition.validate_page_bound_enterprise_field_records(
+        [record], [changed_page], measurement_contract=contract, inventory=inventory, page_reader=reader,
+    )
+    assert "page_extraction_receipts[0]_source_or_page_mismatch" in result["findings"]
+
+
 def _workspace_root() -> Path | None:
     for parent in Path(__file__).resolve().parents:
         if parent.name == "analy":

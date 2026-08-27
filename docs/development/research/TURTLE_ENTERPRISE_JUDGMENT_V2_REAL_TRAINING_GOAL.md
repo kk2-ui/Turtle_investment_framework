@@ -1,10 +1,10 @@
 # Turtle Enterprise Judgment V2 Real Training Goal
 
-> Status: `COMPLETED_REAL_SAMPLE_AND_ROUND7_MULTIDIMENSIONAL_FEEDBACK / TRANSFER_NOT_VALIDATED`
+> Status: `COMPLETED_REAL_SAMPLE_AND_ROUND8_CROSS_INDUSTRY_FEEDBACK / EIGHT_DIMENSION_SKELETON_ADOPTED / ARCHITECTURE_REVISION_REQUIRED / TRANSFER_NOT_VALIDATED`
 >
 > Date: 2026-08-27
 >
-> Scope: `J0 CONTRACT + J1 INDUSTRY BLOCK + J1A RECONSTRUCTION + J2 THREADS + ROUNDS 5-7 FEEDBACK`
+> Scope: `J0 CONTRACT + J1 INDUSTRY BLOCK + J1A RECONSTRUCTION + J2 THREADS + ROUNDS 5-8 FEEDBACK`
 
 ## 1. Objective
 
@@ -471,3 +471,68 @@ report or investment use. The next real turn must test the same chain on a
 different company and period while freezing an organic-versus-acquired volume
 bridge, direct customer evidence, same-scope unit economics and a conservative
 owner-cash bridge before outcome access.
+
+## 16. 2026-08-27 Round 8 Cross-Industry Eight-Dimension Feedback
+
+Round 8 moves from cement to Chinese franchised express delivery. The real
+industry block contains Yunda, STO and YTO at the same 2019-05-01 cutoff. A
+predeclared rule selects the lowest company ID with a complete cutoff-before
+static-PDF packet, CN:002120, independently of outcomes and source convenience.
+Commit `5613b36` freezes the Decision Contract, a fair issuer-scale Baseline,
+the cumulative eight-dimension Enhanced Episode and a 15-cell Measurement
+Contract before the predeclared FY2019 report is opened.
+
+The authorized field-level settlement preserves six observable cells, six
+local `MEASUREMENT_MISMATCH` cells and three `UNKNOWN` cells. Volume, share,
+operating cash, cash capex and leverage remain usable. Express revenue per
+parcel, parcel cost and gross margin do not: the FY2019 report adds dispatch-fee
+revenue and corresponding service cost, so the presentation is not
+definitionally comparable with the frozen FY2018 baseline. The complaint field
+is also mismatched because the report discloses complaints per million parcels
+while the frozen contract used a generic ratio. Dated network, automation and
+franchise-loss events remain unknown rather than being inferred from annual
+narrative.
+
+Independent pre-outcome review found two material contract-design failures.
+First, FY2019 annual flows include January-April before the cutoff and may only
+serve as mixed-clock context with zero causal credit. Second, the national
+industry-growth field was frozen under Yunda's issuer-consolidated
+responsibility boundary. Outcome custody therefore locally mismatches the
+industry and issuer-minus-industry cells; it does not repair the frozen
+contract after seeing results. A scope/clock adjudication mechanically assigns
+`causal_credit = NONE` to every Round 8 result cell.
+
+The eight dimensions are adopted as the standard EnterpriseJudgmentEpisode
+question skeleton because they prevent scale from silently becoming customer
+loyalty, action from becoming execution, headquarters cash from becoming owner
+cash, or a one-year result from becoming permanent-loss resilience. They are
+not a scorecard and not eight global gates: each dimension may remain
+`UNKNOWN`, `EVIDENCE_INELIGIBLE` or `NOT_APPLICABLE`, and only dependent claims
+lose permission.
+
+The outcome-side independent reviewer also found that the Baseline already
+shared the eight-dimensional question set, owner-cash boundary and principal
+rival explanations. Round 8 therefore cannot attribute the shared caution to
+Enhanced. It also cannot grant execution error avoidance: the Baseline called
+scale a provisional signal but neither method froze a distinct outcome
+resolution rule before result access. Both execution assessments are therefore
+`NOT_DIAGNOSTIC`.
+
+Round 8 closes as `REAL_FEEDBACK_COMPLETED /
+NO_MATERIAL_METHOD_ADVANTAGE_PROVED / ARCHITECTURE_REVISION_REQUIRED`.
+The eight dimensions remain the adopted no-score question skeleton, but this
+A/B does not validate their aggregate method advantage. The next unseen episode
+must freeze a genuinely simple independent Baseline, independent industry and
+issuer boundaries, exact complaint units, machine-readable
+measurement-use/causal eligibility, same-definition unit-economics bridges and
+finding-to-cell support before outcome access. Exact outcome source identity
+remains predeclared to prevent result-based source selection; content isolation
+is a recorded procedural role boundary, not a claim of adversarial secrecy. No
+method, Comparative, CJO, valuation, report or investment permission is granted.
+
+Post-review hardening adds a page-level extraction receipt for every scored raw
+value, canonical settlement replay for evaluation, explicit supporting cell IDs
+for all eight findings, and mandatory independent acceptance for completion.
+Changing a raw value or unit without changing the official PDF page now fails
+before settlement; synchronized settlement/adjudication edits, unrelated
+evaluation text, missing acceptance and reviewer-role drift all block completion.

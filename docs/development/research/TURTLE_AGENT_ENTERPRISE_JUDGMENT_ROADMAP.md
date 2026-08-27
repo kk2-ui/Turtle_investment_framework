@@ -1,6 +1,6 @@
 # Turtle Agent 企业判断系统路线图
 
-> 状态：`TOP_LEVEL_DECISION_ARCHITECTURE_ADOPTED / PIT_FORECAST_LEARNING_CONTROL_IMPLEMENTED / REGISTRY_AWARE_ADMISSION_IMPLEMENTED / REAL_H1_CARRIER_REGISTRY_OPEN / CEMENT_H2_NO_PRIMARY_ACTION_SCOPE`
+> 状态：`EIGHT_DIMENSION_JUDGMENT_LATTICE_ADOPTED / REAL_CEMENT_FEEDBACK_COMPLETED / ROUND8_EXPRESS_CROSS_INDUSTRY_FEEDBACK_COMPLETED / ARCHITECTURE_REVISION_REQUIRED / TRANSFER_NOT_VALIDATED`
 >
 > 日期：2026-08-26
 >
@@ -12,7 +12,7 @@
 
 路线图不以“尽快产生第一个样本”为唯一进度指标。第一个正式方向性样本当然重要，但如果为它临时改变共同市场、公告、责任边界或结果口径，系统会得到一个无法迁移的样本，反而离中心目标更远。
 
-路线图采用一个以 `Decision Contract -> CJO -> Investment Overlay` 为中心的持续判断底座、一个行业生命周期底仓、一条日常预测校准主链和一条低频因果高级 lane。Forecast 改善方法，不能替代 CJO 或成为产品中心：
+路线图采用一个以 `Decision Contract -> eight-dimensional EnterpriseJudgmentEpisode -> CJO -> Investment Overlay` 为中心的持续判断底座、一个行业生命周期底仓、一条日常预测校准主链和一条低频因果高级 lane。八维是统一判断格架，不是企业评分或八道硬门；Forecast 改善方法，不能替代 CJO 或成为产品中心：
 
 ```text
 持续判断底座：EnterpriseSystemModel -> ManagementDecisionLedger -> Frozen CJO
@@ -42,7 +42,7 @@
 - 正式 PIT 只接受独立 curator 交付的、预先声明 cutoff 前的 offline static CNINFO PDF package；Agent 不得通过 CNINFO UI、全文检索或 issuer/detail 页面补查候选、行动或结果；
 - 新水泥 H1 static package 已通过 strict preflight 并登记 `STAGE0_FEASIBILITY_REVIEWABLE`：五家公司和 25 份 static PDF 可作 risk set/evidence carriers；三家为 pending，两家有 scope/control break；独立 curator 对既有 H1 PDF 返回 `H2_NO_PRIMARY_ACTION_SCOPE`，只暂停 causal lane；
 - 旧设计已确认存在上层建模错误：H1 receipt、公司 roster、行业宇宙和最终 comparator panel 被错误绑成同一个关闭对象；新分层、registry-aware epoch 与 industry-history runner 已实现，真实 comparative admission 仍须等待 H2；
-- `R-104 = MIXED` 仅可作边界学习；方向性训练样本仍为 `0`，方法冻结、`R-103` 留出、生产 canonical CJO 绑定和黄金报告使用授权均未开始。
+- `R-104 = MIXED` 仅可作边界学习；严格 Comparative 方向性样本仍为 `0`。但这不再代表真实训练为零：水泥已完成真实 block 和多轮字段级反馈，快递 Round 8 已完成同 cutoff Baseline/八维 Enhanced、真实结果结算与独立设计审阅。方法冻结、`R-103` 留出、生产 canonical CJO 绑定和黄金报告使用授权仍未开始。
 
 因此当前不是“全系统停摆”，而是：
 
@@ -52,7 +52,7 @@
 企业整体模型/管理层纵向账本：离线控制与 synthetic fixture 已实现，尚未成为生产 canonical truth
 最小历史管线：一条独立机械结算已证明 blind chain capability；CN600802、CN600425、CN002003 与 CN002404 均保护性终止为 `MEASUREMENT_MISMATCH`，未产生第二个 `FIELD_READY`；该 lane 已在当前验收点封口
 正式 Comparative 入口：action-first intake 是下一条生产主线；水泥 `H2_NO_PRIMARY_ACTION_SCOPE` 只终止水泥候选，不阻断其他行业的已实施行动筛选
-跨公司迁移：契约与 synthetic 反例已实现，真实迁移尚未证明
+跨公司迁移：快递 Round 8 已完成首次跨行业真实方法回放，但因行业 responsibility boundary 错配和 mixed-clock 因果资格不足，仅结算为 `ARCHITECTURE_REVISION_REQUIRED`，真实迁移尚未证明
 方法冻结：未开始
 定量买点接线：离线 directionality 已验收；生产授权仍要求 canonical 冻结 CJO 与 D4 闭合
 ```
@@ -66,10 +66,10 @@ H0–H10 是本仓当前执行状态；下方 G0–G8 只保留能力依赖视�
 | H0 合成控制接纳 | `COMPLETE` | V3/V5 offline control 与 legacy 回归已通过 |
 | H1 Industry History Universe | `MULTI_CUTOFF_RUNNER_IMPLEMENTED / CEMENT_H1_SIX_CUTOFF_SERIES_VALIDATED / SYNTHETIC_LIFECYCLE_VALIDATED` | 后续真实 lifecycle 事实须由独立 cutoff-visible source receipt 接入；不阻断 H2 |
 | H2 Teaching/Lifecycle runner | `LIFECYCLE_TEACHING_SYNTHETIC_ACCEPTED / R104_BOUNDARY_TEACHING_PROJECTED / REAL_HUAXIN_PERIMETER_CASE_ACCEPTED` | 单公司和消失公司可训练，且不会获得选择权限 |
-| H2A PIT Company Forecast | `CEMENT_2018_FIVE_COMPANY_FORECAST_FROZEN / THREE_COMPANY_REFERENCE_TOURNAMENT_FROZEN / MINIMAL_HISTORICAL_EPISODE_ONE_INDEPENDENT_MECHANICAL_SETTLEMENT / CN600802_CN600425_CN002003_CN002404_PROTECTIVE_MEASUREMENT_MISMATCH / MINIMAL_LANE_BOUNDED_CLOSED / FORECAST_LEARNING_CONTROL_IMPLEMENTED / R05_PROSPECTIVE_SIGNAL_SHADOW_REGISTERED` | 历史 pilot 只作 `MODEL_MEMORY_MITIGATED` 流程/反馈验证；独立 custodian 才能结算。Minimal lane 已证明一次 contract→blind observation→mechanical settlement，也以四个 `MEASUREMENT_MISMATCH` 保留无标签终态；没有第二个 `FIELD_READY`。除非发现可复用 acquisition-contract 缺口，不再为追逐第二个结算扩展其 schema、control 或 adapter。其对象始终无 learning、方法、Comparative、CJO、估值、报告或投资权利；下一生产出口转入 H3 |
+| H2A PIT Company Forecast | `REAL_CEMENT_FEEDBACK_COMPLETED / FIELD_LOCAL_SETTLEMENT_IMPLEMENTED / ROUND8_EXPRESS_REAL_SETTLEMENT_COMPLETED / FORECAST_LEARNING_CONTROL_IMPLEMENTED / R05_PROSPECTIVE_SIGNAL_SHADOW_REGISTERED` | 历史 pilot 只作 `MODEL_MEMORY_MITIGATED` 流程/反馈验证；字段级 UNKNOWN/MISMATCH 不再拖停同一 episode。Round 8 的 15 个冻结单元局部结算后只形成架构修订候选，不获得方法、Comparative、CJO、估值、报告或投资权利 |
 | H3 Comparative intake | `ACTION_FIRST_PRIMARY / ONE_CEMENT_H1_RECEIPT / REAL_H1_CARRIER_REGISTRY_OPEN / REGISTRY_AWARE_ADMISSION_IMPLEMENTED / CEMENT_H2_NO_PRIMARY_ACTION_SCOPE` | 独立 curator 先提交任一行业的 cutoff-before 已实施行动和可反驳机制；接纳后冻结 comparator eligibility predicate、static peer batch 与 outcome contract。水泥 H2 的 `NO_PRIMARY` 不阻断其他行业 |
 | H4 第一条真实 Comparative Episode | `NOT_STARTED / NOT_GLOBAL_BLOCKER` | final panel、行动、反方和 outcome contract 独立冻结 |
-| H5 第一次真实结算与 learning | `NOT_STARTED` | 方向性结算改变不同公司冻结前字段 |
+| H5 第一次真实结算与 learning | `NON_CAUSAL_REAL_FEEDBACK_COMPLETED / DIRECTIONAL_COMPARATIVE_NOT_STARTED` | 水泥和快递已产生真实研究行为与架构修订；严格方向性结算仍须独立 Comparative |
 | H6 方法冻结与 R-103 留出 | `LOCKED` | H5 后的隔离 evaluator 结算 |
 | H7 报告使用授权 | `LOCKED` | holdout 与身份、范围、审阅完整 |
 | H8 同 cutoff 黄金报告 A/B | `LOCKED` | 获授权方法带来材料性判断改善 |
@@ -81,10 +81,10 @@ H0–H10 是本仓当前执行状态；下方 G0–G8 只保留能力依赖视�
 | 阶段 | 名称 | 目标 | 当前状态 | 依赖 |
 |---|---|---|---|---|
 | `G0` | `ARCHITECTURE_FREEZE` | 冻结中心目标、企业持续对象、研究控制、lane 和权限 | `LAYERED_DESIGN_COMPLETE / CONTROL_IMPLEMENTED` | 无 |
-| `G1` | `TRAINING_LANES` | 让 Industry Universe、生命周期、教学、边界、PIT forecast 和 causal PIT 分轨运行 | `FORECAST_EPOCH_IMPLEMENTING / REGISTRY_AWARE_ADMISSION_IMPLEMENTED / CEMENT_H2_NO_PRIMARY_ACTION_SCOPE` | G0 |
+| `G1` | `TRAINING_LANES` | 让 Industry Universe、生命周期、教学、边界、PIT forecast 和 causal PIT 分轨运行 | `REAL_CEMENT_AND_EXPRESS_FEEDBACK_RUNNING / EIGHT_DIMENSION_LATTICE_ADOPTED` | G0 |
 | `G2` | `PIT_EPISODE_ENGINE` | 把 claim-specific admission、carrier registry、arena、scope 和静态来源包接到 Comparative 入口 | `REGISTRY_EPOCH_SYNTHETIC_ACCEPTED / REAL_H1_CARRIER_REGISTRY_OPEN / REAL_H2_INTAKE_NOT_STARTED` | G0；可与 G1 并行 |
 | `G3` | `FIRST_DIRECTIONAL_EPISODE` | 取得第一条真实 `A_ONLY/B_ONLY/SELECTIVE_SUPPORT` Comparative Episode | `NOT_STARTED / NOT_GLOBAL_BLOCKER` | G1、G2 |
-| `G4` | `CROSS_COMPANY_TRANSFER` | 用 TransportContract 证明 learning 改变另一家公司冻结前研究字段 | `NOT_STARTED` | 至少一条合格训练结果 |
+| `G4` | `CROSS_COMPANY_TRANSFER` | 用 TransportContract 证明 learning 改变另一家公司冻结前研究字段 | `ROUND8_REAL_ATTEMPT_COMPLETED / ARCHITECTURE_REVISION_REQUIRED / NOT_VALIDATED` | 至少一条合格训练结果 |
 | `G5` | `R103_HOLDOUT` | 冻结方法后揭盲 `R-103`，评价未见对象泛化 | `LOCKED` | G4、方法冻结 |
 | `G6` | `CJO_TO_QUANT` | 将冻结公司判断传到价格隐含要求、价值、回报和条件化买点 | `SYNTHETIC_VALIDATED / PRODUCTION_PENDING` | canonical frozen CJO；可用 fixture 提前开发 |
 | `G7` | `GOLDEN_REPORT` | 生成完整黄金报告并独立验收 | `NOT_AUTHORIZED` | G6、报告质量门 |

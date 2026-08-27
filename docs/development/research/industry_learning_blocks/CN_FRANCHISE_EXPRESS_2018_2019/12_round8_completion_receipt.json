@@ -1,0 +1,59 @@
+{
+  "schema_version": "enterprise-judgment-round8-completion.v2",
+  "completion_id": "R8COMPLETE:CN002120:20190501:FY2019:V1",
+  "package_ref": "R8:CN:FRANCHISE_EXPRESS:CN002120:20190501:V1",
+  "settlement_ref": "R8SETTLE:CN002120:20190501:FY2019:V1",
+  "scope_clock_adjudication_ref": "R8ADJ:CN002120:20190501:FY2019:V1",
+  "evaluation_ref": "UTILITY:EVAL:CN002120:20190501:ROUND8:V3",
+  "independent_acceptance_ref": "R8UTILITYACCEPT:CN002120:20190501:V2",
+  "company_id": "CN:002120",
+  "cutoff_at": "2019-05-01T00:00:00+08:00",
+  "status": "ROUND8_REAL_CROSS_INDUSTRY_FEEDBACK_COMPLETED",
+  "method_conclusion": "REAL_FEEDBACK_COMPLETED_NO_MATERIAL_METHOD_ADVANTAGE_PROVED",
+  "investor_summary": "Round 8 completed real cross-industry feedback but did not prove that the Enhanced method outperformed the Baseline. The eight dimensions exposed boundary, unit and causal-attribution problems; without frozen method-specific resolution rules, those protections cannot be credited as a measured method advantage.",
+  "proved": [
+    "The issuer grew parcel volume and the frozen share cell increased in FY2019.",
+    "The annual report describes a lower complaint metric, but its per-million unit was not correctly frozen.",
+    "Consolidated operating cash flow grew faster than cash capex, while leverage also increased.",
+    "A dispatch-fee presentation change prevents same-definition unit-economics scoring.",
+    "The eight-dimensional review exposed that scale, event timing and cost evidence cannot support an execution conclusion here."
+  ],
+  "not_proved": [
+    "The eight-dimensional Enhanced method has material overall utility versus an independent simple baseline.",
+    "The Enhanced method avoided an error that the frozen Baseline would mechanically have made.",
+    "The issuer outperformed a correctly bounded industry reference in the frozen result contract.",
+    "Customer loyalty or pricing power caused the volume and share gains.",
+    "Post-cutoff automation or network execution caused the FY2019 observations.",
+    "Headquarters cash represents distributable owner cash or healthy franchisee cash economics.",
+    "The franchise network avoided irreversible loss or established a durable moat.",
+    "The eight-dimensional method is cross-industry or prospectively validated.",
+    "The method is authorized for CJO, valuation, report or investment use."
+  ],
+  "next_research_actions": [
+    "Repeat the same eight-dimensional skeleton on a second unseen industry/company cutoff.",
+    "Freeze a genuinely simple independent Baseline that does not reuse the Enhanced mechanism questions or rivals.",
+    "Freeze separate outcome resolution rules for Baseline and Enhanced before opening any result source.",
+    "Bind industry context to an industry responsibility perimeter rather than the issuer perimeter.",
+    "Make causal eligibility machine-readable and require evaluation findings to cite eligible cells.",
+    "Freeze complaints per million parcels as its own unit rather than a generic ratio.",
+    "Freeze a definitionally comparable per-parcel revenue, cost and gross-margin bridge before outcome access.",
+    "Add dated post-cutoff operating-event evidence when the official source provides it; otherwise retain UNKNOWN.",
+    "Keep franchisee economics and ordinary-share owner cash as separate evidence targets."
+  ],
+  "rights": {
+    "directional_learning": "NOT_AUTHORIZED",
+    "enterprise_learning": "NOT_AUTHORIZED",
+    "comparative": "NOT_AUTHORIZED",
+    "method_transfer": "NOT_AUTHORIZED",
+    "cjo": "NOT_AUTHORIZED",
+    "valuation": "NOT_AUTHORIZED",
+    "report": "NOT_AUTHORIZED",
+    "investment": "NOT_AUTHORIZED"
+  },
+  "object_class": "ENTERPRISE_JUDGMENT_ROUND_COMPLETION_RECEIPT",
+  "claim_class": "REAL_CROSS_INDUSTRY_METHOD_FEEDBACK",
+  "allowed_outputs": [
+    "ROUND8_REAL_FEEDBACK_COMPLETED",
+    "RESEARCH_AGENDA"
+  ]
+}

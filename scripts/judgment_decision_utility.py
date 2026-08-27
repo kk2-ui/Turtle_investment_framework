@@ -21,7 +21,7 @@ except ModuleNotFoundError:  # pragma: no cover
 
 
 PAIRING_SCHEMA_VERSION = "turtle-decision-utility-pairing.v2"
-EVALUATION_SCHEMA_VERSION = "turtle-decision-utility-evaluation.v2"
+EVALUATION_SCHEMA_VERSION = "turtle-decision-utility-evaluation.v3"
 CONTROL_PAIRING_SCHEMA_VERSION = "turtle-decision-utility-control-pairing.v2"
 CONTROL_EVALUATION_SCHEMA_VERSION = "turtle-decision-utility-control-evaluation.v2"
 LEGACY_PAIRING_SCHEMA_VERSION = "turtle-decision-utility-pairing.v1"
@@ -48,6 +48,7 @@ _PAIRING_KEYS = {
 _REF_KEYS = {"contract_id", "contract_version"}
 _EVALUATION_KEYS = {"schema_version", "evaluation_id", "pairing_id", "evaluated_at", "reviewer_id", "outcome_settlement_ref", "dimension_findings", "holdout", "object_class", "claim_class", "allowed_outputs"}
 _FINDING_KEYS = {"dimension_id", "baseline_assessment", "enhanced_assessment", "rationale"}
+_EVALUATION_FINDING_KEYS = _FINDING_KEYS | {"supporting_cell_ids"}
 _HOLDOUT_KEYS = {"training_company_ids", "holdout_company_ids", "training_cutoff_through", "holdout_cutoff_from"}
 _CONTROL_PAIRING_KEYS = {
     "schema_version", "pairing_id", "forecast_id", "forecast_pairing_id", "decision_contract_ref",
@@ -303,13 +304,31 @@ def validate_decision_utility_evaluation(
     if item.get("reviewer_id") in set(contract_roles.values()): findings.append("decision_utility_evaluation.reviewer_must_be_independent_of_contract_roles")
     seen: set[str] = set()
     for index, raw in enumerate(_items(item.get("dimension_findings"))):
-        finding = _closed(raw, _FINDING_KEYS, f"decision_utility_evaluation.dimension_findings[{index}]", findings)
+        finding = _closed(raw, _EVALUATION_FINDING_KEYS, f"decision_utility_evaluation.dimension_findings[{index}]", findings)
         dimension = finding.get("dimension_id")
         if dimension not in DIMENSIONS or dimension in seen: findings.append(f"decision_utility_evaluation.dimension_findings[{index}].dimension_invalid_or_duplicate")
         seen.add(str(dimension))
         for field in ("baseline_assessment", "enhanced_assessment"):
             if finding.get(field) not in {"AVOIDED_ERROR", "MATERIAL_IMPROVEMENT", "NO_DIFFERENCE", "UNKNOWN", "NOT_DIAGNOSTIC"}: findings.append(f"decision_utility_evaluation.dimension_findings[{index}].{field}_invalid")
         if not _text(finding.get("rationale")): findings.append(f"decision_utility_evaluation.dimension_findings[{index}].rationale_required")
+        supporting = _items(finding.get("supporting_cell_ids"))
+        allowed_cells = {
+            cell.get("outcome_cell_id")
+            for episode in (baseline_episode, enhanced_episode)
+            for cell in _items(_mapping(episode).get("outcome_cells"))
+            if isinstance(cell, dict) and _text(cell.get("outcome_cell_id"))
+        } | {
+            cell_id
+            for episode in (baseline_episode, enhanced_episode)
+            for claim in _items(_mapping(episode).get("claims"))
+            if isinstance(claim, dict)
+            for cell_id in _items(claim.get("dependent_outcome_cell_ids"))
+            if _text(cell_id)
+        }
+        if not supporting or len(set(supporting)) != len(supporting) or any(
+            not _text(cell_id) or cell_id not in allowed_cells for cell_id in supporting
+        ):
+            findings.append(f"decision_utility_evaluation.dimension_findings[{index}].supporting_cell_ids_invalid")
     if seen != set(DIMENSIONS): findings.append("decision_utility_evaluation.must_cover_each_material_dimension_once")
     holdout = _closed(item.get("holdout"), _HOLDOUT_KEYS, "decision_utility_evaluation.holdout", findings)
     train, held = set(_items(holdout.get("training_company_ids"))), set(_items(holdout.get("holdout_company_ids")))

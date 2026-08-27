@@ -1,0 +1,2026 @@
+{
+  "schema_version": "enterprise-outcome-measurement-settlement.v1",
+  "settled": true,
+  "settlement_id": "R8SETTLE:CN002120:20190501:FY2019:V1",
+  "company_id": "CN:002120",
+  "cutoff_at": "2019-05-01T00:00:00+08:00",
+  "measurement_contract_ref": {
+    "measurement_contract_id": "OMC:CN002120:20190501:MULTIDIMENSIONAL:V3",
+    "measurement_contract_version": 3
+  },
+  "authorization_receipt_id": "OUTCOME-AUTH:R8:CN002120:FY2019:V1",
+  "custodian_id": "ROLE:ROUND8:EXPRESS:OUTCOME_CUSTODIAN",
+  "observed_at": "2020-04-30T16:01:00+00:00",
+  "settled_at": "2020-04-30T16:02:00+00:00",
+  "cell_results": [
+    {
+      "cell_id": "CELL:002120:FY2019:INDUSTRY_PARCEL_GROWTH",
+      "status": "MEASUREMENT_MISMATCH",
+      "label": "MEASUREMENT_MISMATCH",
+      "computed_value": null,
+      "mismatch_propagation": "LOCAL_ONLY"
+    },
+    {
+      "cell_id": "CELL:002120:FY2019:ISSUER_PARCEL_GROWTH",
+      "status": "OBSERVED",
+      "label": "OBSERVED_INCREASE",
+      "computed_value": 0.4359,
+      "mismatch_propagation": "LOCAL_ONLY"
+    },
+    {
+      "cell_id": "CELL:002120:FY2019:ISSUER_MINUS_INDUSTRY_GROWTH_SPREAD",
+      "status": "MEASUREMENT_MISMATCH",
+      "label": "MEASUREMENT_MISMATCH",
+      "computed_value": null,
+      "mismatch_propagation": "LOCAL_ONLY"
+    },
+    {
+      "cell_id": "CELL:002120:FY2019:MARKET_SHARE_CHANGE",
+      "status": "OBSERVED",
+      "label": "OBSERVED_INCREASE",
+      "computed_value": 0.0202,
+      "mismatch_propagation": "LOCAL_ONLY"
+    },
+    {
+      "cell_id": "CELL:002120:FY2019:COMPLAINT_RATE_CHANGE",
+      "status": "MEASUREMENT_MISMATCH",
+      "label": "MEASUREMENT_MISMATCH",
+      "computed_value": null,
+      "mismatch_propagation": "LOCAL_ONLY"
+    },
+    {
+      "cell_id": "CELL:002120:FY2019:NETWORK_SCALE_EVENT",
+      "status": "UNKNOWN",
+      "label": "UNKNOWN",
+      "computed_value": null,
+      "mismatch_propagation": "LOCAL_ONLY"
+    },
+    {
+      "cell_id": "CELL:002120:FY2019:AUTOMATION_SERVICE_EVENT",
+      "status": "UNKNOWN",
+      "label": "UNKNOWN",
+      "computed_value": null,
+      "mismatch_propagation": "LOCAL_ONLY"
+    },
+    {
+      "cell_id": "CELL:002120:FY2019:EXPRESS_REVENUE_PER_PARCEL",
+      "status": "MEASUREMENT_MISMATCH",
+      "label": "MEASUREMENT_MISMATCH",
+      "computed_value": null,
+      "mismatch_propagation": "LOCAL_ONLY"
+    },
+    {
+      "cell_id": "CELL:002120:FY2019:PARCEL_COST",
+      "status": "MEASUREMENT_MISMATCH",
+      "label": "MEASUREMENT_MISMATCH",
+      "computed_value": null,
+      "mismatch_propagation": "LOCAL_ONLY"
+    },
+    {
+      "cell_id": "CELL:002120:FY2019:EXPRESS_GROSS_MARGIN",
+      "status": "MEASUREMENT_MISMATCH",
+      "label": "MEASUREMENT_MISMATCH",
+      "computed_value": null,
+      "mismatch_propagation": "LOCAL_ONLY"
+    },
+    {
+      "cell_id": "CELL:002120:FY2019:OPERATING_CASH_FLOW",
+      "status": "OBSERVED",
+      "label": "OBSERVED_INCREASE",
+      "computed_value": 0.35568155077734054,
+      "mismatch_propagation": "LOCAL_ONLY"
+    },
+    {
+      "cell_id": "CELL:002120:FY2019:CASH_CAPEX",
+      "status": "OBSERVED",
+      "label": "OBSERVED_INCREASE",
+      "computed_value": 0.2615115606884779,
+      "mismatch_propagation": "LOCAL_ONLY"
+    },
+    {
+      "cell_id": "CELL:002120:FY2019:OCF_TO_CASH_CAPEX",
+      "status": "OBSERVED",
+      "label": "OBSERVED_STABLE",
+      "computed_value": 0.07464853515687858,
+      "mismatch_propagation": "LOCAL_ONLY"
+    },
+    {
+      "cell_id": "CELL:002120:FY2019:ASSET_LIABILITY_RATIO",
+      "status": "OBSERVED",
+      "label": "OBSERVED_INCREASE",
+      "computed_value": 0.03672769171827366,
+      "mismatch_propagation": "LOCAL_ONLY"
+    },
+    {
+      "cell_id": "CELL:002120:FY2019:FRANCHISE_NETWORK_ADVERSE_EVENT",
+      "status": "UNKNOWN",
+      "label": "UNKNOWN",
+      "computed_value": null,
+      "mismatch_propagation": "LOCAL_ONLY"
+    }
+  ],
+  "raw_observation_receipts": [
+    {
+      "schema_version": "enterprise-observation-receipt.v1",
+      "receipt_id": "OBS:ENTERPRISE:R8SETTLE:CN002120:20190501:FY2019:V1:CELL:002120:FY2019:INDUSTRY_PARCEL_GROWTH:FIELD:002120:FY2019:INDUSTRY_PARCEL_GROWTH",
+      "settlement_id": "R8SETTLE:CN002120:20190501:FY2019:V1",
+      "measurement_contract_ref": {
+        "measurement_contract_id": "OMC:CN002120:20190501:MULTIDIMENSIONAL:V3",
+        "measurement_contract_version": 3
+      },
+      "company_id": "CN:002120",
+      "cutoff_at": "2019-05-01T00:00:00+08:00",
+      "custodian_id": "ROLE:ROUND8:EXPRESS:OUTCOME_CUSTODIAN",
+      "authorization_receipt_id": "OUTCOME-AUTH:R8:CN002120:FY2019:V1",
+      "cell_id": "CELL:002120:FY2019:INDUSTRY_PARCEL_GROWTH",
+      "source": {
+        "source_id": "CNINFO:002120:ANN:20200430:1207682788",
+        "source_url": "https://static.cninfo.com.cn/finalpage/2020-04-30/1207682788.PDF",
+        "report_period_end": "2019-12-31",
+        "official_source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+        "issuer_id": "ISSUER:CN:002120",
+        "responsibility_boundary": {
+          "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:002120",
+          "perimeter_id": "PERIMETER:CN:002120:FY2019:LISTED_CONSOLIDATED",
+          "arena_id": "ARENA:CN:EXPRESS:HUB_FRANCHISE_SERVICE_SYSTEM",
+          "scope_requirement": "National industry context; FY2019 is MIXED_CLOCK_CONTEXT and receives no issuer causal credit."
+        },
+        "availability_precision": "DATE_ONLY",
+        "source_available_date": "2020-04-30",
+        "pdf_page": 26,
+        "field_ref": "PDF p.26",
+        "field_identity": "FIELD:002120:FY2019:INDUSTRY_PARCEL_GROWTH",
+        "measurement_clock": {
+          "clock_kind": "FLOW_PERIOD",
+          "flow_period": {
+            "period_start": "2019-01-01",
+            "period_end": "2019-12-31",
+            "fiscal_period": "FY2019"
+          }
+        },
+        "unit": "RATIO",
+        "table_or_note": "FY2019 industry review",
+        "line_item": "national parcel volume growth rate",
+        "period_column": "FY2019",
+        "custodian_locator": {
+          "table_or_note": "Industry review",
+          "line_item": "National parcel volume increased 25.3%",
+          "period_column": "FY2019"
+        }
+      },
+      "unit": "RATIO",
+      "field_id": "FIELD:002120:FY2019:INDUSTRY_PARCEL_GROWTH",
+      "reason": "NATIONAL_INDUSTRY_FIELD_IS_FROZEN_TO_AN_ISSUER_CONSOLIDATED_RESPONSIBILITY_BOUNDARY",
+      "status": "MEASUREMENT_MISMATCH",
+      "measurement_clock": {
+        "clock_kind": "FLOW_PERIOD",
+        "flow_period": {
+          "period_start": "2019-01-01",
+          "period_end": "2019-12-31",
+          "fiscal_period": "FY2019"
+        }
+      },
+      "responsibility_boundary": {
+        "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:002120",
+        "perimeter_id": "PERIMETER:CN:002120:FY2019:LISTED_CONSOLIDATED",
+        "arena_id": "ARENA:CN:EXPRESS:HUB_FRANCHISE_SERVICE_SYSTEM",
+        "scope_requirement": "National industry context; FY2019 is MIXED_CLOCK_CONTEXT and receives no issuer causal credit."
+      }
+    },
+    {
+      "schema_version": "enterprise-observation-receipt.v1",
+      "receipt_id": "OBS:ENTERPRISE:R8SETTLE:CN002120:20190501:FY2019:V1:CELL:002120:FY2019:ISSUER_PARCEL_GROWTH:FIELD:002120:FY2019:ISSUER_PARCEL_GROWTH",
+      "settlement_id": "R8SETTLE:CN002120:20190501:FY2019:V1",
+      "measurement_contract_ref": {
+        "measurement_contract_id": "OMC:CN002120:20190501:MULTIDIMENSIONAL:V3",
+        "measurement_contract_version": 3
+      },
+      "company_id": "CN:002120",
+      "cutoff_at": "2019-05-01T00:00:00+08:00",
+      "custodian_id": "ROLE:ROUND8:EXPRESS:OUTCOME_CUSTODIAN",
+      "authorization_receipt_id": "OUTCOME-AUTH:R8:CN002120:FY2019:V1",
+      "cell_id": "CELL:002120:FY2019:ISSUER_PARCEL_GROWTH",
+      "source": {
+        "source_id": "CNINFO:002120:ANN:20200430:1207682788",
+        "source_url": "https://static.cninfo.com.cn/finalpage/2020-04-30/1207682788.PDF",
+        "report_period_end": "2019-12-31",
+        "official_source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+        "issuer_id": "ISSUER:CN:002120",
+        "responsibility_boundary": {
+          "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:002120",
+          "perimeter_id": "PERIMETER:CN:002120:FY2019:LISTED_CONSOLIDATED",
+          "arena_id": "ARENA:CN:EXPRESS:HUB_FRANCHISE_SERVICE_SYSTEM",
+          "scope_requirement": "Issuer parcel flow for FY2019; the annual flow includes January-April before cutoff."
+        },
+        "availability_precision": "DATE_ONLY",
+        "source_available_date": "2020-04-30",
+        "pdf_page": 30,
+        "field_ref": "PDF p.30",
+        "field_identity": "FIELD:002120:FY2019:ISSUER_PARCEL_GROWTH",
+        "measurement_clock": {
+          "clock_kind": "FLOW_PERIOD",
+          "flow_period": {
+            "period_start": "2019-01-01",
+            "period_end": "2019-12-31",
+            "fiscal_period": "FY2019"
+          }
+        },
+        "unit": "RATIO",
+        "table_or_note": "FY2019 operating review",
+        "line_item": "issuer parcel volume growth rate",
+        "period_column": "FY2019",
+        "custodian_locator": {
+          "table_or_note": "Management discussion",
+          "line_item": "Issuer parcel volume increased 43.59%",
+          "period_column": "FY2019"
+        }
+      },
+      "unit": "RATIO",
+      "raw_value": 0.4359,
+      "field_id": "FIELD:002120:FY2019:ISSUER_PARCEL_GROWTH",
+      "status": "OBSERVED",
+      "measurement_clock": {
+        "clock_kind": "FLOW_PERIOD",
+        "flow_period": {
+          "period_start": "2019-01-01",
+          "period_end": "2019-12-31",
+          "fiscal_period": "FY2019"
+        }
+      },
+      "responsibility_boundary": {
+        "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:002120",
+        "perimeter_id": "PERIMETER:CN:002120:FY2019:LISTED_CONSOLIDATED",
+        "arena_id": "ARENA:CN:EXPRESS:HUB_FRANCHISE_SERVICE_SYSTEM",
+        "scope_requirement": "Issuer parcel flow for FY2019; the annual flow includes January-April before cutoff."
+      }
+    },
+    {
+      "schema_version": "enterprise-observation-receipt.v1",
+      "receipt_id": "OBS:ENTERPRISE:R8SETTLE:CN002120:20190501:FY2019:V1:CELL:002120:FY2019:ISSUER_MINUS_INDUSTRY_GROWTH_SPREAD:FIELD:002120:FY2019:SPREAD_INDUSTRY_GROWTH",
+      "settlement_id": "R8SETTLE:CN002120:20190501:FY2019:V1",
+      "measurement_contract_ref": {
+        "measurement_contract_id": "OMC:CN002120:20190501:MULTIDIMENSIONAL:V3",
+        "measurement_contract_version": 3
+      },
+      "company_id": "CN:002120",
+      "cutoff_at": "2019-05-01T00:00:00+08:00",
+      "custodian_id": "ROLE:ROUND8:EXPRESS:OUTCOME_CUSTODIAN",
+      "authorization_receipt_id": "OUTCOME-AUTH:R8:CN002120:FY2019:V1",
+      "cell_id": "CELL:002120:FY2019:ISSUER_MINUS_INDUSTRY_GROWTH_SPREAD",
+      "source": {
+        "source_id": "CNINFO:002120:ANN:20200430:1207682788",
+        "source_url": "https://static.cninfo.com.cn/finalpage/2020-04-30/1207682788.PDF",
+        "report_period_end": "2019-12-31",
+        "official_source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+        "issuer_id": "ISSUER:CN:002120",
+        "responsibility_boundary": {
+          "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:002120",
+          "perimeter_id": "PERIMETER:CN:002120:FY2019:LISTED_CONSOLIDATED",
+          "arena_id": "ARENA:CN:EXPRESS:HUB_FRANCHISE_SERVICE_SYSTEM",
+          "scope_requirement": "Issuer-versus-industry descriptive spread with no untreated-control interpretation."
+        },
+        "availability_precision": "DATE_ONLY",
+        "source_available_date": "2020-04-30",
+        "pdf_page": 26,
+        "field_ref": "PDF p.26",
+        "field_identity": "FIELD:002120:FY2019:SPREAD_INDUSTRY_GROWTH",
+        "measurement_clock": {
+          "clock_kind": "FLOW_PERIOD",
+          "flow_period": {
+            "period_start": "2019-01-01",
+            "period_end": "2019-12-31",
+            "fiscal_period": "FY2019"
+          }
+        },
+        "unit": "RATIO",
+        "table_or_note": "FY2019 industry and operating review",
+        "line_item": "issuer parcel growth rate minus national parcel growth rate",
+        "period_column": "FY2019",
+        "custodian_locator": {
+          "table_or_note": "Industry review",
+          "line_item": "National parcel volume increased 25.3%",
+          "period_column": "FY2019"
+        }
+      },
+      "unit": "RATIO",
+      "field_id": "FIELD:002120:FY2019:SPREAD_INDUSTRY_GROWTH",
+      "reason": "NATIONAL_INDUSTRY_FIELD_IS_FROZEN_TO_AN_ISSUER_CONSOLIDATED_RESPONSIBILITY_BOUNDARY",
+      "status": "MEASUREMENT_MISMATCH",
+      "measurement_clock": {
+        "clock_kind": "FLOW_PERIOD",
+        "flow_period": {
+          "period_start": "2019-01-01",
+          "period_end": "2019-12-31",
+          "fiscal_period": "FY2019"
+        }
+      },
+      "responsibility_boundary": {
+        "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:002120",
+        "perimeter_id": "PERIMETER:CN:002120:FY2019:LISTED_CONSOLIDATED",
+        "arena_id": "ARENA:CN:EXPRESS:HUB_FRANCHISE_SERVICE_SYSTEM",
+        "scope_requirement": "Issuer-versus-industry descriptive spread with no untreated-control interpretation."
+      }
+    },
+    {
+      "schema_version": "enterprise-observation-receipt.v1",
+      "receipt_id": "OBS:ENTERPRISE:R8SETTLE:CN002120:20190501:FY2019:V1:CELL:002120:FY2019:ISSUER_MINUS_INDUSTRY_GROWTH_SPREAD:FIELD:002120:FY2019:SPREAD_ISSUER_GROWTH",
+      "settlement_id": "R8SETTLE:CN002120:20190501:FY2019:V1",
+      "measurement_contract_ref": {
+        "measurement_contract_id": "OMC:CN002120:20190501:MULTIDIMENSIONAL:V3",
+        "measurement_contract_version": 3
+      },
+      "company_id": "CN:002120",
+      "cutoff_at": "2019-05-01T00:00:00+08:00",
+      "custodian_id": "ROLE:ROUND8:EXPRESS:OUTCOME_CUSTODIAN",
+      "authorization_receipt_id": "OUTCOME-AUTH:R8:CN002120:FY2019:V1",
+      "cell_id": "CELL:002120:FY2019:ISSUER_MINUS_INDUSTRY_GROWTH_SPREAD",
+      "source": {
+        "source_id": "CNINFO:002120:ANN:20200430:1207682788",
+        "source_url": "https://static.cninfo.com.cn/finalpage/2020-04-30/1207682788.PDF",
+        "report_period_end": "2019-12-31",
+        "official_source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+        "issuer_id": "ISSUER:CN:002120",
+        "responsibility_boundary": {
+          "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:002120",
+          "perimeter_id": "PERIMETER:CN:002120:FY2019:LISTED_CONSOLIDATED",
+          "arena_id": "ARENA:CN:EXPRESS:HUB_FRANCHISE_SERVICE_SYSTEM",
+          "scope_requirement": "Issuer-versus-industry descriptive spread with no untreated-control interpretation."
+        },
+        "availability_precision": "DATE_ONLY",
+        "source_available_date": "2020-04-30",
+        "pdf_page": 30,
+        "field_ref": "PDF p.30",
+        "field_identity": "FIELD:002120:FY2019:SPREAD_ISSUER_GROWTH",
+        "measurement_clock": {
+          "clock_kind": "FLOW_PERIOD",
+          "flow_period": {
+            "period_start": "2019-01-01",
+            "period_end": "2019-12-31",
+            "fiscal_period": "FY2019"
+          }
+        },
+        "unit": "RATIO",
+        "table_or_note": "FY2019 industry and operating review",
+        "line_item": "issuer parcel growth rate minus national parcel growth rate",
+        "period_column": "FY2019",
+        "custodian_locator": {
+          "table_or_note": "Management discussion",
+          "line_item": "Issuer parcel volume increased 43.59%",
+          "period_column": "FY2019"
+        }
+      },
+      "unit": "RATIO",
+      "raw_value": 0.4359,
+      "field_id": "FIELD:002120:FY2019:SPREAD_ISSUER_GROWTH",
+      "status": "OBSERVED",
+      "measurement_clock": {
+        "clock_kind": "FLOW_PERIOD",
+        "flow_period": {
+          "period_start": "2019-01-01",
+          "period_end": "2019-12-31",
+          "fiscal_period": "FY2019"
+        }
+      },
+      "responsibility_boundary": {
+        "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:002120",
+        "perimeter_id": "PERIMETER:CN:002120:FY2019:LISTED_CONSOLIDATED",
+        "arena_id": "ARENA:CN:EXPRESS:HUB_FRANCHISE_SERVICE_SYSTEM",
+        "scope_requirement": "Issuer-versus-industry descriptive spread with no untreated-control interpretation."
+      }
+    },
+    {
+      "schema_version": "enterprise-observation-receipt.v1",
+      "receipt_id": "OBS:ENTERPRISE:R8SETTLE:CN002120:20190501:FY2019:V1:CELL:002120:FY2019:MARKET_SHARE_CHANGE:FIELD:002120:FY2018:MARKET_SHARE",
+      "settlement_id": "R8SETTLE:CN002120:20190501:FY2019:V1",
+      "measurement_contract_ref": {
+        "measurement_contract_id": "OMC:CN002120:20190501:MULTIDIMENSIONAL:V3",
+        "measurement_contract_version": 3
+      },
+      "company_id": "CN:002120",
+      "cutoff_at": "2019-05-01T00:00:00+08:00",
+      "custodian_id": "ROLE:ROUND8:EXPRESS:OUTCOME_CUSTODIAN",
+      "authorization_receipt_id": "OUTCOME-AUTH:R8:CN002120:FY2019:V1",
+      "cell_id": "CELL:002120:FY2019:MARKET_SHARE_CHANGE",
+      "source": {
+        "source_id": "CNINFO:002120:ANN:20200430:1207682788",
+        "source_url": "https://static.cninfo.com.cn/finalpage/2020-04-30/1207682788.PDF",
+        "report_period_end": "2019-12-31",
+        "official_source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+        "issuer_id": "ISSUER:CN:002120",
+        "responsibility_boundary": {
+          "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:002120",
+          "perimeter_id": "PERIMETER:CN:002120:FY2019:LISTED_CONSOLIDATED",
+          "arena_id": "ARENA:CN:EXPRESS:HUB_FRANCHISE_SERVICE_SYSTEM",
+          "scope_requirement": "Issuer national parcel share; price, platform and product mix remain rival mechanisms."
+        },
+        "availability_precision": "DATE_ONLY",
+        "source_available_date": "2020-04-30",
+        "pdf_page": 30,
+        "field_ref": "PDF p.30",
+        "field_identity": "FIELD:002120:FY2018:MARKET_SHARE",
+        "measurement_clock": {
+          "clock_kind": "FLOW_PERIOD",
+          "flow_period": {
+            "period_start": "2018-01-01",
+            "period_end": "2018-12-31",
+            "fiscal_period": "FY2018"
+          }
+        },
+        "unit": "RATIO",
+        "table_or_note": "FY2019 operating review",
+        "line_item": "issuer national parcel market share",
+        "period_column": "FY2018",
+        "custodian_locator": {
+          "table_or_note": "Management discussion",
+          "line_item": "Prior-year market share implied by 15.79% less 2.02 percentage points",
+          "period_column": "FY2018 comparative"
+        }
+      },
+      "unit": "RATIO",
+      "raw_value": 0.1377,
+      "field_id": "FIELD:002120:FY2018:MARKET_SHARE",
+      "status": "OBSERVED",
+      "measurement_clock": {
+        "clock_kind": "FLOW_PERIOD",
+        "flow_period": {
+          "period_start": "2018-01-01",
+          "period_end": "2018-12-31",
+          "fiscal_period": "FY2018"
+        }
+      },
+      "responsibility_boundary": {
+        "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:002120",
+        "perimeter_id": "PERIMETER:CN:002120:FY2019:LISTED_CONSOLIDATED",
+        "arena_id": "ARENA:CN:EXPRESS:HUB_FRANCHISE_SERVICE_SYSTEM",
+        "scope_requirement": "Issuer national parcel share; price, platform and product mix remain rival mechanisms."
+      }
+    },
+    {
+      "schema_version": "enterprise-observation-receipt.v1",
+      "receipt_id": "OBS:ENTERPRISE:R8SETTLE:CN002120:20190501:FY2019:V1:CELL:002120:FY2019:MARKET_SHARE_CHANGE:FIELD:002120:FY2019:MARKET_SHARE",
+      "settlement_id": "R8SETTLE:CN002120:20190501:FY2019:V1",
+      "measurement_contract_ref": {
+        "measurement_contract_id": "OMC:CN002120:20190501:MULTIDIMENSIONAL:V3",
+        "measurement_contract_version": 3
+      },
+      "company_id": "CN:002120",
+      "cutoff_at": "2019-05-01T00:00:00+08:00",
+      "custodian_id": "ROLE:ROUND8:EXPRESS:OUTCOME_CUSTODIAN",
+      "authorization_receipt_id": "OUTCOME-AUTH:R8:CN002120:FY2019:V1",
+      "cell_id": "CELL:002120:FY2019:MARKET_SHARE_CHANGE",
+      "source": {
+        "source_id": "CNINFO:002120:ANN:20200430:1207682788",
+        "source_url": "https://static.cninfo.com.cn/finalpage/2020-04-30/1207682788.PDF",
+        "report_period_end": "2019-12-31",
+        "official_source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+        "issuer_id": "ISSUER:CN:002120",
+        "responsibility_boundary": {
+          "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:002120",
+          "perimeter_id": "PERIMETER:CN:002120:FY2019:LISTED_CONSOLIDATED",
+          "arena_id": "ARENA:CN:EXPRESS:HUB_FRANCHISE_SERVICE_SYSTEM",
+          "scope_requirement": "Issuer national parcel share; price, platform and product mix remain rival mechanisms."
+        },
+        "availability_precision": "DATE_ONLY",
+        "source_available_date": "2020-04-30",
+        "pdf_page": 30,
+        "field_ref": "PDF p.30",
+        "field_identity": "FIELD:002120:FY2019:MARKET_SHARE",
+        "measurement_clock": {
+          "clock_kind": "FLOW_PERIOD",
+          "flow_period": {
+            "period_start": "2019-01-01",
+            "period_end": "2019-12-31",
+            "fiscal_period": "FY2019"
+          }
+        },
+        "unit": "RATIO",
+        "table_or_note": "FY2019 operating review",
+        "line_item": "issuer national parcel market share",
+        "period_column": "FY2019",
+        "custodian_locator": {
+          "table_or_note": "Management discussion",
+          "line_item": "Issuer parcel market share 15.79%",
+          "period_column": "FY2019"
+        }
+      },
+      "unit": "RATIO",
+      "raw_value": 0.1579,
+      "field_id": "FIELD:002120:FY2019:MARKET_SHARE",
+      "status": "OBSERVED",
+      "measurement_clock": {
+        "clock_kind": "FLOW_PERIOD",
+        "flow_period": {
+          "period_start": "2019-01-01",
+          "period_end": "2019-12-31",
+          "fiscal_period": "FY2019"
+        }
+      },
+      "responsibility_boundary": {
+        "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:002120",
+        "perimeter_id": "PERIMETER:CN:002120:FY2019:LISTED_CONSOLIDATED",
+        "arena_id": "ARENA:CN:EXPRESS:HUB_FRANCHISE_SERVICE_SYSTEM",
+        "scope_requirement": "Issuer national parcel share; price, platform and product mix remain rival mechanisms."
+      }
+    },
+    {
+      "schema_version": "enterprise-observation-receipt.v1",
+      "receipt_id": "OBS:ENTERPRISE:R8SETTLE:CN002120:20190501:FY2019:V1:CELL:002120:FY2019:COMPLAINT_RATE_CHANGE:FIELD:002120:FY2018:EFFECTIVE_COMPLAINT_RATE",
+      "settlement_id": "R8SETTLE:CN002120:20190501:FY2019:V1",
+      "measurement_contract_ref": {
+        "measurement_contract_id": "OMC:CN002120:20190501:MULTIDIMENSIONAL:V3",
+        "measurement_contract_version": 3
+      },
+      "company_id": "CN:002120",
+      "cutoff_at": "2019-05-01T00:00:00+08:00",
+      "custodian_id": "ROLE:ROUND8:EXPRESS:OUTCOME_CUSTODIAN",
+      "authorization_receipt_id": "OUTCOME-AUTH:R8:CN002120:FY2019:V1",
+      "cell_id": "CELL:002120:FY2019:COMPLAINT_RATE_CHANGE",
+      "source": {
+        "source_id": "CNINFO:002120:ANN:20200430:1207682788",
+        "source_url": "https://static.cninfo.com.cn/finalpage/2020-04-30/1207682788.PDF",
+        "report_period_end": "2019-12-31",
+        "official_source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+        "issuer_id": "ISSUER:CN:002120",
+        "responsibility_boundary": {
+          "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:002120",
+          "perimeter_id": "PERIMETER:CN:002120:FY2019:LISTED_CONSOLIDATED",
+          "arena_id": "ARENA:CN:EXPRESS:HUB_FRANCHISE_SERVICE_SYSTEM",
+          "scope_requirement": "Issuer disclosed complaint metric with unchanged definition required across periods."
+        },
+        "availability_precision": "DATE_ONLY",
+        "source_available_date": "2020-04-30",
+        "pdf_page": 35,
+        "field_ref": "PDF p.35",
+        "field_identity": "FIELD:002120:FY2018:EFFECTIVE_COMPLAINT_RATE",
+        "measurement_clock": {
+          "clock_kind": "FLOW_PERIOD",
+          "flow_period": {
+            "period_start": "2018-01-01",
+            "period_end": "2018-12-31",
+            "fiscal_period": "FY2018"
+          }
+        },
+        "unit": "RATIO",
+        "table_or_note": "FY2019 service-quality review",
+        "line_item": "effective complaint rate",
+        "period_column": "FY2018",
+        "custodian_locator": {
+          "table_or_note": "Service-quality review",
+          "line_item": "Prior-year effective complaints 0.77 per million parcels",
+          "period_column": "FY2018 comparative"
+        }
+      },
+      "unit": "RATIO",
+      "field_id": "FIELD:002120:FY2018:EFFECTIVE_COMPLAINT_RATE",
+      "reason": "FROZEN_RATIO_UNIT_DOES_NOT_MATCH_DISCLOSED_COMPLAINTS_PER_MILLION_PARCELS",
+      "status": "MEASUREMENT_MISMATCH",
+      "measurement_clock": {
+        "clock_kind": "FLOW_PERIOD",
+        "flow_period": {
+          "period_start": "2018-01-01",
+          "period_end": "2018-12-31",
+          "fiscal_period": "FY2018"
+        }
+      },
+      "responsibility_boundary": {
+        "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:002120",
+        "perimeter_id": "PERIMETER:CN:002120:FY2019:LISTED_CONSOLIDATED",
+        "arena_id": "ARENA:CN:EXPRESS:HUB_FRANCHISE_SERVICE_SYSTEM",
+        "scope_requirement": "Issuer disclosed complaint metric with unchanged definition required across periods."
+      }
+    },
+    {
+      "schema_version": "enterprise-observation-receipt.v1",
+      "receipt_id": "OBS:ENTERPRISE:R8SETTLE:CN002120:20190501:FY2019:V1:CELL:002120:FY2019:COMPLAINT_RATE_CHANGE:FIELD:002120:FY2019:EFFECTIVE_COMPLAINT_RATE",
+      "settlement_id": "R8SETTLE:CN002120:20190501:FY2019:V1",
+      "measurement_contract_ref": {
+        "measurement_contract_id": "OMC:CN002120:20190501:MULTIDIMENSIONAL:V3",
+        "measurement_contract_version": 3
+      },
+      "company_id": "CN:002120",
+      "cutoff_at": "2019-05-01T00:00:00+08:00",
+      "custodian_id": "ROLE:ROUND8:EXPRESS:OUTCOME_CUSTODIAN",
+      "authorization_receipt_id": "OUTCOME-AUTH:R8:CN002120:FY2019:V1",
+      "cell_id": "CELL:002120:FY2019:COMPLAINT_RATE_CHANGE",
+      "source": {
+        "source_id": "CNINFO:002120:ANN:20200430:1207682788",
+        "source_url": "https://static.cninfo.com.cn/finalpage/2020-04-30/1207682788.PDF",
+        "report_period_end": "2019-12-31",
+        "official_source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+        "issuer_id": "ISSUER:CN:002120",
+        "responsibility_boundary": {
+          "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:002120",
+          "perimeter_id": "PERIMETER:CN:002120:FY2019:LISTED_CONSOLIDATED",
+          "arena_id": "ARENA:CN:EXPRESS:HUB_FRANCHISE_SERVICE_SYSTEM",
+          "scope_requirement": "Issuer disclosed complaint metric with unchanged definition required across periods."
+        },
+        "availability_precision": "DATE_ONLY",
+        "source_available_date": "2020-04-30",
+        "pdf_page": 35,
+        "field_ref": "PDF p.35",
+        "field_identity": "FIELD:002120:FY2019:EFFECTIVE_COMPLAINT_RATE",
+        "measurement_clock": {
+          "clock_kind": "FLOW_PERIOD",
+          "flow_period": {
+            "period_start": "2019-01-01",
+            "period_end": "2019-12-31",
+            "fiscal_period": "FY2019"
+          }
+        },
+        "unit": "RATIO",
+        "table_or_note": "FY2019 service-quality review",
+        "line_item": "effective complaint rate",
+        "period_column": "FY2019",
+        "custodian_locator": {
+          "table_or_note": "Service-quality review",
+          "line_item": "Effective complaints 0.05 per million parcels",
+          "period_column": "FY2019"
+        }
+      },
+      "unit": "RATIO",
+      "field_id": "FIELD:002120:FY2019:EFFECTIVE_COMPLAINT_RATE",
+      "reason": "FROZEN_RATIO_UNIT_DOES_NOT_MATCH_DISCLOSED_COMPLAINTS_PER_MILLION_PARCELS",
+      "status": "MEASUREMENT_MISMATCH",
+      "measurement_clock": {
+        "clock_kind": "FLOW_PERIOD",
+        "flow_period": {
+          "period_start": "2019-01-01",
+          "period_end": "2019-12-31",
+          "fiscal_period": "FY2019"
+        }
+      },
+      "responsibility_boundary": {
+        "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:002120",
+        "perimeter_id": "PERIMETER:CN:002120:FY2019:LISTED_CONSOLIDATED",
+        "arena_id": "ARENA:CN:EXPRESS:HUB_FRANCHISE_SERVICE_SYSTEM",
+        "scope_requirement": "Issuer disclosed complaint metric with unchanged definition required across periods."
+      }
+    },
+    {
+      "schema_version": "enterprise-observation-receipt.v1",
+      "receipt_id": "OBS:ENTERPRISE:R8SETTLE:CN002120:20190501:FY2019:V1:CELL:002120:FY2019:NETWORK_SCALE_EVENT:FIELD:002120:FY2019:NETWORK_SCALE_EVENT",
+      "settlement_id": "R8SETTLE:CN002120:20190501:FY2019:V1",
+      "measurement_contract_ref": {
+        "measurement_contract_id": "OMC:CN002120:20190501:MULTIDIMENSIONAL:V3",
+        "measurement_contract_version": 3
+      },
+      "company_id": "CN:002120",
+      "cutoff_at": "2019-05-01T00:00:00+08:00",
+      "custodian_id": "ROLE:ROUND8:EXPRESS:OUTCOME_CUSTODIAN",
+      "authorization_receipt_id": "OUTCOME-AUTH:R8:CN002120:FY2019:V1",
+      "cell_id": "CELL:002120:FY2019:NETWORK_SCALE_EVENT",
+      "sources_considered": [
+        {
+          "source_id": "CNINFO:002120:ANN:20200430:1207682788",
+          "source_url": "https://static.cninfo.com.cn/finalpage/2020-04-30/1207682788.PDF",
+          "report_period_end": "2019-12-31",
+          "official_source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+          "issuer_id": "ISSUER:CN:002120",
+          "responsibility_boundary": "ISSUER_CONSOLIDATED:CN:002120",
+          "availability_precision": "DATE_ONLY",
+          "source_available_date": "2020-04-30",
+          "field_ref": "PDF pp.24-35 FY2019 network and operating review"
+        }
+      ],
+      "unit": "BOOLEAN_EVENT",
+      "field_id": "FIELD:002120:FY2019:NETWORK_SCALE_EVENT",
+      "reason": "FY2019_NETWORK_IMPLEMENTATION_IS_DISCLOSED_WITHOUT_A_DATE_AFTER_2019_05_01",
+      "status": "UNKNOWN",
+      "measurement_clock": {
+        "clock_kind": "EVENT_WINDOW",
+        "event_window": {
+          "event_start": "2019-05-02",
+          "event_end": "2019-12-31",
+          "window_name": "STRICT_POST_CUTOFF_EVENT_WINDOW"
+        }
+      },
+      "responsibility_boundary": {
+        "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:002120",
+        "perimeter_id": "PERIMETER:CN:002120:FY2019:LISTED_CONSOLIDATED",
+        "arena_id": "ARENA:CN:EXPRESS:HUB_FRANCHISE_SERVICE_SYSTEM",
+        "scope_requirement": "Issuer-controlled network implementation after cutoff; year-end scale without implementation timing is insufficient."
+      }
+    },
+    {
+      "schema_version": "enterprise-observation-receipt.v1",
+      "receipt_id": "OBS:ENTERPRISE:R8SETTLE:CN002120:20190501:FY2019:V1:CELL:002120:FY2019:AUTOMATION_SERVICE_EVENT:FIELD:002120:FY2019:AUTOMATION_SERVICE_EVENT",
+      "settlement_id": "R8SETTLE:CN002120:20190501:FY2019:V1",
+      "measurement_contract_ref": {
+        "measurement_contract_id": "OMC:CN002120:20190501:MULTIDIMENSIONAL:V3",
+        "measurement_contract_version": 3
+      },
+      "company_id": "CN:002120",
+      "cutoff_at": "2019-05-01T00:00:00+08:00",
+      "custodian_id": "ROLE:ROUND8:EXPRESS:OUTCOME_CUSTODIAN",
+      "authorization_receipt_id": "OUTCOME-AUTH:R8:CN002120:FY2019:V1",
+      "cell_id": "CELL:002120:FY2019:AUTOMATION_SERVICE_EVENT",
+      "sources_considered": [
+        {
+          "source_id": "CNINFO:002120:ANN:20200430:1207682788",
+          "source_url": "https://static.cninfo.com.cn/finalpage/2020-04-30/1207682788.PDF",
+          "report_period_end": "2019-12-31",
+          "official_source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+          "issuer_id": "ISSUER:CN:002120",
+          "responsibility_boundary": "ISSUER_CONSOLIDATED:CN:002120",
+          "availability_precision": "DATE_ONLY",
+          "source_available_date": "2020-04-30",
+          "field_ref": "PDF pp.24-35 FY2019 automation and service review"
+        }
+      ],
+      "unit": "BOOLEAN_EVENT",
+      "field_id": "FIELD:002120:FY2019:AUTOMATION_SERVICE_EVENT",
+      "reason": "FY2019_AUTOMATION_AND_SERVICE_IMPLEMENTATION_IS_DISCLOSED_WITHOUT_A_DATE_AFTER_2019_05_01",
+      "status": "UNKNOWN",
+      "measurement_clock": {
+        "clock_kind": "EVENT_WINDOW",
+        "event_window": {
+          "event_start": "2019-05-02",
+          "event_end": "2019-12-31",
+          "window_name": "STRICT_POST_CUTOFF_EVENT_WINDOW"
+        }
+      },
+      "responsibility_boundary": {
+        "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:002120",
+        "perimeter_id": "PERIMETER:CN:002120:FY2019:LISTED_CONSOLIDATED",
+        "arena_id": "ARENA:CN:EXPRESS:HUB_FRANCHISE_SERVICE_SYSTEM",
+        "scope_requirement": "Issuer-controlled implementation event after cutoff."
+      }
+    },
+    {
+      "schema_version": "enterprise-observation-receipt.v1",
+      "receipt_id": "OBS:ENTERPRISE:R8SETTLE:CN002120:20190501:FY2019:V1:CELL:002120:FY2019:EXPRESS_REVENUE_PER_PARCEL:FIELD:002120:FY2018:EXPRESS_REVENUE_RPP_NUMERATOR",
+      "settlement_id": "R8SETTLE:CN002120:20190501:FY2019:V1",
+      "measurement_contract_ref": {
+        "measurement_contract_id": "OMC:CN002120:20190501:MULTIDIMENSIONAL:V3",
+        "measurement_contract_version": 3
+      },
+      "company_id": "CN:002120",
+      "cutoff_at": "2019-05-01T00:00:00+08:00",
+      "custodian_id": "ROLE:ROUND8:EXPRESS:OUTCOME_CUSTODIAN",
+      "authorization_receipt_id": "OUTCOME-AUTH:R8:CN002120:FY2019:V1",
+      "cell_id": "CELL:002120:FY2019:EXPRESS_REVENUE_PER_PARCEL",
+      "source": {
+        "source_id": "CNINFO:002120:ANN:20200430:1207682788",
+        "source_url": "https://static.cninfo.com.cn/finalpage/2020-04-30/1207682788.PDF",
+        "report_period_end": "2019-12-31",
+        "official_source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+        "issuer_id": "ISSUER:CN:002120",
+        "responsibility_boundary": {
+          "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:002120",
+          "perimeter_id": "PERIMETER:CN:002120:FY2019:LISTED_CONSOLIDATED",
+          "arena_id": "ARENA:CN:EXPRESS:HUB_FRANCHISE_SERVICE_SYSTEM",
+          "scope_requirement": "Issuer express revenue per completed parcel; mix and headquarters settlement remain embedded."
+        },
+        "availability_precision": "DATE_ONLY",
+        "source_available_date": "2020-04-30",
+        "pdf_page": 38,
+        "field_ref": "PDF p.38",
+        "field_identity": "FIELD:002120:FY2018:EXPRESS_REVENUE_RPP_NUMERATOR",
+        "measurement_clock": {
+          "clock_kind": "FLOW_PERIOD",
+          "flow_period": {
+            "period_start": "2018-01-01",
+            "period_end": "2018-12-31",
+            "fiscal_period": "FY2018"
+          }
+        },
+        "unit": "RMB",
+        "table_or_note": "FY2019 express revenue and parcel volume",
+        "line_item": "express-service revenue divided by completed parcels",
+        "period_column": "FY2018",
+        "custodian_locator": {
+          "table_or_note": "Principal business by service",
+          "line_item": "Dispatch-fee revenue added from 2019-01-01",
+          "period_column": "FY2018 comparative"
+        }
+      },
+      "unit": "RMB",
+      "field_id": "FIELD:002120:FY2018:EXPRESS_REVENUE_RPP_NUMERATOR",
+      "reason": "FY2019_EXPRESS_REVENUE_ADDS_DISPATCH_FEES_AND_IS_NOT_DEFINITIONALLY_COMPARABLE_TO_FY2018",
+      "status": "MEASUREMENT_MISMATCH",
+      "measurement_clock": {
+        "clock_kind": "FLOW_PERIOD",
+        "flow_period": {
+          "period_start": "2018-01-01",
+          "period_end": "2018-12-31",
+          "fiscal_period": "FY2018"
+        }
+      },
+      "responsibility_boundary": {
+        "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:002120",
+        "perimeter_id": "PERIMETER:CN:002120:FY2019:LISTED_CONSOLIDATED",
+        "arena_id": "ARENA:CN:EXPRESS:HUB_FRANCHISE_SERVICE_SYSTEM",
+        "scope_requirement": "Issuer express revenue per completed parcel; mix and headquarters settlement remain embedded."
+      }
+    },
+    {
+      "schema_version": "enterprise-observation-receipt.v1",
+      "receipt_id": "OBS:ENTERPRISE:R8SETTLE:CN002120:20190501:FY2019:V1:CELL:002120:FY2019:EXPRESS_REVENUE_PER_PARCEL:FIELD:002120:FY2018:PARCEL_VOLUME_RPP_DENOMINATOR",
+      "settlement_id": "R8SETTLE:CN002120:20190501:FY2019:V1",
+      "measurement_contract_ref": {
+        "measurement_contract_id": "OMC:CN002120:20190501:MULTIDIMENSIONAL:V3",
+        "measurement_contract_version": 3
+      },
+      "company_id": "CN:002120",
+      "cutoff_at": "2019-05-01T00:00:00+08:00",
+      "custodian_id": "ROLE:ROUND8:EXPRESS:OUTCOME_CUSTODIAN",
+      "authorization_receipt_id": "OUTCOME-AUTH:R8:CN002120:FY2019:V1",
+      "cell_id": "CELL:002120:FY2019:EXPRESS_REVENUE_PER_PARCEL",
+      "sources_considered": [
+        {
+          "source_id": "CNINFO:002120:ANN:20200430:1207682788",
+          "source_url": "https://static.cninfo.com.cn/finalpage/2020-04-30/1207682788.PDF",
+          "report_period_end": "2019-12-31",
+          "official_source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+          "issuer_id": "ISSUER:CN:002120",
+          "responsibility_boundary": "ISSUER_CONSOLIDATED:CN:002120",
+          "availability_precision": "DATE_ONLY",
+          "source_available_date": "2020-04-30",
+          "field_ref": "PDF p.30 gives rounded FY2019 volume and growth only"
+        }
+      ],
+      "unit": "PARCEL",
+      "field_id": "FIELD:002120:FY2018:PARCEL_VOLUME_RPP_DENOMINATOR",
+      "reason": "AUTHORIZED_FY2019_REPORT_DOES_NOT_DIRECTLY_DISCLOSE_THE_EXACT_FY2018_PARCEL_DENOMINATOR",
+      "status": "UNKNOWN",
+      "measurement_clock": {
+        "clock_kind": "FLOW_PERIOD",
+        "flow_period": {
+          "period_start": "2018-01-01",
+          "period_end": "2018-12-31",
+          "fiscal_period": "FY2018"
+        }
+      },
+      "responsibility_boundary": {
+        "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:002120",
+        "perimeter_id": "PERIMETER:CN:002120:FY2019:LISTED_CONSOLIDATED",
+        "arena_id": "ARENA:CN:EXPRESS:HUB_FRANCHISE_SERVICE_SYSTEM",
+        "scope_requirement": "Issuer express revenue per completed parcel; mix and headquarters settlement remain embedded."
+      }
+    },
+    {
+      "schema_version": "enterprise-observation-receipt.v1",
+      "receipt_id": "OBS:ENTERPRISE:R8SETTLE:CN002120:20190501:FY2019:V1:CELL:002120:FY2019:EXPRESS_REVENUE_PER_PARCEL:FIELD:002120:FY2019:EXPRESS_REVENUE_RPP_NUMERATOR",
+      "settlement_id": "R8SETTLE:CN002120:20190501:FY2019:V1",
+      "measurement_contract_ref": {
+        "measurement_contract_id": "OMC:CN002120:20190501:MULTIDIMENSIONAL:V3",
+        "measurement_contract_version": 3
+      },
+      "company_id": "CN:002120",
+      "cutoff_at": "2019-05-01T00:00:00+08:00",
+      "custodian_id": "ROLE:ROUND8:EXPRESS:OUTCOME_CUSTODIAN",
+      "authorization_receipt_id": "OUTCOME-AUTH:R8:CN002120:FY2019:V1",
+      "cell_id": "CELL:002120:FY2019:EXPRESS_REVENUE_PER_PARCEL",
+      "source": {
+        "source_id": "CNINFO:002120:ANN:20200430:1207682788",
+        "source_url": "https://static.cninfo.com.cn/finalpage/2020-04-30/1207682788.PDF",
+        "report_period_end": "2019-12-31",
+        "official_source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+        "issuer_id": "ISSUER:CN:002120",
+        "responsibility_boundary": {
+          "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:002120",
+          "perimeter_id": "PERIMETER:CN:002120:FY2019:LISTED_CONSOLIDATED",
+          "arena_id": "ARENA:CN:EXPRESS:HUB_FRANCHISE_SERVICE_SYSTEM",
+          "scope_requirement": "Issuer express revenue per completed parcel; mix and headquarters settlement remain embedded."
+        },
+        "availability_precision": "DATE_ONLY",
+        "source_available_date": "2020-04-30",
+        "pdf_page": 38,
+        "field_ref": "PDF p.38",
+        "field_identity": "FIELD:002120:FY2019:EXPRESS_REVENUE_RPP_NUMERATOR",
+        "measurement_clock": {
+          "clock_kind": "FLOW_PERIOD",
+          "flow_period": {
+            "period_start": "2019-01-01",
+            "period_end": "2019-12-31",
+            "fiscal_period": "FY2019"
+          }
+        },
+        "unit": "RMB",
+        "table_or_note": "FY2019 express revenue and parcel volume",
+        "line_item": "express-service revenue divided by completed parcels",
+        "period_column": "FY2019",
+        "custodian_locator": {
+          "table_or_note": "Principal business by service",
+          "line_item": "Dispatch-fee revenue added from 2019-01-01",
+          "period_column": "FY2019"
+        }
+      },
+      "unit": "RMB",
+      "field_id": "FIELD:002120:FY2019:EXPRESS_REVENUE_RPP_NUMERATOR",
+      "reason": "FY2019_EXPRESS_REVENUE_ADDS_DISPATCH_FEES_AND_IS_NOT_DEFINITIONALLY_COMPARABLE_TO_FY2018",
+      "status": "MEASUREMENT_MISMATCH",
+      "measurement_clock": {
+        "clock_kind": "FLOW_PERIOD",
+        "flow_period": {
+          "period_start": "2019-01-01",
+          "period_end": "2019-12-31",
+          "fiscal_period": "FY2019"
+        }
+      },
+      "responsibility_boundary": {
+        "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:002120",
+        "perimeter_id": "PERIMETER:CN:002120:FY2019:LISTED_CONSOLIDATED",
+        "arena_id": "ARENA:CN:EXPRESS:HUB_FRANCHISE_SERVICE_SYSTEM",
+        "scope_requirement": "Issuer express revenue per completed parcel; mix and headquarters settlement remain embedded."
+      }
+    },
+    {
+      "schema_version": "enterprise-observation-receipt.v1",
+      "receipt_id": "OBS:ENTERPRISE:R8SETTLE:CN002120:20190501:FY2019:V1:CELL:002120:FY2019:EXPRESS_REVENUE_PER_PARCEL:FIELD:002120:FY2019:PARCEL_VOLUME_RPP_DENOMINATOR",
+      "settlement_id": "R8SETTLE:CN002120:20190501:FY2019:V1",
+      "measurement_contract_ref": {
+        "measurement_contract_id": "OMC:CN002120:20190501:MULTIDIMENSIONAL:V3",
+        "measurement_contract_version": 3
+      },
+      "company_id": "CN:002120",
+      "cutoff_at": "2019-05-01T00:00:00+08:00",
+      "custodian_id": "ROLE:ROUND8:EXPRESS:OUTCOME_CUSTODIAN",
+      "authorization_receipt_id": "OUTCOME-AUTH:R8:CN002120:FY2019:V1",
+      "cell_id": "CELL:002120:FY2019:EXPRESS_REVENUE_PER_PARCEL",
+      "source": {
+        "source_id": "CNINFO:002120:ANN:20200430:1207682788",
+        "source_url": "https://static.cninfo.com.cn/finalpage/2020-04-30/1207682788.PDF",
+        "report_period_end": "2019-12-31",
+        "official_source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+        "issuer_id": "ISSUER:CN:002120",
+        "responsibility_boundary": {
+          "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:002120",
+          "perimeter_id": "PERIMETER:CN:002120:FY2019:LISTED_CONSOLIDATED",
+          "arena_id": "ARENA:CN:EXPRESS:HUB_FRANCHISE_SERVICE_SYSTEM",
+          "scope_requirement": "Issuer express revenue per completed parcel; mix and headquarters settlement remain embedded."
+        },
+        "availability_precision": "DATE_ONLY",
+        "source_available_date": "2020-04-30",
+        "pdf_page": 30,
+        "field_ref": "PDF p.30",
+        "field_identity": "FIELD:002120:FY2019:PARCEL_VOLUME_RPP_DENOMINATOR",
+        "measurement_clock": {
+          "clock_kind": "FLOW_PERIOD",
+          "flow_period": {
+            "period_start": "2019-01-01",
+            "period_end": "2019-12-31",
+            "fiscal_period": "FY2019"
+          }
+        },
+        "unit": "PARCEL",
+        "table_or_note": "FY2019 express revenue and parcel volume",
+        "line_item": "express-service revenue divided by completed parcels",
+        "period_column": "FY2019",
+        "custodian_locator": {
+          "table_or_note": "Management discussion",
+          "line_item": "Completed parcels 10.03 billion",
+          "period_column": "FY2019"
+        }
+      },
+      "unit": "PARCEL",
+      "raw_value": 10030000000.0,
+      "field_id": "FIELD:002120:FY2019:PARCEL_VOLUME_RPP_DENOMINATOR",
+      "status": "OBSERVED",
+      "measurement_clock": {
+        "clock_kind": "FLOW_PERIOD",
+        "flow_period": {
+          "period_start": "2019-01-01",
+          "period_end": "2019-12-31",
+          "fiscal_period": "FY2019"
+        }
+      },
+      "responsibility_boundary": {
+        "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:002120",
+        "perimeter_id": "PERIMETER:CN:002120:FY2019:LISTED_CONSOLIDATED",
+        "arena_id": "ARENA:CN:EXPRESS:HUB_FRANCHISE_SERVICE_SYSTEM",
+        "scope_requirement": "Issuer express revenue per completed parcel; mix and headquarters settlement remain embedded."
+      }
+    },
+    {
+      "schema_version": "enterprise-observation-receipt.v1",
+      "receipt_id": "OBS:ENTERPRISE:R8SETTLE:CN002120:20190501:FY2019:V1:CELL:002120:FY2019:PARCEL_COST:FIELD:002120:FY2018:PARCEL_COST",
+      "settlement_id": "R8SETTLE:CN002120:20190501:FY2019:V1",
+      "measurement_contract_ref": {
+        "measurement_contract_id": "OMC:CN002120:20190501:MULTIDIMENSIONAL:V3",
+        "measurement_contract_version": 3
+      },
+      "company_id": "CN:002120",
+      "cutoff_at": "2019-05-01T00:00:00+08:00",
+      "custodian_id": "ROLE:ROUND8:EXPRESS:OUTCOME_CUSTODIAN",
+      "authorization_receipt_id": "OUTCOME-AUTH:R8:CN002120:FY2019:V1",
+      "cell_id": "CELL:002120:FY2019:PARCEL_COST",
+      "source": {
+        "source_id": "CNINFO:002120:ANN:20200430:1207682788",
+        "source_url": "https://static.cninfo.com.cn/finalpage/2020-04-30/1207682788.PDF",
+        "report_period_end": "2019-12-31",
+        "official_source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+        "issuer_id": "ISSUER:CN:002120",
+        "responsibility_boundary": {
+          "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:002120",
+          "perimeter_id": "PERIMETER:CN:002120:FY2019:LISTED_CONSOLIDATED",
+          "arena_id": "ARENA:CN:EXPRESS:HUB_FRANCHISE_SERVICE_SYSTEM",
+          "scope_requirement": "Issuer disclosed parcel-cost boundary; definition and network perimeter must remain unchanged."
+        },
+        "availability_precision": "DATE_ONLY",
+        "source_available_date": "2020-04-30",
+        "pdf_page": 35,
+        "field_ref": "PDF p.35",
+        "field_identity": "FIELD:002120:FY2018:PARCEL_COST",
+        "measurement_clock": {
+          "clock_kind": "FLOW_PERIOD",
+          "flow_period": {
+            "period_start": "2018-01-01",
+            "period_end": "2018-12-31",
+            "fiscal_period": "FY2018"
+          }
+        },
+        "unit": "RMB_PER_PARCEL",
+        "table_or_note": "FY2019 express operating review",
+        "line_item": "cost per completed parcel",
+        "period_column": "FY2018",
+        "custodian_locator": {
+          "table_or_note": "Unit-cost review",
+          "line_item": "FY2019 reports RMB2.83 on a same-calibre series but gives no auditable bridge to frozen FY2018",
+          "period_column": "FY2018 comparative"
+        }
+      },
+      "unit": "RMB_PER_PARCEL",
+      "field_id": "FIELD:002120:FY2018:PARCEL_COST",
+      "reason": "FROZEN_FY2018_PARCEL_COST_IS_NOT_BRIDGED_TO_THE_FY2019_DISPATCH_FEE_COST_SCOPE",
+      "status": "MEASUREMENT_MISMATCH",
+      "measurement_clock": {
+        "clock_kind": "FLOW_PERIOD",
+        "flow_period": {
+          "period_start": "2018-01-01",
+          "period_end": "2018-12-31",
+          "fiscal_period": "FY2018"
+        }
+      },
+      "responsibility_boundary": {
+        "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:002120",
+        "perimeter_id": "PERIMETER:CN:002120:FY2019:LISTED_CONSOLIDATED",
+        "arena_id": "ARENA:CN:EXPRESS:HUB_FRANCHISE_SERVICE_SYSTEM",
+        "scope_requirement": "Issuer disclosed parcel-cost boundary; definition and network perimeter must remain unchanged."
+      }
+    },
+    {
+      "schema_version": "enterprise-observation-receipt.v1",
+      "receipt_id": "OBS:ENTERPRISE:R8SETTLE:CN002120:20190501:FY2019:V1:CELL:002120:FY2019:PARCEL_COST:FIELD:002120:FY2019:PARCEL_COST",
+      "settlement_id": "R8SETTLE:CN002120:20190501:FY2019:V1",
+      "measurement_contract_ref": {
+        "measurement_contract_id": "OMC:CN002120:20190501:MULTIDIMENSIONAL:V3",
+        "measurement_contract_version": 3
+      },
+      "company_id": "CN:002120",
+      "cutoff_at": "2019-05-01T00:00:00+08:00",
+      "custodian_id": "ROLE:ROUND8:EXPRESS:OUTCOME_CUSTODIAN",
+      "authorization_receipt_id": "OUTCOME-AUTH:R8:CN002120:FY2019:V1",
+      "cell_id": "CELL:002120:FY2019:PARCEL_COST",
+      "source": {
+        "source_id": "CNINFO:002120:ANN:20200430:1207682788",
+        "source_url": "https://static.cninfo.com.cn/finalpage/2020-04-30/1207682788.PDF",
+        "report_period_end": "2019-12-31",
+        "official_source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+        "issuer_id": "ISSUER:CN:002120",
+        "responsibility_boundary": {
+          "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:002120",
+          "perimeter_id": "PERIMETER:CN:002120:FY2019:LISTED_CONSOLIDATED",
+          "arena_id": "ARENA:CN:EXPRESS:HUB_FRANCHISE_SERVICE_SYSTEM",
+          "scope_requirement": "Issuer disclosed parcel-cost boundary; definition and network perimeter must remain unchanged."
+        },
+        "availability_precision": "DATE_ONLY",
+        "source_available_date": "2020-04-30",
+        "pdf_page": 35,
+        "field_ref": "PDF p.35",
+        "field_identity": "FIELD:002120:FY2019:PARCEL_COST",
+        "measurement_clock": {
+          "clock_kind": "FLOW_PERIOD",
+          "flow_period": {
+            "period_start": "2019-01-01",
+            "period_end": "2019-12-31",
+            "fiscal_period": "FY2019"
+          }
+        },
+        "unit": "RMB_PER_PARCEL",
+        "table_or_note": "FY2019 express operating review",
+        "line_item": "cost per completed parcel",
+        "period_column": "FY2019",
+        "custodian_locator": {
+          "table_or_note": "Unit-cost review",
+          "line_item": "FY2019 parcel cost RMB2.83 after dispatch-service presentation change",
+          "period_column": "FY2019"
+        }
+      },
+      "unit": "RMB_PER_PARCEL",
+      "field_id": "FIELD:002120:FY2019:PARCEL_COST",
+      "reason": "FROZEN_FY2018_PARCEL_COST_IS_NOT_BRIDGED_TO_THE_FY2019_DISPATCH_FEE_COST_SCOPE",
+      "status": "MEASUREMENT_MISMATCH",
+      "measurement_clock": {
+        "clock_kind": "FLOW_PERIOD",
+        "flow_period": {
+          "period_start": "2019-01-01",
+          "period_end": "2019-12-31",
+          "fiscal_period": "FY2019"
+        }
+      },
+      "responsibility_boundary": {
+        "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:002120",
+        "perimeter_id": "PERIMETER:CN:002120:FY2019:LISTED_CONSOLIDATED",
+        "arena_id": "ARENA:CN:EXPRESS:HUB_FRANCHISE_SERVICE_SYSTEM",
+        "scope_requirement": "Issuer disclosed parcel-cost boundary; definition and network perimeter must remain unchanged."
+      }
+    },
+    {
+      "schema_version": "enterprise-observation-receipt.v1",
+      "receipt_id": "OBS:ENTERPRISE:R8SETTLE:CN002120:20190501:FY2019:V1:CELL:002120:FY2019:EXPRESS_GROSS_MARGIN:FIELD:002120:FY2018:EXPRESS_GROSS_MARGIN",
+      "settlement_id": "R8SETTLE:CN002120:20190501:FY2019:V1",
+      "measurement_contract_ref": {
+        "measurement_contract_id": "OMC:CN002120:20190501:MULTIDIMENSIONAL:V3",
+        "measurement_contract_version": 3
+      },
+      "company_id": "CN:002120",
+      "cutoff_at": "2019-05-01T00:00:00+08:00",
+      "custodian_id": "ROLE:ROUND8:EXPRESS:OUTCOME_CUSTODIAN",
+      "authorization_receipt_id": "OUTCOME-AUTH:R8:CN002120:FY2019:V1",
+      "cell_id": "CELL:002120:FY2019:EXPRESS_GROSS_MARGIN",
+      "source": {
+        "source_id": "CNINFO:002120:ANN:20200430:1207682788",
+        "source_url": "https://static.cninfo.com.cn/finalpage/2020-04-30/1207682788.PDF",
+        "report_period_end": "2019-12-31",
+        "official_source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+        "issuer_id": "ISSUER:CN:002120",
+        "responsibility_boundary": {
+          "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:002120",
+          "perimeter_id": "PERIMETER:CN:002120:FY2019:LISTED_CONSOLIDATED",
+          "arena_id": "ARENA:CN:EXPRESS:HUB_FRANCHISE_SERVICE_SYSTEM",
+          "scope_requirement": "Issuer express-service gross margin with same accounting and service perimeter required."
+        },
+        "availability_precision": "DATE_ONLY",
+        "source_available_date": "2020-04-30",
+        "pdf_page": 38,
+        "field_ref": "PDF p.38",
+        "field_identity": "FIELD:002120:FY2018:EXPRESS_GROSS_MARGIN",
+        "measurement_clock": {
+          "clock_kind": "FLOW_PERIOD",
+          "flow_period": {
+            "period_start": "2018-01-01",
+            "period_end": "2018-12-31",
+            "fiscal_period": "FY2018"
+          }
+        },
+        "unit": "RATIO",
+        "table_or_note": "FY2019 principal business by service",
+        "line_item": "express-service gross margin",
+        "period_column": "FY2018",
+        "custodian_locator": {
+          "table_or_note": "Principal business by service",
+          "line_item": "FY2019 gross-margin table includes newly presented dispatch fees",
+          "period_column": "FY2018 comparative"
+        }
+      },
+      "unit": "RATIO",
+      "field_id": "FIELD:002120:FY2018:EXPRESS_GROSS_MARGIN",
+      "reason": "EXPRESS_GROSS_MARGIN_SCOPE_CHANGED_WITH_DISPATCH_FEE_REVENUE_AND_COST_PRESENTATION",
+      "status": "MEASUREMENT_MISMATCH",
+      "measurement_clock": {
+        "clock_kind": "FLOW_PERIOD",
+        "flow_period": {
+          "period_start": "2018-01-01",
+          "period_end": "2018-12-31",
+          "fiscal_period": "FY2018"
+        }
+      },
+      "responsibility_boundary": {
+        "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:002120",
+        "perimeter_id": "PERIMETER:CN:002120:FY2019:LISTED_CONSOLIDATED",
+        "arena_id": "ARENA:CN:EXPRESS:HUB_FRANCHISE_SERVICE_SYSTEM",
+        "scope_requirement": "Issuer express-service gross margin with same accounting and service perimeter required."
+      }
+    },
+    {
+      "schema_version": "enterprise-observation-receipt.v1",
+      "receipt_id": "OBS:ENTERPRISE:R8SETTLE:CN002120:20190501:FY2019:V1:CELL:002120:FY2019:EXPRESS_GROSS_MARGIN:FIELD:002120:FY2019:EXPRESS_GROSS_MARGIN",
+      "settlement_id": "R8SETTLE:CN002120:20190501:FY2019:V1",
+      "measurement_contract_ref": {
+        "measurement_contract_id": "OMC:CN002120:20190501:MULTIDIMENSIONAL:V3",
+        "measurement_contract_version": 3
+      },
+      "company_id": "CN:002120",
+      "cutoff_at": "2019-05-01T00:00:00+08:00",
+      "custodian_id": "ROLE:ROUND8:EXPRESS:OUTCOME_CUSTODIAN",
+      "authorization_receipt_id": "OUTCOME-AUTH:R8:CN002120:FY2019:V1",
+      "cell_id": "CELL:002120:FY2019:EXPRESS_GROSS_MARGIN",
+      "source": {
+        "source_id": "CNINFO:002120:ANN:20200430:1207682788",
+        "source_url": "https://static.cninfo.com.cn/finalpage/2020-04-30/1207682788.PDF",
+        "report_period_end": "2019-12-31",
+        "official_source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+        "issuer_id": "ISSUER:CN:002120",
+        "responsibility_boundary": {
+          "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:002120",
+          "perimeter_id": "PERIMETER:CN:002120:FY2019:LISTED_CONSOLIDATED",
+          "arena_id": "ARENA:CN:EXPRESS:HUB_FRANCHISE_SERVICE_SYSTEM",
+          "scope_requirement": "Issuer express-service gross margin with same accounting and service perimeter required."
+        },
+        "availability_precision": "DATE_ONLY",
+        "source_available_date": "2020-04-30",
+        "pdf_page": 38,
+        "field_ref": "PDF p.38",
+        "field_identity": "FIELD:002120:FY2019:EXPRESS_GROSS_MARGIN",
+        "measurement_clock": {
+          "clock_kind": "FLOW_PERIOD",
+          "flow_period": {
+            "period_start": "2019-01-01",
+            "period_end": "2019-12-31",
+            "fiscal_period": "FY2019"
+          }
+        },
+        "unit": "RATIO",
+        "table_or_note": "FY2019 principal business by service",
+        "line_item": "express-service gross margin",
+        "period_column": "FY2019",
+        "custodian_locator": {
+          "table_or_note": "Principal business by service",
+          "line_item": "FY2019 gross margin 11.35% includes newly presented dispatch fees",
+          "period_column": "FY2019"
+        }
+      },
+      "unit": "RATIO",
+      "field_id": "FIELD:002120:FY2019:EXPRESS_GROSS_MARGIN",
+      "reason": "EXPRESS_GROSS_MARGIN_SCOPE_CHANGED_WITH_DISPATCH_FEE_REVENUE_AND_COST_PRESENTATION",
+      "status": "MEASUREMENT_MISMATCH",
+      "measurement_clock": {
+        "clock_kind": "FLOW_PERIOD",
+        "flow_period": {
+          "period_start": "2019-01-01",
+          "period_end": "2019-12-31",
+          "fiscal_period": "FY2019"
+        }
+      },
+      "responsibility_boundary": {
+        "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:002120",
+        "perimeter_id": "PERIMETER:CN:002120:FY2019:LISTED_CONSOLIDATED",
+        "arena_id": "ARENA:CN:EXPRESS:HUB_FRANCHISE_SERVICE_SYSTEM",
+        "scope_requirement": "Issuer express-service gross margin with same accounting and service perimeter required."
+      }
+    },
+    {
+      "schema_version": "enterprise-observation-receipt.v1",
+      "receipt_id": "OBS:ENTERPRISE:R8SETTLE:CN002120:20190501:FY2019:V1:CELL:002120:FY2019:OPERATING_CASH_FLOW:FIELD:002120:FY2018:OPERATING_CASH_FLOW",
+      "settlement_id": "R8SETTLE:CN002120:20190501:FY2019:V1",
+      "measurement_contract_ref": {
+        "measurement_contract_id": "OMC:CN002120:20190501:MULTIDIMENSIONAL:V3",
+        "measurement_contract_version": 3
+      },
+      "company_id": "CN:002120",
+      "cutoff_at": "2019-05-01T00:00:00+08:00",
+      "custodian_id": "ROLE:ROUND8:EXPRESS:OUTCOME_CUSTODIAN",
+      "authorization_receipt_id": "OUTCOME-AUTH:R8:CN002120:FY2019:V1",
+      "cell_id": "CELL:002120:FY2019:OPERATING_CASH_FLOW",
+      "source": {
+        "source_id": "CNINFO:002120:ANN:20200430:1207682788",
+        "source_url": "https://static.cninfo.com.cn/finalpage/2020-04-30/1207682788.PDF",
+        "report_period_end": "2019-12-31",
+        "official_source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+        "issuer_id": "ISSUER:CN:002120",
+        "responsibility_boundary": {
+          "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:002120",
+          "perimeter_id": "PERIMETER:CN:002120:FY2019:LISTED_CONSOLIDATED",
+          "arena_id": "ARENA:CN:EXPRESS:HUB_FRANCHISE_SERVICE_SYSTEM",
+          "scope_requirement": "Listed-consolidated operating cash; working-capital timing and franchise cash remain separate."
+        },
+        "availability_precision": "DATE_ONLY",
+        "source_available_date": "2020-04-30",
+        "pdf_page": 6,
+        "field_ref": "PDF p.6",
+        "field_identity": "FIELD:002120:FY2018:OPERATING_CASH_FLOW",
+        "measurement_clock": {
+          "clock_kind": "FLOW_PERIOD",
+          "flow_period": {
+            "period_start": "2018-01-01",
+            "period_end": "2018-12-31",
+            "fiscal_period": "FY2018"
+          }
+        },
+        "unit": "RMB",
+        "table_or_note": "consolidated cash-flow statement",
+        "line_item": "net cash flows from operating activities",
+        "period_column": "FY2018",
+        "custodian_locator": {
+          "table_or_note": "Key accounting data",
+          "line_item": "Net cash flows from operating activities",
+          "period_column": "FY2018 comparative"
+        }
+      },
+      "unit": "RMB",
+      "raw_value": 3714468466.28,
+      "field_id": "FIELD:002120:FY2018:OPERATING_CASH_FLOW",
+      "status": "OBSERVED",
+      "measurement_clock": {
+        "clock_kind": "FLOW_PERIOD",
+        "flow_period": {
+          "period_start": "2018-01-01",
+          "period_end": "2018-12-31",
+          "fiscal_period": "FY2018"
+        }
+      },
+      "responsibility_boundary": {
+        "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:002120",
+        "perimeter_id": "PERIMETER:CN:002120:FY2019:LISTED_CONSOLIDATED",
+        "arena_id": "ARENA:CN:EXPRESS:HUB_FRANCHISE_SERVICE_SYSTEM",
+        "scope_requirement": "Listed-consolidated operating cash; working-capital timing and franchise cash remain separate."
+      }
+    },
+    {
+      "schema_version": "enterprise-observation-receipt.v1",
+      "receipt_id": "OBS:ENTERPRISE:R8SETTLE:CN002120:20190501:FY2019:V1:CELL:002120:FY2019:OPERATING_CASH_FLOW:FIELD:002120:FY2019:OPERATING_CASH_FLOW",
+      "settlement_id": "R8SETTLE:CN002120:20190501:FY2019:V1",
+      "measurement_contract_ref": {
+        "measurement_contract_id": "OMC:CN002120:20190501:MULTIDIMENSIONAL:V3",
+        "measurement_contract_version": 3
+      },
+      "company_id": "CN:002120",
+      "cutoff_at": "2019-05-01T00:00:00+08:00",
+      "custodian_id": "ROLE:ROUND8:EXPRESS:OUTCOME_CUSTODIAN",
+      "authorization_receipt_id": "OUTCOME-AUTH:R8:CN002120:FY2019:V1",
+      "cell_id": "CELL:002120:FY2019:OPERATING_CASH_FLOW",
+      "source": {
+        "source_id": "CNINFO:002120:ANN:20200430:1207682788",
+        "source_url": "https://static.cninfo.com.cn/finalpage/2020-04-30/1207682788.PDF",
+        "report_period_end": "2019-12-31",
+        "official_source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+        "issuer_id": "ISSUER:CN:002120",
+        "responsibility_boundary": {
+          "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:002120",
+          "perimeter_id": "PERIMETER:CN:002120:FY2019:LISTED_CONSOLIDATED",
+          "arena_id": "ARENA:CN:EXPRESS:HUB_FRANCHISE_SERVICE_SYSTEM",
+          "scope_requirement": "Listed-consolidated operating cash; working-capital timing and franchise cash remain separate."
+        },
+        "availability_precision": "DATE_ONLY",
+        "source_available_date": "2020-04-30",
+        "pdf_page": 6,
+        "field_ref": "PDF p.6",
+        "field_identity": "FIELD:002120:FY2019:OPERATING_CASH_FLOW",
+        "measurement_clock": {
+          "clock_kind": "FLOW_PERIOD",
+          "flow_period": {
+            "period_start": "2019-01-01",
+            "period_end": "2019-12-31",
+            "fiscal_period": "FY2019"
+          }
+        },
+        "unit": "RMB",
+        "table_or_note": "consolidated cash-flow statement",
+        "line_item": "net cash flows from operating activities",
+        "period_column": "FY2019",
+        "custodian_locator": {
+          "table_or_note": "Key accounting data",
+          "line_item": "Net cash flows from operating activities",
+          "period_column": "FY2019"
+        }
+      },
+      "unit": "RMB",
+      "raw_value": 5035636370.68,
+      "field_id": "FIELD:002120:FY2019:OPERATING_CASH_FLOW",
+      "status": "OBSERVED",
+      "measurement_clock": {
+        "clock_kind": "FLOW_PERIOD",
+        "flow_period": {
+          "period_start": "2019-01-01",
+          "period_end": "2019-12-31",
+          "fiscal_period": "FY2019"
+        }
+      },
+      "responsibility_boundary": {
+        "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:002120",
+        "perimeter_id": "PERIMETER:CN:002120:FY2019:LISTED_CONSOLIDATED",
+        "arena_id": "ARENA:CN:EXPRESS:HUB_FRANCHISE_SERVICE_SYSTEM",
+        "scope_requirement": "Listed-consolidated operating cash; working-capital timing and franchise cash remain separate."
+      }
+    },
+    {
+      "schema_version": "enterprise-observation-receipt.v1",
+      "receipt_id": "OBS:ENTERPRISE:R8SETTLE:CN002120:20190501:FY2019:V1:CELL:002120:FY2019:CASH_CAPEX:FIELD:002120:FY2018:CASH_CAPEX",
+      "settlement_id": "R8SETTLE:CN002120:20190501:FY2019:V1",
+      "measurement_contract_ref": {
+        "measurement_contract_id": "OMC:CN002120:20190501:MULTIDIMENSIONAL:V3",
+        "measurement_contract_version": 3
+      },
+      "company_id": "CN:002120",
+      "cutoff_at": "2019-05-01T00:00:00+08:00",
+      "custodian_id": "ROLE:ROUND8:EXPRESS:OUTCOME_CUSTODIAN",
+      "authorization_receipt_id": "OUTCOME-AUTH:R8:CN002120:FY2019:V1",
+      "cell_id": "CELL:002120:FY2019:CASH_CAPEX",
+      "source": {
+        "source_id": "CNINFO:002120:ANN:20200430:1207682788",
+        "source_url": "https://static.cninfo.com.cn/finalpage/2020-04-30/1207682788.PDF",
+        "report_period_end": "2019-12-31",
+        "official_source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+        "issuer_id": "ISSUER:CN:002120",
+        "responsibility_boundary": {
+          "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:002120",
+          "perimeter_id": "PERIMETER:CN:002120:FY2019:LISTED_CONSOLIDATED",
+          "arena_id": "ARENA:CN:EXPRESS:HUB_FRANCHISE_SERVICE_SYSTEM",
+          "scope_requirement": "Listed-consolidated cash capex with maintenance, growth and property ownership unseparated."
+        },
+        "availability_precision": "DATE_ONLY",
+        "source_available_date": "2020-04-30",
+        "pdf_page": 138,
+        "field_ref": "PDF p.138",
+        "field_identity": "FIELD:002120:FY2018:CASH_CAPEX",
+        "measurement_clock": {
+          "clock_kind": "FLOW_PERIOD",
+          "flow_period": {
+            "period_start": "2018-01-01",
+            "period_end": "2018-12-31",
+            "fiscal_period": "FY2018"
+          }
+        },
+        "unit": "RMB",
+        "table_or_note": "consolidated cash-flow statement",
+        "line_item": "cash paid to acquire and construct fixed assets, intangible assets and other long-term assets",
+        "period_column": "FY2018",
+        "custodian_locator": {
+          "table_or_note": "Consolidated cash-flow statement",
+          "line_item": "Cash paid to acquire long-lived assets",
+          "period_column": "FY2018 comparative"
+        }
+      },
+      "unit": "RMB",
+      "raw_value": 3469731936.52,
+      "field_id": "FIELD:002120:FY2018:CASH_CAPEX",
+      "status": "OBSERVED",
+      "measurement_clock": {
+        "clock_kind": "FLOW_PERIOD",
+        "flow_period": {
+          "period_start": "2018-01-01",
+          "period_end": "2018-12-31",
+          "fiscal_period": "FY2018"
+        }
+      },
+      "responsibility_boundary": {
+        "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:002120",
+        "perimeter_id": "PERIMETER:CN:002120:FY2019:LISTED_CONSOLIDATED",
+        "arena_id": "ARENA:CN:EXPRESS:HUB_FRANCHISE_SERVICE_SYSTEM",
+        "scope_requirement": "Listed-consolidated cash capex with maintenance, growth and property ownership unseparated."
+      }
+    },
+    {
+      "schema_version": "enterprise-observation-receipt.v1",
+      "receipt_id": "OBS:ENTERPRISE:R8SETTLE:CN002120:20190501:FY2019:V1:CELL:002120:FY2019:CASH_CAPEX:FIELD:002120:FY2019:CASH_CAPEX",
+      "settlement_id": "R8SETTLE:CN002120:20190501:FY2019:V1",
+      "measurement_contract_ref": {
+        "measurement_contract_id": "OMC:CN002120:20190501:MULTIDIMENSIONAL:V3",
+        "measurement_contract_version": 3
+      },
+      "company_id": "CN:002120",
+      "cutoff_at": "2019-05-01T00:00:00+08:00",
+      "custodian_id": "ROLE:ROUND8:EXPRESS:OUTCOME_CUSTODIAN",
+      "authorization_receipt_id": "OUTCOME-AUTH:R8:CN002120:FY2019:V1",
+      "cell_id": "CELL:002120:FY2019:CASH_CAPEX",
+      "source": {
+        "source_id": "CNINFO:002120:ANN:20200430:1207682788",
+        "source_url": "https://static.cninfo.com.cn/finalpage/2020-04-30/1207682788.PDF",
+        "report_period_end": "2019-12-31",
+        "official_source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+        "issuer_id": "ISSUER:CN:002120",
+        "responsibility_boundary": {
+          "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:002120",
+          "perimeter_id": "PERIMETER:CN:002120:FY2019:LISTED_CONSOLIDATED",
+          "arena_id": "ARENA:CN:EXPRESS:HUB_FRANCHISE_SERVICE_SYSTEM",
+          "scope_requirement": "Listed-consolidated cash capex with maintenance, growth and property ownership unseparated."
+        },
+        "availability_precision": "DATE_ONLY",
+        "source_available_date": "2020-04-30",
+        "pdf_page": 138,
+        "field_ref": "PDF p.138",
+        "field_identity": "FIELD:002120:FY2019:CASH_CAPEX",
+        "measurement_clock": {
+          "clock_kind": "FLOW_PERIOD",
+          "flow_period": {
+            "period_start": "2019-01-01",
+            "period_end": "2019-12-31",
+            "fiscal_period": "FY2019"
+          }
+        },
+        "unit": "RMB",
+        "table_or_note": "consolidated cash-flow statement",
+        "line_item": "cash paid to acquire and construct fixed assets, intangible assets and other long-term assets",
+        "period_column": "FY2019",
+        "custodian_locator": {
+          "table_or_note": "Consolidated cash-flow statement",
+          "line_item": "Cash paid to acquire long-lived assets",
+          "period_column": "FY2019"
+        }
+      },
+      "unit": "RMB",
+      "raw_value": 4377106950.41,
+      "field_id": "FIELD:002120:FY2019:CASH_CAPEX",
+      "status": "OBSERVED",
+      "measurement_clock": {
+        "clock_kind": "FLOW_PERIOD",
+        "flow_period": {
+          "period_start": "2019-01-01",
+          "period_end": "2019-12-31",
+          "fiscal_period": "FY2019"
+        }
+      },
+      "responsibility_boundary": {
+        "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:002120",
+        "perimeter_id": "PERIMETER:CN:002120:FY2019:LISTED_CONSOLIDATED",
+        "arena_id": "ARENA:CN:EXPRESS:HUB_FRANCHISE_SERVICE_SYSTEM",
+        "scope_requirement": "Listed-consolidated cash capex with maintenance, growth and property ownership unseparated."
+      }
+    },
+    {
+      "schema_version": "enterprise-observation-receipt.v1",
+      "receipt_id": "OBS:ENTERPRISE:R8SETTLE:CN002120:20190501:FY2019:V1:CELL:002120:FY2019:OCF_TO_CASH_CAPEX:FIELD:002120:FY2018:OCF_RATIO_NUMERATOR",
+      "settlement_id": "R8SETTLE:CN002120:20190501:FY2019:V1",
+      "measurement_contract_ref": {
+        "measurement_contract_id": "OMC:CN002120:20190501:MULTIDIMENSIONAL:V3",
+        "measurement_contract_version": 3
+      },
+      "company_id": "CN:002120",
+      "cutoff_at": "2019-05-01T00:00:00+08:00",
+      "custodian_id": "ROLE:ROUND8:EXPRESS:OUTCOME_CUSTODIAN",
+      "authorization_receipt_id": "OUTCOME-AUTH:R8:CN002120:FY2019:V1",
+      "cell_id": "CELL:002120:FY2019:OCF_TO_CASH_CAPEX",
+      "source": {
+        "source_id": "CNINFO:002120:ANN:20200430:1207682788",
+        "source_url": "https://static.cninfo.com.cn/finalpage/2020-04-30/1207682788.PDF",
+        "report_period_end": "2019-12-31",
+        "official_source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+        "issuer_id": "ISSUER:CN:002120",
+        "responsibility_boundary": {
+          "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:002120",
+          "perimeter_id": "PERIMETER:CN:002120:FY2019:LISTED_CONSOLIDATED",
+          "arena_id": "ARENA:CN:EXPRESS:HUB_FRANCHISE_SERVICE_SYSTEM",
+          "scope_requirement": "Issuer funding-capacity diagnostic; acquisition cash and franchise capital are outside the ratio."
+        },
+        "availability_precision": "DATE_ONLY",
+        "source_available_date": "2020-04-30",
+        "pdf_page": 6,
+        "field_ref": "PDF p.6",
+        "field_identity": "FIELD:002120:FY2018:OCF_RATIO_NUMERATOR",
+        "measurement_clock": {
+          "clock_kind": "FLOW_PERIOD",
+          "flow_period": {
+            "period_start": "2018-01-01",
+            "period_end": "2018-12-31",
+            "fiscal_period": "FY2018"
+          }
+        },
+        "unit": "RMB",
+        "table_or_note": "consolidated cash-flow statement",
+        "line_item": "operating cash flow divided by cash capex",
+        "period_column": "FY2018",
+        "custodian_locator": {
+          "table_or_note": "Key accounting data",
+          "line_item": "Net cash flows from operating activities",
+          "period_column": "FY2018 comparative"
+        }
+      },
+      "unit": "RMB",
+      "raw_value": 3714468466.28,
+      "field_id": "FIELD:002120:FY2018:OCF_RATIO_NUMERATOR",
+      "status": "OBSERVED",
+      "measurement_clock": {
+        "clock_kind": "FLOW_PERIOD",
+        "flow_period": {
+          "period_start": "2018-01-01",
+          "period_end": "2018-12-31",
+          "fiscal_period": "FY2018"
+        }
+      },
+      "responsibility_boundary": {
+        "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:002120",
+        "perimeter_id": "PERIMETER:CN:002120:FY2019:LISTED_CONSOLIDATED",
+        "arena_id": "ARENA:CN:EXPRESS:HUB_FRANCHISE_SERVICE_SYSTEM",
+        "scope_requirement": "Issuer funding-capacity diagnostic; acquisition cash and franchise capital are outside the ratio."
+      }
+    },
+    {
+      "schema_version": "enterprise-observation-receipt.v1",
+      "receipt_id": "OBS:ENTERPRISE:R8SETTLE:CN002120:20190501:FY2019:V1:CELL:002120:FY2019:OCF_TO_CASH_CAPEX:FIELD:002120:FY2018:CAPEX_RATIO_DENOMINATOR",
+      "settlement_id": "R8SETTLE:CN002120:20190501:FY2019:V1",
+      "measurement_contract_ref": {
+        "measurement_contract_id": "OMC:CN002120:20190501:MULTIDIMENSIONAL:V3",
+        "measurement_contract_version": 3
+      },
+      "company_id": "CN:002120",
+      "cutoff_at": "2019-05-01T00:00:00+08:00",
+      "custodian_id": "ROLE:ROUND8:EXPRESS:OUTCOME_CUSTODIAN",
+      "authorization_receipt_id": "OUTCOME-AUTH:R8:CN002120:FY2019:V1",
+      "cell_id": "CELL:002120:FY2019:OCF_TO_CASH_CAPEX",
+      "source": {
+        "source_id": "CNINFO:002120:ANN:20200430:1207682788",
+        "source_url": "https://static.cninfo.com.cn/finalpage/2020-04-30/1207682788.PDF",
+        "report_period_end": "2019-12-31",
+        "official_source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+        "issuer_id": "ISSUER:CN:002120",
+        "responsibility_boundary": {
+          "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:002120",
+          "perimeter_id": "PERIMETER:CN:002120:FY2019:LISTED_CONSOLIDATED",
+          "arena_id": "ARENA:CN:EXPRESS:HUB_FRANCHISE_SERVICE_SYSTEM",
+          "scope_requirement": "Issuer funding-capacity diagnostic; acquisition cash and franchise capital are outside the ratio."
+        },
+        "availability_precision": "DATE_ONLY",
+        "source_available_date": "2020-04-30",
+        "pdf_page": 138,
+        "field_ref": "PDF p.138",
+        "field_identity": "FIELD:002120:FY2018:CAPEX_RATIO_DENOMINATOR",
+        "measurement_clock": {
+          "clock_kind": "FLOW_PERIOD",
+          "flow_period": {
+            "period_start": "2018-01-01",
+            "period_end": "2018-12-31",
+            "fiscal_period": "FY2018"
+          }
+        },
+        "unit": "RMB",
+        "table_or_note": "consolidated cash-flow statement",
+        "line_item": "operating cash flow divided by cash capex",
+        "period_column": "FY2018",
+        "custodian_locator": {
+          "table_or_note": "Consolidated cash-flow statement",
+          "line_item": "Cash paid to acquire long-lived assets",
+          "period_column": "FY2018 comparative"
+        }
+      },
+      "unit": "RMB",
+      "raw_value": 3469731936.52,
+      "field_id": "FIELD:002120:FY2018:CAPEX_RATIO_DENOMINATOR",
+      "status": "OBSERVED",
+      "measurement_clock": {
+        "clock_kind": "FLOW_PERIOD",
+        "flow_period": {
+          "period_start": "2018-01-01",
+          "period_end": "2018-12-31",
+          "fiscal_period": "FY2018"
+        }
+      },
+      "responsibility_boundary": {
+        "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:002120",
+        "perimeter_id": "PERIMETER:CN:002120:FY2019:LISTED_CONSOLIDATED",
+        "arena_id": "ARENA:CN:EXPRESS:HUB_FRANCHISE_SERVICE_SYSTEM",
+        "scope_requirement": "Issuer funding-capacity diagnostic; acquisition cash and franchise capital are outside the ratio."
+      }
+    },
+    {
+      "schema_version": "enterprise-observation-receipt.v1",
+      "receipt_id": "OBS:ENTERPRISE:R8SETTLE:CN002120:20190501:FY2019:V1:CELL:002120:FY2019:OCF_TO_CASH_CAPEX:FIELD:002120:FY2019:OCF_RATIO_NUMERATOR",
+      "settlement_id": "R8SETTLE:CN002120:20190501:FY2019:V1",
+      "measurement_contract_ref": {
+        "measurement_contract_id": "OMC:CN002120:20190501:MULTIDIMENSIONAL:V3",
+        "measurement_contract_version": 3
+      },
+      "company_id": "CN:002120",
+      "cutoff_at": "2019-05-01T00:00:00+08:00",
+      "custodian_id": "ROLE:ROUND8:EXPRESS:OUTCOME_CUSTODIAN",
+      "authorization_receipt_id": "OUTCOME-AUTH:R8:CN002120:FY2019:V1",
+      "cell_id": "CELL:002120:FY2019:OCF_TO_CASH_CAPEX",
+      "source": {
+        "source_id": "CNINFO:002120:ANN:20200430:1207682788",
+        "source_url": "https://static.cninfo.com.cn/finalpage/2020-04-30/1207682788.PDF",
+        "report_period_end": "2019-12-31",
+        "official_source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+        "issuer_id": "ISSUER:CN:002120",
+        "responsibility_boundary": {
+          "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:002120",
+          "perimeter_id": "PERIMETER:CN:002120:FY2019:LISTED_CONSOLIDATED",
+          "arena_id": "ARENA:CN:EXPRESS:HUB_FRANCHISE_SERVICE_SYSTEM",
+          "scope_requirement": "Issuer funding-capacity diagnostic; acquisition cash and franchise capital are outside the ratio."
+        },
+        "availability_precision": "DATE_ONLY",
+        "source_available_date": "2020-04-30",
+        "pdf_page": 6,
+        "field_ref": "PDF p.6",
+        "field_identity": "FIELD:002120:FY2019:OCF_RATIO_NUMERATOR",
+        "measurement_clock": {
+          "clock_kind": "FLOW_PERIOD",
+          "flow_period": {
+            "period_start": "2019-01-01",
+            "period_end": "2019-12-31",
+            "fiscal_period": "FY2019"
+          }
+        },
+        "unit": "RMB",
+        "table_or_note": "consolidated cash-flow statement",
+        "line_item": "operating cash flow divided by cash capex",
+        "period_column": "FY2019",
+        "custodian_locator": {
+          "table_or_note": "Key accounting data",
+          "line_item": "Net cash flows from operating activities",
+          "period_column": "FY2019"
+        }
+      },
+      "unit": "RMB",
+      "raw_value": 5035636370.68,
+      "field_id": "FIELD:002120:FY2019:OCF_RATIO_NUMERATOR",
+      "status": "OBSERVED",
+      "measurement_clock": {
+        "clock_kind": "FLOW_PERIOD",
+        "flow_period": {
+          "period_start": "2019-01-01",
+          "period_end": "2019-12-31",
+          "fiscal_period": "FY2019"
+        }
+      },
+      "responsibility_boundary": {
+        "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:002120",
+        "perimeter_id": "PERIMETER:CN:002120:FY2019:LISTED_CONSOLIDATED",
+        "arena_id": "ARENA:CN:EXPRESS:HUB_FRANCHISE_SERVICE_SYSTEM",
+        "scope_requirement": "Issuer funding-capacity diagnostic; acquisition cash and franchise capital are outside the ratio."
+      }
+    },
+    {
+      "schema_version": "enterprise-observation-receipt.v1",
+      "receipt_id": "OBS:ENTERPRISE:R8SETTLE:CN002120:20190501:FY2019:V1:CELL:002120:FY2019:OCF_TO_CASH_CAPEX:FIELD:002120:FY2019:CAPEX_RATIO_DENOMINATOR",
+      "settlement_id": "R8SETTLE:CN002120:20190501:FY2019:V1",
+      "measurement_contract_ref": {
+        "measurement_contract_id": "OMC:CN002120:20190501:MULTIDIMENSIONAL:V3",
+        "measurement_contract_version": 3
+      },
+      "company_id": "CN:002120",
+      "cutoff_at": "2019-05-01T00:00:00+08:00",
+      "custodian_id": "ROLE:ROUND8:EXPRESS:OUTCOME_CUSTODIAN",
+      "authorization_receipt_id": "OUTCOME-AUTH:R8:CN002120:FY2019:V1",
+      "cell_id": "CELL:002120:FY2019:OCF_TO_CASH_CAPEX",
+      "source": {
+        "source_id": "CNINFO:002120:ANN:20200430:1207682788",
+        "source_url": "https://static.cninfo.com.cn/finalpage/2020-04-30/1207682788.PDF",
+        "report_period_end": "2019-12-31",
+        "official_source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+        "issuer_id": "ISSUER:CN:002120",
+        "responsibility_boundary": {
+          "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:002120",
+          "perimeter_id": "PERIMETER:CN:002120:FY2019:LISTED_CONSOLIDATED",
+          "arena_id": "ARENA:CN:EXPRESS:HUB_FRANCHISE_SERVICE_SYSTEM",
+          "scope_requirement": "Issuer funding-capacity diagnostic; acquisition cash and franchise capital are outside the ratio."
+        },
+        "availability_precision": "DATE_ONLY",
+        "source_available_date": "2020-04-30",
+        "pdf_page": 138,
+        "field_ref": "PDF p.138",
+        "field_identity": "FIELD:002120:FY2019:CAPEX_RATIO_DENOMINATOR",
+        "measurement_clock": {
+          "clock_kind": "FLOW_PERIOD",
+          "flow_period": {
+            "period_start": "2019-01-01",
+            "period_end": "2019-12-31",
+            "fiscal_period": "FY2019"
+          }
+        },
+        "unit": "RMB",
+        "table_or_note": "consolidated cash-flow statement",
+        "line_item": "operating cash flow divided by cash capex",
+        "period_column": "FY2019",
+        "custodian_locator": {
+          "table_or_note": "Consolidated cash-flow statement",
+          "line_item": "Cash paid to acquire long-lived assets",
+          "period_column": "FY2019"
+        }
+      },
+      "unit": "RMB",
+      "raw_value": 4377106950.41,
+      "field_id": "FIELD:002120:FY2019:CAPEX_RATIO_DENOMINATOR",
+      "status": "OBSERVED",
+      "measurement_clock": {
+        "clock_kind": "FLOW_PERIOD",
+        "flow_period": {
+          "period_start": "2019-01-01",
+          "period_end": "2019-12-31",
+          "fiscal_period": "FY2019"
+        }
+      },
+      "responsibility_boundary": {
+        "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:002120",
+        "perimeter_id": "PERIMETER:CN:002120:FY2019:LISTED_CONSOLIDATED",
+        "arena_id": "ARENA:CN:EXPRESS:HUB_FRANCHISE_SERVICE_SYSTEM",
+        "scope_requirement": "Issuer funding-capacity diagnostic; acquisition cash and franchise capital are outside the ratio."
+      }
+    },
+    {
+      "schema_version": "enterprise-observation-receipt.v1",
+      "receipt_id": "OBS:ENTERPRISE:R8SETTLE:CN002120:20190501:FY2019:V1:CELL:002120:FY2019:ASSET_LIABILITY_RATIO:FIELD:002120:FY2018:ASSET_LIABILITY_RATIO",
+      "settlement_id": "R8SETTLE:CN002120:20190501:FY2019:V1",
+      "measurement_contract_ref": {
+        "measurement_contract_id": "OMC:CN002120:20190501:MULTIDIMENSIONAL:V3",
+        "measurement_contract_version": 3
+      },
+      "company_id": "CN:002120",
+      "cutoff_at": "2019-05-01T00:00:00+08:00",
+      "custodian_id": "ROLE:ROUND8:EXPRESS:OUTCOME_CUSTODIAN",
+      "authorization_receipt_id": "OUTCOME-AUTH:R8:CN002120:FY2019:V1",
+      "cell_id": "CELL:002120:FY2019:ASSET_LIABILITY_RATIO",
+      "source": {
+        "source_id": "CNINFO:002120:ANN:20200430:1207682788",
+        "source_url": "https://static.cninfo.com.cn/finalpage/2020-04-30/1207682788.PDF",
+        "report_period_end": "2019-12-31",
+        "official_source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+        "issuer_id": "ISSUER:CN:002120",
+        "responsibility_boundary": {
+          "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:002120",
+          "perimeter_id": "PERIMETER:CN:002120:FY2019:LISTED_CONSOLIDATED",
+          "arena_id": "ARENA:CN:EXPRESS:HUB_FRANCHISE_SERVICE_SYSTEM",
+          "scope_requirement": "Listed-consolidated balance-sheet ratio; refinancing terms and franchise liabilities are separate."
+        },
+        "availability_precision": "DATE_ONLY",
+        "source_available_date": "2020-04-30",
+        "pdf_page": 129,
+        "field_ref": "PDF p.129",
+        "field_identity": "FIELD:002120:FY2018:ASSET_LIABILITY_RATIO",
+        "measurement_clock": {
+          "clock_kind": "BALANCE_AS_OF",
+          "balance_as_of": {
+            "as_of": "2018-12-31",
+            "fiscal_period": "FY2018"
+          }
+        },
+        "unit": "RATIO",
+        "table_or_note": "FY2019 solvency review",
+        "line_item": "asset-liability ratio",
+        "period_column": "FY2018",
+        "custodian_locator": {
+          "table_or_note": "Consolidated balance sheet",
+          "line_item": "Total liabilities RMB6,539,236,799.10 divided by total assets RMB18,080,928,087.75",
+          "period_column": "FY2018 comparative"
+        }
+      },
+      "unit": "RATIO",
+      "raw_value": 0.36166488619189824,
+      "field_id": "FIELD:002120:FY2018:ASSET_LIABILITY_RATIO",
+      "status": "OBSERVED",
+      "measurement_clock": {
+        "clock_kind": "BALANCE_AS_OF",
+        "balance_as_of": {
+          "as_of": "2018-12-31",
+          "fiscal_period": "FY2018"
+        }
+      },
+      "responsibility_boundary": {
+        "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:002120",
+        "perimeter_id": "PERIMETER:CN:002120:FY2019:LISTED_CONSOLIDATED",
+        "arena_id": "ARENA:CN:EXPRESS:HUB_FRANCHISE_SERVICE_SYSTEM",
+        "scope_requirement": "Listed-consolidated balance-sheet ratio; refinancing terms and franchise liabilities are separate."
+      }
+    },
+    {
+      "schema_version": "enterprise-observation-receipt.v1",
+      "receipt_id": "OBS:ENTERPRISE:R8SETTLE:CN002120:20190501:FY2019:V1:CELL:002120:FY2019:ASSET_LIABILITY_RATIO:FIELD:002120:FY2019:ASSET_LIABILITY_RATIO",
+      "settlement_id": "R8SETTLE:CN002120:20190501:FY2019:V1",
+      "measurement_contract_ref": {
+        "measurement_contract_id": "OMC:CN002120:20190501:MULTIDIMENSIONAL:V3",
+        "measurement_contract_version": 3
+      },
+      "company_id": "CN:002120",
+      "cutoff_at": "2019-05-01T00:00:00+08:00",
+      "custodian_id": "ROLE:ROUND8:EXPRESS:OUTCOME_CUSTODIAN",
+      "authorization_receipt_id": "OUTCOME-AUTH:R8:CN002120:FY2019:V1",
+      "cell_id": "CELL:002120:FY2019:ASSET_LIABILITY_RATIO",
+      "source": {
+        "source_id": "CNINFO:002120:ANN:20200430:1207682788",
+        "source_url": "https://static.cninfo.com.cn/finalpage/2020-04-30/1207682788.PDF",
+        "report_period_end": "2019-12-31",
+        "official_source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+        "issuer_id": "ISSUER:CN:002120",
+        "responsibility_boundary": {
+          "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:002120",
+          "perimeter_id": "PERIMETER:CN:002120:FY2019:LISTED_CONSOLIDATED",
+          "arena_id": "ARENA:CN:EXPRESS:HUB_FRANCHISE_SERVICE_SYSTEM",
+          "scope_requirement": "Listed-consolidated balance-sheet ratio; refinancing terms and franchise liabilities are separate."
+        },
+        "availability_precision": "DATE_ONLY",
+        "source_available_date": "2020-04-30",
+        "pdf_page": 129,
+        "field_ref": "PDF p.129",
+        "field_identity": "FIELD:002120:FY2019:ASSET_LIABILITY_RATIO",
+        "measurement_clock": {
+          "clock_kind": "BALANCE_AS_OF",
+          "balance_as_of": {
+            "as_of": "2019-12-31",
+            "fiscal_period": "FY2019"
+          }
+        },
+        "unit": "RATIO",
+        "table_or_note": "FY2019 solvency review",
+        "line_item": "asset-liability ratio",
+        "period_column": "FY2019",
+        "custodian_locator": {
+          "table_or_note": "Consolidated balance sheet",
+          "line_item": "Total liabilities RMB8,962,500,289.53 divided by total assets RMB22,496,654,773.40",
+          "period_column": "FY2019"
+        }
+      },
+      "unit": "RATIO",
+      "raw_value": 0.3983925779101719,
+      "field_id": "FIELD:002120:FY2019:ASSET_LIABILITY_RATIO",
+      "status": "OBSERVED",
+      "measurement_clock": {
+        "clock_kind": "BALANCE_AS_OF",
+        "balance_as_of": {
+          "as_of": "2019-12-31",
+          "fiscal_period": "FY2019"
+        }
+      },
+      "responsibility_boundary": {
+        "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:002120",
+        "perimeter_id": "PERIMETER:CN:002120:FY2019:LISTED_CONSOLIDATED",
+        "arena_id": "ARENA:CN:EXPRESS:HUB_FRANCHISE_SERVICE_SYSTEM",
+        "scope_requirement": "Listed-consolidated balance-sheet ratio; refinancing terms and franchise liabilities are separate."
+      }
+    },
+    {
+      "schema_version": "enterprise-observation-receipt.v1",
+      "receipt_id": "OBS:ENTERPRISE:R8SETTLE:CN002120:20190501:FY2019:V1:CELL:002120:FY2019:FRANCHISE_NETWORK_ADVERSE_EVENT:FIELD:002120:FY2019:FRANCHISE_NETWORK_ADVERSE_EVENT",
+      "settlement_id": "R8SETTLE:CN002120:20190501:FY2019:V1",
+      "measurement_contract_ref": {
+        "measurement_contract_id": "OMC:CN002120:20190501:MULTIDIMENSIONAL:V3",
+        "measurement_contract_version": 3
+      },
+      "company_id": "CN:002120",
+      "cutoff_at": "2019-05-01T00:00:00+08:00",
+      "custodian_id": "ROLE:ROUND8:EXPRESS:OUTCOME_CUSTODIAN",
+      "authorization_receipt_id": "OUTCOME-AUTH:R8:CN002120:FY2019:V1",
+      "cell_id": "CELL:002120:FY2019:FRANCHISE_NETWORK_ADVERSE_EVENT",
+      "sources_considered": [
+        {
+          "source_id": "CNINFO:002120:ANN:20200430:1207682788",
+          "source_url": "https://static.cninfo.com.cn/finalpage/2020-04-30/1207682788.PDF",
+          "report_period_end": "2019-12-31",
+          "official_source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+          "issuer_id": "ISSUER:CN:002120",
+          "responsibility_boundary": "ISSUER_CONSOLIDATED:CN:002120",
+          "availability_precision": "DATE_ONLY",
+          "source_available_date": "2020-04-30",
+          "field_ref": "PDF pp.25-33 and risk disclosures"
+        }
+      ],
+      "unit": "BOOLEAN_EVENT",
+      "field_id": "FIELD:002120:FY2019:FRANCHISE_NETWORK_ADVERSE_EVENT",
+      "reason": "AUTHORIZED_REPORT_HAS_NO_EXPLICIT_DATED_POSITIVE_OR_NEGATIVE_EVENT_FOR_THE_FROZEN_WINDOW",
+      "status": "UNKNOWN",
+      "measurement_clock": {
+        "clock_kind": "EVENT_WINDOW",
+        "event_window": {
+          "event_start": "2019-05-02",
+          "event_end": "2019-12-31",
+          "window_name": "STRICT_POST_CUTOFF_EVENT_WINDOW"
+        }
+      },
+      "responsibility_boundary": {
+        "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:002120",
+        "perimeter_id": "PERIMETER:CN:002120:FY2019:LISTED_CONSOLIDATED",
+        "arena_id": "ARENA:CN:EXPRESS:HUB_FRANCHISE_SERVICE_SYSTEM",
+        "scope_requirement": "Issuer or disclosed franchise-network adverse event after cutoff; absence requires explicit negative evidence."
+      }
+    }
+  ],
+  "observation_receipt_ids": [
+    "OBS:ENTERPRISE:R8SETTLE:CN002120:20190501:FY2019:V1:CELL:002120:FY2019:INDUSTRY_PARCEL_GROWTH:FIELD:002120:FY2019:INDUSTRY_PARCEL_GROWTH",
+    "OBS:ENTERPRISE:R8SETTLE:CN002120:20190501:FY2019:V1:CELL:002120:FY2019:ISSUER_PARCEL_GROWTH:FIELD:002120:FY2019:ISSUER_PARCEL_GROWTH",
+    "OBS:ENTERPRISE:R8SETTLE:CN002120:20190501:FY2019:V1:CELL:002120:FY2019:ISSUER_MINUS_INDUSTRY_GROWTH_SPREAD:FIELD:002120:FY2019:SPREAD_INDUSTRY_GROWTH",
+    "OBS:ENTERPRISE:R8SETTLE:CN002120:20190501:FY2019:V1:CELL:002120:FY2019:ISSUER_MINUS_INDUSTRY_GROWTH_SPREAD:FIELD:002120:FY2019:SPREAD_ISSUER_GROWTH",
+    "OBS:ENTERPRISE:R8SETTLE:CN002120:20190501:FY2019:V1:CELL:002120:FY2019:MARKET_SHARE_CHANGE:FIELD:002120:FY2018:MARKET_SHARE",
+    "OBS:ENTERPRISE:R8SETTLE:CN002120:20190501:FY2019:V1:CELL:002120:FY2019:MARKET_SHARE_CHANGE:FIELD:002120:FY2019:MARKET_SHARE",
+    "OBS:ENTERPRISE:R8SETTLE:CN002120:20190501:FY2019:V1:CELL:002120:FY2019:COMPLAINT_RATE_CHANGE:FIELD:002120:FY2018:EFFECTIVE_COMPLAINT_RATE",
+    "OBS:ENTERPRISE:R8SETTLE:CN002120:20190501:FY2019:V1:CELL:002120:FY2019:COMPLAINT_RATE_CHANGE:FIELD:002120:FY2019:EFFECTIVE_COMPLAINT_RATE",
+    "OBS:ENTERPRISE:R8SETTLE:CN002120:20190501:FY2019:V1:CELL:002120:FY2019:NETWORK_SCALE_EVENT:FIELD:002120:FY2019:NETWORK_SCALE_EVENT",
+    "OBS:ENTERPRISE:R8SETTLE:CN002120:20190501:FY2019:V1:CELL:002120:FY2019:AUTOMATION_SERVICE_EVENT:FIELD:002120:FY2019:AUTOMATION_SERVICE_EVENT",
+    "OBS:ENTERPRISE:R8SETTLE:CN002120:20190501:FY2019:V1:CELL:002120:FY2019:EXPRESS_REVENUE_PER_PARCEL:FIELD:002120:FY2018:EXPRESS_REVENUE_RPP_NUMERATOR",
+    "OBS:ENTERPRISE:R8SETTLE:CN002120:20190501:FY2019:V1:CELL:002120:FY2019:EXPRESS_REVENUE_PER_PARCEL:FIELD:002120:FY2018:PARCEL_VOLUME_RPP_DENOMINATOR",
+    "OBS:ENTERPRISE:R8SETTLE:CN002120:20190501:FY2019:V1:CELL:002120:FY2019:EXPRESS_REVENUE_PER_PARCEL:FIELD:002120:FY2019:EXPRESS_REVENUE_RPP_NUMERATOR",
+    "OBS:ENTERPRISE:R8SETTLE:CN002120:20190501:FY2019:V1:CELL:002120:FY2019:EXPRESS_REVENUE_PER_PARCEL:FIELD:002120:FY2019:PARCEL_VOLUME_RPP_DENOMINATOR",
+    "OBS:ENTERPRISE:R8SETTLE:CN002120:20190501:FY2019:V1:CELL:002120:FY2019:PARCEL_COST:FIELD:002120:FY2018:PARCEL_COST",
+    "OBS:ENTERPRISE:R8SETTLE:CN002120:20190501:FY2019:V1:CELL:002120:FY2019:PARCEL_COST:FIELD:002120:FY2019:PARCEL_COST",
+    "OBS:ENTERPRISE:R8SETTLE:CN002120:20190501:FY2019:V1:CELL:002120:FY2019:EXPRESS_GROSS_MARGIN:FIELD:002120:FY2018:EXPRESS_GROSS_MARGIN",
+    "OBS:ENTERPRISE:R8SETTLE:CN002120:20190501:FY2019:V1:CELL:002120:FY2019:EXPRESS_GROSS_MARGIN:FIELD:002120:FY2019:EXPRESS_GROSS_MARGIN",
+    "OBS:ENTERPRISE:R8SETTLE:CN002120:20190501:FY2019:V1:CELL:002120:FY2019:OPERATING_CASH_FLOW:FIELD:002120:FY2018:OPERATING_CASH_FLOW",
+    "OBS:ENTERPRISE:R8SETTLE:CN002120:20190501:FY2019:V1:CELL:002120:FY2019:OPERATING_CASH_FLOW:FIELD:002120:FY2019:OPERATING_CASH_FLOW",
+    "OBS:ENTERPRISE:R8SETTLE:CN002120:20190501:FY2019:V1:CELL:002120:FY2019:CASH_CAPEX:FIELD:002120:FY2018:CASH_CAPEX",
+    "OBS:ENTERPRISE:R8SETTLE:CN002120:20190501:FY2019:V1:CELL:002120:FY2019:CASH_CAPEX:FIELD:002120:FY2019:CASH_CAPEX",
+    "OBS:ENTERPRISE:R8SETTLE:CN002120:20190501:FY2019:V1:CELL:002120:FY2019:OCF_TO_CASH_CAPEX:FIELD:002120:FY2018:OCF_RATIO_NUMERATOR",
+    "OBS:ENTERPRISE:R8SETTLE:CN002120:20190501:FY2019:V1:CELL:002120:FY2019:OCF_TO_CASH_CAPEX:FIELD:002120:FY2018:CAPEX_RATIO_DENOMINATOR",
+    "OBS:ENTERPRISE:R8SETTLE:CN002120:20190501:FY2019:V1:CELL:002120:FY2019:OCF_TO_CASH_CAPEX:FIELD:002120:FY2019:OCF_RATIO_NUMERATOR",
+    "OBS:ENTERPRISE:R8SETTLE:CN002120:20190501:FY2019:V1:CELL:002120:FY2019:OCF_TO_CASH_CAPEX:FIELD:002120:FY2019:CAPEX_RATIO_DENOMINATOR",
+    "OBS:ENTERPRISE:R8SETTLE:CN002120:20190501:FY2019:V1:CELL:002120:FY2019:ASSET_LIABILITY_RATIO:FIELD:002120:FY2018:ASSET_LIABILITY_RATIO",
+    "OBS:ENTERPRISE:R8SETTLE:CN002120:20190501:FY2019:V1:CELL:002120:FY2019:ASSET_LIABILITY_RATIO:FIELD:002120:FY2019:ASSET_LIABILITY_RATIO",
+    "OBS:ENTERPRISE:R8SETTLE:CN002120:20190501:FY2019:V1:CELL:002120:FY2019:FRANCHISE_NETWORK_ADVERSE_EVENT:FIELD:002120:FY2019:FRANCHISE_NETWORK_ADVERSE_EVENT"
+  ],
+  "coverage": {
+    "frozen_cells": 15,
+    "settled_cells": 15,
+    "observed_cells": 6,
+    "unknown_cells": 3,
+    "measurement_mismatch_cells": 6
+  },
+  "rights": {
+    "directional_learning": "NOT_AUTHORIZED",
+    "enterprise_learning": "NOT_AUTHORIZED",
+    "comparative": "NOT_AUTHORIZED",
+    "cjo": "NOT_AUTHORIZED",
+    "valuation": "NOT_AUTHORIZED",
+    "report": "NOT_AUTHORIZED",
+    "investment": "NOT_AUTHORIZED"
+  },
+  "allowed_outputs": [
+    "ENTERPRISE_OUTCOME_SETTLEMENT_ONLY",
+    "RESEARCH_AGENDA"
+  ]
+}

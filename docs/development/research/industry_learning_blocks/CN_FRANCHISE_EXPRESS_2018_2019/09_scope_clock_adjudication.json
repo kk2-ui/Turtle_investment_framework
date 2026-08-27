@@ -1,0 +1,126 @@
+{
+  "schema_version": "enterprise-judgment-round8-scope-clock-adjudication.v1",
+  "adjudication_id": "R8ADJ:CN002120:20190501:FY2019:V1",
+  "package_ref": "R8:CN:FRANCHISE_EXPRESS:CN002120:20190501:V1",
+  "settlement_ref": "R8SETTLE:CN002120:20190501:FY2019:V1",
+  "adjudicated_at": "2020-05-01T00:02:30+08:00",
+  "root_cause": [
+    "MODEL",
+    "REASONING"
+  ],
+  "cells": [
+    {
+      "cell_id": "CELL:002120:FY2019:INDUSTRY_PARCEL_GROWTH",
+      "settlement_status": "MEASUREMENT_MISMATCH",
+      "measurement_use_class": "BOUNDARY_MISMATCH",
+      "causal_credit": "NONE",
+      "allowed_utility_use": "ERROR_AVOIDANCE_OR_DESCRIPTIVE_CONTEXT_ONLY"
+    },
+    {
+      "cell_id": "CELL:002120:FY2019:ISSUER_PARCEL_GROWTH",
+      "settlement_status": "OBSERVED",
+      "measurement_use_class": "MIXED_CLOCK_CONTEXT_ONLY",
+      "causal_credit": "NONE",
+      "allowed_utility_use": "ERROR_AVOIDANCE_OR_DESCRIPTIVE_CONTEXT_ONLY"
+    },
+    {
+      "cell_id": "CELL:002120:FY2019:ISSUER_MINUS_INDUSTRY_GROWTH_SPREAD",
+      "settlement_status": "MEASUREMENT_MISMATCH",
+      "measurement_use_class": "BOUNDARY_MISMATCH",
+      "causal_credit": "NONE",
+      "allowed_utility_use": "ERROR_AVOIDANCE_OR_DESCRIPTIVE_CONTEXT_ONLY"
+    },
+    {
+      "cell_id": "CELL:002120:FY2019:MARKET_SHARE_CHANGE",
+      "settlement_status": "OBSERVED",
+      "measurement_use_class": "MIXED_CLOCK_CONTEXT_ONLY",
+      "causal_credit": "NONE",
+      "allowed_utility_use": "ERROR_AVOIDANCE_OR_DESCRIPTIVE_CONTEXT_ONLY"
+    },
+    {
+      "cell_id": "CELL:002120:FY2019:COMPLAINT_RATE_CHANGE",
+      "settlement_status": "MEASUREMENT_MISMATCH",
+      "measurement_use_class": "UNIT_MISMATCH_DIRECTION_ONLY",
+      "causal_credit": "NONE",
+      "allowed_utility_use": "ERROR_AVOIDANCE_OR_DESCRIPTIVE_CONTEXT_ONLY"
+    },
+    {
+      "cell_id": "CELL:002120:FY2019:NETWORK_SCALE_EVENT",
+      "settlement_status": "UNKNOWN",
+      "measurement_use_class": "POST_CUTOFF_EVENT_ONLY",
+      "causal_credit": "NONE",
+      "allowed_utility_use": "EVENT_EVIDENCE_ONLY_IF_OBSERVED"
+    },
+    {
+      "cell_id": "CELL:002120:FY2019:AUTOMATION_SERVICE_EVENT",
+      "settlement_status": "UNKNOWN",
+      "measurement_use_class": "POST_CUTOFF_EVENT_ONLY",
+      "causal_credit": "NONE",
+      "allowed_utility_use": "EVENT_EVIDENCE_ONLY_IF_OBSERVED"
+    },
+    {
+      "cell_id": "CELL:002120:FY2019:EXPRESS_REVENUE_PER_PARCEL",
+      "settlement_status": "MEASUREMENT_MISMATCH",
+      "measurement_use_class": "MIXED_CLOCK_CONTEXT_ONLY",
+      "causal_credit": "NONE",
+      "allowed_utility_use": "ERROR_AVOIDANCE_OR_DESCRIPTIVE_CONTEXT_ONLY"
+    },
+    {
+      "cell_id": "CELL:002120:FY2019:PARCEL_COST",
+      "settlement_status": "MEASUREMENT_MISMATCH",
+      "measurement_use_class": "MIXED_CLOCK_CONTEXT_ONLY",
+      "causal_credit": "NONE",
+      "allowed_utility_use": "ERROR_AVOIDANCE_OR_DESCRIPTIVE_CONTEXT_ONLY"
+    },
+    {
+      "cell_id": "CELL:002120:FY2019:EXPRESS_GROSS_MARGIN",
+      "settlement_status": "MEASUREMENT_MISMATCH",
+      "measurement_use_class": "MIXED_CLOCK_CONTEXT_ONLY",
+      "causal_credit": "NONE",
+      "allowed_utility_use": "ERROR_AVOIDANCE_OR_DESCRIPTIVE_CONTEXT_ONLY"
+    },
+    {
+      "cell_id": "CELL:002120:FY2019:OPERATING_CASH_FLOW",
+      "settlement_status": "OBSERVED",
+      "measurement_use_class": "MIXED_CLOCK_CONTEXT_ONLY",
+      "causal_credit": "NONE",
+      "allowed_utility_use": "ERROR_AVOIDANCE_OR_DESCRIPTIVE_CONTEXT_ONLY"
+    },
+    {
+      "cell_id": "CELL:002120:FY2019:CASH_CAPEX",
+      "settlement_status": "OBSERVED",
+      "measurement_use_class": "MIXED_CLOCK_CONTEXT_ONLY",
+      "causal_credit": "NONE",
+      "allowed_utility_use": "ERROR_AVOIDANCE_OR_DESCRIPTIVE_CONTEXT_ONLY"
+    },
+    {
+      "cell_id": "CELL:002120:FY2019:OCF_TO_CASH_CAPEX",
+      "settlement_status": "OBSERVED",
+      "measurement_use_class": "MIXED_CLOCK_CONTEXT_ONLY",
+      "causal_credit": "NONE",
+      "allowed_utility_use": "ERROR_AVOIDANCE_OR_DESCRIPTIVE_CONTEXT_ONLY"
+    },
+    {
+      "cell_id": "CELL:002120:FY2019:ASSET_LIABILITY_RATIO",
+      "settlement_status": "OBSERVED",
+      "measurement_use_class": "POST_CUTOFF_STATE_CONTEXT_ONLY",
+      "causal_credit": "NONE",
+      "allowed_utility_use": "ERROR_AVOIDANCE_OR_DESCRIPTIVE_CONTEXT_ONLY"
+    },
+    {
+      "cell_id": "CELL:002120:FY2019:FRANCHISE_NETWORK_ADVERSE_EVENT",
+      "settlement_status": "UNKNOWN",
+      "measurement_use_class": "POST_CUTOFF_EVENT_ONLY",
+      "causal_credit": "NONE",
+      "allowed_utility_use": "EVENT_EVIDENCE_ONLY_IF_OBSERVED"
+    }
+  ],
+  "overall_effect": "No FY2019 flow, balance or unresolved event cell may support causal credit for a post-cutoff management action. National industry cells are locally ineligible because the frozen contract used an issuer-consolidated boundary.",
+  "accepted_risk": "The exact post-cutoff source identity remains predeclared to prevent outcome-source selection; content isolation is procedural rather than adversarial.",
+  "object_class": "OUTCOME_SCOPE_CLOCK_ADJUDICATION",
+  "claim_class": "POST_OUTCOME_CONSERVATIVE_ELIGIBILITY_OVERLAY",
+  "allowed_outputs": [
+    "DECISION_UTILITY_EVALUATION_ONLY",
+    "RESEARCH_AGENDA"
+  ]
+}

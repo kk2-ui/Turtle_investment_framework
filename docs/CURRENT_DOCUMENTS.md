@@ -2,9 +2,17 @@
 
 > 状态：`CURRENT / AUTHORITATIVE_NAVIGATION`
 >
-> 更新：2026-08-26
+> 更新：2026-08-27
 
 本文件只解决一件事：告诉后续 Agent 哪些文档可以决定当前状态、执行顺序和产品标准。`docs/History/` 中的文件只用于追溯，不能成为恢复入口、当前状态或实施授权。
+
+## 2026-08-27 当前训练裁决
+
+企业训练的标准问题骨架现为八维：初始条件、已实施管理行动、执行、客户/竞争响应、单位经济、营运资本/现金/资本、适应/永久损失和最强反方。八维不是评分表，也不是八道全局硬门；每维可以独立保持 `UNKNOWN / EVIDENCE_INELIGIBLE / NOT_APPLICABLE`，只限制依赖它的主张。
+
+水泥已完成真实多公司、多 cutoff block 和多轮字段级反馈。快递 Round 8 已在预结果提交 `5613b36` 后读取预声明 FY2019 官方静态年报，并完成 15 个结果单元的局部结算。每个可评分原始数值现经官方 PDF 页级 token 重算，评价从 canonical settlement 复演并强制绑定独立 acceptance。由于 Baseline 已共享八维问题、owner-cash 边界和主要反方，两种方法又没有预冻结各自的 resolution rule，加上全国行业字段绑定错公司边界、投诉单位错误、FY2019 flow 跨越 cutoff，本轮结论是 `REAL_FEEDBACK_COMPLETED / NO_MATERIAL_METHOD_ADVANTAGE_PROVED / ARCHITECTURE_REVISION_REQUIRED`，不授予 `AVOIDED_ERROR`、方法发布或能力胜出。
+
+当前顶层真源是 [训练系统顶层架构](development/research/TURTLE_TRAINING_SYSTEM_TOP_LEVEL_ARCHITECTURE.md)、[企业判断路线图](development/research/TURTLE_AGENT_ENTERPRISE_JUDGMENT_ROADMAP.md)和[真实训练 Goal](development/research/TURTLE_ENTERPRISE_JUDGMENT_V2_REAL_TRAINING_GOAL.md)。下方较早 Round 5、H2 或 Minimal lane 状态只解释历史演进，不得覆盖本节。当前仍无 `TRANSFER_VALIDATED`、严格 Comparative 方向性方法 release、canonical CJO、估值、黄金报告或投资授权。
 
 ## EnterpriseJudgmentEpisode v2 当前实现状态
 
@@ -69,9 +77,10 @@ retrofit 或发起新 custody flow。
 | `docs/development/research/TURTLE_CANONICAL_CJO_REPORT_BINDING_V1_IMPLEMENTATION.md` | Frozen CJO/Overlay 的 analysis-contract 唯一引用、read receipt 与报告装配受控消费边界 |
 | `docs/development/research/TURTLE_CURRENT_COMPANY_CJO_ADMISSION_V1_IMPLEMENTATION.md` | current-company PRIMARY 的 driver/cash/rival-thesis 审阅绑定，以及 Overlay/投资报告必经 admission receipt |
 | `docs/development/research/TURTLE_SYSTEM_OVERVIEW_AND_INVESTMENT_PHILOSOPHY.md` | Turtle 面向投资者的总体架构、中心目标、训练分层、估值边界和 Turtle/年糕职责导航；不覆盖动态项目状态 |
-| `docs/development/research/TURTLE_TRAINING_SYSTEM_TOP_LEVEL_ARCHITECTURE.md` | 企业承保判断为中心的顶层真源：IndustryLearningBlock 编排多维 EnterpriseJudgmentEpisode；Forecast 为受限校准工具，V5 为低频局部因果实验室 |
-| `docs/development/research/TURTLE_ENTERPRISE_JUDGMENT_V2_REAL_TRAINING_GOAL.md` | 已完成的 J0/J1/J1A/J2 首个真实工作包及其完成记录；水泥真实多公司、多 cutoff block 不等待 H2 或 Comparative |
+| `docs/development/research/TURTLE_TRAINING_SYSTEM_TOP_LEVEL_ARCHITECTURE.md` | 企业承保判断为中心的顶层真源：八维判断格架、IndustryLearningBlock、多维 EnterpriseJudgmentEpisode、局部证据/因果权限和 Investment Overlay 边界 |
+| `docs/development/research/TURTLE_ENTERPRISE_JUDGMENT_V2_REAL_TRAINING_GOAL.md` | J0/J1/J1A/J2 与 Rounds 5-8 真实反馈记录；八维已采用，Round 8 因责任边界和 mixed-clock 问题保持 architecture revision required |
 | `docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/08_investor_readout.md` | 首个真实水泥 V2 block 的投资者可读读出、feedback 与权限边界；底层 JSON 是该读出的可验证工件 |
+| `docs/development/research/industry_learning_blocks/CN_FRANCHISE_EXPRESS_2018_2019/13_investor_readout.md` | 快递 Round 8 的投资者读出：记录 6/6/3 字段结算、无方法优势裁决、页级数值核验和下一次八维 A/B 的修订条件 |
 | `docs/development/research/TURTLE_ENTERPRISE_JUDGMENT_EPISODE_J0_IMPLEMENTATION.md` | `EnterpriseJudgmentEpisode` J0 的 read-only manifest、逐 claim/cell 权限矩阵与非追溯边界 |
 | `docs/development/research/TURTLE_ENTERPRISE_JUDGMENT_RECONSTRUCTION_J1_IMPLEMENTATION.md` | J1 的日期精度 SourcePacketReceipt、同一责任边界企业重建、局部证据状态、无材料行动路线与 J0 精确绑定 |
 | `docs/development/research/TURTLE_ENTERPRISE_JUDGMENT_MECHANISM_J2_IMPLEMENTATION.md` | J2 局部机制线程、逐 claim 权限和 J3/J4 明示路由；线程失败不升级为企业或行业全局失败 |

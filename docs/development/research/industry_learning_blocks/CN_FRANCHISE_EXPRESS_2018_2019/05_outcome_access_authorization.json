@@ -1,0 +1,13 @@
+{
+  "schema_version": "enterprise-outcome-access-authorization.v1",
+  "authorization_receipt_id": "OUTCOME-AUTH:R8:CN002120:FY2019:V1",
+  "measurement_contract_ref": {
+    "measurement_contract_id": "OMC:CN002120:20190501:MULTIDIMENSIONAL:V3",
+    "measurement_contract_version": 3
+  },
+  "company_id": "CN:002120",
+  "custodian_id": "ROLE:ROUND8:EXPRESS:OUTCOME_CUSTODIAN",
+  "source_id": "CNINFO:002120:ANN:20200430:1207682788",
+  "authorized": true,
+  "content_read": true
+}
