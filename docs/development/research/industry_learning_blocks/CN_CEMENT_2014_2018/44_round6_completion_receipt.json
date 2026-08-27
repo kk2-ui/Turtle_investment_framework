@@ -1,0 +1,42 @@
+{
+  "schema_version": "enterprise-judgment-round6-transfer-utility-completion.v1",
+  "completion_id": "R6COMP:CN:CEMENT:600801:20160427:FY2016:V1",
+  "package_ref": "EJTU:CN:CEMENT:600801:20160427:V1",
+  "settlement_ref": "R6SETTLE:CN600801:20160427:FY2016:V1",
+  "review_ref": "R6REVIEW:CN600801:20160427:FY2016:V1",
+  "company_id": "CN:600801",
+  "cutoff_at": "2016-04-27T00:00:00+08:00",
+  "status": "ROUND6_REAL_TRANSFER_UTILITY_COMPLETED",
+  "investor_summary": "华新在 2016 年推进了拉法基资产收购审批并提供运营支持服务，但相关资产年末仍未交割、未由华新控制、未进入华新合并报表。同期华新经营现金流改善、现金资本开支和短期借款下降，只能说明华新自身状态改善，不能证明并购效果或管理层整体质量。",
+  "proved": [
+    "同一 FY2015 证据下，拆分控制、产品参与、并表和客户响应能够提出比总括行动进展更有投资价值的问题。",
+    "FY2016 已观察到正式收购推进，但华新控制和合并范围仍未形成。",
+    "经营现金流上升、现金资本开支下降、短期借款下降可独立结算，且未被错误归因于并购。"
+  ],
+  "not_proved": [
+    "并购最终成功、协同实现或管理层执行能力优秀。",
+    "支持范围内的华新产品参与、客户响应、owner cash 或永久损失结论。",
+    "方法已经通过真实盲法 holdout、跨公司迁移验证或可进入 CJO、估值和报告。"
+  ],
+  "next_research_action": [
+    "在下一 cutoff 核对实际交割日期、六个法律实体与十五家工厂的范围桥以及首次并表口径。",
+    "分别寻找被并购范围的华新产品、客户、单位经济和现金证据，不用华新整体指标代替。",
+    "在没有历史摘要污染的新公司和 cutoff 上重复同证据预算配对，建立真正的迁移验证。"
+  ],
+  "rights": {
+    "directional_learning": "NOT_AUTHORIZED",
+    "enterprise_learning": "NOT_AUTHORIZED",
+    "comparative": "NOT_AUTHORIZED",
+    "method_transfer": "NOT_AUTHORIZED",
+    "cjo": "NOT_AUTHORIZED",
+    "valuation": "NOT_AUTHORIZED",
+    "report": "NOT_AUTHORIZED",
+    "investment": "NOT_AUTHORIZED"
+  },
+  "object_class": "ENTERPRISE_JUDGMENT_ROUND6_COMPLETION_RECEIPT",
+  "claim_class": "REAL_CROSS_COMPANY_PAIRED_UTILITY_COMPLETION",
+  "allowed_outputs": [
+    "ROUND6_REAL_TRANSFER_UTILITY_COMPLETED",
+    "RESEARCH_AGENDA"
+  ]
+}

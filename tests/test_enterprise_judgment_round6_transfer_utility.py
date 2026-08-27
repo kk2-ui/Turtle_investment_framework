@@ -4,7 +4,10 @@ from copy import deepcopy
 import json
 from pathlib import Path
 
+import pytest
+
 from scripts import enterprise_judgment_round6_transfer_utility as round6
+from scripts import outcome_measurement_acquisition as acquisition
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -185,3 +188,64 @@ def test_review_contract_rejects_management_quality_or_method_transfer_overclaim
     result = round6.validate_utility_review(overclaim, package=package, settlement=settlement)
     assert not result["valid"]
     assert "round6_review.rights_or_outputs_invalid" in result["findings"]
+
+
+def test_committed_postoutcome_artifacts_replay_through_existing_v3_path(tmp_path: Path) -> None:
+    local_pdf = tmp_path / "CN600801_FY2016_1203190337.pdf"
+    local_pdf.write_bytes(b"%PDF-1.4\n")
+    artifacts = round6.build_real_postoutcome_artifacts(
+        BLOCK_DIR,
+        local_pdf_path=local_pdf,
+        registry_db=tmp_path / "round6.db",
+        observed_at="2026-08-27T04:30:00+00:00",
+        settled_at="2026-08-27T04:31:00+00:00",
+        reviewed_at="2026-08-27T04:40:00+00:00",
+    )
+    for name, expected in artifacts.items():
+        assert _load(name) == expected
+
+    settlement = artifacts["42_round6_canonical_field_settlement.json"]
+    assert settlement["coverage"] == {
+        "frozen_cells": 11,
+        "settled_cells": 11,
+        "observed_cells": 6,
+        "unknown_cells": 5,
+        "measurement_mismatch_cells": 0,
+    }
+    results = {row["cell_id"].rsplit(":", 1)[-1]: row for row in settlement["cell_results"]}
+    assert results["ACTION_PROGRESS"]["label"] == "OBSERVED_YES"
+    assert results["DECISION_CONTROL"]["label"] == "OBSERVED_NO"
+    assert results["CONSOLIDATION_SCOPE"]["label"] == "OBSERVED_NO"
+    assert results["OPERATING_CASH"]["label"] == "OBSERVED_INCREASE"
+    assert results["CASH_CAPEX"]["label"] == "OBSERVED_DECREASE"
+    assert results["SHORT_TERM_BORROWINGS"]["label"] == "OBSERVED_DECREASE"
+    assert results["ISSUER_PRODUCT_PARTICIPATION"]["label"] == "UNKNOWN"
+    assert results["CUSTOMER_RESPONSE"]["label"] == "UNKNOWN"
+
+
+def test_real_fy2016_pdf_supports_each_observed_page_locator() -> None:
+    local_pdf = Path("/tmp/CN600801_FY2016_1203190337.pdf")
+    if not local_pdf.is_file():
+        pytest.skip("real FY2016 CNINFO PDF is not locally cached")
+    pages = acquisition._pdf_pages(local_pdf)
+    assert "水泥和熟料销售总量 5270 万吨" in pages[8]
+    assert "毛利率" in pages[9] and "25.78" in pages[9]
+    assert "2017 年这些工厂将正式纳入公司的合并范围" in pages[15]
+    assert "受 LafargeHolcim Ltd.之控制" in pages[133]
+    assert "经营活动产生的现金流量净额" in pages[50]
+    assert "1,212,058,252" in pages[51]
+    assert "短期借款" in pages[46] and "904,000,000" in pages[46]
+
+
+def test_real_review_records_key_unknown_improvement_without_method_or_management_rights() -> None:
+    package = _load("38_round6_paired_preoutcome_package.json")
+    settlement = _load("42_round6_canonical_field_settlement.json")
+    review = _load("43_round6_independent_paired_utility_review.json")
+    completion = _load("44_round6_completion_receipt.json")
+    result = round6.validate_utility_review(review, package=package, settlement=settlement)
+    assert result["valid"], result["findings"]
+    assert review["overall_verdict"] == "ENHANCED_IMPROVED_KEY_UNKNOWN"
+    assert set(review["rights"].values()) == {"NOT_AUTHORIZED"}
+    assert any("management quality" in value for value in review["unknowns_preserved"])
+    assert any("管理层执行能力" in value for value in completion["not_proved"])
+    assert completion["rights"]["method_transfer"] == "NOT_AUTHORIZED"

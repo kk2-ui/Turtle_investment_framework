@@ -394,3 +394,39 @@ exact ordered `cell_id x field_id` receipts and verifies cell status, value,
 label, coverage, rights and allowed outputs. Caller-supplied route IDs, labels
 or permissions therefore cannot turn the local feedback into a broader
 training or investment claim.
+
+## 14. 2026-08-27 Round 6 Cross-Company Transfer Utility
+
+Round 6 applies the local control-and-product-participation lesson from
+CN:600802 to a mechanically selected different company and cutoff. The frozen
+roster selects rank 1, CN:600801 `2016-04-27 -> 2017-04-12`; no outcome,
+lifecycle label or source convenience participates in selection. Commit
+`1ae29ea` freezes `37--39` before the FY2016 outcome PDF is opened.
+
+The Baseline and Enhanced views use exactly the same FY2015 source packet and
+fact set. Baseline retains one aggregate action-progress question. Enhanced
+separates formal progress, issuer decision control, issuer-product
+participation, consolidation and customer response. The outcome contract also
+keeps issuer volume, gross margin, operating cash, cash capex, short-term
+borrowings and direct loss as separate cells. H2 and Comparative are not
+admission gates for this turn.
+
+After the pre-outcome commit, the predeclared FY2016 CNINFO annual report was
+read through the existing Enterprise V3 field-record acquisition and generic
+settlement adapter. The committed artifacts are `40--44`. Six of eleven cells
+are observed and five remain local UNKNOWN: formal acquisition progress is
+YES, while issuer control and consolidation are NO; issuer-product
+participation and transaction-specific customer response remain UNKNOWN.
+Operating cash increases, cash capex decreases and short-term borrowings
+decrease, but all three remain issuer state and are not attributed to the
+unclosed acquisition. Missing absolute FY2015 volume and margin fields do not
+stop the six observable sibling cells.
+
+The paired review concludes `ENHANCED_IMPROVED_KEY_UNKNOWN`. This is a material
+research-utility result, not an enterprise-quality score: the Enhanced method
+prevents approval and fee-based support from being mistaken for issuer-owned,
+consolidated operating capacity, while identifying the exact next evidence
+needed. Because later Huaxin summaries already exist in repository history,
+the turn is explicitly `MODEL_MEMORY_MITIGATED / DEVELOPMENT_TRANSFER_UTILITY_ONLY`
+with `score_authority = NONE`. It does not authorize method transfer,
+Comparative, CJO, valuation, report or investment use.

@@ -18,15 +18,23 @@ from pathlib import Path
 from typing import Any
 
 try:
+    from scripts import enterprise_judgment_reconstruction as reconstruction
     from scripts import enterprise_judgment_real_mechanism_training as mechanism_training
     from scripts import enterprise_judgment_source_packet as source_packet
+    from scripts import enterprise_judgment_training_control_plane as enterprise_control
     from scripts import judgment_decision_utility as decision_utility
     from scripts import judgment_training_decision_contract as decision_contract
+    from scripts import outcome_measurement_acquisition as measurement_acquisition
+    from scripts import outcome_measurement_settlement_adapter as settlement_adapter
 except ModuleNotFoundError:  # pragma: no cover - direct script import
+    import enterprise_judgment_reconstruction as reconstruction
     import enterprise_judgment_real_mechanism_training as mechanism_training
     import enterprise_judgment_source_packet as source_packet
+    import enterprise_judgment_training_control_plane as enterprise_control
     import judgment_decision_utility as decision_utility
     import judgment_training_decision_contract as decision_contract
+    import outcome_measurement_acquisition as measurement_acquisition
+    import outcome_measurement_settlement_adapter as settlement_adapter
 
 
 PREOUTCOME_SCHEMA_VERSION = "enterprise-judgment-round6-transfer-utility-preoutcome.v1"
@@ -488,7 +496,7 @@ def validate_utility_review(
     _instant(item.get("reviewed_at"), "round6_review.reviewed_at", findings)
     if item.get("overall_verdict") not in {
         "ENHANCED_AVOIDED_MATERIAL_ERROR", "NO_MATERIAL_DIFFERENCE",
-        "BASELINE_BETTER", "NOT_DIAGNOSTIC",
+        "ENHANCED_IMPROVED_KEY_UNKNOWN", "BASELINE_BETTER", "NOT_DIAGNOSTIC",
     }:
         findings.append("round6_review.overall_verdict_invalid")
     if not _text(item.get("investor_effect")):
@@ -973,14 +981,477 @@ def build_real_preoutcome_artifacts(block_dir: Path, *, frozen_at: str) -> dict[
     }
 
 
+def build_real_outcome_authorization(package: dict[str, Any]) -> dict[str, Any]:
+    contract = package["outcome_measurement_contract"]
+    source = contract["source_access"]
+    return {
+        "schema_version": measurement_acquisition.ENTERPRISE_AUTHORIZATION_SCHEMA_VERSION,
+        "authorization_receipt_id": source["authorization_receipt_id"],
+        "measurement_contract_ref": {
+            "measurement_contract_id": contract["contract_set_id"],
+            "measurement_contract_version": 3,
+        },
+        "company_id": contract["company_id"],
+        "custodian_id": package["roles"]["outcome_custodian_id"],
+        "source_id": source["source_id"],
+        "authorized": True,
+        "content_read": True,
+    }
+
+
+def build_real_source_inventory(
+    package: dict[str, Any], *, local_pdf_path: Path, registered_at: str,
+) -> dict[str, Any]:
+    contract = package["outcome_measurement_contract"]
+    source = contract["source_access"]
+    authorization = build_real_outcome_authorization(package)
+    return {
+        "schema_version": measurement_acquisition.INVENTORY_SCHEMA_VERSION,
+        "inventory_id": "OMINV:CN600801:FY2016:R6:V1",
+        "measurement_contract_ref": authorization["measurement_contract_ref"],
+        "custodian_id": authorization["custodian_id"],
+        "registered_at": registered_at,
+        "documents": [{
+            "source_id": source["source_id"],
+            "source_url": source["official_url"],
+            "local_pdf_path": str(local_pdf_path),
+            "issuer_id": source["issuer_id"],
+            "responsibility_boundary": "ISSUER_CONSOLIDATED:CN:600801",
+            "report_period_end": source["report_period_end"],
+            "official_source_type": source["source_type"],
+            "report_scope": "ISSUER_FILING",
+            "currency": "RMB",
+            "revision_policy": "ORIGINAL_VINTAGE",
+            "consolidation_or_restatement_note": (
+                "FY2016 consolidated statements include the issuer and existing subsidiaries. "
+                "The contracted Lafarge acquisition had not closed by year-end and was expected "
+                "to enter the consolidated perimeter in 2017."
+            ),
+            "availability_precision": source["availability_precision"],
+            "source_available_at": source["source_available_at"],
+            "source_available_date": source["source_available_date"],
+        }],
+        "object_class": measurement_acquisition.INVENTORY_OBJECT_CLASS,
+        "claim_class": measurement_acquisition.INVENTORY_CLAIM_CLASS,
+        "allowed_outputs": ["ENTERPRISE_OUTCOME_ACQUISITION_ONLY"],
+    }
+
+
+def _field_source(
+    package: dict[str, Any], cell: dict[str, Any], raw: dict[str, Any],
+    *, pdf_page: int, table_or_note: str, line_item: str, period_column: str,
+) -> dict[str, Any]:
+    source = package["outcome_measurement_contract"]["source_access"]
+    frozen_locator = raw["locator"]
+    return {
+        "source_id": source["source_id"],
+        "source_url": source["official_url"],
+        "report_period_end": source["report_period_end"],
+        "official_source_type": source["source_type"],
+        "issuer_id": source["issuer_id"],
+        "responsibility_boundary": deepcopy(cell["responsibility_boundary"]),
+        "availability_precision": source["availability_precision"],
+        "source_available_at": source["source_available_at"],
+        "source_available_date": source["source_available_date"],
+        "pdf_page": pdf_page,
+        "field_ref": f"PDF p.{pdf_page}",
+        "field_identity": raw["field_id"],
+        "measurement_clock": deepcopy(raw["measurement_clock"]),
+        "unit": raw["unit"],
+        "table_or_note": frozen_locator["table_or_note"],
+        "line_item": frozen_locator["line_item"],
+        "period_column": frozen_locator["period_column"],
+        "custodian_locator": {
+            "table_or_note": table_or_note,
+            "line_item": line_item,
+            "period_column": period_column,
+        },
+    }
+
+
+def build_real_custodian_field_records(package: dict[str, Any]) -> list[dict[str, Any]]:
+    """Return the page-located FY2016 records in frozen cell/raw-field order."""
+    contract = package["outcome_measurement_contract"]
+    observed: dict[str, tuple[Any, int, str, str, str]] = {
+        "FIELD:600801:FY2016:ACTION_PROGRESS_EVENT": (
+            True, 9, "Management discussion - operating development",
+            "Shareholder approval completed for acquisition covering 15 cement factories",
+            "FY2016 event window",
+        ),
+        "FIELD:600801:FY2016:DECISION_CONTROL_EVENT": (
+            False, 134, "Note 11 - other related parties",
+            "Supported Lafarge entities remained controlled by LafargeHolcim Ltd.",
+            "As of 2016-12-31",
+        ),
+        "FIELD:600801:FY2016:CONSOLIDATION_SCOPE_EVENT": (
+            False, 16, "Management discussion - acquisition integration risk",
+            "The acquired factories were expected to enter issuer consolidation in 2017",
+            "FY2016 year-end status",
+        ),
+        "FIELD:600801:FY2016:CEMENT_CLINKER_SALES_VOLUME": (
+            52_700_000, 9, "Management discussion - principal operating results",
+            "Combined cement and clinker sales volume of 52.70 million tonnes",
+            "FY2016",
+        ),
+        "FIELD:600801:FY2016:CEMENT_GROSS_MARGIN": (
+            0.2578, 10, "Principal business by industry",
+            "Cement gross-margin ratio of 25.78%",
+            "FY2016",
+        ),
+        "FIELD:600801:FY2015:OPERATING_CASH": (
+            2_753_246_189, 51, "Consolidated cash-flow statement",
+            "Net cash flows from operating activities",
+            "Prior-period amount (FY2015)",
+        ),
+        "FIELD:600801:FY2016:OPERATING_CASH": (
+            3_096_150_887, 51, "Consolidated cash-flow statement",
+            "Net cash flows from operating activities",
+            "Current-period amount (FY2016)",
+        ),
+        "FIELD:600801:FY2015:CASH_CAPEX": (
+            1_591_631_924, 52, "Consolidated cash-flow statement",
+            "Cash paid to acquire and construct fixed assets, intangible assets and other long-term assets",
+            "Prior-period amount (FY2015)",
+        ),
+        "FIELD:600801:FY2016:CASH_CAPEX": (
+            1_212_058_252, 52, "Consolidated cash-flow statement",
+            "Cash paid to acquire and construct fixed assets, intangible assets and other long-term assets",
+            "Current-period amount (FY2016)",
+        ),
+        "FIELD:600801:FY2015:SHORT_TERM_BORROWINGS": (
+            1_162_000_000, 47, "Consolidated balance sheet",
+            "Short-term borrowings",
+            "Opening balance (2015-12-31)",
+        ),
+        "FIELD:600801:FY2016:SHORT_TERM_BORROWINGS": (
+            904_000_000, 47, "Consolidated balance sheet",
+            "Short-term borrowings",
+            "Closing balance (2016-12-31)",
+        ),
+    }
+    unknown: dict[str, tuple[str, int, str, str, str]] = {
+        "FIELD:600801:FY2016:ISSUER_PRODUCT_PARTICIPATION_EVENT": (
+            "The report discloses fee-based entrusted-management services but does not uniquely state issuer-product production or sales inside the supported-company scope.",
+            135, "Note 11 - related-party transactions", "Entrusted-management service revenue", "FY2016",
+        ),
+        "FIELD:600801:FY2016:CUSTOMER_RESPONSE_EVENT": (
+            "Issuer-wide projects and digital-channel activity are disclosed, but no customer response is tied to the supported-company scope.",
+            9, "Management discussion - value marketing", "Issuer-wide customer and digital-channel activity", "FY2016",
+        ),
+        "FIELD:600801:FY2015:CEMENT_CLINKER_SALES_VOLUME": (
+            "The report gives the FY2016 combined absolute volume and growth rate, but no directly disclosed FY2015 combined absolute value; it was not reverse-engineered.",
+            9, "Management discussion - principal operating results", "Combined cement and clinker volume", "FY2015 comparative not directly disclosed",
+        ),
+        "FIELD:600801:FY2015:CEMENT_GROSS_MARGIN": (
+            "The report gives FY2016 cement margin and its percentage-point change, but no directly disclosed FY2015 gross-margin ratio; it was not reverse-engineered.",
+            10, "Principal business by industry", "Cement gross-margin ratio", "FY2015 comparative not directly disclosed",
+        ),
+        "FIELD:600801:FY2016:DIRECT_LOSS_EVENT_EVENT": (
+            "The report does not uniquely disclose an issuer-level irreversible capital loss, default, covenant breach or going-concern event within the contracted event window.",
+            21, "Material matters and integrity status", "No material overdue debt non-payment disclosed", "FY2016 event window",
+        ),
+    }
+    records: list[dict[str, Any]] = []
+    for cell in contract["atomic_cells"]:
+        for raw in cell["raw_input_fields"]:
+            base = {
+                "cell_id": cell["cell_id"],
+                "field_id": raw["field_id"],
+                "measurement_clock": deepcopy(raw["measurement_clock"]),
+                "responsibility_boundary": deepcopy(cell["responsibility_boundary"]),
+                "unit": raw["unit"],
+            }
+            if raw["field_id"] in observed:
+                value, page, table, line, period = observed[raw["field_id"]]
+                records.append({
+                    **base,
+                    "status": "OBSERVED",
+                    "raw_value": value,
+                    "source": _field_source(
+                        package, cell, raw, pdf_page=page,
+                        table_or_note=table, line_item=line, period_column=period,
+                    ),
+                })
+            else:
+                reason, page, table, line, period = unknown[raw["field_id"]]
+                source = package["outcome_measurement_contract"]["source_access"]
+                records.append({
+                    **base,
+                    "status": "UNKNOWN",
+                    "reason": reason,
+                    "sources_considered": [{
+                        "source_id": source["source_id"],
+                        "source_url": source["official_url"],
+                        "report_period_end": source["report_period_end"],
+                        "official_source_type": source["source_type"],
+                        "issuer_id": source["issuer_id"],
+                        "source_available_date": source["source_available_date"],
+                        "pdf_page": page,
+                        "field_ref": f"PDF p.{page}",
+                        "custodian_locator": {
+                            "table_or_note": table,
+                            "line_item": line,
+                            "period_column": period,
+                        },
+                    }],
+                })
+    return records
+
+
+def build_real_utility_review(
+    package: dict[str, Any], settlement: dict[str, Any], *, reviewed_at: str,
+) -> dict[str, Any]:
+    reviewer_id = "ROLE:CEMENT:ROUND6:INDEPENDENT_UTILITY_REVIEWER"
+    evaluation = {
+        "schema_version": decision_utility.EVALUATION_SCHEMA_VERSION,
+        "evaluation_id": "DUEVAL:CN600801:20160427:R6:V1",
+        "pairing_id": package["decision_utility_pairing"]["pairing_id"],
+        "evaluated_at": reviewed_at,
+        "reviewer_id": reviewer_id,
+        "outcome_settlement_ref": settlement["settlement_id"],
+        "dimension_findings": [
+            {
+                "dimension_id": "PERMANENT_LOSS_GUARDRAIL",
+                "baseline_assessment": "UNKNOWN",
+                "enhanced_assessment": "UNKNOWN",
+                "rationale": "One annual report and an UNKNOWN direct-loss event cannot establish permanent-loss absence or presence.",
+            },
+            {
+                "dimension_id": "OWNER_CASH_ACCESS",
+                "baseline_assessment": "NOT_DIAGNOSTIC",
+                "enhanced_assessment": "NOT_DIAGNOSTIC",
+                "rationale": "Higher operating cash and lower cash capex do not establish owner-cash accessibility or acquisition economics.",
+            },
+            {
+                "dimension_id": "KEY_UNKNOWN_DISCOVERY",
+                "baseline_assessment": "UNKNOWN",
+                "enhanced_assessment": "MATERIAL_IMPROVEMENT",
+                "rationale": "The enhanced view separates formal approval from issuer control, product participation, consolidation and customer response; FY2016 directly resolves control and consolidation as absent while preserving the other two unknowns.",
+            },
+            {
+                "dimension_id": "RESEARCH_COST",
+                "baseline_assessment": "NO_DIFFERENCE",
+                "enhanced_assessment": "NO_DIFFERENCE",
+                "rationale": "Both views used the same cutoff packet and the same outcome source; the improvement came from question structure, not additional evidence.",
+            },
+        ],
+        "holdout": {
+            "training_company_ids": ["CN:600802"],
+            "holdout_company_ids": ["CN:600801"],
+            "training_cutoff_through": "2015-04-15T00:00:00+08:00",
+            "holdout_cutoff_from": "2016-04-27T00:00:00+08:00",
+        },
+        "object_class": "DECISION_UTILITY_EVALUATION",
+        "claim_class": "MATERIAL_DECISION_UTILITY_REVIEW",
+        "allowed_outputs": decision_utility.ALLOWED_OUTPUTS,
+    }
+    review = {
+        "schema_version": REVIEW_SCHEMA_VERSION,
+        "review_id": "R6REVIEW:CN600801:20160427:FY2016:V1",
+        "package_ref": package["package_id"],
+        "utility_evaluation": evaluation,
+        "settlement_ref": settlement["settlement_id"],
+        "reviewer_id": reviewer_id,
+        "reviewed_at": reviewed_at,
+        "paired_claim_findings": [
+            {
+                "dimension": "formal_progress_versus_control_and_consolidation",
+                "baseline_assessment": "The broad baseline correctly records acquisition approval as progress but does not resolve what became issuer-controlled operating capacity.",
+                "enhanced_assessment": "Approval was observed, while supported entities remained LafargeHolcim-controlled and the acquired factories were not yet consolidated at FY2016 year-end.",
+                "economic_effect": "An investor must not add the factories' capacity, earnings or integration success to the FY2016 issuer merely because approval and support services existed.",
+                "supporting_cell_ids": [
+                    "CELL:600801:20160427:ACTION_PROGRESS",
+                    "CELL:600801:20160427:DECISION_CONTROL",
+                    "CELL:600801:20160427:CONSOLIDATION_SCOPE",
+                ],
+                "prohibited_inference": "This does not prove that the acquisition later failed or succeeded.",
+            },
+            {
+                "dimension": "issuer_operating_state_versus_action_effect",
+                "baseline_assessment": "Issuer operating cash improved while cash capex and short-term borrowings declined.",
+                "enhanced_assessment": "The same directions are retained as issuer state and are not attributed to a transaction that had not closed.",
+                "economic_effect": "The balance-sheet and cash direction improved near-term resilience but provides no acquisition-effect or management-quality label.",
+                "supporting_cell_ids": [
+                    "CELL:600801:20160427:OPERATING_CASH",
+                    "CELL:600801:20160427:CASH_CAPEX",
+                    "CELL:600801:20160427:SHORT_TERM_BORROWINGS",
+                ],
+                "prohibited_inference": "Operating cash is not owner cash, and correlation is not transaction causality.",
+            },
+            {
+                "dimension": "product_and_customer_realization",
+                "baseline_assessment": "Aggregate progress and issuer volume do not identify whose products or customers produced the observed state.",
+                "enhanced_assessment": "Issuer-product participation and transaction-specific customer response remain UNKNOWN; unsupported reverse-engineering also leaves volume and margin direction locally UNKNOWN.",
+                "economic_effect": "The method exposes the evidence needed before crediting commercial realization instead of filling the gap with company-wide growth.",
+                "supporting_cell_ids": [
+                    "CELL:600801:20160427:ISSUER_PRODUCT_PARTICIPATION",
+                    "CELL:600801:20160427:CUSTOMER_RESPONSE",
+                    "CELL:600801:20160427:CEMENT_CLINKER_SALES_VOLUME",
+                    "CELL:600801:20160427:CEMENT_GROSS_MARGIN",
+                ],
+                "prohibited_inference": "UNKNOWN is not evidence of no product participation or no customer response.",
+            },
+        ],
+        "overall_verdict": "ENHANCED_IMPROVED_KEY_UNKNOWN",
+        "investor_effect": (
+            "The enhanced method materially improves the enterprise boundary: FY2016 contains "
+            "formal acquisition progress and fee-based support, but not issuer control or "
+            "consolidation. It prevents premature attribution of capacity, cash improvement or "
+            "integration quality while identifying the next evidence required."
+        ),
+        "unknowns_preserved": [
+            "Issuer-product participation inside the supported-company scope",
+            "Customer response attributable to that scope",
+            "Comparable combined FY2015 volume and cement-margin raw values",
+            "Permanent-loss outcome and owner-cash accessibility",
+            "Post-closing integration effectiveness and management quality",
+        ],
+        "limitations": [
+            "Repository history contains later summaries, so this is MODEL_MEMORY_MITIGATED development utility and has no holdout score authority.",
+            "One company and one outcome period cannot validate method transfer.",
+            "The annual report does not establish causal effects of the support or acquisition actions.",
+        ],
+        "rights": deepcopy(RIGHTS),
+        "object_class": "ENTERPRISE_JUDGMENT_TRANSFER_UTILITY_REVIEW",
+        "claim_class": "PAIRED_MATERIAL_DECISION_UTILITY_REVIEW",
+        "allowed_outputs": REVIEW_OUTPUTS,
+    }
+    validation = validate_utility_review(review, package=package, settlement=settlement)
+    if not validation["valid"]:
+        raise ValueError("round6 utility review invalid: " + "; ".join(validation["findings"]))
+    return review
+
+
+def build_real_completion_receipt(
+    package: dict[str, Any], settlement: dict[str, Any], review: dict[str, Any],
+) -> dict[str, Any]:
+    receipt = {
+        "schema_version": COMPLETION_SCHEMA_VERSION,
+        "completion_id": "R6COMP:CN:CEMENT:600801:20160427:FY2016:V1",
+        "package_ref": package["package_id"],
+        "settlement_ref": settlement["settlement_id"],
+        "review_ref": review["review_id"],
+        "company_id": package["selection"]["company_id"],
+        "cutoff_at": package["selection"]["cutoff_at"],
+        "status": "ROUND6_REAL_TRANSFER_UTILITY_COMPLETED",
+        "investor_summary": (
+            "华新在 2016 年推进了拉法基资产收购审批并提供运营支持服务，但相关资产年末仍未交割、未由华新控制、未进入华新合并报表。同期华新经营现金流改善、现金资本开支和短期借款下降，只能说明华新自身状态改善，不能证明并购效果或管理层整体质量。"
+        ),
+        "proved": [
+            "同一 FY2015 证据下，拆分控制、产品参与、并表和客户响应能够提出比总括行动进展更有投资价值的问题。",
+            "FY2016 已观察到正式收购推进，但华新控制和合并范围仍未形成。",
+            "经营现金流上升、现金资本开支下降、短期借款下降可独立结算，且未被错误归因于并购。",
+        ],
+        "not_proved": [
+            "并购最终成功、协同实现或管理层执行能力优秀。",
+            "支持范围内的华新产品参与、客户响应、owner cash 或永久损失结论。",
+            "方法已经通过真实盲法 holdout、跨公司迁移验证或可进入 CJO、估值和报告。",
+        ],
+        "next_research_action": [
+            "在下一 cutoff 核对实际交割日期、六个法律实体与十五家工厂的范围桥以及首次并表口径。",
+            "分别寻找被并购范围的华新产品、客户、单位经济和现金证据，不用华新整体指标代替。",
+            "在没有历史摘要污染的新公司和 cutoff 上重复同证据预算配对，建立真正的迁移验证。",
+        ],
+        "rights": deepcopy(RIGHTS),
+        "object_class": "ENTERPRISE_JUDGMENT_ROUND6_COMPLETION_RECEIPT",
+        "claim_class": "REAL_CROSS_COMPANY_PAIRED_UTILITY_COMPLETION",
+        "allowed_outputs": COMPLETION_OUTPUTS,
+    }
+    validation = validate_completion_receipt(
+        receipt, package=package, settlement=settlement, review=review,
+    )
+    if not validation["valid"]:
+        raise ValueError("round6 completion receipt invalid: " + "; ".join(validation["findings"]))
+    return receipt
+
+
+def build_real_postoutcome_artifacts(
+    block_dir: Path, *, local_pdf_path: Path, registry_db: Path,
+    observed_at: str, settled_at: str, reviewed_at: str,
+) -> dict[str, Any]:
+    """Acquire and settle the frozen Round 6 contract after outcome access."""
+    package = json.loads(
+        (block_dir / "38_round6_paired_preoutcome_package.json").read_text(encoding="utf-8")
+    )
+    contract = package["outcome_measurement_contract"]
+    authorization = build_real_outcome_authorization(package)
+    inventory = build_real_source_inventory(
+        package, local_pdf_path=local_pdf_path, registered_at=observed_at,
+    )
+    records = build_real_custodian_field_records(package)
+    acquisition_result = measurement_acquisition.acquire_outcome_measurements(
+        contract,
+        inventory,
+        field_records=records,
+        outcome_access_authorization=authorization,
+    )
+    previous_registry = reconstruction.CANONICAL_REGISTRY_PATH
+    reconstruction.CANONICAL_REGISTRY_PATH = registry_db
+    try:
+        enterprise_control.register_measurement_contract(
+            contract, frozen_at=contract["contract_frozen_at"],
+        )
+        settlement = settlement_adapter.settle_enterprise_acquisition_result(
+            measurement_contract=contract,
+            outcome_access_authorization=authorization,
+            acquisition_result=acquisition_result,
+            observed_at=observed_at,
+            settlement_id="R6SETTLE:CN600801:20160427:FY2016:V1",
+            settled_at=settled_at,
+        )
+    finally:
+        reconstruction.CANONICAL_REGISTRY_PATH = previous_registry
+    settlement.pop("persisted", None)
+    settlement.pop("idempotent", None)
+    review = build_real_utility_review(package, settlement, reviewed_at=reviewed_at)
+    completion = build_real_completion_receipt(package, settlement, review)
+    return {
+        "40_round6_outcome_access_authorization.json": authorization,
+        "41_round6_custodian_field_records.json": records,
+        "42_round6_canonical_field_settlement.json": settlement,
+        "43_round6_independent_paired_utility_review.json": review,
+        "44_round6_completion_receipt.json": completion,
+    }
+
+
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Build the Round 6 pre-outcome transfer-utility artifacts.")
+    parser = argparse.ArgumentParser(description="Build Round 6 transfer-utility artifacts.")
+    parser.add_argument("--mode", choices=["preoutcome", "postoutcome"], default="preoutcome")
     parser.add_argument("--block-dir", required=True, type=Path)
-    parser.add_argument("--frozen-at", required=True)
+    parser.add_argument("--frozen-at")
+    parser.add_argument("--outcome-pdf", type=Path)
+    parser.add_argument("--registry-db", type=Path)
+    parser.add_argument("--observed-at")
+    parser.add_argument("--settled-at")
+    parser.add_argument("--reviewed-at")
     parser.add_argument("--output-dir", type=Path)
     parser.add_argument("--check-only", action="store_true")
     args = parser.parse_args()
-    artifacts = build_real_preoutcome_artifacts(args.block_dir, frozen_at=args.frozen_at)
+    if args.mode == "preoutcome":
+        if not args.frozen_at:
+            parser.error("--frozen-at is required in preoutcome mode")
+        artifacts = build_real_preoutcome_artifacts(args.block_dir, frozen_at=args.frozen_at)
+    else:
+        missing = [
+            name for name, value in (
+                ("--outcome-pdf", args.outcome_pdf),
+                ("--registry-db", args.registry_db),
+                ("--observed-at", args.observed_at),
+                ("--settled-at", args.settled_at),
+                ("--reviewed-at", args.reviewed_at),
+            )
+            if value is None
+        ]
+        if missing:
+            parser.error("postoutcome mode requires " + ", ".join(missing))
+        artifacts = build_real_postoutcome_artifacts(
+            args.block_dir,
+            local_pdf_path=args.outcome_pdf,
+            registry_db=args.registry_db,
+            observed_at=args.observed_at,
+            settled_at=args.settled_at,
+            reviewed_at=args.reviewed_at,
+        )
     if not args.check_only:
         output_dir = args.output_dir or args.block_dir
         output_dir.mkdir(parents=True, exist_ok=True)
