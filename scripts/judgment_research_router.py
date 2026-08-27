@@ -155,9 +155,13 @@ def _task(
     chapters: list[int],
     *,
     fragile: bool,
+    analysis_purpose: str = "INVESTMENT_DECISION",
 ) -> dict[str, Any]:
     route = _route(" ".join((question, needed_evidence, consequence)))
     priority = _priority(consequence + " " + needed_evidence, verdict, fragile=fragile)
+    ledgers = list(route["ledgers"])
+    if analysis_purpose == "COMPANY_JUDGMENT_ONLY":
+        ledgers = [ledger for ledger in ledgers if ledger not in {"decision", "valuation_model"}]
     required_primary = 1
     required_independent = 1 if route["route"] in {"peer_and_base_rate", "market_implied_expectations"} else 0
     return {
@@ -187,8 +191,8 @@ def _task(
         },
         "mutation_scope": {
             "chapters": chapters,
-            "ledgers": route["ledgers"],
-            "decision_change_requires_explicit_diff": "decision" in route["ledgers"],
+            "ledgers": ledgers,
+            "decision_change_requires_explicit_diff": "decision" in ledgers,
         },
     }
 
@@ -198,6 +202,11 @@ def build_judgment_research_plan(output_dir: str | Path, *, max_tasks_per_run: i
     review = _load(output / "judgment_review.json")
     insight = _load(output / "insight_ledger.json")
     verdict = str(review.get("ceiling_verdict") or "NOT_ASSESSABLE").upper()
+    analysis_purpose = str(review.get("analysis_purpose") or "INVESTMENT_DECISION")
+    consequence_key = (
+        "judgment_consequence" if analysis_purpose == "COMPANY_JUDGMENT_ONLY"
+        else "decision_consequence"
+    )
     distinctive = review.get("distinctive_insight") or {}
     insight_id = str(distinctive.get("insight_id") or "")
     chapters = _impacted_chapters(insight, insight_id)
@@ -206,22 +215,23 @@ def build_judgment_research_plan(output_dir: str | Path, *, max_tasks_per_run: i
     for item in review.get("fragile_leaps") or []:
         if not isinstance(item, dict):
             continue
-        tasks.append(_task(
-            f"JR{sequence:03d}", "fragile_leap", str(item.get("claim") or ""),
-            str(item.get("needed_evidence") or ""), str(item.get("decision_consequence") or ""),
-            verdict, chapters, fragile=True,
-        ))
-        sequence += 1
-    for item in review.get("missing_information") or []:
-        text = str(item or "").strip()
-        if not text:
+        claim = str(item.get("claim") or "").strip()
+        why_fragile = str(item.get("why_fragile") or "").strip()
+        needed_evidence = str(item.get("needed_evidence") or "").strip()
+        consequence = str(item.get(consequence_key) or "").strip()
+        if not all((claim, why_fragile, needed_evidence, consequence)):
             continue
         tasks.append(_task(
-            f"JR{sequence:03d}", "missing_information", f"Can the missing information be established: {text}",
-            text, str((review.get("decision_dependency") or {}).get("conclusion") or review.get("verdict_basis") or ""),
-            verdict, chapters, fragile=False,
+            f"JR{sequence:03d}", "fragile_leap", claim,
+            needed_evidence, consequence,
+            verdict, chapters, fragile=True, analysis_purpose=analysis_purpose,
         ))
         sequence += 1
+    # Missing disclosure is diagnostic, not an automatic research order. If a
+    # gap can materially change the company judgment or investment treatment,
+    # the challenger must express it above as a fragile leap with a claim,
+    # discriminating evidence and an explicit consequence. Otherwise every
+    # unavailable fact is recreated as the same task on the next run.
     rank = {"critical": 0, "high": 1, "normal": 2}
     tasks.sort(key=lambda item: (rank[item["priority"]], item["task_id"]))
     cap = max(0, min(int(max_tasks_per_run), 3))
@@ -252,7 +262,7 @@ def build_judgment_research_plan(output_dir: str | Path, *, max_tasks_per_run: i
             "rewrite_all_chapters", "expand_unaffected_chapters", "optimize_score_or_length",
             "change_canonical_decision_without_decision_diff", "treat_missing_public_information_as_positive_evidence",
         ],
-        "policy_note": "This plan improves the framework's research selectivity; it is not a request to lengthen the report.",
+        "policy_note": "Only material fragile leaps create research tasks. Missing-information notes remain diagnostic and cannot create repeat searches by themselves.",
     }
     return plan
 

@@ -32,9 +32,19 @@ def _case(output: Path, fragile: list[dict], missing: list[str], verdict: str = 
     })
 
 
+def _fragile(claim: str, *, evidence: str | None = None) -> dict:
+    return {
+        "claim": claim,
+        "why_fragile": "当前来源不足以区分该主张与最强替代解释。",
+        "needed_evidence": evidence or claim,
+        "decision_consequence": "该事实若反转会改变公司判断、估值方向或当前动作。",
+    }
+
+
 def test_routes_governance_gap_without_company_hardcoding(tmp_path: Path) -> None:
     _case(tmp_path, [{
         "claim": "外部股东能够取得留存现金",
+        "why_fragile": "现有材料不能证明资金能够由外部股东取得",
         "needed_evidence": "董事会资本配置、关联交易、分红与回购记录",
         "decision_consequence": "证据会改变资产价值和仓位",
     }], [])
@@ -46,10 +56,10 @@ def test_routes_governance_gap_without_company_hardcoding(tmp_path: Path) -> Non
 
 
 def test_routes_peer_base_rate_and_operating_rebuild_as_distinct_work(tmp_path: Path) -> None:
-    _case(tmp_path, [], [
-        "同类公司历史兑现结果与行业基准率分布",
-        "正常化利润的分部收入、毛利率和费用率重建",
-    ])
+    _case(tmp_path, [
+        _fragile("同类公司历史兑现结果能否支持当前判断", evidence="同类公司历史兑现结果与行业基准率分布"),
+        _fragile("正常化利润是否被分部结构扭曲", evidence="正常化利润的分部收入、毛利率和费用率重建"),
+    ], [])
     plan = build_judgment_research_plan(tmp_path)
     routes = {item["route"] for item in plan["tasks"]}
     assert "peer_and_base_rate" in routes
@@ -57,7 +67,7 @@ def test_routes_peer_base_rate_and_operating_rebuild_as_distinct_work(tmp_path: 
 
 
 def test_contract_route_prefers_primary_terms_and_regulation(tmp_path: Path) -> None:
-    _case(tmp_path, [], ["存款协议的期限、提前支取、担保和监管条款"])
+    _case(tmp_path, [_fragile("受限存款是否能由普通股股东取得", evidence="存款协议的期限、提前支取、担保和监管条款")], [])
     task = build_judgment_research_plan(tmp_path)["tasks"][0]
     assert task["route"] == "contract_and_regulation"
     assert "contract_or_agreement" in task["required_source_types"]
@@ -65,7 +75,7 @@ def test_contract_route_prefers_primary_terms_and_regulation(tmp_path: Path) -> 
 
 
 def test_execution_is_bounded_and_cannot_request_report_wide_rewrite(tmp_path: Path) -> None:
-    _case(tmp_path, [], [f"缺失信息{idx}" for idx in range(9)], verdict="FRAGILE")
+    _case(tmp_path, [_fragile(f"材料经营主张{idx}", evidence=f"区分经营主张{idx}的原始证据") for idx in range(9)], [], verdict="FRAGILE")
     plan = build_judgment_research_plan(tmp_path, max_tasks_per_run=99)
     assert len(plan["execution_queue"]) == 3
     assert len(plan["backlog_task_ids"]) == 6
@@ -78,7 +88,7 @@ def test_execution_is_bounded_and_cannot_request_report_wide_rewrite(tmp_path: P
 
 
 def test_invalid_broad_scope_is_detected(tmp_path: Path) -> None:
-    _case(tmp_path, [], ["需要核验的原始资料"])
+    _case(tmp_path, [_fragile("控制权安排是否改变现金可达性", evidence="需要核验的原始资料")], [])
     plan = build_judgment_research_plan(tmp_path)
     plan["tasks"][0]["mutation_scope"]["chapters"] = list(range(15))
     result = validate_judgment_research_plan(plan)
@@ -87,7 +97,7 @@ def test_invalid_broad_scope_is_detected(tmp_path: Path) -> None:
 
 
 def test_structured_finding_and_independent_review_policies_are_mandatory(tmp_path: Path) -> None:
-    _case(tmp_path, [], ["需要核验的原始资料"])
+    _case(tmp_path, [_fragile("控制权安排是否改变现金可达性", evidence="需要核验的原始资料")], [])
     plan = build_judgment_research_plan(tmp_path)
     plan["execution_policy"].pop("structured_findings_required")
     plan["execution_policy"].pop("independent_synthesis_context")
@@ -97,7 +107,7 @@ def test_structured_finding_and_independent_review_policies_are_mandatory(tmp_pa
 
 
 def test_persisted_plan_is_diagnostic_and_tool_is_discoverable(tmp_path: Path) -> None:
-    _case(tmp_path, [], ["市场参与者在治理事件前后的估值反应"])
+    _case(tmp_path, [_fragile("治理事件是否改变价值兑现", evidence="市场参与者在治理事件前后的估值反应")], [])
     result = persist_judgment_research_plan(tmp_path)
     assert result["written"] is True
     evaluated = evaluate_output_judgment_research_plan(tmp_path)
@@ -105,3 +115,46 @@ def test_persisted_plan_is_diagnostic_and_tool_is_discoverable(tmp_path: Path) -
     registry = ToolRegistry()
     registry.auto_discover("turtle_agent.tools.write_tools")
     assert "plan_judgment_research" in registry.list_tools()
+
+
+def test_missing_information_alone_does_not_create_repeat_research(tmp_path: Path) -> None:
+    _case(tmp_path, [], ["客户留存率未披露", "下一年度分部利润尚不可见"])
+
+    plan = build_judgment_research_plan(tmp_path)
+
+    assert plan["state"] == "NO_ACTION"
+    assert plan["tasks"] == []
+    assert plan["execution_queue"] == []
+
+
+def test_incomplete_fragile_leap_does_not_create_a_research_reward(tmp_path: Path) -> None:
+    _case(tmp_path, [{
+        "claim": "外部股东能够取得留存现金",
+        "why_fragile": "现有材料不能证明资金能够由外部股东取得",
+        "needed_evidence": "董事会资本配置、关联交易、分红与回购记录",
+    }], [])
+
+    plan = build_judgment_research_plan(tmp_path)
+
+    assert plan["state"] == "NO_ACTION"
+    assert plan["tasks"] == []
+
+
+def test_company_judgment_fragile_uses_judgment_consequence_and_excludes_investment_ledgers(tmp_path: Path) -> None:
+    _case(tmp_path, [{
+        "claim": "分部毛利下降来自核心客户流失",
+        "why_fragile": "合并收入无法区分核心客户流失与产品组合变化",
+        "needed_evidence": "责任匹配的分部客户留存、收入和毛利桥",
+        "judgment_consequence": "若客户留存反转，应下调正常盈利并提高永久损失风险",
+    }], [])
+    review = json.loads((tmp_path / "judgment_review.json").read_text(encoding="utf-8"))
+    review["analysis_purpose"] = "COMPANY_JUDGMENT_ONLY"
+    _write(tmp_path / "judgment_review.json", review)
+
+    plan = build_judgment_research_plan(tmp_path)
+    task = plan["tasks"][0]
+
+    assert task["why_it_matters"] == "若客户留存反转，应下调正常盈利并提高永久损失风险"
+    assert task["priority"] == "critical"
+    assert "decision" not in task["mutation_scope"]["ledgers"]
+    assert "valuation_model" not in task["mutation_scope"]["ledgers"]

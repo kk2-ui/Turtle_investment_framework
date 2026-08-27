@@ -31,15 +31,24 @@ def _setup(output: Path, *, second_task: bool = False) -> None:
     _write(output / "insight_ledger.json", {
         "report_id": "CASE", "insights": [{"insight_id": "I001", "chapters": [0, 8, 14]}],
     })
+    fragile = [{
+        "claim": "外部股东能够取得留存价值",
+        "why_fragile": "现有材料不能证明留存价值可以由外部股东取得",
+        "needed_evidence": "董事会资本配置、关联交易、分红与回购记录",
+        "decision_consequence": "改变估值和仓位",
+    }]
+    if second_task:
+        fragile.append({
+            "claim": "同业历史兑现率能否支持当前基准判断",
+            "why_fragile": "当前公司材料不能提供跨公司历史基准率",
+            "needed_evidence": "同业公司历史基准率与样本分布",
+            "decision_consequence": "改变正常盈利与估值方向",
+        })
     _write(output / "judgment_review.json", {
         "report_id": "CASE", "ceiling_verdict": "COMPETENT",
         "verdict_basis": "缺失证据可能改变价值兑现判断。",
         "distinctive_insight": {"insight_id": "I001"},
-        "fragile_leaps": [{
-            "claim": "外部股东能够取得留存价值",
-            "needed_evidence": "董事会资本配置、关联交易、分红与回购记录",
-            "decision_consequence": "改变估值和仓位",
-        }],
+        "fragile_leaps": fragile,
         "missing_information": ["同业公司历史基准率与样本分布"] if second_task else [],
         "decision_dependency": {"conclusion": "证据反转时更新决策"},
     })

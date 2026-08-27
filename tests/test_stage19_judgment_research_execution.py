@@ -28,15 +28,23 @@ def _setup(output: Path, *, missing: list[str] | None = None) -> None:
     _write(output / "insight_ledger.json", {
         "report_id": "CASE", "insights": [{"insight_id": "I001", "chapters": [0, 8, 14]}],
     })
+    fragile = [{
+        "claim": "外部股东能够取得留存价值",
+        "why_fragile": "现有材料不能证明留存价值可以由外部股东取得",
+        "needed_evidence": "董事会资本配置、关联交易、分红与回购记录",
+        "decision_consequence": "证据会改变资产价值和仓位",
+    }]
+    fragile.extend({
+        "claim": f"材料缺口会改变当前判断：{text}",
+        "why_fragile": "当前证据不足以区分该主张和最强替代解释",
+        "needed_evidence": text,
+        "decision_consequence": "新证据会改变公司判断、估值方向或当前动作",
+    } for text in (missing or []))
     _write(output / "judgment_review.json", {
         "report_id": "CASE", "ceiling_verdict": "COMPETENT",
         "verdict_basis": "治理证据仍可能改变价值兑现判断和最终仓位。",
         "distinctive_insight": {"insight_id": "I001"},
-        "fragile_leaps": [{
-            "claim": "外部股东能够取得留存价值",
-            "needed_evidence": "董事会资本配置、关联交易、分红与回购记录",
-            "decision_consequence": "证据会改变资产价值和仓位",
-        }],
+        "fragile_leaps": fragile,
         "missing_information": missing or [],
         "decision_dependency": {"conclusion": "证据反转时必须更新估值和仓位。"},
     })
@@ -255,7 +263,12 @@ def test_changed_plan_archives_active_execution_instead_of_silently_erasing_it(t
     begin_judgment_research_task(tmp_path, "JR001")
     record_judgment_tool_call(tmp_path, "search_report", {}, _ok())
     review = json.loads((tmp_path / "judgment_review.json").read_text(encoding="utf-8"))
-    review["missing_information"] = ["新增的独立研究缺口"]
+    review["fragile_leaps"].append({
+        "claim": "新增客户证据可能推翻当前判断",
+        "why_fragile": "当前来源没有责任匹配的客户留存记录",
+        "needed_evidence": "责任匹配的客户留存与订单记录",
+        "decision_consequence": "若客户留存反转，估值方向和仓位必须更新",
+    })
     _write(tmp_path / "judgment_review.json", review)
     persist_judgment_research_plan(tmp_path)
     archives = list((tmp_path / "judgment_research_history").glob("judgment_research_execution_*.json"))

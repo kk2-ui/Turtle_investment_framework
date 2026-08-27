@@ -147,6 +147,17 @@ def test_complete_judgment_review_is_cross_ledger_bound(tmp_path: Path) -> None:
     assert result["validation"]["ceiling_verdict"] == "COMPETENT"
 
 
+def test_review_can_finish_without_inventing_missing_information(tmp_path: Path) -> None:
+    _dependencies(tmp_path)
+    payload = _payload(tmp_path)
+    payload["missing_information"] = []
+
+    result = validate_judgment_review(payload, tmp_path)
+
+    assert result["state"] == "REVIEWED"
+    assert "missing_information_missing" not in result["incomplete_findings"]
+
+
 def test_company_judgment_review_cross_binds_forward_judgment_without_models_or_decisions(tmp_path: Path) -> None:
     _cjo_dependencies(tmp_path)
     result = persist_judgment_review(tmp_path, _cjo_payload(tmp_path))

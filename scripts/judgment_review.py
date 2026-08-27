@@ -191,8 +191,8 @@ def validate_judgment_review(payload: dict[str, Any], output_dir: str | Path) ->
             incomplete.append(f"competitive_explanation_test:{key}_missing")
 
     missing = payload.get("missing_information")
-    if not isinstance(missing, list) or not any(str(item).strip() for item in missing):
-        incomplete.append("missing_information_missing")
+    if not isinstance(missing, list):
+        invalid.append("missing_information_not_array")
     dependency_key = "judgment_dependency" if analysis_purpose == "COMPANY_JUDGMENT_ONLY" else "decision_dependency"
     if analysis_purpose == "COMPANY_JUDGMENT_ONLY" and "decision_dependency" in payload:
         invalid.append("company_judgment_cannot_carry_decision_dependency")

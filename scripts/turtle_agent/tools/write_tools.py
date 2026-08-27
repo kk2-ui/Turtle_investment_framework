@@ -3910,7 +3910,7 @@ write_judgment_review._tool_meta = {
             "strongest_alternative": {"type": "string"}, "evidence_for_alternative": {"type": "string"},
             "discriminator": {"type": "string"}, "unresolved": {"type": "string"}
         }, "required": ["strongest_alternative", "evidence_for_alternative", "discriminator", "unresolved"]},
-        "missing_information": {"type": "array", "items": {"type": "string"}},
+        "missing_information": {"type": "array", "description": "可为空；只记录不值得立即研究的局部未披露事实。会材料性改变判断/估值/动作的缺口必须写入fragile_leaps，才能生成定向研究任务。", "items": {"type": "string"}},
         "decision_dependency": {"type": "object", "optional": True, "properties": {
             "without_insight": {"type": "string"}, "changed_values": {"type": "string"},
             "changed_action": {"type": "string"}, "conclusion": {"type": "string"}
