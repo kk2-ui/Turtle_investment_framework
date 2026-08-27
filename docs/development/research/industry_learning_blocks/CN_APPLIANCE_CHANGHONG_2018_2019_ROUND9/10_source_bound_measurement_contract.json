@@ -1,0 +1,1265 @@
+{
+  "schema_version": "enterprise-outcome-measurement-contract.v3",
+  "contract_set_id": "OMC:CN600839:20180930:EIGHT_DIMENSION:V3",
+  "package_ref": "R9:CN:APPLIANCE:CN600839:20180930:V1",
+  "company_id": "CN:600839",
+  "cutoff_at": "2018-09-30T23:59:59+08:00",
+  "outcome_window": {
+    "period_start": "2019-01-01T00:00:00+08:00",
+    "period_end": "2019-12-31T23:59:59+08:00",
+    "fiscal_period": "FY2019_STRICT_POST_CUTOFF",
+    "settlement_due_at": "2020-06-30T23:59:59+08:00"
+  },
+  "source_access": {
+    "source_id": "CNINFO:600839:ANN:20200418:1207528466",
+    "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+    "official_url": "https://static.cninfo.com.cn/finalpage/2020-04-18/1207528466.PDF",
+    "published_after_cutoff": true,
+    "access_state": "SEALED_UNTIL_PREOUTCOME_COMMIT",
+    "custodian_access": "OUTCOME_ONLY",
+    "issuer_id": "ISSUER:CN:600839",
+    "report_period_end": "2019-12-31",
+    "availability_precision": "DATE_ONLY",
+    "source_available_at": null,
+    "source_available_date": "2020-04-18",
+    "authorization_receipt_id": "OUTCOME-AUTH:R9:CN600839:FY2019:V1"
+  },
+  "atomic_cells": [
+    {
+      "cell_id": "CELL:600839:FY2019:INDUSTRY_CONTEXT_EVENT",
+      "thread_id": "THREAD:R9:INDUSTRY_AND_RIVAL",
+      "layer": "SALES_VOLUME",
+      "outcome_period": {
+        "period_start": "2019-01-01T00:00:00+08:00",
+        "period_end": "2019-12-31T23:59:59+08:00",
+        "fiscal_period": "FY2019_STRICT_POST_CUTOFF"
+      },
+      "measurement_clock": {
+        "clock_kind": "EVENT_WINDOW",
+        "event_window": {
+          "event_start": "2019-01-01",
+          "event_end": "2019-12-31",
+          "window_name": "FY2019_STRICT_POST_CUTOFF_EVENT_WINDOW"
+        }
+      },
+      "responsibility_boundary": {
+        "responsibility_unit_id": "INDUSTRY_CONTEXT:CN:WHITE_GOODS",
+        "perimeter_id": "PERIMETER:CN:WHITE_GOODS:FY2019_CONTEXT",
+        "arena_id": "ARENA:CN:APPLIANCE:WHITE_GOODS",
+        "scope_requirement": "Industry context only; issuer filing cannot receive industry or issuer causal credit."
+      },
+      "field_identity": {
+        "outcome_field_id": "FIELD:600839:FY2019:INDUSTRY_CONTEXT_EVENT",
+        "baseline_field_id": "",
+        "statement_scope": "FY2019_STRICT_POST_CUTOFF",
+        "table_or_note": "FY2019 industry and competition review",
+        "line_item": "explicit FY2019 white-goods category demand, concentration, price or competition condition",
+        "field_kind": "DISCLOSED_EVENT"
+      },
+      "unit": {
+        "kind": "EVENT",
+        "currency": "NOT_APPLICABLE",
+        "scale": "BOOLEAN"
+      },
+      "raw_input_fields": [
+        {
+          "field_id": "FIELD:600839:FY2019:INDUSTRY_CONTEXT_EVENT",
+          "role": "EVENT",
+          "unit": "BOOLEAN_EVENT",
+          "measurement_clock": {
+            "clock_kind": "EVENT_WINDOW",
+            "event_window": {
+              "event_start": "2019-01-01",
+              "event_end": "2019-12-31",
+              "window_name": "FY2019_STRICT_POST_CUTOFF_EVENT_WINDOW"
+            }
+          },
+          "locator": {
+            "table_or_note": "FY2019 industry and competition review",
+            "line_item": "explicit FY2019 white-goods category demand, concentration, price or competition condition",
+            "period_column": "2019-01-01..2019-12-31"
+          }
+        }
+      ],
+      "formula": {
+        "operator": "EVENT_BOOLEAN",
+        "input_field_ids": [
+          "FIELD:600839:FY2019:INDUSTRY_CONTEXT_EVENT"
+        ],
+        "expression": "explicit_fy2019_event(FIELD:600839:FY2019:INDUSTRY_CONTEXT_EVENT)",
+        "unit_conversions": [
+          {
+            "field_id": "FIELD:600839:FY2019:INDUSTRY_CONTEXT_EVENT",
+            "from_unit": "BOOLEAN_EVENT",
+            "to_unit": "BOOLEAN_EVENT",
+            "scale": "1"
+          }
+        ],
+        "zero_baseline_rule": "NOT_APPLICABLE"
+      },
+      "label_rule": {
+        "type": "EVENT_PRESENCE",
+        "decrease_lte": 0,
+        "increase_gte": 1,
+        "ordered_labels": [
+          "MEASUREMENT_MISMATCH",
+          "OBSERVED_YES",
+          "OBSERVED_NO",
+          "UNKNOWN"
+        ]
+      },
+      "conflict_rule": {
+        "multiple_values": "MEASUREMENT_MISMATCH",
+        "boundary_conflict": "MEASUREMENT_MISMATCH",
+        "period_conflict": "MEASUREMENT_MISMATCH"
+      },
+      "unknown_rule": {
+        "conditions": [
+          "no explicit positive or negative FY2019 evidence"
+        ],
+        "label": "UNKNOWN"
+      },
+      "mismatch_rule": {
+        "conditions": [
+          "event period, responsibility or implementation identity conflict"
+        ],
+        "label": "MEASUREMENT_MISMATCH",
+        "propagation": "LOCAL_ONLY",
+        "dependent_cell_ids": []
+      },
+      "allowed_source_types": [
+        "OFFICIAL_AUDITED_ANNUAL_REPORT"
+      ],
+      "prohibited_inference": "Issuer annual-report industry context is descriptive and cannot prove issuer execution or customer preference."
+    },
+    {
+      "cell_id": "CELL:600839:FY2019:GROUP_REVENUE_LEVEL",
+      "thread_id": "THREAD:R9:SIMPLE_ISSUER_TREND",
+      "layer": "SALES_VOLUME",
+      "outcome_period": {
+        "period_start": "2019-01-01T00:00:00+08:00",
+        "period_end": "2019-12-31T23:59:59+08:00",
+        "fiscal_period": "FY2019_STRICT_POST_CUTOFF"
+      },
+      "measurement_clock": {
+        "clock_kind": "FLOW_PERIOD",
+        "flow_period": {
+          "period_start": "2019-01-01",
+          "period_end": "2019-12-31",
+          "fiscal_period": "FY2019"
+        }
+      },
+      "responsibility_boundary": {
+        "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600839",
+        "perimeter_id": "PERIMETER:CN:600839:FY2019:LISTED_CONSOLIDATED",
+        "arena_id": "ARENA:CN:CONSUMER_ELECTRONICS:MULTI_PRODUCT_PORTFOLIO",
+        "scope_requirement": "Listed-consolidated issuer; no product-arena or ordinary-share promotion."
+      },
+      "field_identity": {
+        "outcome_field_id": "FIELD:600839:FY2019:GROUP_REVENUE_LEVEL",
+        "baseline_field_id": "",
+        "statement_scope": "FY2019_STRICT_POST_CUTOFF",
+        "table_or_note": "consolidated income statement",
+        "line_item": "operating revenue; compare mechanically with frozen FY2017 RMB77,632,476,743.23 anchor",
+        "field_kind": "AUDITED_OR_RECOMPUTABLE_ANNUAL_REPORT_LINE_ITEM"
+      },
+      "unit": {
+        "kind": "VALUE",
+        "currency": "RMB",
+        "scale": "1"
+      },
+      "raw_input_fields": [
+        {
+          "field_id": "FIELD:600839:FY2019:GROUP_REVENUE_LEVEL",
+          "role": "OUTCOME",
+          "unit": "RMB",
+          "measurement_clock": {
+            "clock_kind": "FLOW_PERIOD",
+            "flow_period": {
+              "period_start": "2019-01-01",
+              "period_end": "2019-12-31",
+              "fiscal_period": "FY2019"
+            }
+          },
+          "locator": {
+            "table_or_note": "consolidated income statement",
+            "line_item": "operating revenue; compare mechanically with frozen FY2017 RMB77,632,476,743.23 anchor",
+            "period_column": "FY2019"
+          }
+        }
+      ],
+      "formula": {
+        "operator": "RAW_VALUE",
+        "input_field_ids": [
+          "FIELD:600839:FY2019:GROUP_REVENUE_LEVEL"
+        ],
+        "expression": "FIELD:600839:FY2019:GROUP_REVENUE_LEVEL",
+        "unit_conversions": [
+          {
+            "field_id": "FIELD:600839:FY2019:GROUP_REVENUE_LEVEL",
+            "from_unit": "RMB",
+            "to_unit": "RMB",
+            "scale": "1"
+          }
+        ],
+        "zero_baseline_rule": "NOT_APPLICABLE"
+      },
+      "label_rule": {
+        "type": "ABSOLUTE_CHANGE_BAND",
+        "decrease_lte": 73750852906.07,
+        "increase_gte": 81514100580.39,
+        "ordered_labels": [
+          "MEASUREMENT_MISMATCH",
+          "OBSERVED_DECREASE",
+          "OBSERVED_STABLE",
+          "OBSERVED_INCREASE",
+          "UNKNOWN"
+        ]
+      },
+      "conflict_rule": {
+        "multiple_values": "MEASUREMENT_MISMATCH",
+        "boundary_conflict": "MEASUREMENT_MISMATCH",
+        "period_conflict": "MEASUREMENT_MISMATCH"
+      },
+      "unknown_rule": {
+        "conditions": [
+          "contracted FY2019 field absent"
+        ],
+        "label": "UNKNOWN"
+      },
+      "mismatch_rule": {
+        "conditions": [
+          "scope, period, unit, row identity or unique-field conflict"
+        ],
+        "label": "MEASUREMENT_MISMATCH",
+        "propagation": "LOCAL_ONLY",
+        "dependent_cell_ids": []
+      },
+      "allowed_source_types": [
+        "OFFICIAL_AUDITED_ANNUAL_REPORT"
+      ],
+      "prohibited_inference": "Consolidated revenue is not white-goods revenue, execution, customer preference or owner cash."
+    },
+    {
+      "cell_id": "CELL:600839:FY2019:WHITE_GOODS_REVENUE_LEVEL",
+      "thread_id": "THREAD:R9:WHITE_GOODS_EXECUTION",
+      "layer": "SALES_VOLUME",
+      "outcome_period": {
+        "period_start": "2019-01-01T00:00:00+08:00",
+        "period_end": "2019-12-31T23:59:59+08:00",
+        "fiscal_period": "FY2019_STRICT_POST_CUTOFF"
+      },
+      "measurement_clock": {
+        "clock_kind": "FLOW_PERIOD",
+        "flow_period": {
+          "period_start": "2019-01-01",
+          "period_end": "2019-12-31",
+          "fiscal_period": "FY2019"
+        }
+      },
+      "responsibility_boundary": {
+        "responsibility_unit_id": "PRODUCT_ARENA:CN:600839:WHITE_GOODS",
+        "perimeter_id": "PERIMETER:CN:600839:FY2019:AIR_CONDITIONER_AND_REFRIGERATOR",
+        "arena_id": "ARENA:CN:APPLIANCE:WHITE_GOODS",
+        "scope_requirement": "Air-conditioner and refrigerator product arena only; exact same product row required."
+      },
+      "field_identity": {
+        "outcome_field_id": "FIELD:600839:FY2019:WHITE_GOODS_REVENUE_LEVEL",
+        "baseline_field_id": "",
+        "statement_scope": "FY2019_STRICT_POST_CUTOFF",
+        "table_or_note": "principal business by product",
+        "line_item": "air-conditioner and refrigerator revenue; exact same product row as FY2017 required",
+        "field_kind": "AUDITED_OR_RECOMPUTABLE_ANNUAL_REPORT_LINE_ITEM"
+      },
+      "unit": {
+        "kind": "VALUE",
+        "currency": "RMB",
+        "scale": "1"
+      },
+      "raw_input_fields": [
+        {
+          "field_id": "FIELD:600839:FY2019:WHITE_GOODS_REVENUE_LEVEL",
+          "role": "OUTCOME",
+          "unit": "RMB",
+          "measurement_clock": {
+            "clock_kind": "FLOW_PERIOD",
+            "flow_period": {
+              "period_start": "2019-01-01",
+              "period_end": "2019-12-31",
+              "fiscal_period": "FY2019"
+            }
+          },
+          "locator": {
+            "table_or_note": "principal business by product",
+            "line_item": "air-conditioner and refrigerator revenue; exact same product row as FY2017 required",
+            "period_column": "FY2019"
+          }
+        }
+      ],
+      "formula": {
+        "operator": "RAW_VALUE",
+        "input_field_ids": [
+          "FIELD:600839:FY2019:WHITE_GOODS_REVENUE_LEVEL"
+        ],
+        "expression": "FIELD:600839:FY2019:WHITE_GOODS_REVENUE_LEVEL",
+        "unit_conversions": [
+          {
+            "field_id": "FIELD:600839:FY2019:WHITE_GOODS_REVENUE_LEVEL",
+            "from_unit": "RMB",
+            "to_unit": "RMB",
+            "scale": "1"
+          }
+        ],
+        "zero_baseline_rule": "NOT_APPLICABLE"
+      },
+      "label_rule": {
+        "type": "ABSOLUTE_CHANGE_BAND",
+        "decrease_lte": 13623191090.94,
+        "increase_gte": 15057211205.78,
+        "ordered_labels": [
+          "MEASUREMENT_MISMATCH",
+          "OBSERVED_DECREASE",
+          "OBSERVED_STABLE",
+          "OBSERVED_INCREASE",
+          "UNKNOWN"
+        ]
+      },
+      "conflict_rule": {
+        "multiple_values": "MEASUREMENT_MISMATCH",
+        "boundary_conflict": "MEASUREMENT_MISMATCH",
+        "period_conflict": "MEASUREMENT_MISMATCH"
+      },
+      "unknown_rule": {
+        "conditions": [
+          "contracted FY2019 field absent"
+        ],
+        "label": "UNKNOWN"
+      },
+      "mismatch_rule": {
+        "conditions": [
+          "scope, period, unit, row identity or unique-field conflict"
+        ],
+        "label": "MEASUREMENT_MISMATCH",
+        "propagation": "LOCAL_ONLY",
+        "dependent_cell_ids": []
+      },
+      "allowed_source_types": [
+        "OFFICIAL_AUDITED_ANNUAL_REPORT"
+      ],
+      "prohibited_inference": "Product revenue does not distinguish volume, price, category cycle or organic scope."
+    },
+    {
+      "cell_id": "CELL:600839:FY2019:WHITE_GOODS_GROSS_MARGIN",
+      "thread_id": "THREAD:R9:WHITE_GOODS_EXECUTION",
+      "layer": "GROSS_MARGIN",
+      "outcome_period": {
+        "period_start": "2019-01-01T00:00:00+08:00",
+        "period_end": "2019-12-31T23:59:59+08:00",
+        "fiscal_period": "FY2019_STRICT_POST_CUTOFF"
+      },
+      "measurement_clock": {
+        "clock_kind": "FLOW_PERIOD",
+        "flow_period": {
+          "period_start": "2019-01-01",
+          "period_end": "2019-12-31",
+          "fiscal_period": "FY2019"
+        }
+      },
+      "responsibility_boundary": {
+        "responsibility_unit_id": "PRODUCT_ARENA:CN:600839:WHITE_GOODS",
+        "perimeter_id": "PERIMETER:CN:600839:FY2019:AIR_CONDITIONER_AND_REFRIGERATOR",
+        "arena_id": "ARENA:CN:APPLIANCE:WHITE_GOODS",
+        "scope_requirement": "Air-conditioner and refrigerator product arena only; exact same product row required."
+      },
+      "field_identity": {
+        "outcome_field_id": "FIELD:600839:FY2019:WHITE_GOODS_GROSS_MARGIN",
+        "baseline_field_id": "",
+        "statement_scope": "FY2019_STRICT_POST_CUTOFF",
+        "table_or_note": "principal business by product",
+        "line_item": "(air-conditioner and refrigerator revenue minus cost) divided by revenue; exact row tokens required",
+        "field_kind": "AUDITED_OR_RECOMPUTABLE_ANNUAL_REPORT_LINE_ITEM"
+      },
+      "unit": {
+        "kind": "RATIO",
+        "currency": "NOT_APPLICABLE",
+        "scale": "1"
+      },
+      "raw_input_fields": [
+        {
+          "field_id": "FIELD:600839:FY2019:WHITE_GOODS_GROSS_MARGIN",
+          "role": "OUTCOME",
+          "unit": "RATIO",
+          "measurement_clock": {
+            "clock_kind": "FLOW_PERIOD",
+            "flow_period": {
+              "period_start": "2019-01-01",
+              "period_end": "2019-12-31",
+              "fiscal_period": "FY2019"
+            }
+          },
+          "locator": {
+            "table_or_note": "principal business by product",
+            "line_item": "(air-conditioner and refrigerator revenue minus cost) divided by revenue; exact row tokens required",
+            "period_column": "FY2019"
+          }
+        }
+      ],
+      "formula": {
+        "operator": "RAW_VALUE",
+        "input_field_ids": [
+          "FIELD:600839:FY2019:WHITE_GOODS_GROSS_MARGIN"
+        ],
+        "expression": "FIELD:600839:FY2019:WHITE_GOODS_GROSS_MARGIN",
+        "unit_conversions": [
+          {
+            "field_id": "FIELD:600839:FY2019:WHITE_GOODS_GROSS_MARGIN",
+            "from_unit": "RATIO",
+            "to_unit": "RATIO",
+            "scale": "1"
+          }
+        ],
+        "zero_baseline_rule": "NOT_APPLICABLE"
+      },
+      "label_rule": {
+        "type": "ABSOLUTE_CHANGE_BAND",
+        "decrease_lte": 0.1969,
+        "increase_gte": 0.2369,
+        "ordered_labels": [
+          "MEASUREMENT_MISMATCH",
+          "OBSERVED_DECREASE",
+          "OBSERVED_STABLE",
+          "OBSERVED_INCREASE",
+          "UNKNOWN"
+        ]
+      },
+      "conflict_rule": {
+        "multiple_values": "MEASUREMENT_MISMATCH",
+        "boundary_conflict": "MEASUREMENT_MISMATCH",
+        "period_conflict": "MEASUREMENT_MISMATCH"
+      },
+      "unknown_rule": {
+        "conditions": [
+          "contracted FY2019 field absent"
+        ],
+        "label": "UNKNOWN"
+      },
+      "mismatch_rule": {
+        "conditions": [
+          "scope, period, unit, row identity or unique-field conflict"
+        ],
+        "label": "MEASUREMENT_MISMATCH",
+        "propagation": "LOCAL_ONLY",
+        "dependent_cell_ids": []
+      },
+      "allowed_source_types": [
+        "OFFICIAL_AUDITED_ANNUAL_REPORT"
+      ],
+      "prohibited_inference": "Gross-margin movement does not identify price, mix, cost driver or management causality."
+    },
+    {
+      "cell_id": "CELL:600839:FY2019:WHITE_GOODS_REVENUE_SHARE",
+      "thread_id": "THREAD:R9:INDUSTRY_AND_RIVAL",
+      "layer": "SALES_VOLUME",
+      "outcome_period": {
+        "period_start": "2019-01-01T00:00:00+08:00",
+        "period_end": "2019-12-31T23:59:59+08:00",
+        "fiscal_period": "FY2019_STRICT_POST_CUTOFF"
+      },
+      "measurement_clock": {
+        "clock_kind": "FLOW_PERIOD",
+        "flow_period": {
+          "period_start": "2019-01-01",
+          "period_end": "2019-12-31",
+          "fiscal_period": "FY2019"
+        }
+      },
+      "responsibility_boundary": {
+        "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600839",
+        "perimeter_id": "PERIMETER:CN:600839:FY2019:LISTED_CONSOLIDATED",
+        "arena_id": "ARENA:CN:CONSUMER_ELECTRONICS:MULTI_PRODUCT_PORTFOLIO",
+        "scope_requirement": "Listed-consolidated issuer; no product-arena or ordinary-share promotion."
+      },
+      "field_identity": {
+        "outcome_field_id": "FIELD:600839:FY2019:WHITE_GOODS_REVENUE_SHARE",
+        "baseline_field_id": "",
+        "statement_scope": "FY2019_STRICT_POST_CUTOFF",
+        "table_or_note": "principal business by product and consolidated income statement",
+        "line_item": "air-conditioner and refrigerator revenue divided by consolidated operating revenue",
+        "field_kind": "AUDITED_OR_RECOMPUTABLE_ANNUAL_REPORT_LINE_ITEM"
+      },
+      "unit": {
+        "kind": "RATIO",
+        "currency": "NOT_APPLICABLE",
+        "scale": "1"
+      },
+      "raw_input_fields": [
+        {
+          "field_id": "FIELD:600839:FY2019:WHITE_GOODS_REVENUE_SHARE",
+          "role": "OUTCOME",
+          "unit": "RATIO",
+          "measurement_clock": {
+            "clock_kind": "FLOW_PERIOD",
+            "flow_period": {
+              "period_start": "2019-01-01",
+              "period_end": "2019-12-31",
+              "fiscal_period": "FY2019"
+            }
+          },
+          "locator": {
+            "table_or_note": "principal business by product and consolidated income statement",
+            "line_item": "air-conditioner and refrigerator revenue divided by consolidated operating revenue",
+            "period_column": "FY2019"
+          }
+        }
+      ],
+      "formula": {
+        "operator": "RAW_VALUE",
+        "input_field_ids": [
+          "FIELD:600839:FY2019:WHITE_GOODS_REVENUE_SHARE"
+        ],
+        "expression": "FIELD:600839:FY2019:WHITE_GOODS_REVENUE_SHARE",
+        "unit_conversions": [
+          {
+            "field_id": "FIELD:600839:FY2019:WHITE_GOODS_REVENUE_SHARE",
+            "from_unit": "RATIO",
+            "to_unit": "RATIO",
+            "scale": "1"
+          }
+        ],
+        "zero_baseline_rule": "NOT_APPLICABLE"
+      },
+      "label_rule": {
+        "type": "ABSOLUTE_CHANGE_BAND",
+        "decrease_lte": 0.1747,
+        "increase_gte": 0.1947,
+        "ordered_labels": [
+          "MEASUREMENT_MISMATCH",
+          "OBSERVED_DECREASE",
+          "OBSERVED_STABLE",
+          "OBSERVED_INCREASE",
+          "UNKNOWN"
+        ]
+      },
+      "conflict_rule": {
+        "multiple_values": "MEASUREMENT_MISMATCH",
+        "boundary_conflict": "MEASUREMENT_MISMATCH",
+        "period_conflict": "MEASUREMENT_MISMATCH"
+      },
+      "unknown_rule": {
+        "conditions": [
+          "contracted FY2019 field absent"
+        ],
+        "label": "UNKNOWN"
+      },
+      "mismatch_rule": {
+        "conditions": [
+          "scope, period, unit, row identity or unique-field conflict"
+        ],
+        "label": "MEASUREMENT_MISMATCH",
+        "propagation": "LOCAL_ONLY",
+        "dependent_cell_ids": []
+      },
+      "allowed_source_types": [
+        "OFFICIAL_AUDITED_ANNUAL_REPORT"
+      ],
+      "prohibited_inference": "Revenue share is a portfolio-boundary diagnostic, not competitive share or customer preference."
+    },
+    {
+      "cell_id": "CELL:600839:FY2019:GROUP_OCF_LEVEL",
+      "thread_id": "THREAD:R9:CASH_CAPITAL",
+      "layer": "CASH",
+      "outcome_period": {
+        "period_start": "2019-01-01T00:00:00+08:00",
+        "period_end": "2019-12-31T23:59:59+08:00",
+        "fiscal_period": "FY2019_STRICT_POST_CUTOFF"
+      },
+      "measurement_clock": {
+        "clock_kind": "FLOW_PERIOD",
+        "flow_period": {
+          "period_start": "2019-01-01",
+          "period_end": "2019-12-31",
+          "fiscal_period": "FY2019"
+        }
+      },
+      "responsibility_boundary": {
+        "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600839",
+        "perimeter_id": "PERIMETER:CN:600839:FY2019:LISTED_CONSOLIDATED",
+        "arena_id": "ARENA:CN:CONSUMER_ELECTRONICS:MULTI_PRODUCT_PORTFOLIO",
+        "scope_requirement": "Listed-consolidated issuer; no product-arena or ordinary-share promotion."
+      },
+      "field_identity": {
+        "outcome_field_id": "FIELD:600839:FY2019:GROUP_OCF_LEVEL",
+        "baseline_field_id": "",
+        "statement_scope": "FY2019_STRICT_POST_CUTOFF",
+        "table_or_note": "consolidated cash-flow statement",
+        "line_item": "net cash flows from operating activities; compare mechanically with frozen FY2017 RMB1,456,160,300.99 anchor",
+        "field_kind": "AUDITED_OR_RECOMPUTABLE_ANNUAL_REPORT_LINE_ITEM"
+      },
+      "unit": {
+        "kind": "VALUE",
+        "currency": "RMB",
+        "scale": "1"
+      },
+      "raw_input_fields": [
+        {
+          "field_id": "FIELD:600839:FY2019:GROUP_OCF_LEVEL",
+          "role": "OUTCOME",
+          "unit": "RMB",
+          "measurement_clock": {
+            "clock_kind": "FLOW_PERIOD",
+            "flow_period": {
+              "period_start": "2019-01-01",
+              "period_end": "2019-12-31",
+              "fiscal_period": "FY2019"
+            }
+          },
+          "locator": {
+            "table_or_note": "consolidated cash-flow statement",
+            "line_item": "net cash flows from operating activities; compare mechanically with frozen FY2017 RMB1,456,160,300.99 anchor",
+            "period_column": "FY2019"
+          }
+        }
+      ],
+      "formula": {
+        "operator": "RAW_VALUE",
+        "input_field_ids": [
+          "FIELD:600839:FY2019:GROUP_OCF_LEVEL"
+        ],
+        "expression": "FIELD:600839:FY2019:GROUP_OCF_LEVEL",
+        "unit_conversions": [
+          {
+            "field_id": "FIELD:600839:FY2019:GROUP_OCF_LEVEL",
+            "from_unit": "RMB",
+            "to_unit": "RMB",
+            "scale": "1"
+          }
+        ],
+        "zero_baseline_rule": "NOT_APPLICABLE"
+      },
+      "label_rule": {
+        "type": "ABSOLUTE_CHANGE_BAND",
+        "decrease_lte": 1310544270.89,
+        "increase_gte": 1601776331.09,
+        "ordered_labels": [
+          "MEASUREMENT_MISMATCH",
+          "OBSERVED_DECREASE",
+          "OBSERVED_STABLE",
+          "OBSERVED_INCREASE",
+          "UNKNOWN"
+        ]
+      },
+      "conflict_rule": {
+        "multiple_values": "MEASUREMENT_MISMATCH",
+        "boundary_conflict": "MEASUREMENT_MISMATCH",
+        "period_conflict": "MEASUREMENT_MISMATCH"
+      },
+      "unknown_rule": {
+        "conditions": [
+          "contracted FY2019 field absent"
+        ],
+        "label": "UNKNOWN"
+      },
+      "mismatch_rule": {
+        "conditions": [
+          "scope, period, unit, row identity or unique-field conflict"
+        ],
+        "label": "MEASUREMENT_MISMATCH",
+        "propagation": "LOCAL_ONLY",
+        "dependent_cell_ids": []
+      },
+      "allowed_source_types": [
+        "OFFICIAL_AUDITED_ANNUAL_REPORT"
+      ],
+      "prohibited_inference": "Consolidated operating cash is not white-goods cash or ordinary-share owner cash."
+    },
+    {
+      "cell_id": "CELL:600839:FY2019:GROUP_OCF_TO_CAPEX",
+      "thread_id": "THREAD:R9:CASH_CAPITAL",
+      "layer": "CAPITAL_BURDEN",
+      "outcome_period": {
+        "period_start": "2019-01-01T00:00:00+08:00",
+        "period_end": "2019-12-31T23:59:59+08:00",
+        "fiscal_period": "FY2019_STRICT_POST_CUTOFF"
+      },
+      "measurement_clock": {
+        "clock_kind": "FLOW_PERIOD",
+        "flow_period": {
+          "period_start": "2019-01-01",
+          "period_end": "2019-12-31",
+          "fiscal_period": "FY2019"
+        }
+      },
+      "responsibility_boundary": {
+        "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600839",
+        "perimeter_id": "PERIMETER:CN:600839:FY2019:LISTED_CONSOLIDATED",
+        "arena_id": "ARENA:CN:CONSUMER_ELECTRONICS:MULTI_PRODUCT_PORTFOLIO",
+        "scope_requirement": "Listed-consolidated issuer; no product-arena or ordinary-share promotion."
+      },
+      "field_identity": {
+        "outcome_field_id": "FIELD:600839:FY2019:GROUP_OCF_TO_CAPEX",
+        "baseline_field_id": "",
+        "statement_scope": "FY2019_STRICT_POST_CUTOFF",
+        "table_or_note": "consolidated cash-flow statement",
+        "line_item": "net operating cash divided by cash paid to acquire and construct long-lived assets",
+        "field_kind": "AUDITED_OR_RECOMPUTABLE_ANNUAL_REPORT_LINE_ITEM"
+      },
+      "unit": {
+        "kind": "RATIO",
+        "currency": "NOT_APPLICABLE",
+        "scale": "1"
+      },
+      "raw_input_fields": [
+        {
+          "field_id": "FIELD:600839:FY2019:GROUP_OCF_TO_CAPEX",
+          "role": "OUTCOME",
+          "unit": "RATIO",
+          "measurement_clock": {
+            "clock_kind": "FLOW_PERIOD",
+            "flow_period": {
+              "period_start": "2019-01-01",
+              "period_end": "2019-12-31",
+              "fiscal_period": "FY2019"
+            }
+          },
+          "locator": {
+            "table_or_note": "consolidated cash-flow statement",
+            "line_item": "net operating cash divided by cash paid to acquire and construct long-lived assets",
+            "period_column": "FY2019"
+          }
+        }
+      ],
+      "formula": {
+        "operator": "RAW_VALUE",
+        "input_field_ids": [
+          "FIELD:600839:FY2019:GROUP_OCF_TO_CAPEX"
+        ],
+        "expression": "FIELD:600839:FY2019:GROUP_OCF_TO_CAPEX",
+        "unit_conversions": [
+          {
+            "field_id": "FIELD:600839:FY2019:GROUP_OCF_TO_CAPEX",
+            "from_unit": "RATIO",
+            "to_unit": "RATIO",
+            "scale": "1"
+          }
+        ],
+        "zero_baseline_rule": "NOT_APPLICABLE"
+      },
+      "label_rule": {
+        "type": "ABSOLUTE_CHANGE_BAND",
+        "decrease_lte": 1.0,
+        "increase_gte": 1.5,
+        "ordered_labels": [
+          "MEASUREMENT_MISMATCH",
+          "OBSERVED_DECREASE",
+          "OBSERVED_STABLE",
+          "OBSERVED_INCREASE",
+          "UNKNOWN"
+        ]
+      },
+      "conflict_rule": {
+        "multiple_values": "MEASUREMENT_MISMATCH",
+        "boundary_conflict": "MEASUREMENT_MISMATCH",
+        "period_conflict": "MEASUREMENT_MISMATCH"
+      },
+      "unknown_rule": {
+        "conditions": [
+          "contracted FY2019 field absent"
+        ],
+        "label": "UNKNOWN"
+      },
+      "mismatch_rule": {
+        "conditions": [
+          "scope, period, unit, row identity or unique-field conflict"
+        ],
+        "label": "MEASUREMENT_MISMATCH",
+        "propagation": "LOCAL_ONLY",
+        "dependent_cell_ids": []
+      },
+      "allowed_source_types": [
+        "OFFICIAL_AUDITED_ANNUAL_REPORT"
+      ],
+      "prohibited_inference": "OCF-to-capex does not separate maintenance, growth, acquisitions, subsidiaries or ordinary-share access."
+    },
+    {
+      "cell_id": "CELL:600839:FY2019:GROUP_ASSET_LIABILITY_RATIO",
+      "thread_id": "THREAD:R9:CASH_CAPITAL",
+      "layer": "FINANCING",
+      "outcome_period": {
+        "period_start": "2019-01-01T00:00:00+08:00",
+        "period_end": "2019-12-31T23:59:59+08:00",
+        "fiscal_period": "FY2019_STRICT_POST_CUTOFF"
+      },
+      "measurement_clock": {
+        "clock_kind": "BALANCE_AS_OF",
+        "balance_as_of": {
+          "as_of": "2019-12-31",
+          "fiscal_period": "FY2019"
+        }
+      },
+      "responsibility_boundary": {
+        "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600839",
+        "perimeter_id": "PERIMETER:CN:600839:FY2019:LISTED_CONSOLIDATED",
+        "arena_id": "ARENA:CN:CONSUMER_ELECTRONICS:MULTI_PRODUCT_PORTFOLIO",
+        "scope_requirement": "Listed-consolidated issuer; no product-arena or ordinary-share promotion."
+      },
+      "field_identity": {
+        "outcome_field_id": "FIELD:600839:FY2019:GROUP_ASSET_LIABILITY_RATIO",
+        "baseline_field_id": "",
+        "statement_scope": "FY2019_STRICT_POST_CUTOFF",
+        "table_or_note": "consolidated balance sheet",
+        "line_item": "total liabilities divided by total assets at 2019-12-31",
+        "field_kind": "AUDITED_OR_RECOMPUTABLE_ANNUAL_REPORT_LINE_ITEM"
+      },
+      "unit": {
+        "kind": "RATIO",
+        "currency": "NOT_APPLICABLE",
+        "scale": "1"
+      },
+      "raw_input_fields": [
+        {
+          "field_id": "FIELD:600839:FY2019:GROUP_ASSET_LIABILITY_RATIO",
+          "role": "OUTCOME",
+          "unit": "RATIO",
+          "measurement_clock": {
+            "clock_kind": "BALANCE_AS_OF",
+            "balance_as_of": {
+              "as_of": "2019-12-31",
+              "fiscal_period": "FY2019"
+            }
+          },
+          "locator": {
+            "table_or_note": "consolidated balance sheet",
+            "line_item": "total liabilities divided by total assets at 2019-12-31",
+            "period_column": "FY2019"
+          }
+        }
+      ],
+      "formula": {
+        "operator": "RAW_VALUE",
+        "input_field_ids": [
+          "FIELD:600839:FY2019:GROUP_ASSET_LIABILITY_RATIO"
+        ],
+        "expression": "FIELD:600839:FY2019:GROUP_ASSET_LIABILITY_RATIO",
+        "unit_conversions": [
+          {
+            "field_id": "FIELD:600839:FY2019:GROUP_ASSET_LIABILITY_RATIO",
+            "from_unit": "RATIO",
+            "to_unit": "RATIO",
+            "scale": "1"
+          }
+        ],
+        "zero_baseline_rule": "NOT_APPLICABLE"
+      },
+      "label_rule": {
+        "type": "ABSOLUTE_CHANGE_BAND",
+        "decrease_lte": 0.65,
+        "increase_gte": 0.75,
+        "ordered_labels": [
+          "MEASUREMENT_MISMATCH",
+          "OBSERVED_DECREASE",
+          "OBSERVED_STABLE",
+          "OBSERVED_INCREASE",
+          "UNKNOWN"
+        ]
+      },
+      "conflict_rule": {
+        "multiple_values": "MEASUREMENT_MISMATCH",
+        "boundary_conflict": "MEASUREMENT_MISMATCH",
+        "period_conflict": "MEASUREMENT_MISMATCH"
+      },
+      "unknown_rule": {
+        "conditions": [
+          "contracted FY2019 field absent"
+        ],
+        "label": "UNKNOWN"
+      },
+      "mismatch_rule": {
+        "conditions": [
+          "scope, period, unit, row identity or unique-field conflict"
+        ],
+        "label": "MEASUREMENT_MISMATCH",
+        "propagation": "LOCAL_ONLY",
+        "dependent_cell_ids": []
+      },
+      "allowed_source_types": [
+        "OFFICIAL_AUDITED_ANNUAL_REPORT"
+      ],
+      "prohibited_inference": "A leverage ratio alone does not establish refinancing risk, ordinary-share loss or product economics."
+    },
+    {
+      "cell_id": "CELL:600839:FY2019:WHITE_GOODS_ACTION_EVENT",
+      "thread_id": "THREAD:R9:WHITE_GOODS_EXECUTION",
+      "layer": "IMPLEMENTED",
+      "outcome_period": {
+        "period_start": "2019-01-01T00:00:00+08:00",
+        "period_end": "2019-12-31T23:59:59+08:00",
+        "fiscal_period": "FY2019_STRICT_POST_CUTOFF"
+      },
+      "measurement_clock": {
+        "clock_kind": "EVENT_WINDOW",
+        "event_window": {
+          "event_start": "2019-01-01",
+          "event_end": "2019-12-31",
+          "window_name": "FY2019_STRICT_POST_CUTOFF_EVENT_WINDOW"
+        }
+      },
+      "responsibility_boundary": {
+        "responsibility_unit_id": "PRODUCT_ARENA:CN:600839:WHITE_GOODS",
+        "perimeter_id": "PERIMETER:CN:600839:FY2019:AIR_CONDITIONER_AND_REFRIGERATOR",
+        "arena_id": "ARENA:CN:APPLIANCE:WHITE_GOODS",
+        "scope_requirement": "Air-conditioner and refrigerator product arena only; exact same product row required."
+      },
+      "field_identity": {
+        "outcome_field_id": "FIELD:600839:FY2019:WHITE_GOODS_ACTION_EVENT",
+        "baseline_field_id": "",
+        "statement_scope": "FY2019_STRICT_POST_CUTOFF",
+        "table_or_note": "FY2019 management discussion",
+        "line_item": "explicit FY2019 implemented air-conditioner or refrigerator product, channel or organization action",
+        "field_kind": "DISCLOSED_EVENT"
+      },
+      "unit": {
+        "kind": "EVENT",
+        "currency": "NOT_APPLICABLE",
+        "scale": "BOOLEAN"
+      },
+      "raw_input_fields": [
+        {
+          "field_id": "FIELD:600839:FY2019:WHITE_GOODS_ACTION_EVENT",
+          "role": "EVENT",
+          "unit": "BOOLEAN_EVENT",
+          "measurement_clock": {
+            "clock_kind": "EVENT_WINDOW",
+            "event_window": {
+              "event_start": "2019-01-01",
+              "event_end": "2019-12-31",
+              "window_name": "FY2019_STRICT_POST_CUTOFF_EVENT_WINDOW"
+            }
+          },
+          "locator": {
+            "table_or_note": "FY2019 management discussion",
+            "line_item": "explicit FY2019 implemented air-conditioner or refrigerator product, channel or organization action",
+            "period_column": "2019-01-01..2019-12-31"
+          }
+        }
+      ],
+      "formula": {
+        "operator": "EVENT_BOOLEAN",
+        "input_field_ids": [
+          "FIELD:600839:FY2019:WHITE_GOODS_ACTION_EVENT"
+        ],
+        "expression": "explicit_fy2019_event(FIELD:600839:FY2019:WHITE_GOODS_ACTION_EVENT)",
+        "unit_conversions": [
+          {
+            "field_id": "FIELD:600839:FY2019:WHITE_GOODS_ACTION_EVENT",
+            "from_unit": "BOOLEAN_EVENT",
+            "to_unit": "BOOLEAN_EVENT",
+            "scale": "1"
+          }
+        ],
+        "zero_baseline_rule": "NOT_APPLICABLE"
+      },
+      "label_rule": {
+        "type": "EVENT_PRESENCE",
+        "decrease_lte": 0,
+        "increase_gte": 1,
+        "ordered_labels": [
+          "MEASUREMENT_MISMATCH",
+          "OBSERVED_YES",
+          "OBSERVED_NO",
+          "UNKNOWN"
+        ]
+      },
+      "conflict_rule": {
+        "multiple_values": "MEASUREMENT_MISMATCH",
+        "boundary_conflict": "MEASUREMENT_MISMATCH",
+        "period_conflict": "MEASUREMENT_MISMATCH"
+      },
+      "unknown_rule": {
+        "conditions": [
+          "no explicit positive or negative FY2019 evidence"
+        ],
+        "label": "UNKNOWN"
+      },
+      "mismatch_rule": {
+        "conditions": [
+          "event period, responsibility or implementation identity conflict"
+        ],
+        "label": "MEASUREMENT_MISMATCH",
+        "propagation": "LOCAL_ONLY",
+        "dependent_cell_ids": []
+      },
+      "allowed_source_types": [
+        "OFFICIAL_AUDITED_ANNUAL_REPORT"
+      ],
+      "prohibited_inference": "Implementation does not prove customer response, margin effect or durable advantage."
+    },
+    {
+      "cell_id": "CELL:600839:FY2019:PORTFOLIO_SCOPE_EVENT",
+      "thread_id": "THREAD:R9:INDUSTRY_AND_RIVAL",
+      "layer": "PERMANENT_LOSS",
+      "outcome_period": {
+        "period_start": "2019-01-01T00:00:00+08:00",
+        "period_end": "2019-12-31T23:59:59+08:00",
+        "fiscal_period": "FY2019_STRICT_POST_CUTOFF"
+      },
+      "measurement_clock": {
+        "clock_kind": "EVENT_WINDOW",
+        "event_window": {
+          "event_start": "2019-01-01",
+          "event_end": "2019-12-31",
+          "window_name": "FY2019_STRICT_POST_CUTOFF_EVENT_WINDOW"
+        }
+      },
+      "responsibility_boundary": {
+        "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600839",
+        "perimeter_id": "PERIMETER:CN:600839:FY2019:LISTED_CONSOLIDATED",
+        "arena_id": "ARENA:CN:CONSUMER_ELECTRONICS:MULTI_PRODUCT_PORTFOLIO",
+        "scope_requirement": "Listed-consolidated issuer; no product-arena or ordinary-share promotion."
+      },
+      "field_identity": {
+        "outcome_field_id": "FIELD:600839:FY2019:PORTFOLIO_SCOPE_EVENT",
+        "baseline_field_id": "",
+        "statement_scope": "FY2019_STRICT_POST_CUTOFF",
+        "table_or_note": "FY2019 scope, acquisition, disposal and non-operating review",
+        "line_item": "explicit FY2019 acquisition, disposal or reorganization materially affecting consolidated or white-goods scope",
+        "field_kind": "DISCLOSED_EVENT"
+      },
+      "unit": {
+        "kind": "EVENT",
+        "currency": "NOT_APPLICABLE",
+        "scale": "BOOLEAN"
+      },
+      "raw_input_fields": [
+        {
+          "field_id": "FIELD:600839:FY2019:PORTFOLIO_SCOPE_EVENT",
+          "role": "EVENT",
+          "unit": "BOOLEAN_EVENT",
+          "measurement_clock": {
+            "clock_kind": "EVENT_WINDOW",
+            "event_window": {
+              "event_start": "2019-01-01",
+              "event_end": "2019-12-31",
+              "window_name": "FY2019_STRICT_POST_CUTOFF_EVENT_WINDOW"
+            }
+          },
+          "locator": {
+            "table_or_note": "FY2019 scope, acquisition, disposal and non-operating review",
+            "line_item": "explicit FY2019 acquisition, disposal or reorganization materially affecting consolidated or white-goods scope",
+            "period_column": "2019-01-01..2019-12-31"
+          }
+        }
+      ],
+      "formula": {
+        "operator": "EVENT_BOOLEAN",
+        "input_field_ids": [
+          "FIELD:600839:FY2019:PORTFOLIO_SCOPE_EVENT"
+        ],
+        "expression": "explicit_fy2019_event(FIELD:600839:FY2019:PORTFOLIO_SCOPE_EVENT)",
+        "unit_conversions": [
+          {
+            "field_id": "FIELD:600839:FY2019:PORTFOLIO_SCOPE_EVENT",
+            "from_unit": "BOOLEAN_EVENT",
+            "to_unit": "BOOLEAN_EVENT",
+            "scale": "1"
+          }
+        ],
+        "zero_baseline_rule": "NOT_APPLICABLE"
+      },
+      "label_rule": {
+        "type": "EVENT_PRESENCE",
+        "decrease_lte": 0,
+        "increase_gte": 1,
+        "ordered_labels": [
+          "MEASUREMENT_MISMATCH",
+          "OBSERVED_YES",
+          "OBSERVED_NO",
+          "UNKNOWN"
+        ]
+      },
+      "conflict_rule": {
+        "multiple_values": "MEASUREMENT_MISMATCH",
+        "boundary_conflict": "MEASUREMENT_MISMATCH",
+        "period_conflict": "MEASUREMENT_MISMATCH"
+      },
+      "unknown_rule": {
+        "conditions": [
+          "no explicit positive or negative FY2019 evidence"
+        ],
+        "label": "UNKNOWN"
+      },
+      "mismatch_rule": {
+        "conditions": [
+          "event period, responsibility or implementation identity conflict"
+        ],
+        "label": "MEASUREMENT_MISMATCH",
+        "propagation": "LOCAL_ONLY",
+        "dependent_cell_ids": []
+      },
+      "allowed_source_types": [
+        "OFFICIAL_AUDITED_ANNUAL_REPORT"
+      ],
+      "prohibited_inference": "A scope event is an alternative explanation, not evidence of better or worse operating execution by itself."
+    },
+    {
+      "cell_id": "CELL:600839:FY2019:OWNER_CASH_BRIDGE_EVENT",
+      "thread_id": "THREAD:R9:CASH_CAPITAL",
+      "layer": "CAPITAL_BURDEN",
+      "outcome_period": {
+        "period_start": "2019-01-01T00:00:00+08:00",
+        "period_end": "2019-12-31T23:59:59+08:00",
+        "fiscal_period": "FY2019_STRICT_POST_CUTOFF"
+      },
+      "measurement_clock": {
+        "clock_kind": "EVENT_WINDOW",
+        "event_window": {
+          "event_start": "2019-01-01",
+          "event_end": "2019-12-31",
+          "window_name": "FY2019_STRICT_POST_CUTOFF_EVENT_WINDOW"
+        }
+      },
+      "responsibility_boundary": {
+        "responsibility_unit_id": "ORDINARY_SHARE_CASH:CN:600839",
+        "perimeter_id": "PERIMETER:CN:600839:FY2019:ORDINARY_COMMON_CASH_ACCESS",
+        "arena_id": "ARENA:CN:600839:ORDINARY_SHARE_CLAIM",
+        "scope_requirement": "Residual ordinary-share cash after required capital and priority claims; group OCF is insufficient."
+      },
+      "field_identity": {
+        "outcome_field_id": "FIELD:600839:FY2019:OWNER_CASH_BRIDGE_EVENT",
+        "baseline_field_id": "",
+        "statement_scope": "FY2019_STRICT_POST_CUTOFF",
+        "table_or_note": "FY2019 cash, capital and ordinary-share distribution review",
+        "line_item": "explicit bridge from consolidated OCF through required capital and priority claims to residual ordinary-share cash",
+        "field_kind": "DISCLOSED_EVENT"
+      },
+      "unit": {
+        "kind": "EVENT",
+        "currency": "NOT_APPLICABLE",
+        "scale": "BOOLEAN"
+      },
+      "raw_input_fields": [
+        {
+          "field_id": "FIELD:600839:FY2019:OWNER_CASH_BRIDGE_EVENT",
+          "role": "EVENT",
+          "unit": "BOOLEAN_EVENT",
+          "measurement_clock": {
+            "clock_kind": "EVENT_WINDOW",
+            "event_window": {
+              "event_start": "2019-01-01",
+              "event_end": "2019-12-31",
+              "window_name": "FY2019_STRICT_POST_CUTOFF_EVENT_WINDOW"
+            }
+          },
+          "locator": {
+            "table_or_note": "FY2019 cash, capital and ordinary-share distribution review",
+            "line_item": "explicit bridge from consolidated OCF through required capital and priority claims to residual ordinary-share cash",
+            "period_column": "2019-01-01..2019-12-31"
+          }
+        }
+      ],
+      "formula": {
+        "operator": "EVENT_BOOLEAN",
+        "input_field_ids": [
+          "FIELD:600839:FY2019:OWNER_CASH_BRIDGE_EVENT"
+        ],
+        "expression": "explicit_fy2019_event(FIELD:600839:FY2019:OWNER_CASH_BRIDGE_EVENT)",
+        "unit_conversions": [
+          {
+            "field_id": "FIELD:600839:FY2019:OWNER_CASH_BRIDGE_EVENT",
+            "from_unit": "BOOLEAN_EVENT",
+            "to_unit": "BOOLEAN_EVENT",
+            "scale": "1"
+          }
+        ],
+        "zero_baseline_rule": "NOT_APPLICABLE"
+      },
+      "label_rule": {
+        "type": "EVENT_PRESENCE",
+        "decrease_lte": 0,
+        "increase_gte": 1,
+        "ordered_labels": [
+          "MEASUREMENT_MISMATCH",
+          "OBSERVED_YES",
+          "OBSERVED_NO",
+          "UNKNOWN"
+        ]
+      },
+      "conflict_rule": {
+        "multiple_values": "MEASUREMENT_MISMATCH",
+        "boundary_conflict": "MEASUREMENT_MISMATCH",
+        "period_conflict": "MEASUREMENT_MISMATCH"
+      },
+      "unknown_rule": {
+        "conditions": [
+          "no explicit positive or negative FY2019 evidence"
+        ],
+        "label": "UNKNOWN"
+      },
+      "mismatch_rule": {
+        "conditions": [
+          "event period, responsibility or implementation identity conflict"
+        ],
+        "label": "MEASUREMENT_MISMATCH",
+        "propagation": "LOCAL_ONLY",
+        "dependent_cell_ids": []
+      },
+      "allowed_source_types": [
+        "OFFICIAL_AUDITED_ANNUAL_REPORT"
+      ],
+      "prohibited_inference": "A dividend, OCF or cash balance alone is not the contracted ordinary-share owner-cash bridge."
+    }
+  ],
+  "thread_combination_rules": [
+    {
+      "rule_id": "RULE:R9:WHITE_GOODS_EXECUTION",
+      "thread_id": "THREAD:R9:WHITE_GOODS_EXECUTION",
+      "input_cell_ids": [
+        "CELL:600839:FY2019:WHITE_GOODS_ACTION_EVENT",
+        "CELL:600839:FY2019:WHITE_GOODS_REVENUE_LEVEL",
+        "CELL:600839:FY2019:WHITE_GOODS_GROSS_MARGIN"
+      ],
+      "evaluation_order": [
+        "CELL:600839:FY2019:WHITE_GOODS_ACTION_EVENT",
+        "CELL:600839:FY2019:WHITE_GOODS_REVENUE_LEVEL",
+        "CELL:600839:FY2019:WHITE_GOODS_GROSS_MARGIN"
+      ],
+      "rule": "Keep implementation, product absorption and unit economics separate; no cell compensates for another.",
+      "conflict_rule": "Missing or mismatched product evidence limits only product-dependent conclusions.",
+      "authorization": "TEACHING_ONLY_NO_CAUSAL_UPGRADE"
+    },
+    {
+      "rule_id": "RULE:R9:CASH_AND_ACCESS",
+      "thread_id": "THREAD:R9:CASH_CAPITAL",
+      "input_cell_ids": [
+        "CELL:600839:FY2019:GROUP_OCF_LEVEL",
+        "CELL:600839:FY2019:GROUP_OCF_TO_CAPEX",
+        "CELL:600839:FY2019:GROUP_ASSET_LIABILITY_RATIO",
+        "CELL:600839:FY2019:OWNER_CASH_BRIDGE_EVENT"
+      ],
+      "evaluation_order": [
+        "CELL:600839:FY2019:GROUP_OCF_LEVEL",
+        "CELL:600839:FY2019:GROUP_OCF_TO_CAPEX",
+        "CELL:600839:FY2019:GROUP_ASSET_LIABILITY_RATIO",
+        "CELL:600839:FY2019:OWNER_CASH_BRIDGE_EVENT"
+      ],
+      "rule": "Assess issuer funding before ordinary-share access; no inferred bridge is permitted.",
+      "conflict_rule": "Absent owner-cash bridge preserves UNKNOWN without invalidating issuer cash cells.",
+      "authorization": "TEACHING_ONLY_NO_CAUSAL_UPGRADE"
+    }
+  ],
+  "freeze_state": "PRE_OUTCOME_FROZEN",
+  "contract_frozen_at": "2026-08-27T18:00:00+08:00",
+  "clock_policy": "CUT_OFF_CLOCK_SEPARATE_FROM_MEASUREMENT_CLOCK",
+  "rights": {
+    "directional_learning": "NOT_AUTHORIZED",
+    "enterprise_learning": "NOT_AUTHORIZED",
+    "comparative": "NOT_AUTHORIZED",
+    "cjo": "NOT_AUTHORIZED",
+    "valuation": "NOT_AUTHORIZED",
+    "report": "NOT_AUTHORIZED",
+    "investment": "NOT_AUTHORIZED"
+  },
+  "allowed_outputs": [
+    "OUTCOME_CUSTODY_REQUEST",
+    "RESEARCH_AGENDA"
+  ]
+}

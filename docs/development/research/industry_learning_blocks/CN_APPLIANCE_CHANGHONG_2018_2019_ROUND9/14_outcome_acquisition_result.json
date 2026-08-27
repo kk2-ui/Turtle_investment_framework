@@ -1,0 +1,666 @@
+{
+  "schema_version": "turtle-outcome-measurement-acquisition.v1",
+  "measurement_contract_ref": {
+    "measurement_contract_id": "OMC:CN600839:20180930:EIGHT_DIMENSION:V3",
+    "measurement_contract_version": 3
+  },
+  "source_inventory_id": "OMINV:CN600839:FY2019:R9:V1",
+  "custodian_id": "ROLE:ROUND9:APPLIANCE:OUTCOME_CUSTODIAN",
+  "object_class": "OUTCOME_MEASUREMENT_ACQUISITION_RESULT",
+  "claim_class": "CUSTODIAN_FIELD_ACQUISITION_ONLY",
+  "allowed_outputs": [
+    "ENTERPRISE_OUTCOME_ACQUISITION_ONLY"
+  ],
+  "observations": [
+    {
+      "measurement_id": "CELL:600839:FY2019:INDUSTRY_CONTEXT_EVENT",
+      "status": "OBSERVED",
+      "raw_field_observations": [
+        {
+          "source": {
+            "source_id": "CNINFO:600839:ANN:20200418:1207528466",
+            "source_url": "https://static.cninfo.com.cn/finalpage/2020-04-18/1207528466.PDF",
+            "report_period_end": "2019-12-31",
+            "official_source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+            "issuer_id": "ISSUER:CN:600839",
+            "responsibility_boundary": {
+              "responsibility_unit_id": "INDUSTRY_CONTEXT:CN:WHITE_GOODS",
+              "perimeter_id": "PERIMETER:CN:WHITE_GOODS:FY2019_CONTEXT",
+              "arena_id": "ARENA:CN:APPLIANCE:WHITE_GOODS",
+              "scope_requirement": "Industry context only; issuer filing cannot receive industry or issuer causal credit."
+            },
+            "availability_precision": "DATE_ONLY",
+            "source_available_date": "2020-04-18",
+            "pdf_page": 8,
+            "field_ref": "PDF p.8",
+            "field_identity": "FIELD:600839:FY2019:INDUSTRY_CONTEXT_EVENT",
+            "measurement_clock": {
+              "clock_kind": "EVENT_WINDOW",
+              "event_window": {
+                "event_start": "2019-01-01",
+                "event_end": "2019-12-31",
+                "window_name": "FY2019_STRICT_POST_CUTOFF_EVENT_WINDOW"
+              }
+            },
+            "unit": "BOOLEAN_EVENT",
+            "table_or_note": "FY2019 industry and competition review",
+            "line_item": "explicit FY2019 white-goods category demand, concentration, price or competition condition",
+            "period_column": "2019-01-01..2019-12-31",
+            "custodian_locator": {
+              "table_or_note": "Industry development review",
+              "line_item": "Refrigerator average prices declined while air-conditioner overcapacity drove price promotion.",
+              "period_column": "FY2019"
+            }
+          },
+          "measurement_clock": {
+            "clock_kind": "EVENT_WINDOW",
+            "event_window": {
+              "event_start": "2019-01-01",
+              "event_end": "2019-12-31",
+              "window_name": "FY2019_STRICT_POST_CUTOFF_EVENT_WINDOW"
+            }
+          },
+          "unit": "BOOLEAN_EVENT",
+          "responsibility_boundary": {
+            "responsibility_unit_id": "INDUSTRY_CONTEXT:CN:WHITE_GOODS",
+            "perimeter_id": "PERIMETER:CN:WHITE_GOODS:FY2019_CONTEXT",
+            "arena_id": "ARENA:CN:APPLIANCE:WHITE_GOODS",
+            "scope_requirement": "Industry context only; issuer filing cannot receive industry or issuer causal credit."
+          },
+          "status": "OBSERVED",
+          "field_id": "FIELD:600839:FY2019:INDUSTRY_CONTEXT_EVENT",
+          "raw_value": true
+        }
+      ]
+    },
+    {
+      "measurement_id": "CELL:600839:FY2019:GROUP_REVENUE_LEVEL",
+      "status": "OBSERVED",
+      "raw_field_observations": [
+        {
+          "source": {
+            "source_id": "CNINFO:600839:ANN:20200418:1207528466",
+            "source_url": "https://static.cninfo.com.cn/finalpage/2020-04-18/1207528466.PDF",
+            "report_period_end": "2019-12-31",
+            "official_source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+            "issuer_id": "ISSUER:CN:600839",
+            "responsibility_boundary": {
+              "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600839",
+              "perimeter_id": "PERIMETER:CN:600839:FY2019:LISTED_CONSOLIDATED",
+              "arena_id": "ARENA:CN:CONSUMER_ELECTRONICS:MULTI_PRODUCT_PORTFOLIO",
+              "scope_requirement": "Listed-consolidated issuer; no product-arena or ordinary-share promotion."
+            },
+            "availability_precision": "DATE_ONLY",
+            "source_available_date": "2020-04-18",
+            "pdf_page": 77,
+            "field_ref": "PDF p.77",
+            "field_identity": "FIELD:600839:FY2019:GROUP_REVENUE_LEVEL",
+            "measurement_clock": {
+              "clock_kind": "FLOW_PERIOD",
+              "flow_period": {
+                "period_start": "2019-01-01",
+                "period_end": "2019-12-31",
+                "fiscal_period": "FY2019"
+              }
+            },
+            "unit": "RMB",
+            "table_or_note": "consolidated income statement",
+            "line_item": "operating revenue; compare mechanically with frozen FY2017 RMB77,632,476,743.23 anchor",
+            "period_column": "FY2019",
+            "custodian_locator": {
+              "table_or_note": "Consolidated income statement",
+              "line_item": "Operating revenue",
+              "period_column": "FY2019"
+            }
+          },
+          "measurement_clock": {
+            "clock_kind": "FLOW_PERIOD",
+            "flow_period": {
+              "period_start": "2019-01-01",
+              "period_end": "2019-12-31",
+              "fiscal_period": "FY2019"
+            }
+          },
+          "unit": "RMB",
+          "responsibility_boundary": {
+            "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600839",
+            "perimeter_id": "PERIMETER:CN:600839:FY2019:LISTED_CONSOLIDATED",
+            "arena_id": "ARENA:CN:CONSUMER_ELECTRONICS:MULTI_PRODUCT_PORTFOLIO",
+            "scope_requirement": "Listed-consolidated issuer; no product-arena or ordinary-share promotion."
+          },
+          "status": "OBSERVED",
+          "field_id": "FIELD:600839:FY2019:GROUP_REVENUE_LEVEL",
+          "raw_value": 88792895883.36
+        }
+      ]
+    },
+    {
+      "measurement_id": "CELL:600839:FY2019:WHITE_GOODS_REVENUE_LEVEL",
+      "status": "OBSERVED",
+      "raw_field_observations": [
+        {
+          "source": {
+            "source_id": "CNINFO:600839:ANN:20200418:1207528466",
+            "source_url": "https://static.cninfo.com.cn/finalpage/2020-04-18/1207528466.PDF",
+            "report_period_end": "2019-12-31",
+            "official_source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+            "issuer_id": "ISSUER:CN:600839",
+            "responsibility_boundary": {
+              "responsibility_unit_id": "PRODUCT_ARENA:CN:600839:WHITE_GOODS",
+              "perimeter_id": "PERIMETER:CN:600839:FY2019:AIR_CONDITIONER_AND_REFRIGERATOR",
+              "arena_id": "ARENA:CN:APPLIANCE:WHITE_GOODS",
+              "scope_requirement": "Air-conditioner and refrigerator product arena only; exact same product row required."
+            },
+            "availability_precision": "DATE_ONLY",
+            "source_available_date": "2020-04-18",
+            "pdf_page": 14,
+            "field_ref": "PDF p.14",
+            "field_identity": "FIELD:600839:FY2019:WHITE_GOODS_REVENUE_LEVEL",
+            "measurement_clock": {
+              "clock_kind": "FLOW_PERIOD",
+              "flow_period": {
+                "period_start": "2019-01-01",
+                "period_end": "2019-12-31",
+                "fiscal_period": "FY2019"
+              }
+            },
+            "unit": "RMB",
+            "table_or_note": "principal business by product",
+            "line_item": "air-conditioner and refrigerator revenue; exact same product row as FY2017 required",
+            "period_column": "FY2019",
+            "custodian_locator": {
+              "table_or_note": "Principal business by product",
+              "line_item": "Air-conditioner and refrigerator revenue",
+              "period_column": "FY2019"
+            }
+          },
+          "measurement_clock": {
+            "clock_kind": "FLOW_PERIOD",
+            "flow_period": {
+              "period_start": "2019-01-01",
+              "period_end": "2019-12-31",
+              "fiscal_period": "FY2019"
+            }
+          },
+          "unit": "RMB",
+          "responsibility_boundary": {
+            "responsibility_unit_id": "PRODUCT_ARENA:CN:600839:WHITE_GOODS",
+            "perimeter_id": "PERIMETER:CN:600839:FY2019:AIR_CONDITIONER_AND_REFRIGERATOR",
+            "arena_id": "ARENA:CN:APPLIANCE:WHITE_GOODS",
+            "scope_requirement": "Air-conditioner and refrigerator product arena only; exact same product row required."
+          },
+          "status": "OBSERVED",
+          "field_id": "FIELD:600839:FY2019:WHITE_GOODS_REVENUE_LEVEL",
+          "raw_value": 14008069937.89
+        }
+      ]
+    },
+    {
+      "measurement_id": "CELL:600839:FY2019:WHITE_GOODS_GROSS_MARGIN",
+      "status": "OBSERVED",
+      "raw_field_observations": [
+        {
+          "source": {
+            "source_id": "CNINFO:600839:ANN:20200418:1207528466",
+            "source_url": "https://static.cninfo.com.cn/finalpage/2020-04-18/1207528466.PDF",
+            "report_period_end": "2019-12-31",
+            "official_source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+            "issuer_id": "ISSUER:CN:600839",
+            "responsibility_boundary": {
+              "responsibility_unit_id": "PRODUCT_ARENA:CN:600839:WHITE_GOODS",
+              "perimeter_id": "PERIMETER:CN:600839:FY2019:AIR_CONDITIONER_AND_REFRIGERATOR",
+              "arena_id": "ARENA:CN:APPLIANCE:WHITE_GOODS",
+              "scope_requirement": "Air-conditioner and refrigerator product arena only; exact same product row required."
+            },
+            "availability_precision": "DATE_ONLY",
+            "source_available_date": "2020-04-18",
+            "pdf_page": 14,
+            "field_ref": "PDF p.14",
+            "field_identity": "FIELD:600839:FY2019:WHITE_GOODS_GROSS_MARGIN",
+            "measurement_clock": {
+              "clock_kind": "FLOW_PERIOD",
+              "flow_period": {
+                "period_start": "2019-01-01",
+                "period_end": "2019-12-31",
+                "fiscal_period": "FY2019"
+              }
+            },
+            "unit": "RATIO",
+            "table_or_note": "principal business by product",
+            "line_item": "(air-conditioner and refrigerator revenue minus cost) divided by revenue; exact row tokens required",
+            "period_column": "FY2019",
+            "custodian_locator": {
+              "table_or_note": "Principal business by product",
+              "line_item": "(RMB14,008,069,937.89 revenue less RMB10,875,926,873.34 cost) divided by revenue",
+              "period_column": "FY2019"
+            }
+          },
+          "measurement_clock": {
+            "clock_kind": "FLOW_PERIOD",
+            "flow_period": {
+              "period_start": "2019-01-01",
+              "period_end": "2019-12-31",
+              "fiscal_period": "FY2019"
+            }
+          },
+          "unit": "RATIO",
+          "responsibility_boundary": {
+            "responsibility_unit_id": "PRODUCT_ARENA:CN:600839:WHITE_GOODS",
+            "perimeter_id": "PERIMETER:CN:600839:FY2019:AIR_CONDITIONER_AND_REFRIGERATOR",
+            "arena_id": "ARENA:CN:APPLIANCE:WHITE_GOODS",
+            "scope_requirement": "Air-conditioner and refrigerator product arena only; exact same product row required."
+          },
+          "status": "OBSERVED",
+          "field_id": "FIELD:600839:FY2019:WHITE_GOODS_GROSS_MARGIN",
+          "raw_value": 0.22359561869961553
+        }
+      ]
+    },
+    {
+      "measurement_id": "CELL:600839:FY2019:WHITE_GOODS_REVENUE_SHARE",
+      "status": "OBSERVED",
+      "raw_field_observations": [
+        {
+          "source": {
+            "source_id": "CNINFO:600839:ANN:20200418:1207528466",
+            "source_url": "https://static.cninfo.com.cn/finalpage/2020-04-18/1207528466.PDF",
+            "report_period_end": "2019-12-31",
+            "official_source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+            "issuer_id": "ISSUER:CN:600839",
+            "responsibility_boundary": {
+              "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600839",
+              "perimeter_id": "PERIMETER:CN:600839:FY2019:LISTED_CONSOLIDATED",
+              "arena_id": "ARENA:CN:CONSUMER_ELECTRONICS:MULTI_PRODUCT_PORTFOLIO",
+              "scope_requirement": "Listed-consolidated issuer; no product-arena or ordinary-share promotion."
+            },
+            "availability_precision": "DATE_ONLY",
+            "source_available_date": "2020-04-18",
+            "pdf_page": 14,
+            "field_ref": "PDF p.14",
+            "field_identity": "FIELD:600839:FY2019:WHITE_GOODS_REVENUE_SHARE",
+            "measurement_clock": {
+              "clock_kind": "FLOW_PERIOD",
+              "flow_period": {
+                "period_start": "2019-01-01",
+                "period_end": "2019-12-31",
+                "fiscal_period": "FY2019"
+              }
+            },
+            "unit": "RATIO",
+            "table_or_note": "principal business by product and consolidated income statement",
+            "line_item": "air-conditioner and refrigerator revenue divided by consolidated operating revenue",
+            "period_column": "FY2019",
+            "custodian_locator": {
+              "table_or_note": "Principal business by product plus consolidated income statement",
+              "line_item": "White-goods revenue divided by consolidated operating revenue",
+              "period_column": "FY2019"
+            }
+          },
+          "measurement_clock": {
+            "clock_kind": "FLOW_PERIOD",
+            "flow_period": {
+              "period_start": "2019-01-01",
+              "period_end": "2019-12-31",
+              "fiscal_period": "FY2019"
+            }
+          },
+          "unit": "RATIO",
+          "responsibility_boundary": {
+            "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600839",
+            "perimeter_id": "PERIMETER:CN:600839:FY2019:LISTED_CONSOLIDATED",
+            "arena_id": "ARENA:CN:CONSUMER_ELECTRONICS:MULTI_PRODUCT_PORTFOLIO",
+            "scope_requirement": "Listed-consolidated issuer; no product-arena or ordinary-share promotion."
+          },
+          "status": "OBSERVED",
+          "field_id": "FIELD:600839:FY2019:WHITE_GOODS_REVENUE_SHARE",
+          "raw_value": 0.15776115643633543
+        }
+      ]
+    },
+    {
+      "measurement_id": "CELL:600839:FY2019:GROUP_OCF_LEVEL",
+      "status": "OBSERVED",
+      "raw_field_observations": [
+        {
+          "source": {
+            "source_id": "CNINFO:600839:ANN:20200418:1207528466",
+            "source_url": "https://static.cninfo.com.cn/finalpage/2020-04-18/1207528466.PDF",
+            "report_period_end": "2019-12-31",
+            "official_source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+            "issuer_id": "ISSUER:CN:600839",
+            "responsibility_boundary": {
+              "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600839",
+              "perimeter_id": "PERIMETER:CN:600839:FY2019:LISTED_CONSOLIDATED",
+              "arena_id": "ARENA:CN:CONSUMER_ELECTRONICS:MULTI_PRODUCT_PORTFOLIO",
+              "scope_requirement": "Listed-consolidated issuer; no product-arena or ordinary-share promotion."
+            },
+            "availability_precision": "DATE_ONLY",
+            "source_available_date": "2020-04-18",
+            "pdf_page": 81,
+            "field_ref": "PDF p.81",
+            "field_identity": "FIELD:600839:FY2019:GROUP_OCF_LEVEL",
+            "measurement_clock": {
+              "clock_kind": "FLOW_PERIOD",
+              "flow_period": {
+                "period_start": "2019-01-01",
+                "period_end": "2019-12-31",
+                "fiscal_period": "FY2019"
+              }
+            },
+            "unit": "RMB",
+            "table_or_note": "consolidated cash-flow statement",
+            "line_item": "net cash flows from operating activities; compare mechanically with frozen FY2017 RMB1,456,160,300.99 anchor",
+            "period_column": "FY2019",
+            "custodian_locator": {
+              "table_or_note": "Consolidated cash-flow statement",
+              "line_item": "Net cash flows from operating activities",
+              "period_column": "FY2019"
+            }
+          },
+          "measurement_clock": {
+            "clock_kind": "FLOW_PERIOD",
+            "flow_period": {
+              "period_start": "2019-01-01",
+              "period_end": "2019-12-31",
+              "fiscal_period": "FY2019"
+            }
+          },
+          "unit": "RMB",
+          "responsibility_boundary": {
+            "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600839",
+            "perimeter_id": "PERIMETER:CN:600839:FY2019:LISTED_CONSOLIDATED",
+            "arena_id": "ARENA:CN:CONSUMER_ELECTRONICS:MULTI_PRODUCT_PORTFOLIO",
+            "scope_requirement": "Listed-consolidated issuer; no product-arena or ordinary-share promotion."
+          },
+          "status": "OBSERVED",
+          "field_id": "FIELD:600839:FY2019:GROUP_OCF_LEVEL",
+          "raw_value": 1565512587.09
+        }
+      ]
+    },
+    {
+      "measurement_id": "CELL:600839:FY2019:GROUP_OCF_TO_CAPEX",
+      "status": "OBSERVED",
+      "raw_field_observations": [
+        {
+          "source": {
+            "source_id": "CNINFO:600839:ANN:20200418:1207528466",
+            "source_url": "https://static.cninfo.com.cn/finalpage/2020-04-18/1207528466.PDF",
+            "report_period_end": "2019-12-31",
+            "official_source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+            "issuer_id": "ISSUER:CN:600839",
+            "responsibility_boundary": {
+              "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600839",
+              "perimeter_id": "PERIMETER:CN:600839:FY2019:LISTED_CONSOLIDATED",
+              "arena_id": "ARENA:CN:CONSUMER_ELECTRONICS:MULTI_PRODUCT_PORTFOLIO",
+              "scope_requirement": "Listed-consolidated issuer; no product-arena or ordinary-share promotion."
+            },
+            "availability_precision": "DATE_ONLY",
+            "source_available_date": "2020-04-18",
+            "pdf_page": 81,
+            "field_ref": "PDF p.81",
+            "field_identity": "FIELD:600839:FY2019:GROUP_OCF_TO_CAPEX",
+            "measurement_clock": {
+              "clock_kind": "FLOW_PERIOD",
+              "flow_period": {
+                "period_start": "2019-01-01",
+                "period_end": "2019-12-31",
+                "fiscal_period": "FY2019"
+              }
+            },
+            "unit": "RATIO",
+            "table_or_note": "consolidated cash-flow statement",
+            "line_item": "net operating cash divided by cash paid to acquire and construct long-lived assets",
+            "period_column": "FY2019",
+            "custodian_locator": {
+              "table_or_note": "Consolidated cash-flow statement",
+              "line_item": "Operating cash flow divided by cash paid to acquire long-lived assets",
+              "period_column": "FY2019"
+            }
+          },
+          "measurement_clock": {
+            "clock_kind": "FLOW_PERIOD",
+            "flow_period": {
+              "period_start": "2019-01-01",
+              "period_end": "2019-12-31",
+              "fiscal_period": "FY2019"
+            }
+          },
+          "unit": "RATIO",
+          "responsibility_boundary": {
+            "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600839",
+            "perimeter_id": "PERIMETER:CN:600839:FY2019:LISTED_CONSOLIDATED",
+            "arena_id": "ARENA:CN:CONSUMER_ELECTRONICS:MULTI_PRODUCT_PORTFOLIO",
+            "scope_requirement": "Listed-consolidated issuer; no product-arena or ordinary-share promotion."
+          },
+          "status": "OBSERVED",
+          "field_id": "FIELD:600839:FY2019:GROUP_OCF_TO_CAPEX",
+          "raw_value": 1.0291552904894683
+        }
+      ]
+    },
+    {
+      "measurement_id": "CELL:600839:FY2019:GROUP_ASSET_LIABILITY_RATIO",
+      "status": "OBSERVED",
+      "raw_field_observations": [
+        {
+          "source": {
+            "source_id": "CNINFO:600839:ANN:20200418:1207528466",
+            "source_url": "https://static.cninfo.com.cn/finalpage/2020-04-18/1207528466.PDF",
+            "report_period_end": "2019-12-31",
+            "official_source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+            "issuer_id": "ISSUER:CN:600839",
+            "responsibility_boundary": {
+              "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600839",
+              "perimeter_id": "PERIMETER:CN:600839:FY2019:LISTED_CONSOLIDATED",
+              "arena_id": "ARENA:CN:CONSUMER_ELECTRONICS:MULTI_PRODUCT_PORTFOLIO",
+              "scope_requirement": "Listed-consolidated issuer; no product-arena or ordinary-share promotion."
+            },
+            "availability_precision": "DATE_ONLY",
+            "source_available_date": "2020-04-18",
+            "pdf_page": 73,
+            "field_ref": "PDF p.73",
+            "field_identity": "FIELD:600839:FY2019:GROUP_ASSET_LIABILITY_RATIO",
+            "measurement_clock": {
+              "clock_kind": "BALANCE_AS_OF",
+              "balance_as_of": {
+                "as_of": "2019-12-31",
+                "fiscal_period": "FY2019"
+              }
+            },
+            "unit": "RATIO",
+            "table_or_note": "consolidated balance sheet",
+            "line_item": "total liabilities divided by total assets at 2019-12-31",
+            "period_column": "FY2019",
+            "custodian_locator": {
+              "table_or_note": "Consolidated balance sheet",
+              "line_item": "Total liabilities divided by total assets",
+              "period_column": "2019-12-31"
+            }
+          },
+          "measurement_clock": {
+            "clock_kind": "BALANCE_AS_OF",
+            "balance_as_of": {
+              "as_of": "2019-12-31",
+              "fiscal_period": "FY2019"
+            }
+          },
+          "unit": "RATIO",
+          "responsibility_boundary": {
+            "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600839",
+            "perimeter_id": "PERIMETER:CN:600839:FY2019:LISTED_CONSOLIDATED",
+            "arena_id": "ARENA:CN:CONSUMER_ELECTRONICS:MULTI_PRODUCT_PORTFOLIO",
+            "scope_requirement": "Listed-consolidated issuer; no product-arena or ordinary-share promotion."
+          },
+          "status": "OBSERVED",
+          "field_id": "FIELD:600839:FY2019:GROUP_ASSET_LIABILITY_RATIO",
+          "raw_value": 0.714342516867298
+        }
+      ]
+    },
+    {
+      "measurement_id": "CELL:600839:FY2019:WHITE_GOODS_ACTION_EVENT",
+      "status": "OBSERVED",
+      "raw_field_observations": [
+        {
+          "source": {
+            "source_id": "CNINFO:600839:ANN:20200418:1207528466",
+            "source_url": "https://static.cninfo.com.cn/finalpage/2020-04-18/1207528466.PDF",
+            "report_period_end": "2019-12-31",
+            "official_source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+            "issuer_id": "ISSUER:CN:600839",
+            "responsibility_boundary": {
+              "responsibility_unit_id": "PRODUCT_ARENA:CN:600839:WHITE_GOODS",
+              "perimeter_id": "PERIMETER:CN:600839:FY2019:AIR_CONDITIONER_AND_REFRIGERATOR",
+              "arena_id": "ARENA:CN:APPLIANCE:WHITE_GOODS",
+              "scope_requirement": "Air-conditioner and refrigerator product arena only; exact same product row required."
+            },
+            "availability_precision": "DATE_ONLY",
+            "source_available_date": "2020-04-18",
+            "pdf_page": 12,
+            "field_ref": "PDF p.12",
+            "field_identity": "FIELD:600839:FY2019:WHITE_GOODS_ACTION_EVENT",
+            "measurement_clock": {
+              "clock_kind": "EVENT_WINDOW",
+              "event_window": {
+                "event_start": "2019-01-01",
+                "event_end": "2019-12-31",
+                "window_name": "FY2019_STRICT_POST_CUTOFF_EVENT_WINDOW"
+              }
+            },
+            "unit": "BOOLEAN_EVENT",
+            "table_or_note": "FY2019 management discussion",
+            "line_item": "explicit FY2019 implemented air-conditioner or refrigerator product, channel or organization action",
+            "period_column": "2019-01-01..2019-12-31",
+            "custodian_locator": {
+              "table_or_note": "FY2019 management discussion",
+              "line_item": "The smart-white-goods industrial park reached full production during FY2019.",
+              "period_column": "FY2019"
+            }
+          },
+          "measurement_clock": {
+            "clock_kind": "EVENT_WINDOW",
+            "event_window": {
+              "event_start": "2019-01-01",
+              "event_end": "2019-12-31",
+              "window_name": "FY2019_STRICT_POST_CUTOFF_EVENT_WINDOW"
+            }
+          },
+          "unit": "BOOLEAN_EVENT",
+          "responsibility_boundary": {
+            "responsibility_unit_id": "PRODUCT_ARENA:CN:600839:WHITE_GOODS",
+            "perimeter_id": "PERIMETER:CN:600839:FY2019:AIR_CONDITIONER_AND_REFRIGERATOR",
+            "arena_id": "ARENA:CN:APPLIANCE:WHITE_GOODS",
+            "scope_requirement": "Air-conditioner and refrigerator product arena only; exact same product row required."
+          },
+          "status": "OBSERVED",
+          "field_id": "FIELD:600839:FY2019:WHITE_GOODS_ACTION_EVENT",
+          "raw_value": true
+        }
+      ]
+    },
+    {
+      "measurement_id": "CELL:600839:FY2019:PORTFOLIO_SCOPE_EVENT",
+      "status": "OBSERVED",
+      "raw_field_observations": [
+        {
+          "source": {
+            "source_id": "CNINFO:600839:ANN:20200418:1207528466",
+            "source_url": "https://static.cninfo.com.cn/finalpage/2020-04-18/1207528466.PDF",
+            "report_period_end": "2019-12-31",
+            "official_source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+            "issuer_id": "ISSUER:CN:600839",
+            "responsibility_boundary": {
+              "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600839",
+              "perimeter_id": "PERIMETER:CN:600839:FY2019:LISTED_CONSOLIDATED",
+              "arena_id": "ARENA:CN:CONSUMER_ELECTRONICS:MULTI_PRODUCT_PORTFOLIO",
+              "scope_requirement": "Listed-consolidated issuer; no product-arena or ordinary-share promotion."
+            },
+            "availability_precision": "DATE_ONLY",
+            "source_available_date": "2020-04-18",
+            "pdf_page": 207,
+            "field_ref": "PDF p.207",
+            "field_identity": "FIELD:600839:FY2019:PORTFOLIO_SCOPE_EVENT",
+            "measurement_clock": {
+              "clock_kind": "EVENT_WINDOW",
+              "event_window": {
+                "event_start": "2019-01-01",
+                "event_end": "2019-12-31",
+                "window_name": "FY2019_STRICT_POST_CUTOFF_EVENT_WINDOW"
+              }
+            },
+            "unit": "BOOLEAN_EVENT",
+            "table_or_note": "FY2019 scope, acquisition, disposal and non-operating review",
+            "line_item": "explicit FY2019 acquisition, disposal or reorganization materially affecting consolidated or white-goods scope",
+            "period_column": "2019-01-01..2019-12-31",
+            "custodian_locator": {
+              "table_or_note": "Consolidation-scope change note",
+              "line_item": "The issuer transferred its 70.6835% New Energy stake and ceased consolidation at 2019-12-31.",
+              "period_column": "FY2019"
+            }
+          },
+          "measurement_clock": {
+            "clock_kind": "EVENT_WINDOW",
+            "event_window": {
+              "event_start": "2019-01-01",
+              "event_end": "2019-12-31",
+              "window_name": "FY2019_STRICT_POST_CUTOFF_EVENT_WINDOW"
+            }
+          },
+          "unit": "BOOLEAN_EVENT",
+          "responsibility_boundary": {
+            "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600839",
+            "perimeter_id": "PERIMETER:CN:600839:FY2019:LISTED_CONSOLIDATED",
+            "arena_id": "ARENA:CN:CONSUMER_ELECTRONICS:MULTI_PRODUCT_PORTFOLIO",
+            "scope_requirement": "Listed-consolidated issuer; no product-arena or ordinary-share promotion."
+          },
+          "status": "OBSERVED",
+          "field_id": "FIELD:600839:FY2019:PORTFOLIO_SCOPE_EVENT",
+          "raw_value": true
+        }
+      ]
+    },
+    {
+      "measurement_id": "CELL:600839:FY2019:OWNER_CASH_BRIDGE_EVENT",
+      "status": "UNKNOWN",
+      "raw_field_observations": [
+        {
+          "reason": "AUTHORIZED_FY2019_REPORT_DISCLOSES_GROUP_CASH_CAPEX_LEVERAGE_AND_DIVIDEND_BUT_NO_EXPLICIT_BRIDGE_THROUGH_REQUIRED_CAPITAL_AND_PRIORITY_CLAIMS_TO_RESIDUAL_ORDINARY_SHARE_CASH",
+          "measurement_clock": {
+            "clock_kind": "EVENT_WINDOW",
+            "event_window": {
+              "event_start": "2019-01-01",
+              "event_end": "2019-12-31",
+              "window_name": "FY2019_STRICT_POST_CUTOFF_EVENT_WINDOW"
+            }
+          },
+          "unit": "BOOLEAN_EVENT",
+          "responsibility_boundary": {
+            "responsibility_unit_id": "ORDINARY_SHARE_CASH:CN:600839",
+            "perimeter_id": "PERIMETER:CN:600839:FY2019:ORDINARY_COMMON_CASH_ACCESS",
+            "arena_id": "ARENA:CN:600839:ORDINARY_SHARE_CLAIM",
+            "scope_requirement": "Residual ordinary-share cash after required capital and priority claims; group OCF is insufficient."
+          },
+          "status": "UNKNOWN",
+          "sources_considered": [
+            {
+              "source_id": "CNINFO:600839:ANN:20200418:1207528466",
+              "source_url": "https://static.cninfo.com.cn/finalpage/2020-04-18/1207528466.PDF",
+              "report_period_end": "2019-12-31",
+              "official_source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+              "issuer_id": "ISSUER:CN:600839",
+              "responsibility_boundary": "ORDINARY_SHARE_CASH:CN:600839",
+              "availability_precision": "DATE_ONLY",
+              "source_available_date": "2020-04-18",
+              "field_ref": "PDF pp.23-24, 73-74 and 80-82"
+            }
+          ],
+          "field_id": "FIELD:600839:FY2019:OWNER_CASH_BRIDGE_EVENT"
+        }
+      ],
+      "reason": "ONE_OR_MORE_RAW_FIELDS_REMAIN_UNKNOWN"
+    }
+  ],
+  "contract_kind": "ENTERPRISE_V3",
+  "authorization_receipt_id": "OUTCOME-AUTH:R9:CN600839:FY2019:V1"
+}

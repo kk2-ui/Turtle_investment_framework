@@ -12,6 +12,7 @@ from __future__ import annotations
 
 import argparse
 from copy import deepcopy
+from decimal import Decimal
 import json
 from pathlib import Path
 from typing import Any
@@ -19,13 +20,23 @@ from typing import Any
 try:
     from scripts import enterprise_judgment_episode as episode_module
     from scripts import enterprise_judgment_multidimensional_training as multidimensional
+    from scripts import enterprise_judgment_real_mechanism_training as mechanism_training
+    from scripts import enterprise_judgment_reconstruction as reconstruction
     from scripts import enterprise_judgment_source_packet as source_packet_module
+    from scripts import enterprise_judgment_training_control_plane as enterprise_control
     from scripts import judgment_decision_utility as decision_utility
+    from scripts import outcome_measurement_acquisition as measurement_acquisition
+    from scripts import outcome_measurement_settlement_adapter as settlement_adapter
 except ModuleNotFoundError:  # pragma: no cover - direct script import
     import enterprise_judgment_episode as episode_module
     import enterprise_judgment_multidimensional_training as multidimensional
+    import enterprise_judgment_real_mechanism_training as mechanism_training
+    import enterprise_judgment_reconstruction as reconstruction
     import enterprise_judgment_source_packet as source_packet_module
+    import enterprise_judgment_training_control_plane as enterprise_control
     import judgment_decision_utility as decision_utility
+    import outcome_measurement_acquisition as measurement_acquisition
+    import outcome_measurement_settlement_adapter as settlement_adapter
 
 
 COMPANY_ID = "CN:600839"
@@ -44,6 +55,12 @@ UNRESOLVED_SOURCE_ID = "UNRESOLVED:CNINFO:600839:FY2019:ORIGINAL_ANNUAL_REPORT"
 UNRESOLVED_SOURCE_URL = (
     "https://static.cninfo.com.cn/finalpage/POST_FREEZE_RESOLUTION_REQUIRED.PDF"
 )
+OUTCOME_SOURCE_ID = "CNINFO:600839:ANN:20200418:1207528466"
+OUTCOME_SOURCE_URL = "https://static.cninfo.com.cn/finalpage/2020-04-18/1207528466.PDF"
+OUTCOME_SOURCE_AVAILABLE_DATE = "2020-04-18"
+OUTCOME_SETTLEMENT_ID = "R9SETTLE:CN600839:20180930:FY2019:V1"
+METHOD_CONCLUSION = "ROUND9_METHOD_COMPARISON_INVALID_MODEL_ERROR"
+NEXT_METHOD_EPOCH_ID = "METHOD-EPOCH:ENTERPRISE-JUDGMENT:EIGHT-DIMENSION:V2"
 RIGHTS = deepcopy(multidimensional.PREOUTCOME_RIGHTS)
 DIMENSIONS = list(decision_utility.DIMENSIONS)
 
@@ -1531,6 +1548,22 @@ def build_method_resolution_receipt(
     settlement: Any, *, resolved_at: str,
 ) -> dict[str, Any]:
     settlement_ref, frozen_labels = _labels_from_settlement(settlement)
+    frozen_outputs = resolve_method_outputs(frozen_labels)
+    action_output = frozen_outputs["enhanced"]["dimension_outputs"][
+        "IMPLEMENTED_MANAGEMENT_ACTION"
+    ]
+    model_errors = []
+    if not isinstance(action_output, str):
+        model_errors.append({
+            "error_id": "R9MODEL:NON_SCALAR_IMPLEMENTED_ACTION",
+            "field_path": "enhanced.dimension_outputs.IMPLEMENTED_MANAGEMENT_ACTION",
+            "expected_type": "str",
+            "actual_type": type(action_output).__name__,
+            "root_cause": "MODEL",
+            "economic_impact": (
+                "The frozen post-settlement resolver cannot support a valid blind method comparison."
+            ),
+        })
     return {
         "schema_version": "enterprise-judgment-round9-method-resolution-receipt.v1",
         "resolution_id": "METHOD-RESOLUTION-RECEIPT:R9:CN600839:FY2019:V1",
@@ -1538,11 +1571,19 @@ def build_method_resolution_receipt(
         "settlement_ref": settlement_ref,
         "resolved_at": resolved_at,
         "input_labels": {cell_id: frozen_labels[cell_id] for cell_id in CELL.values()},
-        "resolved_outputs": resolve_method_outputs(frozen_labels),
+        "resolution_status": "MODEL_ERROR" if model_errors else "RESOLVED",
+        "model_errors": model_errors,
+        "resolved_outputs": None if model_errors else frozen_outputs,
         "rights": deepcopy(RIGHTS),
         "object_class": "METHOD_RESOLUTION_RECEIPT",
-        "claim_class": "MECHANICAL_REPLAY_FROM_FROZEN_SETTLEMENT_LABELS",
-        "allowed_outputs": ["DECISION_UTILITY_EVALUATION_ONLY", "RESEARCH_AGENDA"],
+        "claim_class": (
+            "FROZEN_RESOLVER_MODEL_ERROR"
+            if model_errors else "MECHANICAL_REPLAY_FROM_FROZEN_SETTLEMENT_LABELS"
+        ),
+        "allowed_outputs": (
+            ["METHOD_FEEDBACK_INVALIDATION", "NEW_METHOD_EPOCH", "RESEARCH_AGENDA"]
+            if model_errors else ["DECISION_UTILITY_EVALUATION_ONLY", "RESEARCH_AGENDA"]
+        ),
     }
 
 
@@ -1561,6 +1602,728 @@ def validate_method_resolution_receipt(receipt: Any, *, canonical_settlement: An
     if not item.get("resolved_at"):
         findings.append("method_resolution_receipt_time_missing")
     return {"valid": not findings, "findings": findings}
+
+
+def build_source_binding_receipt() -> dict[str, Any]:
+    return {
+        "schema_version": "enterprise-judgment-round9-source-binding-receipt.v1",
+        "binding_id": "SOURCE-BINDING:R9:CN600839:FY2019:V1",
+        "policy_ref": build_source_resolution_policy()["policy_id"],
+        "preoutcome_freeze_ref": "R9FREEZE:CN600839:20180930:V1",
+        "preoutcome_commit": "f147c8961a2508fb1945abf16308766aa50a5f6b",
+        "resolved_after_preoutcome_commit": True,
+        "bounded_query": {
+            "provider": "CNINFO",
+            "org_id": "gssh0600839",
+            "security_code": "600839",
+            "announcement_window": {"start": "2020-01-01", "end": "2020-06-30"},
+            "result_count": 2,
+        },
+        "selected_source": {
+            "title": "2019年年度报告",
+            "announcement_date": OUTCOME_SOURCE_AVAILABLE_DATE,
+            "announcement_id": "1207528466",
+            "source_id": OUTCOME_SOURCE_ID,
+            "official_url": OUTCOME_SOURCE_URL,
+            "selection_reason": "EARLIEST_ORIGINAL_FULL_FY2019_ANNUAL_REPORT_STATIC_FINALPAGE_PDF",
+        },
+        "excluded_results": [{
+            "title": "2019年年度报告摘要",
+            "exclusion_reason": "SUMMARY_EXCLUDED_BY_FROZEN_POLICY",
+        }],
+        "content_read_during_identity_resolution": False,
+        "allowed_contract_substitutions": [
+            "source_access.source_id",
+            "source_access.official_url",
+            "source_access.source_available_date",
+        ],
+        "prohibited_changes": [
+            "atomic_cells", "measurement_clocks", "responsibility_boundaries",
+            "formulas", "label_rules", "method_resolution_rules",
+        ],
+        "object_class": "OUTCOME_SOURCE_BINDING_RECEIPT",
+        "claim_class": "POST_FREEZE_DETERMINISTIC_SOURCE_IDENTITY_ONLY",
+        "allowed_outputs": ["SOURCE_BOUND_MEASUREMENT_CONTRACT", "OUTCOME_ACCESS_AUTHORIZATION"],
+    }
+
+
+def build_source_bound_measurement_contract() -> dict[str, Any]:
+    contract = build_measurement_contract()
+    contract["source_access"].update({
+        "source_id": OUTCOME_SOURCE_ID,
+        "official_url": OUTCOME_SOURCE_URL,
+        "source_available_at": None,
+        "source_available_date": OUTCOME_SOURCE_AVAILABLE_DATE,
+    })
+    return contract
+
+
+def validate_source_bound_measurement_contract(contract: Any) -> dict[str, Any]:
+    item = contract if isinstance(contract, dict) else {}
+    findings: list[str] = []
+    if item != build_source_bound_measurement_contract():
+        findings.append("source_bound_measurement_contract_must_equal_deterministic_binding")
+        return {"valid": False, "findings": findings}
+    preoutcome = build_measurement_contract()
+    restored = deepcopy(item)
+    restored["source_access"] = deepcopy(preoutcome["source_access"])
+    if restored != preoutcome:
+        findings.append("source_binding_changed_frozen_measurement_logic")
+    validation = mechanism_training.validate_outcome_measurement_contract(item)
+    findings.extend("source_bound_contract:" + finding for finding in validation["findings"])
+    return {"valid": not findings, "findings": findings}
+
+
+def build_outcome_authorization(
+    package: dict[str, Any], contract: dict[str, Any],
+) -> dict[str, Any]:
+    source = contract["source_access"]
+    return {
+        "schema_version": measurement_acquisition.ENTERPRISE_AUTHORIZATION_SCHEMA_VERSION,
+        "authorization_receipt_id": source["authorization_receipt_id"],
+        "measurement_contract_ref": {
+            "measurement_contract_id": contract["contract_set_id"],
+            "measurement_contract_version": 3,
+        },
+        "company_id": contract["company_id"],
+        "custodian_id": package["roles"]["outcome_custodian_id"],
+        "source_id": source["source_id"],
+        "authorized": True,
+        "content_read": True,
+    }
+
+
+def build_source_inventory(
+    package: dict[str, Any], contract: dict[str, Any], *, local_pdf_path: Path,
+    registered_at: str,
+) -> dict[str, Any]:
+    source = contract["source_access"]
+    authorization = build_outcome_authorization(package, contract)
+    return {
+        "schema_version": measurement_acquisition.INVENTORY_SCHEMA_VERSION,
+        "inventory_id": "OMINV:CN600839:FY2019:R9:V1",
+        "measurement_contract_ref": deepcopy(authorization["measurement_contract_ref"]),
+        "custodian_id": authorization["custodian_id"],
+        "registered_at": registered_at,
+        "documents": [{
+            "source_id": source["source_id"],
+            "source_url": source["official_url"],
+            "local_pdf_path": str(local_pdf_path),
+            "issuer_id": source["issuer_id"],
+            "responsibility_boundary": "ISSUER_FILING:CN:600839:FY2019:MULTI_TYPED_BOUNDARIES",
+            "report_period_end": source["report_period_end"],
+            "official_source_type": source["source_type"],
+            "report_scope": "ISSUER_FILING",
+            "currency": "RMB",
+            "revision_policy": "ORIGINAL_VINTAGE",
+            "consolidation_or_restatement_note": (
+                "Original FY2019 annual-report vintage. The issuer disposed of Sichuan Changhong New Energy "
+                "at year-end and added newly established entities; the scope event is observed separately and "
+                "does not rewrite the frozen product or issuer fields."
+            ),
+            "availability_precision": source["availability_precision"],
+            "source_available_at": source["source_available_at"],
+            "source_available_date": source["source_available_date"],
+        }],
+        "object_class": measurement_acquisition.INVENTORY_OBJECT_CLASS,
+        "claim_class": measurement_acquisition.INVENTORY_CLAIM_CLASS,
+        "allowed_outputs": ["ENTERPRISE_OUTCOME_ACQUISITION_ONLY"],
+    }
+
+
+def _field_record_base(cell: dict[str, Any], raw_field: dict[str, Any]) -> dict[str, Any]:
+    return {
+        "cell_id": cell["cell_id"],
+        "field_id": raw_field["field_id"],
+        "measurement_clock": deepcopy(raw_field["measurement_clock"]),
+        "responsibility_boundary": deepcopy(cell["responsibility_boundary"]),
+        "unit": raw_field["unit"],
+    }
+
+
+def _field_source(
+    *, cell: dict[str, Any], raw_field: dict[str, Any], page: int,
+    custodian_table: str, custodian_line: str, custodian_period: str,
+) -> dict[str, Any]:
+    locator = raw_field["locator"]
+    return {
+        "source_id": OUTCOME_SOURCE_ID,
+        "source_url": OUTCOME_SOURCE_URL,
+        "report_period_end": "2019-12-31",
+        "official_source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+        "issuer_id": ISSUER_ID,
+        "responsibility_boundary": deepcopy(cell["responsibility_boundary"]),
+        "availability_precision": "DATE_ONLY",
+        "source_available_date": OUTCOME_SOURCE_AVAILABLE_DATE,
+        "pdf_page": page,
+        "field_ref": f"PDF p.{page}",
+        "field_identity": raw_field["field_id"],
+        "measurement_clock": deepcopy(raw_field["measurement_clock"]),
+        "unit": raw_field["unit"],
+        "table_or_note": locator["table_or_note"],
+        "line_item": locator["line_item"],
+        "period_column": locator["period_column"],
+        "custodian_locator": {
+            "table_or_note": custodian_table,
+            "line_item": custodian_line,
+            "period_column": custodian_period,
+        },
+    }
+
+
+def _ratio(numerator: str, denominator: str) -> float:
+    return float(Decimal(numerator) / Decimal(denominator))
+
+
+def build_custodian_field_records(contract: dict[str, Any]) -> list[dict[str, Any]]:
+    observed: dict[str, tuple[bool | float, int, str, str, str]] = {
+        "FIELD:600839:FY2019:INDUSTRY_CONTEXT_EVENT": (
+            True, 8, "Industry development review",
+            "Refrigerator average prices declined while air-conditioner overcapacity drove price promotion.",
+            "FY2019",
+        ),
+        "FIELD:600839:FY2019:GROUP_REVENUE_LEVEL": (
+            88_792_895_883.36, 77, "Consolidated income statement", "Operating revenue", "FY2019",
+        ),
+        "FIELD:600839:FY2019:WHITE_GOODS_REVENUE_LEVEL": (
+            14_008_069_937.89, 14, "Principal business by product", "Air-conditioner and refrigerator revenue", "FY2019",
+        ),
+        "FIELD:600839:FY2019:WHITE_GOODS_GROSS_MARGIN": (
+            _ratio("14008069937.89", "14008069937.89")
+            - _ratio("10875926873.34", "14008069937.89"),
+            14, "Principal business by product",
+            "(RMB14,008,069,937.89 revenue less RMB10,875,926,873.34 cost) divided by revenue",
+            "FY2019",
+        ),
+        "FIELD:600839:FY2019:WHITE_GOODS_REVENUE_SHARE": (
+            _ratio("14008069937.89", "88792895883.36"), 14,
+            "Principal business by product plus consolidated income statement",
+            "White-goods revenue divided by consolidated operating revenue", "FY2019",
+        ),
+        "FIELD:600839:FY2019:GROUP_OCF_LEVEL": (
+            1_565_512_587.09, 81, "Consolidated cash-flow statement",
+            "Net cash flows from operating activities", "FY2019",
+        ),
+        "FIELD:600839:FY2019:GROUP_OCF_TO_CAPEX": (
+            _ratio("1565512587.09", "1521162648.20"), 81,
+            "Consolidated cash-flow statement",
+            "Operating cash flow divided by cash paid to acquire long-lived assets", "FY2019",
+        ),
+        "FIELD:600839:FY2019:GROUP_ASSET_LIABILITY_RATIO": (
+            _ratio("52853641256.70", "73989213869.68"), 73,
+            "Consolidated balance sheet", "Total liabilities divided by total assets", "2019-12-31",
+        ),
+        "FIELD:600839:FY2019:WHITE_GOODS_ACTION_EVENT": (
+            True, 12, "FY2019 management discussion",
+            "The smart-white-goods industrial park reached full production during FY2019.", "FY2019",
+        ),
+        "FIELD:600839:FY2019:PORTFOLIO_SCOPE_EVENT": (
+            True, 207, "Consolidation-scope change note",
+            "The issuer transferred its 70.6835% New Energy stake and ceased consolidation at 2019-12-31.",
+            "FY2019",
+        ),
+    }
+    considered_source = {
+        "source_id": OUTCOME_SOURCE_ID,
+        "source_url": OUTCOME_SOURCE_URL,
+        "report_period_end": "2019-12-31",
+        "official_source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+        "issuer_id": ISSUER_ID,
+        "responsibility_boundary": "ORDINARY_SHARE_CASH:CN:600839",
+        "availability_precision": "DATE_ONLY",
+        "source_available_date": OUTCOME_SOURCE_AVAILABLE_DATE,
+        "field_ref": "PDF pp.23-24, 73-74 and 80-82",
+    }
+    records: list[dict[str, Any]] = []
+    for cell in contract["atomic_cells"]:
+        for raw_field in cell["raw_input_fields"]:
+            field_id = raw_field["field_id"]
+            base = _field_record_base(cell, raw_field)
+            if field_id in observed:
+                value, page, table, line, period = observed[field_id]
+                records.append({
+                    **base,
+                    "status": "OBSERVED",
+                    "raw_value": value,
+                    "source": _field_source(
+                        cell=cell, raw_field=raw_field, page=page,
+                        custodian_table=table, custodian_line=line, custodian_period=period,
+                    ),
+                })
+            else:
+                records.append({
+                    **base,
+                    "status": "UNKNOWN",
+                    "reason": (
+                        "AUTHORIZED_FY2019_REPORT_DISCLOSES_GROUP_CASH_CAPEX_LEVERAGE_AND_DIVIDEND_BUT_NO_"
+                        "EXPLICIT_BRIDGE_THROUGH_REQUIRED_CAPITAL_AND_PRIORITY_CLAIMS_TO_RESIDUAL_ORDINARY_SHARE_CASH"
+                    ),
+                    "sources_considered": [deepcopy(considered_source)],
+                })
+    return records
+
+
+PAGE_VALUE_BINDINGS: dict[str, dict[str, Any]] = {
+    "FIELD:600839:FY2019:INDUSTRY_CONTEXT_EVENT": {
+        "pdf_page": 8,
+        "anchor_tokens": ["冰箱产品市场均价下行", "空调产品行业产能过剩"],
+        "value_expression": {"operator": "BOOLEAN_TOKEN_PRESENCE", "tokens": ["通过降价促销来拉动市场需求"]},
+    },
+    "FIELD:600839:FY2019:GROUP_REVENUE_LEVEL": {
+        "pdf_page": 77, "anchor_tokens": ["合并利润表", "88,792,895,883.36"],
+        "value_expression": {"operator": "SCALED_TOKEN", "tokens": ["88,792,895,883.36"], "multiplier": "1"},
+    },
+    "FIELD:600839:FY2019:WHITE_GOODS_REVENUE_LEVEL": {
+        "pdf_page": 14,
+        "anchor_tokens": ["空调冰箱", "14,008,069,937.89", "-6.70"],
+        "value_expression": {"operator": "SCALED_TOKEN", "tokens": ["14,008,069,937.89"], "multiplier": "1"},
+    },
+    "FIELD:600839:FY2019:WHITE_GOODS_GROSS_MARGIN": {
+        "pdf_page": 14, "anchor_tokens": ["空调冰箱", "22.36", "0.17"],
+        "value_expression": {
+            "operator": "GROSS_MARGIN_TOKENS", "tokens": ["14,008,069,937.89", "10,875,926,873.34"], "multiplier": "1",
+        },
+    },
+    "FIELD:600839:FY2019:WHITE_GOODS_REVENUE_SHARE": {
+        "pdf_page": 14, "supporting_pdf_pages": [77],
+        "anchor_tokens": ["空调冰箱", "合并利润表"],
+        "value_expression": {
+            "operator": "RATIO_TOKENS", "tokens": ["14,008,069,937.89", "88,792,895,883.36"], "multiplier": "1",
+        },
+    },
+    "FIELD:600839:FY2019:GROUP_OCF_LEVEL": {
+        "pdf_page": 81,
+        "anchor_tokens": [
+            "经营活动产生的现金流", "量净额", "1,565,512,587.09", "4,424,454,303.24",
+        ],
+        "value_expression": {"operator": "SCALED_TOKEN", "tokens": ["1,565,512,587.09"], "multiplier": "1"},
+    },
+    "FIELD:600839:FY2019:GROUP_OCF_TO_CAPEX": {
+        "pdf_page": 81, "supporting_pdf_pages": [82],
+        "anchor_tokens": ["经营活动产生的现金流", "购建固定资产、无形资产和其", "他长期资产支付的现金"],
+        "value_expression": {
+            "operator": "RATIO_TOKENS", "tokens": ["1,565,512,587.09", "1,521,162,648.20"], "multiplier": "1",
+        },
+    },
+    "FIELD:600839:FY2019:GROUP_ASSET_LIABILITY_RATIO": {
+        "pdf_page": 73, "supporting_pdf_pages": [74],
+        "anchor_tokens": ["资产总计", "负债合计"],
+        "value_expression": {
+            "operator": "RATIO_TOKENS", "tokens": ["52,853,641,256.70", "73,989,213,869.68"], "multiplier": "1",
+        },
+    },
+    "FIELD:600839:FY2019:WHITE_GOODS_ACTION_EVENT": {
+        "pdf_page": 12,
+        "anchor_tokens": ["以智能白电及特种业务为核心的经开区工业园", "已实现全面投产"],
+        "value_expression": {"operator": "BOOLEAN_TOKEN_PRESENCE", "tokens": ["智能白电", "全面投产"]},
+    },
+    "FIELD:600839:FY2019:PORTFOLIO_SCOPE_EVENT": {
+        "pdf_page": 207,
+        "anchor_tokens": ["四川长虹新能源科技股份有限公司", "不再将长虹新能源公司纳入合并"],
+        "value_expression": {"operator": "BOOLEAN_TOKEN_PRESENCE", "tokens": ["本公司不再持有长虹新能源公司股权"]},
+    },
+}
+
+
+def build_page_extraction_receipts(field_records: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    receipts: list[dict[str, Any]] = []
+    for record in field_records:
+        if record.get("status") != "OBSERVED":
+            continue
+        field_id = record["field_id"]
+        binding = PAGE_VALUE_BINDINGS.get(field_id)
+        if binding is None:
+            raise ValueError(f"round9 observed field lacks page-value binding: {field_id}")
+        receipt = {
+            "schema_version": measurement_acquisition.PAGE_EXTRACTION_RECEIPT_SCHEMA_VERSION,
+            "receipt_id": f"PAGEEXTRACT:R9:{field_id}",
+            "field_id": field_id,
+            "source_id": record["source"]["source_id"],
+            "pdf_page": binding["pdf_page"],
+            "unit": record["unit"],
+            "anchor_tokens": deepcopy(binding["anchor_tokens"]),
+            "value_expression": deepcopy(binding["value_expression"]),
+            "object_class": "ENTERPRISE_PAGE_EXTRACTION_RECEIPT",
+            "claim_class": "PDF_PAGE_VALUE_BINDING_ONLY",
+        }
+        if binding.get("supporting_pdf_pages"):
+            receipt["supporting_pdf_pages"] = deepcopy(binding["supporting_pdf_pages"])
+        receipts.append(receipt)
+    return receipts
+
+
+def settle_custodian_field_records(
+    package: dict[str, Any], contract: dict[str, Any], field_records: list[dict[str, Any]], *,
+    page_extraction_receipts: list[dict[str, Any]], local_pdf_path: Path,
+    registry_db: Path, registered_at: str, observed_at: str, settled_at: str,
+) -> dict[str, Any]:
+    source_validation = validate_source_bound_measurement_contract(contract)
+    if not source_validation["valid"]:
+        raise ValueError("round9 source-bound contract invalid: " + "; ".join(source_validation["findings"]))
+    authorization = build_outcome_authorization(package, contract)
+    authorization_validation = measurement_acquisition.validate_enterprise_outcome_access_authorization(
+        authorization, measurement_contract=contract,
+    )
+    if not authorization_validation["valid"]:
+        raise ValueError("round9 outcome authorization invalid: " + "; ".join(authorization_validation["findings"]))
+    inventory = build_source_inventory(
+        package, contract, local_pdf_path=local_pdf_path, registered_at=registered_at,
+    )
+    inventory_validation = measurement_acquisition.validate_registered_local_pdf_inventory(
+        inventory, measurement_contract=contract, outcome_access_authorization=authorization,
+    )
+    if not inventory_validation["valid"]:
+        raise ValueError("round9 source inventory invalid: " + "; ".join(inventory_validation["findings"]))
+    page_validation = measurement_acquisition.validate_page_bound_enterprise_field_records(
+        field_records, page_extraction_receipts,
+        measurement_contract=contract, inventory=inventory,
+    )
+    if not page_validation["valid"]:
+        raise ValueError("round9 page extraction receipts invalid: " + "; ".join(page_validation["findings"]))
+    acquisition_result = measurement_acquisition.acquire_outcome_measurements_from_field_records(
+        contract, inventory, field_records, outcome_access_authorization=authorization,
+    )
+    previous_registry = reconstruction.CANONICAL_REGISTRY_PATH
+    reconstruction.CANONICAL_REGISTRY_PATH = registry_db
+    try:
+        enterprise_control.register_measurement_contract(
+            contract, frozen_at=contract["contract_frozen_at"],
+        )
+        settlement = settlement_adapter.settle_enterprise_acquisition_result(
+            measurement_contract=contract,
+            outcome_access_authorization=authorization,
+            acquisition_result=acquisition_result,
+            observed_at=observed_at,
+            settlement_id=OUTCOME_SETTLEMENT_ID,
+            settled_at=settled_at,
+        )
+        settlement.pop("persisted", None)
+        settlement.pop("idempotent", None)
+        replayed = enterprise_control.replay_enterprise_settlement(OUTCOME_SETTLEMENT_ID)
+    finally:
+        reconstruction.CANONICAL_REGISTRY_PATH = previous_registry
+    if replayed != settlement:
+        raise ValueError("round9 settlement differs from canonical replay")
+    return {
+        "source_binding_receipt": build_source_binding_receipt(),
+        "source_bound_measurement_contract": deepcopy(contract),
+        "authorization": authorization,
+        "inventory": inventory,
+        "field_records": deepcopy(field_records),
+        "page_extraction_receipts": deepcopy(page_extraction_receipts),
+        "acquisition_result": acquisition_result,
+        "settlement": settlement,
+    }
+
+
+def _canonical_round9_settlement(
+    settlement: dict[str, Any], *, registry_db: Path,
+) -> dict[str, Any]:
+    previous_registry = reconstruction.CANONICAL_REGISTRY_PATH
+    reconstruction.CANONICAL_REGISTRY_PATH = registry_db
+    try:
+        canonical = enterprise_control.replay_enterprise_settlement(settlement["settlement_id"])
+    finally:
+        reconstruction.CANONICAL_REGISTRY_PATH = previous_registry
+    if canonical != settlement:
+        raise ValueError("round9 settlement differs from canonical replay")
+    return canonical
+
+
+def build_method_feedback_invalidation(method_receipt: dict[str, Any]) -> dict[str, Any]:
+    if method_receipt.get("resolution_status") != "MODEL_ERROR":
+        raise ValueError("round9 invalidation requires frozen resolver MODEL_ERROR")
+    return {
+        "schema_version": "enterprise-judgment-method-feedback-invalidation.v1",
+        "invalidation_id": "METHOD-INVALIDATION:R9:CN600839:FY2019:V1",
+        "method_resolution_ref": method_receipt["resolution_id"],
+        "status": "METHOD_COMPARISON_INVALID_MODEL_ERROR",
+        "root_causes": ["MODEL"],
+        "economic_impact": (
+            "Round 9 cannot establish whether the simple Baseline or the eight-dimensional method "
+            "would have produced the better investment treatment under an unchanged blind resolver."
+        ),
+        "preserved_scope": [
+            "OUTCOME_SOURCE_BINDING",
+            "FIELD_LEVEL_ACQUISITION",
+            "CANONICAL_OUTCOME_SETTLEMENT",
+            "INVESTOR_FACT_READOUT",
+        ],
+        "prohibited_claims": [
+            "METHOD_FEEDBACK_COMPLETED",
+            "NO_MATERIAL_METHOD_ADVANTAGE_PROVED",
+            "AVOIDED_ERROR",
+            "MATERIAL_IMPROVEMENT",
+            "METHOD_TRANSFER",
+        ],
+        "remediation": (
+            "Freeze a corrected scalar resolver and unique treatment-delta accounting in a new method "
+            "epoch, then test it only on a different unseen company-cutoff."
+        ),
+        "rights": deepcopy(RIGHTS),
+        "object_class": "METHOD_FEEDBACK_INVALIDATION",
+        "claim_class": "POST_OUTCOME_MODEL_ERROR_BOUNDARY",
+        "allowed_outputs": ["OUTCOME_SETTLED_CLOSEOUT", "NEW_METHOD_EPOCH", "RESEARCH_AGENDA"],
+    }
+
+
+def build_next_method_epoch_requirements() -> dict[str, Any]:
+    return {
+        "schema_version": "enterprise-judgment-method-epoch-requirements.v1",
+        "method_epoch_id": NEXT_METHOD_EPOCH_ID,
+        "state": "DESIGN_REQUIREMENTS_FROZEN_NOT_SAMPLE_VALIDATED",
+        "excluded_validation_samples": [{"company_id": COMPANY_ID, "cutoff_at": CUTOFF_AT}],
+        "resolver_requirements": [
+            "Every dimension output must be a JSON scalar or a declared typed object.",
+            "A treatment change must carry one unique treatment_delta_id.",
+            "Several dimensions may explain one treatment delta, but method_advantage_count must remain one.",
+            "Baseline and Enhanced resolution rules must be committed before outcome identity or content access.",
+        ],
+        "review_requirements": {
+            "input_mode": "EXTERNAL_ARTIFACT_ONLY",
+            "implementation_must_not_generate_review_decision": True,
+            "completion_without_external_review": "REJECT",
+        },
+        "rights": deepcopy(RIGHTS),
+        "object_class": "METHOD_EPOCH_DESIGN_REQUIREMENTS",
+        "claim_class": "POST_ROUND9_REMEDIATION_ONLY",
+        "allowed_outputs": ["NEW_UNSEEN_PREOUTCOME_FREEZE"],
+    }
+
+
+def build_next_epoch_treatment_deltas(
+    *, baseline_operating: str, enhanced_operating: str,
+    portfolio_rival: str, portfolio_event: str,
+) -> list[dict[str, Any]]:
+    if baseline_operating == enhanced_operating:
+        return []
+    if portfolio_rival != "MATERIAL" and portfolio_event != "OBSERVED_YES":
+        return []
+    return [{
+        "treatment_delta_id": "TREATMENT-DELTA:PORTFOLIO-SCOPE:OPERATING:V2",
+        "baseline_treatment": baseline_operating,
+        "enhanced_treatment": enhanced_operating,
+        "explanatory_dimensions": [
+            "ADAPTATION_PERMANENT_LOSS",
+            "STRONGEST_ALTERNATIVE_EXPLANATION",
+        ],
+        "method_advantage_count": 1,
+    }]
+
+
+def validate_external_postoutcome_review(
+    package: dict[str, Any], settlement: dict[str, Any], method_receipt: dict[str, Any],
+    invalidation: dict[str, Any], review: Any,
+) -> dict[str, Any]:
+    item = review if isinstance(review, dict) else {}
+    findings: list[str] = []
+    expected_refs = {
+        "package_ref": package["package_id"],
+        "settlement_ref": settlement["settlement_id"],
+        "method_resolution_ref": method_receipt["resolution_id"],
+        "method_invalidation_ref": invalidation["invalidation_id"],
+    }
+    for key, expected in expected_refs.items():
+        if item.get(key) != expected:
+            findings.append(f"external_review_{key}_mismatch")
+    reviewer_id = item.get("reviewer_id")
+    if not isinstance(reviewer_id, str) or not reviewer_id:
+        findings.append("external_reviewer_id_required")
+    elif reviewer_id in set(package["roles"].values()):
+        findings.append("external_reviewer_conflicts_with_training_role")
+    if item.get("review_status") != "NEEDS_REVISION":
+        findings.append("round9_model_error_requires_needs_revision_review")
+    if item.get("outcome_settlement_status") != "ACCEPTED":
+        findings.append("external_review_must_state_outcome_settlement_status")
+    if item.get("method_feedback_status") != "REJECTED_MODEL_ERROR":
+        findings.append("external_review_must_reject_method_feedback_model_error")
+    review_findings = item.get("findings")
+    required_finding_keys = {
+        "finding_id", "priority", "root_causes", "economic_impact", "missing_facts",
+        "prohibited_assumptions", "remediation", "acceptance_criteria",
+    }
+    if not isinstance(review_findings, list) or not review_findings:
+        findings.append("external_review_material_findings_required")
+    else:
+        for index, finding in enumerate(review_findings):
+            if not isinstance(finding, dict) or not required_finding_keys.issubset(finding):
+                findings.append(f"external_review_finding_{index}_incomplete")
+    if item.get("rights") != RIGHTS:
+        findings.append("external_review_rights_must_remain_closed")
+    return {"valid": not findings, "findings": findings}
+
+
+def build_outcome_closeout_receipt(
+    package: dict[str, Any], settlement: dict[str, Any], method_receipt: dict[str, Any],
+    invalidation: dict[str, Any], review: dict[str, Any], *, registry_db: Path,
+) -> dict[str, Any]:
+    settlement = _canonical_round9_settlement(settlement, registry_db=registry_db)
+    method_validation = validate_method_resolution_receipt(
+        method_receipt, canonical_settlement=settlement,
+    )
+    if not method_validation["valid"]:
+        raise ValueError("round9 method-error receipt does not replay frozen resolver")
+    if invalidation != build_method_feedback_invalidation(method_receipt):
+        raise ValueError("round9 method invalidation does not replay")
+    review_validation = validate_external_postoutcome_review(
+        package, settlement, method_receipt, invalidation, review,
+    )
+    if not review_validation["valid"]:
+        raise ValueError("round9 external review invalid: " + "; ".join(review_validation["findings"]))
+    return {
+        "schema_version": "enterprise-judgment-round9-outcome-closeout.v1",
+        "completion_id": "R9CLOSEOUT:CN600839:20180930:FY2019:V2",
+        "package_ref": package["package_id"],
+        "settlement_ref": settlement["settlement_id"],
+        "method_resolution_ref": method_receipt["resolution_id"],
+        "method_invalidation_ref": invalidation["invalidation_id"],
+        "independent_review_ref": review["review_id"],
+        "company_id": COMPANY_ID,
+        "cutoff_at": CUTOFF_AT,
+        "status": "ROUND9_OUTCOME_SETTLED_METHOD_COMPARISON_INVALID",
+        "method_conclusion": METHOD_CONCLUSION,
+        "investor_summary": (
+            "FY2019 outcome facts support separating consolidated growth from white-goods economics, but "
+            "the blind method comparison is invalid because the frozen resolver contains a model error."
+        ),
+        "result_period_context": [
+            {
+                "metric": "WHITE_GOODS_REVENUE_YOY",
+                "value": -6.70,
+                "unit": "PERCENT",
+                "source_id": OUTCOME_SOURCE_ID,
+                "pdf_page": 14,
+                "scoring_role": "NON_SCORING_CONTEXT",
+            },
+            {
+                "metric": "WHITE_GOODS_GROSS_MARGIN_YOY_CHANGE",
+                "value": 0.17,
+                "unit": "PERCENTAGE_POINT",
+                "source_id": OUTCOME_SOURCE_ID,
+                "pdf_page": 14,
+                "scoring_role": "NON_SCORING_CONTEXT",
+            },
+            {
+                "metric": "GROUP_OCF_FY2018_COMPARATIVE",
+                "value": 4_424_454_303.24,
+                "unit": "RMB",
+                "source_id": OUTCOME_SOURCE_ID,
+                "pdf_page": 81,
+                "scoring_role": "NON_SCORING_CONTEXT",
+            },
+        ],
+        "proved": [
+            "FY2019 consolidated operating revenue was RMB88.79 billion and cleared the frozen FY2017-anchor increase threshold.",
+            "Air-conditioner and refrigerator revenue was RMB14.01 billion and gross margin was about 22.36%; both were inside frozen bands relative to the FY2017 anchor, not year-on-year stability claims.",
+            "The annual report separately shows FY2019 white-goods revenue down 6.70% year on year and gross margin up 0.17 percentage point.",
+            "FY2019 consolidated OCF was RMB1.57 billion versus about RMB4.42 billion in FY2018; its frozen label is relative to FY2017 only.",
+            "The smart-white-goods industrial park reached full production, and the issuer disposed of its controlling New Energy stake.",
+            "Ordinary-share owner cash remains UNKNOWN.",
+        ],
+        "not_proved": [
+            "Either method produced the better investment treatment in a valid blind comparison.",
+            "Implemented actions caused better white-goods execution, customer preference or durable advantage.",
+            "Consolidated cash represents residual ordinary-share owner cash.",
+            "The portfolio disposal increased or reduced permanent-loss risk by itself.",
+            "Any method transfer, CJO, valuation, report conclusion, buy band or investment action.",
+        ],
+        "next_research_actions": [
+            "Freeze the corrected V2 method epoch before selecting a different unseen company-cutoff.",
+            "Count one treatment change once even when several dimensions explain it.",
+            "Require an external review artifact as input; implementation may generate only a review candidate.",
+            "Keep volume, price, customer share and ordinary-share owner cash as priority evidence targets.",
+        ],
+        "rights": deepcopy(RIGHTS),
+        "object_class": "ENTERPRISE_JUDGMENT_ROUND_OUTCOME_CLOSEOUT",
+        "claim_class": "REAL_OUTCOME_SETTLED_METHOD_FEEDBACK_INVALID",
+        "allowed_outputs": ["NEW_METHOD_EPOCH", "RESEARCH_AGENDA"],
+    }
+
+
+def build_investor_readout(completion: dict[str, Any]) -> str:
+    if completion.get("status") != "ROUND9_OUTCOME_SETTLED_METHOD_COMPARISON_INVALID":
+        raise ValueError("round9 investor readout requires outcome-only closeout")
+    return """# 家电 Round 9 投资者读出
+
+> 状态：`OUTCOME_SETTLED / METHOD_COMPARISON_INVALID_MODEL_ERROR`
+>
+> 公司与 cutoff：四川长虹 `CN:600839`，`2018-09-30`
+>
+> 权限：无方法迁移、CJO、估值、报告或投资权限
+
+## 可信的企业结果
+
+- FY2019 集团营业收入约 `887.93 亿元`，相对事前冻结的 FY2017 锚跨过上升阈值。
+- 空调冰箱收入约 `140.08 亿元`、毛利率约 `22.36%`。相对 FY2017 锚处于冻结稳定区间，但这不表示 FY2019 同比稳定：年报披露收入同比下降 `6.70%`，毛利率同比上升 `0.17` 个百分点。
+- FY2019 集团经营现金约 `15.66 亿元`，而 FY2018 约为 `44.24 亿元`。冻结的稳定标签只相对 FY2017 锚，不能用来描述 FY2019 同比现金表现。
+- 智能白电工业园实现全面投产，公司同时处置长虹新能源控制权；普通股 owner cash 仍为 `UNKNOWN`。
+
+## 对企业判断的帮助
+
+集团增长不能直接代表白电业务变强。核心产品收入同比下降、集团组合发生变化，而工业园投产只证明管理层完成了建设，不能证明客户多买、公司有定价权、毛利改善或资本投入产生了良好股东回报。
+
+因此研究顺序已经更清楚：先拆集团组合与核心产品，再检查量、价、客户份额和普通股现金，最后才评价执行能力、竞争优势和永久损失。
+
+## 为什么本轮不能评价方法胜负
+
+独立审阅发现，事前冻结的解析器把“已实施行动”错误输出为 tuple。结果揭示后曾在工作树中修正该错误，这会破坏盲测边界。现在已恢复事前版本，并将本轮诚实结算为 `MODEL_ERROR`：真实公司结果可以保留，但不能声称八维方法更好，也不能声称已经证明两种方法没有差异。
+
+## 下一步
+
+下一轮使用新的方法 epoch：解析器必须在结果前冻结，同一个投资处理变化只能计一次，独立 reviewer 必须从外部提交审阅工件。四川长虹不得再作为修正版的未见验证样本。
+"""
+
+
+def build_postoutcome_candidate_artifacts(
+    *, local_pdf_path: Path, registry_db: Path,
+) -> dict[str, Any]:
+    freeze = build_preoutcome_freeze()
+    package = freeze["canonical_preoutcome_package"]
+    contract = build_source_bound_measurement_contract()
+    records = build_custodian_field_records(contract)
+    page_receipts = build_page_extraction_receipts(records)
+    artifacts = settle_custodian_field_records(
+        package, contract, records,
+        page_extraction_receipts=page_receipts,
+        local_pdf_path=local_pdf_path,
+        registry_db=registry_db,
+        registered_at="2026-08-27T19:00:00+08:00",
+        observed_at="2026-08-27T19:01:00+08:00",
+        settled_at="2026-08-27T19:02:00+08:00",
+    )
+    settlement = artifacts["settlement"]
+    method_receipt = build_method_resolution_receipt(
+        _canonical_round9_settlement(settlement, registry_db=registry_db),
+        resolved_at="2026-08-27T19:03:00+08:00",
+    )
+    invalidation = build_method_feedback_invalidation(method_receipt)
+    return {
+        **artifacts,
+        "method_resolution_receipt": method_receipt,
+        "method_feedback_invalidation": invalidation,
+        "next_method_epoch_requirements": build_next_method_epoch_requirements(),
+    }
+
+
+def build_postoutcome_artifacts(
+    *, local_pdf_path: Path, registry_db: Path, external_review: dict[str, Any],
+) -> dict[str, Any]:
+    freeze = build_preoutcome_freeze()
+    package = freeze["canonical_preoutcome_package"]
+    artifacts = build_postoutcome_candidate_artifacts(
+        local_pdf_path=local_pdf_path, registry_db=registry_db,
+    )
+    completion = build_outcome_closeout_receipt(
+        package, artifacts["settlement"], artifacts["method_resolution_receipt"],
+        artifacts["method_feedback_invalidation"], external_review,
+        registry_db=registry_db,
+    )
+    return {
+        **artifacts,
+        "independent_postoutcome_review": deepcopy(external_review),
+        "completion_receipt": completion,
+        "investor_readout": build_investor_readout(completion),
+    }
 
 
 def build_preoutcome_freeze() -> dict[str, Any]:
@@ -1670,14 +2433,63 @@ def materialize_preoutcome(output_dir: Path) -> dict[str, Any]:
     return freeze
 
 
+def materialize_postoutcome(
+    output_dir: Path, *, local_pdf_path: Path, registry_db: Path,
+    external_review_path: Path,
+) -> dict[str, Any]:
+    external_review = json.loads(external_review_path.read_text(encoding="utf-8"))
+    artifacts = build_postoutcome_artifacts(
+        local_pdf_path=local_pdf_path, registry_db=registry_db,
+        external_review=external_review,
+    )
+    output_dir.mkdir(parents=True, exist_ok=True)
+    files = {
+        "09_source_binding_receipt.json": "source_binding_receipt",
+        "10_source_bound_measurement_contract.json": "source_bound_measurement_contract",
+        "11_outcome_access_authorization.json": "authorization",
+        "12_outcome_source_inventory.json": "inventory",
+        "13_custodian_field_records.json": "field_records",
+        "13a_page_extraction_receipts.json": "page_extraction_receipts",
+        "14_outcome_acquisition_result.json": "acquisition_result",
+        "15_outcome_settlement.json": "settlement",
+        "16_method_resolution_receipt.json": "method_resolution_receipt",
+        "17_method_feedback_invalidation.json": "method_feedback_invalidation",
+        "18_independent_postoutcome_review.json": "independent_postoutcome_review",
+        "19_round9_completion_receipt.json": "completion_receipt",
+        "21_next_method_epoch_requirements.json": "next_method_epoch_requirements",
+    }
+    for name, key in files.items():
+        _write_json(output_dir / name, artifacts[key])
+    (output_dir / "20_investor_readout.md").write_text(
+        artifacts["investor_readout"], encoding="utf-8",
+    )
+    return artifacts
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--write-preoutcome-dir")
+    parser.add_argument("--write-postoutcome-dir")
+    parser.add_argument("--local-pdf-path")
+    parser.add_argument("--registry-db")
+    parser.add_argument("--external-review-path")
     args = parser.parse_args()
     freeze = build_preoutcome_freeze()
     result = validate_preoutcome_freeze(freeze)
     if args.write_preoutcome_dir and result["valid"]:
         materialize_preoutcome(Path(args.write_preoutcome_dir))
+    if args.write_postoutcome_dir and result["valid"]:
+        if not args.local_pdf_path or not args.registry_db or not args.external_review_path:
+            parser.error(
+                "--write-postoutcome-dir requires --local-pdf-path, --registry-db and "
+                "--external-review-path"
+            )
+        materialize_postoutcome(
+            Path(args.write_postoutcome_dir),
+            local_pdf_path=Path(args.local_pdf_path),
+            registry_db=Path(args.registry_db),
+            external_review_path=Path(args.external_review_path),
+        )
     print(json.dumps(result, ensure_ascii=False, indent=2))
     return 0 if result["valid"] else 1
 

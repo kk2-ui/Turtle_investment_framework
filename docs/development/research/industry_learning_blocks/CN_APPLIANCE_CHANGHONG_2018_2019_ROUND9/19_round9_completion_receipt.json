@@ -1,0 +1,77 @@
+{
+  "schema_version": "enterprise-judgment-round9-outcome-closeout.v1",
+  "completion_id": "R9CLOSEOUT:CN600839:20180930:FY2019:V2",
+  "package_ref": "R9:CN:APPLIANCE:CN600839:20180930:V1",
+  "settlement_ref": "R9SETTLE:CN600839:20180930:FY2019:V1",
+  "method_resolution_ref": "METHOD-RESOLUTION-RECEIPT:R9:CN600839:FY2019:V1",
+  "method_invalidation_ref": "METHOD-INVALIDATION:R9:CN600839:FY2019:V1",
+  "independent_review_ref": "INDEPENDENT-REVIEW:R9:CN600839:FY2019:V2",
+  "company_id": "CN:600839",
+  "cutoff_at": "2018-09-30T23:59:59+08:00",
+  "status": "ROUND9_OUTCOME_SETTLED_METHOD_COMPARISON_INVALID",
+  "method_conclusion": "ROUND9_METHOD_COMPARISON_INVALID_MODEL_ERROR",
+  "investor_summary": "FY2019 outcome facts support separating consolidated growth from white-goods economics, but the blind method comparison is invalid because the frozen resolver contains a model error.",
+  "result_period_context": [
+    {
+      "metric": "WHITE_GOODS_REVENUE_YOY",
+      "value": -6.7,
+      "unit": "PERCENT",
+      "source_id": "CNINFO:600839:ANN:20200418:1207528466",
+      "pdf_page": 14,
+      "scoring_role": "NON_SCORING_CONTEXT"
+    },
+    {
+      "metric": "WHITE_GOODS_GROSS_MARGIN_YOY_CHANGE",
+      "value": 0.17,
+      "unit": "PERCENTAGE_POINT",
+      "source_id": "CNINFO:600839:ANN:20200418:1207528466",
+      "pdf_page": 14,
+      "scoring_role": "NON_SCORING_CONTEXT"
+    },
+    {
+      "metric": "GROUP_OCF_FY2018_COMPARATIVE",
+      "value": 4424454303.24,
+      "unit": "RMB",
+      "source_id": "CNINFO:600839:ANN:20200418:1207528466",
+      "pdf_page": 81,
+      "scoring_role": "NON_SCORING_CONTEXT"
+    }
+  ],
+  "proved": [
+    "FY2019 consolidated operating revenue was RMB88.79 billion and cleared the frozen FY2017-anchor increase threshold.",
+    "Air-conditioner and refrigerator revenue was RMB14.01 billion and gross margin was about 22.36%; both were inside frozen bands relative to the FY2017 anchor, not year-on-year stability claims.",
+    "The annual report separately shows FY2019 white-goods revenue down 6.70% year on year and gross margin up 0.17 percentage point.",
+    "FY2019 consolidated OCF was RMB1.57 billion versus about RMB4.42 billion in FY2018; its frozen label is relative to FY2017 only.",
+    "The smart-white-goods industrial park reached full production, and the issuer disposed of its controlling New Energy stake.",
+    "Ordinary-share owner cash remains UNKNOWN."
+  ],
+  "not_proved": [
+    "Either method produced the better investment treatment in a valid blind comparison.",
+    "Implemented actions caused better white-goods execution, customer preference or durable advantage.",
+    "Consolidated cash represents residual ordinary-share owner cash.",
+    "The portfolio disposal increased or reduced permanent-loss risk by itself.",
+    "Any method transfer, CJO, valuation, report conclusion, buy band or investment action."
+  ],
+  "next_research_actions": [
+    "Freeze the corrected V2 method epoch before selecting a different unseen company-cutoff.",
+    "Count one treatment change once even when several dimensions explain it.",
+    "Require an external review artifact as input; implementation may generate only a review candidate.",
+    "Keep volume, price, customer share and ordinary-share owner cash as priority evidence targets."
+  ],
+  "rights": {
+    "directional_learning": "NOT_AUTHORIZED",
+    "enterprise_learning": "NOT_AUTHORIZED",
+    "comparative": "NOT_AUTHORIZED",
+    "method_transfer": "NOT_AUTHORIZED",
+    "cjo": "NOT_AUTHORIZED",
+    "valuation": "NOT_AUTHORIZED",
+    "report": "NOT_AUTHORIZED",
+    "investment": "NOT_AUTHORIZED"
+  },
+  "object_class": "ENTERPRISE_JUDGMENT_ROUND_OUTCOME_CLOSEOUT",
+  "claim_class": "REAL_OUTCOME_SETTLED_METHOD_FEEDBACK_INVALID",
+  "allowed_outputs": [
+    "NEW_METHOD_EPOCH",
+    "RESEARCH_AGENDA"
+  ]
+}

@@ -259,6 +259,81 @@ def test_page_bound_enterprise_receipt_recomputes_raw_value_and_rejects_identity
     assert "page_extraction_receipts[0]_source_or_page_mismatch" in result["findings"]
 
 
+def test_page_bound_enterprise_receipt_supports_cross_page_ratio_and_observed_event(tmp_path: Path) -> None:
+    pdf = tmp_path / "registered-enterprise.pdf"
+    pdf.write_bytes(b"%PDF-1.7 synthetic multi-page enterprise report")
+    clock = {
+        "clock_kind": "FLOW_PERIOD",
+        "flow_period": {
+            "period_start": "2020-01-01", "period_end": "2020-12-31", "fiscal_period": "FY2020",
+        },
+    }
+    event_clock = {
+        "clock_kind": "EVENT_WINDOW",
+        "event_window": {
+            "event_start": "2020-01-01", "event_end": "2020-12-31", "window_name": "FY2020",
+        },
+    }
+    contract = {
+        "atomic_cells": [
+            {
+                "cell_id": "CELL:RATIO",
+                "raw_input_fields": [{"field_id": "FIELD:RATIO", "measurement_clock": clock, "unit": "RATIO"}],
+            },
+            {
+                "cell_id": "CELL:EVENT",
+                "raw_input_fields": [{"field_id": "FIELD:EVENT", "measurement_clock": event_clock, "unit": "BOOLEAN_EVENT"}],
+            },
+        ],
+    }
+    inventory = {"documents": [{"source_id": "STATIC:REPORT", "local_pdf_path": str(pdf)}]}
+    records = [
+        {
+            "cell_id": "CELL:RATIO", "field_id": "FIELD:RATIO", "status": "OBSERVED",
+            "measurement_clock": clock, "responsibility_boundary": {}, "unit": "RATIO",
+            "raw_value": 0.25, "source": {"source_id": "STATIC:REPORT", "pdf_page": 2},
+        },
+        {
+            "cell_id": "CELL:EVENT", "field_id": "FIELD:EVENT", "status": "OBSERVED",
+            "measurement_clock": event_clock, "responsibility_boundary": {}, "unit": "BOOLEAN_EVENT",
+            "raw_value": True, "source": {"source_id": "STATIC:REPORT", "pdf_page": 4},
+        },
+    ]
+    receipts = [
+        {
+            "schema_version": acquisition.PAGE_EXTRACTION_RECEIPT_SCHEMA_VERSION,
+            "receipt_id": "PAGEEXTRACT:RATIO", "field_id": "FIELD:RATIO",
+            "source_id": "STATIC:REPORT", "pdf_page": 2, "supporting_pdf_pages": [3],
+            "unit": "RATIO", "anchor_tokens": ["收入 100", "总收入 400"],
+            "value_expression": {"operator": "RATIO_TOKENS", "tokens": ["100", "400"], "multiplier": "1"},
+            "object_class": "ENTERPRISE_PAGE_EXTRACTION_RECEIPT", "claim_class": "PDF_PAGE_VALUE_BINDING_ONLY",
+        },
+        {
+            "schema_version": acquisition.PAGE_EXTRACTION_RECEIPT_SCHEMA_VERSION,
+            "receipt_id": "PAGEEXTRACT:EVENT", "field_id": "FIELD:EVENT",
+            "source_id": "STATIC:REPORT", "pdf_page": 4, "unit": "BOOLEAN_EVENT",
+            "anchor_tokens": ["生产线已投产"],
+            "value_expression": {"operator": "BOOLEAN_TOKEN_PRESENCE", "tokens": ["已投产"]},
+            "object_class": "ENTERPRISE_PAGE_EXTRACTION_RECEIPT", "claim_class": "PDF_PAGE_VALUE_BINDING_ONLY",
+        },
+    ]
+
+    def reader(_: Path) -> list[str]:
+        return ["cover", "产品收入 100", "集团总收入 400", "新生产线已投产"]
+
+    result = acquisition.validate_page_bound_enterprise_field_records(
+        records, receipts, measurement_contract=contract, inventory=inventory, page_reader=reader,
+    )
+    assert result["valid"], result["findings"]
+
+    wrong_event = deepcopy(records)
+    wrong_event[1]["raw_value"] = False
+    result = acquisition.validate_page_bound_enterprise_field_records(
+        wrong_event, receipts, measurement_contract=contract, inventory=inventory, page_reader=reader,
+    )
+    assert "page_extraction_receipts[1]_raw_value_not_derived_from_pdf_page" in result["findings"]
+
+
 def _workspace_root() -> Path | None:
     for parent in Path(__file__).resolve().parents:
         if parent.name == "analy":

@@ -1,0 +1,13 @@
+{
+  "schema_version": "enterprise-outcome-access-authorization.v1",
+  "authorization_receipt_id": "OUTCOME-AUTH:R9:CN600839:FY2019:V1",
+  "measurement_contract_ref": {
+    "measurement_contract_id": "OMC:CN600839:20180930:EIGHT_DIMENSION:V3",
+    "measurement_contract_version": 3
+  },
+  "company_id": "CN:600839",
+  "custodian_id": "ROLE:ROUND9:APPLIANCE:OUTCOME_CUSTODIAN",
+  "source_id": "CNINFO:600839:ANN:20200418:1207528466",
+  "authorized": true,
+  "content_read": true
+}

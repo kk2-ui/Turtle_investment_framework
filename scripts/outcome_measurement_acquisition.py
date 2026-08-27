@@ -465,10 +465,14 @@ def _receipt_decimal(token: Any) -> Decimal | None:
     return value if value.is_finite() else None
 
 
-def _evaluate_page_value_expression(expression: Any) -> Decimal | None:
+def _evaluate_page_value_expression(expression: Any) -> Decimal | bool | None:
     item = _mapping(expression)
     operator = item.get("operator")
     tokens = _items(item.get("tokens"))
+    if operator == "BOOLEAN_TOKEN_PRESENCE" and tokens and all(
+        isinstance(token, str) and token.strip() for token in tokens
+    ):
+        return True
     values = [_receipt_decimal(token) for token in tokens]
     if any(value is None for value in values):
         return None
@@ -482,6 +486,8 @@ def _evaluate_page_value_expression(expression: Any) -> Decimal | None:
         return (numeric[0] - numeric[1]) * multiplier
     if operator == "RATIO_TOKENS" and len(numeric) == 2 and numeric[1] != 0:
         return (numeric[0] / numeric[1]) * multiplier
+    if operator == "GROSS_MARGIN_TOKENS" and len(numeric) == 2 and numeric[0] != 0:
+        return ((numeric[0] - numeric[1]) / numeric[0]) * multiplier
     return None
 
 
@@ -529,7 +535,9 @@ def validate_page_bound_enterprise_field_records(
     for index, receipt_value in enumerate(receipts):
         path = f"page_extraction_receipts[{index}]"
         receipt = _mapping(receipt_value)
-        if set(receipt) != required_keys:
+        if frozenset(receipt) not in {
+            frozenset(required_keys), frozenset(required_keys | {"supporting_pdf_pages"}),
+        }:
             findings.append(f"{path}_shape_invalid")
             continue
         if receipt.get("schema_version") != PAGE_EXTRACTION_RECEIPT_SCHEMA_VERSION:
@@ -568,7 +576,19 @@ def validate_page_bound_enterprise_field_records(
         if not isinstance(page_number, int) or page_number < 1 or page_number > len(pages):
             findings.append(f"{path}_pdf_page_invalid")
             continue
-        page_text = re.sub(r"\s+", "", pages[page_number - 1])
+        supporting = receipt.get("supporting_pdf_pages", [])
+        if (
+            not isinstance(supporting, list)
+            or any(not isinstance(page, int) or isinstance(page, bool) for page in supporting)
+            or len(set(supporting)) != len(supporting)
+            or page_number in supporting
+            or any(page < 1 or page > len(pages) for page in supporting)
+        ):
+            findings.append(f"{path}_supporting_pdf_pages_invalid")
+            continue
+        page_text = re.sub(
+            r"\s+", "", "\n".join(pages[page - 1] for page in [page_number, *supporting]),
+        )
         anchors = _items(receipt.get("anchor_tokens"))
         expression = _mapping(receipt.get("value_expression"))
         expression_tokens = _items(expression.get("tokens"))
@@ -579,6 +599,10 @@ def validate_page_bound_enterprise_field_records(
             findings.append(f"{path}_declared_tokens_not_found_on_pdf_page")
         derived = _evaluate_page_value_expression(expression)
         raw_value = record.get("raw_value")
+        if isinstance(derived, bool):
+            if not isinstance(raw_value, bool) or raw_value is not derived:
+                findings.append(f"{path}_raw_value_not_derived_from_pdf_page")
+            continue
         if derived is None or isinstance(raw_value, bool) or not isinstance(raw_value, (int, float)):
             findings.append(f"{path}_value_expression_invalid")
             continue
