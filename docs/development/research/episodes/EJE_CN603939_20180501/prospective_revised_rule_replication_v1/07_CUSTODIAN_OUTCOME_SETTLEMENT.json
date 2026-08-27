@@ -1,0 +1,514 @@
+{
+  "schema_version": "prospective-enterprise-judgment-outcome-settlement.v1",
+  "settlement_id": "PEJOS:CN603939:20180501:FY2018:REVISED_RULE_REPLICATION:V1",
+  "role": "FRESH_OUTCOME_ONLY_CUSTODIAN",
+  "authorization": {
+    "frozen_commit": "5021260",
+    "authorization_id": "PEJOA:CN603939:20180501:FY2018:REVISED_RULE_REPLICATION:V1",
+    "frozen_inputs_read": [
+      "02_BASELINE_BEFORE_LEARNING_CONTRACT.json",
+      "03_ENHANCED_AFTER_THREE_FEEDBACK_LOOPS_CONTRACT.json",
+      "06_OUTCOME_ACCESS_AUTHORIZATION.json"
+    ],
+    "outcome_access": "AUTHORIZED",
+    "price_access": "PROHIBITED_AND_NOT_USED"
+  },
+  "outcome_source": {
+    "publisher": "CNINFO",
+    "issuer_code": "603939",
+    "issuer_name": "益丰大药房连锁股份有限公司",
+    "document_title": "益丰药房：2018年年度报告",
+    "document_type": "OFFICIAL_FULL_ANNUAL_REPORT",
+    "announcement_id": "1206004368",
+    "published_on": "2019-04-10",
+    "report_period": "FY2018",
+    "report_period_end": "2018-12-31",
+    "page_count": 215,
+    "official_fulltext_url": "https://static.cninfo.com.cn/finalpage/2019-04-10/1206004368.PDF",
+    "selection_check": {
+      "search_window_end": "2019-05-01",
+      "matching_cninfo_results": 2,
+      "full_annual_reports": 1,
+      "excluded_summary": {
+        "announcement_id": "1206004350",
+        "title": "益丰药房：2018年年度报告摘要"
+      },
+      "selected_reason": "THE_ONLY_MATCHING_FULL_FY2018_ANNUAL_REPORT_PUBLISHED_BY_THE_AUTHORIZED_DEADLINE"
+    },
+    "maximum_documents_used": 1
+  },
+  "scope_firewall": {
+    "settled_only": "UNION_OF_02_AND_03_FIELDS",
+    "not_adjudicated": [
+      "ENTERPRISE_SUCCESS",
+      "MANAGEMENT_CREDIT",
+      "CAPITAL_MISALLOCATION",
+      "NORMALIZED_OWNER_CASH",
+      "COHORT_CAUSAL_RETURN_FROM_GROUP_CASH",
+      "PERMANENT_LOSS",
+      "SCENARIOS",
+      "VALUATION",
+      "PAIRED_UTILITY"
+    ],
+    "outside_analysis_used": false,
+    "price_or_return_used": false,
+    "post_fy2018_information_used": false,
+    "locality_rule_applied": "COMPANY_NETWORK_AND_LOCAL_COHORT_DISCLOSURES_ARE_NOT_SUBSTITUTED_FOR_ONE_ANOTHER"
+  },
+  "reporting_and_consolidation_perimeter": {
+    "financial_statement_scope": {
+      "consolidated_subsidiaries_count": 44,
+      "rule": "THE_PARENT_INCLUDES_ALL_CONTROLLED_SUBSIDIARIES_IN_THE_CONSOLIDATED_FINANCIAL_STATEMENTS",
+      "fy2018_changes": {
+        "non_common_control_acquisitions_disclosed": true,
+        "newly_established_entities": [
+          "无锡益丰康健管理咨询有限公司",
+          "上海益丰大药房医药有限公司",
+          "河北新兴药房连锁有限公司"
+        ],
+        "disposed_entity": "湖南峰高实业投资有限公司",
+        "disposed_on": "2018-04-30"
+      },
+      "evidence": [
+        {"report_pages": [111], "section": "三、公司基本情况／合并财务报表范围"},
+        {"report_pages": [180, 181, 182, 188, 189], "section": "八、合并范围的变更"}
+      ]
+    },
+    "store_reporting_scope": {
+      "total_store_count_includes_franchise_stores": true,
+      "franchise_store_count_fy2018": 169,
+      "direct_store_metrics_exclude_franchise_stores": true,
+      "direct_store_count_fy2018": 3442,
+      "retail_revenue_scope": "CONSOLIDATED_RETAIL_BUSINESS_NOT_A_MATURE_OR_NEW_STORE_COHORT",
+      "acquired_entity_profit_table_scope": "PURCHASE_DATE_TO_YEAR_END_BY_LEGAL_ENTITY_WITH_DIFFERENT_PURCHASE_DATES",
+      "comparability_limit": "THE_2018_NETWORK_INCLUDES_ACQUIRED_ENTITIES_AND_A_NEW_NORTH_CHINA REGION; THIS_LIMIT_IS_LOCAL_TO_NETWORK_OR_COHORT_COMPARABILITY_AND_DOES_NOT CANCEL OTHER FACTS",
+      "evidence": [
+        {"report_pages": [29, 30], "section": "零售行业经营性信息分析"},
+        {"report_pages": [180, 181, 182], "section": "本期发生的非同一控制下企业合并"}
+      ]
+    }
+  },
+  "company_network_raw_facts": {
+    "store_rollforward": {
+      "total_stores": {
+        "fy2017": 2059,
+        "fy2018": 3611,
+        "net_change": 1552,
+        "yoy_percent": 75.38,
+        "fy2018_rollforward": "2059_PLUS_1594_ADDITIONS_MINUS_42_CLOSURES_EQUALS_3611",
+        "scope": "INCLUDES_FRANCHISE_STORES"
+      },
+      "direct_stores": {
+        "fy2017": 1979,
+        "fy2018": 3442,
+        "net_change": 1463,
+        "yoy_percent": 73.93,
+        "fy2018_rollforward": "1979_PLUS_546_ORGANIC_NEW_PLUS_959_ACQUIRED_MINUS_42_CLOSURES_EQUALS_3442",
+        "scope": "DIRECT_STORES_ONLY"
+      },
+      "organic_new_stores": {
+        "fy2017": 349,
+        "fy2018": 546,
+        "change": 197,
+        "yoy_percent": 56.45
+      },
+      "acquired_and_consolidated_stores": {
+        "fy2017": 167,
+        "fy2018": 959,
+        "change": 792,
+        "yoy_percent": 474.25
+      },
+      "franchise_additions_fy2018": 89,
+      "closed_stores": {
+        "fy2017": 49,
+        "fy2018": 42,
+        "change": -7,
+        "yoy_percent": -14.29,
+        "reported_reasons": [
+          "OLD_CITY_REDEVELOPMENT",
+          "OVERLAP_BETWEEN_SOME_ACQUIRED_STORES_AND_EXISTING_COMPANY_STORES",
+          "STRATEGIC_ADJUSTMENT"
+        ],
+        "cohort_attribution": "NOT_SEPARATELY_DISCLOSED"
+      },
+      "evidence": [
+        {"report_pages": [8, 12, 20, 29], "section": "门店数量与变动"},
+        {"report_pages": [29], "section": "报告期公司门店网络情况"}
+      ]
+    },
+    "retail_revenue": {
+      "fy2017_rmb": 4573306210.16,
+      "fy2018_rmb": 6543163005.86,
+      "change_rmb": 1969856795.70,
+      "reported_yoy_percent": 43.07,
+      "scope": "CONSOLIDATED_RETAIL_BUSINESS",
+      "not_same_store_or_cohort_revenue": true,
+      "evidence": [{"report_pages": [22, 23], "section": "主营业务分行业情况"}]
+    },
+    "retail_gross_margin": {
+      "fy2017_percent": 38.71,
+      "fy2018_percent": 38.24,
+      "change_percentage_points": -0.47,
+      "scope": "CONSOLIDATED_RETAIL_BUSINESS",
+      "evidence": [{"report_pages": [22, 23], "section": "主营业务分行业情况"}]
+    },
+    "sales_expense": {
+      "fy2017_rmb": 1294188191.20,
+      "fy2018_rmb": 1895973301.37,
+      "change_rmb": 601785110.17,
+      "reported_yoy_percent": 46.50,
+      "scope": "CONSOLIDATED_COMPANY",
+      "evidence": [{"report_pages": [22, 25], "section": "利润表及现金流量表相关科目变动分析表／费用"}]
+    },
+    "direct_store_daily_sales_per_square_meter": {
+      "unit": "RMB_PER_SQUARE_METER_PER_DAY_TAX_INCLUSIVE",
+      "fy2017": 63.88,
+      "fy2018": 61.05,
+      "change": -2.83,
+      "yoy_percent": -4.43,
+      "scope": "ALL_DIRECT_STORES_NOT_A_SAME_STORE_COHORT",
+      "evidence": [{"report_pages": [30], "section": "报告期公司直营门店经营效率情况"}]
+    },
+    "store_type_daily_sales_per_square_meter": {
+      "unit": "RMB_PER_SQUARE_METER_PER_DAY_TAX_INCLUSIVE",
+      "scope": "FY_END_DIRECT_STORE_TYPE_AGGREGATES_NOT_MATCHED_COHORTS",
+      "rows": [
+        {"store_type": "FLAGSHIP", "fy2017": 114.03, "fy2018": 115.01, "change": 0.98, "yoy_percent": 0.86, "raw_direction": "UP"},
+        {"store_type": "REGIONAL_CENTER", "fy2017": 62.89, "fy2018": 62.13, "change": -0.76, "yoy_percent": -1.21, "raw_direction": "DOWN"},
+        {"store_type": "MEDIUM_COMMUNITY", "fy2017": 62.52, "fy2018": 56.11, "change": -6.41, "yoy_percent": -10.25, "raw_direction": "DOWN"},
+        {"store_type": "SMALL_COMMUNITY", "fy2017": 61.36, "fy2018": 58.02, "change": -3.34, "yoy_percent": -5.44, "raw_direction": "DOWN"}
+      ],
+      "evidence": [{"report_pages": [30], "section": "报告期公司直营门店经营效率情况"}]
+    },
+    "medical_insurance_direct_stores": {
+      "fy2017_count": 1353,
+      "fy2018_count": 2580,
+      "count_change": 1227,
+      "count_yoy_percent": 90.69,
+      "fy2017_share_percent": 68.37,
+      "fy2018_share_percent": 74.96,
+      "share_change_percentage_points": 6.59,
+      "scope": "DIRECT_STORES_ONLY",
+      "evidence": [{"report_pages": [30], "section": "门店取得医保资质情况"}]
+    },
+    "members": {
+      "fy2017_count": 16000000,
+      "fy2018_count": 23000000,
+      "count_change": 7000000,
+      "count_yoy_percent": 43.75,
+      "fy2017_sales_share_percent": 80.00,
+      "fy2018_sales_share_percent": 81.45,
+      "share_change_percentage_points": 1.45,
+      "scope": "COMPANY_MEMBER_PROGRAM_NOT_RETENTION_OR_LIFETIME_VALUE",
+      "evidence": [{"report_pages": [19], "section": "CRM会员管理系统"}]
+    },
+    "customer_service_and_regulatory_raw_events": {
+      "custodian_materiality_classification": "NOT_PERFORMED",
+      "events": [
+        {"event": "O2O_ENABLED_STORES", "reported_count": "MORE_THAN_2500"},
+        {"event": "DTP_PHARMACIES", "reported_count": "MORE_THAN_20"},
+        {"event": "NATIONALLY_NEGOTIATED_INSURANCE_REIMBURSED_PRODUCTS", "count": 42},
+        {"event": "HOSPITAL_PRESCRIPTION_PRODUCTS", "reported_count": "NEARLY_200"},
+        {"event": "4_PLUS_7_PROCUREMENT_PRODUCTS", "sales_share_percent": 0.35, "geographic_overlap": "SHANGHAI_ONLY_AT_FY2018_YEAR_END"}
+      ],
+      "evidence": [
+        {"report_pages": [21, 22], "section": "医药电商与承接处方外流模式"},
+        {"report_pages": [30], "section": "4+7带量采购品种销售情况"}
+      ]
+    }
+  },
+  "organic_and_acquired_cohort_disclosures": {
+    "company_organic_new_store_cohort": {
+      "deployment_count_fy2018": 546,
+      "revenue_or_same_store_sales": "NOT_SEPARATELY_DISCLOSED_FOR_THE_546_STORE_COHORT",
+      "store_profit": "NOT_SEPARATELY_DISCLOSED_FOR_THE_546_STORE_COHORT",
+      "cash_capex_and_payback": "NOT_SEPARATELY_DISCLOSED_FOR_THE_546_STORE_COHORT",
+      "closure_impairment_or_transfer": "42_TOTAL_CLOSURES_HAVE_MIXED_REASONS_AND_ARE_NOT_ATTRIBUTED_TO_THE_546_STORE_COHORT",
+      "locality": "UNAVAILABLE_546_STORE_COHORT_ECONOMICS_LIMIT_ONLY_THIS_COHORT"
+    },
+    "localized_organic_subcohort_inside_acquired_entity": {
+      "responsibility": "SHIJIAZHUANG_XINXING_PHARMACY_FY2018_NEW_STORES_ONLY",
+      "new_store_count": 43,
+      "report_metric": "CUMULATIVE_LOSS",
+      "reported_loss_rmb": 4474800.00,
+      "revenue_or_same_store_sales": "NOT_SEPARATELY_DISCLOSED",
+      "cash_capex_and_payback": "NOT_SEPARATELY_DISCLOSED",
+      "scope_limit": "THIS_43_STORE_LOCAL_FACT_IS_NOT_ATTRIBUTED_TO_ALL_546_COMPANY_ORGANIC_NEW_STORES_OR_ALL_959_ACQUIRED_STORES",
+      "evidence": [{"report_pages": [54], "section": "新兴药房2018年度业绩承诺完成情况"}]
+    },
+    "acquired_and_consolidated_store_cohort": {
+      "deployment_count_fy2018": 959,
+      "one_comparable_cohort_revenue": "NOT_DISCLOSED",
+      "one_comparable_cohort_operating_profit": "NOT_DISCLOSED",
+      "one_comparable_cohort_ocf_and_payback": "NOT_DISCLOSED",
+      "closure_disposal_or_impairment": "NO_959_STORE_COHORT_MATCHED_DISCLOSURE; THE_42_TOTAL_CLOSURES_ARE_MIXED_AND_FY2018_GROUP_GOODWILL_IMPAIRMENT_CHARGE_IS_ZERO",
+      "locality": "LEGAL_ENTITY_DISCLOSURES_BELOW_ARE_NOT_AGGREGATED_INTO_ONE_COHORT_BECAUSE_PURCHASE_DATES_AND_METRIC_RESPONSIBILITIES_DIFFER"
+    },
+    "acquired_entity_purchase_date_to_year_end_disclosures": {
+      "metric_labels": ["REVENUE", "NET_PROFIT"],
+      "not_operating_profit_or_ocf": true,
+      "rows": [
+        {"entity": "石家庄新兴药房连锁有限公司", "purchase_date": "2018-08-31", "revenue_rmb": 386005473.57, "net_profit_rmb": 32328012.61},
+        {"entity": "广东益丰益荔康信大药房连锁有限公司", "purchase_date": "2018-01-01", "revenue_rmb": 57780108.83, "net_profit_rmb": -1212145.60},
+        {"entity": "广州康信大药房连锁有限公司", "purchase_date": "2018-01-01", "revenue_rmb": 46739586.53, "net_profit_rmb": 0.00},
+        {"entity": "上海益丰上虹大药房有限公司", "purchase_date": "2018-08-31", "revenue_rmb": 64749731.32, "net_profit_rmb": 3210760.37},
+        {"entity": "江苏市民大药房连锁有限公司", "purchase_date": "2018-10-01", "revenue_rmb": 35178287.13, "net_profit_rmb": 3699704.32},
+        {"entity": "无锡九州医药连锁有限公司及无锡市九州大药房有限公司", "purchase_date": "2018-01-01", "revenue_rmb": 271540428.46, "net_profit_rmb": 15255083.05},
+        {"entity": "泰州市博爱大药房连锁有限公司", "purchase_date": "2018-05-31", "revenue_rmb": 28378235.25, "net_profit_rmb": -495373.87},
+        {"entity": "如东益丰大药房连锁有限公司", "purchase_date": "2018-07-31", "revenue_rmb": 15743980.66, "net_profit_rmb": 232812.84},
+        {"entity": "江西天顺大药房医药连锁有限公司", "purchase_date": "2018-06-14", "revenue_rmb": 36837772.50, "net_profit_rmb": 1283541.46}
+      ],
+      "evidence": [{"report_pages": [180, 181, 182], "section": "本期发生的非同一控制下企业合并"}]
+    },
+    "acquired_entity_full_year_profit_disclosures": {
+      "comparability": "NOT_COMPARABLE_AS_ONE_COHORT_BECAUSE_REPORT_METRIC_DEFINITIONS_DIFFER",
+      "rows": [
+        {"entity": "石家庄新兴药房连锁有限公司", "metric": "AUDITED_NET_PROFIT_ATTRIBUTABLE_TO_PARENT_AFTER_NONRECURRING_ITEMS", "fy2018_rmb": 63911300.00},
+        {"entity": "无锡九州医药连锁有限公司及无锡市九州大药房有限公司", "metric": "AUDITED_NET_PROFIT_AFTER_EXCLUDING_COMMITTED_PERIOD_ACQUISITION_AND_SELF_SELECTED_NEW_STORE_LOSSES_AND_NONRECURRING_ITEMS", "fy2018_rmb": 20151800.00},
+        {"entity": "上海益丰上虹大药房有限公司", "metric": "AUDITED_NET_PROFIT_BEFORE_NONRECURRING_ITEMS", "fy2018_rmb": 15519000.00},
+        {"entity": "江苏市民大药房连锁有限公司", "metric": "NET_PROFIT", "fy2018_rmb": 16466100.00}
+      ],
+      "not_substituted_for_contract_operating_profit_field": true,
+      "evidence": [{"report_pages": [54, 55], "section": "业绩承诺的完成情况及其对商誉减值测试的影响"}]
+    }
+  },
+  "group_funding_raw_facts": {
+    "consolidated_ocf": {
+      "fy2017_rmb": 317202120.18,
+      "fy2018_rmb": 510711302.33,
+      "change_rmb": 193509182.15,
+      "reported_yoy_percent": 61.01,
+      "evidence": [{"report_pages": [22, 26, 103], "section": "经营活动产生的现金流量净额"}]
+    },
+    "working_capital_cash_support": {
+      "formula": "INVENTORY_DECREASE_PLUS_OPERATING_RECEIVABLE_DECREASE_PLUS_OPERATING_PAYABLE_INCREASE",
+      "fy2018_components_rmb": {
+        "inventory_decrease": -394228398.15,
+        "operating_receivable_decrease": -272601913.21,
+        "operating_payable_increase": 628572077.74
+      },
+      "fy2018_rmb": -38258233.62,
+      "fy2017_rmb": -70672011.12,
+      "change_rmb": 32413777.50,
+      "sign_meaning": "NEGATIVE_MEANS_WORKING_CAPITAL_USED_CASH",
+      "evidence": [{"report_pages": [177], "section": "现金流量表补充资料"}]
+    },
+    "consolidated_cash_capex": {
+      "definition": "CASH_PAID_TO_ACQUIRE_OR_CONSTRUCT_FIXED_ASSETS_INTANGIBLE_ASSETS_AND_OTHER_LONG_TERM_ASSETS",
+      "fy2017_rmb": 206726814.72,
+      "fy2018_rmb": 233670368.14,
+      "change_rmb": 26943553.42,
+      "yoy_percent": 13.03,
+      "evidence": [{"report_pages": [103], "section": "合并现金流量表"}]
+    },
+    "cash_paid_for_acquisitions_net_of_acquired_cash": {
+      "fy2017_rmb": 166230561.23,
+      "fy2018_rmb": 1239315597.29,
+      "change_rmb": 1073085036.06,
+      "yoy_percent": 645.54,
+      "fy2018_bridge_rmb": {
+        "current_period_acquisition_cash_paid": 1242503467.00,
+        "less_acquired_cash": 47952181.57,
+        "plus_prior_period_acquisition_cash_paid_in_fy2018": 44764311.86,
+        "net": 1239315597.29
+      },
+      "evidence": [{"report_pages": [177, 178], "section": "本期支付的取得子公司的现金净额"}]
+    },
+    "other_disclosed_nonoverlapping_strategic_investment_cash": {
+      "fy2018_components_rmb": {
+        "investment_cash_paid": 22500000.00,
+        "prepaid_store_transfer_cash": 29600000.00
+      },
+      "fy2018_rmb": 52100000.00,
+      "fy2017_rmb": 108332939.31,
+      "change_rmb": -56232939.31,
+      "yoy_percent": -51.91,
+      "nonoverlap_basis": "THE_TWO_COMPONENTS_ARE_SEPARATE_LINES_FROM_CASH_CAPEX_AND_NET_ACQUISITION_CASH_IN_THE_CONSOLIDATED_CASH_FLOW_DISCLOSURES",
+      "evidence": [
+        {"report_pages": [103], "section": "合并现金流量表／投资支付的现金"},
+        {"report_pages": [176], "section": "支付的其他与投资活动有关的现金／预付门店转让款"}
+      ]
+    },
+    "additional_nonoverlapping_strategic_outflow": {
+      "amount_rmb": null,
+      "known_sign": null,
+      "status": "NO_ADDITIONAL_SEPARATELY_DISCLOSED_EVENT_ASSERTED_AFTER_ENUMERATING_THE_AUTHORIZED_REPORT_CASH_FLOW_LINES",
+      "treatment": "NOT_SET_TO_ZERO_AND_NOT_USED_AS_A_ZERO_TERM"
+    },
+    "cash_and_restricted_cash": {
+      "cash_and_cash_equivalents": {
+        "fy2017_rmb": 234159841.06,
+        "fy2018_rmb": 789018301.29,
+        "change_rmb": 554858460.23,
+        "yoy_percent": 236.96
+      },
+      "restricted_cash": {
+        "fy2017_frozen_contract_rmb": 553950000.00,
+        "selected_report_comparative_other_monetary_funds_rmb": 295950000.00,
+        "fy2018_rmb": 507917841.02,
+        "change_rmb": null,
+        "yoy_percent": null,
+        "comparison_status": "NOT_COMPARABLE_AT_THE_RESTRICTED_CASH_FIELD_DEFINITION",
+        "comparison_reason": "THE_SELECTED_FY2018_REPORT_DISCLOSES_CURRENT_RESTRICTED_MONETARY_FUNDS_BUT_ITS_COMPARATIVE_MONETARY_FUNDS_TABLE_DOES_NOT_IDENTIFY_PRIOR_RESTRICTED_CASH; THE_COMPARATIVE_OTHER_MONETARY_FUNDS_AMOUNT_IS_NOT_SUBSTITUTED_FOR_RESTRICTED_CASH_AND_THE_FROZEN_CONTRACT_BASELINE_IS_RETAINED_WITHOUT_A_YOY_CALCULATION",
+        "fy2018_components_rmb": {
+          "bank_acceptance_bill_deposit": 507417841.02,
+          "medical_insurance_deposit": 500000.00
+        }
+      },
+      "total_monetary_funds_fy2018_rmb": 1296936142.31,
+      "evidence": [
+        {"report_pages": [28], "section": "截至报告期末主要资产受限情况"},
+        {"report_pages": [131], "section": "货币资金"},
+        {"report_pages": [179], "section": "现金和现金等价物的构成／所有权或使用权受到限制的资产"}
+      ]
+    },
+    "interest_bearing_debt": {
+      "fy2017_rmb": 0.00,
+      "fy2018_rmb": 789000000.00,
+      "change_rmb": 789000000.00,
+      "yoy_percent": null,
+      "fy2018_components_rmb": {
+        "short_term_borrowings": 5000000.00,
+        "current_portion_of_long_term_borrowings": 39200000.00,
+        "long_term_borrowings": 744800000.00,
+        "bonds_payable": 0.00,
+        "long_term_payables": 0.00
+      },
+      "evidence": [{"report_pages": [160, 164, 165], "section": "短期借款／一年内到期的非流动负债／长期借款／应付债券／长期应付款"}]
+    },
+    "notes_and_accounts_payable": {
+      "fy2017_rmb": 1238906475.13,
+      "fy2018_rmb": 2200093982.95,
+      "change_rmb": 961187507.82,
+      "reported_yoy_percent": 77.58,
+      "fy2018_components_rmb": {
+        "notes_payable": 1553881808.00,
+        "accounts_payable": 646212174.95
+      },
+      "fy2017_components_rmb": {
+        "notes_payable": 920222601.73,
+        "accounts_payable": 318683873.40
+      },
+      "notes_payable_type": "BANK_ACCEPTANCE_BILLS",
+      "evidence": [{"report_pages": [27, 160], "section": "应付票据及应付账款"}]
+    },
+    "medical_insurance_receivable": {
+      "definition": "ONE_YEAR_OR_LESS_MEDICAL_INSURANCE_ACCOUNTS_RECEIVABLE_PLUS_MEDICAL_INSURANCE_RETENTION_RECEIVABLE",
+      "fy2018_components_rmb": {
+        "medical_insurance_accounts_receivable": 523427935.03,
+        "medical_insurance_retention_receivable": 79071693.44
+      },
+      "fy2018_rmb": 602499628.47,
+      "fy2017_rmb": 285658072.97,
+      "change_rmb": 316841555.50,
+      "yoy_percent": 110.92,
+      "scope_note": "THE_FY2018_REPORT_SEPARATELY_DISCLOSES_BOTH_CURRENT_COMPONENTS; THE_FY2017_COMPARATOR_IS_THE_SAME_FROZEN_CONTRACT_DEFINITION",
+      "evidence": [
+        {"report_pages": [133], "section": "应收账款／账龄在1年以内的应收医保款"},
+        {"report_pages": [137], "section": "其他应收款／医保预留金"}
+      ]
+    },
+    "goodwill_and_impairment": {
+      "fy2017_net_goodwill_rmb": 694129744.04,
+      "fy2018_gross_goodwill_rmb": 2735102452.88,
+      "fy2018_cumulative_impairment_allowance_rmb": 2299554.25,
+      "fy2018_net_goodwill_rmb": 2732802898.63,
+      "net_goodwill_change_rmb": 2038673154.59,
+      "net_goodwill_yoy_percent": 293.70,
+      "fy2018_impairment_charge_rmb": 0.00,
+      "impairment_event": "NO_NEW_GOODWILL_IMPAIRMENT_LOSS_FOUND_IN_FY2018_TESTING; THE_EXISTING_2299554_25_ALLOWANCE_WAS_UNCHANGED",
+      "evidence": [
+        {"report_pages": [27], "section": "资产及负债状况"},
+        {"report_pages": [148, 149, 150], "section": "商誉账面原值与商誉减值准备"},
+        {"report_pages": [204], "section": "本期商誉减值情况"}
+      ]
+    }
+  },
+  "mechanical_group_funding_endpoints": {
+    "scope_limit": "ONE_PERIOD_CONSOLIDATED_GROUP_ENDPOINTS_NOT_NORMALIZED_OWNER_CASH_NOT_STORE_COHORT_CASH_AND_NOT_MATCHED_ACQUISITION_RETURN",
+    "statutory_ocf_after_all_capex": {
+      "formula": "510711302.33_MINUS_233670368.14",
+      "amount_rmb": 277040934.19,
+      "feasible_interval_rmb": {"lower_bound": 277040934.19, "upper_bound": 277040934.19}
+    },
+    "post_working_capital_directional_cash_after_all_capex": {
+      "formula": "510711302.33_MINUS_NEGATIVE_38258233.62_MINUS_233670368.14",
+      "amount_rmb": 315299167.81,
+      "feasible_interval_rmb": {"lower_bound": 315299167.81, "upper_bound": 315299167.81}
+    },
+    "statutory_post_deployment_cash_endpoint": {
+      "formula": "510711302.33_MINUS_233670368.14_MINUS_1239315597.29_MINUS_52100000.00",
+      "amount_rmb": -1014374663.10,
+      "feasible_interval_rmb": {"lower_bound": -1014374663.10, "upper_bound": -1014374663.10},
+      "raw_sign": "NEGATIVE"
+    },
+    "post_working_capital_group_funding_endpoint": {
+      "formula": "510711302.33_MINUS_NEGATIVE_38258233.62_MINUS_233670368.14_MINUS_1239315597.29_MINUS_52100000.00",
+      "amount_rmb": -976116429.48,
+      "feasible_interval_rmb": {"lower_bound": -976116429.48, "upper_bound": -976116429.48},
+      "raw_sign": "NEGATIVE"
+    },
+    "bounded_uncertainty_treatment": {
+      "incomplete_signed_nonoverlapping_strategic_cash_event_found": false,
+      "unknown_amount_set_to_zero": false,
+      "invented_bound": false,
+      "why_intervals_are_singletons": "ALL_INCLUDED_CASH_COMPONENTS_ARE_EXPLICITLY_DISCLOSED_AND_NO_ADDITIONAL_SEPARATELY_DISCLOSED_SIGNED_INCOMPLETE_EVENT_WAS_ASSERTED"
+    }
+  },
+  "field_budget_coverage": {
+    "contract_occurrences": 69,
+    "unique_field_ids": 48,
+    "coverage_rule": "EVERY_UNIQUE_FIELD_ID_FROM_02_UNION_03_HAS_ONE_SETTLEMENT_POINTER_OR_AN_EXPLICIT_LOCAL_UNAVAILABLE_STATUS",
+    "fields": [
+      {"field_id": "ACQUIRED_AND_CONSOLIDATED_STORE_COUNT", "status": "SETTLED", "pointer": "/company_network_raw_facts/store_rollforward/acquired_and_consolidated_stores"},
+      {"field_id": "ACQUIRED_AND_CONSOLIDATED_STORE_COUNT_AND_PERIMETER", "status": "SETTLED", "pointer": "/company_network_raw_facts/store_rollforward/acquired_and_consolidated_stores"},
+      {"field_id": "ACQUIRED_COHORT_CLOSURE_DISPOSAL_OR_IMPAIRMENT_EVENT", "status": "NOT_SEPARATELY_DISCLOSED_LOCAL_ONLY", "pointer": "/organic_and_acquired_cohort_disclosures/acquired_and_consolidated_store_cohort/closure_disposal_or_impairment"},
+      {"field_id": "ACQUIRED_COHORT_OCF_AND_PAYBACK", "status": "NOT_SEPARATELY_DISCLOSED_LOCAL_ONLY", "pointer": "/organic_and_acquired_cohort_disclosures/acquired_and_consolidated_store_cohort/one_comparable_cohort_ocf_and_payback"},
+      {"field_id": "ACQUIRED_COHORT_OPERATING_PROFIT_RMB", "status": "NOT_DISCLOSED_AT_CONTRACT_METRIC_DEFINITION", "pointer": "/organic_and_acquired_cohort_disclosures/acquired_entity_full_year_profit_disclosures"},
+      {"field_id": "ACQUIRED_COHORT_REVENUE_RMB", "status": "PARTIAL_LOCAL_ENTITY_DISCLOSURES_ONLY", "pointer": "/organic_and_acquired_cohort_disclosures/acquired_entity_purchase_date_to_year_end_disclosures"},
+      {"field_id": "ADDITIONAL_NONOVERLAPPING_STRATEGIC_OUTFLOW_RMB", "status": "NO_ADDITIONAL_EVENT_ASSERTED_NOT_ZERO", "pointer": "/group_funding_raw_facts/additional_nonoverlapping_strategic_outflow"},
+      {"field_id": "CASH_AND_CASH_EQUIVALENTS_RMB", "status": "SETTLED", "pointer": "/group_funding_raw_facts/cash_and_restricted_cash/cash_and_cash_equivalents"},
+      {"field_id": "CASH_PAID_FOR_ACQUISITIONS_NET_OF_ACQUIRED_CASH_RMB", "status": "SETTLED", "pointer": "/group_funding_raw_facts/cash_paid_for_acquisitions_net_of_acquired_cash"},
+      {"field_id": "CLOSED_STORE_COUNT_AND_DISCLOSED_REASON", "status": "SETTLED_WITHOUT_COHORT_ATTRIBUTION", "pointer": "/company_network_raw_facts/store_rollforward/closed_stores"},
+      {"field_id": "CONSOLIDATED_CASH_CAPEX_RMB", "status": "SETTLED", "pointer": "/group_funding_raw_facts/consolidated_cash_capex"},
+      {"field_id": "CONSOLIDATED_OCF_RMB", "status": "SETTLED", "pointer": "/group_funding_raw_facts/consolidated_ocf"},
+      {"field_id": "CONSOLIDATED_WORKING_CAPITAL_CASH_SUPPORT_RMB", "status": "SETTLED", "pointer": "/group_funding_raw_facts/working_capital_cash_support"},
+      {"field_id": "CONSOLIDATION_AND_STORE_COHORT_REPORTING_PERIMETER_EVENT", "status": "SETTLED", "pointer": "/reporting_and_consolidation_perimeter"},
+      {"field_id": "DIRECT_STORE_COUNT_AND_ROLLFORWARD", "status": "SETTLED", "pointer": "/company_network_raw_facts/store_rollforward/direct_stores"},
+      {"field_id": "DIRECT_STORE_DAILY_SALES_PER_SQUARE_METER", "status": "SETTLED_COMPANY_SCOPE_ONLY", "pointer": "/company_network_raw_facts/direct_store_daily_sales_per_square_meter"},
+      {"field_id": "GOODWILL_AND_IMPAIRMENT_RMB_OR_EVENT", "status": "SETTLED", "pointer": "/group_funding_raw_facts/goodwill_and_impairment"},
+      {"field_id": "GOODWILL_RMB", "status": "SETTLED", "pointer": "/group_funding_raw_facts/goodwill_and_impairment"},
+      {"field_id": "GOODWILL_RMB_AND_IMPAIRMENT_EVENT", "status": "SETTLED", "pointer": "/group_funding_raw_facts/goodwill_and_impairment"},
+      {"field_id": "INTEREST_BEARING_DEBT_RMB", "status": "SETTLED", "pointer": "/group_funding_raw_facts/interest_bearing_debt"},
+      {"field_id": "MATERIAL_NETWORK_CUSTOMER_SERVICE_OR_REGULATORY_EVENT", "status": "SETTLED_RAW_WITHOUT_MATERIALITY_JUDGMENT", "pointer": "/company_network_raw_facts/customer_service_and_regulatory_raw_events"},
+      {"field_id": "MEDICAL_INSURANCE_DIRECT_STORE_COUNT_AND_SHARE", "status": "SETTLED_COMPANY_SCOPE_ONLY", "pointer": "/company_network_raw_facts/medical_insurance_direct_stores"},
+      {"field_id": "MEDICAL_INSURANCE_RECEIVABLE_RMB", "status": "SETTLED", "pointer": "/group_funding_raw_facts/medical_insurance_receivable"},
+      {"field_id": "MEMBER_COUNT_AND_MEMBER_SALES_SHARE", "status": "SETTLED_COMPANY_SCOPE_ONLY", "pointer": "/company_network_raw_facts/members"},
+      {"field_id": "NETWORK_AND_STORE_TYPE_REPORTING_PERIMETER_EVENT", "status": "SETTLED", "pointer": "/reporting_and_consolidation_perimeter/store_reporting_scope"},
+      {"field_id": "NOTES_AND_ACCOUNTS_PAYABLE_RMB", "status": "SETTLED", "pointer": "/group_funding_raw_facts/notes_and_accounts_payable"},
+      {"field_id": "OPERATING_RECEIVABLE_PAYABLE_AND_ADVANCE_CASH_SUPPORT_RMB", "status": "SETTLED_AT_CONTRACT_FORMULA_SCOPE", "pointer": "/group_funding_raw_facts/working_capital_cash_support"},
+      {"field_id": "ORGANIC_COHORT_CASH_CAPEX_AND_PAYBACK", "status": "NOT_SEPARATELY_DISCLOSED_LOCAL_ONLY", "pointer": "/organic_and_acquired_cohort_disclosures/company_organic_new_store_cohort/cash_capex_and_payback"},
+      {"field_id": "ORGANIC_COHORT_CLOSURE_IMPAIRMENT_OR_TRANSFER_EVENT", "status": "NOT_SEPARATELY_DISCLOSED_LOCAL_ONLY", "pointer": "/organic_and_acquired_cohort_disclosures/company_organic_new_store_cohort/closure_impairment_or_transfer"},
+      {"field_id": "ORGANIC_COHORT_REVENUE_OR_SAME_STORE_SALES_RMB", "status": "NOT_SEPARATELY_DISCLOSED_LOCAL_ONLY", "pointer": "/organic_and_acquired_cohort_disclosures/company_organic_new_store_cohort/revenue_or_same_store_sales"},
+      {"field_id": "ORGANIC_COHORT_STORE_PROFIT_RMB", "status": "PARTIAL_LOCAL_SUBCOHORT_ONLY", "pointer": "/organic_and_acquired_cohort_disclosures/localized_organic_subcohort_inside_acquired_entity"},
+      {"field_id": "ORGANIC_NEW_STORE_COUNT", "status": "SETTLED", "pointer": "/company_network_raw_facts/store_rollforward/organic_new_stores"},
+      {"field_id": "ORGANIC_NEW_STORE_COUNT_AND_OPENING_EVENT", "status": "SETTLED", "pointer": "/company_network_raw_facts/store_rollforward/organic_new_stores"},
+      {"field_id": "OTHER_DISCLOSED_NONOVERLAPPING_STRATEGIC_INVESTMENT_CASH_RMB", "status": "SETTLED", "pointer": "/group_funding_raw_facts/other_disclosed_nonoverlapping_strategic_investment_cash"},
+      {"field_id": "OTHER_NONOVERLAPPING_STRATEGIC_INVESTMENT_CASH_RMB", "status": "SETTLED", "pointer": "/group_funding_raw_facts/other_disclosed_nonoverlapping_strategic_investment_cash"},
+      {"field_id": "POST_WORKING_CAPITAL_DIRECTIONAL_CASH_AFTER_ALL_CAPEX_RMB", "status": "SETTLED_MECHANICALLY", "pointer": "/mechanical_group_funding_endpoints/post_working_capital_directional_cash_after_all_capex"},
+      {"field_id": "POST_WORKING_CAPITAL_GROUP_FUNDING_ENDPOINT_RMB", "status": "SETTLED_MECHANICALLY", "pointer": "/mechanical_group_funding_endpoints/post_working_capital_group_funding_endpoint"},
+      {"field_id": "RESTRICTED_CASH_RMB", "status": "SETTLED", "pointer": "/group_funding_raw_facts/cash_and_restricted_cash/restricted_cash"},
+      {"field_id": "RETAIL_GROSS_MARGIN_PERCENT", "status": "SETTLED_COMPANY_SCOPE_ONLY", "pointer": "/company_network_raw_facts/retail_gross_margin"},
+      {"field_id": "RETAIL_REVENUE_RMB", "status": "SETTLED_COMPANY_SCOPE_ONLY", "pointer": "/company_network_raw_facts/retail_revenue"},
+      {"field_id": "RETAIL_REVENUE_RMB_AND_GROWTH", "status": "SETTLED_COMPANY_SCOPE_ONLY", "pointer": "/company_network_raw_facts/retail_revenue"},
+      {"field_id": "SALES_EXPENSE_RMB", "status": "SETTLED_COMPANY_SCOPE_ONLY", "pointer": "/company_network_raw_facts/sales_expense"},
+      {"field_id": "SALES_EXPENSE_RMB_AND_GROWTH", "status": "SETTLED_COMPANY_SCOPE_ONLY", "pointer": "/company_network_raw_facts/sales_expense"},
+      {"field_id": "STATUTORY_OCF_AFTER_ALL_CAPEX_RMB", "status": "SETTLED_MECHANICALLY", "pointer": "/mechanical_group_funding_endpoints/statutory_ocf_after_all_capex"},
+      {"field_id": "STATUTORY_POST_DEPLOYMENT_CASH_ENDPOINT_RMB", "status": "SETTLED_MECHANICALLY", "pointer": "/mechanical_group_funding_endpoints/statutory_post_deployment_cash_endpoint"},
+      {"field_id": "STORE_TYPE_DAILY_SALES_PER_SQUARE_METER", "status": "SETTLED_COMPANY_SCOPE_ONLY", "pointer": "/company_network_raw_facts/store_type_daily_sales_per_square_meter"},
+      {"field_id": "STORE_TYPE_EFFICIENCY_DIRECTION", "status": "SETTLED_AS_RAW_DIRECTION_ONLY", "pointer": "/company_network_raw_facts/store_type_daily_sales_per_square_meter"},
+      {"field_id": "TOTAL_STORE_COUNT_AND_ROLLFORWARD", "status": "SETTLED", "pointer": "/company_network_raw_facts/store_rollforward/total_stores"}
+    ]
+  },
+  "settlement_status": "OUTCOME_FACTS_SETTLED_WITHOUT_ENTERPRISE_OR_INVESTMENT_JUDGMENT"
+}
