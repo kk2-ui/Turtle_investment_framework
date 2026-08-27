@@ -16,7 +16,8 @@ from datetime import datetime, timezone
 from typing import Any
 
 
-SCHEMA_VERSION = "enterprise-judgment-episode-manifest.v1"
+SCHEMA_VERSION = "enterprise-judgment-episode-manifest.v2"
+LEGACY_SCHEMA_VERSION = "enterprise-judgment-episode-manifest.v1"
 ALLOWED_OUTPUTS = ["EPISODE_READ_MODEL", "RESEARCH_AGENDA"]
 
 ADMISSION_LEVELS = (
@@ -51,6 +52,16 @@ CLAIM_DOMAINS = {
     "CASH",
     "PERMANENT_LOSS",
     "LIFECYCLE",
+}
+JUDGMENT_DIMENSIONS = {
+    "INITIAL_CONDITIONS",
+    "IMPLEMENTED_MANAGEMENT_ACTION",
+    "EXECUTION",
+    "CUSTOMER_COMPETITION_RESPONSE",
+    "UNIT_ECONOMICS",
+    "WORKING_CAPITAL_CASH_CAPITAL",
+    "ADAPTATION_PERMANENT_LOSS",
+    "STRONGEST_ALTERNATIVE_EXPLANATION",
 }
 OUTCOME_DIMENSIONS = {
     "CUSTOMER",
@@ -96,14 +107,26 @@ _QUESTION_KEYS = {"question_id", "role", "question", "claim_ids"}
 _CLAIM_KEYS = {
     "claim_id",
     "question_id",
+    "method_id",
+    "judgment_dimension",
+    "claim_scope",
     "domain",
     "statement",
     "cell_status",
     "admission_level",
     "evidence_refs",
+    "evidence_locator_refs",
     "dependent_outcome_cell_ids",
     "decision_observation_ref",
     "decision_observation_treatment",
+}
+_CLAIM_SCOPE_KEYS = {
+    "issuer_ids",
+    "product_or_service_ids",
+    "plant_ids",
+    "channel_ids",
+    "region_ids",
+    "arena_ids",
 }
 _THREAD_KEYS = {
     "thread_id",
@@ -222,6 +245,40 @@ def _unique_ids(items: list[dict[str, Any]], field: str, path: str, findings: li
     return values
 
 
+def _unique_text_list(value: Any, path: str, findings: list[str], *, required: bool = False) -> list[str]:
+    if not isinstance(value, list):
+        _add(findings, path + "_must_be_list")
+        return []
+    values: list[str] = []
+    for index, raw in enumerate(value):
+        if not _text(raw):
+            _add(findings, f"{path}[{index}]_must_be_nonempty_text")
+            continue
+        text = str(raw)
+        if text in values:
+            _add(findings, f"{path}[{index}]_duplicate")
+        else:
+            values.append(text)
+    if required and not values:
+        _add(findings, path + "_required")
+    return values
+
+
+def _validate_claim_scope(
+    value: Any, *, issuer_id: str, path: str, findings: list[str],
+) -> dict[str, Any]:
+    scope = _closed(value, _CLAIM_SCOPE_KEYS, path, findings)
+    values = {
+        field: _unique_text_list(
+            scope.get(field), f"{path}.{field}", findings, required=field == "issuer_ids",
+        )
+        for field in _CLAIM_SCOPE_KEYS
+    }
+    if issuer_id and issuer_id not in values["issuer_ids"]:
+        _add(findings, path + ".issuer_ids_must_include_episode_issuer")
+    return scope
+
+
 def _forbidden_paths(value: Any, path: str = "episode") -> list[str]:
     findings: list[str] = []
     if isinstance(value, dict):
@@ -309,14 +366,28 @@ def _validate_questions(value: Any, findings: list[str]) -> tuple[list[dict[str,
     return questions, ids
 
 
-def _validate_claims(value: Any, question_ids: set[str], findings: list[str]) -> tuple[list[dict[str, Any]], set[str]]:
+def _validate_claims(
+    value: Any,
+    question_ids: set[str],
+    issuer_id: str,
+    evidence_locator_ids: set[str] | None,
+    require_typed_contract: bool,
+    findings: list[str],
+) -> tuple[list[dict[str, Any]], set[str]]:
     raw_items = _items(value)
     if not raw_items:
         _add(findings, "episode.claims_required")
     claims = [
         _closed(
             raw, _CLAIM_KEYS, f"episode.claims[{index}]", findings,
-            required=_CLAIM_KEYS - {"decision_observation_ref", "decision_observation_treatment"},
+            required=(
+                _CLAIM_KEYS - {"decision_observation_ref", "decision_observation_treatment"}
+                if require_typed_contract
+                else _CLAIM_KEYS - {
+                    "method_id", "judgment_dimension", "claim_scope", "evidence_locator_refs",
+                    "decision_observation_ref", "decision_observation_treatment",
+                }
+            ),
         )
         for index, raw in enumerate(raw_items)
     ]
@@ -325,6 +396,18 @@ def _validate_claims(value: Any, question_ids: set[str], findings: list[str]) ->
         question_id = _require_text(claim, "question_id", f"episode.claims[{index}]", findings)
         if question_id and question_id not in question_ids:
             _add(findings, f"episode.claims[{index}].question_id_unknown")
+        if require_typed_contract or "method_id" in claim:
+            _require_text(claim, "method_id", f"episode.claims[{index}]", findings)
+        if require_typed_contract or "judgment_dimension" in claim:
+            if claim.get("judgment_dimension") not in JUDGMENT_DIMENSIONS:
+                _add(findings, f"episode.claims[{index}].judgment_dimension_invalid")
+        if require_typed_contract or "claim_scope" in claim:
+            _validate_claim_scope(
+                claim.get("claim_scope"),
+                issuer_id=issuer_id,
+                path=f"episode.claims[{index}].claim_scope",
+                findings=findings,
+            )
         if claim.get("domain") not in CLAIM_DOMAINS:
             _add(findings, f"episode.claims[{index}].domain_invalid")
         _require_text(claim, "statement", f"episode.claims[{index}]", findings)
@@ -337,6 +420,21 @@ def _validate_claims(value: Any, question_ids: set[str], findings: list[str]) ->
             _add(findings, f"episode.claims[{index}].evidence_refs_invalid")
         elif claim.get("cell_status") in {"OBSERVED", "INFERRED", "EVIDENCE_INELIGIBLE"} and not evidence_refs:
             _add(findings, f"episode.claims[{index}].evidence_refs_required_for_status")
+        locator_refs = (
+            _unique_text_list(
+                claim.get("evidence_locator_refs"),
+                f"episode.claims[{index}].evidence_locator_refs",
+                findings,
+            )
+            if require_typed_contract or "evidence_locator_refs" in claim
+            else []
+        )
+        if require_typed_contract and claim.get("cell_status") in {"OBSERVED", "INFERRED", "EVIDENCE_INELIGIBLE"} and not locator_refs:
+            _add(findings, f"episode.claims[{index}].evidence_locator_refs_required_for_status")
+        if evidence_locator_ids is not None:
+            for locator_ref in locator_refs:
+                if locator_ref not in evidence_locator_ids:
+                    _add(findings, f"episode.claims[{index}].evidence_locator_ref_unknown:{locator_ref}")
         dependencies = claim.get("dependent_outcome_cell_ids")
         if not isinstance(dependencies, list) or any(not _text(item) for item in dependencies):
             _add(findings, f"episode.claims[{index}].dependent_outcome_cell_ids_invalid")
@@ -477,6 +575,12 @@ def _validate_bindings(
             _add(findings, "episode.issuer_id_must_match_bound_enterprise_model")
         if model_ref and item.get("cutoff_at") != model.get("as_of"):
             _add(findings, "episode.cutoff_at_must_match_bound_enterprise_model")
+        model_arena_ids = set(_items(model.get("competitive_arena_ids")))
+        for index, raw_claim in enumerate(_items(item.get("claims"))):
+            scope = _mapping(_mapping(raw_claim).get("claim_scope"))
+            arena_ids = set(_items(scope.get("arena_ids")))
+            if arena_ids and not arena_ids <= model_arena_ids:
+                _add(findings, f"episode.claims[{index}].claim_scope.arena_ids_must_exist_in_bound_enterprise_model")
 
     if reconstruction_binding is not None:
         if enterprise_bundle is not None:
@@ -565,6 +669,7 @@ def validate_episode_manifest(
     decision_contract: Any | None = None,
     enterprise_bundle: Any | None = None,
     reconstruction_binding: Any | None = None,
+    evidence_locator_ids: Any | None = None,
 ) -> dict[str, Any]:
     """Validate a closed, read-only episode composition contract.
 
@@ -574,7 +679,8 @@ def validate_episode_manifest(
     """
     findings: list[str] = []
     item = _closed(manifest, _ROOT_KEYS, "episode", findings)
-    if item.get("schema_version") != SCHEMA_VERSION:
+    schema_version = item.get("schema_version")
+    if schema_version not in {SCHEMA_VERSION, LEGACY_SCHEMA_VERSION}:
         _add(findings, "episode.schema_version_invalid")
     _require_text(item, "episode_id", "episode", findings)
     _require_text(item, "company_id", "episode", findings)
@@ -590,7 +696,16 @@ def validate_episode_manifest(
     _validate_contract_ref(item.get("decision_contract_ref"), findings)
     component_by_type = _validate_component_refs(item.get("component_refs"), findings)
     questions, question_ids = _validate_questions(item.get("question_set"), findings)
-    claims, claim_ids = _validate_claims(item.get("claims"), question_ids, findings)
+    known_locator_ids: set[str] | None = None
+    if evidence_locator_ids is not None:
+        locator_values = _unique_text_list(
+            evidence_locator_ids, "episode.evidence_locator_ids", findings,
+        )
+        known_locator_ids = set(locator_values)
+    claims, claim_ids = _validate_claims(
+        item.get("claims"), question_ids, str(item.get("issuer_id") or ""), known_locator_ids,
+        schema_version == SCHEMA_VERSION, findings,
+    )
     cells, cell_ids = _validate_outcome_cells(item.get("outcome_cells"), findings)
     threads = _validate_threads(item.get("mechanism_threads"), claim_ids, cell_ids, findings)
 
@@ -653,6 +768,185 @@ def validate_episode_manifest(
     return {"valid": not findings, "findings": findings, "episode_manifest": deepcopy(item) if not findings else None}
 
 
+def _source_locator_from_receipt(
+    receipt: dict[str, Any], *, path: str, findings: list[str],
+) -> dict[str, Any] | None:
+    source = receipt.get("source")
+    if source is None:
+        if receipt.get("status") == "OBSERVED":
+            _add(findings, path + ".observed_receipt_requires_source_locator")
+        return None
+    source_item = _mapping(source)
+    if not isinstance(source, dict):
+        _add(findings, path + ".source_must_be_object")
+        return None
+    for field in ("source_id", "source_url", "field_ref", "field_identity"):
+        _require_text(source_item, field, path + ".source", findings)
+    if not str(source_item.get("source_url", "")).startswith("https://"):
+        _add(findings, path + ".source.source_url_must_be_https")
+    page = source_item.get("pdf_page")
+    if not isinstance(page, int) or isinstance(page, bool) or page < 1:
+        _add(findings, path + ".source.pdf_page_must_be_positive_integer")
+    elif source_item.get("field_ref") != f"PDF p.{page}":
+        _add(findings, path + ".source.field_ref_must_match_pdf_page")
+    if source_item.get("field_identity") != receipt.get("field_id"):
+        _add(findings, path + ".source.field_identity_must_match_receipt_field")
+    for field in ("measurement_clock", "responsibility_boundary", "unit"):
+        if source_item.get(field) != receipt.get(field):
+            _add(findings, f"{path}.source.{field}_must_match_receipt")
+    locator = _mapping(source_item.get("custodian_locator"))
+    locator_keys = {"table_or_note", "line_item", "period_column"}
+    if set(locator) != locator_keys or any(not _text(locator.get(field)) for field in locator_keys):
+        _add(findings, path + ".source.custodian_locator_invalid")
+    return {
+        key: deepcopy(source_item[key])
+        for key in (
+            "source_id", "source_url", "pdf_page", "field_ref", "field_identity",
+            "custodian_locator", "measurement_clock", "responsibility_boundary", "unit",
+        )
+        if key in source_item
+    }
+
+
+def _derive_claim_evidence_trace(
+    manifest: dict[str, Any], canonical_settlement: Any, findings: list[str],
+) -> tuple[list[dict[str, Any]], dict[str, str]]:
+    settlement = _mapping(canonical_settlement)
+    if not isinstance(canonical_settlement, dict):
+        _add(findings, "episode_trace.canonical_settlement_must_be_object")
+        return [], {}
+    if settlement.get("schema_version") != "enterprise-outcome-measurement-settlement.v1":
+        _add(findings, "episode_trace.canonical_settlement_schema_invalid")
+    if settlement.get("settled") is not True:
+        _add(findings, "episode_trace.canonical_settlement_must_be_settled")
+    for field in ("settlement_id", "company_id", "cutoff_at"):
+        _require_text(settlement, field, "episode_trace.canonical_settlement", findings)
+    if settlement.get("company_id") != manifest.get("company_id"):
+        _add(findings, "episode_trace.settlement_company_must_match_episode")
+    if settlement.get("cutoff_at") != manifest.get("cutoff_at"):
+        _add(findings, "episode_trace.settlement_cutoff_must_match_episode")
+
+    contract_ref = _mapping(settlement.get("measurement_contract_ref"))
+    contract_id = contract_ref.get("measurement_contract_id")
+    contract_version = contract_ref.get("measurement_contract_version")
+    if not _text(contract_id) or not isinstance(contract_version, int) or isinstance(contract_version, bool) or contract_version < 1:
+        _add(findings, "episode_trace.settlement_measurement_contract_ref_invalid")
+
+    result_rows = [_mapping(raw) for raw in _items(settlement.get("cell_results"))]
+    result_ids = _unique_ids(result_rows, "cell_id", "episode_trace.canonical_settlement.cell_results", findings)
+    result_statuses: dict[str, str] = {}
+    for index, result in enumerate(result_rows):
+        status = result.get("status")
+        if status not in {"OBSERVED", "UNKNOWN", "MEASUREMENT_MISMATCH"}:
+            _add(findings, f"episode_trace.canonical_settlement.cell_results[{index}].status_invalid")
+        elif _text(result.get("cell_id")):
+            result_statuses[str(result["cell_id"])] = str(status)
+
+    manifest_cells = {
+        str(_mapping(raw).get("outcome_cell_id")): _mapping(raw)
+        for raw in _items(manifest.get("outcome_cells"))
+    }
+    for cell_id, cell in manifest_cells.items():
+        if cell_id not in result_ids:
+            _add(findings, f"episode_trace.outcome_cell_missing_from_settlement:{cell_id}")
+        measurement_ref = cell.get("measurement_contract_ref")
+        if _text(measurement_ref) and measurement_ref != contract_id:
+            _add(findings, f"episode_trace.outcome_cell_measurement_contract_mismatch:{cell_id}")
+
+    raw_receipts_value = settlement.get("raw_observation_receipts")
+    raw_receipts = [_mapping(raw) for raw in _items(raw_receipts_value)]
+    if not isinstance(raw_receipts_value, list):
+        _add(findings, "episode_trace.raw_observation_receipts_must_be_list")
+    receipt_ids = _unique_ids(
+        raw_receipts, "receipt_id", "episode_trace.canonical_settlement.raw_observation_receipts", findings,
+    )
+    ordered_receipt_ids = [raw.get("receipt_id") for raw in raw_receipts]
+    if settlement.get("observation_receipt_ids") != ordered_receipt_ids:
+        _add(findings, "episode_trace.observation_receipt_ids_must_match_raw_receipts_in_order")
+    if len(receipt_ids) != len(raw_receipts):
+        _add(findings, "episode_trace.raw_observation_receipt_ids_must_be_unique")
+
+    traces_by_cell: dict[str, list[dict[str, Any]]] = {}
+    seen_fields: set[tuple[str, str]] = set()
+    for index, receipt in enumerate(raw_receipts):
+        path = f"episode_trace.canonical_settlement.raw_observation_receipts[{index}]"
+        cell_id = _require_text(receipt, "cell_id", path, findings)
+        field_id = _require_text(receipt, "field_id", path, findings)
+        if receipt.get("settlement_id") != settlement.get("settlement_id"):
+            _add(findings, path + ".settlement_id_must_match_canonical_settlement")
+        if receipt.get("company_id") != manifest.get("company_id"):
+            _add(findings, path + ".company_id_must_match_episode")
+        if receipt.get("cutoff_at") != manifest.get("cutoff_at"):
+            _add(findings, path + ".cutoff_at_must_match_episode")
+        if receipt.get("measurement_contract_ref") != settlement.get("measurement_contract_ref"):
+            _add(findings, path + ".measurement_contract_ref_must_match_canonical_settlement")
+        status = receipt.get("status")
+        if status not in {"OBSERVED", "UNKNOWN", "MEASUREMENT_MISMATCH"}:
+            _add(findings, path + ".status_invalid")
+        if cell_id not in result_ids:
+            _add(findings, path + ".cell_id_not_in_settlement_results")
+        pair = (cell_id, field_id)
+        if pair in seen_fields:
+            _add(findings, path + ".cell_field_pair_duplicate")
+        seen_fields.add(pair)
+        locator = _source_locator_from_receipt(receipt, path=path, findings=findings)
+        traces_by_cell.setdefault(cell_id, []).append({
+            "raw_observation_receipt_id": receipt.get("receipt_id"),
+            "field_id": field_id,
+            "status": status,
+            "source_locator": locator,
+        })
+
+    claim_traces: list[dict[str, Any]] = []
+    for claim in map(_mapping, _items(manifest.get("claims"))):
+        cell_traces: list[dict[str, Any]] = []
+        for cell_id in _items(claim.get("dependent_outcome_cell_ids")):
+            raw_traces = traces_by_cell.get(str(cell_id), [])
+            if not raw_traces:
+                _add(findings, f"episode_trace.dependent_cell_has_no_raw_observation_receipt:{cell_id}")
+            cell_traces.append({
+                "cell_id": cell_id,
+                "status": result_statuses.get(str(cell_id)),
+                "raw_observations": deepcopy(raw_traces),
+            })
+        claim_traces.append({
+            "claim_id": claim.get("claim_id"),
+            "method_id": claim.get("method_id"),
+            "judgment_dimension": claim.get("judgment_dimension"),
+            "claim_scope": deepcopy(claim.get("claim_scope")),
+            "cells": cell_traces,
+        })
+    return claim_traces, result_statuses
+
+
+def compile_claim_evidence_trace(
+    manifest: Any,
+    *,
+    canonical_settlement: Any,
+    decision_contract: Any | None = None,
+    enterprise_bundle: Any | None = None,
+    reconstruction_binding: Any | None = None,
+    evidence_locator_ids: Any | None = None,
+) -> dict[str, Any]:
+    """Project claims to canonical settlement receipts without mutating either input."""
+    validation = validate_episode_manifest(
+        manifest,
+        decision_contract=decision_contract,
+        enterprise_bundle=enterprise_bundle,
+        reconstruction_binding=reconstruction_binding,
+        evidence_locator_ids=evidence_locator_ids,
+    )
+    if not validation["valid"]:
+        return {"valid": False, "findings": validation["findings"], "claim_evidence_trace": None}
+    findings: list[str] = []
+    traces, _ = _derive_claim_evidence_trace(_mapping(manifest), canonical_settlement, findings)
+    return {
+        "valid": not findings,
+        "findings": findings,
+        "claim_evidence_trace": deepcopy(traces) if not findings else None,
+    }
+
+
 def _claim_matrix_row(claim: dict[str, Any], cells_by_id: dict[str, dict[str, Any]]) -> dict[str, Any]:
     blocked_by: list[dict[str, str]] = []
     claim_state = str(claim.get("cell_status"))
@@ -667,6 +961,10 @@ def _claim_matrix_row(claim: dict[str, Any], cells_by_id: dict[str, dict[str, An
     return {
         "claim_id": claim["claim_id"],
         "question_id": claim["question_id"],
+        "method_id": claim.get("method_id"),
+        "judgment_dimension": claim.get("judgment_dimension"),
+        "claim_scope": deepcopy(claim.get("claim_scope")),
+        "evidence_locator_refs": list(_items(claim.get("evidence_locator_refs"))),
         "admission_level": claim["admission_level"],
         "cell_status": claim["cell_status"],
         "allowed_outputs": allowed_outputs,
@@ -680,20 +978,36 @@ def compile_episode_read_model(
     decision_contract: Any | None = None,
     enterprise_bundle: Any | None = None,
     reconstruction_binding: Any | None = None,
+    evidence_locator_ids: Any | None = None,
+    canonical_settlement: Any | None = None,
 ) -> dict[str, Any]:
-    """Derive cell-level permissions without creating or upgrading an artifact."""
+    """Derive permissions and optional receipt traces without writing an artifact."""
     validation = validate_episode_manifest(
         manifest,
         decision_contract=decision_contract,
         enterprise_bundle=enterprise_bundle,
         reconstruction_binding=reconstruction_binding,
+        evidence_locator_ids=evidence_locator_ids,
     )
     if not validation["valid"]:
         return {"valid": False, "findings": validation["findings"], "episode_read_model": None}
     item = _mapping(manifest)
     cells_by_id = {
-        str(_mapping(raw)["outcome_cell_id"]): _mapping(raw) for raw in _items(item.get("outcome_cells"))
+        str(_mapping(raw)["outcome_cell_id"]): deepcopy(_mapping(raw)) for raw in _items(item.get("outcome_cells"))
     }
+    claim_evidence_trace: list[dict[str, Any]] = []
+    canonical_settlement_ref: str | None = None
+    if canonical_settlement is not None:
+        trace_findings: list[str] = []
+        claim_evidence_trace, result_statuses = _derive_claim_evidence_trace(
+            item, canonical_settlement, trace_findings,
+        )
+        if trace_findings:
+            return {"valid": False, "findings": trace_findings, "episode_read_model": None}
+        for cell_id, status in result_statuses.items():
+            if cell_id in cells_by_id:
+                cells_by_id[cell_id]["status"] = status
+        canonical_settlement_ref = str(_mapping(canonical_settlement).get("settlement_id"))
     claim_output_matrix = [_claim_matrix_row(_mapping(raw), cells_by_id) for raw in _items(item.get("claims"))]
     row_by_claim = {row["claim_id"]: row for row in claim_output_matrix}
     thread_views: list[dict[str, Any]] = []
@@ -730,12 +1044,14 @@ def compile_episode_read_model(
         "valid": True,
         "findings": [],
         "episode_read_model": {
-            "schema_version": SCHEMA_VERSION,
+            "schema_version": item["schema_version"],
             "episode_id": item["episode_id"],
             "company_id": item["company_id"],
             "issuer_id": item["issuer_id"],
             "cutoff_at": item["cutoff_at"],
             "claim_output_matrix": claim_output_matrix,
+            "claim_evidence_trace": claim_evidence_trace,
+            "canonical_settlement_ref": canonical_settlement_ref,
             "mechanism_thread_views": thread_views,
             "eligible_admission_levels": eligible_levels,
             "allowed_outputs": list(ALLOWED_OUTPUTS),

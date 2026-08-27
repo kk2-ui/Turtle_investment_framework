@@ -11,7 +11,7 @@ from scripts import judgment_pit_forecast_control_plane as forecast_control
 from scripts import judgment_v5_control_plane as v5_control
 from scripts import judgment_training_cjo_mirror as mirror
 from tests.test_judgment_cjo_valuation import _cjo, _settlement, _snapshot
-from tests.test_judgment_decision_utility import _evaluation, _pairing
+from tests.test_judgment_decision_utility import _episodes, _evaluation, _pairing
 from tests.test_judgment_pit_forecast import _forecast, _universe_and_h1
 from tests.test_judgment_training_cjo_mirror import _enterprise_bundle, _mirror
 from tests.test_judgment_training_decision_contract import _contract
@@ -72,9 +72,11 @@ def test_top_level_synthetic_path_preserves_one_way_permissions() -> None:
     assert valuation_result["valid"], valuation_result["findings"]
     assert valuation_result["learning_authorization"] == "CANDIDATE_ONLY"
 
-    utility_pairing = _pairing(contract)
+    baseline_episode, enhanced_episode = _episodes(contract)
+    utility_pairing = _pairing(contract, baseline_episode, enhanced_episode)
     utility_result = utility.validate_decision_utility_evaluation(
-        _evaluation(utility_pairing), pairing=utility_pairing, contract=contract,
+        _evaluation(utility_pairing, contract), pairing=utility_pairing, contract=contract,
+        baseline_episode=baseline_episode, enhanced_episode=enhanced_episode,
     )
     assert utility_result["valid"], utility_result["findings"]
     assert utility_result["learning_authorization"] == "CANDIDATE_ONLY"

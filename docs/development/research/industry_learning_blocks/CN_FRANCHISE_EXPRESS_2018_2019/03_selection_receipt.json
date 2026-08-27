@@ -1,0 +1,18 @@
+{
+  "schema_version": "enterprise-judgment-industry-selection.v1",
+  "selection_id": "EJSEL:ILB:CN:FRANCHISE_EXPRESS:20180501_20191231:V1",
+  "block_id": "ILB:CN:FRANCHISE_EXPRESS:20180501_20191231:V1",
+  "policy_id": "SEL:CN:FRANCHISE_EXPRESS:ROUND8:V1",
+  "eligible_company_ids": ["CN:002120", "CN:002468", "CN:600233"],
+  "selected_rank": 1,
+  "company_id": "CN:002120",
+  "issuer_id": "ISSUER:CN:002120",
+  "cutoff_at": "2019-05-01T00:00:00+08:00",
+  "source_packet_ref": {"receipt_id": "SP:CN002120:20190501:FY2018", "receipt_version": 1},
+  "selection_used_outcome": false,
+  "selection_used_source_convenience": false,
+  "outcome_access_status": "SEALED",
+  "object_class": "ENTERPRISE_JUDGMENT_INDUSTRY_SELECTION",
+  "claim_class": "MECHANICAL_PRE_OUTCOME_SELECTION",
+  "allowed_outputs": ["PRE_OUTCOME_EPISODE_SELECTION", "RESEARCH_AGENDA"]
+}

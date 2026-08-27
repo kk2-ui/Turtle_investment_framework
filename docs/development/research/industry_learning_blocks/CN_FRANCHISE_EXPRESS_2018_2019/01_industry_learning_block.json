@@ -1,0 +1,163 @@
+{
+  "schema_version": "industry-learning-block.v2",
+  "block_id": "ILB:CN:FRANCHISE_EXPRESS:20180501_20191231:V1",
+  "industry_id": "INDUSTRY:CN:FRANCHISE_EXPRESS",
+  "cutoff_at": "2019-05-01T00:00:00+08:00",
+  "observation_window": {
+    "event_start": "2019-05-02",
+    "event_end": "2019-12-31",
+    "accounting_period": "FY2019",
+    "settlement_source_type": "OFFICIAL_ANNUAL_REPORT_STATIC_PDF",
+    "boundary_note": "FY2019 flow fields include the pre-cutoff January-April period and are MIXED_CLOCK_CONTEXT rather than clean post-cutoff causal outcomes; event claims only use implementation evidence dated from 2019-05-02 onward."
+  },
+  "industry_epoch": {
+    "epoch_id": "EPOCH:CN:FRANCHISE_EXPRESS:FY2018_DISCLOSURE",
+    "condition": "National parcel demand was still expanding quickly while concentration, price-service competition, peak capacity and franchise-network stability jointly shaped company outcomes.",
+    "observed_industry_volume": "50.71 billion parcels in FY2018, up 26.6% year on year.",
+    "observed_industry_revenue": "RMB 603.84 billion in FY2018, up 21.8% year on year.",
+    "observed_concentration": "CR8 was 81.2 in FY2018, up 2.5 points year on year.",
+    "evidence_refs": [
+      "LOC:002120:FY2018:INDUSTRY_VOLUME_CONCENTRATION",
+      "LOC:600233:FY2018:INDUSTRY_VOLUME_REVENUE"
+    ],
+    "causal_credit": "NONE"
+  },
+  "mechanism_arenas": [
+    {
+      "arena_id": "ARENA:CN:EXPRESS:ECOMMERCE_PARCEL_DEMAND",
+      "mechanism": "National e-commerce parcel demand and platform traffic feed shipment volume into competing delivery networks.",
+      "economic_scope": "NATIONAL_DEMAND_WITH_SHIPPER_AND_PLATFORM_CHANNELS",
+      "value_driver": "Parcel adoption, shipper retention, product mix and service-price trade-off.",
+      "failure_mode": "Industry growth or discounting can be mistaken for customer preference for one network."
+    },
+    {
+      "arena_id": "ARENA:CN:EXPRESS:HUB_TRUNK_NETWORK",
+      "mechanism": "Self-operated sorting hubs, route planning and trunk capacity convert parcel density into timeliness and unit cost.",
+      "economic_scope": "NATIONAL_NETWORK_WITH_HUB_AND_ROUTE_LOCALITY",
+      "value_driver": "Sort accuracy, vehicle utilization, route density, peak throughput and fixed-asset productivity.",
+      "failure_mode": "Capacity additions can raise volume before utilization, service quality or cash returns are proven."
+    },
+    {
+      "arena_id": "ARENA:CN:EXPRESS:FRANCHISE_LAST_MILE",
+      "mechanism": "Franchisees supply local pickup and delivery capacity while headquarters sets rules, technology, settlement and incentives.",
+      "economic_scope": "DISTRIBUTED_LOCAL_SERVICE_NETWORK",
+      "value_driver": "Franchisee economics, coverage density, service compliance and network continuity.",
+      "failure_mode": "Headquarters volume or margin can improve while franchisee economics and service resilience deteriorate."
+    },
+    {
+      "arena_id": "ARENA:CN:EXPRESS:SERVICE_RESPONSE",
+      "mechanism": "Timeliness, loss and complaint outcomes influence shipper allocation and consumer acceptance alongside price.",
+      "economic_scope": "NATIONAL_BRAND_WITH_LOCAL_FULFILMENT",
+      "value_driver": "Complaint rate, on-time delivery, market share and repeat shipper adoption.",
+      "failure_mode": "Market-share gains alone do not distinguish service improvement from lower price or external demand."
+    }
+  ],
+  "members": [
+    {
+      "rank": 1,
+      "company_id": "CN:002120",
+      "issuer_id": "ISSUER:CN:002120",
+      "company_name": "Yunda Holding",
+      "source_packet_ref": {"receipt_id": "SP:CN002120:20190501:FY2018", "receipt_version": 1},
+      "packet_state": "COMPLETE_PRE_CUTOFF_STATIC_PDF",
+      "archetype": "FULLY_SELF_OPERATED_HUBS_WITH_FRANCHISED_LAST_MILE",
+      "responsibility_boundary": "ISSUER_CONSOLIDATED_WITH_HUB_CONTROL_AND_FRANCHISE_EDGE",
+      "arena_ids": [
+        "ARENA:CN:EXPRESS:ECOMMERCE_PARCEL_DEMAND",
+        "ARENA:CN:EXPRESS:HUB_TRUNK_NETWORK",
+        "ARENA:CN:EXPRESS:FRANCHISE_LAST_MILE",
+        "ARENA:CN:EXPRESS:SERVICE_RESPONSE"
+      ],
+      "cutoff_state": "FY2018 parcel volume was 6.985 billion, up 48%; market share was 13.77%; all 55 hubs were self-operated; the network had 3,464 franchisees and 26,149 outlets or service points.",
+      "decision_heterogeneity": "Management emphasized service-led growth, product tiers, automation, route optimization, franchisee enablement and selective property ownership.",
+      "evidence_refs": [
+        "LOC:002120:FY2018:BUSINESS_MODEL",
+        "LOC:002120:FY2018:CUSTOMER_RESPONSE",
+        "LOC:002120:FY2018:IMPLEMENTED_ACTIONS",
+        "LOC:002120:FY2018:UNIT_ECONOMICS",
+        "LOC:002120:FY2018:CASH_CAPITAL"
+      ]
+    },
+    {
+      "rank": 2,
+      "company_id": "CN:002468",
+      "issuer_id": "ISSUER:CN:002468",
+      "company_name": "STO Express",
+      "source_packet_ref": {"receipt_id": "SP:CN002468:20190501:FY2018", "receipt_version": 1},
+      "packet_state": "COMPLETE_PRE_CUTOFF_STATIC_PDF",
+      "archetype": "HUB_DIRECT_OPERATION_TRANSITION_WITH_FRANCHISED_LAST_MILE",
+      "responsibility_boundary": "ISSUER_CONSOLIDATED_WITH_ACQUIRED_HUB_PERIMETER",
+      "arena_ids": [
+        "ARENA:CN:EXPRESS:ECOMMERCE_PARCEL_DEMAND",
+        "ARENA:CN:EXPRESS:HUB_TRUNK_NETWORK",
+        "ARENA:CN:EXPRESS:FRANCHISE_LAST_MILE",
+        "ARENA:CN:EXPRESS:SERVICE_RESPONSE"
+      ],
+      "cutoff_state": "FY2018 parcel volume was about 5.112 billion, up about 31.13%; 60 of 68 hubs were self-operated after acquisition of 15 core hubs; the network had 2,233 independent outlets and more than 25,000 service points.",
+      "decision_heterogeneity": "Management was integrating acquired hubs and rebuilding direct control, creating a material perimeter and execution distinction from peers.",
+      "evidence_refs": [
+        "LOC:002468:FY2018:BUSINESS_MODEL",
+        "LOC:002468:FY2018:CUSTOMER_RESPONSE",
+        "LOC:002468:FY2018:HUB_ACQUISITION",
+        "LOC:002468:FY2018:NETWORK_SCALE"
+      ]
+    },
+    {
+      "rank": 3,
+      "company_id": "CN:600233",
+      "issuer_id": "ISSUER:CN:600233",
+      "company_name": "YTO Express",
+      "source_packet_ref": {"receipt_id": "SP:CN600233:20190501:FY2018", "receipt_version": 1},
+      "packet_state": "COMPLETE_PRE_CUTOFF_STATIC_PDF",
+      "archetype": "SELF_OPERATED_HUB_AND_AIR_NETWORK_WITH_FRANCHISED_LAST_MILE",
+      "responsibility_boundary": "ISSUER_CONSOLIDATED_WITH_HUB_AIR_AND_INTERNATIONAL_EXTENSIONS",
+      "arena_ids": [
+        "ARENA:CN:EXPRESS:ECOMMERCE_PARCEL_DEMAND",
+        "ARENA:CN:EXPRESS:HUB_TRUNK_NETWORK",
+        "ARENA:CN:EXPRESS:FRANCHISE_LAST_MILE",
+        "ARENA:CN:EXPRESS:SERVICE_RESPONSE"
+      ],
+      "cutoff_state": "FY2018 parcel volume was 6.664 billion, up 31.61%; market share was 13.14%; the network included 67 self-operated hubs, 3,604 franchisees, 29,991 outlets and 12 owned aircraft.",
+      "decision_heterogeneity": "Management combined hub and route optimization with a larger owned-air and international extension, creating a different capital and complexity profile.",
+      "evidence_refs": [
+        "LOC:600233:FY2018:BUSINESS_MODEL",
+        "LOC:600233:FY2018:CUSTOMER_RESPONSE",
+        "LOC:600233:FY2018:FRANCHISE_GOVERNANCE",
+        "LOC:600233:FY2018:NETWORK_SCALE"
+      ]
+    }
+  ],
+  "selection_policy": {
+    "policy_id": "SEL:CN:FRANCHISE_EXPRESS:ROUND8:V1",
+    "rule": "LOWEST_COMPANY_ID_WITH_COMPLETE_PRE_CUTOFF_STATIC_PDF_PACKET",
+    "eligible_packet_state": "COMPLETE_PRE_CUTOFF_STATIC_PDF",
+    "tie_breaker": "LOWEST_ISSUER_ID",
+    "prohibited_inputs": [
+      "POST_CUTOFF_OUTCOME",
+      "OUTCOME_SOURCE_CONVENIENCE",
+      "PRICE_OR_RETURN",
+      "EXPECTED_METHOD_WINNER"
+    ]
+  },
+  "strongest_common_rivals": [
+    "National parcel demand and platform traffic can lift every network.",
+    "Price concessions can increase volume and market share without improving customer economics.",
+    "New hub capacity and acquired perimeter can lift reported scale before organic execution is established.",
+    "Headquarters financial results can diverge from franchisee economics and last-mile resilience."
+  ],
+  "unresolved_questions": [
+    "Did service and product differentiation, rather than price or industry growth, explain incremental shipper adoption?",
+    "Did automation and route changes improve same-scope unit economics after accounting for parcel mix and network expansion?",
+    "Did headquarters growth preserve franchisee health and local service continuity?",
+    "Did operating cash fund the required network capital without relying on equity issuance or weakening ordinary-share resilience?"
+  ],
+  "outcome_access_status": "SEALED",
+  "roles": {
+    "judgment_owner_id": "ROLE:ROUND8:EXPRESS:JUDGMENT_OWNER",
+    "independent_challenger_id": "ROLE:ROUND8:EXPRESS:INDEPENDENT_CHALLENGER",
+    "outcome_custodian_id": "ROLE:ROUND8:EXPRESS:OUTCOME_CUSTODIAN"
+  },
+  "object_class": "INDUSTRY_LEARNING_BLOCK",
+  "claim_class": "CONDITIONAL_INDUSTRY_CONTEXT_AND_SAMPLING",
+  "allowed_outputs": ["INDUSTRY_CONTEXT", "EPISODE_SAMPLING", "RESEARCH_AGENDA"]
+}

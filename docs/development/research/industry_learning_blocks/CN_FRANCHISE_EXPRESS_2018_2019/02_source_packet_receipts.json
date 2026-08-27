@@ -1,0 +1,364 @@
+[
+  {
+    "schema_version": "enterprise-judgment-source-packet-receipt.v2",
+    "packet_id": "SP:CN002120:20190501:FY2018",
+    "packet_version": 1,
+    "company_id": "CN:002120",
+    "issuer_id": "ISSUER:CN:002120",
+    "cutoff_at": "2019-05-01T00:00:00+08:00",
+    "fields": [
+      {
+        "field_id": "FIELD:002120:FY2018:BUSINESS_MODEL",
+        "field_ref": "SP:CN002120:20190501:FY2018/SRC:CNINFO:002120:FY2018#FIELD:002120:FY2018:BUSINESS_MODEL",
+        "source_id": "SRC:CNINFO:002120:FY2018",
+        "status": "LOCATED",
+        "material_claim_ids": ["CLAIM:R8:BASELINE:INITIAL_CONDITIONS", "CLAIM:R8:ENHANCED:INITIAL_CONDITIONS"],
+        "locator_ids": ["LOC:002120:FY2018:BUSINESS_MODEL"]
+      },
+      {
+        "field_id": "FIELD:002120:FY2018:INDUSTRY_CONTEXT",
+        "field_ref": "SP:CN002120:20190501:FY2018/SRC:CNINFO:002120:FY2018#FIELD:002120:FY2018:INDUSTRY_CONTEXT",
+        "source_id": "SRC:CNINFO:002120:FY2018",
+        "status": "LOCATED",
+        "material_claim_ids": ["CLAIM:R8:BASELINE:INITIAL_CONDITIONS", "CLAIM:R8:ENHANCED:INITIAL_CONDITIONS", "CLAIM:R8:BASELINE:STRONGEST_ALTERNATIVE_EXPLANATION", "CLAIM:R8:ENHANCED:STRONGEST_ALTERNATIVE_EXPLANATION"],
+        "locator_ids": ["LOC:002120:FY2018:INDUSTRY_VOLUME_CONCENTRATION"]
+      },
+      {
+        "field_id": "FIELD:002120:FY2018:CUSTOMER_RESPONSE",
+        "field_ref": "SP:CN002120:20190501:FY2018/SRC:CNINFO:002120:FY2018#FIELD:002120:FY2018:CUSTOMER_RESPONSE",
+        "source_id": "SRC:CNINFO:002120:FY2018",
+        "status": "LOCATED",
+        "material_claim_ids": ["CLAIM:R8:BASELINE:CUSTOMER_COMPETITION_RESPONSE", "CLAIM:R8:ENHANCED:CUSTOMER_COMPETITION_RESPONSE"],
+        "locator_ids": ["LOC:002120:FY2018:CUSTOMER_RESPONSE"]
+      },
+      {
+        "field_id": "FIELD:002120:FY2018:IMPLEMENTED_ACTIONS",
+        "field_ref": "SP:CN002120:20190501:FY2018/SRC:CNINFO:002120:FY2018#FIELD:002120:FY2018:IMPLEMENTED_ACTIONS",
+        "source_id": "SRC:CNINFO:002120:FY2018",
+        "status": "LOCATED",
+        "material_claim_ids": ["CLAIM:R8:BASELINE:IMPLEMENTED_MANAGEMENT_ACTION", "CLAIM:R8:ENHANCED:IMPLEMENTED_MANAGEMENT_ACTION", "CLAIM:R8:BASELINE:EXECUTION", "CLAIM:R8:ENHANCED:EXECUTION"],
+        "locator_ids": ["LOC:002120:FY2018:IMPLEMENTED_ACTIONS"]
+      },
+      {
+        "field_id": "FIELD:002120:FY2018:UNIT_ECONOMICS",
+        "field_ref": "SP:CN002120:20190501:FY2018/SRC:CNINFO:002120:FY2018#FIELD:002120:FY2018:UNIT_ECONOMICS",
+        "source_id": "SRC:CNINFO:002120:FY2018",
+        "status": "LOCATED",
+        "material_claim_ids": ["CLAIM:R8:BASELINE:UNIT_ECONOMICS", "CLAIM:R8:ENHANCED:UNIT_ECONOMICS"],
+        "locator_ids": ["LOC:002120:FY2018:UNIT_ECONOMICS"]
+      },
+      {
+        "field_id": "FIELD:002120:FY2018:NETWORK_SCALE",
+        "field_ref": "SP:CN002120:20190501:FY2018/SRC:CNINFO:002120:FY2018#FIELD:002120:FY2018:NETWORK_SCALE",
+        "source_id": "SRC:CNINFO:002120:FY2018",
+        "status": "LOCATED",
+        "material_claim_ids": ["CLAIM:R8:BASELINE:EXECUTION", "CLAIM:R8:ENHANCED:EXECUTION", "CLAIM:R8:BASELINE:ADAPTATION_PERMANENT_LOSS", "CLAIM:R8:ENHANCED:ADAPTATION_PERMANENT_LOSS"],
+        "locator_ids": ["LOC:002120:FY2018:NETWORK_SCALE"]
+      },
+      {
+        "field_id": "FIELD:002120:FY2018:FRANCHISE_GOVERNANCE",
+        "field_ref": "SP:CN002120:20190501:FY2018/SRC:CNINFO:002120:FY2018#FIELD:002120:FY2018:FRANCHISE_GOVERNANCE",
+        "source_id": "SRC:CNINFO:002120:FY2018",
+        "status": "LOCATED",
+        "material_claim_ids": ["CLAIM:R8:BASELINE:ADAPTATION_PERMANENT_LOSS", "CLAIM:R8:ENHANCED:ADAPTATION_PERMANENT_LOSS"],
+        "locator_ids": ["LOC:002120:FY2018:FRANCHISE_GOVERNANCE"]
+      },
+      {
+        "field_id": "FIELD:002120:FY2018:CASH_CAPITAL",
+        "field_ref": "SP:CN002120:20190501:FY2018/SRC:CNINFO:002120:FY2018#FIELD:002120:FY2018:CASH_CAPITAL",
+        "source_id": "SRC:CNINFO:002120:FY2018",
+        "status": "LOCATED",
+        "material_claim_ids": ["CLAIM:R8:BASELINE:WORKING_CAPITAL_CASH_CAPITAL", "CLAIM:R8:ENHANCED:WORKING_CAPITAL_CASH_CAPITAL"],
+        "locator_ids": ["LOC:002120:FY2018:CASH_CAPITAL"]
+      }
+    ],
+    "sources": [
+      {
+        "source_id": "SRC:CNINFO:002120:FY2018",
+        "source_type": "OFFICIAL_ANNUAL_REPORT_STATIC_PDF",
+        "official_url": "https://static.cninfo.com.cn/finalpage/2019-04-29/1206118366.PDF",
+        "published_on": "2019-04-29",
+        "available_on": "2019-04-29",
+        "availability_timezone": "Asia/Shanghai",
+        "eligibility": "ELIGIBLE",
+        "responsibility_boundary_ids": ["ISSUER_CONSOLIDATED:CN:002120", "HUB_TRUNK_NETWORK:CN:002120", "FRANCHISE_EDGE:CN:002120"],
+        "responsibility_perimeter_id": "PERIMETER:CN:002120:FY2018:LISTED_CONSOLIDATED",
+        "unit": "MIXED_DECLARED_FIELDS",
+        "access_mode": "REMOTE_OFFICIAL_LOCATOR",
+        "locators": [
+          {
+            "locator_id": "LOC:002120:FY2018:BUSINESS_MODEL",
+            "field_id": "FIELD:002120:FY2018:BUSINESS_MODEL",
+            "field_ref": "SP:CN002120:20190501:FY2018/SRC:CNINFO:002120:FY2018#FIELD:002120:FY2018:BUSINESS_MODEL",
+            "research_question_id": "Q:R8:INITIAL_CONDITIONS",
+            "locator": "PDF p.11: self-operated hubs and trunk network with franchised pickup and delivery edge.",
+            "page_number": 11
+          },
+          {
+            "locator_id": "LOC:002120:FY2018:INDUSTRY_VOLUME_CONCENTRATION",
+            "field_id": "FIELD:002120:FY2018:INDUSTRY_CONTEXT",
+            "field_ref": "SP:CN002120:20190501:FY2018/SRC:CNINFO:002120:FY2018#FIELD:002120:FY2018:INDUSTRY_CONTEXT",
+            "research_question_id": "Q:R8:INITIAL_CONDITIONS",
+            "locator": "PDF p.16: national parcel volume, growth, CR8 and common demand context.",
+            "page_number": 16
+          },
+          {
+            "locator_id": "LOC:002120:FY2018:CUSTOMER_RESPONSE",
+            "field_id": "FIELD:002120:FY2018:CUSTOMER_RESPONSE",
+            "field_ref": "SP:CN002120:20190501:FY2018/SRC:CNINFO:002120:FY2018#FIELD:002120:FY2018:CUSTOMER_RESPONSE",
+            "research_question_id": "Q:R8:CUSTOMER_AND_UNIT_ECONOMICS",
+            "locator": "PDF p.16: parcel growth, market share, effective complaint rate and timeliness statements.",
+            "page_number": 16
+          },
+          {
+            "locator_id": "LOC:002120:FY2018:IMPLEMENTED_ACTIONS",
+            "field_id": "FIELD:002120:FY2018:IMPLEMENTED_ACTIONS",
+            "field_ref": "SP:CN002120:20190501:FY2018/SRC:CNINFO:002120:FY2018#FIELD:002120:FY2018:IMPLEMENTED_ACTIONS",
+            "research_question_id": "Q:R8:ACTION_AND_EXECUTION",
+            "locator": "PDF pp.30-31: franchisee enablement, automation deployment, route and transport conversion already implemented in FY2018.",
+            "page_number": 31
+          },
+          {
+            "locator_id": "LOC:002120:FY2018:UNIT_ECONOMICS",
+            "field_id": "FIELD:002120:FY2018:UNIT_ECONOMICS",
+            "field_ref": "SP:CN002120:20190501:FY2018/SRC:CNINFO:002120:FY2018#FIELD:002120:FY2018:UNIT_ECONOMICS",
+            "research_question_id": "Q:R8:CUSTOMER_AND_UNIT_ECONOMICS",
+            "locator": "PDF p.28: express-service revenue, gross margin, parcel cost and operating efficiency disclosures.",
+            "page_number": 28
+          },
+          {
+            "locator_id": "LOC:002120:FY2018:NETWORK_SCALE",
+            "field_id": "FIELD:002120:FY2018:NETWORK_SCALE",
+            "field_ref": "SP:CN002120:20190501:FY2018/SRC:CNINFO:002120:FY2018#FIELD:002120:FY2018:NETWORK_SCALE",
+            "research_question_id": "Q:R8:ACTION_AND_EXECUTION",
+            "locator": "PDF p.28: 55 self-operated hubs, 3,464 franchisees and 26,149 outlets or service points.",
+            "page_number": 28
+          },
+          {
+            "locator_id": "LOC:002120:FY2018:FRANCHISE_GOVERNANCE",
+            "field_id": "FIELD:002120:FY2018:FRANCHISE_GOVERNANCE",
+            "field_ref": "SP:CN002120:20190501:FY2018/SRC:CNINFO:002120:FY2018#FIELD:002120:FY2018:FRANCHISE_GOVERNANCE",
+            "research_question_id": "Q:R8:CASH_AND_PERMANENT_LOSS",
+            "locator": "PDF p.30: franchisee economics, training, technology support and network-stability measures.",
+            "page_number": 30
+          },
+          {
+            "locator_id": "LOC:002120:FY2018:CASH_CAPITAL",
+            "field_id": "FIELD:002120:FY2018:CASH_CAPITAL",
+            "field_ref": "SP:CN002120:20190501:FY2018/SRC:CNINFO:002120:FY2018#FIELD:002120:FY2018:CASH_CAPITAL",
+            "research_question_id": "Q:R8:CASH_AND_PERMANENT_LOSS",
+            "locator": "PDF p.126: consolidated operating cash and cash paid to acquire long-lived assets.",
+            "page_number": 126
+          }
+        ]
+      }
+    ],
+    "object_class": "SOURCE_PACKET_RECEIPT",
+    "claim_class": "CUTOFF_ELIGIBLE_SOURCE_RECEIPT",
+    "allowed_outputs": ["SOURCE_PACKET_READ_MODEL", "RESEARCH_AGENDA"]
+  },
+  {
+    "schema_version": "enterprise-judgment-source-packet-receipt.v2",
+    "packet_id": "SP:CN002468:20190501:FY2018",
+    "packet_version": 1,
+    "company_id": "CN:002468",
+    "issuer_id": "ISSUER:CN:002468",
+    "cutoff_at": "2019-05-01T00:00:00+08:00",
+    "fields": [
+      {
+        "field_id": "FIELD:002468:FY2018:BUSINESS_MODEL",
+        "field_ref": "SP:CN002468:20190501:FY2018/SRC:CNINFO:002468:FY2018#FIELD:002468:FY2018:BUSINESS_MODEL",
+        "source_id": "SRC:CNINFO:002468:FY2018",
+        "status": "LOCATED",
+        "material_claim_ids": ["BLOCK:002468:BUSINESS_MODEL"],
+        "locator_ids": ["LOC:002468:FY2018:BUSINESS_MODEL"]
+      },
+      {
+        "field_id": "FIELD:002468:FY2018:CUSTOMER_RESPONSE",
+        "field_ref": "SP:CN002468:20190501:FY2018/SRC:CNINFO:002468:FY2018#FIELD:002468:FY2018:CUSTOMER_RESPONSE",
+        "source_id": "SRC:CNINFO:002468:FY2018",
+        "status": "LOCATED",
+        "material_claim_ids": ["BLOCK:002468:CUSTOMER_RESPONSE"],
+        "locator_ids": ["LOC:002468:FY2018:CUSTOMER_RESPONSE"]
+      },
+      {
+        "field_id": "FIELD:002468:FY2018:HUB_ACQUISITION",
+        "field_ref": "SP:CN002468:20190501:FY2018/SRC:CNINFO:002468:FY2018#FIELD:002468:FY2018:HUB_ACQUISITION",
+        "source_id": "SRC:CNINFO:002468:FY2018",
+        "status": "LOCATED",
+        "material_claim_ids": ["BLOCK:002468:HUB_ACQUISITION"],
+        "locator_ids": ["LOC:002468:FY2018:HUB_ACQUISITION"]
+      },
+      {
+        "field_id": "FIELD:002468:FY2018:NETWORK_SCALE",
+        "field_ref": "SP:CN002468:20190501:FY2018/SRC:CNINFO:002468:FY2018#FIELD:002468:FY2018:NETWORK_SCALE",
+        "source_id": "SRC:CNINFO:002468:FY2018",
+        "status": "LOCATED",
+        "material_claim_ids": ["BLOCK:002468:NETWORK_SCALE"],
+        "locator_ids": ["LOC:002468:FY2018:NETWORK_SCALE"]
+      }
+    ],
+    "sources": [
+      {
+        "source_id": "SRC:CNINFO:002468:FY2018",
+        "source_type": "OFFICIAL_ANNUAL_REPORT_STATIC_PDF",
+        "official_url": "https://static.cninfo.com.cn/finalpage/2019-04-10/1206004093.PDF",
+        "published_on": "2019-04-10",
+        "available_on": "2019-04-10",
+        "availability_timezone": "Asia/Shanghai",
+        "eligibility": "ELIGIBLE",
+        "responsibility_boundary_ids": ["ISSUER_CONSOLIDATED:CN:002468", "HUB_TRUNK_NETWORK:CN:002468", "FRANCHISE_EDGE:CN:002468"],
+        "responsibility_perimeter_id": "PERIMETER:CN:002468:FY2018:LISTED_CONSOLIDATED",
+        "unit": "MIXED_DECLARED_FIELDS",
+        "access_mode": "REMOTE_OFFICIAL_LOCATOR",
+        "locators": [
+          {
+            "locator_id": "LOC:002468:FY2018:BUSINESS_MODEL",
+            "field_id": "FIELD:002468:FY2018:BUSINESS_MODEL",
+            "field_ref": "SP:CN002468:20190501:FY2018/SRC:CNINFO:002468:FY2018#FIELD:002468:FY2018:BUSINESS_MODEL",
+            "research_question_id": "Q:R8:INDUSTRY_BLOCK",
+            "locator": "PDF pp.9-10: direct-operation hubs, franchised outlets and the hub-acquisition operating model.",
+            "page_number": 9
+          },
+          {
+            "locator_id": "LOC:002468:FY2018:CUSTOMER_RESPONSE",
+            "field_id": "FIELD:002468:FY2018:CUSTOMER_RESPONSE",
+            "field_ref": "SP:CN002468:20190501:FY2018/SRC:CNINFO:002468:FY2018#FIELD:002468:FY2018:CUSTOMER_RESPONSE",
+            "research_question_id": "Q:R8:INDUSTRY_BLOCK",
+            "locator": "PDF p.15: parcel volume growth, national share and complaint-rate direction.",
+            "page_number": 15
+          },
+          {
+            "locator_id": "LOC:002468:FY2018:HUB_ACQUISITION",
+            "field_id": "FIELD:002468:FY2018:HUB_ACQUISITION",
+            "field_ref": "SP:CN002468:20190501:FY2018/SRC:CNINFO:002468:FY2018#FIELD:002468:FY2018:HUB_ACQUISITION",
+            "research_question_id": "Q:R8:INDUSTRY_BLOCK",
+            "locator": "PDF p.19: acquisition of 15 core hubs and the resulting direct-operation ratio.",
+            "page_number": 19
+          },
+          {
+            "locator_id": "LOC:002468:FY2018:NETWORK_SCALE",
+            "field_id": "FIELD:002468:FY2018:NETWORK_SCALE",
+            "field_ref": "SP:CN002468:20190501:FY2018/SRC:CNINFO:002468:FY2018#FIELD:002468:FY2018:NETWORK_SCALE",
+            "research_question_id": "Q:R8:INDUSTRY_BLOCK",
+            "locator": "PDF p.16: 68 hubs, 60 self-operated hubs, 2,233 independent outlets and more than 25,000 service points.",
+            "page_number": 16
+          }
+        ]
+      }
+    ],
+    "object_class": "SOURCE_PACKET_RECEIPT",
+    "claim_class": "CUTOFF_ELIGIBLE_SOURCE_RECEIPT",
+    "allowed_outputs": ["SOURCE_PACKET_READ_MODEL", "RESEARCH_AGENDA"]
+  },
+  {
+    "schema_version": "enterprise-judgment-source-packet-receipt.v2",
+    "packet_id": "SP:CN600233:20190501:FY2018",
+    "packet_version": 1,
+    "company_id": "CN:600233",
+    "issuer_id": "ISSUER:CN:600233",
+    "cutoff_at": "2019-05-01T00:00:00+08:00",
+    "fields": [
+      {
+        "field_id": "FIELD:600233:FY2018:BUSINESS_MODEL",
+        "field_ref": "SP:CN600233:20190501:FY2018/SRC:CNINFO:600233:FY2018#FIELD:600233:FY2018:BUSINESS_MODEL",
+        "source_id": "SRC:CNINFO:600233:FY2018",
+        "status": "LOCATED",
+        "material_claim_ids": ["BLOCK:600233:BUSINESS_MODEL"],
+        "locator_ids": ["LOC:600233:FY2018:BUSINESS_MODEL"]
+      },
+      {
+        "field_id": "FIELD:600233:FY2018:CUSTOMER_RESPONSE",
+        "field_ref": "SP:CN600233:20190501:FY2018/SRC:CNINFO:600233:FY2018#FIELD:600233:FY2018:CUSTOMER_RESPONSE",
+        "source_id": "SRC:CNINFO:600233:FY2018",
+        "status": "LOCATED",
+        "material_claim_ids": ["BLOCK:600233:CUSTOMER_RESPONSE"],
+        "locator_ids": ["LOC:600233:FY2018:CUSTOMER_RESPONSE"]
+      },
+      {
+        "field_id": "FIELD:600233:FY2018:FRANCHISE_GOVERNANCE",
+        "field_ref": "SP:CN600233:20190501:FY2018/SRC:CNINFO:600233:FY2018#FIELD:600233:FY2018:FRANCHISE_GOVERNANCE",
+        "source_id": "SRC:CNINFO:600233:FY2018",
+        "status": "LOCATED",
+        "material_claim_ids": ["BLOCK:600233:FRANCHISE_GOVERNANCE"],
+        "locator_ids": ["LOC:600233:FY2018:FRANCHISE_GOVERNANCE"]
+      },
+      {
+        "field_id": "FIELD:600233:FY2018:NETWORK_SCALE",
+        "field_ref": "SP:CN600233:20190501:FY2018/SRC:CNINFO:600233:FY2018#FIELD:600233:FY2018:NETWORK_SCALE",
+        "source_id": "SRC:CNINFO:600233:FY2018",
+        "status": "LOCATED",
+        "material_claim_ids": ["BLOCK:600233:NETWORK_SCALE"],
+        "locator_ids": ["LOC:600233:FY2018:NETWORK_SCALE"]
+      },
+      {
+        "field_id": "FIELD:600233:FY2018:INDUSTRY_CONTEXT",
+        "field_ref": "SP:CN600233:20190501:FY2018/SRC:CNINFO:600233:FY2018#FIELD:600233:FY2018:INDUSTRY_CONTEXT",
+        "source_id": "SRC:CNINFO:600233:FY2018",
+        "status": "LOCATED",
+        "material_claim_ids": ["BLOCK:INDUSTRY:VOLUME_REVENUE"],
+        "locator_ids": ["LOC:600233:FY2018:INDUSTRY_VOLUME_REVENUE"]
+      }
+    ],
+    "sources": [
+      {
+        "source_id": "SRC:CNINFO:600233:FY2018",
+        "source_type": "OFFICIAL_ANNUAL_REPORT_STATIC_PDF",
+        "official_url": "https://static.cninfo.com.cn/finalpage/2019-04-18/1206048595.PDF",
+        "published_on": "2019-04-18",
+        "available_on": "2019-04-18",
+        "availability_timezone": "Asia/Shanghai",
+        "eligibility": "ELIGIBLE",
+        "responsibility_boundary_ids": ["ISSUER_CONSOLIDATED:CN:600233", "HUB_TRUNK_NETWORK:CN:600233", "FRANCHISE_EDGE:CN:600233"],
+        "responsibility_perimeter_id": "PERIMETER:CN:600233:FY2018:LISTED_CONSOLIDATED",
+        "unit": "MIXED_DECLARED_FIELDS",
+        "access_mode": "REMOTE_OFFICIAL_LOCATOR",
+        "locators": [
+          {
+            "locator_id": "LOC:600233:FY2018:BUSINESS_MODEL",
+            "field_id": "FIELD:600233:FY2018:BUSINESS_MODEL",
+            "field_ref": "SP:CN600233:20190501:FY2018/SRC:CNINFO:600233:FY2018#FIELD:600233:FY2018:BUSINESS_MODEL",
+            "research_question_id": "Q:R8:INDUSTRY_BLOCK",
+            "locator": "PDF p.14: self-operated hubs, franchised pickup and delivery, route control and network coverage.",
+            "page_number": 14
+          },
+          {
+            "locator_id": "LOC:600233:FY2018:CUSTOMER_RESPONSE",
+            "field_id": "FIELD:600233:FY2018:CUSTOMER_RESPONSE",
+            "field_ref": "SP:CN600233:20190501:FY2018/SRC:CNINFO:600233:FY2018#FIELD:600233:FY2018:CUSTOMER_RESPONSE",
+            "research_question_id": "Q:R8:INDUSTRY_BLOCK",
+            "locator": "PDF p.14: parcel volume, market share and effective complaint rate.",
+            "page_number": 14
+          },
+          {
+            "locator_id": "LOC:600233:FY2018:FRANCHISE_GOVERNANCE",
+            "field_id": "FIELD:600233:FY2018:FRANCHISE_GOVERNANCE",
+            "field_ref": "SP:CN600233:20190501:FY2018/SRC:CNINFO:600233:FY2018#FIELD:600233:FY2018:FRANCHISE_GOVERNANCE",
+            "research_question_id": "Q:R8:INDUSTRY_BLOCK",
+            "locator": "PDF pp.17-18: franchisee admission, monitoring, intervention, replacement and network continuity.",
+            "page_number": 18
+          },
+          {
+            "locator_id": "LOC:600233:FY2018:NETWORK_SCALE",
+            "field_id": "FIELD:600233:FY2018:NETWORK_SCALE",
+            "field_ref": "SP:CN600233:20190501:FY2018/SRC:CNINFO:600233:FY2018#FIELD:600233:FY2018:NETWORK_SCALE",
+            "research_question_id": "Q:R8:INDUSTRY_BLOCK",
+            "locator": "PDF p.14: 67 self-operated hubs, 3,604 franchisees, 29,991 outlets and 12 owned aircraft.",
+            "page_number": 14
+          },
+          {
+            "locator_id": "LOC:600233:FY2018:INDUSTRY_VOLUME_REVENUE",
+            "field_id": "FIELD:600233:FY2018:INDUSTRY_CONTEXT",
+            "field_ref": "SP:CN600233:20190501:FY2018/SRC:CNINFO:600233:FY2018#FIELD:600233:FY2018:INDUSTRY_CONTEXT",
+            "research_question_id": "Q:R8:INDUSTRY_BLOCK",
+            "locator": "PDF p.19: national FY2018 parcel volume and industry revenue growth.",
+            "page_number": 19
+          }
+        ]
+      }
+    ],
+    "object_class": "SOURCE_PACKET_RECEIPT",
+    "claim_class": "CUTOFF_ELIGIBLE_SOURCE_RECEIPT",
+    "allowed_outputs": ["SOURCE_PACKET_READ_MODEL", "RESEARCH_AGENDA"]
+  }
+]

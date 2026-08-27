@@ -1,13 +1,13 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "enterprise-judgment-episode-manifest.v1",
+  "$id": "enterprise-judgment-episode-manifest.v2",
   "title": "Turtle Enterprise Judgment Episode Manifest",
   "description": "Read-only composition contract; actual outcomes, price, valuation and investment authority are deliberately absent.",
   "type": "object",
   "additionalProperties": false,
   "required": ["schema_version", "episode_id", "company_id", "issuer_id", "cutoff_at", "decision_contract_ref", "component_refs", "question_set", "claims", "mechanism_threads", "outcome_cells", "roles", "object_class", "claim_class", "allowed_outputs"],
   "properties": {
-    "schema_version": {"const": "enterprise-judgment-episode-manifest.v1"},
+    "schema_version": {"const": "enterprise-judgment-episode-manifest.v2"},
     "episode_id": {"type": "string", "minLength": 1},
     "company_id": {"type": "string", "minLength": 1},
     "issuer_id": {"type": "string", "minLength": 1},
@@ -47,17 +47,33 @@
     },
     "claim": {
       "type": "object", "additionalProperties": false,
-      "required": ["claim_id", "question_id", "domain", "statement", "cell_status", "admission_level", "evidence_refs", "dependent_outcome_cell_ids"],
+      "required": ["claim_id", "question_id", "method_id", "judgment_dimension", "claim_scope", "domain", "statement", "cell_status", "admission_level", "evidence_refs", "evidence_locator_refs", "dependent_outcome_cell_ids"],
       "properties": {
         "claim_id": {"type": "string", "minLength": 1}, "question_id": {"type": "string", "minLength": 1},
+        "method_id": {"type": "string", "minLength": 1},
+        "judgment_dimension": {"enum": ["INITIAL_CONDITIONS", "IMPLEMENTED_MANAGEMENT_ACTION", "EXECUTION", "CUSTOMER_COMPETITION_RESPONSE", "UNIT_ECONOMICS", "WORKING_CAPITAL_CASH_CAPITAL", "ADAPTATION_PERMANENT_LOSS", "STRONGEST_ALTERNATIVE_EXPLANATION"]},
+        "claim_scope": {"$ref": "#/$defs/claim_scope"},
         "domain": {"enum": ["CUSTOMER", "COMPETITION", "OPERATIONS", "ORGANIZATION", "CAPITAL_ALLOCATION", "CASH", "PERMANENT_LOSS", "LIFECYCLE"]},
         "statement": {"type": "string", "minLength": 1},
         "cell_status": {"enum": ["OBSERVED", "INFERRED", "UNKNOWN", "EVIDENCE_INELIGIBLE", "NOT_APPLICABLE"]},
         "admission_level": {"enum": ["E0_CONTEXT", "E1_RECONSTRUCTION", "E2_MECHANISM_PROBE", "E3_COMPARATIVE_LAB", "E4_TRANSFER_AND_UTILITY"]},
         "evidence_refs": {"type": "array", "items": {"type": "string", "minLength": 1}},
+        "evidence_locator_refs": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
         "dependent_outcome_cell_ids": {"type": "array", "items": {"type": "string", "minLength": 1}},
         "decision_observation_ref": {"type": "string", "minLength": 1},
         "decision_observation_treatment": {"enum": ["ACTION_DEPENDENT", "OBSERVATION_BOUNDARY"]}
+      }
+    },
+    "claim_scope": {
+      "type": "object", "additionalProperties": false,
+      "required": ["issuer_ids", "product_or_service_ids", "plant_ids", "channel_ids", "region_ids", "arena_ids"],
+      "properties": {
+        "issuer_ids": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+        "product_or_service_ids": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+        "plant_ids": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+        "channel_ids": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+        "region_ids": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+        "arena_ids": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}}
       }
     },
     "mechanism_thread": {

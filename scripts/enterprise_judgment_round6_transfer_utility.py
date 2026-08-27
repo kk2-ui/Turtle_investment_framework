@@ -1203,7 +1203,7 @@ def build_real_utility_review(
 ) -> dict[str, Any]:
     reviewer_id = "ROLE:CEMENT:ROUND6:INDEPENDENT_UTILITY_REVIEWER"
     evaluation = {
-        "schema_version": decision_utility.EVALUATION_SCHEMA_VERSION,
+        "schema_version": decision_utility.LEGACY_EVALUATION_SCHEMA_VERSION,
         "evaluation_id": "DUEVAL:CN600801:20160427:R6:V1",
         "pairing_id": package["decision_utility_pairing"]["pairing_id"],
         "evaluated_at": reviewed_at,

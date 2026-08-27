@@ -36,6 +36,7 @@ PAIRING_TABLE = "judgment_pit_forecast_method_pairings"
 PAIRED_EVALUATION_TABLE = "judgment_pit_forecast_paired_evaluations"
 ATTRIBUTION_TABLE = "judgment_pit_forecast_error_attributions"
 DECISION_UTILITY_PAIRING_TABLE = "judgment_pit_decision_utility_pairings"
+DECISION_UTILITY_EPISODE_TABLE = "judgment_pit_decision_utility_episode_snapshots"
 DECISION_UTILITY_EVALUATION_TABLE = "judgment_pit_decision_utility_evaluations"
 DECISION_CONTRACT_TABLE = "judgment_pit_training_decision_contracts"
 OUTCOME_ACCESS_TABLE = "judgment_pit_forecast_outcome_access_authorizations"
@@ -191,6 +192,19 @@ def initialize(conn: sqlite3.Connection) -> None:
                 FOREIGN KEY (forecast_pairing_id) REFERENCES {PAIRING_TABLE}(pairing_id),
                 FOREIGN KEY (decision_contract_id, decision_contract_version)
                     REFERENCES {DECISION_CONTRACT_TABLE}(contract_id, contract_version)
+            )"""
+        )
+        conn.execute(
+            f"""CREATE TABLE IF NOT EXISTS {DECISION_UTILITY_EPISODE_TABLE} (
+                decision_utility_pairing_id TEXT NOT NULL,
+                episode_role TEXT NOT NULL CHECK (episode_role IN ('BASELINE', 'ENHANCED')),
+                episode_id TEXT NOT NULL,
+                method_id TEXT NOT NULL,
+                payload_json TEXT NOT NULL,
+                PRIMARY KEY (decision_utility_pairing_id, episode_role),
+                UNIQUE (decision_utility_pairing_id, episode_id),
+                FOREIGN KEY (decision_utility_pairing_id)
+                    REFERENCES {DECISION_UTILITY_PAIRING_TABLE}(pairing_id)
             )"""
         )
         conn.execute(
@@ -1432,7 +1446,12 @@ def register_forecast_paired_evaluation(conn: sqlite3.Connection, evaluation: di
 
 
 def register_decision_utility_pairing(
-    conn: sqlite3.Connection, pairing: dict[str, Any], *, frozen_at: str,
+    conn: sqlite3.Connection,
+    pairing: dict[str, Any],
+    *,
+    baseline_episode: dict[str, Any],
+    enhanced_episode: dict[str, Any],
+    frozen_at: str,
 ) -> dict[str, Any]:
     """Freeze a qualitative method comparison before custodian access opens.
 
@@ -1454,6 +1473,7 @@ def register_decision_utility_pairing(
     contract_payload = _load(contract_row["payload_json"])
     validation = decision_utility.validate_decision_utility_control_pairing(
         pairing, forecast=forecast, forecast_pairing=forecast_pairing, contract=contract_payload,
+        baseline_episode=baseline_episode, enhanced_episode=enhanced_episode,
     )
     if not validation["valid"]:
         raise ForecastControlError("decision_utility_pairing_invalid", "; ".join(validation["findings"]))
@@ -1475,6 +1495,18 @@ def register_decision_utility_pairing(
             "qualitative baseline/enhanced decisions must freeze before the canonical holdout outcome window opens",
         )
     encoded = _json(payload)
+    episode_snapshots = {
+        "BASELINE": (
+            str(baseline_episode.get("episode_id") or ""),
+            str(payload.get("baseline_method_id") or ""),
+            _json(baseline_episode),
+        ),
+        "ENHANCED": (
+            str(enhanced_episode.get("episode_id") or ""),
+            str(payload.get("enhanced_method_id") or ""),
+            _json(enhanced_episode),
+        ),
+    }
     with conn:
         existing = conn.execute(
             f"SELECT * FROM {DECISION_UTILITY_PAIRING_TABLE} WHERE pairing_id = ?", (payload["pairing_id"],),
@@ -1484,6 +1516,19 @@ def register_decision_utility_pairing(
                 raise ForecastControlError(
                     "decision_utility_pairing_immutable_conflict",
                     "pairing_id already identifies different immutable content",
+                )
+            stored_snapshots = {
+                row["episode_role"]: (row["episode_id"], row["method_id"], row["payload_json"])
+                for row in conn.execute(
+                    f"SELECT episode_role, episode_id, method_id, payload_json "
+                    f"FROM {DECISION_UTILITY_EPISODE_TABLE} WHERE decision_utility_pairing_id = ?",
+                    (payload["pairing_id"],),
+                ).fetchall()
+            }
+            if stored_snapshots != episode_snapshots:
+                raise ForecastControlError(
+                    "decision_utility_episode_immutable_conflict",
+                    "pairing_id already identifies different or incomplete episode snapshots",
                 )
             return {
                 "frozen": True, "pairing_id": payload["pairing_id"], "idempotent": True,
@@ -1515,6 +1560,13 @@ def register_decision_utility_pairing(
                 ref["contract_id"], ref["contract_version"], encoded, timestamp,
             ),
         )
+        for role, (episode_id, method_id, episode_json) in episode_snapshots.items():
+            conn.execute(
+                f"""INSERT INTO {DECISION_UTILITY_EPISODE_TABLE} (
+                    decision_utility_pairing_id, episode_role, episode_id, method_id, payload_json
+                ) VALUES (?, ?, ?, ?, ?)""",
+                (payload["pairing_id"], role, episode_id, method_id, episode_json),
+            )
     return {
         "frozen": True, "pairing_id": payload["pairing_id"], "idempotent": False,
         "learning_authorization": validation["learning_authorization"],
@@ -1546,6 +1598,17 @@ def register_decision_utility_evaluation(
     forecast = _load(forecast_row["payload_json"])
     contract_row = _decision_contract_row(conn, forecast.get("decision_contract_ref"))
     contract_payload = _load(contract_row["payload_json"])
+    episode_rows = conn.execute(
+        f"SELECT episode_role, payload_json FROM {DECISION_UTILITY_EPISODE_TABLE} "
+        "WHERE decision_utility_pairing_id = ?",
+        (pairing["pairing_id"],),
+    ).fetchall()
+    episode_snapshots = {row["episode_role"]: _load(row["payload_json"]) for row in episode_rows}
+    if set(episode_snapshots) != {"BASELINE", "ENHANCED"}:
+        raise ForecastControlError(
+            "decision_utility_episode_snapshot_not_found",
+            "the immutable baseline and enhanced episode snapshots are required for evaluation",
+        )
     paired_evaluation_row = _row(
         conn, PAIRED_EVALUATION_TABLE, "evaluation_id", str(evaluation.get("forecast_paired_evaluation_id") or ""),
         code="forecast_paired_evaluation_not_found",
@@ -1554,6 +1617,7 @@ def register_decision_utility_evaluation(
     validation = decision_utility.validate_decision_utility_control_evaluation(
         evaluation, pairing=pairing, forecast=forecast, forecast_pairing=forecast_pairing,
         forecast_paired_evaluation=paired_evaluation, contract=contract_payload,
+        baseline_episode=episode_snapshots["BASELINE"], enhanced_episode=episode_snapshots["ENHANCED"],
     )
     if not validation["valid"]:
         raise ForecastControlError("decision_utility_evaluation_invalid", "; ".join(validation["findings"]))

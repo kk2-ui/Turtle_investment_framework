@@ -1159,7 +1159,7 @@ def build_real_preoutcome_package(
     baseline_view = make_view(BASELINE_METHOD_ID, baseline_assessments, "BASELINE")
     enhanced_view = make_view(ENHANCED_METHOD_ID, enhanced_assessments, "ENHANCED")
     pairing = {
-        "schema_version": decision_utility.PAIRING_SCHEMA_VERSION,
+        "schema_version": decision_utility.LEGACY_PAIRING_SCHEMA_VERSION,
         "pairing_id": "DUPAIR:CN600585:20140416:R7:V1",
         "decision_contract_ref": {"contract_id": decision["contract_id"], "contract_version": 1},
         "baseline": {

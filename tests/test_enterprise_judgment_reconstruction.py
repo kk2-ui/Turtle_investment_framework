@@ -16,7 +16,7 @@ from tests.test_enterprise_judgment_core import _ledger, _model, _source_package
 def _source_inputs(*, cash_eligibility: str = "ELIGIBLE") -> tuple[dict, dict]:
     core_source = _source_package(cash_eligibility=cash_eligibility)
     receipt = {
-        "schema_version": source_packet.SCHEMA_VERSION,
+        "schema_version": source_packet.LEGACY_SCHEMA_VERSION,
         "packet_id": core_source["source_package_id"],
         "packet_version": 1,
         "company_id": core_source["company_id"],
@@ -138,7 +138,7 @@ def _spec(source_package: dict, contract: dict | None = None) -> dict:
 
 def _episode_manifest(source_package: dict, contract: dict, component_refs: list[dict]) -> dict:
     return {
-        "schema_version": episode.SCHEMA_VERSION,
+        "schema_version": episode.LEGACY_SCHEMA_VERSION,
         "episode_id": "EJE:SYNTHETIC:J1",
         "company_id": source_package["company_id"],
         "issuer_id": source_package["company_id"],
