@@ -1,5 +1,9 @@
 # 口子窖 direct judgment calibration：独立结果后审阅
 
+> 情景机械映射与下一期悲观概率已由
+> [10_POSTOUTCOME_SCENARIO_MODEL_CORRECTION.md](10_POSTOUTCOME_SCENARIO_MODEL_CORRECTION.md)
+> 纠正；原始分数保留为历史输出，不计训练效用。
+
 > reviewer：独立于 judgment owner 与 outcome custodian
 >
 > outcome：FY2019 官方完整年报

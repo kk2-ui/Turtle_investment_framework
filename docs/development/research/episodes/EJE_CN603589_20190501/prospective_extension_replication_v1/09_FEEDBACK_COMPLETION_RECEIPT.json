@@ -1,6 +1,8 @@
 {
   "schema_version": "real-judgment-feedback-completion-receipt.v1",
   "receipt_id": "RJFC:CN603589:20190501:FY2019:V1",
+  "postoutcome_correction_ref": "10_POSTOUTCOME_SCENARIO_MODEL_CORRECTION.md",
+  "correction_scope": "SCENARIO_MAPPING_SCORE_UTILITY_AND_NEXT_PERIOD_PESSIMISTIC_PROBABILITY; ENTERPRISE_JUDGMENTS_AND_FEEDBACK_COMPLETION_REMAIN",
   "campaign_id": "JUDGMENT_FIRST_12H_20260828",
   "company_id": "CN:603589",
   "issuer_id": "ISSUER:CN:603589",

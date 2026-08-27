@@ -1,5 +1,9 @@
 # 口子窖 FY2019：投资者结果后读数
 
+> 下一期粗粒度情景概率已由
+> [10_POSTOUTCOME_SCENARIO_MODEL_CORRECTION.md](10_POSTOUTCOME_SCENARIO_MODEL_CORRECTION.md)
+> 修正为 `30% / 58% / 12%`；融资下行改善不得外推为全部永久损失风险下降。
+
 ## 一句话判断
 
 安徽核心仍强但更依赖价格和结构；省外扩张比结果前判断更真实；工业园与陈化库存没有造成资金
