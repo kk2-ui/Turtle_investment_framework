@@ -1,0 +1,32 @@
+{
+  "schema_version": "enterprise-judgment-round6-preoutcome-validation-receipt.v1",
+  "receipt_id": "R6POVR:CN:CEMENT:600801:20160427:V1",
+  "selection_ref": "R6SEL:CN:CEMENT:600801:20160427:V1",
+  "package_ref": "EJTU:CN:CEMENT:600801:20160427:V1",
+  "validated_at": "2026-08-27T03:00:00+00:00",
+  "validation_status": "PRE_OUTCOME_VALID",
+  "mechanical_selection_confirmed": true,
+  "same_evidence_budget_confirmed": true,
+  "evidence_budget_id": "BUDGET:CN600801:20160427:FY2015",
+  "baseline_method_id": "METHOD:AGGREGATE_ACTION_PROGRESS:V1",
+  "enhanced_method_id": "METHOD:CONTROLLED_EXECUTION_SCOPE:V1",
+  "outcome_source_access_state": "SEALED_UNTIL_PREOUTCOME_COMMIT",
+  "outcome_content_read": false,
+  "rights": {
+    "directional_learning": "NOT_AUTHORIZED",
+    "enterprise_learning": "NOT_AUTHORIZED",
+    "comparative": "NOT_AUTHORIZED",
+    "method_transfer": "NOT_AUTHORIZED",
+    "cjo": "NOT_AUTHORIZED",
+    "valuation": "NOT_AUTHORIZED",
+    "report": "NOT_AUTHORIZED",
+    "investment": "NOT_AUTHORIZED"
+  },
+  "object_class": "ENTERPRISE_JUDGMENT_PREOUTCOME_VALIDATION_RECEIPT",
+  "claim_class": "PAIRED_PREOUTCOME_FREEZE_CONFIRMATION",
+  "allowed_outputs": [
+    "PREOUTCOME_FREEZE_CONFIRMATION",
+    "OUTCOME_CUSTODY_REQUEST",
+    "RESEARCH_AGENDA"
+  ]
+}

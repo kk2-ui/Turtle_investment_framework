@@ -1,0 +1,1874 @@
+{
+  "schema_version": "enterprise-judgment-round6-transfer-utility-preoutcome.v1",
+  "package_id": "EJTU:CN:CEMENT:600801:20160427:V1",
+  "selection": {
+    "selection_policy": "EARLIEST_UNCONSUMED_IMMUTABLE_ROSTER_ROW_FOR_DIFFERENT_SOURCE_LEARNING_COMPANY",
+    "source_roster_ref": "EJPF:CN:CEMENT:2014_2018:PRE_OUTCOME:V1",
+    "source_learning_company_id": "CN:600802",
+    "source_learning_completion_id": "R5COMP:CN:CEMENT:600802:20150415:FY2015:V1",
+    "consumed_transition_ids": [
+      "CCR:000401:20170412:20180422",
+      "CCR:600425:20140416:20150415",
+      "CCR:600585:20170412:20180422",
+      "CCR:600801:20170412:20180422",
+      "CCR:600802:20140416:20150415",
+      "CCR:600802:20150415:20160427"
+    ],
+    "selected_rank": 1,
+    "transition_id": "CCR:600801:20160427:20170412",
+    "company_id": "CN:600801",
+    "company_cluster_id": "COMPANY_CLUSTER:CN:CEMENT_LISTED:600801",
+    "cutoff_at": "2016-04-27T00:00:00+08:00",
+    "next_cutoff_at": "2017-04-12T00:00:00+08:00",
+    "selection_used_outcome": false,
+    "selection_used_source_convenience": false,
+    "method_unseen_on_target": true
+  },
+  "source_learning_ref": {
+    "completion_id": "R5COMP:CN:CEMENT:600802:20150415:FY2015:V1",
+    "artifact": "36_round5_real_feedback_completion_receipt.json",
+    "company_id": "CN:600802",
+    "cutoff_at": "2015-04-15T00:00:00+08:00",
+    "accepted_feedback_scope": "LOCAL_ISSUER_CONTROLLED_EXECUTION_SCOPE"
+  },
+  "source_packet_receipt": {
+    "schema_version": "enterprise-judgment-source-packet-receipt.v1",
+    "packet_id": "SP:CN600801:20160427:FY2015",
+    "packet_version": 1,
+    "company_id": "CN:600801",
+    "issuer_id": "ISSUER:CN:600801",
+    "cutoff_at": "2016-04-27T00:00:00+08:00",
+    "sources": [
+      {
+        "source_id": "CNINFO:600801:ANN:20160331:1202113147",
+        "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+        "official_url": "https://static.cninfo.com.cn/finalpage/2016-03-31/1202113147.PDF",
+        "published_on": "2016-03-31",
+        "available_on": "2016-03-31",
+        "availability_timezone": "Asia/Shanghai",
+        "eligibility": "ELIGIBLE",
+        "responsibility_boundary_ids": [
+          "ISSUER_CONSOLIDATED:CN:600801"
+        ],
+        "responsibility_perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+        "unit": "RMB",
+        "access_mode": "REMOTE_OFFICIAL_LOCATOR",
+        "locators": [
+          {
+            "research_question_id": "Q:R6:INDUSTRY_AND_OPERATING_BASELINE",
+            "locator": "FY2015 annual report PDF pp.10-11: demand, price, digital channel, cost, volume, product economics and operating cash."
+          },
+          {
+            "research_question_id": "Q:R6:SUPPORT_CONTROL_SCOPE",
+            "locator": "FY2015 annual report PDF p.27: board-approved operating-support agreement for 15 Lafarge Yunnan companies and the disclosed service scope."
+          },
+          {
+            "research_question_id": "Q:R6:PLAN_AND_CAPITAL_RESILIENCE",
+            "locator": "FY2015 annual report PDF pp.17,50,54: 2016 operating plan, short-term debt, operating cash and cash capex."
+          }
+        ]
+      }
+    ],
+    "object_class": "SOURCE_PACKET_RECEIPT",
+    "claim_class": "CUTOFF_ELIGIBLE_SOURCE_RECEIPT",
+    "allowed_outputs": [
+      "SOURCE_PACKET_READ_MODEL",
+      "RESEARCH_AGENDA"
+    ]
+  },
+  "decision_contract": {
+    "schema_version": "turtle-training-decision-contract.v1",
+    "contract_id": "DC:CN600801:20160427:TRANSFER_UTILITY",
+    "contract_version": 1,
+    "company_id": "CN:600801",
+    "issuer_id": "ISSUER:CN:600801",
+    "cutoff_at": "2016-04-27T00:00:00+08:00",
+    "decision_purpose": "HISTORICAL_TRAINING",
+    "holding_horizon": {
+      "minimum_years": 1,
+      "maximum_years": 5
+    },
+    "permanent_loss_constraints": [
+      {
+        "constraint_id": "PLC:600801:SUPPORT_IS_NOT_CONTROL",
+        "condition": "A support agreement or acquisition approval cannot be credited as issuer-controlled earnings capacity without decision control, product participation and consolidation evidence.",
+        "required_treatment": "Keep control, product participation, consolidation, customer response and capital burden as separate cells; preserve UNKNOWN locally."
+      }
+    ],
+    "decision_flip_questions": [
+      {
+        "question_id": "DQ:600801:SUPPORT_TO_CONTROL",
+        "statement": "Did the 15-company support agreement become an issuer-controlled and consolidated operating scope?",
+        "decision_effect": "Only a control-and-perimeter bridge can add the supported plants to issuer operating capacity or normal earnings."
+      },
+      {
+        "question_id": "DQ:600801:OPERATING_CASH",
+        "statement": "Did volume and unit economics improve without weakening operating cash, capex burden or financing resilience?",
+        "decision_effect": "Activity growth purchased through margin, cash or debt deterioration cannot be credited as value creation."
+      },
+      {
+        "question_id": "DQ:600801:PERMANENT_LOSS",
+        "statement": "Did the next period reveal a direct irreversible loss or solvency event?",
+        "decision_effect": "A one-year operating change cannot by itself establish permanent loss."
+      }
+    ],
+    "evidence_budget": {
+      "evidence_budget_id": "BUDGET:CN600801:20160427:FY2015",
+      "source_packet_refs": [
+        {
+          "receipt_id": "SP:CN600801:20160427:FY2015",
+          "receipt_version": 1
+        }
+      ]
+    },
+    "price_and_opportunity_cost_policy": "PROHIBITED_FOR_HISTORICAL_TRAINING",
+    "outcome_access": "NONE",
+    "roles": {
+      "judgment_owner_id": "ROLE:CEMENT:ROUND6:JUDGMENT_OWNER",
+      "independent_challenger_id": "ROLE:CEMENT:ROUND6:INDEPENDENT_CHALLENGER",
+      "outcome_custodian_id": "ROLE:CEMENT:ROUND6:OUTCOME_CUSTODIAN"
+    },
+    "object_class": "DECISION_CONTRACT",
+    "claim_class": "EX_ANTE_DECISION_SCOPE",
+    "allowed_outputs": [
+      "CJO_TRAINING_MIRROR",
+      "RESEARCH_AGENDA"
+    ]
+  },
+  "shared_cutoff_facts": [
+    {
+      "fact_id": "FACT:R6:INDUSTRY_PRESSURE",
+      "domain": "COMPETITION",
+      "statement": "FY2015 national cement demand fell 5.3%, industry profit fell 58%, and the issuer's cement pretax price fell RMB32 per tonne.",
+      "evidence_refs": [
+        "CNINFO:600801:ANN:20160331:1202113147"
+      ]
+    },
+    {
+      "fact_id": "FACT:R6:DIGITAL_CUSTOMER_CHANNEL",
+      "domain": "CUSTOMER",
+      "statement": "Online orders represented 81% of issuer cement sales and core markets represented more than 80% of volume, without direct retention or market-share evidence.",
+      "evidence_refs": [
+        "CNINFO:600801:ANN:20160331:1202113147"
+      ]
+    },
+    {
+      "fact_id": "FACT:R6:COST_RESPONSE",
+      "domain": "OPERATIONS",
+      "statement": "The issuer reported cement production cost down RMB8 per tonne or 4.4% after procurement and operating changes.",
+      "evidence_refs": [
+        "CNINFO:600801:ANN:20160331:1202113147"
+      ]
+    },
+    {
+      "fact_id": "FACT:R6:SUPPORT_AGREEMENT",
+      "domain": "ORGANIZATION",
+      "statement": "The board approved a fee-based operating-support agreement covering industrial, technical, procurement, sales, finance, people and plant operations for 15 Lafarge Yunnan companies.",
+      "evidence_refs": [
+        "CNINFO:600801:ANN:20160331:1202113147"
+      ]
+    },
+    {
+      "fact_id": "FACT:R6:FORWARD_PLAN",
+      "domain": "CAPITAL_ALLOCATION",
+      "statement": "The FY2016 plan targeted 7% cement-and-clinker volume growth while emphasizing cost, customer and integration initiatives; it was explicitly not a performance commitment.",
+      "evidence_refs": [
+        "CNINFO:600801:ANN:20160331:1202113147"
+      ]
+    }
+  ],
+  "baseline_view": {
+    "method_id": "METHOD:AGGREGATE_ACTION_PROGRESS:V1",
+    "evidence_budget_id": "BUDGET:CN600801:20160427:FY2015",
+    "source_packet_refs": [
+      {
+        "receipt_id": "SP:CN600801:20160427:FY2015",
+        "receipt_version": 1
+      }
+    ],
+    "fact_ids": [
+      "FACT:R6:INDUSTRY_PRESSURE",
+      "FACT:R6:DIGITAL_CUSTOMER_CHANNEL",
+      "FACT:R6:COST_RESPONSE",
+      "FACT:R6:SUPPORT_AGREEMENT",
+      "FACT:R6:FORWARD_PLAN"
+    ],
+    "primary_question": "Did the broad operating-support relationship make material operating progress?",
+    "claim_matrix": [
+      {
+        "claim_id": "CLAIM:R6:BASELINE:ACTION_PROGRESS",
+        "domain": "ORGANIZATION",
+        "statement": "The signed full-function support agreement is treated as one aggregate action-progress signal; control and consolidation are not separate baseline questions.",
+        "state": "INFERRED",
+        "evidence_refs": [
+          "CNINFO:600801:ANN:20160331:1202113147"
+        ],
+        "dependent_outcome_cell_ids": [
+          "CELL:600801:20160427:ACTION_PROGRESS"
+        ],
+        "allowed_outputs": [
+          "RESEARCH_AGENDA"
+        ]
+      },
+      {
+        "claim_id": "CLAIM:R6:BASELINE:OPERATING",
+        "domain": "OPERATIONS",
+        "statement": "The baseline checks aggregate volume, margin and cash direction without attributing them to the support agreement.",
+        "state": "OBSERVED",
+        "evidence_refs": [
+          "CNINFO:600801:ANN:20160331:1202113147"
+        ],
+        "dependent_outcome_cell_ids": [
+          "CELL:600801:20160427:CEMENT_CLINKER_SALES_VOLUME",
+          "CELL:600801:20160427:CEMENT_GROSS_MARGIN",
+          "CELL:600801:20160427:OPERATING_CASH",
+          "CELL:600801:20160427:CASH_CAPEX"
+        ],
+        "allowed_outputs": [
+          "RESEARCH_AGENDA"
+        ]
+      },
+      {
+        "claim_id": "CLAIM:R6:BASELINE:PERMANENT_LOSS",
+        "domain": "PERMANENT_LOSS",
+        "statement": "Permanent loss cannot be established from the cutoff packet.",
+        "state": "UNKNOWN",
+        "evidence_refs": [],
+        "dependent_outcome_cell_ids": [
+          "CELL:600801:20160427:DIRECT_LOSS_EVENT"
+        ],
+        "allowed_outputs": [
+          "RESEARCH_AGENDA"
+        ]
+      }
+    ],
+    "interpretation_rule": "A later formal acquisition or integration approval counts as aggregate action progress, but does not by itself authorize a causal or management-quality conclusion.",
+    "expected_outcome_cell_ids": [
+      "CELL:600801:20160427:ACTION_PROGRESS",
+      "CELL:600801:20160427:CEMENT_CLINKER_SALES_VOLUME",
+      "CELL:600801:20160427:CEMENT_GROSS_MARGIN",
+      "CELL:600801:20160427:OPERATING_CASH",
+      "CELL:600801:20160427:CASH_CAPEX",
+      "CELL:600801:20160427:SHORT_TERM_BORROWINGS",
+      "CELL:600801:20160427:DIRECT_LOSS_EVENT"
+    ],
+    "prohibited_inferences": [
+      "No action-effect attribution from aggregate issuer results.",
+      "No management-quality or permanent-loss conclusion from one period."
+    ]
+  },
+  "enhanced_view": {
+    "method_id": "METHOD:CONTROLLED_EXECUTION_SCOPE:V1",
+    "evidence_budget_id": "BUDGET:CN600801:20160427:FY2015",
+    "source_packet_refs": [
+      {
+        "receipt_id": "SP:CN600801:20160427:FY2015",
+        "receipt_version": 1
+      }
+    ],
+    "fact_ids": [
+      "FACT:R6:INDUSTRY_PRESSURE",
+      "FACT:R6:DIGITAL_CUSTOMER_CHANNEL",
+      "FACT:R6:COST_RESPONSE",
+      "FACT:R6:SUPPORT_AGREEMENT",
+      "FACT:R6:FORWARD_PLAN"
+    ],
+    "primary_question": "Which parts of the support relationship became issuer-controlled, issuer-product-bearing, consolidated and customer-validated?",
+    "claim_matrix": [
+      {
+        "claim_id": "CLAIM:R6:ENHANCED:FORMAL_SUPPORT",
+        "domain": "ORGANIZATION",
+        "statement": "The support agreement and its broad service scope are observed, while later action progress remains a separate outcome cell.",
+        "state": "OBSERVED",
+        "evidence_refs": [
+          "CNINFO:600801:ANN:20160331:1202113147"
+        ],
+        "dependent_outcome_cell_ids": [
+          "CELL:600801:20160427:ACTION_PROGRESS"
+        ],
+        "allowed_outputs": [
+          "RESEARCH_AGENDA"
+        ]
+      },
+      {
+        "claim_id": "CLAIM:R6:ENHANCED:CONTROL",
+        "domain": "ORGANIZATION",
+        "statement": "Issuer decision control over the 15 companies is unknown at cutoff.",
+        "state": "UNKNOWN",
+        "evidence_refs": [],
+        "dependent_outcome_cell_ids": [
+          "CELL:600801:20160427:DECISION_CONTROL"
+        ],
+        "allowed_outputs": [
+          "RESEARCH_AGENDA"
+        ]
+      },
+      {
+        "claim_id": "CLAIM:R6:ENHANCED:PRODUCT",
+        "domain": "OPERATIONS",
+        "statement": "Issuer-product participation inside the supported scope is unknown at cutoff.",
+        "state": "UNKNOWN",
+        "evidence_refs": [],
+        "dependent_outcome_cell_ids": [
+          "CELL:600801:20160427:ISSUER_PRODUCT_PARTICIPATION"
+        ],
+        "allowed_outputs": [
+          "RESEARCH_AGENDA"
+        ]
+      },
+      {
+        "claim_id": "CLAIM:R6:ENHANCED:CONSOLIDATION",
+        "domain": "LIFECYCLE",
+        "statement": "The supported companies are not treated as issuer consolidated capacity without direct perimeter evidence.",
+        "state": "UNKNOWN",
+        "evidence_refs": [],
+        "dependent_outcome_cell_ids": [
+          "CELL:600801:20160427:CONSOLIDATION_SCOPE"
+        ],
+        "allowed_outputs": [
+          "RESEARCH_AGENDA"
+        ]
+      },
+      {
+        "claim_id": "CLAIM:R6:ENHANCED:CUSTOMER",
+        "domain": "CUSTOMER",
+        "statement": "Online-order penetration is observed for the issuer, but direct customer response tied to the 15-company scope is unknown.",
+        "state": "UNKNOWN",
+        "evidence_refs": [
+          "CNINFO:600801:ANN:20160331:1202113147"
+        ],
+        "dependent_outcome_cell_ids": [
+          "CELL:600801:20160427:CUSTOMER_RESPONSE"
+        ],
+        "allowed_outputs": [
+          "RESEARCH_AGENDA"
+        ]
+      },
+      {
+        "claim_id": "CLAIM:R6:ENHANCED:OPERATING_CASH",
+        "domain": "CASH",
+        "statement": "Volume, unit economics, cash, capex and financing must be read separately as issuer state.",
+        "state": "OBSERVED",
+        "evidence_refs": [
+          "CNINFO:600801:ANN:20160331:1202113147"
+        ],
+        "dependent_outcome_cell_ids": [
+          "CELL:600801:20160427:CEMENT_CLINKER_SALES_VOLUME",
+          "CELL:600801:20160427:CEMENT_GROSS_MARGIN",
+          "CELL:600801:20160427:OPERATING_CASH",
+          "CELL:600801:20160427:CASH_CAPEX",
+          "CELL:600801:20160427:SHORT_TERM_BORROWINGS"
+        ],
+        "allowed_outputs": [
+          "RESEARCH_AGENDA"
+        ]
+      },
+      {
+        "claim_id": "CLAIM:R6:ENHANCED:PERMANENT_LOSS",
+        "domain": "PERMANENT_LOSS",
+        "statement": "Permanent loss remains unknown absent a direct event or a separate multi-period persistence contract.",
+        "state": "UNKNOWN",
+        "evidence_refs": [],
+        "dependent_outcome_cell_ids": [
+          "CELL:600801:20160427:DIRECT_LOSS_EVENT"
+        ],
+        "allowed_outputs": [
+          "RESEARCH_AGENDA"
+        ]
+      }
+    ],
+    "interpretation_rule": "Formal progress is reported, but operating execution credit requires separate decision-control, issuer-product and consolidation evidence; customer response and issuer financial state remain independent.",
+    "expected_outcome_cell_ids": [
+      "CELL:600801:20160427:ACTION_PROGRESS",
+      "CELL:600801:20160427:DECISION_CONTROL",
+      "CELL:600801:20160427:ISSUER_PRODUCT_PARTICIPATION",
+      "CELL:600801:20160427:CONSOLIDATION_SCOPE",
+      "CELL:600801:20160427:CUSTOMER_RESPONSE",
+      "CELL:600801:20160427:CEMENT_CLINKER_SALES_VOLUME",
+      "CELL:600801:20160427:CEMENT_GROSS_MARGIN",
+      "CELL:600801:20160427:OPERATING_CASH",
+      "CELL:600801:20160427:CASH_CAPEX",
+      "CELL:600801:20160427:SHORT_TERM_BORROWINGS",
+      "CELL:600801:20160427:DIRECT_LOSS_EVENT"
+    ],
+    "prohibited_inferences": [
+      "Approval is not closing, control, consolidation or issuer earnings capacity.",
+      "Group or supported-company products are not issuer products without direct evidence.",
+      "Issuer financial changes are not action effects."
+    ]
+  },
+  "decision_utility_pairing": {
+    "schema_version": "turtle-decision-utility-pairing.v1",
+    "pairing_id": "DUPAIR:CN600801:20160427:R6:V1",
+    "decision_contract_ref": {
+      "contract_id": "DC:CN600801:20160427:TRANSFER_UTILITY",
+      "contract_version": 1
+    },
+    "baseline": {
+      "method_id": "METHOD:AGGREGATE_ACTION_PROGRESS:V1",
+      "decision_status": "RESEARCH",
+      "material_unknown_ids": [
+        "UNKNOWN:ACTION_EFFECT",
+        "UNKNOWN:PERMANENT_LOSS"
+      ],
+      "evidence_budget_id": "BUDGET:CN600801:20160427:FY2015",
+      "source_packet_refs": [
+        {
+          "receipt_id": "SP:CN600801:20160427:FY2015",
+          "receipt_version": 1
+        }
+      ],
+      "research_cost_hours": 0
+    },
+    "enhanced": {
+      "method_id": "METHOD:CONTROLLED_EXECUTION_SCOPE:V1",
+      "decision_status": "RESEARCH",
+      "material_unknown_ids": [
+        "UNKNOWN:DECISION_CONTROL",
+        "UNKNOWN:ISSUER_PRODUCT_PARTICIPATION",
+        "UNKNOWN:CONSOLIDATION_SCOPE",
+        "UNKNOWN:CUSTOMER_RESPONSE",
+        "UNKNOWN:PERMANENT_LOSS"
+      ],
+      "evidence_budget_id": "BUDGET:CN600801:20160427:FY2015",
+      "source_packet_refs": [
+        {
+          "receipt_id": "SP:CN600801:20160427:FY2015",
+          "receipt_version": 1
+        }
+      ],
+      "research_cost_hours": 0
+    },
+    "frozen_at": "2026-08-27T03:00:00+00:00",
+    "object_class": "DECISION_UTILITY_PAIRING",
+    "claim_class": "SAME_CONTRACT_METHOD_ABLATION",
+    "allowed_outputs": [
+      "DECISION_UTILITY_EVALUATION_ONLY",
+      "RESEARCH_AGENDA"
+    ]
+  },
+  "outcome_measurement_contract": {
+    "schema_version": "enterprise-outcome-measurement-contract.v3",
+    "contract_set_id": "OMC:CN600801:20160427:TRANSFER_UTILITY:V3",
+    "package_ref": "EJTU:CN:CEMENT:600801:20160427:V1",
+    "company_id": "CN:600801",
+    "cutoff_at": "2016-04-27T00:00:00+08:00",
+    "outcome_window": {
+      "period_start": "2016-04-28T00:00:00+08:00",
+      "period_end": "2016-12-31T23:59:59+08:00",
+      "fiscal_period": "FY2016",
+      "settlement_due_at": "2017-04-13T00:00:00+08:00"
+    },
+    "source_access": {
+      "source_id": "CNINFO:600801:ANN:20170324:1203190337",
+      "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+      "official_url": "https://static.cninfo.com.cn/finalpage/2017-03-24/1203190337.PDF",
+      "published_after_cutoff": true,
+      "access_state": "SEALED_UNTIL_PREOUTCOME_COMMIT",
+      "custodian_access": "OUTCOME_ONLY",
+      "issuer_id": "ISSUER:CN:600801",
+      "report_period_end": "2016-12-31",
+      "availability_precision": "DATE_ONLY",
+      "source_available_at": null,
+      "source_available_date": "2017-03-24",
+      "authorization_receipt_id": "OAA:CN600801:20160427:FY2016:R6:V1"
+    },
+    "atomic_cells": [
+      {
+        "cell_id": "CELL:600801:20160427:ACTION_PROGRESS",
+        "thread_id": "THREAD:600801:SUPPORT_TO_CONTROL",
+        "layer": "IMPLEMENTED",
+        "outcome_period": {
+          "period_start": "2016-04-28T00:00:00+08:00",
+          "period_end": "2016-12-31T23:59:59+08:00",
+          "fiscal_period": "FY2016"
+        },
+        "measurement_clock": {
+          "clock_kind": "EVENT_WINDOW",
+          "event_window": {
+            "event_start": "2016-04-28",
+            "event_end": "2016-12-31",
+            "window_name": "POST_CUTOFF_FY2016_EVENT_WINDOW"
+          }
+        },
+        "responsibility_boundary": {
+          "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600801",
+          "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+          "arena_id": "ARENA:CN:CEMENT:MULTI_REGION_DELIVERED_MARKET",
+          "scope_requirement": "issuer-specific support, control, product participation and consolidation must remain distinct"
+        },
+        "field_identity": {
+          "outcome_field_id": "FIELD:600801:FY2016:ACTION_PROGRESS_EVENT",
+          "baseline_field_id": "",
+          "statement_scope": "ISSUER_COMMERCIAL_AND_CONTROL_EVENT",
+          "table_or_note": "FY2016 management discussion or material investment disclosure",
+          "line_item": "explicit board or regulatory approval advancing the 15-company relationship toward acquisition or integration",
+          "field_kind": "DISCLOSED_EVENT"
+        },
+        "unit": {
+          "kind": "EVENT",
+          "currency": "NOT_APPLICABLE",
+          "scale": "BOOLEAN"
+        },
+        "raw_input_fields": [
+          {
+            "field_id": "FIELD:600801:FY2016:ACTION_PROGRESS_EVENT",
+            "role": "EVENT",
+            "unit": "BOOLEAN_EVENT",
+            "measurement_clock": {
+              "clock_kind": "EVENT_WINDOW",
+              "event_window": {
+                "event_start": "2016-04-28",
+                "event_end": "2016-12-31",
+                "window_name": "POST_CUTOFF_FY2016_EVENT_WINDOW"
+              }
+            },
+            "locator": {
+              "table_or_note": "FY2016 management discussion or material investment disclosure",
+              "line_item": "explicit board or regulatory approval advancing the 15-company relationship toward acquisition or integration",
+              "period_column": "2016-04-28..2016-12-31"
+            }
+          }
+        ],
+        "formula": {
+          "operator": "EVENT_BOOLEAN",
+          "input_field_ids": [
+            "FIELD:600801:FY2016:ACTION_PROGRESS_EVENT"
+          ],
+          "expression": "explicit_event(FIELD:600801:FY2016:ACTION_PROGRESS_EVENT)",
+          "unit_conversions": [
+            {
+              "field_id": "FIELD:600801:FY2016:ACTION_PROGRESS_EVENT",
+              "from_unit": "BOOLEAN_EVENT",
+              "to_unit": "BOOLEAN_EVENT",
+              "scale": "1"
+            }
+          ],
+          "zero_baseline_rule": "NOT_APPLICABLE"
+        },
+        "label_rule": {
+          "type": "EVENT_PRESENCE",
+          "decrease_lte": 0,
+          "increase_gte": 1,
+          "ordered_labels": [
+            "MEASUREMENT_MISMATCH",
+            "OBSERVED_YES",
+            "OBSERVED_NO",
+            "UNKNOWN"
+          ]
+        },
+        "conflict_rule": {
+          "multiple_values": "MEASUREMENT_MISMATCH",
+          "boundary_conflict": "MEASUREMENT_MISMATCH",
+          "period_conflict": "MEASUREMENT_MISMATCH"
+        },
+        "unknown_rule": {
+          "conditions": [
+            "no explicit positive or negative event evidence"
+          ],
+          "label": "UNKNOWN"
+        },
+        "mismatch_rule": {
+          "conditions": [
+            "source boundary, period or event identity conflicts"
+          ],
+          "label": "MEASUREMENT_MISMATCH",
+          "propagation": "LOCAL_ONLY",
+          "dependent_cell_ids": []
+        },
+        "allowed_source_types": [
+          "OFFICIAL_AUDITED_ANNUAL_REPORT"
+        ],
+        "prohibited_inference": "Approval is not closing, control, consolidation or operating attribution."
+      },
+      {
+        "cell_id": "CELL:600801:20160427:DECISION_CONTROL",
+        "thread_id": "THREAD:600801:SUPPORT_TO_CONTROL",
+        "layer": "EXECUTED",
+        "outcome_period": {
+          "period_start": "2016-04-28T00:00:00+08:00",
+          "period_end": "2016-12-31T23:59:59+08:00",
+          "fiscal_period": "FY2016"
+        },
+        "measurement_clock": {
+          "clock_kind": "EVENT_WINDOW",
+          "event_window": {
+            "event_start": "2016-04-28",
+            "event_end": "2016-12-31",
+            "window_name": "POST_CUTOFF_FY2016_EVENT_WINDOW"
+          }
+        },
+        "responsibility_boundary": {
+          "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600801",
+          "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+          "arena_id": "ARENA:CN:CEMENT:MULTI_REGION_DELIVERED_MARKET",
+          "scope_requirement": "issuer-specific support, control, product participation and consolidation must remain distinct"
+        },
+        "field_identity": {
+          "outcome_field_id": "FIELD:600801:FY2016:DECISION_CONTROL_EVENT",
+          "baseline_field_id": "",
+          "statement_scope": "ISSUER_COMMERCIAL_AND_CONTROL_EVENT",
+          "table_or_note": "FY2016 management discussion or material investment disclosure",
+          "line_item": "explicit issuer decision control over the 15 supported companies",
+          "field_kind": "DISCLOSED_EVENT"
+        },
+        "unit": {
+          "kind": "EVENT",
+          "currency": "NOT_APPLICABLE",
+          "scale": "BOOLEAN"
+        },
+        "raw_input_fields": [
+          {
+            "field_id": "FIELD:600801:FY2016:DECISION_CONTROL_EVENT",
+            "role": "EVENT",
+            "unit": "BOOLEAN_EVENT",
+            "measurement_clock": {
+              "clock_kind": "EVENT_WINDOW",
+              "event_window": {
+                "event_start": "2016-04-28",
+                "event_end": "2016-12-31",
+                "window_name": "POST_CUTOFF_FY2016_EVENT_WINDOW"
+              }
+            },
+            "locator": {
+              "table_or_note": "FY2016 management discussion or material investment disclosure",
+              "line_item": "explicit issuer decision control over the 15 supported companies",
+              "period_column": "2016-04-28..2016-12-31"
+            }
+          }
+        ],
+        "formula": {
+          "operator": "EVENT_BOOLEAN",
+          "input_field_ids": [
+            "FIELD:600801:FY2016:DECISION_CONTROL_EVENT"
+          ],
+          "expression": "explicit_event(FIELD:600801:FY2016:DECISION_CONTROL_EVENT)",
+          "unit_conversions": [
+            {
+              "field_id": "FIELD:600801:FY2016:DECISION_CONTROL_EVENT",
+              "from_unit": "BOOLEAN_EVENT",
+              "to_unit": "BOOLEAN_EVENT",
+              "scale": "1"
+            }
+          ],
+          "zero_baseline_rule": "NOT_APPLICABLE"
+        },
+        "label_rule": {
+          "type": "EVENT_PRESENCE",
+          "decrease_lte": 0,
+          "increase_gte": 1,
+          "ordered_labels": [
+            "MEASUREMENT_MISMATCH",
+            "OBSERVED_YES",
+            "OBSERVED_NO",
+            "UNKNOWN"
+          ]
+        },
+        "conflict_rule": {
+          "multiple_values": "MEASUREMENT_MISMATCH",
+          "boundary_conflict": "MEASUREMENT_MISMATCH",
+          "period_conflict": "MEASUREMENT_MISMATCH"
+        },
+        "unknown_rule": {
+          "conditions": [
+            "no explicit positive or negative event evidence"
+          ],
+          "label": "UNKNOWN"
+        },
+        "mismatch_rule": {
+          "conditions": [
+            "source boundary, period or event identity conflicts"
+          ],
+          "label": "MEASUREMENT_MISMATCH",
+          "propagation": "LOCAL_ONLY",
+          "dependent_cell_ids": []
+        },
+        "allowed_source_types": [
+          "OFFICIAL_AUDITED_ANNUAL_REPORT"
+        ],
+        "prohibited_inference": "Service provision, shareholder affiliation or approval cannot substitute for actual decision control."
+      },
+      {
+        "cell_id": "CELL:600801:20160427:ISSUER_PRODUCT_PARTICIPATION",
+        "thread_id": "THREAD:600801:SUPPORT_TO_CONTROL",
+        "layer": "EXECUTED",
+        "outcome_period": {
+          "period_start": "2016-04-28T00:00:00+08:00",
+          "period_end": "2016-12-31T23:59:59+08:00",
+          "fiscal_period": "FY2016"
+        },
+        "measurement_clock": {
+          "clock_kind": "EVENT_WINDOW",
+          "event_window": {
+            "event_start": "2016-04-28",
+            "event_end": "2016-12-31",
+            "window_name": "POST_CUTOFF_FY2016_EVENT_WINDOW"
+          }
+        },
+        "responsibility_boundary": {
+          "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600801",
+          "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+          "arena_id": "ARENA:CN:CEMENT:MULTI_REGION_DELIVERED_MARKET",
+          "scope_requirement": "issuer-specific support, control, product participation and consolidation must remain distinct"
+        },
+        "field_identity": {
+          "outcome_field_id": "FIELD:600801:FY2016:ISSUER_PRODUCT_PARTICIPATION_EVENT",
+          "baseline_field_id": "",
+          "statement_scope": "ISSUER_COMMERCIAL_AND_CONTROL_EVENT",
+          "table_or_note": "FY2016 management discussion or material investment disclosure",
+          "line_item": "explicit issuer-product production or sales participation within the 15-company scope",
+          "field_kind": "DISCLOSED_EVENT"
+        },
+        "unit": {
+          "kind": "EVENT",
+          "currency": "NOT_APPLICABLE",
+          "scale": "BOOLEAN"
+        },
+        "raw_input_fields": [
+          {
+            "field_id": "FIELD:600801:FY2016:ISSUER_PRODUCT_PARTICIPATION_EVENT",
+            "role": "EVENT",
+            "unit": "BOOLEAN_EVENT",
+            "measurement_clock": {
+              "clock_kind": "EVENT_WINDOW",
+              "event_window": {
+                "event_start": "2016-04-28",
+                "event_end": "2016-12-31",
+                "window_name": "POST_CUTOFF_FY2016_EVENT_WINDOW"
+              }
+            },
+            "locator": {
+              "table_or_note": "FY2016 management discussion or material investment disclosure",
+              "line_item": "explicit issuer-product production or sales participation within the 15-company scope",
+              "period_column": "2016-04-28..2016-12-31"
+            }
+          }
+        ],
+        "formula": {
+          "operator": "EVENT_BOOLEAN",
+          "input_field_ids": [
+            "FIELD:600801:FY2016:ISSUER_PRODUCT_PARTICIPATION_EVENT"
+          ],
+          "expression": "explicit_event(FIELD:600801:FY2016:ISSUER_PRODUCT_PARTICIPATION_EVENT)",
+          "unit_conversions": [
+            {
+              "field_id": "FIELD:600801:FY2016:ISSUER_PRODUCT_PARTICIPATION_EVENT",
+              "from_unit": "BOOLEAN_EVENT",
+              "to_unit": "BOOLEAN_EVENT",
+              "scale": "1"
+            }
+          ],
+          "zero_baseline_rule": "NOT_APPLICABLE"
+        },
+        "label_rule": {
+          "type": "EVENT_PRESENCE",
+          "decrease_lte": 0,
+          "increase_gte": 1,
+          "ordered_labels": [
+            "MEASUREMENT_MISMATCH",
+            "OBSERVED_YES",
+            "OBSERVED_NO",
+            "UNKNOWN"
+          ]
+        },
+        "conflict_rule": {
+          "multiple_values": "MEASUREMENT_MISMATCH",
+          "boundary_conflict": "MEASUREMENT_MISMATCH",
+          "period_conflict": "MEASUREMENT_MISMATCH"
+        },
+        "unknown_rule": {
+          "conditions": [
+            "no explicit positive or negative event evidence"
+          ],
+          "label": "UNKNOWN"
+        },
+        "mismatch_rule": {
+          "conditions": [
+            "source boundary, period or event identity conflicts"
+          ],
+          "label": "MEASUREMENT_MISMATCH",
+          "propagation": "LOCAL_ONLY",
+          "dependent_cell_ids": []
+        },
+        "allowed_source_types": [
+          "OFFICIAL_AUDITED_ANNUAL_REPORT"
+        ],
+        "prohibited_inference": "Support services or group products cannot be attributed to issuer products."
+      },
+      {
+        "cell_id": "CELL:600801:20160427:CONSOLIDATION_SCOPE",
+        "thread_id": "THREAD:600801:SUPPORT_TO_CONTROL",
+        "layer": "EXECUTED",
+        "outcome_period": {
+          "period_start": "2016-04-28T00:00:00+08:00",
+          "period_end": "2016-12-31T23:59:59+08:00",
+          "fiscal_period": "FY2016"
+        },
+        "measurement_clock": {
+          "clock_kind": "EVENT_WINDOW",
+          "event_window": {
+            "event_start": "2016-04-28",
+            "event_end": "2016-12-31",
+            "window_name": "POST_CUTOFF_FY2016_EVENT_WINDOW"
+          }
+        },
+        "responsibility_boundary": {
+          "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600801",
+          "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+          "arena_id": "ARENA:CN:CEMENT:MULTI_REGION_DELIVERED_MARKET",
+          "scope_requirement": "issuer-specific support, control, product participation and consolidation must remain distinct"
+        },
+        "field_identity": {
+          "outcome_field_id": "FIELD:600801:FY2016:CONSOLIDATION_SCOPE_EVENT",
+          "baseline_field_id": "",
+          "statement_scope": "ISSUER_COMMERCIAL_AND_CONTROL_EVENT",
+          "table_or_note": "FY2016 management discussion or material investment disclosure",
+          "line_item": "explicit inclusion of the 15-company assets in the issuer consolidated perimeter",
+          "field_kind": "DISCLOSED_EVENT"
+        },
+        "unit": {
+          "kind": "EVENT",
+          "currency": "NOT_APPLICABLE",
+          "scale": "BOOLEAN"
+        },
+        "raw_input_fields": [
+          {
+            "field_id": "FIELD:600801:FY2016:CONSOLIDATION_SCOPE_EVENT",
+            "role": "EVENT",
+            "unit": "BOOLEAN_EVENT",
+            "measurement_clock": {
+              "clock_kind": "EVENT_WINDOW",
+              "event_window": {
+                "event_start": "2016-04-28",
+                "event_end": "2016-12-31",
+                "window_name": "POST_CUTOFF_FY2016_EVENT_WINDOW"
+              }
+            },
+            "locator": {
+              "table_or_note": "FY2016 management discussion or material investment disclosure",
+              "line_item": "explicit inclusion of the 15-company assets in the issuer consolidated perimeter",
+              "period_column": "2016-04-28..2016-12-31"
+            }
+          }
+        ],
+        "formula": {
+          "operator": "EVENT_BOOLEAN",
+          "input_field_ids": [
+            "FIELD:600801:FY2016:CONSOLIDATION_SCOPE_EVENT"
+          ],
+          "expression": "explicit_event(FIELD:600801:FY2016:CONSOLIDATION_SCOPE_EVENT)",
+          "unit_conversions": [
+            {
+              "field_id": "FIELD:600801:FY2016:CONSOLIDATION_SCOPE_EVENT",
+              "from_unit": "BOOLEAN_EVENT",
+              "to_unit": "BOOLEAN_EVENT",
+              "scale": "1"
+            }
+          ],
+          "zero_baseline_rule": "NOT_APPLICABLE"
+        },
+        "label_rule": {
+          "type": "EVENT_PRESENCE",
+          "decrease_lte": 0,
+          "increase_gte": 1,
+          "ordered_labels": [
+            "MEASUREMENT_MISMATCH",
+            "OBSERVED_YES",
+            "OBSERVED_NO",
+            "UNKNOWN"
+          ]
+        },
+        "conflict_rule": {
+          "multiple_values": "MEASUREMENT_MISMATCH",
+          "boundary_conflict": "MEASUREMENT_MISMATCH",
+          "period_conflict": "MEASUREMENT_MISMATCH"
+        },
+        "unknown_rule": {
+          "conditions": [
+            "no explicit positive or negative event evidence"
+          ],
+          "label": "UNKNOWN"
+        },
+        "mismatch_rule": {
+          "conditions": [
+            "source boundary, period or event identity conflicts"
+          ],
+          "label": "MEASUREMENT_MISMATCH",
+          "propagation": "LOCAL_ONLY",
+          "dependent_cell_ids": []
+        },
+        "allowed_source_types": [
+          "OFFICIAL_AUDITED_ANNUAL_REPORT"
+        ],
+        "prohibited_inference": "Approval or an agreement cannot substitute for consolidation evidence."
+      },
+      {
+        "cell_id": "CELL:600801:20160427:CUSTOMER_RESPONSE",
+        "thread_id": "THREAD:600801:SUPPORT_TO_CONTROL",
+        "layer": "CUSTOMER_RESPONSE",
+        "outcome_period": {
+          "period_start": "2016-04-28T00:00:00+08:00",
+          "period_end": "2016-12-31T23:59:59+08:00",
+          "fiscal_period": "FY2016"
+        },
+        "measurement_clock": {
+          "clock_kind": "EVENT_WINDOW",
+          "event_window": {
+            "event_start": "2016-04-28",
+            "event_end": "2016-12-31",
+            "window_name": "POST_CUTOFF_FY2016_EVENT_WINDOW"
+          }
+        },
+        "responsibility_boundary": {
+          "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600801",
+          "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+          "arena_id": "ARENA:CN:CEMENT:MULTI_REGION_DELIVERED_MARKET",
+          "scope_requirement": "issuer-specific support, control, product participation and consolidation must remain distinct"
+        },
+        "field_identity": {
+          "outcome_field_id": "FIELD:600801:FY2016:CUSTOMER_RESPONSE_EVENT",
+          "baseline_field_id": "",
+          "statement_scope": "ISSUER_COMMERCIAL_AND_CONTROL_EVENT",
+          "table_or_note": "FY2016 management discussion or material investment disclosure",
+          "line_item": "direct issuer customer, order, retention, channel or market-share response tied to the 15-company scope",
+          "field_kind": "DISCLOSED_EVENT"
+        },
+        "unit": {
+          "kind": "EVENT",
+          "currency": "NOT_APPLICABLE",
+          "scale": "BOOLEAN"
+        },
+        "raw_input_fields": [
+          {
+            "field_id": "FIELD:600801:FY2016:CUSTOMER_RESPONSE_EVENT",
+            "role": "EVENT",
+            "unit": "BOOLEAN_EVENT",
+            "measurement_clock": {
+              "clock_kind": "EVENT_WINDOW",
+              "event_window": {
+                "event_start": "2016-04-28",
+                "event_end": "2016-12-31",
+                "window_name": "POST_CUTOFF_FY2016_EVENT_WINDOW"
+              }
+            },
+            "locator": {
+              "table_or_note": "FY2016 management discussion or material investment disclosure",
+              "line_item": "direct issuer customer, order, retention, channel or market-share response tied to the 15-company scope",
+              "period_column": "2016-04-28..2016-12-31"
+            }
+          }
+        ],
+        "formula": {
+          "operator": "EVENT_BOOLEAN",
+          "input_field_ids": [
+            "FIELD:600801:FY2016:CUSTOMER_RESPONSE_EVENT"
+          ],
+          "expression": "explicit_event(FIELD:600801:FY2016:CUSTOMER_RESPONSE_EVENT)",
+          "unit_conversions": [
+            {
+              "field_id": "FIELD:600801:FY2016:CUSTOMER_RESPONSE_EVENT",
+              "from_unit": "BOOLEAN_EVENT",
+              "to_unit": "BOOLEAN_EVENT",
+              "scale": "1"
+            }
+          ],
+          "zero_baseline_rule": "NOT_APPLICABLE"
+        },
+        "label_rule": {
+          "type": "EVENT_PRESENCE",
+          "decrease_lte": 0,
+          "increase_gte": 1,
+          "ordered_labels": [
+            "MEASUREMENT_MISMATCH",
+            "OBSERVED_YES",
+            "OBSERVED_NO",
+            "UNKNOWN"
+          ]
+        },
+        "conflict_rule": {
+          "multiple_values": "MEASUREMENT_MISMATCH",
+          "boundary_conflict": "MEASUREMENT_MISMATCH",
+          "period_conflict": "MEASUREMENT_MISMATCH"
+        },
+        "unknown_rule": {
+          "conditions": [
+            "no explicit positive or negative event evidence"
+          ],
+          "label": "UNKNOWN"
+        },
+        "mismatch_rule": {
+          "conditions": [
+            "source boundary, period or event identity conflicts"
+          ],
+          "label": "MEASUREMENT_MISMATCH",
+          "propagation": "LOCAL_ONLY",
+          "dependent_cell_ids": []
+        },
+        "allowed_source_types": [
+          "OFFICIAL_AUDITED_ANNUAL_REPORT"
+        ],
+        "prohibited_inference": "Aggregate volume cannot substitute for direct customer response."
+      },
+      {
+        "cell_id": "CELL:600801:20160427:CEMENT_CLINKER_SALES_VOLUME",
+        "thread_id": "THREAD:600801:OPERATING_CASH_CAPITAL",
+        "layer": "SALES_VOLUME",
+        "outcome_period": {
+          "period_start": "2016-01-01T00:00:00+08:00",
+          "period_end": "2016-12-31T23:59:59+08:00",
+          "fiscal_period": "FY2016"
+        },
+        "measurement_clock": {
+          "clock_kind": "FLOW_PERIOD",
+          "flow_period": {
+            "period_start": "2016-01-01",
+            "period_end": "2016-12-31",
+            "fiscal_period": "FY2016"
+          }
+        },
+        "responsibility_boundary": {
+          "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600801",
+          "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+          "arena_id": "ARENA:CN:CEMENT:MULTI_REGION_DELIVERED_MARKET",
+          "scope_requirement": "issuer-consolidated same-definition field; action attribution prohibited"
+        },
+        "field_identity": {
+          "outcome_field_id": "FIELD:600801:FY2016:CEMENT_CLINKER_SALES_VOLUME",
+          "baseline_field_id": "FIELD:600801:FY2015:CEMENT_CLINKER_SALES_VOLUME",
+          "statement_scope": "CONSOLIDATED",
+          "table_or_note": "production-sales-inventory analysis",
+          "line_item": "cement and clinker sales volume",
+          "field_kind": "AUDITED_OR_OPERATING_LINE_ITEM"
+        },
+        "unit": {
+          "kind": "PERCENT_CHANGE",
+          "currency": "NOT_APPLICABLE",
+          "scale": "1"
+        },
+        "raw_input_fields": [
+          {
+            "field_id": "FIELD:600801:FY2015:CEMENT_CLINKER_SALES_VOLUME",
+            "role": "BASELINE",
+            "unit": "TONNE",
+            "measurement_clock": {
+              "clock_kind": "FLOW_PERIOD",
+              "flow_period": {
+                "period_start": "2015-01-01",
+                "period_end": "2015-12-31",
+                "fiscal_period": "FY2015"
+              }
+            },
+            "locator": {
+              "table_or_note": "production-sales-inventory analysis",
+              "line_item": "cement and clinker sales volume",
+              "period_column": "FY2015"
+            }
+          },
+          {
+            "field_id": "FIELD:600801:FY2016:CEMENT_CLINKER_SALES_VOLUME",
+            "role": "OUTCOME",
+            "unit": "TONNE",
+            "measurement_clock": {
+              "clock_kind": "FLOW_PERIOD",
+              "flow_period": {
+                "period_start": "2016-01-01",
+                "period_end": "2016-12-31",
+                "fiscal_period": "FY2016"
+              }
+            },
+            "locator": {
+              "table_or_note": "production-sales-inventory analysis",
+              "line_item": "cement and clinker sales volume",
+              "period_column": "FY2016"
+            }
+          }
+        ],
+        "formula": {
+          "operator": "PERCENT_CHANGE",
+          "input_field_ids": [
+            "FIELD:600801:FY2015:CEMENT_CLINKER_SALES_VOLUME",
+            "FIELD:600801:FY2016:CEMENT_CLINKER_SALES_VOLUME"
+          ],
+          "expression": "(outcome - baseline) / abs(baseline)",
+          "unit_conversions": [
+            {
+              "field_id": "FIELD:600801:FY2015:CEMENT_CLINKER_SALES_VOLUME",
+              "from_unit": "TONNE",
+              "to_unit": "TONNE",
+              "scale": "1"
+            },
+            {
+              "field_id": "FIELD:600801:FY2016:CEMENT_CLINKER_SALES_VOLUME",
+              "from_unit": "TONNE",
+              "to_unit": "TONNE",
+              "scale": "1"
+            }
+          ],
+          "zero_baseline_rule": "RETURN_MEASUREMENT_MISMATCH"
+        },
+        "label_rule": {
+          "type": "PERCENT_CHANGE_BAND",
+          "decrease_lte": -0.05,
+          "increase_gte": 0.05,
+          "ordered_labels": [
+            "MEASUREMENT_MISMATCH",
+            "OBSERVED_DECREASE",
+            "OBSERVED_STABLE",
+            "OBSERVED_INCREASE",
+            "UNKNOWN"
+          ]
+        },
+        "conflict_rule": {
+          "multiple_values": "MEASUREMENT_MISMATCH",
+          "boundary_conflict": "MEASUREMENT_MISMATCH",
+          "period_conflict": "MEASUREMENT_MISMATCH"
+        },
+        "unknown_rule": {
+          "conditions": [
+            "one or more contracted raw fields absent"
+          ],
+          "label": "UNKNOWN"
+        },
+        "mismatch_rule": {
+          "conditions": [
+            "scope, period, unit or unique-field conflict"
+          ],
+          "label": "MEASUREMENT_MISMATCH",
+          "propagation": "LOCAL_ONLY",
+          "dependent_cell_ids": []
+        },
+        "allowed_source_types": [
+          "OFFICIAL_AUDITED_ANNUAL_REPORT"
+        ],
+        "prohibited_inference": "Volume direction is issuer state, not support-agreement or acquisition effect."
+      },
+      {
+        "cell_id": "CELL:600801:20160427:CEMENT_GROSS_MARGIN",
+        "thread_id": "THREAD:600801:OPERATING_CASH_CAPITAL",
+        "layer": "GROSS_MARGIN",
+        "outcome_period": {
+          "period_start": "2016-01-01T00:00:00+08:00",
+          "period_end": "2016-12-31T23:59:59+08:00",
+          "fiscal_period": "FY2016"
+        },
+        "measurement_clock": {
+          "clock_kind": "FLOW_PERIOD",
+          "flow_period": {
+            "period_start": "2016-01-01",
+            "period_end": "2016-12-31",
+            "fiscal_period": "FY2016"
+          }
+        },
+        "responsibility_boundary": {
+          "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600801",
+          "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+          "arena_id": "ARENA:CN:CEMENT:MULTI_REGION_DELIVERED_MARKET",
+          "scope_requirement": "issuer-consolidated same-definition field; action attribution prohibited"
+        },
+        "field_identity": {
+          "outcome_field_id": "FIELD:600801:FY2016:CEMENT_GROSS_MARGIN",
+          "baseline_field_id": "FIELD:600801:FY2015:CEMENT_GROSS_MARGIN",
+          "statement_scope": "CONSOLIDATED",
+          "table_or_note": "principal business by product",
+          "line_item": "cement gross-margin ratio",
+          "field_kind": "AUDITED_OR_OPERATING_LINE_ITEM"
+        },
+        "unit": {
+          "kind": "RATIO",
+          "currency": "NOT_APPLICABLE",
+          "scale": "1"
+        },
+        "raw_input_fields": [
+          {
+            "field_id": "FIELD:600801:FY2015:CEMENT_GROSS_MARGIN",
+            "role": "BASELINE",
+            "unit": "RATIO",
+            "measurement_clock": {
+              "clock_kind": "FLOW_PERIOD",
+              "flow_period": {
+                "period_start": "2015-01-01",
+                "period_end": "2015-12-31",
+                "fiscal_period": "FY2015"
+              }
+            },
+            "locator": {
+              "table_or_note": "principal business by product",
+              "line_item": "cement gross-margin ratio",
+              "period_column": "FY2015"
+            }
+          },
+          {
+            "field_id": "FIELD:600801:FY2016:CEMENT_GROSS_MARGIN",
+            "role": "OUTCOME",
+            "unit": "RATIO",
+            "measurement_clock": {
+              "clock_kind": "FLOW_PERIOD",
+              "flow_period": {
+                "period_start": "2016-01-01",
+                "period_end": "2016-12-31",
+                "fiscal_period": "FY2016"
+              }
+            },
+            "locator": {
+              "table_or_note": "principal business by product",
+              "line_item": "cement gross-margin ratio",
+              "period_column": "FY2016"
+            }
+          }
+        ],
+        "formula": {
+          "operator": "DIFFERENCE",
+          "input_field_ids": [
+            "FIELD:600801:FY2015:CEMENT_GROSS_MARGIN",
+            "FIELD:600801:FY2016:CEMENT_GROSS_MARGIN"
+          ],
+          "expression": "outcome - baseline",
+          "unit_conversions": [
+            {
+              "field_id": "FIELD:600801:FY2015:CEMENT_GROSS_MARGIN",
+              "from_unit": "RATIO",
+              "to_unit": "RATIO",
+              "scale": "1"
+            },
+            {
+              "field_id": "FIELD:600801:FY2016:CEMENT_GROSS_MARGIN",
+              "from_unit": "RATIO",
+              "to_unit": "RATIO",
+              "scale": "1"
+            }
+          ],
+          "zero_baseline_rule": "NOT_APPLICABLE"
+        },
+        "label_rule": {
+          "type": "ABSOLUTE_CHANGE_BAND",
+          "decrease_lte": -0.02,
+          "increase_gte": 0.02,
+          "ordered_labels": [
+            "MEASUREMENT_MISMATCH",
+            "OBSERVED_DECREASE",
+            "OBSERVED_STABLE",
+            "OBSERVED_INCREASE",
+            "UNKNOWN"
+          ]
+        },
+        "conflict_rule": {
+          "multiple_values": "MEASUREMENT_MISMATCH",
+          "boundary_conflict": "MEASUREMENT_MISMATCH",
+          "period_conflict": "MEASUREMENT_MISMATCH"
+        },
+        "unknown_rule": {
+          "conditions": [
+            "one or more contracted raw fields absent"
+          ],
+          "label": "UNKNOWN"
+        },
+        "mismatch_rule": {
+          "conditions": [
+            "scope, period, unit or unique-field conflict"
+          ],
+          "label": "MEASUREMENT_MISMATCH",
+          "propagation": "LOCAL_ONLY",
+          "dependent_cell_ids": []
+        },
+        "allowed_source_types": [
+          "OFFICIAL_AUDITED_ANNUAL_REPORT"
+        ],
+        "prohibited_inference": "Margin direction cannot be attributed to the support agreement or acquisition approval."
+      },
+      {
+        "cell_id": "CELL:600801:20160427:OPERATING_CASH",
+        "thread_id": "THREAD:600801:OPERATING_CASH_CAPITAL",
+        "layer": "CASH",
+        "outcome_period": {
+          "period_start": "2016-01-01T00:00:00+08:00",
+          "period_end": "2016-12-31T23:59:59+08:00",
+          "fiscal_period": "FY2016"
+        },
+        "measurement_clock": {
+          "clock_kind": "FLOW_PERIOD",
+          "flow_period": {
+            "period_start": "2016-01-01",
+            "period_end": "2016-12-31",
+            "fiscal_period": "FY2016"
+          }
+        },
+        "responsibility_boundary": {
+          "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600801",
+          "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+          "arena_id": "ARENA:CN:CEMENT:MULTI_REGION_DELIVERED_MARKET",
+          "scope_requirement": "issuer-consolidated same-definition field; action attribution prohibited"
+        },
+        "field_identity": {
+          "outcome_field_id": "FIELD:600801:FY2016:OPERATING_CASH",
+          "baseline_field_id": "FIELD:600801:FY2015:OPERATING_CASH",
+          "statement_scope": "CONSOLIDATED",
+          "table_or_note": "consolidated cash-flow statement",
+          "line_item": "net cash flows from operating activities",
+          "field_kind": "AUDITED_OR_OPERATING_LINE_ITEM"
+        },
+        "unit": {
+          "kind": "PERCENT_CHANGE",
+          "currency": "RMB",
+          "scale": "1"
+        },
+        "raw_input_fields": [
+          {
+            "field_id": "FIELD:600801:FY2015:OPERATING_CASH",
+            "role": "BASELINE",
+            "unit": "RMB",
+            "measurement_clock": {
+              "clock_kind": "FLOW_PERIOD",
+              "flow_period": {
+                "period_start": "2015-01-01",
+                "period_end": "2015-12-31",
+                "fiscal_period": "FY2015"
+              }
+            },
+            "locator": {
+              "table_or_note": "consolidated cash-flow statement",
+              "line_item": "net cash flows from operating activities",
+              "period_column": "FY2015"
+            }
+          },
+          {
+            "field_id": "FIELD:600801:FY2016:OPERATING_CASH",
+            "role": "OUTCOME",
+            "unit": "RMB",
+            "measurement_clock": {
+              "clock_kind": "FLOW_PERIOD",
+              "flow_period": {
+                "period_start": "2016-01-01",
+                "period_end": "2016-12-31",
+                "fiscal_period": "FY2016"
+              }
+            },
+            "locator": {
+              "table_or_note": "consolidated cash-flow statement",
+              "line_item": "net cash flows from operating activities",
+              "period_column": "FY2016"
+            }
+          }
+        ],
+        "formula": {
+          "operator": "PERCENT_CHANGE",
+          "input_field_ids": [
+            "FIELD:600801:FY2015:OPERATING_CASH",
+            "FIELD:600801:FY2016:OPERATING_CASH"
+          ],
+          "expression": "(outcome - baseline) / abs(baseline)",
+          "unit_conversions": [
+            {
+              "field_id": "FIELD:600801:FY2015:OPERATING_CASH",
+              "from_unit": "RMB",
+              "to_unit": "RMB",
+              "scale": "1"
+            },
+            {
+              "field_id": "FIELD:600801:FY2016:OPERATING_CASH",
+              "from_unit": "RMB",
+              "to_unit": "RMB",
+              "scale": "1"
+            }
+          ],
+          "zero_baseline_rule": "RETURN_MEASUREMENT_MISMATCH"
+        },
+        "label_rule": {
+          "type": "PERCENT_CHANGE_BAND",
+          "decrease_lte": -0.05,
+          "increase_gte": 0.05,
+          "ordered_labels": [
+            "MEASUREMENT_MISMATCH",
+            "OBSERVED_DECREASE",
+            "OBSERVED_STABLE",
+            "OBSERVED_INCREASE",
+            "UNKNOWN"
+          ]
+        },
+        "conflict_rule": {
+          "multiple_values": "MEASUREMENT_MISMATCH",
+          "boundary_conflict": "MEASUREMENT_MISMATCH",
+          "period_conflict": "MEASUREMENT_MISMATCH"
+        },
+        "unknown_rule": {
+          "conditions": [
+            "one or more contracted raw fields absent"
+          ],
+          "label": "UNKNOWN"
+        },
+        "mismatch_rule": {
+          "conditions": [
+            "scope, period, unit or unique-field conflict"
+          ],
+          "label": "MEASUREMENT_MISMATCH",
+          "propagation": "LOCAL_ONLY",
+          "dependent_cell_ids": []
+        },
+        "allowed_source_types": [
+          "OFFICIAL_AUDITED_ANNUAL_REPORT"
+        ],
+        "prohibited_inference": "Operating cash is not owner cash or acquisition-effect cash."
+      },
+      {
+        "cell_id": "CELL:600801:20160427:CASH_CAPEX",
+        "thread_id": "THREAD:600801:OPERATING_CASH_CAPITAL",
+        "layer": "CAPITAL_BURDEN",
+        "outcome_period": {
+          "period_start": "2016-01-01T00:00:00+08:00",
+          "period_end": "2016-12-31T23:59:59+08:00",
+          "fiscal_period": "FY2016"
+        },
+        "measurement_clock": {
+          "clock_kind": "FLOW_PERIOD",
+          "flow_period": {
+            "period_start": "2016-01-01",
+            "period_end": "2016-12-31",
+            "fiscal_period": "FY2016"
+          }
+        },
+        "responsibility_boundary": {
+          "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600801",
+          "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+          "arena_id": "ARENA:CN:CEMENT:MULTI_REGION_DELIVERED_MARKET",
+          "scope_requirement": "issuer-consolidated same-definition field; action attribution prohibited"
+        },
+        "field_identity": {
+          "outcome_field_id": "FIELD:600801:FY2016:CASH_CAPEX",
+          "baseline_field_id": "FIELD:600801:FY2015:CASH_CAPEX",
+          "statement_scope": "CONSOLIDATED",
+          "table_or_note": "consolidated cash-flow statement",
+          "line_item": "cash paid to acquire and construct fixed assets, intangible assets and other long-term assets",
+          "field_kind": "AUDITED_OR_OPERATING_LINE_ITEM"
+        },
+        "unit": {
+          "kind": "PERCENT_CHANGE",
+          "currency": "RMB",
+          "scale": "1"
+        },
+        "raw_input_fields": [
+          {
+            "field_id": "FIELD:600801:FY2015:CASH_CAPEX",
+            "role": "BASELINE",
+            "unit": "RMB",
+            "measurement_clock": {
+              "clock_kind": "FLOW_PERIOD",
+              "flow_period": {
+                "period_start": "2015-01-01",
+                "period_end": "2015-12-31",
+                "fiscal_period": "FY2015"
+              }
+            },
+            "locator": {
+              "table_or_note": "consolidated cash-flow statement",
+              "line_item": "cash paid to acquire and construct fixed assets, intangible assets and other long-term assets",
+              "period_column": "FY2015"
+            }
+          },
+          {
+            "field_id": "FIELD:600801:FY2016:CASH_CAPEX",
+            "role": "OUTCOME",
+            "unit": "RMB",
+            "measurement_clock": {
+              "clock_kind": "FLOW_PERIOD",
+              "flow_period": {
+                "period_start": "2016-01-01",
+                "period_end": "2016-12-31",
+                "fiscal_period": "FY2016"
+              }
+            },
+            "locator": {
+              "table_or_note": "consolidated cash-flow statement",
+              "line_item": "cash paid to acquire and construct fixed assets, intangible assets and other long-term assets",
+              "period_column": "FY2016"
+            }
+          }
+        ],
+        "formula": {
+          "operator": "PERCENT_CHANGE",
+          "input_field_ids": [
+            "FIELD:600801:FY2015:CASH_CAPEX",
+            "FIELD:600801:FY2016:CASH_CAPEX"
+          ],
+          "expression": "(outcome - baseline) / abs(baseline)",
+          "unit_conversions": [
+            {
+              "field_id": "FIELD:600801:FY2015:CASH_CAPEX",
+              "from_unit": "RMB",
+              "to_unit": "RMB",
+              "scale": "1"
+            },
+            {
+              "field_id": "FIELD:600801:FY2016:CASH_CAPEX",
+              "from_unit": "RMB",
+              "to_unit": "RMB",
+              "scale": "1"
+            }
+          ],
+          "zero_baseline_rule": "RETURN_MEASUREMENT_MISMATCH"
+        },
+        "label_rule": {
+          "type": "PERCENT_CHANGE_BAND",
+          "decrease_lte": -0.05,
+          "increase_gte": 0.05,
+          "ordered_labels": [
+            "MEASUREMENT_MISMATCH",
+            "OBSERVED_DECREASE",
+            "OBSERVED_STABLE",
+            "OBSERVED_INCREASE",
+            "UNKNOWN"
+          ]
+        },
+        "conflict_rule": {
+          "multiple_values": "MEASUREMENT_MISMATCH",
+          "boundary_conflict": "MEASUREMENT_MISMATCH",
+          "period_conflict": "MEASUREMENT_MISMATCH"
+        },
+        "unknown_rule": {
+          "conditions": [
+            "one or more contracted raw fields absent"
+          ],
+          "label": "UNKNOWN"
+        },
+        "mismatch_rule": {
+          "conditions": [
+            "scope, period, unit or unique-field conflict"
+          ],
+          "label": "MEASUREMENT_MISMATCH",
+          "propagation": "LOCAL_ONLY",
+          "dependent_cell_ids": []
+        },
+        "allowed_source_types": [
+          "OFFICIAL_AUDITED_ANNUAL_REPORT"
+        ],
+        "prohibited_inference": "Lower cash capex cannot automatically be credited as better capital allocation."
+      },
+      {
+        "cell_id": "CELL:600801:20160427:SHORT_TERM_BORROWINGS",
+        "thread_id": "THREAD:600801:OPERATING_CASH_CAPITAL",
+        "layer": "FINANCING",
+        "outcome_period": {
+          "period_start": "2016-01-01T00:00:00+08:00",
+          "period_end": "2016-12-31T23:59:59+08:00",
+          "fiscal_period": "FY2016"
+        },
+        "measurement_clock": {
+          "clock_kind": "BALANCE_AS_OF",
+          "balance_as_of": {
+            "as_of": "2016-12-31",
+            "fiscal_period": "FY2016"
+          }
+        },
+        "responsibility_boundary": {
+          "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600801",
+          "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+          "arena_id": "ARENA:CN:CEMENT:MULTI_REGION_DELIVERED_MARKET",
+          "scope_requirement": "issuer-consolidated same-definition field; action attribution prohibited"
+        },
+        "field_identity": {
+          "outcome_field_id": "FIELD:600801:FY2016:SHORT_TERM_BORROWINGS",
+          "baseline_field_id": "FIELD:600801:FY2015:SHORT_TERM_BORROWINGS",
+          "statement_scope": "CONSOLIDATED",
+          "table_or_note": "consolidated balance sheet",
+          "line_item": "short-term borrowings",
+          "field_kind": "AUDITED_OR_OPERATING_LINE_ITEM"
+        },
+        "unit": {
+          "kind": "PERCENT_CHANGE",
+          "currency": "RMB",
+          "scale": "1"
+        },
+        "raw_input_fields": [
+          {
+            "field_id": "FIELD:600801:FY2015:SHORT_TERM_BORROWINGS",
+            "role": "BASELINE",
+            "unit": "RMB",
+            "measurement_clock": {
+              "clock_kind": "BALANCE_AS_OF",
+              "balance_as_of": {
+                "as_of": "2015-12-31",
+                "fiscal_period": "FY2015"
+              }
+            },
+            "locator": {
+              "table_or_note": "consolidated balance sheet",
+              "line_item": "short-term borrowings",
+              "period_column": "FY2015"
+            }
+          },
+          {
+            "field_id": "FIELD:600801:FY2016:SHORT_TERM_BORROWINGS",
+            "role": "OUTCOME",
+            "unit": "RMB",
+            "measurement_clock": {
+              "clock_kind": "BALANCE_AS_OF",
+              "balance_as_of": {
+                "as_of": "2016-12-31",
+                "fiscal_period": "FY2016"
+              }
+            },
+            "locator": {
+              "table_or_note": "consolidated balance sheet",
+              "line_item": "short-term borrowings",
+              "period_column": "FY2016"
+            }
+          }
+        ],
+        "formula": {
+          "operator": "PERCENT_CHANGE",
+          "input_field_ids": [
+            "FIELD:600801:FY2015:SHORT_TERM_BORROWINGS",
+            "FIELD:600801:FY2016:SHORT_TERM_BORROWINGS"
+          ],
+          "expression": "(outcome - baseline) / abs(baseline)",
+          "unit_conversions": [
+            {
+              "field_id": "FIELD:600801:FY2015:SHORT_TERM_BORROWINGS",
+              "from_unit": "RMB",
+              "to_unit": "RMB",
+              "scale": "1"
+            },
+            {
+              "field_id": "FIELD:600801:FY2016:SHORT_TERM_BORROWINGS",
+              "from_unit": "RMB",
+              "to_unit": "RMB",
+              "scale": "1"
+            }
+          ],
+          "zero_baseline_rule": "RETURN_MEASUREMENT_MISMATCH"
+        },
+        "label_rule": {
+          "type": "PERCENT_CHANGE_BAND",
+          "decrease_lte": -0.05,
+          "increase_gte": 0.05,
+          "ordered_labels": [
+            "MEASUREMENT_MISMATCH",
+            "OBSERVED_DECREASE",
+            "OBSERVED_STABLE",
+            "OBSERVED_INCREASE",
+            "UNKNOWN"
+          ]
+        },
+        "conflict_rule": {
+          "multiple_values": "MEASUREMENT_MISMATCH",
+          "boundary_conflict": "MEASUREMENT_MISMATCH",
+          "period_conflict": "MEASUREMENT_MISMATCH"
+        },
+        "unknown_rule": {
+          "conditions": [
+            "one or more contracted raw fields absent"
+          ],
+          "label": "UNKNOWN"
+        },
+        "mismatch_rule": {
+          "conditions": [
+            "scope, period, unit or unique-field conflict"
+          ],
+          "label": "MEASUREMENT_MISMATCH",
+          "propagation": "LOCAL_ONLY",
+          "dependent_cell_ids": []
+        },
+        "allowed_source_types": [
+          "OFFICIAL_AUDITED_ANNUAL_REPORT"
+        ],
+        "prohibited_inference": "Debt direction alone does not establish solvency or permanent loss."
+      },
+      {
+        "cell_id": "CELL:600801:20160427:DIRECT_LOSS_EVENT",
+        "thread_id": "THREAD:600801:SUPPORT_TO_CONTROL",
+        "layer": "PERMANENT_LOSS",
+        "outcome_period": {
+          "period_start": "2016-04-28T00:00:00+08:00",
+          "period_end": "2016-12-31T23:59:59+08:00",
+          "fiscal_period": "FY2016"
+        },
+        "measurement_clock": {
+          "clock_kind": "EVENT_WINDOW",
+          "event_window": {
+            "event_start": "2016-04-28",
+            "event_end": "2016-12-31",
+            "window_name": "POST_CUTOFF_FY2016_EVENT_WINDOW"
+          }
+        },
+        "responsibility_boundary": {
+          "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600801",
+          "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+          "arena_id": "ARENA:CN:CEMENT:MULTI_REGION_DELIVERED_MARKET",
+          "scope_requirement": "issuer-specific support, control, product participation and consolidation must remain distinct"
+        },
+        "field_identity": {
+          "outcome_field_id": "FIELD:600801:FY2016:DIRECT_LOSS_EVENT_EVENT",
+          "baseline_field_id": "",
+          "statement_scope": "ISSUER_COMMERCIAL_AND_CONTROL_EVENT",
+          "table_or_note": "FY2016 management discussion or material investment disclosure",
+          "line_item": "direct issuer-level irreversible capital-loss, default, covenant or going-concern event",
+          "field_kind": "DISCLOSED_EVENT"
+        },
+        "unit": {
+          "kind": "EVENT",
+          "currency": "NOT_APPLICABLE",
+          "scale": "BOOLEAN"
+        },
+        "raw_input_fields": [
+          {
+            "field_id": "FIELD:600801:FY2016:DIRECT_LOSS_EVENT_EVENT",
+            "role": "EVENT",
+            "unit": "BOOLEAN_EVENT",
+            "measurement_clock": {
+              "clock_kind": "EVENT_WINDOW",
+              "event_window": {
+                "event_start": "2016-04-28",
+                "event_end": "2016-12-31",
+                "window_name": "POST_CUTOFF_FY2016_EVENT_WINDOW"
+              }
+            },
+            "locator": {
+              "table_or_note": "FY2016 management discussion or material investment disclosure",
+              "line_item": "direct issuer-level irreversible capital-loss, default, covenant or going-concern event",
+              "period_column": "2016-04-28..2016-12-31"
+            }
+          }
+        ],
+        "formula": {
+          "operator": "EVENT_BOOLEAN",
+          "input_field_ids": [
+            "FIELD:600801:FY2016:DIRECT_LOSS_EVENT_EVENT"
+          ],
+          "expression": "explicit_event(FIELD:600801:FY2016:DIRECT_LOSS_EVENT_EVENT)",
+          "unit_conversions": [
+            {
+              "field_id": "FIELD:600801:FY2016:DIRECT_LOSS_EVENT_EVENT",
+              "from_unit": "BOOLEAN_EVENT",
+              "to_unit": "BOOLEAN_EVENT",
+              "scale": "1"
+            }
+          ],
+          "zero_baseline_rule": "NOT_APPLICABLE"
+        },
+        "label_rule": {
+          "type": "EVENT_PRESENCE",
+          "decrease_lte": 0,
+          "increase_gte": 1,
+          "ordered_labels": [
+            "MEASUREMENT_MISMATCH",
+            "OBSERVED_YES",
+            "OBSERVED_NO",
+            "UNKNOWN"
+          ]
+        },
+        "conflict_rule": {
+          "multiple_values": "MEASUREMENT_MISMATCH",
+          "boundary_conflict": "MEASUREMENT_MISMATCH",
+          "period_conflict": "MEASUREMENT_MISMATCH"
+        },
+        "unknown_rule": {
+          "conditions": [
+            "no explicit positive or negative event evidence"
+          ],
+          "label": "UNKNOWN"
+        },
+        "mismatch_rule": {
+          "conditions": [
+            "source boundary, period or event identity conflicts"
+          ],
+          "label": "MEASUREMENT_MISMATCH",
+          "propagation": "LOCAL_ONLY",
+          "dependent_cell_ids": []
+        },
+        "allowed_source_types": [
+          "OFFICIAL_AUDITED_ANNUAL_REPORT"
+        ],
+        "prohibited_inference": "The absence of one disclosed event does not prove permanent-loss risk is absent."
+      }
+    ],
+    "thread_combination_rules": [
+      {
+        "rule_id": "COMBINE:600801:SUPPORT_TO_CONTROL",
+        "thread_id": "THREAD:600801:SUPPORT_TO_CONTROL",
+        "input_cell_ids": [
+          "CELL:600801:20160427:ACTION_PROGRESS",
+          "CELL:600801:20160427:DECISION_CONTROL",
+          "CELL:600801:20160427:ISSUER_PRODUCT_PARTICIPATION",
+          "CELL:600801:20160427:CONSOLIDATION_SCOPE",
+          "CELL:600801:20160427:CUSTOMER_RESPONSE"
+        ],
+        "evaluation_order": [
+          "CELL:600801:20160427:ACTION_PROGRESS",
+          "CELL:600801:20160427:DECISION_CONTROL",
+          "CELL:600801:20160427:ISSUER_PRODUCT_PARTICIPATION",
+          "CELL:600801:20160427:CONSOLIDATION_SCOPE",
+          "CELL:600801:20160427:CUSTOMER_RESPONSE"
+        ],
+        "rule": "Report each atomic label. Action progress cannot establish issuer-controlled execution unless decision control, issuer-product participation and consolidation are independently observed; customer response remains separate.",
+        "conflict_rule": "Any local UNKNOWN or mismatch stays local and cannot be replaced by aggregate volume.",
+        "authorization": "TEACHING_ONLY_NO_CAUSAL_UPGRADE"
+      },
+      {
+        "rule_id": "COMBINE:600801:OPERATING_CASH_CAPITAL",
+        "thread_id": "THREAD:600801:OPERATING_CASH_CAPITAL",
+        "input_cell_ids": [
+          "CELL:600801:20160427:CEMENT_CLINKER_SALES_VOLUME",
+          "CELL:600801:20160427:CEMENT_GROSS_MARGIN",
+          "CELL:600801:20160427:OPERATING_CASH",
+          "CELL:600801:20160427:CASH_CAPEX",
+          "CELL:600801:20160427:SHORT_TERM_BORROWINGS",
+          "CELL:600801:20160427:DIRECT_LOSS_EVENT"
+        ],
+        "evaluation_order": [
+          "CELL:600801:20160427:CEMENT_CLINKER_SALES_VOLUME",
+          "CELL:600801:20160427:CEMENT_GROSS_MARGIN",
+          "CELL:600801:20160427:OPERATING_CASH",
+          "CELL:600801:20160427:CASH_CAPEX",
+          "CELL:600801:20160427:SHORT_TERM_BORROWINGS",
+          "CELL:600801:20160427:DIRECT_LOSS_EVENT"
+        ],
+        "rule": "Operating, cash, financing and loss-event cells describe issuer state only; no cell attributes an effect to the support agreement or acquisition.",
+        "conflict_rule": "Mixed state is reported without a company score or causal label.",
+        "authorization": "TEACHING_ONLY_NO_CAUSAL_UPGRADE"
+      }
+    ],
+    "rights": {
+      "directional_learning": "NOT_AUTHORIZED",
+      "enterprise_learning": "NOT_AUTHORIZED",
+      "comparative": "NOT_AUTHORIZED",
+      "cjo": "NOT_AUTHORIZED",
+      "valuation": "NOT_AUTHORIZED",
+      "report": "NOT_AUTHORIZED",
+      "investment": "NOT_AUTHORIZED"
+    },
+    "allowed_outputs": [
+      "OUTCOME_CUSTODY_REQUEST",
+      "RESEARCH_AGENDA"
+    ],
+    "freeze_state": "PRE_OUTCOME_FROZEN",
+    "contract_frozen_at": "2026-08-27T03:00:00+00:00",
+    "clock_policy": "CUT_OFF_CLOCK_SEPARATE_FROM_MEASUREMENT_CLOCK"
+  },
+  "strongest_rival": "The 15-company support agreement may remain fee-based service provision while industry demand, price, issuer digital sales, cost measures and unrelated assets explain later issuer results.",
+  "contamination_boundary": {
+    "historical_replay_status": "MODEL_MEMORY_MITIGATED",
+    "repository_contains_later_summary": true,
+    "score_authority": "NONE",
+    "allowed_use": "DEVELOPMENT_TRANSFER_UTILITY_ONLY"
+  },
+  "freeze_state": "PRE_OUTCOME_FROZEN",
+  "frozen_at": "2026-08-27T03:00:00+00:00",
+  "roles": {
+    "judgment_owner_id": "ROLE:CEMENT:ROUND6:JUDGMENT_OWNER",
+    "independent_challenger_id": "ROLE:CEMENT:ROUND6:INDEPENDENT_CHALLENGER",
+    "outcome_custodian_id": "ROLE:CEMENT:ROUND6:OUTCOME_CUSTODIAN"
+  },
+  "rights": {
+    "directional_learning": "NOT_AUTHORIZED",
+    "enterprise_learning": "NOT_AUTHORIZED",
+    "comparative": "NOT_AUTHORIZED",
+    "method_transfer": "NOT_AUTHORIZED",
+    "cjo": "NOT_AUTHORIZED",
+    "valuation": "NOT_AUTHORIZED",
+    "report": "NOT_AUTHORIZED",
+    "investment": "NOT_AUTHORIZED"
+  },
+  "allowed_outputs": [
+    "PAIRED_PREOUTCOME_RESEARCH",
+    "OUTCOME_CUSTODY_REQUEST",
+    "RESEARCH_AGENDA"
+  ]
+}
