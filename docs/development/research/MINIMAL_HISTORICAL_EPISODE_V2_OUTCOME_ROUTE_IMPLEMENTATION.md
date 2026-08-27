@@ -42,6 +42,34 @@ investment rights. All objects remain
   `begin_date`, `end_date`, and `page_size` (1--30);
 - `static_pdf_url_policy = CNINFO_STATIC_FINALPAGE_PDF`.
 
+### Annual-report version-family policy
+
+The route may additionally freeze `annual_report_version_policy`.  It is an
+acquisition rule, not a selected source: it cannot contain an announcement ID,
+title, publication date, PDF URL, page, or any outcome content.
+
+`ORIGINAL_ONLY` is the historical/default behavior.  It permits exactly one
+direct original annual-report title and otherwise returns a value-free
+`MEASUREMENT_MISMATCH`.  This keeps existing v2 records readable: an older
+route that lacks the optional field behaves as `ORIGINAL_ONLY`, and does not
+gain a path through a revised family.
+
+`ONE_OFFICIAL_REVISED_VERSION_AFTER_ORIGINAL` is the only opt-in policy.  It
+may select a revised report only when the same bounded official metadata
+enumeration contains exactly one direct original title and exactly one direct
+canonical revised title (`YYYY年年度报告（修订版）`, with either supported
+parenthesis form).  The selected revised row must still carry the exact
+static-finalpage PDF URL, and its metadata date and later single PDF-page
+locator remain in the ordinary source-identity validators.
+
+The adapter never infers a family from announcement ordering, IDs, PDF text,
+or a caller choice.  A summary is not a family member.  A cancellation,
+withdrawal, revocation, unsupported correction/update label, missing original,
+duplicate original/revision, multiple revisions, or policy/family disagreement
+remains `MEASUREMENT_MISMATCH`; it cannot fall back to another row.  No other
+annual-period title is ignorable: only the exact original, canonical revision,
+and exact annual-report summary forms are permitted in the bounded family.
+
 The query dates must form a closed range, and its start must follow the frozen
 outcome period end. The contract does not contain an annual-report title,
 selected announcement, PDF quote, outcome value, price, or prediction.
@@ -112,7 +140,10 @@ forecaster reads or freezes a prediction:
    `ISSUER:CN:<code>` identity.
 3. The one bounded annual-report enumeration window following the frozen
    outcome-period end, using the fixed v2 provider, `fulltext` tab,
-   `ANNUAL_REPORT` category, page size, and static-finalpage policy.
+   `ANNUAL_REPORT` category, page size, static-finalpage policy, and—for new
+   routes—an explicit annual-report version-family policy.  The curator may
+   choose only `ORIGINAL_ONLY` or the documented exact original-plus-one-
+   revised relationship; it may not nominate an announcement or PDF.
 4. The already-frozen company/issuer, responsibility boundary, metric, unit,
    outcome period, and direct field definition.
 
@@ -130,8 +161,11 @@ It is never a production object or a custodian input.
 ## Verification boundary
 
 Focused synthetic tests prove that v2 registration succeeds, malformed or
-mismatched routes are rejected before access, the adapter derives its exact
-request only from the stored contract, v1 records cannot start a new custody
-flow, and no observation or settlement can pass without a stored `FIELD_READY`
-inventory receipt. They do not query CNINFO or make any claim about a real
-company.
+mismatched routes are rejected before access, original-only and
+original-plus-summary families remain safe, the sole explicit revised-family
+policy selects one canonical revised static row only, and cancellation,
+withdrawal, policy mismatch, ambiguous versions, source-date, and page-
+identity failures remain closed. The adapter derives its exact request only
+from the stored contract, v1 records cannot start a new custody flow, and no
+observation or settlement can pass without a stored `FIELD_READY` inventory
+receipt. They do not query CNINFO or make any claim about a real company.

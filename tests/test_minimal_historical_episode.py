@@ -119,6 +119,7 @@ def _contract(decision_contract: dict | None = None) -> dict:
             "end_date": "2022-12-31",
             "page_size": 30,
             "static_pdf_url_policy": episode.CNINFO_OUTCOME_ROUTE_URL_POLICY,
+            "annual_report_version_policy": episode.CNINFO_ANNUAL_REPORT_VERSION_POLICY_ORIGINAL_ONLY,
         },
         "roles": deepcopy(decision_contract["roles"]),
         "object_class": "MINIMAL_HISTORICAL_MEASUREMENT_CONTRACT",
@@ -884,6 +885,9 @@ def test_public_schema_keeps_the_contract_only_access_and_no_transfer_rights() -
     assert schema["$defs"]["outcome_acquisition_route"]["properties"]["provider"] == {
         "const": "CNINFO_ANNOUNCEMENT_METADATA",
     }
+    assert schema["$defs"]["outcome_acquisition_route"]["properties"]["annual_report_version_policy"] == {
+        "enum": ["ORIGINAL_ONLY", "ONE_OFFICIAL_REVISED_VERSION_AFTER_ORIGINAL"],
+    }
     access = schema["$defs"]["outcome_access"]
     assert set(access["properties"]) == {
         "schema_version", "authorization_id", "measurement_contract_ref", "custodian_id", "authorized_at",
@@ -1150,6 +1154,7 @@ def _cn600425_revenue_preoutcome_chain() -> tuple[dict, dict, dict, dict]:
             "end_date": "2019-12-31",
             "page_size": 30,
             "static_pdf_url_policy": episode.CNINFO_OUTCOME_ROUTE_URL_POLICY,
+            "annual_report_version_policy": episode.CNINFO_ANNUAL_REPORT_VERSION_POLICY_ORIGINAL_ONLY,
         },
     })
     evidence = _static_evidence(contract)
@@ -1314,8 +1319,14 @@ def test_runner_rejects_missing_v2_route_before_opening_the_static_source(tmp_pa
     assert opened == []
 
 
-def _authorized_cninfo_database(tmp_path: Path) -> tuple[Path, dict]:
+def _authorized_cninfo_database(
+    tmp_path: Path, *, annual_report_version_policy: str | None = episode.CNINFO_ANNUAL_REPORT_VERSION_POLICY_ORIGINAL_ONLY,
+) -> tuple[Path, dict]:
     contract, evidence, prediction = _cninfo_bound_contract_chain()
+    if annual_report_version_policy is None:
+        contract["outcome_acquisition_route"].pop("annual_report_version_policy")
+    else:
+        contract["outcome_acquisition_route"]["annual_report_version_policy"] = annual_report_version_policy
     database = tmp_path / "cninfo-minimal-episode.db"
     runner.freeze_preoutcome(
         database,
@@ -1343,12 +1354,18 @@ def _authorized_cninfo_database(tmp_path: Path) -> tuple[Path, dict]:
     return database, contract
 
 
-def _cninfo_row(*, title: str = "2021年年度报告", url: str = "finalpage/2022-03-30/SYNTHETIC.PDF") -> dict:
+def _cninfo_row(
+    *,
+    title: str = "2021年年度报告",
+    url: str = "finalpage/2022-03-30/SYNTHETIC.PDF",
+    announcement_date: str = "2022-03-30",
+    announcement_id: str = "SYNTHETIC-2021-ANNUAL",
+) -> dict:
     return {
         "secCode": "600585",
         "orgId": "SYNTHETIC-ORG",
-        "announcementTime": "2022-03-30",
-        "announcementId": "SYNTHETIC-2021-ANNUAL",
+        "announcementTime": announcement_date,
+        "announcementId": announcement_id,
         "announcementTitle": title,
         "adjunctUrl": url,
     }
@@ -1415,10 +1432,11 @@ def test_custodian_acquisition_enumerates_one_contract_bound_static_annual_repor
         ([], None, "NO_UNIQUE_DIRECT_ANNUAL_REPORT"),
         ([_cninfo_row(), {**_cninfo_row(), "announcementId": "SYNTHETIC-SECOND"}], None, "NO_UNIQUE_DIRECT_ANNUAL_REPORT"),
         ([_cninfo_row(title="2021年年度报告摘要")], None, "NO_UNIQUE_DIRECT_ANNUAL_REPORT"),
-        ([_cninfo_row(title="2021年年度报告（修订版）")], None, "ANNUAL_REPORT_REVISION_OR_WITHDRAWAL_UNRESOLVED"),
-        ([_cninfo_row(), {**_cninfo_row(title="2021年年度报告更正后"), "announcementId": "SYNTHETIC-REVISED"}], None, "ANNUAL_REPORT_REVISION_OR_WITHDRAWAL_UNRESOLVED"),
-        ([_cninfo_row(), {**_cninfo_row(title="关于撤销2021年年度报告的公告"), "announcementId": "SYNTHETIC-WITHDRAWN"}], None, "ANNUAL_REPORT_REVISION_OR_WITHDRAWAL_UNRESOLVED"),
-        ([_cninfo_row(), {**_cninfo_row(title="2021年年度报告已取消"), "announcementId": "SYNTHETIC-CANCELLED"}], None, "ANNUAL_REPORT_REVISION_OR_WITHDRAWAL_UNRESOLVED"),
+        ([_cninfo_row(title="2021年年度报告（修订版）")], None, "ANNUAL_REPORT_VERSION_FAMILY_UNRESOLVED"),
+        ([_cninfo_row(), {**_cninfo_row(title="2021年年度报告更正后"), "announcementId": "SYNTHETIC-REVISED"}], None, "ANNUAL_REPORT_VERSION_FAMILY_UNRESOLVED"),
+        ([_cninfo_row(), {**_cninfo_row(title="关于撤销2021年年度报告的公告"), "announcementId": "SYNTHETIC-WITHDRAWN"}], None, "ANNUAL_REPORT_CANCELLATION_OR_WITHDRAWAL_UNRESOLVED"),
+        ([_cninfo_row(), {**_cninfo_row(title="2021年年度报告已取消"), "announcementId": "SYNTHETIC-CANCELLED"}], None, "ANNUAL_REPORT_CANCELLATION_OR_WITHDRAWAL_UNRESOLVED"),
+        ([_cninfo_row(), {**_cninfo_row(title="关于2021年年度报告作废的公告"), "announcementId": "SYNTHETIC-VOIDED"}], None, "ANNUAL_REPORT_CANCELLATION_OR_WITHDRAWAL_UNRESOLVED"),
         ([_cninfo_row(url="announcement/SYNTHETIC.PDF")], None, "ANNUAL_REPORT_NOT_STATIC_FINALPAGE"),
         ([_cninfo_row(title="2020年年度报告")], None, "NO_UNIQUE_DIRECT_ANNUAL_REPORT"),
         ([_cninfo_row()], None, "DIRECT_FIELD_PAGE_LOCATOR_UNAVAILABLE"),
@@ -1457,6 +1475,147 @@ def test_custodian_acquisition_ignores_annual_report_summary_when_one_full_origi
     assert candidate["status"] == "FIELD_READY"
     assert candidate["source"]["source_id"] == "CNINFO:600585:ANN:20220330:SYNTHETIC-2021-ANNUAL"
     assert candidate["source"]["issuer_id"] == contract["issuer_id"]
+
+
+def test_custodian_acquisition_keeps_legacy_default_closed_for_original_and_revised_family(
+    tmp_path: Path,
+) -> None:
+    database, contract = _authorized_cninfo_database(tmp_path, annual_report_version_policy=None)
+    candidate = outcome_acquisition.acquire_cninfo_outcome_source_candidate(
+        str(database),
+        outcome_access_authorization_id="MHE:ACCESS:SYNTHETIC:V1",
+        inventory_receipt_id="MHE:INVENTORY:CNINFO:LEGACY-DEFAULT",
+        field_locator=lambda source, _: "FY2021 annual report, PDF p. 38",
+        request=_cninfo_request([
+            _cninfo_row(),
+            _cninfo_row(
+                title="2021年年度报告（修订版）",
+                announcement_date="2022-04-20",
+                announcement_id="SYNTHETIC-REVISED",
+                url="finalpage/2022-04-20/SYNTHETIC-REVISED.PDF",
+            ),
+        ]),
+    )
+    assert "annual_report_version_policy" not in contract["outcome_acquisition_route"]
+    assert candidate["status"] == "MEASUREMENT_MISMATCH"
+    assert candidate["mismatch_rule"] == "ANNUAL_REPORT_VERSION_POLICY_MISMATCH"
+
+
+def test_custodian_acquisition_selects_one_explicit_official_revised_version_and_retains_date_page_identity(
+    tmp_path: Path,
+) -> None:
+    database, contract = _authorized_cninfo_database(
+        tmp_path,
+        annual_report_version_policy=episode.CNINFO_ANNUAL_REPORT_VERSION_POLICY_ONE_REVISED_AFTER_ORIGINAL,
+    )
+    candidate = outcome_acquisition.acquire_cninfo_outcome_source_candidate(
+        str(database),
+        outcome_access_authorization_id="MHE:ACCESS:SYNTHETIC:V1",
+        inventory_receipt_id="MHE:INVENTORY:CNINFO:REVISED",
+        field_locator=lambda source, _: "FY2021 annual report, PDF p. 38",
+        request=_cninfo_request([
+            _cninfo_row(),
+            _cninfo_row(
+                title="2021年年度报告（修订版）",
+                announcement_date="2022-04-20",
+                announcement_id="SYNTHETIC-REVISED",
+                url="finalpage/2022-04-20/SYNTHETIC-REVISED.PDF",
+            ),
+            _cninfo_row(title="2021年年度报告摘要", announcement_id="SYNTHETIC-SUMMARY"),
+        ]),
+    )
+    assert candidate["status"] == "FIELD_READY"
+    assert candidate["source"] == {
+        "source_id": "CNINFO:600585:ANN:20220420:SYNTHETIC-REVISED",
+        "source_url": "https://static.cninfo.com.cn/finalpage/2022-04-20/SYNTHETIC-REVISED.PDF",
+        "source_type": episode.OFFICIAL_STATIC_FILING,
+        "source_available_at": "2022-04-20",
+        "source_available_precision": "DATE_ONLY",
+        "issuer_id": contract["issuer_id"],
+        "metric_id": contract["metric_id"],
+        "measurement_period_end": contract["outcome_period_end"],
+        "responsibility_boundary": contract["responsibility_boundary"],
+        "unit": contract["unit"],
+        "field_ref": "FY2021 annual report, PDF p. 38",
+    }
+
+
+def test_custodian_acquisition_rejects_policy_mismatch_and_ambiguous_revised_family(
+    tmp_path: Path,
+) -> None:
+    database, _ = _authorized_cninfo_database(
+        tmp_path,
+        annual_report_version_policy=episode.CNINFO_ANNUAL_REPORT_VERSION_POLICY_ONE_REVISED_AFTER_ORIGINAL,
+    )
+    common = {
+        "outcome_access_authorization_id": "MHE:ACCESS:SYNTHETIC:V1",
+        "inventory_receipt_id": "MHE:INVENTORY:CNINFO:VERSION-MISMATCH",
+        "field_locator": lambda source, _: "FY2021 annual report, PDF p. 38",
+    }
+    policy_mismatch = outcome_acquisition.acquire_cninfo_outcome_source_candidate(
+        str(database), request=_cninfo_request([_cninfo_row()]), **common,
+    )
+    assert policy_mismatch["status"] == "MEASUREMENT_MISMATCH"
+    assert policy_mismatch["mismatch_rule"] == "ANNUAL_REPORT_VERSION_POLICY_MISMATCH"
+
+    ambiguous = outcome_acquisition.acquire_cninfo_outcome_source_candidate(
+        str(database),
+        request=_cninfo_request([
+            _cninfo_row(),
+            _cninfo_row(
+                title="2021年年度报告（修订版）",
+                announcement_date="2022-04-20",
+                announcement_id="SYNTHETIC-REVISED-ONE",
+                url="finalpage/2022-04-20/SYNTHETIC-REVISED-ONE.PDF",
+            ),
+            _cninfo_row(
+                title="2021年年度报告（修订版）",
+                announcement_date="2022-04-21",
+                announcement_id="SYNTHETIC-REVISED-TWO",
+                url="finalpage/2022-04-21/SYNTHETIC-REVISED-TWO.PDF",
+            ),
+        ]),
+        **{**common, "inventory_receipt_id": "MHE:INVENTORY:CNINFO:AMBIGUOUS"},
+    )
+    assert ambiguous["status"] == "MEASUREMENT_MISMATCH"
+    assert ambiguous["mismatch_rule"] == "ANNUAL_REPORT_VERSION_FAMILY_UNRESOLVED"
+
+
+@pytest.mark.parametrize(
+    ("unresolved_title", "expected_rule"),
+    [
+        ("关于2021年年度报告作废的公告", "ANNUAL_REPORT_CANCELLATION_OR_WITHDRAWAL_UNRESOLVED"),
+        ("2021年年度报告补充公告", "ANNUAL_REPORT_VERSION_FAMILY_UNRESOLVED"),
+    ],
+)
+def test_custodian_acquisition_never_opens_a_revised_family_with_voided_or_unwhitelisted_member(
+    tmp_path: Path, unresolved_title: str, expected_rule: str,
+) -> None:
+    database, _ = _authorized_cninfo_database(
+        tmp_path,
+        annual_report_version_policy=episode.CNINFO_ANNUAL_REPORT_VERSION_POLICY_ONE_REVISED_AFTER_ORIGINAL,
+    )
+    locator_calls: list[dict] = []
+    candidate = outcome_acquisition.acquire_cninfo_outcome_source_candidate(
+        str(database),
+        outcome_access_authorization_id="MHE:ACCESS:SYNTHETIC:V1",
+        inventory_receipt_id="MHE:INVENTORY:CNINFO:UNRESOLVED-MEMBER",
+        field_locator=lambda source, _: locator_calls.append(source) or "FY2021 annual report, PDF p. 38",
+        request=_cninfo_request([
+            _cninfo_row(),
+            _cninfo_row(
+                title="2021年年度报告（修订版）",
+                announcement_date="2022-04-20",
+                announcement_id="SYNTHETIC-REVISED",
+                url="finalpage/2022-04-20/SYNTHETIC-REVISED.PDF",
+            ),
+            _cninfo_row(title=unresolved_title, announcement_id="SYNTHETIC-UNRESOLVED"),
+        ]),
+    )
+    assert candidate["status"] == "MEASUREMENT_MISMATCH"
+    assert candidate["mismatch_rule"] == expected_rule
+    assert locator_calls == []
+    assert "source" not in candidate
 
 
 def test_custodian_acquisition_does_not_enumerate_before_stored_access(
@@ -1604,6 +1763,7 @@ def test_runner_converts_outside_route_metadata_to_value_free_mismatch_before_ob
         ("organization_id", "", "measurement_contract.outcome_acquisition_route.organization_id_required"),
         ("security_code", "600000", "measurement_contract.outcome_acquisition_route.security_code_must_match_company_id"),
         ("begin_date", "2021-12-31", "measurement_contract.outcome_acquisition_route.begin_date_must_follow_outcome_period_end"),
+        ("annual_report_version_policy", "CALLER_SOURCE_SELECTION", "measurement_contract.outcome_acquisition_route.annual_report_version_policy_invalid"),
     ],
 )
 def test_v2_route_missing_or_mismatched_is_rejected_before_access(

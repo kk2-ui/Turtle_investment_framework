@@ -31,13 +31,17 @@ except ModuleNotFoundError:  # pragma: no cover - direct script import
 OUTCOME_SOURCE_ACQUISITION_SCHEMA_VERSION = "turtle-minimal-historical-episode-outcome-source-acquisition.v1"
 PageLocator = Callable[[dict[str, Any], dict[str, Any]], str | None]
 CNInfoRequest = Callable[[dict[str, str]], dict[str, Any]]
-_UNRESOLVED_ANNUAL_DISCLOSURE_TITLE = re.compile(
-    r"修订|更正|更新|已取消|取消|已撤销|撤销|撤回",
+_ANNUAL_REPORT_CANCELLATION_OR_WITHDRAWAL_TITLE = re.compile(
+    r"已取消|取消|已撤销|撤销|撤回|作废",
     re.IGNORECASE,
 )
 _DIRECT_ANNUAL_REPORT_TITLE = re.compile(
     r"^20\d{2}年年度报告(?:（原始版）|\(原始版\))?$",
 )
+_DIRECT_REVISED_ANNUAL_REPORT_TITLE = re.compile(
+    r"^20\d{2}年年度报告(?:（修订版）|\(修订版\))$",
+)
+_DIRECT_ANNUAL_REPORT_SUMMARY_TITLE = re.compile(r"^20\d{2}年年度报告摘要$")
 
 
 def _connect(database: str) -> sqlite3.Connection:
@@ -75,6 +79,98 @@ def _is_direct_original_annual_report(title: Any) -> bool:
     """
     compact = re.sub(r"\s+", "", str(title or ""))
     return bool(_DIRECT_ANNUAL_REPORT_TITLE.fullmatch(compact))
+
+
+def _is_direct_revised_annual_report(title: Any) -> bool:
+    """Recognize one metadata-explicit revised form of the same annual report.
+
+    This does not try to infer a version relationship from announcement dates,
+    IDs, or report contents.  A policy may use it only alongside one exact
+    original title for the same normalized outcome period.
+    """
+    compact = re.sub(r"\s+", "", str(title or ""))
+    return bool(_DIRECT_REVISED_ANNUAL_REPORT_TITLE.fullmatch(compact))
+
+
+def _is_ignorable_annual_report_summary(title: Any) -> bool:
+    """Allow only the exact summary form alongside one full annual report."""
+    compact = re.sub(r"\s+", "", str(title or ""))
+    return bool(_DIRECT_ANNUAL_REPORT_SUMMARY_TITLE.fullmatch(compact))
+
+
+def _annual_report_version_policy(route: dict[str, Any]) -> str:
+    """Return the safe legacy default unless a v2 contract froze an opt-in."""
+    return str(route.get("annual_report_version_policy") or episode.CNINFO_ANNUAL_REPORT_VERSION_POLICY_ORIGINAL_ONLY)
+
+
+def _version_family_candidate(
+    annual_period_candidates: list[dict[str, Any]], *, version_policy: str,
+) -> tuple[dict[str, Any] | None, str | None, str | None]:
+    """Select only a fully identified annual-report version family.
+
+    The default keeps the prior singleton-original semantics.  The sole
+    opt-in policy can select a revised finalpage candidate only when official
+    metadata exposes exactly one original and exactly one canonical revised
+    title for the same normalized annual-report period.  It never uses date
+    ordering, row ordering, IDs, PDF text, or a caller selection as a version
+    proxy.
+    """
+    titles = [str(source.get("title") or "") for source in annual_period_candidates]
+    if any(_ANNUAL_REPORT_CANCELLATION_OR_WITHDRAWAL_TITLE.search(title) for title in titles):
+        return None, "ANNUAL_REPORT_CANCELLATION_OR_WITHDRAWAL_UNRESOLVED", (
+            "the bounded official metadata enumeration includes a cancelled, withdrawn, or revoked annual-report disclosure"
+        )
+
+    originals = [
+        source for source in annual_period_candidates
+        if _is_direct_original_annual_report(source.get("title"))
+    ]
+    revisions = [
+        source for source in annual_period_candidates
+        if _is_direct_revised_annual_report(source.get("title"))
+    ]
+    permitted_sources = {id(source) for source in [*originals, *revisions]}
+    permitted_sources.update(
+        id(source)
+        for source in annual_period_candidates
+        if _is_ignorable_annual_report_summary(source.get("title"))
+    )
+    if any(id(source) not in permitted_sources for source in annual_period_candidates):
+        return None, "ANNUAL_REPORT_VERSION_FAMILY_UNRESOLVED", (
+            "the bounded official metadata enumeration includes an annual-period title outside the exact original/revised/summary family"
+        )
+
+    if version_policy == episode.CNINFO_ANNUAL_REPORT_VERSION_POLICY_ORIGINAL_ONLY:
+        if len(originals) == 1 and not revisions:
+            return originals[0], None, None
+        if len(originals) == 1 and len(revisions) == 1:
+            return None, "ANNUAL_REPORT_VERSION_POLICY_MISMATCH", (
+                "the frozen ORIGINAL_ONLY policy cannot select an annual-report family containing an official revised version"
+            )
+        if not revisions:
+            return None, "NO_UNIQUE_DIRECT_ANNUAL_REPORT", (
+                "the bounded official metadata enumeration did not identify one direct original annual report for the frozen outcome period"
+            )
+    elif version_policy == episode.CNINFO_ANNUAL_REPORT_VERSION_POLICY_ONE_REVISED_AFTER_ORIGINAL:
+        if len(originals) == 1 and len(revisions) == 1:
+            return revisions[0], None, None
+        if len(originals) == 1 and not revisions:
+            return None, "ANNUAL_REPORT_VERSION_POLICY_MISMATCH", (
+                "the frozen revised-version policy requires exactly one official original and one canonical revised annual-report title"
+            )
+
+    if not originals and not revisions:
+        return None, "NO_UNIQUE_DIRECT_ANNUAL_REPORT", (
+            "the bounded official metadata enumeration did not identify one direct annual report for the frozen outcome period"
+        )
+
+    if len(originals) == 1 and not revisions:
+        return None, "ANNUAL_REPORT_VERSION_POLICY_MISMATCH", (
+            "the frozen annual-report version policy cannot select the singleton original annual report"
+        )
+    return None, "ANNUAL_REPORT_VERSION_FAMILY_UNRESOLVED", (
+        "the bounded official metadata enumeration did not expose exactly one version family permitted by the frozen annual-report version policy"
+    )
 
 
 def _base_candidate(
@@ -168,31 +264,17 @@ def acquire_cninfo_outcome_source_candidate(
         if source.get("source_type") == route["announcement_category"]
         and source.get("data_as_of") == outcome_period_end
     ]
-    # The general Phase10 normalizer intentionally preserves the supplied
-    # announcement row as an original disclosure record.  A minimal outcome
-    # contract cannot infer that a later corrected/revised annual-report title
-    # is the version to settle, even when it is the only row in a bounded
-    # response.  This narrow adapter therefore records a mismatch rather than
-    # choosing a revision or silently preferring an earlier title.
-    if any(_UNRESOLVED_ANNUAL_DISCLOSURE_TITLE.search(str(source.get("title") or "")) for source in annual_period_candidates):
+    selected, mismatch_rule, mismatch_detail = _version_family_candidate(
+        annual_period_candidates,
+        version_policy=_annual_report_version_policy(route),
+    )
+    if mismatch_rule is not None:
         return _mismatch(
             context,
             inventory_receipt_id=inventory_receipt_id,
-            rule="ANNUAL_REPORT_REVISION_OR_WITHDRAWAL_UNRESOLVED",
-            detail="the bounded official metadata enumeration includes a revised, corrected, updated, cancelled, withdrawn, or revoked annual-report disclosure",
+            rule=mismatch_rule,
+            detail=mismatch_detail or "the official annual-report version family could not be resolved",
         )
-    candidates = [
-        source for source in annual_period_candidates
-        if _is_direct_original_annual_report(source.get("title"))
-    ]
-    if len(candidates) != 1:
-        return _mismatch(
-            context,
-            inventory_receipt_id=inventory_receipt_id,
-            rule="NO_UNIQUE_DIRECT_ANNUAL_REPORT",
-            detail="the bounded official metadata enumeration did not identify one direct annual report for the frozen outcome period",
-        )
-    selected = candidates[0]
     if not episode._is_static_cninfo_finalpage_url(selected.get("url")):
         return _mismatch(
             context,
