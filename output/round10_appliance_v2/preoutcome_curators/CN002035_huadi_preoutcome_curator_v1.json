@@ -1,0 +1,178 @@
+{
+  "artifact_type": "ROUND10_PREOUTCOME_CURATOR_PACKET",
+  "artifact_version": "v1",
+  "artifact_id": "ROUND10-CN002035-PREOUTCOME-CURATOR-V1",
+  "role": "INDEPENDENT_PREOUTCOME_CURATOR",
+  "curation_scope": {
+    "company_id": "CN:002035",
+    "listed_issuer_name": "华帝股份有限公司",
+    "cninfo_org_id": "gssz0002035",
+    "cutoff_at": "2018-09-30T23:59:59+08:00",
+    "baseline_period": "FY2017",
+    "outcome_period": "FY2019",
+    "product_arena": "中国厨房电器：吸油烟机、燃气灶具及相关厨电产品",
+    "peer_assertions": "PROHIBITED",
+    "outcome_access": "NOT_READ"
+  },
+  "responsibility_boundary": {
+    "canonical_entity": "华帝股份有限公司合并主体",
+    "security": "深交所 A 股 002035",
+    "financial_scope": "CONSOLIDATED",
+    "currency": "CNY",
+    "unit": "RMB_YUAN",
+    "exclusions": [
+      "母公司单体报表",
+      "集团外品牌或行业总量",
+      "将产品销量或门店数量直接解释为客户忠诚或股东现金"
+    ]
+  },
+  "preoutcome_sources": [
+    {
+      "source_id": "CNINFO:1204805433",
+      "title": "华帝股份：2017年年度报告",
+      "publisher": "巨潮资讯网（深圳证券交易所信息披露官方网站）",
+      "published_on": "2018-04-27",
+      "publication_precision": "DAY",
+      "static_pdf_url": "https://static.cninfo.com.cn/finalpage/2018-04-27/1204805433.PDF",
+      "official_static_pdf": true,
+      "cutoff_eligible": true,
+      "reporting_period": "FY2017",
+      "report_type": "ANNUAL_REPORT_FULL_TEXT"
+    }
+  ],
+  "baseline_measurements": [
+    {
+      "measurement_id": "CN002035-FY2017-CONSOLIDATED-OPERATING-REVENUE",
+      "status": "OBSERVED",
+      "metric_name": "营业总收入（其中：营业收入）",
+      "statement": "CONSOLIDATED_INCOME_STATEMENT",
+      "period": "FY2017",
+      "value": 5730696745.31,
+      "comparison_period": "FY2016",
+      "comparison_value": 4395036328.15,
+      "unit": "RMB_YUAN",
+      "currency": "CNY",
+      "scope": "CONSOLIDATED",
+      "source_id": "CNINFO:1204805433",
+      "pdf_physical_page": 81,
+      "exact_quote": "一、营业总收入 5,730,696,745.31 4,395,036,328.15；其中：营业收入 5,730,696,745.31 4,395,036,328.15",
+      "comparability_note": "报告同时披露 2017 年合并范围发生变化；该数值是报表列报的合并口径，不自动证明跨年同口径经营变化。"
+    },
+    {
+      "measurement_id": "CN002035-FY2017-CONSOLIDATED-OPERATING-CASH-FLOW",
+      "status": "OBSERVED",
+      "metric_name": "经营活动产生的现金流量净额",
+      "statement": "CONSOLIDATED_CASH_FLOW_STATEMENT",
+      "period": "FY2017",
+      "value": 368534466.66,
+      "comparison_period": "FY2016",
+      "comparison_value": 818413634.83,
+      "unit": "RMB_YUAN",
+      "currency": "CNY",
+      "scope": "CONSOLIDATED",
+      "source_id": "CNINFO:1204805433",
+      "pdf_physical_page": 86,
+      "exact_quote": "经营活动产生的现金流量净额 368,534,466.66 818,413,634.83",
+      "comparability_note": "公司披露部分经销商采用汇票结算、适度增大赊销额度及销售增长相关采购和费用增长会影响现金流；不得把该流量直接解释为家电普通股 owner cash。"
+    },
+    {
+      "measurement_id": "CN002035-FY2017-CONSOLIDATED-TOTAL-ASSETS",
+      "status": "OBSERVED",
+      "metric_name": "资产总计",
+      "statement": "CONSOLIDATED_BALANCE_SHEET",
+      "period": "2017-12-31",
+      "value": 4210485308.94,
+      "comparison_period": "2016-12-31",
+      "comparison_value": 3593298595.69,
+      "unit": "RMB_YUAN",
+      "currency": "CNY",
+      "scope": "CONSOLIDATED",
+      "source_id": "CNINFO:1204805433",
+      "pdf_physical_page": 77,
+      "exact_quote": "资产总计 4,210,485,308.94 3,593,298,595.69",
+      "comparability_note": "这是时点合并资产余额；不可单独用作单位经济或资本配置质量的结论。"
+    }
+  ],
+  "scope_and_restatement_notes": [
+    {
+      "status": "OBSERVED",
+      "source_id": "CNINFO:1204805433",
+      "pdf_physical_page": 44,
+      "exact_quote": "公司报告期无重大会计差错更正需追溯重述的情况。",
+      "interpretation_boundary": "没有报告期内重大会计差错追溯重述，不等同于所有跨年经济口径完全可比。"
+    },
+    {
+      "status": "OBSERVED",
+      "source_id": "CNINFO:1204805433",
+      "pdf_physical_page": 44,
+      "exact_quote": "2017年2月，公司全资子公司沈阳粤华完成注销工商登记，因此沈阳粤华不再纳入合并范围；2017年6月，公司转让了原全资子公司华帝环境54.121%的股权，转让后其他股东对华帝环境进行增资，增资完成后公司对华帝环境的持股比例为30%，因此华帝环境从2017年1月1日起不再纳入公司合并范围。",
+      "interpretation_boundary": "任何 FY2017 与 FY2016 或 FY2019 的趋势字段，都必须由 Measurement Contract 显式处理这个合并范围变化；不得自动归因于厨电核心经营。"
+    }
+  ],
+  "implemented_action_evidence": {
+    "status": "OBSERVED_IMPLEMENTED",
+    "management_action_id": "CN002035-2017-CHANNEL-STORE-UPGRADE",
+    "action_label": "百城树旗、千店升级与渠道结构优化/下沉",
+    "responsibility_scope": "华帝合并主体的品牌营销与渠道网络；不声明为某单一产品 arena 的独立效果",
+    "source_id": "CNINFO:1204805433",
+    "pdf_physical_page": 27,
+    "exact_quote": "2017年，公司“百城树旗，千店升级”计划进展顺利，截至报告期末，已拥有华帝品牌旗舰店234家，建成新标准专卖店1249家。……渠道结构进一步优化与下沉，同时加强渠道的精细化管理，进一步提高渠道的效率与竞争力。",
+    "permitted_inference": "到 FY2017 末，门店升级和渠道管理是已披露的实施迹象，可成为后续观察对象。",
+    "prohibited_inference": "不得把门店数、品牌活动或公司叙述结算为客户忠诚、定价权、单位经济改善或 FY2019 经营效果。"
+  },
+  "strongest_rival_explanation": {
+    "status": "OBSERVED_RISK_CONTEXT",
+    "label": "房地产周期和原材料价格可能驱动或破坏收入/利润变化，而非渠道升级本身",
+    "source_id": "CNINFO:1204805433",
+    "pdf_physical_page": 26,
+    "exact_quote": "公司主营业务产品受房地产市场波动影响较大。房地产市场的波动，将对公司经营业绩产生影响。",
+    "use": "后续 outcome observation 即使显示收入或利润变化，也不能仅凭该变化把效果归因于渠道行动。"
+  },
+  "unknowns": [
+    {
+      "dimension": "客户反应",
+      "status": "UNKNOWN",
+      "reason": "本次允许来源没有可一一映射的客户留存、复购、净推荐或可比份额字段。"
+    },
+    {
+      "dimension": "单产品/单渠道 unit economics",
+      "status": "UNKNOWN",
+      "reason": "合并报表和计划执行叙述不足以拆分烟灶、其他新品类或线上线下渠道的单位经济。"
+    },
+    {
+      "dimension": "普通股 owner cash",
+      "status": "UNKNOWN",
+      "reason": "合并经营现金流并非经维护性资本开支、资本配置和少数股东调整后的普通股现金。"
+    }
+  ],
+  "value_free_outcome_route": {
+    "status": "ROUTE_IDENTITY_ONLY",
+    "target_report": "华帝股份：2019年年度报告",
+    "issuer_stock_code": "002035",
+    "cninfo_org_id": "gssz0002035",
+    "reporting_period": "FY2019",
+    "allowed_future_source_type": "CNINFO_OFFICIAL_STATIC_ANNUAL_REPORT_FULL_TEXT",
+    "prohibited_now": [
+      "outcome announcement id",
+      "outcome PDF URL",
+      "outcome PDF body",
+      "outcome values",
+      "price or return data"
+    ]
+  },
+  "handoff": {
+    "consumer": "ROUND10_BATCH_FREEZE_AGENT",
+    "allowed_uses": [
+      "frozen source receipt",
+      "baseline factual evidence",
+      "measurement-contract field definitions",
+      "action and rival-explanation prompts"
+    ],
+    "required_guardrails": [
+      "Preserve the product arena as kitchen appliances; do not create peer or ranking claims.",
+      "Keep each UNKNOWN local to its dimension.",
+      "Use a new independent outcome custodian after the full immutable batch is committed.",
+      "Do not claim causal action effect or investment conclusion from this packet."
+    ]
+  }
+}

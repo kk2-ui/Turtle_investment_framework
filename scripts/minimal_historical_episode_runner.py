@@ -45,9 +45,23 @@ _FIELD_REF_PAGE = re.compile(
     r"(?:\bpdf\s*)?\bp\.?\s*(\d+)\b|\bpage[_\s-]*(\d+)\b",
     re.IGNORECASE,
 )
-_RMB_OPERATING_REVENUE_ROW = re.compile(
-    r"(?:其中[:：])?营业收入\s*(?P<current_period>[0-9][0-9,，]*(?:\.[0-9]+)?)"
-)
+_RMB_FINANCIAL_FIELD_RULES = {
+    "ISSUER_CONSOLIDATED_OPERATING_REVENUE_RMB": {
+        "field_ref_marker": "consolidated income statement",
+        "field_ref_label": "营业收入",
+        "row": re.compile(r"(?:其中[:：])?营业收入\s*(?P<current_period>[0-9][0-9,，]*(?:\.[0-9]+)?)"),
+    },
+    "ISSUER_CONSOLIDATED_OPERATING_CASH_FLOW_RMB": {
+        "field_ref_marker": "consolidated cash-flow statement",
+        "field_ref_label": "经营活动产生的现金流量净额",
+        "row": re.compile(r"经营活动产生的现金流量净额\s*(?P<current_period>[0-9][0-9,，]*(?:\.[0-9]+)?)"),
+    },
+    "ISSUER_CONSOLIDATED_TOTAL_ASSETS_RMB": {
+        "field_ref_marker": "consolidated balance sheet",
+        "field_ref_label": "资产总计",
+        "row": re.compile(r"资产总计\s*(?P<current_period>[0-9][0-9,，]*(?:\.[0-9]+)?)"),
+    },
+}
 SourceVerifier = Callable[[dict[str, Any], dict[str, Any]], dict[str, Any]]
 TechnicalRouteResolver = route_identity_adapter.RouteResolver
 
@@ -158,8 +172,9 @@ def _verify_quote_value(
     The contract may name any nonempty unit.  A real source is accepted only
     when this runner has a deterministic, unit-specific mapping from its exact
     quote to the frozen numeric field.  This intentionally supports the
-    existing tonnes form and one consolidated RMB operating-revenue form; it
-    does not guess scales or columns for other units.
+    existing tonnes form and three exact consolidated RMB financial-statement
+    rows.  It does not guess scales, statement scope, or columns for any
+    other unit or metric.
     """
     declared_value = _finite_decimal(
         verification.get("numeric_value"), field="source verification input numeric_value",
@@ -174,23 +189,32 @@ def _verify_quote_value(
         if not isinstance(source, dict):
             raise ValueError("RMB source verification requires the frozen source identity")
         field_ref = source.get("field_ref")
+        metric_id = source.get("metric_id")
+        rule = _RMB_FINANCIAL_FIELD_RULES.get(metric_id)
+        boundary = source.get("responsibility_boundary")
+        issuer_suffix = str(source.get("issuer_id", "")).removeprefix("ISSUER:")
+        issuer_code = issuer_suffix.rsplit(":", 1)[-1]
+        normalized_field_ref = field_ref.casefold().replace("-", " ") if isinstance(field_ref, str) else ""
+        normalized_marker = rule["field_ref_marker"].replace("-", " ") if rule is not None else ""
         if (
-            source.get("metric_id") != "ISSUER_CONSOLIDATED_OPERATING_REVENUE_RMB"
-            or source.get("responsibility_boundary") != "LISTED_CONSOLIDATED_ISSUER"
+            rule is None
+            or boundary not in {
+                "LISTED_CONSOLIDATED_ISSUER",
+                f"LISTED_ISSUER_CONSOLIDATED:{issuer_suffix}",
+                f"LISTED_ISSUER_CONSOLIDATED:{issuer_code}",
+            }
             or not isinstance(field_ref, str)
-            or "consolidated income statement" not in field_ref.casefold()
-            or "营业收入" not in field_ref
+            or normalized_marker not in normalized_field_ref
+            or rule["field_ref_label"] not in field_ref
         ):
-            raise ValueError("RMB source must be the declared consolidated operating-revenue field")
-        # In a consolidated income-statement revenue row, the first amount
-        # immediately following 营业收入 is the explicitly selected current-period
-        # column.  The later comparative column is never considered a match.
-        # Preserve the cell separator: collapsing whitespace would let the
-        # first current-period amount absorb the following comparative column.
+            raise ValueError("RMB source must be a declared supported consolidated financial-statement field")
+        # The first amount immediately following the frozen row label is the
+        # selected current-period column. The later comparative column cannot
+        # substitute for it.
         quote = verification["exact_quote"]
-        match = _RMB_OPERATING_REVENUE_ROW.search(quote)
+        match = rule["row"].search(quote)
         if match is None:
-            raise ValueError("official RMB revenue quote must expose the selected consolidated current-period column")
+            raise ValueError("official RMB financial-statement quote must expose the selected current-period column")
         try:
             quoted_value = Decimal(match.group("current_period").replace(",", "").replace("，", ""))
         except InvalidOperation as exc:  # pragma: no cover - regex restricts the input

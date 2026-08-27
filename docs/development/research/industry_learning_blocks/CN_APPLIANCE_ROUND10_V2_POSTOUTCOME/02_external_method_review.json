@@ -1,0 +1,77 @@
+{
+  "schema_version": "enterprise-judgment-round10-external-method-review.v1",
+  "review_id": "R10:EXTERNAL-METHOD-REVIEW:CN_APPLIANCE:20180930:V2",
+  "review_candidate_ref": "R10:EXTERNAL-REVIEW-CANDIDATE:CN_APPLIANCE:20180930:V2",
+  "reviewer_id": "ROLE:ROUND10:EXTERNAL_METHOD_REVIEWER",
+  "review_status": "NO_MATERIAL_UTILITY",
+  "accepted_treatment_delta_ids": [],
+  "utility_basis": null,
+  "terminal_field_summary": {
+    "CN:002035": {
+      "terminal_state": "MECHANICALLY_SETTLED",
+      "fields": [
+        "ISSUER_CONSOLIDATED_OPERATING_REVENUE_RMB",
+        "ISSUER_CONSOLIDATED_OPERATING_CASH_FLOW_RMB",
+        "ISSUER_CONSOLIDATED_TOTAL_ASSETS_RMB"
+      ]
+    },
+    "CN:002508": {
+      "terminal_state": "MEASUREMENT_MISMATCH",
+      "fields": [
+        "ISSUER_CONSOLIDATED_OPERATING_REVENUE_RMB",
+        "ISSUER_CONSOLIDATED_OPERATING_CASH_FLOW_RMB",
+        "ISSUER_CONSOLIDATED_TOTAL_ASSETS_RMB"
+      ],
+      "mismatch_rule": "ANNUAL_REPORT_VERSION_FAMILY_UNRESOLVED"
+    },
+    "CN:002677": {
+      "terminal_state": "MECHANICALLY_SETTLED",
+      "fields": [
+        "ISSUER_CONSOLIDATED_OPERATING_REVENUE_RMB",
+        "ISSUER_CONSOLIDATED_OPERATING_CASH_FLOW_RMB",
+        "ISSUER_CONSOLIDATED_TOTAL_ASSETS_RMB"
+      ]
+    }
+  },
+  "treatment_delta_ledger": [
+    {
+      "treatment_delta_id": "R10:DELTA:ISSUER_CASH_NOT_OWNER_CASH",
+      "application_company_ids": ["CN:002035", "CN:002677"],
+      "method_advantage_count": 1,
+      "status": "ONE_BATCH_LEVEL_REVIEW_CANDIDATE_ONLY"
+    }
+  ],
+  "reasoning": {
+    "decision": "The enhanced rule did not demonstrate a material investment-treatment change and did not prove that it avoided a baseline directional error.",
+    "material_treatment_change": "NOT_ESTABLISHED: baseline already prohibits promoting issuer revenue or cash into customer response, management-action effect, unit economics or ordinary-share owner cash.",
+    "prevented_directional_error": "NOT_ESTABLISHED: the settled fields are issuer-boundary financial lines, not an action, customer, unit-economic or owner-cash test.",
+    "not_counted_as_utility": ["MORE_EXPLANATION", "MORE_DIMENSIONS", "MORE_UNKNOWN", "MORE_COVERAGE"],
+    "root_causes": [
+      {
+        "classification": "MODEL",
+        "economic_impact": "This batch cannot establish that eight dimensions change an investor conclusion; it can only preserve an evidence boundary.",
+        "missing_facts": "No frozen field separately measures customer response, unit economics, ordinary-share owner cash, or an implemented-action effect.",
+        "prohibited_assumption": "Do not infer those facts from issuer-level revenue, operating cash flow or total assets.",
+        "remediation": "Freeze a next unseen episode with an independently settleable field for the material mechanism or boundary.",
+        "acceptance_criterion": "The enhanced rule predeclaredly changes a material treatment or prevents a baseline directional error using that field."
+      },
+      {
+        "classification": "ACQUISITION_MODULE",
+        "economic_impact": "CN:002508 cannot inform either method in this batch, but its mismatch does not invalidate the other two companies' settled fields.",
+        "missing_facts": "The ORIGINAL_ONLY FY2019 annual-report version family was not uniquely resolved for the three contracted lines.",
+        "prohibited_assumption": "Do not substitute a revised or alternate annual report merely to complete the company.",
+        "remediation": "Improve original-version enumeration or select a later unseen episode whose authorized version family is resolvable before freeze.",
+        "acceptance_criterion": "One official original annual report maps to the frozen issuer, period, unit and listed-consolidated boundary."
+      }
+    ]
+  },
+  "allowed_outputs": ["RESEARCH_AGENDA"],
+  "rights": {
+    "method_transfer": "NOT_AUTHORIZED",
+    "cjo": "NOT_AUTHORIZED",
+    "valuation": "NOT_AUTHORIZED",
+    "report": "NOT_AUTHORIZED",
+    "buy_band": "NOT_AUTHORIZED",
+    "investment": "NOT_AUTHORIZED"
+  }
+}
