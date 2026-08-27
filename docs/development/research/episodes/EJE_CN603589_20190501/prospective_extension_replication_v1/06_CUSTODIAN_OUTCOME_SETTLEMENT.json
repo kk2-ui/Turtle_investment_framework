@@ -1,0 +1,459 @@
+{
+  "schema_version": "prospective-enterprise-judgment-custodian-outcome-settlement.v1",
+  "settlement_id": "PEJCOS:CN603589:20190501:FY2019:DIRECT_JUDGMENT_CALIBRATION:V1",
+  "authorization_id": "PEJOA:CN603589:20190501:FY2019:DIRECT_JUDGMENT_CALIBRATION:V1",
+  "freeze_id": "DEJCF:CN603589:20190501:FY2019:V1",
+  "company_id": "CN:603589",
+  "issuer_id": "ISSUER:CN:603589",
+  "cutoff_at": "2019-05-01T00:00:00+08:00",
+  "outcome_period": "FY2019",
+  "settlement_scope": "AUTHORIZED_RAW_FACTS_DIRECT_CALCULATIONS_FIRST_MATCH_CLASSIFICATIONS_AND_SCORES_ONLY",
+  "price_access": "PROHIBITED",
+  "source_selection": {
+    "publisher": "CNINFO",
+    "issuer": "安徽口子酒业股份有限公司",
+    "document_type": "OFFICIAL_FULL_ANNUAL_REPORT",
+    "document_title": "2019年年度报告",
+    "announcement_id": "1207635640",
+    "published_date": "2020-04-28",
+    "fiscal_year": 2019,
+    "official_detail_url": "https://www.cninfo.com.cn/new/disclosure/detail?plate=sse&orgId=9900023518&stockCode=603589&announcementId=1207635640&announcementTime=2020-04-28",
+    "official_pdf_url": "https://static.cninfo.com.cn/finalpage/2020-04-28/1207635640.PDF",
+    "pdf_pages": 175,
+    "documents_used": 1,
+    "selection_result": "UNIQUE_QUALIFYING_FULL_REPORT_WITHIN_AUTHORIZED_WINDOW",
+    "selection_evidence": "CNINFO annual-report-category query for 2020-01-01 through 2020-05-01 returned announcement 1207635640 (2019年年度报告) and announcement 1207635639 (2019年年度报告摘要); the summary was excluded and no corrected full version was returned."
+  },
+  "authorized_local_inputs": [
+    "03_DIRECT_JUDGMENT_CALIBRATION_FREEZE.json",
+    "05_OUTCOME_ACCESS_AUTHORIZATION.json"
+  ],
+  "fact_settlement": {
+    "PRODUCT_REGION_CHANNEL_AND_CONSOLIDATION_PERIMETER_EVENT": {
+      "status": "DISCLOSED_OPERATING_CONTEXT_WITH_UNCHANGED_CONSOLIDATION_PERIMETER",
+      "raw_disclosures": [
+        {
+          "fact": "The high-end product table reports FY2019 sales volume of 27,926.03 kL, a reported 1.07% year-on-year decline, while the exact-yuan revenue and margin table reports RMB 4,422,859,735.21 of revenue and 76.27% gross margin.",
+          "report_pages": [17, 20]
+        },
+        {
+          "fact": "Outside-Anhui ending distributors were 238, with 38 additions and 34 removals. The issuer disclosed that exited-distributor inventory was coordinated by issuer offices under its market-management principles and that the reporting-period sales channel was relatively stable.",
+          "report_pages": [19]
+        },
+        {
+          "fact": "The issuer disclosed that the FY2019 consolidation perimeter was unchanged from the prior period.",
+          "report_pages": [81]
+        }
+      ]
+    },
+    "HIGH_END_LIQUOR_REVENUE_RMB": {
+      "fy2019_raw": 4422859735.21,
+      "fy2018_reference": 4059801219.00,
+      "calculated_yoy_percent": 8.942766,
+      "issuer_reported_yoy_percent": 8.94,
+      "formula": "(4422859735.21 / 4059801219.00 - 1) * 100",
+      "report_pages": [20]
+    },
+    "HIGH_END_LIQUOR_SALES_VOLUME_KL": {
+      "fy2019_raw": 27926.03,
+      "fy2018_reference": 28228.74,
+      "calculated_yoy_percent": -1.072347,
+      "issuer_reported_yoy_percent": -1.07,
+      "formula": "(27926.03 / 28228.74 - 1) * 100",
+      "report_pages": [17]
+    },
+    "HIGH_END_LIQUOR_GROSS_MARGIN_PERCENT": {
+      "fy2019_raw": 76.27,
+      "fy2018_reference": 75.67,
+      "change_percentage_points": 0.60,
+      "issuer_reported_change_percentage_points": 0.60,
+      "formula": "76.27 - 75.67",
+      "report_pages": [20]
+    },
+    "ANHUI_REVENUE_RMB": {
+      "fy2019_raw": 3835078452.29,
+      "fy2018_reference": 3559667770.94,
+      "calculated_yoy_percent": 7.736977,
+      "issuer_reported_yoy_percent": 7.74,
+      "formula": "(3835078452.29 / 3559667770.94 - 1) * 100",
+      "report_pages": [20]
+    },
+    "ANHUI_SALES_VOLUME_KL": {
+      "fy2019_raw": 26889.99,
+      "fy2018_reference": 26662.52,
+      "calculated_yoy_percent": 0.853145,
+      "formula": "(26889.99 / 26662.52 - 1) * 100",
+      "report_pages": [19]
+    },
+    "ANHUI_GROSS_MARGIN_PERCENT": {
+      "fy2019_raw": 75.57,
+      "fy2018_reference": 75.18,
+      "change_percentage_points": 0.39,
+      "issuer_reported_change_percentage_points": 0.39,
+      "formula": "75.57 - 75.18",
+      "report_pages": [20]
+    },
+    "OUTSIDE_ANHUI_REVENUE_RMB": {
+      "fy2019_raw": 782421219.29,
+      "fy2018_reference": 662361425.27,
+      "calculated_yoy_percent": 18.126024,
+      "issuer_reported_yoy_percent": 18.13,
+      "formula": "(782421219.29 / 662361425.27 - 1) * 100",
+      "report_pages": [20]
+    },
+    "OUTSIDE_ANHUI_SALES_VOLUME_KL": {
+      "fy2019_raw": 7418.01,
+      "fy2018_reference": 6767.11,
+      "calculated_yoy_percent": 9.618582,
+      "formula": "(7418.01 / 6767.11 - 1) * 100",
+      "report_pages": [19]
+    },
+    "OUTSIDE_ANHUI_GROSS_MARGIN_PERCENT": {
+      "fy2019_raw": 71.82,
+      "fy2018_reference": 69.53,
+      "change_percentage_points": 2.29,
+      "issuer_reported_change_percentage_points": 2.29,
+      "formula": "71.82 - 69.53",
+      "report_pages": [20]
+    },
+    "OUTSIDE_ANHUI_DISTRIBUTOR_ENDING_ADDITIONS_AND_REMOVALS": {
+      "fy2019_ending_raw": 238,
+      "fy2019_additions_raw": 38,
+      "fy2019_removals_raw": 34,
+      "fy2018_ending_reference": 234,
+      "ending_count_change": 4,
+      "ending_count_yoy_percent": 1.709402,
+      "reconciliation_formula": "234 + 38 - 34 = 238",
+      "yoy_formula": "(238 / 234 - 1) * 100",
+      "report_pages": [19]
+    },
+    "ADVANCE_RECEIPTS_RMB": {
+      "fy2019_raw": 800427245.05,
+      "fy2018_reference": 917640915.65,
+      "calculated_yoy_percent": -12.773370,
+      "formula": "(800427245.05 / 917640915.65 - 1) * 100",
+      "report_pages": [61]
+    },
+    "CHANNEL_RETURN_CREDIT_SUPPORT_OR_MATERIAL_CONFLICT_EVENT": {
+      "status": "NO_DISCLOSED_EVENT_IN_AUTHORIZED_REPORT",
+      "classification_input": "NO_MATERIAL_RETURN_CREDIT_OR_CHANNEL_CONFLICT",
+      "disclosed_non_veto_context": "Exited-distributor inventory was coordinated by issuer offices under issuer market-management principles; the issuer described the reporting-period sales channel as relatively stable. Ordinary distributor churn was not treated as a material conflict.",
+      "report_pages": [19]
+    },
+    "SELF_MADE_SEMI_FINISHED_INVENTORY_RMB": {
+      "fy2019_raw": 1968215291.67,
+      "fy2018_reference": 1715013032.76,
+      "calculated_yoy_percent": 14.763868,
+      "formula": "(1968215291.67 / 1715013032.76 - 1) * 100",
+      "fy2019_impairment_allowance_raw": 0.00,
+      "report_pages": [131]
+    },
+    "SEMI_FINISHED_BASE_LIQUOR_VOLUME_KL": {
+      "fy2019_raw": 185374.76,
+      "fy2018_reference": 172187.83,
+      "calculated_yoy_percent": 7.658456,
+      "formula": "(185374.76 / 172187.83 - 1) * 100",
+      "report_pages": [17]
+    },
+    "INDUSTRIAL_PARK_PACKAGING_LOGISTICS_AND_CAPACITY_MILESTONE": {
+      "fy2019_raw_disclosure": [
+        "Three East-Mountain-site brewing workshops entered production and produced more than 4,400 tonnes of base liquor in FY2019.",
+        "Some brewing workshops, starter-culture workshops and base-liquor warehouse main structures were completed and ready for use.",
+        "High-bay warehouses at the East-Gate and Xihe sites entered operation.",
+        "Eleven automated packaging lines for Xiaochijiao, Six-Year-Jiao, Ten-Year-Jiao and Twenty-Year-Jiao products entered use."
+      ],
+      "yoy": "NOT_APPLICABLE_TO_DISCLOSED_MILESTONES",
+      "report_pages": [11]
+    },
+    "CONSOLIDATED_OCF_RMB": {
+      "fy2019_raw": 1297024388.59,
+      "fy2018_reference": 1119715713.93,
+      "calculated_yoy_percent": 15.835151,
+      "formula": "(1297024388.59 / 1119715713.93 - 1) * 100",
+      "report_pages": [156]
+    },
+    "DISCLOSED_INVENTORY_RECEIVABLE_AND_PAYABLE_CASH_FLOW_RECONCILIATION_COMPONENTS": {
+      "inventory_decrease_rmb": {
+        "fy2019_raw": -290903206.42,
+        "fy2018_raw": -222920221.54,
+        "signed_change_rmb": -67982984.88,
+        "formula": "-290903206.42 - (-222920221.54)"
+      },
+      "operating_receivable_decrease_rmb": {
+        "fy2019_raw": 154795248.21,
+        "fy2018_raw": -139098691.51,
+        "signed_change_rmb": 293893939.72,
+        "formula": "154795248.21 - (-139098691.51)"
+      },
+      "operating_payable_increase_rmb": {
+        "fy2019_raw": -401039927.91,
+        "fy2018_raw": -96788261.28,
+        "signed_change_rmb": -304251666.63,
+        "formula": "-401039927.91 - (-96788261.28)"
+      },
+      "report_pages": [156]
+    },
+    "SELECTED_WORKING_CAPITAL_CASH_CONTRIBUTION_RMB": {
+      "fy2019_derived": -537147886.12,
+      "fy2018_reference": -458807174.33,
+      "signed_change_rmb": -78340711.79,
+      "sign_meaning": "NEGATIVE_MEANS_WORKING_CAPITAL_USED_CASH_AND_POSITIVE_MEANS_WORKING_CAPITAL_SUPPORTED_CASH",
+      "formula": "-290903206.42 + 154795248.21 + (-401039927.91)",
+      "report_pages": [156]
+    },
+    "CONSOLIDATED_CASH_CAPEX_RMB": {
+      "fy2019_raw": 137489460.08,
+      "fy2018_reference": 273236734.74,
+      "calculated_yoy_percent": -49.681195,
+      "formula": "(137489460.08 / 273236734.74 - 1) * 100",
+      "report_pages": [69]
+    },
+    "STATUTORY_OCF_AFTER_ALL_CAPEX_RMB": {
+      "fy2019_derived": 1159534928.51,
+      "fy2018_reference": 846478979.19,
+      "calculated_yoy_percent": 36.983311,
+      "formula": "1297024388.59 - 137489460.08",
+      "report_pages": [69, 156]
+    },
+    "POST_WORKING_CAPITAL_DIRECTIONAL_CASH_AFTER_ALL_CAPEX_RMB": {
+      "fy2019_derived": 1696682814.63,
+      "fy2018_reference": 1305286153.52,
+      "calculated_yoy_percent": 29.985506,
+      "formula": "1297024388.59 - (-537147886.12) - 137489460.08",
+      "percent_of_consolidated_ocf": 130.813486,
+      "ratio_formula": "1696682814.63 / 1297024388.59 * 100",
+      "report_pages": [69, 156]
+    },
+    "CASH_AND_CASH_EQUIVALENTS_RMB": {
+      "fy2019_raw": 1442810630.12,
+      "fy2018_reference": 1141270193.76,
+      "calculated_yoy_percent": 26.421477,
+      "formula": "(1442810630.12 / 1141270193.76 - 1) * 100",
+      "report_pages": [69, 156, 157]
+    },
+    "INTEREST_BEARING_DEBT_RMB": {
+      "fy2019_derived": 0.00,
+      "fy2018_reference": 0.00,
+      "yoy": "UNCHANGED_AT_ZERO",
+      "raw_report_presentation": {
+        "short_term_borrowings_rmb": 0.00,
+        "current_portion_of_non_current_liabilities_rmb": 0.00,
+        "long_term_borrowings_rmb": 0.00,
+        "bonds_payable_rmb": 0.00,
+        "lease_liabilities_rmb": 0.00,
+        "presentation_note": "The consolidated balance sheet presents these line items without an amount in either period."
+      },
+      "formula": "0 + 0 + 0 + 0 + 0",
+      "report_pages": [60, 61]
+    },
+    "NET_DEBT_RMB": {
+      "fy2019_derived": -1442810630.12,
+      "fy2018_reference": -1141270193.76,
+      "signed_change_rmb": -301540436.36,
+      "net_cash_magnitude_yoy_percent": 26.421477,
+      "formula": "0.00 - 1442810630.12",
+      "percent_of_consolidated_ocf": -111.240054,
+      "ratio_formula": "-1442810630.12 / 1297024388.59 * 100",
+      "report_pages": [60, 61, 69, 156, 157]
+    },
+    "MATERIAL_SAFETY_BRAND_OR_INVENTORY_EVENT": {
+      "status": "NO_DISCLOSED_EVENT_IN_AUTHORIZED_REPORT",
+      "classification_input": "NO_MATERIAL_SAFETY_BRAND_OR_INVENTORY_EVENT",
+      "scope_note": "This status means no event meeting the frozen definition was disclosed in the authorized report; it is not proof of real-world absence.",
+      "report_context": "The report describes food-safety, production-safety and counterfeit-product matters as prospective risks, not realized FY2019 events; the self-made semi-finished inventory line has no impairment allowance.",
+      "report_pages": [24, 131]
+    }
+  },
+  "first_match_settlement": [
+    {
+      "cell_id": "HIGH_END_AND_ANHUI_CORE_ABSORPTION",
+      "field_coverage": "COMPLETE",
+      "classification_order_evaluation": [
+        {
+          "branch": "MATERIAL_CORE_REVERSAL",
+          "matched": false,
+          "inputs": {
+            "high_end_revenue_change_percent": 8.942766,
+            "anhui_revenue_change_percent": 7.736977,
+            "high_end_volume_change_percent": -1.072347,
+            "high_end_gross_margin_change_percentage_points": 0.60,
+            "anhui_volume_change_percent": 0.853145,
+            "anhui_gross_margin_change_percentage_points": 0.39
+          },
+          "reason": "Neither revenue decline threshold is met and neither combined volume-and-margin reversal threshold is met."
+        },
+        {
+          "branch": "JOINT_HIGH_END_AND_ANHUI_CORE_ABSORPTION",
+          "matched": false,
+          "reason": "High-end revenue, both margins, Anhui revenue and Anhui volume pass, but high-end sales-volume growth of -1.072347% is below the required +3%."
+        },
+        {
+          "branch": "MIXED_CORE_ABSORPTION",
+          "matched": true,
+          "reason": "OTHERWISE first match."
+        }
+      ],
+      "realized_class": "MIXED_CORE_ABSORPTION",
+      "frozen_judgment_mapping": "PARTIAL",
+      "forecast_probabilities": {
+        "JOINT_HIGH_END_AND_ANHUI_CORE_ABSORPTION": 0.65,
+        "MIXED_CORE_ABSORPTION": 0.28,
+        "MATERIAL_CORE_REVERSAL": 0.07
+      },
+      "one_hot_outcome": {
+        "JOINT_HIGH_END_AND_ANHUI_CORE_ABSORPTION": 0,
+        "MIXED_CORE_ABSORPTION": 1,
+        "MATERIAL_CORE_REVERSAL": 0
+      },
+      "categorical_score": 0.9458,
+      "score_formula": "(0.65 - 0)^2 + (0.28 - 1)^2 + (0.07 - 0)^2"
+    },
+    {
+      "cell_id": "OUTSIDE_ANHUI_CUSTOMER_AND_CHANNEL_ABSORPTION",
+      "field_coverage": "COMPLETE",
+      "classification_order_evaluation": [
+        {
+          "branch": "MATERIAL_REVERSAL",
+          "matched": false,
+          "inputs": {
+            "outside_anhui_revenue_change_percent": 18.126024,
+            "outside_anhui_volume_change_percent": 9.618582,
+            "outside_anhui_gross_margin_change_percentage_points": 2.29,
+            "material_return_credit_or_channel_conflict": false
+          },
+          "reason": "The revenue and combined volume-and-margin reversal thresholds are not met, and no material return, credit or channel-conflict event was disclosed."
+        },
+        {
+          "branch": "BREADTH_AND_ECONOMICS_IMPROVE",
+          "matched": true,
+          "reason": "Revenue growth is at least 5%, volume growth is at least 3%, gross-margin change is at least -1 percentage point, and no material return, credit or channel-conflict event was disclosed."
+        },
+        {
+          "branch": "STRUCTURE_LED_OR_MIXED",
+          "matched": false,
+          "reason": "Not reached after the preceding branch matched."
+        }
+      ],
+      "realized_class": "BREADTH_AND_ECONOMICS_IMPROVE",
+      "frozen_judgment_mapping": "REFUTE_UP",
+      "forecast_probabilities": {
+        "BREADTH_AND_ECONOMICS_IMPROVE": 0.35,
+        "STRUCTURE_LED_OR_MIXED": 0.50,
+        "MATERIAL_REVERSAL": 0.15
+      },
+      "one_hot_outcome": {
+        "BREADTH_AND_ECONOMICS_IMPROVE": 1,
+        "STRUCTURE_LED_OR_MIXED": 0,
+        "MATERIAL_REVERSAL": 0
+      },
+      "categorical_score": 0.6950,
+      "score_formula": "(0.35 - 1)^2 + (0.50 - 0)^2 + (0.15 - 0)^2"
+    },
+    {
+      "cell_id": "AGED_INVENTORY_PROJECT_CAPITAL_AND_GROUP_CASH",
+      "field_coverage": "COMPLETE",
+      "classification_order_evaluation": [
+        {
+          "branch": "FUNDING_OR_CORE_ABSORPTION_STRESS",
+          "matched": false,
+          "inputs": {
+            "material_safety_brand_or_inventory_event": false,
+            "core_absorption_class": "MIXED_CORE_ABSORPTION",
+            "consolidated_ocf_rmb": 1297024388.59,
+            "post_working_capital_directional_cash_after_all_capex_rmb": 1696682814.63,
+            "negative_ten_percent_of_consolidated_ocf_rmb": -129702438.859,
+            "net_debt_rmb": -1442810630.12,
+            "fifty_percent_of_consolidated_ocf_rmb": 648512194.295
+          },
+          "reason": "No event or core reversal is present, OCF is positive, directional cash is not below the negative-10%-of-OCF threshold, and net debt is not positive or above 50% of OCF."
+        },
+        {
+          "branch": "SELF_FUNDED_WITH_MATCHED_PRODUCT_ABSORPTION",
+          "matched": false,
+          "inputs": {
+            "post_working_capital_directional_cash_as_percent_of_ocf": 130.813486,
+            "required_minimum_percent_of_ocf": 10.0,
+            "core_absorption_class": "MIXED_CORE_ABSORPTION",
+            "required_core_absorption_class": "JOINT_HIGH_END_AND_ANHUI_CORE_ABSORPTION",
+            "self_made_semi_finished_inventory_growth_percent": 14.763868,
+            "high_end_revenue_growth_percent_plus_five_points": 13.942766,
+            "material_safety_brand_or_inventory_event": false
+          },
+          "reason": "Directional cash passes, but the core class is not joint absorption and inventory growth of 14.763868% exceeds high-end revenue growth plus 5 percentage points, 13.942766%."
+        },
+        {
+          "branch": "SELF_FUNDED_BUT_CONCENTRATION_RISES_OR_ABSORPTION_IS_MIXED",
+          "matched": true,
+          "reason": "OTHERWISE first match."
+        }
+      ],
+      "realized_class": "SELF_FUNDED_BUT_CONCENTRATION_RISES_OR_ABSORPTION_IS_MIXED",
+      "frozen_judgment_mapping": "PARTIAL",
+      "forecast_probabilities": {
+        "SELF_FUNDED_WITH_MATCHED_PRODUCT_ABSORPTION": 0.55,
+        "SELF_FUNDED_BUT_CONCENTRATION_RISES_OR_ABSORPTION_IS_MIXED": 0.35,
+        "FUNDING_OR_CORE_ABSORPTION_STRESS": 0.10
+      },
+      "one_hot_outcome": {
+        "SELF_FUNDED_WITH_MATCHED_PRODUCT_ABSORPTION": 0,
+        "SELF_FUNDED_BUT_CONCENTRATION_RISES_OR_ABSORPTION_IS_MIXED": 1,
+        "FUNDING_OR_CORE_ABSORPTION_STRESS": 0
+      },
+      "categorical_score": 0.7350,
+      "score_formula": "(0.55 - 0)^2 + (0.35 - 1)^2 + (0.10 - 0)^2"
+    }
+  ],
+  "score_summary": {
+    "three_cell_arithmetic_mean": 0.791933333333,
+    "formula": "(0.9458 + 0.6950 + 0.7350) / 3",
+    "pass_fail_threshold": "NONE"
+  },
+  "scenario_settlement": {
+    "classification_order_evaluation": [
+      {
+        "branch": "PESSIMISTIC",
+        "matched": false,
+        "reason": "The core cell is not MATERIAL_CORE_REVERSAL and the cash cell is not FUNDING_OR_CORE_ABSORPTION_STRESS."
+      },
+      {
+        "branch": "OPTIMISTIC",
+        "matched": false,
+        "reason": "All three cells did not equal their first positive class."
+      },
+      {
+        "branch": "BASE",
+        "matched": true,
+        "reason": "OTHERWISE first match."
+      }
+    ],
+    "realized_outcome": "BASE",
+    "forecast_probabilities": {
+      "OPTIMISTIC": 0.25,
+      "BASE": 0.60,
+      "PESSIMISTIC": 0.15
+    },
+    "one_hot_outcome": {
+      "OPTIMISTIC": 0,
+      "BASE": 1,
+      "PESSIMISTIC": 0
+    },
+    "categorical_score": 0.2450,
+    "score_formula": "(0.25 - 0)^2 + (0.60 - 1)^2 + (0.15 - 0)^2"
+  },
+  "locality_and_coverage": {
+    "missing_authorized_fields": [],
+    "cancelled_cells": [],
+    "all_three_cells_settled": true
+  },
+  "scope_exclusions_applied": [
+    "NO_PRICE_OR_RETURN",
+    "NO_FY2020_OR_LATER_INFORMATION",
+    "NO_EXTERNAL_COMMENTARY",
+    "NO_TERMINAL_SELL_THROUGH_OR_DISTRIBUTOR_INVENTORY_INFERENCE",
+    "NO_AGED_INVENTORY_COHORT_ROIC_INFERENCE",
+    "NO_MANAGEMENT_QUALITY_JUDGMENT",
+    "NO_NORMALIZED_OWNER_CASH_LABEL",
+    "NO_PERMANENT_LOSS_VALUATION_OR_INVESTMENT_ACTION_JUDGMENT",
+    "NO_TRAINING_UTILITY_JUDGMENT"
+  ]
+}
