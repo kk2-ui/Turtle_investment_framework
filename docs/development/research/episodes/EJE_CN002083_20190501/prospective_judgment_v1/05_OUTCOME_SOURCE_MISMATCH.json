@@ -1,0 +1,33 @@
+{
+  "schema_version": "prospective-enterprise-judgment-source-settlement.v1",
+  "settlement_id": "PEJSS:CN002083:20190501:FY2019:V1",
+  "authorization_ref": "PEJOA:CN002083:20190501:FY2019:V1",
+  "contract_ref": "PEJOC:CN002083:20190501:FY2019:V1",
+  "custodian_id": "ROLE:CN002083:20190501:OUTCOME_CUSTODIAN",
+  "official_query": {
+    "provider": "CNINFO_HIS_ANNOUNCEMENT_CATEGORY_API",
+    "issuer_code": "002083",
+    "org_id": "9900001342",
+    "category": "ANNUAL_REPORT",
+    "query_window": "2019-01-01..2020-06-30",
+    "matching_fy2019_full_report_candidates": [
+      {
+        "announcement_id": "1207969977",
+        "title": "2019年年度报告（已取消）",
+        "published_on": "2020-06-30",
+        "static_locator": "https://static.cninfo.com.cn/finalpage/2020-06-30/1207969977.PDF",
+        "eligibility": "INELIGIBLE_CANCELLED_AND_AFTER_DUE"
+      }
+    ]
+  },
+  "source_resolution": "MEASUREMENT_MISMATCH",
+  "mismatch_reason": "NO_ELIGIBLE_ORIGINAL_FULL_FY2019_ANNUAL_REPORT_AVAILABLE_BY_2020_05_01_DUE_DATE",
+  "content_read": false,
+  "field_values_read": false,
+  "field_settlement": "NOT_STARTED_SOURCE_MISMATCH",
+  "economic_interpretation": "NONE",
+  "company_performance_interpretation": "PROHIBITED",
+  "judgment_settlement": "UNRESOLVED",
+  "locality": "THIS_SOURCE_FAMILY_AND_OBSERVATION_CLOCK_ONLY",
+  "allowed_outputs": ["RESEARCH_AGENDA", "LOCAL_MEASUREMENT_STATUS"]
+}
