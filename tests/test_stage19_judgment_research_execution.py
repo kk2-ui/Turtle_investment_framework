@@ -55,7 +55,7 @@ def _ok(value: object = None) -> dict:
 def _finding(task_id: str, source_id: str = "annual") -> dict:
     return {
         "schema_version": "judgment-research-finding.v1", "task_id": task_id,
-        "resolution": "UNRESOLVED", "prior_claim": "原主张仍需要更多证据才能确认",
+        "resolution": "UNRESOLVED", "prior_claim": "外部股东能够取得留存价值",
         "evidence_items": [{"source_id": source_id, "source_kind": "primary_filing", "directness": "CONTEXT", "relation": "context", "fact": "公开材料没有提供具有区分力的新事实", "as_of": "2026-08-02"}],
         "strongest_alternative": "现有公开信息可能遗漏关键治理安排",
         "discriminating_result": "本次材料无法区分原主张与替代解释",
@@ -64,6 +64,23 @@ def _finding(task_id: str, source_id: str = "annual") -> dict:
         "confidence_update": {"before": 0.5, "after": 0.5, "basis": "没有新增区分性证据"},
         "valuation_impact": {"state": "NONE", "basis": "没有可校准的估值输入变化", "changes": []},
         "action_impact": {"state": "NONE", "basis": "没有足以改变仓位动作的新证据", "changes": []},
+        "uncertainty_closure": {
+            "affected_axis": "OWNER_CASH",
+            "current_position": {
+                "state": "EXCLUDE_FROM_BASE_CASE",
+                "claim_ref": "外部股东能够取得留存价值",
+                "basis": "现有公开材料没有责任匹配的上游分配与关联现金流",
+            },
+            "base_case_treatment": {
+                "state": "EXCLUDE",
+                "economic_consequence": "CASH_ACCESS_DISCOUNT_RETAINED",
+            },
+            "next_observation": {
+                "metric_or_event": "下一份分红决议与责任匹配的关联交易现金流",
+                "supports_current": {"kind": "EVENT", "operator": "DOES_NOT_OCCUR", "event_definition": "可持续上游分配且无材料关联现金流出"},
+                "reverses_current": {"kind": "EVENT", "operator": "OCCURS", "event_definition": "可持续上游分配且无材料关联现金流出"},
+            },
+        },
         "chapter_update": {"needed": False, "chapters": [], "reason": "原正文无需变化"},
     }
 
@@ -195,6 +212,28 @@ def test_empty_source_result_is_attempted_but_not_successful_and_unavailable_can
         "规定来源均已尝试但公开信息不可得。", _unavailable_finding("JR001"),
     )
     assert result["completed"] is True
+
+
+def test_unavailable_without_bounded_judgment_cannot_close_for_free(tmp_path: Path) -> None:
+    _setup(tmp_path)
+    begin_judgment_research_task(tmp_path, "JR001")
+    record_judgment_tool_call(
+        tmp_path, "search_report", {"query": "不存在"},
+        {"ok": True, "value": {"total_hits": 0, "hits": []}},
+    )
+    record_judgment_tool_call(
+        tmp_path, "read_section", {"section": "GOV"},
+        {"ok": True, "value": {"text": ""}},
+    )
+    finding = _unavailable_finding("JR001")
+    finding.pop("uncertainty_closure")
+    result = complete_judgment_research_task(
+        tmp_path, "JR001", "PUBLIC_INFO_UNAVAILABLE", [],
+        "公开资料不可得，因此维持未知、估值与动作不变。", finding,
+    )
+    assert result["completed"] is False
+    assert result["state"] == "ACTIVE"
+    assert any("uncertainty_closure_missing" in item for item in result["violations"])
 
 
 def test_final_budget_slots_are_reserved_for_unattempted_required_tools(tmp_path: Path) -> None:

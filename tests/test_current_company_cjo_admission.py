@@ -249,6 +249,47 @@ def test_primary_rejects_unknown_selected_thesis_path_and_missing_event_realizat
     assert any("allocation_event_realization_not_bound:FDBEV:titanium" in finding for finding in result["findings"])
 
 
+def test_primary_admission_only_requires_the_operating_judgment_consumed_downstream(tmp_path) -> None:
+    inputs = _primary_inputs(tmp_path)
+    model = inputs["model"]
+    next(
+        item for item in model["financial_transmissions"]
+        if item["transmission_id"] == "TX:OWNER_CASH"
+    )["direction"] = "UNKNOWN"
+    next(
+        item for item in model["financial_transmissions"]
+        if item["transmission_id"] == "TX:PERMANENT_LOSS"
+    )["direction"] = "UNKNOWN"
+    judgment = inputs["judgment_input"]
+    judgment["forward_judgments"][1].update({
+        "evidence_state": "MODEL_UNCERTAIN", "direction": "UNKNOWN", "status": "UNKNOWN",
+    })
+    judgment["forward_judgments"][2].update({
+        "evidence_state": "MODEL_UNCERTAIN", "direction": "UNKNOWN", "status": "UNKNOWN",
+    })
+    inputs["candidate"] = core.compile_cjo_candidate(
+        model=model,
+        ledger=inputs["ledger"],
+        source_package=inputs["source_package"],
+        judgment_input=judgment,
+    )
+    inputs["admission_contract"]["primary_binding"]["forward_judgment_bindings"] = [
+        inputs["admission_contract"]["primary_binding"]["forward_judgment_bindings"][0]
+    ]
+    cash_driver = next(
+        item for item in inputs["financial_driver_bridge"]["drivers"]
+        if item["driver_id"] == "FDBDRV:cash"
+    )
+    cash_driver["cash_normalization_contract"]["state"] = "REPORTED_CASH_STATE_ONLY"
+
+    result = _validate(inputs, tmp_path)
+
+    assert result["state"] == admission.PRIMARY_ADMITTED
+    assert result["admission"]["authority"]["overlay_read_allowed"] is True
+    assert not any("must_all_be_bound" in finding for finding in result["findings"])
+    assert not any("owner_cash_requires_normalized" in finding for finding in result["findings"])
+
+
 @pytest.mark.parametrize("resolution", ["NO_PRIMARY", "MIXED"])
 def test_no_primary_and_mixed_are_reviewable_but_never_downstream_primary_inputs(tmp_path, resolution) -> None:
     package = core_fixture._source_package()

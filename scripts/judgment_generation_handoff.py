@@ -871,7 +871,7 @@ def _build_frozen_cjo_investment_enrichment(
         else:
             sources.append(_source_ref(
                 "CURRENT_COMPANY_CJO_ADMISSION", str(admission_path), "",
-                "Read-only PRIMARY admission receipt; it binds the Frozen CJO to closed cash, driver, and rival-thesis prerequisites.",
+                "Read-only PRIMARY admission receipt; it binds the Frozen CJO to the driver and rival-thesis inputs actually consumed downstream.",
             ))
     path = _resolve_explicit_ref(output, investment_overlay_path)
     if not path.is_file():

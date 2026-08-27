@@ -661,7 +661,6 @@ def _resolution(
     central_path: dict[str, Any],
     central_traces: list[dict[str, Any]],
     source_eligibility: dict[str, str],
-    transmissions: list[dict[str, Any]],
 ) -> str:
     if requested not in RESOLUTIONS:
         raise EnterpriseJudgmentCoreError("judgment_input.resolution_invalid")
@@ -673,13 +672,11 @@ def _resolution(
         raise EnterpriseJudgmentCoreError("abstention_resolution_cannot_define_central_path")
     if not central_traces or any(source_eligibility.get(item.get("source_ref")) != "ELIGIBLE" for item in central_traces):
         return "NO_PRIMARY"
-    normal = _aggregate_direction(transmissions, "NORMAL_EARNINGS")
-    cash = _aggregate_direction(transmissions, "OWNER_CASH")
-    if requested == "MIXED" or normal == "MIXED" or cash == "MIXED":
-        return "MIXED"
-    if normal in {"IMPROVES", "DETERIORATES"} and cash != normal:
-        return "MIXED"
-    return "PRIMARY"
+    # ``resolution`` answers whether the evidenced central operating mechanism
+    # is the current primary explanation.  Earnings, owner cash and permanent
+    # loss remain separate transmission axes below; an unresolved or opposing
+    # downstream axis must constrain only the claim or action that consumes it.
+    return requested
 
 
 def _validate_forward_judgments(
@@ -809,7 +806,7 @@ def compile_cjo_candidate(
     central_transmissions = [transmission_by_id[item] for item in central_transmission_ids]
     resolution = _resolution(
         judgment["resolution"], central_path, central_traces,
-        source_eligibility, central_transmissions,
+        source_eligibility,
     )
     if resolution == "NO_PRIMARY":
         central_path = {}

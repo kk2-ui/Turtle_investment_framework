@@ -57,7 +57,7 @@ def _ok() -> dict:
 def _finding(task_id: str, source_id: str) -> dict:
     return {
         "schema_version": "judgment-research-finding.v1", "task_id": task_id,
-        "resolution": "UNRESOLVED", "prior_claim": "原主张仍需要更多证据才能确认",
+        "resolution": "UNRESOLVED", "prior_claim": "外部股东能够取得留存价值",
         "evidence_items": [{"source_id": source_id, "source_kind": "primary_filing", "directness": "CONTEXT", "relation": "context", "fact": "公开材料未提供具有区分力的新事实", "as_of": "2026-08-02"}],
         "strongest_alternative": "公开披露可能遗漏关键的治理安排",
         "discriminating_result": "本次材料不能区分原主张和替代解释",
@@ -66,6 +66,23 @@ def _finding(task_id: str, source_id: str) -> dict:
         "confidence_update": {"before": 0.5, "after": 0.5, "basis": "没有新增区分性证据"},
         "valuation_impact": {"state": "NONE", "basis": "没有估值输入发生变化", "changes": []},
         "action_impact": {"state": "NONE", "basis": "没有动作依据发生变化", "changes": []},
+        "uncertainty_closure": {
+            "affected_axis": "OWNER_CASH",
+            "current_position": {
+                "state": "EXCLUDE_FROM_BASE_CASE",
+                "claim_ref": "外部股东能够取得留存价值",
+                "basis": "公开材料没有责任匹配的分红与关联交易现金证据",
+            },
+            "base_case_treatment": {
+                "state": "EXCLUDE",
+                "economic_consequence": "CASH_ACCESS_DISCOUNT_RETAINED",
+            },
+            "next_observation": {
+                "metric_or_event": "下一份分红决议和关联交易现金流",
+                "supports_current": {"kind": "EVENT", "operator": "DOES_NOT_OCCUR", "event_definition": "可持续分红且无材料关联流出"},
+                "reverses_current": {"kind": "EVENT", "operator": "OCCURS", "event_definition": "可持续分红且无材料关联流出"},
+            },
+        },
         "chapter_update": {"needed": False, "chapters": [], "reason": "正文无需更新"},
     }
 

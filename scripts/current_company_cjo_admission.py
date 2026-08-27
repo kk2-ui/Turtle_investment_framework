@@ -135,6 +135,27 @@ def _bridge_index(bridge: dict[str, Any]) -> tuple[dict[str, dict[str, Any]], di
     return drivers, events
 
 
+def _binding_consumption(candidate: dict[str, Any], contract: dict[str, Any]) -> tuple[bool, bool]:
+    transmissions = {
+        str(item.get("transmission_id")): item
+        for item in map(
+            _mapping,
+            _items(_mapping(candidate.get("enterprise_system_ref")).get("financial_transmissions")),
+        )
+        if _text(item.get("transmission_id"))
+    }
+    bindings = _items(_mapping(contract.get("primary_binding")).get("forward_judgment_bindings"))
+    consumes_cash_or_loss = any(
+        _mapping(transmissions.get(transmission_id)).get("layer") in {"OWNER_CASH", "PERMANENT_LOSS"}
+        for raw in bindings
+        for transmission_id in _ids(_mapping(raw).get("cjo_transmission_ids"))
+    )
+    consumes_allocation = any(
+        _ids(_mapping(raw).get("allocation_event_ids")) for raw in bindings
+    )
+    return consumes_cash_or_loss, consumes_allocation
+
+
 def _monitoring_binds(contract: Any, thesis_fj_id: str) -> bool:
     item = _mapping(contract)
     return (
@@ -246,17 +267,9 @@ def _primary_binding_findings(
         for item in map(_mapping, _items(_mapping(candidate.get("enterprise_system_ref")).get("financial_transmissions")))
         if _text(item.get("transmission_id"))
     }
-    central_transmissions = {
-        transmission_id
-        for trace in map(_mapping, _items(candidate.get("traceability")))
-        if trace.get("trace_id") in candidate_central_trace_ids
-        for transmission_id in _ids(trace.get("financial_transmission_ids"))
-    }
     drivers, events = _bridge_index(financial_driver_bridge)
     seen_cjo: set[str] = set()
     seen_thesis: set[str] = set()
-    bound_variables: set[str] = set()
-    bound_transmissions: set[str] = set()
     for index, raw in enumerate(raw_bindings):
         path = f"admission_contract.primary_binding.forward_judgment_bindings[{index}]"
         item = _mapping(raw)
@@ -321,8 +334,6 @@ def _primary_binding_findings(
         driver_ids = _exact_id_list(item.get("financial_driver_ids"), path=path + ".financial_driver_ids", findings=findings)
         variable_ids = _exact_id_list(item.get("cjo_variable_ids"), path=path + ".cjo_variable_ids", findings=findings)
         transmission_ids = _exact_id_list(item.get("cjo_transmission_ids"), path=path + ".cjo_transmission_ids", findings=findings)
-        bound_variables.update(variable_ids)
-        bound_transmissions.update(transmission_ids)
         for variable_id in variable_ids:
             if variable_id not in variables:
                 _add(findings, path + ".cjo_variable_id_unknown:" + variable_id)
@@ -364,13 +375,6 @@ def _primary_binding_findings(
                 _add(findings, path + ".material_allocation_event_not_resolved:" + str(event_id))
             if not _realization_binds(event.get("realization_contract"), str(thesis_id)):
                 _add(findings, path + ".allocation_event_realization_not_bound:" + str(event_id))
-    if set(cjo_judgments) != seen_cjo:
-        _add(findings, "admission_contract.primary_binding.cjo_forward_judgments_must_all_be_bound")
-    if set(variables) != bound_variables:
-        _add(findings, "admission_contract.primary_binding.cjo_variables_must_all_be_bound")
-    if central_transmissions != bound_transmissions:
-        _add(findings, "admission_contract.primary_binding.central_transmissions_must_all_be_bound")
-
     if pair is not None:
         selected_side = _selected_pair_side(pair, thesis_test_ledger)
         for item in map(_mapping, _items(pair.get("critical_assumptions"))):
@@ -599,11 +603,12 @@ def validate_current_company_cjo_admission(
         _add(findings, "financial_driver_bridge_missing")
         bridge_validation: dict[str, Any] = {"state": "MISSING", "invalid_findings": [], "incomplete_findings": []}
     else:
+        consumes_cash_or_loss, consumes_allocation = _binding_consumption(candidate_value, contract)
         bridge_validation = financial_bridge.validate_financial_driver_bridge(
             bridge,
             output_dir=_validation_context(validation_dir),
-            require_allocation_commitment_trace=True,
-            require_cash_normalization_contract=True,
+            require_allocation_commitment_trace=consumes_allocation,
+            require_cash_normalization_contract=consumes_cash_or_loss,
         )
         if bridge_validation.get("state") != "REVIEWABLE":
             _add(findings, "financial_driver_bridge_not_reviewable:" + str(bridge_validation.get("state")))

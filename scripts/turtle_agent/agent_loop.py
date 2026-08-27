@@ -1400,6 +1400,9 @@ pit_read_source，且只可按 allowlist 路径调用 pit_read_framework。禁�
   directness=DIRECT|INDIRECT|CONTEXT、relation=supports|contradicts|context、fact/as_of）、strongest_alternative、discriminating_result、inference、
   applicability_conditions、confidence_update（before/after/basis；可用0-1数字，也可用有依据的定性描述，禁止为了过门编造概率）、valuation_impact与action_impact
   （state=NONE/CHANGED/UNCERTAIN、basis、changes）、chapter_update（needed/chapters/reason）。
+- resolution为UNRESOLVED或PUBLIC_INFO_UNAVAILABLE时还必须填写uncertainty_closure：affected_axis，current_position（state、逐字绑定prior_claim的claim_ref、basis），
+  base_case_treatment（state与结构化economic_consequence）和next_observation（具体metric_or_event，以及两个可结算结果：NUMERIC_THRESHOLD必须给operator/value/unit；EVENT必须给operator/event_definition）。
+  “所有影响未知”“保持未知等待资料”“若以后有披露则升级”都不是当前判断或判别观察；不要求强行改变决策，但必须选择条件保留、收窄、排除基准、反转或区间处理之一。
 - “有新事实但不改变决策”用EVIDENCE_FOUND且影响state=NONE；NO_DECISION_CHANGE表示核验后没有新增的决策相关证据。
 - PUBLIC_INFO_UNAVAILABLE要求所有required_tools至少真实尝试一次；失败或空结果不算成功证据，但允许作为“已检索仍不可得”的停止依据。
 - 最后必须调用complete_judgment_research_task；结构化finding不完整时执行账本会标记VIOLATION。

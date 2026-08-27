@@ -1731,6 +1731,179 @@ def _render_cjo_prediction(prediction: dict[str, Any]) -> str:
     return "；".join(part for part in (metric, target_text, timing) if part)
 
 
+def _bound_frozen_cjo_for_summary(
+    output_dir: str | os.PathLike[str],
+) -> dict[str, Any] | None:
+    """Return the canonical CJO when the analysis contract binds one.
+
+    Assembly already requires a current read receipt. Rebuilding the same
+    read-only projection here prevents a stale local thesis from becoming a
+    second reader-facing truth source.
+    """
+    output = Path(output_dir)
+    try:
+        contract = json.loads(
+            (output / "analysis_contract.json").read_text(encoding="utf-8")
+        )
+    except (OSError, json.JSONDecodeError):
+        return None
+    refs = contract.get("canonical_judgment_refs")
+    frozen_ref = refs.get("frozen_cjo_ref") if isinstance(refs, dict) else None
+    if not str(frozen_ref or "").strip():
+        return None
+    try:
+        from scripts.judgment_generation_handoff import (
+            build_judgment_generation_handoff,
+        )
+    except ModuleNotFoundError:
+        from judgment_generation_handoff import build_judgment_generation_handoff
+    handoff = build_judgment_generation_handoff(output, "JUDGMENT_SYNTHESIS")
+    readiness = handoff.get("readiness") if isinstance(handoff.get("readiness"), dict) else {}
+    if readiness.get("state") != "READY":
+        findings = list(readiness.get("invalid_findings") or []) + list(
+            readiness.get("incomplete_findings") or []
+        )
+        raise RuntimeError(
+            "Canonical Frozen CJO is bound but not readable: "
+            + ", ".join(str(item) for item in findings)
+        )
+    projection = handoff.get("projection") if isinstance(handoff.get("projection"), dict) else {}
+    frozen = projection.get("frozen_cjo")
+    if not isinstance(frozen, dict) or not frozen:
+        raise RuntimeError("Canonical JUDGMENT_SYNTHESIS omitted its bound Frozen CJO")
+    return frozen
+
+
+def _render_frozen_cjo_summary(frozen: dict[str, Any]) -> str:
+    thesis_resolution = str(frozen.get("resolution") or "UNKNOWN")
+    direction_labels = {
+        "IMPROVES": "改善", "DETERIORATES": "恶化", "STABLE": "稳定",
+        "MIXED": "正反信号并存", "UNKNOWN": "尚不确定",
+    }
+    status_labels = {
+        "OPEN": "等待结算", "SUPPORTED": "当前证据支持",
+        "UNKNOWN": "局部未知", "CONTRADICTED": "当前证据反驳",
+        "MODEL_UNCERTAIN": "机制仍待检验", "EVIDENCE_INELIGIBLE": "现有证据不适用",
+    }
+    central = frozen.get("central_path") if isinstance(frozen.get("central_path"), dict) else {}
+    judgments = [
+        item for item in frozen.get("forward_judgments") or [] if isinstance(item, dict)
+    ]
+    transmissions = {
+        str(item.get("transmission_id") or ""): item
+        for item in (frozen.get("enterprise_system_ref") or {}).get("financial_transmissions") or []
+        if isinstance(item, dict)
+    }
+    lines = [
+        "## 公司判断摘要", "",
+        "本摘要直接来自已绑定并独立签收的 Frozen CJO；本地草稿不能改写它。", "",
+        "### 当前主路径", "",
+    ]
+    if central:
+        lines.append(
+            _inline_report_text(central.get("claim"))
+            or "中心经营机制已经冻结，但文字主张尚未命名。"
+        )
+    else:
+        lines.append(
+            "当前未冻结唯一中心经营机制；这只限制唯一主路径选择，不撤回下列仍有证据的公司级判断。"
+        )
+    lines.extend(["", "### 当前公司判断", ""])
+    if judgments:
+        for index, judgment in enumerate(judgments, start=1):
+            claim = _inline_report_text(judgment.get("claim")) or "未命名判断"
+            status = status_labels.get(str(judgment.get("status") or ""), "等待进一步检验")
+            evidence = status_labels.get(str(judgment.get("evidence_state") or ""), "证据边界已保留")
+            direction = direction_labels.get(str(judgment.get("direction") or ""), "尚不确定")
+            horizon = _inline_report_text(judgment.get("horizon"))
+            observable = _inline_report_text(judgment.get("observable_condition"))
+            lines.append(
+                f"- **公司判断 {index}**：{claim}"
+                f"（方向：{direction}；状态：{status}；证据：{evidence}"
+                f"{f'；期限：{horizon}' if horizon else ''}）。"
+            )
+            if observable:
+                lines.append(f"  - 翻转或结算观察：{observable}。")
+    else:
+        lines.append("- 当前没有已冻结的前瞻判断；不得用事后叙事补成预测。")
+
+    lines.extend(["", "### 正常盈利、Owner Cash 与永久损失", ""])
+    for field, label in (
+        ("normal_earnings_transmission", "正常盈利"),
+        ("owner_cash_transmission", "Owner Cash"),
+    ):
+        summary = frozen.get(field) if isinstance(frozen.get(field), dict) else {}
+        direction = direction_labels.get(str(summary.get("direction") or ""), "尚不确定")
+        descriptions = [
+            _inline_report_text(transmissions.get(str(item), {}).get("description"))
+            for item in summary.get("transmission_ids") or []
+        ]
+        descriptions = [item for item in descriptions if item]
+        lines.append(
+            f"- **{label}**：{direction}"
+            + ("；" + "；".join(descriptions) if descriptions else "")
+            + "。"
+        )
+    loss_paths = [
+        item for item in frozen.get("permanent_loss_paths") or [] if isinstance(item, dict)
+    ]
+    if loss_paths:
+        for item in loss_paths:
+            lines.append(
+                "- **永久损失**："
+                + direction_labels.get(str(item.get("direction") or ""), "尚不确定")
+                + ("；" + _inline_report_text(item.get("description")) if item.get("description") else "")
+                + "。"
+            )
+    else:
+        lines.append("- **永久损失**：当前路径未闭合，保持局部未知。")
+
+    counter = frozen.get("strongest_counterargument")
+    counter = counter if isinstance(counter, dict) else {}
+    lines.extend([
+        "", "### 最强反方与数据边界", "",
+        "- **最强反方**：" + (
+            _inline_report_text(counter.get("claim")) or "尚未形成可检验的竞争解释"
+        ) + "。",
+    ])
+    for unknown in frozen.get("unknowns") or []:
+        if not isinstance(unknown, dict):
+            continue
+        description = _inline_report_text(unknown.get("description")) or "未命名未知"
+        treatment = _inline_report_text(unknown.get("conservative_treatment"))
+        closing = _inline_report_text(unknown.get("closing_evidence"))
+        lines.append(
+            f"- **局部未知**：{description}"
+            + (f"；当前处理：{treatment}" if treatment else "")
+            + (f"；翻转证据：{closing}" if closing else "")
+            + "。"
+        )
+    monitoring = frozen.get("monitoring_contract")
+    monitoring = monitoring if isinstance(monitoring, dict) else {}
+    signals = [
+        " / ".join(part for part in (
+            _inline_report_text(item.get("source_class")),
+            _inline_report_text(item.get("frequency")),
+        ) if part)
+        for item in monitoring.get("signals") or [] if isinstance(item, dict)
+    ]
+    signals = [item for item in signals if item]
+    if signals:
+        lines.append("- **后续监控**：" + "；".join(signals) + "。")
+    lines.extend([
+        "",
+        {
+            "PRIMARY": "当前已有一条证据更充分的中心经营机制。",
+            "MIXED": "当前多条竞争机制仍需共同保留。",
+            "NO_PRIMARY": "当前未冻结唯一中心经营机制，但局部公司判断继续有效。",
+            "UNKNOWN": "当前中心经营机制尚不确定，但局部公司判断继续有效。",
+        }.get(thesis_resolution, "当前中心经营机制仍待检验。")
+        + " 本摘要不授予估值、买价或投资动作权限。",
+        "",
+    ])
+    return "\n".join(lines)
+
+
 def _render_company_judgment_summary(
     output_dir: str | os.PathLike[str], company_name: str, ts_code: str
 ) -> str:
@@ -1741,6 +1914,9 @@ def _render_company_judgment_summary(
     fields encode market, valuation and action semantics.
     """
     del company_name, ts_code
+    frozen = _bound_frozen_cjo_for_summary(output_dir)
+    if frozen is not None:
+        return _render_frozen_cjo_summary(frozen)
     try:
         thesis = json.loads(
             Path(output_dir, "thesis_test.json").read_text(encoding="utf-8")
@@ -3809,6 +3985,22 @@ complete_judgment_research_task_tool._tool_meta = {
                     "state": {"type": "string", "enum": ["NONE", "CHANGED", "UNCERTAIN"]},
                     "basis": {"type": "string"}, "changes": {"type": "array", "items": {"type": "string"}}
                 }, "required": ["state", "basis", "changes"]},
+                "uncertainty_closure": {"type": "object", "description": "resolution为UNRESOLVED或PUBLIC_INFO_UNAVAILABLE时必填：明确受影响经济轴、当前条件判断、基准情景处理，以及支持和推翻判断的具体观察；等待披露不是观察", "optional": True, "properties": {
+                    "affected_axis": {"type": "string", "enum": ["OPERATING_MECHANISM", "CUSTOMER_DEMAND", "NORMAL_EARNINGS", "OWNER_CASH", "PERMANENT_LOSS", "VALUATION", "ACTION"]},
+                    "current_position": {"type": "object", "properties": {
+                        "state": {"type": "string", "enum": ["RETAIN_CONDITIONALLY", "NARROW_PRIOR", "EXCLUDE_FROM_BASE_CASE", "REVERSE_PRIOR", "RANGE_ONLY"]},
+                        "claim_ref": {"type": "string", "description": "必须逐字等于该任务research_question/prior_claim"}, "basis": {"type": "string"}
+                    }, "required": ["state", "claim_ref", "basis"]},
+                    "base_case_treatment": {"type": "object", "properties": {
+                        "state": {"type": "string", "enum": ["EXCLUDE", "CONDITIONAL_INCLUDE", "WIDEN_RANGE", "LOWER_CONFIDENCE", "RETAIN_WITHOUT_UPGRADE"]},
+                        "economic_consequence": {"type": "string", "enum": ["UPSIDE_WITHHELD", "DOWNSIDE_RETAINED", "RANGE_WIDENED", "CASH_ACCESS_DISCOUNT_RETAINED", "NORMAL_EARNINGS_CREDIT_WITHHELD", "ACTION_WITHHELD", "CLOSED_AXES_UNCHANGED"]}
+                    }, "required": ["state", "economic_consequence"]},
+                    "next_observation": {"type": "object", "properties": {
+                        "metric_or_event": {"type": "string"},
+                        "supports_current": {"type": "object", "description": "可结算分支。NUMERIC_THRESHOLD给value/unit；EVENT给event_definition；不得写‘支持判断’等循环条件", "properties": {"kind": {"type": "string", "enum": ["NUMERIC_THRESHOLD", "EVENT"]}, "operator": {"type": "string", "enum": ["ABOVE", "AT_OR_ABOVE", "BELOW", "AT_OR_BELOW", "OCCURS", "DOES_NOT_OCCUR"]}, "value": {"type": "number", "optional": True}, "unit": {"type": "string", "optional": True}, "event_definition": {"type": "string", "optional": True}}, "required": ["kind", "operator"]},
+                        "reverses_current": {"type": "object", "description": "可结算分支。NUMERIC_THRESHOLD给value/unit；EVENT给event_definition；不得写‘反对判断’等循环条件", "properties": {"kind": {"type": "string", "enum": ["NUMERIC_THRESHOLD", "EVENT"]}, "operator": {"type": "string", "enum": ["ABOVE", "AT_OR_ABOVE", "BELOW", "AT_OR_BELOW", "OCCURS", "DOES_NOT_OCCUR"]}, "value": {"type": "number", "optional": True}, "unit": {"type": "string", "optional": True}, "event_definition": {"type": "string", "optional": True}}, "required": ["kind", "operator"]}
+                    }, "required": ["metric_or_event", "supports_current", "reverses_current"]}
+                }, "required": ["affected_axis", "current_position", "base_case_treatment", "next_observation"]},
                 "chapter_update": {"type": "object", "properties": {
                     "needed": {"type": "boolean"}, "chapters": {"type": "array", "items": {"type": "integer"}},
                     "reason": {"type": "string"}

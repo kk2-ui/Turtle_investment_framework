@@ -97,6 +97,198 @@ def test_finding_rejects_undeclared_source_and_false_decision_transmission(tmp_p
     assert "no_change_outcome_with_changed_impact" in mismatch["invalid_findings"]
 
 
+def test_unresolved_finding_requires_an_economic_uncertainty_closure(tmp_path: Path) -> None:
+    plan = _setup(tmp_path)
+    task = plan["tasks"][0]
+    finding = _finding()
+    finding["resolution"] = "UNRESOLVED"
+    finding["evidence_items"][0]["relation"] = "context"
+    finding["evidence_items"][0]["directness"] = "CONTEXT"
+    result = validate_judgment_research_finding(
+        finding, task=task, outcome="NO_DECISION_CHANGE",
+        source_ids=["JR001:S02:read_section"],
+    )
+    assert result["state"] == "INCOMPLETE"
+    assert "uncertainty_closure_missing" in result["incomplete_findings"]
+
+    finding["uncertainty_closure"] = {
+        "affected_axis": "OWNER_CASH",
+        "current_position": {
+            "state": "EXCLUDE_FROM_BASE_CASE",
+            "claim_ref": "外部股东可以取得留存价值",
+            "basis": "现有资料没有责任匹配的分红与关联交易现金证据",
+        },
+        "base_case_treatment": {
+            "state": "EXCLUDE",
+            "economic_consequence": "CASH_ACCESS_DISCOUNT_RETAINED",
+        },
+        "next_observation": {
+            "metric_or_event": "下一份分红决议和关联交易现金流",
+            "supports_current": {"kind": "EVENT", "operator": "DOES_NOT_OCCUR", "event_definition": "可持续分红且无材料关联流出"},
+            "reverses_current": {"kind": "EVENT", "operator": "OCCURS", "event_definition": "可持续分红且无材料关联流出"},
+        },
+    }
+    accepted = validate_judgment_research_finding(
+        finding, task=task, outcome="NO_DECISION_CHANGE",
+        source_ids=["JR001:S02:read_section"],
+    )
+    assert accepted["state"] == "VALID"
+
+
+def test_uncertainty_closure_rejects_structured_defensive_non_judgment(tmp_path: Path) -> None:
+    plan = _setup(tmp_path)
+    task = plan["tasks"][0]
+    finding = _finding()
+    finding["resolution"] = "UNRESOLVED"
+    finding["evidence_items"][0]["relation"] = "context"
+    finding["evidence_items"][0]["directness"] = "CONTEXT"
+    finding["uncertainty_closure"] = {
+        "affected_axis": "VALUATION",
+        "current_position": {
+            "state": "RETAIN_CONDITIONALLY",
+            "claim_ref": "外部股东可以取得留存价值",
+            "basis": "公开资料不足以支持本次判断升级",
+        },
+        "base_case_treatment": {
+            "state": "RETAIN_WITHOUT_UPGRADE",
+            "economic_consequence": "CLOSED_AXES_UNCHANGED",
+        },
+        "next_observation": {
+            "metric_or_event": "下一次公司公告中的经营指标",
+            "supports_current": {"kind": "EVENT", "operator": "OCCURS", "event_definition": "客户订单变化能够支持当前判断"},
+            "reverses_current": {"kind": "EVENT", "operator": "DOES_NOT_OCCUR", "event_definition": "客户订单变化不能支持当前判断"},
+        },
+    }
+
+    result = validate_judgment_research_finding(
+        finding, task=task, outcome="NO_DECISION_CHANGE",
+        source_ids=["JR001:S02:read_section"],
+    )
+
+    assert result["state"] == "INVALID"
+    assert "uncertainty_closure:next_observation_not_discriminating" in result["invalid_findings"]
+    assert "uncertainty_closure:next_observation_supports_current_event_refers_to_judgment" in result["invalid_findings"]
+    assert "uncertainty_closure:next_observation_reverses_current_event_refers_to_judgment" in result["invalid_findings"]
+
+
+def test_uncertainty_closure_accepts_numeric_discriminating_thresholds(tmp_path: Path) -> None:
+    plan = _setup(tmp_path)
+    task = plan["tasks"][0]
+    finding = _finding()
+    finding["resolution"] = "UNRESOLVED"
+    finding["evidence_items"][0].update({"relation": "context", "directness": "CONTEXT"})
+    finding["uncertainty_closure"] = {
+        "affected_axis": "CUSTOMER_DEMAND",
+        "current_position": {
+            "state": "NARROW_PRIOR",
+            "claim_ref": "外部股东可以取得留存价值",
+            "basis": "当前留存率不足以支持把全部增长写入基准经营情景",
+        },
+        "base_case_treatment": {
+            "state": "LOWER_CONFIDENCE",
+            "economic_consequence": "UPSIDE_WITHHELD",
+        },
+        "next_observation": {
+            "metric_or_event": "下一年度责任匹配客户十二月留存率",
+            "supports_current": {"kind": "NUMERIC_THRESHOLD", "operator": "AT_OR_ABOVE", "value": 80, "unit": "PCT"},
+            "reverses_current": {"kind": "NUMERIC_THRESHOLD", "operator": "BELOW", "value": 60, "unit": "PCT"},
+        },
+    }
+
+    result = validate_judgment_research_finding(
+        finding, task=task, outcome="NO_DECISION_CHANGE",
+        source_ids=["JR001:S02:read_section"],
+    )
+
+    assert result["state"] == "VALID"
+
+
+def test_uncertainty_closure_rejects_numeric_branches_that_can_both_be_true(tmp_path: Path) -> None:
+    plan = _setup(tmp_path)
+    task = plan["tasks"][0]
+    finding = _finding()
+    finding["resolution"] = "UNRESOLVED"
+    finding["evidence_items"][0].update({"relation": "context", "directness": "CONTEXT"})
+    finding["uncertainty_closure"] = {
+        "affected_axis": "CUSTOMER_DEMAND",
+        "current_position": {
+            "state": "NARROW_PRIOR",
+            "claim_ref": "外部股东可以取得留存价值",
+            "basis": "当前留存率不足以支持把全部增长写入基准经营情景",
+        },
+        "base_case_treatment": {
+            "state": "LOWER_CONFIDENCE",
+            "economic_consequence": "UPSIDE_WITHHELD",
+        },
+        "next_observation": {
+            "metric_or_event": "下一年度责任匹配客户十二月留存率",
+            "supports_current": {"kind": "NUMERIC_THRESHOLD", "operator": "AT_OR_ABOVE", "value": 60, "unit": "PCT"},
+            "reverses_current": {"kind": "NUMERIC_THRESHOLD", "operator": "AT_OR_BELOW", "value": 80, "unit": "PCT"},
+        },
+    }
+
+    result = validate_judgment_research_finding(
+        finding, task=task, outcome="NO_DECISION_CHANGE",
+        source_ids=["JR001:S02:read_section"],
+    )
+
+    assert result["state"] == "INVALID"
+    assert "uncertainty_closure:next_observation_numeric_branches_overlap" in result["invalid_findings"]
+
+    finding["uncertainty_closure"]["next_observation"]["supports_current"]["value"] = 80
+    finding["uncertainty_closure"]["next_observation"]["reverses_current"].update({"value": 60, "unit": "RATIO"})
+    unit_mismatch = validate_judgment_research_finding(
+        finding, task=task, outcome="NO_DECISION_CHANGE",
+        source_ids=["JR001:S02:read_section"],
+    )
+    assert "uncertainty_closure:next_observation_numeric_units_mismatch" in unit_mismatch["invalid_findings"]
+
+    finding["uncertainty_closure"]["next_observation"]["reverses_current"].update({"operator": "ABOVE", "unit": "PCT"})
+    same_direction = validate_judgment_research_finding(
+        finding, task=task, outcome="NO_DECISION_CHANGE",
+        source_ids=["JR001:S02:read_section"],
+    )
+    assert "uncertainty_closure:next_observation_numeric_branches_not_opposed" in same_direction["invalid_findings"]
+
+
+def test_missing_information_task_must_convert_question_into_bounded_position(tmp_path: Path) -> None:
+    plan = _setup(tmp_path)
+    task = dict(plan["tasks"][0])
+    task["origin"] = "missing_information"
+    finding = _finding()
+    finding["resolution"] = "UNRESOLVED"
+    finding["evidence_items"][0].update({"relation": "context", "directness": "CONTEXT"})
+    finding["uncertainty_closure"] = {
+        "affected_axis": "OWNER_CASH",
+        "current_position": {
+            "state": "RETAIN_CONDITIONALLY",
+            "claim_ref": "外部股东可以取得留存价值",
+            "basis": "公司有经营现金但公开资料没有责任匹配的上游分配证据",
+        },
+        "base_case_treatment": {
+            "state": "EXCLUDE",
+            "economic_consequence": "CASH_ACCESS_DISCOUNT_RETAINED",
+        },
+        "next_observation": {
+            "metric_or_event": "下一年度责任匹配的上游现金分配",
+            "supports_current": {"kind": "EVENT", "operator": "DOES_NOT_OCCUR", "event_definition": "持续上游现金分配"},
+            "reverses_current": {"kind": "EVENT", "operator": "OCCURS", "event_definition": "持续上游现金分配"},
+        },
+    }
+    retained_question = validate_judgment_research_finding(
+        finding, task=task, outcome="NO_DECISION_CHANGE",
+        source_ids=["JR001:S02:read_section"],
+    )
+    assert "uncertainty_closure:missing_information_cannot_retain_a_question" in retained_question["invalid_findings"]
+
+    finding["uncertainty_closure"]["current_position"]["state"] = "EXCLUDE_FROM_BASE_CASE"
+    bounded = validate_judgment_research_finding(
+        finding, task=task, outcome="NO_DECISION_CHANGE",
+        source_ids=["JR001:S02:read_section"],
+    )
+    assert bounded["state"] == "VALID"
+
+
 def test_completed_task_persists_valid_finding_and_requires_independent_review(tmp_path: Path) -> None:
     _setup(tmp_path)
     result = _execute_success(tmp_path)

@@ -529,6 +529,58 @@ def test_insufficient_evidence_preserves_no_primary_instead_of_manufacturing_pat
     assert "DETERIORATES" not in json.dumps(candidate["forward_judgments"][1], ensure_ascii=False)
 
 
+def test_ineligible_cash_trace_does_not_erase_an_operating_only_central_path() -> None:
+    package = _source_package(cash_eligibility="EVIDENCE_INELIGIBLE")
+    judgment = _judgment_input(cash_evidence_state="EVIDENCE_INELIGIBLE")
+    judgment["central_path"] = {
+        "claim": "Retention evidence supports the operating reset; cash realization remains separate.",
+        "trace_ids": ["TRACE:OPERATING"],
+    }
+    judgment["forward_judgments"][2].update({
+        "evidence_state": "EVIDENCE_INELIGIBLE", "direction": "UNKNOWN", "status": "UNKNOWN",
+    })
+
+    candidate = core.compile_cjo_candidate(
+        model=_model(source_package=package), ledger=_ledger(),
+        source_package=package, judgment_input=judgment,
+    )
+
+    assert candidate["resolution"] == "PRIMARY"
+    assert candidate["central_path"]["trace_ids"] == ["TRACE:OPERATING"]
+    assert candidate["normal_earnings_transmission"]["direction"] == "IMPROVES"
+    assert candidate["owner_cash_transmission"]["direction"] == "UNKNOWN"
+    assert candidate["forward_judgments"][1]["evidence_state"] == "EVIDENCE_INELIGIBLE"
+
+
+def test_supported_operating_path_stays_primary_when_cash_and_loss_axes_are_unknown() -> None:
+    package = _source_package()
+    model = _model(owner_cash_direction="UNKNOWN", source_package=package)
+    next(
+        item for item in model["financial_transmissions"]
+        if item["transmission_id"] == "TX:PERMANENT_LOSS"
+    )["direction"] = "UNKNOWN"
+    judgment = _judgment_input()
+    judgment["central_path"]["claim"] = (
+        "The implemented reset improves retention and normalized unit economics; "
+        "owner cash and permanent loss remain separate unresolved axes."
+    )
+    judgment["forward_judgments"][1].update({
+        "evidence_state": "MODEL_UNCERTAIN", "direction": "UNKNOWN", "status": "UNKNOWN",
+    })
+
+    candidate = core.compile_cjo_candidate(
+        model=model, ledger=_ledger(), source_package=package, judgment_input=judgment,
+    )
+
+    assert candidate["resolution"] == "PRIMARY"
+    assert candidate["central_path"]["trace_ids"] == ["TRACE:OPERATING", "TRACE:CASH", "TRACE:LOSS"]
+    assert candidate["normal_earnings_transmission"]["direction"] == "IMPROVES"
+    assert candidate["owner_cash_transmission"]["direction"] == "UNKNOWN"
+    assert candidate["permanent_loss_paths"][0]["direction"] == "UNKNOWN"
+    assert candidate["forward_judgments"][1]["status"] == "UNKNOWN"
+    assert candidate["forward_judgments"][2]["status"] == "UNKNOWN"
+
+
 def test_no_primary_can_freeze_with_three_monitorable_judgments() -> None:
     package = _source_package()
     candidate = core.compile_cjo_candidate(
@@ -543,22 +595,19 @@ def test_no_primary_can_freeze_with_three_monitorable_judgments() -> None:
     assert len(frozen["forward_judgments"]) == 3
 
 
-def test_operating_improvement_with_owner_cash_deterioration_stays_mixed() -> None:
+def test_operating_improvement_with_owner_cash_deterioration_preserves_separate_axes() -> None:
     package = _source_package()
     model = _model(owner_cash_direction="DETERIORATES", source_package=package)
     judgment = _judgment_input(resolution="PRIMARY")
     candidate = core.compile_cjo_candidate(
         model=model, ledger=_ledger(), source_package=package, judgment_input=judgment,
     )
-    assert candidate["resolution"] == "MIXED"
+    assert candidate["resolution"] == "PRIMARY"
     assert candidate["normal_earnings_transmission"]["direction"] == "IMPROVES"
     assert candidate["owner_cash_transmission"]["direction"] == "DETERIORATES"
     frozen = core.freeze_cjo(candidate=candidate, independent_review=_review(candidate))
-    overlay = quant.compile_synthetic_quantitative_overlay(
-        frozen_cjo=frozen, overlay_input=_overlay_input(50.0),
-    )
-    assert overlay["price_overlay"]["status"] == "MIXED_NO_DIRECTIONAL_CONCLUSION"
-    assert overlay["price_overlay"]["directional_investment_conclusion"] is None
+    assert frozen["resolution"] == "PRIMARY"
+    assert frozen["owner_cash_transmission"]["direction"] == "DETERIORATES"
 
 
 def test_different_prices_change_only_overlay_not_frozen_enterprise_judgment() -> None:

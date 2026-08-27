@@ -15,7 +15,7 @@ def _paragraphs() -> str:
             "估值采用正常现金流和经营价值模型，并同时展示股东回报率、当前价格、未来业务价值和期末市场价格。P_LONG是长期持有价格，P_XIRR是有限期限条件价格，二者身份不同。[source: 2025_年报.md]",
             "最强反方认为利润和现金可能继续下滑；如果债务失控或资产发生不可逆损失，就会形成永久资本毁灭。替代解释是周期恢复，后续数据可以证伪其中一条路径。[source: 2025_年报.md]",
             "投资者应跟踪利润、现金流和回款等指标；如果现金低于阈值或分派下降，就触发降级，如果经营改善达到阈值才升级判断。[source: 2025_年报.md]",
-            "年报提供了主要事实，但部分实体现金限制和未来回收金额未披露，当前估值仍是区间和条件判断，未知项会限制价格和动作置信度。[source: 2025_年报.md]",
+            "年报提供了主要事实，但部分实体现金限制和未来回收金额未披露，因此在责任匹配的分红或回款披露前不计入基准估值，未知项会限制owner cash、价格和动作置信度；若后续披露可上游现金则升级，否则维持折价。[source: 2025_年报.md]",
         ]
     )
 
@@ -41,6 +41,74 @@ def test_reader_coverage_accepts_unknown_with_economic_boundary(tmp_path: Path) 
 
     assert result["status"] == "PASS"
     assert all(item["status"] == "PASS" for item in result["topics"].values())
+    boundary = result["topics"]["data_boundaries"]
+    assert any(item["unknown_closure"] for item in boundary["evidence"])
+
+
+def test_reader_coverage_rejects_an_unknown_wall_with_one_global_source(tmp_path: Path) -> None:
+    text = "\n\n".join([
+        "产品、客户和收入机制全部未知，因为公司没有披露，所以无法判断业务怎样赚钱，只能等待更多资料。[source: 2025_年报.md]",
+        "收入、利润、现金流和正常盈利全部未知，因为资料不足，所以无法判断，也不改变任何结论，等待以后披露。",
+        "普通股、归母现金、少数股东和债务索取全部未知，因为没有资料，所以无法判断现金可达性，等待披露。",
+        "估值、回报、当前价和未来价格全部未知，因为缺少输入，所以无法计算或判断，动作维持不变并等待披露。",
+        "风险、反方、永久损失和替代解释全部未知，因为证据不足，所以无法判断资本是否会毁灭，等待披露。",
+        "后续监控指标、阈值、升级和降级条件全部未知，因为没有信息，所以只能继续跟踪和等待新的公开资料。",
+        "年报、来源、证据、假设和数据缺口全部未知，因为未披露，所以保持不确定，不对任何判断作处理。",
+    ])
+
+    result = evaluate_reader_coverage(text, tmp_path, archetype="general_operating")
+
+    assert result["status"] == "BLOCKED"
+    assert any(item.startswith("topic_missing:") for item in result["blocking_findings"])
+    assert not all(item["status"] == "PASS" for item in result["topics"].values())
+
+
+def test_reader_coverage_rejects_unknown_wall_with_closure_keywords(tmp_path: Path) -> None:
+    topics = [
+        "产品、客户与收入机制", "正常盈利与现金路线", "普通股现金可达性",
+        "估值、回报与价格身份", "反方与永久损失", "监控指标与触发条件",
+        "来源、假设与数据边界",
+    ]
+    text = "\n\n".join(
+        f"{topic}全部未知，因为未披露，所以保守不给结论，owner cash与估值区间后果未知；若后续披露则升级，否则维持折价。[source: 2025_年报.md]"
+        for topic in topics
+    )
+
+    result = evaluate_reader_coverage(text, tmp_path, archetype="general_operating")
+
+    assert result["status"] == "BLOCKED"
+    assert result["topics"]["business_mechanism"]["status"] == "FAIL"
+    assert result["topics"]["earnings_route"]["status"] == "FAIL"
+
+
+def test_local_unknown_requires_treatment_consequence_and_flip_fact(tmp_path: Path) -> None:
+    text = _paragraphs().replace(
+        "因此在责任匹配的分红或回款披露前不计入基准估值，未知项会限制owner cash、价格和动作置信度；若后续披露可上游现金则升级，否则维持折价。",
+        "因此当前全部未知并等待后续披露。",
+    )
+
+    result = evaluate_reader_coverage(text, tmp_path)
+
+    assert result["status"] == "BLOCKED"
+    assert "topic_missing:data_boundaries" in result["blocking_findings"]
+
+
+def test_local_unknown_does_not_erase_a_supported_affirmative_clause(tmp_path: Path) -> None:
+    mixed_business = (
+        "公司向经销商销售高端产品，客户因耐用性支付溢价，因此提价在销量稳定时转为更高收入；"
+        "但客户留存率未披露，仅限制复购强度判断。[source: 2025_年报.md]"
+    )
+    text = _paragraphs().replace(
+        "公司提供面向客户的核心产品和服务，支付方通过定价购买，收入来自销售和持续使用。这个业务在产业链中承担服务入口角色，因此读者需要先理解客户为什么付钱以及公司怎样把服务变成收入。[source: 2025_年报.md]",
+        mixed_business,
+    )
+
+    result = evaluate_reader_coverage(text, tmp_path)
+
+    assert result["status"] == "PASS"
+    business = result["topics"]["business_mechanism"]
+    assert business["status"] == "PASS"
+    assert any(item["unknown"] for item in business["evidence"])
 
 
 def test_archetype_route_uses_asset_cash_questions(tmp_path: Path) -> None:

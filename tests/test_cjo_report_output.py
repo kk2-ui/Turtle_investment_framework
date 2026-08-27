@@ -5,7 +5,11 @@ from pathlib import Path
 from types import SimpleNamespace
 
 from scripts.reader_coverage import evaluate_reader_coverage
+from scripts import enterprise_judgment_core as enterprise_core
 from scripts.turtle_agent.tools import read_tools, write_tools
+from tests.test_enterprise_judgment_core import (
+    _frozen_cjo, _judgment_input, _ledger, _model, _review, _source_package,
+)
 
 
 def _write_json(path: Path, payload: dict) -> None:
@@ -27,7 +31,7 @@ def _cjo_reader_text() -> str:
         "主路径认为渠道重构后核心客户留存恢复；竞争解释认为替代品侵蚀导致结构性流失。两条机制的区别要由同口径留存信号来判别。[source: annual.md]",
         "未来应监测同口径留存和单位经济指标；若信号低于冻结阈值，就在披露后结算并重新检验机制，而不是事后改写解释。[source: annual.md]",
         "最强反方是需求下滑扩展为永久经营损失；如果客户流失持续且投入无法收回，替代解释将成立并推翻当前机制。[source: annual.md]",
-        "年报提供了主要事实，但渠道库存尚未披露，属于 UNKNOWN；这个证据边界限制了当前判断，只能等待公司层面的同口径数据。[source: annual.md]",
+        "年报提供了主要事实，但渠道库存尚未披露，因此库存吸收不计入基准经营改善，正常盈利区间维持折价；若后续同口径库存与销量匹配则升级支持，若库存增长快于销量则下修正常盈利。[source: annual.md]",
     ])
 
 
@@ -137,6 +141,63 @@ def test_cjo_summary_exposes_critical_assumptions_and_their_boundary(tmp_path: P
     assert "将由前瞻信号检验：全渠道份额将在六个月内保持稳定" in summary
     assert "线上滑落代表广泛份额流失" in summary
     assert "不以线上排名裁决" in summary
+
+
+def test_bound_frozen_cjo_is_the_reader_summary_truth_source(tmp_path: Path) -> None:
+    frozen = _frozen_cjo()
+    canonical = tmp_path / "canonical"
+    canonical.mkdir()
+    frozen_path = canonical / "frozen_cjo.json"
+    _write_json(frozen_path, frozen)
+    _write_json(tmp_path / "analysis_contract.json", {
+        "report_id": frozen["company_id"],
+        "company_id": frozen["company_id"],
+        "analysis_purpose": "COMPANY_JUDGMENT_ONLY",
+        "data_as_of": frozen["cutoff_at"],
+        "canonical_judgment_refs": {"frozen_cjo_ref": str(frozen_path)},
+    })
+    _write_json(tmp_path / "thesis_test.json", {
+        "central_path": {"statement": "STALE LOCAL THESIS MUST NOT RENDER"},
+        "forward_judgments": [], "mechanism_chains": [],
+        "rival_hypothesis_pairs": [], "competitive_tests": [],
+    })
+
+    summary = write_tools._render_company_judgment_summary(
+        tmp_path, "测试公司", "000001.SZ",
+    )
+
+    assert frozen["central_path"]["claim"] in summary
+    assert frozen["strongest_counterargument"]["claim"] in summary
+    assert "STALE LOCAL THESIS MUST NOT RENDER" not in summary
+    assert "局部未知" in summary
+    assert "不授予估值、买价或投资动作权限" in summary
+
+
+def test_no_primary_frozen_cjo_keeps_local_company_judgments_in_summary(tmp_path: Path) -> None:
+    package = _source_package()
+    candidate = enterprise_core.compile_cjo_candidate(
+        model=_model(source_package=package), ledger=_ledger(), source_package=package,
+        judgment_input=_judgment_input(resolution="NO_PRIMARY", central=False),
+    )
+    frozen = enterprise_core.freeze_cjo(
+        candidate=candidate, independent_review=_review(candidate),
+    )
+    frozen_path = tmp_path / "frozen_cjo.json"
+    _write_json(frozen_path, frozen)
+    _write_json(tmp_path / "analysis_contract.json", {
+        "report_id": frozen["company_id"], "company_id": frozen["company_id"],
+        "analysis_purpose": "COMPANY_JUDGMENT_ONLY", "data_as_of": frozen["cutoff_at"],
+        "canonical_judgment_refs": {"frozen_cjo_ref": str(frozen_path)},
+    })
+
+    summary = write_tools._render_company_judgment_summary(
+        tmp_path, "测试公司", "000001.SZ",
+    )
+
+    assert "只限制唯一主路径选择，不撤回下列仍有证据的公司级判断" in summary
+    assert frozen["forward_judgments"][0]["claim"] in summary
+    assert frozen["strongest_counterargument"]["claim"] in summary
+    assert "需要先补足公司层面的可判别事实" not in summary
 
 
 def test_cjo_assembly_skips_decision_compiler_manifest_and_investment_memo(

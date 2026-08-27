@@ -138,6 +138,83 @@ def _expected_method_ids(methods: list[dict[str, Any]]) -> set[str]:
     return {str(item.get("identity") or "") for item in methods}
 
 
+def _transmission_layers(cjo: dict[str, Any]) -> tuple[dict[str, str], dict[str, set[str]]]:
+    transmission_layers = {
+        str(item.get("transmission_id") or ""): str(item.get("layer") or "")
+        for item in _items(_mapping(cjo.get("enterprise_system_ref")).get("financial_transmissions"))
+        if isinstance(item, dict)
+    }
+    trace_layers: dict[str, set[str]] = {}
+    for trace in _items(cjo.get("traceability")):
+        item = _mapping(trace)
+        trace_id = str(item.get("trace_id") or "")
+        if trace_id:
+            trace_layers[trace_id] = {
+                transmission_layers.get(str(transmission_id), "")
+                for transmission_id in _items(item.get("financial_transmission_ids"))
+                if transmission_layers.get(str(transmission_id), "")
+            }
+    return transmission_layers, trace_layers
+
+
+def _axis_is_closed_in_cjo(cjo: dict[str, Any], layer: str) -> tuple[bool, str]:
+    """Return whether the Frozen CJO itself supports downstream use of an axis."""
+    _, trace_layers = _transmission_layers(cjo)
+    if layer == "OWNER_CASH":
+        directions = [str(_mapping(cjo.get("owner_cash_transmission")).get("direction") or "")]
+    else:
+        directions = [
+            str(_mapping(item).get("direction") or "")
+            for item in _items(cjo.get("permanent_loss_paths"))
+        ]
+    if not directions or any(direction not in {"IMPROVES", "STABLE"} for direction in directions):
+        return False, "CJO_AXIS_DIRECTION_NOT_CLOSED"
+    for judgment in _items(cjo.get("forward_judgments")):
+        item = _mapping(judgment)
+        if not any(layer in trace_layers.get(str(trace_id), set()) for trace_id in _items(item.get("trace_ids"))):
+            continue
+        if item.get("evidence_state") in {"EVIDENCE_INELIGIBLE", "MODEL_UNCERTAIN"} or item.get("status") == "UNKNOWN":
+            return False, "CJO_AXIS_EVIDENCE_NOT_CLOSED"
+    return True, "CJO_AXIS_CLOSED"
+
+
+def _admission_consumes_layer(cjo: dict[str, Any], admission: dict[str, Any], layer: str) -> bool:
+    transmission_layers, _ = _transmission_layers(cjo)
+    binding = _mapping(_mapping(admission.get("candidate_binding")).get("primary_binding"))
+    for raw in _items(binding.get("forward_judgment_bindings")):
+        if any(
+            transmission_layers.get(str(transmission_id)) == layer
+            for transmission_id in _items(_mapping(raw).get("cjo_transmission_ids"))
+        ):
+            return True
+    return False
+
+
+def _effective_axis_closure(cjo: dict[str, Any], request: dict[str, Any]) -> dict[str, Any]:
+    admission = _mapping(request.get("cjo_admission"))
+    owner = _mapping(_mapping(request.get("financial_ranges")).get("owner_cash"))
+    requested_loss = str(_mapping(request.get("permanent_loss_assessment")).get("level") or "UNKNOWN")
+    cash_cjo_closed, cash_reason = _axis_is_closed_in_cjo(cjo, "OWNER_CASH")
+    loss_cjo_closed, loss_reason = _axis_is_closed_in_cjo(cjo, "PERMANENT_LOSS")
+    cash_binding = _admission_consumes_layer(cjo, admission, "OWNER_CASH")
+    loss_binding = _admission_consumes_layer(cjo, admission, "PERMANENT_LOSS")
+    cash_closed = owner.get("d4_status") == "CLOSED" and cash_cjo_closed and cash_binding
+    loss_closed = requested_loss in {"LOW", "MODERATE"} and loss_cjo_closed and loss_binding
+    effective_d4 = str(owner.get("d4_status") or "UNKNOWN")
+    if not cash_closed and effective_d4 == "CLOSED":
+        effective_d4 = "INELIGIBLE" if cash_reason == "CJO_AXIS_EVIDENCE_NOT_CLOSED" else "UNKNOWN"
+    return {
+        "cash_closed": cash_closed,
+        "effective_d4_status": effective_d4,
+        "cash_reason": cash_reason if not cash_cjo_closed else "ADMISSION_CASH_BINDING_MISSING" if not cash_binding else "REQUEST_D4_OPEN",
+        "permanent_loss_closed": loss_closed,
+        "effective_permanent_loss_level": (
+            requested_loss if requested_loss in {"HIGH", "UNKNOWN"} or loss_closed else "UNKNOWN"
+        ),
+        "permanent_loss_reason": loss_reason if not loss_cjo_closed else "ADMISSION_LOSS_BINDING_MISSING" if not loss_binding else "REQUEST_LOSS_OPEN",
+    }
+
+
 def validate_overlay_request(*, frozen_cjo: Any, overlay_request: Any) -> dict[str, Any]:
     """Validate the bounded, non-canonical input surface for an overlay."""
     cjo = _mapping(frozen_cjo)
@@ -421,14 +498,6 @@ def _expectation_gap(*, cjo: dict[str, Any], identities: list[dict[str, Any]], r
             "selected_requirement": None,
             "reason": "A non-PRIMARY Frozen CJO cannot become a directional investment conclusion.",
         }, requirements
-    if not cash_closed:
-        return {
-            "status": "EXPECTATION_GAP_UNKNOWN_D4_OPEN",
-            "direction": "UNKNOWN",
-            "value": None,
-            "selected_requirement": None,
-            "reason": "Owner cash is not D4-closed, so price cannot be converted to a dependable common-equity requirement.",
-        }, requirements
     if len(explainers) > 1:
         return {
             "status": "EXPECTATION_GAP_UNKNOWN_MULTIPLE_PLAUSIBLE_PARAMETER_SETS",
@@ -437,7 +506,10 @@ def _expectation_gap(*, cjo: dict[str, Any], identities: list[dict[str, Any]], r
             "selected_requirement": None,
             "reason": "More than one CJO-consistent operating identity explains the current price.",
         }, requirements
-    preferred = next((item for item in requirements if item["identity"] == "OWNER_CASH_CAPITALIZATION"), None)
+    preferred_identity = (
+        "OWNER_CASH_CAPITALIZATION" if cash_closed else "NORMAL_EARNINGS_CAPITALIZATION"
+    )
+    preferred = next((item for item in requirements if item["identity"] == preferred_identity), None)
     selected = explainers[0] if explainers else preferred
     if selected is None:
         return {
@@ -471,10 +543,12 @@ def compile_investment_overlay(*, frozen_cjo: Any, overlay_request: Any) -> dict
     if validation["state"] != "VALID":
         raise CJOQuantitativeInvestmentOverlayError("overlay_request_rejected:" + ",".join(validation["findings"]))
     request = deepcopy(_mapping(overlay_request))
+    axis_closure = _effective_axis_closure(cjo, request)
     financial = _mapping(request["financial_ranges"])
     share_count = float(financial["share_count"])
     normalized_range = _range(_mapping(financial["normalized_earnings"])["range"])
     owner_cash = _mapping(financial["owner_cash"])
+    effective_d4_status = str(axis_closure["effective_d4_status"])
     owner_cash_range = _range(owner_cash["range"])
     asset = _mapping(request["asset_identity"])
     asset_value = _range_math(
@@ -496,30 +570,29 @@ def compile_investment_overlay(*, frozen_cjo: Any, overlay_request: Any) -> dict
         ),
         _identity_result(
             methods["OWNER_CASH_CAPITALIZATION"],
-            status="USABLE" if owner_cash["d4_status"] == "CLOSED" else "UNAVAILABLE_D4_OWNER_CASH",
+            status="USABLE" if axis_closure["cash_closed"] else "UNAVAILABLE_D4_OWNER_CASH",
             total_value=(
                 _range_scale(owner_cash_range, 1 / float(methods["OWNER_CASH_CAPITALIZATION"]["capitalization_rate"]))
-                if owner_cash["d4_status"] == "CLOSED" else None
+                if axis_closure["cash_closed"] else None
             ),
             share_count=share_count,
             note=(
                 "D4-closed owner-cash identity."
-                if owner_cash["d4_status"] == "CLOSED"
-                else "Owner cash is not D4-closed; this identity cannot set a BuyBand."
+                if axis_closure["cash_closed"]
+                else "Owner cash is not closed in both the Frozen CJO and its consumed admission binding; this identity cannot set a BuyBand."
             ),
         ),
     ]
-    cash_closed = owner_cash["d4_status"] == "CLOSED"
+    cash_closed = bool(axis_closure["cash_closed"])
     expectation_gap, requirements = _expectation_gap(
         cjo=cjo, identities=identities, request=request, share_count=share_count, cash_closed=cash_closed,
     )
-    permanent_loss = _mapping(request["permanent_loss_assessment"])
     buy_band = _buy_band(
         cjo=cjo,
         cash_closed=cash_closed,
         cash_access_status=asset["cash_access_status"],
         capital_burden_closed=asset["capital_burden_status"] == "CLOSED",
-        permanent_loss_level=permanent_loss["level"],
+        permanent_loss_level=str(axis_closure["effective_permanent_loss_level"]),
         identities=identities,
         request=request,
     )
@@ -560,7 +633,7 @@ def compile_investment_overlay(*, frozen_cjo: Any, overlay_request: Any) -> dict
         "financial_ranges": {
             "share_count": share_count,
             "normalized_earnings": {"range": normalized_range, "cjo_direction": financial["normalized_earnings"]["cjo_direction"], "cjo_trace_ids": deepcopy(financial["normalized_earnings"]["cjo_trace_ids"])},
-            "owner_cash": {"range": owner_cash_range, "d4_status": owner_cash["d4_status"], "cjo_direction": owner_cash["cjo_direction"], "cjo_trace_ids": deepcopy(owner_cash["cjo_trace_ids"])},
+            "owner_cash": {"range": owner_cash_range, "d4_status": effective_d4_status, "cjo_direction": owner_cash["cjo_direction"], "cjo_trace_ids": deepcopy(owner_cash["cjo_trace_ids"])},
         },
         "asset_accessibility": {
             "cash_access_status": asset["cash_access_status"],

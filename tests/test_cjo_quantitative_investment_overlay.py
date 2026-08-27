@@ -121,7 +121,14 @@ def _synthetic_primary_admission(cjo: dict) -> dict:
             "candidate_id": review["candidate_id"],
             "compiled_at": cjo["compiled_at"],
             "source_package_id": cjo["source_package"]["source_package_id"],
-            "primary_binding": {"fixture": "synthetic-only"},
+            "primary_binding": {
+                "fixture": "synthetic-only",
+                "forward_judgment_bindings": [
+                    {"cjo_transmission_ids": ["TX:NORMAL_EARNINGS"]},
+                    {"cjo_transmission_ids": ["TX:OWNER_CASH"]},
+                    {"cjo_transmission_ids": ["TX:PERMANENT_LOSS"]},
+                ],
+            },
         },
         "independent_review_binding": {
             key: review[key] for key in ("review_id", "reviewer_id", "reviewed_at")
@@ -151,8 +158,54 @@ def _no_primary_cjo() -> dict:
     return core.freeze_cjo(candidate=candidate, independent_review=_review(candidate))
 
 
+def _operating_primary_with_unknown_cash_and_loss() -> dict:
+    package = _source_package()
+    model = _model(owner_cash_direction="UNKNOWN", source_package=package)
+    next(
+        item for item in model["financial_transmissions"]
+        if item["transmission_id"] == "TX:PERMANENT_LOSS"
+    )["direction"] = "UNKNOWN"
+    judgment = _judgment_input()
+    judgment["forward_judgments"][1].update({
+        "evidence_state": "MODEL_UNCERTAIN", "direction": "UNKNOWN", "status": "UNKNOWN",
+    })
+    candidate = core.compile_cjo_candidate(
+        model=model, ledger=_ledger(), source_package=package, judgment_input=judgment,
+    )
+    return core.freeze_cjo(candidate=candidate, independent_review=_review(candidate))
+
+
+def _actionable_cjo() -> dict:
+    package = _source_package()
+    judgment = _judgment_input()
+    judgment["forward_judgments"][2].update({
+        "evidence_state": "SUPPORTED", "direction": "IMPROVES", "status": "OPEN",
+    })
+    candidate = core.compile_cjo_candidate(
+        model=_model(source_package=package), ledger=_ledger(),
+        source_package=package, judgment_input=judgment,
+    )
+    return core.freeze_cjo(candidate=candidate, independent_review=_review(candidate))
+
+
+def _operating_primary_with_deteriorating_cash_and_loss() -> dict:
+    package = _source_package()
+    judgment = _judgment_input()
+    judgment["forward_judgments"][1].update({
+        "evidence_state": "SUPPORTED", "direction": "DETERIORATES", "status": "OPEN",
+    })
+    judgment["forward_judgments"][2].update({
+        "evidence_state": "SUPPORTED", "direction": "DETERIORATES", "status": "OPEN",
+    })
+    candidate = core.compile_cjo_candidate(
+        model=_model(owner_cash_direction="DETERIORATES", source_package=package),
+        ledger=_ledger(), source_package=package, judgment_input=judgment,
+    )
+    return core.freeze_cjo(candidate=candidate, independent_review=_review(candidate))
+
+
 def test_primary_cjo_compiles_to_candidate_only_asset_earnings_cash_overlay() -> None:
-    cjo = _frozen_cjo()
+    cjo = _actionable_cjo()
     before = deepcopy(cjo)
     request = _request(cjo)
     result = overlay.compile_investment_overlay(frozen_cjo=cjo, overlay_request=request)
@@ -184,7 +237,7 @@ def test_generic_frozen_cjo_cannot_bypass_the_current_company_admission_gate() -
 
 
 def test_price_changes_only_overlay_expectation_and_current_buyband_position() -> None:
-    cjo = _frozen_cjo()
+    cjo = _actionable_cjo()
     before = deepcopy(cjo)
     low = overlay.compile_investment_overlay(frozen_cjo=cjo, overlay_request=_request(cjo, price=30.0))
     high = overlay.compile_investment_overlay(frozen_cjo=cjo, overlay_request=_request(cjo, price=90.0))
@@ -214,7 +267,7 @@ def test_cjo_bound_normal_earnings_range_moves_value_and_research_boundary() -> 
 
 
 def test_inaccessible_book_cash_cannot_be_added_to_common_equity_or_open_buyband() -> None:
-    cjo = _frozen_cjo()
+    cjo = _actionable_cjo()
     result = overlay.compile_investment_overlay(
         frozen_cjo=cjo,
         overlay_request=_request(cjo, cash_access_status="INACCESSIBLE"),
@@ -229,7 +282,7 @@ def test_inaccessible_book_cash_cannot_be_added_to_common_equity_or_open_buyband
 
 
 def test_d4_open_and_high_permanent_loss_close_or_degrade_buyband() -> None:
-    cjo = _frozen_cjo()
+    cjo = _actionable_cjo()
     d4_open = overlay.compile_investment_overlay(
         frozen_cjo=cjo, overlay_request=_request(cjo, d4_status="UNRESOLVED"),
     )
@@ -237,10 +290,80 @@ def test_d4_open_and_high_permanent_loss_close_or_degrade_buyband() -> None:
         frozen_cjo=cjo, overlay_request=_request(cjo, permanent_loss_level="HIGH"),
     )
 
-    assert d4_open["price_overlay"]["expectation_gap"]["status"] == "EXPECTATION_GAP_UNKNOWN_D4_OPEN"
+    assert d4_open["price_overlay"]["expectation_gap"]["status"] == "EXPECTATION_GAP_UNIQUE_REFERENCE_OUTSIDE_RANGE"
+    assert d4_open["price_overlay"]["expectation_gap"]["selected_requirement"]["identity"] == (
+        "NORMAL_EARNINGS_CAPITALIZATION"
+    )
     assert d4_open["buy_band"]["conditional_buy_zone"]["state"] == "CLOSED_D4_OWNER_CASH"
     assert high_risk["buy_band"]["state"] == "BUY_BAND_CLOSED"
     assert high_risk["buy_band"]["permanent_loss_closure"] is True
+
+
+def test_unknown_cash_and_loss_preserve_earnings_research_but_withdraw_cash_action(tmp_path: Path) -> None:
+    cjo = _operating_primary_with_unknown_cash_and_loss()
+    request = _request(cjo, price=50.0, d4_status="CLOSED", permanent_loss_level="LOW")
+
+    result = overlay.compile_investment_overlay(frozen_cjo=cjo, overlay_request=request)
+
+    identities = {item["identity"]: item for item in result["value_identities"]}
+    assert identities["ASSET_TO_COMMON_EQUITY"]["status"] == "USABLE"
+    assert identities["NORMAL_EARNINGS_CAPITALIZATION"]["status"] == "USABLE"
+    assert identities["NORMAL_EARNINGS_CAPITALIZATION"]["per_share_value"]["base"] == 64.0
+    assert identities["OWNER_CASH_CAPITALIZATION"]["status"] == "UNAVAILABLE_D4_OWNER_CASH"
+    assert result["financial_ranges"]["owner_cash"]["d4_status"] == "UNKNOWN"
+    assert result["price_overlay"]["expectation_gap"]["status"] == "EXPECTATION_GAP_UNIQUE_REFERENCE"
+    assert result["price_overlay"]["expectation_gap"]["selected_requirement"]["identity"] == (
+        "NORMAL_EARNINGS_CAPITALIZATION"
+    )
+    assert result["buy_band"]["state"] == "BUY_BAND_CLOSED"
+    assert result["buy_band"]["research_zone"]["state"] == "RESEARCH_ONLY"
+    assert result["buy_band"]["research_zone"]["maximum_price"] is not None
+    assert result["buy_band"]["conditional_buy_zone"]["maximum_price"] is None
+
+    canonical = tmp_path / "canonical"
+    canonical.mkdir()
+    cjo_path = canonical / "frozen_cjo.json"
+    overlay_path = canonical / "investment_overlay.json"
+    admission_path = _write_current_company_admission(canonical, cjo)
+    cjo_path.write_text(json.dumps(cjo), encoding="utf-8")
+    overlay_path.write_text(json.dumps(result), encoding="utf-8")
+    (tmp_path / "analysis_contract.json").write_text(json.dumps({
+        "report_id": cjo["company_id"],
+        "company_id": cjo["company_id"],
+        "analysis_purpose": "INVESTMENT_DECISION",
+        "data_as_of": cjo["cutoff_at"],
+        "canonical_judgment_refs": {
+            "frozen_cjo_ref": str(cjo_path),
+            "investment_overlay_ref": str(overlay_path),
+            "current_company_cjo_admission_ref": str(admission_path),
+        },
+    }), encoding="utf-8")
+
+    handoff = generation_handoff.build_judgment_generation_handoff(
+        tmp_path, "INVESTMENT_ENRICHMENT", investment_overlay_path=overlay_path,
+    )
+    assert handoff["readiness"]["state"] == "READY"
+    projection = handoff["projection"]["quantitative_overlay"]
+    assert projection["valuation_identities"][1]["status"] == "USABLE"
+    assert projection["buy_band"]["conditional_buy_zone"]["maximum_price"] is None
+
+
+def test_deteriorating_cash_and_loss_cannot_be_overridden_by_optimistic_request() -> None:
+    cjo = _operating_primary_with_deteriorating_cash_and_loss()
+    request = _request(cjo, d4_status="CLOSED", permanent_loss_level="LOW")
+
+    result = overlay.compile_investment_overlay(frozen_cjo=cjo, overlay_request=request)
+
+    identities = {item["identity"]: item for item in result["value_identities"]}
+    assert cjo["resolution"] == "PRIMARY"
+    assert cjo["owner_cash_transmission"]["direction"] == "DETERIORATES"
+    assert identities["NORMAL_EARNINGS_CAPITALIZATION"]["status"] == "USABLE"
+    assert identities["OWNER_CASH_CAPITALIZATION"]["status"] == "UNAVAILABLE_D4_OWNER_CASH"
+    assert result["price_overlay"]["expectation_gap"]["selected_requirement"]["identity"] == (
+        "NORMAL_EARNINGS_CAPITALIZATION"
+    )
+    assert result["buy_band"]["state"] == "BUY_BAND_CLOSED"
+    assert result["buy_band"]["conditional_buy_zone"]["maximum_price"] is None
 
 
 @pytest.mark.parametrize("cjo_factory", [_no_primary_cjo, lambda: _frozen_cjo(owner_cash_direction="DETERIORATES")])

@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import re
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
@@ -17,6 +18,47 @@ RELATIONS = {"supports", "contradicts", "context"}
 SOURCE_KINDS = {"primary_filing", "official_data", "independent_dataset", "company_statement", "secondary_research", "market_data", "unknown"}
 DIRECTNESS = {"DIRECT", "INDIRECT", "CONTEXT"}
 IMPACT_STATES = {"NONE", "CHANGED", "UNCERTAIN"}
+UNCERTAINTY_AXES = {
+    "OPERATING_MECHANISM", "CUSTOMER_DEMAND", "NORMAL_EARNINGS",
+    "OWNER_CASH", "PERMANENT_LOSS", "VALUATION", "ACTION",
+}
+CURRENT_POSITION_STATES = {
+    "RETAIN_CONDITIONALLY", "NARROW_PRIOR", "EXCLUDE_FROM_BASE_CASE",
+    "REVERSE_PRIOR", "RANGE_ONLY",
+}
+BASE_CASE_TREATMENTS = {
+    "EXCLUDE", "CONDITIONAL_INCLUDE", "WIDEN_RANGE", "LOWER_CONFIDENCE",
+    "RETAIN_WITHOUT_UPGRADE",
+}
+ECONOMIC_CONSEQUENCES = {
+    "UPSIDE_WITHHELD", "DOWNSIDE_RETAINED", "RANGE_WIDENED",
+    "CASH_ACCESS_DISCOUNT_RETAINED", "NORMAL_EARNINGS_CREDIT_WITHHELD",
+    "ACTION_WITHHELD", "CLOSED_AXES_UNCHANGED",
+}
+NUMERIC_OBSERVATION_OPERATORS = {
+    "ABOVE", "AT_OR_ABOVE", "BELOW", "AT_OR_BELOW",
+}
+LOWER_BOUND_OPERATORS = {"ABOVE", "AT_OR_ABOVE"}
+UPPER_BOUND_OPERATORS = {"BELOW", "AT_OR_BELOW"}
+EVENT_OBSERVATION_OPERATORS = {"OCCURS", "DOES_NOT_OCCUR"}
+_DEFENSIVE_ONLY_RE = re.compile(
+    r"^(?:当前|仍然|仍|所以|因此|全部|所有|相关|经济影响|本次|继续|并|且|\s)*"
+    r"(?:无法(?:作出|进行)?(?:任何)?判断|(?:全部|所有).*未知|保持未知(?:并)?等待.*|"
+    r"经济影响(?:仍|也)?未知(?:并)?(?:维持)?不变|等待(?:未来|后续|新的|更多|公开)*.*(?:资料|披露|信息|数据))"
+    r"[。；;，,\s]*$",
+    re.I,
+)
+_GENERIC_OBSERVATION_RE = re.compile(
+    r"^(?:等待|查看|关注|取得|获取)?(?:未来|后续|下一次|新的|更多|公开|公司)*"
+    r"(?:资料|披露|信息|数据|公告|文件|经营指标|相关指标|公告中的经营指标)"
+    r"(?:资料|披露|信息|数据)?[。；;，,\s]*$",
+    re.I,
+)
+_DECISION_REFERENCE_RE = re.compile(
+    r"判断|结论|支持|反对|改变|调整|升级|降级|推翻|"
+    r"judg(?:e)?ment|conclusion|support|oppose|change|upgrade|downgrade|reverse",
+    re.I,
+)
 
 
 def _now() -> str:
@@ -71,6 +113,8 @@ def validate_judgment_research_finding(
         invalid.append("finding_schema_version_invalid")
     if str(finding.get("task_id") or "") != str(task.get("task_id") or ""):
         invalid.append("finding_task_id_mismatch")
+    if str(finding.get("prior_claim") or "").strip() != str(task.get("research_question") or "").strip():
+        invalid.append("finding_prior_claim_must_match_research_task")
     resolution = str(finding.get("resolution") or "").upper()
     if resolution not in RESOLUTIONS:
         invalid.append("resolution_invalid")
@@ -84,6 +128,105 @@ def validate_judgment_research_finding(
     conditions = finding.get("applicability_conditions")
     if not isinstance(conditions, list) or not any(str(item).strip() for item in conditions):
         incomplete.append("applicability_conditions_missing")
+
+    # An unresolved search is still a research conclusion. It must preserve
+    # the best bounded judgment and state how the unknown is treated; merely
+    # saying "not found, therefore unchanged" made non-judgment the cheapest
+    # completion strategy.
+    if resolution in {"UNRESOLVED", "PUBLIC_INFO_UNAVAILABLE"}:
+        closure = finding.get("uncertainty_closure")
+        if not isinstance(closure, dict):
+            incomplete.append("uncertainty_closure_missing")
+        else:
+            if closure.get("affected_axis") not in UNCERTAINTY_AXES:
+                invalid.append("uncertainty_closure:affected_axis_invalid")
+            current = closure.get("current_position")
+            if not isinstance(current, dict):
+                incomplete.append("uncertainty_closure:current_position_missing")
+            else:
+                if current.get("state") not in CURRENT_POSITION_STATES:
+                    invalid.append("uncertainty_closure:current_position_state_invalid")
+                if task.get("origin") == "missing_information" and current.get("state") not in {
+                    "NARROW_PRIOR", "EXCLUDE_FROM_BASE_CASE", "RANGE_ONLY",
+                }:
+                    invalid.append("uncertainty_closure:missing_information_cannot_retain_a_question")
+                if str(current.get("claim_ref") or "").strip() != str(finding.get("prior_claim") or "").strip():
+                    invalid.append("uncertainty_closure:current_position_claim_ref_mismatch")
+                basis = str(current.get("basis") or "").strip()
+                if len(basis) < 8:
+                    incomplete.append("uncertainty_closure:current_position_basis_too_thin")
+                elif _DEFENSIVE_ONLY_RE.fullmatch(basis):
+                    invalid.append("uncertainty_closure:current_position_basis_is_non_judgment")
+            treatment = closure.get("base_case_treatment")
+            if not isinstance(treatment, dict):
+                incomplete.append("uncertainty_closure:base_case_treatment_missing")
+            else:
+                if treatment.get("state") not in BASE_CASE_TREATMENTS:
+                    invalid.append("uncertainty_closure:base_case_treatment_state_invalid")
+                if treatment.get("economic_consequence") not in ECONOMIC_CONSEQUENCES:
+                    invalid.append("uncertainty_closure:economic_consequence_invalid")
+            observation = closure.get("next_observation")
+            if not isinstance(observation, dict):
+                incomplete.append("uncertainty_closure:next_observation_missing")
+            else:
+                metric = str(observation.get("metric_or_event") or "").strip()
+                if len(metric) < 8:
+                    incomplete.append("uncertainty_closure:next_observation_metric_or_event_too_thin")
+                if metric and _GENERIC_OBSERVATION_RE.fullmatch(metric):
+                    invalid.append("uncertainty_closure:next_observation_not_discriminating")
+                branches: list[dict[str, str]] = []
+                for field in ("supports_current", "reverses_current"):
+                    branch = observation.get(field)
+                    if not isinstance(branch, dict):
+                        incomplete.append(f"uncertainty_closure:next_observation_{field}_missing")
+                        continue
+                    kind = str(branch.get("kind") or "")
+                    operator = str(branch.get("operator") or "")
+                    normalized_branch: dict[str, Any] = {"kind": kind, "operator": operator}
+                    if kind == "NUMERIC_THRESHOLD":
+                        if operator not in NUMERIC_OBSERVATION_OPERATORS:
+                            invalid.append(f"uncertainty_closure:next_observation_{field}_numeric_operator_invalid")
+                        raw_value = branch.get("value")
+                        if not isinstance(raw_value, (int, float)) or isinstance(raw_value, bool):
+                            invalid.append(f"uncertainty_closure:next_observation_{field}_numeric_value_invalid")
+                        unit = str(branch.get("unit") or "").strip()
+                        if not unit:
+                            incomplete.append(f"uncertainty_closure:next_observation_{field}_unit_missing")
+                        normalized_branch.update({"value": raw_value, "unit": unit})
+                    elif kind == "EVENT":
+                        if operator not in EVENT_OBSERVATION_OPERATORS:
+                            invalid.append(f"uncertainty_closure:next_observation_{field}_event_operator_invalid")
+                        event = str(branch.get("event_definition") or "").strip()
+                        if len(event) < 4:
+                            incomplete.append(f"uncertainty_closure:next_observation_{field}_event_too_thin")
+                        elif _DECISION_REFERENCE_RE.search(event):
+                            invalid.append(f"uncertainty_closure:next_observation_{field}_event_refers_to_judgment")
+                        normalized_branch["event_definition"] = event
+                    else:
+                        invalid.append(f"uncertainty_closure:next_observation_{field}_kind_invalid")
+                    branches.append(normalized_branch)
+                if len(branches) == 2 and branches[0] == branches[1]:
+                    invalid.append("uncertainty_closure:next_observation_branches_identical")
+                if len(branches) == 2 and all(branch.get("kind") == "NUMERIC_THRESHOLD" for branch in branches):
+                    first, second = branches
+                    if first.get("unit") != second.get("unit"):
+                        invalid.append("uncertainty_closure:next_observation_numeric_units_mismatch")
+                    operators = {str(first.get("operator") or ""), str(second.get("operator") or "")}
+                    if not (operators & LOWER_BOUND_OPERATORS and operators & UPPER_BOUND_OPERATORS):
+                        invalid.append("uncertainty_closure:next_observation_numeric_branches_not_opposed")
+                    else:
+                        lower = first if first.get("operator") in LOWER_BOUND_OPERATORS else second
+                        upper = second if lower is first else first
+                        lower_value = lower.get("value")
+                        upper_value = upper.get("value")
+                        if isinstance(lower_value, (int, float)) and isinstance(upper_value, (int, float)):
+                            overlaps = lower_value < upper_value or (
+                                lower_value == upper_value
+                                and lower.get("operator") == "AT_OR_ABOVE"
+                                and upper.get("operator") == "AT_OR_BELOW"
+                            )
+                            if overlaps:
+                                invalid.append("uncertainty_closure:next_observation_numeric_branches_overlap")
 
     declared_sources = {str(item) for item in source_ids if str(item).strip()}
     evidence = finding.get("evidence_items")
@@ -226,6 +369,7 @@ def build_judgment_research_synthesis(output_dir: str | Path, *, persist: bool =
             "confidence_update": finding.get("confidence_update"),
             "valuation_impact": finding.get("valuation_impact"),
             "action_impact": finding.get("action_impact"),
+            "uncertainty_closure": finding.get("uncertainty_closure"),
             "chapter_update": finding.get("chapter_update"),
             "source_ids": entry.get("source_ids") or [],
         })

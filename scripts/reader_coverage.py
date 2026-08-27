@@ -37,6 +37,34 @@ _CAUSAL_RE = re.compile(
     r"路径|机制|传导|支持|限制|whether|because|therefore|depends|if|but",
     re.I,
 )
+_ACTUAL_TREATMENT_RE = re.compile(
+    r"不计入.{0,12}(?:基准|估值|情景)|排除.{0,12}(?:基准|估值|情景)|"
+    r"扩大.{0,10}区间|下修.{0,10}区间|维持.{0,10}折价|仅条件.{0,10}计入|"
+    r"exclude.{0,20}(?:base case|valuation)|widen.{0,20}range|retain.{0,20}discount",
+    re.I,
+)
+_ECONOMIC_CONSEQUENCE_RE = re.compile(
+    r"owner\s*cash|现金可达|正常盈利|永久损失|资本损失|估值区间|基准估值|"
+    r"owner cash|cash access|normal earnings|permanent loss|valuation range|base valuation",
+    re.I,
+)
+_SPECIFIC_OBSERVATION_RE = re.compile(
+    r"分红|派息|回款|利用率|续费|留存|订单|毛利|销量|价格|债务|减值|客户|"
+    r"库存|现金流|资本开支|产能|门店|合同|监管|索赔|退货|"
+    r"dividend|collection|utili[sz]ation|renewal|retention|order|margin|volume|debt|"
+    r"impairment|customer|inventory|cash flow|capex|capacity|contract|claim|return rate",
+    re.I,
+)
+_SUPPORT_BRANCH_RE = re.compile(
+    r"(?:若|如果|一旦).{2,80}(?:则|时|将)?(?:升级|支持|纳入|保留|上修)|"
+    r"(?:if|when).{2,120}(?:support|retain|include|upgrade)",
+    re.I,
+)
+_REVERSE_BRANCH_RE = re.compile(
+    r"(?:若|如果|一旦|否则).{0,80}(?:则|时|将)?(?:降级|推翻|下调|下修|撤回|反驳|维持.{0,10}折价)|"
+    r"(?:if|when|otherwise).{2,120}(?:reverse|refute|downgrade|exclude|retain.{0,20}discount)",
+    re.I,
+)
 
 # Reader reports explain the economic judgment in ordinary language.  These
 # machine identities remain available in structured ledgers and technical
@@ -283,25 +311,67 @@ def _windows(paragraphs: list[str]) -> list[str]:
     return windows
 
 
+def _affirmative_projection(paragraph: str) -> str:
+    """Keep affirmative clauses when a paragraph also discloses a local unknown.
+
+    A sentence may correctly explain a customer or cash mechanism and then
+    limit one sub-claim. The boundary must not erase the affirmative clause,
+    while an UNKNOWN-only paragraph must still contribute no topic judgment.
+    Source binding remains attached to the original paragraph below.
+    """
+    clauses = re.split(
+        r"[。；;！？!?]+|(?:^|[，,]\s*)(?:但|然而|不过)|\b(?:but|however|although)\b",
+        paragraph,
+        flags=re.I,
+    )
+    return " ".join(
+        clause.strip() for clause in clauses
+        if clause.strip() and not _UNKNOWN_RE.search(clause)
+    )
+
+
 def _topic_result(
     text: str, spec: dict[str, Any], paragraphs: list[str], *, source_available: bool
 ) -> dict[str, Any]:
     hits: list[dict[str, Any]] = []
     for paragraph in _windows(paragraphs):
-        groups = _group_hits(paragraph, spec["groups"])
         unknown = bool(_UNKNOWN_RE.search(paragraph))
-        causal = bool(_CAUSAL_RE.search(paragraph))
-        prose_chars = len(re.sub(r"\[[^\]]+\]", "", paragraph))
+        candidate_text = (
+            paragraph
+            if spec.get("label") == "数据边界与未知项" or not unknown
+            else _affirmative_projection(paragraph)
+        )
+        groups = _group_hits(candidate_text, spec["groups"])
+        causal = bool(_CAUSAL_RE.search(candidate_text))
+        unknown_closure = bool(
+            unknown
+            and causal
+            and spec.get("label") == "数据边界与未知项"
+            and _ACTUAL_TREATMENT_RE.search(paragraph)
+            and _ECONOMIC_CONSEQUENCE_RE.search(paragraph)
+            and _SPECIFIC_OBSERVATION_RE.search(paragraph)
+            and _SUPPORT_BRANCH_RE.search(paragraph)
+            and _REVERSE_BRANCH_RE.search(paragraph)
+        )
+        prose_chars = len(re.sub(r"\[[^\]]+\]", "", candidate_text))
         # The paragraph must connect multiple economic cues and contain an
         # explanation or an explicit evidence boundary.  This prevents a
         # table of labels and a technical-link line from closing a topic.
         # This floor only filters source-list/link fragments.  It is not a
         # report-length target; the semantic cue and explanation tests above
         # remain the actual closure criteria.
-        if len(groups) >= int(spec.get("minimum_groups", 2)) and prose_chars >= 45 and (causal or unknown or len(paragraph.split("。")) >= 2):
+        if (
+            len(groups) >= int(spec.get("minimum_groups", 2))
+            and prose_chars >= 45
+            and (causal or len(candidate_text.split("。")) >= 2)
+            and (
+                spec.get("label") != "数据边界与未知项" or unknown_closure
+            )
+        ):
             hits.append({
                 "groups": sorted(groups),
                 "unknown": unknown,
+                "unknown_closure": unknown_closure,
                 "source": bool(
                     _SOURCE_ANCHOR_RE.search(paragraph)
                     or _FOOTNOTE_MARKER_RE.search(paragraph)
@@ -310,10 +380,14 @@ def _topic_result(
                 "preview": paragraph[:180],
             })
     required_group = spec.get("required_group")
-    if required_group and hits and not any(required_group in hit["groups"] or hit["unknown"] for hit in hits):
+    if required_group and hits and not any(required_group in hit["groups"] for hit in hits):
         hits = []
     required_any = set(spec.get("required_any_groups") or [])
-    if required_any and hits and not any(required_any.intersection(hit["groups"]) or hit["unknown"] for hit in hits):
+    if required_any and hits and not any(required_any.intersection(hit["groups"]) for hit in hits):
+        hits = []
+    if spec.get("label") == "数据边界与未知项" and hits and not any(
+        hit["unknown_closure"] for hit in hits
+    ):
         hits = []
     if not hits:
         return {
@@ -324,7 +398,7 @@ def _topic_result(
             "reader_explanation": False,
             "source_anchor_nearby": False,
         }
-    if not any(hit["source"] or hit["unknown"] for hit in hits):
+    if not any(hit["source"] for hit in hits):
         return {
             "status": "FAIL",
             "label": spec["label"],
@@ -340,7 +414,7 @@ def _topic_result(
         "reason": "reader_explanation_present",
         "matched_groups": sorted({group for hit in hits for group in hit["groups"]}),
         "reader_explanation": True,
-        "source_anchor_nearby": any(hit["source"] for hit in hits) or source_available,
+        "source_anchor_nearby": any(hit["source"] for hit in hits),
         "evidence": hits[:3],
     }
 
@@ -442,7 +516,7 @@ def evaluate_reader_coverage(
         "topics": topics,
         "blocking_findings": list(dict.fromkeys(blocking)),
         "warnings": [],
-        "policy": "semantic_topics_with_explicit_unknown; no length_or_hash_gate",
+        "policy": "semantic_topics_with_bounded_unknown_closure; no length_or_hash_gate",
     }
     if persist and output_dir is not None:
         path = Path(output_dir) / "reader_coverage_validation.json"
@@ -474,7 +548,8 @@ def reader_coverage_prompt(
     )
     return (
         "读者层覆盖契约：在技术附录或ledger之外，正文必须用普通语言解释 "
-        f"{labels}。每一项都要连接事实、机制与{implication}；证据不足时明确写UNKNOWN/未披露及其影响。"
+        f"{labels}。每一项都要连接事实、机制与{implication}；证据不足时明确写UNKNOWN/未披露，"
+        "同时说明具体受限主张、当前保守处理、经济后果和会升级或推翻判断的下一观察。"
         "不得用附录链接、来源清单、字段名或数字表格代替解释；内部对象ID、工作流状态码和"
         "ledger/gate/status面板只能留在结构化工件或技术附录。" + scope
     )
