@@ -1,0 +1,62 @@
+{
+  "schema_version": "enterprise-judgment-round9-preoutcome-design-review.v1",
+  "review_id": "R9REVIEW:PREOUTCOME:CN600839:20180930:V1",
+  "freeze_ref": "R9FREEZE:CN600839:20180930:V1",
+  "reviewer_id": "ROLE:ROUND9:INDEPENDENT_PREOUTCOME_REVIEWER",
+  "reviewed_at": "2026-08-27T18:30:00+08:00",
+  "review_status": "SUBSTANTIVE_ACCEPTED_PREOUTCOME_ONLY",
+  "closed_findings": [
+    {
+      "finding_id": "R9-PRE-F1-UNFAIR-SIMPLE-BASELINE",
+      "root_cause": ["MODEL", "REASONING"],
+      "economic_impact": "A group-only proxy would manufacture an avoidable white-goods boundary error and overstate the Enhanced method's utility.",
+      "missing_fact_or_control": "A realistic minimum baseline using direct product evidence and an equal research budget.",
+      "prohibited_assumption": "An investor who can see the white-goods product row would rationally ignore it and promote group trends to product execution.",
+      "remediation": "The Baseline now uses white-goods revenue and gross margin, group cash and leverage as background, a group/product divergence guard, and the same three-hour budget as Enhanced.",
+      "acceptance_criterion": "A group/product direction divergence mechanically resolves to WHITE_GOODS_UNKNOWN and cannot receive AVOIDED_ERROR.",
+      "disposition": "CLOSED"
+    },
+    {
+      "finding_id": "R9-PRE-F2-POSTHOC-METHOD-VERDICT",
+      "root_cause": ["MODEL", "REASONING"],
+      "economic_impact": "Caller-authored labels or an unexecuted narrative rule could create a false method advantage after outcome access.",
+      "missing_fact_or_control": "Executable method rules, canonical settlement label derivation and a shared decision-treatment materiality test.",
+      "prohibited_assumption": "Finding more dimensions, a scope event or a rival is itself an avoided error or material improvement.",
+      "remediation": "resolve_method_outputs now derives both methods and paired utility from the full frozen label vector; the receipt derives labels from an ordered canonical settlement; MATERIAL_IMPROVEMENT requires a frozen common decision-treatment change.",
+      "acceptance_criterion": "Synchronized label/output forgery, wrong settlement identity, duplicate cells, unavailable fields, mixed plus scope, same direction plus scope and group/product reversal all replay to the predeclared treatment.",
+      "disposition": "CLOSED"
+    }
+  ],
+  "passed_controls": {
+    "baseline_fairness": "PASS",
+    "same_evidence_and_research_budget": "PASS",
+    "mechanical_method_resolution": "PASS",
+    "canonical_settlement_label_derivation": "PASS",
+    "forged_receipt_rejection": "PASS",
+    "common_decision_treatment_materiality": "PASS",
+    "typed_boundaries_and_post_cutoff_clock": "PASS",
+    "comparative_and_downstream_rights_isolation": "PASS",
+    "outcome_source_located": false,
+    "outcome_content_read": false
+  },
+  "residual_risks": [
+    "The result phase must supply a settlement replayed from the existing canonical control plane; a caller-constructed object has no canonical authority.",
+    "One scope event may appear in permanent-loss and strongest-rival views, but the readout must treat the shared decision-treatment change as one finding rather than two method wins.",
+    "One historical sample remains CANDIDATE_ONLY and cannot prove transfer, real-time forecasting or investment utility.",
+    "Unavailable real fields must remain UNKNOWN or MEASUREMENT_MISMATCH without supplementary search or rule revision."
+  ],
+  "method_release": "CANDIDATE_ONLY",
+  "rights": {
+    "directional_learning": "NOT_AUTHORIZED",
+    "enterprise_learning": "NOT_AUTHORIZED",
+    "comparative": "NOT_AUTHORIZED",
+    "method_transfer": "NOT_AUTHORIZED",
+    "cjo": "NOT_AUTHORIZED",
+    "valuation": "NOT_AUTHORIZED",
+    "report": "NOT_AUTHORIZED",
+    "investment": "NOT_AUTHORIZED"
+  },
+  "object_class": "INDEPENDENT_PREOUTCOME_DESIGN_REVIEW",
+  "claim_class": "PREOUTCOME_METHOD_TEST_ACCEPTANCE_ONLY",
+  "allowed_outputs": ["PREOUTCOME_COMMIT", "POST_FREEZE_SOURCE_RESOLUTION", "RESEARCH_AGENDA"]
+}

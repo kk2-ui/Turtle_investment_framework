@@ -345,8 +345,8 @@ def validate_industry_learning_block(block: Any, *, source_packets: list[Any]) -
         _closed(raw, _MEMBER_KEYS, f"industry_block.members[{index}]", findings)
         for index, raw in enumerate(_items(item.get("members")))
     ]
-    if len(members) < 3:
-        _add(findings, "industry_block.requires_at_least_three_companies")
+    if not members:
+        _add(findings, "industry_block.requires_at_least_one_company")
     if [member.get("rank") for member in members] != list(range(1, len(members) + 1)):
         _add(findings, "industry_block.member_ranks_must_be_contiguous")
     company_ids: set[str] = set()

@@ -1,0 +1,26 @@
+{
+  "schema_version": "enterprise-judgment-industry-selection.v1",
+  "selection_id": "EJSEL:ILB:CN:APPLIANCE:CHANGHONG:20180930_20191231:R9:V1",
+  "block_id": "ILB:CN:APPLIANCE:CHANGHONG:20180930_20191231:R9:V1",
+  "policy_id": "SEL:CN:APPLIANCE:CHANGHONG:ROUND9:V1",
+  "eligible_company_ids": [
+    "CN:600839"
+  ],
+  "selected_rank": 1,
+  "company_id": "CN:600839",
+  "issuer_id": "ISSUER:CN:600839",
+  "cutoff_at": "2018-09-30T23:59:59+08:00",
+  "source_packet_ref": {
+    "receipt_id": "SP:CN600839:20180930:FY2017:R9",
+    "receipt_version": 1
+  },
+  "selection_used_outcome": false,
+  "selection_used_source_convenience": false,
+  "outcome_access_status": "SEALED",
+  "object_class": "ENTERPRISE_JUDGMENT_INDUSTRY_SELECTION",
+  "claim_class": "MECHANICAL_PRE_OUTCOME_SELECTION",
+  "allowed_outputs": [
+    "PRE_OUTCOME_EPISODE_SELECTION",
+    "RESEARCH_AGENDA"
+  ]
+}

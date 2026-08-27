@@ -1,0 +1,112 @@
+{
+  "schema_version": "industry-learning-block.v2",
+  "block_id": "ILB:CN:APPLIANCE:CHANGHONG:20180930_20191231:R9:V1",
+  "industry_id": "INDUSTRY:CN:APPLIANCE:MULTI_CATEGORY",
+  "cutoff_at": "2018-09-30T23:59:59+08:00",
+  "observation_window": {
+    "event_start": "2019-01-01",
+    "event_end": "2019-12-31",
+    "accounting_period": "FY2019",
+    "settlement_source_type": "OFFICIAL_ANNUAL_REPORT_STATIC_PDF",
+    "boundary_note": "Every FY2019 flow and event is after the 2018-09-30 cutoff. Product-arena, issuer, industry-context and ordinary-share-cash boundaries remain typed separately."
+  },
+  "industry_epoch": {
+    "epoch_id": "EPOCH:CN:APPLIANCE:FY2017_DISCLOSURE:C2",
+    "condition": "Domestic white goods were entering slower category growth and stronger concentration, while portfolio companies combined product upgrades, channel work and other businesses.",
+    "observed_industry_volume": "UNKNOWN_AT_FROZEN_PRODUCT_BOUNDARY",
+    "observed_industry_revenue": "UNKNOWN_AT_FROZEN_PRODUCT_BOUNDARY",
+    "observed_concentration": "Category leaders were disclosed, but no same-boundary concentration series was frozen.",
+    "evidence_refs": [
+      "LOC:600839:FY2017:COMPETITIVE_INITIAL_CONDITIONS"
+    ],
+    "causal_credit": "NONE"
+  },
+  "mechanism_arenas": [
+    {
+      "arena_id": "ARENA:CN:APPLIANCE:ROOM_AIR_CONDITIONING",
+      "mechanism": "Product, channel, price and installation capacity convert seasonal demand into air-conditioner sales and margin.",
+      "economic_scope": "NATIONAL_CATEGORY_WITH_REGIONAL_AND_CHANNEL_VARIATION",
+      "value_driver": "Product mix, sell-through, channel efficiency and unit margin.",
+      "failure_mode": "A hot season or low price can lift revenue without durable execution quality."
+    },
+    {
+      "arena_id": "ARENA:CN:APPLIANCE:REFRIGERATION_AND_WASHING",
+      "mechanism": "Product freshness, efficiency, brand and channel economics shape replacement demand and margin.",
+      "economic_scope": "NATIONAL_REPLACEMENT_CATEGORY_WITH_EXPORT_CONTEXT",
+      "value_driver": "Volume, price-mix, brand investment, unit cost and working capital.",
+      "failure_mode": "Mix or acquisition can move reported revenue without organic customer preference."
+    },
+    {
+      "arena_id": "ARENA:CN:CONSUMER_ELECTRONICS:MULTI_PRODUCT_PORTFOLIO",
+      "mechanism": "Television, IT, intermediate products and portfolio actions alter consolidated revenue, margin and cash independently of white goods.",
+      "economic_scope": "LISTED_CONSOLIDATED_MULTI_BUSINESS_ISSUER",
+      "value_driver": "Business mix, perimeter, non-operating gains and capital allocation.",
+      "failure_mode": "Group improvement can be mistaken for white-goods operating quality."
+    }
+  ],
+  "members": [
+    {
+      "rank": 1,
+      "company_id": "CN:600839",
+      "issuer_id": "ISSUER:CN:600839",
+      "company_name": "Sichuan Changhong Electric Co., Ltd.",
+      "source_packet_ref": {
+        "receipt_id": "SP:CN600839:20180930:FY2017:R9",
+        "receipt_version": 1
+      },
+      "packet_state": "COMPLETE_PRE_CUTOFF_STATIC_PDF",
+      "archetype": "MULTI_PRODUCT_APPLIANCE_AND_CONSUMER_ELECTRONICS_PORTFOLIO",
+      "responsibility_boundary": "LISTED_CONSOLIDATED_ISSUER_WITH_SEPARATE_WHITE_GOODS_ARENA",
+      "arena_ids": [
+        "ARENA:CN:APPLIANCE:ROOM_AIR_CONDITIONING",
+        "ARENA:CN:APPLIANCE:REFRIGERATION_AND_WASHING",
+        "ARENA:CN:CONSUMER_ELECTRONICS:MULTI_PRODUCT_PORTFOLIO"
+      ],
+      "cutoff_state": "FY2017 air-conditioner and refrigerator revenue grew rapidly while product gross margin fell; group operating cash declined and the issuer retained television, IT, intermediate products and portfolio effects.",
+      "decision_heterogeneity": "Management combined product launches, channel adjustment and organization reform inside a broader multi-business group, making boundary discipline the primary question.",
+      "evidence_refs": [
+        "LOC:600839:FY2017:COMPETITIVE_INITIAL_CONDITIONS",
+        "LOC:600839:FY2017:IMPLEMENTED_WHITE_GOODS_ACTIONS",
+        "LOC:600839:FY2017:MULTI_PRODUCT_SYSTEM",
+        "LOC:600839:FY2017:WHITE_GOODS_UNIT_ECONOMICS",
+        "LOC:600839:FY2017:GROUP_CASH_AND_PORTFOLIO"
+      ]
+    }
+  ],
+  "selection_policy": {
+    "policy_id": "SEL:CN:APPLIANCE:CHANGHONG:ROUND9:V1",
+    "rule": "LOWEST_COMPANY_ID_WITH_COMPLETE_PRE_CUTOFF_STATIC_PDF_PACKET",
+    "eligible_packet_state": "COMPLETE_PRE_CUTOFF_STATIC_PDF",
+    "tie_breaker": "LOWEST_ISSUER_ID",
+    "prohibited_inputs": [
+      "POST_CUTOFF_OUTCOME",
+      "OUTCOME_SOURCE_CONVENIENCE",
+      "PRICE_OR_RETURN",
+      "EXPECTED_METHOD_WINNER"
+    ]
+  },
+  "strongest_common_rivals": [
+    "Television, IT and intermediate-product performance can dominate consolidated movement.",
+    "Category cycle and product mix can lift white-goods revenue without better customer preference.",
+    "Portfolio disposals or acquisitions can alter group profit and cash without operating improvement."
+  ],
+  "unresolved_questions": [
+    "Did white-goods revenue and gross margin move coherently after the cutoff?",
+    "Did disclosed product and channel work translate into execution rather than deployment?",
+    "Did consolidated cash fund required capital, and was any residual accessible to ordinary shares?",
+    "Did portfolio scope or leverage change the permanent-loss path?"
+  ],
+  "outcome_access_status": "SEALED",
+  "roles": {
+    "judgment_owner_id": "ROLE:ROUND9:APPLIANCE:JUDGMENT_OWNER",
+    "independent_challenger_id": "ROLE:ROUND9:APPLIANCE:INDEPENDENT_CHALLENGER",
+    "outcome_custodian_id": "ROLE:ROUND9:APPLIANCE:OUTCOME_CUSTODIAN"
+  },
+  "object_class": "INDUSTRY_LEARNING_BLOCK",
+  "claim_class": "CONDITIONAL_INDUSTRY_CONTEXT_AND_SAMPLING",
+  "allowed_outputs": [
+    "INDUSTRY_CONTEXT",
+    "EPISODE_SAMPLING",
+    "RESEARCH_AGENDA"
+  ]
+}

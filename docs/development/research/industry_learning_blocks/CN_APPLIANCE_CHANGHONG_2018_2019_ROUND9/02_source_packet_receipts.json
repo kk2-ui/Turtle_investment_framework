@@ -1,0 +1,167 @@
+[
+  {
+    "schema_version": "enterprise-judgment-source-packet-receipt.v2",
+    "packet_id": "SP:CN600839:20180930:FY2017:R9",
+    "packet_version": 1,
+    "company_id": "CN:600839",
+    "issuer_id": "ISSUER:CN:600839",
+    "cutoff_at": "2018-09-30T23:59:59+08:00",
+    "fields": [
+      {
+        "field_id": "FIELD:600839:FY2017:INITIAL_CONDITIONS",
+        "field_ref": "SP:CN600839:20180930:FY2017:R9/CNINFO:600839:ANN:20180418:1204647552#FIELD:600839:FY2017:INITIAL_CONDITIONS",
+        "source_id": "CNINFO:600839:ANN:20180418:1204647552",
+        "status": "LOCATED",
+        "material_claim_ids": [
+          "CLAIM:R9:BASELINE:EXECUTION",
+          "CLAIM:R9:BASELINE:WORKING_CAPITAL_CASH_CAPITAL",
+          "CLAIM:R9:BASELINE:ADAPTATION_PERMANENT_LOSS",
+          "CLAIM:R9:ENHANCED:INITIAL_CONDITIONS",
+          "CLAIM:R9:ENHANCED:CUSTOMER_COMPETITION_RESPONSE",
+          "CLAIM:R9:ENHANCED:ADAPTATION_PERMANENT_LOSS",
+          "CLAIM:R9:ENHANCED:STRONGEST_ALTERNATIVE_EXPLANATION"
+        ],
+        "locator_ids": [
+          "LOC:600839:FY2017:COMPETITIVE_INITIAL_CONDITIONS"
+        ]
+      },
+      {
+        "field_id": "FIELD:600839:FY2017:IMPLEMENTED_ACTIONS",
+        "field_ref": "SP:CN600839:20180930:FY2017:R9/CNINFO:600839:ANN:20180418:1204647552#FIELD:600839:FY2017:IMPLEMENTED_ACTIONS",
+        "source_id": "CNINFO:600839:ANN:20180418:1204647552",
+        "status": "LOCATED",
+        "material_claim_ids": [
+          "CLAIM:R9:BASELINE:EXECUTION",
+          "CLAIM:R9:BASELINE:WORKING_CAPITAL_CASH_CAPITAL",
+          "CLAIM:R9:BASELINE:ADAPTATION_PERMANENT_LOSS",
+          "CLAIM:R9:ENHANCED:IMPLEMENTED_MANAGEMENT_ACTION",
+          "CLAIM:R9:ENHANCED:EXECUTION",
+          "CLAIM:R9:ENHANCED:CUSTOMER_COMPETITION_RESPONSE"
+        ],
+        "locator_ids": [
+          "LOC:600839:FY2017:IMPLEMENTED_WHITE_GOODS_ACTIONS"
+        ]
+      },
+      {
+        "field_id": "FIELD:600839:FY2017:MULTI_PRODUCT_SYSTEM",
+        "field_ref": "SP:CN600839:20180930:FY2017:R9/CNINFO:600839:ANN:20180418:1204647552#FIELD:600839:FY2017:MULTI_PRODUCT_SYSTEM",
+        "source_id": "CNINFO:600839:ANN:20180418:1204647552",
+        "status": "LOCATED",
+        "material_claim_ids": [
+          "CLAIM:R9:BASELINE:EXECUTION",
+          "CLAIM:R9:BASELINE:WORKING_CAPITAL_CASH_CAPITAL",
+          "CLAIM:R9:BASELINE:ADAPTATION_PERMANENT_LOSS",
+          "CLAIM:R9:ENHANCED:INITIAL_CONDITIONS",
+          "CLAIM:R9:ENHANCED:WORKING_CAPITAL_CASH_CAPITAL",
+          "CLAIM:R9:ENHANCED:STRONGEST_ALTERNATIVE_EXPLANATION"
+        ],
+        "locator_ids": [
+          "LOC:600839:FY2017:MULTI_PRODUCT_SYSTEM"
+        ]
+      },
+      {
+        "field_id": "FIELD:600839:FY2017:WHITE_GOODS_ECONOMICS",
+        "field_ref": "SP:CN600839:20180930:FY2017:R9/CNINFO:600839:ANN:20180418:1204647552#FIELD:600839:FY2017:WHITE_GOODS_ECONOMICS",
+        "source_id": "CNINFO:600839:ANN:20180418:1204647552",
+        "status": "LOCATED",
+        "material_claim_ids": [
+          "CLAIM:R9:BASELINE:EXECUTION",
+          "CLAIM:R9:BASELINE:WORKING_CAPITAL_CASH_CAPITAL",
+          "CLAIM:R9:BASELINE:ADAPTATION_PERMANENT_LOSS",
+          "CLAIM:R9:ENHANCED:EXECUTION",
+          "CLAIM:R9:ENHANCED:UNIT_ECONOMICS",
+          "CLAIM:R9:ENHANCED:STRONGEST_ALTERNATIVE_EXPLANATION"
+        ],
+        "locator_ids": [
+          "LOC:600839:FY2017:WHITE_GOODS_UNIT_ECONOMICS"
+        ]
+      },
+      {
+        "field_id": "FIELD:600839:FY2017:GROUP_CASH_PORTFOLIO",
+        "field_ref": "SP:CN600839:20180930:FY2017:R9/CNINFO:600839:ANN:20180418:1204647552#FIELD:600839:FY2017:GROUP_CASH_PORTFOLIO",
+        "source_id": "CNINFO:600839:ANN:20180418:1204647552",
+        "status": "LOCATED",
+        "material_claim_ids": [
+          "CLAIM:R9:BASELINE:EXECUTION",
+          "CLAIM:R9:BASELINE:WORKING_CAPITAL_CASH_CAPITAL",
+          "CLAIM:R9:BASELINE:ADAPTATION_PERMANENT_LOSS",
+          "CLAIM:R9:ENHANCED:WORKING_CAPITAL_CASH_CAPITAL",
+          "CLAIM:R9:ENHANCED:ADAPTATION_PERMANENT_LOSS",
+          "CLAIM:R9:ENHANCED:STRONGEST_ALTERNATIVE_EXPLANATION"
+        ],
+        "locator_ids": [
+          "LOC:600839:FY2017:GROUP_CASH_AND_PORTFOLIO"
+        ]
+      }
+    ],
+    "sources": [
+      {
+        "source_id": "CNINFO:600839:ANN:20180418:1204647552",
+        "source_type": "OFFICIAL_ANNUAL_REPORT_STATIC_PDF",
+        "official_url": "https://static.cninfo.com.cn/finalpage/2018-04-18/1204647552.PDF",
+        "published_on": "2018-04-18",
+        "available_on": "2018-04-18",
+        "availability_timezone": "Asia/Shanghai",
+        "eligibility": "ELIGIBLE",
+        "responsibility_boundary_ids": [
+          "INDUSTRY_CONTEXT:CN:WHITE_GOODS",
+          "ISSUER_CONSOLIDATED:CN:600839",
+          "PRODUCT_ARENA:CN:600839:WHITE_GOODS",
+          "ORDINARY_SHARE_CASH:CN:600839"
+        ],
+        "responsibility_perimeter_id": "PERIMETER:CN:600839:FY2017:LISTED_CONSOLIDATED",
+        "unit": "MIXED_DECLARED_FIELDS",
+        "access_mode": "REMOTE_OFFICIAL_LOCATOR",
+        "locators": [
+          {
+            "locator_id": "LOC:600839:FY2017:COMPETITIVE_INITIAL_CONDITIONS",
+            "field_id": "FIELD:600839:FY2017:INITIAL_CONDITIONS",
+            "field_ref": "SP:CN600839:20180930:FY2017:R9/CNINFO:600839:ANN:20180418:1204647552#FIELD:600839:FY2017:INITIAL_CONDITIONS",
+            "research_question_id": "Q:R9:CHANGHONG:WHITE_GOODS_BOUNDARY",
+            "locator": "PDF p.10: white-goods arena structure, category leaders, company gaps and compressor cycle.",
+            "page_number": 10
+          },
+          {
+            "locator_id": "LOC:600839:FY2017:IMPLEMENTED_WHITE_GOODS_ACTIONS",
+            "field_id": "FIELD:600839:FY2017:IMPLEMENTED_ACTIONS",
+            "field_ref": "SP:CN600839:20180930:FY2017:R9/CNINFO:600839:ANN:20180418:1204647552#FIELD:600839:FY2017:IMPLEMENTED_ACTIONS",
+            "research_question_id": "Q:R9:CHANGHONG:WHITE_GOODS_BOUNDARY",
+            "locator": "PDF p.12: white-goods product launches, mix, channel work and implemented company actions.",
+            "page_number": 12
+          },
+          {
+            "locator_id": "LOC:600839:FY2017:MULTI_PRODUCT_SYSTEM",
+            "field_id": "FIELD:600839:FY2017:MULTI_PRODUCT_SYSTEM",
+            "field_ref": "SP:CN600839:20180930:FY2017:R9/CNINFO:600839:ANN:20180418:1204647552#FIELD:600839:FY2017:MULTI_PRODUCT_SYSTEM",
+            "research_question_id": "Q:R9:CHANGHONG:WHITE_GOODS_BOUNDARY",
+            "locator": "PDF p.13: organization changes, group revenue/cost/cash and the multi-business issuer system.",
+            "page_number": 13
+          },
+          {
+            "locator_id": "LOC:600839:FY2017:WHITE_GOODS_UNIT_ECONOMICS",
+            "field_id": "FIELD:600839:FY2017:WHITE_GOODS_ECONOMICS",
+            "field_ref": "SP:CN600839:20180930:FY2017:R9/CNINFO:600839:ANN:20180418:1204647552#FIELD:600839:FY2017:WHITE_GOODS_ECONOMICS",
+            "research_question_id": "Q:R9:CHANGHONG:WHITE_GOODS_BOUNDARY",
+            "locator": "PDF p.14: air-conditioner and refrigerator revenue, cost, gross margin and group product mix.",
+            "page_number": 14
+          },
+          {
+            "locator_id": "LOC:600839:FY2017:GROUP_CASH_AND_PORTFOLIO",
+            "field_id": "FIELD:600839:FY2017:GROUP_CASH_PORTFOLIO",
+            "field_ref": "SP:CN600839:20180930:FY2017:R9/CNINFO:600839:ANN:20180418:1204647552#FIELD:600839:FY2017:GROUP_CASH_PORTFOLIO",
+            "research_question_id": "Q:R9:CHANGHONG:WHITE_GOODS_BOUNDARY",
+            "locator": "PDF p.18: consolidated cash flows and non-core disposal gain; no ordinary-share owner-cash bridge.",
+            "page_number": 18
+          }
+        ],
+        "boundary_note": "Product rows support white-goods observations; group cash and portfolio rows remain listed-issuer evidence and do not establish ordinary-share owner cash."
+      }
+    ],
+    "object_class": "SOURCE_PACKET_RECEIPT",
+    "claim_class": "CUTOFF_ELIGIBLE_SOURCE_RECEIPT",
+    "allowed_outputs": [
+      "SOURCE_PACKET_READ_MODEL",
+      "RESEARCH_AGENDA"
+    ]
+  }
+]
