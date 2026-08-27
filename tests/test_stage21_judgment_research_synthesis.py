@@ -152,6 +152,9 @@ def test_synthesis_agent_has_only_review_and_finalize_tools(tmp_path: Path) -> N
     assert "不能搜索、补证据或改报告" in prompt
     assert "判断优先宪法" in prompt
     assert "复核后的最佳当前综合" in prompt
+    assert "未披露与非决定性 proxy 不是经营冲突或负面证据" in prompt
+    assert "融资改善不自动降低客户、品牌、产品生命周期、库存吸收或资本回报风险" in prompt
+    assert "概率和置信更新必须保持同一命题与风险轴" in prompt
     assert "assemble_report" not in schemas
     assert len(prompt) < 30000
 

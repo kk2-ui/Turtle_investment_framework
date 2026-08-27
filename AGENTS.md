@@ -26,6 +26,9 @@ These are substance requirements, not mandatory reader-facing headings. Status c
 Bounded acquisition, implementation, and audit subtasks do not claim final synthesis authority. If they touch material company evidence, they must still state the local economic implication, strongest plausible alternative, and discriminating next observation; pure engineering returns must state their material relevance.
 Reader-facing prose leads with the economic conclusion. Attach each caveat to the claim it limits; do not front-load governance language, permission disclaimers, or a wall of `UNKNOWN` states.
 Distinguish confidence in the evidence or inference from the probability of the business outcome. Use qualitative confidence when no calibrated base rate exists; never manufacture a percentage merely to appear decisive.
+Non-disclosure and a non-decisive observed proxy are not conflicting or negative business evidence. They may lower attribution confidence, but must not mechanically lower management, owner cash, permanent-loss protection, or normal earnings without an observed economic carrier.
+Propagate an update only along the responsibility-matched economic mechanism it supports. Better funding does not by itself reduce customer, brand, product-lifecycle, inventory-absorption, or capital-return risk; a product option does not upgrade an unaffected core.
+Probability and confidence updates must keep the proposition and risk axis stable. Every material branch named in a scenario must map to its outcome treatment; a coarse scenario label or score must not override offsetting continuous facts.
 
 ### Non-evasive uncertainty
 
