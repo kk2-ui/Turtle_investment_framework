@@ -412,6 +412,15 @@ def _frozen_cjo(*, owner_cash_direction: str = "IMPROVES") -> dict:
     return core.freeze_cjo(candidate=candidate, independent_review=_review(candidate))
 
 
+def _refresh_reviewed_reader_projection(frozen: dict) -> None:
+    frozen["independent_review_receipt"]["reviewed_reader_projection"] = {
+        "enterprise_system_ref": deepcopy(frozen["enterprise_system_ref"]),
+        "management_decision_ledger_ref": deepcopy(
+            frozen["management_decision_ledger_ref"]
+        ),
+    }
+
+
 def _overlay_input(price: float) -> dict:
     return {
         "mode": "SYNTHETIC",
@@ -686,6 +695,185 @@ def test_frozen_cjo_is_read_by_judgment_synthesis_and_report_handoff(tmp_path: P
     assert any(item["role"] == "FROZEN_CJO" for item in synthesis["source_refs"])
     assert report_handoff["authority"]["report_use"] == "REPORT_USE_NOT_RELEASED"
     assert report_handoff["authority"]["publication_authorization"] is False
+
+
+@pytest.mark.parametrize(
+    ("section", "field", "replacement"),
+    [
+        ("arena", "customer_task", "post-outcome customer success rewritten after review"),
+        ("state", "variable_states", {"VAR:CUSTOMER_RETENTION": "POST_OUTCOME_WIN"}),
+        ("decision", "problem_statement", "post-outcome success rewritten as the original problem"),
+    ],
+)
+def test_frozen_reader_projection_cannot_change_after_independent_review(
+    section: str, field: str, replacement: object,
+) -> None:
+    frozen = _frozen_cjo()
+    if section == "arena":
+        target = frozen["enterprise_system_ref"]["arenas"][0]
+    elif section == "state":
+        target = frozen["enterprise_system_ref"]["operating_states"][0]
+    else:
+        target = frozen["management_decision_ledger_ref"]["decisions"][0]
+    target[field] = replacement
+
+    validation = core.validate_frozen_cjo(frozen)
+
+    assert validation["state"] == "INVALID"
+    assert "frozen_cjo.reviewed_reader_projection_mutated" in validation["findings"]
+
+
+def test_old_v1_reader_projection_omissions_remain_valid() -> None:
+    frozen = _frozen_cjo()
+    frozen["independent_review_receipt"].pop("reviewed_reader_projection")
+    for field in ("arenas", "operating_variables", "operating_states", "state_changes"):
+        frozen["enterprise_system_ref"].pop(field)
+    frozen["management_decision_ledger_ref"].pop("events")
+
+    assert core.validate_frozen_cjo(frozen)["state"] == "VALID"
+
+
+@pytest.mark.parametrize(
+    ("section", "field", "replacement"),
+    [
+        ("arena", "customer_task", "post-outcome customer success"),
+        ("state", "variable_states", {"VAR:CUSTOMER_RETENTION": "POST_OUTCOME_WIN"}),
+        ("decision", "problem_statement", "post-outcome rewritten problem"),
+    ],
+)
+def test_new_shape_cannot_drop_review_copy_to_hide_projection_mutation(
+    section: str, field: str, replacement: object,
+) -> None:
+    frozen = _frozen_cjo()
+    frozen["independent_review_receipt"].pop("reviewed_reader_projection")
+    if section == "arena":
+        target = frozen["enterprise_system_ref"]["arenas"][0]
+    elif section == "state":
+        target = frozen["enterprise_system_ref"]["operating_states"][0]
+    else:
+        target = frozen["management_decision_ledger_ref"]["decisions"][0]
+    target[field] = replacement
+
+    validation = core.validate_frozen_cjo(frozen)
+
+    assert validation["state"] == "INVALID"
+    assert (
+        "frozen_cjo.reviewed_reader_projection_missing_for_new_shape"
+        in validation["findings"]
+    )
+
+
+def test_new_projection_inference_mechanism_may_have_no_direct_evidence() -> None:
+    frozen = _frozen_cjo()
+    mechanism = frozen["enterprise_system_ref"]["mechanisms"][0]
+    mechanism["reasoning_kind"] = "INFERENCE"
+    mechanism["evidence_refs"] = []
+    _refresh_reviewed_reader_projection(frozen)
+
+    assert core.validate_frozen_cjo(frozen)["state"] == "VALID"
+
+
+def test_new_projection_observation_mechanism_requires_direct_evidence() -> None:
+    frozen = _frozen_cjo()
+    mechanism = frozen["enterprise_system_ref"]["mechanisms"][0]
+    mechanism["reasoning_kind"] = "OBSERVATION"
+    mechanism["evidence_refs"] = []
+    _refresh_reviewed_reader_projection(frozen)
+
+    validation = core.validate_frozen_cjo(frozen)
+
+    assert validation["state"] == "INVALID"
+    assert any("evidence_refs_missing" in item for item in validation["findings"])
+
+
+@pytest.mark.parametrize("direction", ["UNKNOWN", "NONE"])
+def test_new_projection_unknown_or_none_transmission_may_have_no_direct_evidence(
+    direction: str,
+) -> None:
+    frozen = _frozen_cjo()
+    transmission = frozen["enterprise_system_ref"]["financial_transmissions"][1]
+    transmission["direction"] = direction
+    transmission["evidence_refs"] = []
+    frozen["owner_cash_transmission"]["direction"] = direction
+    _refresh_reviewed_reader_projection(frozen)
+
+    assert core.validate_frozen_cjo(frozen)["state"] == "VALID"
+
+
+def test_new_projection_directional_transmission_requires_direct_evidence() -> None:
+    frozen = _frozen_cjo()
+    transmission = frozen["enterprise_system_ref"]["financial_transmissions"][1]
+    transmission["evidence_refs"] = []
+    _refresh_reviewed_reader_projection(frozen)
+
+    validation = core.validate_frozen_cjo(frozen)
+
+    assert validation["state"] == "INVALID"
+    assert any("evidence_refs_missing" in item for item in validation["findings"])
+
+
+@pytest.mark.parametrize("projection", ["inference_mechanism", "unknown_transmission"])
+def test_optional_projection_evidence_is_still_validated_when_present(
+    projection: str,
+) -> None:
+    frozen = _frozen_cjo()
+    if projection == "inference_mechanism":
+        target = frozen["enterprise_system_ref"]["mechanisms"][0]
+        target["reasoning_kind"] = "INFERENCE"
+    else:
+        target = frozen["enterprise_system_ref"]["financial_transmissions"][1]
+        target["direction"] = "UNKNOWN"
+        frozen["owner_cash_transmission"]["direction"] = "UNKNOWN"
+    target["evidence_refs"] = ["SRC:UNKNOWN"]
+    _refresh_reviewed_reader_projection(frozen)
+
+    validation = core.validate_frozen_cjo(frozen)
+
+    assert validation["state"] == "INVALID"
+    assert any("evidence_refs[0]_unknown" in item for item in validation["findings"])
+
+
+def test_event_projection_alone_still_requires_reviewed_projection() -> None:
+    frozen = _frozen_cjo()
+    frozen["independent_review_receipt"].pop("reviewed_reader_projection")
+    for field in ("arenas", "operating_variables", "operating_states", "state_changes"):
+        frozen["enterprise_system_ref"].pop(field)
+
+    validation = core.validate_frozen_cjo(frozen)
+
+    assert validation["state"] == "INVALID"
+    assert (
+        "frozen_cjo.reviewed_reader_projection_missing_for_new_shape"
+        in validation["findings"]
+    )
+
+
+@pytest.mark.parametrize("mutation", ["arena_scope", "state_cutoff", "event_source"])
+def test_frozen_reader_projection_is_directly_revalidated(mutation: str) -> None:
+    frozen = _frozen_cjo()
+    # Remove the direct reviewed copy to prove structural validation is not
+    # merely reporting the review comparison.
+    frozen["independent_review_receipt"].pop("reviewed_reader_projection")
+    if mutation == "arena_scope":
+        frozen["enterprise_system_ref"]["arenas"][0]["responsibility_unit_id"] = "UNIT:UNKNOWN"
+    elif mutation == "state_cutoff":
+        frozen["enterprise_system_ref"]["operating_states"][0]["observed_at"] = (
+            "2026-01-01T00:00:00+00:00"
+        )
+    else:
+        frozen["management_decision_ledger_ref"]["events"][1]["evidence_refs"] = ["SRC:UNKNOWN"]
+
+    validation = core.validate_frozen_cjo(frozen)
+
+    assert validation["state"] == "INVALID"
+    assert any(
+        token in item
+        for item in validation["findings"]
+        for token in (
+            "responsibility_unit_unknown", "observed_at_after_cutoff_or_invalid",
+            "unknown_source_ref", "snapshot_event_mismatch",
+        )
+    )
 
 
 def test_post_cutoff_source_cannot_enter_historical_cjo() -> None:

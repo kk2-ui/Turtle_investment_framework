@@ -238,10 +238,114 @@ def _analysis_purpose(output_dir: str) -> str:
     return purpose if purpose in {"INVESTMENT_DECISION", "COMPANY_JUDGMENT_ONLY"} else "INVALID"
 
 
+def _bound_frozen_cjo_ref(output_dir: str) -> str:
+    try:
+        contract = json.loads(
+            Path(output_dir, "analysis_contract.json").read_text(encoding="utf-8")
+        )
+    except (OSError, json.JSONDecodeError):
+        return ""
+    refs = contract.get("canonical_judgment_refs")
+    if not isinstance(refs, dict):
+        return ""
+    return str(refs.get("frozen_cjo_ref") or "").strip()
+
+
+def _evaluate_bound_frozen_cjo_completion(
+    report_text: str, output_dir: str, frozen_ref: str,
+) -> CompletionResult:
+    """Complete the exact deterministic Frozen-CJO reader route.
+
+    This route has no free chapters.  Its completion truth is the validated
+    canonical object, the current read receipt and the exact deterministic
+    renderer output.
+    """
+    output = Path(output_dir)
+    path = Path(frozen_ref).expanduser()
+    frozen_path = path.resolve() if path.is_absolute() else (output / path).resolve()
+    try:
+        frozen = json.loads(frozen_path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        frozen = {}
+    try:
+        from scripts.enterprise_judgment_core import validate_frozen_cjo
+        from scripts.judgment_handoff_receipts import validate_judgment_handoff_read_receipt
+        from scripts.turtle_agent.tools.write_tools import (
+            _cjo_report_output_validation,
+            _render_bound_frozen_cjo_research_artifact,
+        )
+    except ModuleNotFoundError:
+        from enterprise_judgment_core import validate_frozen_cjo
+        from judgment_handoff_receipts import validate_judgment_handoff_read_receipt
+        from turtle_agent.tools.write_tools import (
+            _cjo_report_output_validation,
+            _render_bound_frozen_cjo_research_artifact,
+        )
+
+    frozen_validation = validate_frozen_cjo(frozen)
+    receipt = validate_judgment_handoff_read_receipt(output)
+    deterministic_output = _cjo_report_output_validation(report_text)
+    findings: list[str] = []
+    if frozen_validation.get("state") != "VALID":
+        findings.extend(
+            "Frozen CJO: " + str(item)
+            for item in frozen_validation.get("findings") or []
+        )
+    try:
+        expected_report = _render_bound_frozen_cjo_research_artifact(frozen)
+    except RuntimeError as exc:
+        expected_report = ""
+        findings.append(str(exc))
+    if expected_report and report_text != expected_report:
+        findings.append("Deterministic CJO output does not equal canonical renderer")
+    if receipt.get("state") != "READY":
+        findings.extend(
+            "Judgment handoff receipt: " + str(item)
+            for item in receipt.get("findings") or [receipt.get("state")]
+        )
+    if deterministic_output.get("status") != "PASS":
+        findings.extend(
+            "CJO output: " + str(item)
+            for item in deterministic_output.get("blocking_findings") or []
+        )
+
+    status = "COMPLETE" if not findings else "BLOCKED"
+    validators = {
+        "analysis_purpose": {"state": "COMPANY_JUDGMENT_ONLY"},
+        "bound_frozen_cjo": frozen_validation,
+        "judgment_handoff_read_receipt": receipt,
+        "deterministic_cjo_output": deterministic_output,
+        "deterministic_renderer": {
+            "status": "PASS" if expected_report and report_text == expected_report else "FAIL",
+        },
+        "structure": {"status": "SKIP", "reason": "bound_frozen_cjo_has_no_free_chapters"},
+        "depth": {"status": "SKIP", "reason": "bound_frozen_cjo_has_no_free_chapters"},
+        "audit": {"status": "SKIP", "reason": "bound_frozen_cjo_has_no_free_chapters"},
+        "reader_coverage": {"status": "SKIP", "reason": "deterministic_frozen_cjo_field_projection"},
+        "absolute_quality": {"status": "SKIP", "reason": "bound_frozen_cjo_has_no_free_chapters"},
+    }
+    result = CompletionResult(
+        status=status,
+        blocking_findings=findings,
+        warning_findings=[],
+        chapter_results=[],
+        validators=validators,
+    )
+    (output / "completion_report.json").write_text(
+        json.dumps(result.to_dict(), ensure_ascii=False, indent=2), encoding="utf-8"
+    )
+    return result
+
+
 def evaluate_report_completion(report_text: str, output_dir: str) -> CompletionResult:
     ledger = _load_audit_ledger(output_dir)
     analysis_purpose = _analysis_purpose(output_dir)
     company_judgment_only = analysis_purpose == "COMPANY_JUDGMENT_ONLY"
+    frozen_ref = _bound_frozen_cjo_ref(output_dir) if company_judgment_only else ""
+    if frozen_ref:
+        return _evaluate_bound_frozen_cjo_completion(
+            report_text, output_dir, frozen_ref,
+        )
     blocking: list[str] = []
     warnings: list[str] = []
     chapter_results: list[dict[str, Any]] = []

@@ -532,6 +532,7 @@ class TurtleAgent:
         )
         self._structured_frontier_completed: bool = False
         self._pit_report_path: str = ""
+        self._bound_cjo_report_path: str = ""
 
     # ------------------------------------------------------------------
     # analyze — 主入口
@@ -570,11 +571,15 @@ class TurtleAgent:
         start_time = time.time()
 
         # Step 1: 加载上下文
-        self._load_context()
+        if self._bound_frozen_cjo_mode():
+            self._context = {}
+        else:
+            self._load_context()
         if (
             not self._config.judgment_task_id
             and not self._config.judgment_synthesis
             and not self._config.binding_only
+            and not self._bound_frozen_cjo_mode()
         ):
             self._initialize_research_execution()
 
@@ -722,6 +727,12 @@ class TurtleAgent:
                     "读取记录由工具层按章节落盘，正文声称‘已读’不算完成。"
                 )
 
+        if self._bound_frozen_cjo_mode():
+            opening_task = (
+                "读取 report contract，再读取当前 JUDGMENT_SYNTHESIS，最后调用 assemble_report。"
+                "handoff 或 receipt 若 stale/unready 就保留阻断，不得回落到自由写作。"
+            )
+
         self._messages = [
             {"role": "system", "content": system_prompt},
             {
@@ -779,7 +790,11 @@ class TurtleAgent:
                 )
 
         # Step 5: 组装报告（唯一出口在 write_tools.assemble_report）。
-        report_path = self._assemble_report()
+        report_path = (
+            self._bound_cjo_report_path
+            if self._bound_frozen_cjo_mode() and self._bound_cjo_report_path
+            else self._assemble_report()
+        )
 
         elapsed = time.time() - start_time
         completion_path = os.path.join(self._config.output_dir, "completion_report.json")
@@ -932,6 +947,33 @@ pit_read_source，且只可按 allowlist 路径调用 pit_read_framework。禁�
             })
         return allowed
 
+    def _bound_frozen_cjo_mode(self) -> bool:
+        """Route on the contract binding itself; stale receipts must not fall back."""
+        try:
+            contract = json.loads(
+                Path(self._config.output_dir, "analysis_contract.json").read_text(
+                    encoding="utf-8"
+                )
+            )
+        except (OSError, json.JSONDecodeError):
+            return False
+        refs = contract.get("canonical_judgment_refs")
+        return bool(
+            contract.get("analysis_purpose") == "COMPANY_JUDGMENT_ONLY"
+            and
+            isinstance(refs, dict)
+            and str(refs.get("frozen_cjo_ref") or "").strip()
+        )
+
+    def _pit_active_allowed_tools(self) -> set[str]:
+        if self._bound_frozen_cjo_mode():
+            return {
+                "pit_read_report_contract_pack",
+                "pit_read_judgment_generation_handoff",
+                "pit_assemble_report",
+            }
+        return self._pit_production_allowed_tools(self._config.analysis_purpose)
+
     def _analyze_pit_production(self) -> str:
         """Generate a full report through PIT reads and output-bound V3 writes."""
         if set(self._tools.list_tools()) != self._pit_production_allowed_tools(self._config.analysis_purpose):
@@ -942,6 +984,29 @@ pit_read_source，且只可按 allowlist 路径调用 pit_read_framework。禁�
             raise RuntimeError("PIT production writer 需要 LLM client")
         if hasattr(self._llm, "set_runtime_task"):
             self._llm.set_runtime_task("pit_production_freeze")
+        if self._bound_frozen_cjo_mode():
+            self._messages = [
+                {
+                    "role": "system",
+                    "content": (
+                        "你在读取合同已绑定的 Frozen CJO。只允许依次调用 "
+                        "pit_read_report_contract_pack、"
+                        "pit_read_judgment_generation_handoff(view=JUDGMENT_SYNTHESIS)、"
+                        "pit_assemble_report。不得读取来源、生成章节、技术附录、估算或第二套判断。"
+                        "若 handoff 或 receipt 不再 READY，assemble 必须阻断；不得回落到自由写作。"
+                    ),
+                },
+                {
+                    "role": "user",
+                    "content": "读取合同与当前 JUDGMENT_SYNTHESIS，然后确定性组装公司判断研究产物。",
+                },
+            ]
+            self._run_loop()
+            if self._loop_error:
+                raise RuntimeError(f"PIT production writer 未完成: {self._loop_error}")
+            if not self._pit_report_path:
+                raise RuntimeError("PIT production writer 在未组装报告前结束")
+            return self._pit_report_path
         purpose_instruction = (
             "再读取pit_read_report_contract_pack，并以其中judgment_generation_handoff为统一入口；必要时调用pit_read_judgment_generation_handoff刷新RESEARCH_AGENDA和INVESTMENT_ENRICHMENT。"
             "必须原样继承同cutoff公司判断的中心路径、经营FJ、pair/card及正常化盈利/owner-cash传导；"
@@ -1502,6 +1567,21 @@ pit_read_source，且只可按 allowlist 路径调用 pit_read_framework。禁�
 
     def _build_system_prompt(self) -> str:
         """构建 Agent system prompt。V12 模式自动检测。"""
+        if self._bound_frozen_cjo_mode():
+            tool_list = "\n".join(
+                f"- **{item['function']['name']}**: {item['function']['description']}"
+                for item in self._tool_schemas_for_stage()
+            )
+            return f"""# Bound Frozen CJO 确定性读取
+
+合同已经绑定 Frozen CJO。只能依次调用 read_report_contract_pack、
+read_judgment_generation_handoff(view=JUDGMENT_SYNTHESIS)、assemble_report。
+不得读取或生成自由章节、技术附录、估算、决策、第二套公司判断或任何额外研究。
+若 handoff 或 receipt stale/unready，assemble 必须阻断；不得回落到普通报告流程。
+
+## 可用工具
+{tool_list}
+"""
         contract = self._context.get("contract", {})
         effective_years = contract.get("effective_years", [])
         cycle_type = contract.get("cycle_type", "未知")
@@ -2183,7 +2263,17 @@ Zone B 提取结果写入 audit.json / governance.json。写作 Agent 在相关�
                 if str(item.get("function", {}).get("name") or "") in allowed
             ]
         if self._config.pit_production_mode:
-            allowed = self._pit_production_allowed_tools(self._config.analysis_purpose)
+            allowed = self._pit_active_allowed_tools()
+            return [
+                deepcopy(item) for item in self._tools.get_schemas()
+                if str(item.get("function", {}).get("name") or "") in allowed
+            ]
+        if self._bound_frozen_cjo_mode():
+            allowed = {
+                "read_report_contract_pack",
+                "read_judgment_generation_handoff",
+                "assemble_report",
+            }
             return [
                 deepcopy(item) for item in self._tools.get_schemas()
                 if str(item.get("function", {}).get("name") or "") in allowed
@@ -3690,6 +3780,8 @@ Zone B 提取结果写入 audit.json / governance.json。写作 Agent 在相关�
 
             if tc.name == "assemble_report" and ok:
                 self._assembled_this_pass = True
+                if self._bound_frozen_cjo_mode() and isinstance(value, dict):
+                    self._bound_cjo_report_path = str(value.get("path") or "")
             if (
                 self._config.synthesis_only
                 and tc.name == "write_valuation_model_ledger"
@@ -3831,7 +3923,7 @@ Zone B 提取结果写入 audit.json / governance.json。写作 Agent 在相关�
                 for tc in resp.tool_calls
             ],
         })
-        allowed = self._pit_production_allowed_tools(self._config.analysis_purpose) if self._config.pit_production_mode else {
+        allowed = self._pit_active_allowed_tools() if self._config.pit_production_mode else {
             "pit_list_sources",
             "pit_read_source",
             "pit_read_framework",

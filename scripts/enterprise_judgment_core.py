@@ -851,11 +851,45 @@ def compile_cjo_candidate(
         used_trace_ids.update(item["trace_ids"])
     used_traces = [deepcopy(item) for item in traces if item["trace_id"] in used_trace_ids]
     used_mechanism_ids = {item["mechanism_id"] for item in used_traces}
+    used_mechanisms = [
+        mechanism_by_id[item] for item in sorted(used_mechanism_ids)
+    ]
+    used_variable_ids = {
+        variable_id
+        for mechanism in used_mechanisms
+        for field in ("from_variable_ids", "to_variable_ids")
+        for variable_id in mechanism.get(field, [])
+    }
+    used_variable_ids.update(key_driver_ids)
+    used_arena_ids = {
+        str(mechanism.get("arena_id")) for mechanism in used_mechanisms
+        if _text(mechanism.get("arena_id"))
+    }
     used_transmission_ids = {
         ref for item in used_traces for ref in item["financial_transmission_ids"]
     }
-    used_source_refs = {item["source_ref"] for item in used_traces}
     used_unit_ids = {item["responsibility_unit_id"] for item in used_traces}
+    used_source_refs = {item["source_ref"] for item in used_traces}
+    selected_model_items = (
+        [item for item in model_value["arenas"] if item["arena_id"] in used_arena_ids]
+        + [item for item in model_value["operating_variables"] if item["variable_id"] in used_variable_ids]
+        + [item for item in model_value["mechanisms"] if item["mechanism_id"] in used_mechanism_ids]
+        + [item for item in model_value["financial_transmissions"] if item["transmission_id"] in used_transmission_ids]
+        + [
+            item for item in model_value["operating_states"]
+            if item["responsibility_unit_id"] in used_unit_ids
+            and any(variable_id in used_variable_ids for variable_id in item.get("variable_states", {}))
+        ]
+        + [
+            item for item in model_value["state_changes"]
+            if any(
+                mechanism_id in used_mechanism_ids
+                for mechanism_id in item.get("mechanism_ids", [])
+            )
+        ]
+    )
+    for item in selected_model_items:
+        used_source_refs.update(item.get("evidence_refs", []))
     used_decision_ids = {
         decision_id
         for mechanism_id in used_mechanism_ids
@@ -921,6 +955,14 @@ def compile_cjo_candidate(
                 deepcopy(item) for item in model_value["responsibility_units"]
                 if item["unit_id"] in used_unit_ids
             ],
+            "arenas": [
+                deepcopy(item) for item in model_value["arenas"]
+                if item["arena_id"] in used_arena_ids
+            ],
+            "operating_variables": [
+                deepcopy(item) for item in model_value["operating_variables"]
+                if item["variable_id"] in used_variable_ids
+            ],
             "mechanisms": [
                 deepcopy(item) for item in model_value["mechanisms"]
                 if item["mechanism_id"] in used_mechanism_ids
@@ -928,6 +970,21 @@ def compile_cjo_candidate(
             "financial_transmissions": [
                 deepcopy(item) for item in model_value["financial_transmissions"]
                 if item["transmission_id"] in used_transmission_ids
+            ],
+            "operating_states": [
+                deepcopy(item) for item in model_value["operating_states"]
+                if item["responsibility_unit_id"] in used_unit_ids
+                and any(
+                    variable_id in used_variable_ids
+                    for variable_id in item.get("variable_states", {})
+                )
+            ],
+            "state_changes": [
+                deepcopy(item) for item in model_value["state_changes"]
+                if any(
+                    mechanism_id in used_mechanism_ids
+                    for mechanism_id in item.get("mechanism_ids", [])
+                )
             ],
         },
         "management_decision_ledger_ref": {
@@ -937,6 +994,12 @@ def compile_cjo_candidate(
                 if _instant(event["recorded_at"]) <= cutoff and _instant(event["effective_at"]) <= cutoff
             ),
             "decisions": [deepcopy(decision_snapshots[item]) for item in sorted(used_decision_ids)],
+            "events": [
+                deepcopy(event) for event in ledger_value["events"]
+                if event.get("decision_id") in used_decision_ids
+                and _instant(event.get("recorded_at")) <= cutoff
+                and _instant(event.get("effective_at")) <= cutoff
+            ],
         },
         "authority": {
             "canonical": False,
@@ -950,6 +1013,326 @@ def compile_cjo_candidate(
     if candidate_validation["state"] != "VALID":
         raise EnterpriseJudgmentCoreError("compiled_cjo_candidate_invalid:" + ",".join(candidate_validation["findings"]))
     return candidate
+
+
+def _validate_cjo_reader_projection(
+    value: dict[str, Any],
+    *,
+    prefix: str,
+    source_validation: dict[str, Any],
+    findings: list[str],
+) -> None:
+    """Deep-check the reader projection without invalidating older v1 omissions."""
+    enterprise = _mapping(value.get("enterprise_system_ref"))
+    cutoff = _instant(value.get("cutoff_at"))
+    source_refs = set(source_validation.get("source_refs") or set())
+    source_available = source_validation.get("source_available_at") or {}
+
+    def evidence_refs(item: dict[str, Any], path: str, *, required: bool = True) -> list[str]:
+        refs = _validate_evidence_refs(
+            item.get("evidence_refs"), path=path, source_refs=source_refs,
+            findings=findings, required=required,
+        )
+        if cutoff is not None:
+            for ref in refs:
+                available = source_available.get(ref)
+                if available is None or available > cutoff:
+                    _add(findings, path + ".source_not_available_at_cutoff:" + ref)
+        return refs
+
+    units = [_mapping(item) for item in _items(enterprise.get("responsibility_units"))]
+    unit_ids = _unique_ids(units, "unit_id", prefix + ".enterprise_system_ref.responsibility_units", findings)
+    for index, unit in enumerate(units):
+        path = f"{prefix}.enterprise_system_ref.responsibility_units[{index}]"
+        for field in (
+            "accounting_perimeter", "decision_scope", "economic_carrier",
+            "measurement_surface",
+        ):
+            if not _text(unit.get(field)):
+                _add(findings, path + "." + field + "_missing")
+
+    arenas_present = "arenas" in enterprise
+    arenas_value = enterprise.get("arenas")
+    if arenas_present and not isinstance(arenas_value, list):
+        _add(findings, prefix + ".enterprise_system_ref.arenas_invalid")
+    arenas = [_mapping(item) for item in _items(arenas_value)]
+    arena_ids = _unique_ids(arenas, "arena_id", prefix + ".enterprise_system_ref.arenas", findings)
+    arena_by_id = {item.get("arena_id"): item for item in arenas if _text(item.get("arena_id"))}
+    for index, arena in enumerate(arenas):
+        path = f"{prefix}.enterprise_system_ref.arenas[{index}]"
+        if arena.get("responsibility_unit_id") not in unit_ids:
+            _add(findings, path + ".responsibility_unit_unknown")
+        for field in (
+            "product_or_service_scope", "customer_task", "competition_mechanism", "window",
+        ):
+            if not _text(arena.get(field)):
+                _add(findings, path + "." + field + "_missing")
+        evidence_refs(arena, path)
+
+    variables_present = "operating_variables" in enterprise
+    variables_value = enterprise.get("operating_variables")
+    if variables_present and not isinstance(variables_value, list):
+        _add(findings, prefix + ".enterprise_system_ref.operating_variables_invalid")
+    variables = [_mapping(item) for item in _items(variables_value)]
+    variable_ids = _unique_ids(
+        variables, "variable_id", prefix + ".enterprise_system_ref.operating_variables", findings,
+    )
+    variable_by_id = {
+        item.get("variable_id"): item for item in variables if _text(item.get("variable_id"))
+    }
+    for index, variable in enumerate(variables):
+        path = f"{prefix}.enterprise_system_ref.operating_variables[{index}]"
+        if variable.get("responsibility_unit_id") not in unit_ids:
+            _add(findings, path + ".responsibility_unit_unknown")
+        if arenas_present and variable.get("arena_id") not in arena_ids:
+            _add(findings, path + ".arena_unknown")
+        if not _text(variable.get("name")) or variable.get("observation_state") not in {
+            "OBSERVED", "INFERRED", "UNKNOWN", "CONTRADICTED",
+        }:
+            _add(findings, path + ".name_or_observation_state_invalid")
+        evidence_refs(
+            variable, path,
+            required=variable.get("observation_state") not in {"UNKNOWN"},
+        )
+
+    mechanisms = [_mapping(item) for item in _items(enterprise.get("mechanisms"))]
+    mechanism_ids = _unique_ids(
+        mechanisms, "mechanism_id", prefix + ".enterprise_system_ref.mechanisms", findings,
+    )
+    mechanism_by_id = {
+        item.get("mechanism_id"): item for item in mechanisms if _text(item.get("mechanism_id"))
+    }
+    for index, mechanism in enumerate(mechanisms):
+        path = f"{prefix}.enterprise_system_ref.mechanisms[{index}]"
+        unit_id = mechanism.get("responsibility_unit_id")
+        arena_id = mechanism.get("arena_id")
+        if unit_id not in unit_ids:
+            _add(findings, path + ".responsibility_unit_unknown")
+        if arenas_present and arena_id not in arena_ids:
+            _add(findings, path + ".arena_unknown")
+        if arenas_present and arena_id in arena_by_id and arena_by_id[arena_id].get("responsibility_unit_id") != unit_id:
+            _add(findings, path + ".arena_unit_mismatch")
+        if not _text(mechanism.get("description")) or mechanism.get("reasoning_kind") not in REASONING_KINDS:
+            _add(findings, path + ".description_or_reasoning_kind_invalid")
+        for field in ("from_variable_ids", "to_variable_ids"):
+            ids = mechanism.get(field)
+            if not isinstance(ids, list) or not ids:
+                _add(findings, path + "." + field + "_missing")
+                continue
+            if variables_present and any(item not in variable_ids for item in ids):
+                _add(findings, path + "." + field + "_unknown")
+            if variables_present and any(
+                variable_by_id.get(item, {}).get("responsibility_unit_id") != unit_id
+                or variable_by_id.get(item, {}).get("arena_id") != arena_id
+                for item in ids if item in variable_by_id
+            ):
+                _add(findings, path + ".variable_scope_mismatch")
+        evidence_refs(
+            mechanism, path,
+            required=mechanism.get("reasoning_kind") == "OBSERVATION",
+        )
+
+    transmissions = [
+        _mapping(item) for item in _items(enterprise.get("financial_transmissions"))
+    ]
+    transmission_ids = _unique_ids(
+        transmissions, "transmission_id",
+        prefix + ".enterprise_system_ref.financial_transmissions", findings,
+    )
+    for index, transmission in enumerate(transmissions):
+        path = f"{prefix}.enterprise_system_ref.financial_transmissions[{index}]"
+        if transmission.get("mechanism_id") not in mechanism_ids:
+            _add(findings, path + ".mechanism_unknown")
+        if transmission.get("layer") not in {"NORMAL_EARNINGS", "OWNER_CASH", "PERMANENT_LOSS"}:
+            _add(findings, path + ".layer_invalid")
+        if transmission.get("direction") not in DIRECTIONS or not _text(transmission.get("description")):
+            _add(findings, path + ".direction_or_description_invalid")
+        evidence_refs(
+            transmission, path,
+            required=transmission.get("direction") not in {"UNKNOWN", "NONE"},
+        )
+
+    states_present = "operating_states" in enterprise
+    states_value = enterprise.get("operating_states")
+    if states_present and not isinstance(states_value, list):
+        _add(findings, prefix + ".enterprise_system_ref.operating_states_invalid")
+    states = [_mapping(item) for item in _items(states_value)]
+    state_ids = _unique_ids(states, "state_id", prefix + ".enterprise_system_ref.operating_states", findings)
+    state_by_id = {item.get("state_id"): item for item in states if _text(item.get("state_id"))}
+    for index, state in enumerate(states):
+        path = f"{prefix}.enterprise_system_ref.operating_states[{index}]"
+        unit_id = state.get("responsibility_unit_id")
+        if unit_id not in unit_ids:
+            _add(findings, path + ".responsibility_unit_unknown")
+        observed_at = _instant(state.get("observed_at"))
+        if observed_at is None or cutoff is None or observed_at > cutoff:
+            _add(findings, path + ".observed_at_after_cutoff_or_invalid")
+        variable_states = state.get("variable_states")
+        if not isinstance(variable_states, dict) or not variable_states:
+            _add(findings, path + ".variable_states_invalid")
+        else:
+            for variable_id, state_value in variable_states.items():
+                if variables_present and variable_id not in variable_ids:
+                    _add(findings, path + ".variable_unknown:" + str(variable_id))
+                elif variables_present and variable_by_id.get(variable_id, {}).get("responsibility_unit_id") != unit_id:
+                    _add(findings, path + ".variable_unit_mismatch:" + str(variable_id))
+                if not _text(state_value):
+                    _add(findings, path + ".state_value_missing:" + str(variable_id))
+        evidence_refs(state, path)
+
+    decision_ref = _mapping(value.get("management_decision_ledger_ref"))
+    decisions_value = decision_ref.get("decisions")
+    if not isinstance(decisions_value, list):
+        _add(findings, prefix + ".management_decision_ledger_ref.decisions_invalid")
+    decisions = [_mapping(item) for item in _items(decisions_value)]
+    decision_ids = _unique_ids(
+        decisions, "decision_id", prefix + ".management_decision_ledger_ref.decisions", findings,
+    )
+    for index, mechanism in enumerate(mechanisms):
+        decision_links = mechanism.get("management_decision_ids")
+        if not isinstance(decision_links, list) or any(
+            item not in decision_ids for item in decision_links
+        ):
+            _add(
+                findings,
+                f"{prefix}.enterprise_system_ref.mechanisms[{index}].management_decision_ids_invalid",
+            )
+    for index, decision in enumerate(decisions):
+        path = f"{prefix}.management_decision_ledger_ref.decisions[{index}]"
+        if decision.get("responsibility_unit_id") not in unit_ids:
+            _add(findings, path + ".responsibility_unit_unknown")
+        if arenas_present and decision.get("arena_id") not in arena_ids:
+            _add(findings, path + ".arena_unknown")
+        for field in ("responsible_party", "problem_statement", "strongest_counterargument"):
+            if not _text(decision.get(field)):
+                _add(findings, path + "." + field + "_missing")
+        if decision.get("status") not in DECISION_STATUSES:
+            _add(findings, path + ".status_invalid")
+        effective_at = _instant(decision.get("effective_at"))
+        if effective_at is None or cutoff is None or effective_at > cutoff:
+            _add(findings, path + ".effective_at_after_cutoff_or_invalid")
+        for field, known in (
+            ("expected_mechanism_ids", mechanism_ids),
+            ("financial_transmission_ids", transmission_ids),
+        ):
+            ids = decision.get(field)
+            if not isinstance(ids, list) or not ids or any(item not in known for item in ids):
+                _add(findings, path + "." + field + "_invalid")
+        for field in ("observable_signal_ids", "unknowns"):
+            items = decision.get(field)
+            if not isinstance(items, list) or not items or any(not _text(item) for item in items):
+                _add(findings, path + "." + field + "_invalid")
+        evidence_refs(decision, path, required=decision.get("status") != "PLANNED")
+
+    events_present = "events" in decision_ref
+    events_value = decision_ref.get("events")
+    if events_present and not isinstance(events_value, list):
+        _add(findings, prefix + ".management_decision_ledger_ref.events_invalid")
+    events = [_mapping(item) for item in _items(events_value)]
+    _unique_ids(events, "event_id", prefix + ".management_decision_ledger_ref.events", findings)
+    event_count_at_cutoff = decision_ref.get("event_count_at_cutoff")
+    if (
+        not isinstance(event_count_at_cutoff, int)
+        or event_count_at_cutoff < len(events)
+    ):
+        _add(findings, prefix + ".management_decision_ledger_ref.event_count_at_cutoff_invalid")
+    event_status: dict[str, str] = {}
+    prior_recorded: datetime | None = None
+    prior_sequence = 0
+    for index, event in enumerate(events):
+        path = f"{prefix}.management_decision_ledger_ref.events[{index}]"
+        decision_id = event.get("decision_id")
+        if decision_id not in decision_ids:
+            _add(findings, path + ".decision_unknown")
+        event_type = event.get("event_type")
+        if event_type not in DECISION_EVENT_TYPES:
+            _add(findings, path + ".event_type_invalid")
+        sequence = event.get("sequence")
+        if not isinstance(sequence, int) or sequence <= prior_sequence:
+            _add(findings, path + ".sequence_invalid_or_not_monotonic")
+        elif sequence > 0:
+            prior_sequence = sequence
+        recorded_at = _instant(event.get("recorded_at"))
+        effective_at = _instant(event.get("effective_at"))
+        if (
+            recorded_at is None or effective_at is None or cutoff is None
+            or effective_at > recorded_at or recorded_at > cutoff or effective_at > cutoff
+        ):
+            _add(findings, path + ".timestamp_or_cutoff_invalid")
+        if prior_recorded is not None and recorded_at is not None and recorded_at < prior_recorded:
+            _add(findings, path + ".recorded_at_not_monotonic")
+        if recorded_at is not None:
+            prior_recorded = recorded_at
+        refs = evidence_refs(
+            event, path,
+            required=event_type != "DECISION_RECORDED" or event.get("status") != "PLANNED",
+        )
+        if recorded_at is not None:
+            for ref in refs:
+                available = source_available.get(ref)
+                if available is None or available > recorded_at:
+                    _add(findings, path + ".evidence_not_available_when_recorded:" + ref)
+        if event_type == "DECISION_RECORDED":
+            if decision_id in event_status:
+                _add(findings, path + ".decision_already_recorded")
+            if event.get("status") not in DECISION_STATUSES:
+                _add(findings, path + ".status_invalid")
+            event_status[str(decision_id)] = str(event.get("status") or "")
+        elif decision_id not in event_status:
+            _add(findings, path + ".decision_not_recorded")
+        elif event_type == "STATUS_CHANGED":
+            if event.get("from_status") != event_status.get(str(decision_id)):
+                _add(findings, path + ".from_status_not_current")
+            if event.get("to_status") not in DECISION_STATUS_TRANSITIONS.get(
+                event.get("from_status"), set()
+            ):
+                _add(findings, path + ".status_transition_invalid")
+            if not _text(event.get("rationale")):
+                _add(findings, path + ".rationale_missing")
+            event_status[str(decision_id)] = str(event.get("to_status") or "")
+    if events_present:
+        try:
+            rebuilt = _decision_snapshots({"events": events}, through=cutoff)
+        except (KeyError, TypeError):
+            rebuilt = {}
+            _add(findings, prefix + ".management_decision_ledger_ref.events_unreadable")
+        actual = {item.get("decision_id"): item for item in decisions}
+        if rebuilt != actual:
+            _add(findings, prefix + ".management_decision_ledger_ref.snapshot_event_mismatch")
+
+    changes_present = "state_changes" in enterprise
+    changes_value = enterprise.get("state_changes")
+    if changes_present and not isinstance(changes_value, list):
+        _add(findings, prefix + ".enterprise_system_ref.state_changes_invalid")
+    changes = [_mapping(item) for item in _items(changes_value)]
+    _unique_ids(changes, "change_id", prefix + ".enterprise_system_ref.state_changes", findings)
+    for index, change in enumerate(changes):
+        path = f"{prefix}.enterprise_system_ref.state_changes[{index}]"
+        if states_present and (
+            change.get("from_state_id") not in state_ids
+            or change.get("to_state_id") not in state_ids
+        ):
+            _add(findings, path + ".state_unknown")
+        if states_present and all(
+            item in state_by_id for item in (change.get("from_state_id"), change.get("to_state_id"))
+        ) and state_by_id[change["from_state_id"]].get("responsibility_unit_id") != state_by_id[change["to_state_id"]].get("responsibility_unit_id"):
+            _add(findings, path + ".state_unit_mismatch")
+        if states_present and all(
+            item in state_by_id for item in (change.get("from_state_id"), change.get("to_state_id"))
+        ):
+            from_at = _instant(state_by_id[change["from_state_id"]].get("observed_at"))
+            to_at = _instant(state_by_id[change["to_state_id"]].get("observed_at"))
+            if from_at is None or to_at is None or from_at >= to_at:
+                _add(findings, path + ".state_time_order_invalid")
+        mechanism_refs = change.get("mechanism_ids")
+        if not isinstance(mechanism_refs, list) or not mechanism_refs or any(
+            item not in mechanism_by_id for item in mechanism_refs
+        ):
+            _add(findings, path + ".mechanism_ids_invalid")
+        decision_refs = change.get("management_decision_ids")
+        if not isinstance(decision_refs, list) or any(item not in decision_ids for item in decision_refs):
+            _add(findings, path + ".management_decision_ids_invalid")
+        evidence_refs(change, path)
 
 
 def validate_cjo_candidate(candidate: Any) -> dict[str, Any]:
@@ -991,6 +1374,10 @@ def validate_cjo_candidate(candidate: Any) -> dict[str, Any]:
     )
     source_validation = validate_source_package(value.get("source_package"))
     findings.extend("cjo_candidate.source_package:" + item for item in source_validation["findings"])
+    _validate_cjo_reader_projection(
+        value, prefix="cjo_candidate", source_validation=source_validation,
+        findings=findings,
+    )
     if _mapping(value.get("source_package")).get("company_id") != value.get("company_id"):
         _add(findings, "cjo_candidate.source_package_company_id_mismatch")
     if _mapping(value.get("source_package")).get("cutoff_at") != value.get("cutoff_at"):
@@ -1148,6 +1535,14 @@ def freeze_cjo(*, candidate: Any, independent_review: Any) -> dict[str, Any]:
             "reviewer_id", "reviewed_at", "decision", "accepted_criteria",
         )
     }
+    # Direct reviewed values, not a digest: later validation can prove that a
+    # reader-facing field was not rewritten after the independent acceptance.
+    frozen["independent_review_receipt"]["reviewed_reader_projection"] = {
+        "enterprise_system_ref": deepcopy(frozen["enterprise_system_ref"]),
+        "management_decision_ledger_ref": deepcopy(
+            frozen["management_decision_ledger_ref"]
+        ),
+    }
     frozen["authority"] = {
         "canonical": True,
         "append_only_predecessors": True,
@@ -1204,6 +1599,10 @@ def validate_frozen_cjo(cjo: Any) -> dict[str, Any]:
     )
     source_validation = validate_source_package(value.get("source_package"))
     findings.extend("frozen_cjo.source_package:" + item for item in source_validation["findings"])
+    _validate_cjo_reader_projection(
+        value, prefix="frozen_cjo", source_validation=source_validation,
+        findings=findings,
+    )
     if _mapping(value.get("source_package")).get("company_id") != value.get("company_id"):
         _add(findings, "frozen_cjo.source_package_company_id_mismatch")
     if _mapping(value.get("source_package")).get("cutoff_at") != value.get("cutoff_at"):
@@ -1283,6 +1682,23 @@ def validate_frozen_cjo(cjo: Any) -> dict[str, Any]:
             _add(findings, "frozen_cjo.independent_review_receipt_identity_mismatch:" + field)
     if receipt.get("reviewed_at") != value.get("frozen_at"):
         _add(findings, "frozen_cjo.reviewed_at_frozen_at_mismatch")
+    reviewed_projection = receipt.get("reviewed_reader_projection")
+    enterprise_projection = _mapping(value.get("enterprise_system_ref"))
+    decision_projection = _mapping(value.get("management_decision_ledger_ref"))
+    has_new_reader_projection = any(
+        field in enterprise_projection
+        for field in ("arenas", "operating_variables", "operating_states", "state_changes")
+    ) or "events" in decision_projection
+    if has_new_reader_projection and reviewed_projection is None:
+        _add(findings, "frozen_cjo.reviewed_reader_projection_missing_for_new_shape")
+    elif reviewed_projection is not None:
+        reviewed_projection = _mapping(reviewed_projection)
+        expected_projection = {
+            "enterprise_system_ref": value.get("enterprise_system_ref"),
+            "management_decision_ledger_ref": value.get("management_decision_ledger_ref"),
+        }
+        if reviewed_projection != expected_projection:
+            _add(findings, "frozen_cjo.reviewed_reader_projection_mutated")
     required_criteria = {
         "TRACEABILITY", "UNKNOWN_PRESERVATION", "COUNTERARGUMENT",
         "FINANCIAL_TRANSMISSION", "PIT_CUTOFF", "AUTHORITY_BOUNDARY",

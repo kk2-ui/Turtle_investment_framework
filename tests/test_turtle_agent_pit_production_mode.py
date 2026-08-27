@@ -45,6 +45,40 @@ class ProductionLlm:
         return self.responses.pop(0)
 
 
+class BoundCjoLlm(ProductionLlm):
+    def __init__(self) -> None:
+        super().__init__()
+        self.responses = [
+            LlmResponse(tool_calls=[ToolCall(
+                id="contract", name="pit_read_report_contract_pack", arguments={},
+            )]),
+            LlmResponse(tool_calls=[ToolCall(
+                id="handoff", name="pit_read_judgment_generation_handoff",
+                arguments={"view": "JUDGMENT_SYNTHESIS"},
+            )]),
+            LlmResponse(tool_calls=[ToolCall(
+                id="assemble", name="pit_assemble_report", arguments={"company_name": "ignored"},
+            )]),
+        ]
+
+
+class BoundNormalCjoLlm(BoundCjoLlm):
+    def __init__(self) -> None:
+        super().__init__()
+        self.responses = [
+            LlmResponse(tool_calls=[ToolCall(
+                id="contract", name="read_report_contract_pack", arguments={},
+            )]),
+            LlmResponse(tool_calls=[ToolCall(
+                id="handoff", name="read_judgment_generation_handoff",
+                arguments={"view": "JUDGMENT_SYNTHESIS"},
+            )]),
+            LlmResponse(tool_calls=[ToolCall(
+                id="assemble", name="assemble_report", arguments={"company_name": "ignored"},
+            )]),
+        ]
+
+
 def test_pit_production_agent_uses_only_bound_tools_and_ends_at_assembly() -> None:
     tools = ToolRegistry()
     allowed = TurtleAgent._pit_production_allowed_tools()
@@ -80,6 +114,133 @@ def test_pit_production_registry_discovers_exactly_the_bound_toolset() -> None:
     tools.auto_discover("turtle_agent.tools.pit_production_write_tools")
 
     assert set(tools.list_tools()) == TurtleAgent._pit_production_allowed_tools()
+
+
+def test_bound_frozen_cjo_uses_compact_prompt_and_exact_tool_trace(tmp_path: Path) -> None:
+    (tmp_path / "analysis_contract.json").write_text(json.dumps({
+        "analysis_purpose": "COMPANY_JUDGMENT_ONLY",
+        "canonical_judgment_refs": {"frozen_cjo_ref": "canonical/frozen_cjo.json"},
+    }), encoding="utf-8")
+    tools = ToolRegistry()
+    called: list[str] = []
+    full = TurtleAgent._pit_production_allowed_tools("COMPANY_JUDGMENT_ONLY")
+    for name in sorted(full):
+        def handler(_name: str = name, **kwargs: object) -> dict[str, object]:
+            called.append(_name)
+            if _name == "pit_assemble_report":
+                return {"path": "output/company-judgment-research.md"}
+            if _name == "pit_read_judgment_generation_handoff":
+                return {"readiness": {"state": "READY"}}
+            return {"ok": True}
+        tools.register(name, handler)
+    llm = BoundCjoLlm()
+
+    result = TurtleAgent(
+        llm=llm,
+        tools=tools,
+        config=AgentConfig(
+            code="600340.SH", output_dir=str(tmp_path),
+            analysis_purpose="COMPANY_JUDGMENT_ONLY",
+            pit_production_mode=True,
+            pit_case_id="HBTCASE:600340:20200427",
+            pit_experiment_id="HBT:600340:20200427",
+            pit_cutoff_at="2020-04-27T18:00:00+08:00",
+        ),
+    ).analyze()
+
+    compact = {
+        "pit_read_report_contract_pack",
+        "pit_read_judgment_generation_handoff",
+        "pit_assemble_report",
+    }
+    assert result == "output/company-judgment-research.md"
+    assert llm.schemas == [compact, compact, compact]
+    assert called == [
+        "pit_read_report_contract_pack",
+        "pit_read_judgment_generation_handoff",
+        "pit_assemble_report",
+    ]
+    prompt = str(llm.messages[0][0]["content"])
+    assert "只允许依次调用" in prompt
+    assert "15章" not in prompt
+    assert "compute_ddm" not in prompt
+    assert "估值模型" not in prompt
+
+
+def test_normal_bound_frozen_cjo_prompt_never_builds_full_report_context(tmp_path: Path) -> None:
+    (tmp_path / "analysis_contract.json").write_text(json.dumps({
+        "analysis_purpose": "COMPANY_JUDGMENT_ONLY",
+        "canonical_judgment_refs": {"frozen_cjo_ref": "canonical/frozen_cjo.json"},
+    }), encoding="utf-8")
+    tools = ToolRegistry()
+    compact = {
+        "read_report_contract_pack",
+        "read_judgment_generation_handoff",
+        "assemble_report",
+    }
+    for name in sorted(compact):
+        tools.register(name, lambda **kwargs: {"ok": True})
+    agent = TurtleAgent(
+        llm=None, tools=tools,
+        config=AgentConfig(
+            code="600340.SH", output_dir=str(tmp_path),
+            analysis_purpose="COMPANY_JUDGMENT_ONLY",
+        ),
+    )
+
+    prompt = agent._build_system_prompt()
+    offered = {
+        item["function"]["name"] for item in agent._tool_schemas_for_stage()
+    }
+
+    assert offered == compact
+    assert "只能依次调用" in prompt
+    for forbidden in ("15章", "compute_ddm", "reader coverage", "模板合约", "估值模型"):
+        assert forbidden not in prompt
+
+
+def test_normal_bound_frozen_cjo_actual_prompt_and_trace_are_compact(tmp_path: Path) -> None:
+    (tmp_path / "analysis_contract.json").write_text(json.dumps({
+        "analysis_purpose": "COMPANY_JUDGMENT_ONLY",
+        "canonical_judgment_refs": {"frozen_cjo_ref": "canonical/frozen_cjo.json"},
+    }), encoding="utf-8")
+    tools = ToolRegistry()
+    called: list[str] = []
+    compact = {
+        "read_report_contract_pack",
+        "read_judgment_generation_handoff",
+        "assemble_report",
+    }
+    for name in sorted(compact):
+        def handler(_name: str = name, **kwargs: object) -> dict[str, object]:
+            called.append(_name)
+            if _name == "assemble_report":
+                return {"path": "output/company-judgment-research.md"}
+            if _name == "read_judgment_generation_handoff":
+                return {"readiness": {"state": "READY"}}
+            return {"ok": True}
+        tools.register(name, handler)
+    llm = BoundNormalCjoLlm()
+
+    result = TurtleAgent(
+        llm=llm, tools=tools,
+        config=AgentConfig(
+            code="600340.SH", output_dir=str(tmp_path),
+            analysis_purpose="COMPANY_JUDGMENT_ONLY", publish_downstream=False,
+        ),
+    ).analyze()
+
+    assert result == "output/company-judgment-research.md"
+    assert llm.schemas == [compact, compact, compact]
+    assert called == [
+        "read_report_contract_pack", "read_judgment_generation_handoff", "assemble_report",
+    ]
+    system = str(llm.messages[0][0]["content"])
+    user = str(llm.messages[0][1]["content"])
+    assert "只能依次调用" in system
+    assert "读取 report contract，再读取当前 JUDGMENT_SYNTHESIS" in user
+    for forbidden in ("15章", "compute_ddm", "reader coverage", "模板合约", "估值模型"):
+        assert forbidden not in system + user
 
 
 PIT_ARGS = {

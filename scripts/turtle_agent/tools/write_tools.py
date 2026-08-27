@@ -1775,10 +1775,20 @@ def _bound_frozen_cjo_for_summary(
 
 
 def _render_frozen_cjo_summary(frozen: dict[str, Any]) -> str:
+    try:
+        from scripts.enterprise_judgment_core import validate_frozen_cjo
+    except ModuleNotFoundError:
+        from enterprise_judgment_core import validate_frozen_cjo
+    validation = validate_frozen_cjo(frozen)
+    if validation.get("state") != "VALID":
+        raise RuntimeError(
+            "Deterministic CJO reader requires a valid Frozen CJO: "
+            + ", ".join(str(item) for item in validation.get("findings") or [])
+        )
     thesis_resolution = str(frozen.get("resolution") or "UNKNOWN")
     direction_labels = {
         "IMPROVES": "改善", "DETERIORATES": "恶化", "STABLE": "稳定",
-        "MIXED": "正反信号并存", "UNKNOWN": "尚不确定",
+        "MIXED": "正反信号并存", "UNKNOWN": "尚不确定", "NONE": "无此传导",
     }
     status_labels = {
         "OPEN": "等待结算", "SUPPORTED": "当前证据支持",
@@ -1794,16 +1804,204 @@ def _render_frozen_cjo_summary(frozen: dict[str, Any]) -> str:
         for item in (frozen.get("enterprise_system_ref") or {}).get("financial_transmissions") or []
         if isinstance(item, dict)
     }
+    enterprise = frozen.get("enterprise_system_ref")
+    enterprise = enterprise if isinstance(enterprise, dict) else {}
+
+    def inline_list(value: Any) -> str:
+        items = value if isinstance(value, list) else []
+        return " / ".join(
+            item for item in (_inline_report_text(part) for part in items) if item
+        ) or "无"
+
+    review = frozen.get("independent_review_receipt")
+    review = review if isinstance(review, dict) else {}
     lines = [
-        "## 公司判断摘要", "",
-        "本摘要直接来自已绑定并独立签收的 Frozen CJO；本地草稿不能改写它。", "",
-        "### 当前主路径", "",
+        "## 对象、时点与独立复核", "",
+        f"- **CJO**：{_inline_report_text(frozen.get('cjo_id'))}；公司：{_inline_report_text(frozen.get('company_id'))}。",
+        f"- **判断截止**：{_inline_report_text(frozen.get('cutoff_at'))}；方法：{_inline_report_text(frozen.get('method_version'))}；冻结：{_inline_report_text(frozen.get('frozen_at'))}。",
+        f"- **独立复核**：{_inline_report_text(review.get('decision'))}；复核人：{_inline_report_text(review.get('reviewer_id'))}；复核编号：{_inline_report_text(review.get('review_id'))}。",
+        "", "## 企业责任边界", "",
     ]
+    for unit in enterprise.get("responsibility_units") or []:
+        if not isinstance(unit, dict):
+            continue
+        lines.append(
+            f"- **{_inline_report_text(unit.get('unit_id'))}**："
+            f"会计边界={_inline_report_text(unit.get('accounting_perimeter'))}；"
+            f"决策范围={_inline_report_text(unit.get('decision_scope'))}；"
+            f"经济承载={_inline_report_text(unit.get('economic_carrier'))}；"
+            f"观察界面={_inline_report_text(unit.get('measurement_surface'))}。"
+        )
+    lines.extend(["", "## 产品、客户任务与竞争场", ""])
+    arenas = enterprise.get("arenas")
+    if not isinstance(arenas, list):
+        lines.append("- 该旧版冻结对象未冻结产品、客户任务与竞争场投影；本报告不从本地章节补写。")
+    for arena in arenas or []:
+        if not isinstance(arena, dict):
+            continue
+        lines.append(
+            f"- **{_inline_report_text(arena.get('arena_id'))}**："
+            f"责任单元={_inline_report_text(arena.get('responsibility_unit_id'))}；"
+            f"产品或服务={_inline_report_text(arena.get('product_or_service_scope'))}；"
+            f"客户任务={_inline_report_text(arena.get('customer_task'))}；"
+            f"竞争机制={_inline_report_text(arena.get('competition_mechanism'))}；"
+            f"观察窗口={_inline_report_text(arena.get('window'))}；"
+            f"替代方案={inline_list(arena.get('competitor_or_alternative_refs'))}；"
+            f"来源={inline_list(arena.get('evidence_refs'))}。"
+        )
+    lines.extend(["", "## 经营状态与状态变化", ""])
+    variable_names = {
+        str(item.get("variable_id")): _inline_report_text(item.get("name"))
+        for item in enterprise.get("operating_variables") or []
+        if isinstance(item, dict)
+    }
+    states = enterprise.get("operating_states")
+    if not isinstance(states, list):
+        lines.append("- 该旧版冻结对象未冻结经营状态投影；不据此推断经营未变化。")
+    for state in states or []:
+        if not isinstance(state, dict):
+            continue
+        variable_states = state.get("variable_states")
+        variable_states = variable_states if isinstance(variable_states, dict) else {}
+        rendered_states = "；".join(
+            f"{variable_names.get(str(key), str(key))}={_inline_report_text(value)}"
+            for key, value in variable_states.items()
+        )
+        lines.append(
+            f"- **{_inline_report_text(state.get('state_id'))}**（{_inline_report_text(state.get('observed_at'))}）："
+            + rendered_states + "；来源=" + inline_list(state.get("evidence_refs")) + "。"
+        )
+    changes = enterprise.get("state_changes")
+    if not isinstance(changes, list):
+        lines.append("- 该旧版冻结对象未冻结状态变化投影。")
+    elif not changes:
+        lines.append(
+            "- 截至 " + _inline_report_text(frozen.get("cutoff_at"))
+            + " 未观察到合格状态变化。"
+        )
+    for change in changes or []:
+        if not isinstance(change, dict):
+            continue
+        lines.append(
+            f"- **状态变化 {_inline_report_text(change.get('change_id'))}**："
+            f"{_inline_report_text(change.get('from_state_id'))} → {_inline_report_text(change.get('to_state_id'))}；"
+            f"机制={inline_list(change.get('mechanism_ids'))}；"
+            f"管理决策={inline_list(change.get('management_decision_ids'))}；"
+            f"来源={inline_list(change.get('evidence_refs'))}。"
+        )
+    decision_ref = frozen.get("management_decision_ledger_ref")
+    decision_ref = decision_ref if isinstance(decision_ref, dict) else {}
+    decision_events = decision_ref.get("events")
+    lines.extend([
+        "",
+        (
+            "## 管理层决策事件与截至时点状态"
+            if isinstance(decision_events, list) else
+            "## 管理层决策 Snapshot"
+        ),
+        "",
+    ])
+    if isinstance(decision_events, list):
+        for event in decision_events:
+            if not isinstance(event, dict):
+                continue
+            rationale = _inline_report_text(event.get("rationale"))
+            event_type = event.get("event_type")
+            if event_type == "DECISION_RECORDED":
+                status_detail = (
+                    f"记录状态={_inline_report_text(event.get('status'))}；"
+                )
+            elif event_type == "STATUS_CHANGED":
+                status_detail = (
+                    f"状态变化={_inline_report_text(event.get('from_status'))}"
+                    f" → {_inline_report_text(event.get('to_status'))}；"
+                )
+            else:
+                status_detail = ""
+            lines.append(
+                f"- **{_inline_report_text(event.get('event_id'))}**："
+                f"类型={_inline_report_text(event_type)}；"
+                f"决策={_inline_report_text(event.get('decision_id'))}；"
+                + status_detail
+                + f"记录时间={_inline_report_text(event.get('recorded_at'))}；"
+                f"生效时间={_inline_report_text(event.get('effective_at'))}；"
+                + (f"经济理由={rationale}；" if rationale else "")
+                + f"来源={inline_list(event.get('evidence_refs'))}。"
+            )
+    else:
+        lines.append(
+            "- 事件序列未冻结；下列内容仅为截至 "
+            + _inline_report_text(frozen.get("cutoff_at"))
+            + " 的决策 snapshot，不作为执行过程重建。"
+        )
+    decisions = decision_ref.get("decisions")
+    decisions = decisions if isinstance(decisions, list) else []
+    if not decisions:
+        lines.append(
+            "- 截至 " + _inline_report_text(frozen.get("cutoff_at"))
+            + " 未观察到合格管理决策；资料不足以区分 no-action 与未披露。"
+        )
+    for decision in decisions:
+        if not isinstance(decision, dict):
+            continue
+        lines.append(
+            f"- **{_inline_report_text(decision.get('decision_id'))}**："
+            f"问题={_inline_report_text(decision.get('problem_statement'))}；"
+            f"当前状态={_inline_report_text(decision.get('status'))}；"
+            f"最新事件={_inline_report_text(decision.get('last_event_id'))}；"
+            f"生效时间={_inline_report_text(decision.get('effective_at'))}；"
+            f"责任主体={_inline_report_text(decision.get('responsible_party'))}；"
+            f"责任单元={_inline_report_text(decision.get('responsibility_unit_id'))}；"
+            f"经营场={_inline_report_text(decision.get('arena_id'))}。"
+        )
+        lines.append(
+            "  - 预期机制=" + inline_list(decision.get("expected_mechanism_ids"))
+            + "；观察信号=" + inline_list(decision.get("observable_signal_ids"))
+            + "；经济传导=" + inline_list(decision.get("financial_transmission_ids"))
+            + "；来源=" + inline_list(decision.get("evidence_refs")) + "。"
+        )
+        lines.append(
+            "  - 决策内最强反方="
+            + (_inline_report_text(decision.get("strongest_counterargument")) or "无")
+            + "；局部未知=" + inline_list(decision.get("unknowns")) + "。"
+        )
+    lines.extend(["", "## 因果机制", ""])
+    for mechanism in enterprise.get("mechanisms") or []:
+        if not isinstance(mechanism, dict):
+            continue
+        lines.append(
+            f"- **{_inline_report_text(mechanism.get('mechanism_id'))}**："
+            f"{_inline_report_text(mechanism.get('description'))}；"
+            f"责任单元={_inline_report_text(mechanism.get('responsibility_unit_id'))}；"
+            f"经营场={_inline_report_text(mechanism.get('arena_id'))}；"
+            f"{inline_list(mechanism.get('from_variable_ids'))} → {inline_list(mechanism.get('to_variable_ids'))}；"
+            f"管理决策={inline_list(mechanism.get('management_decision_ids'))}；"
+            f"推理性质={_inline_report_text(mechanism.get('reasoning_kind'))}；"
+            f"来源={inline_list(mechanism.get('evidence_refs'))}。"
+        )
+    lines.extend(["", "## 关键经营驱动", ""])
+    if not enterprise.get("operating_variables"):
+        lines.append("- 该旧版冻结对象未冻结完整经营变量投影；仅展示下列已冻结关键驱动。")
+    for driver in frozen.get("key_operating_drivers") or []:
+        if not isinstance(driver, dict):
+            continue
+        lines.append(
+            f"- **{_inline_report_text(driver.get('variable_id'))}**："
+            f"{_inline_report_text(driver.get('name'))}；"
+            f"观察状态={_inline_report_text(driver.get('observation_state'))}；"
+            f"来源={inline_list(driver.get('evidence_refs'))}。"
+        )
+    lines.extend([
+        "", "## 公司判断摘要", "",
+        "本报告直接来自已绑定并独立签收的 Frozen CJO。", "",
+        "### 当前主路径", "",
+    ])
     if central:
         lines.append(
             _inline_report_text(central.get("claim"))
             or "中心经营机制已经冻结，但文字主张尚未命名。"
         )
+        lines.append("- Trace：" + inline_list(central.get("trace_ids")) + "。")
     else:
         lines.append(
             "当前未冻结唯一中心经营机制；这只限制唯一主路径选择，不撤回下列仍有证据的公司级判断。"
@@ -1824,6 +2022,7 @@ def _render_frozen_cjo_summary(frozen: dict[str, Any]) -> str:
             )
             if observable:
                 lines.append(f"  - 翻转或结算观察：{observable}。")
+            lines.append("  - Trace：" + inline_list(judgment.get("trace_ids")) + "。")
     else:
         lines.append("- 当前没有已冻结的前瞻判断；不得用事后叙事补成预测。")
 
@@ -1841,6 +2040,7 @@ def _render_frozen_cjo_summary(frozen: dict[str, Any]) -> str:
         descriptions = [item for item in descriptions if item]
         lines.append(
             f"- **{label}**：{direction}"
+            + ("；传导=" + inline_list(summary.get("transmission_ids")))
             + ("；" + "；".join(descriptions) if descriptions else "")
             + "。"
         )
@@ -1852,6 +2052,7 @@ def _render_frozen_cjo_summary(frozen: dict[str, Any]) -> str:
             lines.append(
                 "- **永久损失**："
                 + direction_labels.get(str(item.get("direction") or ""), "尚不确定")
+                + ("；传导=" + _inline_report_text(item.get("transmission_id")) if item.get("transmission_id") else "")
                 + ("；" + _inline_report_text(item.get("description")) if item.get("description") else "")
                 + "。"
             )
@@ -1864,7 +2065,7 @@ def _render_frozen_cjo_summary(frozen: dict[str, Any]) -> str:
         "", "### 最强反方与数据边界", "",
         "- **最强反方**：" + (
             _inline_report_text(counter.get("claim")) or "尚未形成可检验的竞争解释"
-        ) + "。",
+        ) + "（Trace：" + inline_list(counter.get("trace_ids")) + "）。",
     ])
     for unknown in frozen.get("unknowns") or []:
         if not isinstance(unknown, dict):
@@ -1873,7 +2074,7 @@ def _render_frozen_cjo_summary(frozen: dict[str, Any]) -> str:
         treatment = _inline_report_text(unknown.get("conservative_treatment"))
         closing = _inline_report_text(unknown.get("closing_evidence"))
         lines.append(
-            f"- **局部未知**：{description}"
+            f"- **局部未知 {_inline_report_text(unknown.get('unknown_id'))}**：{description}"
             + (f"；当前处理：{treatment}" if treatment else "")
             + (f"；翻转证据：{closing}" if closing else "")
             + "。"
@@ -1882,6 +2083,7 @@ def _render_frozen_cjo_summary(frozen: dict[str, Any]) -> str:
     monitoring = monitoring if isinstance(monitoring, dict) else {}
     signals = [
         " / ".join(part for part in (
+            _inline_report_text(item.get("signal_id")),
             _inline_report_text(item.get("source_class")),
             _inline_report_text(item.get("frequency")),
         ) if part)
@@ -1889,7 +2091,38 @@ def _render_frozen_cjo_summary(frozen: dict[str, Any]) -> str:
     ]
     signals = [item for item in signals if item]
     if signals:
-        lines.append("- **后续监控**：" + "；".join(signals) + "。")
+        lines.append(
+            "- **后续监控 " + _inline_report_text(monitoring.get("contract_id"))
+            + "**：" + "；".join(signals) + "。"
+        )
+    lines.extend(["", "## Trace 对照", ""])
+    for trace in frozen.get("traceability") or []:
+        if not isinstance(trace, dict):
+            continue
+        lines.append(
+            f"- **{_inline_report_text(trace.get('trace_id'))}**："
+            f"责任单元={_inline_report_text(trace.get('responsibility_unit_id'))}；"
+            f"机制={_inline_report_text(trace.get('mechanism_id'))}；"
+            f"推理性质={_inline_report_text(trace.get('reasoning_kind'))}；"
+            f"经济传导={inline_list(trace.get('financial_transmission_ids'))}；"
+            f"来源={_inline_report_text(trace.get('source_ref'))}。"
+        )
+    lines.extend(["", "## 来源与证据边界", ""])
+    source_package = frozen.get("source_package")
+    source_package = source_package if isinstance(source_package, dict) else {}
+    for source in source_package.get("sources") or []:
+        if not isinstance(source, dict):
+            continue
+        line = (
+            f"- **{_inline_report_text(source.get('source_ref'))}**："
+            f"类型={_inline_report_text(source.get('source_type'))}；"
+            f"定位={_inline_report_text(source.get('locator'))}；"
+            f"可见时间={_inline_report_text(source.get('available_at'))}；"
+            f"证据状态={_inline_report_text(source.get('eligibility'))}；"
+            f"责任边界={inline_list(source.get('responsibility_boundary_ids'))}"
+        )
+        boundary = _inline_report_text(source.get("boundary_note"))
+        lines.append(line + (f"；边界说明={boundary}" if boundary else "") + "。")
     lines.extend([
         "",
         {
@@ -1898,10 +2131,26 @@ def _render_frozen_cjo_summary(frozen: dict[str, Any]) -> str:
             "NO_PRIMARY": "当前未冻结唯一中心经营机制，但局部公司判断继续有效。",
             "UNKNOWN": "当前中心经营机制尚不确定，但局部公司判断继续有效。",
         }.get(thesis_resolution, "当前中心经营机制仍待检验。")
-        + " 本摘要不授予估值、买价或投资动作权限。",
+        + " 本摘要仅限企业经营判断。",
         "",
     ])
     return "\n".join(lines)
+
+
+def _render_bound_frozen_cjo_research_artifact(frozen: dict[str, Any]) -> str:
+    """Render the entire bound-CJO reader artifact from one canonical object."""
+    return "\n".join([
+        f"# {_inline_report_text(frozen.get('company_id'))} 公司判断研究",
+        "",
+        "> Turtle Frozen CJO 确定性读者报告",
+        f"> 判断截止: {_inline_report_text(frozen.get('cutoff_at'))}",
+        "",
+        "**研究说明**：本文由已冻结的企业经营判断对象确定性生成，阅读者应核对所列来源。",
+        "",
+        "---",
+        "",
+        _render_frozen_cjo_summary(frozen),
+    ])
 
 
 def _render_company_judgment_summary(
@@ -2130,6 +2379,88 @@ def assemble_report(
         compiler_result = {
             "state": "SKIP", "written": False,
             "reason": "company_judgment_only_has_no_decision_compilation",
+        }
+
+    # A contract-bound Frozen CJO is already the independently reviewed
+    # company-judgment truth source.  Render it directly before discovering or
+    # reading chapter files: free chapters and technical appendices have no
+    # role in this route and cannot silently publish a second judgment.
+    bound_frozen_cjo = (
+        _bound_frozen_cjo_for_summary(output_dir)
+        if company_judgment_only else None
+    )
+    if bound_frozen_cjo is not None:
+        report_text = _render_bound_frozen_cjo_research_artifact(bound_frozen_cjo)
+        try:
+            from scripts.report_completion import evaluate_report_completion
+        except ModuleNotFoundError:
+            from report_completion import evaluate_report_completion
+        completion = evaluate_report_completion(report_text, output_dir)
+        completion_dict = completion.to_dict()
+        cjo_report_output = _cjo_report_output_validation(report_text)
+        reports_d = os.path.join(output_dir, REPORTS_SUBDIR)
+        os.makedirs(reports_d, exist_ok=True)
+        identity = re.sub(
+            r"[^A-Za-z0-9_.-]+", "_",
+            str(bound_frozen_cjo.get("company_id") or ts_code or "company"),
+        ).strip("_") or "company"
+        authority = {
+            "artifact_class": "COMPANY_JUDGMENT_RESEARCH",
+            "company_judgment_read_allowed": True,
+            "publication_authority": False,
+            "investment_authority": False,
+        }
+        if completion.status not in {"COMPLETE", "COMPLETE_WITH_WARNINGS"}:
+            drafts_d = os.path.join(reports_d, "drafts")
+            os.makedirs(drafts_d, exist_ok=True)
+            report_path = os.path.join(
+                drafts_d, f"{identity}_公司判断研究_{REPORT_VERSION}_draft.md"
+            )
+            Path(report_path).write_text(report_text, encoding="utf-8")
+            return {
+                "path": report_path, "tool_name": "assemble_report",
+                "chapter_count": 0, "char_count": len(report_text),
+                "completion": completion_dict,
+                "decision_compiler": compiler_result,
+                "cjo_report_output": cjo_report_output,
+                "authority": authority,
+                "research_artifact_written": False,
+                "published": False,
+                "error": "Frozen CJO 确定性研究产物未通过完成契约",
+            }
+        if validation_only:
+            drafts_d = os.path.join(reports_d, "drafts")
+            os.makedirs(drafts_d, exist_ok=True)
+            report_path = os.path.join(
+                drafts_d, f"{identity}_公司判断研究_{REPORT_VERSION}_draft.md"
+            )
+            Path(report_path).write_text(report_text, encoding="utf-8")
+            return {
+                "path": report_path, "tool_name": "assemble_report",
+                "chapter_count": 0, "char_count": len(report_text),
+                "completion": completion_dict,
+                "decision_compiler": compiler_result,
+                "cjo_report_output": cjo_report_output,
+                "authority": authority,
+                "research_artifact_written": False,
+                "published": False,
+                "validated": True,
+            }
+        report_path = os.path.join(
+            reports_d, f"{identity}_公司判断研究_{REPORT_VERSION}.md"
+        )
+        Path(report_path).write_text(report_text, encoding="utf-8")
+        return {
+            "path": report_path, "tool_name": "assemble_report",
+            "html_path": _render_report_html(report_path),
+            "technical_report_path": None,
+            "chapter_count": 0, "char_count": len(report_text),
+            "completion": completion_dict,
+            "decision_compiler": compiler_result,
+            "cjo_report_output": cjo_report_output,
+            "authority": authority,
+            "research_artifact_written": True,
+            "published": False,
         }
 
     # v13+: chapters live in chapters/ subdir; fallback to root for legacy v12 dirs

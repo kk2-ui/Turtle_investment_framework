@@ -6,6 +6,8 @@ from types import SimpleNamespace
 
 from scripts.reader_coverage import evaluate_reader_coverage
 from scripts import enterprise_judgment_core as enterprise_core
+from scripts import judgment_generation_handoff
+from scripts.judgment_handoff_receipts import record_judgment_handoff_read_receipt
 from scripts.turtle_agent.tools import read_tools, write_tools
 from tests.test_enterprise_judgment_core import (
     _frozen_cjo, _judgment_input, _ledger, _model, _review, _source_package,
@@ -170,7 +172,31 @@ def test_bound_frozen_cjo_is_the_reader_summary_truth_source(tmp_path: Path) -> 
     assert frozen["strongest_counterargument"]["claim"] in summary
     assert "STALE LOCAL THESIS MUST NOT RENDER" not in summary
     assert "局部未知" in summary
-    assert "不授予估值、买价或投资动作权限" in summary
+    assert "本摘要仅限企业经营判断" in summary
+    assert write_tools._cjo_report_output_validation(summary)["status"] == "PASS"
+    for heading in (
+        "企业责任边界", "产品、客户任务与竞争场", "经营状态与状态变化",
+        "管理层决策事件与截至时点状态", "因果机制", "公司判断摘要", "Trace 对照",
+        "来源与证据边界",
+    ):
+        assert heading in summary
+    assert frozen["enterprise_system_ref"]["arenas"][0]["customer_task"] in summary
+    assert frozen["enterprise_system_ref"]["state_changes"][0]["change_id"] in summary
+    assert frozen["management_decision_ledger_ref"]["decisions"][0]["decision_id"] in summary
+    assert frozen["management_decision_ledger_ref"]["events"][1]["event_type"] in summary
+    assert frozen["management_decision_ledger_ref"]["events"][1]["rationale"] in summary
+    arena = frozen["enterprise_system_ref"]["arenas"][0]
+    mechanism = frozen["enterprise_system_ref"]["mechanisms"][0]
+    assert f"责任单元={arena['responsibility_unit_id']}" in summary
+    assert f"责任单元={mechanism['responsibility_unit_id']}" in summary
+    assert f"经营场={mechanism['arena_id']}" in summary
+    assert "记录状态=PLANNED" in summary
+    assert "状态变化=PLANNED → COMMITTED" in summary
+    for trace in frozen["traceability"]:
+        assert trace["trace_id"] in summary
+        assert trace["source_ref"] in summary
+    for source in frozen["source_package"]["sources"]:
+        assert source["locator"] in summary
 
 
 def test_no_primary_frozen_cjo_keeps_local_company_judgments_in_summary(tmp_path: Path) -> None:
@@ -198,6 +224,160 @@ def test_no_primary_frozen_cjo_keeps_local_company_judgments_in_summary(tmp_path
     assert frozen["forward_judgments"][0]["claim"] in summary
     assert frozen["strongest_counterargument"]["claim"] in summary
     assert "需要先补足公司层面的可判别事实" not in summary
+
+
+def test_bound_frozen_cjo_assembly_ignores_all_free_files_and_writes_research_artifact(
+    tmp_path: Path, monkeypatch,
+) -> None:
+    from scripts.report_completion import evaluate_report_completion
+
+    frozen = _frozen_cjo()
+    canonical = tmp_path / "canonical"
+    canonical.mkdir()
+    frozen_path = canonical / "frozen_cjo.json"
+    _write_json(frozen_path, frozen)
+    _write_json(tmp_path / "analysis_contract.json", {
+        "report_id": frozen["company_id"],
+        "company_id": frozen["company_id"],
+        "analysis_purpose": "COMPANY_JUDGMENT_ONLY",
+        "data_as_of": frozen["cutoff_at"],
+        "canonical_judgment_refs": {"frozen_cjo_ref": str(frozen_path)},
+    })
+    # Invalid UTF-8 proves this route does not even read free chapter bytes.
+    (tmp_path / "_ch05.md").write_bytes(b"\xffFREE_OPPOSITE_CONCLUSION")
+    (tmp_path / "_technical_appendix.md").write_bytes(b"\xffFREE_TECHNICAL_CONCLUSION")
+    handoff = judgment_generation_handoff.build_judgment_generation_handoff(
+        tmp_path, "JUDGMENT_SYNTHESIS", frozen_cjo_path=frozen_path,
+    )
+    assert record_judgment_handoff_read_receipt(tmp_path, handoff)["state"] == "RECORDED"
+    monkeypatch.setattr(write_tools, "_render_report_html", lambda *a, **k: None)
+
+    result = write_tools.assemble_report(str(tmp_path), "被忽略的本地名称", "000001.SZ")
+    report = Path(result["path"]).read_text(encoding="utf-8")
+
+    assert result["chapter_count"] == 0
+    assert result["research_artifact_written"] is True
+    assert result["published"] is False
+    assert result["authority"] == {
+        "artifact_class": "COMPANY_JUDGMENT_RESEARCH",
+        "company_judgment_read_allowed": True,
+        "publication_authority": False,
+        "investment_authority": False,
+    }
+    assert "15 章" not in report
+    assert "FREE_OPPOSITE_CONCLUSION" not in report
+    assert "FREE_TECHNICAL_CONCLUSION" not in report
+    assert frozen["central_path"]["claim"] in report
+    assert frozen["strongest_counterargument"]["claim"] in report
+    assert result["completion"]["status"] == "COMPLETE"
+    for validator in ("structure", "depth", "audit", "absolute_quality"):
+        assert result["completion"]["validators"][validator]["status"] == "SKIP"
+
+    changed = evaluate_report_completion(
+        report + "\n\n渠道重置导致结构性恶化。", str(tmp_path),
+    )
+    assert changed.status == "BLOCKED"
+    assert "Deterministic CJO output does not equal canonical renderer" in changed.blocking_findings
+
+
+def test_bound_frozen_cjo_renderer_preserves_three_axes_and_ineligible_locality() -> None:
+    mixed = _frozen_cjo(owner_cash_direction="MIXED")
+    mixed_report = write_tools._render_bound_frozen_cjo_research_artifact(mixed)
+    assert "当前多条竞争机制仍需共同保留" in mixed_report
+    assert "正常盈利**：改善" in mixed_report
+    assert "Owner Cash**：正反信号并存" in mixed_report
+    assert "永久损失**：恶化" in mixed_report
+
+    package = _source_package(cash_eligibility="EVIDENCE_INELIGIBLE")
+    candidate = enterprise_core.compile_cjo_candidate(
+        model=_model(source_package=package), ledger=_ledger(), source_package=package,
+        judgment_input=_judgment_input(cash_evidence_state="EVIDENCE_INELIGIBLE"),
+    )
+    frozen = enterprise_core.freeze_cjo(
+        candidate=candidate, independent_review=_review(candidate),
+    )
+
+    report = write_tools._render_bound_frozen_cjo_research_artifact(frozen)
+
+    assert "证据：现有证据不适用" in report
+    assert "局部未知" in report
+    assert frozen["unknowns"][0]["closing_evidence"] in report
+    assert write_tools._cjo_report_output_validation(report)["status"] == "PASS"
+
+
+def test_old_v1_frozen_cjo_renders_local_projection_absence_without_invention() -> None:
+    frozen = _frozen_cjo()
+    frozen["independent_review_receipt"].pop("reviewed_reader_projection")
+    for field in ("arenas", "operating_variables", "operating_states", "state_changes"):
+        frozen["enterprise_system_ref"].pop(field)
+    frozen["management_decision_ledger_ref"].pop("events")
+
+    report = write_tools._render_bound_frozen_cjo_research_artifact(frozen)
+
+    assert "旧版冻结对象未冻结产品、客户任务与竞争场投影" in report
+    assert "旧版冻结对象未冻结经营状态投影" in report
+    assert "事件序列未冻结" in report
+    assert "的决策 snapshot" in report
+    assert frozen["management_decision_ledger_ref"]["decisions"][0]["problem_statement"] in report
+
+
+def test_empty_state_changes_and_decisions_are_local_absence_not_global_failure() -> None:
+    frozen = _frozen_cjo()
+    frozen["enterprise_system_ref"]["state_changes"] = []
+    for mechanism in frozen["enterprise_system_ref"]["mechanisms"]:
+        mechanism["management_decision_ids"] = []
+    frozen["management_decision_ledger_ref"]["decisions"] = []
+    frozen["management_decision_ledger_ref"].pop("events")
+    frozen["independent_review_receipt"]["reviewed_reader_projection"] = {
+        "enterprise_system_ref": frozen["enterprise_system_ref"],
+        "management_decision_ledger_ref": frozen["management_decision_ledger_ref"],
+    }
+
+    assert enterprise_core.validate_frozen_cjo(frozen)["state"] == "VALID"
+    report = write_tools._render_bound_frozen_cjo_research_artifact(frozen)
+    assert "未观察到合格状态变化" in report
+    assert "资料不足以区分 no-action 与未披露" in report
+    assert frozen["central_path"]["claim"] in report
+
+
+def test_rerecorded_receipt_cannot_complete_a_mutated_frozen_projection(tmp_path: Path) -> None:
+    from scripts.report_completion import evaluate_report_completion
+
+    frozen = _frozen_cjo()
+    original_report = write_tools._render_bound_frozen_cjo_research_artifact(frozen)
+    frozen["independent_review_receipt"].pop("reviewed_reader_projection")
+    frozen["enterprise_system_ref"]["arenas"][0]["customer_task"] = (
+        "post-outcome customer success rewritten after review"
+    )
+    frozen["enterprise_system_ref"]["operating_states"][0]["variable_states"] = {
+        "VAR:CUSTOMER_RETENTION": "POST_OUTCOME_WIN"
+    }
+    frozen["management_decision_ledger_ref"]["decisions"][0]["problem_statement"] = (
+        "post-outcome success rewritten as the original problem"
+    )
+    canonical = tmp_path / "canonical"
+    canonical.mkdir()
+    frozen_path = canonical / "frozen_cjo.json"
+    _write_json(frozen_path, frozen)
+    _write_json(tmp_path / "analysis_contract.json", {
+        "report_id": frozen["company_id"], "company_id": frozen["company_id"],
+        "analysis_purpose": "COMPANY_JUDGMENT_ONLY", "data_as_of": frozen["cutoff_at"],
+        "canonical_judgment_refs": {"frozen_cjo_ref": str(frozen_path)},
+    })
+    handoff = judgment_generation_handoff.build_judgment_generation_handoff(
+        tmp_path, "JUDGMENT_SYNTHESIS", frozen_cjo_path=frozen_path,
+    )
+    recorded = record_judgment_handoff_read_receipt(tmp_path, handoff)
+    assert recorded["state"] == "RECORDED"
+    assert recorded["readiness_state"] != "READY"
+
+    completion = evaluate_report_completion(original_report, str(tmp_path))
+
+    assert completion.status == "BLOCKED"
+    assert any(
+        "reviewed_reader_projection_missing_for_new_shape" in item
+        for item in completion.blocking_findings
+    )
 
 
 def test_cjo_assembly_skips_decision_compiler_manifest_and_investment_memo(
