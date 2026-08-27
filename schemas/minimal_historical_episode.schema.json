@@ -239,7 +239,10 @@
         "begin_date": {"type": "string", "format": "date"},
         "end_date": {"type": "string", "format": "date"},
         "page_size": {"type": "integer", "minimum": 1, "maximum": 30},
-        "static_pdf_url_policy": {"const": "CNINFO_STATIC_FINALPAGE_PDF"}
+        "static_pdf_url_policy": {"const": "CNINFO_STATIC_FINALPAGE_PDF"},
+        "annual_report_version_policy": {
+          "enum": ["ORIGINAL_ONLY", "ONE_OFFICIAL_REVISED_VERSION_AFTER_ORIGINAL"]
+        }
       }
     },
     "measurement_contract": {

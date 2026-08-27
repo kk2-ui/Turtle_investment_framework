@@ -48,6 +48,17 @@ CNINFO_OUTCOME_ROUTE_PROVIDER_VERSION = "phase10-cninfo-announcement-query.v1"
 CNINFO_OUTCOME_ROUTE_TAB = "fulltext"
 CNINFO_OUTCOME_ROUTE_CATEGORY = "ANNUAL_REPORT"
 CNINFO_OUTCOME_ROUTE_URL_POLICY = "CNINFO_STATIC_FINALPAGE_PDF"
+# A v2 route without this optional field keeps its historical behavior: it
+# accepts a singleton original report and fails closed on a version family.
+# The second value is the only opt-in that may select a revised report.
+CNINFO_ANNUAL_REPORT_VERSION_POLICY_ORIGINAL_ONLY = "ORIGINAL_ONLY"
+CNINFO_ANNUAL_REPORT_VERSION_POLICY_ONE_REVISED_AFTER_ORIGINAL = (
+    "ONE_OFFICIAL_REVISED_VERSION_AFTER_ORIGINAL"
+)
+CNINFO_ANNUAL_REPORT_VERSION_POLICIES = {
+    CNINFO_ANNUAL_REPORT_VERSION_POLICY_ORIGINAL_ONLY,
+    CNINFO_ANNUAL_REPORT_VERSION_POLICY_ONE_REVISED_AFTER_ORIGINAL,
+}
 CNINFO_TECHNICAL_ROUTE_RESOLVER_ENDPOINT = "http://www.cninfo.com.cn/new/data/szse_stock.json"
 CNINFO_TECHNICAL_ROUTE_RESOLVER_VERSION = "cninfo-stock-map-code-orgid.v1"
 
@@ -74,6 +85,7 @@ _CONTRACT_V1_KEYS = {
 _OUTCOME_ACQUISITION_ROUTE_KEYS = {
     "provider", "provider_version", "security_code", "organization_id", "tab_name",
     "announcement_category", "begin_date", "end_date", "page_size", "static_pdf_url_policy",
+    "annual_report_version_policy",
 }
 _TECHNICAL_ROUTE_IDENTITY_KEYS = {
     "schema_version", "technical_route_identity_id", "technical_route_identity_version", "decision_contract_ref",
@@ -463,7 +475,17 @@ def _outcome_acquisition_route(
     The later custodian can only enumerate this frozen route and then apply the
     already-existing value-free FIELD_READY / MEASUREMENT_MISMATCH gate.
     """
-    route = _closed(value, _OUTCOME_ACQUISITION_ROUTE_KEYS, path, findings)
+    # ``annual_report_version_policy`` was added after the first v2 routes
+    # were frozen.  It is deliberately optional so those immutable records
+    # retain their singleton-original, fail-closed behavior.
+    route = _mapping(value)
+    if not isinstance(value, dict):
+        findings.append(f"{path}_must_be_object")
+    for field in sorted(set(route).difference(_OUTCOME_ACQUISITION_ROUTE_KEYS)):
+        findings.append(f"{path}_contains_unapproved_field:{field}")
+    required_fields = _OUTCOME_ACQUISITION_ROUTE_KEYS - {"annual_report_version_policy"}
+    for field in sorted(required_fields.difference(route)):
+        findings.append(f"{path}_missing_required_field:{field}")
     for field in ("provider", "provider_version", "security_code", "organization_id", "tab_name",
                   "announcement_category", "static_pdf_url_policy"):
         _require_text(route, field, path, findings)
@@ -477,6 +499,9 @@ def _outcome_acquisition_route(
         findings.append(f"{path}.announcement_category_must_be_annual_report")
     if route.get("static_pdf_url_policy") != CNINFO_OUTCOME_ROUTE_URL_POLICY:
         findings.append(f"{path}.static_pdf_url_policy_must_be_cninfo_static_finalpage_pdf")
+    version_policy = route.get("annual_report_version_policy")
+    if version_policy is not None and version_policy not in CNINFO_ANNUAL_REPORT_VERSION_POLICIES:
+        findings.append(f"{path}.annual_report_version_policy_invalid")
     security_code = str(route.get("security_code") or "").strip()
     if not re.fullmatch(r"\d{6}", security_code):
         findings.append(f"{path}.security_code_must_be_six_digits")

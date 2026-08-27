@@ -1,0 +1,39 @@
+{
+  "schema_version": "turtle-minimal-historical-episode-outcome-source-mismatch-record.v1",
+  "record_id": "MHE:INVENTORY:CN000651:FY2017:REVENUE:V2:20260827",
+  "measurement_contract_ref": {
+    "measurement_contract_id": "MHE:CONTRACT:CN000651:FY2017:V2",
+    "measurement_contract_version": 2
+  },
+  "company_id": "CN:000651",
+  "cutoff_at": "2017-04-30T23:59:59+08:00",
+  "status": "MEASUREMENT_MISMATCH",
+  "mismatch_rule": "ANNUAL_REPORT_REVISION_OR_WITHDRAWAL_UNRESOLVED",
+  "custody_boundary": {
+    "outcome_access_authorization_id": "MHE:ACCESS:CN000651:FY2017:REVENUE:V2",
+    "inventory_count": 1,
+    "observation_count": 0,
+    "settlement_count": 0,
+    "official_pdf_opened": false,
+    "outcome_value_or_label_recorded": false
+  },
+  "root_cause": [
+    "ACQUISITION_MODULE",
+    "DATA_COVERAGE"
+  ],
+  "economic_impact": "Selecting an ungoverned original, revised, or withdrawn filing could change the realised field and make a mechanical match or miss false. This episode therefore has no score, learning, CJO, valuation, report, or investment consequence.",
+  "missing_fact": "A contract-bound official version-family relationship identifying the permitted original or final filing, with a physical field page locator.",
+  "prohibited_assumptions": [
+    "A title, publication date, list ordering, or presumed latest filing identifies the economically permitted version.",
+    "MEASUREMENT_MISMATCH means a negative operating result."
+  ],
+  "executable_remediation": "Extend the reusable CNINFO outcome-acquisition route for a future, result-unseen episode to freeze and validate an official annual-report version-selection relationship before outcome access. Do not retrofit or reopen this immutable episode.",
+  "acceptance_criteria": "A bounded official enumeration proves exactly one policy-permitted static finalpage filing with its version relationship and page locator; otherwise the field remains MEASUREMENT_MISMATCH.",
+  "permissions": {
+    "allowed_outputs": [
+      "MECHANICAL_SETTLEMENT_ONLY"
+    ],
+    "method_transfer_rights": "NO_METHOD_TRANSFER_RIGHTS",
+    "learning_authority": "NONE"
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "schema_version": "turtle-minimal-historical-episode-source-verification-input.v1",
+  "subject_ref": {
+    "object_type": "STATIC_EVIDENCE",
+    "object_id": "MHE:EVIDENCE:CN600839:FY2017:C1:V2",
+    "object_version": 1
+  },
+  "source_id": "CNINFO:600839:ANN:20180418:1204647552",
+  "source_url": "https://static.cninfo.com.cn/finalpage/2018-04-18/1204647552.PDF",
+  "exact_quote": "其中：营业收入  77,632,476,743.23  67,175,343,225.71",
+  "numeric_value": 77632476743.23,
+  "unit": "RMB",
+  "allowed_outputs": ["MECHANICAL_SETTLEMENT_ONLY"],
+  "method_transfer_rights": "NO_METHOD_TRANSFER_RIGHTS"
+}

@@ -46,7 +46,7 @@ _FIELD_REF_PAGE = re.compile(
     re.IGNORECASE,
 )
 _RMB_OPERATING_REVENUE_ROW = re.compile(
-    r"(?:其中[:：])?营业收入\s*(?P<current_period>[0-9][0-9,，]*(?:\.[0-9]+)?)"
+    r"(?:其中[:：])?营业收入(?:\s+(?:[一二三四五六七八九十百千]+[（(][一二三四五六七八九十百千]+[)）]|[一二三四五六七八九十]+、\d+))?\s+(?P<current_period>[0-9][0-9,，]*(?:\.[0-9]+)?)"
 )
 SourceVerifier = Callable[[dict[str, Any], dict[str, Any]], dict[str, Any]]
 TechnicalRouteResolver = route_identity_adapter.RouteResolver

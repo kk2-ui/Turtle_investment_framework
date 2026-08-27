@@ -107,8 +107,10 @@ verifier is allowed to inspect its numeric field.
 `scripts/minimal_historical_outcome_acquisition.py` is the corresponding
 custodian-only metadata adapter for future objects. It uses the existing
 bounded Phase10 CNINFO enumerator after stored access, accepts only one direct
-outcome-period `ANNUAL_REPORT` with an exact static-finalpage URL, and otherwise
-emits the value-free mismatch candidate. Any PDF/page-reader work remains
+outcome-period original annual-report title with an exact static-finalpage URL.
+Any same-period revised, corrected, updated, cancelled, withdrawn, or revoked
+annual-report disclosure instead makes the field value-free
+`MEASUREMENT_MISMATCH`. Any PDF/page-reader work remains
 custodian-temporary; the runner's post-inventory verifier continues to be the
 only numeric/quote gate. This is additive for new minimal objects and does not
 rewrite existing episodes.
