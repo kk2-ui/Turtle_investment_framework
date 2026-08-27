@@ -210,6 +210,27 @@ def test_v3_forecast_requires_a_prior_measurement_contract_and_deterministic_obs
     coverage = _attribution(v3, settlement, scope="COVERAGE")
     recorded = control.register_forecast_error_attribution(conn, coverage)
     assert recorded["learning_authorization"] == "FORECAST_POLICY_DIRECT"
+    active_coverage = control.read_active_forecast_learning_policies(
+        conn, as_of="2023-01-01T00:00:00+00:00",
+    )
+    assert [item["learning_scope"] for item in active_coverage] == ["COVERAGE"]
+    assert active_coverage[0]["cell_refs"] == [{"dimension_id": "NORMAL_EARNINGS", "window_id": "ONE_YEAR"}]
+    assert active_coverage[0]["error_signatures"] == [{
+        "dimension_id": "NORMAL_EARNINGS",
+        "window_id": "ONE_YEAR",
+        "expected_label": "CONTRACT_MATCHED_MEASUREMENT",
+        "realized_label": "MEASUREMENT_MISMATCH",
+        "error_kind": "MEASUREMENT_MISMATCH",
+    }]
+
+    for scope in ("CALIBRATION", "STATE_DEFINITION", "UNCERTAINTY_POLICY"):
+        correct = _attribution(v3, settlement, scope=scope)
+        correct["attribution_id"] = f"ATTRIBUTION:{scope}:CORRECT:CELL"
+        correct["policy_change"]["change_id"] = f"POLICY:{scope}:CORRECT:CELL"
+        correct["cell_refs"] = [{"dimension_id": "NORMAL_EARNINGS", "window_id": "THREE_YEAR"}]
+        with pytest.raises(control.ForecastControlError) as exc_info:
+            control.register_forecast_error_attribution(conn, correct)
+        assert exc_info.value.code == "attribution_invalid"
     assert [item["learning_scope"] for item in control.read_active_forecast_learning_policies(
         conn, as_of="2023-01-01T00:00:00+00:00",
     )] == ["COVERAGE"]
@@ -772,6 +793,11 @@ def test_pairing_precedes_outcome_and_only_direct_forecast_policy_becomes_active
         conn, measurement_contract, frozen_at="2021-01-02T00:00:00+00:00",
     )
     forecast = _v3_forecast(v2, measurement_contract)
+    forecast["dimensions"][0]["forecast_by_window"][0]["probabilities"] = [
+        {"label": "DETERIORATE", "probability": 0.6},
+        {"label": "STABLE", "probability": 0.2},
+        {"label": "IMPROVE", "probability": 0.2},
+    ]
     control.register_company_state_forecast(
         conn, forecast, universe_snapshot=universe, stage0_package=h1, frozen_at="2021-01-03T00:00:00+00:00",
     )
@@ -832,6 +858,14 @@ def test_pairing_precedes_outcome_and_only_direct_forecast_policy_becomes_active
     assert control.read_active_forecast_learning_policies(conn, as_of="2022-12-31T00:00:00+00:00") == []
     active = control.read_active_forecast_learning_policies(conn, as_of="2023-01-01T00:00:00+00:00")
     assert [item["learning_scope"] for item in active] == ["CALIBRATION"]
+    assert active[0]["cell_refs"] == [{"dimension_id": "NORMAL_EARNINGS", "window_id": "ONE_YEAR"}]
+    assert active[0]["error_signatures"] == [{
+        "dimension_id": "NORMAL_EARNINGS",
+        "window_id": "ONE_YEAR",
+        "expected_label": "DETERIORATE",
+        "realized_label": "STABLE",
+        "error_kind": "DIRECTIONAL_CLASS_MISS",
+    }]
 
     candidate = _attribution(forecast, settlement, scope="EVIDENCE_PRIORITY", evaluation=evaluation)
     candidate["attribution_id"] = "ATTRIBUTION:CANDIDATE:CONTROL"

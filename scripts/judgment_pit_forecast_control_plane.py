@@ -1746,6 +1746,7 @@ def register_forecast_error_attribution(conn: sqlite3.Connection, attribution: d
             return {
                 "recorded": True, "attribution_id": payload["attribution_id"], "idempotent": True,
                 "learning_authorization": validation["learning_authorization"],
+                "error_signatures": validation.get("error_signatures", []),
             }
         if policy_change_id and conn.execute(
             f"SELECT attribution_id FROM {ATTRIBUTION_TABLE} WHERE policy_change_id = ?", (policy_change_id,),
@@ -1763,6 +1764,7 @@ def register_forecast_error_attribution(conn: sqlite3.Connection, attribution: d
     return {
         "recorded": True, "attribution_id": payload["attribution_id"], "idempotent": False,
         "learning_authorization": validation["learning_authorization"],
+        "error_signatures": validation.get("error_signatures", []),
     }
 
 
@@ -1776,19 +1778,51 @@ def read_active_forecast_learning_policies(conn: sqlite3.Connection, *, as_of: s
     cutoff = _instant(as_of, "as_of")
     policies: list[dict[str, Any]] = []
     rows = conn.execute(
-        f"""SELECT a.payload_json FROM {ATTRIBUTION_TABLE} AS a
+        f"""SELECT a.payload_json AS attribution_payload,
+                   f.payload_json AS forecast_payload,
+                   s.payload_json AS settlement_payload
+              FROM {ATTRIBUTION_TABLE} AS a
             JOIN {FORECAST_TABLE} AS f ON f.forecast_id = a.forecast_id
+            JOIN {SETTLEMENT_TABLE} AS s ON s.settlement_id = a.settlement_id
                 WHERE a.disposition = 'DIRECT_FORECAST_POLICY' AND f.forecast_epoch_id IN (?, ?, ?, ?)
             ORDER BY a.attributed_at, a.attribution_id""",
         (pit.FORECAST_EPOCH_ID_V3, pit.FORECAST_EPOCH_ID_V4, pit.FORECAST_EPOCH_ID_V5, pit.FORECAST_EPOCH_ID_V6),
     ).fetchall()
     for row in rows:
-        payload = _load(row["payload_json"])
+        payload = _load(row["attribution_payload"])
         change = payload.get("policy_change") if isinstance(payload.get("policy_change"), dict) else {}
         effective = change.get("effective_from_cutoff_at")
         if isinstance(effective, str) and _instant(effective, "policy_change.effective_from_cutoff_at") <= cutoff:
+            pairing: dict[str, Any] | None = None
+            if payload.get("learning_scope") == "BASELINE_PERFORMANCE":
+                evaluation_row = conn.execute(
+                    f"SELECT payload_json FROM {PAIRED_EVALUATION_TABLE} WHERE evaluation_id = ?",
+                    (payload.get("paired_evaluation_id"),),
+                ).fetchone()
+                if evaluation_row is None:
+                    continue
+                evaluation = _load(evaluation_row["payload_json"])
+                pairing_row = conn.execute(
+                    f"SELECT payload_json FROM {PAIRING_TABLE} WHERE pairing_id = ?",
+                    (evaluation.get("pairing_id"),),
+                ).fetchone()
+                if pairing_row is None:
+                    continue
+                pairing = _load(pairing_row["payload_json"])
+            refs = [
+                (str(ref.get("dimension_id")), str(ref.get("window_id")))
+                for ref in payload.get("cell_refs", []) if isinstance(ref, dict)
+            ]
+            signatures, signature_findings = pit._direct_error_signatures(
+                str(payload.get("learning_scope")), refs,
+                forecast=_load(row["forecast_payload"]), settlement=_load(row["settlement_payload"]),
+                pairing=pairing,
+            )
+            if signature_findings or len(signatures) != len(refs):
+                continue
             policies.append({
                 "attribution_id": payload["attribution_id"], "learning_scope": payload["learning_scope"],
+                "cell_refs": deepcopy(payload["cell_refs"]), "error_signatures": signatures,
                 "policy_change": change,
             })
     return policies

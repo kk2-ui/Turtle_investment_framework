@@ -1055,6 +1055,11 @@ def test_forecast_learning_routes_direct_feedback_and_holds_method_changes_as_ca
     )
     measurement_contract = _outcome_measurement_contract(v2, _contract(v2))
     forecast = _v3_forecast(v2, measurement_contract)
+    forecast["dimensions"][0]["forecast_by_window"][0]["probabilities"] = [
+        {"label": "DETERIORATE", "probability": 0.6},
+        {"label": "STABLE", "probability": 0.2},
+        {"label": "IMPROVE", "probability": 0.2},
+    ]
     settlement = _v3_observed_settlement(forecast, measurement_contract)
     observations = _v3_observation_receipts(forecast, measurement_contract)
     pairing = _pairing(forecast)
@@ -1075,6 +1080,13 @@ def test_forecast_learning_routes_direct_feedback_and_holds_method_changes_as_ca
     )
     assert admitted["valid"], admitted["findings"]
     assert admitted["learning_authorization"] == "FORECAST_POLICY_DIRECT"
+    assert admitted["error_signatures"] == [{
+        "dimension_id": "NORMAL_EARNINGS",
+        "window_id": "ONE_YEAR",
+        "expected_label": "DETERIORATE",
+        "realized_label": "STABLE",
+        "error_kind": "DIRECTIONAL_CLASS_MISS",
+    }]
 
     candidate = _attribution(forecast, settlement, scope="EVIDENCE_PRIORITY", evaluation=evaluation)
     candidate_result = pit.validate_forecast_error_attribution(
@@ -1134,6 +1146,188 @@ def test_forecast_learning_routes_direct_feedback_and_holds_method_changes_as_ca
     assert "attribution.allowed_outputs_must_exclude_cjo_report_and_investment" in rejected["findings"]
 
 
+def test_direct_forecast_policy_requires_a_mechanical_local_error_signature() -> None:
+    universe, h1 = _universe_and_h1()
+    from tests.test_judgment_training_decision_contract import _contract
+
+    v2 = _forecast(
+        universe, h1, universe["members"][0]["company_id"],
+        decision_contract_ref={"contract_id": "DC:SYNTHETIC:FORECAST:V1", "contract_version": 1},
+    )
+    measurement_contract = _outcome_measurement_contract(v2, _contract(v2))
+    observations: dict[str, dict]
+
+    perfect = _v3_forecast(v2, measurement_contract)
+    perfect["dimensions"][0]["forecast_by_window"][0]["probabilities"] = [
+        {"label": "DETERIORATE", "probability": 0.0},
+        {"label": "STABLE", "probability": 1.0},
+        {"label": "IMPROVE", "probability": 0.0},
+    ]
+    perfect_settlement = _v3_observed_settlement(perfect, measurement_contract)
+    observations = _v3_observation_receipts(perfect, measurement_contract)
+    perfect_pairing = _pairing(perfect)
+    perfect_pairing["baseline_cells"][0]["probabilities"] = deepcopy(
+        perfect["dimensions"][0]["forecast_by_window"][0]["probabilities"],
+    )
+    perfect_evaluation = _paired_evaluation(perfect, perfect_settlement, perfect_pairing)
+    for scope in ("CALIBRATION", "STATE_DEFINITION", "UNCERTAINTY_POLICY", "BASELINE_PERFORMANCE"):
+        attribution = _attribution(perfect, perfect_settlement, scope=scope)
+        if scope == "BASELINE_PERFORMANCE":
+            attribution["paired_evaluation_id"] = perfect_evaluation["evaluation_id"]
+        rejected = pit.validate_forecast_error_attribution(
+            attribution, forecast=perfect, settlement=perfect_settlement,
+            pairing=perfect_pairing if scope == "BASELINE_PERFORMANCE" else None,
+            paired_evaluation=perfect_evaluation if scope == "BASELINE_PERFORMANCE" else None,
+            measurement_contract=measurement_contract, observation_receipts=observations,
+        )
+        assert not rejected["valid"], (scope, rejected["findings"])
+        assert rejected["learning_authorization"] == "NONE"
+
+    directional = _v3_forecast(v2, measurement_contract)
+    directional["dimensions"][0]["forecast_by_window"][0]["probabilities"] = [
+        {"label": "DETERIORATE", "probability": 0.8},
+        {"label": "STABLE", "probability": 0.2},
+        {"label": "IMPROVE", "probability": 0.0},
+    ]
+    directional_settlement = _v3_observed_settlement(directional, measurement_contract)
+    observations = _v3_observation_receipts(directional, measurement_contract)
+    calibration = pit.validate_forecast_error_attribution(
+        _attribution(directional, directional_settlement), forecast=directional,
+        settlement=directional_settlement, measurement_contract=measurement_contract,
+        observation_receipts=observations,
+    )
+    assert calibration["valid"], calibration["findings"]
+    assert calibration["error_signatures"][0]["error_kind"] == "DIRECTIONAL_CLASS_MISS"
+
+    ordinary_uncertainty = pit.validate_forecast_error_attribution(
+        _attribution(directional, directional_settlement, scope="UNCERTAINTY_POLICY"),
+        forecast=directional, settlement=directional_settlement, measurement_contract=measurement_contract,
+        observation_receipts=observations,
+    )
+    assert not ordinary_uncertainty["valid"]
+    assert ordinary_uncertainty["learning_authorization"] == "NONE"
+
+    mixed = _attribution(directional, directional_settlement)
+    mixed["cell_refs"].append({"dimension_id": "NORMAL_EARNINGS", "window_id": "THREE_YEAR"})
+    mixed_result = pit.validate_forecast_error_attribution(
+        mixed, forecast=directional, settlement=directional_settlement,
+        measurement_contract=measurement_contract, observation_receipts=observations,
+    )
+    assert not mixed_result["valid"]
+    assert "attribution.calibration_requires_directional_class_miss" in mixed_result["findings"]
+
+    impossible = deepcopy(directional)
+    impossible["dimensions"][0]["forecast_by_window"][0]["probabilities"] = [
+        {"label": "DETERIORATE", "probability": 1.0},
+        {"label": "STABLE", "probability": 0.0},
+        {"label": "IMPROVE", "probability": 0.0},
+    ]
+    impossible_result = pit.validate_forecast_error_attribution(
+        _attribution(impossible, directional_settlement, scope="UNCERTAINTY_POLICY"),
+        forecast=impossible, settlement=directional_settlement, measurement_contract=measurement_contract,
+        observation_receipts=observations,
+    )
+    assert impossible_result["valid"], impossible_result["findings"]
+    assert impossible_result["error_signatures"][0]["error_kind"] == "REALIZED_LABEL_ASSIGNED_ZERO_PROBABILITY"
+
+    tied = deepcopy(impossible)
+    tied["dimensions"][0]["forecast_by_window"][0]["probabilities"] = [
+        {"label": "DETERIORATE", "probability": 0.5},
+        {"label": "STABLE", "probability": 0.0},
+        {"label": "IMPROVE", "probability": 0.5},
+    ]
+    for scope in ("CALIBRATION", "UNCERTAINTY_POLICY"):
+        tied_result = pit.validate_forecast_error_attribution(
+            _attribution(tied, directional_settlement, scope=scope), forecast=tied,
+            settlement=directional_settlement, measurement_contract=measurement_contract,
+            observation_receipts=observations,
+        )
+        assert not tied_result["valid"]
+        assert tied_result["learning_authorization"] == "NONE"
+
+    baseline_pairing = _pairing(directional)
+    baseline_pairing["baseline_cells"][0]["probabilities"] = [
+        {"label": "DETERIORATE", "probability": 0.0},
+        {"label": "STABLE", "probability": 1.0},
+        {"label": "IMPROVE", "probability": 0.0},
+    ]
+    baseline_evaluation = _paired_evaluation(directional, directional_settlement, baseline_pairing)
+    baseline_attribution = _attribution(directional, directional_settlement, scope="BASELINE_PERFORMANCE")
+    baseline_attribution["paired_evaluation_id"] = baseline_evaluation["evaluation_id"]
+    baseline_result = pit.validate_forecast_error_attribution(
+        baseline_attribution, forecast=directional, settlement=directional_settlement,
+        pairing=baseline_pairing, paired_evaluation=baseline_evaluation,
+        measurement_contract=measurement_contract, observation_receipts=observations,
+    )
+    assert baseline_result["valid"], baseline_result["findings"]
+    assert baseline_result["error_signatures"][0] == {
+        "dimension_id": "NORMAL_EARNINGS",
+        "window_id": "ONE_YEAR",
+        "expected_label": "DETERIORATE",
+        "realized_label": "STABLE",
+        "baseline_expected_label": "STABLE",
+        "error_kind": "BASELINE_CORRECT_FORECAST_DIRECTIONAL_MISS",
+    }
+
+    forecast_better = deepcopy(directional)
+    forecast_better["dimensions"][0]["forecast_by_window"][0]["probabilities"] = [
+        {"label": "DETERIORATE", "probability": 0.4},
+        {"label": "STABLE", "probability": 0.39},
+        {"label": "IMPROVE", "probability": 0.21},
+    ]
+    weaker_baseline = _pairing(forecast_better)
+    weaker_baseline["baseline_cells"][0]["probabilities"] = [
+        {"label": "DETERIORATE", "probability": 0.33},
+        {"label": "STABLE", "probability": 0.34},
+        {"label": "IMPROVE", "probability": 0.33},
+    ]
+    weaker_evaluation = _paired_evaluation(forecast_better, directional_settlement, weaker_baseline)
+    weaker_attribution = _attribution(forecast_better, directional_settlement, scope="BASELINE_PERFORMANCE")
+    weaker_attribution["paired_evaluation_id"] = weaker_evaluation["evaluation_id"]
+    weaker_result = pit.validate_forecast_error_attribution(
+        weaker_attribution, forecast=forecast_better, settlement=directional_settlement,
+        pairing=weaker_baseline, paired_evaluation=weaker_evaluation,
+        measurement_contract=measurement_contract, observation_receipts=observations,
+    )
+    assert not weaker_result["valid"]
+    assert weaker_result["learning_authorization"] == "NONE"
+
+
+def test_binary_tie_is_not_diagnostic_but_contradicted_certainty_is() -> None:
+    universe, h1 = _universe_and_h1()
+    from tests.test_judgment_training_decision_contract import _contract
+
+    v2 = _forecast(
+        universe, h1, universe["members"][0]["company_id"],
+        decision_contract_ref={"contract_id": "DC:SYNTHETIC:FORECAST:V1", "contract_version": 1},
+    )
+    for window in v2["dimensions"][0]["forecast_by_window"]:
+        window.pop("probabilities")
+        window["event_statement"] = "The cutoff-defined earnings event occurs."
+        window["event_occurs_probability"] = 0.5
+    measurement_contract = _outcome_measurement_contract(v2, _contract(v2))
+    forecast = _v3_forecast(v2, measurement_contract)
+    settlement = _v3_observed_settlement(forecast, measurement_contract)
+    observations = _v3_observation_receipts(forecast, measurement_contract)
+    for scope in ("CALIBRATION", "UNCERTAINTY_POLICY"):
+        tied = pit.validate_forecast_error_attribution(
+            _attribution(forecast, settlement, scope=scope), forecast=forecast, settlement=settlement,
+            measurement_contract=measurement_contract, observation_receipts=observations,
+        )
+        assert not tied["valid"]
+        assert tied["learning_authorization"] == "NONE"
+
+    forecast["dimensions"][0]["forecast_by_window"][0]["event_occurs_probability"] = 0.0
+    contradicted = pit.validate_forecast_error_attribution(
+        _attribution(forecast, settlement, scope="UNCERTAINTY_POLICY"),
+        forecast=forecast, settlement=settlement, measurement_contract=measurement_contract,
+        observation_receipts=observations,
+    )
+    assert contradicted["valid"], contradicted["findings"]
+    assert contradicted["error_signatures"][0]["expected_label"] is False
+    assert contradicted["error_signatures"][0]["realized_label"] is True
+
+
 def test_abstention_and_unknown_outcomes_never_authorize_coverage_learning() -> None:
     universe, h1 = _universe_and_h1()
     from tests.test_judgment_training_decision_contract import _contract
@@ -1144,6 +1338,11 @@ def test_abstention_and_unknown_outcomes_never_authorize_coverage_learning() -> 
     )
     measurement_contract = _outcome_measurement_contract(v2, _contract(v2))
     forecast = _v3_forecast(v2, measurement_contract)
+    forecast["dimensions"][0]["forecast_by_window"][0]["probabilities"] = [
+        {"label": "DETERIORATE", "probability": 0.6},
+        {"label": "STABLE", "probability": 0.2},
+        {"label": "IMPROVE", "probability": 0.2},
+    ]
     observed_settlement = _v3_observed_settlement(forecast, measurement_contract)
 
     abstained_forecast = deepcopy(forecast)
@@ -1208,6 +1407,11 @@ def test_local_abstention_does_not_block_observed_cell_calibration() -> None:
     )
     measurement_contract = _outcome_measurement_contract(v2, _contract(v2))
     forecast = _v3_forecast(v2, measurement_contract)
+    forecast["dimensions"][0]["forecast_by_window"][0]["probabilities"] = [
+        {"label": "DETERIORATE", "probability": 0.6},
+        {"label": "STABLE", "probability": 0.2},
+        {"label": "IMPROVE", "probability": 0.2},
+    ]
     loss_dimension = next(
         dimension for dimension in forecast["dimensions"] if dimension["dimension_id"] == "PERMANENT_LOSS_RISK"
     )

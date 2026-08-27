@@ -213,6 +213,7 @@ def test_j3_projects_probability_interval_and_abstain_requests_without_running_f
     assert loss["coverage_permission"]["settlement_statuses"] == ["EVIDENCE_INELIGIBLE"]
     assert loss["error_attribution_permission"]["direct_learning_scopes"] == []
     assert "COVERAGE" in requests["REQ:OPERATING:ONE_YEAR"]["error_attribution_permission"]["direct_learning_scopes"]
+    assert "STATE_DEFINITION" not in requests["REQ:OPERATING:ONE_YEAR"]["error_attribution_permission"]["direct_learning_scopes"]
     assert requests["REQ:OPERATING:ONE_YEAR"]["measurement_ref"] == source["threads"][0]["cells"][0]["measurement_ref"]
     assert requests["REQ:OPERATING:ONE_YEAR"]["evidence_refs"] == source["threads"][0]["cells"][0]["evidence_refs"]
     assert projected["episode_ref"] == source["episode_ref"]

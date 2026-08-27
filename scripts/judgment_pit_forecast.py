@@ -2166,6 +2166,113 @@ def _forecast_cell_index(forecast: dict[str, Any]) -> dict[tuple[str, str], dict
     }
 
 
+def _unique_expected_label(window: dict[str, Any]) -> str | bool | None:
+    probabilities = _items(window.get("probabilities"))
+    if probabilities:
+        highest = max(float(item.get("probability", 0.0)) for item in probabilities if isinstance(item, dict))
+        modal = [
+            str(item.get("label")) for item in probabilities
+            if isinstance(item, dict) and float(item.get("probability", 0.0)) == highest
+        ]
+        return modal[0] if len(modal) == 1 else None
+    probability = window.get("event_occurs_probability")
+    if not isinstance(probability, (int, float)) or isinstance(probability, bool) or float(probability) == 0.5:
+        return None
+    return float(probability) > 0.5
+
+
+def _realized_probability(window: dict[str, Any], realized: Any) -> float | None:
+    probabilities = _items(window.get("probabilities"))
+    if probabilities:
+        for item in probabilities:
+            if isinstance(item, dict) and item.get("label") == realized:
+                return float(item.get("probability", 0.0))
+        return None
+    probability = window.get("event_occurs_probability")
+    if not isinstance(probability, (int, float)) or isinstance(probability, bool) or not isinstance(realized, bool):
+        return None
+    return float(probability) if realized else 1.0 - float(probability)
+
+
+def _direct_error_signatures(
+    scope: str, refs: list[tuple[str, str]], *, forecast: dict[str, Any], settlement: dict[str, Any],
+    pairing: dict[str, Any] | None = None,
+) -> tuple[list[dict[str, Any]], list[str]]:
+    """Derive cell-local direct feedback from frozen predictions and settled labels."""
+    findings: list[str] = []
+    signatures: list[dict[str, Any]] = []
+    forecast_cells = _forecast_cell_index(forecast)
+    settlement_cells = {
+        (str(entry.get("dimension_id")), str(entry.get("window_id"))): entry
+        for entry in _items(settlement.get("dimension_settlements")) if isinstance(entry, dict)
+    }
+    baseline_cells = {
+        (str(entry.get("dimension_id")), str(entry.get("window_id"))): entry
+        for entry in _items(_mapping(pairing).get("baseline_cells")) if isinstance(entry, dict)
+    }
+    if scope == "STATE_DEFINITION":
+        return [], ["attribution.state_definition_not_mechanically_diagnostic"]
+    for dimension_id, window_id in refs:
+        cell = _mapping(settlement_cells.get((dimension_id, window_id)))
+        if scope == "COVERAGE":
+            if cell.get("status") == "MEASUREMENT_MISMATCH":
+                signatures.append({
+                    "dimension_id": dimension_id,
+                    "window_id": window_id,
+                    "expected_label": "CONTRACT_MATCHED_MEASUREMENT",
+                    "realized_label": "MEASUREMENT_MISMATCH",
+                    "error_kind": "MEASUREMENT_MISMATCH",
+                })
+            continue
+        if cell.get("status") != "OBSERVED":
+            continue
+        window = _mapping(forecast_cells.get((dimension_id, window_id)))
+        expected = _unique_expected_label(window)
+        realized = cell.get("realized_label")
+        signature = {
+            "dimension_id": dimension_id,
+            "window_id": window_id,
+            "expected_label": expected,
+            "realized_label": realized,
+        }
+        if scope == "CALIBRATION":
+            if expected is None or expected == realized:
+                findings.append("attribution.calibration_requires_directional_class_miss")
+                continue
+            signatures.append({**signature, "error_kind": "DIRECTIONAL_CLASS_MISS"})
+        elif scope == "UNCERTAINTY_POLICY":
+            if expected is None or _realized_probability(window, realized) != 0.0:
+                findings.append("attribution.uncertainty_policy_requires_contradicted_certainty")
+                continue
+            signatures.append({**signature, "error_kind": "REALIZED_LABEL_ASSIGNED_ZERO_PROBABILITY"})
+        elif scope == "BASELINE_PERFORMANCE":
+            baseline_window = _mapping(baseline_cells.get((dimension_id, window_id)))
+            baseline_expected = _unique_expected_label(baseline_window)
+            baseline_score = _baseline_score(
+                baseline_window, window, dimension_id=dimension_id, realized=realized,
+            )
+            forecast_score = (
+                _score(_probability_map(window), _labels_for(dimension_id), str(realized))
+                if _items(window.get("probabilities")) and isinstance(realized, str)
+                else _binary_score(float(window.get("event_occurs_probability", 0.0)), realized)
+                if isinstance(realized, bool)
+                else None
+            )
+            if (
+                expected is None or expected == realized or baseline_expected != realized
+                or baseline_score is None or forecast_score is None
+                or float(baseline_score["brier"]) >= float(forecast_score["brier"])
+            ):
+                findings.append("attribution.baseline_performance_requires_correct_baseline_and_forecast_directional_miss")
+                continue
+            signatures.append({
+                **signature,
+                "baseline_expected_label": baseline_expected,
+                "error_kind": "BASELINE_CORRECT_FORECAST_DIRECTIONAL_MISS",
+            })
+    return signatures, findings
+
+
 def _cell_refs(value: Any, *, path: str, findings: list[str]) -> list[tuple[str, str]]:
     refs: list[tuple[str, str]] = []
     seen: set[tuple[str, str]] = set()
@@ -2548,6 +2655,7 @@ def validate_forecast_error_attribution(
 
     disposition = item.get("disposition")
     policy_change = item.get("policy_change")
+    error_signatures: list[dict[str, Any]] = []
     if scope in DIRECT_FORECAST_LEARNING_SCOPES:
         if frozen.get("schema_version") not in MEASUREMENT_CONTRACT_FORECAST_SCHEMA_VERSIONS:
             findings.append("attribution.legacy_forecast_cannot_emit_direct_policy")
@@ -2570,10 +2678,22 @@ def validate_forecast_error_attribution(
             if _mapping(settlement_cells.get(key)).get("status") != expected_status:
                 findings.append("attribution.direct_scope_cell_status_not_eligible")
         if scope == "BASELINE_PERFORMANCE":
-            if paired_evaluation is None:
+            if pairing is None or paired_evaluation is None:
                 findings.append("attribution.baseline_performance_requires_paired_evaluation")
-            elif item.get("paired_evaluation_id") != _mapping(paired_evaluation).get("evaluation_id"):
-                findings.append("attribution.baseline_performance_must_bind_paired_evaluation")
+            else:
+                evaluation = validate_forecast_paired_evaluation(
+                    paired_evaluation, forecast=frozen, settlement=raw_settlement, pairing=pairing,
+                    measurement_contract=measurement_contract, observation_receipts=observation_receipts,
+                    acquisition_scope=acquisition_scope,
+                )
+                findings.extend(f"attribution.paired_evaluation:{finding}" for finding in evaluation["findings"])
+                if item.get("paired_evaluation_id") != _mapping(paired_evaluation).get("evaluation_id"):
+                    findings.append("attribution.baseline_performance_must_bind_paired_evaluation")
+        if not findings:
+            error_signatures, signature_findings = _direct_error_signatures(
+                str(scope), refs, forecast=frozen, settlement=raw_settlement, pairing=_mapping(pairing),
+            )
+            findings.extend(signature_findings)
         if item.get("holdout") is not None:
             findings.append("attribution.direct_scope_must_not_claim_holdout_method_transfer")
     elif scope in CANDIDATE_FORECAST_LEARNING_SCOPES:
@@ -2635,6 +2755,7 @@ def validate_forecast_error_attribution(
         findings,
         attribution=deepcopy(item) if not findings else None,
         learning_authorization=learning_authorization,
+        error_signatures=error_signatures if not findings else [],
     )
 
 
