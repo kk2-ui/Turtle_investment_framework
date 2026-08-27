@@ -1098,7 +1098,7 @@ def build_canonical_preoutcome_package(
     baseline = _baseline_episode(contract, block)
     enhanced = _enhanced_episode(contract, block)
     pairing = {
-        "schema_version": decision_utility.PAIRING_SCHEMA_VERSION,
+        "schema_version": decision_utility.HISTORICAL_PAIRING_SCHEMA_VERSION,
         "pairing_id": "UTILITY:PAIR:CN600839:20180930:ROUND9:V1",
         "decision_contract_ref": {"contract_id": contract["contract_id"], "contract_version": contract["contract_version"]},
         "baseline_episode_id": baseline["episode_id"],

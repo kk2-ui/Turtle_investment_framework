@@ -64,6 +64,16 @@ def test_round9_freezes_a_simple_baseline_and_an_eight_dimension_method_on_same_
     assert baseline_locators == enhanced_locators == set(round9.LOCATOR.values())
     pairing = package["decision_utility_pairing"]
     assert pairing["baseline_research_cost_hours"] == pairing["enhanced_research_cost_hours"]
+    assert pairing["schema_version"] == decision_utility.HISTORICAL_PAIRING_SCHEMA_VERSION
+    pairing_validation = decision_utility.validate_decision_utility_pairing(
+        pairing,
+        contract=package["decision_contract"],
+        baseline_episode=baseline,
+        enhanced_episode=enhanced,
+    )
+    assert pairing_validation["valid"], pairing_validation["findings"]
+    assert pairing_validation["artifact_status"] == "HISTORICAL_READ_ONLY"
+    assert pairing_validation["learning_authorization"] == "NONE"
 
 
 def test_round9_measurement_contract_has_strict_post_cutoff_clocks_and_typed_boundaries() -> None:

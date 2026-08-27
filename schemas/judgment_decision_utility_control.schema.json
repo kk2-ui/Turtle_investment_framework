@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "judgment-decision-utility-control.v2",
+  "$id": "judgment-decision-utility-control.v3",
   "title": "Turtle persisted canonical Episode decision utility contracts",
   "$defs": {
     "contract_ref": {
@@ -12,6 +12,38 @@
         "contract_version": {"type": "integer", "minimum": 1}
       }
     },
+    "forecast_cell_ref": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["dimension_id", "window_id"],
+      "properties": {
+        "dimension_id": {"type": "string", "minLength": 1},
+        "window_id": {"type": "string", "minLength": 1}
+      }
+    },
+    "outcome_support_binding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "binding_id", "dimension_id", "enhanced_outcome_cell_id", "supporting_forecast_cells"
+      ],
+      "properties": {
+        "binding_id": {"type": "string", "minLength": 1},
+        "dimension_id": {
+          "enum": [
+            "INITIAL_CONDITIONS", "IMPLEMENTED_MANAGEMENT_ACTION", "EXECUTION",
+            "CUSTOMER_COMPETITION_RESPONSE", "UNIT_ECONOMICS",
+            "WORKING_CAPITAL_CASH_CAPITAL", "ADAPTATION_PERMANENT_LOSS",
+            "STRONGEST_ALTERNATIVE_EXPLANATION"
+          ]
+        },
+        "enhanced_outcome_cell_id": {"type": "string", "minLength": 1},
+        "supporting_forecast_cells": {
+          "type": "array", "minItems": 1, "uniqueItems": true,
+          "items": {"$ref": "#/$defs/forecast_cell_ref"}
+        }
+      }
+    },
     "pairing": {
       "type": "object",
       "additionalProperties": false,
@@ -20,10 +52,10 @@
         "decision_contract_ref", "baseline_episode_id", "enhanced_episode_id",
         "baseline_method_id", "enhanced_method_id", "baseline_research_cost_hours",
         "enhanced_research_cost_hours", "frozen_at", "object_class", "claim_class",
-        "allowed_outputs"
+        "allowed_outputs", "outcome_support_bindings", "artifact_status", "authority_ceiling"
       ],
       "properties": {
-        "schema_version": {"const": "turtle-decision-utility-control-pairing.v2"},
+        "schema_version": {"const": "turtle-decision-utility-control-pairing.v3"},
         "pairing_id": {"type": "string", "minLength": 1},
         "forecast_id": {"type": "string", "minLength": 1},
         "forecast_pairing_id": {"type": "string", "minLength": 1},
@@ -35,6 +67,11 @@
         "baseline_research_cost_hours": {"type": "number", "minimum": 0},
         "enhanced_research_cost_hours": {"type": "number", "minimum": 0},
         "frozen_at": {"type": "string", "format": "date-time"},
+        "outcome_support_bindings": {
+          "type": "array", "items": {"$ref": "#/$defs/outcome_support_binding"}
+        },
+        "artifact_status": {"const": "FROZEN"},
+        "authority_ceiling": {"const": "NONE"},
         "object_class": {"const": "DECISION_UTILITY_PAIRING"},
         "claim_class": {"const": "SAME_CONTRACT_METHOD_ABLATION"},
         "allowed_outputs": {"const": ["DECISION_UTILITY_EVALUATION_ONLY", "RESEARCH_AGENDA"]}
@@ -53,8 +90,8 @@
             "STRONGEST_ALTERNATIVE_EXPLANATION"
           ]
         },
-        "baseline_assessment": {"enum": ["AVOIDED_ERROR", "MATERIAL_IMPROVEMENT", "NO_DIFFERENCE", "UNKNOWN", "NOT_DIAGNOSTIC"]},
-        "enhanced_assessment": {"enum": ["AVOIDED_ERROR", "MATERIAL_IMPROVEMENT", "NO_DIFFERENCE", "UNKNOWN", "NOT_DIAGNOSTIC"]},
+        "baseline_assessment": {"enum": ["AVOIDED_ERROR", "MATERIAL_IMPROVEMENT", "NO_DIFFERENCE", "UNKNOWN", "NOT_DIAGNOSTIC", "HARMFUL"]},
+        "enhanced_assessment": {"enum": ["AVOIDED_ERROR", "MATERIAL_IMPROVEMENT", "NO_DIFFERENCE", "UNKNOWN", "NOT_DIAGNOSTIC", "HARMFUL"]},
         "rationale": {"type": "string", "minLength": 1}
       }
     },
@@ -64,15 +101,20 @@
       "required": [
         "schema_version", "evaluation_id", "pairing_id", "forecast_paired_evaluation_id",
         "evaluated_at", "reviewer_id", "dimension_findings", "object_class", "claim_class",
-        "allowed_outputs"
+        "allowed_outputs", "artifact_status", "authority_ceiling", "overall_utility_verdict"
       ],
       "properties": {
-        "schema_version": {"const": "turtle-decision-utility-control-evaluation.v2"},
+        "schema_version": {"const": "turtle-decision-utility-control-evaluation.v3"},
         "evaluation_id": {"type": "string", "minLength": 1},
         "pairing_id": {"type": "string", "minLength": 1},
         "forecast_paired_evaluation_id": {"type": "string", "minLength": 1},
         "evaluated_at": {"type": "string", "format": "date-time"},
         "reviewer_id": {"type": "string", "minLength": 1},
+        "artifact_status": {"const": "EVALUATED"},
+        "authority_ceiling": {"const": "CANDIDATE_ONLY"},
+        "overall_utility_verdict": {
+          "enum": ["MATERIAL_UTILITY", "NO_MATERIAL_UTILITY", "HARMFUL", "NOT_DIAGNOSTIC"]
+        },
         "dimension_findings": {
           "type": "array", "minItems": 8, "maxItems": 8,
           "items": {"$ref": "#/$defs/dimension_finding"}

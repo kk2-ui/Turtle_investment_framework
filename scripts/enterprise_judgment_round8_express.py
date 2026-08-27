@@ -889,7 +889,7 @@ def build_preoutcome_package(
         block=block, packet_id=packet["packet_id"],
     )
     pairing = {
-        "schema_version": decision_utility.PAIRING_SCHEMA_VERSION,
+        "schema_version": decision_utility.HISTORICAL_PAIRING_SCHEMA_VERSION,
         "pairing_id": "UTILITY:PAIR:CN002120:20190501:ROUND8:V2",
         "decision_contract_ref": {
             "contract_id": contract["contract_id"],
@@ -1598,7 +1598,7 @@ def build_utility_evaluation(
         },
     ]
     evaluation = {
-        "schema_version": decision_utility.EVALUATION_SCHEMA_VERSION,
+        "schema_version": decision_utility.HISTORICAL_EVALUATION_SCHEMA_VERSION,
         "evaluation_id": UTILITY_EVALUATION_ID,
         "pairing_id": package["decision_utility_pairing"]["pairing_id"],
         "evaluated_at": evaluated_at,

@@ -20,10 +20,14 @@ except ModuleNotFoundError:  # pragma: no cover
     import judgment_training_decision_contract as contract_module
 
 
-PAIRING_SCHEMA_VERSION = "turtle-decision-utility-pairing.v2"
-EVALUATION_SCHEMA_VERSION = "turtle-decision-utility-evaluation.v3"
-CONTROL_PAIRING_SCHEMA_VERSION = "turtle-decision-utility-control-pairing.v2"
-CONTROL_EVALUATION_SCHEMA_VERSION = "turtle-decision-utility-control-evaluation.v2"
+PAIRING_SCHEMA_VERSION = "turtle-decision-utility-pairing.v3"
+EVALUATION_SCHEMA_VERSION = "turtle-decision-utility-evaluation.v4"
+CONTROL_PAIRING_SCHEMA_VERSION = "turtle-decision-utility-control-pairing.v3"
+CONTROL_EVALUATION_SCHEMA_VERSION = "turtle-decision-utility-control-evaluation.v3"
+HISTORICAL_PAIRING_SCHEMA_VERSION = "turtle-decision-utility-pairing.v2"
+HISTORICAL_EVALUATION_SCHEMA_VERSION = "turtle-decision-utility-evaluation.v3"
+HISTORICAL_CONTROL_PAIRING_SCHEMA_VERSION = "turtle-decision-utility-control-pairing.v2"
+HISTORICAL_CONTROL_EVALUATION_SCHEMA_VERSION = "turtle-decision-utility-control-evaluation.v2"
 LEGACY_PAIRING_SCHEMA_VERSION = "turtle-decision-utility-pairing.v1"
 LEGACY_EVALUATION_SCHEMA_VERSION = "turtle-decision-utility-evaluation.v1"
 ALLOWED_OUTPUTS = ["DECISION_UTILITY_EVALUATION_ONLY", "RESEARCH_AGENDA"]
@@ -39,26 +43,48 @@ DIMENSIONS = [
 ]
 LEGACY_DIMENSIONS = ["PERMANENT_LOSS_GUARDRAIL", "OWNER_CASH_ACCESS", "KEY_UNKNOWN_DISCOVERY", "RESEARCH_COST"]
 
-_PAIRING_KEYS = {
+_HISTORICAL_PAIRING_KEYS = {
     "schema_version", "pairing_id", "decision_contract_ref", "baseline_episode_id",
     "enhanced_episode_id", "baseline_method_id", "enhanced_method_id",
     "baseline_research_cost_hours", "enhanced_research_cost_hours", "frozen_at",
     "object_class", "claim_class", "allowed_outputs",
 }
+_PAIRING_KEYS = _HISTORICAL_PAIRING_KEYS | {"artifact_status", "authority_ceiling"}
 _REF_KEYS = {"contract_id", "contract_version"}
-_EVALUATION_KEYS = {"schema_version", "evaluation_id", "pairing_id", "evaluated_at", "reviewer_id", "outcome_settlement_ref", "dimension_findings", "holdout", "object_class", "claim_class", "allowed_outputs"}
+_HISTORICAL_EVALUATION_KEYS = {"schema_version", "evaluation_id", "pairing_id", "evaluated_at", "reviewer_id", "outcome_settlement_ref", "dimension_findings", "holdout", "object_class", "claim_class", "allowed_outputs"}
+_EVALUATION_KEYS = _HISTORICAL_EVALUATION_KEYS | {
+    "artifact_status", "authority_ceiling", "overall_utility_verdict",
+}
 _FINDING_KEYS = {"dimension_id", "baseline_assessment", "enhanced_assessment", "rationale"}
 _EVALUATION_FINDING_KEYS = _FINDING_KEYS | {"supporting_cell_ids"}
 _HOLDOUT_KEYS = {"training_company_ids", "holdout_company_ids", "training_cutoff_through", "holdout_cutoff_from"}
-_CONTROL_PAIRING_KEYS = {
+_HISTORICAL_CONTROL_PAIRING_KEYS = {
     "schema_version", "pairing_id", "forecast_id", "forecast_pairing_id", "decision_contract_ref",
     "baseline_episode_id", "enhanced_episode_id", "baseline_method_id", "enhanced_method_id",
     "baseline_research_cost_hours", "enhanced_research_cost_hours", "frozen_at",
     "object_class", "claim_class", "allowed_outputs",
 }
-_CONTROL_EVALUATION_KEYS = {
+_CONTROL_PAIRING_KEYS = _HISTORICAL_CONTROL_PAIRING_KEYS | {
+    "artifact_status", "authority_ceiling", "outcome_support_bindings",
+}
+_HISTORICAL_CONTROL_EVALUATION_KEYS = {
     "schema_version", "evaluation_id", "pairing_id", "forecast_paired_evaluation_id", "evaluated_at",
     "reviewer_id", "dimension_findings", "object_class", "claim_class", "allowed_outputs",
+}
+_CONTROL_EVALUATION_KEYS = _HISTORICAL_CONTROL_EVALUATION_KEYS | {
+    "artifact_status", "authority_ceiling", "overall_utility_verdict",
+}
+ASSESSMENTS = {
+    "AVOIDED_ERROR", "MATERIAL_IMPROVEMENT", "NO_DIFFERENCE", "UNKNOWN",
+    "NOT_DIAGNOSTIC", "HARMFUL",
+}
+HISTORICAL_ASSESSMENTS = ASSESSMENTS - {"HARMFUL"}
+UTILITY_VERDICTS = {
+    "MATERIAL_UTILITY", "NO_MATERIAL_UTILITY", "HARMFUL", "NOT_DIAGNOSTIC",
+}
+_FORECAST_CELL_REF_KEYS = {"dimension_id", "window_id"}
+_OUTCOME_SUPPORT_BINDING_KEYS = {
+    "binding_id", "dimension_id", "enhanced_outcome_cell_id", "supporting_forecast_cells",
 }
 _LEGACY_PAIRING_KEYS = {
     "schema_version", "pairing_id", "decision_contract_ref", "baseline", "enhanced",
@@ -91,6 +117,199 @@ def _instant(value: Any, path: str, findings: list[str]) -> datetime | None:
 def _research_cost(value: Any, path: str, findings: list[str]) -> None:
     if not isinstance(value, (int, float)) or isinstance(value, bool) or value < 0:
         findings.append(f"{path}_invalid")
+
+
+def _utility_verdict(
+    dimension_findings: list[dict[str, Any]], *, supported_material_dimensions: set[str],
+) -> str:
+    """Resolve qualitative utility without a score or dimension-count threshold."""
+    comparisons = [
+        (item.get("baseline_assessment"), item.get("enhanced_assessment"))
+        for item in dimension_findings
+    ]
+    if any(enhanced == "HARMFUL" for _, enhanced in comparisons):
+        return "HARMFUL"
+    material_states = {"AVOIDED_ERROR", "MATERIAL_IMPROVEMENT"}
+    reviewer_material_dimensions = {
+        str(item.get("dimension_id"))
+        for item in dimension_findings
+        if item.get("enhanced_assessment") in material_states
+        and item.get("baseline_assessment") not in material_states
+    }
+    if reviewer_material_dimensions & supported_material_dimensions:
+        return "MATERIAL_UTILITY"
+    if reviewer_material_dimensions:
+        return "NOT_DIAGNOSTIC"
+    if comparisons and all(
+        enhanced in {"UNKNOWN", "NOT_DIAGNOSTIC"} for _, enhanced in comparisons
+    ):
+        return "NOT_DIAGNOSTIC"
+    return "NO_MATERIAL_UTILITY"
+
+
+def _episode_dependencies_by_dimension(episode: Any) -> dict[str, set[str]]:
+    result: dict[str, set[str]] = {}
+    for raw in _items(_mapping(episode).get("claims")):
+        claim = _mapping(raw)
+        dimension = claim.get("judgment_dimension")
+        if dimension in DIMENSIONS:
+            result[str(dimension)] = {
+                str(cell_id) for cell_id in _items(claim.get("dependent_outcome_cell_ids"))
+                if _text(cell_id)
+            }
+    return result
+
+
+def _validate_outcome_support_bindings(
+    value: Any, *, path: str, findings: list[str], baseline_episode: Any,
+    enhanced_episode: Any,
+) -> list[dict[str, Any]]:
+    if not isinstance(value, list):
+        findings.append(f"{path}_must_be_array")
+        return []
+    baseline_dependencies = _episode_dependencies_by_dimension(baseline_episode)
+    enhanced_dependencies = _episode_dependencies_by_dimension(enhanced_episode)
+    seen: set[str] = set()
+    bindings: list[dict[str, Any]] = []
+    for index, raw in enumerate(value):
+        binding_path = f"{path}[{index}]"
+        binding = _closed(raw, _OUTCOME_SUPPORT_BINDING_KEYS, binding_path, findings)
+        binding_id = binding.get("binding_id")
+        if not _text(binding_id) or binding_id in seen:
+            findings.append(f"{binding_path}.binding_id_invalid_or_duplicate")
+        seen.add(str(binding_id))
+        dimension = binding.get("dimension_id")
+        if dimension not in DIMENSIONS:
+            findings.append(f"{binding_path}.dimension_id_invalid")
+        outcome_cell_id = binding.get("enhanced_outcome_cell_id")
+        if not _text(outcome_cell_id) or (
+            outcome_cell_id not in enhanced_dependencies.get(str(dimension), set())
+            or outcome_cell_id in baseline_dependencies.get(str(dimension), set())
+        ):
+            findings.append(
+                f"{binding_path}.enhanced_outcome_cell_id_must_be_new_frozen_dependency"
+            )
+        support = _items(binding.get("supporting_forecast_cells"))
+        if not support:
+            findings.append(f"{binding_path}.supporting_forecast_cells_must_be_nonempty")
+        refs: set[tuple[str, str]] = set()
+        for ref_index, raw_ref in enumerate(support):
+            ref = _closed(
+                raw_ref, _FORECAST_CELL_REF_KEYS,
+                f"{binding_path}.supporting_forecast_cells[{ref_index}]", findings,
+            )
+            dimension_id, window_id = ref.get("dimension_id"), ref.get("window_id")
+            key = (str(dimension_id), str(window_id))
+            if not _text(dimension_id) or not _text(window_id) or key in refs:
+                findings.append(
+                    f"{binding_path}.supporting_forecast_cells[{ref_index}].invalid_or_duplicate"
+                )
+            refs.add(key)
+        bindings.append(binding)
+    return bindings
+
+
+def _observed_outcome_cell_ids(settlement: Any, expected_id: Any) -> set[str]:
+    item = _mapping(settlement)
+    if item.get("settlement_id") != expected_id:
+        return set()
+    return {
+        str(row.get("cell_id") or row.get("outcome_cell_id"))
+        for row in (_mapping(raw) for raw in _items(item.get("cell_results")))
+        if row.get("status") == "OBSERVED" and _text(row.get("cell_id") or row.get("outcome_cell_id"))
+    }
+
+
+def _supported_standard_material_dimensions(
+    baseline_episode: Any, enhanced_episode: Any,
+    findings_by_dimension: dict[str, dict[str, Any]], settlement: Any, expected_settlement_id: Any,
+) -> set[str]:
+    observed = _observed_outcome_cell_ids(settlement, expected_settlement_id)
+    baseline_dependencies = _episode_dependencies_by_dimension(baseline_episode)
+    enhanced_dependencies = _episode_dependencies_by_dimension(enhanced_episode)
+    supported: set[str] = set()
+    for dimension in DIMENSIONS:
+        cited = set(_items(_mapping(findings_by_dimension.get(dimension)).get("supporting_cell_ids")))
+        added_dependencies = (
+            enhanced_dependencies.get(dimension, set())
+            - baseline_dependencies.get(dimension, set())
+        )
+        if observed & cited & added_dependencies:
+            supported.add(dimension)
+    return supported
+
+
+def _forecast_cell_index(forecast: Any) -> dict[tuple[str, str], dict[str, Any]]:
+    return {
+        (str(dimension.get("dimension_id")), str(window.get("window_id"))): window
+        for dimension in (_mapping(raw) for raw in _items(_mapping(forecast).get("dimensions")))
+        for window in (_mapping(raw) for raw in _items(dimension.get("forecast_by_window")))
+        if _text(dimension.get("dimension_id")) and _text(window.get("window_id"))
+    }
+
+
+def _forecast_prediction(cell: Any) -> tuple[Any, ...] | None:
+    item = _mapping(cell)
+    probabilities = _items(item.get("probabilities"))
+    if probabilities:
+        return tuple(sorted(
+            (str(_mapping(row).get("label")), _mapping(row).get("probability"))
+            for row in probabilities
+        ))
+    probability = item.get("event_occurs_probability")
+    if isinstance(probability, (int, float)) and not isinstance(probability, bool):
+        return ("BINARY", probability)
+    return None
+
+
+def _supported_control_material_dimensions(
+    pairing: Any, forecast: Any, forecast_pairing: Any, settlement: Any,
+    paired_evaluation: Any, baseline_episode: Any, enhanced_episode: Any,
+) -> set[str]:
+    settlement_item = _mapping(settlement)
+    paired = _mapping(paired_evaluation)
+    if settlement_item.get("settlement_id") != paired.get("settlement_id"):
+        return set()
+    observed = {
+        (str(row.get("dimension_id")), str(row.get("window_id")))
+        for row in (_mapping(raw) for raw in _items(settlement_item.get("dimension_settlements")))
+        if row.get("status") == "OBSERVED"
+    }
+    forecast_cells = _forecast_cell_index(forecast)
+    baseline_cells = {
+        (str(cell.get("dimension_id")), str(cell.get("window_id"))): cell
+        for cell in (_mapping(raw) for raw in _items(_mapping(forecast_pairing).get("baseline_cells")))
+    }
+    registered = {
+        (str(cell.get("dimension_id")), str(cell.get("window_id")))
+        for cell in (
+            _mapping(raw)
+            for raw in _items(_mapping(_mapping(forecast_pairing).get("holdout_binding")).get("evaluated_cells"))
+        )
+    }
+    supported: set[str] = set()
+    baseline_dependencies = _episode_dependencies_by_dimension(baseline_episode)
+    enhanced_dependencies = _episode_dependencies_by_dimension(enhanced_episode)
+    for raw in _items(_mapping(pairing).get("outcome_support_bindings")):
+        item = _mapping(raw)
+        dimension = str(item.get("dimension_id"))
+        outcome_cell_id = item.get("enhanced_outcome_cell_id")
+        if (
+            outcome_cell_id not in enhanced_dependencies.get(dimension, set())
+            or outcome_cell_id in baseline_dependencies.get(dimension, set())
+        ):
+            continue
+        refs = {
+            (str(ref.get("dimension_id")), str(ref.get("window_id")))
+            for ref in (_mapping(raw) for raw in _items(item.get("supporting_forecast_cells")))
+        }
+        for key in refs & observed & registered:
+            baseline_prediction = _forecast_prediction(baseline_cells.get(key))
+            enhanced_prediction = _forecast_prediction(forecast_cells.get(key))
+            if baseline_prediction is not None and enhanced_prediction is not None and baseline_prediction != enhanced_prediction:
+                supported.add(dimension)
+                break
+    return supported
 
 
 def _legacy_decision(
@@ -140,6 +359,9 @@ def _validate_legacy_pairing(pairing: Any, *, contract: Any) -> dict[str, Any]:
         "valid": not findings,
         "findings": findings,
         "pairing": deepcopy(item) if not findings else None,
+        "artifact_status": "HISTORICAL_READ_ONLY",
+        "authority_ceiling": "NONE",
+        "learning_authorization": "NONE",
         "authority": "LEGACY_V1_READ_ONLY",
     }
 
@@ -147,7 +369,7 @@ def _validate_legacy_pairing(pairing: Any, *, contract: Any) -> dict[str, Any]:
 def _validate_legacy_evaluation(evaluation: Any, *, pairing: Any, contract: Any) -> dict[str, Any]:
     pair = _validate_legacy_pairing(pairing, contract=contract)
     findings = ["pairing:" + finding for finding in pair["findings"]]
-    item = _closed(evaluation, _EVALUATION_KEYS, "decision_utility_evaluation", findings)
+    item = _closed(evaluation, _HISTORICAL_EVALUATION_KEYS, "decision_utility_evaluation", findings)
     if item.get("schema_version") != LEGACY_EVALUATION_SCHEMA_VERSION:
         findings.append("decision_utility_evaluation.schema_version_invalid")
     if item.get("pairing_id") != _mapping(pairing).get("pairing_id"):
@@ -173,7 +395,7 @@ def _validate_legacy_evaluation(evaluation: Any, *, pairing: Any, contract: Any)
             findings.append(f"decision_utility_evaluation.dimension_findings[{index}].dimension_invalid_or_duplicate")
         seen.add(str(dimension))
         for field in ("baseline_assessment", "enhanced_assessment"):
-            if finding.get(field) not in {"AVOIDED_ERROR", "MATERIAL_IMPROVEMENT", "NO_DIFFERENCE", "UNKNOWN", "NOT_DIAGNOSTIC"}:
+            if finding.get(field) not in HISTORICAL_ASSESSMENTS:
                 findings.append(f"decision_utility_evaluation.dimension_findings[{index}].{field}_invalid")
         if not _text(finding.get("rationale")):
             findings.append(f"decision_utility_evaluation.dimension_findings[{index}].rationale_required")
@@ -191,7 +413,10 @@ def _validate_legacy_evaluation(evaluation: Any, *, pairing: Any, contract: Any)
     return {
         "valid": not findings,
         "findings": findings,
-        "learning_authorization": "CANDIDATE_ONLY" if not findings else "NONE",
+        "artifact_status": "HISTORICAL_READ_ONLY",
+        "authority_ceiling": "NONE",
+        "overall_utility_verdict": None,
+        "learning_authorization": "NONE",
         "authority": "LEGACY_V1_READ_ONLY",
     }
 
@@ -260,8 +485,15 @@ def validate_decision_utility_pairing(
     if _mapping(pairing).get("schema_version") == LEGACY_PAIRING_SCHEMA_VERSION:
         return _validate_legacy_pairing(pairing, contract=contract)
     findings: list[str] = []
-    item = _closed(pairing, _PAIRING_KEYS, "decision_utility_pairing", findings)
-    if item.get("schema_version") != PAIRING_SCHEMA_VERSION: findings.append("decision_utility_pairing.schema_version_invalid")
+    historical = _mapping(pairing).get("schema_version") == HISTORICAL_PAIRING_SCHEMA_VERSION
+    item = _closed(
+        pairing,
+        _HISTORICAL_PAIRING_KEYS if historical else _PAIRING_KEYS,
+        "decision_utility_pairing",
+        findings,
+    )
+    expected_version = HISTORICAL_PAIRING_SCHEMA_VERSION if historical else PAIRING_SCHEMA_VERSION
+    if item.get("schema_version") != expected_version: findings.append("decision_utility_pairing.schema_version_invalid")
     if item.get("object_class") != "DECISION_UTILITY_PAIRING" or item.get("claim_class") != "SAME_CONTRACT_METHOD_ABLATION": findings.append("decision_utility_pairing.object_or_claim_class_invalid")
     if item.get("allowed_outputs") != ALLOWED_OUTPUTS: findings.append("decision_utility_pairing.outputs_must_remain_evaluation_only")
     if not _text(item.get("pairing_id")): findings.append("decision_utility_pairing.pairing_id_required")
@@ -280,20 +512,43 @@ def validate_decision_utility_pairing(
         findings=findings, path="decision_utility_pairing",
     )
     _instant(item.get("frozen_at"), "decision_utility_pairing.frozen_at", findings)
-    return {"valid": not findings, "findings": findings, "pairing": deepcopy(item) if not findings else None}
+    if not historical:
+        if item.get("artifact_status") != "FROZEN":
+            findings.append("decision_utility_pairing.artifact_status_must_be_frozen")
+        if item.get("authority_ceiling") != "NONE":
+            findings.append("decision_utility_pairing.authority_ceiling_must_be_none")
+    return {
+        "valid": not findings,
+        "findings": findings,
+        "pairing": deepcopy(item) if not findings else None,
+        "artifact_status": "HISTORICAL_READ_ONLY" if historical else item.get("artifact_status"),
+        "authority_ceiling": "NONE",
+        "learning_authorization": "NONE",
+    }
 
 def validate_decision_utility_evaluation(
     evaluation: Any, *, pairing: Any, contract: Any, baseline_episode: Any | None = None,
-    enhanced_episode: Any | None = None,
+    enhanced_episode: Any | None = None, outcome_settlement: Any | None = None,
 ) -> dict[str, Any]:
     if _mapping(pairing).get("schema_version") == LEGACY_PAIRING_SCHEMA_VERSION:
         return _validate_legacy_evaluation(evaluation, pairing=pairing, contract=contract)
+    historical_pairing = _mapping(pairing).get("schema_version") == HISTORICAL_PAIRING_SCHEMA_VERSION
+    historical_evaluation = _mapping(evaluation).get("schema_version") == HISTORICAL_EVALUATION_SCHEMA_VERSION
+    historical = historical_pairing and historical_evaluation
     pair = validate_decision_utility_pairing(
         pairing, contract=contract, baseline_episode=baseline_episode, enhanced_episode=enhanced_episode,
     )
     findings = ["pairing:" + x for x in pair["findings"]]
-    item = _closed(evaluation, _EVALUATION_KEYS, "decision_utility_evaluation", findings)
-    if item.get("schema_version") != EVALUATION_SCHEMA_VERSION: findings.append("decision_utility_evaluation.schema_version_invalid")
+    if historical_pairing != historical_evaluation:
+        findings.append("decision_utility_evaluation.pairing_and_evaluation_version_epoch_mismatch")
+    item = _closed(
+        evaluation,
+        _HISTORICAL_EVALUATION_KEYS if historical else _EVALUATION_KEYS,
+        "decision_utility_evaluation",
+        findings,
+    )
+    expected_version = HISTORICAL_EVALUATION_SCHEMA_VERSION if historical else EVALUATION_SCHEMA_VERSION
+    if item.get("schema_version") != expected_version: findings.append("decision_utility_evaluation.schema_version_invalid")
     if item.get("pairing_id") != _mapping(pairing).get("pairing_id"): findings.append("decision_utility_evaluation.pairing_id_must_match")
     if item.get("object_class") != "DECISION_UTILITY_EVALUATION" or item.get("claim_class") != "MATERIAL_DECISION_UTILITY_REVIEW": findings.append("decision_utility_evaluation.object_or_claim_class_invalid")
     if item.get("allowed_outputs") != ALLOWED_OUTPUTS: findings.append("decision_utility_evaluation.outputs_must_remain_evaluation_only")
@@ -303,13 +558,16 @@ def validate_decision_utility_evaluation(
     contract_roles = _mapping(contract).get("roles") if isinstance(_mapping(contract).get("roles"), dict) else {}
     if item.get("reviewer_id") in set(contract_roles.values()): findings.append("decision_utility_evaluation.reviewer_must_be_independent_of_contract_roles")
     seen: set[str] = set()
+    dimension_findings: list[dict[str, Any]] = []
     for index, raw in enumerate(_items(item.get("dimension_findings"))):
         finding = _closed(raw, _EVALUATION_FINDING_KEYS, f"decision_utility_evaluation.dimension_findings[{index}]", findings)
+        dimension_findings.append(finding)
         dimension = finding.get("dimension_id")
         if dimension not in DIMENSIONS or dimension in seen: findings.append(f"decision_utility_evaluation.dimension_findings[{index}].dimension_invalid_or_duplicate")
         seen.add(str(dimension))
         for field in ("baseline_assessment", "enhanced_assessment"):
-            if finding.get(field) not in {"AVOIDED_ERROR", "MATERIAL_IMPROVEMENT", "NO_DIFFERENCE", "UNKNOWN", "NOT_DIAGNOSTIC"}: findings.append(f"decision_utility_evaluation.dimension_findings[{index}].{field}_invalid")
+            allowed_assessments = HISTORICAL_ASSESSMENTS if historical else ASSESSMENTS
+            if finding.get(field) not in allowed_assessments: findings.append(f"decision_utility_evaluation.dimension_findings[{index}].{field}_invalid")
         if not _text(finding.get("rationale")): findings.append(f"decision_utility_evaluation.dimension_findings[{index}].rationale_required")
         supporting = _items(finding.get("supporting_cell_ids"))
         allowed_cells = {
@@ -335,7 +593,36 @@ def validate_decision_utility_evaluation(
     if not train or not held or train & held: findings.append("decision_utility_evaluation.holdout_company_axis_invalid")
     before, after = _instant(holdout.get("training_cutoff_through"), "decision_utility_evaluation.holdout.training_cutoff_through", findings), _instant(holdout.get("holdout_cutoff_from"), "decision_utility_evaluation.holdout.holdout_cutoff_from", findings)
     if before and after and before >= after: findings.append("decision_utility_evaluation.holdout_time_axis_invalid")
-    return {"valid": not findings, "findings": findings, "learning_authorization": "CANDIDATE_ONLY" if not findings else "NONE"}
+    verdict: str | None = None
+    if not historical:
+        if item.get("artifact_status") != "EVALUATED":
+            findings.append("decision_utility_evaluation.artifact_status_must_be_evaluated")
+        if item.get("authority_ceiling") != "CANDIDATE_ONLY":
+            findings.append("decision_utility_evaluation.authority_ceiling_invalid")
+        verdict = item.get("overall_utility_verdict")
+        findings_by_dimension = {
+            str(finding.get("dimension_id")): finding for finding in dimension_findings
+        }
+        supported_material_dimensions = _supported_standard_material_dimensions(
+            baseline_episode, enhanced_episode, findings_by_dimension,
+            outcome_settlement, item.get("outcome_settlement_ref"),
+        )
+        if verdict not in UTILITY_VERDICTS:
+            findings.append("decision_utility_evaluation.overall_utility_verdict_invalid")
+        elif verdict != _utility_verdict(
+            dimension_findings, supported_material_dimensions=supported_material_dimensions,
+        ):
+            findings.append("decision_utility_evaluation.overall_utility_verdict_inconsistent")
+    return {
+        "valid": not findings,
+        "findings": findings,
+        "artifact_status": "HISTORICAL_READ_ONLY" if historical else item.get("artifact_status"),
+        "authority_ceiling": "NONE" if historical else item.get("authority_ceiling"),
+        "overall_utility_verdict": verdict,
+        "learning_authorization": (
+            "CANDIDATE_ONLY" if not findings and verdict == "MATERIAL_UTILITY" else "NONE"
+        ),
+    }
 
 
 def validate_decision_utility_control_pairing(
@@ -350,12 +637,21 @@ def validate_decision_utility_control_pairing(
     company-and-time outcome-window binding.
     """
     findings: list[str] = []
-    item = _closed(pairing, _CONTROL_PAIRING_KEYS, "decision_utility_control_pairing", findings)
+    historical = _mapping(pairing).get("schema_version") == HISTORICAL_CONTROL_PAIRING_SCHEMA_VERSION
+    item = _closed(
+        pairing,
+        _HISTORICAL_CONTROL_PAIRING_KEYS if historical else _CONTROL_PAIRING_KEYS,
+        "decision_utility_control_pairing",
+        findings,
+    )
     frozen = _mapping(forecast)
     forecast_pair = _mapping(forecast_pairing)
     contract_item = _mapping(contract)
 
-    if item.get("schema_version") != CONTROL_PAIRING_SCHEMA_VERSION:
+    expected_version = (
+        HISTORICAL_CONTROL_PAIRING_SCHEMA_VERSION if historical else CONTROL_PAIRING_SCHEMA_VERSION
+    )
+    if item.get("schema_version") != expected_version:
         findings.append("decision_utility_control_pairing.schema_version_invalid")
     if item.get("object_class") != "DECISION_UTILITY_PAIRING" or item.get("claim_class") != "SAME_CONTRACT_METHOD_ABLATION":
         findings.append("decision_utility_control_pairing.object_or_claim_class_invalid")
@@ -400,18 +696,53 @@ def validate_decision_utility_control_pairing(
     if item.get("baseline_method_id") == item.get("enhanced_method_id"):
         findings.append("decision_utility_control_pairing.methods_must_differ")
     _instant(item.get("frozen_at"), "decision_utility_control_pairing.frozen_at", findings)
+    if not historical:
+        support_bindings = _validate_outcome_support_bindings(
+            item.get("outcome_support_bindings"),
+            path="decision_utility_control_pairing.outcome_support_bindings", findings=findings,
+            baseline_episode=baseline_episode, enhanced_episode=enhanced_episode,
+        )
+        available_cells = {
+            (str(cell.get("dimension_id")), str(cell.get("window_id")))
+            for cell in (_mapping(raw) for raw in _items(forecast_pair.get("baseline_cells")))
+        } & set(_forecast_cell_index(frozen))
+        evaluated_cells = {
+            (str(cell.get("dimension_id")), str(cell.get("window_id")))
+            for cell in (
+                _mapping(raw)
+                for raw in _items(_mapping(forecast_pair.get("holdout_binding")).get("evaluated_cells"))
+            )
+        }
+        for index, binding in enumerate(support_bindings):
+            refs = {
+                (str(ref.get("dimension_id")), str(ref.get("window_id")))
+                for ref in (
+                    _mapping(raw) for raw in _items(binding.get("supporting_forecast_cells"))
+                )
+            }
+            if not refs.issubset(available_cells & evaluated_cells):
+                findings.append(
+                    "decision_utility_control_pairing.outcome_support_bindings"
+                    f"[{index}].supporting_forecast_cells_must_be_pre_registered"
+                )
+        if item.get("artifact_status") != "FROZEN":
+            findings.append("decision_utility_control_pairing.artifact_status_must_be_frozen")
+        if item.get("authority_ceiling") != "NONE":
+            findings.append("decision_utility_control_pairing.authority_ceiling_must_be_none")
     return {
         "valid": not findings,
         "findings": findings,
         "pairing": deepcopy(item) if not findings else None,
-        "learning_authorization": "CANDIDATE_ONLY" if not findings else "NONE",
+        "artifact_status": "HISTORICAL_READ_ONLY" if historical else item.get("artifact_status"),
+        "authority_ceiling": "NONE",
+        "learning_authorization": "NONE",
     }
 
 
 def validate_decision_utility_control_evaluation(
     evaluation: Any, *, pairing: Any, forecast: Any, forecast_pairing: Any,
     forecast_paired_evaluation: Any, contract: Any, baseline_episode: Any | None = None,
-    enhanced_episode: Any | None = None,
+    enhanced_episode: Any | None = None, settlement: Any | None = None,
 ) -> dict[str, Any]:
     """Validate an independent decision review from exact persisted outcomes.
 
@@ -419,16 +750,33 @@ def validate_decision_utility_control_evaluation(
     holdout.  Both are resolved from the immutable Forecast Pairing V3 and
     its registered paired evaluation by the control plane.
     """
+    historical_pairing = (
+        _mapping(pairing).get("schema_version") == HISTORICAL_CONTROL_PAIRING_SCHEMA_VERSION
+    )
+    historical_evaluation = (
+        _mapping(evaluation).get("schema_version") == HISTORICAL_CONTROL_EVALUATION_SCHEMA_VERSION
+    )
+    historical = historical_pairing and historical_evaluation
     pairing_result = validate_decision_utility_control_pairing(
         pairing, forecast=forecast, forecast_pairing=forecast_pairing, contract=contract,
         baseline_episode=baseline_episode, enhanced_episode=enhanced_episode,
     )
     findings = ["pairing:" + finding for finding in pairing_result["findings"]]
-    item = _closed(evaluation, _CONTROL_EVALUATION_KEYS, "decision_utility_control_evaluation", findings)
+    if historical_pairing != historical_evaluation:
+        findings.append("decision_utility_control_evaluation.pairing_and_evaluation_version_epoch_mismatch")
+    item = _closed(
+        evaluation,
+        _HISTORICAL_CONTROL_EVALUATION_KEYS if historical else _CONTROL_EVALUATION_KEYS,
+        "decision_utility_control_evaluation",
+        findings,
+    )
     paired = _mapping(forecast_paired_evaluation)
     contract_item = _mapping(contract)
 
-    if item.get("schema_version") != CONTROL_EVALUATION_SCHEMA_VERSION:
+    expected_version = (
+        HISTORICAL_CONTROL_EVALUATION_SCHEMA_VERSION if historical else CONTROL_EVALUATION_SCHEMA_VERSION
+    )
+    if item.get("schema_version") != expected_version:
         findings.append("decision_utility_control_evaluation.schema_version_invalid")
     if item.get("object_class") != "DECISION_UTILITY_EVALUATION" or item.get("claim_class") != "MATERIAL_DECISION_UTILITY_REVIEW":
         findings.append("decision_utility_control_evaluation.object_or_claim_class_invalid")
@@ -453,22 +801,47 @@ def validate_decision_utility_control_evaluation(
     if item.get("reviewer_id") in set(roles.values()):
         findings.append("decision_utility_control_evaluation.reviewer_must_be_independent_of_contract_roles")
     seen: set[str] = set()
+    dimension_findings: list[dict[str, Any]] = []
     for index, raw in enumerate(_items(item.get("dimension_findings"))):
         finding = _closed(raw, _FINDING_KEYS, f"decision_utility_control_evaluation.dimension_findings[{index}]", findings)
+        dimension_findings.append(finding)
         dimension = finding.get("dimension_id")
         if dimension not in DIMENSIONS or dimension in seen:
             findings.append(f"decision_utility_control_evaluation.dimension_findings[{index}].dimension_invalid_or_duplicate")
         seen.add(str(dimension))
         for field in ("baseline_assessment", "enhanced_assessment"):
-            if finding.get(field) not in {"AVOIDED_ERROR", "MATERIAL_IMPROVEMENT", "NO_DIFFERENCE", "UNKNOWN", "NOT_DIAGNOSTIC"}:
+            allowed_assessments = HISTORICAL_ASSESSMENTS if historical else ASSESSMENTS
+            if finding.get(field) not in allowed_assessments:
                 findings.append(f"decision_utility_control_evaluation.dimension_findings[{index}].{field}_invalid")
         if not _text(finding.get("rationale")):
             findings.append(f"decision_utility_control_evaluation.dimension_findings[{index}].rationale_required")
     if seen != set(DIMENSIONS):
         findings.append("decision_utility_control_evaluation.must_cover_each_material_dimension_once")
+    verdict: str | None = None
+    if not historical:
+        if item.get("artifact_status") != "EVALUATED":
+            findings.append("decision_utility_control_evaluation.artifact_status_must_be_evaluated")
+        if item.get("authority_ceiling") != "CANDIDATE_ONLY":
+            findings.append("decision_utility_control_evaluation.authority_ceiling_invalid")
+        verdict = item.get("overall_utility_verdict")
+        supported_material_dimensions = _supported_control_material_dimensions(
+            pairing, forecast, forecast_pairing, settlement, forecast_paired_evaluation,
+            baseline_episode, enhanced_episode,
+        )
+        if verdict not in UTILITY_VERDICTS:
+            findings.append("decision_utility_control_evaluation.overall_utility_verdict_invalid")
+        elif verdict != _utility_verdict(
+            dimension_findings, supported_material_dimensions=supported_material_dimensions,
+        ):
+            findings.append("decision_utility_control_evaluation.overall_utility_verdict_inconsistent")
     return {
         "valid": not findings,
         "findings": findings,
         "evaluation": deepcopy(item) if not findings else None,
-        "learning_authorization": "CANDIDATE_ONLY" if not findings else "NONE",
+        "artifact_status": "HISTORICAL_READ_ONLY" if historical else item.get("artifact_status"),
+        "authority_ceiling": "NONE" if historical else item.get("authority_ceiling"),
+        "overall_utility_verdict": verdict,
+        "learning_authorization": (
+            "CANDIDATE_ONLY" if not findings and verdict == "MATERIAL_UTILITY" else "NONE"
+        ),
     }

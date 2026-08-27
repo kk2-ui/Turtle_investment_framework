@@ -32,6 +32,10 @@ BASELINE_METHOD_ID = "METHOD:CONTROL:RETAIL_BASELINE:V1"
 ENHANCED_METHOD_ID = "METHOD:CONTROL:RETAIL_ENHANCED:V1"
 
 
+def _probability_map(rows: list[dict]) -> dict[str, float]:
+    return {row["label"]: row["probability"] for row in rows}
+
+
 def _control_inputs() -> tuple[dict, dict, dict, dict, dict, dict]:
     contract = _contract()
     baseline, enhanced = _episodes(
@@ -48,6 +52,18 @@ def _control_inputs() -> tuple[dict, dict, dict, dict, dict, dict]:
         "decision_contract_ref": {
             "contract_id": contract["contract_id"], "contract_version": contract["contract_version"],
         },
+        "dimensions": [{
+            "dimension_id": "NORMAL_EARNINGS",
+            "evidence_status": "MODEL_UNCERTAIN",
+            "forecast_by_window": [{
+                "window_id": "ONE_YEAR",
+                "probabilities": [
+                    {"label": "DOWN", "probability": 0.2},
+                    {"label": "FLAT", "probability": 0.3},
+                    {"label": "UP", "probability": 0.5},
+                ],
+            }],
+        }],
     }
     forecast_pairing = {
         "schema_version": "turtle-pit-forecast-pairing.v3",
@@ -55,9 +71,19 @@ def _control_inputs() -> tuple[dict, dict, dict, dict, dict, dict]:
         "forecast_id": forecast["forecast_id"],
         "baseline_method_id": BASELINE_METHOD_ID,
         "enhanced_method_id": ENHANCED_METHOD_ID,
+        "baseline_cells": [{
+            "dimension_id": "NORMAL_EARNINGS",
+            "window_id": "ONE_YEAR",
+            "probabilities": [
+                {"label": "DOWN", "probability": 0.5},
+                {"label": "FLAT", "probability": 0.0},
+                {"label": "UP", "probability": 0.5},
+            ],
+        }],
         "holdout_binding": {
             "program_id": "JTP:RETAIL:V1",
             "holdout_training_episode_id": "JTE:CN601933:20190501",
+            "evaluated_cells": [{"dimension_id": "NORMAL_EARNINGS", "window_id": "ONE_YEAR"}],
         },
     }
     pairing = _pairing(
@@ -72,6 +98,34 @@ def _control_inputs() -> tuple[dict, dict, dict, dict, dict, dict]:
     return contract, baseline, enhanced, forecast, forecast_pairing, pairing
 
 
+def _freeze_control_material_delta(pairing: dict, enhanced: dict) -> None:
+    cell_id = "CELL:CN601933:FY2019:OPERATING_CASH"
+    next(
+        claim for claim in enhanced["claims"]
+        if claim["judgment_dimension"] == "INITIAL_CONDITIONS"
+    )["dependent_outcome_cell_ids"] = [cell_id]
+    pairing["outcome_support_bindings"] = [{
+        "binding_id": "BINDING:CN601933:CONTROL:RESEARCH:V1",
+        "dimension_id": "INITIAL_CONDITIONS",
+        "enhanced_outcome_cell_id": cell_id,
+        "supporting_forecast_cells": [{
+            "dimension_id": "NORMAL_EARNINGS",
+            "window_id": "ONE_YEAR",
+        }],
+    }]
+
+
+def _control_settlement(paired: dict, *, status: str = "OBSERVED", dimension_id: str = "NORMAL_EARNINGS") -> dict:
+    return {
+        "settlement_id": paired["settlement_id"],
+        "dimension_settlements": [{
+            "dimension_id": dimension_id,
+            "window_id": "ONE_YEAR",
+            "status": status,
+        }],
+    }
+
+
 def _control_evaluation(pairing: dict, paired: dict) -> dict:
     return {
         "schema_version": utility.CONTROL_EVALUATION_SCHEMA_VERSION,
@@ -80,13 +134,17 @@ def _control_evaluation(pairing: dict, paired: dict) -> dict:
         "forecast_paired_evaluation_id": paired["evaluation_id"],
         "evaluated_at": "2020-05-03T00:00:00+08:00",
         "reviewer_id": "AGENT:RETAIL:INDEPENDENT_DECISION_UTILITY_REVIEWER",
+        "artifact_status": "EVALUATED",
+        "authority_ceiling": "CANDIDATE_ONLY",
+        "overall_utility_verdict": "MATERIAL_UTILITY",
         "dimension_findings": [{
             "dimension_id": dimension,
             "baseline_assessment": "NO_DIFFERENCE",
             "enhanced_assessment": (
-                "UNKNOWN" if dimension == "IMPLEMENTED_MANAGEMENT_ACTION"
+                "MATERIAL_IMPROVEMENT" if dimension == "INITIAL_CONDITIONS"
+                else "UNKNOWN" if dimension == "IMPLEMENTED_MANAGEMENT_ACTION"
                 else "NOT_DIAGNOSTIC" if dimension == "CUSTOMER_COMPETITION_RESPONSE"
-                else "MATERIAL_IMPROVEMENT"
+                else "NO_DIFFERENCE"
             ),
             "rationale": "Each dimension remains independently reviewable without an aggregate release score.",
         } for dimension in utility.DIMENSIONS],
@@ -109,7 +167,9 @@ def test_control_pairing_binds_episode_methods_to_frozen_forecast_pairing() -> N
     )
 
     assert result["valid"], result["findings"]
-    assert result["learning_authorization"] == "CANDIDATE_ONLY"
+    assert result["learning_authorization"] == "NONE"
+    assert result["artifact_status"] == "FROZEN"
+    assert result["authority_ceiling"] == "NONE"
     assert result["pairing"]["baseline_episode_id"] == baseline["episode_id"]
     assert result["pairing"]["enhanced_episode_id"] == enhanced["episode_id"]
 
@@ -141,15 +201,21 @@ def test_control_pairing_rejects_method_drift_and_missing_external_episode() -> 
     assert "decision_utility_control_pairing.enhanced_episode_manifest_required" in missing["findings"]
 
 
-def test_control_evaluation_is_independent_and_candidate_only_with_local_unknowns() -> None:
+def test_control_real_probability_change_authorizes_candidate_with_local_unknowns() -> None:
     contract, baseline, enhanced, forecast, forecast_pairing, pairing = _control_inputs()
+    _freeze_control_material_delta(pairing, enhanced)
     paired = {
         "evaluation_id": "FORECAST:EVALUATION:CN601933:FY2019:V1",
         "pairing_id": forecast_pairing["pairing_id"],
         "forecast_id": forecast["forecast_id"],
+        "settlement_id": "SETTLEMENT:CN601933:FY2019:V1",
         "evaluated_at": "2020-05-02T00:00:00+08:00",
     }
+    settlement = _control_settlement(paired)
     evaluation = _control_evaluation(pairing, paired)
+    assert _probability_map(forecast["dimensions"][0]["forecast_by_window"][0]["probabilities"]) != _probability_map(
+        forecast_pairing["baseline_cells"][0]["probabilities"]
+    )
 
     result = utility.validate_decision_utility_control_evaluation(
         evaluation,
@@ -157,12 +223,14 @@ def test_control_evaluation_is_independent_and_candidate_only_with_local_unknown
         forecast=forecast,
         forecast_pairing=forecast_pairing,
         forecast_paired_evaluation=paired,
+        settlement=settlement,
         contract=contract,
         baseline_episode=baseline,
         enhanced_episode=enhanced,
     )
 
     assert result["valid"], result["findings"]
+    assert result["overall_utility_verdict"] == "MATERIAL_UTILITY"
     assert result["learning_authorization"] == "CANDIDATE_ONLY"
     assert result["evaluation"] == evaluation
     conflicted = deepcopy(evaluation)
@@ -173,12 +241,133 @@ def test_control_evaluation_is_independent_and_candidate_only_with_local_unknown
         forecast=forecast,
         forecast_pairing=forecast_pairing,
         forecast_paired_evaluation=paired,
+        settlement=settlement,
         contract=contract,
         baseline_episode=baseline,
         enhanced_episode=enhanced,
     )
     assert not result["valid"]
     assert "decision_utility_control_evaluation.reviewer_must_be_independent_of_contract_roles" in result["findings"]
+
+
+def test_control_evaluation_returns_no_material_verdict_without_authorization() -> None:
+    contract, baseline, enhanced, forecast, forecast_pairing, pairing = _control_inputs()
+    paired = {
+        "evaluation_id": "FORECAST:EVALUATION:CN601933:FY2019:V1",
+        "pairing_id": forecast_pairing["pairing_id"],
+        "forecast_id": forecast["forecast_id"],
+        "settlement_id": "SETTLEMENT:CN601933:FY2019:V1",
+        "evaluated_at": "2020-05-02T00:00:00+08:00",
+    }
+    evaluation = _control_evaluation(pairing, paired)
+    for finding in evaluation["dimension_findings"]:
+        finding["enhanced_assessment"] = "NO_DIFFERENCE"
+    evaluation["overall_utility_verdict"] = "NO_MATERIAL_UTILITY"
+
+    result = utility.validate_decision_utility_control_evaluation(
+        evaluation, pairing=pairing, forecast=forecast, forecast_pairing=forecast_pairing,
+        forecast_paired_evaluation=paired, contract=contract,
+        baseline_episode=baseline, enhanced_episode=enhanced,
+        settlement=_control_settlement(paired),
+    )
+
+    assert result["valid"], result["findings"]
+    assert result["overall_utility_verdict"] == "NO_MATERIAL_UTILITY"
+    assert result["learning_authorization"] == "NONE"
+
+
+def test_control_reviewer_label_cannot_replace_registered_delta_and_settlement_support() -> None:
+    contract, baseline, enhanced, forecast, forecast_pairing, pairing = _control_inputs()
+    paired = {
+        "evaluation_id": "FORECAST:EVALUATION:CN601933:FY2019:V1",
+        "pairing_id": forecast_pairing["pairing_id"],
+        "forecast_id": forecast["forecast_id"],
+        "settlement_id": "SETTLEMENT:CN601933:FY2019:V1",
+        "evaluated_at": "2020-05-02T00:00:00+08:00",
+    }
+    evaluation = _control_evaluation(pairing, paired)
+
+    no_frozen_delta = utility.validate_decision_utility_control_evaluation(
+        evaluation, pairing=pairing, forecast=forecast, forecast_pairing=forecast_pairing,
+        forecast_paired_evaluation=paired, settlement=_control_settlement(paired), contract=contract,
+        baseline_episode=baseline, enhanced_episode=enhanced,
+    )
+    assert not no_frozen_delta["valid"]
+    assert no_frozen_delta["learning_authorization"] == "NONE"
+
+    _freeze_control_material_delta(pairing, enhanced)
+
+    for settlement in (
+        _control_settlement(paired, status="UNKNOWN"),
+        _control_settlement(paired, dimension_id="OWNER_CASH"),
+    ):
+        not_supported = deepcopy(evaluation)
+        not_supported["overall_utility_verdict"] = "NOT_DIAGNOSTIC"
+        result = utility.validate_decision_utility_control_evaluation(
+            not_supported, pairing=pairing, forecast=forecast, forecast_pairing=forecast_pairing,
+            forecast_paired_evaluation=paired, settlement=settlement, contract=contract,
+            baseline_episode=baseline, enhanced_episode=enhanced,
+        )
+        assert result["valid"], result["findings"]
+        assert result["learning_authorization"] == "NONE"
+
+
+def test_control_probability_row_reordering_is_not_material_utility() -> None:
+    contract, baseline, enhanced, forecast, forecast_pairing, pairing = _control_inputs()
+    _freeze_control_material_delta(pairing, enhanced)
+    paired = {
+        "evaluation_id": "FORECAST:EVALUATION:CN601933:FY2019:V1",
+        "pairing_id": forecast_pairing["pairing_id"],
+        "forecast_id": forecast["forecast_id"],
+        "settlement_id": "SETTLEMENT:CN601933:FY2019:V1",
+        "evaluated_at": "2020-05-02T00:00:00+08:00",
+    }
+    reordered_forecast = deepcopy(forecast)
+    reordered_forecast["dimensions"][0]["forecast_by_window"][0]["probabilities"] = list(reversed(
+        deepcopy(forecast_pairing["baseline_cells"][0]["probabilities"])
+    ))
+    no_forecast_change = _control_evaluation(pairing, paired)
+    no_forecast_change["overall_utility_verdict"] = "NOT_DIAGNOSTIC"
+    result = utility.validate_decision_utility_control_evaluation(
+        no_forecast_change, pairing=pairing, forecast=reordered_forecast,
+        forecast_pairing=forecast_pairing, forecast_paired_evaluation=paired,
+        settlement=_control_settlement(paired), contract=contract,
+        baseline_episode=baseline, enhanced_episode=enhanced,
+    )
+    assert result["valid"], result["findings"]
+    assert result["learning_authorization"] == "NONE"
+
+
+def test_historical_control_v2_artifacts_remain_read_only() -> None:
+    contract, baseline, enhanced, forecast, forecast_pairing, pairing = _control_inputs()
+    pairing["schema_version"] = "turtle-decision-utility-control-pairing.v2"
+    pairing.pop("artifact_status")
+    pairing.pop("authority_ceiling")
+    pairing.pop("outcome_support_bindings")
+    paired = {
+        "evaluation_id": "FORECAST:EVALUATION:CN601933:FY2019:V1",
+        "pairing_id": forecast_pairing["pairing_id"],
+        "forecast_id": forecast["forecast_id"],
+        "settlement_id": "SETTLEMENT:CN601933:FY2019:V1",
+        "evaluated_at": "2020-05-02T00:00:00+08:00",
+    }
+    evaluation = _control_evaluation(pairing, paired)
+    evaluation["schema_version"] = "turtle-decision-utility-control-evaluation.v2"
+    evaluation.pop("artifact_status")
+    evaluation.pop("authority_ceiling")
+    evaluation.pop("overall_utility_verdict")
+
+    result = utility.validate_decision_utility_control_evaluation(
+        evaluation, pairing=pairing, forecast=forecast, forecast_pairing=forecast_pairing,
+        forecast_paired_evaluation=paired, contract=contract,
+        baseline_episode=baseline, enhanced_episode=enhanced,
+    )
+
+    assert result["valid"], result["findings"]
+    assert result["artifact_status"] == "HISTORICAL_READ_ONLY"
+    assert result["authority_ceiling"] == "NONE"
+    assert result["overall_utility_verdict"] is None
+    assert result["learning_authorization"] == "NONE"
 
 
 def test_control_schema_has_no_embedded_decision_truth_source() -> None:
@@ -208,7 +397,9 @@ def _register_h1(conn: sqlite3.Connection, h1: dict) -> None:
     })["registered"]
 
 
-def _v6_chain() -> tuple[sqlite3.Connection, dict, dict, dict, dict, dict, dict, dict]:
+def _v6_chain(
+    *, reordered_probabilities_only: bool = False,
+) -> tuple[sqlite3.Connection, dict, dict, dict, dict, dict, dict, dict]:
     conn = _conn()
     universe, h1 = _universe_and_h1()
     _register_h1(conn, h1)
@@ -249,6 +440,20 @@ def _v6_chain() -> tuple[sqlite3.Connection, dict, dict, dict, dict, dict, dict,
         ),
     )
     forecast = _v6_forecast(v2, measurement, evidence, scope, method_ref=method_ref)
+    if reordered_probabilities_only:
+        preview_pairing = _forecast_pairing(forecast)
+        baseline_cell = next(
+            cell for cell in preview_pairing["baseline_cells"]
+            if cell["dimension_id"] == "NORMAL_EARNINGS" and cell["window_id"] == "ONE_YEAR"
+        )
+        enhanced_cell = next(
+            window
+            for dimension in forecast["dimensions"]
+            if dimension["dimension_id"] == "NORMAL_EARNINGS"
+            for window in dimension["forecast_by_window"]
+            if window["window_id"] == "ONE_YEAR"
+        )
+        enhanced_cell["probabilities"] = list(reversed(deepcopy(baseline_cell["probabilities"])))
     control.register_company_state_forecast(
         conn, forecast, universe_snapshot=universe, stage0_package=h1,
         frozen_at="2021-01-05T00:00:00+00:00",
@@ -307,6 +512,7 @@ def _v6_chain() -> tuple[sqlite3.Connection, dict, dict, dict, dict, dict, dict,
         "forecast_pairing_id": forecast_pairing["pairing_id"],
         "frozen_at": "2021-01-06T12:00:00+00:00",
     })
+    _freeze_control_material_delta(pairing, enhanced)
     return conn, forecast, contract, measurement, forecast_pairing, pairing, baseline, enhanced
 
 
@@ -358,7 +564,7 @@ def test_registered_pairing_persists_immutable_episode_snapshots_before_outcome_
         "frozen": True,
         "pairing_id": pairing["pairing_id"],
         "idempotent": False,
-        "learning_authorization": "CANDIDATE_ONLY",
+        "learning_authorization": "NONE",
     }
     assert replay["idempotent"] is True
     rows = conn.execute(
@@ -399,6 +605,18 @@ def test_registered_pairing_persists_immutable_episode_snapshots_before_outcome_
 
 def test_registered_utility_evaluation_uses_frozen_episode_snapshots() -> None:
     conn, forecast, contract, measurement, forecast_pairing, pairing, baseline, enhanced = _v6_chain()
+    baseline_cell = next(
+        cell for cell in forecast_pairing["baseline_cells"]
+        if cell["dimension_id"] == "NORMAL_EARNINGS" and cell["window_id"] == "ONE_YEAR"
+    )
+    enhanced_cell = next(
+        window
+        for dimension in forecast["dimensions"]
+        if dimension["dimension_id"] == "NORMAL_EARNINGS"
+        for window in dimension["forecast_by_window"]
+        if window["window_id"] == "ONE_YEAR"
+    )
+    assert _probability_map(baseline_cell["probabilities"]) != _probability_map(enhanced_cell["probabilities"])
     control.register_decision_utility_pairing(
         conn,
         pairing,
@@ -416,6 +634,7 @@ def test_registered_utility_evaluation_uses_frozen_episode_snapshots() -> None:
         "evaluation_id": evaluation["evaluation_id"],
         "idempotent": False,
         "learning_authorization": "CANDIDATE_ONLY",
+        "overall_utility_verdict": "MATERIAL_UTILITY",
     }
     assert replay["idempotent"] is True
 
@@ -429,4 +648,50 @@ def test_registered_utility_evaluation_uses_frozen_episode_snapshots() -> None:
     with pytest.raises(control.ForecastControlError) as exc_info:
         control.register_decision_utility_evaluation(conn, missing)
     assert exc_info.value.code == "decision_utility_episode_snapshot_not_found"
+    conn.close()
+
+
+def test_registered_no_material_evaluation_returns_verdict_without_authorization() -> None:
+    conn, forecast, contract, measurement, forecast_pairing, pairing, baseline, enhanced = _v6_chain()
+    control.register_decision_utility_pairing(
+        conn,
+        pairing,
+        baseline_episode=baseline,
+        enhanced_episode=enhanced,
+        frozen_at=pairing["frozen_at"],
+    )
+    paired = _authorize_and_evaluate(conn, forecast, contract, measurement, forecast_pairing)
+    evaluation = _control_evaluation(pairing, paired)
+    evaluation["evaluated_at"] = "2022-04-03T00:00:00+00:00"
+    for finding in evaluation["dimension_findings"]:
+        finding["enhanced_assessment"] = "NO_DIFFERENCE"
+    evaluation["overall_utility_verdict"] = "NO_MATERIAL_UTILITY"
+
+    result = control.register_decision_utility_evaluation(conn, evaluation)
+
+    assert result["overall_utility_verdict"] == "NO_MATERIAL_UTILITY"
+    assert result["learning_authorization"] == "NONE"
+    conn.close()
+
+
+def test_registered_probability_row_reordering_is_not_material_utility() -> None:
+    conn, forecast, contract, measurement, forecast_pairing, pairing, baseline, enhanced = _v6_chain(
+        reordered_probabilities_only=True,
+    )
+    control.register_decision_utility_pairing(
+        conn,
+        pairing,
+        baseline_episode=baseline,
+        enhanced_episode=enhanced,
+        frozen_at=pairing["frozen_at"],
+    )
+    paired = _authorize_and_evaluate(conn, forecast, contract, measurement, forecast_pairing)
+    evaluation = _control_evaluation(pairing, paired)
+    evaluation["evaluated_at"] = "2022-04-03T00:00:00+00:00"
+    evaluation["overall_utility_verdict"] = "NOT_DIAGNOSTIC"
+
+    result = control.register_decision_utility_evaluation(conn, evaluation)
+
+    assert result["overall_utility_verdict"] == "NOT_DIAGNOSTIC"
+    assert result["learning_authorization"] == "NONE"
     conn.close()

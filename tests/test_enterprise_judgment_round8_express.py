@@ -208,7 +208,9 @@ def test_round8_real_pdf_settlement_keeps_usable_cells_moving(tmp_path: Path) ->
         enhanced_episode=package["enhanced_episode"],
     )
     assert utility["valid"], utility["findings"]
-    assert utility["learning_authorization"] == "CANDIDATE_ONLY"
+    assert utility["artifact_status"] == "HISTORICAL_READ_ONLY"
+    assert utility["overall_utility_verdict"] is None
+    assert utility["learning_authorization"] == "NONE"
     assessments = {
         finding["dimension_id"]: finding["enhanced_assessment"]
         for finding in evaluation["dimension_findings"]

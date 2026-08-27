@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "judgment-decision-utility.v3",
+  "$id": "judgment-decision-utility.v4",
   "title": "Turtle canonical Episode decision utility contracts",
   "$defs": {
     "contract_ref": {
@@ -20,10 +20,11 @@
         "baseline_episode_id", "enhanced_episode_id",
         "baseline_method_id", "enhanced_method_id",
         "baseline_research_cost_hours", "enhanced_research_cost_hours",
-        "frozen_at", "object_class", "claim_class", "allowed_outputs"
+        "frozen_at", "artifact_status", "authority_ceiling",
+        "object_class", "claim_class", "allowed_outputs"
       ],
       "properties": {
-        "schema_version": {"const": "turtle-decision-utility-pairing.v2"},
+        "schema_version": {"const": "turtle-decision-utility-pairing.v3"},
         "pairing_id": {"type": "string", "minLength": 1},
         "decision_contract_ref": {"$ref": "#/$defs/contract_ref"},
         "baseline_episode_id": {"type": "string", "minLength": 1},
@@ -33,6 +34,8 @@
         "baseline_research_cost_hours": {"type": "number", "minimum": 0},
         "enhanced_research_cost_hours": {"type": "number", "minimum": 0},
         "frozen_at": {"type": "string", "format": "date-time"},
+        "artifact_status": {"const": "FROZEN"},
+        "authority_ceiling": {"const": "NONE"},
         "object_class": {"const": "DECISION_UTILITY_PAIRING"},
         "claim_class": {"const": "SAME_CONTRACT_METHOD_ABLATION"},
         "allowed_outputs": {"const": ["DECISION_UTILITY_EVALUATION_ONLY", "RESEARCH_AGENDA"]}
@@ -51,8 +54,8 @@
             "STRONGEST_ALTERNATIVE_EXPLANATION"
           ]
         },
-        "baseline_assessment": {"enum": ["AVOIDED_ERROR", "MATERIAL_IMPROVEMENT", "NO_DIFFERENCE", "UNKNOWN", "NOT_DIAGNOSTIC"]},
-        "enhanced_assessment": {"enum": ["AVOIDED_ERROR", "MATERIAL_IMPROVEMENT", "NO_DIFFERENCE", "UNKNOWN", "NOT_DIAGNOSTIC"]},
+        "baseline_assessment": {"enum": ["AVOIDED_ERROR", "MATERIAL_IMPROVEMENT", "NO_DIFFERENCE", "UNKNOWN", "NOT_DIAGNOSTIC", "HARMFUL"]},
+        "enhanced_assessment": {"enum": ["AVOIDED_ERROR", "MATERIAL_IMPROVEMENT", "NO_DIFFERENCE", "UNKNOWN", "NOT_DIAGNOSTIC", "HARMFUL"]},
         "supporting_cell_ids": {
           "type": "array", "minItems": 1, "uniqueItems": true,
           "items": {"type": "string", "minLength": 1}
@@ -66,15 +69,21 @@
       "required": [
         "schema_version", "evaluation_id", "pairing_id", "evaluated_at", "reviewer_id",
         "outcome_settlement_ref", "dimension_findings", "holdout", "object_class",
-        "claim_class", "allowed_outputs"
+        "claim_class", "allowed_outputs", "artifact_status", "authority_ceiling",
+        "overall_utility_verdict"
       ],
       "properties": {
-        "schema_version": {"const": "turtle-decision-utility-evaluation.v3"},
+        "schema_version": {"const": "turtle-decision-utility-evaluation.v4"},
         "evaluation_id": {"type": "string", "minLength": 1},
         "pairing_id": {"type": "string", "minLength": 1},
         "evaluated_at": {"type": "string", "format": "date-time"},
         "reviewer_id": {"type": "string", "minLength": 1},
         "outcome_settlement_ref": {"type": "string", "minLength": 1},
+        "artifact_status": {"const": "EVALUATED"},
+        "authority_ceiling": {"const": "CANDIDATE_ONLY"},
+        "overall_utility_verdict": {
+          "enum": ["MATERIAL_UTILITY", "NO_MATERIAL_UTILITY", "HARMFUL", "NOT_DIAGNOSTIC"]
+        },
         "dimension_findings": {
           "type": "array", "minItems": 8, "maxItems": 8,
           "items": {"$ref": "#/$defs/dimension_finding"}

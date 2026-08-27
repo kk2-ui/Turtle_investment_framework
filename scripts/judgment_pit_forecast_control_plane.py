@@ -1580,7 +1580,8 @@ def register_decision_utility_evaluation(
 
     The settlement and company-and-time holdout are resolved from registered
     forecast artifacts; callers cannot substitute either with an ad-hoc
-    reference.  The sole authorization remains ``CANDIDATE_ONLY``.
+    reference.  Only a validated ``MATERIAL_UTILITY`` verdict may receive the
+    bounded ``CANDIDATE_ONLY`` learning authorization.
     """
     if not isinstance(evaluation, dict):
         raise ForecastControlError("decision_utility_evaluation_invalid", "evaluation must be an object")
@@ -1614,9 +1615,14 @@ def register_decision_utility_evaluation(
         code="forecast_paired_evaluation_not_found",
     )
     paired_evaluation = _load(paired_evaluation_row["payload_json"])
+    settlement_row = _row(
+        conn, SETTLEMENT_TABLE, "settlement_id", str(paired_evaluation.get("settlement_id") or ""),
+        code="settlement_not_found",
+    )
+    settlement = _load(settlement_row["payload_json"])
     validation = decision_utility.validate_decision_utility_control_evaluation(
         evaluation, pairing=pairing, forecast=forecast, forecast_pairing=forecast_pairing,
-        forecast_paired_evaluation=paired_evaluation, contract=contract_payload,
+        forecast_paired_evaluation=paired_evaluation, settlement=settlement, contract=contract_payload,
         baseline_episode=episode_snapshots["BASELINE"], enhanced_episode=episode_snapshots["ENHANCED"],
     )
     if not validation["valid"]:
@@ -1629,10 +1635,6 @@ def register_decision_utility_evaluation(
             "decision_utility_evaluation_precedes_forecast_paired_evaluation",
             "decision utility evaluation must follow the immutable per-cell forecast comparison",
         )
-    settlement_row = _row(
-        conn, SETTLEMENT_TABLE, "settlement_id", str(paired_evaluation.get("settlement_id") or ""),
-        code="settlement_not_found",
-    )
     if payload["reviewer_id"] in {forecast_row["forecaster_id"], settlement_row["custodian_id"]}:
         raise ForecastControlError(
             "decision_utility_reviewer_not_independent",
@@ -1652,6 +1654,7 @@ def register_decision_utility_evaluation(
             return {
                 "evaluated": True, "evaluation_id": payload["evaluation_id"], "idempotent": True,
                 "learning_authorization": validation["learning_authorization"],
+                "overall_utility_verdict": validation["overall_utility_verdict"],
             }
         if conn.execute(
             f"SELECT evaluation_id FROM {DECISION_UTILITY_EVALUATION_TABLE} "
@@ -1674,6 +1677,7 @@ def register_decision_utility_evaluation(
     return {
         "evaluated": True, "evaluation_id": payload["evaluation_id"], "idempotent": False,
         "learning_authorization": validation["learning_authorization"],
+        "overall_utility_verdict": validation["overall_utility_verdict"],
     }
 
 
