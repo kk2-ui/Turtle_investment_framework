@@ -1,0 +1,221 @@
+{
+  "schema_version": "turtle-cn-appliance-industry-j234.v1",
+  "block_id": "ILB:CN:APPLIANCE:NATIONAL:V1",
+  "source_register_ref": {
+    "block_id": "ILB:CN:APPLIANCE:NATIONAL:V1",
+    "schema_version": "turtle-cn-appliance-industry-learning-block-sources.v1"
+  },
+  "industry_universe": [
+    {
+      "company_id": "CN:000651",
+      "issuer_id": "ISSUER:CN:000651",
+      "company_cluster_id": "ECONOMIC_CLUSTER:CN:000651",
+      "cutoff_id": "CN_APPLIANCE_C1_20170430",
+      "responsibility_boundary": {"responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:000651", "perimeter_id": "LISTED_CONSOLIDATED_ISSUER", "arena_labels": ["ROOM_AIR_CONDITIONING", "CHANNEL_AND_COMPONENT_SYSTEM"]},
+      "universe_role": "CORE_SYSTEM_RECONSTRUCTION",
+      "evidence_state": "OBSERVED_SYSTEM_CONTEXT",
+      "source_refs": [{"source_id": "CNINFO:000651:ANN:20170427:1203403930", "physical_page": 8}],
+      "reason": ""
+    },
+    {
+      "company_id": "CN:000651",
+      "issuer_id": "ISSUER:CN:000651",
+      "company_cluster_id": "ECONOMIC_CLUSTER:CN:000651",
+      "cutoff_id": "CN_APPLIANCE_C2_20180930",
+      "responsibility_boundary": {"responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:000651", "perimeter_id": "LISTED_CONSOLIDATED_ISSUER", "arena_labels": ["ROOM_AIR_CONDITIONING", "CHANNEL_AND_COMPONENT_SYSTEM"]},
+      "universe_role": "CORE_SYSTEM_RECONSTRUCTION",
+      "evidence_state": "OBSERVED_SYSTEM_CONTEXT",
+      "source_refs": [{"source_id": "CNINFO:000651:H1:20180830:1205362961", "physical_page": 10}],
+      "reason": ""
+    },
+    {
+      "company_id": "CN:000333",
+      "issuer_id": "ISSUER:CN:000333",
+      "company_cluster_id": "ECONOMIC_CLUSTER:CN:000333",
+      "cutoff_id": "CN_APPLIANCE_C1_20170430",
+      "responsibility_boundary": {"responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:000333", "perimeter_id": "LISTED_CONSOLIDATED_ISSUER", "arena_labels": ["ROOM_AIR_CONDITIONING", "REFRIGERATION_AND_WASHING", "MULTI_CATEGORY_CHANNEL_SYSTEM"]},
+      "universe_role": "CORE_SYSTEM_RECONSTRUCTION",
+      "evidence_state": "OBSERVED_SYSTEM_CONTEXT",
+      "source_refs": [{"source_id": "CNINFO:000333:ANN:20170330:1203240657", "physical_page": 11}],
+      "reason": ""
+    },
+    {
+      "company_id": "CN:000333",
+      "issuer_id": "ISSUER:CN:000333",
+      "company_cluster_id": "ECONOMIC_CLUSTER:CN:000333",
+      "cutoff_id": "CN_APPLIANCE_C2_20180930",
+      "responsibility_boundary": {"responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:000333", "perimeter_id": "LISTED_CONSOLIDATED_ISSUER", "arena_labels": ["ROOM_AIR_CONDITIONING", "REFRIGERATION_AND_WASHING", "MULTI_CATEGORY_CHANNEL_SYSTEM"]},
+      "universe_role": "CORE_SYSTEM_RECONSTRUCTION",
+      "evidence_state": "OBSERVED_SYSTEM_CONTEXT",
+      "source_refs": [{"source_id": "CNINFO:000333:ANN:20180330:1204557296", "physical_page": 12}],
+      "reason": ""
+    },
+    {
+      "company_id": "CN:600690",
+      "issuer_id": "ISSUER:CN:600690",
+      "company_cluster_id": "ECONOMIC_CLUSTER:CN:600690",
+      "cutoff_id": "CN_APPLIANCE_C1_20170430",
+      "responsibility_boundary": {"responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600690", "perimeter_id": "LISTED_CONSOLIDATED_ISSUER", "arena_labels": ["REFRIGERATION_AND_WASHING", "SERVICE_AND_LOGISTICS_SYSTEM"]},
+      "universe_role": "CORE_SYSTEM_RECONSTRUCTION",
+      "evidence_state": "OBSERVED_SYSTEM_CONTEXT",
+      "source_refs": [{"source_id": "CNINFO:600690:ANN:20170429:1203428901", "physical_page": 10}],
+      "reason": ""
+    },
+    {
+      "company_id": "CN:600690",
+      "issuer_id": "ISSUER:CN:600690",
+      "company_cluster_id": "ECONOMIC_CLUSTER:CN:600690",
+      "cutoff_id": "CN_APPLIANCE_C2_20180930",
+      "responsibility_boundary": {"responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600690", "perimeter_id": "LISTED_CONSOLIDATED_ISSUER", "arena_labels": ["REFRIGERATION_AND_WASHING", "SERVICE_AND_LOGISTICS_SYSTEM"]},
+      "universe_role": "CORE_SYSTEM_RECONSTRUCTION",
+      "evidence_state": "OBSERVED_SYSTEM_CONTEXT",
+      "source_refs": [{"source_id": "CNINFO:600690:ANN:20180426:1204797433", "physical_page": 10}],
+      "reason": ""
+    },
+    {
+      "company_id": "CN:000921",
+      "issuer_id": "ISSUER:CN:000921",
+      "company_cluster_id": "ECONOMIC_CLUSTER:CN:000921",
+      "cutoff_id": "CN_APPLIANCE_C1_20170430",
+      "responsibility_boundary": {"responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:000921", "perimeter_id": "LISTED_CONSOLIDATED_ISSUER", "arena_labels": ["MULTI_PRODUCT_APPLIANCE_CONTEXT"]},
+      "universe_role": "CONTEXTUAL_RISK_SET",
+      "evidence_state": "SOURCE_REGISTERED_CONTEXT_ONLY",
+      "source_refs": [{"source_id": "CNINFO:000921:ANN:20170330:1203223381", "physical_page": 1}],
+      "reason": "Only the listed-issuer annual-report identity and cutoff availability are frozen here; the present packet does not establish a product-level responsibility bridge or a same-boundary operating reconstruction."
+    },
+    {
+      "company_id": "CN:000921",
+      "issuer_id": "ISSUER:CN:000921",
+      "company_cluster_id": "ECONOMIC_CLUSTER:CN:000921",
+      "cutoff_id": "CN_APPLIANCE_C2_20180930",
+      "responsibility_boundary": {"responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:000921", "perimeter_id": "LISTED_CONSOLIDATED_ISSUER", "arena_labels": ["MULTI_PRODUCT_APPLIANCE_CONTEXT"]},
+      "universe_role": "CONTEXTUAL_RISK_SET",
+      "evidence_state": "SOURCE_REGISTERED_CONTEXT_ONLY",
+      "source_refs": [{"source_id": "CNINFO:000921:ANN:20180330:1204544098", "physical_page": 1}],
+      "reason": "Only the listed-issuer annual-report identity and cutoff availability are frozen here; the present packet does not establish a product-level responsibility bridge or a same-boundary operating reconstruction."
+    },
+    {
+      "company_id": "CN:600839",
+      "issuer_id": "ISSUER:CN:600839",
+      "company_cluster_id": "ECONOMIC_CLUSTER:CN:600839",
+      "cutoff_id": "CN_APPLIANCE_C1_20170430",
+      "responsibility_boundary": {"responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600839", "perimeter_id": "LISTED_CONSOLIDATED_ISSUER", "arena_labels": ["MULTI_PRODUCT_APPLIANCE_CONTEXT"]},
+      "universe_role": "CONTEXTUAL_RISK_SET",
+      "evidence_state": "SOURCE_REGISTERED_CONTEXT_ONLY",
+      "source_refs": [{"source_id": "CNINFO:600839:ANN:20170428:1203418558", "physical_page": 1}],
+      "reason": "Only the listed-issuer annual-report identity and cutoff availability are frozen here; the present packet does not establish a product-level responsibility bridge or a same-boundary operating reconstruction."
+    },
+    {
+      "company_id": "CN:600839",
+      "issuer_id": "ISSUER:CN:600839",
+      "company_cluster_id": "ECONOMIC_CLUSTER:CN:600839",
+      "cutoff_id": "CN_APPLIANCE_C2_20180930",
+      "responsibility_boundary": {"responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600839", "perimeter_id": "LISTED_CONSOLIDATED_ISSUER", "arena_labels": ["MULTI_PRODUCT_APPLIANCE_CONTEXT"]},
+      "universe_role": "CONTEXTUAL_RISK_SET",
+      "evidence_state": "SOURCE_REGISTERED_CONTEXT_ONLY",
+      "source_refs": [{"source_id": "CNINFO:600839:ANN:20180418:1204647552", "physical_page": 1}],
+      "reason": "Only the listed-issuer annual-report identity and cutoff availability are frozen here; the present packet does not establish a product-level responsibility bridge or a same-boundary operating reconstruction."
+    }
+  ],
+  "episodes": [
+    {
+      "episode_id": "J2:CN:000651:C1",
+      "company_id": "CN:000651",
+      "issuer_id": "ISSUER:CN:000651",
+      "company_cluster_id": "ECONOMIC_CLUSTER:CN:000651",
+      "cutoff_id": "CN_APPLIANCE_C1_20170430",
+      "responsibility_boundary": {"responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:000651", "perimeter_id": "LISTED_CONSOLIDATED_ISSUER", "arena_labels": ["ROOM_AIR_CONDITIONING", "CHANNEL_AND_COMPONENT_SYSTEM"]},
+      "primary_question": {"question_id": "Q:GREE:CUSTOMER_CHANNEL", "role": "PRIMARY", "question": "Can the disclosed room-air-conditioner channel and component system be treated as a mechanism candidate rather than a customer-outcome conclusion?", "required_cell_ids": ["CUSTOMER", "OPERATING", "COMPETITION"], "observation_state": "INFERRED", "source_refs": [{"source_id": "CNINFO:000651:ANN:20170427:1203403930", "physical_page": 8}]},
+      "supporting_questions": [
+        {"question_id": "Q:GREE:CASH", "role": "SUPPORTING", "question": "What prevents the disclosed operating cash flow from being promoted to owner cash?", "required_cell_ids": ["CASH", "CAPITAL_RETURN"], "observation_state": "OBSERVED", "source_refs": [{"source_id": "CNINFO:000651:ANN:20170427:1203403930", "physical_page": 23}]},
+        {"question_id": "Q:GREE:LOSS", "role": "SUPPORTING", "question": "Which permanent-loss path remains unresolved at the listed-consolidated boundary?", "required_cell_ids": ["LEVERAGE", "PERMANENT_LOSS"], "observation_state": "UNKNOWN", "source_refs": []}
+      ],
+      "cells": [
+        {"cell_id": "CUSTOMER", "domain": "CUSTOMER", "observation_state": "INFERRED", "source_refs": [{"source_id": "CNINFO:000651:ANN:20170427:1203403930", "physical_page": 20}], "reason": ""},
+        {"cell_id": "OPERATING", "domain": "OPERATING", "observation_state": "OBSERVED", "source_refs": [{"source_id": "CNINFO:000651:ANN:20170427:1203403930", "physical_page": 9}], "reason": ""},
+        {"cell_id": "COMPETITION", "domain": "COMPETITION", "observation_state": "OBSERVED", "source_refs": [{"source_id": "CNINFO:000651:ANN:20170427:1203403930", "physical_page": 20}], "reason": ""},
+        {"cell_id": "CASH", "domain": "CASH", "observation_state": "OBSERVED", "source_refs": [{"source_id": "CNINFO:000651:ANN:20170427:1203403930", "physical_page": 23}], "reason": ""},
+        {"cell_id": "CAPITAL_RETURN", "domain": "CAPITAL_RETURN", "observation_state": "UNKNOWN", "source_refs": [], "reason": "Maintenance capital expenditure and distributable owner cash are not separately mapped in the frozen source packet."},
+        {"cell_id": "LEVERAGE", "domain": "LEVERAGE", "observation_state": "OBSERVED", "source_refs": [{"source_id": "CNINFO:000651:ANN:20170427:1203403930", "physical_page": 22}], "reason": ""},
+        {"cell_id": "PERMANENT_LOSS", "domain": "PERMANENT_LOSS", "observation_state": "UNKNOWN", "source_refs": [], "reason": "The packet does not establish a pre-outcome stress path at the same product and responsibility boundary."}
+      ],
+      "mechanism_threads": [
+        {"thread_id": "T:GREE:CHANNEL_COMPONENT", "question_id": "Q:GREE:CUSTOMER_CHANNEL", "h_a": "Channel reach, components and manufacturing execution can jointly support room-air-conditioner delivery economics.", "h_b": "Industry demand, materials and channel inventory can explain observed system facts without proving a durable company mechanism.", "evidence_cell_ids": ["CUSTOMER", "OPERATING", "COMPETITION"], "source_refs": [{"source_id": "CNINFO:000651:ANN:20170427:1203403930", "physical_page": 8}, {"source_id": "CNINFO:000651:ANN:20170427:1203403930", "physical_page": 20}], "evidence_ceiling": "MECHANISM_CANDIDATE", "observation_clock": "C1_ONLY", "permitted_conclusion": "A mechanism question is admissible for further research, not a causal verdict.", "allowed_outputs": ["MECHANISM_CANDIDATE", "RESEARCH_AGENDA"]},
+        {"thread_id": "T:GREE:CASH_BRIDGE", "question_id": "Q:GREE:CASH", "h_a": "Operating cash is a necessary input to owner cash analysis.", "h_b": "Working capital and unseparated reinvestment can make operating cash an unreliable owner-cash proxy.", "evidence_cell_ids": ["CASH", "CAPITAL_RETURN"], "source_refs": [{"source_id": "CNINFO:000651:ANN:20170427:1203403930", "physical_page": 23}], "evidence_ceiling": "CONTEXT_ONLY", "observation_clock": "C1_ONLY", "permitted_conclusion": "Cash is observed, while owner-cash conversion remains unresolved.", "allowed_outputs": ["INDUSTRY_CONTEXT", "RESEARCH_AGENDA"]}
+      ],
+      "allowed_outputs": ["INDUSTRY_CONTEXT", "TEACHING_ONLY", "MECHANISM_CANDIDATE", "RESEARCH_AGENDA"]
+    },
+    {
+      "episode_id": "J2:CN:000333:C2",
+      "company_id": "CN:000333",
+      "issuer_id": "ISSUER:CN:000333",
+      "company_cluster_id": "ECONOMIC_CLUSTER:CN:000333",
+      "cutoff_id": "CN_APPLIANCE_C2_20180930",
+      "responsibility_boundary": {"responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:000333", "perimeter_id": "LISTED_CONSOLIDATED_ISSUER", "arena_labels": ["ROOM_AIR_CONDITIONING", "REFRIGERATION_AND_WASHING", "MULTI_CATEGORY_CHANNEL_SYSTEM"]},
+      "primary_question": {"question_id": "Q:MIDEA:CHANNEL_SYSTEM", "role": "PRIMARY", "question": "Can the disclosed channel-layer reduction and supply-chain system be investigated as an operating mechanism without attributing later business performance to it?", "required_cell_ids": ["CUSTOMER", "OPERATING", "COMPETITION"], "observation_state": "INFERRED", "source_refs": [{"source_id": "CNINFO:000333:ANN:20180330:1204557296", "physical_page": 21}]},
+      "supporting_questions": [
+        {"question_id": "Q:MIDEA:CASH", "role": "SUPPORTING", "question": "Which operating cash information is visible before capital and acquisition effects are separated?", "required_cell_ids": ["CASH", "CAPITAL_RETURN"], "observation_state": "OBSERVED", "source_refs": [{"source_id": "CNINFO:000333:ANN:20180330:1204557296", "physical_page": 23}]},
+        {"question_id": "Q:MIDEA:LOSS", "role": "SUPPORTING", "question": "What leverage and permanent-loss paths remain unresolved after multi-business and acquisition-boundary changes?", "required_cell_ids": ["LEVERAGE", "PERMANENT_LOSS"], "observation_state": "UNKNOWN", "source_refs": []}
+      ],
+      "cells": [
+        {"cell_id": "CUSTOMER", "domain": "CUSTOMER", "observation_state": "INFERRED", "source_refs": [{"source_id": "CNINFO:000333:ANN:20180330:1204557296", "physical_page": 21}], "reason": ""},
+        {"cell_id": "OPERATING", "domain": "OPERATING", "observation_state": "OBSERVED", "source_refs": [{"source_id": "CNINFO:000333:ANN:20180330:1204557296", "physical_page": 22}], "reason": ""},
+        {"cell_id": "COMPETITION", "domain": "COMPETITION", "observation_state": "OBSERVED", "source_refs": [{"source_id": "CNINFO:000333:ANN:20180330:1204557296", "physical_page": 14}], "reason": ""},
+        {"cell_id": "CASH", "domain": "CASH", "observation_state": "OBSERVED", "source_refs": [{"source_id": "CNINFO:000333:ANN:20180330:1204557296", "physical_page": 23}], "reason": ""},
+        {"cell_id": "CAPITAL_RETURN", "domain": "CAPITAL_RETURN", "observation_state": "UNKNOWN", "source_refs": [], "reason": "The packet does not isolate maintenance capital, acquisition capital and distributable owner cash."},
+        {"cell_id": "LEVERAGE", "domain": "LEVERAGE", "observation_state": "OBSERVED", "source_refs": [{"source_id": "CNINFO:000333:ANN:20180330:1204557296", "physical_page": 19}], "reason": ""},
+        {"cell_id": "PERMANENT_LOSS", "domain": "PERMANENT_LOSS", "observation_state": "UNKNOWN", "source_refs": [], "reason": "A same-boundary stress and refinancing path is not defined in the source packet."}
+      ],
+      "mechanism_threads": [
+        {"thread_id": "T:MIDEA:CHANNEL_SUPPLY_CHAIN", "question_id": "Q:MIDEA:CHANNEL_SYSTEM", "h_a": "Channel simplification and order-supply coordination can reduce friction in a multi-category appliance system.", "h_b": "Category cycle, channel migration and acquired-business consolidation can explain the same disclosed execution facts.", "evidence_cell_ids": ["CUSTOMER", "OPERATING", "COMPETITION"], "source_refs": [{"source_id": "CNINFO:000333:ANN:20180330:1204557296", "physical_page": 21}, {"source_id": "CNINFO:000333:ANN:20180330:1204557296", "physical_page": 22}], "evidence_ceiling": "MECHANISM_CANDIDATE", "observation_clock": "C2_ONLY", "permitted_conclusion": "The operating thread may be researched, but it is not an action outcome or causal verdict.", "allowed_outputs": ["MECHANISM_CANDIDATE", "RESEARCH_AGENDA"]},
+        {"thread_id": "T:MIDEA:PERIMETER_CASH", "question_id": "Q:MIDEA:CASH", "h_a": "Reported operating cash is an observable system constraint.", "h_b": "Acquisition and multi-business perimeter changes prevent its promotion to home-appliance owner cash.", "evidence_cell_ids": ["CASH", "CAPITAL_RETURN"], "source_refs": [{"source_id": "CNINFO:000333:ANN:20180330:1204557296", "physical_page": 23}], "evidence_ceiling": "CONTEXT_ONLY", "observation_clock": "C2_ONLY", "permitted_conclusion": "Cash observation remains separate from a capital-return conclusion.", "allowed_outputs": ["INDUSTRY_CONTEXT", "RESEARCH_AGENDA"]}
+      ],
+      "allowed_outputs": ["INDUSTRY_CONTEXT", "TEACHING_ONLY", "MECHANISM_CANDIDATE", "RESEARCH_AGENDA"]
+    },
+    {
+      "episode_id": "J2:CN:600690:C2",
+      "company_id": "CN:600690",
+      "issuer_id": "ISSUER:CN:600690",
+      "company_cluster_id": "ECONOMIC_CLUSTER:CN:600690",
+      "cutoff_id": "CN_APPLIANCE_C2_20180930",
+      "responsibility_boundary": {"responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600690", "perimeter_id": "LISTED_CONSOLIDATED_ISSUER", "arena_labels": ["REFRIGERATION_AND_WASHING", "SERVICE_AND_LOGISTICS_SYSTEM"]},
+      "primary_question": {"question_id": "Q:HAIER:SERVICE_SYSTEM", "role": "PRIMARY", "question": "Can the disclosed service, logistics and manufacturing-system facts be kept as a mechanism candidate while customer conversion and product economics remain unresolved?", "required_cell_ids": ["CUSTOMER", "OPERATING", "COMPETITION"], "observation_state": "INFERRED", "source_refs": [{"source_id": "CNINFO:600690:ANN:20180426:1204797433", "physical_page": 13}]},
+      "supporting_questions": [
+        {"question_id": "Q:HAIER:CASH", "role": "SUPPORTING", "question": "Which cash and balance-sheet facts can be observed without treating global acquisition effects as domestic appliance owner cash?", "required_cell_ids": ["CASH", "CAPITAL_RETURN"], "observation_state": "OBSERVED", "source_refs": [{"source_id": "CNINFO:600690:ANN:20180426:1204797433", "physical_page": 24}]},
+        {"question_id": "Q:HAIER:LOSS", "role": "SUPPORTING", "question": "What permanent-loss and refinancing conclusion must remain unknown at the listed-consolidated boundary?", "required_cell_ids": ["LEVERAGE", "PERMANENT_LOSS"], "observation_state": "UNKNOWN", "source_refs": []}
+      ],
+      "cells": [
+        {"cell_id": "CUSTOMER", "domain": "CUSTOMER", "observation_state": "INFERRED", "source_refs": [{"source_id": "CNINFO:600690:ANN:20180426:1204797433", "physical_page": 13}], "reason": ""},
+        {"cell_id": "OPERATING", "domain": "OPERATING", "observation_state": "OBSERVED", "source_refs": [{"source_id": "CNINFO:600690:ANN:20180426:1204797433", "physical_page": 16}], "reason": ""},
+        {"cell_id": "COMPETITION", "domain": "COMPETITION", "observation_state": "OBSERVED", "source_refs": [{"source_id": "CNINFO:600690:ANN:20180426:1204797433", "physical_page": 10}], "reason": ""},
+        {"cell_id": "CASH", "domain": "CASH", "observation_state": "OBSERVED", "source_refs": [{"source_id": "CNINFO:600690:ANN:20180426:1204797433", "physical_page": 24}], "reason": ""},
+        {"cell_id": "CAPITAL_RETURN", "domain": "CAPITAL_RETURN", "observation_state": "UNKNOWN", "source_refs": [], "reason": "Maintenance capital, acquisition spending and distributable owner cash are not separated by the frozen packet."},
+        {"cell_id": "LEVERAGE", "domain": "LEVERAGE", "observation_state": "OBSERVED", "source_refs": [{"source_id": "CNINFO:600690:ANN:20180426:1204797433", "physical_page": 25}], "reason": ""},
+        {"cell_id": "PERMANENT_LOSS", "domain": "PERMANENT_LOSS", "observation_state": "UNKNOWN", "source_refs": [], "reason": "No same-boundary financing, impairment and product-demand stress contract is frozen."}
+      ],
+      "mechanism_threads": [
+        {"thread_id": "T:HAIER:SERVICE_LOGISTICS", "question_id": "Q:HAIER:SERVICE_SYSTEM", "h_a": "Service, logistics and manufacturing execution can support a differentiated appliance delivery system.", "h_b": "Product cycle, global brands and consolidation can explain disclosed operating changes without validating a domestic service mechanism.", "evidence_cell_ids": ["CUSTOMER", "OPERATING", "COMPETITION"], "source_refs": [{"source_id": "CNINFO:600690:ANN:20180426:1204797433", "physical_page": 13}, {"source_id": "CNINFO:600690:ANN:20180426:1204797433", "physical_page": 16}], "evidence_ceiling": "MECHANISM_CANDIDATE", "observation_clock": "C2_ONLY", "permitted_conclusion": "A researchable operating mechanism exists; customer and unit-economic conclusions remain unresolved.", "allowed_outputs": ["MECHANISM_CANDIDATE", "RESEARCH_AGENDA"]},
+        {"thread_id": "T:HAIER:GLOBAL_BOUNDARY", "question_id": "Q:HAIER:CASH", "h_a": "Reported cash and leverage are observable listed-consolidated constraints.", "h_b": "Global acquisition and financing effects prevent a domestic appliance owner-cash conclusion.", "evidence_cell_ids": ["CASH", "CAPITAL_RETURN"], "source_refs": [{"source_id": "CNINFO:600690:ANN:20180426:1204797433", "physical_page": 24}, {"source_id": "CNINFO:600690:ANN:20180426:1204797433", "physical_page": 25}], "evidence_ceiling": "CONTEXT_ONLY", "observation_clock": "C2_ONLY", "permitted_conclusion": "The cash and leverage observations remain boundary-qualified.", "allowed_outputs": ["INDUSTRY_CONTEXT", "RESEARCH_AGENDA"]}
+      ],
+      "allowed_outputs": ["INDUSTRY_CONTEXT", "TEACHING_ONLY", "MECHANISM_CANDIDATE", "RESEARCH_AGENDA"]
+    }
+  ],
+  "forecast_handoffs": [
+    {"handoff_id": "J3:GREE:C1", "episode_id": "J2:CN:000651:C1", "state": "FORECAST_CONTRACT_REQUIRED", "eligible_cell_ids": ["CUSTOMER", "OPERATING", "COMPETITION", "CASH", "LEVERAGE"], "unresolved_cell_ids": ["CAPITAL_RETURN", "PERMANENT_LOSS"], "required_contracts": ["DECISION_CONTRACT", "OUTCOME_MEASUREMENT_CONTRACT", "PREFREEZE_EVIDENCE_RECEIPT"], "allowed_outputs": ["RESEARCH_AGENDA"], "prohibited_outputs": ["FORECAST", "PROBABILITY", "OUTCOME_SETTLEMENT", "CJO", "VALUATION", "REPORT", "INVESTMENT"]},
+    {"handoff_id": "J3:MIDEA:C2", "episode_id": "J2:CN:000333:C2", "state": "FORECAST_CONTRACT_REQUIRED", "eligible_cell_ids": ["CUSTOMER", "OPERATING", "COMPETITION", "CASH", "LEVERAGE"], "unresolved_cell_ids": ["CAPITAL_RETURN", "PERMANENT_LOSS"], "required_contracts": ["DECISION_CONTRACT", "OUTCOME_MEASUREMENT_CONTRACT", "PREFREEZE_EVIDENCE_RECEIPT"], "allowed_outputs": ["RESEARCH_AGENDA"], "prohibited_outputs": ["FORECAST", "PROBABILITY", "OUTCOME_SETTLEMENT", "CJO", "VALUATION", "REPORT", "INVESTMENT"]},
+    {"handoff_id": "J3:HAIER:C2", "episode_id": "J2:CN:600690:C2", "state": "FORECAST_CONTRACT_REQUIRED", "eligible_cell_ids": ["CUSTOMER", "OPERATING", "COMPETITION", "CASH", "LEVERAGE"], "unresolved_cell_ids": ["CAPITAL_RETURN", "PERMANENT_LOSS"], "required_contracts": ["DECISION_CONTRACT", "OUTCOME_MEASUREMENT_CONTRACT", "PREFREEZE_EVIDENCE_RECEIPT"], "allowed_outputs": ["RESEARCH_AGENDA"], "prohibited_outputs": ["FORECAST", "PROBABILITY", "OUTCOME_SETTLEMENT", "CJO", "VALUATION", "REPORT", "INVESTMENT"]}
+  ],
+  "comparative_gates": [
+    {
+      "gate_id": "J4:CN_APPLIANCE:PRODUCT_BOUNDARY",
+      "state": "NOT_ADMITTED_MISSING_HOMOGENEOUS_PRODUCT_BOUNDARY",
+      "candidate_episode_ids": ["J2:CN:000651:C1", "J2:CN:000333:C2", "J2:CN:600690:C2"],
+      "arena_labels": ["ROOM_AIR_CONDITIONING", "REFRIGERATION_AND_WASHING", "MULTI_CATEGORY_CHANNEL_SYSTEM", "SERVICE_AND_LOGISTICS_SYSTEM"],
+      "missing_facts": ["Same-product customer or SKU cohort identity.", "Same-boundary price, unit-volume, inventory and cash fields.", "A pre-outcome mechanism-compatible comparator roster with control and perimeter checks."],
+      "allowed_outputs": ["RESEARCH_AGENDA"],
+      "prohibited_outputs": ["PANEL", "CAUSAL_VERDICT", "METHOD_TRANSFER", "CJO", "VALUATION", "REPORT", "INVESTMENT"]
+    }
+  ],
+  "allowed_outputs": ["INDUSTRY_CONTEXT", "TEACHING_ONLY", "MECHANISM_CANDIDATE", "RESEARCH_AGENDA"],
+  "prohibited_outputs": ["FORECAST", "OUTCOME_SETTLEMENT", "METHOD_TRANSFER", "CJO", "VALUATION", "REPORT", "INVESTMENT"]
+}

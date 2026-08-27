@@ -106,6 +106,58 @@
       "static_pdf_url": "https://static.cninfo.com.cn/finalpage/2018-04-26/1204797433.PDF",
       "physical_pages_used": [10, 11, 13, 16, 20, 21, 24, 25, 29, 30],
       "eligible_for_cutoff_ids": ["CN_APPLIANCE_C2_20180930"]
+    },
+    {
+      "source_id": "CNINFO:000921:ANN:20170330:1203223381",
+      "company_id": "CN:000921",
+      "company_name": "海信科龙电器股份有限公司",
+      "reporting_period_end": "2016-12-31",
+      "report_type": "ANNUAL_REPORT",
+      "announced_on": "2017-03-30",
+      "availability_precision": "DATE_ONLY",
+      "provenance": "OFFICIAL_STATUTORY_STATIC_PDF",
+      "static_pdf_url": "https://static.cninfo.com.cn/finalpage/2017-03-30/1203223381.PDF",
+      "physical_pages_used": [1],
+      "eligible_for_cutoff_ids": ["CN_APPLIANCE_C1_20170430", "CN_APPLIANCE_C2_20180930"]
+    },
+    {
+      "source_id": "CNINFO:000921:ANN:20180330:1204544098",
+      "company_id": "CN:000921",
+      "company_name": "海信科龙电器股份有限公司",
+      "reporting_period_end": "2017-12-31",
+      "report_type": "ANNUAL_REPORT",
+      "announced_on": "2018-03-30",
+      "availability_precision": "DATE_ONLY",
+      "provenance": "OFFICIAL_STATUTORY_STATIC_PDF",
+      "static_pdf_url": "https://static.cninfo.com.cn/finalpage/2018-03-30/1204544098.PDF",
+      "physical_pages_used": [1],
+      "eligible_for_cutoff_ids": ["CN_APPLIANCE_C2_20180930"]
+    },
+    {
+      "source_id": "CNINFO:600839:ANN:20170428:1203418558",
+      "company_id": "CN:600839",
+      "company_name": "四川长虹电器股份有限公司",
+      "reporting_period_end": "2016-12-31",
+      "report_type": "ANNUAL_REPORT",
+      "announced_on": "2017-04-28",
+      "availability_precision": "DATE_ONLY",
+      "provenance": "OFFICIAL_STATUTORY_STATIC_PDF",
+      "static_pdf_url": "https://static.cninfo.com.cn/finalpage/2017-04-28/1203418558.PDF",
+      "physical_pages_used": [1],
+      "eligible_for_cutoff_ids": ["CN_APPLIANCE_C1_20170430", "CN_APPLIANCE_C2_20180930"]
+    },
+    {
+      "source_id": "CNINFO:600839:ANN:20180418:1204647552",
+      "company_id": "CN:600839",
+      "company_name": "四川长虹电器股份有限公司",
+      "reporting_period_end": "2017-12-31",
+      "report_type": "ANNUAL_REPORT",
+      "announced_on": "2018-04-18",
+      "availability_precision": "DATE_ONLY",
+      "provenance": "OFFICIAL_STATUTORY_STATIC_PDF",
+      "static_pdf_url": "https://static.cninfo.com.cn/finalpage/2018-04-18/1204647552.PDF",
+      "physical_pages_used": [1],
+      "eligible_for_cutoff_ids": ["CN_APPLIANCE_C2_20180930"]
     }
   ]
 }
