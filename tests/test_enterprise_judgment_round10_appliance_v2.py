@@ -3,6 +3,7 @@ from __future__ import annotations
 from copy import deepcopy
 
 from scripts import enterprise_judgment_round10_appliance_v2 as round10
+from scripts import minimal_historical_episode_runner as runner
 
 
 def _source(company_id: str) -> dict:
@@ -72,6 +73,12 @@ def test_round10_unknown_is_local_and_review_cannot_self_accept() -> None:
     candidate = round10.build_review_candidate(batch=batch, settlements=settlements)
     assert candidate["automatic_status"] == "INDEPENDENT_REVIEW_REQUIRED"
     assert not candidate["automatic_completion"]
+    assert candidate["treatment_delta_ledger"] == [{
+        "treatment_delta_id": "R10:DELTA:ISSUER_CASH_NOT_OWNER_CASH",
+        "application_company_ids": ["CN:002035", "CN:002677"],
+        "method_advantage_count": 1,
+        "status": "ONE_BATCH_LEVEL_REVIEW_CANDIDATE_ONLY",
+    }]
     review = {
         "review_candidate_ref": candidate["review_candidate_id"], "reviewer_id": "ROLE:ROUND10:INDEPENDENT_REVIEWER",
         "review_status": "NO_MATERIAL_UTILITY", "accepted_treatment_delta_ids": [], "utility_basis": None,
@@ -96,3 +103,33 @@ def test_round10_real_curator_projection_freezes_three_companies_before_outcomes
         for chain in package["minimal_field_chains"]:
             assert chain["measurement_contract"]["outcome_acquisition_route"]["annual_report_version_policy"] == "ORIGINAL_ONLY"
             assert chain["prediction"]["method_transfer_rights"] == "NO_METHOD_TRANSFER_RIGHTS"
+
+
+def test_round10_existing_runner_verifies_all_three_frozen_rmb_field_kinds() -> None:
+    for package in round10.build_real_preoutcome_batch()["company_packages"]:
+        for chain in package["minimal_field_chains"]:
+            source = chain["static_evidence"]["source"]
+            runner._verify_quote_value({
+                "exact_quote": chain["exact_quote"],
+                "numeric_value": source["numeric_value"],
+                "unit": source["unit"],
+            }, source=source)
+
+
+def test_round10_three_company_applications_still_count_one_method_delta() -> None:
+    batch = round10.build_batch_freeze([_package(row["company_id"]) for row in round10.ROSTER])
+    settlements = [
+        {
+            "settlement_id": f"SETTLEMENT:R10:{package['company']['security_code']}",
+            "company_id": package["company"]["company_id"],
+            "cell_results": [
+                {"cell_id": f"CELL:R10:{package['company']['security_code']}:FY2019:REVENUE", "label": "OBSERVED_INCREASE"},
+                {"cell_id": f"CELL:R10:{package['company']['security_code']}:FY2019:OPERATING_CASH_FLOW", "label": "OBSERVED_INCREASE"},
+                {"cell_id": f"CELL:R10:{package['company']['security_code']}:FY2019:TOTAL_ASSETS", "label": "OBSERVED_STABLE"},
+            ],
+        }
+        for package in batch["company_packages"]
+    ]
+    candidate = round10.build_review_candidate(batch=batch, settlements=settlements)
+    assert candidate["treatment_delta_ledger"][0]["application_company_ids"] == [row["company_id"] for row in round10.ROSTER]
+    assert candidate["treatment_delta_ledger"][0]["method_advantage_count"] == 1

@@ -318,6 +318,15 @@ def _minimal_prediction_direction(metric: str) -> str:
     return {"REVENUE": "INCREASE", "OPERATING_CASH_FLOW": "STABLE", "TOTAL_ASSETS": "STABLE"}[metric]
 
 
+def _minimal_field_reference(metric: str, page_reference: str) -> str:
+    statement, label = {
+        "REVENUE": ("consolidated income statement", "营业收入"),
+        "OPERATING_CASH_FLOW": ("consolidated cash-flow statement", "经营活动产生的现金流量净额"),
+        "TOTAL_ASSETS": ("consolidated balance sheet", "资产总计"),
+    }[metric]
+    return f"{page_reference}; {statement}; {label}"
+
+
 def build_minimal_field_chains(*, company_id: str, source_packet: dict[str, Any]) -> list[dict[str, Any]]:
     """Project one immutable V2 Minimal chain per frozen accounting field.
 
@@ -403,7 +412,7 @@ def build_minimal_field_chains(*, company_id: str, source_packet: dict[str, Any]
             "source": {
                 "source_id": field["source_id"], "source_url": field["source_url"], "source_type": minimal.OFFICIAL_STATIC_FILING,
                 "published_at": field["published_at"], "issuer_id": company["issuer_id"], "metric_id": metric_id,
-                "responsibility_boundary": contract["responsibility_boundary"], "unit": "RMB", "field_ref": field["field_ref"],
+                "responsibility_boundary": contract["responsibility_boundary"], "unit": "RMB", "field_ref": _minimal_field_reference(metric, str(field["field_ref"])),
                 "numeric_value": float(field["numeric_value"]),
             },
             "object_class": "MINIMAL_HISTORICAL_STATIC_EVIDENCE", "claim_class": "CUTOFF_VISIBLE_OFFICIAL_FIELD",
@@ -652,13 +661,19 @@ def build_review_candidate(*, batch: dict[str, Any], settlements: list[dict[str,
         enhanced = "REQUIRE_OWNER_CASH_AND_BOUNDARY_EVIDENCE" if baseline == "CONTINUE_OPERATING_UNDERWRITING" else "NOT_DIAGNOSTIC"
         comparisons.append({
             "company_id": company_id, "settlement_ref": settlement.get("settlement_id"), "baseline_treatment": baseline, "enhanced_treatment": enhanced,
-            "treatment_delta_id": delta_id if baseline != enhanced else None,
-            "method_advantage_count": 1 if baseline != enhanced else 0,
+            "treatment_delta_application_id": f"R10:APPLICATION:{package['company']['security_code']}:ISSUER_CASH_BOUNDARY" if baseline != enhanced else None,
+            "treatment_delta_ref": delta_id if baseline != enhanced else None,
             "candidate_basis": "Different treatment is an external-review candidate, not a method win; reviewer must establish material investment treatment change or a prevented directional error.",
         })
+    applied_companies = [row["company_id"] for row in comparisons if row["treatment_delta_ref"] == delta_id]
     return {
         "schema_version": "enterprise-judgment-round10-review-candidate.v2", "review_candidate_id": "R10:REVIEW-CANDIDATE:CN_APPLIANCE:20180930:V2",
         "batch_ref": batch["batch_id"], "settlement_refs": [item["settlement_ref"] for item in comparisons], "comparisons": comparisons,
+        "treatment_delta_ledger": [{
+            "treatment_delta_id": delta_id, "application_company_ids": applied_companies,
+            "method_advantage_count": 1 if applied_companies else 0,
+            "status": "ONE_BATCH_LEVEL_REVIEW_CANDIDATE_ONLY",
+        }],
         "automatic_status": "INDEPENDENT_REVIEW_REQUIRED", "automatic_completion": False,
         "object_class": "ROUND10_METHOD_UTILITY_REVIEW_CANDIDATE", "claim_class": "NO_AUTOMATIC_METHOD_ADVANTAGE", "allowed_outputs": ["EXTERNAL_REVIEW_ONLY", "RESEARCH_AGENDA"], "rights": deepcopy(RIGHTS),
     }
@@ -674,7 +689,10 @@ def validate_external_review(review: Any, *, candidate: dict[str, Any]) -> dict[
     if item.get("review_status") not in {"NO_MATERIAL_UTILITY", "MATERIAL_UTILITY_CONFIRMED"}:
         findings.append("round10_review_status_invalid")
     accepted = _items(item.get("accepted_treatment_delta_ids"))
-    candidate_deltas = {row.get("treatment_delta_id") for row in _items(candidate.get("comparisons")) if row.get("treatment_delta_id")}
+    ledger = _items(candidate.get("treatment_delta_ledger"))
+    candidate_deltas = {row.get("treatment_delta_id") for row in ledger if isinstance(row, dict) and row.get("treatment_delta_id")}
+    if len(candidate_deltas) != len(ledger) or any(row.get("method_advantage_count") not in {0, 1} for row in ledger if isinstance(row, dict)) or sum(row.get("method_advantage_count", 0) for row in ledger if isinstance(row, dict)) > 1:
+        findings.append("round10_review_candidate_delta_count_must_be_batch_unique")
     if item.get("review_status") == "NO_MATERIAL_UTILITY" and accepted:
         findings.append("round10_no_material_utility_cannot_accept_delta")
     if item.get("review_status") == "MATERIAL_UTILITY_CONFIRMED":
