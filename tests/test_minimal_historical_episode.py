@@ -1414,6 +1414,7 @@ def test_custodian_acquisition_enumerates_one_contract_bound_static_annual_repor
     [
         ([], None, "NO_UNIQUE_DIRECT_ANNUAL_REPORT"),
         ([_cninfo_row(), {**_cninfo_row(), "announcementId": "SYNTHETIC-SECOND"}], None, "NO_UNIQUE_DIRECT_ANNUAL_REPORT"),
+        ([_cninfo_row(title="2021年年度报告摘要")], None, "NO_UNIQUE_DIRECT_ANNUAL_REPORT"),
         ([_cninfo_row(title="2021年年度报告（修订版）")], None, "ANNUAL_REPORT_REVISION_OR_CORRECTION_UNRESOLVED"),
         ([_cninfo_row(), {**_cninfo_row(title="2021年年度报告更正后"), "announcementId": "SYNTHETIC-REVISED"}], None, "ANNUAL_REPORT_REVISION_OR_CORRECTION_UNRESOLVED"),
         ([_cninfo_row(url="announcement/SYNTHETIC.PDF")], None, "ANNUAL_REPORT_NOT_STATIC_FINALPAGE"),
@@ -1435,6 +1436,25 @@ def test_custodian_acquisition_returns_value_free_mismatch_for_nonunique_or_unus
     assert candidate["status"] == "MEASUREMENT_MISMATCH"
     assert candidate["mismatch_rule"] == rule
     assert "source" not in candidate and "numeric_value" not in json.dumps(candidate)
+
+
+def test_custodian_acquisition_ignores_annual_report_summary_when_one_full_original_report_exists(
+    tmp_path: Path,
+) -> None:
+    database, contract = _authorized_cninfo_database(tmp_path)
+    candidate = outcome_acquisition.acquire_cninfo_outcome_source_candidate(
+        str(database),
+        outcome_access_authorization_id="MHE:ACCESS:SYNTHETIC:V1",
+        inventory_receipt_id="MHE:INVENTORY:CNINFO:FULL-ONLY",
+        field_locator=lambda source, _: "FY2021 annual report, PDF p. 38",
+        request=_cninfo_request([
+            _cninfo_row(),
+            {**_cninfo_row(title="2021年年度报告摘要"), "announcementId": "SYNTHETIC-SUMMARY"},
+        ]),
+    )
+    assert candidate["status"] == "FIELD_READY"
+    assert candidate["source"]["source_id"] == "CNINFO:600585:ANN:20220330:SYNTHETIC-2021-ANNUAL"
+    assert candidate["source"]["issuer_id"] == contract["issuer_id"]
 
 
 def test_custodian_acquisition_does_not_enumerate_before_stored_access(

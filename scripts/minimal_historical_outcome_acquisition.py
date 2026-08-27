@@ -32,6 +32,9 @@ OUTCOME_SOURCE_ACQUISITION_SCHEMA_VERSION = "turtle-minimal-historical-episode-o
 PageLocator = Callable[[dict[str, Any], dict[str, Any]], str | None]
 CNInfoRequest = Callable[[dict[str, str]], dict[str, Any]]
 _REVISION_TITLE = re.compile(r"修订|更正|更新", re.IGNORECASE)
+_DIRECT_ANNUAL_REPORT_TITLE = re.compile(
+    r"^20\d{2}年年度报告(?:（原始版）|\(原始版\))?$",
+)
 
 
 def _connect(database: str) -> sqlite3.Connection:
@@ -56,6 +59,19 @@ def _date(value: str, *, name: str) -> date:
         return date.fromisoformat(value)
     except (TypeError, ValueError) as exc:
         raise ValueError(f"{name} must be an ISO date") from exc
+
+
+def _is_direct_original_annual_report(title: Any) -> bool:
+    """Keep a full original annual report distinct from its summary/abstract.
+
+    CNINFO's general normalizer deliberately groups titles containing
+    ``年度报告`` under the same broad annual-report period.  That is useful for
+    discovery, but a frozen field may only be read from the full statutory
+    report; an annual-report summary is not a substitute.  This is a narrow
+    title identity rule, not an inference about the contents of either PDF.
+    """
+    compact = re.sub(r"\s+", "", str(title or ""))
+    return bool(_DIRECT_ANNUAL_REPORT_TITLE.fullmatch(compact))
 
 
 def _base_candidate(
@@ -144,7 +160,7 @@ def acquire_cninfo_outcome_source_candidate(
         )
 
     outcome_period_end = contract["outcome_period_end"]
-    candidates = [
+    annual_period_candidates = [
         source for source in normalized
         if source.get("source_type") == route["announcement_category"]
         and source.get("data_as_of") == outcome_period_end
@@ -155,13 +171,17 @@ def acquire_cninfo_outcome_source_candidate(
     # is the version to settle, even when it is the only row in a bounded
     # response.  This narrow adapter therefore records a mismatch rather than
     # choosing a revision or silently preferring an earlier title.
-    if any(_REVISION_TITLE.search(str(source.get("title") or "")) for source in candidates):
+    if any(_REVISION_TITLE.search(str(source.get("title") or "")) for source in annual_period_candidates):
         return _mismatch(
             context,
             inventory_receipt_id=inventory_receipt_id,
             rule="ANNUAL_REPORT_REVISION_OR_CORRECTION_UNRESOLVED",
             detail="the bounded official metadata enumeration includes a revised, corrected, or updated annual report title",
         )
+    candidates = [
+        source for source in annual_period_candidates
+        if _is_direct_original_annual_report(source.get("title"))
+    ]
     if len(candidates) != 1:
         return _mismatch(
             context,
