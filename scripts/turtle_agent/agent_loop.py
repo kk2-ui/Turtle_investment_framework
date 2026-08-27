@@ -100,6 +100,24 @@ def _load_graham_framework() -> str:
     return "\n".join(parts)
 
 
+def _judgment_first_prompt_block(role: str) -> str:
+    """Return the compact judgment-first contract for active runtime roles."""
+    common = """## 判断优先宪法（高优先级）
+- 在证据、PIT、结果隔离和权限边界这些硬约束内，首要产物是对企业经济和投资处理有用的最佳当前判断；审计完整、状态码和过门本身不是产物。
+- 将已验证事实与经济推论分开。允许基于事实形成有边界、可证伪的推论；缺少因果权限只限制因果主张，不得抹掉其他企业判断。
+- `UNKNOWN`、`MIXED`、`NO_PRIMARY`、`MEASUREMENT_MISMATCH`只属于受影响的主张。材料性未知必须转成保守区间、情景、条件结论、投资后果或能区分解释的下一观察。
+- 区分“证据/推论置信度”和“经营结果概率”。没有校准基准时使用定性置信度，不得为显得果断而编造百分比。
+- 读者语言先写经济结论，再把限制贴到对应主张；不得用治理说明、权限免责声明或状态码墙代替判断。"""
+    addenda = {
+        "research": """- 你不拥有整家公司或最终投资综合权，但凡finding接触材料性企业证据，仍必须写出局部经济含义、最强替代解释、区分结果，以及在权限内的valuation/action影响。仅返回`PUBLIC_INFO_UNAVAILABLE`或缺口清单不算完成。""",
+        "synthesis": """- 你负责形成复核后的最佳当前综合：说明决定性机制、最强替代解释、企业或投资后果及翻转条件。只因足以改变中心判断的错误而退回；局部缺口优先局部降级，不新增全局门。""",
+        "report": """- 围绕少数决定性问题给出方向性或条件性裁决、最强反方和翻转条件，并把判断传播到企业质量、永久损失、owner cash、估值或本任务权限内的处理。未证实的增长选择权不进基准情景，不等于价值为零或经营失败。""",
+    }
+    if role not in addenda:
+        raise ValueError(f"unknown judgment-first runtime role: {role}")
+    return common + "\n" + addenda[role]
+
+
 def _load_asset_template_supplements(contract: dict[str, Any]) -> list[dict[str, str]]:
     asset = contract.get('asset_profile', {}) if isinstance(contract, dict) else {}
     names = list(asset.get('recommended_templates', []) or [])
@@ -1347,6 +1365,8 @@ pit_read_source，且只可按 allowlist 路径调用 pit_read_framework。禁�
         )
         return f"""你是价值投资框架中的单任务研究执行器，不是全文报告写作者。
 
+{_judgment_first_prompt_block("research")}
+
 ## 唯一任务
 {json.dumps(task, ensure_ascii=False, indent=2)}
 
@@ -1446,6 +1466,8 @@ pit_read_source，且只可按 allowlist 路径调用 pit_read_framework。禁�
                 ], "synthesis": value.get("synthesis")}
             context[filename] = value
         return f"""你是独立判断复核员。研究任务已由其他上下文完成；你不能搜索、补证据或改报告。
+
+{_judgment_first_prompt_block("synthesis")}
 
 ## 复核材料
 {json.dumps(context, ensure_ascii=False, indent=2)}
@@ -1900,6 +1922,8 @@ Part C 的 Ch14 综合决策使用 5 状态合成矩阵。写 Ch14 前必须检�
 
 你是龟龟投资策略的**唯一分析师**。你拥有完整的分析上下文和工具集。
 按顺序逐步完成分析，主动调用工具获取所需数据。
+
+{_judgment_first_prompt_block("report")}
 
 ## 分析标的
 - 代码: {self._config.code}

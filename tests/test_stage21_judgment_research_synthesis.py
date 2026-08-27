@@ -150,6 +150,8 @@ def test_synthesis_agent_has_only_review_and_finalize_tools(tmp_path: Path) -> N
     assert schemas == {"finalize_judgment_research_review"}
     prompt = agent._build_judgment_synthesis_system_prompt()
     assert "不能搜索、补证据或改报告" in prompt
+    assert "判断优先宪法" in prompt
+    assert "复核后的最佳当前综合" in prompt
     assert "assemble_report" not in schemas
     assert len(prompt) < 30000
 

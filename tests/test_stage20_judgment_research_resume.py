@@ -174,11 +174,29 @@ def test_task_prompt_and_tool_schema_exclude_full_report_context(tmp_path: Path)
     prompt = agent._build_judgment_task_system_prompt()
     schemas = {item["function"]["name"] for item in agent._judgment_tool_schemas()}
     assert schemas == {"begin_judgment_research_task"}
+    assert "判断优先宪法" in prompt
+    assert "局部经济含义" in prompt
     assert "assemble_report" not in schemas
     assert "plan_judgment_research" not in schemas
     assert "完整报告蓝图" not in prompt
     assert "不要重新分析整家公司" not in prompt  # opening task, not repeated system baggage
     assert len(prompt) < 12000
+
+
+def test_full_report_prompt_inherits_judgment_first_constitution(tmp_path: Path) -> None:
+    class _Llm:
+        model = "fake"
+
+    agent = TurtleAgent(_Llm(), ToolRegistry(), AgentConfig(
+        code="CASE", output_dir=str(tmp_path),
+    ))
+    agent._context = {
+        "contract": {}, "company_name": "案例公司", "template_raw": "",
+    }
+    prompt = agent._build_system_prompt()
+    assert "判断优先宪法" in prompt
+    assert "未证实的增长选择权不进基准情景" in prompt
+    assert "不等于价值为零或经营失败" in prompt
 
 
 def test_active_schema_hides_mutations_until_required_routes_are_attempted(tmp_path: Path) -> None:
