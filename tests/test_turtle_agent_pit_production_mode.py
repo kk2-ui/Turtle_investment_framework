@@ -31,6 +31,7 @@ class ProductionLlm:
     def __init__(self) -> None:
         self.task_type = ""
         self.schemas: list[set[str]] = []
+        self.messages: list[list[dict[str, object]]] = []
         self.responses = [LlmResponse(tool_calls=[ToolCall(
             id="assemble", name="pit_assemble_report", arguments={"company_name": "Test issuer"},
         )])]
@@ -39,6 +40,7 @@ class ProductionLlm:
         self.task_type = task_type
 
     def chat(self, messages: list[dict[str, object]], **kwargs: object) -> LlmResponse:
+        self.messages.append(messages)
         self.schemas.append({item["function"]["name"] for item in kwargs["tools"]})
         return self.responses.pop(0)
 
@@ -68,6 +70,8 @@ def test_pit_production_agent_uses_only_bound_tools_and_ends_at_assembly() -> No
     assert report_path == "output/pit-report.md"
     assert llm.task_type == "pit_production_freeze"
     assert llm.schemas == [allowed]
+    assert "判断优先宪法" in str(llm.messages[0][0]["content"])
+    assert "未披露与非决定性 proxy 不是经营冲突或负面证据" in str(llm.messages[0][0]["content"])
 
 
 def test_pit_production_registry_discovers_exactly_the_bound_toolset() -> None:

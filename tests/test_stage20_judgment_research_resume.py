@@ -199,6 +199,29 @@ def test_full_report_prompt_inherits_judgment_first_constitution(tmp_path: Path)
     assert "不等于价值为零或经营失败" in prompt
 
 
+def test_v12_report_prompt_does_not_reintroduce_defensive_decision_bias(tmp_path: Path) -> None:
+    class _Llm:
+        model = "fake"
+
+    agent = TurtleAgent(_Llm(), ToolRegistry(), AgentConfig(
+        code="CASE", output_dir=str(tmp_path),
+    ))
+    agent._context = {
+        "contract": {}, "company_name": "案例公司",
+        "template_raw": "Part A\n定性深度分析",
+    }
+    prompt = agent._build_system_prompt()
+    assert "默认**保守偏空**" not in prompt
+    assert "折价15%后的 GG 和 DDM" not in prompt
+    assert "说不清楚 → 仓位打五折" not in prompt
+    assert "答案是\"不确定\" → 决策降一级" not in prompt
+    assert "必须给出概率判断**（百分比）" not in prompt
+    assert "对乐观与悲观解释使用相同证据标准" in prompt
+    assert "缺失本身不是固定 15% 价值毁灭" in prompt
+    assert "相对旧锚稳定不得写成最新一期稳定" in prompt
+    assert "项目完成只结算实施里程碑" in prompt
+
+
 def test_active_schema_hides_mutations_until_required_routes_are_attempted(tmp_path: Path) -> None:
     _setup(tmp_path)
     begin_judgment_research_task(tmp_path, "JR001")

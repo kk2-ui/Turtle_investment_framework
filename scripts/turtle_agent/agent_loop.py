@@ -109,6 +109,8 @@ def _judgment_first_prompt_block(role: str) -> str:
 - 未披露与非决定性 proxy 不是经营冲突或负面证据；它们只能降低对应归因置信，不能在没有已观察经济载体时机械下调管理层、owner cash、永久损失保护或 normal earnings。
 - 判断更新只沿责任匹配的经济机制传播。融资改善不自动降低客户、品牌、产品生命周期、库存吸收或资本回报风险；新选择权也不自动升级未受影响的核心。
 - 概率和置信更新必须保持同一命题与风险轴；情景文字中的每个材料分支必须进入对应处理，粗粒度标签或分数不得覆盖相反的连续事实。
+- 方向比较必须保持同一指标、责任边界、基期和比较时钟；相对旧锚稳定不得写成最新一期稳定。
+- 产能、门店、并购、产品或项目完成只结算实施里程碑；管理层执行、owner cash 和资本回报还必须由建成后的客户、利用率、单位经济与现金吸收支持。
 - 区分“证据/推论置信度”和“经营结果概率”。没有校准基准时使用定性置信度，不得为显得果断而编造百分比。
 - 读者语言先写经济结论，再把限制贴到对应主张；不得用治理说明、权限免责声明或状态码墙代替判断。"""
     addenda = {
@@ -957,6 +959,7 @@ pit_read_source，且只可按 allowlist 路径调用 pit_read_framework。禁�
             f"你在生成 {self._config.code} 的完整历史时点冻结报告。案例 {self._config.pit_case_id}，"
             f"实验 {self._config.pit_experiment_id}，截止 {self._config.pit_cutoff_at}，"
             f"用途 {self._config.analysis_purpose}。"
+            "\n\n" + _judgment_first_prompt_block("report") + "\n\n"
             "只可使用提供的PIT工具：先读取官方来源，数值事实用pit_verify_official_fact逐页验证，"
             + purpose_instruction
             + "需要修复结构化账本时只用pit_read_structured_ledger_contract。禁止网页、行情、数据库、任意路径、"
@@ -1626,7 +1629,7 @@ pit_read_source，且只可按 allowlist 路径调用 pit_read_framework。禁�
 - 单一供应商集中 → 关键零部件或原料的定价权在供应商手中
 - 监管定价 → 产品价格受政府管制
 
-若发现上述模式，**必须对关键输入品提价 5%/10%/15% 做敏感性分析**，量化对毛利率和 GG 的冲击。每条情景必须附带 **概率估计**（高/中/低 + 百分比区间），并说明概率判断的依据（历史频率、合同条款、行业惯例）。格式："提价5%概率中(30-40%)——过去10年可口可乐每3-4年提价一次；提价15%概率低(<10%)——会触发装瓶商联合抵制"。这是通用的"外部依赖风险"量化框架，不限于某个特定行业。
+若发现上述模式，**必须对关键输入品提价 5%/10%/15% 做条件敏感性分析**，量化对毛利率和 GG 的冲击。只有历史频率、合同条款或行业记录足以支持 `QUALIFIED_PROBABILITY` 时才附百分比区间；否则标为未校准的条件压力，并用高/中/低相对可能性和翻转事实表达，不得编造概率。这是通用的"外部依赖风险"量化框架，不限于某个特定行业。
 
 ### 四大师交叉验证（V12.20 吸收自 ai-berkshire）
 
@@ -1645,12 +1648,12 @@ pit_read_source，且只可按 allowlist 路径调用 pit_read_framework。禁�
 **段永平+巴菲特 — 管理层镜子测试（Ch8 治理）**
 - CEO 过去 5 年的资本配置决策复盘
 - 如果只能用 5 句话向一个不懂这行的人解释你为什么持有这家公司，你能说清楚吗？
-- 说不清楚 → 仓位打五折
+- 说不清楚 → 指出尚未说清的经济机制、降低该主张的置信并补充翻转条件；只有它改变 normal earnings、owner cash、永久损失或估值区间时才调整仓位
 
 **段永平 — 5 年持有测试（Ch14 决策）**
 - 必须回答："如果股市明天关闭 5 年，你愿意以当前价格持有这家公司吗？"
-- 如果答案是"不确定" → 决策降一级（Buy→Hold, Hold→Pause）
-- 如果答案是"不愿意" → 直接 Avoid
+- 如果答案是"不确定" → 写出条件判断与决定该不确定性的经营/估值事实；不确定本身不自动降级
+- 如果答案是"不愿意" → 说明对应的企业经济、永久损失或估值载体，并据其材料影响决定动作；不得仅凭态度词直接 Avoid
 
 ### 估值方法选择矩阵（V12.20 吸收自 stock-analytics-skill）
 
@@ -1782,7 +1785,7 @@ pit_read_source，且只可按 allowlist 路径调用 pit_read_framework。禁�
 ### 统一决策合成 — 来自 Dayu write_research_decision.md
 
 ## 分析基调
-默认**保守偏空**——对乐观解释要求更高的证据标准，对悲观情景赋予更重的权重。
+对乐观与悲观解释使用相同证据标准。情景权重由已观察的经济载体、材料性和竞争解释决定，不设置默认偏多或偏空先验。
 
 ### 资产陷阱三段论（净现金/MC>50% 时强制执行）
 当公司净现金占市值比例高时，必须回答三个问题：
@@ -1794,14 +1797,14 @@ pit_read_source，且只可按 allowlist 路径调用 pit_read_framework。禁�
 - 当定性决定与定量决定冲突时，**定量决定（GG/DDM/否决门）为第一优先**
 - 定性决定只能调整仓位（Continue→仓位加满，Pause→仓位减半），不能在定量否决时"拉回"决策
 - **例外（V12.18 逆向覆盖）**：若 compute_bundle 中 `contrarian_override.active=true`，说明定量 Avoid 仅因一次性扰动（S2 扰动豁免）触发，且 PE 已极度压缩（<12x）。此时 Agent 应在 Ch14 中讨论逆向机会——市场对已知风险的过度定价本身构成安全边际，决策可升级为 Cautious Watch（1-2%仓位）
-- **例外（V12.18 定性降级）**：若定量=STRONG_BUY 但定性=Pause（待验证的结构性问题未解决，如国企治理、小票流动性、客户集中等），Agent 必须在 Ch14 中将 STRONG_BUY 降级为 BUY，仓位从满仓降至 1-2%。理由：定量便宜但定性风险未释放时，重仓不理性。格式："定量指标显示 Strong Buy，但由于[X/Y/Z]定性问题尚未验证，降级为 Buy，仓位控制在 2%以内。"
-- **定性"Continue/Pause边界"处理**：若 Agent 自评定性处于 Continue 和 Pause 的边界（如"偏 Pause 的 Continue"），在决策矩阵中应将其计为 Pause，不能模糊处理。边界状态意味着部分关键判断仍有待验证，取保守侧。
+- **定性风险传导**：若定量=STRONG_BUY，但观察到的结构性风险会材料改变 normal earnings、owner cash、永久损失或估值区间，Agent 必须先把该载体进入模型敏感性和决策依据，再据更新后的范围调整动作。字段未披露、一般性待验证或 `Pause` 标签本身不能自动把仓位压到固定比例。
+- **定性"Continue/Pause边界"处理**：若 Agent 自评处于边界，必须拆出已观察的经济风险、局部未知和翻转事实。只有材料风险或估值范围变化可推动动作；不能仅因边界措辞机械取更悲观一侧。
 - 禁止"取折中"——如果定量说 Avoid 且无 contrarian_override，最终必须是 Avoid 或 Strong Reject，不能变成 Hold
 
 Part C 的 Ch14 综合决策使用 5 状态合成矩阵。写 Ch14 前必须检查：
 - `compute_bundle.factor3.minority_adjustment` → 如存在，安全边际必须按归母 AA 重新评估
 - `compute_bundle.factor3.aa_avg.3y` → 确认是真 AA 还是已调整 AA
-- 若 Zone J 文件缺失且 `total_discount_pct=0`，必须在"数据完整性"小节中**显式计算**折价15%后的 GG 和 DDM，不能只提建议不执行
+- 若 Zone J 文件缺失且 `total_discount_pct=0`，必须指出受影响的具体参数，以保守区间、敏感性或不承保对应溢价处理。缺失本身不是固定 15% 价值毁灭；只有观察到的现金不可达、治理侵占、资本损失或其他责任匹配载体才允许折价，幅度来自模型敏感性。
 
 | | Turtle Buy | Turtle Hold | Turtle Avoid |
 |---|---|---|---|
@@ -1820,9 +1823,9 @@ Part C 的 Ch14 综合决策使用 5 状态合成矩阵。写 Ch14 前必须检�
 - 格式：`低PB+ROE恶化：ROE从39%→9%，接近社会平均。概率低（置信度中），因为经营性杠杆有限`
 
 **竞争性解释（强制）**：
-- 当核心变量存在多种解释时，**必须给出概率判断**（百分比）
+- 当核心变量存在多种解释时，必须给出当前相对可能性和选择理由；只有 `QUALIFIED_PROBABILITY` 才填写百分比，否则用定性排序、置信范围和翻转事实
 - 每种解释必须标注：**验证方法**（什么数据能证伪）+ **验证时间窗口**
-- 格式：`解释A（拐点）概率30%，解释B（均值回归）概率50%，解释C（粉饰）概率20%。FY2026 H1 毛利率>14%可排除解释C`
+- 无校准基准格式：`解释B（均值回归）当前更可能，解释A（拐点）次之，解释C（粉饰）证据较弱。FY2026 H1 毛利率>14%可进一步排除解释C`
 
 **决策回退条件（替代"止损"）**：
 - 区分建仓前/建仓后：
@@ -1960,7 +1963,7 @@ Part C 的 Ch14 综合决策使用 5 状态合成矩阵。写 Ch14 前必须检�
 10. **固化公司经营驱动桥**: 在前瞻判断前调用 `read_structured_ledger_contract(ledger=financial_driver)` 再调用 `write_financial_driver_bridge`。必须分别覆盖竞争/需求、单位经济、现金转换、资本配置四层；每个OBSERVED项只能引用VERIFIED observation，并明确如何进入已有估值模型输入和决策条目。UNKNOWN必须保留并采用保守处理。金融产品滚动、受限资金释放、在建工程减值等不能被一个标签吞没：分别给出分类依据、实现/结算窗口和行动含义。价格只能进入入场和条件回报，不得作为经营驱动证据或中心路径选择依据。
 
 11. **固化重大主张证据链**: 调用 write_claim_evidence_ledger。重大主张正文用 `[claim: claim_id]`；`chapters` 第一章是该主张的 canonical home，必须原样包含 ledger 的 claim 文本，其他章可只引用 ID。每条链必须包含原始事实、推理、竞争解释、适用条件、置信度及决策影响，并绑定至少一个 decision entry。新统一运行的每条直接支持必须填写VERIFIED `observation_id`，`source_id`必须是该observation对应的`DOC:`身份；CANDIDATE、搜索摘要和报告内部引用都不得作为直接支持。来源同时记录 authority × claim_distance、发布日期/数据截止日、利益冲突、口径匹配和同源组。Markdown 表格可在紧邻位置用 `[table-source: X]` 一次映射整表。
-12. **固化中心路径、前瞻判断、竞争解释、阈值与概率**: 调用 write_thesis_test_ledger。先提交唯一的3年或5年 `central_path`，明确选择哪个情景更可能以及为什么；“若X则Y”的敏感性不能替代“X更可能，因为……”的判断。被中心路径选择的 `probability_set` 必须声明为 `TERMINAL_OPERATING_OUTCOME`，并以同一3/5年尺度定义终局；渠道调整、会计确认、库存和其他过程因素必须写入 `mechanism_chains`，不得与经营终局并列占用概率。每条机制链都要绑定情景、领先阈值和到正常化盈利、owner cash、估值、预期回报的传导；每项前瞻判断再用 `mechanism_chain_ids` 连接它。再冻结3-5项 `forward_judgments`：每项必须有方向/区间、期限与resolution_due、证据、竞争解释、领先信号、证伪条件、概率情景身份、官方结果测量规则，并逐项说明如何传导到正常化盈利、owner cash、估值和预期回报；启用 `financial_driver_bridge` 时每项还要用 `financial_driver_ids` 绑定当时四层 bridge 的具体 driver，不能等结果出来再补连；每项可量化判断另冻结一个同一PIT经营信息下的简单 `baseline`，其指标、单位、期限与到期日必须完全相同，且必须写出由已列 evidence 的数值输入可复算的指定公式（持续、公司水平加行业变化或等权驱动）；它只能在结果期比较机制判断的增量信息，绝不参与中心路径选择或读取价格/事后结果；每项还必须登记 `settlement_contract`（冻结 claim ID、PIT 来源、同指标阈值与后果、观察窗口），adapter 不得代填或把区间取中点；正文用 `[central-path: id]` 绑定中心路径。核心 thesis 还必须给出有证据的最强替代解释、能区分两者的观察及可获得时间，并为每个观察写明其在主/反方下各自 `LOW` / `MEDIUM` / `HIGH` 的事前可能性和经济理由（两者必须不同；不得伪造精确概率或贝叶斯因子）、翻转条件，以及翻转后的估值/仓位/动作；正文分别用 `[thesis-test: id]`、`[threshold: id]`、`[probability: id]` 绑定。阈值必须说明历史波动/同行/模型敏感性/合同或监管依据、观测频率、窗口、滚动或连续期规则、季节性、会计口径和合理精度；没有依据的精确数值不得使用。概率必须标明 frequency/base_rate/analyst_subjective/scenario_weight，情景互斥完备且合计100%，每个probability_set必须给出晚于as_of的resolution_due；`base_rate` 的source_ids必须是base_rate_context中至少5个同机制ELIGIBLE `CASE:` ID，否则只能标为analyst_subjective或scenario_weight；主观概率必须给区间，禁止伪精确。
+12. **固化中心路径、前瞻判断、竞争解释、阈值与概率**: 调用 write_thesis_test_ledger。先提交唯一的3年或5年 `central_path`，明确选择哪个情景更可能以及为什么；“若X则Y”的敏感性不能替代“X更可能，因为……”的判断。存在合格数值概率时，被中心路径选择的 `probability_set` 必须声明为 `TERMINAL_OPERATING_OUTCOME`，并以同一3/5年尺度定义终局；无校准基准时仍须定性选择中心路径，但不得为过门编造概率。渠道调整、会计确认、库存和其他过程因素必须写入 `mechanism_chains`，不得与经营终局并列占用概率。每条机制链都要绑定情景、领先阈值和到正常化盈利、owner cash、估值、预期回报的传导；每项前瞻判断再用 `mechanism_chain_ids` 连接它。再冻结3-5项 `forward_judgments`：每项必须有方向/区间、期限与resolution_due、证据、竞争解释、领先信号、证伪条件、可用时的概率情景身份、官方结果测量规则，并逐项说明如何传导到正常化盈利、owner cash、估值和预期回报；启用 `financial_driver_bridge` 时每项还要用 `financial_driver_ids` 绑定当时四层 bridge 的具体 driver，不能等结果出来再补连；每项可量化判断另冻结一个同一PIT经营信息下的简单 `baseline`，其指标、单位、期限与到期日必须完全相同，且必须写出由已列 evidence 的数值输入可复算的指定公式（持续、公司水平加行业变化或等权驱动）；它只能在结果期比较机制判断的增量信息，绝不参与中心路径选择或读取价格/事后结果；每项还必须登记 `settlement_contract`（冻结 claim ID、PIT 来源、同指标阈值与后果、观察窗口），adapter 不得代填或把区间取中点；正文用 `[central-path: id]` 绑定中心路径。核心 thesis 还必须给出有证据的最强替代解释、能区分两者的观察及可获得时间，并为每个观察写明其在主/反方下各自 `LOW` / `MEDIUM` / `HIGH` 的事前可能性和经济理由（两者必须不同；不得伪造精确概率或贝叶斯因子）、翻转条件，以及翻转后的估值/仓位/动作；正文分别用 `[thesis-test: id]`、`[threshold: id]`、`[probability: id]` 绑定。阈值必须说明历史波动/同行/模型敏感性/合同或监管依据、观测频率、窗口、滚动或连续期规则、季节性、会计口径和合理精度；没有依据的精确数值不得使用。合格概率必须标明 frequency/base_rate/analyst_subjective/scenario_weight，情景互斥完备且合计100%，每个probability_set必须给出晚于as_of的resolution_due；`base_rate` 的source_ids必须是base_rate_context中至少5个同机制ELIGIBLE `CASE:` ID。`analyst_subjective` 只有在合同允许且有可说明的锚点时使用宽区间；`scenario_weight` 是决策敏感性权重，不得冒充预测概率或校准成绩。
 12.1 **冻结前失败预演**: 在中心路径冻结前，先假定这份公司判断已经失败，列出最可能的失败机制。每个材料性失败机制必须转入最强替代解释、`mechanism_chain`、领先阈值或明确 `UNKNOWN`；不能只是再写一张风险清单，不能产生新的评分，也不能以假想失败替代公司证据。
 13. **固化洞见账本**: 先确认write_decisive_question_findings已覆盖全部入选question_id，再以合同包 decisive_question_plan、研究结论和 insight_research_brief 为起点。`decisive_question`必须逐字使用某个入选问题，`question_basis.question_id`必须引用对应ID；禁止绕开计划另造问题。调用 write_insight_ledger，仅保留1-3条能改变估值或动作的公司特异洞见；每条绑定 claim/evidence/decision，写出异常→机制链→最强替代解释→区分观察→估值与动作。必须用估值模型反推市场隐含经营路径，不能用“低PE/PB”代替逆向预期；必须说明潜在价值由谁控制、如何兑现、无催化剂时值多少；最强反方成立时动作如何改变。Ch0/Ch14用 `[insight: id]` 绑定。禁止仅因股价跌破某数无条件止损。
 14. **独立洞见上限评审**: 洞见账冻结后切换为反方审稿人，调用 write_judgment_review。必须区分“真正差异化洞见”和“只是合格的常规分析”，指出最脆弱跳跃、最需要的新证据，以及拿掉核心洞见后估值与动作是否改变。只能引用现有 insight/evidence/decision/model ID。裁决仅诊断，不得因自评为INSIGHTFUL而放宽任何发布门。

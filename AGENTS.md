@@ -29,6 +29,8 @@ Distinguish confidence in the evidence or inference from the probability of the 
 Non-disclosure and a non-decisive observed proxy are not conflicting or negative business evidence. They may lower attribution confidence, but must not mechanically lower management, owner cash, permanent-loss protection, or normal earnings without an observed economic carrier.
 Propagate an update only along the responsibility-matched economic mechanism it supports. Better funding does not by itself reduce customer, brand, product-lifecycle, inventory-absorption, or capital-return risk; a product option does not upgrade an unaffected core.
 Probability and confidence updates must keep the proposition and risk axis stable. Every material branch named in a scenario must map to its outcome treatment; a coarse scenario label or score must not override offsetting continuous facts.
+Every directional comparison must preserve the metric, responsibility boundary, base period, and comparison clock. Stability relative to an older anchor must not be narrated as stability in the latest period.
+Capacity, store, acquisition, product, or project completion settles an implementation milestone only. Management execution, owner cash, and capital return require the post-completion customer, utilization, unit-economics, and cash-absorption evidence relevant to the claim.
 
 ### Non-evasive uncertainty
 
