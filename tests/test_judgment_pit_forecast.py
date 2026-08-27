@@ -1134,6 +1134,111 @@ def test_forecast_learning_routes_direct_feedback_and_holds_method_changes_as_ca
     assert "attribution.allowed_outputs_must_exclude_cjo_report_and_investment" in rejected["findings"]
 
 
+def test_abstention_and_unknown_outcomes_never_authorize_coverage_learning() -> None:
+    universe, h1 = _universe_and_h1()
+    from tests.test_judgment_training_decision_contract import _contract
+
+    v2 = _forecast(
+        universe, h1, universe["members"][0]["company_id"],
+        decision_contract_ref={"contract_id": "DC:SYNTHETIC:FORECAST:V1", "contract_version": 1},
+    )
+    measurement_contract = _outcome_measurement_contract(v2, _contract(v2))
+    forecast = _v3_forecast(v2, measurement_contract)
+    observed_settlement = _v3_observed_settlement(forecast, measurement_contract)
+
+    abstained_forecast = deepcopy(forecast)
+    for dimension in abstained_forecast["dimensions"]:
+        dimension["evidence_status"] = "EVIDENCE_INELIGIBLE"
+        dimension["forecast_by_window"] = []
+    assert pit.validate_company_state_forecast(
+        abstained_forecast, universe_snapshot=universe, stage0_package=h1,
+    )["valid"]
+    abstained_settlement = deepcopy(observed_settlement)
+    for cell in abstained_settlement["dimension_settlements"]:
+        cell["status"] = "EVIDENCE_INELIGIBLE"
+        cell["realized_label"] = None
+        cell.pop("outcome_observation_ref")
+    settled = pit.settle_company_state_forecast(
+        abstained_forecast, abstained_settlement, measurement_contract=measurement_contract,
+    )
+    assert settled["valid"], settled["findings"]
+    assert settled["coverage"] == {
+        "eligible_forecast_cells": 0,
+        "observed_scored_cells": 0,
+        "selective_coverage": None,
+        "evidence_ineligible_cells": 18,
+    }
+    not_diagnostic = pit.validate_forecast_error_attribution(
+        _attribution(abstained_forecast, abstained_settlement, scope="NOT_DIAGNOSTIC"),
+        forecast=abstained_forecast, settlement=abstained_settlement,
+        measurement_contract=measurement_contract,
+    )
+    assert not_diagnostic["valid"], not_diagnostic["findings"]
+    assert not_diagnostic["learning_authorization"] == "NONE"
+
+    false_coverage = pit.validate_forecast_error_attribution(
+        _attribution(abstained_forecast, abstained_settlement, scope="COVERAGE"),
+        forecast=abstained_forecast, settlement=abstained_settlement,
+        measurement_contract=measurement_contract,
+    )
+    assert not false_coverage["valid"]
+    assert false_coverage["learning_authorization"] == "NONE"
+    assert "attribution.direct_scope_cell_status_not_eligible" in false_coverage["findings"]
+
+    unknown_settlement = deepcopy(observed_settlement)
+    for cell in unknown_settlement["dimension_settlements"]:
+        cell["status"] = "UNKNOWN"
+        cell["realized_label"] = None
+        cell.pop("outcome_observation_ref")
+    unknown = pit.validate_forecast_error_attribution(
+        _attribution(forecast, unknown_settlement, scope="NOT_DIAGNOSTIC"),
+        forecast=forecast, settlement=unknown_settlement, measurement_contract=measurement_contract,
+    )
+    assert unknown["valid"], unknown["findings"]
+    assert unknown["learning_authorization"] == "NONE"
+
+
+def test_local_abstention_does_not_block_observed_cell_calibration() -> None:
+    universe, h1 = _universe_and_h1()
+    from tests.test_judgment_training_decision_contract import _contract
+
+    v2 = _forecast(
+        universe, h1, universe["members"][0]["company_id"],
+        decision_contract_ref={"contract_id": "DC:SYNTHETIC:FORECAST:V1", "contract_version": 1},
+    )
+    measurement_contract = _outcome_measurement_contract(v2, _contract(v2))
+    forecast = _v3_forecast(v2, measurement_contract)
+    loss_dimension = next(
+        dimension for dimension in forecast["dimensions"] if dimension["dimension_id"] == "PERMANENT_LOSS_RISK"
+    )
+    loss_dimension["evidence_status"] = "EVIDENCE_INELIGIBLE"
+    loss_dimension["forecast_by_window"] = []
+    assert pit.validate_company_state_forecast(
+        forecast, universe_snapshot=universe, stage0_package=h1,
+    )["valid"]
+
+    settlement = _v3_observed_settlement(_v3_forecast(v2, measurement_contract), measurement_contract)
+    for cell in settlement["dimension_settlements"]:
+        if cell["dimension_id"] == "PERMANENT_LOSS_RISK":
+            cell["status"] = "EVIDENCE_INELIGIBLE"
+            cell["realized_label"] = None
+            cell.pop("outcome_observation_ref")
+    observations = _v3_observation_receipts(forecast, measurement_contract)
+    settled = pit.settle_company_state_forecast(
+        forecast, settlement, measurement_contract=measurement_contract, observation_receipts=observations,
+    )
+    assert settled["valid"], settled["findings"]
+    assert settled["coverage"]["eligible_forecast_cells"] == 15
+    assert settled["coverage"]["observed_scored_cells"] == 15
+
+    calibration = pit.validate_forecast_error_attribution(
+        _attribution(forecast, settlement), forecast=forecast, settlement=settlement,
+        measurement_contract=measurement_contract, observation_receipts=observations,
+    )
+    assert calibration["valid"], calibration["findings"]
+    assert calibration["learning_authorization"] == "FORECAST_POLICY_DIRECT"
+
+
 def test_company_and_time_holdout_and_shadow_episode_remain_separate_from_learning() -> None:
     universe, h1 = _universe_and_h1()
     forecast = _forecast(universe, h1, universe["members"][0]["company_id"])

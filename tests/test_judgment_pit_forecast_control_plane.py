@@ -207,6 +207,13 @@ def test_v3_forecast_requires_a_prior_measurement_contract_and_deterministic_obs
     first_entry["realized_label"] = None
     assert control.register_forecast_settlement(conn, settlement)["coverage"]["observed_scored_cells"] == 17
 
+    coverage = _attribution(v3, settlement, scope="COVERAGE")
+    recorded = control.register_forecast_error_attribution(conn, coverage)
+    assert recorded["learning_authorization"] == "FORECAST_POLICY_DIRECT"
+    assert [item["learning_scope"] for item in control.read_active_forecast_learning_policies(
+        conn, as_of="2023-01-01T00:00:00+00:00",
+    )] == ["COVERAGE"]
+
     drifted_settlement = _v3_observed_settlement(v3, measurement_contract)
     drifted_settlement["dimension_settlements"][0]["outcome_observation_ref"]["observation_id"] = "OBS:UNREGISTERED"
     with pytest.raises(control.ForecastControlError) as exc_info:

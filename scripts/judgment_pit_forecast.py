@@ -2565,7 +2565,7 @@ def validate_forecast_error_attribution(
         }[str(scope)]
         if locus != expected_locus:
             findings.append("attribution.direct_scope_must_match_failure_locus")
-        expected_status = "EVIDENCE_INELIGIBLE" if scope == "COVERAGE" else "OBSERVED"
+        expected_status = "MEASUREMENT_MISMATCH" if scope == "COVERAGE" else "OBSERVED"
         for key in refs:
             if _mapping(settlement_cells.get(key)).get("status") != expected_status:
                 findings.append("attribution.direct_scope_cell_status_not_eligible")
