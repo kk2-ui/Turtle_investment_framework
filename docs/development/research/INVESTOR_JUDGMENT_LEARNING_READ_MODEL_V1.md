@@ -65,3 +65,15 @@ The next useful milestone is not another broad completion count. It is one clean
 - `UNKNOWN`, `MIXED`, `NOT_DIAGNOSTIC` and `MEASUREMENT_MISMATCH` must remain in the denominator.
 
 Only after that accepted lesson changes a different company's pre-outcome research fields and is settled under the same definition should Turtle claim `L4` transfer evidence.
+
+## Research-agenda projection
+
+`scripts/investor_judgment_research_agenda.py` converts this status into a research-planning-only handoff. The explicit `INVESTOR_JUDGMENT_RESEARCH_AGENDA_V1_POLICY.json` classifies every source `next_evidence` item instead of assuming that every company follow-up transfers. The projection keeps the evidence classes separate:
+
+- Round 5 local lessons and Round 6/7 development utility become replication-required question or acquisition candidates;
+- issuer-specific follow-up remains in a company continuation agenda;
+- Round 8 remains a no-advantage caution while its valid measurement and experiment lessons may enter redesign-required candidates;
+- Round 9 remains quarantined and can inform only failure-mode design for a new method epoch;
+- unreviewed evidence is excluded from both company context and candidate rules.
+
+The generated `INVESTOR_JUDGMENT_RESEARCH_AGENDA_V1.json` authorizes only `RESEARCH_AGENDA_ONLY`. It cannot amend CJO, valuation, reports, buy bands or investment actions.

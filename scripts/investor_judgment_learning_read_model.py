@@ -331,7 +331,7 @@ def _project_entry(repo_root: Path, entry: dict[str, Any]) -> dict[str, Any]:
             and review.get("overall_conclusion") == "REAL_FEEDBACK_COMPLETED_NO_MATERIAL_METHOD_ADVANTAGE_PROVED"
         )
         company_status = "ACCEPTED_BOUNDED_FINDING" if review_accepted else "UNREVIEWED"
-        company_statement = str(completion.get("investor_summary") or "")
+        company_statement = " ".join(_list_text(completion.get("proved"))[:4])
         method_status = "NO_ADVANTAGE_PROVED" if review_accepted else "UNREVIEWED"
         transfer_status = "NOT_ESTABLISHED"
         method_statement = (
@@ -367,7 +367,7 @@ def _project_entry(repo_root: Path, entry: dict[str, Any]) -> dict[str, Any]:
             and review.get("method_feedback_status") == "REJECTED_MODEL_ERROR"
         )
         company_status = "ACCEPTED_OUTCOME_FINDING" if review_confirms_rejection else "UNREVIEWED"
-        company_statement = str(completion.get("investor_summary") or "")
+        company_statement = " ".join(_list_text(completion.get("proved")))
         method_status = "INVALIDATED" if review_confirms_rejection else "INVALIDATED_PENDING_EXTERNAL_REVIEW"
         transfer_status = "INVALIDATED"
         method_statement = str(invalidation.get("economic_impact") or "")

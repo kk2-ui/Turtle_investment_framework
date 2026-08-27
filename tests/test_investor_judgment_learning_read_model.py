@@ -72,6 +72,8 @@ def test_round8_no_advantage_is_valid_negative_evidence_not_method_success() -> 
     assert round8["method_utility"]["status"] == "NO_ADVANTAGE_PROVED"
     assert round8["transfer_evidence"]["status"] == "NOT_ESTABLISHED"
     assert "POSITIVE" not in round8["method_utility"]["status"]
+    assert "Enhanced method" not in round8["company_finding"]["statement"]
+    assert "parcel volume" in round8["company_finding"]["statement"]
 
 
 def test_round9_invalidation_cannot_become_method_or_transfer_evidence() -> None:
@@ -82,6 +84,8 @@ def test_round9_invalidation_cannot_become_method_or_transfer_evidence() -> None
     assert round9["method_utility"]["status"] == "INVALIDATED"
     assert round9["transfer_evidence"]["status"] == "INVALIDATED"
     assert "METHOD_FEEDBACK_COMPLETED" in round9["invalidated_evidence"]["prohibited_claims"]
+    assert "method comparison" not in round9["company_finding"]["statement"]
+    assert "Ordinary-share owner cash remains UNKNOWN" in round9["company_finding"]["statement"]
 
 
 def test_unknown_mixed_and_measurement_mismatch_stay_in_the_denominator() -> None:

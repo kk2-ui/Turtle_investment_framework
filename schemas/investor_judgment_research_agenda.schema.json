@@ -1,0 +1,138 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://turtle.local/schemas/investor_judgment_research_agenda.schema.json",
+  "title": "Investor Judgment Research Agenda",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "as_of",
+    "read_model_ref",
+    "policy_ref",
+    "readiness",
+    "next_training_contract",
+    "historical_company_context",
+    "candidate_research_rules",
+    "company_continuation_agenda",
+    "method_cautions",
+    "quarantined_evidence",
+    "unreviewed_evidence",
+    "preserved_denominator",
+    "rights",
+    "allowed_outputs",
+    "aggregation_policy"
+  ],
+  "properties": {
+    "schema_version": {"const": "investor-judgment-research-agenda.v1"},
+    "as_of": {"type": "string", "format": "date"},
+    "read_model_ref": {"type": "string"},
+    "policy_ref": {"type": "string"},
+    "readiness": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["state", "meaning"],
+      "properties": {
+        "state": {"const": "READY_FOR_L2_RESEARCH_DESIGN"},
+        "meaning": {"type": "string", "minLength": 1}
+      }
+    },
+    "next_training_contract": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["target_level", "objective", "required_evidence", "required_independence", "prohibited_shortcuts"],
+      "properties": {
+        "target_level": {"const": "L2"},
+        "objective": {"type": "string", "minLength": 1},
+        "required_evidence": {"type": "array", "minItems": 1, "items": {"type": "string"}},
+        "required_independence": {"type": "string", "minLength": 1},
+        "prohibited_shortcuts": {"type": "array", "minItems": 1, "items": {"type": "string"}}
+      }
+    },
+    "historical_company_context": {"type": "array", "items": {"$ref": "#/$defs/companyContext"}},
+    "candidate_research_rules": {"type": "array", "items": {"$ref": "#/$defs/candidateRule"}},
+    "company_continuation_agenda": {"type": "array", "items": {"$ref": "#/$defs/companyContinuation"}},
+    "method_cautions": {"type": "array", "items": {"$ref": "#/$defs/methodCaution"}},
+    "quarantined_evidence": {"type": "array", "items": {"$ref": "#/$defs/quarantine"}},
+    "unreviewed_evidence": {"type": "array", "items": {"type": "object"}},
+    "preserved_denominator": {"type": "object"},
+    "rights": {"$ref": "investor_judgment_learning_read_model.schema.json#/$defs/closedRights"},
+    "allowed_outputs": {"const": ["RESEARCH_AGENDA_ONLY"]},
+    "aggregation_policy": {"const": "NO_TOTAL_RANKING_NO_METHOD_WIN_RATE"}
+  },
+  "$defs": {
+    "companyContext": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["context_id", "round_id", "company_id", "cutoff_at", "statement", "use_permission", "prohibited_use", "source_artifacts"],
+      "properties": {
+        "context_id": {"type": "string"},
+        "round_id": {"type": "string"},
+        "company_id": {"type": "string"},
+        "cutoff_at": {"type": "string"},
+        "statement": {"type": "string"},
+        "use_permission": {"const": "HISTORICAL_COMPANY_CONTEXT_ONLY"},
+        "prohibited_use": {"type": "string"},
+        "source_artifacts": {"type": "object"}
+      }
+    },
+    "candidateRule": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["rule_candidate_id", "source_evidence_id", "source_round_id", "evidence_class", "status", "research_change", "allowed_use", "acceptance_needed", "prohibited_use"],
+      "properties": {
+        "rule_candidate_id": {"type": "string"},
+        "source_evidence_id": {"type": "string"},
+        "source_round_id": {"type": "string"},
+        "evidence_class": {"enum": ["LOCAL_COMPANY_JUDGMENT_CHANGE", "POSITIVE_DEVELOPMENT_METHOD_UTILITY", "VALID_NEGATIVE_METHOD_OR_MEASUREMENT_LESSON"]},
+        "status": {"enum": ["LOCAL_LESSON_REPLICATION_REQUIRED", "DEVELOPMENT_UTILITY_REPLICATION_REQUIRED", "NO_ADVANTAGE_REDESIGN_REQUIRED"]},
+        "research_change": {"type": "string", "minLength": 1},
+        "allowed_use": {"const": "NEXT_EPISODE_QUESTION_OR_ACQUISITION_DESIGN_ONLY"},
+        "acceptance_needed": {"type": "string", "minLength": 1},
+        "prohibited_use": {"type": "string", "minLength": 1}
+      }
+    },
+    "companyContinuation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["continuation_id", "source_evidence_id", "source_round_id", "company_id", "status", "research_change", "allowed_use", "prohibited_use"],
+      "properties": {
+        "continuation_id": {"type": "string"},
+        "source_evidence_id": {"type": "string"},
+        "source_round_id": {"type": "string"},
+        "company_id": {"type": "string"},
+        "status": {"const": "COMPANY_CONTINUATION_ONLY"},
+        "research_change": {"type": "string"},
+        "allowed_use": {"const": "SAME_ISSUER_FUTURE_CUTOFF_RESEARCH_ONLY"},
+        "prohibited_use": {"type": "string"}
+      }
+    },
+    "methodCaution": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["caution_id", "source_round_id", "status", "statement", "research_effect"],
+      "properties": {
+        "caution_id": {"type": "string"},
+        "source_round_id": {"type": "string"},
+        "status": {"const": "NO_ADVANTAGE_PROVED"},
+        "statement": {"type": "string"},
+        "research_effect": {"type": "string"}
+      }
+    },
+    "quarantine": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["quarantine_id", "source_round_id", "status", "root_causes", "prohibited_claims", "remediation", "remediation_actions", "allowed_use", "reentry_condition"],
+      "properties": {
+        "quarantine_id": {"type": "string"},
+        "source_round_id": {"type": "string"},
+        "status": {"type": "string", "pattern": "^INVALIDATED"},
+        "root_causes": {"type": "array", "items": {"type": "string"}},
+        "prohibited_claims": {"type": "array", "items": {"type": "string"}},
+        "remediation": {"type": "string"},
+        "remediation_actions": {"type": "array", "items": {"type": "string"}},
+        "allowed_use": {"const": "FAILURE_MODE_AND_NEW_EPOCH_DESIGN_ONLY"},
+        "reentry_condition": {"type": "string"}
+      }
+    }
+  }
+}

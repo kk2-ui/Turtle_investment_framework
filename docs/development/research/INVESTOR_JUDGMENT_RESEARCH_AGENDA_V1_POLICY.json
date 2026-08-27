@@ -1,0 +1,59 @@
+{
+  "schema_version": "investor-judgment-research-agenda-policy.v1",
+  "as_of": "2026-08-27",
+  "entries": [
+    {
+      "round_id": "ROUND5",
+      "dispositions": [
+        {"next_evidence_index": 1, "disposition": "CANDIDATE_RESEARCH_RULE"},
+        {"next_evidence_index": 2, "disposition": "CANDIDATE_RESEARCH_RULE"},
+        {"next_evidence_index": 3, "disposition": "CANDIDATE_RESEARCH_RULE"}
+      ],
+      "rationale": "The three changes are bounded research-design lessons; none transfers the issuer finding itself."
+    },
+    {
+      "round_id": "ROUND6",
+      "dispositions": [
+        {"next_evidence_index": 1, "disposition": "COMPANY_CONTINUATION_ONLY"},
+        {"next_evidence_index": 2, "disposition": "COMPANY_CONTINUATION_ONLY"},
+        {"next_evidence_index": 3, "disposition": "CANDIDATE_RESEARCH_RULE"}
+      ],
+      "rationale": "Huaxin transaction-scope follow-up stays local; only the unseen-company same-budget replication instruction is cross-company."
+    },
+    {
+      "round_id": "ROUND7",
+      "dispositions": [
+        {"next_evidence_index": 1, "disposition": "CANDIDATE_RESEARCH_RULE"},
+        {"next_evidence_index": 2, "disposition": "CANDIDATE_RESEARCH_RULE"},
+        {"next_evidence_index": 3, "disposition": "CANDIDATE_RESEARCH_RULE"},
+        {"next_evidence_index": 4, "disposition": "CANDIDATE_RESEARCH_RULE"}
+      ],
+      "rationale": "Each item is a bounded decomposition or replication requirement, not a transferred company conclusion."
+    },
+    {
+      "round_id": "ROUND8",
+      "dispositions": [
+        {"next_evidence_index": 1, "disposition": "CANDIDATE_RESEARCH_RULE"},
+        {"next_evidence_index": 2, "disposition": "CANDIDATE_RESEARCH_RULE"},
+        {"next_evidence_index": 3, "disposition": "CANDIDATE_RESEARCH_RULE"},
+        {"next_evidence_index": 4, "disposition": "CANDIDATE_RESEARCH_RULE"},
+        {"next_evidence_index": 5, "disposition": "CANDIDATE_RESEARCH_RULE"},
+        {"next_evidence_index": 6, "disposition": "CANDIDATE_RESEARCH_RULE"},
+        {"next_evidence_index": 7, "disposition": "CANDIDATE_RESEARCH_RULE"},
+        {"next_evidence_index": 8, "disposition": "CANDIDATE_RESEARCH_RULE"},
+        {"next_evidence_index": 9, "disposition": "CANDIDATE_RESEARCH_RULE"}
+      ],
+      "rationale": "A valid no-advantage result may redesign measurement and comparison, but cannot become positive method evidence."
+    },
+    {
+      "round_id": "ROUND9",
+      "dispositions": [
+        {"next_evidence_index": 1, "disposition": "INVALIDATION_REMEDIATION_ONLY"},
+        {"next_evidence_index": 2, "disposition": "INVALIDATION_REMEDIATION_ONLY"},
+        {"next_evidence_index": 3, "disposition": "INVALIDATION_REMEDIATION_ONLY"},
+        {"next_evidence_index": 4, "disposition": "INVALIDATION_REMEDIATION_ONLY"}
+      ],
+      "rationale": "The method comparison is invalid; its actions stay inside the quarantine and new-epoch remediation boundary."
+    }
+  ]
+}
