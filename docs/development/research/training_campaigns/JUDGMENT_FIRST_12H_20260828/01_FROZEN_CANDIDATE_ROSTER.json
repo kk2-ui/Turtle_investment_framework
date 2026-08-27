@@ -1,0 +1,99 @@
+{
+  "schema_version": "judgment-first-training-campaign-roster.v1",
+  "campaign_id": "JUDGMENT_FIRST_12H_20260828",
+  "frozen_before_any_outcome_access": true,
+  "selection_policy": "ARCHETYPE_ORDER_THEN_PREOUTCOME_SOURCE_CLOCK; NEVER_REORDER_BY_OUTCOME",
+  "execution_order": [
+    {
+      "rank": 1,
+      "company_id": "CN:002080",
+      "company_name": "中材科技",
+      "cutoff_at": "2019-05-01T00:00:00+08:00",
+      "outcome_period": "FY2019",
+      "outcome_due_at": "2020-05-01T00:00:00+08:00",
+      "archetype": "ASSET_HEAVY_CAPACITY_BUILD_REPLICATION",
+      "preoutcome_source": {
+        "announcement_id": "1205918611",
+        "title": "2018年年度报告",
+        "published_at": "2019-03-20",
+        "url": "https://static.cninfo.com.cn/finalpage/2019-03-20/1205918611.PDF"
+      },
+      "material_question": "FOUR_SEPARATOR_LINES_AND_INITIAL_CUSTOMER_ENTRY_TO_PHYSICAL_SALES_INVENTORY_SUBSIDIARY_ECONOMICS_AND_CASH_ABSORPTION",
+      "outcome_access": "SEALED",
+      "selection_status": "FROZEN_PRIMARY"
+    },
+    {
+      "rank": 2,
+      "company_id": "CN:603708",
+      "company_name": "家家悦",
+      "cutoff_at": "2018-05-01T00:00:00+08:00",
+      "outcome_period": "FY2018",
+      "outcome_due_at": "2019-05-01T00:00:00+08:00",
+      "archetype": "STORE_NETWORK_EXPANSION_DOMAIN_TRANSFER",
+      "preoutcome_source": {
+        "announcement_id": "1204597676",
+        "title": "2017年年度报告",
+        "published_at": "2018-04-10",
+        "url": "https://static.cninfo.com.cn/finalpage/2018-04-10/1204597676.PDF"
+      },
+      "material_question": "STORE_BUILD_TO_MEMBER_TRAFFIC_TICKET_UNIT_ECONOMICS_WORKING_CAPITAL_AND_CASH_ABSORPTION",
+      "outcome_access": "SEALED",
+      "selection_status": "FROZEN_PRIMARY"
+    },
+    {
+      "rank": 3,
+      "company_id": "CN:600570",
+      "company_name": "恒生电子",
+      "cutoff_at": "2018-05-01T00:00:00+08:00",
+      "outcome_period": "FY2018",
+      "outcome_due_at": "2019-05-01T00:00:00+08:00",
+      "archetype": "ASSET_LIGHT_RULE_SCOPE_NEGATIVE_CONTROL",
+      "preoutcome_source": {
+        "announcement_id": "1204520471",
+        "title": "2017年年度报告",
+        "published_at": "2018-03-27",
+        "url": "https://static.cninfo.com.cn/finalpage/2018-03-27/1204520471.PDF"
+      },
+      "material_question": "WHETHER_BUILD_ABSORPTION_RULE_HAS_NO_UTILITY_OR_CAUSES_MISDIRECTION_WHEN_THE_ECONOMIC_CARRIER_IS_CONTINUOUS_R_AND_D_DEPLOYMENT_AND_CUSTOMER_REPLACEMENT",
+      "outcome_access": "SEALED",
+      "selection_status": "FROZEN_REQUIRED_NEGATIVE_CONTROL"
+    },
+    {
+      "rank": 4,
+      "company_id": "CN:603939",
+      "company_name": "益丰药房",
+      "cutoff_at": "2018-05-01T00:00:00+08:00",
+      "outcome_period": "FY2018",
+      "outcome_due_at": "2019-05-01T00:00:00+08:00",
+      "archetype": "STORE_NETWORK_REVISED_RULE_PROSPECTIVE_REPLICATION",
+      "preoutcome_source": {
+        "announcement_id": "1204514135",
+        "title": "2017年年度报告",
+        "published_at": "2018-03-26",
+        "url": "https://static.cninfo.com.cn/finalpage/2018-03-26/1204514135.PDF"
+      },
+      "material_question": "STORE_EFFICIENCY_AND_CASH_ABSORPTION_AFTER_ORGANIC_AND_ACQUIRED_NETWORK_EXPANSION",
+      "outcome_access": "SEALED",
+      "selection_status": "FROZEN_REVISED_RULE_REPLICATION_OR_SOURCE_CLOCK_RESERVE"
+    }
+  ],
+  "allowed_skip_reasons": [
+    "NO_UNIQUE_OFFICIAL_FULL_OUTCOME_REPORT_BY_FROZEN_DUE_AT",
+    "PREOUTCOME_CONTAMINATION_DISCOVERED_AFTER_FREEZE",
+    "ISSUER_OR_RESPONSIBILITY_UNIT_CANNOT_BE_IDENTIFIED"
+  ],
+  "prohibited_skip_reasons": [
+    "OUTCOME_DIRECTION",
+    "OUTCOME_QUALITY",
+    "RULE_NOT_SUPPORTED",
+    "MEASUREMENT_MISMATCH_LOCAL_TO_ONE_CLAIM"
+  ],
+  "permissions": {
+    "comparative": "NOT_GRANTED",
+    "cjo": "NOT_GRANTED",
+    "formal_valuation": "NOT_GRANTED",
+    "buyband": "NOT_GRANTED",
+    "report": "NOT_GRANTED",
+    "investment_action": "NOT_GRANTED"
+  }
+}
