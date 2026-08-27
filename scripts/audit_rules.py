@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """audit_rules.py — V12：从 Dayu 移植的完整审计系统。
 
-程序化审计（P1-P3）：结构比对、最短长度、证据小节 — 来自 Dayu audit_formatting.py。
+程序化审计：结构比对与空壳正文；证据支持由 claim-evidence 合同负责。
 审计决策逻辑：verdict、repair strategy — 来自 Dayu audit_rules.py。
 V13 增强：P2 使用不受 Markdown 排版影响的实质深度契约。
 
@@ -146,9 +146,6 @@ except ModuleNotFoundError:
         analyze_chapter_depth,
         depth_failure_description,
     )
-_CONTENT_MIN_CHARS = 10  # Dayu 原始阈值
-
-
 # ---- 兼容 Turtle models ----
 class AuditVerdict(str, Enum):
     PASS = "pass"
@@ -172,14 +169,14 @@ class AuditResult:
     repair_plan: str = ""
 
 
-# ---- Dayu 程序化审计（P1-P3）----
+# ---- Dayu 程序化审计（结构 + 非空壳）----
 
 def _run_programmatic_audits(
     content: str,
     skeleton: str = "",
     chapter_index: int = 0,
 ) -> list[Violation]:
-    """执行 Dayu P1-P3 程序化审计。"""
+    """执行结构与非空壳审计，不用格式计数替代判断质量。"""
     violations: list[Violation] = []
 
     # P1: 结构比对 — 检查内容是否按骨架标题顺序覆盖
@@ -192,28 +189,14 @@ def _run_programmatic_audits(
                 description="章节结构与骨架不匹配：缺少必须的子节标题或顺序错乱",
             ))
 
-    # P2: 实质深度。排版换行不影响结果，也不再奖励逐句断行。
+    # P2 only rejects an empty/template shell.  Numeric, analysis, derivation,
+    # heading and citation counts are diagnostics, not publication rewards.
     depth = analyze_chapter_depth(content, chapter_index)
     if depth["status"] == "FAIL":
         violations.append(Violation(
             rule_code=AuditRuleCode.P2.value,
             severity="error",
-            description="实质深度不足: " + depth_failure_description(depth),
-        ))
-    elif len(content.strip()) < _CONTENT_MIN_CHARS:
-        violations.append(Violation(
-            rule_code=AuditRuleCode.P2.value,
-            severity="error",
-            description=f"内容过短: {len(content.strip())} 字符 < 最低 {_CONTENT_MIN_CHARS} 字符",
-        ))
-
-    # P3: 证据小节存在
-    from scripts.audit_formatting import _has_evidence_section
-    if not _has_evidence_section(content):
-        violations.append(Violation(
-            rule_code=AuditRuleCode.P3.value,
-            severity="error",
-            description='缺少 "### 证据与出处" 小节',
+            description="章节正文为空壳: " + depth_failure_description(depth),
         ))
 
     return violations
@@ -357,9 +340,9 @@ def run_audit(
     """运行完整程序化审计，返回 AuditResult。
 
     规则优先级：
-    1. P1/P2/P3（结构深度）→ error 级 → REGENERATE
+    1. P1/P2（结构与空壳）→ error 级 → REGENERATE
     2. S1（占位符）→ error 级 → PATCH（≤3）或 REGENERATE（>3）
-    3. E1（证据密度）→ warn 级 → PATCH
+    3. 数量型证据密度仅作 diagnostics，不参与发布裁决
     4. C2（禁止内容）→ error 级 → PATCH/REGENERATE
     5. S2（数值一致）→ warn 级 → PATCH
 
@@ -367,14 +350,11 @@ def run_audit(
     """
     all_violations: list[Violation] = []
 
-    # Dayu P1-P3 程序化审计
+    # 结构与空壳审计
     all_violations.extend(_run_programmatic_audits(content, skeleton, chapter_index))
 
     # S1 占位符
     all_violations.extend(_check_placeholders(content))
-
-    # E1 证据密度
-    all_violations.extend(_check_evidence_density(content))
 
     # C2 禁止内容
     if must_not_cover:
@@ -409,9 +389,8 @@ def run_audit(
         plan_parts = []
         if has_structural:
             plan_parts.append("⚠️ 结构性违规 → 必须整章重写（REGENERATE）：")
-            plan_parts.append("  - 补足实质正文、数字声明、分析推导、证据锚点与小节覆盖；禁止用逐句断行凑深度")
-            plan_parts.append("  - 需包含完整的子节标题（与模板骨架对齐）")
-            plan_parts.append('  - 需包含 "### 证据与出处" 小节')
+            plan_parts.append("  - 补足一个实质正文判断；禁止为过门补数字、公式、标题或引用")
+            plan_parts.append("  - 若任务提供了明确骨架，只补缺失的章节身份结构")
         if errors:
             plan_parts.append(f"  - {len(errors)} 个 error 级违规需修复")
         if warns:

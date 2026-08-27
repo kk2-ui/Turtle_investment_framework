@@ -3624,7 +3624,7 @@ Zone B 提取结果写入 audit.json / governance.json。写作 Agent 在相关�
             )
             if judgment_record.get("recorded"):
                 result["judgment_research_meta"] = judgment_record
-            # 来源深化按章节身份提高证据覆盖，不提高字符或分析单元配额。
+            # 来源深化只执行真实取证计划；章节计数不随资料量升级。
             if (
                 tc.name == "write_chapter"
                 and ok
@@ -3641,15 +3641,14 @@ Zone B 提取结果写入 audit.json / governance.json。写作 Agent 在相关�
                 _premium_depth = analyze_chapter_depth(
                     _premium_content if isinstance(_premium_content, str) else "",
                     _premium_idx,
-                    data_rich=True,
                     quality_profile="source_deepening",
                 )
                 value["depth"] = _premium_depth
                 if _premium_depth.get("status") != "PASS":
                     _premium_error = (
-                        "来源深化质量门未通过："
+                        "章节正文为空壳："
                         + depth_failure_description(_premium_depth)
-                        + "。请补真实证据或缺失研究闭环；禁止重复和空泛补字。"
+                        + "。请写出一个实质判断；禁止为过门补数字、公式或引用。"
                     )
                     value["passed"] = False
                     value["short_content"] = True

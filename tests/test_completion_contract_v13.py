@@ -14,8 +14,12 @@ def test_completion_blocks_missing_and_short_chapters(tmp_path: Path) -> None:
     out = tmp_path / "stock"
     chapters = out / "chapters"
     for idx in range(15):
-        body = "\n".join(["detail"] * (130 if idx == 11 else 20))
-        _write(chapters / f"_ch{idx:02d}.md", f"## Ch{idx} 标题\n\n### 详细情况\n{body}\n")
+        if idx == 2:
+            body = "## Ch2 标题\n\n### 证据与出处\n\n[source: source_receipt.json]\n"
+        else:
+            detail = "\n".join(["detail"] * (130 if idx == 11 else 20))
+            body = f"## Ch{idx} 标题\n\n### 详细情况\n{detail}\n"
+        _write(chapters / f"_ch{idx:02d}.md", body)
     ledger = {
         "chapters": {
             str(idx): {"final": {"passed": True, "verdict": "pass", "error_count": 0, "warn_count": 0, "violations": []}}
@@ -25,7 +29,10 @@ def test_completion_blocks_missing_and_short_chapters(tmp_path: Path) -> None:
     (out / "chapter_audit_ledger.json").write_text(json.dumps(ledger), encoding="utf-8")
     result = evaluate_report_completion("draft", str(out))
     assert result.status == "BLOCKED"
-    assert any("short" in item for item in result.blocking_findings)
+    assert any(
+        "Ch2: short_depth:substantive_chars:0<10" in item
+        for item in result.blocking_findings
+    )
 
 
 def test_completion_blocks_missing_gg_derivation(tmp_path: Path) -> None:

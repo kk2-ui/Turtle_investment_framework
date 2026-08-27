@@ -1410,9 +1410,10 @@ def test_v13_chapter_depth_identity_has_one_source_of_truth() -> None:
     from scripts.chapter_depth import QUANTITATIVE_CHAPTER_INDEXES, depth_requirements
 
     assert QUANTITATIVE_CHAPTER_INDEXES == {10, 11, 12, 13, 14}
-    assert depth_requirements(9)["min_substantive_chars"] == 800
-    assert depth_requirements(10)["min_substantive_chars"] == 1000
-    assert depth_requirements(14)["min_derivation_lines"] == 6
+    assert depth_requirements(9)["min_substantive_chars"] == 10
+    assert depth_requirements(10)["min_substantive_chars"] == 10
+    assert depth_requirements(14)["min_derivation_lines"] == 0
+    assert depth_requirements(10, data_rich=True) == depth_requirements(10)
 
 
 def test_av_method_accepts_summary_before_full_incremental_formula() -> None:

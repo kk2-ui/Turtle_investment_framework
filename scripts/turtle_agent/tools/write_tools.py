@@ -1407,7 +1407,7 @@ def _enforce_depth_contract(
     chapter_index: int,
     output_dir: str,
 ) -> dict[str, Any]:
-    """Overlay the output-specific semantic-depth profile on the base audit."""
+    """Reject an empty body without turning content counts into quality gates."""
     depth = analyze_chapter_depth(
         content,
         chapter_index,
@@ -1416,7 +1416,7 @@ def _enforce_depth_contract(
     if depth["status"] == "PASS":
         return depth
     if not any(item.get("rule") == "P2_RICH_DEPTH" for item in audit.get("violations", [])):
-        description = "实质深度不足：" + depth_failure_description(depth)
+        description = "章节正文为空壳：" + depth_failure_description(depth)
         audit.setdefault("violations", []).append({
             "rule": "P2_RICH_DEPTH",
             "severity": "error",
@@ -1425,7 +1425,7 @@ def _enforce_depth_contract(
         audit["error_count"] = int(audit.get("error_count", 0)) + 1
         audit["passed"] = False
         audit["verdict"] = "fail"
-        repair_line = "补足当前数据档的语义深度：" + depth_failure_description(depth)
+        repair_line = "写出至少一个实质判断：" + depth_failure_description(depth)
         repair = audit.get("repair_plan")
         if isinstance(repair, list):
             repair.append(repair_line)
@@ -1471,7 +1471,7 @@ def write_chapter(
             with open(path, encoding="utf-8") as _f:
                 _existing = _f.read()
             canonical_heading = rf"^##\s+Ch{int(chapter_index)}\b"
-            if len(_existing) >= 800 and re.search(canonical_heading, _existing, re.MULTILINE):
+            if re.search(canonical_heading, _existing, re.MULTILINE):
                 _quick_audit = _audit_content(_existing, chapter_index=chapter_index)
                 _existing_depth = _enforce_depth_contract(
                     _quick_audit, _existing, chapter_index, output_dir
@@ -1531,7 +1531,7 @@ def write_chapter(
         except OSError:
             pass
 
-    # 长度守卫：追踪本次为第几次尝试（仅用于生成反馈信息，不阻止写盘）
+    # 追踪写入尝试；只用于空壳反馈，不作为篇幅奖励。
     _write_attempt_counts[path] = _write_attempt_counts.get(path, 0) + 1
     _attempt_num = _write_attempt_counts[path]
 
@@ -1545,9 +1545,9 @@ def write_chapter(
         )
         if _depth["status"] == "FAIL":
             _short_feedback = (
-                f"实质深度不足（第 {_attempt_num} 次）：{depth_failure_description(_depth)}。"
-                "文件仅作为草稿写入，正式报告仍被阻断；请补充可核查数字、"
-                "多年趋势、因果判断和公式/情景推导，不要通过逐句换行凑长度。"
+                f"章节正文为空壳（第 {_attempt_num} 次）：{depth_failure_description(_depth)}。"
+                "文件仅作为草稿写入；请写出至少一个实质经营或投资判断，"
+                "不要为通过检查补数字、公式、标题或重复引用。"
             )
 
     # 始终写盘：即使过短也先落盘，确保章节文件永不缺失（assemble 不校验完整性）
@@ -1602,7 +1602,7 @@ def write_chapter(
             "章节含未绑定或错误绑定的canonical关键值："
             + "; ".join(binding_validation.get("invalid_findings") or [])
         )
-    # 过短反馈：文件已落盘，但提示 Agent 重写加长（short_content 不计入死循环真实写入数）
+    # 空壳反馈：文件已落盘，但正式报告仍等待一个实质正文判断。
     if _short_feedback is not None:
         _ret["short_content"] = True
         _ret["passed"] = False

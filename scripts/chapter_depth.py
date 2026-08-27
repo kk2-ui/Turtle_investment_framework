@@ -1,8 +1,10 @@
-"""Semantic chapter-depth contract for v13 reports.
+"""Minimal non-empty-shell contract for v13 report chapters.
 
-The old contract counted non-empty Markdown lines.  That encouraged models to
-put every sentence on its own line and made paragraph cleanup look like a loss
-of depth.  This module measures content that survives formatting changes.
+Judgment quality is enforced by the claim, evidence, model and reader
+contracts.  This module only rejects an empty body and keeps a small
+traceability diagnostic for numeric claims.  It deliberately does not
+reward length, number density, formula count, headings or available file
+volume.
 """
 
 from __future__ import annotations
@@ -36,33 +38,12 @@ _DERIVATION_RE = re.compile(
     r"敏感|情景|假设|口径|折现|安全边际|相比|相较|因此|所以"
 )
 
-# A chapter should cite roughly one evidence anchor for every four numeric
-# claim units.  Fixed floors alone let dense quantitative/risk chapters pass
-# with only three citations, which made reports formally complete but less
-# traceable after context compaction.
+# The diagnostic highlights roughly one evidence anchor for every four numeric
+# claim units a chapter chooses to make.  There is no fixed citation quota:
+# a chapter with no numeric claim is judged by the claim/evidence contracts,
+# not forced to manufacture numbers or citations here.
 MIN_EVIDENCE_PER_NUMERIC_CLAIM = 0.25
-_EVIDENCE_ANCHOR_FLOORS = {
-    0: 8,
-    4: 12,
-    8: 12,
-    9: 12,
-    11: 18,
-    12: 18,
-    13: 20,
-    14: 15,
-}
-
-# Source-deepening raises traceability where it matters, but deliberately does
-# not impose prose length or analysis-unit quotas.  The V3 structured gates
-# judge claim support, competing explanations and model validity directly.
-SOURCE_DEEPENING_FLOORS: dict[int, dict[str, int]] = {
-    8: {"min_evidence_anchors": 20},
-    9: {"min_evidence_anchors": 16},
-    11: {"min_evidence_anchors": 20},
-    12: {"min_evidence_anchors": 20},
-    13: {"min_evidence_anchors": 22},
-    14: {"min_evidence_anchors": 18},
-}
+MIN_SUBSTANTIVE_BODY_CHARS = 10
 
 
 def detect_data_richness(output_dir: str) -> bool:
@@ -93,52 +74,41 @@ def depth_requirements(
     data_rich: bool = False,
     quality_profile: str = "standard",
 ) -> dict[str, int]:
-    """Return the single canonical depth requirement for a chapter identity."""
-    if chapter_index in QUANTITATIVE_CHAPTER_INDEXES:
-        requirements = {
-            "min_substantive_chars": 1600 if data_rich else 1000,
-            "min_numeric_claim_lines": 12 if data_rich else 8,
-            "min_analysis_lines": 10 if data_rich else 6,
-            "min_derivation_lines": 10 if data_rich else 6,
-            "min_evidence_anchors": _EVIDENCE_ANCHOR_FLOORS.get(chapter_index, 10),
-            "min_section_headings": 4 if data_rich else 3,
-        }
-    else:
-        requirements = {
-            "min_substantive_chars": 1200 if data_rich else 800,
-            "min_numeric_claim_lines": 8 if data_rich else 4,
-            "min_analysis_lines": 8 if data_rich else 4,
-            "min_derivation_lines": 0,
-            "min_evidence_anchors": _EVIDENCE_ANCHOR_FLOORS.get(chapter_index, 6),
-            "min_section_headings": 4 if data_rich else 3,
-        }
-    if quality_profile == "source_deepening" and data_rich:
-        for key, value in SOURCE_DEEPENING_FLOORS.get(chapter_index, {}).items():
-            requirements[key] = max(requirements.get(key, 0), value)
-    return requirements
+    """Return the minimal shell requirement, independent of data abundance.
+
+    ``data_rich`` and ``quality_profile`` remain inputs because callers use
+    them to describe the run.  They must not make the writing quota larger:
+    more available files are an opportunity to improve a material judgment,
+    not a reason to pad every chapter.
+    """
+    del chapter_index, data_rich, quality_profile
+    return {
+        "min_substantive_chars": MIN_SUBSTANTIVE_BODY_CHARS,
+        "min_numeric_claim_lines": 0,
+        "min_analysis_lines": 0,
+        "min_derivation_lines": 0,
+        "min_evidence_anchors": 0,
+        "min_section_headings": 0,
+    }
 
 
 def semantic_depth_prompt(*, data_rich: bool = False) -> str:
-    """Compact generation contract shared with the DeepSeek system prompt."""
-    qualitative = depth_requirements(1, data_rich=data_rich)
-    quantitative = depth_requirements(10, data_rich=data_rich)
+    """Compact anti-padding contract shared with the generation prompt."""
     profile_note = (
-        "本标的数据丰富（至少4类Zone B且4年以上年报），启用高信息密度档；"
-        "不得贴着最低门槛写短章。"
+        "本标的可用资料较多；只使用会改变本章判断的材料，不因文件更多扩大篇幅。"
         if data_rich else
         "本标的使用标准数据档；数据缺失必须明示，不得编造。"
     )
-    target_note = "字符数只设防空壳下限，不设目标区间；以关键问题闭环为止，禁止为过门重复结论、拆句或堆阈值。"
-    return f"""## 章节语义深度契约（首稿即满足）
+    return f"""## 章节非空壳契约
 
-深度按语义内容计算，与 Markdown 行数无关；禁止逐句换行、重复结论或堆模板话术凑长度。
+本契约只防止空章和模板壳，不评价研究深度。判断质量由 claim、证据、模型和读者合同负责。
 {profile_note}
 
-- Ch0-Ch9 定性章：实质正文≥{qualitative['min_substantive_chars']}字符；数字声明≥{qualitative['min_numeric_claim_lines']}条；分析/因果判断≥{qualitative['min_analysis_lines']}条；基础证据锚点≥{qualitative['min_evidence_anchors']}个；H2-H4 小节标题≥{qualitative['min_section_headings']}个。
-- Ch10-Ch14 定量章：实质正文≥{quantitative['min_substantive_chars']}字符；数字声明≥{quantitative['min_numeric_claim_lines']}条；分析/因果判断≥{quantitative['min_analysis_lines']}条；公式/情景/推导≥{quantitative['min_derivation_lines']}条；基础证据锚点≥{quantitative['min_evidence_anchors']}个；H2-H4 小节标题≥{quantitative['min_section_headings']}个。
-- 证据锚点最终要求动态取 `max(章节基础值, ceil(含单位数字声明行×{MIN_EVIDENCE_PER_NUMERIC_CLAIM:.0%}))`，即约每4行金额/比例/倍数声明至少1个真实来源。普通年份、章节编号和同一行内的来源注释不抬高分母，避免补引用时门槛追涨。Ch4/Ch9 风险变化章和 Ch11-Ch14 裁决章有更高基础值；来源可在段末合并，但不得因同一文件已引用过而省略新数字的来源。
-- {target_note} 数据不足时明确缺口，绝不编造。
-- write_chapter 返回 `depth.metrics/failures`。若首稿未通过，只补失败维度及必要上下文，不要整章推倒重写；第二次仍未通过就转下一章，交给 fresh-context repair。
+- 写出本章范围内的当前判断，并优先说明经济机制、最强反方、经营情景、翻转事实和投资含义；纯标题或明确占位符不能通过，模板话术不能代替判断。
+- 不设字数、数字、公式、标题数量或基础引用配额。资料多不要求写得更长，资料少也不能用 `UNKNOWN` 取消仍可成立的公司判断。
+- 金额、比例、倍数等材料主张继续服从已有 claim-evidence 合同；这里的计数只用于诊断，不改变完成状态。没有数字时不得为过门补数字或引用。
+- 以三个最重要判断闭环为止。禁止重复结论、拆句、堆阈值、堆引用或增加小节来通过检查。
+- write_chapter 若返回非空壳失败，只补一个缺失的实质判断或原因，不扩写无关内容。
 """
 
 
@@ -186,18 +156,15 @@ def analyze_chapter_depth(
         # Historical JSON field names retain ``_lines`` for compatibility, but
         # the counting unit is now a semantic sentence/table row, not a newline.
         "numeric_claim_lines": sum(bool(_NUMBER_RE.search(unit)) for unit in units),
-        "evidence_claim_lines": sum(
-            bool(_EVIDENCE_CLAIM_RE.search(line)) for line in content.splitlines()
-        ),
+        "evidence_claim_lines": sum(bool(_EVIDENCE_CLAIM_RE.search(unit)) for unit in units),
         "analysis_lines": sum(bool(_ANALYSIS_RE.search(unit)) for unit in units),
         "derivation_lines": sum(bool(_DERIVATION_RE.search(unit)) for unit in units),
         "evidence_anchors": len(_SOURCE_RE.findall(content)),
         "section_headings": len(re.findall(r"^#{2,6}\s+", content, re.MULTILINE)),
         "nonempty_lines": sum(bool(line.strip()) for line in content.splitlines()),
     }
-    requirements["min_evidence_anchors"] = max(
-        requirements["min_evidence_anchors"],
-        math.ceil(metrics["evidence_claim_lines"] * MIN_EVIDENCE_PER_NUMERIC_CLAIM),
+    recommended_evidence_anchors = math.ceil(
+        metrics["evidence_claim_lines"] * MIN_EVIDENCE_PER_NUMERIC_CLAIM
     )
     mapping = {
         "substantive_chars": "min_substantive_chars",
@@ -222,6 +189,12 @@ def analyze_chapter_depth(
         ),
         "metrics": metrics,
         "requirements": requirements,
+        "diagnostics": {
+            "recommended_evidence_anchors_for_numeric_claims": recommended_evidence_anchors,
+            "numeric_evidence_anchor_shortfall": max(
+                0, recommended_evidence_anchors - metrics["evidence_anchors"]
+            ),
+        },
         "failures": failures,
     }
 
