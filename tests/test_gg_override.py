@@ -8,7 +8,12 @@ SCRIPTS_DIR = ROOT / "scripts"
 if str(SCRIPTS_DIR) not in sys.path:
     sys.path.insert(0, str(SCRIPTS_DIR))
 
-from compute_bundle import compute_factor3, load_gg_override, _normalized_aa_value  # noqa: E402
+from compute_bundle import (  # noqa: E402
+    _normalized_aa_value,
+    compute_factor3,
+    load_gg_override,
+    load_zone_j_params,
+)
 
 
 def _sample_fin_data():
@@ -168,6 +173,62 @@ def test_fcfe_exposes_raw_and_distributed_return_identities():
     assert fcfe["base_semantics"] == "distributed_fcfe_owner_return_pct"
     assert fcfe["fcfe_yield_pct"] == 10.0
     assert fcfe["distributed_fcfe_yield_pct"] == fcfe["base"] == 5.0
+
+
+def test_missing_data_discount_does_not_reduce_gg_point_estimate():
+    fin_data = _sample_fin_data()
+    for row in fin_data["cashflow"]:
+        row["cash_paid_employees"] = 10.0
+    params = _sample_params()
+    params["_g_coef"] = 1.0
+
+    result = compute_factor3(fin_data, _sample_market(), params)
+
+    assert result["data_discount_used"] == 0.0
+    assert result["gg_discounted"] == result["gg"]
+
+
+def test_observed_economic_discount_still_reduces_gg_point_estimate():
+    fin_data = _sample_fin_data()
+    for row in fin_data["cashflow"]:
+        row["cash_paid_employees"] = 10.0
+    params = _sample_params()
+    params["_g_coef"] = 1.0
+    params["total_discount_pct"] = {
+        "value": 8,
+        "rationale": "observed related-party cash extraction",
+        "evidence_ref": ["audit.json:related_party_cash"],
+        "confidence": "high",
+    }
+
+    result = compute_factor3(fin_data, _sample_market(), params)
+
+    assert result["data_discount_used"] == 8.0
+    assert result["gg_discounted"] == {
+        key: round(value * 0.92, 1) for key, value in result["gg"].items()
+    }
+
+
+def test_zone_j_loader_ignores_legacy_missing_disclosure_discount(tmp_path):
+    (tmp_path / "data_discount.json").write_text(
+        json.dumps({"total_discount_pct": 15}), encoding="utf-8"
+    )
+
+    assert "total_discount_pct" not in load_zone_j_params(str(tmp_path))
+
+
+def test_zone_j_loader_accepts_marked_observed_economic_discount(tmp_path):
+    (tmp_path / "data_discount.json").write_text(
+        json.dumps(
+            {
+                "discount_basis": "observed_economic_carrier_v1",
+                "total_discount_pct": 8,
+            }
+        ),
+        encoding="utf-8",
+    )
+
+    assert load_zone_j_params(str(tmp_path))["total_discount_pct"] == 8
 
 
 def test_compute_factor3_prefers_pdf_override_for_direct_labor():

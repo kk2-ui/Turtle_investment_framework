@@ -27,6 +27,7 @@ from typing import Any, Optional
 
 OUTPUT_BASE = os.path.join(os.path.dirname(os.path.dirname(__file__)), "output")
 SHARED_QUALITATIVE_BASE = Path(__file__).resolve().parent.parent / "shared" / "qualitative"
+DATA_DISCOUNT_BASIS = "observed_economic_carrier_v1"
 
 AGENTS = {
     "moat": {
@@ -52,7 +53,7 @@ AGENTS = {
     },
     "data_quality": {
         "output_file": "data_discount.json",
-        "description": "李录视角：数据质量折价 + 10年确定性",
+        "description": "李录视角：信息质量、经济折价 + 10年确定性",
         "role_name": "lilu",
         "allowed_inputs": ["financial_trends.json", "audit.json", "qualitative_summary.json"],
         "prompt_template_file": "zone_j/zone_j_lilu.md",
@@ -140,11 +141,24 @@ def build_context(agent_name: str, stock_dir: str, ts_code: str, qualitative_sum
                 context[fname] = {"_missing": True}
                 missing.append(fname)
 
-    # V7.2: Add degradation hint when inputs are missing
+    # Missing inputs constrain the affected claim; they do not have a fixed
+    # economic sign.  In particular, data_quality must not convert absence of
+    # disclosure into an automatic valuation haircut.
     if missing:
+        if agent_name == "data_quality":
+            hint = (
+                f"以下输入文件不可用: {missing}。降低相关主张置信度并扩大估值区间；"
+                "不要仅因缺失降低估值中枢。若没有已观察、责任匹配的经济损失载体，"
+                "total_discount_pct.value=0；非零折价必须引用该经济载体及其传导。"
+            )
+        else:
+            hint = (
+                f"以下输入文件不可用: {missing}。使用有界估计并标注confidence='low'。"
+                "g_base默认2.0%, b_penalty默认0.25, mcapex_split_pct默认0.80。"
+            )
         context["_degraded"] = {
             "missing_inputs": missing,
-            "hint": f"以下输入文件不可用: {missing}。使用你的行业知识做保守估计。所有估计值标注confidence='low'。g_base默认2.0%, b_penalty默认0.25, mcapex_split_pct默认0.80, total_discount_pct默认15%。"
+            "hint": hint,
         }
 
     return context

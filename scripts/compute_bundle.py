@@ -142,6 +142,16 @@ def load_zone_j_params(zone_j_dir: str) -> dict:
         except Exception:
             continue
 
+        # Pre-judgment-first files encoded missing disclosure itself as a
+        # negative valuation adjustment.  They remain readable artifacts, but
+        # are not economic-discount inputs until regenerated under the current
+        # observed-carrier semantics.
+        if (
+            fname == "data_discount.json"
+            and data.get("discount_basis") != "observed_economic_carrier_v1"
+        ):
+            continue
+
         for json_key, override_key in mappings:
             val = data.get(json_key)
             if val is None:
@@ -2092,10 +2102,13 @@ def compute_factor3(fin_data: dict, market: dict, params: dict, factor2_M: float
             result["gg_unavailable"] = True
             result["gg_unavailable_reason"] = "AA₃y数据不足（<3年），无法计算GG"
 
-        # V12.15: 使用 Zone J 的总折价率 = 数据折价 + 治理折价
-        disc_pct = params.get("total_discount_pct", 15)
+        # Zone J data discount represents an observed economic loss carrier,
+        # not missing-disclosure pessimism.  Missing assessment therefore
+        # leaves the point estimate unchanged; uncertainty belongs in the
+        # confidence/range layer.
+        disc_pct = params.get("total_discount_pct", 0)
         if isinstance(disc_pct, dict):
-            disc_pct = disc_pct.get("value", 15)
+            disc_pct = disc_pct.get("value", 0)
         disc_pct = float(disc_pct)
 
         # V12.15: 叠加治理折价（来自 governance_tension.json）

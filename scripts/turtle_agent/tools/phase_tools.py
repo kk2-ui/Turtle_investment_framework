@@ -803,7 +803,7 @@ def extract_zone_j(
         return {"ok": False, "error": "需要 llm_client 参数"}
 
     try:
-        from zone_j_agent import AGENTS
+        from zone_j_agent import AGENTS, DATA_DISCOUNT_BASIS, build_context, build_prompt
     except ImportError as exc:
         return {"ok": False, "error": f"无法导入 zone_j_agent: {exc}"}
 
@@ -834,7 +834,12 @@ def extract_zone_j(
                 with open(out_path, encoding="utf-8") as f:
                     existing = json.load(f)
                 expected = REQUIRED_CHECK.get(agent_name, [])
-                if expected and not any(k in existing for k in expected):
+                if agent_name == "data_quality" and existing.get("discount_basis") != DATA_DISCOUNT_BASIS:
+                    print(
+                        "  ♻️  Zone J/data_quality 现有文件使用旧折价语义，按当前经济载体规则重新生成",
+                        file=sys.stderr,
+                    )
+                elif expected and not any(k in existing for k in expected):
                     print(f"  🗑️  Zone J/{agent_name} 现有文件为垃圾数据 (keys={list(existing.keys())[:5]})，重新生成", file=sys.stderr)
                     os.remove(out_path)
                 else:
@@ -842,72 +847,16 @@ def extract_zone_j(
             except Exception:
                 pass
 
-        # 加载 allowed_inputs
-        context_parts = {}
-        missing = []
-        for fname in agent_def.get("allowed_inputs", []):
-            fpath = os.path.join(stock_dir, fname)
-            if os.path.exists(fpath):
-                try:
-                    with open(fpath, encoding="utf-8") as f:
-                        context_parts[fname] = json.load(f)
-                except Exception:
-                    missing.append(fname)
-            else:
-                missing.append(fname)
-
-        # qualitative_context — 优先用 existing JSON，缺失时从 Zone B 自动推断
-        qual_ctx = ""
-        if qual_summary:
-            parts = []
-            moat = qual_summary.get("moat_rating", "")
-            if moat:
-                parts.append(f"护城河评级: {moat}")
-            gbc = qual_summary.get("g_base_context", "")
-            if gbc:
-                parts.append(f"g_base上下文: {gbc}")
-            bpe = qual_summary.get("b_penalty_evidence", "")
-            if bpe:
-                parts.append(f"B类惩罚证据: {bpe}")
-            eq = qual_summary.get("earnings_quality", "")
-            if eq:
-                parts.append(f"盈利质量: {eq}")
-            dds = qual_summary.get("data_discount_signals", [])
-            if dds:
-                parts.append(f"数据折扣信号: {', '.join(dds)}")
-            qual_ctx = "; ".join(parts)
-        else:
-            # Fallback: 从 Zone B 数据自动构建摘要
-            fallback_parts = []
-            mda = context_parts.get("mda.json", {})
-            ta = mda.get("trend_analysis", {})
-            if ta.get("gross_margin_trend"):
-                fallback_parts.append(f"毛利率趋势: {ta['gross_margin_trend'][:200]}")
-            if ta.get("revenue_growth_quality"):
-                fallback_parts.append(f"营收质量: {ta['revenue_growth_quality'][:200]}")
-            if ta.get("strategic_execution"):
-                fallback_parts.append(f"战略: {ta['strategic_execution'][:200]}")
-            seg = context_parts.get("segments.json", {}).get("segments", {})
-            if seg:
-                all_names = set()
-                for items in seg.values():
-                    for s in items:
-                        if isinstance(s, dict) and s.get("name"):
-                            all_names.add(s["name"])
-                if all_names:
-                    fallback_parts.append(f"业务线: {', '.join(list(all_names)[:8])}")
-            risks = context_parts.get("risks.json", {}).get("principal_risks", [])
-            if risks:
-                fallback_parts.append(f"主要风险({len(risks)}条): {'; '.join(r.get('description','')[:60] for r in risks[:3])}")
-            qual_ctx = " | ".join(fallback_parts) if fallback_parts else "(无定性分析上下文——首次运行，请基于量化数据做保守估计)"
-
-        # 构建 prompt
-        context_json = json.dumps(context_parts, indent=2, ensure_ascii=False, default=str)
-        template = agent_def.get("prompt_template", "")
-        if missing:
-            hint = agent_def.get("hint_on_missing_inputs", f"以下输入文件不可用: {missing}。使用行业知识做保守估计。g_base默认2.0%, b_penalty默认0.25, mcapex_split_pct默认0.80, total_discount_pct默认15%。")
-            context_json += f"\n\n{hint}"
-        prompt = template.replace("{qualitative_context}", qual_ctx).replace("{context_json}", context_json)
+        # Reuse the canonical builder.  AGENTS stores a prompt_template_file,
+        # not an inline prompt_template; the old duplicate path therefore sent
+        # an empty prompt from the unified runtime.
+        context = build_context(
+            agent_name,
+            stock_dir,
+            ts_code,
+            qual_path if os.path.exists(qual_path) else None,
+        )
+        prompt = build_prompt(agent_name, context, qual_summary)
 
         try:
             resp = llm_client.chat_with_retry(
@@ -933,7 +882,11 @@ def extract_zone_j(
             parse_ok = False
             try:
                 data = json.loads(content)
-                if expected and not any(k in data for k in expected):
+                semantic_ok = (
+                    agent_name != "data_quality"
+                    or data.get("discount_basis") == DATA_DISCOUNT_BASIS
+                )
+                if (expected and not any(k in data for k in expected)) or not semantic_ok:
                     print(f"  ⚠️  Zone J/{agent_name} JSON合法但字段不对: {list(data.keys())[:5]} (需要 {expected})", file=sys.stderr)
                 else:
                     parse_ok = True
@@ -950,7 +903,11 @@ def extract_zone_j(
                 repaired += "}" * open_braces + "]" * open_brackets
                 try:
                     data = json.loads(repaired)
-                    if expected and not any(k in data for k in expected):
+                    semantic_ok = (
+                        agent_name != "data_quality"
+                        or data.get("discount_basis") == DATA_DISCOUNT_BASIS
+                    )
+                    if (expected and not any(k in data for k in expected)) or not semantic_ok:
                         raise ValueError(f"Repaired JSON still missing {expected}")
                     parse_ok = True
                 except (json.JSONDecodeError, ValueError):
@@ -973,6 +930,15 @@ def extract_zone_j(
                         content2 = content2[:-3]
                 try:
                     data = json.loads(content2)
+                    if (
+                        agent_name == "data_quality"
+                        and data.get("discount_basis") != DATA_DISCOUNT_BASIS
+                    ):
+                        return {
+                            "agent": agent_name,
+                            "error": "重试结果缺少当前经济载体折价语义标记",
+                            "file": output_file,
+                        }
                 except json.JSONDecodeError:
                     return {"agent": agent_name, "error": "两次尝试均无法解析JSON", "file": output_file}
 

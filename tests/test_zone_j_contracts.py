@@ -8,7 +8,9 @@ if str(SCRIPTS_DIR) not in sys.path:
     sys.path.insert(0, str(SCRIPTS_DIR))
 
 from boundary_validator import ZONE_J_SCHEMAS, validate_file  # noqa: E402
-from zone_j_agent import _validate_param_wrapper  # noqa: E402
+import zone_j_agent  # noqa: E402
+from turtle_agent.tools.phase_tools import extract_zone_j  # noqa: E402
+from zone_j_agent import _validate_param_wrapper, build_context  # noqa: E402
 
 
 def test_boundary_validator_accepts_wrapped_moat_params_without_moat_rating():
@@ -83,3 +85,79 @@ def test_zone_j_agent_wrapper_validation_accepts_legacy_numeric():
     data = {"total_discount_pct": 15}
 
     assert _validate_param_wrapper(data, "total_discount_pct") == []
+
+
+def test_data_quality_missing_inputs_lower_confidence_without_fixed_discount(tmp_path):
+    context = build_context("data_quality", str(tmp_path), "000001.SZ")
+
+    hint = context["_degraded"]["hint"]
+    assert "扩大估值区间" in hint
+    assert "total_discount_pct.value=0" in hint
+    assert "默认15%" not in hint
+
+
+def test_unified_zone_j_runtime_sends_materialized_lilu_prompt(tmp_path, monkeypatch):
+    stock_dir = tmp_path / "000001_示例公司"
+    stock_dir.mkdir()
+    captured: list[str] = []
+
+    class _Response:
+        content = '{"discount_basis":"observed_economic_carrier_v1","total_discount_pct":{"value":0,"rationale":"no observed loss carrier","evidence_ref":["audit.json"],"confidence":"low"}}'
+
+    class _Client:
+        def chat_with_retry(self, *, messages, temperature):
+            captured.append(messages[0]["content"])
+            return _Response()
+
+    monkeypatch.setattr(
+        zone_j_agent,
+        "AGENTS",
+        {"data_quality": dict(zone_j_agent.AGENTS["data_quality"])},
+    )
+
+    result = extract_zone_j("000001.SZ", str(stock_dir), _Client())
+
+    assert result["ok"] is True
+    assert len(captured) == 1
+    assert "示例公司" in captured[0]
+    assert "缺失本身没有方向" in captured[0]
+    assert "financial_trends.json" in captured[0]
+    assert "默认15%" not in captured[0]
+
+
+def test_unified_zone_j_runtime_regenerates_legacy_data_discount(tmp_path, monkeypatch):
+    stock_dir = tmp_path / "000001_示例公司"
+    stock_dir.mkdir()
+    (stock_dir / "data_discount.json").write_text(
+        '{"total_discount_pct":15}', encoding="utf-8"
+    )
+    calls = 0
+
+    class _Response:
+        content = '{"discount_basis":"observed_economic_carrier_v1","total_discount_pct":{"value":0,"rationale":"no observed loss carrier","evidence_ref":["audit.json"],"confidence":"low"}}'
+
+    class _Client:
+        def chat_with_retry(self, *, messages, temperature):
+            nonlocal calls
+            calls += 1
+            return _Response()
+
+    monkeypatch.setattr(
+        zone_j_agent,
+        "AGENTS",
+        {"data_quality": dict(zone_j_agent.AGENTS["data_quality"])},
+    )
+
+    result = extract_zone_j("000001.SZ", str(stock_dir), _Client())
+
+    assert result["ok"] is True
+    assert calls == 1
+    regenerated = __import__("json").loads(
+        (stock_dir / "data_discount.json").read_text(encoding="utf-8")
+    )
+    assert regenerated["discount_basis"] == "observed_economic_carrier_v1"
+
+    reused = extract_zone_j("000001.SZ", str(stock_dir), _Client())
+    assert reused["ok"] is True
+    assert reused["results"][0]["skipped"] is True
+    assert calls == 1
