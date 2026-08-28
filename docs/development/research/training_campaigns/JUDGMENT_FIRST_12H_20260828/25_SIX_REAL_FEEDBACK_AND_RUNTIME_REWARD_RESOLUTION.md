@@ -93,7 +93,8 @@ Baseline 获得同一事实预算和普通投资者能力。Enhanced 只有在�
 - 删除报告篇幅、引用比例、固定来源调用次数和 Ch11 关键词等会奖励扩写/重复检索的完成门；
 - UNKNOWN 必须绑定当前处理、经济后果和可结算翻转事实，不能独自完成研究或读者主题；
 - 缺失信息不自动创建研究任务，只有会改变当前判断的 fragile leap 获得预算；
-- decision utility 必须有真实的结果前处理差异和相关 OBSERVED 结果；reviewer 的积极标签没有权限；
+- decision utility 当前没有可机械比较的材料投资处理载体，因此新增结果字段、概率差异、
+  OBSERVED 结果和 reviewer 积极标签都只能 `NOT_DIAGNOSTIC / NONE`；
 - Forecast 弃权不再获得 coverage 学习；预测正确、与 baseline 相同或无法识别错误时也不制造 policy；
 - 只有同维度、同期限的真实 modal 错判、零概率事件被实现，或 baseline 确实纠正 enhanced 错误时，
   才形成局部 Forecast error signature；
