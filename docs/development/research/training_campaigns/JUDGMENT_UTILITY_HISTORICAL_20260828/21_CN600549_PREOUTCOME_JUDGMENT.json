@@ -1,0 +1,884 @@
+{
+  "schema_version": "historical-judgment-first-draft.v1",
+  "episode_id": "HIST:CN600549:20240501:FY2024",
+  "company_id": "CN:600549",
+  "cutoff_at": "2024-05-01T00:00:00+08:00",
+  "outcome_state": "SEALED_NOT_IN_PACKET",
+  "forecast_basis": {
+    "allowed_sources_used": [
+      "CNINFO:600549:FY2021:1212754030",
+      "CNINFO:600549:FY2022:1216523566",
+      "CNINFO:600549:FY2023:1219672897"
+    ],
+    "reference_state_for_directional_treatments": "FY2022年末已知的持续盈利能力、资本负担和风险约束",
+    "price_or_return_inputs_used": false
+  },
+  "enterprise_view": "截至2024-05-01，厦门钨业不是一个可用合并收入增速概括的单一周期股，而是盈利质量明显分化的材料组合：钨钼尤其深加工已成为最可靠的利润增量来源，足以在2023年电池材料和稀土利润显著回落时推动归母扣非利润继续增长；电池材料与稀土仍有规模和客户/产品地位，但低毛利、原料价格传导、竞争和扩产使规模尚不能等同于高质量盈利。当前应小幅上调相对FY2022参考状态的正常盈利与内在价值方向，但只能给予管理层有条件执行信用。2023年现金流和去杠杆改善是真实的集团层信号，却含有营运资金释放，且重要经营子公司少数股东占比较高、母公司现金上划边界未闭合，因此owner cash只能条件计入，永久损失约束维持而不放松。",
+  "most_important_enterprise_judgments": [
+    {
+      "rank": 1,
+      "current_judgment": "利润引擎已向钨钼深加工倾斜；这不是单纯的合并收入扩张，而是截至cutoff最可信的正常盈利抬升来源。",
+      "causal_mechanism": "在可比钨钼分部边界内，分部收入由2021年的112.42亿元、2022年的135.74亿元升至2023年的167.67亿元，分部营业利润由14.99亿元、16.37亿元升至26.54亿元；对外主营毛利率则为26.76%、24.70%、28.73%。同时硬质合金销量由6,416吨升至6,785吨，切削工具销量由2021年整体刀具与数控刀片合计4,338万件升至2022年4,884万件、2023年5,018万件，细钨丝销量由90亿米升至272亿米、868亿米。收入/销量、毛利和分部营业利润同向改善，支持产品结构、终端拓展和规模效应，而非仅有产能或收入叙事。2023年公司另披露钨钼利润总额剔除联营企业投资收益后同比增长57.10%，加强了经常经营利润信号。",
+      "strongest_counterargument": "2023年钨精矿价格上涨、产品价格体系和矿山回收率改善也贡献利润，分部营业利润仍混合矿山周期、多个产品与投资相关项目；年报没有给出细钨丝、切削工具等单品在同一责任边界下扣除持续研发、销售、管理、资本负担后的单位经常利润。光伏用钨丝快速扩产也可能引发价格和利用率压力。因此证据足以确认钨钼盈利质量改善，但不足以把全部增量归因于管理层。",
+      "investment_implication": "正常盈利可相对FY2022参考状态小幅上调，估值方向向上；但应以钨钼经常利润和单位经济性继续兑现为条件，不应把钨丝产能或合并收入直接资本化。管理层只获CONDITIONAL_CREDIT。",
+      "flip_facts": [
+        "以冻结的FY2023钨钼SEGMENT_ATTRIBUTED_ADJUSTED_RECURRING_PROFIT 26.543亿元为基线，FY2024同定义下降15%或以上，同时对外主营毛利率降至24.70%或以下且资本负担输入闭合。",
+        "细钨丝、切削工具或硬质合金销量继续增长，但同边界经常利润或单位毛利下降，证明规模未转化为经济利润。",
+        "原始分部利润上升但剔除有证据归属于该分部的一次性项目后的adjusted recurring profit未增长，或资本负担恶化，推翻对正常盈利进一步上修而不否定已观察的历史改善；无分部归属的集团项目不得事后分配。"
+      ],
+      "evidence_refs": [
+        "FY2021.pdf pp.13-17,29-31,291-292",
+        "FY2022.pdf pp.15-20,34-37,289-290",
+        "FY2023.pdf pp.15-20,34-36,333-334"
+      ]
+    },
+    {
+      "rank": 2,
+      "current_judgment": "电池材料与稀土的规模和市场地位是真实的，但截至cutoff仍是低毛利、强价格传导且扩产负担较重的盈利来源，不能用收入或产能替代单位经济性。",
+      "causal_mechanism": "电池材料对外主营毛利率从2021年的9.53%降至2022年的8.48%、2023年的7.88%；稀土毛利率从12.96%降至11.57%、6.66%。两个分部合计营业利润由2021年的8.74亿元升至2022年的15.52亿元后，在2023年降至7.05亿元；同期2023年两个分部合计资本性支出约17.50亿元，明显高于当年合计营业利润。电池材料采用主要原料成本加加工费加目标利润的常见定价方式，高原料价格会放大收入并被动压低毛利率；2023年原料和产品价格下跌、三元材料销量下降19.39%及行业产能过剩又压低利润。钴酸锂销量增长4.16%、稀土主要产品销量增长仍未阻止利润下降，说明规模本身不是当前盈利护城河。",
+      "strongest_counterargument": "原料价格下降会机械压低电池材料收入，毛利率也不能完整代表单吨加工利润；钴酸锂龙头份额、磁材终端拓展和正在建设的海外/新产品产能可能在需求恢复时释放经营杠杆。2023年的低点可能主要是行业周期而非竞争力永久受损。",
+      "investment_implication": "保留这两个板块的复苏期权，但正常盈利不按2022年景气峰值外推，也不给尚未形成经常利润桥的新增产能独立价值信用。若销量、分部营业利润率与资本效率共同改善，才可提高其估值贡献；若低利润伴随高资本投入持续，则会成为永久损失载体。",
+      "flip_facts": [
+        "以冻结的FY2023电池材料/稀土ADJUSTED_RECURRING_SEGMENT_PROFIT 5.604亿元/1.444亿元为各自基线，FY2024合计增长25%以上、adjusted margin提升至少0.5个百分点，两边利润均为正且各自资本负担未恶化、关键销量均增长。",
+        "公司披露可比的单吨加工毛利或扣除持续费用后的单位经常利润，证明在原料价格下行期单位经济性稳定或改善。",
+        "两个分部合计adjusted recurring profit下降25%以上且adjusted margin下降至少0.5个百分点，或单边转负并伴随资本负担恶化但未被另一边材料改善抵销，将把周期性谨慎升级为局部或合计资本效率担忧。"
+      ],
+      "evidence_refs": [
+        "FY2021.pdf pp.15-17,29-32,291",
+        "FY2022.pdf pp.18-20,34-39,289",
+        "FY2023.pdf pp.18-20,24-25,34-36,333-334"
+      ]
+    },
+    {
+      "rank": 3,
+      "current_judgment": "2023年资产负债表与集团现金流改善降低了近期财务脆弱性，但尚不能证明可持续、可归属于母公司股东的owner cash已经转正。",
+      "causal_mechanism": "合并OCF减购建固定资产、无形资产和其他长期资产支付现金的GROUP_CASH_PROXY，按后续年报所列可比数计算，2021年约-3.30亿元、2022年约-20.93亿元、2023年约+21.82亿元，三年累计仍约-2.41亿元。2023年OCF 42.86亿元主要受应收款回收及营收下降带来的存货和应收占用减少推动，具有可逆性；同期现金资本开支升至21.04亿元。资产负债率由2022年的59.65%降至2023年的51.44%，短期借款显著下降，是真实缓冲。但2023年少数股东权益78.59亿元，相对归母权益112.12亿元并不轻微；厦钨新能少数股东持股49.74%，虹鹭39.43%，金鹭30%，金龙稀土34.80%，集团现金代理不能直接等同于母公司股东可支配现金。",
+      "strongest_counterargument": "2023年应收回收、地产退出和偿还短债可能是持续改善营运纪律与资本配置的开始；若后续营运资金不反转、扩产趋于收尾且重要子公司稳定分红，则2023年的正现金代理可能低估未来owner cash。",
+      "investment_implication": "owner cash维持COUNT_CONDITIONALLY，不用2023年单年现金代理上调正常盈利；去杠杆阻止永久损失约束收紧，但NCI、母公司上划和维持性资本开支未闭合，约束也不能放松。",
+      "flip_facts": [
+        "FY2024在营运资金不再大幅释放的情况下GROUP_CASH_PROXY仍为正且两年累计不低于20亿元，并完成post-capex cash、NCI归属、留存/回投限制、母公司实收与净支持四步桥，PARENT_DISTRIBUTABLE_OWNER_CASH至少5亿元且不低于GROUP_CASH_PROXY的20%。",
+        "FY2024 GROUP_CASH_PROXY低于-21.82亿元，使2023-2024两年累计不再为正，且可比有息债务增长15%以上、现金资本开支不低于2023年。",
+        "材料核心子公司受法律、监管、少数股东协议或融资契约阻断上划至少12个月且母公司替代流动资源不足，即使GROUP_CASH_PROXY为正也收紧永久损失约束。"
+      ],
+      "evidence_refs": [
+        "FY2021.pdf pp.6,29,143",
+        "FY2022.pdf pp.7,34,137",
+        "FY2023.pdf pp.7,34,163-164,307,333-334"
+      ]
+    }
+  ],
+  "management_execution_bridge": {
+    "responsibility_boundary": "合并钨钼报告分部；执行信用只针对该边界，不外推至电池材料、稀土或全部合并集团",
+    "volume_or_revenue_path": {
+      "segment_revenue_cny": {
+        "FY2021": 11242460877.89,
+        "FY2022": 13574329666.20,
+        "FY2023": 16767154077.41
+      },
+      "hard_alloy_sales_tonnes": {
+        "FY2021": 6416,
+        "FY2022": 6473,
+        "FY2023": 6785
+      },
+      "cutting_tool_sales_10k_units": {
+        "FY2021": 4338,
+        "FY2022": 4884,
+        "FY2023": 5018,
+        "FY2021_definition_note": "整体刀具650万件加数控刀片3,688万件；2022起年报以切削工具合计披露"
+      },
+      "fine_tungsten_wire_sales_100m_metres": {
+        "FY2021": 90,
+        "FY2022": 272,
+        "FY2023": 868
+      }
+    },
+    "recurring_profit_path": {
+      "segment_operating_profit_cny": {
+        "FY2021": 1498887225.13,
+        "FY2022": 1637341364.38,
+        "FY2023": 2654306141.57
+      },
+      "external_main_business_gross_margin_pct": {
+        "FY2021": 26.76,
+        "FY2022": 24.70,
+        "FY2023": 28.73
+      },
+      "FY2023_profit_before_tax_ex_associate_investment_yoy_pct": 57.10,
+      "FY2023_adjusted_recurring_segment_profit_cny": 2654306141.57,
+      "FY2023_adjusted_recurring_margin": 0.15830391545969544,
+      "adjustment_schedule_ref": "FY2024_TUNGSTEN_PROFIT_ENGINE_BRIDGE.normal_earnings_bridge.baseline_adjusted_profit_schedules"
+    },
+    "persistent_cost_burden": {
+      "segment_capital_expenditure_cny": {
+        "FY2021": 1057343955.44,
+        "FY2022": 1419680674.01,
+        "FY2023": 1298646277.62
+      },
+      "segment_depreciation_and_amortization_cny": {
+        "FY2021": 573435872.86,
+        "FY2022": 604527821.15,
+        "FY2023": 648142396.80
+      }
+    },
+    "bridge_conclusion": "同责任边界的收入/核心产品销量、毛利率和分部营业利润桥足以确认钨钼经营改善和规模向利润转化；但单品持续费用、单位经常利润、矿价贡献和投资收益拆分不完整，因此不授予公司层面的完整执行归因。"
+  },
+  "scenario_analysis": {
+    "optimistic": {
+      "operating_path": "钨钼深加工保持量增与高于2022年的毛利率，细钨丝、切削工具和硬质合金新增产能由订单吸收，分部经常利润增速不低于收入增速；电池材料与稀土在原料价格稳定后实现销量和分部利润率同步恢复，地产退出继续减少拖累。营运资金不反转，扩产现金支出逐步被经营现金覆盖。",
+      "investment_effect": "正常盈利和内在价值方向进一步上调；若NCI及母公司上划同时闭合，owner cash可由条件计入转为计入母公司股东现金，永久损失约束可在多期证据后放松。",
+      "discriminating_facts": [
+        "钨钼ADJUSTED_RECURRING_SEGMENT_PROFIT较冻结FY2023基线增长至少10%，毛利率不低于27.73%，核心销量不下降且资本负担未恶化。",
+        "电池材料与稀土各自adjusted recurring profit为正且不低于各自基线95%，合计增长至少25%、adjusted margin提高至少0.5个百分点，关键销量均增长且各自资本负担未恶化。",
+        "GROUP_CASH_PROXY为正且两年累计不低于20亿元，并完成四步归母现金桥，PARENT_DISTRIBUTABLE_OWNER_CASH至少5亿元且不低于GROUP_CASH_PROXY的20%。"
+      ]
+    },
+    "base": {
+      "operating_path": "钨钼仍是主要利润支柱但增速放缓，光伏用钨丝和切削工具的价格/利用率部分抵消销量增长；电池材料和稀土保持低毛利、利润仅温和修复或横盘。归母扣非利润大致维持2023年附近至温和增长，OCF从2023年营运资金释放高点回落，资本开支仍消耗大部分现金。",
+      "investment_effect": "维持正常盈利RAISE、估值方向UP但不扩大幅度；管理层继续仅获有条件信用，owner cash继续条件计入，永久损失约束维持。",
+      "discriminating_facts": [
+        "钨钼ADJUSTED_RECURRING_SEGMENT_PROFIT处于冻结FY2023基线附近，毛利率未跌回2022年以下，资本负担没有材料恶化。",
+        "电池材料与稀土分别完成adjusted-profit桥后呈一强一弱或合计未再大幅下降，但利润率和资本效率没有同时显著改善。",
+        "GROUP_CASH_PROXY接近盈亏平衡或为正但NCI/上划仍未闭合，有息债务没有材料性增加。"
+      ]
+    },
+    "pessimistic": {
+      "operating_path": "光伏用钨丝和钨钼深加工新增供给快于需求，价格、利用率和利润率下降，矿价周期不再提供缓冲；电池材料与稀土的竞争和低价持续，扩产项目仍大量支出并产生减值或低利用率。营运资金反转、集团现金代理显著为负并重新依赖债务。",
+      "investment_effect": "下调正常盈利和内在价值方向，撤销钨钼执行信用；若负现金、资本支出和债务增长形成两年持续载体，则owner cash不计入并收紧永久损失约束。",
+      "discriminating_facts": [
+        "钨钼ADJUSTED_RECURRING_SEGMENT_PROFIT较冻结FY2023基线下降至少15%、毛利率降至24.70%或以下，并伴随核心销量下降。",
+        "电池材料与稀土合计adjusted recurring profit下降至少25%且adjusted margin下降，或出现未被另一边材料改善抵销的单边转负与资本负担恶化。",
+        "GROUP_CASH_PROXY不高于-21.82亿元、两年累计不为正且有息债务增长；或材料核心子公司上划被明确阻断至少12个月且母公司替代流动资源不足。"
+      ]
+    }
+  },
+  "material_treatment_snapshot": {
+    "management_execution": {
+      "treatment_code": "CONDITIONAL_CREDIT",
+      "rationale": "钨钼分部已有同责任边界的收入/销量到毛利率、分部营业利润及资本负担桥，足以授予局部执行信用；但单品单位经常利润、持续费用分配、矿价及投资收益贡献未完全拆开，电池材料/稀土的规模与利润桥也较弱，因此不授予完整公司级执行归因。"
+    },
+    "normal_earnings": {
+      "treatment_code": "RAISE",
+      "rationale": "相对FY2022参考状态小幅上调。归母扣非利润由2021年10.30亿元、2022年12.36亿元升至2023年14.00亿元，扣非ROE由12.57%、12.85%升至13.27%；2023年钨钼利润改善抵消电池材料、稀土回落，且销售、管理、研发和财务费用合计并未随钨钼利润同幅上升。上调不采用2022年电池景气峰值，也不计一次性现金释放。"
+    },
+    "owner_cash": {
+      "treatment_code": "COUNT_CONDITIONALLY",
+      "rationale": "按后续年报所列可比数，2021-2023 GROUP_CASH_PROXY分别约-3.30亿元、-20.93亿元和+21.82亿元，三年累计约-2.41亿元；2023年明显改善但含可逆营运资金释放。重要子公司NCI材料且母公司上划未知，维持性与成长性资本开支也未拆分，不能计入母公司owner cash。"
+    },
+    "permanent_loss": {
+      "treatment_code": "MAINTAIN_CONSTRAINT",
+      "rationale": "2023年去杠杆和地产退出降低近期脆弱性，阻止约束收紧；但电池/稀土在利润下行时仍有高资本支出，钨丝和刀具扩产存在利用率风险，集团现金归属边界未闭合，因此不能放松。"
+    },
+    "valuation_direction": {
+      "treatment_code": "UP",
+      "rationale": "仅指相对FY2022共同参考状态的内在价值方向：归母扣非盈利、钨钼经常利润能力和资产负债表缓冲改善，方向向上；低质量板块资本效率和owner cash不确定性限制上调幅度。本判断不使用市场价格、正式估值或BuyBand。"
+    },
+    "next_research_action": {
+      "action_family": "RESPONSIBILITY_BOUNDARY_ECONOMIC_BRIDGE",
+      "target_scope": "钨钼分部，优先拆至光伏用细钨丝、切削工具和硬质合金；只剔除有证据进入并归属于该分部的投资收益和一次性项目",
+      "fact_or_metric": "产品销量/收入、可比单位售价、单位毛利、扣除持续研发销售管理负担后的经常经营利润、产能利用率、维持性与成长性资本开支",
+      "decision_axis": "management_execution_and_normal_earnings",
+      "positive_effect": "若销量增长伴随单位经常利润稳定或提升、利用率良好且维持性资本负担可控，则管理层信用可转POSITIVE_CREDIT，并进一步上调正常盈利和估值方向。",
+      "negative_effect": "若销量/产能增长伴随单位经常利润下降、利用率走弱或资本负担吞噬利润，则撤销执行信用，下调正常盈利；若形成持续负现金和债务载体，再收紧永久损失约束。"
+    }
+  },
+  "localized_unknowns": [
+    {
+      "unknown": "细钨丝、切削工具、硬质合金的单品单位经常利润及持续费用分配未披露。",
+      "claim_limited": "只限制对钨钼利润增量的完整管理层归因，不否定钨钼分部利润引擎已经增强。",
+      "current_treatment": "management_execution维持CONDITIONAL_CREDIT。"
+    },
+    {
+      "unknown": "合并资本性支出中维持性、成长性和已承诺未支付部分无法完整拆分。",
+      "claim_limited": "只限制owner cash计量和永久损失约束的放松，不把未知资本开支自动视为恶化。",
+      "current_treatment": "owner_cash条件计入，permanent_loss维持约束。"
+    },
+    {
+      "unknown": "重要非全资子公司的现金分红能力、融资限制和向上市公司母公司的可持续上划比例未闭合。",
+      "claim_limited": "只限制集团现金代理向母公司owner cash的转换，不否定2023年集团流动性改善。",
+      "current_treatment": "GROUP_CASH_PROXY不直接计入母公司owner cash。"
+    },
+    {
+      "unknown": "电池材料和稀土新增产能的FY2024订单覆盖、利用率和单位加工利润未知。",
+      "claim_limited": "只限制对复苏与新增产能价值的主张；当前仍判断这两个板块低毛利且资本效率需验证。",
+      "current_treatment": "不为未形成经常利润桥的产能单独上调正常盈利。"
+    }
+  ],
+  "preoutcome_counterexamples": [
+    {
+      "case_id": "TUNGSTEN_RAW_PROFIT_ONEOFF_DOES_NOT_UPGRADE",
+      "input": "冻结FY2023 segment-attributed adjusted baseline=26.543061亿元；FY2024原始分部营业利润30亿元，其中2亿元有结果年分部证据证明属于可机械剔除的一次性项目，故adjusted=28亿元、同比约+5.5%；对外主营毛利率28.0%，三项销量均不下降，资本负担NOT_DETERIORATED且无单位利润披露。",
+      "expected_class": "MIXED_COMPLETE_RESIDUAL",
+      "forbidden_update": "不得命中任一FAVORABLE或上调normal earnings/valuation。"
+    },
+    {
+      "case_id": "BATTERY_UP_RARE_EARTH_DOWN_IS_NOT_DUAL_RECOVERY",
+      "input": "冻结FY2023电池/稀土adjusted baseline分别为5.603818亿元/1.443511亿元；FY2024电池adjusted=11.207636亿元（+100%）且资本负担NOT_DETERIORATED，稀土adjusted=-0.10亿元且资本负担DETERIORATED；合计11.107636亿元，显著高于FY2023合计，合计margin未下降0.5个百分点，其他输入完整可比。",
+      "expected_class": "MIXED_LOCAL_SEGMENT_ADVERSE_OFFSET",
+      "forbidden_update": "不得命中FAVORABLE_DUAL_RECOVERY，也不得把稀土局部恶化传播为合计normal earnings LOWER或valuation DOWN。"
+    },
+    {
+      "case_id": "POSITIVE_GROUP_PROXY_TINY_PARENT_CASH_STAYS_CONDITIONAL",
+      "input": "FY2024 GROUP_CASH_PROXY=50亿元，FY2023-2024累计=71.82亿元，NCI四步桥已闭合且parent access=EVIDENCED、无结构性阻断，但PARENT_DISTRIBUTABLE_OWNER_CASH仅0.1亿元。",
+      "expected_class": "NEUTRAL_POSITIVE_GROUP_PROXY_SCOPE_OPEN",
+      "forbidden_update": "不得把集团现金整体计入母公司owner cash。"
+    },
+    {
+      "case_id": "STRUCTURAL_PARENT_BLOCK_OVERRIDES_POSITIVE_GROUP_CASH",
+      "input": "FY2024 GROUP_CASH_PROXY=50亿元且债务下降；贡献集团adjusted recurring profit或现金至少30%的核心子公司受明确融资契约阻断18个月，母公司自身流动资源与其他可分配现金不足覆盖12个月债务及必要支出。",
+      "expected_class": "ADVERSE_STRUCTURAL_PARENT_ACCESS_BLOCK",
+      "forbidden_update": "不得因正集团现金维持permanent-loss约束不变。"
+    },
+    {
+      "case_id": "MISSING_ONE_CORE_VOLUME_IS_LOCAL_UNKNOWN",
+      "input": "钨钼分部收入、adjusted recurring profit全部调整项、毛利率、硬质合金/切削工具销量和所有资本负担输入齐全，但细钨丝销量未披露，且不存在定义冲突。",
+      "expected_class": "LOCAL_UNKNOWN",
+      "forbidden_update": "不得进入数值方向或MEASUREMENT_MISMATCH。"
+    }
+  ],
+  "outcome_cells": [
+    {
+      "cell_id": "FY2024_TUNGSTEN_PROFIT_ENGINE_BRIDGE",
+      "judgment_link": 1,
+      "direct_axes": [
+        "management_execution",
+        "normal_earnings",
+        "valuation_direction"
+      ],
+      "preserved_axes": [
+        "owner_cash",
+        "permanent_loss",
+        "next_research_action"
+      ],
+      "direct_axis_links": {
+        "management_execution": "同责任边界的钨钼收入/核心产品销量、毛利率、经常营业利润和持续资本负担可以直接检验局部执行信用；只有单品单位经济性桥闭合才升级为完整正面信用。",
+        "normal_earnings": "钨钼是2023年抵消电池材料与稀土下降的主要利润引擎，其可比经常利润变化直接改变正常盈利。",
+        "valuation_direction": "钨钼经常利润的可持续方向直接改变相对FY2022参考状态的内在价值方向。"
+      },
+      "preserved_axis_reasons": {
+        "owner_cash": "单一分部利润不等于集团或母公司可支配现金，且不能关闭NCI与资本开支现金边界。",
+        "permanent_loss": "一年钨钼利润变化本身不证明持续资本吞噬、偿债能力恶化或不可逆竞争损失。",
+        "next_research_action": "本格只结算钨钼经营桥，不自动改写结果前已经冻结的首要研究行动。"
+      },
+      "normal_earnings_bridge": {
+        "revenue_or_volume_metric": "可比钨钼报告分部收入；硬质合金销量、切削工具销量、细钨丝销量",
+        "recurring_profit_metric": "钨钼ADJUSTED_RECURRING_SEGMENT_PROFIT及其同比变化，不以原始报告分部营业利润直接触发",
+        "uses_adjusted_relative_thresholds": true,
+        "required_adjusted_profit_scope_ids": [
+          "SEGMENT:TUNGSTEN_MOLYBDENUM"
+        ],
+        "baseline_adjusted_profit_schedules": [
+          {
+            "scope_id": "SEGMENT:TUNGSTEN_MOLYBDENUM",
+            "baseline_period": "FY2023",
+            "schedule_status": "FROZEN_PREOUTCOME",
+            "reported_segment_profit": 2654306141.57,
+            "baseline_revenue": 16767154077.41,
+            "adjusted_recurring_profit": 2654306141.57,
+            "adjusted_recurring_margin": 0.15830391545969544,
+            "capital_expenditure": 1298646277.62,
+            "depreciation_amortization": 648142396.8,
+            "asset_impairment": 106537258.1,
+            "capital_burden_denominator": 2654306141.57,
+            "source_refs": [
+              "FY2023.pdf printed pp.15,333-334",
+              "FY2023.pdf printed pp.285-286"
+            ],
+            "adjustment_schedule": [
+              {
+                "item": "权益法核算联营企业投资收益",
+                "amount_removed_from_reported_profit": 0,
+                "treatment": "UNALLOCATED_GROUP_ITEM_NOT_REMOVED",
+                "source_ref": "FY2023.pdf printed p.15 and p.286",
+                "rationale": "年报只披露集团权益法收益总额和钨钼剔除后增速，未证明该集团金额全额进入钨钼报告分部；因此cutoff前不作分部归属、不从基线扣除，FY2024也只剔除有分部归属证据的金额。"
+              },
+              {
+                "item": "钨钼分部资产减值",
+                "amount_removed_from_reported_profit": 0,
+                "treatment": "RETAIN_AS_PERSISTENT_CAPITAL_COST",
+                "source_ref": "FY2023.pdf printed p.334",
+                "rationale": "已观察减值保留在经常利润代理和资本负担中，不因结果后叙事加回。"
+              },
+              {
+                "item": "无法按分部归属的集团政府补助和处置收益",
+                "amount_removed_from_reported_profit": 0,
+                "treatment": "NO_SEGMENT_ALLOCATION_FROZEN_AS_ZERO_ADJUSTMENT",
+                "source_ref": "FY2023.pdf printed pp.285-286",
+                "rationale": "cutoff前不能可靠归属到钨钼，故不事后分配；FY2024若出现材料分部归属则按同定义重述，否则LOCAL_UNKNOWN。"
+              }
+            ]
+          }
+        ],
+        "adjusted_recurring_profit_definition": "钨钼SEGMENT_ATTRIBUTED_ADJUSTED_RECURRING_PROFIT = 可比报告分部营业利润 - 有证据证明已进入且归属于钨钼分部的联营投资收益、处置收益、非持续补助和其他一次性正收益 + 同样有分部证据的一次性可逆非经营负损失；集团项目无分部归属时冻结为零调整，不得结果后分配。",
+        "persistent_capital_burden_state": "必须取得钨钼分部资本性支出、折旧摊销和资产减值。NOT_DETERIORATED仅在资本性支出不高于FY2023的120%，或adjusted recurring profit增速不低于资本性支出增速，同时折旧摊销占adjusted recurring profit比例未上升5个百分点、无材料减值且已披露利用率未下降10个百分点时成立；否则为DETERIORATED或UNKNOWN。",
+        "persistent_cost_burden_metrics": [
+          "钨钼分部资本性支出",
+          "钨钼分部折旧和摊销",
+          "钨钼分部资产减值",
+          "若披露则纳入产品边界的持续研发、销售和管理费用"
+        ],
+        "nonrecurring_exclusions": [
+          "联营企业投资收益",
+          "资产处置收益",
+          "与经营无持续关系的政府补助",
+          "一次性搬迁、停产或口径变更影响"
+        ]
+      },
+      "local_input_treatments": {
+        "LOCAL_UNKNOWN": {
+          "axis_updates": {},
+          "next_discriminating_evidence": "取得FY2024可比钨钼分部收入、三项核心销量、对外主营毛利率、adjusted recurring segment profit的全部调整项，以及资本性支出、折旧摊销和资产减值。"
+        },
+        "MEASUREMENT_MISMATCH": {
+          "axis_updates": {},
+          "next_discriminating_evidence": "把合并范围变化、分部重分类、内部交易抵销或产品统计定义变动重述到FY2023可比口径。"
+        }
+      },
+      "valid_input_first_match": [
+        {
+          "class_id": "LOCAL_UNKNOWN",
+          "economic_direction": "MIXED",
+          "condition": "不存在已知不可重述的责任边界或定义冲突，但FY2024官方年报缺少可比钨钼分部收入、硬质合金/切削工具/细钨丝任一销量、对外主营毛利率、adjusted recurring segment profit任一必要调整项，或资本性支出/折旧摊销/资产减值任一资本负担输入。此类不作数值方向分类。",
+          "is_residual": false,
+          "observed_adverse_carriers": [],
+          "axis_updates": {},
+          "scope_requirements": {
+            "responsibility_boundary": "钨钼报告分部",
+            "comparability": "REQUIRED"
+          }
+        },
+        {
+          "class_id": "MEASUREMENT_MISMATCH",
+          "economic_direction": "MIXED",
+          "condition": "FY2024已披露的钨钼分部范围、内部抵销、利润调整项或产品销量定义与FY2023发生材料冲突，且有证据确认不能重述为同责任边界可比口径；普通字段未披露不属于本类。此类不作数值方向分类。",
+          "is_residual": false,
+          "observed_adverse_carriers": [],
+          "axis_updates": {},
+          "scope_requirements": {
+            "responsibility_boundary": "FY2023_RESTATED_COMPARABLE",
+            "comparability": "REQUIRED"
+          }
+        },
+        {
+          "class_id": "FAVORABLE_FULL_EXECUTION_BRIDGE",
+          "economic_direction": "FAVORABLE",
+          "condition": "在同责任边界下，FY2024钨钼ADJUSTED_RECURRING_SEGMENT_PROFIT较可比FY2023增长至少10%，对外主营毛利率不低于27.73%，硬质合金、切削工具、细钨丝三项销量至少两项不下降，PERSISTENT_CAPITAL_BURDEN=NOT_DETERIORATED；并披露至少一项核心深加工产品扣除持续研发、销售、管理和资本负担后的单位经常利润不下降。",
+          "is_residual": false,
+          "observed_adverse_carriers": [],
+          "axis_updates": {
+            "management_execution": "POSITIVE_CREDIT",
+            "normal_earnings": "RAISE",
+            "valuation_direction": "UP"
+          },
+          "scope_requirements": {
+            "responsibility_boundary": "钨钼分部并至少一个深加工产品单位经济性",
+            "comparability": "CLOSED"
+          }
+        },
+        {
+          "class_id": "FAVORABLE_EARNINGS_BRIDGE_ONLY",
+          "economic_direction": "FAVORABLE",
+          "condition": "钨钼SEGMENT_ATTRIBUTED_ADJUSTED_RECURRING_PROFIT较可比FY2023增长至少10%，对外主营毛利率不低于27.73%，三项核心销量至少两项不下降，PERSISTENT_CAPITAL_BURDEN=NOT_DETERIORATED，全部有分部归属证据的联营投资收益和一次性项目已机械剔除、无归属集团项目沿基线定义不分配；仅单品持续费用后单位经常利润未披露。",
+          "is_residual": false,
+          "observed_adverse_carriers": [],
+          "axis_updates": {
+            "management_execution": "CONDITIONAL_CREDIT",
+            "normal_earnings": "RAISE",
+            "valuation_direction": "UP"
+          },
+          "scope_requirements": {
+            "responsibility_boundary": "钨钼报告分部",
+            "comparability": "CLOSED"
+          }
+        },
+        {
+          "class_id": "ADVERSE_PROFIT_ENGINE_BREAK",
+          "economic_direction": "ADVERSE",
+          "condition": "在同责任边界且调整项与资本负担输入全部闭合时，FY2024钨钼ADJUSTED_RECURRING_SEGMENT_PROFIT较可比FY2023下降至少15%，对外主营毛利率不高于24.70%，且硬质合金、切削工具、细钨丝至少一项销量下降10%以上；不存在足以重述的单次停产或处置。",
+          "is_residual": false,
+          "observed_adverse_carriers": [
+            "钨钼可比营业利润材料下降",
+            "钨钼对外主营毛利率压缩",
+            "核心深加工产品销量下降"
+          ],
+          "axis_updates": {
+            "management_execution": "NO_CREDIT_ASSIGNED",
+            "normal_earnings": "LOWER",
+            "valuation_direction": "DOWN"
+          },
+          "scope_requirements": {
+            "responsibility_boundary": "钨钼报告分部",
+            "comparability": "CLOSED"
+          }
+        },
+        {
+          "class_id": "NEUTRAL_HOLD",
+          "economic_direction": "NEUTRAL",
+          "condition": "FY2024钨钼ADJUSTED_RECURRING_SEGMENT_PROFIT处于可比FY2023的±5%，对外主营毛利率处于27.73%至29.73%，核心销量没有两项或以上下降10%，且PERSISTENT_CAPITAL_BURDEN不是DETERIORATED。",
+          "is_residual": false,
+          "observed_adverse_carriers": [],
+          "axis_updates": {
+            "management_execution": "CONDITIONAL_CREDIT",
+            "normal_earnings": "RAISE",
+            "valuation_direction": "UP"
+          },
+          "scope_requirements": {
+            "responsibility_boundary": "钨钼报告分部",
+            "comparability": "CLOSED"
+          }
+        },
+        {
+          "class_id": "MIXED_COMPLETE_RESIDUAL",
+          "economic_direction": "MIXED",
+          "condition": "adjusted recurring profit全部调整项、三项核心销量和资本负担输入完整可比但不满足以上条件，包括量增利降、利润增长但资本负担恶化、一个产品改善而另一个恶化，或利润下降未达到明确不利阈值。",
+          "is_residual": true,
+          "observed_adverse_carriers": [],
+          "axis_updates": {
+            "management_execution": "CONDITIONAL_CREDIT",
+            "normal_earnings": "UNCHANGED",
+            "valuation_direction": "UNCHANGED"
+          },
+          "scope_requirements": {
+            "responsibility_boundary": "钨钼报告分部",
+            "comparability": "CLOSED"
+          }
+        }
+      ]
+    },
+    {
+      "cell_id": "FY2024_BATTERY_RARE_EARTH_UNIT_ECONOMICS",
+      "judgment_link": 2,
+      "direct_axes": [
+        "normal_earnings",
+        "valuation_direction"
+      ],
+      "preserved_axes": [
+        "management_execution",
+        "owner_cash",
+        "permanent_loss",
+        "next_research_action"
+      ],
+      "direct_axis_links": {
+        "normal_earnings": "电池材料与稀土合计经常营业利润和利润率的恢复或继续恶化直接改变集团正常盈利中非钨钼部分。",
+        "valuation_direction": "在同边界利润和单位经济性得到验证时，两板块的盈利贡献变化直接改变相对参考状态的内在价值方向。"
+      },
+      "preserved_axis_reasons": {
+        "management_execution": "行业价格、原料传导和需求周期影响大；本cell没有产品级持续费用后单位利润，不能单独授予或扣除管理层执行信用。",
+        "owner_cash": "分部营业利润不关闭现金资本开支、NCI和母公司上划边界。",
+        "permanent_loss": "单年利润变化可逆；只有持续资本吞噬或结构性上划阻断才改变永久损失处理，由现金/资本载体cell结算。",
+        "next_research_action": "本格只结算两板块单位经济，不自动改写结果前已经冻结的首要研究行动。"
+      },
+      "normal_earnings_bridge": {
+        "revenue_or_volume_metric": "电池材料与稀土两个可比报告分部收入；电池关键销量为三元材料加钴酸锂，稀土关键销量为稀土氧化物、稀土金属和磁性材料，分别与自身FY2023合计比较",
+        "recurring_profit_metric": "分别计算BATTERY_ADJUSTED_RECURRING_SEGMENT_PROFIT与RARE_EARTH_ADJUSTED_RECURRING_SEGMENT_PROFIT，再求和；不得先用原始分部利润互相抵销",
+        "uses_adjusted_relative_thresholds": true,
+        "required_adjusted_profit_scope_ids": [
+          "SEGMENT:BATTERY_MATERIALS",
+          "SEGMENT:RARE_EARTH"
+        ],
+        "baseline_adjusted_profit_schedules": [
+          {
+            "scope_id": "SEGMENT:BATTERY_MATERIALS",
+            "baseline_period": "FY2023",
+            "schedule_status": "FROZEN_PREOUTCOME",
+            "reported_segment_profit": 560381772.08,
+            "baseline_revenue": 17310873278.22,
+            "adjusted_recurring_profit": 560381772.08,
+            "adjusted_recurring_margin": 0.032371663928997436,
+            "capital_expenditure": 1415709683.04,
+            "depreciation_amortization": 365598528.27,
+            "asset_impairment": 102047848.46,
+            "capital_burden_denominator": 560381772.08,
+            "source_refs": [
+              "FY2023.pdf printed pp.333-334"
+            ],
+            "adjustment_schedule": [
+              {
+                "item": "电池材料分部资产减值",
+                "amount_removed_from_reported_profit": 0,
+                "treatment": "RETAIN_AS_PERSISTENT_CAPITAL_COST",
+                "source_ref": "FY2023.pdf printed p.334",
+                "rationale": "已观察减值不加回，继续作为经常利润代理与资本负担的一部分。"
+              },
+              {
+                "item": "无法按分部归属的集团投资收益、补助和处置",
+                "amount_removed_from_reported_profit": 0,
+                "treatment": "NO_SEGMENT_ALLOCATION_FROZEN_AS_ZERO_ADJUSTMENT",
+                "source_ref": "FY2023.pdf printed pp.285-286,333-334",
+                "rationale": "cutoff前无可靠电池分部归属，不在结果后补分配；FY2024必须沿同定义或局部UNKNOWN。"
+              }
+            ]
+          },
+          {
+            "scope_id": "SEGMENT:RARE_EARTH",
+            "baseline_period": "FY2023",
+            "schedule_status": "FROZEN_PREOUTCOME",
+            "reported_segment_profit": 144351075.22,
+            "baseline_revenue": 5523438635.32,
+            "adjusted_recurring_profit": 144351075.22,
+            "adjusted_recurring_margin": 0.026134276987697002,
+            "capital_expenditure": 334221638.07,
+            "depreciation_amortization": 126779590.84,
+            "asset_impairment": 93893369.6,
+            "capital_burden_denominator": 144351075.22,
+            "source_refs": [
+              "FY2023.pdf printed pp.333-334"
+            ],
+            "adjustment_schedule": [
+              {
+                "item": "稀土分部资产减值",
+                "amount_removed_from_reported_profit": 0,
+                "treatment": "RETAIN_AS_PERSISTENT_CAPITAL_COST",
+                "source_ref": "FY2023.pdf printed p.334",
+                "rationale": "已观察减值不加回，继续作为经常利润代理与资本负担的一部分。"
+              },
+              {
+                "item": "无法按分部归属的集团投资收益、补助和处置",
+                "amount_removed_from_reported_profit": 0,
+                "treatment": "NO_SEGMENT_ALLOCATION_FROZEN_AS_ZERO_ADJUSTMENT",
+                "source_ref": "FY2023.pdf printed pp.285-286,333-334",
+                "rationale": "cutoff前无可靠稀土分部归属，不在结果后补分配；FY2024必须沿同定义或局部UNKNOWN。"
+              }
+            ]
+          }
+        ],
+        "adjusted_recurring_profit_definition": "每个分部的ADJUSTED_RECURRING_SEGMENT_PROFIT = 可比报告分部营业利润 - 资产处置收益 - 非持续政府补助 - 与经常经营无关的投资收益 - 合并范围变化一次性收益 + 有充分证据为非经营且可逆的一次性负损失；两个分部分别闭合，任一无法复算则LOCAL_UNKNOWN。",
+        "persistent_capital_burden_state": "电池材料与稀土分别取得资本性支出、折旧摊销、资产减值及已披露利用率。各自NOT_DETERIORATED仅在资本性支出不高于FY2023的120%或该分部adjusted recurring profit增速不低于资本性支出增速，折旧摊销占adjusted recurring profit比例未上升5个百分点、无材料减值且已披露利用率未下降10个百分点时成立。",
+        "persistent_cost_burden_metrics": [
+          "电池材料与稀土分部资本性支出合计",
+          "两个分部折旧和摊销合计",
+          "两个分部资产减值损失",
+          "新增产能利用率（若披露）"
+        ],
+        "nonrecurring_exclusions": [
+          "资产处置收益",
+          "非持续政府补助",
+          "合并范围变化的一次性损益",
+          "与经常经营无关的投资收益"
+        ]
+      },
+      "local_input_treatments": {
+        "LOCAL_UNKNOWN": {
+          "axis_updates": {},
+          "next_discriminating_evidence": "分别取得FY2024电池材料与稀土可比分部收入、关键产品销量、adjusted recurring segment profit调整项，以及各自资本性支出、折旧摊销、资产减值和已披露利用率。"
+        },
+        "MEASUREMENT_MISMATCH": {
+          "axis_updates": {},
+          "next_discriminating_evidence": "对稀土出表、业务转移、内部抵销或销量品类变动做FY2023可比重述。"
+        }
+      },
+      "valid_input_first_match": [
+        {
+          "class_id": "LOCAL_UNKNOWN",
+          "economic_direction": "MIXED",
+          "condition": "不存在已知不可重述的责任边界或定义冲突，但FY2024官方年报缺少电池材料或稀土任一分部的可比收入、关键产品销量、adjusted recurring segment profit必要调整项、资本性支出、折旧摊销或资产减值，导致任一独立利润与资本负担桥不能闭合。此类不作数值方向分类。",
+          "is_residual": false,
+          "observed_adverse_carriers": [],
+          "axis_updates": {},
+          "scope_requirements": {
+            "responsibility_boundary": "电池材料与稀土两个报告分部",
+            "comparability": "REQUIRED"
+          }
+        },
+        {
+          "class_id": "MEASUREMENT_MISMATCH",
+          "economic_direction": "MIXED",
+          "condition": "FY2024已披露的合并范围、分部划分、利润调整项或产品销量定义与FY2023发生材料冲突，且有证据确认无法重述至两个独立责任边界的可比口径；普通字段未披露不属于本类。此类不作数值方向分类。",
+          "is_residual": false,
+          "observed_adverse_carriers": [],
+          "axis_updates": {},
+          "scope_requirements": {
+            "responsibility_boundary": "FY2023_RESTATED_COMPARABLE",
+            "comparability": "REQUIRED"
+          }
+        },
+        {
+          "class_id": "FAVORABLE_DUAL_RECOVERY",
+          "economic_direction": "FAVORABLE",
+          "condition": "FY2024电池材料与稀土两个ADJUSTED_RECURRING_SEGMENT_PROFIT合计较可比FY2023增长至少25%，合计adjusted recurring profit margin提升至少0.5个百分点；两个分部各自adjusted recurring profit均为正且均不低于各自FY2023的95%，各自PERSISTENT_CAPITAL_BURDEN=NOT_DETERIORATED；电池关键销量合计较71,994吨增长至少5%，稀土关键销量合计较14,431吨增长至少5%。",
+          "is_residual": false,
+          "observed_adverse_carriers": [],
+          "axis_updates": {
+            "normal_earnings": "RAISE",
+            "valuation_direction": "UP"
+          },
+          "scope_requirements": {
+            "responsibility_boundary": "电池材料与稀土两个报告分部",
+            "comparability": "CLOSED"
+          }
+        },
+        {
+          "class_id": "ADVERSE_AGGREGATE_CONTINUED_COMPRESSION",
+          "economic_direction": "ADVERSE",
+          "condition": "全部调整项与资本负担输入闭合后，FY2024两个ADJUSTED_RECURRING_SEGMENT_PROFIT合计较冻结FY2023基线7.047亿元下降至少25%，且合计adjusted recurring profit margin较冻结基线约3.086%下降至少0.5个百分点。单边转负但被另一分部材料改善抵销不触发本类。",
+          "is_residual": false,
+          "observed_adverse_carriers": [
+            "两个分部合计可比营业利润材料下降",
+            "合计营业利润率进一步压缩或分部转亏",
+            "若触发第二条件则存在低利润下持续高资本投入"
+          ],
+          "axis_updates": {
+            "normal_earnings": "LOWER",
+            "valuation_direction": "DOWN"
+          },
+          "scope_requirements": {
+            "responsibility_boundary": "电池材料与稀土两个报告分部",
+            "comparability": "CLOSED"
+          }
+        },
+        {
+          "class_id": "MIXED_LOCAL_SEGMENT_ADVERSE_OFFSET",
+          "economic_direction": "MIXED",
+          "condition": "电池材料或稀土任一分部ADJUSTED_RECURRING_SEGMENT_PROFIT转负且该分部PERSISTENT_CAPITAL_BURDEN=DETERIORATED，但另一分部改善使两个分部合计adjusted recurring profit未较冻结FY2023基线下降25%，或合计adjusted margin未下降0.5个百分点。保留局部资本效率恶化，不下调合计normal earnings。",
+          "is_residual": false,
+          "observed_adverse_carriers": [
+            "一个分部adjusted recurring profit转负",
+            "同一分部资本负担恶化",
+            "另一分部材料改善抵销合计方向"
+          ],
+          "axis_updates": {
+            "normal_earnings": "UNCHANGED",
+            "valuation_direction": "UNCHANGED"
+          },
+          "scope_requirements": {
+            "responsibility_boundary": "电池材料与稀土分别结算后汇总",
+            "comparability": "CLOSED"
+          }
+        },
+        {
+          "class_id": "NEUTRAL_LOW_MARGIN_HOLD",
+          "economic_direction": "NEUTRAL",
+          "condition": "FY2024两个ADJUSTED_RECURRING_SEGMENT_PROFIT合计处于可比FY2023的-15%至+15%，合计adjusted recurring profit margin处于可比FY2023的±0.5个百分点，两分部均未转亏且两个PERSISTENT_CAPITAL_BURDEN均不是DETERIORATED。",
+          "is_residual": false,
+          "observed_adverse_carriers": [],
+          "axis_updates": {
+            "normal_earnings": "UNCHANGED",
+            "valuation_direction": "UNCHANGED"
+          },
+          "scope_requirements": {
+            "responsibility_boundary": "电池材料与稀土两个报告分部",
+            "comparability": "CLOSED"
+          }
+        },
+        {
+          "class_id": "MIXED_COMPLETE_RESIDUAL",
+          "economic_direction": "MIXED",
+          "condition": "两个分部的adjusted recurring profit、关键销量和资本负担输入全部完整可比但不满足以上条件，例如一边恢复而另一边恶化、合计利润改善但一边资本负担恶化、销量恢复而利润率下降，或利润下降未达到明确不利阈值。",
+          "is_residual": true,
+          "observed_adverse_carriers": [],
+          "axis_updates": {
+            "normal_earnings": "UNCHANGED",
+            "valuation_direction": "UNCHANGED"
+          },
+          "scope_requirements": {
+            "responsibility_boundary": "电池材料与稀土两个报告分部",
+            "comparability": "CLOSED"
+          }
+        }
+      ]
+    },
+    {
+      "cell_id": "FY2024_GROUP_CASH_PROXY_AND_SEVERE_CARRIER",
+      "judgment_link": 3,
+      "direct_axes": [
+        "owner_cash",
+        "permanent_loss"
+      ],
+      "preserved_axes": [
+        "management_execution",
+        "normal_earnings",
+        "valuation_direction",
+        "next_research_action"
+      ],
+      "direct_axis_links": {
+        "owner_cash": "合并OCF减现金资本开支先形成GROUP_CASH_PROXY；只有NCI范围与母公司上划闭合后才能直接计入母公司owner cash。",
+        "permanent_loss": "只有负现金代理在两年累计层面持续、同时资本支出不降且债务材料增加，才构成持续现金吞噬和资产负债表恶化的severe载体。"
+      },
+      "preserved_axis_reasons": {
+        "management_execution": "营运资金和融资结构变化不能单独归因管理层产品执行。",
+        "normal_earnings": "单年可逆现金波动不改变会计口径的正常盈利；相关盈利变化由前两格结算。",
+        "valuation_direction": "本cell不让单一现金信号自动传播到估值方向；若severe载体出现，先收紧永久损失约束，再由完整企业处理决定估值。",
+        "next_research_action": "本格只结算现金与永久损失载体，不自动改写结果前已经冻结的首要研究行动。"
+      },
+      "owner_cash_bridge": {
+        "cash_proxy_scope": "GROUP",
+        "nci_scope": "OPEN",
+        "parent_access": "UNKNOWN",
+        "capex_treatment": "GROUP_CASH_PROXY = 合并经营活动现金流量净额 - 购建固定资产、无形资产和其他长期资产支付的现金；在维持性/成长性资本开支未拆分时全部扣除。",
+        "parent_distributable_owner_cash_definition": "先按重要非全资子公司的归母经济权益与实际分配限制，从其post-capex cash中剔除NCI权利和必须留存/回投金额，再与母公司实际收到的持续分红或合法上划现金及母公司为子公司提供的净现金支持对账；处置、借款和资本返还不计入。只有该四步桥可复算才称PARENT_DISTRIBUTABLE_OWNER_CASH。",
+        "material_parent_cash_threshold": "PARENT_DISTRIBUTABLE_OWNER_CASH至少5亿元，且不低于FY2024正GROUP_CASH_PROXY的20%；处理代码只适用于该归母金额，不把GROUP_CASH_PROXY整体改名。"
+      },
+      "permanent_loss_bridge": {
+        "risk_carrier": "持续负GROUP_CASH_PROXY由不下降的现金资本开支驱动，并伴随可比有息债务材料增加；或重要子公司现金上划被明确阻断。",
+        "materiality_or_persistence_test": "现金吞噬路径：FY2024 GROUP_CASH_PROXY不高于-21.82亿元，使FY2023与FY2024两年累计不为正；同时FY2024现金资本开支不低于21.04亿元且年末可比有息债务同比增长至少15%。结构性上划路径：有法律、监管、少数股东协议或融资契约证据阻断至少12个月，被阻断子公司贡献集团adjusted recurring profit或GROUP_CASH_PROXY至少30%，且母公司自身流动资源与其他可分配现金不足以覆盖未来12个月债务和必要支出。",
+        "reversibility_test": "若负现金主要来自一次性营运资金反转、收购或成长性项目，且两年累计仍为正或有息债务未材料增加，则只更新owner cash，不收紧permanent_loss。"
+      },
+      "local_input_treatments": {
+        "LOCAL_UNKNOWN": {
+          "axis_updates": {},
+          "next_discriminating_evidence": "取得FY2024合并OCF、现金资本开支、可比有息债务；若拟计入母公司owner cash，再复算重要非全资子公司的post-capex cash、NCI归属、留存/回投限制、母公司实收与净支持，形成PARENT_DISTRIBUTABLE_OWNER_CASH。"
+        },
+        "MEASUREMENT_MISMATCH": {
+          "axis_updates": {},
+          "next_discriminating_evidence": "重述收购/处置、现金流分类变化和有息债务口径，使FY2024与FY2023可比。"
+        }
+      },
+      "valid_input_first_match": [
+        {
+          "class_id": "LOCAL_UNKNOWN",
+          "economic_direction": "MIXED",
+          "condition": "不存在已知不可重述的现金或债务口径冲突，但FY2024官方年报缺少合并OCF、现金资本开支或可比有息债务中的任一项。仅NCI归属、母公司上划或PARENT_DISTRIBUTABLE_OWNER_CASH未闭合不触发本类，而是保留集团信号并继续条件计入。此类不作数值方向分类。",
+          "is_residual": false,
+          "observed_adverse_carriers": [],
+          "axis_updates": {},
+          "scope_requirements": {
+            "required_nci_scope_at_settlement": [
+              "OPEN",
+              "CLOSED",
+              "IMMATERIAL_WITH_EVIDENCE"
+            ],
+            "required_parent_access_at_settlement": "ANY"
+          }
+        },
+        {
+          "class_id": "MEASUREMENT_MISMATCH",
+          "economic_direction": "MIXED",
+          "condition": "FY2024已披露的材料收购/处置、现金流分类或债务定义与FY2023发生冲突，且有证据确认不能重述为可比口径；普通字段未披露不属于本类。此类不作数值方向分类。",
+          "is_residual": false,
+          "observed_adverse_carriers": [],
+          "axis_updates": {},
+          "scope_requirements": {
+            "required_nci_scope_at_settlement": [
+              "OPEN",
+              "CLOSED",
+              "IMMATERIAL_WITH_EVIDENCE"
+            ],
+            "required_parent_access_at_settlement": "ANY"
+          }
+        },
+        {
+          "class_id": "ADVERSE_STRUCTURAL_PARENT_ACCESS_BLOCK",
+          "economic_direction": "ADVERSE",
+          "condition": "有法律、监管、少数股东协议或融资契约证据明确阻断核心非全资子公司向母公司分红/上划至少12个月；被阻断子公司贡献集团adjusted recurring profit或GROUP_CASH_PROXY至少30%，且母公司自身流动资源与其他可分配现金不足以覆盖未来12个月债务和必要支出。单次少分红、OPEN或UNKNOWN不触发本类。",
+          "is_residual": false,
+          "observed_adverse_carriers": [
+            "材料核心子公司现金上划有明确结构性阻断",
+            "阻断期至少12个月",
+            "母公司替代流动资源不足"
+          ],
+          "axis_updates": {
+            "owner_cash": "DO_NOT_COUNT",
+            "permanent_loss": "TIGHTEN_CONSTRAINT"
+          },
+          "scope_requirements": {
+            "required_nci_scope_at_settlement": [
+              "OPEN",
+              "CLOSED",
+              "IMMATERIAL_WITH_EVIDENCE"
+            ],
+            "required_parent_access_at_settlement": "BLOCKED_WITH_EVIDENCE"
+          }
+        },
+        {
+          "class_id": "ADVERSE_SEVERE_PERSISTENT_CASH_CARRIER",
+          "economic_direction": "ADVERSE",
+          "condition": "FY2024 GROUP_CASH_PROXY不高于-21.82亿元，因而FY2023与FY2024两年累计不为正；FY2024现金资本开支不低于21.04亿元，且以短期借款、一年内到期长期借款/应付债券、长期借款和应付债券合计的可比有息债务同比增长至少15%。",
+          "is_residual": false,
+          "observed_adverse_carriers": [
+            "两年累计GROUP_CASH_PROXY不为正",
+            "现金资本开支持续不降",
+            "可比有息债务材料增加"
+          ],
+          "axis_updates": {
+            "owner_cash": "DO_NOT_COUNT",
+            "permanent_loss": "TIGHTEN_CONSTRAINT"
+          },
+          "scope_requirements": {
+            "required_nci_scope_at_settlement": [
+              "OPEN",
+              "CLOSED",
+              "IMMATERIAL_WITH_EVIDENCE"
+            ],
+            "required_parent_access_at_settlement": "ANY"
+          }
+        },
+        {
+          "class_id": "FAVORABLE_PARENT_OWNER_CASH_CLOSED",
+          "economic_direction": "FAVORABLE",
+          "condition": "FY2024 GROUP_CASH_PROXY为正且FY2023与FY2024两年累计不低于20亿元；重要非全资子公司post-capex cash、NCI归属、必须留存/回投限制、母公司实际持续分红/上划及净现金支持已逐项对账，PARENT_DISTRIBUTABLE_OWNER_CASH至少5亿元且不低于FY2024 GROUP_CASH_PROXY的20%；parent access=EVIDENCED且不存在结构性阻断。",
+          "is_residual": false,
+          "observed_adverse_carriers": [],
+          "axis_updates": {
+            "owner_cash": "COUNT_IN_PARENT_OWNER_CASH",
+            "permanent_loss": "MAINTAIN_CONSTRAINT"
+          },
+          "scope_requirements": {
+            "required_nci_scope_at_settlement": [
+              "CLOSED",
+              "IMMATERIAL_WITH_EVIDENCE"
+            ],
+            "required_parent_access_at_settlement": "EVIDENCED"
+          }
+        },
+        {
+          "class_id": "NEUTRAL_POSITIVE_GROUP_PROXY_SCOPE_OPEN",
+          "economic_direction": "NEUTRAL",
+          "condition": "FY2024 GROUP_CASH_PROXY不低于0且两年累计为正，但NCI范围仍OPEN、母公司上划为UNKNOWN，或PARENT_DISTRIBUTABLE_OWNER_CASH四步桥未闭合/低于材料阈值；同时不满足任何severe条件。仅证明曾分红或具有上划能力仍属于本类。",
+          "is_residual": false,
+          "observed_adverse_carriers": [],
+          "axis_updates": {
+            "owner_cash": "COUNT_CONDITIONALLY",
+            "permanent_loss": "MAINTAIN_CONSTRAINT"
+          },
+          "scope_requirements": {
+            "required_nci_scope_at_settlement": [
+              "OPEN",
+              "CLOSED",
+              "IMMATERIAL_WITH_EVIDENCE"
+            ],
+            "required_parent_access_at_settlement": "EVIDENCED_OR_UNKNOWN_OR_BLOCKED"
+          }
+        },
+        {
+          "class_id": "ADVERSE_OWNER_CASH_ONLY_REVERSIBLE",
+          "economic_direction": "ADVERSE",
+          "condition": "FY2024 GROUP_CASH_PROXY为负，但不同时满足两年累计不为正、现金资本开支不低于2023年和可比有息债务增长15%三项severe条件。",
+          "is_residual": false,
+          "observed_adverse_carriers": [
+            "FY2024已观察到负GROUP_CASH_PROXY"
+          ],
+          "axis_updates": {
+            "owner_cash": "DO_NOT_COUNT",
+            "permanent_loss": "MAINTAIN_CONSTRAINT"
+          },
+          "scope_requirements": {
+            "required_nci_scope_at_settlement": [
+              "OPEN",
+              "CLOSED",
+              "IMMATERIAL_WITH_EVIDENCE"
+            ],
+            "required_parent_access_at_settlement": "EVIDENCED_OR_UNKNOWN_OR_BLOCKED"
+          }
+        },
+        {
+          "class_id": "MIXED_COMPLETE_RESIDUAL",
+          "economic_direction": "MIXED",
+          "condition": "全部集团现金输入完整可比但不满足以上条件，例如集团现金代理显著为正但两年累计不足20亿元且上划边界仅部分闭合。",
+          "is_residual": true,
+          "observed_adverse_carriers": [],
+          "axis_updates": {
+            "owner_cash": "COUNT_CONDITIONALLY",
+            "permanent_loss": "MAINTAIN_CONSTRAINT"
+          },
+          "scope_requirements": {
+            "required_nci_scope_at_settlement": [
+              "OPEN",
+              "CLOSED",
+              "IMMATERIAL_WITH_EVIDENCE"
+            ],
+            "required_parent_access_at_settlement": "EVIDENCED_OR_UNKNOWN_OR_BLOCKED"
+          }
+        }
+      ]
+    }
+  ]
+}

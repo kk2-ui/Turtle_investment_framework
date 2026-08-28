@@ -214,6 +214,110 @@ def _nonempty_text(value: Any) -> bool:
     return isinstance(value, str) and bool(value.strip())
 
 
+def _finite_number(value: Any) -> bool:
+    return isinstance(value, (int, float)) and not isinstance(value, bool)
+
+
+def _validate_adjusted_profit_baselines(
+    bridge: dict[str, Any], prefix: str, findings: list[str]
+) -> None:
+    """Bind relative adjusted-profit thresholds to a pre-outcome denominator.
+
+    This is opt-in: existing cases that do not use adjusted relative thresholds
+    are unchanged.  Once a case declares that treatment, the result custodian
+    must not be left to invent the baseline or its exclusions after reveal.
+    """
+
+    if bridge.get("uses_adjusted_relative_thresholds") is not True:
+        return
+    schedules = bridge.get("baseline_adjusted_profit_schedules")
+    if not isinstance(schedules, list) or not schedules:
+        findings.append(f"{prefix}.baseline_adjusted_profit_schedules_missing")
+        return
+    required_scope_ids = bridge.get("required_adjusted_profit_scope_ids")
+    if (
+        not isinstance(required_scope_ids, list)
+        or not required_scope_ids
+        or len(required_scope_ids) != len(set(required_scope_ids))
+        or not all(_nonempty_text(scope_id) for scope_id in required_scope_ids)
+    ):
+        findings.append(f"{prefix}.required_adjusted_profit_scope_ids_invalid")
+        required_scope_set: set[str] = set()
+    else:
+        required_scope_set = set(required_scope_ids)
+    seen_scopes: set[str] = set()
+    numeric_fields = (
+        "reported_segment_profit",
+        "baseline_revenue",
+        "adjusted_recurring_profit",
+        "adjusted_recurring_margin",
+        "capital_expenditure",
+        "depreciation_amortization",
+        "asset_impairment",
+        "capital_burden_denominator",
+    )
+    for index, schedule in enumerate(schedules):
+        item_prefix = f"{prefix}.baseline_adjusted_profit_schedules[{index}]"
+        if not isinstance(schedule, dict):
+            findings.append(f"{item_prefix}.must_be_object")
+            continue
+        scope_id = schedule.get("scope_id")
+        if not _nonempty_text(scope_id) or scope_id in seen_scopes:
+            findings.append(f"{item_prefix}.scope_id_missing_or_duplicate")
+        else:
+            seen_scopes.add(scope_id)
+        if schedule.get("baseline_period") != "FY2023":
+            findings.append(f"{item_prefix}.baseline_period_must_be_fy2023")
+        if schedule.get("schedule_status") != "FROZEN_PREOUTCOME":
+            findings.append(f"{item_prefix}.schedule_not_frozen_preoutcome")
+        for field in numeric_fields:
+            if not _finite_number(schedule.get(field)):
+                findings.append(f"{item_prefix}.{field}_missing")
+        refs = schedule.get("source_refs")
+        if not isinstance(refs, list) or not any(_nonempty_text(ref) for ref in refs):
+            findings.append(f"{item_prefix}.source_refs_missing")
+        adjustments = schedule.get("adjustment_schedule")
+        if not isinstance(adjustments, list) or not adjustments:
+            findings.append(f"{item_prefix}.adjustment_schedule_missing")
+            continue
+        removed_total = 0.0
+        adjustments_valid = True
+        for adjustment_index, adjustment in enumerate(adjustments):
+            adjustment_prefix = f"{item_prefix}.adjustment_schedule[{adjustment_index}]"
+            if not isinstance(adjustment, dict):
+                findings.append(f"{adjustment_prefix}.must_be_object")
+                adjustments_valid = False
+                continue
+            for field in ("item", "treatment", "source_ref", "rationale"):
+                if not _nonempty_text(adjustment.get(field)):
+                    findings.append(f"{adjustment_prefix}.{field}_missing")
+                    adjustments_valid = False
+            amount = adjustment.get("amount_removed_from_reported_profit")
+            if not _finite_number(amount):
+                findings.append(f"{adjustment_prefix}.amount_missing")
+                adjustments_valid = False
+            else:
+                removed_total += float(amount)
+        if all(_finite_number(schedule.get(field)) for field in numeric_fields) and adjustments_valid:
+            reported = float(schedule["reported_segment_profit"])
+            adjusted = float(schedule["adjusted_recurring_profit"])
+            revenue = float(schedule["baseline_revenue"])
+            expected_adjusted = reported - removed_total
+            if abs(adjusted - expected_adjusted) > max(1.0, abs(expected_adjusted) * 1e-9):
+                findings.append(f"{item_prefix}.adjusted_profit_not_reconciled")
+            expected_margin = adjusted / revenue if revenue else None
+            if expected_margin is None or abs(
+                float(schedule["adjusted_recurring_margin"]) - expected_margin
+            ) > 1e-9:
+                findings.append(f"{item_prefix}.adjusted_margin_not_reconciled")
+            if abs(float(schedule["capital_burden_denominator"]) - adjusted) > max(
+                1.0, abs(adjusted) * 1e-9
+            ):
+                findings.append(f"{item_prefix}.capital_burden_denominator_not_adjusted_profit")
+    if required_scope_set and seen_scopes != required_scope_set:
+        findings.append(f"{prefix}.baseline_adjusted_profit_scopes_incomplete")
+
+
 def _validate_action(action: Any, prefix: str, findings: list[str]) -> None:
     if not isinstance(action, dict):
         findings.append(f"{prefix}.must_be_object")
@@ -348,6 +452,11 @@ def validate_preoutcome_draft(draft: dict[str, Any]) -> list[str]:
                     values = bridge.get(field)
                     if not isinstance(values, list) or not any(_nonempty_text(value) for value in values):
                         findings.append(f"{prefix}.normal_earnings_bridge.{field}_missing")
+                _validate_adjusted_profit_baselines(
+                    bridge,
+                    f"{prefix}.normal_earnings_bridge",
+                    findings,
+                )
 
         owner_cash_bridge = cell.get("owner_cash_bridge") if "owner_cash" in direct_set else None
         if "owner_cash" in direct_set:

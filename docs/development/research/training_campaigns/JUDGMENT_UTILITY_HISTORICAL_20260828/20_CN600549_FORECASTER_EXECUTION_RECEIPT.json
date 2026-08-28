@@ -1,0 +1,41 @@
+{
+  "schema_version": "historical-forecaster-execution-receipt.v1",
+  "campaign_id": "JUDGMENT_UTILITY_HISTORICAL_20260828",
+  "episode_id": "HIST:CN600549:20240501:FY2024",
+  "company_id": "CN:600549",
+  "cutoff_at": "2024-05-01T00:00:00+08:00",
+  "forecaster_id": "/root/cn600549_preoutcome_forecaster",
+  "execution_mode": "FRESH_AGENT_NO_PARENT_CONTEXT",
+  "fork_turns": "none",
+  "declared_input": {
+    "packet_path": "/tmp/turtle-cn600549-forecaster-packet.g7QH9H",
+    "allowed_files": [
+      "FORECASTER_PACKET.json",
+      "FY2021.pdf",
+      "FY2022.pdf",
+      "FY2023.pdf"
+    ],
+    "source_ids": [
+      "CNINFO:600549:FY2021:1212754030",
+      "CNINFO:600549:FY2022:1216523566",
+      "CNINFO:600549:FY2023:1219672897"
+    ],
+    "parent_conversation_visible": false,
+    "workspace_search_authorized": false,
+    "outcome_body_access": false,
+    "price_or_return_access": false
+  },
+  "prior_feedback_applied": {
+    "source_feedback_ref": "19_CN601598_FEEDBACK_RECEIPT.json",
+    "behavior_change": "Before granting management-execution credit for business-volume or revenue growth, construct a same-responsibility-boundary bridge to recurring profit or unit economics. If unavailable, record scale growth but freeze execution attribution.",
+    "application": "钨钼、电池材料和稀土均先冻结同责任边界的收入或销量、经常营业利润、利润率与持续资本负担桥；产能和销量本身不授予完整执行信用。"
+  },
+  "output": {
+    "path": "docs/development/research/training_campaigns/JUDGMENT_UTILITY_HISTORICAL_20260828/21_CN600549_PREOUTCOME_JUDGMENT.json",
+    "status": "COMPLETED_AND_INDEPENDENTLY_ACCEPTED",
+    "outcome_state": "SEALED"
+  },
+  "isolation_status": "ROLE_SCOPED_ONE_SHOT_EXECUTED",
+  "training_utility_credit": "NONE",
+  "authority": "NONE"
+}

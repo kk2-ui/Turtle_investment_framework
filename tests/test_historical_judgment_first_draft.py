@@ -270,6 +270,72 @@ def test_normal_earnings_requires_recurring_profit_and_cost_bridge() -> None:
     assert any("normal_earnings_bridge_missing" in item for item in validate_preoutcome_draft(draft))
 
 
+def _adjusted_profit_schedule() -> dict:
+    return {
+        "scope_id": "SEGMENT:CORE",
+        "baseline_period": "FY2023",
+        "schedule_status": "FROZEN_PREOUTCOME",
+        "reported_segment_profit": 120.0,
+        "baseline_revenue": 1000.0,
+        "adjusted_recurring_profit": 110.0,
+        "adjusted_recurring_margin": 0.11,
+        "capital_expenditure": 25.0,
+        "depreciation_amortization": 10.0,
+        "asset_impairment": 2.0,
+        "capital_burden_denominator": 110.0,
+        "source_refs": ["FY2023.pdf p100"],
+        "adjustment_schedule": [
+            {
+                "item": "one-off disposal gain",
+                "amount_removed_from_reported_profit": 10.0,
+                "treatment": "REMOVE_FROM_RECURRING",
+                "source_ref": "FY2023.pdf p101",
+                "rationale": "处置不属于持续经营利润。",
+            }
+        ],
+    }
+
+
+def test_relative_adjusted_profit_threshold_requires_frozen_reconciled_baseline() -> None:
+    draft = _draft()
+    bridge = draft["outcome_cells"][0]["normal_earnings_bridge"]
+    bridge["uses_adjusted_relative_thresholds"] = True
+    bridge["required_adjusted_profit_scope_ids"] = ["SEGMENT:CORE"]
+    findings = validate_preoutcome_draft(draft)
+    assert any("baseline_adjusted_profit_schedules_missing" in item for item in findings)
+
+    bridge["baseline_adjusted_profit_schedules"] = [_adjusted_profit_schedule()]
+    assert validate_preoutcome_draft(draft) == []
+
+
+def test_adjusted_profit_baseline_mutation_is_rejected_before_outcome_access() -> None:
+    draft = _draft()
+    bridge = draft["outcome_cells"][0]["normal_earnings_bridge"]
+    bridge["uses_adjusted_relative_thresholds"] = True
+    bridge["required_adjusted_profit_scope_ids"] = ["SEGMENT:CORE"]
+    bridge["baseline_adjusted_profit_schedules"] = [_adjusted_profit_schedule()]
+
+    del bridge["baseline_adjusted_profit_schedules"][0]["source_refs"]
+    assert any("source_refs_missing" in item for item in validate_preoutcome_draft(draft))
+
+    bridge["baseline_adjusted_profit_schedules"][0]["source_refs"] = ["FY2023.pdf p100"]
+    bridge["baseline_adjusted_profit_schedules"][0]["adjusted_recurring_profit"] = 112.0
+    findings = validate_preoutcome_draft(draft)
+    assert any("adjusted_profit_not_reconciled" in item for item in findings)
+
+
+def test_all_declared_adjusted_profit_scopes_are_required() -> None:
+    draft = _draft()
+    bridge = draft["outcome_cells"][0]["normal_earnings_bridge"]
+    bridge["uses_adjusted_relative_thresholds"] = True
+    bridge["required_adjusted_profit_scope_ids"] = ["SEGMENT:CORE", "SEGMENT:SECOND"]
+    bridge["baseline_adjusted_profit_schedules"] = [_adjusted_profit_schedule()]
+    assert any(
+        "baseline_adjusted_profit_scopes_incomplete" in item
+        for item in validate_preoutcome_draft(draft)
+    )
+
+
 def test_group_cash_proxy_needs_future_nci_and_parent_access_closure() -> None:
     draft = _draft()
     cell = draft["outcome_cells"][0]
