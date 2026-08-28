@@ -1346,6 +1346,46 @@
         "transfer_question": "下一家收缩网络能否在结果前分开冻结保留、退出、暂停和复开cohort的客户、单位经济、现金、退出成本与替代资本？"
       },
       "holdout_axis": null
+    },
+    {
+      "case_id": "TEACH:CN600660:20131023:FY2013_FY2016",
+      "company_id": "CN:600660",
+      "company_cluster_id": "COMPANY:CN600660",
+      "company_name": "福耀玻璃",
+      "industry_id": "CROSS_BORDER_AUTOMOTIVE_MANUFACTURING",
+      "track": "TEACHING",
+      "status": "CURATED",
+      "cutoff_at": "2013-10-23T00:00:00+08:00",
+      "outcome_window": null,
+      "outcome_access": "RESULT_KNOWN",
+      "selection_exposure": "RESULT_KNOWN_OR_DERIVED_VISIBLE",
+      "role_isolation_state": "NOT_REQUIRED_FOR_TEACHING",
+      "primary_capability_units": [
+        "BUSINESS_MODEL_ECONOMICS",
+        "CAPITAL_ALLOCATION"
+      ],
+      "mechanism_focus": "跨境绿地制造如何从决策/量产经过客户接口、目标实体爬坡单位经济、项目现金和责任单元资本回收形成或不形成当地经济价值",
+      "claim_scope": "WITHIN_CASE_MECHANISM",
+      "comparative_mode": "NOT_REQUIRED",
+      "source_refs": [
+        "docs/development/research/training_curricula/teaching_cases/TC_CN600660_CROSS_BORDER_GREENFIELD_V1.md"
+      ],
+      "artifact_refs": {
+        "lesson_ref": "docs/development/research/training_curricula/teaching_cases/TC_CN600660_CROSS_BORDER_GREENFIELD_V1.md",
+        "postoutcome_review_ref": "docs/development/research/training_curricula/teaching_cases/TC_CN600660_CROSS_BORDER_GREENFIELD_INDEPENDENT_REVIEW.md"
+      },
+      "lesson": {
+        "state_and_constraint": "美国本地化项目链承诺重、范围与资本口径随时间演化；目标实体出现收入和亏损，但客户、同厂成本、现金和回收桥不披露。",
+        "management_choice_or_no_action": "管理层选择美国成品厂及本地浮法供给接口，以较高不可逆资本换取当地服务、交付与关键材料控制。",
+        "customer_or_operating_response": "一期量产、支持OEM/ARG的叙述和目标实体收入仅显示经营输出存在；认证、订单、交付、份额、价格和续单仍不可归属。",
+        "cash_or_capital_result": "项目持续资本吸收且目标实体亏损；集团OCF仅是环境，项目营运资本、现金与资本回收仍未知。",
+        "mechanism_lesson": "跨境工厂的决策、实施、客户吸收、单位经济、现金和资本回收必须按同一责任单元分时钟观察。",
+        "strongest_rival": "首期目标实体亏损可能是认证、人员、固定成本和利用率的正常爬坡，而非结构性失败。",
+        "near_miss": "把投产、收入、首期亏损、集团OCF、不同范围的资本投入或不同单位产能分别当作客户验证、长期失败、项目现金或资本回收。",
+        "investor_treatment": "确认项目已进入资本吸收和爬坡阶段；不给客户、正常单位经济、project owner cash或资本回收信用，保留条件性永久损失路径。",
+        "transfer_question": "下一家跨境绿地项目是否能在同一责任单元冻结客户认证/交付、量价成本、营运资本现金和资本台账/回收窗口？"
+      },
+      "holdout_axis": null
     }
   ],
   "teaching_candidate_pool": [
