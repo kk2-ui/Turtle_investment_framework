@@ -146,6 +146,15 @@ def _archived_no_method_holdout_case() -> dict:
     return item
 
 
+def _archived_no_material_preoutcome_difference_holdout_case() -> dict:
+    item = _holdout_case()
+    item["status"] = "ARCHIVED_NOT_EVALUABLE"
+    item["role_isolation_state"] = "ROLE_ISOLATION_PROVED"
+    item["method_memory_state"] = "NO_MATERIAL_PREOUTCOME_TREATMENT_DIFFERENCE"
+    item["artifact_refs"]["holdout_pair_ref"] = "docs/example/holdout-pair-review.md"
+    return item
+
+
 def _prospective_case() -> dict:
     return {
         "case_id": "FORWARD:CN601899:FY2026",
@@ -266,6 +275,41 @@ def test_no_method_single_arm_holdout_is_archived_and_not_counted_as_training_ev
     assert not invalid["valid"]
     assert any("holdout_method_memory_state_mismatched" in item for item in invalid["findings"])
     assert any("holdout_artifact_chain_incomplete" in item for item in invalid["findings"])
+
+
+def test_no_material_preoutcome_difference_archives_paired_holdout_without_outcome_access() -> None:
+    payload = _curriculum()
+    payload["cases"] = [_archived_no_material_preoutcome_difference_holdout_case()]
+    result = curriculum.validate_curriculum(payload)
+    assert result["valid"], result["findings"]
+    progress = result["progress"]["track_progress"]["HISTORICAL_HOLDOUT"]
+    assert progress["record_count"] == 1
+    assert progress["episode_count"] == 0
+    assert progress["archived_not_evaluable_count"] == 1
+    assert progress["completed_episode_count"] == 0
+
+
+def test_no_material_preoutcome_difference_rejects_outcome_access_or_incomplete_pair() -> None:
+    payload = _curriculum()
+    payload["cases"] = [_archived_no_material_preoutcome_difference_holdout_case()]
+    payload["cases"][0]["outcome_access"] = "REVEALED_AFTER_HOLDOUT_FORECAST_FREEZE"
+    revealed = curriculum.validate_curriculum(payload)
+    assert not revealed["valid"]
+    assert "cases[0].archived_no_material_preoutcome_difference_must_be_sealed" in revealed["findings"]
+
+    missing_method_pack = _curriculum()
+    missing_method_pack["cases"] = [_archived_no_material_preoutcome_difference_holdout_case()]
+    missing_method_pack["cases"][0]["artifact_refs"].pop("method_pack_ref")
+    invalid = curriculum.validate_curriculum(missing_method_pack)
+    assert not invalid["valid"]
+    assert "cases[0].holdout_artifact_chain_incomplete" in invalid["findings"]
+
+    missing_pair = _curriculum()
+    missing_pair["cases"] = [_archived_no_material_preoutcome_difference_holdout_case()]
+    missing_pair["cases"][0]["artifact_refs"].pop("holdout_pair_ref")
+    invalid = curriculum.validate_curriculum(missing_pair)
+    assert not invalid["valid"]
+    assert "cases[0].holdout_artifact_chain_incomplete" in invalid["findings"]
 
 
 def test_teaching_only_curriculum_does_not_require_holdout_or_blind_lane() -> None:
@@ -444,9 +488,9 @@ def test_checked_in_curriculum_registers_real_assets_without_overclaiming_capaci
     assert progress["next_action"] == "EXPAND_TEACHING_CANDIDATE_POOL"
     assert progress["track_progress"]["BLIND_JUDGMENT"]["completed_independent_company_cluster_count"] == 9
     holdout = progress["track_progress"]["HISTORICAL_HOLDOUT"]
-    assert holdout["record_count"] == 2
+    assert holdout["record_count"] == 3
     assert holdout["episode_count"] == 0
-    assert holdout["archived_not_evaluable_count"] == 2
+    assert holdout["archived_not_evaluable_count"] == 3
     assert holdout["independent_company_cluster_count"] == 0
     assert holdout["completed_independent_company_cluster_count"] == 0
     assert progress["track_progress"]["PROSPECTIVE"]["independent_company_cluster_count"] == 2

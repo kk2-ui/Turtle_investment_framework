@@ -1,0 +1,88 @@
+{
+  "schema_version": "holdout-v3-enhanced-execution-receipt.v1",
+  "receipt_type": "HOLDOUT_V3_ENHANCED_EXECUTION_RECEIPT",
+  "status": "COMPLETED_PREOUTCOME_BLIND",
+  "case_id": "CN002475_HOLDOUT_V3",
+  "issuer": "立讯精密工业股份有限公司",
+  "ticker": "002475",
+  "cutoff": "2024-05-01T00:00:00+08:00",
+  "target_outcome_period_label": "FY2024",
+  "work_product_boundary": {
+    "output_directory": "/tmp/HOLDOUT_V3_LUXSHARE_ENHANCED",
+    "repository_modified": false,
+    "company_evidence_budget": {
+      "permitted_document_count": 3,
+      "documents_used": 3,
+      "additional_company_evidence_used": 0,
+      "time_boundary": "pre-cutoff materials only"
+    }
+  },
+  "permitted_inputs_read": [
+    {
+      "kind": "campaign_selection_register",
+      "identifier": "120_CN002475_HOLDOUT_V3_SELECTION_REGISTER.json"
+    },
+    {
+      "kind": "cutoff_before_source_packet_receipt",
+      "identifier": "121_CN002475_HOLDOUT_V3_CUTOFF_BEFORE_SOURCE_PACKET_RECEIPT.json"
+    },
+    {
+      "kind": "frozen_method_pack",
+      "identifier": "118_FROZEN_TRAINING_METHOD_PACK_V3.json"
+    },
+    {
+      "kind": "official_static_annual_report_pdf",
+      "fiscal_year": 2021,
+      "announcement_id": "1213171817",
+      "title": "2021年年度报告",
+      "official_static_url": "http://static.cninfo.com.cn/finalpage/2022-04-28/1213171817.PDF"
+    },
+    {
+      "kind": "official_static_annual_report_pdf",
+      "fiscal_year": 2022,
+      "announcement_id": "1216646576",
+      "title": "2022年年度报告",
+      "official_static_url": "http://static.cninfo.com.cn/finalpage/2023-04-28/1216646576.PDF"
+    },
+    {
+      "kind": "official_static_annual_report_pdf",
+      "fiscal_year": 2023,
+      "announcement_id": "1219799516",
+      "title": "2023年年度报告",
+      "official_static_url": "http://static.cninfo.com.cn/finalpage/2024-04-25/1219799516.PDF"
+    }
+  ],
+  "access_firewall_attestation": {
+    "baseline_forecast_or_files_read": false,
+    "other_campaign_or_case_material_read": false,
+    "FY2024_or_later_metadata_or_body_read": false,
+    "price_return_valuation_or_analyst_content_read": false,
+    "browser_used": false,
+    "outcome_accessed": false,
+    "outcome_status": "SEALED"
+  },
+  "v3_treatment": {
+    "exact_rule_used": {
+      "rule_id": "SAME_BOUNDARY_RECURRING_ECONOMICS_FIRST",
+      "required_behavior": "Before upgrading on scale or revenue growth, build a responsibility-matched bridge to recurring profit, unit economics, utilization, inventory absorption, or an equivalent economic carrier; preserve independently supported company judgments when one bridge remains open."
+    },
+    "trigger_observed_preoutcome": "FY2023 consolidated revenue rose 8.35% and attributable profit rose 19.53%; consumer electronics, 85.03% of sales, grew 9.75%. FY2023 operating cash flow also rose 116.89% to RMB27.605bn.",
+    "responsibility_matched_bridge": "The FY2023 report says the cash-flow increase came from faster customer collection and sale/collection of opening strategic inventory. Consumer-electronics gross margin was 10.60%, down 0.87 percentage points year on year. Those observations support delivered volume and inventory absorption, but do not establish that the cash uplift is a recurring owner-cash level or that the core unit economics improved.",
+    "enhanced_treatment": "Retain positive credit for delivery and inventory absorption; keep recurring owner cash and the associated permanent-loss protection CONDITIONAL pending a second-period cash and margin bridge. Do not use the FY2023 cash jump to lower the concentration-and-asset-utilization permanent-loss concern.",
+    "material_difference_relative_to_ordinary_research": {
+      "present": true,
+      "comparison_boundary": "This is a counterfactual ordinary-research treatment, not a characterization of the unread baseline work product.",
+      "ordinary_treatment_being_avoided": "Treating the FY2023 profit and cash acceleration as an unqualified improvement in recurring owner cash and therefore as reduced permanent-loss exposure.",
+      "enhanced_difference": "The enhanced judgment separates validated operating execution from an unvalidated recurring cash level. It consequently leaves owner-cash strength conditional and preserves customer concentration plus manufacturing-asset utilization as a material permanent-loss carrier.",
+      "why_material": "The difference changes the treatment of the two investor-relevant questions that the FY2023 headline cash figure would otherwise answer: whether cash available after reinvestment is durable, and whether a customer/program reversal could strand a large manufacturing asset base. It is not a difference in prose, field count, or caveat volume."
+    },
+    "falsifiable_observation": "The enhanced pause is falsified if the FY2024 annual report, on the same disclosed bases, shows consumer-electronics revenue at least RMB197.183bn, consumer-electronics gross margin at least 10.60%, and operating cash flow at least attributable profit while operating cash flow less cash paid for long-lived assets remains positive. That would provide the missing second-period recurring-economics bridge despite the FY2023 working-capital explanation."
+  },
+  "deliverables": [
+    "124_CN002475_ENHANCED_EXECUTION_RECEIPT.json",
+    "125_CN002475_ENHANCED_PREOUTCOME_JUDGMENT.json"
+  ],
+  "method_validation": "NOT_CLAIMED",
+  "outcome_or_investment_action": "NOT_STATED"
+}
+

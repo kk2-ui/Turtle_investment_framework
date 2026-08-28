@@ -1,0 +1,253 @@
+{
+  "receipt_type": "BASELINE_PREOUTCOME_JUDGMENT",
+  "status": "FROZEN_PRE_OUTCOME",
+  "case_id": "CN002475_HOLDOUT_V3",
+  "forecaster_arm": "BASELINE",
+  "as_of_cutoff": "2024-05-01T00:00:00+08:00",
+  "scope": "Company, business-quality, owner-cash, and permanent-loss judgment from the frozen FY2021-FY2023 official annual-report packet only.",
+  "bottom_line": {
+    "judgment": "Luxshare is a scaled and technically capable precision-manufacturing business whose FY2023 reported earnings resilience is real, but whose near-term economics remain dominated by consumer electronics and whose FY2023 operating-cash step-up was partly a working-capital release. The appropriate pre-outcome treatment is therefore a profitable but capital- and cycle-sensitive owner-cash profile: credit continued modest business growth, give only upside credit to non-consumer expansion, and do not capitalize the FY2023 cash peak as a normal owner-cash run rate.",
+    "evidence_confidence": "Medium. The audited multi-year financial and cash-flow facts are direct; the durability of mix, margins, and cash conversion is an economic inference constrained by only three annual reports.",
+    "business_quality_treatment": "Operational capability is above the packet's minimum evidence threshold: revenue expanded strongly in FY2021-FY2022 and FY2023 profit still grew while the consumer market only began to recover. Economic quality is not yet equivalent to a diversified, high-margin compounder because consumer electronics supplied 85.03% of FY2023 revenue and that segment's gross margin slipped to 10.60%.",
+    "owner_cash_treatment": "Use CNY 1-9bn as a conservative FY2024 owner-cash proxy range, defined only as operating cash flow less cash paid for fixed, intangible, and other long-lived assets. This is deliberately below the FY2023 CNY 16.22bn proxy because FY2023 operating cash flow included faster customer collections and conversion of prior strategic inventory into sales and collections. It is not a claim that the proxy equals distributable cash flow.",
+    "permanent_loss_treatment": "MODERATE. The central risk is a consumer-electronics or customer-program reset that combines lower volume or pricing with inventory, receivable, and capacity absorption; it is amplified by a capital-intensive balance sheet and meaningful borrowing. It is mitigated, but not eliminated, by demonstrated operating scale, positive profits, rising automotive and communications revenue, and FY2023 working-capital improvement."
+  },
+  "historical_evidence": [
+    {
+      "evidence_id": "E1_three_year_core_financials",
+      "source": "FY2021 2021年年度报告, p.8; FY2022 2022年年度报告, p.8; FY2023 2023年年度报告, p.8",
+      "facts_cny_billion": {
+        "revenue": {
+          "FY2021": 153.946,
+          "FY2022": 214.028,
+          "FY2023": 231.905
+        },
+        "attributable_net_profit": {
+          "FY2021": 7.071,
+          "FY2022": 9.163,
+          "FY2023": 10.953
+        },
+        "operating_cash_flow": {
+          "FY2021": 7.285,
+          "FY2022": 12.728,
+          "FY2023": 27.605
+        }
+      },
+      "relevance": "Revenue growth decelerated from 66.43% in FY2021 to 39.03% in FY2022 and 8.35% in FY2023, while attributable profit rose 19.53% in FY2023. The record supports resilience, but not a conclusion that top-line momentum itself was accelerating."
+    },
+    {
+      "evidence_id": "E2_consumer_concentration_and_margin",
+      "source": "FY2023 2023年年度报告, pp.18-19; FY2022 2022年年度报告, pp.17-18; FY2021 2021年年度报告, pp.22-23",
+      "facts": {
+        "FY2023_consumer_electronics_revenue_cny_billion": 197.183,
+        "FY2023_consumer_electronics_revenue_share": "85.03%",
+        "FY2023_consumer_electronics_revenue_growth": "9.75%",
+        "FY2023_consumer_electronics_gross_margin": "10.60%",
+        "FY2023_consumer_electronics_gross_margin_change": "-0.87 percentage points",
+        "FY2022_consumer_electronics_revenue_share": "83.95%",
+        "FY2022_consumer_electronics_gross_margin": "11.47%",
+        "FY2021_consumer_electronics_revenue_share": "87.46%",
+        "FY2021_consumer_electronics_gross_margin": "11.36%"
+      },
+      "relevance": "The main revenue engine regained growth in FY2023 but remained overwhelmingly concentrated and did not show broad segment-margin expansion."
+    },
+    {
+      "evidence_id": "E3_adjacent_platforms_remain_smaller",
+      "source": "FY2023 2023年年度报告, p.18; FY2022 2022年年度报告, p.17",
+      "facts": {
+        "FY2023_automotive_revenue_cny_billion": 9.252,
+        "FY2023_automotive_revenue_share": "3.99%",
+        "FY2023_automotive_revenue_growth": "50.46%",
+        "FY2023_communications_revenue_cny_billion": 14.538,
+        "FY2023_communications_revenue_share": "6.27%",
+        "FY2023_communications_revenue_growth": "13.28%",
+        "FY2023_computer_revenue_growth": "-33.58%"
+      },
+      "relevance": "Automotive and communications provide credible expansion paths, but their FY2023 revenue base was too small to remove the consumer-electronics dependency in the base case."
+    },
+    {
+      "evidence_id": "E4_cash_release_and_capital_needs",
+      "source": "FY2023 2023年年度报告, pp.28, 29, 124-125, 38-39",
+      "facts": {
+        "FY2023_operating_cash_flow_cny_billion": 27.605,
+        "FY2022_operating_cash_flow_cny_billion": 12.728,
+        "FY2023_cash_paid_for_long_lived_assets_cny_billion": 11.387,
+        "FY2022_cash_paid_for_long_lived_assets_cny_billion": 13.584,
+        "FY2023_operating_cash_flow_driver_disclosed": "faster customer collections and sales/collections from beginning-of-period strategic inventory",
+        "FY2023_inventory_cny_billion": 29.758,
+        "FY2022_inventory_cny_billion": 37.363,
+        "FY2023_short_term_borrowings_cny_billion": 20.514,
+        "FY2023_long_term_borrowings_cny_billion": 12.039,
+        "FY2023_asset_liability_ratio": "56.61%"
+      },
+      "relevance": "The FY2023 cash result is strong, but the filing itself identifies cash-release drivers. Fixed investment and borrowing remain material to the owner-cash and permanent-loss treatment."
+    },
+    {
+      "evidence_id": "E5_operational_capability_and_external_exposure",
+      "source": "FY2023 2023年年度报告, pp.17, 39",
+      "facts": {
+        "management_discussion": "The company describes vertical integration, automated process development, lean manufacturing, and product breadth across consumer electronics, communications/data centers, and automotive products.",
+        "FY2023_overseas_revenue_share": "89.16%",
+        "filing_risks": [
+          "macro-economic uncertainty",
+          "foreign-exchange exposure",
+          "management complexity from expansion, vertical integration, and international capacity requirements"
+        ]
+      },
+      "relevance": "The capability case is plausible, while the risk disclosure is consistent with treating global demand, execution, and currency exposure as real downside channels rather than remote caveats."
+    }
+  ],
+  "material_mechanism_claims": [
+    {
+      "claim_id": "M1_core_recovery_not_diversification",
+      "claim": "The FY2024 business result will still be principally set by consumer-electronics demand, product mix, and manufacturing execution; fast growth in automotive and communications is not yet large enough to change that causal hierarchy.",
+      "why_it_matters": "Consumer electronics were CNY 197.183bn, or 85.03% of FY2023 revenue. A modest change in the core outweighs high percentage growth in the smaller adjacent segments.",
+      "strongest_alternative": "Automotive and communications are scaling quickly enough to become the next growth engine and absorb a consumer-electronics slowdown.",
+      "why_the_alternative_is_not_base_case": "Automotive and communications together were CNY 23.790bn in FY2023, versus CNY 197.183bn for consumer electronics; the observed scale gap is still too large for them to offset a material core reset without an exceptional acceleration.",
+      "pre_outcome_treatment": "Treat adjacent-platform growth as upside, while making consumer-electronics continuity the base-case driver.",
+      "flip_facts": [
+        "FY2024 segment reporting shows consumer-electronics revenue materially below the base band with no sufficient non-consumer offset.",
+        "FY2024 segment reporting shows sustained non-consumer expansion large enough to reduce consumer-electronics share materially while consolidated revenue and profit remain intact."
+      ]
+    },
+    {
+      "claim_id": "M2_profit_resilience_has_not_proven_core_margin_expansion",
+      "claim": "FY2023 profit growth shows resilience in operating execution, but it does not prove that the dominant business has structurally improved its unit economics: consumer-electronics gross margin fell even as attributable profit increased.",
+      "why_it_matters": "Attributable net profit increased 19.53% to CNY 10.953bn in FY2023 while consumer-electronics gross margin declined 0.87 percentage points to 10.60%. This separates reported-profit progress from a confirmed improvement in the core segment's economics.",
+      "strongest_alternative": "The lower segment margin is a temporary product-mix cost, and vertical integration will restore or expand margins as consumer demand recovers.",
+      "why_the_alternative_is_not_base_case": "The packet provides a credible capability narrative but only one latest-year margin observation after a prior-year margin of 11.47%; it does not establish that the next mix or margin outcome will reverse.",
+      "pre_outcome_treatment": "Credit modest profit growth in the base case, but do not underwrite a material core-margin expansion.",
+      "flip_facts": [
+        "FY2024 consumer-electronics margin improves while segment revenue grows, accompanied by attributable profit above the upside band.",
+        "FY2024 consumer-electronics revenue is weak and attributable profit falls below the downside threshold, indicating that the FY2023 profit resilience was not durable."
+      ]
+    },
+    {
+      "claim_id": "M3_owner_cash_is_positive_but_not_at_fy2023_peak",
+      "claim": "The company can generate material operating cash, but FY2023's CNY 27.605bn operating cash flow should be treated as partly non-recurring working-capital conversion rather than the normal owner-cash level.",
+      "why_it_matters": "The filing attributes the FY2023 operating-cash increase to faster customer collections and sales/collections of beginning strategic inventory. Inventory declined from CNY 37.363bn to CNY 29.758bn, while cash investment in long-lived assets remained CNY 11.387bn and borrowings were CNY 32.553bn at year-end.",
+      "strongest_alternative": "The inventory and receivables improvement proves a durable process upgrade, allowing FY2023 cash conversion to recur alongside lower capital intensity.",
+      "why_the_alternative_is_not_base_case": "The exact recurring versus release component is not separated in the packet, and the company still reports new-project funding needs, material capital spending, and a 56.61% asset-liability ratio.",
+      "pre_outcome_treatment": "Use the conservative owner-cash proxy range in the bottom line; preserve FY2023 peak cash as an upside possibility, not the base run rate.",
+      "flip_facts": [
+        "FY2024 operating cash remains at or above CNY 25bn without another large inventory or receivable release and with long-lived-asset cash spending contained near FY2023's level.",
+        "FY2024 operating cash falls below CNY 12bn or working capital rebuilds materially while capital spending remains elevated."
+      ]
+    }
+  ],
+  "local_unknown_treatments": [
+    {
+      "unknown": "The packet does not isolate the exact recurring share of FY2023 operating cash flow versus the collection and inventory-release effects cited by management.",
+      "contained_claim": "M3 owner-cash run rate only.",
+      "treatment": "Do not infer a single precise normalized cash number. Use the CNY 1-9bn owner-cash proxy range and make persistent high operating cash a specific flip fact."
+    },
+    {
+      "unknown": "The packet does not establish future customer-program volume, pricing, or segment-level unit economics for the consumer-electronics recovery.",
+      "contained_claim": "M1 core-growth and M2 margin durability only.",
+      "treatment": "Keep FY2024 revenue and profit in moderate base bands; do not assign durable margin expansion or customer-program growth to the base case."
+    },
+    {
+      "unknown": "The packet shows rapid automotive and communications revenue growth but does not establish the maturity, cash absorption, or repeatability of those platforms at a scale that changes the group outcome.",
+      "contained_claim": "Diversification contribution only.",
+      "treatment": "Retain both platforms as upside mechanisms and require their reported scale to offset a consumer-electronics reset before promoting them into the base driver."
+    }
+  ],
+  "scenarios": [
+    {
+      "scenario": "BASE",
+      "business_path": "Consumer electronics continues a modest recovery; automotive and communications grow but remain supplementary; core margin is broadly stable to modestly variable; working-capital benefit moderates.",
+      "treatment": "Profitable, scaled manufacturer with moderate permanent-loss risk and conservative owner-cash treatment.",
+      "frozen_cell_ranges_cny_billion": {
+        "operating_revenue": [
+          242.0,
+          258.0
+        ],
+        "consumer_electronics_revenue": [
+          205.0,
+          222.0
+        ],
+        "attributable_net_profit": [
+          11.0,
+          12.5
+        ],
+        "operating_cash_flow": [
+          15.0,
+          25.0
+        ]
+      }
+    },
+    {
+      "scenario": "UPSIDE",
+      "business_path": "A stronger consumer-electronics recovery coincides with meaningful non-consumer growth and durable working-capital discipline.",
+      "observable_conditions": [
+        "Operating revenue above CNY 258bn",
+        "Consumer-electronics revenue above CNY 222bn without a further material core-margin sacrifice",
+        "Attributable net profit above CNY 12.5bn",
+        "Operating cash flow above CNY 25bn, with cash conversion not principally created by another working-capital release"
+      ],
+      "treatment_change": "Upgrade confidence in durable operating and owner-cash execution; assess diversification separately from the still-dominant core."
+    },
+    {
+      "scenario": "DOWNSIDE",
+      "business_path": "Consumer demand, pricing, or program mix weakens; non-consumer growth cannot offset it; working capital consumes cash while capacity and financing needs persist.",
+      "observable_conditions": [
+        "Operating revenue below CNY 235bn",
+        "Consumer-electronics revenue below CNY 198bn",
+        "Attributable net profit below CNY 10.5bn",
+        "Operating cash flow below CNY 12bn"
+      ],
+      "treatment_change": "Raise permanent-loss concern because the same consumer-electronics reset would affect scale, margins, inventory/receivables, and cash conversion together."
+    }
+  ],
+  "annual_report_outcome_cells": [
+    {
+      "cell_id": "O1_total_revenue",
+      "annual_report_location": "FY2024 annual report, 主要会计数据和财务指标, 营业收入（元）",
+      "FY2023_anchor_cny_billion": 231.905,
+      "base_expectation_cny_billion": [
+        242.0,
+        258.0
+      ],
+      "settles": "M1 scale and core-demand continuity"
+    },
+    {
+      "cell_id": "O2_consumer_electronics_revenue",
+      "annual_report_location": "FY2024 annual report, 主营业务分析/营业收入构成, 消费性电子营业收入",
+      "FY2023_anchor_cny_billion": 197.183,
+      "base_expectation_cny_billion": [
+        205.0,
+        222.0
+      ],
+      "settles": "M1 consumer-electronics dependence and recovery"
+    },
+    {
+      "cell_id": "O3_attributable_net_profit",
+      "annual_report_location": "FY2024 annual report, 主要会计数据和财务指标, 归属于上市公司股东的净利润（元）",
+      "FY2023_anchor_cny_billion": 10.953,
+      "base_expectation_cny_billion": [
+        11.0,
+        12.5
+      ],
+      "settles": "M2 reported-profit resilience without assumed broad core-margin expansion"
+    },
+    {
+      "cell_id": "O4_operating_cash_flow",
+      "annual_report_location": "FY2024 annual report, 主要会计数据和财务指标/现金流, 经营活动产生的现金流量净额（元）",
+      "FY2023_anchor_cny_billion": 27.605,
+      "base_expectation_cny_billion": [
+        15.0,
+        25.0
+      ],
+      "settles": "M3 cash normalization versus durable owner-cash conversion"
+    }
+  ],
+  "exclusions": {
+    "not_claimed": [
+      "price, return, valuation, or entry treatment",
+      "FY2024 realized outcome",
+      "a company action recommendation",
+      "a comparative claim about any enhanced forecaster or treatment"
+    ],
+    "reason": "They are outside this pre-outcome baseline judgment's authority or sealed by the packet firewall."
+  }
+}

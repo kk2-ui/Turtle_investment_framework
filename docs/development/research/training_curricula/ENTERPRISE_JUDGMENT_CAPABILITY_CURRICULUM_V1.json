@@ -1622,6 +1622,44 @@
         "transfer_question": "另一家把一次性产品改为持续访问的企业，能否分别展示未来产品价值迁移、付费采用、确认收入/递延收入桥、企业现金和 cohort 留存/获客/服务成本，而非让任一会计或客户指标替代其余环节？"
       },
       "holdout_axis": null
+    },
+    {
+      "case_id": "HOLDOUT:CN002475:20240501:FY2024",
+      "company_id": "CN:002475",
+      "company_cluster_id": "COMPANY:CN002475",
+      "company_name": "立讯精密",
+      "industry_id": "PRECISION_ELECTRONICS_AND_AUTOMOTIVE_COMPONENT_MANUFACTURING",
+      "track": "HISTORICAL_HOLDOUT",
+      "status": "ARCHIVED_NOT_EVALUABLE",
+      "cutoff_at": "2024-05-01T00:00:00+08:00",
+      "outcome_window": {
+        "starts_at": "2025-03-01T00:00:00+08:00",
+        "ends_at": "2025-05-01T00:00:00+08:00"
+      },
+      "outcome_access": "SEALED",
+      "selection_exposure": "PREOUTCOME_ONLY",
+      "role_isolation_state": "ROLE_ISOLATION_PROVED",
+      "primary_capability_units": [
+        "BUSINESS_MODEL_ECONOMICS",
+        "OWNER_CASH_CONVERSION"
+      ],
+      "mechanism_focus": "高集中度精密制造的核心客户吸收、责任边界利润、营运资本驱动的现金和长期资产再投入如何共同决定正常 owner cash 与永久损失风险",
+      "claim_scope": "ENTERPRISE_JUDGMENT",
+      "comparative_mode": "NOT_REQUIRED",
+      "source_refs": [
+        "docs/development/research/training_campaigns/JUDGMENT_UTILITY_HISTORICAL_20260828/120_CN002475_HOLDOUT_V3_SELECTION_REGISTER.json",
+        "docs/development/research/training_campaigns/JUDGMENT_UTILITY_HISTORICAL_20260828/121_CN002475_HOLDOUT_V3_CUTOFF_BEFORE_SOURCE_PACKET_RECEIPT.json",
+        "docs/development/research/training_campaigns/JUDGMENT_UTILITY_HISTORICAL_20260828/123_CN002475_BASELINE_PREOUTCOME_JUDGMENT.json",
+        "docs/development/research/training_campaigns/JUDGMENT_UTILITY_HISTORICAL_20260828/125_CN002475_ENHANCED_PREOUTCOME_JUDGMENT.json"
+      ],
+      "artifact_refs": {
+        "freeze_ref": "docs/development/research/training_campaigns/JUDGMENT_UTILITY_HISTORICAL_20260828/127_CN002475_HOLDOUT_NOT_EVALUABLE.md",
+        "method_pack_ref": "docs/development/research/training_campaigns/JUDGMENT_UTILITY_HISTORICAL_20260828/118_FROZEN_TRAINING_METHOD_PACK_V3.json",
+        "holdout_pair_ref": "docs/development/research/training_campaigns/JUDGMENT_UTILITY_HISTORICAL_20260828/126_CN002475_INDEPENDENT_PREOUTCOME_PAIR_REVIEW.md"
+      },
+      "lesson": null,
+      "holdout_axis": "COMPANY",
+      "method_memory_state": "NO_MATERIAL_PREOUTCOME_TREATMENT_DIFFERENCE"
     }
   ],
   "teaching_candidate_pool": []

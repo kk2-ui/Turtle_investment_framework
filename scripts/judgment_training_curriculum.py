@@ -84,6 +84,7 @@ HOLDOUT_METHOD_MEMORY_STATES = {
     "PAIRED_FORECASTS_FROZEN",
     "PAIRED_METHOD_EVALUATED",
     "NO_TRAINING_METHOD_SUPPLIED",
+    "NO_MATERIAL_PREOUTCOME_TREATMENT_DIFFERENCE",
 }
 
 ROOT_FIELDS = {
@@ -368,29 +369,50 @@ def _validate_case(raw: Any, *, index: int) -> tuple[list[str], dict[str, Any]]:
             findings.append(path + ".holdout_axis_invalid")
         if status in {"RESERVED", "FROZEN"} and outcome_access != "SEALED":
             findings.append(path + ".unevaluated_holdout_must_be_sealed")
+        method_memory_state = str(case.get("method_memory_state") or "").upper()
+        archived_for_no_material_preoutcome_difference = (
+            status == "ARCHIVED_NOT_EVALUABLE"
+            and method_memory_state == "NO_MATERIAL_PREOUTCOME_TREATMENT_DIFFERENCE"
+        )
+        if archived_for_no_material_preoutcome_difference and outcome_access != "SEALED":
+            findings.append(path + ".archived_no_material_preoutcome_difference_must_be_sealed")
         if status in {"EVALUATED", "ARCHIVED_NOT_EVALUABLE"} \
+                and not archived_for_no_material_preoutcome_difference \
                 and outcome_access != "REVEALED_AFTER_HOLDOUT_FORECAST_FREEZE":
             findings.append(path + ".evaluated_holdout_requires_post_holdout_forecast_freeze_reveal")
         if starts is None:
             findings.append(path + ".holdout_outcome_window_required_at_reservation")
-        method_memory_state = str(case.get("method_memory_state") or "").upper()
         if method_memory_state not in HOLDOUT_METHOD_MEMORY_STATES:
             findings.append(path + ".holdout_method_memory_state_invalid")
+        if method_memory_state == "NO_MATERIAL_PREOUTCOME_TREATMENT_DIFFERENCE" \
+                and status != "ARCHIVED_NOT_EVALUABLE":
+            findings.append(path + ".no_material_preoutcome_difference_only_for_archived_not_evaluable")
         expected_memory_state = {
             "RESERVED": "FROZEN_METHOD_PAIR_BOUND",
             "FROZEN": "PAIRED_FORECASTS_FROZEN",
             "EVALUATED": "PAIRED_METHOD_EVALUATED",
-            "ARCHIVED_NOT_EVALUABLE": "NO_TRAINING_METHOD_SUPPLIED",
         }.get(status)
-        if expected_memory_state and method_memory_state != expected_memory_state:
+        if status == "ARCHIVED_NOT_EVALUABLE":
+            allowed_archived_memory_states = {
+                "NO_TRAINING_METHOD_SUPPLIED",
+                "NO_MATERIAL_PREOUTCOME_TREATMENT_DIFFERENCE",
+            }
+            if method_memory_state not in allowed_archived_memory_states:
+                findings.append(path + ".holdout_method_memory_state_mismatched")
+        elif expected_memory_state and method_memory_state != expected_memory_state:
             findings.append(path + ".holdout_method_memory_state_mismatched")
 
         required_artifacts = {"freeze_ref"}
-        if status != "ARCHIVED_NOT_EVALUABLE":
+        if archived_for_no_material_preoutcome_difference:
+            required_artifacts |= {"method_pack_ref", "holdout_pair_ref"}
+        elif status != "ARCHIVED_NOT_EVALUABLE":
             required_artifacts.add("method_pack_ref")
         if status in {"FROZEN", "EVALUATED"}:
             required_artifacts.add("holdout_pair_ref")
-        if status in {"EVALUATED", "ARCHIVED_NOT_EVALUABLE"}:
+        if status == "EVALUATED" or (
+            status == "ARCHIVED_NOT_EVALUABLE"
+            and not archived_for_no_material_preoutcome_difference
+        ):
             required_artifacts |= {"settlement_ref", "postoutcome_review_ref"}
         if not required_artifacts <= set(artifacts):
             findings.append(path + ".holdout_artifact_chain_incomplete")

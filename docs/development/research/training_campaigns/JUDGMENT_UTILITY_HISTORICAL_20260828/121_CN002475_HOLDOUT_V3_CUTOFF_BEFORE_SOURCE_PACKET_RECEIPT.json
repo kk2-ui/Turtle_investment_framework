@@ -1,0 +1,81 @@
+{
+  "receipt_type": "HOLDOUT_V3_CUTOFF_BEFORE_SOURCE_PACKET_RECEIPT",
+  "status": "ISSUED",
+  "case_id": "CN002475_HOLDOUT_V3",
+  "packet_freeze": {
+    "cutoff": "2024-05-01T00:00:00+08:00",
+    "packet_contents_are_fixed": true,
+    "packet_document_count": 3,
+    "packet_document_ids": [
+      "FY2021:1213171817",
+      "FY2022:1216646576",
+      "FY2023:1219799516"
+    ],
+    "packet_source_rule": "The packet consists only of the three original annual-report PDF URLs listed in the paired selection register; both forecasters receive the same frozen packet."
+  },
+  "paired_role_firewall": {
+    "baseline_forecaster": {
+      "receives": {
+        "cutoff": "2024-05-01T00:00:00+08:00",
+        "source_packet": [
+          "FY2021:1213171817",
+          "FY2022:1216646576",
+          "FY2023:1219799516"
+        ],
+        "research_budget": {
+          "source_documents": 3,
+          "time_boundary": "pre-cutoff materials only",
+          "permitted_company_evidence": "only the frozen packet"
+        }
+      },
+      "does_not_receive": [
+        "V3 treatment",
+        "FY2024 results or outcome materials"
+      ]
+    },
+    "enhanced_forecaster": {
+      "receives": {
+        "cutoff": "2024-05-01T00:00:00+08:00",
+        "source_packet": [
+          "FY2021:1213171817",
+          "FY2022:1216646576",
+          "FY2023:1219799516"
+        ],
+        "research_budget": {
+          "source_documents": 3,
+          "time_boundary": "pre-cutoff materials only",
+          "permitted_company_evidence": "only the frozen packet"
+        }
+      },
+      "additional_treatment": {
+        "name": "V3",
+        "release_timing": "Only after this source-packet receipt is frozen.",
+        "access_rule": "Enhanced forecaster alone receives V3. V3 must operate within the same cutoff, source packet, and research budget."
+      },
+      "does_not_receive": [
+        "FY2024 results or outcome materials"
+      ]
+    },
+    "exact_common_input_statement": "Before the V3 release, baseline and enhanced forecasters receive exactly the same three PDFs, cutoff, and research budget. V3 is the sole permitted treatment difference and is released only to enhanced after packet freeze.",
+    "outcome_firewall": "No forecaster, curator, or pair reviewer may access FY2024 results, FY2024-or-later announcement metadata, outcome commentary, market-price/return content, valuation content, or analyst content before evaluability is established."
+  },
+  "result_free_independent_pair_review": {
+    "reviewer_role": "independent_pair_reviewer",
+    "reviewer_input_boundary": "The reviewer is result-free and may inspect only the frozen packet receipt, the two pre-outcome forecaster work products, and the declared V3 treatment boundary; no FY2024 outcome information is permitted.",
+    "required_declaration": "The reviewer must explicitly declare whether a material pre-outcome treatment difference is present, attributable to V3 rather than unequal source access, cutoff, or budget.",
+    "evaluability_rule": {
+      "if_material_treatment_difference_declared": "The pair may advance to the separately controlled outcome-resolution stage; this declaration does not itself reveal an outcome.",
+      "if_not_declared_or_not_reviewed": "Set pair status to NOT_EVALUABLE and keep the FY2024 outcome sealed."
+    }
+  },
+  "local_mismatch_treatment": {
+    "scope": "This paired packet only.",
+    "rule": "Any mismatch between declared common inputs and actual arm inputs is a local packet mismatch. It must be recorded with the affected arm and treated under the evaluability rule; no global gate is created or invoked."
+  },
+  "outcome_seal": {
+    "target_outcome_period_label": "FY2024",
+    "current_state": "SEALED",
+    "unseal_precondition": "A result-free independent pair reviewer has declared a material pre-outcome treatment difference."
+  },
+  "non_judgment_boundary": "This receipt freezes experimental access controls only. It makes no company or FY2024 outcome judgment."
+}

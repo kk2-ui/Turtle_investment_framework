@@ -1,0 +1,83 @@
+{
+  "receipt_type": "HOLDOUT_V3_SELECTION_REGISTER",
+  "status": "ISSUED",
+  "case_id": "CN002475_HOLDOUT_V3",
+  "candidate_input": {
+    "candidate_id": "CN:002475",
+    "issuer_name_as_supplied": "立讯精密工业股份有限公司"
+  },
+  "official_metadata_resolution": {
+    "source": "CNINFO szse_stock.json via scripts/downloaders/cninfo.py resolve_company",
+    "ticker": "002475",
+    "org_id": "9900014448",
+    "company_short_name": "立讯精密",
+    "column": "szse",
+    "plate": "sz",
+    "access_boundary": "Official metadata only. No issuer pages, announcement bodies, or PDF content were opened."
+  },
+  "historical_holdout": {
+    "cutoff": "2024-05-01T00:00:00+08:00",
+    "target_outcome_period_label": "FY2024",
+    "outcome_access": "SEALED; no FY2024 results, documents, or FY2024-or-later announcement metadata were queried or read.",
+    "selection_rule": "Exactly one non-amended, original annual-report PDF metadata record for each of FY2021, FY2022, and FY2023, selected from the official annual-report classification query and announced strictly before the cutoff."
+  },
+  "selected_source_register": [
+    {
+      "fiscal_year": 2021,
+      "document_kind": "original annual-report PDF",
+      "title": "2021年年度报告",
+      "announcement_date": "2022-04-28",
+      "announcement_id": "1213171817",
+      "pdf_url_from_official_metadata": "http://static.cninfo.com.cn/finalpage/2022-04-28/1213171817.PDF",
+      "source_query": {
+        "mechanism": "CNINFO hisAnnouncement/query annual-report classification",
+        "category": "category_ndbg_szsh;",
+        "query_window": "2021-01-01~2022-06-30"
+      },
+      "cutoff_test": "PASS: 2022-04-28 is strictly before 2024-05-01T00:00:00+08:00",
+      "original_title_test": "PASS: title does not contain the downloader amendment tokens."
+    },
+    {
+      "fiscal_year": 2022,
+      "document_kind": "original annual-report PDF",
+      "title": "2022年年度报告",
+      "announcement_date": "2023-04-28",
+      "announcement_id": "1216646576",
+      "pdf_url_from_official_metadata": "http://static.cninfo.com.cn/finalpage/2023-04-28/1216646576.PDF",
+      "source_query": {
+        "mechanism": "CNINFO hisAnnouncement/query annual-report classification",
+        "category": "category_ndbg_szsh;",
+        "query_window": "2022-01-01~2023-06-30"
+      },
+      "cutoff_test": "PASS: 2023-04-28 is strictly before 2024-05-01T00:00:00+08:00",
+      "original_title_test": "PASS: title does not contain the downloader amendment tokens."
+    },
+    {
+      "fiscal_year": 2023,
+      "document_kind": "original annual-report PDF",
+      "title": "2023年年度报告",
+      "announcement_date": "2024-04-25",
+      "announcement_id": "1219799516",
+      "pdf_url_from_official_metadata": "http://static.cninfo.com.cn/finalpage/2024-04-25/1219799516.PDF",
+      "source_query": {
+        "mechanism": "CNINFO hisAnnouncement/query annual-report classification",
+        "category": "category_ndbg_szsh;",
+        "query_window": "2023-01-01~2024-04-30"
+      },
+      "cutoff_test": "PASS: 2024-04-25 is strictly before 2024-05-01T00:00:00+08:00",
+      "original_title_test": "PASS: title does not contain the downloader amendment tokens."
+    }
+  ],
+  "external_mechanism_cluster": {
+    "cluster_label": "external_electronics_and_automotive_component_manufacturing",
+    "mechanism_scope": "A broad, external manufacturing mechanism: end-market program volumes and product mix interact with component/precision-assembly capacity, manufacturing yield, utilization, supplier input availability, customer qualification cycles, capital intensity, and working-capital absorption. This is a sector-level mechanism statement, not an issuer-specific factual claim or forecast.",
+    "candidate_eligibility": "Eligible as one clean, independent company cluster for this paired historical holdout because the fixed candidate has three identified original annual-report PDFs before the common cutoff. This is a source-availability and experimental-cluster designation only; it makes no judgment about the company, the mechanism's realized effect, or FY2024."
+  },
+  "local_mismatch_treatment": {
+    "status": "NO_LOCAL_MISMATCH_OBSERVED",
+    "scope": "This CN002475 source packet only.",
+    "identity_note": "The supplied legal issuer name and the official resolver's short name are compatible name forms; no identity mismatch was observed in the permitted metadata.",
+    "handling_if_later_observed": "Record and contain the issue to this packet; do not create or invoke any global gate."
+  },
+  "non_judgment_boundary": "This register records source identity, timing, experimental eligibility, and a broad external mechanism only. It contains no company-quality, earnings, valuation, return, or outcome judgment."
+}
