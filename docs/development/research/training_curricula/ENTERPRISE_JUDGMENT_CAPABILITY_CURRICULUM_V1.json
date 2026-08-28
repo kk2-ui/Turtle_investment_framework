@@ -1151,6 +1151,45 @@
       },
       "lesson": null,
       "holdout_axis": null
+    },
+    {
+      "case_id": "TEACH:HK06668:20230501:FY2022_FY2024",
+      "company_id": "HK:06668",
+      "company_cluster_id": "COMPANY:HK06668",
+      "company_name": "星盛商业",
+      "industry_id": "COMMERCIAL_PROPERTY_OPERATIONS",
+      "track": "TEACHING",
+      "status": "CURATED",
+      "cutoff_at": "2023-05-01T00:00:00+08:00",
+      "outcome_window": null,
+      "outcome_access": "RESULT_KNOWN",
+      "selection_exposure": "RESULT_KNOWN_OR_DERIVED_VISIBLE",
+      "role_isolation_state": "NOT_REQUIRED_FOR_TEACHING",
+      "primary_capability_units": [
+        "CUSTOMER_ABSORPTION",
+        "OWNER_CASH_CONVERSION"
+      ],
+      "mechanism_focus": "整租项目开业如何穿过租户吸收、出租率、租金单位经济、装修与租赁承诺形成普通股现金",
+      "claim_scope": "WITHIN_CASE_MECHANISM",
+      "comparative_mode": "NOT_REQUIRED",
+      "source_refs": [
+        "docs/development/research/training_curricula/teaching_cases/TC_HK06668_WHOLE_LEASE_UNIT_ECONOMICS_AND_OWNER_CASH_V1.md"
+      ],
+      "artifact_refs": {
+        "lesson_ref": "docs/development/research/training_curricula/teaching_cases/TC_HK06668_WHOLE_LEASE_UNIT_ECONOMICS_AND_OWNER_CASH_V1.md"
+      },
+      "lesson": {
+        "state_and_constraint": "整租收入随新商场开业增长，但整租毛利率约7%，集团毛利率下降；项目级销售、续约及现金未披露。",
+        "management_choice_or_no_action": "管理层将部分上市募资重配给整租租赁费用及翻新，推进新项目开业、招商和数字化运营，同时主动解除低质量项目。",
+        "customer_or_operating_response": "客流、会员与局部旗舰活动的租户销售改善真实，年报限定样本的平均出租率由92.8%小降至92.4%，不能替代新整租cohort的成熟证明。",
+        "cash_or_capital_result": "FY2024 OCF减投资物业租赁装修的机械代理降至约0.97亿元；整租租赁现金和长期租赁负债要求把收入增长与股东现金分开。",
+        "mechanism_lesson": "开业、出租率、租户销售、租金、单位毛利、装修和租赁承诺后的现金是不同状态；前段不能替后段投票。",
+        "strongest_rival": "约7%整租毛利可能主要反映新项目免租和爬坡；收入增长、稳定毛利率、充足现金和无银行贷款可能预示后续经营杠杆。",
+        "near_miss": "用合约面积、开业、年报限定样本出租率、局部活动销售或现金余额证明整租已创造资本回报，或因项目级现金缺失撤回已观察到的低margin和现金吸收事实。",
+        "investor_treatment": "成熟管理服务按跨期费用后现金处理；整租只给已实现低利润与条件性选择权，等待同cohort租户销售、续约、租赁后现金共同改善。",
+        "transfer_question": "新增商场在免租期结束后，租户销售、租金、续约、项目毛利、装修和业主租金后的现金是否同时改善？"
+      },
+      "holdout_axis": null
     }
   ],
   "teaching_candidate_pool": [
@@ -1175,17 +1214,6 @@
       "mechanism_focus": "非住宅物业续约、项目拓展和回款质量",
       "selection_exposure": "RESULT_KNOWN_OR_DERIVED_VISIBLE",
       "source_locator": "LOCAL_OUTPUT:01502_金融街物业"
-    },
-    {
-      "candidate_id": "TCAND:HK06668",
-      "company_ids": ["HK:06668"],
-      "company_cluster_id": "COMPANY:HK06668",
-      "company_name": "星盛商业",
-      "industry_id": "COMMERCIAL_PROPERTY_OPERATIONS",
-      "primary_capability_units": ["CUSTOMER_ABSORPTION", "OWNER_CASH_CONVERSION"],
-      "mechanism_focus": "商场开业、出租率、租户销售和轻资产现金转换",
-      "selection_exposure": "RESULT_KNOWN_OR_DERIVED_VISIBLE",
-      "source_locator": "LOCAL_OUTPUT:06668_星盛商业"
     }
   ]
 }
