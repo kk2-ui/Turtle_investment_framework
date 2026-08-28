@@ -1,0 +1,62 @@
+{
+  "schema_version": "blind_forecaster.execution_receipt.v3",
+  "task": "CN00816 blind V2 final minimal J1/J3 settlement revision",
+  "status": "COMPLETED",
+  "actual_inputs": [
+    {
+      "path": "/tmp/CN00816_BLIND_REVISED_V2/PREOUTCOME_JUDGMENT.json",
+      "role": "blind_v2_preoutcome_judgment"
+    },
+    {
+      "path": "/tmp/CN00816_BLIND_REVISED_V2/EXECUTION_RECEIPT.json",
+      "role": "blind_v2_execution_receipt"
+    },
+    {
+      "path": "/tmp/CN00816_BLIND_REVISED_FINAL_REVIEW.md",
+      "role": "external_final_review"
+    },
+    {
+      "path": "/Users/xiami/workspace/analy/Turtle_investment_framework/output/00816_金茂服务/00816.HK_2022_年报.pdf",
+      "role": "official_annual_report_FY2022"
+    },
+    {
+      "path": "/Users/xiami/workspace/analy/Turtle_investment_framework/output/00816_金茂服务/00816.HK_2023_年报.pdf",
+      "role": "official_annual_report_FY2023"
+    }
+  ],
+  "outputs": [
+    "/tmp/CN00816_BLIND_REVISED_V3/PREOUTCOME_JUDGMENT.json",
+    "/tmp/CN00816_BLIND_REVISED_V3/EXECUTION_RECEIPT.json"
+  ],
+  "boundary_attestations": {
+    "only_permitted_inputs_read": true,
+    "fy2024_outcome_accessed": false,
+    "outcome_data_accessed": false,
+    "price_data_accessed": false,
+    "return_data_accessed": false,
+    "network_accessed": false,
+    "other_files_or_directories_read": false,
+    "repository_source_modified": false,
+    "repository_commit_created": false,
+    "ego_browser_used": false
+  },
+  "revision_scope": {
+    "executive_call_preserved": true,
+    "three_company_judgments_preserved": true,
+    "current_investor_treatment_preserved": true,
+    "scenarios_preserved": true,
+    "company_countercases_preserved": true,
+    "flip_facts_preserved": true,
+    "j2_settlement_preserved": true,
+    "only_j1_and_j3_settlement_blocks_modified": true,
+    "j1_profit_condition_uses_adjusted_parent_profit_excluding_disclosed_acquisition_goodwill_and_contract_rights_impairment": true,
+    "j1_uncalculable_impairment_effect_makes_only_profit_subcondition_unknown": true,
+    "j1_impairment_isolation_counterexample_updated": true,
+    "j3_return_split_into_profit_return_and_operating_cash_return": true,
+    "j3_single_disclosed_nonpositive_contribution_and_dual_metric_divergence_rules_made_deterministic": true,
+    "reviewer_three_deterministic_j3_counterexamples_added": true,
+    "no_other_substantive_revision": true
+  },
+  "external_review_revision_accepted": true,
+  "blind_state": "SEALED"
+}

@@ -431,7 +431,7 @@ def test_checked_in_curriculum_registers_real_assets_without_overclaiming_capaci
 
     progress = result["progress"]
     assert progress["track_progress"]["TEACHING"]["completed_independent_company_cluster_count"] == 20
-    assert progress["track_progress"]["BLIND_JUDGMENT"]["independent_company_cluster_count"] == 4
+    assert progress["track_progress"]["BLIND_JUDGMENT"]["independent_company_cluster_count"] == 5
     assert progress["track_progress"]["BLIND_JUDGMENT"]["completed_independent_company_cluster_count"] == 4
     assert progress["next_action"] == "REGISTER_NEXT_BLIND_CASE"
     assert progress["track_progress"]["BLIND_JUDGMENT"]["completed_independent_company_cluster_count"] == 4
@@ -442,8 +442,8 @@ def test_checked_in_curriculum_registers_real_assets_without_overclaiming_capaci
     assert holdout["independent_company_cluster_count"] == 0
     assert holdout["completed_independent_company_cluster_count"] == 0
     assert progress["track_progress"]["PROSPECTIVE"]["independent_company_cluster_count"] == 2
-    assert progress["teaching_candidate_pool"]["independent_company_cluster_count"] == 4
-    assert progress["teaching_candidate_pool"]["teaching_library_pipeline_independent_company_cluster_count"] == 24
+    assert progress["teaching_candidate_pool"]["independent_company_cluster_count"] == 3
+    assert progress["teaching_candidate_pool"]["teaching_library_pipeline_independent_company_cluster_count"] == 23
     assert progress["teaching_candidate_pool"]["ability_evidence_count"] == 0
     assert progress["next_action"] == "REGISTER_NEXT_BLIND_CASE"
     assert progress["capability_claim"] == "NOT_DEMONSTRATED_BY_CURRICULUM_COUNTS"

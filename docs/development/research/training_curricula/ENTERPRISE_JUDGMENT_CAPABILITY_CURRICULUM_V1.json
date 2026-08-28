@@ -975,6 +975,40 @@
       "holdout_axis": null
     },
     {
+      "case_id": "BLIND:HK00816:20240501:FY2024",
+      "company_id": "HK:00816",
+      "company_cluster_id": "COMPANY:HK00816",
+      "company_name": "金茂服务",
+      "industry_id": "PROPERTY_MANAGEMENT",
+      "track": "BLIND_JUDGMENT",
+      "status": "FROZEN",
+      "cutoff_at": "2024-05-01T00:00:00+08:00",
+      "outcome_window": {
+        "starts_at": "2025-03-01T00:00:00+08:00",
+        "ends_at": "2025-05-01T00:00:00+08:00"
+      },
+      "outcome_access": "SEALED",
+      "selection_exposure": "PREOUTCOME_ONLY",
+      "role_isolation_state": "ROLE_ISOLATION_PROVED",
+      "primary_capability_units": [
+        "CUSTOMER_ABSORPTION",
+        "OWNER_CASH_CONVERSION"
+      ],
+      "mechanism_focus": "第三方物管面积如何穿过单位毛利、关联方资金占用、母公司上划和并购回报形成普通股经济",
+      "claim_scope": "ENTERPRISE_JUDGMENT",
+      "comparative_mode": "NOT_REQUIRED",
+      "source_refs": [
+        "docs/development/research/training_campaigns/JUDGMENT_UTILITY_HISTORICAL_20260828/65_CN00816_FORECASTER_EXECUTION_RECEIPT.json",
+        "docs/development/research/training_campaigns/JUDGMENT_UTILITY_HISTORICAL_20260828/66_CN00816_PREOUTCOME_JUDGMENT.json"
+      ],
+      "artifact_refs": {
+        "preoutcome_judgment_ref": "docs/development/research/training_campaigns/JUDGMENT_UTILITY_HISTORICAL_20260828/66_CN00816_PREOUTCOME_JUDGMENT.json",
+        "freeze_ref": "docs/development/research/training_campaigns/JUDGMENT_UTILITY_HISTORICAL_20260828/67_CN00816_INDEPENDENT_PREOUTCOME_REVIEW.md"
+      },
+      "lesson": null,
+      "holdout_axis": null
+    },
+    {
       "case_id": "HOLDOUT:CN600161:20240501:FY2024",
       "company_id": "CN:600161",
       "company_cluster_id": "COMPANY:CN600161",
@@ -1141,17 +1175,6 @@
       "mechanism_focus": "非住宅物业续约、项目拓展和回款质量",
       "selection_exposure": "RESULT_KNOWN_OR_DERIVED_VISIBLE",
       "source_locator": "LOCAL_OUTPUT:01502_金融街物业"
-    },
-    {
-      "candidate_id": "TCAND:HK00816",
-      "company_ids": ["HK:00816"],
-      "company_cluster_id": "COMPANY:HK00816",
-      "company_name": "金茂服务",
-      "industry_id": "PROPERTY_MANAGEMENT",
-      "primary_capability_units": ["CUSTOMER_ABSORPTION", "OWNER_CASH_CONVERSION"],
-      "mechanism_focus": "在管面积增长、关联方依赖、社区增值和现金回收",
-      "selection_exposure": "RESULT_KNOWN_OR_DERIVED_VISIBLE",
-      "source_locator": "LOCAL_OUTPUT:00816_金茂服务"
     },
     {
       "candidate_id": "TCAND:HK06668",
