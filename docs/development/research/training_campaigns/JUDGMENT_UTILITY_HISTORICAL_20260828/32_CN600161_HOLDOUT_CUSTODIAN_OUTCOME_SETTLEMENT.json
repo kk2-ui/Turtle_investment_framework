@@ -1,0 +1,549 @@
+{
+  "schema_version": "historical-holdout-outcome-settlement.v1",
+  "campaign_id": "JUDGMENT_UTILITY_HISTORICAL_20260828",
+  "episode_id": "HIST:CN600161:20240501:FY2024",
+  "company_id": "CN:600161",
+  "custodian_id": "/root/cn600161_holdout_outcome_custodian",
+  "authorization_contract": "31_CN600161_HOLDOUT_OUTCOME_ACCESS_AUTHORIZATION.json",
+  "source_document": {
+    "document_count": 1,
+    "period": "FY2024",
+    "source_class": "ISSUER_OFFICIAL_FULL_ANNUAL_REPORT",
+    "title": "北京天坛生物制品股份有限公司2024年年度报告",
+    "url": "https://static.cninfo.com.cn/finalpage/2025-03-29/1222945087.PDF"
+  },
+  "outcome_cells": [
+    {
+      "cell_id": "FY2024_ECONOMIC_ABSORPTION",
+      "raw_reported_facts": [
+        {
+          "fact": "consolidated_revenue",
+          "FY2024_value": 6031865460.16,
+          "FY2023_comparable_value": 5180441799.76,
+          "unit": "CNY",
+          "responsibility_boundary": "consolidated_group",
+          "printed_page": 5,
+          "source_locator": "第二节/七/(一)主要会计数据"
+        },
+        {
+          "fact": "consolidated_blood_products_revenue",
+          "FY2024_value": 6012751228.49,
+          "FY2023_comparable_value": 5162063742.39,
+          "unit": "CNY",
+          "responsibility_boundary": "consolidated_group_main_business_blood_products",
+          "printed_page": 180,
+          "source_locator": "财务报表附注七/(61)/1营业收入和营业成本情况"
+        },
+        {
+          "fact": "blood_products_actual_sales_volume",
+          "FY2024_value": 1659.09,
+          "FY2024_reported_yoy_change": 10.05,
+          "unit": "10_thousand_bottles_and_percent",
+          "responsibility_boundary": "consolidated_group_blood_products",
+          "printed_page": 18,
+          "source_locator": "第三节/五/(一)/2/(2)产销量情况分析表"
+        },
+        {
+          "fact": "consolidated_operating_profit",
+          "FY2024_value": 2557785310.27,
+          "FY2023_comparable_value": 1804994565.17,
+          "unit": "CNY",
+          "responsibility_boundary": "consolidated_group",
+          "printed_page": 92,
+          "source_locator": "合并利润表/三、营业利润"
+        },
+        {
+          "fact": "parent_adjusted_net_profit",
+          "FY2024_value": 1518650457.88,
+          "FY2023_comparable_value": 1104302920.41,
+          "unit": "CNY",
+          "responsibility_boundary": "profit_attributable_to_listed_company_shareholders_excluding_nonrecurring_items",
+          "printed_page": 5,
+          "source_locator": "第二节/七/(一)主要会计数据"
+        },
+        {
+          "fact": "selling_expense",
+          "FY2024_value": 133389253.72,
+          "FY2023_comparable_value": 270516563.02,
+          "unit": "CNY",
+          "responsibility_boundary": "consolidated_group",
+          "printed_page": 92,
+          "source_locator": "合并利润表/二、营业总成本/销售费用"
+        },
+        {
+          "fact": "administrative_expense",
+          "FY2024_value": 481024899.62,
+          "FY2023_comparable_value": 469461905.96,
+          "unit": "CNY",
+          "responsibility_boundary": "consolidated_group",
+          "printed_page": 92,
+          "source_locator": "合并利润表/二、营业总成本/管理费用"
+        },
+        {
+          "fact": "income_statement_R_and_D_expense",
+          "FY2024_value": 142786644.46,
+          "FY2023_comparable_value": 139949764.24,
+          "unit": "CNY",
+          "responsibility_boundary": "consolidated_group_income_statement",
+          "printed_page": 92,
+          "source_locator": "合并利润表/二、营业总成本/研发费用"
+        },
+        {
+          "fact": "R_and_D_input_expensed_and_capitalized",
+          "FY2024_expensed_value": 124120863.87,
+          "FY2024_capitalized_value": 192404726.86,
+          "FY2024_total_value": 316525590.73,
+          "unit": "CNY",
+          "responsibility_boundary": "consolidated_group_R_and_D_input_disclosure",
+          "printed_page": 19,
+          "source_locator": "第三节/五/(一)/4/(1)研发投入情况表"
+        },
+        {
+          "fact": "depreciation_of_fixed_assets_oil_and_gas_assets_and_biological_assets",
+          "FY2024_value": 254203356.88,
+          "FY2023_comparable_value": 215682615.38,
+          "unit": "CNY",
+          "responsibility_boundary": "consolidated_group_cash_flow_reconciliation",
+          "printed_page": 189,
+          "source_locator": "财务报表附注七/(79)/1.1现金流量表补充资料"
+        },
+        {
+          "fact": "inventory_balance",
+          "FY2024_year_end_value": 3869072356.24,
+          "FY2023_year_end_comparable_value": 2844499190.49,
+          "unit": "CNY",
+          "responsibility_boundary": "consolidated_group",
+          "printed_page": 21,
+          "source_locator": "第三节/五/(三)/1资产及负债状况"
+        },
+        {
+          "fact": "inventory_impairment_loss",
+          "FY2024_value": 6794421.89,
+          "FY2023_comparable_value": 1942868.00,
+          "unit": "CNY_loss",
+          "responsibility_boundary": "consolidated_group",
+          "printed_page": 185,
+          "source_locator": "财务报表附注七/(72)资产减值损失"
+        },
+        {
+          "fact": "explicit_positive_nonrecurring_operating_items_used_for_conservative_margin_check",
+          "FY2024_nonrecurring_government_grants": 32960008.31,
+          "FY2024_debt_restructuring_gain": 24595456.40,
+          "FY2024_asset_disposal_gain": 37503.49,
+          "unit": "CNY",
+          "responsibility_boundary": "consolidated_group_pre_tax_operating_profit_components",
+          "printed_pages": [
+            7,
+            92,
+            183,
+            184,
+            228
+          ],
+          "source_locator": "第二节/十非经常性损益；合并利润表；财务报表附注七/(67)(68)(73)；附注十六/18/2重要债务重组"
+        }
+      ],
+      "derived_values": [
+        {
+          "metric": "consolidated_revenue_growth",
+          "formula": "6031865460.16 / 5180441799.76 - 1",
+          "value": 0.1643534844,
+          "comparison": "above_favorable_revenue_growth_floor_0.10"
+        },
+        {
+          "metric": "consolidated_blood_products_revenue_growth",
+          "formula": "6012751228.49 / 5162063742.39 - 1",
+          "value": 0.1647960057,
+          "comparison": "positive_and_consistent_with_reported_group_revenue_growth"
+        },
+        {
+          "metric": "FY2023_implied_blood_products_sales_volume",
+          "formula": "1659.09 / (1 + 0.1005)",
+          "value": 1507.5783735,
+          "unit": "10_thousand_bottles",
+          "measurement_status": "DERIVED_FROM_PRINTED_FY2024_VOLUME_AND_YOY_RATE_NOT_RAW_FY2023_VALUE"
+        },
+        {
+          "metric": "reported_operating_margin_proxy_FY2024",
+          "formula": "2557785310.27 / 6031865460.16",
+          "value": 0.4240454843,
+          "comparison": "above_favorable_margin_floor_0.343"
+        },
+        {
+          "metric": "reported_operating_margin_proxy_FY2023",
+          "formula": "1804994565.17 / 5180441799.76",
+          "value": 0.3484248323,
+          "comparison": "reconciles_to_frozen_reference_approximately_0.348"
+        },
+        {
+          "metric": "conservative_positive_nonrecurring_adjusted_operating_margin_FY2024",
+          "formula": "(2557785310.27 - 32960008.31 - 24595456.40 - 37503.49) / 6031865460.16",
+          "value": 0.4144973655,
+          "comparison": "above_favorable_margin_floor_0.343_even_after_removing_explicit_positive_nonrecurring_items"
+        },
+        {
+          "metric": "parent_adjusted_net_profit_growth",
+          "formula": "1518650457.88 / 1104302920.41 - 1",
+          "value": 0.3752118461,
+          "comparison": "above_favorable_parent_adjusted_profit_growth_floor_0.10"
+        },
+        {
+          "metric": "inventory_balance_increase",
+          "formula": "3869072356.24 - 2844499190.49",
+          "value": 1024573165.75,
+          "unit": "CNY",
+          "interpretation_boundary": "persistent_cost_counterweight_only_not_a_substitute_for_profit_or_sales"
+        }
+      ],
+      "local_unknowns_and_mismatches": [
+        {
+          "field": "FY2023_actual_product_sales_volume",
+          "state": "UNKNOWN_RAW_VALUE",
+          "bounded_treatment": "retain_the_implied_1507.5783735_10_thousand_bottles_as_derived_only"
+        },
+        {
+          "field": "plasma_collection_cost",
+          "state": "UNKNOWN",
+          "bounded_treatment": "not_used_to_settle_absorption"
+        },
+        {
+          "field": "expensed_R_and_D_measure",
+          "state": "MEASUREMENT_MISMATCH",
+          "detail": "R_and_D_input_table_reports_124120863.87_CNY_expensed_while_income_statement_reports_142786644.46_CNY_R_and_D_expense",
+          "bounded_treatment": "preserve_both_raw_measures_without_forced_reconciliation"
+        },
+        {
+          "field": "terminated_R_and_D_charges",
+          "state": "NO_SEPARATE_AMOUNT_DISCLOSED",
+          "bounded_treatment": "not_assumed_zero_and_not_needed_to_change_the_threshold_result"
+        }
+      ],
+      "first_match_trace": {
+        "revenue_growth_test": "PASS_ABSORPTION_FAVORABLE",
+        "recurring_operating_margin_test": "PASS_ABSORPTION_FAVORABLE_ON_REPORTED_PROXY_AND_CONSERVATIVE_ADJUSTED_CHECK",
+        "parent_adjusted_profit_growth_test": "PASS_ABSORPTION_FAVORABLE",
+        "economic_absorption_carrier": "sales_and_recurring_profit_not_station_count_plasma_collection_or_nameplate_capacity"
+      },
+      "matched_class": "ABSORPTION_FAVORABLE"
+    },
+    {
+      "cell_id": "FY2024_OWNER_CASH_AND_CAPITAL_BURDEN",
+      "raw_reported_facts": [
+        {
+          "fact": "consolidated_operating_cash_flow",
+          "FY2024_value": 819780705.09,
+          "FY2023_comparable_value": 2393576031.26,
+          "unit": "CNY",
+          "responsibility_boundary": "consolidated_group",
+          "printed_page": 95,
+          "source_locator": "合并现金流量表/一、经营活动产生的现金流量净额"
+        },
+        {
+          "fact": "cash_paid_to_acquire_fixed_intangible_and_other_long_term_assets",
+          "FY2024_value": 1067411262.82,
+          "FY2023_comparable_value": 1077540017.32,
+          "unit": "CNY",
+          "responsibility_boundary": "consolidated_group",
+          "printed_page": 95,
+          "source_locator": "合并现金流量表/二、投资活动"
+        },
+        {
+          "fact": "working_capital_cash_flow_reconciliation",
+          "FY2024_inventory_increase": 579842533.14,
+          "FY2024_operating_receivables_increase": 473117126.79,
+          "FY2024_operating_payables_decrease": 613096821.24,
+          "unit": "CNY_cash_use",
+          "responsibility_boundary": "consolidated_group_cash_flow_reconciliation",
+          "printed_page": 190,
+          "source_locator": "财务报表附注七/(79)/1.1现金流量表补充资料"
+        },
+        {
+          "fact": "reported_operating_cash_flow_explanation",
+          "value": "FY2024 operating cash flow fell 65.75%; the report attributes the change to a new credit policy from Q3, higher notes and receivables, the prior-year collection of matured notes, and greater cash occupation from higher plasma collection",
+          "unit": "narrative",
+          "responsibility_boundary": "issuer_explanation_for_consolidated_group",
+          "printed_page": 20,
+          "source_locator": "第三节/五/(一)/5现金流"
+        },
+        {
+          "fact": "unfinished_large_capital_commitment",
+          "FY2024_year_end_future_obligation": 49004362.50,
+          "contract_total": 193522659.95,
+          "unit": "CNY",
+          "responsibility_boundary": "listed_company_contract_for_Lanzhou_blood_products_production_base",
+          "printed_page": 227,
+          "source_locator": "财务报表附注十六/16/1重要承诺事项"
+        },
+        {
+          "fact": "Chengdu_Rongsheng_ownership_and_NCI_claims",
+          "listed_company_interest": 74.005,
+          "NCI_interest": 25.995,
+          "FY2024_NCI_profit": 593022244.77,
+          "FY2024_dividend_declared_to_NCI": 103980000.00,
+          "FY2024_year_end_NCI_equity": 3381598868.25,
+          "unit": "percent_and_CNY",
+          "responsibility_boundary": "Chengdu_Rongsheng_consolidated_subgroup_and_its_NCI",
+          "printed_pages": [
+            200,
+            201
+          ],
+          "source_locator": "财务报表附注七/10/1/(1)-(2)在子公司中的权益"
+        },
+        {
+          "fact": "Chengdu_Rongsheng_operating_cash_flow",
+          "FY2024_value": 941349300.00,
+          "FY2023_comparable_value": 2508097000.00,
+          "unit": "CNY_converted_from_reported_CNY_10_thousand",
+          "responsibility_boundary": "Chengdu_Rongsheng_consolidated_subgroup",
+          "printed_page": 202,
+          "source_locator": "财务报表附注七/10/1/(3)重要非全资子公司的主要财务信息"
+        },
+        {
+          "fact": "consolidated_dividends_paid_to_NCI",
+          "FY2024_value": 105360198.39,
+          "FY2023_comparable_value": 28209657.18,
+          "unit": "CNY",
+          "responsibility_boundary": "all_consolidated_subsidiaries_to_NCI",
+          "printed_page": 95,
+          "source_locator": "合并现金流量表/三、筹资活动"
+        },
+        {
+          "fact": "actual_parent_receipt_of_investment_income",
+          "FY2024_value": 321333980.82,
+          "FY2023_comparable_value": 109900742.76,
+          "unit": "CNY",
+          "responsibility_boundary": "listed_company_parent_only_non_financing_investment_cash_receipt",
+          "printed_page": 96,
+          "source_locator": "母公司现金流量表/二、投资活动/取得投资收益收到的现金"
+        },
+        {
+          "fact": "parent_operating_cash_flow",
+          "FY2024_value": -43650515.11,
+          "FY2023_comparable_value": -50979265.28,
+          "unit": "CNY",
+          "responsibility_boundary": "listed_company_parent_only",
+          "printed_page": 96,
+          "source_locator": "母公司现金流量表/一、经营活动产生的现金流量净额"
+        },
+        {
+          "fact": "parent_cash_paid_for_long_term_assets",
+          "FY2024_value": 594247.00,
+          "FY2023_comparable_value": 537008.00,
+          "unit": "CNY",
+          "responsibility_boundary": "listed_company_parent_only",
+          "printed_page": 96,
+          "source_locator": "母公司现金流量表/二、投资活动"
+        },
+        {
+          "fact": "parent_other_investing_cash_flows_not_disaggregated_by_counterparty",
+          "FY2024_receipts": 1323300000.00,
+          "FY2024_payments": 717000000.00,
+          "unit": "CNY",
+          "responsibility_boundary": "listed_company_parent_only",
+          "printed_page": 96,
+          "source_locator": "母公司现金流量表/二、投资活动/其他"
+        },
+        {
+          "fact": "parent_liquidity",
+          "FY2024_year_end_monetary_funds": 1370134372.61,
+          "FY2024_year_end_cash_and_cash_equivalents": 129402211.67,
+          "unit": "CNY",
+          "responsibility_boundary": "listed_company_parent_only",
+          "printed_pages": [
+            90,
+            96
+          ],
+          "source_locator": "母公司资产负债表/货币资金；母公司现金流量表/六、期末现金及现金等价物余额"
+        },
+        {
+          "fact": "restricted_group_cash",
+          "FY2024_term_deposit_principal_and_interest": 1256576119.46,
+          "FY2024_notice_deposit_interest": 1183855.37,
+          "FY2024_guarantee_and_ETC_deposits": 720038.99,
+          "FY2024_Chengdu_Rongsheng_frozen_government_grant_cash": 4255000.00,
+          "unit": "CNY",
+          "responsibility_boundary": "consolidated_group_with_Chengdu_Rongsheng_item_separately_identified",
+          "printed_page": 21,
+          "source_locator": "第三节/五/(三)/3截至报告期末主要资产受限情况"
+        },
+        {
+          "fact": "material_subsidiary_asset_or_debt_restriction_disclosure",
+          "value": "not_applicable",
+          "unit": "issuer_disclosure_state",
+          "responsibility_boundary": "important_non_wholly_owned_subsidiaries",
+          "printed_page": 202,
+          "source_locator": "财务报表附注七/10/1/(4)使用企业集团资产和清偿企业集团债务的重大限制"
+        },
+        {
+          "fact": "common_shareholder_cash_distributions",
+          "FY2023_dividend_paid_during_FY2024": 247171430.70,
+          "FY2024_dividend_proposed_after_year_end": 197737144.60,
+          "unit": "CNY",
+          "responsibility_boundary": "listed_company_common_shareholders",
+          "printed_pages": [
+            45,
+            228
+          ],
+          "source_locator": "第五节/十/(一)现金分红执行；财务报表附注十六/17/2利润分配情况"
+        }
+      ],
+      "derived_values": [
+        {
+          "metric": "group_cash_proxy_FY2024",
+          "formula": "819780705.09 - 1067411262.82",
+          "value": -247630557.73,
+          "unit": "CNY",
+          "responsibility_boundary": "consolidated_group"
+        },
+        {
+          "metric": "group_cash_proxy_FY2023",
+          "formula": "2393576031.26 - 1077540017.32",
+          "value": 1316036013.94,
+          "unit": "CNY",
+          "responsibility_boundary": "consolidated_group"
+        },
+        {
+          "metric": "group_cash_proxy_change",
+          "formula": "-247630557.73 - 1316036013.94",
+          "value": -1563666571.67,
+          "unit": "CNY",
+          "responsibility_boundary": "consolidated_group"
+        },
+        {
+          "metric": "parent_cash_after_parent_operating_cash_use_and_parent_long_term_asset_cash_payment_before_common_dividend_and_unclassified_investing_flows",
+          "formula": "321333980.82 - 43650515.11 - 594247.00",
+          "value": 277089218.71,
+          "unit": "CNY",
+          "responsibility_boundary": "listed_company_parent_only",
+          "interpretation_boundary": "not_parent_distributable_cash_because_net_parent_support_and_required_subsidiary_retention_are_unresolved"
+        }
+      ],
+      "local_unknowns_and_mismatches": [
+        {
+          "field": "Chengdu_Rongsheng_post_capex_cash",
+          "state": "UNKNOWN",
+          "detail": "Chengdu_Rongsheng operating cash flow is disclosed but its own cash capex is not separately disclosed",
+          "bounded_treatment": "do_not_allocate_the_consolidated_group_cash_proxy_between_parent_and_NCI"
+        },
+        {
+          "field": "required_subsidiary_retention_or_reinvestment",
+          "state": "PARTIAL",
+          "detail": "a 49004362.50 CNY group capital commitment is disclosed but entity-specific retention needs are not fully disclosed"
+        },
+        {
+          "field": "net_parent_support_to_subsidiaries",
+          "state": "UNKNOWN",
+          "detail": "parent other investing receipts of 1323300000.00 CNY and payments of 717000000.00 CNY are not disaggregated by counterparty or purpose",
+          "bounded_treatment": "do_not_relabel_unclassified_flows_as_upstream_receipts_or_parent_support"
+        },
+        {
+          "field": "parent_distributable_cash",
+          "state": "CONDITIONAL_NOT_FULLY_CLOSED",
+          "bounded_treatment": "retain_actual_parent_investment_income_receipts_parent_expenses_liquidity_and_announced_dividend_separately"
+        },
+        {
+          "field": "specific_legal_regulatory_shareholder_agreement_or_financing_contract_restriction_on_upstream_cash",
+          "state": "NO_SPECIFIC_RESTRICTION_DISCLOSED",
+          "bounded_treatment": "do_not_generalize_beyond_the_reported_no_material_group_asset_or_debt_restriction_and_identified_restricted_cash"
+        }
+      ],
+      "first_match_trace": {
+        "group_cash_direction": "NEGATIVE_BUT_ABOVE_STRUCTURAL_ADVERSE_BOUNDARY_MINUS_500M",
+        "structural_adverse_test": "NOT_MATCHED_GROUP_CASH_PROXY_MINUS_247630557_73_IS_NOT_BELOW_MINUS_500M",
+        "NCI_attribution": "PARTIAL_WITH_POST_CAPEX_UNKNOWN",
+        "parent_access": "OBSERVED_RECEIPTS_BUT_DISTRIBUTABLE_CASH_CONDITIONAL",
+        "settlement_rule": "MATCH_OWNER_CASH_GROUP_NONSTRUCTURAL_SCOPE_OPEN_AND_KEEP_OWNER_CASH_CONDITIONAL_WITHOUT_PERMANENT_LOSS_OR_VALUATION_PROPAGATION"
+      },
+      "matched_class": "OWNER_CASH_GROUP_NONSTRUCTURAL_SCOPE_OPEN"
+    },
+    {
+      "cell_id": "FY2024_QUALITY_AND_REGULATORY_TAIL",
+      "raw_reported_facts": [
+        {
+          "fact": "regulatory_quality_inspections_and_batch_release",
+          "value": "the company states that it passed quality inspections by regulators at all levels, the quality-management systems operated effectively, product quality remained stable, and all blood-products subsidiaries had 100% product self-inspection and batch-release pass rates",
+          "unit": "issuer_disclosure_state_and_percent",
+          "responsibility_boundary": "all_consolidated_blood_products_manufacturing_subsidiaries",
+          "printed_page": 9,
+          "source_locator": "第三节/一/(三)持续严格管控确保产品质量"
+        },
+        {
+          "fact": "Yunnan_project_registration_and_GMP_inspection",
+          "value": "passed_registration_site_inspection_and_GMP_conformity_inspection",
+          "unit": "issuer_disclosure_state",
+          "responsibility_boundary": "Shanghai_Blood_Products_Yunnan_project",
+          "printed_page": 9,
+          "source_locator": "第三节/一/(六)加速项目进展推进智能布局"
+        },
+        {
+          "fact": "production_licence_changes",
+          "value": "licence changes during FY2024 added or updated approved production scope or corporate/management particulars; no suspension or revocation is shown in the disclosed table",
+          "unit": "issuer_disclosure_state",
+          "responsibility_boundary": "Chengdu_Rongsheng_Guizhou_Blood_Products_and_Zhongyuan_Ruide",
+          "printed_page": 74,
+          "source_locator": "第六节/十五/(一)报告期血制公司换发或变更生产许可证情况"
+        },
+        {
+          "fact": "plasma_station_licences",
+          "value": "37_plasma_stations_completed_initial_licensing_or_expiry_renewal_during_FY2024",
+          "unit": "count_and_issuer_disclosure_state",
+          "responsibility_boundary": "consolidated_group_plasma_station_network",
+          "printed_pages": [
+            74,
+            75
+          ],
+          "source_locator": "第六节/十五/(二)报告期浆站获得及换发采浆证情况"
+        },
+        {
+          "fact": "product_reregistration",
+          "value": "33_approval_numbers_across_10_blood_product_varieties_completed_reregistration_and_all_existing_approval_numbers_were_stated_to_be_valid",
+          "unit": "count_and_issuer_disclosure_state",
+          "responsibility_boundary": "consolidated_group_blood_products",
+          "printed_page": 75,
+          "source_locator": "第六节/十五/(三)/1产品再注册情况"
+        }
+      ],
+      "derived_values": [],
+      "local_unknowns_and_mismatches": [
+        {
+          "field": "product_recall_shutdown_major_GMP_deficiency_drug_administrative_penalty_or_serious_product_safety_event",
+          "state": "NO_SUCH_EVENT_DISCLOSED_IN_AUTHORIZED_REPORT",
+          "bounded_treatment": "do_not_infer_an_undisclosed_event_and_do_not_claim_external_exhaustiveness_beyond_the_single_authorized_report"
+        },
+        {
+          "field": "continuing_remediation_cost_fixed_shutdown_cost_and_affected_recurring_profit",
+          "state": "NOT_APPLICABLE_TO_ANY_DISCLOSED_SEVERE_OR_RECOVERY_EVENT",
+          "bounded_treatment": "not_used_to_create_persistence_unknown"
+        }
+      ],
+      "first_match_trace": {
+        "complete_severe_path": "NOT_OBSERVED",
+        "verified_in_period_recovery_path": "NOT_APPLICABLE_NO_PRECEDING_SEVERE_EVENT_DISCLOSED",
+        "contained_mixed_path": "NOT_MATCHED_NO_EXPLICIT_NONMATERIAL_NEGATIVE_EVENT_OBSERVED",
+        "neutral_residual_path": "MATCHED_NO_NEGATIVE_EVENT_OBSERVED_WITH_PASSED_INSPECTIONS_100_PERCENT_SELF_INSPECTION_AND_BATCH_RELEASE_PASS_RATES_VALID_LICENCES_AND_REREGISTRATIONS",
+        "unresolved_persistence": "NOT_TRIGGERED"
+      },
+      "matched_class": "QUALITY_NEUTRAL_RESIDUAL"
+    }
+  ],
+  "cross_cell_settlement": {
+    "cell_class_vector": {
+      "FY2024_ECONOMIC_ABSORPTION": "ABSORPTION_FAVORABLE",
+      "FY2024_OWNER_CASH_AND_CAPITAL_BURDEN": "OWNER_CASH_GROUP_NONSTRUCTURAL_SCOPE_OPEN",
+      "FY2024_QUALITY_AND_REGULATORY_TAIL": "QUALITY_NEUTRAL_RESIDUAL"
+    },
+    "mechanical_aggregate_class": "CELL_VECTOR_ONLY",
+    "aggregation_basis": "ABSORPTION_FAVORABLE_plus_OWNER_CASH_GROUP_NONSTRUCTURAL_SCOPE_OPEN_plus_QUALITY_NEUTRAL_RESIDUAL",
+    "owner_cash_treatment": "CONDITIONAL_SCOPE_OPEN_ONLY",
+    "authority_boundary": "mechanical_outcome_cell_vector_only_no_permanent_loss_management_enterprise_method_utility_valuation_price_return_or_investment_conclusion"
+  },
+  "scope_compliance": {
+    "documents_read": 1,
+    "maximum_documents_authorized": 1,
+    "teaching_or_blind_feedback_read": false,
+    "preoutcome_narrative_or_treatment_read": false,
+    "old_derived_reports_read": false,
+    "other_outcomes_read": false,
+    "prices_or_returns_read": false,
+    "comparative_or_valuation_or_investment_conclusion_made": false
+  }
+}
