@@ -1,0 +1,120 @@
+{
+  "schema_version": "historical-outcome-access-authorization.v1",
+  "campaign_id": "JUDGMENT_UTILITY_HISTORICAL_20260828",
+  "episode_id": "HIST:CN601598:20240501:FY2024",
+  "company_id": "CN:601598",
+  "cutoff_at": "2024-05-01T00:00:00+08:00",
+  "preoutcome_freeze_commit": "51d0520",
+  "custodian_id": "/root/cn601598_outcome_custodian",
+  "authorized_source": {
+    "period": "FY2024",
+    "source_class": "ISSUER_OFFICIAL_FULL_ANNUAL_REPORT",
+    "url": "https://static.cninfo.com.cn/finalpage/2025-03-26/1222895896.PDF",
+    "maximum_documents": 1
+  },
+  "authorization": "FY2024_OUTCOME_FACT_EXTRACTION_AND_CELL_SETTLEMENT",
+  "cells": [
+    {
+      "cell_id": "FY2024_CORE_OPERATING_RESILIENCE",
+      "allowed_fields": [
+        "FY2024 and FY2023-comparable revenue and segment profit excluding investment income for professional logistics, forwarding and related business, and e-commerce",
+        "FY2024 and FY2023-comparable adjusted parent profit",
+        "FY2024 and FY2023-comparable major business volumes disclosed in the same annual report",
+        "sales expense, administrative expense, expensed R&D, and revenue",
+        "logistics-industry fiscal subsidies and other recurring government subsidies, including any disclosed segment or route attribution",
+        "reported segment-definition, subsidy-definition, consolidation-perimeter, or accounting changes"
+      ],
+      "preoutcome_reference": {
+        "FY2023_three_segment_profit_excluding_investment_income_CNY_billion": 3.568,
+        "FY2023_adjusted_parent_profit_CNY_billion": 3.457,
+        "FY2023_logistics_fiscal_subsidy_CNY_billion": 2.130,
+        "FY2022_comparable_three_segment_profit_excluding_investment_income_CNY_billion": 3.134,
+        "FY2022_logistics_fiscal_subsidy_CNY_billion": 1.203
+      },
+      "first_match": [
+        "LOCAL_UNKNOWN only if comparable three-segment profit or adjusted parent profit itself is unavailable",
+        "MEASUREMENT_MISMATCH if segment, period, perimeter, or accounting definitions cannot be bridged",
+        "ADVERSE_STRUCTURAL_CORE_EROSION if three-segment profit <= CNY 3.0bn and adjusted parent profit < CNY 2.8bn with an observed customer-loss, price-cut, structural-cost, or credit-loss carrier",
+        "FAVORABLE_SELF_FUNDED_IMPROVEMENT if three-segment profit >= CNY 3.7bn, adjusted parent profit >= CNY 3.4bn, at least two major volume axes do not decline, and matched subsidy intensity plus persistent expense burden do not rise while subsidy-before profit improves",
+        "MIXED_REPORTED_RESILIENCE_ATTRIBUTION_UNPROVEN if three-segment profit is CNY 3.2bn to CNY 3.7bn and adjusted parent profit >= CNY 2.8bn but subsidy cannot be matched to the same boundary or subsidy-before profit is unavailable",
+        "MIXED_COMPLETE_RESIDUAL for the remaining complete comparable cases"
+      ]
+    },
+    {
+      "cell_id": "FY2024_KEY_JV_EARNINGS_DURABILITY",
+      "allowed_fields": [
+        "FY2024 and FY2023-comparable Sinotrans-DHL revenue and net profit",
+        "group equity-method investment income and its material investee composition",
+        "actual dividends received from Sinotrans-DHL or other material joint ventures if disclosed",
+        "Sinotrans-DHL margin, demand, share, pricing, persistent-cost, impairment, or major-customer facts if disclosed",
+        "holding percentage, control, accounting-policy, or perimeter changes"
+      ],
+      "preoutcome_reference": {
+        "FY2023_Sinotrans_DHL_revenue_CNY_billion": 23.031,
+        "FY2023_Sinotrans_DHL_net_profit_CNY_billion": 3.501,
+        "FY2023_group_equity_method_income_CNY_billion": 2.270
+      },
+      "first_match": [
+        "LOCAL_UNKNOWN if Sinotrans-DHL comparable net profit or group equity-method income is unavailable",
+        "MEASUREMENT_MISMATCH if holding, control, accounting, period, or perimeter cannot be bridged",
+        "ADVERSE_JV_ECONOMIC_DECLINE if Sinotrans-DHL net profit <= CNY 2.8bn and group equity-method income <= CNY 1.8bn with an observed demand, share, pricing, cost, impairment, or customer-loss carrier",
+        "FAVORABLE_JV_DURABILITY if Sinotrans-DHL net profit >= CNY 3.7bn and group equity-method income >= CNY 2.35bn without nonrecurring support",
+        "NEUTRAL_JV_RANGE if Sinotrans-DHL net profit is CNY 3.15bn to CNY 3.7bn and group equity-method income is CNY 2.04bn to CNY 2.5bn without a structural adverse carrier",
+        "MIXED_COMPLETE_RESIDUAL for the remaining complete comparable cases"
+      ]
+    },
+    {
+      "cell_id": "FY2024_PARENT_OWNER_CASH_AND_SEVERE_BRANCH",
+      "allowed_fields": [
+        "consolidated operating cash flow",
+        "cash paid to acquire fixed assets, intangible assets, and other long-term assets",
+        "reported segment capital expenditure using the same definition as FY2023",
+        "maintenance versus expansion capex only where explicitly attributable",
+        "NCI cash claims or distributions and parent cash-access evidence",
+        "parent dividends received from subsidiaries, joint ventures, and associates if disclosed",
+        "credit-loss charges and the economic carrier or persistence of receivable deterioration",
+        "cash and cash equivalents, interest-bearing debt, and the issuer-defined net-debt bridge",
+        "perimeter, cash-flow-classification, capex-definition, restricted-cash, acquisition, or disposal changes"
+      ],
+      "formulas": {
+        "cash_flow_statement_purchase_proxy": "consolidated OCF minus cash paid to acquire fixed assets, intangible assets and other long-term assets",
+        "segment_capex_proxy": "consolidated OCF minus disclosed segment capital expenditure",
+        "comparison_rule": "keep each proxy on its own definition across periods; never substitute or mix the two"
+      },
+      "first_match": [
+        "MEASUREMENT_MISMATCH only for an unbridgeable group cash, period, perimeter, or capex-definition mismatch",
+        "SEVERE_STRUCTURAL_CASH_LOSS if either same-definition group proxy is negative for two comparable periods with persistent credit loss or maintenance cash consumption, material net-cash contraction, and an irreversible carrier lasting or expected to last at least 12 months; parent scope may remain unknown and owner cash then stays conditional",
+        "ADVERSE_CASH_ONLY if either same-definition group proxy is negative for two comparable periods with persistent credit loss or maintenance cash consumption and net-cash contraction but the severe irreversibility test is not met; parent scope may remain unknown and permanent-loss constraint still tightens",
+        "POSITIVE_GROUP_PROXY_OWNER_SCOPE_OPEN if same-definition group cash is positive with no persistent adverse carrier but NCI, parent access, or maintenance-versus-growth scope remains open; owner cash remains conditional",
+        "FAVORABLE_PARENT_CASH_CLOSED if scope is closed, FY2024 parent-distributable owner cash >= CNY 2.0bn, cumulative FY2022-FY2024 parent-distributable owner cash is positive, and no material transfer restriction exists",
+        "NEUTRAL_POSITIVE_GROUP_PROXY if scope is closed, group cash is positive, parent-distributable owner cash < CNY 2.0bn, and no persistent adverse carrier exists",
+        "MIXED_COMPLETE_RESIDUAL for the remaining complete comparable cases"
+      ]
+    }
+  ],
+  "output_requirements": [
+    "Record raw reported values, units, responsibility boundary, printed page, and source locator before derived values.",
+    "Apply the listed first-match in order and identify the matched condition.",
+    "Keep reported profitability resilience separate from subsidy-before commercial attribution.",
+    "Keep each cash proxy on its own definition; parent-scope unknown may restrict owner cash but must not erase observed permanent-loss carriers.",
+    "Keep UNKNOWN and mismatch local and continue settling other cells.",
+    "Do not infer management quality, investment utility, valuation, enterprise conclusions, prices, returns, or investment action."
+  ],
+  "forbidden_inputs": [
+    "preoutcome judgment narrative or treatment mapping beyond the explicit cell contract and frozen numeric references above",
+    "prices or returns",
+    "old reports or derived research",
+    "any source other than the one authorized official annual report"
+  ],
+  "permissions": {
+    "training_utility": "NONE",
+    "transfer_validated": false,
+    "method_freeze": false,
+    "comparative": false,
+    "cjo": false,
+    "formal_valuation": false,
+    "buy_band": false,
+    "report": false,
+    "investment_action": false
+  }
+}
