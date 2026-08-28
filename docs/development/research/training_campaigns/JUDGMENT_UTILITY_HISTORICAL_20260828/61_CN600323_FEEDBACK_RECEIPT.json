@@ -1,0 +1,74 @@
+{
+  "schema_version": "historical-holdout-feedback-receipt.v1",
+  "receipt_id": "FEEDBACK:HIST:CN600323:FY2024:PAIR_V2",
+  "evaluation_id": "EVAL:HIST:CN600323:FY2024:PAIR_V2",
+  "pair_id": "PAIR:HIST:CN600323:20240501:V2",
+  "episode_id": "HIST:CN600323:20240501:FY2024",
+  "company_id": "CN:600323",
+  "method_pack_id": "METHOD_PACK:JUDGMENT_FIRST:BLIND_FEEDBACK:V2",
+  "method_version": "judgment-first-blind-feedback.v2",
+  "completed_at": "2026-08-28T21:16:48+08:00",
+  "artifact_status": "COMPLETED",
+  "authority": "NONE",
+  "real_feedback_turn": "COMPLETED",
+  "enterprise_investment_treatment": "MATERIAL_UPDATE_BOUNDED",
+  "enterprise_materially_changed_axes_from_common_preoutcome_treatment": [
+    "normal_earnings",
+    "valuation_direction",
+    "next_research_action"
+  ],
+  "postoutcome_investor_treatment": {
+    "management_execution": {
+      "treatment_code": "CONDITIONAL_CREDIT",
+      "rationale": "垃圾焚烧运营分轴为正面；能源采购与定价、回款、融资为条件信用，增量资本配置尚未闭合，故企业综合不升为无条件正面。"
+    },
+    "normal_earnings": {
+      "treatment_code": "RAISE",
+      "rationale": "扣非归母增长15.52%、固废剔除工程与装备后的运营净利润增长9.64%、垃圾焚烧利润增长21.63%，支持相对FY2023底座小幅上修；往期电费、国补及能源采购成本下降限制完整增幅的正常化。"
+    },
+    "owner_cash": {
+      "treatment_code": "COUNT_CONDITIONALLY",
+      "rationale": "集团OCF减披露资本开支约为正15.65亿元，母公司实际收到约11.73亿元投资收益现金；但NCI和重要子公司post-capex现金至母公司上划桥未闭合。"
+    },
+    "permanent_loss": {
+      "treatment_code": "TIGHTEN_CONSTRAINT",
+      "rationale": "正的资本开支后现金、同口径净债务下降和债务覆盖改善降低即时风险；应收合同资产增长8.26%、总有息债务增长7.10%、受限资产和一年内到期债务仍要求保持收紧，尚非THESIS_BLOCKING。"
+    },
+    "valuation_direction": {
+      "treatment_code": "UP",
+      "rationale": "不使用价格、正式估值或BuyBand；核心正常盈利与净债务方向改善超过资产负债表混合项，支持相对FY2023小幅上修，幅度受时点性收入、集中回款与parent access未知限制。"
+    },
+    "next_research_action": {
+      "action_family": "MATERIAL_SUBSIDIARY_TO_PARENT_CASH_ATTRIBUTION",
+      "target_scope": "重要项目子公司、NCI、受限资金与上市公司母公司",
+      "fact_or_metric": "逐家闭合资本开支后现金、必要留存、可分配利润、NCI权利、应付及已付母公司分红和集团资金调度，并与母公司实际投资收益现金、应收股利及集团内其他应收勾稽。",
+      "decision_axis": "owner_cash_and_permanent_loss",
+      "positive_effect": "若重要子公司现金可持续上划且NCI漏出可界定，将集团现金的可归属部分计入parent owner cash并考虑放松永久损失约束。",
+      "negative_effect": "若出现持续留存、受限资金、重大NCI漏出或结构性上划阻断，则不计入对应集团现金，并收紧价值与永久损失处理。"
+    }
+  },
+  "method_utility": "NO_MATERIAL_UTILITY",
+  "method_learning_utility": "NO_MATERIAL_UTILITY",
+  "method_pack_disposition": "RETAIN_CANDIDATE_NOT_VALIDATED",
+  "method_pack_disposition_reason": "两臂冻结的五轴处理代码与经济rank-1行动相同，无法产生本episode的正向paired utility。Enhanced的责任传播设计更合理，只能保留为设计经验；FY2024没有材料事实证明方法包有害或需要缩窄。",
+  "method_validated": false,
+  "transfer_validated": false,
+  "learning_authorization": "NONE",
+  "permissions": {
+    "training_utility": "NONE",
+    "method_validation": "NONE",
+    "transfer_validation": "NONE",
+    "comparative": "NONE",
+    "cjo": "NONE",
+    "formal_valuation": "NONE",
+    "buy_band": "NONE",
+    "report": "NONE",
+    "investment_action": "NONE"
+  },
+  "next_historical_training_behavior": {
+    "action": "RUN_NEXT_UNSEEN_PAIRED_HOLDOUT_WITH_MATERIAL_PREOUTCOME_TREATMENT_DIFFERENCE",
+    "reason": "本episode完成了真实结果反馈，但两臂在结果解封前没有材料处理差异，不能承担方法验证。",
+    "required_behavior": "在相同cutoff、相同证据与研究预算下，先冻结至少一个会改变正常盈利、owner cash、永久损失、内在价值方向或经济rank-1行动的真实差异，再解封结果；局部经营桥缺失必须只冻结对应责任轴。",
+    "acceptance_criteria": "结果必须通过观察到且责任匹配的经济载体支持Enhanced避免一个材料错误、改进一个材料范围或改变一项材料投资处理；篇幅、字段数、分类粒度和措辞偏好不计效用。"
+  }
+}

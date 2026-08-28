@@ -945,15 +945,15 @@
       "company_name": "浙江鼎力",
       "industry_id": "INDUSTRIAL_EQUIPMENT",
       "track": "BLIND_JUDGMENT",
-      "status": "REGISTERED",
+      "status": "SETTLED",
       "cutoff_at": "2024-05-01T00:00:00+08:00",
       "outcome_window": {
         "starts_at": "2025-04-18T00:00:00+08:00",
         "ends_at": "2025-05-01T00:00:00+08:00"
       },
-      "outcome_access": "SEALED",
+      "outcome_access": "REVEALED_AFTER_FREEZE",
       "selection_exposure": "PREOUTCOME_ONLY",
-      "role_isolation_state": "BLIND_PACKET_READY",
+      "role_isolation_state": "ROLE_ISOLATION_PROVED",
       "primary_capability_units": [
         "CUSTOMER_ABSORPTION",
         "CAPITAL_ALLOCATION"
@@ -962,12 +962,14 @@
       "claim_scope": "ENTERPRISE_JUDGMENT",
       "comparative_mode": "NOT_REQUIRED",
       "source_refs": [
-        "docs/development/research/training_campaigns/JUDGMENT_UTILITY_HISTORICAL_20260828/02_FROZEN_3_2_1_ROSTER.json",
-        "docs/development/research/training_campaigns/JUDGMENT_UTILITY_HISTORICAL_20260828/39_CN603338_BLIND_PACKET_READY.json"
+        "docs/development/research/training_campaigns/JUDGMENT_UTILITY_HISTORICAL_20260828/40_CN603338_FORECASTER_EXECUTION_RECEIPT.json",
+        "docs/development/research/training_campaigns/JUDGMENT_UTILITY_HISTORICAL_20260828/41_CN603338_PREOUTCOME_JUDGMENT.json"
       ],
       "artifact_refs": {
-        "freeze_ref": "docs/development/research/training_campaigns/JUDGMENT_UTILITY_HISTORICAL_20260828/39_CN603338_BLIND_PACKET_READY.json",
-        "method_pack_ref": "docs/development/research/training_campaigns/JUDGMENT_UTILITY_HISTORICAL_20260828/37_FROZEN_TRAINING_METHOD_PACK_V1.json"
+        "preoutcome_judgment_ref": "docs/development/research/training_campaigns/JUDGMENT_UTILITY_HISTORICAL_20260828/41_CN603338_PREOUTCOME_JUDGMENT.json",
+        "settlement_ref": "docs/development/research/training_campaigns/JUDGMENT_UTILITY_HISTORICAL_20260828/44_CN603338_CUSTODIAN_OUTCOME_SETTLEMENT.json",
+        "postoutcome_review_ref": "docs/development/research/training_campaigns/JUDGMENT_UTILITY_HISTORICAL_20260828/45_CN603338_INDEPENDENT_POSTOUTCOME_REVIEW.md",
+        "investor_readout_ref": "docs/development/research/training_campaigns/JUDGMENT_UTILITY_HISTORICAL_20260828/46_CN603338_INVESTOR_READOUT.md"
       },
       "lesson": null,
       "holdout_axis": null
@@ -1009,6 +1011,46 @@
       "lesson": null,
       "holdout_axis": "COMPANY",
       "method_memory_state": "NO_TRAINING_METHOD_SUPPLIED"
+    },
+    {
+      "case_id": "HOLDOUT:CN600323:20240501:FY2024:PAIR_V2",
+      "company_id": "CN:600323",
+      "company_cluster_id": "COMPANY:CN600323",
+      "company_name": "瀚蓝环境",
+      "industry_id": "ENVIRONMENTAL_UTILITY_PROJECT_OPERATIONS",
+      "track": "HISTORICAL_HOLDOUT",
+      "status": "EVALUATED",
+      "cutoff_at": "2024-05-01T00:00:00+08:00",
+      "outcome_window": {
+        "starts_at": "2025-04-11T00:00:00+08:00",
+        "ends_at": "2025-05-01T00:00:00+08:00"
+      },
+      "outcome_access": "REVEALED_AFTER_HOLDOUT_FORECAST_FREEZE",
+      "selection_exposure": "PREOUTCOME_ONLY",
+      "role_isolation_state": "ROLE_ISOLATION_PROVED",
+      "primary_capability_units": [
+        "OWNER_CASH_CONVERSION",
+        "PERMANENT_LOSS_AND_LIFECYCLE"
+      ],
+      "mechanism_focus": "固废和能源经常盈利如何穿过政府客户回款、资本开支、债务、NCI与母公司上划形成普通股现金和永久损失边界",
+      "claim_scope": "ENTERPRISE_JUDGMENT",
+      "comparative_mode": "NOT_REQUIRED",
+      "source_refs": [
+        "docs/development/research/training_campaigns/JUDGMENT_UTILITY_HISTORICAL_20260828/51_CN600323_BASELINE_PREOUTCOME_JUDGMENT.json",
+        "docs/development/research/training_campaigns/JUDGMENT_UTILITY_HISTORICAL_20260828/53_CN600323_ENHANCED_PREOUTCOME_JUDGMENT.json"
+      ],
+      "artifact_refs": {
+        "preoutcome_judgment_ref": "docs/development/research/training_campaigns/JUDGMENT_UTILITY_HISTORICAL_20260828/51_CN600323_BASELINE_PREOUTCOME_JUDGMENT.json",
+        "freeze_ref": "docs/development/research/training_campaigns/JUDGMENT_UTILITY_HISTORICAL_20260828/54_CN600323_HOLDOUT_TREATMENT_PAIR.json",
+        "method_pack_ref": "docs/development/research/training_campaigns/JUDGMENT_UTILITY_HISTORICAL_20260828/48_FROZEN_TRAINING_METHOD_PACK_V2.json",
+        "holdout_pair_ref": "docs/development/research/training_campaigns/JUDGMENT_UTILITY_HISTORICAL_20260828/54_CN600323_HOLDOUT_TREATMENT_PAIR.json",
+        "settlement_ref": "docs/development/research/training_campaigns/JUDGMENT_UTILITY_HISTORICAL_20260828/57_CN600323_CUSTODIAN_OUTCOME_SETTLEMENT.json",
+        "postoutcome_review_ref": "docs/development/research/training_campaigns/JUDGMENT_UTILITY_HISTORICAL_20260828/59_CN600323_INDEPENDENT_POSTOUTCOME_REVIEW.md",
+        "investor_readout_ref": "docs/development/research/training_campaigns/JUDGMENT_UTILITY_HISTORICAL_20260828/60_CN600323_INVESTOR_READOUT.md"
+      },
+      "lesson": null,
+      "holdout_axis": "COMPANY",
+      "method_memory_state": "PAIRED_METHOD_EVALUATED"
     },
     {
       "case_id": "PROSPECTIVE:CN601899:20260501:FY2026",

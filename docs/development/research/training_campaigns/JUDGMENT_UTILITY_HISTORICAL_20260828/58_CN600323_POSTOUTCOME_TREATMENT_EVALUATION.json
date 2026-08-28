@@ -1,0 +1,11 @@
+{
+  "schema_version": "historical-holdout-treatment-evaluation.v1",
+  "evaluation_id": "EVAL:HIST:CN600323:FY2024:PAIR_V2",
+  "pair_id": "PAIR:HIST:CN600323:20240501:V2",
+  "reviewer_id": "/root/cn600323_holdout_postoutcome_reviewer",
+  "evaluated_at": "2026-08-28T21:16:48+08:00",
+  "axis_assessments": [],
+  "overall_utility_verdict": "NO_MATERIAL_UTILITY",
+  "artifact_status": "EVALUATED",
+  "authority": "NONE"
+}
