@@ -1,0 +1,68 @@
+{
+  "schema_version": "historical-independent-postoutcome-feedback-receipt.v1",
+  "campaign_id": "JUDGMENT_UTILITY_HISTORICAL_20260828",
+  "case_id": "BLIND:HK00816:20240501:FY2024",
+  "company_id": "HK:00816",
+  "review_mode": "FRESH_INDEPENDENT_POSTOUTCOME_REVIEW",
+  "review_status": "ACCEPT",
+  "input_scope": {
+    "preoutcome_artifacts": [
+      "65_CN00816_FORECASTER_EXECUTION_RECEIPT.json",
+      "66_CN00816_PREOUTCOME_JUDGMENT.json",
+      "67_CN00816_INDEPENDENT_PREOUTCOME_REVIEW.md",
+      "68_CN00816_OUTCOME_ACCESS_AUTHORIZATION.json"
+    ],
+    "outcome_artifact": "69_CN00816_CUSTODIAN_OUTCOME_SETTLEMENT.json",
+    "independent_review": "70_CN00816_INDEPENDENT_POSTOUTCOME_REVIEW.md",
+    "official_result_source_count": 1,
+    "prices_or_returns_used": false,
+    "comparative_used": false
+  },
+  "real_feedback_turn": {
+    "status": "REAL_FEEDBACK_TURN_5_COMPLETED",
+    "basis": [
+      "a preoutcome enterprise judgment and three responsibility-axis settlement contract were frozen before outcome access",
+      "a fresh custodian used only the authorized FY2024 issuer annual report",
+      "J1, J2 and J3 were settled in frozen first-match order",
+      "a fresh reviewer accepted the investor readout and localized uncertainty"
+    ],
+    "not_based_on": [
+      "field count",
+      "receipt count",
+      "price or return",
+      "method comparison"
+    ]
+  },
+  "settled_axis_vector": {
+    "J1_OPERATING_AND_CUSTOMER_ABSORPTION": "NEGATIVE",
+    "J2_GROUP_CASH_RELATED_CREDIT_AND_PARENT_AVAILABILITY": "NEGATIVE",
+    "J3_ACQUISITION_CAPITAL_ALLOCATION": "LOCAL_UNKNOWN"
+  },
+  "enterprise_feedback": {
+    "best_current_judgment": "基础物管规模扩张尚未形成可信的利润率和非关联客户回款闭环；集团仍产生现金，但更高的关联财务公司存款限制普通股现金可得性；两宗重大并购仍未被证明成功或失败。",
+    "normal_earnings_treatment": "维持保守正常盈利处理；收入或面积增长不单独上调。",
+    "owner_cash_treatment": "集团现金仅作集团层现金创造证据；维持现金地点、关联集中度与母公司可得性折价。",
+    "permanent_loss_treatment": "近端偿付风险未被证明恶化；相关永久损失风险限于关联资金集中与并购回报未验证，不夸大为已实现危机。",
+    "capital_allocation_treatment": "不把无减值、总体利润或润物嘉业的单项利润贡献写成两宗收购的已验证资本回报。"
+  },
+  "method_learning_utility": {
+    "status": "NO_MATERIAL_NEW_METHOD_UTILITY",
+    "reason": "冻结前合同已要求本次命中的全部关键字段与局部UNKNOWN处理；结果没有使下一未知公司新增或改变任何结果前字段、阈值或研究动作。",
+    "next_case_research_agenda_delta": "NONE",
+    "retain_existing_actions": [
+      "分列同责任边界的单位毛利与非关联陈账",
+      "分列集团现金地点、关联财务机构存款与母公司可得性",
+      "对每项重大收购分别记录利润贡献和经营现金贡献；缺失只限并购轴"
+    ],
+    "transfer_candidate_created": false,
+    "transfer_validated": false,
+    "method_validated": false
+  },
+  "authority": {
+    "CJO": "NONE",
+    "formal_valuation": "NONE",
+    "buy_band": "NONE",
+    "report_authority": "NONE",
+    "investment_action": "NONE"
+  }
+}

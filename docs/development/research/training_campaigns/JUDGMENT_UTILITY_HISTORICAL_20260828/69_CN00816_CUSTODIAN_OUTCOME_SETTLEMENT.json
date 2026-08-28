@@ -238,7 +238,7 @@
         },
         {
           "field": "runwu_jiaye_attributable_profit_contribution_rmb_thousand",
-          "fy2024": 29250,
+                    "fy2024": 29259,
           "annual_report_page": 136,
           "locator": "Note 27 Business combination — since acquisition, Runwu Jiaye Group contribution to consolidated profit"
         },
@@ -290,8 +290,8 @@
       "direct_derivations": [
         {
           "metric": "runwu_jiaye_profit_return",
-          "value": "9.03%",
-          "calculation": "29,250 / 323,800",
+                    "value": "9.04%",
+                    "calculation": "29,259 / 323,800",
           "annual_report_pages": [
             135,
             136
@@ -304,7 +304,7 @@
           "order": 1,
           "output": "NEGATIVE",
           "matched": false,
-          "reason": "No disclosed material acquisition-related goodwill or contractual-right impairment; Runwu Jiaye's disclosed profit contribution is positive; its 9.03% profit return is not below 5%; and the annual report does not disclose a further FY2024 large acquisition outside the pre-frozen Shouzhishenghua and Runwu Jiaye scope.",
+                    "reason": "No disclosed material acquisition-related goodwill or contractual-right impairment; Runwu Jiaye's disclosed profit contribution is positive; its 9.04% profit return is not below 5%; and the annual report does not disclose a further FY2024 large acquisition outside the pre-frozen Shouzhishenghua and Runwu Jiaye scope.",
           "annual_report_pages": [
             125,
             126,
@@ -351,7 +351,7 @@
         }
       ],
       "axis_output": "LOCAL_UNKNOWN",
-      "axis_limited_conclusion": "The annual report supplies a positive 9.03% FY2024 profit return for Runwu Jiaye but not its operating-cash contribution, and supplies neither contribution measure for Shouzhishenghua. This local disclosure gap cannot be filled with group operating cash, overall profit, related-party collections, no impairment, or the disclosed Runwu Jiaye profit contribution."
+            "axis_limited_conclusion": "The annual report supplies a positive 9.04% FY2024 profit return for Runwu Jiaye but not its operating-cash contribution, and supplies neither contribution measure for Shouzhishenghua. This local disclosure gap cannot be filled with group operating cash, overall profit, related-party collections, no impairment, or the disclosed Runwu Jiaye profit contribution."
     }
   ],
   "local_unknowns": [

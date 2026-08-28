@@ -981,13 +981,13 @@
       "company_name": "金茂服务",
       "industry_id": "PROPERTY_MANAGEMENT",
       "track": "BLIND_JUDGMENT",
-      "status": "FROZEN",
+      "status": "SETTLED",
       "cutoff_at": "2024-05-01T00:00:00+08:00",
       "outcome_window": {
         "starts_at": "2025-03-01T00:00:00+08:00",
         "ends_at": "2025-05-01T00:00:00+08:00"
       },
-      "outcome_access": "SEALED",
+      "outcome_access": "REVEALED_AFTER_FREEZE",
       "selection_exposure": "PREOUTCOME_ONLY",
       "role_isolation_state": "ROLE_ISOLATION_PROVED",
       "primary_capability_units": [
@@ -1003,7 +1003,9 @@
       ],
       "artifact_refs": {
         "preoutcome_judgment_ref": "docs/development/research/training_campaigns/JUDGMENT_UTILITY_HISTORICAL_20260828/66_CN00816_PREOUTCOME_JUDGMENT.json",
-        "freeze_ref": "docs/development/research/training_campaigns/JUDGMENT_UTILITY_HISTORICAL_20260828/67_CN00816_INDEPENDENT_PREOUTCOME_REVIEW.md"
+        "freeze_ref": "docs/development/research/training_campaigns/JUDGMENT_UTILITY_HISTORICAL_20260828/67_CN00816_INDEPENDENT_PREOUTCOME_REVIEW.md",
+        "settlement_ref": "docs/development/research/training_campaigns/JUDGMENT_UTILITY_HISTORICAL_20260828/69_CN00816_CUSTODIAN_OUTCOME_SETTLEMENT.json",
+        "postoutcome_review_ref": "docs/development/research/training_campaigns/JUDGMENT_UTILITY_HISTORICAL_20260828/70_CN00816_INDEPENDENT_POSTOUTCOME_REVIEW.md"
       },
       "lesson": null,
       "holdout_axis": null
