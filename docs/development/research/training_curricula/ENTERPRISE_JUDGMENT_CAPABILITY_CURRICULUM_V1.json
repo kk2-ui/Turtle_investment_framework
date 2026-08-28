@@ -1704,6 +1704,34 @@
       "holdout_axis": null
     },
     {
+      "case_id": "BLIND:CN600036:20240501:FY2024",
+      "company_id": "CN:600036",
+      "company_cluster_id": "COMPANY:CN600036",
+      "company_name": "招商银行",
+      "industry_id": "COMMERCIAL_BANKING_BALANCE_SHEET_RISK_CAPITAL_AND_CASH_FLOW",
+      "track": "BLIND_JUDGMENT",
+      "status": "REGISTERED",
+      "cutoff_at": "2024-05-01T00:00:00+08:00",
+      "outcome_window": null,
+      "outcome_access": "SEALED",
+      "selection_exposure": "METADATA_ONLY",
+      "role_isolation_state": "BLIND_PACKET_READY",
+      "primary_capability_units": [
+        "BUSINESS_MODEL_ECONOMICS",
+        "OWNER_CASH_CONVERSION"
+      ],
+      "mechanism_focus": "商业银行的存款与其他融资、贷款/投资资产、净息差与非息收入、风险识别与减值、资本/流动性约束及可分配股东现金如何共同决定正常盈利、永久损失和研究处理",
+      "claim_scope": "ENTERPRISE_JUDGMENT",
+      "comparative_mode": "NOT_REQUIRED",
+      "source_refs": [
+        "docs/development/research/training_campaigns/JUDGMENT_UTILITY_HISTORICAL_20260828/128_CN600036_BLIND_EXTENSION_SELECTION_REGISTER.json",
+        "docs/development/research/training_campaigns/JUDGMENT_UTILITY_HISTORICAL_20260828/129_CN600036_CUTOFF_BEFORE_SOURCE_PACKET_RECEIPT.json"
+      ],
+      "artifact_refs": {},
+      "lesson": null,
+      "holdout_axis": null
+    },
+    {
       "case_id": "HOLDOUT:CN002475:20240501:FY2024",
       "company_id": "CN:002475",
       "company_cluster_id": "COMPANY:CN002475",
