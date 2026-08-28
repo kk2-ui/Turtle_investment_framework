@@ -939,6 +939,40 @@
       "holdout_axis": null
     },
     {
+      "case_id": "BLIND:CN603338:20240501:FY2024",
+      "company_id": "CN:603338",
+      "company_cluster_id": "COMPANY:CN603338",
+      "company_name": "浙江鼎力",
+      "industry_id": "INDUSTRIAL_EQUIPMENT",
+      "track": "BLIND_JUDGMENT",
+      "status": "REGISTERED",
+      "cutoff_at": "2024-05-01T00:00:00+08:00",
+      "outcome_window": {
+        "starts_at": "2025-04-18T00:00:00+08:00",
+        "ends_at": "2025-05-01T00:00:00+08:00"
+      },
+      "outcome_access": "SEALED",
+      "selection_exposure": "PREOUTCOME_ONLY",
+      "role_isolation_state": "BLIND_PACKET_READY",
+      "primary_capability_units": [
+        "CUSTOMER_ABSORPTION",
+        "CAPITAL_ALLOCATION"
+      ],
+      "mechanism_focus": "臂式产能与海外销量如何穿过产品毛利、持续费用、资本占用和现金转换形成增量回报",
+      "claim_scope": "ENTERPRISE_JUDGMENT",
+      "comparative_mode": "NOT_REQUIRED",
+      "source_refs": [
+        "docs/development/research/training_campaigns/JUDGMENT_UTILITY_HISTORICAL_20260828/02_FROZEN_3_2_1_ROSTER.json",
+        "docs/development/research/training_campaigns/JUDGMENT_UTILITY_HISTORICAL_20260828/39_CN603338_BLIND_PACKET_READY.json"
+      ],
+      "artifact_refs": {
+        "freeze_ref": "docs/development/research/training_campaigns/JUDGMENT_UTILITY_HISTORICAL_20260828/39_CN603338_BLIND_PACKET_READY.json",
+        "method_pack_ref": "docs/development/research/training_campaigns/JUDGMENT_UTILITY_HISTORICAL_20260828/37_FROZEN_TRAINING_METHOD_PACK_V1.json"
+      },
+      "lesson": null,
+      "holdout_axis": null
+    },
+    {
       "case_id": "HOLDOUT:CN600161:20240501:FY2024",
       "company_id": "CN:600161",
       "company_cluster_id": "COMPANY:CN600161",

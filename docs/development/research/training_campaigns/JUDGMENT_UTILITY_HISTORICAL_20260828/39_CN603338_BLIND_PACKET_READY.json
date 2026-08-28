@@ -1,0 +1,63 @@
+{
+  "schema_version": "historical-blind-packet-readiness.v1",
+  "campaign_id": "JUDGMENT_UTILITY_HISTORICAL_20260828",
+  "episode_id": "HIST:CN603338:20240501:FY2024",
+  "company_id": "CN:603338",
+  "company_name": "浙江鼎力",
+  "roster_ref": "02_FROZEN_3_2_1_ROSTER.json",
+  "roster_rank": 4,
+  "roster_role": "TRANSFER_1",
+  "cutoff_at": "2024-05-01T00:00:00+08:00",
+  "packet_path": "/Users/xiami/workspace/analy/_turtle_training_packets/JUDGMENT_UTILITY_HISTORICAL_20260828/CN603338_TRANSFER_1",
+  "packet_builder_commit": "161b937",
+  "allowed_files": [
+    "FORECASTER_PACKET.json",
+    "FROZEN_METHOD_PACK.json",
+    "FY2021.pdf",
+    "FY2022.pdf",
+    "FY2023.pdf"
+  ],
+  "source_ids": [
+    "CNINFO:603338:FY2021:1213225533",
+    "CNINFO:603338:FY2022:1216627858",
+    "CNINFO:603338:FY2023:1219791369"
+  ],
+  "method_input": {
+    "method_pack_ref": "37_FROZEN_TRAINING_METHOD_PACK_V1.json",
+    "method_pack_id": "METHOD_PACK:JUDGMENT_FIRST:BLIND_FEEDBACK:V1",
+    "method_version": "judgment-first-blind-feedback.v1",
+    "rules": [
+      "SAME_BOUNDARY_RECURRING_ECONOMICS_FIRST",
+      "CONVERSION_TRIAD_RETAIN_AND_NARROW"
+    ],
+    "company_evidence": false,
+    "answer_key": false
+  },
+  "selection_integrity": {
+    "selected_by_frozen_order": true,
+    "selected_by_result_direction": false,
+    "replacement_used": false
+  },
+  "outcome_state": "SEALED_NOT_IN_PACKET",
+  "role_isolation_state": "BLIND_PACKET_READY",
+  "execution_requirement": {
+    "mode": "FRESH_AGENT_NO_PARENT_CONTEXT",
+    "fork_turns": "none",
+    "workspace_search_authorized": false,
+    "outcome_body_access": false,
+    "price_or_return_access": false,
+    "execution_receipt_required": true
+  },
+  "training_credit": "NONE_UNTIL_FRESH_EXECUTION_AND_REAL_FEEDBACK",
+  "status": "READY_FOR_FRESH_FORECASTER",
+  "permissions": {
+    "method_validation": "NONE",
+    "transfer_validation": "NONE",
+    "comparative": "NONE",
+    "cjo": "NONE",
+    "formal_valuation": "NONE",
+    "buy_band": "NONE",
+    "report": "NONE",
+    "investment_action": "NONE"
+  }
+}
