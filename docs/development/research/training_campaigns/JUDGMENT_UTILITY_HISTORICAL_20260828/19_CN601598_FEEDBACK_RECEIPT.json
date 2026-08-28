@@ -1,0 +1,160 @@
+{
+  "schema_version": "historical-independent-postoutcome-feedback-receipt.v1",
+  "campaign_id": "JUDGMENT_UTILITY_HISTORICAL_20260828",
+  "episode_id": "HIST:CN601598:20240501:FY2024",
+  "company_id": "CN:601598",
+  "reviewer_id": "/root/cn601598_postoutcome_reviewer",
+  "review_status": "ACCEPT",
+  "input_scope": {
+    "authorized_artifact_count": 4,
+    "used_only_authorized_artifacts": true,
+    "internet_used": false,
+    "price_used": false,
+    "return_used": false,
+    "old_report_used": false,
+    "other_outcome_used": false
+  },
+  "real_feedback_turn": {
+    "status": "COMPLETE",
+    "completion_basis": [
+      "preoutcome judgment was frozen before outcome access and independently accepted",
+      "outcome access was separately authorized and mechanically settled by the custodian",
+      "postoutcome investor judgment was formed after comparing observed FY2024 facts with the frozen judgment",
+      "all six axes record treatment changes, confidence or range changes, or explicit non-change",
+      "one outcome-caused next-case research behavior change is recorded"
+    ],
+    "completion_not_based_on": [
+      "field count",
+      "classification hit count",
+      "price or return",
+      "method comparison"
+    ]
+  },
+  "method_utility": {
+    "status": "NOT_APPLICABLE",
+    "design": "SINGLE_ARM_BLIND",
+    "comparative_arm_present": false,
+    "method_validated": false,
+    "transfer_validated": false,
+    "learned_rule": null,
+    "reason": "A single-arm blind episode can complete a real feedback turn but cannot estimate comparative method utility, calibration improvement, efficiency, or investment effect."
+  },
+  "material_treatment_change": {
+    "status": "NO_MATERIAL_TREATMENT_CHANGE",
+    "changed_axis_count": 0,
+    "axis_count": 6,
+    "reason": "No axis crossed its frozen treatment category; the outcome changed confidence, the normal-earnings upper bound, risk composition, and research specificity."
+  },
+  "axis_feedback": [
+    {
+      "axis": "management_execution",
+      "preoutcome_treatment": "CONDITIONAL_CREDIT",
+      "postoutcome_treatment": "CONDITIONAL_CREDIT",
+      "change_class": "CONFIDENCE_CHANGE",
+      "material_treatment_change": false,
+      "confidence_direction": "LOWER",
+      "outcome_processing": "Ten of eleven disclosed volume axes did not decline and persistent expense burden fell, but three-segment profit fell about 12.0% and adjusted parent profit fell about 8.5%. No qualifying structural carrier was identified and the adverse profit thresholds were not both breached.",
+      "unknown_localization": "The missing price, mix, unit-contribution, cost, or customer carrier limits causal attribution only; it does not erase the observed profit decline or the company judgment."
+    },
+    {
+      "axis": "normal_earnings",
+      "preoutcome_treatment": "LOWER",
+      "postoutcome_treatment": "LOWER",
+      "change_class": "RANGE_CHANGE",
+      "material_treatment_change": false,
+      "preoutcome_range_cny_billion": [2.8, 3.4],
+      "postoutcome_range_cny_billion": [2.8, 3.2],
+      "outcome_processing": "FY2024 adjusted parent profit was CNY 3.163bn, three-segment profit was CNY 3.132bn, Sinotrans-DHL net profit fell about 20.9%, and group equity-method income fell about 17.2%. The lower bound was not breached, while the prior upper bound lost support.",
+      "unknown_localization": "Segment-level subsidy attribution and the Sinotrans-DHL structural carrier remain local unknowns; they determine attribution and placement within the range, not whether group earnings exist."
+    },
+    {
+      "axis": "owner_cash",
+      "preoutcome_treatment": "COUNT_CONDITIONALLY",
+      "postoutcome_treatment": "COUNT_CONDITIONALLY",
+      "change_class": "UNCHANGED_WITH_CONFIDENCE_UPDATE",
+      "material_treatment_change": false,
+      "confidence_direction": "HIGHER_FOR_GROUP_CASH_ONLY",
+      "outcome_processing": "Both same-definition group cash proxies remained positive and improved; parent investment-income cash was CNY 3.359bn and no material remittance restriction was disclosed. Parent-distributable owner cash, complete NCI attribution, and maintenance-versus-expansion capex remain open.",
+      "unknown_localization": "Open parent scope prevents an upgrade but does not erase observed group cash."
+    },
+    {
+      "axis": "permanent_loss",
+      "preoutcome_treatment": "MAINTAIN_CONSTRAINT",
+      "postoutcome_treatment": "MAINTAIN_CONSTRAINT",
+      "change_class": "UNCHANGED_WITH_RISK_MIX_UPDATE",
+      "material_treatment_change": false,
+      "confidence_direction": "HIGHER_THAT_NEAR_TERM_FINANCING_LOSS_IS_NOT_THESIS_BLOCKING",
+      "outcome_processing": "Both group cash proxies were positive and issuer-defined net cash increased to CNY 1.813bn. A CNY 0.036bn expected credit loss on a charter-flight subsidy receivable is a real local carrier, but persistence and irreversibility were not established.",
+      "unknown_localization": "Credit-loss persistence remains local; parent cash access is not a gate to permanent-loss settlement."
+    },
+    {
+      "axis": "valuation_direction",
+      "preoutcome_treatment": "UNCHANGED",
+      "postoutcome_treatment": "UNCHANGED",
+      "change_class": "UNCHANGED",
+      "material_treatment_change": false,
+      "outcome_processing": "Lower core and joint-venture earnings reduced the earnings-range upper bound, while stronger group cash and net cash offset a directional downgrade relative to the already conservative frozen reference state.",
+      "price_or_target_used": false
+    },
+    {
+      "axis": "next_research_action",
+      "preoutcome_treatment": "PARENT_OWNER_CASH_BRIDGE",
+      "postoutcome_treatment": "PARENT_OWNER_CASH_BRIDGE",
+      "change_class": "NON_MATERIAL_SCOPE_REFINEMENT",
+      "material_treatment_change": false,
+      "outcome_processing": "The action family stays rank one. It is refined to split the parent's CNY 3.359bn investment-income cash by source and close NCI distributions, maintenance capex, transfer restrictions, and cumulative FY2022-FY2024 parent-distributable owner cash."
+    }
+  ],
+  "postoutcome_investor_judgment": {
+    "enterprise_view": "Reported resilience remains but is weaker: broad volume growth did not convert into matched segment profit, the key joint venture's earnings and dividend contribution declined, while group cash and net cash improved. Use a CNY 2.8bn-CNY 3.2bn conservative normal-earnings range, conditional management credit, conditional owner cash, maintained permanent-loss constraint, and unchanged valuation direction relative to the frozen conservative state.",
+    "most_important_judgments": [
+      {
+        "rank": 1,
+        "judgment": "Scale growth did not demonstrate economic improvement.",
+        "mechanism": "Ten of eleven volume axes did not decline, yet all three segment profits declined and aggregate segment profit fell about 12%; price, mix, unit contribution, and resource-intensity carriers are not disclosed."
+      },
+      {
+        "rank": 2,
+        "judgment": "Sinotrans-DHL remains valuable and cash-generative but no longer supports the old normal-earnings upper bound.",
+        "mechanism": "Revenue fell about 8.6%, net profit about 20.9%, margin compressed, equity-method income fell about 17.2%, and dividends declined while transfer access and impairment evidence remained non-adverse."
+      },
+      {
+        "rank": 3,
+        "judgment": "Cash and net cash cushion permanent-loss risk without closing parent owner cash.",
+        "mechanism": "OCF and both group cash proxies improved and net cash expanded, but parent-distributable cash, NCI attribution, and maintenance capex remain unclosed."
+      }
+    ],
+    "strongest_counterargument": "Revenue and most business volumes grew, expense burden and subsidy intensity fell, both group cash proxies and net cash improved, and Sinotrans-DHL still produced profit and dividends without impairment or transfer restriction. The profit decline may therefore be reversible mix or cycle noise rather than structural execution deterioration.",
+    "management_execution": "CONDITIONAL_CREDIT with lower confidence",
+    "normal_earnings_range_cny_billion": [2.8, 3.2],
+    "owner_cash": "COUNT_CONDITIONALLY",
+    "permanent_loss": "MAINTAIN_CONSTRAINT",
+    "valuation_direction": "UNCHANGED",
+    "scenario_summary": {
+      "optimistic": "Same-boundary segment profit reaches at least CNY 3.7bn, adjusted parent profit at least CNY 3.4bn, subsidy-before unit economics improve, joint-venture earnings recover, and parent owner cash closes; management and valuation may move positive.",
+      "base": "Segment profit stays around CNY 3.1bn-CNY 3.4bn, adjusted parent profit remains within the CNY 2.8bn-CNY 3.2bn conservative range, joint-venture profit and dividends persist, and both group cash proxies stay positive; current treatments remain.",
+      "pessimistic": "Segment profit is at most CNY 3.0bn and adjusted parent profit below CNY 2.8bn with an identified carrier, or JV profit and equity income breach their adverse thresholds; earnings and valuation move down. Persistent negative group cash plus net-cash contraction tightens or blocks permanent loss."
+    },
+    "flip_facts": [
+      "Same-boundary segment profit of at least CNY 3.7bn and adjusted parent profit of at least CNY 3.4bn with improved subsidy-before unit economics would flip execution and valuation upward.",
+      "Segment profit at or below CNY 3.0bn and adjusted parent profit below CNY 2.8bn with an identified customer, pricing, cost, or credit carrier would flip execution and valuation downward.",
+      "Sinotrans-DHL net profit at or below CNY 2.8bn and group equity-method income at or below CNY 1.8bn with an identified adverse carrier would lower normal earnings and valuation.",
+      "Closed parent scope with at least CNY 2.0bn FY2024 parent-distributable owner cash and positive FY2022-FY2024 cumulative owner cash would upgrade owner cash.",
+      "Either same-definition group cash proxy negative for two periods with persistent credit or maintenance cash consumption and material net-cash contraction would tighten permanent loss; irreversibility lasting at least 12 months would make it thesis-blocking."
+    ]
+  },
+  "next_case_research_behavior_change": {
+    "status": "ADOPTED",
+    "behavior": "Before granting management-execution credit for business-volume or revenue growth, construct a same-responsibility-boundary bridge to recurring profit or unit economics. If the bridge is unavailable, record scale growth but freeze execution attribution.",
+    "outcome_trigger": "In this episode, ten of eleven volume axes did not decline while three-segment profit fell about 12.0%.",
+    "changes_current_company_rank_one_action": false,
+    "generalization_claim": false,
+    "method_validation_claim": false,
+    "learned_rule_claim": false
+  },
+  "artifacts": [
+    "/tmp/turtle-cn601598-feedback/17_CN601598_INDEPENDENT_POSTOUTCOME_REVIEW.md",
+    "/tmp/turtle-cn601598-feedback/18_CN601598_INVESTOR_READOUT.md",
+    "/tmp/turtle-cn601598-feedback/19_CN601598_FEEDBACK_RECEIPT.json"
+  ]
+}
