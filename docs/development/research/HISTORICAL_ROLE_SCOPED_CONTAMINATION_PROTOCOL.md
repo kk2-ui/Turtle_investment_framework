@@ -38,6 +38,11 @@
 6. 目标目录必须为空，避免旧文件混入。
 7. PDF 必须能从正文页提取文本；只有 `%PDF` 文件头但内容流损坏的材料不得交给 forecaster 用常识补写。
 
+对于 Historical Holdout，`build-holdout-pair` 生成两个同 cutoff、同 source budget、同 judgment-first 合同的
+packet。Baseline 不接训练方法；Enhanced 只多接一个冻结的通用 Method Pack。隔离的是目标公司的结果和答案，
+不是训练形成的通用研究行为。Method Pack 只能包含可反驳的研究行为，不能包含训练公司或目标公司的事实、
+结局、价格、回报或答案。
+
 同公司更早且在当前 cutoff 前已经公开的正文是合法训练输入，不会令公司永久污染。metadata-only 的
 下一期文件存在性也不污染。exposure 缺少 role、company、access 或 source availability 时，该 episode
 manifest 无效，但不会扩展成全局公司黑名单。
@@ -61,7 +66,8 @@ one-shot selector/forecaster 之前，只能称 `BLIND_PACKET_READY`，不能称
 ```text
 fresh selector（无父会话，只看候选身份、业务原型、cutoff 与前置来源数量）
   -> 冻结 roster 与 source budget
-  -> fresh forecaster（无父会话，只收 cutoff 前盲包）
+  -> Blind：fresh forecaster（无父会话，只收 cutoff 前盲包）
+  -> Holdout：fresh Baseline（共同盲包）+ fresh Enhanced（共同盲包 + 冻结 Method Pack）
   -> independent pre-outcome reviewer
   -> freeze
   -> outcome-only custodian（只收 measurement contract 与 outcome locator）
@@ -70,3 +76,6 @@ fresh selector（无父会话，只看候选身份、业务原型、cutoff 与�
 
 主协调 Agent 可以知道仓库里有结果文件，也可以在 freeze 后汇总结果；只要它不担任该 episode 的
 selector/forecaster，就不影响 fresh forecaster 的结果前判断。
+
+没有 Method Pack 的 single-arm 历史判断不能评价训练效用，也不得计入 Historical Holdout 完成数。它最多是
+一份公司研究记录；方向正确不等于课程让 Agent 变强。

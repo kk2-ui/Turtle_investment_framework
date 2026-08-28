@@ -1,13 +1,17 @@
 from copy import deepcopy
+import json
 from pathlib import Path
 
 import pytest
 
 from scripts.historical_role_isolation import (
+    METHOD_PACK_SCHEMA_VERSION,
     SCHEMA_VERSION,
     build_forecaster_packet,
+    build_holdout_pair_packets,
     build_selector_packet,
     role_is_contaminated,
+    validate_method_pack,
     validate_selector_universe,
     validate_manifest,
 )
@@ -59,6 +63,37 @@ def _manifest(tmp_path: Path) -> dict:
             "forecaster_visibility": "EXISTENCE_METADATA_ONLY",
         },
         "exposure_ledger": [],
+    }
+
+
+def _method_pack() -> dict:
+    return {
+        "schema_version": METHOD_PACK_SCHEMA_VERSION,
+        "method_pack_id": "METHOD_PACK:JUDGMENT_FIRST:BLIND_FEEDBACK:V1",
+        "method_version": "judgment-first-blind-feedback.v1",
+        "state": "FROZEN_FOR_HOLDOUT_EVALUATION",
+        "frozen_at": "2026-08-28T12:00:00+08:00",
+        "rules": [
+            {
+                "rule_id": "SAME_BOUNDARY_RECURRING_ECONOMICS_FIRST",
+                "status": "CANDIDATE_BEHAVIOR_NOT_VALIDATED",
+                "scope": "management execution, normal earnings, and valuation direction",
+                "trigger": "scale or volume growth is offered as evidence for an upgrade",
+                "required_behavior": "build a responsibility-matched recurring-profit or unit-economics bridge first",
+                "prohibited_inference": "deployment or scale growth alone proves economic absorption",
+                "disconfirming_observation": "matched economics later support the upgrade even though the bridge looked weak",
+            }
+        ],
+        "authority": "RESEARCH_METHOD_ONLY",
+        "permissions": {
+            "method_validation": "NONE",
+            "transfer_validation": "NONE",
+            "cjo": "NONE",
+            "formal_valuation": "NONE",
+            "buy_band": "NONE",
+            "report": "NONE",
+            "investment_action": "NONE",
+        },
     }
 
 
@@ -123,6 +158,76 @@ def test_forecaster_packet_contains_only_allowlisted_preoutcome_inputs(tmp_path:
     assert "缺少价格本身不能" in contract["required_product"]["material_treatment_snapshot"][
         "valuation_direction_rule"
     ]
+
+
+def test_holdout_pair_supplies_frozen_method_only_to_enhanced_arm(tmp_path: Path) -> None:
+    manifest = _manifest(tmp_path)
+    manifest["holdout_pair_roles"] = {
+        "baseline_forecaster_id": "AGENT:HOLDOUT:BASELINE:FRESH",
+        "enhanced_forecaster_id": "AGENT:HOLDOUT:ENHANCED:FRESH",
+    }
+    method_path = tmp_path / "method-pack.json"
+    method_path.write_text(json.dumps(_method_pack()), encoding="utf-8")
+
+    pair = build_holdout_pair_packets(manifest, method_path, tmp_path / "holdout-pair")
+    baseline_dir = tmp_path / "holdout-pair" / "baseline"
+    enhanced_dir = tmp_path / "holdout-pair" / "enhanced"
+    baseline = json.loads((baseline_dir / "FORECASTER_PACKET.json").read_text(encoding="utf-8"))
+    enhanced = json.loads((enhanced_dir / "FORECASTER_PACKET.json").read_text(encoding="utf-8"))
+
+    assert baseline["source_budget"] == enhanced["source_budget"] == pair["shared_source_budget"]
+    assert baseline["judgment_first_contract"] == enhanced["judgment_first_contract"]
+    assert baseline["method_input"] == {"state": "NONE"}
+    assert enhanced["method_input"]["state"] == "FROZEN_GENERALIZED_METHOD_SUPPLIED"
+    assert not (baseline_dir / "FROZEN_METHOD_PACK.json").exists()
+    assert (enhanced_dir / "FROZEN_METHOD_PACK.json").exists()
+    assert baseline["outcome_state"] == enhanced["outcome_state"] == "SEALED_NOT_IN_PACKET"
+
+
+def test_holdout_pair_rejects_unfrozen_method_or_exposed_arm(tmp_path: Path) -> None:
+    invalid_pack = _method_pack()
+    invalid_pack["permissions"]["method_validation"] = "VALIDATED"
+    invalid_pack["company_id"] = "CN:600161"
+    findings = validate_method_pack(invalid_pack)
+    assert "method_pack.unapproved_fields:company_id" in findings
+    assert "method_pack.permissions_must_all_be_none" in findings
+
+    manifest = _manifest(tmp_path)
+    manifest["holdout_pair_roles"] = {
+        "baseline_forecaster_id": "AGENT:HOLDOUT:BASELINE:FRESH",
+        "enhanced_forecaster_id": "AGENT:HOLDOUT:ENHANCED:FRESH",
+    }
+    manifest["exposure_ledger"].append({
+        "role_id": "AGENT:HOLDOUT:ENHANCED:FRESH",
+        "company_id": "HK:00941",
+        "access": "DERIVED_CONTENT_READ",
+        "source_available_at": "2024-03-21T00:00:00+08:00",
+    })
+    method_path = tmp_path / "method-pack.json"
+    method_path.write_text(json.dumps(_method_pack()), encoding="utf-8")
+    with pytest.raises(ValueError, match="enhanced_forecaster_outcome_contaminated"):
+        build_holdout_pair_packets(manifest, method_path, tmp_path / "holdout-pair")
+
+
+def test_checked_in_method_pack_is_generalized_and_unvalidated() -> None:
+    repo = Path(__file__).resolve().parents[1]
+    path = repo / (
+        "docs/development/research/training_campaigns/"
+        "JUDGMENT_UTILITY_HISTORICAL_20260828/37_FROZEN_TRAINING_METHOD_PACK_V1.json"
+    )
+    method_pack = json.loads(path.read_text(encoding="utf-8"))
+    assert validate_method_pack(method_pack) == []
+    assert all(value == "NONE" for value in method_pack["permissions"].values())
+    assert set(method_pack) == {
+        "schema_version",
+        "method_pack_id",
+        "method_version",
+        "state",
+        "frozen_at",
+        "rules",
+        "authority",
+        "permissions",
+    }
 
 
 def test_post_cutoff_source_and_outcome_locator_are_rejected(tmp_path: Path) -> None:

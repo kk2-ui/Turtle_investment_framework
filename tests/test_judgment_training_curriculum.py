@@ -110,9 +110,13 @@ def _holdout_case() -> dict:
         "claim_scope": "ENTERPRISE_JUDGMENT",
         "comparative_mode": "NOT_REQUIRED",
         "source_refs": [],
-        "artifact_refs": {"freeze_ref": "docs/example/holdout-freeze.json"},
+        "artifact_refs": {
+            "freeze_ref": "docs/example/holdout-freeze.json",
+            "method_pack_ref": "docs/example/method-pack.json",
+        },
         "lesson": None,
         "holdout_axis": "COMPANY",
+        "method_memory_state": "FROZEN_METHOD_PAIR_BOUND",
     }
 
 
@@ -121,12 +125,24 @@ def _evaluated_holdout_case() -> dict:
     item["status"] = "EVALUATED"
     item["outcome_access"] = "REVEALED_AFTER_HOLDOUT_FORECAST_FREEZE"
     item["role_isolation_state"] = "ROLE_ISOLATION_PROVED"
+    item["method_memory_state"] = "PAIRED_METHOD_EVALUATED"
     item["source_refs"] = ["docs/example/holdout-preoutcome.json"]
     item["artifact_refs"] = {
         "freeze_ref": "docs/example/holdout-freeze.json",
+        "method_pack_ref": "docs/example/method-pack.json",
+        "holdout_pair_ref": "docs/example/holdout-pair.json",
         "settlement_ref": "docs/example/holdout-settlement.json",
         "postoutcome_review_ref": "docs/example/holdout-review.md",
     }
+    return item
+
+
+def _archived_no_method_holdout_case() -> dict:
+    item = _evaluated_holdout_case()
+    item["status"] = "ARCHIVED_NOT_EVALUABLE"
+    item["method_memory_state"] = "NO_TRAINING_METHOD_SUPPLIED"
+    item["artifact_refs"].pop("method_pack_ref")
+    item["artifact_refs"].pop("holdout_pair_ref")
     return item
 
 
@@ -182,6 +198,8 @@ def _curriculum() -> dict:
             "teaching_can_use_known_results": True,
             "blind_requires_role_scoped_result_isolation": True,
             "holdout_can_influence_training": False,
+            "holdout_requires_frozen_training_method": True,
+            "holdout_uses_fair_baseline_pair": True,
             "prospective_wait_blocks_historical_training": False,
             "comparative_default": "NOT_REQUIRED",
             "teaching_cases_per_blind_cycle": 3,
@@ -228,6 +246,26 @@ def test_evaluated_holdout_reveals_after_its_own_forecast_freeze_without_claimin
     invalid = curriculum.validate_curriculum(wrong)
     assert not invalid["valid"]
     assert any("post_holdout_forecast_freeze" in finding for finding in invalid["findings"])
+
+
+def test_no_method_single_arm_holdout_is_archived_and_not_counted_as_training_evidence() -> None:
+    payload = _curriculum()
+    payload["cases"] = [_archived_no_method_holdout_case()]
+    result = curriculum.validate_curriculum(payload)
+    assert result["valid"], result["findings"]
+    progress = result["progress"]["track_progress"]["HISTORICAL_HOLDOUT"]
+    assert progress["record_count"] == 1
+    assert progress["episode_count"] == 0
+    assert progress["archived_not_evaluable_count"] == 1
+    assert progress["completed_episode_count"] == 0
+
+    invalid_payload = _curriculum()
+    invalid_payload["cases"] = [_archived_no_method_holdout_case()]
+    invalid_payload["cases"][0]["status"] = "EVALUATED"
+    invalid = curriculum.validate_curriculum(invalid_payload)
+    assert not invalid["valid"]
+    assert any("holdout_method_memory_state_mismatched" in item for item in invalid["findings"])
+    assert any("holdout_artifact_chain_incomplete" in item for item in invalid["findings"])
 
 
 def test_teaching_only_curriculum_does_not_require_holdout_or_blind_lane() -> None:
@@ -381,7 +419,7 @@ def test_sample_counts_never_auto_grant_capability_or_method_utility() -> None:
     }
     status = curriculum.curriculum_status(payload)
     assert status["capability_claim"] == "NOT_DEMONSTRATED_BY_CURRICULUM_COUNTS"
-    assert status["method_utility_claim"] == "REQUIRES_BLIND_TREATMENT_FEEDBACK_AND_INDEPENDENT_HOLDOUT"
+    assert status["method_utility_claim"] == "REQUIRES_FAIR_PAIRED_HOLDOUT_WITH_FROZEN_METHOD_PACK"
 
 
 def test_checked_in_curriculum_registers_real_assets_without_overclaiming_capacity() -> None:
@@ -395,8 +433,12 @@ def test_checked_in_curriculum_registers_real_assets_without_overclaiming_capaci
     assert progress["track_progress"]["TEACHING"]["completed_independent_company_cluster_count"] == 15
     assert progress["track_progress"]["BLIND_JUDGMENT"]["independent_company_cluster_count"] == 3
     assert progress["track_progress"]["BLIND_JUDGMENT"]["completed_independent_company_cluster_count"] == 3
-    assert progress["track_progress"]["HISTORICAL_HOLDOUT"]["independent_company_cluster_count"] == 1
-    assert progress["track_progress"]["HISTORICAL_HOLDOUT"]["completed_independent_company_cluster_count"] == 1
+    holdout = progress["track_progress"]["HISTORICAL_HOLDOUT"]
+    assert holdout["record_count"] == 1
+    assert holdout["episode_count"] == 0
+    assert holdout["archived_not_evaluable_count"] == 1
+    assert holdout["independent_company_cluster_count"] == 0
+    assert holdout["completed_independent_company_cluster_count"] == 0
     assert progress["track_progress"]["PROSPECTIVE"]["independent_company_cluster_count"] == 2
     assert progress["teaching_candidate_pool"]["independent_company_cluster_count"] == 9
     assert progress["teaching_candidate_pool"]["teaching_library_pipeline_independent_company_cluster_count"] == 24
@@ -407,9 +449,9 @@ def test_checked_in_curriculum_registers_real_assets_without_overclaiming_capaci
     assert progress["capability_coverage_by_distinct_company_clusters"]["CAPITAL_ALLOCATION"] == 8
     assert progress["capability_coverage_by_distinct_company_clusters"]["COMPETITION_AND_PRICING"] == 4
     assert progress["capability_coverage_by_distinct_company_clusters"]["BUSINESS_MODEL_ECONOMICS"] == 5
-    assert progress["capability_coverage_by_distinct_company_clusters"]["CUSTOMER_ABSORPTION"] == 6
+    assert progress["capability_coverage_by_distinct_company_clusters"]["CUSTOMER_ABSORPTION"] == 5
     assert progress["capability_coverage_by_distinct_company_clusters"]["MANAGEMENT_DECISION_EXECUTION"] == 3
-    assert progress["capability_coverage_by_distinct_company_clusters"]["OWNER_CASH_CONVERSION"] == 7
+    assert progress["capability_coverage_by_distinct_company_clusters"]["OWNER_CASH_CONVERSION"] == 6
     assert progress["capability_coverage_by_distinct_company_clusters"]["PERMANENT_LOSS_AND_LIFECYCLE"] == 3
     assert progress["capability_coverage_by_distinct_company_clusters"]["VALUATION_AND_ENTRY_TREATMENT"] == 2
     assert progress["teaching_pipeline_coverage_by_distinct_company_clusters"]["VALUATION_AND_ENTRY_TREATMENT"] == 2

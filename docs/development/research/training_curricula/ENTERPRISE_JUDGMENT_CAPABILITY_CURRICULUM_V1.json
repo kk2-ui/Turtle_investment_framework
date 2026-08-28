@@ -31,6 +31,8 @@
     "teaching_can_use_known_results": true,
     "blind_requires_role_scoped_result_isolation": true,
     "holdout_can_influence_training": false,
+    "holdout_requires_frozen_training_method": true,
+    "holdout_uses_fair_baseline_pair": true,
     "prospective_wait_blocks_historical_training": false,
     "comparative_default": "NOT_REQUIRED",
     "teaching_cases_per_blind_cycle": 3
@@ -748,7 +750,7 @@
       "company_name": "天坛生物",
       "industry_id": "PLASMA_DERIVED_BIOLOGICS",
       "track": "HISTORICAL_HOLDOUT",
-      "status": "EVALUATED",
+      "status": "ARCHIVED_NOT_EVALUABLE",
       "cutoff_at": "2024-05-01T00:00:00+08:00",
       "outcome_window": {
         "starts_at": "2025-03-29T00:00:00+08:00",
@@ -776,7 +778,8 @@
         "investor_readout_ref": "docs/development/research/training_campaigns/JUDGMENT_UTILITY_HISTORICAL_20260828/34_CN600161_HOLDOUT_INVESTOR_READOUT.md"
       },
       "lesson": null,
-      "holdout_axis": "COMPANY"
+      "holdout_axis": "COMPANY",
+      "method_memory_state": "NO_TRAINING_METHOD_SUPPLIED"
     },
     {
       "case_id": "PROSPECTIVE:CN601899:20260501:FY2026",

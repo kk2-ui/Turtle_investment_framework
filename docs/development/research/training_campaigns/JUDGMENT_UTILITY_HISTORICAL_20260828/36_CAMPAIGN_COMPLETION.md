@@ -10,9 +10,10 @@
 
 - 新增两个 Teaching Block，共六个异质企业教学 cluster；课程累计为 15 个 Teaching company cluster。
 - 历史 Blind Judgment 累计完成三个：公牛集团、中国外运、厦门钨业。
-- 完成第一个独立 Historical Holdout：天坛生物 FY2024。
+- 天坛生物 FY2024 完成了一次结果隔离的 single-arm 判断，但因未接收任何训练 Method Pack，现已归档为
+  `ARCHIVED_NOT_EVALUABLE`，不计 Historical Holdout 或训练能力证据。
 - 保留两个未来样本，其中中国民航信息只有局部中期反馈；未来结果没有阻断本轮历史训练。
-- 每个新 Blind/Holdout 都先产出当前企业判断、机制、最强反方、管理层、owner cash、永久损失、情景、方向性估值处理与翻转事实，再揭示结果；字段 settlement 只服务判断，不是训练主角。
+- 每个已执行的历史 episode 都先产出当前企业判断、机制、最强反方、管理层、owner cash、永久损失、情景、方向性估值处理与翻转事实，再揭示结果；字段 settlement 只服务判断，不是训练主角。
 
 课程当前机械状态为：
 
@@ -20,7 +21,7 @@
 |---|---:|---:|---|
 | Teaching | 15 | 20 | 已形成多机制教学底座，仍需扩充 |
 | Blind Judgment | 3 | 8 | 已能进行真实结果反馈，样本仍少 |
-| Historical Holdout | 1 | 4 | 有第一次独立方向检验，不能据此宣称迁移 |
+| Historical Holdout | 0 个可评价；1 个无方法输入历史记录 | 4 | 尚无训练方法的独立公平考试 |
 | Prospective | 0 个完整结果 | 1 | 不阻断历史训练 |
 
 课程状态继续是 `BUILDING`，而不是完成或方法冻结。按三教学案例支持一轮 Blind 的节奏，15 个 Teaching 已足以支持登记下一例 Blind Judgment。
@@ -39,7 +40,7 @@
 
 因此当前处理是：管理层执行继续条件性信用但置信度下降；相对 FY2022 的正常盈利仍小幅上修，但只保留下半区；owner cash 继续条件计入；永久损失约束维持；不再因“量增”或“产能兑现”进一步提高价值方向。
 
-### 天坛生物
+### 天坛生物（公司研究记录，不计训练效用）
 
 FY2024 的收入、销量、经常利润、母公司调整后利润和经营利润率共同支持真实经济吸收，结果强于冻结基准情景。同时集团 OCF 扣长期资产现金投入后的代理转负，但没有达到结构性 adverse 阈值；成都蓉生 post-capex 现金、必要留存及母公司净支持仍未闭合。未见质量监管 adverse carrier，100% 自检和批签发通过率只能结算为中性，不能证明永久护城河。
 
@@ -51,7 +52,8 @@ FY2024 的收入、销量、经常利润、母公司调整后利润和经营利�
 
 1. 第一稿已经能够先给公司判断，而不是先列缺失字段。局部 `UNKNOWN`、`MEASUREMENT_MISMATCH` 和责任边界没有吞掉整家公司。
 2. 中国外运的结果真实改变了下一例研究行为：在给业务量或收入增长管理层信用前，先建立同责任边界的经常利润或单位经济桥。厦门钨业执行了这条行为，并进一步把它收窄为“利润增速落后收入、毛利率下降、资本开支快于利润”同时出现时，暂停进一步升级，而不是撤回已有判断。
-3. 天坛生物 Holdout 的主要方向正确，但暴露了情景校准不足：经营吸收与 owner-cash 转换必须作为正交轴建模，不能默认利润改善会同步变成母公司现金。
+3. 两轮 Blind 反馈已被冻结为一个不含公司答案的 Method Pack：先做同责任边界经常利润/单位经济桥，
+   并在转换三联征出现时保留已有优点但暂停继续升级。它只是未来实验输入，尚未证明有用。
 
 这些是判断过程的真实改善，不是因为新增了字段、收据、规则或测试。
 
@@ -69,7 +71,8 @@ FY2024 的收入、销量、经常利润、母公司调整后利润和经营利�
 
 ## 没有证明什么
 
-- 三个 Blind 和一个 Holdout 都是 single-arm，`METHOD_UTILITY=NOT_APPLICABLE`；它们既不是 `NO_MATERIAL_UTILITY`，也不能证明方法优于公平普通研究。
+- 三个 Blind 都是 single-arm，负责产生反馈而不评价相对方法效用。天坛生物没有接收训练方法且没有公平
+  Baseline，故其 `METHOD_UTILITY=NOT_APPLICABLE` 现在解释为“训练评估无效”，并从 Holdout 完成数剔除。
 - 旧有四个 paired episode——中材科技、恒生电子、益丰药房、激成投资——仍是 `NO_MATERIAL_UTILITY`：Enhanced 没有改变公平 baseline 的材料投资处理。这个零结果继续保留。
 - 尚未证明跨公司迁移稳定、行业认知成熟、报告或买点改善、回报提高。
 - `TRANSFER_VALIDATED=0`，没有方法冻结。
@@ -83,7 +86,12 @@ FY2024 的收入、销量、经常利润、母公司调整后利润和经营利�
 
 这两项都只是 Blind 结果产生的下一案研究行为，不是已验证的通用规律、全局 gate 或方法有效性证明；第四个 Blind 必须允许现实结果支持、反驳或判为不具诊断性。
 
-天坛生物暴露出的 `ORTHOGONAL_OPERATING_AND_OWNER_CASH_SCENARIOS` 目前仍是封存的 Holdout 反馈：经营吸收与 owner-cash 转换分别建轴，并显式允许“经营强、集团现金阶段性弱、母公司现金仍开放”的联合状态。按照 `holdout_can_influence_training=false`，本轮不会把它交给第四个 Blind；只有天坛生物按既有契约正式退休后，才能进入未来训练。
+天坛生物结果后提出的 `ORTHOGONAL_OPERATING_AND_OWNER_CASH_SCENARIOS` 不进入当前 Method Pack。原因不是
+它一定错误，而是该样本本身没有接收训练方法，不能既充当无方法 single-arm 又反向为同一版本提供训练信用。
+
+未来真正的 Historical Holdout 必须使用公平双臂：Baseline 只收共同 judgment-first 合同；Enhanced 在完全
+相同 cutoff 和资料预算上只多接冻结 Method Pack。两臂都先冻结材料投资处理，再由同一结果区分方法是否有用。
+详见 [38_HOLDOUT_METHOD_MEMORY_CORRECTION.md](./38_HOLDOUT_METHOD_MEMORY_CORRECTION.md)。
 
 Blind 第一稿仍必须完整回答三项核心企业判断、因果机制、最强反方、管理层、owner cash、永久损失、三情景、方向性估值处理和翻转事实。局部未知必须说明当前投资处理，不能用“资料不足”结束公司判断。
 

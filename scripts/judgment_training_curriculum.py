@@ -42,7 +42,12 @@ CURRICULUM_STATES = {"BUILDING", "ACTIVE", "FROZEN_FOR_HOLDOUT_EVALUATION"}
 TRACK_STATUSES = {
     "TEACHING": {"REGISTERED", "CURATED"},
     "BLIND_JUDGMENT": {"REGISTERED", "FROZEN", "SETTLED"},
-    "HISTORICAL_HOLDOUT": {"RESERVED", "FROZEN", "EVALUATED"},
+    "HISTORICAL_HOLDOUT": {
+        "RESERVED",
+        "FROZEN",
+        "EVALUATED",
+        "ARCHIVED_NOT_EVALUABLE",
+    },
     "PROSPECTIVE": {"FROZEN", "PARTIAL_FEEDBACK", "SETTLED"},
 }
 TRACK_OUTCOME_ACCESS = {
@@ -74,6 +79,12 @@ CLAIM_SCOPES = {
     "RELATIVE_CAUSAL_EFFECT",
 }
 HOLDOUT_AXES = {"COMPANY", "TIME", "COMPANY_AND_TIME"}
+HOLDOUT_METHOD_MEMORY_STATES = {
+    "FROZEN_METHOD_PAIR_BOUND",
+    "PAIRED_FORECASTS_FROZEN",
+    "PAIRED_METHOD_EVALUATED",
+    "NO_TRAINING_METHOD_SUPPLIED",
+}
 
 ROOT_FIELDS = {
     "schema_version",
@@ -92,6 +103,8 @@ POLICY_FIELDS = {
     "teaching_can_use_known_results",
     "blind_requires_role_scoped_result_isolation",
     "holdout_can_influence_training",
+    "holdout_requires_frozen_training_method",
+    "holdout_uses_fair_baseline_pair",
     "prospective_wait_blocks_historical_training",
     "comparative_default",
     "teaching_cases_per_blind_cycle",
@@ -117,6 +130,7 @@ CASE_FIELDS = {
     "artifact_refs",
     "lesson",
     "holdout_axis",
+    "method_memory_state",
 }
 WINDOW_FIELDS = {"starts_at", "ends_at"}
 LESSON_FIELDS = {
@@ -137,6 +151,8 @@ ARTIFACT_FIELDS = {
     "investor_readout_ref",
     "lesson_ref",
     "freeze_ref",
+    "method_pack_ref",
+    "holdout_pair_ref",
 }
 TEACHING_CANDIDATE_FIELDS = {
     "candidate_id",
@@ -345,18 +361,36 @@ def _validate_case(raw: Any, *, index: int) -> tuple[list[str], dict[str, Any]]:
             findings.append(path + ".holdout_role_cannot_have_result_exposure")
         if status == "RESERVED" and isolation not in {"BLIND_PACKET_READY", "ROLE_ISOLATION_PROVED"}:
             findings.append(path + ".reserved_holdout_requires_blind_packet")
-        if status in {"FROZEN", "EVALUATED"} and isolation != "ROLE_ISOLATION_PROVED":
+        if status in {"FROZEN", "EVALUATED", "ARCHIVED_NOT_EVALUABLE"} \
+                and isolation != "ROLE_ISOLATION_PROVED":
             findings.append(path + ".executed_holdout_requires_proved_role_isolation")
         if case.get("holdout_axis") not in HOLDOUT_AXES:
             findings.append(path + ".holdout_axis_invalid")
         if status in {"RESERVED", "FROZEN"} and outcome_access != "SEALED":
             findings.append(path + ".unevaluated_holdout_must_be_sealed")
-        if status == "EVALUATED" and outcome_access != "REVEALED_AFTER_HOLDOUT_FORECAST_FREEZE":
+        if status in {"EVALUATED", "ARCHIVED_NOT_EVALUABLE"} \
+                and outcome_access != "REVEALED_AFTER_HOLDOUT_FORECAST_FREEZE":
             findings.append(path + ".evaluated_holdout_requires_post_holdout_forecast_freeze_reveal")
         if starts is None:
             findings.append(path + ".holdout_outcome_window_required_at_reservation")
+        method_memory_state = str(case.get("method_memory_state") or "").upper()
+        if method_memory_state not in HOLDOUT_METHOD_MEMORY_STATES:
+            findings.append(path + ".holdout_method_memory_state_invalid")
+        expected_memory_state = {
+            "RESERVED": "FROZEN_METHOD_PAIR_BOUND",
+            "FROZEN": "PAIRED_FORECASTS_FROZEN",
+            "EVALUATED": "PAIRED_METHOD_EVALUATED",
+            "ARCHIVED_NOT_EVALUABLE": "NO_TRAINING_METHOD_SUPPLIED",
+        }.get(status)
+        if expected_memory_state and method_memory_state != expected_memory_state:
+            findings.append(path + ".holdout_method_memory_state_mismatched")
+
         required_artifacts = {"freeze_ref"}
-        if status == "EVALUATED":
+        if status != "ARCHIVED_NOT_EVALUABLE":
+            required_artifacts.add("method_pack_ref")
+        if status in {"FROZEN", "EVALUATED"}:
+            required_artifacts.add("holdout_pair_ref")
+        if status in {"EVALUATED", "ARCHIVED_NOT_EVALUABLE"}:
             required_artifacts |= {"settlement_ref", "postoutcome_review_ref"}
         if not required_artifacts <= set(artifacts):
             findings.append(path + ".holdout_artifact_chain_incomplete")
@@ -376,6 +410,9 @@ def _validate_case(raw: Any, *, index: int) -> tuple[list[str], dict[str, Any]]:
             findings.append(path + ".prospective_artifact_chain_incomplete")
         if case.get("lesson") is not None or case.get("holdout_axis") is not None:
             findings.append(path + ".prospective_teaching_or_holdout_fields_forbidden")
+
+    if track != "HISTORICAL_HOLDOUT" and case.get("method_memory_state") is not None:
+        findings.append(path + ".method_memory_state_only_for_holdout")
 
     evidence_statuses = {
         "TEACHING": {"CURATED"},
@@ -443,6 +480,8 @@ def validate_curriculum(curriculum: Any) -> dict[str, Any]:
         "teaching_can_use_known_results": True,
         "blind_requires_role_scoped_result_isolation": True,
         "holdout_can_influence_training": False,
+        "holdout_requires_frozen_training_method": True,
+        "holdout_uses_fair_baseline_pair": True,
         "prospective_wait_blocks_historical_training": False,
         "comparative_default": "NOT_REQUIRED",
     }
@@ -545,14 +584,20 @@ def curriculum_status(curriculum: dict[str, Any], *, validate: bool = True) -> d
     candidates = list(curriculum.get("teaching_candidate_pool") or [])
     track_progress: dict[str, Any] = {}
     for track in TRACKS:
-        selected = [case for case in cases if case.get("track") == track]
+        records = [case for case in cases if case.get("track") == track]
+        selected = [
+            case for case in records
+            if case.get("status") != "ARCHIVED_NOT_EVALUABLE"
+        ]
         clusters = {case.get("company_cluster_id") for case in selected}
         complete = [case for case in selected if _track_complete(track, str(case.get("status") or ""))]
         complete_clusters = {case.get("company_cluster_id") for case in complete}
         target = (curriculum.get("capacity_targets") or {}).get(track) or {}
         lower = int(target.get("lower") or 0)
         track_progress[track] = {
+            "record_count": len(records),
             "episode_count": len(selected),
+            "archived_not_evaluable_count": len(records) - len(selected),
             "independent_company_cluster_count": len(clusters),
             "completed_episode_count": len(complete),
             "completed_independent_company_cluster_count": len(complete_clusters),
@@ -628,7 +673,7 @@ def curriculum_status(curriculum: dict[str, Any], *, validate: bool = True) -> d
         "historical_training_blocked_by_holdout_or_prospective": False,
         "comparative_is_default_entry": False,
         "capability_claim": "NOT_DEMONSTRATED_BY_CURRICULUM_COUNTS",
-        "method_utility_claim": "REQUIRES_BLIND_TREATMENT_FEEDBACK_AND_INDEPENDENT_HOLDOUT",
+        "method_utility_claim": "REQUIRES_FAIR_PAIRED_HOLDOUT_WITH_FROZEN_METHOD_PACK",
     }
 
 

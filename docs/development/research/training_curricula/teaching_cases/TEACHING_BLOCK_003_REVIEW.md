@@ -50,4 +50,4 @@ Block 003 没把这条顺序写成口号，而是分别应用到三个不同经�
 
 ## 尚未证明
 
-本 block 全部为 `RESULT_KNOWN` Teaching，只增加结构表示、反例和研究顺序练习。中国外运反馈在三类企业上可被执行，说明课程能够传播一个研究动作；它仍未证明 Agent 在未见结果时会正确识别这些桥，更未证明估值或投资回报改善。下一步必须回到冻结 roster 的下一历史 Blind；只有结果隔离的处理反馈和独立 Historical Holdout 才能提供能力证据。
+本 block 全部为 `RESULT_KNOWN` Teaching，只增加结构表示、反例和研究顺序练习。中国外运反馈在三类企业上可被执行，说明课程能够传播一个研究动作；它仍未证明 Agent 在未见结果时会正确识别这些桥，更未证明估值或投资回报改善。下一步必须回到冻结 roster 的下一历史 Blind；只有结果隔离的处理反馈，以及“公平 Baseline 对比显式接收冻结 Method Pack 的 Enhanced”的独立 Historical Holdout，才能提供训练增量证据。

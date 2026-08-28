@@ -80,6 +80,11 @@ Blind 评价两件事：
 
 Holdout 在训练中不可被读取或用于选规则。它按公司轴，必要时再按时间轴隔离。它只评价已经冻结的课程或方法能否迁移，不允许根据 holdout 结果修补同一版本后再声称通过。
 
+当前系统不会更新模型权重，因此“训练记忆”必须作为冻结的通用 Method Pack 显式提供给 Enhanced
+forecaster。真正的 Holdout 是公平双臂：Baseline 与 Enhanced 使用同一公司、cutoff、资料预算和
+judgment-first 合同；只有 Enhanced 多接 Method Pack。隔离的是目标结果与答案，不是已经抽象并冻结的研究
+方法。没有 Method Pack 的 single-arm 判断不能评价训练效用，也不计 Holdout 完成数。
+
 Holdout 数量不必大，但必须独立。一个 holdout 通过也只形成有界证据；不能自动授予方法冻结、报告、估值或交易权限。
 
 ### 3.4 Prospective：现实校准
@@ -176,14 +181,17 @@ Retain    只保留可迁移的问题、反例和边界，不保留公司结局�
 | 轨道 | 已完成/冻结 | 当前含义 |
 |---|---:|---|
 | Teaching | 15 个 curated company clusters | Block 003 新增中国食品、鄂尔多斯和招商积余，并把中国外运反馈应用于消费装瓶、周期重资产和物业服务 |
-| Blind Judgment | 2 个 settled | 公牛和中国外运 FY2024 均在 fresh role 结果前冻结后独立揭示；中国外运完成一次真实研究行为反馈但六轴没有跨档 |
-| Historical Holdout | 0 | 尚无独立历史考试，不得声称迁移 |
+| Blind Judgment | 3 个 settled | 公牛、中国外运和厦门钨业均完成结果前冻结与独立揭示；后两者连续收窄下一案研究行为，但尚未证明方法效用 |
+| Historical Holdout | 0 个可评价 | 天坛生物 single-arm 未接收训练 Method Pack，现归档为 `ARCHIVED_NOT_EVALUABLE`，不计训练证据 |
 | Prospective | 2 个 company clusters | 紫金冻结；民航信息有局部中期反馈但全年未结算 |
 | Teaching candidates | 9 个独立 company clusters | 已知结果的本地池，只待策展，不计能力 |
 
 15 个 curated Teaching 加 9 个候选，仍形成 24 个独立公司簇的教学管线。它解决“没有案例可练”的问题，但没有解决“能力是否形成”的问题。Block 003 把 `CUSTOMER_ABSORPTION`、`OWNER_CASH_CONVERSION`、`BUSINESS_MODEL_ECONOMICS`、`MANAGEMENT_DECISION_EXECUTION` 和 `PERMANENT_LOSS_AND_LIFECYCLE` 分别扩展到新的公司簇；数量增加只说明反例和机制语言更丰富，不代表新公司上会主动使用它们。
 
-按 `3:1` 节奏，中国外运 Blind 与 Teaching Block 003 已完成。中国外运的结果没有让任何投资处理轴跨档，也没有形成 method utility；它把下一案例的研究顺序改为：先建立同责任边界的规模到经常利润或单位经济桥，再给执行信用。Block 003 已把这个动作分别用于中国食品、鄂尔多斯和招商积余。下一项是冻结 roster rank 3 的厦门钨业 Blind，而不是继续只读 Teaching 或转向新前瞻样本。
+按 `3:1` 节奏，三个 Blind 和 15 个 Teaching 已完成。中国外运把下一案例研究顺序改为先建立同责任
+边界的经常利润或单位经济桥；厦门钨业进一步收窄为转换三联征出现时暂停继续升级。两条行为已经冻结为
+Method Pack v1，但仍只是候选训练记忆。下一项是登记第四个 Blind，并继续补充三到五个 Teaching cluster，
+而不是把天坛生物 single-arm 误算成方法考试。
 
 ## 9. 防御性写作的运行约束
 
@@ -232,21 +240,25 @@ Comparative 的 target-trial、同行、干扰、删失和 estimand 边界全部
 
 现有组件分工不变：
 
-- `historical_role_isolation.py` 负责 selector/forecaster packet 与真实 one-shot 输入收据；
+- `historical_role_isolation.py` 负责 selector、Blind forecaster 和 Holdout 公平双臂 packet；真实 one-shot
+  Agent 身份与输入仍由 execution receipt 证明；
 - `historical_judgment_first_draft.py` 负责 Blind 第一稿的判断优先合同；
 - `judgment_training_program.py` 负责严格评价、holdout、方法冻结和发布控制；
 - J2/J3/J4 adapter 不因本课程重构而改变。
 
 ## 13. 下一阶段执行顺序
 
-1. 中国外运 Blind 与 Teaching Block 003 已完成；保留其真实反馈与零方法效用边界，不回写为成功率；
-2. 按冻结顺序执行厦门钨业 Blind：fresh role 只读 FY2021--FY2023，冻结完整判断后才向独立 custodian 开放 FY2024；
-3. 处理 roster 的两条 transfer：只有 ranks 1--3 真正形成候选规则时才应用；没有候选规则就明确记为 `NOT_APPLICABLE`，不得为了做迁移而发明规则；
-4. 用未参与训练的天坛生物完成当前 roster 的 untouched Historical Holdout，使用原始判断合同而非按案例修订的提示；
-5. 当前历史闭环完成后再继续下一组 Teaching/Blind，达到 20 个 Teaching、8 个 Blind 前不把精力转向新 prospective 或大规模 Comparative；
-6. 只有 Blind 暴露出材料、可重复的处理错误时才提出窄规则；规则必须在独立 holdout 通过后才能谈迁移。
+1. 三个 Blind 与 15 个 Teaching 已完成；保留真实反馈，不把命中、字段或结果结算回写成成功率；
+2. 天坛生物因没有接收训练方法而归档为 `ARCHIVED_NOT_EVALUABLE`；其 single-arm 结果不再计 Holdout 或
+   迁移证据；
+3. 冻结只含 Blind 反馈的 Method Pack v1，不包含公司身份、结局或 Holdout 反馈；
+4. 登记第四个 Blind，并在随后补三到五个 Teaching cluster，优先管理层适应、竞争定价和资本投入后的单位经济；
+5. 达到更稳定的 Blind 反馈后，选择独立历史公司，用两个 `fork_turns=none` forecaster 执行公平双臂
+   Holdout；只有 Enhanced 的材料投资处理相对 Baseline 真正改善，才产生有界方法候选；
+6. 达到 20 个 Teaching、8 个 Blind 前不把精力转向新 prospective 或大规模 Comparative。
 
-下一条实际工作不是再写架构，而是执行厦门钨业 Blind；只有结果前判断冻结并通过独立审阅后才揭示 FY2024。
+下一条实际工作是第四个历史 Blind，而不是继续增加 Holdout gate。Method Pack 的作用是让未来 Holdout
+能够检验训练增量，不是提前宣称方法已验证。
 
 ## 14. 研究依据与适用边界
 
