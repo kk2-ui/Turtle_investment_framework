@@ -129,7 +129,7 @@ _RIGHTS = {
 
 _DIRECT_SCORES = [
     "CALIBRATION",
-    "COVERAGE",
+    "STATE_DEFINITION",
     "UNCERTAINTY_POLICY",
     "BASELINE_PERFORMANCE",
 ]
@@ -531,7 +531,7 @@ def _coverage_permission(request_kind: str) -> dict[str, Any]:
 def _error_attribution_permission(request_kind: str) -> dict[str, Any]:
     if request_kind == "ABSTAIN":
         return {
-            "direct_learning_scopes": [],
+            "direct_learning_scopes": ["COVERAGE"],
             "candidate_learning_scopes": [],
             "failure_loci": ["COVERAGE", "OUTCOME_MEASUREMENT"],
             "candidate_disposition": "NONE",
