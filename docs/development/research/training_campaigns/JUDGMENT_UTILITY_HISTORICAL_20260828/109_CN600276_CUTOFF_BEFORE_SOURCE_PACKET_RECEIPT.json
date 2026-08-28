@@ -1,0 +1,48 @@
+{
+  "receipt_type": "BLIND9_CUTOFF_BEFORE_SOURCE_PACKET_RECEIPT",
+  "status": "ISSUED",
+  "candidate": {
+    "security_id": "CN:600276",
+    "legal_name": "江苏恒瑞医药股份有限公司",
+    "cninfo_org_id": "gssh0600276"
+  },
+  "cutoff": "2024-05-01T00:00:00+08:00",
+  "packet_release_rule": "The packet contains exactly the three original annual-report references below. The URLs are official CNINFO static-PDF locations; this curation step did not retrieve or read their bodies.",
+  "source_packet": [
+    {
+      "fiscal_year": 2021,
+      "original_report_title": "恒瑞医药2021年年度报告",
+      "disclosure_date": "2022-04-23",
+      "announcement_id": "1213053755",
+      "official_static_pdf_url": "http://static.cninfo.com.cn/finalpage/2022-04-23/1213053755.PDF"
+    },
+    {
+      "fiscal_year": 2022,
+      "original_report_title": "恒瑞医药2022年年度报告",
+      "disclosure_date": "2023-04-22",
+      "announcement_id": "1216518776",
+      "official_static_pdf_url": "http://static.cninfo.com.cn/finalpage/2023-04-22/1216518776.PDF"
+    },
+    {
+      "fiscal_year": 2023,
+      "original_report_title": "恒瑞医药2023年年度报告",
+      "disclosure_date": "2024-04-18",
+      "announcement_id": "1219650115",
+      "official_static_pdf_url": "http://static.cninfo.com.cn/finalpage/2024-04-18/1219650115.PDF"
+    }
+  ],
+  "candidate_mechanism_descriptor": "Permitted orientation is limited to the broad pharmaceutical R&D, approval/commercialization, product-sales collection, and cash-reinvestment mechanism. It is not an enterprise judgment or a statement about the FY2024 outcome.",
+  "strict_firewall": {
+    "custodian_to_forecaster": "Release this fixed packet only; do not release other metadata, source bodies outside the packet, outcome material, or interpretation.",
+    "forecaster_to_reviewer": "Provide a blinded submission derived only from this fixed packet; do not transmit outcome knowledge or request new sources.",
+    "reviewer_to_custodian_or_forecaster": "Return only a local manifest mismatch. A valid mismatch is limited to identity, fiscal-year/title/originality, disclosure date, announcement ID, official URL, cutoff, or an access-boundary violation.",
+    "forbidden": "No direct outcome channel, hindsight comparison, FY2024-or-later source access, source substitution, reviewer-led enterprise judgment, or feedback beyond local mismatch."
+  },
+  "curation_attestation": {
+    "metadata_query": "Official CNINFO classification-query metadata for 2022-01-01 through 2024-04-30, after resolving CN:600276 through CninfoDownloader.resolve_company.",
+    "no_fy2024_or_later_fiscal_period_metadata_accessed": true,
+    "no_announcement_or_pdf_body_accessed": true,
+    "no_fallback_sources": true,
+    "complete_clean_set": "Exactly one original FY2021, FY2022, and FY2023 annual report is present, and each disclosure date is strictly before the cutoff."
+  }
+}
