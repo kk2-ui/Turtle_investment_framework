@@ -1477,6 +1477,32 @@ def test_custodian_acquisition_ignores_annual_report_summary_when_one_full_origi
     assert candidate["source"]["issuer_id"] == contract["issuer_id"]
 
 
+def test_custodian_acquisition_ignores_performance_meeting_notice_when_original_report_is_unique(
+    tmp_path: Path,
+) -> None:
+    database, contract = _authorized_cninfo_database(tmp_path)
+    candidate = outcome_acquisition.acquire_cninfo_outcome_source_candidate(
+        str(database),
+        outcome_access_authorization_id="MHE:ACCESS:SYNTHETIC:V1",
+        inventory_receipt_id="MHE:INVENTORY:CNINFO:REPORT-PLUS-MEETING",
+        field_locator=lambda source, _: "FY2021 annual report, PDF p. 38",
+        request=_cninfo_request([
+            _cninfo_row(),
+            {
+                **_cninfo_row(
+                    title="关于举行2021年年度报告网上业绩说明会的公告",
+                    announcement_date="2022-04-08",
+                    announcement_id="SYNTHETIC-PERFORMANCE-MEETING",
+                    url="finalpage/2022-04-08/SYNTHETIC-PERFORMANCE-MEETING.PDF",
+                ),
+            },
+        ]),
+    )
+    assert candidate["status"] == "FIELD_READY"
+    assert candidate["source"]["source_id"] == "CNINFO:600585:ANN:20220330:SYNTHETIC-2021-ANNUAL"
+    assert candidate["source"]["issuer_id"] == contract["issuer_id"]
+
+
 def test_custodian_acquisition_keeps_legacy_default_closed_for_original_and_revised_family(
     tmp_path: Path,
 ) -> None:

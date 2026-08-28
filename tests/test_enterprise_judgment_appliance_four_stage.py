@@ -141,3 +141,24 @@ def test_e2_product_miss_has_precedence_over_other_settled_patterns() -> None:
     result = four_stage.resolve_e2_terminal_statuses(statuses)
     assert result["valid"]
     assert result["resolution"]["combined_resolution"] == "PRODUCT_MECHANISM_EXPECTATION_WEAKENED"
+
+
+def test_first_custody_attempt_is_value_free_local_mismatch() -> None:
+    attempt = _load(FOUR_STAGE / "03_e2_acquisition_attempt_1.json")
+    statuses = [
+        {
+            "measurement_contract_id": row["measurement_contract_id"],
+            "terminal_status": row["terminal_status"],
+        }
+        for row in attempt["field_terminal_statuses"]
+    ]
+    result = four_stage.resolve_e2_terminal_statuses(statuses)
+    assert result["valid"], result["findings"]
+    assert result["resolution"]["combined_resolution"] == attempt["e2_resolution"] == "PARTIAL_NOT_DIAGNOSTIC"
+    assert attempt["lifecycle_counts"] == {
+        "authorized_access": 3, "source_inventory": 3, "observation": 0, "settlement": 0,
+    }
+    serialized = json.dumps(attempt, ensure_ascii=False).casefold()
+    assert "outcome_value" not in serialized
+    assert "realized_direction" not in serialized
+    assert attempt["e3_comparative_status"] == "NOT_ADMITTED"

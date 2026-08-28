@@ -1490,6 +1490,13 @@ def _cninfo_source_type_and_period(title: str, published_at: date) -> tuple[str,
     compact = re.sub(r"\s+", "", title)
     annual = re.search(r"(20\d{2})年年度报告", compact)
     if annual:
+        # A real CNINFO annual-report route may also return the issuer's
+        # post-filing performance-presentation notice.  Its title names the
+        # annual report as the subject of the meeting; it is not another
+        # statutory annual-report version and must not contaminate the
+        # original/revised report family.
+        if re.search(r"年度报告(?:网上)?业绩说明会", compact):
+            return "EXCHANGE_ANNOUNCEMENT", published_at.isoformat()
         return "ANNUAL_REPORT", annual.group(1) + "-12-31"
     interim = re.search(r"(20\d{2})年半年度报告", compact)
     if interim:
