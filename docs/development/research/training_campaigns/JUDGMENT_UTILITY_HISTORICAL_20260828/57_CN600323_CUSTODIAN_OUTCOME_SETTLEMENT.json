@@ -1,0 +1,765 @@
+{
+  "schema_version": "historical-holdout-outcome-settlement.v1",
+  "settlement_id": "SETTLEMENT:HIST:CN600323:FY2024:PAIR_V2",
+  "pair_id": "PAIR:HIST:CN600323:20240501:V2",
+  "episode_id": "HIST:CN600323:20240501:FY2024",
+  "company_id": "CN:600323",
+  "custodian_id": "/root/cn600323_holdout_outcome_custodian",
+  "settled_at": "2026-08-28T21:16:00+08:00",
+  "outcome_access": "AFTER_PAIR_FREEZE",
+  "artifact_status": "SETTLED",
+  "authority": "NONE",
+  "authorized_source": {
+    "source_id": "CNINFO:600323:FY2024:1223057340",
+    "source_class": "ISSUER_OFFICIAL_FULL_ANNUAL_REPORT",
+    "period": "FY2024",
+    "url": "https://static.cninfo.com.cn/finalpage/2025-04-11/1223057340.PDF",
+    "documents_consumed": 1
+  },
+  "shared_fact_budget_policy": "All six cells received the same F01-F28 fact union. No arm-specific outcome facts were acquired or supplied. Values below precede all bridges and retain the annual report's printed page, unit, and responsibility boundary.",
+  "shared_fact_budget": [
+    {
+      "fact_id": "F01_GROUP_REVENUE",
+      "value": {
+        "FY2024": 11886247107.45,
+        "FY2023": 12541288979.45,
+        "yoy_pct": -5.22
+      },
+      "unit": "CNY; percent for yoy_pct",
+      "responsibility_boundary": "consolidated group",
+      "printed_page": 6,
+      "source_locator": "Second section, VII(1), principal accounting data"
+    },
+    {
+      "fact_id": "F02_GROUP_RECURRING_PARENT_PROFIT",
+      "value": {
+        "FY2024_parent_net_profit_ex_nonrecurring": 1625364374.33,
+        "FY2023_parent_net_profit_ex_nonrecurring": 1407048073.86,
+        "yoy_pct": 15.52,
+        "FY2024_parent_net_profit": 1663901901.49
+      },
+      "unit": "CNY; percent for yoy_pct",
+      "responsibility_boundary": "consolidated group attributable to listed-company shareholders",
+      "printed_page": 6,
+      "source_locator": "Second section, VII(1), principal accounting data"
+    },
+    {
+      "fact_id": "F03_NONRECURRING_EXCLUSIONS",
+      "value": {
+        "FY2024_total_after_tax_attributable": 38537527.16,
+        "noncurrent_asset_disposal": 3069893.67,
+        "nonrecurring_government_grants": 30958303.71,
+        "fair_value_and_financial_disposals": 196132.84,
+        "nonfinancial_enterprise_funds_occupation_fee": 14205299.43,
+        "receivable_impairment_reversal": 1295018.98,
+        "cash_settled_share_payment_fair_value_change": -10840643.23,
+        "other_nonoperating_net": 7668582.11
+      },
+      "unit": "CNY",
+      "responsibility_boundary": "consolidated group, statutory nonrecurring-profit bridge",
+      "printed_page": 7,
+      "source_locator": "Second section, X, nonrecurring profit and loss"
+    },
+    {
+      "fact_id": "F04_PERSISTENT_GROUP_EXPENSES",
+      "value": {
+        "FY2024_sales_expense": 115728153.57,
+        "FY2024_management_expense": 726381890.66,
+        "FY2024_research_expense": 73669074.96,
+        "FY2024_finance_expense": 499257357.08,
+        "FY2024_sum": 1415036476.27,
+        "FY2023_sum": 1347476704.79,
+        "sum_yoy_pct": 5.01,
+        "FY2024_MA_advisory_expense_approx": 24000000
+      },
+      "unit": "CNY; percent for sum_yoy_pct",
+      "responsibility_boundary": "consolidated group; the M&A advisory amount is identified as a transaction-related management-cost component",
+      "printed_page": 21,
+      "source_locator": "Third section, V(1), income statement and cash-flow line analysis; expense details on printed pages 188-190"
+    },
+    {
+      "fact_id": "F05_SOLID_WASTE_TOTAL_AND_ENGINEERING",
+      "value": {
+        "FY2024_solid_waste_main_revenue": 6008000000,
+        "solid_waste_revenue_yoy_pct": -6.61,
+        "FY2024_solid_waste_net_profit": 1025000000,
+        "solid_waste_net_profit_yoy_pct": 3.8,
+        "FY2024_engineering_equipment_revenue": 530000000,
+        "engineering_equipment_revenue_yoy_pct": -54.78,
+        "FY2024_engineering_equipment_net_profit": 22000000,
+        "engineering_equipment_net_profit_yoy_pct": -70.5
+      },
+      "unit": "CNY; percent for yoy fields",
+      "responsibility_boundary": "solid-waste segment, with engineering and equipment separately identified",
+      "printed_page": 13,
+      "source_locator": "Third section, I(2)(1), solid-waste business basic conditions"
+    },
+    {
+      "fact_id": "F06_SOLID_WASTE_OPERATIONS_EX_ENGINEERING",
+      "value": {
+        "FY2024_operating_revenue": 5478000000,
+        "operating_revenue_yoy_pct": 4.13,
+        "FY2024_operating_net_profit": 1004000000,
+        "operating_net_profit_yoy_pct": 9.64
+      },
+      "unit": "CNY; percent for yoy fields; report values are rounded to CNY 0.01 billion",
+      "responsibility_boundary": "solid-waste operating businesses excluding engineering and equipment",
+      "printed_page": 13,
+      "source_locator": "Third section, I(2)(1), solid-waste business basic conditions"
+    },
+    {
+      "fact_id": "F07_WASTE_INCINERATION_ECONOMICS",
+      "value": {
+        "FY2024_main_revenue": 3537000000,
+        "main_revenue_yoy_pct": 8.24,
+        "FY2024_net_profit": 932000000,
+        "net_profit_yoy_pct": 21.63,
+        "FY2024_gross_margin_pct": 48.39,
+        "FY2024_heat_supply_revenue": 212000000
+      },
+      "unit": "CNY; percent for margins and yoy fields; report values are rounded",
+      "responsibility_boundary": "waste-incineration business excluding engineering and equipment",
+      "printed_page": 13,
+      "source_locator": "Third section, I(2)(1), solid-waste business basic conditions"
+    },
+    {
+      "fact_id": "F08_WASTE_INCINERATION_VOLUME_AND_UTILIZATION",
+      "value": {
+        "FY2024_incineration_volume": 1278.67,
+        "FY2023_incineration_volume": 1256.28,
+        "volume_yoy_pct": 1.78,
+        "FY2024_capacity_utilization_pct": 119,
+        "boiler_effective_hours_over": 8200,
+        "FY2024_kwh_per_ton": 376.38,
+        "kwh_per_ton_yoy_pct": 2.48,
+        "FY2024_grid_kwh_per_ton": 325.66,
+        "grid_kwh_per_ton_yoy_pct": 3.53
+      },
+      "unit": "10,000 tonnes for volume; percent; hours; kWh/tonne",
+      "responsibility_boundary": "waste-incineration operating fleet",
+      "printed_page": 14,
+      "source_locator": "Third section, I(2)(1)(3), operating management; volume comparison on printed page 20"
+    },
+    {
+      "fact_id": "F09_WASTE_REVENUE_PERIMETER_ITEMS",
+      "value": {
+        "identified_items": [
+          "Jining waste project recognized prior-period and current-period electricity-fee revenue",
+          "Guiyang project recognized renewable-energy subsidy revenue",
+          "heat-supply volume and revenue increased"
+        ]
+      },
+      "unit": "qualitative issuer disclosure",
+      "responsibility_boundary": "waste-incineration revenue; items constrain durability attribution but do not erase observed operating improvement",
+      "printed_page": 13,
+      "source_locator": "Third section, I(2)(1), solid-waste sub-business revenue table and explanation"
+    },
+    {
+      "fact_id": "F10_ENERGY_VOLUME_PRICE_COST_BRIDGE",
+      "value": {
+        "FY2024_main_revenue": 3758366500,
+        "main_revenue_yoy_pct": -7.46,
+        "FY2024_main_cost": 3347058800,
+        "main_cost_yoy_pct": -8.67,
+        "FY2024_gross_margin_pct": 10.94,
+        "gross_margin_change_ppt": 1.18,
+        "FY2024_gas_source_procurement_cost": 3180441000,
+        "FY2023_gas_source_procurement_cost": 3529587400,
+        "procurement_cost_yoy_pct": -9.89,
+        "FY2024_natural_gas_sales_volume": 98335.83,
+        "FY2023_natural_gas_sales_volume": 102475.52,
+        "sales_volume_yoy_pct": -4.04,
+        "price_direction": "sale price declined with upstream procurement-gas price",
+        "spread_direction": "purchase-sale spread and engineering gross profit improved"
+      },
+      "unit": "CNY; 10,000 cubic metres for sales volume; percent; percentage points",
+      "responsibility_boundary": "energy segment; upstream procurement-price and regulated/customer sale-price movement is external unless a controllable execution carrier is separately observed",
+      "printed_page": 15,
+      "source_locator": "Third section, I(2)(2), energy business; production volume on printed page 21 and segment cost/margin on printed pages 22-23"
+    },
+    {
+      "fact_id": "F11_ENERGY_RECURRING_PROFIT_SCOPE_GAP",
+      "value": {
+        "FY2024_report_segment_operating_profit": 303121854.54,
+        "FY2023_same_metric": null,
+        "exact_average_procurement_price": null,
+        "exact_average_terminal_sale_price": null,
+        "issuer_characterization": "natural gas remained normally profitable and energy operations continued to improve"
+      },
+      "unit": "CNY; null means not disclosed in the authorized annual report",
+      "responsibility_boundary": "reportable energy segment; current operating profit is not substituted for an undisclosed same-boundary recurring net-profit comparison",
+      "printed_page": 229,
+      "source_locator": "Eighteenth section, 1(2), segment financial information; qualitative statement on printed page 15"
+    },
+    {
+      "fact_id": "F12_GROUP_PROFIT_NONOPERATING_ITEMS",
+      "value": {
+        "FY2024_investment_income": 127463731.46,
+        "FY2023_investment_income": 67577861.06,
+        "FY2024_fair_value_change": -10644510.39,
+        "FY2024_asset_disposal_income": 3417963.01,
+        "FY2024_daily_activity_government_grants": 181590945.12
+      },
+      "unit": "CNY",
+      "responsibility_boundary": "consolidated group; separate from the statutory attributable ex-nonrecurring-profit measure",
+      "printed_page": 87,
+      "source_locator": "Consolidated income statement and notes 52-54 on printed pages 189-190"
+    },
+    {
+      "fact_id": "F13_GROUP_OPERATING_CASH_FLOW",
+      "value": {
+        "FY2024": 3272684364.57,
+        "FY2023": 2482050695.57,
+        "yoy_pct": 31.85
+      },
+      "unit": "CNY; percent for yoy_pct",
+      "responsibility_boundary": "consolidated group operating cash flow; includes PPP financial-asset principal and interest collections and outlays in operating classification",
+      "printed_page": 91,
+      "source_locator": "Consolidated cash-flow statement; note 62 classification explanation on printed pages 193-194"
+    },
+    {
+      "fact_id": "F14_RECEIVABLE_COLLECTION_CONCENTRATION",
+      "value": {
+        "FY2024_existing_receivables_collected_over": 2400000000,
+        "collection_context": "collection improved with relevant government support and implementation of repayment plans",
+        "contract_asset_reduction_from_government_assessment_and_settlement": 586867106.61
+      },
+      "unit": "CNY",
+      "responsibility_boundary": "consolidated group collections; government support/payment timing is not automatically attributed to management",
+      "printed_page": 10,
+      "source_locator": "Third section, I(1)(2), collection work; cash-flow discussion on printed page 13 and contract-asset note on printed page 149"
+    },
+    {
+      "fact_id": "F15_CAPITAL_EXPENDITURE_INPUTS",
+      "value": {
+        "FY2024_cash_paid_for_fixed_intangible_and_other_long_term_assets": 1665203883.36,
+        "FY2023_same_cash_paid": 2048084762.26,
+        "FY2024_disclosed_fixed_asset_capital_expenditure_ex_interpretation_14": 1708000000,
+        "disclosed_capex_yoy_reduction_approx": 590000000,
+        "FY2024_company_reported_free_cash_flow": 1358000000
+      },
+      "unit": "CNY; disclosed rounded fields retain issuer precision",
+      "responsibility_boundary": "consolidated group; cash-paid capex and issuer-disclosed total fixed-asset capex are retained separately",
+      "printed_page": 13,
+      "source_locator": "Third section, I(2), cash and capex discussion; cash-paid line on printed page 92"
+    },
+    {
+      "fact_id": "F16_NET_RECEIVABLES_AND_CONTRACT_ASSETS",
+      "value": {
+        "FY2024_net_accounts_receivable": 4251758104.94,
+        "FY2024_net_contract_assets": 1039249011.16,
+        "FY2024_sum": 5291007116.1,
+        "FY2023_net_accounts_receivable": 3273686701.83,
+        "FY2023_net_contract_assets": 1613549220.95,
+        "FY2023_sum": 4887235922.78,
+        "sum_yoy_pct": 8.26
+      },
+      "unit": "CNY; percent for sum_yoy_pct",
+      "responsibility_boundary": "consolidated group, net carrying value; contract-asset-to-receivable transfer is not treated as risk disappearance",
+      "printed_page": 83,
+      "source_locator": "Consolidated balance sheet; movement explanation on printed page 25"
+    },
+    {
+      "fact_id": "F17_RECEIVABLE_CREDIT_CONCENTRATION",
+      "value": {
+        "FY2024_gross_accounts_receivable": 4644066983.68,
+        "FY2024_accounts_receivable_allowance": 392308878.74,
+        "FY2024_government_customer_gross_AR": 3106696909.55,
+        "FY2024_renewable_subsidy_gross_AR": 1117063739.75,
+        "FY2024_gross_contract_assets": 1109634303.14,
+        "FY2024_contract_asset_allowance": 70385291.98,
+        "top_five_AR_and_contract_assets": 2152588803.89,
+        "top_five_share_pct": 37.41
+      },
+      "unit": "CNY; percent for top_five_share_pct",
+      "responsibility_boundary": "consolidated group credit exposure, principally government, grid and renewable-subsidy customers",
+      "printed_page": 145,
+      "source_locator": "Accounts-receivable and contract-asset notes on printed pages 145-150"
+    },
+    {
+      "fact_id": "F18_IMPAIRMENT",
+      "value": {
+        "FY2024_credit_impairment_loss": -112742845.18,
+        "FY2023_credit_impairment_loss": -103391221.53,
+        "FY2024_contract_asset_impairment_reversal": 36426157.37,
+        "FY2024_fixed_asset_impairment_loss": -40662991.85,
+        "FY2024_intangible_asset_impairment_loss": -16086389.62,
+        "FY2024_total_asset_impairment_loss": -20323224.1
+      },
+      "unit": "CNY; loss is negative",
+      "responsibility_boundary": "consolidated group; fixed/intangible impairment is not automatically assigned to the core incineration fleet absent project identification",
+      "printed_page": 190,
+      "source_locator": "Notes 55-56, credit and asset impairment, printed pages 190-191"
+    },
+    {
+      "fact_id": "F19_CASH_AND_RESTRICTION",
+      "value": {
+        "FY2024_total_monetary_funds": 4258254435.03,
+        "FY2024_restricted_monetary_funds": 11126957.76,
+        "FY2024_unrestricted_cash_proxy": 4247127477.27,
+        "FY2023_total_monetary_funds": 1523196654.92,
+        "FY2023_restricted_monetary_funds": 19696727.37,
+        "FY2023_unrestricted_cash_proxy": 1503499927.55
+      },
+      "unit": "CNY",
+      "responsibility_boundary": "consolidated group; unrestricted proxy equals reported cash and cash equivalents",
+      "printed_page": 142,
+      "source_locator": "Note 1, monetary funds; restriction detail on printed page 175"
+    },
+    {
+      "fact_id": "F20_INTEREST_BEARING_DEBT_COMPONENTS",
+      "value": {
+        "FY2024_short_term_borrowings": 2516778858.93,
+        "FY2024_short_term_bonds_including_interest": 504502739.74,
+        "FY2024_current_long_term_borrowings": 1684000380.57,
+        "FY2024_current_bonds": 500000000,
+        "FY2024_current_lease_liabilities": 64788832.93,
+        "FY2024_long_term_borrowings": 9963552464.94,
+        "FY2024_long_term_bonds": 1529784523.28,
+        "FY2024_long_term_lease_liabilities": 71106111.56,
+        "FY2024_derived_gross_interest_bearing_debt": 16834513911.95,
+        "FY2023_same_scope_gross_interest_bearing_debt": 15717791234.21,
+        "gross_debt_yoy_pct": 7.1,
+        "FY2024_due_within_one_year_on_same_scope": 5270070812.17
+      },
+      "unit": "CNY; percent for gross_debt_yoy_pct",
+      "responsibility_boundary": "consolidated group; derived debt includes borrowings, bonds and leases and excludes trade payables and shareholder dividends",
+      "printed_page": 84,
+      "source_locator": "Consolidated balance sheet and debt notes on printed pages 176, 179-183"
+    },
+    {
+      "fact_id": "F21_DEBT_SERVICE_AND_FUNDING_COVERAGE",
+      "value": {
+        "FY2024_interest_coverage": 4.87,
+        "FY2024_cash_interest_coverage": 8.52,
+        "FY2024_EBITDA_interest_coverage": 7.02,
+        "loan_repayment_rate_pct": 100,
+        "interest_payment_rate_pct": 100,
+        "overdue_bonds": false,
+        "overdue_interest_bearing_debt_other_than_bonds": false,
+        "long_term_borrowing_rate_range_pct": [
+          2.41,
+          4.3
+        ]
+      },
+      "unit": "times; percent",
+      "responsibility_boundary": "consolidated group funding and debt service",
+      "printed_page": 78,
+      "source_locator": "Ninth section, debt metrics; borrowing-rate range on printed page 181"
+    },
+    {
+      "fact_id": "F22_RESTRICTED_ASSETS",
+      "value": {
+        "FY2024_restricted_assets_gross": 18248905916.17,
+        "FY2024_restricted_assets_carrying_value": 16031977196.3,
+        "FY2023_restricted_assets_carrying_value": 15804773546.96,
+        "main_restriction": "project-company BOT fee rights, receivables, intangible assets and PPP receivables pledged for project-company borrowings"
+      },
+      "unit": "CNY",
+      "responsibility_boundary": "consolidated group and project-company financing perimeter",
+      "printed_page": 175,
+      "source_locator": "Note 24, ownership or use restrictions"
+    },
+    {
+      "fact_id": "F23_NCI_CLAIMS_AND_FLOWS",
+      "value": {
+        "FY2024_NCI_equity": 1818547594.42,
+        "FY2023_NCI_equity": 720923449.5,
+        "FY2024_total_equity": 15220868869.22,
+        "FY2024_NCI_equity_share_pct": 11.95,
+        "FY2024_NCI_profit": 20190693.7,
+        "FY2024_group_net_profit": 1684092595.19,
+        "FY2024_NCI_profit_share_pct": 1.2,
+        "FY2024_subsidiary_equity_injection_from_NCI": 1218557441.36,
+        "FY2024_dividends_paid_to_NCI": 13142866.3
+      },
+      "unit": "CNY; percent for share fields",
+      "responsibility_boundary": "consolidated group NCI; the equity increase principally reflects the high-quality development fund's injection into Foshan Investment",
+      "printed_page": 85,
+      "source_locator": "Consolidated balance sheet and income/cash-flow statements on printed pages 85, 88 and 92; cause on printed page 25"
+    },
+    {
+      "fact_id": "F24_PARENT_CASH_ACCESS_OBSERVATIONS",
+      "value": {
+        "FY2024_parent_cash": 1111936322.48,
+        "FY2024_parent_operating_cash_flow": -1684276110.85,
+        "FY2024_parent_cash_received_from_investment_income": 1172900139.13,
+        "FY2024_parent_cost_method_subsidiary_investment_income": 1888000000,
+        "FY2024_parent_dividends_receivable": 715600000,
+        "FY2024_parent_other_receivables_from_group_and_others_net": 4893007837,
+        "FY2023_parent_other_receivables_net": 3011585908.51
+      },
+      "unit": "CNY",
+      "responsibility_boundary": "listed-company parent; investment-income cash is observed non-financing upstream cash, while parent operating cash and intercompany balances are not added to group cash",
+      "printed_page": 93,
+      "source_locator": "Parent cash-flow statement; parent balance sheet on printed page 85 and parent notes on printed pages 233-239"
+    },
+    {
+      "fact_id": "F25_GROUP_POST_CAPEX_CASH_BRIDGES",
+      "value": {
+        "raw_group_operating_cash_flow": 3272684364.57,
+        "less_disclosed_fixed_asset_capex_ex_interpretation_14": 1708000000,
+        "derived_group_cash_proxy_using_disclosed_capex": 1564684364.57,
+        "less_cash_paid_for_long_term_assets": 1665203883.36,
+        "derived_group_cash_proxy_using_cash_paid": 1607480481.21,
+        "issuer_reported_free_cash_flow": 1358000000
+      },
+      "unit": "CNY",
+      "responsibility_boundary": "consolidated group; three bridges are retained separately and none is relabeled parent owner cash",
+      "printed_page": 13,
+      "source_locator": "Derived only from F13 and F15; issuer free-cash-flow value on printed page 13"
+    },
+    {
+      "fact_id": "F26_NET_DEBT_BRIDGE",
+      "value": {
+        "FY2024_derived_gross_interest_bearing_debt": 16834513911.95,
+        "less_FY2024_unrestricted_cash_proxy": 4247127477.27,
+        "FY2024_derived_net_interest_bearing_debt": 12587386434.68,
+        "FY2023_same_scope_derived_net_interest_bearing_debt": 14214291306.66,
+        "same_scope_yoy_pct": -11.45,
+        "scope_note": "The frozen Baseline threshold used an approximate FY2023 anchor of CNY 13.7bn; the annual-report component bridge is shown without overwriting that frozen anchor."
+      },
+      "unit": "CNY; percent for yoy_pct",
+      "responsibility_boundary": "consolidated group, borrowings+bonds+leases less unrestricted cash",
+      "printed_page": 84,
+      "source_locator": "Derived only from F19-F20"
+    },
+    {
+      "fact_id": "F27_EXTERNAL_PAYMENT_RESPONSIBILITY_BOUNDARY",
+      "value": {
+        "observed": [
+          "Government-supported repayment plans improved FY2024 collections.",
+          "Government customers remained the largest gross accounts-receivable group.",
+          "The issuer identifies lengthening government settlement cycles as an external cash-flow risk."
+        ],
+        "controllable_collection_failure_evidenced": false
+      },
+      "unit": "qualitative issuer disclosure",
+      "responsibility_boundary": "external government payment timing versus management-controllable collection execution",
+      "printed_page": 39,
+      "source_locator": "Third section, VI(4)(6), financial risk; collection results on printed pages 10 and 13"
+    },
+    {
+      "fact_id": "F28_STRUCTURAL_BLOCK_AND_REFINANCING",
+      "value": {
+        "documented_parent_upstream_block": false,
+        "documented_debt_or_covenant_default": false,
+        "documented_forced_disposal": false,
+        "funding_observation": "Debt service was current and coverage improved, but CNY 16.032bn of assets remained restricted and CNY 5.270bn of the selected debt scope was due within one year."
+      },
+      "unit": "qualitative with CNY amounts",
+      "responsibility_boundary": "consolidated group and listed-company parent; absence of a documented block does not prove unrestricted parent access",
+      "printed_page": 78,
+      "source_locator": "Debt status on printed page 78; restricted assets on printed page 175; maturity components on printed pages 179-183"
+    }
+  ],
+  "cells": [
+    {
+      "cell_id": "FY2024_BALANCE_SHEET_PERMANENT_LOSS",
+      "status": "OBSERVED",
+      "classification": "BALANCE_SHEET_COMPLETE_RESIDUAL",
+      "evidence_ref": "CNINFO:600323:FY2024:1223057340#printed-pages-13,25-26,78,83-84,91-92,142-150,175-183,190-195",
+      "observed_facts": [
+        "F01_GROUP_REVENUE",
+        "F02_GROUP_RECURRING_PARENT_PROFIT",
+        "F03_NONRECURRING_EXCLUSIONS",
+        "F04_PERSISTENT_GROUP_EXPENSES",
+        "F05_SOLID_WASTE_TOTAL_AND_ENGINEERING",
+        "F06_SOLID_WASTE_OPERATIONS_EX_ENGINEERING",
+        "F07_WASTE_INCINERATION_ECONOMICS",
+        "F08_WASTE_INCINERATION_VOLUME_AND_UTILIZATION",
+        "F09_WASTE_REVENUE_PERIMETER_ITEMS",
+        "F10_ENERGY_VOLUME_PRICE_COST_BRIDGE",
+        "F11_ENERGY_RECURRING_PROFIT_SCOPE_GAP",
+        "F12_GROUP_PROFIT_NONOPERATING_ITEMS",
+        "F13_GROUP_OPERATING_CASH_FLOW",
+        "F14_RECEIVABLE_COLLECTION_CONCENTRATION",
+        "F15_CAPITAL_EXPENDITURE_INPUTS",
+        "F16_NET_RECEIVABLES_AND_CONTRACT_ASSETS",
+        "F17_RECEIVABLE_CREDIT_CONCENTRATION",
+        "F18_IMPAIRMENT",
+        "F19_CASH_AND_RESTRICTION",
+        "F20_INTEREST_BEARING_DEBT_COMPONENTS",
+        "F21_DEBT_SERVICE_AND_FUNDING_COVERAGE",
+        "F22_RESTRICTED_ASSETS",
+        "F23_NCI_CLAIMS_AND_FLOWS",
+        "F24_PARENT_CASH_ACCESS_OBSERVATIONS",
+        "F25_GROUP_POST_CAPEX_CASH_BRIDGES",
+        "F26_NET_DEBT_BRIDGE",
+        "F27_EXTERNAL_PAYMENT_RESPONSIBILITY_BOUNDARY",
+        "F28_STRUCTURAL_BLOCK_AND_REFINANCING"
+      ],
+      "raw_inputs": {
+        "net_receivables_plus_contract_assets": 5291007116.1,
+        "net_receivables_plus_contract_assets_yoy_pct": 8.26,
+        "estimated_net_interest_bearing_debt": 12587386434.68,
+        "group_cash_proxy_using_disclosed_capex": 1564684364.57,
+        "structural_block_observed": false
+      },
+      "derived_calculations": [
+        "CNY 5.2910bn net receivables plus contract assets is up 8.26%, so it is neither at or below CNY 4.3985bn nor at or above the frozen 10% worsening threshold of CNY 5.3760bn.",
+        "The selected net-debt bridge is CNY 12.5874bn and the post-capex group cash proxy is positive CNY 1.5647bn; therefore neither the severe-block nor risk-worsens branch can match.",
+        "Risk-release cannot match because receivables did not decline at least 10%, regardless of the positive cash proxy."
+      ],
+      "matched_rule_order": 4,
+      "classification_reason": "The first three frozen branches fail; complete comparable inputs instead show offsetting cash, receivable and debt directions. Strong core operations do not erase the group balance-sheet burden."
+    },
+    {
+      "cell_id": "FY2024_GROUP_CASH_AND_BALANCE_SHEET_BURDEN",
+      "status": "OBSERVED",
+      "classification": "MIXED_COMPLETE_COMPARABLE_CASH_RESIDUAL",
+      "evidence_ref": "CNINFO:600323:FY2024:1223057340#printed-pages-10,13,25-26,39,78,83-84,91-93,142-150,175-183,190-195",
+      "observed_facts": [
+        "F01_GROUP_REVENUE",
+        "F02_GROUP_RECURRING_PARENT_PROFIT",
+        "F03_NONRECURRING_EXCLUSIONS",
+        "F04_PERSISTENT_GROUP_EXPENSES",
+        "F05_SOLID_WASTE_TOTAL_AND_ENGINEERING",
+        "F06_SOLID_WASTE_OPERATIONS_EX_ENGINEERING",
+        "F07_WASTE_INCINERATION_ECONOMICS",
+        "F08_WASTE_INCINERATION_VOLUME_AND_UTILIZATION",
+        "F09_WASTE_REVENUE_PERIMETER_ITEMS",
+        "F10_ENERGY_VOLUME_PRICE_COST_BRIDGE",
+        "F11_ENERGY_RECURRING_PROFIT_SCOPE_GAP",
+        "F12_GROUP_PROFIT_NONOPERATING_ITEMS",
+        "F13_GROUP_OPERATING_CASH_FLOW",
+        "F14_RECEIVABLE_COLLECTION_CONCENTRATION",
+        "F15_CAPITAL_EXPENDITURE_INPUTS",
+        "F16_NET_RECEIVABLES_AND_CONTRACT_ASSETS",
+        "F17_RECEIVABLE_CREDIT_CONCENTRATION",
+        "F18_IMPAIRMENT",
+        "F19_CASH_AND_RESTRICTION",
+        "F20_INTEREST_BEARING_DEBT_COMPONENTS",
+        "F21_DEBT_SERVICE_AND_FUNDING_COVERAGE",
+        "F22_RESTRICTED_ASSETS",
+        "F23_NCI_CLAIMS_AND_FLOWS",
+        "F24_PARENT_CASH_ACCESS_OBSERVATIONS",
+        "F25_GROUP_POST_CAPEX_CASH_BRIDGES",
+        "F26_NET_DEBT_BRIDGE",
+        "F27_EXTERNAL_PAYMENT_RESPONSIBILITY_BOUNDARY",
+        "F28_STRUCTURAL_BLOCK_AND_REFINANCING"
+      ],
+      "raw_inputs": {
+        "group_cash_proxy_using_disclosed_capex": 1564684364.57,
+        "net_receivables_plus_contract_assets_yoy_pct": 8.26,
+        "gross_interest_bearing_debt_yoy_pct": 7.1,
+        "government_supported_existing_receivables_collected_over": 2400000000,
+        "controllable_cash_execution_failure_evidenced": false
+      },
+      "derived_calculations": [
+        "The CNY 1.5647bn group cash proxy is positive, not negative by at least CNY 0.5bn, so neither adverse branch can match.",
+        "Receivables plus contract assets rose 8.26% and gross interest-bearing debt rose 7.10%, so favorable cash deleveraging cannot match even though the cash proxy exceeded CNY 0.5bn.",
+        "The cash balance also received CNY 1.2186bn of subsidiary NCI equity; that financing fact is not counted as owner cash or as operating collection performance."
+      ],
+      "matched_rule_order": 4,
+      "classification_reason": "The complete inputs are mixed. Collection and post-capex cash improved, but receivables did not fall and gross debt rose. Government payment timing is kept external absent a controllable failure carrier."
+    },
+    {
+      "cell_id": "FY2024_OWNER_CASH_ACCESS",
+      "status": "LOCAL_UNKNOWN",
+      "classification": "LOCAL_UNKNOWN",
+      "evidence_ref": "CNINFO:600323:FY2024:1223057340#printed-pages-13,25,85,91-93,142,175,193-195,233-239",
+      "observed_facts": [
+        "F01_GROUP_REVENUE",
+        "F02_GROUP_RECURRING_PARENT_PROFIT",
+        "F03_NONRECURRING_EXCLUSIONS",
+        "F04_PERSISTENT_GROUP_EXPENSES",
+        "F05_SOLID_WASTE_TOTAL_AND_ENGINEERING",
+        "F06_SOLID_WASTE_OPERATIONS_EX_ENGINEERING",
+        "F07_WASTE_INCINERATION_ECONOMICS",
+        "F08_WASTE_INCINERATION_VOLUME_AND_UTILIZATION",
+        "F09_WASTE_REVENUE_PERIMETER_ITEMS",
+        "F10_ENERGY_VOLUME_PRICE_COST_BRIDGE",
+        "F11_ENERGY_RECURRING_PROFIT_SCOPE_GAP",
+        "F12_GROUP_PROFIT_NONOPERATING_ITEMS",
+        "F13_GROUP_OPERATING_CASH_FLOW",
+        "F14_RECEIVABLE_COLLECTION_CONCENTRATION",
+        "F15_CAPITAL_EXPENDITURE_INPUTS",
+        "F16_NET_RECEIVABLES_AND_CONTRACT_ASSETS",
+        "F17_RECEIVABLE_CREDIT_CONCENTRATION",
+        "F18_IMPAIRMENT",
+        "F19_CASH_AND_RESTRICTION",
+        "F20_INTEREST_BEARING_DEBT_COMPONENTS",
+        "F21_DEBT_SERVICE_AND_FUNDING_COVERAGE",
+        "F22_RESTRICTED_ASSETS",
+        "F23_NCI_CLAIMS_AND_FLOWS",
+        "F24_PARENT_CASH_ACCESS_OBSERVATIONS",
+        "F25_GROUP_POST_CAPEX_CASH_BRIDGES",
+        "F26_NET_DEBT_BRIDGE",
+        "F27_EXTERNAL_PAYMENT_RESPONSIBILITY_BOUNDARY",
+        "F28_STRUCTURAL_BLOCK_AND_REFINANCING"
+      ],
+      "raw_inputs": {
+        "group_cash_proxy_using_disclosed_capex": 1564684364.57,
+        "NCI_equity_share_pct": 11.95,
+        "NCI_profit_share_pct": 1.2,
+        "actual_parent_investment_income_cash_received": 1172900139.13,
+        "documented_parent_upstream_block": false
+      },
+      "local_unknowns": [
+        "NCI is not below 10% on the balance-sheet claim boundary and is not otherwise closed by the annual report.",
+        "Although the parent received CNY 1.1729bn of investment-income cash, the annual report does not map all material subsidiary post-capex cash, required retention, NCI entitlements and distributable amounts into a complete parent-access bridge.",
+        "Absence of a documented upstream block is not evidence of unrestricted access to all positive group cash."
+      ],
+      "classification_reason": "Positive group cash and an observed parent receipt do not satisfy the frozen NCI and complete parent-access requirements; non-disclosure is localized rather than treated as adverse cash evidence."
+    },
+    {
+      "cell_id": "FY2024_PARENT_OWNER_CASH_ATTRIBUTION",
+      "status": "LOCAL_UNKNOWN",
+      "classification": "LOCAL_UNKNOWN",
+      "evidence_ref": "CNINFO:600323:FY2024:1223057340#printed-pages-13,25,85,91-93,142,175,193-195,233-239",
+      "observed_facts": [
+        "F01_GROUP_REVENUE",
+        "F02_GROUP_RECURRING_PARENT_PROFIT",
+        "F03_NONRECURRING_EXCLUSIONS",
+        "F04_PERSISTENT_GROUP_EXPENSES",
+        "F05_SOLID_WASTE_TOTAL_AND_ENGINEERING",
+        "F06_SOLID_WASTE_OPERATIONS_EX_ENGINEERING",
+        "F07_WASTE_INCINERATION_ECONOMICS",
+        "F08_WASTE_INCINERATION_VOLUME_AND_UTILIZATION",
+        "F09_WASTE_REVENUE_PERIMETER_ITEMS",
+        "F10_ENERGY_VOLUME_PRICE_COST_BRIDGE",
+        "F11_ENERGY_RECURRING_PROFIT_SCOPE_GAP",
+        "F12_GROUP_PROFIT_NONOPERATING_ITEMS",
+        "F13_GROUP_OPERATING_CASH_FLOW",
+        "F14_RECEIVABLE_COLLECTION_CONCENTRATION",
+        "F15_CAPITAL_EXPENDITURE_INPUTS",
+        "F16_NET_RECEIVABLES_AND_CONTRACT_ASSETS",
+        "F17_RECEIVABLE_CREDIT_CONCENTRATION",
+        "F18_IMPAIRMENT",
+        "F19_CASH_AND_RESTRICTION",
+        "F20_INTEREST_BEARING_DEBT_COMPONENTS",
+        "F21_DEBT_SERVICE_AND_FUNDING_COVERAGE",
+        "F22_RESTRICTED_ASSETS",
+        "F23_NCI_CLAIMS_AND_FLOWS",
+        "F24_PARENT_CASH_ACCESS_OBSERVATIONS",
+        "F25_GROUP_POST_CAPEX_CASH_BRIDGES",
+        "F26_NET_DEBT_BRIDGE",
+        "F27_EXTERNAL_PAYMENT_RESPONSIBILITY_BOUNDARY",
+        "F28_STRUCTURAL_BLOCK_AND_REFINANCING"
+      ],
+      "raw_inputs": {
+        "group_cash_proxy_using_cash_paid": 1607480481.21,
+        "NCI_equity_share_pct": 11.95,
+        "actual_parent_investment_income_cash_received": 1172900139.13,
+        "parent_dividends_receivable": 715600000,
+        "parent_operating_cash_flow": -1684276110.85
+      },
+      "local_unknowns": [
+        "The NCI scope remains open: the annual report identifies the fund injection and group-level NCI, but does not close material-subsidiary post-capex cash and NCI entitlements.",
+        "Actual parent investment-income cash establishes some upstream access, not unrestricted access to the full positive group cash proxy.",
+        "Parent operating cash includes large intra-group flows and cannot be added to consolidated cash without an internal-elimination bridge."
+      ],
+      "classification_reason": "Neither favorable nor adverse attribution can be uniquely matched because the required NCI closure and full parent-access mapping are absent. The unknown is confined to owner-cash attribution."
+    },
+    {
+      "cell_id": "FY2024_RECURRING_EARNINGS_QUALITY",
+      "status": "OBSERVED",
+      "classification": "EARNINGS_COMPLETE_RESIDUAL",
+      "evidence_ref": "CNINFO:600323:FY2024:1223057340#printed-pages-6-7,13-15,20-23,87-88,187-191,229,239-240",
+      "observed_facts": [
+        "F01_GROUP_REVENUE",
+        "F02_GROUP_RECURRING_PARENT_PROFIT",
+        "F03_NONRECURRING_EXCLUSIONS",
+        "F04_PERSISTENT_GROUP_EXPENSES",
+        "F05_SOLID_WASTE_TOTAL_AND_ENGINEERING",
+        "F06_SOLID_WASTE_OPERATIONS_EX_ENGINEERING",
+        "F07_WASTE_INCINERATION_ECONOMICS",
+        "F08_WASTE_INCINERATION_VOLUME_AND_UTILIZATION",
+        "F09_WASTE_REVENUE_PERIMETER_ITEMS",
+        "F10_ENERGY_VOLUME_PRICE_COST_BRIDGE",
+        "F11_ENERGY_RECURRING_PROFIT_SCOPE_GAP",
+        "F12_GROUP_PROFIT_NONOPERATING_ITEMS",
+        "F13_GROUP_OPERATING_CASH_FLOW",
+        "F14_RECEIVABLE_COLLECTION_CONCENTRATION",
+        "F15_CAPITAL_EXPENDITURE_INPUTS",
+        "F16_NET_RECEIVABLES_AND_CONTRACT_ASSETS",
+        "F17_RECEIVABLE_CREDIT_CONCENTRATION",
+        "F18_IMPAIRMENT",
+        "F19_CASH_AND_RESTRICTION",
+        "F20_INTEREST_BEARING_DEBT_COMPONENTS",
+        "F21_DEBT_SERVICE_AND_FUNDING_COVERAGE",
+        "F22_RESTRICTED_ASSETS",
+        "F23_NCI_CLAIMS_AND_FLOWS",
+        "F24_PARENT_CASH_ACCESS_OBSERVATIONS",
+        "F25_GROUP_POST_CAPEX_CASH_BRIDGES",
+        "F26_NET_DEBT_BRIDGE",
+        "F27_EXTERNAL_PAYMENT_RESPONSIBILITY_BOUNDARY",
+        "F28_STRUCTURAL_BLOCK_AND_REFINANCING"
+      ],
+      "raw_inputs": {
+        "FY2024_parent_net_profit_ex_nonrecurring": 1625364374.33,
+        "FY2024_parent_net_profit_ex_nonrecurring_yoy_pct": 15.52,
+        "FY2024_solid_waste_operating_net_profit_ex_engineering_equipment": 1004000000,
+        "solid_waste_operating_net_profit_yoy_pct": 9.64,
+        "FY2024_total_nonrecurring_after_tax_attributable": 38537527.16,
+        "persistent_group_expense_sum_yoy_pct": 5.01
+      },
+      "derived_calculations": [
+        "Attributable ex-nonrecurring profit of CNY 1.6254bn exceeds the favorable CNY 1.54775bn threshold.",
+        "Solid-waste operating net profit excluding engineering/equipment was reported as CNY 1.004bn and +9.64%, below the favorable CNY 1.0043bn and +10% requirements at issuer precision.",
+        "Neither adverse profit threshold is met; therefore the favorable and adverse branches both fail before the residual branch."
+      ],
+      "matched_rule_order": 3,
+      "classification_reason": "Group recurring profit improved materially and solid-waste operations improved, but the frozen dual 10% favorable test is narrowly not met. External gas-price relief and identified revenue perimeter items are not converted into management credit."
+    },
+    {
+      "cell_id": "FY2024_RESPONSIBILITY_MATCHED_RECURRING_ECONOMICS",
+      "status": "LOCAL_UNKNOWN",
+      "classification": "LOCAL_UNKNOWN",
+      "evidence_ref": "CNINFO:600323:FY2024:1223057340#printed-pages-6,13-15,20-23,87-88,187-191,229",
+      "observed_facts": [
+        "F01_GROUP_REVENUE",
+        "F02_GROUP_RECURRING_PARENT_PROFIT",
+        "F03_NONRECURRING_EXCLUSIONS",
+        "F04_PERSISTENT_GROUP_EXPENSES",
+        "F05_SOLID_WASTE_TOTAL_AND_ENGINEERING",
+        "F06_SOLID_WASTE_OPERATIONS_EX_ENGINEERING",
+        "F07_WASTE_INCINERATION_ECONOMICS",
+        "F08_WASTE_INCINERATION_VOLUME_AND_UTILIZATION",
+        "F09_WASTE_REVENUE_PERIMETER_ITEMS",
+        "F10_ENERGY_VOLUME_PRICE_COST_BRIDGE",
+        "F11_ENERGY_RECURRING_PROFIT_SCOPE_GAP",
+        "F12_GROUP_PROFIT_NONOPERATING_ITEMS",
+        "F13_GROUP_OPERATING_CASH_FLOW",
+        "F14_RECEIVABLE_COLLECTION_CONCENTRATION",
+        "F15_CAPITAL_EXPENDITURE_INPUTS",
+        "F16_NET_RECEIVABLES_AND_CONTRACT_ASSETS",
+        "F17_RECEIVABLE_CREDIT_CONCENTRATION",
+        "F18_IMPAIRMENT",
+        "F19_CASH_AND_RESTRICTION",
+        "F20_INTEREST_BEARING_DEBT_COMPONENTS",
+        "F21_DEBT_SERVICE_AND_FUNDING_COVERAGE",
+        "F22_RESTRICTED_ASSETS",
+        "F23_NCI_CLAIMS_AND_FLOWS",
+        "F24_PARENT_CASH_ACCESS_OBSERVATIONS",
+        "F25_GROUP_POST_CAPEX_CASH_BRIDGES",
+        "F26_NET_DEBT_BRIDGE",
+        "F27_EXTERNAL_PAYMENT_RESPONSIBILITY_BOUNDARY",
+        "F28_STRUCTURAL_BLOCK_AND_REFINANCING"
+      ],
+      "raw_inputs": {
+        "incineration_net_profit_yoy_pct": 21.63,
+        "FY2024_incineration_gross_margin_pct": 48.39,
+        "FY2024_capacity_utilization_pct": 119,
+        "natural_gas_sales_volume_yoy_pct": -4.04,
+        "energy_gross_margin_change_ppt": 1.18,
+        "gas_source_procurement_cost_yoy_pct": -9.89,
+        "FY2024_energy_report_segment_operating_profit": 303121854.54,
+        "group_parent_net_profit_ex_nonrecurring_yoy_pct": 15.52
+      },
+      "local_unknowns": [
+        "The authorized report does not disclose FY2023 same-boundary incineration gross margin for the frozen one-point comparison.",
+        "It does not disclose exact average gas procurement price, exact regulated/customer sale price, or a same-boundary FY2023 versus FY2024 energy recurring-profit bridge after persistent costs.",
+        "The current report-segment operating profit cannot be substituted for the required same-boundary recurring net-profit comparison."
+      ],
+      "classification_reason": "Incineration utilization and profit are favorable, but the favorable first branch also requires a same-boundary gross-margin comparison and durable energy economics when procurement price is no longer declining. Procurement cost did decline, and the exact energy price/profit bridge is unavailable. No responsibility-matched adverse carrier is observed, so the missing fields remain local rather than becoming a negative management inference."
+    }
+  ],
+  "excluded_inferences": [
+    "No training utility, method utility or transfer validity inference is made.",
+    "No enterprise-final judgment, valuation, price, return, BuyBand, report or investment action is made.",
+    "External gas-price and government-payment timing are not automatically attributed to management.",
+    "Favorable waste-incineration performance is not used to erase group receivable, debt, restricted-asset or parent-access risk."
+  ]
+}
