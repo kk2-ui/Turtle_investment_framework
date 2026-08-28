@@ -48,7 +48,7 @@ TRACK_STATUSES = {
 TRACK_OUTCOME_ACCESS = {
     "TEACHING": {"RESULT_KNOWN"},
     "BLIND_JUDGMENT": {"SEALED", "REVEALED_AFTER_FREEZE"},
-    "HISTORICAL_HOLDOUT": {"SEALED", "REVEALED_AFTER_METHOD_FREEZE"},
+    "HISTORICAL_HOLDOUT": {"SEALED", "REVEALED_AFTER_HOLDOUT_FORECAST_FREEZE"},
     "PROSPECTIVE": {"NOT_YET_RELEASED", "PARTIAL_RELEASED", "RELEASED_AFTER_FREEZE"},
 }
 SELECTION_EXPOSURES = {
@@ -351,8 +351,8 @@ def _validate_case(raw: Any, *, index: int) -> tuple[list[str], dict[str, Any]]:
             findings.append(path + ".holdout_axis_invalid")
         if status in {"RESERVED", "FROZEN"} and outcome_access != "SEALED":
             findings.append(path + ".unevaluated_holdout_must_be_sealed")
-        if status == "EVALUATED" and outcome_access != "REVEALED_AFTER_METHOD_FREEZE":
-            findings.append(path + ".evaluated_holdout_requires_post_method_freeze_reveal")
+        if status == "EVALUATED" and outcome_access != "REVEALED_AFTER_HOLDOUT_FORECAST_FREEZE":
+            findings.append(path + ".evaluated_holdout_requires_post_holdout_forecast_freeze_reveal")
         if starts is None:
             findings.append(path + ".holdout_outcome_window_required_at_reservation")
         required_artifacts = {"freeze_ref"}

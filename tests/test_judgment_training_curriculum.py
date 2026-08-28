@@ -116,6 +116,20 @@ def _holdout_case() -> dict:
     }
 
 
+def _evaluated_holdout_case() -> dict:
+    item = _holdout_case()
+    item["status"] = "EVALUATED"
+    item["outcome_access"] = "REVEALED_AFTER_HOLDOUT_FORECAST_FREEZE"
+    item["role_isolation_state"] = "ROLE_ISOLATION_PROVED"
+    item["source_refs"] = ["docs/example/holdout-preoutcome.json"]
+    item["artifact_refs"] = {
+        "freeze_ref": "docs/example/holdout-freeze.json",
+        "settlement_ref": "docs/example/holdout-settlement.json",
+        "postoutcome_review_ref": "docs/example/holdout-review.md",
+    }
+    return item
+
+
 def _prospective_case() -> dict:
     return {
         "case_id": "FORWARD:CN601899:FY2026",
@@ -201,6 +215,19 @@ def test_preoutcome_candidate_can_enter_blind_or_holdout_without_comparative() -
     )
     assert result["allowed_tracks"] == ["TEACHING", "BLIND_JUDGMENT", "HISTORICAL_HOLDOUT"]
     assert _blind_case()["comparative_mode"] == "NOT_REQUIRED"
+
+
+def test_evaluated_holdout_reveals_after_its_own_forecast_freeze_without_claiming_method_freeze() -> None:
+    payload = _curriculum()
+    payload["cases"] = [_evaluated_holdout_case()]
+    result = curriculum.validate_curriculum(payload)
+    assert result["valid"], result["findings"]
+
+    wrong = deepcopy(payload)
+    wrong["cases"][0]["outcome_access"] = "REVEALED_AFTER_METHOD_FREEZE"
+    invalid = curriculum.validate_curriculum(wrong)
+    assert not invalid["valid"]
+    assert any("post_holdout_forecast_freeze" in finding for finding in invalid["findings"])
 
 
 def test_teaching_only_curriculum_does_not_require_holdout_or_blind_lane() -> None:
