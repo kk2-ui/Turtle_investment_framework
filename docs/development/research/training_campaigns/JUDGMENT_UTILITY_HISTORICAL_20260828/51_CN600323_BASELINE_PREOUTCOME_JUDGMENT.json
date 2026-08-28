@@ -1,0 +1,413 @@
+{
+  "schema_version": "historical-judgment-first-draft.v1",
+  "episode_id": "HIST:CN600323:20240501:FY2024",
+  "company_id": "CN:600323",
+  "cutoff_at": "2024-05-01T00:00:00+08:00",
+  "outcome_state": "SEALED_NOT_IN_PACKET",
+  "enterprise_view": "瀚蓝环境在截点时更像一家运营能力已经得到验证、但集团现金转化仍未得到验证的区域环境基础设施运营商，而不是单纯依靠建设扩张的成长公司。最可依赖的是生活垃圾焚烧等固废运营资产：2021—2023年固废净利润由7.17亿元增至9.86亿元，2023年剔除工程与装备后的固废净利润约9.13亿元，垃圾焚烧量仍增长20.85%，说明在工程收入退坡时运营利润仍能增长。不能同等依赖的是2023年燃气盈利修复和报表经营现金流跃升：能源净利润由2022年的亏损0.65亿元反弹至1.57亿元，主要由采购气价和受监管终端售价之间的价差修复驱动；24.82亿元集团经营现金流又含9.88亿元债权转让回款和约2亿元污水处理费集中回收。与此同时，应收账款加合同资产由2021年的约21.93亿元升至2023年的48.87亿元，估算净有息债务由约99.5亿元升至约137亿元。当前投资处理是把固废核心运营利润作为正常盈利的主要锚，剔除工程收入和燃气周期高点的外推，对集团现金只条件计入，并因客户付款、资本开支和杠杆联动而收紧永久损失约束；这不是整案否定，因为资本开支已从2021—2022年约32亿元降至2023年约23亿元，少数股东损益占合并净利润约2.7%，且付款机制改善已经证明部分应收可以变现。",
+  "most_important_enterprise_judgments": [
+    {
+      "current_judgment": "固废核心运营利润具有中等偏高的持续性，且其质量高于表面总收入走势；工程业务退坡并未破坏核心经营能力。",
+      "causal_mechanism": "2023年低毛利固废工程收入同比减少约12.58亿元、固废总收入下降6.49%，但固废净利润仍增长9.34%至9.86亿元；剔除工程与装备后，固废运营净利润约9.13亿元，较2022年的8.13亿元增长约12%。同期垃圾焚烧量增长20.85%、生活垃圾焚烧收入增长15.57%、该子业务毛利率44.70%，新增项目投运、产能利用和降本增效共同把新增处理量转成经常利润。这一机制属于项目运营、成本控制和存量资产利用，而非依赖继续确认建设收入。",
+      "strongest_counterargument": "新增投产仍可能处于爬坡期，2023年吨垃圾发电量和上网电量分别下降4.10%和3.02%；危废行业产能严重过剩、量价承压，政府客户回款拉长也可能使会计利润不能转成现金。固废利润增长因此既可能是运营能力，也可能部分来自项目组合变化和阶段性降本，而非可无限外推的单位经济改善。",
+      "investment_implication": "正常盈利应主要锚定剔除工程与装备后的固废运营利润，并给予管理层有条件的运营信用；不把工程收入下降误判为核心恶化，也不为尚未证明的危废、环卫扩张和新项目满产支付增长价值。",
+      "flip_facts": [
+        "FY2024剔除工程与装备后的固废净利润同比下降10%以上，且下降来自垃圾焚烧单位经济、利用率或可控运营成本恶化，而非单纯工程口径变化。",
+        "垃圾焚烧量继续增长但生活垃圾焚烧利润或毛利率显著下降，并伴随新增项目减值，表明规模未能转化为经济回报。",
+        "相反，若吨垃圾上网效率恢复、固废运营利润继续增长且不靠补贴或资产处置，则可把管理执行从有条件信用上调为正面信用。"
+      ]
+    },
+    {
+      "current_judgment": "2023年盈利改善是真实的，但其中燃气价差修复不应按全年水平直接资本化；能源业务是受监管顺价和采购成本共同决定的波动项，而不是管理层单独控制的稳定增长引擎。",
+      "causal_mechanism": "能源业务2021年净利润约0.36亿元、2022年亏损约0.65亿元、2023年盈利约1.57亿元；2023年能源毛利率由1.45%升至9.76%，主要因为天然气采购气价回落、进销价差提高，而销量仅增长1.22%。终端限价和顺价机制未完全理顺，使采购成本冲击可以直接穿透利润，2023年能源利润改善约2.22亿元，解释了合并扣非净利润约3亿元增量中的大部分。",
+      "strongest_counterargument": "公司正在推动多元气源、优化采购结构并与政府和客户沟通顺价，2023年恢复盈利可能不只是外部价格回落，也可能包含可持续的采购和机制改善；完全按三年均值处理会低估已改善的供应组合。",
+      "investment_implication": "维持固废主锚，但在正常盈利中排除2023年能源利润高于保守中周期水平的部分；不因燃气价差修复自动给管理层执行信用，也不因一次再度压缩自动下调不受影响的固废核心。只有同责任边界的采购价、终端售价、销量和能源经常利润共同改善，才提升能源正常盈利。",
+      "flip_facts": [
+        "FY2024在采购气价不再明显下降的情况下，能源进销价差和经常利润仍保持稳定，并有正式、可执行的顺价或多元气源证据。",
+        "FY2024能源利润再次转负，且受监管售价无法覆盖采购成本，说明2023修复不可作为正常状态。",
+        "能源销量、毛利率和经常利润同时改善但合并利润未改善，需转而检查财务费用、信用减值和新增项目固定成本。"
+      ]
+    },
+    {
+      "current_judgment": "集团最关键的约束不是会计盈利，而是政府/电网客户回款、资本开支与债务融资之间尚未闭合的现金循环；当前尚未到永久损失论断，但必须收紧约束并只条件计入所有者现金。",
+      "causal_mechanism": "应收账款加合同资产从2021年约21.93亿元增至2022年约38.74亿元、2023年约48.87亿元，即使2023年已通过南控集团债权转让回收9.88亿元仍继续上升；其中政府客户及可再生能源补贴应收余额占应收账款的大部分，2023年信用减值损失增至1.03亿元。按短期借款、一年内到期非流动负债、长期借款、应付债券和租赁负债减货币资金估算，净有息债务由2021年约99.5亿元升至2023年约137亿元。2023年集团经营现金流24.82亿元减购建长期资产现金20.48亿元虽为正，但现金流含约11.88亿元集中回款且公司披露全年资本性支出约23亿元，说明经常现金覆盖仍弱。集团资本开支、项目质押和地方政府付款把利润转化延迟并由债务填补。",
+      "strongest_counterargument": "2023年债权转让全部到账、南海污水处理费付款机制调整、公司预计2024年解决至少20亿元存量应收，且资本性支出已由约32亿元降至23亿元并预计继续下降；少数股东损益和权益占比较小，项目长期特许经营现金流与低风险融资也可能使当前杠杆可管理。",
+      "investment_implication": "集团经营现金流减总资本开支只能作为GROUP_CASH_PROXY；少数股东边界相对不重大但母公司上划能力尚未闭合，因此owner cash仅COUNT_CONDITIONALLY。永久损失约束TIGHTEN但暂不THESIS_BLOCKING：不依赖分红增长承诺或存量应收回收目标，直到应收下降、资本开支退坡和净债务下降同时出现。",
+      "flip_facts": [
+        "FY2024应收账款加合同资产下降至少10%、集团调整后经营现金流减总资本开支为正且净有息债务下降至少10%，并能看到子公司现金合法上划或母公司现金覆盖股东分配。",
+        "FY2024应收账款加合同资产和净有息债务均再增10%以上，同时调整后GROUP_CASH_PROXY低于负5亿元，则进一步收紧永久损失约束。",
+        "若出现项目回款结构性阻断、再融资压力或母公司无法取得子公司现金，永久损失处理升级为THESIS_BLOCKING。"
+      ]
+    }
+  ],
+  "scenario_analysis": {
+    "optimistic": {
+      "operating_path": "垃圾焚烧处理量和剔除工程后的固废运营利润继续增长，吨垃圾上网效率企稳；天然气在采购成本不再大幅回落的情况下仍保持正向价差；至少20亿元存量应收得到实质回收，合同资产同步下降而非仅在科目间迁移；总资本开支继续下降，调整后GROUP_CASH_PROXY转为稳定正值，净有息债务下降，且母公司取得子公司现金的路径被财务数据证明。",
+      "investment_effect": "固废正常盈利上调，能源可从排除高点改为按较高但仍保守的中周期水平计入；管理执行上调为POSITIVE_CREDIT，owner cash可转为COUNT_IN_PARENT_OWNER_CASH，永久损失约束放松，内在价值相对FY2023参考状态方向为UP。",
+      "discriminating_facts": [
+        "剔除工程与装备后的固废净利润同比至少增长10%，且信用减值和财务费用没有吞噬增量。",
+        "应收账款加合同资产同比下降至少10%，而非通过债权转让后又重新累积。",
+        "调整后集团经营现金流减公司披露的总资本开支至少为正5亿元，净有息债务同比下降至少10%。",
+        "母公司经营现金、上游分红或可核验的集团资金调度足以覆盖对外分配。"
+      ]
+    },
+    "base": {
+      "operating_path": "固废运营利润小幅增长或大致稳定，工程收入继续退坡，吨垃圾效率不再明显恶化；能源业务保持盈利但低于2023年高价差水平；政府回款改善但新增环卫、国补和污水应收抵消一部分回收，资本开支下降而净债务仅小幅波动。",
+      "investment_effect": "核心正常盈利维持，继续剔除能源高点与工程收入外推；管理层维持CONDITIONAL_CREDIT，集团现金仍只条件计入，永久损失维持收紧约束，内在价值方向相对FY2023为UNCHANGED。",
+      "discriminating_facts": [
+        "合并扣非净利润在2023年的正负10%范围内，且固废运营利润稳定、能源利润波动解释大部分差额。",
+        "应收账款加合同资产、调整后GROUP_CASH_PROXY和净有息债务没有同时明显改善或恶化。",
+        "资本开支下降，但母公司现金可得性仍只见间接集团调度而无清晰上划证据。"
+      ]
+    },
+    "pessimistic": {
+      "operating_path": "固废新增项目利用率或单位经济恶化，危废和环卫价格竞争带来减值；天然气采购成本再次超过受监管售价，能源转亏；政府、电网及补贴回款继续延迟，资本开支虽下降仍高于经常经营现金，信用减值、财务费用和净债务一起上升，或母公司现金上划受阻。",
+      "investment_effect": "下调正常盈利并撤回管理执行信用；owner cash改为DO_NOT_COUNT。若负现金、应收和净债务持续且出现融资或上划阻断，永久损失升级为THESIS_BLOCKING，内在价值方向为DOWN。",
+      "discriminating_facts": [
+        "剔除工程后的固废净利润同比下降10%以上，并伴随单位效率下降、可控成本上升或项目减值。",
+        "能源业务再次亏损且顺价机制无实质改善。",
+        "应收账款加合同资产和净有息债务均增长10%以上，调整后GROUP_CASH_PROXY低于负5亿元。",
+        "出现项目付款违约、重大再融资压力或母公司取得子公司现金的结构性阻断。"
+      ]
+    }
+  },
+  "material_treatment_snapshot": {
+    "management_execution": {
+      "treatment_code": "CONDITIONAL_CREDIT",
+      "rationale": "固废工程收入大降时，剔除工程后的固废运营净利润仍约增长12%，焚烧量增长20.85%，且资本开支下降，支持运营与项目收尾能力；但吨垃圾效率下滑、应收继续增加，燃气利润主要由外部价差修复，不能给无条件正面信用。"
+    },
+    "normal_earnings": {
+      "treatment_code": "EXCLUDE_COMPONENT",
+      "rationale": "以剔除工程与装备后的固废运营利润及供排水经常利润为主要锚；排除低毛利工程收入的外推，并把2023年能源1.57亿元利润高于保守中周期水平的部分排除，直到同口径销量、价差、经常利润和持续费用共同证明其可持续。"
+    },
+    "owner_cash": {
+      "treatment_code": "COUNT_CONDITIONALLY",
+      "rationale": "2023年GROUP_CASH_PROXY转正，但含约11.88亿元集中回款，维护性与成长性资本开支未精确拆分；少数股东损益约占2.7%而相对不重大，但母公司上划能力没有闭合。故不能直接把合并现金当母公司所有者现金。"
+    },
+    "permanent_loss": {
+      "treatment_code": "TIGHTEN_CONSTRAINT",
+      "rationale": "2021—2023年应收账款加合同资产约翻倍至48.87亿元、估算净有息债务增至约137亿元，且约158亿元资产受限；稳定运营资产与资本开支退坡防止立即升级为THESIS_BLOCKING，但继续扩表不能被会计利润掩盖。"
+    },
+    "valuation_direction": {
+      "treatment_code": "UNCHANGED",
+      "rationale": "这是相对共同FY2023参考状态的内在价值方向。截点没有FY2024结果可证明固废正常盈利、现金可得性或永久损失载体发生净变化；对能源高点和现金集中回收的保守处理已经冻结在参考状态内，不涉及市场价格或正式估值。"
+    },
+    "next_research_action": {
+      "action_family": "CASH_CONVERSION_AND_PARENT_ACCESS",
+      "target_scope": "FY2024集团与母公司同口径现金桥，含政府/电网/国补客户、项目公司、少数股东与母公司",
+      "fact_or_metric": "核对调整后集团经营现金流、公司披露的总资本开支、应收账款加合同资产、净有息债务、信用减值，以及子公司分红/集团资金调度进入母公司的金额；明确回收是否超过新增应收并覆盖资本开支与对外分配。",
+      "decision_axis": "owner_cash_and_permanent_loss",
+      "positive_effect": "若应收下降、调整后GROUP_CASH_PROXY为正、净债务下降且母公司取得现金路径有证据，则owner cash转为COUNT_IN_PARENT_OWNER_CASH并放松永久损失约束。",
+      "negative_effect": "若应收和净债务继续同步上升、现金代理持续为负或上划受阻，则owner cash转为DO_NOT_COUNT；出现持续融资压力时永久损失升级为THESIS_BLOCKING。"
+    }
+  },
+  "outcome_cells": [
+    {
+      "cell_id": "FY2024_RECURRING_EARNINGS_QUALITY",
+      "direct_axes": [
+        "management_execution",
+        "normal_earnings",
+        "valuation_direction"
+      ],
+      "preserved_axes": [
+        "owner_cash",
+        "permanent_loss",
+        "next_research_action"
+      ],
+      "direct_axis_links": {
+        "management_execution": "只由固废运营利润、单位效率、可控成本和项目减值更新；燃气采购价或受监管售价单独变化不归责管理层。",
+        "normal_earnings": "由归母扣非利润与剔除工程后的固废运营利润共同更新，并扣除非经常项目、工程退坡和持续费用负担。",
+        "valuation_direction": "只有经常盈利跨过阈值且来源质量一致时，才改变相对FY2023参考状态的内在价值方向。"
+      },
+      "preserved_axis_reasons": {
+        "owner_cash": "利润不等于现金，必须由独立的现金、资本开支、NCI和母公司上划单元结算。",
+        "permanent_loss": "单年利润变化本身不能结算持续现金吞噬、应收累积和再融资风险。",
+        "next_research_action": "无论盈利类别如何，排名第一的现金转化与母公司可得性核查仍然需要完成。"
+      },
+      "normal_earnings_bridge": {
+        "revenue_or_volume_metric": "FY2024垃圾焚烧量、剔除工程与装备后的固废运营收入，以及天然气销量；均与FY2023同口径比较。",
+        "recurring_profit_metric": "归属于母公司股东的扣除非经常性损益净利润，以及剔除工程与装备后的固废净利润；FY2023锚分别为14.0704807386亿元和约9.13亿元。",
+        "persistent_cost_burden_metrics": [
+          "销售费用、管理费用、研发费用和财务费用合计",
+          "信用减值损失和资产减值损失",
+          "固废运营折旧摊销和可控运营成本",
+          "天然气采购成本与终端销售收入形成的进销价差"
+        ],
+        "nonrecurring_exclusions": [
+          "非经常性损益",
+          "资产处置、一次性补贴和减值转回",
+          "PPP或工程与装备建设收入及利润的口径变化",
+          "仅由天然气采购价格单年大幅回落形成、尚未证明可持续的高于中周期利润部分"
+        ]
+      },
+      "local_input_treatments": {
+        "LOCAL_UNKNOWN": {
+          "axis_updates": {},
+          "next_discriminating_evidence": "取得FY2024归母扣非净利润、剔除工程与装备后的固废净利润及对应非经常项目；缺少某一分项只冻结本单元，不推定恶化。"
+        },
+        "MEASUREMENT_MISMATCH": {
+          "axis_updates": {},
+          "next_discriminating_evidence": "把FY2024固废工程/运营拆分、会计政策与合并范围重述到FY2023同口径；不能把总收入或总毛利率替代同责任边界的经常利润。"
+        }
+      },
+      "valid_input_first_match": [
+        {
+          "class_id": "EARNINGS_FAVORABLE_DURABLE",
+          "economic_direction": "FAVORABLE",
+          "condition": "在完整可比输入下，FY2024归母扣非净利润不少于15.4775亿元（较FY2023增长至少10%），剔除工程与装备后的固废净利润不少于10.043亿元（增长至少10%），且增长不是由非经常项目、减值转回或仅由燃气采购价单年下跌主导，持续费用负担没有超过经常毛利增量。",
+          "is_residual": false,
+          "observed_adverse_carriers": [],
+          "axis_updates": {
+            "management_execution": "POSITIVE_CREDIT",
+            "normal_earnings": "RAISE",
+            "valuation_direction": "UP"
+          },
+          "scope_requirements": {
+            "required_nci_scope_at_settlement": [],
+            "required_parent_access_at_settlement": "NOT_APPLICABLE"
+          }
+        },
+        {
+          "class_id": "EARNINGS_ADVERSE_CORE",
+          "economic_direction": "ADVERSE",
+          "condition": "在完整可比输入下，FY2024归母扣非净利润不高于12.6634亿元（较FY2023下降至少10%），同时剔除工程与装备后的固废净利润不高于8.217亿元（下降至少10%），且已观察到垃圾焚烧单位经济或利用率下降、可控运营成本/持续费用上升、或新增项目减值至少一项责任匹配的负面载体；单独的燃气限价或采购价冲击不满足本类。",
+          "is_residual": false,
+          "observed_adverse_carriers": [
+            "剔除工程后的固废经常利润显著下降",
+            "垃圾焚烧单位经济或利用率恶化",
+            "可控运营成本、持续费用或项目减值吞噬利润"
+          ],
+          "axis_updates": {
+            "management_execution": "NEGATIVE_CREDIT",
+            "normal_earnings": "LOWER",
+            "valuation_direction": "DOWN"
+          },
+          "scope_requirements": {
+            "required_nci_scope_at_settlement": [],
+            "required_parent_access_at_settlement": "NOT_APPLICABLE"
+          }
+        },
+        {
+          "class_id": "EARNINGS_COMPLETE_RESIDUAL",
+          "economic_direction": "MIXED",
+          "condition": "所有完整、同口径、可比的FY2024盈利输入中，未首先满足EARNINGS_FAVORABLE_DURABLE或EARNINGS_ADVERSE_CORE的剩余补集，包括利润变化主要由外部燃气价差解释、或归母与固废运营指标方向不一致。",
+          "is_residual": true,
+          "observed_adverse_carriers": [],
+          "axis_updates": {
+            "management_execution": "CONDITIONAL_CREDIT",
+            "normal_earnings": "EXCLUDE_COMPONENT",
+            "valuation_direction": "UNCHANGED"
+          },
+          "scope_requirements": {
+            "required_nci_scope_at_settlement": [],
+            "required_parent_access_at_settlement": "NOT_APPLICABLE"
+          }
+        }
+      ]
+    },
+    {
+      "cell_id": "FY2024_OWNER_CASH_ACCESS",
+      "direct_axes": [
+        "owner_cash"
+      ],
+      "preserved_axes": [
+        "management_execution",
+        "normal_earnings",
+        "permanent_loss",
+        "valuation_direction",
+        "next_research_action"
+      ],
+      "direct_axis_links": {
+        "owner_cash": "只有集团调整后现金代理、NCI归属和母公司实际上划/覆盖三条桥同时闭合，才把集团现金计入母公司所有者现金。"
+      },
+      "preserved_axis_reasons": {
+        "management_execution": "政府和电网付款时点不完全由管理层控制，回款本身不自动授予执行信用。",
+        "normal_earnings": "现金回收不改变同口径经常利润。",
+        "permanent_loss": "永久损失由独立的持续现金吞噬、应收与杠杆组合单元结算。",
+        "valuation_direction": "单轴现金可得性证据不足以越过独立盈利与资产负债表处理直接改变估值方向。",
+        "next_research_action": "该单元结算后仍需持续观察应收、净债务与项目回款，不机械改变行动范围。"
+      },
+      "owner_cash_bridge": {
+        "cash_proxy_scope": "GROUP",
+        "nci_scope": "IMMATERIAL_WITH_EVIDENCE",
+        "parent_access": "UNKNOWN",
+        "capex_treatment": "以公司披露的FY2024总资本性支出为优先；若只披露购建固定资产、无形资产和其他长期资产现金，则明确标记为下限。PPP解释第14号造成的经营/投资分类差异先同口径调整。维护性资本开支比例未知不阻断判断，采用总资本开支作为保守扣减。"
+      },
+      "local_input_treatments": {
+        "LOCAL_UNKNOWN": {
+          "axis_updates": {},
+          "next_discriminating_evidence": "若FY2024少数股东归属或母公司取得子公司现金的路径仍未披露，维持截点COUNT_CONDITIONALLY，不把未披露当作现金恶化。"
+        },
+        "MEASUREMENT_MISMATCH": {
+          "axis_updates": {},
+          "next_discriminating_evidence": "将PPP解释第14号影响、资本开支范围及受限现金统一到FY2023口径；不能用合并OCF减投资现金流直接称为母公司自由现金。"
+        }
+      },
+      "valid_input_first_match": [
+        {
+          "class_id": "OWNER_CASH_PARENT_EVIDENCED",
+          "economic_direction": "FAVORABLE",
+          "condition": "FY2024调整后集团经营现金流减总资本开支至少为正5亿元，少数股东损益与权益继续低于合并口径10%或已完成归属闭合，且子公司分红、合法资金调度或母公司自身经营现金明确覆盖母公司对外分配及到期义务。",
+          "is_residual": false,
+          "observed_adverse_carriers": [],
+          "axis_updates": {
+            "owner_cash": "COUNT_IN_PARENT_OWNER_CASH"
+          },
+          "scope_requirements": {
+            "required_nci_scope_at_settlement": [
+              "CLOSED",
+              "IMMATERIAL_WITH_EVIDENCE"
+            ],
+            "required_parent_access_at_settlement": "EVIDENCED"
+          }
+        },
+        {
+          "class_id": "OWNER_CASH_STRUCTURALLY_BLOCKED",
+          "economic_direction": "ADVERSE",
+          "condition": "在NCI归属已闭合的可比输入下，FY2024调整后集团经营现金流减总资本开支为负，且观察到项目公司分红限制、受限资金、债务契约或其他结构性因素使母公司不能取得现金；仅仅没有披露上划数据不满足本类。",
+          "is_residual": false,
+          "observed_adverse_carriers": [
+            "调整后GROUP_CASH_PROXY为负",
+            "已观察到的母公司现金上划阻断"
+          ],
+          "axis_updates": {
+            "owner_cash": "DO_NOT_COUNT"
+          },
+          "scope_requirements": {
+            "required_nci_scope_at_settlement": [
+              "CLOSED",
+              "IMMATERIAL_WITH_EVIDENCE"
+            ],
+            "required_parent_access_at_settlement": "BLOCKED"
+          }
+        },
+        {
+          "class_id": "OWNER_CASH_COMPLETE_RESIDUAL",
+          "economic_direction": "MIXED",
+          "condition": "NCI归属与母公司访问均有足够证据、但未满足前两类的完整可比剩余补集；例如集团现金代理为正但不足5亿元，或母公司可访问但现金覆盖仍依赖新增借款。",
+          "is_residual": true,
+          "observed_adverse_carriers": [],
+          "axis_updates": {
+            "owner_cash": "COUNT_CONDITIONALLY"
+          },
+          "scope_requirements": {
+            "required_nci_scope_at_settlement": [
+              "CLOSED",
+              "IMMATERIAL_WITH_EVIDENCE"
+            ],
+            "required_parent_access_at_settlement": "EVIDENCED"
+          }
+        }
+      ]
+    },
+    {
+      "cell_id": "FY2024_BALANCE_SHEET_PERMANENT_LOSS",
+      "direct_axes": [
+        "permanent_loss",
+        "valuation_direction"
+      ],
+      "preserved_axes": [
+        "management_execution",
+        "normal_earnings",
+        "owner_cash",
+        "next_research_action"
+      ],
+      "direct_axis_links": {
+        "permanent_loss": "由持续现金缺口、应收/合同资产、净有息债务、项目质押和再融资载体的联动更新。",
+        "valuation_direction": "只有资产负债表风险显著释放或恶化时，才改变相对FY2023参考状态的内在价值方向。"
+      },
+      "preserved_axis_reasons": {
+        "management_execution": "付款机制和融资市场含外部责任，资产负债表结果不单独归责管理层。",
+        "normal_earnings": "应收和债务变化不重写独立结算的经常利润。",
+        "owner_cash": "集团现金代理仍须经NCI和母公司访问桥结算。",
+        "next_research_action": "即使年度指标改善，仍需核实改善来自真实回款而非科目迁移或债务置换。"
+      },
+      "permanent_loss_bridge": {
+        "risk_carrier": "调整后集团经营现金流减总资本开支持续为负，同时应收账款加合同资产及净有息债务上升；严重分支另要求观察到付款、上划或再融资结构性阻断。",
+        "materiality_or_persistence_test": "以FY2023的应收账款加合同资产48.872359亿元、估算净有息债务约137亿元为锚；10%变化为材料阈值，20%变化并伴随负10亿元以上现金代理和结构性阻断为严重阈值。",
+        "reversibility_test": "应收真实回收而非转科目、总资本开支退坡、净债务下降及无再融资压力可逆转；新增借款填补回款或资本开支缺口不构成逆转。"
+      },
+      "local_input_treatments": {
+        "LOCAL_UNKNOWN": {
+          "axis_updates": {},
+          "next_discriminating_evidence": "取得FY2024应收账款、合同资产、利息债务、受限现金、调整后经营现金流和总资本开支；缺项只冻结本单元。"
+        },
+        "MEASUREMENT_MISMATCH": {
+          "axis_updates": {},
+          "next_discriminating_evidence": "统一受限/非受限货币资金、PPP现金分类、债务范围和合同资产合并范围；不能把债权转让或科目重分类当作应收风险消失。"
+        }
+      },
+      "valid_input_first_match": [
+        {
+          "class_id": "BALANCE_SHEET_RISK_RELEASE",
+          "economic_direction": "FAVORABLE",
+          "condition": "完整可比输入下，FY2024应收账款加合同资产不高于43.985亿元（较FY2023下降至少10%），估算净有息债务不高于约123.3亿元（下降至少10%），且调整后集团经营现金流减总资本开支至少为正5亿元。",
+          "is_residual": false,
+          "observed_adverse_carriers": [],
+          "axis_updates": {
+            "permanent_loss": "RELAX_CONSTRAINT",
+            "valuation_direction": "UP"
+          },
+          "scope_requirements": {
+            "required_nci_scope_at_settlement": [],
+            "required_parent_access_at_settlement": "NOT_APPLICABLE"
+          }
+        },
+        {
+          "class_id": "BALANCE_SHEET_SEVERE_BLOCK",
+          "economic_direction": "ADVERSE",
+          "condition": "完整可比输入下，FY2024应收账款加合同资产不少于58.647亿元（较FY2023上升至少20%），估算净有息债务不少于约164.4亿元（上升至少20%），调整后集团经营现金流减总资本开支不高于负10亿元，并观察到项目付款、现金上划或再融资的结构性阻断至少一项。",
+          "is_residual": false,
+          "observed_adverse_carriers": [
+            "应收账款及合同资产材料且持续累积",
+            "净有息债务材料上升",
+            "调整后GROUP_CASH_PROXY严重为负",
+            "付款、上划或再融资结构性阻断"
+          ],
+          "axis_updates": {
+            "permanent_loss": "THESIS_BLOCKING",
+            "valuation_direction": "DOWN"
+          },
+          "scope_requirements": {
+            "required_nci_scope_at_settlement": [],
+            "required_parent_access_at_settlement": "NOT_APPLICABLE"
+          }
+        },
+        {
+          "class_id": "BALANCE_SHEET_RISK_WORSENS",
+          "economic_direction": "ADVERSE",
+          "condition": "未先满足严重分支且完整可比输入下，FY2024应收账款加合同资产不少于53.760亿元（较FY2023上升至少10%），估算净有息债务不少于约150.7亿元（上升至少10%），且调整后集团经营现金流减总资本开支不高于负5亿元。",
+          "is_residual": false,
+          "observed_adverse_carriers": [
+            "应收账款及合同资产继续材料累积",
+            "净有息债务继续材料上升",
+            "资本开支后的集团现金代理持续为负"
+          ],
+          "axis_updates": {
+            "permanent_loss": "TIGHTEN_CONSTRAINT",
+            "valuation_direction": "DOWN"
+          },
+          "scope_requirements": {
+            "required_nci_scope_at_settlement": [],
+            "required_parent_access_at_settlement": "NOT_APPLICABLE"
+          }
+        },
+        {
+          "class_id": "BALANCE_SHEET_COMPLETE_RESIDUAL",
+          "economic_direction": "MIXED",
+          "condition": "所有完整、同口径、可比的FY2024资产负债表输入中，未首先满足风险释放、严重阻断或风险恶化的剩余补集；包括应收、现金代理和净债务方向互相抵消。",
+          "is_residual": true,
+          "observed_adverse_carriers": [],
+          "axis_updates": {
+            "permanent_loss": "MAINTAIN_CONSTRAINT",
+            "valuation_direction": "UNCHANGED"
+          },
+          "scope_requirements": {
+            "required_nci_scope_at_settlement": [],
+            "required_parent_access_at_settlement": "NOT_APPLICABLE"
+          }
+        }
+      ]
+    }
+  ]
+}

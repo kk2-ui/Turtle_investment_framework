@@ -1,0 +1,54 @@
+{
+  "schema_version": "historical-holdout-pair-packet.v1",
+  "episode_id": "HIST:CN600323:20240501:FY2024",
+  "company_id": "CN:600323",
+  "cutoff_at": "2024-05-01T00:00:00+08:00",
+  "method_pack_id": "METHOD_PACK:JUDGMENT_FIRST:BLIND_FEEDBACK:V2",
+  "method_version": "judgment-first-blind-feedback.v2",
+  "shared_source_budget": [
+    {
+      "source_id": "IR:CN600323:FY2021",
+      "packet_name": "CN600323_FY2021.pdf",
+      "available_at": "2022-03-31T00:00:00+08:00",
+      "time_role": "PRE_CUTOFF"
+    },
+    {
+      "source_id": "IR:CN600323:FY2022",
+      "packet_name": "CN600323_FY2022.pdf",
+      "available_at": "2023-04-07T00:00:00+08:00",
+      "time_role": "PRE_CUTOFF"
+    },
+    {
+      "source_id": "IR:CN600323:FY2023",
+      "packet_name": "CN600323_FY2023.pdf",
+      "available_at": "2024-04-12T00:00:00+08:00",
+      "time_role": "PRE_CUTOFF"
+    }
+  ],
+  "arms": {
+    "baseline": {
+      "packet_dir": "baseline",
+      "forecaster_id": "/root/cn600323_holdout_baseline_forecaster",
+      "method_input": {
+        "state": "NONE"
+      }
+    },
+    "enhanced": {
+      "packet_dir": "enhanced",
+      "forecaster_id": "/root/cn600323_holdout_enhanced_forecaster",
+      "method_input": {
+        "state": "FROZEN_GENERALIZED_METHOD_SUPPLIED",
+        "packet_name": "FROZEN_METHOD_PACK.json",
+        "method_pack_id": "METHOD_PACK:JUDGMENT_FIRST:BLIND_FEEDBACK:V2",
+        "method_version": "judgment-first-blind-feedback.v2"
+      }
+    }
+  },
+  "fairness_contract": [
+    "Both arms use the same company, cutoff, source budget, judgment-first contract, and outcome seal.",
+    "Only the enhanced arm receives the frozen generalized method pack.",
+    "Compare frozen material investment treatments, not prose length, field count, or confidence tone."
+  ],
+  "outcome_state": "SEALED_NOT_IN_PACKET",
+  "authority": "NONE"
+}
