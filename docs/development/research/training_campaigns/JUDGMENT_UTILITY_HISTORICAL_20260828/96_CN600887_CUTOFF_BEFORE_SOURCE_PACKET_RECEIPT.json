@@ -1,0 +1,85 @@
+{
+  "receipt_type": "preoutcome-source-packet-receipt.v1",
+  "case_id": "BLIND:CN600887:20240501:FY2024",
+  "preoutcome_cutoff": "2024-05-01T00:00:00+08:00",
+  "availability_rule": "date-only disclosure_date must be strictly earlier than 2024-05-01 in Asia/Shanghai; a date-only source on the cutoff date is unavailable",
+  "outcome_period_sealed": "FY2024",
+  "source_curation_scope": "Metadata-only code-to-orgId resolution plus date-bounded original-report identity. This receipt makes no operating, financial, management, market or outcome claim.",
+  "source_publisher": "巨潮资讯网（上市公司信息披露）",
+  "issuer": "内蒙古伊利实业集团股份有限公司",
+  "ticker": "600887",
+  "technical_route": {
+    "stock_map_endpoint": "https://www.cninfo.com.cn/new/data/szse_stock.json",
+    "stock_code": "600887",
+    "organization_id": "gssh0600887",
+    "announcement_index_endpoint": "https://www.cninfo.com.cn/new/hisAnnouncement/query",
+    "date_bounded_query": {
+      "stock": "600887,gssh0600887",
+      "column": "sse",
+      "plate": "sh",
+      "category": "category_ndbg_szsh",
+      "seDate": "2022-01-01~2024-04-30"
+    },
+    "body_access_during_curation": "none"
+  },
+  "source_documents": [
+    {
+      "period": "FY2021",
+      "document_title": "内蒙古伊利实业集团股份有限公司2021年年度报告",
+      "disclosure_date": "2022-04-28",
+      "announcement_id": "1213169501",
+      "official_pdf_url": "https://static.cninfo.com.cn/finalpage/2022-04-28/1213169501.PDF",
+      "original_vs_exclusion": "original",
+      "cutoff_comparison": "2022-04-28 < 2024-05-01: PASS"
+    },
+    {
+      "period": "FY2022",
+      "document_title": "内蒙古伊利实业集团股份有限公司2022年年度报告",
+      "disclosure_date": "2023-04-28",
+      "announcement_id": "1216664083",
+      "official_pdf_url": "https://static.cninfo.com.cn/finalpage/2023-04-28/1216664083.PDF",
+      "original_vs_exclusion": "original",
+      "cutoff_comparison": "2023-04-28 < 2024-05-01: PASS"
+    },
+    {
+      "period": "FY2023",
+      "document_title": "内蒙古伊利实业集团股份有限公司2023年年度报告",
+      "disclosure_date": "2024-04-30",
+      "announcement_id": "1219916433",
+      "official_pdf_url": "https://static.cninfo.com.cn/finalpage/2024-04-30/1219916433.PDF",
+      "original_vs_exclusion": "original",
+      "cutoff_comparison": "2024-04-30 < 2024-05-01: PASS"
+    }
+  ],
+  "source_cardinality": {
+    "required_original_reports": ["FY2021", "FY2022", "FY2023"],
+    "one_original_report_per_period": true,
+    "annual_report_abstracts_admitted": false,
+    "status": "PASS"
+  },
+  "fresh_forecaster_read_boundary": {
+    "may_open": [
+      "the three official static PDF URLs listed in source_documents",
+      "95_CN600887_BLIND_EXTENSION_SELECTION_REGISTER.json",
+      "this source-packet receipt",
+      "worktree AGENTS.md"
+    ],
+    "must_not_open": [
+      "any FY2024-or-later source or metadata",
+      "price, return, valuation, analyst, market, prior-case result, curriculum, method-pack or derived report material",
+      "any additional website, announcement, company page or document"
+    ],
+    "may_do": [
+      "read the three listed cutoff-before issuer annual reports in full",
+      "construct a complete preoutcome enterprise judgment and first-match settlement contract",
+      "write only to its separately designated temporary output directory"
+    ]
+  },
+  "source_isolation_attestation": {
+    "FY2024_or_later_source_opened": false,
+    "price_or_return_accessed": false,
+    "analyst_or_derived_company_material_accessed": false,
+    "company_judgment_created_by_source_curator": false,
+    "outcome_url_or_metadata_recorded": false
+  }
+}

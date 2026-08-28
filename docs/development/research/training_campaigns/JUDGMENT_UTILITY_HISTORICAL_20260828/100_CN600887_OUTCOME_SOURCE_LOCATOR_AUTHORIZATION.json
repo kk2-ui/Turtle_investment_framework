@@ -1,0 +1,38 @@
+{
+  "authorization_type": "single-case-metadata-only-outcome-source-locator.v1",
+  "case_id": "BLIND:CN600887:20240501:FY2024",
+  "authorization_status": "ACTIVE_FOR_FRESH_METADATA_LOCATOR_ONLY",
+  "activation_evidence": {
+    "selection_register_ref": "95_CN600887_BLIND_EXTENSION_SELECTION_REGISTER.json",
+    "preoutcome_judgment_ref": "97_CN600887_PREOUTCOME_JUDGMENT.json",
+    "forecaster_execution_receipt_ref": "98_CN600887_FORECASTER_EXECUTION_RECEIPT.json",
+    "independent_preoutcome_review_ref": "99_CN600887_INDEPENDENT_PREOUTCOME_REVIEW.md",
+    "preoutcome_review_status": "AUTHORIZE"
+  },
+  "locator_scope": {
+    "issuer_stock_code": "600887",
+    "organization_id": "gssh0600887",
+    "official_endpoint": "https://www.cninfo.com.cn/new/hisAnnouncement/query",
+    "fixed_query": {
+      "stock": "600887,gssh0600887",
+      "column": "sse",
+      "plate": "sh",
+      "category": "category_ndbg_szsh",
+      "seDate": "2025-01-01~2025-04-30"
+    },
+    "permitted_result": "At most one FY2024 original annual-report identity: title, fiscal period, publication date, announcement ID and direct static PDF URL. No PDF body may be opened."
+  },
+  "fresh_locator_read_set": [
+    "AGENTS.md",
+    "96_CN600887_CUTOFF_BEFORE_SOURCE_PACKET_RECEIPT.json",
+    "this authorization",
+    "the fixed official metadata-only query response"
+  ],
+  "locator_must_not_read_or_write": [
+    "the FY2024 report body or any other outcome body",
+    "selection outcomes, curricula, method packs, price, return, valuation, report or investment recommendation",
+    "a company synthesis, a training-effectiveness conclusion, a preoutcome-contract alteration or a broader source inventory"
+  ],
+  "source_selection_rule": "Retain exactly one item only if it is the original FY2024 annual report with a first-party static CNINFO PDF URL. Exclude abstracts, English versions, corrections, notices and non-PDF items. If the date-bounded route cannot establish exactly one, return LOCAL_SOURCE_IDENTITY_UNRESOLVED without guessing or widening the query.",
+  "authority": "METADATA_ONLY_NO_CJO_NO_VALUATION_NO_BUYBAND_NO_INVESTMENT_ACTION"
+}

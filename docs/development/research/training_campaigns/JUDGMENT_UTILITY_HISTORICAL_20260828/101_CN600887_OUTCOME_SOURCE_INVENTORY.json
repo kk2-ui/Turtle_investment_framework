@@ -1,0 +1,21 @@
+{
+  "receipt_type": "outcome-source-inventory.v1",
+  "case_id": "BLIND:CN600887:20240501:FY2024",
+  "status": "PASS",
+  "source_document": {
+    "title": "内蒙古伊利实业集团股份有限公司2024年年度报告",
+    "fiscal_period": "FY2024",
+    "publication_date": "2025-04-30",
+    "announcement_id": "1223421123",
+    "official_static_pdf_url": "https://static.cninfo.com.cn/finalpage/2025-04-30/1223421123.PDF"
+  },
+  "metadata_only_isolation_attestation": {
+    "authorized_fixed_cninfo_metadata_query_only": true,
+    "query_window_expanded": false,
+    "exactly_one_original_fy2024_annual_report_identified": true,
+    "annual_report_pdf_body_opened": false,
+    "other_outcome_body_opened": false,
+    "announcement_detail_or_fulltext_opened": false,
+    "company_or_investment_synthesis_created": false
+  }
+}

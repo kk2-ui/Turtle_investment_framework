@@ -1348,6 +1348,44 @@
       "holdout_axis": null
     },
     {
+      "case_id": "BLIND:CN600887:20240501:FY2024",
+      "company_id": "CN:600887",
+      "company_cluster_id": "COMPANY:CN600887",
+      "company_name": "伊利股份",
+      "industry_id": "BRANDED_DAIRY_AND_COLD_CHAIN_CONSUMER",
+      "track": "BLIND_JUDGMENT",
+      "status": "SETTLED",
+      "cutoff_at": "2024-05-01T00:00:00+08:00",
+      "outcome_window": {
+        "starts_at": "2025-03-01T00:00:00+08:00",
+        "ends_at": "2025-05-01T00:00:00+08:00"
+      },
+      "outcome_access": "REVEALED_AFTER_FREEZE",
+      "selection_exposure": "PREOUTCOME_ONLY",
+      "role_isolation_state": "ROLE_ISOLATION_PROVED",
+      "primary_capability_units": [
+        "CUSTOMER_ABSORPTION",
+        "OWNER_CASH_CONVERSION"
+      ],
+      "mechanism_focus": "品牌乳制品的产品/渠道升级如何穿过同产品销量、产品毛利、营运资本后的企业现金与资本回报形成 owner-cash 和永久损失判断",
+      "claim_scope": "ENTERPRISE_JUDGMENT",
+      "comparative_mode": "NOT_REQUIRED",
+      "source_refs": [
+        "docs/development/research/training_campaigns/JUDGMENT_UTILITY_HISTORICAL_20260828/95_CN600887_BLIND_EXTENSION_SELECTION_REGISTER.json",
+        "docs/development/research/training_campaigns/JUDGMENT_UTILITY_HISTORICAL_20260828/96_CN600887_CUTOFF_BEFORE_SOURCE_PACKET_RECEIPT.json",
+        "docs/development/research/training_campaigns/JUDGMENT_UTILITY_HISTORICAL_20260828/97_CN600887_PREOUTCOME_JUDGMENT.json"
+      ],
+      "artifact_refs": {
+        "preoutcome_judgment_ref": "docs/development/research/training_campaigns/JUDGMENT_UTILITY_HISTORICAL_20260828/97_CN600887_PREOUTCOME_JUDGMENT.json",
+        "freeze_ref": "docs/development/research/training_campaigns/JUDGMENT_UTILITY_HISTORICAL_20260828/99_CN600887_INDEPENDENT_PREOUTCOME_REVIEW.md",
+        "settlement_ref": "docs/development/research/training_campaigns/JUDGMENT_UTILITY_HISTORICAL_20260828/103_CN600887_CUSTODIAN_OUTCOME_SETTLEMENT.json",
+        "postoutcome_review_ref": "docs/development/research/training_campaigns/JUDGMENT_UTILITY_HISTORICAL_20260828/105_CN600887_INDEPENDENT_POSTOUTCOME_REVIEW.md",
+        "investor_readout_ref": "docs/development/research/training_campaigns/JUDGMENT_UTILITY_HISTORICAL_20260828/106_CN600887_INVESTOR_READOUT.md"
+      },
+      "lesson": null,
+      "holdout_axis": null
+    },
+    {
       "case_id": "TEACH:CN600660:20131023:FY2013_FY2016",
       "company_id": "CN:600660",
       "company_cluster_id": "COMPANY:CN600660",
