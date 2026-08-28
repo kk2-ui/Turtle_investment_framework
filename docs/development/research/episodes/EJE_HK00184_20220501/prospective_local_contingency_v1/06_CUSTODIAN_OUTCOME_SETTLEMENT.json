@@ -1,0 +1,415 @@
+{
+  "schema_version": "prospective-enterprise-judgment-outcome-settlement.v1",
+  "settlement_id": "PEJOS:HK00184:20220501:FY2022:LOCAL_CONTINGENCY:V1",
+  "contract_ref": "03_ENHANCED_AFTER_LEARNING_AND_OUTCOME_CELLS.json",
+  "contract_id": "PEJEC:HK00184:20220501:FY2022:LOCAL_CONTINGENCY:V1",
+  "authorization_ref": "05_OUTCOME_ACCESS_AUTHORIZATION.json",
+  "authorization_id": "PEJOA:HK00184:20220501:FY2022:LOCAL_CONTINGENCY:V1",
+  "authorization_commit": "a97a3aa",
+  "company_id": "HK:00184",
+  "issuer_id": "ISSUER:HK:00184",
+  "cutoff_at": "2022-05-01T00:00:00+08:00",
+  "outcome_period": "FY2022",
+  "custodian_role": "FRESH_OUTCOME_ONLY_CUSTODIAN",
+  "custodian_independence": "INDEPENDENT_OF_CURATOR_AND_PREOUTCOME_REVIEWER",
+  "authorized_source": {
+    "publisher": "KECK_SENG_INVESTMENTS_HONG_KONG_LIMITED",
+    "document_type": "OFFICIAL_FULL_ANNUAL_REPORT",
+    "fiscal_year": 2022,
+    "local_path": "/Users/xiami/workspace/analy/Turtle_investment_framework/output/00184_激成投资/00184_2022_年报.pdf",
+    "documents_used": 1
+  },
+  "access_attestation": {
+    "inputs_read": [
+      "03_ENHANCED_AFTER_LEARNING_AND_OUTCOME_CELLS.json",
+      "05_OUTCOME_ACCESS_AUTHORIZATION.json",
+      "/Users/xiami/workspace/analy/Turtle_investment_framework/output/00184_激成投资/00184_2022_年报.pdf"
+    ],
+    "other_source_directory_files_read_or_listed": false,
+    "price_return_or_market_data_accessed": false,
+    "external_or_post_fy2022_material_accessed": false,
+    "baseline_enhanced_comparison_performed": false
+  },
+  "cell_settlements": [
+    {
+      "cell_id": "H1_HOTEL_CUSTOMER_ABSORPTION_VECTOR",
+      "settlement_status": "OBSERVED_WITH_LOCAL_UNKNOWNS",
+      "classification_scope": "FIRST_MATCH_PER_FIXED_PROPERTY",
+      "fixed_property_vector": [
+        {
+          "property_id": "HOLIDAY_INN_RIVERSIDE_WUHAN",
+          "ownership_percent": 41.26,
+          "operation_event": "NO_ACQUISITION_DISPOSAL_OR_REOPENING_EVENT_DISCLOSED_FOR_FY2021_TO_FY2022; OPERATING_DAYS_NOT_DISCLOSED",
+          "raw_inputs": {
+            "occupancy_percent": {"fy2022": 51.1, "fy2021": 45.6},
+            "adr_local_currency_per_room_night": {"currency": "CNY", "fy2022": 305, "fy2021": 397},
+            "room_revenue_local_currency_thousand": {"currency": "CNY", "fy2022": 17300, "fy2021": 20200},
+            "food_and_beverage_revenue_local_currency_thousand": {"currency": "CNY", "fy2022": 7400, "fy2021": 11100}
+          },
+          "calculation": {
+            "formula": "occupancy_fraction * ADR_in_same_property_local_currency",
+            "implied_revpar_local_currency": {"currency": "CNY", "fy2022": 155.855, "fy2021": 181.032},
+            "direction": {"occupancy": "UP", "adr": "DOWN", "implied_revpar": "DOWN"}
+          },
+          "first_match_classification": "VOLUME_LED_RATE_DILUTION",
+          "evidence_locators": [
+            {"pdf_page": 7, "printed_report_page": 6, "locator": "Chairman's Statement, Holiday Inn Wuhan Riverside paragraph: ownership, room/F&B revenue, occupancy and average room rate"}
+          ],
+          "local_unknowns": ["PROPERTY_OPERATING_DAYS"]
+        },
+        {
+          "property_id": "SHERATON_SAIGON_HOTEL_AND_TOWERS",
+          "ownership_percent": 64.12,
+          "operation_event": "NO_ACQUISITION_DISPOSAL_OR_REOPENING_EVENT_DISCLOSED_FOR_FY2021_TO_FY2022; OPERATING_DAYS_NOT_DISCLOSED",
+          "raw_inputs": {
+            "occupancy_percent": {"fy2022": 55.4, "fy2021": 18.7},
+            "adr_local_currency_per_room_night": {"currency": "USD", "fy2022": 148, "fy2021": 90},
+            "property_room_or_hotel_revenue": "NOT_DISCLOSED"
+          },
+          "calculation": {
+            "formula": "occupancy_fraction * ADR_in_same_property_local_currency",
+            "implied_revpar_local_currency": {"currency": "USD", "fy2022": 81.992, "fy2021": 16.83},
+            "direction": {"occupancy": "UP", "adr": "UP", "implied_revpar": "UP"}
+          },
+          "first_match_classification": "PRICE_AND_VOLUME_ABSORPTION",
+          "evidence_locators": [
+            {"pdf_page": 8, "printed_report_page": 7, "locator": "Chairman's Statement, Sheraton Saigon Hotel and Towers paragraph: ownership, occupancy and average room rate"}
+          ],
+          "local_unknowns": ["PROPERTY_OPERATING_DAYS", "PROPERTY_ROOM_OR_HOTEL_REVENUE"]
+        },
+        {
+          "property_id": "CARAVELLE_HOTEL",
+          "ownership_percent": 24.99,
+          "operation_event": "NO_ACQUISITION_DISPOSAL_OR_REOPENING_EVENT_DISCLOSED_FOR_FY2021_TO_FY2022; OPERATING_DAYS_NOT_DISCLOSED",
+          "raw_inputs": {
+            "occupancy_percent": {"fy2022": 51.5, "fy2021": 12.1},
+            "adr_local_currency_per_room_night": {"currency": "USD", "fy2022": 122, "fy2021": 80},
+            "property_room_or_hotel_revenue": "NOT_DISCLOSED"
+          },
+          "calculation": {
+            "formula": "occupancy_fraction * ADR_in_same_property_local_currency",
+            "implied_revpar_local_currency": {"currency": "USD", "fy2022": 62.83, "fy2021": 9.68},
+            "direction": {"occupancy": "UP", "adr": "UP", "implied_revpar": "UP"}
+          },
+          "first_match_classification": "PRICE_AND_VOLUME_ABSORPTION",
+          "evidence_locators": [
+            {"pdf_page": 8, "printed_report_page": 7, "locator": "Chairman's Statement, Caravelle Hotel paragraph: ownership, occupancy and average room rate"}
+          ],
+          "local_unknowns": ["PROPERTY_OPERATING_DAYS", "PROPERTY_ROOM_OR_HOTEL_REVENUE"]
+        },
+        {
+          "property_id": "BEST_WESTERN_HOTEL_FINO_OSAKA_SHINSAIBASHI",
+          "ownership_percent": 100.0,
+          "operation_event": "NO_ACQUISITION_DISPOSAL_OR_REOPENING_EVENT_DISCLOSED_FOR_FY2021_TO_FY2022; OPERATING_DAYS_NOT_DISCLOSED",
+          "raw_inputs": {
+            "occupancy_percent": {"fy2022": 40.9, "fy2021": 9.5},
+            "adr_local_currency_per_room_night": {"currency": "JPY", "fy2022": 6326, "fy2021": 5899},
+            "property_room_or_hotel_revenue": "NOT_DISCLOSED"
+          },
+          "calculation": {
+            "formula": "occupancy_fraction * ADR_in_same_property_local_currency",
+            "implied_revpar_local_currency": {"currency": "JPY", "fy2022": 2587.334, "fy2021": 560.405},
+            "direction": {"occupancy": "UP", "adr": "UP", "implied_revpar": "UP"}
+          },
+          "first_match_classification": "PRICE_AND_VOLUME_ABSORPTION",
+          "evidence_locators": [
+            {"pdf_page": 8, "printed_report_page": 7, "locator": "Chairman's Statement, Best Western Hotel Fino Osaka Shinsaibashi paragraph: ownership, occupancy and average room rate"}
+          ],
+          "local_unknowns": ["PROPERTY_OPERATING_DAYS", "PROPERTY_ROOM_OR_HOTEL_REVENUE"]
+        },
+        {
+          "property_id": "W_SAN_FRANCISCO",
+          "ownership_percent": 100.0,
+          "operation_event": "NO_ACQUISITION_DISPOSAL_OR_REOPENING_EVENT_DISCLOSED_FOR_FY2021_TO_FY2022; OPERATING_DAYS_NOT_DISCLOSED",
+          "raw_inputs": {
+            "occupancy_percent": {"fy2022": 68.8, "fy2021": 42.7},
+            "adr_local_currency_per_room_night": {"currency": "USD", "fy2022": 305, "fy2021": 197},
+            "property_room_or_hotel_revenue": "NOT_DISCLOSED"
+          },
+          "calculation": {
+            "formula": "occupancy_fraction * ADR_in_same_property_local_currency",
+            "implied_revpar_local_currency": {"currency": "USD", "fy2022": 209.84, "fy2021": 84.119},
+            "direction": {"occupancy": "UP", "adr": "UP", "implied_revpar": "UP"}
+          },
+          "first_match_classification": "PRICE_AND_VOLUME_ABSORPTION",
+          "evidence_locators": [
+            {"pdf_page": 9, "printed_report_page": 8, "locator": "Chairman's Statement, W San Francisco paragraph: ownership, occupancy and average room rate"}
+          ],
+          "local_unknowns": ["PROPERTY_OPERATING_DAYS", "PROPERTY_ROOM_OR_HOTEL_REVENUE"]
+        },
+        {
+          "property_id": "SOFITEL_NEW_YORK",
+          "ownership_percent": 100.0,
+          "operation_event": "CLOSED_FROM_LATE_MARCH_2020_AND_REOPENED_IN_NOVEMBER_2021; FY2021_NOT_A_COMPARABLE_FULL_OPERATING_PERIOD",
+          "raw_inputs": {
+            "occupancy_percent": {"fy2022": 61.2, "fy2021": 4.0},
+            "adr_local_currency_per_room_night": {"currency": "USD", "fy2022": 387, "fy2021": 338},
+            "property_room_or_hotel_revenue": "NOT_DISCLOSED"
+          },
+          "calculation": {
+            "formula": "occupancy_fraction * ADR_in_same_property_local_currency; calculated for disclosure completeness but not treated as comparable absorption",
+            "implied_revpar_local_currency": {"currency": "USD", "fy2022": 236.844, "fy2021": 13.52},
+            "comparison_eligibility": "INELIGIBLE_DUE_TO_FY2021_REOPENING"
+          },
+          "first_match_classification": "REOPENING_ONLY",
+          "evidence_locators": [
+            {"pdf_page": 6, "printed_report_page": 5, "locator": "Chairman's Statement hotel KPI table footnote: closure from late March 2020 and November 2021 reopening"},
+            {"pdf_page": 9, "printed_report_page": 8, "locator": "Chairman's Statement, Sofitel New York paragraph: ownership, reopening, occupancy and average room rate"}
+          ],
+          "local_unknowns": ["EXACT_FY2021_OPERATING_DAYS", "PROPERTY_ROOM_OR_HOTEL_REVENUE"]
+        },
+        {
+          "property_id": "SHERATON_OTTAWA_HOTEL",
+          "ownership_percent": 85.0,
+          "operation_event": "NO_ACQUISITION_DISPOSAL_OR_REOPENING_EVENT_DISCLOSED_FOR_FY2021_TO_FY2022; OPERATING_DAYS_NOT_DISCLOSED",
+          "raw_inputs": {
+            "occupancy_percent": {"fy2022": 57.0, "fy2021": 20.0},
+            "adr_local_currency_per_room_night": {"currency": "CAD", "fy2022": 199, "fy2021": 141},
+            "property_room_or_hotel_revenue": "NOT_DISCLOSED"
+          },
+          "calculation": {
+            "formula": "occupancy_fraction * ADR_in_same_property_local_currency",
+            "implied_revpar_local_currency": {"currency": "CAD", "fy2022": 113.43, "fy2021": 28.2},
+            "direction": {"occupancy": "UP", "adr": "UP", "implied_revpar": "UP"}
+          },
+          "first_match_classification": "PRICE_AND_VOLUME_ABSORPTION",
+          "evidence_locators": [
+            {"pdf_page": 10, "printed_report_page": 9, "locator": "Chairman's Statement, Sheraton Ottawa Hotel paragraph: ownership, occupancy and average room rate"}
+          ],
+          "local_unknowns": ["PROPERTY_OPERATING_DAYS", "PROPERTY_ROOM_OR_HOTEL_REVENUE"]
+        },
+        {
+          "property_id": "DELTA_HOTELS_BY_MARRIOTT_TORONTO_AIRPORT_AND_CONFERENCE_CENTRE",
+          "ownership_percent": 25.0,
+          "operation_event": "NO_ACQUISITION_DISPOSAL_OR_REOPENING_EVENT_DISCLOSED_FOR_FY2021_TO_FY2022; OPERATING_DAYS_NOT_DISCLOSED",
+          "raw_inputs": {
+            "occupancy_percent": {"fy2022": 61.6, "fy2021": 28.6},
+            "adr_local_currency_per_room_night": {"currency": "CAD", "fy2022": 158, "fy2021": 108},
+            "property_room_or_hotel_revenue": "NOT_DISCLOSED"
+          },
+          "calculation": {
+            "formula": "occupancy_fraction * ADR_in_same_property_local_currency",
+            "implied_revpar_local_currency": {"currency": "CAD", "fy2022": 97.328, "fy2021": 30.888},
+            "direction": {"occupancy": "UP", "adr": "UP", "implied_revpar": "UP"}
+          },
+          "first_match_classification": "PRICE_AND_VOLUME_ABSORPTION",
+          "evidence_locators": [
+            {"pdf_page": 10, "printed_report_page": 9, "locator": "Chairman's Statement, Delta Hotels by Marriott Toronto Airport and Conference Centre paragraph: ownership, occupancy and average room rate"}
+          ],
+          "local_unknowns": ["PROPERTY_OPERATING_DAYS", "PROPERTY_ROOM_OR_HOTEL_REVENUE"]
+        }
+      ],
+      "portfolio_resolution": "VECTOR_RETAINED_WITHOUT_CROSS_CURRENCY_AGGREGATION_OR_PROPERTY_COUNT_SCORE",
+      "local_unknowns": [
+        "EXACT_OPERATING_DAYS_NOT_DISCLOSED_FOR_ANY_FIXED_PROPERTY",
+        "PROPERTY_LEVEL_ROOM_OR_HOTEL_REVENUE_NOT_DISCLOSED_EXCEPT_WUHAN_ROOM_AND_FOOD_AND_BEVERAGE_REVENUE"
+      ]
+    },
+    {
+      "cell_id": "H2_HOTEL_RECURRING_ECONOMICS",
+      "settlement_status": "OBSERVED_WITH_LOCAL_NONRECURRING_ALLOCATION_UNKNOWN",
+      "unit": "HKD_THOUSAND",
+      "raw_inputs": {
+        "hotel_segment_revenue": {"fy2022": 1331028, "fy2021": 380351},
+        "hotel_segment_reported_contribution": {"fy2022": 78953, "fy2021": -204859},
+        "controlled_hotel_depreciation_positive_magnitude": {"fy2022": 144804, "fy2021": 150228},
+        "finance_cost_positive_magnitude": {"fy2022": 48423, "fy2021": 30378},
+        "associate_result": {"fy2022": {"type": "PROFIT", "amount": 14073}, "fy2021": {"type": "LOSS", "amount": 11627}},
+        "income_tax_result": {"fy2022": {"type": "CREDIT", "amount": 13106}, "fy2021": {"type": "CREDIT", "amount": 75948}},
+        "explicit_hotel_segment_impairment_reversal_disposal_fair_value_or_other_nonrecurring_adjustment": "NONE_SEPARATELY_REPORTED_IN_THE_SEGMENT_TABLE",
+        "group_ppe_disposal_gain_not_allocated_to_hotel_segment": {"fy2022": 4361, "fy2021": 109, "formula_treatment": "NOT_APPLIED_WITHOUT_HOTEL_SEGMENT_ATTRIBUTION"}
+      },
+      "calculations": {
+        "controlled_hotel_recurring_ebit": {
+          "fy2022_formula": "78953 + 48423 - 14073 - 13106",
+          "fy2022": 100197,
+          "fy2021_formula": "-204859 + 30378 + 11627 - 75948",
+          "fy2021": -238802,
+          "direction": "IMPROVED"
+        },
+        "controlled_hotel_recurring_pre_d_and_a": {
+          "fy2022_formula": "100197 + 144804",
+          "fy2022": 245001,
+          "fy2021_formula": "-238802 + 150228",
+          "fy2021": -88574,
+          "direction": "IMPROVED"
+        },
+        "associate_hotel_result_kept_separate": {"fy2022": 14073, "fy2021": -11627}
+      },
+      "first_match_classification": "REVENUE_AND_ECONOMICS_RECOVER",
+      "first_match_basis": "Comparable segment revenue, controlled recurring EBIT and controlled recurring pre-D&A all improved using only explicitly disclosed segment components; the unallocated group PPE disposal gain is local uncertainty and does not drive or reverse any of the three directions.",
+      "evidence_locators": [
+        {"pdf_page": 90, "printed_report_page": 89, "locator": "Note 10(a), Group segment results analysis, Hotel rows for FY2022 and FY2021"},
+        {"pdf_page": 105, "printed_report_page": 104, "locator": "Note 18(b), profit-to-operating-cash reconciliation, group disposal gain and other nonrecurring items"},
+        {"pdf_page": 93, "printed_report_page": 92, "locator": "Note 11(a), FY2022 PPE roll-forward, hotel property and total depreciation/impairment columns"}
+      ],
+      "local_unknowns": [
+        "GROUP_PPE_DISPOSAL_GAIN_IS_NOT_ALLOCATED_TO_THE_HOTEL_SEGMENT",
+        "NO_PROPERTY_LEVEL_HOTEL_IMPAIRMENT_OR_REVERSAL_AMOUNT_IS_SEPARATELY_REPORTED"
+      ]
+    },
+    {
+      "cell_id": "P1_MACAU_RECURRING_PROPERTY_AND_MONETIZATION",
+      "settlement_status": "OBSERVED",
+      "unit": "HKD_THOUSAND_EXCEPT_OCCUPANCY",
+      "raw_inputs": {
+        "macau_property_scope_event": "NO_PROPERTY_DISPOSAL_DURING_FY2022",
+        "macau_property_rental_revenue": {"fy2022": 82000, "fy2021": 85800, "direction": "DOWN"},
+        "residential_occupancy_percent": {"fy2022": 72, "fy2021": 79, "direction": "DOWN"},
+        "office_occupancy_percent": {"fy2022": 100, "fy2021": 93, "direction": "UP"},
+        "macau_property_segment_revenue": {"fy2022": 96346, "fy2021": 100620, "direction": "DOWN"},
+        "macau_property_segment_result": {"fy2022": 61550, "fy2021": 58946, "direction": "UP"},
+        "investment_property_fair_value_gain": {"fy2022": 3900, "fy2021": 4400},
+        "matched_completed_property_disposal": "NONE",
+        "matched_property_disposal_carrying_value": "NOT_APPLICABLE",
+        "matched_property_net_cash_proceeds": "NOT_APPLICABLE",
+        "use_of_property_net_proceeds": "NOT_APPLICABLE"
+      },
+      "first_match_classification": "HOLD_WITH_RENTAL_SUPPORT_MIXED_OR_STABLE",
+      "first_match_basis": "No specified property disposal; rental revenue and residential occupancy declined, office occupancy and recurring segment result improved, and segment revenue declined, producing conflicting recurring signals.",
+      "evidence_locators": [
+        {"pdf_page": 5, "printed_report_page": 4, "locator": "Chairman's Statement, Macau property leasing and management: rental revenue and residential/office occupancy"},
+        {"pdf_page": 6, "printed_report_page": 5, "locator": "Chairman's Statement continuation: investment-property fair-value gain and explicit statement that no property was sold in FY2022"},
+        {"pdf_page": 90, "printed_report_page": 89, "locator": "Note 10(a), Macau property segment revenue and contribution for FY2022 and FY2021"}
+      ],
+      "local_unknowns": []
+    },
+    {
+      "cell_id": "C1_CONSOLIDATED_POST_CAPEX_CASH_PROXY",
+      "settlement_status": "OBSERVED_WITH_LOCAL_SCOPE_UNKNOWNS",
+      "unit": "HKD_THOUSAND",
+      "raw_inputs": {
+        "consolidated_ocf_after_tax": 311791,
+        "cash_ppe_purchases": 21653,
+        "cash_interest": {"amount": 41290, "cash_flow_classification": "OUTSIDE_OCF", "location": "FINANCING_ACTIVITIES"},
+        "nci_distributions_and_matched_cash_claims": {
+          "nci_dividends_paid": 57096,
+          "nci_lender_interest_or_principal_paid": 0,
+          "basis": "No separate NCI lender payment is shown in the FY2022 financing-cash-flow reconciliation; new NCI loan proceeds are not added."
+        },
+        "capital_commitments": {"contracted": 29056, "authorized_not_contracted": 28185, "total": 57241},
+        "maintenance_capex_adequacy": "UNKNOWN",
+        "parent_cash_access": "UNKNOWN"
+      },
+      "calculations": {
+        "reported_post_capex_group_proxy": {"formula": "311791 - 21653", "amount": 290138},
+        "group_proxy_after_external_cash_claims": {"formula": "290138 - 41290 - 57096", "amount": 191752}
+      },
+      "first_match_classification": "POSITIVE_GROUP_CASH_SCOPE_UNKNOWN",
+      "first_match_basis": "The matched group proxy remains positive after observed outside-OCF cash interest and NCI dividends, while maintenance adequacy and parent cash access are not explicitly evidenced.",
+      "evidence_locators": [
+        {"pdf_page": 60, "printed_report_page": 59, "locator": "Consolidated cash flow statement: OCF after tax, cash PPE purchases, interest paid outside OCF and NCI dividends paid"},
+        {"pdf_page": 122, "printed_report_page": 121, "locator": "Note 26, contracted and authorized-but-not-contracted capital commitments"},
+        {"pdf_page": 115, "printed_report_page": 114, "locator": "Note 24(f), distributable reserves and group net-debt table; no evidence that consolidated cash is parent-accessible cash"}
+      ],
+      "local_unknowns": [
+        "MAINTENANCE_CAPEX_SPLIT_AND_ADEQUACY_NOT_DISCLOSED",
+        "PARENT_ACCESS_TO_CONSOLIDATED_CASH_NOT_EXPLICITLY_EVIDENCED",
+        "CAPITAL_COMMITMENTS_NOT_IDENTIFIED_AS_MAINTENANCE_OR_GROWTH"
+      ]
+    },
+    {
+      "cell_id": "R1_PERMANENT_LOSS_SIGNAL",
+      "settlement_status": "OBSERVED_WITH_LOCAL_LIQUIDITY_UNKNOWNS",
+      "unit": "HKD_THOUSAND_EXCEPT_RATIOS_AND_EVENTS",
+      "raw_inputs": {
+        "new_hotel_impairment_or_reversal_by_property": "NO_NEW_ITEM_SEPARATELY_REPORTED; PROPERTY_LEVEL_AMOUNT_NOT_DISCLOSED",
+        "asset_disposals": {
+          "forced_disposal": "NONE_DISCLOSED",
+          "property_disposal": "NONE_DISCLOSED",
+          "ordinary_group_ppe_disposal": {
+            "gross_cost_removed": 14157,
+            "accumulated_depreciation_and_impairment_released": 12349,
+            "implied_carrying_value": 1808,
+            "cash_proceeds": 6169,
+            "reported_gain": 4361,
+            "hotel_property_component_gross_cost_removed": 350,
+            "hotel_property_component_accumulated_depreciation_and_impairment_released": 263,
+            "hotel_property_component_implied_carrying_value": 87,
+            "hotel_property_component_proceeds": "NOT_DISCLOSED"
+          }
+        },
+        "bank_debt_maturities": {
+          "bank_loans_total": 1435804,
+          "due_within_one_year_or_on_demand": 1359323,
+          "due_after_one_year_but_within_two_years": 0,
+          "cumulative_due_within_two_years": 1359323
+        },
+        "liquidity": {
+          "deposits_and_cash_total_including_any_pledged_deposits": 1341269,
+          "available_unrestricted_liquidity": "UNKNOWN",
+          "restricted_cash": "UNKNOWN",
+          "reported_bank_facility_total": 1444323,
+          "reported_facility_used": 1359323,
+          "arithmetic_undrawn_headroom": 85000,
+          "binding_and_available_undrawn_facility": "UNKNOWN_DUE_TO_NO_EXPLICIT_COMMITMENT_OR_UNRESTRICTED_AVAILABILITY_DISCLOSURE"
+        },
+        "reported_coverage_indicators": {
+          "profit_to_finance_cost_times": 2,
+          "deposits_and_cash_to_finance_cost_times_including_pledged_deposits": 27
+        },
+        "loans_cash_and_net_liquidity": {
+          "bank_loans": 1435804,
+          "deposits_and_cash_including_any_pledged_deposits": 1341269,
+          "reported_adjusted_net_debt": 94535
+        },
+        "covenant_event": {
+          "status": "CONTINUED_WAIVER_DEPENDENCY",
+          "facts": "Two subsidiary bank loans had covenant-ratio deviations; waivers were obtained before year end and cover the tests through loan maturity in October 2023.",
+          "unwaived_breach_or_acceleration": false,
+          "waiver_expiry": "2023-10"
+        },
+        "refinancing_or_extension_status": "NONE_OR_NOT_DISCLOSED_AS_COMPLETED_OR_CONTRACTUALLY_BINDING",
+        "collateral": {
+          "secured_bank_loans": 1359323,
+          "hotel_properties_including_land_and_held_for_sale_property_book_value": 1895032,
+          "hotel_properties_including_land_book_value": 1830666,
+          "held_for_sale_property_book_value": 64366
+        },
+        "c1_class_reference": "POSITIVE_GROUP_CASH_SCOPE_UNKNOWN"
+      },
+      "calculations": {
+        "one_year_liquidity_coverage": "UNKNOWN_BECAUSE_AVAILABLE_UNRESTRICTED_LIQUIDITY_IS_NOT_DISCLOSED",
+        "two_year_liquidity_coverage": "UNKNOWN_BECAUSE_AVAILABLE_UNRESTRICTED_LIQUIDITY_IS_NOT_DISCLOSED",
+        "reported_cash_to_one_year_bank_debt_nonqualifying_context_ratio": {
+          "formula": "1341269 / 1359323",
+          "ratio": 0.9867,
+          "qualification": "NOT_THE_FROZEN_AVAILABLE_LIQUIDITY_COVERAGE_BECAUSE_THE_CASH_TOTAL_INCLUDES_ANY_PLEDGED_DEPOSITS_AND_RESTRICTED_SPLIT_IS_UNKNOWN"
+        },
+        "net_debt": {"formula": "1435804 - 1341269", "amount": 94535}
+      },
+      "first_match_classification": "REFINANCING_OR_WAIVER_DEPENDENCY_PERSISTS",
+      "first_match_basis": "No disclosed new material hotel impairment, forced disposal, unwaived breach or acceleration precedes the observed temporary covenant waiver; the company still depended on waivers through the October 2023 maturity and no completed or binding refinancing was disclosed.",
+      "evidence_locators": [
+        {"pdf_page": 93, "printed_report_page": 92, "locator": "Note 11(a), FY2022 PPE roll-forward: hotel property disposal component and accumulated depreciation/impairment roll-forward"},
+        {"pdf_page": 60, "printed_report_page": 59, "locator": "Consolidated cash flow statement: group PPE disposal proceeds"},
+        {"pdf_page": 105, "printed_report_page": 104, "locator": "Note 18(b), reported group PPE disposal gain"},
+        {"pdf_page": 108, "printed_report_page": 107, "locator": "Note 19(a)-(c), bank maturities, secured loans, collateral, covenant deviations and waiver through October 2023 maturity"},
+        {"pdf_page": 104, "printed_report_page": 103, "locator": "Note 18(a), deposits and cash composition"},
+        {"pdf_page": 115, "printed_report_page": 114, "locator": "Note 24(f), reported bank loans, deposits and cash, and adjusted net debt"},
+        {"pdf_page": 26, "printed_report_page": 25, "locator": "Other Corporate Information, financial KPIs and pledged asset summary"}
+      ],
+      "local_unknowns": [
+        "PROPERTY_LEVEL_NEW_HOTEL_IMPAIRMENT_OR_REVERSAL_AMOUNT_NOT_SEPARATELY_DISCLOSED",
+        "HOTEL_PROPERTY_COMPONENT_DISPOSAL_PROCEEDS_NOT_SEPARATELY_DISCLOSED",
+        "AVAILABLE_UNRESTRICTED_VERSUS_RESTRICTED_CASH_SPLIT_NOT_DISCLOSED",
+        "BINDING_AVAILABLE_UNDRAWN_FACILITY_NOT_EXPLICITLY_DISCLOSED",
+        "ONE_AND_TWO_YEAR_AVAILABLE_LIQUIDITY_COVERAGE_NOT_COMPUTABLE",
+        "NO_COMPLETED_OR_CONTRACTUALLY_BINDING_REFINANCING_DISCLOSED"
+      ]
+    }
+  ],
+  "settlement_locality": "LOCAL_UNKNOWN_OR_NONCOMPARABILITY_WAS_RETAINED_ONLY_IN_THE_DEPENDENT_PROPERTY_OR_CELL_AND_DID_NOT_CANCEL_OTHER_SETTLED_CELLS",
+  "permissions": {
+    "outcome_fact_extraction_and_cell_settlement": "COMPLETED",
+    "learning": "NONE",
+    "transfer_validated": "NONE",
+    "method_frozen": "NONE",
+    "comparative": "NONE",
+    "cjo": "NONE",
+    "formal_valuation": "NONE",
+    "buyband": "NONE",
+    "report": "NONE",
+    "investment_action": "NONE"
+  }
+}
