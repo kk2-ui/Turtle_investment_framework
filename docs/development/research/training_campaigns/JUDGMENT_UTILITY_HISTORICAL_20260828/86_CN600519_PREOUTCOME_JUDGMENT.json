@@ -1,0 +1,97 @@
+{
+  "artifact_type": "preoutcome-enterprise-judgment.v1",
+  "case_id": "BLIND:CN600519:20240501:FY2024",
+  "company": "贵州茅台酒股份有限公司",
+  "ticker": "CN:600519",
+  "as_of": "2024-05-01T00:00:00+08:00",
+  "outcome_period": "FY2024",
+  "status": "PREOUTCOME_JUDGMENT_FROZEN",
+  "authority_limits": {
+    "formal_valuation": "NOT_PERMITTED",
+    "buy_band": "NOT_PERMITTED",
+    "investment_action": "NOT_PERMITTED",
+    "price_or_return": "NOT_ACCESSED_AND_NOT_USED"
+  },
+  "enterprise_episode": {
+    "business_state": "成熟高端酱香型白酒生产商。制酒、长期贮存、勾兑和包装使新增基酒与可销售成品间至少有五年时差；销售同时通过自营/数字化直销及批发代理渠道完成。",
+    "starting_evidence": "FY2021—FY2023 两个产品桶收入、销售量和总库存持续增长。FY2023茅台酒销售量42,109.50吨、其他系列酒31,164.54吨，期末成品酒13,985.07吨、半成品酒（含基础酒）279,804.96吨。",
+    "management_choice_or_no_action": "保留批发代理，同时扩大自营及“i茅台”数字营销平台；FY2024计划提升渠道管控、推进产品/渠道/品牌/终端协同与营销数字化，并计划固定资产投资61.79亿元。",
+    "customer_or_operating_link": "只有直销触点持续购买且批发代理没有实质收缩，才是渠道扩容而非迁移；基酒和项目只有经过产品销售量才能成为经济供给。",
+    "cash_and_capital_link": "产品交付前的合同负债、商品销售现金收款、综合经营现金流、项目投资和现金余额分别属于不同口径；财务公司项目会影响综合经营现金流。"
+  },
+  "best_current_judgment": {
+    "direction": "条件性正向",
+    "confidence": "中等：连续经营数据支持方向，但没有终端耗用、渠道库存或FY2024执行结果。",
+    "claim": "最可能的FY2024路径是数字化直销和产品矩阵继续增长、批发代理基本承接，成熟产品供给支持实际销售量和客户收款扩张。这是经营链判断，不是收入、利润、现金余额或项目完成的单点预测。",
+    "supporting_mechanism": [
+      "FY2022 i茅台酒类不含税销售118.83亿元，FY2023为223.74亿元、同比+88.29%，已是可观交易载体而非宣传项目。",
+      "FY2023直销收入672.33亿元、同比+36.16%，批发代理799.86亿元、同比+7.52%；两渠道同时增长更符合扩容而非批发端已失效。",
+      "FY2023茅台酒销量+11.10%、其他系列酒销量+2.94%，给价格/结构以外的客户吸收以有限支持；不证明终端耗用或渠道库存健康。",
+      "FY2023商品销售现金收款1,637.00亿元、合同负债141.26亿元、经营现金流665.93亿元；付款链有韧性，但三者不能互换。"
+    ]
+  },
+  "supporting_facts": [
+    {"fact": "FY2021直销收入240.29亿元，批发代理820.30亿元；商品销售现金收款1,193.21亿元，经营现金流640.29亿元。", "source": "FY2021 issuer annual report", "pdf_pages": [9, 57]},
+    {"fact": "FY2022 i茅台销售118.83亿元，直销493.79亿元、批发代理743.94亿元；茅台酒销量37,901.39吨、其他系列酒30,274.93吨。", "source": "FY2022 issuer annual report", "pdf_pages": [7, 14, 16]},
+    {"fact": "FY2022商品销售现金收款1,406.92亿元、经营现金流366.99亿元；年报说明后者受财务公司吸收存款及同业定期存款影响。", "source": "FY2022 issuer annual report", "pdf_pages": [8, 61, 62]},
+    {"fact": "FY2023两个产品桶销量分别42,109.50吨和31,164.54吨；直销672.33亿元、批发代理799.86亿元、i茅台223.74亿元。", "source": "FY2023 issuer annual report", "pdf_pages": [9, 15, 17]},
+    {"fact": "FY2023合同负债141.26亿元（预收货款），商品销售现金收款1,637.00亿元，经营现金流665.93亿元。", "source": "FY2023 issuer annual report", "pdf_pages": [66, 67, 103]},
+    {"fact": "FY2024计划收入增长约15%、固定资产投资61.79亿元；这是计划而非结果。", "source": "FY2023 issuer annual report", "pdf_pages": [19, 20]}
+  ],
+  "strongest_countercase": {
+    "claim": "直销/i茅台的高增长主要是原有批发需求、配给或渠道利润迁移，或由价格/结构而非终端耗用驱动；生产和项目先形成库存、资金占用而非可持续客户收款。",
+    "why_plausible": ["FY2022批发代理收入-9.31%。", "年报不披露终端耗用和渠道库存。", "基酒长期贮存使产能/项目与当期销售错配。", "FY2022综合经营现金流受财务公司项目影响。"],
+    "why_not_base_case": "FY2023两渠道收入、两个产品桶销量和商品收款均增长；不能排除迁移风险，但不支持“渠道已失效或需求已断裂”。"
+  },
+  "owner_cash_and_permanent_loss_without_valuation": {
+    "treatment": "商品收款更贴近商品付款，合同负债为待交付预收货款，经营现金流包含其他经营项目；现金生成能力强但其未来可归属性取决于客户吸收与收款。不得估值或行动。",
+    "permanent_loss_path": "渠道迁移掩盖终端需求，供给/项目先于需求形成资本吸收，或客户付款链恶化。现有品牌、销量和现金事实降低即时经营性损失担忧，但不消除该路径。",
+    "prohibited_substitutions": ["收入不能证明终端耗用、收款或经营现金流。", "合同负债不能替代收入、收款、经营现金流或渠道库存。", "经营现金流不能替代商品收款。", "现金余额和项目节点不能替代客户吸收或现金回收。"]
+  },
+  "localized_unknowns": [
+    {"claim_limited": "数字直销是否对应终端耗用而非迁移。", "state": "UNKNOWN", "treatment": "不把直销收入、注册用户或线上收入升级为终端需求；只按渠道收入和产品销量处理。", "discriminating_observation": "FY2024可比渠道收入和产品桶销量。"},
+    {"claim_limited": "经营现金流变动能否归因于商品付款。", "state": "MEASUREMENT_MISMATCH_RISK", "treatment": "收款与经营现金流分开结算；非商品项目只局部降低经营现金流归因。", "discriminating_observation": "FY2024现金流量表及财务公司项目说明。"},
+    {"claim_limited": "新增产能/项目能否转化为当期可售产品。", "state": "CONDITIONALLY_DELAYED", "treatment": "项目、投资额、产能和基础酒库存只作中期供给选项。", "discriminating_observation": "FY2024产品桶实际销售量。"}
+  ],
+  "reversal_observations": ["直销/i茅台扩张而批发代理收入或销量实质下滑。", "至少一个产品桶销量不能高于FY2023，尤其两个桶均走弱。", "商品收款和经营现金流均低于FY2023且非商品解释不足。", "预收货款缩减并同时出现销售量、渠道或收款走弱。"],
+  "operating_scenarios": {
+    "upside": "三渠道同步承接、两个产品桶销量均增长，并有可比商品收款与经营现金转换共同改善。",
+    "base": "直销增速更快，批发基本稳定或温和增长，销量不广泛回落；终端耗用和库存仍不作无证实假设。",
+    "downside": "直销不能抵消批发收缩，至少一个产品桶销量下降，或商品收款和经营现金流共同走弱；不得转化为估值/投资动作。"
+  },
+  "frozen_fy2024_first_match_settlement_axes": [
+    {
+      "axis_id": "AXIS_1_CHANNEL_ARCHITECTURE_ADDITIVITY",
+      "object": "直销/数字渠道扩张是否在批发代理框架上形成增量承接。",
+      "chain": "FY2023直销672.33亿元、批发代理799.86亿元、i茅台223.74亿元 → 保留批发并扩大直销/i茅台 → 渠道收入/销量承接 → 商品收款由轴3单独结算。",
+      "frozen_claim": "FY2024直销与i茅台继续增长，批发代理收入至少维持FY2023，因此扩张多于纯替代。",
+      "allowed_observations": {"direct_sales_revenue": 672.3287688314, "wholesale_agent_revenue": 799.861193979, "i_maotai_revenue": 223.743235, "unit": "亿元；对应FY2024同口径年报渠道/线上表"},
+      "mechanical_rules": {
+        "success": "三腿均可比且均通过：直销>672.3287688314、i茅台>223.743235、批发代理>=799.861193979；全三腿主张完全实现。",
+        "failure": "三腿均可比且均未通过；全三腿主张未实现。",
+        "mixed": "三腿均可比且恰有一或两腿通过（P/P/F、P/F/P、F/P/P、P/F/F、F/P/F、F/F/P）；逐腿记录，主张未完全实现。",
+        "partial_unknown": "至少一腿未披露或不可比；该腿LOCAL_UNKNOWN/MEASUREMENT_MISMATCH，其他腿照常记录；全三腿主张不标成功或失败。"
+      },
+      "local_mismatch": "i茅台若与其他线上平台合并，仅该腿mismatch；总收入、销量、合同负债、商品收款、经营现金流、现金余额和项目进展均不得补替。"
+    },
+    {
+      "axis_id": "AXIS_2_MATURE_PRODUCT_ABSORPTION",
+      "object": "两个成熟产品桶的实际销售量是否共同扩张。",
+      "chain": "FY2023茅台酒42,109.50吨、其他系列酒31,164.54吨及大量基酒 → 长期贮存和产品矩阵投放 → 各桶销售量 → 商品收款由轴3单独结算。",
+      "frozen_claim": "FY2024茅台酒销量>42,109.50吨且其他系列酒>31,164.54吨。",
+      "allowed_observations": "FY2024同定义产品情况表的两桶销售量（吨）。产量、收入、库存、产能和项目只作背景。",
+      "mechanical_rules": {"success": "两桶均严格高于基准。", "failure": "两桶均可比但任一桶未严格高于基准；记录失败桶，另一桶不能抵消。", "partial_unknown": "受影响桶未披露或定义/单位改变；局部UNKNOWN/mismatch，不由其他口径补填。"},
+      "local_mismatch": "产品重分、合并或单位改变只影响该桶；不得用产能、产量、投资、收入、总收入、合同负债、收款、经营现金或现金余额替代。"
+    },
+    {
+      "axis_id": "AXIS_3_PRODUCT_COLLECTION_AND_OWNER_CASH_CONVERSION",
+      "object": "商品客户收款与综合经营现金转换是否共同改善。",
+      "chain": "FY2023商品销售现金收款1,636.9990941762亿元、经营现金流665.9324772109亿元 → 管理预收、付款与营运资金 → 商品收款 → 经营现金结果；财务公司成分局部识别。",
+      "frozen_claim": "FY2024商品销售现金收款与经营现金流均高于FY2023，支持强但分口径验证的owner-cash判断。",
+      "allowed_observations": "FY2024合并现金流量表的商品销售收款和经营现金流，以及财务公司项目可比性说明。",
+      "mechanical_rules": {"success": "两指标可比且均严格高于基准。", "failure": "两指标可比且均不高于基准。", "mixed": "两指标可比但仅一项高于基准；分别报告两腿。", "partial_unknown": "任一指标未披露或范围/分类不可比；只局部UNKNOWN/mismatch。"},
+      "local_mismatch": "财务公司成员、客户存款、同业存放或分类变化只降级经营现金流腿；可比商品收款仍结算。收入、合同负债、现金余额和项目叙事均不得替代。"
+    }
+  ],
+  "settlement_boundary": "三轴互不替代。custodian只能读取FY2024官方年报中各轴的匹配观察；缺失或不匹配局部降级，不新增全局门槛。"
+}

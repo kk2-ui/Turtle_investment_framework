@@ -1,0 +1,44 @@
+{
+  "artifact_type": "contract-limited-outcome-settlement.v1",
+  "case_id": "BLIND:CN600519:20240501:FY2024",
+  "outcome_period": "FY2024",
+  "authorized_source": {
+    "publisher": "issuer official annual report disclosure",
+    "report": "贵州茅台酒股份有限公司2024年年度报告",
+    "local_path": "/Users/xiami/workspace/analy/Turtle_investment_framework/output/600519_贵州茅台/600519_2024_年报.pdf"
+  },
+  "axes": [
+    {
+      "axis_id": "AXIS_1_CHANNEL_ARCHITECTURE_ADDITIVITY",
+      "legs": [
+        {"leg_id": "direct_sales_revenue", "observation": "直销本期销售收入7,484,332.71万元=748.433271亿元", "pdf_page": 16, "frozen_baseline": 672.3287688314, "operator": ">", "comparable": true, "result": "PASS"},
+        {"leg_id": "i_maotai_revenue", "observation": "i茅台数字营销平台本期销售收入2,002,366.62万元=200.236662亿元", "pdf_page": 16, "frozen_baseline": 223.743235, "operator": ">", "comparable": true, "result": "FAIL"},
+        {"leg_id": "wholesale_agent_revenue", "observation": "批发代理本期销售收入9,576,851.10万元=957.685110亿元", "pdf_page": 16, "frozen_baseline": 799.861193979, "operator": ">=", "comparable": true, "result": "PASS"}
+      ],
+      "axis_result": "MIXED",
+      "exact_rule_application": "P/F/P：三腿可比、两腿通过；全三腿主张未完全实现。",
+      "local_mismatch_or_unknown": []
+    },
+    {
+      "axis_id": "AXIS_2_MATURE_PRODUCT_ABSORPTION",
+      "legs": [
+        {"leg_id": "maotai_liquor_sales_volume", "observation": "茅台酒销量46,412.95吨", "pdf_page": 15, "frozen_baseline": 42109.5, "operator": ">", "comparable": true, "result": "PASS"},
+        {"leg_id": "other_series_liquor_sales_volume", "observation": "其他系列酒销量36,919.81吨", "pdf_page": 15, "frozen_baseline": 31164.54, "operator": ">", "comparable": true, "result": "PASS"}
+      ],
+      "axis_result": "SUCCESS",
+      "exact_rule_application": "两桶均严格高于冻结基准。",
+      "local_mismatch_or_unknown": []
+    },
+    {
+      "axis_id": "AXIS_3_PRODUCT_COLLECTION_AND_OWNER_CASH_CONVERSION",
+      "legs": [
+        {"leg_id": "cash_received_from_sales_of_goods_and_services", "observation": "合并商品销售、提供劳务收到的现金182,645,203,339.89元=1,826.4520333989亿元", "pdf_page": 66, "frozen_baseline": 1636.9990941762, "operator": ">", "comparable": true, "result": "PASS"},
+        {"leg_id": "net_cash_flows_from_operating_activities", "observation": "合并经营活动现金流92,463,692,168.43元=924.6369216843亿元", "pdf_page": 67, "frozen_baseline": 665.9324772109, "operator": ">", "comparable": true, "result": "PASS", "comparability_note": "p.9说明销售收款增加及财务公司归集其他成员资金增加；同一合并现金流表以同项列示两年，未披露范围/分类改变。"}
+      ],
+      "axis_result": "SUCCESS",
+      "exact_rule_application": "两指标可比且均严格高于冻结基准。",
+      "local_mismatch_or_unknown": []
+    }
+  ],
+  "settlement_boundary_confirmation": "仅结算冻结三轴；没有以收入汇总、库存、合同负债、现金余额、项目或产能补替任何腿。"
+}

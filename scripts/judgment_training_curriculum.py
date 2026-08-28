@@ -633,7 +633,12 @@ def curriculum_status(curriculum: dict[str, Any], *, validate: bool = True) -> d
     registered_blind = any(
         case.get("track") == "BLIND_JUDGMENT" and case.get("status") == "REGISTERED" for case in cases
     )
-    if curated_teaching >= (settled_blind + 1) * teaching_per_blind:
+    frozen_blind = any(
+        case.get("track") == "BLIND_JUDGMENT" and case.get("status") == "FROZEN" for case in cases
+    )
+    if frozen_blind:
+        next_action = "AUTHORIZE_AND_SETTLE_FROZEN_BLIND_CASE"
+    elif curated_teaching >= (settled_blind + 1) * teaching_per_blind:
         next_action = "FREEZE_NEXT_REGISTERED_BLIND_CASE" if registered_blind else "REGISTER_NEXT_BLIND_CASE"
     elif registered_teaching:
         next_action = "CURATE_NEXT_TEACHING_CASE"

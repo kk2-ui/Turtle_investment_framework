@@ -1268,6 +1268,84 @@
         "transfer_question": "下一家重资产扩张企业能否在同一责任单元同时给出客户量价、单位成本、营运资本、维护/扩张资本和累计现金回收？"
       },
       "holdout_axis": null
+    },
+    {
+      "case_id": "BLIND:CN600519:20240501:FY2024",
+      "company_id": "CN:600519",
+      "company_cluster_id": "COMPANY:CN600519",
+      "company_name": "贵州茅台",
+      "industry_id": "PREMIUM_BRANDED_SPIRITS",
+      "track": "BLIND_JUDGMENT",
+      "status": "SETTLED",
+      "cutoff_at": "2024-05-01T00:00:00+08:00",
+      "outcome_window": {
+        "starts_at": "2025-01-01T00:00:00+08:00",
+        "ends_at": "2026-01-01T00:00:00+08:00"
+      },
+      "outcome_access": "REVEALED_AFTER_FREEZE",
+      "selection_exposure": "PREOUTCOME_ONLY",
+      "role_isolation_state": "ROLE_ISOLATION_PROVED",
+      "primary_capability_units": [
+        "CUSTOMER_ABSORPTION",
+        "OWNER_CASH_CONVERSION"
+      ],
+      "mechanism_focus": "品牌渠道重构如何穿过产品桶销量、客户收款、金融子公司影响的经营现金流和资本投入形成 owner-cash 判断",
+      "claim_scope": "ENTERPRISE_JUDGMENT",
+      "comparative_mode": "NOT_REQUIRED",
+      "source_refs": [
+        "docs/development/research/training_campaigns/JUDGMENT_UTILITY_HISTORICAL_20260828/84_CN600519_BLIND_EXTENSION_SELECTION_REGISTER.json",
+        "docs/development/research/training_campaigns/JUDGMENT_UTILITY_HISTORICAL_20260828/85_CN600519_CUTOFF_BEFORE_SOURCE_PACKET_RECEIPT.json",
+        "docs/development/research/training_campaigns/JUDGMENT_UTILITY_HISTORICAL_20260828/86_CN600519_PREOUTCOME_JUDGMENT.json"
+      ],
+      "artifact_refs": {
+        "preoutcome_judgment_ref": "docs/development/research/training_campaigns/JUDGMENT_UTILITY_HISTORICAL_20260828/86_CN600519_PREOUTCOME_JUDGMENT.json",
+        "freeze_ref": "docs/development/research/training_campaigns/JUDGMENT_UTILITY_HISTORICAL_20260828/88_CN600519_INDEPENDENT_PREOUTCOME_REVIEW.md",
+        "settlement_ref": "docs/development/research/training_campaigns/JUDGMENT_UTILITY_HISTORICAL_20260828/90_CN600519_CUSTODIAN_OUTCOME_SETTLEMENT.json",
+        "postoutcome_review_ref": "docs/development/research/training_campaigns/JUDGMENT_UTILITY_HISTORICAL_20260828/92_CN600519_INDEPENDENT_POSTOUTCOME_REVIEW.md",
+        "investor_readout_ref": "docs/development/research/training_campaigns/JUDGMENT_UTILITY_HISTORICAL_20260828/93_CN600519_INVESTOR_READOUT.md"
+      },
+      "lesson": null,
+      "holdout_axis": null
+    },
+    {
+      "case_id": "TEACH:HK06862:20211101:FY2021H1_2022H1",
+      "company_id": "HK:06862",
+      "company_cluster_id": "COMPANY:HK06862",
+      "company_name": "海底捞",
+      "industry_id": "FULL_SERVICE_RESTAURANT_NETWORK",
+      "track": "TEACHING",
+      "status": "CURATED",
+      "cutoff_at": "2021-11-01T00:00:00+08:00",
+      "outcome_window": null,
+      "outcome_access": "RESULT_KNOWN",
+      "selection_exposure": "RESULT_KNOWN_OR_DERIVED_VISIBLE",
+      "role_isolation_state": "NOT_REQUIRED_FOR_TEACHING",
+      "primary_capability_units": [
+        "MANAGEMENT_DECISION_EXECUTION",
+        "CAPITAL_ALLOCATION"
+      ],
+      "mechanism_focus": "餐饮网络过度扩张后的关停/暂停开店，如何经过保留门店客户、单位经济、营运资本、退出成本和替代资本处理形成或不形成资源重置",
+      "claim_scope": "WITHIN_CASE_MECHANISM",
+      "comparative_mode": "NOT_REQUIRED",
+      "source_refs": [
+        "docs/development/research/experiments/R-75_haidilao_woodpecker_202111/00_result_known_multiclock_teaching.md"
+      ],
+      "artifact_refs": {
+        "lesson_ref": "docs/development/research/experiments/R-75_haidilao_woodpecker_202111/00_result_known_multiclock_teaching.md",
+        "postoutcome_review_ref": "docs/development/research/training_curricula/teaching_cases/TC_HK06862_WOODPECKER_INDEPENDENT_REVIEW.md"
+      },
+      "lesson": {
+        "state_and_constraint": "快速扩张增加管理难度；行动前翻台低、网络含低客流、修复期长和过密门店，疫情是同时存在的外部约束。",
+        "management_choice_or_no_action": "2021年11月启动啄木鸟计划，永久关闭、暂停整顿部分门店，放缓后续资本投入并安置受影响员工。",
+        "customer_or_operating_response": "紧邻窗口内同店日销售和翻台未恢复；疫情停业、营业日和幸存者样本能解释这一观察，不能直接归为计划无效。",
+        "cash_or_capital_result": "退出、租赁终止及减值带来显性资本代价，PPE购置下降；集团经营现金含营运资本释放，资本回收仍不可识别。",
+        "mechanism_lesson": "停止继续投入是可结算的管理执行，已修复网络、owner cash和资本回收需要保留cohort客户、单位经济和现金桥。",
+        "strongest_rival": "疫情/需求环境和关闭弱店后的样本构成变化可解释聚合变化，无需归因于啄木鸟计划。",
+        "near_miss": "把关店数、集团/同店均值、正CFO、存货释放、减值或PPE下降当成选店正确、单位经济修复或资本回收。",
+        "investor_treatment": "确认止损权已经实施且退出成本真实发生；对网络修复、正常 owner cash 与资本回收保持条件性处理，不做证券结论。",
+        "transfer_question": "下一家收缩网络能否在结果前分开冻结保留、退出、暂停和复开cohort的客户、单位经济、现金、退出成本与替代资本？"
+      },
+      "holdout_axis": null
     }
   ],
   "teaching_candidate_pool": [
