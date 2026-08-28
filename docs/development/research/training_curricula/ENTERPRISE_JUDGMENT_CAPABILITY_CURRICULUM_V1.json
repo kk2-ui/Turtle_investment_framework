@@ -1386,6 +1386,86 @@
       "holdout_axis": null
     },
     {
+      "case_id": "TEACH:HK02669:20230425:FY2023",
+      "company_id": "HK:02669",
+      "company_cluster_id": "COMPANY:HK02669",
+      "company_name": "中海物业",
+      "industry_id": "PROPERTY_MANAGEMENT",
+      "track": "TEACHING",
+      "status": "CURATED",
+      "cutoff_at": "2023-04-25T00:00:00+08:00",
+      "outcome_window": null,
+      "outcome_access": "RESULT_KNOWN",
+      "selection_exposure": "RESULT_KNOWN_OR_DERIVED_VISIBLE",
+      "role_isolation_state": "NOT_REQUIRED_FOR_TEACHING",
+      "primary_capability_units": [
+        "CUSTOMER_ABSORPTION",
+        "OWNER_CASH_CONVERSION"
+      ],
+      "mechanism_focus": "第三方物业拓展如何从合同赢单和在管面积穿过续约、项目经济、回款信用和普通股东现金转移形成或不形成 owner-cash 证据",
+      "claim_scope": "WITHIN_CASE_MECHANISM",
+      "comparative_mode": "NOT_REQUIRED",
+      "source_refs": [
+        "docs/development/research/training_curricula/teaching_cases/TC_HK02669_THIRD_PARTY_GROWTH_COLLECTION_OWNER_CASH_V1.md"
+      ],
+      "artifact_refs": {
+        "lesson_ref": "docs/development/research/training_curricula/teaching_cases/TC_HK02669_THIRD_PARTY_GROWTH_COLLECTION_OWNER_CASH_V1.md",
+        "postoutcome_review_ref": "docs/development/research/training_curricula/teaching_cases/TC_HK02669_THIRD_PARTY_GROWTH_COLLECTION_OWNER_CASH_INDEPENDENT_REVIEW.md"
+      },
+      "lesson": {
+        "state_and_constraint": "FY2022 末第三方在管面积已增至 105.2m 平方米，且包干制意味着公司承担服务成本和应收风险；可得项目不等于可收现的优质增长。",
+        "management_choice_or_no_action": "管理层主动拓展独立第三方项目；分析基准是先以已有项目的续约、收缴与项目经济筛选扩张，而非虚构已披露的董事会备选案。",
+        "customer_or_operating_response": "FY2023 独立第三方新订单和第三方在管面积显著增长，物业管理利润率改善；但没有外部 cohort 的续约、满意度或全成本经济披露。",
+        "cash_or_capital_result": "集团 CFO 与应收、坏账和营运资本同时变化；FY2023 已向普通股东支付 407.854m 人民币股利，但其来源、第三方 cohort 归因及维护后可持续性均未披露。",
+        "mechanism_lesson": "合同赢单、在管面积、合同口径利润、集团现金、已付股东现金、第三方 cohort 现金和可持续维护后 owner cash 是不同层级，前一层不能替后一层投票。",
+        "strongest_rival": "效率改善、品牌和已付股东股利可能反映可重复的优质平台现金，而 receivable 变化只是暂时的扩张营运资本；但现有披露不能把这一解释归属到新第三方 cohort。",
+        "near_miss": "将香港临时隔离设施的短期管理收入，或第三方在管面积增长，误作独立第三方项目续约、项目单位经济和 owner-cash 转换的证明。",
+        "investor_treatment": "确认第三方规模增长、合同口径经营改善和已发生的普通股东现金转移；第三方 cohort 的续约、收缴、项目 owner cash 及可持续维护后现金仍只作条件性处理。",
+        "transfer_question": "另一家物业公司能否给出同一第三方项目 cohort 从中标、续约、开票/实收、全成本、应收核销到普通股东现金转移与可持续现金能力的桥？"
+      },
+      "holdout_axis": null
+    },
+    {
+      "case_id": "TEACH:HK01502:20240419:FY2023_FY2025",
+      "company_id": "HK:01502",
+      "company_cluster_id": "COMPANY:HK01502",
+      "company_name": "金融街物业",
+      "industry_id": "PROPERTY_MANAGEMENT",
+      "track": "TEACHING",
+      "status": "CURATED",
+      "cutoff_at": "2024-04-19T00:00:00+08:00",
+      "outcome_window": null,
+      "outcome_access": "RESULT_KNOWN",
+      "selection_exposure": "RESULT_KNOWN_OR_DERIVED_VISIBLE",
+      "role_isolation_state": "NOT_REQUIRED_FOR_TEACHING",
+      "primary_capability_units": [
+        "CUSTOMER_ABSORPTION",
+        "OWNER_CASH_CONVERSION"
+      ],
+      "mechanism_focus": "非住宅和第三方物业拓展、合资/收购调整如何从面积穿过续约、项目经济、应收收缴、可上划现金和资本损失形成或不形成 owner cash",
+      "claim_scope": "WITHIN_CASE_MECHANISM",
+      "comparative_mode": "NOT_REQUIRED",
+      "source_refs": [
+        "docs/development/research/training_curricula/teaching_cases/TC_HK01502_NONRESIDENTIAL_RENEWAL_COLLECTION_OWNER_CASH_V1.md"
+      ],
+      "artifact_refs": {
+        "lesson_ref": "docs/development/research/training_curricula/teaching_cases/TC_HK01502_NONRESIDENTIAL_RENEWAL_COLLECTION_OWNER_CASH_V1.md",
+        "postoutcome_review_ref": "docs/development/research/training_curricula/teaching_cases/TC_HK01502_NONRESIDENTIAL_RENEWAL_COLLECTION_OWNER_CASH_INDEPENDENT_REVIEW.md"
+      },
+      "lesson": {
+        "state_and_constraint": "FY2023 的第三方来源、非住宅面积和商务/非商务损益分类是三个未交叉披露的分母；包干制为主使扩张同时承担服务成本和现金转换约束。",
+        "management_choice_or_no_action": "管理层选择市场化竞标、合资与收购置佳的组合调整；no-action 是分析基准，不把未披露的董事会比较假装成事实。",
+        "customer_or_operating_response": "第三方面积、非住宅覆盖和置佳收入增长真实发生，置佳却未完成业绩承诺；公开资料没有按客户来源和物业类型披露续约、收缴或项目全成本。",
+        "cash_or_capital_result": "置佳有真实收购对价、卖方补偿权和两年合计 28.081m 人民币商誉减值；集团现金与可分配储备存在，但不能替代项目收缴、上划或 owner cash。",
+        "mechanism_lesson": "面积、合并收入、商务/非商务毛利、应收/ECL、集团现金、补偿和商誉减值分别回答不同问题；收购减值是资本后果，不是同额现金损失或整个项目池的结论。",
+        "strongest_rival": "置佳接近收入承诺、补偿能抵销部分未付对价，且集团仍有经营现金与流动性，可能表明资本损失有限；但这仍不能证明第三方非住宅 cohort 的 owner cash。",
+        "near_miss": "把第三方面积、非住宅面积、非商务毛利率、集团现金和 ECL 并列，误写成第三方非住宅项目续约、收缴和 owner-cash 成功。",
+        "investor_treatment": "确认扩张、交易、承诺未达标、补偿权和减值的事实；不给第三方非住宅增长精确的现金质量或永久损失归因，等待同 cohort 的续约—收缴—全成本—上划桥。",
+        "transfer_question": "另一家声称非住宅第三方扩张成功的物业公司，能否对同一 cohort 披露到期/续约、开票实收、全成本、应收核销和可上划现金？"
+      },
+      "holdout_axis": null
+    },
+    {
       "case_id": "TEACH:CN600660:20131023:FY2013_FY2016",
       "company_id": "CN:600660",
       "company_cluster_id": "COMPANY:CN600660",
@@ -1428,26 +1508,15 @@
   ],
   "teaching_candidate_pool": [
     {
-      "candidate_id": "TCAND:HK02669",
-      "company_ids": ["HK:02669"],
-      "company_cluster_id": "COMPANY:HK02669",
-      "company_name": "中海物业",
-      "industry_id": "PROPERTY_MANAGEMENT",
-      "primary_capability_units": ["CUSTOMER_ABSORPTION", "OWNER_CASH_CONVERSION"],
-      "mechanism_focus": "在管面积、第三方拓展、收缴率和应收如何形成现金",
+      "candidate_id": "TCAND:MSFT_NOKIA_DEVICES_SERVICES",
+      "company_ids": ["US:MSFT"],
+      "company_cluster_id": "COMPANY:MICROSOFT",
+      "company_name": "Microsoft / Nokia Devices & Services",
+      "industry_id": "ACQUIRED_PHONE_HARDWARE_ECOSYSTEM",
+      "primary_capability_units": ["PERMANENT_LOSS_AND_LIFECYCLE", "MANAGEMENT_DECISION_EXECUTION"],
+      "mechanism_focus": "将战略伙伴内化为自有手机硬件系统后，整合、客户销量/利润组合、未来现金流重置、减值和重组如何区分实施、经济失败与资本损失",
       "selection_exposure": "RESULT_KNOWN_OR_DERIVED_VISIBLE",
-      "source_locator": "LOCAL_OUTPUT:02669_中海物业"
-    },
-    {
-      "candidate_id": "TCAND:HK01502",
-      "company_ids": ["HK:01502"],
-      "company_cluster_id": "COMPANY:HK01502",
-      "company_name": "金融街物业",
-      "industry_id": "PROPERTY_MANAGEMENT",
-      "primary_capability_units": ["CUSTOMER_ABSORPTION", "OWNER_CASH_CONVERSION"],
-      "mechanism_focus": "非住宅物业续约、项目拓展和回款质量",
-      "selection_exposure": "RESULT_KNOWN_OR_DERIVED_VISIBLE",
-      "source_locator": "LOCAL_OUTPUT:01502_金融街物业"
+      "source_locator": "docs/development/research/training_curricula/teaching_candidates/TCAND_MSFT_NOKIA_DEVICES_SERVICES_SELECTION.md"
     }
   ]
 }
