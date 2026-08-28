@@ -66,9 +66,9 @@
     "investment_action": "NONE"
   },
   "next_historical_training_behavior": {
-    "action": "RUN_NEXT_UNSEEN_PAIRED_HOLDOUT_WITH_MATERIAL_PREOUTCOME_TREATMENT_DIFFERENCE",
-    "reason": "本episode完成了真实结果反馈，但两臂在结果解封前没有材料处理差异，不能承担方法验证。",
-    "required_behavior": "在相同cutoff、相同证据与研究预算下，先冻结至少一个会改变正常盈利、owner cash、永久损失、内在价值方向或经济rank-1行动的真实差异，再解封结果；局部经营桥缺失必须只冻结对应责任轴。",
-    "acceptance_criteria": "结果必须通过观察到且责任匹配的经济载体支持Enhanced避免一个材料错误、改进一个材料范围或改变一项材料投资处理；篇幅、字段数、分类粒度和措辞偏好不计效用。"
+    "action": "REGISTER_NEXT_BLIND_CASE",
+    "reason": "课程当前已完成四个Blind、尚低于下限八；本episode的双臂又没有冻结材料处理差异，不能用重复Holdout代替下一轮异质企业反馈。",
+    "required_behavior": "先执行第五个结果隔离Blind，使真实结果继续检验同责任边界、局部传播和连续事实综合；随后补Teaching，再运行下一paired Holdout。未来paired Holdout必须在相同cutoff、相同证据与研究预算下先冻结至少一个真实材料处理差异，任何跨臂材料修订都使该pair不可作method-only评价。",
+    "acceptance_criteria": "即时下一动作与课程状态REGISTER_NEXT_BLIND_CASE一致；后续Holdout只有在对称隔离、结果前材料处理确有不同，且结果通过责任匹配经济载体支持Enhanced避免材料错误或改变材料投资处理时，才可能产生候选效用。篇幅、字段数、分类粒度和措辞偏好不计效用。"
   }
 }

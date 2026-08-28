@@ -437,10 +437,10 @@ def test_checked_in_curriculum_registers_real_assets_without_overclaiming_capaci
     assert progress["track_progress"]["BLIND_JUDGMENT"]["completed_independent_company_cluster_count"] == 4
     holdout = progress["track_progress"]["HISTORICAL_HOLDOUT"]
     assert holdout["record_count"] == 2
-    assert holdout["episode_count"] == 1
-    assert holdout["archived_not_evaluable_count"] == 1
-    assert holdout["independent_company_cluster_count"] == 1
-    assert holdout["completed_independent_company_cluster_count"] == 1
+    assert holdout["episode_count"] == 0
+    assert holdout["archived_not_evaluable_count"] == 2
+    assert holdout["independent_company_cluster_count"] == 0
+    assert holdout["completed_independent_company_cluster_count"] == 0
     assert progress["track_progress"]["PROSPECTIVE"]["independent_company_cluster_count"] == 2
     assert progress["teaching_candidate_pool"]["independent_company_cluster_count"] == 4
     assert progress["teaching_candidate_pool"]["teaching_library_pipeline_independent_company_cluster_count"] == 24
@@ -453,8 +453,8 @@ def test_checked_in_curriculum_registers_real_assets_without_overclaiming_capaci
     assert progress["capability_coverage_by_distinct_company_clusters"]["BUSINESS_MODEL_ECONOMICS"] == 6
     assert progress["capability_coverage_by_distinct_company_clusters"]["CUSTOMER_ABSORPTION"] == 9
     assert progress["capability_coverage_by_distinct_company_clusters"]["MANAGEMENT_DECISION_EXECUTION"] == 3
-    assert progress["capability_coverage_by_distinct_company_clusters"]["OWNER_CASH_CONVERSION"] == 8
-    assert progress["capability_coverage_by_distinct_company_clusters"]["PERMANENT_LOSS_AND_LIFECYCLE"] == 4
+    assert progress["capability_coverage_by_distinct_company_clusters"]["OWNER_CASH_CONVERSION"] == 7
+    assert progress["capability_coverage_by_distinct_company_clusters"]["PERMANENT_LOSS_AND_LIFECYCLE"] == 3
     assert progress["capability_coverage_by_distinct_company_clusters"]["VALUATION_AND_ENTRY_TREATMENT"] == 2
     assert progress["teaching_pipeline_coverage_by_distinct_company_clusters"]["VALUATION_AND_ENTRY_TREATMENT"] == 2
 

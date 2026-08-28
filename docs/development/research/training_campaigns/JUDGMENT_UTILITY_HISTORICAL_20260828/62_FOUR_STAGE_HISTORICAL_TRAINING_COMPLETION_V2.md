@@ -6,7 +6,7 @@
 
 ## 先说结论
 
-这轮训练对“形成企业判断”已经有真实成效，但对“Method Pack 比公平普通研究更好”仍没有正面证据。
+这轮训练对“形成企业判断”已经有真实成效，但对“Method Pack 比公平普通研究更好”仍没有可评价的正面证据。
 
 真实成效不是多了多少字段或工件，而是：
 
@@ -14,9 +14,9 @@
 - 结果后能够上调或下调企业判断，而不是用 `UNKNOWN`、`MIXED` 或机械 residual 拒绝综合；
 - 浙江鼎力暴露并纠正了“用局部信用风险覆盖已经验证的产品与现金执行”这一过度保守错误；
 - 瀚蓝环境结果前暴露并纠正了另一种过度防御：为了避免整体负面而过度保护核心正面判断，忽略已经观察到的集团应收、现金和债务载体；
-- 瀚蓝 FY2024 又证明，机械 `LOCAL_UNKNOWN` 只限制能源归因和 parent cash 归属，不能阻止对正常盈利和内在价值作小幅上修。
+- 瀚蓝 FY2024 作为企业反馈显示，机械 `LOCAL_UNKNOWN` 只限制能源归因和 parent cash 归属，不能阻止对正常盈利和内在价值作小幅上修；但其双臂在结果前曾接受跨臂纠正，不能作为严格 Method-only Holdout。
 
-但公平 Holdout 中 Baseline 与 Enhanced 在结果揭示前冻结了相同的五轴投资处理和同一个经济 rank-1 研究行动。因此本案的 Method Pack 效用必须是 `NO_MATERIAL_UTILITY`。Enhanced 的责任传播写得更细，不等于它改变了投资处理，更不能倒算为方法胜利。
+瀚蓝环境 workflow pair 中 Baseline 与 Enhanced 在结果揭示前最终冻结了相同的五轴投资处理和同一个经济 rank-1 研究行动；但 Enhanced 曾接受跨臂纠正，因此该 pair 不能作为严格方法-only Holdout，方法效用记为不可诊断。Enhanced 的责任传播写得更细，不等于它改变了投资处理，更不能倒算为方法胜利。
 
 ## 四个阶段完成到哪里
 
@@ -25,14 +25,14 @@
 | Teaching | 20 个独立公司 cluster | 已建立覆盖项目投产、零售扩张、软件研发、品牌消费、制造、资源加工、物流、酒店、平台与现金归属等机制的教学底座 |
 | Historical Blind Judgment | 4 个独立公司，全部完成结果反馈 | 第一稿和结果后判断都可形成明确投资处理；样本仍低于课程下限 8 |
 | Method Pack | V2 已冻结 | 只保留同责任边界经常经济、转换三联征局部收窄和管理层分轴三项行为；均是候选，不是已验证规则 |
-| Fair Historical Holdout | 1 个真正可评价 paired holdout；另有 1 个无方法输入历史记录归档 | 瀚蓝环境完成同公司、同 cutoff、同资料预算双臂；结果为零方法效用，不夸大 |
+| Fair Historical Holdout | 0 个可评价；2 个尝试均归档 | 瀚蓝环境双臂在结果前发生跨臂纠正，属于企业反馈/workflow archive；天坛生物 strict pair 因责任边界和口径不匹配被 RETURN，见 `64_CN600161_STRICT_PAIRED_HOLDOUT_NOT_EVALUABLE.json` |
 | Prospective | 2 个冻结对象 | 不计本轮历史训练效用，不阻断下一轮历史训练 |
 
 课程机械状态仍是 `BUILDING`：
 
 - Teaching：20 / lower 20；
 - Blind：4 / lower 8；
-- 可评价 Holdout：1 / lower 4；
+- 可评价 Holdout：0 / lower 4；
 - `capability_claim=NOT_DEMONSTRATED_BY_CURRICULUM_COUNTS`；
 - 下一动作：`REGISTER_NEXT_BLIND_CASE`。
 
@@ -58,11 +58,11 @@ FY2024 结果支持臂式毛利、销量、库存和集团经常利润改善，�
 
 这次纠正直接回答了防御性写作问题：不能让最弱局部轴成为整家公司分数，也不能把 `MIXED` 当作 `NEGATIVE`。
 
-## 瀚蓝环境：公平 Holdout 学到了什么
+## 瀚蓝环境：企业反馈（非严格 Holdout）
 
 ### 结果前
 
-公平 Baseline 与 Enhanced 都判断：
+两臂在 workflow 修复后都判断：
 
 - 核心垃圾焚烧运营是最可靠的正常盈利底座；
 - 单年燃气价差修复不能完整正常化；
@@ -78,7 +78,7 @@ Enhanced 第一稿一度把 FY2023 能源高点完整纳入正常盈利，并用
 - 外生气价与政府延付影响经济，但不能自动归责管理层；
 - 固废运营正面也不能为融资和新增资本配置背书。
 
-修复后两臂材料处理完全相同。这一事实在 outcome access 前已经冻结，防止结果后为 Method Pack 制造胜利。
+修复后两臂材料处理完全相同；但修复本身是跨臂审阅，破坏了方法-only 隔离。因此该结果保留为企业经营反馈和流程审计，不计入可评价 Holdout，也不能为 Method Pack 产生效用信用。
 
 ### FY2024 结果
 
@@ -99,11 +99,11 @@ Enhanced 第一稿一度把 FY2023 能源高点完整纳入正常盈利，并用
 
 机械 threshold 将 9.64% 因低于 10% 归入 residual，Enhanced 又因能源精确桥缺失将整项 recurring economics 置为 local unknown。最终综合没有被这些状态绑架，而是消费连续经营事实并作小幅上修。这是第一稿和结果后反防御能力的直接表现。
 
-### 方法效用
+### 方法效用（不可诊断）
 
-`NO_MATERIAL_UTILITY`。
+`NOT_DIAGNOSTIC`：该 pair 不是严格方法-only Holdout。
 
-原因不是“结果不够好”，而是两臂在结果前采取了相同投资处理。以下都不能改写这个零：
+原因是 Enhanced 在结果前接受了跨臂纠正，无法知道最终相同处理来自 Method Pack 还是审阅修复。以下都不能把它改写成方法胜利：
 
 - Enhanced 的 cell 更细；
 - Enhanced 的责任传播更合理；
@@ -111,7 +111,13 @@ Enhanced 第一稿一度把 FY2023 能源高点完整纳入正常盈利，并用
 - 某一 arm 的机械分类更贴近结果；
 - 结果后能提出更好的研究问题。
 
-Method Pack V2 保留为 `RETAIN_CANDIDATE_NOT_VALIDATED`。它没有被证明有害，但也没有被证明优于公平普通研究。
+Method Pack V2 保留为 `RETAIN_CANDIDATE_NOT_VALIDATED`。它没有被证明有害，也没有获得可诊断的公平效用证据。
+
+## 天坛生物：严格 paired Holdout 结果前退回
+
+天坛生物 CN600161 的新 strict pair 在结果仍 sealed 时由独立 reviewer RETURN，未进入 FY2024 settlement，也不登记为可评价 Holdout。退回原因是三项可改变投资结论的设计缺陷：Baseline 将母公司 NCI/上划条件错误地耦合到经营 cell；Baseline 将商业化与质量监管合并；两臂 normal-earnings perimeter 不可比。根因属于 `REASONING + DATA_COVERAGE`，不是企业经营判断“失败”。完整裁决见 [`63_CN600161_STRICT_PAIRED_HOLDOUT_PREOUTCOME_REVIEW_RETURN.md`](./63_CN600161_STRICT_PAIRED_HOLDOUT_PREOUTCOME_REVIEW_RETURN.md)，不可评价记录见 [`64_CN600161_STRICT_PAIRED_HOLDOUT_NOT_EVALUABLE.json`](./64_CN600161_STRICT_PAIRED_HOLDOUT_NOT_EVALUABLE.json)。
+
+该 pair 的两份结果前判断仍保留为流程诊断材料，但不能将其 outcome 结果当作训练反馈；在下一轮先登记第五个 Blind，再按新的共同边界冻结条件设计下一次 Holdout。
 
 ## 防御性写作：解决了什么，仍剩什么
 

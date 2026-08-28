@@ -1019,7 +1019,7 @@
       "company_name": "瀚蓝环境",
       "industry_id": "ENVIRONMENTAL_UTILITY_PROJECT_OPERATIONS",
       "track": "HISTORICAL_HOLDOUT",
-      "status": "EVALUATED",
+      "status": "ARCHIVED_NOT_EVALUABLE",
       "cutoff_at": "2024-05-01T00:00:00+08:00",
       "outcome_window": {
         "starts_at": "2025-04-11T00:00:00+08:00",
@@ -1050,7 +1050,7 @@
       },
       "lesson": null,
       "holdout_axis": "COMPANY",
-      "method_memory_state": "PAIRED_METHOD_EVALUATED"
+      "method_memory_state": "NO_TRAINING_METHOD_SUPPLIED"
     },
     {
       "case_id": "PROSPECTIVE:CN601899:20260501:FY2026",
