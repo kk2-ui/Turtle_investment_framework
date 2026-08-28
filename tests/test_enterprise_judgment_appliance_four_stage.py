@@ -162,3 +162,36 @@ def test_first_custody_attempt_is_value_free_local_mismatch() -> None:
     assert "outcome_value" not in serialized
     assert "realized_direction" not in serialized
     assert attempt["e3_comparative_status"] == "NOT_ADMITTED"
+
+
+def test_recovery_receipt_is_an_exact_preoutcome_replay_not_a_forecast_rewrite() -> None:
+    receipt = _load(FOUR_STAGE / "04_e2_acquisition_recovery_preoutcome_receipt.json")
+    _, _, episode, _ = _inputs()
+
+    assert receipt["episode_id"] == episode["episode_id"]
+    assert receipt["measurement_contract_ids"] == [
+        row["measurement_contract"]["measurement_contract_id"]
+        for row in episode["minimal_field_chains"]
+    ]
+    assert receipt["controller_counts"] == {
+        "decision_contracts": 3,
+        "technical_route_identities": 3,
+        "measurement_contracts": 3,
+        "static_evidence": 3,
+        "predictions": 3,
+        "outcome_access": 0,
+        "source_inventories": 0,
+        "observations": 0,
+        "settlements": 0,
+    }
+    assert receipt["recovery_invariants"] == {
+        "forecast_reauthored": False,
+        "measurement_contract_changed": False,
+        "source_packet_changed": False,
+        "outcome_source_enumerated": False,
+        "outcome_pdf_opened": False,
+        "outcome_value_read": False,
+        "old_terminal_receipt_mutated": False,
+    }
+    assert receipt["status"] == "PREOUTCOME_REPLAY_FROZEN_AWAITING_CONTRACT_ONLY_OUTCOME_ACCESS"
+    assert receipt["rights"] == four_stage.RIGHTS

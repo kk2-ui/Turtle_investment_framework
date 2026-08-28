@@ -18,3 +18,8 @@
 - `E3_COMPARATIVE_LAB`：未准入，但不阻断前三层。只有另行冻结产品级 estimand、机制相容 panel、公平基线与独立结果合同后才可启动。
 
 允许输出仅为 `STATE_VIEW / DECISION_VIEW / MECHANISM_VIEW / TEACHING_ONLY / RESEARCH_AGENDA`。方法迁移、CJO、估值、报告、BuyBand 和投资权限全部关闭。
+
+结果侧工件保持追加式：`03_e2_acquisition_attempt_1.json` 保留第一次
+value-free mismatch；`04_e2_acquisition_recovery_preoutcome_receipt.json` 只记录修复
+公告分类后对已验收结果前对象的等值控制器重放。后者没有打开 outcome access，
+也没有改写预测、Measurement Contract 或第一次失败收据。
