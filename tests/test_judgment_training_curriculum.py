@@ -431,7 +431,7 @@ def test_checked_in_curriculum_registers_real_assets_without_overclaiming_capaci
 
     progress = result["progress"]
     assert progress["track_progress"]["TEACHING"]["completed_independent_company_cluster_count"] == 21
-    assert progress["track_progress"]["BLIND_JUDGMENT"]["independent_company_cluster_count"] == 5
+    assert progress["track_progress"]["BLIND_JUDGMENT"]["independent_company_cluster_count"] == 6
     assert progress["track_progress"]["BLIND_JUDGMENT"]["completed_independent_company_cluster_count"] == 5
     assert progress["next_action"] == "REGISTER_NEXT_BLIND_CASE"
     assert progress["track_progress"]["BLIND_JUDGMENT"]["completed_independent_company_cluster_count"] == 5
