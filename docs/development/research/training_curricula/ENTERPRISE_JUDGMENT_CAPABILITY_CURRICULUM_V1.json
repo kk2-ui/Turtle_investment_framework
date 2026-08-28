@@ -517,6 +517,123 @@
       "holdout_axis": null
     },
     {
+      "case_id": "TEACH:HK00506:20240501:FY2024_FY2025",
+      "company_id": "HK:00506",
+      "company_cluster_id": "COMPANY:HK00506",
+      "company_name": "中国食品",
+      "industry_id": "BEVERAGE_BOTTLER",
+      "track": "TEACHING",
+      "status": "CURATED",
+      "cutoff_at": "2024-05-01T00:00:00+08:00",
+      "outcome_window": null,
+      "outcome_access": "RESULT_KNOWN",
+      "selection_exposure": "RESULT_KNOWN_OR_DERIVED_VISIBLE",
+      "role_isolation_state": "NOT_REQUIRED_FOR_TEACHING",
+      "primary_capability_units": [
+        "CUSTOMER_ABSORPTION",
+        "OWNER_CASH_CONVERSION"
+      ],
+      "mechanism_focus": "装瓶渠道的销量、单箱收入和品类结构怎样穿过利润、NCI与母公司路径形成普通股现金",
+      "claim_scope": "WITHIN_CASE_MECHANISM",
+      "comparative_mode": "NOT_REQUIRED",
+      "source_refs": [
+        "docs/development/research/training_curricula/teaching_cases/TC_HK00506_VOLUME_MIX_AND_PARENT_CASH_V1.md"
+      ],
+      "artifact_refs": {
+        "lesson_ref": "docs/development/research/training_curricula/teaching_cases/TC_HK00506_VOLUME_MIX_AND_PARENT_CASH_V1.md"
+      },
+      "lesson": {
+        "state_and_constraint": "核心汽水渠道和价格包装执行有韧性，新品类增长的毛利与资本回报分化。",
+        "management_choice_or_no_action": "管理层提价、调整包装与品类、整合五家工厂，并持续增加产能和数字化投入。",
+        "customer_or_operating_response": "FY2024量减而收入毛利改善；FY2025销量恢复但低毛利水品类和铝价使毛利率回落。",
+        "cash_or_capital_result": "三年group post-capex现金强；65%经济归属、具体法人上游和母公司费用未闭合，NCI股利只解释分配时点。",
+        "mechanism_lesson": "执行信用必须穿过同边界量价、毛利、费用与利润；合并现金还要按经济持股和实际母公司上游转换。",
+        "strongest_rival": "水和能量饮料的早期毛利牺牲可能换来长期渠道密度，当前不能因单期稀释把增长选择权归零。",
+        "near_miss": "用销量或提价动作证明永久定价权，或把单年NCI现金时点和合并现金直接当普通股现金。",
+        "investor_treatment": "成熟装瓶先按跨期group post-capex现金判断，再对65%经济份额和母公司访问折价；新品类与工厂收购只给选择权。",
+        "transfer_question": "各品类销量能否同步转成毛利、经营利润和投入后母公司现金。"
+      },
+      "holdout_axis": null
+    },
+    {
+      "case_id": "TEACH:CN600295:20210501:FY2021_FY2025",
+      "company_id": "CN:600295",
+      "company_cluster_id": "COMPANY:ERDOS",
+      "company_name": "鄂尔多斯",
+      "industry_id": "TEXTILE_AND_ENERGY_CONGLOMERATE",
+      "track": "TEACHING",
+      "status": "CURATED",
+      "cutoff_at": "2021-05-01T00:00:00+08:00",
+      "outcome_window": null,
+      "outcome_access": "RESULT_KNOWN",
+      "selection_exposure": "RESULT_KNOWN_OR_DERIVED_VISIBLE",
+      "role_isolation_state": "NOT_REQUIRED_FOR_TEACHING",
+      "primary_capability_units": [
+        "BUSINESS_MODEL_ECONOMICS",
+        "PERMANENT_LOSS_AND_LIFECYCLE"
+      ],
+      "mechanism_focus": "羊绒品牌与能源冶金周期如何分别穿过单位经济、资本负担、减值和经营权形成普通股价值",
+      "claim_scope": "WITHIN_CASE_MECHANISM",
+      "comparative_mode": "NOT_REQUIRED",
+      "source_refs": [
+        "docs/development/research/training_curricula/teaching_cases/TC_CN600295_CYCLE_CAPITAL_AND_PERMANENT_LOSS_V1.md"
+      ],
+      "artifact_refs": {
+        "lesson_ref": "docs/development/research/training_curricula/teaching_cases/TC_CN600295_CYCLE_CAPITAL_AND_PERMANENT_LOSS_V1.md"
+      },
+      "lesson": {
+        "state_and_constraint": "羊绒品牌毛利有韧性，电冶主导周期波动并承担大部分资本和许可风险。",
+        "management_choice_or_no_action": "管理层维持羊绒品牌、扩建和置换电冶产能、推进绿电余热，同时对亏损项目继续投入或减值。",
+        "customer_or_operating_response": "FY2025多项产量上升而电冶收入下降，成本下降更快使同板块毛利有限修复；产品间仍严重分化。",
+        "cash_or_capital_result": "跨期集团post-capex现金为正且短债下降，但固定资产、在建工程、多晶硅和合规资本已形成真实损失载体。",
+        "mechanism_lesson": "产量、周期价格和集团利润不能互相替代；必须分业务闭合产品毛利、资本投入、减值和非控股现金。",
+        "strongest_rival": "一体化资源和电力可能使低谷盈利优于同行，及时减值也可能是止损而非持续失血。",
+        "near_miss": "把峰值盈利永久资本化，或因单位成本未披露就忽略已观察的板块毛利修复和真实减值。",
+        "investor_treatment": "羊绒单独给予品牌质量信用；电冶按中周期利润并削峰，多晶硅和已减值项目不给成长价值。",
+        "transfer_question": "产量变化能否在同分部转成重复毛利、投入后现金，并在完整合规资本后仍归属母公司。"
+      },
+      "holdout_axis": null
+    },
+    {
+      "case_id": "TEACH:CN001914:20210501:FY2021_FY2025",
+      "company_id": "CN:001914",
+      "company_cluster_id": "COMPANY:CN001914",
+      "company_name": "招商积余",
+      "industry_id": "PROPERTY_MANAGEMENT",
+      "track": "TEACHING",
+      "status": "CURATED",
+      "cutoff_at": "2021-05-01T00:00:00+08:00",
+      "outcome_window": null,
+      "outcome_access": "RESULT_KNOWN",
+      "selection_exposure": "RESULT_KNOWN_OR_DERIVED_VISIBLE",
+      "role_isolation_state": "NOT_REQUIRED_FOR_TEACHING",
+      "primary_capability_units": [
+        "MANAGEMENT_DECISION_EXECUTION",
+        "OWNER_CASH_CONVERSION"
+      ],
+      "mechanism_focus": "重组整合与第三方拓展如何穿过项目进场、同边界利润、回款和资本损失",
+      "claim_scope": "WITHIN_CASE_MECHANISM",
+      "comparative_mode": "NOT_REQUIRED",
+      "source_refs": [
+        "docs/development/research/training_curricula/teaching_cases/TC_CN001914_SCALE_MARGIN_AND_COLLECTION_V1.md"
+      ],
+      "artifact_refs": {
+        "lesson_ref": "docs/development/research/training_curricula/teaching_cases/TC_CN001914_SCALE_MARGIN_AND_COLLECTION_V1.md"
+      },
+      "lesson": {
+        "state_and_constraint": "重组后的物业平台持续扩大合同、收入、绝对毛利和现金，但单位毛利和独立获客质量未同步上升。",
+        "management_choice_or_no_action": "管理层整合招商物业、拓展第三方项目、收购物业公司，并处置形成损失的遗留地产。",
+        "customer_or_operating_response": "第三方合同和在管面积占主导，物业收入与绝对毛利增长；物业毛利率由11.43%降至10.01%，物业分部回款未闭合。",
+        "cash_or_capital_result": "集团post-capex现金强、债务低；衡阳中航确认真实资本损失，新并购投入后回报仍未闭合。",
+        "mechanism_lesson": "并表、合同、进场收入、同边界利润和业务线回款必须顺序闭合；规模与利润吸收可以成立而回款归因仍未证。",
+        "strongest_rival": "低毛利物业服务只要绝对毛利、续约和现金增长仍可创造价值，大股东渠道也可能是可持续分销优势。",
+        "near_miss": "用重组并表或新签合同直接证明执行，把集团OCF归给物业回款，或因分部现金缺失而撤回已成立的规模与集团现金判断。",
+        "investor_treatment": "物业主业按8亿至9亿元正常盈利，并以毛利率和未闭合的分部回款约束增长；遗留地产损失进入资本配置历史。",
+        "transfer_question": "新增合同能否按客户来源形成可重复收入、毛利和回款，并在并购投入后覆盖母公司现金成本。"
+      },
+      "holdout_axis": null
+    },
+    {
       "case_id": "BLIND:CN603195:20240501:FY2024",
       "company_id": "CN:603195",
       "company_cluster_id": "COMPANY:CN603195",
@@ -559,15 +676,15 @@
       "company_name": "中国外运",
       "industry_id": "CONTRACT_LOGISTICS_AND_FORWARDING",
       "track": "BLIND_JUDGMENT",
-      "status": "REGISTERED",
+      "status": "SETTLED",
       "cutoff_at": "2024-05-01T00:00:00+08:00",
       "outcome_window": {
         "starts_at": "2025-03-26T00:00:00+08:00",
         "ends_at": "2025-04-01T00:00:00+08:00"
       },
-      "outcome_access": "SEALED",
-      "selection_exposure": "METADATA_ONLY",
-      "role_isolation_state": "BLIND_PACKET_READY",
+      "outcome_access": "REVEALED_AFTER_FREEZE",
+      "selection_exposure": "PREOUTCOME_ONLY",
+      "role_isolation_state": "ROLE_ISOLATION_PROVED",
       "primary_capability_units": [
         "COMPETITION_AND_PRICING",
         "OWNER_CASH_CONVERSION"
@@ -576,9 +693,15 @@
       "claim_scope": "ENTERPRISE_JUDGMENT",
       "comparative_mode": "NOT_REQUIRED",
       "source_refs": [
-        "docs/development/research/training_campaigns/JUDGMENT_UTILITY_HISTORICAL_20260828/02_FROZEN_3_2_1_ROSTER.json"
+        "docs/development/research/training_campaigns/JUDGMENT_UTILITY_HISTORICAL_20260828/12_CN601598_FORECASTER_EXECUTION_RECEIPT.json",
+        "docs/development/research/training_campaigns/JUDGMENT_UTILITY_HISTORICAL_20260828/13_CN601598_PREOUTCOME_JUDGMENT.json"
       ],
-      "artifact_refs": {},
+      "artifact_refs": {
+        "preoutcome_judgment_ref": "docs/development/research/training_campaigns/JUDGMENT_UTILITY_HISTORICAL_20260828/13_CN601598_PREOUTCOME_JUDGMENT.json",
+        "settlement_ref": "docs/development/research/training_campaigns/JUDGMENT_UTILITY_HISTORICAL_20260828/16_CN601598_CUSTODIAN_OUTCOME_SETTLEMENT.json",
+        "postoutcome_review_ref": "docs/development/research/training_campaigns/JUDGMENT_UTILITY_HISTORICAL_20260828/17_CN601598_INDEPENDENT_POSTOUTCOME_REVIEW.md",
+        "investor_readout_ref": "docs/development/research/training_campaigns/JUDGMENT_UTILITY_HISTORICAL_20260828/18_CN601598_INVESTOR_READOUT.md"
+      },
       "lesson": null,
       "holdout_axis": null
     },
@@ -662,28 +785,6 @@
       "source_locator": "LOCAL_OUTPUT:600690_海尔智家+690D_海尔智家"
     },
     {
-      "candidate_id": "TCAND:HK00506",
-      "company_ids": ["HK:00506"],
-      "company_cluster_id": "COMPANY:HK00506",
-      "company_name": "中国食品",
-      "industry_id": "BEVERAGE_BOTTLER",
-      "primary_capability_units": ["CUSTOMER_ABSORPTION", "OWNER_CASH_CONVERSION"],
-      "mechanism_focus": "装瓶渠道、产品结构和销量如何穿过营运资本形成现金",
-      "selection_exposure": "RESULT_KNOWN_OR_DERIVED_VISIBLE",
-      "source_locator": "LOCAL_OUTPUT:00506_中国食品"
-    },
-    {
-      "candidate_id": "TCAND:ERDOS",
-      "company_ids": ["CN:600295", "CN:900936"],
-      "company_cluster_id": "COMPANY:ERDOS",
-      "company_name": "鄂尔多斯",
-      "industry_id": "TEXTILE_AND_ENERGY_CONGLOMERATE",
-      "primary_capability_units": ["BUSINESS_MODEL_ECONOMICS", "PERMANENT_LOSS_AND_LIFECYCLE"],
-      "mechanism_focus": "羊绒品牌与能源冶金周期如何在集团边界内形成现金和风险",
-      "selection_exposure": "RESULT_KNOWN_OR_DERIVED_VISIBLE",
-      "source_locator": "LOCAL_OUTPUT:600295_鄂尔多斯+900936_鄂资B股"
-    },
-    {
       "candidate_id": "TCAND:HK02669",
       "company_ids": ["HK:02669"],
       "company_cluster_id": "COMPANY:HK02669",
@@ -693,17 +794,6 @@
       "mechanism_focus": "在管面积、第三方拓展、收缴率和应收如何形成现金",
       "selection_exposure": "RESULT_KNOWN_OR_DERIVED_VISIBLE",
       "source_locator": "LOCAL_OUTPUT:02669_中海物业"
-    },
-    {
-      "candidate_id": "TCAND:CN001914",
-      "company_ids": ["CN:001914"],
-      "company_cluster_id": "COMPANY:CN001914",
-      "company_name": "招商积余",
-      "industry_id": "PROPERTY_MANAGEMENT",
-      "primary_capability_units": ["MANAGEMENT_DECISION_EXECUTION", "OWNER_CASH_CONVERSION"],
-      "mechanism_focus": "重组整合、第三方拓展和应收回款的经营传导",
-      "selection_exposure": "RESULT_KNOWN_OR_DERIVED_VISIBLE",
-      "source_locator": "LOCAL_OUTPUT:001914_招商积余"
     },
     {
       "candidate_id": "TCAND:HK06186",

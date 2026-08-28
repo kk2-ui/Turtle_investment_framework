@@ -175,15 +175,15 @@ Retain    只保留可迁移的问题、反例和边界，不保留公司结局�
 
 | 轨道 | 已完成/冻结 | 当前含义 |
 |---|---:|---|
-| Teaching | 12 个 curated company clusters | Block 002 新增新奥能源、格力电器和天津发展，补充公用事业单位经济、成熟制造定价/多元化及控股平台现金 |
-| Blind Judgment | 1 个 settled、1 个 registered | 公牛 FY2024 已结算；中国外运按冻结 roster rank 2 等待 fresh role 执行 |
+| Teaching | 15 个 curated company clusters | Block 003 新增中国食品、鄂尔多斯和招商积余，并把中国外运反馈应用于消费装瓶、周期重资产和物业服务 |
+| Blind Judgment | 2 个 settled | 公牛和中国外运 FY2024 均在 fresh role 结果前冻结后独立揭示；中国外运完成一次真实研究行为反馈但六轴没有跨档 |
 | Historical Holdout | 0 | 尚无独立历史考试，不得声称迁移 |
 | Prospective | 2 个 company clusters | 紫金冻结；民航信息有局部中期反馈但全年未结算 |
-| Teaching candidates | 12 个独立 company clusters | 已知结果的本地池，只待策展，不计能力 |
+| Teaching candidates | 9 个独立 company clusters | 已知结果的本地池，只待策展，不计能力 |
 
-12 个 curated Teaching 加 12 个候选，仍形成 24 个独立公司簇的教学管线。它解决“没有案例可练”的问题，但没有解决“能力是否形成”的问题。Block 002 将完成教学覆盖中的 `CAPITAL_ALLOCATION` 从 4 个公司簇增至 7 个、`COMPETITION_AND_PRICING` 从 2 个增至 3 个、`VALUATION_AND_ENTRY_TREATMENT` 从 1 个增至 2 个；数量增加只说明反例和机制语言更丰富，不代表新公司上会主动使用它们。
+15 个 curated Teaching 加 9 个候选，仍形成 24 个独立公司簇的教学管线。它解决“没有案例可练”的问题，但没有解决“能力是否形成”的问题。Block 003 把 `CUSTOMER_ABSORPTION`、`OWNER_CASH_CONVERSION`、`BUSINESS_MODEL_ECONOMICS`、`MANAGEMENT_DECISION_EXECUTION` 和 `PERMANENT_LOSS_AND_LIFECYCLE` 分别扩展到新的公司簇；数量增加只说明反例和机制语言更丰富，不代表新公司上会主动使用它们。
 
-按 `3:1` 节奏，完成 Block 002 后不继续只读 Teaching；下一项必须是按原冻结顺序登记的中国外运 Blind。其 cutoff 前官方材料盲包已可构建，但只有 fresh one-shot 角色实际执行并记录输入后才能称为结果隔离判断；完成这次结果反馈后，再执行已冻结的 Teaching Block 003。不能为了尽快达到 20 个而连续生成事后总结，也不能因为 Holdout 为零而阻止课程运行。
+按 `3:1` 节奏，中国外运 Blind 与 Teaching Block 003 已完成。中国外运的结果没有让任何投资处理轴跨档，也没有形成 method utility；它把下一案例的研究顺序改为：先建立同责任边界的规模到经常利润或单位经济桥，再给执行信用。Block 003 已把这个动作分别用于中国食品、鄂尔多斯和招商积余。下一项是冻结 roster rank 3 的厦门钨业 Blind，而不是继续只读 Teaching 或转向新前瞻样本。
 
 ## 9. 防御性写作的运行约束
 
@@ -239,14 +239,14 @@ Comparative 的 target-trial、同行、干扰、删失和 estimand 边界全部
 
 ## 13. 下一阶段执行顺序
 
-1. 执行已登记的中国外运 Blind：fresh role 只读 FY2021--FY2023，冻结完整第一稿后才向 custodian 开放 FY2024；
-2. 执行已冻结的 Teaching Block 003：中国食品、鄂尔多斯和招商积余；每案保留一个 near miss，不把结果结局写成通用规则；
-3. 每完成 3 个新 Teaching，执行 1 个新的 historical Blind；
-4. Blind 累积到 4--6 个后，从尚未参与训练的公司簇冻结第一批 4 个 Historical Holdout；
-5. 达到 20 个 Teaching、8 个 Blind 前，不把精力转向新的 prospective 样本或大规模 Comparative；
-6. 只有 Blind 暴露出材料、可重复的处理错误时，才提出窄规则；规则必须在 holdout 通过后才能谈迁移。
+1. 中国外运 Blind 与 Teaching Block 003 已完成；保留其真实反馈与零方法效用边界，不回写为成功率；
+2. 按冻结顺序执行厦门钨业 Blind：fresh role 只读 FY2021--FY2023，冻结完整判断后才向独立 custodian 开放 FY2024；
+3. 处理 roster 的两条 transfer：只有 ranks 1--3 真正形成候选规则时才应用；没有候选规则就明确记为 `NOT_APPLICABLE`，不得为了做迁移而发明规则；
+4. 用未参与训练的天坛生物完成当前 roster 的 untouched Historical Holdout，使用原始判断合同而非按案例修订的提示；
+5. 当前历史闭环完成后再继续下一组 Teaching/Blind，达到 20 个 Teaching、8 个 Blind 前不把精力转向新 prospective 或大规模 Comparative；
+6. 只有 Blind 暴露出材料、可重复的处理错误时才提出窄规则；规则必须在独立 holdout 通过后才能谈迁移。
 
-下一条实际工作不是再写架构，而是执行第二个 Blind；只有结果前判断冻结后才揭示 FY2024，并用反馈改变 Block 003 的研究行为。
+下一条实际工作不是再写架构，而是执行厦门钨业 Blind；只有结果前判断冻结并通过独立审阅后才揭示 FY2024。
 
 ## 14. 研究依据与适用边界
 
