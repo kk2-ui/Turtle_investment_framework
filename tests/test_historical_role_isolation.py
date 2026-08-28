@@ -9,6 +9,7 @@ from scripts.historical_role_isolation import (
     SCHEMA_VERSION,
     build_forecaster_packet,
     build_holdout_pair_packets,
+    build_transfer_forecaster_packet,
     build_selector_packet,
     role_is_contaminated,
     validate_method_pack,
@@ -182,6 +183,25 @@ def test_holdout_pair_supplies_frozen_method_only_to_enhanced_arm(tmp_path: Path
     assert not (baseline_dir / "FROZEN_METHOD_PACK.json").exists()
     assert (enhanced_dir / "FROZEN_METHOD_PACK.json").exists()
     assert baseline["outcome_state"] == enhanced["outcome_state"] == "SEALED_NOT_IN_PACKET"
+
+
+def test_transfer_packet_supplies_frozen_method_without_outcome(tmp_path: Path) -> None:
+    manifest = _manifest(tmp_path)
+    method_path = tmp_path / "method-pack.json"
+    method_path.write_text(json.dumps(_method_pack()), encoding="utf-8")
+
+    packet = build_transfer_forecaster_packet(
+        manifest, method_path, tmp_path / "transfer"
+    )
+
+    assert packet["evaluation_arm"] == "FROZEN_METHOD_TRANSFER"
+    assert packet["method_input"]["state"] == "FROZEN_GENERALIZED_METHOD_SUPPLIED"
+    assert (tmp_path / "transfer" / "FROZEN_METHOD_PACK.json").exists()
+    assert packet["outcome_state"] == "SEALED_NOT_IN_PACKET"
+    rendered = (tmp_path / "transfer" / "FORECASTER_PACKET.json").read_text(
+        encoding="utf-8"
+    )
+    assert "fy2023_outcome" not in rendered.lower()
 
 
 def test_holdout_pair_rejects_unfrozen_method_or_exposed_arm(tmp_path: Path) -> None:

@@ -440,6 +440,34 @@ def build_forecaster_packet(manifest: dict[str, Any], output_dir: Path) -> dict[
     )
 
 
+def build_transfer_forecaster_packet(
+    manifest: dict[str, Any], method_pack_path: Path, output_dir: Path,
+) -> dict[str, Any]:
+    """Build a single historical-blind packet with frozen method memory.
+
+    Transfer rows remain ordinary result-isolated company judgments.  The
+    generalized method pack is supplied only so the next case can apply a
+    behavior learned earlier; it is not evidence about the target company.
+    """
+
+    findings = validate_manifest(manifest)
+    try:
+        method_pack = json.loads(method_pack_path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        findings.append("role_isolation.method_pack_unreadable")
+        method_pack = {}
+    findings.extend(validate_method_pack(method_pack))
+    if findings:
+        raise ValueError(";".join(findings))
+    return _materialize_forecaster_packet(
+        manifest,
+        output_dir,
+        evaluation_arm="FROZEN_METHOD_TRANSFER",
+        forecaster_id=manifest["roles"]["forecaster_id"],
+        method_pack=method_pack,
+    )
+
+
 def build_holdout_pair_packets(
     manifest: dict[str, Any], method_pack_path: Path, output_dir: Path,
 ) -> dict[str, Any]:
@@ -550,6 +578,10 @@ def main() -> int:
     build_parser = subparsers.add_parser("build-forecaster-packet")
     build_parser.add_argument("manifest", type=Path)
     build_parser.add_argument("output_dir", type=Path)
+    transfer_parser = subparsers.add_parser("build-transfer-forecaster-packet")
+    transfer_parser.add_argument("manifest", type=Path)
+    transfer_parser.add_argument("method_pack", type=Path)
+    transfer_parser.add_argument("output_dir", type=Path)
     holdout_parser = subparsers.add_parser("build-holdout-pair")
     holdout_parser.add_argument("manifest", type=Path)
     holdout_parser.add_argument("method_pack", type=Path)
@@ -574,6 +606,16 @@ def main() -> int:
             "built": True,
             "episode_id": packet["episode_id"],
             "method_pack_id": packet["method_pack_id"],
+        }, ensure_ascii=False))
+        return 0
+    if args.command == "build-transfer-forecaster-packet":
+        packet = build_transfer_forecaster_packet(
+            manifest, args.method_pack, args.output_dir
+        )
+        print(json.dumps({
+            "built": True,
+            "episode_id": packet["episode_id"],
+            "method_pack_id": packet["method_input"]["method_pack_id"],
         }, ensure_ascii=False))
         return 0
     packet = build_forecaster_packet(manifest, args.output_dir)
