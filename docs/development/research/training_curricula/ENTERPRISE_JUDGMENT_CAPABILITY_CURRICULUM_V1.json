@@ -1200,13 +1200,13 @@
       "company_name": "万华化学",
       "industry_id": "PROCESS_CHEMICALS_AND_NEW_MATERIALS",
       "track": "BLIND_JUDGMENT",
-      "status": "FROZEN",
+      "status": "SETTLED",
       "cutoff_at": "2024-05-01T00:00:00+08:00",
       "outcome_window": {
         "starts_at": "2025-03-01T00:00:00+08:00",
         "ends_at": "2025-05-01T00:00:00+08:00"
       },
-      "outcome_access": "SEALED",
+      "outcome_access": "REVEALED_AFTER_FREEZE",
       "selection_exposure": "PREOUTCOME_ONLY",
       "role_isolation_state": "ROLE_ISOLATION_PROVED",
       "primary_capability_units": [
@@ -1223,7 +1223,9 @@
       ],
       "artifact_refs": {
         "preoutcome_judgment_ref": "docs/development/research/training_campaigns/JUDGMENT_UTILITY_HISTORICAL_20260828/74_CN600309_PREOUTCOME_JUDGMENT.json",
-        "freeze_ref": "docs/development/research/training_campaigns/JUDGMENT_UTILITY_HISTORICAL_20260828/75_CN600309_INDEPENDENT_PREOUTCOME_REVIEW.md"
+        "freeze_ref": "docs/development/research/training_campaigns/JUDGMENT_UTILITY_HISTORICAL_20260828/75_CN600309_INDEPENDENT_PREOUTCOME_REVIEW.md",
+        "settlement_ref": "docs/development/research/training_campaigns/JUDGMENT_UTILITY_HISTORICAL_20260828/81_CN600309_CUSTODIAN_OUTCOME_SETTLEMENT.json",
+        "postoutcome_review_ref": "docs/development/research/training_campaigns/JUDGMENT_UTILITY_HISTORICAL_20260828/82_CN600309_INDEPENDENT_POSTOUTCOME_REVIEW.md"
       },
       "lesson": null,
       "holdout_axis": null

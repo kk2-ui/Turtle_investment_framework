@@ -1,0 +1,67 @@
+{
+  "schema_version": "historical-independent-postoutcome-feedback-receipt.v1",
+  "campaign_id": "JUDGMENT_UTILITY_HISTORICAL_20260828",
+  "case_id": "BLIND:CN600309:20240501:FY2024",
+  "company_id": "CN:600309",
+  "review_mode": "FRESH_INDEPENDENT_POSTOUTCOME_REVIEW",
+  "review_status": "ACCEPT",
+  "input_scope": {
+    "preoutcome_contracts": [
+      "72_CN600309_BLIND_SELECTION_REGISTER.json",
+      "73_CN600309_FORECASTER_EXECUTION_RECEIPT.json",
+      "74_CN600309_PREOUTCOME_JUDGMENT.json",
+      "75_CN600309_INDEPENDENT_PREOUTCOME_REVIEW.md"
+    ],
+    "value_free_source_inventory": "79_CN600309_OUTCOME_SOURCE_INVENTORY.json",
+    "outcome_settlement": "81_CN600309_CUSTODIAN_OUTCOME_SETTLEMENT.json",
+    "postoutcome_review": "82_CN600309_INDEPENDENT_POSTOUTCOME_REVIEW.md",
+    "prices_or_returns_used": false,
+    "comparative_used": false
+  },
+  "real_feedback_turn": {
+    "status": "REAL_FEEDBACK_TURN_6_COMPLETED",
+    "basis": [
+      "the preoutcome enterprise judgment and three non-substitutable responsibility axes were frozen before outcome content access",
+      "a fresh custodian used the one inventoried issuer official FY2024 annual report",
+      "A, B and C were mechanically settled in frozen first-match order",
+      "a fresh independent reviewer accepted the investor readout and localized remaining uncertainty"
+    ],
+    "not_based_on": [
+      "field count",
+      "receipt count",
+      "price or return",
+      "method comparison"
+    ]
+  },
+  "settled_axis_vector": {
+    "A_CORE_POLYURETHANE_CUSTOMER_ABSORPTION_AND_SPREAD": "NEGATIVE",
+    "B_PETROCHEMICAL_AND_NEW_MATERIALS_UNIT_ECONOMICS": "NEGATIVE",
+    "C_GROWTH_CAPEX_CASH_CONVERSION_AND_DEBT_LOAD": "MIXED"
+  },
+  "enterprise_feedback": {
+    "best_current_judgment": "新增化工资产和非核心扩链尚未被客户吸收与单位经济证明；核心存量聚氨酯仍有销量和高绝对毛利的韧性；扩张资本现金缺口明显缩小但尚未转成owner cash，也没有形成即时融资危机。",
+    "normal_earnings_treatment": "不把新增聚氨酯产能、非核心收入或项目投产加入正常盈利；FY2024归母利润低于结果前观察带只作为谨慎支持，不把单年结果机械视为永久正常值。",
+    "owner_cash_treatment": "全部长期资产现金支出仍高于经营现金，维持owner cash的保守处理；维护/增长资本未分拆只限制精确数值，不取消现金约束。",
+    "permanent_loss_treatment": "风险是低利用率、低价差新增资产长期不能覆盖资本与利息；FY2024销量、高核心毛利和受控债务增速使其仍为条件性风险，不冒充即时偿债危机。"
+  },
+  "method_learning_utility": {
+    "status": "NO_MATERIAL_NEW_METHOD_UTILITY",
+    "reason": "结果前合同已要求利用率、产销库存与毛利；非核心双分部毛利；以及经营现金、长期资产支出和固定借款范围。A/B命中负面、C命中混合没有使下一未知案例新增或改变结果前字段与研究动作。",
+    "next_case_research_agenda_delta": "NONE",
+    "retain_existing_actions": [
+      "将产能/投产、客户吸收、单位经济和资本回报分开",
+      "不以收入、工程进度、总体利润或正经营现金替代责任轴结算",
+      "以经营现金对长期资产支出和固定债务范围约束owner-cash叙述"
+    ],
+    "transfer_candidate_created": false,
+    "transfer_validated": false,
+    "method_validated": false
+  },
+  "authority": {
+    "CJO": "NONE",
+    "formal_valuation": "NONE",
+    "buy_band": "NONE",
+    "report_authority": "NONE",
+    "investment_action": "NONE"
+  }
+}
