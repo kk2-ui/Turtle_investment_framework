@@ -1229,6 +1229,45 @@
       },
       "lesson": null,
       "holdout_axis": null
+    },
+    {
+      "case_id": "TEACH:CN600585:20240501:FY2022H1_FY2024",
+      "company_id": "CN:600585",
+      "company_cluster_id": "COMPANY:CN600585",
+      "company_name": "安徽海螺水泥",
+      "industry_id": "REGIONAL_CEMENT_AND_CLINKER",
+      "track": "TEACHING",
+      "status": "CURATED",
+      "cutoff_at": "2024-05-01T00:00:00+08:00",
+      "outcome_window": null,
+      "outcome_access": "RESULT_KNOWN",
+      "selection_exposure": "RESULT_KNOWN_OR_DERIVED_VISIBLE",
+      "role_isolation_state": "NOT_REQUIRED_FOR_TEACHING",
+      "primary_capability_units": [
+        "CUSTOMER_ABSORPTION",
+        "CAPITAL_ALLOCATION"
+      ],
+      "mechanism_focus": "区域性重资产扩张如何穿过客户量价、单位成本、维护/扩张资本和现金回收形成增量 owner cash",
+      "claim_scope": "WITHIN_CASE_MECHANISM",
+      "comparative_mode": "NOT_REQUIRED",
+      "source_refs": [
+        "docs/development/research/training_curricula/teaching_cases/TC_CN600585_CYCLE_CAPITAL_CASH_V1.md"
+      ],
+      "artifact_refs": {
+        "lesson_ref": "docs/development/research/training_curricula/teaching_cases/TC_CN600585_CYCLE_CAPITAL_CASH_V1.md"
+      },
+      "lesson": {
+        "state_and_constraint": "国内区域需求、价格和毛利承压；公司继续国内、产业链和海外资本承诺，但项目级客户、现金和维护/扩张资本桥未披露。",
+        "management_choice_or_no_action": "管理层逆周期推进项目、低碳/效率改造、骨料商混和海外布局，同时以采购、物流和替代燃料降本。",
+        "customer_or_operating_response": "集团自产品销量、收入与毛利走弱，FY2024 成本下降仍未阻止毛利率下行；海外区域汇总毛利为正但不能替代新增项目吸收。",
+        "cash_or_capital_result": "FY2024 集团 OCF 超过当期披露资本性支出，显示现金承受力；维护/扩张拆分、项目现金和 owner cash 仍不可得。",
+        "mechanism_lesson": "宣布、投产、客户吸收、单位经济和维护资本后的现金是五个不同的时钟；后段不能由集团汇总代理变量补替。",
+        "strongest_rival": "海外区域毛利改善、集团现金承受力和成本下降，可能代表跨周期组合缓冲，而非新增资产低回报。",
+        "near_miss": "用项目投产、设计产能、海外分部总毛利、集团 OCF 或货币资金证明具体项目已经创造 owner cash，或让项目 UNKNOWN 吞掉整家公司判断。",
+        "investor_treatment": "国内新增资产不给未经项目桥证实的正常盈利或 owner-cash 增量信用；融资资源作为缓冲，海外/产业链只保留条件性选择权。",
+        "transfer_question": "下一家重资产扩张企业能否在同一责任单元同时给出客户量价、单位成本、营运资本、维护/扩张资本和累计现金回收？"
+      },
+      "holdout_axis": null
     }
   ],
   "teaching_candidate_pool": [

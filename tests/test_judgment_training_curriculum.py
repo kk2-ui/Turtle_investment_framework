@@ -430,7 +430,7 @@ def test_checked_in_curriculum_registers_real_assets_without_overclaiming_capaci
     assert result["valid"], result["findings"]
 
     progress = result["progress"]
-    assert progress["track_progress"]["TEACHING"]["completed_independent_company_cluster_count"] == 21
+    assert progress["track_progress"]["TEACHING"]["completed_independent_company_cluster_count"] == 22
     assert progress["track_progress"]["BLIND_JUDGMENT"]["independent_company_cluster_count"] == 6
     assert progress["track_progress"]["BLIND_JUDGMENT"]["completed_independent_company_cluster_count"] == 6
     assert progress["next_action"] == "REGISTER_NEXT_BLIND_CASE"
@@ -443,15 +443,15 @@ def test_checked_in_curriculum_registers_real_assets_without_overclaiming_capaci
     assert holdout["completed_independent_company_cluster_count"] == 0
     assert progress["track_progress"]["PROSPECTIVE"]["independent_company_cluster_count"] == 2
     assert progress["teaching_candidate_pool"]["independent_company_cluster_count"] == 2
-    assert progress["teaching_candidate_pool"]["teaching_library_pipeline_independent_company_cluster_count"] == 23
+    assert progress["teaching_candidate_pool"]["teaching_library_pipeline_independent_company_cluster_count"] == 24
     assert progress["teaching_candidate_pool"]["ability_evidence_count"] == 0
     assert progress["next_action"] == "REGISTER_NEXT_BLIND_CASE"
     assert progress["capability_claim"] == "NOT_DEMONSTRATED_BY_CURRICULUM_COUNTS"
     assert progress["comparative_is_default_entry"] is False
-    assert progress["capability_coverage_by_distinct_company_clusters"]["CAPITAL_ALLOCATION"] == 13
+    assert progress["capability_coverage_by_distinct_company_clusters"]["CAPITAL_ALLOCATION"] == 14
     assert progress["capability_coverage_by_distinct_company_clusters"]["COMPETITION_AND_PRICING"] == 6
     assert progress["capability_coverage_by_distinct_company_clusters"]["BUSINESS_MODEL_ECONOMICS"] == 6
-    assert progress["capability_coverage_by_distinct_company_clusters"]["CUSTOMER_ABSORPTION"] == 12
+    assert progress["capability_coverage_by_distinct_company_clusters"]["CUSTOMER_ABSORPTION"] == 13
     assert progress["capability_coverage_by_distinct_company_clusters"]["MANAGEMENT_DECISION_EXECUTION"] == 3
     assert progress["capability_coverage_by_distinct_company_clusters"]["OWNER_CASH_CONVERSION"] == 9
     assert progress["capability_coverage_by_distinct_company_clusters"]["PERMANENT_LOSS_AND_LIFECYCLE"] == 3
