@@ -1,8 +1,8 @@
 # Turtle 企业判断与训练系统顶层架构
 
-> 状态：`TOP_LEVEL_DESIGN_DECISION_V2 / EIGHT_DIMENSION_JUDGMENT_LATTICE_ADOPTED / ROUND8_REAL_CROSS_INDUSTRY_FEEDBACK_COMPLETED / ARCHITECTURE_REVISION_REQUIRED / TRANSFER_NOT_VALIDATED`
+> 状态：`TOP_LEVEL_DESIGN_DECISION_V2 / FOUR_TRACK_CAPABILITY_CURRICULUM_IMPLEMENTED / INITIAL_24_CLUSTER_TEACHING_PIPELINE_REGISTERED / TRANSFER_NOT_VALIDATED`
 >
-> 日期：2026-08-27
+> 日期：2026-08-28
 >
 > 本文裁决顶层目标、系统边界、学习闭环和路线优先级。现有 Forecast epoch、H1/H2/V5、schema、validator 和控制面仍由各自实施文档管理。2026-08-25 已按用户授权完成 C（Forecast Learning 与逐层错误归因）、D 的 contract-first CJO teaching mirror，及 E 的 synthetic valuation/return settlement：经营兑现、owner-cash valuation identity 和市场回报已各自结算且不回写 CJO。它们不创建 canonical CJO、不读取真实结果，也不授予 report 或投资动作；决策效用、真实独立结算和前瞻验证仍须独立工作包和验收，不能提前宣称已闭环。
 
@@ -149,6 +149,8 @@ CJO 是指定 cutoff 下企业判断的冻结快照。经营判断必须单向�
 6. 冻结经营判断怎样进入正常利润、owner cash、预期差和买点。
 
 一个任务可以使用多种 episode；一个 episode 也可以训练多个任务。公司消失、没有明确行动公告或 comparator 不足，都不再使该公司失去训练价值。
+
+课程从此使用两个正交维度：上述决策任务回答“练什么能力”，`Teaching / Blind Judgment / Historical Holdout / Prospective` 回答“这个样本在学习与评价中承担什么角色”。不得再让一家公司同时承担教学、盲测、迁移和方法发布证明。现有 `judgment_training_program.py` 继续作为严格评价与方法发布控制面；它不是历史训练的课程入口，也不得因 holdout 尚未建立而阻止 Teaching 运行。
 
 ### 3.1 EnterpriseJudgmentEpisode：一个公司判断，多个证据线程
 
@@ -304,16 +306,22 @@ cutoff t: freeze IndustryEpoch + company risk set
 
 因此，缺少 Comparative 不得否认第 1、2 层已经发生；同样，完成一个真实 block 也不得冒充第 3 层。项目汇报必须明确使用上述状态，不再笼统地说“有样本”或“训练完成”。
 
-## 4. 三种速度的训练与一种最终验证
+## 4. 四类样本与一条可选 Comparative 支线
 
-| 回路 | 主要作用 | 可以学习什么 | 不能授予什么 |
-|---|---|---|---|
-| `Teaching / Industry / Lifecycle` | 高频、低成本练习 | 问题、边界、near miss、禁止替代、取证顺序 | 预测优势、因果结论、经验概率 |
-| `PIT Company State Forecast` | 常规能力训练和结算 | 直接学习校准、coverage、状态定义、不确定性和基线表现；其他只形成待验证候选 | 行动因果、公司事实、自动买点 |
-| `Causal Action Lab` | 低频机制识别 | 特定行动的因果箭头和适用边界 | 日常训练产量、全行业规律、完整投资能力 |
-| `Prospective Shadow` | 答案尚不存在时的部署验证 | 无历史结果污染的可靠性和校准证据 | 单次结果证明普遍优势 |
+| 样本轨道 | 主要作用 | 结果规则 | 可以形成什么 | 不能证明什么 |
+|---|---|---|---|---|
+| `TEACHING` | 高频学习行业演化、企业生命周期、机制、反例和投资处理 | 允许结果已知；必须明确 near miss 与迁移问题 | 课程资产、机制认识、当前研究行为 | 方法优于 baseline、盲测能力 |
+| `BLIND_JUDGMENT` | 在历史资料中练习结果前检索和完整企业判断 | fresh role 只读 cutoff 前资料，先冻结判断再揭示 | 企业判断反馈、过度乐观或过度保守纠正 | 跨公司普遍能力 |
+| `HISTORICAL_HOLDOUT` | 对已经冻结的课程或方法做独立考试 | 训练过程完全不消费；公司轴或公司与时间双轴隔离 | 有界的迁移证据 | 单案方法冻结或投资授权 |
+| `PROSPECTIVE` | 答案尚不存在时校准现实稳定性 | 真实等待未来披露，允许局部中期反馈但不提前结算全年 | 无历史结果优化的现实反馈 | 早期训练产量或单案普遍优势 |
 
-Teaching 负责快速学习边界，Forecast 负责常规能力改善，Causal Lab 增强少数关键机制的识别可信度。任何一条等待外部材料，都不能把其他回路标记为 blocked。
+`COMPARATIVE` 不再是第五类日常样本。它是挂在任一 episode 上的低频局部实验室，仅当主张是“某项行动相对另一项行动更有效”时才使用。判断企业如何赚钱、管理层是否执行、客户是否吸收和现金是否转化，默认不需要 Comparative。
+
+课程容量按 `company_cluster_id` 计，而不是按字段、cutoff 或报告数量计。初始规划范围为 Teaching 20--30、Blind 8--12、Holdout 4--6、Prospective 1--3；这是启动容量，不是文献给出的统计门槛，更不是能力或权限证明。同一公司多年份仍是一个独立公司样本，但可以贡献多个纵向 episode。
+
+历史训练按初始 `3 Teaching : 1 Blind` 节奏交错运行：教学形成机制表示，盲判断迫使 Agent 从记忆中检索并在未知条件下作出处理。这个比例是可修订的运行政策，不是新 gate。前瞻结果等待和 holdout 未启用都不得阻止历史 Teaching/Blind 前进。
+
+本地“污染”也改为角色与用途路由，而不是公司黑名单：当前角色已经见过结果或派生报告时，该公司进入 `TEACHING`；只有 fresh role 对特定 `company × cutoff × outcome window` 的实际输入隔离得到证明后，才可进入 Blind 或 Holdout。工作区存在结果文件本身不使公司永久失去训练价值。
 
 ## 5. Learning Policy Router
 

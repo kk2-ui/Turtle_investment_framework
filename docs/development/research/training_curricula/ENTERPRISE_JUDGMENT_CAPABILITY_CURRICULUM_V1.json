@@ -1,0 +1,618 @@
+{
+  "schema_version": "judgment-capability-curriculum.v1",
+  "curriculum_id": "JCC:ENTERPRISE_JUDGMENT:V1",
+  "curriculum_version": "enterprise-judgment-capability-curriculum.v1",
+  "state": "BUILDING",
+  "objective": "用已知结果教学案例高频学习企业机制，用结果隔离的历史盲判断检验能力，用独立留出检验迁移，并用少量前瞻案例校准现实稳定性。",
+  "capacity_targets": {
+    "TEACHING": {
+      "lower": 20,
+      "target": 24,
+      "upper": 30
+    },
+    "BLIND_JUDGMENT": {
+      "lower": 8,
+      "target": 10,
+      "upper": 12
+    },
+    "HISTORICAL_HOLDOUT": {
+      "lower": 4,
+      "target": 5,
+      "upper": 6
+    },
+    "PROSPECTIVE": {
+      "lower": 1,
+      "target": 2,
+      "upper": 3
+    }
+  },
+  "execution_policy": {
+    "same_company_cutoffs_count_as_independent": false,
+    "teaching_can_use_known_results": true,
+    "blind_requires_role_scoped_result_isolation": true,
+    "holdout_can_influence_training": false,
+    "prospective_wait_blocks_historical_training": false,
+    "comparative_default": "NOT_REQUIRED",
+    "teaching_cases_per_blind_cycle": 3
+  },
+  "cases": [
+    {
+      "case_id": "TEACH:CN002080:20190501:FY2019",
+      "company_id": "CN:002080",
+      "company_cluster_id": "COMPANY:CN002080",
+      "company_name": "中材科技",
+      "industry_id": "SPECIALTY_MATERIALS",
+      "track": "TEACHING",
+      "status": "CURATED",
+      "cutoff_at": "2019-05-01T00:00:00+08:00",
+      "outcome_window": null,
+      "outcome_access": "RESULT_KNOWN",
+      "selection_exposure": "RESULT_KNOWN_OR_DERIVED_VISIBLE",
+      "role_isolation_state": "NOT_REQUIRED_FOR_TEACHING",
+      "primary_capability_units": [
+        "CUSTOMER_ABSORPTION",
+        "CAPITAL_ALLOCATION"
+      ],
+      "mechanism_focus": "投产如何经过客户吸收和责任单元经济转成资本回报",
+      "claim_scope": "WITHIN_CASE_MECHANISM",
+      "comparative_mode": "NOT_REQUIRED",
+      "source_refs": [
+        "docs/development/research/episodes/EJE_CN002080_20190501/prospective_replication_v1/01_PREOUTCOME_EVIDENCE_AND_JUDGMENT_FREEZE.md",
+        "docs/development/research/episodes/EJE_CN002080_20190501/prospective_replication_v1/07_CUSTODIAN_OUTCOME_SETTLEMENT.json"
+      ],
+      "artifact_refs": {
+        "lesson_ref": "docs/development/research/episodes/EJE_CN002080_20190501/prospective_replication_v1/09_INVESTOR_READOUT.md",
+        "postoutcome_review_ref": "docs/development/research/episodes/EJE_CN002080_20190501/prospective_replication_v1/08_INDEPENDENT_PAIRED_UTILITY_REVIEW.md"
+      },
+      "lesson": {
+        "state_and_constraint": "隔膜项目跨过建设阶段，但责任单元利润和成熟资本回报仍未闭合。",
+        "management_choice_or_no_action": "管理层完成一期建设、推进客户认证并在一期经济尚未成熟时启动二期。",
+        "customer_or_operating_response": "客户和收入吸收得到改善，责任单元营业利润仍为负。",
+        "cash_or_capital_result": "集团能承担扩建不等于项目已创造回报，二期放大资本暴露。",
+        "mechanism_lesson": "建设完成、客户吸收和资本回报是三个不同阶段，前一阶段不能替后一阶段投票。",
+        "strongest_rival": "首年亏损可能只是产能爬坡，不能据此把项目永久判死。",
+        "near_miss": "只看到认证、投产或收入增长而没有责任单元利润与现金的案例。",
+        "investor_treatment": "保留恢复选择权，不把项目纳入基准成长价值，并提高二期资本配置要求。",
+        "transfer_question": "新项目完成后，客户量价、利用率和费用后单位经济是否同步改善。"
+      },
+      "holdout_axis": null
+    },
+    {
+      "case_id": "TEACH:CN603708:20180501:FY2018",
+      "company_id": "CN:603708",
+      "company_cluster_id": "COMPANY:CN603708",
+      "company_name": "家家悦",
+      "industry_id": "GROCERY_RETAIL",
+      "track": "TEACHING",
+      "status": "CURATED",
+      "cutoff_at": "2018-05-01T00:00:00+08:00",
+      "outcome_window": null,
+      "outcome_access": "RESULT_KNOWN",
+      "selection_exposure": "RESULT_KNOWN_OR_DERIVED_VISIBLE",
+      "role_isolation_state": "NOT_REQUIRED_FOR_TEACHING",
+      "primary_capability_units": [
+        "OWNER_CASH_CONVERSION",
+        "PERMANENT_LOSS_AND_LIFECYCLE"
+      ],
+      "mechanism_focus": "门店并购和物流扩张如何穿过完整资金端点影响普通股风险",
+      "claim_scope": "WITHIN_CASE_MECHANISM",
+      "comparative_mode": "NOT_REQUIRED",
+      "source_refs": [
+        "docs/development/research/episodes/EJE_CN603708_20180501/prospective_domain_transfer_v1/01_PREOUTCOME_EVIDENCE_AND_JUDGMENT_FREEZE.md",
+        "docs/development/research/episodes/EJE_CN603708_20180501/prospective_domain_transfer_v1/07_CUSTODIAN_OUTCOME_SETTLEMENT.json"
+      ],
+      "artifact_refs": {
+        "lesson_ref": "docs/development/research/episodes/EJE_CN603708_20180501/prospective_domain_transfer_v1/09_INVESTOR_READOUT.md",
+        "postoutcome_review_ref": "docs/development/research/episodes/EJE_CN603708_20180501/prospective_domain_transfer_v1/08_INDEPENDENT_PAIRED_UTILITY_REVIEW.md"
+      },
+      "lesson": {
+        "state_and_constraint": "成熟零售网络有经营基础，新区域、并购与物流的独立经济尚未证明。",
+        "management_choice_or_no_action": "管理层选择开店、并购和物流扩张，并开始使用外部融资。",
+        "customer_or_operating_response": "网络扩大和部署兑现，但新域客户吸收与单位经济仍混合。",
+        "cash_or_capital_result": "已知资金端点即使含未知外部投入，其最乐观上界仍为负。",
+        "mechanism_lesson": "未知金额有已知符号时先求可行区间；最乐观端仍为负就必须保留负方向。",
+        "strongest_rival": "短期资金消耗可能换来成熟网络，单期负端点不等于收购必然失败。",
+        "near_miss": "把负数减未知非负项写成全局 UNKNOWN，从而擦除已知负方向。",
+        "investor_treatment": "保留成熟核心价值，新域不给基准成长价值，并提高资本配置与永久损失折价。",
+        "transfer_question": "扩张后的责任匹配利润、现金回收和债务需求是否重复改善。"
+      },
+      "holdout_axis": null
+    },
+    {
+      "case_id": "TEACH:CN600570:20180501:FY2018",
+      "company_id": "CN:600570",
+      "company_cluster_id": "COMPANY:CN600570",
+      "company_name": "恒生电子",
+      "industry_id": "FINANCIAL_SOFTWARE",
+      "track": "TEACHING",
+      "status": "CURATED",
+      "cutoff_at": "2018-05-01T00:00:00+08:00",
+      "outcome_window": null,
+      "outcome_access": "RESULT_KNOWN",
+      "selection_exposure": "RESULT_KNOWN_OR_DERIVED_VISIBLE",
+      "role_isolation_state": "NOT_REQUIRED_FOR_TEACHING",
+      "primary_capability_units": [
+        "BUSINESS_MODEL_ECONOMICS",
+        "CAPITAL_ALLOCATION"
+      ],
+      "mechanism_focus": "成熟软件核心、新技术部署和战略投资现金必须分责任边界判断",
+      "claim_scope": "WITHIN_CASE_MECHANISM",
+      "comparative_mode": "NOT_REQUIRED",
+      "source_refs": [
+        "docs/development/research/episodes/EJE_CN600570_20180501/prospective_negative_control_v1/01_PREOUTCOME_EVIDENCE_AND_JUDGMENT_FREEZE.md",
+        "docs/development/research/episodes/EJE_CN600570_20180501/prospective_negative_control_v1/07_CUSTODIAN_OUTCOME_SETTLEMENT.json"
+      ],
+      "artifact_refs": {
+        "lesson_ref": "docs/development/research/episodes/EJE_CN600570_20180501/prospective_negative_control_v1/09_INVESTOR_READOUT.md",
+        "postoutcome_review_ref": "docs/development/research/episodes/EJE_CN600570_20180501/prospective_negative_control_v1/08_INDEPENDENT_PAIRED_UTILITY_REVIEW.md"
+      },
+      "lesson": {
+        "state_and_constraint": "成熟金融 IT 核心吸收为正，新技术选项和战略投资回报未闭合。",
+        "management_choice_or_no_action": "管理层继续核心研发，同时部署 AI、云和战略投资。",
+        "customer_or_operating_response": "核心产品有签约和上线，新选项有案例但缺重复收入与责任匹配利润。",
+        "cash_or_capital_result": "核心现金代理为正，战略资金残差区间可跨零，不能强写成正或负。",
+        "mechanism_lesson": "核心、成长选项和集团资金必须分开；部署案例不能替重复经济性投票。",
+        "strongest_rival": "早期技术投入常在披露前形成能力，零成长价值不等于零项目价值。",
+        "near_miss": "把集团正现金归给新技术，或把跨零资金区间武断写成负。",
+        "investor_treatment": "成熟核心进入正常盈利，新选项只保留选择权，战略配置维持条件性折价。",
+        "transfer_question": "新技术是否形成跨客户复用收入、利润和可归属现金。"
+      },
+      "holdout_axis": null
+    },
+    {
+      "case_id": "TEACH:CN603939:20180501:FY2018",
+      "company_id": "CN:603939",
+      "company_cluster_id": "COMPANY:CN603939",
+      "company_name": "益丰药房",
+      "industry_id": "PHARMACY_RETAIL",
+      "track": "TEACHING",
+      "status": "CURATED",
+      "cutoff_at": "2018-05-01T00:00:00+08:00",
+      "outcome_window": null,
+      "outcome_access": "RESULT_KNOWN",
+      "selection_exposure": "RESULT_KNOWN_OR_DERIVED_VISIBLE",
+      "role_isolation_state": "NOT_REQUIRED_FOR_TEACHING",
+      "primary_capability_units": [
+        "CUSTOMER_ABSORPTION",
+        "CAPITAL_ALLOCATION"
+      ],
+      "mechanism_focus": "门店网络部署、成熟店吸收和收购资金负担的分层",
+      "claim_scope": "WITHIN_CASE_MECHANISM",
+      "comparative_mode": "NOT_REQUIRED",
+      "source_refs": [
+        "docs/development/research/episodes/EJE_CN603939_20180501/prospective_revised_rule_replication_v1/01_PREOUTCOME_EVIDENCE_AND_JUDGMENT_FREEZE.md",
+        "docs/development/research/episodes/EJE_CN603939_20180501/prospective_revised_rule_replication_v1/07_CUSTODIAN_OUTCOME_SETTLEMENT.json"
+      ],
+      "artifact_refs": {
+        "lesson_ref": "docs/development/research/episodes/EJE_CN603939_20180501/prospective_revised_rule_replication_v1/09_INVESTOR_READOUT.md",
+        "postoutcome_review_ref": "docs/development/research/episodes/EJE_CN603939_20180501/prospective_revised_rule_replication_v1/08_INDEPENDENT_PAIRED_UTILITY_REVIEW.md"
+      },
+      "lesson": {
+        "state_and_constraint": "药房网络快速扩大，但新建和收购 cohort 的成熟单位经济未分拆。",
+        "management_choice_or_no_action": "管理层同时推进直营开店、并购、医保和会员覆盖。",
+        "customer_or_operating_response": "收入和网络覆盖强，综合坪效与部分店型效率走弱，吸收为混合。",
+        "cash_or_capital_result": "现有经营覆盖报表 capex，却不足以覆盖完整并购和战略部署现金。",
+        "mechanism_lesson": "部署能力和客户覆盖可以为正，但只有 cohort 回报和完整资金桥能结算资本配置。",
+        "strongest_rival": "新店和并购在首年拖累效率并不证明长期回报差。",
+        "near_miss": "用门店数、收入增长或正 OCF 直接证明收购创造价值。",
+        "investor_treatment": "保留现有网络价值，不给新建与收购 cohort 基准成长价值，并跟踪债务和商誉。",
+        "transfer_question": "成熟、自建与收购 cohort 的店级利润和现金回收是否分化。"
+      },
+      "holdout_axis": null
+    },
+    {
+      "case_id": "TEACH:CN603589:20190501:FY2019",
+      "company_id": "CN:603589",
+      "company_cluster_id": "COMPANY:CN603589",
+      "company_name": "口子窖",
+      "industry_id": "BAIJIU",
+      "track": "TEACHING",
+      "status": "CURATED",
+      "cutoff_at": "2019-05-01T00:00:00+08:00",
+      "outcome_window": null,
+      "outcome_access": "RESULT_KNOWN",
+      "selection_exposure": "RESULT_KNOWN_OR_DERIVED_VISIBLE",
+      "role_isolation_state": "NOT_REQUIRED_FOR_TEACHING",
+      "primary_capability_units": [
+        "CUSTOMER_ABSORPTION",
+        "COMPETITION_AND_PRICING"
+      ],
+      "mechanism_focus": "品牌价格结构、实体销量和区域渠道广度怎样共同决定真实吸收",
+      "claim_scope": "WITHIN_CASE_MECHANISM",
+      "comparative_mode": "NOT_REQUIRED",
+      "source_refs": [
+        "docs/development/research/episodes/EJE_CN603589_20190501/prospective_extension_replication_v1/01_PREOUTCOME_EVIDENCE_AND_JUDGMENT_FREEZE.md",
+        "docs/development/research/episodes/EJE_CN603589_20190501/prospective_extension_replication_v1/06_CUSTODIAN_OUTCOME_SETTLEMENT.json"
+      ],
+      "artifact_refs": {
+        "lesson_ref": "docs/development/research/episodes/EJE_CN603589_20190501/prospective_extension_replication_v1/08_INVESTOR_READOUT.md",
+        "postoutcome_review_ref": "docs/development/research/episodes/EJE_CN603589_20190501/prospective_extension_replication_v1/07_INDEPENDENT_POSTOUTCOME_JUDGMENT_REVIEW.md"
+      },
+      "lesson": {
+        "state_and_constraint": "安徽核心仍强，但高档产品增长可能由价格结构而非实体销量驱动。",
+        "management_choice_or_no_action": "管理层维护区域品牌并推动省外渠道扩张。",
+        "customer_or_operating_response": "高档实体销量弱于预期，省外收入、销量、毛利和渠道广度强于预期。",
+        "cash_or_capital_result": "强经营现金和零有息债务缓解融资下行，但不消除库存、品牌和区域风险。",
+        "mechanism_lesson": "价格、销量、毛利和渠道广度要分别结算；一个现金轴不能覆盖品牌与库存轴。",
+        "strongest_rival": "省外改善可能来自低基数或短期招商，尚未证明可重复。",
+        "near_miss": "因资料不完整而维持过度悲观，忽略多个同向经营载体。",
+        "investor_treatment": "安徽核心保留正常盈利，省外获得有限选择权，悲观权重保留区域和库存风险。",
+        "transfer_question": "新区域的收入、实物量、毛利和有效渠道能否跨期共同改善。"
+      },
+      "holdout_axis": null
+    },
+    {
+      "case_id": "TEACH:HK00184:20220501:FY2022",
+      "company_id": "HK:00184",
+      "company_cluster_id": "COMPANY:HK00184",
+      "company_name": "激成投资",
+      "industry_id": "HOTEL_AND_PROPERTY_HOLDING",
+      "track": "TEACHING",
+      "status": "CURATED",
+      "cutoff_at": "2022-05-01T00:00:00+08:00",
+      "outcome_window": null,
+      "outcome_access": "RESULT_KNOWN",
+      "selection_exposure": "RESULT_KNOWN_OR_DERIVED_VISIBLE",
+      "role_isolation_state": "NOT_REQUIRED_FOR_TEACHING",
+      "primary_capability_units": [
+        "BUSINESS_MODEL_ECONOMICS",
+        "PERMANENT_LOSS_AND_LIFECYCLE"
+      ],
+      "mechanism_focus": "酒店重开如何经过量价、固定成本吸收、集团现金和再融资约束",
+      "claim_scope": "WITHIN_CASE_MECHANISM",
+      "comparative_mode": "NOT_REQUIRED",
+      "source_refs": [
+        "docs/development/research/episodes/EJE_HK00184_20220501/prospective_local_contingency_v1/01_PREOUTCOME_EVIDENCE_AND_JUDGMENT_FREEZE.md",
+        "docs/development/research/episodes/EJE_HK00184_20220501/prospective_local_contingency_v1/06_CUSTODIAN_OUTCOME_SETTLEMENT.json"
+      ],
+      "artifact_refs": {
+        "lesson_ref": "docs/development/research/episodes/EJE_HK00184_20220501/prospective_local_contingency_v1/08_INVESTOR_READOUT.md",
+        "postoutcome_review_ref": "docs/development/research/episodes/EJE_HK00184_20220501/prospective_local_contingency_v1/07_INDEPENDENT_POSTOUTCOME_PAIRED_REVIEW.md"
+      },
+      "lesson": {
+        "state_and_constraint": "跨地域酒店从封锁期恢复，物业租金和集团流动性提供缓冲，契约依赖仍在。",
+        "management_choice_or_no_action": "管理层重开酒店、控制成本、维持流动性并延续贷款豁免。",
+        "customer_or_operating_response": "六家同物业 occupancy 与 ADR 同升，受控酒店 recurring EBIT 和 pre-D&A 转正。",
+        "cash_or_capital_result": "集团扣已知索取后的现金代理转正，maintenance 和 parent access 未闭合，滚动 waiver 仍在。",
+        "mechanism_lesson": "重开不是吸收；酒店量价、经常性利润、集团现金和债务期限必须逐层传导。",
+        "strongest_rival": "需求反弹可能是开放后的低基数恢复，未必代表完整周期正常化。",
+        "near_miss": "只因入住率或 reported OCF 改善就上调 parent owner cash 并取消再融资折价。",
+        "investor_treatment": "上调酒店经营执行，owner cash 仍条件计入，永久损失维持中等条件性。",
+        "transfer_question": "重资产网络恢复时，量价、费用后利润、维护资本和到期融资是否同时闭合。"
+      },
+      "holdout_axis": null
+    },
+    {
+      "case_id": "BLIND:CN603195:20240501:FY2024",
+      "company_id": "CN:603195",
+      "company_cluster_id": "COMPANY:CN603195",
+      "company_name": "公牛集团",
+      "industry_id": "CONSUMER_ELECTRICAL",
+      "track": "BLIND_JUDGMENT",
+      "status": "SETTLED",
+      "cutoff_at": "2024-05-01T00:00:00+08:00",
+      "outcome_window": {
+        "starts_at": "2025-04-25T00:00:00+08:00",
+        "ends_at": "2025-05-01T00:00:00+08:00"
+      },
+      "outcome_access": "REVEALED_AFTER_FREEZE",
+      "selection_exposure": "PREOUTCOME_ONLY",
+      "role_isolation_state": "ROLE_ISOLATION_PROVED",
+      "primary_capability_units": [
+        "BUSINESS_MODEL_ECONOMICS",
+        "OWNER_CASH_CONVERSION"
+      ],
+      "mechanism_focus": "品牌渠道平台在地产逆风中的核心韧性、现金转换和新业务边界",
+      "claim_scope": "ENTERPRISE_JUDGMENT",
+      "comparative_mode": "NOT_REQUIRED",
+      "source_refs": [
+        "docs/development/research/training_campaigns/JUDGMENT_UTILITY_HISTORICAL_20260828/03_CN603195_FORECASTER_EXECUTION_RECEIPT.json",
+        "docs/development/research/training_campaigns/JUDGMENT_UTILITY_HISTORICAL_20260828/04_CN603195_PREOUTCOME_JUDGMENT.json"
+      ],
+      "artifact_refs": {
+        "preoutcome_judgment_ref": "docs/development/research/training_campaigns/JUDGMENT_UTILITY_HISTORICAL_20260828/04_CN603195_PREOUTCOME_JUDGMENT.json",
+        "settlement_ref": "docs/development/research/training_campaigns/JUDGMENT_UTILITY_HISTORICAL_20260828/07_CN603195_CUSTODIAN_OUTCOME_SETTLEMENT.json",
+        "postoutcome_review_ref": "docs/development/research/training_campaigns/JUDGMENT_UTILITY_HISTORICAL_20260828/08_CN603195_INDEPENDENT_POSTOUTCOME_REVIEW.md",
+        "investor_readout_ref": "docs/development/research/training_campaigns/JUDGMENT_UTILITY_HISTORICAL_20260828/09_CN603195_INVESTOR_READOUT.md"
+      },
+      "lesson": null,
+      "holdout_axis": null
+    },
+    {
+      "case_id": "BLIND:CN601598:20240501:FY2024",
+      "company_id": "CN:601598",
+      "company_cluster_id": "COMPANY:CN601598",
+      "company_name": "中国外运",
+      "industry_id": "CONTRACT_LOGISTICS_AND_FORWARDING",
+      "track": "BLIND_JUDGMENT",
+      "status": "REGISTERED",
+      "cutoff_at": "2024-05-01T00:00:00+08:00",
+      "outcome_window": {
+        "starts_at": "2025-03-26T00:00:00+08:00",
+        "ends_at": "2025-04-01T00:00:00+08:00"
+      },
+      "outcome_access": "SEALED",
+      "selection_exposure": "METADATA_ONLY",
+      "role_isolation_state": "BLIND_PACKET_READY",
+      "primary_capability_units": [
+        "COMPETITION_AND_PRICING",
+        "OWNER_CASH_CONVERSION"
+      ],
+      "mechanism_focus": "货代与合同物流网络的量价、客户留存、周转资金和资本投入如何形成普通股现金",
+      "claim_scope": "ENTERPRISE_JUDGMENT",
+      "comparative_mode": "NOT_REQUIRED",
+      "source_refs": [
+        "docs/development/research/training_campaigns/JUDGMENT_UTILITY_HISTORICAL_20260828/02_FROZEN_3_2_1_ROSTER.json"
+      ],
+      "artifact_refs": {},
+      "lesson": null,
+      "holdout_axis": null
+    },
+    {
+      "case_id": "PROSPECTIVE:CN601899:20260501:FY2026",
+      "company_id": "CN:601899",
+      "company_cluster_id": "COMPANY:CN601899",
+      "company_name": "紫金矿业",
+      "industry_id": "GLOBAL_MINING",
+      "track": "PROSPECTIVE",
+      "status": "FROZEN",
+      "cutoff_at": "2026-05-01T00:00:00+08:00",
+      "outcome_window": {
+        "starts_at": "2027-03-01T00:00:00+08:00",
+        "ends_at": "2027-05-01T00:00:00+08:00"
+      },
+      "outcome_access": "NOT_YET_RELEASED",
+      "selection_exposure": "PREOUTCOME_ONLY",
+      "role_isolation_state": "NOT_REQUIRED_RESULT_DOES_NOT_EXIST",
+      "primary_capability_units": [
+        "CAPITAL_ALLOCATION",
+        "PERMANENT_LOSS_AND_LIFECYCLE"
+      ],
+      "mechanism_focus": "矿山扩产和并购如何穿过单位经济、NCI、项目资本和期限风险",
+      "claim_scope": "ENTERPRISE_JUDGMENT",
+      "comparative_mode": "NOT_REQUIRED",
+      "source_refs": [
+        "docs/development/research/training_campaigns/JUDGMENT_FIRST_12H_20260828/27_FROZEN_FUTURE_HOLDOUT_CN601899_FY2026.json"
+      ],
+      "artifact_refs": {
+        "preoutcome_judgment_ref": "docs/development/research/training_campaigns/JUDGMENT_FIRST_12H_20260828/28_CN601899_PREOUTCOME_INVESTOR_JUDGMENT.md",
+        "freeze_ref": "docs/development/research/training_campaigns/JUDGMENT_FIRST_12H_20260828/27_FROZEN_FUTURE_HOLDOUT_CN601899_FY2026.json"
+      },
+      "lesson": null,
+      "holdout_axis": null
+    },
+    {
+      "case_id": "PROSPECTIVE:HK00696:20260501:FY2026",
+      "company_id": "HK:00696",
+      "company_cluster_id": "COMPANY:HK00696",
+      "company_name": "中国民航信息网络",
+      "industry_id": "AIR_TRAVEL_TRANSACTION_INFRASTRUCTURE",
+      "track": "PROSPECTIVE",
+      "status": "PARTIAL_FEEDBACK",
+      "cutoff_at": "2026-05-01T00:00:00+08:00",
+      "outcome_window": {
+        "starts_at": "2027-03-01T00:00:00+08:00",
+        "ends_at": "2027-05-01T00:00:00+08:00"
+      },
+      "outcome_access": "PARTIAL_RELEASED",
+      "selection_exposure": "PREOUTCOME_ONLY",
+      "role_isolation_state": "NOT_REQUIRED_RESULT_DOES_NOT_EXIST",
+      "primary_capability_units": [
+        "CUSTOMER_ABSORPTION",
+        "OWNER_CASH_CONVERSION"
+      ],
+      "mechanism_focus": "航空交易网络位置如何穿过定价、项目经济、结算代收代付和系统投入",
+      "claim_scope": "ENTERPRISE_JUDGMENT",
+      "comparative_mode": "NOT_REQUIRED",
+      "source_refs": [
+        "docs/development/research/training_campaigns/JUDGMENT_FIRST_12H_20260828/30_FROZEN_FUTURE_HOLDOUT_HK00696_FY2026.json"
+      ],
+      "artifact_refs": {
+        "preoutcome_judgment_ref": "docs/development/research/training_campaigns/JUDGMENT_FIRST_12H_20260828/31_HK00696_PREOUTCOME_INVESTOR_JUDGMENT.md",
+        "freeze_ref": "docs/development/research/training_campaigns/JUDGMENT_FIRST_12H_20260828/30_FROZEN_FUTURE_HOLDOUT_HK00696_FY2026.json"
+      },
+      "lesson": null,
+      "holdout_axis": null
+    }
+  ],
+  "teaching_candidate_pool": [
+    {
+      "candidate_id": "TCAND:HK02688",
+      "company_ids": ["HK:02688"],
+      "company_cluster_id": "COMPANY:HK02688",
+      "company_name": "新奥能源",
+      "industry_id": "CITY_GAS_UTILITY",
+      "primary_capability_units": ["BUSINESS_MODEL_ECONOMICS", "CAPITAL_ALLOCATION"],
+      "mechanism_focus": "接驳、售气、泛能和资本开支如何转成公用事业现金",
+      "selection_exposure": "RESULT_KNOWN_OR_DERIVED_VISIBLE",
+      "source_locator": "LOCAL_OUTPUT:02688_新奥能源"
+    },
+    {
+      "candidate_id": "TCAND:HAIER",
+      "company_ids": ["CN:600690", "DE:690D"],
+      "company_cluster_id": "COMPANY:HAIER",
+      "company_name": "海尔智家",
+      "industry_id": "GLOBAL_HOME_APPLIANCE",
+      "primary_capability_units": ["CUSTOMER_ABSORPTION", "CAPITAL_ALLOCATION"],
+      "mechanism_focus": "全球品牌、渠道和并购整合如何转成同口径单位经济",
+      "selection_exposure": "RESULT_KNOWN_OR_DERIVED_VISIBLE",
+      "source_locator": "LOCAL_OUTPUT:600690_海尔智家+690D_海尔智家"
+    },
+    {
+      "candidate_id": "TCAND:HK00506",
+      "company_ids": ["HK:00506"],
+      "company_cluster_id": "COMPANY:HK00506",
+      "company_name": "中国食品",
+      "industry_id": "BEVERAGE_BOTTLER",
+      "primary_capability_units": ["CUSTOMER_ABSORPTION", "OWNER_CASH_CONVERSION"],
+      "mechanism_focus": "装瓶渠道、产品结构和销量如何穿过营运资本形成现金",
+      "selection_exposure": "RESULT_KNOWN_OR_DERIVED_VISIBLE",
+      "source_locator": "LOCAL_OUTPUT:00506_中国食品"
+    },
+    {
+      "candidate_id": "TCAND:CN000651",
+      "company_ids": ["CN:000651"],
+      "company_cluster_id": "COMPANY:CN000651",
+      "company_name": "格力电器",
+      "industry_id": "HOME_APPLIANCE",
+      "primary_capability_units": ["COMPETITION_AND_PRICING", "CAPITAL_ALLOCATION"],
+      "mechanism_focus": "经销渠道、库存、价格纪律和多元化资本投入的传导",
+      "selection_exposure": "RESULT_KNOWN_OR_DERIVED_VISIBLE",
+      "source_locator": "LOCAL_OUTPUT:000651_格力电器"
+    },
+    {
+      "candidate_id": "TCAND:ERDOS",
+      "company_ids": ["CN:600295", "CN:900936"],
+      "company_cluster_id": "COMPANY:ERDOS",
+      "company_name": "鄂尔多斯",
+      "industry_id": "TEXTILE_AND_ENERGY_CONGLOMERATE",
+      "primary_capability_units": ["BUSINESS_MODEL_ECONOMICS", "PERMANENT_LOSS_AND_LIFECYCLE"],
+      "mechanism_focus": "羊绒品牌与能源冶金周期如何在集团边界内形成现金和风险",
+      "selection_exposure": "RESULT_KNOWN_OR_DERIVED_VISIBLE",
+      "source_locator": "LOCAL_OUTPUT:600295_鄂尔多斯+900936_鄂资B股"
+    },
+    {
+      "candidate_id": "TCAND:HK03990",
+      "company_ids": ["HK:03990"],
+      "company_cluster_id": "COMPANY:HK03990",
+      "company_name": "美的置业",
+      "industry_id": "PROPERTY_DEVELOPMENT",
+      "primary_capability_units": ["PERMANENT_LOSS_AND_LIFECYCLE", "VALUATION_AND_ENTRY_TREATMENT"],
+      "mechanism_focus": "销售、交付、土地与融资期限如何决定地产现金和永久损失",
+      "selection_exposure": "RESULT_KNOWN_OR_DERIVED_VISIBLE",
+      "source_locator": "LOCAL_OUTPUT:03990_美的置业"
+    },
+    {
+      "candidate_id": "TCAND:HK02669",
+      "company_ids": ["HK:02669"],
+      "company_cluster_id": "COMPANY:HK02669",
+      "company_name": "中海物业",
+      "industry_id": "PROPERTY_MANAGEMENT",
+      "primary_capability_units": ["CUSTOMER_ABSORPTION", "OWNER_CASH_CONVERSION"],
+      "mechanism_focus": "在管面积、第三方拓展、收缴率和应收如何形成现金",
+      "selection_exposure": "RESULT_KNOWN_OR_DERIVED_VISIBLE",
+      "source_locator": "LOCAL_OUTPUT:02669_中海物业"
+    },
+    {
+      "candidate_id": "TCAND:HK01522",
+      "company_ids": ["HK:01522"],
+      "company_cluster_id": "COMPANY:HK01522",
+      "company_name": "京投交通科技",
+      "industry_id": "RAIL_TRANSIT_TECHNOLOGY",
+      "primary_capability_units": ["MANAGEMENT_DECISION_EXECUTION", "OWNER_CASH_CONVERSION"],
+      "mechanism_focus": "轨交订单、项目验收和回款如何把执行转成现金",
+      "selection_exposure": "RESULT_KNOWN_OR_DERIVED_VISIBLE",
+      "source_locator": "LOCAL_OUTPUT:01522_京投交通科技"
+    },
+    {
+      "candidate_id": "TCAND:CN001914",
+      "company_ids": ["CN:001914"],
+      "company_cluster_id": "COMPANY:CN001914",
+      "company_name": "招商积余",
+      "industry_id": "PROPERTY_MANAGEMENT",
+      "primary_capability_units": ["MANAGEMENT_DECISION_EXECUTION", "OWNER_CASH_CONVERSION"],
+      "mechanism_focus": "重组整合、第三方拓展和应收回款的经营传导",
+      "selection_exposure": "RESULT_KNOWN_OR_DERIVED_VISIBLE",
+      "source_locator": "LOCAL_OUTPUT:001914_招商积余"
+    },
+    {
+      "candidate_id": "TCAND:HK06186",
+      "company_ids": ["HK:06186"],
+      "company_cluster_id": "COMPANY:HK06186",
+      "company_name": "中国飞鹤",
+      "industry_id": "INFANT_FORMULA",
+      "primary_capability_units": ["CUSTOMER_ABSORPTION", "COMPETITION_AND_PRICING"],
+      "mechanism_focus": "品牌、渠道库存、出生人口逆风和高端结构的吸收",
+      "selection_exposure": "RESULT_KNOWN_OR_DERIVED_VISIBLE",
+      "source_locator": "LOCAL_OUTPUT:06186_中国飞鹤"
+    },
+    {
+      "candidate_id": "TCAND:HK00882",
+      "company_ids": ["HK:00882"],
+      "company_cluster_id": "COMPANY:HK00882",
+      "company_name": "天津发展",
+      "industry_id": "DIVERSIFIED_HOLDING",
+      "primary_capability_units": ["CAPITAL_ALLOCATION", "VALUATION_AND_ENTRY_TREATMENT"],
+      "mechanism_focus": "多业务控股、联营现金、资产处置和资本再配置",
+      "selection_exposure": "RESULT_KNOWN_OR_DERIVED_VISIBLE",
+      "source_locator": "LOCAL_OUTPUT:00882_天津发展"
+    },
+    {
+      "candidate_id": "TCAND:CN002027",
+      "company_ids": ["CN:002027"],
+      "company_cluster_id": "COMPANY:CN002027",
+      "company_name": "分众传媒",
+      "industry_id": "OFFLINE_ADVERTISING_NETWORK",
+      "primary_capability_units": ["CUSTOMER_ABSORPTION", "COMPETITION_AND_PRICING"],
+      "mechanism_focus": "点位网络、广告主周期、刊挂率与定价如何形成利润",
+      "selection_exposure": "RESULT_KNOWN_OR_DERIVED_VISIBLE",
+      "source_locator": "LOCAL_OUTPUT:002027_分众传媒"
+    },
+    {
+      "candidate_id": "TCAND:HK03658",
+      "company_ids": ["HK:03658"],
+      "company_cluster_id": "COMPANY:HK03658",
+      "company_name": "新希望服务",
+      "industry_id": "PROPERTY_MANAGEMENT",
+      "primary_capability_units": ["BUSINESS_MODEL_ECONOMICS", "OWNER_CASH_CONVERSION"],
+      "mechanism_focus": "关联方项目、第三方拓展和应收现金质量",
+      "selection_exposure": "RESULT_KNOWN_OR_DERIVED_VISIBLE",
+      "source_locator": "LOCAL_OUTPUT:03658_新希望服务"
+    },
+    {
+      "candidate_id": "TCAND:HK01502",
+      "company_ids": ["HK:01502"],
+      "company_cluster_id": "COMPANY:HK01502",
+      "company_name": "金融街物业",
+      "industry_id": "PROPERTY_MANAGEMENT",
+      "primary_capability_units": ["CUSTOMER_ABSORPTION", "OWNER_CASH_CONVERSION"],
+      "mechanism_focus": "非住宅物业续约、项目拓展和回款质量",
+      "selection_exposure": "RESULT_KNOWN_OR_DERIVED_VISIBLE",
+      "source_locator": "LOCAL_OUTPUT:01502_金融街物业"
+    },
+    {
+      "candidate_id": "TCAND:CN200596",
+      "company_ids": ["CN:200596"],
+      "company_cluster_id": "COMPANY:CN200596",
+      "company_name": "古井贡B",
+      "industry_id": "BAIJIU",
+      "primary_capability_units": ["COMPETITION_AND_PRICING", "CAPITAL_ALLOCATION"],
+      "mechanism_focus": "产品升级、渠道扩张和品牌投入如何转成量价与现金",
+      "selection_exposure": "RESULT_KNOWN_OR_DERIVED_VISIBLE",
+      "source_locator": "LOCAL_OUTPUT:200596_古井贡B"
+    },
+    {
+      "candidate_id": "TCAND:HK01858",
+      "company_ids": ["HK:01858"],
+      "company_cluster_id": "COMPANY:HK01858",
+      "company_name": "春立医疗",
+      "industry_id": "ORTHOPEDIC_MEDICAL_DEVICES",
+      "primary_capability_units": ["CUSTOMER_ABSORPTION", "CAPITAL_ALLOCATION"],
+      "mechanism_focus": "骨科产品获批、医院吸收、集采价格和研发产能回报",
+      "selection_exposure": "RESULT_KNOWN_OR_DERIVED_VISIBLE",
+      "source_locator": "LOCAL_OUTPUT:01858_春立医疗"
+    },
+    {
+      "candidate_id": "TCAND:HK00816",
+      "company_ids": ["HK:00816"],
+      "company_cluster_id": "COMPANY:HK00816",
+      "company_name": "金茂服务",
+      "industry_id": "PROPERTY_MANAGEMENT",
+      "primary_capability_units": ["CUSTOMER_ABSORPTION", "OWNER_CASH_CONVERSION"],
+      "mechanism_focus": "在管面积增长、关联方依赖、社区增值和现金回收",
+      "selection_exposure": "RESULT_KNOWN_OR_DERIVED_VISIBLE",
+      "source_locator": "LOCAL_OUTPUT:00816_金茂服务"
+    },
+    {
+      "candidate_id": "TCAND:HK06668",
+      "company_ids": ["HK:06668"],
+      "company_cluster_id": "COMPANY:HK06668",
+      "company_name": "星盛商业",
+      "industry_id": "COMMERCIAL_PROPERTY_OPERATIONS",
+      "primary_capability_units": ["CUSTOMER_ABSORPTION", "OWNER_CASH_CONVERSION"],
+      "mechanism_focus": "商场开业、出租率、租户销售和轻资产现金转换",
+      "selection_exposure": "RESULT_KNOWN_OR_DERIVED_VISIBLE",
+      "source_locator": "LOCAL_OUTPUT:06668_星盛商业"
+    }
+  ]
+}

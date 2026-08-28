@@ -1,8 +1,8 @@
 # Turtle 历史训练体系重构：分层、生命周期与权限
 
-> 状态：`FORECAST_EPOCH_ADOPTED / PIT_FORECAST_CONTROL_IMPLEMENTING / WP-R1--R4_REGISTRY_EPOCH_SYNTHETIC_ACCEPTED / REAL_H1_CARRIER_REGISTRY_OPEN / CEMENT_H2_NO_PRIMARY_ACTION_SCOPE`
+> 状态：`FOUR_TRACK_CAPABILITY_CURRICULUM_IMPLEMENTED / HISTORICAL_TEACHING_AND_BLIND_PRIMARY / COMPARATIVE_LOCAL_ONLY / TRANSFER_NOT_VALIDATED`
 >
-> 日期：2026-08-25
+> 日期：2026-08-28
 >
 > 中心目标：让 Agent 更好地辅助用户判断企业经营、管理决策、永久损失与长期价值，并在公司判断冻结后改善正常利润、owner cash、预期差和买点；训练样本数量、报告数量和流程通过率都不是目标。
 
@@ -67,6 +67,10 @@ Industry History Universe
 | `LearningEpisode` | 哪一条经诊断的错误能改变下一家公司？ | 具诊断性的 Comparative Episode、独立 review、TransportContract、不同公司应用 | 窄方法改变、method candidate | 整案复制、以单例证明一般能力 |
 
 `HISTORICAL_HOLDOUT` 与 `LIVE_SENTINEL` 不是新的研究内容类型，而是对 Comparative/Learning 对象施加的评价和部署权限。它们不参与形成被评价的方法。
+
+这里的通用 `TeachingCase` 不再等同于现有 lifecycle-only runner。课程层允许任何结果已知的真实企业案例进入 Teaching，只要它能重建一条完整经济链：`公司状态/约束 -> 管理选择或 no-action -> 客户/经营反应 -> 现金/资本结果 -> 投资处理`，并写出最强反方、near miss 和迁移问题。生命周期事件只是其中一种教学主题，不是 Teaching 的全局准入条件。
+
+历史样本用途分为 `TEACHING / BLIND_JUDGMENT / HISTORICAL_HOLDOUT`，另保留少量 `PROSPECTIVE`。这四类是样本在课程中的角色，不替代本节九类研究对象。已知结果与旧派生报告暴露只让当前角色把公司路由为 Teaching；不会把公司永久逐出候选池。Blind 和 Holdout 的污染判断必须绑定具体角色、公司、cutoff 与 outcome window。
 
 ## 3. 按主张准入，而不是按案例准入
 
@@ -330,12 +334,21 @@ seal 从持久化 H1、H2、FROZEN carrier registry 与 immutable static batch r
 
 - `build_industry_history_series_from_h1()` 已按 H1 static-PDF 可得日生成 company×cutoff snapshot：后披露公司不回填 earlier cutoff，只有带官方 static-PDF、发布时间与页码绑定的 `CUTOFF_VISIBLE` lifecycle 事实改变其后的 risk status；一旦经济实体/经营业务/perimeter/control 已退出，后续 `SURVIVED` 不能重开该 risk set；
 - 水泥 H1 的 2013--2017 年报已生成六个 2014--2018 cutoff snapshot。`600801` 的 2017 perimeter break 已作为独立、teaching-only 的真实 lifecycle receipt 接纳；它不推广为整个水泥行业的退出、失败或可比性结论。其余退出与删失语义仍只由 synthetic fixture 验收；
-- `admit_lifecycle_teaching_case()` 已要求一个独立 lifecycle event、source receipt、机制问题与禁止替代项；已知历史 outcome 仅可生成 `TEACHING_ONLY / BOUNDARY_ASSET / RESEARCH_AGENDA`，不能生成 comparative、方法冻结、report 或 investment 权限；
+- `admit_lifecycle_teaching_case()` 继续服务 lifecycle 专题；课程层另由 `judgment_training_curriculum.py` 登记通用 Teaching，不要求每个案例都有 lifecycle event。两者都不能生成 comparative、方法冻结、report 或 investment 权限；
 - `project_mixed_boundary_episode_to_teaching_case()` 已将 R-104 的独立 post-outcome `MIXED_MECHANISM_BOUNDARY` 与其无 learning 权限投影成一个 Boundary Teaching Case；它只保留“D3 经营改善不能替代相反 D4 owner-cash”这一禁止替代项，不能改变方法或释放 R-103；
 - 真实 Huaxin perimeter teaching receipt 已独立提交；不得把水泥 Industry History、该 receipt 或其已知 boundary 直接升格为 Comparative、方向 learning 或 report/investment 权限；
 - 再把 current H1/H2/V5 映射为 Comparative lane；
 - 现有 R-62/R-69/R-102/R-104 权限原样保留，不追溯升级；
 - R-103 继续 sealed，不读取、不迁移结果。
+
+### WP-C0 能力课程与案例库
+
+- `judgment_training_curriculum.py` 已建立四轨课程合同、八类能力单元、company-cluster 计数和角色化候选路由；
+- 初始容量范围是 Teaching 20--30、Blind 8--12、Holdout 4--6、Prospective 1--3，只用于安排工作，不自动授予能力或方法效用；
+- 已知结果的本地资料池登记为 teaching candidate，不计已完成案例，也不计能力证据；
+- 课程按初始三条 Teaching 后一条 Blind 的节奏交错，避免只读 worked examples 而不练结果前检索；
+- `RELATIVE_CAUSAL` 之外的企业判断和单公司机制默认 `comparative_mode=NOT_REQUIRED`；
+- 现有 `judgment_training_program.py` 保留为严格评价、方法冻结和发布控制面，不再充当 Teaching 的启动门。
 
 ### WP-F0 PIT Company Forecast epoch
 
