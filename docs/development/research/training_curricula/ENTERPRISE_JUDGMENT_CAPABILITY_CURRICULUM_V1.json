@@ -1544,6 +1544,44 @@
         "transfer_question": "另一宗伙伴关系转收购的项目，是否在同一经营边界证明了客户数量、价格/产品组合、毛利和经营现金共同支持取得资本，而不仅是完成交割和产品出货？"
       },
       "holdout_axis": null
+    },
+    {
+      "case_id": "BLIND:CN600276:20240501:FY2024",
+      "company_id": "CN:600276",
+      "company_cluster_id": "COMPANY:CN600276",
+      "company_name": "恒瑞医药",
+      "industry_id": "INNOVATIVE_PHARMACEUTICAL_RESEARCH_AND_COMMERCIALIZATION",
+      "track": "BLIND_JUDGMENT",
+      "status": "SETTLED",
+      "cutoff_at": "2024-05-01T00:00:00+08:00",
+      "outcome_window": {
+        "starts_at": "2025-03-01T00:00:00+08:00",
+        "ends_at": "2025-05-01T00:00:00+08:00"
+      },
+      "outcome_access": "REVEALED_AFTER_FREEZE",
+      "selection_exposure": "PREOUTCOME_ONLY",
+      "role_isolation_state": "ROLE_ISOLATION_PROVED",
+      "primary_capability_units": [
+        "BUSINESS_MODEL_ECONOMICS",
+        "OWNER_CASH_CONVERSION"
+      ],
+      "mechanism_focus": "创新药研发、产品商业化和回款如何在企业层面共同支撑或削弱必要研发再投入、资金能力和永久损失处理",
+      "claim_scope": "ENTERPRISE_JUDGMENT",
+      "comparative_mode": "NOT_REQUIRED",
+      "source_refs": [
+        "docs/development/research/training_campaigns/JUDGMENT_UTILITY_HISTORICAL_20260828/108_CN600276_BLIND_EXTENSION_SELECTION_REGISTER.json",
+        "docs/development/research/training_campaigns/JUDGMENT_UTILITY_HISTORICAL_20260828/109_CN600276_CUTOFF_BEFORE_SOURCE_PACKET_RECEIPT.json",
+        "docs/development/research/training_campaigns/JUDGMENT_UTILITY_HISTORICAL_20260828/111_CN600276_PREOUTCOME_JUDGMENT.json"
+      ],
+      "artifact_refs": {
+        "preoutcome_judgment_ref": "docs/development/research/training_campaigns/JUDGMENT_UTILITY_HISTORICAL_20260828/111_CN600276_PREOUTCOME_JUDGMENT.json",
+        "freeze_ref": "docs/development/research/training_campaigns/JUDGMENT_UTILITY_HISTORICAL_20260828/112_CN600276_INDEPENDENT_PREOUTCOME_REVIEW.md",
+        "settlement_ref": "docs/development/research/training_campaigns/JUDGMENT_UTILITY_HISTORICAL_20260828/114_CN600276_CUSTODIAN_OUTCOME_SETTLEMENT.json",
+        "postoutcome_review_ref": "docs/development/research/training_campaigns/JUDGMENT_UTILITY_HISTORICAL_20260828/115_CN600276_INDEPENDENT_POSTOUTCOME_REVIEW.md",
+        "investor_readout_ref": "docs/development/research/training_campaigns/JUDGMENT_UTILITY_HISTORICAL_20260828/116_CN600276_INVESTOR_READOUT.md"
+      },
+      "lesson": null,
+      "holdout_axis": null
     }
   ],
   "teaching_candidate_pool": [

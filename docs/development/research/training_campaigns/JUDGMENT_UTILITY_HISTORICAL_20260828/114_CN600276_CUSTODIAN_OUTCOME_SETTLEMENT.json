@@ -1,0 +1,92 @@
+{
+  "artifact_type": "BLIND9_CONTRACT_LIMITED_CUSTODIAN_OUTCOME_SETTLEMENT",
+  "status": "SETTLED",
+  "candidate": {
+    "security_id": "CN:600276",
+    "legal_name": "江苏恒瑞医药股份有限公司"
+  },
+  "authorized_source": {
+    "fiscal_year": 2024,
+    "document_kind": "original annual report",
+    "title": "恒瑞医药2024年年度报告",
+    "cninfo_announcement_id": "1222961962",
+    "official_static_pdf_url": "http://static.cninfo.com.cn/finalpage/2025-03-31/1222961962.PDF"
+  },
+  "cell_settlements": [
+    {
+      "cell_id": "S1_INNOVATIVE_REVENUE_CARRIER",
+      "settlement_state": "pass",
+      "matching_disclosure": {
+        "pdf_page": 9,
+        "metric_label": "创新药销售收入",
+        "exact_company_disclosure": "2024 年公司创新药销售收入达 138.92 亿元（含税，不含对外许可收入）",
+        "definition": "含税，不含对外许可收入",
+        "reported_value": 138.92,
+        "unit": "亿元人民币"
+      },
+      "frozen_comparison": "138.92亿元人民币（RMB13.892bn） >= RMB11.701bn（117.01亿元人民币）。"
+    },
+    {
+      "cell_id": "S2_COLLECTION_TO_OWNER_CASH",
+      "settlement_state": "pass",
+      "matching_disclosure": {
+        "pdf_page": 7,
+        "source_section": "七、近三年主要会计数据和财务指标 / （一）主要会计数据；表始于PDF第6页，经营活动产生的现金流量净额行载于PDF第7页",
+        "source_table_unit": "单位：元 币种：人民币",
+        "operating_cash_flow_metric": "经营活动产生的现金流量净额",
+        "operating_cash_flow_reported_value": 7422753038.71,
+        "attributable_profit_metric": "归属于上市公司股东的净利润",
+        "attributable_profit_reported_value": 6336527014.75,
+        "unit": "元人民币"
+      },
+      "frozen_calculation": {
+        "expression": "7,422,753,038.71 / 6,336,527,014.75",
+        "result_ratio": 1.1714229295371916,
+        "result_percent": 117.14229295371916,
+        "frozen_comparison": "117.14229295371916% >= 100%（冻结的pass阈值）。"
+      }
+    },
+    {
+      "cell_id": "S3_REINVESTMENT_DISCIPLINE",
+      "settlement_state": "pass",
+      "matching_disclosure": {
+        "r_and_d_pdf_page": 56,
+        "r_and_d_source_section": "4、研发投入 / (1).研发投入情况表",
+        "r_and_d_source_table_unit": "单位：元",
+        "r_and_d_metric": "研发投入合计",
+        "r_and_d_exact_company_disclosure": "研发投入合计 8,227,838,456.69；研发投入总额占营业收入比例（%）29.40。",
+        "r_and_d_reported_value": 8227838456.69,
+        "revenue_pdf_page": 6,
+        "revenue_source_section": "七、近三年主要会计数据和财务指标 / （一）主要会计数据",
+        "revenue_source_table_unit": "单位：元 币种：人民币",
+        "revenue_metric": "营业收入",
+        "revenue_exact_company_disclosure": "营业收入 27,984,605,342.06。",
+        "revenue_reported_value": 27984605342.06,
+        "unit": "元人民币"
+      },
+      "frozen_calculations": {
+        "r_and_d_to_revenue_expression": "8,227,838,456.69 / 27,984,605,342.06",
+        "r_and_d_to_revenue_result_percent": 29.40130245225868,
+        "r_and_d_to_revenue_frozen_comparison": "29.40130245225868%在22%至30%（含）之间。",
+        "revenue_floor_frozen_comparison": "27,984,605,342.06元人民币 >= 22,820,000,000元人民币（冻结的FY2023收入比较值）。"
+      }
+    }
+  ],
+  "access_firewall_attestation": {
+    "frozen_contract_cells_used": [
+      "S1_INNOVATIVE_REVENUE_CARRIER",
+      "S2_COLLECTION_TO_OWNER_CASH",
+      "S3_REINVESTMENT_DISCIPLINE"
+    ],
+    "outcome_report_sources_accessed": [
+      "http://static.cninfo.com.cn/finalpage/2025-03-31/1222961962.PDF"
+    ],
+    "no_other_outcome_source_or_period_accessed": true,
+    "no_other_repository_campaign_curriculum_method_or_derived_report_accessed": true,
+    "no_market_price_return_valuation_or_analyst_material_accessed": true,
+    "no_ego_browser_used": true,
+    "no_non_authorized_website_or_browser_interaction_used": true,
+    "no_contract_revision_source_substitution_or_cross_cell_conclusion_made": true,
+    "repository_not_modified": true
+  }
+}
