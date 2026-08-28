@@ -706,6 +706,79 @@
       "holdout_axis": null
     },
     {
+      "case_id": "BLIND:CN600549:20240501:FY2024",
+      "company_id": "CN:600549",
+      "company_cluster_id": "COMPANY:CN600549",
+      "company_name": "厦门钨业",
+      "industry_id": "RESOURCE_DEEP_PROCESSING_AND_NEW_MATERIALS",
+      "track": "BLIND_JUDGMENT",
+      "status": "SETTLED",
+      "cutoff_at": "2024-05-01T00:00:00+08:00",
+      "outcome_window": {
+        "starts_at": "2025-04-26T00:00:00+08:00",
+        "ends_at": "2025-05-01T00:00:00+08:00"
+      },
+      "outcome_access": "REVEALED_AFTER_FREEZE",
+      "selection_exposure": "PREOUTCOME_ONLY",
+      "role_isolation_state": "ROLE_ISOLATION_PROVED",
+      "primary_capability_units": [
+        "MANAGEMENT_DECISION_EXECUTION",
+        "CAPITAL_ALLOCATION"
+      ],
+      "mechanism_focus": "资源深加工销量和收入如何穿过同边界经常利润、毛利率与持续资本负担形成增量回报",
+      "claim_scope": "ENTERPRISE_JUDGMENT",
+      "comparative_mode": "NOT_REQUIRED",
+      "source_refs": [
+        "docs/development/research/training_campaigns/JUDGMENT_UTILITY_HISTORICAL_20260828/20_CN600549_FORECASTER_EXECUTION_RECEIPT.json",
+        "docs/development/research/training_campaigns/JUDGMENT_UTILITY_HISTORICAL_20260828/21_CN600549_PREOUTCOME_JUDGMENT.json"
+      ],
+      "artifact_refs": {
+        "preoutcome_judgment_ref": "docs/development/research/training_campaigns/JUDGMENT_UTILITY_HISTORICAL_20260828/21_CN600549_PREOUTCOME_JUDGMENT.json",
+        "settlement_ref": "docs/development/research/training_campaigns/JUDGMENT_UTILITY_HISTORICAL_20260828/24_CN600549_CUSTODIAN_OUTCOME_SETTLEMENT.json",
+        "postoutcome_review_ref": "docs/development/research/training_campaigns/JUDGMENT_UTILITY_HISTORICAL_20260828/25_CN600549_INDEPENDENT_POSTOUTCOME_REVIEW.md",
+        "investor_readout_ref": "docs/development/research/training_campaigns/JUDGMENT_UTILITY_HISTORICAL_20260828/26_CN600549_INVESTOR_READOUT.md"
+      },
+      "lesson": null,
+      "holdout_axis": null
+    },
+    {
+      "case_id": "HOLDOUT:CN600161:20240501:FY2024",
+      "company_id": "CN:600161",
+      "company_cluster_id": "COMPANY:CN600161",
+      "company_name": "天坛生物",
+      "industry_id": "PLASMA_DERIVED_BIOLOGICS",
+      "track": "HISTORICAL_HOLDOUT",
+      "status": "EVALUATED",
+      "cutoff_at": "2024-05-01T00:00:00+08:00",
+      "outcome_window": {
+        "starts_at": "2025-03-29T00:00:00+08:00",
+        "ends_at": "2025-04-01T00:00:00+08:00"
+      },
+      "outcome_access": "REVEALED_AFTER_HOLDOUT_FORECAST_FREEZE",
+      "selection_exposure": "PREOUTCOME_ONLY",
+      "role_isolation_state": "ROLE_ISOLATION_PROVED",
+      "primary_capability_units": [
+        "CUSTOMER_ABSORPTION",
+        "OWNER_CASH_CONVERSION"
+      ],
+      "mechanism_focus": "浆源和产能如何穿过产品销量、经常利润、持续成本、NCI与母公司上划形成企业价值",
+      "claim_scope": "ENTERPRISE_JUDGMENT",
+      "comparative_mode": "NOT_REQUIRED",
+      "source_refs": [
+        "docs/development/research/training_campaigns/JUDGMENT_UTILITY_HISTORICAL_20260828/28_CN600161_HOLDOUT_FORECASTER_EXECUTION_RECEIPT.json",
+        "docs/development/research/training_campaigns/JUDGMENT_UTILITY_HISTORICAL_20260828/29_CN600161_HOLDOUT_PREOUTCOME_JUDGMENT.json"
+      ],
+      "artifact_refs": {
+        "preoutcome_judgment_ref": "docs/development/research/training_campaigns/JUDGMENT_UTILITY_HISTORICAL_20260828/29_CN600161_HOLDOUT_PREOUTCOME_JUDGMENT.json",
+        "freeze_ref": "docs/development/research/training_campaigns/JUDGMENT_UTILITY_HISTORICAL_20260828/29_CN600161_HOLDOUT_PREOUTCOME_JUDGMENT.json",
+        "settlement_ref": "docs/development/research/training_campaigns/JUDGMENT_UTILITY_HISTORICAL_20260828/32_CN600161_HOLDOUT_CUSTODIAN_OUTCOME_SETTLEMENT.json",
+        "postoutcome_review_ref": "docs/development/research/training_campaigns/JUDGMENT_UTILITY_HISTORICAL_20260828/33_CN600161_HOLDOUT_INDEPENDENT_POSTOUTCOME_REVIEW.md",
+        "investor_readout_ref": "docs/development/research/training_campaigns/JUDGMENT_UTILITY_HISTORICAL_20260828/34_CN600161_HOLDOUT_INVESTOR_READOUT.md"
+      },
+      "lesson": null,
+      "holdout_axis": "COMPANY"
+    },
+    {
       "case_id": "PROSPECTIVE:CN601899:20260501:FY2026",
       "company_id": "CN:601899",
       "company_cluster_id": "COMPANY:CN601899",
