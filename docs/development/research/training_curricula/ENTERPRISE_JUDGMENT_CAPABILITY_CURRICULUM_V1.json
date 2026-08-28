@@ -400,6 +400,123 @@
       "holdout_axis": null
     },
     {
+      "case_id": "TEACH:HK02688:20230501:FY2023_FY2025",
+      "company_id": "HK:02688",
+      "company_cluster_id": "COMPANY:HK02688",
+      "company_name": "新奥能源",
+      "industry_id": "CITY_GAS_UTILITY",
+      "track": "TEACHING",
+      "status": "CURATED",
+      "cutoff_at": "2023-05-01T00:00:00+08:00",
+      "outcome_window": null,
+      "outcome_access": "RESULT_KNOWN",
+      "selection_exposure": "RESULT_KNOWN_OR_DERIVED_VISIBLE",
+      "role_isolation_state": "NOT_REQUIRED_FOR_TEACHING",
+      "primary_capability_units": [
+        "BUSINESS_MODEL_ECONOMICS",
+        "CAPITAL_ALLOCATION"
+      ],
+      "mechanism_focus": "燃气客户和销量如何穿过价格传导、泛能单位经济与资本密度形成普通股现金",
+      "claim_scope": "WITHIN_CASE_MECHANISM",
+      "comparative_mode": "NOT_REQUIRED",
+      "source_refs": [
+        "docs/development/research/training_curricula/teaching_cases/TC_HK02688_GAS_VOLUME_PAN_ENERGY_AND_CAPITAL_V1.md"
+      ],
+      "artifact_refs": {
+        "lesson_ref": "docs/development/research/training_curricula/teaching_cases/TC_HK02688_GAS_VOLUME_PAN_ENERGY_AND_CAPITAL_V1.md"
+      },
+      "lesson": {
+        "state_and_constraint": "城市燃气网络销量和现金有韧性，接驳利润衰退，泛能项目的全周期资本回报尚未闭合。",
+        "management_choice_or_no_action": "管理层维持燃气网络、推进泛能项目、持续资本投入，同时降债和分红。",
+        "customer_or_operating_response": "燃气量增而收入毛利近似停滞；泛能2025年规模下降但毛利与毛利率改善。",
+        "cash_or_capital_result": "集团经营现金减全部报表非流动投入后仍为正，但维护增长资本、融资和NCI限制parent owner cash。",
+        "mechanism_lesson": "销量证明使用，单位毛利证明有限经济吸收，投入后现金与全周期回报才证明资本配置。",
+        "strongest_rival": "能源价格下降可使收入收缩而毛利改善，规模下降未必是客户流失。",
+        "near_miss": "用用户数、销量或项目部署直接证明定价权和项目资本回报。",
+        "investor_treatment": "核心燃气按稳定低增量利润资产处理，接驳按衰退处理，泛能只获得条件性增量价值。",
+        "transfer_question": "同口径泛能项目的续约、利用率、毛利和投入后现金能否重复改善。"
+      },
+      "holdout_axis": null
+    },
+    {
+      "case_id": "TEACH:CN000651:20200501:FY2020_FY2025",
+      "company_id": "CN:000651",
+      "company_cluster_id": "COMPANY:CN000651",
+      "company_name": "格力电器",
+      "industry_id": "HOME_APPLIANCE",
+      "track": "TEACHING",
+      "status": "CURATED",
+      "cutoff_at": "2020-05-01T00:00:00+08:00",
+      "outcome_window": null,
+      "outcome_access": "RESULT_KNOWN",
+      "selection_exposure": "RESULT_KNOWN_OR_DERIVED_VISIBLE",
+      "role_isolation_state": "NOT_REQUIRED_FOR_TEACHING",
+      "primary_capability_units": [
+        "COMPETITION_AND_PRICING",
+        "CAPITAL_ALLOCATION"
+      ],
+      "mechanism_focus": "成熟消费制造的渠道吸收、价格纪律、现金波动与逐项多元化资本配置",
+      "claim_scope": "WITHIN_CASE_MECHANISM",
+      "comparative_mode": "NOT_REQUIRED",
+      "source_refs": [
+        "docs/development/research/training_curricula/teaching_cases/TC_CN000651_CHANNEL_PRICING_AND_DIVERSIFICATION_V1.md"
+      ],
+      "artifact_refs": {
+        "lesson_ref": "docs/development/research/training_curricula/teaching_cases/TC_CN000651_CHANNEL_PRICING_AND_DIVERSIFICATION_V1.md"
+      },
+      "lesson": {
+        "state_and_constraint": "核心消费电器毛利和现金仍强，客户数量吸收转弱，多元化业务的经济质量分化。",
+        "management_choice_or_no_action": "管理层改革渠道，并分别收购格力钛和盾安环境以扩展低碳与制冷产业链。",
+        "customer_or_operating_response": "核心收入连续下降而毛利率稳定；盾安已有规模，格力钛部分项目停止建设并减值。",
+        "cash_or_capital_result": "跨期经营现金强但受渠道营运资本摆动；格力钛减值和遗留担保形成真实资本损失。",
+        "mechanism_lesson": "价格纪律、客户吸收和渠道现金必须分开；同一管理层可以主业强而部分资本配置差。",
+        "strongest_rival": "地产和耐用品周期可解释部分收入下降，格力钛仍保留技术选择权。",
+        "near_miss": "用总收入或单年OCF证明渠道健康，或用技术选择权擦除已发生项目损失。",
+        "investor_treatment": "核心进入正常盈利，盾安条件性正面，格力钛不给基准成长价值并保留剩余选择权。",
+        "transfer_question": "终端动销、渠道库存、毛利和回款能否共同改善，非核心投入能否产生责任匹配现金。"
+      },
+      "holdout_axis": null
+    },
+    {
+      "case_id": "TEACH:HK00882:20210501:FY2021_FY2025",
+      "company_id": "HK:00882",
+      "company_cluster_id": "COMPANY:HK00882",
+      "company_name": "天津发展",
+      "industry_id": "DIVERSIFIED_HOLDING",
+      "track": "TEACHING",
+      "status": "CURATED",
+      "cutoff_at": "2021-05-01T00:00:00+08:00",
+      "outcome_window": null,
+      "outcome_access": "RESULT_KNOWN",
+      "selection_exposure": "RESULT_KNOWN_OR_DERIVED_VISIBLE",
+      "role_isolation_state": "NOT_REQUIRED_FOR_TEACHING",
+      "primary_capability_units": [
+        "CAPITAL_ALLOCATION",
+        "VALUATION_AND_ENTRY_TREATMENT"
+      ],
+      "mechanism_focus": "多业务控股、权益法利润、实收联营股息和资本再配置如何形成普通股价值",
+      "claim_scope": "WITHIN_CASE_MECHANISM",
+      "comparative_mode": "NOT_REQUIRED",
+      "source_refs": [
+        "docs/development/research/training_curricula/teaching_cases/TC_HK00882_ASSOCIATE_DIVIDENDS_AND_HOLDING_VALUE_V1.md"
+      ],
+      "artifact_refs": {
+        "lesson_ref": "docs/development/research/training_curricula/teaching_cases/TC_HK00882_ASSOCIATE_DIVIDENDS_AND_HOLDING_VALUE_V1.md"
+      },
+      "lesson": {
+        "state_and_constraint": "公用设施和机电底盘弱化，医药headline利润含多项一次性收益，联营投资仍贡献利润和现金。",
+        "management_choice_or_no_action": "管理层处置和调整医药权益、维持联营投资、评估机电重组并延长控股层债务期限。",
+        "customer_or_operating_response": "公用设施收入贡献连续下降，机电持续亏损；奥的斯和天津港仍有利润与实际股息。",
+        "cash_or_capital_result": "2025年经营现金很弱但联营和金融投资股息强；特别股息不可重复，合并现金受NCI和再配置限制。",
+        "mechanism_lesson": "权益法利润、实收股息和普通股现金是三个不同状态；控股平台必须按资产和现金上游分别估值。",
+        "strongest_rival": "处置和特别股息是管理层兑现资产的真实现金，天津港市场价格也可能低估长期使用价值。",
+        "near_miss": "因控股结构复杂而停止判断，或把权益法利润、一次性收益和合并现金统一资本化。",
+        "investor_treatment": "分业务与联营做SOTP，一次性收益不进正常盈利，实际股息计现金，净现金与控股折价并存。",
+        "transfer_question": "联营利润中有多少以重复股息上游，平台如何配置现金，低回报业务是否退出。"
+      },
+      "holdout_axis": null
+    },
+    {
       "case_id": "BLIND:CN603195:20240501:FY2024",
       "company_id": "CN:603195",
       "company_cluster_id": "COMPANY:CN603195",
@@ -534,17 +651,6 @@
   ],
   "teaching_candidate_pool": [
     {
-      "candidate_id": "TCAND:HK02688",
-      "company_ids": ["HK:02688"],
-      "company_cluster_id": "COMPANY:HK02688",
-      "company_name": "新奥能源",
-      "industry_id": "CITY_GAS_UTILITY",
-      "primary_capability_units": ["BUSINESS_MODEL_ECONOMICS", "CAPITAL_ALLOCATION"],
-      "mechanism_focus": "接驳、售气、泛能和资本开支如何转成公用事业现金",
-      "selection_exposure": "RESULT_KNOWN_OR_DERIVED_VISIBLE",
-      "source_locator": "LOCAL_OUTPUT:02688_新奥能源"
-    },
-    {
       "candidate_id": "TCAND:HAIER",
       "company_ids": ["CN:600690", "DE:690D"],
       "company_cluster_id": "COMPANY:HAIER",
@@ -565,17 +671,6 @@
       "mechanism_focus": "装瓶渠道、产品结构和销量如何穿过营运资本形成现金",
       "selection_exposure": "RESULT_KNOWN_OR_DERIVED_VISIBLE",
       "source_locator": "LOCAL_OUTPUT:00506_中国食品"
-    },
-    {
-      "candidate_id": "TCAND:CN000651",
-      "company_ids": ["CN:000651"],
-      "company_cluster_id": "COMPANY:CN000651",
-      "company_name": "格力电器",
-      "industry_id": "HOME_APPLIANCE",
-      "primary_capability_units": ["COMPETITION_AND_PRICING", "CAPITAL_ALLOCATION"],
-      "mechanism_focus": "经销渠道、库存、价格纪律和多元化资本投入的传导",
-      "selection_exposure": "RESULT_KNOWN_OR_DERIVED_VISIBLE",
-      "source_locator": "LOCAL_OUTPUT:000651_格力电器"
     },
     {
       "candidate_id": "TCAND:ERDOS",
@@ -620,17 +715,6 @@
       "mechanism_focus": "品牌、渠道库存、出生人口逆风和高端结构的吸收",
       "selection_exposure": "RESULT_KNOWN_OR_DERIVED_VISIBLE",
       "source_locator": "LOCAL_OUTPUT:06186_中国飞鹤"
-    },
-    {
-      "candidate_id": "TCAND:HK00882",
-      "company_ids": ["HK:00882"],
-      "company_cluster_id": "COMPANY:HK00882",
-      "company_name": "天津发展",
-      "industry_id": "DIVERSIFIED_HOLDING",
-      "primary_capability_units": ["CAPITAL_ALLOCATION", "VALUATION_AND_ENTRY_TREATMENT"],
-      "mechanism_focus": "多业务控股、联营现金、资产处置和资本再配置",
-      "selection_exposure": "RESULT_KNOWN_OR_DERIVED_VISIBLE",
-      "source_locator": "LOCAL_OUTPUT:00882_天津发展"
     },
     {
       "candidate_id": "TCAND:HK03658",

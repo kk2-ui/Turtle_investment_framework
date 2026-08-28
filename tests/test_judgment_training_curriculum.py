@@ -365,18 +365,20 @@ def test_checked_in_curriculum_registers_real_assets_without_overclaiming_capaci
     assert result["valid"], result["findings"]
 
     progress = result["progress"]
-    assert progress["track_progress"]["TEACHING"]["completed_independent_company_cluster_count"] == 9
+    assert progress["track_progress"]["TEACHING"]["completed_independent_company_cluster_count"] == 12
     assert progress["track_progress"]["BLIND_JUDGMENT"]["independent_company_cluster_count"] == 2
     assert progress["track_progress"]["BLIND_JUDGMENT"]["completed_independent_company_cluster_count"] == 1
     assert progress["track_progress"]["HISTORICAL_HOLDOUT"]["independent_company_cluster_count"] == 0
     assert progress["track_progress"]["PROSPECTIVE"]["independent_company_cluster_count"] == 2
-    assert progress["teaching_candidate_pool"]["independent_company_cluster_count"] == 15
+    assert progress["teaching_candidate_pool"]["independent_company_cluster_count"] == 12
     assert progress["teaching_candidate_pool"]["teaching_library_pipeline_independent_company_cluster_count"] == 24
     assert progress["teaching_candidate_pool"]["ability_evidence_count"] == 0
     assert progress["next_action"] == "FREEZE_NEXT_REGISTERED_BLIND_CASE"
     assert progress["capability_claim"] == "NOT_DEMONSTRATED_BY_CURRICULUM_COUNTS"
     assert progress["comparative_is_default_entry"] is False
-    assert progress["capability_coverage_by_distinct_company_clusters"]["VALUATION_AND_ENTRY_TREATMENT"] == 1
+    assert progress["capability_coverage_by_distinct_company_clusters"]["CAPITAL_ALLOCATION"] == 7
+    assert progress["capability_coverage_by_distinct_company_clusters"]["COMPETITION_AND_PRICING"] == 3
+    assert progress["capability_coverage_by_distinct_company_clusters"]["VALUATION_AND_ENTRY_TREATMENT"] == 2
     assert progress["teaching_pipeline_coverage_by_distinct_company_clusters"]["VALUATION_AND_ENTRY_TREATMENT"] == 2
 
     for case in payload["cases"]:
