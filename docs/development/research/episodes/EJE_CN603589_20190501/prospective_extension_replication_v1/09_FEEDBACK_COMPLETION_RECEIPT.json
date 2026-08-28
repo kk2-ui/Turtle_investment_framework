@@ -82,10 +82,20 @@
     "risk_locus_change": "FROM_NEAR_TERM_FUNDING_CAPACITY_TO_FUTURE_BRAND_ABSORPTION_AND_CAPITAL_OPPORTUNITY_COST"
   },
   "scenario_probability_update": {
+    "status": "HISTORICAL_SUPERSEDED_NOT_FOR_CURRENT_USE",
+    "superseded_by": "10_POSTOUTCOME_SCENARIO_MODEL_CORRECTION.md",
     "before": {"OPTIMISTIC": 0.25, "BASE": 0.60, "PESSIMISTIC": 0.15},
     "after_for_next_period": {"OPTIMISTIC": 0.30, "BASE": 0.62, "PESSIMISTIC": 0.08},
     "changes_percentage_points": {"OPTIMISTIC": 5, "BASE": 2, "PESSIMISTIC": -7},
     "reason": "OUTSIDE_BREADTH_IMPROVEMENT_RAISES_UPSIDE_STRONG_NET_CASH_AND_SELF_FUNDING_REDUCE_FUNDING_DOWNSIDE_WHILE_FLAT_HIGH_END_VOLUME_AND_FASTER_INVENTORY_GROWTH_KEEP_BASE_DOMINANT"
+  },
+  "effective_scenario_probability_update": {
+    "status": "CURRENT_EFFECTIVE",
+    "correction_ref": "10_POSTOUTCOME_SCENARIO_MODEL_CORRECTION.md",
+    "before": {"OPTIMISTIC": 0.25, "BASE": 0.60, "PESSIMISTIC": 0.15},
+    "after_for_next_period": {"OPTIMISTIC": 0.30, "BASE": 0.58, "PESSIMISTIC": 0.12},
+    "changes_percentage_points": {"OPTIMISTIC": 5, "BASE": -2, "PESSIMISTIC": -3},
+    "reason": "OUTSIDE_BREADTH_IMPROVEMENT_RAISES_UPSIDE_AND_STRONG_SELF_FUNDING_REDUCES_ONLY_FUNDING_DOWNSIDE_WHILE_CORE_PHYSICAL_ABSORPTION_OUTSIDE_REPEATABILITY_AND_AGED_INVENTORY_FIXED_CAPITAL_RISKS_REMAIN"
   },
   "valuation_direction": {
     "change": "MODEST_UPWARD_DIRECTIONAL_UPDATE",
@@ -103,6 +113,8 @@
     "aged_inventory_project_capital_and_cash": 0.7350,
     "three_cell_arithmetic_mean": 0.791933333333,
     "scenario_score": 0.2450,
+    "scenario_score_status": "HISTORICAL_SUPERSEDED_NOT_FOR_CURRENT_USE",
+    "scenario_score_superseded_by": "10_POSTOUTCOME_SCENARIO_MODEL_CORRECTION.md",
     "interpretation": "DIAGNOSTIC_ONLY_THE_COARSE_BASE_SCENARIO_HIT_MASKS_OVERCONFIDENCE_IN_CORE_PHYSICAL_ABSORPTION_AND_UNDERCONFIDENCE_IN_OUTSIDE_BREADTH",
     "method_validation_claim": false
   },
