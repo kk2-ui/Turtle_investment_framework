@@ -1,0 +1,115 @@
+{
+  "schema_version": "historical-outcome-access-authorization.v1",
+  "campaign_id": "JUDGMENT_UTILITY_HISTORICAL_20260828",
+  "episode_id": "HIST:CN600549:20240501:FY2024",
+  "company_id": "CN:600549",
+  "cutoff_at": "2024-05-01T00:00:00+08:00",
+  "preoutcome_freeze_commit": "59ed386",
+  "custodian_id": "/root/cn600549_outcome_custodian",
+  "authorized_source": {
+    "period": "FY2024",
+    "source_class": "ISSUER_OFFICIAL_FULL_ANNUAL_REPORT",
+    "url": "https://static.cninfo.com.cn/finalpage/2025-04-26/1223318066.PDF",
+    "maximum_documents": 1
+  },
+  "authorization": "FY2024_OUTCOME_FACT_EXTRACTION_AND_CELL_SETTLEMENT",
+  "cells": [
+    {
+      "cell_id": "FY2024_TUNGSTEN_PROFIT_ENGINE_BRIDGE",
+      "allowed_fields": [
+        "FY2024 and FY2023-comparable tungsten-molybdenum reportable-segment revenue and reported segment operating profit",
+        "hard-alloy, cutting-tool, and fine-tungsten-wire sales volumes using the frozen product definitions",
+        "external main-business gross margin using the same definition as FY2023",
+        "only segment-attributed equity-method income, disposal gains, non-persistent subsidies, other one-offs, and reversals needed to reconstruct adjusted recurring segment profit",
+        "segment capital expenditure, depreciation and amortization, asset impairment, and utilization where disclosed",
+        "product-level recurring unit economics after persistent R&D, selling, administrative, and capital burden only where explicitly attributable",
+        "segment perimeter, internal-elimination, product-definition, or accounting changes needed for comparability"
+      ],
+      "frozen_baseline": {
+        "FY2023_reported_and_adjusted_recurring_segment_profit_CNY": 2654306141.57,
+        "FY2023_segment_revenue_CNY": 16767154077.41,
+        "FY2023_adjusted_recurring_margin": 0.15830391545969544,
+        "FY2023_segment_capex_CNY": 1298646277.62,
+        "FY2023_depreciation_amortization_CNY": 648142396.80,
+        "FY2023_asset_impairment_CNY": 106537258.10,
+        "FY2023_external_main_business_gross_margin": 0.2873
+      },
+      "calculation_rule": "Reconstruct SEGMENT_ATTRIBUTED_ADJUSTED_RECURRING_PROFIT from the comparable reported segment profit. Remove or add back only an item with explicit tungsten-molybdenum segment attribution. Never allocate a group equity-method, subsidy, disposal, or impairment amount to this segment without such evidence.",
+      "first_match_ref": "21_CN600549_PREOUTCOME_JUDGMENT.json#outcome_cells/FY2024_TUNGSTEN_PROFIT_ENGINE_BRIDGE/valid_input_first_match"
+    },
+    {
+      "cell_id": "FY2024_BATTERY_RARE_EARTH_UNIT_ECONOMICS",
+      "allowed_fields": [
+        "FY2024 and FY2023-comparable revenue and reported segment operating profit for battery materials and rare earth separately",
+        "battery key sales volume defined as ternary material plus lithium cobalt oxide and rare-earth key sales volume defined as rare-earth oxide plus rare-earth metal plus magnetic material",
+        "only segment-attributed disposal gains, non-persistent subsidies, non-operating investment income, consolidation one-offs, and reversible non-operating losses needed to reconstruct each adjusted recurring segment profit",
+        "capital expenditure, depreciation and amortization, asset impairment, and utilization for each segment separately",
+        "segment perimeter, business-transfer, internal-elimination, product-definition, or accounting changes needed for comparability"
+      ],
+      "frozen_baseline": {
+        "battery_materials": {
+          "FY2023_adjusted_recurring_segment_profit_CNY": 560381772.08,
+          "FY2023_segment_revenue_CNY": 17310873278.22,
+          "FY2023_adjusted_recurring_margin": 0.032371663928997436,
+          "FY2023_segment_capex_CNY": 1415709683.04,
+          "FY2023_depreciation_amortization_CNY": 365598528.27,
+          "FY2023_asset_impairment_CNY": 102047848.46,
+          "FY2023_key_sales_volume_tonnes": 71994
+        },
+        "rare_earth": {
+          "FY2023_adjusted_recurring_segment_profit_CNY": 144351075.22,
+          "FY2023_segment_revenue_CNY": 5523438635.32,
+          "FY2023_adjusted_recurring_margin": 0.026134276987697002,
+          "FY2023_segment_capex_CNY": 334221638.07,
+          "FY2023_depreciation_amortization_CNY": 126779590.84,
+          "FY2023_asset_impairment_CNY": 93893369.60,
+          "FY2023_key_sales_volume_tonnes": 14431
+        }
+      },
+      "calculation_rule": "Reconstruct battery-materials and rare-earth adjusted recurring segment profit independently before aggregation. Do not let one segment's unallocated item or profit mechanically offset the other, and do not allocate group items without segment evidence.",
+      "first_match_ref": "21_CN600549_PREOUTCOME_JUDGMENT.json#outcome_cells/FY2024_BATTERY_RARE_EARTH_UNIT_ECONOMICS/valid_input_first_match"
+    },
+    {
+      "cell_id": "FY2024_GROUP_CASH_PROXY_AND_SEVERE_CARRIER",
+      "allowed_fields": [
+        "consolidated operating cash flow",
+        "cash paid to acquire fixed assets, intangible assets, and other long-term assets",
+        "comparable interest-bearing debt consisting of short-term borrowings, current maturities, long-term borrowings, and bonds payable",
+        "material non-wholly-owned subsidiary post-capex cash, NCI economic claims, mandatory retention or reinvestment, actual recurring dividends or lawful upstream cash received by the parent, and net parent cash support where disclosed",
+        "legal, regulatory, minority-shareholder, or financing-contract restrictions on upstream cash",
+        "cash-flow classification, acquisition, disposal, restricted-cash, perimeter, or debt-definition changes needed for comparability"
+      ],
+      "formulas": {
+        "group_cash_proxy": "consolidated operating cash flow minus cash paid to acquire fixed assets, intangible assets and other long-term assets",
+        "parent_distributable_owner_cash": "material non-wholly-owned subsidiary post-capex cash minus NCI claims and required retention or reinvestment, reconciled to recurring parent receipts and net parent support; disposal, borrowing and capital return are excluded"
+      },
+      "first_match_ref": "21_CN600549_PREOUTCOME_JUDGMENT.json#outcome_cells/FY2024_GROUP_CASH_PROXY_AND_SEVERE_CARRIER/valid_input_first_match"
+    }
+  ],
+  "output_requirements": [
+    "Record every raw reported value, unit, responsibility boundary, printed page, and source locator before each derived value.",
+    "Apply the frozen first-match in order and identify the matched class for every cell.",
+    "Keep tungsten-molybdenum, battery materials, and rare earth on separate responsibility boundaries before any aggregation.",
+    "Do not allocate group investment income, subsidy, disposal, impairment, or other one-off items to a segment without explicit segment attribution.",
+    "Keep group cash, NCI claims, parent access, and permanent-loss carriers separate; an open parent bridge must not erase an observed group cash direction.",
+    "Keep UNKNOWN and measurement mismatch local and continue settling every other observable cell.",
+    "Do not infer management quality, enterprise conclusions, training utility, valuation, price, return, or investment action."
+  ],
+  "forbidden_inputs": [
+    "the preoutcome judgment narrative or treatment mapping beyond this explicit cell contract and frozen references",
+    "prices or returns",
+    "old reports or derived research",
+    "any source other than the single authorized official FY2024 annual report"
+  ],
+  "permissions": {
+    "training_utility": "NONE",
+    "transfer_validated": false,
+    "method_freeze": false,
+    "comparative": false,
+    "cjo": false,
+    "formal_valuation": false,
+    "buy_band": false,
+    "report": false,
+    "investment_action": false
+  }
+}
