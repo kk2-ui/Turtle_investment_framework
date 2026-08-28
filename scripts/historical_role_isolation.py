@@ -16,9 +16,15 @@ from __future__ import annotations
 import argparse
 import json
 import shutil
+import subprocess
 from datetime import datetime
 from pathlib import Path
 from typing import Any
+
+try:
+    from scripts.historical_judgment_first_draft import forecaster_contract
+except ModuleNotFoundError:  # Direct `python scripts/historical_role_isolation.py` execution.
+    from historical_judgment_first_draft import forecaster_contract
 
 
 SCHEMA_VERSION = "historical-role-isolation.v1"
@@ -38,6 +44,21 @@ SELECTOR_CANDIDATE_FIELDS = {
     "outcome_existence_confirmed",
 }
 SELECTION_POLICIES = {"BUSINESS_MODEL_HETEROGENEITY_THEN_CUTOFF_SOURCE_READINESS"}
+
+
+def _pdf_has_extractable_text(path: Path) -> bool:
+    """Reject a damaged/textless annual-report materialization before Agent use."""
+
+    try:
+        result = subprocess.run(
+            ["pdftotext", "-f", "1", "-l", "5", str(path), "-"],
+            check=False,
+            capture_output=True,
+            timeout=20,
+        )
+    except (FileNotFoundError, subprocess.TimeoutExpired):
+        return False
+    return result.returncode == 0 and bool(result.stdout.strip())
 
 
 def _parse_time(value: str) -> datetime:
@@ -136,6 +157,10 @@ def validate_manifest(manifest: dict[str, Any]) -> list[str]:
                 seen_names.add(packet_name)
             if not source_path or not Path(source_path).is_file():
                 findings.append(f"{prefix}.path_not_readable")
+            elif Path(source_path).suffix.lower() == ".pdf" and not _pdf_has_extractable_text(
+                Path(source_path)
+            ):
+                findings.append(f"{prefix}.pdf_text_not_extractable")
             try:
                 available_at = _parse_time(source["available_at"])
                 if cutoff is not None and available_at > cutoff:
@@ -265,8 +290,10 @@ def build_forecaster_packet(manifest: dict[str, Any], output_dir: Path) -> dict[
         "instructions": [
             "Use only files listed in source_budget.",
             "Do not search the parent workspace, prices, returns, or post-cutoff materials.",
-            "Return a best-current enterprise judgment; localize unknowns rather than refusing the case.",
+            "Follow judgment_first_contract and return the best-current enterprise judgment before designing outcome cells.",
+            "Localize unknowns without turning them into deterioration or refusing the company.",
         ],
+        "judgment_first_contract": forecaster_contract(),
     }
     (output_dir / "FORECASTER_PACKET.json").write_text(
         json.dumps(packet, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"

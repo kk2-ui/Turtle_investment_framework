@@ -13,6 +13,13 @@ from scripts.historical_role_isolation import (
 )
 
 
+@pytest.fixture(autouse=True)
+def _declared_test_pdfs_are_readable(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setattr(
+        "scripts.historical_role_isolation._pdf_has_extractable_text", lambda _path: True
+    )
+
+
 def _manifest(tmp_path: Path) -> dict:
     first = tmp_path / "fy2021.pdf"
     second = tmp_path / "fy2022.pdf"
@@ -106,6 +113,16 @@ def test_forecaster_packet_contains_only_allowlisted_preoutcome_inputs(tmp_path:
     assert "fy2023" not in rendered.lower()
     assert "custodian" not in rendered.lower()
     assert "exposure_ledger" not in rendered
+    contract = packet["judgment_first_contract"]
+    assert contract["required_product"]["most_important_enterprise_judgments"]["count"] == 3
+    assert "UNKNOWN不是投资处理" in contract["required_product"]["material_treatment_snapshot"]["rule"]
+    assert any("ADVERSE" in rule and "ELSE" in rule for rule in contract["outcome_cell_rules"])
+    assert any("METHOD_LEARNING_UTILITY" in rule for rule in contract["postoutcome_rules"])
+    assert any("GROUP_CASH_PROXY" in rule for rule in contract["economic_bridge_rules"])
+    assert any("收入和毛利率不能单独" in rule for rule in contract["economic_bridge_rules"])
+    assert "缺少价格本身不能" in contract["required_product"]["material_treatment_snapshot"][
+        "valuation_direction_rule"
+    ]
 
 
 def test_post_cutoff_source_and_outcome_locator_are_rejected(tmp_path: Path) -> None:
@@ -115,6 +132,19 @@ def test_post_cutoff_source_and_outcome_locator_are_rejected(tmp_path: Path) -> 
     findings = validate_manifest(manifest)
     assert "role_isolation.preoutcome_sources[0].available_after_cutoff" in findings
     assert "role_isolation.outcome_locator_or_value_exposed" in findings
+
+
+def test_unextractable_pdf_is_rejected_before_forecaster_receives_it(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    manifest = _manifest(tmp_path)
+    monkeypatch.setattr(
+        "scripts.historical_role_isolation._pdf_has_extractable_text", lambda _path: False
+    )
+    findings = validate_manifest(manifest)
+    assert "role_isolation.preoutcome_sources[0].pdf_text_not_extractable" in findings
+    with pytest.raises(ValueError, match="pdf_text_not_extractable"):
+        build_forecaster_packet(manifest, tmp_path / "unreadable-packet")
 
 
 def test_role_collision_and_nonempty_output_are_rejected(tmp_path: Path) -> None:

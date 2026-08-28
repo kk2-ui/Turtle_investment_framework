@@ -36,6 +36,7 @@
 4. selector、forecaster、custodian、reviewer 必须不同；
 5. selector/forecaster 已有 cutoff 后正文、派生内容、价格或回报 exposure 时拒绝生成 packet；
 6. 目标目录必须为空，避免旧文件混入。
+7. PDF 必须能从正文页提取文本；只有 `%PDF` 文件头但内容流损坏的材料不得交给 forecaster 用常识补写。
 
 同公司更早且在当前 cutoff 前已经公开的正文是合法训练输入，不会令公司永久污染。metadata-only 的
 下一期文件存在性也不污染。exposure 缺少 role、company、access 或 source availability 时，该 episode
@@ -49,7 +50,8 @@ one-shot selector/forecaster 之前，只能称 `BLIND_PACKET_READY`，不能称
 ## 与判断优先的关系
 
 本协议只解决结果隔离，不新增企业判断 gate。盲包通过后，forecaster 仍必须形成当前最合理、可反驳、
-对投资有用的判断；局部 `UNKNOWN` 不得终止公司。packet、receipt 或污染状态本身不计训练效用。
+对投资有用的判断；局部 `UNKNOWN` 不得终止公司。具体第一稿与局部传播规则见
+`HISTORICAL_JUDGMENT_FIRST_DRAFT_CONTRACT.md`。packet、receipt 或污染状态本身不计训练效用。
 
 训练效用仍只来自结果前材料处理的真实变化，以及相关结果对该变化的支持。更多白名单文件、更干净的
 目录或更完整的 exposure ledger 都不产生学习信用。
