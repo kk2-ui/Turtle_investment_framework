@@ -1,0 +1,92 @@
+{
+  "schema_version": "historical-outcome-access-authorization.v1",
+  "campaign_id": "JUDGMENT_UTILITY_HISTORICAL_20260828",
+  "episode_id": "HIST:CN600161:20240501:FY2024",
+  "roster_role": "UNTOUCHED_HOLDOUT",
+  "company_id": "CN:600161",
+  "cutoff_at": "2024-05-01T00:00:00+08:00",
+  "preoutcome_freeze_commit": "bc33967",
+  "custodian_id": "/root/cn600161_holdout_outcome_custodian",
+  "authorized_source": {
+    "period": "FY2024",
+    "source_class": "ISSUER_OFFICIAL_FULL_ANNUAL_REPORT",
+    "url": "https://static.cninfo.com.cn/finalpage/2025-03-29/1222945087.PDF",
+    "maximum_documents": 1
+  },
+  "authorization": "FY2024_HOLDOUT_OUTCOME_FACT_EXTRACTION_AND_CELL_SETTLEMENT",
+  "cells": [
+    {
+      "cell_id": "FY2024_ECONOMIC_ABSORPTION",
+      "allowed_fields": [
+        "FY2024 and FY2023-comparable consolidated blood-products revenue and actual product sales volumes; station count, plasma collection, plasma input and nameplate capacity are explanatory only",
+        "consolidated operating profit, revenue, recurring operating margin and parent adjusted net profit",
+        "selling expense, administrative expense, expensed and capitalized R&D, depreciation, plasma-collection cost, inventory and impairment",
+        "government grants, other income, disposal, investment income, non-operating items and terminated-R&D charges needed to separate nonrecurring effects",
+        "accounting-policy, consolidation-perimeter, product-classification or common-control changes needed for comparability"
+      ],
+      "frozen_reference": {
+        "FY2023_consolidated_recurring_operating_margin_approx": 0.348,
+        "favorable_margin_floor": 0.343,
+        "adverse_margin_boundary": 0.338,
+        "favorable_revenue_growth_floor": 0.10,
+        "favorable_parent_adjusted_profit_growth_floor": 0.10
+      },
+      "first_match_ref": "29_CN600161_HOLDOUT_PREOUTCOME_JUDGMENT.json#outcome_cells/FY2024_ECONOMIC_ABSORPTION/valid_input_first_match"
+    },
+    {
+      "cell_id": "FY2024_OWNER_CASH_AND_CAPITAL_BURDEN",
+      "allowed_fields": [
+        "consolidated operating cash flow and cash paid to acquire fixed assets, intangible assets and other long-term assets",
+        "inventory and working-capital explanation and unfinished necessary capital commitments",
+        "Chengdu Rongsheng and other material NCI post-capex cash attribution, required retention or reinvestment, and NCI distributions where disclosed",
+        "actual non-financing upstream cash received by the listed-company parent, net parent support to subsidiaries, parent necessary expenses and announced common-shareholder distributions",
+        "parent liquidity and any legal, regulatory, shareholder-agreement or financing-contract restriction on upstream cash",
+        "cash-flow classification, consolidation-perimeter, term-deposit or capital-expenditure definition changes needed for comparability"
+      ],
+      "formulas": {
+        "group_cash_proxy": "consolidated operating cash flow minus cash paid to acquire fixed assets, intangible assets and other long-term assets",
+        "parent_distributable_cash": "material subsidiary post-capex cash minus NCI claims and required retention or reinvestment, reconciled to actual non-financing parent receipts and net parent support"
+      },
+      "first_match_ref": "29_CN600161_HOLDOUT_PREOUTCOME_JUDGMENT.json#outcome_cells/FY2024_OWNER_CASH_AND_CAPITAL_BURDEN/valid_input_first_match"
+    },
+    {
+      "cell_id": "FY2024_QUALITY_AND_REGULATORY_TAIL",
+      "allowed_fields": [
+        "issuer disclosures on product recalls, batch release, shutdowns, GMP inspections or major deficiencies, administrative penalties, plasma-station licence suspension or revocation, and serious product-safety events",
+        "the affected production entity, product, material plasma-station network and economic materiality",
+        "remediation completion, production or collection restart, later batch release, licence validity, recertification requirement, cross-period supply interruption and sustained trust damage",
+        "continuing remediation capital or expense, fixed cost during shutdown, and affected recurring-profit contribution where disclosed",
+        "event-boundary or event-definition changes needed for comparability"
+      ],
+      "first_match_ref": "29_CN600161_HOLDOUT_PREOUTCOME_JUDGMENT.json#outcome_cells/FY2024_QUALITY_AND_REGULATORY_TAIL/valid_input_first_match"
+    }
+  ],
+  "cross_cell_rule_ref": "29_CN600161_HOLDOUT_PREOUTCOME_JUDGMENT.json#cross_cell_treatment_aggregation",
+  "output_requirements": [
+    "Record every raw reported value, unit, responsibility boundary, printed page and source locator before derived values.",
+    "Apply every frozen first-match in order and identify the unique matched class; apply the frozen cross-cell aggregation only after all three local cells are settled.",
+    "Keep revenue and product sales together with recurring profit and persistent costs; never use plasma stations, plasma collection, plasma input or nameplate capacity alone as economic absorption.",
+    "Keep group cash, NCI attribution and parent access separate; partial scope closure stays conditional and must not erase the observed group-cash direction.",
+    "For a quality event, distinguish an observed complete severe path, a verified in-period recovery path, a contained path and genuinely unresolved persistence. Missing an unrelated field must not erase a complete adverse path.",
+    "Keep UNKNOWN and measurement mismatch local and continue settling all other observable cells.",
+    "Do not infer management quality, enterprise conclusions, training utility, valuation, price, return or investment action."
+  ],
+  "forbidden_inputs": [
+    "any prior Teaching case, Blind feedback, candidate method or transfer rule",
+    "the holdout preoutcome narrative or treatment mapping beyond this explicit cell contract and frozen references",
+    "prices or returns",
+    "old reports or derived research",
+    "any source other than the single authorized official FY2024 annual report"
+  ],
+  "permissions": {
+    "training_utility": "NONE",
+    "transfer_validated": false,
+    "method_freeze": false,
+    "comparative": false,
+    "cjo": false,
+    "formal_valuation": false,
+    "buy_band": false,
+    "report": false,
+    "investment_action": false
+  }
+}
