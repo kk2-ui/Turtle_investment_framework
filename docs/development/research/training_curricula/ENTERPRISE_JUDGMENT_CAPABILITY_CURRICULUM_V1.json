@@ -1504,19 +1504,59 @@
         "transfer_question": "下一家跨境绿地项目是否能在同一责任单元冻结客户认证/交付、量价成本、营运资本现金和资本台账/回收窗口？"
       },
       "holdout_axis": null
+    },
+    {
+      "case_id": "TEACH:MSFT_NOKIA_PHONE_HARDWARE:20130903:FY2014_FY2015",
+      "company_id": "US:MSFT",
+      "company_cluster_id": "COMPANY:MICROSOFT",
+      "company_name": "Microsoft / Nokia Devices & Services",
+      "industry_id": "ACQUIRED_PHONE_HARDWARE_ECOSYSTEM",
+      "track": "TEACHING",
+      "status": "CURATED",
+      "cutoff_at": "2013-09-03T00:00:00-07:00",
+      "outcome_window": null,
+      "outcome_access": "RESULT_KNOWN",
+      "selection_exposure": "RESULT_KNOWN_OR_DERIVED_VISIBLE",
+      "role_isolation_state": "NOT_REQUIRED_FOR_TEACHING",
+      "primary_capability_units": [
+        "PERMANENT_LOSS_AND_LIFECYCLE",
+        "MANAGEMENT_DECISION_EXECUTION"
+      ],
+      "mechanism_focus": "从既有战略伙伴转为拥有手机硬件经营边界后，整合、客户数量与利润组合、未来现金流重置、减值和重组如何区分实施、经济执行与资本可回收性",
+      "claim_scope": "WITHIN_CASE_MECHANISM",
+      "comparative_mode": "NOT_REQUIRED",
+      "source_refs": [
+        "docs/development/research/training_curricula/teaching_cases/TC_MSFT_NOKIA_PHONE_HARDWARE_PERMANENT_LOSS_V1.md"
+      ],
+      "artifact_refs": {
+        "lesson_ref": "docs/development/research/training_curricula/teaching_cases/TC_MSFT_NOKIA_PHONE_HARDWARE_PERMANENT_LOSS_V1.md",
+        "postoutcome_review_ref": "docs/development/research/training_curricula/teaching_cases/TC_MSFT_NOKIA_PHONE_HARDWARE_PERMANENT_LOSS_INDEPENDENT_REVIEW.md"
+      },
+      "lesson": {
+        "state_and_constraint": "Microsoft 已有 2011 年 Nokia 战略合作；取得决定把设计、生产、销售、支持和约 32,000 人的手机经营系统内化，约束是客户数量、产品/地区/渠道利润组合和未来现金流必须支撑所取得资本。",
+        "management_choice_or_no_action": "实际选择是取得 NDS 并将 Phone Hardware 纳入自有经营边界；事实存在的 no-action 是保留或重做既有合作而不取得控制权，不能把未结算的反事实假装为更优。",
+        "customer_or_operating_response": "交割、并表、整合和大量手机出货均发生；FY2015 自身销量和收入目标未达、已售组合利润率低于计划，战略收窄并下调未来现金流预期。",
+        "cash_or_capital_result": "71 亿美元是实际现金取得资本部署；75 亿美元 goodwill/asset impairment 是可回收性下调的会计后果而非第二笔现金流。13 亿美元 Integration Plan、7.80 亿美元后续 Phone Hardware restructuring 与 FY2015 全部重组活动的 8.35 亿美元现金支付必须分别处理。",
+        "mechanism_lesson": "交易宣布、交割、员工迁入、产品上线、总出货、总收入和单一减值都不能替代同责任边界的客户吸收、利润组合、现金流与资本可回收性判断。",
+        "strongest_rival": "拥有硬件可能产生未在 Phone Hardware 单列的 Windows、服务或生态外溢价值；现有资料不足以将外溢与 NDS 资本闭合，因此限制全公司结论但不推翻已观察的 acquired-perimeter 可回收性受损。",
+        "near_miss": "把交易完成、约 19,000 个职位消除、出货和收入增加误写为资本回收或经济执行成功；或把 71 亿现金和 75 亿减值相加为现金损失。",
+        "investor_treatment": "把收购后的 Phone Hardware 资本回收假设视为未通过 FY2015 经济检验，分别记录取得现金、非现金对价、减值、重组费用和重组现金；不由此判定 Microsoft 全公司、估值或证券行动。",
+        "transfer_question": "另一宗伙伴关系转收购的项目，是否在同一经营边界证明了客户数量、价格/产品组合、毛利和经营现金共同支持取得资本，而不仅是完成交割和产品出货？"
+      },
+      "holdout_axis": null
     }
   ],
   "teaching_candidate_pool": [
     {
-      "candidate_id": "TCAND:MSFT_NOKIA_DEVICES_SERVICES",
-      "company_ids": ["US:MSFT"],
-      "company_cluster_id": "COMPANY:MICROSOFT",
-      "company_name": "Microsoft / Nokia Devices & Services",
-      "industry_id": "ACQUIRED_PHONE_HARDWARE_ECOSYSTEM",
-      "primary_capability_units": ["PERMANENT_LOSS_AND_LIFECYCLE", "MANAGEMENT_DECISION_EXECUTION"],
-      "mechanism_focus": "将战略伙伴内化为自有手机硬件系统后，整合、客户销量/利润组合、未来现金流重置、减值和重组如何区分实施、经济失败与资本损失",
+      "candidate_id": "TCAND:ADBE_CREATIVE_CLOUD_BUSINESS_MODEL",
+      "company_ids": ["US:ADBE"],
+      "company_cluster_id": "COMPANY:ADOBE",
+      "company_name": "Adobe Creative Cloud",
+      "industry_id": "CREATIVE_SOFTWARE_SUBSCRIPTION_TRANSITION",
+      "primary_capability_units": ["BUSINESS_MODEL_ECONOMICS", "COMPETITION_AND_PRICING"],
+      "mechanism_focus": "从永久许可证到订阅制时，Cloud-only 产品创新、付费采用、ARR、收入确认、递延收入和公司现金如何区分客户接受、商业模式迁移与 cohort owner cash",
       "selection_exposure": "RESULT_KNOWN_OR_DERIVED_VISIBLE",
-      "source_locator": "docs/development/research/training_curricula/teaching_candidates/TCAND_MSFT_NOKIA_DEVICES_SERVICES_SELECTION.md"
+      "source_locator": "docs/development/research/training_curricula/teaching_candidates/TCAND_ADBE_CREATIVE_CLOUD_BUSINESS_MODEL_SELECTION.md"
     }
   ]
 }
