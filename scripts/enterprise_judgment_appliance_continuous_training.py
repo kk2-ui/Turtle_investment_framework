@@ -10,14 +10,25 @@ an outcome, settle a field, or create a second training control plane.
 from __future__ import annotations
 
 from copy import deepcopy
-from datetime import datetime
+from datetime import datetime, timezone
+from decimal import Decimal, InvalidOperation
+import json
 import math
+from pathlib import Path
+import re
+import sqlite3
+import subprocess
+import tempfile
 from typing import Any
 
 try:
     from scripts import minimal_historical_episode as minimal
+    from scripts import minimal_historical_episode_control_plane as minimal_control
+    from scripts import minimal_historical_episode_runner as minimal_runner
 except ModuleNotFoundError:  # pragma: no cover - direct script import
     import minimal_historical_episode as minimal
+    import minimal_historical_episode_control_plane as minimal_control
+    import minimal_historical_episode_runner as minimal_runner
 
 
 SCHEMA_VERSION = "enterprise-judgment-appliance-continuous-training.v1"
@@ -62,6 +73,36 @@ DIMENSIONS = (
 _FORBIDDEN_KEYS = {
     "outcome_value", "realized_value", "realised_value", "outcome_label",
     "settlement", "price", "return", "cjo", "valuation", "buy_band",
+}
+
+_WHITESPACE = re.compile(r"\s+")
+_PAGE_REF = re.compile(r"\bPDF\s+p\.(\d+)\b", re.IGNORECASE)
+
+_LOCAL_SOURCE_RULES = {
+    "CONSOLIDATED_REVENUE_RMB": {
+        "page": 12,
+        "boundary": "LISTED_ISSUER_CONSOLIDATED:CN002032",
+        "field_ref": "PDF p.12; 营业收入合计; 2017 current-period value",
+        "label": "营业收入合计",
+        "exact_quote": "营业收入合计 14,187,347,425.77 100% 11,947,123,201.12 100% 18.75%",
+        "numeric_value": Decimal("14187347425.77"),
+    },
+    "PRODUCT_REVENUE_RMB:电锅类": {
+        "page": 12,
+        "boundary": "LISTED_ISSUER_CONSOLIDATED:CN002032:DISCLOSED_PRODUCT_CATEGORY:电锅类",
+        "field_ref": "PDF p.12; 分产品; 电锅类; 2017 current-period revenue",
+        "label": "电锅类",
+        "exact_quote": "电锅类 3,809,138,321.20 26.85% 3,462,194,790.53 28.98% 10.02%",
+        "numeric_value": Decimal("3809138321.20"),
+    },
+    "CONSOLIDATED_OPERATING_CASH_FLOW_RMB": {
+        "page": 16,
+        "boundary": "LISTED_ISSUER_CONSOLIDATED:CN002032",
+        "field_ref": "PDF p.16; 经营活动产生的现金流量净额; 2017 current-period value",
+        "label": "经营活动产生的现金流量净额",
+        "exact_quote": "经营活动产生的现金流量净额 1,081,469,057.39 1,388,911,912.47 -22.14%",
+        "numeric_value": Decimal("1081469057.39"),
+    },
 }
 
 
@@ -345,7 +386,30 @@ def _chain(spec: dict[str, Any]) -> dict[str, Any]:
         "allowed_outputs": list(minimal.ALLOWED_OUTPUTS),
         "method_transfer_rights": minimal.NO_METHOD_TRANSFER_RIGHTS,
     }
-    return {"metric_role": spec["metric_role"], "decision_contract": decision, "technical_route_identity": route, "measurement_contract": contract, "static_evidence": evidence, "prediction": prediction}
+    source_verification_input = {
+        "schema_version": minimal_runner.SOURCE_VERIFICATION_INPUT_SCHEMA_VERSION,
+        "subject_ref": {
+            "object_type": "STATIC_EVIDENCE",
+            "object_id": evidence["evidence_receipt_id"],
+            "object_version": evidence["evidence_receipt_version"],
+        },
+        "source_id": SOURCE_ID,
+        "source_url": SOURCE_URL,
+        "exact_quote": spec["exact_quote"],
+        "numeric_value": spec["baseline_value"],
+        "unit": "RMB",
+        "allowed_outputs": list(minimal.ALLOWED_OUTPUTS),
+        "method_transfer_rights": minimal.NO_METHOD_TRANSFER_RIGHTS,
+    }
+    return {
+        "metric_role": spec["metric_role"],
+        "decision_contract": decision,
+        "technical_route_identity": route,
+        "measurement_contract": contract,
+        "static_evidence": evidence,
+        "prediction": prediction,
+        "source_verification_input": source_verification_input,
+    }
 
 
 def build_minimal_chains() -> list[dict[str, Any]]:
@@ -356,6 +420,7 @@ def build_minimal_chains() -> list[dict[str, Any]]:
             "metric_id": "CONSOLIDATED_REVENUE_RMB",
             "boundary": "LISTED_ISSUER_CONSOLIDATED:CN002032",
             "field_ref": "PDF p.12; 营业收入合计; 2017 current-period value",
+            "exact_quote": _LOCAL_SOURCE_RULES["CONSOLIDATED_REVENUE_RMB"]["exact_quote"],
             "baseline_value": 14187347425.77,
             "predicted_direction": "INCREASE",
             "tolerance": 709367371.2885,
@@ -366,6 +431,7 @@ def build_minimal_chains() -> list[dict[str, Any]]:
             "metric_id": "PRODUCT_REVENUE_RMB:电锅类",
             "boundary": "LISTED_ISSUER_CONSOLIDATED:CN002032:DISCLOSED_PRODUCT_CATEGORY:电锅类",
             "field_ref": "PDF p.12; 分产品; 电锅类; 2017 current-period revenue",
+            "exact_quote": _LOCAL_SOURCE_RULES["PRODUCT_REVENUE_RMB:电锅类"]["exact_quote"],
             "baseline_value": 3809138321.20,
             "predicted_direction": "INCREASE",
             "tolerance": 190456916.06,
@@ -376,12 +442,217 @@ def build_minimal_chains() -> list[dict[str, Any]]:
             "metric_id": "CONSOLIDATED_OPERATING_CASH_FLOW_RMB",
             "boundary": "LISTED_ISSUER_CONSOLIDATED:CN002032",
             "field_ref": "PDF p.16; 经营活动产生的现金流量净额; 2017 current-period value",
+            "exact_quote": _LOCAL_SOURCE_RULES["CONSOLIDATED_OPERATING_CASH_FLOW_RMB"]["exact_quote"],
             "baseline_value": 1081469057.39,
             "predicted_direction": "STABLE",
             "tolerance": 216293811.478,
         },
     ]
     return [_chain(spec) for spec in specs]
+
+
+def _finite_decimal(value: Any, *, field: str) -> Decimal:
+    if not isinstance(value, (int, float)) or isinstance(value, bool) or not math.isfinite(float(value)):
+        raise ApplianceContinuousTrainingError(f"{field}_must_be_finite_numeric")
+    try:
+        parsed = Decimal(str(value))
+    except (InvalidOperation, ValueError) as exc:  # pragma: no cover - guarded above
+        raise ApplianceContinuousTrainingError(f"{field}_must_be_finite_numeric") from exc
+    if not parsed.is_finite():
+        raise ApplianceContinuousTrainingError(f"{field}_must_be_finite_numeric")
+    return parsed
+
+
+def _normalized_pdf_text(value: str) -> str:
+    return _WHITESPACE.sub("", value).replace(",", "").replace("，", "")
+
+
+def build_local_pdf_source_verifier(local_pdf_path: str | Path) -> minimal_runner.SourceVerifier:
+    """Build the narrow FY2017 Supor verifier used by the existing runner seam.
+
+    The verifier opens only the already-registered local cutoff-before PDF. It
+    supports exactly the three frozen appliance fields and delegates all
+    controller chronology and persistence to ``freeze_preoutcome``.
+    """
+    pdf_path = Path(local_pdf_path)
+
+    def verify(source: dict[str, Any], verification: dict[str, Any]) -> dict[str, Any]:
+        if not pdf_path.is_file():
+            raise ApplianceContinuousTrainingError("registered_local_pdf_not_found")
+        metric_id = source.get("metric_id")
+        rule = _LOCAL_SOURCE_RULES.get(metric_id)
+        if rule is None:
+            raise ApplianceContinuousTrainingError("source_metric_not_supported_by_appliance_verifier")
+        if source.get("source_id") != SOURCE_ID or source.get("source_url") != SOURCE_URL:
+            raise ApplianceContinuousTrainingError("source_identity_mismatch")
+        if source.get("issuer_id") != ISSUER_ID:
+            raise ApplianceContinuousTrainingError("source_issuer_mismatch")
+        if source.get("responsibility_boundary") != rule["boundary"]:
+            raise ApplianceContinuousTrainingError("source_responsibility_boundary_mismatch")
+        if source.get("unit") != "RMB" or verification.get("unit") != "RMB":
+            raise ApplianceContinuousTrainingError("source_unit_mismatch")
+        if source.get("field_ref") != rule["field_ref"]:
+            raise ApplianceContinuousTrainingError("source_field_ref_mismatch")
+        page_match = _PAGE_REF.search(str(source.get("field_ref") or ""))
+        if page_match is None or int(page_match.group(1)) != rule["page"]:
+            raise ApplianceContinuousTrainingError("source_physical_page_mismatch")
+        if verification.get("source_id") != SOURCE_ID or verification.get("source_url") != SOURCE_URL:
+            raise ApplianceContinuousTrainingError("source_verification_identity_mismatch")
+        if verification.get("exact_quote") != rule["exact_quote"]:
+            raise ApplianceContinuousTrainingError("source_exact_quote_mismatch")
+        if (
+            _finite_decimal(source.get("numeric_value"), field="source_numeric_value")
+            != rule["numeric_value"]
+            or _finite_decimal(verification.get("numeric_value"), field="verification_numeric_value")
+            != rule["numeric_value"]
+        ):
+            raise ApplianceContinuousTrainingError("source_numeric_value_mismatch")
+        extracted = subprocess.run(
+            [
+                "pdftotext", "-f", str(rule["page"]), "-l", str(rule["page"]),
+                "-layout", str(pdf_path), "-",
+            ],
+            check=True,
+            capture_output=True,
+            text=True,
+        ).stdout
+        if _normalized_pdf_text(rule["exact_quote"]) not in _normalized_pdf_text(extracted):
+            raise ApplianceContinuousTrainingError("registered_pdf_exact_quote_not_found_on_declared_page")
+        row = re.search(
+            rf"{re.escape(rule['label'])}\s*(?P<current>[0-9][0-9,，]*(?:\.[0-9]+)?)",
+            extracted,
+        )
+        if row is None:
+            raise ApplianceContinuousTrainingError("registered_pdf_metric_row_not_found")
+        quoted_value = Decimal(row.group("current").replace(",", "").replace("，", ""))
+        if quoted_value != rule["numeric_value"]:
+            raise ApplianceContinuousTrainingError("registered_pdf_metric_value_mismatch")
+        return {
+            "schema_version": minimal_runner.SOURCE_RECEIPT_SCHEMA_VERSION,
+            "verification_state": "OPENED_REGISTERED_LOCAL_PDF_FIELD_MATCHED",
+            "retrieved_at": datetime.now(timezone.utc).isoformat(),
+            "subject_ref": deepcopy(verification["subject_ref"]),
+            "source_id": SOURCE_ID,
+            "source_url": SOURCE_URL,
+            "field_ref": rule["field_ref"],
+            "exact_quote": rule["exact_quote"],
+            "numeric_value": source["numeric_value"],
+            "unit": "RMB",
+            "allowed_outputs": list(minimal.ALLOWED_OUTPUTS),
+            "method_transfer_rights": minimal.NO_METHOD_TRANSFER_RIGHTS,
+        }
+
+    return verify
+
+
+def _write_runtime_json(path: Path, value: dict[str, Any]) -> None:
+    path.write_text(json.dumps(value, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+
+
+def _controller_counts(database: str | Path) -> dict[str, int]:
+    tables = {
+        "decision_contracts": minimal_control.DECISION_CONTRACT_TABLE,
+        "technical_route_identities": minimal_control.TECHNICAL_ROUTE_IDENTITY_TABLE,
+        "measurement_contracts": minimal_control.CONTRACT_TABLE,
+        "static_evidence": minimal_control.EVIDENCE_TABLE,
+        "predictions": minimal_control.PREDICTION_TABLE,
+        "outcome_access": minimal_control.ACCESS_TABLE,
+        "source_inventories": minimal_control.OUTCOME_SOURCE_INVENTORY_TABLE,
+        "observations": minimal_control.OBSERVATION_TABLE,
+        "settlements": minimal_control.SETTLEMENT_TABLE,
+    }
+    conn = sqlite3.connect(database)
+    try:
+        minimal_control.initialize(conn)
+        return {
+            name: int(conn.execute(f"SELECT COUNT(*) FROM {table}").fetchone()[0])
+            for name, table in tables.items()
+        }
+    finally:
+        conn.close()
+
+
+def freeze_supor_preoutcome(
+    database: str | Path,
+    *,
+    local_pdf_path: str | Path,
+    round10_review: Any,
+    round10_completion: Any,
+    source_receipt_directory: str | Path | None = None,
+) -> dict[str, Any]:
+    """Freeze the canonical three-field batch through the existing runner."""
+    candidate = build_curriculum_candidate(round10_review, round10_completion)
+    roster = build_roster()
+    episode = build_preoutcome_episode(candidate, roster)
+    validation = validate_preoutcome_episode(
+        episode, curriculum_candidate=candidate, roster=roster,
+    )
+    if not validation["valid"]:
+        raise ApplianceContinuousTrainingError("canonical_preoutcome_episode_invalid")
+    verifier = build_local_pdf_source_verifier(local_pdf_path)
+    receipt_directory = Path(source_receipt_directory) if source_receipt_directory else None
+    if receipt_directory is not None:
+        receipt_directory.mkdir(parents=True, exist_ok=True)
+    runner_receipts: list[dict[str, Any]] = []
+    with tempfile.TemporaryDirectory(prefix="appliance-r11-preoutcome-") as temporary:
+        root = Path(temporary)
+        for index, chain in enumerate(episode["minimal_field_chains"]):
+            paths = {
+                "decision": root / f"{index}-decision.json",
+                "contract": root / f"{index}-contract.json",
+                "evidence": root / f"{index}-evidence.json",
+                "prediction": root / f"{index}-prediction.json",
+                "verification": root / f"{index}-verification.json",
+            }
+            _write_runtime_json(paths["decision"], chain["decision_contract"])
+            _write_runtime_json(paths["contract"], chain["measurement_contract"])
+            _write_runtime_json(paths["evidence"], chain["static_evidence"])
+            _write_runtime_json(paths["prediction"], chain["prediction"])
+            _write_runtime_json(paths["verification"], chain["source_verification_input"])
+            source_receipt_path = (
+                receipt_directory / f"{index + 1:02d}_{chain['measurement_contract']['metric_id'].replace(':', '_')}_source_receipt.json"
+                if receipt_directory is not None else None
+            )
+            runner_receipts.append(minimal_runner.freeze_preoutcome(
+                database,
+                decision_contract_path=paths["decision"],
+                contract_path=paths["contract"],
+                evidence_path=paths["evidence"],
+                prediction_path=paths["prediction"],
+                source_verification_path=paths["verification"],
+                source_verifier=verifier,
+                technical_route_resolver=lambda code: {
+                    "security_code": code,
+                    "organization_id": ORGANIZATION_ID,
+                },
+                source_receipt_output_path=source_receipt_path,
+            ))
+    counts = _controller_counts(database)
+    expected_counts = {
+        "decision_contracts": 3,
+        "technical_route_identities": 3,
+        "measurement_contracts": 3,
+        "static_evidence": 3,
+        "predictions": 3,
+        "outcome_access": 0,
+        "source_inventories": 0,
+        "observations": 0,
+        "settlements": 0,
+    }
+    if counts != expected_counts:
+        raise ApplianceContinuousTrainingError("controller_preoutcome_counts_invalid")
+    if any(receipt.get("stage") != "PRE_OUTCOME_FROZEN" for receipt in runner_receipts):
+        raise ApplianceContinuousTrainingError("runner_preoutcome_freeze_incomplete")
+    return {
+        "schema_version": "enterprise-judgment-appliance-controller-freeze-receipt.v1",
+        "episode_id": EPISODE_ID,
+        "stage": "PRE_OUTCOME_BATCH_FROZEN",
+        "field_receipts": runner_receipts,
+        "controller_counts": counts,
+        "outcome_access": {"authorized": False, "content_read": False, "custodian_started": False},
+        "allowed_outputs": ["INDEPENDENT_PREOUTCOME_REVIEW_ONLY"],
+        "rights": deepcopy(RIGHTS),
+    }
 
 
 def _enhanced_dimensions() -> list[dict[str, Any]]:
@@ -487,6 +758,7 @@ def validate_preoutcome_episode(episode: Any, *, curriculum_candidate: Any, rost
         contract = chain.get("measurement_contract")
         evidence = chain.get("static_evidence")
         prediction = chain.get("prediction")
+        verification = _mapping(chain.get("source_verification_input"))
         for prefix, result in (
             ("decision", minimal.validate_decision_contract(decision)),
             ("route", minimal.validate_technical_route_identity(route, decision_contract=decision)),
@@ -498,6 +770,37 @@ def validate_preoutcome_episode(episode: Any, *, curriculum_candidate: Any, rost
         numeric = _mapping(_mapping(evidence).get("source")).get("numeric_value")
         if not isinstance(numeric, (int, float)) or isinstance(numeric, bool) or not math.isfinite(float(numeric)):
             findings.append(f"minimal_field_chains[{index}].baseline_value_invalid")
+        source = _mapping(_mapping(evidence).get("source"))
+        metric_id = source.get("metric_id")
+        rule = _LOCAL_SOURCE_RULES.get(metric_id)
+        verification_required = {
+            "schema_version", "subject_ref", "source_id", "source_url", "exact_quote",
+            "numeric_value", "unit", "allowed_outputs", "method_transfer_rights",
+        }
+        expected_subject_ref = {
+            "object_type": "STATIC_EVIDENCE",
+            "object_id": _mapping(evidence).get("evidence_receipt_id"),
+            "object_version": _mapping(evidence).get("evidence_receipt_version"),
+        }
+        if (
+            set(verification) != verification_required
+            or verification.get("schema_version") != minimal_runner.SOURCE_VERIFICATION_INPUT_SCHEMA_VERSION
+            or verification.get("subject_ref") != expected_subject_ref
+            or verification.get("source_id") != source.get("source_id")
+            or verification.get("source_url") != source.get("source_url")
+            or verification.get("unit") != source.get("unit")
+            or verification.get("allowed_outputs") != list(minimal.ALLOWED_OUTPUTS)
+            or verification.get("method_transfer_rights") != minimal.NO_METHOD_TRANSFER_RIGHTS
+            or rule is None
+            or verification.get("exact_quote") != rule["exact_quote"]
+        ):
+            findings.append(f"minimal_field_chains[{index}].source_verification_input_invalid")
+        else:
+            try:
+                if _finite_decimal(verification.get("numeric_value"), field="verification_numeric_value") != _finite_decimal(numeric, field="source_numeric_value"):
+                    findings.append(f"minimal_field_chains[{index}].source_verification_numeric_value_mismatch")
+            except ApplianceContinuousTrainingError:
+                findings.append(f"minimal_field_chains[{index}].source_verification_numeric_value_invalid")
     outcome_access = _mapping(item.get("outcome_access"))
     if outcome_access != {"authorized": False, "content_read": False, "custodian_started": False}:
         findings.append("episode_outcome_access_must_remain_closed")

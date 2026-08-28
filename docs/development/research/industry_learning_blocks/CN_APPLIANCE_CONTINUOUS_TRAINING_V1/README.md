@@ -1,6 +1,6 @@
 # 家电持续训练 V1：苏泊尔结果前冻结
 
-> 状态：`PREOUTCOME_INDEPENDENT_REVIEW_REQUIRED`
+> 状态：`CONTROLLER_PREOUTCOME_FREEZE_READY_FOR_REVIEW`
 >
 > cutoff：`2018-09-30T23:59:59+08:00`
 >
@@ -37,7 +37,9 @@ Round 10 已有六个发行人层字段完成机械结算，但外部审阅仍�
 | 产品区分字段 | 电锅类收入 | `PRODUCT_REVENUE_RMB:电锅类` | `INCREASE` | 是产品信号，不是忠诚度或行动因果 |
 | 发行人现金背景 | 合并经营现金流净额 | `CONSOLIDATED_OPERATING_CASH_FLOW_RMB` | `STABLE` | 不能替代普通股 owner cash |
 
-三个字段分别使用现有 Minimal Historical Episode 的 Decision、Technical Route、Measurement、Static Evidence 和 Prediction 合同。后续 acquisition 可逐字段返回 `OBSERVED`、`MEASUREMENT_MISMATCH` 或 `UNKNOWN`；一个字段不得拖停其他字段。
+三个字段分别使用现有 Minimal Historical Episode 的 Decision、Technical Route、Measurement、Static Evidence 和 Prediction 合同。家电专属薄适配器只负责把这三项 FY2017 字段从已登记的本地 PDF 映射到现有 runner 的 `source_verifier` 接口；controller 已按 Decision → Technical Route → Measurement → Static Evidence → Prediction 的顺序各冻结三条记录。当前 outcome access、source inventory、observation 和 settlement 均为零。后续 acquisition 可逐字段返回 `OBSERVED`、`MEASUREMENT_MISMATCH` 或 `UNKNOWN`；一个字段不得拖停其他字段。
+
+该适配器没有复制采集器或结算引擎，也没有放宽通用字段规则。它只接受本案预先冻结的三个 metric、责任边界、物理页、标签、单位和数值；错页、错指标、错边界、错单位或错值都会在 controller 写入前拒绝。运行收据见 `CN002032_20180930_CONTROLLER_PREOUTCOME_FREEZE_RECEIPT.json`。
 
 ## 证据与隔离
 
@@ -51,7 +53,7 @@ Round 10 已有六个发行人层字段完成机械结算，但外部审阅仍�
 
 ## 下一合法步骤
 
-1. 独立 reviewer 只复核 cutoff、PDF 页、责任边界、三项字段合同、Baseline/Enhanced 公平性和防御性写作；
+1. 独立 reviewer 复核 cutoff、PDF 页、责任边界、三项字段合同、真实 runner/controller 冻结、Baseline/Enhanced 公平性和防御性写作；
 2. 审阅通过后才授权一个新的 outcome-only custodian；
 3. custodian 只取得 FY2018 官方静态年报并逐字段机械结算；
 4. 只有产品字段使 Enhanced 预先避免 Baseline 方向错误，或实际改变材料处理时，才生成一次方法效用候选；否则记录 `NO_MATERIAL_UTILITY`。
