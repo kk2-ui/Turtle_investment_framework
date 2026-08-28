@@ -321,12 +321,13 @@ def test_semantically_identical_arms_cannot_authorize_from_reviewer_label() -> N
     assert "decision_utility_evaluation.overall_utility_verdict_inconsistent" in result["findings"]
 
 
-def test_material_frozen_treatment_delta_with_related_observed_cell_authorizes_candidate() -> None:
+def test_added_dependency_and_observed_cell_do_not_substitute_for_material_treatment_delta() -> None:
     contract = _contract()
     baseline, enhanced = _episodes(contract)
     pairing = _pairing(contract, baseline, enhanced)
     _add_enhanced_material_outcome_dependency(enhanced)
     evaluation = _evaluation(pairing, contract)
+    evaluation["overall_utility_verdict"] = "NOT_DIAGNOSTIC"
 
     result = utility.validate_decision_utility_evaluation(
         evaluation, pairing=pairing, contract=contract,
@@ -335,8 +336,8 @@ def test_material_frozen_treatment_delta_with_related_observed_cell_authorizes_c
     )
 
     assert result["valid"], result["findings"]
-    assert result["overall_utility_verdict"] == "MATERIAL_UTILITY"
-    assert result["learning_authorization"] == "CANDIDATE_ONLY"
+    assert result["overall_utility_verdict"] == "NOT_DIAGNOSTIC"
+    assert result["learning_authorization"] == "NONE"
     assert baseline["claims"][0]["dependent_outcome_cell_ids"] == []
     assert enhanced["claims"][0]["dependent_outcome_cell_ids"] == [
         "CELL:CN601933:FY2019:OPERATING_CASH"

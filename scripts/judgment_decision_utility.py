@@ -120,9 +120,17 @@ def _research_cost(value: Any, path: str, findings: list[str]) -> None:
 
 
 def _utility_verdict(
-    dimension_findings: list[dict[str, Any]], *, supported_material_dimensions: set[str],
+    dimension_findings: list[dict[str, Any]],
 ) -> str:
-    """Resolve qualitative utility without a score or dimension-count threshold."""
+    """Resolve current-schema utility without treating review prose as a delta.
+
+    The current episode/pairing schemas can freeze evidence dependencies and
+    forecast differences, but they do not carry a structured, mechanically
+    comparable before/after treatment for management, owner cash, permanent
+    loss, valuation direction, or the next research action.  A positive
+    reviewer assessment therefore remains diagnostic only.  Observing an
+    extra cell or predicting it better is not itself decision utility.
+    """
     comparisons = [
         (item.get("baseline_assessment"), item.get("enhanced_assessment"))
         for item in dimension_findings
@@ -136,8 +144,6 @@ def _utility_verdict(
         if item.get("enhanced_assessment") in material_states
         and item.get("baseline_assessment") not in material_states
     }
-    if reviewer_material_dimensions & supported_material_dimensions:
-        return "MATERIAL_UTILITY"
     if reviewer_material_dimensions:
         return "NOT_DIAGNOSTIC"
     if comparisons and all(
@@ -209,36 +215,6 @@ def _validate_outcome_support_bindings(
     return bindings
 
 
-def _observed_outcome_cell_ids(settlement: Any, expected_id: Any) -> set[str]:
-    item = _mapping(settlement)
-    if item.get("settlement_id") != expected_id:
-        return set()
-    return {
-        str(row.get("cell_id") or row.get("outcome_cell_id"))
-        for row in (_mapping(raw) for raw in _items(item.get("cell_results")))
-        if row.get("status") == "OBSERVED" and _text(row.get("cell_id") or row.get("outcome_cell_id"))
-    }
-
-
-def _supported_standard_material_dimensions(
-    baseline_episode: Any, enhanced_episode: Any,
-    findings_by_dimension: dict[str, dict[str, Any]], settlement: Any, expected_settlement_id: Any,
-) -> set[str]:
-    observed = _observed_outcome_cell_ids(settlement, expected_settlement_id)
-    baseline_dependencies = _episode_dependencies_by_dimension(baseline_episode)
-    enhanced_dependencies = _episode_dependencies_by_dimension(enhanced_episode)
-    supported: set[str] = set()
-    for dimension in DIMENSIONS:
-        cited = set(_items(_mapping(findings_by_dimension.get(dimension)).get("supporting_cell_ids")))
-        added_dependencies = (
-            enhanced_dependencies.get(dimension, set())
-            - baseline_dependencies.get(dimension, set())
-        )
-        if observed & cited & added_dependencies:
-            supported.add(dimension)
-    return supported
-
-
 def _forecast_cell_index(forecast: Any) -> dict[tuple[str, str], dict[str, Any]]:
     return {
         (str(dimension.get("dimension_id")), str(window.get("window_id"))): window
@@ -246,72 +222,6 @@ def _forecast_cell_index(forecast: Any) -> dict[tuple[str, str], dict[str, Any]]
         for window in (_mapping(raw) for raw in _items(dimension.get("forecast_by_window")))
         if _text(dimension.get("dimension_id")) and _text(window.get("window_id"))
     }
-
-
-def _forecast_prediction(cell: Any) -> tuple[Any, ...] | None:
-    item = _mapping(cell)
-    probabilities = _items(item.get("probabilities"))
-    if probabilities:
-        return tuple(sorted(
-            (str(_mapping(row).get("label")), _mapping(row).get("probability"))
-            for row in probabilities
-        ))
-    probability = item.get("event_occurs_probability")
-    if isinstance(probability, (int, float)) and not isinstance(probability, bool):
-        return ("BINARY", probability)
-    return None
-
-
-def _supported_control_material_dimensions(
-    pairing: Any, forecast: Any, forecast_pairing: Any, settlement: Any,
-    paired_evaluation: Any, baseline_episode: Any, enhanced_episode: Any,
-) -> set[str]:
-    settlement_item = _mapping(settlement)
-    paired = _mapping(paired_evaluation)
-    if settlement_item.get("settlement_id") != paired.get("settlement_id"):
-        return set()
-    observed = {
-        (str(row.get("dimension_id")), str(row.get("window_id")))
-        for row in (_mapping(raw) for raw in _items(settlement_item.get("dimension_settlements")))
-        if row.get("status") == "OBSERVED"
-    }
-    forecast_cells = _forecast_cell_index(forecast)
-    baseline_cells = {
-        (str(cell.get("dimension_id")), str(cell.get("window_id"))): cell
-        for cell in (_mapping(raw) for raw in _items(_mapping(forecast_pairing).get("baseline_cells")))
-    }
-    registered = {
-        (str(cell.get("dimension_id")), str(cell.get("window_id")))
-        for cell in (
-            _mapping(raw)
-            for raw in _items(_mapping(_mapping(forecast_pairing).get("holdout_binding")).get("evaluated_cells"))
-        )
-    }
-    supported: set[str] = set()
-    baseline_dependencies = _episode_dependencies_by_dimension(baseline_episode)
-    enhanced_dependencies = _episode_dependencies_by_dimension(enhanced_episode)
-    for raw in _items(_mapping(pairing).get("outcome_support_bindings")):
-        item = _mapping(raw)
-        dimension = str(item.get("dimension_id"))
-        outcome_cell_id = item.get("enhanced_outcome_cell_id")
-        if (
-            outcome_cell_id not in enhanced_dependencies.get(dimension, set())
-            or outcome_cell_id in baseline_dependencies.get(dimension, set())
-        ):
-            continue
-        refs = {
-            (str(ref.get("dimension_id")), str(ref.get("window_id")))
-            for ref in (_mapping(raw) for raw in _items(item.get("supporting_forecast_cells")))
-        }
-        for key in refs & observed & registered:
-            baseline_prediction = _forecast_prediction(baseline_cells.get(key))
-            enhanced_prediction = _forecast_prediction(forecast_cells.get(key))
-            if baseline_prediction is not None and enhanced_prediction is not None and baseline_prediction != enhanced_prediction:
-                supported.add(dimension)
-                break
-    return supported
-
-
 def _legacy_decision(
     value: Any, path: str, budget: dict[str, Any], findings: list[str],
 ) -> dict[str, Any]:
@@ -600,18 +510,9 @@ def validate_decision_utility_evaluation(
         if item.get("authority_ceiling") != "CANDIDATE_ONLY":
             findings.append("decision_utility_evaluation.authority_ceiling_invalid")
         verdict = item.get("overall_utility_verdict")
-        findings_by_dimension = {
-            str(finding.get("dimension_id")): finding for finding in dimension_findings
-        }
-        supported_material_dimensions = _supported_standard_material_dimensions(
-            baseline_episode, enhanced_episode, findings_by_dimension,
-            outcome_settlement, item.get("outcome_settlement_ref"),
-        )
         if verdict not in UTILITY_VERDICTS:
             findings.append("decision_utility_evaluation.overall_utility_verdict_invalid")
-        elif verdict != _utility_verdict(
-            dimension_findings, supported_material_dimensions=supported_material_dimensions,
-        ):
+        elif verdict != _utility_verdict(dimension_findings):
             findings.append("decision_utility_evaluation.overall_utility_verdict_inconsistent")
     return {
         "valid": not findings,
@@ -824,15 +725,9 @@ def validate_decision_utility_control_evaluation(
         if item.get("authority_ceiling") != "CANDIDATE_ONLY":
             findings.append("decision_utility_control_evaluation.authority_ceiling_invalid")
         verdict = item.get("overall_utility_verdict")
-        supported_material_dimensions = _supported_control_material_dimensions(
-            pairing, forecast, forecast_pairing, settlement, forecast_paired_evaluation,
-            baseline_episode, enhanced_episode,
-        )
         if verdict not in UTILITY_VERDICTS:
             findings.append("decision_utility_control_evaluation.overall_utility_verdict_invalid")
-        elif verdict != _utility_verdict(
-            dimension_findings, supported_material_dimensions=supported_material_dimensions,
-        ):
+        elif verdict != _utility_verdict(dimension_findings):
             findings.append("decision_utility_control_evaluation.overall_utility_verdict_inconsistent")
     return {
         "valid": not findings,

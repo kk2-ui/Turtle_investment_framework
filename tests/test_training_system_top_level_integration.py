@@ -78,11 +78,14 @@ def test_top_level_synthetic_path_preserves_one_way_permissions() -> None:
     baseline_episode, enhanced_episode = _episodes(contract)
     utility_pairing = _pairing(contract, baseline_episode, enhanced_episode)
     _add_enhanced_material_outcome_dependency(enhanced_episode)
+    utility_evaluation = _evaluation(utility_pairing, contract)
+    utility_evaluation["overall_utility_verdict"] = "NOT_DIAGNOSTIC"
     utility_result = utility.validate_decision_utility_evaluation(
-        _evaluation(utility_pairing, contract), pairing=utility_pairing, contract=contract,
+        utility_evaluation, pairing=utility_pairing, contract=contract,
         baseline_episode=baseline_episode, enhanced_episode=enhanced_episode,
         outcome_settlement=_utility_settlement(),
     )
     assert utility_result["valid"], utility_result["findings"]
-    assert utility_result["learning_authorization"] == "CANDIDATE_ONLY"
+    assert utility_result["overall_utility_verdict"] == "NOT_DIAGNOSTIC"
+    assert utility_result["learning_authorization"] == "NONE"
     conn.close()

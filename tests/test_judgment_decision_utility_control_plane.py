@@ -201,7 +201,7 @@ def test_control_pairing_rejects_method_drift_and_missing_external_episode() -> 
     assert "decision_utility_control_pairing.enhanced_episode_manifest_required" in missing["findings"]
 
 
-def test_control_real_probability_change_authorizes_candidate_with_local_unknowns() -> None:
+def test_control_probability_change_and_positive_reviewer_remain_not_diagnostic() -> None:
     contract, baseline, enhanced, forecast, forecast_pairing, pairing = _control_inputs()
     _freeze_control_material_delta(pairing, enhanced)
     paired = {
@@ -213,6 +213,7 @@ def test_control_real_probability_change_authorizes_candidate_with_local_unknown
     }
     settlement = _control_settlement(paired)
     evaluation = _control_evaluation(pairing, paired)
+    evaluation["overall_utility_verdict"] = "NOT_DIAGNOSTIC"
     assert _probability_map(forecast["dimensions"][0]["forecast_by_window"][0]["probabilities"]) != _probability_map(
         forecast_pairing["baseline_cells"][0]["probabilities"]
     )
@@ -230,8 +231,24 @@ def test_control_real_probability_change_authorizes_candidate_with_local_unknown
     )
 
     assert result["valid"], result["findings"]
-    assert result["overall_utility_verdict"] == "MATERIAL_UTILITY"
-    assert result["learning_authorization"] == "CANDIDATE_ONLY"
+    assert result["overall_utility_verdict"] == "NOT_DIAGNOSTIC"
+    assert result["learning_authorization"] == "NONE"
+    overclaimed = deepcopy(evaluation)
+    overclaimed["overall_utility_verdict"] = "MATERIAL_UTILITY"
+    rejected = utility.validate_decision_utility_control_evaluation(
+        overclaimed,
+        pairing=pairing,
+        forecast=forecast,
+        forecast_pairing=forecast_pairing,
+        forecast_paired_evaluation=paired,
+        settlement=settlement,
+        contract=contract,
+        baseline_episode=baseline,
+        enhanced_episode=enhanced,
+    )
+    assert not rejected["valid"]
+    assert rejected["learning_authorization"] == "NONE"
+    assert "decision_utility_control_evaluation.overall_utility_verdict_inconsistent" in rejected["findings"]
     assert result["evaluation"] == evaluation
     conflicted = deepcopy(evaluation)
     conflicted["reviewer_id"] = contract["roles"]["outcome_custodian_id"]
@@ -273,6 +290,33 @@ def test_control_evaluation_returns_no_material_verdict_without_authorization() 
 
     assert result["valid"], result["findings"]
     assert result["overall_utility_verdict"] == "NO_MATERIAL_UTILITY"
+    assert result["learning_authorization"] == "NONE"
+
+
+def test_control_harmful_verdict_remains_harmful_without_authorization() -> None:
+    contract, baseline, enhanced, forecast, forecast_pairing, pairing = _control_inputs()
+    paired = {
+        "evaluation_id": "FORECAST:EVALUATION:CN601933:FY2019:V1",
+        "pairing_id": forecast_pairing["pairing_id"],
+        "forecast_id": forecast["forecast_id"],
+        "settlement_id": "SETTLEMENT:CN601933:FY2019:V1",
+        "evaluated_at": "2020-05-02T00:00:00+08:00",
+    }
+    evaluation = _control_evaluation(pairing, paired)
+    for finding in evaluation["dimension_findings"]:
+        finding["enhanced_assessment"] = "NO_DIFFERENCE"
+    evaluation["dimension_findings"][0]["enhanced_assessment"] = "HARMFUL"
+    evaluation["overall_utility_verdict"] = "HARMFUL"
+
+    result = utility.validate_decision_utility_control_evaluation(
+        evaluation, pairing=pairing, forecast=forecast, forecast_pairing=forecast_pairing,
+        forecast_paired_evaluation=paired, contract=contract,
+        baseline_episode=baseline, enhanced_episode=enhanced,
+        settlement=_control_settlement(paired),
+    )
+
+    assert result["valid"], result["findings"]
+    assert result["overall_utility_verdict"] == "HARMFUL"
     assert result["learning_authorization"] == "NONE"
 
 
@@ -399,6 +443,7 @@ def _register_h1(conn: sqlite3.Connection, h1: dict) -> None:
 
 def _v6_chain(
     *, reordered_probabilities_only: bool = False,
+    enhanced_normal_earnings_probabilities: list[dict] | None = None,
 ) -> tuple[sqlite3.Connection, dict, dict, dict, dict, dict, dict, dict]:
     conn = _conn()
     universe, h1 = _universe_and_h1()
@@ -440,6 +485,16 @@ def _v6_chain(
         ),
     )
     forecast = _v6_forecast(v2, measurement, evidence, scope, method_ref=method_ref)
+    if enhanced_normal_earnings_probabilities is not None:
+        normal_earnings = next(
+            dimension for dimension in forecast["dimensions"]
+            if dimension["dimension_id"] == "NORMAL_EARNINGS"
+        )
+        one_year = next(
+            window for window in normal_earnings["forecast_by_window"]
+            if window["window_id"] == "ONE_YEAR"
+        )
+        one_year["probabilities"] = deepcopy(enhanced_normal_earnings_probabilities)
     if reordered_probabilities_only:
         preview_pairing = _forecast_pairing(forecast)
         baseline_cell = next(
@@ -627,14 +682,15 @@ def test_registered_utility_evaluation_uses_frozen_episode_snapshots() -> None:
     paired = _authorize_and_evaluate(conn, forecast, contract, measurement, forecast_pairing)
     evaluation = _control_evaluation(pairing, paired)
     evaluation["evaluated_at"] = "2022-04-03T00:00:00+00:00"
+    evaluation["overall_utility_verdict"] = "NOT_DIAGNOSTIC"
     first = control.register_decision_utility_evaluation(conn, evaluation)
     replay = control.register_decision_utility_evaluation(conn, deepcopy(evaluation))
     assert first == {
         "evaluated": True,
         "evaluation_id": evaluation["evaluation_id"],
         "idempotent": False,
-        "learning_authorization": "CANDIDATE_ONLY",
-        "overall_utility_verdict": "MATERIAL_UTILITY",
+        "learning_authorization": "NONE",
+        "overall_utility_verdict": "NOT_DIAGNOSTIC",
     }
     assert replay["idempotent"] is True
 
@@ -648,6 +704,61 @@ def test_registered_utility_evaluation_uses_frozen_episode_snapshots() -> None:
     with pytest.raises(control.ForecastControlError) as exc_info:
         control.register_decision_utility_evaluation(conn, missing)
     assert exc_info.value.code == "decision_utility_episode_snapshot_not_found"
+    conn.close()
+
+
+@pytest.mark.parametrize(
+    ("probabilities", "expected_brier_relation"),
+    [
+        ([
+            {"label": "DETERIORATE", "probability": 0.05},
+            {"label": "STABLE", "probability": 0.90},
+            {"label": "IMPROVE", "probability": 0.05},
+        ], "BETTER"),
+        ([
+            {"label": "DETERIORATE", "probability": 0.90},
+            {"label": "STABLE", "probability": 0.05},
+            {"label": "IMPROVE", "probability": 0.05},
+        ], "WORSE"),
+    ],
+)
+def test_registered_better_or_worse_forecast_is_not_decision_utility_without_treatment_delta(
+    probabilities: list[dict], expected_brier_relation: str,
+) -> None:
+    conn, forecast, contract, measurement, forecast_pairing, pairing, baseline, enhanced = _v6_chain(
+        enhanced_normal_earnings_probabilities=probabilities,
+    )
+    baseline_probability = _probability_map(next(
+        cell for cell in forecast_pairing["baseline_cells"]
+        if cell["dimension_id"] == "NORMAL_EARNINGS" and cell["window_id"] == "ONE_YEAR"
+    )["probabilities"])
+    enhanced_probability = _probability_map(probabilities)
+    baseline_brier = sum(
+        (baseline_probability[label] - (1.0 if label == "STABLE" else 0.0)) ** 2
+        for label in baseline_probability
+    )
+    enhanced_brier = sum(
+        (enhanced_probability[label] - (1.0 if label == "STABLE" else 0.0)) ** 2
+        for label in enhanced_probability
+    )
+    assert (enhanced_brier < baseline_brier) == (expected_brier_relation == "BETTER")
+
+    control.register_decision_utility_pairing(
+        conn,
+        pairing,
+        baseline_episode=baseline,
+        enhanced_episode=enhanced,
+        frozen_at=pairing["frozen_at"],
+    )
+    paired = _authorize_and_evaluate(conn, forecast, contract, measurement, forecast_pairing)
+    evaluation = _control_evaluation(pairing, paired)
+    evaluation["evaluated_at"] = "2022-04-03T00:00:00+00:00"
+    evaluation["overall_utility_verdict"] = "NOT_DIAGNOSTIC"
+
+    result = control.register_decision_utility_evaluation(conn, evaluation)
+
+    assert result["overall_utility_verdict"] == "NOT_DIAGNOSTIC"
+    assert result["learning_authorization"] == "NONE"
     conn.close()
 
 
