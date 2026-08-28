@@ -23,3 +23,8 @@
 value-free mismatch；`04_e2_acquisition_recovery_preoutcome_receipt.json` 只记录修复
 公告分类后对已验收结果前对象的等值控制器重放。后者没有打开 outcome access，
 也没有改写预测、Measurement Contract 或第一次失败收据。
+
+`05_e2_acquisition_attempt_2.json` 保留第二次独立 custody 的字段级终态。它证明
+官方原始年报已可唯一选中，但三个字段仍分别被 metric identity、产品收入表定位和
+现金流量表续页规则阻断。对应修复只扩展既有 acquisition catalogue 和机械 verifier，
+不改变任何训练判断。

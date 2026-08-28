@@ -154,6 +154,51 @@ def test_acquisition_keeps_observed_mismatch_and_unknown_fields_independent(tmp_
     assert "prediction" not in json.dumps(result, ensure_ascii=False).casefold()
 
 
+def test_product_revenue_and_cash_flow_continuation_are_deterministic_per_field(tmp_path: Path) -> None:
+    """A repeated product row and a continued statement cannot stop neighbors."""
+    pdf = tmp_path / "registered-appliance-report.pdf"
+    pdf.write_bytes(b"%PDF-1.7 registered appliance annual report")
+    contract = _contract(company_id="CN:002032", issuer_id="ISSUER:CN:002032")
+    for cell in contract["cells"]:
+        cell["responsibility_boundary"] = "LISTED_ISSUER_CONSOLIDATED:CN002032"
+    _cell(
+        contract, "COMPETITIVE_POSITION", "ONE_YEAR",
+        source_field_id="PRODUCT_REVENUE_RMB:电锅类", measurement_id="M:PRODUCT",
+    )
+    _cell(
+        contract, "CASH_CONVERSION_AND_CAPEX_BURDEN", "ONE_YEAR",
+        source_field_id="CONSOLIDATED_OPERATING_CASH_FLOW_RMB", measurement_id="M:CASH-CONTINUED",
+    )
+    inventory = _inventory(contract, pdf)
+    inventory["documents"][0].update({
+        "issuer_id": contract["issuer_id"],
+        "responsibility_boundary": "LISTED_ISSUER_CONSOLIDATED:CN002032",
+    })
+
+    def pages(_: Path) -> list[str]:
+        return [
+            "营业收入构成\n单位：元\n电锅类 4,241,166,335.58 23.76% 3,809,138,321.20 26.19% 11.34%",
+            "占营业收入或营业利润10%以上的产品\n单位：元\n分产品\n电锅类 4,241,166,335.58 3,009,938,151.33 29.03%",
+            "营业成本构成\n单位：元\n分产品\n电锅类 营业成本 3,009,938,151.33 2,719,900,753.54",
+            "5、合并现金流量表\n单位：元\n项目 本期发生额 上期发生额\n一、经营活动产生的现金流量：",
+            "经营活动现金流出小计 17,075,030,138.92 15,717,103,931.64\n经营活动产生的现金流量净额 2,013,658,744.84 1,101,068,593.63",
+            "6、母公司现金流量表\n单位：元\n经营活动产生的现金流量净额 89,980,759.26 -52,883,288.75",
+        ]
+
+    result = acquisition.acquire_outcome_measurements(
+        contract, inventory, measurement_ids=["M:PRODUCT", "M:CASH-CONTINUED"], page_reader=pages,
+    )
+    by_id = {item["measurement_id"]: item for item in result["observations"]}
+    assert by_id["M:PRODUCT"]["status"] == "OBSERVED"
+    assert by_id["M:PRODUCT"]["current_value"] == 4241166335.58
+    assert by_id["M:PRODUCT"]["comparative_value"] == 3809138321.20
+    assert by_id["M:PRODUCT"]["source"]["pdf_page"] == 1
+    assert by_id["M:CASH-CONTINUED"]["status"] == "OBSERVED"
+    assert by_id["M:CASH-CONTINUED"]["current_value"] == 2013658744.84
+    assert by_id["M:CASH-CONTINUED"]["comparative_value"] == 1101068593.63
+    assert by_id["M:CASH-CONTINUED"]["source"]["pdf_page"] == 5
+
+
 def test_inventory_must_be_local_static_contract_bound_and_is_checked_before_pdf_read(tmp_path: Path) -> None:
     pdf = tmp_path / "registered-official.pdf"
     pdf.write_bytes(b"%PDF-1.7 synthetic static official annual report")

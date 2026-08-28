@@ -630,6 +630,7 @@ def _field_spec(source_field_id: str) -> dict[str, Any] | None:
         "CONSOLIDATED_OPERATING_CASH_FLOW_RMB": {
             "statement_kind": "CONSOLIDATED_CASH_FLOW_STATEMENT", "scope": "CONSOLIDATED",
             "markers": ("合并现金流量表",), "labels": ("经营活动产生的现金流量净额",),
+            "continuation_pages": 1,
         },
         "PARENT_REVENUE_RMB": {
             "statement_kind": "PARENT_INCOME_STATEMENT", "scope": "PARENT",
@@ -646,11 +647,15 @@ def _field_spec(source_field_id: str) -> dict[str, Any] | None:
     }
     if source_field_id in catalogue:
         return deepcopy(catalogue[source_field_id])
-    for prefix, marker in (("SEGMENT_REVENUE_RMB:", "分部"), ("PRODUCT_REVENUE_RMB:", "分产品")):
+    for prefix, markers in (
+        ("SEGMENT_REVENUE_RMB:", ("分部报告", "分部信息", "分部")),
+        ("PRODUCT_REVENUE_RMB:", ("营业收入构成",)),
+    ):
         if source_field_id.startswith(prefix) and _text(source_field_id[len(prefix):]):
             return {
                 "statement_kind": "SEGMENT_OR_PRODUCT_OPERATIONAL_DATA", "scope": "CONSOLIDATED",
-                "markers": (marker,), "labels": (source_field_id[len(prefix):],),
+                "markers": markers, "labels": (source_field_id[len(prefix):],),
+                **({"value_columns": (0, 2)} if prefix == "PRODUCT_REVENUE_RMB:" else {}),
             }
     return None
 
@@ -677,21 +682,44 @@ def _numeric_values(line: str) -> list[Decimal]:
 
 def _field_rows(pages: list[str], spec: dict[str, Any]) -> list[tuple[int, str, Decimal, Decimal, tuple[str, Decimal] | None]]:
     matches: list[tuple[int, str, Decimal, Decimal, tuple[str, Decimal] | None]] = []
-    for page_number, page in enumerate(pages, start=1):
+    seen_pages: set[int] = set()
+    for marker_index, page in enumerate(pages):
         if not any(marker in page for marker in spec["markers"]):
             continue
-        lines = page.splitlines()
-        for position, line in enumerate(lines):
-            if not any(label in line for label in spec["labels"]):
+        marker_unit = _page_unit_scale(page)
+        continuation_pages = int(spec.get("continuation_pages", 0))
+        for target_index in range(marker_index, min(len(pages), marker_index + continuation_pages + 1)):
+            page_number = target_index + 1
+            if page_number in seen_pages:
                 continue
-            candidate = " ".join(lines[position:position + 3])
-            values = _numeric_values(candidate)
-            if len(values) >= 2:
-                # Accounting note identifiers precede the actual current and
-                # comparative columns (for example ``附注七(42)``).  The two
-                # right-most numeric tokens in the matched statement row are
-                # the columns frozen by this narrow source-field catalogue.
-                matches.append((page_number, candidate, values[-2], values[-1], _page_unit_scale(page)))
+            target_page = pages[target_index]
+            # A new statement heading starts a new table and cannot be treated
+            # as a continuation of the prior consolidated statement.
+            if target_index > marker_index and re.search(r"(?:母公司|合并).*(?:利润表|资产负债表|现金流量表)", target_page):
+                break
+            lines = target_page.splitlines()
+            for position, line in enumerate(lines):
+                if not any(label in line for label in spec["labels"]):
+                    continue
+                candidate = " ".join(lines[position:position + 3])
+                values = _numeric_values(candidate)
+                if len(values) >= 2:
+                    # Accounting note identifiers precede the actual current
+                    # and comparative columns.  The two right-most numeric
+                    # tokens are used only in a table selected by the explicit
+                    # catalogue marker above.
+                    columns = spec.get("value_columns")
+                    if isinstance(columns, tuple) and len(columns) == 2:
+                        if max(columns) >= len(values):
+                            continue
+                        current, comparative = values[columns[0]], values[columns[1]]
+                    else:
+                        current, comparative = values[-2], values[-1]
+                    matches.append((
+                        page_number, candidate, current, comparative,
+                        _page_unit_scale(target_page) or marker_unit,
+                    ))
+                    seen_pages.add(page_number)
     return matches
 
 

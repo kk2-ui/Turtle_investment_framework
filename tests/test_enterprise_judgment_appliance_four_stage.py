@@ -195,3 +195,22 @@ def test_recovery_receipt_is_an_exact_preoutcome_replay_not_a_forecast_rewrite()
     }
     assert receipt["status"] == "PREOUTCOME_REPLAY_FROZEN_AWAITING_CONTRACT_ONLY_OUTCOME_ACCESS"
     assert receipt["rights"] == four_stage.RIGHTS
+
+
+def test_second_acquisition_attempt_preserves_field_local_unknowns_and_mismatches() -> None:
+    attempt = _load(FOUR_STAGE / "05_e2_acquisition_attempt_2.json")
+    statuses = [
+        {
+            "measurement_contract_id": row["measurement_contract_id"],
+            "terminal_status": row["terminal_status"],
+        }
+        for row in attempt["field_terminal_statuses"]
+    ]
+    result = four_stage.resolve_e2_terminal_statuses(statuses)
+    assert result["valid"], result["findings"]
+    assert result["resolution"]["combined_resolution"] == attempt["e2_resolution"] == "PARTIAL_NOT_DIAGNOSTIC"
+    assert attempt["lifecycle_counts"]["observations"] == 0
+    assert attempt["lifecycle_counts"]["settlements"] == 0
+    assert attempt["outcome_values_in_artifact"] is False
+    assert attempt["forecast_changed"] is False
+    assert attempt["rights"] == four_stage.RIGHTS
