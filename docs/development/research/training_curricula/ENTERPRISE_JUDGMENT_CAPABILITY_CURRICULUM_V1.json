@@ -283,6 +283,123 @@
       "holdout_axis": null
     },
     {
+      "case_id": "TEACH:HK03990:20220501:FY2022_FY2025",
+      "company_id": "HK:03990",
+      "company_cluster_id": "COMPANY:HK03990",
+      "company_name": "美的置业",
+      "industry_id": "PROPERTY_DEVELOPMENT_AND_SERVICES",
+      "track": "TEACHING",
+      "status": "CURATED",
+      "cutoff_at": "2022-05-01T00:00:00+08:00",
+      "outcome_window": null,
+      "outcome_access": "RESULT_KNOWN",
+      "selection_exposure": "RESULT_KNOWN_OR_DERIVED_VISIBLE",
+      "role_isolation_state": "NOT_REQUIRED_FOR_TEACHING",
+      "primary_capability_units": [
+        "CAPITAL_ALLOCATION",
+        "VALUATION_AND_ENTRY_TREATMENT"
+      ],
+      "mechanism_focus": "开发业务缩表与实物分派如何改变责任边界、普通股经济载体和估值对象",
+      "claim_scope": "WITHIN_CASE_MECHANISM",
+      "comparative_mode": "NOT_REQUIRED",
+      "source_refs": [
+        "docs/development/research/training_curricula/teaching_cases/TC_HK03990_PROPERTY_PERIMETER_AND_VALUE_V1.md"
+      ],
+      "artifact_refs": {
+        "lesson_ref": "docs/development/research/training_curricula/teaching_cases/TC_HK03990_PROPERTY_PERIMETER_AND_VALUE_V1.md"
+      },
+      "lesson": {
+        "state_and_constraint": "开发收入在2021至2023年大体维持，但毛利率、归母利润、现金、资产与借款同步下降，降杠杆伴随经营经济恶化。",
+        "management_choice_or_no_action": "管理层先收缩土储与偿债，随后把开发及销售业务重组至PrivateCo，并向股东实物分派或提供现金替代。",
+        "customer_or_operating_response": "旧开发业务利润和减值恶化；留存服务业务在2025年盈利产现金，但最大关联客户贡献35.5%收入，独立需求尚未完全证明。",
+        "cash_or_capital_result": "现金、债务和开发资产随PrivateCo迁出合并边界；留存公司转为净现金不能证明旧开发业务自然修复，也不能代表股东收到的私人权益价值为零。",
+        "mechanism_lesson": "缩表或降债必须先追踪资产负债和控制权去了哪里，再识别普通股股东收到的权益或现金，最后分别估计留存与迁出业务价值。",
+        "strongest_rival": "主动收缩、偿债和分派可能降低留存公司的尾部风险并释放资产轻型业务价值，但这只在股东合计经济载体可兑现时成立。",
+        "near_miss": "用分派后的净现金和高利润率证明旧集团经营反转，或因PrivateCo不再合并而把其股东价值直接计零。",
+        "investor_treatment": "跨登记日原股东按留存上市公司、实际收到的PrivateCo权益或现金和已收分配做SOTP；分派后新买家只估留存公司，关联客户未去集中前收紧增长倍数。",
+        "transfer_question": "企业通过出售、分拆或实物分派变轻时，股东保留了什么现金流权利、承担什么尾部责任，留存业务是否有独立客户和重复现金。"
+      },
+      "holdout_axis": null
+    },
+    {
+      "case_id": "TEACH:HK01522:20190501:FY2019_FY2025",
+      "company_id": "HK:01522",
+      "company_cluster_id": "COMPANY:HK01522",
+      "company_name": "京投交通科技",
+      "industry_id": "RAIL_TRANSIT_TECHNOLOGY",
+      "track": "TEACHING",
+      "status": "CURATED",
+      "cutoff_at": "2019-05-01T00:00:00+08:00",
+      "outcome_window": null,
+      "outcome_access": "RESULT_KNOWN",
+      "selection_exposure": "RESULT_KNOWN_OR_DERIVED_VISIBLE",
+      "role_isolation_state": "NOT_REQUIRED_FOR_TEACHING",
+      "primary_capability_units": [
+        "MANAGEMENT_DECISION_EXECUTION",
+        "OWNER_CASH_CONVERSION"
+      ],
+      "mechanism_focus": "项目订单怎样经过部署、验收、合同资产和收款转成普通股现金",
+      "claim_scope": "WITHIN_CASE_MECHANISM",
+      "comparative_mode": "NOT_REQUIRED",
+      "source_refs": [
+        "docs/development/research/training_curricula/teaching_cases/TC_HK01522_ORDER_DELIVERY_AND_OWNER_CASH_V1.md"
+      ],
+      "artifact_refs": {
+        "lesson_ref": "docs/development/research/training_curricula/teaching_cases/TC_HK01522_ORDER_DELIVERY_AND_OWNER_CASH_V1.md"
+      },
+      "lesson": {
+        "state_and_constraint": "轨交项目进入能力和订单储备较强，项目验收时点、合同资产及应收使收入利润与现金不同步。",
+        "management_choice_or_no_action": "管理层收购华启智能、扩大区域覆盖、维持研发并不断获取大型轨交信息化订单。",
+        "customer_or_operating_response": "在手订单由约20亿港元升至32亿港元，但2022至2024年收入平台化，2025年收入增长时毛利和归母利润仍下降。",
+        "cash_or_capital_result": "2022至2025年累计经营现金明显低于累计归母利润，扣报表资本投入后的代理更低；现金高于贷款只降低近端生存风险。",
+        "mechanism_lesson": "订单、部署、验收、无条件收款权和实际收款是五个状态；前两段只能给市场与部署信用。",
+        "strongest_rival": "公共轨交客户信用较强，合同资产增长可能只是验收节奏，2024至2025年正经营现金说明部分占用可回流。",
+        "near_miss": "用在手订单增长或单年工作资本回流证明项目利润率和长期owner cash已经改善。",
+        "investor_treatment": "正常盈利使用多项目周期费用后利润，owner cash使用跨期现金减维持投入；订单只有在利润率和回款同步时才上调价值。",
+        "transfer_question": "项目制企业的订单能否按期转收入、合同资产能否转应收和现金、费用后利润是否在完整周期重复。"
+      },
+      "holdout_axis": null
+    },
+    {
+      "case_id": "TEACH:CN002027:20210501:FY2021_FY2025",
+      "company_id": "CN:002027",
+      "company_cluster_id": "COMPANY:CN002027",
+      "company_name": "分众传媒",
+      "industry_id": "OUT_OF_HOME_ADVERTISING_NETWORK",
+      "track": "TEACHING",
+      "status": "CURATED",
+      "cutoff_at": "2021-05-01T00:00:00+08:00",
+      "outcome_window": null,
+      "outcome_access": "RESULT_KNOWN",
+      "selection_exposure": "RESULT_KNOWN_OR_DERIVED_VISIBLE",
+      "role_isolation_state": "NOT_REQUIRED_FOR_TEACHING",
+      "primary_capability_units": [
+        "CUSTOMER_ABSORPTION",
+        "COMPETITION_AND_PRICING"
+      ],
+      "mechanism_focus": "媒体点位怎样经过广告主需求、同点位变现、回款和租赁现金形成网络价值",
+      "claim_scope": "WITHIN_CASE_MECHANISM",
+      "comparative_mode": "NOT_REQUIRED",
+      "source_refs": [
+        "docs/development/research/training_curricula/teaching_cases/TC_CN002027_NETWORK_DENSITY_PRICING_AND_ALLOCATION_V1.md"
+      ],
+      "artifact_refs": {
+        "lesson_ref": "docs/development/research/training_curricula/teaching_cases/TC_CN002027_NETWORK_DENSITY_PRICING_AND_ALLOCATION_V1.md"
+      },
+      "lesson": {
+        "state_and_constraint": "生活圈媒体覆盖形成稀缺触达网络，但广告预算有周期，点位租金和客户回款决定网络能否转成现金。",
+        "management_choice_or_no_action": "管理层扩张电视覆盖、优化海报点位、推进数字化和海外网络，并把核心现金投入部分股权投资。",
+        "customer_or_operating_response": "2022年点位仍大但广告需求使收入大降；2023至2025年收入恢复，2025年海报收缩、电视扩张且收入仍增，但应收与合同资产增长51.3%。",
+        "cash_or_capital_result": "核心广告经营现金为正且扣实际租赁现金后仍强；数禾科技约21.5亿元投资减值是独立的真实资本配置损失。",
+        "mechanism_lesson": "网络覆盖、客户吸收、同点位定价、回款和资本配置是五个轴；任何一个都不能替其他轴投票。",
+        "strongest_rival": "收入韧性可能来自更宽松回款或媒体组合而非提价，缺同点位刊挂和复投数据时只能确认网络价值，不能确认完整定价权。",
+        "near_miss": "用设备数量证明护城河、用reported OCF忽略租赁现金，或用核心现金把非核心投资减值擦除。",
+        "investor_treatment": "核心平台按扣租赁、维持设备和正常工作资本后的现金估值；海外只给选择权，数禾减值进入资本配置记录。",
+        "transfer_question": "网络型企业缩减低效节点后，同点位收入、客户复投、毛利、回款和租赁后现金是否共同改善。"
+      },
+      "holdout_axis": null
+    },
+    {
       "case_id": "BLIND:CN603195:20240501:FY2024",
       "company_id": "CN:603195",
       "company_cluster_id": "COMPANY:CN603195",
@@ -472,17 +589,6 @@
       "source_locator": "LOCAL_OUTPUT:600295_鄂尔多斯+900936_鄂资B股"
     },
     {
-      "candidate_id": "TCAND:HK03990",
-      "company_ids": ["HK:03990"],
-      "company_cluster_id": "COMPANY:HK03990",
-      "company_name": "美的置业",
-      "industry_id": "PROPERTY_DEVELOPMENT",
-      "primary_capability_units": ["PERMANENT_LOSS_AND_LIFECYCLE", "VALUATION_AND_ENTRY_TREATMENT"],
-      "mechanism_focus": "销售、交付、土地与融资期限如何决定地产现金和永久损失",
-      "selection_exposure": "RESULT_KNOWN_OR_DERIVED_VISIBLE",
-      "source_locator": "LOCAL_OUTPUT:03990_美的置业"
-    },
-    {
       "candidate_id": "TCAND:HK02669",
       "company_ids": ["HK:02669"],
       "company_cluster_id": "COMPANY:HK02669",
@@ -492,17 +598,6 @@
       "mechanism_focus": "在管面积、第三方拓展、收缴率和应收如何形成现金",
       "selection_exposure": "RESULT_KNOWN_OR_DERIVED_VISIBLE",
       "source_locator": "LOCAL_OUTPUT:02669_中海物业"
-    },
-    {
-      "candidate_id": "TCAND:HK01522",
-      "company_ids": ["HK:01522"],
-      "company_cluster_id": "COMPANY:HK01522",
-      "company_name": "京投交通科技",
-      "industry_id": "RAIL_TRANSIT_TECHNOLOGY",
-      "primary_capability_units": ["MANAGEMENT_DECISION_EXECUTION", "OWNER_CASH_CONVERSION"],
-      "mechanism_focus": "轨交订单、项目验收和回款如何把执行转成现金",
-      "selection_exposure": "RESULT_KNOWN_OR_DERIVED_VISIBLE",
-      "source_locator": "LOCAL_OUTPUT:01522_京投交通科技"
     },
     {
       "candidate_id": "TCAND:CN001914",
@@ -536,17 +631,6 @@
       "mechanism_focus": "多业务控股、联营现金、资产处置和资本再配置",
       "selection_exposure": "RESULT_KNOWN_OR_DERIVED_VISIBLE",
       "source_locator": "LOCAL_OUTPUT:00882_天津发展"
-    },
-    {
-      "candidate_id": "TCAND:CN002027",
-      "company_ids": ["CN:002027"],
-      "company_cluster_id": "COMPANY:CN002027",
-      "company_name": "分众传媒",
-      "industry_id": "OFFLINE_ADVERTISING_NETWORK",
-      "primary_capability_units": ["CUSTOMER_ABSORPTION", "COMPETITION_AND_PRICING"],
-      "mechanism_focus": "点位网络、广告主周期、刊挂率与定价如何形成利润",
-      "selection_exposure": "RESULT_KNOWN_OR_DERIVED_VISIBLE",
-      "source_locator": "LOCAL_OUTPUT:002027_分众传媒"
     },
     {
       "candidate_id": "TCAND:HK03658",

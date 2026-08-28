@@ -175,15 +175,15 @@ Retain    只保留可迁移的问题、反例和边界，不保留公司结局�
 
 | 轨道 | 已完成/冻结 | 当前含义 |
 |---|---:|---|
-| Teaching | 6 个 curated company clusters | 已把六轮真实反馈转为机制课程资产 |
+| Teaching | 9 个 curated company clusters | 六轮真实反馈之外，新增美的置业、京投交通科技和分众传媒三条异质机制课程 |
 | Blind Judgment | 1 个 settled、1 个 registered | 公牛 FY2024 已结算；中国外运按冻结 roster rank 2 等待 fresh role 执行 |
 | Historical Holdout | 0 | 尚无独立历史考试，不得声称迁移 |
 | Prospective | 2 个 company clusters | 紫金冻结；民航信息有局部中期反馈但全年未结算 |
-| Teaching candidates | 18 个独立 company clusters | 已知结果的本地池，只待策展，不计能力 |
+| Teaching candidates | 15 个独立 company clusters | 已知结果的本地池，只待策展，不计能力 |
 
-6 个 curated Teaching 加 18 个候选，形成 24 个独立公司簇的教学管线。它解决“没有案例可练”的问题，但没有解决“能力是否形成”的问题。当前能力覆盖仍明显不足：管理决策执行和估值/买点尚无完成的 primary 教学公司簇，竞争定价也只有一个完成簇。
+9 个 curated Teaching 加 15 个候选，形成 24 个独立公司簇的教学管线。它解决“没有案例可练”的问题，但没有解决“能力是否形成”的问题。美的置业补入第一个估值与进入处理簇，京投交通科技补入第一个管理决策执行簇，分众传媒把竞争定价完成簇增至两个；三项仍远低于形成稳定能力所需的异质样本量。
 
-按 `3:1` 节奏，6 个 Teaching 和 1 个已结算 Blind 之后，第二个历史 Blind 已按原冻结顺序登记为中国外运。下一动作是执行其 fresh one-shot 结果前判断；随后继续策展异质 Teaching。不能为了尽快达到 20 个而连续生成十八篇事后总结，也不能因为 Holdout 为零而阻止课程运行。
+按 `3:1` 节奏，9 个 Teaching 和 1 个已结算 Blind 之后，第二个历史 Blind 已按原冻结顺序登记为中国外运。其 cutoff 前官方材料盲包已可构建，但只有 fresh one-shot 角色实际执行并记录输入后才能称为结果隔离判断；随后继续策展异质 Teaching。不能为了尽快达到 20 个而连续生成十五篇事后总结，也不能因为 Holdout 为零而阻止课程运行。
 
 ## 9. 防御性写作的运行约束
 
