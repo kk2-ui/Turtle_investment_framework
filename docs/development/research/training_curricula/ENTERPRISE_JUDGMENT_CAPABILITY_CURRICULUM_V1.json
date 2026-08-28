@@ -1624,6 +1624,46 @@
       "holdout_axis": null
     },
     {
+      "case_id": "TEACH:CN000100:TCL_THOMSON_TTE:20040827:FY2005_FY2006",
+      "company_id": "CN:000100",
+      "company_cluster_id": "COMPANY:TCL_THOMSON_TTE",
+      "company_name": "TCL—Thomson / TTE",
+      "industry_id": "CROSS_BORDER_CONSUMER_ELECTRONICS_INTEGRATION",
+      "track": "TEACHING",
+      "status": "CURATED",
+      "cutoff_at": "2004-08-27T00:00:00+08:00",
+      "outcome_window": null,
+      "outcome_access": "RESULT_KNOWN",
+      "selection_exposure": "RESULT_KNOWN_OR_DERIVED_VISIBLE",
+      "role_isolation_state": "NOT_REQUIRED_FOR_TEACHING",
+      "primary_capability_units": [
+        "MANAGEMENT_DECISION_EXECUTION",
+        "PERMANENT_LOSS_AND_LIFECYCLE"
+      ],
+      "mechanism_focus": "跨境资产合并后，法律控制、销售营销等端到端经营控制、销量收入、持续盈利、营运资本现金和重组退出如何分时钟判断，避免将规模或正 OCF资本化为 owner cash",
+      "claim_scope": "WITHIN_CASE_MECHANISM",
+      "comparative_mode": "NOT_REQUIRED",
+      "source_refs": [
+        "docs/development/research/training_curricula/teaching_cases/TC_CN000100_TCL_THOMSON_TTE_CONTROL_AND_CASH_V1.md"
+      ],
+      "artifact_refs": {
+        "lesson_ref": "docs/development/research/training_curricula/teaching_cases/TC_CN000100_TCL_THOMSON_TTE_CONTROL_AND_CASH_V1.md",
+        "postoutcome_review_ref": "docs/development/research/training_curricula/teaching_cases/TC_CN000100_TCL_THOMSON_TTE_CONTROL_AND_CASH_INDEPENDENT_REVIEW.md"
+      },
+      "lesson": {
+        "state_and_constraint": "TCL 承接已亏损的欧美电视业务、品牌和网络，且 CRT 向平板/数字产品转换、价格竞争与跨区域组织过渡共同存在；约束不是能否并入资产，而是能否取得并协调产品、采购、制造、销售、营销与售后的完整经营控制。",
+        "management_choice_or_no_action": "实际选择是把双方电视/DVD 业务和资产投入由 TCL 侧控制的 TTE；当时可见 no-action 是继续区域扩张或以合同/许可合作进入欧美，不得把未观察的反事实写成必然更优或无成本。",
+        "customer_or_operating_response": "2005 年欧美市场收入和销量很大，仍有约 7.79 亿港元经营亏损；销售/营销至 2005–2006 才实际移交。2006 年电视收入和销量下滑、欧洲亏损扩大，并启动重组和关停。",
+        "cash_or_capital_result": "2005 年 OCF 为负；2006 年 OCF 转正约 9.26 亿港元，却与存货、应收大幅减少、应付变化、持续经营巨亏和重组同时发生，不能作为健康 owner cash 或总交易资本回收。",
+        "mechanism_lesson": "资产或法律控制、经营控制、销量收入、经常利润、现金质量和退出成本是不同的时钟；只有端到端控制、责任匹配盈利和非营运资本主导的现金共同成立，才能升级协同或 owner-cash 判断。",
+        "strongest_rival": "关键商业职能的后续移交、技术范式转换和行业价格竞争都可能解释很大部分亏损，因此不能把全部损失因果归于 TCL 管理层或交易本身。",
+        "near_miss": "把业务并入、品牌网络、销量、合并收入或一年正 OCF分别写成整合成功、客户经济吸收、可持续现金或资本回收；或因交易 IRR 未闭合而撤回 TTE 已观察的经营判断。",
+        "investor_treatment": "类似承接亏损海外业务、品牌和渠道的扩张，不把资产控制、规模或单年 OCF计入基准正常盈利与 owner cash；保留真实实施和客户交易证据，要求经营控制、同边界利润、现金质量和资本/退出记录共同支持升级。",
+        "transfer_question": "下一家资产/法律控制先于商业控制的企业，产品、采购、销售、营销、售后、定价和渠道何时由谁控制？控制完整后，客户/产品组合、经常利润、营运资本桥和退出成本能否在同一责任边界上形成可重复经济？"
+      },
+      "holdout_axis": null
+    },
+    {
       "case_id": "HOLDOUT:CN002475:20240501:FY2024",
       "company_id": "CN:002475",
       "company_cluster_id": "COMPANY:CN002475",
