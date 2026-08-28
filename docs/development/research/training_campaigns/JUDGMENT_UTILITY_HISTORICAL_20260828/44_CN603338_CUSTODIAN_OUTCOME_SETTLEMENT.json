@@ -1,0 +1,827 @@
+{
+  "schema_version": "historical-outcome-settlement.v1",
+  "campaign_id": "JUDGMENT_UTILITY_HISTORICAL_20260828",
+  "episode_id": "HIST:CN603338:20240501:FY2024",
+  "company_id": "CN:603338",
+  "custodian_id": "/root/cn603338_outcome_custodian",
+  "authorization": {
+    "contract_path": "/Users/xiami/workspace/analy/worktrees/Turtle_investment_framework/feat-judgment-first-training-iteration-12h/docs/development/research/training_campaigns/JUDGMENT_UTILITY_HISTORICAL_20260828/43_CN603338_OUTCOME_ACCESS_AUTHORIZATION.json",
+    "authorized_source_count": 1,
+    "documents_consumed": 1,
+    "outcome_period": "FY2024",
+    "forbidden_conclusions_emitted": []
+  },
+  "official_pdf_identity": {
+    "source_id": "CNINFO:603338:FY2024:1223122580",
+    "announcement_id": "1223122580",
+    "source_class": "ISSUER_OFFICIAL_FULL_ANNUAL_REPORT",
+    "issuer": "浙江鼎力机械股份有限公司",
+    "document_title": "浙江鼎力机械股份有限公司2024年年度报告",
+    "company_code_printed": "603338",
+    "url": "https://static.cninfo.com.cn/finalpage/2025-04-18/1223122580.PDF",
+    "reporting_period": "2024-01-01/2024-12-31",
+    "printed_page_count": 206,
+    "pdf_version": "1.5",
+    "ego_browser_task_space_id": 80,
+    "ego_browser_opened_url_exact_match": true
+  },
+  "settlement_method": {
+    "sequence": [
+      "raw_reported_inputs",
+      "derived_inputs",
+      "axis_level_first_match",
+      "cell_level_first_match",
+      "axis_merge"
+    ],
+    "comparatives_used": [
+      "FY2024",
+      "FY2023 comparative printed in the FY2024 annual report"
+    ],
+    "source_limit_observed": true,
+    "training_utility_inference": "NONE",
+    "valuation_or_investment_action": "NONE"
+  },
+  "cells": [
+    {
+      "cell_id": "OC1_FY2024_ARM_RECURRING_ECONOMIC_ABSORPTION",
+      "raw_inputs": {
+        "arm_product_absorption": [
+          {
+            "metric": "臂式高空作业平台营业收入",
+            "period": "FY2024",
+            "value": "2955688241.79",
+            "unit": "CNY",
+            "responsibility_boundary": "GROUP_ARM_PRODUCT",
+            "printed_page": 17,
+            "source_locator": "第三节 管理层讨论与分析/五、报告期内主要经营情况/2、收入和成本分析/(1)主营业务分产品"
+          },
+          {
+            "metric": "臂式高空作业平台营业成本",
+            "period": "FY2024",
+            "value": "2063034902.73",
+            "unit": "CNY",
+            "responsibility_boundary": "GROUP_ARM_PRODUCT",
+            "printed_page": 17,
+            "source_locator": "第三节 管理层讨论与分析/五、报告期内主要经营情况/2、收入和成本分析/(1)主营业务分产品"
+          },
+          {
+            "metric": "臂式高空作业平台毛利率",
+            "period": "FY2024",
+            "value": "30.20",
+            "unit": "percent",
+            "responsibility_boundary": "GROUP_ARM_PRODUCT",
+            "printed_page": 17,
+            "source_locator": "第三节 管理层讨论与分析/五、报告期内主要经营情况/2、收入和成本分析/(1)主营业务分产品"
+          },
+          {
+            "metric": "臂式高空作业平台营业收入同比",
+            "period": "FY2024_vs_FY2023",
+            "value": "20.84",
+            "unit": "percent",
+            "responsibility_boundary": "GROUP_ARM_PRODUCT",
+            "printed_page": 17,
+            "source_locator": "第三节 管理层讨论与分析/五、报告期内主要经营情况/2、收入和成本分析/(1)主营业务分产品"
+          },
+          {
+            "metric": "臂式高空作业平台营业成本同比",
+            "period": "FY2024_vs_FY2023",
+            "value": "18.33",
+            "unit": "percent",
+            "responsibility_boundary": "GROUP_ARM_PRODUCT",
+            "printed_page": 17,
+            "source_locator": "第三节 管理层讨论与分析/五、报告期内主要经营情况/2、收入和成本分析/(1)主营业务分产品"
+          },
+          {
+            "metric": "臂式高空作业平台毛利率同比变动",
+            "period": "FY2024_vs_FY2023",
+            "value": "1.48",
+            "unit": "percentage_points",
+            "responsibility_boundary": "GROUP_ARM_PRODUCT",
+            "printed_page": 17,
+            "source_locator": "第三节 管理层讨论与分析/五、报告期内主要经营情况/2、收入和成本分析/(1)主营业务分产品"
+          },
+          {
+            "metric": "臂式高空作业平台销售量",
+            "period": "FY2024",
+            "value": "6516",
+            "unit": "units",
+            "responsibility_boundary": "GROUP_ARM_PRODUCT",
+            "printed_page": 18,
+            "source_locator": "第三节 管理层讨论与分析/五、报告期内主要经营情况/2、收入和成本分析/(2)产销量情况分析表"
+          },
+          {
+            "metric": "臂式高空作业平台销售量同比",
+            "period": "FY2024_vs_FY2023",
+            "value": "18.65",
+            "unit": "percent",
+            "responsibility_boundary": "GROUP_ARM_PRODUCT",
+            "printed_page": 18,
+            "source_locator": "第三节 管理层讨论与分析/五、报告期内主要经营情况/2、收入和成本分析/(2)产销量情况分析表"
+          },
+          {
+            "metric": "臂式高空作业平台库存量",
+            "period": "FY2024",
+            "value": "1969",
+            "unit": "units",
+            "responsibility_boundary": "GROUP_ARM_PRODUCT",
+            "printed_page": 18,
+            "source_locator": "第三节 管理层讨论与分析/五、报告期内主要经营情况/2、收入和成本分析/(2)产销量情况分析表"
+          },
+          {
+            "metric": "臂式高空作业平台库存量同比",
+            "period": "FY2024_vs_FY2023",
+            "value": "-19.53",
+            "unit": "percent",
+            "responsibility_boundary": "GROUP_ARM_PRODUCT",
+            "printed_page": 18,
+            "source_locator": "第三节 管理层讨论与分析/五、报告期内主要经营情况/2、收入和成本分析/(2)产销量情况分析表"
+          }
+        ],
+        "group_recurring_profit_bridge": [
+          {
+            "metric": "营业收入",
+            "values": {"FY2024": "7798913979.04", "FY2023": "6311963849.93"},
+            "unit": "CNY",
+            "responsibility_boundary": "GROUP_CONSOLIDATED",
+            "printed_page": 77,
+            "source_locator": "第十节 财务报告/二、财务报表/合并利润表"
+          },
+          {
+            "metric": "营业成本",
+            "values": {"FY2024": "5065980518.04", "FY2023": "3989863306.14"},
+            "unit": "CNY",
+            "responsibility_boundary": "GROUP_CONSOLIDATED",
+            "printed_page": 77,
+            "source_locator": "第十节 财务报告/二、财务报表/合并利润表"
+          },
+          {
+            "metric": "税金及附加",
+            "values": {"FY2024": "48347359.93", "FY2023": "33380022.06"},
+            "unit": "CNY",
+            "responsibility_boundary": "GROUP_CONSOLIDATED",
+            "printed_page": 77,
+            "source_locator": "第十节 财务报告/二、财务报表/合并利润表"
+          },
+          {
+            "metric": "销售费用",
+            "values": {"FY2024": "253881041.19", "FY2023": "125038482.83"},
+            "unit": "CNY",
+            "responsibility_boundary": "GROUP_CONSOLIDATED",
+            "printed_page": 77,
+            "source_locator": "第十节 财务报告/二、财务报表/合并利润表"
+          },
+          {
+            "metric": "管理费用",
+            "values": {"FY2024": "224833897.80", "FY2023": "141225030.79"},
+            "unit": "CNY",
+            "responsibility_boundary": "GROUP_CONSOLIDATED",
+            "printed_page": 77,
+            "source_locator": "第十节 财务报告/二、财务报表/合并利润表"
+          },
+          {
+            "metric": "研发费用",
+            "values": {"FY2024": "255918596.38", "FY2023": "220006702.13"},
+            "unit": "CNY",
+            "responsibility_boundary": "GROUP_CONSOLIDATED",
+            "printed_page": 77,
+            "source_locator": "第十节 财务报告/二、财务报表/合并利润表"
+          },
+          {
+            "metric": "信用减值损失_利润表带符号",
+            "values": {"FY2024": "-18579669.54", "FY2023": "-25135369.54"},
+            "unit": "CNY",
+            "responsibility_boundary": "GROUP_CONSOLIDATED",
+            "printed_page": 78,
+            "source_locator": "第十节 财务报告/二、财务报表/合并利润表"
+          },
+          {
+            "metric": "资产减值损失_利润表带符号",
+            "values": {"FY2024": "-7123887.50", "FY2023": "0"},
+            "reported_display": {"FY2024": "-7,123,887.50", "FY2023": "blank"},
+            "unit": "CNY",
+            "responsibility_boundary": "GROUP_CONSOLIDATED",
+            "printed_page": 78,
+            "source_locator": "第十节 财务报告/二、财务报表/合并利润表",
+            "zero_treatment_note": "FY2023 comparative cell is blank in the audited statement and is mechanically treated as zero for the bridge."
+          }
+        ],
+        "persistent_cost_burden_support": [
+          {
+            "metric": "保证类质量保证计入营业成本的重分类金额",
+            "values": {"FY2024": "87107723.05", "FY2023": "107422364.69"},
+            "unit": "CNY",
+            "responsibility_boundary": "GROUP_CONSOLIDATED",
+            "printed_page": 117,
+            "source_locator": "第十节 财务报告/五、重要会计政策及会计估计/40、重要会计政策和会计估计的变更/(1)重要会计政策变更/执行企业会计准则解释第18号"
+          },
+          {
+            "metric": "产品质量保证预计负债",
+            "values": {"FY2024_end": "110032461.43", "FY2023_end": "99021842.89"},
+            "unit": "CNY",
+            "responsibility_boundary": "GROUP_CONSOLIDATED",
+            "printed_page": 159,
+            "source_locator": "第十节 财务报告/七、合并财务报表项目注释/50、预计负债"
+          }
+        ]
+      },
+      "derived_inputs": [
+        {
+          "metric": "FY2024臂式毛利额",
+          "formula": "2955688241.79 - 2063034902.73",
+          "value": "892653339.06",
+          "unit": "CNY",
+          "responsibility_boundary": "GROUP_ARM_PRODUCT"
+        },
+        {
+          "metric": "FY2023臂式营业收入_由已披露同比反推",
+          "formula": "2955688241.79 / 1.2084",
+          "value": "2445951871.72",
+          "unit": "CNY_approx",
+          "responsibility_boundary": "GROUP_ARM_PRODUCT",
+          "precision_note": "The reported 20.84% comparative is rounded to two decimals."
+        },
+        {
+          "metric": "FY2023臂式营业成本_由已披露同比反推",
+          "formula": "2063034902.73 / 1.1833",
+          "value": "1743458888.47",
+          "unit": "CNY_approx",
+          "responsibility_boundary": "GROUP_ARM_PRODUCT",
+          "precision_note": "The reported 18.33% comparative is rounded to two decimals."
+        },
+        {
+          "metric": "FY2023臂式毛利额_反推",
+          "formula": "2445951871.72 - 1743458888.47",
+          "value": "702492983.25",
+          "unit": "CNY_approx",
+          "responsibility_boundary": "GROUP_ARM_PRODUCT"
+        },
+        {
+          "metric": "臂式毛利额同比",
+          "formula": "892653339.06 / 702492983.25 - 1",
+          "value": "27.07",
+          "unit": "percent_approx",
+          "responsibility_boundary": "GROUP_ARM_PRODUCT"
+        },
+        {
+          "metric": "FY2023臂式毛利率",
+          "formula": "30.20% - 1.48 percentage points",
+          "value": "28.72",
+          "unit": "percent",
+          "responsibility_boundary": "GROUP_ARM_PRODUCT"
+        },
+        {
+          "metric": "FY2023臂式销售量_由同比反推并取最接近整台",
+          "formula": "6516 / 1.1865",
+          "value": "5492",
+          "unit": "units_implied",
+          "responsibility_boundary": "GROUP_ARM_PRODUCT"
+        },
+        {
+          "metric": "FY2023臂式库存量_由同比反推并取最接近整台",
+          "formula": "1969 / 0.8047",
+          "value": "2447",
+          "unit": "units_implied",
+          "responsibility_boundary": "GROUP_ARM_PRODUCT"
+        },
+        {
+          "metric": "库存增速允许上限",
+          "formula": "臂式销量同比18.65% + 10 percentage points",
+          "value": "28.65",
+          "unit": "percent",
+          "responsibility_boundary": "GROUP_ARM_PRODUCT"
+        },
+        {
+          "metric": "集团同口径经常经营利润",
+          "formula": "营业收入-营业成本-税金及附加-销售费用-管理费用-研发费用+带符号信用减值损失+带符号资产减值损失",
+          "values": {"FY2024": "1924249008.66", "FY2023": "1777314936.44"},
+          "unit": "CNY",
+          "responsibility_boundary": "GROUP_CONSOLIDATED",
+          "exclusions_confirmed": [
+            "财务费用（含净利息与汇率）",
+            "其他收益及政府补助",
+            "投资收益",
+            "公允价值变动",
+            "资产处置",
+            "营业外损益"
+          ]
+        },
+        {
+          "metric": "集团同口径经常经营利润同比",
+          "formula": "1924249008.66 / 1777314936.44 - 1",
+          "value": "8.2672",
+          "unit": "percent",
+          "responsibility_boundary": "GROUP_CONSOLIDATED"
+        },
+        {
+          "metric": "保证类质量保证成本同比",
+          "formula": "87107723.05 / 107422364.69 - 1",
+          "value": "-18.91",
+          "unit": "percent",
+          "responsibility_boundary": "GROUP_CONSOLIDATED"
+        },
+        {
+          "metric": "产品质量保证预计负债变动",
+          "formula": "110032461.43 - 99021842.89",
+          "value": "11010618.54",
+          "unit": "CNY_increase",
+          "responsibility_boundary": "GROUP_CONSOLIDATED"
+        }
+      ],
+      "axis_level_first_match": {
+        "group_recurring_profit": {
+          "matched_class_id": "OC1_GROUP_PROFIT_FAVORABLE",
+          "observed_value": "8.2672%",
+          "threshold_test": "8.2672% >= 5%",
+          "axis_updates": {"normal_earnings": "RAISE", "valuation_direction": "UP"}
+        }
+      },
+      "cell_level_first_match": {
+        "matched_class_id": "OC1_FAVORABLE_CONFIRMED_ABSORPTION",
+        "economic_direction": "FAVORABLE",
+        "predicate_tests": [
+          {"predicate": "臂式毛利额同比至少10%", "observed": "27.07%", "pass": true},
+          {"predicate": "臂式毛利率不低于29%", "observed": "30.20%", "pass": true},
+          {"predicate": "集团经常经营利润同比至少5%", "observed": "8.2672%", "pass": true},
+          {"predicate": "臂式库存同比不超过销量同比加10个百分点", "observed": "-19.53% <= 28.65%", "pass": true}
+        ],
+        "first_match_uniqueness": "FAVORABLE matched before NEUTRAL; NEUTRAL explicitly excludes FAVORABLE.",
+        "axis_updates": {
+          "management_execution": "POSITIVE_CREDIT",
+          "normal_earnings": "RAISE",
+          "valuation_direction": "UP"
+        },
+        "preserved_axes": ["owner_cash", "permanent_loss", "next_research_action"]
+      }
+    },
+    {
+      "cell_id": "OC2_FY2024_PARENT_OWNER_CASH_AND_CAPITAL_ABSORPTION",
+      "raw_inputs": {
+        "parent_cash_bridge": [
+          {
+            "metric": "母公司经营活动产生的现金流量净额",
+            "values": {"FY2024": "1466496605.98", "FY2023": "2041801448.99"},
+            "unit": "CNY",
+            "responsibility_boundary": "PARENT_COMPANY",
+            "printed_page": 81,
+            "source_locator": "第十节 财务报告/二、财务报表/母公司现金流量表"
+          },
+          {
+            "metric": "母公司购建固定资产、无形资产和其他长期资产支付的现金",
+            "values": {"FY2024": "343297120.39", "FY2023": "366028918.30"},
+            "unit": "CNY",
+            "responsibility_boundary": "PARENT_COMPANY_ALL_CAPEX",
+            "printed_page": 82,
+            "source_locator": "第十节 财务报告/二、财务报表/母公司现金流量表"
+          },
+          {
+            "metric": "母公司净利润",
+            "values": {"FY2024": "1647093010.50", "FY2023": "1892456920.40"},
+            "unit": "CNY",
+            "responsibility_boundary": "PARENT_COMPANY",
+            "printed_page": 79,
+            "source_locator": "第十节 财务报告/二、财务报表/母公司利润表"
+          },
+          {
+            "metric": "母公司货币资金",
+            "period": "FY2024_end",
+            "value": "4544464682.33",
+            "unit": "CNY",
+            "responsibility_boundary": "PARENT_COMPANY",
+            "printed_page": 75,
+            "source_locator": "第十节 财务报告/二、财务报表/母公司资产负债表"
+          },
+          {
+            "metric": "母公司交易性金融资产_未按低风险类别拆分",
+            "period": "FY2024_end",
+            "value": "155544200.57",
+            "unit": "CNY",
+            "responsibility_boundary": "PARENT_COMPANY",
+            "printed_page": 75,
+            "source_locator": "第十节 财务报告/二、财务报表/母公司资产负债表"
+          },
+          {
+            "metric": "母公司短期借款",
+            "period": "FY2024_end",
+            "value": "110070694.45",
+            "unit": "CNY",
+            "responsibility_boundary": "PARENT_COMPANY",
+            "printed_page": 76,
+            "source_locator": "第十节 财务报告/二、财务报表/母公司资产负债表"
+          },
+          {
+            "metric": "母公司一年内到期的非流动负债",
+            "period": "FY2024_end",
+            "value": "180719.33",
+            "unit": "CNY",
+            "responsibility_boundary": "PARENT_COMPANY",
+            "printed_page": 76,
+            "source_locator": "第十节 财务报告/二、财务报表/母公司资产负债表"
+          },
+          {
+            "metric": "母公司租赁负债",
+            "period": "FY2024_end",
+            "value": "70733.86",
+            "unit": "CNY",
+            "responsibility_boundary": "PARENT_COMPANY",
+            "printed_page": 76,
+            "source_locator": "第十节 财务报告/二、财务报表/母公司资产负债表"
+          },
+          {
+            "metric": "母公司长期借款与应付债券",
+            "period": "FY2024_end",
+            "value": "0",
+            "reported_display": "blank",
+            "unit": "CNY",
+            "responsibility_boundary": "PARENT_COMPANY",
+            "printed_page": 76,
+            "source_locator": "第十节 财务报告/二、财务报表/母公司资产负债表"
+          }
+        ],
+        "actual_parent_cash_event_evidence": [
+          {
+            "metric": "对子公司担保余额",
+            "period": "FY2024_end",
+            "value": "914923139.82",
+            "unit": "CNY_guarantee_balance_not_cash_payout",
+            "responsibility_boundary": "PARENT_GUARANTEE_FOR_SUBSIDIARIES",
+            "printed_pages": [58, 59],
+            "source_locator": "第六节 重要事项/十三、重大合同及其履行情况/(二)担保情况"
+          },
+          {
+            "metric": "重要或有事项",
+            "period": "FY2024_end",
+            "reported_fact": "资产负债表日存在的重要或有事项：不适用；公司没有需要披露的重要或有事项：不适用。",
+            "unit": "qualitative_negative_disclosure",
+            "responsibility_boundary": "GROUP_AND_PARENT_DISCLOSURE",
+            "printed_page": 194,
+            "source_locator": "第十节 财务报告/十六、承诺及或有事项/2、或有事项"
+          },
+          {
+            "metric": "母公司实际担保代偿现金金额",
+            "period": "FY2024",
+            "reported_numeric_value": null,
+            "unit": "CNY",
+            "responsibility_boundary": "PARENT_COMPANY_ACTUAL_CASH",
+            "printed_pages": [58, 59, 194],
+            "source_locator": "第六节 重要事项/十三(二)担保情况；第十节 财务报告/十六、承诺及或有事项",
+            "local_status": "LOCAL_UNKNOWN_EXACT_AMOUNT",
+            "observed_event_status": "NO_QUALIFYING_PAYOUT_DISCLOSED",
+            "boundary_note": "Guarantee balances are not re-labeled as cash payouts. No zero amount is imputed."
+          }
+        ]
+      },
+      "derived_inputs": [
+        {
+          "metric": "母公司全资本开支后现金",
+          "formula": "母公司OCF - 母公司全部购建长期资产现金",
+          "values": {"FY2024": "1123199485.59", "FY2023": "1675772530.69"},
+          "unit": "CNY",
+          "responsibility_boundary": "PARENT_COMPANY"
+        },
+        {
+          "metric": "母公司OCF/净利润",
+          "formula": "母公司OCF / 母公司净利润",
+          "values": {"FY2024": "0.8904", "FY2023": "1.0789"},
+          "unit": "ratio",
+          "responsibility_boundary": "PARENT_COMPANY"
+        },
+        {
+          "metric": "母公司有息债务_保守总额",
+          "formula": "短期借款 + 一年内到期的非流动负债 + 租赁负债 + 长期借款 + 应付债券",
+          "value": "110322147.64",
+          "unit": "CNY",
+          "responsibility_boundary": "PARENT_COMPANY"
+        },
+        {
+          "metric": "母公司货币资金/有息债务",
+          "formula": "4544464682.33 / 110322147.64",
+          "value": "41.19",
+          "unit": "times",
+          "responsibility_boundary": "PARENT_COMPANY",
+          "treatment_note": "Cash alone covers debt; the undifferentiated parent trading-financial-asset balance is not required for the coverage conclusion."
+        },
+        {
+          "metric": "母公司货币资金加交易性金融资产",
+          "formula": "4544464682.33 + 155544200.57",
+          "value": "4700008882.90",
+          "unit": "CNY",
+          "responsibility_boundary": "PARENT_COMPANY",
+          "classification_note": "Displayed only; not all trading financial assets are assumed to be low-risk."
+        }
+      ],
+      "axis_level_first_match": {
+        "parent_cash_event": {
+          "matched_class_id": "OC2_PARENT_GUARANTEE_CASH_OUTFLOW_BELOW_THRESHOLD",
+          "evidence_basis": "No qualifying actual parent payout is disclosed in the guarantee and audited contingency sections; the exact separately measured amount remains locally unknown and is not imputed as zero.",
+          "axis_updates": {}
+        }
+      },
+      "cell_level_first_match": {
+        "matched_class_id": "OC2_NEUTRAL_POSITIVE_CASH",
+        "economic_direction": "NEUTRAL",
+        "predicate_tests": [
+          {"predicate": "未命中ADVERSE", "observed": "全资本开支后现金1123199485.59元>0且OCF/净利润0.8904>0.5", "pass": true},
+          {"predicate": "未命中FAVORABLE", "observed": "1123199485.59元<1500000000元且0.8904<0.9", "pass": true},
+          {"predicate": "全资本开支后现金不低于8亿元且严格低于15亿元", "observed": "1123199485.59元", "pass": true},
+          {"predicate": "OCF/净利润不低于0.7", "observed": "0.8904", "pass": true},
+          {"predicate": "母公司实际代偿未达到双门槛", "observed": "NO_QUALIFYING_PAYOUT_DISCLOSED", "pass": true, "local_precision_status": "EXACT_AMOUNT_NOT_SEPARATELY_DISCLOSED"}
+        ],
+        "axis_updates": {
+          "management_execution": "POSITIVE_CREDIT",
+          "owner_cash": "COUNT_IN_PARENT_OWNER_CASH",
+          "permanent_loss": "MAINTAIN_CONSTRAINT",
+          "valuation_direction": "UP"
+        },
+        "preserved_axes": ["normal_earnings", "next_research_action"]
+      }
+    },
+    {
+      "cell_id": "OC3_FY2024_CREDIT_FINANCING_AND_GUARANTEE_LOSS_CARRIER",
+      "raw_inputs": {
+        "book_credit_axes": [
+          {
+            "metric": "应收账款账面余额",
+            "values": {"FY2024_end": "2392889640.39", "FY2023_end": "2453689351.97"},
+            "unit": "CNY_gross",
+            "responsibility_boundary": "GROUP_ACCOUNTS_RECEIVABLE",
+            "printed_page": 121,
+            "source_locator": "第十节 财务报告/七、合并财务报表项目注释/5、应收账款/(1)按账龄披露"
+          },
+          {
+            "metric": "应收账款坏账准备",
+            "values": {"FY2024_end": "83759794.93", "FY2023_end": "82911327.73"},
+            "unit": "CNY_allowance",
+            "responsibility_boundary": "GROUP_ACCOUNTS_RECEIVABLE",
+            "printed_page": 121,
+            "source_locator": "第十节 财务报告/七、合并财务报表项目注释/5、应收账款/(1)按账龄披露"
+          },
+          {
+            "metric": "长期应收款账面余额_含一年内到期部分并扣未实现融资收益",
+            "values": {"FY2024_end": "2227296610.21", "FY2023_end": "2024718917.70"},
+            "unit": "CNY_gross_before_allowance",
+            "responsibility_boundary": "GROUP_LONG_TERM_RECEIVABLES",
+            "printed_page": 136,
+            "source_locator": "第十节 财务报告/七、合并财务报表项目注释/16、长期应收款/(2)按坏账计提方法分类披露"
+          },
+          {
+            "metric": "长期应收款坏账准备_含一年内到期部分",
+            "values": {"FY2024_end": "55396266.55", "FY2023_end": "24098008.03"},
+            "unit": "CNY_allowance",
+            "responsibility_boundary": "GROUP_LONG_TERM_RECEIVABLES",
+            "printed_page": 136,
+            "source_locator": "第十节 财务报告/七、合并财务报表项目注释/16、长期应收款/(2)按坏账计提方法分类披露"
+          },
+          {
+            "metric": "当年信用减值损失_损失金额",
+            "values": {"FY2024": "18579669.54", "FY2023": "25135369.54"},
+            "unit": "CNY_loss_magnitude",
+            "responsibility_boundary": "GROUP_CONSOLIDATED",
+            "printed_page": 167,
+            "source_locator": "第十节 财务报告/七、合并财务报表项目注释/71、信用减值损失"
+          }
+        ],
+        "finance_lease_axes": [
+          {
+            "metric": "融资租赁组合长期应收款",
+            "values": {"FY2024_end": "1638085921.47", "FY2023_end": "1703563803.71"},
+            "unit": "CNY_gross_before_allowance",
+            "responsibility_boundary": "GROUP_FINANCE_LEASE_PORTFOLIO",
+            "printed_page": 137,
+            "source_locator": "第十节 财务报告/七、合并财务报表项目注释/16、长期应收款/按信用风险特征组合计提坏账准备"
+          },
+          {
+            "metric": "融资租赁组合坏账准备",
+            "values": {"FY2024_end": "31248938.30", "FY2023_end": "9706704.65"},
+            "unit": "CNY_allowance",
+            "responsibility_boundary": "GROUP_FINANCE_LEASE_PORTFOLIO",
+            "printed_page": 137,
+            "source_locator": "第十节 财务报告/七、合并财务报表项目注释/16、长期应收款/按信用风险特征组合计提坏账准备"
+          },
+          {
+            "metric": "融资租赁组合减值率",
+            "values": {"FY2024_end": "1.91", "FY2023_end": "0.57"},
+            "unit": "percent",
+            "responsibility_boundary": "GROUP_FINANCE_LEASE_PORTFOLIO",
+            "printed_pages": [136, 137],
+            "source_locator": "第十节 财务报告/七、合并财务报表项目注释/16、长期应收款/(2)按坏账计提方法分类披露"
+          },
+          {
+            "metric": "上海鼎策净利润",
+            "period": "FY2024",
+            "value": "4532.78",
+            "unit": "CNY_10k",
+            "responsibility_boundary": "SUBSIDIARY_SHANGHAI_DINGCE",
+            "printed_page": 27,
+            "source_locator": "第三节 管理层讨论与分析/五、报告期内主要经营情况/(七)主要控股参股公司分析"
+          }
+        ],
+        "guarantee_and_parent_cash_axes": [
+          {
+            "metric": "对子公司担保余额",
+            "period": "FY2024_end",
+            "value": "914923139.82",
+            "unit": "CNY_guarantee_balance",
+            "responsibility_boundary": "PARENT_GUARANTEE_FOR_SUBSIDIARIES",
+            "printed_pages": [58, 59],
+            "source_locator": "第六节 重要事项/十三、重大合同及其履行情况/(二)担保情况"
+          },
+          {
+            "metric": "母公司实际信用回款、子公司向母公司现金分配、母公司实际担保代偿",
+            "period": "FY2024",
+            "reported_numeric_value": null,
+            "unit": "CNY",
+            "responsibility_boundary": "PARENT_COMPANY_ACTUAL_CASH",
+            "printed_pages": [58, 59, 81, 82, 194],
+            "source_locator": "母公司现金流量表；担保情况；承诺及或有事项",
+            "local_status": "LOCAL_UNKNOWN_EXACT_COMPONENT_AMOUNTS",
+            "observed_event_status": "NO_QUALIFYING_PARENT_CASH_EVENT_DISCLOSED",
+            "axis_boundary_note": "No group cash, book allowance, guarantee balance, or subsidiary profit is substituted for parent actual cash."
+          }
+        ]
+      },
+      "derived_inputs": [
+        {
+          "metric": "综合应收毛额",
+          "formula": "应收账款账面余额 + 长期应收款账面余额",
+          "values": {"FY2024_end": "4620186250.60", "FY2023_end": "4478408269.67"},
+          "unit": "CNY_gross",
+          "responsibility_boundary": "GROUP_COMBINED_RECEIVABLES"
+        },
+        {
+          "metric": "综合应收准备",
+          "formula": "应收账款坏账准备 + 长期应收款坏账准备",
+          "values": {"FY2024_end": "139156061.48", "FY2023_end": "107009335.76"},
+          "unit": "CNY_allowance",
+          "responsibility_boundary": "GROUP_COMBINED_RECEIVABLES"
+        },
+        {
+          "metric": "综合应收减值率",
+          "formula": "综合应收准备 / 综合应收毛额",
+          "values": {"FY2024_end": "3.0119", "FY2023_end": "2.3895"},
+          "unit": "percent",
+          "responsibility_boundary": "GROUP_COMBINED_RECEIVABLES"
+        },
+        {
+          "metric": "综合应收减值率同比变化",
+          "formula": "3.0119% - 2.3895%",
+          "value": "0.6225",
+          "unit": "percentage_points_increase",
+          "responsibility_boundary": "GROUP_COMBINED_RECEIVABLES"
+        },
+        {
+          "metric": "信用减值损失/集团同口径经常经营利润",
+          "formula": "18579669.54 / 1924249008.66",
+          "value": "0.9656",
+          "unit": "percent",
+          "responsibility_boundary": "GROUP_CONSOLIDATED"
+        },
+        {
+          "metric": "上海鼎策净利润_元",
+          "formula": "4532.78 * 10000",
+          "value": "45327800.00",
+          "unit": "CNY",
+          "responsibility_boundary": "SUBSIDIARY_SHANGHAI_DINGCE"
+        },
+        {
+          "metric": "对子公司担保余额_亿元",
+          "formula": "914923139.82 / 100000000",
+          "value": "9.1492",
+          "unit": "CNY_100m",
+          "responsibility_boundary": "PARENT_GUARANTEE_FOR_SUBSIDIARIES"
+        }
+      ],
+      "axis_level_first_match": {
+        "parent_cash_event": {
+          "matched_class_id": "OC3_NO_QUALIFYING_PARENT_CASH_EVENT",
+          "evidence_basis": "No qualifying separately disclosed parent cash inflow, distribution, or payout was observed; exact component amounts remain locally unknown and no book amount is substituted.",
+          "axis_updates": {}
+        },
+        "normal_earnings_no_double_count": {
+          "treatment": "OC1_UNIQUE",
+          "reason": "OC1 group recurring profit is complete and already includes FY2024 credit impairment; OC3 does not lower normal earnings a second time."
+        }
+      },
+      "cell_level_first_match": {
+        "matched_class_id": "OC3_MIXED_RESIDUAL",
+        "economic_direction": "MIXED",
+        "predicate_tests": [
+          {"predicate": "ADVERSE融资租赁支路", "observed": "融资租赁减值率1.91%<3%且上海鼎策净利润45327800元>0", "pass": false},
+          {"predicate": "ADVERSE综合应收支路", "observed": "综合应收减值率3.0119%<4%，信用减值损失18579669.54元<150000000元，且仅为集团经常利润0.9656%", "pass": false},
+          {"predicate": "FAVORABLE", "observed": "综合应收减值率3.0119%>2.39%且融资租赁减值率1.91%>1%", "pass": false},
+          {"predicate": "NEUTRAL", "observed": "综合应收减值率变化+0.6225个百分点>0.5个百分点；融资租赁减值率1.91%<2%且上海鼎策盈利不改变该失败", "pass": false},
+          {"predicate": "MIXED_RESIDUAL", "observed": "完整同口径账面输入且前三个分支均未命中", "pass": true}
+        ],
+        "axis_updates": {
+          "management_execution": "CONDITIONAL_CREDIT",
+          "permanent_loss": "MAINTAIN_CONSTRAINT",
+          "valuation_direction": "UNCHANGED"
+        },
+        "preserved_or_not_updated_axes": ["normal_earnings", "owner_cash", "next_research_action"]
+      }
+    }
+  ],
+  "counterexample_boundary_checks": [
+    {
+      "counterexample": "V1_OC1_FAVORABLE_UNIQUE",
+      "application": "OC1 FAVORABLE is the unique product match; the later NEUTRAL branch is excluded."
+    },
+    {
+      "counterexample": "V2_OC2_EXACT_15_BILLION_UNIQUE",
+      "application": "Observed parent post-capex cash is 1123199485.59 CNY, strictly below 1.5 billion; therefore the exact-1.5-billion favorable boundary is not invoked and OC2 NEUTRAL is selected."
+    },
+    {
+      "counterexample": "V3_OC3_STABLE_CREDIT_NO_OWNER_CASH_UPDATE",
+      "application": "OC3 does not meet the favorable 2.39%/1% rate ceilings; its book branch never updates owner cash."
+    },
+    {
+      "counterexample": "V4_INVENTORY_UNKNOWN_GROUP_PROFIT_ADVERSE",
+      "application": "Not triggered because inventory is disclosed; the independent group-profit rule was nevertheless applied before the full product branch."
+    },
+    {
+      "counterexample": "V5_PARENT_GUARANTEE_PAYOUT_FINANCE_LEASE_UNKNOWN",
+      "application": "Not triggered: finance-lease book inputs are complete and no qualifying parent payout is disclosed. Exact parent event component amounts remain local only."
+    },
+    {
+      "counterexample": "V6_BOOK_IMPAIRMENT_ADVERSE_PARENT_CASH_STRONG",
+      "application": "Not triggered because OC3 book impairment does not reach the unified adverse threshold; no book amount updates owner cash."
+    },
+    {
+      "counterexample": "V7_NONPOSITIVE_RECURRING_PROFIT_CREDIT_LOSS",
+      "application": "Not triggered because group recurring profit is positive 1924249008.66 CNY and credit loss is below both the absolute and relative thresholds."
+    }
+  ],
+  "final_axis_merge": {
+    "management_execution": {
+      "cell_inputs": {
+        "OC1": "POSITIVE_CREDIT",
+        "OC2": "POSITIVE_CREDIT",
+        "OC3": "CONDITIONAL_CREDIT"
+      },
+      "merged_treatment": "CONDITIONAL_CREDIT",
+      "merge_note": "OC3 explicitly leaves the credit carrier conditional; no NEGATIVE_CREDIT carrier is observed."
+    },
+    "normal_earnings": {
+      "cell_inputs": {"OC1": "RAISE", "OC2": "PRESERVE", "OC3": "NO_DOUBLE_COUNT"},
+      "merged_treatment": "RAISE",
+      "merge_note": "OC1 is unique because its complete group recurring-profit bridge already includes credit impairment."
+    },
+    "owner_cash": {
+      "cell_inputs": {"OC1": "PRESERVE", "OC2": "COUNT_IN_PARENT_OWNER_CASH", "OC3": "NO_BOOK_UPDATE"},
+      "merged_treatment": "COUNT_IN_PARENT_OWNER_CASH",
+      "merge_note": "The complete parent bridge controls; no book credit amount is propagated to parent cash."
+    },
+    "permanent_loss": {
+      "cell_inputs": {"OC1": "PRESERVE", "OC2": "MAINTAIN_CONSTRAINT", "OC3": "MAINTAIN_CONSTRAINT"},
+      "merged_treatment": "MAINTAIN_CONSTRAINT"
+    },
+    "valuation_direction": {
+      "cell_inputs": {"OC1": "UP", "OC2": "UP", "OC3": "UNCHANGED"},
+      "merged_treatment": "UP",
+      "merge_note": "There is no DOWN signal; OC3 contributes no directional change."
+    },
+    "next_research_action": {
+      "merged_treatment": "PRESERVE_CURRENT"
+    }
+  },
+  "local_unknowns_and_mismatches": [
+    {
+      "scope": "PARENT_ACTUAL_CASH_EVENT_COMPONENTS",
+      "classification": "LOCAL_UNKNOWN",
+      "fact": "The annual report does not separately quantify actual parent guarantee payout, actual parent credit recovery, or subsidiary-to-parent cash distributions.",
+      "treatment": "No zero amount is imputed and no group/book amount is substituted. The report discloses no qualifying payout or important contingency, so the event branches receive no axis update; complete parent cash and book-credit axes remain settled."
+    },
+    {
+      "scope": "PARENT_LOW_RISK_LIQUID_FINANCIAL_ASSETS",
+      "classification": "MEASUREMENT_MISMATCH_NONBLOCKING",
+      "fact": "The parent trading-financial-asset line is not split into low-risk versus other instruments.",
+      "treatment": "Use parent cash alone for debt coverage; cash alone covers conservative interest-bearing debt 41.19 times."
+    },
+    {
+      "scope": "ARM_FY2023_EXACT_COMPARATIVE_AMOUNTS_AND_UNITS",
+      "classification": "MEASUREMENT_MISMATCH_ROUNDED_COMPARATIVE_NONBLOCKING",
+      "fact": "Exact FY2023 arm revenue, cost, sales units, and inventory units are not printed in the FY2024 product tables; only FY2024 values and two-decimal comparative rates are printed.",
+      "treatment": "Derived FY2023 values are labeled approximate/implied. First-match predicates use the directly printed FY2024 margin and comparative rates, so classification does not depend on false precision."
+    }
+  ],
+  "responsibility_boundary_checks": {
+    "arm_product_absorption": "GROUP_ARM_PRODUCT_ONLY",
+    "group_recurring_profit": "GROUP_CONSOLIDATED_EXCLUDING_NONRECURRING_AND_FINANCE_ITEMS",
+    "parent_owner_cash": "PARENT_COMPANY_ONLY",
+    "book_credit_risk": "GROUP_RECEIVABLE_BOOKS_ONLY",
+    "finance_lease_risk": "GROUP_FINANCE_LEASE_PORTFOLIO_PLUS_SHANGHAI_DINGCE_PROFIT",
+    "actual_parent_cash_events": "PARENT_ACTUAL_CASH_ONLY",
+    "nci": "NOT_PROPAGATED_TO_PARENT_OWNER_CASH",
+    "double_count_prevented": [
+      "Credit impairment enters normal earnings once through OC1.",
+      "No guarantee balance or book allowance is treated as parent cash."
+    ]
+  },
+  "custodian_conclusion_boundary": {
+    "management_overall_assessment": "NOT_INFERRED",
+    "training_utility": "NOT_INFERRED",
+    "method_validation": "NOT_INFERRED",
+    "formal_valuation": "NOT_PERFORMED",
+    "price_or_return": "NOT_ACCESSED",
+    "investment_action": "NOT_PROVIDED"
+  }
+}

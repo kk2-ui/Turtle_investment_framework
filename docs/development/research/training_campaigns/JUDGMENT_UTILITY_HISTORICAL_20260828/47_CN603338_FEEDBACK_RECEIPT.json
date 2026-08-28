@@ -1,0 +1,273 @@
+{
+  "schema_version": "independent-postoutcome-feedback-receipt.v1",
+  "campaign_id": "JUDGMENT_UTILITY_HISTORICAL_20260828",
+  "episode_id": "HIST:CN603338:20240501:FY2024",
+  "company_id": "CN:603338",
+  "reviewer_id": "/root/cn603338_postoutcome_reviewer",
+  "review_mode": "FRESH_INDEPENDENT_POSTOUTCOME_REVIEW",
+  "verdict": {
+    "code": "ACCEPT_AFTER_SCOPE_CORRECTION",
+    "status": "CLOSED_ACCEPTED",
+    "enterprise_feedback": "ACCEPTED",
+    "settlement_merge_disposition": "REJECTED_AS_OVERDEFENSIVE_SCOPE_FLATTENING",
+    "accepted_scope": [
+      "OUTCOME_FACTS",
+      "OC1_FIRST_MATCH",
+      "OC2_FIRST_MATCH",
+      "OC3_FIRST_MATCH",
+      "NORMAL_EARNINGS_DIRECTION",
+      "OWNER_CASH_CODE",
+      "PERMANENT_LOSS_CODE",
+      "VALUATION_DIRECTION"
+    ],
+    "historically_returned_scope": [
+      "OVERALL_MANAGEMENT_EXECUTION_MERGE",
+      "NEXT_RESEARCH_ACTION_PRESERVE_CURRENT"
+    ],
+    "historical_return_preserved": true,
+    "correction_complete": true,
+    "unresolved_remediation": false,
+    "root_causes": ["REASONING", "WRITING"],
+    "reason": "OC1 and OC2 are POSITIVE while OC3 is a scoped MIXED/CONDITIONAL residual with no NEGATIVE carrier. The preregistered merge rule only makes POSITIVE-versus-NEGATIVE conflicts conditional; flattening POSITIVE+POSITIVE+CONDITIONAL into overall CONDITIONAL is unsupported and economically overconservative. The independent scope correction resolves this error without changing 41 or 44, so the enterprise feedback is accepted and closed."
+  },
+  "input_boundary": {
+    "allowed_files_read": [
+      "37_FROZEN_TRAINING_METHOD_PACK_V1.json",
+      "40_CN603338_FORECASTER_EXECUTION_RECEIPT.json",
+      "41_CN603338_PREOUTCOME_JUDGMENT.json",
+      "42_CN603338_INDEPENDENT_PREOUTCOME_REVIEW.md",
+      "43_CN603338_OUTCOME_ACCESS_AUTHORIZATION.json",
+      "44_CN603338_CUSTODIAN_OUTCOME_SETTLEMENT.json"
+    ],
+    "other_repository_files_read": false,
+    "packet_prior_outputs_read": false,
+    "internet_used": false,
+    "prices_or_returns_used": false,
+    "old_reports_used": false,
+    "other_company_outcomes_used": false,
+    "memory_used": false
+  },
+  "cell_review": {
+    "OC1": {
+      "settlement": "FAVORABLE_CONFIRMED_ABSORPTION",
+      "review": "ACCEPT",
+      "material_facts": {
+        "arm_revenue_yoy_pct": 20.84,
+        "arm_sales_volume_yoy_pct": 18.65,
+        "arm_gross_profit_yoy_pct_approx": 27.07,
+        "arm_gross_margin_pct": 30.20,
+        "arm_inventory_yoy_pct": -19.53,
+        "group_recurring_operating_profit_cny": 1924249008.66,
+        "group_recurring_operating_profit_yoy_pct": 8.2672
+      }
+    },
+    "OC2": {
+      "settlement": "NEUTRAL_POSITIVE_CASH",
+      "review": "ACCEPT",
+      "material_facts": {
+        "parent_post_full_capex_cash_cny": 1123199485.59,
+        "parent_post_full_capex_cash_fy2023_cny": 1675772530.69,
+        "parent_ocf_to_net_income": 0.8904,
+        "parent_cash_cny": 4544464682.33,
+        "parent_conservative_interest_bearing_debt_cny": 110322147.64,
+        "qualifying_parent_payout_disclosed": false,
+        "exact_parent_cash_event_components": "LOCAL_UNKNOWN"
+      }
+    },
+    "OC3": {
+      "settlement": "MIXED_RESIDUAL",
+      "review": "ACCEPT_AS_SCOPED_CREDIT_SIGNAL_ONLY",
+      "material_facts": {
+        "combined_receivables_impairment_rate_fy2024_pct": 3.0119,
+        "combined_receivables_impairment_rate_fy2023_pct": 2.3895,
+        "finance_lease_impairment_rate_fy2024_pct": 1.91,
+        "finance_lease_impairment_rate_fy2023_pct": 0.57,
+        "credit_impairment_loss_cny": 18579669.54,
+        "credit_loss_to_group_recurring_profit_pct": 0.9656,
+        "shanghai_dingce_net_profit_cny": 45327800.0,
+        "subsidiary_guarantee_balance_cny": 914923139.82
+      },
+      "economic_interpretation": "Credit execution is conditional because allowance rates rose, but no adverse threshold, subsidiary loss, or qualifying parent cash payout is observed. It cannot overwrite positive product absorption."
+    }
+  },
+  "six_axis_comparison": [
+    {
+      "axis": "management_execution",
+      "preoutcome": "POSITIVE_CREDIT",
+      "custodian_merged": "CONDITIONAL_CREDIT",
+      "postoutcome_review": "POSITIVE_CREDIT_WITH_SCOPED_CREDIT_AND_CAPITAL_ALLOCATION_CONSTRAINTS",
+      "change_class": "SCOPED_MATERIAL_SUBAXIS_CHANGE_GLOBAL_DOWNGRADE_REJECTED",
+      "subaxes": {
+        "product_and_channel_execution": "POSITIVE_CREDIT",
+        "operating_cash_execution": "POSITIVE_CREDIT_WITH_LOWER_NORMALIZED_LEVEL",
+        "credit_and_financing_execution": "CONDITIONAL_CREDIT",
+        "incremental_project_capital_allocation": "WITHHOLD_CREDIT"
+      }
+    },
+    {
+      "axis": "normal_earnings",
+      "preoutcome": "RAISE_1308071288_TO_1510717696_CENTER_1409394492_CNY",
+      "custodian_merged": "RAISE",
+      "postoutcome_review": "RAISE_DIRECTIONAL_1370448582_TO_1635611657_CENTER_1503030120_CNY",
+      "change_class": "RANGE_AND_CONFIDENCE_ONLY_CODE_UNCHANGED",
+      "calculation_note": "Uses the existing 15% tax convention and conservative 2/4 percentage-point sensitivity on FY2024 total revenue because FY2024 main-business revenue is not separately available in the settlement."
+    },
+    {
+      "axis": "owner_cash",
+      "preoutcome": "COUNT_IN_PARENT_OWNER_CASH_1300000000_TO_1700000000_CNY",
+      "custodian_merged": "COUNT_IN_PARENT_OWNER_CASH",
+      "postoutcome_review": "COUNT_IN_PARENT_OWNER_CASH_WORKING_RANGE_1000000000_TO_1400000000_CNY_CENTER_1123199486",
+      "change_class": "LEVEL_AND_RANGE_NARROWING_CODE_UNCHANGED"
+    },
+    {
+      "axis": "permanent_loss",
+      "preoutcome": "MAINTAIN_CONSTRAINT",
+      "custodian_merged": "MAINTAIN_CONSTRAINT",
+      "postoutcome_review": "MAINTAIN_CONSTRAINT",
+      "change_class": "COMPLETELY_UNCHANGED_TREATMENT"
+    },
+    {
+      "axis": "valuation_direction",
+      "preoutcome": "UP",
+      "custodian_merged": "UP",
+      "postoutcome_review": "UP_DIRECTIONAL_ONLY",
+      "change_class": "COMPLETELY_UNCHANGED_DIRECTION_CODE"
+    },
+    {
+      "axis": "next_research_action",
+      "preoutcome": "SAME_BOUNDARY_ABSORPTION_AND_PARENT_CASH_SETTLEMENT",
+      "custodian_merged": "PRESERVE_CURRENT",
+      "postoutcome_review": "NARROW_TO_CREDIT_COHORT_PARENT_CASH_RECOVERY_AND_INCREMENTAL_CAPITAL_RETURNS",
+      "change_class": "MATERIAL_TREATMENT_CHANGE"
+    }
+  ],
+  "enterprise_investment_treatment": {
+    "code": "ACCEPTED_AFTER_SCOPE_CORRECTION",
+    "settlement_merge_disposition": "REJECTED_AS_OVERDEFENSIVE_SCOPE_FLATTENING",
+    "management": "POSITIVE_CREDIT_WITH_SCOPED_CREDIT_AND_CAPITAL_ALLOCATION_CONSTRAINTS",
+    "normal_earnings": {
+      "treatment": "RAISE",
+      "directional_after_tax_range_cny": {"low": 1370448582, "central": 1503030120, "high": 1635611657},
+      "confidence": "MEDIUM",
+      "formal_forecast": false
+    },
+    "parent_owner_cash": {
+      "treatment": "COUNT_IN_PARENT_OWNER_CASH",
+      "working_range_cny": {"low": 1000000000, "central": 1123199486, "high": 1400000000},
+      "confidence": "MEDIUM"
+    },
+    "permanent_loss": {
+      "treatment": "MAINTAIN_CONSTRAINT",
+      "thesis_blocking": false
+    },
+    "valuation": {
+      "direction": "UP",
+      "directional_only": true,
+      "price_used": false,
+      "buy_band": false,
+      "investment_action": false
+    },
+    "next_research_action": [
+      "FINANCE_LEASE_COHORT_AGING_WRITE_OFFS_AND_RECOVERIES",
+      "PARENT_ACTUAL_CREDIT_RECOVERY_DISTRIBUTION_AND_GUARANTEE_PAYOUT",
+      "PARENT_POST_CAPEX_CASH_RECOVERY",
+      "HIGH_PLATFORM_AND_CMEC_INCREMENTAL_PROFIT_AND_PARENT_CASH_RETURN"
+    ]
+  },
+  "scenario_summary": {
+    "optimistic": "Arm margin holds near or above 30%, recurring profit grows, parent post-capex cash returns to at least CNY 1.5bn with conversion at least 0.9, and credit rates fall.",
+    "base": "Arm margin remains 28%-31%, group recurring pre-tax profit is CNY 1.7-1.95bn, parent post-capex cash is CNY 0.8-1.4bn, and credit deterioration stays below adverse thresholds.",
+    "pessimistic": "OC1 deabsorption, structural parent cash failure, or OC3 adverse credit/lease thresholds are reached; normal earnings lower, permanent-loss constraint tightens, and valuation direction can turn down."
+  },
+  "return_requirements": {
+    "history_status": "PRESERVED_AND_SATISFIED",
+    "economic_impact": "A flattened overall conditional label can under-credit verified product absorption and misallocate research and valuation attention, while a product-only positive narrative can miss delayed credit losses.",
+    "missing_facts": [
+      "HIGH_PLATFORM_INCREMENTAL_UTILIZATION_UNIT_PROFIT_AND_PARENT_CASH",
+      "CMEC_INCREMENTAL_RETURN_AND_IMPAIRMENT",
+      "SEPARATELY_QUANTIFIED_PARENT_CREDIT_RECOVERY_DISTRIBUTION_AND_GUARANTEE_PAYOUT"
+    ],
+    "missing_facts_required_to_fix_merge": false,
+    "prohibited_assumptions": [
+      "MIXED_RESIDUAL_EQUALS_NEGATIVE_CREDIT",
+      "WEAKEST_SCOPED_CARRIER_OVERRIDES_ALL_RESPONSIBILITY_BOUNDARIES",
+      "UNDISCLOSED_PARENT_CASH_EVENT_EQUALS_ZERO",
+      "STRONG_PRODUCT_RESULT_PROVES_CREDIT_OR_NEW_PROJECT_SAFETY"
+    ],
+    "minimum_remediation": "Split management execution by product/channel, operating cash, credit/financing, and incremental capital allocation; revise next action to retire the settled broad absorption question.",
+    "acceptance_criteria": "The enterprise result shows product/channel POSITIVE, operating cash POSITIVE with a lower normalized level, credit/financing CONDITIONAL, incremental capital allocation WITHHOLD, and overall POSITIVE_WITH_SCOPED_CONSTRAINTS while preserving OC3 monitoring.",
+    "acceptance_criteria_satisfied": true,
+    "remaining_blocker": false
+  },
+  "separate_settlements": {
+    "REAL_FEEDBACK_TURN": {
+      "status": "COMPLETED_AND_CLOSED",
+      "real_feedback_produced": true,
+      "feedback_accepted": true
+    },
+    "ENTERPRISE_INVESTMENT_TREATMENT": {
+      "status": "ACCEPTED_AFTER_SCOPE_CORRECTION",
+      "material_enterprise_feedback": true,
+      "corrected_overall": {
+        "product_and_channel": "POSITIVE_CREDIT",
+        "operating_cash": "POSITIVE_CREDIT_WITH_LOWER_NORMALIZED_LEVEL",
+        "credit_and_financing": "CONDITIONAL_CREDIT",
+        "new_project_capital_allocation": "WITHHOLD_CREDIT",
+        "enterprise_overall": "POSITIVE_CREDIT_WITH_SCOPED_CREDIT_AND_CAPITAL_ALLOCATION_CONSTRAINTS",
+        "single_overall_conditional": false
+      }
+    },
+    "METHOD_LEARNING_UTILITY": {
+      "status": "NOT_APPLICABLE_SINGLE_ARM_BLIND_EPISODE",
+      "utility_credit": 0,
+      "method_validated": false,
+      "transfer_validated": false,
+      "explanation": "A single blind arm can produce real feedback and candidate behavior decisions but cannot establish incremental utility versus a fair ordinary-research counterfactual."
+    }
+  },
+  "fair_ordinary_research_counterfactual": {
+    "reads_same_annual_report_product_margin_sales_inventory_group_profit_parent_cash_and_credit_risk": true,
+    "strawman_prohibited": true,
+    "likely_material_enterprise_treatment": "POSITIVE_PRODUCT_EXECUTION_RAISE_EARNINGS_COUNT_PARENT_CASH_MAINTAIN_CREDIT_CONSTRAINT_UP_DIRECTION",
+    "method_pack_incremental_treatment_proven": false
+  },
+  "candidate_behavior_feedback": [
+    {
+      "rule_id": "SAME_BOUNDARY_RECURRING_ECONOMICS_FIRST",
+      "decision": "RETAIN",
+      "next_case_behavior": "Keep product absorption tied to product gross profit, inventory, and group recurring economics, but do not claim incremental utility without a paired counterfactual.",
+      "material_treatment_delta_vs_fair_ordinary_research": "NOT_APPLICABLE",
+      "utility_credit": 0
+    },
+    {
+      "rule_id": "CONVERSION_TRIAD_RETAIN_AND_NARROW",
+      "decision": "NARROW",
+      "next_case_behavior": "Limit the conservative pause to the incremental project or capital burden that lacks a return bridge; never let scoped credit MIXED erase already verified product absorption.",
+      "material_treatment_delta_vs_fair_ordinary_research": "NOT_APPLICABLE",
+      "utility_credit": 0
+    },
+    {
+      "rule_id": "SCOPED_MANAGEMENT_AXIS_MERGE_CANDIDATE",
+      "decision": "REVISE",
+      "next_case_behavior": "Merge management subaxes only after preserving responsibility boundaries; CONDITIONAL may spread enterprise-wide only when a material negative carrier is observed.",
+      "status": "CANDIDATE_BEHAVIOR_NOT_VALIDATED"
+    }
+  ],
+  "authority": {
+    "real_feedback": "COMPLETED_AND_CLOSED",
+    "enterprise_feedback": "ACCEPTED_AFTER_SCOPE_CORRECTION",
+    "training_utility_credit": "NONE",
+    "method_validation": "NONE",
+    "transfer_validation": "NONE",
+    "cjo": "NONE",
+    "formal_valuation": "NONE",
+    "buy_band": "NONE",
+    "report_authority": "NONE",
+    "investment_action": "NONE"
+  },
+  "outputs_created": [
+    "INDEPENDENT_POSTOUTCOME_REVIEW.md",
+    "INVESTOR_READOUT.md",
+    "FEEDBACK_RECEIPT.json"
+  ]
+}
