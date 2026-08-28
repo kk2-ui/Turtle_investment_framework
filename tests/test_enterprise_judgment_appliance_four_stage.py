@@ -214,3 +214,17 @@ def test_second_acquisition_attempt_preserves_field_local_unknowns_and_mismatche
     assert attempt["outcome_values_in_artifact"] is False
     assert attempt["forecast_changed"] is False
     assert attempt["rights"] == four_stage.RIGHTS
+
+
+def test_second_recovery_still_has_zero_outcome_state_before_independent_access() -> None:
+    receipt = _load(FOUR_STAGE / "06_e2_acquisition_recovery_v2_preoutcome_receipt.json")
+    first_recovery = _load(FOUR_STAGE / "04_e2_acquisition_recovery_preoutcome_receipt.json")
+
+    assert receipt["episode_id"] == first_recovery["episode_id"]
+    assert receipt["measurement_contract_ids"] == first_recovery["measurement_contract_ids"]
+    assert receipt["controller_counts"] == first_recovery["controller_counts"]
+    assert receipt["invariants"]["forecast_reauthored"] is False
+    assert receipt["invariants"]["measurement_contract_changed"] is False
+    assert receipt["invariants"]["outcome_source_enumerated"] is False
+    assert receipt["status"] == "PREOUTCOME_REPLAY_FROZEN_AWAITING_CONTRACT_ONLY_OUTCOME_ACCESS"
+    assert receipt["rights"] == four_stage.RIGHTS

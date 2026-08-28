@@ -28,3 +28,7 @@ value-free mismatch；`04_e2_acquisition_recovery_preoutcome_receipt.json` 只�
 官方原始年报已可唯一选中，但三个字段仍分别被 metric identity、产品收入表定位和
 现金流量表续页规则阻断。对应修复只扩展既有 acquisition catalogue 和机械 verifier，
 不改变任何训练判断。
+
+`06_e2_acquisition_recovery_v2_preoutcome_receipt.json` 是修复后三个既有结果前
+对象的第二次等值重放。它仍以零 outcome access、零 observation、零 settlement
+作为交给独立 custodian 前的验收出口。
