@@ -108,3 +108,36 @@ def test_investor_readout_exposes_stage_limits_not_prediction_or_price() -> None
     assert "predicted_direction" not in serialized
     assert "market_price" not in serialized
     assert readout["rights"] == four_stage.RIGHTS
+
+
+def test_e2_resolution_is_field_local_and_never_self_admits_e3() -> None:
+    contract = four_stage.build_e2_resolution_contract()
+    assert contract == _load(FOUR_STAGE / "02_e2_resolution_contract.json")
+
+    statuses = [
+        {"measurement_contract_id": contract_id, "terminal_status": status}
+        for (contract_id, _role), status in zip(
+            four_stage.E2_FIELD_ROLES.items(),
+            ["MATCH", "MEASUREMENT_MISMATCH", "MISS"],
+            strict=True,
+        )
+    ]
+    result = four_stage.resolve_e2_terminal_statuses(statuses)
+    assert result["valid"], result["findings"]
+    assert result["resolution"]["combined_resolution"] == "PARTIAL_NOT_DIAGNOSTIC"
+    assert [row["interpretation"] for row in result["resolution"]["field_diagnostics"]] == [
+        "FIELD_EXPECTATION_SUPPORTED_NOT_CAUSAL", "FIELD_UNRESOLVED", "FIELD_EXPECTATION_WEAKENED",
+    ]
+    assert result["resolution"]["e3_comparative_status"] == "NOT_ADMITTED"
+
+
+def test_e2_product_miss_has_precedence_over_other_settled_patterns() -> None:
+    statuses = [
+        {"measurement_contract_id": contract_id, "terminal_status": status}
+        for (contract_id, _role), status in zip(
+            four_stage.E2_FIELD_ROLES.items(), ["MATCH", "MISS", "MATCH"], strict=True,
+        )
+    ]
+    result = four_stage.resolve_e2_terminal_statuses(statuses)
+    assert result["valid"]
+    assert result["resolution"]["combined_resolution"] == "PRODUCT_MECHANISM_EXPECTATION_WEAKENED"

@@ -22,6 +22,7 @@ from typing import Any
 
 
 SCHEMA_VERSION = "enterprise-judgment-appliance-four-stage.v1"
+E2_RESOLUTION_SCHEMA_VERSION = "enterprise-judgment-appliance-e2-resolution-contract.v1"
 PLAN_ID = "APPLIANCE:FOUR-STAGE:20170430-20180930:V1"
 BLOCK_ID = "ILB:CN:APPLIANCE:NATIONAL:V1"
 SUPOR_EPISODE_ID = "APPLIANCE-R11:CN002032:20180930:V1"
@@ -34,6 +35,12 @@ RIGHTS = {
     "report": "NOT_AUTHORIZED",
     "buy_band": "NOT_AUTHORIZED",
     "investment": "NOT_AUTHORIZED",
+}
+
+E2_FIELD_ROLES = {
+    "MHE:CONTRACT:APPLIANCE-R11:CN002032:FY2018:ISSUER_REVENUE:V1": "ISSUER_SCALE_CONTEXT",
+    "MHE:CONTRACT:APPLIANCE-R11:CN002032:FY2018:ELECTRIC_POT_REVENUE:V1": "PRODUCT_BOUNDARY_DISCRIMINATOR",
+    "MHE:CONTRACT:APPLIANCE-R11:CN002032:FY2018:ISSUER_OCF:V1": "ISSUER_CASH_BOUNDARY",
 }
 
 _ROOT_KEYS = {
@@ -250,4 +257,112 @@ def compile_investor_stage_readout(plan: Any) -> dict[str, Any]:
             "E3 remains closed until a product-specific estimand, panel, baseline and independent outcome contract exist.",
         ],
         "rights": deepcopy(RIGHTS),
+    }
+
+
+def build_e2_resolution_contract() -> dict[str, Any]:
+    """Freeze field-local interpretation before receiving custody results."""
+    return {
+        "schema_version": E2_RESOLUTION_SCHEMA_VERSION,
+        "resolution_contract_id": "APPLIANCE:E2:CN002032:20180930:RESOLUTION:V1",
+        "episode_ref": SUPOR_EPISODE_ID,
+        "field_roles": [
+            {"measurement_contract_id": contract_id, "role": role}
+            for contract_id, role in E2_FIELD_ROLES.items()
+        ],
+        "field_rules": {
+            "MATCH": "SUPPORT_ONLY_THE_PREDECLARED_FIELD_EXPECTATION",
+            "MISS": "WEAKEN_ONLY_THE_PREDECLARED_FIELD_EXPECTATION",
+            "MEASUREMENT_MISMATCH": "FIELD_UNRESOLVED_NO_OPERATING_CONCLUSION",
+            "UNKNOWN": "FIELD_UNRESOLVED_NO_OPERATING_CONCLUSION",
+        },
+        "combined_rules": [
+            {
+                "condition": "ALL_THREE_MATCH",
+                "resolution": "PATTERN_CONSISTENT_WITH_H_A_NOT_CAUSAL",
+            },
+            {
+                "condition": "PRODUCT_BOUNDARY_DISCRIMINATOR_MISS",
+                "resolution": "PRODUCT_MECHANISM_EXPECTATION_WEAKENED",
+            },
+            {
+                "condition": "ANY_FIELD_UNRESOLVED",
+                "resolution": "PARTIAL_NOT_DIAGNOSTIC",
+            },
+            {
+                "condition": "OTHER_SETTLED_PATTERN",
+                "resolution": "MIXED_PATTERN_H_A_NOT_ESTABLISHED",
+            },
+        ],
+        "evidence_ceiling": "NARROW_ASSOCIATION_AND_BOUNDARY_PROBE",
+        "comparative_admission": "NOT_AUTHORIZED",
+        "allowed_outputs": ["MECHANISM_VIEW", "TEACHING_ONLY", "RESEARCH_AGENDA"],
+        "rights": deepcopy(RIGHTS),
+    }
+
+
+def resolve_e2_terminal_statuses(statuses: Any) -> dict[str, Any]:
+    """Apply the frozen field rules to value-free custody terminal statuses."""
+    rows = _items(statuses)
+    by_contract: dict[str, dict[str, Any]] = {}
+    findings: list[str] = []
+    allowed_terminal = {"MATCH", "MISS", "MEASUREMENT_MISMATCH", "UNKNOWN"}
+    for index, raw in enumerate(rows):
+        row = _mapping(raw)
+        if set(row) != {"measurement_contract_id", "terminal_status"}:
+            findings.append(f"statuses[{index}].shape_invalid")
+            continue
+        contract_id = row.get("measurement_contract_id")
+        terminal = row.get("terminal_status")
+        if contract_id not in E2_FIELD_ROLES:
+            findings.append(f"statuses[{index}].contract_unknown")
+        elif contract_id in by_contract:
+            findings.append(f"statuses[{index}].contract_duplicate")
+        elif terminal not in allowed_terminal:
+            findings.append(f"statuses[{index}].terminal_status_invalid")
+        else:
+            by_contract[str(contract_id)] = row
+    if set(by_contract) != set(E2_FIELD_ROLES):
+        findings.append("statuses_must_cover_all_three_frozen_contracts")
+    if findings:
+        return {"valid": False, "findings": findings, "resolution": None}
+
+    diagnostics = [
+        {
+            "measurement_contract_id": contract_id,
+            "role": role,
+            "terminal_status": by_contract[contract_id]["terminal_status"],
+            "interpretation": {
+                "MATCH": "FIELD_EXPECTATION_SUPPORTED_NOT_CAUSAL",
+                "MISS": "FIELD_EXPECTATION_WEAKENED",
+                "MEASUREMENT_MISMATCH": "FIELD_UNRESOLVED",
+                "UNKNOWN": "FIELD_UNRESOLVED",
+            }[by_contract[contract_id]["terminal_status"]],
+        }
+        for contract_id, role in E2_FIELD_ROLES.items()
+    ]
+    product_status = by_contract[
+        "MHE:CONTRACT:APPLIANCE-R11:CN002032:FY2018:ELECTRIC_POT_REVENUE:V1"
+    ]["terminal_status"]
+    all_statuses = [row["terminal_status"] for row in by_contract.values()]
+    if all(status == "MATCH" for status in all_statuses):
+        combined = "PATTERN_CONSISTENT_WITH_H_A_NOT_CAUSAL"
+    elif product_status == "MISS":
+        combined = "PRODUCT_MECHANISM_EXPECTATION_WEAKENED"
+    elif any(status in {"MEASUREMENT_MISMATCH", "UNKNOWN"} for status in all_statuses):
+        combined = "PARTIAL_NOT_DIAGNOSTIC"
+    else:
+        combined = "MIXED_PATTERN_H_A_NOT_ESTABLISHED"
+    return {
+        "valid": True,
+        "findings": [],
+        "resolution": {
+            "episode_ref": SUPOR_EPISODE_ID,
+            "field_diagnostics": diagnostics,
+            "combined_resolution": combined,
+            "evidence_ceiling": "NARROW_ASSOCIATION_AND_BOUNDARY_PROBE",
+            "e3_comparative_status": "NOT_ADMITTED",
+            "allowed_outputs": ["MECHANISM_VIEW", "TEACHING_ONLY", "RESEARCH_AGENDA"],
+            "rights": deepcopy(RIGHTS),
+        },
     }

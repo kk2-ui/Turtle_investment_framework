@@ -1,0 +1,58 @@
+{
+  "schema_version": "enterprise-judgment-appliance-e2-resolution-contract.v1",
+  "resolution_contract_id": "APPLIANCE:E2:CN002032:20180930:RESOLUTION:V1",
+  "episode_ref": "APPLIANCE-R11:CN002032:20180930:V1",
+  "field_roles": [
+    {
+      "measurement_contract_id": "MHE:CONTRACT:APPLIANCE-R11:CN002032:FY2018:ISSUER_REVENUE:V1",
+      "role": "ISSUER_SCALE_CONTEXT"
+    },
+    {
+      "measurement_contract_id": "MHE:CONTRACT:APPLIANCE-R11:CN002032:FY2018:ELECTRIC_POT_REVENUE:V1",
+      "role": "PRODUCT_BOUNDARY_DISCRIMINATOR"
+    },
+    {
+      "measurement_contract_id": "MHE:CONTRACT:APPLIANCE-R11:CN002032:FY2018:ISSUER_OCF:V1",
+      "role": "ISSUER_CASH_BOUNDARY"
+    }
+  ],
+  "field_rules": {
+    "MATCH": "SUPPORT_ONLY_THE_PREDECLARED_FIELD_EXPECTATION",
+    "MISS": "WEAKEN_ONLY_THE_PREDECLARED_FIELD_EXPECTATION",
+    "MEASUREMENT_MISMATCH": "FIELD_UNRESOLVED_NO_OPERATING_CONCLUSION",
+    "UNKNOWN": "FIELD_UNRESOLVED_NO_OPERATING_CONCLUSION"
+  },
+  "combined_rules": [
+    {
+      "condition": "ALL_THREE_MATCH",
+      "resolution": "PATTERN_CONSISTENT_WITH_H_A_NOT_CAUSAL"
+    },
+    {
+      "condition": "PRODUCT_BOUNDARY_DISCRIMINATOR_MISS",
+      "resolution": "PRODUCT_MECHANISM_EXPECTATION_WEAKENED"
+    },
+    {
+      "condition": "ANY_FIELD_UNRESOLVED",
+      "resolution": "PARTIAL_NOT_DIAGNOSTIC"
+    },
+    {
+      "condition": "OTHER_SETTLED_PATTERN",
+      "resolution": "MIXED_PATTERN_H_A_NOT_ESTABLISHED"
+    }
+  ],
+  "evidence_ceiling": "NARROW_ASSOCIATION_AND_BOUNDARY_PROBE",
+  "comparative_admission": "NOT_AUTHORIZED",
+  "allowed_outputs": [
+    "MECHANISM_VIEW",
+    "TEACHING_ONLY",
+    "RESEARCH_AGENDA"
+  ],
+  "rights": {
+    "method_transfer": "NOT_AUTHORIZED",
+    "cjo": "NOT_AUTHORIZED",
+    "valuation": "NOT_AUTHORIZED",
+    "report": "NOT_AUTHORIZED",
+    "buy_band": "NOT_AUTHORIZED",
+    "investment": "NOT_AUTHORIZED"
+  }
+}
