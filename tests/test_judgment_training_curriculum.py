@@ -482,10 +482,10 @@ def test_checked_in_curriculum_registers_real_assets_without_overclaiming_capaci
     assert result["valid"], result["findings"]
 
     progress = result["progress"]
-    assert progress["track_progress"]["TEACHING"]["completed_independent_company_cluster_count"] == 29
+    assert progress["track_progress"]["TEACHING"]["completed_independent_company_cluster_count"] == 30
     assert progress["track_progress"]["BLIND_JUDGMENT"]["independent_company_cluster_count"] == 9
     assert progress["track_progress"]["BLIND_JUDGMENT"]["completed_independent_company_cluster_count"] == 9
-    assert progress["next_action"] == "EXPAND_TEACHING_CANDIDATE_POOL"
+    assert progress["next_action"] == "REGISTER_NEXT_BLIND_CASE"
     assert progress["track_progress"]["BLIND_JUDGMENT"]["completed_independent_company_cluster_count"] == 9
     holdout = progress["track_progress"]["HISTORICAL_HOLDOUT"]
     assert holdout["record_count"] == 3
@@ -495,18 +495,18 @@ def test_checked_in_curriculum_registers_real_assets_without_overclaiming_capaci
     assert holdout["completed_independent_company_cluster_count"] == 0
     assert progress["track_progress"]["PROSPECTIVE"]["independent_company_cluster_count"] == 2
     assert progress["teaching_candidate_pool"]["independent_company_cluster_count"] == 0
-    assert progress["teaching_candidate_pool"]["teaching_library_pipeline_independent_company_cluster_count"] == 29
+    assert progress["teaching_candidate_pool"]["teaching_library_pipeline_independent_company_cluster_count"] == 30
     assert progress["teaching_candidate_pool"]["ability_evidence_count"] == 0
-    assert progress["next_action"] == "EXPAND_TEACHING_CANDIDATE_POOL"
+    assert progress["next_action"] == "REGISTER_NEXT_BLIND_CASE"
     assert progress["capability_claim"] == "NOT_DEMONSTRATED_BY_CURRICULUM_COUNTS"
     assert progress["comparative_is_default_entry"] is False
     assert progress["capability_coverage_by_distinct_company_clusters"]["CAPITAL_ALLOCATION"] == 16
     assert progress["capability_coverage_by_distinct_company_clusters"]["COMPETITION_AND_PRICING"] == 7
     assert progress["capability_coverage_by_distinct_company_clusters"]["BUSINESS_MODEL_ECONOMICS"] == 9
     assert progress["capability_coverage_by_distinct_company_clusters"]["CUSTOMER_ABSORPTION"] == 17
-    assert progress["capability_coverage_by_distinct_company_clusters"]["MANAGEMENT_DECISION_EXECUTION"] == 6
+    assert progress["capability_coverage_by_distinct_company_clusters"]["MANAGEMENT_DECISION_EXECUTION"] == 7
     assert progress["capability_coverage_by_distinct_company_clusters"]["OWNER_CASH_CONVERSION"] == 14
-    assert progress["capability_coverage_by_distinct_company_clusters"]["PERMANENT_LOSS_AND_LIFECYCLE"] == 5
+    assert progress["capability_coverage_by_distinct_company_clusters"]["PERMANENT_LOSS_AND_LIFECYCLE"] == 6
     assert progress["capability_coverage_by_distinct_company_clusters"]["VALUATION_AND_ENTRY_TREATMENT"] == 2
     assert progress["teaching_pipeline_coverage_by_distinct_company_clusters"]["VALUATION_AND_ENTRY_TREATMENT"] == 2
 

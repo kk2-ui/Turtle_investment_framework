@@ -1664,6 +1664,46 @@
       "holdout_axis": null
     },
     {
+      "case_id": "TEACH:USKHC_BRAND_INTEGRATION_AND_IMPAIRMENT:20150325:FY2015_FY2018",
+      "company_id": "US:KHC",
+      "company_cluster_id": "COMPANY:KRAFT_HEINZ",
+      "company_name": "Kraft Heinz",
+      "industry_id": "BRANDED_PACKAGED_FOOD_MERGER_AND_INTEGRATION",
+      "track": "TEACHING",
+      "status": "CURATED",
+      "cutoff_at": "2015-03-25T00:00:00-04:00",
+      "outcome_window": null,
+      "outcome_access": "RESULT_KNOWN",
+      "selection_exposure": "RESULT_KNOWN_OR_DERIVED_VISIBLE",
+      "role_isolation_state": "NOT_REQUIRED_FOR_TEACHING",
+      "primary_capability_units": [
+        "MANAGEMENT_DECISION_EXECUTION",
+        "PERMANENT_LOSS_AND_LIFECYCLE"
+      ],
+      "mechanism_focus": "成熟消费品牌合并中，成本/组织实施、品牌与渠道压力、合并现金、必要资本和商誉/无形资产的未来现金流可回收性如何分开判断，避免将交割、节约、CFO或减值任一项替代企业经济结论",
+      "claim_scope": "WITHIN_CASE_MECHANISM",
+      "comparative_mode": "NOT_REQUIRED",
+      "source_refs": [
+        "docs/development/research/training_curricula/teaching_cases/TC_USKHC_BRAND_INTEGRATION_AND_IMPAIRMENT_V1.md"
+      ],
+      "artifact_refs": {
+        "lesson_ref": "docs/development/research/training_curricula/teaching_cases/TC_USKHC_BRAND_INTEGRATION_AND_IMPAIRMENT_V1.md",
+        "postoutcome_review_ref": "docs/development/research/training_curricula/teaching_cases/TC_USKHC_BRAND_INTEGRATION_AND_IMPAIRMENT_INDEPENDENT_REVIEW.md"
+      },
+      "lesson": {
+        "state_and_constraint": "Kraft 和 Heinz 是有品牌、渠道和制造规模的成熟组合，但消费者偏好、私牌、价格/促销、供应链成本、零售渠道和资本结构共同决定品牌未来现金流；成本整合不是独立的财务工程。",
+        "management_choice_or_no_action": "实际选择是合并，并推进零基预算、制造足迹、分销网络、采购和组织整合；真实 no-action 是维持两家独立的品牌、制造、销售和分销体系，不得把未观察反事实写成必然更优或更差。",
+        "customer_or_operating_response": "交割、岗位精简、工厂关闭、分销整合和部分成本节约真实发生；早期 volume/mix 下行，FY2018 竞争、私牌、供应链成本和较低增长/利润率预期共同使销售、Adjusted EBITDA和资产承载假设受压。",
+        "cash_or_capital_result": "合并口径 FY2015/FY2018 CFO 分别为约 24.67 亿/25.74 亿美元，须保留合并边界和营运资本；取得现金、capex、整合费用与 159.36 亿美元 goodwill/intangible impairment 必须分开，减值不是同额当期现金流。",
+        "mechanism_lesson": "宣布协同、交割、零基预算、裁员/关厂、成本节约、合并 CFO 和单笔 impairment 都不能单独结算品牌经济或资本回收；必须先看品牌—客户—渠道经济和必要投入，再看同边界现金与取得资产的未来现金流承载力。",
+        "strongest_rival": "私牌、消费者偏好、供应链成本、竞争、利率、汇率、资产出售和宏观/监管环境共同影响 FY2018 结果；成本整合可能部分避免了更差结果，不能将减值或经营压力单因归咎于管理层。",
+        "near_miss": "把交割、关厂、首批节约、合并 CFO 或 159.36 亿美元减值任何一项写成品牌经济成功、正常 owner cash、同额现金损失或 2015 合并的精确 IRR；或因反事实和品牌级单位经济未知而拒绝观察到的资本可回收性重置。",
+        "investor_treatment": "对以成熟品牌合并、零基预算和供应链整合作为价值创造核心的案例，不把实施、规模、节约或合并 CFO计入品牌的基准正常盈利/owner cash；当未来现金流承载力被重置时，下调原资产承载与资本回收假设，同时不把减值扩大为全公司或全部现金损失。",
+        "transfer_question": "下一家成熟品牌或渠道企业的成本重组/并购，成本、组织或分销整合能否在同一品牌—客户—渠道边界上保留或改善价格/组合、复购/货架、必要品牌投入后的现金承载力？若不能，商誉和无形资产何时需按更低未来现金流重估？"
+      },
+      "holdout_axis": null
+    },
+    {
       "case_id": "HOLDOUT:CN002475:20240501:FY2024",
       "company_id": "CN:002475",
       "company_cluster_id": "COMPANY:CN002475",
