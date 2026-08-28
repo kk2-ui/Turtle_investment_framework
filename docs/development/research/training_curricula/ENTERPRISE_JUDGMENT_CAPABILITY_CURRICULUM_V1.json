@@ -1582,19 +1582,47 @@
       },
       "lesson": null,
       "holdout_axis": null
-    }
-  ],
-  "teaching_candidate_pool": [
+    },
     {
-      "candidate_id": "TCAND:ADBE_CREATIVE_CLOUD_BUSINESS_MODEL",
-      "company_ids": ["US:ADBE"],
+      "case_id": "TEACH:ADBE_CREATIVE_CLOUD:201205:FY2012_FY2014",
+      "company_id": "US:ADBE",
       "company_cluster_id": "COMPANY:ADOBE",
       "company_name": "Adobe Creative Cloud",
       "industry_id": "CREATIVE_SOFTWARE_SUBSCRIPTION_TRANSITION",
-      "primary_capability_units": ["BUSINESS_MODEL_ECONOMICS", "COMPETITION_AND_PRICING"],
-      "mechanism_focus": "从永久许可证到订阅制时，Cloud-only 产品创新、付费采用、ARR、收入确认、递延收入和公司现金如何区分客户接受、商业模式迁移与 cohort owner cash",
+      "track": "TEACHING",
+      "status": "CURATED",
+      "cutoff_at": "2013-05-06T00:00:00-07:00",
+      "outcome_window": null,
+      "outcome_access": "RESULT_KNOWN",
       "selection_exposure": "RESULT_KNOWN_OR_DERIVED_VISIBLE",
-      "source_locator": "docs/development/research/training_curricula/teaching_candidates/TCAND_ADBE_CREATIVE_CLOUD_BUSINESS_MODEL_SELECTION.md"
+      "role_isolation_state": "NOT_REQUIRED_FOR_TEACHING",
+      "primary_capability_units": [
+        "BUSINESS_MODEL_ECONOMICS",
+        "COMPETITION_AND_PRICING"
+      ],
+      "mechanism_focus": "从永久许可证到 Cloud-only 订阅时，产品/价格/渠道选择、付费采用、ARR、收入确认、递延收入和企业现金如何区分商业模式迁移与 cohort owner cash",
+      "claim_scope": "WITHIN_CASE_MECHANISM",
+      "comparative_mode": "NOT_REQUIRED",
+      "source_refs": [
+        "docs/development/research/training_curricula/teaching_cases/TC_ADBE_CREATIVE_CLOUD_BUSINESS_MODEL_V1.md"
+      ],
+      "artifact_refs": {
+        "lesson_ref": "docs/development/research/training_curricula/teaching_cases/TC_ADBE_CREATIVE_CLOUD_BUSINESS_MODEL_V1.md",
+        "postoutcome_review_ref": "docs/development/research/training_curricula/teaching_cases/TC_ADBE_CREATIVE_CLOUD_BUSINESS_MODEL_INDEPENDENT_REVIEW.md"
+      },
+      "lesson": {
+        "state_and_constraint": "Adobe 的成熟创意软件仍以一次性许可证为主，订阅会把收入确认改为按期确认而固定开发、销售和服务成本不会同步下降；核心约束是产品价值、价格与渠道改变能否得到真实付费接受而非只改变会计时点。",
+        "management_choice_or_no_action": "实际选择是在 FY2013 将未来创意产品创新和功能转为 Creative Cloud 独享；事实存在的 no-action 是继续主要版本的永久许可证升级路径，不能把未观察的反事实包装成必然更优或无成本。",
+        "customer_or_operating_response": "期末付费 Creative Cloud 订阅从 FY2012 约 0.3m 增至 FY2013 1.4m、FY2014 3.454m；Creative ARR 与订阅收入结构同步扩大，证明付费采用和商业模式迁移，但不证明 cohort 留存或单客户经济。",
+        "cash_or_capital_result": "FY2013/FY2014 公司经营现金分别为 11.52 亿和 12.88 亿美元，转型没有出现企业层面现金崩塌；这是合并现金韧性，不是 Creative Cloud cohort owner cash、维护资本或 CAC 回收期。",
+        "mechanism_lesson": "付费订阅、ARR、已确认收入、递延收入和合并经营现金回答不同命题；会计确认压力不能自动等于客户失败，而 ARR/订阅增长也不能替代留存、成本到服务或 owner-cash 桥。",
+        "strongest_rival": "既有创意软件 franchise、数字内容需求、产品更新、促销、企业期限协议及其他订阅业务同时变化，因此现有资料不能把全部采用和现金因果归于 Cloud-only 决定。",
+        "near_miss": "将 FY2013 的收入和利润下降机械视作转型失败，或将付费订阅/ARR/递延收入/合并现金写成已验证的 Creative Cloud 单位经济和 owner cash。",
+        "investor_treatment": "确认截至 FY2014 Cloud-only 转型获得实质付费客户接受并在公司层面维持现金韧性；不把这升级为 cohort 留存、独立服务成本、可持续 owner cash 或整体管理层判断。",
+        "transfer_question": "另一家把一次性产品改为持续访问的企业，能否分别展示未来产品价值迁移、付费采用、确认收入/递延收入桥、企业现金和 cohort 留存/获客/服务成本，而非让任一会计或客户指标替代其余环节？"
+      },
+      "holdout_axis": null
     }
-  ]
+  ],
+  "teaching_candidate_pool": []
 }

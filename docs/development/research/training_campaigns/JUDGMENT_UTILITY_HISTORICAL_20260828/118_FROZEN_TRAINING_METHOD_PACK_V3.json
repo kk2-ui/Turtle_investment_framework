@@ -1,0 +1,146 @@
+{
+  "schema_version": "historical-frozen-training-method-pack.v1",
+  "method_pack_id": "METHOD_PACK:JUDGMENT_FIRST:BLIND_FEEDBACK:V3",
+  "method_version": "judgment-first-blind-feedback.v3",
+  "state": "FROZEN_FOR_HOLDOUT_EVALUATION",
+  "frozen_at": "2026-08-29T06:14:01+08:00",
+  "purpose": "A candidate research-method pack for one next paired historical Holdout. It records no validation claim and must be tested only through the pre-frozen paired comparison below.",
+  "predecessor": {
+    "method_pack_id": "METHOD_PACK:JUDGMENT_FIRST:BLIND_FEEDBACK:V2",
+    "direct_source_ref": "48_FROZEN_TRAINING_METHOD_PACK_V2.json",
+    "carry_forward_basis": "V2 is the authoritative carry-forward for the first four settled Blind feedback episodes."
+  },
+  "rules": [
+    {
+      "rule_id": "SAME_BOUNDARY_RECURRING_ECONOMICS_FIRST",
+      "status": "CANDIDATE_BEHAVIOR_NOT_VALIDATED",
+      "scope": "management execution, normal earnings, and valuation direction within the responsibility boundary whose scale is being credited",
+      "trigger": "scale, volume, revenue, capacity, store, customer, or deployment growth is used to justify an upgrade",
+      "required_behavior": "before upgrading, build a responsibility-matched bridge to recurring profit, unit economics, utilization, inventory absorption, or an equivalent economic carrier; preserve independently supported company judgments when one bridge remains open",
+      "prohibited_inference": "deployment or scale growth alone proves customer absorption, execution quality, normal earnings, capital return, or higher intrinsic value",
+      "disconfirming_observation": "later matched economics show that the withheld upgrade was warranted even though the responsibility-matched bridge was weak or adverse, and the pause changed the material treatment in the wrong direction",
+      "v3_vs_v2_disposition": "CARRY_FORWARD_UNCHANGED",
+      "direct_source_ref": "48_FROZEN_TRAINING_METHOD_PACK_V2.json#rules[0]"
+    },
+    {
+      "rule_id": "CONVERSION_TRIAD_RETAIN_AND_NARROW",
+      "status": "CANDIDATE_BEHAVIOR_NOT_VALIDATED",
+      "scope": "the incremental project, product, or capital burden that shows weak conversion; not every already-absorbed operation or unrelated management responsibility",
+      "trigger": "within one responsibility boundary, recurring profit grows more slowly than revenue, gross margin declines, and capital expenditure grows faster than profit",
+      "required_behavior": "retain already-supported enterprise strengths and execution credit, but pause any further upgrade for the incremental project or matched capital burden until recurring unit profit, utilization, or a cash-return bridge explains the incremental return",
+      "prohibited_inference": "the conversion triad, a scoped credit MIXED, or an unproven new project automatically proves enterprise failure, permanent loss, or withdrawal of already-validated product and channel execution credit",
+      "disconfirming_observation": "later matched project utilization, unit economics, and parent cash show that the scoped pause worsened the material treatment, or that the supposedly isolated weakness was already a material enterprise-wide loss carrier",
+      "v3_vs_v2_disposition": "CARRY_FORWARD_UNCHANGED",
+      "direct_source_ref": "48_FROZEN_TRAINING_METHOD_PACK_V2.json#rules[1]"
+    },
+    {
+      "rule_id": "SCOPED_MANAGEMENT_EXECUTION_BEFORE_ENTERPRISE_MERGE",
+      "status": "CANDIDATE_BEHAVIOR_NOT_VALIDATED",
+      "scope": "management execution by named action and responsibility boundary, including product or channel execution, operating-cash execution, credit or financing execution, and incremental capital allocation",
+      "trigger": "different responsibility-matched management subaxes produce positive, conditional, mixed, or adverse observations in the same episode",
+      "required_behavior": "state each subaxis treatment before any enterprise summary; a local MIXED or CONDITIONAL signal may lower only its matched execution credit, while an enterprise-wide downgrade requires an observed material negative carrier or a demonstrated transmission into normal earnings, parent owner cash, or permanent loss; remove already-settled questions from the next rank-one research action",
+      "prohibited_inference": "the weakest local treatment is the company-wide management score, MIXED is equivalent to NEGATIVE, or a strong product result proves credit quality and new-project capital returns",
+      "disconfirming_observation": "a later material loss emerges through the scoped conditional carrier and shows that preserving positive credit elsewhere caused a worse enterprise treatment even though the cross-boundary transmission was already observable before the outcome",
+      "v3_vs_v2_disposition": "CARRY_FORWARD_UNCHANGED",
+      "direct_source_ref": "48_FROZEN_TRAINING_METHOD_PACK_V2.json#rules[2]"
+    }
+  ],
+  "v3_vs_v2_summary": {
+    "behavioral_rule_change": "NONE",
+    "exact_disposition": "All three V2 rules are carried forward byte-for-byte in meaning and wording. V3 adds only a post-V2 evidence ledger and a paired-Holdout evaluation contract; neither adds a research admission gate nor changes a pre-outcome company treatment rule.",
+    "why_no_rule_changed": "Each direct post-V2 Blind receipt either explicitly reports no material new method utility or explicitly says no transferable rule was created. The feedback produced company-specific treatment and next-cutoff-agenda changes, but did not identify a change that would have altered another unknown company's pre-outcome treatment."
+  },
+  "post_v2_direct_feedback_ledger": [
+    {
+      "episode": "BLIND:HK00816:20240501:FY2024",
+      "direct_source_ref": "71_CN00816_FEEDBACK_RECEIPT.json#method_learning_utility",
+      "observed_company_specific_feedback": "Operating/customer absorption and group-cash-related credit/parent availability settled NEGATIVE; acquisition capital allocation remained LOCAL_UNKNOWN.",
+      "next_cutoff_research_agenda_delta": "NONE",
+      "rule_change_test": "NO_CHANGE: the receipt states the frozen contract already required every relevant split and local-UNKNOWN treatment, so outcome did not add or alter a next-unknown-company field, threshold, or research action.",
+      "v3_disposition": "NO_NEW_TRANSFERABLE_RULE"
+    },
+    {
+      "episode": "BLIND:CN600309:20240501:FY2024",
+      "direct_source_ref": "83_CN600309_FEEDBACK_RECEIPT.json#method_learning_utility",
+      "observed_company_specific_feedback": "Core customer absorption/spread and new-material unit economics settled NEGATIVE; growth-capex cash conversion/debt settled MIXED.",
+      "next_cutoff_research_agenda_delta": "NONE",
+      "rule_change_test": "NO_CHANGE: the outcome used the already-frozen separation of capacity, customer absorption, unit economics, cash burden, and debt scope and did not change a next-unknown-company field or treatment.",
+      "v3_disposition": "NO_NEW_TRANSFERABLE_RULE"
+    },
+    {
+      "episode": "BLIND:CN600519:20240501:FY2024",
+      "direct_source_ref": "94_CN600519_FEEDBACK_RECEIPT.json#basis",
+      "observed_company_specific_feedback": "One channel leg was mixed while two product-bucket absorption legs and collection/cash observations passed, with financial-company attribution remaining local.",
+      "next_cutoff_research_agenda_delta": "NO_FROZEN_FIELD_OR_PROCESSING_DELTA_FOR_NEXT_UNKNOWN_BRAND_CHANNEL_COMPANY",
+      "rule_change_test": "NO_CHANGE: the receipt says the direct-sales, iMaotai, and wholesale legs, product buckets, and collection-versus-consolidated-cash distinction were already present.",
+      "v3_disposition": "NO_NEW_TRANSFERABLE_RULE"
+    },
+    {
+      "episode": "BLIND:CN600887:20240501:FY2024",
+      "direct_source_ref": "107_CN600887_FEEDBACK_RECEIPT.json#enterprise_judgment_delta;107_CN600887_FEEDBACK_RECEIPT.json#basis",
+      "observed_company_specific_feedback": "Customer absorption and capital return failed while unit economics were mixed and the owner-cash proxy passed; the company treatment was downgraded and its next-cutoff question changed.",
+      "next_cutoff_research_agenda_delta": "From first-period mechanical comparisons to repeated product-volume/margin and same-definition ROE recovery without sacrificing margin.",
+      "rule_change_test": "NO_CHANGE: the four-axis separation already prevented cash or local margin improvement from replacing failed demand or capital return. This is a material company update, not a newly discovered next-unknown-company rule.",
+      "v3_disposition": "NO_NEW_TRANSFERABLE_RULE"
+    },
+    {
+      "episode": "BLIND:CN600276:20240501:FY2024",
+      "direct_source_ref": "117_CN600276_FEEDBACK_RECEIPT.json#company_treatment_change;117_CN600276_FEEDBACK_RECEIPT.json#transferable_rule",
+      "observed_company_specific_feedback": "Three frozen cells passed; the company moved from first confirmation to durability, coupling, and licensing/timing-effect tests while R&D remained required reinvestment.",
+      "next_cutoff_research_agenda_delta": "From first confirmation to persistence and coupling tests for the innovative-revenue carrier, cash conversion, R&D funding, and licensing/timing effects.",
+      "rule_change_test": "NO_CHANGE: the receipt expressly states that no new transferable rule was created and that one all-pass company settlement is not cross-company transfer.",
+      "v3_disposition": "NO_NEW_TRANSFERABLE_RULE"
+    }
+  ],
+  "v2_carry_forward_provenance": {
+    "direct_source_ref": "47_CN603338_FEEDBACK_RECEIPT.json#candidate_behavior_feedback;47_CN603338_FEEDBACK_RECEIPT.json#six_axis_comparison",
+    "role": "Pre-V2 source evidence for V2's scope-preserving management-merge behavior. It is not counted as a post-V2 rule change.",
+    "disposition": "V2_AUTHORITATIVE_CARRY_FORWARD_ONLY"
+  },
+  "paired_historical_holdout_evaluation_contract": {
+    "purpose": "Evaluate this frozen candidate method against a fair ordinary-research baseline, not against a strawman and not against prose volume.",
+    "freeze_timing": "Before any Holdout outcome content is read.",
+    "same_cutoff_required": true,
+    "same_evidence_required": "Baseline and Enhanced must receive the same cutoff-bounded, result-unseen evidence set.",
+    "same_budget_required": "Baseline and Enhanced must receive the same stated research budget, tools, and time/turn allocation.",
+    "material_difference_must_be_pre_frozen": "Before outcome access, freeze a specific economic difference between Baseline and Enhanced that could change normal-earnings treatment, owner-cash treatment, permanent-loss treatment, valuation direction, or the highest-value next research action. The difference must state its mechanism and expected decision consequence.",
+    "not_evaluable_if": [
+      "no specific Baseline-versus-Enhanced economic treatment difference is frozen before outcome access",
+      "the cutoff, result-unseen evidence set, tools, or research budget differs between arms",
+      "the asserted difference is only more prose, more fields, more caveats, a lower UNKNOWN count, or additional gates"
+    ],
+    "not_evaluable_status": "NOT_EVALUABLE",
+    "allowed_utility_standard": "Enhanced may be preferred only if outcome feedback shows the pre-frozen difference materially improved a company judgment or treatment for the stated economic reason. A correct local field, a passed validator, or a completed receipt alone is not utility.",
+    "prohibited_utility_proxies": [
+      "more prose or stronger-sounding prose",
+      "more fields, documents, receipts, or citations",
+      "a lower UNKNOWN count or a whole-company refusal induced by UNKNOWN",
+      "more gates, a stricter gate, or a newly added global gate",
+      "price, return, valuation, or investment-action results"
+    ]
+  },
+  "non_defensive_operating_boundary": {
+    "localize_uncertainty": "A missing or mismatched measurement limits only the affected proposition. It cannot be used to terminate the enterprise judgment or to credit defensive behavior as research utility.",
+    "no_global_gates_introduced": true,
+    "global_gate_disposition": "NONE. This pack introduces no mandatory admission, evidence-volume, field-count, or outcome-settlement gate. The rules remain candidate research behaviors to be tested in the paired Holdout.",
+    "company_specific_feedback_is_retained": "A company treatment or research-agenda delta remains economically useful feedback even when it does not create a transferable rule; it must not be relabeled as a method failure or discarded as a non-result."
+  },
+  "authority": "RESEARCH_METHOD_ONLY",
+  "permissions": {
+    "method_validation": "NONE",
+    "transfer_validation": "NONE",
+    "cjo": "NONE",
+    "formal_valuation": "NONE",
+    "buy_band": "NONE",
+    "report": "NONE",
+    "investment_action": "NONE"
+  },
+  "claims_explicitly_not_made": {
+    "method_validated": false,
+    "transfer_candidate_created": false,
+    "transfer_validated": false,
+    "company_judgment_authority_created": false,
+    "valuation_authority_created": false,
+    "investment_permission_or_action_created": false
+  }
+}
