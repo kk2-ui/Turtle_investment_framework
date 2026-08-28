@@ -1,0 +1,730 @@
+{
+  "schema_version": "historical-judgment-first-draft.v1",
+  "episode_id": "HIST:CN600161:20240501:FY2024",
+  "company_id": "CN:600161",
+  "cutoff_at": "2024-05-01T00:00:00+08:00",
+  "outcome_state": "SEALED_NOT_IN_PACKET",
+  "enterprise_view": "截至结果封存日，天坛生物是具有强监管准入、稀缺浆源和规模优势的血液制品龙头，2021—2023年收入由41.12亿元增至51.80亿元、归母扣非净利润由7.56亿元增至11.04亿元，2023年营业利润率约34.8%、同比提高约1.2个百分点，说明新增供给至少已经出现了经费用负担检验的经济吸收，而不只是浆站或产能扩张。最合理的当前判断是企业经常盈利能力上了一个台阶，但2023年的高速增长和现金回款改善不宜线性外推：79家在营浆站采浆2,415吨、永安投产及云南/兰州等项目仍会带来库存转换、折旧和资本开支负担，且关键经营资产位于仅持有74.005%的成都蓉生体系。因而应上调normal earnings和内在价值方向、给予管理层经营执行正面信用，同时只条件计入owner cash，并维持对需求吸收、母公司上划和质量监管尾部风险的永久损失约束。",
+  "most_important_enterprise_judgments": [
+    {
+      "current_judgment": "浆源扩张已在2023年初步转化为经常利润，但2024年必须继续以销售、同责任边界的经常营业利润和费用负担共同验证，不能把浆站数、采浆量或名义产能直接当作经济吸收。",
+      "causal_mechanism": "血浆经过检疫、投浆、分离、批签发和销售周期后，只有在可售产品销量与产品组合增长足以覆盖采浆成本、筹建浆站费用、新厂折旧、销售管理费用及持续研发负担时，新增浆源才提高单位股东的normal earnings。2023年血液制品收入增长21.6%、营业利润增长约26.0%、归母扣非净利润增长29.4%，且营业利润率提升，构成了初步闭环。",
+      "strongest_counterargument": "2023年可能包含阶段性需求旺盛、渠道备货或信用政策变化带来的销售与回款提前；第四季度收入和归母扣非利润较前三季度走弱，新浆站和新产能也可能先形成库存、折旧和费用，而不是持续终端消化。",
+      "investment_implication": "当前提高normal earnings基准并将内在价值方向判为向上，但不把102家浆站总数、2,415吨采浆或3个千吨级基地的全部名义能力提前资本化；新增价值只随经常营业利润和归母扣非利润的持续兑现确认。",
+      "flip_facts": [
+        "FY2024完整可比口径下，血液制品收入不增长或下降，同时归母扣非净利润下降且经常营业利润率较2023年约34.8%显著收缩，并由产品售价、真实销量、采浆成本、折旧或库存积压中的明确载体解释。",
+        "相反，FY2024血液制品收入和归母扣非净利润均保持至少约10%增长，经常营业利润率不低于约34.3%，且存货没有相对销售异常堆积，将把初步吸收判断升级为较强的持续吸收判断。"
+      ]
+    },
+    {
+      "current_judgment": "会计利润质量较好，但可归上市公司股东支配的owner cash显著低于集团现金表象，当前只能条件计入。",
+      "causal_mechanism": "2021—2023年集团经营现金流分别约9.80亿、11.26亿和23.94亿元，而购建长期资产现金分别约11.32亿、13.54亿和10.78亿元；2023年GROUP_CASH_PROXY转正约13.16亿元，但经营现金流的跃升部分来自销售信用政策变化。更重要的是成都蓉生少数股东持股25.995%，2023年少数股东损益约4.00亿元；母公司期末现金及现金等价物约15.75亿元，却同时出现大量筹资流入和约20.56亿元其他应付款，因此集团现金、母公司账面现金与无负担owner cash不是同一个数。",
+      "strongest_counterargument": "公司净负债压力低，永安项目已经投产、云南项目完成工艺验证，若建设高峰过去且子公司稳定上划分红，2023年改善后的现金转换可能持续，母公司现金也可能确实具备较强分配能力。",
+      "investment_implication": "不以集团货币资金或单年OCF减资本开支直接增加母公司owner cash；仅在NCI归属、母公司非融资性现金来源、子公司上划及未完资本承诺闭合后计入。资本化研发和新基地开支作为真实股东现金负担保留。",
+      "flip_facts": [
+        "FY2024及连续两年集团经营现金流扣除全部购建长期资产现金后保持充足正值，且母公司现金流明确显示来自控股子公司的可持续上划覆盖母公司费用与股东分配，而不是新增借款或内部往来。",
+        "FY2024集团现金代理转为大额负值，并由持续性建设、库存积压或经营成本吞噬造成，同时母公司上划受阻或依赖融资，将把条件计入翻转为不计入并收紧永久损失约束。"
+      ]
+    },
+    {
+      "current_judgment": "永久损失风险目前受控但不能放松：护城河来自监管与质量信任，同一机制也使严重质量事件、浆站合规问题、价格压力或资本错配具有非线性破坏力。",
+      "causal_mechanism": "血液制品准入受限、血浆稀缺且品牌依赖长期质量记录，支持较强盈利；但原料具有生物属性，生产和批签发全链条严格监管，严重缺陷可直接导致停产、召回、许可证受限和信任损失。与此同时，采浆成本上涨、集采或进口竞争压价，以及名义产能快于需求吸收，会通过毛利率、经常营业利润和持续现金吞噬转成永久损失。",
+      "strongest_counterargument": "公司拥有多地浆站和六家血制企业，2023年所属血制公司产品自检和批签发合格率均为100%，并持续通过监管检查；多产品、规模化质量体系和央企资源可降低单点风险。",
+      "investment_implication": "不因风险清单本身否定企业，但维持永久损失约束；只有观察到明确且材料性的安全、监管、价格或持续现金载体才收紧，单纯未披露、单年波动或名义产能变化不得被判作恶化。",
+      "flip_facts": [
+        "发生影响核心生产主体或重要浆站网络的召回、停产、GMP重大缺陷、许可证暂停/撤销或有明确经济影响的严重产品安全事件。",
+        "若连续年度无材料质量监管事件、批签发和生产持续正常，且扩产后的经常利润与owner cash同步兑现，可逐步放松当前约束。"
+      ]
+    }
+  ],
+  "scenario_analysis": {
+    "optimistic": {
+      "operating_path": "2023年新增浆源按生产周期转成可售产品，10%静丙与重组凝血因子等新品开始贡献更优组合；永安运行效率提升、云南形成有效产出而兰州建设受控，收入与归母扣非利润保持双位数增长，经常营业利润率稳定或提高，资本开支从建设高峰回落并形成可上划现金。",
+      "investment_effect": "normal earnings继续上调，管理层正面信用增强；在NCI和母公司上划闭合后，owner cash可由条件计入转为母公司可计入，并允许放松资本错配约束，内在价值方向进一步向上。",
+      "discriminating_facts": [
+        "血液制品收入、归母扣非净利润均至少约增长10%，经常营业利润率不低于约34.3%。",
+        "存货增速不显著超过血液制品收入增速，集团OCF减全部购建长期资产现金仍为充足正值，母公司收到的非融资性子公司上划明显覆盖母公司费用与股东分配。"
+      ]
+    },
+    "base": {
+      "operating_path": "浆量与投浆继续增长，但2023年需求和回款高基数使销售增速回落；新产能的折旧、浆站筹建与研发负担大体被销量吸收，血液制品收入与归母扣非利润温和增长或接近持平，经常营业利润率保持在2023年附近，资本开支仍高但不再吞噬全部经营现金。",
+      "investment_effect": "维持已上调的normal earnings与向上的内在价值方向，但不再外推2023年增速；管理层保留正面信用，owner cash继续条件计入，永久损失约束不变。",
+      "discriminating_facts": [
+        "完整可比的收入、归母扣非净利润与经常营业利润率没有同时显著恶化，费用与折旧上升可被销售增长大体覆盖。",
+        "集团现金代理为非负或轻微负值，负值主要是可逆时点或已接近完工的资本开支，且没有存货持续堆积或母公司上划阻断证据。"
+      ]
+    },
+    "pessimistic": {
+      "operating_path": "2023年需求或渠道回款提前后出现消化放缓，新增采浆和产能先进入库存；售价、产品组合或采浆成本承压，同时新厂折旧、筹建费用和资本化研发继续占用现金，导致收入下降或低增长、经常营业利润率明显收缩、归母扣非利润下降，集团现金代理持续转负。另一条更严重路径是核心生产或浆站体系出现材料性质量监管事件。",
+      "investment_effect": "下调normal earnings并撤回部分管理层信用；若现金吞噬具有持续性或母公司上划受阻，则不计owner cash、收紧永久损失约束并下调内在价值方向；若发生核心质量监管事件，风险可直接升级为thesis blocking。",
+      "discriminating_facts": [
+        "收入、归母扣非净利润和经常营业利润率同步下降，且存货相对销售显著上升，原因明确指向弱需求、降价、采浆成本或折旧负担。",
+        "集团OCF减全部购建长期资产现金出现大额且持续负值，母公司现金增加依赖融资，或出现材料性召回、停产、许可证/GMP处罚。"
+      ]
+    }
+  },
+  "material_treatment_snapshot": {
+    "management_execution": {
+      "treatment_code": "POSITIVE_CREDIT",
+      "rationale": "2021—2023年采浆、产品上市和项目投产与归母扣非利润持续增长共同兑现；2023年营业利润增速高于收入、营业利润率提高，信用来自经济结果而非浆站或产能数量本身。"
+    },
+    "normal_earnings": {
+      "treatment_code": "RAISE",
+      "rationale": "2023年收入增长21.6%、营业利润增长约26.0%、归母扣非净利润增长29.4%，在销售、管理、研发费用和新增折旧均进入同一利润责任边界后仍改善；不把非经常收益或单独毛利率当作依据。"
+    },
+    "owner_cash": {
+      "treatment_code": "COUNT_CONDITIONALLY",
+      "rationale": "2023年OCF减购建长期资产现金仅能作为约13.16亿元GROUP_CASH_PROXY；销售信用政策变化、成都蓉生25.995% NCI、母公司筹资流入和其他应付款使可归上市公司股东自由支配的金额尚未闭合。"
+    },
+    "permanent_loss": {
+      "treatment_code": "MAINTAIN_CONSTRAINT",
+      "rationale": "目前没有观察到实际材料性安全或监管损害，且经常利润在改善；但生物制品质量、浆站合规、价格/采浆成本以及扩产快于需求的持续现金吞噬仍是可改变永久损失概率的明确载体。"
+    },
+    "valuation_direction": {
+      "treatment_code": "UP",
+      "rationale": "不使用市场价格或正式估值，仅就企业内在价值相对共同参考状态判断：更高且经费用责任边界验证的归母经常盈利支持向上，幅度受资本负担、NCI和2023高基数限制。"
+    },
+    "next_research_action": {
+      "action_family": "ECONOMIC_ABSORPTION_AND_OWNER_CASH_BRIDGE",
+      "target_scope": "FY2024合并血液制品经营责任边界、成都蓉生NCI归属及上市公司母公司现金上划边界",
+      "fact_or_metric": "同时取得血液制品收入/销量、经常营业利润及利润率、销售管理研发费用、折旧、存货、归母扣非净利润、集团OCF、全部购建长期资产现金、母公司投资现金收入与非融资性子公司上划、NCI分配及未完资本承诺",
+      "decision_axis": "normal_earnings, owner_cash, permanent_loss, valuation_direction",
+      "positive_effect": "经营增长在同责任边界保持利润率且现金代理持续为正、母公司上划闭合，则巩固或再上调normal earnings，计入母公司owner cash并放松资本错配约束。",
+      "negative_effect": "收入/归母扣非/经常营业利润率同步恶化或出现持续现金吞噬、NCI及上划阻断，则下调normal earnings，不计owner cash并收紧永久损失和内在价值方向。"
+    }
+  },
+  "cross_cell_treatment_aggregation": {
+    "initial_treatment_ref": "material_treatment_snapshot",
+    "order_invariant": true,
+    "partial_update_rule": "每个class只提交有新证据支持的axis_updates；未列轴与NEUTRAL结果保留进入结算前的处理，禁止last-write覆盖。",
+    "axis_precedence": {
+      "management_execution": [
+        "NEGATIVE_CREDIT",
+        "NO_CREDIT_ASSIGNED",
+        "CONDITIONAL_CREDIT",
+        "POSITIVE_CREDIT"
+      ],
+      "normal_earnings": [
+        "LOWER",
+        "EXCLUDE_COMPONENT",
+        "UNCHANGED",
+        "RAISE"
+      ],
+      "owner_cash": [
+        "DO_NOT_COUNT",
+        "COUNT_CONDITIONALLY",
+        "COUNT_IN_PARENT_OWNER_CASH"
+      ],
+      "permanent_loss": [
+        "THESIS_BLOCKING",
+        "TIGHTEN_CONSTRAINT",
+        "MAINTAIN_CONSTRAINT",
+        "RELAX_CONSTRAINT"
+      ],
+      "valuation_direction": [
+        "DOWN",
+        "WITHHELD",
+        "UNCHANGED",
+        "UP"
+      ]
+    },
+    "economic_rules": [
+      "同一轴有多个材料更新时使用上述风险优先顺序，执行顺序不得改变结果；这不是把局部UNKNOWN当负面，只有已命中材料class的更新参与。",
+      "QUALITY_THESIS_BLOCKING_ADVERSE同时支配management_execution、normal_earnings、permanent_loss与valuation_direction，不可被现金或吸收的中性/有利结果覆盖。",
+      "现金改善最多关闭owner-cash/资本负担主张，不直接把全局permanent_loss改为RELAX_CONSTRAINT；质量、需求与许可载体仍分别保留。",
+      "next_research_action保持结果前冻结，只有结果后独立feedback receipt才能改变。"
+    ],
+    "preoutcome_counterexamples": [
+      {
+        "case_id": "ABSORPTION_UP_CASH_ADVERSE_QUALITY_NEUTRAL",
+        "cell_results": [
+          "ABSORPTION_FAVORABLE",
+          "OWNER_CASH_STRUCTURAL_ADVERSE",
+          "QUALITY_NEUTRAL_RESIDUAL"
+        ],
+        "required_final": {
+          "permanent_loss": "TIGHTEN_CONSTRAINT",
+          "valuation_direction": "DOWN"
+        }
+      },
+      {
+        "case_id": "QUALITY_BLOCKING_OVERRIDES_CASH_FAVORABLE",
+        "cell_results": [
+          "OWNER_CASH_FAVORABLE",
+          "QUALITY_THESIS_BLOCKING_ADVERSE"
+        ],
+        "required_final": {
+          "management_execution": "NEGATIVE_CREDIT",
+          "normal_earnings": "LOWER",
+          "permanent_loss": "THESIS_BLOCKING",
+          "valuation_direction": "DOWN"
+        }
+      }
+    ]
+  },
+  "preoutcome_counterexamples": [
+    {
+      "case_id": "ABSORPTION_COMPLETE_PARENT_SCOPE_OPEN",
+      "input": "血液制品收入+12%、归母扣非+12%、经常营业利润率34.5%，费用/折旧/减值完整；NCI=OPEN、parent access=UNKNOWN。",
+      "expected_cell_class": "ABSORPTION_FAVORABLE",
+      "forbidden_result": "不得因owner-cash边界未闭合进入LOCAL_UNKNOWN。"
+    },
+    {
+      "case_id": "ABSORPTION_MATERIAL_DECLINE_NOT_NEUTRAL",
+      "input": "收入-8%、归母扣非-15%、经常营业利润率33.4%，并观察到真实销量下降，其他桥字段完整可比。",
+      "expected_cell_class": "ABSORPTION_ADVERSE",
+      "forbidden_result": "不得进入ABSORPTION_NEUTRAL_RESIDUAL或保留valuation UP。"
+    },
+    {
+      "case_id": "ABSORPTION_MISSING_FIELD_LOCAL_ONLY",
+      "input": "血液制品收入、归母扣非、费用和折旧已披露，但经常营业利润率缺失且不存在口径冲突。",
+      "expected_cell_class": "LOCAL_UNKNOWN",
+      "forbidden_result": "不得进入数值方向或MEASUREMENT_MISMATCH；不影响现金与质量cell。"
+    },
+    {
+      "case_id": "QUALITY_LICENSE_SUSPENSION_IGNORES_PARENT_SCOPE",
+      "input": "核心生产主体许可证被暂停、影响跨期且难逆；parent access=UNKNOWN。",
+      "expected_cell_class": "QUALITY_THESIS_BLOCKING_ADVERSE",
+      "forbidden_result": "不得因上划未知拒绝结算，normal earnings不得继续RAISE。"
+    },
+    {
+      "case_id": "OWNER_CASH_FAVORABLE_EXCLUDES_LIMITED",
+      "input": "两年GROUP_CASH_PROXY均正、FY2024覆盖归母扣非80%以上、承诺下降，归母桥闭合且PARENT_DISTRIBUTABLE_CASH足以持续覆盖母公司必要费用与已宣布普通股分配。",
+      "expected_cell_class": "OWNER_CASH_FAVORABLE",
+      "forbidden_result": "不得同时满足OWNER_CASH_REVERSIBLE_OR_MIXED中的LIMITED路径。"
+    },
+    {
+      "case_id": "ABSORPTION_SINGLE_ADVERSE_SIGNAL_IS_MIXED",
+      "input": "收入-6%、归母扣非-5%、经常营业利润率34.5%，观察到真实销量下降，其他桥字段完整可比。",
+      "expected_cell_class": "ABSORPTION_MIXED",
+      "forbidden_result": "不得因未达到两票ADVERSE而落入NEUTRAL或无分类。"
+    },
+    {
+      "case_id": "ABSORPTION_QUANT_DECLINE_WITHOUT_CARRIER_IS_MIXED",
+      "input": "收入-8%、归母扣非-15%、经常营业利润率34.0%，但年报没有把下降连接到销量、价格、成本、折旧或存货载体，其他桥字段完整可比。",
+      "expected_cell_class": "ABSORPTION_MIXED",
+      "forbidden_result": "不得把缺失载体当作ADVERSE事实，也不得落入NEUTRAL或无分类。"
+    },
+    {
+      "case_id": "ABSORPTION_MARGIN_BOUNDARY_IS_MIXED",
+      "input": "收入+12%、归母扣非+5%、经常营业利润率恰为33.8%，并有匹配持续成本载体，其他桥字段完整可比。",
+      "expected_cell_class": "ABSORPTION_MIXED",
+      "forbidden_result": "33.8%不得成为分类空档，也不得在利润未增长10%时冒充FAVORABLE。"
+    },
+    {
+      "case_id": "OWNER_CASH_NONSTRUCTURAL_NEGATIVE_SCOPE_OPEN",
+      "input": "GROUP_CASH_PROXY为负1亿元，集团桥完整，负值由近完工一次性项目解释，不满足结构性adverse；NCI=OPEN、parent access=UNKNOWN。",
+      "expected_cell_class": "OWNER_CASH_GROUP_NONSTRUCTURAL_SCOPE_OPEN",
+      "forbidden_result": "不得进入LOCAL_UNKNOWN、STRUCTURAL_ADVERSE或无分类；不得更新permanent loss或valuation。"
+    },
+    {
+      "case_id": "QUALITY_MATERIAL_EVENT_REVERSED_IN_PERIOD",
+      "input": "材料性产品召回使核心主体停产两个月，但整改、恢复生产与许可证有效性均在报告期内得到确认，没有跨期供给或信任损害。",
+      "expected_cell_class": "QUALITY_MATERIAL_REVERSIBLE_MIXED",
+      "forbidden_result": "不得进入THESIS_BLOCKING、CONTAINED或NEUTRAL；不得在无持续盈利载体时下调normal earnings。"
+    },
+    {
+      "case_id": "OWNER_CASH_POSITIVE_NCI_CLOSED_PARENT_OPEN",
+      "input": "GROUP_CASH_PROXY为正且无结构性adverse；NCI=CLOSED、parent access=UNKNOWN。",
+      "expected_cell_class": "OWNER_CASH_GROUP_POSITIVE_SCOPE_OPEN",
+      "forbidden_result": "任一必要归属未闭合即只能条件计入；不得因NCI已闭合进入FAVORABLE或无分类。"
+    },
+    {
+      "case_id": "OWNER_CASH_POSITIVE_PARENT_EVIDENCED_AMOUNT_OPEN",
+      "input": "GROUP_CASH_PROXY为正且无结构性adverse；NCI=OPEN、parent access=EVIDENCED、PARENT_DISTRIBUTABLE_CASH金额未闭合。",
+      "expected_cell_class": "OWNER_CASH_GROUP_POSITIVE_SCOPE_OPEN",
+      "forbidden_result": "不得因parent access已有证据而把未闭合归母金额当作母公司owner cash。"
+    },
+    {
+      "case_id": "OWNER_CASH_NEGATIVE_NCI_CLOSED_PARENT_OPEN",
+      "input": "GROUP_CASH_PROXY为负1亿元且不满足结构性adverse；NCI=CLOSED、parent access=UNKNOWN。",
+      "expected_cell_class": "OWNER_CASH_GROUP_NONSTRUCTURAL_SCOPE_OPEN",
+      "forbidden_result": "不得无分类，也不得更新permanent loss或valuation。"
+    },
+    {
+      "case_id": "QUALITY_MATERIAL_EVENT_RECOVERY_UNKNOWN",
+      "input": "已确认核心主体发生材料召回，但恢复时点、后续批签发、许可证有效性与跨期供给影响未披露。",
+      "expected_cell_class": "LOCAL_UNKNOWN",
+      "forbidden_result": "不得从缺失的持续性事实推断THESIS_BLOCKING或已恢复。"
+    },
+    {
+      "case_id": "QUALITY_IMMATERIAL_EVENT_REMEDIATION_UNKNOWN",
+      "input": "已确认非材料检查缺陷，但整改完成与后续生产影响未披露。",
+      "expected_cell_class": "LOCAL_UNKNOWN",
+      "forbidden_result": "不得因事件非材料便假设已经整改，也不得传播到其他轴。"
+    },
+    {
+      "case_id": "QUALITY_UNKNOWN_DOES_NOT_CANCEL_OTHER_CELLS",
+      "input": "质量事件恢复状态未知而质量cell为LOCAL_UNKNOWN；同一FY2024的吸收与集团现金桥字段完整。",
+      "expected_cell_class": "LOCAL_UNKNOWN",
+      "forbidden_result": "质量cell空更新；吸收和owner-cash仍须独立结算，企业结果前快照不得撤回。"
+    },
+    {
+      "case_id": "QUALITY_SEVERE_PATH_NOT_ERASED_BY_UNRELATED_UNKNOWN",
+      "input": "核心生产主体许可证暂停，已确认影响跨期且难逆；持续信任损害和后续批签发未披露。",
+      "expected_cell_class": "QUALITY_THESIS_BLOCKING_ADVERSE",
+      "forbidden_result": "完整severe路径不得因无关附属字段未披露而退回LOCAL_UNKNOWN。"
+    },
+    {
+      "case_id": "QUALITY_RECERTIFICATION_SEVERE_PATH",
+      "input": "核心主体长期停产且已确认需要跨期重新认证；其他许可证附属字段未披露。",
+      "expected_cell_class": "QUALITY_THESIS_BLOCKING_ADVERSE",
+      "forbidden_result": "已经闭合的跨期难逆供给损害不得被附属UNKNOWN撤销。"
+    }
+  ],
+  "outcome_cells": [
+    {
+      "cell_id": "FY2024_ECONOMIC_ABSORPTION",
+      "direct_axes": [
+        "management_execution",
+        "normal_earnings",
+        "valuation_direction"
+      ],
+      "preserved_axes": [
+        "owner_cash",
+        "permanent_loss",
+        "next_research_action"
+      ],
+      "direct_axis_links": {
+        "management_execution": "完整FY2024销售和经常利润共同检验管理层是否把新增浆源、产品与产能变成经济产出。",
+        "normal_earnings": "收入/销量必须与归母扣非净利润、经常营业利润率及持续费用负担同向结算，才能改变normal earnings。",
+        "valuation_direction": "只有材料且持续的归母经常盈利变化才直接改变内在价值方向，不消费市场价格。"
+      },
+      "preserved_axis_reasons": {
+        "owner_cash": "利润吸收不等于现金上划，本cell不消费OCF、资本开支、NCI或母公司现金来源。",
+        "permanent_loss": "单年盈利波动通常可逆；除非由另一个cell确认持续现金吞噬或材料质量监管载体，否则维持约束。",
+        "next_research_action": "本cell只是rank-1桥的一部分，不能单独改变研究行动的family、scope或decision-axis。"
+      },
+      "normal_earnings_bridge": {
+        "revenue_or_volume_metric": "FY2024合并血液制品收入和真实产品销量；浆站数、采浆量、投浆量或名义产能仅作解释变量，不作吸收结论",
+        "recurring_profit_metric": "合并营业利润/营业收入、归母扣除非经常性损益净利润及其同比变化",
+        "persistent_cost_burden_metrics": [
+          "销售费用、管理费用、费用化与资本化研发投入",
+          "新厂转固折旧、采浆成本及存货/减值",
+          "少数股东损益与归母利润的责任边界"
+        ],
+        "nonrecurring_exclusions": [
+          "政府补助和其他收益中的非经常部分",
+          "资产处置、一次性投资收益及营业外损益",
+          "研发项目终止的一次性资本化支出转费用（单列后再判断是否代表持续失败率）"
+        ]
+      },
+      "local_input_treatments": {
+        "LOCAL_UNKNOWN": {
+          "axis_updates": {},
+          "next_discriminating_evidence": "补齐FY2024血液制品收入、合并营业利润、归母扣非净利润、费用与折旧；缺少任一关键桥字段时仅局部UNKNOWN，不推断恶化。"
+        },
+        "MEASUREMENT_MISMATCH": {
+          "axis_updates": {},
+          "next_discriminating_evidence": "取得会计政策、合并范围、产品分类或同一控制调整后的可比2023基数；不可比时不做数值分类。"
+        }
+      },
+      "valid_input_first_match": [
+        {
+          "class_id": "LOCAL_UNKNOWN",
+          "economic_direction": "MIXED",
+          "condition": "不存在已知责任边界冲突，但FY2024血液制品收入/销量、合并经常营业利润、归母扣非净利润、经常营业利润率、销售管理研发费用、折旧或减值任一关键桥字段未披露。NCI或母公司现金上划未知不触发本类。",
+          "is_residual": false,
+          "observed_adverse_carriers": [],
+          "axis_updates": {},
+          "scope_requirements": {
+            "responsibility_boundary": "合并血液制品经营边界并用归母扣非净利润交叉归属",
+            "nci_parent_access": "NOT_REQUIRED_FOR_THIS_CELL"
+          }
+        },
+        {
+          "class_id": "MEASUREMENT_MISMATCH",
+          "economic_direction": "MIXED",
+          "condition": "会计政策、合并范围、产品分类或同一控制调整发生材料变化，且已披露信息不能重述到FY2023同一经营责任边界；普通字段未披露不属于本类。",
+          "is_residual": false,
+          "observed_adverse_carriers": [],
+          "axis_updates": {},
+          "scope_requirements": {
+            "responsibility_boundary": "FY2023_RESTATED_COMPARABLE",
+            "nci_parent_access": "NOT_REQUIRED_FOR_THIS_CELL"
+          }
+        },
+        {
+          "class_id": "ABSORPTION_FAVORABLE",
+          "economic_direction": "FAVORABLE",
+          "condition": "关键桥字段完整可比，FY2024血液制品收入与归母扣非净利润均较可比2023至少增长10%，合并经常营业利润率不低于34.3%（较2023约34.8%下降不超过0.5个百分点），且销售、管理、研发、折旧与减值均已进入责任边界；不存在材料负面需求或单位经济载体。",
+          "is_residual": false,
+          "observed_adverse_carriers": [],
+          "axis_updates": {
+            "management_execution": "POSITIVE_CREDIT",
+            "normal_earnings": "RAISE",
+            "valuation_direction": "UP"
+          },
+          "scope_requirements": {
+            "responsibility_boundary": "合并血液制品经营边界并用归母扣非净利润交叉归属",
+            "nci_parent_access": "NOT_REQUIRED_FOR_THIS_CELL"
+          }
+        },
+        {
+          "class_id": "ABSORPTION_ADVERSE",
+          "economic_direction": "ADVERSE",
+          "condition": "关键桥字段完整可比，收入下降至少5%、归母扣非净利润下降至少10%、经常营业利润率降至33.8%或以下三项中至少两项成立，并明确观察到真实销量下降、持续降价、采浆成本、新厂折旧或存货减值中的至少一项匹配负面载体。",
+          "is_residual": false,
+          "observed_adverse_carriers": [
+            "真实销量或售价下降",
+            "采浆成本或新厂折旧持续压缩经常营业利润率",
+            "存货积压并形成减值或去库存压力"
+          ],
+          "axis_updates": {
+            "management_execution": "NEGATIVE_CREDIT",
+            "normal_earnings": "LOWER",
+            "valuation_direction": "DOWN"
+          },
+          "scope_requirements": {
+            "responsibility_boundary": "合并血液制品经营边界并用归母扣非净利润交叉归属",
+            "nci_parent_access": "NOT_REQUIRED_FOR_THIS_CELL"
+          }
+        },
+        {
+          "class_id": "ABSORPTION_MIXED",
+          "economic_direction": "MIXED",
+          "condition": "完整可比输入在按first-match排除FAVORABLE与ADVERSE后，存在至少一个材料但非决定性信号：收入或归母扣非增长至少10%、利润率提高至少0.5个百分点、收入下降至少5%、归母扣非下降至少10%、利润率降至33.8%或以下、真实销量材料下降、持续降价、采浆成本或新厂折旧压力、存货积压或减值。包括正负冲突、仅一个材料方向信号、财务量化达到ADVERSE票数但没有匹配观察载体，以及正向财务被材料需求或单位经济载体抵销；没有匹配观察载体的量化下降只保持条件性处理，不输出ADVERSE更新。",
+          "is_residual": false,
+          "observed_adverse_carriers": [],
+          "axis_updates": {
+            "management_execution": "CONDITIONAL_CREDIT",
+            "normal_earnings": "UNCHANGED",
+            "valuation_direction": "UNCHANGED"
+          },
+          "scope_requirements": {
+            "responsibility_boundary": "合并血液制品经营边界并用归母扣非净利润交叉归属",
+            "nci_parent_access": "NOT_REQUIRED_FOR_THIS_CELL"
+          }
+        },
+        {
+          "class_id": "ABSORPTION_NEUTRAL_RESIDUAL",
+          "economic_direction": "NEUTRAL",
+          "condition": "所有桥字段完整、可比，且未出现ABSORPTION_MIXED列明的任何材料财务、销量、需求、价格、成本、折旧或存货信号，只包含无材料方向变化的剩余补集。",
+          "is_residual": true,
+          "observed_adverse_carriers": [],
+          "axis_updates": {},
+          "scope_requirements": {
+            "responsibility_boundary": "合并血液制品经营边界并用归母扣非净利润交叉归属",
+            "nci_parent_access": "NOT_REQUIRED_FOR_THIS_CELL"
+          }
+        }
+      ]
+    },
+    {
+      "cell_id": "FY2024_OWNER_CASH_AND_CAPITAL_BURDEN",
+      "direct_axes": [
+        "owner_cash",
+        "permanent_loss",
+        "valuation_direction"
+      ],
+      "preserved_axes": [
+        "management_execution",
+        "normal_earnings",
+        "next_research_action"
+      ],
+      "direct_axis_links": {
+        "owner_cash": "集团OCF扣除全部购建长期资产现金只形成GROUP_CASH_PROXY；必须进一步闭合NCI、母公司非融资性上划和现金限制。",
+        "permanent_loss": "只有材料且持续的维持/扩张现金吞噬或结构性上划阻断才从owner-cash问题升级为永久损失载体。",
+        "valuation_direction": "持续可上划自由现金或持续结构性现金吞噬直接改变企业内在价值方向；可逆单年时点波动不改变。"
+      },
+      "preserved_axis_reasons": {
+        "management_execution": "单年现金波动可能来自付款和回款时点，不能单独改写管理层经营信用。",
+        "normal_earnings": "现金转换不替代同责任边界的收入与经常利润判断。",
+        "next_research_action": "只有本cell与吸收cell共同结算后才可能改变rank-1行动，本cell单独不改行动范围。"
+      },
+      "owner_cash_bridge": {
+        "cash_proxy_scope": "GROUP",
+        "nci_scope": "OPEN",
+        "parent_access": "UNKNOWN",
+        "capex_treatment": "以合并现金流量表购建固定资产、无形资产和其他长期资产支付现金全额扣减OCF形成GROUP_CASH_PROXY；定期存款流转和融资不算经营owner cash，资本化研发作为真实现金负担跟踪但避免与OCF重复扣减。",
+        "parent_distributable_cash_test": "闭合成都蓉生及其他材料NCI的post-capex cash归属、必须留存/回投、母公司实际非融资性上划和母公司对子公司净现金支持；FAVORABLE要求该归母可分配现金持续覆盖母公司必要费用与已宣布普通股股东分配且不依赖新增融资。正但低于这一覆盖需求属于LIMITED，不得与FAVORABLE重叠。"
+      },
+      "permanent_loss_bridge": {
+        "risk_carrier": "持续建设/维持性资本开支、库存和营运资金吞噬，以及成都蓉生NCI或公司治理造成的母公司结构性上划阻断",
+        "materiality_or_persistence_test": "不仅看FY2024单年；要求FY2024大额负现金代理且2022—2024累计代理不再为正，或明确存在尚未完结的大额必要投入/连续库存吞噬/母公司持续依赖融资，并足以改变可分配现金结论。",
+        "reversibility_test": "若负值可由年末回款、已近完工的一次性项目付款或定期存款分类解释，且随后无需重复，则只更新owner cash、不收紧永久损失；若需要持续投入或上划受制度/股权结构阻断，则视为难逆转。"
+      },
+      "local_input_treatments": {
+        "LOCAL_UNKNOWN": {
+          "axis_updates": {},
+          "next_discriminating_evidence": "先补齐FY2024合并OCF、购建长期资产现金、存货/营运资金解释和资本承诺以结算集团现金；成都蓉生NCI、母公司上划或归母金额未闭合时只保持owner cash条件计入，不清除已观察的集团现金或永久损失载体。"
+        },
+        "MEASUREMENT_MISMATCH": {
+          "axis_updates": {},
+          "next_discriminating_evidence": "统一合并与母公司边界，剔除定期存款收付、借款和内部往来造成的现金表象，并取得可比资本开支分类。"
+        }
+      },
+      "valid_input_first_match": [
+        {
+          "class_id": "LOCAL_UNKNOWN",
+          "economic_direction": "MIXED",
+          "condition": "不存在已知不可重述的现金口径冲突，但FY2024合并OCF、购建长期资产现金、存货/营运资金解释或未完必要资本承诺任一集团现金桥核心输入未披露。仅NCI归属、母公司上划或归母金额未闭合不触发本类。",
+          "is_residual": false,
+          "observed_adverse_carriers": [],
+          "axis_updates": {},
+          "scope_requirements": {
+            "required_nci_scope_at_settlement": "ANY",
+            "required_parent_access_at_settlement": "ANY"
+          }
+        },
+        {
+          "class_id": "MEASUREMENT_MISMATCH",
+          "economic_direction": "MIXED",
+          "condition": "已披露现金流分类、合并范围、定期存款或资本开支定义发生材料变化，且无法重述到FY2023同一集团现金口径；普通字段未披露不属于本类。",
+          "is_residual": false,
+          "observed_adverse_carriers": [],
+          "axis_updates": {},
+          "scope_requirements": {
+            "required_nci_scope_at_settlement": "ANY",
+            "required_parent_access_at_settlement": "ANY"
+          }
+        },
+        {
+          "class_id": "OWNER_CASH_FAVORABLE",
+          "economic_direction": "FAVORABLE",
+          "condition": "FY2023与FY2024连续两年GROUP_CASH_PROXY均为正，FY2024代理至少覆盖当年归母扣非净利润的80%，未完必要资本承诺下降；成都蓉生及其他材料NCI的post-capex cash归属、留存/回投、母公司实际非融资性上划和净支持全部闭合，PARENT_DISTRIBUTABLE_CASH可持续覆盖母公司必要费用与已宣布普通股股东分配且不依赖新增融资。",
+          "is_residual": false,
+          "observed_adverse_carriers": [],
+          "axis_updates": {
+            "owner_cash": "COUNT_IN_PARENT_OWNER_CASH",
+            "valuation_direction": "UP"
+          },
+          "scope_requirements": {
+            "required_nci_scope_at_settlement": [
+              "CLOSED",
+              "IMMATERIAL_WITH_EVIDENCE"
+            ],
+            "required_parent_access_at_settlement": "EVIDENCED"
+          }
+        },
+        {
+          "class_id": "OWNER_CASH_STRUCTURAL_ADVERSE",
+          "economic_direction": "ADVERSE",
+          "condition": "集团现金路径：FY2024 GROUP_CASH_PROXY低于负5亿元，且2022—2024累计代理不再为正或存在明确未来重复的大额必要投入，并观察到持续库存/营运资金吞噬或未完建设承诺，排除可逆时点因素。母公司路径：有法律、监管、股东协议或融资契约证据使材料现金来源至少12个月不能上划，且母公司替代流动资源不足；该路径不要求NCI金额已完全闭合。",
+          "is_residual": false,
+          "observed_adverse_carriers": [
+            "持续建设或维持性资本开支超过经营现金",
+            "库存或营运资金连续吞噬现金",
+            "NCI归属或治理安排造成母公司结构性上划阻断",
+            "母公司现金增长依赖新增融资而非子公司分配"
+          ],
+          "axis_updates": {
+            "owner_cash": "DO_NOT_COUNT",
+            "permanent_loss": "TIGHTEN_CONSTRAINT",
+            "valuation_direction": "DOWN"
+          },
+          "scope_requirements": {
+            "required_nci_scope_at_settlement": "ANY_FOR_GROUP_ADVERSE_OR_MATERIAL_BOUNDARY_FOR_ACCESS_BLOCK",
+            "required_parent_access_at_settlement": "ANY_OR_BLOCKED_WITH_EVIDENCE"
+          }
+        },
+        {
+          "class_id": "OWNER_CASH_GROUP_POSITIVE_SCOPE_OPEN",
+          "economic_direction": "MIXED",
+          "condition": "GROUP_CASH_PROXY为正且不存在结构性现金adverse，但成都蓉生NCI归属、母公司上划或PARENT_DISTRIBUTABLE_CASH金额任一未闭合。只保留已观察集团现金改善，不升级为母公司owner cash。",
+          "is_residual": false,
+          "observed_adverse_carriers": [],
+          "axis_updates": {
+            "owner_cash": "COUNT_CONDITIONALLY"
+          },
+          "scope_requirements": {
+            "required_nci_scope_at_settlement": "ANY",
+            "required_parent_access_at_settlement": "ANY",
+            "joint_open_requirement": "NCI归属、parent access或PARENT_DISTRIBUTABLE_CASH金额至少一项为OPEN、UNKNOWN或PARTIAL"
+          }
+        },
+        {
+          "class_id": "OWNER_CASH_GROUP_NONSTRUCTURAL_SCOPE_OPEN",
+          "economic_direction": "MIXED",
+          "condition": "集团现金桥核心输入完整、GROUP_CASH_PROXY不为正，但按前序first-match不满足OWNER_CASH_STRUCTURAL_ADVERSE，且NCI归属、母公司上划或PARENT_DISTRIBUTABLE_CASH任一仍OPEN或UNKNOWN。保留已观察到的非正集团现金与可逆解释，只把母公司owner cash维持条件计入，不推断结构性上划阻断，也不更新permanent loss或valuation。",
+          "is_residual": false,
+          "observed_adverse_carriers": [
+            "已观察到非正GROUP_CASH_PROXY但未达到结构性持续现金损失"
+          ],
+          "axis_updates": {
+            "owner_cash": "COUNT_CONDITIONALLY"
+          },
+          "scope_requirements": {
+            "required_nci_scope_at_settlement": "ANY",
+            "required_parent_access_at_settlement": "ANY",
+            "joint_open_requirement": "NCI归属、parent access或PARENT_DISTRIBUTABLE_CASH金额至少一项为OPEN、UNKNOWN或PARTIAL"
+          }
+        },
+        {
+          "class_id": "OWNER_CASH_REVERSIBLE_OR_MIXED",
+          "economic_direction": "MIXED",
+          "condition": "完整边界显示FY2024 GROUP_CASH_PROXY偏弱或为负但由已近完工一次性项目、明确回款时点或其他可逆因素解释；或者归母桥已闭合且PARENT_DISTRIBUTABLE_CASH为正但明确低于持续覆盖母公司必要费用与已宣布普通股分配的需求、且未被结构性阻断。后者与FAVORABLE互斥。",
+          "is_residual": false,
+          "observed_adverse_carriers": [],
+          "axis_updates": {
+            "owner_cash": "COUNT_CONDITIONALLY"
+          },
+          "scope_requirements": {
+            "required_nci_scope_at_settlement": [
+              "CLOSED",
+              "IMMATERIAL_WITH_EVIDENCE"
+            ],
+            "required_parent_access_at_settlement": "EVIDENCED"
+          }
+        },
+        {
+          "class_id": "OWNER_CASH_NEUTRAL_RESIDUAL",
+          "economic_direction": "NEUTRAL",
+          "condition": "现金桥、NCI和母公司上划输入完整可比，未出现材料方向变化且不满足以上分类的剩余补集。",
+          "is_residual": true,
+          "observed_adverse_carriers": [],
+          "axis_updates": {},
+          "scope_requirements": {
+            "required_nci_scope_at_settlement": [
+              "CLOSED",
+              "IMMATERIAL_WITH_EVIDENCE"
+            ],
+            "required_parent_access_at_settlement": "EVIDENCED"
+          }
+        }
+      ]
+    },
+    {
+      "cell_id": "FY2024_QUALITY_AND_REGULATORY_TAIL",
+      "direct_axes": [
+        "management_execution",
+        "normal_earnings",
+        "permanent_loss",
+        "valuation_direction"
+      ],
+      "preserved_axes": [
+        "owner_cash",
+        "next_research_action"
+      ],
+      "direct_axis_links": {
+        "management_execution": "质量体系和浆站合规是血制企业管理层不可转移的核心执行责任。",
+        "normal_earnings": "核心生产资格、跨期停产或材料浆站许可损害会直接降低可持续供给能力；只有核心、材料、跨期且难逆事件才下调normal earnings。",
+        "permanent_loss": "材料性召回、停产或许可证/GMP问题会破坏供给资格与长期信任，是明确永久损失载体。",
+        "valuation_direction": "核心生产或浆站网络的材料性监管事件直接降低未来现金流可实现性；无事件本身不自动上调价值。"
+      },
+      "preserved_axis_reasons": {
+        "owner_cash": "罚款、召回或停产的实际现金影响需由现金桥另行确认；本cell不假设金额。",
+        "next_research_action": "非材料或无事件不改变rank-1研究行动；若材料事件发生，后续行动应在结算阶段按事实重排。"
+      },
+      "normal_earnings_bridge": {
+        "revenue_or_volume_metric": "受影响核心生产主体的产品供给、批签发、停产期与材料浆站采浆能力",
+        "recurring_profit_metric": "受影响责任边界对应的可持续经常营业利润与归母正常盈利贡献",
+        "persistent_cost_burden_metrics": [
+          "整改与恢复所需持续资本和费用",
+          "停产期间固定成本",
+          "许可证恢复时点与产能损失"
+        ],
+        "nonrecurring_exclusions": [
+          "短期、非材料且已完成整改的检查事项",
+          "与核心生产资格无关的一次性行政事项"
+        ]
+      },
+      "permanent_loss_bridge": {
+        "risk_carrier": "核心血制主体或具有材料采浆贡献的浆站发生产品召回、批签发持续失败、停产、GMP重大缺陷、采浆许可证暂停/撤销或严重产品安全事件",
+        "materiality_or_persistence_test": "事件影响核心产品/生产主体或材料浆量，导致跨报告期供应中断、市场信任损害或许可证能力受限；一般检查、已即时整改且无生产销售影响的轻微事项不满足。",
+        "reversibility_test": "若无需召回/停产、整改期短且后续批签发和销售正常，则可逆；若需要重新认证、长期停产、许可证恢复不确定或造成持续需求流失，则难逆转。"
+      },
+      "local_input_treatments": {
+        "LOCAL_UNKNOWN": {
+          "axis_updates": {},
+          "next_discriminating_evidence": "取得FY2024年报对召回、批签发、停产、GMP检查、行政处罚和浆站许可证的完整披露；如事件已发生，继续取得整改完成、恢复时点、后续批签发/生产、许可证有效性及跨期供给影响。未披露不等于发生、已恢复或跨期难逆。"
+        },
+        "MEASUREMENT_MISMATCH": {
+          "axis_updates": {},
+          "next_discriminating_evidence": "确认事件主体是否属于合并范围、影响产品和浆量是否材料，以及检查意见与正式处罚/停产是否为同一口径。"
+        }
+      },
+      "valid_input_first_match": [
+        {
+          "class_id": "LOCAL_UNKNOWN",
+          "economic_direction": "MIXED",
+          "condition": "不存在已知主体或事件口径冲突，且当前已观察事实尚不足以完整满足QUALITY_THESIS_BLOCKING_ADVERSE、QUALITY_MATERIAL_REVERSIBLE_MIXED或QUALITY_CONTAINED_MIXED任一条路径；在此前提下，FY2024年报不能确认召回、批签发、停产、GMP检查、行政处罚或浆站许可证事项是否发生及其主体/材料性，或者事项已确认后仍缺少区分跨期难逆与报告期内恢复所必需的恢复时点、后续批签发/生产、许可证有效性、跨期供给或信任影响。若任一severe、material-reversible或contained路径的必要事实已经闭合，与该路径无关的附属字段未披露不触发本类。未披露不推断事件发生、已恢复或跨期难逆。",
+          "is_residual": false,
+          "observed_adverse_carriers": [],
+          "axis_updates": {},
+          "scope_requirements": {
+            "responsibility_boundary": "核心生产主体、产品及材料浆站网络",
+            "nci_parent_access": "NOT_REQUIRED_FOR_THIS_CELL"
+          }
+        },
+        {
+          "class_id": "MEASUREMENT_MISMATCH",
+          "economic_direction": "MIXED",
+          "condition": "已披露事件主体不在可比合并/经营边界，或检查意见、正式处罚、停产和许可状态无法重述为同一事件定义；普通未披露不属于本类。",
+          "is_residual": false,
+          "observed_adverse_carriers": [],
+          "axis_updates": {},
+          "scope_requirements": {
+            "responsibility_boundary": "CORE_EVENT_RESTATED_COMPARABLE",
+            "nci_parent_access": "NOT_REQUIRED_FOR_THIS_CELL"
+          }
+        },
+        {
+          "class_id": "QUALITY_THESIS_BLOCKING_ADVERSE",
+          "economic_direction": "ADVERSE",
+          "condition": "观察到核心生产主体或材料浆站网络的召回、长期停产、GMP重大缺陷、许可证暂停/撤销或严重产品安全事件，且恢复时间或信任损害跨期、不易逆转。",
+          "is_residual": false,
+          "observed_adverse_carriers": [
+            "核心产品召回或严重安全事件",
+            "核心生产主体长期停产或GMP重大缺陷",
+            "材料浆站网络许可证暂停、撤销或长期采浆中断"
+          ],
+          "axis_updates": {
+            "management_execution": "NEGATIVE_CREDIT",
+            "normal_earnings": "LOWER",
+            "permanent_loss": "THESIS_BLOCKING",
+            "valuation_direction": "DOWN"
+          },
+          "scope_requirements": {
+            "responsibility_boundary": "核心生产主体、产品及材料浆站网络",
+            "nci_parent_access": "NOT_REQUIRED_FOR_THIS_CELL"
+          }
+        },
+        {
+          "class_id": "QUALITY_MATERIAL_REVERSIBLE_MIXED",
+          "economic_direction": "MIXED",
+          "condition": "观察到核心生产主体、材料产品或材料浆站网络的召回、停产、GMP或许可证事项，事件在规模上材料，但整改完成、生产或采浆恢复、后续批签发或许可证有效性均在报告期内得到确认，没有跨报告期供给中断、持续信任损害或许可证能力损失。只降低管理层执行信用；normal earnings、permanent loss与valuation仅在各自另有持续直接载体时由其他class更新。",
+          "is_residual": false,
+          "observed_adverse_carriers": [
+            "已观察到材料但在报告期内完成整改和恢复的质量或监管事件"
+          ],
+          "axis_updates": {
+            "management_execution": "CONDITIONAL_CREDIT"
+          },
+          "scope_requirements": {
+            "responsibility_boundary": "核心生产主体、材料产品或材料浆站网络，材料事件已在报告期内可验证恢复",
+            "nci_parent_access": "NOT_REQUIRED_FOR_THIS_CELL"
+          }
+        },
+        {
+          "class_id": "QUALITY_CONTAINED_MIXED",
+          "economic_direction": "MIXED",
+          "condition": "存在明确质量或监管负面事项，但影响主体/产品不材料、已在短期整改且未造成持续停产、召回或许可证能力损失。",
+          "is_residual": false,
+          "observed_adverse_carriers": [
+            "已观察但可逆、非材料的质量或监管缺陷"
+          ],
+          "axis_updates": {
+            "management_execution": "CONDITIONAL_CREDIT"
+          },
+          "scope_requirements": {
+            "responsibility_boundary": "已观察但非材料且短期可逆的质量监管事项",
+            "nci_parent_access": "NOT_REQUIRED_FOR_THIS_CELL"
+          }
+        },
+        {
+          "class_id": "QUALITY_NEUTRAL_RESIDUAL",
+          "economic_direction": "NEUTRAL",
+          "condition": "FY2024相关披露完整且未观察到上述材料性或非材料性负面质量监管载体的剩余补集；没有事件只维持当前处理，不作有利升级。",
+          "is_residual": true,
+          "observed_adverse_carriers": [],
+          "axis_updates": {},
+          "scope_requirements": {
+            "responsibility_boundary": "核心生产主体、产品及材料浆站网络",
+            "nci_parent_access": "NOT_REQUIRED_FOR_THIS_CELL"
+          }
+        }
+      ]
+    }
+  ]
+}
