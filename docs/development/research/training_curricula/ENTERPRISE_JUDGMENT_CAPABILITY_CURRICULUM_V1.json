@@ -636,6 +636,201 @@
       "holdout_axis": null
     },
     {
+      "case_id": "TEACH:HK01858:20230501:FY2022_FY2025",
+      "company_id": "HK:01858",
+      "company_cluster_id": "COMPANY:HK01858",
+      "company_name": "春立医疗",
+      "industry_id": "ORTHOPEDIC_MEDICAL_DEVICES",
+      "track": "TEACHING",
+      "status": "CURATED",
+      "cutoff_at": "2023-05-01T00:00:00+08:00",
+      "outcome_window": null,
+      "outcome_access": "RESULT_KNOWN",
+      "selection_exposure": "RESULT_KNOWN_OR_DERIVED_VISIBLE",
+      "role_isolation_state": "NOT_REQUIRED_FOR_TEACHING",
+      "primary_capability_units": [
+        "CUSTOMER_ABSORPTION",
+        "CAPITAL_ALLOCATION"
+      ],
+      "mechanism_focus": "骨科集采准入、销量、实现收入和毛利如何穿过研发、库存与现金形成经济吸收",
+      "claim_scope": "WITHIN_CASE_MECHANISM",
+      "comparative_mode": "NOT_REQUIRED",
+      "source_refs": [
+        "docs/development/research/training_curricula/teaching_cases/TC_HK01858_PROCUREMENT_EXPORT_AND_RND_OPTIONS_V1.md"
+      ],
+      "artifact_refs": {
+        "lesson_ref": "docs/development/research/training_curricula/teaching_cases/TC_HK01858_PROCUREMENT_EXPORT_AND_RND_OPTIONS_V1.md"
+      },
+      "lesson": {
+        "state_and_constraint": "集采扩大医院准入和销量但压低实现价格；海外已成为现实经营支柱，研发新品的独立回报仍未闭合。",
+        "management_choice_or_no_action": "管理层承接集采放量、拓展海外、持续费用化研发并推进机器人、导航和多品类注册。",
+        "customer_or_operating_response": "FY2022关节销量大增但收入近乎持平；FY2024国内业务重挫，FY2025收入利润现金恢复；境外收入和毛利连续增强。",
+        "cash_or_capital_result": "四年group post-capex现金总体为正但年度波动大，回款释放、库存增长与研发投入需分别解释。",
+        "mechanism_lesson": "准入或获批必须继续穿过销量、实现收入、毛利、经常利润和投入后现金；新产品只能在经济吸收前保留选择权。",
+        "strongest_rival": "集采低价可能以规模和国产替代换取长期利润，海外高增长也可能只是低基数、客户或产品集中。",
+        "near_miss": "用中标、注册证、投产或销量证明资本回报，或因产品披露中断而撤回已观察的海外和现金方向。",
+        "investor_treatment": "国内核心按跨期量价利润现金承载价值；海外给第二经营支柱信用但保留集中度折价；机器人和新品只计选择权。",
+        "transfer_question": "准入和新品上线后，客户是否重复购买，单位经济是否保持，库存和应收是否被投入后现金吸收。"
+      },
+      "holdout_axis": null
+    },
+    {
+      "case_id": "TEACH:HK06186:20230501:FY2022_FY2025",
+      "company_id": "HK:06186",
+      "company_cluster_id": "COMPANY:HK06186",
+      "company_name": "中国飞鹤",
+      "industry_id": "INFANT_FORMULA",
+      "track": "TEACHING",
+      "status": "CURATED",
+      "cutoff_at": "2023-05-01T00:00:00+08:00",
+      "outcome_window": null,
+      "outcome_access": "RESULT_KNOWN",
+      "selection_exposure": "RESULT_KNOWN_OR_DERIVED_VISIBLE",
+      "role_isolation_state": "NOT_REQUIRED_FOR_TEACHING",
+      "primary_capability_units": [
+        "CUSTOMER_ABSORPTION",
+        "COMPETITION_AND_PRICING"
+      ],
+      "mechanism_focus": "出生人口、终端需求和渠道库存如何穿过价格结构、营销强度与品类毛利形成品牌现金",
+      "claim_scope": "WITHIN_CASE_MECHANISM",
+      "comparative_mode": "NOT_REQUIRED",
+      "source_refs": [
+        "docs/development/research/training_curricula/teaching_cases/TC_HK06186_DEMOGRAPHY_CHANNEL_AND_MIX_V1.md"
+      ],
+      "artifact_refs": {
+        "lesson_ref": "docs/development/research/training_curricula/teaching_cases/TC_HK06186_DEMOGRAPHY_CHANNEL_AND_MIX_V1.md"
+      },
+      "lesson": {
+        "state_and_constraint": "婴配粉保持高毛利但客户总量和核心收入收缩，净现金强而集团现金边际下降。",
+        "management_choice_or_no_action": "管理层主动降低渠道库存、维持品牌营销和高端结构，并扩展成人乳品、原料粉与营养品。",
+        "customer_or_operating_response": "FY2024核心收入毛利反弹，FY2025又受竞争拖累；其他乳制品收入增长但毛利率降至1%。",
+        "cash_or_capital_result": "四年group post-investment现金强但逐年下降；低毛利品类和产能投入的增量回报未闭合。",
+        "mechanism_lesson": "高毛利、渠道去库存和新品收入都不能单独证明品牌增强，必须穿过终端需求、营销强度、利润和现金。",
+        "strongest_rival": "龙头份额和高端化仍可能抵消人口下降，低毛利原料粉也可能是减少库存与产能损失的理性动作。",
+        "near_miss": "用高毛利证明收入不会收缩，用去库存证明终端恢复，或用新品收入和净现金掩盖核心盈利下行。",
+        "investor_treatment": "核心婴配粉按中期可持续利润而非峰值资本化；其他乳品按毛利和现金计价；净现金只降低财务损失风险。",
+        "transfer_question": "客户基数下降后，品牌究竟守住份额、价格、复购、毛利还是现金，新品是否产生可重复利润。"
+      },
+      "holdout_axis": null
+    },
+    {
+      "case_id": "TEACH:HAIER:20230501:FY2022_FY2025",
+      "company_id": "CN:600690",
+      "company_cluster_id": "COMPANY:HAIER",
+      "company_name": "海尔智家",
+      "industry_id": "GLOBAL_HOME_APPLIANCE",
+      "track": "TEACHING",
+      "status": "CURATED",
+      "cutoff_at": "2023-05-01T00:00:00+08:00",
+      "outcome_window": null,
+      "outcome_access": "RESULT_KNOWN",
+      "selection_exposure": "RESULT_KNOWN_OR_DERIVED_VISIBLE",
+      "role_isolation_state": "NOT_REQUIRED_FOR_TEACHING",
+      "primary_capability_units": [
+        "CUSTOMER_ABSORPTION",
+        "CAPITAL_ALLOCATION"
+      ],
+      "mechanism_focus": "全球品牌整合与场景渠道如何穿过客户吸收、同边界利润、收购现金和商誉形成资本回报",
+      "claim_scope": "WITHIN_CASE_MECHANISM",
+      "comparative_mode": "NOT_REQUIRED",
+      "source_refs": [
+        "docs/development/research/training_curricula/teaching_cases/TC_HAIER_GLOBAL_INTEGRATION_SCENE_AND_CASH_V1.md"
+      ],
+      "artifact_refs": {
+        "lesson_ref": "docs/development/research/training_curricula/teaching_cases/TC_HAIER_GLOBAL_INTEGRATION_SCENE_AND_CASH_V1.md"
+      },
+      "lesson": {
+        "state_and_constraint": "历史海外收购已形成现实运营平台和强集团现金，但新收购回报与三翼鸟独立平台经济未闭合。",
+        "management_choice_or_no_action": "管理层整合全球品牌、建设本地研发供应链和场景渠道，并于FY2024新增CCR与Kwikot收购。",
+        "customer_or_operating_response": "海外收入连续增长、份额与毛利改善；三翼鸟门店零售和成套销售证明渠道吸收，但未披露独立利润。",
+        "cash_or_capital_result": "FY2022至FY2024 group post-capex代理合计约437.8亿元；FY2024另支付约44.1亿元收购现金，年末商誉约273.8亿元。",
+        "mechanism_lesson": "历史整合信用、场景渠道吸收和新增资本回报必须分开；强集团现金不能替每笔收购投票。",
+        "strongest_rival": "地区需求、汇率、原料和竞争可独立推动海外利润，门店与成套占比也可能只是既有收入的渠道重分类。",
+        "near_miss": "用并表收入或份额证明并购回报，用触点和成套占比给平台独立倍数，或因平台利润缺失撤回核心经营判断。",
+        "investor_treatment": "成熟全球平台进入正常盈利；三翼鸟只获得渠道能力信用；新收购在责任匹配经常利润和现金出现前保持条件性。",
+        "transfer_question": "新平台究竟改变客户购买与单位经济，还是只改变披露边界；新增资产能否在投入后形成可重复回报。"
+      },
+      "holdout_axis": null
+    },
+    {
+      "case_id": "TEACH:CN200596:20230501:FY2022_FY2025",
+      "company_id": "CN:200596",
+      "company_cluster_id": "COMPANY:CN200596",
+      "company_name": "古井贡B",
+      "industry_id": "BAIJIU",
+      "track": "TEACHING",
+      "status": "CURATED",
+      "cutoff_at": "2023-05-01T00:00:00+08:00",
+      "outcome_window": null,
+      "outcome_access": "RESULT_KNOWN",
+      "selection_exposure": "RESULT_KNOWN_OR_DERIVED_VISIBLE",
+      "role_isolation_state": "NOT_REQUIRED_FOR_TEACHING",
+      "primary_capability_units": [
+        "COMPETITION_AND_PRICING",
+        "CAPITAL_ALLOCATION"
+      ],
+      "mechanism_focus": "产品升级和全国化如何穿过终端、补库、量价、销售投入、库存与现金形成品牌回报",
+      "claim_scope": "WITHIN_CASE_MECHANISM",
+      "comparative_mode": "NOT_REQUIRED",
+      "source_refs": [
+        "docs/development/research/training_curricula/teaching_cases/TC_CN200596_BRAND_EXPANSION_INVENTORY_AND_CASH_V1.md"
+      ],
+      "artifact_refs": {
+        "lesson_ref": "docs/development/research/training_curricula/teaching_cases/TC_CN200596_BRAND_EXPANSION_INVENTORY_AND_CASH_V1.md"
+      },
+      "lesson": {
+        "state_and_constraint": "FY2022至FY2024产品、区域和现金共同增长真实，FY2025销量、收入、区域和现金反转而存货继续上升。",
+        "management_choice_or_no_action": "管理层推进年份原浆高端化、全国化、品牌投入和智能园区产能，并在行业下行时控货稳价。",
+        "customer_or_operating_response": "年份原浆量价毛利先共同改善后共同下降；华北收入FY2025近乎腰斩，三大区域经销商均净减少。",
+        "cash_or_capital_result": "四年group post-capex现金合计约62.3亿元且净现金强，但FY2025代理只剩约2.8亿元、存货升至约107.4亿元。",
+        "mechanism_lesson": "曾经真实的增长不等于不可逆能力；品牌、全国化和产能必须继续穿过终端、补库、销售强度、库存与现金。",
+        "strongest_rival": "FY2025可能是主动控货去库存和全行业调整，基酒库存也有陈化价值，不能把单年反转写成品牌失效。",
+        "near_miss": "用高毛利、经销商或区域收入证明全国化永久成功，或用净现金和基酒叙事吞掉多轴经营反转。",
+        "investor_treatment": "保留核心品牌和净现金价值，正常盈利不使用FY2024峰值；全国化与园区投入在重复动销和现金恢复前保持条件性。",
+        "transfer_question": "品牌投入守住的是终端需求、价格、毛利还是渠道发货，库存和产能能否被重复销量与现金吸收。"
+      },
+      "holdout_axis": null
+    },
+    {
+      "case_id": "TEACH:HK03658:20230501:FY2021_FY2025",
+      "company_id": "HK:03658",
+      "company_cluster_id": "COMPANY:HK03658",
+      "company_name": "新希望服务",
+      "industry_id": "PROPERTY_MANAGEMENT",
+      "track": "TEACHING",
+      "status": "CURATED",
+      "cutoff_at": "2023-05-01T00:00:00+08:00",
+      "outcome_window": null,
+      "outcome_access": "RESULT_KNOWN",
+      "selection_exposure": "RESULT_KNOWN_OR_DERIVED_VISIBLE",
+      "role_isolation_state": "NOT_REQUIRED_FOR_TEACHING",
+      "primary_capability_units": [
+        "BUSINESS_MODEL_ECONOMICS",
+        "OWNER_CASH_CONVERSION"
+      ],
+      "mechanism_focus": "客户来源和项目进场如何穿过边际毛利、收缴、信贷损失与投入后现金形成物业价值",
+      "claim_scope": "WITHIN_CASE_MECHANISM",
+      "comparative_mode": "NOT_REQUIRED",
+      "source_refs": [
+        "docs/development/research/training_curricula/teaching_cases/TC_HK03658_THIRD_PARTY_MARGIN_AND_COLLECTION_V1.md"
+      ],
+      "artifact_refs": {
+        "lesson_ref": "docs/development/research/training_curricula/teaching_cases/TC_HK03658_THIRD_PARTY_MARGIN_AND_COLLECTION_V1.md"
+      },
+      "lesson": {
+        "state_and_constraint": "真正独立第三方外拓和绝对毛利增长真实，关联生态仍材料；单位毛利、应收和信贷损失没有同步改善。",
+        "management_choice_or_no_action": "管理层扩大独立项目和城市密度，利用新希望供应链发展生活服务，并主动退出部分低毛利项目。",
+        "customer_or_operating_response": "物业收入五年接近三倍、绝对毛利超过两倍；毛利率由30.1%降至24.3%，真正独立第三方物业收入FY2025占39.6%。",
+        "cash_or_capital_result": "五年group post-PPE现金约10.37亿元且无计息借款；贸易应收升至约5.04亿元、拨备升至约0.51亿元。",
+        "mechanism_lesson": "客户来源、合同、进场、边际毛利、收缴和现金必须顺序闭合；关联生态和真正独立第三方不得用宽口径合并。",
+        "strongest_rival": "关联生态可能是低成本分销优势，低毛利项目只要绝对毛利、续约和现金增长也可创造价值。",
+        "near_miss": "用第三方全口径、在管面积或合同额证明独立能力，用净现金掩盖应收与拨备，或因项目现金缺失撤回集团现金判断。",
+        "investor_treatment": "成熟物业按项目毛利和回款计价；关联与独立项目分列；生活服务只消费已发生利润；应收和拨备限制正常化现金。",
+        "transfer_question": "新客户属于何种责任边界，项目贡献多少边际毛利，账款能否收回，新增项目投入后现金是否留存。"
+      },
+      "holdout_axis": null
+    },
+    {
       "case_id": "BLIND:CN603195:20240501:FY2024",
       "company_id": "CN:603195",
       "company_cluster_id": "COMPANY:CN603195",
@@ -850,17 +1045,6 @@
   ],
   "teaching_candidate_pool": [
     {
-      "candidate_id": "TCAND:HAIER",
-      "company_ids": ["CN:600690", "DE:690D"],
-      "company_cluster_id": "COMPANY:HAIER",
-      "company_name": "海尔智家",
-      "industry_id": "GLOBAL_HOME_APPLIANCE",
-      "primary_capability_units": ["CUSTOMER_ABSORPTION", "CAPITAL_ALLOCATION"],
-      "mechanism_focus": "全球品牌、渠道和并购整合如何转成同口径单位经济",
-      "selection_exposure": "RESULT_KNOWN_OR_DERIVED_VISIBLE",
-      "source_locator": "LOCAL_OUTPUT:600690_海尔智家+690D_海尔智家"
-    },
-    {
       "candidate_id": "TCAND:HK02669",
       "company_ids": ["HK:02669"],
       "company_cluster_id": "COMPANY:HK02669",
@@ -872,28 +1056,6 @@
       "source_locator": "LOCAL_OUTPUT:02669_中海物业"
     },
     {
-      "candidate_id": "TCAND:HK06186",
-      "company_ids": ["HK:06186"],
-      "company_cluster_id": "COMPANY:HK06186",
-      "company_name": "中国飞鹤",
-      "industry_id": "INFANT_FORMULA",
-      "primary_capability_units": ["CUSTOMER_ABSORPTION", "COMPETITION_AND_PRICING"],
-      "mechanism_focus": "品牌、渠道库存、出生人口逆风和高端结构的吸收",
-      "selection_exposure": "RESULT_KNOWN_OR_DERIVED_VISIBLE",
-      "source_locator": "LOCAL_OUTPUT:06186_中国飞鹤"
-    },
-    {
-      "candidate_id": "TCAND:HK03658",
-      "company_ids": ["HK:03658"],
-      "company_cluster_id": "COMPANY:HK03658",
-      "company_name": "新希望服务",
-      "industry_id": "PROPERTY_MANAGEMENT",
-      "primary_capability_units": ["BUSINESS_MODEL_ECONOMICS", "OWNER_CASH_CONVERSION"],
-      "mechanism_focus": "关联方项目、第三方拓展和应收现金质量",
-      "selection_exposure": "RESULT_KNOWN_OR_DERIVED_VISIBLE",
-      "source_locator": "LOCAL_OUTPUT:03658_新希望服务"
-    },
-    {
       "candidate_id": "TCAND:HK01502",
       "company_ids": ["HK:01502"],
       "company_cluster_id": "COMPANY:HK01502",
@@ -903,28 +1065,6 @@
       "mechanism_focus": "非住宅物业续约、项目拓展和回款质量",
       "selection_exposure": "RESULT_KNOWN_OR_DERIVED_VISIBLE",
       "source_locator": "LOCAL_OUTPUT:01502_金融街物业"
-    },
-    {
-      "candidate_id": "TCAND:CN200596",
-      "company_ids": ["CN:200596"],
-      "company_cluster_id": "COMPANY:CN200596",
-      "company_name": "古井贡B",
-      "industry_id": "BAIJIU",
-      "primary_capability_units": ["COMPETITION_AND_PRICING", "CAPITAL_ALLOCATION"],
-      "mechanism_focus": "产品升级、渠道扩张和品牌投入如何转成量价与现金",
-      "selection_exposure": "RESULT_KNOWN_OR_DERIVED_VISIBLE",
-      "source_locator": "LOCAL_OUTPUT:200596_古井贡B"
-    },
-    {
-      "candidate_id": "TCAND:HK01858",
-      "company_ids": ["HK:01858"],
-      "company_cluster_id": "COMPANY:HK01858",
-      "company_name": "春立医疗",
-      "industry_id": "ORTHOPEDIC_MEDICAL_DEVICES",
-      "primary_capability_units": ["CUSTOMER_ABSORPTION", "CAPITAL_ALLOCATION"],
-      "mechanism_focus": "骨科产品获批、医院吸收、集采价格和研发产能回报",
-      "selection_exposure": "RESULT_KNOWN_OR_DERIVED_VISIBLE",
-      "source_locator": "LOCAL_OUTPUT:01858_春立医疗"
     },
     {
       "candidate_id": "TCAND:HK00816",
