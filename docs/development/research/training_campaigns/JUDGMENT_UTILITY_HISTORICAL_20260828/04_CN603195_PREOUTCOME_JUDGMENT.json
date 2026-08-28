@@ -1,0 +1,953 @@
+{
+  "schema_version": "preoutcome-judgment.v1",
+  "episode_id": "HIST:CN603195:20240501:FY2024",
+  "company_id": "CN:603195",
+  "cutoff_at": "2024-05-01T00:00:00+08:00",
+  "forecaster_role": "fresh_preoutcome_investment_researcher",
+  "enterprise_view": "公牛已从单一插座龙头演进为以品牌、密集渠道和垂直供应链为底座的民用电工平台。核心业务在地产深度调整期仍扩张，2023年毛利、扣非利润和现金流同步改善，因此应上调对正常盈利和经营执行力的判断；但新能源和国际化仍是小基数、异渠道的新曲线，当前只能视作有证据支持的期权，不能提前资本化为成熟第二增长极。",
+  "confidence": "MEDIUM_HIGH",
+  "most_important_enterprise_judgments": [
+    {
+      "rank": 1,
+      "topic": "核心护城河已由单品品牌扩展为渠道与运营系统，但还不是不受周期影响",
+      "current_judgment": "正面。电连接的品牌心智、超过110万家线下终端、线上头部位置和垂直一体化制造共同形成难复制的分销与成本系统；这套系统已能把墙开、照明和生态品类推入同一消费场景。2023年智能电工照明在地产深度调整下仍增长15.37%，比单纯的行业顺风更能说明份额与品类扩张能力。",
+      "causal_mechanism": "高安全认知降低消费者选择成本，密集终端提高可得性和经销商周转，跨品类陈列提高单店产出；上游自制、自动化和集中采购同时控制品质及成本。三者相互强化，使新品可借既有品牌和渠道更快达到规模，并使原材料下行时利润弹性高于收入弹性。",
+      "supporting_evidence": [
+        {
+          "source_id": "CNINFO:603195:FY2023:1219840341",
+          "printed_page": 28,
+          "fact": "公司披露超过110万家线下网点，其中五金渠道75万多家、装饰及灯饰渠道12万多家、数码渠道25万多家；转换器和墙壁开关插座在天猫线上市占率第一。"
+        },
+        {
+          "source_id": "CNINFO:603195:FY2023:1219840341",
+          "printed_page": 30,
+          "fact": "2023年电连接收入73.87亿元、同比增长4.77%、毛利率40.89%；智能电工照明收入79.02亿元、同比增长15.37%、毛利率45.81%。"
+        },
+        {
+          "source_id": "CNINFO:603195:FY2023:1219840341",
+          "printed_page": 31,
+          "fact": "前五大客户仅占销售额8.23%，前五大供应商占采购额12.20%，没有单一客户依赖。"
+        }
+      ],
+      "strongest_counterargument": "2023年毛利率大幅回升有明显的材料成本下降和制造降本贡献，不应全部归因于定价权；智能电工照明仍与装修活动相关，地产持续收缩可能最终压过份额提升。",
+      "local_unknown": "年报没有披露经销商库存、终端真实动销、同店增长、核心SKU价格与销量拆分，因此无法区分铺货、品类扩张、提价和份额提升各自贡献。",
+      "flip_facts": [
+        "核心两板块合计收入转为持续收缩，且不是主动退出低质收入所致",
+        "电连接与智能电工照明毛利率在原材料平稳时合计下降超过2个百分点",
+        "经销商库存或应收显著快于终端销售增长，证明渠道优势正在变成压货风险",
+        "核心品类线上排名和线下有效售点覆盖同时丢失"
+      ],
+      "investment_implication": "正常盈利应主要由核心两板块支撑，并给予其高于普通耐用品制造商的持续性判断；但估值中不应假设毛利率只升不降，需保留原材料与家装周期的正常化折扣。"
+    },
+    {
+      "rank": 2,
+      "topic": "管理层已证明能在逆风期兼顾增长、利润和现金，但2023年现金流峰值不可全额年化",
+      "current_judgment": "正面信用。2021至2023年收入、扣非利润和研发投入连续增长；2023年收入增长11.46%的同时扣非归母利润增长27.51%，经营现金流升至48.27亿元。核心能力建设、渠道变革和成本改善已反映在财务结果中，而不只是叙述。",
+      "causal_mechanism": "持续研发和新品迭代推动产品结构升级，BBS、自动化与供应链纵向整合带来降本和周转改善，渠道精细化把新品扩散到广泛终端。管理层在2022年原材料与宏观压力后仍继续投入，2023年成本端改善时释放经营杠杆。",
+      "supporting_evidence": [
+        {
+          "source_id": "CNINFO:603195:FY2021:1212886382",
+          "printed_page": 23,
+          "fact": "2021年经营现金流30.14亿元；电连接毛利率受大宗材料上涨影响，较上年下降6.18个百分点，提供了逆风期基准。"
+        },
+        {
+          "source_id": "CNINFO:603195:FY2022:1216665553",
+          "printed_page": 26,
+          "fact": "2022年收入140.81亿元、同比增长13.70%，归母净利润31.89亿元、同比增长14.68%，经营现金流30.58亿元；销售和研发费用分别增长42.88%和24.90%。"
+        },
+        {
+          "source_id": "CNINFO:603195:FY2023:1219840341",
+          "printed_page": 9,
+          "fact": "2023年收入156.95亿元、归母净利润38.70亿元、扣非归母净利润37.03亿元、经营现金流48.27亿元，分别同比增长11.46%、21.37%、27.51%和57.86%。"
+        },
+        {
+          "source_id": "CNINFO:603195:FY2023:1219840341",
+          "printed_page": 32,
+          "fact": "2023年研发投入6.73亿元，全部费用化，占收入4.29%；销售费用和管理费用增幅均快于收入。"
+        }
+      ],
+      "strongest_counterargument": "2023年利润增速高于收入可能主要是铜塑料成本回落，而经营现金流增加17.69亿元主要来自材料采购成本与库存下降，均含周期性和营运资本释放；同时销售、管理费用快速增长，若新品回报不足会侵蚀后续利润。",
+      "local_unknown": "缺少价格/销量桥、各品类贡献利润、广告与旗舰店投入回报、BBS节省金额及维持性资本开支拆分，无法把2023年利润改善精确拆成结构性与周期性。",
+      "flip_facts": [
+        "未来核心收入增长但扣非利润连续落后，显示投入不能转化为回报",
+        "剔除营运资本释放后经营现金流长期显著低于扣非利润",
+        "研发、销售和数字化支出增加而新品收入或毛利没有对应改善",
+        "管理层在高现金余额下进行大额低协同并购并持续减值"
+      ],
+      "investment_implication": "给予管理层POSITIVE_CREDIT并上调正常盈利基线，但以三年现金和利润中枢而非2023年单年峰值作为承保基础；将2023年营运资本释放的一部分视为不可重复。"
+    },
+    {
+      "rank": 3,
+      "topic": "新能源具备能力迁移的早期证据，国际化尚未形成商业证明，两者都不应成为当前主估值支柱",
+      "current_judgment": "审慎正面。新能源收入已从2022年的1.53亿元增至2023年的3.80亿元，毛利率34.15%，并搭建了C端、运营商、直流快充与储能产品能力；但只占主营收入约2.4%。海外收入2023年反而下降33.03%，境外资产仅占总资产0.12%，国际化仍是组织和试销阶段。",
+      "causal_mechanism": "电连接安全品牌、功率电子研发、垂直制造及渠道建设方法可以迁移至充电枪桩，使公司比纯新进入者更快建立产品与服务网络；但汽车后市场、运营商、安装商和海外本地渠道与原有五金/装饰渠道重合度低，迁移并非自动发生。",
+      "supporting_evidence": [
+        {
+          "source_id": "CNINFO:603195:FY2022:1216665553",
+          "printed_page": 27,
+          "fact": "2022年新能源收入1.53亿元、同比增长638.62%、毛利率32.34%；公司明确该板块为新分类和新业务开局。"
+        },
+        {
+          "source_id": "CNINFO:603195:FY2023:1219840341",
+          "printed_page": 20,
+          "fact": "2023年新能源收入3.80亿元、同比增长148.64%，产品已由交流/慢充/单桩/C端扩展至直流/快充/群充/储能/B端。"
+        },
+        {
+          "source_id": "CNINFO:603195:FY2023:1219840341",
+          "printed_page": 22,
+          "fact": "截至2023年末，新能源C端累计开发1.7万余家终端网点、B端累计开发1500余家运营商客户，并披露第三方品牌线上销量居前。"
+        },
+        {
+          "source_id": "CNINFO:603195:FY2023:1219840341",
+          "printed_page": 30,
+          "fact": "2023年新能源毛利率34.15%；同期境外收入仅1.75亿元、同比下降33.03%、毛利率27.29%。"
+        },
+        {
+          "source_id": "CNINFO:603195:FY2023:1219840341",
+          "printed_page": 42,
+          "fact": "公司明确提示新能源汽车后市场、B端运营商及海外渠道与既有优势渠道重合度较低，新渠道与新市场可能不达预期。"
+        }
+      ],
+      "strongest_counterargument": "新能源已连续两年高速增长、毛利率不低且技术和渠道覆盖快速形成，可能正处在进入规模化前的拐点；若过度保守，会错失第二增长曲线的价值。",
+      "local_unknown": "没有披露新能源子板块利润、获客成本、客户复购、终端安装量、渠道库存、保修成本、储能订单与海外试销收入，无法证明增长已产生正的增量资本回报。",
+      "flip_facts": [
+        "新能源在保持30%左右或更高毛利率的同时继续高速增长，且经营现金投入受控",
+        "B端运营商出现重复采购、服务收入或稳定订单，证明并非一次性铺货",
+        "海外本地化业务收入形成可见规模且毛利率改善，不再依赖前期试销叙事",
+        "相反，新能源收入停滞、毛利显著下滑或库存/售后负担激增，则取消增长期权"
+      ],
+      "investment_implication": "基础情景只计入新能源的已实现收入与保守利润，不给予远期储能和国际化溢价；若同口径规模、毛利、现金消耗同时得到验证，再上调正常盈利与估值方向。"
+    }
+  ],
+  "management_execution": {
+    "treatment": "POSITIVE_CREDIT",
+    "judgment": "连续三年收入、扣非利润、研发与核心能力建设兑现，2023年在地产逆风下实现智能电工照明增长及集团利润率改善，足以给予正面执行信用。",
+    "boundary": "信用主要授予成熟核心业务、供应链降本和渠道扩张；新能源、储能及国际化仍只给条件性项目信用。"
+  },
+  "normal_earnings": {
+    "treatment": "RAISE",
+    "judgment": "相对2021至2022基线，上调核心正常盈利。2023年扣非归母利润37.03亿元比2022年增长27.51%，核心两板块合计收入与毛利均改善；但不把48.27亿元经营现金流或2023年全部毛利提升直接视为永久新常态。",
+    "normalization": "用2022至2023核心收入能力与跨周期毛利区间承保；剔除非经常损益，不将营运资本释放、理财收益、政府补助或尚未证明的储能/国际化远期利润计入正常盈利。"
+  },
+  "owner_cash": {
+    "treatment": "COUNT_IN_PARENT_OWNER_CASH",
+    "judgment": "核心经济体产生真实现金。合并OCF减全部长期资产购置形成的保守现金下限在2021、2022、2023年约为25.39、20.39、41.72亿元，三年均为正；在少数股东权益不重大时，这一合并口径可近似映射为parent owner cash，但不是精确的母公司股东现金。2023年拟现金分红27.64亿元，占归母净利润71.41%。",
+    "normalization": "全部长期资产购置均被扣除，因此该口径是保守现金下限，不把增长性capex误当维持性capex；2023年库存和材料采购释放不按单年全额外推。只有在NCI不重大时才近似计入parent owner cash，若NCI变得重大且没有归属现金桥则改为COUNT_CONDITIONALLY。理财本金收付从经营性owner cash中排除。",
+    "liquidity_boundary": "即时流动性只计可自由动用货币资金、现金等价物及已核实能在相应短债到期前回款的到期资产；封闭式信托、资管或其他理财不得仅因列入交易性金融资产就等同现金。",
+    "supporting_evidence": [
+      {
+        "source_id": "CNINFO:603195:FY2021:1212886382",
+        "printed_page": 95,
+        "fact": "2021年经营现金流30.14亿元，购建固定资产、无形资产和其他长期资产支付4.75亿元。"
+      },
+      {
+        "source_id": "CNINFO:603195:FY2022:1216665553",
+        "printed_page": 96,
+        "fact": "2022年经营现金流30.58亿元，购建长期资产支付10.19亿元。"
+      },
+      {
+        "source_id": "CNINFO:603195:FY2023:1219840341",
+        "printed_page": 106,
+        "fact": "2023年经营现金流48.27亿元，购建长期资产支付6.55亿元。"
+      },
+      {
+        "source_id": "CNINFO:603195:FY2023:1219840341",
+        "printed_page": 58,
+        "fact": "2023年度拟现金分红27.64亿元，占归母净利润71.41%。"
+      },
+      {
+        "source_id": "CNINFO:603195:FY2023:1219840341",
+        "printed_page": 99,
+        "fact": "2023年末少数股东权益0.145亿元，相对归母权益144.46亿元不重大，支持当前近似，但不构成永久假设。"
+      }
+    ]
+  },
+  "permanent_loss": {
+    "treatment": "RELAX_CONSTRAINT",
+    "judgment": "母公司层面的永久损失约束可放松但不可移除。仅2023年末货币资金47.44亿元已覆盖短期借款5.88亿元和一年内到期非流动负债4.07亿元；交易性金融资产97.27亿元只作为更广义金融资产缓冲，不默认属于即时现金。应收账款仅2.65亿元、前五大客户占比低，经营与融资脆弱性较小。",
+    "residual_risks": [
+      "创始人兼任董事长和总裁，控制权集中，外部治理制衡的实际强度未知",
+      "大量现金配置于封闭式理财，虽降低闲置成本但带来期限和配置纪律问题",
+      "新业务、海外扩张及大额产业基地投资可能把低风险资产负债表转化为资本配置风险",
+      "2023年邦奇智能商誉全额减值，说明相邻业务并购并非天然成功"
+    ],
+    "supporting_evidence": [
+      {
+        "source_id": "CNINFO:603195:FY2023:1219840341",
+        "printed_page": 97,
+        "fact": "2023年末货币资金47.44亿元、交易性金融资产97.27亿元。"
+      },
+      {
+        "source_id": "CNINFO:603195:FY2023:1219840341",
+        "printed_page": 98,
+        "fact": "2023年末应收账款2.65亿元、存货14.21亿元、短期借款5.88亿元。"
+      },
+      {
+        "source_id": "CNINFO:603195:FY2023:1219840341",
+        "printed_page": 34,
+        "fact": "2023年商誉由4513万元降为零，原因为本期全额计提商誉减值。"
+      }
+    ]
+  },
+  "scenarios": {
+    "optimistic": {
+      "description": "核心电连接维持稳健增长，智能电工照明继续以份额和品类扩张抵消地产拖累，产品升级与自动化使毛利维持2023年附近；新能源在高毛利下继续快速放量并出现复购，海外试销转为可复制渠道。",
+      "enterprise_result": "扣非盈利和owner cash继续快于收入增长，增长期权开始进入正常盈利，资产负债表仍保持净现金。",
+      "key_disproof": "新能源放量依赖降价或铺货、核心毛利回吐、海外仍无有效收入。"
+    },
+    "base": {
+      "description": "电连接低至中个位数增长，智能电工照明中高个位数增长；原材料红利部分回吐但产品结构和降本保住大部分毛利改善。新能源继续增长但体量仍小，国际化仍主要投入。",
+      "enterprise_result": "正常盈利温和上行，现金转换保持健康但低于2023年峰值；投资结论仍由核心业务决定，新业务只保留期权价值。",
+      "key_disproof": "核心两板块同时停滞并伴随毛利明显下降，或现金转换恶化。"
+    },
+    "pessimistic": {
+      "description": "家装需求继续下滑且竞争加剧，核心收入停滞或下降，原材料与营销投入令毛利和费用率双向挤压；新能源和海外渠道投入无法形成复购，库存与售后负担上升。",
+      "enterprise_result": "正常盈利下修、owner cash转为条件计入；但庞大净流动性和较低应收仍使短期生存风险低，永久损失主要来自估值过高或资本错误配置而非财务困境。",
+      "key_disproof": "核心收入、毛利和自由现金流仍同步增长，新能源保持质量增长。"
+    }
+  },
+  "valuation_direction": {
+    "treatment": "UP",
+    "direction_only": true,
+    "formal_valuation_performed": false,
+    "buyband_performed": false,
+    "rationale": "方向上调来自核心正常盈利提升、三年现金兑现和净流动性降低永久损失风险；上调幅度受2023年成本/营运资本顺风不可全额年化及新业务未证明约束。该判断不含价格比较、正式估值或BuyBand。"
+  },
+  "next_research_action": {
+    "rank": 1,
+    "action_family": "UNIT_ECONOMICS_AND_SELL_THROUGH_VALIDATION",
+    "target_scope": "新能源充电枪桩业务，优先C端安装与B端运营商复购，不把储能和国际化混入同一验证边界",
+    "fact_or_metric": "同口径终端安装量、经销商进销存、B端复购收入、产品毛利、售后/质保成本及该业务经营现金投入",
+    "decision_axis": "新能源增长是否可从估值期权升级为正常盈利组成部分",
+    "positive_effect": "若销量增长来自终端安装和复购、毛利维持约30%以上且现金投入受控，则上调normal_earnings和valuation_direction，并扩大management_execution信用。",
+    "negative_effect": "若增长来自渠道铺货或降价、复购弱、售后成本高或现金消耗持续，则EXCLUDE_COMPONENT、DO_NOT_COUNT并维持或收紧permanent_loss约束。"
+  },
+  "material_treatment_snapshot": {
+    "management_execution": "POSITIVE_CREDIT",
+    "normal_earnings": "RAISE",
+    "owner_cash": "COUNT_IN_PARENT_OWNER_CASH",
+    "permanent_loss": "RELAX_CONSTRAINT",
+    "valuation_direction": "UP",
+    "next_research_action": {
+      "action_family": "UNIT_ECONOMICS_AND_SELL_THROUGH_VALIDATION",
+      "target_scope": "新能源充电枪桩业务",
+      "fact_or_metric": "终端安装、经销商进销存、B端复购、毛利、售后成本和经营现金投入",
+      "decision_axis": "新能源是否进入正常盈利",
+      "positive_effect": "质量增长则上调正常盈利并扩大正面执行信用",
+      "negative_effect": "铺货或价值破坏则排除该组件且不计owner cash"
+    }
+  },
+  "fy2024_outcome_cells": [
+    {
+      "cell_id": "FY2024_CORE_EARNINGS_DELIVERY",
+      "responsibility_boundary": "成熟核心业务：电连接与智能电工照明。集团扣非归母净利润仅作企业层交叉验证，不作为核心分类的必需输入，不混入新能源、国际化、集团费用或理财收益。",
+      "frozen_fields": {
+        "required_numeric": [
+          "FY2024电连接主营收入与主营成本",
+          "FY2024智能电工照明主营收入与主营成本",
+          "FY2023同口径重述的上述四项"
+        ],
+        "optional_cross_check_only": [
+          "FY2024与FY2023扣非归母净利润",
+          "可归因于新能源、国际化和集团费用的扣非利润桥"
+        ],
+        "field_status_codes": [
+          "AVAILABLE",
+          "UNDISCLOSED",
+          "NOT_COMPARABLE"
+        ]
+      },
+      "input_and_comparability_gate": [
+        {
+          "order": 0,
+          "output": "LOCAL_UNKNOWN",
+          "condition": "任一required_numeric字段为UNDISCLOSED，或任一必需分母为零、无效或无法识别",
+          "local_settlement": "仅冻结本核心cell；不得把未披露当作零或CORE_EROSION，其他cell继续独立判断。"
+        },
+        {
+          "order": 1,
+          "output": "COMPARABILITY_MISMATCH",
+          "condition": "任一required_numeric字段为NOT_COMPARABLE，或FY2023没有同口径重述，或板块范围/会计口径变化无法桥接",
+          "local_settlement": "仅冻结本核心cell并研究口径桥；不得下修核心执行、正常盈利或估值。"
+        },
+        {
+          "order": 2,
+          "output": "VALID_NUMERIC_INPUT",
+          "condition": "全部required_numeric字段AVAILABLE、分母有效且FY2023比较数同口径"
+        }
+      ],
+      "frozen_formulas": {
+        "core_revenue_growth": "(FY2024两核心板块收入合计 / FY2023同口径两核心板块收入合计) - 1",
+        "core_weighted_gross_margin": "1 - FY2024两核心板块主营成本合计 / FY2024两核心板块主营收入合计",
+        "core_weighted_gross_margin_change_pp": "FY2024核心加权毛利率 - FY2023同口径核心加权毛利率，以百分点表示",
+        "group_adjusted_profit_growth_cross_check": "若两年集团扣非归母净利润均AVAILABLE且分母有效，则FY2024/FY2023-1；只作交叉验证"
+      },
+      "group_adjusted_profit_cross_check_rule": {
+        "aligned": "与核心收入/毛利方向一致时提高结论置信度，但不增加跨轴权限。",
+        "attributable_mismatch": "核心强而集团扣非弱，且差异可归因于新能源、国际化或集团费用投入时，标记ENTERPRISE_CROSS_CHECK_MISMATCH，不反判核心侵蚀。",
+        "unexplained_mismatch": "差异无法归因时降低核心分类置信度并触发利润桥研究；在利润桥闭合前不得把集团指标替代核心指标。",
+        "unavailable": "不影响核心数值分类。"
+      },
+      "first_match_classification_after_valid_gate_only": [
+        {
+          "order": 1,
+          "class": "CORE_COMPOUNDING",
+          "condition": "core_revenue_growth >= 8% AND core_weighted_gross_margin_change_pp >= -1.0"
+        },
+        {
+          "order": 2,
+          "class": "CORE_HOLDING",
+          "condition": "未命中1，且 core_revenue_growth >= 0% AND core_weighted_gross_margin_change_pp >= -2.0"
+        },
+        {
+          "order": 3,
+          "class": "CORE_EROSION",
+          "condition": "ELSE，仅指全部required_numeric输入完整、有效、同口径后的数值补集；LOCAL_UNKNOWN或COMPARABILITY_MISMATCH永不进入此ELSE"
+        }
+      ],
+      "gate_to_six_axis_treatment": {
+        "LOCAL_UNKNOWN": {
+          "management_execution": "POSITIVE_CREDIT",
+          "normal_earnings": "RAISE",
+          "owner_cash": "COUNT_IN_PARENT_OWNER_CASH",
+          "permanent_loss": "MAINTAIN_CONSTRAINT",
+          "valuation_direction": "UP",
+          "next_research_action": {
+            "action_family": "MISSING_CORE_FIELD_RECOVERY",
+            "target_scope": "缺失的核心板块字段",
+            "fact_or_metric": "收入、成本、分母有效性",
+            "decision_axis": "核心执行与正常盈利",
+            "positive_effect": "恢复数值分类",
+            "negative_effect": "继续局部冻结，不传播负面"
+          },
+          "non_propagation": "沿用前置企业判断；该cell不更新任何轴。"
+        },
+        "COMPARABILITY_MISMATCH": {
+          "management_execution": "POSITIVE_CREDIT",
+          "normal_earnings": "RAISE",
+          "owner_cash": "COUNT_IN_PARENT_OWNER_CASH",
+          "permanent_loss": "MAINTAIN_CONSTRAINT",
+          "valuation_direction": "UP",
+          "next_research_action": {
+            "action_family": "CORE_SCOPE_BRIDGE",
+            "target_scope": "FY2023至FY2024板块重分类",
+            "fact_or_metric": "同口径收入与成本桥",
+            "decision_axis": "核心经济可比性",
+            "positive_effect": "桥接后恢复分类",
+            "negative_effect": "维持局部冻结"
+          },
+          "non_propagation": "口径不匹配不得解释为经济恶化。"
+        }
+      },
+      "class_to_six_axis_treatment_assuming_other_cells_neutral": {
+        "CORE_COMPOUNDING": {
+          "management_execution": "POSITIVE_CREDIT",
+          "normal_earnings": "RAISE",
+          "owner_cash": "COUNT_IN_PARENT_OWNER_CASH",
+          "permanent_loss": "MAINTAIN_CONSTRAINT",
+          "valuation_direction": "UP",
+          "next_research_action": {
+            "action_family": "CORE_PROFIT_BRIDGE",
+            "target_scope": "核心产品结构与费用",
+            "fact_or_metric": "价格销量桥、同店动销和核心贡献利润",
+            "decision_axis": "核心复利质量",
+            "positive_effect": "巩固RAISE",
+            "negative_effect": "降低增量置信度"
+          },
+          "propagation_limit": "只直接更新核心执行、normal_earnings与valuation_direction；owner_cash沿用原处理，本cell不得自动RELAX永久损失约束。"
+        },
+        "CORE_HOLDING": {
+          "management_execution": "CONDITIONAL_CREDIT",
+          "normal_earnings": "UNCHANGED",
+          "owner_cash": "COUNT_IN_PARENT_OWNER_CASH",
+          "permanent_loss": "MAINTAIN_CONSTRAINT",
+          "valuation_direction": "UNCHANGED",
+          "next_research_action": {
+            "action_family": "CORE_SELL_THROUGH_DIAGNOSIS",
+            "target_scope": "电连接与智能电工照明",
+            "fact_or_metric": "同店动销、价格销量桥和渠道库存",
+            "decision_axis": "护城河是否只是守成",
+            "positive_effect": "恢复RAISE",
+            "negative_effect": "出现核心经济侵蚀证据才转LOWER"
+          },
+          "propagation_limit": "owner_cash不变；永久损失只维持，不因核心守成自动放松。"
+        },
+        "CORE_EROSION": {
+          "management_execution": "NEGATIVE_CREDIT",
+          "normal_earnings": "LOWER",
+          "owner_cash": "COUNT_IN_PARENT_OWNER_CASH",
+          "permanent_loss": "TIGHTEN_CONSTRAINT",
+          "valuation_direction": "DOWN",
+          "next_research_action": {
+            "action_family": "CORE_EROSION_ATTRIBUTION",
+            "target_scope": "核心品类、渠道和毛利",
+            "fact_or_metric": "份额、终端库存、价格、材料成本和费用回报",
+            "decision_axis": "核心经济侵蚀是否可逆",
+            "positive_effect": "若只是短期成本扰动则恢复MAINTAIN_CONSTRAINT",
+            "negative_effect": "若份额与动销受损则维持LOWER与DOWN"
+          },
+          "propagation_limit": "完整可比的核心收入/毛利侵蚀可收紧PL，但无现金字段不得改变owner_cash原处理。"
+        }
+      }
+    },
+    {
+      "cell_id": "FY2024_CONSERVATIVE_CASH_FLOOR_AND_IMMEDIATE_LIQUIDITY",
+      "responsibility_boundary": "合并OCF减全部长期资产购置的保守现金下限，以及能在短债到期前动用的即时流动性。NCI不重大时才近似映射至parent owner cash；封闭式理财不自动算即时现金。",
+      "frozen_fields": {
+        "required_cash_floor": [
+          "FY2024经营活动现金流量净额",
+          "FY2024购建固定资产、无形资产和其他长期资产支付的现金",
+          "FY2024扣非归母净利润"
+        ],
+        "nci_materiality": [
+          "FY2024年末少数股东权益与总权益",
+          "重大非全资子公司经营现金及归属桥，如NCI已重大"
+        ],
+        "capex_purpose": [
+          "已明确的维持性capex",
+          "已明确的扩产/增长性capex",
+          "无法拆分部分"
+        ],
+        "immediate_liquidity": [
+          "不受限货币资金与现金等价物",
+          "已核实可随时赎回或在相应短债到期前回款的到期资产",
+          "短期借款、一年内到期非流动负债及一年内到期长期借款"
+        ],
+        "excluded_from_immediate_liquidity_unless_maturity_verified": [
+          "封闭式信托",
+          "封闭式资管计划",
+          "其他仅因列入交易性金融资产但不可立即动用的产品"
+        ],
+        "field_status_codes": [
+          "AVAILABLE",
+          "UNDISCLOSED",
+          "NOT_COMPARABLE"
+        ]
+      },
+      "frozen_formulas": {
+        "consolidated_conservative_cash_floor": "经营活动现金流量净额 - 全部购建固定资产、无形资产和其他长期资产支付的现金",
+        "conservative_cash_floor_conversion": "consolidated_conservative_cash_floor / FY2024扣非归母净利润，仅在分母有效且NCI不重大或已有归属桥时解释为parent近似转换",
+        "ocf_profit_conversion": "FY2024经营活动现金流量净额 / FY2024扣非归母净利润",
+        "identified_growth_capex": "年报明确归为扩产、募投建设或新产能的长期资产购置；未披露不得臆测",
+        "cash_after_identified_maintenance_range": "下限=consolidated_conservative_cash_floor；上限=经营活动现金流量净额-max(全部长期资产购置-identified_growth_capex,0)",
+        "nci_equity_ratio": "少数股东权益 / 总所有者权益",
+        "nci_immaterial_gate": "nci_equity_ratio < 5% 且没有证据表明重大经营现金来自非全资子公司",
+        "immediate_liquidity": "不受限货币资金与现金等价物 + 已核实可在相应短债到期前回款的资产；不得无条件加入全部交易性金融资产",
+        "immediate_debt_coverage": "immediate_liquidity / 一年内到期有息债务；若一年内到期有息债务为0且immediate_liquidity>=0，定义为无短债约束而非分母错误",
+        "broad_net_financial_assets_information_only": "货币资金+交易性金融资产-有息债务；仅作广义资产信息，不参与即时流动性门"
+      },
+      "input_and_comparability_gate": [
+        {
+          "order": 0,
+          "output": "LOCAL_UNKNOWN",
+          "condition": "任一required_cash_floor字段UNDISCLOSED，或扣非归母净利润分母为零/无效",
+          "local_settlement": "仅冻结现金下限判断；沿用历史owner_cash处理，不得因缺失判弱，其他cell继续。"
+        },
+        {
+          "order": 1,
+          "output": "COMPARABILITY_MISMATCH",
+          "condition": "OCF、长期资产购置或扣非归母口径发生无法桥接的范围变化",
+          "local_settlement": "仅冻结现金cell，不传播至normal_earnings或估值。"
+        },
+        {
+          "order": 2,
+          "output": "PARENT_ATTRIBUTION_UNKNOWN",
+          "condition": "NCI不满足nci_immaterial_gate且重大非全资子公司现金归属桥UNDISCLOSED或无效",
+          "local_settlement": "可描述合并现金下限，但parent owner cash仅COUNT_CONDITIONALLY，不得COUNT_IN_PARENT_OWNER_CASH。"
+        },
+        {
+          "order": 3,
+          "output": "LOCAL_UNKNOWN_IMMEDIATE_LIQUIDITY",
+          "condition": "不受限货币资金、合格到期资产或一年内到期有息债务任一无法识别",
+          "local_settlement": "owner cash与流动性PL分开结算；不得用封闭式理财补足即时流动性并RELAX。"
+        },
+        {
+          "order": 4,
+          "output": "CAPEX_PURPOSE_UNKNOWN",
+          "condition": "consolidated_conservative_cash_floor <= 0 且capex用途桥UNDISCLOSED或不可拆分",
+          "local_settlement": "owner cash改为COUNT_CONDITIONALLY；不得仅凭总capex判WEAK_CASH或DO_NOT_COUNT。"
+        },
+        {
+          "order": 5,
+          "output": "VALID_NUMERIC_INPUT",
+          "condition": "现金下限、NCI归属、capex用途和即时流动性均可按上述规则有效处理"
+        }
+      ],
+      "first_match_classification_after_valid_gate_only": [
+        {
+          "order": 1,
+          "class": "DURABLE_CONSERVATIVE_CASH_FLOOR",
+          "condition": "consolidated_conservative_cash_floor > 0 AND conservative_cash_floor_conversion >= 80% AND immediate_debt_coverage >= 1"
+        },
+        {
+          "order": 2,
+          "class": "POSITIVE_BUT_MIXED_CASH_FLOOR",
+          "condition": "未命中1，且 consolidated_conservative_cash_floor > 0 AND immediate_debt_coverage >= 1"
+        },
+        {
+          "order": 3,
+          "class": "EXPANSION_FUNDED_CASH",
+          "condition": "未命中1-2，且 consolidated_conservative_cash_floor <= 0 AND ocf_profit_conversion >= 80% AND identified_growth_capex >= abs(consolidated_conservative_cash_floor) AND immediate_debt_coverage >= 1"
+        },
+        {
+          "order": 4,
+          "class": "WEAK_CONSERVATIVE_CASH_FLOOR_OR_LIQUIDITY",
+          "condition": "ELSE，仅指全部必需输入完整、有效、可比，NCI归属可处理、capex用途已知且即时流动性已核实后的数值补集；任何UNKNOWN或MISMATCH永不进入此ELSE"
+        }
+      ],
+      "gate_to_six_axis_treatment": {
+        "LOCAL_UNKNOWN": {
+          "management_execution": "POSITIVE_CREDIT",
+          "normal_earnings": "RAISE",
+          "owner_cash": "COUNT_IN_PARENT_OWNER_CASH",
+          "permanent_loss": "MAINTAIN_CONSTRAINT",
+          "valuation_direction": "UP",
+          "next_research_action": {
+            "action_family": "CASH_INPUT_RECOVERY",
+            "target_scope": "缺失现金流字段",
+            "fact_or_metric": "OCF、全部长期资产购置或有效利润分母",
+            "decision_axis": "保守现金下限",
+            "positive_effect": "恢复分类",
+            "negative_effect": "继续局部冻结"
+          },
+          "non_propagation": "历史owner_cash结论保留，但FY2024不新增信用；normal_earnings与valuation不由本cell更新。"
+        },
+        "COMPARABILITY_MISMATCH": {
+          "management_execution": "POSITIVE_CREDIT",
+          "normal_earnings": "RAISE",
+          "owner_cash": "COUNT_IN_PARENT_OWNER_CASH",
+          "permanent_loss": "MAINTAIN_CONSTRAINT",
+          "valuation_direction": "UP",
+          "next_research_action": {
+            "action_family": "CASH_SCOPE_BRIDGE",
+            "target_scope": "合并范围与现金流口径",
+            "fact_or_metric": "可比OCF、capex与利润桥",
+            "decision_axis": "现金转换可比性",
+            "positive_effect": "桥接后恢复分类",
+            "negative_effect": "保持局部冻结"
+          },
+          "non_propagation": "口径变化不得判为现金恶化。"
+        },
+        "PARENT_ATTRIBUTION_UNKNOWN": {
+          "management_execution": "POSITIVE_CREDIT",
+          "normal_earnings": "RAISE",
+          "owner_cash": "COUNT_CONDITIONALLY",
+          "permanent_loss": "MAINTAIN_CONSTRAINT",
+          "valuation_direction": "UP",
+          "next_research_action": {
+            "action_family": "NCI_CASH_ATTRIBUTION",
+            "target_scope": "重大非全资子公司",
+            "fact_or_metric": "归母可支配现金桥",
+            "decision_axis": "parent owner cash",
+            "positive_effect": "可归属后COUNT_IN_PARENT_OWNER_CASH",
+            "negative_effect": "无法归属则保持条件计入"
+          },
+          "non_propagation": "不得把合并现金100%归于母公司股东。"
+        },
+        "LOCAL_UNKNOWN_IMMEDIATE_LIQUIDITY": {
+          "management_execution": "POSITIVE_CREDIT",
+          "normal_earnings": "RAISE",
+          "owner_cash": "COUNT_CONDITIONALLY",
+          "permanent_loss": "MAINTAIN_CONSTRAINT",
+          "valuation_direction": "UP",
+          "next_research_action": {
+            "action_family": "LIQUIDITY_MATURITY_LADDER",
+            "target_scope": "不受限现金、理财到期和短债",
+            "fact_or_metric": "可动用金额与到期日",
+            "decision_axis": "即时偿债缓冲",
+            "positive_effect": "覆盖充分才RELAX_CONSTRAINT",
+            "negative_effect": "覆盖不足则TIGHTEN_CONSTRAINT"
+          },
+          "non_propagation": "封闭式产品不得替代缺失的即时流动性证据。"
+        },
+        "CAPEX_PURPOSE_UNKNOWN": {
+          "management_execution": "POSITIVE_CREDIT",
+          "normal_earnings": "RAISE",
+          "owner_cash": "COUNT_CONDITIONALLY",
+          "permanent_loss": "MAINTAIN_CONSTRAINT",
+          "valuation_direction": "UP",
+          "next_research_action": {
+            "action_family": "CAPEX_PURPOSE_BRIDGE",
+            "target_scope": "长期资产购置",
+            "fact_or_metric": "维持性、扩产性与不可拆分capex",
+            "decision_axis": "保守现金下限解释",
+            "positive_effect": "扩产解释闭合则转EXPANSION_FUNDED_CASH",
+            "negative_effect": "维持性资本吞噬则判弱"
+          },
+          "non_propagation": "负的保守下限不得在capex用途未知时自动判弱。"
+        }
+      },
+      "class_to_six_axis_treatment_assuming_other_cells_neutral": {
+        "DURABLE_CONSERVATIVE_CASH_FLOOR": {
+          "management_execution": "POSITIVE_CREDIT",
+          "normal_earnings": "RAISE",
+          "owner_cash": "COUNT_IN_PARENT_OWNER_CASH",
+          "permanent_loss": "RELAX_CONSTRAINT",
+          "valuation_direction": "UP",
+          "next_research_action": {
+            "action_family": "CAPITAL_ALLOCATION_REVIEW",
+            "target_scope": "可归母现金用途",
+            "fact_or_metric": "分红、回购、扩产和并购回报",
+            "decision_axis": "现金是否增厚每股价值",
+            "positive_effect": "维持全额计入与流动性放松",
+            "negative_effect": "误配则收紧资本配置约束"
+          },
+          "propagation_limit": "只更新owner_cash与流动性相关permanent_loss；normal_earnings的RAISE及valuation的UP沿用前置判断，不由现金cell新增。"
+        },
+        "POSITIVE_BUT_MIXED_CASH_FLOOR": {
+          "management_execution": "POSITIVE_CREDIT",
+          "normal_earnings": "RAISE",
+          "owner_cash": "COUNT_CONDITIONALLY",
+          "permanent_loss": "RELAX_CONSTRAINT",
+          "valuation_direction": "UP",
+          "next_research_action": {
+            "action_family": "WORKING_CAPITAL_BRIDGE",
+            "target_scope": "合并经营现金",
+            "fact_or_metric": "存货、应收、应付和合同负债变动",
+            "decision_axis": "利润现金化",
+            "positive_effect": "恢复全额计入",
+            "negative_effect": "维持条件计入"
+          },
+          "propagation_limit": "不改变正常盈利金额或估值方向。"
+        },
+        "EXPANSION_FUNDED_CASH": {
+          "management_execution": "POSITIVE_CREDIT",
+          "normal_earnings": "RAISE",
+          "owner_cash": "COUNT_CONDITIONALLY",
+          "permanent_loss": "RELAX_CONSTRAINT",
+          "valuation_direction": "UP",
+          "next_research_action": {
+            "action_family": "EXPANSION_RETURN_VALIDATION",
+            "target_scope": "已识别扩产项目",
+            "fact_or_metric": "投产节奏、利用率和增量资本回报",
+            "decision_axis": "增长capex是否创造价值",
+            "positive_effect": "回报兑现后恢复全额计入",
+            "negative_effect": "低回报则收紧PL约束"
+          },
+          "propagation_limit": "扩产capex导致保守下限为负不等于owner cash弱，不得下修normal_earnings。"
+        },
+        "WEAK_CONSERVATIVE_CASH_FLOOR_OR_LIQUIDITY": {
+          "management_execution": "POSITIVE_CREDIT",
+          "normal_earnings": "RAISE",
+          "owner_cash": "DO_NOT_COUNT",
+          "permanent_loss": "TIGHTEN_CONSTRAINT",
+          "valuation_direction": "UP",
+          "next_research_action": {
+            "action_family": "CASH_LEAKAGE_OR_LIQUIDITY_DIAGNOSIS",
+            "target_scope": "营运资本、维持性capex与短债",
+            "fact_or_metric": "现金缺口来源、期限和可逆性",
+            "decision_axis": "股东现金与流动性",
+            "positive_effect": "可逆则转COUNT_CONDITIONALLY",
+            "negative_effect": "结构性吞噬则维持DO_NOT_COUNT并收紧PL"
+          },
+          "propagation_limit": "即使现金弱，本cell也不得单独把normal_earnings从RAISE改为LOWER或直接改变valuation_direction。"
+        }
+      }
+    },
+    {
+      "cell_id": "FY2024_NEW_ENERGY_GROWTH_OPTION",
+      "responsibility_boundary": "新能源产品板块的项目级执行与增长期权；不混入核心电连接、智能电工照明、海外其他品类或集团理财。复购、营业利润和业务现金投入未闭合前，不得把新能源纳入normal_earnings或owner_cash。",
+      "frozen_fields": {
+        "required_scale_fields": [
+          "FY2024新能源主营收入与主营成本",
+          "FY2023同口径新能源主营收入与主营成本"
+        ],
+        "additional_scale_proof_fields": [
+          "FY2024与FY2023新能源产量、销量和库存量，且单位与范围一致"
+        ],
+        "required_before_earnings_or_cash_upgrade": [
+          "终端安装或B端复购",
+          "新能源营业利润",
+          "新能源经营现金投入",
+          "售后与质保成本"
+        ],
+        "explicit_value_destruction_evidence": [
+          "新能源营业亏损与经营现金净流出同时出现",
+          "新能源相关重大存货或资产减值",
+          "重大售后/质保负担",
+          "不可撤销且相对项目规模重大的后续资本承诺"
+        ],
+        "field_status_codes": [
+          "AVAILABLE",
+          "UNDISCLOSED",
+          "NOT_COMPARABLE"
+        ]
+      },
+      "frozen_formulas": {
+        "new_energy_revenue_growth": "FY2024新能源收入 / FY2023同口径新能源收入 - 1",
+        "new_energy_gross_margin": "1 - FY2024新能源主营成本 / FY2024新能源主营收入",
+        "production_growth": "FY2024新能源产量 / FY2023同口径新能源产量 - 1",
+        "sales_volume_growth": "FY2024新能源销量 / FY2023同口径新能源销量 - 1",
+        "production_sales_growth_gap_pp": "production_growth - sales_volume_growth，以百分点表示",
+        "value_destruction_overlay": "只有explicit_value_destruction_evidence至少一项AVAILABLE且事实成立时才为TRUE；收入停滞、低毛利或产销差单独均不等于价值破坏"
+      },
+      "input_and_comparability_gate": [
+        {
+          "order": 0,
+          "output": "LOCAL_UNKNOWN",
+          "condition": "任一required_scale_fields为UNDISCLOSED，或收入分母为零/无效",
+          "local_settlement": "仅冻结新能源项目判断；不得映射为价值破坏，核心与现金cell继续。"
+        },
+        {
+          "order": 1,
+          "output": "COMPARABILITY_MISMATCH",
+          "condition": "required_scale_fields为NOT_COMPARABLE，或FY2023无同口径重述",
+          "local_settlement": "只研究新能源口径桥；不得取消增长期权或给予负面企业级信用。"
+        },
+        {
+          "order": 2,
+          "output": "VALUE_DESTRUCTION_EVIDENCED",
+          "condition": "value_destruction_overlay == TRUE；该类与单纯停滞分开，仍只作项目级结论"
+        },
+        {
+          "order": 3,
+          "output": "INCOMPLETE_SCALE_PROOF",
+          "condition": "required_scale_fields完整可比，但additional_scale_proof_fields任一UNDISCLOSED、NOT_COMPARABLE、单位/范围变化或分母无效",
+          "local_settlement": "最多保留有条件增长期权；不得进入价值破坏类。"
+        },
+        {
+          "order": 4,
+          "output": "VALID_NUMERIC_INPUT",
+          "condition": "required_scale_fields与additional_scale_proof_fields均AVAILABLE、有效且同口径"
+        }
+      ],
+      "first_match_classification_after_valid_gate_only": [
+        {
+          "order": 1,
+          "class": "QUALITY_SCALE_OPTION_RETAINED",
+          "condition": "new_energy_revenue_growth >= 50% AND new_energy_gross_margin >= 30% AND production_sales_growth_gap_pp <= 15"
+        },
+        {
+          "order": 2,
+          "class": "GROWTH_OPTION_RETAINED_BUT_UNPROVEN",
+          "condition": "未命中1，且 new_energy_revenue_growth > 0% AND new_energy_gross_margin >= 20%"
+        },
+        {
+          "order": 3,
+          "class": "STALLED_GROWTH_OPTION",
+          "condition": "未命中1-2，且 new_energy_revenue_growth <= 0%"
+        },
+        {
+          "order": 4,
+          "class": "LOW_QUALITY_OR_INVENTORY_RISK_OPTION",
+          "condition": "ELSE，仅指全部规模输入完整、有效、同口径后的数值补集；它不是VALUE_DESTRUCTION，任何UNKNOWN或MISMATCH永不进入此ELSE"
+        }
+      ],
+      "gate_to_six_axis_treatment": {
+        "LOCAL_UNKNOWN": {
+          "management_execution": "NO_CREDIT_ASSIGNED",
+          "normal_earnings": "EXCLUDE_COMPONENT",
+          "owner_cash": "DO_NOT_COUNT",
+          "permanent_loss": "MAINTAIN_CONSTRAINT",
+          "valuation_direction": "UNCHANGED",
+          "next_research_action": {
+            "action_family": "NEW_ENERGY_FIELD_RECOVERY",
+            "target_scope": "新能源缺失字段",
+            "fact_or_metric": "同口径收入与成本",
+            "decision_axis": "项目执行与增长期权",
+            "positive_effect": "恢复项目分类",
+            "negative_effect": "继续排除组件但不传播负面"
+          },
+          "growth_option_treatment": "FREEZE",
+          "non_propagation": "只冻结新能源组件；不改变核心normal_earnings、parent owner cash、PL或企业估值方向。"
+        },
+        "COMPARABILITY_MISMATCH": {
+          "management_execution": "NO_CREDIT_ASSIGNED",
+          "normal_earnings": "EXCLUDE_COMPONENT",
+          "owner_cash": "DO_NOT_COUNT",
+          "permanent_loss": "MAINTAIN_CONSTRAINT",
+          "valuation_direction": "UNCHANGED",
+          "next_research_action": {
+            "action_family": "NEW_ENERGY_SCOPE_BRIDGE",
+            "target_scope": "新能源重分类",
+            "fact_or_metric": "同口径收入、成本与产品范围",
+            "decision_axis": "项目可比性",
+            "positive_effect": "桥接后恢复分类",
+            "negative_effect": "维持局部冻结"
+          },
+          "growth_option_treatment": "FREEZE",
+          "non_propagation": "口径变化不等于停滞或价值破坏。"
+        },
+        "INCOMPLETE_SCALE_PROOF": {
+          "management_execution": "CONDITIONAL_CREDIT",
+          "normal_earnings": "EXCLUDE_COMPONENT",
+          "owner_cash": "DO_NOT_COUNT",
+          "permanent_loss": "MAINTAIN_CONSTRAINT",
+          "valuation_direction": "UNCHANGED",
+          "next_research_action": {
+            "action_family": "VOLUME_AND_INVENTORY_RECOVERY",
+            "target_scope": "新能源产销存",
+            "fact_or_metric": "同口径产量、销量、库存及单位",
+            "decision_axis": "规模增长真实性",
+            "positive_effect": "完成质量规模判断",
+            "negative_effect": "仍仅保留条件性期权"
+          },
+          "growth_option_treatment": "RETAIN_CONDITIONALLY",
+          "non_propagation": "收入毛利已知而产销量缺失，最多是不完全证明；不得纳入正常盈利或owner cash。"
+        },
+        "VALUE_DESTRUCTION_EVIDENCED": {
+          "management_execution": "NEGATIVE_CREDIT",
+          "normal_earnings": "EXCLUDE_COMPONENT",
+          "owner_cash": "DO_NOT_COUNT",
+          "permanent_loss": "MAINTAIN_CONSTRAINT",
+          "valuation_direction": "UNCHANGED",
+          "next_research_action": {
+            "action_family": "PROJECT_STOP_LOSS_AND_PARENT_MATERIALITY",
+            "target_scope": "新能源亏损、现金流出、减值与资本承诺",
+            "fact_or_metric": "可撤销性及相对集团owner cash的重要性",
+            "decision_axis": "项目止损与是否传播至parent PL",
+            "positive_effect": "及时止损则不影响核心估值",
+            "negative_effect": "若对parent重大且持续才TIGHTEN_CONSTRAINT并转DOWN"
+          },
+          "growth_option_treatment": "STOP_LOSS_REVIEW",
+          "non_propagation": "项目级价值破坏不自动变成企业级负面信用；需另过parent materiality门。"
+        }
+      },
+      "class_to_six_axis_treatment_assuming_other_cells_neutral": {
+        "QUALITY_SCALE_OPTION_RETAINED": {
+          "management_execution": "POSITIVE_CREDIT",
+          "normal_earnings": "EXCLUDE_COMPONENT",
+          "owner_cash": "DO_NOT_COUNT",
+          "permanent_loss": "MAINTAIN_CONSTRAINT",
+          "valuation_direction": "UNCHANGED",
+          "next_research_action": {
+            "action_family": "REPEAT_PURCHASE_PROFIT_AND_CASH_VALIDATION",
+            "target_scope": "新能源B端复购与C端安装",
+            "fact_or_metric": "复购、营业利润、售后成本和业务现金投入",
+            "decision_axis": "增长期权能否升级为正常盈利",
+            "positive_effect": "全部闭合后才考虑纳入normal_earnings与owner cash",
+            "negative_effect": "继续仅保留期权"
+          },
+          "growth_option_treatment": "RETAIN_AND_STRENGTHEN",
+          "propagation_limit": "POSITIVE_CREDIT仅限新能源项目；在复购、营业利润、现金投入闭合前，企业normal_earnings、parent owner cash和valuation均不因本cell上调。"
+        },
+        "GROWTH_OPTION_RETAINED_BUT_UNPROVEN": {
+          "management_execution": "CONDITIONAL_CREDIT",
+          "normal_earnings": "EXCLUDE_COMPONENT",
+          "owner_cash": "DO_NOT_COUNT",
+          "permanent_loss": "MAINTAIN_CONSTRAINT",
+          "valuation_direction": "UNCHANGED",
+          "next_research_action": {
+            "action_family": "CHANNEL_INVENTORY_AND_UNIT_ECONOMICS",
+            "target_scope": "新能源充电枪桩",
+            "fact_or_metric": "终端安装、渠道库存、复购、营业利润、现金投入和质保",
+            "decision_axis": "增长真实性",
+            "positive_effect": "升级QUALITY_SCALE_OPTION_RETAINED",
+            "negative_effect": "移除增长期权"
+          },
+          "growth_option_treatment": "RETAIN_CONDITIONALLY",
+          "propagation_limit": "仅更新项目执行与期权状态，其他轴不传播。"
+        },
+        "STALLED_GROWTH_OPTION": {
+          "management_execution": "NEGATIVE_CREDIT",
+          "normal_earnings": "EXCLUDE_COMPONENT",
+          "owner_cash": "DO_NOT_COUNT",
+          "permanent_loss": "MAINTAIN_CONSTRAINT",
+          "valuation_direction": "UNCHANGED",
+          "next_research_action": {
+            "action_family": "GROWTH_OPTION_REUNDERWRITE",
+            "target_scope": "新能源市场、渠道与产品",
+            "fact_or_metric": "停滞原因、库存和可撤销投入",
+            "decision_axis": "是否移除增长期权",
+            "positive_effect": "可逆停滞则保留条件性期权",
+            "negative_effect": "结构性停滞则移除期权"
+          },
+          "growth_option_treatment": "REMOVE_UNLESS_REVERSIBLE",
+          "propagation_limit": "停滞不是价值破坏；NEGATIVE_CREDIT仅限项目，不改变核心盈利、parent owner cash或企业估值。"
+        },
+        "LOW_QUALITY_OR_INVENTORY_RISK_OPTION": {
+          "management_execution": "NEGATIVE_CREDIT",
+          "normal_earnings": "EXCLUDE_COMPONENT",
+          "owner_cash": "DO_NOT_COUNT",
+          "permanent_loss": "MAINTAIN_CONSTRAINT",
+          "valuation_direction": "UNCHANGED",
+          "next_research_action": {
+            "action_family": "INVENTORY_AND_MARGIN_DIAGNOSIS",
+            "target_scope": "新能源低毛利或产销差",
+            "fact_or_metric": "渠道库存、折价、终端安装和售后",
+            "decision_axis": "低质量增长是否可逆",
+            "positive_effect": "改善后保留期权",
+            "negative_effect": "有现金/减值证据后才升级为VALUE_DESTRUCTION_EVIDENCED"
+          },
+          "growth_option_treatment": "RETAIN_WITH_LOW_CONFIDENCE",
+          "propagation_limit": "低质量或库存风险不等于已证实价值破坏，不跨轴传播。"
+        }
+      }
+    }
+  ],
+  "preoutcome_counterexamples": [
+    {
+      "id": 1,
+      "input_case": "FY2023核心板块比较数无法按FY2024口径重述。",
+      "expected_classification": "COMPARABILITY_MISMATCH",
+      "expected_non_propagation": "不得输出CORE_EROSION，不得下修核心执行、normal_earnings、owner cash、PL或valuation。"
+    },
+    {
+      "id": 2,
+      "input_case": "新能源收入和毛利已知且可比，但产销量未披露或单位变化。",
+      "expected_classification": "INCOMPLETE_SCALE_PROOF",
+      "expected_non_propagation": "不得输出VALUE_DESTRUCTION；normal_earnings=EXCLUDE_COMPONENT、owner_cash=DO_NOT_COUNT，parent其他轴不变。"
+    },
+    {
+      "id": 3,
+      "input_case": "任一cell的必需分母为零、无效或未披露。",
+      "expected_classification": "LOCAL_UNKNOWN，仅限受影响cell",
+      "expected_non_propagation": "该cell不得借ELSE落入负面类，另外两个cell仍独立判定。"
+    },
+    {
+      "id": 4,
+      "input_case": "核心收入增长和毛利变化达到CORE_COMPOUNDING，但集团扣非利润因明确的新业务投入未达预期。",
+      "expected_classification": "CORE_COMPOUNDING + ENTERPRISE_CROSS_CHECK_MISMATCH",
+      "expected_non_propagation": "集团扣非只触发利润桥，不得直接输出CORE_EROSION；核心cell不更新owner cash，PL不得自动RELAX。"
+    },
+    {
+      "id": 5,
+      "input_case": "现金下限和即时流动性达到DURABLE_CONSERVATIVE_CASH_FLOOR，但没有新增盈利能力证据；或核心达到强档但没有现金字段。",
+      "expected_classification": "对应现金/核心强档各自成立",
+      "expected_non_propagation": "现金cell不得单独把normal_earnings改为RAISE，核心cell不得单独把owner_cash改为全额计入；JSON中的相同代码只表示沿用前置处理。"
+    },
+    {
+      "id": 6,
+      "input_case": "新能源收入增长60%、毛利31%、产销增长差5个百分点，但复购、营业利润和现金投入未知。",
+      "expected_classification": "QUALITY_SCALE_OPTION_RETAINED",
+      "expected_non_propagation": "仅给予项目级POSITIVE_CREDIT并加强增长期权；normal_earnings=EXCLUDE_COMPONENT、owner_cash=DO_NOT_COUNT，下一步仍验证复购、利润与现金。"
+    },
+    {
+      "id": 7,
+      "input_case": "OCF/利润转换健康、即时流动性覆盖短债，但保守现金下限小于等于零，缺口完全由已识别扩产性capex解释。",
+      "expected_classification": "EXPANSION_FUNDED_CASH",
+      "expected_non_propagation": "不得输出WEAK、DO_NOT_COUNT或下修normal_earnings；owner_cash仅COUNT_CONDITIONALLY并研究扩产回报。"
+    },
+    {
+      "id": 8,
+      "input_case": "NCI变得重大且没有重大非全资子公司的可归属现金桥。",
+      "expected_classification": "PARENT_ATTRIBUTION_UNKNOWN",
+      "expected_non_propagation": "不得输出COUNT_IN_PARENT_OWNER_CASH；只把owner_cash改为COUNT_CONDITIONALLY，其他轴不因归属缺失转负。"
+    },
+    {
+      "id": 9,
+      "input_case": "只有封闭式理财使广义净金融资产为正，而可立即动用资金不能覆盖短债。",
+      "expected_classification": "若其他输入完整则WEAK_CONSERVATIVE_CASH_FLOOR_OR_LIQUIDITY，否则LOCAL_UNKNOWN_IMMEDIATE_LIQUIDITY",
+      "expected_non_propagation": "不得输出DURABLE或以流动性为由RELAX；封闭式理财不得加入immediate_liquidity。"
+    },
+    {
+      "id": 10,
+      "input_case": "对三组数值门槛分别输入阈值本身、略高与略低，且全部字段完整有效同口径。",
+      "expected_classification": "按书面>=、>及first-match顺序得到唯一数值类；未命中前项后由下一项或受限ELSE穷尽",
+      "expected_non_propagation": "LOCAL_UNKNOWN和COMPARABILITY_MISMATCH在数值分类前结算，永不借ELSE进入负面类。"
+    }
+  ],
+  "outcome_state": "SEALED",
+  "permissions": {
+    "read_parent_workspace": "NONE",
+    "read_repository_other_files": "NONE",
+    "external_search": "NONE",
+    "read_post_cutoff_materials": "NONE",
+    "read_FY2024_outcome": "NONE",
+    "read_prices": "NONE",
+    "read_returns": "NONE",
+    "read_old_reports": "NONE",
+    "read_derived_research": "NONE",
+    "all_other_permissions": "NONE"
+  }
+}
