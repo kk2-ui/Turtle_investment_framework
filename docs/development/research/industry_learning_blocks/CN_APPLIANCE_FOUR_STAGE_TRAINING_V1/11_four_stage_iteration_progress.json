@@ -1,0 +1,80 @@
+{
+  "schema_version": "enterprise-judgment-appliance-four-stage-iteration-progress.v1",
+  "progress_id": "APPLIANCE:FOUR-STAGE:20170430-20180930:ITERATION-1",
+  "industry_block_ref": "ILB:CN:APPLIANCE:NATIONAL:V1",
+  "stage_status": [
+    {
+      "stage": "E0_CONTEXT",
+      "status": "COMPLETE",
+      "result": "SIX_COMPANY_NATIONAL_APPLIANCE_RISK_SET_WITH_DISTINCT_PRODUCT_ARENAS"
+    },
+    {
+      "stage": "E1_RECONSTRUCTION",
+      "status": "COMPLETE",
+      "result": "SIX_COMPANY_OPERATING_SYSTEMS_WITH_LOCAL_UNKNOWNS_AND_BOUNDARIES"
+    },
+    {
+      "stage": "E2_MECHANISM_PROBE",
+      "status": "COMPLETE_INDEPENDENTLY_REVIEWED",
+      "result": "MIXED_PATTERN_H_A_NOT_ESTABLISHED",
+      "settlement_receipt_ref": "APPLIANCE-FOUR-STAGE:E2:CN002032:MECHANICAL-SETTLEMENT:V1",
+      "review_ref": "APPLIANCE:E2:CN002032:20180930:INDEPENDENT-POSTOUTCOME-REVIEW:V1"
+    },
+    {
+      "stage": "E3_COMPARATIVE_LAB",
+      "status": "NOT_ADMITTED_NOT_BLOCKING_COMPLETED_E0_TO_E2",
+      "result": "RESEARCH_AGENDA_ONLY"
+    }
+  ],
+  "material_training_corrections": [
+    {
+      "correction_id": "SIGNED_DEVIATION_REQUIRED",
+      "finding": "A favorable upward cash deviation was mechanically a MISS against STABLE; future contracts must distinguish favorable and adverse misses.",
+      "authority": "FUTURE_MEASUREMENT_CONTRACT_CANDIDATE_ONLY"
+    },
+    {
+      "correction_id": "PRODUCT_RELATIVE_METRIC_REQUIRED",
+      "finding": "Absolute product revenue growth cannot answer whether the product improved relative to the issuer or its arena.",
+      "authority": "FUTURE_MEASUREMENT_CONTRACT_CANDIDATE_ONLY"
+    },
+    {
+      "correction_id": "PRIOR_PERIOD_BRIDGE_REQUIRED",
+      "finding": "A reported comparative-period issuer value may differ from the cutoff-frozen baseline and needs an explicit perimeter or restatement bridge.",
+      "authority": "FUTURE_ACQUISITION_AND_MEASUREMENT_CONTRACT_CANDIDATE_ONLY"
+    }
+  ],
+  "next_stage_plan": [
+    {
+      "order": 1,
+      "action": "Select the next appliance company and cutoff by the existing result-unseen roster rule; do not reuse CN002032 as method validation."
+    },
+    {
+      "order": 2,
+      "action": "Before outcome access, freeze signed cash-deviation semantics, one product-relative metric, and a prior-period perimeter/restatement bridge."
+    },
+    {
+      "order": 3,
+      "action": "Run another independent E2 settlement to test whether those corrections change a material enterprise interpretation rather than merely add fields."
+    },
+    {
+      "order": 4,
+      "action": "Only after a product-specific estimand, compatible panel, common-shock boundary and independent outcome contract exist, submit a separate E3 admission candidate."
+    }
+  ],
+  "coordination_boundary": {
+    "scope": "APPLIANCE_FOUR_STAGE_BLOCK_ONLY",
+    "does_not_modify": [
+      "ENTERPRISE_JUDGMENT_V2_HISTORICAL_ROSTER",
+      "CEMENT_TRAINING_ROUNDS",
+      "SHARED_E3_OR_V5_COMPARATIVE_CONTROL"
+    ]
+  },
+  "rights": {
+    "method_transfer": "NOT_AUTHORIZED",
+    "cjo": "NOT_AUTHORIZED",
+    "valuation": "NOT_AUTHORIZED",
+    "report": "NOT_AUTHORIZED",
+    "buy_band": "NOT_AUTHORIZED",
+    "investment": "NOT_AUTHORIZED"
+  }
+}

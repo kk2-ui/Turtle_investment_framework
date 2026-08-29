@@ -40,3 +40,7 @@ value-free mismatch；`04_e2_acquisition_recovery_preoutcome_receipt.json` 只�
 `08_e2_mechanical_settlement.json` 与 `09_investor_training_readout.md` 是最终 E2
 反馈。两项收入预期 `MATCH`，发行人经营现金因有利地超出冻结稳定带而 `MISS`；
 冻结总规则据此返回 `MIXED_PATTERN_H_A_NOT_ESTABLISHED`，E3 仍未准入。
+
+`10_independent_postoutcome_review.json` 已独立复核上述结论；
+`11_four_stage_iteration_progress.json` 将 E0/E1/E2 标为本轮完成，并把下一次
+家电 E2 的三个合同修正与 E3 的独立准入条件分开，不占用另一条历史 roster 主线。

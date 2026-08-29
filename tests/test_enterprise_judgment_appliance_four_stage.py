@@ -308,3 +308,25 @@ def test_independent_postoutcome_review_binds_settlement_and_keeps_e3_closed() -
         continuous.CUSTODIAN_ID,
     }
     assert review["reviewer"]["reviewer_id"] not in review["reviewer"]["distinct_from"]
+
+
+def test_iteration_progress_completes_e0_to_e2_without_claiming_e3_or_method_rights() -> None:
+    progress = _load(FOUR_STAGE / "11_four_stage_iteration_progress.json")
+    review = _load(FOUR_STAGE / "10_independent_postoutcome_review.json")
+
+    assert [row["stage"] for row in progress["stage_status"]] == four_stage.STAGE_ORDER
+    assert [row["status"] for row in progress["stage_status"]] == [
+        "COMPLETE",
+        "COMPLETE",
+        "COMPLETE_INDEPENDENTLY_REVIEWED",
+        "NOT_ADMITTED_NOT_BLOCKING_COMPLETED_E0_TO_E2",
+    ]
+    assert progress["stage_status"][2]["review_ref"] == review["review_id"]
+    assert progress["stage_status"][2]["result"] == "MIXED_PATTERN_H_A_NOT_ESTABLISHED"
+    assert [row["correction_id"] for row in progress["material_training_corrections"]] == [
+        "SIGNED_DEVIATION_REQUIRED",
+        "PRODUCT_RELATIVE_METRIC_REQUIRED",
+        "PRIOR_PERIOD_BRIDGE_REQUIRED",
+    ]
+    assert progress["coordination_boundary"]["scope"] == "APPLIANCE_FOUR_STAGE_BLOCK_ONLY"
+    assert progress["rights"] == four_stage.RIGHTS
