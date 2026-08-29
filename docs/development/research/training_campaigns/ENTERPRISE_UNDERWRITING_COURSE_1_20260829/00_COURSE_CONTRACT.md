@@ -1,11 +1,13 @@
 # Judgment-First 企业承保训练第一期课程
 
-> 状态：`12_WORKED_CASES_COMPLETED / 4_BLIND_PREOUTCOME_EPISODES_FROZEN / OUTCOMES_SEALED`
+> 状态：`12_WORKED_CASES_COMPLETED / 4_BLIND_OUTCOME_FEEDBACK_COMPLETED / FIRST_FAIR_A_B_ENHANCED_WORSE / METHOD_NOT_VALIDATED`
 >
 > 冻结基线：本地受保护主线 `main@eadaae9dedbf4cf1c3ac621031bb18fd0f4d49f0`
 >
 > 训练 kernel：由该基线直接提供；不得从其祖先 `a115456` 或已分叉的
 > `origin/main` 恢复课程
+
+> 结果反馈独立审阅：[`PASS_WITH_LOCAL_NARROWING / COURSE_METHOD_NOT_VALIDATED`](outcomes/05_INDEPENDENT_OUTCOME_REVIEW.md)
 
 ## 中心任务
 
