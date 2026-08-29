@@ -1,0 +1,279 @@
+{
+  "authority": "PRICE_FREE_RESEARCH_CANDIDATES_ONLY",
+  "boundary": {
+    "contains_outcome_results": false,
+    "contains_price_or_valuation_results": false,
+    "grants_investment_authority": false
+  },
+  "company_id": "CN:601966",
+  "contract_id": "UWTRAIN:CN601966:20190501:CURRENT_AGENT_SELF_REPLAY:V1",
+  "cutoff_at": "2019-05-01T00:00:00+08:00",
+  "primary_training_product": {
+    "episode_id": "UWEP:CN601966:20190501:CURRENT_AGENT_SELF_REPLAY:V1",
+    "object_type": "EnterpriseUnderwritingEpisode",
+    "underwriting_thesis_id": "UWTHESIS:CN601966:20190501:CURRENT_AGENT_SELF_REPLAY:V1"
+  },
+  "projections": {
+    "cjo_candidate_projection": {
+      "authority": "TEACHING_CANDIDATE_ONLY",
+      "boundary": "A projection for the existing CJO compiler; it is not a Frozen CJO and cannot authorize value, price, BuyBand, report publication, or investment action.",
+      "central_path": "玲珑已拥有可承保的既有轮胎制造、客户和现金基础，但多基地、海外与新增产能不是同一项已验证的经济能力。最可能路径是成熟基地与客户在周期压力下继续产生条件化盈利，湖北、泰国爬坡和塞尔维亚只有在区域客户、利用率、单位经济和资本后现金闭环后才成为增量能力。FY2018 全资本支出后的负机械现金差额提示资本与融资压力，却不能偷换成负维护后 owner cash。置信度中等。",
+      "company_id": "CN:601966",
+      "component_treatments": [
+        {
+          "component_id": "EXISTING_TIRE_ECONOMICS",
+          "evidence_ids": [
+            "EV-LL-THREE_YEAR",
+            "EV-LL-PRODUCT_CHANNEL",
+            "EV-LL-CAPACITY"
+          ],
+          "investment_consequence": "把既有客户、成熟基地和渠道形成的条件化盈利能力作为价值主线，而非把所有合并产能同质化。",
+          "promotion_or_resolution_condition": "取得按基地、产品和客户的毛利、利用率与现金，确认成熟业务在原料、贸易和周期压力下的韧性。",
+          "reason": "三年盈利、经营现金、国内外收入、零售/配套渠道及部分成熟基地的高利用率支持既有轮胎经济真实存在；行业周期、原料与产品/基地净利未拆分限制精度。",
+          "treatment": "CONDITIONALLY_UNDERWRITE"
+        },
+        {
+          "component_id": "NEW_BASE_AND_OVERSEAS_COHORTS",
+          "evidence_ids": [
+            "EV-LL-CAPACITY",
+            "EV-LL-SERBIA",
+            "EV-LL-STRATEGIC_TENSION"
+          ],
+          "investment_consequence": "新增基地只保留为明确上行与下行情景，不提前加入正常盈利或 owner-cash 基准。",
+          "promotion_or_resolution_condition": "同一基地—产品—区域 cohort 取得连续客户订单、利用率、价格/毛利、营运资本和资本后现金改善。",
+          "reason": "湖北、泰国爬坡及塞尔维亚布局具战略逻辑，但塞尔维亚尚无业务，新增产能的订单、单位经济和资本回报均未结算。",
+          "treatment": "SCENARIO_ONLY"
+        },
+        {
+          "component_id": "MAINTENANCE_OWNER_CASH",
+          "evidence_ids": [
+            "EV-LL-CAPITAL_FINANCE"
+          ],
+          "investment_consequence": "维护后 owner cash 保持条件判断；未知限制点估计但不终止公司、生存或价值路线判断。",
+          "promotion_or_resolution_condition": "按成熟产线维护、更新改造和各增长项目取得资本支出、营运资本及回报的责任拆分。",
+          "reason": "年报没有将成熟基地维护、智能化改造和湖北/泰国/塞尔维亚增长资本拆开。",
+          "treatment": "CANNOT_BOUND"
+        },
+        {
+          "component_id": "TOTAL_CAPITAL_SPEND_CASH_PRESSURE",
+          "evidence_ids": [
+            "EV-LL-CAPITAL_FINANCE",
+            "EV-LL-Q1"
+          ],
+          "investment_consequence": "确认扩张期存在真实资本配置与融资压力，并持续监测现金、债务、项目支出与营运资本；该事实不能替代维护后 cash。",
+          "promotion_or_resolution_condition": "观察周期中全资本支出后的现金、债务和项目资本是否随订单和产能利用率改善而稳定，或持续依赖外部融资。",
+          "reason": "FY2018 经营现金约 18.42 亿元减全部长期资产支出约 24.70 亿元约为负 6.29 亿元，且融资活动显著增加。",
+          "treatment": "UNDERWRITE"
+        },
+        {
+          "component_id": "GROWTH_CAPITAL_RETURN",
+          "evidence_ids": [
+            "EV-LL-CAPACITY",
+            "EV-LL-SERBIA",
+            "EV-LL-Q1"
+          ],
+          "investment_consequence": "不能把未证实增长回报写成负维护现金，也不能以项目建设或单季增长给增长信用。",
+          "promotion_or_resolution_condition": "项目按 cohort 显示客户吸收、单位经济和资本后现金，并在周期中覆盖所用资本。",
+          "reason": "新增基地、泰国爬坡和塞尔维亚资金投入已开始或计划开始，source package 没有其投产后的订单、回报或独立现金。",
+          "treatment": "SCENARIO_ONLY"
+        },
+        {
+          "component_id": "SURVIVAL_AND_FINANCING",
+          "evidence_ids": [
+            "EV-LL-THREE_YEAR",
+            "EV-LL-CAPITAL_FINANCE"
+          ],
+          "investment_consequence": "不把融资写成免费增长，也不把负全资本支出现金差额写成即刻生存失败；生存结论随债务、现金和项目回报共同更新。",
+          "promotion_or_resolution_condition": "证明新增项目不再反复提高净融资依赖，或在压力期仍保持成熟业务现金、债务服务和可控资本承诺。",
+          "reason": "既有利润、经营现金、现金余额与融资渠道支持短期承受力，但扩张资本支出、借款、债券及海外执行提高了对现金和融资纪律的要求。",
+          "treatment": "CONDITIONALLY_UNDERWRITE"
+        },
+        {
+          "component_id": "PERMANENT_LOSS_PATH",
+          "evidence_ids": [
+            "EV-LL-CAPACITY",
+            "EV-LL-CAPITAL_FINANCE",
+            "EV-LL-STRATEGIC_TENSION"
+          ],
+          "investment_consequence": "把基地 cohort、资本回报和融资持续性列为永久损失前哨，而非用空泛谨慎或单年现金差额替代判断。",
+          "promotion_or_resolution_condition": "新基地持续形成资本后现金则降低该风险；若低利用率、营运资本与融资上升而订单和利润无改善则确认风险。",
+          "reason": "不均衡利用率、行业放缓、贸易和海外新厂使成熟现金补贴低回报扩张成为可检验风险；截至 cutoff 没有证据它已经发生。",
+          "treatment": "CONDITIONALLY_UNDERWRITE"
+        }
+      ],
+      "cutoff_at": "2019-05-01T00:00:00+08:00",
+      "episode_id": "UWEP:CN601966:20190501:CURRENT_AGENT_SELF_REPLAY:V1",
+      "existing_cjo_adapter": "scripts/enterprise_judgment_core.py:compile_cjo_candidate",
+      "monitoring": "研究顺序是先按基地/产品/区域看订单、利用率和价格/毛利，再看库存/应收和经营现金，最后看全资本开支、债务与每个增长项目的资本后回报；不得用融资、总产能或总现金替代这些问题。",
+      "normal_earnings_treatment": "以 FY2016–FY2018 约 10.10–11.81 亿元归母盈利和既有高利用率基地为历史锚，按行业周期、原料、贸易和基地差异作条件化处理；不将单季增长、低利用率产线、项目建设或海外新厂直接加入。",
+      "owner_cash_treatment": "维护后 owner cash 因维护、智能化和增长资本未拆分而不可精确界定。FY2018 经营现金约 18.42 亿元减全部长期资产支出约 24.70 亿元为约负 6.29 亿元，说明扩张期资本压力；FY2019 Q1 的正机械差额是早期信号。二者都不等同维护后现金。第三条线是新增资本投产后是否取得独立回报。",
+      "permanent_loss_treatment": "主要风险不是眼前无力生存，而是周期、贸易或原料冲击下，新增国内/海外产能与融资规模先扩大、客户吸收和单位经济后缺位，导致成熟现金长期补贴低回报资产。",
+      "projection_id": "UW-CJO:UWEP:CN601966:20190501:CURRENT_AGENT_SELF_REPLAY:V1",
+      "sample_identity": "BLIND_REPLAY",
+      "schema_version": "enterprise-underwriting-cjo-candidate-projection.v2",
+      "situation_model": {
+        "industry_future_thesis": {
+          "adaptation": "管理层选择国际化、智能化和多基地扩产：以泰国工厂缓解出口壁垒，推进湖北投产并筹建塞尔维亚。该选择有战略逻辑，但截至 cutoff 塞尔维亚尚未开展业务，湖北/泰国新增能力也还未完成经济验证；适应必须由客户吸收、单位经济和资本回报而不是项目完成结算。",
+          "company_exposure": "公司 FY2018 国内和海外销售各约半，轮胎毛利率 23.61%，零售与配套渠道均增长；招远基地利用率较高，德州、广西等部分产线较低，湖北、泰国和塞尔维亚增加了地区与项目异质性。既有全球渠道和泰国工厂是适应贸易风险的基础，海外客户集中于欧美、橡胶成本、贸易壁垒和新厂执行则是主要暴露。",
+          "horizon": "自 2019-05-01 起三至五年；先看 FY2019 的客户吸收、订单、现金和融资压力，再于 FY2021 及以后看新基地投产后的利用率、单位经济和资本回报。",
+          "most_likely_regime": "轮胎行业增长放缓并进入结构调整，原料、贸易政策和区域供需使利润池波动加大。最可能路径不是全行业线性增长，而是有客户、产品、区域制造和成本位置的企业保持竞争力，低利用率或贸易受阻的产能承受更大价格与资本压力。",
+          "normal_economics": "FY2016–FY2018 归母净利润约 10.10、10.48、11.81 亿元和经营现金的波动显示已有盈利现金基础，但不是不受周期影响的固定常态。基准承保既有高利用率基地、客户与渠道形成的方向性正常能力；对低利用率基地、未投产/爬坡产能和海外新厂只作具名情景，直到取得基地—产品—客户的连续毛利、利用率和现金。",
+          "permanent_loss": "永久损失主路径是行业、原料或贸易压力下，新增国内和海外产能未获得足够订单、价格或利用率，而债务、可转债、营运资本和追加资本先行增加；成熟基地的现金被用来覆盖低回报扩张。第二路径是把 FY2018 全部资本开支后的负现金差额直接当作维护后 owner cash，从而错误判断原有企业已没有现金能力；两种错误都会扭曲资本配置处理。",
+          "profit_pool_transmission": "客户订单先决定基地和产品的利用率；利用率、原料采购、产品组合和定价决定毛利；应收、库存、税费与资本支出再决定普通股现金。海外工厂只有在降低贸易/服务摩擦后取得稳定订单和单位经济，才把利润池传导给公司；仅有建厂、产量或资产增长不构成回报。",
+          "reversal_observations": [
+            "若新增基地按产品和区域显示持续订单、利用率、价格/毛利、营运资本与资本后现金共同改善，且不需成熟基地或新增债务反复补贴，则把相应 cohort 提升为正常能力。",
+            "若产能、库存或融资继续上升而基地利用率、客户订单、单位经济或经营现金不能同步改善，则确认扩张正在稀释资本回报，并收窄增长与正常现金处理。",
+            "若维护资本与新项目资本得到可靠拆分，并显示既有基地维护后现金稳定、增长项目随后回收资本，则提高 owner-cash 与成长处理；若只有总资本开支，则保留条件性范围，不能制造负维护现金点估计。"
+          ],
+          "strongest_rival": "玲珑的规模、国内第二/半钢领先位置、零售和配套渠道、泰国工厂与海外客户网络已显示管理层能把产能全球化转为服务和成本优势；FY2018 产销量同步增长、FY2019 Q1 利润和经营现金上行，因此新增湖北和欧洲布局更可能是放大既有竞争力，而不是低回报扩张。",
+          "valuation_treatment": "价值路线先以已经形成客户、利用率和现金的既有轮胎业务的条件化盈利能力为主，按原料、贸易与周期作压力；新增湖北、泰国爬坡和塞尔维亚只在获得独立经济闭环后纳入。维护后现金、全部长期资产支出后现金和增长资本回报是三条不可互换的证据线。"
+        },
+        "summary": "截至 cutoff，玲珑已拥有规模化轮胎业务、国内外客户、较强的既有基地利用率和盈利现金，亦同时推进湖北、泰国补产能、智能化和尚未运营的塞尔维亚工厂。轮胎经济受供需、橡胶成本、车厂配套、替换市场与贸易壁垒共同决定；故海外与新增工厂既可能降低摩擦，也可能把成熟现金和融资投入未获利用率或价格支撑的资产。"
+      },
+      "strongest_rival": "玲珑的规模、国内第二/半钢领先位置、零售和配套渠道、泰国工厂与海外客户网络已显示管理层能把产能全球化转为服务和成本优势；FY2018 产销量同步增长、FY2019 Q1 利润和经营现金上行，因此新增湖北和欧洲布局更可能是放大既有竞争力，而不是低回报扩张。",
+      "underwriting_thesis_id": "UWTHESIS:CN601966:20190501:CURRENT_AGENT_SELF_REPLAY:V1"
+    },
+    "golden_report_underwriting_handoff": {
+      "adaptation_case": "国际化和智能制造的管理选择合理地瞄准贸易壁垒、成本和客户服务：泰国已有产能，湖北正在投产，塞尔维亚项目拟解决欧洲供应位置。但截至 cutoff，塞尔维亚尚无业务，且国内基地利用率并不整齐。因而管理层执行能力评价为“已有基础、增长项目待验证”：下一步要看产品—基地—客户 cohort 的订单、利用率、毛利、营运资本和投产后资本回收，而不是把奠基、融资或产能设计当作适应完成。",
+      "authority": "UNDERWRITING_HANDOFF_ONLY",
+      "boundary": "The Golden Report writer consumes this thesis and may not replace it with a different company story. This is a teaching handoff, not report-publication authority.",
+      "business_position": "玲珑的可承保位置是已形成的轮胎制造规模、国内外销售、零售/配套渠道和泰国海外制造，而非“所有新增产能自动优质”。FY2018 招远产线利用率约九成、部分德州/广西产线显著较低，说明客户吸收与单位经济已在公司内部异质化。海外和新基地可以解决客户服务与贸易摩擦，也会增加执行、区域需求、汇率与固定资本责任。",
+      "central_path": "玲珑已拥有可承保的既有轮胎制造、客户和现金基础，但多基地、海外与新增产能不是同一项已验证的经济能力。最可能路径是成熟基地与客户在周期压力下继续产生条件化盈利，湖北、泰国爬坡和塞尔维亚只有在区域客户、利用率、单位经济和资本后现金闭环后才成为增量能力。FY2018 全资本支出后的负机械现金差额提示资本与融资压力，却不能偷换成负维护后 owner cash。置信度中等。",
+      "company_id": "CN:601966",
+      "cutoff_at": "2019-05-01T00:00:00+08:00",
+      "episode_id": "UWEP:CN601966:20190501:CURRENT_AGENT_SELF_REPLAY:V1",
+      "existing_report_adapter": "scripts/judgment_generation_handoff.py:build_judgment_generation_handoff",
+      "handoff_id": "UW-GR:UWEP:CN601966:20190501:CURRENT_AGENT_SELF_REPLAY:V1",
+      "normalization_case": "FY2016–FY2018 归母净利润约 10.10–11.81 亿元、扣非约 9.58–11.62 亿元，是公司已有正常盈利能力的历史锚。基准承保这一锚所代表的既有产品、客户、渠道和成熟基地的方向性 earnings power，同时对橡胶、价格竞争、贸易与周期施压；不把 FY2019 Q1 的上行外推，也不把湖北、泰国爬坡或塞尔维亚尚未运营的产能预先加入正常盈利。缺少基地/产品净利意味着不能把公司总利润精确拆成成熟和增长两块。",
+      "owner_cash_treatment": "维护后 owner cash 因维护、智能化和增长资本未拆分而不可精确界定。FY2018 经营现金约 18.42 亿元减全部长期资产支出约 24.70 亿元为约负 6.29 亿元，说明扩张期资本压力；FY2019 Q1 的正机械差额是早期信号。二者都不等同维护后现金。第三条线是新增资本投产后是否取得独立回报。",
+      "permanent_loss_map": "第一条路径是多基地和海外扩张在行业放缓、贸易壁垒或原料/价格压力下未获订单与利用率，新增固定资产、营运资本和融资长期低回报；第二条路径是海外项目执行、客户和当地运营不达预期，既有国际现金反复补贴；第三条路径是把全资本开支现金缺口误称为维护后 cash failure，从而错误压低成熟业务的价值。前两条是公司须防范的资本配置型永久损失，第三条是本训练必须避免的推理错误。",
+      "reader_order": [
+        "central_path",
+        "industry_future_transmission",
+        "situation_and_route",
+        "survival_and_adaptation",
+        "normalization_and_owner_cash",
+        "permanent_loss_and_rival",
+        "value_route_and_research_treatment",
+        "reversal_observations"
+      ],
+      "reversal_observations": [
+        "若新增基地按产品和区域显示持续订单、利用率、价格/毛利、营运资本与资本后现金共同改善，且不需成熟基地或新增债务反复补贴，则把相应 cohort 提升为正常能力。",
+        "若产能、库存或融资继续上升而基地利用率、客户订单、单位经济或经营现金不能同步改善，则确认扩张正在稀释资本回报，并收窄增长与正常现金处理。",
+        "若维护资本与新项目资本得到可靠拆分，并显示既有基地维护后现金稳定、增长项目随后回收资本，则提高 owner-cash 与成长处理；若只有总资本开支，则保留条件性范围，不能制造负维护现金点估计。"
+      ],
+      "sample_identity": "BLIND_REPLAY",
+      "schema_version": "enterprise-underwriting-golden-report-handoff.v2",
+      "situation_model": {
+        "industry_future_thesis": {
+          "adaptation": "管理层选择国际化、智能化和多基地扩产：以泰国工厂缓解出口壁垒，推进湖北投产并筹建塞尔维亚。该选择有战略逻辑，但截至 cutoff 塞尔维亚尚未开展业务，湖北/泰国新增能力也还未完成经济验证；适应必须由客户吸收、单位经济和资本回报而不是项目完成结算。",
+          "company_exposure": "公司 FY2018 国内和海外销售各约半，轮胎毛利率 23.61%，零售与配套渠道均增长；招远基地利用率较高，德州、广西等部分产线较低，湖北、泰国和塞尔维亚增加了地区与项目异质性。既有全球渠道和泰国工厂是适应贸易风险的基础，海外客户集中于欧美、橡胶成本、贸易壁垒和新厂执行则是主要暴露。",
+          "horizon": "自 2019-05-01 起三至五年；先看 FY2019 的客户吸收、订单、现金和融资压力，再于 FY2021 及以后看新基地投产后的利用率、单位经济和资本回报。",
+          "most_likely_regime": "轮胎行业增长放缓并进入结构调整，原料、贸易政策和区域供需使利润池波动加大。最可能路径不是全行业线性增长，而是有客户、产品、区域制造和成本位置的企业保持竞争力，低利用率或贸易受阻的产能承受更大价格与资本压力。",
+          "normal_economics": "FY2016–FY2018 归母净利润约 10.10、10.48、11.81 亿元和经营现金的波动显示已有盈利现金基础，但不是不受周期影响的固定常态。基准承保既有高利用率基地、客户与渠道形成的方向性正常能力；对低利用率基地、未投产/爬坡产能和海外新厂只作具名情景，直到取得基地—产品—客户的连续毛利、利用率和现金。",
+          "permanent_loss": "永久损失主路径是行业、原料或贸易压力下，新增国内和海外产能未获得足够订单、价格或利用率，而债务、可转债、营运资本和追加资本先行增加；成熟基地的现金被用来覆盖低回报扩张。第二路径是把 FY2018 全部资本开支后的负现金差额直接当作维护后 owner cash，从而错误判断原有企业已没有现金能力；两种错误都会扭曲资本配置处理。",
+          "profit_pool_transmission": "客户订单先决定基地和产品的利用率；利用率、原料采购、产品组合和定价决定毛利；应收、库存、税费与资本支出再决定普通股现金。海外工厂只有在降低贸易/服务摩擦后取得稳定订单和单位经济，才把利润池传导给公司；仅有建厂、产量或资产增长不构成回报。",
+          "reversal_observations": [
+            "若新增基地按产品和区域显示持续订单、利用率、价格/毛利、营运资本与资本后现金共同改善，且不需成熟基地或新增债务反复补贴，则把相应 cohort 提升为正常能力。",
+            "若产能、库存或融资继续上升而基地利用率、客户订单、单位经济或经营现金不能同步改善，则确认扩张正在稀释资本回报，并收窄增长与正常现金处理。",
+            "若维护资本与新项目资本得到可靠拆分，并显示既有基地维护后现金稳定、增长项目随后回收资本，则提高 owner-cash 与成长处理；若只有总资本开支，则保留条件性范围，不能制造负维护现金点估计。"
+          ],
+          "strongest_rival": "玲珑的规模、国内第二/半钢领先位置、零售和配套渠道、泰国工厂与海外客户网络已显示管理层能把产能全球化转为服务和成本优势；FY2018 产销量同步增长、FY2019 Q1 利润和经营现金上行，因此新增湖北和欧洲布局更可能是放大既有竞争力，而不是低回报扩张。",
+          "valuation_treatment": "价值路线先以已经形成客户、利用率和现金的既有轮胎业务的条件化盈利能力为主，按原料、贸易与周期作压力；新增湖北、泰国爬坡和塞尔维亚只在获得独立经济闭环后纳入。维护后现金、全部长期资产支出后现金和增长资本回报是三条不可互换的证据线。"
+        },
+        "summary": "截至 cutoff，玲珑已拥有规模化轮胎业务、国内外客户、较强的既有基地利用率和盈利现金，亦同时推进湖北、泰国补产能、智能化和尚未运营的塞尔维亚工厂。轮胎经济受供需、橡胶成本、车厂配套、替换市场与贸易壁垒共同决定；故海外与新增工厂既可能降低摩擦，也可能把成熟现金和融资投入未获利用率或价格支撑的资产。"
+      },
+      "strongest_rival": "玲珑的规模、国内第二/半钢领先位置、零售和配套渠道、泰国工厂与海外客户网络已显示管理层能把产能全球化转为服务和成本优势；FY2018 产销量同步增长、FY2019 Q1 利润和经营现金上行，因此新增湖北和欧洲布局更可能是放大既有竞争力，而不是低回报扩张。",
+      "survival_case": "FY2018 经营现金约 18.42 亿元，全部长期资产支出约 24.70 亿元，机械差额约负 6.29 亿元；同期取得借款和发行债券合计约 102.10 亿元、偿还债务约 62.46 亿元，期末短期借款、长期借款和应付债券合计约 95.37 亿元，资产负债率 61.17%。这显示扩张带来真实融资和流动性压力，但公司仍有经营现金、现金余额、盈利和可融资能力，不能把它写成已临近生存失败。生存承保取决于新资本不会长期超过既有业务现金与融资承受力。",
+      "underwriting_thesis_id": "UWTHESIS:CN601966:20190501:CURRENT_AGENT_SELF_REPLAY:V1",
+      "value_route": {
+        "excluded_routes": [
+          "把总产能、单季增长、项目开工或海外布局直接等同长期盈利和 owner cash 的路线",
+          "把全部长期资产支出或未证实增长回报直接等同维护资本的路线"
+        ],
+        "primary_routes": [
+          "既有轮胎业务按周期、原料、贸易和基地利用率压力后的条件化正常盈利路线",
+          "维护后现金、全部长期资产支出后现金和新增资本回报三线交叉验证路线"
+        ],
+        "route_reasoning": "历史盈利、经营现金、高利用率成熟产线和现有客户支持既有轮胎经济的价值路线；行业周期和资本密集度要求按利润池压力处理。湖北、泰国爬坡和塞尔维亚不以建设叙事进入基准，须各自完成客户吸收、单位经济和资本后现金闭环。三笔资本账分别回答成熟可分配现金、当期资本配置压力和增长是否创造回报。",
+        "valuation_model_roles": {
+          "corroborative": [
+            "按基地/产品/区域的客户订单、利用率和毛利",
+            "维护后现金、全部长期资产支出后现金与增长资本回报的分线检验"
+          ],
+          "primary": [
+            "既有轮胎业务在原料、贸易、价格及基地利用率压力下的条件化正常盈利能力"
+          ],
+          "stress": [
+            "贸易和原料压力下新增国内外产能无法吸收且融资持续增加",
+            "海外项目、低利用率产线长期消耗既有业务现金"
+          ]
+        }
+      }
+    },
+    "valuation_route_request": {
+      "authority": "ROUTE_REQUEST_ONLY",
+      "boundary": "No current value, price, expected return, BuyBand, or investment action is generated.",
+      "company_id": "CN:601966",
+      "compatibility_resolution": "Current-company underwriting may enter CJO and valuation routing through a source-bound, independently reviewed complete Episode; SELECTION_ADMITTED remains local to claims that actually depend on comparative selection or causal authority.",
+      "cutoff_at": "2019-05-01T00:00:00+08:00",
+      "episode_id": "UWEP:CN601966:20190501:CURRENT_AGENT_SELF_REPLAY:V1",
+      "excluded_routes": [
+        "把总产能、单季增长、项目开工或海外布局直接等同长期盈利和 owner cash 的路线",
+        "把全部长期资产支出或未证实增长回报直接等同维护资本的路线"
+      ],
+      "existing_valuation_adapter": "scripts/valuation_routing.py:build_valuation_route",
+      "inputs_excluded_from_base": [
+        "NEW_BASE_AND_OVERSEAS_COHORTS",
+        "MAINTENANCE_OWNER_CASH",
+        "GROWTH_CAPITAL_RETURN"
+      ],
+      "normal_earnings_input_treatment": "以 FY2016–FY2018 约 10.10–11.81 亿元归母盈利和既有高利用率基地为历史锚，按行业周期、原料、贸易和基地差异作条件化处理；不将单季增长、低利用率产线、项目建设或海外新厂直接加入。",
+      "owner_cash_input_treatment": "维护后 owner cash 因维护、智能化和增长资本未拆分而不可精确界定。FY2018 经营现金约 18.42 亿元减全部长期资产支出约 24.70 亿元为约负 6.29 亿元，说明扩张期资本压力；FY2019 Q1 的正机械差额是早期信号。二者都不等同维护后现金。第三条线是新增资本投产后是否取得独立回报。",
+      "permanent_loss_input_treatment": "主要风险不是眼前无力生存，而是周期、贸易或原料冲击下，新增国内/海外产能与融资规模先扩大、客户吸收和单位经济后缺位，导致成熟现金长期补贴低回报资产。",
+      "primary_routes": [
+        "既有轮胎业务按周期、原料、贸易和基地利用率压力后的条件化正常盈利路线",
+        "维护后现金、全部长期资产支出后现金和新增资本回报三线交叉验证路线"
+      ],
+      "request_id": "UW-VR:UWEP:CN601966:20190501:CURRENT_AGENT_SELF_REPLAY:V1",
+      "route_reasoning": "历史盈利、经营现金、高利用率成熟产线和现有客户支持既有轮胎经济的价值路线；行业周期和资本密集度要求按利润池压力处理。湖北、泰国爬坡和塞尔维亚不以建设叙事进入基准，须各自完成客户吸收、单位经济和资本后现金闭环。三笔资本账分别回答成熟可分配现金、当期资本配置压力和增长是否创造回报。",
+      "sample_identity": "BLIND_REPLAY",
+      "schema_version": "enterprise-underwriting-valuation-route-request.v2",
+      "situation_model": {
+        "industry_future_thesis": {
+          "adaptation": "管理层选择国际化、智能化和多基地扩产：以泰国工厂缓解出口壁垒，推进湖北投产并筹建塞尔维亚。该选择有战略逻辑，但截至 cutoff 塞尔维亚尚未开展业务，湖北/泰国新增能力也还未完成经济验证；适应必须由客户吸收、单位经济和资本回报而不是项目完成结算。",
+          "company_exposure": "公司 FY2018 国内和海外销售各约半，轮胎毛利率 23.61%，零售与配套渠道均增长；招远基地利用率较高，德州、广西等部分产线较低，湖北、泰国和塞尔维亚增加了地区与项目异质性。既有全球渠道和泰国工厂是适应贸易风险的基础，海外客户集中于欧美、橡胶成本、贸易壁垒和新厂执行则是主要暴露。",
+          "horizon": "自 2019-05-01 起三至五年；先看 FY2019 的客户吸收、订单、现金和融资压力，再于 FY2021 及以后看新基地投产后的利用率、单位经济和资本回报。",
+          "most_likely_regime": "轮胎行业增长放缓并进入结构调整，原料、贸易政策和区域供需使利润池波动加大。最可能路径不是全行业线性增长，而是有客户、产品、区域制造和成本位置的企业保持竞争力，低利用率或贸易受阻的产能承受更大价格与资本压力。",
+          "normal_economics": "FY2016–FY2018 归母净利润约 10.10、10.48、11.81 亿元和经营现金的波动显示已有盈利现金基础，但不是不受周期影响的固定常态。基准承保既有高利用率基地、客户与渠道形成的方向性正常能力；对低利用率基地、未投产/爬坡产能和海外新厂只作具名情景，直到取得基地—产品—客户的连续毛利、利用率和现金。",
+          "permanent_loss": "永久损失主路径是行业、原料或贸易压力下，新增国内和海外产能未获得足够订单、价格或利用率，而债务、可转债、营运资本和追加资本先行增加；成熟基地的现金被用来覆盖低回报扩张。第二路径是把 FY2018 全部资本开支后的负现金差额直接当作维护后 owner cash，从而错误判断原有企业已没有现金能力；两种错误都会扭曲资本配置处理。",
+          "profit_pool_transmission": "客户订单先决定基地和产品的利用率；利用率、原料采购、产品组合和定价决定毛利；应收、库存、税费与资本支出再决定普通股现金。海外工厂只有在降低贸易/服务摩擦后取得稳定订单和单位经济，才把利润池传导给公司；仅有建厂、产量或资产增长不构成回报。",
+          "reversal_observations": [
+            "若新增基地按产品和区域显示持续订单、利用率、价格/毛利、营运资本与资本后现金共同改善，且不需成熟基地或新增债务反复补贴，则把相应 cohort 提升为正常能力。",
+            "若产能、库存或融资继续上升而基地利用率、客户订单、单位经济或经营现金不能同步改善，则确认扩张正在稀释资本回报，并收窄增长与正常现金处理。",
+            "若维护资本与新项目资本得到可靠拆分，并显示既有基地维护后现金稳定、增长项目随后回收资本，则提高 owner-cash 与成长处理；若只有总资本开支，则保留条件性范围，不能制造负维护现金点估计。"
+          ],
+          "strongest_rival": "玲珑的规模、国内第二/半钢领先位置、零售和配套渠道、泰国工厂与海外客户网络已显示管理层能把产能全球化转为服务和成本优势；FY2018 产销量同步增长、FY2019 Q1 利润和经营现金上行，因此新增湖北和欧洲布局更可能是放大既有竞争力，而不是低回报扩张。",
+          "valuation_treatment": "价值路线先以已经形成客户、利用率和现金的既有轮胎业务的条件化盈利能力为主，按原料、贸易与周期作压力；新增湖北、泰国爬坡和塞尔维亚只在获得独立经济闭环后纳入。维护后现金、全部长期资产支出后现金和增长资本回报是三条不可互换的证据线。"
+        },
+        "summary": "截至 cutoff，玲珑已拥有规模化轮胎业务、国内外客户、较强的既有基地利用率和盈利现金，亦同时推进湖北、泰国补产能、智能化和尚未运营的塞尔维亚工厂。轮胎经济受供需、橡胶成本、车厂配套、替换市场与贸易壁垒共同决定；故海外与新增工厂既可能降低摩擦，也可能把成熟现金和融资投入未获利用率或价格支撑的资产。"
+      },
+      "underwriting_thesis_id": "UWTHESIS:CN601966:20190501:CURRENT_AGENT_SELF_REPLAY:V1",
+      "valuation_model_roles": {
+        "corroborative": [
+          "按基地/产品/区域的客户订单、利用率和毛利",
+          "维护后现金、全部长期资产支出后现金与增长资本回报的分线检验"
+        ],
+        "primary": [
+          "既有轮胎业务在原料、贸易、价格及基地利用率压力下的条件化正常盈利能力"
+        ],
+        "stress": [
+          "贸易和原料压力下新增国内外产能无法吸收且融资持续增加",
+          "海外项目、低利用率产线长期消耗既有业务现金"
+        ]
+      }
+    }
+  },
+  "sample_identity": "BLIND_REPLAY",
+  "schema_version": "enterprise-underwriting-training-downstream-bundle.v1"
+}
