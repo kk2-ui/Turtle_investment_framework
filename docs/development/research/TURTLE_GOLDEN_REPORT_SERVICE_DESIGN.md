@@ -1,12 +1,51 @@
 # Turtle 训练反馈到黄金报告的服务定位设计
 
-> 状态：`DESIGN_AUTHORITY / G1-J_IN_PROGRESS / G1.5_NOT_ACTIVATED`
+> 状态：`ENTERPRISE_UNDERWRITING_CONSUMER_DESIGN / VERTICAL_SLICE_PENDING`
 >
-> 日期：2026-08-23
+> 日期：2026-08-29
 >
 > 上位路线：[黄金报告驱动的双向层级研究路线图](../GOLDEN_REPORT_BIDIRECTIONAL_RESEARCH_ROADMAP.md)
 >
 > 本文件回答一个问题：训练反馈系统在 Turtle 中究竟为黄金报告生成提供什么服务。它是产品和模块边界设计，不是训练效果证明，也不授权提前生产 G1.5 的 24 份报告。
+
+## 0. 2026-08-29 顶层更新
+
+黄金报告不再从八维状态、训练 lane、CJO 状态码和 valuation handoff 中重新拼装一条公司故事。当前设计以[企业投资承保系统 V1](TURTLE_ENTERPRISE_UNDERWRITING_SYSTEM_V1.md)为上位真源：报告、CJO 和估值必须消费同一个 `EnterpriseUnderwritingEpisode`。
+
+```text
+UnderwritingThesis（价格前）
+  -> Frozen CJO compatibility projection
+  -> 正常盈利 / owner cash / permanent-loss / value-route inputs
+
+InvestmentTreatment（价格后）
+  -> 市场隐含要求 / 安全边际 / BuyBand 或研究处理
+
+同一 Episode
+  -> Golden Report reader narrative
+```
+
+这不是新增第四个数据库。Episode 只引用现有 evidence、EnterpriseSystemModel、ManagementDecisionLedger、Judgment Experience、Frozen CJO 和 valuation objects。其作用是让一个中心判断拥有从处境到价格的完整语义，并防止报告 writer、CJO compiler 和估值层各自选择不同故事。
+
+### 0.1 报告首先回答什么
+
+一份黄金报告的第一屏和中心论证必须先让投资者理解：
+
+1. 公司处在怎样的宏观/行业阶段，当前压力是周期还是结构；
+2. 公司是否能活下来，真正的融资和索取权风险是什么；
+3. 公司竞争位置和管理层适应能力怎样；
+4. 正常情况下可持续盈利和 owner cash 在什么范围；
+5. 哪些路径会造成永久损失；
+6. 为什么使用当前价值路线，哪些成长或资产不能计价；
+7. 当前价格要求什么，安全边际和最高可接受处理怎样；
+8. 最强反方和会翻转结论的观察是什么。
+
+宏观只在存在行业和公司传导时出现。十五章仍可作为导航，但不再作为十五个并列任务；所有章节都是同一承保主张的展开。
+
+### 0.2 UNKNOWN 和权限怎样呈现
+
+内部 `UNKNOWN / NO_PRIMARY / MEASUREMENT_MISMATCH / EVIDENCE_INELIGIBLE` 继续限制对应 claim。读者正文把它们翻译成：可进入基准、条件性进入、只保留情景、从基准排除或暂时无法形成范围。技术状态、schema、receipt 和权限说明进入附录，不能挡在企业判断之前。
+
+无法形成数值 BuyBand 时，报告仍须说明“不为哪项未来付费、什么事实会允许定价”。这不绕过计算权限，也不把整份报告降成控制状态说明。
 
 ## 1. 一句话定位
 
@@ -98,7 +137,9 @@ M10 是控制面，不是第 11 个研究大脑。它只保证“谁在什么时
   -> 正常盈利、owner cash、资本回报和永久损失
 ```
 
-只有同公司、同 cutoff 的 CJO predecessor 通过当前 G1-J policy，且选择身份为 `SELECTION_ADMITTED` 时，才可读取 `INVESTMENT_ENRICHMENT`。该视图再追加估值路线、价格隐含路径、回报、行动和翻转条件；它不能反过来改写公司判断或选择中心路径。
+有边界的 `EnterpriseUnderwritingEpisode` 可以先生成 `valuation-route request` 和研究处理：说明应采用哪种价值路线、哪些能力可进入基准、哪些只进入情景或不应付费。这不要求 Comparative 或 `SELECTION_ADMITTED`，也不产生当前价值数字。
+
+数值 `INVESTMENT_ENRICHMENT` 仍须绑定同公司、同 cutoff 的 current-company CJO admission、可用估值输入和当前估值合同。只有当它消费的具体主张来自相对因果或选择方法时，该主张才额外要求 `SELECTION_ADMITTED` 及相应方法权限。现有 adapter 暂时把 `SELECTION_ADMITTED` 设成全局前提，这是兼容缺口：U1 只需显式报告并输出 route request，U4 再将其收窄为 claim-local 权限；不得用该缺口阻断企业承保读本。无论哪条路径，投资增强都不能反过来改写公司判断或选择中心路径。
 
 ### 5.3 报告后：把结果变成下一轮约束
 
@@ -106,8 +147,8 @@ M10 是控制面，不是第 11 个研究大脑。它只保证“谁在什么时
 
 1. 原冻结判断保持不可变；
 2. 记录企业经济链和研究设计链的双正交 failure locus；
-3. 只有 `SELECTION_ADMITTED`、结果诊断性足够且跨公司 reviewer 接纳的对象，才可形成正式 method learning；
-4. `NO_PRIMARY` 可训练弃权与测量纪律，但不能生成路径选择 learning；
+3. learning 权限按主张和样本身份处理：选择/相对因果方法仍要求 `SELECTION_ADMITTED`；可观察 Forecast 只更新校准；完整 Blind Replay 或 Prospective Episode 经独立审阅后可收窄承保经验；Worked Case 不计能力或方法信用；
+4. 局部 `NO_PRIMARY` 可训练弃权与测量纪律，但不能关闭其他已承保主张，也不能单独生成路径选择 learning；
 5. `HISTORICAL_TEACHING` 只能形成边界，`HISTORICAL_HOLDOUT` 只能评价，`LIVE_SENTINEL` 只能提供未知结果环境的部署校准；
 6. 通过 `LNOTE -> method review -> LAPP receipt -> 下一家公司冻结字段` 返回 M4/M7，而不是把旧报告正文复制到下一份报告。
 
@@ -161,19 +202,17 @@ M10 是控制面，不是第 11 个研究大脑。它只保证“谁在什么时
 
 这些是过程与迁移指标，不是“报告质量分数”或投资胜率。没有真实成对的 `COMPANY_ONLY / INDUSTRY_MACRO_ENHANCED` 黄金报告、独立盲评和后续经营结果前，不得宣称行业增强产生材料增量；单一案例也不能证明方法有效。
 
-## 9. 当前状态和下一合法动作
+## 9. 当前状态和下一动作
 
-截至 2026-08-23：
+截至 2026-08-29：
 
-- `judgment-generation-handoff.v1`、三视图、CJO predecessor 和 publication refresh 门已具备工程接线；
-- G1-J 仍在进行，格力仍为 `PRE_FREEZE / NO_PRIMARY / NOT_FROZEN`；
-- G1.5 的 6 公司 × 3 时点、24 份黄金级产物仍未激活；
-- 行业知识库尚无可直接作为 `MECHANISM_READY` 的真实机制实例；
-- 当前历史训练计划配置不能作为已登记生产计划：主数据库没有 `judgment_training_program` 登记，配置中的 `registered_at` 只是自声明；
-- R-62 canonical 筛查是 `NO_PRIMARY / NOT_FROZEN`，不能作为 `SELECTION_ADMITTED` 开发样本；R-56、R-58 等结果已知对象只能作教学边界；
-- 因此当前最诚实的系统状态是：**工程接缝已实现，训练效果尚未验证，合法开发样本仍需重新准入**。
+- `judgment-generation-handoff.v1`、三视图、Frozen CJO、valuation overlay 和 publication refresh 已具备工程接线；
+- Judgment Experience Invocation Loop 已进入 `main`，并完成福莱特结果前经验调用；FY2024 反馈尚未到期；
+- 多轮真实训练已经产生局部企业判断和规则修正，但完整方法仍未证明相对公平 Baseline 的稳定材料优势；
+- 现有黄金报告仍可能从多个状态和 handoff 重建中心故事，尚未消费统一 `EnterpriseUnderwritingEpisode`；
+- 格力、行业机制发布和正式 BuyBand 的原权限状态不因 V1 设计自动升级。
 
-下一合法动作不是扩写更多公司报告，而是：重新形成一个真实、结果隔离、具有 `SELECTION_ADMITTED`、主/反方、简单基线、结果合同、结算、诊断和跨公司 learning application 的开发 episode；经独立 reviewer 接纳后，再冻结方法并揭盲留出。期间普通黄金报告只能消费受控 `RESEARCH_AGENDA`，不得把未升格行业经验或教学结果当作先验。
+当前下一动作是执行[企业投资承保纵向切片 V1 Goal](TURTLE_ENTERPRISE_UNDERWRITING_VERTICAL_SLICE_GOAL.md)：先用 Magna fixture 与 CN600585 已有真实教学证据证明一条完整承保主张可以同源投影到 CJO、估值路由和黄金报告。该 worked slice 不需要等待 `SELECTION_ADMITTED` 或 Comparative；它也不宣称 Blind learning。完成后才选择未见公司运行完整 Blind Replay，并检验黄金报告是否出现材料投资判断改善。
 
 ## 10. 规范依据
 

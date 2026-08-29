@@ -1,10 +1,31 @@
 # Turtle Agent 企业判断系统路线图
 
-> 状态：`EIGHT_DIMENSION_JUDGMENT_LATTICE_ADOPTED / REAL_CEMENT_FEEDBACK_COMPLETED / ROUND8_EXPRESS_CROSS_INDUSTRY_FEEDBACK_COMPLETED / ARCHITECTURE_REVISION_REQUIRED / TRANSFER_NOT_VALIDATED`
+> 状态：`ENTERPRISE_UNDERWRITING_V1_ADOPTED / VERTICAL_SLICE_NEXT / TRANSFER_NOT_VALIDATED`
 >
-> 日期：2026-08-26
+> 日期：2026-08-29
 >
 > 配套设计：[训练系统顶层架构](./TURTLE_TRAINING_SYSTEM_TOP_LEVEL_ARCHITECTURE.md)、[Turtle Agent 企业判断系统总设计](./TURTLE_AGENT_ENTERPRISE_JUDGMENT_SYSTEM_DESIGN.md)、[历史训练体系重构](./TURTLE_HISTORICAL_TRAINING_SYSTEM_REDESIGN.md)
+
+## 0. 当前路线覆盖：从 H0--H10 转向 U0--U5
+
+本文下方 H0--H10、G0--G8 和 E/J 说明保留为现有工程能力与历史依赖，不再是顶层执行队列。当前路线以[企业投资承保系统 V1](TURTLE_ENTERPRISE_UNDERWRITING_SYSTEM_V1.md)的 U0--U5 为准：
+
+```text
+U0  顶层收口（本文档集）
+U1  Magna + CN600585 完整承保纵向切片
+U2  12--20 个跨路线 worked case 课程种子
+U3  完整 Blind Replay，而不是单字段预测
+U4  UnderwritingThesis -> CJO / valuation / Golden Report 同源消费
+U5  Prospective 与条件化买点校准
+```
+
+当前唯一下一实施动作是[企业投资承保纵向切片 V1 Goal](TURTLE_ENTERPRISE_UNDERWRITING_VERTICAL_SLICE_GOAL.md)。它从 `main@5d64b91b354d` 开工，复用现有事实、CJO、经验和估值组件，不继续扩张控制层。
+
+### 0.1 为什么改路
+
+现有训练已经证明控制系统能保持 PIT、局部未知和结果隔离，也出现过真实局部判断修正；但多轮 `NO_MATERIAL_UTILITY` 说明更多字段、维度和解释不会自动改善投资判断。新路线把进度改成：是否完成一条从行业处境、生存、正常化和永久损失到价值路线与价格处理的公司判断，以及后续反馈是否改变未见公司的同一推理链。
+
+八维继续作为证据覆盖镜头，Comparative 继续服务局部因果，Forecast 继续服务可观察校准。它们不再决定训练样本是否存在，也不能作为对投资者的中心成果。
 
 ## 1. 路线图的唯一目的
 
@@ -12,7 +33,7 @@
 
 路线图不以“尽快产生第一个样本”为唯一进度指标。第一个正式方向性样本当然重要，但如果为它临时改变共同市场、公告、责任边界或结果口径，系统会得到一个无法迁移的样本，反而离中心目标更远。
 
-路线图采用一个以 `Decision Contract -> eight-dimensional EnterpriseJudgmentEpisode -> CJO -> Investment Overlay` 为中心的持续判断底座、一个行业生命周期底仓、一条日常预测校准主链和一条低频因果高级 lane。八维是统一判断格架，不是企业评分或八道硬门；Forecast 改善方法，不能替代 CJO 或成为产品中心：
+路线图当前采用 `Decision Frame -> EnterpriseUnderwritingEpisode -> UnderwritingThesis / InvestmentTreatment -> CJO / valuation / Golden Report` 的完整承保主链。行业生命周期、八维、Forecast 和 Comparative 分别提供参考类别、证据覆盖、可观察校准和局部因果识别；它们都不能替代完整企业判断或成为产品中心：
 
 ```text
 持续判断底座：EnterpriseSystemModel -> ManagementDecisionLedger -> Frozen CJO
@@ -51,15 +72,15 @@
 机制/边界设计：已有资产可继续运行
 企业整体模型/管理层纵向账本：离线控制与 synthetic fixture 已实现，尚未成为生产 canonical truth
 最小历史管线：一条独立机械结算已证明 blind chain capability；CN600802、CN600425、CN002003 与 CN002404 均保护性终止为 `MEASUREMENT_MISMATCH`，未产生第二个 `FIELD_READY`；该 lane 已在当前验收点封口
-正式 Comparative 入口：action-first intake 是下一条生产主线；水泥 `H2_NO_PRIMARY_ACTION_SCOPE` 只终止水泥候选，不阻断其他行业的已实施行动筛选
+正式 Comparative 入口：action-first intake 仍可用于确有相对因果主张的兼容支线；水泥 `H2_NO_PRIMARY_ACTION_SCOPE` 只终止该主张，不是当前 U0--U5 生产主线
 跨公司迁移：快递 Round 8 已完成首次跨行业真实方法回放，但因行业 responsibility boundary 错配和 mixed-clock 因果资格不足，仅结算为 `ARCHITECTURE_REVISION_REQUIRED`，真实迁移尚未证明
 方法冻结：未开始
 定量买点接线：离线 directionality 已验收；生产授权仍要求 canonical 冻结 CJO 与 D4 闭合
 ```
 
-### 2.1 当前执行顺序：H0–H10
+### 2.1 V2 兼容能力记录：H0–H10
 
-H0–H10 是本仓当前执行状态；下方 G0–G8 只保留能力依赖视图，不能覆盖本表。
+H0–H10 记录 V2 兼容能力和历史执行状态；下方 G0–G8 同样只保留能力依赖视图，不能覆盖 U0--U5 当前路线。
 
 | 阶段 | 当前状态 | 下一退出事实 |
 |---|---|---|

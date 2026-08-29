@@ -1,14 +1,22 @@
 # Turtle 企业判断经验调用闭环 V1
 
-> 状态：`DESIGN_DELTA_ON_08C8620 / NOT_IMPLEMENTED`
+> 状态：`IMPLEMENTED_ON_MAIN / ONE_PREOUTCOME_INVOCATION_FROZEN / FEEDBACK_PENDING`
 >
 > 日期：2026-08-29
 >
-> 基线：`feat/judgment-first-training-iteration-12h@08c8620`
+> 设计基线：`feat/judgment-first-training-iteration-12h@08c8620`
+>
+> 当前实现基线：`main@5d64b91b354d`
 
 本文不重写四轨课程、八维问题骨架、Blind feedback、Comparative、PIT、CJO
 或方法迁移控制。它只补最新训练基线尚未闭合的一段：让真实反馈形成的经营经验，能在
 普通新公司研究中被结构化调用，并在结果回来后更新适用边界。
+
+### 当前实现说明
+
+`scripts/judgment_experience_memory.py` 已实现 source-side record、retrieval pack、结果前 invocation、target analogy projection 和受独立授权约束的 feedback update。`CN601865@2024-04-01` 已完成一次结果前调用并保留 FY2024 outcome sealed；当前只能说明隆基经验材料性改变了福莱特的研究问题、证据顺序、反方和新增产能的保守现金处理，不能说明经验被结果支持或方法已验证。
+
+2026-08-29 起，本对象作为[企业投资承保系统 V1](TURTLE_ENTERPRISE_UNDERWRITING_SYSTEM_V1.md)的经验层继续使用。后续 record 优先从完整 `EnterpriseUnderwritingEpisode` 投影处境、承保路线、near miss、正常化、永久损失和价值路由边界；不另建经验卡。
 
 ## 0. 投资者结论
 

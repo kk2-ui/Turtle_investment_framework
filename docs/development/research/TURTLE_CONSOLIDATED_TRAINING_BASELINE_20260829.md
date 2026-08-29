@@ -6,6 +6,8 @@
 >
 > 能力底座：`feat/judgment-first-training-iteration-12h@08c8620`
 
+> 当前集成提交：`main@5d64b91b354d`；该提交已在本基线之后实现并合入 Judgment Experience Invocation Loop。企业判断的最新上位设计另见 `TURTLE_ENTERPRISE_UNDERWRITING_SYSTEM_V1.md`。
+
 ## 1. 唯一基线裁决
 
 本文件所在的验收提交快进 `main` 后，`main` 是训练、企业判断、结果结算、学习读模型和经验调用
@@ -70,7 +72,7 @@ Judgment-First company judgment
 3. 任何 Agent 返回成果时必须给出其 `main` 基线和独立提交；
 4. 若成果基于旧分支，先做 patch-equivalence/能力映射，再移植材料增量；
 5. 不再用旧 branch 名称描述系统当前进度；
-6. 经验调用设计仍是 `NOT_IMPLEMENTED`，后续实现应从统一 `main` 开始；
+6. 经验调用设计已在 `main@5d64b91b354d` 实现并完成一次福莱特结果前调用；结果后反馈、方法迁移和能力验证仍未发生；
 7. 家电四阶段真实结算只证明局部机制反馈，不自动授予方法、CJO、估值、报告或投资权限。
 
 ## 6. 投资者看到的统一结果

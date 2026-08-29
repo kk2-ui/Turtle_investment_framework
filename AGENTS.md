@@ -12,6 +12,17 @@ When working here with Codex, treat those files as workflow specifications, not 
 3. Facts require appropriate evidence. Judgments may combine verified facts with clearly identified economic inference. Do not demand direct causal proof before stating a bounded, falsifiable view; reserve causal language and authority for claims that actually require it.
 4. When evidence is incomplete, localize the uncertainty to the affected claim and continue. Preserve the strict boundary for that claim without discarding unrelated facts, mechanisms, or investment implications.
 
+For every whole-company research, synthesis, valuation-routing, or report task,
+the primary reasoning object is the `EnterpriseUnderwritingEpisode` defined in
+`docs/development/research/TURTLE_ENTERPRISE_UNDERWRITING_SYSTEM_V1.md`.  The
+Agent must connect situation/regime, industry cycle versus structural damage,
+company position and adaptation, survival, normalized economics, owner cash,
+permanent-loss paths, value route, and price-facing treatment into one
+continuous thesis.  Macro variables enter only through a demonstrated company
+transmission.  The existing eight dimensions, E/J stages, fields, receipts,
+and gates remain supporting views; do not use them as the reader-facing
+structure or as substitutes for the underwriting conclusion.
+
 ### Required judgment return
 
 Every substantive company or industry synthesis, training readout, or report task must return, in investor language:
@@ -68,6 +79,8 @@ Capacity, store, acquisition, product, or project completion settles an implemen
 The unified objective hierarchy, runtime/training split, and next paired acceptance
 test are recorded in
 `docs/development/research/TURTLE_JUDGMENT_FIRST_DECISION_FOCUSED_INTEGRATED_DESIGN.md`.
+The current top-level company judgment and training object is recorded in
+`docs/development/research/TURTLE_ENTERPRISE_UNDERWRITING_SYSTEM_V1.md`.
 The detailed runtime rationale remains in
 `docs/development/research/TURTLE_JUDGMENT_FIRST_AGENT_CONSTITUTION.md`; the
 episode, feedback, and transfer semantics remain in
