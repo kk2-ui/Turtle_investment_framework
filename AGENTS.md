@@ -83,6 +83,7 @@ Capacity, store, acquisition, product, or project completion settles an implemen
 
 ### Training and evaluation
 
+0. Start whole-company training through `scripts/enterprise_underwriting_training.py run <contract> --output-dir <dir>`.  That command invokes the training model from the contract-bound source package and completes only after the generated full `EnterpriseUnderwritingEpisode` validates and is persisted. Teaching, Blind/Holdout, and Prospective tracks select source visibility and the Episode sample identity; a prewritten Episode passed to a validator, legacy curriculum counts, axes, settled fields, and receipts cannot complete a training run.
 1. Training success means that a later unseen case produces a better judgment or treatment: a material error is avoided, a mechanism is recognized earlier, an uncertainty range is better calibrated, or a valuation/research action changes for a stated economic reason.
 2. Settled fields, passed validators, preserved blindness, and completed receipts establish integrity but do not by themselves establish learning. An episode that only proves "cannot judge" may be retained as a boundary lesson, but it is not a judgment-improvement success.
 3. A minimal real learning episode may concern one company and one material mechanism. Require a comparative panel only when the intended lesson is relative or causal.

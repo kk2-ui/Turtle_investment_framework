@@ -1,5 +1,5 @@
 {
-  "schema_version": "enterprise-underwriting-episode.v1",
+  "schema_version": "enterprise-underwriting-episode.v2",
   "episode_id": "EUE:MAGNA:200903:WORKED:V1",
   "company_id": "CASE:MAGNA_INTERNATIONAL",
   "company_name": "麦格纳国际",
@@ -34,7 +34,12 @@
   "value_route": {
     "primary_routes": ["ASSET_VALUE", "EARNINGS_POWER_VALUE"],
     "excluded_routes": ["GROWTH_VALUE_AS_PRIMARY"],
-    "route_reasoning": "无持续特许权的可生存周期企业应以资产价值与零成长 EPV 交叉约束；成长只在另有高回报再投资证据时才可进入。"
+    "route_reasoning": "无持续特许权的可生存周期企业应以资产价值与零成长 EPV 交叉约束；成长只在另有高回报再投资证据时才可进入。",
+    "valuation_model_roles": {
+      "primary": ["ASSET_VALUE", "EPV"],
+      "corroborative": ["RETURN_DECOMPOSITION"],
+      "stress": ["NAV"]
+    }
   },
   "strongest_rival": "核心客户的破产压力可能不仅是周期低谷，而是会破坏订单、供应链和资本结构，从而使正常化盈利假设无效。",
   "reversal_observations": [
@@ -96,6 +101,11 @@
     "owner_cash_treatment": "本书籍案例只示范 EPV/资产价值路线，未把它扩写成可迁移的现金流结论。",
     "permanent_loss_treatment": "客户破产、融资失败或订单基础永久损坏会使本路径失效；这些是先于估值的关键观察。",
     "value_route_treatment": "资产价值与 EPV 相互检验；成长价值排除在基准之外。",
+    "economic_directions": {
+      "normal_earnings": "IMPROVES",
+      "owner_cash": "UNKNOWN",
+      "permanent_loss": "MIXED"
+    },
     "strongest_rival": "核心客户的破产压力可能不仅是周期低谷，而是会破坏订单、供应链和资本结构，从而使正常化盈利假设无效。",
     "monitoring": "客户生存、融资可得性、订单恢复和正常化利润率。"
   },

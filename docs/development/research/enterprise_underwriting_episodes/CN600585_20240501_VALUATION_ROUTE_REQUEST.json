@@ -1,5 +1,5 @@
 {
-  "schema_version": "enterprise-underwriting-valuation-route-request.v1",
+  "schema_version": "enterprise-underwriting-valuation-route-request.v2",
   "request_id": "UW-VR:EUE:CN600585:20240501:WORKED:V1",
   "episode_id": "EUE:CN600585:20240501:WORKED:V1",
   "company_id": "CN:600585",
@@ -24,14 +24,37 @@
       "区域需求与价格继续走弱且维护或防御性资本吞噬现金，或融资缓冲明显收缩。"
     ]
   },
-  "primary_routes": ["ASSET_VALUE", "EARNINGS_POWER_VALUE", "CAPITAL_RETURN_CROSS_CHECK"],
-  "excluded_routes": ["CAPACITY_GROWTH_VALUE_AS_PRIMARY", "ONE_PERIOD_OCF_MINUS_CAPEX_AS_OWNER_CASH"],
+  "primary_routes": [
+    "ASSET_VALUE",
+    "EARNINGS_POWER_VALUE",
+    "CAPITAL_RETURN_CROSS_CHECK"
+  ],
+  "excluded_routes": [
+    "CAPACITY_GROWTH_VALUE_AS_PRIMARY",
+    "ONE_PERIOD_OCF_MINUS_CAPEX_AS_OWNER_CASH"
+  ],
   "route_reasoning": "即时生存并非中心问题，且公司没有证据允许把新增产能直接资本化为高回报成长。资产价值和中周期 EPV 提供双锚；资本回报交叉检查防止把新旧重资产混合成未经承保的增长价值。",
+  "valuation_model_roles": {
+    "primary": [
+      "ASSET_VALUE",
+      "EPV"
+    ],
+    "corroborative": [
+      "RETURN_DECOMPOSITION"
+    ],
+    "stress": [
+      "NAV"
+    ]
+  },
   "normal_earnings_input_treatment": "国内核心仅按量价、利用率和成本共同恢复的中周期范围承保；新增国内资产排除在基准之外，海外区域利润只作条件性上行情景。",
   "owner_cash_input_treatment": "集团FY2024经营现金覆盖披露资本支出显示承受力，但维护/增长资本和普通股可得现金未闭合；owner cash 只能以范围和资产/EPV交叉约束，而不是单点OCF减资本支出。",
   "permanent_loss_input_treatment": "核心风险是区域需求和价格长期疲弱使新旧资产低利用率、低回报并持续消耗维护或防御性资本，而非即时融资崩溃。",
-  "inputs_excluded_from_base": ["DOMESTIC_INCREMENTAL_ASSET_RETURN", "OVERSEAS_AND_INDUSTRIAL_CHAIN_OPTION", "ORDINARY_SHARE_OWNER_CASH"],
+  "inputs_excluded_from_base": [
+    "DOMESTIC_INCREMENTAL_ASSET_RETURN",
+    "OVERSEAS_AND_INDUSTRIAL_CHAIN_OPTION",
+    "ORDINARY_SHARE_OWNER_CASH"
+  ],
   "existing_valuation_adapter": "scripts/valuation_routing.py:build_valuation_route",
-  "compatibility_gap": "Existing numeric INVESTMENT_ENRICHMENT requires global SELECTION_ADMITTED. This teaching route request does not create or substitute that admission; U4 must make the restriction claim-local.",
+  "compatibility_resolution": "Current-company underwriting may enter CJO and valuation routing through a source-bound, independently reviewed complete Episode; SELECTION_ADMITTED remains local to claims that actually depend on comparative selection or causal authority.",
   "boundary": "No current value, price, expected return, BuyBand, or investment action is generated."
 }

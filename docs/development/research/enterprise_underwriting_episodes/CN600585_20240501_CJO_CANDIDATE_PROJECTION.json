@@ -1,5 +1,5 @@
 {
-  "schema_version": "enterprise-underwriting-cjo-candidate-projection.v1",
+  "schema_version": "enterprise-underwriting-cjo-candidate-projection.v2",
   "projection_id": "UW-CJO:EUE:CN600585:20240501:WORKED:V1",
   "episode_id": "EUE:CN600585:20240501:WORKED:V1",
   "company_id": "CN:600585",
@@ -37,7 +37,10 @@
       "reason": "现金、贷款与债券资源支持公司穿越当前低迷，教学材料没有显示即时融资危机。",
       "investment_consequence": "不以清算或短期融资崩溃作为基准路径；仍将资本结构与现金可得性和新增项目回报分开。",
       "promotion_or_resolution_condition": "若流动性、再融资或债务期限显著恶化，应重新评估生存路径。",
-      "evidence_ids": ["CONCH-E1", "CONCH-E2"]
+      "evidence_ids": [
+        "CONCH-E1",
+        "CONCH-E2"
+      ]
     },
     {
       "component_id": "DOMESTIC_CORE_NORMAL_EARNINGS",
@@ -45,7 +48,10 @@
       "reason": "成本改善与既有区域网络提供缓冲，但需求、价格、销量和毛利仍受压。",
       "investment_consequence": "只按中周期量价和成本恢复范围承保国内核心，不使用景气峰值或设计产能外推。",
       "promotion_or_resolution_condition": "区域量价、利用率和单位毛利在兼容口径上同时恢复。",
-      "evidence_ids": ["CONCH-E1", "CONCH-E3"]
+      "evidence_ids": [
+        "CONCH-E1",
+        "CONCH-E3"
+      ]
     },
     {
       "component_id": "DOMESTIC_INCREMENTAL_ASSET_RETURN",
@@ -53,7 +59,10 @@
       "reason": "投产和建设只证明资源承诺；没有项目级客户、单位经济、现金回收和资本基数桥。",
       "investment_consequence": "国内新增资产不取得增量正常盈利或 owner-cash 信用。",
       "promotion_or_resolution_condition": "同一责任单元连续披露客户量价、单位成本、维护/扩张资本和累计现金回收。",
-      "evidence_ids": ["CONCH-E1", "CONCH-E4"]
+      "evidence_ids": [
+        "CONCH-E1",
+        "CONCH-E4"
+      ]
     },
     {
       "component_id": "OVERSEAS_AND_INDUSTRIAL_CHAIN_OPTION",
@@ -61,7 +70,10 @@
       "reason": "海外区域毛利改善是真实组合缓冲，但其数据混合存量与新项目。",
       "investment_consequence": "保留为上行情景和反方，不作为新增项目价值或国内盈利修复的替代。",
       "promotion_or_resolution_condition": "可拆分区域/项目利润、现金和资本回报，且显示可重复客户吸收。",
-      "evidence_ids": ["CONCH-E1", "CONCH-E3"]
+      "evidence_ids": [
+        "CONCH-E1",
+        "CONCH-E3"
+      ]
     },
     {
       "component_id": "ORDINARY_SHARE_OWNER_CASH",
@@ -69,7 +81,10 @@
       "reason": "维护/扩张资本、项目现金、营运资本、税、少数股东、债务融资和普通股可得性没有形成同一桥。",
       "investment_consequence": "不把 FY2024 OCF 减披露资本支出28.57亿元当作 owner cash；价值路线使用范围与资产/EPV交叉约束。",
       "promotion_or_resolution_condition": "补齐经济维护资本、增长资本、普通股现金可达性和项目级回收的兼容桥。",
-      "evidence_ids": ["CONCH-E1", "CONCH-E4"]
+      "evidence_ids": [
+        "CONCH-E1",
+        "CONCH-E4"
+      ]
     }
   ],
   "existing_cjo_adapter": "scripts/enterprise_judgment_core.py:compile_cjo_candidate",

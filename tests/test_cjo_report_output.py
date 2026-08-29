@@ -11,6 +11,7 @@ from scripts.judgment_handoff_receipts import record_judgment_handoff_read_recei
 from scripts.turtle_agent.tools import read_tools, write_tools
 from tests.test_enterprise_judgment_core import (
     _frozen_cjo, _judgment_input, _ledger, _model, _review, _source_package,
+    _underwriting_episode,
 )
 
 
@@ -198,6 +199,55 @@ def test_bound_frozen_cjo_is_the_reader_summary_truth_source(tmp_path: Path) -> 
         assert trace["source_ref"] in summary
     for source in frozen["source_package"]["sources"]:
         assert source["locator"] in summary
+
+
+def test_bound_underwriting_episode_reaches_handoff_and_reader_without_local_rewrite(
+    tmp_path: Path,
+) -> None:
+    package = _source_package()
+    episode = _underwriting_episode()
+    candidate = enterprise_core.compile_cjo_candidate(
+        model=_model(source_package=package),
+        ledger=_ledger(),
+        source_package=package,
+        judgment_input=_judgment_input(),
+        underwriting_episode=episode,
+    )
+    frozen = enterprise_core.freeze_cjo(
+        candidate=candidate,
+        independent_review=_review(candidate),
+    )
+    frozen_path = tmp_path / "frozen_cjo.json"
+    _write_json(frozen_path, frozen)
+    _write_json(tmp_path / "analysis_contract.json", {
+        "report_id": frozen["company_id"],
+        "company_id": frozen["company_id"],
+        "analysis_purpose": "COMPANY_JUDGMENT_ONLY",
+        "data_as_of": frozen["cutoff_at"],
+        "canonical_judgment_refs": {"frozen_cjo_ref": str(frozen_path)},
+    })
+    _write_json(tmp_path / "thesis_test.json", {
+        "central_path": {"statement": "STALE LOCAL INDUSTRY STORY"},
+    })
+
+    handoff = judgment_generation_handoff.build_judgment_generation_handoff(
+        tmp_path, "JUDGMENT_SYNTHESIS",
+    )
+    validation = judgment_generation_handoff.validate_judgment_generation_handoff(
+        handoff, output_dir=tmp_path,
+    )
+    report = write_tools._render_bound_frozen_cjo_research_artifact(frozen)
+
+    expected = enterprise_core.project_frozen_cjo_to_judgment_synthesis(frozen)[
+        "underwriting_thesis_projection"
+    ]
+    assert validation["state"] == "READY"
+    assert handoff["projection"]["underwriting_thesis_projection"] == expected
+    assert episode["situation_model"]["industry_future_thesis"]["most_likely_regime"] in report
+    assert episode["underwriting_thesis"]["central_path"] in report
+    assert episode["underwriting_thesis"]["owner_cash_treatment"] in report
+    assert "STALE LOCAL INDUSTRY STORY" not in report
+    assert write_tools._cjo_report_output_validation(report)["status"] == "PASS"
 
 
 def test_no_primary_frozen_cjo_keeps_local_company_judgments_in_summary(tmp_path: Path) -> None:

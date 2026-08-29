@@ -317,7 +317,8 @@ def test_teaching_only_curriculum_does_not_require_holdout_or_blind_lane() -> No
     payload["cases"] = [_teaching_case()]
     result = curriculum.validate_curriculum(payload)
     assert result["valid"], result["findings"]
-    assert result["progress"]["next_action"] == "EXPAND_TEACHING_CANDIDATE_POOL"
+    assert result["progress"]["next_action"] == "RUN_ENTERPRISE_UNDERWRITING_TRAINING_ENTRY"
+    assert result["progress"]["legacy_lane_next_action"] == "EXPAND_TEACHING_CANDIDATE_POOL"
 
 
 def test_result_known_local_candidate_pool_adds_teaching_capacity_not_ability_evidence() -> None:
@@ -340,7 +341,8 @@ def test_result_known_local_candidate_pool_adds_teaching_capacity_not_ability_ev
     assert pool["independent_company_cluster_count"] == 1
     assert pool["teaching_library_pipeline_independent_company_cluster_count"] == 1
     assert pool["ability_evidence_count"] == 0
-    assert result["progress"]["next_action"] == "CURATE_NEXT_TEACHING_CANDIDATE"
+    assert result["progress"]["next_action"] == "RUN_ENTERPRISE_UNDERWRITING_TRAINING_ENTRY"
+    assert result["progress"]["legacy_lane_next_action"] == "CURATE_NEXT_TEACHING_CANDIDATE"
 
 
 def test_result_known_case_cannot_masquerade_as_blind_or_holdout() -> None:
@@ -381,7 +383,8 @@ def test_repeated_cutoffs_do_not_accelerate_teaching_to_blind_schedule() -> None
     status = curriculum.curriculum_status(payload)
     assert status["track_progress"]["TEACHING"]["completed_episode_count"] == 3
     assert status["track_progress"]["TEACHING"]["completed_independent_company_cluster_count"] == 1
-    assert status["next_action"] == "EXPAND_TEACHING_CANDIDATE_POOL"
+    assert status["next_action"] == "RUN_ENTERPRISE_UNDERWRITING_TRAINING_ENTRY"
+    assert status["legacy_lane_next_action"] == "EXPAND_TEACHING_CANDIDATE_POOL"
 
 
 def test_two_listed_securities_may_share_one_economic_company_cluster() -> None:
@@ -455,12 +458,13 @@ def test_frozen_blind_case_is_settled_before_registering_another_case() -> None:
     payload["cases"] = [_blind_case(status="FROZEN")]
     assert curriculum.validate_curriculum(payload)["valid"]
     status = curriculum.curriculum_status(payload)
-    assert status["next_action"] == "AUTHORIZE_AND_SETTLE_FROZEN_BLIND_CASE"
+    assert status["next_action"] == "RUN_ENTERPRISE_UNDERWRITING_TRAINING_ENTRY"
+    assert status["legacy_lane_next_action"] == "AUTHORIZE_AND_SETTLE_FROZEN_BLIND_CASE"
 
 
 def test_waiting_prospective_case_never_blocks_historical_training() -> None:
     status = curriculum.curriculum_status(_curriculum())
-    assert status["state"] == "ACTIONABLE"
+    assert status["state"] == "SUPPORTING_INVENTORY_ONLY"
     assert status["historical_training_blocked_by_holdout_or_prospective"] is False
 
 
@@ -485,7 +489,8 @@ def test_checked_in_curriculum_registers_real_assets_without_overclaiming_capaci
     assert progress["track_progress"]["TEACHING"]["completed_independent_company_cluster_count"] == 30
     assert progress["track_progress"]["BLIND_JUDGMENT"]["independent_company_cluster_count"] == 11
     assert progress["track_progress"]["BLIND_JUDGMENT"]["completed_independent_company_cluster_count"] == 11
-    assert progress["next_action"] == "RUN_FEEDBACK_LINKED_BLIND_BEFORE_ANOTHER_HOLDOUT"
+    assert progress["next_action"] == "RUN_ENTERPRISE_UNDERWRITING_TRAINING_ENTRY"
+    assert progress["legacy_lane_next_action"] == "RUN_FEEDBACK_LINKED_BLIND_BEFORE_ANOTHER_HOLDOUT"
     assert progress["track_progress"]["BLIND_JUDGMENT"]["completed_independent_company_cluster_count"] == 11
     holdout = progress["track_progress"]["HISTORICAL_HOLDOUT"]
     assert holdout["record_count"] == 5
@@ -497,7 +502,7 @@ def test_checked_in_curriculum_registers_real_assets_without_overclaiming_capaci
     assert progress["teaching_candidate_pool"]["independent_company_cluster_count"] == 0
     assert progress["teaching_candidate_pool"]["teaching_library_pipeline_independent_company_cluster_count"] == 30
     assert progress["teaching_candidate_pool"]["ability_evidence_count"] == 0
-    assert progress["next_action"] == "RUN_FEEDBACK_LINKED_BLIND_BEFORE_ANOTHER_HOLDOUT"
+    assert progress["next_action"] == "RUN_ENTERPRISE_UNDERWRITING_TRAINING_ENTRY"
     assert progress["capability_claim"] == "NOT_DEMONSTRATED_BY_CURRICULUM_COUNTS"
     assert progress["comparative_is_default_entry"] is False
     assert progress["capability_coverage_by_distinct_company_clusters"]["CAPITAL_ALLOCATION"] == 16

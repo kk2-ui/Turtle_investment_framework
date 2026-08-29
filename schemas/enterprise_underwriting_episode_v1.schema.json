@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "title": "EnterpriseUnderwritingEpisode v1",
+  "title": "EnterpriseUnderwritingEpisode v2",
   "type": "object",
   "required": [
     "schema_version",
@@ -27,9 +27,10 @@
     "investment_treatment"
   ],
   "properties": {
-    "schema_version": {"const": "enterprise-underwriting-episode.v1"},
+    "schema_version": {"const": "enterprise-underwriting-episode.v2"},
     "sample_identity": {"enum": ["WORKED_CASE", "BLIND_REPLAY", "PROSPECTIVE_EPISODE"]},
     "situation_model": {"$ref": "#/$defs/situation_model"},
+    "value_route": {"$ref": "#/$defs/value_route"},
     "strongest_rival": {"$ref": "#/$defs/non_empty_string"},
     "reversal_observations": {
       "type": "array",
@@ -56,9 +57,13 @@
         "owner_cash_treatment",
         "permanent_loss_treatment",
         "value_route_treatment",
+        "economic_directions",
         "strongest_rival",
         "monitoring"
-      ]
+      ],
+      "properties": {
+        "economic_directions": {"$ref": "#/$defs/economic_directions"}
+      }
     }
   },
   "$defs": {
@@ -106,6 +111,56 @@
         }
       },
       "additionalProperties": false
+    },
+    "economic_directions": {
+      "type": "object",
+      "required": ["normal_earnings", "owner_cash", "permanent_loss"],
+      "properties": {
+        "normal_earnings": {"$ref": "#/$defs/economic_direction"},
+        "owner_cash": {"$ref": "#/$defs/economic_direction"},
+        "permanent_loss": {"$ref": "#/$defs/economic_direction"}
+      },
+      "additionalProperties": false
+    },
+    "value_route": {
+      "type": "object",
+      "required": ["primary_routes", "excluded_routes", "route_reasoning", "valuation_model_roles"],
+      "properties": {
+        "primary_routes": {
+          "type": "array",
+          "minItems": 1,
+          "items": {"$ref": "#/$defs/non_empty_string"}
+        },
+        "excluded_routes": {
+          "type": "array",
+          "minItems": 1,
+          "items": {"$ref": "#/$defs/non_empty_string"}
+        },
+        "route_reasoning": {"$ref": "#/$defs/non_empty_string"},
+        "valuation_model_roles": {
+          "type": "object",
+          "required": ["primary"],
+          "properties": {
+            "primary": {
+              "type": "array",
+              "minItems": 1,
+              "items": {"$ref": "#/$defs/non_empty_string"}
+            },
+            "corroborative": {
+              "type": "array",
+              "items": {"$ref": "#/$defs/non_empty_string"}
+            },
+            "stress": {
+              "type": "array",
+              "items": {"$ref": "#/$defs/non_empty_string"}
+            }
+          },
+          "additionalProperties": false
+        }
+      }
+    },
+    "economic_direction": {
+      "enum": ["IMPROVES", "DETERIORATES", "MIXED", "UNKNOWN", "NONE"]
     }
   },
   "additionalProperties": true

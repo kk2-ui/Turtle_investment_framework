@@ -251,6 +251,147 @@ def _bound_frozen_cjo_ref(output_dir: str) -> str:
     return str(refs.get("frozen_cjo_ref") or "").strip()
 
 
+def _episode_bound_investment_refs(output_dir: str) -> dict[str, Any]:
+    """Return the formal Episode predecessor binding, including partial binds.
+
+    Once either canonical current-company reference is declared, completion
+    must validate that route and must not silently fall back to the legacy
+    bridge/thesis predecessor.
+    """
+    try:
+        contract = json.loads(
+            Path(output_dir, "analysis_contract.json").read_text(encoding="utf-8")
+        )
+    except (OSError, json.JSONDecodeError):
+        return {}
+    refs = contract.get("canonical_judgment_refs")
+    if contract.get("analysis_purpose") != "INVESTMENT_DECISION" or not isinstance(refs, dict):
+        return {}
+    frozen_ref = str(refs.get("frozen_cjo_ref") or "").strip()
+    admission_ref = str(refs.get("current_company_cjo_admission_ref") or "").strip()
+    if not frozen_ref and not admission_ref:
+        return {}
+    return {
+        "frozen_cjo_ref": frozen_ref,
+        "current_company_cjo_admission_ref": admission_ref,
+        "company_id": str(
+            contract.get("company_id")
+            or contract.get("ts_code")
+            or contract.get("code")
+            or ""
+        ),
+        "cutoff_at": str(
+            contract.get("data_as_of")
+            or contract.get("analysis_date")
+            or ""
+        ),
+    }
+
+
+def _completion_company_identity_matches(canonical: Any, runtime: Any) -> bool:
+    left = str(canonical or "").strip().upper()
+    right = str(runtime or "").strip().upper()
+    if left == right:
+        return True
+    if ":" not in left or "." not in right:
+        return False
+    market, security = left.split(":", 1)
+    runtime_security, exchange = right.split(".", 1)
+    runtime_market = {"SH": "CN", "SZ": "CN", "BJ": "CN", "HK": "HK"}.get(exchange)
+    return bool(runtime_market == market and runtime_security == security)
+
+
+def _evaluate_episode_bound_investment_predecessor(
+    output_dir: str, refs: dict[str, Any],
+) -> dict[str, Any]:
+    """Validate the Frozen Episode/CJO admission that replaces legacy G1J."""
+    output = Path(output_dir)
+    findings: list[str] = []
+
+    def resolve(ref: Any) -> Path | None:
+        text = str(ref or "").strip()
+        if not text:
+            return None
+        path = Path(text).expanduser()
+        return path.resolve() if path.is_absolute() else (output / path).resolve()
+
+    frozen_path = resolve(refs.get("frozen_cjo_ref"))
+    admission_path = resolve(refs.get("current_company_cjo_admission_ref"))
+    if frozen_path is None:
+        findings.append("frozen_cjo_ref_missing")
+    if admission_path is None:
+        findings.append("current_company_cjo_admission_ref_missing")
+    try:
+        frozen = json.loads(frozen_path.read_text(encoding="utf-8")) if frozen_path else {}
+    except (OSError, json.JSONDecodeError):
+        frozen = {}
+        findings.append("frozen_cjo_unreadable")
+    try:
+        admission = json.loads(admission_path.read_text(encoding="utf-8")) if admission_path else {}
+    except (OSError, json.JSONDecodeError):
+        admission = {}
+        findings.append("current_company_cjo_admission_unreadable")
+
+    try:
+        from scripts.enterprise_judgment_core import validate_frozen_cjo
+        from scripts.current_company_cjo_admission import (
+            validate_frozen_current_company_cjo_admission,
+        )
+    except ModuleNotFoundError:
+        from enterprise_judgment_core import validate_frozen_cjo
+        from current_company_cjo_admission import (
+            validate_frozen_current_company_cjo_admission,
+        )
+
+    frozen_validation = validate_frozen_cjo(frozen)
+    admission_validation = validate_frozen_current_company_cjo_admission(
+        frozen_cjo=frozen,
+        admission_receipt=admission,
+        require_overlay=True,
+    )
+    if frozen_validation.get("state") != "VALID":
+        findings.extend(
+            "frozen_cjo_invalid:" + str(item)
+            for item in frozen_validation.get("findings") or []
+        )
+    if admission_validation.get("state") != "VALID":
+        findings.extend(
+            "current_company_cjo_admission_invalid:" + str(item)
+            for item in admission_validation.get("findings") or []
+        )
+    projection = (
+        frozen.get("underwriting_thesis_projection")
+        if isinstance(frozen.get("underwriting_thesis_projection"), dict) else {}
+    )
+    if projection.get("sample_identity") not in {"BLIND_REPLAY", "PROSPECTIVE_EPISODE"}:
+        findings.append("current_investment_requires_blind_or_prospective_episode")
+    binding = (
+        admission.get("candidate_binding", {}).get("primary_binding", {})
+        if isinstance(admission.get("candidate_binding"), dict) else {}
+    )
+    if (
+        binding.get("binding_kind") != "ENTERPRISE_UNDERWRITING_EPISODE"
+        or binding.get("episode_id") != projection.get("episode_id")
+        or binding.get("underwriting_thesis_id") != projection.get("underwriting_thesis_id")
+    ):
+        findings.append("current_company_admission_episode_binding_mismatch")
+    if not _completion_company_identity_matches(frozen.get("company_id"), refs.get("company_id")):
+        findings.append("frozen_cjo_company_id_contract_mismatch")
+    if str(frozen.get("cutoff_at") or "")[:10] != str(refs.get("cutoff_at") or "")[:10]:
+        findings.append("frozen_cjo_cutoff_contract_mismatch")
+
+    return {
+        "state": "DECISION_READY" if not findings else "INVALID",
+        "status": "PASS" if not findings else "FAIL",
+        "findings": findings,
+        "episode_id": str(projection.get("episode_id") or ""),
+        "underwriting_thesis_id": str(projection.get("underwriting_thesis_id") or ""),
+        "sample_identity": str(projection.get("sample_identity") or ""),
+        "frozen_cjo_validation": frozen_validation,
+        "current_company_cjo_admission_validation": admission_validation,
+    }
+
+
 def _evaluate_bound_frozen_cjo_completion(
     report_text: str, output_dir: str, frozen_ref: str,
 ) -> CompletionResult:
@@ -341,6 +482,17 @@ def evaluate_report_completion(report_text: str, output_dir: str) -> CompletionR
     ledger = _load_audit_ledger(output_dir)
     analysis_purpose = _analysis_purpose(output_dir)
     company_judgment_only = analysis_purpose == "COMPANY_JUDGMENT_ONLY"
+    episode_investment_refs = _episode_bound_investment_refs(output_dir)
+    episode_bound_investment = bool(episode_investment_refs)
+    episode_predecessor = (
+        _evaluate_episode_bound_investment_predecessor(
+            output_dir, episode_investment_refs,
+        )
+        if episode_bound_investment else {
+            "state": "SKIP", "status": "SKIP",
+            "findings": [], "reason": "legacy_predecessor_path",
+        }
+    )
     frozen_ref = _bound_frozen_cjo_ref(output_dir) if company_judgment_only else ""
     if frozen_ref:
         return _evaluate_bound_frozen_cjo_completion(
@@ -350,6 +502,11 @@ def evaluate_report_completion(report_text: str, output_dir: str) -> CompletionR
     warnings: list[str] = []
     chapter_results: list[dict[str, Any]] = []
     chapter_texts: dict[int, str] = {}
+    if episode_bound_investment and episode_predecessor.get("state") != "DECISION_READY":
+        blocking.append(
+            "Enterprise underwriting predecessor: INVALID: "
+            + " | ".join(str(item) for item in episode_predecessor.get("findings") or [])
+        )
     chapters = ledger.get('chapters', {}) if isinstance(ledger, dict) else {}
     data_rich = detect_data_richness(output_dir)
     for idx in _expected_v13_chapters():
@@ -461,18 +618,25 @@ def evaluate_report_completion(report_text: str, output_dir: str) -> CompletionR
     # A financial-driver bridge is opt-in for legacy outputs, but once a new
     # run enables it, a report cannot complete while cash conversion or capital
     # allocation remains unbound from the valuation and decision ledgers.
-    try:
-        from scripts.financial_driver_bridge import evaluate_output_financial_driver_bridge
-    except ModuleNotFoundError:
-        from financial_driver_bridge import evaluate_output_financial_driver_bridge
-    try:
-        financial_driver_bridge = evaluate_output_financial_driver_bridge(output_dir, persist=True)
-    except (OSError, ValueError, TypeError, json.JSONDecodeError) as exc:
+    if episode_bound_investment:
         financial_driver_bridge = {
-            'state': 'INVALID', 'status': 'FAIL',
-            'invalid_findings': ['validator_error:' + str(exc)],
-            'incomplete_findings': [], 'warnings': [],
+            'state': 'SKIP', 'status': 'SKIP',
+            'invalid_findings': [], 'incomplete_findings': [], 'warnings': [],
+            'reason': 'enterprise_underwriting_episode_is_price_free_company_story',
         }
+    else:
+        try:
+            from scripts.financial_driver_bridge import evaluate_output_financial_driver_bridge
+        except ModuleNotFoundError:
+            from financial_driver_bridge import evaluate_output_financial_driver_bridge
+        try:
+            financial_driver_bridge = evaluate_output_financial_driver_bridge(output_dir, persist=True)
+        except (OSError, ValueError, TypeError, json.JSONDecodeError) as exc:
+            financial_driver_bridge = {
+                'state': 'INVALID', 'status': 'FAIL',
+                'invalid_findings': ['validator_error:' + str(exc)],
+                'incomplete_findings': [], 'warnings': [],
+            }
     financial_driver_bridge_state = str(financial_driver_bridge.get('state') or 'INVALID')
     if financial_driver_bridge_state == 'INVALID':
         blocking.append('Financial driver bridge: INVALID: ' + ' | '.join(str(item) for item in financial_driver_bridge.get('invalid_findings', [])[:12]))
@@ -728,14 +892,21 @@ def evaluate_report_completion(report_text: str, output_dir: str) -> CompletionR
             + ' | '.join(str(item) for item in decision_revision.get('findings', [])[:12])
         )
 
-    try:
-        from scripts.thesis_test_gate import evaluate_output_thesis_test
-    except ModuleNotFoundError:
-        from thesis_test_gate import evaluate_output_thesis_test
-    try:
-        thesis_test = evaluate_output_thesis_test(output_dir, report_text=report_text, persist=True)
-    except (OSError, ValueError, TypeError, json.JSONDecodeError) as exc:
-        thesis_test = {'state': 'INVALID', 'status': 'FAIL', 'invalid_findings': ['validator_error:' + str(exc)], 'incomplete_findings': []}
+    if episode_bound_investment:
+        thesis_test = {
+            'state': 'SKIP', 'status': 'SKIP',
+            'invalid_findings': [], 'incomplete_findings': [],
+            'reason': 'frozen_episode_and_current_company_admission_own_thesis',
+        }
+    else:
+        try:
+            from scripts.thesis_test_gate import evaluate_output_thesis_test
+        except ModuleNotFoundError:
+            from thesis_test_gate import evaluate_output_thesis_test
+        try:
+            thesis_test = evaluate_output_thesis_test(output_dir, report_text=report_text, persist=True)
+        except (OSError, ValueError, TypeError, json.JSONDecodeError) as exc:
+            thesis_test = {'state': 'INVALID', 'status': 'FAIL', 'invalid_findings': ['validator_error:' + str(exc)], 'incomplete_findings': []}
     thesis_test_state = str(thesis_test.get('state') or 'INVALID')
     if thesis_test_state == 'INVALID':
         blocking.append('Thesis test: INVALID: ' + ' | '.join(str(item) for item in thesis_test.get('invalid_findings', [])[:12]))
@@ -907,6 +1078,8 @@ def evaluate_report_completion(report_text: str, output_dir: str) -> CompletionR
         official_evidence_state, financial_driver_bridge_state, claim_evidence_state,
         thesis_test_state, insight_state,
     }
+    if episode_bound_investment:
+        active_states.add(str(episode_predecessor.get('state') or 'INVALID'))
     if not company_judgment_only:
         active_states.update({
             valuation_route_state, decisive_questions_state, base_rate_state,
@@ -926,6 +1099,7 @@ def evaluate_report_completion(report_text: str, output_dir: str) -> CompletionR
         'depth': {'status': 'PASS' if not any('short_depth:' in b for b in blocking) else 'FAIL'},
         'audit': {'status': 'PASS' if not any('audit_' in b or 'missing_audit_record' in b for b in blocking) else 'FAIL'},
         'analysis_purpose': {'state': analysis_purpose},
+        'enterprise_underwriting_predecessor': episode_predecessor,
         'gg_derivation': {
             'status': 'SKIP',
             'reason': 'structured_valuation_model_and_decision_reliability_own_derivation',

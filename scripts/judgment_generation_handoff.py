@@ -55,7 +55,7 @@ _VIEW_PROJECTION_KEYS = {
     },
 }
 _VIEW_OPTIONAL_PROJECTION_KEYS = {
-    "JUDGMENT_SYNTHESIS": {"frozen_cjo"},
+    "JUDGMENT_SYNTHESIS": {"frozen_cjo", "underwriting_thesis_projection"},
     "INVESTMENT_ENRICHMENT": {"quantitative_overlay"},
 }
 _USAGE_CONTRACT_TRUE_FIELDS = {
@@ -890,6 +890,133 @@ def _build_investment_enrichment(
     }
 
 
+def _build_episode_cjo_investment_enrichment(
+    output: Path,
+    frozen_cjo_path: str | Path,
+    current_company_cjo_admission_path: str | Path,
+    identity: dict[str, str],
+    invalid: list[str],
+    incomplete: list[str],
+    sources: list[dict[str, Any]],
+) -> tuple[dict[str, Any], dict[str, str]]:
+    """Expose an admitted Episode thesis and its valuation route before price.
+
+    This replaces the legacy Comparative predecessor at the production handoff.
+    It deliberately does not invent a quantitative overlay: price, return, and
+    action remain downstream work, while the report receives the same Frozen
+    Episode and route that valuation routing already consumed.
+    """
+    frozen_path = _resolve_explicit_ref(output, frozen_cjo_path)
+    admission_path = _resolve_explicit_ref(output, current_company_cjo_admission_path)
+    frozen = _read_json(frozen_path)
+    admission = _read_json(admission_path)
+    route = _load_artifact(
+        output,
+        "valuation_route.json",
+        required=True,
+        invalid=invalid,
+        incomplete=incomplete,
+    )
+    if not frozen_path.is_file():
+        incomplete.append("artifact_missing:frozen_cjo:" + str(frozen_path))
+    elif not frozen:
+        invalid.append("artifact_invalid_json_or_object:frozen_cjo")
+    else:
+        validation = enterprise_core.validate_frozen_cjo(frozen)
+        if validation.get("state") != "VALID":
+            invalid.extend(
+                "frozen_cjo_invalid:" + str(item)
+                for item in validation.get("findings") or []
+            )
+        _identity_match(
+            "frozen_cjo.company_id", frozen.get("company_id"), identity["company_id"], invalid,
+        )
+        frozen_cutoff = str(frozen.get("cutoff_at") or "")[:10]
+        if frozen_cutoff and identity["information_cutoff"][:10] and frozen_cutoff != identity["information_cutoff"][:10]:
+            invalid.append("identity_mismatch:frozen_cjo.information_cutoff")
+    if not admission_path.is_file():
+        incomplete.append(
+            "artifact_missing:current_company_cjo_admission:" + str(admission_path)
+        )
+    elif not admission:
+        invalid.append("artifact_invalid_json_or_object:current_company_cjo_admission")
+    elif frozen:
+        admission_validation = current_cjo_admission.validate_frozen_current_company_cjo_admission(
+            frozen_cjo=frozen,
+            admission_receipt=admission,
+            require_overlay=True,
+        )
+        if admission_validation.get("state") != "VALID":
+            invalid.extend(
+                "current_company_cjo_admission_invalid:" + str(item)
+                for item in admission_validation.get("findings") or []
+            )
+    if identity["analysis_purpose"] != "INVESTMENT_DECISION":
+        invalid.append("investment_enrichment_requires_investment_decision_purpose")
+    route_validation = (
+        route.get("validation")
+        if isinstance(route, dict) and isinstance(route.get("validation"), dict) else {}
+    )
+    if route and route_validation.get("state") == "INVALID":
+        invalid.append("valuation_route_invalid")
+    elif route and route_validation.get("state") not in _READY_LEDGER_STATES:
+        incomplete.append("valuation_route_not_reviewable")
+    _identity_match("valuation_route.report_id", route.get("report_id"), identity["report_id"], invalid)
+    projection = (
+        frozen.get("underwriting_thesis_projection")
+        if isinstance(frozen.get("underwriting_thesis_projection"), dict) else {}
+    )
+    route_ref = route.get("underwriting_thesis_ref") if isinstance(route.get("underwriting_thesis_ref"), dict) else {}
+    if not projection:
+        invalid.append("frozen_cjo_underwriting_thesis_projection_missing")
+    elif (
+        route_ref.get("episode_id") != projection.get("episode_id")
+        or route_ref.get("underwriting_thesis_id") != projection.get("underwriting_thesis_id")
+    ):
+        invalid.append("valuation_route_underwriting_thesis_binding_mismatch")
+    sources.extend([
+        _source_ref(
+            "FROZEN_CJO", str(frozen_path), "",
+            "Read-only complete enterprise judgment; valuation and report may enrich but not rewrite it.",
+        ),
+        _source_ref(
+            "CURRENT_COMPANY_CJO_ADMISSION", str(admission_path), "",
+            "Read-only PRIMARY current-company admission bound to the Frozen Episode.",
+        ),
+        _source_ref(
+            "VALUATION_ROUTE", "valuation_route.json", "",
+            "Price-free model applicability route derived from the same Episode.",
+        ),
+    ])
+    return {
+        "company_judgment_predecessor": _safe_projection({
+            "source": "FROZEN_CJO_ENTERPRISE_UNDERWRITING_EPISODE",
+            "cjo_id": frozen.get("cjo_id"),
+            "company_id": frozen.get("company_id"),
+            "cutoff_at": frozen.get("cutoff_at"),
+            "resolution": frozen.get("resolution"),
+            "underwriting_thesis_projection": projection,
+            "normal_earnings_transmission": frozen.get("normal_earnings_transmission"),
+            "owner_cash_transmission": frozen.get("owner_cash_transmission"),
+            "permanent_loss_paths": frozen.get("permanent_loss_paths"),
+            "read_only": True,
+        }),
+        "valuation_route": _safe_projection({
+            key: route.get(key)
+            for key in (
+                "report_id", "route_id", "archetype_id", "models", "rejected_models",
+                "synthesis_policy", "terminal_policy", "required_research",
+                "underwriting_thesis_ref", "underwriting_route_binding",
+                "underwriting_input_treatments",
+            )
+            if key in route
+        }),
+    }, {
+        "industry_priors": "NOT_APPLICABLE_TO_VIEW",
+        "learning_prompts": "NOT_APPLICABLE_TO_VIEW",
+    }
+
+
 def _build_frozen_cjo_investment_enrichment(
     output: Path,
     frozen_cjo_path: str | Path,
@@ -1225,6 +1352,16 @@ def build_judgment_generation_handoff(
             projection, empty_states = _build_frozen_cjo_investment_enrichment(
                 output, bound_frozen_cjo, bound_overlay, bound_current_company_admission,
                 identity, invalid, incomplete, sources,
+            )
+        elif bound_frozen_cjo is not None and bound_current_company_admission is not None:
+            projection, empty_states = _build_episode_cjo_investment_enrichment(
+                output,
+                bound_frozen_cjo,
+                bound_current_company_admission,
+                identity,
+                invalid,
+                incomplete,
+                sources,
             )
         else:
             projection, empty_states = _build_investment_enrichment(

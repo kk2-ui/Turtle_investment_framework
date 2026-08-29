@@ -1,5 +1,5 @@
 {
-  "schema_version": "enterprise-underwriting-episode.v1",
+  "schema_version": "enterprise-underwriting-episode.v2",
   "episode_id": "EUE:CN600585:20240501:WORKED:V1",
   "company_id": "CN:600585",
   "company_name": "安徽海螺水泥",
@@ -35,7 +35,12 @@
   "value_route": {
     "primary_routes": ["ASSET_VALUE", "EARNINGS_POWER_VALUE", "CAPITAL_RETURN_CROSS_CHECK"],
     "excluded_routes": ["CAPACITY_GROWTH_VALUE_AS_PRIMARY", "ONE_PERIOD_OCF_MINUS_CAPEX_AS_OWNER_CASH"],
-    "route_reasoning": "即时生存并非中心问题，且公司没有证据允许把新增产能直接资本化为高回报成长。资产价值和中周期 EPV 提供双锚；资本回报交叉检查防止把新旧重资产混合成未经承保的增长价值。"
+    "route_reasoning": "即时生存并非中心问题，且公司没有证据允许把新增产能直接资本化为高回报成长。资产价值和中周期 EPV 提供双锚；资本回报交叉检查防止把新旧重资产混合成未经承保的增长价值。",
+    "valuation_model_roles": {
+      "primary": ["ASSET_VALUE", "EPV"],
+      "corroborative": ["RETURN_DECOMPOSITION"],
+      "stress": ["NAV"]
+    }
   },
   "strongest_rival": "海外毛利改善、成本下降、现金缓冲和多元布局会使整体盈利先于国内周期恢复，新增布局最终成为有效组合缓冲。",
   "reversal_observations": [
@@ -145,6 +150,11 @@
     "owner_cash_treatment": "集团FY2024经营现金覆盖披露资本支出显示承受力，但维护/增长资本和普通股可得现金未闭合；owner cash 只能以范围和资产/EPV交叉约束，而不是单点OCF减资本支出。",
     "permanent_loss_treatment": "核心风险是区域需求和价格长期疲弱使新旧资产低利用率、低回报并持续消耗维护或防御性资本，而非即时融资崩溃。",
     "value_route_treatment": "采用资产价值、中周期EPV与资本回报交叉检查；不对产能、投产或一季现金覆盖支付成长价值。",
+    "economic_directions": {
+      "normal_earnings": "MIXED",
+      "owner_cash": "UNKNOWN",
+      "permanent_loss": "DETERIORATES"
+    },
     "strongest_rival": "海外毛利改善、成本下降、现金缓冲和多元布局会使整体盈利先于国内周期恢复，新增布局最终成为有效组合缓冲。",
     "monitoring": "国内量价利用率和吨毛利；新增项目的同边界客户/经济/现金桥；海外存量与新项目拆分；经济维护资本和普通股现金可达性。"
   },

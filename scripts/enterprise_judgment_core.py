@@ -703,12 +703,147 @@ def _validate_forward_judgments(
             _add(findings, path + ".direction_or_status_invalid")
 
 
+def _validate_underwriting_thesis_projection(
+    projection: Any,
+    *,
+    cjo: dict[str, Any],
+    prefix: str,
+    findings: list[str],
+) -> None:
+    """Keep an optional complete underwriting thesis bound to the CJO.
+
+    The Episode remains the composition/read model.  This validator only
+    checks that its price-free projection has not changed company, cutoff, or
+    the two narrative claims also represented by the narrower CJO schema.
+    Legacy CJO objects omit the projection and remain valid.
+    """
+    if projection is None:
+        return
+    value = _mapping(projection)
+    if not value:
+        _add(findings, prefix + ".underwriting_thesis_projection_invalid")
+        return
+    try:
+        from scripts.enterprise_underwriting_episode import (
+            validate_price_free_underwriting_thesis_projection,
+        )
+    except ModuleNotFoundError:  # pragma: no cover - direct script fallback
+        from enterprise_underwriting_episode import (
+            validate_price_free_underwriting_thesis_projection,
+        )
+    projection_validation = validate_price_free_underwriting_thesis_projection(value)
+    for finding in projection_validation.get("findings") or []:
+        _add(
+            findings,
+            prefix + ".underwriting_thesis_projection." + str(finding),
+        )
+    if value.get("schema_version") != "enterprise-underwriting-thesis-projection.v1":
+        _add(findings, prefix + ".underwriting_thesis_projection.schema_version_invalid")
+    mapping_fields = {
+        "industry_future_thesis", "situation_model", "value_route",
+        "underwriting_thesis",
+    }
+    list_fields = {
+        "reversal_observations", "component_treatments", "evidence_trace",
+    }
+    for field in (
+        "episode_id", "company_id", "cutoff_at", "sample_identity",
+        "underwriting_thesis_id", "decision_frame", "underwriting_route",
+        "industry_future_thesis", "situation_model", "business_position",
+        "survival_case", "adaptation_case", "normalization_case",
+        "permanent_loss_map", "value_route", "strongest_rival",
+        "reversal_observations", "component_treatments", "evidence_trace",
+        "underwriting_thesis",
+    ):
+        item = value.get(field)
+        if field in mapping_fields:
+            if not _mapping(item):
+                _add(findings, prefix + ".underwriting_thesis_projection." + field + "_missing")
+        elif field in list_fields:
+            if not _items(item):
+                _add(findings, prefix + ".underwriting_thesis_projection." + field + "_missing")
+        elif not _text(item):
+            _add(findings, prefix + ".underwriting_thesis_projection." + field + "_missing")
+    if value.get("company_id") != cjo.get("company_id"):
+        _add(findings, prefix + ".underwriting_thesis_projection_company_id_mismatch")
+    if value.get("cutoff_at") != cjo.get("cutoff_at"):
+        _add(findings, prefix + ".underwriting_thesis_projection_cutoff_mismatch")
+
+    thesis = _mapping(value.get("underwriting_thesis"))
+    if thesis.get("thesis_id") != value.get("underwriting_thesis_id"):
+        _add(findings, prefix + ".underwriting_thesis_projection_thesis_id_mismatch")
+    central_claim = _mapping(cjo.get("central_path")).get("claim")
+    if thesis.get("central_path") != central_claim:
+        _add(findings, prefix + ".underwriting_thesis_projection_central_path_mismatch")
+    rival_claim = _mapping(cjo.get("strongest_counterargument")).get("claim")
+    if thesis.get("strongest_rival") != rival_claim:
+        _add(findings, prefix + ".underwriting_thesis_projection_strongest_rival_mismatch")
+    if value.get("strongest_rival") != thesis.get("strongest_rival"):
+        _add(findings, prefix + ".underwriting_thesis_projection_rival_internal_mismatch")
+    directions = _mapping(thesis.get("economic_directions"))
+    expected_directions = {
+        "normal_earnings": _mapping(cjo.get("normal_earnings_transmission")).get("direction"),
+        "owner_cash": _mapping(cjo.get("owner_cash_transmission")).get("direction"),
+    }
+    for axis, observed in expected_directions.items():
+        if directions.get(axis) != observed:
+            _add(
+                findings,
+                prefix + ".underwriting_thesis_projection_" + axis + "_direction_mismatch",
+            )
+    loss_directions = {
+        str(item.get("direction") or "")
+        for item in _items(cjo.get("permanent_loss_paths"))
+        if isinstance(item, dict)
+    }
+    expected_loss = directions.get("permanent_loss")
+    if loss_directions != ({expected_loss} if expected_loss != "NONE" else set()):
+        _add(
+            findings,
+            prefix + ".underwriting_thesis_projection_permanent_loss_direction_mismatch",
+        )
+    enterprise_transmissions = {
+        str(item.get("transmission_id") or ""): item
+        for item in _items(_mapping(cjo.get("enterprise_system_ref")).get("financial_transmissions"))
+        if isinstance(item, dict) and item.get("transmission_id")
+    }
+    for field, axis in (
+        ("normal_earnings_transmission", "normal_earnings"),
+        ("owner_cash_transmission", "owner_cash"),
+    ):
+        summary = _mapping(cjo.get(field))
+        for transmission_id in _items(summary.get("transmission_ids")):
+            if _mapping(enterprise_transmissions.get(str(transmission_id))).get("direction") != directions.get(axis):
+                _add(
+                    findings,
+                    prefix + ".underwriting_thesis_projection_" + axis
+                    + "_enterprise_transmission_direction_mismatch:" + str(transmission_id),
+                )
+    for path in _items(cjo.get("permanent_loss_paths")):
+        item = _mapping(path)
+        transmission_id = str(item.get("transmission_id") or "")
+        if _mapping(enterprise_transmissions.get(transmission_id)).get("direction") != item.get("direction"):
+            _add(
+                findings,
+                prefix
+                + ".underwriting_thesis_projection_permanent_loss_enterprise_transmission_direction_mismatch:"
+                + transmission_id,
+            )
+    for path in _forbidden_paths(value):
+        _add(
+            findings,
+            prefix + ".underwriting_thesis_projection_forbidden_price_valuation_or_outcome_field:"
+            + path,
+        )
+
+
 def compile_cjo_candidate(
     *,
     model: Any,
     ledger: Any,
     source_package: Any,
     judgment_input: Any,
+    underwriting_episode: Any | None = None,
 ) -> dict[str, Any]:
     """Compile a review-ready candidate.  This function cannot freeze or authorize it."""
     model_value = _mapping(model)
@@ -903,6 +1038,85 @@ def compile_cjo_candidate(
     for decision_id in used_decision_ids:
         used_source_refs.update(decision_snapshots[decision_id].get("evidence_refs", []))
 
+    underwriting_projection: dict[str, Any] | None = None
+    if underwriting_episode is not None:
+        try:
+            from scripts.enterprise_underwriting_episode import (
+                project_price_free_underwriting_thesis,
+                validate_enterprise_underwriting_episode,
+            )
+        except ModuleNotFoundError:  # pragma: no cover - direct script fallback
+            from enterprise_underwriting_episode import (
+                project_price_free_underwriting_thesis,
+                validate_enterprise_underwriting_episode,
+            )
+        episode_validation = validate_enterprise_underwriting_episode(
+            underwriting_episode
+        )
+        if episode_validation.get("state") != "REVIEWABLE":
+            raise EnterpriseJudgmentCoreError(
+                "underwriting_episode_invalid:"
+                + ",".join(str(item) for item in episode_validation.get("findings") or [])
+            )
+        underwriting_projection = project_price_free_underwriting_thesis(
+            underwriting_episode
+        )
+        if underwriting_projection.get("sample_identity") != "WORKED_CASE":
+            package_source_refs = {
+                str(item.get("source_ref") or "")
+                for item in _items(package_value.get("sources"))
+                if isinstance(item, dict)
+            }
+            episode_source_refs = {
+                str(item.get("source_ref") or "")
+                for item in _items(underwriting_projection.get("evidence_trace"))
+                if isinstance(item, dict)
+            }
+            missing_episode_sources = episode_source_refs - package_source_refs
+            if missing_episode_sources:
+                raise EnterpriseJudgmentCoreError(
+                    "underwriting_episode_evidence_not_in_source_package:"
+                    + ",".join(sorted(missing_episode_sources))
+                )
+
+    economic_directions = _mapping(
+        _mapping(underwriting_projection.get("underwriting_thesis")).get(
+            "economic_directions"
+        )
+    ) if underwriting_projection is not None else {}
+    normal_earnings_direction = (
+        economic_directions.get("normal_earnings")
+        if economic_directions else _aggregate_direction(central_transmissions, "NORMAL_EARNINGS")
+    )
+    owner_cash_direction = (
+        economic_directions.get("owner_cash")
+        if economic_directions else _aggregate_direction(central_transmissions, "OWNER_CASH")
+    )
+    permanent_loss_paths = [
+        deepcopy(item) for item in central_transmissions if item["layer"] == "PERMANENT_LOSS"
+    ]
+    if economic_directions:
+        expected_loss_direction = economic_directions.get("permanent_loss")
+        if expected_loss_direction == "NONE":
+            permanent_loss_paths = []
+        else:
+            for item in permanent_loss_paths:
+                item["direction"] = expected_loss_direction
+    selected_financial_transmissions = [
+        deepcopy(item)
+        for item in model_value["financial_transmissions"]
+        if item["transmission_id"] in used_transmission_ids
+    ]
+    if economic_directions:
+        direction_by_layer = {
+            "NORMAL_EARNINGS": economic_directions.get("normal_earnings"),
+            "OWNER_CASH": economic_directions.get("owner_cash"),
+            "PERMANENT_LOSS": economic_directions.get("permanent_loss"),
+        }
+        for item in selected_financial_transmissions:
+            if item.get("layer") in direction_by_layer:
+                item["direction"] = direction_by_layer[item["layer"]]
+
     candidate = {
         "schema_version": CJO_CANDIDATE_VERSION,
         "object_class": "COMPANY_JUDGMENT_OBJECT_CANDIDATE",
@@ -918,22 +1132,20 @@ def compile_cjo_candidate(
         "forward_judgments": forward_judgments,
         "key_operating_drivers": [deepcopy(variable_by_id[item]) for item in key_driver_ids],
         "normal_earnings_transmission": {
-            "direction": _aggregate_direction(central_transmissions, "NORMAL_EARNINGS"),
+            "direction": normal_earnings_direction,
             "transmission_ids": [
                 item["transmission_id"] for item in central_transmissions
-                if item["layer"] == "NORMAL_EARNINGS"
+                if item["layer"] == "NORMAL_EARNINGS" and normal_earnings_direction != "NONE"
             ],
         },
         "owner_cash_transmission": {
-            "direction": _aggregate_direction(central_transmissions, "OWNER_CASH"),
+            "direction": owner_cash_direction,
             "transmission_ids": [
                 item["transmission_id"] for item in central_transmissions
-                if item["layer"] == "OWNER_CASH"
+                if item["layer"] == "OWNER_CASH" and owner_cash_direction != "NONE"
             ],
         },
-        "permanent_loss_paths": [
-            deepcopy(item) for item in central_transmissions if item["layer"] == "PERMANENT_LOSS"
-        ],
+        "permanent_loss_paths": permanent_loss_paths,
         "strongest_counterargument": strongest_counterargument,
         "unknowns": unknowns,
         "monitoring_contract": monitoring,
@@ -968,8 +1180,7 @@ def compile_cjo_candidate(
                 if item["mechanism_id"] in used_mechanism_ids
             ],
             "financial_transmissions": [
-                deepcopy(item) for item in model_value["financial_transmissions"]
-                if item["transmission_id"] in used_transmission_ids
+                deepcopy(item) for item in selected_financial_transmissions
             ],
             "operating_states": [
                 deepcopy(item) for item in model_value["operating_states"]
@@ -1009,6 +1220,10 @@ def compile_cjo_candidate(
             "investment_authorization": False,
         },
     }
+    if underwriting_projection is not None:
+        candidate["underwriting_thesis_projection"] = deepcopy(
+            underwriting_projection
+        )
     candidate_validation = validate_cjo_candidate(candidate)
     if candidate_validation["state"] != "VALID":
         raise EnterpriseJudgmentCoreError("compiled_cjo_candidate_invalid:" + ",".join(candidate_validation["findings"]))
@@ -1346,7 +1561,8 @@ def validate_cjo_candidate(candidate: Any) -> dict[str, Any]:
             "central_path", "forward_judgments", "key_operating_drivers",
             "normal_earnings_transmission", "owner_cash_transmission", "permanent_loss_paths",
             "strongest_counterargument", "unknowns", "monitoring_contract", "traceability",
-            "source_package", "enterprise_system_ref", "management_decision_ledger_ref", "authority",
+            "source_package", "enterprise_system_ref", "management_decision_ledger_ref",
+            "underwriting_thesis_projection", "authority",
         },
         "cjo_candidate",
         findings,
@@ -1366,6 +1582,12 @@ def validate_cjo_candidate(candidate: Any) -> dict[str, Any]:
         _add(findings, "cjo_candidate.abstention_cannot_have_central_path")
     if value.get("resolution") in {"PRIMARY", "MIXED"} and not _mapping(value.get("central_path")):
         _add(findings, "cjo_candidate.directional_or_mixed_requires_central_path")
+    _validate_underwriting_thesis_projection(
+        value.get("underwriting_thesis_projection"),
+        cjo=value,
+        prefix="cjo_candidate",
+        findings=findings,
+    )
     traces = [_mapping(item) for item in _items(value.get("traceability"))]
     trace_ids = _unique_ids(traces, "trace_id", "cjo_candidate.traceability", findings)
     _validate_forward_judgments(
@@ -1543,6 +1765,10 @@ def freeze_cjo(*, candidate: Any, independent_review: Any) -> dict[str, Any]:
             frozen["management_decision_ledger_ref"]
         ),
     }
+    if "underwriting_thesis_projection" in frozen:
+        frozen["independent_review_receipt"]["reviewed_reader_projection"][
+            "underwriting_thesis_projection"
+        ] = deepcopy(frozen["underwriting_thesis_projection"])
     frozen["authority"] = {
         "canonical": True,
         "append_only_predecessors": True,
@@ -1571,7 +1797,7 @@ def validate_frozen_cjo(cjo: Any) -> dict[str, Any]:
             "normal_earnings_transmission", "owner_cash_transmission", "permanent_loss_paths",
             "strongest_counterargument", "unknowns", "monitoring_contract", "traceability",
             "source_package", "enterprise_system_ref", "management_decision_ledger_ref",
-            "independent_review_receipt", "authority",
+            "underwriting_thesis_projection", "independent_review_receipt", "authority",
         },
         "frozen_cjo",
         findings,
@@ -1591,6 +1817,12 @@ def validate_frozen_cjo(cjo: Any) -> dict[str, Any]:
         _add(findings, "frozen_cjo.abstention_cannot_have_central_path")
     if value.get("resolution") in {"PRIMARY", "MIXED"} and not _mapping(value.get("central_path")):
         _add(findings, "frozen_cjo.directional_or_mixed_requires_central_path")
+    _validate_underwriting_thesis_projection(
+        value.get("underwriting_thesis_projection"),
+        cjo=value,
+        prefix="frozen_cjo",
+        findings=findings,
+    )
     traces = [_mapping(item) for item in _items(value.get("traceability"))]
     trace_ids = _unique_ids(traces, "trace_id", "frozen_cjo.traceability", findings)
     _validate_forward_judgments(
@@ -1688,7 +1920,7 @@ def validate_frozen_cjo(cjo: Any) -> dict[str, Any]:
     has_new_reader_projection = any(
         field in enterprise_projection
         for field in ("arenas", "operating_variables", "operating_states", "state_changes")
-    ) or "events" in decision_projection
+    ) or "events" in decision_projection or "underwriting_thesis_projection" in value
     if has_new_reader_projection and reviewed_projection is None:
         _add(findings, "frozen_cjo.reviewed_reader_projection_missing_for_new_shape")
     elif reviewed_projection is not None:
@@ -1697,6 +1929,10 @@ def validate_frozen_cjo(cjo: Any) -> dict[str, Any]:
             "enterprise_system_ref": value.get("enterprise_system_ref"),
             "management_decision_ledger_ref": value.get("management_decision_ledger_ref"),
         }
+        if "underwriting_thesis_projection" in value:
+            expected_projection["underwriting_thesis_projection"] = value.get(
+                "underwriting_thesis_projection"
+            )
         if reviewed_projection != expected_projection:
             _add(findings, "frozen_cjo.reviewed_reader_projection_mutated")
     required_criteria = {
@@ -1793,7 +2029,7 @@ def project_frozen_cjo_to_judgment_synthesis(cjo: Any) -> dict[str, Any]:
         deepcopy(item) for item in value["management_decision_ledger_ref"]["decisions"]
         if any("capital" in str(signal).lower() for signal in item.get("observable_signal_ids", []))
     ]
-    return {
+    projection = {
         "ledger_states": {
             "frozen_cjo": "FROZEN",
             "enterprise_system_model": "SNAPSHOT_READ_ONLY",
@@ -1820,6 +2056,11 @@ def project_frozen_cjo_to_judgment_synthesis(cjo: Any) -> dict[str, Any]:
         },
         "frozen_cjo": deepcopy(value),
     }
+    if "underwriting_thesis_projection" in value:
+        projection["underwriting_thesis_projection"] = deepcopy(
+            value["underwriting_thesis_projection"]
+        )
+    return projection
 
 
 def build_report_handoff(cjo: Any) -> dict[str, Any]:

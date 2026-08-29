@@ -10,12 +10,15 @@ from scripts.judgment_experience_memory import (
     EXPERIENCE_REGISTRY_SCHEMA,
     JudgmentExperienceError,
     append_experience_feedback,
+    append_experience_record,
     build_experience_feedback_event,
     build_experience_invocation_receipt,
     build_experience_retrieval_pack,
+    build_registry_experience_retrieval_pack,
     compile_feedback_experience_record,
     compile_existing_source_experience_record,
     compile_teaching_experience_record,
+    compile_underwriting_episode_experience_record,
     project_existing_analogy_transfer_card,
     validate_experience_feedback_event,
     validate_experience_invocation_receipt,
@@ -55,6 +58,38 @@ def _record(*, record_id: str = "JER:TEACH:CAPACITY:V1", boundary: str = "BUSINE
         economic_failure_loci=["MECHANISM", "TRANSMISSION"],
         apply_when=["The target has a separately identifiable expansion line and cutoff-visible customer absorption evidence."],
         do_not_apply_when=["Group cash or construction completion is the only available carrier."],
+    )
+
+
+def _underwriting_record(*, roles: list[str] | None = None) -> dict:
+    root = Path(__file__).resolve().parents[1]
+    episode_ref = "docs/development/research/enterprise_underwriting_episodes/CN600585_20240501_WORKED_CASE_V1.json"
+    review_ref = "docs/development/research/enterprise_underwriting_episodes/CN600585_20240501_INDEPENDENT_PRODUCT_REVIEW.md"
+    episode = json.loads((root / episode_ref).read_text(encoding="utf-8"))
+    review = (root / review_ref).read_text(encoding="utf-8")
+    return compile_underwriting_episode_experience_record(
+        episode,
+        review,
+        canonical_episode_ref=episode_ref,
+        canonical_review_ref=review_ref,
+        record_id="JER:EUE:CN600585:20240501:V1",
+        recorded_at=TIME,
+        structural_key={
+            "mechanism_kinds": ["CYCLE_NORMALIZATION", "CAPITAL_ABSORPTION"],
+            "lifecycle": "MATURE_CAPITAL_INTENSIVE_CYCLICAL",
+            "industry_epoch": "STRUCTURAL_DEMAND_CONTRACTION",
+            "competitive_arena": "REGIONAL_HEAVY_MATERIALS",
+            "responsibility_boundary": "CORE_VS_INCREMENTAL_ASSETS_AND_OWNER_CASH",
+            "company_constraints": ["DEMAND_CONTRACTION", "CAPITAL_INTENSITY"],
+        },
+        retrieval_roles=roles or ["PRIMARY_ANALOG"],
+        economic_failure_loci=["STATE", "MECHANISM", "TRANSMISSION", "ENVIRONMENT"],
+        apply_when=[
+            "A mature capital-intensive cyclical has survival capacity but incremental assets still need customer, unit-economic, and cash absorption evidence."
+        ],
+        do_not_apply_when=[
+            "The target's survival, asset responsibility boundary, or industry profit-pool path differs materially."
+        ],
     )
 
 
@@ -153,6 +188,101 @@ def test_m1_compiles_a_reviewed_blind_feedback_without_copying_outcome_values() 
     assert "outcome" not in record
 
 
+def test_complete_underwriting_episode_projects_into_existing_teaching_record() -> None:
+    record = _underwriting_record()
+
+    assert validate_judgment_experience_record(record)["state"] == "REVIEWABLE"
+    assert record["source_kind"] == "TEACHING"
+    assert record["evidence_ceiling"] == "TEACHING"
+    projection = record["episode_projection"]
+    assert projection["authority"] == "TEACHING_ONLY_NO_TRANSFER_CREDIT"
+    assert projection["situation"]["industry_future_thesis"]["profit_pool_transmission"]
+    assert projection["underwriting_route"] == "DISTRESSED_CYCLICAL_WITH_ASSET_EPV_CROSS_CHECK"
+    assert projection["normalization_boundary"]["normal_earnings_treatment"]
+    assert projection["normalization_boundary"]["owner_cash_treatment"]
+    assert projection["normalization_boundary"]["economic_directions"] == {
+        "normal_earnings": "MIXED",
+        "owner_cash": "UNKNOWN",
+        "permanent_loss": "DETERIORATES",
+    }
+    assert projection["permanent_loss_boundary"]["permanent_loss_treatment"]
+    assert projection["value_route"]["primary_routes"] == [
+        "ASSET_VALUE", "EARNINGS_POWER_VALUE", "CAPITAL_RETURN_CROSS_CHECK",
+    ]
+    assert projection["near_miss"]["strongest_rival"] == record["strongest_rival"]
+    assert "transfer_credit" not in record
+    assert not {"price", "valuation", "buyband", "investment_action"} & set(record)
+
+
+def test_underwriting_episode_compiler_requires_exact_canonical_episode_and_review(tmp_path: Path) -> None:
+    root = Path(__file__).resolve().parents[1]
+    episode_ref = root / "docs/development/research/enterprise_underwriting_episodes/CN600585_20240501_WORKED_CASE_V1.json"
+    review_ref = root / "docs/development/research/enterprise_underwriting_episodes/CN600585_20240501_INDEPENDENT_PRODUCT_REVIEW.md"
+    episode = json.loads(episode_ref.read_text(encoding="utf-8"))
+    review = review_ref.read_text(encoding="utf-8")
+    forged = deepcopy(episode)
+    forged["underwriting_thesis"]["central_path"] = "Caller-supplied prose is not canonical."
+
+    with pytest.raises(JudgmentExperienceError, match="not_exact_canonical_source"):
+        compile_underwriting_episode_experience_record(
+            forged,
+            review,
+            canonical_episode_ref=str(episode_ref),
+            canonical_review_ref=str(review_ref),
+            record_id="JER:FORGED:EUE",
+            recorded_at=TIME,
+            structural_key=_structural_key(),
+            retrieval_roles=["PRIMARY_ANALOG"],
+            economic_failure_loci=["MECHANISM"],
+            apply_when=["Only exact canonical Episodes apply."],
+            do_not_apply_when=["Caller prose differs."],
+        )
+
+    review_copy = tmp_path / "review.md"
+    review_copy.write_text(review, encoding="utf-8")
+    with pytest.raises(JudgmentExperienceError, match="review_not_exact_canonical_source"):
+        compile_underwriting_episode_experience_record(
+            episode,
+            review + "\nchanged",
+            canonical_episode_ref=str(episode_ref),
+            canonical_review_ref=str(review_copy),
+            record_id="JER:FORGED:REVIEW",
+            recorded_at=TIME,
+            structural_key=_structural_key(),
+            retrieval_roles=["PRIMARY_ANALOG"],
+            economic_failure_loci=["MECHANISM"],
+            apply_when=["Only exact review text applies."],
+            do_not_apply_when=["Review text differs."],
+        )
+
+
+def test_non_worked_episode_cannot_mint_teaching_or_transfer_credit(tmp_path: Path) -> None:
+    root = Path(__file__).resolve().parents[1]
+    source = json.loads((
+        root / "docs/development/research/enterprise_underwriting_episodes/CN600585_20240501_WORKED_CASE_V1.json"
+    ).read_text(encoding="utf-8"))
+    source["sample_identity"] = "BLIND_REPLAY"
+    episode_path = tmp_path / "blind_episode.json"
+    episode_path.write_text(json.dumps(source, ensure_ascii=False), encoding="utf-8")
+    review_path = tmp_path / "review.md"
+    review_path.write_text("Verdict: ACCEPT\n", encoding="utf-8")
+
+    with pytest.raises(JudgmentExperienceError, match="only_worked_case"):
+        compile_underwriting_episode_experience_record(
+            source,
+            review_path.read_text(encoding="utf-8"),
+            canonical_episode_ref=str(episode_path),
+            canonical_review_ref=str(review_path),
+            record_id="JER:BLIND:FORGED:TEACHING",
+            recorded_at=TIME,
+            structural_key=_structural_key(),
+            retrieval_roles=["PRIMARY_ANALOG"],
+            economic_failure_loci=["MECHANISM"],
+            apply_when=["Blind feedback is independently accepted."],
+            do_not_apply_when=["Outcome feedback has not completed."],
+        )
+
+
 def test_teaching_and_blind_compilers_reject_forged_or_noncanonical_sources() -> None:
     forged_teaching = _teaching_case()
     forged_teaching["lesson"]["mechanism_lesson"] = "A caller must not mint a retrieval-ready lesson."
@@ -240,6 +370,59 @@ def test_structural_retrieval_returns_primary_and_boundary_without_forcing_a_mat
     assert pack["status"] == "RETRIEVAL_READY"
     assert [item["role"] for item in pack["candidates"]] == ["PRIMARY_ANALOG", "BOUNDARY_RECORD"]
     assert pack["candidates"][1]["fit"] == "BOUNDARY_ONLY"
+
+
+def test_initial_append_and_registry_retrieval_keep_complete_episode_guidance() -> None:
+    record = _underwriting_record()
+    registry = {
+        "schema_version": EXPERIENCE_REGISTRY_SCHEMA,
+        "records": [],
+        "feedback_events": [],
+        "invocation_receipts": [],
+    }
+    appended = append_experience_record(registry, record=record)
+    target = _target()
+    target["structural_key"] = deepcopy(record["structural_key"])
+
+    pack = build_registry_experience_retrieval_pack(
+        pack_id="ERP:CN002475:COMPLETE_UNDERWRITING:V1",
+        target=target,
+        registry=appended,
+        retrieved_at=TIME,
+    )
+
+    assert registry["records"] == []
+    assert appended["records"] == [record]
+    assert pack["status"] == "RETRIEVAL_READY"
+    guidance = pack["candidates"][0]["guidance"]
+    assert guidance["episode_projection"] == record["episode_projection"]
+    assert guidance["episode_projection"]["value_route"]["value_route_treatment"]
+    with pytest.raises(JudgmentExperienceError, match="already_registered"):
+        append_experience_record(appended, record=record)
+
+
+def test_underwriting_route_ranks_but_does_not_gate_a_structural_match() -> None:
+    record = _underwriting_record()
+    target = _target()
+    target["structural_key"] = deepcopy(record["structural_key"])
+    target["structural_key"]["underwriting_route"] = "STRUCTURAL_TRANSITION_WITH_RAMP_TEST"
+    registry = {
+        "schema_version": EXPERIENCE_REGISTRY_SCHEMA,
+        "records": [record],
+        "feedback_events": [],
+        "invocation_receipts": [],
+    }
+
+    pack = build_registry_experience_retrieval_pack(
+        pack_id="ERP:CN002475:ROUTE_NEAR_MISS:V1",
+        target=target,
+        registry=registry,
+        retrieved_at=TIME,
+    )
+
+    assert pack["status"] == "RETRIEVAL_READY"
+    assert pack["candidates"][0]["fit"] == "PRIMARY_ELIGIBLE"
+    assert "underwriting_route_mismatch" in pack["candidates"][0]["reasons"]
 
 
 def test_same_industry_but_responsibility_mismatch_is_not_promoted_to_primary() -> None:

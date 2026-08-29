@@ -17,10 +17,11 @@ from typing import Any
 from scripts.reader_coverage import reader_boundary_findings
 
 
-EPISODE_SCHEMA = "enterprise-underwriting-episode.v1"
-CJO_PROJECTION_SCHEMA = "enterprise-underwriting-cjo-candidate-projection.v1"
-VALUATION_REQUEST_SCHEMA = "enterprise-underwriting-valuation-route-request.v1"
-REPORT_HANDOFF_SCHEMA = "enterprise-underwriting-golden-report-handoff.v1"
+EPISODE_SCHEMA = "enterprise-underwriting-episode.v2"
+THESIS_PROJECTION_SCHEMA = "enterprise-underwriting-thesis-projection.v1"
+CJO_PROJECTION_SCHEMA = "enterprise-underwriting-cjo-candidate-projection.v2"
+VALUATION_REQUEST_SCHEMA = "enterprise-underwriting-valuation-route-request.v2"
+REPORT_HANDOFF_SCHEMA = "enterprise-underwriting-golden-report-handoff.v2"
 
 SAMPLE_IDENTITIES = {"WORKED_CASE", "BLIND_REPLAY", "PROSPECTIVE_EPISODE"}
 TREATMENTS = {
@@ -30,6 +31,7 @@ TREATMENTS = {
     "EXCLUDE_FROM_BASE",
     "CANNOT_BOUND",
 }
+ECONOMIC_DIRECTIONS = {"IMPROVES", "DETERIORATES", "MIXED", "UNKNOWN", "NONE"}
 
 _ROOT = Path(__file__).resolve().parents[1]
 _THESIS_FORBIDDEN_KEYS = {
@@ -82,7 +84,15 @@ def _forbidden_paths(value: Any, path: str = "$") -> list[str]:
 
 def _reference_exists(reference: Any) -> bool:
     text = str(reference or "").split("#", 1)[0].strip()
-    return bool(text) and "://" not in text and (_ROOT / text).is_file()
+    if not text or "://" in text:
+        return False
+    if (_ROOT / text).is_file():
+        return True
+    # Production source packages use canonical source identities (for example
+    # ``SRC:OPERATING``) rather than repository filenames.  Standalone Episode
+    # validation accepts that identity shape; the formal CJO compiler and the
+    # training contract each bind it to their actual source allowlist.
+    return text.startswith(("SRC:", "OBS:", "DOC:", "CALC:", "canonical:"))
 
 
 def _industry_future_thesis(episode: dict[str, Any]) -> dict[str, Any]:
@@ -177,6 +187,12 @@ def validate_enterprise_underwriting_episode(episode: Any) -> dict[str, Any]:
     ):
         if not _text(thesis.get(field)):
             findings.append("underwriting_thesis." + field + "_missing")
+    directions = _mapping(thesis.get("economic_directions"))
+    for field in ("normal_earnings", "owner_cash", "permanent_loss"):
+        if directions.get(field) not in ECONOMIC_DIRECTIONS:
+            findings.append(
+                "underwriting_thesis.economic_directions." + field + "_invalid"
+            )
     findings.extend("underwriting_thesis.price_boundary:" + item for item in _forbidden_paths(thesis))
     if industry_future:
         if value.get("strongest_rival") != industry_future.get("strongest_rival"):
@@ -187,11 +203,20 @@ def validate_enterprise_underwriting_episode(episode: Any) -> dict[str, Any]:
             findings.append("reversal_observations_not_derived_from_industry_future_thesis")
 
     value_route = _mapping(value.get("value_route"))
-    for field in ("primary_routes", "excluded_routes", "route_reasoning"):
+    for field in ("primary_routes", "excluded_routes", "route_reasoning", "valuation_model_roles"):
         route_value = value_route.get(field)
         if field.endswith("routes"):
             if not _items(route_value):
                 findings.append("value_route." + field + "_missing")
+        elif field == "valuation_model_roles":
+            roles = _mapping(route_value)
+            if not _items(roles.get("primary")):
+                findings.append("value_route.valuation_model_roles_missing")
+            for role in ("corroborative", "stress"):
+                if role in roles and not isinstance(roles.get(role), list):
+                    findings.append(
+                        "value_route.valuation_model_roles." + role + "_invalid"
+                    )
         elif not _text(route_value):
             findings.append("value_route." + field + "_missing")
 
@@ -212,11 +237,107 @@ def _assert_reviewable(episode: Any) -> dict[str, Any]:
     return _mapping(episode)
 
 
+def project_price_free_underwriting_thesis(episode: Any) -> dict[str, Any]:
+    """Return the one price-free object shared by CJO, valuation and report consumers."""
+    value = _assert_reviewable(episode)
+    thesis = _mapping(value["underwriting_thesis"])
+    projection = {
+        "schema_version": THESIS_PROJECTION_SCHEMA,
+        "episode_id": value["episode_id"],
+        "company_id": value["company_id"],
+        "cutoff_at": value["cutoff_at"],
+        "sample_identity": value["sample_identity"],
+        "underwriting_thesis_id": thesis["thesis_id"],
+        "decision_frame": value["decision_frame"],
+        "underwriting_route": value["underwriting_route"],
+        "industry_future_thesis": deepcopy(_industry_future_thesis(value)),
+        "situation_model": deepcopy(value["situation_model"]),
+        "business_position": value["business_position"],
+        "survival_case": value["survival_case"],
+        "adaptation_case": value["adaptation_case"],
+        "normalization_case": value["normalization_case"],
+        "permanent_loss_map": value["permanent_loss_map"],
+        "value_route": deepcopy(value["value_route"]),
+        "strongest_rival": value["strongest_rival"],
+        "reversal_observations": deepcopy(value["reversal_observations"]),
+        "component_treatments": deepcopy(value["component_treatments"]),
+        "evidence_trace": deepcopy(value["evidence_trace"]),
+        "underwriting_thesis": deepcopy(thesis),
+    }
+    forbidden = _forbidden_paths(projection)
+    if forbidden:
+        raise ValueError("price_free_underwriting_thesis_invalid:" + ",".join(forbidden))
+    return projection
+
+
+def validate_price_free_underwriting_thesis_projection(projection: Any) -> dict[str, Any]:
+    """Validate the complete price-free object after its source Episode is absent."""
+    value = _mapping(projection)
+    findings: list[str] = []
+    if value.get("schema_version") != THESIS_PROJECTION_SCHEMA:
+        findings.append("schema_version_invalid")
+    for field in (
+        "episode_id", "company_id", "cutoff_at", "sample_identity",
+        "underwriting_thesis_id", "decision_frame", "underwriting_route",
+        "business_position", "survival_case", "adaptation_case",
+        "normalization_case", "permanent_loss_map", "strongest_rival",
+    ):
+        if not _text(value.get(field)):
+            findings.append(field + "_missing")
+    for field in ("reversal_observations", "component_treatments", "evidence_trace"):
+        if not _items(value.get(field)):
+            findings.append(field + "_missing")
+    situation = _mapping(value.get("situation_model"))
+    if not _text(situation.get("summary")):
+        findings.append("situation_model.summary_missing")
+    industry = _mapping(value.get("industry_future_thesis"))
+    for field in (
+        "horizon", "most_likely_regime", "profit_pool_transmission",
+        "company_exposure", "adaptation", "normal_economics",
+        "permanent_loss", "valuation_treatment", "strongest_rival",
+    ):
+        if not _text(industry.get(field)):
+            findings.append("industry_future_thesis." + field + "_missing")
+    if not _items(industry.get("reversal_observations")):
+        findings.append("industry_future_thesis.reversal_observations_missing")
+    thesis = _mapping(value.get("underwriting_thesis"))
+    for field in (
+        "thesis_id", "central_path", "normal_earnings_treatment", "owner_cash_treatment",
+        "permanent_loss_treatment", "value_route_treatment", "strongest_rival", "monitoring",
+    ):
+        if not _text(thesis.get(field)):
+            findings.append("underwriting_thesis." + field + "_missing")
+    directions = _mapping(thesis.get("economic_directions"))
+    for field in ("normal_earnings", "owner_cash", "permanent_loss"):
+        if directions.get(field) not in ECONOMIC_DIRECTIONS:
+            findings.append(
+                "underwriting_thesis.economic_directions." + field + "_invalid"
+            )
+    if thesis.get("thesis_id") != value.get("underwriting_thesis_id"):
+        findings.append("underwriting_thesis_id_mismatch")
+    if thesis.get("strongest_rival") != value.get("strongest_rival"):
+        findings.append("strongest_rival_mismatch")
+    route = _mapping(value.get("value_route"))
+    if not _items(route.get("primary_routes")) or not _items(route.get("excluded_routes")):
+        findings.append("value_route.routes_missing")
+    if not _text(route.get("route_reasoning")):
+        findings.append("value_route.route_reasoning_missing")
+    roles = _mapping(route.get("valuation_model_roles"))
+    if not _items(roles.get("primary")):
+        findings.append("value_route.valuation_model_roles_missing")
+    for role in ("corroborative", "stress"):
+        if role in roles and not isinstance(roles.get(role), list):
+            findings.append("value_route.valuation_model_roles." + role + "_invalid")
+    findings.extend("price_boundary:" + path for path in _forbidden_paths(value))
+    return _findings(findings)
+
+
 def compile_underwriting_projections(episode: Any) -> dict[str, dict[str, Any]]:
     """Project one thesis into existing-consumer-shaped, price-free views."""
     value = _assert_reviewable(episode)
-    thesis = deepcopy(_mapping(value["underwriting_thesis"]))
-    industry_future = deepcopy(_industry_future_thesis(value))
+    price_free = project_price_free_underwriting_thesis(value)
+    thesis = deepcopy(_mapping(price_free["underwriting_thesis"]))
+    industry_future = deepcopy(_mapping(price_free["industry_future_thesis"]))
     identity = {
         "episode_id": value["episode_id"],
         "company_id": value["company_id"],
@@ -230,7 +351,7 @@ def compile_underwriting_projections(episode: Any) -> dict[str, dict[str, Any]]:
         **identity,
         "authority": "TEACHING_CANDIDATE_ONLY",
         "central_path": thesis["central_path"],
-        "industry_future_thesis": deepcopy(industry_future),
+        "industry_future_thesis": deepcopy(price_free["industry_future_thesis"]),
         "normal_earnings_treatment": thesis["normal_earnings_treatment"],
         "owner_cash_treatment": thesis["owner_cash_treatment"],
         "permanent_loss_treatment": thesis["permanent_loss_treatment"],
@@ -245,10 +366,11 @@ def compile_underwriting_projections(episode: Any) -> dict[str, dict[str, Any]]:
         "request_id": "UW-VR:" + value["episode_id"],
         **identity,
         "authority": "ROUTE_REQUEST_ONLY",
-        "industry_future_thesis": deepcopy(industry_future),
+        "industry_future_thesis": deepcopy(price_free["industry_future_thesis"]),
         "primary_routes": deepcopy(value["value_route"]["primary_routes"]),
         "excluded_routes": deepcopy(value["value_route"]["excluded_routes"]),
         "route_reasoning": value["value_route"]["route_reasoning"],
+        "valuation_model_roles": deepcopy(value["value_route"]["valuation_model_roles"]),
         "normal_earnings_input_treatment": thesis["normal_earnings_treatment"],
         "owner_cash_input_treatment": thesis["owner_cash_treatment"],
         "permanent_loss_input_treatment": thesis["permanent_loss_treatment"],
@@ -257,7 +379,7 @@ def compile_underwriting_projections(episode: Any) -> dict[str, dict[str, Any]]:
             if item["treatment"] in {"EXCLUDE_FROM_BASE", "SCENARIO_ONLY", "CANNOT_BOUND"}
         ],
         "existing_valuation_adapter": "scripts/valuation_routing.py:build_valuation_route",
-        "compatibility_gap": "Existing numeric INVESTMENT_ENRICHMENT requires global SELECTION_ADMITTED. This teaching route request does not create or substitute that admission; U4 must make the restriction claim-local.",
+        "compatibility_resolution": "Current-company underwriting may enter CJO and valuation routing through a source-bound, independently reviewed complete Episode; SELECTION_ADMITTED remains local to claims that actually depend on comparative selection or causal authority.",
         "boundary": "No current value, price, expected return, BuyBand, or investment action is generated.",
     }
     report_handoff = {
@@ -276,6 +398,7 @@ def compile_underwriting_projections(episode: Any) -> dict[str, dict[str, Any]]:
             "reversal_observations",
         ],
         "central_path": thesis["central_path"],
+        "industry_future_thesis": deepcopy(industry_future),
         "situation_model": deepcopy(value["situation_model"]),
         "business_position": value["business_position"],
         "survival_case": value["survival_case"],

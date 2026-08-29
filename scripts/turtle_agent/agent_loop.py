@@ -983,6 +983,24 @@ pit_read_source，且只可按 allowlist 路径调用 pit_read_framework。禁�
             and str(refs.get("frozen_cjo_ref") or "").strip()
         )
 
+    def _bound_episode_investment_mode(self) -> bool:
+        """Route on the formal Episode binding; invalid refs must not fall back."""
+        try:
+            contract = json.loads(
+                Path(self._config.output_dir, "analysis_contract.json").read_text(
+                    encoding="utf-8"
+                )
+            )
+        except (OSError, json.JSONDecodeError):
+            return False
+        refs = contract.get("canonical_judgment_refs")
+        return bool(
+            contract.get("analysis_purpose") == "INVESTMENT_DECISION"
+            and isinstance(refs, dict)
+            and str(refs.get("frozen_cjo_ref") or "").strip()
+            and str(refs.get("current_company_cjo_admission_ref") or "").strip()
+        )
+
     def _pit_active_allowed_tools(self) -> set[str]:
         if self._bound_frozen_cjo_mode():
             return {
@@ -990,7 +1008,16 @@ pit_read_source，且只可按 allowlist 路径调用 pit_read_framework。禁�
                 "pit_read_judgment_generation_handoff",
                 "pit_assemble_report",
             }
-        return self._pit_production_allowed_tools(self._config.analysis_purpose)
+        allowed = self._pit_production_allowed_tools(self._config.analysis_purpose)
+        if self._bound_episode_investment_mode():
+            # The admitted Episode is the sole price-free company thesis.
+            # Do not offer tools that would rebuild the retired predecessor
+            # bridge or thesis/pair/card path inside the investment report.
+            allowed -= {
+                "pit_write_financial_driver_bridge",
+                "pit_write_thesis_test_ledger",
+            }
+        return allowed
 
     def _analyze_pit_production(self) -> str:
         """Generate a full report through PIT reads and output-bound V3 writes."""
@@ -1026,6 +1053,14 @@ pit_read_source，且只可按 allowlist 路径调用 pit_read_framework。禁�
                 raise RuntimeError("PIT production writer 在未组装报告前结束")
             return self._pit_report_path
         purpose_instruction = (
+            "先读取pit_read_report_contract_pack和"
+            "pit_read_judgment_generation_handoff(view=JUDGMENT_SYNTHESIS)。"
+            "Frozen CJO 内的 EnterpriseUnderwritingEpisode 是唯一价格前公司故事；"
+            "行业未来、公司适应、正常盈利、owner cash、永久损失、最强反方及价值路线必须原样继承。"
+            "不得另写 thesis、Comparative pair、analogy card 或第二套经营桥来替换它。"
+            "只在该主张之后完成估值模型、价格回报与动作工件；局部数值不足时限制对应估值输入，"
+            "不能退回重写企业判断。完成后再次读取 JUDGMENT_SYNTHESIS 并调用pit_assemble_report。"
+            if self._bound_episode_investment_mode() else
             "再读取pit_read_report_contract_pack，并以其中judgment_generation_handoff为统一入口；必要时调用pit_read_judgment_generation_handoff刷新RESEARCH_AGENDA和INVESTMENT_ENRICHMENT。"
             "必须原样继承同cutoff公司判断的中心路径、经营FJ、pair/card及正常化盈利/owner-cash传导；"
             "估值、条件回报和动作只能附加在该经营判断之后，若需要修改经营机制则停止本投资版本并先重做CJO；完成章节、估值后经营驱动桥和其余账本；"

@@ -480,6 +480,111 @@ def _load_company_judgment_predecessor(
     }
 
 
+def _load_episode_bound_current_company_judgment(
+    frozen_cjo_path: str,
+    admission_path: str,
+    *,
+    company_code: str,
+    cutoff_at: str,
+) -> dict[str, Any]:
+    """Load the current Episode-first predecessor for investment production.
+
+    The Frozen CJO and its current-company admission are existing canonical
+    objects.  This loader only verifies their identity and authority, then
+    binds their paths into the report contract.  It does not translate the
+    Episode back into the legacy Comparative predecessor shape.
+    """
+    if not str(frozen_cjo_path or "").strip() or not str(admission_path or "").strip():
+        raise RuntimeError(
+            "Episode-bound investment production requires both --frozen-cjo "
+            "and --current-company-cjo-admission"
+        )
+    frozen_path = Path(frozen_cjo_path).expanduser().resolve()
+    receipt_path = Path(admission_path).expanduser().resolve()
+    frozen = _load_json_file(str(frozen_path))
+    receipt = _load_json_file(str(receipt_path))
+    if not frozen or not receipt:
+        raise RuntimeError("Episode-bound Frozen CJO or current-company admission is unreadable")
+    try:
+        from scripts.enterprise_judgment_core import validate_frozen_cjo
+        from scripts.current_company_cjo_admission import (
+            validate_frozen_current_company_cjo_admission,
+        )
+    except ModuleNotFoundError:  # pragma: no cover - direct script fallback
+        from enterprise_judgment_core import validate_frozen_cjo
+        from current_company_cjo_admission import (
+            validate_frozen_current_company_cjo_admission,
+        )
+    frozen_validation = validate_frozen_cjo(frozen)
+    if frozen_validation.get("state") != "VALID":
+        raise RuntimeError(
+            "Episode-bound Frozen CJO is invalid: "
+            + ", ".join(str(item) for item in frozen_validation.get("findings") or [])
+        )
+    admission_validation = validate_frozen_current_company_cjo_admission(
+        frozen_cjo=frozen,
+        admission_receipt=receipt,
+        require_overlay=True,
+    )
+    if admission_validation.get("state") != "VALID":
+        raise RuntimeError(
+            "Episode-bound current-company admission is invalid: "
+            + ", ".join(str(item) for item in admission_validation.get("findings") or [])
+        )
+    projection = (
+        frozen.get("underwriting_thesis_projection")
+        if isinstance(frozen.get("underwriting_thesis_projection"), dict) else {}
+    )
+    if not projection:
+        raise RuntimeError("Frozen CJO does not contain an EnterpriseUnderwritingEpisode projection")
+    if projection.get("sample_identity") not in {"BLIND_REPLAY", "PROSPECTIVE_EPISODE"}:
+        raise RuntimeError("Worked-case underwriting cannot enter current investment production")
+    if not _company_identity_matches(frozen.get("company_id"), company_code):
+        raise RuntimeError("Episode-bound Frozen CJO company does not match the production company")
+    if str(frozen.get("cutoff_at") or "")[:10] != str(cutoff_at or "")[:10]:
+        raise RuntimeError("Episode-bound Frozen CJO cutoff does not match the production cutoff")
+    binding = (
+        receipt.get("candidate_binding", {}).get("primary_binding", {})
+        if isinstance(receipt.get("candidate_binding"), dict) else {}
+    )
+    if (
+        binding.get("binding_kind") != "ENTERPRISE_UNDERWRITING_EPISODE"
+        or binding.get("episode_id") != projection.get("episode_id")
+        or binding.get("underwriting_thesis_id") != projection.get("underwriting_thesis_id")
+    ):
+        raise RuntimeError("Current-company admission is not bound to this underwriting Episode")
+    return {
+        "frozen_cjo_path": str(frozen_path),
+        "current_company_cjo_admission_path": str(receipt_path),
+        "company_id": str(frozen.get("company_id") or ""),
+        "cutoff_at": str(frozen.get("cutoff_at") or ""),
+        "episode_id": str(projection.get("episode_id") or ""),
+        "underwriting_thesis_id": str(projection.get("underwriting_thesis_id") or ""),
+        "sample_identity": str(projection.get("sample_identity") or ""),
+    }
+
+
+def _company_identity_matches(company_id: Any, production_code: Any) -> bool:
+    """Match the canonical CN/HK identity forms used by training to runtime codes."""
+    canonical = str(company_id or "").strip().upper()
+    runtime = str(production_code or "").strip().upper()
+    if canonical == runtime:
+        return True
+    if ":" not in canonical or "." not in runtime:
+        return False
+    market, security = canonical.split(":", 1)
+    runtime_security, exchange = runtime.split(".", 1)
+    runtime_market = {
+        "SH": "CN", "SZ": "CN", "BJ": "CN", "HK": "HK",
+    }.get(exchange)
+    return bool(
+        runtime_market == market
+        and security
+        and runtime_security
+        and security == runtime_security
+    )
+
+
 def _safe_int(value: Any) -> int | None:
     if value in (None, ""):
         return None
@@ -1763,14 +1868,21 @@ def _initialize_pit_production_output(
     *, output_dir: str, code: str, run_id: str, cutoff_at: str,
     analysis_purpose: str = "INVESTMENT_DECISION",
     company_judgment_predecessor: dict[str, Any] | None = None,
+    canonical_judgment_binding: dict[str, Any] | None = None,
 ) -> None:
     """Seed only the local contracts a PIT production writer may complete."""
     if analysis_purpose not in {"INVESTMENT_DECISION", "COMPANY_JUDGMENT_ONLY"}:
         raise RuntimeError("PIT production analysis_purpose invalid")
     cutoff_date = str(cutoff_at or "")[:10]
-    if analysis_purpose == "INVESTMENT_DECISION" and not isinstance(company_judgment_predecessor, dict):
-        raise RuntimeError("投资 PIT 生产冻结需要同 cutoff 的公司判断前置物")
-    if analysis_purpose == "INVESTMENT_DECISION":
+    has_legacy_predecessor = isinstance(company_judgment_predecessor, dict)
+    has_episode_binding = isinstance(canonical_judgment_binding, dict)
+    if analysis_purpose == "INVESTMENT_DECISION" and not (
+        has_legacy_predecessor or has_episode_binding
+    ):
+        raise RuntimeError("投资 PIT 生产冻结需要同 cutoff 的冻结公司判断")
+    if analysis_purpose == "INVESTMENT_DECISION" and has_legacy_predecessor and has_episode_binding:
+        raise RuntimeError("Legacy predecessor and Episode-bound Frozen CJO are mutually exclusive")
+    if analysis_purpose == "INVESTMENT_DECISION" and has_legacy_predecessor:
         predecessor_findings = _investment_predecessor_findings(
             company_judgment_predecessor or {}, company_code=code, cutoff_at=cutoff_at,
         )
@@ -1791,7 +1903,16 @@ def _initialize_pit_production_output(
         "tracking": {"report_type": "annual", "period_end": cutoff_date},
         "pit_production": {"cutoff_at": cutoff_at, "source_access": "PIT_ALLOWLIST_ONLY"},
     }
-    if analysis_purpose == "INVESTMENT_DECISION":
+    if has_episode_binding:
+        binding = canonical_judgment_binding or {}
+        contract["company_id"] = binding.get("company_id")
+        contract["canonical_judgment_refs"] = {
+            "frozen_cjo_ref": binding.get("frozen_cjo_path"),
+            "current_company_cjo_admission_ref": binding.get(
+                "current_company_cjo_admission_path"
+            ),
+        }
+    elif analysis_purpose == "INVESTMENT_DECISION":
         predecessor_path = Path(output_dir) / "company_judgment_predecessor.json"
         _write_json_file(str(predecessor_path), company_judgment_predecessor or {})
         source = (company_judgment_predecessor or {}).get("source") or {}
@@ -1833,17 +1954,25 @@ def _initialize_pit_production_output(
     _refresh_report_learning_admissions(output_dir)
     from scripts.evidence_documents import initialize_official_evidence_policy
     from scripts.claim_evidence import initialize_claim_evidence_policy
-    from scripts.financial_driver_bridge import initialize_financial_driver_bridge_policy
-    from scripts.thesis_test_gate import initialize_thesis_test_policy
     from scripts.insight_ledger import initialize_insight_policy
     initialize_official_evidence_policy(output_dir, run_id=run_id, enforced=True)
     initialize_claim_evidence_policy(output_dir, run_id=run_id, enforced=True)
-    initialize_financial_driver_bridge_policy(output_dir, run_id=run_id, enforced=True)
-    initialize_thesis_test_policy(
-        output_dir, run_id=run_id, enforced=True, monitoring_required=True,
-        forward_judgment_required=True, rival_hypothesis_pair_required=True,
-        company_judgment_lineage_required=analysis_purpose == "INVESTMENT_DECISION",
-    )
+    if not has_episode_binding:
+        # The legacy predecessor owns a financial-driver bridge and the
+        # thesis/FJ/pair ledger.  A complete EnterpriseUnderwritingEpisode
+        # already owns that price-free company story, so recreating those
+        # artifacts would introduce a second, potentially contradictory
+        # judgment path.
+        from scripts.financial_driver_bridge import initialize_financial_driver_bridge_policy
+        from scripts.thesis_test_gate import initialize_thesis_test_policy
+        initialize_financial_driver_bridge_policy(output_dir, run_id=run_id, enforced=True)
+        initialize_thesis_test_policy(
+            output_dir, run_id=run_id, enforced=True, monitoring_required=True,
+            forward_judgment_required=True, rival_hypothesis_pair_required=True,
+            company_judgment_lineage_required=(
+                analysis_purpose == "INVESTMENT_DECISION"
+            ),
+        )
     initialize_insight_policy(output_dir, run_id=run_id, enforced=True)
     if analysis_purpose == "INVESTMENT_DECISION":
         from scripts.decision_ledger import initialize_decision_ledger_policy
@@ -1900,18 +2029,30 @@ def _validate_pit_production_completion(
         raise RuntimeError("PIT production publication snapshot is not V3-enforced")
     contract = _load_json_file(str(output / "analysis_contract.json"))
     if analysis_purpose == "INVESTMENT_DECISION":
-        predecessor = _load_json_file(str(output / "company_judgment_predecessor.json"))
-        predecessor_findings = _investment_predecessor_findings(
-            predecessor,
-            company_code=str(contract.get("ts_code") or contract.get("code") or ""),
-            cutoff_at=str(contract.get("data_as_of") or contract.get("analysis_date") or ""),
-            analysis_contract=contract,
+        refs = (
+            contract.get("canonical_judgment_refs")
+            if isinstance(contract.get("canonical_judgment_refs"), dict) else {}
         )
-        if predecessor_findings:
-            raise RuntimeError(
-                "PIT production completion company-judgment predecessor invalid: "
-                + ", ".join(predecessor_findings)
+        if refs.get("frozen_cjo_ref") or refs.get("current_company_cjo_admission_ref"):
+            _load_episode_bound_current_company_judgment(
+                str(refs.get("frozen_cjo_ref") or ""),
+                str(refs.get("current_company_cjo_admission_ref") or ""),
+                company_code=str(contract.get("ts_code") or contract.get("code") or ""),
+                cutoff_at=str(contract.get("data_as_of") or contract.get("analysis_date") or ""),
             )
+        else:
+            predecessor = _load_json_file(str(output / "company_judgment_predecessor.json"))
+            predecessor_findings = _investment_predecessor_findings(
+                predecessor,
+                company_code=str(contract.get("ts_code") or contract.get("code") or ""),
+                cutoff_at=str(contract.get("data_as_of") or contract.get("analysis_date") or ""),
+                analysis_contract=contract,
+            )
+            if predecessor_findings:
+                raise RuntimeError(
+                    "PIT production completion company-judgment predecessor invalid: "
+                    + ", ".join(predecessor_findings)
+                )
     from turtle_agent.tools.pit_production_write_tools import validate_pit_handoff_receipts
     handoff_receipts = validate_pit_handoff_receipts(
         output_dir=output, analysis_purpose=analysis_purpose, run_id=run_id,
@@ -1947,6 +2088,7 @@ def _run_pit_production_freeze(
     pit_case_id: str, pit_experiment_id: str, runtime: Any, diagnostics: dict[str, Any],
     analysis_purpose: str = "INVESTMENT_DECISION",
     company_judgment_predecessor: dict[str, Any] | None = None,
+    canonical_judgment_binding: dict[str, Any] | None = None,
 ) -> str:
     """Run one full PIT report with the normal V3 exits but no normal inputs."""
     from scripts.phase10_pit_production import PITProductionWorkspace
@@ -1966,6 +2108,7 @@ def _run_pit_production_freeze(
     _initialize_pit_production_output(
         output_dir=output_dir, code=code, run_id=pit_runner.run_id, cutoff_at=str(pit_runner.cutoff_at),
         analysis_purpose=analysis_purpose, company_judgment_predecessor=company_judgment_predecessor,
+        canonical_judgment_binding=canonical_judgment_binding,
     )
     workspace = PITProductionWorkspace(
         pit_runner, output_dir, company_code=code, run_id=str(pit_runner.run_id),
@@ -2068,6 +2211,8 @@ def run_full_pipeline(
     analysis_purpose: str = "INVESTMENT_DECISION",
     company_judgment_snapshot: str = "",
     review_return: str = "",
+    frozen_cjo: str = "",
+    current_company_cjo_admission: str = "",
 ) -> str:
     """运行完整分析管线。
 
@@ -2227,6 +2372,7 @@ def run_full_pipeline(
     }
     pit_runner = None
     company_judgment_predecessor: dict[str, Any] | None = None
+    canonical_judgment_binding: dict[str, Any] | None = None
     pit_attestation_path = ""
     if pit_mode:
         try:
@@ -2265,23 +2411,36 @@ def run_full_pipeline(
         diagnostics["pit_framework_root"] = str(_PIT_FRAMEWORK_ROOT.resolve())
         diagnostics["pit_framework_root_class"] = "REPOSITORY_STATIC"
         if pit_production_freeze and analysis_purpose == "INVESTMENT_DECISION":
-            company_judgment_predecessor = _load_company_judgment_predecessor(
-                company_judgment_snapshot, company_code=code, cutoff_at=str(pit_runner.cutoff_at),
-            )
-            predecessor_findings = _investment_predecessor_findings(
-                company_judgment_predecessor,
-                company_code=code,
-                cutoff_at=str(pit_runner.cutoff_at),
-            )
-            if predecessor_findings:
-                raise RuntimeError(
-                    "投资 PIT 生产冻结的公司判断前置物未达到 INVESTMENT_READY: "
-                    + ", ".join(predecessor_findings)
+            if str(frozen_cjo or "").strip() or str(current_company_cjo_admission or "").strip():
+                canonical_judgment_binding = _load_episode_bound_current_company_judgment(
+                    frozen_cjo,
+                    current_company_cjo_admission,
+                    company_code=code,
+                    cutoff_at=str(pit_runner.cutoff_at),
                 )
-            diagnostics["company_judgment_predecessor"] = {
-                key: value for key, value in (company_judgment_predecessor.get("source") or {}).items()
-                if key != "snapshot_path"
-            }
+                diagnostics["enterprise_underwriting_binding"] = {
+                    key: value
+                    for key, value in canonical_judgment_binding.items()
+                    if not key.endswith("_path")
+                }
+            else:
+                company_judgment_predecessor = _load_company_judgment_predecessor(
+                    company_judgment_snapshot, company_code=code, cutoff_at=str(pit_runner.cutoff_at),
+                )
+                predecessor_findings = _investment_predecessor_findings(
+                    company_judgment_predecessor,
+                    company_code=code,
+                    cutoff_at=str(pit_runner.cutoff_at),
+                )
+                if predecessor_findings:
+                    raise RuntimeError(
+                        "投资 PIT 生产冻结的公司判断前置物未达到 INVESTMENT_READY: "
+                        + ", ".join(predecessor_findings)
+                    )
+                diagnostics["company_judgment_predecessor"] = {
+                    key: value for key, value in (company_judgment_predecessor.get("source") or {}).items()
+                    if key != "snapshot_path"
+                }
         if pit_writer:
             return _run_pit_writer(
                 code=code,
@@ -2313,6 +2472,7 @@ def run_full_pipeline(
                 pit_runner=pit_runner, pit_case_id=pit_case_id, pit_experiment_id=pit_experiment_id,
                 runtime=runtime, diagnostics=diagnostics, analysis_purpose=analysis_purpose,
                 company_judgment_predecessor=company_judgment_predecessor,
+                canonical_judgment_binding=canonical_judgment_binding,
             )
             production_completion = _validate_pit_production_completion(
                 output_dir=output_dir, report_path=report_path, run_id=run_id,
@@ -3903,7 +4063,11 @@ def main(argv: list[str] | None = None) -> int:
                     choices=["INVESTMENT_DECISION", "COMPANY_JUDGMENT_ONLY"],
                     help="分析用途；CJO 只允许经营机制、前瞻判断与结算，不产生投资决策")
     ap.add_argument("--company-judgment-snapshot", default="",
-                    help="投资 PIT 生产冻结的同 cutoff CJO publication_snapshot.json；估值/价格只能建立在此冻结经营判断上")
+                    help="Legacy G1J compatibility: same-cutoff CJO publication_snapshot.json")
+    ap.add_argument("--frozen-cjo", default="",
+                    help="Episode-first investment production: source-bound, independently frozen current-company CJO")
+    ap.add_argument("--current-company-cjo-admission", default="",
+                    help="Episode-first investment production: PRIMARY_ADMITTED receipt bound to --frozen-cjo")
     args = ap.parse_args(argv)
     try:
         repair_chapters = tuple(
@@ -3952,6 +4116,8 @@ def main(argv: list[str] | None = None) -> int:
             analysis_purpose=args.analysis_purpose,
             company_judgment_snapshot=args.company_judgment_snapshot,
             review_return=args.review_return,
+            frozen_cjo=args.frozen_cjo,
+            current_company_cjo_admission=args.current_company_cjo_admission,
         )
         print(f"\n📄 {report_path}")
         return 0

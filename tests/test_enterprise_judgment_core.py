@@ -8,6 +8,7 @@ import pytest
 
 from scripts import enterprise_judgment_core as core
 from scripts import enterprise_judgment_quantitative_adapter as quant
+from scripts import enterprise_underwriting_episode as underwriting
 from scripts import judgment_generation_handoff as generation_handoff
 
 
@@ -382,6 +383,101 @@ def _judgment_input(*, resolution: str = "PRIMARY", central: bool = True, cash_e
     }
 
 
+def _underwriting_episode() -> dict:
+    judgment = _judgment_input()
+    central_path = judgment["central_path"]["claim"]
+    strongest_rival = judgment["strongest_counterargument"]["claim"]
+    reversal_observations = [
+        "Same-arena untreated cohorts recover equally.",
+        "Owner cash does not follow the operating improvement.",
+    ]
+    source_ref = "SRC:OPERATING"
+    return {
+        "schema_version": underwriting.EPISODE_SCHEMA,
+        "episode_id": "EUE:COMPANY:SYNTHETIC:2025:BLIND:V1",
+        "company_id": "COMPANY:SYNTHETIC",
+        "company_name": "Synthetic Company",
+        "cutoff_at": "2025-12-31T23:59:59+00:00",
+        "sample_identity": "BLIND_REPLAY",
+        "decision_frame": "Underwrite survival, normalized economics and permanent loss before price.",
+        "underwriting_route": "OPERATING_FRANCHISE_WITH_CASH_CROSS_CHECK",
+        "situation_model": {
+            "summary": "A selective demand regime tests whether the service reset changes retention rather than appearances.",
+            "industry_future_thesis": {
+                "horizon": "Three to five years",
+                "most_likely_regime": "Customer demand remains selective and rewards measurable processing gains.",
+                "profit_pool_transmission": "Retention and unit cost determine which providers retain the profit pool.",
+                "company_exposure": "The company is directly exposed to selective customer demand through retention and processing economics.",
+                "adaptation": "The company reset service delivery and exposed retention to the new process.",
+                "normal_economics": "Retention must pass through unit economics and capital burden before normalized earnings and owner cash improve.",
+                "permanent_loss": "Repeated capital burden without owner-cash conversion can turn an operating reset into permanent loss.",
+                "valuation_treatment": "Do not pay for unobserved cash conversion or assume the reset caused all recovery.",
+                "strongest_rival": strongest_rival,
+                "reversal_observations": reversal_observations,
+            },
+        },
+        "business_position": "The company competes through customer retention and processing unit economics.",
+        "survival_case": "No immediate survival failure is observed, but cash transmission remains material.",
+        "adaptation_case": "Management committed and implemented the service reset; exposure is observed but causality remains bounded.",
+        "normalization_case": "Normalized economics improve only if retained customers support unit economics after capital burden.",
+        "permanent_loss_map": "Failure to convert the reset into owner cash can turn recurring capital burden into permanent loss.",
+        "value_route": {
+            "primary_routes": ["EPV"],
+            "excluded_routes": ["UNOBSERVED_GROWTH_CAPITALIZATION"],
+            "route_reasoning": "Use normalized earnings and owner-cash evidence; exclude unsupported growth.",
+            "valuation_model_roles": {
+                "primary": ["EPV"],
+                "corroborative": ["RETURN_DECOMPOSITION"],
+                "stress": ["NAV"],
+            },
+        },
+        "strongest_rival": strongest_rival,
+        "reversal_observations": reversal_observations,
+        "component_treatments": [
+            {
+                "component_id": "CORE_OPERATING_RESET",
+                "treatment": "CONDITIONALLY_UNDERWRITE",
+                "reason": "Retention evidence supports the operating path while the counterfactual remains open.",
+                "investment_consequence": "Normalize the core conditionally and do not attribute all recovery to management.",
+                "promotion_or_resolution_condition": "Observe a same-arena untreated cohort and owner-cash bridge.",
+                "evidence_ids": ["UW:E1"],
+            }
+        ],
+        "evidence_trace": [
+            {
+                "evidence_id": "UW:E1",
+                "source_ref": source_ref,
+                "locator": "_judgment_input synthetic fixture",
+                "scope": "Synthetic current-company operating and cash mechanism",
+                "used_for": "Bind the complete underwriting thesis to the formal CJO fixture",
+            }
+        ],
+        "existing_object_refs": [
+            {
+                "kind": "CJO_TEST_FIXTURE",
+                "ref": "tests/test_enterprise_judgment_core.py",
+                "role": "Existing source package, enterprise model, ledger and judgment input",
+            }
+        ],
+        "underwriting_thesis": {
+            "thesis_id": "UWT:COMPANY:SYNTHETIC:2025:V1",
+            "central_path": central_path,
+            "normal_earnings_treatment": "Conditionally underwrite improved retention and unit economics.",
+            "owner_cash_treatment": "Keep owner cash conditional until the same-boundary capital bridge closes.",
+            "permanent_loss_treatment": "Treat recurring capital burden without cash conversion as the loss path.",
+            "value_route_treatment": "Use EPV only on normalized economics and exclude unsupported growth.",
+            "economic_directions": {
+                "normal_earnings": "IMPROVES",
+                "owner_cash": "IMPROVES",
+                "permanent_loss": "DETERIORATES",
+            },
+            "strongest_rival": strongest_rival,
+            "monitoring": "Monitor retention, unit economics, owner cash and the untreated cohort.",
+        },
+        "investment_treatment": "BLIND_REPLAY_PRICE_FREE: no value, price, BuyBand or action is authorized.",
+    }
+
+
 def _review(candidate: dict, *, reviewer_id: str = "INDEPENDENT_REVIEWER:TWO") -> dict:
     return {
         "schema_version": core.CJO_REVIEW_VERSION,
@@ -457,6 +553,179 @@ def test_enterprise_model_compiles_to_independently_frozen_cjo() -> None:
     assert frozen["state"] == "FROZEN"
     assert frozen["authority"]["canonical"] is True
     assert frozen["authority"]["investment_authorization"] is False
+
+
+def test_complete_underwriting_episode_is_bound_through_candidate_freeze_and_synthesis() -> None:
+    package = _source_package()
+    episode = _underwriting_episode()
+    expected = underwriting.project_price_free_underwriting_thesis(episode)
+    candidate = core.compile_cjo_candidate(
+        model=_model(source_package=package),
+        ledger=_ledger(),
+        source_package=package,
+        judgment_input=_judgment_input(),
+        underwriting_episode=episode,
+    )
+
+    assert candidate["underwriting_thesis_projection"] == expected
+    assert candidate["authority"]["report_read_allowed"] is False
+    frozen = core.freeze_cjo(candidate=candidate, independent_review=_review(candidate))
+    assert core.validate_frozen_cjo(frozen)["state"] == "VALID"
+    assert frozen["underwriting_thesis_projection"] == expected
+    assert (
+        frozen["independent_review_receipt"]["reviewed_reader_projection"]
+        ["underwriting_thesis_projection"]
+        == expected
+    )
+    synthesis = core.project_frozen_cjo_to_judgment_synthesis(frozen)
+    assert synthesis["underwriting_thesis_projection"] == expected
+    assert synthesis["frozen_cjo"]["underwriting_thesis_projection"] == expected
+
+
+def test_episode_deterministically_owns_cjo_earnings_cash_and_loss_directions() -> None:
+    package = _source_package()
+    episode = _underwriting_episode()
+    episode["underwriting_thesis"]["economic_directions"] = {
+        "normal_earnings": "DETERIORATES",
+        "owner_cash": "DETERIORATES",
+        "permanent_loss": "DETERIORATES",
+    }
+    candidate = core.compile_cjo_candidate(
+        model=_model(owner_cash_direction="IMPROVES", source_package=package),
+        ledger=_ledger(),
+        source_package=package,
+        judgment_input=_judgment_input(),
+        underwriting_episode=episode,
+    )
+
+    assert candidate["normal_earnings_transmission"]["direction"] == "DETERIORATES"
+    assert candidate["owner_cash_transmission"]["direction"] == "DETERIORATES"
+    assert {item["direction"] for item in candidate["permanent_loss_paths"]} == {
+        "DETERIORATES"
+    }
+    assert {
+        item["layer"]: item["direction"]
+        for item in candidate["enterprise_system_ref"]["financial_transmissions"]
+    } == {
+        "NORMAL_EARNINGS": "DETERIORATES",
+        "OWNER_CASH": "DETERIORATES",
+        "PERMANENT_LOSS": "DETERIORATES",
+    }
+    frozen = core.freeze_cjo(candidate=candidate, independent_review=_review(candidate))
+    assert core.validate_frozen_cjo(frozen)["state"] == "VALID"
+
+    top_level_tamper = deepcopy(frozen)
+    top_level_tamper["owner_cash_transmission"]["direction"] = "IMPROVES"
+    validation = core.validate_frozen_cjo(top_level_tamper)
+    assert validation["state"] == "INVALID"
+    assert any(
+        "underwriting_thesis_projection_owner_cash_direction_mismatch" in item
+        for item in validation["findings"]
+    )
+
+    nested_tamper = deepcopy(frozen)
+    next(
+        item
+        for item in nested_tamper["enterprise_system_ref"]["financial_transmissions"]
+        if item["transmission_id"] == "TX:OWNER_CASH"
+    )["direction"] = "IMPROVES"
+    nested_validation = core.validate_frozen_cjo(nested_tamper)
+    assert nested_validation["state"] == "INVALID"
+    assert any(
+        "owner_cash_enterprise_transmission_direction_mismatch:TX:OWNER_CASH" in item
+        for item in nested_validation["findings"]
+    )
+
+
+@pytest.mark.parametrize(
+    ("mutation", "finding"),
+    [
+        ("company", "underwriting_thesis_projection_company_id_mismatch"),
+        ("cutoff", "underwriting_thesis_projection_cutoff_mismatch"),
+        ("central", "underwriting_thesis_projection_central_path_mismatch"),
+        ("rival", "underwriting_thesis_projection_strongest_rival_mismatch"),
+    ],
+)
+def test_underwriting_episode_must_match_formal_cjo_identity_and_narrative_claims(
+    mutation: str, finding: str,
+) -> None:
+    package = _source_package()
+    episode = _underwriting_episode()
+    if mutation == "company":
+        episode["company_id"] = "COMPANY:OTHER"
+    elif mutation == "cutoff":
+        episode["cutoff_at"] = "2025-12-30T23:59:59+00:00"
+    elif mutation == "central":
+        episode["underwriting_thesis"]["central_path"] = "A different company story."
+    else:
+        episode["strongest_rival"] = "A different strongest rival."
+        episode["underwriting_thesis"]["strongest_rival"] = episode["strongest_rival"]
+        episode["situation_model"]["industry_future_thesis"]["strongest_rival"] = episode["strongest_rival"]
+
+    with pytest.raises(core.EnterpriseJudgmentCoreError, match=finding):
+        core.compile_cjo_candidate(
+            model=_model(source_package=package),
+            ledger=_ledger(),
+            source_package=package,
+            judgment_input=_judgment_input(),
+            underwriting_episode=episode,
+        )
+
+
+def test_reviewed_underwriting_projection_cannot_change_after_freeze() -> None:
+    package = _source_package()
+    candidate = core.compile_cjo_candidate(
+        model=_model(source_package=package),
+        ledger=_ledger(),
+        source_package=package,
+        judgment_input=_judgment_input(),
+        underwriting_episode=_underwriting_episode(),
+    )
+    frozen = core.freeze_cjo(candidate=candidate, independent_review=_review(candidate))
+    frozen["underwriting_thesis_projection"]["industry_future_thesis"][
+        "most_likely_regime"
+    ] = "A post-review regime rewrite."
+
+    validation = core.validate_frozen_cjo(frozen)
+
+    assert validation["state"] == "INVALID"
+    assert "frozen_cjo.reviewed_reader_projection_mutated" in validation["findings"]
+
+
+def test_underwriting_episode_cannot_put_price_inside_frozen_thesis() -> None:
+    package = _source_package()
+    episode = _underwriting_episode()
+    episode["underwriting_thesis"]["price"] = 42.0
+
+    with pytest.raises(
+        core.EnterpriseJudgmentCoreError,
+        match="underwriting_thesis.price_boundary",
+    ):
+        core.compile_cjo_candidate(
+            model=_model(source_package=package),
+            ledger=_ledger(),
+            source_package=package,
+            judgment_input=_judgment_input(),
+            underwriting_episode=episode,
+        )
+
+
+def test_blind_underwriting_evidence_must_come_from_the_cjo_source_package() -> None:
+    package = _source_package()
+    episode = _underwriting_episode()
+    episode["evidence_trace"][0]["source_ref"] = "SRC:OUTSIDE-PACKAGE"
+
+    with pytest.raises(
+        core.EnterpriseJudgmentCoreError,
+        match="underwriting_episode_evidence_not_in_source_package",
+    ):
+        core.compile_cjo_candidate(
+            model=_model(source_package=package),
+            ledger=_ledger(),
+            source_package=package,
+            judgment_input=_judgment_input(),
+            underwriting_episode=episode,
+        )
 
 
 def test_every_central_judgment_trace_has_source_boundary_mechanism_reasoning_and_financial_transmission() -> None:
