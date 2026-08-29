@@ -1,0 +1,53 @@
+{
+  "schema_version": "enterprise-underwriting-training-contract.v1",
+  "contract_id": "UWTRAIN:CN601966:20190501:CURRENT_AGENT_SELF_REPLAY:V1",
+  "training_track": "BLIND_REPLAY",
+  "company_id": "CN:601966",
+  "company_name": "Shandong Linglong Tire",
+  "cutoff_at": "2019-05-01T00:00:00+08:00",
+  "sample_identity": "BLIND_REPLAY",
+  "outcome_access": "SEALED",
+  "allowed_sources": [
+    {
+      "source_id": "SOURCE:CN601966:20190501:PRE_CUTOFF",
+      "source_ref": "docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_COURSE_1_20260829/sources/CN601966_20190501_PRE_CUTOFF_SOURCE_PACKAGE.md",
+      "available_at": "2019-04-30T23:59:59+08:00",
+      "time_role": "PRE_CUTOFF"
+    },
+    {
+      "source_id": "MEMORY:COURSE1:CAPITAL_BOUNDARY:V1",
+      "source_ref": "docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_COURSE_1_20260829/08_CAPITAL_AND_BOUNDARY_REASONING_REVISION.md",
+      "available_at": "2026-08-29T00:00:00+08:00",
+      "time_role": "TRAINING_MEMORY"
+    }
+  ],
+  "feedback_clocks": [
+    {
+      "clock_id": "CLOCK:CN601966:FY2019",
+      "horizon": "EARLY_SIGNAL",
+      "opens_at": "2020-04-30T00:00:00+08:00",
+      "episode_claims": ["INDUSTRY_AND_SITUATION", "BUSINESS_POSITION_AND_ADAPTATION", "SURVIVAL_AND_FINANCING"],
+      "discriminating_observation": "国内与海外产量、订单、产品结构和单位利润能否在扩产及贸易摩擦下继续吸收既有和新增产能。"
+    },
+    {
+      "clock_id": "CLOCK:CN601966:FY2021",
+      "horizon": "NORMALIZATION_AND_CASH",
+      "opens_at": "2022-04-30T00:00:00+08:00",
+      "episode_claims": ["BUSINESS_POSITION_AND_ADAPTATION", "NORMAL_EARNINGS", "OWNER_CASH"],
+      "discriminating_observation": "泰国、湖北和塞尔维亚布局是否形成可重复的客户吸收、单位经济和经营现金，而非只扩大资产、营运资本及融资。"
+    },
+    {
+      "clock_id": "CLOCK:CN601966:FY2023",
+      "horizon": "LONG_TERM_PERMANENT_LOSS",
+      "opens_at": "2024-04-30T00:00:00+08:00",
+      "episode_claims": ["SURVIVAL_AND_FINANCING", "NORMAL_EARNINGS", "OWNER_CASH", "PERMANENT_LOSS", "VALUE_ROUTE"],
+      "discriminating_observation": "国际化产能和资本支出能否在周期、原料、贸易与价格竞争后覆盖投入资本并改善普通股现金，或形成过度扩张的永久损失。"
+    }
+  ],
+  "primary_training_product": {
+    "object_type": "EnterpriseUnderwritingEpisode",
+    "schema_version": "enterprise-underwriting-episode.v2",
+    "completion_basis": "COMPLETE_EPISODE_VALIDATION_ONLY"
+  },
+  "authority": "RESEARCH_TRAINING_ONLY_NO_PRICE_VALUATION_OR_INVESTMENT_AUTHORITY"
+}

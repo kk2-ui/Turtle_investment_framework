@@ -1,9 +1,17 @@
 # 课程一期结果后研究议程
 
-> 状态：`ACTIVE_FOR_SECOND_FAIR_A_B`
+> 状态：`ACTIVE_FOR_CURRENT_AGENT_SELF_REPLAYS`
 >
-> 依据：四份 Blind outcome feedback 与独立审阅
+> 依据：四份 Blind outcome feedback、独立审阅、广州酒家第二次 A/B 与玲珑轮胎 self replay
 > [`PASS_WITH_LOCAL_NARROWING / COURSE_METHOD_NOT_VALIDATED`](outcomes/05_INDEPENDENT_OUTCOME_REVIEW.md)
+
+第二次公平 A/B 已经完成；其 current-Agent 结果见
+[`06_CN603043_CURRENT_AGENT_SELF_RUN_OUTCOME_FEEDBACK.md`](outcomes/06_CN603043_CURRENT_AGENT_SELF_RUN_OUTCOME_FEEDBACK.md)。
+随后在轮胎制造这个结构不同、仓库零命中的公司上，玲珑 replay 再次显示：全资本开支后的
+现金压力、维护后 owner cash 与增长资本回报会给出不同答案；参见
+[`07_CN601966_CURRENT_AGENT_SELF_REPLAY_OUTCOME_FEEDBACK.md`](outcomes/07_CN601966_CURRENT_AGENT_SELF_REPLAY_OUTCOME_FEEDBACK.md)。
+这使三笔资本账成为 current Agent 的实际研究顺序，但因为这些均不是认知隔离的外部 A/B，
+并不提升方法验证状态。
 
 ## 这次反馈改变什么
 
