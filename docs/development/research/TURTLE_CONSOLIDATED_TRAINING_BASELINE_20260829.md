@@ -1,6 +1,6 @@
 # Turtle 训练系统统一基线 2026-08-29
 
-> 状态：`CONSOLIDATED_INTEGRATION_BASELINE / PENDING_FINAL_MAIN_FAST_FORWARD`
+> 状态：`CONSOLIDATED_MAIN_BASELINE / VERIFIED`
 >
 > 集成分支：`feat/consolidated-training-baseline-v1`
 >
@@ -8,7 +8,7 @@
 
 ## 1. 唯一基线裁决
 
-本分支完成验收并快进 `main` 后，`main` 是训练、企业判断、结果结算、学习读模型和经验调用
+本文件所在的验收提交快进 `main` 后，`main` 是训练、企业判断、结果结算、学习读模型和经验调用
 设计的唯一新工作基线。后续 Agent 不再从本表中的旧功能分支继续扩展；需要追溯时可以读取其
 提交，但新实现必须从统一 `main` 建立 linked worktree。
 
