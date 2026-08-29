@@ -36,3 +36,7 @@ value-free mismatch；`04_e2_acquisition_recovery_preoutcome_receipt.json` 只�
 `07_e2_acquisition_attempt_3.json` 记录三字段都已 `FIELD_READY`、但 compact
 `CN002032` 责任边界尚未被 verifier 接受的最后一个机械阻断。边界本身不改写；
 修复只让 verifier 接受仓库已经冻结并验证过的该形式。
+
+`08_e2_mechanical_settlement.json` 与 `09_investor_training_readout.md` 是最终 E2
+反馈。两项收入预期 `MATCH`，发行人经营现金因有利地超出冻结稳定带而 `MISS`；
+冻结总规则据此返回 `MIXED_PATTERN_H_A_NOT_ESTABLISHED`，E3 仍未准入。

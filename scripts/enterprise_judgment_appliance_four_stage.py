@@ -18,11 +18,13 @@ The four stages are progressive evidence ceilings:
 from __future__ import annotations
 
 from copy import deepcopy
+import math
 from typing import Any
 
 
 SCHEMA_VERSION = "enterprise-judgment-appliance-four-stage.v1"
 E2_RESOLUTION_SCHEMA_VERSION = "enterprise-judgment-appliance-e2-resolution-contract.v1"
+E2_SETTLEMENT_SCHEMA_VERSION = "enterprise-judgment-appliance-e2-mechanical-settlement.v1"
 PLAN_ID = "APPLIANCE:FOUR-STAGE:20170430-20180930:V1"
 BLOCK_ID = "ILB:CN:APPLIANCE:NATIONAL:V1"
 SUPOR_EPISODE_ID = "APPLIANCE-R11:CN002032:20180930:V1"
@@ -42,6 +44,19 @@ E2_FIELD_ROLES = {
     "MHE:CONTRACT:APPLIANCE-R11:CN002032:FY2018:ELECTRIC_POT_REVENUE:V1": "PRODUCT_BOUNDARY_DISCRIMINATOR",
     "MHE:CONTRACT:APPLIANCE-R11:CN002032:FY2018:ISSUER_OCF:V1": "ISSUER_CASH_BOUNDARY",
 }
+E2_OUTCOME_FIELD_IDENTITIES = {
+    "MHE:CONTRACT:APPLIANCE-R11:CN002032:FY2018:ISSUER_REVENUE:V1": {
+        "metric_id": "CONSOLIDATED_REVENUE_RMB", "pdf_page": 69,
+    },
+    "MHE:CONTRACT:APPLIANCE-R11:CN002032:FY2018:ELECTRIC_POT_REVENUE:V1": {
+        "metric_id": "PRODUCT_REVENUE_RMB:电锅类", "pdf_page": 12,
+    },
+    "MHE:CONTRACT:APPLIANCE-R11:CN002032:FY2018:ISSUER_OCF:V1": {
+        "metric_id": "CONSOLIDATED_OPERATING_CASH_FLOW_RMB", "pdf_page": 73,
+    },
+}
+E2_OUTCOME_SOURCE_ID = "CNINFO:002032:ANN:20190328:1205946626"
+E2_OUTCOME_SOURCE_URL = "https://static.cninfo.com.cn/finalpage/2019-03-28/1205946626.PDF"
 
 _ROOT_KEYS = {
     "schema_version", "plan_id", "industry_block_ref", "cutoffs", "risk_set",
@@ -366,3 +381,90 @@ def resolve_e2_terminal_statuses(statuses: Any) -> dict[str, Any]:
             "rights": deepcopy(RIGHTS),
         },
     }
+
+
+def validate_e2_mechanical_settlement(artifact: Any, *, supor_episode: Any) -> dict[str, Any]:
+    """Validate the post-outcome read model without duplicating settlement.
+
+    Mechanical labels must already have been issued by the Minimal runner.
+    This function only binds those labels and observations back to the frozen
+    E2 field identities and pre-outcome baselines.
+    """
+    item = _mapping(artifact)
+    episode = _mapping(supor_episode)
+    findings: list[str] = []
+    expected_root = {
+        "schema_version", "receipt_id", "episode_id", "source", "field_results",
+        "lifecycle_counts", "frozen_resolution", "investor_learning",
+        "e3_comparative_status", "rights",
+    }
+    if set(item) != expected_root:
+        findings.append("e2_settlement_shape_invalid")
+    if item.get("schema_version") != E2_SETTLEMENT_SCHEMA_VERSION:
+        findings.append("e2_settlement_schema_invalid")
+    if item.get("episode_id") != SUPOR_EPISODE_ID or episode.get("episode_id") != SUPOR_EPISODE_ID:
+        findings.append("e2_settlement_episode_identity_invalid")
+    source = _mapping(item.get("source"))
+    if source.get("source_id") != E2_OUTCOME_SOURCE_ID or source.get("source_url") != E2_OUTCOME_SOURCE_URL:
+        findings.append("e2_settlement_source_identity_invalid")
+    if source.get("report_period_end") != "2018-12-31":
+        findings.append("e2_settlement_report_period_invalid")
+
+    frozen = {
+        chain["measurement_contract"]["measurement_contract_id"]: chain
+        for chain in _items(episode.get("minimal_field_chains"))
+        if isinstance(chain, dict) and isinstance(chain.get("measurement_contract"), dict)
+    }
+    rows = _items(item.get("field_results"))
+    statuses: list[dict[str, str]] = []
+    if len(rows) != 3:
+        findings.append("e2_settlement_must_cover_three_fields")
+    for index, raw in enumerate(rows):
+        row = _mapping(raw)
+        contract_id = row.get("measurement_contract_id")
+        expected = E2_OUTCOME_FIELD_IDENTITIES.get(contract_id)
+        chain = frozen.get(contract_id)
+        if expected is None or chain is None:
+            findings.append(f"field_results[{index}].contract_unknown")
+            continue
+        if row.get("metric_id") != expected["metric_id"] or row.get("pdf_page") != expected["pdf_page"]:
+            findings.append(f"field_results[{index}].metric_or_page_invalid")
+        if row.get("unit") != "RMB" or row.get("source_id") != E2_OUTCOME_SOURCE_ID:
+            findings.append(f"field_results[{index}].unit_or_source_invalid")
+        contract = chain["measurement_contract"]
+        prediction = chain["prediction"]
+        source_before = chain["static_evidence"]["source"]
+        if (
+            row.get("frozen_baseline_value") != source_before.get("numeric_value")
+            or row.get("frozen_prediction_direction") != prediction.get("predicted_direction")
+            or row.get("settlement_tolerance") != contract.get("settlement_tolerance")
+        ):
+            findings.append(f"field_results[{index}].preoutcome_binding_invalid")
+        for field in ("realized_value", "reported_comparative_value", "delta_from_frozen_baseline_percent"):
+            value = row.get(field)
+            if not isinstance(value, (int, float)) or isinstance(value, bool) or not math.isfinite(float(value)):
+                findings.append(f"field_results[{index}].{field}_must_be_finite")
+        baseline = row.get("frozen_baseline_value")
+        realized = row.get("realized_value")
+        delta = row.get("delta_from_frozen_baseline_percent")
+        if all(isinstance(value, (int, float)) and not isinstance(value, bool) for value in (baseline, realized, delta)):
+            expected_delta = round((float(realized) / float(baseline) - 1.0) * 100.0, 2)
+            if abs(float(delta) - expected_delta) > 0.001:
+                findings.append(f"field_results[{index}].delta_not_derived_from_frozen_baseline")
+        terminal = row.get("mechanical_label")
+        if terminal not in {"MATCH", "MISS"}:
+            findings.append(f"field_results[{index}].mechanical_label_invalid")
+        else:
+            statuses.append({"measurement_contract_id": str(contract_id), "terminal_status": str(terminal)})
+
+    resolution = resolve_e2_terminal_statuses(statuses)
+    if not resolution["valid"]:
+        findings.extend("e2_settlement_" + finding for finding in resolution["findings"])
+    elif item.get("frozen_resolution") != resolution["resolution"]:
+        findings.append("e2_settlement_resolution_must_follow_frozen_rules")
+    counts = _mapping(item.get("lifecycle_counts"))
+    if counts != {"authorized_access": 3, "field_ready_inventory": 3, "observations": 3, "settlements": 3}:
+        findings.append("e2_settlement_lifecycle_counts_invalid")
+    if item.get("e3_comparative_status") != "NOT_ADMITTED" or item.get("rights") != RIGHTS:
+        findings.append("e2_settlement_downstream_authority_invalid")
+    return {"valid": not findings, "findings": findings, "settlement": deepcopy(item) if not findings else None}

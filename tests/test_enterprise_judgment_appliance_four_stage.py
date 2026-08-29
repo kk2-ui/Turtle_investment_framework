@@ -246,3 +246,39 @@ def test_third_attempt_reaches_field_ready_without_claiming_settlement() -> None
     assert attempt["lifecycle_counts"]["settlements"] == 0
     assert attempt["outcome_values_in_artifact"] is False
     assert attempt["rights"] == four_stage.RIGHTS
+
+
+def test_real_e2_settlement_follows_frozen_rules_and_preserves_evidence_ceiling() -> None:
+    _, _, episode, _ = _inputs()
+    settlement = _load(FOUR_STAGE / "08_e2_mechanical_settlement.json")
+    result = four_stage.validate_e2_mechanical_settlement(settlement, supor_episode=episode)
+
+    assert result["valid"], result["findings"]
+    assert [row["mechanical_label"] for row in settlement["field_results"]] == [
+        "MATCH", "MATCH", "MISS",
+    ]
+    assert settlement["frozen_resolution"]["combined_resolution"] == "MIXED_PATTERN_H_A_NOT_ESTABLISHED"
+    assert settlement["frozen_resolution"]["e3_comparative_status"] == "NOT_ADMITTED"
+    assert settlement["investor_learning"]["next_contract_changes"] == [
+        "Separate favorable and adverse directional misses instead of treating both as an undifferentiated MISS.",
+        "Freeze product revenue share or product-minus-issuer growth when the investment question is product quality rather than absolute growth.",
+        "Freeze a prior-period perimeter or restatement bridge when the annual report may revise the comparative column.",
+    ]
+    assert settlement["rights"] == four_stage.RIGHTS
+
+
+def test_e2_settlement_cannot_relabel_a_field_or_self_admit_comparative() -> None:
+    _, _, episode, _ = _inputs()
+    settlement = _load(FOUR_STAGE / "08_e2_mechanical_settlement.json")
+
+    relabeled = deepcopy(settlement)
+    relabeled["field_results"][2]["mechanical_label"] = "MATCH"
+    assert not four_stage.validate_e2_mechanical_settlement(
+        relabeled, supor_episode=episode,
+    )["valid"]
+
+    admitted = deepcopy(settlement)
+    admitted["e3_comparative_status"] = "ADMITTED"
+    assert not four_stage.validate_e2_mechanical_settlement(
+        admitted, supor_episode=episode,
+    )["valid"]
