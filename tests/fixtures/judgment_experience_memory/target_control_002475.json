@@ -10,5 +10,5 @@
   "frozen_at": "2026-08-29T09:00:00+08:00",
   "source_packet_ref": "tests/fixtures/judgment_experience_memory/preoutcome_source_packet.json",
   "judgment_freeze_ref": "tests/fixtures/judgment_experience_memory/judgment_freeze.json",
-  "independent_preoutcome_review_ref": "tests/fixtures/judgment_experience_memory/independent_preoutcome_review.md"
+  "independent_preoutcome_review_ref": "tests/fixtures/judgment_experience_memory/independent_preoutcome_review.json"
 }

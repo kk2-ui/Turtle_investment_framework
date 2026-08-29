@@ -1,0 +1,10 @@
+{
+  "status": "COMPLETED",
+  "candidate": {
+    "security_id": "CN:601012"
+  },
+  "independent_post_outcome_review": {
+    "verdict": "ACCEPT",
+    "artifact": "independent_postoutcome_review.md"
+  }
+}

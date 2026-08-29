@@ -1,0 +1,43 @@
+{
+  "schema_version": "experience-invocation-receipt.v1",
+  "invocation_id": "EIR:CN601865:20240401:CAPACITY_PRICE_CASH:V1",
+  "retrieval_pack_id": "ERP:CN601865:20240401:CAPACITY_PRICE_CASH:V1",
+  "record_id": "JER:CN601012:CAPACITY_PRICE_CASH:V1",
+  "record_version": 1,
+  "target_case_id": "EXPERIENCE_TARGET:CN601865:20240401",
+  "target_company_id": "CN:601865",
+  "target_company_cluster_id": "COMPANY:CN601865",
+  "cutoff_at": "2024-04-01T00:00:00+08:00",
+  "preoutcome_control_ref": "docs/development/research/experience_applications/CN601865_20240401/04_PREOUTCOME_CONTROL.json",
+  "retrieved_at": "2026-08-29T17:00:00+08:00",
+  "state": "APPLIED_PREOUTCOME",
+  "structural_match": "Both cases are expansion-stage capital-intensive B2B manufacturing situations where capacity or scale can be mistaken for durable product economics and cash, while the target remains an upstream solar-glass supplier rather than a vertically integrated module producer.",
+  "mismatch_dimensions": [
+    "The target product, customer interface, product mix, technology path and funding structure must be rebuilt from its own cutoff-visible evidence."
+  ],
+  "accepted_transfer": [
+    "Test the responsibility-boundary bridge in the frozen order: capacity or commissioning -> customer absorption or utilization -> realized price or spread -> operating cash -> cash capital expenditure and funding or recoverability.",
+    "Exclude capacity-driven growth from base normal owner-cash treatment until the target bridge is supported."
+  ],
+  "rejected_transfer": [
+    "Do not import the Longi outcome, threshold, product mix, financing fact, probability or conclusion.",
+    "Do not treat an unresolved target carrier as target failure or capacity destruction."
+  ],
+  "changed_question_refs": [
+    "JERQ:CN601865:SOLAR_GLASS_BOUNDARY_BRIDGE:V1"
+  ],
+  "changed_evidence_priority": [
+    "JEREV:CN601865:SOLAR_GLASS_CUSTOMER_ABSORPTION_AND_UTILIZATION:V1",
+    "JEREV:CN601865:SOLAR_GLASS_REALIZED_PRICE_OR_SPREAD:V1",
+    "JEREV:CN601865:SAME_BOUNDARY_OPERATING_CASH_AND_CASH_CAPEX:V1",
+    "JEREV:CN601865:FUNDING_OR_RECOVERABILITY_BRIDGE:V1"
+  ],
+  "changed_rival_or_discriminator_refs": [
+    "JERR:CN601865:RECOVERY_VS_CAPACITY_NOT_YET_DURABLE:V1"
+  ],
+  "changed_investor_treatment": "Keep capacity-driven growth outside base normal owner-cash treatment until current-company product economics and cash absorption are supported; preserve the recovery rival as a named scenario rather than a conclusion.",
+  "retrieval_role": "PRIMARY_ANALOG",
+  "projected_analogy_transfer_card_id": "ATC:CN601865:SOLAR_GLASS_CAPACITY_BOUNDARY:V1",
+  "frozen_at": "2026-08-29T17:05:00+08:00",
+  "outcome_access_state": "SEALED"
+}

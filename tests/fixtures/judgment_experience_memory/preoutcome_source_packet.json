@@ -1,4 +1,7 @@
 {
-  "artifact_type": "CUTOFF_BEFORE_SOURCE_PACKET",
-  "state": "PREOUTCOME_ONLY"
+  "schema_version": "judgment-experience-target-source-packet.v1",
+  "case_id": "EXPERIENCE_TARGET:CN002475:20240501",
+  "company_id": "CN:002475",
+  "cutoff_at": "2024-05-01T00:00:00+08:00",
+  "outcome_access_state": "SEALED"
 }

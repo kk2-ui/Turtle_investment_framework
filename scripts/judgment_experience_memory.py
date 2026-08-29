@@ -51,6 +51,11 @@ PREOUTCOME_ACCESS_STATES = {"SEALED", "NOT_YET_RELEASED", "PREOUTCOME_ONLY"}
 ECONOMIC_FAILURE_LOCI = {"STATE", "DECISION", "MEASUREMENT", "MECHANISM", "TRANSMISSION", "ENVIRONMENT"}
 FORBIDDEN_TOP_LEVEL_FIELDS = {"actual", "outcome", "price", "valuation", "buyband", "investment_action", "probability"}
 TARGET_CONTROL_SCHEMA = "judgment-experience-preoutcome-control.v1"
+TARGET_SOURCE_PACKET_SCHEMA = "judgment-experience-target-source-packet.v1"
+TARGET_FREEZE_SCHEMA = "judgment-experience-target-freeze.v1"
+TARGET_INDEPENDENT_REVIEW_SCHEMA = "judgment-experience-independent-preoutcome-review.v1"
+FEEDBACK_SETTLEMENT_BINDING_SCHEMA = "judgment-experience-feedback-settlement-binding.v1"
+FEEDBACK_INDEPENDENT_REVIEW_SCHEMA = "judgment-experience-independent-feedback-review.v1"
 
 
 class JudgmentExperienceError(ValueError):
@@ -145,6 +150,31 @@ def _ceiling_allows(*, permitted: Any, source: Any) -> bool:
     )
 
 
+def _same_repository_reference(left: Any, right: Any) -> bool:
+    left_path = _repository_path(left)
+    right_path = _repository_path(right)
+    return left_path is not None and right_path is not None and left_path.resolve() == right_path.resolve()
+
+
+def _require_existing_references(references: Any, field: str) -> list[str]:
+    findings: list[str] = []
+    normalized = _text_list(references, field, findings)
+    if findings or any(_repository_path(reference) is None for reference in normalized):
+        raise JudgmentExperienceError(field + "_contains_missing_or_unreadable_reference")
+    return normalized
+
+
+def _canonical_teaching_case(payload: dict[str, Any], case_id: str) -> dict[str, Any] | None:
+    """Resolve either a direct canonical case or a case in the curriculum."""
+    if payload.get("case_id") == case_id:
+        return payload
+    cases = payload.get("cases")
+    if isinstance(cases, list):
+        matches = [item for item in cases if isinstance(item, dict) and item.get("case_id") == case_id]
+        return matches[0] if len(matches) == 1 else None
+    return None
+
+
 def _required(payload: dict[str, Any], fields: tuple[str, ...], prefix: str, findings: list[str]) -> None:
     for field in fields:
         if not _text(payload.get(field)):
@@ -228,6 +258,7 @@ def validate_judgment_experience_record(record: Any) -> dict[str, Any]:
 def compile_teaching_experience_record(
     teaching_case: dict[str, Any],
     *,
+    canonical_teaching_ref: str,
     record_id: str,
     recorded_at: str,
     structural_key: dict[str, Any],
@@ -237,6 +268,10 @@ def compile_teaching_experience_record(
     do_not_apply_when: list[str],
 ) -> dict[str, Any]:
     """Compile an existing reviewed curriculum lesson; never mine new facts."""
+    canonical_payload = _read_json_reference(canonical_teaching_ref)
+    canonical_case = _canonical_teaching_case(canonical_payload or {}, _text(teaching_case.get("case_id")))
+    if canonical_case is None or canonical_case != teaching_case:
+        raise JudgmentExperienceError("teaching_case_not_exact_canonical_source")
     if teaching_case.get("track") != "TEACHING" or teaching_case.get("status") != "CURATED":
         raise JudgmentExperienceError("only curated Teaching cases may compile a Teaching experience record")
     lesson = teaching_case.get("lesson")
@@ -244,8 +279,9 @@ def compile_teaching_experience_record(
         raise JudgmentExperienceError("Teaching case has no curated lesson")
     artifacts = teaching_case.get("artifact_refs") if isinstance(teaching_case.get("artifact_refs"), dict) else {}
     review_ref = _text(artifacts.get("postoutcome_review_ref"))
-    if not review_ref:
+    if not review_ref or _repository_path(review_ref) is None:
         raise JudgmentExperienceError("Teaching case lacks independent post-outcome review reference")
+    _require_existing_references(teaching_case.get("source_refs"), "teaching_source_refs")
     record = {
         "schema_version": JUDGMENT_EXPERIENCE_RECORD_SCHEMA,
         "record_id": record_id,
@@ -285,6 +321,8 @@ def compile_teaching_experience_record(
 def compile_feedback_experience_record(
     feedback_receipt: dict[str, Any],
     *,
+    canonical_feedback_ref: str,
+    canonical_review_ref: str,
     record_id: str,
     source_case_id: str,
     source_refs: list[str],
@@ -308,12 +346,32 @@ def compile_feedback_experience_record(
     carry the settled values, the source company's judgment, or a target
     conclusion.  The receipt remains the only outcome-bearing source.
     """
+    canonical_receipt = _read_json_reference(canonical_feedback_ref)
+    if canonical_receipt is None or canonical_receipt != feedback_receipt:
+        raise JudgmentExperienceError("feedback_receipt_not_exact_canonical_source")
     candidate = feedback_receipt.get("candidate") if isinstance(feedback_receipt.get("candidate"), dict) else {}
     review = feedback_receipt.get("independent_post_outcome_review") if isinstance(feedback_receipt.get("independent_post_outcome_review"), dict) else {}
     if feedback_receipt.get("status") != "COMPLETED" or _text(review.get("verdict")).upper() != "ACCEPT":
         raise JudgmentExperienceError("only completed independently accepted feedback may compile a feedback experience record")
     if not _text(candidate.get("security_id")):
         raise JudgmentExperienceError("feedback receipt lacks source company identity")
+    if _repository_path(canonical_review_ref) is None:
+        raise JudgmentExperienceError("feedback_independent_review_missing_or_unreadable")
+    review_artifact = _text(review.get("artifact"))
+    canonical_feedback_path = _repository_path(canonical_feedback_ref)
+    canonical_review_path = _repository_path(canonical_review_ref)
+    if review_artifact and canonical_feedback_path is not None and canonical_review_path is not None:
+        declared_review_path = Path(review_artifact)
+        if not declared_review_path.is_absolute():
+            declared_review_path = canonical_feedback_path.parent / declared_review_path
+        if not declared_review_path.is_file() or declared_review_path.resolve() != canonical_review_path.resolve():
+            raise JudgmentExperienceError("feedback_independent_review_reference_mismatch")
+    canonical_source_refs = _require_existing_references(source_refs, "feedback_source_refs")
+    canonical_review_refs = _require_existing_references(review_refs, "feedback_review_refs")
+    if not any(_same_repository_reference(reference, canonical_feedback_ref) for reference in canonical_source_refs):
+        raise JudgmentExperienceError("feedback_source_refs_missing_canonical_feedback")
+    if not any(_same_repository_reference(reference, canonical_review_ref) for reference in canonical_review_refs):
+        raise JudgmentExperienceError("feedback_review_refs_missing_canonical_review")
     record = {
         "schema_version": JUDGMENT_EXPERIENCE_RECORD_SCHEMA,
         "record_id": record_id,
@@ -323,8 +381,8 @@ def compile_feedback_experience_record(
         "source_case_id": source_case_id,
         "source_company_id": candidate["security_id"],
         "source_company_cluster_id": _canonical_company_cluster_id(candidate["security_id"]),
-        "source_refs": list(source_refs),
-        "review_refs": list(review_refs),
+        "source_refs": canonical_source_refs,
+        "review_refs": canonical_review_refs,
         "evidence_ceiling": "MECHANISM",
         "proposition": _text(proposition),
         "structural_key": deepcopy(structural_key),
@@ -499,9 +557,41 @@ def _validate_target_context(target: Any) -> dict[str, Any]:
         if control.get("outcome_access_state") != target.get("outcome_access_state"):
             findings.append("target_preoutcome_control_outcome_access_mismatch")
         _iso_timestamp(control.get("frozen_at"), "target_preoutcome_control_frozen_at", findings)
-        for field in ("source_packet_ref", "judgment_freeze_ref", "independent_preoutcome_review_ref"):
-            if _repository_path(control.get(field)) is None:
-                findings.append("target_preoutcome_control_" + field + "_missing_or_unreadable")
+        source_packet = _read_json_reference(control.get("source_packet_ref"))
+        freeze = _read_json_reference(control.get("judgment_freeze_ref"))
+        review = _read_json_reference(control.get("independent_preoutcome_review_ref"))
+        if source_packet is None:
+            findings.append("target_preoutcome_control_source_packet_missing_or_unreadable")
+        elif (
+            source_packet.get("schema_version") != TARGET_SOURCE_PACKET_SCHEMA
+            or source_packet.get("case_id") != target.get("case_id")
+            or source_packet.get("company_id") != target.get("company_id")
+            or source_packet.get("cutoff_at") != target.get("cutoff_at")
+            or source_packet.get("outcome_access_state") != target.get("outcome_access_state")
+        ):
+            findings.append("target_preoutcome_control_source_packet_mismatch")
+        if freeze is None:
+            findings.append("target_preoutcome_control_judgment_freeze_missing_or_unreadable")
+        elif (
+            freeze.get("schema_version") != TARGET_FREEZE_SCHEMA
+            or freeze.get("state") != "FROZEN_PREOUTCOME"
+            or freeze.get("case_id") != target.get("case_id")
+            or freeze.get("company_id") != target.get("company_id")
+            or freeze.get("company_cluster_id") != target.get("company_cluster_id")
+            or freeze.get("cutoff_at") != target.get("cutoff_at")
+            or freeze.get("outcome_access_state") != target.get("outcome_access_state")
+        ):
+            findings.append("target_preoutcome_control_judgment_freeze_mismatch")
+        if review is None:
+            findings.append("target_preoutcome_control_independent_review_missing_or_unreadable")
+        elif (
+            review.get("schema_version") != TARGET_INDEPENDENT_REVIEW_SCHEMA
+            or review.get("verdict") != "ACCEPT"
+            or review.get("case_id") != target.get("case_id")
+            or review.get("freeze_ref") != control.get("judgment_freeze_ref")
+            or review.get("outcome_access_state") != target.get("outcome_access_state")
+        ):
+            findings.append("target_preoutcome_control_independent_review_mismatch")
     _validate_structural_key(target.get("structural_key"), findings, prefix="target_")
     return _findings_result(findings)
 
@@ -671,6 +761,62 @@ def _contains_forbidden_investment_field(value: Any) -> bool:
     return False
 
 
+def _validate_existing_analogy_transfer_card_shape(card: Any, *, record: dict[str, Any]) -> None:
+    """Use the live CJO card vocabulary; do not invent a V1 target-card type.
+
+    A sealed target is not yet a Frozen CJO, so it cannot satisfy the full
+    thesis-ledger validator (which additionally needs its frozen rival pair
+    and signals).  This check deliberately validates the existing card's
+    reusable shape and source archetype now; the normal thesis validator
+    remains the only route to report/CJO consumption later.
+    """
+    if not isinstance(card, dict):
+        raise JudgmentExperienceError("existing_analogy_transfer_card_not_object")
+    required = {
+        "card_id", "target_pair_id", "source_case_id", "target_state_vector", "structural_mapping",
+        "mismatch_dimensions", "application_rule", "invalidation_conditions", "strongest_near_miss",
+        "linked_discriminator_ids", "support_role",
+    }
+    missing = sorted(field for field in required if field not in card)
+    if missing:
+        raise JudgmentExperienceError("existing_analogy_transfer_card_fields_missing:" + ",".join(missing))
+    if not _text(card.get("card_id")).startswith("ATC:"):
+        raise JudgmentExperienceError("existing_analogy_transfer_card_id_invalid")
+    try:
+        from scripts.thesis_test_gate import _analogy_has_forbidden_field, _case_archetype_ids
+    except ModuleNotFoundError:  # pragma: no cover - direct execution path
+        from thesis_test_gate import _analogy_has_forbidden_field, _case_archetype_ids
+    if _text(card.get("source_case_id")) not in _case_archetype_ids():
+        raise JudgmentExperienceError("existing_analogy_transfer_card_source_case_not_registered")
+    if card.get("support_role") not in {"PRIMARY_SUPPORT", "QUESTION_ONLY"}:
+        raise JudgmentExperienceError("existing_analogy_transfer_card_support_role_invalid")
+    if not isinstance(card.get("target_state_vector"), list) or len(card["target_state_vector"]) < 3:
+        raise JudgmentExperienceError("existing_analogy_transfer_card_state_vector_incomplete")
+    if not isinstance(card.get("structural_mapping"), list) or not card["structural_mapping"]:
+        raise JudgmentExperienceError("existing_analogy_transfer_card_mapping_incomplete")
+    if not isinstance(card.get("mismatch_dimensions"), list) or not card["mismatch_dimensions"]:
+        raise JudgmentExperienceError("existing_analogy_transfer_card_mismatch_incomplete")
+    rule = card.get("application_rule")
+    if not isinstance(rule, dict) or not _text(rule.get("when_to_apply")) or not _text(rule.get("when_not_to_apply")):
+        raise JudgmentExperienceError("existing_analogy_transfer_card_application_rule_incomplete")
+    if not isinstance(card.get("invalidation_conditions"), list) or not card["invalidation_conditions"]:
+        raise JudgmentExperienceError("existing_analogy_transfer_card_invalidation_incomplete")
+    near_miss = card.get("strongest_near_miss")
+    if not isinstance(near_miss, dict) or near_miss.get("status") != "UNKNOWN_NO_QUALIFIED_EPISODE":
+        raise JudgmentExperienceError("existing_analogy_transfer_card_near_miss_invalid")
+    if card.get("support_role") != "QUESTION_ONLY" or not _text(near_miss.get("unknown_reason")) or not _text(near_miss.get("conservative_treatment")):
+        raise JudgmentExperienceError("existing_analogy_transfer_card_unknown_near_miss_not_question_only")
+    if not isinstance(card.get("linked_discriminator_ids"), list) or not card["linked_discriminator_ids"]:
+        raise JudgmentExperienceError("existing_analogy_transfer_card_discriminator_missing")
+    if _analogy_has_forbidden_field(card):
+        raise JudgmentExperienceError("analogy_transfer_card_contains_forbidden_investment_field")
+    if _text(card.get("experience_record_id")) and (
+        card.get("experience_record_id") != record.get("record_id")
+        or card.get("experience_record_version") != record.get("version")
+    ):
+        raise JudgmentExperienceError("existing_analogy_transfer_card_experience_record_conflicts")
+
+
 def build_experience_invocation_receipt(
     *, invocation_id: str, retrieval_pack: dict[str, Any], record: dict[str, Any],
     state: str, structural_match: str, mismatch_dimensions: list[str], accepted_transfer: list[str],
@@ -821,28 +967,76 @@ def project_existing_analogy_transfer_card(
         raise JudgmentExperienceError("cannot project from invalid invocation or record")
     if receipt.get("state") != "APPLIED_PREOUTCOME":
         raise JudgmentExperienceError("only applied invocation may project an analogy transfer card")
-    required = {
-        "card_id", "target_pair_id", "target_state_vector", "structural_mapping", "mismatch_dimensions",
-        "application_rule", "invalidation_conditions", "strongest_near_miss", "linked_discriminator_ids",
-    }
-    missing = sorted(field for field in required if field not in target_card)
-    if missing:
-        raise JudgmentExperienceError("existing_analogy_transfer_card_fields_missing:" + ",".join(missing))
     card = deepcopy(target_card)
-    if not _text(card.get("card_id")).startswith("ATC:"):
-        raise JudgmentExperienceError("existing_analogy_transfer_card_id_invalid")
-    if card.get("source_case_id") not in (None, "", record.get("source_case_id")):
-        raise JudgmentExperienceError("existing_analogy_transfer_card_source_conflicts_with_record")
-    card["source_case_id"] = record["source_case_id"]
+    if not _text(card.get("source_case_id")):
+        # Compatibility only for a pre-V1 fixture.  New applications must bind
+        # a registered existing archetype plus the source-side record below.
+        card["source_case_id"] = record["source_case_id"]
+    if not _text(card.get("experience_record_id")):
+        card["experience_record_id"] = record["record_id"]
+        card["experience_record_version"] = record["version"]
+    _validate_existing_analogy_transfer_card_shape(card, record=record)
     card["settlement_rule"] = "DERIVE_FROM_PAIR_SIGNALS_ONLY"
-    if _contains_forbidden_investment_field(card):
-        raise JudgmentExperienceError("analogy_transfer_card_contains_forbidden_investment_field")
     projected = deepcopy(receipt)
     projected["projected_analogy_transfer_card_id"] = card["card_id"]
     validation = validate_experience_invocation_receipt(projected)
     if validation["state"] != "REVIEWABLE":
         raise JudgmentExperienceError("projected invocation invalid")
     return projected, card
+
+
+def _outcome_authorization_is_open(payload: dict[str, Any]) -> bool:
+    """Accept the existing authorization shapes without owning their semantics."""
+    grant = payload.get("authorization_grant") if isinstance(payload.get("authorization_grant"), dict) else {}
+    outcome_access = payload.get("outcome_access") if isinstance(payload.get("outcome_access"), dict) else {}
+    return bool(
+        payload.get("authorized") is True
+        or grant.get("outcome_access_authorized") is True
+        or outcome_access.get("authorized") is True
+    )
+
+
+def _validate_feedback_binding(receipt: dict[str, Any], feedback_ref: str, review_ref: str) -> None:
+    """Bind post-outcome revision to a real custodian settlement and review.
+
+    The two small binding receipts do not duplicate settlement facts.  They
+    identify the existing authorization/settlement/review artifacts and prove
+    that they all settle this immutable invocation.
+    """
+    settlement_binding = _read_json_reference(feedback_ref)
+    review = _read_json_reference(review_ref)
+    if settlement_binding is None or review is None:
+        raise JudgmentExperienceError("experience_feedback_requires_json_settlement_binding_and_review")
+    if settlement_binding.get("schema_version") != FEEDBACK_SETTLEMENT_BINDING_SCHEMA:
+        raise JudgmentExperienceError("experience_feedback_settlement_binding_schema_invalid")
+    if review.get("schema_version") != FEEDBACK_INDEPENDENT_REVIEW_SCHEMA or review.get("verdict") != "ACCEPT":
+        raise JudgmentExperienceError("experience_feedback_independent_review_not_accepted")
+    for field, receipt_field in (
+        ("target_case_id", "target_case_id"),
+        ("invocation_id", "invocation_id"),
+        ("record_id", "record_id"),
+        ("record_version", "record_version"),
+    ):
+        if settlement_binding.get(field) != receipt.get(receipt_field):
+            raise JudgmentExperienceError("experience_feedback_settlement_binding_" + field + "_mismatch")
+        if review.get(field) != receipt.get(receipt_field):
+            raise JudgmentExperienceError("experience_feedback_review_" + field + "_mismatch")
+    if not _same_repository_reference(review.get("settlement_binding_ref"), feedback_ref):
+        raise JudgmentExperienceError("experience_feedback_review_settlement_binding_mismatch")
+    authorization = _read_json_reference(settlement_binding.get("outcome_access_authorization_ref"))
+    settlement = _read_json_reference(settlement_binding.get("custodian_settlement_ref"))
+    if authorization is None or not _outcome_authorization_is_open(authorization):
+        raise JudgmentExperienceError("experience_feedback_outcome_access_not_authorized")
+    authorization_case_id = authorization.get("case_id", authorization.get("case_identity"))
+    if authorization_case_id != receipt.get("target_case_id"):
+        raise JudgmentExperienceError("experience_feedback_outcome_access_case_id_mismatch")
+    if settlement is None:
+        raise JudgmentExperienceError("experience_feedback_custodian_settlement_missing_or_unreadable")
+    for field, receipt_field in (("case_id", "target_case_id"), ("invocation_id", "invocation_id")):
+        if settlement.get(field) != receipt.get(receipt_field):
+            raise JudgmentExperienceError("experience_feedback_custodian_settlement_" + field + "_mismatch")
+    if settlement.get("settled") is not True:
+        raise JudgmentExperienceError("experience_feedback_custodian_settlement_not_settled")
 
 
 def build_experience_feedback_event(
@@ -857,8 +1051,7 @@ def build_experience_feedback_event(
         raise JudgmentExperienceError("only_applied_preoutcome_invocation_may_receive_experience_feedback")
     if status not in FEEDBACK_STATUSES or not _text(event_id).startswith("EFE:"):
         raise JudgmentExperienceError("experience_feedback_identity_or_status_invalid")
-    if _repository_path(feedback_ref) is None or _repository_path(review_ref) is None:
-        raise JudgmentExperienceError("experience_feedback_requires_existing_settlement_and_independent_review_refs")
+    _validate_feedback_binding(receipt, feedback_ref, review_ref)
     if _parse_timestamp(recorded_at, "recorded_at") <= _parse_timestamp(receipt.get("frozen_at"), "receipt.frozen_at"):
         raise JudgmentExperienceError("experience_feedback_must_follow_preoutcome_freeze")
     if status == "MEASUREMENT_BLOCKED" and "MEASUREMENT" not in economic_failure_loci:
@@ -897,9 +1090,6 @@ def validate_experience_feedback_event(event: Any) -> dict[str, Any]:
     if event.get("status") not in FEEDBACK_STATUSES:
         findings.append("feedback_status_invalid")
     _iso_timestamp(event.get("recorded_at"), "recorded_at", findings)
-    for field in ("feedback_ref", "review_ref"):
-        if _repository_path(event.get(field)) is None:
-            findings.append(field + "_missing_or_unreadable")
     loci = _text_list(event.get("economic_failure_loci"), "economic_failure_loci", findings)
     if any(item not in ECONOMIC_FAILURE_LOCI for item in loci):
         findings.append("economic_failure_locus_invalid")
@@ -926,6 +1116,7 @@ def version_record_after_feedback(
         raise JudgmentExperienceError("cannot version invalid experience record or event")
     if receipt.get("state") != "APPLIED_PREOUTCOME":
         raise JudgmentExperienceError("only_applied_preoutcome_invocation_may_version_experience_record")
+    _validate_feedback_binding(receipt, _text(event.get("feedback_ref")), _text(event.get("review_ref")))
     if any(
         left != right for left, right in (
             (event.get("invocation_id"), receipt.get("invocation_id")),

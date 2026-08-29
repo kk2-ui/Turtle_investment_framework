@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 from copy import deepcopy
+import json
+from pathlib import Path
 
 import pytest
 
@@ -17,6 +19,7 @@ from scripts.judgment_experience_memory import (
     project_existing_analogy_transfer_card,
     validate_experience_feedback_event,
     validate_experience_invocation_receipt,
+    validate_experience_retrieval_pack,
     validate_experience_registry,
     validate_judgment_experience_record,
     version_record_after_feedback,
@@ -27,25 +30,9 @@ TIME = "2026-08-29T10:00:00+08:00"
 
 
 def _teaching_case(case_id: str = "TEACH:CN002080:20190501:FY2019", company_id: str = "CN:002080") -> dict:
-    return {
-        "case_id": case_id,
-        "company_id": company_id,
-        "company_cluster_id": "COMPANY:" + company_id.removeprefix("CN:"),
-        "track": "TEACHING",
-        "status": "CURATED",
-        "source_refs": ["docs/teaching/preoutcome.md", "docs/teaching/settlement.json"],
-        "artifact_refs": {"postoutcome_review_ref": "docs/teaching/independent_review.md"},
-        "lesson": {
-            "state_and_constraint": "A capital-intensive new line had reached construction completion before unit economics matured.",
-            "management_choice_or_no_action": "Management added a second line before the first line had a mature capital return.",
-            "customer_or_operating_response": "Customer certification and revenue improved while line profit remained unresolved.",
-            "cash_or_capital_result": "Parent funding did not establish project cash recovery.",
-            "mechanism_lesson": "Construction, customer absorption, and capital return are separate stages.",
-            "strongest_rival": "Early losses can be normal ramp-up rather than permanent failure.",
-            "investor_treatment": "Keep the option outside base owner cash until customer and unit-economic evidence converge.",
-            "transfer_question": "Do customer absorption, line economics, and cash recovery improve together?",
-        },
-    }
+    del case_id, company_id
+    fixture = Path(__file__).resolve().parent / "fixtures/judgment_experience_memory/teaching_case.json"
+    return json.loads(fixture.read_text(encoding="utf-8"))
 
 
 def _structural_key(*, boundary: str = "BUSINESS_LINE", arena: str = "CAPITAL_INTENSIVE_B2B_MANUFACTURING") -> dict:
@@ -61,7 +48,8 @@ def _structural_key(*, boundary: str = "BUSINESS_LINE", arena: str = "CAPITAL_IN
 
 def _record(*, record_id: str = "JER:TEACH:CAPACITY:V1", boundary: str = "BUSINESS_LINE", roles: list[str] | None = None) -> dict:
     return compile_teaching_experience_record(
-        _teaching_case(), record_id=record_id, recorded_at=TIME,
+        _teaching_case(), canonical_teaching_ref="tests/fixtures/judgment_experience_memory/teaching_case.json",
+        record_id=record_id, recorded_at=TIME,
         structural_key=_structural_key(boundary=boundary),
         retrieval_roles=roles or ["PRIMARY_ANALOG"],
         economic_failure_loci=["MECHANISM", "TRANSMISSION"],
@@ -105,6 +93,7 @@ def _target_card() -> dict:
     return {
         "card_id": "ATC:CN002475:CAPACITY:V1",
         "target_pair_id": "RHP:CN002475:CAPACITY",
+        "source_case_id": "operating_transition",
         "target_state_vector": ["capacity expansion", "customer concentration", "business-line cash boundary"],
         "structural_mapping": [{
             "source_driver": "construction completion", "target_driver": "incremental capacity deployment",
@@ -139,14 +128,14 @@ def test_m0_compiler_reuses_teaching_lesson_without_creating_a_second_card_or_le
 
 
 def test_m1_compiles_a_reviewed_blind_feedback_without_copying_outcome_values() -> None:
+    fixture = Path(__file__).resolve().parent / "fixtures/judgment_experience_memory/blind_feedback.json"
     record = compile_feedback_experience_record(
-        {
-            "status": "COMPLETED", "candidate": {"security_id": "CN:601012"},
-            "independent_post_outcome_review": {"verdict": "ACCEPT"},
-        },
+        json.loads(fixture.read_text(encoding="utf-8")),
+        canonical_feedback_ref="tests/fixtures/judgment_experience_memory/blind_feedback.json",
+        canonical_review_ref="tests/fixtures/judgment_experience_memory/independent_postoutcome_review.md",
         record_id="JER:CN601012:PRICE_CASH:V1", source_case_id="BLIND:CN601012:20240501:FY2024",
-        source_refs=["docs/preoutcome.json", "docs/settlement.json", "docs/feedback.json"],
-        review_refs=["docs/postoutcome_review.md"], recorded_at=TIME,
+        source_refs=["tests/fixtures/judgment_experience_memory/preoutcome_source_packet.json", "tests/fixtures/judgment_experience_memory/blind_feedback.json"],
+        review_refs=["tests/fixtures/judgment_experience_memory/independent_postoutcome_review.md"], recorded_at=TIME,
         proposition="Scale requires same-boundary price, cost, and cash-capex evidence before durable economics are credited.",
         structural_key=_structural_key(), decision_or_no_action="Continue capacity deployment under price pressure.",
         mechanism_chain="capacity -> price and cost -> cash-capex absorption",
@@ -162,6 +151,52 @@ def test_m1_compiles_a_reviewed_blind_feedback_without_copying_outcome_values() 
     assert record["source_kind"] == "BLIND_FEEDBACK"
     assert "actual" not in record
     assert "outcome" not in record
+
+
+def test_teaching_and_blind_compilers_reject_forged_or_noncanonical_sources() -> None:
+    forged_teaching = _teaching_case()
+    forged_teaching["lesson"]["mechanism_lesson"] = "A caller must not mint a retrieval-ready lesson."
+    with pytest.raises(JudgmentExperienceError, match="teaching_case_not_exact_canonical_source"):
+        compile_teaching_experience_record(
+            forged_teaching, canonical_teaching_ref="tests/fixtures/judgment_experience_memory/teaching_case.json",
+            record_id="JER:FORGED:TEACHING", recorded_at=TIME, structural_key=_structural_key(),
+            retrieval_roles=["PRIMARY_ANALOG"], economic_failure_loci=["MECHANISM"],
+            apply_when=["Only canonical lessons apply."], do_not_apply_when=["Caller text is not a source."],
+        )
+
+    fixture = Path(__file__).resolve().parent / "fixtures/judgment_experience_memory/blind_feedback.json"
+    forged_feedback = json.loads(fixture.read_text(encoding="utf-8"))
+    forged_feedback["candidate"]["security_id"] = "CN:000001"
+    with pytest.raises(JudgmentExperienceError, match="feedback_receipt_not_exact_canonical_source"):
+        compile_feedback_experience_record(
+            forged_feedback, canonical_feedback_ref="tests/fixtures/judgment_experience_memory/blind_feedback.json",
+            canonical_review_ref="tests/fixtures/judgment_experience_memory/independent_postoutcome_review.md",
+            record_id="JER:FORGED:BLIND", source_case_id="BLIND:FORGED",
+            source_refs=["tests/fixtures/judgment_experience_memory/blind_feedback.json"],
+            review_refs=["tests/fixtures/judgment_experience_memory/independent_postoutcome_review.md"], recorded_at=TIME,
+            proposition="Forged inputs cannot become an experience.", structural_key=_structural_key(),
+            decision_or_no_action="No decision is accepted from a forged receipt.", mechanism_chain="forged -> rejected",
+            observable_signals=["canonical identity"], strongest_rival="The receipt could be real only if canonical.",
+            apply_when=["never"], do_not_apply_when=["always"], investor_relevance="No registry admission.",
+            retrieval_roles=["PRIMARY_ANALOG"], economic_failure_loci=["MEASUREMENT"],
+        )
+
+    wrong_review_fixture = Path(__file__).resolve().parent / "fixtures/judgment_experience_memory/blind_feedback_wrong_review_ref.json"
+    wrong_review_receipt = json.loads(wrong_review_fixture.read_text(encoding="utf-8"))
+    with pytest.raises(JudgmentExperienceError, match="feedback_independent_review_reference_mismatch"):
+        compile_feedback_experience_record(
+            wrong_review_receipt,
+            canonical_feedback_ref="tests/fixtures/judgment_experience_memory/blind_feedback_wrong_review_ref.json",
+            canonical_review_ref="tests/fixtures/judgment_experience_memory/independent_postoutcome_review.md",
+            record_id="JER:WRONG:REVIEW", source_case_id="BLIND:WRONG:REVIEW",
+            source_refs=["tests/fixtures/judgment_experience_memory/blind_feedback_wrong_review_ref.json"],
+            review_refs=["tests/fixtures/judgment_experience_memory/independent_postoutcome_review.md"], recorded_at=TIME,
+            proposition="Same filenames must not substitute an independent review.", structural_key=_structural_key(),
+            decision_or_no_action="No compilation under a mismatched review.", mechanism_chain="mismatch -> reject",
+            observable_signals=["resolved review path"], strongest_rival="The artifact could be another review.",
+            apply_when=["never"], do_not_apply_when=["review path differs"], investor_relevance="No registry admission.",
+            retrieval_roles=["PRIMARY_ANALOG"], economic_failure_loci=["MEASUREMENT"],
+        )
 
 
 @pytest.mark.parametrize("source_kind", ["LEARNING_NOTE", "CONDITIONAL_MECHANISM"])
@@ -223,8 +258,10 @@ def test_result_leakage_and_source_target_identity_are_rejected_locally() -> Non
     with pytest.raises(JudgmentExperienceError, match="target context invalid"):
         build_experience_retrieval_pack(pack_id="ERP:LEAK", target=leaked, records=[_record()], retrieved_at=TIME)
 
-    same_company = _target(company_id="CN:002080")
-    pack = build_experience_retrieval_pack(pack_id="ERP:SAME", target=same_company, records=[_record()], retrieved_at=TIME)
+    same_cluster_record = _record()
+    same_cluster_record["source_company_id"] = "HK:00000"
+    same_cluster_record["source_company_cluster_id"] = _target()["company_cluster_id"]
+    pack = build_experience_retrieval_pack(pack_id="ERP:SAME", target=_target(), records=[same_cluster_record], retrieved_at=TIME)
     assert pack["status"] == "NO_APPLICABLE_EXPERIENCE"
 
 
@@ -251,7 +288,8 @@ def test_applied_invocation_projects_one_existing_target_card_and_not_a_value() 
     receipt, card = project_existing_analogy_transfer_card(_applied_receipt(record, pack), record, _target_card())
 
     assert receipt["projected_analogy_transfer_card_id"] == card["card_id"]
-    assert card["source_case_id"] == record["source_case_id"]
+    assert card["source_case_id"] == "operating_transition"
+    assert card["experience_record_id"] == record["record_id"]
     assert card["settlement_rule"] == "DERIVE_FROM_PAIR_SIGNALS_ONLY"
 
     forged = deepcopy(receipt)
@@ -267,8 +305,8 @@ def test_measurement_block_stays_local_and_feedback_versions_preserve_the_origin
     receipt = _applied_receipt(record, pack)
     event = build_experience_feedback_event(
         event_id="EFE:CN002475:MEASUREMENT:V1", receipt=receipt, status="MEASUREMENT_BLOCKED",
-        feedback_ref="tests/fixtures/judgment_experience_memory/outcome_settlement.json",
-        review_ref="tests/fixtures/judgment_experience_memory/independent_postoutcome_review.md",
+        feedback_ref="tests/fixtures/judgment_experience_memory/feedback_settlement_binding.json",
+        review_ref="tests/fixtures/judgment_experience_memory/independent_feedback_review.json",
         recorded_at="2026-08-30T10:00:00+08:00",
         explanation="The target outcome used an incompatible business-line perimeter, so the invocation cannot be diagnosed.",
         economic_failure_loci=["MEASUREMENT"],
@@ -279,8 +317,8 @@ def test_measurement_block_stays_local_and_feedback_versions_preserve_the_origin
     with pytest.raises(JudgmentExperienceError, match="measurement_blocked_requires"):
         build_experience_feedback_event(
             event_id="EFE:BAD", receipt=receipt, status="MEASUREMENT_BLOCKED",
-            feedback_ref="tests/fixtures/judgment_experience_memory/outcome_settlement.json",
-            review_ref="tests/fixtures/judgment_experience_memory/independent_postoutcome_review.md",
+            feedback_ref="tests/fixtures/judgment_experience_memory/feedback_settlement_binding.json",
+            review_ref="tests/fixtures/judgment_experience_memory/independent_feedback_review.json",
             recorded_at="2026-08-30T10:00:00+08:00", explanation="wrong", economic_failure_loci=["MECHANISM"],
         )
 
@@ -293,3 +331,139 @@ def test_measurement_block_stays_local_and_feedback_versions_preserve_the_origin
     assert len(appended["records"]) == 2
     assert appended["feedback_events"] == [event]
     assert validate_experience_registry(appended)["state"] == "REVIEWABLE"
+
+
+def test_latest_retired_record_cannot_resurrect_an_older_retrieval_ready_version() -> None:
+    original = _record(record_id="JER:VERSIONED:V1")
+    retired = deepcopy(original)
+    retired.update({
+        "version": 2,
+        "status": "RETIRED",
+        "recorded_at": "2026-08-30T10:00:00+08:00",
+        "feedback_event_refs": ["EFE:TARGET:RETIRED"],
+    })
+
+    pack = build_experience_retrieval_pack(
+        pack_id="ERP:VERSIONED:RETIRED", target=_target(), records=[original, retired], retrieved_at=TIME,
+    )
+
+    assert pack["status"] == "NO_APPLICABLE_EXPERIENCE"
+
+
+def test_latest_bounded_record_replaces_old_scope_and_evidence_ceiling_filters_before_ranking() -> None:
+    original = _record(record_id="JER:VERSIONED:V1")
+    bounded = deepcopy(original)
+    bounded.update({
+        "version": 2,
+        "status": "BOUNDED",
+        "recorded_at": "2026-08-30T10:00:00+08:00",
+        "feedback_event_refs": ["EFE:TARGET:BOUNDARY"],
+        "do_not_apply_when": ["A different responsibility boundary is present."],
+    })
+
+    pack = build_experience_retrieval_pack(
+        pack_id="ERP:VERSIONED:BOUNDED", target=_target(), records=[original, bounded], retrieved_at=TIME,
+    )
+    assert pack["candidates"][0]["record_version"] == 2
+    assert pack["candidates"][0]["guidance"]["do_not_apply_when"] == ["A different responsibility boundary is present."]
+
+    mechanism_only = _record(record_id="JER:CEILING:V1")
+    mechanism_only["evidence_ceiling"] = "MECHANISM"
+    no_permission_pack = build_experience_retrieval_pack(
+        pack_id="ERP:CEILING", target=_target(), records=[mechanism_only], retrieved_at=TIME,
+    )
+    assert no_permission_pack["status"] == "NO_APPLICABLE_EXPERIENCE"
+
+
+def test_unapplied_or_rogue_feedback_cannot_receive_transfer_credit_or_skip_versions() -> None:
+    record = _record()
+    pack = build_experience_retrieval_pack(pack_id="ERP:CN002475:V1", target=_target(), records=[record], retrieved_at=TIME)
+    unapplied = build_experience_invocation_receipt(
+        invocation_id="EIR:CN002475:UNAPPLIED:V1", retrieval_pack=pack, record=record,
+        state="RETRIEVED_NOT_APPLIED", structural_match="Question only.", mismatch_dimensions=["No target change."],
+        accepted_transfer=[], rejected_transfer=["No change."], changed_question_refs=[], changed_evidence_priority=[],
+        changed_rival_or_discriminator_refs=[], changed_investor_treatment="", frozen_at=TIME,
+    )
+    with pytest.raises(JudgmentExperienceError, match="only_applied_preoutcome"):
+        build_experience_feedback_event(
+            event_id="EFE:UNAPPLIED", receipt=unapplied, status="SUPPORTED",
+            feedback_ref="tests/fixtures/judgment_experience_memory/feedback_settlement_binding.json",
+            review_ref="tests/fixtures/judgment_experience_memory/independent_feedback_review.json",
+            recorded_at="2026-08-30T10:00:00+08:00", explanation="Must not credit a retrieval-only event.",
+            economic_failure_loci=["MECHANISM"],
+        )
+
+    receipt = _applied_receipt(record, pack)
+    event = build_experience_feedback_event(
+        event_id="EFE:APPLIED", receipt=receipt, status="SUPPORTED",
+        feedback_ref="tests/fixtures/judgment_experience_memory/feedback_settlement_binding.json",
+        review_ref="tests/fixtures/judgment_experience_memory/independent_feedback_review.json",
+        recorded_at="2026-08-30T10:00:00+08:00", explanation="A valid post-freeze application feedback event.",
+        economic_failure_loci=["MECHANISM"],
+    )
+    updated = version_record_after_feedback(record, event, receipt=receipt, recorded_at="2026-08-30T10:00:00+08:00")
+    rogue = deepcopy(updated)
+    rogue["version"] = 99
+    registry = {"schema_version": EXPERIENCE_REGISTRY_SCHEMA, "records": [record], "feedback_events": []}
+    with pytest.raises(JudgmentExperienceError, match="updated_record_not_exact_feedback_derived_version"):
+        append_experience_feedback(registry, record=record, event=event, receipt=receipt, updated_record=rogue)
+
+
+@pytest.mark.parametrize(
+    ("binding_ref", "review_ref", "expected"),
+    [
+        ("tests/fixtures/judgment_experience_memory/feedback_settlement_binding_wrong_case.json", "tests/fixtures/judgment_experience_memory/independent_feedback_review.json", "settlement_binding_target_case_id_mismatch"),
+        ("tests/fixtures/judgment_experience_memory/feedback_settlement_binding_unauthorized.json", "tests/fixtures/judgment_experience_memory/independent_feedback_review_unauthorized.json", "outcome_access_not_authorized"),
+        ("tests/fixtures/judgment_experience_memory/feedback_settlement_binding_wrong_authorization_case.json", "tests/fixtures/judgment_experience_memory/independent_feedback_review_wrong_authorization_case.json", "outcome_access_case_id_mismatch"),
+        ("tests/fixtures/judgment_experience_memory/feedback_settlement_binding.json", "tests/fixtures/judgment_experience_memory/independent_feedback_review_rejected.json", "independent_review_not_accepted"),
+    ],
+)
+def test_feedback_requires_matched_settlement_authorization_and_independent_acceptance(
+    binding_ref: str, review_ref: str, expected: str,
+) -> None:
+    record = _record()
+    pack = build_experience_retrieval_pack(pack_id="ERP:CN002475:V1", target=_target(), records=[record], retrieved_at=TIME)
+    receipt = _applied_receipt(record, pack)
+    with pytest.raises(JudgmentExperienceError, match=expected):
+        build_experience_feedback_event(
+            event_id="EFE:BAD:BINDING", receipt=receipt, status="SUPPORTED", feedback_ref=binding_ref,
+            review_ref=review_ref, recorded_at="2026-08-30T10:00:00+08:00",
+            explanation="No unrelated settlement or review may change an experience.", economic_failure_loci=["MECHANISM"],
+        )
+
+
+def test_real_registry_is_reviewable_and_keeps_only_references_and_questions() -> None:
+    root = Path(__file__).resolve().parents[1]
+    registry_path = root / "docs/development/research/training_campaigns/JUDGMENT_UTILITY_HISTORICAL_20260828/171_JUDGMENT_EXPERIENCE_REGISTRY_V1.json"
+    registry = json.loads(registry_path.read_text(encoding="utf-8"))
+
+    assert validate_experience_registry(registry)["state"] == "REVIEWABLE"
+    for record in registry["records"]:
+        for ref in [*record["source_refs"], *record["review_refs"]]:
+            assert (root / ref).is_file()
+        assert not {"price", "valuation", "buyband", "probability", "investment_action"} & set(record)
+
+
+def test_real_different_company_sealed_application_freezes_a_question_not_a_target_conclusion() -> None:
+    root = Path(__file__).resolve().parents[1]
+    app_dir = root / "docs/development/research/experience_applications/CN601865_20240401"
+    registry = json.loads((root / "docs/development/research/training_campaigns/JUDGMENT_UTILITY_HISTORICAL_20260828/171_JUDGMENT_EXPERIENCE_REGISTRY_V1.json").read_text(encoding="utf-8"))
+    record = registry["records"][0]
+    pack = json.loads((app_dir / "05_EXPERIENCE_RETRIEVAL_PACK.json").read_text(encoding="utf-8"))
+    receipt = json.loads((app_dir / "06_EXPERIENCE_INVOCATION_RECEIPT.json").read_text(encoding="utf-8"))
+    card = json.loads((app_dir / "07_ANALOGY_TRANSFER_CARD.json").read_text(encoding="utf-8"))
+
+    assert record["source_company_cluster_id"] != receipt["target_company_cluster_id"]
+    assert validate_experience_retrieval_pack(pack)["state"] == "REVIEWABLE"
+    assert validate_experience_invocation_receipt(receipt)["state"] == "REVIEWABLE"
+    projected_receipt, projected_card = project_existing_analogy_transfer_card(receipt, record, card)
+    assert projected_receipt == receipt
+    assert projected_card == card
+    assert receipt["state"] == "APPLIED_PREOUTCOME"
+    assert receipt["changed_question_refs"]
+    assert receipt["changed_evidence_priority"]
+    assert receipt["changed_rival_or_discriminator_refs"]
+    assert "base normal owner-cash" in receipt["changed_investor_treatment"]
+    serialized = json.dumps({"pack": pack, "receipt": receipt, "card": card}, ensure_ascii=False).lower()
+    for forbidden in ("buyband", "investment_action", "target outcome"):
+        assert forbidden not in serialized
