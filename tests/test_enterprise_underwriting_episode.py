@@ -9,9 +9,11 @@ import pytest
 from scripts.enterprise_underwriting_episode import (
     compile_golden_report_reader_brief,
     compile_underwriting_projections,
+    project_price_free_underwriting_thesis,
     render_underwriting_readout,
     validate_enterprise_underwriting_episode,
     validate_golden_report_reader_brief,
+    validate_price_free_underwriting_thesis_projection,
     validate_underwriting_projection_bundle,
 )
 
@@ -64,8 +66,20 @@ def test_schema_makes_industry_future_thesis_part_of_situation_model() -> None:
     situation = schema["$defs"]["situation_model"]
     industry_future = schema["$defs"]["industry_future_thesis"]
 
+    assert schema["properties"]["schema_version"]["const"] == "enterprise-underwriting-episode.v2"
     assert situation["required"] == ["summary", "industry_future_thesis"]
     assert set(industry_future["required"]) == INDUSTRY_FUTURE_FIELDS
+    assert "economic_directions" in schema["properties"]["underwriting_thesis"]["required"]
+    assert schema["$defs"]["value_route"]["properties"]["valuation_model_roles"]["required"] == ["primary"]
+
+
+def test_only_primary_valuation_model_is_required() -> None:
+    episode = _episode("CN600585_20240501_WORKED_CASE_V1.json")
+    episode["value_route"]["valuation_model_roles"] = {"primary": ["EPV"]}
+
+    validation = validate_enterprise_underwriting_episode(episode)
+
+    assert validation["state"] == "REVIEWABLE"
 
 
 def test_magna_is_a_distressed_cycle_demonstration_and_not_a_conch_conclusion() -> None:
@@ -96,13 +110,47 @@ def test_conch_same_thesis_projects_deterministically_to_cjo_valuation_and_repor
     assert {item["underwriting_thesis_id"] for item in bundle.values()} == {thesis_id}
     industry_future = conch["situation_model"]["industry_future_thesis"]
     projected_futures = [
-        bundle["cjo_candidate_projection"]["industry_future_thesis"],
-        bundle["valuation_route_request"]["industry_future_thesis"],
+        bundle["cjo_candidate_projection"]["situation_model"]["industry_future_thesis"],
+        bundle["valuation_route_request"]["situation_model"]["industry_future_thesis"],
         bundle["golden_report_underwriting_handoff"]["situation_model"]["industry_future_thesis"],
     ]
     assert projected_futures == [industry_future, industry_future, industry_future]
     assert bundle["cjo_candidate_projection"]["central_path"] == bundle["golden_report_underwriting_handoff"]["central_path"]
     assert bundle["valuation_route_request"]["normal_earnings_input_treatment"] == conch["underwriting_thesis"]["normal_earnings_treatment"]
+    industry = conch["situation_model"]["industry_future_thesis"]
+    assert {item["situation_model"]["industry_future_thesis"]["most_likely_regime"] for item in bundle.values()} == {
+        industry["most_likely_regime"]
+    }
+
+
+def test_industry_future_is_part_of_the_episode_and_price_free_shared_thesis() -> None:
+    conch = _episode("CN600585_20240501_WORKED_CASE_V1.json")
+    projection = project_price_free_underwriting_thesis(conch)
+
+    assert projection["situation_model"]["industry_future_thesis"]["profit_pool_transmission"]
+    assert projection["situation_model"]["industry_future_thesis"]["company_exposure"]
+    assert "industry_future_thesis" not in projection
+    assert projection["underwriting_thesis"]["owner_cash_treatment"]
+    assert "investment_treatment" not in projection
+
+    missing = deepcopy(conch)
+    missing["situation_model"].pop("industry_future_thesis")
+    findings = validate_enterprise_underwriting_episode(missing)["findings"]
+    assert "situation_model.industry_future_thesis.horizon_missing" in findings
+
+
+def test_price_free_projection_rejects_a_second_top_level_industry_story() -> None:
+    conch = _episode("CN600585_20240501_WORKED_CASE_V1.json")
+    projection = project_price_free_underwriting_thesis(conch)
+    projection["industry_future_thesis"] = deepcopy(
+        projection["situation_model"]["industry_future_thesis"]
+    )
+    projection["industry_future_thesis"]["most_likely_regime"] = "A conflicting broad recovery story."
+
+    validation = validate_price_free_underwriting_thesis_projection(projection)
+
+    assert validation["state"] == "INVALID"
+    assert "legacy_top_level_industry_future_thesis_not_allowed" in validation["findings"]
 
 
 def test_industry_future_thesis_cannot_be_missing_or_diverge_across_episode_views() -> None:
@@ -156,6 +204,8 @@ def test_readout_is_investor_facing_and_preserves_the_strongest_rival() -> None:
     assert "即时生存风险低" in rendered
     assert "未来3至5年" in rendered
     assert "利润池传导" in rendered
+    assert "行业未来与公司传导" in rendered
+    assert "供给退出慢于需求下降" in rendered
     assert "海外毛利改善" in rendered
     assert "国内新增资产不取得增量正常盈利" in rendered
     assert "DOMESTIC_INCREMENTAL_ASSET_RETURN" not in rendered

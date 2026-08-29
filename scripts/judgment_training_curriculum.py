@@ -688,9 +688,10 @@ def curriculum_status(curriculum: dict[str, Any], *, validate: bool = True) -> d
     else:
         next_action = "EXPAND_TEACHING_CANDIDATE_POOL"
 
+    legacy_next_action = next_action
     return {
         "schema_version": STATUS_VERSION,
-        "state": "ACTIONABLE",
+        "state": "SUPPORTING_INVENTORY_ONLY",
         "curriculum_id": curriculum.get("curriculum_id"),
         "curriculum_version": curriculum.get("curriculum_version"),
         "track_progress": track_progress,
@@ -715,7 +716,15 @@ def curriculum_status(curriculum: dict[str, Any], *, validate: bool = True) -> d
         "teaching_pipeline_coverage_by_distinct_company_clusters": {
             unit: len(teaching_pipeline_coverage.get(unit, set())) for unit in sorted(CAPABILITY_UNITS)
         },
-        "next_action": next_action,
+        "next_action": "RUN_ENTERPRISE_UNDERWRITING_TRAINING_ENTRY",
+        "legacy_lane_next_action": legacy_next_action,
+        "primary_training_product": {
+            "object_type": "EnterpriseUnderwritingEpisode",
+            "schema_version": "enterprise-underwriting-episode.v2",
+            "entrypoint": "scripts/enterprise_underwriting_training.py run",
+            "complete_episode_count_in_legacy_curriculum": 0,
+        },
+        "legacy_track_count_authority": "LOCAL_ARTIFACT_INVENTORY_ONLY_NOT_COMPLETE_UNDERWRITING_TRAINING",
         "historical_training_blocked_by_holdout_or_prospective": False,
         "comparative_is_default_entry": False,
         "capability_claim": "NOT_DEMONSTRATED_BY_CURRICULUM_COUNTS",

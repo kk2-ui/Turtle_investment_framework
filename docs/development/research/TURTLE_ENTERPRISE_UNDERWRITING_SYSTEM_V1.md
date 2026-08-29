@@ -1,6 +1,6 @@
 # Turtle 企业投资承保系统 V1
 
-> 状态：`TOP_LEVEL_DESIGN_AUTHORITY / U1_VERTICAL_SLICE_IMPLEMENTED / CURRICULUM_AND_BLIND_REPLAY_PENDING`
+> 状态：`TOP_LEVEL_DESIGN_AUTHORITY / UNDERWRITING_KERNEL_IMPLEMENTED / WORKED_CASE_ONLY / BLIND_REPLAY_PENDING`
 >
 > 日期：2026-08-29（Asia/Shanghai）
 >
@@ -435,7 +435,18 @@ E0--E3、J0--J4、八维和现有 schema 在迁移期继续可用，避免重写
 3. 哪条真实反馈改变了下一次判断；
 4. 当前价格处理是否比旧 Baseline 更有用。
 
-当前已知的主要兼容缺口是 numeric `INVESTMENT_ENRICHMENT` adapter 把 `SELECTION_ADMITTED` 当作全局前提。该前提只应约束选择/相对因果方法贡献的主张，不能约束企业重建、条件化承保或价值路线请求。U1 必须显式暴露这一 gap，不能为了通过旧 adapter 新增包装层或伪造 admission；U4 再把数值估值入口改为 current-company underwriting admission + valuation contract，并对确实依赖 Comparative 的 claim 追加局部权限。
+该兼容缺口已在 kernel 层收窄：完整 Episode 若与 current-company source package、CJO company/cutoff、中心路径、最强反方和独立复核精确绑定，可以取得 `PRIMARY_ADMITTED`，由正式生产入口写入 `canonical_judgment_refs`，并进入运行时 valuation routing 与 `INVESTMENT_ENRICHMENT` 的价格前报告 handoff；不再要求整家公司先取得 `SELECTION_ADMITTED`。Comparative/selection 权限仍只约束真正依赖相对选择或因果方法的局部 claim。Legacy CJO 和旧局部训练对象继续可读，但不能再冒充完整训练主产品。
+
+`UnderwritingThesis` 同时冻结 `normal_earnings / owner_cash / permanent_loss` 三条经济方向。Episode 存在时，CJO 的对应方向由它确定性派生，不能保留另一套相反叙事；价值路线也只能由同一投影进入估值。每家公司只需明确适用的 primary 估值模型，corroborative 与 stress 模型在不适用时可以为空，避免为了形式完整污染判断。
+
+正式训练使用：
+
+```bash
+.venv/bin/python scripts/enterprise_underwriting_training.py run \
+  <training-contract.json> --output-dir <fresh-output-dir>
+```
+
+该入口从合同允许的 source-package 工件调用训练模型，模型必须一次产出完整 Episode；只有绑定校验通过后才写入 Episode 和价格前下游 bundle。`validate-episode` 仍可用于诊断，但不能把预写 JSON 或旧 lane receipt 变成一次已完成训练。
 
 ## 10. 黄金报告怎样改变
 
@@ -474,13 +485,15 @@ U1 的完成标准是投资者能读到一条连续企业判断，而不是 sche
 
 围绕五类承保路线建立 worked case、near miss 和 failure case。Magna、WD-40、Intel 只作方法示范；中国真实企业提供主要训练材料。允许失败和消失企业进入。
 
+首个 U3 pilot 在 kernel 完成后先于 U2 批量扩样运行，用来验证主链确实练完整 Episode；否则 12--20 个新案例仍可能退回旧字段底座。Pilot 通过后再扩大 U2 覆盖。
+
 ### U3 Blind Replay
 
 选择未用于 U1/U2 规则调试的公司/cutoff，冻结完整承保主张，再按多时钟揭示结果。反馈修改 Episode 的具体推理链和经验边界。
 
 ### U4 黄金报告与估值同源
 
-让当前候选黄金报告直接消费 UnderwritingThesis 和 InvestmentTreatment。只有这一步才能验证后台训练是否真正改善前台产品。
+kernel 接线已让 Frozen CJO、`JUDGMENT_SYNTHESIS`、确定性公司判断读者工件和 valuation runtime 消费同一价格前 UnderwritingThesis；报告本地 `thesis_test.json` 不能覆盖它。剩余 U4 产品验证是让一份真实黄金候选在合法 CJO/估值合同下消费该对象，并观察完整读者报告是否真正改善；当前 worked case 与 synthetic runtime test 不能替代这一步。
 
 ### U5 Prospective 与买点校准
 

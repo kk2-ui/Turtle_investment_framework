@@ -2,7 +2,7 @@
 
 > 状态日期：2026-08-29
 > 当前目标：`GOLDEN_SET_V1`
-> 当前阶段：`G1_CANDIDATE_MATURATION + G1-U_ENTERPRISE_UNDERWRITING_VERTICAL_SLICE / IMPLEMENTATION_COMPLETE_PENDING_INTEGRATION`
+> 当前阶段：`G1_CANDIDATE_MATURATION + G1-U_ENTERPRISE_UNDERWRITING_KERNEL / KERNEL_IMPLEMENTED_WORKED_CASE_ONLY_U3_PENDING`
 > 长期领域路线图：`docs/development/LONG_TERM_ROADMAP.md`
 > 双向层级研究路线：`docs/development/GOLDEN_REPORT_BIDIRECTIONAL_RESEARCH_ROADMAP.md`
 
@@ -142,7 +142,7 @@ HTML 只负责渲染，不得另造投资事实、模型数值或结论。正文
 | G1 候选内容成熟与逐案接纳 | 七个指定案例完成材料性修复和独立接纳 | **IN_PROGRESS** |
 | G1-J 判断契约与已有案例资产接线 | 复用书籍方法案例卡和基准率候选，补齐中心路径、前瞻判断与历史结算硬门 | **IN_PROGRESS / G1内部前置门** |
 | G1-T 历史判断训练与留出 | 已完成首个真实 `IndustryLearningBlock + EnterpriseJudgmentEpisode` 的 E0/E1 多维重建与独立 feedback；Comparative 仅为局部 E3 支线，有效方法冻结后再揭盲 R-61 | **IN_PROGRESS / REAL_SAMPLE_CREATED + REAL_FEEDBACK_TURN_COMPLETED / TRANSFER_NOT_VALIDATED** |
-| G1-U 企业投资承保纵向切片 | 用一个完整对象连接处境、生存、正常化、永久损失、价值路线、CJO、估值和黄金报告 | **IMPLEMENTATION_COMPLETE / WORKED_CASE_ONLY / PENDING_INTEGRATION** |
+| G1-U 企业投资承保纵向切片 | 用一个完整对象连接处境、生存、正常化、永久损失、价值路线、CJO、估值和黄金报告 | **KERNEL_IMPLEMENTED / WORKED_CASE_ONLY / U3_PENDING** |
 | G1.5 格力行业经验工厂试验 | 24 份黄金级产物验证公司→行业→宏观传导→公司的双向研究架构 | PLANNED |
 | G2 跨报告裁决与路线规范 | 统一共同规则，裁决公司、行业、基准率和宏观层的权限与路线差异 | PLANNED |
 | G3 Golden Set v1 与行业经验包冻结 | 多份内容黄金报告、完整案例包及 `Industry Experience Pack v1` 形成版本化集合 | PLANNED |
@@ -191,7 +191,7 @@ G1-J 退出要求：上述对象成为 G1 接纳工件和独立内容审阅的�
 
 2026-08-20 实现进度：中心路径、3—5 项前瞻判断、概率/反方/领先信号、官方结果测量身份及正常利润—owner cash—估值—预期回报传导已接入现有 `thesis_test.json`，新 unified/PIT 运行默认强制；新 G1-J PIT policy 还要求材料 FJ 进入冻结的主/反 pair 与案例 transfer card，旧账本保持 legacy，不得冒充已覆盖。Phase 08/10 黄金接纳和独立盲评已读取同一判断门。本轮研究另发现“渠道/会计扰动”可与竞争恶化共存，不能充当互斥终局；已在研究 worktree 为终局范围、机制链及其对前瞻判断的绑定增加验证原型。结算适配复核曾发现 `historical_backtest` 只能结算单一 `value`；现已增加保留上下界的 `RANGE` 结算，并验证区间内/外身份及中点替换拒绝。生产 adapter 现可在 case spec 显式选择 `FROZEN_FORWARD_JUDGMENTS`，只从 publication snapshot 哈希完全匹配的 `thesis_test.json` 投影 claim；它拒绝手写平行账本、未准入来源、区间中点、价格和投资动作，并要求独立审阅同一投影契约。格力公司的 889 条 CNINFO inventory 与 41 项带逐源问题理由的官方正文已经是 `COMPLETE / REVIEWABLE` 的公司盲轨 source package；这不等于竞争数据齐备。财务驱动桥的 schema/验证器和官方年报采集规则已建立：格力 2025 年报的 463.83 亿 OCF 中 156.67 亿是经营相关受限资金释放，金融产品支付与格力钛减值也已能分别采集；正式格力 bridge 的 CJO 路径仍须以四层 `VERIFIED` observations 和 `FDBMON/FDBREAL → FJ` 写入，投资路径才另须模型和决策账本。剩余 `REASONING + MODEL + ACQUISITION_MODULE` 缺口是独立行业原始版本包、公司/行业同口径 bridge、中心机制与基线/判断、独立盲评和内容验收。G1-J 仍为 `IN_PROGRESS`，不能仅凭夹具或只读提取测试宣告退出。
 
-2026-08-23 报告生成接线：新增报告级派生 read model `judgment-generation-handoff.v1`，以 `RESEARCH_AGENDA / JUDGMENT_SYNTHESIS / INVESTMENT_ENRICHMENT` 三个受控视图，把官方证据范围、待验证行业问题、正式反馈谱系准入的候选方法提示、冻结前公司判断内核及同 cutoff CJO 前置物接入普通合同包和 PIT 工具面。历史 PIT 在没有可逐条证明 cutoff-safe 的正式快照前，不读取当前全局行业机制或基准率结果；writer 组装和 publication completion 都复核当前 refresh generation 的 handoff 读取收据。`company-judgment-predecessor.v2` 仍按 G1-J policy/validator 复核。2026-08-29 的上位裁决将旧 adapter 的全局 `SELECTION_ADMITTED -> INVESTMENT_READY` 关系降为兼容限制：价值路线请求和条件化研究处理不需要 Comparative；真实数值 `INVESTMENT_ENRICHMENT` 需要 current-company CJO admission 与估值合同，只有其中确实依赖选择/相对因果方法的 claim 才额外要求 `SELECTION_ADMITTED`。U1 不伪造权限或数值，U4 负责收窄现有 adapter。读者正文继续禁止内部 ID/status 泄漏。当前格力仍为 `PRE_FREEZE / NO_PRIMARY / NOT_FROZEN`，G1 与 G1-U 继续 `IN_PROGRESS`，G1.5 继续 `PLANNED`。
+2026-08-23 报告生成接线：新增报告级派生 read model `judgment-generation-handoff.v1`，以 `RESEARCH_AGENDA / JUDGMENT_SYNTHESIS / INVESTMENT_ENRICHMENT` 三个受控视图，把官方证据范围、待验证行业问题、正式反馈谱系准入的候选方法提示、冻结前公司判断内核及同 cutoff CJO 前置物接入普通合同包和 PIT 工具面。历史 PIT 在没有可逐条证明 cutoff-safe 的正式快照前，不读取当前全局行业机制或基准率结果；writer 组装和 publication completion 都复核当前 refresh generation 的 handoff 读取收据。`company-judgment-predecessor.v2` 仍按 G1-J policy/validator 复核。2026-08-29 的 kernel 修复已把旧 adapter 的全局 `SELECTION_ADMITTED -> INVESTMENT_READY` 关系收窄：source-bound、独立复核的完整 Episode 可以进入 current-company CJO admission、运行时 valuation route 和 `JUDGMENT_SYNTHESIS`；只有确实依赖选择/相对因果方法的 claim 才额外要求 `SELECTION_ADMITTED`。该接线不授予数值估值、价格、BuyBand、报告发布或投资权限。当前格力仍为 `PRE_FREEZE / NO_PRIMARY / NOT_FROZEN`，G1 与 G1-U 继续 `IN_PROGRESS`，G1.5 继续 `PLANNED`。
 
 ### 7.1 并行工作通道
 
@@ -287,12 +287,14 @@ G1-U 解决当前后台能力与前台黄金报告之间的根本断点：现有
 
 ### 7U.2 当前实施 Goal
 
-U1 已在独立候选分支完成，等待集成前验证：
+U1 worked slice 与随后 kernel 接线已经实现：
 
 - 从 `main@542bec1` 建 linked worktree；
 - Magna worked fixture 验证困境周期型的生存优先、资产/EPV 交叉路线；
 - CN600585 海螺水泥的既有教学证据形成完整公司特定承保读本；
 - 同一 `UnderwritingThesis` 确定性投影 CJO candidate、valuation-route request 和 Golden Report handoff；
+- `IndustryFutureThesis` 已进入 Episode v2 本体；训练合同只把完整 Episode 视为主产品，旧四轨统计降为支持性 inventory；
+- 真实 current-company CJO 可消费 source-bound Episode，Frozen CJO 将同一投影交给报告 handoff，valuation runtime 自动使用 Episode 的路线，经验层从完整 worked Episode 投影条件化经验；
 - 没有新建事实库、CJO、估值引擎、经验卡或全局 gate。
 
 海螺仍是 `RESULT_KNOWN_TEACHING_ONLY / WORKED_CASE`。本完成只证明完整承保对象和同源消费能运行，不证明盲测、迁移、当前估值、BuyBand 或投资结论。
@@ -306,7 +308,7 @@ U1 已在独立候选分支完成，等待集成前验证：
 - worked slice 明确不冒充 Blind learning、当前估值、BuyBand 或投资建议；
 - 产品审阅、定向测试、`project_guard verify full` 和 `merge-check` 通过。
 
-完成 G1-U 后不继续扩基础设施；直接进入跨路线 worked-case 课程和一个完整 Blind Replay，再把同一对象接入真实黄金候选。
+完成 G1-U kernel 后不继续扩基础设施。下一步先运行一个完整 Blind Replay，再让一份真实黄金候选消费同一 Frozen Episode；跨路线 worked-case 课程随后用于扩大机制覆盖，不得先以数量替代闭环。
 
 ## 7A. G1.5：格力行业经验工厂与双向层级试验
 
@@ -522,11 +524,11 @@ Phase 08 只有同时具备以下结果才能完成：
 
 当前执行分为训练主线与黄金候选线，互不以等待状态阻断：
 
-1. **集成并消费已完成的 G1-U 纵向切片。** 以 Magna + CN600585 的 `EnterpriseUnderwritingEpisode` 作为当前 worked-case 基线；继续停止扩展字段、receipt 和准入控制。
-2. **扩大的是完整案例，不是机械字段。** 建立 12--20 个跨承保路线的 worked cases，必须包含成功、失败、消失企业和 near miss；它们训练推理，不计命中或方法成绩。
-3. **首个新盲测练完整承保。** 选择一个未参与 U1/U2 规则形成的公司/cutoff，冻结处境、生存、正常化、owner cash、永久损失和价值路线，再按多时钟揭示结果；不得退回单字段 Minimal 作为中心样本。
-4. **经验层继续自然反馈。** 福莱特 FY2024 outcome 到期后按既有合同结算；此前不提前读取，也不因等待而阻断 U1/U2/U3。
-5. **黄金候选继续材料性修复。** 七个候选只处理会改变企业判断、永久损失、价值或回报的问题；完成 U1 后，选一个候选消费 UnderwritingThesis，检验前台报告是否真正改善。
+1. **集成 G1-U kernel，不再重开字段底座。** 以 Episode v2、唯一训练入口、CJO/valuation/report/experience 同源接线作为当前实现基线；继续停止扩展 receipt 和准入控制。
+2. **首个新盲测练完整承保。** 选择一个未参与 U1/U2 规则形成的公司/cutoff，冻结行业未来、处境、生存、正常化、owner cash、永久损失和价值路线，再按多时钟揭示结果；不得退回单字段 Minimal 作为中心样本。
+3. **真实黄金候选消费同一 Frozen Episode。** 让一份合法 current-company CJO、估值路线和报告 handoff 读取同一对象，检验报告本地 thesis 不会另写公司故事；仍不自动生成 BuyBand 或投资动作。
+4. **随后扩大完整案例课程。** 建立 12--20 个跨承保路线 worked cases，包含成功、失败、消失企业和 near miss；它们训练推理，不计命中或方法成绩。
+5. **经验层继续自然反馈。** 福莱特 FY2024 outcome 到期后按既有合同结算；此前不提前读取，也不因等待而阻断 U3。
 6. **旧训练控制保持兼容。** E/J、Forecast 和 Comparative 只在对应局部主张需要时使用；其等待、mismatch 或 `NO_PRIMARY` 不能再定义整个训练系统的进度。
 7. **G1.5 与 G2 仍保持原依赖。** 七案内容接纳和 G1-U/U4 产品验证后再决定格力 24 份矩阵是否仍是最高信息价值的行业扩展，不因旧路线图自动启动。
 

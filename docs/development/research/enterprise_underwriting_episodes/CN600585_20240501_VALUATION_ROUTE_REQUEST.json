@@ -1,5 +1,5 @@
 {
-  "schema_version": "enterprise-underwriting-valuation-route-request.v1",
+  "schema_version": "enterprise-underwriting-valuation-route-request.v2",
   "request_id": "UW-VR:EUE:CN600585:20240501:WORKED:V1",
   "episode_id": "EUE:CN600585:20240501:WORKED:V1",
   "company_id": "CN:600585",
@@ -7,31 +7,57 @@
   "sample_identity": "WORKED_CASE",
   "underwriting_thesis_id": "UWT:CN600585:20240501:V1",
   "authority": "ROUTE_REQUEST_ONLY",
-  "industry_future_thesis": {
-    "horizon": "未来3至5年，以2024-05-01为观察起点。",
-    "most_likely_regime": "国内水泥需求随地产下行和存量建设阶段继续收缩，供给退出慢于需求下降，区域价格和利用率持续承压；基准路径不是快速V形复苏。海外水泥与骨料商混提供局部缓冲，但尚不足以逆转国内主利润池收缩。",
-    "profit_pool_transmission": "需求收缩和区域供给刚性先压低销量、价格与窑线利用率，降本只能部分缓冲单位利润；利润池将更多留给物流半径、成本和资产负债表更强的存续者，并局部转向海外和产业链业务，但行业总利润难回地产高景气水平。",
-    "company_exposure": "海螺的大型国内熟料水泥网络直接暴露于区域需求、价格和重资产低利用率，新增产能还会与存量资产争夺客户；水运、成本控制、现金与融资资源提高相对承受力，海外和骨料商混降低但不能消除国内暴露。",
-    "adaptation": "管理层通过物流、替代燃料、采购和低碳改造降本，并以海外项目、骨料和商混分散国内需求风险。这些动作可以延长穿越周期的时间并保留组合上行，但只有客户吸收、单位经济和项目现金回收出现后，新增资产才算有效适应。",
-    "normal_economics": "国内核心应按低于旧地产景气期的中周期量价、利用率和成本范围承保；成本优势支持相对利润但不保证绝对利润恢复。普通股owner cash还需扣除经济维护资本、增长资本和项目占款，海外利润只作条件性缓冲。",
-    "permanent_loss": "若需求和区域价格长期下降而公司继续投入，存量与新增资产会在低利用率下消耗维护和防御性资本，压低资本回报与普通股可得现金；这比短期融资断裂更可能把周期压力转成永久损失。",
-    "valuation_treatment": "采用资产价值、中周期EPV与资本回报交叉检查，只为可承保的国内存量盈利和可回收资产付费；新增国内产能及未拆分的海外项目保留为情景，不进入基准成长价值。",
-    "strongest_rival": "海外毛利改善、成本下降、现金缓冲和多元布局会使整体盈利先于国内周期恢复，新增布局最终成为有效组合缓冲。",
-    "reversal_observations": [
-      "国内区域的量、价、利用率和吨毛利在不依赖持续大幅降本的情况下同步修复。",
-      "新增项目在同一责任单元披露客户吸收、单位经济、维护/扩张资本与累计现金回收。",
-      "海外区域的利润与现金桥能够区分存量业务和新增项目，并显示可重复回报。",
-      "区域需求与价格继续走弱且维护或防御性资本吞噬现金，或融资缓冲明显收缩。"
+  "situation_model": {
+    "summary": "房地产下行、库存偏高和供给过剩经区域销售半径与本地价格传到海螺：需求和售价压力压低销量、收入和毛利。FY2024 全国水泥产量下降9.5%，公司自产品销量下降6.05%、收入下降12.89%。这既是周期压力，也可能在需求长期收缩时演变为结构性资产回报压力。",
+    "industry_future_thesis": {
+      "horizon": "未来3至5年，以2024-05-01为观察起点。",
+      "most_likely_regime": "国内水泥需求随地产下行和存量建设阶段继续收缩，供给退出慢于需求下降，区域价格和利用率持续承压；基准路径不是快速V形复苏。海外水泥与骨料商混提供局部缓冲，但尚不足以逆转国内主利润池收缩。",
+      "profit_pool_transmission": "需求收缩和区域供给刚性先压低销量、价格与窑线利用率，降本只能部分缓冲单位利润；利润池将更多留给物流半径、成本和资产负债表更强的存续者，并局部转向海外和产业链业务，但行业总利润难回地产高景气水平。",
+      "company_exposure": "海螺的大型国内熟料水泥网络直接暴露于区域需求、价格和重资产低利用率，新增产能还会与存量资产争夺客户；水运、成本控制、现金与融资资源提高相对承受力，海外和骨料商混降低但不能消除国内暴露。",
+      "adaptation": "管理层通过物流、替代燃料、采购和低碳改造降本，并以海外项目、骨料和商混分散国内需求风险。这些动作可以延长穿越周期的时间并保留组合上行，但只有客户吸收、单位经济和项目现金回收出现后，新增资产才算有效适应。",
+      "normal_economics": "国内核心应按低于旧地产景气期的中周期量价、利用率和成本范围承保；成本优势支持相对利润但不保证绝对利润恢复。普通股owner cash还需扣除经济维护资本、增长资本和项目占款，海外利润只作条件性缓冲。",
+      "permanent_loss": "若需求和区域价格长期下降而公司继续投入，存量与新增资产会在低利用率下消耗维护和防御性资本，压低资本回报与普通股可得现金；这比短期融资断裂更可能把周期压力转成永久损失。",
+      "valuation_treatment": "采用资产价值、中周期EPV与资本回报交叉检查，只为可承保的国内存量盈利和可回收资产付费；新增国内产能及未拆分的海外项目保留为情景，不进入基准成长价值。",
+      "strongest_rival": "海外毛利改善、成本下降、现金缓冲和多元布局会使整体盈利先于国内周期恢复，新增布局最终成为有效组合缓冲。",
+      "reversal_observations": [
+        "国内区域的量、价、利用率和吨毛利在不依赖持续大幅降本的情况下同步修复。",
+        "新增项目在同一责任单元披露客户吸收、单位经济、维护/扩张资本与累计现金回收。",
+        "海外区域的利润与现金桥能够区分存量业务和新增项目，并显示可重复回报。",
+        "区域需求与价格继续走弱且维护或防御性资本吞噬现金，或融资缓冲明显收缩。"
+      ]
+    }
+  },
+  "primary_routes": [
+    "ASSET_VALUE",
+    "EARNINGS_POWER_VALUE",
+    "CAPITAL_RETURN_CROSS_CHECK"
+  ],
+  "excluded_routes": [
+    "CAPACITY_GROWTH_VALUE_AS_PRIMARY",
+    "ONE_PERIOD_OCF_MINUS_CAPEX_AS_OWNER_CASH"
+  ],
+  "route_reasoning": "即时生存并非中心问题，且公司没有证据允许把新增产能直接资本化为高回报成长。资产价值和中周期 EPV 提供双锚；资本回报交叉检查防止把新旧重资产混合成未经承保的增长价值。",
+  "valuation_model_roles": {
+    "primary": [
+      "ASSET_VALUE",
+      "EPV"
+    ],
+    "corroborative": [
+      "RETURN_DECOMPOSITION"
+    ],
+    "stress": [
+      "NAV"
     ]
   },
-  "primary_routes": ["ASSET_VALUE", "EARNINGS_POWER_VALUE", "CAPITAL_RETURN_CROSS_CHECK"],
-  "excluded_routes": ["CAPACITY_GROWTH_VALUE_AS_PRIMARY", "ONE_PERIOD_OCF_MINUS_CAPEX_AS_OWNER_CASH"],
-  "route_reasoning": "即时生存并非中心问题，且公司没有证据允许把新增产能直接资本化为高回报成长。资产价值和中周期 EPV 提供双锚；资本回报交叉检查防止把新旧重资产混合成未经承保的增长价值。",
   "normal_earnings_input_treatment": "国内核心仅按量价、利用率和成本共同恢复的中周期范围承保；新增国内资产排除在基准之外，海外区域利润只作条件性上行情景。",
   "owner_cash_input_treatment": "集团FY2024经营现金覆盖披露资本支出显示承受力，但维护/增长资本和普通股可得现金未闭合；owner cash 只能以范围和资产/EPV交叉约束，而不是单点OCF减资本支出。",
   "permanent_loss_input_treatment": "核心风险是区域需求和价格长期疲弱使新旧资产低利用率、低回报并持续消耗维护或防御性资本，而非即时融资崩溃。",
-  "inputs_excluded_from_base": ["DOMESTIC_INCREMENTAL_ASSET_RETURN", "OVERSEAS_AND_INDUSTRIAL_CHAIN_OPTION", "ORDINARY_SHARE_OWNER_CASH"],
+  "inputs_excluded_from_base": [
+    "DOMESTIC_INCREMENTAL_ASSET_RETURN",
+    "OVERSEAS_AND_INDUSTRIAL_CHAIN_OPTION",
+    "ORDINARY_SHARE_OWNER_CASH"
+  ],
   "existing_valuation_adapter": "scripts/valuation_routing.py:build_valuation_route",
-  "compatibility_gap": "Existing numeric INVESTMENT_ENRICHMENT requires global SELECTION_ADMITTED. This teaching route request does not create or substitute that admission; U4 must make the restriction claim-local.",
+  "compatibility_resolution": "Current-company underwriting may enter CJO and valuation routing through a source-bound, independently reviewed complete Episode; SELECTION_ADMITTED remains local to claims that actually depend on comparative selection or causal authority.",
   "boundary": "No current value, price, expected return, BuyBand, or investment action is generated."
 }

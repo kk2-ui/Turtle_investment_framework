@@ -176,6 +176,51 @@ def test_primary_requires_exact_identity_observed_bindings_and_can_freeze(tmp_pa
     )["state"] == "VALID"
 
 
+def test_complete_underwriting_episode_admits_current_company_without_selection_gate(
+    tmp_path,
+) -> None:
+    inputs = _primary_inputs(tmp_path)
+    episode = core_fixture._underwriting_episode()
+    episode["cutoff_at"] = inputs["source_package"]["cutoff_at"]
+    episode["episode_id"] = "EUE:COMPANY:SYNTHETIC:20260802:BLIND:V1"
+    episode["underwriting_thesis"]["thesis_id"] = "UWT:COMPANY:SYNTHETIC:20260802:V1"
+    episode["evidence_trace"][0]["source_ref"] = "SRC:OPERATING"
+    inputs["admission_contract"]["primary_binding"] = {
+        "binding_kind": "ENTERPRISE_UNDERWRITING_EPISODE",
+        "episode_id": episode["episode_id"],
+        "underwriting_thesis_id": episode["underwriting_thesis"]["thesis_id"],
+        "central_trace_ids": list(inputs["candidate"]["central_path"]["trace_ids"]),
+    }
+
+    compiled = admission.compile_current_company_cjo_candidate(
+        model=inputs["model"],
+        ledger=inputs["ledger"],
+        source_package=inputs["source_package"],
+        judgment_input=inputs["judgment_input"],
+        admission_contract=inputs["admission_contract"],
+        underwriting_episode=episode,
+    )
+
+    assert compiled["admission"]["status"] == admission.PRIMARY_ADMITTED
+    assert compiled["candidate"]["underwriting_thesis_projection"]["episode_id"] == episode["episode_id"]
+    assert "selection" not in str(compiled["admission"]["primary_binding"]).lower()
+    review = core_fixture._review(compiled["candidate"])
+    frozen = admission.freeze_admitted_current_company_cjo(
+        model=inputs["model"],
+        ledger=inputs["ledger"],
+        source_package=inputs["source_package"],
+        judgment_input=inputs["judgment_input"],
+        admission_contract=inputs["admission_contract"],
+        underwriting_episode=episode,
+        independent_review=review,
+        admission_review=_review_binding(
+            compiled["candidate"], compiled["admission"], review,
+        ),
+    )
+    assert frozen["admission"]["status"] == admission.PRIMARY_ADMITTED
+    assert frozen["frozen_cjo"]["underwriting_thesis_projection"]["episode_id"] == episode["episode_id"]
+
+
 def test_current_company_review_binds_the_compiled_candidate_and_selected_side(tmp_path) -> None:
     inputs = _primary_inputs(tmp_path)
     compiled = admission.compile_current_company_cjo_candidate(

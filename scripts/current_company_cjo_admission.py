@@ -385,6 +385,52 @@ def _primary_binding_findings(
                 _add(findings, "thesis_test.selected_causal_trace_unknown")
 
 
+def _underwriting_primary_binding_findings(
+    *, candidate: dict[str, Any], contract: dict[str, Any], source_package: dict[str, Any],
+    findings: list[str],
+) -> None:
+    """Admit a current-company primary from the complete Episode, not E3 selection.
+
+    Comparative selection remains available to claims that actually depend on
+    it.  A whole-company underwriting conclusion instead binds the already
+    validated, price-free Episode carried by the CJO to current-company source
+    evidence and the CJO's central traces.
+    """
+    projection = _mapping(candidate.get("underwriting_thesis_projection"))
+    binding = _mapping(contract.get("primary_binding"))
+    allowed = {
+        "binding_kind", "episode_id", "underwriting_thesis_id", "central_trace_ids",
+    }
+    for field in sorted(set(binding) - allowed):
+        _add(findings, "admission_contract.primary_binding." + field + "_unsupported")
+    if binding.get("binding_kind") != "ENTERPRISE_UNDERWRITING_EPISODE":
+        _add(findings, "admission_contract.primary_binding.binding_kind_invalid")
+    for field in ("episode_id", "underwriting_thesis_id"):
+        if binding.get(field) != projection.get(field):
+            _add(findings, "admission_contract.primary_binding." + field + "_mismatch")
+    if projection.get("sample_identity") == "WORKED_CASE":
+        _add(findings, "worked_case_underwriting_cannot_enter_current_company_primary")
+    central_trace_ids = _exact_id_list(
+        binding.get("central_trace_ids"),
+        path="admission_contract.primary_binding.central_trace_ids",
+        findings=findings,
+    )
+    if set(central_trace_ids) != set(_ids(_mapping(candidate.get("central_path")).get("trace_ids"))):
+        _add(findings, "admission_contract.primary_binding.central_trace_ids_must_exactly_match_cjo")
+    package_sources = {
+        str(item.get("source_ref") or "")
+        for item in _items(source_package.get("sources")) if isinstance(item, dict)
+    }
+    projection_sources = {
+        str(item.get("source_ref") or "")
+        for item in _items(projection.get("evidence_trace")) if isinstance(item, dict)
+    }
+    if not projection_sources:
+        _add(findings, "underwriting_thesis_projection.evidence_trace_missing")
+    for source_ref in sorted(projection_sources - package_sources):
+        _add(findings, "underwriting_thesis_projection.source_not_in_package:" + source_ref)
+
+
 def _admission_receipt(
     *, contract: dict[str, Any], candidate: dict[str, Any], status: str, findings: list[str],
 ) -> dict[str, Any]:
@@ -599,6 +645,37 @@ def validate_current_company_cjo_admission(
             "admission": _admission_receipt(contract=contract, candidate=candidate_value, status=status, findings=[]),
         }
 
+    if isinstance(candidate_value.get("underwriting_thesis_projection"), dict):
+        _underwriting_primary_binding_findings(
+            candidate=candidate_value,
+            contract=contract,
+            source_package=source_value,
+            findings=findings,
+        )
+        status = PRIMARY_ADMITTED if not findings else REJECTED
+        return {
+            "state": status,
+            "status": status,
+            "findings": findings,
+            "core_validation": core_validation,
+            "financial_driver_bridge_validation": {
+                "state": "NOT_REQUIRED_EPISODE_BOUND",
+                "invalid_findings": [],
+                "incomplete_findings": [],
+            },
+            "thesis_test_validation": {
+                "state": "NOT_REQUIRED_EPISODE_BOUND",
+                "invalid_findings": [],
+                "incomplete_findings": [],
+            },
+            "admission": _admission_receipt(
+                contract=contract,
+                candidate=candidate_value,
+                status=status,
+                findings=findings,
+            ),
+        }
+
     if not bridge:
         _add(findings, "financial_driver_bridge_missing")
         bridge_validation: dict[str, Any] = {"state": "MISSING", "invalid_findings": [], "incomplete_findings": []}
@@ -657,6 +734,7 @@ def validate_current_company_cjo_admission(
 def compile_current_company_cjo_candidate(
     *, model: Any, ledger: Any, source_package: Any, judgment_input: Any, admission_contract: Any,
     financial_driver_bridge: Any | None = None, thesis_test_ledger: Any | None = None,
+    underwriting_episode: Any | None = None,
     validation_dir: str | Path | None = None,
 ) -> dict[str, Any]:
     """Compile Core's candidate and attach a separately auditable admission receipt."""
@@ -665,6 +743,7 @@ def compile_current_company_cjo_candidate(
         ledger=ledger,
         source_package=source_package,
         judgment_input=judgment_input,
+        underwriting_episode=underwriting_episode,
     )
     validation = validate_current_company_cjo_admission(
         candidate=candidate,
@@ -686,6 +765,7 @@ def compile_current_company_cjo_candidate(
 def freeze_admitted_current_company_cjo(
     *, model: Any, ledger: Any, source_package: Any, judgment_input: Any, admission_contract: Any,
     financial_driver_bridge: Any | None = None, thesis_test_ledger: Any | None = None,
+    underwriting_episode: Any | None = None,
     independent_review: Any, admission_review: Any, validation_dir: str | Path | None = None,
 ) -> dict[str, Any]:
     """Recompile and revalidate all inputs before independently freezing a CJO.
@@ -702,6 +782,7 @@ def freeze_admitted_current_company_cjo(
         admission_contract=admission_contract,
         financial_driver_bridge=financial_driver_bridge,
         thesis_test_ledger=thesis_test_ledger,
+        underwriting_episode=underwriting_episode,
         validation_dir=validation_dir,
     )
     review_findings = _validate_review_binding(

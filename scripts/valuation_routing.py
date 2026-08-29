@@ -57,6 +57,40 @@ def _stable_payload_hash(payload: dict[str, Any]) -> str:
     return _hash(value)
 
 
+def _bound_underwriting_thesis_projection(output: Path) -> dict[str, Any]:
+    """Read the optional complete thesis already frozen in the bound CJO.
+
+    The analysis contract is the existing canonical binding surface.  A
+    legacy report with no bound CJO, or a legacy Frozen CJO without an Episode
+    projection, keeps the archetype route.  Once a projection is bound, route
+    construction must consume it instead of silently rebuilding a different
+    company story from the industry archetype.
+    """
+    contract = _read_json(output / "analysis_contract.json")
+    refs = contract.get("canonical_judgment_refs")
+    frozen_ref = refs.get("frozen_cjo_ref") if isinstance(refs, dict) else None
+    if not str(frozen_ref or "").strip():
+        return {}
+    path = Path(str(frozen_ref)).expanduser()
+    if not path.is_absolute():
+        path = output / path
+    frozen = _read_json(path)
+    if not frozen:
+        raise ValueError("bound frozen CJO missing or invalid for valuation routing")
+    try:
+        from scripts.enterprise_judgment_core import validate_frozen_cjo
+    except ModuleNotFoundError:  # pragma: no cover - direct script fallback
+        from enterprise_judgment_core import validate_frozen_cjo
+    validation = validate_frozen_cjo(frozen)
+    if validation.get("state") != "VALID":
+        raise ValueError(
+            "bound frozen CJO invalid for valuation routing:"
+            + ",".join(str(item) for item in validation.get("findings") or [])
+        )
+    projection = frozen.get("underwriting_thesis_projection")
+    return deepcopy(projection) if isinstance(projection, dict) else {}
+
+
 def _repo_root() -> Path:
     return Path(__file__).resolve().parents[1]
 
@@ -236,9 +270,11 @@ def build_company_archetype(
         {"archetype_id": item["archetype_id"], "confidence": item["score"], "reason": item["matches"]}
         for item in scores[1:3] if item["score"] >= 0.45
     ]
-    report_id = str(_nested(inputs.get("analysis_contract.json", {}), "ts_code") or _nested(inputs.get("report_context.json", {}), "meta.report_id") or output.name)
+    contract = inputs.get("analysis_contract.json", {})
+    report_id = str(_nested(contract, "ts_code") or _nested(inputs.get("report_context.json", {}), "meta.report_id") or output.name)
+    company_id = str(_nested(contract, "company_id") or report_id)
     payload: dict[str, Any] = {
-        "schema_version": ARCHETYPE_SCHEMA, "report_id": report_id,
+        "schema_version": ARCHETYPE_SCHEMA, "report_id": report_id, "company_id": company_id,
         "registry_version": registry["registry_version"], "registry_fingerprint": registry_fingerprint(registry),
         "input_sources": sources, "input_fingerprint": _hash(sources), "generated_at": _now(),
         "primary_archetype": {"archetype_id": primary_id, "label": spec["label"], "confidence": primary_score["score"], "basis": "structured industry identity and explicit counter-rules"},
@@ -309,15 +345,25 @@ def validate_valuation_route(
                 invalid.append(model_id + ":basis_drift:" + field)
         if not item.get("fragilities") or not item.get("required_conditions"):
             incomplete.append(model_id + ":fragility_or_conditions_missing")
+    binding = payload.get("underwriting_route_binding")
+    if binding is not None and not isinstance(binding, dict):
+        invalid.append("underwriting_route_binding_not_object")
+        binding = {}
     for role, field in (("primary", "primary_models"), ("corroborative", "corroborative_models"), ("stress", "stress_models")):
-        expected = set(spec.get(field) or [])
+        expected = set(
+            (binding or {}).get(role, [])
+            if binding
+            else spec.get(field) or []
+        )
         if roles.get(role, set()) != expected:
             invalid.append(role + "_model_set_mismatch")
     rejected = payload.get("rejected_models")
     if not isinstance(rejected, list):
         invalid.append("rejected_models_not_array"); rejected = []
     rejected_ids = {str(item.get("route_model_id")) for item in rejected if isinstance(item, dict)}
-    if rejected_ids != set(spec.get("rejected_models") or []):
+    selected_ids = {item for values in roles.values() for item in values}
+    expected_rejected = set(spec.get("rejected_models") or []) - selected_ids
+    if rejected_ids != expected_rejected:
         invalid.append("rejected_model_set_mismatch")
     for item in rejected:
         if not isinstance(item, dict) or not str(item.get("rejection_reason") or "").strip():
@@ -332,25 +378,73 @@ def validate_valuation_route(
         invalid.append("terminal_r_g_policy_drift")
     if not terminal.get("required_stress_cases"):
         incomplete.append("terminal_stress_policy_missing")
+    if binding:
+        thesis_ref = payload.get("underwriting_thesis_ref")
+        treatments = payload.get("underwriting_input_treatments")
+        if not isinstance(thesis_ref, dict) or any(
+            not str(thesis_ref.get(field) or "").strip()
+            for field in ("episode_id", "underwriting_thesis_id", "company_id", "cutoff_at")
+        ):
+            invalid.append("underwriting_thesis_ref_invalid")
+        if not isinstance(binding.get("primary"), list) or not binding.get("primary"):
+            invalid.append("underwriting_route_binding_incomplete")
+        if any(
+            role in binding and not isinstance(binding.get(role), list)
+            for role in ("corroborative", "stress")
+        ):
+            invalid.append("underwriting_route_binding_optional_role_invalid")
+        bound_ids = [
+            model_id
+            for role in ("primary", "corroborative", "stress")
+            for model_id in binding.get(role, [])
+        ]
+        if len(bound_ids) != len(set(bound_ids)) or any(model_id not in registry["models"] for model_id in bound_ids):
+            invalid.append("underwriting_route_binding_model_invalid")
+        if not isinstance(treatments, dict) or any(
+            not str(treatments.get(field) or "").strip()
+            for field in ("normal_earnings", "owner_cash", "permanent_loss", "route_reasoning")
+        ):
+            invalid.append("underwriting_input_treatments_invalid")
     invalid = list(dict.fromkeys(invalid)); incomplete = list(dict.fromkeys(incomplete)); warnings = list(dict.fromkeys(warnings))
     state = "INVALID" if invalid else "INCOMPLETE" if incomplete else "REVIEWABLE"
     return {"schema_version": VALIDATION_SCHEMA, "state": state, "status": "PASS" if state == "REVIEWABLE" else "FAIL", "invalid_findings": invalid, "incomplete_findings": incomplete, "warnings": warnings}
 
 
 def build_valuation_route(
-    output_dir: str | Path, archetype: dict[str, Any] | None = None, *, registry: dict[str, Any] | None = None, persist: bool = True
+    output_dir: str | Path, archetype: dict[str, Any] | None = None, *, registry: dict[str, Any] | None = None,
+    underwriting_thesis_projection: dict[str, Any] | None = None, persist: bool = True
 ) -> dict[str, Any]:
     output = Path(output_dir)
     registry = registry or load_registry()
     archetype = archetype or _read_json(output / "company_archetype.json") or build_company_archetype(output, registry=registry, persist=persist)
     primary_id = str((archetype.get("primary_archetype") or {}).get("archetype_id") or "")
     spec = registry["archetypes"].get(primary_id, registry["archetypes"]["general_operating"])
+    underwriting = (
+        underwriting_thesis_projection
+        if isinstance(underwriting_thesis_projection, dict)
+        else _bound_underwriting_thesis_projection(output)
+    )
+    if underwriting and underwriting.get("schema_version") != "enterprise-underwriting-thesis-projection.v1":
+        raise ValueError("underwriting thesis projection schema invalid")
+    company_id = str(archetype.get("company_id") or archetype.get("report_id") or "").strip()
+    if underwriting and company_id and str(underwriting.get("company_id") or "").strip() != company_id:
+        raise ValueError("underwriting thesis company does not match valuation route company")
+    value_route = underwriting.get("value_route") if isinstance(underwriting.get("value_route"), dict) else {}
+    role_binding = value_route.get("valuation_model_roles") if isinstance(value_route.get("valuation_model_roles"), dict) else {}
     models = []
     for role, field in (("primary", "primary_models"), ("corroborative", "corroborative_models"), ("stress", "stress_models")):
-        models.extend(_route_model(model_id, role, registry, spec) for model_id in spec.get(field) or [])
+        model_ids = (
+            role_binding.get(role, [])
+            if role_binding
+            else spec.get(field) or []
+        )
+        if any(model_id not in registry["models"] for model_id in model_ids):
+            raise ValueError("underwriting valuation model role contains unknown model")
+        models.extend(_route_model(model_id, role, registry, spec) for model_id in model_ids)
+    selected_ids = {item["route_model_id"] for item in models}
     rejected = [
         {"route_model_id": model_id, "model_type": registry["models"][model_id]["model_type"], "role": "rejected", "rejection_reason": (spec.get("rejection_reasons") or {}).get(model_id, "与该原型的现金流或资产归属不匹配")}
-        for model_id in spec.get("rejected_models") or []
+        for model_id in spec.get("rejected_models") or [] if model_id not in selected_ids
     ]
     policy = registry["model_policy"]
     payload: dict[str, Any] = {
@@ -375,6 +469,23 @@ def build_valuation_route(
         "required_research": list(spec.get("research_requirements") or []),
         "reference_policy": {"index": "config/valuation_reference_index.json", "use": "mechanism_reference_only", "company_fact_eligible": False},
     }
+    if role_binding:
+        thesis = underwriting.get("underwriting_thesis") if isinstance(underwriting.get("underwriting_thesis"), dict) else {}
+        payload["underwriting_thesis_ref"] = {
+            field: underwriting.get(field)
+            for field in ("episode_id", "underwriting_thesis_id", "company_id", "cutoff_at")
+        }
+        payload["underwriting_route_binding"] = deepcopy(role_binding)
+        payload["underwriting_input_treatments"] = {
+            "normal_earnings": thesis.get("normal_earnings_treatment"),
+            "owner_cash": thesis.get("owner_cash_treatment"),
+            "permanent_loss": thesis.get("permanent_loss_treatment"),
+            "route_reasoning": value_route.get("route_reasoning"),
+            "excluded_component_ids": [
+                item.get("component_id") for item in underwriting.get("component_treatments") or []
+                if isinstance(item, dict) and item.get("treatment") in {"EXCLUDE_FROM_BASE", "SCENARIO_ONLY", "CANNOT_BOUND"}
+            ],
+        }
     payload["validation"] = validate_valuation_route(payload, archetype, registry)
     if persist:
         _atomic_write_json(output / "valuation_route.json", payload)

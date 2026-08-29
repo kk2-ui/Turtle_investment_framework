@@ -2249,6 +2249,11 @@ def _render_frozen_cjo_summary(frozen: dict[str, Any]) -> str:
 
 def _render_bound_frozen_cjo_research_artifact(frozen: dict[str, Any]) -> str:
     """Render the entire bound-CJO reader artifact from one canonical object."""
+    underwriting = frozen.get("underwriting_thesis_projection")
+    underwriting_section = (
+        _render_price_free_underwriting_section(underwriting)
+        if isinstance(underwriting, dict) and underwriting else ""
+    )
     return "\n".join([
         f"# {_inline_report_text(frozen.get('company_id'))} 公司判断研究",
         "",
@@ -2259,8 +2264,73 @@ def _render_bound_frozen_cjo_research_artifact(frozen: dict[str, Any]) -> str:
         "",
         "---",
         "",
+        underwriting_section,
+        "" if underwriting_section else "",
         _render_frozen_cjo_summary(frozen),
     ])
+
+
+def _render_price_free_underwriting_section(projection: dict[str, Any]) -> str:
+    """Render the complete price-free company story frozen with the CJO.
+
+    A COMPANY_JUDGMENT_ONLY artifact deliberately stops before model choice,
+    security value, price, return, or action.  Those downstream treatments
+    remain available in the same projection for an investment-purpose report,
+    while this reader view preserves the economically prior industry,
+    adaptation, normalization, owner-cash, and permanent-loss chain.
+    """
+    thesis = projection.get("underwriting_thesis")
+    thesis = thesis if isinstance(thesis, dict) else {}
+    situation = projection.get("situation_model")
+    situation = situation if isinstance(situation, dict) else {}
+    industry = situation.get("industry_future_thesis")
+    industry = industry if isinstance(industry, dict) else {}
+    industry_reversals = [
+        _inline_report_text(item)
+        for item in industry.get("reversal_observations") or []
+        if _inline_report_text(item)
+    ]
+    reversals = [
+        _inline_report_text(item)
+        for item in projection.get("reversal_observations") or []
+        if _inline_report_text(item)
+    ]
+    lines = [
+        "## 完整企业承保主张", "",
+        _inline_report_text(thesis.get("central_path")) or "当前中心经营路径尚未冻结。", "",
+        "### 行业未来与公司传导", "",
+        f"- **时域与最可能行业路径**：{_inline_report_text(industry.get('horizon'))}；{_inline_report_text(industry.get('most_likely_regime'))}。",
+        f"- **利润池变化**：{_inline_report_text(industry.get('profit_pool_transmission'))}。",
+        f"- **公司暴露**：{_inline_report_text(industry.get('company_exposure'))}。",
+        f"- **公司适应**：{_inline_report_text(industry.get('adaptation'))}。",
+        f"- **正常经济与普通股现金**：{_inline_report_text(industry.get('normal_economics'))}。",
+        f"- **永久损失路径**：{_inline_report_text(industry.get('permanent_loss'))}。",
+        f"- **价值处理**：{_inline_report_text(industry.get('valuation_treatment'))}。",
+        f"- **最强竞争解释**：{_inline_report_text(industry.get('strongest_rival'))}。",
+    ]
+    if industry_reversals:
+        lines.append("- **行业路径翻转观察**：" + "；".join(industry_reversals) + "。")
+    lines.extend([
+        "", "### 企业处境、适应与生存", "",
+        f"- **处境**：{_inline_report_text(situation.get('summary'))}。",
+        f"- **公司位置**：{_inline_report_text(projection.get('business_position'))}。",
+        f"- **管理适应**：{_inline_report_text(projection.get('adaptation_case'))}。",
+        f"- **生存与融资**：{_inline_report_text(projection.get('survival_case'))}。",
+        "", "### 正常盈利、普通股现金与永久损失", "",
+        f"- **正常化重建**：{_inline_report_text(projection.get('normalization_case'))}。",
+        f"- **正常盈利处理**：{_inline_report_text(thesis.get('normal_earnings_treatment'))}。",
+        f"- **普通股现金处理**：{_inline_report_text(thesis.get('owner_cash_treatment'))}。",
+        f"- **永久损失路径**：{_inline_report_text(projection.get('permanent_loss_map'))}。",
+        f"- **永久损失处理**：{_inline_report_text(thesis.get('permanent_loss_treatment'))}。",
+        "", "### 最强反方与翻转", "",
+        f"- **最强反方**：{_inline_report_text(thesis.get('strongest_rival'))}。",
+    ])
+    if reversals:
+        lines.append("- **公司主张翻转观察**：" + "；".join(reversals) + "。")
+    monitoring = _inline_report_text(thesis.get("monitoring"))
+    if monitoring:
+        lines.append("- **后续观察**：" + monitoring + "。")
+    return "\n".join(lines)
 
 
 def _render_company_judgment_summary(

@@ -173,7 +173,7 @@ case 和反例，但不得把它们写成目标公司事实。知识不完整时
 
 有边界的 `EnterpriseUnderwritingEpisode` 可以先生成 `valuation-route request` 和研究处理：说明应采用哪种价值路线、哪些能力可进入基准、哪些只进入情景或不应付费。这不要求 Comparative 或 `SELECTION_ADMITTED`，也不产生当前价值数字。
 
-数值 `INVESTMENT_ENRICHMENT` 仍须绑定同公司、同 cutoff 的 current-company CJO admission、可用估值输入和当前估值合同。只有当它消费的具体主张来自相对因果或选择方法时，该主张才额外要求 `SELECTION_ADMITTED` 及相应方法权限。现有 adapter 暂时把 `SELECTION_ADMITTED` 设成全局前提，这是兼容缺口：U1 只需显式报告并输出 route request，U4 再将其收窄为 claim-local 权限；不得用该缺口阻断企业承保读本。无论哪条路径，投资增强都不能反过来改写公司判断或选择中心路径。
+数值 `INVESTMENT_ENRICHMENT` 仍须绑定同公司、同 cutoff 的 current-company CJO admission、可用估值输入和当前估值合同。Kernel 已允许 source-bound、独立复核的完整 Episode 取得 current-company `PRIMARY_ADMITTED`，并让 valuation runtime 消费同一价格前路线；不再把 `SELECTION_ADMITTED` 当作整家公司前提。只有当具体主张来自相对因果或选择方法时，该主张才额外要求 `SELECTION_ADMITTED` 及相应方法权限。无论哪条路径，投资增强都不能反过来改写公司判断或选择中心路径。
 
 ### 5.3 报告后：把结果变成下一轮约束
 
@@ -249,10 +249,10 @@ reader writer 不读取该审阅对象。它只读取 `golden-report-reader-brie
 - `judgment-generation-handoff.v1`、三视图、Frozen CJO、valuation overlay 和 publication refresh 已具备工程接线；
 - Judgment Experience Invocation Loop 已进入 `main`，并完成福莱特结果前经验调用；FY2024 反馈尚未到期；
 - 多轮真实训练已经产生局部企业判断和规则修正，但完整方法仍未证明相对公平 Baseline 的稳定材料优势；
-- 现有黄金报告仍可能从多个状态和 handoff 重建中心故事，尚未消费统一 `EnterpriseUnderwritingEpisode`；
+- Frozen CJO 的完整 UnderwritingThesis 已进入 `JUDGMENT_SYNTHESIS` 和确定性公司判断读者工件，valuation runtime 也会消费同一对象；真实黄金候选的完整投资报告尚未完成同源产品验收；
 - 格力、行业机制发布和正式 BuyBand 的原权限状态不因 V1 设计自动升级。
 
-当前下一动作是执行[企业投资承保纵向切片 V1 Goal](TURTLE_ENTERPRISE_UNDERWRITING_VERTICAL_SLICE_GOAL.md)：先用 Magna fixture 与 CN600585 已有真实教学证据证明一条完整承保主张可以同源投影到 CJO、估值路由和黄金报告。该 worked slice 不需要等待 `SELECTION_ADMITTED` 或 Comparative；它也不宣称 Blind learning。完成后才选择未见公司运行完整 Blind Replay，并检验黄金报告是否出现材料投资判断改善。
+当前下一动作是选择未见公司运行首个完整 Blind Replay，并在合法 source package、ManagementDecisionLedger 和独立 CJO review 下冻结同一 Episode；随后让一份真实黄金候选消费它，检验报告是否出现材料投资判断改善。Magna 与 CN600585 worked slice 只作教学和 kernel 回归，不宣称 Blind learning。
 
 ## 10. 规范依据
 

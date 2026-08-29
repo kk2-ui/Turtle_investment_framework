@@ -1,0 +1,66 @@
+{
+  "schema_version": "enterprise-underwriting-training-contract.v1",
+  "contract_id": "UWTRAIN:CN600585:20240501:WORKED:V1",
+  "training_track": "WORKED_CASE",
+  "company_id": "CN:600585",
+  "company_name": "安徽海螺水泥",
+  "cutoff_at": "2024-05-01T00:00:00+08:00",
+  "sample_identity": "WORKED_CASE",
+  "outcome_access": "RESULT_KNOWN",
+  "allowed_sources": [
+    {
+      "source_id": "SOURCE:CONCH:TEACHING",
+      "source_ref": "docs/development/research/training_curricula/teaching_cases/TC_CN600585_CYCLE_CAPITAL_CASH_V1.md",
+      "available_at": "2026-08-29T00:00:00+08:00",
+      "time_role": "RESULT_KNOWN"
+    },
+    {
+      "source_id": "SOURCE:CONCH:CURRICULUM",
+      "source_ref": "docs/development/research/training_curricula/ENTERPRISE_JUDGMENT_CAPABILITY_CURRICULUM_V1.json",
+      "available_at": "2026-08-29T00:00:00+08:00",
+      "time_role": "RESULT_KNOWN"
+    },
+    {
+      "source_id": "SOURCE:CONCH:CROSS-CASE",
+      "source_ref": "docs/development/golden_set_v1/CROSS_CASE_ADJUDICATION.md",
+      "available_at": "2026-08-29T00:00:00+08:00",
+      "time_role": "RESULT_KNOWN"
+    },
+    {
+      "source_id": "SOURCE:CONCH:ENTERPRISE-MODEL",
+      "source_ref": "docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/02_enterprise_system_models.json",
+      "available_at": "2026-08-29T00:00:00+08:00",
+      "time_role": "RESULT_KNOWN"
+    }
+  ],
+  "feedback_clocks": [
+    {
+      "clock_id": "CLOCK:CONCH:EARLY",
+      "horizon": "EARLY_SIGNAL",
+      "opens_at": "2025-05-01T00:00:00+08:00",
+      "episode_claims": [
+        "INDUSTRY_AND_SITUATION",
+        "BUSINESS_POSITION_AND_ADAPTATION"
+      ],
+      "discriminating_observation": "国内区域量价、利用率、吨毛利与管理层适应是否沿同一公司传导共同变化。"
+    },
+    {
+      "clock_id": "CLOCK:CONCH:LONG",
+      "horizon": "LONG_TERM_PERMANENT_LOSS",
+      "opens_at": "2027-05-01T00:00:00+08:00",
+      "episode_claims": [
+        "NORMAL_EARNINGS",
+        "OWNER_CASH",
+        "PERMANENT_LOSS",
+        "VALUE_ROUTE"
+      ],
+      "discriminating_observation": "维护资本、项目吸收、普通股现金与重资产回报是否支持当前中周期承保和损失路径。"
+    }
+  ],
+  "primary_training_product": {
+    "object_type": "EnterpriseUnderwritingEpisode",
+    "schema_version": "enterprise-underwriting-episode.v2",
+    "completion_basis": "COMPLETE_EPISODE_VALIDATION_ONLY"
+  },
+  "authority": "RESEARCH_TRAINING_ONLY_NO_PRICE_VALUATION_OR_INVESTMENT_AUTHORITY"
+}

@@ -14,7 +14,10 @@ from copy import deepcopy
 from datetime import datetime, timezone
 import json
 from pathlib import Path
+import re
 from typing import Any
+
+from scripts import enterprise_underwriting_episode as underwriting_episode
 
 
 JUDGMENT_EXPERIENCE_RECORD_SCHEMA = "judgment-experience-record.v1"
@@ -211,6 +214,111 @@ def _validate_structural_key(value: Any, findings: list[str], *, prefix: str) ->
     _required(value, ("lifecycle", "industry_epoch", "competitive_arena", "responsibility_boundary"), prefix, findings)
     _text_list(value.get("mechanism_kinds"), prefix + "mechanism_kinds", findings)
     _text_list(value.get("company_constraints"), prefix + "company_constraints", findings)
+    if "underwriting_route" in value and not _text(value.get("underwriting_route")):
+        findings.append(prefix + "underwriting_route_missing")
+    return value
+
+
+def _validate_episode_projection(value: Any, findings: list[str], *, prefix: str = "") -> dict[str, Any]:
+    """Validate the complete-underwriting subset kept inside an existing record.
+
+    This is not a second experience object.  It preserves the source Episode's
+    price-free reasoning so retrieval does not collapse back to one mechanism
+    sentence while the legacy record fields remain the conditional query
+    interface.
+    """
+    if not isinstance(value, dict):
+        findings.append(prefix + "episode_projection_not_object")
+        return {}
+    _required(
+        value,
+        (
+            "source_episode_id", "sample_identity", "authority", "underwriting_route",
+            "central_path",
+        ),
+        prefix,
+        findings,
+    )
+    if value.get("sample_identity") != "WORKED_CASE":
+        findings.append(prefix + "episode_projection_not_worked_case")
+    if value.get("authority") != "TEACHING_ONLY_NO_TRANSFER_CREDIT":
+        findings.append(prefix + "episode_projection_authority_invalid")
+
+    situation = value.get("situation")
+    if not isinstance(situation, dict):
+        findings.append(prefix + "situation_not_object")
+    else:
+        for field in ("situation_model", "business_position"):
+            if situation.get(field) in (None, "", {}, []):
+                findings.append(prefix + "situation_" + field + "_missing")
+        situation_model = situation.get("situation_model")
+        if not isinstance(situation_model, dict) or not isinstance(
+            situation_model.get("industry_future_thesis"), dict
+        ):
+            findings.append(prefix + "situation_model_industry_future_thesis_missing")
+        if "industry_future_thesis" in situation:
+            findings.append(prefix + "situation_legacy_industry_future_thesis_not_allowed")
+
+    mechanism = value.get("mechanism_and_adaptation")
+    if not isinstance(mechanism, dict):
+        findings.append(prefix + "mechanism_and_adaptation_not_object")
+    else:
+        _required(mechanism, ("survival_case", "adaptation_case"), prefix + "mechanism_", findings)
+
+    near_miss = value.get("near_miss")
+    if not isinstance(near_miss, dict):
+        findings.append(prefix + "near_miss_not_object")
+    else:
+        _required(near_miss, ("strongest_rival",), prefix + "near_miss_", findings)
+        _text_list(
+            near_miss.get("reversal_observations"),
+            prefix + "near_miss_reversal_observations",
+            findings,
+        )
+
+    normalization = value.get("normalization_boundary")
+    if not isinstance(normalization, dict):
+        findings.append(prefix + "normalization_boundary_not_object")
+    else:
+        _required(
+            normalization,
+            (
+                "normalization_case", "normal_earnings_treatment",
+                "owner_cash_treatment", "economic_directions",
+            ),
+            prefix + "normalization_",
+            findings,
+        )
+        directions = normalization.get("economic_directions")
+        if not isinstance(directions, dict) or any(
+            directions.get(axis) not in underwriting_episode.ECONOMIC_DIRECTIONS
+            for axis in ("normal_earnings", "owner_cash", "permanent_loss")
+        ):
+            findings.append(prefix + "normalization_economic_directions_invalid")
+
+    permanent_loss = value.get("permanent_loss_boundary")
+    if not isinstance(permanent_loss, dict):
+        findings.append(prefix + "permanent_loss_boundary_not_object")
+    else:
+        _required(
+            permanent_loss,
+            ("permanent_loss_map", "permanent_loss_treatment"),
+            prefix + "permanent_loss_",
+            findings,
+        )
+
+    value_route = value.get("value_route")
+    if not isinstance(value_route, dict):
+        findings.append(prefix + "value_route_not_object")
+    else:
+        _text_list(value_route.get("primary_routes"), prefix + "value_route_primary_routes", findings)
+        _text_list(value_route.get("excluded_routes"), prefix + "value_route_excluded_routes", findings)
+        _required(
+            value_route,
+            ("route_reasoning", "value_route_treatment"),
+            prefix + "value_route_",
+            findings,
+        )
     return value
 
 
@@ -251,8 +359,189 @@ def validate_judgment_experience_record(record: Any) -> dict[str, Any]:
     feedback_refs = record.get("feedback_event_refs", [])
     if not isinstance(feedback_refs, list) or any(not _text(value) for value in feedback_refs):
         findings.append("feedback_event_refs_invalid")
+    episode_projection = record.get("episode_projection")
+    if episode_projection is not None:
+        projection = _validate_episode_projection(episode_projection, findings)
+        if projection:
+            if record.get("source_kind") != "TEACHING" or record.get("evidence_ceiling") not in {
+                "TEACHING", "TEACHING_ONLY",
+            }:
+                findings.append("worked_episode_projection_must_remain_teaching")
+            if projection.get("source_episode_id") != record.get("source_case_id"):
+                findings.append("episode_projection_source_case_mismatch")
+            near_miss = projection.get("near_miss") if isinstance(projection.get("near_miss"), dict) else {}
+            if near_miss.get("strongest_rival") != record.get("strongest_rival"):
+                findings.append("episode_projection_strongest_rival_mismatch")
+            if near_miss.get("reversal_observations") != record.get("observable_signals"):
+                findings.append("episode_projection_reversal_observations_mismatch")
+            structural_key = record.get("structural_key") if isinstance(record.get("structural_key"), dict) else {}
+            if structural_key.get("underwriting_route") != projection.get("underwriting_route"):
+                findings.append("episode_projection_underwriting_route_mismatch")
     _forbidden_fields(record, findings)
     return _findings_result(findings)
+
+
+def compile_underwriting_episode_experience_record(
+    episode: dict[str, Any],
+    independent_review: str,
+    *,
+    canonical_episode_ref: str,
+    canonical_review_ref: str,
+    record_id: str,
+    recorded_at: str,
+    structural_key: dict[str, Any],
+    retrieval_roles: list[str],
+    economic_failure_loci: list[str],
+    apply_when: list[str],
+    do_not_apply_when: list[str],
+) -> dict[str, Any]:
+    """Project one reviewed complete worked Episode into the existing JER.
+
+    Worked cases remain Teaching.  This compiler deliberately cannot turn a
+    result-known Episode into transfer evidence; Blind or Prospective Episodes
+    must continue through their existing outcome feedback and independent
+    review before a feedback-derived record can be created.
+    """
+    canonical_episode = _read_json_reference(canonical_episode_ref)
+    if canonical_episode is None or canonical_episode != episode:
+        raise JudgmentExperienceError("underwriting_episode_not_exact_canonical_source")
+    episode_validation = underwriting_episode.validate_enterprise_underwriting_episode(episode)
+    if episode_validation["state"] != "REVIEWABLE":
+        raise JudgmentExperienceError(
+            "underwriting_episode_invalid:" + ",".join(episode_validation["findings"])
+        )
+    review_path = _repository_path(canonical_review_ref)
+    if review_path is None:
+        raise JudgmentExperienceError("underwriting_episode_independent_review_missing_or_unreadable")
+    try:
+        canonical_review = review_path.read_text(encoding="utf-8")
+    except OSError as exc:
+        raise JudgmentExperienceError(
+            "underwriting_episode_independent_review_missing_or_unreadable"
+        ) from exc
+    if canonical_review != independent_review:
+        raise JudgmentExperienceError("underwriting_episode_review_not_exact_canonical_source")
+    if not re.search(
+        r"(?im)^\s*(?:审阅结论|verdict)\s*[:：]\s*`?(?:ACCEPT|ACCEPTED|PASS)`?\s*$",
+        canonical_review,
+    ):
+        raise JudgmentExperienceError("underwriting_episode_independent_review_not_accepted")
+    if episode.get("sample_identity") != "WORKED_CASE":
+        raise JudgmentExperienceError("only_worked_case_episode_may_compile_as_teaching_experience")
+
+    source_projection = underwriting_episode.project_price_free_underwriting_thesis(episode)
+    thesis = source_projection.get("underwriting_thesis")
+    value_route = source_projection.get("value_route")
+    if not isinstance(thesis, dict) or not isinstance(value_route, dict):
+        raise JudgmentExperienceError("underwriting_episode_price_free_projection_incomplete")
+
+    source_refs = _require_existing_references(
+        [canonical_episode_ref], "underwriting_episode_source_refs",
+    )
+    review_refs = _require_existing_references(
+        [canonical_review_ref], "underwriting_episode_review_refs",
+    )
+    normalized_structural_key = deepcopy(structural_key)
+    supplied_route = _text(normalized_structural_key.get("underwriting_route"))
+    projected_route = _text(source_projection.get("underwriting_route"))
+    if supplied_route and supplied_route != projected_route:
+        raise JudgmentExperienceError("underwriting_episode_structural_route_mismatch")
+    normalized_structural_key["underwriting_route"] = projected_route
+
+    reversals = deepcopy(source_projection.get("reversal_observations") or [])
+    episode_projection = {
+        "source_episode_id": source_projection.get("episode_id"),
+        "sample_identity": source_projection.get("sample_identity"),
+        "authority": "TEACHING_ONLY_NO_TRANSFER_CREDIT",
+        "situation": {
+            "situation_model": deepcopy(source_projection.get("situation_model")),
+            "business_position": source_projection.get("business_position"),
+        },
+        "underwriting_route": projected_route,
+        "central_path": thesis.get("central_path"),
+        "mechanism_and_adaptation": {
+            "survival_case": source_projection.get("survival_case"),
+            "adaptation_case": source_projection.get("adaptation_case"),
+        },
+        "near_miss": {
+            "strongest_rival": source_projection.get("strongest_rival"),
+            "reversal_observations": reversals,
+        },
+        "normalization_boundary": {
+            "normalization_case": source_projection.get("normalization_case"),
+            "normal_earnings_treatment": thesis.get("normal_earnings_treatment"),
+            "owner_cash_treatment": thesis.get("owner_cash_treatment"),
+            "economic_directions": deepcopy(thesis.get("economic_directions")),
+        },
+        "permanent_loss_boundary": {
+            "permanent_loss_map": source_projection.get("permanent_loss_map"),
+            "permanent_loss_treatment": thesis.get("permanent_loss_treatment"),
+        },
+        "value_route": {
+            "primary_routes": deepcopy(value_route.get("primary_routes") or []),
+            "excluded_routes": deepcopy(value_route.get("excluded_routes") or []),
+            "route_reasoning": value_route.get("route_reasoning"),
+            "value_route_treatment": thesis.get("value_route_treatment"),
+        },
+    }
+    projected_situation = source_projection.get("situation_model")
+    projected_situation = projected_situation if isinstance(projected_situation, dict) else {}
+    industry_future = projected_situation.get("industry_future_thesis")
+    industry_path = ""
+    if isinstance(industry_future, dict):
+        industry_path = " -> ".join([
+            _text(industry_future.get("most_likely_regime")),
+            _text(industry_future.get("profit_pool_transmission")),
+            _text(industry_future.get("company_exposure")),
+            _text(industry_future.get("adaptation")),
+            _text(industry_future.get("normal_economics")),
+            _text(industry_future.get("permanent_loss")),
+        ])
+    mechanism_chain = " -> ".join([
+        industry_path,
+        _text(source_projection.get("adaptation_case")),
+        _text(source_projection.get("normalization_case")),
+        _text(source_projection.get("permanent_loss_map")),
+    ])
+    investor_relevance = " | ".join([
+        "normal earnings: " + _text(thesis.get("normal_earnings_treatment")),
+        "owner cash: " + _text(thesis.get("owner_cash_treatment")),
+        "permanent loss: " + _text(thesis.get("permanent_loss_treatment")),
+        "value route: " + _text(thesis.get("value_route_treatment")),
+    ])
+    record = {
+        "schema_version": JUDGMENT_EXPERIENCE_RECORD_SCHEMA,
+        "record_id": record_id,
+        "version": 1,
+        "status": "RETRIEVAL_READY",
+        "source_kind": "TEACHING",
+        "source_case_id": source_projection.get("episode_id"),
+        "source_company_id": source_projection.get("company_id"),
+        "source_company_cluster_id": _canonical_company_cluster_id(source_projection.get("company_id")),
+        "source_refs": source_refs,
+        "review_refs": review_refs,
+        "evidence_ceiling": "TEACHING",
+        "proposition": thesis.get("central_path"),
+        "structural_key": normalized_structural_key,
+        "decision_or_no_action": source_projection.get("adaptation_case"),
+        "mechanism_chain": mechanism_chain,
+        "observable_signals": reversals,
+        "strongest_rival": source_projection.get("strongest_rival"),
+        "apply_when": list(apply_when),
+        "do_not_apply_when": list(do_not_apply_when),
+        "investor_relevance": investor_relevance,
+        "retrieval_roles": list(retrieval_roles),
+        "economic_failure_loci": list(economic_failure_loci),
+        "feedback_event_refs": [],
+        "episode_projection": episode_projection,
+        "recorded_at": recorded_at,
+    }
+    validation = validate_judgment_experience_record(record)
+    if validation["state"] != "REVIEWABLE":
+        raise JudgmentExperienceError(
+            "compiled underwriting Episode record invalid: " + ", ".join(validation["findings"])
+        )
+    return record
 
 
 def compile_teaching_experience_record(
@@ -605,16 +894,32 @@ def _structural_fit(record: dict[str, Any], target: dict[str, Any]) -> tuple[str
     same_arena = source["competitive_arena"] == current["competitive_arena"]
     same_boundary = source["responsibility_boundary"] == current["responsibility_boundary"]
     shared_constraints = set(source["company_constraints"]) & set(current["company_constraints"])
+    source_route = _text(source.get("underwriting_route"))
+    target_route = _text(current.get("underwriting_route"))
+    same_route = bool(source_route and target_route and source_route == target_route)
     reasons = [
         "mechanism=" + ",".join(sorted(mechanisms)) if mechanisms else "mechanism_mismatch",
         "lifecycle_match" if same_lifecycle else "lifecycle_mismatch",
         "arena_match" if same_arena else "arena_mismatch",
         "responsibility_boundary_match" if same_boundary else "responsibility_boundary_mismatch",
         "constraints=" + ",".join(sorted(shared_constraints)) if shared_constraints else "constraints_mismatch",
+        (
+            "underwriting_route_match" if same_route
+            else "underwriting_route_mismatch" if source_route and target_route
+            else "underwriting_route_unavailable"
+        ),
     ]
     if not mechanisms:
         return "NO_MATCH", 0, reasons
-    score = len(mechanisms) * 10 + int(same_lifecycle) * 4 + int(same_epoch) * 2 + int(same_arena) * 4 + int(same_boundary) * 5 + len(shared_constraints)
+    score = (
+        len(mechanisms) * 10
+        + int(same_lifecycle) * 4
+        + int(same_epoch) * 2
+        + int(same_arena) * 4
+        + int(same_boundary) * 5
+        + len(shared_constraints)
+        + int(same_route) * 2
+    )
     if same_lifecycle and same_arena and same_boundary and shared_constraints:
         return "PRIMARY_ELIGIBLE", score, reasons
     if same_boundary:
@@ -683,6 +988,10 @@ def build_experience_retrieval_pack(
                 "strongest_rival": record["strongest_rival"],
                 "observable_signals": deepcopy(record["observable_signals"]),
                 "investor_relevance": record["investor_relevance"],
+                **(
+                    {"episode_projection": deepcopy(record["episode_projection"])}
+                    if isinstance(record.get("episode_projection"), dict) else {}
+                ),
             },
         })
     candidates.sort(key=lambda item: (-item["score"], item["record_id"]))
@@ -743,10 +1052,37 @@ def validate_experience_retrieval_pack(pack: Any) -> dict[str, Any]:
             _required(guidance, ("proposition", "strongest_rival", "investor_relevance"), "candidate:guidance_", findings)
             for field in ("apply_when", "do_not_apply_when", "observable_signals"):
                 _text_list(guidance.get(field), "candidate:guidance_" + field, findings)
+            if "episode_projection" in guidance:
+                _validate_episode_projection(
+                    guidance.get("episode_projection"),
+                    findings,
+                    prefix="candidate:guidance_episode_",
+                )
     record_ids = [item.get("record_id") for item in candidates if isinstance(item, dict)]
     if len(record_ids) != len(set(record_ids)):
         findings.append("candidate_record_id_duplicate")
     return _findings_result(findings)
+
+
+def build_registry_experience_retrieval_pack(
+    *,
+    pack_id: str,
+    target: dict[str, Any],
+    registry: dict[str, Any],
+    retrieved_at: str,
+) -> dict[str, Any]:
+    """Retrieve from the existing registry instead of a caller-curated list."""
+    registry_validation = validate_experience_registry(registry)
+    if registry_validation["state"] != "REVIEWABLE":
+        raise JudgmentExperienceError(
+            "experience registry invalid: " + ", ".join(registry_validation["findings"])
+        )
+    return build_experience_retrieval_pack(
+        pack_id=pack_id,
+        target=target,
+        records=registry["records"],
+        retrieved_at=retrieved_at,
+    )
 
 
 def _contains_forbidden_investment_field(value: Any) -> bool:
@@ -1148,6 +1484,35 @@ def version_record_after_feedback(
     if validation["state"] != "REVIEWABLE":
         raise JudgmentExperienceError("versioned record invalid: " + ", ".join(validation["findings"]))
     return next_record
+
+
+def append_experience_record(registry: dict[str, Any], *, record: dict[str, Any]) -> dict[str, Any]:
+    """Append one initial record to the existing registry without mutation."""
+    registry_validation = validate_experience_registry(registry)
+    if registry_validation["state"] != "REVIEWABLE":
+        raise JudgmentExperienceError(
+            "experience registry invalid: " + ", ".join(registry_validation["findings"])
+        )
+    record_validation = validate_judgment_experience_record(record)
+    if record_validation["state"] != "REVIEWABLE":
+        raise JudgmentExperienceError(
+            "experience record invalid: " + ", ".join(record_validation["findings"])
+        )
+    if record.get("version") != 1:
+        raise JudgmentExperienceError("initial_experience_record_must_be_version_one")
+    if any(
+        item.get("record_id") == record.get("record_id")
+        for item in registry.get("records", []) if isinstance(item, dict)
+    ):
+        raise JudgmentExperienceError("experience_record_id_already_registered")
+    result = deepcopy(registry)
+    result["records"].append(deepcopy(record))
+    result_validation = validate_experience_registry(result)
+    if result_validation["state"] != "REVIEWABLE":
+        raise JudgmentExperienceError(
+            "appended experience registry invalid: " + ", ".join(result_validation["findings"])
+        )
+    return result
 
 
 def append_experience_feedback(

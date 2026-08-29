@@ -5,6 +5,7 @@ from copy import deepcopy
 from pathlib import Path
 
 from scripts.report_completion import evaluate_report_completion
+from scripts.enterprise_underwriting_episode import project_price_free_underwriting_thesis
 from scripts.turtle_agent.tool_registry import ToolRegistry
 from scripts.turtle_agent.tools.read_tools import read_valuation_route
 from scripts.valuation_model_gate import validate_valuation_model_ledger
@@ -16,6 +17,11 @@ from scripts.valuation_routing import (
     load_registry,
     validate_company_archetype,
     validate_valuation_route,
+)
+from scripts import enterprise_judgment_core as enterprise_core
+from tests.test_enterprise_judgment_core import (
+    _judgment_input, _ledger, _model, _review, _source_package,
+    _underwriting_episode,
 )
 
 
@@ -129,6 +135,105 @@ def test_route_has_role_based_models_rejections_and_exact_basis(tmp_path: Path) 
     assert {item["route_model_id"] for item in route["models"] if item["role"] == "primary"} == {"RETURN_DECOMPOSITION", "EPV"}
     assert {item["route_model_id"] for item in route["rejected_models"]} == {"DCF_FCFF"}
     assert route["synthesis_policy"]["method"] == "role_based_decision_not_weighted_average"
+
+
+def test_underwriting_thesis_overrides_archetype_default_route_without_adding_value(tmp_path: Path) -> None:
+    _fixture(tmp_path, industry="水泥")
+    archetype = build_company_archetype(tmp_path, persist=False)
+    episode = json.loads((Path(__file__).parents[1] / "docs/development/research/enterprise_underwriting_episodes/CN600585_20240501_WORKED_CASE_V1.json").read_text(encoding="utf-8"))
+    projection = project_price_free_underwriting_thesis(episode)
+    projection["company_id"] = archetype["report_id"]
+
+    route = build_valuation_route(
+        tmp_path, archetype, underwriting_thesis_projection=projection, persist=False,
+    )
+
+    assert route["validation"]["state"] == "REVIEWABLE"
+    assert {item["route_model_id"] for item in route["models"] if item["role"] == "primary"} == {
+        "ASSET_VALUE", "EPV",
+    }
+    assert route["underwriting_thesis_ref"]["underwriting_thesis_id"] == projection["underwriting_thesis_id"]
+    assert "DOMESTIC_INCREMENTAL_ASSET_RETURN" in route["underwriting_input_treatments"]["excluded_component_ids"]
+    assert "price" not in route["underwriting_input_treatments"]
+
+
+def test_underwriting_route_honors_intentionally_empty_auxiliary_roles(tmp_path: Path) -> None:
+    _fixture(tmp_path, industry="水泥")
+    archetype = build_company_archetype(tmp_path, persist=False)
+    episode = _underwriting_episode()
+    projection = project_price_free_underwriting_thesis(episode)
+    projection["company_id"] = archetype["report_id"]
+    projection["value_route"]["valuation_model_roles"] = {"primary": ["EPV"]}
+
+    route = build_valuation_route(
+        tmp_path,
+        archetype,
+        underwriting_thesis_projection=projection,
+        persist=False,
+    )
+
+    assert route["validation"]["state"] == "REVIEWABLE"
+    assert {(item["role"], item["route_model_id"]) for item in route["models"]} == {
+        ("primary", "EPV")
+    }
+
+
+def test_underwriting_route_rejects_company_or_model_identity_mismatch(tmp_path: Path) -> None:
+    _fixture(tmp_path, industry="水泥")
+    archetype = build_company_archetype(tmp_path, persist=False)
+    episode = json.loads((Path(__file__).parents[1] / "docs/development/research/enterprise_underwriting_episodes/CN600585_20240501_WORKED_CASE_V1.json").read_text(encoding="utf-8"))
+    projection = project_price_free_underwriting_thesis(episode)
+    try:
+        build_valuation_route(tmp_path, archetype, underwriting_thesis_projection=projection, persist=False)
+    except ValueError as exc:
+        assert "company" in str(exc)
+    else:
+        raise AssertionError("company mismatch must not route")
+
+    projection["company_id"] = archetype["report_id"]
+    projection["value_route"]["valuation_model_roles"]["primary"] = ["NOT_A_MODEL"]
+    try:
+        build_valuation_route(tmp_path, archetype, underwriting_thesis_projection=projection, persist=False)
+    except ValueError as exc:
+        assert "unknown model" in str(exc)
+    else:
+        raise AssertionError("unknown underwriting model binding must not route")
+
+
+def test_runtime_route_automatically_consumes_episode_bound_in_frozen_cjo(
+    tmp_path: Path,
+) -> None:
+    _fixture(tmp_path, industry="水泥")
+    package = _source_package()
+    episode = _underwriting_episode()
+    candidate = enterprise_core.compile_cjo_candidate(
+        model=_model(source_package=package),
+        ledger=_ledger(),
+        source_package=package,
+        judgment_input=_judgment_input(),
+        underwriting_episode=episode,
+    )
+    frozen = enterprise_core.freeze_cjo(
+        candidate=candidate,
+        independent_review=_review(candidate),
+    )
+    frozen_path = tmp_path / "frozen_cjo.json"
+    _write(frozen_path, frozen)
+    contract = json.loads((tmp_path / "analysis_contract.json").read_text(encoding="utf-8"))
+    contract.update({
+        "company_id": frozen["company_id"],
+        "canonical_judgment_refs": {"frozen_cjo_ref": "frozen_cjo.json"},
+    })
+    _write(tmp_path / "analysis_contract.json", contract)
+
+    archetype = build_company_archetype(tmp_path, persist=False)
+    route = build_valuation_route(tmp_path, archetype, persist=False)
+
+    assert route["validation"]["state"] == "REVIEWABLE"
+    assert route["underwriting_thesis_ref"]["episode_id"] == episode["episode_id"]
+    assert {item["route_model_id"] for item in route["models"] if item["role"] == "primary"} == {
+        "EPV",
+    }
 
 
 def test_route_rejects_basis_role_and_synthesis_tampering(tmp_path: Path) -> None:

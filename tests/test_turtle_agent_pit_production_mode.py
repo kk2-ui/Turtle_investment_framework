@@ -7,6 +7,9 @@ from pathlib import Path
 import pytest
 
 from scripts.turtle_agent import run as run_module
+from scripts import current_company_cjo_admission as current_admission
+from scripts.judgment_generation_handoff import build_judgment_generation_handoff
+from scripts.valuation_routing import build_valuation_route, load_registry
 from scripts.financial_driver_bridge import (
     evaluate_output_financial_driver_bridge,
     initialize_financial_driver_bridge_policy,
@@ -20,6 +23,8 @@ from scripts.thesis_test_gate import (
 from tests.test_financial_driver_bridge import _payload as _valid_bridge_payload
 from tests.test_financial_driver_bridge import _prepare as _prepare_bridge_dependencies
 from tests.test_stage14_thesis_test_gate import _no_probability_company_judgment_payload
+from tests import test_current_company_cjo_admission as admission_fixture
+from tests import test_enterprise_judgment_core as core_fixture
 from turtle_agent.agent_loop import AgentConfig, TurtleAgent
 from turtle_agent.llm_client import LlmResponse, ToolCall
 from turtle_agent.tool_registry import ToolRegistry
@@ -77,6 +82,355 @@ class BoundNormalCjoLlm(BoundCjoLlm):
                 id="assemble", name="assemble_report", arguments={"company_name": "ignored"},
             )]),
         ]
+
+
+class EpisodeInvestmentLlm(ProductionLlm):
+    def __init__(self) -> None:
+        super().__init__()
+        self.responses = [
+            LlmResponse(tool_calls=[ToolCall(
+                id="contract", name="pit_read_report_contract_pack", arguments={},
+            )]),
+            LlmResponse(tool_calls=[ToolCall(
+                id="agenda", name="pit_read_judgment_generation_handoff",
+                arguments={"view": "RESEARCH_AGENDA"},
+            )]),
+            LlmResponse(tool_calls=[ToolCall(
+                id="synthesis", name="pit_read_judgment_generation_handoff",
+                arguments={"view": "JUDGMENT_SYNTHESIS"},
+            )]),
+            LlmResponse(tool_calls=[ToolCall(
+                id="enrichment", name="pit_read_judgment_generation_handoff",
+                arguments={"view": "INVESTMENT_ENRICHMENT"},
+            )]),
+            LlmResponse(tool_calls=[ToolCall(
+                id="assemble", name="pit_assemble_report",
+                arguments={"company_name": "Synthetic Company"},
+            )]),
+        ]
+
+
+def _episode_bound_current_company_artifacts(tmp_path: Path) -> tuple[Path, Path, dict]:
+    fixture_root = tmp_path / "episode-admission-fixture"
+    fixture_root.mkdir()
+    inputs = admission_fixture._primary_inputs(fixture_root)
+    episode = core_fixture._underwriting_episode()
+    episode["cutoff_at"] = inputs["source_package"]["cutoff_at"]
+    episode["episode_id"] = "EUE:COMPANY:SYNTHETIC:20260802:BLIND:V1"
+    episode["underwriting_thesis"]["thesis_id"] = "UWT:COMPANY:SYNTHETIC:20260802:V1"
+    episode["evidence_trace"][0]["source_ref"] = "SRC:OPERATING"
+    inputs["admission_contract"]["primary_binding"] = {
+        "binding_kind": "ENTERPRISE_UNDERWRITING_EPISODE",
+        "episode_id": episode["episode_id"],
+        "underwriting_thesis_id": episode["underwriting_thesis"]["thesis_id"],
+        "central_trace_ids": list(inputs["candidate"]["central_path"]["trace_ids"]),
+    }
+    compiled = current_admission.compile_current_company_cjo_candidate(
+        model=inputs["model"],
+        ledger=inputs["ledger"],
+        source_package=inputs["source_package"],
+        judgment_input=inputs["judgment_input"],
+        admission_contract=inputs["admission_contract"],
+        underwriting_episode=episode,
+    )
+    review = core_fixture._review(compiled["candidate"])
+    review_binding = current_admission.build_current_company_cjo_review_binding(
+        candidate=compiled["candidate"],
+        admission=compiled["admission"],
+        independent_review=review,
+    )
+    frozen = current_admission.freeze_admitted_current_company_cjo(
+        model=inputs["model"],
+        ledger=inputs["ledger"],
+        source_package=inputs["source_package"],
+        judgment_input=inputs["judgment_input"],
+        admission_contract=inputs["admission_contract"],
+        underwriting_episode=episode,
+        independent_review=review,
+        admission_review=review_binding,
+    )
+    frozen_path = tmp_path / "frozen_cjo.json"
+    admission_path = tmp_path / "current_company_cjo_admission.json"
+    frozen_path.write_text(
+        json.dumps(frozen["frozen_cjo"], ensure_ascii=False), encoding="utf-8"
+    )
+    admission_path.write_text(
+        json.dumps(frozen["admission"], ensure_ascii=False), encoding="utf-8"
+    )
+    return frozen_path, admission_path, frozen
+
+
+def test_episode_bound_investment_entry_bypasses_comparative_and_feeds_route_and_handoff(
+    tmp_path: Path,
+) -> None:
+    frozen_path, admission_path, frozen = _episode_bound_current_company_artifacts(tmp_path)
+    binding = run_module._load_episode_bound_current_company_judgment(
+        str(frozen_path),
+        str(admission_path),
+        company_code=frozen["frozen_cjo"]["company_id"],
+        cutoff_at=frozen["frozen_cjo"]["cutoff_at"],
+    )
+    output = tmp_path / "production-output"
+    output.mkdir()
+
+    run_module._initialize_pit_production_output(
+        output_dir=str(output),
+        code=frozen["frozen_cjo"]["company_id"],
+        run_id="RUN:EPISODE:INVESTMENT",
+        cutoff_at=frozen["frozen_cjo"]["cutoff_at"],
+        analysis_purpose="INVESTMENT_DECISION",
+        canonical_judgment_binding=binding,
+    )
+
+    contract = json.loads((output / "analysis_contract.json").read_text(encoding="utf-8"))
+    assert contract["canonical_judgment_refs"] == {
+        "frozen_cjo_ref": str(frozen_path.resolve()),
+        "current_company_cjo_admission_ref": str(admission_path.resolve()),
+    }
+    assert not (output / "company_judgment_predecessor.json").exists()
+    assert not (output / "financial_driver_bridge_policy.json").exists()
+    assert not (output / "thesis_test_policy.json").exists()
+    active_tools = TurtleAgent(
+        llm=None,
+        tools=ToolRegistry(),
+        config=AgentConfig(
+            code=frozen["frozen_cjo"]["company_id"],
+            output_dir=str(output),
+            analysis_purpose="INVESTMENT_DECISION",
+            pit_production_mode=True,
+        ),
+    )._pit_active_allowed_tools()
+    assert "pit_write_financial_driver_bridge" not in active_tools
+    assert "pit_write_thesis_test_ledger" not in active_tools
+    handoff = build_judgment_generation_handoff(output, "JUDGMENT_SYNTHESIS")
+    assert handoff["readiness"]["state"] == "READY"
+    assert handoff["projection"]["underwriting_thesis_projection"]["episode_id"] == binding["episode_id"]
+
+    registry = load_registry()
+    archetype = {
+        "schema_version": "company-archetype.v1",
+        "report_id": frozen["frozen_cjo"]["company_id"],
+        "company_id": frozen["frozen_cjo"]["company_id"],
+        "primary_archetype": {
+            "archetype_id": "general_operating",
+            "label": registry["archetypes"]["general_operating"]["label"],
+        },
+    }
+    route = build_valuation_route(output, archetype, registry=registry, persist=True)
+    assert route["validation"]["state"] == "REVIEWABLE"
+    assert route["underwriting_thesis_ref"]["episode_id"] == binding["episode_id"]
+    enrichment = build_judgment_generation_handoff(output, "INVESTMENT_ENRICHMENT")
+    assert enrichment["readiness"]["state"] == "READY"
+    assert (
+        enrichment["projection"]["company_judgment_predecessor"]
+        ["underwriting_thesis_projection"]["episode_id"]
+        == binding["episode_id"]
+    )
+    assert "selection_admission" not in json.dumps(enrichment, ensure_ascii=False)
+    assert "SELECTION_ADMITTED" not in json.dumps(contract, ensure_ascii=False)
+
+    # A stale canonical object must block on validation; it must not re-enable
+    # the legacy thesis/bridge authoring tools as a fallback path.
+    frozen_path.write_text("{}", encoding="utf-8")
+    stale_active_tools = TurtleAgent(
+        llm=None, tools=ToolRegistry(),
+        config=AgentConfig(
+            code=frozen["frozen_cjo"]["company_id"], output_dir=str(output),
+            analysis_purpose="INVESTMENT_DECISION", pit_production_mode=True,
+        ),
+    )._pit_active_allowed_tools()
+    assert "pit_write_financial_driver_bridge" not in stale_active_tools
+    assert "pit_write_thesis_test_ledger" not in stale_active_tools
+
+
+def test_episode_company_identity_accepts_supported_canonical_and_runtime_codes() -> None:
+    assert run_module._company_identity_matches("CN:600585", "600585.SH")
+    assert run_module._company_identity_matches("CN:000651", "000651.SZ")
+    assert run_module._company_identity_matches("HK:00696", "00696.HK")
+    assert not run_module._company_identity_matches("CN:600585", "000651.SZ")
+
+
+def test_episode_bound_stub_llm_reaches_real_assemble_and_production_completion_without_legacy_g1j(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Exercise the formal writer exit, not a prewritten completion fixture."""
+    from scripts import absolute_quality_scorecard as absolute_quality
+    from scripts import research_calibration
+    from turtle_agent.tools import pit_production_write_tools as production_tools
+    from turtle_agent.tools import write_tools
+    import turtle_agent.llm_client as llm_module
+
+    frozen_path, admission_path, frozen_bundle = _episode_bound_current_company_artifacts(
+        tmp_path
+    )
+    frozen = frozen_bundle["frozen_cjo"]
+    binding = run_module._load_episode_bound_current_company_judgment(
+        str(frozen_path), str(admission_path),
+        company_code=frozen["company_id"], cutoff_at=frozen["cutoff_at"],
+    )
+    output = tmp_path / "episode-production"
+    llm = EpisodeInvestmentLlm()
+    observed: dict[str, object] = {}
+
+    class FakeRunner:
+        run_id = "RUN:EPISODE:E2E"
+        cutoff_at = frozen["cutoff_at"]
+
+        def attestation(self) -> dict[str, object]:
+            return {
+                "run_id": self.run_id,
+                "read_audit": [{
+                    "allowed": True, "kind": "SOURCE", "source_id": "SRC:PIT",
+                }],
+                "source_allowlist": [],
+            }
+
+    class FakeManifest:
+        def __init__(self) -> None:
+            self.artifacts: list[tuple[str, str]] = []
+
+        def add_artifact(self, path: object, kind: str) -> None:
+            self.artifacts.append((str(path), kind))
+
+    class FakeRuntime:
+        manifest = FakeManifest()
+
+    real_initialize = run_module._initialize_pit_production_output
+
+    def initialize_and_seed(**kwargs: object) -> None:
+        real_initialize(**kwargs)
+        root = Path(str(kwargs["output_dir"]))
+        observed["initialized_policy_names"] = sorted(
+            path.name for path in root.glob("*_policy.json")
+        )
+        # Non-target report gates are represented by their legacy opt-in/SKIP
+        # behavior so this acceptance isolates the Episode predecessor exit.
+        for path in root.glob("*_policy.json"):
+            path.unlink()
+        label = "观察但不为未证实现金改善付费"
+        sentence = (
+            "当前判断把行业利润池、公司适应、正常盈利、owner cash、永久损失和价格处理"
+            "连成同一条可反驳路径，最强反方是改善仅来自共同需求恢复；若现金转换不跟随，"
+            "则不提高正常化现金或可接受买价。[source: SRC:PIT]"
+        )
+        chapters = root / "chapters"
+        chapters.mkdir(parents=True, exist_ok=True)
+        for idx in range(15):
+            heading_label = label if idx in {0, 14} else "企业承保"
+            (chapters / f"_ch{idx:02d}.md").write_text(
+                f"## Ch{idx} {heading_label}\n\n### 经营与投资含义\n"
+                + "\n".join([sentence] * 150),
+                encoding="utf-8",
+            )
+        (root / "chapter_audit_ledger.json").write_text(json.dumps({
+            "chapters": {
+                str(idx): {"final": {
+                    "passed": True, "verdict": "pass", "error_count": 0,
+                    "warn_count": 0, "violations": [],
+                }}
+                for idx in range(15)
+            }
+        }), encoding="utf-8")
+        (root / "decision_manifest.json").write_text(json.dumps({
+            "qualitative_decision": "WATCH",
+            "quantitative_decision": "WATCH",
+            "unified_decision": "WATCH",
+            "display_label": label,
+            "decision_family": "WATCH",
+            "position_pct": 0,
+        }, ensure_ascii=False), encoding="utf-8")
+        (root / "report_context.json").write_text(json.dumps({
+            "meta": {"report_id": frozen["company_id"]},
+            "coverage": {"citable_observation_ids": []},
+            "validation": {"state": "REVIEWABLE"},
+        }), encoding="utf-8")
+        (root / "official_evidence_validation.json").write_text(json.dumps({
+            "state": "REVIEWABLE", "invalid_findings": [],
+            "incomplete_findings": [],
+        }), encoding="utf-8")
+        registry = load_registry()
+        archetype = {
+            "schema_version": "company-archetype.v1",
+            "report_id": frozen["company_id"],
+            "company_id": frozen["company_id"],
+            "primary_archetype": {
+                "archetype_id": "general_operating",
+                "label": registry["archetypes"]["general_operating"]["label"],
+            },
+        }
+        route = build_valuation_route(root, archetype, registry=registry, persist=True)
+        assert route["validation"]["state"] == "REVIEWABLE"
+
+    real_configure = production_tools.configure_pit_production_writer
+
+    def configure_with_completed_refresh(**kwargs: object) -> None:
+        real_configure(**kwargs)
+        production_tools._advance_handoff_generation(prerequisite_refresh=True)
+
+    def fake_snapshot(output_dir: str, report_text: str, **kwargs: object) -> dict[str, object]:
+        root = Path(output_dir)
+        contract = json.loads((root / "analysis_contract.json").read_text(encoding="utf-8"))
+        completion = kwargs.get("completion")
+        completion_status = (
+            str(completion.get("status") or "COMPLETE")
+            if isinstance(completion, dict) else "COMPLETE"
+        )
+        path = root / "publication_snapshot.json"
+        path.write_text(json.dumps({
+            "run_id": contract["run_id"],
+            "analysis_purpose": contract["analysis_purpose"],
+            "completion_status": completion_status,
+            "v3_enforced": True,
+        }), encoding="utf-8")
+        return {"written": True, "path": str(path)}
+
+    monkeypatch.setattr(run_module, "_initialize_pit_production_output", initialize_and_seed)
+    monkeypatch.setattr(production_tools, "configure_pit_production_writer", configure_with_completed_refresh)
+    monkeypatch.setattr(llm_module, "LlmClient", lambda *args, **kwargs: llm)
+    monkeypatch.setattr(write_tools, "_run_quality_checks", lambda *args, **kwargs: {
+        "passed": True, "issues": [], "warnings": [],
+    })
+    monkeypatch.setattr(write_tools, "_render_report_html", lambda *args, **kwargs: None)
+    monkeypatch.setattr(absolute_quality, "evaluate_absolute_quality", lambda *args, **kwargs: {
+        "status": "PASS", "failed_chapters": [],
+    })
+    monkeypatch.setattr(research_calibration, "create_publication_snapshot", fake_snapshot)
+    monkeypatch.delenv("DEEPSEEK_API_KEY", raising=False)
+    monkeypatch.setenv("ANTHROPIC_API_KEY", "offline-test-key")
+
+    report_path = run_module._run_pit_production_freeze(
+        code=frozen["company_id"], output_dir=str(output), model="offline-stub",
+        max_iterations=8, pit_runner=FakeRunner(), pit_case_id="CASE:EPISODE:E2E",
+        pit_experiment_id="EXPERIMENT:EPISODE:E2E", runtime=FakeRuntime(),
+        diagnostics={}, analysis_purpose="INVESTMENT_DECISION",
+        canonical_judgment_binding=binding,
+    )
+    completion = run_module._validate_pit_production_completion(
+        output_dir=str(output), report_path=report_path,
+        run_id=FakeRunner.run_id, analysis_purpose="INVESTMENT_DECISION",
+    )
+    completion_report = json.loads(
+        (output / "completion_report.json").read_text(encoding="utf-8")
+    )
+
+    initialized_policies = set(observed["initialized_policy_names"])
+    assert "financial_driver_bridge_policy.json" not in initialized_policies
+    assert "thesis_test_policy.json" not in initialized_policies
+    assert not (output / "financial_driver_bridge.json").exists()
+    assert not (output / "thesis_test.json").exists()
+    assert not (output / "company_judgment_predecessor.json").exists()
+    assert not list(output.glob("*analogy*"))
+    assert not list(output.glob("*selection*"))
+    assert completion["completion_status"] == "COMPLETE"
+    predecessor = completion_report["validators"]["enterprise_underwriting_predecessor"]
+    assert predecessor["state"] == "DECISION_READY"
+    assert completion_report["validators"]["financial_driver_bridge"]["state"] == "SKIP"
+    assert completion_report["validators"]["thesis_test"]["state"] == "SKIP"
+    assert all(
+        "pit_write_financial_driver_bridge" not in schema
+        and "pit_write_thesis_test_ledger" not in schema
+        for schema in llm.schemas
+    )
 
 
 def test_pit_production_agent_uses_only_bound_tools_and_ends_at_assembly() -> None:
