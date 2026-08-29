@@ -2,11 +2,11 @@
 
 > 文件身份：`CURRENT / ARCHITECTURE_ORIENTATION`
 >
-> 更新：2026-08-25
+> 更新：2026-08-29
 >
 > 本文是 Turtle 的架构总览和共同语言，面向投资者、研究 Agent 和后续实现者。它解释系统为什么这样分层、各层解决什么问题，以及训练结果如何服务企业判断和买点判断。本文不是动态项目状态、具体 schema 或执行路线的替代品。
 
-当前状态以 `docs/CURRENT_DOCUMENTS.md`、`GOALS.md` 和适用的路线图为准；具体对象的权限以代码和 schema 为准。
+当前状态以 `docs/CURRENT_DOCUMENTS.md`、`GOALS.md` 和适用的路线图为准；企业判断、训练、估值和黄金报告的当前上位设计是 `TURTLE_ENTERPRISE_UNDERWRITING_SYSTEM_V1.md`。具体对象的权限以代码和 schema 为准。
 
 ## 1. Turtle 要解决什么问题
 
@@ -43,41 +43,35 @@ Turtle 不是“自动选股器”，也不是“输入财务数据后输出目�
 ## 3. 总体架构
 
 ```text
-                    ┌──────────────────────────┐
-                    │  当前价格与投资决策层     │
-                    │  估值、预期差、BuyBand    │
-                    └────────────┬─────────────┘
-                                 │ 只读企业判断，不能反写
-                    ┌────────────▼─────────────┐
-                    │  企业判断层：CJO          │
-                    │  经营机制、现金、风险、反方 │
-                    └────────────┬─────────────┘
-                                 │
-          ┌──────────────────────▼──────────────────────┐
-          │ Decision Contract + Measurement Contract       │
-          │ 研究目的、cutoff、时域、权限、结果如何结算     │
-          └──────────────────────┬──────────────────────┘
-                                 │
-                    ┌────────────▼─────────────┐
-                    │ 官方证据与 PIT 层         │
-                    │ 来源、页码、责任边界、时点 │
-                    └────────────┬─────────────┘
-                                 │
-                    ┌────────────▼─────────────┐
-                    │ 训练与反馈层              │
-                    │ 历史、Teaching、Forecast  │
-                    │ Comparative、Learning     │
-                    └──────────────────────────┘
+Decision Frame + 官方证据/PIT + 企业经营与管理行动对象
+                         |
+                         v
+              EnterpriseUnderwritingEpisode
+        处境/周期结构 -> 生存适应 -> 正常化/owner cash
+        -> 永久损失 -> 价值路线 -> 最强反方与翻转条件
+                    /                       \
+                   v                         v
+       UnderwritingThesis             InvestmentTreatment
+          （价格前）                       （价格后）
+             |                              |
+             v                              v
+      Frozen CJO 投影              估值/预期差/条件化 BuyBand
+                    \                       /
+                     v                     v
+                      同一主张的黄金报告
+
+训练与反馈：Worked Case / Blind Replay / Prospective Episode
+局部工具：八维、Forecast、Measurement、Comparative、receipt
 ```
 
 这不是一个允许各层自由互相覆盖的流水线。每层有自己的责任：
 
-- 证据层回答“当时知道什么”；
-- 合同层回答“这次研究要判断什么、未来如何验证”；
-- 企业判断层回答“企业经营是否值得承保”；
-- 估值层回答“在当前价格下是否值得承担风险”；
-- 训练层回答“系统是否真的从过去的判断中变得更好”；
-- 报告层只是把已冻结的内容编译成投资者可读的完整研究。
+- 证据和合同回答“当时知道什么、这次要判断什么、以后怎样验证”；
+- `EnterpriseUnderwritingEpisode` 对从处境到价值路线的完整投资主张负责；
+- CJO 是价格前企业判断的冻结兼容投影，不再独立重建故事；
+- 估值层回答“当前价格是否值得承担已经识别的风险”；
+- 训练层回答“这条完整判断链是否在未见公司中变得更好”；
+- 报告层把同一个 Episode 编译成投资者可读的完整研究。
 
 ## 4. 证据层：先建立可审计事实
 
@@ -126,9 +120,9 @@ Measurement Contract 必须独立提供给结果 custodian。custodian 不应看
 
 当前水泥 2018 Forecast 暴露的正是这一层缺口：资料存在，但部分结果无法无歧义映射到冻结定义，因此应保留 `EVIDENCE_INELIGIBLE` 或 `MEASUREMENT_MISMATCH`，而不是强行标记 `OBSERVED`。
 
-## 6. 企业判断层：CJO 是核心产品
+## 6. 企业判断层：Episode 是主对象，CJO 是冻结投影
 
-CJO（Company Judgment Object）是对企业经营状态的冻结判断，不是报告正文，也不是交易指令。
+`EnterpriseUnderwritingEpisode` 拥有从行业处境、生存、适应、正常化、owner cash、永久损失到价值路线的连续论证。CJO（Company Judgment Object）是其中价格前企业判断的冻结投影，不是另一套综合、报告正文或交易指令。
 
 它应当把以下链条连起来：
 
@@ -150,20 +144,19 @@ CJO 必须保留：
 - 未来监测条件；
 - `UNKNOWN` 和保守处理。
 
-CJO 的作用是防止当前价格、估值模型或报告写作反过来塑造企业事实。
+CJO 的作用是防止当前价格、估值模型或报告写作反过来塑造企业事实。它必须由同一个 `UnderwritingThesis` 投影；若 CJO、估值和报告出现三条不同公司故事，应修复投影，不应要求投资者自行拼接。
 
-## 7. 训练层的分工
+## 7. 训练层：练完整承保任务
 
-训练对象不是一个“大样本池”，而是按主张和证据能力分层。
+训练的顶层样本不再按 Industry、Teaching、Forecast、Comparative 互斥分轨，而按反馈身份区分：
 
-| 训练轨道 | 投资意义 | 能否直接证明选股方法有效 |
+| 样本身份 | 投资意义 | 能证明什么 |
 |---|---|---|
-| Industry History | 认识行业发展、退出、失败和生命周期 | 不能 |
-| Teaching / Boundary | 学习机制、测量边界和常见误判 | 不能 |
-| Forecast | 预测企业状态，检验校准、覆盖和不确定性 | 不能直接证明因果选股 |
-| Comparative | 在机制定义的竞争范围内比较行动与反事实 | 只有满足严格结算后才可能 |
-| Learning | 把已结算错误变成下一公司可审计的研究变化 | 必须证明迁移 |
-| Prospective Shadow | 检验部署后的未来时钟和污染控制 | 不是历史训练成绩 |
+| `WORKED_CASE` | 学习完整推理、near miss 和价值路线 | 教学覆盖，不证明能力 |
+| `BLIND_REPLAY` | 在历史 cutoff 下独立完成完整承保 | 揭示后的判断反馈；仍受模型记忆污染限制 |
+| `PROSPECTIVE_EPISODE` | 在真实未来时钟下检验部署 | 真实校准；少量样本不证明普适收益 |
+
+Industry History、Lifecycle、Teaching、Forecast 和 Comparative 是 Episode 内可选的资料或反馈工具。一次训练必须从处境和公司位置走到生存、正常化、永久损失与价值路线；字段结算只负责定位哪条链错了。
 
 ### Industry History 与 Lifecycle
 
@@ -185,13 +178,13 @@ Forecast 主要预测企业状态，而不是股票涨跌，通常包括：
 - 竞争位置；
 - 永久损失风险。
 
-Forecast 的结果只能修改与其识别强度相称的校准、覆盖率、状态定义或不确定性政策。它不能自动成为 CJO、估值或买点。
+Forecast 的结果只能修改与其识别强度相称的校准、覆盖率、状态定义或不确定性政策。它不能自动成为 CJO、估值或买点，也不能代替完整 Episode 的反馈。
 
 ### Comparative
 
 Comparative 要求企业有明确的已实施行动、可定义的竞争经济体、固定反事实和独立的经营与现金结果。竞争范围由机制定义，不由“同一省份”这一单一字段决定。
 
-水泥 H2 当前没有合格的公司级行动证据，所以方向性 Comparative 样本仍为零。这不影响水泥作为行业史、Teaching 或 Forecast 训练对象。
+水泥 H2 没有合格的公司级行动证据，所以该相对因果主张不能进入 Comparative。这不影响水泥作为完整 worked case、行业史、Teaching 或 Forecast 材料，也不阻断生存、正常化和价值路线判断。
 
 ### Learning
 
@@ -205,14 +198,14 @@ Comparative 要求企业有明确的已实施行动、可定义的竞争经济�
   -> 独立审阅确认改变真实发生
 ```
 
-只有复盘文字，没有下一对象的冻结字段变化，不能称为训练能力提升。
+只有复盘文字，没有下一对象的判断链或研究行为变化，不能称为训练能力提升。字段变化可以是证据，但不是唯一形式；材料改善也可以表现为更早识别结构毁灭、收窄正常化范围、切换价值路线或改变价格处理。
 
 ## 8. 估值与投资 Overlay
 
-企业判断完成后，才进入 Investment Overlay：
+价格前的 `UnderwritingThesis` 完成后，才进入 Investment Overlay：
 
 ```text
-冻结 CJO
+同一 Episode 的 UnderwritingThesis / Frozen CJO 投影
   -> 资产价值 / 盈利能力价值 / owner-cash 价值
   -> 当前价格与市场隐含预期
   -> 未来现金流与永久损失情景
@@ -228,11 +221,11 @@ Comparative 要求企业有明确的已实施行动、可定义的竞争经济�
 - 低估值不是自动的安全边际；
 - 历史市场回报不是企业经营结果。
 
-价格只能作为估值和决策输入，不能成为历史企业判断的证据，也不能为没有方向性证据的公司制造中心路径。
+价格只能作为估值和决策输入，不能成为历史企业判断的证据，也不能为没有方向性证据的公司制造中心路径。价值路线请求不要求 Comparative；数值估值和 BuyBand 仍须满足当前公司判断、输入范围与估值合同。
 
 ## 9. 黄金报告的作用
 
-黄金报告不是训练系统本身，而是训练和研究结果的产品出口。
+黄金报告不是训练系统本身，而是同一个 `EnterpriseUnderwritingEpisode` 的投资者可读出口。
 
 它必须把以下内容传递完整：
 
@@ -246,7 +239,7 @@ Comparative 要求企业有明确的已实施行动、可定义的竞争经济�
   -> 买入、观察或否决条件
 ```
 
-报告可以读取三类受控视图：
+报告可以通过现有 handoff 读取三类受控视图，但三者必须来自同一 Episode：
 
 - `RESEARCH_AGENDA`：哪些问题值得继续研究；
 - `JUDGMENT_SYNTHESIS`：冻结后的企业判断；
@@ -266,26 +259,24 @@ Comparative 要求企业有明确的已实施行动、可定义的竞争经济�
 - `CANDIDATE_ONLY`：离线验证通过，但还没有生产权限；
 - `REPORT_USE_NOT_RELEASED`：不能进入正式黄金报告结论。
 
-这些状态不是为了让系统显得谨慎，而是为了避免把不确定性伪装成确定性，从而改变投资结论。
+这些状态只描述局部证据或权限，不能作为整家公司结论。每个材料主张还必须给出 `UNDERWRITE / CONDITIONALLY_UNDERWRITE / SCENARIO_ONLY / EXCLUDE_FROM_BASE / CANNOT_BOUND` 之一，说明它怎样进入正常化、价值和价格处理。这样既不伪造确定性，也不让 `UNKNOWN` 代替判断。
 
 ## 11. 当前架构成熟度
 
 当前最准确的判断是：
 
 ```text
-证据与 PIT 控制：较成熟
-Decision Contract 和权限边界：已形成
-企业判断与训练对象分层：已形成
-Forecast 离线入口：已实现
-Measurement Contract：正在补齐
-真实结果结算：尚未形成有效样本
-跨公司学习迁移：尚未证明
-方法留出：尚未释放
-Canonical CJO -> BuyBand：尚未开放生产权限
-训练 -> 黄金报告：已接线，但尚未授权为能力改进证据
+证据、PIT、结果隔离与局部结算：较成熟
+旧八维/Forecast/Comparative/CJO/估值组件：已形成并部分实测
+EnterpriseUnderwritingEpisode 顶层设计：已冻结
+Magna + CN600585 纵向切片：待实现
+完整承保 Blind Replay：尚未开始
+完整判断的跨公司迁移：尚未证明
+黄金报告消费同一承保主张：设计完成，待纵向接通
+Canonical CJO -> 真实 BuyBand：尚未开放生产权限
 ```
 
-因此，Turtle 目前已经不是简单的报告生成器，但也还不能宣称是经过验证的自动投资系统。它处于“研究控制面已成形，真实学习和决策增量仍需证明”的阶段。
+因此，Turtle 已有较强的研究控制与局部反馈基础，但尚未证明能稳定做出麦格纳式完整企业判断。当前阶段不是继续加门，而是先让纵向切片工作，再用未见公司验证判断和价格处理是否真的改善。
 
 ## 12. 后续 Agent 的固定阅读顺序
 
@@ -294,11 +285,11 @@ Canonical CJO -> BuyBand：尚未开放生产权限
 1. `AGENTS.md`：工程、证据和审阅规则；
 2. `docs/CURRENT_DOCUMENTS.md`：当前真源和文档权限；
 3. `GOALS.md`：当前状态和执行出口；
-4. 本文：理解中心目标、分层和投资语言；
-5. `TURTLE_TRAINING_SYSTEM_TOP_LEVEL_ARCHITECTURE.md`：训练和学习控制细节；
-6. `TURTLE_HISTORICAL_TRAINING_SYSTEM_REDESIGN.md`：历史对象、生命周期和准入重构；
-7. `TURTLE_AGENT_ENTERPRISE_JUDGMENT_ROADMAP.md`：企业判断路线和阶段门；
-8. 具体 schema、validator、测试和当前审阅工件。
+4. `TURTLE_ENTERPRISE_UNDERWRITING_SYSTEM_V1.md`：理解当前顶层对象、完整判断链和 U0--U5 路线；
+5. 本文：理解中心目标、投资语言和系统边界；
+6. `TURTLE_TRAINING_SYSTEM_TOP_LEVEL_ARCHITECTURE.md`：旧组件怎样成为支持视图；
+7. `TURTLE_AGENT_ENTERPRISE_JUDGMENT_ROADMAP.md`：U0--U5 当前路线及历史兼容能力；
+8. 当前 Goal、具体 schema、validator、测试和审阅工件。
 
 遇到文档之间的状态冲突时，回到 `docs/CURRENT_DOCUMENTS.md` 和 `GOALS.md`，不要用本文覆盖动态状态。
 

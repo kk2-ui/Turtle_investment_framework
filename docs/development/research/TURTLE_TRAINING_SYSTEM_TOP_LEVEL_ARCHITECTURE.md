@@ -1,12 +1,50 @@
 # Turtle 企业判断与训练系统顶层架构
 
-> 状态：`TOP_LEVEL_DESIGN_DECISION_V2 / FOUR_TRACK_CAPABILITY_CURRICULUM_IMPLEMENTED / INITIAL_24_CLUSTER_TEACHING_PIPELINE_REGISTERED / TRANSFER_NOT_VALIDATED`
+> 状态：`V3_ENTERPRISE_UNDERWRITING_ADOPTED / V2_COMPONENTS_RETAINED_AS_SUPPORTING_VIEWS / VERTICAL_SLICE_PENDING`
 >
-> 日期：2026-08-28
+> 日期：2026-08-29
 >
 > 本文裁决顶层目标、系统边界、学习闭环和路线优先级。现有 Forecast epoch、H1/H2/V5、schema、validator 和控制面仍由各自实施文档管理。2026-08-25 已按用户授权完成 C（Forecast Learning 与逐层错误归因）、D 的 contract-first CJO teaching mirror，及 E 的 synthetic valuation/return settlement：经营兑现、owner-cash valuation identity 和市场回报已各自结算且不回写 CJO。它们不创建 canonical CJO、不读取真实结果，也不授予 report 或投资动作；决策效用、真实独立结算和前瞻验证仍须独立工作包和验收，不能提前宣称已闭环。
 
 > 已新增一条 synthetic 顶层整合回归：`DecisionContract → Forecast V2 → contract-first prospective shadow`、teaching-only CJO mirror、investment-only valuation settlement 与 candidate-only decision-utility evaluation 必须保持单向权限。它通过不代表全仓回归已恢复：当前全量 pytest 另被缺失的 `prompts/coordinator.md` 和未冻结的香港 risk-free-rate fixture 阻断，均不属于上述 Turtle contract 的修改面。
+
+## V3 顶层裁决：企业投资承保取代“多轨训练”作为主视图
+
+2026-08-29 的深度研究确认：V2 已经正确解决企业多维性、局部不确定性和 Comparative 过严问题，但仍把一个完整投资判断分散到七层、八维、E/J 阶段、六种训练视图以及 CJO/估值/报告多个 handoff。Agent 因此仍可能优化字段、收据和局部门禁，而没有一个对象对完整投资推理负责。
+
+当前最高层设计以[企业投资承保系统 V1](TURTLE_ENTERPRISE_UNDERWRITING_SYSTEM_V1.md)为准：
+
+```text
+EnterpriseUnderwritingEpisode
+  = situation/regime
+  -> cycle versus structural damage
+  -> company position and adaptation
+  -> survival and financing
+  -> normalized earnings and owner cash
+  -> permanent-loss paths
+  -> value route
+  -> price-facing treatment and reversals
+```
+
+V2 的 `EnterpriseJudgmentEpisode`、八维、IndustryLearningBlock、Forecast、Comparative、E0--E3 和 J0--J4 不被删除；它们降为证据覆盖、局部反馈和兼容投影。新任务不得再把它们作为投资者可见的主流程，也不得以完成更多字段或阶段作为顶层训练进度。
+
+### V3.1 与 V2 的实质变化
+
+| 问题 | V2 主要处理 | V3 当前裁决 |
+|---|---|---|
+| 训练对象 | 多维公司 episode + 多种 lane/view | 一个完整企业承保 Episode，lane 是局部工具 |
+| 判断顺序 | 八维覆盖后传播到 CJO | 先识别承保路线，再按材料问题动态研究 |
+| 样本 | Teaching/Blind/Holdout/Prospective 与 E/J 组合 | Worked Case、Blind Replay、Prospective 三种反馈身份 |
+| 结果反馈 | outcome cell、mechanism thread、方法迁移 | 多时钟结算完整承保链，字段只定位错误 |
+| 经验记忆 | 窄机制和研究规则 | 从完整 Episode 投影处境、路径、near miss、正常化和价值路线 |
+| 报告 | 从 handoff/CJO 状态组合综合 | 直接编译同一 UnderwritingThesis 和 InvestmentTreatment |
+| 成功 | 真实反馈与跨公司材料 delta | 未见公司中改善生存、正常化、永久损失、价值路线或买点处理 |
+
+### V3.2 当前唯一实施动作
+
+下一实施工作不是扩展训练控制层，而是执行[企业投资承保纵向切片 V1 Goal](TURTLE_ENTERPRISE_UNDERWRITING_VERTICAL_SLICE_GOAL.md)：复用 Magna worked fixture 和 CN600585 海螺水泥现有真实教学证据，生成一条投资者可读的完整承保主张，并从同一 thesis 投影 CJO candidate、valuation-route request 和 Golden Report handoff。
+
+该切片通过只证明新主对象能工作，不能证明方法迁移、真实收益、当前估值或 BuyBand。后续才建立跨路线 worked-case 课程和首个完整 Blind Replay。
 
 ## 0. V2 重构裁决：从“训练轨道”回到“企业判断对象”
 
@@ -63,20 +101,19 @@ Turtle 的中心不是训练样本、预测榜单或黄金报告，而是：
 
 因此，Turtle 的主系统应是**企业承保与投资决策闭环**。生产研究负责当前判断；训练系统负责发现这套判断流程在哪里稳定出错，并以受限方式改善下一次判断；黄金报告只是某个 cutoff 下的可读编译快照。
 
-`PIT Company State Forecast` 作为高频训练主线的当前实现应继续。它解决了“必须先找到稀有公司行动，训练才可开始”的错误。但 Forecast 不是新的产品中心，严格 `Causal Action` 也不是全局入口。
+`PIT Company State Forecast` 的现有实现继续作为 Episode 内可观察子主张的高频校准工具。它解决了“必须先找到稀有公司行动，训练才可开始”的错误，但不再被称为顶层训练主线；完整 Worked Case、Blind Replay 和 Prospective Episode 才负责练习整条承保任务。严格 `Causal Action` 同样只服务局部相对因果主张。
 
 ```text
-Decision Contract
-  -> Outside View: industry structure, cycle, qualified base rates
-  -> Inside View: longitudinal enterprise operating system
-  -> Relative Reference: economics, cash, risk and expectations
-  -> Management / capital allocation / adaptation
-  -> Frozen Company Judgment Object (CJO)
-  -> Normal earnings / owner cash / value identities
-  -> Price-implied expectations / ExpectationGap / BuyBand
-  -> Monitoring / revision / decision attribution
-  -> Bounded learning policy
-  -> Next unseen company and time
+Decision Frame
+  -> EnterpriseUnderwritingEpisode
+     -> Outside View and company transmission
+     -> Inside View, management and adaptation
+     -> survival / normalization / owner cash / permanent loss
+     -> value route and strongest rival
+  -> UnderwritingThesis -> Frozen CJO projection
+  -> InvestmentTreatment -> ExpectationGap / conditional BuyBand
+  -> multi-clock monitoring / attribution / bounded learning
+  -> next unseen company and time
 ```
 
 历史训练必须镜像这条生产研究链，并在 cutoff 后隐藏结果进行评价；不再建立一套与生产研究分离的 episode 工厂。
