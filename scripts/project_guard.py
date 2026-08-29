@@ -69,6 +69,23 @@ def is_dirty(root: Path) -> bool:
     return bool(git(root, "status", "--porcelain"))
 
 
+def ensure_minimum_base(root: Path, config: dict, revision: str) -> str | None:
+    required = str(config.get("minimum_base_commit", "")).strip()
+    if not required:
+        return None
+    resolved = git(root, "rev-parse", "--verify", f"{required}^{{commit}}", check=False)
+    if not resolved:
+        raise RuntimeError(f"治理配置引用了不存在的 minimum_base_commit：{required}")
+    result = run(["git", "merge-base", "--is-ancestor", resolved, revision], root)
+    if result.returncode != 0:
+        reason = str(config.get("minimum_base_reason", "统一项目基线")).strip()
+        raise RuntimeError(
+            f"{revision} 未继承要求的基线 {resolved[:12]}（{reason}）；"
+            "请把增量迁移到从当前 main 创建的新 linked worktree"
+        )
+    return resolved
+
+
 def ensure_feature_context(root: Path, config: dict, *, allow_dirty: bool) -> str:
     current = branch(root)
     if current in config["protected_branches"]:
@@ -78,6 +95,7 @@ def ensure_feature_context(root: Path, config: dict, *, allow_dirty: bool) -> st
         raise RuntimeError(f"分支名不合规；必须使用：{allowed}")
     if not (root / ".git").is_file():
         raise RuntimeError("当前不是 linked worktree；请用 project_guard.py start 创建独立工作区")
+    ensure_minimum_base(root, config, "HEAD")
     if not allow_dirty and is_dirty(root):
         raise RuntimeError("验证或合入检查要求工作树干净；请先提交当前改动")
     return current
@@ -121,6 +139,7 @@ def cmd_start(root: Path, config: dict, args: argparse.Namespace) -> int:
     if args.base not in config["protected_branches"]:
         raise RuntimeError("新 worktree 的 base 必须是受保护集成分支")
     base_commit = git(root, "rev-parse", "--verify", args.base)
+    ensure_minimum_base(root, config, args.base)
     slug = re.sub(r"[^a-z0-9-]+", "-", args.slug.lower()).strip("-")
     if not slug:
         raise RuntimeError("slug 必须包含字母、数字或连字符")
@@ -178,6 +197,7 @@ def cmd_verify(root: Path, config: dict, args: argparse.Namespace) -> int:
         "branch": current,
         "commit": git(root, "rev-parse", "HEAD"),
         "base_branch": next((name for name in config["protected_branches"] if git(root, "rev-parse", "--verify", name, check=False)), None),
+        "minimum_base_commit": ensure_minimum_base(root, config, "HEAD"),
         "profile": args.profile,
         "started_at": dt.datetime.now(dt.timezone.utc).isoformat(),
         "commands": [],
@@ -221,6 +241,16 @@ def cmd_merge_check(root: Path, config: dict, _args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_baseline_check(root: Path, config: dict, args: argparse.Namespace) -> int:
+    required = ensure_minimum_base(root, config, args.revision)
+    if required is None:
+        print("OK: 当前项目未配置 minimum_base_commit")
+    else:
+        resolved = git(root, "rev-parse", "--verify", args.revision)
+        print(f"OK: {args.revision}@{resolved[:12]} 已继承统一基线 {required[:12]}")
+    return 0
+
+
 def parser() -> argparse.ArgumentParser:
     result = argparse.ArgumentParser()
     sub = result.add_subparsers(dest="command", required=True)
@@ -234,6 +264,8 @@ def parser() -> argparse.ArgumentParser:
     verify = sub.add_parser("verify")
     verify.add_argument("profile")
     sub.add_parser("merge-check")
+    baseline_check = sub.add_parser("baseline-check")
+    baseline_check.add_argument("revision", nargs="?", default="HEAD")
     return result
 
 
@@ -248,6 +280,7 @@ def main() -> int:
             "start": cmd_start,
             "verify": cmd_verify,
             "merge-check": cmd_merge_check,
+            "baseline-check": cmd_baseline_check,
         }
         return handlers[args.command](root, config, args)
     except (RuntimeError, OSError, ValueError, json.JSONDecodeError) as exc:

@@ -3,6 +3,8 @@
   "project_name": "Turtle Investment Framework",
   "protected_branches": ["main", "master"],
   "branch_prefixes": ["feat", "fix", "docs", "refactor", "test", "chore", "hotfix"],
+  "minimum_base_commit": "be74318828dc990a64e3ae2677d208cede812363",
+  "minimum_base_reason": "2026-08-29 consolidated training baseline",
   "worktree_root": "../worktrees",
   "profile_order": ["docs", "fast", "full"],
   "required_profile": "full",
@@ -14,7 +16,7 @@
       [".venv/bin/python", "-m", "pytest", "-q", "tests/test_config.py", "tests/test_derived_metrics.py", "tests/test_tushare_client.py"]
     ],
     "full": [
-      [".venv/bin/python", "-m", "pytest", "-q", "tests/test_stage*.py", "tests/test_completion_contract_v13.py", "tests/test_auto_repair_pipeline.py"]
+      [".venv/bin/python", "-m", "pytest", "-q", "tests/test_stage*.py", "tests/test_completion_contract_v13.py", "tests/test_auto_repair_pipeline.py", "tests/test_project_guard_baseline.py"]
     ]
   }
 }

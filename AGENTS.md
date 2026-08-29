@@ -136,7 +136,8 @@ When a new Codex session is asked to continue, improve, or repair this project, 
 2. Run `git status --short --branch`. `main` and `master` are integration-only. If the protected worktree is dirty, stop and record the baseline blocker; never reset, stash, or edit it to begin a task.
 3. For any write, start a fresh linked worktree and branch from clean `main` with `.venv/bin/python scripts/project_guard.py start <kind> <slug>`. Do not modify files in the primary worktree before `start` succeeds.
 4. Keep one coherent objective per worktree. Commit from that worktree, then run `.venv/bin/python scripts/project_guard.py verify full` and `merge-check`; verification evidence must match the current branch and commit.
-5. Before integration, complete the independent code review, roadmap audit, and any required real-run or Computer Use checks. Update `GOALS.md` and `progress-dashboard.html` only from an isolated worktree.
+5. Candidate branches must inherit `.project-governance.json`'s `minimum_base_commit`. Before integration, run `.venv/bin/python scripts/project_guard.py baseline-check <candidate-branch>` from current `main`. An older worktree that predates that baseline must commit or preserve its delta, then migrate the delta to a fresh worktree from current `main`; do not merge the old branch directly.
+6. Before integration, complete the independent code review, roadmap audit, and any required real-run or Computer Use checks. Update `GOALS.md` and `progress-dashboard.html` only from an isolated worktree.
 
 Current-state document searches should exclude `docs/History/` by default. Search History only when the task explicitly needs design provenance, an old failure, or audit reconstruction.
 

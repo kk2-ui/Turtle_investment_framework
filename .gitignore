@@ -14,6 +14,7 @@ dist/
 build/
 .env
 .project/evidence/
+/worktrees/
 .omc/
 scripts/.omc/
 turtle_framework/
