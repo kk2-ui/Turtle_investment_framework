@@ -1,0 +1,69 @@
+{
+  "schema_version": "historical-holdout-v4-enhanced-execution-receipt.v1",
+  "receipt_id": "HOLDOUT_V4_ENHANCED_EXECUTION:CN300059:CUTOFF_2024-05-01",
+  "role": "ENHANCED_FORECASTER",
+  "case_id": "HOLDOUT:CN300059:20240501:FY2021_FY2023:PAIR_V4",
+  "method_pack": {
+    "method_pack_id": "METHOD_PACK:JUDGMENT_FIRST:BLIND_FEEDBACK:V4",
+    "method_version": "judgment-first-blind-feedback.v4",
+    "active_rule": "COMPOSITE_METRIC_SCOPE_BEFORE_CONVERSION_CLAIM",
+    "active_rule_treatment": "Before using a customer, asset, user, volume, or activity carrier as evidence for fee income, recurring profit, cash, or capital efficiency, this execution names both reported perimeters and combines them only when they are identical or the issuer supplies an explicit bridge."
+  },
+  "cutoff_firewall": {
+    "cutoff_date": "2024-05-01",
+    "permitted_content": "Only the three complete FY2021-FY2023 annual reports and their listed local text extractions released in receipt 140.",
+    "prohibited_content_not_accessed": [
+      "FY2024 annual-report metadata or body",
+      "any post-cutoff announcement, event, or outcome material",
+      "price, return, valuation, or analyst material",
+      "external or browser sources",
+      "campaign, curriculum, historical-report, or Method Pack V3 artifacts"
+    ],
+    "outcome_access": false,
+    "browser_or_external_tool_used": false
+  },
+  "common_allocation_used": {
+    "report_reading_turns_used": 3,
+    "report_reading_turns_by_source": {
+      "FY2021": 1,
+      "FY2022": 1,
+      "FY2023": 1
+    },
+    "synthesis_turns_used": 1,
+    "total_turns_used": 4,
+    "permitted_tool_class_used": "local search and local text extraction only"
+  },
+  "sources_read": [
+    {
+      "fiscal_year": "FY2021",
+      "source_id": "CNINFO:1212623862",
+      "announcement_title": "2021年年度报告",
+      "publication_date": "2022-03-19",
+      "local_pdf_path": "/tmp/cn300059_holdout_v4_packet.hkxNWx/FY2021_CNINFO_1212623862.pdf",
+      "local_text_extraction_path": "/tmp/cn300059_holdout_v4_packet.hkxNWx/FY2021_CNINFO_1212623862.txt"
+    },
+    {
+      "fiscal_year": "FY2022",
+      "source_id": "CNINFO:1216145341",
+      "announcement_title": "2022年年度报告",
+      "publication_date": "2023-03-18",
+      "local_pdf_path": "/tmp/cn300059_holdout_v4_packet.hkxNWx/FY2022_CNINFO_1216145341.pdf",
+      "local_text_extraction_path": "/tmp/cn300059_holdout_v4_packet.hkxNWx/FY2022_CNINFO_1216145341.txt"
+    },
+    {
+      "fiscal_year": "FY2023",
+      "source_id": "CNINFO:1219307793",
+      "announcement_title": "2023年年度报告",
+      "publication_date": "2024-03-15",
+      "local_pdf_path": "/tmp/cn300059_holdout_v4_packet.hkxNWx/FY2023_CNINFO_1219307793.pdf",
+      "local_text_extraction_path": "/tmp/cn300059_holdout_v4_packet.hkxNWx/FY2023_CNINFO_1219307793.txt"
+    }
+  ],
+  "source_limits": "No source outside this common packet was read. Line references in the judgment identify the released local text extractions, not a newly acquired source.",
+  "write_scope": [
+    "143_CN300059_ENHANCED_FORECASTER_EXECUTION_RECEIPT.json",
+    "144_CN300059_ENHANCED_PREOUTCOME_JUDGMENT.json"
+  ],
+  "commit_created": false,
+  "negative_attestation": "This is a blind pre-outcome execution. It makes no claim to investment authority, method validation, transfer validation, valuation number, or investment action."
+}

@@ -1,0 +1,186 @@
+{
+  "schema_version": "historical-holdout-v4-enhanced-preoutcome-judgment.v1",
+  "judgment_id": "HOLDOUT_V4_ENHANCED_PREOUTCOME_JUDGMENT:CN300059:CUTOFF_2024-05-01",
+  "case_id": "HOLDOUT:CN300059:20240501:FY2021_FY2023:PAIR_V4",
+  "as_of_cutoff": "2024-05-01",
+  "status": "BLIND_PREOUTCOME_FROZEN",
+  "source_boundary": "FY2021, FY2022, and FY2023 CN300059 annual reports in the common local packet only; no FY2024, post-cutoff, price, return, valuation, analyst, browser, external, or outcome material was accessed.",
+  "source_citations": [
+    {
+      "source": "FY2021 annual report",
+      "source_id": "CNINFO:1212623862",
+      "publication_date": "2022-03-19",
+      "released_text_reference": "FY2021_CNINFO_1212623862.txt lines 288-296, 475-489, 548-570, 591-595, 880-888, 9380-9386",
+      "use": "consolidated financial results and cash flow; business architecture; TTFund platform activity; reportable-segment revenue"
+    },
+    {
+      "source": "FY2022 annual report",
+      "source_id": "CNINFO:1216145341",
+      "publication_date": "2023-03-18",
+      "released_text_reference": "FY2022_CNINFO_1216145341.txt lines 228-233, 384-399, 462-483, 501-507, 545-550, 796-800, 1090-1091, 8756-8768",
+      "use": "consolidated financial results and cash flow; market-sensitivity disclosure; TTFund platform activity; reportable-segment revenue; securities balance-sheet carrier"
+    },
+    {
+      "source": "FY2023 annual report",
+      "source_id": "CNINFO:1219307793",
+      "publication_date": "2024-03-15",
+      "released_text_reference": "FY2023_CNINFO_1219307793.txt lines 232-247, 408-423, 494-520, 548-597, 845-851, 869-870, 1149-1150, 3443-3466, 3820, 5561, 7211-7222, 7268-7289, 7429-7438, 8268-8270, 9104-9107",
+      "use": "consolidated financial results and cash flow explanation; business and platform activity; reportable-segment revenue; margin-financing and credit-risk carrier; fee-income detail"
+    }
+  ],
+  "perimeter_register": [
+    {
+      "carrier": "Reported total revenue, attributable net profit, and cash flow from operating activities",
+      "reported_perimeter": "the issuer's consolidated reporting group in the annual report's principal financial data and consolidated cash-flow reporting",
+      "treatment": "May be compared across FY2021-FY2023 as identical consolidated-reporting perimeter. It is not a TTFund-only profitability or cash metric."
+    },
+    {
+      "carrier": "Securities-business and financial-electronic-commerce-service revenue",
+      "reported_perimeter": "the issuer's consolidated reportable-segment disclosure, with segments determined by the issuer's internal organization, management requirements, and internal reporting system",
+      "treatment": "May be compared with the same reportable-segment disclosure across FY2021-FY2023. The segment disclosure supplies revenue and cost, but does not allocate segment assets, liabilities, or period expenses."
+    },
+    {
+      "carrier": "Fund transaction count, fund sales amount, non-money public-fund holding scale, and daily active users",
+      "reported_perimeter": "天天基金 / the TTFund platform, as expressly named in the annual-report management discussion",
+      "treatment": "These are retained as TTFund-platform activity facts. The packet contains no issuer-provided bridge that identifies this platform perimeter as identical to the consolidated financial-electronic-commerce reportable segment or to consolidated profit/cash."
+    },
+    {
+      "carrier": "Margin-financing assets, related impairment treatment, and securities-business cash-flow movements",
+      "reported_perimeter": "the issuer's consolidated financial statements and notes describing securities-business activities; not a stand-alone TTFund or reportable-segment owner-cash measure",
+      "treatment": "May inform consolidated balance-sheet and cash-flow risk, but cannot establish an activity-to-fee conversion for the TTFund platform."
+    }
+  ],
+  "v4_scope_treatment": {
+    "rule_id": "COMPOSITE_METRIC_SCOPE_BEFORE_CONVERSION_CLAIM",
+    "material_difference_created": true,
+    "current_frozen_enhanced_treatment": "The base case gives no fee-conversion, recurring-profit, owner-cash, or capital-efficiency credit to TTFund's reported fund-sales, non-money fund-holding, transaction, or daily-active-user metrics. Those TTFund-platform carriers are not combined with the issuer's consolidated financial-electronic-commerce segment revenue, consolidated attributable profit, or consolidated cash flow because the disclosed perimeters differ and this packet contains no issuer-provided explicit bridge. Consequently, the base normal-earnings treatment excludes any incremental persistency or margin uplift inferred from those activity metrics, and the directional valuation treatment withholds a capital-light assets-to-fee premium on that evidence.",
+    "what_remains_usable": "TTFund-platform activity is still evidence of reach and a possible distribution mechanism; the financial-electronic-commerce reportable-segment revenue trend is still evidence of that separately reported segment's revenue outcome; the consolidated profit and cash-flow facts are still usable on their own perimeters.",
+    "comparison_boundary": "This freezes an Enhanced treatment capable of materially differing from a completed alternative that grants an activity-to-fee conversion. It makes no assertion about the unseen Baseline's actual output."
+  },
+  "best_current_enterprise_judgments": [
+    {
+      "judgment_id": "J1_PLATFORM_AND_EARNINGS_MECHANISM",
+      "best_current_judgment": "东方财富 has a real multi-product internet wealth-distribution and securities platform, but the FY2021-FY2023 record supports a cyclical, market-sensitive earnings mechanism rather than a proven straight-line recurring-fee compounder. Confidence is moderate for the mechanism and low-to-moderate for the durability of any recovery rate.",
+      "decisive_evidence_and_mechanism": [
+        "On the consolidated reporting-group perimeter, total revenue moved from RMB13.094bn in FY2021 to RMB12.486bn in FY2022 and RMB11.081bn in FY2023; attributable net profit moved from RMB8.553bn to RMB8.509bn to RMB8.193bn.",
+        "On the identical consolidated reportable-segment perimeter, securities-business revenue was RMB7.687bn, RMB7.857bn, and RMB7.194bn, while financial-electronic-commerce-service revenue was RMB5.073bn, RMB4.326bn, and RMB3.625bn in FY2021-FY2023 respectively. Both large income carriers had weakened from their FY2021 level by FY2023.",
+        "TTFund-platform activity remained large but declined: reported fund sales were RMB22,385.71bn in FY2021, RMB20,133.43bn in FY2022, and RMB15,479bn in FY2023; reported daily active visitors were 3.147m, 2.137m, and 1.477m. These same-platform activity facts support scale and the direction of engagement, not a fee or profit conversion conclusion.",
+        "The issuer explicitly states that its one-stop internet wealth-management service is highly correlated with capital-market conditions; the observed revenue/engagement sequence is economically consistent with that exposure."
+      ],
+      "strongest_countercase": "The FY2022 report says securities-business revenue rose slightly and the FY2023 report says securities-market share further improved while credit business and asset-management scale developed. Reported attributable profit remained comparatively resilient despite the revenue fall. The more favorable explanation is that share gains, operating leverage, and product breadth can restore earnings when market activity normalizes without requiring a loss of platform relevance.",
+      "why_countercase_is_not_base": "The packet does not provide a same-perimeter bridge from TTFund activity or holdings to the financial-electronic-commerce segment's fees, profit, or cash; two years of reportable-segment revenue contraction therefore prevent giving that favorable conversion mechanism base-case credit. The countercase remains an optimistic conditional, not a rejection of the platform asset.",
+      "reversal_observation": "A subsequent annual report would reverse this base treatment if identical-perimeter segment revenue and underlying same-perimeter activity demonstrate a sustained conversion recovery, rather than a market-volume rebound alone."
+    },
+    {
+      "judgment_id": "J2_NORMAL_EARNINGS_AND_OWNER_CASH",
+      "best_current_judgment": "Reported attributable earnings remained high through FY2023, but normal earnings should be held conditional and owner cash should not be upgraded from reported operating cash flow. The issuer's financial-intermediation balance sheet makes raw operating cash an unreliable stand-alone owner-cash proxy. Confidence is moderate on the constraint, not on a numerical normal-earnings range.",
+      "decisive_evidence_and_mechanism": [
+        "Consolidated attributable net profit was broadly stable at RMB8.553bn in FY2021, RMB8.509bn in FY2022, and RMB8.193bn in FY2023 even as total revenue and both major reported revenue segments declined from FY2021 to FY2023.",
+        "Consolidated cash flow from operating activities was RMB8.974bn in FY2021, RMB1.277bn in FY2022, and negative RMB3.138bn in FY2023. The FY2023 report attributes the decline principally to larger margin-financing balances and repo-related cash movements; it separately says the gap versus net profit reflects margin-financing growth and net agency securities settlement funds.",
+        "On the consolidated financial-statement perimeter, margin-financing assets were RMB43.407bn at FY2021 year-end, RMB36.621bn at FY2022 year-end, and RMB46.264bn at FY2023 year-end. The FY2023 audit report identifies impairment assessment of margin-financing assets as a key audit matter, and the notes identify collateral values and realization periods as credit-loss drivers."
+      ],
+      "normal_earnings_treatment": "Use the three-year reported attributable-profit plateau only as evidence that the franchise had substantial earnings capacity before cutoff. Do not extrapolate the FY2023 reported profit as a clean normal-earnings floor, and do not add a TTFund activity-derived fee uplift. The 2023 discussion's reference to fixed-income proprietary-business benefit is an additional reason to require source-specific repeatability before upgrading normal earnings.",
+      "owner_cash_treatment": "Treat reported operating cash flow as balance-sheet and client/settlement-flow affected, not as distributable owner cash. No free-cash or cash-conversion conclusion is granted until a same-perimeter reconciliation separates repeatable earnings, required broker capital, margin-financing balance growth, client/settlement movements, and ordinary reinvestment.",
+      "strongest_countercase": "The negative FY2023 operating cash flow may principally fund reversible margin-financing and trading/settlement balance-sheet movements rather than represent weak underlying earnings; stable reported profit and limited disclosed margin-financing impairment could therefore mean cash economics are materially better than raw CFO implies.",
+      "why_countercase_is_not_base": "That explanation is plausible but the packet does not provide the required owner-cash reconciliation or a repeatable capital requirement. It supports a bounded UNKNOWN, not positive owner-cash credit.",
+      "reversal_observation": "A subsequent annual report could reverse the restraint by reconciling normalized profit to post-required-capital cash over a stable period while showing that balance-sheet cash movements and credit losses do not absorb the economic return."
+    },
+    {
+      "judgment_id": "J3_PERMANENT_LOSS_AND_MANAGEMENT_EXECUTION",
+      "best_current_judgment": "Permanent-loss risk is not established as an enterprise-wide failure at the cutoff, but it is meaningfully conditional on a market-sensitive engagement/revenue downturn not transmitting into balance-sheet credit losses or a higher recurring capital burden. Management receives differentiated execution credit: positive for maintaining a broad platform and securities reach, mixed for monetization, and conditional for balance-sheet/owner-cash execution.",
+      "management_execution_subaxes": [
+        {
+          "subaxis": "platform and product execution",
+          "treatment": "POSITIVE_BUT_CYCLICAL",
+          "basis": "The issuer continued to operate integrated information, securities, fund-sales, and data services; TTFund reported substantial activity and the FY2023 report describes further securities-market-share improvement. This is execution evidence for reach and service availability, not fee conversion."
+        },
+        {
+          "subaxis": "monetization and recurring economics",
+          "treatment": "MIXED_TO_ADVERSE_ON_THE_MATCHED_REVENUE_CARRIER",
+          "basis": "Financial-electronic-commerce reportable-segment revenue declined 14.73% in FY2022 and 16.19% in FY2023; securities-business revenue declined 8.44% in FY2023 after a modest FY2022 increase. No TTFund activity metric is used to offset these same-perimeter revenue outcomes."
+        },
+        {
+          "subaxis": "balance-sheet, credit, and owner-cash execution",
+          "treatment": "CONDITIONAL",
+          "basis": "Margin-financing balances expanded in FY2023 and raw CFO turned negative for disclosed broker-balance-sheet reasons. Margin-financing impairment is a key audit matter, but the packet contains no observed material credit-loss carrier sufficient to turn this into an enterprise-wide execution failure."
+        }
+      ],
+      "permanent_loss_treatment": "Do not infer permanent loss solely from lower platform activity, lower segment revenue, or a scoped cross-perimeter mismatch. Raise the permanent-loss concern only in the adverse scenario where market-sensitive revenue weakness persists and transmits into material credit losses, capital constraints, or durable earnings impairment. Until then, the constraint is on normal-earnings and owner-cash credit, not a declaration of franchise failure.",
+      "strongest_countercase": "The platform may preserve share and customer access through a down cycle, so the revenue decline is predominantly market beta while the balance sheet remains adequately controlled; in that case the adverse transmission never occurs.",
+      "reversal_observation": "A recovery in engagement and identical-perimeter revenue with stable credit/capital absorption would lower this permanent-loss concern; conversely, disclosed margin-financing stress, impairment, or capital pressure together with continued income-carrier decline would confirm it."
+    }
+  ],
+  "conditional_scenarios": [
+    {
+      "scenario": "OPTIMISTIC",
+      "conditions": "Market activity normalizes; securities share gains translate into recovery in the same consolidated reportable-segment revenue; TTFund activity stabilizes or rises; and required broker capital/credit losses remain contained.",
+      "normal_earnings_and_owner_cash_treatment": "Reported profit resilience proves repeatable after excluding clearly non-repeatable proprietary/trading effects and cash-flow reconciliation shows that financing/settlement movements, not economic leakage, drove the FY2023 CFO weakness.",
+      "permanent_loss_treatment": "Low: the platform's reach is converted into economically demonstrated revenue without credit or capital absorption.",
+      "directional_valuation_implication": "Upward, because recurring earning power and cash conversion would become more credible; no valuation number or action is implied."
+    },
+    {
+      "scenario": "BASE",
+      "conditions": "The platform remains relevant but market sensitivity persists; large TTFund activity remains unbridged to economic carriers; financial-electronic-commerce and securities revenue recover only with market activity; and balance-sheet funding continues to make raw CFO volatile.",
+      "normal_earnings_and_owner_cash_treatment": "Hold normal earnings at a conservative, conditional level below any untested activity-to-fee extrapolation; do not use raw CFO as owner cash.",
+      "permanent_loss_treatment": "Moderate but bounded: the primary risk is prolonged earnings/cash underperformance rather than a presently observed franchise collapse.",
+      "directional_valuation_implication": "More conditional and lower than a case that grants a capital-light, recurring TTFund assets-to-fee premium; no valuation number or action is implied."
+    },
+    {
+      "scenario": "ADVERSE",
+      "conditions": "Weak engagement and market activity persist, both major reportable revenue carriers continue to fall, and higher margin-financing or trading/settlement capital needs coincide with material credit impairment or capital pressure.",
+      "normal_earnings_and_owner_cash_treatment": "Normalize earnings materially below the FY2021-FY2023 reported-profit plateau and treat owner cash as impaired by required capital and losses rather than merely volatile timing.",
+      "permanent_loss_treatment": "Elevated: the negative case requires the observed revenue weakness to transmit into a balance-sheet or capital-loss carrier, not merely a lower TTFund activity statistic.",
+      "directional_valuation_implication": "Downward, because both durable earnings capacity and distributable cash would be impaired; no valuation number or action is implied."
+    }
+  ],
+  "local_unknowns_and_current_treatment": [
+    {
+      "unknown": "Whether TTFund platform fund holdings, sales, transactions, and traffic convert into the reported financial-electronic-commerce segment's fee income, profit, cash, or capital efficiency at an economically stable rate.",
+      "why_unknown": "Activity is disclosed at the TTFund-platform perimeter while economic carriers are disclosed at a consolidated reportable-segment or consolidated-group perimeter; no explicit issuer bridge was observed in the allowed packet.",
+      "current_treatment": "WITHHOLD_CONVERSION_CREDIT; retain activity as local reach evidence only."
+    },
+    {
+      "unknown": "The amount of FY2021-FY2023 attributable profit that is repeatable through a cycle after proprietary fixed-income/trading effects and changing market activity.",
+      "why_unknown": "The packet records profit and notes a FY2023 proprietary fixed-income benefit, but does not supply the component-level repeatability bridge required to set a numerical normal-earnings figure.",
+      "current_treatment": "CONSERVATIVE_CONDITIONAL_NORMAL_EARNINGS; no activity-derived uplift and no numerical valuation."
+    },
+    {
+      "unknown": "Post-required-capital owner cash attributable to the consolidated group.",
+      "why_unknown": "Cash flow is explicitly affected by margin-financing, repo, and agency settlement movements; segment assets, liabilities, and period expenses are not allocated in the segment disclosure.",
+      "current_treatment": "RAW_CFO_NOT_OWNER_CASH; no cash-conversion upgrade."
+    },
+    {
+      "unknown": "Whether margin-financing growth has a durable economic return net of losses and capital needs under a weaker market.",
+      "why_unknown": "The packet identifies impairment as a key audit matter and names collateral and realization assumptions, but supplies no stress-cycle return-on-required-capital bridge.",
+      "current_treatment": "CONDITIONAL_BALANCE_SHEET_RISK; it affects the adverse scenario but does not by itself prove permanent loss or enterprise-wide management failure."
+    }
+  ],
+  "fy2024_annual_report_resolution_cells": [
+    {
+      "cell_id": "FY2024_CONSOLIDATED_EARNINGS",
+      "mechanical_request": "Read FY2024 consolidated total revenue, attributable net profit, and cash flow from operating activities from the principal financial-data table.",
+      "reported_perimeter_required": "issuer consolidated reporting group",
+      "judgment_that_it_can_change": "Whether the FY2021-FY2023 profit plateau was durable and whether the cash-flow constraint is improving, worsening, or still balance-sheet-driven."
+    },
+    {
+      "cell_id": "FY2024_IDENTICAL_SEGMENT_REVENUE",
+      "mechanical_request": "Read FY2024 securities-business revenue and financial-electronic-commerce-service revenue from the same consolidated reportable-segment financial-information table, including the issuer's reported year-on-year comparison.",
+      "reported_perimeter_required": "issuer consolidated reportable segments",
+      "judgment_that_it_can_change": "Whether the two revenue carriers stabilized or whether the base cyclicality/monetization restraint strengthened."
+    },
+    {
+      "cell_id": "FY2024_TTFUND_ACTIVITY",
+      "mechanical_request": "Read the FY2024 annual-report management-discussion disclosures, if present, for TTFund non-money public-fund holding scale, fund sales, transaction count, and daily active visitors, preserving the issuer's exact definitions.",
+      "reported_perimeter_required": "天天基金 / TTFund platform",
+      "judgment_that_it_can_change": "Whether local platform engagement is recovering or weakening. It cannot by itself resolve fee/profit/cash conversion without an explicit identical-perimeter bridge."
+    },
+    {
+      "cell_id": "FY2024_OWNER_CASH_AND_MARGIN_FINANCING_BRIDGE",
+      "mechanical_request": "Read FY2024 cash-flow statement operating cash flow, the management explanation for its movement, year-end margin-financing assets, and the margin-financing impairment/loss disclosure from the consolidated statements and notes.",
+      "reported_perimeter_required": "issuer consolidated financial statements and securities-business notes",
+      "judgment_that_it_can_change": "Whether cash remains chiefly a financing/settlement timing issue or begins to show a repeatable required-capital and credit-loss burden that changes owner-cash and permanent-loss treatment."
+    }
+  ],
+  "rank_one_next_research_action": "Obtain an issuer-provided, same-perimeter bridge from TTFund activity/holdings to financial-electronic-commerce fee revenue, profit, required capital, and cash, or keep this conversion uncredited. This is the highest-value action because it can change normal earnings and valuation direction without conflating platform scale with economics.",
+  "frozen_preoutcome_conclusion": "The current base case recognizes a valuable but cyclical wealth-platform and securities franchise, with resilient reported profit but unproven recurring conversion and owner cash. The Enhanced V4 treatment deliberately withholds a TTFund activity-to-economics premium until the issuer supplies an identical-perimeter or explicit bridge. This is a research-method judgment only: no valuation number, investment action, outcome conclusion, method validation, or transfer conclusion is created."
+}

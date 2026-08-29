@@ -648,6 +648,9 @@ def curriculum_status(curriculum: dict[str, Any], *, validate: bool = True) -> d
 
     curated_teaching = track_progress["TEACHING"]["completed_independent_company_cluster_count"]
     settled_blind = track_progress["BLIND_JUDGMENT"]["completed_independent_company_cluster_count"]
+    evaluated_holdout = track_progress["HISTORICAL_HOLDOUT"]["completed_independent_company_cluster_count"]
+    blind_target = int(((curriculum.get("capacity_targets") or {}).get("BLIND_JUDGMENT") or {}).get("target") or 0)
+    holdout_lower = int(((curriculum.get("capacity_targets") or {}).get("HISTORICAL_HOLDOUT") or {}).get("lower") or 0)
     teaching_per_blind = int((curriculum.get("execution_policy") or {}).get("teaching_cases_per_blind_cycle") or 3)
     registered_teaching = any(
         case.get("track") == "TEACHING" and case.get("status") == "REGISTERED" for case in cases
@@ -658,8 +661,15 @@ def curriculum_status(curriculum: dict[str, Any], *, validate: bool = True) -> d
     frozen_blind = any(
         case.get("track") == "BLIND_JUDGMENT" and case.get("status") == "FROZEN" for case in cases
     )
+    frozen_holdout = any(
+        case.get("track") == "HISTORICAL_HOLDOUT" and case.get("status") == "FROZEN" for case in cases
+    )
     if frozen_blind:
         next_action = "AUTHORIZE_AND_SETTLE_FROZEN_BLIND_CASE"
+    elif frozen_holdout:
+        next_action = "AUTHORIZE_AND_EVALUATE_FROZEN_HISTORICAL_HOLDOUT"
+    elif blind_target and settled_blind >= blind_target and evaluated_holdout < holdout_lower:
+        next_action = "RESERVE_GENUINE_HISTORICAL_HOLDOUT"
     elif curated_teaching >= (settled_blind + 1) * teaching_per_blind:
         next_action = "FREEZE_NEXT_REGISTERED_BLIND_CASE" if registered_blind else "REGISTER_NEXT_BLIND_CASE"
     elif registered_teaching:
