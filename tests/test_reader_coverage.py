@@ -10,6 +10,7 @@ def _paragraphs() -> str:
     return "\n\n".join(
         [
             "公司提供面向客户的核心产品和服务，支付方通过定价购买，收入来自销售和持续使用。这个业务在产业链中承担服务入口角色，因此读者需要先理解客户为什么付钱以及公司怎样把服务变成收入。[source: 2025_年报.md]",
+            "未来五年，行业最可能从新增需求驱动转向存量竞争，因为供给仍然充足而客户更看重价格和服务，利润池将向低成本和高复购环节迁移。本公司的客户结构和核心产品直接暴露于这条主路径，管理层退出低回报合同并调整渠道后，正常盈利和owner cash更可能稳定；若调整失败，毛利和资本回报下滑会形成永久损失并压低估值。[source: 行业协会_2025.md]",
             "历史收入和利润经过周期调整后，正常盈利要扣除维持性资本开支，才能转换为普通股股东真正可得的owner earnings和自由现金流。这个现金路线解释了经营变化怎样传导到可持续回报。[source: 2024_年报.md]",
             "合并现金不等于普通股现金；需要先看现金由哪个实体控制、能否上游分配，再扣除少数股东、债务和受限资金。普通股可得分红取决于这些索取权和控制限制。[source: 2025_年报.md]",
             "估值采用正常现金流和经营价值模型，并同时展示股东回报率、当前价格、未来业务价值和期末市场价格。P_LONG是长期持有价格，P_XIRR是有限期限条件价格，二者身份不同。[source: 2025_年报.md]",
@@ -43,6 +44,31 @@ def test_reader_coverage_accepts_unknown_with_economic_boundary(tmp_path: Path) 
     assert all(item["status"] == "PASS" for item in result["topics"].values())
     boundary = result["topics"]["data_boundaries"]
     assert any(item["unknown_closure"] for item in boundary["evidence"])
+
+
+def test_industry_future_requires_a_directional_company_transmission(
+    tmp_path: Path,
+) -> None:
+    directional = (
+        "未来五年，行业最可能从新增需求驱动转向存量竞争，因为供给仍然充足而客户更看重价格和服务，"
+        "利润池将向低成本和高复购环节迁移。本公司的客户结构和核心产品直接暴露于这条主路径，"
+        "管理层退出低回报合同并调整渠道后，正常盈利和owner cash更可能稳定；若调整失败，"
+        "毛利和资本回报下滑会形成永久损失并压低估值。[source: 行业协会_2025.md]"
+    )
+    trend_inventory = (
+        "未来五年行业同时存在周期、结构性变化、需求、供给、竞争和价格压力。公司可以调整渠道、"
+        "客户结构与产品结构，正常盈利、现金、资本回报、永久损失和估值分别放入基础、压力和有利"
+        "三组情景，后续继续观察。[source: 行业协会_2025.md]"
+    )
+
+    result = evaluate_reader_coverage(
+        _paragraphs().replace(directional, trend_inventory),
+        tmp_path,
+    )
+
+    assert result["status"] == "BLOCKED"
+    assert "topic_missing:industry_future_transmission" in result["blocking_findings"]
+    assert result["topics"]["industry_future_transmission"]["status"] == "FAIL"
 
 
 def test_reader_coverage_rejects_an_unknown_wall_with_one_global_source(tmp_path: Path) -> None:
@@ -136,6 +162,8 @@ def test_reader_coverage_flags_stale_decision_identity(tmp_path: Path) -> None:
 def test_prompt_names_unknown_and_reader_explanation() -> None:
     prompt = reader_coverage_prompt(archetype="general_operating")
     assert "UNKNOWN" in prompt
+    assert "行业未来" in prompt
+    assert "并列情景" in prompt
     assert "附录链接" in prompt
     assert "内部对象ID" in prompt
 

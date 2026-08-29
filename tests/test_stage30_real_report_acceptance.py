@@ -202,6 +202,8 @@ def test_newer_complete_dual_layer_draft_supersedes_stale_formal_and_binds_varia
         "COMPETENT", "FRAGILE", "INSIGHTFUL", "NOT_ASSESSABLE",
     ]
     assert "PASS/FAIL" in template["review_contract"]["instruction"]
+    assert "industry-future thesis" in template["review_contract"]["instruction"]
+    assert "trend inventory is WEAK" in template["review_contract"]["instruction"]
 
     technical.write_text("# 当前技术附录\n\n## Ch0\n证据已变化", encoding="utf-8")
     second = evaluate_acceptance(config, acceptance_root=acceptance, persist=False)

@@ -211,6 +211,69 @@ def _topic_specs(
             ],
             "minimum_groups": 2,
         },
+        "industry_future_transmission": {
+            "label": "行业未来与公司传导",
+            "groups": [
+                (
+                    "future_regime",
+                    (
+                        "未来三年", "未来五年", "未来十年", "未来几年", "长期",
+                        "周期", "结构性", "利润池迁移", "增量转向存量",
+                        "industry regime", "next three", "next five", "long term",
+                    ),
+                ),
+                (
+                    "industry_force",
+                    (
+                        "需求", "供给", "竞争", "价格", "成本", "客户", "渠道",
+                        "监管", "融资", "替代", "利润池", "demand", "supply",
+                        "competition", "pricing", "cost", "regulation", "profit pool",
+                    ),
+                ),
+                (
+                    "company_exposure",
+                    (
+                        "公司", "本公司", "自身", "核心业务", "客户结构", "产品结构",
+                        "区域", "份额", "产能", "合同", "母体", "company", "exposure",
+                        "customer mix", "product mix", "market share", "capacity",
+                    ),
+                ),
+                (
+                    "adaptation",
+                    (
+                        "适应", "调整", "转型", "退出", "投入", "扩张", "管理层",
+                        "渠道改革", "降本", "adapt", "management", "restructure",
+                    ),
+                ),
+                (
+                    "economic_consequence",
+                    (
+                        "正常盈利", "owner cash", "现金", "利润率", "毛利", "资本回报",
+                        "生存", "永久损失", "估值", "买入", "价值", "normal earnings",
+                        "cash", "margin", "return on capital", "permanent loss", "valuation",
+                    ),
+                ),
+                (
+                    "directional_judgment",
+                    (
+                        "更可能", "最可能", "主路径", "基础路径", "判断是", "预计",
+                        "大概率", "将从", "将会", "更接近", "合理图景", "中心判断",
+                        "most likely", "base path",
+                        "central path", "we expect", "more likely",
+                    ),
+                ),
+            ],
+            "minimum_groups": 5,
+            "required_groups": [
+                "future_regime", "industry_force", "company_exposure",
+                "economic_consequence", "directional_judgment",
+            ],
+            # This gate checks whether the reader receives a complete thesis.
+            # Material source support is already reviewed by claim/evidence
+            # gates; requiring an inline anchor here would turn a prose repair
+            # into another acquisition blocker.
+            "source_required": False,
+        },
         "earnings_route": {
             "label": "正常盈利或现金路线",
             "groups": earnings_groups,
@@ -382,6 +445,11 @@ def _topic_result(
     required_group = spec.get("required_group")
     if required_group and hits and not any(required_group in hit["groups"] for hit in hits):
         hits = []
+    required_groups = set(spec.get("required_groups") or [])
+    if required_groups and hits and not any(
+        required_groups.issubset(set(hit["groups"])) for hit in hits
+    ):
+        hits = []
     required_any = set(spec.get("required_any_groups") or [])
     if required_any and hits and not any(required_any.intersection(hit["groups"]) for hit in hits):
         hits = []
@@ -398,7 +466,7 @@ def _topic_result(
             "reader_explanation": False,
             "source_anchor_nearby": False,
         }
-    if not any(hit["source"] for hit in hits):
+    if spec.get("source_required", True) and not any(hit["source"] for hit in hits):
         return {
             "status": "FAIL",
             "label": spec["label"],
@@ -516,7 +584,7 @@ def evaluate_reader_coverage(
         "topics": topics,
         "blocking_findings": list(dict.fromkeys(blocking)),
         "warnings": [],
-        "policy": "semantic_topics_with_bounded_unknown_closure; no length_or_hash_gate",
+        "policy": "semantic_topics_with_industry_future_transmission_and_bounded_unknown_closure; no length_or_hash_gate",
     }
     if persist and output_dir is not None:
         path = Path(output_dir) / "reader_coverage_validation.json"
@@ -550,6 +618,8 @@ def reader_coverage_prompt(
         "读者层覆盖契约：在技术附录或ledger之外，正文必须用普通语言解释 "
         f"{labels}。每一项都要连接事实、机制与{implication}；证据不足时明确写UNKNOWN/未披露，"
         "同时说明具体受限主张、当前保守处理、经济后果和会升级或推翻判断的下一观察。"
+        "行业未来项必须在适当时域内选择最可能的regime，把需求/供给/竞争导致的利润池变化"
+        "传到本公司的暴露、适应、正常现金与永久损失；趋势清单、并列情景和监控指标不能替代主张。"
         "不得用附录链接、来源清单、字段名或数字表格代替解释；内部对象ID、工作流状态码和"
         "ledger/gate/status面板只能留在结构化工件或技术附录。" + scope
     )
