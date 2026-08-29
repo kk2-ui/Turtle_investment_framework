@@ -55,7 +55,13 @@ TRACK_BINDINGS = {
     },
 }
 
-SOURCE_TIME_ROLES = {"PRE_CUTOFF", "RESULT_KNOWN"}
+# ``TRAINING_MEMORY`` is deliberately distinct from issuer evidence.  A Blind
+# Replay may use a lesson learned from an earlier, separately settled case to
+# change its questions or evidence order, even though the lesson was written
+# after the target's historical cutoff.  It can never support a target-company
+# fact, so the Episode binding below keeps it out of evidence_trace and
+# existing_object_refs.
+SOURCE_TIME_ROLES = {"PRE_CUTOFF", "RESULT_KNOWN", "TRAINING_MEMORY"}
 FEEDBACK_HORIZONS = {
     "EARLY_SIGNAL",
     "OPERATING_ADAPTATION",
@@ -293,9 +299,14 @@ def validate_training_contract(contract: Any) -> dict[str, Any]:
         if time_role not in SOURCE_TIME_ROLES:
             findings.append(path + ".time_role_invalid")
         if track in {"BLIND_REPLAY", "PROSPECTIVE"}:
-            if time_role != "PRE_CUTOFF":
+            if time_role == "RESULT_KNOWN":
                 findings.append(path + ".result_known_source_forbidden")
-            if cutoff is not None and available is not None and available > cutoff:
+            if (
+                time_role == "PRE_CUTOFF"
+                and cutoff is not None
+                and available is not None
+                and available > cutoff
+            ):
                 findings.append(path + ".available_after_cutoff")
 
     clocks = value.get("feedback_clocks")
@@ -362,19 +373,29 @@ def validate_training_episode(contract: Any, episode: Any) -> dict[str, Any]:
             if episode_value.get(field) != contract_value.get(field):
                 findings.append("binding." + field + "_mismatch")
 
-        allowed = {
-            _canonical_ref(item.get("source_ref"))
+        allowed_sources = [
+            _mapping(item)
             for item in _items(contract_value.get("allowed_sources"))
             if isinstance(item, dict)
+        ]
+        allowed = {_canonical_ref(item.get("source_ref")) for item in allowed_sources}
+        training_memory = {
+            _canonical_ref(item.get("source_ref"))
+            for item in allowed_sources
+            if item.get("time_role") == "TRAINING_MEMORY"
         }
         for index, item in enumerate(_items(episode_value.get("evidence_trace"))):
             reference = _canonical_ref(_mapping(item).get("source_ref"))
             if reference not in allowed:
                 findings.append(f"binding.evidence_trace[{index}].source_not_allowed")
+            elif reference in training_memory:
+                findings.append(f"binding.evidence_trace[{index}].training_memory_not_company_evidence")
         for index, item in enumerate(_items(episode_value.get("existing_object_refs"))):
             reference = _canonical_ref(_mapping(item).get("ref"))
             if reference not in allowed:
                 findings.append(f"binding.existing_object_refs[{index}].source_not_allowed")
+            elif reference in training_memory:
+                findings.append(f"binding.existing_object_refs[{index}].training_memory_not_company_evidence")
 
         findings.extend(
             "episode.price_or_return_forbidden:" + path
@@ -466,12 +487,19 @@ def build_training_agent_messages(
         raise ValueError("training_contract_invalid:" + ",".join(validation["findings"]))
     value = _mapping(contract)
     source_blocks = []
+    source_roles = {
+        _canonical_ref(item.get("source_ref")): str(item.get("time_role") or "")
+        for item in _items(value.get("allowed_sources"))
+        if isinstance(item, dict)
+    }
     for item in source_materials:
+        source_ref = str(item.get("source_ref") or "")
         source_blocks.append(
             "\n".join([
                 "<source>",
                 "source_id=" + str(item.get("source_id") or ""),
-                "source_ref=" + str(item.get("source_ref") or ""),
+                "source_ref=" + source_ref,
+                "time_role=" + source_roles.get(_canonical_ref(source_ref), ""),
                 str(item.get("content") or ""),
                 "</source>",
             ])
@@ -490,7 +518,9 @@ enterprise-underwriting-episode.v2. The underwriting_thesis must include
 economic_directions.normal_earnings, owner_cash, and permanent_loss, each chosen from
 IMPROVES, DETERIORATES, MIXED, UNKNOWN, or NONE. Only primary valuation model roles are
 mandatory; corroborative and stress roles may be empty or omitted when economically
-inapplicable."""
+inapplicable. A source labelled TRAINING_MEMORY is prior curriculum guidance only: use it
+to change questions, evidence order, rival checks, or conditional treatment, but never
+as a target-company fact and never cite it in evidence_trace or existing_object_refs."""
     user = "\n".join([
         "Create the complete pre-outcome Episode for this frozen training contract:",
         json.dumps(value, ensure_ascii=False, indent=2, sort_keys=True),

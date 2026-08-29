@@ -8,6 +8,10 @@
 > `origin/main` 恢复课程
 
 > 结果反馈独立审阅：[`PASS_WITH_LOCAL_NARROWING / COURSE_METHOD_NOT_VALIDATED`](outcomes/05_INDEPENDENT_OUTCOME_REVIEW.md)
+>
+> 当前写回：[`结果后研究议程`](07_POSTOUTCOME_RESEARCH_AGENDA.md) 与
+> [`第二次 A/B 推理修订`](08_CAPITAL_AND_BOUNDARY_REASONING_REVISION.md)。首轮负反馈只改变
+> 下一次 Enhanced 的问题设计和推导边界，不改变 Baseline，也不产生方法验证。
 
 ## 中心任务
 

@@ -10,6 +10,7 @@ from scripts.enterprise_underwriting_episode import compile_underwriting_project
 from scripts.enterprise_underwriting_training import (
     DOWNSTREAM_BUNDLE_SCHEMA,
     PRIMARY_PRODUCT,
+    build_training_agent_messages,
     build_training_contract,
     compile_price_free_downstream_bundle,
     run_training_agent,
@@ -30,6 +31,13 @@ CONTRACT_PATH = (
     / "docs/development/research/enterprise_underwriting_episodes"
     / "CN600585_20240501_TRAINING_CONTRACT_V1.json"
 )
+COURSE_ROOT = (
+    ROOT
+    / "docs/development/research/training_campaigns"
+    / "ENTERPRISE_UNDERWRITING_COURSE_1_20260829"
+)
+COURSE_BLIND_CONTRACT_PATH = COURSE_ROOT / "contracts/CN002352_BLIND_CONTRACT.json"
+COURSE_BLIND_EPISODE_PATH = COURSE_ROOT / "blind/03_CN002352/enterprise_underwriting_episode.json"
 
 
 def _episode() -> dict:
@@ -154,6 +162,35 @@ def test_blind_contract_requires_sealed_cutoff_safe_sources() -> None:
         "available_after_cutoff" in item
         for item in validate_training_contract(future_source)["findings"]
     )
+
+
+def test_blind_training_memory_changes_questions_but_cannot_be_target_evidence() -> None:
+    contract = json.loads(COURSE_BLIND_CONTRACT_PATH.read_text(encoding="utf-8"))
+    contract["allowed_sources"].append({
+        "source_id": "SOURCE:TRAINING_MEMORY",
+        "source_ref": "AGENTS.md",
+        "available_at": "2026-08-29T22:00:00+08:00",
+        "time_role": "TRAINING_MEMORY",
+    })
+
+    assert validate_training_contract(contract)["state"] == "REVIEWABLE"
+
+    episode = json.loads(COURSE_BLIND_EPISODE_PATH.read_text(encoding="utf-8"))
+    episode["evidence_trace"][0]["source_ref"] = "AGENTS.md"
+    findings = validate_training_episode(contract, episode)["findings"]
+    assert "binding.evidence_trace[0].training_memory_not_company_evidence" in findings
+
+    materials = [
+        {
+            "source_id": item["source_id"],
+            "source_ref": item["source_ref"],
+            "content": "Source material.",
+        }
+        for item in contract["allowed_sources"]
+    ]
+    messages = build_training_agent_messages(contract, source_materials=materials)
+    assert "time_role=TRAINING_MEMORY" in messages[1]["content"]
+    assert "never cite it in evidence_trace" in messages[0]["content"]
 
 
 def test_contract_requires_real_multi_clock_feedback_not_duplicate_labels() -> None:
