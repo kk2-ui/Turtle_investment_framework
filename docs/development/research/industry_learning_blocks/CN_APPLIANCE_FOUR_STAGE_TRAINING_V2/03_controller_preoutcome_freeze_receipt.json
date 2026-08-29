@@ -1,0 +1,39 @@
+{
+  "schema_version": "enterprise-judgment-appliance-controller-freeze-receipt.v1",
+  "episode_id": "APPLIANCE-R12:CN002242:20180930:V1",
+  "status": "CONTROLLER_PREOUTCOME_FREEZE_READY_FOR_REVIEW",
+  "runner_entrypoint": "minimal_historical_episode_runner.freeze_preoutcome",
+  "source_verifier": "enterprise_judgment_appliance_four_stage_round2.build_local_pdf_source_verifier",
+  "registered_source": {
+    "source_id": "CNINFO:002242:ANN:20180421:1204680243",
+    "source_url": "https://static.cninfo.com.cn/finalpage/2018-04-21/1204680243.PDF",
+    "physical_pages_opened": [60, 13, 64],
+    "outcome_period_source_opened": false
+  },
+  "field_stages": ["PRE_OUTCOME_FROZEN", "PRE_OUTCOME_FROZEN", "PRE_OUTCOME_FROZEN"],
+  "controller_counts": {
+    "decision_contracts": 3,
+    "technical_route_identities": 3,
+    "measurement_contracts": 3,
+    "static_evidence": 3,
+    "predictions": 3,
+    "outcome_access": 0,
+    "source_inventories": 0,
+    "observations": 0,
+    "settlements": 0
+  },
+  "outcome_access": {
+    "authorized": false,
+    "content_read": false,
+    "custodian_started": false
+  },
+  "allowed_outputs": ["INDEPENDENT_PREOUTCOME_REVIEW_ONLY"],
+  "rights": {
+    "method_transfer": "NOT_AUTHORIZED",
+    "cjo": "NOT_AUTHORIZED",
+    "valuation": "NOT_AUTHORIZED",
+    "report": "NOT_AUTHORIZED",
+    "buy_band": "NOT_AUTHORIZED",
+    "investment": "NOT_AUTHORIZED"
+  }
+}

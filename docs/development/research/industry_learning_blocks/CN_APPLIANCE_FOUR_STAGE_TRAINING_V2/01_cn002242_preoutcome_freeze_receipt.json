@@ -1,0 +1,66 @@
+{
+  "schema_version": "appliance-four-stage-round2-preoutcome-freeze-receipt.v1",
+  "episode_id": "APPLIANCE-R12:CN002242:20180930:V1",
+  "company_id": "CN:002242",
+  "issuer_id": "ISSUER:CN:002242",
+  "cutoff_at": "2018-09-30T23:59:59+08:00",
+  "frozen_at": "2026-08-29T09:00:00+08:00",
+  "selection_rule": "SECOND_FIXED_RESULT_UNSEEN_COMPANY_IN_APPLIANCE_ROSTER",
+  "method_identity": "MODEL_MEMORY_MITIGATED_HISTORICAL_APPLIANCE_TRAINING",
+  "same_fact_budget": true,
+  "fair_baseline": {
+    "treatment": "WATCH_STABLE_ISSUER_AND_CHANNEL_EXECUTION",
+    "resolution_rule": "发行人规模与产品收入仅作经营背景，不推断客户响应、owner cash或行动有效性。"
+  },
+  "cumulative_enhanced": {
+    "treatment": "CONDITIONAL_PRODUCT_RELATIVE_CASH_AND_BRIDGE_UNDERWRITING",
+    "resolution_rule": "产品相对公司跑赢、现金偏差方向和历史口径桥必须分别结算；任何一项缺失只限制依赖判断。",
+    "applied_learning_change_ids": [
+      "APPLIANCE:R11:LEARNING:SIGNED_MISS_SEMANTICS",
+      "APPLIANCE:R11:LEARNING:PRODUCT_RELATIVE_TO_ISSUER",
+      "APPLIANCE:R11:LEARNING:PRIOR_PERIOD_BRIDGE"
+    ]
+  },
+  "predictions": [
+    {
+      "measurement_contract_id": "MHE:CONTRACT:APPLIANCE-R12:CN002242:FY2018:ISSUER_REVENUE:V1",
+      "metric_id": "CONSOLIDATED_REVENUE_RMB",
+      "predicted_direction": "STABLE",
+      "settlement_tolerance_rmb": 362376242.7855
+    },
+    {
+      "measurement_contract_id": "MHE:CONTRACT:APPLIANCE-R12:CN002242:FY2018:FOOD_PROCESSOR_REVENUE:V1",
+      "metric_id": "PRODUCT_REVENUE_RMB:食品加工机系列",
+      "predicted_direction": "INCREASE",
+      "settlement_tolerance_rmb": 157489441.35
+    },
+    {
+      "measurement_contract_id": "MHE:CONTRACT:APPLIANCE-R12:CN002242:FY2018:ISSUER_OCF:V1",
+      "metric_id": "CONSOLIDATED_OPERATING_CASH_FLOW_RMB",
+      "predicted_direction": "STABLE",
+      "settlement_tolerance_rmb": 9780652.938
+    }
+  ],
+  "eight_dimension_local_unknowns": [
+    "CUSTOMER_AND_COMPETITIVE_RESPONSE",
+    "UNIT_ECONOMICS",
+    "ORDINARY_SHARE_OWNER_CASH",
+    "STRONGEST_NAMED_RIVAL",
+    "CONSTANT_PERIMETER_BRIDGE"
+  ],
+  "outcome_access": {
+    "authorized": false,
+    "content_read": false,
+    "custodian_started": false
+  },
+  "review_state": "PREOUTCOME_INDEPENDENT_REVIEW_REQUIRED",
+  "allowed_outputs": ["OUTCOME_CUSTODY_REQUEST", "INDEPENDENT_REVIEW_CANDIDATE", "RESEARCH_AGENDA"],
+  "rights": {
+    "method_transfer": "NOT_AUTHORIZED",
+    "cjo": "NOT_AUTHORIZED",
+    "valuation": "NOT_AUTHORIZED",
+    "report": "NOT_AUTHORIZED",
+    "buy_band": "NOT_AUTHORIZED",
+    "investment": "NOT_AUTHORIZED"
+  }
+}
