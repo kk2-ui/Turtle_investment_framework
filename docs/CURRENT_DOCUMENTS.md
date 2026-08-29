@@ -2,9 +2,18 @@
 
 > 状态：`CURRENT / AUTHORITATIVE_NAVIGATION`
 >
-> 更新：2026-08-27
+> 更新：2026-08-29
 
 本文件只解决一件事：告诉后续 Agent 哪些文档可以决定当前状态、执行顺序和产品标准。`docs/History/` 中的文件只用于追溯，不能成为恢复入口、当前状态或实施授权。
+
+## 2026-08-29 企业判断经验调用设计
+
+最新训练设计增量是[企业判断经验调用闭环 V1](development/research/TURTLE_JUDGMENT_EXPERIENCE_MEMORY_V1.md)。
+它以 `feat/judgment-first-training-iteration-12h@08c8620` 为基线，复用已有 Teaching
+mechanism card、Blind feedback、LearningNote、`analogy_transfer_cards` 和 CJO；不再
+新增第二套经验卡。当前缺口被收敛为 source-side 经验登记、普通研究运行时结构检索、结果前
+调用收据和结果后边界更新。该设计尚未实现，不授予方法、估值、报告或投资权限，也不能覆盖
+下方已完成训练事实。
 
 ## 2026-08-27 当前训练裁决
 
