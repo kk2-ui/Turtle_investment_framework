@@ -518,6 +518,11 @@ long-lived-asset spending (current capital-allocation and financing pressure), a
 subsequent return on growth capital. Missing growth-return evidence or total spending
 must never be renamed as maintenance capital or used to invent a negative owner-cash
 point estimate; give a conditional treatment and continue the company judgment.
+Capital intensity is economic, not a fixed-asset label: for a channel, service, retail,
+or acquisition-led company, identify material working-capital, lease, logistics, people,
+integration, or customer-acquisition commitments alongside long-lived assets. Do not call
+a company cash-light merely because capex is low, and do not force a capital-spending
+problem where those commitments are immaterial.
 Use only the supplied sources. Every evidence_trace.source_ref and existing_object_ref.ref
 must exactly match a supplied source_ref. Return JSON only, with schema_version
 enterprise-underwriting-episode.v2. The underwriting_thesis must include
