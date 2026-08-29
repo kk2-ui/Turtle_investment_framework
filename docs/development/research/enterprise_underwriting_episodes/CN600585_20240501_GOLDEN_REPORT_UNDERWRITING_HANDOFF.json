@@ -1,0 +1,33 @@
+{
+  "schema_version": "enterprise-underwriting-golden-report-handoff.v1",
+  "handoff_id": "UW-GR:EUE:CN600585:20240501:WORKED:V1",
+  "episode_id": "EUE:CN600585:20240501:WORKED:V1",
+  "company_id": "CN:600585",
+  "cutoff_at": "2024-05-01T00:00:00+08:00",
+  "sample_identity": "WORKED_CASE",
+  "underwriting_thesis_id": "UWT:CN600585:20240501:V1",
+  "authority": "UNDERWRITING_HANDOFF_ONLY",
+  "reader_order": ["central_path", "situation_and_route", "survival_and_adaptation", "normalization_and_owner_cash", "permanent_loss_and_rival", "value_route_and_research_treatment", "reversal_observations"],
+  "central_path": "海螺可承受当前水泥周期，国内核心可按保守中周期范围而非景气峰值处理；但国内新增资产尚未证明客户吸收、单位经济和现金回收，不能进入基准正常盈利或普通股现金。海外与产业链是组合缓冲和上行情景，不是项目回报的替代证据。",
+  "situation_model": "房地产下行、库存偏高和供给过剩经区域销售半径与本地价格传到海螺：需求和售价压力压低销量、收入和毛利。FY2024 全国水泥产量下降9.5%，公司自产品销量下降6.05%、收入下降12.89%。这既是周期压力，也可能在需求长期收缩时演变为结构性资产回报压力。",
+  "business_position": "海螺拥有区域水泥网络、骨料和商混延伸、水运与成本控制能力，并在海外经营布局。FY2024 吨成本下降8.65%，但集团自产品毛利率降至24.81%，说明成本改善是真实缓冲，却不足以单独证明国内价格和资产利用率已恢复。",
+  "survival_case": "即时生存风险低：FY2024 货币资金702.29亿元、银行贷款余额175.73亿元，并有115亿元中票。它们代表融资和流动性缓冲，不等于净现金，也不证明新增资产将获得资本回报。真正长期风险不是短期融资断裂，而是区域需求与价格持续疲弱令既有和新增重资产低回报。",
+  "adaptation_case": "管理层继续低碳置换、海外项目、骨料商混和效率改造，并通过物流、替代燃料和采购降低成本。该动作提供了跨周期的选择权和组合缓冲；但点火、建设、安集延投产或海外分部毛利不能替代某个新项目的客户吸收、单位经济与现金回收。",
+  "normalization_case": "国内核心的正常盈利只能按中周期需求、价格、利用率和成本共同恢复的范围处理，不能使用高景气利润或新增产能设计量。海外区域FY2024毛利率32.33%且同比提高2.23个百分点，是组合缓冲的条件性证据；它混合存量与新项目，不能授予新增项目增量利润信用。",
+  "owner_cash_treatment": "集团FY2024经营现金覆盖披露资本支出显示承受力，但维护/增长资本和普通股可得现金未闭合；owner cash 只能以范围和资产/EPV交叉约束，而不是单点OCF减资本支出。",
+  "permanent_loss_map": "若区域需求和价格长期低迷，新增与存量资产会争夺有限客户，利用率和单位利润下降；维护和防御性资本继续消耗现金，最终令普通股可得现金与资本回报低于维持竞争位置的需要。项目层现金、维护/扩张资本拆分和普通股可达性不足，使该风险需以范围而非单点 owner cash 处理。",
+  "value_route": {
+    "primary_routes": ["ASSET_VALUE", "EARNINGS_POWER_VALUE", "CAPITAL_RETURN_CROSS_CHECK"],
+    "excluded_routes": ["CAPACITY_GROWTH_VALUE_AS_PRIMARY", "ONE_PERIOD_OCF_MINUS_CAPEX_AS_OWNER_CASH"],
+    "route_reasoning": "即时生存并非中心问题，且公司没有证据允许把新增产能直接资本化为高回报成长。资产价值和中周期 EPV 提供双锚；资本回报交叉检查防止把新旧重资产混合成未经承保的增长价值。"
+  },
+  "strongest_rival": "海外毛利改善、成本下降、现金缓冲和多元布局会使整体盈利先于国内周期恢复，新增布局最终成为有效组合缓冲。",
+  "reversal_observations": [
+    "国内区域的量、价、利用率和吨毛利在不依赖持续大幅降本的情况下同步修复。",
+    "新增项目在同一责任单元披露客户吸收、单位经济、维护/扩张资本与累计现金回收。",
+    "海外区域的利润与现金桥能够区分存量业务和新增项目，并显示可重复回报。",
+    "区域需求与价格继续走弱且维护或防御性资本吞噬现金，或融资缓冲明显收缩。"
+  ],
+  "existing_report_adapter": "scripts/judgment_generation_handoff.py:build_judgment_generation_handoff",
+  "boundary": "The Golden Report writer consumes this thesis and may not replace it with a different company story. This is a teaching handoff, not report-publication authority."
+}

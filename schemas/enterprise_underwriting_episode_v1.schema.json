@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "EnterpriseUnderwritingEpisode v1",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "episode_id",
+    "company_id",
+    "company_name",
+    "cutoff_at",
+    "sample_identity",
+    "decision_frame",
+    "underwriting_route",
+    "situation_model",
+    "business_position",
+    "survival_case",
+    "adaptation_case",
+    "normalization_case",
+    "permanent_loss_map",
+    "value_route",
+    "strongest_rival",
+    "reversal_observations",
+    "component_treatments",
+    "evidence_trace",
+    "existing_object_refs",
+    "underwriting_thesis",
+    "investment_treatment"
+  ],
+  "properties": {
+    "schema_version": {"const": "enterprise-underwriting-episode.v1"},
+    "sample_identity": {"enum": ["WORKED_CASE", "BLIND_REPLAY", "PROSPECTIVE_EPISODE"]},
+    "component_treatments": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["component_id", "treatment", "reason", "investment_consequence", "promotion_or_resolution_condition", "evidence_ids"],
+        "properties": {
+          "treatment": {"enum": ["UNDERWRITE", "CONDITIONALLY_UNDERWRITE", "SCENARIO_ONLY", "EXCLUDE_FROM_BASE", "CANNOT_BOUND"]}
+        }
+      }
+    },
+    "underwriting_thesis": {"type": "object"}
+  },
+  "additionalProperties": true
+}

@@ -2,7 +2,7 @@
 
 > 状态日期：2026-08-29
 > 当前目标：`GOLDEN_SET_V1`
-> 当前阶段：`G1_CANDIDATE_MATURATION + G1-U_ENTERPRISE_UNDERWRITING_VERTICAL_SLICE / IN_PROGRESS`
+> 当前阶段：`G1_CANDIDATE_MATURATION + G1-U_ENTERPRISE_UNDERWRITING_VERTICAL_SLICE / IMPLEMENTATION_COMPLETE_PENDING_INTEGRATION`
 > 长期领域路线图：`docs/development/LONG_TERM_ROADMAP.md`
 > 双向层级研究路线：`docs/development/GOLDEN_REPORT_BIDIRECTIONAL_RESEARCH_ROADMAP.md`
 
@@ -140,7 +140,7 @@ HTML 只负责渲染，不得另造投资事实、模型数值或结论。正文
 | G1 候选内容成熟与逐案接纳 | 七个指定案例完成材料性修复和独立接纳 | **IN_PROGRESS** |
 | G1-J 判断契约与已有案例资产接线 | 复用书籍方法案例卡和基准率候选，补齐中心路径、前瞻判断与历史结算硬门 | **IN_PROGRESS / G1内部前置门** |
 | G1-T 历史判断训练与留出 | 已完成首个真实 `IndustryLearningBlock + EnterpriseJudgmentEpisode` 的 E0/E1 多维重建与独立 feedback；Comparative 仅为局部 E3 支线，有效方法冻结后再揭盲 R-61 | **IN_PROGRESS / REAL_SAMPLE_CREATED + REAL_FEEDBACK_TURN_COMPLETED / TRANSFER_NOT_VALIDATED** |
-| G1-U 企业投资承保纵向切片 | 用一个完整对象连接处境、生存、正常化、永久损失、价值路线、CJO、估值和黄金报告 | **IN_PROGRESS / DESIGN_COMPLETE / IMPLEMENTATION_PENDING** |
+| G1-U 企业投资承保纵向切片 | 用一个完整对象连接处境、生存、正常化、永久损失、价值路线、CJO、估值和黄金报告 | **IMPLEMENTATION_COMPLETE / WORKED_CASE_ONLY / PENDING_INTEGRATION** |
 | G1.5 格力行业经验工厂试验 | 24 份黄金级产物验证公司→行业→宏观传导→公司的双向研究架构 | PLANNED |
 | G2 跨报告裁决与路线规范 | 统一共同规则，裁决公司、行业、基准率和宏观层的权限与路线差异 | PLANNED |
 | G3 Golden Set v1 与行业经验包冻结 | 多份内容黄金报告、完整案例包及 `Industry Experience Pack v1` 形成版本化集合 | PLANNED |
@@ -285,13 +285,15 @@ G1-U 解决当前后台能力与前台黄金报告之间的根本断点：现有
 
 ### 7U.2 当前实施 Goal
 
-执行[企业投资承保纵向切片 V1 Goal](docs/development/research/TURTLE_ENTERPRISE_UNDERWRITING_VERTICAL_SLICE_GOAL.md)：
+U1 已在独立候选分支完成，等待集成前验证：
 
-- 从干净 `main@5d64b91b354d` 建 linked worktree；
-- 用 Magna worked fixture 验证困境周期型路线；
-- 用 CN600585 海螺水泥现有官方教学证据形成一条真实公司特定承保读本；
-- 从同一 thesis 投影 CJO candidate、valuation-route request 和 Golden Report handoff；
-- 不新建事实库、CJO、估值引擎、经验卡或全局 gate。
+- 从 `main@542bec1` 建 linked worktree；
+- Magna worked fixture 验证困境周期型的生存优先、资产/EPV 交叉路线；
+- CN600585 海螺水泥的既有教学证据形成完整公司特定承保读本；
+- 同一 `UnderwritingThesis` 确定性投影 CJO candidate、valuation-route request 和 Golden Report handoff；
+- 没有新建事实库、CJO、估值引擎、经验卡或全局 gate。
+
+海螺仍是 `RESULT_KNOWN_TEACHING_ONLY / WORKED_CASE`。本完成只证明完整承保对象和同源消费能运行，不证明盲测、迁移、当前估值、BuyBand 或投资结论。
 
 ### 7U.3 完成定义
 
@@ -518,8 +520,8 @@ Phase 08 只有同时具备以下结果才能完成：
 
 当前执行分为训练主线与黄金候选线，互不以等待状态阻断：
 
-1. **优先完成 G1-U 纵向切片。** 从 `main@5d64b91b354d` 实现 Magna + CN600585 的 `EnterpriseUnderwritingEpisode`，并让 CJO、valuation route 和 Golden Report handoff 消费同一 thesis；停止继续扩展字段、receipt 和准入控制。
-2. **扩大的是完整案例，不是机械字段。** U1 完成后建立 12--20 个跨承保路线的 worked cases，必须包含成功、失败、消失企业和 near miss；它们训练推理，不计命中或方法成绩。
+1. **集成并消费已完成的 G1-U 纵向切片。** 以 Magna + CN600585 的 `EnterpriseUnderwritingEpisode` 作为当前 worked-case 基线；继续停止扩展字段、receipt 和准入控制。
+2. **扩大的是完整案例，不是机械字段。** 建立 12--20 个跨承保路线的 worked cases，必须包含成功、失败、消失企业和 near miss；它们训练推理，不计命中或方法成绩。
 3. **首个新盲测练完整承保。** 选择一个未参与 U1/U2 规则形成的公司/cutoff，冻结处境、生存、正常化、owner cash、永久损失和价值路线，再按多时钟揭示结果；不得退回单字段 Minimal 作为中心样本。
 4. **经验层继续自然反馈。** 福莱特 FY2024 outcome 到期后按既有合同结算；此前不提前读取，也不因等待而阻断 U1/U2/U3。
 5. **黄金候选继续材料性修复。** 七个候选只处理会改变企业判断、永久损失、价值或回报的问题；完成 U1 后，选一个候选消费 UnderwritingThesis，检验前台报告是否真正改善。

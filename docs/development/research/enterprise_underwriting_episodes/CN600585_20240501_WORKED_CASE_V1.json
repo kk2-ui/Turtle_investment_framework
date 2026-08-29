@@ -1,0 +1,133 @@
+{
+  "schema_version": "enterprise-underwriting-episode.v1",
+  "episode_id": "EUE:CN600585:20240501:WORKED:V1",
+  "company_id": "CN:600585",
+  "company_name": "安徽海螺水泥",
+  "cutoff_at": "2024-05-01T00:00:00+08:00",
+  "sample_identity": "WORKED_CASE",
+  "decision_frame": "在中国水泥需求、价格和利用率承压而公司仍在国内、产业链和海外投入时，判断海螺是可穿越周期的重资产平台，还是新增资本会把周期压力转成永久性普通股损失；在不使用市场价格时，确定哪些盈利与资产可被承保、哪些不能被支付。",
+  "underwriting_route": "DISTRESSED_CYCLICAL_WITH_ASSET_EPV_CROSS_CHECK",
+  "situation_model": "房地产下行、库存偏高和供给过剩经区域销售半径与本地价格传到海螺：需求和售价压力压低销量、收入和毛利。FY2024 全国水泥产量下降9.5%，公司自产品销量下降6.05%、收入下降12.89%。这既是周期压力，也可能在需求长期收缩时演变为结构性资产回报压力。",
+  "business_position": "海螺拥有区域水泥网络、骨料和商混延伸、水运与成本控制能力，并在海外经营布局。FY2024 吨成本下降8.65%，但集团自产品毛利率降至24.81%，说明成本改善是真实缓冲，却不足以单独证明国内价格和资产利用率已恢复。",
+  "survival_case": "即时生存风险低：FY2024 货币资金702.29亿元、银行贷款余额175.73亿元，并有115亿元中票。它们代表融资和流动性缓冲，不等于净现金，也不证明新增资产将获得资本回报。真正长期风险不是短期融资断裂，而是区域需求与价格持续疲弱令既有和新增重资产低回报。",
+  "adaptation_case": "管理层继续低碳置换、海外项目、骨料商混和效率改造，并通过物流、替代燃料和采购降低成本。该动作提供了跨周期的选择权和组合缓冲；但点火、建设、安集延投产或海外分部毛利不能替代某个新项目的客户吸收、单位经济与现金回收。",
+  "normalization_case": "国内核心的正常盈利只能按中周期需求、价格、利用率和成本共同恢复的范围处理，不能使用高景气利润或新增产能设计量。海外区域FY2024毛利率32.33%且同比提高2.23个百分点，是组合缓冲的条件性证据；它混合存量与新项目，不能授予新增项目增量利润信用。",
+  "permanent_loss_map": "若区域需求和价格长期低迷，新增与存量资产会争夺有限客户，利用率和单位利润下降；维护和防御性资本继续消耗现金，最终令普通股可得现金与资本回报低于维持竞争位置的需要。项目层现金、维护/扩张资本拆分和普通股可达性不足，使该风险需以范围而非单点 owner cash 处理。",
+  "value_route": {
+    "primary_routes": ["ASSET_VALUE", "EARNINGS_POWER_VALUE", "CAPITAL_RETURN_CROSS_CHECK"],
+    "excluded_routes": ["CAPACITY_GROWTH_VALUE_AS_PRIMARY", "ONE_PERIOD_OCF_MINUS_CAPEX_AS_OWNER_CASH"],
+    "route_reasoning": "即时生存并非中心问题，且公司没有证据允许把新增产能直接资本化为高回报成长。资产价值和中周期 EPV 提供双锚；资本回报交叉检查防止把新旧重资产混合成未经承保的增长价值。"
+  },
+  "strongest_rival": "海外区域毛利改善、成本下降、集团现金承受力和多元布局说明海螺可能已形成足够的组合缓冲；若海外与产业链业务提高利用率和单位经济，国内低迷未必毁坏整体正常盈利。",
+  "reversal_observations": [
+    "国内区域的量、价、利用率和吨毛利在不依赖持续大幅降本的情况下同步修复。",
+    "新增项目在同一责任单元披露客户吸收、单位经济、维护/扩张资本与累计现金回收。",
+    "海外区域的利润与现金桥能够区分存量业务和新增项目，并显示可重复回报。",
+    "区域需求与价格继续走弱且维护或防御性资本吞噬现金，或融资缓冲明显收缩。"
+  ],
+  "component_treatments": [
+    {
+      "component_id": "CONSOLIDATED_SURVIVAL_AND_FINANCING",
+      "treatment": "UNDERWRITE",
+      "reason": "现金、贷款与债券资源支持公司穿越当前低迷，教学材料没有显示即时融资危机。",
+      "investment_consequence": "不以清算或短期融资崩溃作为基准路径；仍将资本结构与现金可得性和新增项目回报分开。",
+      "promotion_or_resolution_condition": "若流动性、再融资或债务期限显著恶化，应重新评估生存路径。",
+      "evidence_ids": ["CONCH-E1", "CONCH-E2"]
+    },
+    {
+      "component_id": "DOMESTIC_CORE_NORMAL_EARNINGS",
+      "treatment": "CONDITIONALLY_UNDERWRITE",
+      "reason": "成本改善与既有区域网络提供缓冲，但需求、价格、销量和毛利仍受压。",
+      "investment_consequence": "只按中周期量价和成本恢复范围承保国内核心，不使用景气峰值或设计产能外推。",
+      "promotion_or_resolution_condition": "区域量价、利用率和单位毛利在兼容口径上同时恢复。",
+      "evidence_ids": ["CONCH-E1", "CONCH-E3"]
+    },
+    {
+      "component_id": "DOMESTIC_INCREMENTAL_ASSET_RETURN",
+      "treatment": "EXCLUDE_FROM_BASE",
+      "reason": "投产和建设只证明资源承诺；没有项目级客户、单位经济、现金回收和资本基数桥。",
+      "investment_consequence": "国内新增资产不取得增量正常盈利或 owner-cash 信用。",
+      "promotion_or_resolution_condition": "同一责任单元连续披露客户量价、单位成本、维护/扩张资本和累计现金回收。",
+      "evidence_ids": ["CONCH-E1", "CONCH-E4"]
+    },
+    {
+      "component_id": "OVERSEAS_AND_INDUSTRIAL_CHAIN_OPTION",
+      "treatment": "SCENARIO_ONLY",
+      "reason": "海外区域毛利改善是真实组合缓冲，但其数据混合存量与新项目。",
+      "investment_consequence": "保留为上行情景和反方，不作为新增项目价值或国内盈利修复的替代。",
+      "promotion_or_resolution_condition": "可拆分区域/项目利润、现金和资本回报，且显示可重复客户吸收。",
+      "evidence_ids": ["CONCH-E1", "CONCH-E3"]
+    },
+    {
+      "component_id": "ORDINARY_SHARE_OWNER_CASH",
+      "treatment": "CANNOT_BOUND",
+      "reason": "维护/扩张资本、项目现金、营运资本、税、少数股东、债务融资和普通股可得性没有形成同一桥。",
+      "investment_consequence": "不把 FY2024 OCF 减披露资本支出28.57亿元当作 owner cash；价值路线使用范围与资产/EPV交叉约束。",
+      "promotion_or_resolution_condition": "补齐经济维护资本、增长资本、普通股现金可达性和项目级回收的兼容桥。",
+      "evidence_ids": ["CONCH-E1", "CONCH-E4"]
+    }
+  ],
+  "evidence_trace": [
+    {
+      "evidence_id": "CONCH-E1",
+      "source_ref": "docs/development/research/training_curricula/teaching_cases/TC_CN600585_CYCLE_CAPITAL_CASH_V1.md",
+      "locator": "第1、2、5、6、9节",
+      "scope": "结果已知教学材料，引用2022H1、2023H1和FY2024官方年报",
+      "used_for": "行业处境、现金与融资缓冲、五时钟、正常化、永久损失和价值路线"
+    },
+    {
+      "evidence_id": "CONCH-E2",
+      "source_ref": "docs/development/research/training_curricula/ENTERPRISE_JUDGMENT_CAPABILITY_CURRICULUM_V1.json",
+      "locator": "TEACH:CN600585:20240501:FY2022H1_FY2024",
+      "scope": "已策展教学身份与企业状态摘要",
+      "used_for": "教学身份、管理选择、反方和投资处理边界"
+    },
+    {
+      "evidence_id": "CONCH-E3",
+      "source_ref": "docs/development/golden_set_v1/CROSS_CASE_ADJUDICATION.md",
+      "locator": "海螺水泥600585行",
+      "scope": "现有候选报告的周期正常化、维护资本与价值路线复核摘要",
+      "used_for": "资产/EPV/资本回报交叉路线与材料性缺口"
+    },
+    {
+      "evidence_id": "CONCH-E4",
+      "source_ref": "docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/02_enterprise_system_models.json",
+      "locator": "ESM:CN:600585:20170412",
+      "scope": "既有企业模型中的合并销量、经营状态与经营现金责任边界",
+      "used_for": "复用合并边界；不把早期模型或集团现金写成项目资本回报"
+    }
+  ],
+  "existing_object_refs": [
+    {
+      "kind": "TEACHING_CASE",
+      "ref": "docs/development/research/training_curricula/teaching_cases/TC_CN600585_CYCLE_CAPITAL_CASH_V1.md",
+      "role": "公司特定教学证据和完整机制重建"
+    },
+    {
+      "kind": "TRAINING_CURRICULUM_CASE",
+      "ref": "docs/development/research/training_curricula/ENTERPRISE_JUDGMENT_CAPABILITY_CURRICULUM_V1.json",
+      "role": "现有结果已知教学身份与 lesson"
+    },
+    {
+      "kind": "ENTERPRISE_SYSTEM_MODEL",
+      "ref": "docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/02_enterprise_system_models.json",
+      "role": "复用既有合并责任边界，不复制事实"
+    },
+    {
+      "kind": "VALUATION_ROUTE_CONTEXT",
+      "ref": "docs/development/golden_set_v1/CROSS_CASE_ADJUDICATION.md",
+      "role": "已有周期正常化和价值路线的候选报告上下文"
+    }
+  ],
+  "underwriting_thesis": {
+    "thesis_id": "UWT:CN600585:20240501:V1",
+    "central_path": "海螺可承受当前水泥周期，国内核心可按保守中周期范围而非景气峰值处理；但国内新增资产尚未证明客户吸收、单位经济和现金回收，不能进入基准正常盈利或普通股现金。海外与产业链是组合缓冲和上行情景，不是项目回报的替代证据。",
+    "normal_earnings_treatment": "国内核心仅按量价、利用率和成本共同恢复的中周期范围承保；新增国内资产排除在基准之外，海外区域利润只作条件性上行情景。",
+    "owner_cash_treatment": "集团FY2024经营现金覆盖披露资本支出显示承受力，但维护/增长资本和普通股可得现金未闭合；owner cash 只能以范围和资产/EPV交叉约束，而不是单点OCF减资本支出。",
+    "permanent_loss_treatment": "核心风险是区域需求和价格长期疲弱使新旧资产低利用率、低回报并持续消耗维护或防御性资本，而非即时融资崩溃。",
+    "value_route_treatment": "采用资产价值、中周期EPV与资本回报交叉检查；不对产能、投产或一季现金覆盖支付成长价值。",
+    "strongest_rival": "海外毛利改善、成本下降、现金缓冲和多元布局会使整体盈利先于国内周期恢复，新增布局最终成为有效组合缓冲。",
+    "monitoring": "国内量价利用率和吨毛利；新增项目的同边界客户/经济/现金桥；海外存量与新项目拆分；经济维护资本和普通股现金可达性。"
+  },
+  "investment_treatment": "RESULT_KNOWN_TEACHING_ONLY：当前研究只承保生存缓冲与保守中周期核心；不为未经项目桥验证的新增资产或单点现金覆盖支付。没有价格、价值数字、BuyBand或投资动作。"
+}
