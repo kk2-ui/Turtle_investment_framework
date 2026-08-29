@@ -32,3 +32,7 @@ value-free mismatch；`04_e2_acquisition_recovery_preoutcome_receipt.json` 只�
 `06_e2_acquisition_recovery_v2_preoutcome_receipt.json` 是修复后三个既有结果前
 对象的第二次等值重放。它仍以零 outcome access、零 observation、零 settlement
 作为交给独立 custodian 前的验收出口。
+
+`07_e2_acquisition_attempt_3.json` 记录三字段都已 `FIELD_READY`、但 compact
+`CN002032` 责任边界尚未被 verifier 接受的最后一个机械阻断。边界本身不改写；
+修复只让 verifier 接受仓库已经冻结并验证过的该形式。

@@ -228,3 +228,21 @@ def test_second_recovery_still_has_zero_outcome_state_before_independent_access(
     assert receipt["invariants"]["outcome_source_enumerated"] is False
     assert receipt["status"] == "PREOUTCOME_REPLAY_FROZEN_AWAITING_CONTRACT_ONLY_OUTCOME_ACCESS"
     assert receipt["rights"] == four_stage.RIGHTS
+
+
+def test_third_attempt_reaches_field_ready_without_claiming_settlement() -> None:
+    attempt = _load(FOUR_STAGE / "07_e2_acquisition_attempt_3.json")
+
+    assert [row["acquisition_state"] for row in attempt["field_terminal_statuses"]] == [
+        "OBSERVED", "OBSERVED", "OBSERVED",
+    ]
+    assert [row["inventory_state"] for row in attempt["field_terminal_statuses"]] == [
+        "FIELD_READY", "FIELD_READY", "FIELD_READY",
+    ]
+    assert [row["settlement_state"] for row in attempt["field_terminal_statuses"]] == [
+        "MEASUREMENT_MISMATCH", "MEASUREMENT_MISMATCH", "MEASUREMENT_MISMATCH",
+    ]
+    assert attempt["lifecycle_counts"]["observations"] == 0
+    assert attempt["lifecycle_counts"]["settlements"] == 0
+    assert attempt["outcome_values_in_artifact"] is False
+    assert attempt["rights"] == four_stage.RIGHTS

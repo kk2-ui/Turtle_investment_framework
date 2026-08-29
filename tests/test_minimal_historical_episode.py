@@ -2102,21 +2102,21 @@ def test_official_rmb_revenue_quote_uses_only_the_selected_consolidated_current_
     [
         (
             "CONSOLIDATED_REVENUE_RMB",
-            "LISTED_ISSUER_CONSOLIDATED:CN:002032",
+            "LISTED_ISSUER_CONSOLIDATED:CN002032",
             "FY2018 annual report, consolidated income statement, PDF p.69, 营业收入.",
             "其中：营业收入 17,851,264,801.72 14,542,193,769.70",
             17851264801.72,
         ),
         (
             "CONSOLIDATED_OPERATING_CASH_FLOW_RMB",
-            "LISTED_ISSUER_CONSOLIDATED:CN:002032",
+            "LISTED_ISSUER_CONSOLIDATED:CN002032",
             "FY2018 annual report, consolidated cash-flow statement, PDF p.73, 经营活动产生的现金流量净额.",
             "经营活动产生的现金流量净额 2,013,658,744.84 1,101,068,593.63",
             2013658744.84,
         ),
         (
             "PRODUCT_REVENUE_RMB:电锅类",
-            "LISTED_ISSUER_CONSOLIDATED:CN:002032:DISCLOSED_PRODUCT_CATEGORY:电锅类",
+            "LISTED_ISSUER_CONSOLIDATED:CN002032:DISCLOSED_PRODUCT_CATEGORY:电锅类",
             "FY2018 annual report, segment or product operational data, PDF p.12, 电锅类.",
             "电锅类 4,241,166,335.58 23.76% 3,809,138,321.20 26.19% 11.34%",
             4241166335.58,

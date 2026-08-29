@@ -221,11 +221,13 @@ def _verify_quote_value(
             "LISTED_CONSOLIDATED_ISSUER",
             f"LISTED_ISSUER_CONSOLIDATED:{issuer_suffix}",
             f"LISTED_ISSUER_CONSOLIDATED:{issuer_code}",
+            f"LISTED_ISSUER_CONSOLIDATED:CN{issuer_code}",
         }
         if product_name is not None:
             allowed_boundaries = {
                 f"LISTED_ISSUER_CONSOLIDATED:{issuer_suffix}:DISCLOSED_PRODUCT_CATEGORY:{product_name}",
                 f"LISTED_ISSUER_CONSOLIDATED:{issuer_code}:DISCLOSED_PRODUCT_CATEGORY:{product_name}",
+                f"LISTED_ISSUER_CONSOLIDATED:CN{issuer_code}:DISCLOSED_PRODUCT_CATEGORY:{product_name}",
             }
         if (
             rule is None
