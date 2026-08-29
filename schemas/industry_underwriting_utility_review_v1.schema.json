@@ -1,0 +1,266 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://turtle.local/schemas/industry_underwriting_utility_review_v1.schema.json",
+  "title": "IndustryUnderwritingContext Utility Review v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "review_id",
+    "company_id",
+    "cutoff_at",
+    "reviewed_at",
+    "context_status",
+    "baseline_treatment",
+    "context_informed_treatment",
+    "dimension_reviews",
+    "utility_verdict",
+    "utility_basis",
+    "material_treatment_change_dimensions",
+    "narrowed_range_dimensions",
+    "explanation_only_dimensions",
+    "nonqualifying_change_dimensions",
+    "non_blocking_unknown_dimensions",
+    "investor_conclusion",
+    "review_policy"
+  ],
+  "properties": {
+    "schema_version": {"const": "industry-underwriting-utility-review.v1"},
+    "review_id": {"$ref": "#/$defs/nonempty"},
+    "company_id": {"$ref": "#/$defs/nonempty"},
+    "cutoff_at": {"type": "string", "format": "date-time"},
+    "reviewed_at": {"type": "string", "format": "date-time"},
+    "context_status": {"$ref": "#/$defs/status"},
+    "baseline_treatment": {"$ref": "#/$defs/snapshot"},
+    "context_informed_treatment": {"$ref": "#/$defs/snapshot"},
+    "dimension_reviews": {
+      "type": "array",
+      "minItems": 5,
+      "maxItems": 5,
+      "items": {"$ref": "#/$defs/dimension_review"}
+    },
+    "utility_verdict": {"enum": ["MATERIAL_UTILITY", "NO_MATERIAL_UTILITY"]},
+    "utility_basis": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/utility_basis"}
+    },
+    "material_treatment_change_dimensions": {"$ref": "#/$defs/dimension_ids"},
+    "narrowed_range_dimensions": {"$ref": "#/$defs/dimension_ids"},
+    "explanation_only_dimensions": {"$ref": "#/$defs/dimension_ids"},
+    "nonqualifying_change_dimensions": {"$ref": "#/$defs/dimension_ids"},
+    "non_blocking_unknown_dimensions": {"$ref": "#/$defs/dimension_ids"},
+    "investor_conclusion": {
+      "enum": [
+        "CONTEXT_CHANGED_MATERIAL_TREATMENT_OR_NARROWED_KEY_RANGE",
+        "CONTEXT_ADDED_NO_QUALIFYING_INVESTMENT_UTILITY"
+      ]
+    },
+    "review_policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "materiality_rule",
+        "explanation_only_never_qualifies",
+        "unknown_and_bounded_are_non_blocking",
+        "verdict_is_mechanically_derived"
+      ],
+      "properties": {
+        "materiality_rule": {
+          "const": "MATERIAL_TREATMENT_CHANGE_OR_LIKE_FOR_LIKE_KEY_ECONOMIC_RANGE_NARROWING"
+        },
+        "explanation_only_never_qualifies": {"const": true},
+        "unknown_and_bounded_are_non_blocking": {"const": true},
+        "verdict_is_mechanically_derived": {"const": true}
+      }
+    }
+  },
+  "$defs": {
+    "nonempty": {"type": "string", "minLength": 1},
+    "status": {"enum": ["READY", "BOUNDED", "UNKNOWN"]},
+    "dimension_id": {
+      "enum": [
+        "INDUSTRY_FUTURE_PATH",
+        "TARGET_EXPOSURE",
+        "OWNER_CASH_TREATMENT",
+        "PERMANENT_LOSS_PATH",
+        "VALUATION_ROUTE_AND_REQUIRED_EVIDENCE"
+      ]
+    },
+    "dimension_ids": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {"$ref": "#/$defs/dimension_id"}
+    },
+    "snapshot": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version", "snapshot_id", "company_id", "cutoff_at", "status", "dimensions"
+      ],
+      "properties": {
+        "schema_version": {"const": "industry-underwriting-treatment.v1"},
+        "snapshot_id": {"$ref": "#/$defs/nonempty"},
+        "company_id": {"$ref": "#/$defs/nonempty"},
+        "cutoff_at": {"type": "string", "format": "date-time"},
+        "status": {"$ref": "#/$defs/status"},
+        "dimensions": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "industry_future_path",
+            "target_exposure",
+            "owner_cash_treatment",
+            "permanent_loss_path",
+            "valuation_route_and_required_evidence"
+          ],
+          "properties": {
+            "industry_future_path": {"$ref": "#/$defs/treatment_axis"},
+            "target_exposure": {"$ref": "#/$defs/treatment_axis"},
+            "owner_cash_treatment": {"$ref": "#/$defs/treatment_axis"},
+            "permanent_loss_path": {"$ref": "#/$defs/treatment_axis"},
+            "valuation_route_and_required_evidence": {"$ref": "#/$defs/treatment_axis"}
+          }
+        }
+      }
+    },
+    "treatment_axis": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "thesis_code",
+        "direction",
+        "investment_treatment",
+        "key_economic_range",
+        "required_evidence",
+        "explanation"
+      ],
+      "properties": {
+        "status": {"$ref": "#/$defs/status"},
+        "thesis_code": {"$ref": "#/$defs/nonempty"},
+        "direction": {
+          "enum": ["POSITIVE", "NEUTRAL", "NEGATIVE", "MIXED", "CONDITIONAL", "UNKNOWN"]
+        },
+        "investment_treatment": {"$ref": "#/$defs/investment_treatment"},
+        "key_economic_range": {
+          "oneOf": [{"type": "null"}, {"$ref": "#/$defs/economic_range"}]
+        },
+        "required_evidence": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/required_evidence"}
+        },
+        "explanation": {"$ref": "#/$defs/nonempty"}
+      }
+    },
+    "investment_treatment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["base_case_role", "decision_action", "reason"],
+      "properties": {
+        "base_case_role": {
+          "enum": ["INCLUDE", "INCLUDE_CONDITIONALLY", "SCENARIO_ONLY", "EXCLUDE", "UNRESOLVED"]
+        },
+        "decision_action": {
+          "enum": [
+            "PROCEED",
+            "PROCEED_WITH_HAIRCUT",
+            "WAIT_FOR_DECISIVE_EVIDENCE",
+            "REJECT",
+            "NO_ACTION_CHANGE",
+            "UNRESOLVED"
+          ]
+        },
+        "reason": {"$ref": "#/$defs/nonempty"}
+      }
+    },
+    "economic_range": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["metric", "scope", "unit", "lower", "upper"],
+      "properties": {
+        "metric": {"$ref": "#/$defs/nonempty"},
+        "scope": {"$ref": "#/$defs/nonempty"},
+        "unit": {"$ref": "#/$defs/nonempty"},
+        "lower": {"type": "number"},
+        "upper": {"type": "number"}
+      }
+    },
+    "required_evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["evidence_id", "priority"],
+      "properties": {
+        "evidence_id": {"$ref": "#/$defs/nonempty"},
+        "priority": {"enum": ["DECISIVE", "SUPPORTING"]}
+      }
+    },
+    "dimension_review": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "dimension_id",
+        "baseline_status",
+        "context_informed_status",
+        "changed_fields",
+        "material_treatment_changed",
+        "key_economic_range_narrowed",
+        "qualifying_reasons",
+        "comparison_status"
+      ],
+      "properties": {
+        "dimension_id": {"$ref": "#/$defs/dimension_id"},
+        "baseline_status": {"$ref": "#/$defs/status"},
+        "context_informed_status": {"$ref": "#/$defs/status"},
+        "changed_fields": {
+          "type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/nonempty"}
+        },
+        "material_treatment_changed": {"type": "boolean"},
+        "key_economic_range_narrowed": {"type": "boolean"},
+        "qualifying_reasons": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "BASE_CASE_ROLE_CHANGED",
+              "DECISION_ACTION_CHANGED",
+              "VALUATION_ROUTE_CHANGED",
+              "DECISIVE_REQUIRED_EVIDENCE_CHANGED",
+              "KEY_ECONOMIC_RANGE_NARROWED"
+            ]
+          }
+        },
+        "comparison_status": {
+          "enum": [
+            "QUALIFYING_MATERIAL_CHANGE",
+            "UNRESOLVED_NON_BLOCKING",
+            "NO_CHANGE",
+            "EXPLANATION_ONLY",
+            "NONQUALIFYING_CHANGE"
+          ]
+        }
+      }
+    },
+    "utility_basis": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["dimension_id", "qualifying_reasons"],
+      "properties": {
+        "dimension_id": {"$ref": "#/$defs/dimension_id"},
+        "qualifying_reasons": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "BASE_CASE_ROLE_CHANGED",
+              "DECISION_ACTION_CHANGED",
+              "VALUATION_ROUTE_CHANGED",
+              "DECISIVE_REQUIRED_EVIDENCE_CHANGED",
+              "KEY_ECONOMIC_RANGE_NARROWED"
+            ]
+          }
+        }
+      }
+    }
+  }
+}
