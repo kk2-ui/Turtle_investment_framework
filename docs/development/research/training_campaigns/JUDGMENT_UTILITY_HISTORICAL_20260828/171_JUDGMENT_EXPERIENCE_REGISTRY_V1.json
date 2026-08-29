@@ -89,15 +89,18 @@
       "proposition": "A profitable core, a new option, and group cash must remain on their own responsibility boundaries; deployment examples or group cash cannot establish the option's recurring economics.",
       "structural_key": {
         "mechanism_kinds": [
-          "RESPONSIBILITY_MATCHED_CASH"
+          "CORE_OPTION_RESPONSIBILITY_BOUNDARY",
+          "REPEATABLE_CUSTOMER_ECONOMICS",
+          "STRATEGIC_CAPITAL_ALLOCATION"
         ],
-        "lifecycle": "EXPANSION",
-        "industry_epoch": "OVERSUPPLY_PRICE_COMPRESSION",
-        "competitive_arena": "CAPITAL_INTENSIVE_B2B_MANUFACTURING",
-        "responsibility_boundary": "GROUP_VS_INCREMENTAL_BUSINESS_LINE",
+        "lifecycle": "MATURE_CORE_WITH_EMERGING_OPTION",
+        "industry_epoch": "TECHNOLOGY_DEPLOYMENT_AND_REGULATORY_CYCLE",
+        "competitive_arena": "MATURE_CORE_AND_EMERGING_OPTION",
+        "responsibility_boundary": "CORE_BUSINESS_VS_EMERGING_OPTION_AND_STRATEGIC_CAPITAL",
         "company_constraints": [
-          "CAPITAL_INTENSITY",
-          "CAPACITY_COMMITMENT"
+          "R_AND_D_INTENSITY",
+          "EARLY_OPTION_COMMERCIALIZATION",
+          "STRATEGIC_CAPITAL_ALLOCATION"
         ]
       },
       "decision_or_no_action": "Continue core investment while treating new-option economics as unresolved.",
