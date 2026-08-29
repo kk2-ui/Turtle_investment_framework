@@ -1,0 +1,19 @@
+{
+  "schema_version": "turtle-minimal-historical-episode-decision-contract.v1",
+  "decision_contract_id": "MHE:DECISION:CN600839:C1:V2",
+  "decision_contract_version": 1,
+  "company_id": "CN:600839",
+  "issuer_id": "ISSUER:CN:600839",
+  "cutoff_at": "2018-09-30T23:59:59+08:00",
+  "metric_id": "ISSUER_CONSOLIDATED_OPERATING_REVENUE_RMB",
+  "window_id": "ONE_YEAR",
+  "decision_purpose": "ONE_METRIC_DIRECTIONAL_PREDICTION",
+  "roles": {
+    "forecaster_id": "FORECASTER:CN600839:C1:20260827",
+    "custodian_id": "CUSTODIAN:CN600839:FY2019:20260827"
+  },
+  "object_class": "MINIMAL_HISTORICAL_DECISION_CONTRACT",
+  "claim_class": "ONE_METRIC_DIRECTIONAL_DECISION_SCOPE",
+  "allowed_outputs": ["MECHANICAL_SETTLEMENT_ONLY"],
+  "method_transfer_rights": "NO_METHOD_TRANSFER_RIGHTS"
+}

@@ -1,0 +1,31 @@
+{
+  "schema_version": "turtle-minimal-historical-episode-static-evidence.v1",
+  "evidence_receipt_id": "MHE:EVIDENCE:CN000921:FY2016:C1:V2",
+  "evidence_receipt_version": 1,
+  "measurement_contract_ref": {
+    "measurement_contract_id": "MHE:CONTRACT:CN000921:FY2017:V2",
+    "measurement_contract_version": 2
+  },
+  "company_id": "CN:000921",
+  "issuer_id": "ISSUER:CN:000921",
+  "cutoff_at": "2017-04-30T23:59:59+08:00",
+  "metric_id": "ISSUER_CONSOLIDATED_OPERATING_REVENUE_RMB",
+  "window_id": "ONE_YEAR",
+  "curator_id": "CURATOR:CN000921:REVENUE:C1:20260827",
+  "source": {
+    "source_id": "CNINFO:000921:ANN:20170330:1203223381",
+    "source_url": "https://static.cninfo.com.cn/finalpage/2017-03-30/1203223381.PDF",
+    "source_type": "OFFICIAL_STATIC_FILING",
+    "published_at": "2017-03-30",
+    "issuer_id": "ISSUER:CN:000921",
+    "metric_id": "ISSUER_CONSOLIDATED_OPERATING_REVENUE_RMB",
+    "responsibility_boundary": "LISTED_CONSOLIDATED_ISSUER",
+    "unit": "RMB",
+    "field_ref": "FY2016 Hisense Kelon annual report, consolidated income statement, PDF p. 72, 其中：营业收入.",
+    "numeric_value": 26730219497.07
+  },
+  "object_class": "MINIMAL_HISTORICAL_STATIC_EVIDENCE",
+  "claim_class": "CUTOFF_VISIBLE_OFFICIAL_FIELD",
+  "allowed_outputs": ["MECHANICAL_SETTLEMENT_ONLY"],
+  "method_transfer_rights": "NO_METHOD_TRANSFER_RIGHTS"
+}

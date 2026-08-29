@@ -1,0 +1,61 @@
+{
+  "schema_version": "enterprise-judgment-appliance-e2-acquisition-recovery-preoutcome-receipt.v1",
+  "receipt_id": "APPLIANCE-FOUR-STAGE:E2:CN002032:ACQUISITION-RECOVERY:PREOUTCOME:V1",
+  "episode_id": "APPLIANCE-R11:CN002032:20180930:V1",
+  "company_id": "CN:002032",
+  "cutoff_at": "2018-09-30T23:59:59+08:00",
+  "recovery_kind": "EXACT_CONTROLLER_REPLAY_OF_ACCEPTED_PREOUTCOME_OBJECTS",
+  "accepted_preoutcome_ref": {
+    "commit": "79859c7",
+    "independent_review_status": "PASS",
+    "source_receipt_id": "CNINFO:002032:ANN:20180331:1204552803",
+    "source_url": "https://static.cninfo.com.cn/finalpage/2018-03-31/1204552803.PDF"
+  },
+  "original_attempt_ref": {
+    "artifact": "03_e2_acquisition_attempt_1.json",
+    "terminal_status": "PARTIAL_NOT_DIAGNOSTIC",
+    "immutable": true,
+    "observation_count": 0,
+    "settlement_count": 0
+  },
+  "classifier_remediation_ref": {
+    "commit": "aa9f7b6",
+    "failure_class": "ACQUISITION_MODULE",
+    "repaired_rule": "ANNUAL_REPORT_PERFORMANCE_MEETING_IS_NOT_AN_ANNUAL_REPORT_VERSION"
+  },
+  "measurement_contract_ids": [
+    "MHE:CONTRACT:APPLIANCE-R11:CN002032:FY2018:ISSUER_REVENUE:V1",
+    "MHE:CONTRACT:APPLIANCE-R11:CN002032:FY2018:ELECTRIC_POT_REVENUE:V1",
+    "MHE:CONTRACT:APPLIANCE-R11:CN002032:FY2018:ISSUER_OCF:V1"
+  ],
+  "controller_counts": {
+    "decision_contracts": 3,
+    "technical_route_identities": 3,
+    "measurement_contracts": 3,
+    "static_evidence": 3,
+    "predictions": 3,
+    "outcome_access": 0,
+    "source_inventories": 0,
+    "observations": 0,
+    "settlements": 0
+  },
+  "recovery_invariants": {
+    "forecast_reauthored": false,
+    "measurement_contract_changed": false,
+    "source_packet_changed": false,
+    "outcome_source_enumerated": false,
+    "outcome_pdf_opened": false,
+    "outcome_value_read": false,
+    "old_terminal_receipt_mutated": false
+  },
+  "status": "PREOUTCOME_REPLAY_FROZEN_AWAITING_CONTRACT_ONLY_OUTCOME_ACCESS",
+  "permitted_next_action": "INDEPENDENT_CUSTODIAN_CONTRACT_ONLY_OUTCOME_ACCESS",
+  "rights": {
+    "method_transfer": "NOT_AUTHORIZED",
+    "cjo": "NOT_AUTHORIZED",
+    "valuation": "NOT_AUTHORIZED",
+    "report": "NOT_AUTHORIZED",
+    "buy_band": "NOT_AUTHORIZED",
+    "investment": "NOT_AUTHORIZED"
+  }
+}

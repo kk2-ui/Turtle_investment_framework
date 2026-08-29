@@ -675,6 +675,19 @@ def test_cninfo_export_normalizes_shenzhen_filing_and_preserves_future_rejection
     assert validate_source_manifest(manifest)["state"] == "REVIEWABLE"
 
 
+def test_cninfo_annual_report_performance_meeting_notice_is_not_a_report_version() -> None:
+    normalized = normalize_cninfo_announcement_record({
+        "secCode": "002032",
+        "announcementId": "1205946639",
+        "announcementTitle": "关于举行2018年年度报告网上业绩说明会的公告",
+        "announcementTime": "2019-03-28",
+        "adjunctUrl": "finalpage/2019-03-28/1205946639.PDF",
+    }, company_code="002032")
+    assert normalized["source_type"] == "EXCHANGE_ANNOUNCEMENT"
+    assert normalized["data_as_of"] == "2019-03-28"
+    assert normalized["source_id"] == "CNINFO:002032:ANN:20190328:1205946639"
+
+
 def test_cninfo_export_rejects_a_row_without_statutory_url() -> None:
     with pytest.raises(CNInfoAnnouncementExportError, match="URL"):
         normalize_cninfo_announcement_record({

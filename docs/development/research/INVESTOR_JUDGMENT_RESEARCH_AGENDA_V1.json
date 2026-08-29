@@ -1,0 +1,417 @@
+{
+  "schema_version": "investor-judgment-research-agenda.v1",
+  "as_of": "2026-08-27",
+  "read_model_ref": "docs/development/research/INVESTOR_JUDGMENT_LEARNING_STATUS_V1.json",
+  "policy_ref": "docs/development/research/INVESTOR_JUDGMENT_RESEARCH_AGENDA_V1_POLICY.json",
+  "readiness": {
+    "state": "READY_FOR_L2_RESEARCH_DESIGN",
+    "meaning": "Existing receipts may guide the next mechanism-pair design, but none may supply a company conclusion or validated method claim for that episode."
+  },
+  "next_training_contract": {
+    "target_level": "L2",
+    "objective": "Complete one clean L2 mechanism-pair settlement, then use its accepted lesson in a different pre-outcome company episode before attempting L4 or any multi-episode L5 comparison.",
+    "required_evidence": [
+      "One frozen mechanism pair with distinct outcome predicates and an independently accepted diagnostic verdict.",
+      "UNKNOWN, MIXED, NOT_DIAGNOSTIC and MEASUREMENT_MISMATCH retained without replacement.",
+      "No use of the same settled outcome to repair and re-credit a method rule."
+    ],
+    "required_independence": "Different eligible company-cutoff, pre-outcome frozen mechanism pair and resolver, official result source, and external post-outcome review.",
+    "prohibited_shortcuts": [
+      "Do not use a candidate research rule as an issuer fact or selected mechanism.",
+      "Do not repair a resolver after outcome access and credit the same episode.",
+      "Do not remove UNKNOWN, MIXED, NOT_DIAGNOSTIC or MEASUREMENT_MISMATCH from the denominator.",
+      "Do not use price, return, CJO, valuation or a final report to choose or settle the mechanism pair."
+    ]
+  },
+  "historical_company_context": [
+    {
+      "context_id": "CONTEXT:R5COMP:CN:CEMENT:600802:20150415:FY2015:V1",
+      "round_id": "ROUND5",
+      "company_id": "CN:600802",
+      "cutoff_at": "2015-04-15T00:00:00+08:00",
+      "statement": "Do not credit Furun as an executed driver of the issuer's customer, volume, profit or cash outcome.",
+      "use_permission": "HISTORICAL_COMPANY_CONTEXT_ONLY",
+      "prohibited_use": "Do not transfer this company finding to another issuer, infer general management quality, or use it as valuation, report or investment authority.",
+      "source_artifacts": {
+        "completion": "docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/36_round5_real_feedback_completion_receipt.json",
+        "settlement": "docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/34_round5_real_feedback_settlement.json",
+        "independent_review": "docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/35_round5_independent_postoutcome_review.json",
+        "invalidation": null
+      }
+    },
+    {
+      "context_id": "CONTEXT:R6COMP:CN:CEMENT:600801:20160427:FY2016:V1",
+      "round_id": "ROUND6",
+      "company_id": "CN:600801",
+      "cutoff_at": "2016-04-27T00:00:00+08:00",
+      "statement": "华新在 2016 年推进了拉法基资产收购审批并提供运营支持服务，但相关资产年末仍未交割、未由华新控制、未进入华新合并报表。同期华新经营现金流改善、现金资本开支和短期借款下降，只能说明华新自身状态改善，不能证明并购效果或管理层整体质量。",
+      "use_permission": "HISTORICAL_COMPANY_CONTEXT_ONLY",
+      "prohibited_use": "Do not transfer this company finding to another issuer, infer general management quality, or use it as valuation, report or investment authority.",
+      "source_artifacts": {
+        "completion": "docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/44_round6_completion_receipt.json",
+        "settlement": "docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/42_round6_canonical_field_settlement.json",
+        "independent_review": "docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/43_round6_independent_paired_utility_review.json",
+        "invalidation": null
+      }
+    },
+    {
+      "context_id": "CONTEXT:R7COMP:CN:CEMENT:600585:20140416:FY2014:V1",
+      "round_id": "ROUND7",
+      "company_id": "CN:600585",
+      "cutoff_at": "2014-04-16T00:00:00+08:00",
+      "statement": "海螺 FY2014 在行业增速放缓时仍录得更强销量、现金覆盖和更低净负债，但扩产、收购与外部成本变化尚未与企业自身能力分开；客户优势、owner cash、适应能力和永久损失结论继续保持未知。",
+      "use_permission": "HISTORICAL_COMPANY_CONTEXT_ONLY",
+      "prohibited_use": "Do not transfer this company finding to another issuer, infer general management quality, or use it as valuation, report or investment authority.",
+      "source_artifacts": {
+        "completion": "docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/53_round7_completion_receipt.json",
+        "settlement": "docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/51_round7_canonical_field_settlement.json",
+        "independent_review": "docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/52_round7_independent_multidimensional_review.json",
+        "invalidation": null
+      }
+    },
+    {
+      "context_id": "CONTEXT:R8COMPLETE:CN002120:20190501:FY2019:V1",
+      "round_id": "ROUND8",
+      "company_id": "CN:002120",
+      "cutoff_at": "2019-05-01T00:00:00+08:00",
+      "statement": "The issuer grew parcel volume and the frozen share cell increased in FY2019. The annual report describes a lower complaint metric, but its per-million unit was not correctly frozen. Consolidated operating cash flow grew faster than cash capex, while leverage also increased. A dispatch-fee presentation change prevents same-definition unit-economics scoring.",
+      "use_permission": "HISTORICAL_COMPANY_CONTEXT_ONLY",
+      "prohibited_use": "Do not transfer this company finding to another issuer, infer general management quality, or use it as valuation, report or investment authority.",
+      "source_artifacts": {
+        "completion": "docs/development/research/industry_learning_blocks/CN_FRANCHISE_EXPRESS_2018_2019/12_round8_completion_receipt.json",
+        "settlement": "docs/development/research/industry_learning_blocks/CN_FRANCHISE_EXPRESS_2018_2019/08_outcome_settlement.json",
+        "independent_review": "docs/development/research/industry_learning_blocks/CN_FRANCHISE_EXPRESS_2018_2019/11a_independent_utility_review_acceptance.json",
+        "invalidation": null
+      }
+    },
+    {
+      "context_id": "CONTEXT:R9CLOSEOUT:CN600839:20180930:FY2019:V2",
+      "round_id": "ROUND9",
+      "company_id": "CN:600839",
+      "cutoff_at": "2018-09-30T23:59:59+08:00",
+      "statement": "FY2019 consolidated operating revenue was RMB88.79 billion and cleared the frozen FY2017-anchor increase threshold. Air-conditioner and refrigerator revenue was RMB14.01 billion and gross margin was about 22.36%; both were inside frozen bands relative to the FY2017 anchor, not year-on-year stability claims. The annual report separately shows FY2019 white-goods revenue down 6.70% year on year and gross margin up 0.17 percentage point. FY2019 consolidated OCF was RMB1.57 billion versus about RMB4.42 billion in FY2018; its frozen label is relative to FY2017 only. The smart-white-goods industrial park reached full production, and the issuer disposed of its controlling New Energy stake. Ordinary-share owner cash remains UNKNOWN.",
+      "use_permission": "HISTORICAL_COMPANY_CONTEXT_ONLY",
+      "prohibited_use": "Do not transfer this company finding to another issuer, infer general management quality, or use it as valuation, report or investment authority.",
+      "source_artifacts": {
+        "completion": "docs/development/research/industry_learning_blocks/CN_APPLIANCE_CHANGHONG_2018_2019_ROUND9/19_round9_completion_receipt.json",
+        "settlement": "docs/development/research/industry_learning_blocks/CN_APPLIANCE_CHANGHONG_2018_2019_ROUND9/15_outcome_settlement.json",
+        "independent_review": "docs/development/research/industry_learning_blocks/CN_APPLIANCE_CHANGHONG_2018_2019_ROUND9/18_independent_postoutcome_review.json",
+        "invalidation": "docs/development/research/industry_learning_blocks/CN_APPLIANCE_CHANGHONG_2018_2019_ROUND9/17_method_feedback_invalidation.json"
+      }
+    }
+  ],
+  "candidate_research_rules": [
+    {
+      "rule_candidate_id": "RESEARCH-RULE:ROUND5:1",
+      "source_evidence_id": "R5COMP:CN:CEMENT:600802:20150415:FY2015:V1",
+      "source_round_id": "ROUND5",
+      "evidence_class": "LOCAL_COMPANY_JUDGMENT_CHANGE",
+      "status": "LOCAL_LESSON_REPLICATION_REQUIRED",
+      "research_change": "Freeze legal launch, decision control, issuer-product participation and customer response as separate cells in a future episode.",
+      "allowed_use": "NEXT_EPISODE_QUESTION_OR_ACQUISITION_DESIGN_ONLY",
+      "acceptance_needed": "Apply before outcome access on a different eligible company-cutoff and settle under a declared same-definition contract with independent review.",
+      "prohibited_use": "Not a company fact, validated method, probability, CJO amendment, valuation input, report conclusion, buy band or investment action."
+    },
+    {
+      "rule_candidate_id": "RESEARCH-RULE:ROUND5:2",
+      "source_evidence_id": "R5COMP:CN:CEMENT:600802:20150415:FY2015:V1",
+      "source_round_id": "ROUND5",
+      "evidence_class": "LOCAL_COMPANY_JUDGMENT_CHANGE",
+      "status": "LOCAL_LESSON_REPLICATION_REQUIRED",
+      "research_change": "Obtain absolute same-definition baseline volume fields or freeze an interval inference rule before outcome access.",
+      "allowed_use": "NEXT_EPISODE_QUESTION_OR_ACQUISITION_DESIGN_ONLY",
+      "acceptance_needed": "Apply before outcome access on a different eligible company-cutoff and settle under a declared same-definition contract with independent review.",
+      "prohibited_use": "Not a company fact, validated method, probability, CJO amendment, valuation input, report conclusion, buy band or investment action."
+    },
+    {
+      "rule_candidate_id": "RESEARCH-RULE:ROUND5:3",
+      "source_evidence_id": "R5COMP:CN:CEMENT:600802:20150415:FY2015:V1",
+      "source_round_id": "ROUND5",
+      "evidence_class": "LOCAL_COMPANY_JUDGMENT_CHANGE",
+      "status": "LOCAL_LESSON_REPLICATION_REQUIRED",
+      "research_change": "Study capital-return and permanent-loss persistence under a separate multi-period issuer-level contract.",
+      "allowed_use": "NEXT_EPISODE_QUESTION_OR_ACQUISITION_DESIGN_ONLY",
+      "acceptance_needed": "Apply before outcome access on a different eligible company-cutoff and settle under a declared same-definition contract with independent review.",
+      "prohibited_use": "Not a company fact, validated method, probability, CJO amendment, valuation input, report conclusion, buy band or investment action."
+    },
+    {
+      "rule_candidate_id": "RESEARCH-RULE:ROUND6:3",
+      "source_evidence_id": "R6COMP:CN:CEMENT:600801:20160427:FY2016:V1",
+      "source_round_id": "ROUND6",
+      "evidence_class": "POSITIVE_DEVELOPMENT_METHOD_UTILITY",
+      "status": "DEVELOPMENT_UTILITY_REPLICATION_REQUIRED",
+      "research_change": "在没有历史摘要污染的新公司和 cutoff 上重复同证据预算配对，建立真正的迁移验证。",
+      "allowed_use": "NEXT_EPISODE_QUESTION_OR_ACQUISITION_DESIGN_ONLY",
+      "acceptance_needed": "Apply before outcome access on a different eligible company-cutoff and settle under a declared same-definition contract with independent review.",
+      "prohibited_use": "Not a company fact, validated method, probability, CJO amendment, valuation input, report conclusion, buy band or investment action."
+    },
+    {
+      "rule_candidate_id": "RESEARCH-RULE:ROUND7:1",
+      "source_evidence_id": "R7COMP:CN:CEMENT:600585:20140416:FY2014:V1",
+      "source_round_id": "ROUND7",
+      "evidence_class": "POSITIVE_DEVELOPMENT_METHOD_UTILITY",
+      "status": "DEVELOPMENT_UTILITY_REPLICATION_REQUIRED",
+      "research_change": "下一 cutoff 先冻结新增与收购产能、存量有机销量以及具名计划里程碑的范围桥。",
+      "allowed_use": "NEXT_EPISODE_QUESTION_OR_ACQUISITION_DESIGN_ONLY",
+      "acceptance_needed": "Apply before outcome access on a different eligible company-cutoff and settle under a declared same-definition contract with independent review.",
+      "prohibited_use": "Not a company fact, validated method, probability, CJO amendment, valuation input, report conclusion, buy band or investment action."
+    },
+    {
+      "rule_candidate_id": "RESEARCH-RULE:ROUND7:2",
+      "source_evidence_id": "R7COMP:CN:CEMENT:600585:20140416:FY2014:V1",
+      "source_round_id": "ROUND7",
+      "evidence_class": "POSITIVE_DEVELOPMENT_METHOD_UTILITY",
+      "status": "DEVELOPMENT_UTILITY_REPLICATION_REQUIRED",
+      "research_change": "补充直接客户响应、同口径价格组合和水泥熟料毛利字段，不用公司总销量替代客户证据。",
+      "allowed_use": "NEXT_EPISODE_QUESTION_OR_ACQUISITION_DESIGN_ONLY",
+      "acceptance_needed": "Apply before outcome access on a different eligible company-cutoff and settle under a declared same-definition contract with independent review.",
+      "prohibited_use": "Not a company fact, validated method, probability, CJO amendment, valuation input, report conclusion, buy band or investment action."
+    },
+    {
+      "rule_candidate_id": "RESEARCH-RULE:ROUND7:3",
+      "source_evidence_id": "R7COMP:CN:CEMENT:600585:20140416:FY2014:V1",
+      "source_round_id": "ROUND7",
+      "evidence_class": "POSITIVE_DEVELOPMENT_METHOD_UTILITY",
+      "status": "DEVELOPMENT_UTILITY_REPLICATION_REQUIRED",
+      "research_change": "拆分维护性与增长性资本开支，并把营运资本变化桥接到保守 owner-cash 候选。",
+      "allowed_use": "NEXT_EPISODE_QUESTION_OR_ACQUISITION_DESIGN_ONLY",
+      "acceptance_needed": "Apply before outcome access on a different eligible company-cutoff and settle under a declared same-definition contract with independent review.",
+      "prohibited_use": "Not a company fact, validated method, probability, CJO amendment, valuation input, report conclusion, buy band or investment action."
+    },
+    {
+      "rule_candidate_id": "RESEARCH-RULE:ROUND7:4",
+      "source_evidence_id": "R7COMP:CN:CEMENT:600585:20140416:FY2014:V1",
+      "source_round_id": "ROUND7",
+      "evidence_class": "POSITIVE_DEVELOPMENT_METHOD_UTILITY",
+      "status": "DEVELOPMENT_UTILITY_REPLICATION_REQUIRED",
+      "research_change": "在未被后期摘要污染的不同公司和时期重复同证据预算测试，才判断是否允许方法迁移。",
+      "allowed_use": "NEXT_EPISODE_QUESTION_OR_ACQUISITION_DESIGN_ONLY",
+      "acceptance_needed": "Apply before outcome access on a different eligible company-cutoff and settle under a declared same-definition contract with independent review.",
+      "prohibited_use": "Not a company fact, validated method, probability, CJO amendment, valuation input, report conclusion, buy band or investment action."
+    },
+    {
+      "rule_candidate_id": "RESEARCH-RULE:ROUND8:1",
+      "source_evidence_id": "R8COMPLETE:CN002120:20190501:FY2019:V1",
+      "source_round_id": "ROUND8",
+      "evidence_class": "VALID_NEGATIVE_METHOD_OR_MEASUREMENT_LESSON",
+      "status": "NO_ADVANTAGE_REDESIGN_REQUIRED",
+      "research_change": "Repeat the same eight-dimensional skeleton on a second unseen industry/company cutoff.",
+      "allowed_use": "NEXT_EPISODE_QUESTION_OR_ACQUISITION_DESIGN_ONLY",
+      "acceptance_needed": "Apply before outcome access on a different eligible company-cutoff and settle under a declared same-definition contract with independent review.",
+      "prohibited_use": "Not a company fact, validated method, probability, CJO amendment, valuation input, report conclusion, buy band or investment action."
+    },
+    {
+      "rule_candidate_id": "RESEARCH-RULE:ROUND8:2",
+      "source_evidence_id": "R8COMPLETE:CN002120:20190501:FY2019:V1",
+      "source_round_id": "ROUND8",
+      "evidence_class": "VALID_NEGATIVE_METHOD_OR_MEASUREMENT_LESSON",
+      "status": "NO_ADVANTAGE_REDESIGN_REQUIRED",
+      "research_change": "Freeze a genuinely simple independent Baseline that does not reuse the Enhanced mechanism questions or rivals.",
+      "allowed_use": "NEXT_EPISODE_QUESTION_OR_ACQUISITION_DESIGN_ONLY",
+      "acceptance_needed": "Apply before outcome access on a different eligible company-cutoff and settle under a declared same-definition contract with independent review.",
+      "prohibited_use": "Not a company fact, validated method, probability, CJO amendment, valuation input, report conclusion, buy band or investment action."
+    },
+    {
+      "rule_candidate_id": "RESEARCH-RULE:ROUND8:3",
+      "source_evidence_id": "R8COMPLETE:CN002120:20190501:FY2019:V1",
+      "source_round_id": "ROUND8",
+      "evidence_class": "VALID_NEGATIVE_METHOD_OR_MEASUREMENT_LESSON",
+      "status": "NO_ADVANTAGE_REDESIGN_REQUIRED",
+      "research_change": "Freeze separate outcome resolution rules for Baseline and Enhanced before opening any result source.",
+      "allowed_use": "NEXT_EPISODE_QUESTION_OR_ACQUISITION_DESIGN_ONLY",
+      "acceptance_needed": "Apply before outcome access on a different eligible company-cutoff and settle under a declared same-definition contract with independent review.",
+      "prohibited_use": "Not a company fact, validated method, probability, CJO amendment, valuation input, report conclusion, buy band or investment action."
+    },
+    {
+      "rule_candidate_id": "RESEARCH-RULE:ROUND8:4",
+      "source_evidence_id": "R8COMPLETE:CN002120:20190501:FY2019:V1",
+      "source_round_id": "ROUND8",
+      "evidence_class": "VALID_NEGATIVE_METHOD_OR_MEASUREMENT_LESSON",
+      "status": "NO_ADVANTAGE_REDESIGN_REQUIRED",
+      "research_change": "Bind industry context to an industry responsibility perimeter rather than the issuer perimeter.",
+      "allowed_use": "NEXT_EPISODE_QUESTION_OR_ACQUISITION_DESIGN_ONLY",
+      "acceptance_needed": "Apply before outcome access on a different eligible company-cutoff and settle under a declared same-definition contract with independent review.",
+      "prohibited_use": "Not a company fact, validated method, probability, CJO amendment, valuation input, report conclusion, buy band or investment action."
+    },
+    {
+      "rule_candidate_id": "RESEARCH-RULE:ROUND8:5",
+      "source_evidence_id": "R8COMPLETE:CN002120:20190501:FY2019:V1",
+      "source_round_id": "ROUND8",
+      "evidence_class": "VALID_NEGATIVE_METHOD_OR_MEASUREMENT_LESSON",
+      "status": "NO_ADVANTAGE_REDESIGN_REQUIRED",
+      "research_change": "Make causal eligibility machine-readable and require evaluation findings to cite eligible cells.",
+      "allowed_use": "NEXT_EPISODE_QUESTION_OR_ACQUISITION_DESIGN_ONLY",
+      "acceptance_needed": "Apply before outcome access on a different eligible company-cutoff and settle under a declared same-definition contract with independent review.",
+      "prohibited_use": "Not a company fact, validated method, probability, CJO amendment, valuation input, report conclusion, buy band or investment action."
+    },
+    {
+      "rule_candidate_id": "RESEARCH-RULE:ROUND8:6",
+      "source_evidence_id": "R8COMPLETE:CN002120:20190501:FY2019:V1",
+      "source_round_id": "ROUND8",
+      "evidence_class": "VALID_NEGATIVE_METHOD_OR_MEASUREMENT_LESSON",
+      "status": "NO_ADVANTAGE_REDESIGN_REQUIRED",
+      "research_change": "Freeze complaints per million parcels as its own unit rather than a generic ratio.",
+      "allowed_use": "NEXT_EPISODE_QUESTION_OR_ACQUISITION_DESIGN_ONLY",
+      "acceptance_needed": "Apply before outcome access on a different eligible company-cutoff and settle under a declared same-definition contract with independent review.",
+      "prohibited_use": "Not a company fact, validated method, probability, CJO amendment, valuation input, report conclusion, buy band or investment action."
+    },
+    {
+      "rule_candidate_id": "RESEARCH-RULE:ROUND8:7",
+      "source_evidence_id": "R8COMPLETE:CN002120:20190501:FY2019:V1",
+      "source_round_id": "ROUND8",
+      "evidence_class": "VALID_NEGATIVE_METHOD_OR_MEASUREMENT_LESSON",
+      "status": "NO_ADVANTAGE_REDESIGN_REQUIRED",
+      "research_change": "Freeze a definitionally comparable per-parcel revenue, cost and gross-margin bridge before outcome access.",
+      "allowed_use": "NEXT_EPISODE_QUESTION_OR_ACQUISITION_DESIGN_ONLY",
+      "acceptance_needed": "Apply before outcome access on a different eligible company-cutoff and settle under a declared same-definition contract with independent review.",
+      "prohibited_use": "Not a company fact, validated method, probability, CJO amendment, valuation input, report conclusion, buy band or investment action."
+    },
+    {
+      "rule_candidate_id": "RESEARCH-RULE:ROUND8:8",
+      "source_evidence_id": "R8COMPLETE:CN002120:20190501:FY2019:V1",
+      "source_round_id": "ROUND8",
+      "evidence_class": "VALID_NEGATIVE_METHOD_OR_MEASUREMENT_LESSON",
+      "status": "NO_ADVANTAGE_REDESIGN_REQUIRED",
+      "research_change": "Add dated post-cutoff operating-event evidence when the official source provides it; otherwise retain UNKNOWN.",
+      "allowed_use": "NEXT_EPISODE_QUESTION_OR_ACQUISITION_DESIGN_ONLY",
+      "acceptance_needed": "Apply before outcome access on a different eligible company-cutoff and settle under a declared same-definition contract with independent review.",
+      "prohibited_use": "Not a company fact, validated method, probability, CJO amendment, valuation input, report conclusion, buy band or investment action."
+    },
+    {
+      "rule_candidate_id": "RESEARCH-RULE:ROUND8:9",
+      "source_evidence_id": "R8COMPLETE:CN002120:20190501:FY2019:V1",
+      "source_round_id": "ROUND8",
+      "evidence_class": "VALID_NEGATIVE_METHOD_OR_MEASUREMENT_LESSON",
+      "status": "NO_ADVANTAGE_REDESIGN_REQUIRED",
+      "research_change": "Keep franchisee economics and ordinary-share owner cash as separate evidence targets.",
+      "allowed_use": "NEXT_EPISODE_QUESTION_OR_ACQUISITION_DESIGN_ONLY",
+      "acceptance_needed": "Apply before outcome access on a different eligible company-cutoff and settle under a declared same-definition contract with independent review.",
+      "prohibited_use": "Not a company fact, validated method, probability, CJO amendment, valuation input, report conclusion, buy band or investment action."
+    },
+    {
+      "rule_candidate_id": "RESEARCH-RULE:ROUND10:1",
+      "source_evidence_id": "R10:BATCH-COMPLETION:CN_APPLIANCE:20180930:V2",
+      "source_round_id": "ROUND10",
+      "evidence_class": "VALID_NEGATIVE_METHOD_OR_MEASUREMENT_LESSON",
+      "status": "NO_MATERIAL_UTILITY_REDESIGN_REQUIRED",
+      "research_change": "Freeze a next unseen episode with an independently settleable field for the material mechanism or boundary.",
+      "allowed_use": "NEXT_EPISODE_QUESTION_OR_ACQUISITION_DESIGN_ONLY",
+      "acceptance_needed": "Apply before outcome access on a different eligible company-cutoff and settle under a declared same-definition contract with independent review.",
+      "prohibited_use": "Not a company fact, validated method, probability, CJO amendment, valuation input, report conclusion, buy band or investment action."
+    },
+    {
+      "rule_candidate_id": "RESEARCH-RULE:ROUND10:2",
+      "source_evidence_id": "R10:BATCH-COMPLETION:CN_APPLIANCE:20180930:V2",
+      "source_round_id": "ROUND10",
+      "evidence_class": "VALID_NEGATIVE_METHOD_OR_MEASUREMENT_LESSON",
+      "status": "NO_MATERIAL_UTILITY_REDESIGN_REQUIRED",
+      "research_change": "Improve original-version enumeration or select a later unseen episode whose authorized version family is resolvable before freeze.",
+      "allowed_use": "NEXT_EPISODE_QUESTION_OR_ACQUISITION_DESIGN_ONLY",
+      "acceptance_needed": "Apply before outcome access on a different eligible company-cutoff and settle under a declared same-definition contract with independent review.",
+      "prohibited_use": "Not a company fact, validated method, probability, CJO amendment, valuation input, report conclusion, buy band or investment action."
+    }
+  ],
+  "company_continuation_agenda": [
+    {
+      "continuation_id": "COMPANY-CONTINUATION:ROUND6:1",
+      "source_evidence_id": "R6COMP:CN:CEMENT:600801:20160427:FY2016:V1",
+      "source_round_id": "ROUND6",
+      "company_id": "CN:600801",
+      "status": "COMPANY_CONTINUATION_ONLY",
+      "research_change": "在下一 cutoff 核对实际交割日期、六个法律实体与十五家工厂的范围桥以及首次并表口径。",
+      "allowed_use": "SAME_ISSUER_FUTURE_CUTOFF_RESEARCH_ONLY",
+      "prohibited_use": "Do not transfer this issuer-specific follow-up into a cross-company method rule."
+    },
+    {
+      "continuation_id": "COMPANY-CONTINUATION:ROUND6:2",
+      "source_evidence_id": "R6COMP:CN:CEMENT:600801:20160427:FY2016:V1",
+      "source_round_id": "ROUND6",
+      "company_id": "CN:600801",
+      "status": "COMPANY_CONTINUATION_ONLY",
+      "research_change": "分别寻找被并购范围的华新产品、客户、单位经济和现金证据，不用华新整体指标代替。",
+      "allowed_use": "SAME_ISSUER_FUTURE_CUTOFF_RESEARCH_ONLY",
+      "prohibited_use": "Do not transfer this issuer-specific follow-up into a cross-company method rule."
+    }
+  ],
+  "method_cautions": [
+    {
+      "caution_id": "METHOD-CAUTION:R8COMPLETE:CN002120:20190501:FY2019:V1",
+      "source_round_id": "ROUND8",
+      "status": "NO_ADVANTAGE_PROVED",
+      "statement": "The cross-industry comparison is valid negative evidence: it did not prove a material advantage for the enhanced method.",
+      "research_effect": "Do not credit the enhanced method with material utility. A new unseen episode needs separate frozen Baseline and Enhanced resolution rules plus a field that can actually distinguish their treatment."
+    },
+    {
+      "caution_id": "METHOD-CAUTION:R10:BATCH-COMPLETION:CN_APPLIANCE:20180930:V2",
+      "source_round_id": "ROUND10",
+      "status": "NO_MATERIAL_UTILITY",
+      "statement": "The enhanced rule did not demonstrate a material investment-treatment change and did not prove that it avoided a baseline directional error.",
+      "research_effect": "Do not credit the enhanced method with material utility. A new unseen episode needs separate frozen Baseline and Enhanced resolution rules plus a field that can actually distinguish their treatment."
+    }
+  ],
+  "quarantined_evidence": [
+    {
+      "quarantine_id": "QUARANTINE:R9CLOSEOUT:CN600839:20180930:FY2019:V2",
+      "source_round_id": "ROUND9",
+      "status": "INVALIDATED",
+      "root_causes": [
+        "MODEL"
+      ],
+      "prohibited_claims": [
+        "METHOD_FEEDBACK_COMPLETED",
+        "NO_MATERIAL_METHOD_ADVANTAGE_PROVED",
+        "AVOIDED_ERROR",
+        "MATERIAL_IMPROVEMENT",
+        "METHOD_TRANSFER"
+      ],
+      "remediation": "Freeze a corrected scalar resolver and unique treatment-delta accounting in a new method epoch, then test it only on a different unseen company-cutoff.",
+      "remediation_actions": [
+        "Freeze the corrected V2 method epoch before selecting a different unseen company-cutoff.",
+        "Count one treatment change once even when several dimensions explain it.",
+        "Require an external review artifact as input; implementation may generate only a review candidate.",
+        "Keep volume, price, customer share and ordinary-share owner cash as priority evidence targets."
+      ],
+      "allowed_use": "FAILURE_MODE_AND_NEW_EPOCH_DESIGN_ONLY",
+      "reentry_condition": "Only a different unseen company-cutoff under a pre-outcome frozen corrected epoch may create new method evidence."
+    }
+  ],
+  "unreviewed_evidence": [],
+  "preserved_denominator": {
+    "measurement_cells": {
+      "total": 77,
+      "status_counts": {
+        "MEASUREMENT_MISMATCH": 10,
+        "OBSERVED": 45,
+        "UNKNOWN": 22
+      }
+    },
+    "diagnostic_findings": {
+      "total": 39,
+      "status_counts": {
+        "INVALIDATED": 1,
+        "MIXED": 1,
+        "NOT_DIAGNOSTIC": 9,
+        "NO_DIFFERENCE": 15,
+        "NO_MATERIAL_UTILITY": 1,
+        "PARTIAL": 2,
+        "POSITIVE_DEVELOPMENT_UTILITY": 5,
+        "UNKNOWN": 5
+      }
+    }
+  },
+  "rights": {
+    "directional_learning": "NOT_AUTHORIZED",
+    "enterprise_learning": "NOT_AUTHORIZED",
+    "comparative": "NOT_AUTHORIZED",
+    "method_transfer": "NOT_AUTHORIZED",
+    "cjo": "NOT_AUTHORIZED",
+    "valuation": "NOT_AUTHORIZED",
+    "report": "NOT_AUTHORIZED",
+    "buy_band": "NOT_AUTHORIZED",
+    "investment": "NOT_AUTHORIZED"
+  },
+  "allowed_outputs": [
+    "RESEARCH_AGENDA_ONLY"
+  ],
+  "aggregation_policy": "NO_TOTAL_RANKING_NO_METHOD_WIN_RATE"
+}
