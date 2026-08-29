@@ -23,6 +23,16 @@ transmission.  The existing eight dimensions, E/J stages, fields, receipts,
 and gates remain supporting views; do not use them as the reader-facing
 structure or as substitutes for the underwriting conclusion.
 
+Every whole-company report must also own an `IndustryFutureThesis` inside the
+Episode's Situation Model. It states the relevant horizon, the most likely
+industry regime and strongest rival, how demand/supply/competition move the
+profit pool, how this company is exposed and can adapt, and how that path
+changes normalized economics, owner cash, permanent loss, valuation, or price
+treatment. A trend inventory, several equally weighted scenarios, or a list of
+monitoring indicators does not satisfy this requirement. When calibrated base
+rates do not exist, make a bounded qualitative judgment instead of inventing
+probabilities.
+
 ### Required judgment return
 
 Every substantive company or industry synthesis, training readout, or report task must return, in investor language:

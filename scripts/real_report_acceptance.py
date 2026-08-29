@@ -820,6 +820,10 @@ def write_blind_packets(result: dict[str, Any], directory: Path) -> None:
                 "instruction": (
                     "Use only the exact enum values above. Do not submit PASS/FAIL, "
                     "free-form verdicts, or object-valued fatal findings. For "
+                    "causal_depth, require a bounded industry-future thesis that selects "
+                    "the most likely regime, traces the profit-pool change into this "
+                    "company's exposure and adaptation, and reaches normal economics or "
+                    "permanent loss; a trend inventory is WEAK. For "
                     "forward_judgment_quality, decide whether the report actually selects "
                     "a more likely 3/5-year path, discriminates the strongest alternative, "
                     "and transmits its frozen judgments into earnings, owner cash, value, "
