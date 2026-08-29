@@ -82,6 +82,11 @@ def _reference_exists(reference: Any) -> bool:
     return bool(text) and "://" not in text and (_ROOT / text).is_file()
 
 
+def _industry_future_thesis(episode: dict[str, Any]) -> dict[str, Any]:
+    situation_model = _mapping(episode.get("situation_model"))
+    return _mapping(situation_model.get("industry_future_thesis"))
+
+
 def validate_enterprise_underwriting_episode(episode: Any) -> dict[str, Any]:
     """Check the economic continuity and the one-way price boundary.
 
@@ -111,6 +116,25 @@ def validate_enterprise_underwriting_episode(episode: Any) -> dict[str, Any]:
             findings.append(field + "_missing")
     if value.get("sample_identity") not in SAMPLE_IDENTITIES:
         findings.append("sample_identity_invalid")
+
+    situation_model = _mapping(value.get("situation_model"))
+    if not _text(situation_model.get("summary")):
+        findings.append("situation_model.summary_missing")
+    industry_future = _industry_future_thesis(value)
+    for field in (
+        "horizon", "most_likely_regime", "profit_pool_transmission", "company_exposure",
+        "adaptation", "normal_economics", "permanent_loss", "valuation_treatment",
+        "strongest_rival",
+    ):
+        if not _text(industry_future.get(field)):
+            findings.append("situation_model.industry_future_thesis." + field + "_missing")
+    industry_reversals = _items(industry_future.get("reversal_observations"))
+    if not industry_reversals or any(not _text(item) for item in industry_reversals):
+        findings.append("situation_model.industry_future_thesis.reversal_observations_invalid")
+    findings.extend(
+        "situation_model.industry_future_thesis.price_boundary:" + item
+        for item in _forbidden_paths(industry_future)
+    )
 
     evidence_ids: set[str] = set()
     for index, item in enumerate(_items(value.get("evidence_trace"))):
@@ -151,6 +175,13 @@ def validate_enterprise_underwriting_episode(episode: Any) -> dict[str, Any]:
         if not _text(thesis.get(field)):
             findings.append("underwriting_thesis." + field + "_missing")
     findings.extend("underwriting_thesis.price_boundary:" + item for item in _forbidden_paths(thesis))
+    if industry_future:
+        if value.get("strongest_rival") != industry_future.get("strongest_rival"):
+            findings.append("strongest_rival_not_derived_from_industry_future_thesis")
+        if thesis.get("strongest_rival") != industry_future.get("strongest_rival"):
+            findings.append("underwriting_thesis.strongest_rival_not_derived_from_industry_future_thesis")
+        if value.get("reversal_observations") != industry_future.get("reversal_observations"):
+            findings.append("reversal_observations_not_derived_from_industry_future_thesis")
 
     value_route = _mapping(value.get("value_route"))
     for field in ("primary_routes", "excluded_routes", "route_reasoning"):
@@ -182,6 +213,7 @@ def compile_underwriting_projections(episode: Any) -> dict[str, dict[str, Any]]:
     """Project one thesis into existing-consumer-shaped, price-free views."""
     value = _assert_reviewable(episode)
     thesis = deepcopy(_mapping(value["underwriting_thesis"]))
+    industry_future = deepcopy(_industry_future_thesis(value))
     identity = {
         "episode_id": value["episode_id"],
         "company_id": value["company_id"],
@@ -195,10 +227,11 @@ def compile_underwriting_projections(episode: Any) -> dict[str, dict[str, Any]]:
         **identity,
         "authority": "TEACHING_CANDIDATE_ONLY",
         "central_path": thesis["central_path"],
+        "industry_future_thesis": deepcopy(industry_future),
         "normal_earnings_treatment": thesis["normal_earnings_treatment"],
         "owner_cash_treatment": thesis["owner_cash_treatment"],
         "permanent_loss_treatment": thesis["permanent_loss_treatment"],
-        "strongest_rival": thesis["strongest_rival"],
+        "strongest_rival": industry_future["strongest_rival"],
         "monitoring": thesis["monitoring"],
         "component_treatments": deepcopy(value["component_treatments"]),
         "existing_cjo_adapter": "scripts/enterprise_judgment_core.py:compile_cjo_candidate",
@@ -209,6 +242,7 @@ def compile_underwriting_projections(episode: Any) -> dict[str, dict[str, Any]]:
         "request_id": "UW-VR:" + value["episode_id"],
         **identity,
         "authority": "ROUTE_REQUEST_ONLY",
+        "industry_future_thesis": deepcopy(industry_future),
         "primary_routes": deepcopy(value["value_route"]["primary_routes"]),
         "excluded_routes": deepcopy(value["value_route"]["excluded_routes"]),
         "route_reasoning": value["value_route"]["route_reasoning"],
@@ -230,6 +264,7 @@ def compile_underwriting_projections(episode: Any) -> dict[str, dict[str, Any]]:
         "authority": "UNDERWRITING_HANDOFF_ONLY",
         "reader_order": [
             "central_path",
+            "industry_future_transmission",
             "situation_and_route",
             "survival_and_adaptation",
             "normalization_and_owner_cash",
@@ -238,7 +273,7 @@ def compile_underwriting_projections(episode: Any) -> dict[str, dict[str, Any]]:
             "reversal_observations",
         ],
         "central_path": thesis["central_path"],
-        "situation_model": value["situation_model"],
+        "situation_model": deepcopy(value["situation_model"]),
         "business_position": value["business_position"],
         "survival_case": value["survival_case"],
         "adaptation_case": value["adaptation_case"],
@@ -246,8 +281,8 @@ def compile_underwriting_projections(episode: Any) -> dict[str, dict[str, Any]]:
         "owner_cash_treatment": thesis["owner_cash_treatment"],
         "permanent_loss_map": value["permanent_loss_map"],
         "value_route": deepcopy(value["value_route"]),
-        "strongest_rival": thesis["strongest_rival"],
-        "reversal_observations": deepcopy(value["reversal_observations"]),
+        "strongest_rival": industry_future["strongest_rival"],
+        "reversal_observations": deepcopy(industry_future["reversal_observations"]),
         "existing_report_adapter": "scripts/judgment_generation_handoff.py:build_judgment_generation_handoff",
         "boundary": "The Golden Report writer consumes this thesis and may not replace it with a different company story. This is a teaching handoff, not report-publication authority.",
     }
@@ -285,20 +320,42 @@ def render_underwriting_readout(episode: Any) -> str:
     """Render the same underwriting thesis in investor order without gate prose."""
     value = _assert_reviewable(episode)
     thesis = _mapping(value["underwriting_thesis"])
+    situation_model = _mapping(value["situation_model"])
+    industry_future = _industry_future_thesis(value)
     components = "\n".join(
         f"- {item['component_id']}：{item['treatment']}。{item['investment_consequence']}"
         for item in value["component_treatments"]
     )
-    reversals = "\n".join(f"- {item}" for item in value["reversal_observations"])
+    reversals = "\n".join(f"- {item}" for item in industry_future["reversal_observations"])
     routes = "、".join(value["value_route"]["primary_routes"])
     excluded = "、".join(value["value_route"]["excluded_routes"])
     return f"""# {value['company_name']}：{value['decision_frame']}
 
 {thesis['central_path']}
 
+## 行业未来与公司传导
+
+观察时域：{industry_future['horizon']}
+
+最可能的行业路径：{industry_future['most_likely_regime']}
+
+利润池传导：{industry_future['profit_pool_transmission']}
+
+公司暴露：{industry_future['company_exposure']}
+
+适应能力：{industry_future['adaptation']}
+
+正常经济与普通股现金：{industry_future['normal_economics']}
+
+永久损失路径：{industry_future['permanent_loss']}
+
+价值处理：{industry_future['valuation_treatment']}
+
+最强竞争解释：{industry_future['strongest_rival']}
+
 ## 处境、位置与适应
 
-{value['situation_model']}
+{situation_model['summary']}
 
 {value['business_position']}
 
@@ -318,7 +375,7 @@ def render_underwriting_readout(episode: Any) -> str:
 
 {value['permanent_loss_map']}
 
-最强反方：{thesis['strongest_rival']}
+最强反方：{industry_future['strongest_rival']}
 
 以下事实会改变当前处理：
 {reversals}

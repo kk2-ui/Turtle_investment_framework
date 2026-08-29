@@ -29,8 +29,16 @@
   "properties": {
     "schema_version": {"const": "enterprise-underwriting-episode.v1"},
     "sample_identity": {"enum": ["WORKED_CASE", "BLIND_REPLAY", "PROSPECTIVE_EPISODE"]},
+    "situation_model": {"$ref": "#/$defs/situation_model"},
+    "strongest_rival": {"$ref": "#/$defs/non_empty_string"},
+    "reversal_observations": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"$ref": "#/$defs/non_empty_string"}
+    },
     "component_treatments": {
       "type": "array",
+      "minItems": 1,
       "items": {
         "type": "object",
         "required": ["component_id", "treatment", "reason", "investment_consequence", "promotion_or_resolution_condition", "evidence_ids"],
@@ -39,7 +47,66 @@
         }
       }
     },
-    "underwriting_thesis": {"type": "object"}
+    "underwriting_thesis": {
+      "type": "object",
+      "required": [
+        "thesis_id",
+        "central_path",
+        "normal_earnings_treatment",
+        "owner_cash_treatment",
+        "permanent_loss_treatment",
+        "value_route_treatment",
+        "strongest_rival",
+        "monitoring"
+      ]
+    }
+  },
+  "$defs": {
+    "non_empty_string": {
+      "type": "string",
+      "minLength": 1
+    },
+    "situation_model": {
+      "type": "object",
+      "required": ["summary", "industry_future_thesis"],
+      "properties": {
+        "summary": {"$ref": "#/$defs/non_empty_string"},
+        "industry_future_thesis": {"$ref": "#/$defs/industry_future_thesis"}
+      },
+      "additionalProperties": false
+    },
+    "industry_future_thesis": {
+      "type": "object",
+      "required": [
+        "horizon",
+        "most_likely_regime",
+        "profit_pool_transmission",
+        "company_exposure",
+        "adaptation",
+        "normal_economics",
+        "permanent_loss",
+        "valuation_treatment",
+        "strongest_rival",
+        "reversal_observations"
+      ],
+      "properties": {
+        "horizon": {"$ref": "#/$defs/non_empty_string"},
+        "most_likely_regime": {"$ref": "#/$defs/non_empty_string"},
+        "profit_pool_transmission": {"$ref": "#/$defs/non_empty_string"},
+        "company_exposure": {"$ref": "#/$defs/non_empty_string"},
+        "adaptation": {"$ref": "#/$defs/non_empty_string"},
+        "normal_economics": {"$ref": "#/$defs/non_empty_string"},
+        "permanent_loss": {"$ref": "#/$defs/non_empty_string"},
+        "valuation_treatment": {"$ref": "#/$defs/non_empty_string"},
+        "strongest_rival": {"$ref": "#/$defs/non_empty_string"},
+        "reversal_observations": {
+          "type": "array",
+          "minItems": 1,
+          "items": {"$ref": "#/$defs/non_empty_string"}
+        }
+      },
+      "additionalProperties": false
+    }
   },
   "additionalProperties": true
 }

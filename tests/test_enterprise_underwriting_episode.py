@@ -14,6 +14,18 @@ from scripts.enterprise_underwriting_episode import (
 
 ROOT = Path(__file__).resolve().parents[1]
 EPISODES = ROOT / "docs/development/research/enterprise_underwriting_episodes"
+INDUSTRY_FUTURE_FIELDS = {
+    "horizon",
+    "most_likely_regime",
+    "profit_pool_transmission",
+    "company_exposure",
+    "adaptation",
+    "normal_economics",
+    "permanent_loss",
+    "valuation_treatment",
+    "strongest_rival",
+    "reversal_observations",
+}
 
 
 def _episode(name: str) -> dict:
@@ -28,6 +40,28 @@ def test_worked_cases_are_reviewable_and_reuse_only_existing_sources() -> None:
             assert (ROOT / evidence["source_ref"]).is_file()
         for reference in episode["existing_object_refs"]:
             assert (ROOT / reference["ref"]).is_file()
+
+
+def test_worked_cases_own_one_structured_industry_future_thesis() -> None:
+    for name in ("MAGNA_200903_WORKED_CASE_V1.json", "CN600585_20240501_WORKED_CASE_V1.json"):
+        episode = _episode(name)
+        industry_future = episode["situation_model"]["industry_future_thesis"]
+
+        assert set(industry_future) == INDUSTRY_FUTURE_FIELDS
+        assert episode["strongest_rival"] == industry_future["strongest_rival"]
+        assert episode["underwriting_thesis"]["strongest_rival"] == industry_future["strongest_rival"]
+        assert episode["reversal_observations"] == industry_future["reversal_observations"]
+
+
+def test_schema_makes_industry_future_thesis_part_of_situation_model() -> None:
+    schema = json.loads(
+        (ROOT / "schemas/enterprise_underwriting_episode_v1.schema.json").read_text(encoding="utf-8")
+    )
+    situation = schema["$defs"]["situation_model"]
+    industry_future = schema["$defs"]["industry_future_thesis"]
+
+    assert situation["required"] == ["summary", "industry_future_thesis"]
+    assert set(industry_future["required"]) == INDUSTRY_FUTURE_FIELDS
 
 
 def test_magna_is_a_distressed_cycle_demonstration_and_not_a_conch_conclusion() -> None:
@@ -56,8 +90,32 @@ def test_conch_same_thesis_projects_deterministically_to_cjo_valuation_and_repor
     assert validate_underwriting_projection_bundle(conch, bundle)["state"] == "REVIEWABLE"
     thesis_id = conch["underwriting_thesis"]["thesis_id"]
     assert {item["underwriting_thesis_id"] for item in bundle.values()} == {thesis_id}
+    industry_future = conch["situation_model"]["industry_future_thesis"]
+    projected_futures = [
+        bundle["cjo_candidate_projection"]["industry_future_thesis"],
+        bundle["valuation_route_request"]["industry_future_thesis"],
+        bundle["golden_report_underwriting_handoff"]["situation_model"]["industry_future_thesis"],
+    ]
+    assert projected_futures == [industry_future, industry_future, industry_future]
     assert bundle["cjo_candidate_projection"]["central_path"] == bundle["golden_report_underwriting_handoff"]["central_path"]
     assert bundle["valuation_route_request"]["normal_earnings_input_treatment"] == conch["underwriting_thesis"]["normal_earnings_treatment"]
+
+
+def test_industry_future_thesis_cannot_be_missing_or_diverge_across_episode_views() -> None:
+    conch = _episode("CN600585_20240501_WORKED_CASE_V1.json")
+    missing = deepcopy(conch)
+    del missing["situation_model"]["industry_future_thesis"]["profit_pool_transmission"]
+    assert (
+        "situation_model.industry_future_thesis.profit_pool_transmission_missing"
+        in validate_enterprise_underwriting_episode(missing)["findings"]
+    )
+
+    divergent = deepcopy(conch)
+    divergent["underwriting_thesis"]["strongest_rival"] = "A different report story."
+    assert (
+        "underwriting_thesis.strongest_rival_not_derived_from_industry_future_thesis"
+        in validate_enterprise_underwriting_episode(divergent)["findings"]
+    )
 
 
 def _episode_projection(name: str) -> dict:
@@ -92,6 +150,8 @@ def test_readout_is_investor_facing_and_preserves_the_strongest_rival() -> None:
     reader_file = (EPISODES / "CN600585_20240501_INVESTOR_READOUT.md").read_text(encoding="utf-8")
 
     assert "即时生存风险低" in rendered
+    assert "未来3至5年" in rendered
+    assert "利润池传导" in rendered
     assert "海外毛利改善" in rendered
     assert "DOMESTIC_INCREMENTAL_ASSET_RETURN：EXCLUDE_FROM_BASE" in rendered
     assert "能穿越周期" in reader_file
