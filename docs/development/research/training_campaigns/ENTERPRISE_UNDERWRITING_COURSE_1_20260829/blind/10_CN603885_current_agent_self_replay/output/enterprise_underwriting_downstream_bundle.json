@@ -1,0 +1,226 @@
+{
+  "authority": "PRICE_FREE_RESEARCH_CANDIDATES_ONLY",
+  "boundary": {
+    "contains_outcome_results": false,
+    "contains_price_or_valuation_results": false,
+    "grants_investment_authority": false
+  },
+  "company_id": "CN:603885",
+  "contract_id": "UWTRAIN:CN603885:20190501:CURRENT_AGENT_SELF_REPLAY:V1",
+  "cutoff_at": "2019-05-01T00:00:00+08:00",
+  "primary_training_product": {
+    "episode_id": "UWEP:CN603885:20190501:CURRENT_AGENT_SELF_REPLAY:V1",
+    "object_type": "EnterpriseUnderwritingEpisode",
+    "underwriting_thesis_id": "UWTHESIS:CN603885:20190501:CURRENT_AGENT_SELF_REPLAY:V1"
+  },
+  "projections": {
+    "cjo_candidate_projection": {
+      "authority": "TEACHING_CANDIDATE_ONLY",
+      "boundary": "A projection for the existing CJO compiler; it is not a Frozen CJO and cannot authorize value, price, BuyBand, report publication, or investment action.",
+      "central_path": "核心网络有条件化现金基础；新增机队和国际网络只有在客户、收益成本、现金和融资后回报共同成立时才可升级。置信度中等。",
+      "company_id": "CN:603885",
+      "component_treatments": [
+        {
+          "component_id": "CORE_NETWORK",
+          "evidence_ids": [
+            "EV-JY-THREE_YEAR",
+            "EV-JY-INDUSTRY"
+          ],
+          "investment_consequence": "作为条件化价值主线。",
+          "promotion_or_resolution_condition": "核心航线的客流、收益成本与融资后现金保持一致。",
+          "reason": "三年收入利润增长支持核心网络，未拆分航线维护与现金。",
+          "treatment": "CONDITIONALLY_UNDERWRITE"
+        },
+        {
+          "component_id": "NEW_FLEET_AND_INTERNATIONAL",
+          "evidence_ids": [
+            "EV-JY-ACTION",
+            "EV-JY-CAPITAL"
+          ],
+          "investment_consequence": "不以运力或开航线加入正常盈利。",
+          "promotion_or_resolution_condition": "新 cohort 显示利用率、单位经济、现金和资本回报。",
+          "reason": "新增机队/国际网络有入口但无后续客户与资本回报结算。",
+          "treatment": "SCENARIO_ONLY"
+        },
+        {
+          "component_id": "OWNER_CASH",
+          "evidence_ids": [
+            "EV-JY-CAPITAL"
+          ],
+          "investment_consequence": "给条件 owner-cash 处理，仍完成公司判断。",
+          "promotion_or_resolution_condition": "拆分维护、增长和融资现金责任。",
+          "reason": "维护机队、增长机队、租赁融资和营运资本未拆分。",
+          "treatment": "CANNOT_BOUND"
+        }
+      ],
+      "cutoff_at": "2019-05-01T00:00:00+08:00",
+      "episode_id": "UWEP:CN603885:20190501:CURRENT_AGENT_SELF_REPLAY:V1",
+      "existing_cjo_adapter": "scripts/enterprise_judgment_core.py:compile_cjo_candidate",
+      "monitoring": "依次观察航线客流、客座率、收益成本、现金、租赁融资和新增机队回报。",
+      "normal_earnings_treatment": "以历史核心网络为方向性锚，不把新增运力混入。",
+      "owner_cash_treatment": "维护、增长机队与租赁融资未拆分，维护后 owner cash 条件化；全部机队投入压力和增长回报另行处理。",
+      "permanent_loss_treatment": "风险是新增运力在需求和票价压力下由融资责任侵蚀核心现金，而非公司已失去生存能力。",
+      "projection_id": "UW-CJO:UWEP:CN603885:20190501:CURRENT_AGENT_SELF_REPLAY:V1",
+      "sample_identity": "BLIND_REPLAY",
+      "schema_version": "enterprise-underwriting-cjo-candidate-projection.v2",
+      "situation_model": {
+        "industry_future_thesis": {
+          "adaptation": "管理层通过机队、航线、服务和国际化扩张适应需求增长；这些行动有客户入口但截至 cutoff 未证明每项新增运力在相同经济边界上获得回报。",
+          "company_exposure": "FY2016–FY2018 收入约由 88 升至 144 亿元、归母利润约 5 升至 12 亿元，支持真实网络能力；FY2018 利润较 FY2017 略降，说明扩张/收入不等于普通股经济同步改善。",
+          "horizon": "2019-05-01 后先看 FY2019 航线、客流、收益成本与现金，再看 FY2021/FY2023 核心网络和新增机队能否穿过需求冲击与融资压力。",
+          "most_likely_regime": "航空需求长期增长但供给、票价、燃油、汇率和机场成本使利润池高度周期化；核心航线和成本效率提供条件化基础，新增机队/国际网络的回报分开结算。",
+          "normal_economics": "三年增长是存量网络的方向性锚；基准承保核心航线的条件化现金，新增宽体机、国际网络和后续机队只在客座率、收益、成本、现金和资本回报共同改善后加入。",
+          "permanent_loss": "主要路径是需求/票价不及预期而新增机队、租赁融资和成本先占用现金；次要路径是将 OCF 减全部机队投入或未证明的增长回报直接等同维护后 owner cash。",
+          "profit_pool_transmission": "客户需求经客座率和票价形成收入，燃油、机场、人力、租赁融资和机队利用率决定单位经济与现金；交机或开航线只有在其后客户吸收和现金回报出现时才创造股东价值。",
+          "reversal_observations": [
+            "若核心及新增航线连续显示客流、客座率、单位收益成本、经营现金和融资后回报共同改善，则升级相应 cohort。",
+            "若新增运力先带来低票价、低利用率、租赁融资和现金压力，则确认扩张稀释普通股现金。",
+            "若取得维护机队、增长机队和融资责任拆分并显示回报，则提高 owner-cash 处理；否则保持条件化。"
+          ],
+          "strongest_rival": "上海枢纽、服务产品、网络密度和已有增长已形成客户与成本优势，新增机队和国际网络会提高利用率并扩大现金，FY2018 的利润波动只是燃油、汇率和扩张期扰动。",
+          "valuation_treatment": "价值路线以压力后核心航线网络的条件化盈利现金为主；排除以机队数、运力、航线开通或收入增长直接年金化。"
+        },
+        "summary": "截至 cutoff，吉祥拥有上海为核心的客运网络、服务产品和持续增长的收入利润；但航空经济由客流和单位收益成本决定，机队与航线扩张不是自动现金创造。"
+      },
+      "strongest_rival": "上海枢纽、服务产品、网络密度和已有增长已形成客户与成本优势，新增机队和国际网络会提高利用率并扩大现金，FY2018 的利润波动只是燃油、汇率和扩张期扰动。",
+      "underwriting_thesis_id": "UWTHESIS:CN603885:20190501:CURRENT_AGENT_SELF_REPLAY:V1"
+    },
+    "golden_report_underwriting_handoff": {
+      "adaptation_case": "机队、航线和国际化是有方向的适应，但只完成供给实施，须由客户吸收与单位经济结算。",
+      "authority": "UNDERWRITING_HANDOFF_ONLY",
+      "boundary": "The Golden Report writer consumes this thesis and may not replace it with a different company story. This is a teaching handoff, not report-publication authority.",
+      "business_position": "吉祥的可承保位置是上海枢纽、航线网络和服务形成的客户入口，而不是所有机队/国际航线同样优秀。",
+      "central_path": "核心网络有条件化现金基础；新增机队和国际网络只有在客户、收益成本、现金和融资后回报共同成立时才可升级。置信度中等。",
+      "company_id": "CN:603885",
+      "cutoff_at": "2019-05-01T00:00:00+08:00",
+      "episode_id": "UWEP:CN603885:20190501:CURRENT_AGENT_SELF_REPLAY:V1",
+      "existing_report_adapter": "scripts/judgment_generation_handoff.py:build_judgment_generation_handoff",
+      "handoff_id": "UW-GR:UWEP:CN603885:20190501:CURRENT_AGENT_SELF_REPLAY:V1",
+      "normalization_case": "FY2016–FY2018 利润增长是核心网络的方向性锚，新增运力仅在同边界现金回报后纳入。",
+      "owner_cash_treatment": "维护、增长机队与租赁融资未拆分，维护后 owner cash 条件化；全部机队投入压力和增长回报另行处理。",
+      "permanent_loss_map": "需求/票价无法吸收新增供给时，燃油、汇率、租赁融资和机队资本会侵蚀核心现金；反方是枢纽和网络效率使新增供给形成规模回报。",
+      "reader_order": [
+        "central_path",
+        "industry_future_transmission",
+        "situation_and_route",
+        "survival_and_adaptation",
+        "normalization_and_owner_cash",
+        "permanent_loss_and_rival",
+        "value_route_and_research_treatment",
+        "reversal_observations"
+      ],
+      "reversal_observations": [
+        "若核心及新增航线连续显示客流、客座率、单位收益成本、经营现金和融资后回报共同改善，则升级相应 cohort。",
+        "若新增运力先带来低票价、低利用率、租赁融资和现金压力，则确认扩张稀释普通股现金。",
+        "若取得维护机队、增长机队和融资责任拆分并显示回报，则提高 owner-cash 处理；否则保持条件化。"
+      ],
+      "sample_identity": "BLIND_REPLAY",
+      "schema_version": "enterprise-underwriting-golden-report-handoff.v2",
+      "situation_model": {
+        "industry_future_thesis": {
+          "adaptation": "管理层通过机队、航线、服务和国际化扩张适应需求增长；这些行动有客户入口但截至 cutoff 未证明每项新增运力在相同经济边界上获得回报。",
+          "company_exposure": "FY2016–FY2018 收入约由 88 升至 144 亿元、归母利润约 5 升至 12 亿元，支持真实网络能力；FY2018 利润较 FY2017 略降，说明扩张/收入不等于普通股经济同步改善。",
+          "horizon": "2019-05-01 后先看 FY2019 航线、客流、收益成本与现金，再看 FY2021/FY2023 核心网络和新增机队能否穿过需求冲击与融资压力。",
+          "most_likely_regime": "航空需求长期增长但供给、票价、燃油、汇率和机场成本使利润池高度周期化；核心航线和成本效率提供条件化基础，新增机队/国际网络的回报分开结算。",
+          "normal_economics": "三年增长是存量网络的方向性锚；基准承保核心航线的条件化现金，新增宽体机、国际网络和后续机队只在客座率、收益、成本、现金和资本回报共同改善后加入。",
+          "permanent_loss": "主要路径是需求/票价不及预期而新增机队、租赁融资和成本先占用现金；次要路径是将 OCF 减全部机队投入或未证明的增长回报直接等同维护后 owner cash。",
+          "profit_pool_transmission": "客户需求经客座率和票价形成收入，燃油、机场、人力、租赁融资和机队利用率决定单位经济与现金；交机或开航线只有在其后客户吸收和现金回报出现时才创造股东价值。",
+          "reversal_observations": [
+            "若核心及新增航线连续显示客流、客座率、单位收益成本、经营现金和融资后回报共同改善，则升级相应 cohort。",
+            "若新增运力先带来低票价、低利用率、租赁融资和现金压力，则确认扩张稀释普通股现金。",
+            "若取得维护机队、增长机队和融资责任拆分并显示回报，则提高 owner-cash 处理；否则保持条件化。"
+          ],
+          "strongest_rival": "上海枢纽、服务产品、网络密度和已有增长已形成客户与成本优势，新增机队和国际网络会提高利用率并扩大现金，FY2018 的利润波动只是燃油、汇率和扩张期扰动。",
+          "valuation_treatment": "价值路线以压力后核心航线网络的条件化盈利现金为主；排除以机队数、运力、航线开通或收入增长直接年金化。"
+        },
+        "summary": "截至 cutoff，吉祥拥有上海为核心的客运网络、服务产品和持续增长的收入利润；但航空经济由客流和单位收益成本决定，机队与航线扩张不是自动现金创造。"
+      },
+      "strongest_rival": "上海枢纽、服务产品、网络密度和已有增长已形成客户与成本优势，新增机队和国际网络会提高利用率并扩大现金，FY2018 的利润波动只是燃油、汇率和扩张期扰动。",
+      "survival_case": "截止日前利润与经营能力支持持续经营；真正风险是需求、票价和成本波动下的机队租赁融资责任，而不是用单年增长或低维护数据替代生存判断。",
+      "underwriting_thesis_id": "UWTHESIS:CN603885:20190501:CURRENT_AGENT_SELF_REPLAY:V1",
+      "value_route": {
+        "excluded_routes": [
+          "将交机、航线、运力或收入增长直接等同正常 owner cash",
+          "将总机队投入或增长回报未知冒充维护资本"
+        ],
+        "primary_routes": [
+          "核心航线网络的压力后条件化现金",
+          "新增机队和国际网络的客户—单位经济—资本回报分层路线"
+        ],
+        "route_reasoning": "核心网络有历史盈利基础，扩张须独立穿过客户、单位经济和资本责任。",
+        "valuation_model_roles": {
+          "corroborative": [
+            "新增机队和国际网络的利用率与资本后回报"
+          ],
+          "primary": [
+            "核心航线客流、收益成本、经营现金和融资责任"
+          ],
+          "stress": [
+            "票价/需求冲击、燃油汇率、租赁融资和低利用率"
+          ]
+        }
+      }
+    },
+    "valuation_route_request": {
+      "authority": "ROUTE_REQUEST_ONLY",
+      "boundary": "No current value, price, expected return, BuyBand, or investment action is generated.",
+      "company_id": "CN:603885",
+      "compatibility_resolution": "Current-company underwriting may enter CJO and valuation routing through a source-bound, independently reviewed complete Episode; SELECTION_ADMITTED remains local to claims that actually depend on comparative selection or causal authority.",
+      "cutoff_at": "2019-05-01T00:00:00+08:00",
+      "episode_id": "UWEP:CN603885:20190501:CURRENT_AGENT_SELF_REPLAY:V1",
+      "excluded_routes": [
+        "将交机、航线、运力或收入增长直接等同正常 owner cash",
+        "将总机队投入或增长回报未知冒充维护资本"
+      ],
+      "existing_valuation_adapter": "scripts/valuation_routing.py:build_valuation_route",
+      "inputs_excluded_from_base": [
+        "NEW_FLEET_AND_INTERNATIONAL",
+        "OWNER_CASH"
+      ],
+      "normal_earnings_input_treatment": "以历史核心网络为方向性锚，不把新增运力混入。",
+      "owner_cash_input_treatment": "维护、增长机队与租赁融资未拆分，维护后 owner cash 条件化；全部机队投入压力和增长回报另行处理。",
+      "permanent_loss_input_treatment": "风险是新增运力在需求和票价压力下由融资责任侵蚀核心现金，而非公司已失去生存能力。",
+      "primary_routes": [
+        "核心航线网络的压力后条件化现金",
+        "新增机队和国际网络的客户—单位经济—资本回报分层路线"
+      ],
+      "request_id": "UW-VR:UWEP:CN603885:20190501:CURRENT_AGENT_SELF_REPLAY:V1",
+      "route_reasoning": "核心网络有历史盈利基础，扩张须独立穿过客户、单位经济和资本责任。",
+      "sample_identity": "BLIND_REPLAY",
+      "schema_version": "enterprise-underwriting-valuation-route-request.v2",
+      "situation_model": {
+        "industry_future_thesis": {
+          "adaptation": "管理层通过机队、航线、服务和国际化扩张适应需求增长；这些行动有客户入口但截至 cutoff 未证明每项新增运力在相同经济边界上获得回报。",
+          "company_exposure": "FY2016–FY2018 收入约由 88 升至 144 亿元、归母利润约 5 升至 12 亿元，支持真实网络能力；FY2018 利润较 FY2017 略降，说明扩张/收入不等于普通股经济同步改善。",
+          "horizon": "2019-05-01 后先看 FY2019 航线、客流、收益成本与现金，再看 FY2021/FY2023 核心网络和新增机队能否穿过需求冲击与融资压力。",
+          "most_likely_regime": "航空需求长期增长但供给、票价、燃油、汇率和机场成本使利润池高度周期化；核心航线和成本效率提供条件化基础，新增机队/国际网络的回报分开结算。",
+          "normal_economics": "三年增长是存量网络的方向性锚；基准承保核心航线的条件化现金，新增宽体机、国际网络和后续机队只在客座率、收益、成本、现金和资本回报共同改善后加入。",
+          "permanent_loss": "主要路径是需求/票价不及预期而新增机队、租赁融资和成本先占用现金；次要路径是将 OCF 减全部机队投入或未证明的增长回报直接等同维护后 owner cash。",
+          "profit_pool_transmission": "客户需求经客座率和票价形成收入，燃油、机场、人力、租赁融资和机队利用率决定单位经济与现金；交机或开航线只有在其后客户吸收和现金回报出现时才创造股东价值。",
+          "reversal_observations": [
+            "若核心及新增航线连续显示客流、客座率、单位收益成本、经营现金和融资后回报共同改善，则升级相应 cohort。",
+            "若新增运力先带来低票价、低利用率、租赁融资和现金压力，则确认扩张稀释普通股现金。",
+            "若取得维护机队、增长机队和融资责任拆分并显示回报，则提高 owner-cash 处理；否则保持条件化。"
+          ],
+          "strongest_rival": "上海枢纽、服务产品、网络密度和已有增长已形成客户与成本优势，新增机队和国际网络会提高利用率并扩大现金，FY2018 的利润波动只是燃油、汇率和扩张期扰动。",
+          "valuation_treatment": "价值路线以压力后核心航线网络的条件化盈利现金为主；排除以机队数、运力、航线开通或收入增长直接年金化。"
+        },
+        "summary": "截至 cutoff，吉祥拥有上海为核心的客运网络、服务产品和持续增长的收入利润；但航空经济由客流和单位收益成本决定，机队与航线扩张不是自动现金创造。"
+      },
+      "underwriting_thesis_id": "UWTHESIS:CN603885:20190501:CURRENT_AGENT_SELF_REPLAY:V1",
+      "valuation_model_roles": {
+        "corroborative": [
+          "新增机队和国际网络的利用率与资本后回报"
+        ],
+        "primary": [
+          "核心航线客流、收益成本、经营现金和融资责任"
+        ],
+        "stress": [
+          "票价/需求冲击、燃油汇率、租赁融资和低利用率"
+        ]
+      }
+    }
+  },
+  "sample_identity": "BLIND_REPLAY",
+  "schema_version": "enterprise-underwriting-training-downstream-bundle.v1"
+}
