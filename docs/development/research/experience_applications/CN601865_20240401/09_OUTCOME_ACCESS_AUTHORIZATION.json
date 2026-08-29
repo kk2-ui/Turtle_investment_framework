@@ -1,0 +1,32 @@
+{
+  "schema_version": "judgment-experience-outcome-access-authorization.v1",
+  "authorization_id": "JEROAA:CN601865:20240401:FY2024:CASH_CAPEX:V1",
+  "case_id": "EXPERIENCE_TARGET:CN601865:20240401",
+  "invocation_id": "EIR:CN601865:20240401:CAPACITY_PRICE_CASH:V1",
+  "authorized": true,
+  "authorized_at": "2026-08-29T20:00:00+08:00",
+  "authority_basis": "Standing project authorization for historical training and the operator's instruction to close the Flat Glass feedback loop; this grants a custodian read of the one frozen FY2024 carrier, not a valuation, report, or investment action.",
+  "permitted_source": {
+    "issuer": "福莱特玻璃集团股份有限公司 / Flat Glass Group Co., Ltd.",
+    "period": "FY2024",
+    "document_kind": "official full annual report",
+    "permitted_authorities": [
+      "issuer investor-relations disclosure",
+      "Hong Kong Exchanges and Clearing official disclosure"
+    ]
+  },
+  "permitted_contract_ref": "docs/development/research/experience_applications/CN601865_20240401/10_FY2024_CASH_CAPEX_OUTCOME_CONTRACT.json",
+  "prohibited_reads": [
+    "FY2025 or later issuer results",
+    "market price, total return, valuation, analyst, portfolio, or investment-action material",
+    "any outcome field outside the frozen cash-capex carrier"
+  ],
+  "permissions": {
+    "experience_feedback_only": true,
+    "cjo_value": "NOT_AUTHORIZED",
+    "valuation_input": "NOT_AUTHORIZED",
+    "buy_band": "NOT_AUTHORIZED",
+    "report_authority": "NOT_AUTHORIZED",
+    "investment_action": "NOT_AUTHORIZED"
+  }
+}

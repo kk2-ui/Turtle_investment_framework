@@ -1,0 +1,35 @@
+{
+  "schema_version": "judgment-experience-independent-feedback-review.v1",
+  "review_id": "JERREV:CN601865:20240401:CAPACITY_PRICE_CASH:FY2024:V1",
+  "reviewed_at": "2026-08-29T21:00:00+08:00",
+  "reviewer_role": "independent post-outcome experience reviewer",
+  "verdict": "ACCEPT",
+  "target_case_id": "EXPERIENCE_TARGET:CN601865:20240401",
+  "invocation_id": "EIR:CN601865:20240401:CAPACITY_PRICE_CASH:V1",
+  "record_id": "JER:CN601012:CAPACITY_PRICE_CASH:V1",
+  "record_version": 1,
+  "settlement_binding_ref": "docs/development/research/experience_applications/CN601865_20240401/12_EXPERIENCE_FEEDBACK_SETTLEMENT_BINDING.json",
+  "evidence_checked": [
+    "The official HKEX FY2024 annual-report cash-flow statement (PDF page 72; printed page 70).",
+    "The frozen authorization and cash-capex-only outcome contract.",
+    "The result-before treatment freeze, invocation receipt, and target-side analogy card."
+  ],
+  "decision": {
+    "status": "NOT_DIAGNOSTIC",
+    "reason": "The positive RMB1.027bn consolidated cash-capex screen is contract-matched and materially clears the target's cash-absorption leg. It neither proves customer absorption, utilization, realized price or spread, product-level economics, nor distinguishes the source experience from the pre-frozen recovery/cost-or-technology rival. It therefore cannot support a transfer or method claim."
+  },
+  "anti_defensive_writing_check": {
+    "result": "PASS",
+    "reason": "The settlement makes the concrete positive cash conclusion and changes the next research agenda. It confines uncertainty to the still-unsettled bridge legs rather than converting the company or invocation into UNKNOWN."
+  },
+  "permissions": {
+    "transfer_candidate_created": false,
+    "transfer_validated": false,
+    "method_validated": false,
+    "cjo_value": "NOT_AUTHORIZED",
+    "valuation_input": "NOT_AUTHORIZED",
+    "buy_band": "NOT_AUTHORIZED",
+    "report_authority": "NOT_AUTHORIZED",
+    "investment_action": "NOT_AUTHORIZED"
+  }
+}

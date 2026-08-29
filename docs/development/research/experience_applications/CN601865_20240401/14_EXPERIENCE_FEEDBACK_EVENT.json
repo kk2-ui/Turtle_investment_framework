@@ -1,0 +1,17 @@
+{
+  "schema_version": "experience-feedback-event.v1",
+  "event_id": "EFE:CN601865:20240401:CAPACITY_PRICE_CASH:FY2024:V1",
+  "invocation_id": "EIR:CN601865:20240401:CAPACITY_PRICE_CASH:V1",
+  "record_id": "JER:CN601012:CAPACITY_PRICE_CASH:V1",
+  "record_version": 1,
+  "target_case_id": "EXPERIENCE_TARGET:CN601865:20240401",
+  "status": "NOT_DIAGNOSTIC",
+  "feedback_ref": "docs/development/research/experience_applications/CN601865_20240401/12_EXPERIENCE_FEEDBACK_SETTLEMENT_BINDING.json",
+  "review_ref": "docs/development/research/experience_applications/CN601865_20240401/13_INDEPENDENT_EXPERIENCE_FEEDBACK_REVIEW.json",
+  "recorded_at": "2026-08-29T21:05:00+08:00",
+  "explanation": "FY2024 consolidated operating cash exceeded the frozen cash-capex carrier by RMB1.027bn, clearing one target cash leg. The same source does not settle customer absorption, utilization, realized price or spread, product economics, or funding/recoverability, so it cannot distinguish the Longi-derived question from the target recovery rival or grant transfer credit.",
+  "economic_failure_loci": [
+    "MECHANISM",
+    "TRANSMISSION"
+  ]
+}
