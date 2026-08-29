@@ -31,6 +31,8 @@ Phase 08 不再采用“先把 02669 做成唯一黄金样本，再用 01502 做
 
 2026-08-29，用户把中心目标进一步明确为麦格纳式企业承保：宏观/行业处境必须通过公司暴露传导到生存、适应、正常盈利、owner cash、永久损失、价值路线和价格处理。`EnterpriseUnderwritingEpisode` 成为企业判断、训练、CJO、估值与黄金报告的顶层主对象；八维、E/J、Forecast、Comparative 和 receipt 降为局部工具。当前先完成 G1-U 纵向切片，再建立跨路线 worked cases 和完整 Blind Replay；不得继续用字段结算、严格 Comparative 准入或防御性 `UNKNOWN` 代替企业判断。
 
+2026-08-29，用户进一步裁定黄金报告的反馈必须修生成链路而不是逐篇打补丁。已新增 `golden-report-review-return.v1` 与确定性责任分流：开放的 `DATA_COVERAGE / ACQUISITION_MODULE / REASONING / MODEL` 只进入对应采集、承保或模型责任层，不能直接生成章节改写目标；只有纯 `WRITING` 或上游已验收后的普通投资结论才可进入 reader writer。`golden-report-reader-brief.v1` 将 Episode、已接纳经济结论和读者语言修订指令与原始审阅工单隔离，reader coverage 门继续拒绝审阅面板、状态码、对象 ID 和内部价格身份，同时保留 NAV、EPV、owner cash 及自然语言 `UNKNOWN`。该接线仍属于 G1/U4 产品验证，不改变 G1、G1-U 或 G1.5 的阶段状态，也不把 02669 候选提升为 Golden。
+
 旧的 01502/02669 黄金身份、旧 Q1 单样本顺序、旧 dashboard 状态、旧黄金预览或旧评审票，均不得自动沿用为当前结论。历史工件仍可作为研究资料和回归输入，但不能覆盖本文件。
 
 ## 2. 当前项目目标

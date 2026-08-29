@@ -196,6 +196,12 @@ case 和反例，但不得把它们写成目标公司事实。知识不完整时
 
 三个视图都是读取时投影，不是第二份数据库。writer 必须在同一 generation 读取所需视图并保存 receipt；读取后若 prerequisite refresh，必须重新读取。publication completion 再复核视图、CJO 身份、黄金标准和输出目录的绑定。
 
+### 6.1 审阅返回与 reader writer 的隔离
+
+报告审阅后的修复链使用专用 `golden-report-review-return.v1`。它保存完整根因、经济影响、缺失事实、禁止假设、可执行修复和验收标准，并绑定被审候选；dispatcher 依 `DATA_COVERAGE -> acquisition/schema`、`ACQUISITION_MODULE -> acquisition implementation`、`REASONING -> UnderwritingThesis`、`MODEL -> deterministic model`、`WRITING -> reader writer` 路由。开放的材料性上游问题不产生章节目标。
+
+reader writer 不读取该审阅对象。它只读取 `golden-report-reader-brief.v1`：同一 Episode 已经形成的公司判断、已验收确定性结果及普通投资语言的 reader consequence。即使上游修复完成，也只能把验收后的经济结论投影进 brief，不能把原始 finding、状态、schema、对象 ID 或验收面板复制进正文。这样一次审阅首先改变责任模块和经济结论，最后才改变表达。
+
 ## 7. 自下而上与自上而下的可行路径
 
 ### 7.1 自下而上：公司 -> 行业 -> 宏观

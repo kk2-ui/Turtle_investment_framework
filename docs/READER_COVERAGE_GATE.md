@@ -25,6 +25,14 @@ A source list, field name, ledger ID, or technical appendix link cannot close a
 topic. When a fact is unavailable, `UNKNOWN`/`未披露` is valid only when the
 report explains the economic consequence of that unknown.
 
+The reader body also rejects review-return panels, workflow statuses, internal
+object IDs, and model identities such as `PRIMARY_ROUTE_UNKNOWN`, `P_LONG`, or
+`P_XIRR_*`. Those identities remain available in the deterministic model and
+technical appendix. Reader prose must translate them into the route, terminal
+value, horizon, currency, tax, and investor consequence they represent. This
+boundary deliberately continues to allow NAV, EPV, owner cash, audited facts,
+and ordinary-language uncertainty.
+
 ## Archetype Routing
 
 The validator reads `company_archetype.json` (or the valuation profile) and

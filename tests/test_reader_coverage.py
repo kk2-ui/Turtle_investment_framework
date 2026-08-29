@@ -13,7 +13,7 @@ def _paragraphs() -> str:
             "未来五年，行业最可能从新增需求驱动转向存量竞争，因为供给仍然充足而客户更看重价格和服务，利润池将向低成本和高复购环节迁移。本公司的客户结构和核心产品直接暴露于这条主路径，管理层退出低回报合同并调整渠道后，正常盈利和owner cash更可能稳定；若调整失败，毛利和资本回报下滑会形成永久损失并压低估值。[source: 行业协会_2025.md]",
             "历史收入和利润经过周期调整后，正常盈利要扣除维持性资本开支，才能转换为普通股股东真正可得的owner earnings和自由现金流。这个现金路线解释了经营变化怎样传导到可持续回报。[source: 2024_年报.md]",
             "合并现金不等于普通股现金；需要先看现金由哪个实体控制、能否上游分配，再扣除少数股东、债务和受限资金。普通股可得分红取决于这些索取权和控制限制。[source: 2025_年报.md]",
-            "估值采用正常现金流和经营价值模型，并同时展示股东回报率、当前价格、未来业务价值和期末市场价格。P_LONG是长期持有价格，P_XIRR是有限期限条件价格，二者身份不同。[source: 2025_年报.md]",
+            "估值采用正常现金流和经营价值模型，并同时展示股东回报率、当前价格、未来业务价值和期末市场价格。长期持有价格与有限期限条件价格的经济含义不同，不能混为一个价格。[source: 2025_年报.md]",
             "最强反方认为利润和现金可能继续下滑；如果债务失控或资产发生不可逆损失，就会形成永久资本毁灭。替代解释是周期恢复，后续数据可以证伪其中一条路径。[source: 2025_年报.md]",
             "投资者应跟踪利润、现金流和回款等指标；如果现金低于阈值或分派下降，就触发降级，如果经营改善达到阈值才升级判断。[source: 2025_年报.md]",
             "年报提供了主要事实，但部分实体现金限制和未来回收金额未披露，因此在责任匹配的分红或回款披露前不计入基准估值，未知项会限制owner cash、价格和动作置信度；若后续披露可上游现金则升级，否则维持折价。[source: 2025_年报.md]",
@@ -182,6 +182,17 @@ def test_reader_coverage_rejects_internal_workflow_status_and_object_ids(tmp_pat
         "REVIEWABLE": "workflow_status",
         "DECISION_READY": "workflow_status",
         "PIT_EVIDENCE_ONLY": "workflow_status",
+        "CANNOT_BOUND": "workflow_status",
+        "EXCLUDE_FROM_BASE": "workflow_status",
+        "RESULT_KNOWN_TEACHING_ONLY": "workflow_status",
+        "DATA_COVERAGE": "review_taxonomy",
+        "ACQUISITION_MODULE": "review_taxonomy",
+        "REASONING": "review_taxonomy",
+        "MODEL": "review_taxonomy",
+        "WRITING": "review_taxonomy",
+        "PRIMARY_ROUTE_UNKNOWN": "model_identity",
+        "P_LONG": "model_identity",
+        "P_XIRR_15Y": "model_identity",
         "JAXREPORT:pair-a": "workflow_object_id",
         "JAXUNIT:unit-a": "workflow_object_id",
         "FJ:channel-share": "workflow_object_id",
@@ -212,6 +223,16 @@ def test_reader_coverage_rejects_an_obvious_control_panel(tmp_path: Path) -> Non
     assert "reader_internal_control_leak:workflow_panel" in result["blocking_findings"]
 
 
+def test_reader_coverage_rejects_an_obvious_review_return_panel(tmp_path: Path) -> None:
+    text = _paragraphs() + "\n\nroot_cause: DATA_COVERAGE\nmissing_facts: project cash bridge"
+
+    result = evaluate_reader_coverage(text, tmp_path)
+
+    assert result["status"] == "BLOCKED"
+    assert "reader_internal_control_leak:review_taxonomy" in result["blocking_findings"]
+    assert "reader_internal_control_leak:review_panel" in result["blocking_findings"]
+
+
 def test_reader_coverage_allows_plain_language_and_does_not_scan_technical_appendix(
     tmp_path: Path,
 ) -> None:
@@ -221,7 +242,7 @@ def test_reader_coverage_allows_plain_language_and_does_not_scan_technical_appen
     )
     text = _paragraphs() + (
         "\n\n当前经营状态仍有不确定性，因此这项判断只说明渠道机制需要继续验证，"
-        "不能提高报告结论的置信度。"
+        "不能提高报告结论的置信度。NAV、EPV与owner cash仍是允许向读者解释的经济概念。"
     )
 
     result = evaluate_reader_coverage(text, tmp_path)

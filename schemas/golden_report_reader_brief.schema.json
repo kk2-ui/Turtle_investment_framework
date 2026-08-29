@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://turtle.local/schemas/golden_report_reader_brief.schema.json",
+  "title": "Golden Report Reader Writer Brief",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "company_name", "central_judgment", "sections",
+    "component_judgments", "reversal_observations", "deterministic_conclusions",
+    "accepted_conclusions"
+  ],
+  "properties": {
+    "company_name": {"type": "string", "minLength": 1},
+    "central_judgment": {"type": "string", "minLength": 1},
+    "sections": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["heading", "paragraphs"],
+        "properties": {
+          "heading": {"type": "string", "minLength": 1},
+          "paragraphs": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}}
+        }
+      }
+    },
+    "component_judgments": {"type": "array", "items": {"type": "string", "minLength": 1}},
+    "reversal_observations": {"type": "array", "items": {"type": "string", "minLength": 1}},
+    "deterministic_conclusions": {"type": "array", "items": {"type": "string", "minLength": 1}},
+    "accepted_conclusions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["statement", "basis", "investor_consequence", "source_refs"],
+        "properties": {
+          "statement": {"type": "string", "minLength": 1},
+          "basis": {"type": "string", "minLength": 1},
+          "investor_consequence": {"type": "string", "minLength": 1},
+          "source_refs": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}}
+        }
+      }
+    }
+  }
+}

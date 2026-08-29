@@ -4,10 +4,14 @@ from copy import deepcopy
 import json
 from pathlib import Path
 
+import pytest
+
 from scripts.enterprise_underwriting_episode import (
+    compile_golden_report_reader_brief,
     compile_underwriting_projections,
     render_underwriting_readout,
     validate_enterprise_underwriting_episode,
+    validate_golden_report_reader_brief,
     validate_underwriting_projection_bundle,
 )
 
@@ -153,7 +157,54 @@ def test_readout_is_investor_facing_and_preserves_the_strongest_rival() -> None:
     assert "未来3至5年" in rendered
     assert "利润池传导" in rendered
     assert "海外毛利改善" in rendered
-    assert "DOMESTIC_INCREMENTAL_ASSET_RETURN：EXCLUDE_FROM_BASE" in rendered
+    assert "国内新增资产不取得增量正常盈利" in rendered
+    assert "DOMESTIC_INCREMENTAL_ASSET_RETURN" not in rendered
+    assert "EXCLUDE_FROM_BASE" not in rendered
+    assert "RESULT_KNOWN_TEACHING_ONLY" not in rendered
     assert "能穿越周期" in reader_file
     assert "新增国内资产" in reader_file
     assert "schema" not in reader_file.lower()
+
+
+def test_reader_brief_whitelists_only_economic_conclusions() -> None:
+    conch = _episode("CN600585_20240501_WORKED_CASE_V1.json")
+    brief = compile_golden_report_reader_brief(
+        conch,
+        {
+            "accepted": True,
+            "reader_conclusions": [
+                "NAV与中周期EPV给出互不相加的价值交叉检查；owner cash仍采用保守范围。"
+            ],
+            "raw_review": {
+                "root_cause": "DATA_COVERAGE",
+                "status": "CANNOT_BOUND",
+                "finding_id": "FINDING:should-not-reach-writer",
+            },
+        },
+    )
+    serialized = json.dumps(brief, ensure_ascii=False)
+
+    assert validate_golden_report_reader_brief(brief)["state"] == "REVIEWABLE"
+    assert "NAV与中周期EPV" in serialized
+    assert "raw_review" not in serialized
+    assert "DATA_COVERAGE" not in serialized
+    assert "CANNOT_BOUND" not in serialized
+    assert "FINDING:should-not-reach-writer" not in serialized
+    assert "component_id" not in serialized
+    assert "schema_version" not in brief
+    assert "accepted_conclusions" in brief
+
+
+def test_reader_brief_rejects_unaccepted_or_untranslated_model_results() -> None:
+    conch = _episode("CN600585_20240501_WORKED_CASE_V1.json")
+
+    with pytest.raises(ValueError, match="deterministic_results_not_accepted"):
+        compile_golden_report_reader_brief(
+            conch,
+            {"accepted": False, "reader_conclusions": ["EPV保持保守范围。"]},
+        )
+    with pytest.raises(ValueError, match="reader_internal_control_leak:model_identity"):
+        compile_golden_report_reader_brief(
+            conch,
+            {"accepted": True, "reader_conclusions": ["P_LONG为3.20港元。"]},
+        )

@@ -428,6 +428,7 @@ class AgentConfig:
     template_path: str = "templates/report_template_v10.md"
     pass_name: str = "build"
     repair_targets: tuple[int, ...] = ()
+    reader_repair_brief: list[dict[str, Any]] = field(default_factory=list)
     source_deepening: bool = False
     binding_only: bool = False
     publish_downstream: bool = True
@@ -623,7 +624,13 @@ class TurtleAgent:
             )
             self._decision_already_frozen = decision_already_frozen
             synthesis_batch = bool({0, 14}.intersection(self._config.repair_targets))
-            if synthesis_batch and not decision_already_frozen:
+            if self._config.reader_repair_brief:
+                decision_instruction = (
+                    "本轮只把已接纳结论写成投资者语言；决策、模型和研究账本全部冻结，"
+                    "禁止调用任何 write_*_ledger、write_decisive_question_findings、"
+                    "write_judgment_review 或 plan_judgment_research。"
+                )
+            elif synthesis_batch and not decision_already_frozen:
                 decision_instruction = (
                     "目标章节处理完后调用 write_decision_manifest 固化唯一决策身份，再调用 "
                     "write_decision_ledger 固化全部canonical参数，再调用 write_claim_evidence_ledger "
@@ -646,16 +653,27 @@ class TurtleAgent:
                     "write_decisive_question_findings、write_judgment_review、plan_judgment_research 或 assemble_report；"
                     "目标章节全部通过后立即结束本上下文，结构化综合由后续 Ch14/Ch0 专用轮完成。"
                 )
-            opening_task = (
-                f"开始 {self._config.code} 的自动质量修复轮（{self._config.pass_name}）。"
-                f"本轮只处理完成契约阻断章节：{targets}。"
-                "先调用 list_documents，再读取目标章和 audit；随后一次调用 "
-                f"read_report_contract_pack(chapter_indexes={list(self._config.repair_targets)})；"
-                "逐章执行合同包内 research_plan：回答全部研究问题，给出支持证据与反证，形成事实→机制→财务→估值闭环；"
-                "保留已有有效内容，仅针对 blocking_rules 和研究计划缺口补深度、证据或缺失推导，"
-                "并以 force_rewrite=true 写回。不要改写未列出的通过章节。"
-                + decision_instruction
-            )
+            if self._config.reader_repair_brief:
+                opening_task = (
+                    f"开始 {self._config.code} 的读者修订轮（{self._config.pass_name}）。"
+                    f"本轮只处理指定章节：{targets}。"
+                    "先调用 list_documents、读取目标章，并一次调用 "
+                    f"read_report_contract_pack(chapter_indexes={list(self._config.repair_targets)})；"
+                    "保留已有事实、判断、模型结果、来源和叙事，只按读者修订简报做最小充分改写，"
+                    "以 force_rewrite=true 写回。不要重新研究、重新计算或改写未列出的章节，"
+                    "也不要把审阅标签、验收字段或工作流状态写入报告正文。"
+                    + decision_instruction
+                )
+            else:
+                opening_task = (
+                    f"开始 {self._config.code} 的自动质量修复轮（{self._config.pass_name}）。"
+                    f"本轮只处理完成契约指定章节：{targets}。"
+                    "先调用 list_documents、读取目标章和当前 audit，再一次调用 "
+                    f"read_report_contract_pack(chapter_indexes={list(self._config.repair_targets)})；"
+                    "保留已有有效内容，按工具返回的实际缺口完成最小充分修复，"
+                    "并以 force_rewrite=true 写回。不要改写未列出的章节。"
+                    + decision_instruction
+                )
             if self._config.binding_only:
                 opening_task = (
                     f"开始 {self._config.code} 的 canonical 绑定最小修复轮（{self._config.pass_name}）。"
@@ -1228,30 +1246,23 @@ pit_read_source，且只可按 allowlist 路径调用 pit_read_framework。禁�
     def _build_resume_hint(self) -> str:
         """检查已有章节文件，生成断点续跑提示。"""
         if self._config.repair_targets:
-            completion_path = os.path.join(self._config.output_dir, "completion_report.json")
-            findings: list[str] = []
-            try:
-                with open(completion_path, encoding="utf-8") as handle:
-                    completion = json.load(handle)
-                target_prefixes = tuple(f"Ch{i}:" for i in self._config.repair_targets)
-                findings = [
-                    item for item in completion.get("blocking_findings", [])
-                    if str(item).startswith(target_prefixes)
-                    or str(item).startswith((
-                        "Quality:", "Decision:", "Decision reliability:",
-                    ))
-                ]
-            except (OSError, json.JSONDecodeError):
-                pass
             target_text = ", ".join(f"Ch{i}" for i in self._config.repair_targets)
-            finding_text = "\n".join(f"  - {item}" for item in findings) or "  - 以 audit_chapter 返回为准"
+            brief = self._config.reader_repair_brief
+            brief_items = [
+                str(item.get("instruction") or "").strip()
+                for item in brief
+                if isinstance(item, dict) and str(item.get("instruction") or "").strip()
+            ]
+            brief_text = "\n".join(f"  - {item}" for item in brief_items)
+            if not brief_text:
+                brief_text = "  - 保留原有投资判断，只修正目标章节中影响读者理解的表达与证据呈现。"
             return f"""
-- 🔧 **自动修复轮 {self._config.pass_name}**：只允许修改 {target_text}；其余章节已冻结。
-- 本轮完成契约阻断项：
-{finding_text}
-- 每个目标章先 read_chapter，再按阻断项做最小充分修复；禁止从空白重写或压缩原有内容。
+- 🔧 **读者修订轮 {self._config.pass_name}**：只允许修改 {target_text}；其余章节已冻结。
+- 本轮面向投资者的修订重点：
+{brief_text}
+- 每个目标章先 read_chapter，再按上述经济含义做最小充分修订；禁止从空白重写或压缩原有内容。
 - write_chapter 必须传 force_rewrite=true。单章本轮最多尝试 {self._config.max_chapter_attempts_per_pass} 次；预算耗尽立即转下一目标章。
-- E1 只补可靠证据锚点并保留分析深度；P2 扩充实质数据、趋势和推导；S2 先核对 compute_gg 再统一口径。
+- 只把投资事实、经济影响、不确定性及其对估值或行动的含义写入正文；不要复制缺陷标签、验收字段、内部对象名或工作流状态。
 """
         import os as _os
         output_dir = self._config.output_dir
@@ -1920,13 +1931,13 @@ Part C 的 Ch14 综合决策使用 5 状态合成矩阵。写 Ch14 前必须检�
         elif is_v12:
             targets = set(self._config.repair_targets)
             v12_methodology = """
-## 自动质量修复方法（精简上下文）
+## 读者修订方法（精简上下文）
 
-- 只修 completion contract 指定章节，先读取旧章和 audit 结果，保留已正确的分析与表格。
-- P2：增加实质数据、跨年趋势、对比与推导，不用一句一段或空行凑行数。
-- E1：核对原始工具结果，在相关段落或 bullet 末尾补 `[source: 文件/工具 关键字段=值]`；禁止虚构来源。
-- S2：区分 AA GG、FCFE GG、Normalized GG，不把不同口径强行统一成一个值。
-- 每章包含结论、详细情况、证据与出处；修完立即 audit，预算耗尽就转下一目标章。
+- 只修本轮指定章节，先读取旧章和面向投资者的修订简报，保留已正确的分析与表格。
+- 增加真正影响投资判断的数据、跨年趋势、对比与推导，不用一句一段或空行凑行数。
+- 核对原始工具结果，在相关段落或 bullet 末尾补 `[source: 文件/工具 关键字段=值]`；禁止虚构来源。
+- 区分 AA GG、FCFE GG、Normalized GG，不把不同口径强行统一成一个值。
+- 每章包含结论、详细情况、证据与出处；内部检查仅用于确认正文是否可靠，其标签和状态不得出现在正文中。
 """
             if targets.intersection({10, 11, 12, 13, 14}):
                 v12_methodology += """
@@ -2303,6 +2314,15 @@ Zone B 提取结果写入 audit.json / governance.json。写作 Agent 在相关�
                     )
                     if isinstance(ledger_schema, dict):
                         ledger_schema["enum"] = ["decision_binding"]
+        elif self._config.reader_repair_brief:
+            allowed = {
+                "list_documents", "read_report_contract_pack", "read_chapter",
+                "audit_chapter", "write_chapter",
+            }
+            tool_schemas = [
+                deepcopy(item) for item in tool_schemas
+                if str(item.get("function", {}).get("name") or "") in allowed
+            ]
         elif self._config.synthesis_only:
             frontier, _ = self._structured_repair_frontier()
             if frontier:
@@ -2603,6 +2623,18 @@ Zone B 提取结果写入 audit.json / governance.json。写作 Agent 在相关�
                     ):
                         print("  ⏹ canonical绑定目标已耗尽本轮写入预算，立即结束本轮。")
                         break
+                if self._config.reader_repair_brief and self._config.repair_targets:
+                    missing_targets = set(self._config.repair_targets) - self._passed_chapters
+                    if not missing_targets:
+                        print("  ⏹ 读者修订目标全部通过，交还外层完成契约。")
+                        break
+                    if all(
+                        self._chapter_write_counts.get(idx, 0)
+                        >= self._config.max_chapter_attempts_per_pass
+                        for idx in missing_targets
+                    ):
+                        print("  ⏹ 读者修订目标已耗尽本轮写入预算。")
+                        break
                 if (
                     self._config.source_deepening
                     and self._config.repair_targets
@@ -2684,6 +2716,21 @@ Zone B 提取结果写入 audit.json / governance.json。写作 Agent 在相关�
                             + ", ".join(f"Ch{idx}" for idx in missing_targets)
                             + "；读取decision_binding合同及章节后最小write_chapter，"
                             "禁止读取其他ledger或执行研究/综合。"
+                        ),
+                    })
+                    continue
+                if self._config.reader_repair_brief and self._config.repair_targets:
+                    missing_targets = sorted(
+                        set(self._config.repair_targets) - self._passed_chapters
+                    )
+                    if not missing_targets:
+                        break
+                    self._messages.append({
+                        "role": "user",
+                        "content": (
+                            "读者修订尚未完成。只按已接纳简报最小改写 "
+                            + ", ".join(f"Ch{idx}" for idx in missing_targets)
+                            + "；禁止修改模型、账本或其他章节。"
                         ),
                     })
                     continue

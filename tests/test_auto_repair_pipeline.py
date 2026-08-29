@@ -10,6 +10,7 @@ from scripts.turtle_agent.llm_client import LlmResponse, ToolCall
 from scripts.turtle_agent.run import (
     _explicit_repair_targets_for_pass,
     _is_binding_only_repair,
+    _load_golden_report_review_return,
     _repair_iteration_budget,
     _repair_targets_for_pass,
     _repair_targets_from_completion,
@@ -37,6 +38,32 @@ class _FailingLlm:
 
     def chat(self, *args, **kwargs):
         raise RuntimeError("provider connection failed")
+
+
+def _review_return(*, root_cause: str, guidance: str = "") -> dict:
+    return {
+        "schema_version": "golden-report-review-return.v1",
+        "review_id": "REVIEW-1",
+        "report_id": "REPORT-1",
+        "candidate_ref": "reports/candidate.md",
+        "reviewer_id": "REVIEWER-1",
+        "reviewed_at": "2026-08-29T00:00:00Z",
+        "findings": [{
+            "finding_id": "F-1",
+            "root_cause_classes": [root_cause],
+            "materiality": "MATERIAL",
+            "economic_impact": "The issue can change normalized owner cash and value.",
+            "affected_claims": ["cash accessibility changes value"],
+            "missing_facts": ["subsidiary remittance evidence"],
+            "prohibited_assumptions": ["do not assume all cash is distributable"],
+            "executable_remediation": ["repair the owning reusable component"],
+            "acceptance_criteria": ["the owning component passes with evidence"],
+            "affected_chapters": [12],
+            "remediation_status": "OPEN",
+            "acceptance_evidence_refs": [],
+            "reader_guidance": guidance,
+        }],
+    }
 
 
 def test_zero_pass_repair_always_revalidates_instead_of_reading_stale_completion() -> None:
@@ -97,6 +124,114 @@ def test_repair_targets_support_legacy_blocking_findings() -> None:
     completion = {"blocking_findings": ["Ch11: audit_failed", "Ch2: short:70<80"]}
 
     assert _repair_targets_from_completion(completion) == (2, 11)
+
+
+def test_open_upstream_review_return_does_not_trigger_chapter_repair() -> None:
+    completion = {
+        "chapter_results": [{"index": 12, "blocking_rules": ["audit_failed"]}],
+        "golden_report_review_return": _review_return(root_cause="MODEL"),
+    }
+
+    assert _repair_targets_from_completion(completion) == ()
+
+
+def test_pure_writing_review_return_routes_only_declared_reader_chapter() -> None:
+    completion = {
+        "golden_report_review_return": _review_return(
+            root_cause="WRITING",
+            guidance="Explain the cash-access range once in investor language.",
+        ),
+    }
+
+    assert _repair_targets_from_completion(completion) == (12,)
+
+
+def test_review_return_file_enters_the_same_routing_path_used_by_repair_only(
+    tmp_path: Path,
+) -> None:
+    review_path = tmp_path / "review-return.json"
+    review_path.write_text(
+        json.dumps(_review_return(
+            root_cause="WRITING",
+            guidance="State the accepted cash-access consequence once.",
+        )),
+        encoding="utf-8",
+    )
+
+    loaded = _load_golden_report_review_return(str(review_path))
+    completion = {
+        "status": "COMPLETE",
+        "golden_report_review_return": loaded,
+    }
+
+    assert loaded["candidate_ref"] == "reports/candidate.md"
+    assert _repair_targets_from_completion(completion) == (12,)
+
+
+def test_repair_prompt_uses_clean_reader_brief_not_raw_completion_findings(tmp_path: Path) -> None:
+    (tmp_path / "completion_report.json").write_text(json.dumps({
+        "blocking_findings": [
+            "DATA_COVERAGE: acquisition_schema_missing",
+            "Quality: P_LONG PRIMARY_ROUTE_UNKNOWN",
+        ],
+    }), encoding="utf-8")
+    agent = TurtleAgent(
+        _DummyLlm(),  # type: ignore[arg-type]
+        ToolRegistry(),
+        AgentConfig(
+            output_dir=str(tmp_path),
+            repair_targets=(12,),
+            reader_repair_brief=[
+                {
+                    "instruction": "说明现金可达性不确定时，内在价值区间和行动门槛如何变化。",
+                },
+                {
+                    "instruction": "保留已有估值结论，删除重复的内部过程说明。",
+                },
+            ],
+        ),
+    )
+
+    prompt = agent._build_resume_hint()
+
+    assert "现金可达性不确定" in prompt
+    assert "删除重复的内部过程说明" in prompt
+    assert "DATA_COVERAGE" not in prompt
+    assert "P_LONG" not in prompt
+    assert "PRIMARY_ROUTE_UNKNOWN" not in prompt
+    assert "blocking_findings" not in prompt
+    assert "audit_failed" not in prompt
+
+
+def test_reader_repair_tool_surface_cannot_mutate_models_or_research(tmp_path: Path) -> None:
+    registry = ToolRegistry()
+    for name in (
+        "list_documents", "read_report_contract_pack", "read_chapter",
+        "audit_chapter", "write_chapter", "write_valuation_model_ledger",
+        "web_search", "assemble_report",
+    ):
+        registry.register(name, lambda **kwargs: {}, parameters={})
+    agent = TurtleAgent(
+        _DummyLlm(),  # type: ignore[arg-type]
+        registry,
+        AgentConfig(
+            output_dir=str(tmp_path),
+            repair_targets=(0, 12, 14),
+            reader_repair_brief=[{
+                "instruction": "Explain the accepted value range in investor language.",
+            }],
+        ),
+    )
+
+    offered = {
+        str(item.get("function", {}).get("name") or "")
+        for item in agent._tool_schemas_for_stage()
+    }
+
+    assert offered == {
+        "list_documents", "read_report_contract_pack", "read_chapter",
+        "audit_chapter", "write_chapter",
+    }
 
 
 def test_decision_ledger_failure_routes_only_decision_chapters() -> None:
