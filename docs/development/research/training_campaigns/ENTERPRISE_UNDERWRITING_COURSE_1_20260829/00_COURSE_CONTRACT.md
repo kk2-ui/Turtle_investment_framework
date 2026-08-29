@@ -1,6 +1,6 @@
 # Judgment-First 企业承保训练第一期课程
 
-> 状态：`ROSTER_FROZEN / WORKED_CASE_PENDING`
+> 状态：`12_WORKED_CASES_COMPLETED / 4_BLIND_PREOUTCOME_EPISODES_FROZEN / OUTCOMES_SEALED`
 >
 > 冻结基线：本地受保护主线 `main@eadaae9dedbf4cf1c3ac621031bb18fd0f4d49f0`
 >

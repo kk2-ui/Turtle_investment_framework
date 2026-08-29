@@ -1,0 +1,224 @@
+{
+  "schema_version": "enterprise-underwriting-episode.v2",
+  "episode_id": "UWEP:CN603866:20190501:BLIND:C1",
+  "contract_id": "UWTRAIN:CN603866:20190501:BLIND:C1",
+  "training_track": "BLIND_REPLAY",
+  "company_id": "CN:603866",
+  "company_name": "Taoli Bread",
+  "cutoff_at": "2019-05-01T00:00:00+08:00",
+  "sample_identity": "BLIND_REPLAY",
+  "outcome_access": "SEALED",
+  "authority": "RESEARCH_TRAINING_ONLY_NO_PRICE_VALUATION_OR_INVESTMENT_AUTHORITY",
+  "decision_frame": "在截止日可见信息内，判断短保面包的区域密度经济能否从成熟市场复制到新区域，并把集团经营现金分成成熟网络维持、区域爬坡和新增产能三种责任；投产、收入或销量只证明动作和初步客户入口，不单独证明正常盈利与 owner cash。",
+  "underwriting_route": "以短保食品网络为分析单位，依次验收终端客户吸收、配送半径和退货纪律、工厂利用率、同口径区域单位经济以及维护与增长资本后的现金；成熟区域与新区域 cohort 分账，集团现金只用于集团生存和总体现金可达性。",
+  "situation_model": {
+    "summary": "截至截止日，桃李已形成 17 个区域生产基地，以中央工厂加批发的以销定产模式服务中心城市直营 KA 和外埠经销渠道。短保产品把新区域扩张变成一项本地密度工程：工厂必须在有限运输半径内获得足够终端周转，才能同时压低配送和退货损耗、提高利用率并覆盖固定成本。FY2018 的全国销量、利润和经营现金表明既有网络具有真实经营能力，但多个新区域子公司亏损、部分负净资产，而东莞已盈利，说明复制结果是区域异质而非统一成功或失败。",
+    "industry_future_thesis": {
+      "horizon": "自截止日起三至五年，覆盖在建工厂投产后的首轮区域爬坡与网络密度形成期。",
+      "most_likely_regime": "短保面包行业仍较分散且产品同质化明显，标准化、品牌、食品安全和高频配送能力会推动部分集中，但利润池不会简单按全国销量集中；更可能由一个个区域内的终端周转、运输半径和工厂密度决定，领先者会出现成熟区域高回报与新区域低回报并存。",
+      "profit_pool_transmission": "需求增长只有在终端能以较低退货率持续吸收、配送路线足够密集且工厂利用率提升时才进入利润池；客户不足会先表现为低利用率和区域亏损，再经额外配送、退货、促销及持续建厂资本压低集团现金。供给扩张因此既可能扩大品牌网络，也可能把现金固化为低回报产能。",
+      "company_exposure": "公司已有 17 个区域基地，并同时推进武汉、沈阳、山东和江苏句容等项目，既有成熟网络和 FY2018 的利润、经营现金为复制提供资源；但多个新区域仍亏损且部分负净资产，表明集团总量增长尚不能证明每个新基地已经取得经济密度。东莞盈利说明局部复制可行，不能把所有早期亏损永久化。",
+      "adaptation": "最合适的适应路径不是继续用全国总量覆盖区域差异，而是按新区域 cohort 控制投产节奏：以真实终端周转决定生产，以配送半径、退货率和利用率决定是否继续铺设产能，并让成熟网络现金只在新区域达到可验证的客户吸收里程碑后继续投入。截止日前材料证明公司有实施资源，但没有证明这种区域级资本纪律已经普遍建立。",
+      "normal_economics": "既有成熟网络可以按持续盈利的经营平台处理，但不把 FY2018 集团毛利率或收入增速直接外推给全部新区域。新区域正常盈利只有在同龄 cohort 的销量吸收、利用率和扣除退货及配送后的利润共同改善时才进入基准。owner cash 以集团经营现金为上界起点，先扣除维持 17 个基地和配送网络所需资本；在维护资本未单列时，将所有无法由已验证利用率支持的新工厂及配套投入先视为增长资本并从可分配现金中扣除，因此方向上预计显著低于经营现金，精确额保持局部未知。",
+      "permanent_loss": "短期被迫退出风险因现金充足且无有息债务而较低；更现实的永久损失路径是成熟区域现金被连续投入客户密度不足的新工厂，区域亏损、负净资产、退货和配送费用长期存在，同时为维持短保网络继续投入资本，最终令低利用率资产吞噬普通股现金。食品安全或品牌受损会通过终端吸收和退货迅速放大，但截止日前没有事件证据，只保留为压力情景。",
+      "valuation_treatment": "价值路线以成熟区域的分层正常盈利能力为主，以维护资本后的 owner cash 作条件化交叉检验；新区域扩张仅按达到客户吸收、利用率和区域现金里程碑的 cohort 逐步纳入，未验收的设计产能、在建项目和全国化叙事不进入基准。资产负债表用于检验生存与下行缓冲，不能替代低利用率产能的经济回报。",
+      "strongest_rival": "最强反方是：多个新区域亏损主要是工厂投产前后必经的短期爬坡费用，而非局部竞争优势失效；行业增长且分散，公司已有品牌、标准化体系、成熟网络现金和低负债，东莞盈利又证明复制可以发生，因此当前谨慎处理可能低估较长爬坡期后全国网络形成的密度收益。该解释具备现实基础，但目前缺少新区域同龄 cohort 的终端周转、退货、配送成本、利用率和资本后现金证据，故只能保留为上行情景，尚不足以把全部在建产能写入正常经济。",
+      "reversal_observations": [
+        "最早翻转信号是新工厂投产后的首个可比爬坡阶段：若同龄新区域的终端销量和复购持续提高、退货与单位配送费用受控、利用率同步上升并使区域亏损收窄，则把全国复制从情景逐步提升；若产量先行而终端吸收停滞、退货或配送负担上升，则转向局部优势难复制的判断。",
+        "若多数新区域在不依赖持续大额追加投入的情况下跨过盈亏平衡并产生资本开支后的现金，同时成熟区域利润与现金未被侵蚀，则上调正常盈利和 owner cash；若区域负净资产与亏损延续且新建产能继续增加，则下调并把资本错配列为主导永久损失路径。",
+        "若公司披露或可重建成熟基地维护资本、新基地增长资本及区域现金流，并显示维护后集团现金稳定覆盖扩张，则收窄 owner-cash 折价；若现金余额下降或负债增加主要用于维持低利用率网络，则生存缓冲不再能抵消长期回报恶化。"
+      ]
+    }
+  },
+  "business_position": "公司在截止日前的优势是已具规模的短保生产配送网络、FY2018 约 48.33 亿元收入和 6.42 亿元归母净利润、面包及糕点约 39.83% 毛利率，以及约 8.03 亿元经营现金；这些事实支持成熟网络有品牌、终端和运营基础。位置的限制是短保优势受运输半径和本地渠道密度约束，行业同质化又使新区域不能仅凭品牌获得复制信用。多个新区域亏损与东莞盈利并存，最符合的定位是“成熟核心已证实、区域复制有选择权但尚未普遍证实”。",
+  "survival_case": "FY2018 末约 14.24 亿元货币资金、约 4.89 亿元总负债，且无短期借款、长期借款或应付债券；当年经营现金约 8.03 亿元，高于约 6.42 亿元归母净利润。这使公司有能力承受若干区域爬坡失败，近期生存风险低。该缓冲不能证明复利：武汉、江苏等在建工厂和多个亏损子公司可能持续吸收现金，低杠杆只是延长纠错时间，是否保护普通股取决于管理层能否在终端密度不足时放慢投入或退出。",
+  "adaptation_case": "适应能力来自两项已观察基础：成熟网络产生的利润和现金，以及东莞新区域盈利所显示的可复制可能。真正需要承保的管理动作是按区域缩短决策反馈：生产跟随终端 sell-through，路线和客户密度决定配送范围，退货与单位配送成本进入区域损益，利用率未达里程碑时延后下一阶段产能。截止日前只能确认公司正在扩产和拓渠，不能确认上述资本纪律；因此适应方向为有能力、但执行成效条件化。",
+  "normalization_case": "正常盈利采用分层而非集团增速外推。第一层是已有成熟基地和成熟渠道的持续利润，可由 FY2018 的面包及糕点收入、毛利及集团净利润支持方向，但需要为竞争和网络维护保留保守余量。第二层是东莞这类已出现盈利的新区域，仅给予小幅复制信用并等待持续性。第三层是亏损或建设期区域，不把亏损机械永久化，也不把设计产能写成利润；只有终端吸收、利用率、扣除配送退货后的区域利润依次成立才进入正常盈利。owner cash 不能等同约 8.03 亿元经营现金：以该数为截止日前上界起点，扣除成熟生产配送网络的必要维护资本，并在无法拆分时保守扣除全部尚未被客户吸收证据支持的工厂与配套资本。由此可以判断成熟业务现金生成方向为正，但扩张期普通股可达现金显著低于经营现金，精确额待维护/增长资本拆分后再收窄。",
+  "permanent_loss_map": "第一路径是区域复制失真：客户吸收不足导致低利用率、退货和配送费用偏高，工厂固定成本令区域亏损和负净资产延续。第二路径是资本配置放大：集团用成熟区域现金连续建设新工厂，使本可退出的局部试错变成长期低回报资产。第三路径是网络冲击：食品安全或品牌受损经终端下架、退货和利用率下降同时打击多个区域，目前仅为压力情景。抵消因素是高现金、低负债、低库存及以销定产，使近期流动性和库存毁损风险较低；它们降低被迫退出概率，但不消除资本回报型永久损失。",
+  "value_route": {
+    "primary_routes": [
+      "成熟区域与已验证区域 cohort 的分层正常盈利能力",
+      "维护生产配送网络和已承诺资本后 owner cash 的条件化交叉检验"
+    ],
+    "excluded_routes": [
+      "将全国销量增速、设计产能或项目投产直接资本化的成长路线",
+      "用现金和低负债替代区域资产回报证明的净资产路线"
+    ],
+    "route_reasoning": "短保面包不是单一全国同质资产：成熟基地的终端密度和现金可以支持持续经营盈利路线，而新基地只有在本地客户、配送、退货、利用率与资本后现金闭环后才具同等经济含义。固定资产和在建工程主要用于检查资本暴露与下行回收，不把账面投入视为生产能力价值；owner cash 作为重要交叉检验，但在维护资本未拆分时只作保守条件化使用。",
+    "valuation_model_roles": {
+      "primary": [
+        "按成熟区域与已验证 cohort 分层的正常盈利能力"
+      ],
+      "corroborative": [
+        "以经营现金为起点并保守扣除维护与未验收增长资本的 owner-cash 能力"
+      ],
+      "stress": [
+        "亏损区域长期低利用率、追加资本和资产回收折损下的永久损失压力"
+      ]
+    }
+  },
+  "strongest_rival": "最强反方是：多个新区域亏损主要是工厂投产前后必经的短期爬坡费用，而非局部竞争优势失效；行业增长且分散，公司已有品牌、标准化体系、成熟网络现金和低负债，东莞盈利又证明复制可以发生，因此当前谨慎处理可能低估较长爬坡期后全国网络形成的密度收益。该解释具备现实基础，但目前缺少新区域同龄 cohort 的终端周转、退货、配送成本、利用率和资本后现金证据，故只能保留为上行情景，尚不足以把全部在建产能写入正常经济。",
+  "reversal_observations": [
+    "最早翻转信号是新工厂投产后的首个可比爬坡阶段：若同龄新区域的终端销量和复购持续提高、退货与单位配送费用受控、利用率同步上升并使区域亏损收窄，则把全国复制从情景逐步提升；若产量先行而终端吸收停滞、退货或配送负担上升，则转向局部优势难复制的判断。",
+    "若多数新区域在不依赖持续大额追加投入的情况下跨过盈亏平衡并产生资本开支后的现金，同时成熟区域利润与现金未被侵蚀，则上调正常盈利和 owner cash；若区域负净资产与亏损延续且新建产能继续增加，则下调并把资本错配列为主导永久损失路径。",
+    "若公司披露或可重建成熟基地维护资本、新基地增长资本及区域现金流，并显示维护后集团现金稳定覆盖扩张，则收窄 owner-cash 折价；若现金余额下降或负债增加主要用于维持低利用率网络，则生存缓冲不再能抵消长期回报恶化。"
+  ],
+  "component_treatments": [
+    {
+      "component_id": "MATURE_SHORT_SHELF_LIFE_NETWORK",
+      "treatment": "UNDERWRITE",
+      "reason": "FY2018 的收入、面包及糕点毛利、净利润、经营现金、低库存以及 17 个区域基地共同证明既有网络已经获得真实客户吸收并形成集团级盈利与现金。",
+      "investment_consequence": "可以把成熟网络作为持续经营和正常盈利的基准，但对竞争、配送维护和成熟区域边际放缓保留余量。",
+      "promotion_or_resolution_condition": "按成熟区域披露的终端周转、退货、配送成本、基地利用率与维持性资本可进一步收窄正常盈利范围。",
+      "evidence_ids": [
+        "EV-CN603866-BUSINESS-MODEL",
+        "EV-CN603866-FY2018-OPERATING"
+      ]
+    },
+    {
+      "component_id": "NEW_REGION_CUSTOMER_ABSORPTION",
+      "treatment": "SCENARIO_ONLY",
+      "reason": "多个新区域亏损且部分负净资产，东莞盈利又表明复制并非不可能；现有全国销量不能分辨各区域终端吸收。",
+      "investment_consequence": "全国复制保留为有经济根据的上行情景，不把所有在建和亏损区域纳入正常盈利。",
+      "promotion_or_resolution_condition": "同龄新区域连续显示终端销量和复购提升、退货与单位配送费用受控、利用率提高并跨过区域盈亏平衡。",
+      "evidence_ids": [
+        "EV-CN603866-REGIONAL-HETEROGENEITY",
+        "EV-CN603866-CAPACITY-PIPELINE"
+      ]
+    },
+    {
+      "component_id": "CAPACITY_IMPLEMENTATION",
+      "treatment": "EXCLUDE_FROM_BASE",
+      "reason": "天津投产以及武汉、沈阳、山东、江苏句容建设只确认产能实施，短保模式下没有客户密度、退货、配送和利用率证据就不能确认经济吸收。",
+      "investment_consequence": "设计产能与在建项目不直接增加正常盈利或 owner cash，只增加需要验收的固定资产和资本暴露。",
+      "promotion_or_resolution_condition": "每个项目投产后以终端 sell-through、配送半径、退货、利用率、区域利润和资本后现金完成闭环。",
+      "evidence_ids": [
+        "EV-CN603866-CAPACITY-PIPELINE",
+        "EV-CN603866-BUSINESS-MODEL"
+      ]
+    },
+    {
+      "component_id": "SURVIVAL_BUFFER",
+      "treatment": "UNDERWRITE",
+      "reason": "FY2018 末现金显著高于总负债，且无短期借款、长期借款或应付债券，经营现金高于净利润。",
+      "investment_consequence": "近期被迫融资或退出风险低，公司有时间纠正区域扩张错误；这项信用只进入生存判断，不替代资本回报。",
+      "promotion_or_resolution_condition": "持续观察扩张期间现金、负债和成熟网络经营现金是否仍能覆盖区域试错而不依赖外部融资。",
+      "evidence_ids": [
+        "EV-CN603866-BALANCE-SHEET",
+        "EV-CN603866-FY2018-OPERATING"
+      ]
+    },
+    {
+      "component_id": "NORMAL_EARNINGS",
+      "treatment": "CONDITIONALLY_UNDERWRITE",
+      "reason": "成熟网络已有利润证据，但集团口径混合成熟区域、建设期和亏损区域，FY2018 毛利与净利润不能无差别外推到全国复制。",
+      "investment_consequence": "正常盈利以成熟网络为核心、东莞等已盈利 cohort 只给有限复制信用，其他新区域在闭环前不进入基准。",
+      "promotion_or_resolution_condition": "获得区域同口径收入、退货和配送后利润、利用率以及投产年限，并确认盈利不是一次性或集团费用分配造成。",
+      "evidence_ids": [
+        "EV-CN603866-FY2018-OPERATING",
+        "EV-CN603866-REGIONAL-HETEROGENEITY"
+      ]
+    },
+    {
+      "component_id": "MAINTENANCE_CAPITAL",
+      "treatment": "CANNOT_BOUND",
+      "reason": "源包未拆分成熟区域维护资本、新工厂增长资本和新区域爬坡损失，无法给 17 个基地及配送网络的精确维持性资本额。",
+      "investment_consequence": "该未知只限制 owner cash 的精度：不把经营现金等同可分配现金，并对所有未由客户吸收和利用率支持的资本作保守扣除，不推翻成熟业务现金生成方向。",
+      "promotion_or_resolution_condition": "按基地获得更新改造、配送设备、在建转固、扩产项目和区域爬坡支出，并按维持现有销量与新增销量的责任拆分。",
+      "evidence_ids": [
+        "EV-CN603866-CASH-CAPITAL-BOUNDARY",
+        "EV-CN603866-CAPACITY-PIPELINE"
+      ]
+    },
+    {
+      "component_id": "OWNER_CASH",
+      "treatment": "CONDITIONALLY_UNDERWRITE",
+      "reason": "FY2018 经营现金约 8.03 亿元证明集团有现金生成，但维护资本和增长资本未拆分，且扩张项目可能吸收成熟区域现金。",
+      "investment_consequence": "方向上承认成熟业务 owner cash 为正，但集团可达额显著低于经营现金；以经营现金为上界起点，并先扣除生产配送维护资本及所有未验收扩张资本。",
+      "promotion_or_resolution_condition": "维护与增长资本拆分后，显示成熟网络资本后现金为正且新区域追加资本随利用率改善而下降。",
+      "evidence_ids": [
+        "EV-CN603866-FY2018-OPERATING",
+        "EV-CN603866-CASH-CAPITAL-BOUNDARY"
+      ]
+    },
+    {
+      "component_id": "PERMANENT_LOSS_PATH",
+      "treatment": "UNDERWRITE",
+      "reason": "低杠杆降低近期流动性损失，但多个区域亏损、部分负净资产与连续建厂共同形成可观察的资本错配路径。",
+      "investment_consequence": "永久损失的核心监控从短期破产转向成熟现金是否长期补贴低利用率资产，以及管理层能否在密度不足时停止追加资本。",
+      "promotion_or_resolution_condition": "新区域 cohort 的资本后现金转正会降低该风险；亏损和负净资产延续且仍持续建厂会使其成为主导路径。",
+      "evidence_ids": [
+        "EV-CN603866-REGIONAL-HETEROGENEITY",
+        "EV-CN603866-BALANCE-SHEET",
+        "EV-CN603866-CAPACITY-PIPELINE"
+      ]
+    }
+  ],
+  "evidence_trace": [
+    {
+      "evidence_id": "EV-CN603866-BUSINESS-MODEL",
+      "source_ref": "docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_COURSE_1_20260829/sources/CN603866_20190501_PRE_CUTOFF_SOURCE_PACKAGE.md",
+      "locator": "行业与商业模式，第 1 段",
+      "scope": "中央工厂加批发、直营与经销分工，以及短保产品对生产、配送、退货、终端管理和运输半径的要求。",
+      "used_for": "界定短保食品网络的客户吸收、配送密度、退货和利用率责任链。"
+    },
+    {
+      "evidence_id": "EV-CN603866-CAPACITY-PIPELINE",
+      "source_ref": "docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_COURSE_1_20260829/sources/CN603866_20190501_PRE_CUTOFF_SOURCE_PACKAGE.md",
+      "locator": "行业与商业模式，第 2 至 3 段",
+      "scope": "17 个区域基地、天津投产及武汉、沈阳、山东、江苏句容在建产能。",
+      "used_for": "区分产能实施与客户及经济吸收，并识别扩张资本暴露。"
+    },
+    {
+      "evidence_id": "EV-CN603866-FY2018-OPERATING",
+      "source_ref": "docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_COURSE_1_20260829/sources/CN603866_20190501_PRE_CUTOFF_SOURCE_PACKAGE.md",
+      "locator": "FY2016–FY2018 经营与现金，第 1 至 2 项",
+      "scope": "FY2018 收入、净利润、经营现金、面包及糕点收入与毛利率、销量增长及低库存。",
+      "used_for": "承保成熟网络的真实经营能力、集团现金生成和总量证据的边界。"
+    },
+    {
+      "evidence_id": "EV-CN603866-BALANCE-SHEET",
+      "source_ref": "docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_COURSE_1_20260829/sources/CN603866_20190501_PRE_CUTOFF_SOURCE_PACKAGE.md",
+      "locator": "FY2016–FY2018 经营与现金，第 3 项",
+      "scope": "FY2018 末货币资金、总负债、无有息债务、固定资产及在建工程。",
+      "used_for": "判断近期生存缓冲，并限制把低杠杆误写成资本回报。"
+    },
+    {
+      "evidence_id": "EV-CN603866-CASH-CAPITAL-BOUNDARY",
+      "source_ref": "docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_COURSE_1_20260829/sources/CN603866_20190501_PRE_CUTOFF_SOURCE_PACKAGE.md",
+      "locator": "FY2016–FY2018 经营与现金，第 3 项末句",
+      "scope": "经营现金未拆分成熟区域维护资本、新工厂增长资本和新区域爬坡损失。",
+      "used_for": "局部化维护资本未知，并形成 owner cash 的保守条件处理。"
+    },
+    {
+      "evidence_id": "EV-CN603866-REGIONAL-HETEROGENEITY",
+      "source_ref": "docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_COURSE_1_20260829/sources/CN603866_20190501_PRE_CUTOFF_SOURCE_PACKAGE.md",
+      "locator": "截止日前的异质区域信号",
+      "scope": "深圳、武汉、江苏、合肥、广西、长沙、福州、厦门、南昌亏损，部分负净资产；东莞盈利。",
+      "used_for": "将复制判断分成区域 cohort，避免统一成功或统一失败。"
+    }
+  ],
+  "existing_object_refs": [
+    {
+      "kind": "CONTRACT_ALLOWED_SOURCE_PACKAGE",
+      "ref": "docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_COURSE_1_20260829/sources/CN603866_20190501_PRE_CUTOFF_SOURCE_PACKAGE.md",
+      "role": "截止日内唯一事实来源，用于本 Episode 的企业、行业、经营、现金与区域证据。"
+    }
+  ],
+  "underwriting_thesis": {
+    "thesis_id": "UWTHESIS:CN603866:20190501:BLIND:C1",
+    "central_path": "中央判断（中等置信）：桃李在截止日前已经证明成熟短保网络能产生利润和经营现金，现金充足、无有息债务又使近期生存风险低；但全国化是一组区域密度试验，而不是成熟核心的机械复制。多个新区域亏损与东莞盈利并存，最可能路径是成熟核心继续供血、少数区域逐步跨过密度门槛、其余区域较长时间稀释利用率和资本后现金。因此只承保成熟网络和生存缓冲，把新区域复制保留为逐 cohort 验收的条件情景；真正的永久损失不是近期破产，而是持续把成熟现金固化为客户不足、低利用率且仍需追加资本的工厂。",
+    "normal_earnings_treatment": "正常盈利以成熟区域持续利润为核心，对已盈利新区域只给有限复制信用；不把 FY2018 集团毛利率、销量增长或在建产能直接外推。新区域需依次证明终端吸收、退货和配送后的区域利润与利用率，才从情景进入基准。",
+    "owner_cash_treatment": "成熟网络现金生成方向为正，但约 8.03 亿元经营现金不是 owner cash。维护资本未单列时，以经营现金为上界起点，先扣除维持 17 个基地和配送网络的必要资本，并把所有尚未由客户吸收、利用率和区域利润支持的新工厂及配套资本保守扣除；因此扩张期集团 owner cash 显著低于经营现金，精确额局部未知而非整案不可判断。",
+    "permanent_loss_treatment": "高现金、低负债和以销定产降低近期被迫退出概率；主导长期风险是多个低密度区域持续亏损并负净资产，管理层仍用成熟现金追加工厂和配送资本，最终造成资产回收折损与普通股现金长期流失。食品安全和品牌冲击只作压力情景。",
+    "value_route_treatment": "以成熟网络分层正常盈利能力为主路线，以保守扣除维护和未验收增长资本后的 owner cash 作交叉检验；未验收的全国化产能只保留情景价值，资产负债表仅承担生存和下行约束角色。",
+    "economic_directions": {
+      "normal_earnings": "MIXED",
+      "owner_cash": "DETERIORATES",
+      "permanent_loss": "DETERIORATES"
+    },
+    "strongest_rival": "最强反方是：多个新区域亏损主要是工厂投产前后必经的短期爬坡费用，而非局部竞争优势失效；行业增长且分散，公司已有品牌、标准化体系、成熟网络现金和低负债，东莞盈利又证明复制可以发生，因此当前谨慎处理可能低估较长爬坡期后全国网络形成的密度收益。该解释具备现实基础，但目前缺少新区域同龄 cohort 的终端周转、退货、配送成本、利用率和资本后现金证据，故只能保留为上行情景，尚不足以把全部在建产能写入正常经济。",
+    "monitoring": "最先看新工厂投产后的同龄区域 cohort：终端销量与复购、退货、单位配送费用、利用率和区域亏损是否同向改善；随后看多数新区域能否在减少追加投入的同时形成资本后现金，以及成熟区域现金是否仍稳定。若产量和资本投入领先而客户、单位经济与现金滞后，立即加强资本错配判断。"
+  },
+  "investment_treatment": "企业研究处理：承保成熟短保网络的持续经营能力和低杠杆生存缓冲；全国复制只保留为按区域 cohort 验收的条件情景，未获得终端吸收、利用率、区域利润和资本后现金证据的新增产能不进入基准。维护资本缺口通过保守扣除和条件区间局部处理。"
+}
