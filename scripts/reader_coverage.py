@@ -72,15 +72,34 @@ _REVERSE_BRANCH_RE = re.compile(
 # internal control-plane panel rather than an investor-facing explanation.
 _INTERNAL_CONTROL_TOKEN_PATTERNS: tuple[tuple[str, re.Pattern[str]], ...] = (
     (
+        "review_taxonomy",
+        re.compile(
+            r"(?<![A-Za-z0-9_])(?:DATA_COVERAGE|ACQUISITION_MODULE|"
+            r"REASONING|MODEL|WRITING)"
+            r"(?![A-Za-z0-9_])"
+        ),
+    ),
+    (
+        "model_identity",
+        re.compile(
+            r"(?<![A-Za-z0-9_])"
+            r"(?:PRIMARY_ROUTE_UNKNOWN|P_LONG|P_XIRR(?:_[A-Z0-9]+)*)"
+            r"(?![A-Za-z0-9_])",
+            re.I,
+        ),
+    ),
+    (
         "workflow_status",
         re.compile(
-            r"\b(?:MECHANISM_READY|NOT_EVIDENCED|LEARNING_APPLIED|"
+            r"(?<![A-Za-z0-9_])(?:MECHANISM_READY|NOT_EVIDENCED|LEARNING_APPLIED|"
             r"READY_WITH_NO_PRIOR|G1J_COMPLETE|LEGACY_PARTIAL|NO_PRIMARY|"
             r"SELECTION_ADMITTED|NOT_SELECTION_ELIGIBLE|BINDING_PENDING|"
             r"REVIEWABLE|DECISION_READY|PIT_EVIDENCE_ONLY|"
             r"NO_DECISIVE_PLAN_EVIDENCE_ONLY|NO_MATCHING_MECHANISM_READY|"
-            r"NO_EXPLICIT_LEARNING_REFS|NOT_APPLICABLE_TO_VIEW)\b",
-            re.I,
+            r"NO_EXPLICIT_LEARNING_REFS|NOT_APPLICABLE_TO_VIEW|"
+            r"UNDERWRITE|CONDITIONALLY_UNDERWRITE|SCENARIO_ONLY|"
+            r"EXCLUDE_FROM_BASE|CANNOT_BOUND|RESULT_KNOWN_TEACHING_ONLY)"
+            r"(?![A-Za-z0-9_])",
         ),
     ),
     (
@@ -102,6 +121,13 @@ _INTERNAL_CONTROL_PANEL_RE = re.compile(
 _INTERNAL_CONTROL_TABLE_RE = re.compile(
     r"^\s*\|[^\n|]*(?:ledger|gate|validator|validation)[^\n]*\|"
     r"[^\n|]*(?:status|state|verdict)[^\n]*\|",
+    re.I | re.M,
+)
+_REVIEW_RETURN_PANEL_RE = re.compile(
+    r"^\s*(?:[-*]\s*)?"
+    r"(?:root[_ ]cause|economic[_ ]impact|missing[_ ]facts|"
+    r"prohibited[_ ]assumptions|executable[_ ]remediation|acceptance[_ ]criteria)"
+    r"\s*(?:[:=]|\|)",
     re.I | re.M,
 )
 
@@ -513,7 +539,19 @@ def _internal_control_findings(text: str) -> list[str]:
     ]
     if _INTERNAL_CONTROL_PANEL_RE.search(text or "") or _INTERNAL_CONTROL_TABLE_RE.search(text or ""):
         findings.append("reader_internal_control_leak:workflow_panel")
+    if _REVIEW_RETURN_PANEL_RE.search(text or ""):
+        findings.append("reader_internal_control_leak:review_panel")
     return findings
+
+
+def reader_boundary_findings(text: str) -> list[str]:
+    """Return only reader/control-plane boundary violations.
+
+    This narrow helper lets a writer-payload compiler enforce the same
+    boundary before prose generation.  It deliberately permits investor
+    concepts such as NAV, EPV, owner cash and ordinary-language uncertainty.
+    """
+    return list(dict.fromkeys(_internal_control_findings(text)))
 
 
 def _analysis_purpose(output_dir: str | Path | None, declared: str | None) -> str:
@@ -571,7 +609,7 @@ def evaluate_reader_coverage(
         blocking.append("reader_source_anchor_missing")
     if purpose == "INVESTMENT_DECISION":
         blocking.extend(_identity_findings(report_text, output_dir))
-    blocking.extend(_internal_control_findings(report_text))
+    blocking.extend(reader_boundary_findings(report_text))
     result = {
         "schema_version": SCHEMA_VERSION,
         "status": "BLOCKED" if blocking else "PASS",
@@ -621,7 +659,9 @@ def reader_coverage_prompt(
         "行业未来项必须在适当时域内选择最可能的regime，把需求/供给/竞争导致的利润池变化"
         "传到本公司的暴露、适应、正常现金与永久损失；趋势清单、并列情景和监控指标不能替代主张。"
         "不得用附录链接、来源清单、字段名或数字表格代替解释；内部对象ID、工作流状态码和"
-        "ledger/gate/status面板只能留在结构化工件或技术附录。" + scope
+        "ledger/gate/status面板只能留在结构化工件或技术附录。DATA_COVERAGE 等审阅分类、"
+        "PRIMARY_ROUTE_UNKNOWN、P_LONG、P_XIRR 等模型身份必须先翻译成投资者能理解的经济结论。"
+        + scope
     )
 
 

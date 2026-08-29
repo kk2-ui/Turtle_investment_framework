@@ -1,6 +1,6 @@
 # Turtle 运行治理与恢复手册
 
-> 适用版本：Phase 07 / `runtime-governance.v1` ｜ 更新：2026-08-03
+> 适用版本：Phase 08 / `runtime-governance.v1` ｜ 更新：2026-08-29
 
 ## 1. 运行原则
 
@@ -60,6 +60,17 @@ manifest 记录代码、配置、prompt和输入指纹，以及步骤、模型�
 - `manual_audit_before_resume`：manifest 指纹或身份损坏，先人工审计。
 
 恢复完成后必须重新通过完成契约和 manifest 验证；不得直接把旧草稿复制成正式报告。
+
+### 5.1 Golden Report 审阅返回
+
+材料性审阅先写成符合 `schemas/golden_report_review_return.schema.json` 的候选绑定对象，再从现有输出目录运行：
+
+```bash
+.venv/bin/python -m scripts.turtle_agent.run --code <代码> --output <输出目录> \
+  --repair-only --review-return <review-return.json> --validation-only
+```
+
+入口会写出 `golden_report_feedback_routing.json`，且强制 `--validation-only`，只生成待复核候选，不发布。存在开放的采集、推理或模型问题时，运行以 upstream blocked 结束且不调用 reader writer，先按其中 owner 修复公共模块并取得验收证据；纯写作问题或上游已验收后的 `reader_guidance` 只触发一次限域读者修订。`--review-return` 不得与 `--repair-chapters` 联用，防止人工章节参数绕过责任分流。设 `--repair-passes 0` 时只生成并检查路由，不调用模型。
 
 ## 6. 缓存纪律
 

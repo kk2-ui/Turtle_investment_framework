@@ -1191,6 +1191,34 @@ def _load_completion_report(output_dir: str) -> dict[str, Any]:
         return {}
 
 
+def _load_golden_report_review_return(path: str) -> dict[str, Any]:
+    """Load and validate one candidate-bound Golden Report review return."""
+    review_path = Path(path).expanduser().resolve()
+    if not review_path.is_file():
+        raise RuntimeError(f"Golden Report review return 不存在: {review_path}")
+    review = _load_json_file(str(review_path))
+    try:
+        from scripts.golden_report_feedback import validate_golden_report_review_return
+    except ModuleNotFoundError:
+        from golden_report_feedback import validate_golden_report_review_return
+    validation = validate_golden_report_review_return(review)
+    if validation.get("state") != "REVIEWABLE":
+        raise RuntimeError(
+            "Golden Report review return 无效: "
+            + ", ".join(str(item) for item in validation.get("findings") or [])
+        )
+    return review
+
+
+def _completion_with_review_return(
+    completion: dict[str, Any], review: dict[str, Any],
+) -> dict[str, Any]:
+    """Attach the control-plane review for routing, without mutating completion."""
+    if not review:
+        return completion
+    return {**completion, "golden_report_review_return": review}
+
+
 def _requires_zero_pass_revalidation(
     *, repair_only: bool, requested_repairs: int,
     explicit_repairs: tuple[int, ...],
@@ -1440,8 +1468,29 @@ def _should_use_synthesis_only(
     )
 
 
+def _feedback_route_from_completion(completion: dict[str, Any]) -> dict[str, Any]:
+    """Keep review work orders separate from the reader repair payload."""
+    try:
+        from scripts.golden_report_feedback import route_golden_report_feedback
+    except ModuleNotFoundError:
+        from golden_report_feedback import route_golden_report_feedback
+    route = route_golden_report_feedback(completion)
+    if not isinstance(route, dict):
+        raise RuntimeError("golden report feedback router returned a non-object")
+    return route
+
+
 def _repair_targets_from_completion(completion: dict[str, Any]) -> tuple[int, ...]:
     """Extract blocked chapter indices in dependency order, summary last."""
+    feedback_route = _feedback_route_from_completion(completion)
+    routed_targets = feedback_route.get("repair_targets")
+    if routed_targets is not None:
+        selected = {
+            int(idx) for idx in routed_targets
+            if isinstance(idx, int) and not isinstance(idx, bool) and 0 <= idx <= 14
+        }
+        return tuple(idx for idx in (*range(1, 14), 14, 0) if idx in selected)
+
     targets: list[int] = []
     for item in completion.get("chapter_results", []):
         if not isinstance(item, dict) or not item.get("blocking_rules"):
@@ -2018,6 +2067,7 @@ def run_full_pipeline(
     pit_production_freeze: bool = False,
     analysis_purpose: str = "INVESTMENT_DECISION",
     company_judgment_snapshot: str = "",
+    review_return: str = "",
 ) -> str:
     """运行完整分析管线。
 
@@ -2048,7 +2098,7 @@ def run_full_pipeline(
             raise RuntimeError("PIT运行必须显式提供新的 --output 目录")
         ordinary_mode = (
             data_source or price_source or repair_only or dry_run or unified or qualitative_only
-            or repair_chapters or source_deepening is not None
+            or repair_chapters or source_deepening is not None or review_return
         )
         if ordinary_mode or (pit_production_freeze and validation_only) or (
             not pit_production_freeze and not validation_only
@@ -2081,6 +2131,26 @@ def run_full_pipeline(
         code_short = code.replace(".HK", "").replace(".SH", "").replace(".SZ", "")
         output_dir = _find_or_create_output_dir(code, code_short)
     os.makedirs(output_dir, exist_ok=True)
+    if review_return and not repair_only:
+        raise RuntimeError("--review-return 必须与 --repair-only 一起使用")
+    if review_return and not validation_only:
+        raise RuntimeError("--review-return 只生成待复核候选，必须使用 --validation-only")
+    if review_return and repair_chapters:
+        raise RuntimeError("--review-return 禁止 --repair-chapters 绕过责任分流")
+    review_return_payload = (
+        _load_golden_report_review_return(review_return) if review_return else {}
+    )
+    if review_return_payload:
+        try:
+            initial_route = _feedback_route_from_completion(
+                _completion_with_review_return({}, review_return_payload)
+            )
+        except ValueError as exc:
+            raise RuntimeError(f"Golden Report review return 无法路由: {exc}") from exc
+        _write_json_file(
+            os.path.join(output_dir, "golden_report_feedback_routing.json"),
+            initial_route,
+        )
 
     if analysis_purpose == "COMPANY_JUDGMENT_ONLY":
         # This happens before the CJO Agent loop and intentionally has no
@@ -2149,6 +2219,7 @@ def run_full_pipeline(
         "repair_max_iterations": max(1, int(repair_max_iterations)),
         "chapter_attempts_per_pass": max(1, int(chapter_attempts_per_pass)),
         "repair_chapters": list(repair_chapters),
+        "review_return": str(Path(review_return).expanduser().resolve()) if review_return else None,
         "source_deepening": bool(source_deepening),
         "started_at": _utc_now_iso(),
         "status": "running",
@@ -2867,6 +2938,24 @@ def run_full_pipeline(
             from turtle_agent.tools.pit_read_tools import clear_pit_runner
             clear_pit_runner()
             return pit_attestation_path
+        if review_return_payload and not llm:
+            route_path = os.path.join(output_dir, "golden_report_feedback_routing.json")
+            if max(0, int(repair_passes)) == 0:
+                diagnostics["status"] = "completed"
+                diagnostics["report_path"] = route_path
+                diagnostics["agent_mode"] = "review_route_only"
+                return route_path
+            if initial_route.get("status") == "UPSTREAM_REPAIR_REQUIRED":
+                diagnostics["status"] = "blocked"
+                diagnostics["feedback_route"] = initial_route
+                raise RuntimeError(
+                    "Golden Report 存在未验收的上游问题；已生成责任路由，"
+                    "reader writer 未启动"
+                )
+            raise RuntimeError(
+                "Golden Report 读者修订需要已配置的模型；"
+                "可用 --repair-passes 0 只生成责任路由"
+            )
         if llm:
             # 复用 Phase 2 创建的 LlmClient → 运行完整 Agent Loop
             print(f"\n{'━'*40}")
@@ -2876,7 +2965,12 @@ def run_full_pipeline(
     
             start_time = time.time()
             try:
-                completion: dict[str, Any] = _load_completion_report(output_dir) if repair_only else {}
+                completion: dict[str, Any] = (
+                    _completion_with_review_return(
+                        _load_completion_report(output_dir), review_return_payload,
+                    )
+                    if repair_only else {}
+                )
                 agent_passes: list[dict[str, Any]] = []
                 try:
                     from scripts.run_budget_guard import NoProgressCircuitBreaker
@@ -3096,7 +3190,10 @@ def run_full_pipeline(
                     )
                     report_path = str(assembled.get("path") or "")
                     completion = _load_completion_report(output_dir)
-                requested_repairs = max(0, int(repair_passes)) if unified else 0
+                requested_repairs = (
+                    max(0, int(repair_passes))
+                    if unified or review_return_payload else 0
+                )
                 explicit_repairs = tuple(dict.fromkeys(
                     int(idx) for idx in repair_chapters if 0 <= int(idx) <= 14
                 ))
@@ -3172,26 +3269,46 @@ def run_full_pipeline(
                         print("  ✅ completion已通过；零模型幂等validation-only收口。")
                     else:
                         print("  ↪ 新契约重验发现阻断；进入有界 repair-only 修复轮。")
-                total_passes = (
-                    _scheduled_repair_passes(
-                        completion,
-                        requested=requested_repairs,
-                        resumed_existing_work=resumed_existing_work,
+                if review_return_payload:
+                    feedback_status = _feedback_route_from_completion(completion).get("status")
+                    total_passes = (
+                        1
+                        if requested_repairs > 0 and feedback_status in {
+                            "UPSTREAM_REPAIR_REQUIRED", "READER_REPAIR_READY",
+                        }
+                        else 0
                     )
-                    if repair_only
-                    else (0 if resumed_existing_work else 1 + requested_repairs)
-                )
+                else:
+                    total_passes = (
+                        _scheduled_repair_passes(
+                            completion,
+                            requested=requested_repairs,
+                            resumed_existing_work=resumed_existing_work,
+                        )
+                        if repair_only
+                        else (0 if resumed_existing_work else 1 + requested_repairs)
+                    )
                 for loop_index in range(total_passes):
                     repair_targets: tuple[int, ...] = ()
+                    feedback_route: dict[str, Any] = {}
                     repair_round = loop_index + 1 if repair_only else loop_index
                     if repair_round:
-                        refreshed = _repair_stale_decision_bindings_before_model(
-                            output_dir,
-                            code=code,
-                            validation_only=validation_only,
+                        refreshed = (
+                            None
+                            if review_return_payload
+                            else _repair_stale_decision_bindings_before_model(
+                                output_dir,
+                                code=code,
+                                validation_only=validation_only,
+                            )
                         )
                         if refreshed is not None:
                             completion = refreshed
+                        completion = _completion_with_review_return(
+                            completion, review_return_payload,
+                        )
+                        if not explicit_repairs:
+                            feedback_route = _feedback_route_from_completion(completion)
                         repair_targets = (
                             _explicit_repair_targets_for_pass(
                                 explicit_repairs,
@@ -3206,6 +3323,19 @@ def run_full_pipeline(
                             )
                         )
                         if not repair_targets:
+                            if feedback_route.get("status") == "UPSTREAM_REPAIR_REQUIRED":
+                                owners = [
+                                    str(item.get("owner") or "")
+                                    for item in feedback_route.get("execution_queue") or []
+                                    if isinstance(item, dict) and item.get("owner") != "READER_WRITER"
+                                ]
+                                owner_text = ", ".join(dict.fromkeys(owners)) or "UPSTREAM"
+                                diagnostics["status"] = "blocked"
+                                diagnostics["feedback_route"] = feedback_route
+                                raise RuntimeError(
+                                    "Golden Report 存在未验收的上游问题；读者报告保持不变，"
+                                    "先完成责任层修复: " + owner_text
+                                )
                             break
                         print(f"\n{'━'*40}")
                         print(f"🔧 自动质量修复轮 {repair_round}/{requested_repairs} — fresh context")
@@ -3221,6 +3351,7 @@ def run_full_pipeline(
                     binding_only = bool(
                         repair_round
                         and not explicit_repairs
+                        and not feedback_route.get("reader_repair_brief")
                         and _is_binding_only_repair(completion)
                     )
                     if binding_only:
@@ -3302,15 +3433,26 @@ def run_full_pipeline(
                         template_path=template_path,
                         pass_name=pass_label,
                         repair_targets=repair_targets,
-                        source_deepening=bool(source_deepening) and not binding_only,
+                        reader_repair_brief=list(
+                            feedback_route.get("reader_repair_brief") or []
+                        ),
+                        source_deepening=(
+                            bool(source_deepening)
+                            and not binding_only
+                            and not feedback_route.get("reader_repair_brief")
+                        ),
                         binding_only=binding_only,
                         publish_downstream=not validation_only,
                         run_id=run_id,
-                        synthesis_only=_should_use_synthesis_only(
-                            output_dir,
-                            repair_targets,
-                            binding_only=binding_only,
-                            completion=completion,
+                        synthesis_only=(
+                            False
+                            if feedback_route.get("reader_repair_brief")
+                            else _should_use_synthesis_only(
+                                output_dir,
+                                repair_targets,
+                                binding_only=binding_only,
+                                completion=completion,
+                            )
                         ),
                     )
                     agent = TurtleAgent(llm=llm, tools=tools, config=config)
@@ -3718,6 +3860,8 @@ def main(argv: list[str] | None = None) -> int:
                     help="跳过首轮全文读取，直接从现有 BLOCKED completion_report 做定向修复")
     ap.add_argument("--repair-chapters", default="",
                     help="显式深化章节，逗号分隔（如 0,1,2,14）；允许对 COMPLETE 报告执行 repair-only")
+    ap.add_argument("--review-return", default="",
+                    help="结构化 Golden Report 审阅返回；仅与 repair-only 联用并按责任层分流")
     ap.add_argument("--source-deepening", dest="source_deepening", action="store_true",
                     help="来源驱动深化（unified 默认开启）")
     ap.add_argument("--no-source-deepening", dest="source_deepening", action="store_false",
@@ -3807,6 +3951,7 @@ def main(argv: list[str] | None = None) -> int:
             pit_production_freeze=args.pit_production_freeze,
             analysis_purpose=args.analysis_purpose,
             company_judgment_snapshot=args.company_judgment_snapshot,
+            review_return=args.review_return,
         )
         print(f"\n📄 {report_path}")
         return 0

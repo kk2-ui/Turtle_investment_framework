@@ -10,8 +10,11 @@ valuation-routing, and report systems.
 from __future__ import annotations
 
 from copy import deepcopy
+import json
 from pathlib import Path
 from typing import Any
+
+from scripts.reader_coverage import reader_boundary_findings
 
 
 EPISODE_SCHEMA = "enterprise-underwriting-episode.v1"
@@ -281,55 +284,194 @@ def validate_underwriting_projection_bundle(episode: Any, bundle: Any) -> dict[s
     return _findings(findings)
 
 
-def render_underwriting_readout(episode: Any) -> str:
-    """Render the same underwriting thesis in investor order without gate prose."""
+def validate_golden_report_reader_brief(brief: Any) -> dict[str, Any]:
+    """Validate the deliberately small, control-plane-free writer payload."""
+    value = _mapping(brief)
+    findings: list[str] = []
+    expected_fields = {
+        "company_name",
+        "central_judgment",
+        "sections",
+        "component_judgments",
+        "reversal_observations",
+        "deterministic_conclusions",
+        "accepted_conclusions",
+    }
+    if set(value) != expected_fields:
+        findings.append("reader_brief_fields_invalid")
+    if not _text(value.get("company_name")):
+        findings.append("reader_brief.company_name_missing")
+    if not _text(value.get("central_judgment")):
+        findings.append("reader_brief.central_judgment_missing")
+
+    sections = _items(value.get("sections"))
+    if not sections:
+        findings.append("reader_brief.sections_missing")
+    for index, item in enumerate(sections):
+        section = _mapping(item)
+        if set(section) != {"heading", "paragraphs"}:
+            findings.append(f"reader_brief.sections[{index}].fields_invalid")
+        if not _text(section.get("heading")):
+            findings.append(f"reader_brief.sections[{index}].heading_missing")
+        paragraphs = _items(section.get("paragraphs"))
+        if not paragraphs or any(not _text(paragraph) for paragraph in paragraphs):
+            findings.append(f"reader_brief.sections[{index}].paragraphs_invalid")
+
+    for field in (
+        "component_judgments",
+        "reversal_observations",
+        "deterministic_conclusions",
+        "accepted_conclusions",
+    ):
+        items = value.get(field)
+        if not isinstance(items, list):
+            findings.append("reader_brief." + field + "_invalid")
+        elif field != "accepted_conclusions" and any(not _text(item) for item in items):
+            findings.append("reader_brief." + field + "_invalid")
+    for index, raw in enumerate(_items(value.get("accepted_conclusions"))):
+        item = _mapping(raw)
+        required = {"statement", "basis", "investor_consequence", "source_refs"}
+        if set(item) != required:
+            findings.append(f"reader_brief.accepted_conclusions[{index}].fields_invalid")
+            continue
+        if any(not _text(item.get(field)) for field in required - {"source_refs"}):
+            findings.append(f"reader_brief.accepted_conclusions[{index}].text_invalid")
+        source_refs = _items(item.get("source_refs"))
+        if not source_refs or any(not _text(ref) for ref in source_refs) or len(set(source_refs)) != len(source_refs):
+            findings.append(f"reader_brief.accepted_conclusions[{index}].source_refs_invalid")
+
+    serialized = json.dumps(value, ensure_ascii=False, sort_keys=True)
+    findings.extend(reader_boundary_findings(serialized))
+    return {
+        "state": "REVIEWABLE" if not findings else "INVALID",
+        "findings": list(dict.fromkeys(findings)),
+    }
+
+
+def compile_golden_report_reader_brief(
+    episode: Any,
+    deterministic_results: Any = None,
+    *,
+    accepted_conclusions: list[dict[str, Any]] | None = None,
+) -> dict[str, Any]:
+    """Compile the only Episode payload intended for a reader writer.
+
+    The structured Episode and its projections retain IDs, authority and
+    machine treatments for deterministic consumers.  This compiler copies
+    only accepted economic conclusions.  Optional deterministic results must
+    be explicitly accepted upstream and expose a small list of already
+    translated ``reader_conclusions``; raw models, validations and review
+    findings are never copied into the brief.
+    """
     value = _assert_reviewable(episode)
     thesis = _mapping(value["underwriting_thesis"])
-    components = "\n".join(
-        f"- {item['component_id']}：{item['treatment']}。{item['investment_consequence']}"
+    deterministic_conclusions: list[str] = []
+    if deterministic_results is not None:
+        results = _mapping(deterministic_results)
+        conclusions = results.get("reader_conclusions")
+        if results.get("accepted") is not True:
+            raise ValueError("deterministic_results_not_accepted")
+        if not isinstance(conclusions, list) or any(not _text(item) for item in conclusions):
+            raise ValueError("deterministic_reader_conclusions_invalid")
+        deterministic_conclusions = list(conclusions)
+
+    clean_conclusions: list[dict[str, Any]] = []
+    for index, raw in enumerate(accepted_conclusions or []):
+        item = _mapping(raw)
+        required = ("statement", "basis", "investor_consequence", "source_refs")
+        if set(item) != set(required):
+            raise ValueError(f"accepted_conclusions[{index}]_fields_invalid")
+        if any(not _text(item.get(field)) for field in required[:-1]):
+            raise ValueError(f"accepted_conclusions[{index}]_text_invalid")
+        source_refs = _items(item.get("source_refs"))
+        if not source_refs or any(not _text(ref) for ref in source_refs) or len(set(source_refs)) != len(source_refs):
+            raise ValueError(f"accepted_conclusions[{index}]_source_refs_invalid")
+        clean_conclusions.append({field: deepcopy(item[field]) for field in required})
+
+    component_judgments = [
+        (
+            f"{item['reason']} 因此，{item['investment_consequence']} "
+            f"需要重估这一处理的条件是：{item['promotion_or_resolution_condition']}"
+        )
         for item in value["component_treatments"]
+    ]
+    brief = {
+        "company_name": value["company_name"],
+        "central_judgment": thesis["central_path"],
+        "sections": [
+            {
+                "heading": "行业处境、公司位置与适应",
+                "paragraphs": [
+                    value["situation_model"],
+                    value["business_position"],
+                    value["adaptation_case"],
+                ],
+            },
+            {
+                "heading": "生存、正常盈利与普通股现金",
+                "paragraphs": [
+                    value["survival_case"],
+                    value["normalization_case"],
+                    thesis["normal_earnings_treatment"],
+                    thesis["owner_cash_treatment"],
+                ],
+            },
+            {
+                "heading": "永久损失与最强反方",
+                "paragraphs": [
+                    value["permanent_loss_map"],
+                    thesis["strongest_rival"],
+                ],
+            },
+            {
+                "heading": "价值路线与当前处理",
+                "paragraphs": [
+                    value["value_route"]["route_reasoning"],
+                    thesis["value_route_treatment"],
+                ],
+            },
+        ],
+        "component_judgments": component_judgments,
+        "reversal_observations": deepcopy(value["reversal_observations"]),
+        "deterministic_conclusions": deterministic_conclusions,
+        "accepted_conclusions": clean_conclusions,
+    }
+    validation = validate_golden_report_reader_brief(brief)
+    if validation["state"] != "REVIEWABLE":
+        raise ValueError("golden_report_reader_brief_invalid:" + ",".join(validation["findings"]))
+    return brief
+
+
+def render_underwriting_readout(episode: Any) -> str:
+    """Render the same underwriting thesis in investor order without gate prose."""
+    brief = compile_golden_report_reader_brief(episode)
+    sections = "\n\n".join(
+        f"## {section['heading']}\n\n" + "\n\n".join(section["paragraphs"])
+        for section in brief["sections"]
     )
-    reversals = "\n".join(f"- {item}" for item in value["reversal_observations"])
-    routes = "、".join(value["value_route"]["primary_routes"])
-    excluded = "、".join(value["value_route"]["excluded_routes"])
-    return f"""# {value['company_name']}：{value['decision_frame']}
+    components = "\n".join(f"- {item}" for item in brief["component_judgments"])
+    reversals = "\n".join(f"- {item}" for item in brief["reversal_observations"])
+    conclusions = "\n".join(
+        f"- {item['statement']} {item['investor_consequence']}"
+        for item in brief["accepted_conclusions"]
+    )
+    conclusions_block = (
+        "## 已接纳的估值与投资结论\n\n" + conclusions
+        if conclusions else ""
+    )
+    return f"""# {brief['company_name']}：企业承保读本
 
-{thesis['central_path']}
+{brief['central_judgment']}
 
-## 处境、位置与适应
+{sections}
 
-{value['situation_model']}
-
-{value['business_position']}
-
-{value['adaptation_case']}
-
-## 生存、正常化与普通股现金
-
-{value['survival_case']}
-
-{value['normalization_case']}
-
-正常盈利处理：{thesis['normal_earnings_treatment']}
-
-普通股现金处理：{thesis['owner_cash_treatment']}
-
-## 永久损失、反方与翻转
-
-{value['permanent_loss_map']}
-
-最强反方：{thesis['strongest_rival']}
-
-以下事实会改变当前处理：
-{reversals}
-
-## 承保与价值路线
+## 各项判断的投资含义
 
 {components}
 
-价值路线：{routes}。不采用：{excluded}。
+{conclusions_block}
 
-{thesis['value_route_treatment']}
+## 会改变判断的事实
 
-当前研究处理：{value['investment_treatment']}
+{reversals}
 """
