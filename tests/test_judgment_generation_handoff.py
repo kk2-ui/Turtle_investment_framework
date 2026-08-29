@@ -455,6 +455,7 @@ def test_research_agenda_has_explicit_legal_empty_states(tmp_path):
         "decisive_questions": "AVAILABLE",
         "industry_priors": "NO_MATCHING_MECHANISM_READY",
         "learning_prompts": "NO_EXPLICIT_LEARNING_REFS",
+        "industry_underwriting_context": "NOT_COMPILED",
     }
     assert handoff["projection"]["official_evidence"]["citable_observation_ids"] == [
         "OBS:revenue", "OBS:inventory",

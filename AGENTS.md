@@ -33,6 +33,17 @@ monitoring indicators does not satisfy this requirement. When calibrated base
 rates do not exist, make a bounded qualitative judgment instead of inventing
 probabilities.
 
+Before forming that thesis, compile an `IndustryUnderwritingContext` from the
+available IndustryLearningBlock, official industry observations, reviewed
+mechanisms, company archetypes, worked cases, and near misses. It must explain
+the industry's customer job, value chain, structural epoch, profit-pool
+movement, heterogeneous company responses, and mechanism-role peers. A fixed
+two-or-three-company comparison is not an industry model. Missing optional
+peers or a mature mechanism card narrows the context but does not block the
+company judgment. The context supplies reference classes and questions; only
+the target company's evidence can establish its exposure, adaptation, or
+economics.
+
 ### Required judgment return
 
 Every substantive company or industry synthesis, training readout, or report task must return, in investor language:

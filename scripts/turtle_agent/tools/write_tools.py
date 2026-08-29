@@ -126,6 +126,116 @@ def _resolve_submitted_analysis_purpose(
     return contract_purpose, None
 
 
+def write_industry_underwriting_context(
+    output_dir: str = ".",
+    industry_learning_block_refs: list[str] | None = None,
+    competitive_arena_ref: str = "",
+    industry_keys: list[str] | None = None,
+    mechanism_keys: list[str] | None = None,
+    industry_knowledge_context_ref: str = "",
+) -> dict[str, Any]:
+    """Compile the report-local industry read model from existing source objects."""
+    try:
+        from scripts.industry_underwriting_context import (
+            DEFAULT_OUTPUT_NAME,
+            compile_industry_underwriting_context,
+            validate_industry_underwriting_context,
+        )
+    except ModuleNotFoundError:  # pragma: no cover - direct import fallback
+        from industry_underwriting_context import (  # type: ignore[no-redef]
+            DEFAULT_OUTPUT_NAME,
+            compile_industry_underwriting_context,
+            validate_industry_underwriting_context,
+        )
+
+    root = Path(output_dir).expanduser().resolve()
+
+    def read_object(reference: str) -> dict[str, Any]:
+        if not str(reference or "").strip():
+            return {}
+        path = Path(reference).expanduser()
+        path = path if path.is_absolute() else root / path
+        try:
+            value = json.loads(path.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError):
+            raise ValueError("industry_underwriting_source_unreadable:" + str(reference))
+        if not isinstance(value, dict):
+            raise ValueError("industry_underwriting_source_not_object:" + str(reference))
+        return value
+
+    try:
+        contract = read_object("analysis_contract.json")
+    except ValueError:
+        return {"ok": False, "error": "analysis_contract_missing_or_invalid"}
+    report_context = {}
+    try:
+        report_context = read_object("report_context.json")
+    except ValueError:
+        pass
+    meta = report_context.get("meta") if isinstance(report_context.get("meta"), dict) else {}
+    pit = contract.get("pit_production") if isinstance(contract.get("pit_production"), dict) else {}
+    cutoff_at = str(
+        pit.get("cutoff_at") or contract.get("data_as_of") or contract.get("analysis_date")
+        or contract.get("cutoff_at") or contract.get("pit_cutoff_at") or ""
+    ).strip()
+    company_id = str(
+        contract.get("company_id") or contract.get("ts_code") or contract.get("code") or ""
+    ).strip()
+    if not company_id or not cutoff_at:
+        return {"ok": False, "error": "analysis_contract_company_or_cutoff_missing"}
+
+    block_paths: list[Path] = []
+    for reference in industry_learning_block_refs or []:
+        path = Path(reference).expanduser()
+        path = path if path.is_absolute() else root / path
+        if not path.is_file():
+            return {"ok": False, "error": "industry_learning_block_missing:" + str(reference)}
+        block_paths.append(path)
+    try:
+        arena = read_object(competitive_arena_ref) if competitive_arena_ref else None
+        knowledge = (
+            read_object(industry_knowledge_context_ref)
+            if industry_knowledge_context_ref else None
+        )
+        payload = compile_industry_underwriting_context(
+            company={
+                "company_id": company_id,
+                "company_name": str(
+                    contract.get("company_name") or meta.get("issuer")
+                    or meta.get("company_name") or company_id
+                ).strip(),
+                "cutoff_at": cutoff_at,
+                "knowledge_cutoff_at": cutoff_at,
+                "pit_mode": bool(pit),
+                "industry_keys": list(industry_keys or []),
+            },
+            industry_learning_blocks=block_paths,
+            competitive_arena=arena,
+            industry_keys=list(industry_keys or []),
+            mechanism_keys=list(mechanism_keys or []),
+            industry_knowledge_context=knowledge,
+        )
+    except ValueError as exc:
+        return {"ok": False, "error": str(exc)}
+
+    validation = validate_industry_underwriting_context(payload)
+    if validation.get("state") != "REVIEWABLE":
+        return {"ok": False, "error": "industry_underwriting_context_invalid", "validation": validation}
+    destination = root / DEFAULT_OUTPUT_NAME
+    destination.write_text(
+        json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8",
+    )
+    return {
+        "ok": True,
+        "artifact_ref": DEFAULT_OUTPUT_NAME,
+        "context_id": payload["context_id"],
+        "context_status": payload["context_status"],
+        "representative_peer_count": len(payload["representative_peers"]),
+        "near_miss_count": len(payload["near_misses"]),
+        "candidate_path_count": len(payload["candidate_main_paths"]),
+    }
+
+
 def _cjo_forbidden_report_findings(text: str) -> list[str]:
     """Return concrete CJO output-boundary breaches without blocking product price."""
     findings: list[str] = []
@@ -3600,6 +3710,18 @@ def _collect_sources(output_dir: str) -> list[str]:
 
 
 write_chapter._tool_meta = {"name": "write_chapter", "description": "写入单章内容(含自动审计S1/E1/C2)", "parameters": {"output_dir": {"type": "string", "description": "股票输出目录"}, "chapter_index": {"type": "integer", "description": "章序号0-14"}, "title": {"type": "string", "description": "章节标题"}, "content": {"type": "string", "description": "Markdown章节内容"}, "force_rewrite": {"type": "boolean", "description": "质量修复轮强制覆盖已有章节", "optional": True}}}  # type: ignore[attr-defined]
+write_industry_underwriting_context._tool_meta = {
+    "name": "write_industry_underwriting_context",
+    "description": "从既有行业学习块、竞争 arena 和行业机制上下文编译报告级 IndustryUnderwritingContext；BOUNDED 仍可使用，不会阻断报告。",
+    "parameters": {
+        "output_dir": {"type": "string", "description": "股票输出目录"},
+        "industry_learning_block_refs": {"type": "array", "items": {"type": "string"}, "optional": True},
+        "competitive_arena_ref": {"type": "string", "optional": True},
+        "industry_keys": {"type": "array", "items": {"type": "string"}, "optional": True},
+        "mechanism_keys": {"type": "array", "items": {"type": "string"}, "optional": True},
+        "industry_knowledge_context_ref": {"type": "string", "optional": True},
+    },
+}  # type: ignore[attr-defined]
 verify_official_fact._tool_meta = {
     "name": "verify_official_fact",
     "description": "把read_section精确回读的原文事实程序化验证为VERIFIED observation。quote必须逐字存在于指定doc_id/page，数值raw_value也必须出现在quote；失败不得自行升级。",

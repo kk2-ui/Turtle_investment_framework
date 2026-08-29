@@ -1,0 +1,394 @@
+{
+  "schema_version": "industry-underwriting-utility-review.v1",
+  "review_id": "IUR:HK02669:20260813:V1",
+  "company_id": "HK:02669",
+  "cutoff_at": "2026-08-13T23:59:59+08:00",
+  "reviewed_at": "2026-08-29T18:00:00+08:00",
+  "context_status": "READY",
+  "baseline_treatment": {
+    "schema_version": "industry-underwriting-treatment.v1",
+    "snapshot_id": "IUT:HK02669:20260813:GENERIC_BASELINE",
+    "company_id": "HK:02669",
+    "cutoff_at": "2026-08-13T23:59:59+08:00",
+    "status": "BOUNDED",
+    "dimensions": {
+      "industry_future_path": {
+        "status": "UNKNOWN",
+        "thesis_code": "UNKNOWN:GENERIC_PROPERTY_SECTOR_PATH",
+        "direction": "UNKNOWN",
+        "investment_treatment": {
+          "base_case_role": "UNRESOLVED",
+          "decision_action": "UNRESOLVED",
+          "reason": "Revenue-similar peers do not establish where the property-services profit pool is moving."
+        },
+        "key_economic_range": null,
+        "required_evidence": [],
+        "explanation": "The legacy context supplies sector percentiles and a small revenue-similar peer panel, not an industry path."
+      },
+      "target_exposure": {
+        "status": "UNKNOWN",
+        "thesis_code": "UNKNOWN:TARGET_INDUSTRY_EXPOSURE",
+        "direction": "UNKNOWN",
+        "investment_treatment": {
+          "base_case_role": "UNRESOLVED",
+          "decision_action": "UNRESOLVED",
+          "reason": "The generic sector label does not separate mature residential, public-service and smart-engineering exposure."
+        },
+        "key_economic_range": null,
+        "required_evidence": [],
+        "explanation": "Target-company industry exposure remains unresolved under a homogeneous property-services model."
+      },
+      "owner_cash_treatment": {
+        "status": "BOUNDED",
+        "thesis_code": "OWNER_CASH:GENERIC_PUBLIC_SERVICE_REFERENCE",
+        "direction": "CONDITIONAL",
+        "investment_treatment": {
+          "base_case_role": "SCENARIO_ONLY",
+          "decision_action": "WAIT_FOR_DECISIVE_EVIDENCE",
+          "reason": "Issuer-level reported earnings cannot identify public-service owner cash."
+        },
+        "key_economic_range": {
+          "metric": "ordinary_shareholder_operating_margin_after_working_capital",
+          "scope": "public_and_institutional_property_reference_class",
+          "unit": "percent",
+          "lower": 0.0,
+          "upper": 15.0
+        },
+        "required_evidence": [
+          {
+            "evidence_id": "E:HK02669:PUBLIC_SERVICE_MARGIN_AND_CASH",
+            "priority": "DECISIVE"
+          }
+        ],
+        "explanation": "A wide placeholder range preserves uncertainty but offers little underwriting value."
+      },
+      "permanent_loss_path": {
+        "status": "READY",
+        "thesis_code": "LOSS:NEAR_TERM_LIQUIDITY_ONLY",
+        "direction": "NEUTRAL",
+        "investment_treatment": {
+          "base_case_role": "INCLUDE",
+          "decision_action": "NO_ACTION_CHANGE",
+          "reason": "Low debt and consolidated cash make near-term insolvency unlikely."
+        },
+        "key_economic_range": null,
+        "required_evidence": [
+          {
+            "evidence_id": "E:HK02669:CONSOLIDATED_LIQUIDITY",
+            "priority": "DECISIVE"
+          }
+        ],
+        "explanation": "The generic treatment emphasizes survival and does not identify a slow capital-loss mechanism."
+      },
+      "valuation_route_and_required_evidence": {
+        "status": "BOUNDED",
+        "thesis_code": "ROUTE:ISSUER_AGGREGATE_EPV",
+        "direction": "CONDITIONAL",
+        "investment_treatment": {
+          "base_case_role": "INCLUDE_CONDITIONALLY",
+          "decision_action": "PROCEED_WITH_HAIRCUT",
+          "reason": "Aggregate earnings require a broad uncertainty haircut."
+        },
+        "key_economic_range": null,
+        "required_evidence": [
+          {
+            "evidence_id": "E:HK02669:AGGREGATE_NORMALIZED_OWNER_CASH",
+            "priority": "DECISIVE"
+          }
+        ],
+        "explanation": "The route cannot distinguish a durable residential base from lower-return growth adjacencies."
+      }
+    }
+  },
+  "context_informed_treatment": {
+    "schema_version": "industry-underwriting-treatment.v1",
+    "snapshot_id": "IUT:HK02669:20260813:INDUSTRY_CONTEXT",
+    "company_id": "HK:02669",
+    "cutoff_at": "2026-08-13T23:59:59+08:00",
+    "status": "READY",
+    "dimensions": {
+      "industry_future_path": {
+        "status": "READY",
+        "thesis_code": "PATH:NEW_BUILD_TO_STOCK_AND_CONDITIONAL_ADJACENCIES",
+        "direction": "CONDITIONAL",
+        "investment_treatment": {
+          "base_case_role": "INCLUDE_CONDITIONALLY",
+          "decision_action": "PROCEED_WITH_HAIRCUT",
+          "reason": "Recurring stock operations remain the base while public services and smart engineering require separate cash proof."
+        },
+        "key_economic_range": null,
+        "required_evidence": [
+          {
+            "evidence_id": "E:CN:PROPERTY:NEW_BUILD_AND_STOCK_DEMAND",
+            "priority": "SUPPORTING"
+          }
+        ],
+        "explanation": "The profit pool is migrating away from incremental developer delivery toward stock operations and conditional adjacencies."
+      },
+      "target_exposure": {
+        "status": "READY",
+        "thesis_code": "EXPOSURE:RESIDENTIAL_BASE_PUBLIC_GROWTH_SMART_CASH_RISK",
+        "direction": "MIXED",
+        "investment_treatment": {
+          "base_case_role": "INCLUDE_CONDITIONALLY",
+          "decision_action": "WAIT_FOR_DECISIVE_EVIDENCE",
+          "reason": "Mature residential can anchor earnings, but public-service and engineering growth enter only after target-specific margin and cash evidence."
+        },
+        "key_economic_range": null,
+        "required_evidence": [
+          {
+            "evidence_id": "E:HK02669:PUBLIC_PROJECT_MATURITY",
+            "priority": "DECISIVE"
+          },
+          {
+            "evidence_id": "E:HK02669:SMART_ENGINEERING_CASH_CONVERSION",
+            "priority": "DECISIVE"
+          }
+        ],
+        "explanation": "The target is a multi-path operator rather than one homogeneous property-services business."
+      },
+      "owner_cash_treatment": {
+        "status": "BOUNDED",
+        "thesis_code": "OWNER_CASH:MECHANISM_MATCHED_PUBLIC_SERVICE_REFERENCE",
+        "direction": "CONDITIONAL",
+        "investment_treatment": {
+          "base_case_role": "SCENARIO_ONLY",
+          "decision_action": "WAIT_FOR_DECISIVE_EVIDENCE",
+          "reason": "The reference-class range constrains a scenario but does not establish Zhonghai project economics."
+        },
+        "key_economic_range": {
+          "metric": "ordinary_shareholder_operating_margin_after_working_capital",
+          "scope": "public_and_institutional_property_reference_class",
+          "unit": "percent",
+          "lower": 3.0,
+          "upper": 6.0
+        },
+        "required_evidence": [
+          {
+            "evidence_id": "E:HK02669:PUBLIC_SERVICE_MARGIN_AND_CASH",
+            "priority": "DECISIVE"
+          },
+          {
+            "evidence_id": "E:CN:PROPERTY:MECHANISM_PEER_MARGIN_AND_RECEIVABLES",
+            "priority": "SUPPORTING"
+          }
+        ],
+        "explanation": "Mechanism-matched peers narrow the reference range; issuer project margin, receivables and cumulative cash remain unproven."
+      },
+      "permanent_loss_path": {
+        "status": "READY",
+        "thesis_code": "LOSS:LOW_RETURN_EXPANSION_AND_CASH_ABSORPTION",
+        "direction": "NEGATIVE",
+        "investment_treatment": {
+          "base_case_role": "SCENARIO_ONLY",
+          "decision_action": "PROCEED_WITH_HAIRCUT",
+          "reason": "Permanent loss can arise through years of below-cost reinvestment and delayed collection even without insolvency."
+        },
+        "key_economic_range": null,
+        "required_evidence": [
+          {
+            "evidence_id": "E:HK02669:PUBLIC_PROJECT_ROIC_AND_COLLECTION",
+            "priority": "DECISIVE"
+          },
+          {
+            "evidence_id": "E:HK02669:CAPITAL_ALLOCATION_AND_CASH_ACCESS",
+            "priority": "DECISIVE"
+          }
+        ],
+        "explanation": "The downside path shifts from bankruptcy to slow ordinary-shareholder value erosion."
+      },
+      "valuation_route_and_required_evidence": {
+        "status": "BOUNDED",
+        "thesis_code": "ROUTE:SEGMENT_SENSITIVE_EPV_AND_OWNER_CASH",
+        "direction": "CONDITIONAL",
+        "investment_treatment": {
+          "base_case_role": "INCLUDE_CONDITIONALLY",
+          "decision_action": "PROCEED_WITH_HAIRCUT",
+          "reason": "Residential, public-service and engineering economics require separate normalization before synthesis."
+        },
+        "key_economic_range": null,
+        "required_evidence": [
+          {
+            "evidence_id": "E:HK02669:MATURE_RESIDENTIAL_MARGIN_AND_COLLECTION",
+            "priority": "DECISIVE"
+          },
+          {
+            "evidence_id": "E:HK02669:PUBLIC_PROJECT_MATURITY",
+            "priority": "DECISIVE"
+          },
+          {
+            "evidence_id": "E:HK02669:SMART_ENGINEERING_CASH_CONVERSION",
+            "priority": "DECISIVE"
+          },
+          {
+            "evidence_id": "E:HK02669:CAPITAL_ALLOCATION_AND_CASH_ACCESS",
+            "priority": "DECISIVE"
+          }
+        ],
+        "explanation": "The valuation route now follows distinct profit and cash mechanisms rather than an issuer-wide sector multiple or margin."
+      }
+    }
+  },
+  "dimension_reviews": [
+    {
+      "dimension_id": "INDUSTRY_FUTURE_PATH",
+      "baseline_status": "UNKNOWN",
+      "context_informed_status": "READY",
+      "changed_fields": [
+        "status",
+        "thesis_code",
+        "direction",
+        "explanation",
+        "investment_treatment.base_case_role",
+        "investment_treatment.decision_action",
+        "investment_treatment.reason",
+        "required_evidence"
+      ],
+      "material_treatment_changed": true,
+      "key_economic_range_narrowed": false,
+      "qualifying_reasons": [
+        "BASE_CASE_ROLE_CHANGED",
+        "DECISION_ACTION_CHANGED"
+      ],
+      "comparison_status": "QUALIFYING_MATERIAL_CHANGE"
+    },
+    {
+      "dimension_id": "TARGET_EXPOSURE",
+      "baseline_status": "UNKNOWN",
+      "context_informed_status": "READY",
+      "changed_fields": [
+        "status",
+        "thesis_code",
+        "direction",
+        "explanation",
+        "investment_treatment.base_case_role",
+        "investment_treatment.decision_action",
+        "investment_treatment.reason",
+        "required_evidence"
+      ],
+      "material_treatment_changed": true,
+      "key_economic_range_narrowed": false,
+      "qualifying_reasons": [
+        "BASE_CASE_ROLE_CHANGED",
+        "DECISION_ACTION_CHANGED"
+      ],
+      "comparison_status": "QUALIFYING_MATERIAL_CHANGE"
+    },
+    {
+      "dimension_id": "OWNER_CASH_TREATMENT",
+      "baseline_status": "BOUNDED",
+      "context_informed_status": "BOUNDED",
+      "changed_fields": [
+        "thesis_code",
+        "explanation",
+        "investment_treatment.reason",
+        "key_economic_range",
+        "required_evidence"
+      ],
+      "material_treatment_changed": false,
+      "key_economic_range_narrowed": true,
+      "qualifying_reasons": [
+        "KEY_ECONOMIC_RANGE_NARROWED"
+      ],
+      "comparison_status": "QUALIFYING_MATERIAL_CHANGE"
+    },
+    {
+      "dimension_id": "PERMANENT_LOSS_PATH",
+      "baseline_status": "READY",
+      "context_informed_status": "READY",
+      "changed_fields": [
+        "thesis_code",
+        "direction",
+        "explanation",
+        "investment_treatment.base_case_role",
+        "investment_treatment.decision_action",
+        "investment_treatment.reason",
+        "required_evidence"
+      ],
+      "material_treatment_changed": true,
+      "key_economic_range_narrowed": false,
+      "qualifying_reasons": [
+        "BASE_CASE_ROLE_CHANGED",
+        "DECISION_ACTION_CHANGED"
+      ],
+      "comparison_status": "QUALIFYING_MATERIAL_CHANGE"
+    },
+    {
+      "dimension_id": "VALUATION_ROUTE_AND_REQUIRED_EVIDENCE",
+      "baseline_status": "BOUNDED",
+      "context_informed_status": "BOUNDED",
+      "changed_fields": [
+        "thesis_code",
+        "explanation",
+        "investment_treatment.reason",
+        "required_evidence"
+      ],
+      "material_treatment_changed": true,
+      "key_economic_range_narrowed": false,
+      "qualifying_reasons": [
+        "VALUATION_ROUTE_CHANGED",
+        "DECISIVE_REQUIRED_EVIDENCE_CHANGED"
+      ],
+      "comparison_status": "QUALIFYING_MATERIAL_CHANGE"
+    }
+  ],
+  "utility_verdict": "MATERIAL_UTILITY",
+  "utility_basis": [
+    {
+      "dimension_id": "INDUSTRY_FUTURE_PATH",
+      "qualifying_reasons": [
+        "BASE_CASE_ROLE_CHANGED",
+        "DECISION_ACTION_CHANGED"
+      ]
+    },
+    {
+      "dimension_id": "TARGET_EXPOSURE",
+      "qualifying_reasons": [
+        "BASE_CASE_ROLE_CHANGED",
+        "DECISION_ACTION_CHANGED"
+      ]
+    },
+    {
+      "dimension_id": "OWNER_CASH_TREATMENT",
+      "qualifying_reasons": [
+        "KEY_ECONOMIC_RANGE_NARROWED"
+      ]
+    },
+    {
+      "dimension_id": "PERMANENT_LOSS_PATH",
+      "qualifying_reasons": [
+        "BASE_CASE_ROLE_CHANGED",
+        "DECISION_ACTION_CHANGED"
+      ]
+    },
+    {
+      "dimension_id": "VALUATION_ROUTE_AND_REQUIRED_EVIDENCE",
+      "qualifying_reasons": [
+        "VALUATION_ROUTE_CHANGED",
+        "DECISIVE_REQUIRED_EVIDENCE_CHANGED"
+      ]
+    }
+  ],
+  "material_treatment_change_dimensions": [
+    "INDUSTRY_FUTURE_PATH",
+    "TARGET_EXPOSURE",
+    "PERMANENT_LOSS_PATH",
+    "VALUATION_ROUTE_AND_REQUIRED_EVIDENCE"
+  ],
+  "narrowed_range_dimensions": [
+    "OWNER_CASH_TREATMENT"
+  ],
+  "explanation_only_dimensions": [],
+  "nonqualifying_change_dimensions": [],
+  "non_blocking_unknown_dimensions": [
+    "INDUSTRY_FUTURE_PATH",
+    "TARGET_EXPOSURE"
+  ],
+  "investor_conclusion": "CONTEXT_CHANGED_MATERIAL_TREATMENT_OR_NARROWED_KEY_RANGE",
+  "review_policy": {
+    "materiality_rule": "MATERIAL_TREATMENT_CHANGE_OR_LIKE_FOR_LIKE_KEY_ECONOMIC_RANGE_NARROWING",
+    "explanation_only_never_qualifies": true,
+    "unknown_and_bounded_are_non_blocking": true,
+    "verdict_is_mechanically_derived": true
+  }
+}

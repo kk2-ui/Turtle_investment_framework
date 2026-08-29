@@ -315,6 +315,16 @@ EVIDENCE CEILING <teaching / mechanism / comparative / transferred>
 
 它禁止输出“扩产总是有效”“龙头管理层更优秀”或统一公司总分。公司差异和时期差异不是噪声，而是 `moderators / transport conditions / break conditions`。行业知识只有在不同公司或时期重现、保留反例并经独立审阅后，才可从 `RESEARCH_AGENDA` 升格为候选方法；否则只是一组有来源的条件化问题。
 
+`IndustryLearningBlock` 不能只停留在训练档案。报告研究启动时，应把与目标公司相关的
+block、行业机制、官方行业观察、公司 archetype、完整案例和反例编译成
+`IndustryUnderwritingContext`。该对象回答“这个行业已经学到了什么、在哪些公司上会失效、
+目标公司还必须验证什么”，并进入 `EnterpriseUnderwritingEpisode.Situation Model`；它不
+复制原始事实，也不直接提供目标公司的结论、估值参数或概率。
+
+同行不是固定两三家，也不是简单平均。系统按机制角色从更大的 reference class 中选择
+必要参照：谁代表相同客户任务、谁代表不同资本结构、谁证明一种适应路径可行、谁构成
+失败或 near miss。正文只呈现会改变公司承保结论的比较，完整参照关系保留在结构化上下文。
+
 ### 3.6 历史训练的纵横运行顺序
 
 历史训练采用逐 cutoff 展开，而不是先阅读完整行业结局再回填：

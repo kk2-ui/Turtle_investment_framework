@@ -504,7 +504,7 @@ read_valuation_route._tool_meta = {
 }
 read_judgment_generation_handoff._tool_meta = {
     "name": "read_judgment_generation_handoff",
-    "description": "读取报告级判断生成上下文。RESEARCH_AGENDA给出受控行业问题、官方证据范围和候选方法提示；JUDGMENT_SYNTHESIS给出冻结前判断内核；INVESTMENT_ENRICHMENT给出不可改写的同cutoff公司判断前置物。它是派生只读模型，不是事实真源。",
+    "description": "读取报告级判断生成上下文。RESEARCH_AGENDA给出行业承保上下文、受控行业问题、官方证据范围和候选方法提示；JUDGMENT_SYNTHESIS给出冻结前判断内核；INVESTMENT_ENRICHMENT给出不可改写的同cutoff公司判断前置物。它是派生只读模型，不是事实真源。",
     "parameters": {
         "output_dir": {"type": "string", "description": "股票输出目录"},
         "view": {

@@ -20,10 +20,12 @@ try:
     from scripts import enterprise_judgment_core as enterprise_core
     from scripts import cjo_quantitative_investment_overlay as quantitative_overlay
     from scripts import current_company_cjo_admission as current_cjo_admission
+    from scripts import industry_underwriting_context as industry_underwriting
 except ImportError:  # pragma: no cover - direct script import fallback
     import enterprise_judgment_core as enterprise_core
     import cjo_quantitative_investment_overlay as quantitative_overlay
     import current_company_cjo_admission as current_cjo_admission
+    import industry_underwriting_context as industry_underwriting
 
 
 SCHEMA_VERSION = "judgment-generation-handoff.v1"
@@ -42,7 +44,7 @@ _READY_LEDGER_STATES = {"REVIEWABLE", "DECISION_READY", "MONITORING"}
 _VIEW_PROJECTION_KEYS = {
     "RESEARCH_AGENDA": {
         "agenda_mode", "official_evidence", "decisive_questions", "industry_priors",
-        "learning_prompts", "industry_snapshot",
+        "learning_prompts", "industry_snapshot", "industry_underwriting_context",
     },
     "JUDGMENT_SYNTHESIS": {
         "ledger_states", "claims", "financial_drivers", "allocation_events", "thesis",
@@ -204,6 +206,64 @@ def _project_industry_prior(item: dict[str, Any]) -> dict[str, Any]:
         "question_injected", "forbidden_model_role",
     )
     return {key: item.get(key) for key in keys if key in item}
+
+
+def _same_company(left: Any, right: Any) -> bool:
+    first = str(left or "").strip().upper()
+    second = str(right or "").strip().upper()
+    if not first or not second:
+        return False
+    if first == second:
+        return True
+    first_digits = "".join(char for char in first if char.isdigit())
+    second_digits = "".join(char for char in second if char.isdigit())
+    return (
+        len(first_digits) >= 5
+        and len(second_digits) >= 5
+        and first_digits[-6:] == second_digits[-6:]
+    )
+
+
+def _project_industry_underwriting_context(
+    output: Path,
+    identity: dict[str, str],
+    warnings: list[str],
+    sources: list[dict[str, Any]],
+) -> tuple[dict[str, Any], str]:
+    """Load the optional report-local industry read model without gating research."""
+    path = output / industry_underwriting.DEFAULT_OUTPUT_NAME
+    if not path.is_file():
+        return {}, "NOT_COMPILED"
+    payload = _read_json(path)
+    validation = industry_underwriting.validate_industry_underwriting_context(payload)
+    if validation.get("state") != "REVIEWABLE":
+        warnings.extend(
+            "industry_underwriting_context_excluded_invalid:" + str(item)
+            for item in validation.get("findings") or []
+        )
+        return {}, "EXCLUDED_INVALID"
+
+    company = payload.get("company_identity") if isinstance(payload.get("company_identity"), dict) else {}
+    if not _same_company(company.get("company_id"), identity["company_id"]):
+        warnings.append("industry_underwriting_context_excluded_company_mismatch")
+        return {}, "EXCLUDED_IDENTITY_MISMATCH"
+    report_cutoff = _instant(identity["information_cutoff"], allow_date_cutoff=True)
+    knowledge = payload.get("knowledge_time") if isinstance(payload.get("knowledge_time"), dict) else {}
+    context_cutoff = _instant(
+        knowledge.get("cutoff_at") or company.get("cutoff_at"), allow_date_cutoff=True,
+    )
+    if report_cutoff is None or context_cutoff is None or context_cutoff > report_cutoff:
+        warnings.append("industry_underwriting_context_excluded_cutoff_mismatch")
+        return {}, "EXCLUDED_CUTOFF_MISMATCH"
+
+    sources.append(_source_ref(
+        "INDUSTRY_UNDERWRITING_CONTEXT",
+        industry_underwriting.DEFAULT_OUTPUT_NAME,
+        "",
+        "Industry reference classes, candidate paths, peers, near misses and company-verification fields only; target-company evidence must establish exposure and economics.",
+    ))
+    status = str(payload.get("context_status") or "BOUNDED")
+    return _safe_projection(payload), status
 
 
 def _fallback_industry_context(output: Path, warnings: list[str]) -> dict[str, Any]:
@@ -481,6 +541,10 @@ def _build_research_agenda(
     if excluded_count:
         warnings.append(f"industry_matches_excluded_by_ready_not_evidenced_gate:{excluded_count}")
 
+    underwriting_context, underwriting_state = _project_industry_underwriting_context(
+        output, identity, warnings, sources,
+    )
+
     learning_prompts: list[dict[str, Any]] = []
     cutoff = _instant(identity["information_cutoff"], allow_date_cutoff=True)
     for index, reference in enumerate(learning_note_refs):
@@ -532,10 +596,14 @@ def _build_research_agenda(
             if pit_mode else "NO_MATCHING_MECHANISM_READY"
         ),
         "learning_prompts": "AVAILABLE" if learning_prompts else "NO_EXPLICIT_LEARNING_REFS",
+        "industry_underwriting_context": underwriting_state,
     }
     return {
         "agenda_mode": (
-            "DECISIVE_PLAN" if selected else "INDUSTRY_PRIOR_ONLY" if priors else "EVIDENCE_ONLY"
+            "DECISIVE_PLAN" if selected
+            else "INDUSTRY_UNDERWRITING" if underwriting_context
+            else "INDUSTRY_PRIOR_ONLY" if priors
+            else "EVIDENCE_ONLY"
         ),
         "official_evidence": {
             "artifact_ref": "report_context.json",
@@ -546,6 +614,7 @@ def _build_research_agenda(
         },
         "decisive_questions": [_project_question(item) for item in selected],
         "industry_priors": priors,
+        "industry_underwriting_context": underwriting_context,
         "industry_snapshot": {
             "mode": str(industry_availability.get("mode") or "CURRENT_LIBRARY"),
             "knowledge_snapshot_at": str(industry_availability.get("knowledge_snapshot_at") or ""),
@@ -1020,6 +1089,7 @@ def _shape_findings(handoff: Any) -> tuple[list[str], list[str]]:
             and isinstance(projection, dict)
             and projection.get("decisive_questions") == []
             and projection.get("industry_priors") == []
+            and projection.get("industry_underwriting_context") == {}
         ):
             invalid.append("ready_with_no_prior_state_inconsistent")
     return list(dict.fromkeys(invalid)), list(dict.fromkeys(incomplete))
@@ -1171,6 +1241,10 @@ def build_judgment_generation_handoff(
         and empty_states.get("decisive_questions") == "NO_DECISIVE_PLAN_EVIDENCE_ONLY"
         and empty_states.get("industry_priors") in {
             "NO_MATCHING_MECHANISM_READY", "PIT_EVIDENCE_ONLY",
+        }
+        and empty_states.get("industry_underwriting_context") in {
+            "NOT_COMPILED", "EXCLUDED_INVALID", "EXCLUDED_IDENTITY_MISMATCH",
+            "EXCLUDED_CUTOFF_MISMATCH",
         }
     ):
         state = "READY_WITH_NO_PRIOR"

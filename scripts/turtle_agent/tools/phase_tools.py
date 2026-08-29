@@ -790,13 +790,135 @@ def build_financial_trends(
     return {"ok": True, "path": out_path}
 
 
+def _company_identity_matches(value: Any, code: str) -> bool:
+    left = str(value or "").strip().upper()
+    right = str(code or "").strip().upper()
+    if not left or not right:
+        return False
+    if left == right:
+        return True
+    left_digits = "".join(char for char in left if char.isdigit())
+    right_digits = "".join(char for char in right if char.isdigit())
+    return (
+        len(left_digits) >= 5
+        and len(right_digits) >= 5
+        and left_digits[-6:] == right_digits[-6:]
+    )
+
+
+def _industry_block_contains_company(value: Any, code: str) -> bool:
+    if isinstance(value, dict):
+        for key, item in value.items():
+            if key in {
+                "company_id", "company_code", "issuer_id", "member_id", "target_company_id",
+                "ts_code",
+            } and _company_identity_matches(item, code):
+                return True
+            if _industry_block_contains_company(item, code):
+                return True
+    elif isinstance(value, list):
+        return any(_industry_block_contains_company(item, code) for item in value)
+    return False
+
+
+def _matching_industry_learning_blocks(code: str) -> list[str]:
+    root = os.path.join(
+        _FRAMEWORK_DIR, "docs", "development", "research", "industry_learning_blocks",
+    )
+    if not os.path.isdir(root):
+        return []
+    matches: list[str] = []
+    for directory, _subdirs, filenames in os.walk(root):
+        for filename in sorted(filenames):
+            if "industry_learning_block" not in filename or not filename.endswith(".json"):
+                continue
+            path = os.path.join(directory, filename)
+            try:
+                with open(path, encoding="utf-8") as handle:
+                    payload = json.load(handle)
+            except (OSError, json.JSONDecodeError):
+                continue
+            if _industry_block_contains_company(payload, code):
+                matches.append(path)
+    return sorted(matches)
+
+
+def _compile_report_industry_underwriting_context(
+    *, code: str, output_dir: str, discovery_context: dict[str, Any],
+) -> dict[str, Any]:
+    try:
+        from scripts.industry_underwriting_context import (
+            DEFAULT_OUTPUT_NAME,
+            compile_industry_underwriting_context,
+        )
+    except ModuleNotFoundError:
+        try:
+            from industry_underwriting_context import (  # type: ignore[no-redef]
+                DEFAULT_OUTPUT_NAME,
+                compile_industry_underwriting_context,
+            )
+        except ModuleNotFoundError:
+            return {"status": "UNAVAILABLE", "warning": "industry_underwriting_compiler_missing"}
+
+    contract: dict[str, Any] = {}
+    contract_path = os.path.join(output_dir, "analysis_contract.json")
+    try:
+        with open(contract_path, encoding="utf-8") as handle:
+            contract = json.load(handle)
+    except (OSError, json.JSONDecodeError):
+        return {"status": "UNAVAILABLE", "warning": "analysis_contract_missing_or_invalid"}
+    pit = contract.get("pit_production") if isinstance(contract.get("pit_production"), dict) else {}
+    cutoff_at = str(
+        pit.get("cutoff_at") or contract.get("data_as_of") or contract.get("analysis_date")
+        or contract.get("cutoff_at") or contract.get("pit_cutoff_at") or ""
+    ).strip()
+    company_id = str(contract.get("company_id") or code).strip()
+    meta = discovery_context.get("meta") if isinstance(discovery_context.get("meta"), dict) else {}
+    if not cutoff_at or not company_id:
+        return {"status": "UNAVAILABLE", "warning": "analysis_contract_company_or_cutoff_missing"}
+    industry_keys = list(dict.fromkeys(
+        str(item).strip() for item in (
+            meta.get("industry_group"), meta.get("industry_l2"), meta.get("industry_l1"),
+        ) if str(item or "").strip()
+    ))
+    block_paths = _matching_industry_learning_blocks(code)
+    try:
+        payload = compile_industry_underwriting_context(
+            company={
+                "company_id": company_id,
+                "company_name": str(contract.get("company_name") or company_id),
+                "cutoff_at": cutoff_at,
+                "knowledge_cutoff_at": cutoff_at,
+                "pit_mode": bool(pit),
+                "industry_keys": industry_keys,
+            },
+            industry_learning_blocks=block_paths,
+            competitive_arena=discovery_context,
+            industry_keys=industry_keys,
+        )
+    except (OSError, ValueError) as exc:
+        return {"status": "UNAVAILABLE", "warning": str(exc)}
+    destination = os.path.join(output_dir, DEFAULT_OUTPUT_NAME)
+    with open(destination, "w", encoding="utf-8") as handle:
+        json.dump(payload, handle, indent=2, ensure_ascii=False)
+        handle.write("\n")
+    return {
+        "status": payload["context_status"],
+        "path": destination,
+        "industry_learning_block_count": len(block_paths),
+        "representative_peer_count": len(payload["representative_peers"]),
+        "near_miss_count": len(payload["near_misses"]),
+    }
+
+
 def build_industry_context(
     code: str = "",
     output_dir: str = "",
 ) -> dict[str, Any]:
-    """生成行业上下文数据（Phase 1.5）。
+    """生成行业发现数据与报告级行业承保上下文（Phase 1.5）。
 
-    调用 zone_d_industry_context.py 获取同行对比和行业百分位。
+    调用 zone_d_industry_context.py 获取发现宇宙，再从目标公司已归属的
+    IndustryLearningBlock 编译非阻断的 IndustryUnderwritingContext。
     """
     py = sys.executable
     script = os.path.join(_scripts_dir, "zone_d_industry_context.py")
@@ -808,7 +930,13 @@ def build_industry_context(
                 "signals": [], "meta": {"error": "zone_d_industry_context.py 不可用"}}
         with open(out_path, "w", encoding="utf-8") as f:
             json.dump(stub, f, indent=2, ensure_ascii=False)
-        return {"ok": True, "path": out_path, "comparable_peers": [], "note": "stub"}
+        underwriting = _compile_report_industry_underwriting_context(
+            code=code, output_dir=output_dir, discovery_context=stub,
+        )
+        return {
+            "ok": True, "path": out_path, "comparable_peers": [], "note": "stub",
+            "industry_underwriting_context": underwriting,
+        }
 
     args = [py, script, "--code", code, "--output", output_dir]
     try:
@@ -816,7 +944,15 @@ def build_industry_context(
         if result.returncode == 0 and os.path.exists(out_path):
             with open(out_path, encoding="utf-8") as f:
                 data = json.load(f)
-            return {"ok": True, "path": out_path, "comparable_peers": len(data.get("comparable_peers", []))}
+            underwriting = _compile_report_industry_underwriting_context(
+                code=code, output_dir=output_dir, discovery_context=data,
+            )
+            return {
+                "ok": True,
+                "path": out_path,
+                "comparable_peers": len(data.get("comparable_peers", [])),
+                "industry_underwriting_context": underwriting,
+            }
         # 脚本失败 → 生成 stub
         error_msg = (result.stderr + result.stdout).strip()[-200:]
         print(f"  ⚠️ zone_d_industry_context 失败: {error_msg}")
@@ -829,7 +965,16 @@ def build_industry_context(
             "meta": {"error": f"zone_d_industry_context.py 执行失败"}}
     with open(out_path, "w", encoding="utf-8") as f:
         json.dump(stub, f, indent=2, ensure_ascii=False)
-    return {"ok": True, "path": out_path, "comparable_peers": 0, "note": "stub (script failed)"}
+    underwriting = _compile_report_industry_underwriting_context(
+        code=code, output_dir=output_dir, discovery_context=stub,
+    )
+    return {
+        "ok": True,
+        "path": out_path,
+        "comparable_peers": 0,
+        "note": "stub (script failed)",
+        "industry_underwriting_context": underwriting,
+    }
 
 
 def extract_zone_j(

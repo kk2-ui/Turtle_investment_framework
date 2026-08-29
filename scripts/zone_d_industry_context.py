@@ -426,6 +426,15 @@ def build_industry_context(ts_code: str, num_years: int = 3) -> dict:
     for r in target_fo:
         target_metrics[r["field_name"]] = r["normalized_value"]
 
+    reference_class_members = [
+        {
+            "ts_code": peer["ts_code"],
+            "name": peer["name_cn"],
+            "market": peer["market"],
+        }
+        for peer in peers
+    ]
+
     conn.close()
 
     return {
@@ -453,6 +462,12 @@ def build_industry_context(ts_code: str, num_years: int = 3) -> dict:
             "accounting_definition_basis": "same annual_financials field names only; issuer definitions not independently bridged",
             "period_basis": f"FY{latest_yr}",
             "reason": "automatic industry peers are discovery candidates until responsibility boundary, lifecycle and accounting definitions are verified",
+        },
+        "reference_class": {
+            "role": "DISCOVERY_UNIVERSE_ONLY",
+            "member_count": len(reference_class_members),
+            "members": reference_class_members,
+            "usage": "Select mechanism-role peers and near misses; do not average the universe into a company conclusion.",
         },
         "percentiles": percentiles,
         "comparable_peers": comparable,

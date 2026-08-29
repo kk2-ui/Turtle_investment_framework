@@ -7,6 +7,9 @@ from scripts.industry_underwriting_context import (
     compile_industry_underwriting_context,
     validate_industry_underwriting_context,
 )
+from scripts.industry_underwriting_utility_review import (
+    validate_industry_underwriting_utility_review,
+)
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -15,6 +18,7 @@ BLOCK_PATH = (
     / "docs/development/research/industry_learning_blocks"
     / "CN_PROPERTY_SERVICES_2025/01_industry_learning_block.json"
 )
+UTILITY_REVIEW_PATH = BLOCK_PATH.with_name("07_utility_review.json")
 
 
 def _read_block() -> dict:
@@ -114,3 +118,18 @@ def test_every_compiled_block_evidence_reference_resolves_to_an_official_source(
     assert registered
     assert all(url.startswith("https://") for url in registered.values())
     assert set(item["evidence_ref"] for item in compiled["evidence_refs"]) <= set(registered)
+
+
+def test_worked_ab_changes_investment_treatment_instead_of_only_adding_prose() -> None:
+    review = json.loads(UTILITY_REVIEW_PATH.read_text(encoding="utf-8"))
+
+    assert validate_industry_underwriting_utility_review(review)["valid"]
+    assert review["utility_verdict"] == "MATERIAL_UTILITY"
+    assert set(review["material_treatment_change_dimensions"]) >= {
+        "INDUSTRY_FUTURE_PATH",
+        "TARGET_EXPOSURE",
+        "PERMANENT_LOSS_PATH",
+        "VALUATION_ROUTE_AND_REQUIRED_EVIDENCE",
+    }
+    assert review["narrowed_range_dimensions"] == ["OWNER_CASH_TREATMENT"]
+    assert review["explanation_only_dimensions"] == []

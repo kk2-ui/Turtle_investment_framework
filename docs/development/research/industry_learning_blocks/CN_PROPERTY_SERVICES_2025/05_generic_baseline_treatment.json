@@ -1,0 +1,86 @@
+{
+  "schema_version": "industry-underwriting-treatment.v1",
+  "snapshot_id": "IUT:HK02669:20260813:GENERIC_BASELINE",
+  "company_id": "HK:02669",
+  "cutoff_at": "2026-08-13T23:59:59+08:00",
+  "status": "BOUNDED",
+  "dimensions": {
+    "industry_future_path": {
+      "status": "UNKNOWN",
+      "thesis_code": "UNKNOWN:GENERIC_PROPERTY_SECTOR_PATH",
+      "direction": "UNKNOWN",
+      "investment_treatment": {
+        "base_case_role": "UNRESOLVED",
+        "decision_action": "UNRESOLVED",
+        "reason": "Revenue-similar peers do not establish where the property-services profit pool is moving."
+      },
+      "key_economic_range": null,
+      "required_evidence": [],
+      "explanation": "The legacy context supplies sector percentiles and a small revenue-similar peer panel, not an industry path."
+    },
+    "target_exposure": {
+      "status": "UNKNOWN",
+      "thesis_code": "UNKNOWN:TARGET_INDUSTRY_EXPOSURE",
+      "direction": "UNKNOWN",
+      "investment_treatment": {
+        "base_case_role": "UNRESOLVED",
+        "decision_action": "UNRESOLVED",
+        "reason": "The generic sector label does not separate mature residential, public-service and smart-engineering exposure."
+      },
+      "key_economic_range": null,
+      "required_evidence": [],
+      "explanation": "Target-company industry exposure remains unresolved under a homogeneous property-services model."
+    },
+    "owner_cash_treatment": {
+      "status": "BOUNDED",
+      "thesis_code": "OWNER_CASH:GENERIC_PUBLIC_SERVICE_REFERENCE",
+      "direction": "CONDITIONAL",
+      "investment_treatment": {
+        "base_case_role": "SCENARIO_ONLY",
+        "decision_action": "WAIT_FOR_DECISIVE_EVIDENCE",
+        "reason": "Issuer-level reported earnings cannot identify public-service owner cash."
+      },
+      "key_economic_range": {
+        "metric": "ordinary_shareholder_operating_margin_after_working_capital",
+        "scope": "public_and_institutional_property_reference_class",
+        "unit": "percent",
+        "lower": 0.0,
+        "upper": 15.0
+      },
+      "required_evidence": [
+        {"evidence_id": "E:HK02669:PUBLIC_SERVICE_MARGIN_AND_CASH", "priority": "DECISIVE"}
+      ],
+      "explanation": "A wide placeholder range preserves uncertainty but offers little underwriting value."
+    },
+    "permanent_loss_path": {
+      "status": "READY",
+      "thesis_code": "LOSS:NEAR_TERM_LIQUIDITY_ONLY",
+      "direction": "NEUTRAL",
+      "investment_treatment": {
+        "base_case_role": "INCLUDE",
+        "decision_action": "NO_ACTION_CHANGE",
+        "reason": "Low debt and consolidated cash make near-term insolvency unlikely."
+      },
+      "key_economic_range": null,
+      "required_evidence": [
+        {"evidence_id": "E:HK02669:CONSOLIDATED_LIQUIDITY", "priority": "DECISIVE"}
+      ],
+      "explanation": "The generic treatment emphasizes survival and does not identify a slow capital-loss mechanism."
+    },
+    "valuation_route_and_required_evidence": {
+      "status": "BOUNDED",
+      "thesis_code": "ROUTE:ISSUER_AGGREGATE_EPV",
+      "direction": "CONDITIONAL",
+      "investment_treatment": {
+        "base_case_role": "INCLUDE_CONDITIONALLY",
+        "decision_action": "PROCEED_WITH_HAIRCUT",
+        "reason": "Aggregate earnings require a broad uncertainty haircut."
+      },
+      "key_economic_range": null,
+      "required_evidence": [
+        {"evidence_id": "E:HK02669:AGGREGATE_NORMALIZED_OWNER_CASH", "priority": "DECISIVE"}
+      ],
+      "explanation": "The route cannot distinguish a durable residential base from lower-return growth adjacencies."
+    }
+  }
+}

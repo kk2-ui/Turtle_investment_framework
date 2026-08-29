@@ -127,6 +127,12 @@ InvestmentTreatment（价格后）
 3--5 年或更长时域内，行业利润池最可能怎样变化，这家公司将怎样承受、适应或利用
 这种变化，以及它会把正常盈利、owner cash 和永久损失推向哪里。
 
+该主张不能只靠目标公司 Agent 临时搜索两三家同行后现写。形成主张前，系统先把现有
+`IndustryLearningBlock`、官方行业观察、已审阅机制、公司 archetype、完整案例和 near
+miss 编译成 `IndustryUnderwritingContext`。上下文给出行业 reference class、结构 epoch、
+利润池、异质公司路径和机制角色同行；目标公司的证据再决定哪些部分适用。上下文是同一
+`Situation Model` 的派生输入，不是新的事实库，也不能直接成为本公司事实或估值参数。
+
 一条完整主张必须连续回答：
 
 ```text
