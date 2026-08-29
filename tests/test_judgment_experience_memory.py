@@ -444,6 +444,29 @@ def test_real_registry_is_reviewable_and_keeps_only_references_and_questions() -
         assert not {"price", "valuation", "buyband", "probability", "investment_action"} & set(record)
 
 
+def test_hundsunn_teaching_record_uses_its_core_option_structure_not_a_manufacturing_proxy() -> None:
+    root = Path(__file__).resolve().parents[1]
+    registry = json.loads((root / "docs/development/research/training_campaigns/JUDGMENT_UTILITY_HISTORICAL_20260828/171_JUDGMENT_EXPERIENCE_REGISTRY_V1.json").read_text(encoding="utf-8"))
+    record = next(item for item in registry["records"] if item["record_id"] == "JER:TEACH:CN600570:RESPONSIBILITY_CASH_BOUNDARY:V1")
+
+    assert record["structural_key"] == {
+        "mechanism_kinds": [
+            "CORE_OPTION_RESPONSIBILITY_BOUNDARY",
+            "REPEATABLE_CUSTOMER_ECONOMICS",
+            "STRATEGIC_CAPITAL_ALLOCATION",
+        ],
+        "lifecycle": "MATURE_CORE_WITH_EMERGING_OPTION",
+        "industry_epoch": "TECHNOLOGY_DEPLOYMENT_AND_REGULATORY_CYCLE",
+        "competitive_arena": "MATURE_CORE_AND_EMERGING_OPTION",
+        "responsibility_boundary": "CORE_BUSINESS_VS_EMERGING_OPTION_AND_STRATEGIC_CAPITAL",
+        "company_constraints": [
+            "R_AND_D_INTENSITY",
+            "EARLY_OPTION_COMMERCIALIZATION",
+            "STRATEGIC_CAPITAL_ALLOCATION",
+        ],
+    }
+
+
 def test_real_different_company_sealed_application_freezes_a_question_not_a_target_conclusion() -> None:
     root = Path(__file__).resolve().parents[1]
     app_dir = root / "docs/development/research/experience_applications/CN601865_20240401"
