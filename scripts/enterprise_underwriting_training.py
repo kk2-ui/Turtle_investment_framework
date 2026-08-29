@@ -512,6 +512,12 @@ route, strongest rival, and reversal observations into one best-current judgment
 Evidence discipline is a constraint, not the product: localize an unknown and continue
 the rest of the company. Do not emit axes, outcome cells, receipts, gates, scores,
 market price, valuation results, expected return, BuyBand, or investment action.
+When capital spending matters, keep three distinct economic questions: operating cash
+less economic maintenance capital (normal owner cash), operating cash less all
+long-lived-asset spending (current capital-allocation and financing pressure), and the
+subsequent return on growth capital. Missing growth-return evidence or total spending
+must never be renamed as maintenance capital or used to invent a negative owner-cash
+point estimate; give a conditional treatment and continue the company judgment.
 Use only the supplied sources. Every evidence_trace.source_ref and existing_object_ref.ref
 must exactly match a supplied source_ref. Return JSON only, with schema_version
 enterprise-underwriting-episode.v2. The underwriting_thesis must include

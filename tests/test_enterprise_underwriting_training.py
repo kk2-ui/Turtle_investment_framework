@@ -191,6 +191,8 @@ def test_blind_training_memory_changes_questions_but_cannot_be_target_evidence()
     messages = build_training_agent_messages(contract, source_materials=materials)
     assert "time_role=TRAINING_MEMORY" in messages[1]["content"]
     assert "never cite it in evidence_trace" in messages[0]["content"]
+    assert "three distinct economic questions" in messages[0]["content"]
+    assert "must never be renamed as maintenance capital" in messages[0]["content"]
 
 
 def test_contract_requires_real_multi_clock_feedback_not_duplicate_labels() -> None:
