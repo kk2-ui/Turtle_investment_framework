@@ -1,0 +1,34 @@
+{
+  "schema_version": "historical-holdout-paired-attempt.v1",
+  "attempt_id": "PAIR_ATTEMPT:HIST:CN601933:20240501:V5_MEMORY_RETRIEVAL",
+  "pair_id": "PAIR:HIST:CN601933:20240501:V5_MEMORY_RETRIEVAL",
+  "episode_id": "HIST:CN601933:20240501:FY2024:PAIR_V5_MEMORY_RETRIEVAL",
+  "company_id": "CN:601933",
+  "cutoff_at": "2024-05-01T00:00:00+08:00",
+  "review_ref": "155_CN601933_V5_INDEPENDENT_PREOUTCOME_PAIR_REVIEW.md",
+  "verdict": "RETURN_PAIR_NOT_EVALUABLE",
+  "outcome_state": "SEALED_NOT_READ",
+  "arm_revision_allowed": false,
+  "outcome_access": "NONE",
+  "method_utility": "NOT_DIAGNOSTIC",
+  "method_validated": false,
+  "transfer_candidate_created": false,
+  "transfer_validated": false,
+  "root_cause": {
+    "classification": "REASONING",
+    "statement": "Enhanced used a bounded, mechanism-relevant Teaching retrieval pack, but the actual Baseline already withheld recovery credit without a retained-network economics and cash/capital bridge. The memory improved neither a material economic treatment nor a distinct rank-one research action."
+  },
+  "economic_retention": "This is evidence against pretending that a generic mechanism card is automatically active learning. It does not show that the target company lacks value or that Teaching is useless; it shows that this card pair did not add incremental treatment beyond an already competent baseline.",
+  "next_action": "Pause repetitive paired-Holdout construction. Return to outcome-isolated Blind feedback and select the next learning intervention only from an observed, material blind reasoning failure or a feedback-derived behavior that an actual new pre-outcome application changes. A future Holdout tests that specific applied behavior rather than a generic rule or generic card retrieval.",
+  "permissions": {
+    "outcome_read": "NONE",
+    "training_utility": "NONE",
+    "method_validation": "NONE",
+    "transfer_validation": "NONE",
+    "cjo": "NONE",
+    "formal_valuation": "NONE",
+    "buy_band": "NONE",
+    "report": "NONE",
+    "investment_action": "NONE"
+  }
+}

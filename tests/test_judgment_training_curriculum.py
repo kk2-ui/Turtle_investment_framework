@@ -485,19 +485,19 @@ def test_checked_in_curriculum_registers_real_assets_without_overclaiming_capaci
     assert progress["track_progress"]["TEACHING"]["completed_independent_company_cluster_count"] == 30
     assert progress["track_progress"]["BLIND_JUDGMENT"]["independent_company_cluster_count"] == 10
     assert progress["track_progress"]["BLIND_JUDGMENT"]["completed_independent_company_cluster_count"] == 10
-    assert progress["next_action"] == "RESERVE_GENUINE_HISTORICAL_HOLDOUT"
+    assert progress["next_action"] == "RUN_FEEDBACK_LINKED_BLIND_BEFORE_ANOTHER_HOLDOUT"
     assert progress["track_progress"]["BLIND_JUDGMENT"]["completed_independent_company_cluster_count"] == 10
     holdout = progress["track_progress"]["HISTORICAL_HOLDOUT"]
-    assert holdout["record_count"] == 4
+    assert holdout["record_count"] == 5
     assert holdout["episode_count"] == 0
-    assert holdout["archived_not_evaluable_count"] == 4
+    assert holdout["archived_not_evaluable_count"] == 5
     assert holdout["independent_company_cluster_count"] == 0
     assert holdout["completed_independent_company_cluster_count"] == 0
     assert progress["track_progress"]["PROSPECTIVE"]["independent_company_cluster_count"] == 2
     assert progress["teaching_candidate_pool"]["independent_company_cluster_count"] == 0
     assert progress["teaching_candidate_pool"]["teaching_library_pipeline_independent_company_cluster_count"] == 30
     assert progress["teaching_candidate_pool"]["ability_evidence_count"] == 0
-    assert progress["next_action"] == "RESERVE_GENUINE_HISTORICAL_HOLDOUT"
+    assert progress["next_action"] == "RUN_FEEDBACK_LINKED_BLIND_BEFORE_ANOTHER_HOLDOUT"
     assert progress["capability_claim"] == "NOT_DEMONSTRATED_BY_CURRICULUM_COUNTS"
     assert progress["comparative_is_default_entry"] is False
     assert progress["capability_coverage_by_distinct_company_clusters"]["CAPITAL_ALLOCATION"] == 16

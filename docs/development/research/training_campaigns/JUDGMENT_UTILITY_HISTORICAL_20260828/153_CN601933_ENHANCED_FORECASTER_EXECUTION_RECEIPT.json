@@ -1,0 +1,91 @@
+{
+  "schema_version": "1.0",
+  "receipt_id": "V5_ENHANCED_FORECASTER_EXECUTION:CN601933:FY2023",
+  "status": "PRE_OUTCOME_JUDGMENT_COMPLETED",
+  "arm": "ENHANCED",
+  "candidate_and_cutoff": {
+    "company_id": "CN:601933",
+    "security_code": "601933",
+    "company_name": "永辉超市",
+    "market": "CN_SSE",
+    "cutoff_at": "2024-05-01"
+  },
+  "source_and_read_attestation": {
+    "read_order": [
+      "AGENTS.md",
+      "148_V5_MEMORY_HOLDOUT_SELECTION_REGISTER.json",
+      "149_V5_MEMORY_RETRIEVAL_PACK.json",
+      "150_CN601933_CUTOFF_BEFORE_PACKET_RECEIPT.json",
+      "/tmp/cn601933-v5-holdout-packet.LGq8Ii/FY2021_1213271083.txt",
+      "/tmp/cn601933-v5-holdout-packet.LGq8Ii/FY2022_1216707511.txt",
+      "/tmp/cn601933-v5-holdout-packet.LGq8Ii/FY2023_1219878384.txt"
+    ],
+    "target_company_evidence_sources": [
+      {
+        "fiscal_year": 2021,
+        "announcement_id": "1213271083",
+        "local_text_extraction_path": "/tmp/cn601933-v5-holdout-packet.LGq8Ii/FY2021_1213271083.txt",
+        "read_turn": 1,
+        "method": "local text-extraction search and context read"
+      },
+      {
+        "fiscal_year": 2022,
+        "announcement_id": "1216707511",
+        "local_text_extraction_path": "/tmp/cn601933-v5-holdout-packet.LGq8Ii/FY2022_1216707511.txt",
+        "read_turn": 2,
+        "method": "local text-extraction search and context read"
+      },
+      {
+        "fiscal_year": 2023,
+        "announcement_id": "1219878384",
+        "local_text_extraction_path": "/tmp/cn601933-v5-holdout-packet.LGq8Ii/FY2023_1219878384.txt",
+        "read_turn": 3,
+        "method": "local text-extraction search and context read"
+      }
+    ],
+    "report_read_turns_allocated": 3,
+    "report_read_turns_used": 3,
+    "synthesis_turns_allocated": 1,
+    "synthesis_turns_used": 1,
+    "report_reading_method": "The released local text extraction was used for each of the three PDF/text pairs; no additional target-report read was performed.",
+    "target_evidence_scope": "Only the three official FY2021-FY2023 CNINFO annual-report text extractions released in packet CN601933_OFFICIAL_CNINFO_FY2021_FY2023."
+  },
+  "frozen_memory_use_attestation": {
+    "frozen_pack_id": "V5_MEMORY_RETRIEVAL_PACK",
+    "cards_seen": [
+      {
+        "card_id": "V5-SAME-MECHANISM-CN603708-OWNER-CASH-CAPITAL",
+        "bounded_use": "Prompted a separation of incremental deployment from customer absorption, cohort unit economics, owner-cash conversion, and capital recovery. Its strongest rival was retained: early cash use can be a mature-network investment rather than failure."
+      },
+      {
+        "card_id": "V5-NEAR-MISS-HK06862-MANAGEMENT-CAPITAL",
+        "bounded_use": "Prevented closure, lower replacement investment, or aggregate cash from being treated as proof of a repaired retained network; no contraction, recovery, or path inference was transferred to CN601933."
+      }
+    ],
+    "not_used_as_target_evidence": true,
+    "not_used_for_target_outcome_guessing": true,
+    "not_used_as_a_completion_gate": true,
+    "material_current_treatment_changed_by_memory": false,
+    "memory_effect": "The cards sharpened the evidence boundary and preserved their stated rivals and non-transfer limits. The frozen current treatment itself is independently supported by the released target reports and is not an imported teaching-case conclusion.",
+    "noncanonical_project_memory": "A mandatory project-memory recall returned only generic workflow material. It supplied no CN601933 fact, outcome, valuation, or action and was excluded from the target evidence and reasoning."
+  },
+  "result_isolation_firewall_attestation": {
+    "no_147_or_other_campaign_or_curriculum_artifact_read": true,
+    "no_target_source_other_than_148_149_150_and_released_packet_read": true,
+    "no_fy2024_or_later_filing_metadata_or_body_read": true,
+    "no_browser_or_external_target_query_used": true,
+    "no_price_return_analyst_or_valuation_material_read": true,
+    "no_target_outcome_result_or_outcome_proxy_read": true,
+    "no_post_cutoff_operating_data_read": true,
+    "target_reports_interpreted_only_for_fy2021_to_fy2023_pre_cutoff_judgment": true
+  },
+  "frozen_enhanced_treatment": {
+    "treatment": "Do not credit reported customer, store, online, supply-chain, or digital activity to incremental unit economics, normal earnings, owner cash, or capital recovery until responsibility-matched retained/cohort evidence connects them.",
+    "expected_decision_consequence": "Keep valuation direction constrained by a loss-making and unbridged base; promote recovery optionality only if the FY2024 annual report resolves the specified retained-network, cash, and capital cells."
+  },
+  "outputs_created": [
+    "153_CN601933_ENHANCED_FORECASTER_EXECUTION_RECEIPT.json",
+    "154_CN601933_ENHANCED_PREOUTCOME_JUDGMENT.json"
+  ],
+  "commit_created": false
+}

@@ -1,0 +1,130 @@
+{
+  "schema_version": "1.0",
+  "register_id": "V5_MEMORY_HOLDOUT_SELECTION:CN601933:FY2023",
+  "status": "FROZEN_SELECTION_PENDING_MEMORY_CURATION",
+  "intervention_design_ref": "147_MEMORY_RETRIEVAL_INTERVENTION_DESIGN.md",
+  "selection": {
+    "track": "HISTORICAL_HOLDOUT",
+    "target_company_cluster_id": "COMPANY:CN601933",
+    "company_id": "CN:601933",
+    "security_code": "601933",
+    "company_name": "永辉超市",
+    "market": "CN_SSE",
+    "cutoff_at": "2024-05-01",
+    "company_structure": "Chinese multi-unit grocery retail and distribution network",
+    "mechanism_rationale": {
+      "decision_mechanism": "The material pre-cutoff judgment is whether changes in the physical store and distribution network produce customer absorption and repeatable unit economics that convert to owner cash and recover committed capital, rather than scale that merely absorbs additional operating and working-capital commitments.",
+      "competing_mechanisms_to_test": [
+        "customer and local-store economics improve sufficiently for network investment to earn through",
+        "network scale, format, assortment, or deployment changes fail to earn through, leaving cash conversion and capital recovery weaker than the apparent activity"
+      ],
+      "why_memory_retrieval_is_testable": "A same-mechanism teaching case can transfer the store-growth-to-cash-capital transmission question, while a near-miss can force the agent to distinguish a superficially similar multi-unit expansion from an economically different customer, asset, or cash bearer. Neither retrieval need disclose this target's later result.",
+      "selection_not_based_on": [
+        "subsequent operating outcome",
+        "share-price or return attractiveness",
+        "analyst view or target valuation",
+        "a desired Baseline error"
+      ]
+    }
+  },
+  "candidate_card_selection_criteria": {
+    "cards_emitted_by_this_register": 0,
+    "later_curator_limit": 2,
+    "required_roles": [
+      {
+        "role": "SAME_MECHANISM",
+        "criteria": "One Teaching case whose admissible lesson concerns a multi-unit consumer, retail, service, franchise, or distribution network where customer or deployment absorption must be separated from unit economics, owner-cash conversion, and capital recovery. The card may state its historical operating tension, competing explanation, economic transmission, and non-transfer boundary, but no target-company claim or case outcome number."
+      },
+      {
+        "role": "NEAR_MISS",
+        "criteria": "One different Teaching case with an outwardly similar expansion, footprint, customer-acquisition, or deployment narrative but a materially different economic bearer or capital cycle. It must make a concrete rival mechanism available to the agent and identify why superficial similarity is insufficient; it may not provide the target outcome, price, valuation, or directive."
+      }
+    ],
+    "rejection_criteria": [
+      "no card that merely restates a project-wide research rule",
+      "no card that supplies a field checklist or target-company answer",
+      "no card without a falsifiable operating-to-cash-or-capital transmission",
+      "no card whose lesson can be applied without confronting a competing mechanism",
+      "no card selected for similarity score, prose quality, or known result attractiveness"
+    ],
+    "curation_boundary": "This selector freezes only the target and retrieval criteria. It does not select, write, or expose a Teaching card."
+  },
+  "prior_cluster_exclusion": {
+    "curriculum_read_scope": "All case_id, track, and company_cluster_id fields; Teaching cases additionally limited to identity, company, industry, and primary_capability_units fields.",
+    "matched_existing_case_count": 0,
+    "checked_tracks": [
+      "TEACHING",
+      "BLIND_JUDGMENT",
+      "HISTORICAL_HOLDOUT",
+      "PROSPECTIVE"
+    ],
+    "same_domain_teaching_clusters_not_reused_as_target": [
+      "COMPANY:CN603708",
+      "COMPANY:CN603939",
+      "COMPANY:HK06862"
+    ],
+    "attestation": "COMPANY:CN601933 is absent from the curriculum's existing company_cluster_id fields and is therefore a previously unseen company cluster."
+  },
+  "official_cninfo_packet_metadata": {
+    "metadata_source": "CNINFO (巨潮资讯网) official disclosure metadata",
+    "metadata_only_query_scope": "601933 / 永辉超市; annual-report metadata dated 2021-01-01 through 2024-04-30; original full annual-report notices only",
+    "cninfo_org_id": "9900016367",
+    "packet_cutoff": "2024-05-01",
+    "full_annual_reports": [
+      {
+        "fiscal_year": 2021,
+        "announcement_id": "1213271083",
+        "announcement_title": "永辉超市股份有限公司2021年年度报告",
+        "portal_announcement_date": "2022-04-29",
+        "cninfo_adjunct_path": "finalpage/2022-04-30/1213271083.PDF",
+        "is_original_full_annual_report": true,
+        "published_before_cutoff": true
+      },
+      {
+        "fiscal_year": 2022,
+        "announcement_id": "1216707511",
+        "announcement_title": "永辉超市股份有限公司有限公司2022年度报告",
+        "portal_announcement_date": "2023-04-28",
+        "cninfo_adjunct_path": "finalpage/2023-04-29/1216707511.PDF",
+        "is_original_full_annual_report": true,
+        "published_before_cutoff": true
+      },
+      {
+        "fiscal_year": 2023,
+        "announcement_id": "1219878384",
+        "announcement_title": "永辉超市股份有限公司2023年年度报告",
+        "portal_announcement_date": "2024-04-26",
+        "cninfo_adjunct_path": "finalpage/2024-04-27/1219878384.PDF",
+        "is_original_full_annual_report": true,
+        "published_before_cutoff": true
+      }
+    ],
+    "clean_packet_attestation": "The packet contains exactly one original full FY2021, FY2022, and FY2023 annual-report metadata record. The corresponding summary notices were not selected; no correction or revised title was selected."
+  },
+  "result_isolation_firewall": {
+    "selector_authorized_inputs": [
+      "147_MEMORY_RETRIEVAL_INTERVENTION_DESIGN.md",
+      "permitted curriculum identity, track, company-cluster, company, industry, and capability-unit fields",
+      "CNINFO official disclosure metadata for the selected FY2021-FY2023 original annual-report packet"
+    ],
+    "selector_prohibited_inputs": [
+      "Teaching lesson, artifact, source, mechanism-focus, claim-scope, comparative, status, result-access, outcome-window, holdout-axis, or method-memory fields",
+      "any campaign artifact other than 147_MEMORY_RETRIEVAL_INTERVENTION_DESIGN.md",
+      "target annual-report, announcement, browser, or PDF body content",
+      "FY2024 filing metadata or body content",
+      "price, return, analyst, valuation, or subsequent operating data"
+    ],
+    "handoff_rule": "A separate memory curator may later use the Teaching library within the V5 design to select no more than one SAME_MECHANISM and one NEAR_MISS card. The target packet, its outcomes, and this selector's unobserved target result remain unavailable to that curator, Baseline, Enhanced, and reviewer until the frozen comparison qualifies for result release."
+  },
+  "negative_attestations": {
+    "no_teaching_lesson_artifact_source_or_outcome_content_read": true,
+    "no_nonpermitted_curriculum_field_read": true,
+    "no_campaign_artifact_other_than_147_read": true,
+    "no_target_report_or_announcement_body_read": true,
+    "no_fy2024_metadata_or_body_inspected": true,
+    "no_price_return_analyst_or_valuation_data_read": true,
+    "no_target_result_or_result_proxy_read": true,
+    "no_teaching_card_selected_or_written": true,
+    "no_selection_for_result_attractiveness": true
+  }
+}

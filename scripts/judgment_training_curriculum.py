@@ -664,10 +664,19 @@ def curriculum_status(curriculum: dict[str, Any], *, validate: bool = True) -> d
     frozen_holdout = any(
         case.get("track") == "HISTORICAL_HOLDOUT" and case.get("status") == "FROZEN" for case in cases
     )
+    no_difference_holdouts = sum(
+        case.get("track") == "HISTORICAL_HOLDOUT"
+        and case.get("status") == "ARCHIVED_NOT_EVALUABLE"
+        and case.get("method_memory_state") == "NO_MATERIAL_PREOUTCOME_TREATMENT_DIFFERENCE"
+        for case in cases
+    )
     if frozen_blind:
         next_action = "AUTHORIZE_AND_SETTLE_FROZEN_BLIND_CASE"
     elif frozen_holdout:
         next_action = "AUTHORIZE_AND_EVALUATE_FROZEN_HISTORICAL_HOLDOUT"
+    elif blind_target and settled_blind >= blind_target and evaluated_holdout < holdout_lower \
+            and no_difference_holdouts >= 3:
+        next_action = "RUN_FEEDBACK_LINKED_BLIND_BEFORE_ANOTHER_HOLDOUT"
     elif blind_target and settled_blind >= blind_target and evaluated_holdout < holdout_lower:
         next_action = "RESERVE_GENUINE_HISTORICAL_HOLDOUT"
     elif curated_teaching >= (settled_blind + 1) * teaching_per_blind:

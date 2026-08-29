@@ -1748,6 +1748,51 @@
       "holdout_axis": null
     },
     {
+      "case_id": "HOLDOUT:CN601933:20240501:FY2024:PAIR_V5_MEMORY_RETRIEVAL",
+      "company_id": "CN:601933",
+      "company_cluster_id": "COMPANY:CN601933",
+      "company_name": "永辉超市",
+      "industry_id": "MULTI_UNIT_GROCERY_RETAIL_AND_DISTRIBUTION",
+      "track": "HISTORICAL_HOLDOUT",
+      "status": "ARCHIVED_NOT_EVALUABLE",
+      "cutoff_at": "2024-05-01T00:00:00+08:00",
+      "outcome_window": {
+        "starts_at": "2025-03-01T00:00:00+08:00",
+        "ends_at": "2025-05-01T00:00:00+08:00"
+      },
+      "outcome_access": "SEALED",
+      "selection_exposure": "PREOUTCOME_ONLY",
+      "role_isolation_state": "ROLE_ISOLATION_PROVED",
+      "primary_capability_units": [
+        "CUSTOMER_ABSORPTION",
+        "OWNER_CASH_CONVERSION"
+      ],
+      "mechanism_focus": "多门店零售网络的客户/门店活动、retained/exited cohort 单位经济、现金转换和资本回收如何在同一责任边界连接，而不是把恢复叙事、网络规模或集团现金直接资本化。",
+      "claim_scope": "ENTERPRISE_JUDGMENT",
+      "comparative_mode": "NOT_REQUIRED",
+      "source_refs": [
+        "docs/development/research/training_campaigns/JUDGMENT_UTILITY_HISTORICAL_20260828/147_MEMORY_RETRIEVAL_INTERVENTION_DESIGN.md",
+        "docs/development/research/training_campaigns/JUDGMENT_UTILITY_HISTORICAL_20260828/148_V5_MEMORY_HOLDOUT_SELECTION_REGISTER.json",
+        "docs/development/research/training_campaigns/JUDGMENT_UTILITY_HISTORICAL_20260828/149_V5_MEMORY_RETRIEVAL_PACK.json",
+        "docs/development/research/training_campaigns/JUDGMENT_UTILITY_HISTORICAL_20260828/150_CN601933_CUTOFF_BEFORE_PACKET_RECEIPT.json",
+        "docs/development/research/training_campaigns/JUDGMENT_UTILITY_HISTORICAL_20260828/151_CN601933_BASELINE_FORECASTER_EXECUTION_RECEIPT.json",
+        "docs/development/research/training_campaigns/JUDGMENT_UTILITY_HISTORICAL_20260828/152_CN601933_BASELINE_PREOUTCOME_JUDGMENT.json",
+        "docs/development/research/training_campaigns/JUDGMENT_UTILITY_HISTORICAL_20260828/153_CN601933_ENHANCED_FORECASTER_EXECUTION_RECEIPT.json",
+        "docs/development/research/training_campaigns/JUDGMENT_UTILITY_HISTORICAL_20260828/154_CN601933_ENHANCED_PREOUTCOME_JUDGMENT.json",
+        "docs/development/research/training_campaigns/JUDGMENT_UTILITY_HISTORICAL_20260828/155_CN601933_V5_INDEPENDENT_PREOUTCOME_PAIR_REVIEW.md",
+        "docs/development/research/training_campaigns/JUDGMENT_UTILITY_HISTORICAL_20260828/156_CN601933_HOLDOUT_NOT_EVALUABLE.json",
+        "docs/development/research/training_campaigns/JUDGMENT_UTILITY_HISTORICAL_20260828/157_HOLDOUT_CONVERGENCE_ROUTING.md"
+      ],
+      "artifact_refs": {
+        "freeze_ref": "docs/development/research/training_campaigns/JUDGMENT_UTILITY_HISTORICAL_20260828/155_CN601933_V5_INDEPENDENT_PREOUTCOME_PAIR_REVIEW.md",
+        "method_pack_ref": "docs/development/research/training_campaigns/JUDGMENT_UTILITY_HISTORICAL_20260828/149_V5_MEMORY_RETRIEVAL_PACK.json",
+        "holdout_pair_ref": "docs/development/research/training_campaigns/JUDGMENT_UTILITY_HISTORICAL_20260828/156_CN601933_HOLDOUT_NOT_EVALUABLE.json"
+      },
+      "lesson": null,
+      "holdout_axis": "COMPANY",
+      "method_memory_state": "NO_MATERIAL_PREOUTCOME_TREATMENT_DIFFERENCE"
+    },
+    {
       "case_id": "HOLDOUT:CN300059:20240501:FY2024:PAIR_V4",
       "company_id": "CN:300059",
       "company_cluster_id": "COMPANY:CN300059",

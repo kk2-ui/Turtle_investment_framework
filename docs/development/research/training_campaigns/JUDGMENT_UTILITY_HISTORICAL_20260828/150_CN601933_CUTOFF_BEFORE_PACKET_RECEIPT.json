@@ -1,0 +1,83 @@
+{
+  "schema_version": "1.0",
+  "receipt_id": "V5_MEMORY_HOLDOUT_PACKET_RECEIPT:CN601933:FY2023",
+  "status": "PRE_OUTCOME_PACKET_RECEIVED",
+  "candidate_and_cutoff": {
+    "company_id": "CN:601933",
+    "security_code": "601933",
+    "company_name": "永辉超市",
+    "market": "CN_SSE",
+    "cutoff_at": "2024-05-01"
+  },
+  "released_packet": {
+    "packet_id": "CN601933_OFFICIAL_CNINFO_FY2021_FY2023",
+    "source": "CNINFO official static annual-report PDFs",
+    "reports": [
+      {
+        "fiscal_year": 2021,
+        "announcement_id": "1213271083",
+        "exact_url": "https://static.cninfo.com.cn/finalpage/2022-04-30/1213271083.PDF",
+        "local_pdf_path": "/tmp/cn601933-v5-holdout-packet.LGq8Ii/FY2021_1213271083.pdf",
+        "local_text_extraction_path": "/tmp/cn601933-v5-holdout-packet.LGq8Ii/FY2021_1213271083.txt"
+      },
+      {
+        "fiscal_year": 2022,
+        "announcement_id": "1216707511",
+        "exact_url": "https://static.cninfo.com.cn/finalpage/2023-04-29/1216707511.PDF",
+        "local_pdf_path": "/tmp/cn601933-v5-holdout-packet.LGq8Ii/FY2022_1216707511.pdf",
+        "local_text_extraction_path": "/tmp/cn601933-v5-holdout-packet.LGq8Ii/FY2022_1216707511.txt"
+      },
+      {
+        "fiscal_year": 2023,
+        "announcement_id": "1219878384",
+        "exact_url": "https://static.cninfo.com.cn/finalpage/2024-04-27/1219878384.PDF",
+        "local_pdf_path": "/tmp/cn601933-v5-holdout-packet.LGq8Ii/FY2023_1219878384.pdf",
+        "local_text_extraction_path": "/tmp/cn601933-v5-holdout-packet.LGq8Ii/FY2023_1219878384.txt"
+      }
+    ]
+  },
+  "arm_release_and_allocation": {
+    "same_released_packet_attestation": "Baseline and Enhanced receive the identical released_packet packet_id and the same three local PDF/text pairs.",
+    "baseline": {
+      "released_packet_id": "CN601933_OFFICIAL_CNINFO_FY2021_FY2023",
+      "target_evidence_allocation": {
+        "report_reads": 3,
+        "synthesis_turns": 1,
+        "permitted_methods": [
+          "local packet search",
+          "local PDF and text extraction use"
+        ],
+        "prohibited_methods": [
+          "browser",
+          "external source or query"
+        ]
+      }
+    },
+    "enhanced": {
+      "released_packet_id": "CN601933_OFFICIAL_CNINFO_FY2021_FY2023",
+      "target_evidence_allocation": {
+        "report_reads": 3,
+        "synthesis_turns": 1,
+        "permitted_methods": [
+          "local packet search",
+          "local PDF and text extraction use"
+        ],
+        "prohibited_methods": [
+          "browser",
+          "external source or query"
+        ]
+      }
+    }
+  },
+  "result_isolation_firewall_attestation": {
+    "outcome_or_result_content_read": false,
+    "outcome_proxy_read": false,
+    "post_cutoff_filing_metadata_or_body_read": false,
+    "target_report_or_announcement_body_interpreted_or_summarized": false,
+    "permitted_external_access_used_only_for": [
+      "the three exact official CNINFO static PDF URLs listed in released_packet"
+    ],
+    "arms_receive_no_outcomes": true,
+    "receipt_custodian_has_not_read_outcomes": true
+  }
+}
