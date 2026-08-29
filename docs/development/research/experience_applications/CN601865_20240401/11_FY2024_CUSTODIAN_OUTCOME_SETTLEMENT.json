@@ -1,0 +1,79 @@
+{
+  "schema_version": "judgment-experience-custodian-settlement.v1",
+  "settlement_id": "JERSET:CN601865:20240401:FY2024:CASH_CAPEX:V1",
+  "settled": true,
+  "settled_at": "2026-08-29T20:30:00+08:00",
+  "case_id": "EXPERIENCE_TARGET:CN601865:20240401",
+  "invocation_id": "EIR:CN601865:20240401:CAPACITY_PRICE_CASH:V1",
+  "authorization_ref": "docs/development/research/experience_applications/CN601865_20240401/09_OUTCOME_ACCESS_AUTHORIZATION.json",
+  "measurement_contract_ref": "docs/development/research/experience_applications/CN601865_20240401/10_FY2024_CASH_CAPEX_OUTCOME_CONTRACT.json",
+  "source_identity": {
+    "source_authority": "HKEXnews official listed-company disclosure",
+    "issuer": "Flat Glass Group Co., Ltd. / 福萊特玻璃集團股份有限公司",
+    "security": "HKEX:6865 / SSE:601865",
+    "announcement_title": "ANNUAL REPORT 2024 FLAT GLASS GROUP CO., LTD.",
+    "period": "year ended 31 December 2024",
+    "publication_date": "2025-03-27",
+    "official_url": "https://www.hkexnews.hk/listedco/listconews/sehk/2025/0327/2025032701213.pdf",
+    "pdf_pages": 264,
+    "statement_location": "PDF page 72; printed annual-report page 70; Consolidated Statement of Cash Flow"
+  },
+  "frozen_cell_settlements": [
+    {
+      "cell_id": "FY2024_CASH_CAPEX_COVERAGE",
+      "resolution_state": "RESOLVED__CASH_CAPEX_COVERED",
+      "matching_disclosures": [
+        {
+          "report_label": "Net cash flow from operating activities",
+          "value_RMB": 5913200554.89,
+          "scope": "consolidated",
+          "period": "FY2024"
+        },
+        {
+          "report_label": "Cash paid to purchase fixed assets, intangible assets and other long-term assets",
+          "value_RMB": 4885974011.27,
+          "scope": "consolidated",
+          "period": "FY2024"
+        }
+      ],
+      "frozen_calculation": {
+        "operating_cash_flow_RMB": 5913200554.89,
+        "cash_capex_RMB": 4885974011.27,
+        "cash_capex_coverage_RMB": 1027226543.62,
+        "comparison": "cash_capex_coverage_RMB >= 0"
+      },
+      "local_judgment_update": "The FY2024 consolidated cash-capex screen is positive. It removes this one carrier as a reason to keep the target's capacity growth outside base normal owner cash, but it does not itself admit that growth: the frozen bridge still lacks current evidence on customer absorption or utilization, realized price or spread, funding or recoverability, and product-level economics."
+    }
+  ],
+  "local_outcome_interpretation": {
+    "result": "CASH_CAPEX_COVERED",
+    "economic_meaning": "The company generated RMB5.913bn of consolidated operating cash in FY2024 and spent RMB4.886bn on the frozen cash-capex carrier, leaving a positive RMB1.027bn screen. That is a material improvement in the cash-absorption leg relative to a generic concern that all capacity spending is currently consuming operating cash.",
+    "what_it_does_not_mean": "It does not show that solar-glass capacity was economically absorbed by customers, that realized price or spread was durable, that the positive screen is maintenance rather than growth capital, that finance or recoverability risk is low, or that the source-company outcome has transferred."
+  },
+  "next_cutoff_research_agenda_delta": {
+    "previous_priority": "First establish whether the same-boundary cash-capex carrier supports capacity-driven growth at all.",
+    "updated_priority": [
+      "Explain the positive cash screen with target-specific customer absorption or utilization and realized price or spread evidence rather than treating aggregate cash as a proxy.",
+      "Separate maintenance, catch-up, and growth capital before turning the RMB1.027bn screen into normal owner cash.",
+      "Test whether funding and recoverability remain consistent with the improved cash leg, and whether the signal persists through the next industry-price window."
+    ],
+    "investment_treatment": "The cash leg now belongs in the conditional positive scenario, while capacity-driven growth remains outside base normal owner cash until the remaining frozen bridge legs are independently supported."
+  },
+  "experience_feedback_proposal": {
+    "proposed_status": "NOT_DIAGNOSTIC",
+    "reason": "The authorized cell resolves only one bridge leg positively. Under the pre-read contract, a positive cash-capex screen cannot distinguish the source experience from the frozen recovery/cost-or-technology rival and cannot prove that the experience improved a fair baseline. It is useful current-company feedback, but not transfer credit.",
+    "economic_failure_loci": [
+      "MECHANISM",
+      "TRANSMISSION"
+    ]
+  },
+  "firewall_attestation": {
+    "preoutcome_artifacts_not_modified": true,
+    "only_authorized_FY2024_official_report_read": true,
+    "only_frozen_cash_capex_cell_settled": true,
+    "other_FY2024_operating_or_financial_outcomes_not_used": true,
+    "FY2025_or_later_material_not_read": true,
+    "market_price_return_valuation_analyst_or_portfolio_material_not_read": true,
+    "cjo_valuation_buyband_report_or_investment_authority_not_created": true
+  }
+}

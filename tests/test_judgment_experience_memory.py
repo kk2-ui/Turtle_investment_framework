@@ -467,3 +467,35 @@ def test_real_different_company_sealed_application_freezes_a_question_not_a_targ
     serialized = json.dumps({"pack": pack, "receipt": receipt, "card": card}, ensure_ascii=False).lower()
     for forbidden in ("buyband", "investment_action", "target outcome"):
         assert forbidden not in serialized
+
+
+def test_real_flatglass_feedback_updates_one_cash_leg_without_granting_transfer_credit() -> None:
+    root = Path(__file__).resolve().parents[1]
+    app_dir = root / "docs/development/research/experience_applications/CN601865_20240401"
+    registry_path = root / "docs/development/research/training_campaigns/JUDGMENT_UTILITY_HISTORICAL_20260828/171_JUDGMENT_EXPERIENCE_REGISTRY_V1.json"
+    registry = json.loads(registry_path.read_text(encoding="utf-8"))
+    settlement = json.loads((app_dir / "11_FY2024_CUSTODIAN_OUTCOME_SETTLEMENT.json").read_text(encoding="utf-8"))
+    event = json.loads((app_dir / "14_EXPERIENCE_FEEDBACK_EVENT.json").read_text(encoding="utf-8"))
+    review = json.loads((app_dir / "13_INDEPENDENT_EXPERIENCE_FEEDBACK_REVIEW.json").read_text(encoding="utf-8"))
+
+    assert settlement["settled"] is True
+    cell = settlement["frozen_cell_settlements"][0]
+    assert cell["resolution_state"] == "RESOLVED__CASH_CAPEX_COVERED"
+    assert cell["frozen_calculation"]["cash_capex_coverage_RMB"] == 1027226543.62
+    assert event["status"] == "NOT_DIAGNOSTIC"
+    assert review["verdict"] == "ACCEPT"
+    assert review["permissions"]["transfer_validated"] is False
+    assert validate_experience_feedback_event(event)["state"] == "REVIEWABLE"
+    assert validate_experience_registry(registry)["state"] == "REVIEWABLE"
+
+    versions = sorted(
+        item["version"] for item in registry["records"]
+        if item["record_id"] == event["record_id"]
+    )
+    assert versions == [1, 2]
+    latest = next(
+        item for item in registry["records"]
+        if item["record_id"] == event["record_id"] and item["version"] == 2
+    )
+    assert latest["status"] == "RETRIEVAL_READY"
+    assert event["event_id"] in latest["feedback_event_refs"]
