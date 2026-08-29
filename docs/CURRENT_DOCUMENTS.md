@@ -10,7 +10,7 @@
 
 当前企业判断、训练、估值与黄金报告的最高层对象改为[企业投资承保系统 V1](development/research/TURTLE_ENTERPRISE_UNDERWRITING_SYSTEM_V1.md)中的 `EnterpriseUnderwritingEpisode`。它把宏观/行业处境、周期与结构、公司位置和适应、生存、正常化、owner cash、永久损失、价值路线及价格处理连接成一条连续投资主张。
 
-现有八维 `EnterpriseJudgmentEpisode`、E0--E3、J0--J4、Forecast、Comparative 和各类 receipt 继续作为底层证据、局部反馈和兼容投影，不能再作为投资者可见的主流程或顶层进度。新实现固定执行[企业投资承保纵向切片 V1 Goal](development/research/TURTLE_ENTERPRISE_UNDERWRITING_VERTICAL_SLICE_GOAL.md)：从干净 `main@5d64b91b354d` 开工，复用 Magna worked fixture 与 CN600585 现有教学证据，生成同源 CJO/valuation/report 投影。该切片不授予方法迁移、当前估值、BuyBand 或投资权限。
+现有八维 `EnterpriseJudgmentEpisode`、E0--E3、J0--J4、Forecast、Comparative 和各类 receipt 继续作为底层证据、局部反馈和兼容投影，不能再作为投资者可见的主流程或顶层进度。[企业投资承保纵向切片 V1 Goal](development/research/TURTLE_ENTERPRISE_UNDERWRITING_VERTICAL_SLICE_GOAL.md) 的 U1 已在独立候选分支完成：复用 Magna worked fixture 与 CN600585 现有教学证据，生成 `EnterpriseUnderwritingEpisode`、投资者读本及同源 CJO/valuation/report projection。海螺仍是 `RESULT_KNOWN_TEACHING_ONLY / WORKED_CASE`；该切片不授予方法迁移、当前估值、BuyBand 或投资权限。集成后直接进入跨路线 worked-case 课程和完整 Blind Replay，不再扩展字段、receipt 或准入控制。
 
 ## 2026-08-29 唯一训练集成基线
 

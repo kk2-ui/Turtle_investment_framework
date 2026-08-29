@@ -1,0 +1,60 @@
+{
+  "schema_version": "enterprise-underwriting-cjo-candidate-projection.v1",
+  "projection_id": "UW-CJO:EUE:CN600585:20240501:WORKED:V1",
+  "episode_id": "EUE:CN600585:20240501:WORKED:V1",
+  "company_id": "CN:600585",
+  "cutoff_at": "2024-05-01T00:00:00+08:00",
+  "sample_identity": "WORKED_CASE",
+  "underwriting_thesis_id": "UWT:CN600585:20240501:V1",
+  "authority": "TEACHING_CANDIDATE_ONLY",
+  "central_path": "海螺可承受当前水泥周期，国内核心可按保守中周期范围而非景气峰值处理；但国内新增资产尚未证明客户吸收、单位经济和现金回收，不能进入基准正常盈利或普通股现金。海外与产业链是组合缓冲和上行情景，不是项目回报的替代证据。",
+  "normal_earnings_treatment": "国内核心仅按量价、利用率和成本共同恢复的中周期范围承保；新增国内资产排除在基准之外，海外区域利润只作条件性上行情景。",
+  "owner_cash_treatment": "集团FY2024经营现金覆盖披露资本支出显示承受力，但维护/增长资本和普通股可得现金未闭合；owner cash 只能以范围和资产/EPV交叉约束，而不是单点OCF减资本支出。",
+  "permanent_loss_treatment": "核心风险是区域需求和价格长期疲弱使新旧资产低利用率、低回报并持续消耗维护或防御性资本，而非即时融资崩溃。",
+  "strongest_rival": "海外毛利改善、成本下降、现金缓冲和多元布局会使整体盈利先于国内周期恢复，新增布局最终成为有效组合缓冲。",
+  "monitoring": "国内量价利用率和吨毛利；新增项目的同边界客户/经济/现金桥；海外存量与新项目拆分；经济维护资本和普通股现金可达性。",
+  "component_treatments": [
+    {
+      "component_id": "CONSOLIDATED_SURVIVAL_AND_FINANCING",
+      "treatment": "UNDERWRITE",
+      "reason": "现金、贷款与债券资源支持公司穿越当前低迷，教学材料没有显示即时融资危机。",
+      "investment_consequence": "不以清算或短期融资崩溃作为基准路径；仍将资本结构与现金可得性和新增项目回报分开。",
+      "promotion_or_resolution_condition": "若流动性、再融资或债务期限显著恶化，应重新评估生存路径。",
+      "evidence_ids": ["CONCH-E1", "CONCH-E2"]
+    },
+    {
+      "component_id": "DOMESTIC_CORE_NORMAL_EARNINGS",
+      "treatment": "CONDITIONALLY_UNDERWRITE",
+      "reason": "成本改善与既有区域网络提供缓冲，但需求、价格、销量和毛利仍受压。",
+      "investment_consequence": "只按中周期量价和成本恢复范围承保国内核心，不使用景气峰值或设计产能外推。",
+      "promotion_or_resolution_condition": "区域量价、利用率和单位毛利在兼容口径上同时恢复。",
+      "evidence_ids": ["CONCH-E1", "CONCH-E3"]
+    },
+    {
+      "component_id": "DOMESTIC_INCREMENTAL_ASSET_RETURN",
+      "treatment": "EXCLUDE_FROM_BASE",
+      "reason": "投产和建设只证明资源承诺；没有项目级客户、单位经济、现金回收和资本基数桥。",
+      "investment_consequence": "国内新增资产不取得增量正常盈利或 owner-cash 信用。",
+      "promotion_or_resolution_condition": "同一责任单元连续披露客户量价、单位成本、维护/扩张资本和累计现金回收。",
+      "evidence_ids": ["CONCH-E1", "CONCH-E4"]
+    },
+    {
+      "component_id": "OVERSEAS_AND_INDUSTRIAL_CHAIN_OPTION",
+      "treatment": "SCENARIO_ONLY",
+      "reason": "海外区域毛利改善是真实组合缓冲，但其数据混合存量与新项目。",
+      "investment_consequence": "保留为上行情景和反方，不作为新增项目价值或国内盈利修复的替代。",
+      "promotion_or_resolution_condition": "可拆分区域/项目利润、现金和资本回报，且显示可重复客户吸收。",
+      "evidence_ids": ["CONCH-E1", "CONCH-E3"]
+    },
+    {
+      "component_id": "ORDINARY_SHARE_OWNER_CASH",
+      "treatment": "CANNOT_BOUND",
+      "reason": "维护/扩张资本、项目现金、营运资本、税、少数股东、债务融资和普通股可得性没有形成同一桥。",
+      "investment_consequence": "不把 FY2024 OCF 减披露资本支出28.57亿元当作 owner cash；价值路线使用范围与资产/EPV交叉约束。",
+      "promotion_or_resolution_condition": "补齐经济维护资本、增长资本、普通股现金可达性和项目级回收的兼容桥。",
+      "evidence_ids": ["CONCH-E1", "CONCH-E4"]
+    }
+  ],
+  "existing_cjo_adapter": "scripts/enterprise_judgment_core.py:compile_cjo_candidate",
+  "boundary": "A projection for the existing CJO compiler; it is not a Frozen CJO and cannot authorize value, price, BuyBand, report publication, or investment action."
+}

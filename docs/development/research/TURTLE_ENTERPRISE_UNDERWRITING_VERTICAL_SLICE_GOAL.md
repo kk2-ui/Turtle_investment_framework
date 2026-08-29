@@ -1,14 +1,14 @@
 # Goal：企业投资承保纵向切片 V1
 
-> 状态：`READY_FOR_IMPLEMENTATION`
+> 状态：`IMPLEMENTATION_COMPLETE / PENDING_INTEGRATION`
 >
-> 设计基线：`main@5d64b91b354d`
+> 实现基线：`main@542bec1`
 >
 > 上位设计：[Turtle 企业投资承保系统 V1](TURTLE_ENTERPRISE_UNDERWRITING_SYSTEM_V1.md)
 
 ## 1. Goal
 
-从干净 `main@5d64b91b354d` 创建 linked worktree，实现一条可由投资者直接阅读的麦格纳式企业承保纵向切片：
+已从干净 `main@542bec1` 创建 linked worktree，实现一条可由投资者直接阅读的麦格纳式企业承保纵向切片：
 
 ```text
 处境与行业周期/结构
@@ -22,6 +22,8 @@
 ```
 
 本 Goal 的完成物不是新控制平面，而是一条真实、连续、公司特定的投资判断。
+
+U1 已交付 Magna 与 CN600585 worked cases、CN600585 投资者读本、同源 CJO candidate／valuation-route request／Golden Report handoff、定向测试和独立产品审阅。它仍只提供 `RESULT_KNOWN_TEACHING_ONLY / WORKED_CASE` 证据：不授予盲测、迁移、当前估值、BuyBand、发布或投资权限。
 
 ## 2. 固定范围
 
