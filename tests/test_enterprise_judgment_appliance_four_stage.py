@@ -282,3 +282,29 @@ def test_e2_settlement_cannot_relabel_a_field_or_self_admit_comparative() -> Non
     assert not four_stage.validate_e2_mechanical_settlement(
         admitted, supor_episode=episode,
     )["valid"]
+
+
+def test_independent_postoutcome_review_binds_settlement_and_keeps_e3_closed() -> None:
+    settlement = _load(FOUR_STAGE / "08_e2_mechanical_settlement.json")
+    review = _load(FOUR_STAGE / "10_independent_postoutcome_review.json")
+
+    assert review["review_status"] == "PASS"
+    assert review["reviewed_commit"] == "9fce71708e6245f3270555f683a2508f6ae89ef2"
+    assert review["settlement_receipt_ref"] == {
+        "artifact": "08_e2_mechanical_settlement.json",
+        "receipt_id": settlement["receipt_id"],
+        "episode_id": settlement["episode_id"],
+    }
+    assert [row["mechanical_label"] for row in review["persisted_field_labels"]] == [
+        row["mechanical_label"] for row in settlement["field_results"]
+    ] == ["MATCH", "MATCH", "MISS"]
+    assert review["frozen_resolution"] == settlement["frozen_resolution"]["combined_resolution"] == (
+        "MIXED_PATTERN_H_A_NOT_ESTABLISHED"
+    )
+    assert review["e3_comparative_status"] == settlement["e3_comparative_status"] == "NOT_ADMITTED"
+    assert review["rights"] == settlement["rights"] == four_stage.RIGHTS
+    assert set(review["reviewer"]["distinct_from"]) == {
+        continuous.FORECASTER_ID,
+        continuous.CUSTODIAN_ID,
+    }
+    assert review["reviewer"]["reviewer_id"] not in review["reviewer"]["distinct_from"]

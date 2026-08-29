@@ -1,0 +1,94 @@
+{
+  "schema_version": "enterprise-judgment-appliance-e2-independent-postoutcome-review.v1",
+  "review_id": "APPLIANCE:E2:CN002032:20180930:INDEPENDENT-POSTOUTCOME-REVIEW:V1",
+  "reviewed_commit": "9fce71708e6245f3270555f683a2508f6ae89ef2",
+  "reviewer": {
+    "reviewer_id": "ROLE:APPLIANCE-R11:INDEPENDENT_POSTOUTCOME_REVIEWER",
+    "distinct_from": [
+      "ROLE:APPLIANCE-R11:CN002032:FORECASTER_FUNCTION",
+      "ROLE:APPLIANCE-R11:CN002032:INDEPENDENT_OUTCOME_CUSTODIAN"
+    ]
+  },
+  "review_status": "PASS",
+  "settlement_receipt_ref": {
+    "artifact": "08_e2_mechanical_settlement.json",
+    "receipt_id": "APPLIANCE-FOUR-STAGE:E2:CN002032:MECHANICAL-SETTLEMENT:V1",
+    "episode_id": "APPLIANCE-R11:CN002032:20180930:V1"
+  },
+  "pass_findings": [
+    {
+      "finding_id": "DB_MECHANICAL_LABELS_BOUND",
+      "finding": "The recovery-v2 controller persisted MATCH, MATCH and MISS for issuer revenue, electric-pot revenue and issuer operating cash flow respectively."
+    },
+    {
+      "finding_id": "FROZEN_RESOLUTION_APPLIED",
+      "finding": "The pre-outcome resolution contract maps the settled pattern to MIXED_PATTERN_H_A_NOT_ESTABLISHED."
+    },
+    {
+      "finding_id": "FAVORABLE_OCF_MISS_NOT_RELABELED",
+      "finding": "The operating-cash-flow MISS is correctly described as an economically favorable upward deviation from the frozen STABLE band and remains mechanically labeled MISS."
+    },
+    {
+      "finding_id": "PRODUCT_EVIDENCE_CEILING_PRESERVED",
+      "finding": "Absolute electric-pot revenue growth is not promoted to competitive share, customer loyalty or management-action causality."
+    },
+    {
+      "finding_id": "COMPARATIVE_BRIDGE_UNKNOWN_PRESERVED",
+      "finding": "Issuer-revenue and operating-cash-flow reported comparative values that differ from the frozen baselines remain UNKNOWN perimeter or restatement bridge questions."
+    },
+    {
+      "finding_id": "PREOUTCOME_OBJECTS_NOT_REWRITTEN",
+      "finding": "The accepted R11 episode and the E2 resolution contract predate outcome access and were not rewritten after the outcome was observed."
+    },
+    {
+      "finding_id": "E3_AND_DOWNSTREAM_RIGHTS_CLOSED",
+      "finding": "E3 remains NOT_ADMITTED and the settlement grants no method-transfer, CJO, valuation, report, BuyBand or investment authority."
+    }
+  ],
+  "persisted_field_labels": [
+    {
+      "measurement_contract_id": "MHE:CONTRACT:APPLIANCE-R11:CN002032:FY2018:ISSUER_REVENUE:V1",
+      "mechanical_label": "MATCH"
+    },
+    {
+      "measurement_contract_id": "MHE:CONTRACT:APPLIANCE-R11:CN002032:FY2018:ELECTRIC_POT_REVENUE:V1",
+      "mechanical_label": "MATCH"
+    },
+    {
+      "measurement_contract_id": "MHE:CONTRACT:APPLIANCE-R11:CN002032:FY2018:ISSUER_OCF:V1",
+      "mechanical_label": "MISS"
+    }
+  ],
+  "db_lifecycle_counts": {
+    "decision_contracts": 3,
+    "technical_route_identities": 3,
+    "measurement_contracts": 3,
+    "static_evidence": 3,
+    "predictions": 3,
+    "authorized_access": 3,
+    "field_ready_inventory": 3,
+    "observations": 3,
+    "settlements": 3
+  },
+  "frozen_resolution": "MIXED_PATTERN_H_A_NOT_ESTABLISHED",
+  "non_blocking_caveat": "The statement that product growth was slower than issuer growth is only a comparison of movements from their separately frozen baselines. Because the issuer comparative column differs from the frozen baseline, it cannot be upgraded to a perimeter-matched organic-growth, share or loyalty conclusion.",
+  "review_execution": {
+    "network_used": false,
+    "browser_used": false,
+    "runtime_values_treated_as_standalone_authority": false,
+    "authority_basis": "Controller-persisted contracts, observations and settlements bound to official source receipts."
+  },
+  "e3_comparative_status": "NOT_ADMITTED",
+  "allowed_outputs": [
+    "E2_REVIEW_ACCEPTANCE",
+    "RESEARCH_AGENDA"
+  ],
+  "rights": {
+    "method_transfer": "NOT_AUTHORIZED",
+    "cjo": "NOT_AUTHORIZED",
+    "valuation": "NOT_AUTHORIZED",
+    "report": "NOT_AUTHORIZED",
+    "buy_band": "NOT_AUTHORIZED",
+    "investment": "NOT_AUTHORIZED"
+  }
+}
