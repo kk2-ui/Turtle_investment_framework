@@ -1,0 +1,31 @@
+{
+  "schema_version": "turtle-minimal-historical-episode-static-evidence.v1",
+  "evidence_receipt_id": "MHE:EVIDENCE:CN600839:FY2017:C1:V2",
+  "evidence_receipt_version": 1,
+  "measurement_contract_ref": {
+    "measurement_contract_id": "MHE:CONTRACT:CN600839:FY2019:V2",
+    "measurement_contract_version": 2
+  },
+  "company_id": "CN:600839",
+  "issuer_id": "ISSUER:CN:600839",
+  "cutoff_at": "2018-09-30T23:59:59+08:00",
+  "metric_id": "ISSUER_CONSOLIDATED_OPERATING_REVENUE_RMB",
+  "window_id": "ONE_YEAR",
+  "curator_id": "CURATOR:CN600839:REVENUE:C1:20260827",
+  "source": {
+    "source_id": "CNINFO:600839:ANN:20180418:1204647552",
+    "source_url": "https://static.cninfo.com.cn/finalpage/2018-04-18/1204647552.PDF",
+    "source_type": "OFFICIAL_STATIC_FILING",
+    "published_at": "2018-04-18",
+    "issuer_id": "ISSUER:CN:600839",
+    "metric_id": "ISSUER_CONSOLIDATED_OPERATING_REVENUE_RMB",
+    "responsibility_boundary": "LISTED_CONSOLIDATED_ISSUER",
+    "unit": "RMB",
+    "field_ref": "FY2017 Sichuan Changhong annual report, consolidated income statement, PDF p. 67, 其中：营业收入.",
+    "numeric_value": 77632476743.23
+  },
+  "object_class": "MINIMAL_HISTORICAL_STATIC_EVIDENCE",
+  "claim_class": "CUTOFF_VISIBLE_OFFICIAL_FIELD",
+  "allowed_outputs": ["MECHANICAL_SETTLEMENT_ONLY"],
+  "method_transfer_rights": "NO_METHOD_TRANSFER_RIGHTS"
+}

@@ -1,0 +1,108 @@
+{
+  "schema_version": "turtle-minimal-historical-episode-settlement-completion-receipt.v1",
+  "receipt_id": "MHE:RECEIPT:CN000921:FY2017:V2:SETTLEMENT_COMPLETION",
+  "receipt_class": "RESULT_BLIND_POST_SETTLEMENT_INTEGRITY_REVIEW",
+  "measurement_contract_ref": {
+    "measurement_contract_id": "MHE:CONTRACT:CN000921:FY2017:V2",
+    "measurement_contract_version": 2
+  },
+  "decision_contract_ref": {
+    "decision_contract_id": "MHE:DECISION:CN000921:C1:V2",
+    "decision_contract_version": 1
+  },
+  "technical_route_identity_ref": {
+    "technical_route_identity_id": "MHE:ROUTE:CN000921:C1:V1",
+    "technical_route_identity_version": 1
+  },
+  "object_ids": {
+    "static_evidence": {
+      "evidence_receipt_id": "MHE:EVIDENCE:CN000921:FY2016:C1:V2",
+      "evidence_receipt_version": 1
+    },
+    "prediction": {
+      "prediction_id": "MHE:PREDICTION:CN000921:FY2017:C1:V2"
+    },
+    "outcome_access": {
+      "authorization_id": "MHE:ACCESS:CN000921:FY2017:REVENUE:V2"
+    },
+    "outcome_source_inventory": {
+      "inventory_receipt_id": "MHE:INVENTORY:CN000921:FY2017:V2:OUTCOME"
+    },
+    "observation": {
+      "observation_id": "MHE:OBSERVATION:CN000921:FY2017:V2:OUTCOME"
+    },
+    "settlement": {
+      "settlement_id": "MHE:SETTLEMENT:CN000921:FY2017:V2:OUTCOME"
+    }
+  },
+  "counts": {
+    "measurement_contract": 1,
+    "decision_contract": 1,
+    "technical_route_identity": 1,
+    "static_evidence": 1,
+    "prediction": 1,
+    "outcome_access": 1,
+    "outcome_source_inventory": 1,
+    "observation": 1,
+    "settlement": 1
+  },
+  "contract_identity_valid": true,
+  "chronological_validity": {
+    "cutoff_precedes_decision_contract_freeze": true,
+    "decision_contract_precedes_route_identity": true,
+    "route_identity_precedes_measurement_contract": true,
+    "cutoff_precedes_measurement_contract_freeze": true,
+    "measurement_contract_precedes_static_evidence": true,
+    "static_evidence_precedes_prediction": true,
+    "prediction_precedes_outcome_access": true,
+    "outcome_access_precedes_source_inventory": true,
+    "source_inventory_precedes_observation": true,
+    "observation_precedes_settlement": true
+  },
+  "role_separation": {
+    "forecaster_id": "FORECASTER:CN000921:C1:20260827",
+    "custodian_id": "CUSTODIAN:CN000921:FY2017:20260827",
+    "checks": {
+      "forecaster_matches_frozen_contract": true,
+      "custodian_matches_frozen_contract_at_access": true,
+      "custodian_matches_frozen_contract_at_inventory": true,
+      "custodian_matches_frozen_contract_at_observation": true,
+      "forecaster_and_custodian_are_distinct": true
+    }
+  },
+  "output_permissions": {
+    "allowed_outputs": [
+      "MECHANICAL_SETTLEMENT_ONLY"
+    ],
+    "method_transfer_rights": "NO_METHOD_TRANSFER_RIGHTS",
+    "checks": {
+      "only_mechanical_settlement_is_permitted": true,
+      "method_transfer_rights_are_absent": true,
+      "inventory_is_field_ready": true
+    }
+  },
+  "authority_boundary": {
+    "learning_authority": false,
+    "cjo_authority": false,
+    "valuation_authority": false,
+    "report_authority": false,
+    "investment_authority": false
+  },
+  "structural_test": {
+    "name": "cn000921_v2_post_settlement_result_blind_integrity",
+    "passed": true,
+    "assertions": [
+      "frozen contract identity and route linkage agree with the isolated database",
+      "each required lifecycle object has exactly one stored record",
+      "frozen chronology is strictly ordered through settlement",
+      "forecaster and custodian identities are distinct and custody-consistent",
+      "the frozen contract permits only mechanical settlement and transfers no method rights"
+    ]
+  },
+  "result_blindness": {
+    "outcome_value_disclosed": false,
+    "prediction_direction_disclosed": false,
+    "realized_direction_disclosed": false,
+    "match_miss_disclosed": false
+  }
+}

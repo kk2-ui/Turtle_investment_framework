@@ -1200,6 +1200,24 @@ def _rmb_source_verification(source: dict, *, subject_ref: dict) -> dict:
     }
 
 
+def test_rmb_source_verification_accepts_consolidated_revenue_note_column() -> None:
+    """A statutory income statement may put the line-note column before revenue."""
+    source = {
+        "metric_id": "ISSUER_CONSOLIDATED_OPERATING_REVENUE_RMB",
+        "responsibility_boundary": "LISTED_CONSOLIDATED_ISSUER",
+        "unit": "RMB",
+        "field_ref": "FY2016 annual report, consolidated income statement, PDF p. 62, 营业收入.",
+        "numeric_value": 108302565293.70,
+    }
+    verification = {
+        "exact_quote": "其中：营业收入 七（四十二） 108,302,565,293.70 97,745,137,194.16",
+        "numeric_value": source["numeric_value"],
+        "unit": source["unit"],
+    }
+
+    runner._verify_quote_value(verification, source=source)
+
+
 def test_real_runner_freezes_cn600425_rmb_revenue_preoutcome_chain_only(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch,
 ) -> None:

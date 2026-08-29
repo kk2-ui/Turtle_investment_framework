@@ -1,0 +1,47 @@
+{
+  "schema_version": "minimal-pre-outcome-curator-stop-receipt.v1",
+  "receipt_id": "CURATOR:CN000651:C1:ELIGIBILITY_STOP:V1",
+  "company_id": "CN:000651",
+  "cutoff_at": "2017-04-30T23:59:59+08:00",
+  "status": "EVIDENCE_INELIGIBLE",
+  "selection_basis": {
+    "rule": "From the C1 J3 population, choose the first company by ascending company_id.",
+    "selected_company_id": "CN:000651",
+    "source_register_ref": "CN_APPLIANCE_INDUSTRY_LEARNING_BLOCK_V1_SOURCE_REGISTER.json",
+    "j234_ref": "J2:CN:000651:C1"
+  },
+  "eligibility_rule": "A result-unseen curator may emit a cutoff-before field only when every material input read by that curator is cutoff-before or an allowed value-free technical identity. Exposure to post-cutoff company material terminates this curator's eligibility before source extraction.",
+  "finding": {
+    "root_cause": [
+      "REASONING"
+    ],
+    "material_reason": "The requested existing-record eligibility check exposed post-cutoff company material. The curator stopped before opening any CN:000651 annual-report PDF or technical route endpoint, so it cannot truthfully represent a newly emitted record as result-unseen.",
+    "economic_impact": "No CN:000651 metric may enter a forecast, contract, outcome-access request, settlement, learning record, CJO, valuation, report, or investment decision from this curator run.",
+    "missing_fact": "A fresh independent curator must establish the one cutoff-before, directly disclosed listed-consolidated field without accessing post-cutoff company material.",
+    "prohibited_assumptions": [
+      "A later company-judgment PRE_FREEZE record can determine eligibility for the distinct 2017 C1 Minimal lane.",
+      "A directly disclosed FY2016 field would cure this curator's exposure after post-cutoff material was read.",
+      "The absence of a submitted baseline means CN:000651 has no stable public field."
+    ],
+    "executable_remediation": "Assign a fresh curator whose read set is limited to the C1 J234/source-register identities, the selected cutoff-before official static PDF, and the value-free code-to-organization resolver. The curator must create a new immutable submission before any forecast or outcome access.",
+    "acceptance_criteria": "The replacement submission records one official static PDF identity, pre-cutoff publication date, physical page, exact quote, listed-consolidated metric/unit, and value-free route identity; its declared input boundary excludes all post-cutoff materials."
+  },
+  "not_a_company_conclusion": [
+    "This stop does not conclude that CN:000651 lacks a stable issuer-consolidated metric.",
+    "This stop does not evaluate CN:000651's operating quality, customer position, cash, owner cash, permanent-loss risk, price, or return."
+  ],
+  "curator_actions": {
+    "cutoff_before_company_pdf_opened": false,
+    "technical_route_endpoint_opened": false,
+    "outcome_source_enumerated": false,
+    "outcome_source_opened": false,
+    "forecast_or_prediction_read": false,
+    "curator_submission_emitted": false
+  },
+  "permissions": {
+    "allowed_outputs": [
+      "EVIDENCE_INELIGIBLE"
+    ],
+    "method_transfer_rights": "NO_METHOD_TRANSFER_RIGHTS"
+  }
+}

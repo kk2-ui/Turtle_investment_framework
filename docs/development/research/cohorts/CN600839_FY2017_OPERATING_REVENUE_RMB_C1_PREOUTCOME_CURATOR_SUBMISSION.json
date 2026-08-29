@@ -1,0 +1,105 @@
+{
+  "schema_version": "static-pre-outcome-curator-field-submission.v1",
+  "submission_class": "JSON_CURATOR_FIELD_SUBMISSION",
+  "submission_id": "CURATOR:CN600839:FY2017:OPERATING_REVENUE_RMB:C1:V1",
+  "submission_state": "READY_FOR_INDEPENDENT_CONTRACT_FREEZE",
+  "curator_identity": {
+    "curator_id": "CURATOR:CN600839:REVENUE:C1:20260827",
+    "role": "INDEPENDENT_PRE_OUTCOME_STATIC_CURATOR"
+  },
+  "scope": {
+    "company_id": "CN:600839",
+    "issuer_id": "ISSUER:CN:600839",
+    "issuer_legal_name": "四川长虹电器股份有限公司",
+    "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600839",
+    "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+    "cutoff_at": "2018-09-30T23:59:59+08:00",
+    "baseline_measurement_period_end": "2017-12-31",
+    "proposed_outcome_period_end": "2019-12-31",
+    "metric_id": "ISSUER_CONSOLIDATED_OPERATING_REVENUE_RMB",
+    "metric_definition": "Consolidated income-statement operating revenue (营业收入) for the fiscal year, in RMB.",
+    "unit": "RMB"
+  },
+  "source": {
+    "source_id": "CNINFO:600839:ANN:20180418:1204647552",
+    "source_url": "https://static.cninfo.com.cn/finalpage/2018-04-18/1204647552.PDF",
+    "source_type": "OFFICIAL_STATIC_FILING",
+    "report_type": "ANNUAL_REPORT",
+    "reporting_period_end": "2017-12-31",
+    "published_at": "2018-04-18",
+    "availability_precision": "DATE_ONLY",
+    "issuer_id": "ISSUER:CN:600839",
+    "responsibility_boundary": "LISTED_CONSOLIDATED_ISSUER",
+    "unit": "RMB",
+    "physical_page": 67,
+    "field_ref": "FY2017 Sichuan Changhong annual report, consolidated income statement, PDF p. 67, 其中：营业收入.",
+    "exact_quote": "2017 年 1—12 月  单位:元币种:人民币；其中：营业收入  77,632,476,743.23  67,175,343,225.71",
+    "numeric_value": 77632476743.23,
+    "numeric_value_period_end": "2017-12-31",
+    "comparative_value_in_same_table": 67175343225.71,
+    "comparative_value_period_end": "2016-12-31"
+  },
+  "responsibility_boundary_note": "The field is the listed issuer's consolidated revenue across its controlled businesses. It is not a white-goods-only, television-only, customer-specific, or owner-cash measure; the submission makes no such conversion.",
+  "technical_outcome_route_identity": {
+    "identity_class": "VALUE_FREE_TECHNICAL_ROUTE_IDENTITY",
+    "security_code": "600839",
+    "organization_id": "gssh0600839",
+    "resolver_endpoint": "http://www.cninfo.com.cn/new/data/szse_stock.json",
+    "resolver_version": "cninfo-stock-map-code-orgid.v1",
+    "resolver_selector": "stockList entry where code equals 600839, then orgId",
+    "observed_at": "2026-08-27T00:00:00+08:00",
+    "technical_identity_only": true,
+    "no_outcome_period_source_enumerated": true,
+    "no_outcome_period_source_opened": true,
+    "no_outcome_title_or_value_retained": true
+  },
+  "controller_handoff": {
+    "next_legal_step": "An independent controller may first freeze a Decision Contract, then validate this code-to-organization route and freeze a v2 Measurement Contract before any forecaster writes a direction or any custodian receives outcome access.",
+    "future_outcome_route": {
+      "provider": "CNINFO_ANNOUNCEMENT_METADATA",
+      "provider_version": "phase10-cninfo-announcement-query.v1",
+      "security_code": "600839",
+      "organization_id": "gssh0600839",
+      "tab_name": "fulltext",
+      "announcement_category": "ANNUAL_REPORT",
+      "begin_date": "2020-01-01",
+      "end_date": "2020-12-31",
+      "page_size": 30,
+      "static_pdf_url_policy": "CNINFO_STATIC_FINALPAGE_PDF"
+    },
+    "curator_scope": "STATIC_BASELINE_AND_VALUE_FREE_TECHNICAL_ROUTE_ONLY_NO_FORECAST_OR_OUTCOME_MATERIAL"
+  },
+  "information_boundary": {
+    "read_inputs": [
+      "CNINFO:600839:ANN:20180418:1204647552",
+      "CNINFO code-to-organization technical identity for security code 600839"
+    ],
+    "prohibited_inputs": [
+      "OUTCOME_DOCUMENTS",
+      "OUTCOME_METADATA_EXCEPT_VALUE_FREE_CODE_TO_ORGANIZATION_ROUTE",
+      "FORECASTS",
+      "PREDICTIONS",
+      "PRIOR_ROUND2_FEEDBACK",
+      "CUSTODIAN_MATERIAL",
+      "H2",
+      "R-103",
+      "PRICE",
+      "RETURNS",
+      "CJO",
+      "REPORT",
+      "LEARNING"
+    ]
+  },
+  "permissions": {
+    "pre_outcome_only": true,
+    "forecast_authoring_permitted": false,
+    "outcome_access_permitted": false,
+    "learning_authority": "NONE",
+    "allowed_outputs": [
+      "CURATED_CUTOFF_BASELINE_FIELD",
+      "VALUE_FREE_TECHNICAL_ROUTE_IDENTITY",
+      "MECHANICAL_SETTLEMENT_ONLY"
+    ],
+    "method_transfer_rights": "NO_METHOD_TRANSFER_RIGHTS"
+  }
+}

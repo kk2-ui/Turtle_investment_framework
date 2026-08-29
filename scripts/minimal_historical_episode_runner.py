@@ -49,7 +49,12 @@ _RMB_FINANCIAL_FIELD_RULES = {
     "ISSUER_CONSOLIDATED_OPERATING_REVENUE_RMB": {
         "field_ref_marker": "consolidated income statement",
         "field_ref_label": "营业收入",
-        "row": re.compile(r"(?:其中[:：])?营业收入\s*(?P<current_period>[0-9][0-9,，]*(?:\.[0-9]+)?)"),
+        "row": re.compile(
+            r"(?:其中[:：])?营业收入"
+            r"(?:\s+(?:[一二三四五六七八九十百千]+[（(][一二三四五六七八九十百千]+[)）]|"
+            r"[一二三四五六七八九十]+、\d+))?\s+"
+            r"(?P<current_period>[0-9][0-9,，]*(?:\.[0-9]+)?)"
+        ),
     },
     "ISSUER_CONSOLIDATED_OPERATING_CASH_FLOW_RMB": {
         "field_ref_marker": "consolidated cash-flow statement",
