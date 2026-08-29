@@ -1,0 +1,167 @@
+{
+  "source_identity": {
+    "authorized_source": {
+      "legal_name": "招商银行股份有限公司",
+      "ticker": "600036",
+      "report_title": "招商银行股份有限公司2024年度报告",
+      "disclosure_date": "2025-03-26",
+      "announcement_id": "1222895154",
+      "source_url": "http://static.cninfo.com.cn/finalpage/2025-03-26/1222895154.PDF"
+    },
+    "observed_pdf": {
+      "cover_legal_name": "招商银行股份有限公司",
+      "cover_ticker": "600036",
+      "contents_report_title": "招商银行股份有限公司2024年度报告（A股）",
+      "pdf_page_count": 362
+    },
+    "resolution_state": "MATCHED"
+  },
+  "cells": [
+    {
+      "cell_id": "CMB24_01_RETAIL_AUM_AND_WEALTH_INCOME",
+      "source_metrics": [
+        {
+          "pdf_page": 51,
+          "report_page": 49,
+          "reported_scope": "本公司",
+          "metric": "管理零售客户总资产(AUM)余额",
+          "value": 149267.14,
+          "unit": "RMB 100m",
+          "normalized_value": 14.926714,
+          "normalized_unit": "RMB tn"
+        },
+        {
+          "pdf_page": 24,
+          "report_page": 22,
+          "reported_scope": "本集团",
+          "metric": "财富管理手续费及佣金收入",
+          "value": 220.05,
+          "unit": "RMB 100m"
+        },
+        {
+          "pdf_page": 24,
+          "report_page": 22,
+          "reported_scope": "本集团",
+          "metric": "资产管理手续费及佣金收入",
+          "value": 107.51,
+          "unit": "RMB 100m"
+        },
+        {
+          "pdf_page": 24,
+          "report_page": 22,
+          "reported_scope": "本集团",
+          "metric": "托管业务佣金收入",
+          "value": 48.91,
+          "unit": "RMB 100m"
+        }
+      ],
+      "mechanical_calculations": {
+        "required_AUM_scope": "本集团",
+        "observed_AUM_scope": "本公司",
+        "AUM_scope_match": false,
+        "big_wealth_management_income_RMB_100m": "220.05 + 107.51 + 48.91 = 376.47",
+        "big_wealth_management_income_RMB_bn": "376.47 / 10 = 37.647",
+        "wealth_income_threshold_test": "37.647 < 45.268"
+      },
+      "resolution_state": "LOCAL_MISMATCH"
+    },
+    {
+      "cell_id": "CMB24_02_GROUP_NIM_STABILITY",
+      "source_metrics": [
+        {
+          "pdf_page": 22,
+          "report_page": 20,
+          "reported_scope": "本集团",
+          "metric": "净利息收益率",
+          "value": 1.98,
+          "unit": "%"
+        }
+      ],
+      "mechanical_calculations": {
+        "pass_test": "1.98 >= 2.15 = false",
+        "fail_test": "1.98 < 2.04 = true"
+      },
+      "resolution_state": "FAIL"
+    },
+    {
+      "cell_id": "CMB24_03_COMPONENT_CREDIT_RECOGNITION",
+      "source_metrics": [
+        {
+          "pdf_page": 34,
+          "report_page": 32,
+          "reported_scope": "本公司",
+          "metric": "房地产业不良贷款率",
+          "value": 4.74,
+          "unit": "%"
+        },
+        {
+          "pdf_page": 32,
+          "report_page": 30,
+          "reported_scope": "本集团",
+          "metric": "信用卡贷款不良贷款率",
+          "value": 1.75,
+          "unit": "%"
+        }
+      ],
+      "mechanical_calculations": {
+        "bank_real_estate_NPL_test": "4.74 <= 5.01 = true",
+        "group_credit_card_NPL_test": "1.75 <= 1.75 = true"
+      },
+      "resolution_state": "PASS"
+    },
+    {
+      "cell_id": "CMB24_04_RISK_CAPITAL_TRACTION",
+      "source_metrics": [
+        {
+          "pdf_page": 38,
+          "report_page": 36,
+          "reported_scope": "本集团高级法",
+          "metric": "核心一级资本充足率",
+          "value": 14.86,
+          "unit": "%"
+        },
+        {
+          "pdf_page": 38,
+          "report_page": 36,
+          "reported_scope": "本集团高级法",
+          "metric": "核心一级资本净额",
+          "value": 1023048,
+          "unit": "RMB m",
+          "prior_year_value": 907308,
+          "prior_year_unit": "RMB m"
+        },
+        {
+          "pdf_page": 38,
+          "report_page": 36,
+          "reported_scope": "本集团高级法",
+          "metric": "风险加权资产（考虑资本底线要求）",
+          "value": 6885783,
+          "unit": "RMB m",
+          "prior_year_value": 6608021,
+          "prior_year_unit": "RMB m"
+        }
+      ],
+      "mechanical_calculations": {
+        "CET1_ratio_test": "14.86 >= 13.73 = true",
+        "CET1_capital_growth_percent": "(1023048 - 907308) / 907308 * 100 = 12.756417886760",
+        "RWA_growth_percent": "(6885783 - 6608021) / 6608021 * 100 = 4.203406738568",
+        "growth_traction_test": "12.756417886760 >= 4.203406738568 = true"
+      },
+      "resolution_state": "PASS"
+    }
+  ],
+  "firewall_attestations": {
+    "authorized_pdf_only": true,
+    "authorized_source_url_only": "http://static.cninfo.com.cn/finalpage/2025-03-26/1222895154.PDF",
+    "frozen_cell_ids_only": [
+      "CMB24_01_RETAIL_AUM_AND_WEALTH_INCOME",
+      "CMB24_02_GROUP_NIM_STABILITY",
+      "CMB24_03_COMPONENT_CREDIT_RECOGNITION",
+      "CMB24_04_RISK_CAPITAL_TRACTION"
+    ],
+    "outside_outcome_sources_accessed": false,
+    "non_frozen_outcome_facts_recorded": false,
+    "preoutcome_artifacts_modified": false,
+    "enterprise_judgment_or_investment_output": false
+  }
+}

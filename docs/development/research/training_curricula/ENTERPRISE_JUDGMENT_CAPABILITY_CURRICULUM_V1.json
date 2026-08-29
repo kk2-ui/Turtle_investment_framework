@@ -1710,12 +1710,15 @@
       "company_name": "招商银行",
       "industry_id": "COMMERCIAL_BANKING_BALANCE_SHEET_RISK_CAPITAL_AND_CASH_FLOW",
       "track": "BLIND_JUDGMENT",
-      "status": "REGISTERED",
+      "status": "SETTLED",
       "cutoff_at": "2024-05-01T00:00:00+08:00",
-      "outcome_window": null,
-      "outcome_access": "SEALED",
+      "outcome_window": {
+        "starts_at": "2025-03-26T00:00:00+08:00",
+        "ends_at": "2025-05-01T00:00:00+08:00"
+      },
+      "outcome_access": "REVEALED_AFTER_FREEZE",
       "selection_exposure": "METADATA_ONLY",
-      "role_isolation_state": "BLIND_PACKET_READY",
+      "role_isolation_state": "ROLE_ISOLATION_PROVED",
       "primary_capability_units": [
         "BUSINESS_MODEL_ECONOMICS",
         "OWNER_CASH_CONVERSION"
@@ -1725,9 +1728,22 @@
       "comparative_mode": "NOT_REQUIRED",
       "source_refs": [
         "docs/development/research/training_campaigns/JUDGMENT_UTILITY_HISTORICAL_20260828/128_CN600036_BLIND_EXTENSION_SELECTION_REGISTER.json",
-        "docs/development/research/training_campaigns/JUDGMENT_UTILITY_HISTORICAL_20260828/129_CN600036_CUTOFF_BEFORE_SOURCE_PACKET_RECEIPT.json"
+        "docs/development/research/training_campaigns/JUDGMENT_UTILITY_HISTORICAL_20260828/129_CN600036_CUTOFF_BEFORE_SOURCE_PACKET_RECEIPT.json",
+        "docs/development/research/training_campaigns/JUDGMENT_UTILITY_HISTORICAL_20260828/131_CN600036_PREOUTCOME_JUDGMENT.json",
+        "docs/development/research/training_campaigns/JUDGMENT_UTILITY_HISTORICAL_20260828/132_CN600036_PREOUTCOME_INDEPENDENT_REVIEW.md",
+        "docs/development/research/training_campaigns/JUDGMENT_UTILITY_HISTORICAL_20260828/133_CN600036_OUTCOME_ACCESS_AUTHORIZATION.json",
+        "docs/development/research/training_campaigns/JUDGMENT_UTILITY_HISTORICAL_20260828/134_CN600036_CUSTODIAN_OUTCOME_SETTLEMENT.json",
+        "docs/development/research/training_campaigns/JUDGMENT_UTILITY_HISTORICAL_20260828/135_CN600036_INDEPENDENT_POSTOUTCOME_REVIEW.md",
+        "docs/development/research/training_campaigns/JUDGMENT_UTILITY_HISTORICAL_20260828/136_CN600036_INVESTOR_READOUT.md",
+        "docs/development/research/training_campaigns/JUDGMENT_UTILITY_HISTORICAL_20260828/137_CN600036_FEEDBACK_RECEIPT.json"
       ],
-      "artifact_refs": {},
+      "artifact_refs": {
+        "preoutcome_judgment_ref": "docs/development/research/training_campaigns/JUDGMENT_UTILITY_HISTORICAL_20260828/131_CN600036_PREOUTCOME_JUDGMENT.json",
+        "freeze_ref": "docs/development/research/training_campaigns/JUDGMENT_UTILITY_HISTORICAL_20260828/132_CN600036_PREOUTCOME_INDEPENDENT_REVIEW.md",
+        "settlement_ref": "docs/development/research/training_campaigns/JUDGMENT_UTILITY_HISTORICAL_20260828/134_CN600036_CUSTODIAN_OUTCOME_SETTLEMENT.json",
+        "postoutcome_review_ref": "docs/development/research/training_campaigns/JUDGMENT_UTILITY_HISTORICAL_20260828/135_CN600036_INDEPENDENT_POSTOUTCOME_REVIEW.md",
+        "investor_readout_ref": "docs/development/research/training_campaigns/JUDGMENT_UTILITY_HISTORICAL_20260828/136_CN600036_INVESTOR_READOUT.md"
+      },
       "lesson": null,
       "holdout_axis": null
     },

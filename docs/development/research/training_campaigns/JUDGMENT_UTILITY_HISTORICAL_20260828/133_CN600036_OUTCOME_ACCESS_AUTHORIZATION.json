@@ -1,0 +1,96 @@
+{
+  "artifact_type": "BLIND10_OUTCOME_ACCESS_AUTHORIZATION",
+  "status": "AUTHORIZED",
+  "candidate": {
+    "security_id": "CN:600036",
+    "legal_name": "招商银行股份有限公司",
+    "cninfo_identity": {
+      "ticker": "600036",
+      "org_id": "gssh0600036",
+      "company_name": "招商银行",
+      "column": "sse",
+      "plate": "sh"
+    }
+  },
+  "authorized_outcome_source": {
+    "source_key": "FY2024_ORIGINAL_ANNUAL_REPORT",
+    "original_report_title": "招商银行股份有限公司2024年度报告",
+    "disclosure_date": "2025-03-26",
+    "announcement_id": "1222895154",
+    "official_static_pdf_url": "http://static.cninfo.com.cn/finalpage/2025-03-26/1222895154.PDF",
+    "source_scope": "Exactly this one original FY2024 annual report. The FY2024 annual-report summary, amendments, extracts, market material, analyst material, and every other source are outside this authorization."
+  },
+  "cninfo_metadata_acquisition": {
+    "official_api_endpoint": "https://www.cninfo.com.cn/new/hisAnnouncement/query",
+    "method": "POST",
+    "request_parameters": {
+      "pageNum": "1",
+      "pageSize": "30",
+      "column": "sse",
+      "tabName": "fulltext",
+      "plate": "sh",
+      "stock": "600036,gssh0600036",
+      "category": "category_ndbg_szsh;",
+      "seDate": "2025-01-01~2025-04-30",
+      "searchkey": "",
+      "sortName": "",
+      "sortType": "",
+      "isHLtitle": "true"
+    },
+    "metadata_only": true,
+    "announcement_or_pdf_bodies_accessed": false
+  },
+  "authorization_prerequisites": {
+    "required_preoutcome_chain": [
+      "128_CN600036_BLIND_EXTENSION_SELECTION_REGISTER.json",
+      "129_CN600036_CUTOFF_BEFORE_SOURCE_PACKET_RECEIPT.json",
+      "131_CN600036_PREOUTCOME_JUDGMENT.json",
+      "132_CN600036_PREOUTCOME_INDEPENDENT_REVIEW.md"
+    ],
+    "required_consistency": [
+      "The candidate is CN:600036 / 招商银行股份有限公司 / CNINFO org_id gssh0600036.",
+      "The pre-outcome cutoff remains 2024-05-01T00:00:00+08:00 and no pre-outcome artifact may be edited after this authorization.",
+      "The accepted pre-outcome contract contains exactly the four frozen cell IDs below; no outcome field may be substituted for, added to, or removed from that contract.",
+      "CNINFO metadata must identify exactly one original FY2024 annual report matching every field in authorized_outcome_source before the custodian opens the authorized PDF."
+    ]
+  },
+  "frozen_outcome_cell_ids": [
+    "CMB24_01_RETAIL_AUM_AND_WEALTH_INCOME",
+    "CMB24_02_GROUP_NIM_STABILITY",
+    "CMB24_03_COMPONENT_CREDIT_RECOGNITION",
+    "CMB24_04_RISK_CAPITAL_TRACTION"
+  ],
+  "fresh_contract_limited_custodian_role": {
+    "role_id": "BLIND10_CMB_FY2024_OUTCOME_CUSTODIAN",
+    "freshness_requirement": "The assigned custodian begins outcome work without prior FY2024-or-later announcement/PDF-body access for this candidate and receives this authorization plus the frozen four-cell contract before opening the authorized PDF.",
+    "may_do": [
+      "Confirm the authorized source against CNINFO metadata and open only the exact authorized static PDF URL after all prerequisites are satisfied.",
+      "Extract and apply only the four frozen outcome cells under their already-stated mechanical definitions and pass/fail/mixed treatments.",
+      "Record a local acquisition mismatch when the source identity or access boundary fails."
+    ],
+    "must_not_do": [
+      "Access the FY2024 annual-report summary, any amendment, any substitute source, later-period material, market data, analyst material, or outcome material outside the one authorized report.",
+      "Alter the pre-outcome judgment, frozen definitions, thresholds, resolution rules, judgment links, or post-reveal actions.",
+      "Form, add, or transmit an enterprise judgment, valuation, return, investment instruction, hindsight explanation, or non-frozen FY2024 fact."
+    ]
+  },
+  "local_mismatch_protocol": {
+    "valid_triggers": [
+      "CNINFO metadata does not yield exactly one original FY2024 annual report for ticker 600036 and org_id gssh0600036 within the stated annual-report query window.",
+      "The observed original-report title, disclosure date, announcement ID, or official static PDF URL differs from authorized_outcome_source.",
+      "The accessible document does not match the authorized metadata identity or access would require a source outside the authorization."
+    ],
+    "required_response": "Stop before outcome extraction and issue a LOCAL_ACQUISITION_MISMATCH that states only the expected and observed source-identity/access fields, the applicable frozen cell IDs, and that no substitution or pre-outcome revision is authorized.",
+    "prohibited_response": "Do not infer any FY2024 body fact, score a judgment, expand sources, repair the pre-outcome contract, or send an outcome-aware interpretation to the forecaster or pre-outcome reviewer."
+  },
+  "outcome_firewall": {
+    "permitted_information_flow": "CNINFO metadata establishes this authorization. After the custodian verifies the exact source, only the four mechanically resolved frozen cells may enter the post-reveal outcome workflow.",
+    "forecaster_and_preoutcome_reviewer_boundary": "The forecaster and the pre-outcome independent reviewer receive no source body, non-frozen FY2024 fact, hindsight explanation, substitute source, or request to revise the pre-outcome judgment.",
+    "no_backward_contamination": "This authorization does not reopen the cutoff, selection, packet, pre-outcome judgment, or independent review. A local mismatch remains local and does not authorize outcome comparison or source expansion."
+  },
+  "metadata_validation": {
+    "query_result": "The official CNINFO annual-report-classification query returned two FY2024 annual-report metadata records for the resolved candidate in the stated date window: one record titled 招商银行股份有限公司2024年度报告 and one record titled 招商银行股份有限公司2024年度报告摘要.",
+    "unique_original_report_validation": "Exactly one record is the original annual report; the summary is excluded by title. Its ticker, org_id, company name, announcement ID, disclosure date, adjunct path, and PDF type match authorized_outcome_source.",
+    "body_fact_attestation": "No announcement or PDF body was retrieved, opened, or read while locating and validating this authorization. This artifact contains no FY2024 annual-report body fact."
+  }
+}

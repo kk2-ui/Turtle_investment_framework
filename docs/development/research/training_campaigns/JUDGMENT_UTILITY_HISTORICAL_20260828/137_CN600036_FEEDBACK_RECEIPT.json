@@ -1,0 +1,64 @@
+{
+  "artifact_type": "BLIND10_COMPANY_FEEDBACK_RECEIPT",
+  "status": "COMPLETED",
+  "candidate": {
+    "security_id": "CN:600036",
+    "legal_name": "招商银行股份有限公司"
+  },
+  "REAL_FEEDBACK_TURN_10_COMPLETED": true,
+  "completion_basis": "The frozen real blind contract in 131_CN600036_PREOUTCOME_JUDGMENT.json was settled only through 134_CN600036_CUSTODIAN_OUTCOME_SETTLEMENT.json and independently accepted in 135_CN600036_INDEPENDENT_POSTOUTCOME_REVIEW.md. The accepted result changes the company's next-cutoff research agenda from first observation of a deposit/margin/risk-capital configuration to a focused test of margin repair, its funding/asset drivers, and the coupling of capital absorption with component credit risk.",
+  "frozen_cell_feedback": {
+    "CMB24_01_RETAIL_AUM_AND_WEALTH_INCOME": "LOCAL_MISMATCH: required group AUM was not deterministically available in the outcome report; no J1 pass/fail/mixed action is applied.",
+    "CMB24_02_GROUP_NIM_STABILITY": "FAIL: FY2024 group NIM was 1.98%, below the pre-frozen 2.04% failure threshold; weaken J2.",
+    "CMB24_03_COMPONENT_CREDIT_RECOGNITION": "PASS: bank real-estate NPL was 4.74% versus 5.01% threshold and group credit-card NPL was 1.75% versus 1.75% threshold; retain J3 as conditionally supported.",
+    "CMB24_04_RISK_CAPITAL_TRACTION": "PASS: advanced-approach CET1 ratio was 14.86%, and CET1 capital growth of about 12.76% exceeded RWA growth of about 4.20%; retain risk-capital capacity as scoped support for J2/J3."
+  },
+  "company_treatment_change": {
+    "before_settlement": "Treat the deposit franchise as real, J2 as a mixed margin/funding watch, and J3 as conditionally supported with component risk. Do not treat customer reach, aggregate NPL, operating cash flow, or capital ratios as owner cash or a complete enterprise conclusion.",
+    "after_settlement": "Treat margin stability as weakened: the bank cannot yet be relied upon to preserve its earnings engine through the disclosed funding and asset-pricing pressure. Separately retain J3 as conditionally supported because the two frozen component-risk measures passed and risk-capital traction passed. J1 remains conditional rather than pass or fail because its AUM/fee-conversion cell has a local scope mismatch.",
+    "permanent_loss_change": "The observed permanent-loss concern shifts toward persistent margin compression and its interaction with future capital generation. The four cells do not establish a current component-credit/capital breakdown, nor do they establish distributable owner cash. A later simultaneous deterioration in margin, component credit loss and capital absorption would materially worsen the case."
+  },
+  "next_cutoff_research_agenda_delta": {
+    "previous_question": "Whether the FY2023 retail franchise, deposit base, margin control, component credit-risk work and capital buffer first pass the frozen AUM/fee, NIM, component-NPL and risk-capital tests.",
+    "new_questions": [
+      "Which disclosed changes in demand versus term deposits, deposit cost, loan yield and asset allocation explain whether the 1.98% FY2024 NIM can stabilize without greater risk taking?",
+      "Does any margin response preserve earnings while remaining compatible with the advanced-approach capital and RWA path, rather than consuming loss-absorption or distribution capacity?",
+      "Do real-estate and credit-card classification, provision, recovery and RWA disclosures continue to support the separate component-risk treatment, or does a later loss/capital coupling emerge?",
+      "Before creating a new wealth/AUM outcome cell, does the cutoff-before report disclose AUM and fee measures at one explicitly identical group-or-company scope, so client assets can be tested against monetisation without a proxy?"
+    ],
+    "company_specific_effect": "The agenda changes from confirming whether all three enterprise channels first clear their thresholds to diagnosing the margin-failure mechanism while monitoring whether current credit/capital support remains intact."
+  },
+  "measurement_method_note": {
+    "change": "Future composite AUM-and-fee contracts must freeze an exact issuer scope that is demonstrably disclosed in the cutoff-before packet; group and company fields may not be combined merely because both are called AUM or wealth-management measures.",
+    "classification": "ACQUISITION_CONTRACT_CORRECTION_ONLY",
+    "not_an_enterprise_insight": true,
+    "not_a_new_global_gate": true,
+    "not_yet_transfer_evidence": true
+  },
+  "transferable_rule": {
+    "created": false,
+    "statement": "No transfer candidate was created. A local scope-mismatch correction has not yet changed a separate unknown company's pre-outcome treatment."
+  },
+  "METHOD_VALIDATED": false,
+  "TRANSFER_CANDIDATE_CREATED": false,
+  "TRANSFER_VALIDATED": false,
+  "independent_post_outcome_review": {
+    "artifact": "135_CN600036_INDEPENDENT_POSTOUTCOME_REVIEW.md",
+    "verdict": "ACCEPT",
+    "scope": "The reviewer accepts the four-cell settlement, preserves CMB24_01 as local-only, and permits only the frozen J1/J2/J3 consequences."
+  },
+  "source_boundary": {
+    "direct_artifacts_referenced": [
+      "131_CN600036_PREOUTCOME_JUDGMENT.json",
+      "134_CN600036_CUSTODIAN_OUTCOME_SETTLEMENT.json",
+      "135_CN600036_INDEPENDENT_POSTOUTCOME_REVIEW.md"
+    ],
+    "other_outcome_facts_added": false,
+    "market_price_return_valuation_analyst_or_portfolio_content": false
+  },
+  "permissions": {
+    "PERMISSIONS_GRANTED": false,
+    "granted": [],
+    "statement": "No CJO, formal valuation, BuyBand, report authorization, or investment authority is granted or implied."
+  }
+}
