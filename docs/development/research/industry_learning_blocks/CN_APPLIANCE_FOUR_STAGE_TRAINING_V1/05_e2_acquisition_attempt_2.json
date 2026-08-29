@@ -1,0 +1,62 @@
+{
+  "schema_version": "enterprise-judgment-appliance-e2-acquisition-attempt.v2",
+  "attempt_id": "APPLIANCE-FOUR-STAGE:E2:CN002032:ACQUISITION-ATTEMPT:2",
+  "episode_id": "APPLIANCE-R11:CN002032:20180930:V1",
+  "custodian_id": "ROLE:APPLIANCE-R11:CN002032:INDEPENDENT_OUTCOME_CUSTODIAN",
+  "field_terminal_statuses": [
+    {
+      "measurement_contract_id": "MHE:CONTRACT:APPLIANCE-R11:CN002032:FY2018:ISSUER_REVENUE:V1",
+      "terminal_status": "MEASUREMENT_MISMATCH",
+      "acquisition_state": "OBSERVED",
+      "blocker": "FROZEN_CONSOLIDATED_REVENUE_METRIC_ID_NOT_IN_MECHANICAL_VERIFIER"
+    },
+    {
+      "measurement_contract_id": "MHE:CONTRACT:APPLIANCE-R11:CN002032:FY2018:ELECTRIC_POT_REVENUE:V1",
+      "terminal_status": "MEASUREMENT_MISMATCH",
+      "acquisition_state": "MEASUREMENT_MISMATCH",
+      "blocker": "PRODUCT_REVENUE_TABLE_ROW_NOT_UNIQUELY_LOCATED"
+    },
+    {
+      "measurement_contract_id": "MHE:CONTRACT:APPLIANCE-R11:CN002032:FY2018:ISSUER_OCF:V1",
+      "terminal_status": "UNKNOWN",
+      "acquisition_state": "UNKNOWN",
+      "blocker": "CONSOLIDATED_CASH_FLOW_STATEMENT_CONTINUATION_PAGE_NOT_SUPPORTED"
+    }
+  ],
+  "lifecycle_counts": {
+    "authorized_access": 3,
+    "source_inventory": 3,
+    "field_ready": 1,
+    "observations": 0,
+    "settlements": 0
+  },
+  "e2_resolution": "PARTIAL_NOT_DIAGNOSTIC",
+  "e3_comparative_status": "NOT_ADMITTED",
+  "return": {
+    "root_cause": ["ACQUISITION_MODULE"],
+    "economic_impact": "No field produced a controller-recorded observation or settlement, so the attempt cannot change the enterprise view or establish method utility.",
+    "missing_facts": [
+      "one verified issuer-revenue observation",
+      "one uniquely located product-revenue observation",
+      "one verified issuer operating-cash-flow observation"
+    ],
+    "prohibited_assumptions": [
+      "alias an unsupported metric identity at custody time",
+      "manually choose one of several product rows",
+      "join statement pages without a deterministic continuation rule",
+      "infer a direction from an unrecorded value"
+    ],
+    "executable_remediation": "Extend the existing field catalogue and mechanical verifier for the frozen metric identities, the annual-report revenue-composition table, and one-page consolidated cash-flow continuation; then replay the accepted pre-outcome objects in a new appendable controller database.",
+    "acceptance_criteria": "Each field resolves to one official static source and physical page, passes metric/unit/boundary/quote verification, and creates one observation plus one mechanical settlement without changing the frozen contracts or forecasts."
+  },
+  "outcome_values_in_artifact": false,
+  "forecast_changed": false,
+  "rights": {
+    "method_transfer": "NOT_AUTHORIZED",
+    "cjo": "NOT_AUTHORIZED",
+    "valuation": "NOT_AUTHORIZED",
+    "report": "NOT_AUTHORIZED",
+    "buy_band": "NOT_AUTHORIZED",
+    "investment": "NOT_AUTHORIZED"
+  }
+}

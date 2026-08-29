@@ -1,0 +1,132 @@
+{
+  "schema_version": "enterprise-judgment-appliance-e2-mechanical-settlement.v1",
+  "receipt_id": "APPLIANCE-FOUR-STAGE:E2:CN002032:MECHANICAL-SETTLEMENT:V1",
+  "episode_id": "APPLIANCE-R11:CN002032:20180930:V1",
+  "source": {
+    "source_id": "CNINFO:002032:ANN:20190328:1205946626",
+    "source_url": "https://static.cninfo.com.cn/finalpage/2019-03-28/1205946626.PDF",
+    "source_available_date": "2019-03-28",
+    "report_period_end": "2018-12-31",
+    "version_policy": "ORIGINAL_ONLY"
+  },
+  "field_results": [
+    {
+      "measurement_contract_id": "MHE:CONTRACT:APPLIANCE-R11:CN002032:FY2018:ISSUER_REVENUE:V1",
+      "metric_id": "CONSOLIDATED_REVENUE_RMB",
+      "role": "ISSUER_SCALE_CONTEXT",
+      "source_id": "CNINFO:002032:ANN:20190328:1205946626",
+      "pdf_page": 69,
+      "unit": "RMB",
+      "frozen_baseline_value": 14187347425.77,
+      "frozen_prediction_direction": "INCREASE",
+      "settlement_tolerance": 709367371.2885,
+      "realized_value": 17851264801.72,
+      "reported_comparative_value": 14542193769.70,
+      "delta_from_frozen_baseline_percent": 25.83,
+      "prior_period_bridge_status": "UNKNOWN_REPORTED_COMPARATIVE_DIFFERS_FROM_FROZEN_BASELINE",
+      "mechanical_label": "MATCH",
+      "interpretation": "ISSUER_SCALE_EXPECTATION_SUPPORTED_NOT_CAUSAL"
+    },
+    {
+      "measurement_contract_id": "MHE:CONTRACT:APPLIANCE-R11:CN002032:FY2018:ELECTRIC_POT_REVENUE:V1",
+      "metric_id": "PRODUCT_REVENUE_RMB:电锅类",
+      "role": "PRODUCT_BOUNDARY_DISCRIMINATOR",
+      "source_id": "CNINFO:002032:ANN:20190328:1205946626",
+      "pdf_page": 12,
+      "unit": "RMB",
+      "frozen_baseline_value": 3809138321.20,
+      "frozen_prediction_direction": "INCREASE",
+      "settlement_tolerance": 190456916.06,
+      "realized_value": 4241166335.58,
+      "reported_comparative_value": 3809138321.20,
+      "delta_from_frozen_baseline_percent": 11.34,
+      "prior_period_bridge_status": "EXACT_MATCH_TO_FROZEN_BASELINE",
+      "mechanical_label": "MATCH",
+      "interpretation": "PRODUCT_REVENUE_EXPECTATION_SUPPORTED_NOT_COMPETITIVE_SHARE_OR_CAUSAL"
+    },
+    {
+      "measurement_contract_id": "MHE:CONTRACT:APPLIANCE-R11:CN002032:FY2018:ISSUER_OCF:V1",
+      "metric_id": "CONSOLIDATED_OPERATING_CASH_FLOW_RMB",
+      "role": "ISSUER_CASH_BOUNDARY",
+      "source_id": "CNINFO:002032:ANN:20190328:1205946626",
+      "pdf_page": 73,
+      "unit": "RMB",
+      "frozen_baseline_value": 1081469057.39,
+      "frozen_prediction_direction": "STABLE",
+      "settlement_tolerance": 216293811.478,
+      "realized_value": 2013658744.84,
+      "reported_comparative_value": 1101068593.63,
+      "delta_from_frozen_baseline_percent": 86.20,
+      "prior_period_bridge_status": "UNKNOWN_REPORTED_COMPARATIVE_DIFFERS_FROM_FROZEN_BASELINE",
+      "mechanical_label": "MISS",
+      "interpretation": "FAVORABLE_UPWARD_DEVIATION_FROM_STABLE_BAND_NOT_OWNER_CASH_OR_CAUSAL"
+    }
+  ],
+  "lifecycle_counts": {
+    "authorized_access": 3,
+    "field_ready_inventory": 3,
+    "observations": 3,
+    "settlements": 3
+  },
+  "frozen_resolution": {
+    "episode_ref": "APPLIANCE-R11:CN002032:20180930:V1",
+    "field_diagnostics": [
+      {
+        "measurement_contract_id": "MHE:CONTRACT:APPLIANCE-R11:CN002032:FY2018:ISSUER_REVENUE:V1",
+        "role": "ISSUER_SCALE_CONTEXT",
+        "terminal_status": "MATCH",
+        "interpretation": "FIELD_EXPECTATION_SUPPORTED_NOT_CAUSAL"
+      },
+      {
+        "measurement_contract_id": "MHE:CONTRACT:APPLIANCE-R11:CN002032:FY2018:ELECTRIC_POT_REVENUE:V1",
+        "role": "PRODUCT_BOUNDARY_DISCRIMINATOR",
+        "terminal_status": "MATCH",
+        "interpretation": "FIELD_EXPECTATION_SUPPORTED_NOT_CAUSAL"
+      },
+      {
+        "measurement_contract_id": "MHE:CONTRACT:APPLIANCE-R11:CN002032:FY2018:ISSUER_OCF:V1",
+        "role": "ISSUER_CASH_BOUNDARY",
+        "terminal_status": "MISS",
+        "interpretation": "FIELD_EXPECTATION_WEAKENED"
+      }
+    ],
+    "combined_resolution": "MIXED_PATTERN_H_A_NOT_ESTABLISHED",
+    "evidence_ceiling": "NARROW_ASSOCIATION_AND_BOUNDARY_PROBE",
+    "e3_comparative_status": "NOT_ADMITTED",
+    "allowed_outputs": ["MECHANISM_VIEW", "TEACHING_ONLY", "RESEARCH_AGENDA"],
+    "rights": {
+      "method_transfer": "NOT_AUTHORIZED",
+      "cjo": "NOT_AUTHORIZED",
+      "valuation": "NOT_AUTHORIZED",
+      "report": "NOT_AUTHORIZED",
+      "buy_band": "NOT_AUTHORIZED",
+      "investment": "NOT_AUTHORIZED"
+    }
+  },
+  "investor_learning": {
+    "supported": [
+      "Issuer revenue and disclosed electric-pot revenue both exceeded their frozen baselines.",
+      "Issuer operating cash flow did not deteriorate; it exceeded the frozen stable band."
+    ],
+    "not_established": [
+      "Electric-pot competitive share or customer loyalty improved.",
+      "A management action caused the observed growth.",
+      "Issuer operating cash flow equals owner cash.",
+      "The frozen and subsequently reported comparative-period issuer boundaries are identical."
+    ],
+    "next_contract_changes": [
+      "Separate favorable and adverse directional misses instead of treating both as an undifferentiated MISS.",
+      "Freeze product revenue share or product-minus-issuer growth when the investment question is product quality rather than absolute growth.",
+      "Freeze a prior-period perimeter or restatement bridge when the annual report may revise the comparative column."
+    ]
+  },
+  "e3_comparative_status": "NOT_ADMITTED",
+  "rights": {
+    "method_transfer": "NOT_AUTHORIZED",
+    "cjo": "NOT_AUTHORIZED",
+    "valuation": "NOT_AUTHORIZED",
+    "report": "NOT_AUTHORIZED",
+    "buy_band": "NOT_AUTHORIZED",
+    "investment": "NOT_AUTHORIZED"
+  }
+}

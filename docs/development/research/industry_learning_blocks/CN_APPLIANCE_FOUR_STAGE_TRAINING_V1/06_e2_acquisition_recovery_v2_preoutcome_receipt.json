@@ -1,0 +1,51 @@
+{
+  "schema_version": "enterprise-judgment-appliance-e2-acquisition-recovery-preoutcome-receipt.v2",
+  "receipt_id": "APPLIANCE-FOUR-STAGE:E2:CN002032:ACQUISITION-RECOVERY:PREOUTCOME:V2",
+  "episode_id": "APPLIANCE-R11:CN002032:20180930:V1",
+  "company_id": "CN:002032",
+  "cutoff_at": "2018-09-30T23:59:59+08:00",
+  "source_preoutcome_receipt_ref": "APPLIANCE-FOUR-STAGE:E2:CN002032:ACQUISITION-RECOVERY:PREOUTCOME:V1",
+  "failed_attempt_ref": "APPLIANCE-FOUR-STAGE:E2:CN002032:ACQUISITION-ATTEMPT:2",
+  "acquisition_remediation_ref": {
+    "commit": "3223f1a",
+    "rules": [
+      "FROZEN_CONSOLIDATED_REVENUE_METRIC_ID",
+      "PRODUCT_REVENUE_COMPOSITION_TABLE",
+      "ONE_PAGE_CONSOLIDATED_CASH_FLOW_CONTINUATION"
+    ]
+  },
+  "measurement_contract_ids": [
+    "MHE:CONTRACT:APPLIANCE-R11:CN002032:FY2018:ISSUER_REVENUE:V1",
+    "MHE:CONTRACT:APPLIANCE-R11:CN002032:FY2018:ELECTRIC_POT_REVENUE:V1",
+    "MHE:CONTRACT:APPLIANCE-R11:CN002032:FY2018:ISSUER_OCF:V1"
+  ],
+  "controller_counts": {
+    "decision_contracts": 3,
+    "technical_route_identities": 3,
+    "measurement_contracts": 3,
+    "static_evidence": 3,
+    "predictions": 3,
+    "outcome_access": 0,
+    "source_inventories": 0,
+    "observations": 0,
+    "settlements": 0
+  },
+  "invariants": {
+    "forecast_reauthored": false,
+    "measurement_contract_changed": false,
+    "source_packet_changed": false,
+    "outcome_source_enumerated": false,
+    "outcome_pdf_opened_in_this_controller": false,
+    "old_attempts_mutated": false
+  },
+  "status": "PREOUTCOME_REPLAY_FROZEN_AWAITING_CONTRACT_ONLY_OUTCOME_ACCESS",
+  "permitted_next_action": "INDEPENDENT_CUSTODIAN_CONTRACT_ONLY_OUTCOME_ACCESS",
+  "rights": {
+    "method_transfer": "NOT_AUTHORIZED",
+    "cjo": "NOT_AUTHORIZED",
+    "valuation": "NOT_AUTHORIZED",
+    "report": "NOT_AUTHORIZED",
+    "buy_band": "NOT_AUTHORIZED",
+    "investment": "NOT_AUTHORIZED"
+  }
+}

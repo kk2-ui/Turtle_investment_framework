@@ -1,0 +1,60 @@
+{
+  "schema_version": "enterprise-judgment-appliance-e2-acquisition-attempt.v1",
+  "attempt_id": "APPLIANCE:E2:CN002032:20180930:ACQUISITION:ATTEMPT-1",
+  "plan_ref": "APPLIANCE:FOUR-STAGE:20170430-20180930:V1",
+  "episode_ref": "APPLIANCE-R11:CN002032:20180930:V1",
+  "custodian_id": "ROLE:APPLIANCE-R11:CN002032:INDEPENDENT_OUTCOME_CUSTODIAN",
+  "field_terminal_statuses": [
+    {
+      "measurement_contract_id": "MHE:CONTRACT:APPLIANCE-R11:CN002032:FY2018:ISSUER_REVENUE:V1",
+      "terminal_status": "MEASUREMENT_MISMATCH",
+      "mismatch_rule": "ANNUAL_REPORT_VERSION_FAMILY_UNRESOLVED"
+    },
+    {
+      "measurement_contract_id": "MHE:CONTRACT:APPLIANCE-R11:CN002032:FY2018:ELECTRIC_POT_REVENUE:V1",
+      "terminal_status": "MEASUREMENT_MISMATCH",
+      "mismatch_rule": "ANNUAL_REPORT_VERSION_FAMILY_UNRESOLVED"
+    },
+    {
+      "measurement_contract_id": "MHE:CONTRACT:APPLIANCE-R11:CN002032:FY2018:ISSUER_OCF:V1",
+      "terminal_status": "MEASUREMENT_MISMATCH",
+      "mismatch_rule": "ANNUAL_REPORT_VERSION_FAMILY_UNRESOLVED"
+    }
+  ],
+  "e2_resolution": "PARTIAL_NOT_DIAGNOSTIC",
+  "lifecycle_counts": {
+    "authorized_access": 3,
+    "source_inventory": 3,
+    "observation": 0,
+    "settlement": 0
+  },
+  "root_cause": "ACQUISITION_MODULE",
+  "economic_impact": "No result field entered the episode; no operating, mechanism, comparative, method or investment conclusion changed.",
+  "missing_facts": [
+    "controller-approved statutory annual-report identity",
+    "field-level physical PDF page binding",
+    "controller-admitted observation"
+  ],
+  "prohibited_assumptions": [
+    "manually remove the annual-report-related announcement from the official family",
+    "select a PDF URL outside the controller result",
+    "infer a value, direction or action effect"
+  ],
+  "remediation": "Classify the official performance-meeting notice as an exchange announcement rather than an annual-report version, preserve the three immutable mismatch receipts, and use a separately identified recovery attempt bound to the original pre-outcome freeze.",
+  "acceptance_criteria": "The same stored route must identify one ORIGINAL_ONLY statutory annual report, invoke the page locator, and keep every observation and mechanical settlement field-local.",
+  "original_inventory_receipts": "IMMUTABLE_NOT_REWRITTEN",
+  "e3_comparative_status": "NOT_ADMITTED",
+  "allowed_outputs": [
+    "MECHANISM_VIEW",
+    "TEACHING_ONLY",
+    "RESEARCH_AGENDA"
+  ],
+  "rights": {
+    "method_transfer": "NOT_AUTHORIZED",
+    "cjo": "NOT_AUTHORIZED",
+    "valuation": "NOT_AUTHORIZED",
+    "report": "NOT_AUTHORIZED",
+    "buy_band": "NOT_AUTHORIZED",
+    "investment": "NOT_AUTHORIZED"
+  }
+}

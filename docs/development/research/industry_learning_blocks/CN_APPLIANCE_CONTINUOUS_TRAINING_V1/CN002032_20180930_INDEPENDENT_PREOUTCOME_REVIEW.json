@@ -1,0 +1,62 @@
+{
+  "schema_version": "enterprise-judgment-appliance-independent-preoutcome-review.v1",
+  "review_id": "APPLIANCE-R11:CN002032:20180930:INDEPENDENT-PREOUTCOME-REVIEW:V1",
+  "reviewed_commit": "b3ccde39121d339c273095dba671b2dc4748c09c",
+  "episode_ref": "APPLIANCE-R11:CN002032:20180930:V1",
+  "reviewer_id": "ROLE:APPLIANCE-R11:INDEPENDENT_PREOUTCOME_REVIEWER",
+  "review_status": "PASS",
+  "decision": "OUTCOME_ONLY_CUSTODY_MAY_BE_AUTHORIZED",
+  "basis": {
+    "source_scope": "The appliance-specific verifier accepts only the three frozen FY2017 metric, page, label, RMB unit, responsibility boundary and numeric-value combinations.",
+    "controller_path": "All three chains were independently reproduced through minimal_historical_episode_runner.freeze_preoutcome and the existing controller; no acquisition or settlement engine was copied.",
+    "real_local_pdf_reproduction": "The registered local FY2017 PDF opened physical pages 12, 12 and 16 and produced PRE_OUTCOME_FROZEN for all three fields.",
+    "identity_drift_rejection": "Wrong page, metric, responsibility boundary, unit, numeric value and a quote present only on another page are rejected before controller persistence.",
+    "outcome_firewall": "No FY2018 report, outcome value, source inventory, observation, settlement, price or return was opened or enumerated during review.",
+    "method_boundary": "The predeclared Baseline/Enhanced treatment difference remains a training hypothesis and does not receive method utility or transfer rights from this review."
+  },
+  "field_contract_ids": [
+    "MHE:CONTRACT:APPLIANCE-R11:CN002032:FY2018:ISSUER_REVENUE:V1",
+    "MHE:CONTRACT:APPLIANCE-R11:CN002032:FY2018:ELECTRIC_POT_REVENUE:V1",
+    "MHE:CONTRACT:APPLIANCE-R11:CN002032:FY2018:ISSUER_OCF:V1"
+  ],
+  "independently_reproduced_controller_counts": {
+    "decision_contracts": 3,
+    "technical_route_identities": 3,
+    "measurement_contracts": 3,
+    "static_evidence": 3,
+    "predictions": 3,
+    "outcome_access": 0,
+    "source_inventories": 0,
+    "observations": 0,
+    "settlements": 0
+  },
+  "custodian_contract": {
+    "allowed_role": "ROLE:APPLIANCE-R11:CN002032:INDEPENDENT_OUTCOME_CUSTODIAN",
+    "allowed_inputs": [
+      "FROZEN_MEASUREMENT_CONTRACT",
+      "CONTROLLER_ISSUED_OUTCOME_ACCESS",
+      "AUTHORIZED_FY2018_OFFICIAL_STATIC_REPORT"
+    ],
+    "prohibited_inputs": [
+      "PREDICTED_DIRECTION",
+      "FORECAST_REASONING",
+      "BASELINE_OR_ENHANCED_TREATMENT",
+      "METHOD_UTILITY_CLAIM",
+      "PRICE_OR_RETURN",
+      "CJO_VALUATION_REPORT_OR_INVESTMENT_CONCLUSION"
+    ],
+    "allowed_output": "FIELD_LEVEL_ACQUISITION_AND_MECHANICAL_SETTLEMENT_ONLY"
+  },
+  "outcome_content_read": false,
+  "allowed_outputs": [
+    "OUTCOME_ONLY_CUSTODY_AUTHORIZATION"
+  ],
+  "rights": {
+    "method_transfer": "NOT_AUTHORIZED",
+    "cjo": "NOT_AUTHORIZED",
+    "valuation": "NOT_AUTHORIZED",
+    "report": "NOT_AUTHORIZED",
+    "buy_band": "NOT_AUTHORIZED",
+    "investment": "NOT_AUTHORIZED"
+  }
+}

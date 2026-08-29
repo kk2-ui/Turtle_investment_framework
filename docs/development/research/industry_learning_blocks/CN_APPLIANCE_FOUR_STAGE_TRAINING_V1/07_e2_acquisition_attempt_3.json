@@ -1,0 +1,50 @@
+{
+  "schema_version": "enterprise-judgment-appliance-e2-acquisition-attempt.v3",
+  "attempt_id": "APPLIANCE-FOUR-STAGE:E2:CN002032:ACQUISITION-ATTEMPT:3",
+  "episode_id": "APPLIANCE-R11:CN002032:20180930:V1",
+  "field_terminal_statuses": [
+    {
+      "measurement_contract_id": "MHE:CONTRACT:APPLIANCE-R11:CN002032:FY2018:ISSUER_REVENUE:V1",
+      "acquisition_state": "OBSERVED",
+      "inventory_state": "FIELD_READY",
+      "settlement_state": "MEASUREMENT_MISMATCH"
+    },
+    {
+      "measurement_contract_id": "MHE:CONTRACT:APPLIANCE-R11:CN002032:FY2018:ELECTRIC_POT_REVENUE:V1",
+      "acquisition_state": "OBSERVED",
+      "inventory_state": "FIELD_READY",
+      "settlement_state": "MEASUREMENT_MISMATCH"
+    },
+    {
+      "measurement_contract_id": "MHE:CONTRACT:APPLIANCE-R11:CN002032:FY2018:ISSUER_OCF:V1",
+      "acquisition_state": "OBSERVED",
+      "inventory_state": "FIELD_READY",
+      "settlement_state": "MEASUREMENT_MISMATCH"
+    }
+  ],
+  "lifecycle_counts": {
+    "authorized_access": 3,
+    "source_inventory": 3,
+    "field_ready": 3,
+    "observations": 0,
+    "settlements": 0
+  },
+  "return": {
+    "root_cause": ["ACQUISITION_MODULE"],
+    "economic_impact": "All three official fields were found, but none could enter mechanical settlement, so no enterprise or investment conclusion may use them.",
+    "missing_facts": ["three verifier-accepted responsibility-boundary identities"],
+    "prohibited_assumptions": ["rewrite the frozen responsibility boundary", "bypass the mechanical verifier"],
+    "executable_remediation": "Accept the already supported compact listed-issuer boundary form CN002032 alongside the colon-delimited issuer identity, while preserving exact issuer and product-category matching.",
+    "acceptance_criteria": "The exact frozen issuer and product boundaries pass; another issuer or widened product boundary rejects; the existing three FIELD_READY inventories then create three observations and three settlements."
+  },
+  "outcome_values_in_artifact": false,
+  "forecast_changed": false,
+  "rights": {
+    "method_transfer": "NOT_AUTHORIZED",
+    "cjo": "NOT_AUTHORIZED",
+    "valuation": "NOT_AUTHORIZED",
+    "report": "NOT_AUTHORIZED",
+    "buy_band": "NOT_AUTHORIZED",
+    "investment": "NOT_AUTHORIZED"
+  }
+}

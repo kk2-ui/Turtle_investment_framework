@@ -1495,6 +1495,32 @@ def test_custodian_acquisition_ignores_annual_report_summary_when_one_full_origi
     assert candidate["source"]["issuer_id"] == contract["issuer_id"]
 
 
+def test_custodian_acquisition_ignores_performance_meeting_notice_when_original_report_is_unique(
+    tmp_path: Path,
+) -> None:
+    database, contract = _authorized_cninfo_database(tmp_path)
+    candidate = outcome_acquisition.acquire_cninfo_outcome_source_candidate(
+        str(database),
+        outcome_access_authorization_id="MHE:ACCESS:SYNTHETIC:V1",
+        inventory_receipt_id="MHE:INVENTORY:CNINFO:REPORT-PLUS-MEETING",
+        field_locator=lambda source, _: "FY2021 annual report, PDF p. 38",
+        request=_cninfo_request([
+            _cninfo_row(),
+            {
+                **_cninfo_row(
+                    title="关于举行2021年年度报告网上业绩说明会的公告",
+                    announcement_date="2022-04-08",
+                    announcement_id="SYNTHETIC-PERFORMANCE-MEETING",
+                    url="finalpage/2022-04-08/SYNTHETIC-PERFORMANCE-MEETING.PDF",
+                ),
+            },
+        ]),
+    )
+    assert candidate["status"] == "FIELD_READY"
+    assert candidate["source"]["source_id"] == "CNINFO:600585:ANN:20220330:SYNTHETIC-2021-ANNUAL"
+    assert candidate["source"]["issuer_id"] == contract["issuer_id"]
+
+
 def test_custodian_acquisition_keeps_legacy_default_closed_for_original_and_revised_family(
     tmp_path: Path,
 ) -> None:
@@ -2087,6 +2113,55 @@ def test_official_rmb_revenue_quote_uses_only_the_selected_consolidated_current_
     verification["numeric_value"] = 1802357428.23
     with pytest.raises(ValueError, match="do not match"):
         runner._verify_quote_value(verification, source=evidence["source"])
+
+
+@pytest.mark.parametrize(
+    ("metric_id", "boundary", "field_ref", "quote", "numeric_value"),
+    [
+        (
+            "CONSOLIDATED_REVENUE_RMB",
+            "LISTED_ISSUER_CONSOLIDATED:CN002032",
+            "FY2018 annual report, consolidated income statement, PDF p.69, 营业收入.",
+            "其中：营业收入 17,851,264,801.72 14,542,193,769.70",
+            17851264801.72,
+        ),
+        (
+            "CONSOLIDATED_OPERATING_CASH_FLOW_RMB",
+            "LISTED_ISSUER_CONSOLIDATED:CN002032",
+            "FY2018 annual report, consolidated cash-flow statement, PDF p.73, 经营活动产生的现金流量净额.",
+            "经营活动产生的现金流量净额 2,013,658,744.84 1,101,068,593.63",
+            2013658744.84,
+        ),
+        (
+            "PRODUCT_REVENUE_RMB:电锅类",
+            "LISTED_ISSUER_CONSOLIDATED:CN002032:DISCLOSED_PRODUCT_CATEGORY:电锅类",
+            "FY2018 annual report, segment or product operational data, PDF p.12, 电锅类.",
+            "电锅类 4,241,166,335.58 23.76% 3,809,138,321.20 26.19% 11.34%",
+            4241166335.58,
+        ),
+    ],
+)
+def test_runner_verifies_frozen_appliance_metric_identities_without_aliasing_boundaries(
+    metric_id: str, boundary: str, field_ref: str, quote: str, numeric_value: float,
+) -> None:
+    source = {
+        "metric_id": metric_id,
+        "issuer_id": "ISSUER:CN:002032",
+        "responsibility_boundary": boundary,
+        "field_ref": field_ref,
+    }
+    runner._verify_quote_value(
+        {"unit": "RMB", "numeric_value": numeric_value, "exact_quote": quote},
+        source=source,
+    )
+
+    drift = deepcopy(source)
+    drift["responsibility_boundary"] = "LISTED_ISSUER_CONSOLIDATED:CN:OTHER"
+    with pytest.raises(ValueError, match="supported consolidated financial-statement field"):
+        runner._verify_quote_value(
+            {"unit": "RMB", "numeric_value": numeric_value, "exact_quote": quote},
+            source=drift,
+        )
 
 
 def test_source_verification_rejects_nonfinite_contract_bound_numbers_before_pdf_access(tmp_path: Path) -> None:

@@ -66,6 +66,16 @@ _RMB_FINANCIAL_FIELD_RULES = {
         "field_ref_label": "资产总计",
         "row": re.compile(r"资产总计\s*(?P<current_period>[0-9][0-9,，]*(?:\.[0-9]+)?)"),
     },
+    "CONSOLIDATED_REVENUE_RMB": {
+        "field_ref_marker": "consolidated income statement",
+        "field_ref_label": "营业收入",
+        "row": re.compile(r"(?:其中[:：])?营业收入\s*(?P<current_period>[0-9][0-9,，]*(?:\.[0-9]+)?)"),
+    },
+    "CONSOLIDATED_OPERATING_CASH_FLOW_RMB": {
+        "field_ref_marker": "consolidated cash-flow statement",
+        "field_ref_label": "经营活动产生的现金流量净额",
+        "row": re.compile(r"经营活动产生的现金流量净额\s*(?P<current_period>[0-9][0-9,，]*(?:\.[0-9]+)?)"),
+    },
 }
 SourceVerifier = Callable[[dict[str, Any], dict[str, Any]], dict[str, Any]]
 TechnicalRouteResolver = route_identity_adapter.RouteResolver
@@ -196,18 +206,37 @@ def _verify_quote_value(
         field_ref = source.get("field_ref")
         metric_id = source.get("metric_id")
         rule = _RMB_FINANCIAL_FIELD_RULES.get(metric_id)
+        product_name: str | None = None
+        if isinstance(metric_id, str) and metric_id.startswith("PRODUCT_REVENUE_RMB:"):
+            product_name = metric_id.removeprefix("PRODUCT_REVENUE_RMB:").strip()
+            if product_name:
+                rule = {
+                    "field_ref_marker": "segment or product operational data",
+                    "field_ref_label": product_name,
+                    "row": re.compile(
+                        rf"{re.escape(product_name)}\s*(?P<current_period>[0-9][0-9,，]*(?:\.[0-9]+)?)"
+                    ),
+                }
         boundary = source.get("responsibility_boundary")
         issuer_suffix = str(source.get("issuer_id", "")).removeprefix("ISSUER:")
         issuer_code = issuer_suffix.rsplit(":", 1)[-1]
         normalized_field_ref = field_ref.casefold().replace("-", " ") if isinstance(field_ref, str) else ""
         normalized_marker = rule["field_ref_marker"].replace("-", " ") if rule is not None else ""
+        allowed_boundaries = {
+            "LISTED_CONSOLIDATED_ISSUER",
+            f"LISTED_ISSUER_CONSOLIDATED:{issuer_suffix}",
+            f"LISTED_ISSUER_CONSOLIDATED:{issuer_code}",
+            f"LISTED_ISSUER_CONSOLIDATED:CN{issuer_code}",
+        }
+        if product_name is not None:
+            allowed_boundaries = {
+                f"LISTED_ISSUER_CONSOLIDATED:{issuer_suffix}:DISCLOSED_PRODUCT_CATEGORY:{product_name}",
+                f"LISTED_ISSUER_CONSOLIDATED:{issuer_code}:DISCLOSED_PRODUCT_CATEGORY:{product_name}",
+                f"LISTED_ISSUER_CONSOLIDATED:CN{issuer_code}:DISCLOSED_PRODUCT_CATEGORY:{product_name}",
+            }
         if (
             rule is None
-            or boundary not in {
-                "LISTED_CONSOLIDATED_ISSUER",
-                f"LISTED_ISSUER_CONSOLIDATED:{issuer_suffix}",
-                f"LISTED_ISSUER_CONSOLIDATED:{issuer_code}",
-            }
+            or boundary not in allowed_boundaries
             or not isinstance(field_ref, str)
             or normalized_marker not in normalized_field_ref
             or rule["field_ref_label"] not in field_ref
