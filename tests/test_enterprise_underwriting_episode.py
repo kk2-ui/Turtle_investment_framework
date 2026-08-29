@@ -13,6 +13,7 @@ from scripts.enterprise_underwriting_episode import (
     render_underwriting_readout,
     validate_enterprise_underwriting_episode,
     validate_golden_report_reader_brief,
+    validate_price_free_underwriting_thesis_projection,
     validate_underwriting_projection_bundle,
 )
 
@@ -109,15 +110,15 @@ def test_conch_same_thesis_projects_deterministically_to_cjo_valuation_and_repor
     assert {item["underwriting_thesis_id"] for item in bundle.values()} == {thesis_id}
     industry_future = conch["situation_model"]["industry_future_thesis"]
     projected_futures = [
-        bundle["cjo_candidate_projection"]["industry_future_thesis"],
-        bundle["valuation_route_request"]["industry_future_thesis"],
+        bundle["cjo_candidate_projection"]["situation_model"]["industry_future_thesis"],
+        bundle["valuation_route_request"]["situation_model"]["industry_future_thesis"],
         bundle["golden_report_underwriting_handoff"]["situation_model"]["industry_future_thesis"],
     ]
     assert projected_futures == [industry_future, industry_future, industry_future]
     assert bundle["cjo_candidate_projection"]["central_path"] == bundle["golden_report_underwriting_handoff"]["central_path"]
     assert bundle["valuation_route_request"]["normal_earnings_input_treatment"] == conch["underwriting_thesis"]["normal_earnings_treatment"]
     industry = conch["situation_model"]["industry_future_thesis"]
-    assert {item["industry_future_thesis"]["most_likely_regime"] for item in bundle.values()} == {
+    assert {item["situation_model"]["industry_future_thesis"]["most_likely_regime"] for item in bundle.values()} == {
         industry["most_likely_regime"]
     }
 
@@ -126,8 +127,9 @@ def test_industry_future_is_part_of_the_episode_and_price_free_shared_thesis() -
     conch = _episode("CN600585_20240501_WORKED_CASE_V1.json")
     projection = project_price_free_underwriting_thesis(conch)
 
-    assert projection["industry_future_thesis"]["profit_pool_transmission"]
-    assert projection["industry_future_thesis"]["company_exposure"]
+    assert projection["situation_model"]["industry_future_thesis"]["profit_pool_transmission"]
+    assert projection["situation_model"]["industry_future_thesis"]["company_exposure"]
+    assert "industry_future_thesis" not in projection
     assert projection["underwriting_thesis"]["owner_cash_treatment"]
     assert "investment_treatment" not in projection
 
@@ -135,6 +137,20 @@ def test_industry_future_is_part_of_the_episode_and_price_free_shared_thesis() -
     missing["situation_model"].pop("industry_future_thesis")
     findings = validate_enterprise_underwriting_episode(missing)["findings"]
     assert "situation_model.industry_future_thesis.horizon_missing" in findings
+
+
+def test_price_free_projection_rejects_a_second_top_level_industry_story() -> None:
+    conch = _episode("CN600585_20240501_WORKED_CASE_V1.json")
+    projection = project_price_free_underwriting_thesis(conch)
+    projection["industry_future_thesis"] = deepcopy(
+        projection["situation_model"]["industry_future_thesis"]
+    )
+    projection["industry_future_thesis"]["most_likely_regime"] = "A conflicting broad recovery story."
+
+    validation = validate_price_free_underwriting_thesis_projection(projection)
+
+    assert validation["state"] == "INVALID"
+    assert "legacy_top_level_industry_future_thesis_not_allowed" in validation["findings"]
 
 
 def test_industry_future_thesis_cannot_be_missing_or_diverge_across_episode_views() -> None:

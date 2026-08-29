@@ -740,8 +740,7 @@ def _validate_underwriting_thesis_projection(
     if value.get("schema_version") != "enterprise-underwriting-thesis-projection.v1":
         _add(findings, prefix + ".underwriting_thesis_projection.schema_version_invalid")
     mapping_fields = {
-        "industry_future_thesis", "situation_model", "value_route",
-        "underwriting_thesis",
+        "situation_model", "value_route", "underwriting_thesis",
     }
     list_fields = {
         "reversal_observations", "component_treatments", "evidence_trace",
@@ -749,7 +748,7 @@ def _validate_underwriting_thesis_projection(
     for field in (
         "episode_id", "company_id", "cutoff_at", "sample_identity",
         "underwriting_thesis_id", "decision_frame", "underwriting_route",
-        "industry_future_thesis", "situation_model", "business_position",
+        "situation_model", "business_position",
         "survival_case", "adaptation_case", "normalization_case",
         "permanent_loss_map", "value_route", "strongest_rival",
         "reversal_observations", "component_treatments", "evidence_trace",

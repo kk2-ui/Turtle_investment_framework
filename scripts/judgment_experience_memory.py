@@ -248,9 +248,16 @@ def _validate_episode_projection(value: Any, findings: list[str], *, prefix: str
     if not isinstance(situation, dict):
         findings.append(prefix + "situation_not_object")
     else:
-        for field in ("industry_future_thesis", "situation_model", "business_position"):
+        for field in ("situation_model", "business_position"):
             if situation.get(field) in (None, "", {}, []):
                 findings.append(prefix + "situation_" + field + "_missing")
+        situation_model = situation.get("situation_model")
+        if not isinstance(situation_model, dict) or not isinstance(
+            situation_model.get("industry_future_thesis"), dict
+        ):
+            findings.append(prefix + "situation_model_industry_future_thesis_missing")
+        if "industry_future_thesis" in situation:
+            findings.append(prefix + "situation_legacy_industry_future_thesis_not_allowed")
 
     mechanism = value.get("mechanism_and_adaptation")
     if not isinstance(mechanism, dict):
@@ -447,8 +454,7 @@ def compile_underwriting_episode_experience_record(
         "sample_identity": source_projection.get("sample_identity"),
         "authority": "TEACHING_ONLY_NO_TRANSFER_CREDIT",
         "situation": {
-            "industry_future_thesis": deepcopy(source_projection.get("industry_future_thesis")),
-            "situation_model": source_projection.get("situation_model"),
+            "situation_model": deepcopy(source_projection.get("situation_model")),
             "business_position": source_projection.get("business_position"),
         },
         "underwriting_route": projected_route,
@@ -478,7 +484,9 @@ def compile_underwriting_episode_experience_record(
             "value_route_treatment": thesis.get("value_route_treatment"),
         },
     }
-    industry_future = source_projection.get("industry_future_thesis")
+    projected_situation = source_projection.get("situation_model")
+    projected_situation = projected_situation if isinstance(projected_situation, dict) else {}
+    industry_future = projected_situation.get("industry_future_thesis")
     industry_path = ""
     if isinstance(industry_future, dict):
         industry_path = " -> ".join([

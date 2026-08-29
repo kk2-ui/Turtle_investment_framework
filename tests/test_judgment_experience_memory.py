@@ -196,7 +196,7 @@ def test_complete_underwriting_episode_projects_into_existing_teaching_record() 
     assert record["evidence_ceiling"] == "TEACHING"
     projection = record["episode_projection"]
     assert projection["authority"] == "TEACHING_ONLY_NO_TRANSFER_CREDIT"
-    assert projection["situation"]["industry_future_thesis"]["profit_pool_transmission"]
+    assert projection["situation"]["situation_model"]["industry_future_thesis"]["profit_pool_transmission"]
     assert projection["underwriting_route"] == "DISTRESSED_CYCLICAL_WITH_ASSET_EPV_CROSS_CHECK"
     assert projection["normalization_boundary"]["normal_earnings_treatment"]
     assert projection["normalization_boundary"]["owner_cash_treatment"]
@@ -212,6 +212,25 @@ def test_complete_underwriting_episode_projects_into_existing_teaching_record() 
     assert projection["near_miss"]["strongest_rival"] == record["strongest_rival"]
     assert "transfer_credit" not in record
     assert not {"price", "valuation", "buyband", "investment_action"} & set(record)
+
+
+def test_underwriting_experience_rejects_a_second_industry_story() -> None:
+    record = _underwriting_record()
+    situation = record["episode_projection"]["situation"]
+    situation["industry_future_thesis"] = deepcopy(
+        situation["situation_model"]["industry_future_thesis"]
+    )
+    situation["industry_future_thesis"]["most_likely_regime"] = (
+        "A conflicting broad recovery story."
+    )
+
+    validation = validate_judgment_experience_record(record)
+
+    assert validation["state"] == "INVALID"
+    assert any(
+        "situation_legacy_industry_future_thesis_not_allowed" in finding
+        for finding in validation["findings"]
+    )
 
 
 def test_underwriting_episode_compiler_requires_exact_canonical_episode_and_review(tmp_path: Path) -> None:

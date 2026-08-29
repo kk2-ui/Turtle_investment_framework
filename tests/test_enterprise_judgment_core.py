@@ -682,14 +682,40 @@ def test_reviewed_underwriting_projection_cannot_change_after_freeze() -> None:
         underwriting_episode=_underwriting_episode(),
     )
     frozen = core.freeze_cjo(candidate=candidate, independent_review=_review(candidate))
-    frozen["underwriting_thesis_projection"]["industry_future_thesis"][
-        "most_likely_regime"
-    ] = "A post-review regime rewrite."
+    frozen["underwriting_thesis_projection"]["situation_model"][
+        "industry_future_thesis"
+    ]["most_likely_regime"] = "A post-review regime rewrite."
 
     validation = core.validate_frozen_cjo(frozen)
 
     assert validation["state"] == "INVALID"
     assert "frozen_cjo.reviewed_reader_projection_mutated" in validation["findings"]
+
+
+def test_cjo_rejects_a_second_top_level_industry_story() -> None:
+    package = _source_package()
+    candidate = core.compile_cjo_candidate(
+        model=_model(source_package=package),
+        ledger=_ledger(),
+        source_package=package,
+        judgment_input=_judgment_input(),
+        underwriting_episode=_underwriting_episode(),
+    )
+    projection = candidate["underwriting_thesis_projection"]
+    projection["industry_future_thesis"] = deepcopy(
+        projection["situation_model"]["industry_future_thesis"]
+    )
+    projection["industry_future_thesis"]["most_likely_regime"] = (
+        "A conflicting broad recovery story."
+    )
+
+    validation = core.validate_cjo_candidate(candidate)
+
+    assert validation["state"] == "INVALID"
+    assert (
+        "cjo_candidate.underwriting_thesis_projection."
+        "legacy_top_level_industry_future_thesis_not_allowed"
+    ) in validation["findings"]
 
 
 def test_underwriting_episode_cannot_put_price_inside_frozen_thesis() -> None:

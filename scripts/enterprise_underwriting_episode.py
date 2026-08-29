@@ -250,7 +250,6 @@ def project_price_free_underwriting_thesis(episode: Any) -> dict[str, Any]:
         "underwriting_thesis_id": thesis["thesis_id"],
         "decision_frame": value["decision_frame"],
         "underwriting_route": value["underwriting_route"],
-        "industry_future_thesis": deepcopy(_industry_future_thesis(value)),
         "situation_model": deepcopy(value["situation_model"]),
         "business_position": value["business_position"],
         "survival_case": value["survival_case"],
@@ -290,16 +289,18 @@ def validate_price_free_underwriting_thesis_projection(projection: Any) -> dict[
     situation = _mapping(value.get("situation_model"))
     if not _text(situation.get("summary")):
         findings.append("situation_model.summary_missing")
-    industry = _mapping(value.get("industry_future_thesis"))
+    industry = _mapping(situation.get("industry_future_thesis"))
     for field in (
         "horizon", "most_likely_regime", "profit_pool_transmission",
         "company_exposure", "adaptation", "normal_economics",
         "permanent_loss", "valuation_treatment", "strongest_rival",
     ):
         if not _text(industry.get(field)):
-            findings.append("industry_future_thesis." + field + "_missing")
+            findings.append("situation_model.industry_future_thesis." + field + "_missing")
     if not _items(industry.get("reversal_observations")):
-        findings.append("industry_future_thesis.reversal_observations_missing")
+        findings.append("situation_model.industry_future_thesis.reversal_observations_missing")
+    if "industry_future_thesis" in value:
+        findings.append("legacy_top_level_industry_future_thesis_not_allowed")
     thesis = _mapping(value.get("underwriting_thesis"))
     for field in (
         "thesis_id", "central_path", "normal_earnings_treatment", "owner_cash_treatment",
@@ -337,7 +338,8 @@ def compile_underwriting_projections(episode: Any) -> dict[str, dict[str, Any]]:
     value = _assert_reviewable(episode)
     price_free = project_price_free_underwriting_thesis(value)
     thesis = deepcopy(_mapping(price_free["underwriting_thesis"]))
-    industry_future = deepcopy(_mapping(price_free["industry_future_thesis"]))
+    situation_model = deepcopy(_mapping(price_free["situation_model"]))
+    industry_future = deepcopy(_mapping(situation_model["industry_future_thesis"]))
     identity = {
         "episode_id": value["episode_id"],
         "company_id": value["company_id"],
@@ -351,7 +353,7 @@ def compile_underwriting_projections(episode: Any) -> dict[str, dict[str, Any]]:
         **identity,
         "authority": "TEACHING_CANDIDATE_ONLY",
         "central_path": thesis["central_path"],
-        "industry_future_thesis": deepcopy(price_free["industry_future_thesis"]),
+        "situation_model": deepcopy(situation_model),
         "normal_earnings_treatment": thesis["normal_earnings_treatment"],
         "owner_cash_treatment": thesis["owner_cash_treatment"],
         "permanent_loss_treatment": thesis["permanent_loss_treatment"],
@@ -366,7 +368,7 @@ def compile_underwriting_projections(episode: Any) -> dict[str, dict[str, Any]]:
         "request_id": "UW-VR:" + value["episode_id"],
         **identity,
         "authority": "ROUTE_REQUEST_ONLY",
-        "industry_future_thesis": deepcopy(price_free["industry_future_thesis"]),
+        "situation_model": deepcopy(situation_model),
         "primary_routes": deepcopy(value["value_route"]["primary_routes"]),
         "excluded_routes": deepcopy(value["value_route"]["excluded_routes"]),
         "route_reasoning": value["value_route"]["route_reasoning"],
@@ -398,8 +400,7 @@ def compile_underwriting_projections(episode: Any) -> dict[str, dict[str, Any]]:
             "reversal_observations",
         ],
         "central_path": thesis["central_path"],
-        "industry_future_thesis": deepcopy(industry_future),
-        "situation_model": deepcopy(value["situation_model"]),
+        "situation_model": deepcopy(situation_model),
         "business_position": value["business_position"],
         "survival_case": value["survival_case"],
         "adaptation_case": value["adaptation_case"],

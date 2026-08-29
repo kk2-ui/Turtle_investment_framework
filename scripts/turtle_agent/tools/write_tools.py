@@ -2281,10 +2281,10 @@ def _render_price_free_underwriting_section(projection: dict[str, Any]) -> str:
     """
     thesis = projection.get("underwriting_thesis")
     thesis = thesis if isinstance(thesis, dict) else {}
-    industry = projection.get("industry_future_thesis")
-    industry = industry if isinstance(industry, dict) else {}
     situation = projection.get("situation_model")
     situation = situation if isinstance(situation, dict) else {}
+    industry = situation.get("industry_future_thesis")
+    industry = industry if isinstance(industry, dict) else {}
     industry_reversals = [
         _inline_report_text(item)
         for item in industry.get("reversal_observations") or []
