@@ -1,0 +1,130 @@
+{
+  "schema_version": "judgment-experience-registry.v1",
+  "registry_id": "JERREG:JUDGMENT_UTILITY_HISTORICAL_20260828:V1",
+  "generated_at": "2026-08-29T12:00:00+08:00",
+  "projection_boundary": "Source-side references only. Records may generate current-company questions, rival checks, evidence priority, and conditional treatment. They are not current-company facts, probabilities, CJO values, valuation inputs, BuyBand, report authority, or investment actions.",
+  "records": [
+    {
+      "schema_version": "judgment-experience-record.v1",
+      "record_id": "JER:CN601012:CAPACITY_PRICE_CASH:V1",
+      "version": 1,
+      "status": "RETRIEVAL_READY",
+      "source_kind": "BLIND_FEEDBACK",
+      "source_case_id": "BLIND:CN601012:20240501:FY2024",
+      "source_company_id": "CN:601012",
+      "source_company_cluster_id": "COMPANY:CN601012",
+      "source_refs": [
+        "docs/development/research/training_campaigns/JUDGMENT_UTILITY_HISTORICAL_20260828/164_CN601012_PREOUTCOME_JUDGMENT_V2.json",
+        "docs/development/research/training_campaigns/JUDGMENT_UTILITY_HISTORICAL_20260828/167_CN601012_CUSTODIAN_OUTCOME_SETTLEMENT.json",
+        "docs/development/research/training_campaigns/JUDGMENT_UTILITY_HISTORICAL_20260828/170_CN601012_FEEDBACK_RECEIPT.json"
+      ],
+      "review_refs": [
+        "docs/development/research/training_campaigns/JUDGMENT_UTILITY_HISTORICAL_20260828/168_CN601012_INDEPENDENT_POSTOUTCOME_REVIEW.md"
+      ],
+      "evidence_ceiling": "MECHANISM",
+      "proposition": "In a capital-intensive manufacturing expansion under price pressure, installed capacity or scale does not establish durable economics until responsibility-matched price, cost or mix, cash-capex absorption, and financing or recoverability evidence support the same path.",
+      "structural_key": {
+        "mechanism_kinds": [
+          "CAPACITY_SCALE_VS_UNIT_ECONOMICS",
+          "CASH_CAPEX_ABSORPTION",
+          "RESPONSIBILITY_MATCHED_CASH"
+        ],
+        "lifecycle": "EXPANSION",
+        "industry_epoch": "OVERSUPPLY_PRICE_COMPRESSION",
+        "competitive_arena": "CAPITAL_INTENSIVE_B2B_MANUFACTURING",
+        "responsibility_boundary": "CONSOLIDATED_PRODUCT_CATEGORY_AND_CASH_CAPEX",
+        "company_constraints": [
+          "CAPACITY_COMMITMENT",
+          "PRICE_COMPRESSION",
+          "CAPITAL_INTENSITY"
+        ]
+      },
+      "decision_or_no_action": "Continue capacity and technology deployment while product economics and internal-cash coverage remain unresolved.",
+      "mechanism_chain": "capacity and scale -> same-boundary price, cost and product mix -> operating cash minus cash capital expenditure -> financing and recoverability investigation",
+      "observable_signals": [
+        "Same-boundary revenue and margin rather than capacity or a combined volume series.",
+        "Operating cash and cash capital expenditure under the same responsibility boundary.",
+        "A directly disclosed financing or recoverability bridge when permanent-loss treatment depends on it."
+      ],
+      "strongest_rival": "A cyclical price and cost recovery can restore returns before capacity is reduced, so one weak period does not prove that the manufacturing base is permanently impaired.",
+      "apply_when": [
+        "The target has a capital-intensive manufacturing expansion and a cutoff-visible risk that scale is being used as a proxy for unit economics.",
+        "The target can be examined through a responsibility-matched product or business-line economics carrier and a cash-capex carrier."
+      ],
+      "do_not_apply_when": [
+        "The target lacks a comparable responsibility boundary for either economics or cash, in which case the affected claim stays conditional rather than being inferred from group results.",
+        "A capacity completion, aggregate shipment, group liquidity, or one-period cash number is being substituted for the full mechanism."
+      ],
+      "investor_relevance": "Keep incremental capacity outside normal owner-cash treatment until current-company product economics and cash absorption are independently supported; investigate permanent-loss transmission without calling an unresolved cash screen a complete conclusion.",
+      "retrieval_roles": [
+        "PRIMARY_ANALOG"
+      ],
+      "economic_failure_loci": [
+        "MECHANISM",
+        "TRANSMISSION",
+        "ENVIRONMENT"
+      ],
+      "feedback_event_refs": [
+        "docs/development/research/training_campaigns/JUDGMENT_UTILITY_HISTORICAL_20260828/170_CN601012_FEEDBACK_RECEIPT.json"
+      ],
+      "recorded_at": "2026-08-29T12:00:00+08:00"
+    },
+    {
+      "schema_version": "judgment-experience-record.v1",
+      "record_id": "JER:TEACH:CN600570:RESPONSIBILITY_CASH_BOUNDARY:V1",
+      "version": 1,
+      "status": "RETRIEVAL_READY",
+      "source_kind": "TEACHING",
+      "source_case_id": "TEACH:CN600570:20180501:FY2018",
+      "source_company_id": "CN:600570",
+      "source_company_cluster_id": "COMPANY:CN600570",
+      "source_refs": [
+        "docs/development/research/episodes/EJE_CN600570_20180501/prospective_negative_control_v1/01_PREOUTCOME_EVIDENCE_AND_JUDGMENT_FREEZE.md",
+        "docs/development/research/episodes/EJE_CN600570_20180501/prospective_negative_control_v1/07_CUSTODIAN_OUTCOME_SETTLEMENT.json"
+      ],
+      "review_refs": [
+        "docs/development/research/episodes/EJE_CN600570_20180501/prospective_negative_control_v1/08_INDEPENDENT_PAIRED_UTILITY_REVIEW.md"
+      ],
+      "evidence_ceiling": "TEACHING",
+      "proposition": "A profitable core, a new option, and group cash must remain on their own responsibility boundaries; deployment examples or group cash cannot establish the option's recurring economics.",
+      "structural_key": {
+        "mechanism_kinds": [
+          "RESPONSIBILITY_MATCHED_CASH"
+        ],
+        "lifecycle": "EXPANSION",
+        "industry_epoch": "OVERSUPPLY_PRICE_COMPRESSION",
+        "competitive_arena": "CAPITAL_INTENSIVE_B2B_MANUFACTURING",
+        "responsibility_boundary": "GROUP_VS_INCREMENTAL_BUSINESS_LINE",
+        "company_constraints": [
+          "CAPITAL_INTENSITY",
+          "CAPACITY_COMMITMENT"
+        ]
+      },
+      "decision_or_no_action": "Continue core investment while treating new-option economics as unresolved.",
+      "mechanism_chain": "core cash and new-option deployment -> responsibility-matched recurring revenue and profit -> attributable cash treatment",
+      "observable_signals": [
+        "A target business-line revenue, profit or cash carrier rather than aggregate group cash.",
+        "A current-company discriminator showing whether the incremental line absorbs capital on its own economics."
+      ],
+      "strongest_rival": "Early technology or new-line investment can create a valuable option before separate recurring economics are disclosed.",
+      "apply_when": [
+        "A target has a mature core and a separately discussed incremental business line whose economics could be masked by group cash."
+      ],
+      "do_not_apply_when": [
+        "The target's cash and incremental economics are already reported at the same responsibility boundary.",
+        "A group cash figure is being used as proof that the incremental line has earned a return."
+      ],
+      "investor_relevance": "Preserve a plausible option in a named scenario, but exclude it from the current base cash treatment until current-company evidence closes the responsibility boundary.",
+      "retrieval_roles": [
+        "BOUNDARY_RECORD"
+      ],
+      "economic_failure_loci": [
+        "STATE",
+        "TRANSMISSION"
+      ],
+      "feedback_event_refs": [],
+      "recorded_at": "2026-08-29T12:00:00+08:00"
+    }
+  ],
+  "feedback_events": []
+}
