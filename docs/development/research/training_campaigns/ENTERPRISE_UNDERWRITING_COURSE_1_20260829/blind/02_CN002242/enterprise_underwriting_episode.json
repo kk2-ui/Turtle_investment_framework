@@ -1,0 +1,180 @@
+{
+  "schema_version": "enterprise-underwriting-episode.v2",
+  "episode_id": "UWEP:CN002242:20190501:BLIND:C1",
+  "company_id": "CN:002242",
+  "company_name": "Joyoung",
+  "cutoff_at": "2019-05-01T00:00:00+08:00",
+  "sample_identity": "BLIND_REPLAY",
+  "decision_frame": "站在2019-05-01，只判断九阳既有核心、跨品类扩展和渠道融合能否形成可持续的正常盈利与维护后普通股现金，以及哪些路径会造成永久损失；不使用截止日后的经营结果或任何价格信息。",
+  "underwriting_route": "先区分成熟核心、渠道改革和相邻品类，再沿终端客户吸收、同口径单位经济、库存与营运资本吸收、维护后现金的顺序承保；低负债只结算生存，不替代跨品类复利判断。",
+  "situation_model": {
+    "summary": "九阳正从豆浆机单品品牌转向品质生活小家电平台，并同时推进线上直营、线下品牌店与高端商业综合体。2018年收入、销量和利润均增长，说明既有品牌与渠道仍能获取需求；但产量增速快于销量、存货上升、毛利率下降且经营现金跨年波动，尚不能确认增长已被终端客户、单位经济和现金共同吸收。",
+    "industry_future_thesis": {
+      "horizon": "自截止日起三至五年，覆盖至少一个主要产品迭代与渠道库存消化周期。",
+      "most_likely_regime": "小家电需求最可能继续由单一功能产品向多品类品质生活需求扩展，电商、直营旗舰店与线下体验渠道并存；可触达市场扩大，但线上价格透明、产品生命周期和新品成败会使利润池更依赖持续创新、品牌跨品类迁移和库存纪律，而非单一爆品规模。",
+      "profit_pool_transmission": "若消费者在多个品类持续复购且线上线下没有以长期促销换量，品牌、研发和渠道覆盖可把需求扩展转成销量与盈利；若新品只进入经销库存或价格竞争加剧，存货、折价和营销投入会先压低毛利，再占用营运资本与普通股现金。",
+      "company_exposure": "九阳拥有自主研发、自有品牌、供应商与经销商资源、三级研发体系及约4万个终端，具备跨品类接触客户的入口；但豆浆机心智能否迁移到20多个品类、300多个型号，以及新增渠道是否带来终端复购，截止日证据尚未闭合。",
+      "adaptation": "核心产品迭代、研发全部费用化、直营网店和线下品牌店构成真实适应投入；当前只确认能力建设和公司层面销量增长，不把门店增加、型号扩张或相邻品类投资本身视为经济成功。",
+      "normal_economics": "成熟核心可用FY2016至FY2018约6.89亿元至7.54亿元的归母净利润观测区间作为保守锚，但不把2018年增速外推为常态。跨品类上行只有在库存周转、同口径毛利和多期经营现金同步改善后才进入正常盈利；owner cash 则需在经营现金基础上扣除保守维护资本并容纳渠道营运资本需求。",
+      "permanent_loss": "近期永久损失不主要来自偿债压力，而来自品牌跨品类迁移失败后持续以促销、库存和投入维持规模，或把资金投入不能形成终端吸收与现金回收的相邻品类；这会逐步侵蚀正常盈利和可分配现金，即使公司仍能生存。",
+      "valuation_treatment": "价值路线以成熟核心的保守正常盈利能力为主，并以多期维护后 owner cash 交叉检查；未验证的跨品类、渠道增量和尚科宁家只保留情景价值，不把单年增长或机械 post-capex 数字直接资本化。",
+      "strongest_rival": "最强反方是消费升级、电商和线下高端门店正在扩大九阳可触达市场，2018年的产销增长与库存增加主要是新品和增长备货，品牌、研发及约4万个终端将把跨品类扩张转成持续利润与现金。该解释因2018年收入、销量和归母利润均增长而可信，但截至截止日仍比审慎路径少一层关键证据：未见分品类终端动销、经销库存、同口径毛利与多期现金闭环，且产量快于销量、库存上升。",
+      "reversal_observations": [
+        "最早的上行翻转信号是下一完整经营期内，新品与新增品类的终端动销和复购增长、经销库存没有同步堆积，且产销差收敛；这会把跨品类扩张从情景提升为可条件承保。",
+        "若库存周转改善的同时整体或可比品类毛利企稳，并且经营现金连续覆盖保守维护资本和渠道营运资本，则应上调正常盈利与 owner cash 的可承保程度。",
+        "若收入或出货仍增长但产量持续快于销量、库存继续累积、毛利与经营现金恶化，则应下调品牌迁移判断，并把渠道和新品扩张视为永久损失路径而非增长选择权。"
+      ]
+    }
+  },
+  "business_position": "九阳在小家电中拥有清晰的豆浆机品牌起点、自主研发和广泛终端网络，2018年5183万台销量及收入增长表明公司没有失去市场入口。相对位置的关键限制是：公司层面增长不能分辨成熟核心、新品与经销备货，整体毛利率下降0.88个百分点也表明规模尚未转成更强的单位经济，因此只能承保既有经营基础，不能承保已经成为跨品类复利平台。",
+  "survival_case": "FY2018末约10.91亿元货币资金且无短期或长期借款，近端被迫融资、资产处置或退出的风险较低；约1.70亿元应收账款也没有显示出相对于现有资金的即时生存压力。生存判断置信度较高，但7.47亿元存货及扩张投入意味着现金缓冲可能被错误品类和渠道库存逐步消耗，故不能由资产负债表直接推导长期复利。",
+  "adaptation_case": "九阳以核心产品迭代、约2.98亿元且全部费用化的研发、直营网旗舰店、线下品牌店和相邻品类探索应对单品依赖与渠道变化，方向与行业转向多品类、线上线下并存相匹配。中等置信度判断是公司具备尝试适应的资源与入口，但成效仍有条件：2018年销量增长是积极的客户吸收代理，却因缺少终端动销、复购、分品类毛利与渠道库存，不能排除经销备货或低质量促销增长。",
+  "normalization_case": "正常盈利先由FY2016至FY2018约6.89亿元、6.89亿元和7.54亿元归母净利润所显示的成熟经营能力锚定，并因2018年毛利率下降与库存上升采用区间偏保守端，而不是延续12.71%的收入增速。owner cash 不采用单年精确值：FY2016至FY2018经营现金净额约10.07亿元、0.49亿元和4.09亿元，波动远大于利润；在维护/增长资本无法拆分时，保守地把FY2018约1.12亿元购建长期资产现金支出全额视作维护扣除，使约2.96亿元机械 post-capex 只成为单年交叉检查，并继续要求库存与渠道营运资本正常化。",
+  "permanent_loss_map": "第一条路径是豆浆机品牌不能跨品类迁移，新品依靠促销或压入渠道，造成毛利下滑、库存折价和营运资本占用；第二条是线上直营与线下门店增加重复获客、营销和库存责任，却没有形成复购与更好单位经济；第三条是尚科宁家及相邻品类持续投入但不能贡献可辨认利润与现金。无借款和现金储备显著降低短期破产式损失，却可能延长低回报试错，因此真正需要防范的是正常盈利与 owner cash 被多年侵蚀。",
+  "value_route": {
+    "primary_routes": [
+      "成熟核心的保守正常盈利能力",
+      "扣除保守维护资本并纳入渠道营运资本压力后的 owner cash 交叉检查"
+    ],
+    "excluded_routes": [
+      "按2018年单年收入或销量增速外推的成长路线",
+      "把未验证的新类别、渠道增量和尚科宁家直接并入基准的分部加总路线"
+    ],
+    "route_reasoning": "九阳是低负债、持续盈利且以品牌研发和渠道运营为主的企业，成熟核心适合正常盈利路线；但经营现金波动和存货上升要求用维护后现金约束。资产账面值不是品牌经营能力的主要表达，未验证扩张也没有足够同口径利润与现金支撑独立价值。",
+    "valuation_model_roles": {
+      "primary": [
+        "成熟核心正常盈利能力路线"
+      ],
+      "corroborative": [
+        "多期维护后 owner cash 路线"
+      ],
+      "stress": [
+        "库存累积、毛利承压与扩张投入不能回收的下行情景"
+      ]
+    }
+  },
+  "strongest_rival": "最强反方是消费升级、电商和线下高端门店正在扩大九阳可触达市场，2018年的产销增长与库存增加主要是新品和增长备货，品牌、研发及约4万个终端将把跨品类扩张转成持续利润与现金。该解释因2018年收入、销量和归母利润均增长而可信，但截至截止日仍比审慎路径少一层关键证据：未见分品类终端动销、经销库存、同口径毛利与多期现金闭环，且产量快于销量、库存上升。",
+  "reversal_observations": [
+    "最早的上行翻转信号是下一完整经营期内，新品与新增品类的终端动销和复购增长、经销库存没有同步堆积，且产销差收敛；这会把跨品类扩张从情景提升为可条件承保。",
+    "若库存周转改善的同时整体或可比品类毛利企稳，并且经营现金连续覆盖保守维护资本和渠道营运资本，则应上调正常盈利与 owner cash 的可承保程度。",
+    "若收入或出货仍增长但产量持续快于销量、库存继续累积、毛利与经营现金恶化，则应下调品牌迁移判断，并把渠道和新品扩张视为永久损失路径而非增长选择权。"
+  ],
+  "component_treatments": [
+    {
+      "component_id": "MATURE_CORE",
+      "treatment": "CONDITIONALLY_UNDERWRITE",
+      "reason": "FY2016至FY2018归母净利润保持在约6.89亿元至7.54亿元，2018年收入和销量增长，支持成熟经营基础；整体毛利率下降和缺少分品类经济性限制了精度。",
+      "investment_consequence": "以历史盈利区间偏保守端作为成熟核心的正常盈利锚，不外推单年增长。",
+      "promotion_or_resolution_condition": "连续期间的核心品类终端动销、同口径毛利、库存周转和经营现金保持一致。",
+      "evidence_ids": [
+        "EVIDENCE:CN002242:BUSINESS_MODEL",
+        "EVIDENCE:CN002242:OPERATING_2016_2018",
+        "EVIDENCE:CN002242:INVENTORY_MARGIN"
+      ]
+    },
+    {
+      "component_id": "CHANNEL_FUSION",
+      "treatment": "SCENARIO_ONLY",
+      "reason": "直营网旗舰店、线下品牌店、Shopping Mall和O2O扩大了触达方式，但现有公司层面销量不能区分真实终端增量、渠道迁移或经销备货。",
+      "investment_consequence": "渠道改革不增加基准正常盈利，只保留形成更广客户触达和复购的上行情景。",
+      "promotion_or_resolution_condition": "新增渠道带来可辨认终端动销与复购，且经销库存、毛利和渠道营运资本不恶化。",
+      "evidence_ids": [
+        "EVIDENCE:CN002242:BUSINESS_MODEL",
+        "EVIDENCE:CN002242:STRATEGIC_CHOICES",
+        "EVIDENCE:CN002242:INVENTORY_MARGIN"
+      ]
+    },
+    {
+      "component_id": "CATEGORY_AND_ADJACENCY",
+      "treatment": "SCENARIO_ONLY",
+      "reason": "公司已扩展至20多个品类、300多个型号并投资尚科宁家，但材料没有分品类终端吸收、利润、现金或投资回收证据。",
+      "investment_consequence": "新类别与尚科宁家不进入基准正常盈利，保留为品牌迁移成功时的选择权。",
+      "promotion_or_resolution_condition": "分品类销量来自终端而非库存转移，并形成稳定毛利、库存周转和可归属现金回收。",
+      "evidence_ids": [
+        "EVIDENCE:CN002242:BUSINESS_MODEL",
+        "EVIDENCE:CN002242:STRATEGIC_CHOICES"
+      ]
+    },
+    {
+      "component_id": "SURVIVAL",
+      "treatment": "UNDERWRITE",
+      "reason": "FY2018末约10.91亿元货币资金且无短期或长期借款，支持较强的近端财务韧性。",
+      "investment_consequence": "短期被迫融资或退出不是中心风险，但不因此上调客户吸收、正常盈利或资本配置质量。",
+      "promotion_or_resolution_condition": "若库存和扩张投入持续消耗现金，或出现新增刚性债务责任，则重新评估生存保护。",
+      "evidence_ids": [
+        "EVIDENCE:CN002242:BALANCE_AND_CASH"
+      ]
+    },
+    {
+      "component_id": "OWNER_CASH",
+      "treatment": "CONDITIONALLY_UNDERWRITE",
+      "reason": "FY2016至FY2018经营现金净额在约0.49亿元至10.07亿元间大幅波动，FY2018机械 post-capex 约2.96亿元，但维护/增长拆分和渠道营运资本正常水平不可辨认。",
+      "investment_consequence": "承认企业能够产生现金，但不把任一单年现金或机械 post-capex 当成正常 owner cash；用全额披露资本支出作保守维护扣除并等待多期现金闭环。",
+      "promotion_or_resolution_condition": "经营现金在库存正常化后连续跟随盈利，并覆盖保守维护资本、必要渠道投入和其他普通股之前的现金责任。",
+      "evidence_ids": [
+        "EVIDENCE:CN002242:OPERATING_2016_2018",
+        "EVIDENCE:CN002242:BALANCE_AND_CASH"
+      ]
+    }
+  ],
+  "evidence_trace": [
+    {
+      "evidence_id": "EVIDENCE:CN002242:BUSINESS_MODEL",
+      "source_ref": "docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_COURSE_1_20260829/sources/CN002242_20190501_PRE_CUTOFF_SOURCE_PACKAGE.md",
+      "locator": "公司怎样赚钱及行业位置",
+      "scope": "品牌、研发、经销与多渠道经营模式，品类和终端覆盖，以及主要经营约束。",
+      "used_for": "行业处境、公司位置、客户入口与跨品类品牌迁移判断。"
+    },
+    {
+      "evidence_id": "EVIDENCE:CN002242:OPERATING_2016_2018",
+      "source_ref": "docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_COURSE_1_20260829/sources/CN002242_20190501_PRE_CUTOFF_SOURCE_PACKAGE.md",
+      "locator": "FY2016–FY2018 经营与现金：收入、归母净利润、销量与产量",
+      "scope": "FY2016至FY2018收入与利润及FY2018产销量增长。",
+      "used_for": "成熟核心正常盈利锚、客户吸收代理与产销差判断。"
+    },
+    {
+      "evidence_id": "EVIDENCE:CN002242:INVENTORY_MARGIN",
+      "source_ref": "docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_COURSE_1_20260829/sources/CN002242_20190501_PRE_CUTOFF_SOURCE_PACKAGE.md",
+      "locator": "FY2016–FY2018 经营与现金：存货、产销与毛利率",
+      "scope": "FY2018产量快于销量、存货由约5.16亿元升至7.47亿元、整体毛利率下降0.88个百分点。",
+      "used_for": "终端吸收边界、单位经济、营运资本风险与永久损失路径。"
+    },
+    {
+      "evidence_id": "EVIDENCE:CN002242:BALANCE_AND_CASH",
+      "source_ref": "docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_COURSE_1_20260829/sources/CN002242_20190501_PRE_CUTOFF_SOURCE_PACKAGE.md",
+      "locator": "FY2016–FY2018 经营与现金：经营现金、长期资产支出与FY2018末资产负债表",
+      "scope": "经营现金跨年波动、FY2018长期资产现金支出、货币资金、借款、应收账款与存货。",
+      "used_for": "生存、维护资本保守处理、owner cash 与资本损失承受力。"
+    },
+    {
+      "evidence_id": "EVIDENCE:CN002242:STRATEGIC_CHOICES",
+      "source_ref": "docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_COURSE_1_20260829/sources/CN002242_20190501_PRE_CUTOFF_SOURCE_PACKAGE.md",
+      "locator": "公司怎样赚钱及行业位置：FY2018管理选择",
+      "scope": "核心产品迭代、渠道融合、品质生活小家电升级与尚科宁家探索。",
+      "used_for": "适应路径、组件分账和情景价值处理。"
+    }
+  ],
+  "existing_object_refs": [
+    {
+      "kind": "PRE_CUTOFF_SOURCE_PACKAGE",
+      "ref": "docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_COURSE_1_20260829/sources/CN002242_20190501_PRE_CUTOFF_SOURCE_PACKAGE.md",
+      "role": "合同允许的唯一九阳事实来源，用于本 Episode 的全部事实与经济推断。"
+    }
+  ],
+  "underwriting_thesis": {
+    "thesis_id": "UWTHESIS:CN002242:20190501:BLIND:C1",
+    "central_path": "中等信心的中心判断是：九阳的品牌、研发、终端覆盖和低负债足以支撑生存及一个可保守承保的成熟核心，但截止日尚不能把2018年增长解释为已经完成的跨品类复利。客户吸收的公司层面代理在改善，经济吸收却受毛利率下降、产量快于销量、存货上升和经营现金波动约束；因此新类别、渠道融合和尚科宁家只保留情景信用，正常盈利以近三年历史利润区间偏保守端锚定，owner cash 以全额披露资本支出作维护扣除并等待库存与多期现金闭环。",
+    "normal_earnings_treatment": "以FY2016至FY2018约6.89亿元至7.54亿元归母净利润的观测区间作为成熟核心参考，并因毛利与库存信号使用偏保守端；不外推2018年增长，不计入尚未证明终端吸收和同口径利润的新类别或渠道增量。",
+    "owner_cash_treatment": "精确维护资本未知但局部化处理：暂将披露购建长期资产现金支出全额视为维护资本；鉴于经营现金跨年大幅波动和库存上升，FY2018约2.96亿元机械 post-capex 只作单年交叉检查，正常 owner cash 须由库存正常化后的多期经营现金覆盖来确认。",
+    "permanent_loss_treatment": "低债务降低近期被迫退出风险；主要损失路径改为品牌跨品类失败、渠道库存与促销侵蚀毛利和现金，以及相邻品类投入长期不能回收。对这些扩张不预付基准信用，并用库存、毛利与维护后现金作为约束。",
+    "value_route_treatment": "采用成熟核心正常盈利能力为主、多期维护后 owner cash 为交叉检查的路线；跨品类和渠道扩张只在客户、单位经济和现金责任链闭合后升级，资产路线和未经证明的分部加总不作为主要表达。",
+    "economic_directions": {
+      "normal_earnings": "MIXED",
+      "owner_cash": "MIXED",
+      "permanent_loss": "MIXED"
+    },
+    "strongest_rival": "最强反方是消费升级、电商和线下高端门店正在扩大九阳可触达市场，2018年的产销增长与库存增加主要是新品和增长备货，品牌、研发及约4万个终端将把跨品类扩张转成持续利润与现金。该解释因2018年收入、销量和归母利润均增长而可信，但截至截止日仍比审慎路径少一层关键证据：未见分品类终端动销、经销库存、同口径毛利与多期现金闭环，且产量快于销量、库存上升。",
+    "monitoring": "先看新增品类的终端动销、复购和经销库存是否证实真实客户吸收，再看产销差、库存周转与同口径毛利是否证明经济吸收，最后看经营现金能否跨期覆盖保守维护资本和渠道营运资本；任一前段增长都不替代后段结算。"
+  },
+  "investment_treatment": "仅作价格分离的企业承保研究：成熟核心进入保守基准，新类别、渠道融合和尚科宁家保持情景处理；在终端吸收、同口径利润、库存周转和维护后现金闭合前，不给予其基准贡献。"
+}
