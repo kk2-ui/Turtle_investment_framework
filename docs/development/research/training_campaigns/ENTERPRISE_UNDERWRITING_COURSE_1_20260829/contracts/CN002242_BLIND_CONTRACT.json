@@ -1,0 +1,47 @@
+{
+  "schema_version": "enterprise-underwriting-training-contract.v1",
+  "contract_id": "UWTRAIN:CN002242:20190501:BLIND:C1",
+  "training_track": "BLIND_REPLAY",
+  "company_id": "CN:002242",
+  "company_name": "Joyoung",
+  "cutoff_at": "2019-05-01T00:00:00+08:00",
+  "sample_identity": "BLIND_REPLAY",
+  "outcome_access": "SEALED",
+  "allowed_sources": [
+    {
+      "source_id": "SOURCE:CN002242:20190501:PRE_CUTOFF",
+      "source_ref": "docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_COURSE_1_20260829/sources/CN002242_20190501_PRE_CUTOFF_SOURCE_PACKAGE.md",
+      "available_at": "2019-04-30T23:59:59+08:00",
+      "time_role": "PRE_CUTOFF"
+    }
+  ],
+  "feedback_clocks": [
+    {
+      "clock_id": "CLOCK:CN002242:FY2019",
+      "horizon": "EARLY_SIGNAL",
+      "opens_at": "2020-04-30T00:00:00+08:00",
+      "episode_claims": ["INDUSTRY_AND_SITUATION", "BUSINESS_POSITION_AND_ADAPTATION", "SURVIVAL_AND_FINANCING"],
+      "discriminating_observation": "新品、品类和渠道变化是否带来真实终端吸收，而非经销库存或单品波动。"
+    },
+    {
+      "clock_id": "CLOCK:CN002242:FY2021",
+      "horizon": "NORMALIZATION_AND_CASH",
+      "opens_at": "2022-04-30T00:00:00+08:00",
+      "episode_claims": ["BUSINESS_POSITION_AND_ADAPTATION", "NORMAL_EARNINGS", "OWNER_CASH"],
+      "discriminating_observation": "品类、渠道与创新是否稳定转成同口径利润、库存周转和维护后现金。"
+    },
+    {
+      "clock_id": "CLOCK:CN002242:FY2023",
+      "horizon": "LONG_TERM_PERMANENT_LOSS",
+      "opens_at": "2024-04-30T00:00:00+08:00",
+      "episode_claims": ["NORMAL_EARNINGS", "OWNER_CASH", "PERMANENT_LOSS", "VALUE_ROUTE"],
+      "discriminating_observation": "品牌与渠道是否能跨产品周期复利，还是竞争、库存与资本配置持续削弱正常盈利和 owner cash。"
+    }
+  ],
+  "primary_training_product": {
+    "object_type": "EnterpriseUnderwritingEpisode",
+    "schema_version": "enterprise-underwriting-episode.v2",
+    "completion_basis": "COMPLETE_EPISODE_VALIDATION_ONLY"
+  },
+  "authority": "RESEARCH_TRAINING_ONLY_NO_PRICE_VALUATION_OR_INVESTMENT_AUTHORITY"
+}

@@ -2,9 +2,10 @@
 
 > 状态：`ROSTER_FROZEN / WORKED_CASE_PENDING`
 >
-> 冻结基线：`main@a115456e99061bc4e831cc0e057fa909bc4cfad1`
+> 冻结基线：本地受保护主线 `main@eadaae9dedbf4cf1c3ac621031bb18fd0f4d49f0`
 >
-> 训练 kernel：在冻结基线之上接入已验收的 `34cc649` 与 `93dda8e`
+> 训练 kernel：由该基线直接提供；不得从其祖先 `a115456` 或已分叉的
+> `origin/main` 恢复课程
 
 ## 中心任务
 

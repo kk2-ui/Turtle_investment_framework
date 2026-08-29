@@ -2,7 +2,7 @@
   "schema_version": "enterprise-underwriting-course-roster.v1",
   "roster_id": "EUCR:COURSE1:WORKED:20260829",
   "frozen_at": "2026-08-29T18:40:00+08:00",
-  "base_commit": "a115456e99061bc4e831cc0e057fa909bc4cfad1",
+  "base_commit": "eadaae9dedbf4cf1c3ac621031bb18fd0f4d49f0",
   "track": "WORKED_CASE",
   "selection_basis": "FOUR_INDUSTRY_REFERENCE_CLASSES_WITH_ADVANTAGE_ORDINARY_AND_FAILURE_OR_NEAR_MISS",
   "result_access": "RESULT_KNOWN_TEACHING_ONLY",

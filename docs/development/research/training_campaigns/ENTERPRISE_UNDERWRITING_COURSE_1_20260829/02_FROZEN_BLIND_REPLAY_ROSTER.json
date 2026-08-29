@@ -2,7 +2,7 @@
   "schema_version": "enterprise-underwriting-course-roster.v1",
   "roster_id": "EUCR:COURSE1:BLIND:20260829",
   "frozen_at": "2026-08-29T18:40:00+08:00",
-  "base_commit": "a115456e99061bc4e831cc0e057fa909bc4cfad1",
+  "base_commit": "eadaae9dedbf4cf1c3ac621031bb18fd0f4d49f0",
   "track": "BLIND_REPLAY",
   "selection_basis": "UNSEEN_COMPANIES_WITH_THREE_TRAINED_INDUSTRY_HOLDOUTS_AND_ONE_CROSS_INDUSTRY_TRANSFER",
   "prohibited_selection_inputs": [
