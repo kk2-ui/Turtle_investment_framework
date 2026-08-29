@@ -1,0 +1,201 @@
+{
+  "settlement_id": "CN601012_BLIND11_CUSTODIAN_OUTCOME_SETTLEMENT",
+  "settlement_version": "1.0",
+  "settlement_date": "2026-08-29",
+  "settlement_status": "COMPLETE_WITH_CELL_LOCAL_UNKNOWN_RESOLUTIONS",
+  "case_identity": "BLIND:CN601012:20240501:FY2024",
+  "source_identity": {
+    "source_authority": "CNINFO official disclosure",
+    "announcement_id": "1223421477",
+    "announcement_title": "2024年年度报告",
+    "announcement_date": "2025-04-30",
+    "static_url": "https://static.cninfo.com.cn/finalpage/2025-04-30/1223421477.PDF",
+    "retrieved_pdf_title": "隆基绿能科技股份有限公司2024年年度报告",
+    "retrieved_pdf_pages": 301,
+    "identity_verification_state": "MATCHED: authorized announcement ID and publication-date URL path match; retrieved PDF title matches the authorized FY2024 full annual-report identity."
+  },
+  "frozen_cell_settlements": [
+    {
+      "cell_id": "FY2024_CELL_1",
+      "judgment_id": "J1_CAPACITY_AND_VOLUME",
+      "resolution_state": "UNKNOWN_UNAVAILABLE_OR_NONCOMPARABLE",
+      "matching_disclosures": [],
+      "local_mismatch": {
+        "annual_report_page": "19 / 301",
+        "observed_nonmatching_label": "电池组件出货量",
+        "reason": "The disclosure is one combined battery-and-module shipment figure. It does not separately disclose the required FY2024 actual 电池对外销售 and total 组件出货 series, so S1_GW cannot be calculated without a prohibited substitution."
+      },
+      "frozen_calculations": {
+        "S1_GW": "NOT_COMPUTED__BOTH_REQUIRED_ACTUAL_GW_INPUTS_NOT_DETERMINISTICALLY_MATCHED",
+        "threshold_GW": 90.0
+      },
+      "judgment_treatment": "unchanged: retain the frozen J1 treatment; no alternate shipment series used."
+    },
+    {
+      "cell_id": "FY2024_CELL_2",
+      "judgment_id": "J2_PRICE_AND_UNIT_ECONOMICS",
+      "resolution_state": "RESOLVED__MARGIN_BELOW_THRESHOLD__REVENUE_NON_EXPANDING",
+      "matching_disclosures": [
+        {
+          "annual_report_page": "24 / 301",
+          "disclosure_location": "主营业务分产品情况 / 组件及电池",
+          "label": "营业收入",
+          "value": 66334071734.16,
+          "unit": "RMB"
+        },
+        {
+          "annual_report_page": "24 / 301",
+          "disclosure_location": "主营业务分产品情况 / 组件及电池",
+          "label": "营业成本",
+          "value": 62177517906.68,
+          "unit": "RMB"
+        }
+      ],
+      "frozen_calculations": {
+        "R2_RMB": 66334071734.16,
+        "C2_RMB": 62177517906.68,
+        "R2_minus_C2_RMB": 4156553827.48,
+        "M2_pct": 6.266091796894028,
+        "FY2023_revenue_base_RMB": 99199497228.5,
+        "FY2023_margin_threshold_pct": 18.38,
+        "revenue_comparison": "NON_EXPANDING: R2 <= RMB99,199,497,228.50",
+        "margin_comparison": "BELOW_THRESHOLD: M2_pct < 18.38"
+      },
+      "judgment_treatment": "downward: lower margin on non-expanding same-category revenue strengthens the commodity-price/technology-refresh mechanism."
+    },
+    {
+      "cell_id": "FY2024_CELL_3",
+      "judgment_id": "J3_CASH_CAPITAL_DEBT_AND_PERMANENT_LOSS",
+      "resolution_state": "RESOLVED__CASH_CAPEX_NOT_COVERED",
+      "matching_disclosures": [
+        {
+          "annual_report_page": "127 / 301 and 128 / 301",
+          "disclosure_location": "合并现金流量表 / 2024 年 1—12 月",
+          "label": "经营活动产生的现金流量净额",
+          "value": -4724978931.84,
+          "unit": "RMB"
+        },
+        {
+          "annual_report_page": "128 / 301",
+          "disclosure_location": "合并现金流量表 / 2024 年 1—12 月",
+          "label": "购建固定资产、无形资产和其他长期资产支付的现金",
+          "value": 8013068271.53,
+          "unit": "RMB"
+        }
+      ],
+      "frozen_calculations": {
+        "operating_cash_flow_RMB": -4724978931.84,
+        "cash_capex_RMB": 8013068271.53,
+        "S3_RMB": -12738047203.37,
+        "comparison": "S3_RMB < 0"
+      },
+      "local_result": "CASH_CAPEX_NOT_COVERED",
+      "judgment_treatment": "J3 treatment is not independently assigned from CELL_3; apply only the frozen joint map with CELL_4."
+    },
+    {
+      "cell_id": "FY2024_CELL_4",
+      "judgment_id": "J3_CASH_CAPITAL_DEBT_AND_PERMANENT_LOSS",
+      "resolution_state": "UNKNOWN_UNAVAILABLE_OR_NONCOMPARABLE",
+      "matching_disclosures": [
+        {
+          "annual_report_page": "118 / 301",
+          "disclosure_location": "合并资产负债表 / 2024 年 12 月 31 日",
+          "label": "货币资金",
+          "value": 53156782586.47,
+          "unit": "RMB"
+        },
+        {
+          "annual_report_page": "119 / 301",
+          "disclosure_location": "合并资产负债表 / 2024 年 12 月 31 日",
+          "label": "短期借款",
+          "value": 300223666.66,
+          "unit": "RMB"
+        },
+        {
+          "annual_report_page": "225 / 301",
+          "disclosure_location": "附注43：1年内到期的非流动负债",
+          "label": "1年内到期的长期借款",
+          "value": 1686484167.76,
+          "unit": "RMB"
+        },
+        {
+          "annual_report_page": "225 / 301",
+          "disclosure_location": "附注43：1年内到期的非流动负债",
+          "label": "1年内到期的租赁负债",
+          "value": 103486769.61,
+          "unit": "RMB"
+        },
+        {
+          "annual_report_page": "120 / 301",
+          "disclosure_location": "合并资产负债表 / 2024 年 12 月 31 日",
+          "label": "长期借款",
+          "value": 13949126850.8,
+          "unit": "RMB"
+        },
+        {
+          "annual_report_page": "120 / 301",
+          "disclosure_location": "合并资产负债表 / 2024 年 12 月 31 日",
+          "label": "应付债券",
+          "value": 6973410085.8,
+          "unit": "RMB"
+        },
+        {
+          "annual_report_page": "120 / 301",
+          "disclosure_location": "合并资产负债表 / 2024 年 12 月 31 日",
+          "label": "租赁负债",
+          "value": 6781716336.6,
+          "unit": "RMB"
+        },
+        {
+          "annual_report_page": "241 / 301",
+          "disclosure_location": "附注72：资产减值损失",
+          "label": "存货跌价损失及合同履约成本减值损失",
+          "source_display_value": -6128184433.54,
+          "frozen_formula_loss_magnitude": 6128184433.54,
+          "unit": "RMB"
+        },
+        {
+          "annual_report_page": "241 / 301",
+          "disclosure_location": "附注72：资产减值损失",
+          "label": "固定资产减值损失",
+          "source_display_value": -2298708865.67,
+          "frozen_formula_loss_magnitude": 2298708865.67,
+          "unit": "RMB"
+        }
+      ],
+      "local_mismatch": {
+        "annual_report_page": "225 / 301",
+        "missing_required_label": "1年内到期的应付债券",
+        "reason": "附注43 does not separately disclose the required current-bonds component. The missing component is not inferred as zero and no substitute is used."
+      },
+      "frozen_calculations": {
+        "A_cash_RMB": 53156782586.47,
+        "known_D_components_RMB_excluding_missing_current_bonds": 29794447877.23,
+        "B4_RMB": "NOT_COMPUTED__REQUIRED_NOTE43_CURRENT_BONDS_COMPONENT_UNAVAILABLE",
+        "cash_buffer_threshold_RMB": 30308853390.43,
+        "I4_RMB": 8426893299.21,
+        "impairment_threshold_RMB": 1351416111.91,
+        "impairment_comparison": "MATERIAL_IMPAIRMENT: I4_RMB >= RMB1,351,416,111.91"
+      },
+      "judgment_treatment": "unchanged: CELL_4 is locally unknown, so the frozen J3 joint map is not applied."
+    }
+  ],
+  "j3_joint_resolution": {
+    "CELL_3_state": "CASH_CAPEX_NOT_COVERED",
+    "CELL_4_state": "UNKNOWN_UNAVAILABLE_OR_NONCOMPARABLE",
+    "resolution_state": "NOT_APPLIED__LOCAL_UNKNOWN",
+    "J3_treatment": "unchanged: the frozen contract requires CELL_3 and CELL_4 to be resolved before a joint-map treatment can apply."
+  },
+  "firewall_attestation": {
+    "pre_outcome_judgment_unchanged": true,
+    "only_authorized_FY2024_source_body_retrieved_and_read": true,
+    "retrieved_source_body": "https://static.cninfo.com.cn/finalpage/2025-04-30/1223421477.PDF",
+    "summary_or_revision_retrieved_or_read": false,
+    "other_campaign_curriculum_method_or_feedback_artifacts_read": false,
+    "FY2025_or_later_material_read": false,
+    "market_price_return_analyst_or_valuation_material_read": false,
+    "enterprise_synthesis_or_new_unfrozen_outcome_facts_added": false,
+    "only_the_four_frozen_resolution_cells_settled": true,
+    "repository_commit_created": false
+  }
+}

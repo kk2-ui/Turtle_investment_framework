@@ -1,0 +1,62 @@
+{
+  "artifact_type": "BLIND11_COMPANY_FEEDBACK_RECEIPT",
+  "status": "COMPLETED",
+  "candidate": {
+    "security_id": "CN:601012",
+    "legal_name": "隆基绿能科技股份有限公司"
+  },
+  "REAL_FEEDBACK_TURN_11_COMPLETED": true,
+  "completion_basis": "The repaired, frozen pre-outcome V2 contract in 164_CN601012_PREOUTCOME_JUDGMENT_V2.json was independently accepted in 165_CN601012_INDEPENDENT_PREOUTCOME_REVIEW_V2.md, settled only through the authorized FY2024 original annual report in 167_CN601012_CUSTODIAN_OUTCOME_SETTLEMENT.json, and independently accepted in 168_CN601012_INDEPENDENT_POSTOUTCOME_REVIEW.md. The permitted settlement changes the company's price/unit-economics treatment and next-cutoff research priority.",
+  "frozen_cell_feedback": {
+    "FY2024_CELL_1": "UNKNOWN_UNAVAILABLE_OR_NONCOMPARABLE: the report disclosed only a combined battery-and-module shipment series; J1 is unchanged.",
+    "FY2024_CELL_2": "DOWNWARD: same-category revenue was non-expanding and calculated gross margin was 6.2661%, below the frozen 18.38% threshold; J2 is downgraded.",
+    "FY2024_CELL_3": "CASH_CAPEX_NOT_COVERED: operating cash flow less frozen cash capex was negative RMB12.738bn; it enters J3 only through the pre-frozen joint map.",
+    "FY2024_CELL_4": "UNKNOWN_UNAVAILABLE_OR_NONCOMPARABLE: the required current-bonds component was not separately disclosed, so the buffer calculation and J3 joint map are not applied. The separately extractable impairment amount does not cure that missing component."
+  },
+  "company_treatment_change": {
+    "before_settlement": "Treat shipment scale and liquidity as real mitigating facts, but do not credit capacity as durable normal earnings or owner cash while price compression, technology-refresh impairment and cash-capex absorption remain unresolved.",
+    "after_settlement": "Lower the price/unit-economics treatment: FY2024 same-category revenue and margin validate the pre-outcome commodity-price/technology-refresh pressure. Retain J1 conditional because the exact volume contract is locally unavailable. Retain J3 conditional because the joint liquidity/cash-capex/impairment contract cannot be completed without the specified current-bonds field; do not call the cash screen or impairment amount a full owner-cash or permanent-loss conclusion.",
+    "permanent_loss_change": "The concrete permanent-loss investigation becomes more urgent because unit economics deteriorated and the cash-capex screen failed. The formal J3 treatment is unchanged, not improved: future work must determine whether that pressure transmits through financing capacity and recoverable asset value."
+  },
+  "next_cutoff_research_agenda_delta": {
+    "previous_question": "Can large capacity and shipment scale coexist with a recoverable product-economics and cash/capital path, or does the capital-intensive expansion create a permanent-loss carrier?",
+    "new_questions": [
+      "Does the exact consolidated 组件及电池 price, cost and product mix recover sufficiently to improve the same-scope margin without relying on capacity or volume as a proxy?",
+      "Do operating cash and cash capital expenditure again move toward coverage, and what recurring working-capital or capex driver explains the change?",
+      "Do technology-refresh inventory and fixed-asset losses recur, and how do they interact with a directly disclosed, non-double-counted financing maturity and cash buffer?",
+      "Does the issuer disclose a stable, comparable component shipment series that can settle demand/volume realization without combining self-use, external cells, modules, capacity or production?"
+    ],
+    "company_specific_effect": "Research moves from a broad capacity-versus-economics question to a priority examination of price/cost recovery and whether capital/impairment pressure transmits into financing and recoverability."
+  },
+  "measurement_learning": {
+    "observation": "The strict V2 contract correctly prevented the custodian from substituting a combined shipment series or inferring an undisclosed current-bonds component. The resulting local UNKNOWNs preserve the company judgment while identifying which disclosure labels are not stable enough for a future contract.",
+    "classification": "DATA_COVERAGE_AND_ACQUISITION_MODULE_OBSERVATION",
+    "not_a_new_global_gate": true,
+    "not_yet_transfer_evidence": true
+  },
+  "transferable_rule": {
+    "created": false,
+    "statement": "No transfer candidate is created. The feedback changes CN601012's own treatment and agenda; the disclosure-availability observation has not yet changed another unknown company's pre-outcome treatment."
+  },
+  "METHOD_VALIDATED": false,
+  "TRANSFER_CANDIDATE_CREATED": false,
+  "TRANSFER_VALIDATED": false,
+  "independent_post_outcome_review": {
+    "artifact": "168_CN601012_INDEPENDENT_POSTOUTCOME_REVIEW.md",
+    "verdict": "ACCEPT"
+  },
+  "source_boundary": {
+    "direct_artifacts_referenced": [
+      "164_CN601012_PREOUTCOME_JUDGMENT_V2.json",
+      "167_CN601012_CUSTODIAN_OUTCOME_SETTLEMENT.json",
+      "168_CN601012_INDEPENDENT_POSTOUTCOME_REVIEW.md"
+    ],
+    "other_outcome_facts_added": false,
+    "market_price_return_valuation_analyst_or_portfolio_content": false
+  },
+  "permissions": {
+    "PERMISSIONS_GRANTED": false,
+    "granted": [],
+    "statement": "No CJO, formal valuation, BuyBand, report authorization or investment authority is granted or implied."
+  }
+}

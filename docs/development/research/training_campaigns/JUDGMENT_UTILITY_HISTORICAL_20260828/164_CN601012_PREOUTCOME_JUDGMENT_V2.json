@@ -1,0 +1,318 @@
+{
+  "judgment_id": "CN601012_BLIND11_PREOUTCOME_JUDGMENT_V2",
+  "judgment_version": "2.0",
+  "judgment_date": "2026-08-29",
+  "judgment_status": "FROZEN_PRE_OUTCOME",
+  "case_identity": "BLIND:CN601012:20240501:FY2024",
+  "issuer_name_at_cutoff": "隆基绿能",
+  "security_code": "601012",
+  "cutoff_exclusive": "2024-05-01",
+  "supersedes_for_resolution_contract_only": "161_CN601012_PREOUTCOME_JUDGMENT.json",
+  "source_boundary": {
+    "used": "Only 158_BLIND11_FEEDBACK_LINKED_SELECTION_REGISTER.json, 159_CN601012_CUTOFF_BEFORE_PACKET_RECEIPT.json, and the packet's three local FY2021-FY2023 annual-report text extractions.",
+    "excluded": [
+      "other campaign, curriculum, method, and feedback materials",
+      "FY2024 and later metadata, bodies, and outcomes",
+      "external or browser evidence",
+      "market-price, return, valuation, and analyst material"
+    ],
+    "point_in_time_rule": "The FY2023 annual report, published 2024-04-30, is the last admissible company evidence. Nothing after the exclusive 2024-05-01 cutoff informs this judgment."
+  },
+  "overall_best_current_judgment": {
+    "direction": "隆基绿能 enters the cutoff as a genuine scale and technology contender, but not as a capacity-led normal-earnings conclusion. Its 2023 shipment growth defended revenue while industry price collapse, rapid technology replacement, write-downs, and capital absorption made the link from additional GW to owner cash materially weaker. The base case credits the enterprise with survival capacity and a plausible differentiation option, while requiring proof that BC-led volume can earn a durable spread and convert to cash before treating the expanded asset base as value creating.",
+    "inference_confidence": "medium",
+    "why_this_is_not_a_company_rejection": "The company retained RMB57.00bn of reported cash, produced RMB8.12bn of operating cash in FY2023, held leading reported shipment scale, and has a technically credible product path. Those facts mitigate immediate financing-led failure; they do not validate the economics of the entire capacity build."
+  },
+  "named_judgments": [
+    {
+      "judgment_id": "J1_CAPACITY_AND_VOLUME",
+      "best_current_judgment": "Volume execution is strong in absolute terms but capacity growth is ahead of demonstrated value realization. The base case expects material shipments and continued scale leadership, yet treats new capacity as an option whose economic value depends on utilization and unit contribution rather than as evidence of normal earnings.",
+      "inference_confidence": "medium",
+      "decisive_evidence": "Wafer shipments rose from 70.01GW in FY2021 to 85.06GW in FY2022 and 125.42GW in FY2023; component shipments rose from 38.52GW to 46.76GW to 67.52GW. Year-end wafer/cell/component capacity rose from 105/37/60GW to 133/50/85GW to 170/80/120GW. The FY2024 plan was about 135GW wafer shipments and 90-100GW battery-plus-component shipments, while FY2023 reported component shipments were 67.52GW and external cell sales were 5.90GW.",
+      "causal_mechanism": "Lower module prices can stimulate end-market installation and keep a leading supplier's factories busy, but industry-wide expansion and rapid technology change make shipment volume insufficient to establish an economic return on each new production line. A supplier earns the added capacity only if utilization, yield, customer acceptance, and per-watt contribution jointly cover replacement and refresh capital.",
+      "strongest_countercase": "Global installation growth and lower system cost could absorb the capacity; a global leader with falling manufacturing cost, a broad channel, and differentiating BC products may retain high utilization while weaker competitors exit. The FY2023 report's acute supply-demand imbalance, component tender prices below RMB1/W, new-technology expansion, and price-led impairment keep that case outside the base case.",
+      "frozen_altering_result": "FY2024_CELL_1 only. An at-least-90GW resolved result strengthens volume realization; a below-90GW resolved result strengthens the capacity-ahead-of-demand branch; an unavailable or non-comparable result leaves J1 unchanged and is local to CELL_1."
+    },
+    {
+      "judgment_id": "J2_PRICE_AND_UNIT_ECONOMICS",
+      "best_current_judgment": "The base case is that scale has bought volume but not yet demonstrated stable per-watt economics. Falling inputs lifted FY2023 reported gross margin versus FY2022, yet much faster shipment growth than revenue in the core module business, sharply falling industry selling prices, and technology-related write-downs mean that a 2022-style profit rate is not a defensible normal unit-economics anchor.",
+      "inference_confidence": "medium",
+      "decisive_evidence": "FY2023 revenue was RMB129.50bn, essentially flat year on year, while component shipment volume rose 44.40%. The FY2023 主营业务分产品情况 row 组件及电池 reported revenue of RMB99.199bn, cost of RMB80.962bn, and gross margin of 18.38%. The report describes industry price declines of about 70% for polysilicon, 60% for PERC wafers/cells, and 50% for PERC modules, together with RMB6.757bn of inventory and fixed-asset provisions linked to price decline and technology iteration.",
+      "causal_mechanism": "In a rapidly oversupplied manufacturing chain, price falls can be partly offset by cheaper silicon, logistics, and scale, but they also compress the return on inventory and older equipment. A differentiated technology changes the conclusion only when customers pay for its lifetime-yield advantage at volume and that premium survives the next competing technology wave.",
+      "strongest_countercase": "The FY2023 gross-margin increase from 15.38% to 18.26%, lower raw-material and freight costs, reported HPBC performance advantages, and scale could mean the price decline is a healthy pass-through that expands demand while a leader keeps or improves its spread. Reported gross-margin recovery nevertheless coincided with a 27% profit decline and large inventory/fixed-asset provisions, without proof of a product-level realized BC premium or cash contribution.",
+      "frozen_altering_result": "FY2024_CELL_2 only. The resolved margin/revenue quadrant determines whether J2 receives an upward, unchanged, or downward treatment; CELL_2 cannot establish owner cash without CELL_3."
+    },
+    {
+      "judgment_id": "J3_CASH_CAPITAL_DEBT_AND_PERMANENT_LOSS",
+      "best_current_judgment": "Permanent-loss risk is material through capital misallocation, technology obsolescence, and a prolonged negative spread, rather than presently through an observed liquidity cliff. FY2023 retained substantial reported cash and operating cash flow, but operating cash of RMB8.12bn was below RMB9.26bn of cash capital expenditure, while capacity and long-lived assets kept expanding. The base case therefore gives no credit for all accounting profit as owner cash and treats the balance sheet as a buffer that can be consumed by a continued refresh-and-price-war cycle.",
+      "inference_confidence": "medium",
+      "decisive_evidence": "Operating cash flow was RMB12.32bn in FY2021, RMB24.37bn in FY2022, and RMB8.12bn in FY2023. Cash paid to acquire fixed, intangible, and other long-lived assets was RMB4.90bn, RMB5.01bn, and RMB9.26bn respectively, making the FY2023 operating-cash-less-cash-capex screen negative RMB1.138bn. FY2023 reported RMB57.001bn of cash, RMB5.274bn of non-current long-term loans, RMB6.804bn of non-current bonds, and RMB5.456bn of non-current lease liabilities; inventory and fixed-asset impairment charges totalled RMB6.757bn.",
+      "causal_mechanism": "If selling prices do not cover a technology-refreshing asset base, cash must be redeployed into new lines, working capital, or debt service before it becomes owner cash. Inventory and fixed-asset impairment is the accounting carrier of that permanent-loss mechanism: it shows that a portion of prior capital no longer earns its intended return. Cash and financing access postpone a liquidity event but cannot repair an uncompetitive installed base.",
+      "strongest_countercase": "The reported cash balance is large relative to stated loans and bonds, FY2023 still generated positive operating cash, and selective investment in a more efficient technology platform may be the right way to emerge with a stronger cost and product position after a cyclical shakeout. The same period's sharp operating-cash decline, higher capital spending, larger long-lived assets and liabilities, and material write-down prevent that countercase from establishing that the next capital cycle earns a return.",
+      "frozen_altering_result": "FY2024_CELL_3 and FY2024_CELL_4 together. Their complete joint map, and no other FY2024 measure, determines whether J3 receives an upward, unchanged, or downward treatment."
+    }
+  ],
+  "FY2024_annual_report_mechanical_resolution_cells": [
+    {
+      "cell_id": "FY2024_CELL_1",
+      "judgment_id": "J1_CAPACITY_AND_VOLUME",
+      "annual_report_location": "FY2024 annual-report management discussion / operating results",
+      "fixed_fields_and_scope": {
+        "cell_field": "Actual FY2024 battery-plus-component shipment, in GW",
+        "required_actual_labels": [
+          "电池对外销售",
+          "组件出货"
+        ],
+        "required_period": "FY2024 actual result, not a target, capacity, production quantity, order quantity, or revenue-derived proxy.",
+        "includes": "The actual GW reported as 电池对外销售 plus the actual GW reported as 组件出货. The component figure includes both externally sold and self-used components whenever they are included in the report's total 组件出货 figure.",
+        "excludes": "All self-used cells, including cells consumed in module manufacture; wafers; nameplate capacity; production output; revenue; and a separately reported component external-sales figure in place of the total 组件出货 figure. No other cell or module series is interchangeable with either required label."
+      },
+      "arithmetic": "S1_GW = actual FY2024 电池对外销售_GW + actual FY2024 组件出货_GW.",
+      "comparison_baseline_and_threshold": "The frozen pre-cutoff FY2024 target was 电池加组件出货量目标 90-100GW. S1_GW is tested only against the lower 90GW threshold.",
+      "deterministic_resolution": [
+        {
+          "condition": "Both required actual figures are disclosed in the specified scope and S1_GW >= 90.00.",
+          "local_result": "AT_LEAST_90GW",
+          "J1_treatment": "upward: strengthen only the volume-realization leg of J1."
+        },
+        {
+          "condition": "Both required actual figures are disclosed in the specified scope and S1_GW < 90.00.",
+          "local_result": "BELOW_90GW",
+          "J1_treatment": "downward: strengthen the capacity-ahead-of-demand-realization leg of J1."
+        },
+        {
+          "condition": "Either required actual figure is absent, is not in GW, is not an FY2024 actual, or total 组件出货 cannot be distinguished from a component external-sales-only figure.",
+          "local_result": "UNKNOWN_UNAVAILABLE_OR_NONCOMPARABLE",
+          "J1_treatment": "unchanged: retain the frozen J1 treatment; do not substitute a different shipment series."
+        }
+      ],
+      "scope_of_update": "CELL_1 updates capacity/volume only. It does not establish product margin, owner cash, or permanent-loss protection."
+    },
+    {
+      "cell_id": "FY2024_CELL_2",
+      "judgment_id": "J2_PRICE_AND_UNIT_ECONOMICS",
+      "annual_report_location": "FY2024 annual-report consolidated 主营业务分产品情况 table",
+      "fixed_fields_and_scope": {
+        "required_product_category": "组件及电池",
+        "required_fields": [
+          "营业收入",
+          "营业成本"
+        ],
+        "excludes": "A parent-company table, industry total, a differently named or broader/narrower product category, product volume, and any reconstructed combination of categories."
+      },
+      "arithmetic": "R2 = FY2024 组件及电池 营业收入; C2 = FY2024 组件及电池 营业成本; M2_pct = ((R2 - C2) / R2) * 100 when R2 > 0.",
+      "comparison_baseline_and_threshold": {
+        "FY2023_revenue_base_RMB": 99199497228.5,
+        "FY2023_gross_margin_pct": 18.38,
+        "revenue_expanding": "R2 > RMB99,199,497,228.50.",
+        "margin_at_or_above_threshold": "M2_pct >= 18.38."
+      },
+      "exhaustive_resolved_quadrants": [
+        {
+          "margin_result": "M2_pct >= 18.38",
+          "revenue_result": "R2 > RMB99,199,497,228.50",
+          "J2_treatment": "upward: strengthen the case that the product mix can retain a spread through the cycle."
+        },
+        {
+          "margin_result": "M2_pct >= 18.38",
+          "revenue_result": "0 < R2 <= RMB99,199,497,228.50",
+          "J2_treatment": "unchanged: margin preservation without expanded same-category revenue does not establish a durable spread at broader realization."
+        },
+        {
+          "margin_result": "M2_pct < 18.38",
+          "revenue_result": "R2 > RMB99,199,497,228.50",
+          "J2_treatment": "downward: margin compression strengthens the commodity-price/technology-refresh mechanism despite higher same-category revenue."
+        },
+        {
+          "margin_result": "M2_pct < 18.38, or R2 = 0 (classified as below threshold because no same-category revenue was realized)",
+          "revenue_result": "0 <= R2 <= RMB99,199,497,228.50",
+          "J2_treatment": "downward: lower margin on non-expanding same-category revenue strengthens the commodity-price/technology-refresh mechanism."
+        }
+      ],
+      "unavailable_or_noncomparable_resolution": "If the consolidated table does not disclose the exact 组件及电池 row with both revenue and cost, CELL_2 is UNKNOWN_UNAVAILABLE_OR_NONCOMPARABLE and J2 remains unchanged; no other category or proxy is used.",
+      "scope_of_update": "CELL_2 updates price and unit economics only. It does not convert shipment or capacity growth into owner cash without CELL_3."
+    },
+    {
+      "cell_id": "FY2024_CELL_3",
+      "judgment_id": "J3_CASH_CAPITAL_DEBT_AND_PERMANENT_LOSS",
+      "annual_report_location": "FY2024 annual-report consolidated cash-flow statement",
+      "fixed_fields_and_scope": {
+        "operating_cash_flow_label": "经营活动产生的现金流量净额",
+        "cash_capex_label": "购建固定资产、无形资产和其他长期资产支付的现金",
+        "excludes": "A parent-company cash-flow statement, depreciation, accrual capex, acquisition spending, financing flows, disposal proceeds, and a maintenance-versus-growth-capex allocation."
+      },
+      "arithmetic": "S3_RMB = FY2024 经营活动产生的现金流量净额 - FY2024 购建固定资产、无形资产和其他长期资产支付的现金.",
+      "FY2023_baseline_RMB": {
+        "operating_cash_flow": 8117363683.48,
+        "cash_capex": 9255563996.45,
+        "screen": -1138200312.97
+      },
+      "threshold_and_local_result": {
+        "S3_RMB >= 0": "CASH_CAPEX_COVERED",
+        "S3_RMB < 0": "CASH_CAPEX_NOT_COVERED"
+      },
+      "unavailable_or_noncomparable_resolution": "If either specified consolidated cash-flow line is unavailable, CELL_3 is UNKNOWN_UNAVAILABLE_OR_NONCOMPARABLE. It is not replaced by another cash or capex figure.",
+      "scope_of_update": "This is a reproducible owner-cash screen, not precise free cash flow or a maintenance-capex estimate. J3 treatment is fixed only by the joint CELL_3/CELL_4 map."
+    },
+    {
+      "cell_id": "FY2024_CELL_4",
+      "judgment_id": "J3_CASH_CAPITAL_DEBT_AND_PERMANENT_LOSS",
+      "annual_report_location": "FY2024 annual-report consolidated balance sheet, Note 43 one-year-due non-current liabilities, and Note 72 asset-impairment losses",
+      "fixed_cash_buffer_formula": {
+        "cash": "A = consolidated balance-sheet 货币资金.",
+        "financing_obligations": "D = 短期借款 + Note 43 1年内到期的长期借款 + Note 43 1年内到期的应付债券 + Note 43 1年内到期的租赁负债 + non-current balance-sheet 长期借款 + non-current balance-sheet 应付债券 + non-current balance-sheet 租赁负债.",
+        "cash_buffer": "B4_RMB = A - D.",
+        "inclusion_and_double_count_rule": "Use the three separately disclosed current portions in Note 43 and the non-current balance-sheet lines net of those current portions. Do not use the aggregate 一年内到期的非流动负债, total liabilities, accounts payable, other payables, restricted-cash adjustment, or any other borrowing line in place of a listed component."
+      },
+      "FY2023_cash_buffer_baseline_RMB": {
+        "A_cash_货币资金": 57001192070.63,
+        "D_short_term_borrowings": 78641234.04,
+        "D_current_long_term_borrowings": 1432426366.71,
+        "D_current_bonds": 847471.6,
+        "D_current_lease_liabilities": 68822443.84,
+        "D_non_current_long_term_borrowings": 5274200000.0,
+        "D_non_current_bonds": 6804161712.35,
+        "D_non_current_lease_liabilities": 5456026104.05,
+        "D_total": 19115125332.59,
+        "B4_cash_buffer": 37886066738.04
+      },
+      "cash_buffer_threshold": {
+        "formula": "BUFFER_INTACT if FY2024 B4_RMB >= 0.80 * FY2023 B4_RMB; BUFFER_WEAKENED if FY2024 B4_RMB < 0.80 * FY2023 B4_RMB.",
+        "fixed_RMB_threshold": 30308853390.43
+      },
+      "fixed_impairment_formula_and_threshold": {
+        "formula": "I4_RMB = Note 72 current-period 存货跌价损失及合同履约成本减值损失 + Note 72 current-period 固定资产减值损失.",
+        "FY2023_inventory_and_contract_cost_impairment": 5170862988.06,
+        "FY2023_fixed_asset_impairment": 1586217571.47,
+        "FY2023_combined_I4": 6757080559.53,
+        "material_threshold": "MATERIAL_IMPAIRMENT if FY2024 I4_RMB >= 0.20 * FY2023 combined I4; BELOW_MATERIAL if FY2024 I4_RMB < that threshold.",
+        "fixed_RMB_threshold": 1351416111.91
+      },
+      "unavailable_or_noncomparable_resolution": "If a listed cash-buffer component, a required Note 43 current portion, or either required Note 72 impairment line is unavailable, CELL_4 is UNKNOWN_UNAVAILABLE_OR_NONCOMPARABLE. Do not infer it from total liabilities, total asset impairment, or a differently scoped balance-sheet measure."
+    }
+  ],
+  "J3_exhaustive_joint_resolution_with_CELL_3_and_CELL_4": {
+    "resolved_CELL_4_states": "The CELL_4 state is the ordered pair of cash-buffer result and impairment result. The eight rows below exhaust every resolved CELL_3/CELL_4 combination.",
+    "resolved_combinations": [
+      {
+        "CELL_3": "CASH_CAPEX_COVERED",
+        "CELL_4_buffer": "BUFFER_INTACT",
+        "CELL_4_impairment": "BELOW_MATERIAL",
+        "J3_treatment": "upward: strengthen owner-cash capacity and reduce, but do not eliminate, the permanent-loss branch."
+      },
+      {
+        "CELL_3": "CASH_CAPEX_COVERED",
+        "CELL_4_buffer": "BUFFER_INTACT",
+        "CELL_4_impairment": "MATERIAL_IMPAIRMENT",
+        "J3_treatment": "unchanged: cash coverage is positive, but material capital destruction prevents an upgrade to J3."
+      },
+      {
+        "CELL_3": "CASH_CAPEX_COVERED",
+        "CELL_4_buffer": "BUFFER_WEAKENED",
+        "CELL_4_impairment": "BELOW_MATERIAL",
+        "J3_treatment": "unchanged: cash coverage is positive, but the predefined buffer weakening prevents an upgrade to J3."
+      },
+      {
+        "CELL_3": "CASH_CAPEX_COVERED",
+        "CELL_4_buffer": "BUFFER_WEAKENED",
+        "CELL_4_impairment": "MATERIAL_IMPAIRMENT",
+        "J3_treatment": "downward: a weakened buffer and material capital destruction strengthen the permanent-loss branch."
+      },
+      {
+        "CELL_3": "CASH_CAPEX_NOT_COVERED",
+        "CELL_4_buffer": "BUFFER_INTACT",
+        "CELL_4_impairment": "BELOW_MATERIAL",
+        "J3_treatment": "unchanged: repeat cash-capex non-coverage sustains the frozen base concern but does not by itself worsen J3."
+      },
+      {
+        "CELL_3": "CASH_CAPEX_NOT_COVERED",
+        "CELL_4_buffer": "BUFFER_INTACT",
+        "CELL_4_impairment": "MATERIAL_IMPAIRMENT",
+        "J3_treatment": "downward: repeat cash-capex non-coverage together with material capital destruction strengthens the permanent-loss branch."
+      },
+      {
+        "CELL_3": "CASH_CAPEX_NOT_COVERED",
+        "CELL_4_buffer": "BUFFER_WEAKENED",
+        "CELL_4_impairment": "BELOW_MATERIAL",
+        "J3_treatment": "downward: repeat cash-capex non-coverage together with a weakened buffer strengthens the permanent-loss branch."
+      },
+      {
+        "CELL_3": "CASH_CAPEX_NOT_COVERED",
+        "CELL_4_buffer": "BUFFER_WEAKENED",
+        "CELL_4_impairment": "MATERIAL_IMPAIRMENT",
+        "J3_treatment": "downward: all three adverse signals strengthen the permanent-loss branch."
+      }
+    ],
+    "local_unknown_treatment": "If CELL_3 or CELL_4 is UNKNOWN_UNAVAILABLE_OR_NONCOMPARABLE, J3 remains unchanged and the unknown is confined to that cell; no unlisted balance-sheet, cash-flow, or impairment proxy may resolve it."
+  },
+  "scenario_conditions_and_directional_valuation_implications": {
+    "optimistic": {
+      "conditions": "FY2024_CELL_1 is AT_LEAST_90GW, FY2024_CELL_2 receives its upward quadrant, and the first J3 joint-resolution row applies.",
+      "enterprise_interpretation": "BC differentiation and scale are converting capacity into a resilient spread and owner cash rather than simply filling factories.",
+      "directional_valuation_implication": "A normal-owner-cash range could be widened upward and placed on a more durable earnings base, rather than on a purely cyclical capacity basis."
+    },
+    "base": {
+      "conditions": "Volume remains high, price competition continues, CELL_2 does not receive its upward quadrant, and the J3 joint resolution is unchanged or locally unknown.",
+      "enterprise_interpretation": "The firm remains viable and strategically relevant, but surplus capacity and refresh capital consume much of the benefit from scale.",
+      "directional_valuation_implication": "Normal earnings and owner cash warrant a cyclical, capital-intensive treatment below a peak-profit extrapolation; capacity additions receive little standalone credit."
+    },
+    "adverse": {
+      "conditions": "FY2024_CELL_1 is BELOW_90GW, FY2024_CELL_2 receives a downward quadrant, and/or the J3 joint resolution is downward.",
+      "enterprise_interpretation": "The price war and technology transition are destroying returns on inventory and fixed assets faster than differentiation can restore them.",
+      "directional_valuation_implication": "The permanent-loss branch becomes central: the normal-owner-cash range and recoverable value of the asset base should move materially lower."
+    },
+    "boundary": "These are conditional enterprise-value implications, not a valuation number, market-price view, or investment action."
+  },
+  "local_unknowns_and_current_treatment": [
+    {
+      "unknown": "Maintenance versus growth capital expenditure, committed conversion spend, and the cash needed to keep the installed base technologically current.",
+      "current_treatment": "Do not convert operating cash flow minus all capex into a precise free-cash-flow estimate. CELL_3 remains a defined coverage screen."
+    },
+    {
+      "unknown": "Realized price per watt, product-level contribution, and the sustainable price premium of HPBC/BC products relative to competing technology.",
+      "current_treatment": "Treat performance claims as an upside option; use the frozen 组件及电池 product-margin contract rather than assuming a premium in the base case."
+    },
+    {
+      "unknown": "Utilization by factory and technology route, including the share of capacity that is economically usable after the technology transition.",
+      "current_treatment": "Treat disclosed capacity as physical capability only. The specified CELL_1 shipment arithmetic and CELL_2 product margin determine whether it upgrades the capacity judgment."
+    },
+    {
+      "unknown": "The proportion of reported cash that is freely deployable and the exact maturity/recourse profile of all financing obligations.",
+      "current_treatment": "The CELL_4 formula is a reproducible reported-cash buffer, not a claim that all monetary funds are freely deployable or that all group liabilities are debt."
+    }
+  ],
+  "next_cutoff_research_agenda": {
+    "sequence": [
+      "Resolve FY2024_CELL_1 under its frozen shipment arithmetic before narrating capacity as demand realization.",
+      "Resolve FY2024_CELL_2 under its frozen product row and four-quadrant map before crediting BC with a durable price or margin advantage.",
+      "Resolve FY2024_CELL_3 and FY2024_CELL_4 together under their frozen joint map before revising normal owner cash or permanent-loss treatment."
+    ],
+    "research_discipline": "The next operator may acquire the FY2024 annual report only after preserving this V2 file, then update each named judgment solely through its mapped cells."
+  },
+  "source_map": [
+    {
+      "source": "FY2021_1213161635.txt",
+      "relevant_sections": [
+        "management discussion: shipment, capacity, technology, and FY2022 plan (extracted lines 1320-1360 and 3488-3540)",
+        "consolidated financial statements (extracted lines 11142-12534)"
+      ]
+    },
+    {
+      "source": "FY2022_1216664294.txt",
+      "relevant_sections": [
+        "management discussion: shipment, capacity, competition, and FY2023 plan (extracted lines 1178-1260 and 3740-3800)",
+        "product revenue/cost analysis (extracted lines 1578-1760)",
+        "consolidated balance sheet and cash-flow statement (extracted lines 12369-12815 and 13755-14070)"
+      ]
+    },
+    {
+      "source": "FY2023_1219925312.txt",
+      "relevant_sections": [
+        "management discussion: shipment, price/impairment, technology, and capacity (extracted lines 1208-1435)",
+        "product revenue/cost and cash-flow analysis (extracted lines 1515-1785 and 2360-2450)",
+        "FY2024 plan and risk discussion (extracted lines 3770-3870)",
+        "consolidated financial statements (extracted lines 11592-12030 and 12455-13235)"
+      ]
+    }
+  ]
+}
