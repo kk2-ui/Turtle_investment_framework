@@ -1,0 +1,9 @@
+{
+  "schema_version": "judgment-experience-target-freeze.v1",
+  "state": "FROZEN_PREOUTCOME",
+  "case_id": "EXPERIENCE_TARGET:CN002475:20240501",
+  "company_id": "CN:002475",
+  "company_cluster_id": "COMPANY:CN002475",
+  "cutoff_at": "2024-05-01T00:00:00+08:00",
+  "outcome_access_state": "SEALED"
+}

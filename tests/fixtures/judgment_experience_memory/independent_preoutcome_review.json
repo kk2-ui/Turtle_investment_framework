@@ -1,0 +1,7 @@
+{
+  "schema_version": "judgment-experience-independent-preoutcome-review.v1",
+  "case_id": "EXPERIENCE_TARGET:CN002475:20240501",
+  "freeze_ref": "tests/fixtures/judgment_experience_memory/judgment_freeze.json",
+  "outcome_access_state": "SEALED",
+  "verdict": "ACCEPT"
+}

@@ -1,0 +1,7 @@
+{
+  "schema_version": "judgment-learning-note.v1",
+  "note_id": "LNOTE:SOURCE",
+  "case_id": "CASE:SOURCE",
+  "company_cluster_id": "COMPANY:CN600000",
+  "feedback_ref": "tests/fixtures/judgment_experience_memory/outcome_settlement.json"
+}

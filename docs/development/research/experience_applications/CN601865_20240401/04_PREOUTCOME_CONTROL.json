@@ -1,0 +1,15 @@
+{
+  "schema_version": "judgment-experience-preoutcome-control.v1",
+  "control_id": "JERCTRL:CN601865:20240401:V1",
+  "state": "PREOUTCOME_FROZEN_SEALED",
+  "case_id": "EXPERIENCE_TARGET:CN601865:20240401",
+  "company_id": "CN:601865",
+  "company_cluster_id": "COMPANY:CN601865",
+  "cutoff_at": "2024-04-01T00:00:00+08:00",
+  "outcome_access_state": "SEALED",
+  "frozen_at": "2026-08-29T16:00:00+08:00",
+  "source_packet_ref": "docs/development/research/experience_applications/CN601865_20240401/01_CUTOFF_BEFORE_SOURCE_PACKET.json",
+  "judgment_freeze_ref": "docs/development/research/experience_applications/CN601865_20240401/02_PREOUTCOME_RESEARCH_TREATMENT_FREEZE.json",
+  "independent_preoutcome_review_ref": "docs/development/research/experience_applications/CN601865_20240401/03_INDEPENDENT_PREOUTCOME_REVIEW.json",
+  "control_boundary": "This control binds a pre-outcome research treatment and its independent review. It does not authorize outcome access, CJO, valuation, report, BuyBand, investment action, transfer validation or method validation."
+}

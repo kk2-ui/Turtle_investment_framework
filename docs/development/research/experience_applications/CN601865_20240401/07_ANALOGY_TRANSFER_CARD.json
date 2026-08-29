@@ -1,0 +1,44 @@
+{
+  "card_id": "ATC:CN601865:SOLAR_GLASS_CAPACITY_BOUNDARY:V1",
+  "target_pair_id": "RHP:CN601865:RECOVERY_VS_CAPACITY_NOT_YET_DURABLE:V1",
+  "source_case_id": "operating_transition",
+  "experience_record_id": "JER:CN601012:CAPACITY_PRICE_CASH:V1",
+  "experience_record_version": 1,
+  "target_state_vector": [
+    "capital-intensive solar-glass expansion",
+    "upstream B2B customer interface",
+    "product-boundary economics and cash-capex investigation"
+  ],
+  "structural_mapping": [
+    {
+      "source_driver": "installed capacity or scale",
+      "target_driver": "solar-glass capacity or commissioning",
+      "intermediate_variable": "customer absorption or utilization together with realized price or spread",
+      "operating_outcome": "same-boundary operating-cash and cash-capex absorption"
+    }
+  ],
+  "mismatch_dimensions": [
+    "The target is an upstream solar-glass supplier; its customer interface, product mix, technology and funding carriers cannot be inherited from Longi."
+  ],
+  "application_rule": {
+    "when_to_apply": "Use only to order target research once a target solar-glass responsibility boundary and cutoff-visible carriers are identified.",
+    "when_not_to_apply": "Stop at a local conditional treatment when group cash, aggregate volume or commissioning substitutes for the target product economics and cash carriers."
+  },
+  "invalidation_conditions": [
+    {
+      "signal_id": "JERR:CN601865:RECOVERY_VS_CAPACITY_NOT_YET_DURABLE:V1",
+      "condition": "The target bridge cannot be constructed under a compatible responsibility boundary or the recovery rival explains the carriers better.",
+      "effect": "Keep the capacity treatment conditional; do not infer enterprise failure or validate transfer."
+    }
+  ],
+  "strongest_near_miss": {
+    "status": "UNKNOWN_NO_QUALIFIED_EPISODE",
+    "unknown_reason": "No registered sealed-target near-miss with the same solar-glass responsibility boundary has been independently accepted.",
+    "conservative_treatment": "Question-only support; the card cannot support a central path or a valuation treatment."
+  },
+  "linked_discriminator_ids": [
+    "JERR:CN601865:RECOVERY_VS_CAPACITY_NOT_YET_DURABLE:V1"
+  ],
+  "support_role": "QUESTION_ONLY",
+  "settlement_rule": "DERIVE_FROM_PAIR_SIGNALS_ONLY"
+}
