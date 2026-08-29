@@ -1,0 +1,158 @@
+{
+  "schema_version": "enterprise-underwriting-episode.v2",
+  "episode_id": "UWEP:C1:WORKED:CN600801:20170412",
+  "company_id": "CN:600801",
+  "company_name": "Huaxin Cement",
+  "cutoff_at": "2017-04-12T00:00:00+08:00",
+  "sample_identity": "WORKED_CASE",
+  "decision_frame": "At the FY2016 reporting cutoff, determine whether the approved acquisition of fifteen Yunnan cement plants had already changed Huaxin's controllable business, normalized economics, owner cash, and permanent-loss exposure. This result-known worked case separates formal transaction progress from control, consolidation, customer absorption, and asset-level cash results.",
+  "underwriting_route": "MATURE_CYCLICAL_EXISTING_BUSINESS_WITH_UNCONSOLIDATED_ACQUISITION_OPTION",
+  "situation_model": {
+    "summary": "Huaxin entered 2017 with an established cement business, operating know-how, and improved consolidated cash and short-term funding indicators, while a large Yunnan transaction had received shareholder approval but had not closed or entered Huaxin's consolidation perimeter. The best-current judgment is that Huaxin had a credible integration option, not yet fifteen controlled and economically proven plants.",
+    "industry_future_thesis": {
+      "horizon": "Three to five years after the FY2016 cutoff, spanning transaction control, operating integration, and one cement cycle.",
+      "most_likely_regime": "Regional cement profit pools remain cyclical and local: demand, capacity discipline, utilization, and delivered-cost position matter more than announced capacity. Consolidation can improve a regional network, but only controlled assets with customer absorption and cash contribution deserve operating credit.",
+      "profit_pool_transmission": "Regional demand and supply discipline move selling conditions and utilization; logistics, procurement, and plant operations then determine unit margins. Acquiring plants can widen the network and lower costs, but value reaches Huaxin only after control, consolidation, product participation, customer retention, unit economics, and cash absorption are established.",
+      "company_exposure": "Huaxin had an operating platform capable of providing technical, procurement, sales, finance, human-resources, and plant support, and its consolidated operating cash improved while cash capital expenditure and short-term borrowing fell. Those group indicators support resilience of the existing perimeter but do not identify the Yunnan assets as their cause.",
+      "adaptation": "Shareholder approval and prior operating support make eventual integration plausible and show preparation. Because LafargeHolcim still controlled the related enterprises at year-end and equity delivery was pending, Huaxin had not yet demonstrated the authority or responsibility boundary needed for execution credit.",
+      "normal_economics": "Underwrite only the existing consolidated cement business on a mid-cycle basis. Keep the fifteen plants' earnings, procurement and logistics synergies, and growth contribution outside the base until first consolidation and responsibility-matched operating evidence appear.",
+      "permanent_loss": "Improved consolidated cash generation, lower cash capital expenditure, and lower short-term borrowing reduce near-term financing pressure. The incremental permanent-loss path is paying for assets whose control, cycle resilience, integration needs, and asset-level cash return are not yet demonstrated.",
+      "valuation_treatment": "Use mid-cycle EPV and asset support for the existing perimeter. Carry the Yunnan acquisition only as a named scenario and do not capitalize unobserved plant earnings or synergies in the base route.",
+      "strongest_rival": "Shareholder approval, years of operational support, and Huaxin's simultaneous consolidated cash improvement may mean integration was already economically effective despite the pending legal closing; however, without control, consolidation, Huaxin-product participation, customer response, or asset-level economics, that explanation cannot receive acquisition credit.",
+      "reversal_observations": [
+        "Actual equity delivery, control, and first consolidation followed by Huaxin-product participation, retained customers, acceptable utilization and unit economics, and acquisition-perimeter cash contribution would promote the fifteen plants into normalized economics.",
+        "A failed or delayed closing, repeated capital support, operating losses, customer loss, weak utilization, or acquisition-perimeter cash consumption would move the transaction from a scenario option to a permanent-loss carrier.",
+        "If later evidence shows the FY2016 consolidated cash improvement came from the acquired perimeter on a responsibility-matched basis, the current non-attribution judgment would be revised."
+      ]
+    }
+  },
+  "business_position": "Huaxin had a real incumbent cement platform and multi-function operating capabilities that could support integration. Its position in the fifteen Yunnan plants was nevertheless preparatory rather than controlling at year-end, so announced scale could not yet be treated as Huaxin-owned competitive position.",
+  "survival_case": "Consolidated operating cash rose from about RMB 2.753 billion to RMB 3.096 billion, cash capital expenditure fell from about RMB 1.592 billion to RMB 1.212 billion, and short-term borrowings fell from about RMB 1.162 billion to RMB 0.904 billion. These observations support adequate near-term financial capacity in the existing group, while saying nothing decisive about the acquired assets' standalone funding needs.",
+  "adaptation_case": "Management advanced the transaction through shareholder approval and had supplied broad operating support before closing, which deserves readiness credit. Execution credit stops at that boundary: the related enterprises remained controlled by LafargeHolcim, delivery was incomplete, and customer, product, unit-economics, and acquisition cash outcomes were unavailable.",
+  "normalization_case": "Normal earnings remain mixed but underwritable for the existing consolidated business through a conservative cement-cycle view. The acquisition cannot lift the base normal earnings merely because approval occurred; its profit and synergy remain a scenario until control and same-perimeter economics are observed.",
+  "permanent_loss_map": "The existing group shows lower immediate financing stress, but cement cyclicality remains. The transaction adds exposure to integration cost, unknown plant economics, possible customer or utilization weakness, and additional funding if control is obtained without economic absorption. No observed acquisition loss is asserted; the correct treatment is to withhold base credit while preserving the option.",
+  "value_route": {
+    "primary_routes": [
+      "MID_CYCLE_EPV_OF_EXISTING_CONSOLIDATED_BUSINESS",
+      "OPERATING_ASSET_VALUE_OF_EXISTING_PERIMETER"
+    ],
+    "excluded_routes": [
+      "CAPITALIZATION_OF_UNCONSOLIDATED_YUNNAN_EARNINGS",
+      "ANNOUNCED_CAPACITY_OR_SYNERGY_AS_BASE_GROWTH"
+    ],
+    "route_reasoning": "Existing operations have observable group cash and financing capacity, so a conservative mid-cycle earnings-power route can be paired with asset support. The fifteen plants lacked control, consolidation, and responsibility-matched economic results at the cutoff and therefore belong in a separately labeled scenario rather than the base.",
+    "valuation_model_roles": {
+      "primary": [
+        "EPV",
+        "ASSET_VALUE"
+      ],
+      "corroborative": [
+        "SOTP"
+      ],
+      "stress": [
+        "NAV"
+      ]
+    }
+  },
+  "strongest_rival": "Shareholder approval, years of operational support, and Huaxin's simultaneous consolidated cash improvement may mean integration was already economically effective despite the pending legal closing; however, without control, consolidation, Huaxin-product participation, customer response, or asset-level economics, that explanation cannot receive acquisition credit.",
+  "reversal_observations": [
+    "Actual equity delivery, control, and first consolidation followed by Huaxin-product participation, retained customers, acceptable utilization and unit economics, and acquisition-perimeter cash contribution would promote the fifteen plants into normalized economics.",
+    "A failed or delayed closing, repeated capital support, operating losses, customer loss, weak utilization, or acquisition-perimeter cash consumption would move the transaction from a scenario option to a permanent-loss carrier.",
+    "If later evidence shows the FY2016 consolidated cash improvement came from the acquired perimeter on a responsibility-matched basis, the current non-attribution judgment would be revised."
+  ],
+  "component_treatments": [
+    {
+      "component_id": "CN600801:EXISTING_CEMENT_PERIMETER",
+      "treatment": "CONDITIONALLY_UNDERWRITE",
+      "reason": "The existing consolidated group had observable operating cash and reduced near-term borrowing, but its economics remain exposed to the regional cement cycle.",
+      "investment_consequence": "Use a conservative mid-cycle normal earnings and asset-support range for the existing perimeter rather than extrapolating one year of group cash.",
+      "promotion_or_resolution_condition": "Sustained utilization, unit margin, and cash conversion across a full cycle would support a firmer EPV treatment; a cash and leverage reversal would narrow it.",
+      "evidence_ids": [
+        "E-CN600801-CASH",
+        "E-CN600801-FINANCING"
+      ]
+    },
+    {
+      "component_id": "CN600801:YUNNAN_FIFTEEN_PLANTS",
+      "treatment": "SCENARIO_ONLY",
+      "reason": "The acquisition had shareholder approval and expected future consolidation, but legal delivery and actual control had not occurred at year-end.",
+      "investment_consequence": "Do not include target earnings, capacity, or synergies in the base; retain upside and downside as explicit integration scenarios.",
+      "promotion_or_resolution_condition": "Require closing, control, first consolidation, Huaxin-product participation, customer absorption, unit economics, and acquisition-perimeter cash evidence.",
+      "evidence_ids": [
+        "E-CN600801-TRANSACTION",
+        "E-CN600801-PERIMETER"
+      ]
+    },
+    {
+      "component_id": "CN600801:PRE_CLOSING_OPERATING_SUPPORT",
+      "treatment": "CONDITIONALLY_UNDERWRITE",
+      "reason": "Technical and operating support demonstrates integration capability and access, but not control or realized economic ownership.",
+      "investment_consequence": "Credit management readiness qualitatively without lifting normal earnings or owner cash.",
+      "promotion_or_resolution_condition": "Promote only if the same capabilities produce customer, utilization, unit-economics, and cash results after Huaxin obtains control.",
+      "evidence_ids": [
+        "E-CN600801-SUPPORT",
+        "E-CN600801-PERIMETER"
+      ]
+    }
+  ],
+  "evidence_trace": [
+    {
+      "evidence_id": "E-CN600801-TRANSACTION",
+      "source_ref": "docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/08_investor_readout.md",
+      "locator": "Round 6: frozen action and baseline-versus-enhanced reconstruction",
+      "scope": "FY2016 acquisition approval and expected 2017 consolidation of fifteen Yunnan plants",
+      "used_for": "Decision frame, transaction scenario, and management readiness"
+    },
+    {
+      "evidence_id": "E-CN600801-SUPPORT",
+      "source_ref": "docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/08_investor_readout.md",
+      "locator": "Round 6: company participation and management control reconstruction",
+      "scope": "Pre-closing technical, procurement, sales, finance, human-resources, and plant operating support",
+      "used_for": "Adaptation capability without economic attribution"
+    },
+    {
+      "evidence_id": "E-CN600801-PERIMETER",
+      "source_ref": "docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/08_investor_readout.md",
+      "locator": "Round 6 table: Huaxin consolidation perimeter",
+      "scope": "Related enterprises remained controlled by LafargeHolcim; equity delivery and consolidation were pending",
+      "used_for": "Control boundary, base exclusion, and reversal conditions"
+    },
+    {
+      "evidence_id": "E-CN600801-CASH",
+      "source_ref": "docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/08_investor_readout.md",
+      "locator": "Round 6 table: operating cash flow and cash capital expenditure",
+      "scope": "Consolidated operating cash increased while cash capital expenditure decreased",
+      "used_for": "Existing-perimeter survival and owner-cash direction, not acquisition attribution"
+    },
+    {
+      "evidence_id": "E-CN600801-FINANCING",
+      "source_ref": "docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/08_investor_readout.md",
+      "locator": "Round 6 table: short-term borrowing",
+      "scope": "Consolidated short-term borrowing fell from about RMB 1.162 billion to RMB 0.904 billion",
+      "used_for": "Near-term financing capacity of the existing consolidated group"
+    }
+  ],
+  "existing_object_refs": [
+    {
+      "kind": "CONTRACT_ALLOWED_TEACHING_SOURCE",
+      "ref": "docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/08_investor_readout.md",
+      "role": "Only result-known source used to compose this worked case"
+    }
+  ],
+  "underwriting_thesis": {
+    "thesis_id": "UWTHESIS:C1:CN600801:20170412",
+    "central_path": "Huaxin's existing cement platform retains mixed but underwritable mid-cycle economics and adequate near-term cash capacity. The fifteen-plant transaction adds a credible integration option, yet approval and support do not become controlled earnings or owner cash before closing, consolidation, customer absorption, unit economics, and asset-level cash are observed.",
+    "normal_earnings_treatment": "MIXED: normalize the existing consolidated cement perimeter conservatively and exclude unobserved Yunnan earnings and synergies from the base.",
+    "owner_cash_treatment": "MIXED: consolidated cash and lower capital expenditure support the existing group, but the acquisition's incremental owner cash remains unproven and must not be inferred from group totals.",
+    "permanent_loss_treatment": "MIXED: lower short-term borrowing reduces immediate financing pressure, while unproven acquisition economics create integration and capital-allocation downside without yet constituting an observed loss.",
+    "value_route_treatment": "Route the existing business through mid-cycle EPV and asset support; reserve the acquisition for named scenarios until responsibility-matched results exist.",
+    "economic_directions": {
+      "normal_earnings": "MIXED",
+      "owner_cash": "MIXED",
+      "permanent_loss": "MIXED"
+    },
+    "strongest_rival": "Shareholder approval, years of operational support, and Huaxin's simultaneous consolidated cash improvement may mean integration was already economically effective despite the pending legal closing; however, without control, consolidation, Huaxin-product participation, customer response, or asset-level economics, that explanation cannot receive acquisition credit.",
+    "monitoring": "First resolve legal delivery and actual control, then read the first consolidation perimeter and separately trace Huaxin-product participation, customers, utilization, unit margins, operating cash, additional capital needs, and leverage. Group totals cannot settle the acquired perimeter."
+  },
+  "investment_treatment": "WORKED_CASE_PRICE_FREE: research and valuation-route treatment only; no security value, BuyBand, report publication, or investment authority."
+}

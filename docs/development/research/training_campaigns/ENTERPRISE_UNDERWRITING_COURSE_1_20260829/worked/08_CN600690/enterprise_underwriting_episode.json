@@ -1,0 +1,185 @@
+{
+  "schema_version": "enterprise-underwriting-episode.v2",
+  "episode_id": "UWEP:C1:WORKED:CN600690:20230501",
+  "company_id": "CN:600690",
+  "company_name": "Haier Smart Home",
+  "cutoff_at": "2023-05-01T00:00:00+08:00",
+  "sample_identity": "WORKED_CASE",
+  "decision_frame": "At the FY2022 reporting cutoff, determine whether Haier's global brand acquisitions and Three-Winged Bird scene channel had created durable enterprise economics, and how far strong group cash could support normal earnings and new capital allocation. This result-known worked case separates historical integration credit, channel absorption, standalone platform economics, and later CCR and Kwikot acquisition returns.",
+  "underwriting_route": "GLOBAL_MATURE_APPLIANCE_PLATFORM_WITH_CONDITIONAL_INTEGRATION_CREDIT_AND_INCREMENTAL_ACQUISITION_RISK",
+  "situation_model": {
+    "summary": "Haier's historical global platform produced rising overseas revenue, improved product structure and utilization, and strong group cash through FY2024, supporting real but conditional integration credit. Three-Winged Bird demonstrated channel and customer absorption through store retail and package-sales measures, yet no independent profit and cash platform was established. New CCR and Kwikot acquisitions entered near year-end and cannot borrow the historical platform's credit before their own economics appear.",
+    "industry_future_thesis": {
+      "horizon": "Three to five years after the FY2022 cutoff, spanning global appliance demand cycles, channel maturation, and the first full economic periods for new acquisitions.",
+      "most_likely_regime": "Global appliances remain a mature, regionally cyclical industry in which brand, premium mix, local distribution, supply-chain utilization, and after-sales capability shift the profit pool. Digital or scene channels strengthen the core only when customer behavior and unit economics improve; serial acquisition adds value only when asset-level return exceeds capital committed.",
+      "profit_pool_transmission": "Regional demand, competition, raw materials, currencies, and interest rates first affect volume and gross margin; multi-brand positioning and local supply chains can preserve share and utilization. Value reaches ordinary owners only after operating cash covers maintenance, subsidiary needs, acquisitions, minority interests, and other capital uses.",
+      "company_exposure": "Haier is diversified across geographies, categories, and mature brands, with a historically integrated overseas platform and strong group cash. It is also exposed to currency, rate, regulation, acquisition goodwill, and the possibility that a strong core masks weak incremental assets or a scene platform that merely reclassifies existing sales.",
+      "adaptation": "Overseas revenue growth, share and product-structure improvement, better utilization, and strong cash support high conditional operating-integration credit. Three-Winged Bird earns channel execution credit from observed store retail, touchpoints, and package share but no separate platform economics. New acquisitions remain conditional until constant-perimeter profit and cash appear.",
+      "normal_economics": "Underwrite the mature global appliance platform through conservative EPV using cross-cycle group operating evidence. Keep Three-Winged Bird's independent platform profit and new-acquisition synergies outside the base; bridge subsidiary retention, minority interests, acquisitions, and distributions before treating the group cash proxy as normalized parent owner cash.",
+      "permanent_loss": "Diversification, brands, and strong operating cash make near-term financial failure unlikely. The more plausible permanent-loss path is sustained margin erosion or repeated acquisition and platform spending whose low asset-level return is hidden by the core, reinforced by a large goodwill balance.",
+      "valuation_treatment": "Use EPV for the mature global appliance platform, corroborative SOTP for distinct regional and acquired components, and NAV and goodwill stress. Exclude standalone Three-Winged Bird economics and CCR or Kwikot synergy from the base until responsibility-matched returns are observable.",
+      "strongest_rival": "Raw materials, currencies, interest rates, regional demand, and competition may independently explain much of the overseas improvement, while strong core cash may conceal low-return acquisitions and Three-Winged Bird may mainly reclassify existing sales; this rival limits causal and incremental-platform credit but does not erase the observed multi-year global operating engine and customer-channel absorption.",
+      "reversal_observations": [
+        "Constant-perimeter revenue, recurring profit, and post-investment cash from new acquisitions, alongside resilient overseas unit economics through currency and competition changes, would raise incremental allocation and normal-earnings credit.",
+        "Repeatable incremental gross profit, service revenue, customer retention, and cash attributable to Three-Winged Bird would promote it from channel capability to a separately capitalizable platform.",
+        "Overseas revenue growth with persistent margin and after-expense profit deterioration, new acquisition funding or impairment, worsening goodwill economics, or scene touchpoint growth alongside weaker customer economics and cash would lower normal earnings and increase permanent-loss treatment."
+      ]
+    }
+  },
+  "business_position": "Haier had an established multi-brand global appliance platform with meaningful local operations, rising overseas revenue, and a real scene-channel capability in China. The historical platform is an operating engine rather than just accumulated acquisitions, but neither every historical gain nor future acquisition success can be attributed automatically to integration skill.",
+  "survival_case": "FY2022-FY2024 group operating cash less cash purchases of fixed, intangible, and other long-term assets remained strongly positive, and FY2025 operating cash was still about RMB 26.0 billion. This supports low near-term financing risk and substantial reinvestment capacity. It does not by itself measure normalized cash distributable to the parent after acquisitions, subsidiary retention, minority interests, and full distributions.",
+  "adaptation_case": "Management earns high conditional credit for building a global platform whose overseas revenue rose from about RMB 125.42 billion in FY2022 to RMB 143.81 billion in FY2024 alongside product, utilization, margin, and cash evidence. Three-Winged Bird's retail, touchpoint, and package-share evidence establishes channel absorption, not independent economics. CCR and Kwikot were consolidated near FY2024 year-end and require their own result window.",
+  "normalization_case": "Normalize the mature global appliance platform on cross-cycle revenue, margin, and group cash, with a conservative bridge for maintenance, acquisitions, subsidiary needs, minority interests, and distributions. Historical integration supports franchise quality but not a blanket acquisition premium. Three-Winged Bird remains embedded channel capability, while new acquisitions contribute only through scenarios before recurring asset-level profit and cash are observed.",
+  "permanent_loss_map": "Near-term failure risk is reduced by geographic and category diversity, mature brands, and strong cash. Material long-term loss can arise from regional margin erosion, currency and rate pressure, goodwill impairment, repeated low-return acquisitions, or channel investment without incremental economics. The roughly RMB 27.38 billion FY2024 goodwill balance and late-year acquisitions are risk carriers, not proof of loss or value creation.",
+  "value_route": {
+    "primary_routes": [
+      "GLOBAL_MATURE_APPLIANCE_EPV"
+    ],
+    "excluded_routes": [
+      "THREE_WINGED_BIRD_STANDALONE_PLATFORM_VALUE",
+      "CCR_AND_KWIKOT_SYNERGY_IN_BASE",
+      "GOODWILL_BOOK_VALUE_AS_INTRINSIC_VALUE"
+    ],
+    "route_reasoning": "The mature global platform has multi-year operating and cash evidence appropriate for an earnings-power route. Distinct acquired or platform components still require responsibility-matched returns, so SOTP is corroborative and NAV and goodwill are stress tools rather than substitutes for the operating thesis.",
+    "valuation_model_roles": {
+      "primary": [
+        "EPV"
+      ],
+      "corroborative": [
+        "SOTP"
+      ],
+      "stress": [
+        "NAV"
+      ]
+    }
+  },
+  "strongest_rival": "Raw materials, currencies, interest rates, regional demand, and competition may independently explain much of the overseas improvement, while strong core cash may conceal low-return acquisitions and Three-Winged Bird may mainly reclassify existing sales; this rival limits causal and incremental-platform credit but does not erase the observed multi-year global operating engine and customer-channel absorption.",
+  "reversal_observations": [
+    "Constant-perimeter revenue, recurring profit, and post-investment cash from new acquisitions, alongside resilient overseas unit economics through currency and competition changes, would raise incremental allocation and normal-earnings credit.",
+    "Repeatable incremental gross profit, service revenue, customer retention, and cash attributable to Three-Winged Bird would promote it from channel capability to a separately capitalizable platform.",
+    "Overseas revenue growth with persistent margin and after-expense profit deterioration, new acquisition funding or impairment, worsening goodwill economics, or scene touchpoint growth alongside weaker customer economics and cash would lower normal earnings and increase permanent-loss treatment."
+  ],
+  "component_treatments": [
+    {
+      "component_id": "CN600690:HISTORICAL_GLOBAL_PLATFORM",
+      "treatment": "CONDITIONALLY_UNDERWRITE",
+      "reason": "Multi-year overseas revenue, product structure, utilization, share, margin, and group cash provide more than consolidation growth and support a real operating engine.",
+      "investment_consequence": "Include conservative global-platform earnings power in the base, while avoiding a blanket premium for every historical or future acquisition.",
+      "promotion_or_resolution_condition": "Sustained overseas unit economics and cash through currency, demand, and competitive changes would strengthen integration credit; margin and cash erosion would narrow it.",
+      "evidence_ids": [
+        "E-CN600690-GLOBAL",
+        "E-CN600690-CASH"
+      ]
+    },
+    {
+      "component_id": "CN600690:THREE_WINGED_BIRD_CHANNEL",
+      "treatment": "CONDITIONALLY_UNDERWRITE",
+      "reason": "Store retail growth, touchpoint additions, and package-sales share show that the scene offer changed channel and customer behavior.",
+      "investment_consequence": "Credit the core appliance channel and mix capability qualitatively, but do not add a separate platform earnings stream.",
+      "promotion_or_resolution_condition": "Require repeatable customer retention, incremental gross profit, service revenue, and cash attributable to the scene channel.",
+      "evidence_ids": [
+        "E-CN600690-SCENE"
+      ]
+    },
+    {
+      "component_id": "CN600690:THREE_WINGED_BIRD_STANDALONE_PLATFORM",
+      "treatment": "EXCLUDE_FROM_BASE",
+      "reason": "Independent customers, incremental profit, and cash were not established, so channel evidence cannot be promoted into a second capitalizable platform.",
+      "investment_consequence": "Preserve possible platform upside as a named scenario while assigning no separate base earnings or multiple.",
+      "promotion_or_resolution_condition": "Promote only after independent and repeatable customer, revenue, after-expense profit, capital use, and cash evidence is disclosed.",
+      "evidence_ids": [
+        "E-CN600690-SCENE",
+        "E-CN600690-BOUNDARIES"
+      ]
+    },
+    {
+      "component_id": "CN600690:GROUP_CASH_CAPACITY",
+      "treatment": "CONDITIONALLY_UNDERWRITE",
+      "reason": "The FY2022-FY2024 post-capital-spending proxy was strongly positive and FY2025 operating cash remained high, demonstrating substantial group cash capacity.",
+      "investment_consequence": "Use a conservative multi-year group cash range but bridge acquisitions, subsidiary retention, minority interests, maintenance, and distributions before parent normalization.",
+      "promotion_or_resolution_condition": "A reproducible parent cash bridge and stable cross-cycle conversion would support a firmer owner-cash treatment.",
+      "evidence_ids": [
+        "E-CN600690-CASH",
+        "E-CN600690-BOUNDARIES"
+      ]
+    },
+    {
+      "component_id": "CN600690:CCR_AND_KWIKOT",
+      "treatment": "SCENARIO_ONLY",
+      "reason": "The acquisitions were consolidated near FY2024 year-end, leaving insufficient same-perimeter recurring profit and cash evidence for return attribution.",
+      "investment_consequence": "Exclude synergy and incremental normal earnings from the base while retaining explicit success and failure scenarios and stressing goodwill.",
+      "promotion_or_resolution_condition": "Require constant-perimeter revenue, recurring after-expense profit, necessary reinvestment, and cash relative to acquisition capital.",
+      "evidence_ids": [
+        "E-CN600690-ACQUISITIONS",
+        "E-CN600690-GOODWILL"
+      ]
+    }
+  ],
+  "evidence_trace": [
+    {
+      "evidence_id": "E-CN600690-GLOBAL",
+      "source_ref": "docs/development/research/training_curricula/teaching_cases/TC_HAIER_GLOBAL_INTEGRATION_SCENE_AND_CASH_V1.md",
+      "locator": "Judgment 1: overseas platform as a real operating engine",
+      "scope": "FY2022-FY2024 overseas revenue, product structure, supply-chain utilization, market position, margin, and group outcome",
+      "used_for": "Business position, adaptation, and mature global-platform normal earnings"
+    },
+    {
+      "evidence_id": "E-CN600690-SCENE",
+      "source_ref": "docs/development/research/training_curricula/teaching_cases/TC_HAIER_GLOBAL_INTEGRATION_SCENE_AND_CASH_V1.md",
+      "locator": "Judgment 2: Three-Winged Bird channel absorption versus platform economics",
+      "scope": "Store retail, touchpoints, package-sales share, and missing independent platform economics",
+      "used_for": "Channel adaptation credit and exclusion of standalone platform value"
+    },
+    {
+      "evidence_id": "E-CN600690-CASH",
+      "source_ref": "docs/development/research/training_curricula/teaching_cases/TC_HAIER_GLOBAL_INTEGRATION_SCENE_AND_CASH_V1.md",
+      "locator": "Operating and cash table and Management, owner cash, and permanent loss",
+      "scope": "FY2022-FY2024 group operating-cash-less-capital-spending proxy and FY2025 operating cash",
+      "used_for": "Survival, owner-cash direction, and financing-risk assessment"
+    },
+    {
+      "evidence_id": "E-CN600690-ACQUISITIONS",
+      "source_ref": "docs/development/research/training_curricula/teaching_cases/TC_HAIER_GLOBAL_INTEGRATION_SCENE_AND_CASH_V1.md",
+      "locator": "Judgment 3 and valuation direction: CCR and Kwikot",
+      "scope": "Late-FY2024 consolidation and missing responsibility-matched recurring economics for new acquisitions",
+      "used_for": "Scenario treatment and incremental allocation boundary"
+    },
+    {
+      "evidence_id": "E-CN600690-GOODWILL",
+      "source_ref": "docs/development/research/training_curricula/teaching_cases/TC_HAIER_GLOBAL_INTEGRATION_SCENE_AND_CASH_V1.md",
+      "locator": "Operating and cash reconstruction: acquisition cash and goodwill",
+      "scope": "FY2024 acquisition cash and approximately RMB 27.38 billion of year-end goodwill",
+      "used_for": "Capital-allocation and permanent-loss stress"
+    },
+    {
+      "evidence_id": "E-CN600690-BOUNDARIES",
+      "source_ref": "docs/development/research/training_curricula/teaching_cases/TC_HAIER_GLOBAL_INTEGRATION_SCENE_AND_CASH_V1.md",
+      "locator": "Local unknowns that do not withdraw the enterprise judgment",
+      "scope": "Independent scene-platform economics and parent-level normalized cash bridge remain locally unresolved",
+      "used_for": "Conditional component treatments without whole-company refusal"
+    }
+  ],
+  "existing_object_refs": [
+    {
+      "kind": "CONTRACT_ALLOWED_TEACHING_SOURCE",
+      "ref": "docs/development/research/training_curricula/teaching_cases/TC_HAIER_GLOBAL_INTEGRATION_SCENE_AND_CASH_V1.md",
+      "role": "Only result-known source used to compose this worked case"
+    }
+  ],
+  "underwriting_thesis": {
+    "thesis_id": "UWTHESIS:C1:CN600690:20230501",
+    "central_path": "Haier's mature global appliance platform has earned conditional operating-integration credit through multi-year overseas business and strong cash evidence. That supports conservative EPV, while Three-Winged Bird remains channel capability rather than a separate platform and new acquisitions remain scenarios until their own profit and cash cover committed capital.",
+    "normal_earnings_treatment": "IMPROVES: the historical global platform supports a stronger mature earnings base, while standalone scene-platform profit and new-acquisition synergies remain outside the base.",
+    "owner_cash_treatment": "MIXED: the group cash proxy is strongly positive and durable, but normalized parent owner cash still requires deductions and a bridge for acquisitions, subsidiaries, minority interests, maintenance, and distributions.",
+    "permanent_loss_treatment": "MIXED: diversified brands and cash lower near-term failure risk, while goodwill and repeated incremental investment can dilute long-term returns if asset-level economics disappoint.",
+    "value_route_treatment": "Primary global-platform EPV, corroborative component SOTP, and NAV and goodwill stress; no separate base value for Three-Winged Bird platform economics or CCR and Kwikot synergies.",
+    "economic_directions": {
+      "normal_earnings": "IMPROVES",
+      "owner_cash": "MIXED",
+      "permanent_loss": "MIXED"
+    },
+    "strongest_rival": "Raw materials, currencies, interest rates, regional demand, and competition may independently explain much of the overseas improvement, while strong core cash may conceal low-return acquisitions and Three-Winged Bird may mainly reclassify existing sales; this rival limits causal and incremental-platform credit but does not erase the observed multi-year global operating engine and customer-channel absorption.",
+    "monitoring": "Track overseas revenue, recurring after-expense profit, unit economics, utilization, and cash through currency and competition changes. Separately settle Three-Winged Bird incremental customer economics and each new acquisition's constant-perimeter profit, necessary reinvestment, cash, funding, and impairment."
+  },
+  "investment_treatment": "WORKED_CASE_PRICE_FREE: global-platform, allocation-risk, and valuation-route treatment only; no security value, BuyBand, report publication, or investment authority."
+}
