@@ -19,11 +19,15 @@ from scripts.computation_evidence import (
     _unit_for, build_calculation_observations, validate_calculation_observations,
 )
 from scripts.evidence_documents import (
+    _manifest_core,
+    _payload_hash,
     build_document_manifest,
     initialize_official_evidence_policy,
     validate_document_manifest,
 )
 from scripts.evidence_facts import (
+    _observation_core,
+    _payload_hash as _fact_payload_hash,
     build_fact_observations,
     make_observation_id,
     validate_fact_observations,
@@ -131,6 +135,518 @@ def test_manifest_consumes_download_provenance_sidecar(tmp_path: Path) -> None:
     assert document["published_at"] == "2026-03-20"
     assert document["acquisition_status"] == "DOWNLOADED"
     assert not manifest["validation"]["warnings"]
+
+
+def test_manifest_ingests_registered_announcement_with_temporal_identity(tmp_path: Path) -> None:
+    output = _filing_dir(tmp_path)
+    announcement_name = "01502_2026-03-28_cash_upstream_announcement.pdf"
+    announcement_text = "01502_2026-03-28_cash_upstream_announcement.md"
+    (output / announcement_name).write_bytes(b"%PDF-1.4\nfixture exchange announcement\n")
+    (output / announcement_text).write_text(
+        "# 公告\n\n## 第 2 页\n\n附属公司已于2026年3月15日向母公司上游现金人民币278.417百万元。\n",
+        encoding="utf-8",
+    )
+    (output / "document_sources.json").write_text(json.dumps({
+        "schema_version": "document-sources.v1",
+        "documents": {
+            "01502_2025_年报.pdf": {
+                "source_url": "https://www1.hkexnews.hk/annual.pdf",
+                "published_at": "2026-03-20",
+                "provider": "hkexnews",
+            },
+            announcement_name: {
+                "source_url": "https://www1.hkexnews.hk/cash-upstream.pdf",
+                "published_at": "2026-03-28",
+                "provider": "hkexnews",
+                "doc_type": "exchange_announcement",
+                "authority": "company_filing",
+                "fiscal_period": "POST-FY2025",
+                "period_end": "2025-12-31",
+                "derived_text_path": announcement_text,
+                "source_id": "HKEX:01502:20260328:CASH_UPSTREAM",
+                "source_version": "ORIGINAL",
+                "verification_mode": "PAGE_QUOTE",
+            },
+        },
+    }), encoding="utf-8")
+
+    manifest = build_document_manifest(output, "01502.HK", persist=True)
+    announcement = next(
+        item for item in manifest["documents"]
+        if item["doc_type"] == "exchange_announcement"
+    )
+
+    assert manifest["validation"]["state"] == "REVIEWABLE"
+    assert announcement["period_end"] == "2025-12-31"
+    assert announcement["published_at"] == "2026-03-28"
+    assert announcement["derived_text_path"] == announcement_text
+    assert announcement["source_id"] == "HKEX:01502:20260328:CASH_UPSTREAM"
+    verified = verify_fact_from_quote(
+        output,
+        doc_id=announcement["doc_id"],
+        page=2,
+        fact_name="subsidiary_cash_upstream_rmb_m",
+        domain="cash_accessibility",
+        raw_value=278.417,
+        normalized_value=278.417,
+        unit="RMB_m",
+        currency="RMB",
+        basis="parent_company_receipt",
+        quote="附属公司已于2026年3月15日向母公司上游现金人民币278.417百万元。",
+        temporal_role="EVENT",
+        event_date="2026-03-15",
+        observed_at="2026-03-28",
+    )
+    assert verified["verified"] is True
+    assert verified["observation"]["as_of"] == "2026-03-15"
+    assert verified["observation"]["event_date"] == "2026-03-15"
+    assert verified["observation"]["observed_at"] == "2026-03-28"
+
+    missing_clock = verify_fact_from_quote(
+        output,
+        doc_id=announcement["doc_id"],
+        page=2,
+        fact_name="subsidiary_cash_upstream_rmb_m",
+        domain="cash_accessibility",
+        raw_value=278.417,
+        normalized_value=278.417,
+        unit="RMB_m",
+        currency="RMB",
+        basis="parent_company_receipt",
+        quote="附属公司已于2026年3月15日向母公司上游现金人民币278.417百万元。",
+    )
+    assert missing_clock == {
+        "verified": False,
+        "error": "registered_event_document_temporal_role_required",
+    }
+
+    fact_registry = json.loads((output / "fact_observations.json").read_text(encoding="utf-8"))
+    tampered_facts = deepcopy(fact_registry)
+    tampered_event = next(
+        item
+        for item in tampered_facts["observations"]
+        if item.get("fact_name") == "subsidiary_cash_upstream_rmb_m"
+    )
+    tampered_event["event_date"] = tampered_event["as_of"] = "2026-03-16"
+    tampered_event["observation_id"] = make_observation_id(tampered_event)
+    tampered_facts["observation_hash"] = _fact_payload_hash(
+        _observation_core(tampered_facts)
+    )
+    tampered_validation = validate_fact_observations(
+        tampered_facts, manifest, output
+    )
+    assert tampered_validation["state"] == "INVALID"
+    assert any(
+        "event_date_not_in_quote" in finding
+        for finding in tampered_validation["invalid_findings"]
+    )
+    (output / "fact_observations.json").write_text(
+        json.dumps(tampered_facts), encoding="utf-8"
+    )
+    rebuilt = build_fact_observations(output, manifest, persist=False)
+    assert rebuilt["validation"]["state"] == "INVALID"
+    assert any(
+        "event_date_not_in_quote" in finding
+        for finding in rebuilt["validation"]["invalid_findings"]
+    )
+
+    missing_quote_date = verify_fact_from_quote(
+        output,
+        doc_id=announcement["doc_id"],
+        page=2,
+        fact_name="subsidiary_cash_upstream_without_date_in_quote",
+        domain="cash_accessibility",
+        raw_value=278.417,
+        normalized_value=278.417,
+        unit="RMB_m",
+        currency="RMB",
+        basis="parent_company_receipt",
+        quote="向母公司上游现金人民币278.417百万元。",
+        temporal_role="EVENT",
+        event_date="2026-03-15",
+        observed_at="2026-03-28",
+    )
+    assert missing_quote_date == {
+        "verified": False,
+        "error": "event_date_not_in_quote",
+    }
+
+    for field, changed in (
+        ("doc_type", "quarterly_report"),
+        ("doc_type", "annual_report"),
+        ("period_end", "2025-12-30"),
+        ("code", "09999"),
+        ("market", "CN-SH"),
+        ("report_id", "REPORT:FAKE"),
+    ):
+        tampered_manifest = deepcopy(manifest)
+        tampered_document = next(
+            item
+            for item in tampered_manifest["documents"]
+            if item["doc_id"] == announcement["doc_id"]
+        )
+        tampered_document[field] = changed
+        tampered_manifest["manifest_hash"] = _payload_hash(
+            _manifest_core(tampered_manifest)
+        )
+        validation = validate_document_manifest(tampered_manifest, output)
+        assert validation["state"] == "INVALID", field
+
+    for field, changed in (
+        ("report_id", "REPORT:FAKE"),
+        ("code", "09999"),
+        ("market", "CN-SH"),
+    ):
+        tampered_manifest = deepcopy(manifest)
+        tampered_manifest[field] = changed
+        for document in tampered_manifest["documents"]:
+            document[field] = changed
+        tampered_manifest["manifest_hash"] = _payload_hash(
+            _manifest_core(tampered_manifest)
+        )
+        validation = validate_document_manifest(tampered_manifest, output)
+        assert validation["state"] == "INVALID", "top-level:" + field
+
+    type_tampered = deepcopy(manifest)
+    next(
+        item
+        for item in type_tampered["documents"]
+        if item["doc_id"] == announcement["doc_id"]
+    )["doc_type"] = "quarterly_report"
+    type_tampered["manifest_hash"] = _payload_hash(_manifest_core(type_tampered))
+    (output / "document_manifest.json").write_text(
+        json.dumps(type_tampered), encoding="utf-8"
+    )
+    blocked = verify_fact_from_quote(
+        output,
+        doc_id=announcement["doc_id"],
+        page=2,
+        fact_name="bypassed_event_clock",
+        domain="cash_accessibility",
+        raw_value=278.417,
+        normalized_value=278.417,
+        unit="RMB_m",
+        currency="RMB",
+        basis="parent_company_receipt",
+        quote="附属公司已于2026年3月15日向母公司上游现金人民币278.417百万元。",
+    )
+    assert blocked == {"verified": False, "error": "document_manifest_not_reviewable"}
+
+
+def test_registered_event_dates_accept_english_and_spaced_chinese_quotes(
+    tmp_path: Path,
+) -> None:
+    output = _filing_dir(tmp_path)
+    filename = "01502_2026-03-28_bilingual_announcement.pdf"
+    derivative = "01502_2026-03-28_bilingual_announcement.md"
+    (output / filename).write_bytes(b"%PDF-1.4\nfixture bilingual announcement\n")
+    (output / derivative).write_text(
+        "# Announcement\n\n## 第 1 页\n\n"
+        "The subsidiary collected RMB20 million on 15 March 2026.\n"
+        "本公司已于 2026 年 3 月 16 日收回人民币10百万元。\n"
+        "The subsidiary collected RMB30 million on 2026-03-150.\n"
+        "The subsidiary collected RMB40 million on 12026-03-15.\n",
+        encoding="utf-8",
+    )
+    (output / "document_sources.json").write_text(
+        json.dumps(
+            {
+                "schema_version": "document-sources.v1",
+                "documents": {
+                    filename: {
+                        "source_url": "https://www1.hkexnews.hk/bilingual.pdf",
+                        "published_at": "2026-03-28",
+                        "doc_type": "exchange_announcement",
+                        "authority": "company_filing",
+                        "fiscal_period": "POST-FY2025",
+                        "period_end": "2025-12-31",
+                        "derived_text_path": derivative,
+                        "verification_mode": "PAGE_QUOTE",
+                        "language": "en",
+                    }
+                },
+            }
+        ),
+        encoding="utf-8",
+    )
+    manifest = build_document_manifest(output, "01502.HK", persist=True)
+    announcement = next(
+        item
+        for item in manifest["documents"]
+        if item["doc_type"] == "exchange_announcement"
+    )
+
+    english = verify_fact_from_quote(
+        output,
+        doc_id=announcement["doc_id"],
+        page=1,
+        fact_name="english_collection",
+        domain="cash_accessibility",
+        raw_value=20,
+        normalized_value=20,
+        unit="RMB_m",
+        currency="RMB",
+        basis="cash_received",
+        quote="The subsidiary collected RMB20 million on 15 March 2026.",
+        temporal_role="EVENT",
+        event_date="2026-03-15",
+        observed_at="2026-03-28",
+    )
+    spaced_chinese = verify_fact_from_quote(
+        output,
+        doc_id=announcement["doc_id"],
+        page=1,
+        fact_name="spaced_chinese_collection",
+        domain="cash_accessibility",
+        raw_value=10,
+        normalized_value=10,
+        unit="RMB_m",
+        currency="RMB",
+        basis="cash_received",
+        quote="本公司已于 2026 年 3 月 16 日收回人民币10百万元。",
+        temporal_role="EVENT",
+        event_date="2026-03-16",
+        observed_at="2026-03-28",
+    )
+
+    assert english["verified"] is True
+    assert spaced_chinese["verified"] is True
+
+    for raw_value, quote in (
+        (30, "The subsidiary collected RMB30 million on 2026-03-150."),
+        (40, "The subsidiary collected RMB40 million on 12026-03-15."),
+    ):
+        rejected = verify_fact_from_quote(
+            output,
+            doc_id=announcement["doc_id"],
+            page=1,
+            fact_name=f"invalid_iso_collection_{raw_value}",
+            domain="cash_accessibility",
+            raw_value=raw_value,
+            normalized_value=raw_value,
+            unit="RMB_m",
+            currency="RMB",
+            basis="cash_received",
+            quote=quote,
+            temporal_role="EVENT",
+            event_date="2026-03-15",
+            observed_at="2026-03-28",
+        )
+        assert rejected == {
+            "verified": False,
+            "error": "event_date_not_in_quote",
+        }
+
+    persisted = json.loads(
+        (output / "fact_observations.json").read_text(encoding="utf-8")
+    )
+    invalid_persisted = deepcopy(english["observation"])
+    invalid_persisted.update(
+        {
+            "fact_name": "persisted_invalid_iso_collection",
+            "raw_value": 30,
+            "normalized_value": 30,
+            "raw_text": "The subsidiary collected RMB30 million on 2026-03-150.",
+        }
+    )
+    invalid_persisted["observation_id"] = make_observation_id(invalid_persisted)
+    persisted["observations"].append(invalid_persisted)
+    persisted["observation_hash"] = _fact_payload_hash(_observation_core(persisted))
+    validation = validate_fact_observations(persisted, manifest, output)
+    assert validation["state"] == "INVALID"
+    assert any(
+        "event_date_not_in_quote" in finding
+        for finding in validation["invalid_findings"]
+    )
+
+
+def test_registered_non_filing_document_requires_publication_date(tmp_path: Path) -> None:
+    output = _filing_dir(tmp_path)
+    filename = "01502_tender_record.pdf"
+    (output / filename).write_bytes(b"%PDF-1.4\nfixture tender record\n")
+    (output / "document_sources.json").write_text(json.dumps({
+        "schema_version": "document-sources.v1",
+        "documents": {
+            filename: {
+                "source_url": "https://official.example/tender.pdf",
+                "doc_type": "other_official",
+                "authority": "other_official",
+                "fiscal_period": "EVENT-2025",
+                "period_end": "2025-11-01",
+                "verification_mode": "PAGE_QUOTE",
+            }
+        },
+    }), encoding="utf-8")
+
+    import pytest
+    with pytest.raises(ValueError, match="registered_document_published_at_invalid"):
+        build_document_manifest(output, "01502.HK", persist=False)
+
+
+def test_registered_document_authority_must_match_document_type(tmp_path: Path) -> None:
+    output = _filing_dir(tmp_path)
+    filename = "01502_official_statistics.json"
+    (output / filename).write_text('{"series": []}', encoding="utf-8")
+    (output / "document_sources.json").write_text(json.dumps({
+        "schema_version": "document-sources.v1",
+        "documents": {
+            filename: {
+                "source_url": "https://official.example/statistics.json",
+                "published_at": "2025-11-02",
+                "doc_type": "official_statistics",
+                "authority": "company_filing",
+                "fiscal_period": "2025-M10",
+                "period_end": "2025-10-31",
+                "verification_mode": "STRUCTURED_DATA",
+            }
+        },
+    }), encoding="utf-8")
+
+    import pytest
+    with pytest.raises(ValueError, match="registered_document_authority_invalid"):
+        build_document_manifest(output, "01502.HK", persist=False)
+
+
+def _registered_announcement_manifest(tmp_path: Path) -> tuple[Path, dict]:
+    output = _filing_dir(tmp_path)
+    filename = "01502_2026-03-28_announcement.pdf"
+    derivative = "01502_2026-03-28_announcement.md"
+    (output / filename).write_bytes(b"%PDF-1.4\nfixture announcement\n")
+    (output / derivative).write_text(
+        "# 公告\n\n## 第 1 页\n\n本公告披露一项已完成事项。\n",
+        encoding="utf-8",
+    )
+    (output / "document_sources.json").write_text(json.dumps({
+        "schema_version": "document-sources.v1",
+        "documents": {
+            filename: {
+                "source_url": "https://www1.hkexnews.hk/announcement.pdf",
+                "published_at": "2026-03-28",
+                "doc_type": "exchange_announcement",
+                "authority": "company_filing",
+                "fiscal_period": "POST-FY2025",
+                "period_end": "2025-12-31",
+                "derived_text_path": derivative,
+                "verification_mode": "PAGE_QUOTE",
+            }
+        },
+    }), encoding="utf-8")
+    return output, build_document_manifest(output, "01502.HK", persist=False)
+
+
+def test_manifest_validator_rechecks_registered_identity_after_tampering(tmp_path: Path) -> None:
+    output, manifest = _registered_announcement_manifest(tmp_path)
+    announcement = next(
+        item for item in manifest["documents"]
+        if item["doc_type"] == "exchange_announcement"
+    )
+
+    for field, bad_value, finding in (
+        ("authority", "other_official", "authority_incompatible_with_registered_doc_type"),
+        ("published_at", None, "published_at_invalid"),
+        ("source_url", None, "source_url_invalid"),
+    ):
+        tampered = deepcopy(manifest)
+        target = next(item for item in tampered["documents"] if item["doc_id"] == announcement["doc_id"])
+        target[field] = bad_value
+        tampered["manifest_hash"] = _payload_hash(_manifest_core(tampered))
+        validation = validate_document_manifest(tampered, output)
+        assert validation["state"] == "INVALID"
+        assert any(finding in item for item in validation["invalid_findings"])
+
+
+def test_registered_page_quote_document_without_page_marked_text_is_incomplete(tmp_path: Path) -> None:
+    output, manifest = _registered_announcement_manifest(tmp_path)
+    announcement = next(
+        item for item in manifest["documents"]
+        if item["doc_type"] == "exchange_announcement"
+    )
+    (output / announcement["derived_text_path"]).write_text(
+        "# 公告\n\n没有页码定位。\n", encoding="utf-8"
+    )
+    validation = validate_document_manifest(manifest, output)
+
+    assert validation["state"] == "INCOMPLETE"
+    assert any("page_markers_missing" in item for item in validation["incomplete_findings"])
+
+    no_derivative = deepcopy(manifest)
+    target = next(item for item in no_derivative["documents"] if item["doc_id"] == announcement["doc_id"])
+    target["derived_text_path"] = None
+    no_derivative["manifest_hash"] = _payload_hash(_manifest_core(no_derivative))
+    validation = validate_document_manifest(no_derivative, output)
+    assert validation["state"] == "INVALID"
+    assert any(
+        "derived_text_path_registered_source_mismatch" in item
+        for item in validation["invalid_findings"]
+    )
+
+    source_registry = json.loads(
+        (output / "document_sources.json").read_text(encoding="utf-8")
+    )
+    source_registry["documents"][announcement["local_path"]][
+        "derived_text_path"
+    ] = None
+    (output / "document_sources.json").write_text(
+        json.dumps(source_registry), encoding="utf-8"
+    )
+    legitimately_missing = build_document_manifest(output, "01502.HK", persist=False)
+    assert legitimately_missing["validation"]["state"] == "INCOMPLETE"
+    assert any(
+        "page_marked_derivative_missing" in item
+        for item in legitimately_missing["validation"]["incomplete_findings"]
+    )
+
+
+def test_quote_verifier_rejects_nonreviewable_manifest_and_structured_data(tmp_path: Path) -> None:
+    output, manifest = _registered_announcement_manifest(tmp_path)
+    announcement = next(
+        item for item in manifest["documents"]
+        if item["doc_type"] == "exchange_announcement"
+    )
+    tampered = deepcopy(manifest)
+    target = next(item for item in tampered["documents"] if item["doc_id"] == announcement["doc_id"])
+    target["authority"] = "other_official"
+    tampered["manifest_hash"] = _payload_hash(_manifest_core(tampered))
+    (output / "document_manifest.json").write_text(
+        json.dumps(tampered, ensure_ascii=False, indent=2), encoding="utf-8"
+    )
+    rejected = verify_fact_from_quote(
+        output, doc_id=announcement["doc_id"], page=1, fact_name="event",
+        domain="cash_accessibility", raw_value="完成", normalized_value="完成",
+        unit="text", basis="event", quote="本公告披露一项已完成事项。",
+    )
+    assert rejected == {"verified": False, "error": "document_manifest_not_reviewable"}
+
+    data_file = "01502_official_statistics.json"
+    (output / data_file).write_text('{"value": 12}', encoding="utf-8")
+    (output / "document_sources.json").write_text(json.dumps({
+        "schema_version": "document-sources.v1",
+        "documents": {
+            data_file: {
+                "source_url": "https://official.example/statistics.json",
+                "published_at": "2026-03-20",
+                "doc_type": "official_statistics",
+                "authority": "official_statistics",
+                "fiscal_period": "FY2025",
+                "period_end": "2025-12-31",
+                "verification_mode": "STRUCTURED_DATA",
+            }
+        },
+    }), encoding="utf-8")
+    structured_manifest = build_document_manifest(output, "01502.HK", persist=True)
+    structured = next(
+        item for item in structured_manifest["documents"]
+        if item["doc_type"] == "official_statistics"
+    )
+    rejected = verify_fact_from_quote(
+        output, doc_id=structured["doc_id"], page=1, fact_name="statistic",
+        domain="industry", raw_value=12, normalized_value=12,
+        unit="count", basis="official_statistics", quote='{"value": 12}',
+    )
+    assert rejected == {
+        "verified": False,
+        "error": "structured_document_requires_deterministic_data_verifier",
+    }
 
 
 def test_only_page_located_source_facts_are_verified(tmp_path: Path) -> None:

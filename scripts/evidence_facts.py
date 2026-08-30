@@ -26,6 +26,13 @@ TEMPORAL_ROLES = {"POSITION_AS_OF", "HISTORICAL_PERIOD", "EVENT"}
 OFFICIAL_DOCUMENT_AUTHORITIES = {
     "issuer", "audited_filing", "company_filing", "official_statistics", "other_official",
 }
+_REGISTERED_EVENT_DOCUMENT_TYPES = {
+    "company_announcement", "company_circular", "exchange_announcement",
+}
+_ENGLISH_MONTHS = (
+    "January", "February", "March", "April", "May", "June",
+    "July", "August", "September", "October", "November", "December",
+)
 _VALUATION_EVIDENCE_ROLE_RE = re.compile(r"[A-Z][A-Z0-9_]*")
 _VALUATION_EXCLUSION_DESTINATIONS = {
     "OTHER_REPLACEMENT_COMPONENT",
@@ -80,6 +87,40 @@ def _parse_temporal_date(value: Any) -> Any:
         return datetime.fromisoformat(text.replace("Z", "+00:00")).date()
     except ValueError:
         return None
+
+
+def _event_date_appears_in_quote(event_date: Any, quote: Any) -> bool:
+    """Match an explicit calendar date without inferring an ambiguous date.
+
+    Official Hong Kong disclosures commonly use ISO, Chinese YMD, English
+    DMY, or English MDY month-name forms.  Whitespace introduced by PDF/OCR
+    extraction is ignored, but numeric slash dates are deliberately excluded.
+    """
+    event_day = _parse_temporal_date(event_date)
+    if event_day is None:
+        return False
+    text = re.sub(r"\s+", " ", str(quote or "")).strip()
+    compact = re.sub(r"\s+", "", text)
+    if re.search(
+        rf"(?<!\d){re.escape(event_day.isoformat())}(?!\d)", compact
+    ):
+        return True
+    chinese_pattern = re.compile(
+        rf"(?<!\d){event_day.year}年0?{event_day.month}月0?{event_day.day}日(?!\d)"
+    )
+    if chinese_pattern.search(compact):
+        return True
+    month = _ENGLISH_MONTHS[event_day.month - 1]
+    month_pattern = rf"(?:{month}|{month[:3]}\.?)"
+    dmy = re.compile(
+        rf"(?<!\w)0?{event_day.day}\s+{month_pattern}\s+{event_day.year}(?!\w)",
+        re.IGNORECASE,
+    )
+    mdy = re.compile(
+        rf"(?<!\w){month_pattern}\s+0?{event_day.day}(?:,)?\s+{event_day.year}(?!\w)",
+        re.IGNORECASE,
+    )
+    return bool(dmy.search(text) or mdy.search(text))
 
 
 def _temporal_contract_findings(
@@ -913,6 +954,12 @@ def validate_fact_observations(
                 invalid.append(f"{observation_id or prefix}:verified_locator_missing")
             if doc.get("authority") not in OFFICIAL_DOCUMENT_AUTHORITIES:
                 invalid.append(f"{observation_id or prefix}:non_official_source_cannot_verify")
+            if (
+                doc.get("doc_type") in _REGISTERED_EVENT_DOCUMENT_TYPES
+                and item.get("temporal_role") == "EVENT"
+                and not _event_date_appears_in_quote(item.get("event_date"), quote)
+            ):
+                invalid.append(f"{observation_id or prefix}:event_date_not_in_quote")
             if output is not None and quote:
                 relative = doc.get("derived_text_path")
                 if not relative:
@@ -1015,12 +1062,22 @@ def verify_fact_from_quote(
     """Programmatically promote an exact page quote to VERIFIED evidence."""
     output = Path(output_dir)
     manifest = json.loads((output / "document_manifest.json").read_text(encoding="utf-8"))
+    try:
+        from scripts.evidence_documents import validate_document_manifest
+    except ModuleNotFoundError:
+        from evidence_documents import validate_document_manifest
+    if validate_document_manifest(manifest, output).get("state") != "REVIEWABLE":
+        return {"verified": False, "error": "document_manifest_not_reviewable"}
     documents = {str(doc.get("doc_id")): doc for doc in manifest.get("documents") or []}
     document = documents.get(str(doc_id))
     if not document:
         return {"verified": False, "error": "unknown_doc_id"}
     if document.get("authority") not in OFFICIAL_DOCUMENT_AUTHORITIES:
         return {"verified": False, "error": "non_official_source_cannot_verify"}
+    if document.get("verification_mode") == "STRUCTURED_DATA":
+        return {"verified": False, "error": "structured_document_requires_deterministic_data_verifier"}
+    if document.get("doc_type") in _REGISTERED_EVENT_DOCUMENT_TYPES and temporal_role is None:
+        return {"verified": False, "error": "registered_event_document_temporal_role_required"}
     _, text = _document_text(output, document)
     block = next((item for item in _page_blocks(text) if item["page"] == int(page)), None)
     exact_quote = str(quote or "").strip()
@@ -1030,6 +1087,11 @@ def verify_fact_from_quote(
         numeric_tokens = [_parse_number(item) for item in re.findall(r"[-+]?\d[\d,，]*(?:\.\d+)?", exact_quote)]
         if not any(abs(float(raw_value) - token) <= max(1e-9, abs(float(raw_value)) * 1e-9) for token in numeric_tokens):
             return {"verified": False, "error": "raw_value_not_in_quote"}
+    if document.get("doc_type") in _REGISTERED_EVENT_DOCUMENT_TYPES and temporal_role == "EVENT":
+        if _parse_temporal_date(event_date) is None:
+            return {"verified": False, "error": "event_date_invalid"}
+        if not _event_date_appears_in_quote(event_date, exact_quote):
+            return {"verified": False, "error": "event_date_not_in_quote"}
     quote_start = str(block["text"]).index(exact_quote)
     absolute_start = int(block["start"]) + quote_start
     explicit_as_of = str(as_of or "").strip()

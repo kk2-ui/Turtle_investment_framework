@@ -30,7 +30,7 @@
         "issuer": {"type": "string", "minLength": 1},
         "code": {"type": "string", "minLength": 1},
         "market": {"type": "string", "minLength": 1},
-        "doc_type": {"enum": ["annual_report", "interim_report", "quarterly_report", "annual_report_text", "interim_report_text", "company_announcement", "exchange_announcement", "official_statistics", "other_official", "licensed_industry_data"]},
+        "doc_type": {"enum": ["annual_report", "interim_report", "quarterly_report", "annual_report_text", "interim_report_text", "company_announcement", "company_circular", "exchange_announcement", "official_statistics", "other_official", "licensed_industry_data"]},
         "fiscal_period": {"type": "string", "minLength": 1},
         "period_end": {"type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}$"},
         "published_at": {"type": ["string", "null"]},
@@ -42,11 +42,44 @@
         "mime_type": {"type": "string", "minLength": 1},
         "language": {"type": "string", "minLength": 1},
         "acquisition_status": {"enum": ["CACHED", "DOWNLOADED", "DERIVED_ONLY", "FAILED", "PIT_LINKED_AFTER_ALLOW_READ"]},
+        "verification_mode": {"enum": ["PAGE_QUOTE", "STRUCTURED_DATA"]},
         "source_id": {"type": "string", "minLength": 1},
         "source_version": {"type": "string", "minLength": 1},
         "revision_policy": {"type": "string", "minLength": 1},
         "source_role_provenance": {"$ref": "#/$defs/source_role_provenance"}
-      }
+      },
+      "allOf": [
+        {
+          "if": {"properties": {"doc_type": {"enum": ["quarterly_report", "company_announcement", "company_circular", "exchange_announcement", "official_statistics", "other_official", "licensed_industry_data"]}}},
+          "then": {
+            "required": ["verification_mode"],
+            "properties": {
+              "source_url": {"type": "string", "pattern": "^https?://\\S+$"},
+              "published_at": {"type": "string", "minLength": 10}
+            }
+          }
+        },
+        {
+          "if": {"properties": {"doc_type": {"enum": ["quarterly_report", "company_announcement", "company_circular", "exchange_announcement"]}}},
+          "then": {"properties": {"authority": {"const": "company_filing"}, "verification_mode": {"const": "PAGE_QUOTE"}}}
+        },
+        {
+          "if": {"properties": {"doc_type": {"const": "official_statistics"}}},
+          "then": {"properties": {"authority": {"const": "official_statistics"}}}
+        },
+        {
+          "if": {"properties": {"doc_type": {"const": "other_official"}}},
+          "then": {"properties": {"authority": {"const": "other_official"}, "verification_mode": {"const": "PAGE_QUOTE"}}}
+        },
+        {
+          "if": {"properties": {"doc_type": {"const": "licensed_industry_data"}}},
+          "then": {"properties": {"authority": {"const": "industry_data"}}}
+        },
+        {
+          "if": {"required": ["verification_mode"], "properties": {"verification_mode": {"const": "PAGE_QUOTE"}}},
+          "then": {"properties": {"derived_text_path": {"type": "string", "minLength": 1}}}
+        }
+      ]
     },
     "entity_identity": {
       "type": "object",
