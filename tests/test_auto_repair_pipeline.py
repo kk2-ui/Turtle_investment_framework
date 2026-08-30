@@ -510,14 +510,16 @@ def test_incomplete_source_pass_refreshes_completion_without_publishing(tmp_path
         def to_dict(self):
             return {"status": "INCOMPLETE", "blocking_findings": ["Ch3: audit_failed"]}
 
-    def fake_evaluate(report_text, output_dir):
+    def fake_evaluate(report_text, output_dir, **kwargs):
         captured["report_text"] = report_text; captured["output_dir"] = output_dir
+        captured["reader_report_text"] = kwargs.get("reader_report_text")
         return Result()
 
     monkeypatch.setattr(completion_module, "evaluate_report_completion", fake_evaluate)
     result = _refresh_completion_after_incomplete_source_pass(str(tmp_path))
     assert result["status"] == "INCOMPLETE"
     assert "## Ch1" in captured["report_text"] and "## Ch3" in captured["report_text"]
+    assert "## Ch1" in captured["reader_report_text"] and "## Ch3" in captured["reader_report_text"]
     assert not (tmp_path / "reports").exists()
 
 

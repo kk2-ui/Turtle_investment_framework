@@ -26,12 +26,33 @@ topic. When a fact is unavailable, `UNKNOWN`/`未披露` is valid only when the
 report explains the economic consequence of that unknown.
 
 The reader body also rejects review-return panels, workflow statuses, internal
-object IDs, and model identities such as `PRIMARY_ROUTE_UNKNOWN`, `P_LONG`, or
-`P_XIRR_*`. Those identities remain available in the deterministic model and
-technical appendix. Reader prose must translate them into the route, terminal
-value, horizon, currency, tax, and investor consequence they represent. This
-boundary deliberately continues to allow NAV, EPV, owner cash, audited facts,
-and ordinary-language uncertainty.
+object IDs such as `insight_id`, `claim_id`, `evidence_id`, `observation_id`,
+`calculation_id`, `decision_entry_id`, and `model_id`; canonical `OBS:` / `CALC:`
+identities, structured anchors such as `[insight: ...]`, binding lists, and model identities
+such as `PRIMARY_ROUTE_UNKNOWN`, `P_LONG`, or `P_XIRR_*`. Those identities remain
+available in the deterministic model and technical artifact. Reader prose must
+translate them into the route, terminal value, horizon, currency, tax, and
+investor consequence they represent. This boundary deliberately continues to
+allow NAV, EPV, owner cash, audited facts, and ordinary-language uncertainty.
+
+## Three Publication Surfaces
+
+- The formal reader report is the complete company narrative assembled from
+  the accepted chapters. A deterministic projection removes only generated
+  control bindings and preserves every narrative section. A pure binding line
+  disappears; when a binding and economic explanation share a line, only the
+  label and private identity disappear and the explanation remains.
+- The technical report retains the original chapter bytes, compiler anchors,
+  binding lists, model derivations, and technical appendix for reproduction.
+- The investment memo is an optional separate executive artifact. It contains
+  no machine identities and links to both the full reader report and the
+  technical report; it can never be written to the formal report path.
+
+Compiler-owned numeric reader slots remain exactly once in both the formal
+reader report and technical report, and zero times in the executive memo. This
+three-artifact cardinality is a hard publication gate, so neither a technical
+appendix duplicate nor an arbitrary memo-field copy can pass. The projection
+removes slot control comments, not the canonical sentence.
 
 ## Archetype Routing
 
@@ -45,11 +66,12 @@ realisation constraints. The common reader questions remain stable.
 ## Lifecycle Hook
 
 `report_completion.py` runs the gate for current archetype-aware runs. The
-assembler runs it again on the actual reader text after compact memo rendering,
-not only on chapters and the technical appendix. A blocked result is retained
-as a draft and cannot be published. Legacy directories without archetype
-context retain existing completion behavior until regenerated through the
-current pipeline.
+assembler gives completion both surfaces: technical text for ledger/binding
+validation and the projected full narrative for reader coverage. It then runs
+reader coverage again on the exact formal reader bytes. A blocked result is
+retained as a draft and cannot be published. Legacy directories without
+archetype context retain existing completion behavior until regenerated through
+the current pipeline.
 
 The JSON result uses `schemas/reader_coverage.schema.json`. It is a semantic
 contract with material findings, not a score or byte/line target.

@@ -339,12 +339,85 @@ def _normalised_content(value: Any) -> str:
     return re.sub(r"\s+|[，。；：、,.!?！？（）()\[\]【】`*_>#|\-]", "", _text(value)).lower()
 
 
-def validate_rendered_memo(payload: dict[str, Any], memo_text: str, technical_filename: str) -> dict[str, Any]:
+def _memo_private_identities(value: Any, *, key: str = "") -> set[str]:
+    identity_keys = {
+        "insight_id", "claim_id", "evidence_id", "decision_entry_id",
+        "model_id", "entry_id", "observation_id", "calculation_id", "fact_id",
+    }
+    identity_list_keys = {
+        "insight_ids", "claim_ids", "evidence_ids", "decision_entry_ids",
+        "valuation_model_ids", "model_ids", "entry_ids", "forward_judgment_ids",
+        "observation_ids", "calculation_ids", "source_fact_ids",
+        "verified_fact_ids", "input_observation_ids", "input_calculation_ids",
+        "evidence_observation_ids", "evidence_calculation_ids",
+    }
+    result: set[str] = set()
+    if isinstance(value, dict):
+        for child_key, child in value.items():
+            child_key = str(child_key)
+            singular_identity = (
+                child_key in identity_keys
+                or child_key.endswith("_observation_id")
+                or child_key.endswith("_calculation_id")
+            )
+            list_identity = (
+                child_key in identity_list_keys
+                or child_key.endswith("_observation_ids")
+                or child_key.endswith("_calculation_ids")
+            )
+            if singular_identity and isinstance(child, str) and child.strip():
+                result.add(child.strip())
+            elif list_identity and isinstance(child, list):
+                result.update(str(item).strip() for item in child if str(item).strip())
+            result.update(_memo_private_identities(child, key=child_key))
+    elif isinstance(value, list):
+        for child in value:
+            result.update(_memo_private_identities(child, key=key))
+    return {
+        identity for identity in result
+        if not re.search(
+            r"(?:^|[/\\])[^/\\]+\.(?:pdf|json|md|html?|xlsx?|csv|txt)$",
+            identity,
+            re.I,
+        )
+    }
+
+
+def _reader_safe_memo_text(value: Any, payload: dict[str, Any]) -> str:
+    """Remove exact control identities from a copied economic sentence."""
+    text = value if isinstance(value, str) else _text(value)
+    for identity in sorted(_memo_private_identities(payload), key=len, reverse=True):
+        text = re.sub(
+            r"(?<![A-Za-z0-9_])"
+            + re.escape(identity)
+            + r"(?![A-Za-z0-9_]|\.(?:pdf|json|md|html?|xlsx?|csv|txt)\b)",
+            "",
+            text,
+            flags=re.I,
+        )
+    text = re.sub(
+        r"\[(?:insight|decision|valuation|claim|threshold|thesis-test|probability)\s*:[^\]]+\]",
+        "",
+        text,
+        flags=re.I,
+    )
+    text = re.sub(r"\s+([，。；：,.!?！？])", r"\1", text)
+    text = re.sub(r"[ \t]+", " ", text)
+    text = re.sub(r" *\n *", "\n", text)
+    return text.strip()
+
+
+def validate_rendered_memo(
+    payload: dict[str, Any],
+    memo_text: str,
+    technical_filename: str,
+    reader_filename: str = "",
+) -> dict[str, Any]:
     """Prove that formatting a compact memo did not discard decision content.
 
     The compact layer may rearrange prose, but every decision-bearing ledger field,
-    insight binding and monitoring item must remain visible. The technical report is
-    linked separately and remains the full evidence/derivation layer.
+    economic judgment and monitoring item must remain visible. Machine IDs and
+    binding lists are intentionally excluded; the technical report retains them.
     """
     analysis_purpose = _analysis_purpose(payload)
     required: list[tuple[str, Any]] = [
@@ -353,23 +426,20 @@ def validate_rendered_memo(payload: dict[str, Any], memo_text: str, technical_fi
     for idx, insight in enumerate(payload.get("insights") or []):
         keys = (
             "title", "anomaly", "mechanism", "strongest_alternative",
-            "discriminating_observation", "falsification", "insight_id", "claim_id",
-            "evidence_ids",
+            "discriminating_observation", "falsification",
         )
         if analysis_purpose == "COMPANY_JUDGMENT_ONLY":
             keys += (
                 "operating_impact", "monitoring_or_forward_judgment",
-                "forward_judgment_ids",
             )
         else:
-            keys += ("valuation_impact", "action_impact", "decision_entry_ids")
+            keys += ("valuation_impact", "action_impact")
         for key in keys:
             required.append((f"insights[{idx}].{key}", insight.get(key)))
     sections = {
         "adversarial_review": (
             "strongest_case_against", "why_it_may_be_right", "unresolved",
             "judgment_if_true" if analysis_purpose == "COMPANY_JUDGMENT_ONLY" else "decision_if_true",
-            "evidence_ids",
         ),
         "memo": (
             "executive_judgment" if analysis_purpose == "COMPANY_JUDGMENT_ONLY" else "executive_decision",
@@ -380,11 +450,11 @@ def validate_rendered_memo(payload: dict[str, Any], memo_text: str, technical_fi
         sections.update({
             "reverse_expectations": (
                 "as_of", "current_price", "method", "implied_operating_path",
-                "assumptions", "conclusion", "flip_condition", "valuation_model_ids",
+                "assumptions", "conclusion", "flip_condition",
             ),
             "value_realization": (
                 "latent_value", "controller", "access_mechanism", "no_catalyst_value",
-                "failure_mode", "decision_entry_ids",
+                "failure_mode",
             ),
         })
         sections["memo"] += ("valuation_action",)
@@ -399,7 +469,7 @@ def validate_rendered_memo(payload: dict[str, Any], memo_text: str, technical_fi
     for path, value in required:
         parts = value if isinstance(value, list) else [value]
         for idx, part in enumerate(parts):
-            needle = _normalised_content(part)
+            needle = _normalised_content(_reader_safe_memo_text(part, payload))
             if not needle:
                 continue
             checked += 1
@@ -408,13 +478,35 @@ def validate_rendered_memo(payload: dict[str, Any], memo_text: str, technical_fi
     checked += 1
     if f"]({technical_filename})" not in memo_text:
         missing.append("technical_report_link")
+    if reader_filename:
+        checked += 1
+        if f"]({reader_filename})" not in memo_text:
+            missing.append("reader_report_link")
+    try:
+        from scripts.reader_coverage import reader_boundary_findings
+    except ModuleNotFoundError:
+        from reader_coverage import reader_boundary_findings
+    leaks = list(reader_boundary_findings(memo_text))
+    leaks.extend(
+        "memo_private_identity:" + identity
+        for identity in sorted(_memo_private_identities(payload))
+        if identity and re.search(
+            r"(?<![A-Za-z0-9_])"
+            + re.escape(identity)
+            + r"(?![A-Za-z0-9_]|\.(?:pdf|json|md|html?|xlsx?|csv|txt)\b)",
+            memo_text,
+            re.I,
+        )
+    )
+    leaks = list(dict.fromkeys(leaks))
     missing = list(dict.fromkeys(missing))
     return {
         "schema_version": "memo-preservation.v1",
-        "status": "FAIL" if missing else "PASS",
+        "status": "FAIL" if missing or leaks else "PASS",
         "checked_content_units": checked,
         "preserved_content_units": checked - len(missing),
         "missing_fields": missing,
+        "control_plane_leaks": leaks,
         "memo_chars": len(memo_text),
     }
 
@@ -575,6 +667,10 @@ def validate_insight_ledger(payload: dict[str, Any], *, output_dir: str | Path |
     if len(rendered_memo) > 32000: invalid.append("investment_memo_over_32000_chars")
     preservation = validate_rendered_memo(payload, rendered_memo, "technical.md")
     invalid.extend(f"memo_content_lost:{item}" for item in preservation["missing_fields"])
+    invalid.extend(
+        f"memo_control_plane_leak:{item}"
+        for item in preservation.get("control_plane_leaks") or []
+    )
     known_refs = set(_ANCHOR.findall(report_text))
     for ref in sorted(known_refs - insight_ids): invalid.append(f"unknown_insight_reference:{ref}")
     freeze = payload.get("freeze") or {}
@@ -636,9 +732,14 @@ def persist_insight_ledger(output_dir: str | Path, payload: dict[str, Any], *, r
     return {"written": True, "path": str(path), **validation}
 
 
-def render_investment_memo(payload: dict[str, Any], company_name: str, ts_code: str, technical_filename: str) -> str:
+def render_investment_memo(
+    payload: dict[str, Any], company_name: str, ts_code: str,
+    technical_filename: str, reader_filename: str = "",
+) -> str:
     if _analysis_purpose(payload) == "COMPANY_JUDGMENT_ONLY":
-        return render_company_judgment_memo(payload, company_name, ts_code, technical_filename)
+        return render_company_judgment_memo(
+            payload, company_name, ts_code, technical_filename, reader_filename,
+        )
     insights = payload.get("insights") or []
     reverse = payload.get("reverse_expectations") or {}
     realization = payload.get("value_realization") or {}
@@ -646,19 +747,15 @@ def render_investment_memo(payload: dict[str, Any], company_name: str, ts_code: 
     memo = payload.get("memo") or {}
     lines = [
         f"# {company_name} ({ts_code}) 投资备忘录", "",
-        "> 决策层摘要；完整证据、推导和15章审计底稿见技术附录。", "",
+        "> 执行摘要；完整公司叙事见正式报告，模型推导与证据索引见技术附录。", "",
         "## 结论", "", _inline(memo.get("executive_decision")) + "。", "",
         "### 估值与动作", "", _inline(memo.get("valuation_action")) + "。", "",
         "## 首要决定性问题", "", _inline(payload.get("decisive_question")), "",
         "## 关键洞见", "",
     ]
     for item in insights:
-        iid = str(item.get("insight_id") or "")
-        bindings = [iid, _inline(item.get("claim_id"))]
-        bindings += [_inline(x) for x in item.get("evidence_ids") or []]
-        bindings += [_inline(x) for x in item.get("decision_entry_ids") or []]
         lines += [
-            f"### {_inline(item.get('title')) or iid} [insight: {iid}]", "",
+            f"### {_inline(item.get('title')) or '关键洞见'}", "",
             f"- **观察**：{_inline(item.get('anomaly'))}",
             "- **机制**：" + " → ".join(_inline(x) for x in item.get("mechanism") or []),
             f"- **竞争解释**：{_inline(item.get('strongest_alternative'))}",
@@ -666,12 +763,12 @@ def render_investment_memo(payload: dict[str, Any], company_name: str, ts_code: 
             f"- **证伪条件**：{_inline(item.get('falsification'))}",
             f"- **估值影响**：{_inline(item.get('valuation_impact'))}",
             f"- **动作影响**：{_inline(item.get('action_impact'))}",
-            f"- **绑定**：{' / '.join(x for x in bindings if x)}", "",
+            "",
         ]
     lines += [
         "## 市场隐含预期", "",
         f"- **输入**：截至{_inline(reverse.get('as_of'))}，股价{_inline(reverse.get('current_price'))}",
-        f"- **方法**：{_inline(reverse.get('method'))}（模型：{' / '.join(_inline(x) for x in reverse.get('valuation_model_ids') or [])}）",
+        f"- **方法**：{_inline(reverse.get('method'))}",
         f"- **市场定价路径**：{_inline(reverse.get('implied_operating_path'))}",
         f"- **关键假设**：{'；'.join(_inline(x) for x in reverse.get('assumptions') or [])}",
         f"- **裁决**：{_inline(reverse.get('conclusion'))}",
@@ -682,22 +779,25 @@ def render_investment_memo(payload: dict[str, Any], company_name: str, ts_code: 
         f"- **可达路径**：{_inline(realization.get('access_mechanism'))}",
         f"- **无催化剂价值**：{_inline(realization.get('no_catalyst_value'))}",
         f"- **失败方式**：{_inline(realization.get('failure_mode'))}",
-        f"- **决策绑定**：{' / '.join(_inline(x) for x in realization.get('decision_entry_ids') or [])}", "",
+        "",
         "## 最强反方", "",
         f"- **反方论点**：{_inline(adversarial.get('strongest_case_against'))}",
         f"- **为何可能成立**：{_inline(adversarial.get('why_it_may_be_right'))}",
         f"- **尚未解决**：{_inline(adversarial.get('unresolved'))}",
         f"- **若成立的动作**：{_inline(adversarial.get('decision_if_true'))}",
-        f"- **证据绑定**：{' / '.join(_inline(x) for x in adversarial.get('evidence_ids') or [])}", "",
+        "",
         "## 监控清单", "",
     ]
     lines += [f"- {_inline(item)}" for item in (memo.get("monitoring") if isinstance(memo.get("monitoring"), list) else [memo.get("monitoring")]) if _inline(item)]
+    if reader_filename:
+        lines += ["", "## 完整报告", "", f"[{reader_filename}]({reader_filename})", ""]
     lines += ["", "## 技术附录", "", f"[{technical_filename}]({technical_filename})", ""]
-    return "\n".join(lines)
+    return _reader_safe_memo_text("\n".join(lines), payload) + "\n"
 
 
 def render_company_judgment_memo(
-    payload: dict[str, Any], company_name: str, ts_code: str, technical_filename: str,
+    payload: dict[str, Any], company_name: str, ts_code: str,
+    technical_filename: str, reader_filename: str = "",
 ) -> str:
     """Render the company-learning layer without smuggling in an investment conclusion."""
     insights = payload.get("insights") or []
@@ -711,12 +811,8 @@ def render_company_judgment_memo(
         "## 关键机制洞见", "",
     ]
     for item in insights:
-        iid = str(item.get("insight_id") or "")
-        bindings = [iid, _inline(item.get("claim_id"))]
-        bindings += [_inline(x) for x in item.get("evidence_ids") or []]
-        bindings += [_inline(x) for x in item.get("forward_judgment_ids") or []]
         lines += [
-            f"### {_inline(item.get('title')) or iid} [insight: {iid}]", "",
+            f"### {_inline(item.get('title')) or '关键机制洞见'}", "",
             f"- **观察**：{_inline(item.get('anomaly'))}",
             "- **机制**：" + " → ".join(_inline(x) for x in item.get("mechanism") or []),
             f"- **竞争解释**：{_inline(item.get('strongest_alternative'))}",
@@ -724,7 +820,7 @@ def render_company_judgment_memo(
             f"- **经营传导**：{_inline(item.get('operating_impact'))}",
             f"- **监控 / 前瞻判断**：{_inline(item.get('monitoring_or_forward_judgment'))}",
             f"- **证伪条件**：{_inline(item.get('falsification'))}",
-            f"- **绑定**：{' / '.join(x for x in bindings if x)}", "",
+            "",
         ]
     lines += [
         "## 最强反方", "",
@@ -732,7 +828,7 @@ def render_company_judgment_memo(
         f"- **为何可能成立**：{_inline(adversarial.get('why_it_may_be_right'))}",
         f"- **尚未解决**：{_inline(adversarial.get('unresolved'))}",
         f"- **若成立的公司判断**：{_inline(adversarial.get('judgment_if_true'))}",
-        f"- **证据绑定**：{' / '.join(_inline(x) for x in adversarial.get('evidence_ids') or [])}", "",
+        "",
         "## 监控清单", "",
     ]
     monitoring = memo.get("monitoring")
@@ -741,5 +837,7 @@ def render_company_judgment_memo(
         for item in (monitoring if isinstance(monitoring, list) else [monitoring])
         if _inline(item)
     ]
+    if reader_filename:
+        lines += ["", "## 完整报告", "", f"[{reader_filename}]({reader_filename})", ""]
     lines += ["", "## 技术附录", "", f"[{technical_filename}]({technical_filename})", ""]
-    return "\n".join(lines)
+    return _reader_safe_memo_text("\n".join(lines), payload) + "\n"

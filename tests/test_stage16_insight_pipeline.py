@@ -4,6 +4,8 @@ import json
 from pathlib import Path
 from types import SimpleNamespace
 
+import pytest
+
 from scripts.insight_ledger import (
     build_insight_ledger,
     bind_insight_references,
@@ -20,6 +22,17 @@ from scripts.insight_ledger import (
 )
 from scripts.insight_research import build_insight_research_brief
 from scripts.turtle_agent.tool_registry import ToolRegistry
+
+SLOT_SENTENCE = (
+    "税费和收取摩擦后的普通股分配为RMB278.417百万元，即约RMB2.784亿元。"
+)
+WRONG_SLOT_SENTENCE = (
+    "税费和收取摩擦后的普通股分配为RMB375.800百万元，即约RMB3.758亿元。"
+)
+MARKDOWN_SLOT_SENTENCE = (
+    "税费和收取摩擦后的普通股分配为 **RMB 278.417 百万元**，"
+    "即约 **RMB 2.784 亿元**。"
+)
 
 
 def _write_json(path: Path, value: dict) -> None:
@@ -52,6 +65,38 @@ def _payload(output: Path) -> dict:
         {"executive_decision": "当前不买入，等待现金引擎是否企稳。", "valuation_action": "仅在逆向估值允许结构性下滑且仍满足回报要求时建仓。", "monitoring": ["内销量", "渠道库存", "经营现金流"]},
         change_reason="initial case-calibrated analysis", freeze=True,
     )
+
+
+def _dual_layer_dependencies(
+    output: Path, *, executive_slot_copy: bool = False,
+) -> None:
+    from scripts.valuation_value_bridges import compile_valuation_value_bridges
+    from tests.test_valuation_value_bridges import _ordinary_distribution_input
+
+    _dependencies(output)
+    for idx in range(15):
+        binding = (
+            "\n\n- 洞见引用：[insight: insight.cash_decay]"
+            if idx in {0, 14} else ""
+        )
+        (output / f"_ch{idx:02d}.md").write_text(
+            f"## Ch{idx} 公司研究\n\n章节事实、机制、反方与投资含义 "
+            f"[source: source{idx}.json]" + binding,
+            encoding="utf-8",
+        )
+    initialize_insight_policy(output, run_id="run-dual", enforced=True)
+    insight = _payload(output)
+    if executive_slot_copy:
+        insight["memo"]["monitoring"].append(SLOT_SENTENCE)
+    _write_json(output / "insight_ledger.json", insight)
+    valuation = json.loads(
+        (output / "valuation_model.json").read_text(encoding="utf-8")
+    )
+    valuation["value_bridge_models"] = compile_valuation_value_bridges({
+        "schema_version": "valuation-value-bridges-input.v1",
+        "ordinary_distribution": {"model_input": _ordinary_distribution_input()},
+    })
+    _write_json(output / "valuation_model.json", valuation)
 
 
 def _cjo_dependencies(output: Path) -> None:
@@ -153,7 +198,8 @@ def test_company_judgment_insight_freezes_operating_transmission_without_investm
     assert result["state"] == "DECISION_READY"
     assert result["analysis_purpose"] == "COMPANY_JUDGMENT_ONLY"
     assert "市场隐含预期" not in memo and "估值与动作" not in memo
-    assert "fj.owner_cash" in memo
+    assert "fj.owner_cash" not in memo
+    assert "经营现金" in memo
 
 
 def test_company_judgment_insight_rejects_valuation_placeholder(tmp_path: Path) -> None:
@@ -252,11 +298,16 @@ def test_valid_insight_is_bound_then_frozen_without_llm_chapter_rewrite(tmp_path
 
 def test_renderer_creates_compact_decision_layer_with_technical_link(tmp_path: Path) -> None:
     _dependencies(tmp_path); payload = _payload(tmp_path)
+    payload["memo"]["monitoring"].append("核对来源文件 ev.sales.pdf")
     memo = render_investment_memo(payload, "测试公司", "000001.SZ", "technical.md")
     assert "首要决定性问题" in memo and "市场隐含预期" in memo and "最强反方" in memo
     assert "[technical.md](technical.md)" in memo
     assert "## 监控清单" in memo and "- 内销量" in memo
-    assert "ev.sales" in memo and "decision.value" in memo and "reverse.dcf" in memo
+    for private_id in ("decision.value", "reverse.dcf", "insight.cash_decay", "claim.core"):
+        assert private_id not in memo
+    assert "[insight:" not in memo and "绑定清单" not in memo and "15章审计底稿" not in memo
+    assert "ev.sales.pdf" in memo
+    assert memo.count("ev.sales") == 1
     assert "。。" not in memo and "。；" not in memo
     assert validate_rendered_memo(payload, memo, "technical.md")["status"] == "PASS"
     assert len(memo) < 10000
@@ -271,21 +322,39 @@ def test_memo_preservation_detects_dropped_decision_content(tmp_path: Path) -> N
     assert "memo.executive_decision" in result["missing_fields"]
 
 
+@pytest.mark.parametrize("identity", ["OBS:cash.balance", "CALC:cash.bridge"])
+def test_memo_gate_rejects_canonical_fact_id_in_an_arbitrary_economic_field(
+    tmp_path: Path, identity: str,
+) -> None:
+    _dependencies(tmp_path)
+    payload = _payload(tmp_path)
+    payload["memo"]["monitoring"].append(
+        f"继续观察回款，并引用 {identity}。"
+    )
+    memo = render_investment_memo(
+        payload, "测试公司", "000001.SZ", "technical.md",
+    )
+
+    validation = validate_rendered_memo(payload, memo, "technical.md")
+
+    assert validation["status"] == "FAIL"
+    assert any(
+        "canonical_fact_identity" in finding
+        for finding in validation["control_plane_leaks"]
+    )
+
+
 def test_insight_tool_is_auto_discoverable() -> None:
     registry = ToolRegistry(); registry.auto_discover("turtle_agent.tools.write_tools")
     assert "write_insight_ledger" in registry.list_tools()
 
 
-def test_unified_assembly_publishes_memo_and_separate_technical_report(tmp_path: Path, monkeypatch) -> None:
+def test_unified_assembly_publishes_full_reader_executive_and_technical_artifacts(tmp_path: Path, monkeypatch) -> None:
     import scripts.report_completion as completion_module
     import scripts.research_calibration as calibration_module
     import scripts.turtle_agent.tools.write_tools as write_tools
 
-    _dependencies(tmp_path)
-    for idx in range(15):
-        (tmp_path / f"_ch{idx:02d}.md").write_text(f"## Ch{idx} 技术底稿\n\n章节证据 [source: source{idx}.json]", encoding="utf-8")
-    initialize_insight_policy(tmp_path, run_id="run-dual", enforced=True)
-    _write_json(tmp_path / "insight_ledger.json", _payload(tmp_path))
+    _dual_layer_dependencies(tmp_path)
     fake_completion = SimpleNamespace(status="COMPLETE", to_dict=lambda: {"status": "COMPLETE", "blocking_findings": [], "warning_findings": [], "validators": {}})
     monkeypatch.setattr(completion_module, "evaluate_report_completion", lambda *a, **k: fake_completion)
     monkeypatch.setattr(write_tools, "_run_quality_checks", lambda *a, **k: {"passed": True, "issues": [], "warnings": []})
@@ -298,14 +367,145 @@ def test_unified_assembly_publishes_memo_and_separate_technical_report(tmp_path:
 
     monkeypatch.setattr(calibration_module, "create_publication_snapshot", snapshot)
     result = write_tools.assemble_report(str(tmp_path), "测试公司", "000001.SZ")
-    memo = Path(result["path"]).read_text(encoding="utf-8")
+    reader = Path(result["path"]).read_text(encoding="utf-8")
+    executive = Path(result["executive_memo_path"]).read_text(encoding="utf-8")
     technical = Path(result["technical_report_path"]).read_text(encoding="utf-8")
     assert result["published"] is True
     assert snapshot_called["value"] is True
     assert result["memo_preservation"]["status"] == "PASS"
+    assert result["reader_surface"]["status"] == "PASS"
     assert (tmp_path / "memo_preservation_report.json").exists()
-    assert "首要决定性问题" in memo and "## Ch0 技术底稿" not in memo
-    assert "## Ch0 技术底稿" in technical and "## Ch14 技术底稿" in technical
+    assert "## Ch0 公司研究" in reader and "## Ch14 公司研究" in reader
+    assert "投资备忘录" not in reader and "[insight:" not in reader
+    for private_id in ("insight.cash_decay", "claim.core", "ev.sales", "decision.value", "reverse.dcf"):
+        assert private_id not in reader
+    assert "首要决定性问题" in executive
+    assert "[insight:" not in executive and "ev.sales" not in executive
+    assert "## Ch0 公司研究" in technical and "## Ch14 公司研究" in technical
+    assert technical.count("[insight: insight.cash_decay]") == 2
+    slot = SLOT_SENTENCE
+    assert reader.count(slot) == 1
+    assert technical.count(slot) == 1
+    assert slot not in executive
+    assert result["reader_surface"]["reader_slot_cardinality"] == [{
+        "slot_id": "after_tax_common_distribution",
+        "reader_count": 1,
+        "technical_count": 1,
+        "executive_count": 0,
+        "status": "PASS",
+    }]
+
+
+@pytest.mark.parametrize("leak_surface", ["technical_appendix", "executive_memo"])
+def test_assembly_blocks_reader_slot_copy_outside_its_owned_artifact_position(
+    tmp_path: Path, monkeypatch, leak_surface: str,
+) -> None:
+    import scripts.report_completion as completion_module
+    import scripts.turtle_agent.tools.write_tools as write_tools
+
+    _dual_layer_dependencies(
+        tmp_path, executive_slot_copy=leak_surface == "executive_memo",
+    )
+    if leak_surface == "technical_appendix":
+        (tmp_path / "_technical_appendix.md").write_text(
+            "## 技术附录\n\n" + SLOT_SENTENCE,
+            encoding="utf-8",
+        )
+    fake_completion = SimpleNamespace(
+        status="COMPLETE",
+        to_dict=lambda: {
+            "status": "COMPLETE", "blocking_findings": [],
+            "warning_findings": [], "validators": {},
+        },
+    )
+    monkeypatch.setattr(
+        completion_module, "evaluate_report_completion", lambda *a, **k: fake_completion,
+    )
+    monkeypatch.setattr(
+        write_tools, "_run_quality_checks",
+        lambda *a, **k: {"passed": True, "issues": [], "warnings": []},
+    )
+
+    result = write_tools.assemble_report(str(tmp_path), "测试公司", "000001.SZ")
+
+    assert result["published"] is False
+    assert result["reader_surface"]["status"] == "BLOCKED"
+    cardinality = result["reader_surface"]["reader_slot_cardinality"][0]
+    if leak_surface == "technical_appendix":
+        assert cardinality["technical_count"] == 2
+        assert cardinality["executive_count"] == 0
+    else:
+        assert cardinality["technical_count"] == 1
+        assert cardinality["executive_count"] == 1
+    assert "未正确分离" in result["error"]
+
+
+@pytest.mark.parametrize(
+    ("leak_surface", "copied_amount"),
+    [
+        ("executive_memo", WRONG_SLOT_SENTENCE),
+        ("executive_memo", MARKDOWN_SLOT_SENTENCE),
+        ("technical_appendix", MARKDOWN_SLOT_SENTENCE),
+    ],
+)
+def test_assembly_blocks_semantic_reader_slot_amount_variants_before_publication(
+    tmp_path: Path,
+    monkeypatch,
+    leak_surface: str,
+    copied_amount: str,
+) -> None:
+    import scripts.report_completion as completion_module
+    import scripts.research_calibration as calibration_module
+    import scripts.turtle_agent.tools.write_tools as write_tools
+
+    _dual_layer_dependencies(tmp_path)
+    if leak_surface == "technical_appendix":
+        (tmp_path / "_technical_appendix.md").write_text(
+            "## 技术附录\n\n" + copied_amount,
+            encoding="utf-8",
+        )
+    else:
+        insight = json.loads(
+            (tmp_path / "insight_ledger.json").read_text(encoding="utf-8")
+        )
+        insight["memo"]["valuation_action"] = copied_amount
+        _write_json(tmp_path / "insight_ledger.json", insight)
+    fake_completion = SimpleNamespace(
+        status="COMPLETE",
+        to_dict=lambda: {
+            "status": "COMPLETE", "blocking_findings": [],
+            "warning_findings": [], "validators": {},
+        },
+    )
+    monkeypatch.setattr(
+        completion_module, "evaluate_report_completion", lambda *a, **k: fake_completion,
+    )
+    monkeypatch.setattr(
+        write_tools, "_run_quality_checks",
+        lambda *a, **k: {"passed": True, "issues": [], "warnings": []},
+    )
+    snapshot_called = {"value": False}
+
+    def snapshot(*args, **kwargs):
+        snapshot_called["value"] = True
+        return {"written": True}
+
+    monkeypatch.setattr(calibration_module, "create_publication_snapshot", snapshot)
+
+    result = write_tools.assemble_report(str(tmp_path), "测试公司", "000001.SZ")
+
+    assert result["published"] is False
+    assert snapshot_called["value"] is False
+    assert result["reader_surface"]["status"] == "BLOCKED"
+    expected_surface = (
+        "technical_artifact" if leak_surface == "technical_appendix"
+        else "executive_artifact"
+    )
+    assert any(
+        finding.startswith(f"free_reader_numeric_slot:{expected_surface}:")
+        for finding in result["reader_surface"]["blocking_findings"]
+    )
+    assert "未正确分离" in result["error"]
 
 
 def test_validation_only_materializes_matching_memo_and_technical_drafts(
@@ -343,7 +543,8 @@ def test_validation_only_materializes_matching_memo_and_technical_drafts(
     result = write_tools.assemble_report(
         str(tmp_path), "测试公司", "000001.SZ", validation_only=True,
     )
-    memo_path = Path(result["path"])
+    reader_path = Path(result["path"])
+    executive_path = Path(result["executive_memo_path"])
     technical_path = Path(result["technical_report_path"])
     assert result["published"] is False and result["validated"] is True
     assert result["publication_snapshot"] == {
@@ -354,10 +555,12 @@ def test_validation_only_materializes_matching_memo_and_technical_drafts(
     }
     assert snapshot_called["value"] is False
     assert not (tmp_path / "publication_snapshot.json").exists()
-    assert memo_path.parent.name == "drafts"
-    assert technical_path.parent == memo_path.parent
+    assert reader_path.parent.name == "drafts"
+    assert technical_path.parent == reader_path.parent == executive_path.parent
     assert technical_path.name.endswith("_technical_draft.md")
-    assert f"]({technical_path.name})" in memo_path.read_text(encoding="utf-8")
+    assert f"]({technical_path.name})" in executive_path.read_text(encoding="utf-8")
+    assert f"]({reader_path.name})" in executive_path.read_text(encoding="utf-8")
+    assert "## Ch0 技术底稿" in reader_path.read_text(encoding="utf-8")
     assert "## Ch14 技术底稿" in technical_path.read_text(encoding="utf-8")
 
 
@@ -387,7 +590,10 @@ def test_assembly_recovers_company_name_from_report_context(tmp_path: Path, monk
     monkeypatch.setattr(calibration_module, "create_publication_snapshot", lambda *a, **k: {"written": True})
 
     result = write_tools.assemble_report(str(tmp_path), "", "000001.SZ", validation_only=True)
-    assert Path(result["path"]).read_text(encoding="utf-8").startswith("# 上下文公司 (000001.SZ) 投资备忘录")
+    assert Path(result["path"]).read_text(encoding="utf-8").startswith("# 上下文公司 (000001.SZ) 龟龟策略分析报告")
+    assert Path(result["executive_memo_path"]).read_text(encoding="utf-8").startswith(
+        "# 上下文公司 (000001.SZ) 投资备忘录"
+    )
     assert Path(result["technical_report_path"]).read_text(encoding="utf-8").startswith(
         "# 上下文公司 (000001.SZ) 龟龟策略分析报告"
     )
