@@ -316,6 +316,8 @@
         "company_id": "02669.HK",
         "model_context": {
           "purpose": "COMPANY_ANALYSIS",
+          "valuation_archetype_id": "property_service",
+          "valuation_archetype_version": "v1",
           "parameter_transfer_policy": "COMPANY_SPECIFIC_EVIDENCE_ONLY"
         },
         "basis": {
@@ -498,7 +500,15 @@
           "minority_interest": {"range_low": 0.0, "range_high": 0.0},
           "other_priority_claims": {"range_low": 0.0, "range_high": 0.0},
           "other_adjustments": {"range_low": 0.0, "range_high": 0.0},
-          "shares_outstanding": 3283.96046
+          "shares_outstanding": 3283.96046,
+          "source_fact_ids": [
+            "CALC:02669:REPLACEMENT-NON-OPERATING-ASSETS",
+            "CALC:02669:REPLACEMENT-DEBT",
+            "CALC:02669:REPLACEMENT-MINORITY-INTEREST",
+            "CALC:02669:REPLACEMENT-OTHER-PRIORITY-CLAIMS",
+            "CALC:02669:REPLACEMENT-OTHER-ADJUSTMENTS",
+            "OBS:02669:SHARES-OUTSTANDING"
+          ]
         },
         "liquidation_floor_reference": {
           "status": "AVAILABLE",
@@ -508,7 +518,10 @@
           "as_of": "2025-12-31",
           "per_share_low": 0.83,
           "per_share_high": 0.83,
-          "use": "SEPARATE_STRESS_REFERENCE_NEVER_ADD"
+          "use": "SEPARATE_STRESS_REFERENCE_NEVER_ADD",
+          "source_fact_ids": [
+            "CALC:02669:LIQUIDATION-STRESS-PER-SHARE"
+          ]
         },
         "epv_cross_check": {
           "status": "NOT_COMPARABLE",

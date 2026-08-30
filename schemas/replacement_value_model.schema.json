@@ -33,6 +33,12 @@
   "$defs": {
     "nonempty": {"type": "string", "minLength": 1},
     "nullable_number": {"type": ["number", "null"]},
+    "source_fact_ids": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {"$ref": "#/$defs/nonempty"}
+    },
     "range": {
       "type": "object",
       "additionalProperties": false,
@@ -49,6 +55,8 @@
       "properties": {
         "purpose": {"enum": ["COMPANY_ANALYSIS", "METHOD_FIXTURE"]},
         "method_fixture_id": {"type": "string"},
+        "valuation_archetype_id": {"type": "string", "minLength": 1},
+        "valuation_archetype_version": {"type": "string", "pattern": "^v[0-9]+$"},
         "parameter_transfer_policy": {
           "enum": [
             "COMPANY_SPECIFIC_EVIDENCE_ONLY",
@@ -67,6 +75,7 @@
             }
           },
           "else": {
+            "required": ["valuation_archetype_id", "valuation_archetype_version"],
             "properties": {
               "parameter_transfer_policy": {"const": "COMPANY_SPECIFIC_EVIDENCE_ONLY"}
             }
@@ -156,8 +165,54 @@
         "method": {"enum": ["FULL", "FRACTION_OF_ESTIMATED_RANGE", "NOT_APPLICABLE"]},
         "fraction_low": {"type": "number", "minimum": 0, "maximum": 1},
         "fraction_high": {"type": "number", "minimum": 0, "maximum": 1},
-        "reason": {"$ref": "#/$defs/nonempty"}
+        "reason": {"$ref": "#/$defs/nonempty"},
+        "source_fact_ids": {"$ref": "#/$defs/source_fact_ids"}
+      },
+      "allOf": [
+        {
+          "if": {"properties": {"method": {"const": "FRACTION_OF_ESTIMATED_RANGE"}}},
+          "then": {"required": ["source_fact_ids"]}
+        }
+      ]
+    },
+    "evidence_role_binding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["role", "source_fact_ids"],
+      "properties": {
+        "role": {"$ref": "#/$defs/nonempty"},
+        "source_fact_ids": {"$ref": "#/$defs/source_fact_ids"}
       }
+    },
+    "exclusion_treatment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["destination", "source_fact_ids", "reason"],
+      "properties": {
+        "destination": {
+          "enum": [
+            "OTHER_REPLACEMENT_COMPONENT",
+            "BALANCE_SHEET_WORKING_CAPITAL",
+            "EPV_MAINTENANCE_NEED"
+          ]
+        },
+        "destination_component_type": {
+          "type": "string",
+          "pattern": "^[A-Z][A-Z0-9_]*$"
+        },
+        "source_fact_ids": {"$ref": "#/$defs/source_fact_ids"},
+        "reason": {"$ref": "#/$defs/nonempty"}
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "destination": {"const": "OTHER_REPLACEMENT_COMPONENT"}
+            }
+          },
+          "then": {"required": ["destination_component_type"]}
+        }
+      ]
     },
     "uncertainty_treatment": {
       "type": "object",
@@ -196,20 +251,16 @@
       ],
       "properties": {
         "component_id": {"$ref": "#/$defs/nonempty"},
-        "component_type": {
-          "enum": [
-            "CUSTOMER_RELATIONSHIP",
-            "REGIONAL_OPERATING_ORGANIZATION",
-            "CUSTOMER_ACQUISITION_CHANNEL",
-            "FULFILLMENT_OR_PROJECT_TRACK_RECORD",
-            "PROJECT_STARTUP_WORKING_CAPITAL",
-            "OTHER_FUNCTIONAL_ASSET"
-          ]
-        },
+        "component_type": {"type": "string", "pattern": "^[A-Z][A-Z0-9_]*$"},
         "economic_function": {"$ref": "#/$defs/nonempty"},
         "estimate_status": {"enum": ["BOUNDED", "SCENARIO_ONLY", "UNKNOWN"]},
         "calculation": {"$ref": "#/$defs/calculation"},
         "recognition": {"$ref": "#/$defs/recognition"},
+        "evidence_role_bindings": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/evidence_role_binding"}
+        },
+        "exclusion_treatment": {"$ref": "#/$defs/exclusion_treatment"},
         "uncertainty_treatment": {"$ref": "#/$defs/uncertainty_treatment"},
         "double_count_treatment": {"$ref": "#/$defs/double_count_treatment"}
       }
@@ -223,7 +274,8 @@
         "minority_interest",
         "other_priority_claims",
         "other_adjustments",
-        "shares_outstanding"
+        "shares_outstanding",
+        "source_fact_ids"
       ],
       "properties": {
         "non_operating_assets": {"$ref": "#/$defs/range"},
@@ -231,7 +283,8 @@
         "minority_interest": {"$ref": "#/$defs/range"},
         "other_priority_claims": {"$ref": "#/$defs/range"},
         "other_adjustments": {"$ref": "#/$defs/range"},
-        "shares_outstanding": {"type": "number", "exclusiveMinimum": 0}
+        "shares_outstanding": {"type": "number", "exclusiveMinimum": 0},
+        "source_fact_ids": {"$ref": "#/$defs/source_fact_ids"}
       }
     },
     "liquidation_floor_reference": {
@@ -247,8 +300,15 @@
         "per_share_low": {"type": "number"},
         "per_share_high": {"type": "number"},
         "reason": {"type": "string"},
-        "use": {"const": "SEPARATE_STRESS_REFERENCE_NEVER_ADD"}
-      }
+        "use": {"const": "SEPARATE_STRESS_REFERENCE_NEVER_ADD"},
+        "source_fact_ids": {"$ref": "#/$defs/source_fact_ids"}
+      },
+      "allOf": [
+        {
+          "if": {"properties": {"status": {"const": "AVAILABLE"}}},
+          "then": {"required": ["source_fact_ids"]}
+        }
+      ]
     },
     "epv_cross_check": {
       "type": "object",
@@ -270,8 +330,15 @@
         "per_share_low": {"type": "number"},
         "per_share_high": {"type": "number"},
         "reason": {"type": "string"},
-        "synthesis_rule": {"const": "CROSS_CHECK_ONLY_NEVER_ADD_OR_AVERAGE"}
-      }
+        "synthesis_rule": {"const": "CROSS_CHECK_ONLY_NEVER_ADD_OR_AVERAGE"},
+        "source_fact_ids": {"$ref": "#/$defs/source_fact_ids"}
+      },
+      "allOf": [
+        {
+          "if": {"properties": {"status": {"const": "COMPARABLE"}}},
+          "then": {"required": ["source_fact_ids"]}
+        }
+      ]
     }
   }
 }

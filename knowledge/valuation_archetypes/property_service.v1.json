@@ -1,0 +1,160 @@
+{
+  "schema_version": "valuation-archetype.v1",
+  "card_id": "VALUATION_ARCHETYPE:property_service:v1",
+  "archetype_id": "property_service",
+  "version": "v1",
+  "status": "ACTIVE",
+  "valuation_family": "GOING_CONCERN_REPLACEMENT",
+  "applicability": {
+    "required_operating_characteristics": [
+      "The operating capability depends on a renewable customer contract base, distributed local delivery, and demonstrated service execution.",
+      "Winning and retaining work requires more than immediately purchasable fixed assets."
+    ],
+    "required_company_conditions": [
+      "The analysis can define a continuing operating perimeter and ordinary-share claim scope.",
+      "The analysis can distinguish customer acquisition, service delivery capability, project startup funding, and other functional assets without counting an economic cost twice."
+    ],
+    "non_applicability_conditions": [
+      "Use is not appropriate when the company is valued principally as a liquidation, development-project, regulated-financial, or pre-revenue project vehicle.",
+      "Do not present a complete company-level replacement range when the required operating capabilities cannot be separately bounded or their overlap cannot be resolved."
+    ]
+  },
+  "components": [
+    {
+      "component_type": "CUSTOMER_RELATIONSHIP",
+      "presence_requirement": "REQUIRED",
+      "requirement": "Rebuild the continuing customer contract base and the retention capability needed for that base to remain economically usable.",
+      "allowed_calculation_methods": ["DIRECT_RANGE", "SUM_OF_INPUT_RANGES", "UNAVAILABLE"],
+      "required_evidence_roles": [
+        "CONTRACT_POPULATION_OR_CUSTOMER_BOOK",
+        "RETENTION_OR_CHURN_COHORT_EVIDENCE",
+        "WIN_OR_REBUILD_COST_EVIDENCE",
+        "TIME_TO_RECREATE_EVIDENCE"
+      ],
+      "allowed_exclusion_destinations": [],
+      "double_count_owner": "OWN_REPLACEMENT_COMPONENT",
+      "unknown_semantics": "An unbounded customer relationship rebuild cost remains UNKNOWN and prevents a complete company-level replacement range.",
+      "recognition_semantics": "Recognize only a company-specific evidence-bounded range for capability not already recognized by another component.",
+      "completion_semantics": "The required component is complete only when the rebuilding scope, evidence-bound range, recognition treatment, and overlap treatment are resolved."
+    },
+    {
+      "component_type": "REGIONAL_OPERATING_ORGANIZATION",
+      "presence_requirement": "REQUIRED",
+      "requirement": "Rebuild the regional operating organization, including the local management, staffing, operating systems, and ramp capability required to fulfil the customer base.",
+      "allowed_calculation_methods": ["DIRECT_RANGE", "SUM_OF_INPUT_RANGES", "PRODUCT_OF_INPUT_RANGES", "UNAVAILABLE"],
+      "required_evidence_roles": [
+        "REGIONAL_COVERAGE_AND_OPERATING_PERIMETER",
+        "ROLE_AND_STAFFING_REQUIREMENT",
+        "RECRUITMENT_AND_RAMP_EVIDENCE",
+        "OPERATING_CAPABILITY_EVIDENCE"
+      ],
+      "allowed_exclusion_destinations": [],
+      "double_count_owner": "OWN_REPLACEMENT_COMPONENT",
+      "unknown_semantics": "An unknown regional organization rebuild requirement remains UNKNOWN and prevents a complete company-level replacement range.",
+      "recognition_semantics": "Recognize only the separately evidenced operating organization cost after excluding any customer acquisition or functional asset overlap.",
+      "completion_semantics": "The required component is complete only when local coverage, staffing or system scope, ramp evidence, recognition treatment, and overlap treatment are resolved."
+    },
+    {
+      "component_type": "CUSTOMER_ACQUISITION_CHANNEL",
+      "presence_requirement": "REQUIRED",
+      "requirement": "Rebuild the tender, referral, sales, and other customer-acquisition channels that provide a repeatable route to new work.",
+      "allowed_calculation_methods": ["DIRECT_RANGE", "SUM_OF_INPUT_RANGES", "UNAVAILABLE"],
+      "required_evidence_roles": [
+        "CHANNEL_OR_TENDER_ACCESS_EVIDENCE",
+        "WIN_CONVERSION_OR_REPEATABILITY_EVIDENCE",
+        "CHANNEL_REBUILD_COST_EVIDENCE",
+        "TIME_TO_RECREATE_EVIDENCE"
+      ],
+      "allowed_exclusion_destinations": ["OTHER_REPLACEMENT_COMPONENT"],
+      "double_count_owner": "CUSTOMER_RELATIONSHIP_COMPONENT",
+      "unknown_semantics": "An unbounded channel rebuild cost remains UNKNOWN or SCENARIO_ONLY and prevents a complete company-level replacement range.",
+      "recognition_semantics": "Recognize only the channel capability that is distinct from the customer relationship rebuild component.",
+      "completion_semantics": "The required component is complete only when channel scope, repeatability, evidence-bound range, recognition treatment, and relationship overlap treatment are resolved."
+    },
+    {
+      "component_type": "FULFILLMENT_OR_PROJECT_TRACK_RECORD",
+      "presence_requirement": "REQUIRED",
+      "requirement": "Rebuild the qualifications, reference record, service execution record, and time-dependent credibility required to win and fulfil work.",
+      "allowed_calculation_methods": ["DIRECT_RANGE", "SUM_OF_INPUT_RANGES", "UNAVAILABLE"],
+      "required_evidence_roles": [
+        "CUSTOMER_QUALIFICATION_OR_BID_ELIGIBILITY_REQUIREMENT",
+        "PERFORMANCE_RECORD_OR_REFERENCE_REQUIREMENT",
+        "TIME_TO_REBUILD_EVIDENCE",
+        "REBUILD_COST_OR_CAPABILITY_EVIDENCE"
+      ],
+      "allowed_exclusion_destinations": [],
+      "double_count_owner": "OWN_REPLACEMENT_COMPONENT",
+      "unknown_semantics": "An unbounded fulfilment record rebuild cost remains UNKNOWN or SCENARIO_ONLY and prevents a complete company-level replacement range.",
+      "recognition_semantics": "Recognize only the independently evidenced qualification and delivery capability that is not already included in customer relationships or organization buildout.",
+      "completion_semantics": "The required component is complete only when the qualification scope, delivery record, time to rebuild, recognition treatment, and overlap treatment are resolved."
+    },
+    {
+      "component_type": "PROJECT_STARTUP_WORKING_CAPITAL",
+      "presence_requirement": "REQUIRED",
+      "requirement": "Rebuild the project launch funding required before collections and settlements support an operating cohort.",
+      "allowed_calculation_methods": ["DIRECT_RANGE", "SUM_OF_INPUT_RANGES", "UNAVAILABLE"],
+      "required_evidence_roles": [
+        "PROJECT_LAUNCH_CASH_SEQUENCE",
+        "PAYROLL_AND_SUPPLIER_PRE_COLLECTION_EXPOSURE",
+        "COLLECTION_AND_SETTLEMENT_HISTORY",
+        "BALANCE_SHEET_AND_EPV_OVERLAP_CHECK"
+      ],
+      "allowed_exclusion_destinations": [
+        "BALANCE_SHEET_WORKING_CAPITAL",
+        "EPV_MAINTENANCE_NEED"
+      ],
+      "double_count_owner": "BALANCE_SHEET_WORKING_CAPITAL_OR_EPV_MAINTENANCE_NEED",
+      "unknown_semantics": "An unbounded startup funding requirement remains UNKNOWN or SCENARIO_ONLY and prevents a complete company-level replacement range.",
+      "recognition_semantics": "Recognize startup funding only once, after resolving whether the same economic need already belongs in balance-sheet working capital or EPV maintenance needs.",
+      "completion_semantics": "The required component is complete only when the cohort cash sequence, evidence-bound range, destination owner, and recognition treatment are resolved."
+    },
+    {
+      "component_type": "OTHER_FUNCTIONAL_ASSET",
+      "presence_requirement": "REQUIRED",
+      "requirement": "Identify and rebuild any other separately evidenced functional asset necessary to provide the same continuing operating capability.",
+      "allowed_calculation_methods": ["DIRECT_RANGE", "SUM_OF_INPUT_RANGES", "PRODUCT_OF_INPUT_RANGES", "UNAVAILABLE"],
+      "required_evidence_roles": [
+        "FUNCTIONAL_ASSET_IDENTITY",
+        "OPERATING_NECESSITY_EVIDENCE",
+        "REBUILD_COST_OR_CAPABILITY_EVIDENCE",
+        "OVERLAP_CHECK"
+      ],
+      "allowed_exclusion_destinations": [],
+      "double_count_owner": "OWN_REPLACEMENT_COMPONENT",
+      "unknown_semantics": "An identified but unbounded functional asset remains UNKNOWN or SCENARIO_ONLY and prevents a complete company-level replacement range.",
+      "recognition_semantics": "Recognize only a separately evidenced functional asset after excluding items already represented by another replacement component or the claims bridge.",
+      "completion_semantics": "The required component is complete only when the functional asset identity, operating necessity, evidence-bound range, recognition treatment, and overlap treatment are resolved."
+    }
+  ],
+  "completion_rule": {
+    "company_level_range": "A company-level ordinary-equity or per-share replacement range is available only when every required component is bounded and recognized, or explicitly excluded with a resolved value destination owner.",
+    "incomplete_scope": "Any required component that remains UNKNOWN or SCENARIO_ONLY leaves the company-level replacement range incomplete and prohibits a joint protection price.",
+    "epv_cross_check": "Compare with EPV only after economic entity, operating perimeter, ordinary-share claim scope, currency, unit, and as-of basis are comparable; never add or average the ranges.",
+    "joint_protection": "A common protection conclusion is permitted only when complete replacement and comparable EPV ranges exist on the same basis; it is not permitted from partial components."
+  },
+  "limits": {
+    "company_fact_policy": "NO_COMPANY_FACTS",
+    "valuation_parameter_policy": "NO_DEFAULT_NUMERIC_PARAMETERS",
+    "prohibited_content": [
+      "CURRENCY_AMOUNT",
+      "PERCENTAGE_OR_MULTIPLE",
+      "COMPANY_FACT",
+      "DEFAULT_HAIRCUT_OR_COMPLETION_RATE",
+      "AUTOMATIC_MODEL_ROUTE"
+    ]
+  },
+  "training_boundary": {
+    "may_update": [
+      "REQUIRED_EVIDENCE_ROLE",
+      "CALCULATION_METHOD_ELIGIBILITY",
+      "DOUBLE_COUNT_OWNER",
+      "UNKNOWN_OR_COMPLETION_BOUNDARY"
+    ],
+    "may_not_supply": [
+      "COMPANY_FACT",
+      "VALUATION_PARAMETER",
+      "AUTOMATIC_VALUATION_CONCLUSION",
+      "AUTOMATIC_MODEL_ROUTE"
+    ]
+  }
+}

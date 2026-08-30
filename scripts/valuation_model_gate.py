@@ -829,9 +829,20 @@ def _bridge_operand_context(
     ):
         context["unit"] = "ratio"
         context["currency"] = ""
-    if leaf == "shares":
+    if leaf in {"shares", "shares_outstanding"}:
         context["unit"] = "million_shares"
         context["currency"] = ""
+    if leaf in {"fraction_low", "fraction_high"}:
+        context["unit"] = "ratio"
+        context["currency"] = ""
+    if (
+        wrapper_key == "replacement_value"
+        and (
+            ".epv_cross_check.per_share_" in path
+            or ".liquidation_floor_reference.per_share_" in path
+        )
+    ):
+        context["unit"] = f"{currency}_per_share" if currency else "per_share"
     # Working-capital observations must be period-specific, not copied from
     # the model's latest balance-sheet date.
     match = re.match(r"working_capital\.model_input\.periods\[(\d+)\]", path)
@@ -895,6 +906,12 @@ def _validate_value_bridge_fact_bindings(
     if not observations and not calculations_by_id:
         incomplete.append("value_bridge_fact_bindings_verified_registry_empty")
         return
+    _validate_replacement_non_numeric_fact_refs(
+        model_input,
+        observations=observations,
+        calculations_by_id=calculations_by_id,
+        invalid=invalid,
+    )
     operands = _bridge_numeric_leaves(model_input)
     submitted: dict[str, str] = {}
     for index, raw in enumerate(bindings):
@@ -947,6 +964,89 @@ def _validate_value_bridge_fact_bindings(
                     invalid.append(prefix + ":measurement_context_mismatch:" + field)
     missing = sorted(set(operands) - set(submitted))
     invalid.extend("value_bridge_fact_bindings_operand_unbound:" + path for path in missing)
+
+
+def _validate_replacement_non_numeric_fact_refs(
+    model_input: dict[str, Any],
+    *,
+    observations: dict[str, dict[str, Any]],
+    calculations_by_id: dict[str, dict[str, Any]],
+    invalid: list[str],
+) -> None:
+    """Resolve replacement evidence-role and exclusion proofs to current facts.
+
+    These references justify capability coverage or an explicit destination,
+    rather than a submitted numeric leaf, so they cannot appear in
+    ``canonical_fact_bindings``.  The replacement core owns the role and
+    destination semantics; this ledger layer proves the named facts or
+    calculations exist in the current verified registry.
+    """
+    replacement = _mapping(_mapping(model_input.get("replacement_value")).get("model_input"))
+    context = _mapping(replacement.get("model_context"))
+    if context.get("purpose") != "COMPANY_ANALYSIS":
+        return
+    components = replacement.get("components") or []
+    if not isinstance(components, list):
+        return
+    for component_index, raw_component in enumerate(components):
+        component = _mapping(raw_component)
+        component_id = str(component.get("component_id") or component_index)
+        recognition = _mapping(component.get("recognition"))
+        if recognition.get("status") == "RECOGNIZED":
+            bindings = component.get("evidence_role_bindings") or []
+            if isinstance(bindings, list):
+                for binding_index, raw_binding in enumerate(bindings):
+                    binding = _mapping(raw_binding)
+                    role = str(binding.get("role") or binding_index)
+                    for source_id in binding.get("source_fact_ids") or []:
+                        source_key = str(source_id)
+                        source = observations.get(source_key)
+                        if source is None:
+                            invalid.append(
+                                "replacement_evidence_role_requires_verified_observation:"
+                                + component_id
+                                + ":"
+                                + role
+                                + ":"
+                                + source_key
+                            )
+                        elif role not in set(
+                            str(item)
+                            for item in source.get("valuation_evidence_roles") or []
+                        ):
+                            invalid.append(
+                                "replacement_evidence_role_source_role_mismatch:"
+                                + component_id
+                                + ":"
+                                + role
+                                + ":"
+                                + source_key
+                            )
+        if recognition.get("status") == "EXCLUDED":
+            treatment = _mapping(component.get("exclusion_treatment"))
+            destination = str(treatment.get("destination") or "")
+            for source_id in treatment.get("source_fact_ids") or []:
+                source_key = str(source_id)
+                source = observations.get(source_key)
+                if source is None:
+                    invalid.append(
+                        "replacement_exclusion_requires_verified_observation:"
+                        + component_id
+                        + ":"
+                        + source_key
+                    )
+                elif destination not in set(
+                    str(item)
+                    for item in source.get("valuation_exclusion_destinations") or []
+                ):
+                    invalid.append(
+                        "replacement_exclusion_source_destination_mismatch:"
+                        + component_id
+                        + ":"
+                        + destination
+                        + ":"
+                        + source_key
+                    )
 
 
 def _validate_value_bridge_models(
@@ -1079,6 +1179,11 @@ def _validate_value_bridge_models(
     replacement = results.get("replacement_value")
     if isinstance(replacement, dict):
         projection = _mapping(projections.get("replacement_value"))
+        replacement_input = _mapping(
+            _mapping(_mapping(compiled).get("model_input")).get("replacement_value")
+        )
+        replacement_model_input = _mapping(replacement_input.get("model_input"))
+        replacement_context = _mapping(replacement_model_input.get("model_context"))
         per_share = _mapping(replacement.get("per_share_range"))
         low = _num(per_share.get("range_low"))
         high = _num(per_share.get("range_high"))
@@ -1089,8 +1194,31 @@ def _validate_value_bridge_models(
         ]
         if needs_replacement and not replacement_models:
             incomplete.append("replacement_value_routed_model_missing")
+        routed_replacement = _mapping(route_models.get("REPLACEMENT_VALUE"))
+        expected_archetype_id = str(
+            routed_replacement.get("valuation_archetype_id") or ""
+        )
+        expected_archetype_version = str(
+            routed_replacement.get("valuation_archetype_version") or ""
+        )
         for model in replacement_models:
             model_id = str(model.get("model_id") or "unknown")
+            # Older or isolated ledger tests may deliberately omit a route.
+            # A production route policy separately makes that output
+            # incomplete.  Do not upgrade that absence into an invalid card
+            # mismatch; the replacement core still resolves its own active
+            # card in every COMPANY_ANALYSIS input.
+            if routed_replacement and (
+                not expected_archetype_id or not expected_archetype_version
+            ):
+                invalid.append(model_id + ":replacement_value_route_archetype_missing")
+            elif routed_replacement and (
+                replacement_context.get("valuation_archetype_id")
+                != expected_archetype_id
+                or replacement_context.get("valuation_archetype_version")
+                != expected_archetype_version
+            ):
+                invalid.append(model_id + ":replacement_value_archetype_mismatch")
             result = _mapping(model.get("result"))
             basis = _mapping(model.get("basis"))
             if model.get("role") != "corroborative":
@@ -1115,10 +1243,7 @@ def _validate_value_bridge_models(
                 if not _same(result.get("value_per_share"), low):
                     invalid.append(model_id + ":replacement_value_scalar_must_use_low_endpoint")
         epv_result = _mapping(replacement.get("epv_cross_check"))
-        replacement_input = _mapping(
-            _mapping(_mapping(compiled).get("model_input")).get("replacement_value")
-        )
-        epv_check = _mapping(_mapping(replacement_input.get("model_input")).get("epv_cross_check"))
+        epv_check = _mapping(replacement_model_input.get("epv_cross_check"))
         if epv_result.get("status") == "COMPARABLE":
             epv_id = str(epv_check.get("model_id") or "")
             epv_model = next(

@@ -11,6 +11,7 @@ from __future__ import annotations
 
 from copy import deepcopy
 import math
+import re
 from typing import Any
 
 
@@ -18,6 +19,9 @@ SCHEMA_VERSION = "replacement-value-model.v1"
 RESULT_SCHEMA_VERSION = "replacement-value-model-result.v1"
 READER_SCHEMA_VERSION = "replacement-value-reader-conclusions.v1"
 
+# Kept as a public compatibility alias for the first property-service card.
+# Company models no longer use this set as a global ontology: their complete
+# component contract is resolved from a versioned valuation archetype.
 COMPONENT_TYPES = {
     "CUSTOMER_RELATIONSHIP",
     "REGIONAL_OPERATING_ORGANIZATION",
@@ -35,6 +39,11 @@ CALCULATION_METHODS = {
     "UNAVAILABLE",
 }
 RECOGNITION_METHODS = {"FULL", "FRACTION_OF_ESTIMATED_RANGE", "NOT_APPLICABLE"}
+EXCLUSION_DESTINATIONS = {
+    "OTHER_REPLACEMENT_COMPONENT",
+    "BALANCE_SHEET_WORKING_CAPITAL",
+    "EPV_MAINTENANCE_NEED",
+}
 DOUBLE_COUNT_TREATMENTS = {
     "NOT_INCLUDED",
     "NETTED",
@@ -55,38 +64,51 @@ _TOP_LEVEL_FIELDS = {
     "liquidation_floor_reference",
     "epv_cross_check",
 }
-_MODEL_CONTEXT_FIELDS = {"purpose", "method_fixture_id", "parameter_transfer_policy"}
+_MODEL_CONTEXT_FIELDS = {
+    "purpose",
+    "method_fixture_id",
+    "parameter_transfer_policy",
+    "valuation_archetype_id",
+    "valuation_archetype_version",
+}
 _BASIS_FIELDS = {
     "valuation_basis", "value_scope", "economic_entity", "operating_perimeter",
     "ordinary_share_claim_scope", "currency", "unit", "as_of",
 }
 _COMPONENT_FIELDS = {
     "component_id", "component_type", "economic_function", "estimate_status",
-    "calculation", "recognition", "uncertainty_treatment", "double_count_treatment",
+    "calculation", "recognition", "evidence_role_bindings", "exclusion_treatment",
+    "uncertainty_treatment", "double_count_treatment",
 }
 _CALCULATION_FIELDS = {"method", "output_unit", "inputs"}
 _INPUT_FIELDS = {
     "input_id", "metric", "range_low", "range_high", "unit", "basis",
     "evidence_ids", "parameter_scope",
 }
-_RECOGNITION_FIELDS = {"status", "method", "fraction_low", "fraction_high", "reason"}
+_RECOGNITION_FIELDS = {
+    "status", "method", "fraction_low", "fraction_high", "reason", "source_fact_ids",
+}
+_EVIDENCE_ROLE_BINDING_FIELDS = {"role", "source_fact_ids"}
+_EXCLUSION_TREATMENT_FIELDS = {
+    "destination", "destination_component_type", "source_fact_ids", "reason",
+}
 _UNCERTAINTY_FIELDS = {"boundary", "investor_consequence", "promotion_evidence"}
 _DOUBLE_COUNT_FIELDS = {
     "balance_sheet_working_capital", "epv_maintenance_need", "explanation",
 }
 _CLAIMS_FIELDS = {
     "non_operating_assets", "debt", "minority_interest", "other_priority_claims",
-    "other_adjustments", "shares_outstanding",
+    "other_adjustments", "shares_outstanding", "source_fact_ids",
 }
 _LIQUIDATION_FIELDS = {
     "status", "model_id", "value_scope", "currency", "as_of", "per_share_low",
-    "per_share_high", "reason", "use",
+    "per_share_high", "reason", "use", "source_fact_ids",
 }
 _EPV_FIELDS = {
     "status", "model_id", "economic_entity", "operating_perimeter",
     "ordinary_share_claim_scope", "value_scope", "currency", "unit", "as_of",
     "equity_value_low", "equity_value_high", "shares_outstanding", "per_share_low",
-    "per_share_high", "reason", "synthesis_rule",
+    "per_share_high", "reason", "synthesis_rule", "source_fact_ids",
 }
 
 
@@ -201,12 +223,58 @@ def _validate_model_context(value: Any, findings: list[str]) -> str:
             findings.append("model_context:method_fixture_id_missing")
         if policy != "METHOD_FIXTURE_PARAMETERS_NON_TRANSFERABLE":
             findings.append("model_context:method_fixture_parameters_must_be_non_transferable")
+        if (
+            context.get("valuation_archetype_id") not in {None, ""}
+            or context.get("valuation_archetype_version") not in {None, ""}
+        ):
+            findings.append("model_context:method_fixture_must_not_claim_production_archetype")
     else:
         if context.get("method_fixture_id") not in {None, ""}:
             findings.append("model_context:method_fixture_id_forbidden_for_company_analysis")
         if policy != "COMPANY_SPECIFIC_EVIDENCE_ONLY":
             findings.append("model_context:company_parameter_policy_invalid")
     return purpose
+
+
+def _company_archetype_component_specs(
+    value: Any, *, purpose: str, findings: list[str]
+) -> dict[str, dict[str, Any]]:
+    """Resolve the company model's component contract from a versioned card.
+
+    The card describes required capabilities and admissible methods but never
+    supplies company values.  A method fixture is intentionally excluded: it
+    teaches a calculation shape and must not inherit production eligibility.
+    """
+    if purpose != "COMPANY_ANALYSIS":
+        return {}
+    context = _mapping(value)
+    archetype_id = str(context.get("valuation_archetype_id") or "").strip()
+    version = str(context.get("valuation_archetype_version") or "").strip()
+    if not archetype_id or not version:
+        findings.append("model_context:valuation_archetype_id_or_version_missing")
+        return {}
+    try:
+        from scripts.valuation_archetypes import resolve_valuation_archetype
+    except ModuleNotFoundError:  # pragma: no cover - direct script fallback
+        from valuation_archetypes import resolve_valuation_archetype
+    try:
+        resolution = resolve_valuation_archetype(archetype_id, version)
+    except ValueError as exc:
+        findings.append("model_context:valuation_archetype_unavailable:" + str(exc))
+        return {}
+    if resolution.get("valuation_family") != "GOING_CONCERN_REPLACEMENT":
+        findings.append("model_context:valuation_archetype_family_mismatch")
+        return {}
+    components = _items(resolution.get("required_component_specs"))
+    specs: dict[str, dict[str, Any]] = {}
+    for component in components:
+        item = _mapping(component)
+        component_type = str(item.get("component_type") or "")
+        if component_type:
+            specs[component_type] = item
+    if not specs:
+        findings.append("model_context:valuation_archetype_components_missing")
+    return specs
 
 
 def _validate_basis(value: Any, findings: list[str]) -> dict[str, Any]:
@@ -237,12 +305,228 @@ def _validate_uncertainty(value: Any, prefix: str, findings: list[str]) -> None:
             findings.append(prefix + ":uncertainty_" + field + "_missing")
 
 
+def _validate_source_fact_ids(
+    value: Any,
+    *,
+    prefix: str,
+    purpose: str,
+    required: bool,
+    findings: list[str],
+) -> list[str]:
+    """Require a numeric input's declared canonical source identities.
+
+    The value-bridge gate resolves each numeric operand against the current
+    fact/calculation registry. This specialist-model validation closes the
+    earlier gap where a recognition fraction, claims bridge, or copied EPV
+    comparison had no local source declaration for that gate to resolve.
+    """
+    refs = _items(value)
+    if not refs:
+        if required:
+            findings.append(prefix + ":source_fact_ids_missing")
+        return []
+    if any(not _text(ref) for ref in refs) or len(set(refs)) != len(refs):
+        findings.append(prefix + ":source_fact_ids_invalid")
+        return []
+    if purpose == "COMPANY_ANALYSIS":
+        if any(not str(ref).startswith(("OBS:", "CALC:")) for ref in refs):
+            findings.append(prefix + ":source_fact_ids_require_current_observation_or_calculation")
+    elif purpose == "METHOD_FIXTURE":
+        if any(not str(ref).startswith("METHOD:") for ref in refs):
+            findings.append(prefix + ":source_fact_ids_require_method_identity")
+    return [str(ref) for ref in refs]
+
+
+def _validate_evidence_role_bindings(
+    value: Any,
+    *,
+    prefix: str,
+    purpose: str,
+    recognition_status: str,
+    component_spec: dict[str, Any] | None,
+    findings: list[str],
+) -> None:
+    """Require every card-defined capability proof before recognition.
+
+    Replacement components are not a checklist of generic inputs.  A company
+    model can recognize a component only after it binds every capability role
+    declared by its resolved valuation archetype to a current observation or
+    calculation.  Unknown and scenario-only components intentionally remain
+    admissible without invented role bindings; they cannot form a complete
+    company range.
+    """
+    if purpose != "COMPANY_ANALYSIS":
+        return
+    if recognition_status != "RECOGNIZED":
+        # A capability may retain collected evidence while its value remains
+        # unknown or scenario-only.  The evidence cannot promote the
+        # component, but it must not turn an intentionally incomplete model
+        # invalid merely because a research pass preserved its provenance.
+        return
+    if component_spec is None:
+        return
+    expected_roles = {
+        str(role) for role in _items(component_spec.get("required_evidence_roles"))
+        if _text(role)
+    }
+    bindings = _items(value)
+    if not bindings:
+        findings.append(prefix + ":evidence_role_bindings_missing")
+        return
+    seen_roles: set[str] = set()
+    for index, raw_binding in enumerate(bindings):
+        binding = _mapping(raw_binding)
+        binding_prefix = prefix + f":evidence_role_bindings[{index}]"
+        _reject_unknown_fields(binding, _EVIDENCE_ROLE_BINDING_FIELDS, binding_prefix, findings)
+        role = str(binding.get("role") or "")
+        if not _text(role):
+            findings.append(binding_prefix + ":role_missing")
+        elif role in seen_roles:
+            findings.append(binding_prefix + ":role_duplicate:" + role)
+        else:
+            seen_roles.add(role)
+            if role not in expected_roles:
+                findings.append(binding_prefix + ":role_not_required_by_valuation_archetype:" + role)
+        _validate_source_fact_ids(
+            binding.get("source_fact_ids"),
+            prefix=binding_prefix,
+            purpose=purpose,
+            required=True,
+            findings=findings,
+        )
+        if any(
+            not str(source_id).startswith("OBS:")
+            for source_id in _items(binding.get("source_fact_ids"))
+        ):
+            findings.append(
+                binding_prefix
+                + ":evidence_role_requires_direct_verified_observation"
+            )
+    for role in sorted(expected_roles - seen_roles):
+        findings.append(prefix + ":evidence_role_binding_missing_required_role:" + role)
+
+
+def _validate_exclusion_treatment(
+    value: Any,
+    *,
+    prefix: str,
+    purpose: str,
+    recognition_status: str,
+    component_type: str,
+    component_spec: dict[str, Any] | None,
+    findings: list[str],
+) -> None:
+    """Permit exclusion only when the card and a source-bound destination do.
+
+    ``EXCLUDED`` resolves a zero incremental contribution only when a card
+    identifies the value destination that already owns the economic cost.  It
+    is not an alternative spelling of ``UNKNOWN`` and cannot erase a required
+    operating capability from a company-level replacement range.
+    """
+    if purpose != "COMPANY_ANALYSIS":
+        return
+    if recognition_status != "EXCLUDED":
+        # Keep a previously considered destination as auditable context when
+        # the component is later recognized, scenario-only, or unknown.  Only
+        # an active EXCLUDED status can rely on the treatment economically.
+        return
+    treatment = _mapping(value)
+    if not treatment:
+        findings.append(prefix + ":exclusion_treatment_missing")
+        return
+    _reject_unknown_fields(treatment, _EXCLUSION_TREATMENT_FIELDS, prefix + ":exclusion", findings)
+    destination = str(treatment.get("destination") or "")
+    if destination not in EXCLUSION_DESTINATIONS:
+        findings.append(prefix + ":exclusion_destination_invalid")
+    elif component_spec is not None:
+        allowed = set(_items(component_spec.get("allowed_exclusion_destinations")))
+        if destination not in allowed:
+            findings.append(prefix + ":exclusion_destination_not_allowed_by_valuation_archetype")
+    destination_component_type = treatment.get("destination_component_type")
+    if destination == "OTHER_REPLACEMENT_COMPONENT":
+        target = str(destination_component_type or "")
+        if not re.fullmatch(r"[A-Z][A-Z0-9_]*", target):
+            findings.append(prefix + ":exclusion_destination_component_type_missing_or_invalid")
+        elif target == component_type:
+            findings.append(prefix + ":exclusion_destination_component_type_must_be_distinct")
+    elif destination_component_type not in {None, ""}:
+        findings.append(prefix + ":exclusion_destination_component_type_only_for_other_replacement_component")
+    if not _text(treatment.get("reason")):
+        findings.append(prefix + ":exclusion_reason_missing")
+    _validate_source_fact_ids(
+        treatment.get("source_fact_ids"),
+        prefix=prefix + ":exclusion",
+        purpose=purpose,
+        required=True,
+        findings=findings,
+    )
+    if any(
+        not str(source_id).startswith("OBS:")
+        for source_id in _items(treatment.get("source_fact_ids"))
+    ):
+        findings.append(
+            prefix + ":exclusion_requires_direct_verified_observation"
+        )
+
+
+def _validate_exclusion_destinations(
+    components: list[Any],
+    *,
+    purpose: str,
+    archetype_component_specs: dict[str, dict[str, Any]],
+    findings: list[str],
+) -> None:
+    """Resolve component-to-component and balance-sheet exclusion owners."""
+    if purpose != "COMPANY_ANALYSIS":
+        return
+    by_type = {
+        str(_mapping(item).get("component_type") or ""): _mapping(item)
+        for item in components
+        if isinstance(item, dict)
+    }
+    for raw_component in components:
+        component = _mapping(raw_component)
+        recognition = _mapping(component.get("recognition"))
+        if recognition.get("status") != "EXCLUDED":
+            continue
+        component_id = str(component.get("component_id") or "")
+        prefix = component_id or "component"
+        component_type = str(component.get("component_type") or "")
+        if component_type not in archetype_component_specs:
+            continue
+        treatment = _mapping(component.get("exclusion_treatment"))
+        destination = str(treatment.get("destination") or "")
+        if destination == "OTHER_REPLACEMENT_COMPONENT":
+            target_type = str(treatment.get("destination_component_type") or "")
+            target = by_type.get(target_type)
+            if target is None:
+                findings.append(prefix + ":exclusion_destination_component_type_missing_from_model")
+            elif _mapping(target.get("recognition")).get("status") != "RECOGNIZED":
+                findings.append(prefix + ":exclusion_destination_component_type_must_be_recognized")
+        elif destination in {
+            "BALANCE_SHEET_WORKING_CAPITAL",
+            "EPV_MAINTENANCE_NEED",
+        }:
+            field = (
+                "balance_sheet_working_capital"
+                if destination == "BALANCE_SHEET_WORKING_CAPITAL"
+                else "epv_maintenance_need"
+            )
+            double_count = _mapping(component.get("double_count_treatment"))
+            if double_count.get(field) != "ALREADY_INCLUDED_EXCLUDED":
+                findings.append(
+                    prefix + ":exclusion_destination_not_affirmed_by_double_count_treatment:"
+                    + destination
+                )
+
+
 def _validate_component(
     component: Any,
     *,
     index: int,
     purpose: str,
     basis: dict[str, Any],
+    archetype_component_specs: dict[str, dict[str, Any]],
     seen_ids: set[str],
     seen_types: set[str],
     findings: list[str],
@@ -257,12 +541,15 @@ def _validate_component(
         seen_ids.add(component_id)
         prefix = component_id
     component_type = str(item.get("component_type") or "")
-    if component_type not in COMPONENT_TYPES:
+    if not re.fullmatch(r"[A-Z][A-Z0-9_]*", component_type):
         findings.append(prefix + ":component_type_invalid")
     elif component_type in seen_types:
         findings.append(prefix + ":component_type_duplicate")
     else:
         seen_types.add(component_type)
+    component_spec = archetype_component_specs.get(component_type)
+    if purpose == "COMPANY_ANALYSIS" and component_spec is None:
+        findings.append(prefix + ":component_type_not_declared_by_valuation_archetype")
     if not _text(item.get("economic_function")):
         findings.append(prefix + ":economic_function_missing")
 
@@ -274,6 +561,10 @@ def _validate_component(
     method = str(calculation.get("method") or "")
     if method not in CALCULATION_METHODS:
         findings.append(prefix + ":calculation_method_invalid")
+    elif component_spec is not None and method not in set(
+        _items(component_spec.get("allowed_calculation_methods"))
+    ):
+        findings.append(prefix + ":calculation_method_not_allowed_by_valuation_archetype")
     if calculation.get("output_unit") != basis.get("unit"):
         findings.append(prefix + ":calculation_output_unit_basis_mismatch")
     inputs = _items(calculation.get("inputs"))
@@ -331,6 +622,24 @@ def _validate_component(
     if not _text(recognition.get("reason")):
         findings.append(prefix + ":recognition_reason_missing")
 
+    _validate_evidence_role_bindings(
+        item.get("evidence_role_bindings"),
+        prefix=prefix,
+        purpose=purpose,
+        recognition_status=recognition_status,
+        component_spec=component_spec,
+        findings=findings,
+    )
+    _validate_exclusion_treatment(
+        item.get("exclusion_treatment"),
+        prefix=prefix,
+        purpose=purpose,
+        recognition_status=recognition_status,
+        component_type=component_type,
+        component_spec=component_spec,
+        findings=findings,
+    )
+
     fraction_low = _number(recognition.get("fraction_low"))
     fraction_high = _number(recognition.get("fraction_high"))
     if recognition_status == "RECOGNIZED":
@@ -345,6 +654,13 @@ def _validate_component(
                 or fraction_high > 1
             ):
                 findings.append(prefix + ":recognition_fraction_invalid")
+            _validate_source_fact_ids(
+                recognition.get("source_fact_ids"),
+                prefix=prefix + ":recognition",
+                purpose=purpose,
+                required=True,
+                findings=findings,
+            )
         elif recognition_method == "FULL":
             if fraction_low is not None or fraction_high is not None:
                 findings.append(prefix + ":full_recognition_must_not_have_fraction")
@@ -377,7 +693,12 @@ def _validate_component(
         findings.append(prefix + ":recognized_range_invalid")
 
     double_count = _mapping(item.get("double_count_treatment"))
-    if component_type == "PROJECT_STARTUP_WORKING_CAPITAL":
+    needs_working_capital_overlap = (
+        component_spec is not None
+        and component_spec.get("double_count_owner")
+        == "BALANCE_SHEET_WORKING_CAPITAL_OR_EPV_MAINTENANCE_NEED"
+    )
+    if needs_working_capital_overlap:
         _reject_unknown_fields(double_count, _DOUBLE_COUNT_FIELDS, prefix + ":double_count", findings)
         for field in ("balance_sheet_working_capital", "epv_maintenance_need"):
             if double_count.get(field) not in DOUBLE_COUNT_TREATMENTS:
@@ -397,7 +718,9 @@ def _validate_component(
             findings.append(prefix + ":unknown_working_capital_overlap_cannot_be_recognized")
 
 
-def _validate_claims_bridge(value: Any, findings: list[str]) -> dict[str, Any]:
+def _validate_claims_bridge(
+    value: Any, *, purpose: str, findings: list[str]
+) -> dict[str, Any]:
     bridge = _mapping(value)
     _reject_unknown_fields(bridge, _CLAIMS_FIELDS, "claims_bridge", findings)
     for field in (
@@ -416,11 +739,18 @@ def _validate_claims_bridge(value: Any, findings: list[str]) -> dict[str, Any]:
     shares = _number(bridge.get("shares_outstanding"))
     if shares is None or shares <= 0:
         findings.append("claims_bridge:shares_outstanding_invalid")
+    _validate_source_fact_ids(
+        bridge.get("source_fact_ids"),
+        prefix="claims_bridge",
+        purpose=purpose,
+        required=True,
+        findings=findings,
+    )
     return bridge
 
 
 def _validate_liquidation_reference(
-    value: Any, *, basis: dict[str, Any], findings: list[str]
+    value: Any, *, basis: dict[str, Any], purpose: str, findings: list[str]
 ) -> None:
     reference = _mapping(value)
     _reject_unknown_fields(reference, _LIQUIDATION_FIELDS, "liquidation_floor_reference", findings)
@@ -441,6 +771,13 @@ def _validate_liquidation_reference(
             findings.append("liquidation_floor_reference:per_share_range_invalid")
         if reference.get("currency") != basis.get("currency"):
             findings.append("liquidation_floor_reference:currency_mismatch")
+        _validate_source_fact_ids(
+            reference.get("source_fact_ids"),
+            prefix="liquidation_floor_reference",
+            purpose=purpose,
+            required=True,
+            findings=findings,
+        )
     elif status == "UNAVAILABLE" and not _text(reference.get("reason")):
         findings.append("liquidation_floor_reference:unavailable_reason_missing")
 
@@ -450,6 +787,7 @@ def _validate_epv_cross_check(
     *,
     basis: dict[str, Any],
     claims_bridge: dict[str, Any],
+    purpose: str,
     findings: list[str],
 ) -> None:
     cross_check = _mapping(value)
@@ -506,6 +844,13 @@ def _validate_epv_cross_check(
             per_share_high, equity_high / shares
         ):
             findings.append("epv_cross_check:per_share_arithmetic_mismatch")
+    _validate_source_fact_ids(
+        cross_check.get("source_fact_ids"),
+        prefix="epv_cross_check",
+        purpose=purpose,
+        required=True,
+        findings=findings,
+    )
 
 
 def validate_replacement_value_model(payload: Any) -> dict[str, Any]:
@@ -523,6 +868,9 @@ def validate_replacement_value_model(payload: Any) -> dict[str, Any]:
             findings.append(field + "_missing")
 
     purpose = _validate_model_context(value.get("model_context"), findings)
+    archetype_component_specs = _company_archetype_component_specs(
+        value.get("model_context"), purpose=purpose, findings=findings
+    )
     basis = _validate_basis(value.get("basis"), findings)
     components = _items(value.get("components"))
     if not components:
@@ -535,23 +883,38 @@ def validate_replacement_value_model(payload: Any) -> dict[str, Any]:
             index=index,
             purpose=purpose,
             basis=basis,
+            archetype_component_specs=archetype_component_specs,
             seen_ids=seen_ids,
             seen_types=seen_types,
             findings=findings,
         )
+    _validate_exclusion_destinations(
+        components,
+        purpose=purpose,
+        archetype_component_specs=archetype_component_specs,
+        findings=findings,
+    )
     if purpose == "COMPANY_ANALYSIS":
         findings.extend(
             "components:required_component_type_missing:" + component_type
-            for component_type in sorted(COMPONENT_TYPES - seen_types)
+            for component_type, component_spec in sorted(archetype_component_specs.items())
+            if component_spec.get("presence_requirement") == "REQUIRED"
+            and component_type not in seen_types
         )
-    claims_bridge = _validate_claims_bridge(value.get("claims_bridge"), findings)
+    claims_bridge = _validate_claims_bridge(
+        value.get("claims_bridge"), purpose=purpose, findings=findings
+    )
     _validate_liquidation_reference(
-        value.get("liquidation_floor_reference"), basis=basis, findings=findings
+        value.get("liquidation_floor_reference"),
+        basis=basis,
+        purpose=purpose,
+        findings=findings,
     )
     _validate_epv_cross_check(
         value.get("epv_cross_check"),
         basis=basis,
         claims_bridge=claims_bridge,
+        purpose=purpose,
         findings=findings,
     )
     findings = _unique(findings)
@@ -584,6 +947,10 @@ def compute_replacement_value_model(payload: Any) -> dict[str, Any]:
     if validation["state"] != "REVIEWABLE":
         raise ValueError("replacement_value_model_invalid:" + ",".join(validation["findings"]))
     value = _mapping(payload)
+    purpose = str(_mapping(value.get("model_context")).get("purpose") or "")
+    archetype_component_specs = _company_archetype_component_specs(
+        value.get("model_context"), purpose=purpose, findings=[]
+    )
     component_results: list[dict[str, Any]] = []
     recognized_ranges: list[tuple[float, float]] = []
     unknown_ids: list[str] = []
@@ -618,6 +985,10 @@ def compute_replacement_value_model(payload: Any) -> dict[str, Any]:
             ),
             "evidence_ids": evidence_ids,
         }
+        if item["recognition"].get("source_fact_ids") is not None:
+            result["recognition_source_fact_ids"] = deepcopy(
+                item["recognition"]["source_fact_ids"]
+            )
         if item.get("double_count_treatment") is not None:
             result["double_count_treatment"] = deepcopy(item["double_count_treatment"])
         component_results.append(result)
@@ -638,11 +1009,21 @@ def compute_replacement_value_model(payload: Any) -> dict[str, Any]:
     minority_interest = _required_range(bridge["minority_interest"])
     other_priority_claims = _required_range(bridge["other_priority_claims"])
     other_adjustments = _required_range(bridge["other_adjustments"])
+    unresolved_required_ids = [
+        item["component_id"]
+        for item in value["components"]
+        if archetype_component_specs.get(str(item.get("component_type") or ""), {}).get(
+            "presence_requirement"
+        )
+        == "REQUIRED"
+        and _mapping(item.get("recognition")).get("status")
+        in {"UNKNOWN", "SCENARIO_ONLY"}
+    ]
     # A component deliberately excluded because its economic cost is already
     # present elsewhere in the claims bridge is a resolved zero *increment*.
     # It must not be confused with an unknown or scenario-only component: the
     # former would wrongly suppress a complete going-concern range forever.
-    full_scope = not unknown_ids and not scenario_ids
+    full_scope = not unresolved_required_ids
     equity_low: float | None = None
     equity_high: float | None = None
     if full_scope:
@@ -675,6 +1056,8 @@ def compute_replacement_value_model(payload: Any) -> dict[str, Any]:
         "synthesis_rule": SYNTHESIS_RULE,
         "relationship": "NOT_COMPARABLE",
     }
+    if epv.get("source_fact_ids") is not None:
+        epv_result["source_fact_ids"] = deepcopy(epv["source_fact_ids"])
     if epv["status"] == "COMPARABLE" and full_scope:
         epv_range = (float(epv["equity_value_low"]), float(epv["equity_value_high"]))
         epv_result.update(
@@ -711,13 +1094,18 @@ def compute_replacement_value_model(payload: Any) -> dict[str, Any]:
         epv_result["reason"] = epv["reason"]
 
     recognized_scope = (
-        "PARTIAL_RECOGNIZED_COMPONENTS"
-        if unknown_ids or scenario_ids
-        else "ALL_SUBMITTED_COMPONENTS_RECOGNIZED"
+        "PARTIAL_RECOGNIZED_REQUIRED_COMPONENTS"
+        if unresolved_required_ids
+        else (
+            "ALL_REQUIRED_COMPONENTS_RECOGNIZED_OPTIONAL_BOUNDARIES_REMAIN"
+            if unknown_ids or scenario_ids
+            else "ALL_SUBMITTED_COMPONENTS_RECOGNIZED"
+        )
     )
     economic_conclusion = {
         "replacement_value_role": "GOING_CONCERN_REPLACEMENT_RANGE",
         "recognized_scope": recognized_scope,
+        "unresolved_required_component_ids": unresolved_required_ids,
         "replacement_range_status": "AVAILABLE" if full_scope else "INCOMPLETE",
         "claims_bridge_status": (
             "APPLIED_TO_COMPLETE_REPLACEMENT_RANGE"

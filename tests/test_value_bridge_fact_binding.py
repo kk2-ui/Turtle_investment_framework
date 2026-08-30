@@ -6,6 +6,7 @@ from pathlib import Path
 
 from scripts.valuation_model_gate import _validate_value_bridge_fact_bindings
 from scripts.valuation_value_bridges import compile_valuation_value_bridges
+from tests.test_valuation_value_bridges import _replacement_input
 
 
 def _ordinary_input() -> dict:
@@ -84,6 +85,175 @@ def _validate(output: Path, bridge_input: dict) -> tuple[list[str], list[str]]:
     return invalid, incomplete
 
 
+def _replacement_input_with_current_fact_bindings() -> tuple[
+    dict,
+    list[tuple[str, float, str, list[str], list[str]]],
+    list[tuple[str, float, str]],
+]:
+    """Build a full-scope replacement fixture with every raw operand bound.
+
+    It intentionally uses a recognition fraction, an enterprise-to-equity
+    claims bridge and a comparable EPV projection: these were the numeric
+    ownership gaps in the first replacement model contract.
+    """
+    model = deepcopy(_replacement_input())
+    customer = model["components"][0]
+    customer["calculation"]["inputs"][0]["evidence_ids"] = [
+        "OBS:CUSTOMER-COST:LOW",
+        "OBS:CUSTOMER-COST:HIGH",
+    ]
+    customer["recognition"] = {
+        "status": "RECOGNIZED",
+        "method": "FRACTION_OF_ESTIMATED_RANGE",
+        "fraction_low": 0.5,
+        "fraction_high": 0.75,
+        "reason": "Only the independently measured retention benefit is recognized.",
+        "source_fact_ids": [
+            "CALC:REPLACEMENT:RECOGNITION:LOW",
+            "CALC:REPLACEMENT:RECOGNITION:HIGH",
+        ],
+    }
+    role_rows: list[tuple[str, float, str, list[str], list[str]]] = []
+    for component in model["components"]:
+        component_type = component["component_type"]
+        for binding in component["evidence_role_bindings"]:
+            role = binding["role"]
+            source_id = "OBS:ROLE:" + component_type + ":" + role
+            binding["source_fact_ids"] = [source_id]
+            role_rows.append((source_id, 0.0, "RMB_m", [role], []))
+    observation_rows = [
+        ("OBS:CUSTOMER-COST:LOW", 100.0, "RMB_m", [], []),
+        ("OBS:CUSTOMER-COST:HIGH", 120.0, "RMB_m", [], []),
+        ("OBS:REGIONAL-ORGANIZATION", 0.0, "RMB_m", [], []),
+        ("OBS:ACQUISITION-CHANNEL", 0.0, "RMB_m", [], []),
+        ("OBS:DELIVERY-RECORD", 0.0, "RMB_m", [], []),
+        ("OBS:STARTUP-WORKING-CAPITAL", 0.0, "RMB_m", [], []),
+        ("OBS:OTHER-FUNCTIONAL-ASSETS", 0.0, "RMB_m", [], []),
+        ("OBS:CLAIMS:NON_OPERATING_ASSETS", 20.0, "RMB_m", [], []),
+        ("OBS:CLAIMS:DEBT", 40.0, "RMB_m", [], []),
+        ("OBS:CLAIMS:MINORITY_INTEREST", 0.0, "RMB_m", [], []),
+        ("OBS:CLAIMS:OTHER_PRIORITY_CLAIMS", 0.0, "RMB_m", [], []),
+        ("OBS:CLAIMS:OTHER_ADJUSTMENTS", 0.0, "RMB_m", [], []),
+        ("OBS:CLAIMS:SHARES", 100.0, "million_shares", [], []),
+    ]
+    observation_rows.extend(role_rows)
+    calculation_rows = [
+        ("CALC:REPLACEMENT:RECOGNITION:LOW", 0.5, "ratio"),
+        ("CALC:REPLACEMENT:RECOGNITION:HIGH", 0.75, "ratio"),
+        ("CALC:NAV:FLOOR:LOW", 0.3, "RMB_per_share"),
+        ("CALC:NAV:FLOOR:HIGH", 0.4, "RMB_per_share"),
+        ("CALC:EPV:EQUITY:LOW", 90.0, "RMB_m"),
+        ("CALC:EPV:EQUITY:HIGH", 110.0, "RMB_m"),
+        ("CALC:EPV:PER_SHARE:LOW", 0.9, "RMB_per_share"),
+        ("CALC:EPV:PER_SHARE:HIGH", 1.1, "RMB_per_share"),
+    ]
+
+    bindings: list[dict[str, str]] = []
+    def bind(path: str, evidence_id: str) -> None:
+        bindings.append({"path": path, "evidence_id": evidence_id})
+
+    base = "replacement_value.model_input"
+    bind(base + ".components[0].calculation.inputs[0].range_low", "OBS:CUSTOMER-COST:LOW")
+    bind(base + ".components[0].calculation.inputs[0].range_high", "OBS:CUSTOMER-COST:HIGH")
+    for index, evidence_id in enumerate((
+        "OBS:REGIONAL-ORGANIZATION",
+        "OBS:ACQUISITION-CHANNEL",
+        "OBS:DELIVERY-RECORD",
+        "OBS:STARTUP-WORKING-CAPITAL",
+        "OBS:OTHER-FUNCTIONAL-ASSETS",
+    ), start=1):
+        path = base + f".components[{index}].calculation.inputs[0]"
+        bind(path + ".range_low", evidence_id)
+        bind(path + ".range_high", evidence_id)
+    bind(base + ".components[0].recognition.fraction_low", "CALC:REPLACEMENT:RECOGNITION:LOW")
+    bind(base + ".components[0].recognition.fraction_high", "CALC:REPLACEMENT:RECOGNITION:HIGH")
+    bind(base + ".liquidation_floor_reference.per_share_low", "CALC:NAV:FLOOR:LOW")
+    bind(base + ".liquidation_floor_reference.per_share_high", "CALC:NAV:FLOOR:HIGH")
+    for field, evidence_id in (
+        ("non_operating_assets", "OBS:CLAIMS:NON_OPERATING_ASSETS"),
+        ("debt", "OBS:CLAIMS:DEBT"),
+        ("minority_interest", "OBS:CLAIMS:MINORITY_INTEREST"),
+        ("other_priority_claims", "OBS:CLAIMS:OTHER_PRIORITY_CLAIMS"),
+        ("other_adjustments", "OBS:CLAIMS:OTHER_ADJUSTMENTS"),
+    ):
+        path = base + ".claims_bridge." + field
+        bind(path + ".range_low", evidence_id)
+        bind(path + ".range_high", evidence_id)
+    bind(base + ".claims_bridge.shares_outstanding", "OBS:CLAIMS:SHARES")
+    for field, evidence_id in (
+        ("equity_value_low", "CALC:EPV:EQUITY:LOW"),
+        ("equity_value_high", "CALC:EPV:EQUITY:HIGH"),
+        ("shares_outstanding", "OBS:CLAIMS:SHARES"),
+        ("per_share_low", "CALC:EPV:PER_SHARE:LOW"),
+        ("per_share_high", "CALC:EPV:PER_SHARE:HIGH"),
+    ):
+        bind(base + ".epv_cross_check." + field, evidence_id)
+
+    return {
+        "schema_version": "valuation-value-bridges-input.v1",
+        "canonical_fact_bindings": bindings,
+        "replacement_value": {"model_input": model},
+    }, observation_rows, calculation_rows
+
+
+def _write_replacement_current_registry(
+    output: Path,
+    observation_rows: list[tuple[str, float, str, list[str], list[str]]],
+    calculation_rows: list[tuple[str, float, str]],
+) -> None:
+    context = {
+        "economic_entity": "Listed consolidated operating group",
+        "operating_perimeter": "Continuing property-service operations",
+    }
+    (output / "fact_observations.json").write_text(
+        json.dumps(
+            {
+                "observations": [
+                    {
+                        "observation_id": fact_id,
+                        "normalized_value": value,
+                        "unit": unit,
+                        "currency": "RMB" if unit == "RMB_m" else None,
+                        "as_of": "2025-12-31",
+                        "measurement_context": context,
+                        "status": "VERIFIED",
+                        **(
+                            {"valuation_evidence_roles": roles}
+                            if roles
+                            else {}
+                        ),
+                        **(
+                            {
+                                "valuation_exclusion_destinations": destinations
+                            }
+                            if destinations
+                            else {}
+                        ),
+                    }
+                    for fact_id, value, unit, roles, destinations in observation_rows
+                ]
+            }
+        ),
+        encoding="utf-8",
+    )
+    (output / "calculation_observations.json").write_text(
+        json.dumps(
+            {
+                "calculations": [
+                    {
+                        "calculation_id": calculation_id,
+                        "value": value,
+                        "unit": unit,
+                        "status": "VERIFIED",
+                    }
+                    for calculation_id, value, unit in calculation_rows
+                ]
+            }
+        ),
+        encoding="utf-8",
+    )
+
+
 def test_every_distribution_operand_is_resolved_to_current_verified_observation(
     tmp_path: Path,
 ) -> None:
@@ -93,6 +263,68 @@ def test_every_distribution_operand_is_resolved_to_current_verified_observation(
 
     assert invalid == []
     assert incomplete == []
+
+
+def test_replacement_fraction_claims_and_epv_operands_resolve_to_current_registry(
+    tmp_path: Path,
+) -> None:
+    bridge_input, observations, calculations = _replacement_input_with_current_fact_bindings()
+    _write_replacement_current_registry(tmp_path, observations, calculations)
+
+    invalid, incomplete = _validate(tmp_path, bridge_input)
+
+    assert invalid == []
+    assert incomplete == []
+
+
+def test_replacement_role_binding_requires_the_source_to_declare_that_role(
+    tmp_path: Path,
+) -> None:
+    bridge_input, observations, calculations = _replacement_input_with_current_fact_bindings()
+    customer = bridge_input["replacement_value"]["model_input"]["components"][0]
+    customer["evidence_role_bindings"][0]["source_fact_ids"] = [
+        "OBS:CUSTOMER-COST:LOW"
+    ]
+    _write_replacement_current_registry(tmp_path, observations, calculations)
+
+    invalid, incomplete = _validate(tmp_path, bridge_input)
+
+    assert incomplete == []
+    assert any(
+        "replacement_evidence_role_source_role_mismatch:customer-book:"
+        "CONTRACT_POPULATION_OR_CUSTOMER_BOOK:OBS:CUSTOMER-COST:LOW"
+        == finding
+        for finding in invalid
+    )
+
+
+def test_replacement_exclusion_requires_the_source_to_declare_its_destination(
+    tmp_path: Path,
+) -> None:
+    bridge_input, observations, calculations = _replacement_input_with_current_fact_bindings()
+    channel = bridge_input["replacement_value"]["model_input"]["components"][2]
+    channel["recognition"] = {
+        "status": "EXCLUDED",
+        "method": "NOT_APPLICABLE",
+        "reason": "The channel capability is asserted to be owned by customer relationships.",
+    }
+    channel.pop("evidence_role_bindings", None)
+    channel["exclusion_treatment"] = {
+        "destination": "OTHER_REPLACEMENT_COMPONENT",
+        "destination_component_type": "CUSTOMER_RELATIONSHIP",
+        "source_fact_ids": ["OBS:ACQUISITION-CHANNEL"],
+        "reason": "A source must directly establish that the destination owns this capability.",
+    }
+    _write_replacement_current_registry(tmp_path, observations, calculations)
+
+    invalid, incomplete = _validate(tmp_path, bridge_input)
+
+    assert incomplete == []
+    assert (
+        "replacement_exclusion_source_destination_mismatch:acquisition-channel:"
+        "OTHER_REPLACEMENT_COMPONENT:OBS:ACQUISITION-CHANNEL"
+        in invalid
+    )
 
 
 def test_self_declared_verified_fact_cannot_replace_current_registry_evidence(

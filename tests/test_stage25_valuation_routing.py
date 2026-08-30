@@ -135,6 +135,12 @@ def test_route_has_role_based_models_rejections_and_exact_basis(tmp_path: Path) 
     assert {item["route_model_id"] for item in route["models"] if item["role"] == "primary"} == {"RETURN_DECOMPOSITION", "EPV"}
     assert {item["route_model_id"] for item in route["rejected_models"]} == {"DCF_FCFF"}
     assert route["synthesis_policy"]["method"] == "role_based_decision_not_weighted_average"
+    replacement = next(
+        model for model in route["models"]
+        if model["route_model_id"] == "REPLACEMENT_VALUE"
+    )
+    assert replacement["valuation_archetype_id"] == "property_service"
+    assert replacement["valuation_archetype_version"] == "v1"
 
 
 def test_underwriting_thesis_overrides_archetype_default_route_without_adding_value(tmp_path: Path) -> None:
@@ -248,6 +254,21 @@ def test_route_rejects_basis_role_and_synthesis_tampering(tmp_path: Path) -> Non
     assert any("basis_drift:value_scope" in item for item in result["invalid_findings"])
     assert "primary_model_set_mismatch" in result["invalid_findings"]
     assert "unjustified_weighted_average_not_prohibited" in result["invalid_findings"]
+
+
+def test_route_rejects_replacement_model_without_its_declared_archetype(tmp_path: Path) -> None:
+    _fixture(tmp_path)
+    archetype = build_company_archetype(tmp_path, persist=False)
+    route = build_valuation_route(tmp_path, archetype, persist=False)
+    replacement = next(
+        model for model in route["models"]
+        if model["route_model_id"] == "REPLACEMENT_VALUE"
+    )
+    replacement["valuation_archetype_version"] = "v0"
+
+    result = validate_valuation_route(route, archetype, load_registry())
+
+    assert "replacement_value:valuation_archetype_route_mismatch" in result["invalid_findings"]
 
 
 def test_policy_is_backward_compatible_but_enforced_run_requires_route(tmp_path: Path) -> None:

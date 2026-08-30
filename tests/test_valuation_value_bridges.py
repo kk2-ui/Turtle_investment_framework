@@ -11,6 +11,7 @@ from scripts.valuation_value_bridges import (
     validate_valuation_value_bridge_input,
     validate_valuation_value_bridges,
 )
+from scripts.valuation_archetypes import resolve_valuation_archetype
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -18,6 +19,18 @@ ROOT = Path(__file__).resolve().parents[1]
 
 def _facts(*fact_ids: str) -> list[dict[str, str]]:
     return [{"fact_id": fact_id, "status": "VERIFIED"} for fact_id in fact_ids]
+
+
+def _role_bindings(component_type: str, source_fact_id: str) -> list[dict[str, object]]:
+    card = resolve_valuation_archetype("property_service", "v1")
+    spec = next(
+        item for item in card["required_component_specs"]
+        if item["component_type"] == component_type
+    )
+    return [
+        {"role": role, "source_fact_ids": [source_fact_id]}
+        for role in spec["required_evidence_roles"]
+    ]
 
 
 def _cash_input() -> dict:
@@ -119,6 +132,9 @@ def _replacement_input() -> dict:
                 "method": "FULL",
                 "reason": "The synthetic bridge fixture explicitly bounds this component.",
             },
+            "evidence_role_bindings": _role_bindings(
+                component_type, "OBS:" + component_id.upper()
+            ),
         }
         if component_type == "PROJECT_STARTUP_WORKING_CAPITAL":
             item["double_count_treatment"] = {
@@ -134,6 +150,8 @@ def _replacement_input() -> dict:
         "company_id": "TEST.HK",
         "model_context": {
             "purpose": "COMPANY_ANALYSIS",
+            "valuation_archetype_id": "property_service",
+            "valuation_archetype_version": "v1",
             "parameter_transfer_policy": "COMPANY_SPECIFIC_EVIDENCE_ONLY",
         },
         "basis": {
@@ -173,6 +191,9 @@ def _replacement_input() -> dict:
                     "method": "FULL",
                     "reason": "The observed rebuild range is recognized.",
                 },
+                "evidence_role_bindings": _role_bindings(
+                    "CUSTOMER_RELATIONSHIP", "OBS:CUSTOMER-COST"
+                ),
             },
             covered_component("regional-organization", "REGIONAL_OPERATING_ORGANIZATION"),
             covered_component("acquisition-channel", "CUSTOMER_ACQUISITION_CHANNEL"),
@@ -187,6 +208,14 @@ def _replacement_input() -> dict:
             "other_priority_claims": {"range_low": 0, "range_high": 0},
             "other_adjustments": {"range_low": 0, "range_high": 0},
             "shares_outstanding": 100,
+            "source_fact_ids": [
+                "OBS:CLAIMS:NON_OPERATING_ASSETS",
+                "OBS:CLAIMS:DEBT",
+                "OBS:CLAIMS:MINORITY_INTEREST",
+                "OBS:CLAIMS:OTHER_PRIORITY_CLAIMS",
+                "OBS:CLAIMS:OTHER_ADJUSTMENTS",
+                "OBS:CLAIMS:SHARES",
+            ],
         },
         "liquidation_floor_reference": {
             "status": "AVAILABLE",
@@ -197,6 +226,10 @@ def _replacement_input() -> dict:
             "per_share_low": 0.30,
             "per_share_high": 0.40,
             "use": "SEPARATE_STRESS_REFERENCE_NEVER_ADD",
+            "source_fact_ids": [
+                "CALC:NAV:FLOOR:LOW",
+                "CALC:NAV:FLOOR:HIGH",
+            ],
         },
         "epv_cross_check": {
             "status": "COMPARABLE",
@@ -214,6 +247,13 @@ def _replacement_input() -> dict:
             "per_share_low": 0.90,
             "per_share_high": 1.10,
             "synthesis_rule": "CROSS_CHECK_ONLY_NEVER_ADD_OR_AVERAGE",
+            "source_fact_ids": [
+                "CALC:EPV:EQUITY:LOW",
+                "CALC:EPV:EQUITY:HIGH",
+                "OBS:CLAIMS:SHARES",
+                "CALC:EPV:PER_SHARE:LOW",
+                "CALC:EPV:PER_SHARE:HIGH",
+            ],
         },
     }
 

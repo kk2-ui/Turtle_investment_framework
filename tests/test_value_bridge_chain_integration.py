@@ -508,6 +508,53 @@ def test_compiled_replacement_cannot_survive_without_active_routed_model(
     assert "replacement_value_routed_model_missing" in validation["incomplete_findings"]
 
 
+def test_compiled_replacement_must_resolve_its_versioned_valuation_archetype(
+    tmp_path: Path,
+) -> None:
+    ledger = _integrated_ledger(tmp_path)
+    replacement = ledger["value_bridge_models"]["model_input"][
+        "replacement_value"
+    ]["model_input"]
+    replacement["model_context"]["valuation_archetype_version"] = "v0"
+
+    validation = _validate(tmp_path, ledger, enforced=False)
+
+    assert validation["state"] == "INVALID"
+    assert any(
+        "model_context:valuation_archetype_unavailable" in finding
+        for finding in validation["invalid_findings"]
+    )
+
+
+def test_replacement_gate_rejects_a_route_card_mismatch(tmp_path: Path) -> None:
+    ledger = _integrated_ledger(tmp_path)
+    # The model keeps its valid v1 card.  This represents a route that was
+    # changed without rebuilding the company model, so the gate—not a missing
+    # card lookup—must reject the cross-surface mismatch.
+    (tmp_path / "valuation_route.json").write_text(
+        json.dumps(
+            {
+                "models": [
+                    {
+                        "route_model_id": "REPLACEMENT_VALUE",
+                        "valuation_archetype_id": "property_service",
+                        "valuation_archetype_version": "v0",
+                    }
+                ]
+            }
+        ),
+        encoding="utf-8",
+    )
+
+    validation = _validate(tmp_path, ledger, enforced=False)
+
+    assert validation["state"] == "INVALID"
+    assert (
+        "replacement.going_concern:replacement_value_archetype_mismatch"
+        in validation["invalid_findings"]
+    )
+
+
 def test_replacement_epv_cross_check_must_project_the_active_epv_result(
     tmp_path: Path,
 ) -> None:

@@ -276,6 +276,8 @@ def verify_official_fact(
     quote: str = "",
     currency: str | None = None,
     measurement_context: dict[str, Any] | None = None,
+    valuation_evidence_roles: list[str] | None = None,
+    valuation_exclusion_destinations: list[str] | None = None,
 ) -> dict[str, Any]:
     """Verify an exact annual-report quote and persist its observation identity."""
     try:
@@ -297,6 +299,8 @@ def verify_official_fact(
         quote=quote,
         currency=currency,
         measurement_context=measurement_context,
+        valuation_evidence_roles=valuation_evidence_roles,
+        valuation_exclusion_destinations=valuation_exclusion_destinations,
     )
     if not result.get("verified"):
         return result
@@ -3847,7 +3851,9 @@ verify_official_fact._tool_meta = {
             "stock_flow_role": {"type": "string", "enum": ["OPENING_STOCK", "CLOSING_STOCK", "GROWTH_LAUNCH_ADDITION", "STEADY_ROLLOVER_ADDITION", "COLLECTION_OR_SETTLEMENT", "PERMANENT_LOSS", "NONCASH_SCOPE_CHANGE"]},
             "settlement_status": {"type": "string"},
             "loss_treatment": {"type": "string", "enum": ["RECURRING_EXPECTED", "ONE_OFF_PERMANENT", "NO_LOSS", "UNKNOWN"]}
-        }, "optional": True}
+        }, "optional": True},
+        "valuation_evidence_roles": {"type": "array", "items": {"type": "string"}, "description": "仅当这条官方原始事实直接支持持续经营重置模型的某个能力证据角色时填写；角色必须是大写 card role，不能用成本事实冒充客户簿、留存或重建时间。", "optional": True},
+        "valuation_exclusion_destinations": {"type": "array", "items": {"type": "string", "enum": ["OTHER_REPLACEMENT_COMPONENT", "BALANCE_SHEET_WORKING_CAPITAL", "EPV_MAINTENANCE_NEED"]}, "description": "仅当该官方原始事实直接证明重置组件已由指定价值目的地承接时填写；不能用一般成本或余额事实声明排除。", "optional": True}
     }
 }  # type: ignore[attr-defined]
 write_decision_manifest._tool_meta = {"name": "write_decision_manifest", "description": "提交结构化最终决策；必须在 assemble_report 前调用，Ch0/Ch14/数据库以此为准", "parameters": {"output_dir": {"type": "string", "description": "股票输出目录"}, "qualitative_decision": {"type": "string", "enum": ["continue", "pause", "abandon"]}, "quantitative_decision": {"type": "string", "enum": ["buy", "hold", "avoid", "unresolved"]}, "position_pct": {"type": "number", "description": "建议仓位百分比；quantitative_decision=unresolved 时省略", "optional": True}, "qualitative_rationale": {"type": "string", "optional": True}, "quantitative_rationale": {"type": "string", "optional": True}, "monitor_triggers": {"type": "array", "items": {"type": "string"}, "optional": True}, "exit_conditions": {"type": "array", "items": {"type": "string"}, "optional": True}}}  # type: ignore[attr-defined]
@@ -3994,7 +4000,7 @@ write_valuation_model_ledger._tool_meta = {
             "fragility_mitigation": {"type": "string"}, "source_ids": {"type": "array", "items": {"type": "string"}}, "decision_entry_ids": {"type": "array", "items": {"type": "string"}}
         }, "required": ["model_id", "route_model_id", "model_type", "role", "status"]}},
         "synthesis": {"type": "object", "properties": {"action": {"type": "string", "enum": ["buy", "hold", "avoid", "unresolved"]}, "position_pct": {"type": "number", "optional": True}, "range_low": {"type": "number", "optional": True}, "range_base": {"type": "number", "optional": True}, "range_high": {"type": "number", "optional": True}, "chosen_value_per_share": {"type": "number", "optional": True}, "joint_protection_price_ceiling": {"type": "number", "description": "仅可等于同口径重置价值与EPV各自保守下限的较低者；不可比或重置组件未完整定界时省略", "optional": True}, "decision_rule": {"type": "string"}, "divergence_explanation": {"type": "string"}, "decision_entry_id": {"type": "string", "optional": True}}, "required": ["action", "decision_rule", "divergence_explanation"]},
-        "value_bridge_inputs": {"type": "object", "description": "新报告的canonical价值桥输入；schema_version=valuation-value-bridges-input.v1。每一个数值operand（包括0、股数、汇率和区间端点）必须在canonical_fact_bindings中按精确path绑定当前VERIFIED OBS:/CALC:；模型自称verified或自由OBS字符串不构成证据。cash_accessibility、working_capital、replacement_value分别使用其canonical模型；需要在读者报告展示税费后普通股分配时，ordinary_distribution只提交正常化收益、分配率、税费/收取摩擦率和固定收取成本，禁止提交计算结果。框架确定性生成numeric claim、每股值、单位换算和reader slot，禁止手算或重抄结果。", "properties": {
+        "value_bridge_inputs": {"type": "object", "description": "新报告的canonical价值桥输入；schema_version=valuation-value-bridges-input.v1。每一个数值operand（包括0、股数、汇率和区间端点）必须在canonical_fact_bindings中按精确path绑定当前VERIFIED OBS:/CALC:；模型自称verified或自由OBS字符串不构成证据。cash_accessibility、working_capital、replacement_value分别使用其canonical模型；COMPANY_ANALYSIS 的 replacement_value.model_input.model_context 必须填写 valuation_archetype_id 与 valuation_archetype_version，并且只能使用当前 valuation_route 中 REPLACEMENT_VALUE 所声明的版本。卡片只规定所需经营能力、证据和重叠边界，不能提供公司金额、比例或自动结论。需要在读者报告展示税费后普通股分配时，ordinary_distribution只提交正常化收益、分配率、税费/收取摩擦率和固定收取成本，禁止提交计算结果。框架确定性生成numeric claim、每股值、单位换算和reader slot，禁止手算或重抄结果。", "properties": {
             "canonical_fact_bindings": {"type": "array", "items": {"type": "object", "properties": {"path": {"type": "string", "description": "例如ordinary_distribution.model_input.fixed_collection_cost"}, "evidence_id": {"type": "string", "description": "当前VERIFIED OBS:或CALC:；须位于该operand自身或祖先对象声明的证据引用中"}}, "required": ["path", "evidence_id"]}},
             "schema_version": {"type": "string"},
             "cash_accessibility": {"type": "object", "properties": {"model_input": {"type": "object"}, "valuation_context": {"type": "object", "properties": {"company_id": {"type": "string"}, "operating_model_id": {"type": "string"}, "position_as_of": {"type": "string"}, "ordinary_share_claim_scope": {"type": "string"}, "valuation_currency": {"type": "string"}, "fx_source_per_valuation_currency": {"type": "number"}, "shares": {"type": "number"}, "source_fact_ids": {"type": "array", "items": {"type": "string"}, "description": "股数与汇率的当前VERIFIED OBS:/CALC:来源；启用事实绑定时必填"}}, "required": ["company_id", "operating_model_id", "position_as_of", "ordinary_share_claim_scope", "valuation_currency", "fx_source_per_valuation_currency", "shares"]}}, "required": ["model_input", "valuation_context"]},
@@ -4499,6 +4505,8 @@ write_judgment_review._tool_meta = {
             }, "required": ["state", "basis"]}
             for key in ["question_selection", "differentiation", "evidence_discrimination", "valuation_transmission", "action_relevance", "operating_transmission", "monitoring_relevance"]
         }},
+        "valuation_evidence_roles": {"type": "array", "items": {"type": "string"}, "description": "仅当这条官方原始事实直接支持持续经营重置模型的某个能力证据角色时填写；角色必须是大写 card role，不能用成本事实冒充客户簿、留存或重建时间。"},
+        "valuation_exclusion_destinations": {"type": "array", "items": {"type": "string", "enum": ["OTHER_REPLACEMENT_COMPONENT", "BALANCE_SHEET_WORKING_CAPITAL", "EPV_MAINTENANCE_NEED"]}, "description": "仅当该官方原始事实直接证明重置组件已由指定价值目的地承接时填写；不能用一般成本或余额事实声明排除。"},
         "reviewer_limits": {"type": "array", "items": {"type": "string"}}
     }
 }  # type: ignore[attr-defined]

@@ -296,7 +296,7 @@ def build_company_archetype(
 
 def _route_model(model_id: str, role: str, registry: dict[str, Any], spec: dict[str, Any]) -> dict[str, Any]:
     model = registry["models"][model_id]
-    return {
+    route_model = {
         "route_model_id": model_id, "model_type": model["model_type"], "role": role,
         "value_scope": model["value_scope"], "cash_flow_scope": model["cash_flow_scope"],
         "discount_rate_kind": model["discount_rate_kind"], "independence_group": model["independence_group"],
@@ -304,6 +304,14 @@ def _route_model(model_id: str, role: str, registry: dict[str, Any], spec: dict[
         "use": "决策主锚" if role == "primary" else "独立边界校验" if role == "corroborative" else "下行或口径压力测试",
         "required_conditions": list(spec.get("research_requirements") or []),
     }
+    if model_id == "REPLACEMENT_VALUE":
+        route_model["valuation_archetype_id"] = str(
+            spec.get("replacement_archetype_id") or ""
+        )
+        route_model["valuation_archetype_version"] = str(
+            spec.get("replacement_archetype_version") or ""
+        )
+    return route_model
 
 
 def validate_valuation_route(
@@ -343,6 +351,21 @@ def validate_valuation_route(
         for field in ("model_type", "value_scope", "cash_flow_scope", "discount_rate_kind", "independence_group"):
             if item.get(field) != canonical.get(field):
                 invalid.append(model_id + ":basis_drift:" + field)
+        if model_id == "REPLACEMENT_VALUE":
+            expected_id = str(spec.get("replacement_archetype_id") or "")
+            expected_version = str(spec.get("replacement_archetype_version") or "")
+            if not expected_id or not expected_version:
+                invalid.append("replacement_value:valuation_archetype_missing_in_route_spec")
+            elif (
+                item.get("valuation_archetype_id") != expected_id
+                or item.get("valuation_archetype_version") != expected_version
+            ):
+                invalid.append("replacement_value:valuation_archetype_route_mismatch")
+        elif (
+            item.get("valuation_archetype_id") is not None
+            or item.get("valuation_archetype_version") is not None
+        ):
+            invalid.append(model_id + ":unexpected_valuation_archetype")
         if not item.get("fragilities") or not item.get("required_conditions"):
             incomplete.append(model_id + ":fragility_or_conditions_missing")
     binding = payload.get("underwriting_route_binding")

@@ -25,6 +25,12 @@ STATUSES = {"CANDIDATE", "VERIFIED", "REJECTED", "CONFLICT"}
 OFFICIAL_DOCUMENT_AUTHORITIES = {
     "issuer", "audited_filing", "company_filing", "official_statistics", "other_official",
 }
+_VALUATION_EVIDENCE_ROLE_RE = re.compile(r"[A-Z][A-Z0-9_]*")
+_VALUATION_EXCLUSION_DESTINATIONS = {
+    "OTHER_REPLACEMENT_COMPONENT",
+    "BALANCE_SHEET_WORKING_CAPITAL",
+    "EPV_MAINTENANCE_NEED",
+}
 
 
 def _now() -> str:
@@ -50,6 +56,13 @@ def make_observation_id(observation: dict[str, Any]) -> str:
         "fact_name": observation.get("fact_name"),
         "normalized_value": _normalized_identity_value(observation.get("normalized_value")),
         "measurement_context": observation.get("measurement_context"),
+        "valuation_evidence_roles": sorted(
+            str(item) for item in observation.get("valuation_evidence_roles") or []
+        ),
+        "valuation_exclusion_destinations": sorted(
+            str(item)
+            for item in observation.get("valuation_exclusion_destinations") or []
+        ),
     }
     return "OBS:" + _payload_hash(identity)[:20]
 
@@ -745,6 +758,35 @@ def validate_fact_observations(
         counts[status] += 1
         if status not in STATUSES:
             invalid.append(f"{observation_id or prefix}:status_invalid")
+        valuation_roles = item.get("valuation_evidence_roles")
+        if valuation_roles is not None:
+            if (
+                not isinstance(valuation_roles, list)
+                or not valuation_roles
+                or any(
+                    not isinstance(role, str)
+                    or not _VALUATION_EVIDENCE_ROLE_RE.fullmatch(role)
+                    for role in valuation_roles
+                )
+                or len(valuation_roles) != len(set(valuation_roles))
+            ):
+                invalid.append(
+                    f"{observation_id or prefix}:valuation_evidence_roles_invalid"
+                )
+        exclusion_destinations = item.get("valuation_exclusion_destinations")
+        if exclusion_destinations is not None:
+            if (
+                not isinstance(exclusion_destinations, list)
+                or not exclusion_destinations
+                or any(
+                    destination not in _VALUATION_EXCLUSION_DESTINATIONS
+                    for destination in exclusion_destinations
+                )
+                or len(exclusion_destinations) != len(set(exclusion_destinations))
+            ):
+                invalid.append(
+                    f"{observation_id or prefix}:valuation_exclusion_destinations_invalid"
+                )
         measurement_context = item.get("measurement_context")
         if measurement_context is not None:
             if not isinstance(measurement_context, dict):
@@ -879,6 +921,8 @@ def verify_fact_from_quote(
     quote: str,
     currency: str | None = None,
     measurement_context: dict[str, Any] | None = None,
+    valuation_evidence_roles: list[str] | None = None,
+    valuation_exclusion_destinations: list[str] | None = None,
 ) -> dict[str, Any]:
     """Programmatically promote an exact page quote to VERIFIED evidence."""
     output = Path(output_dir)
@@ -943,6 +987,32 @@ def verify_fact_from_quote(
         }:
             return {"verified": False, "error": "measurement_context_loss_treatment_invalid"}
         observation["measurement_context"] = deepcopy(measurement_context)
+    if valuation_evidence_roles is not None:
+        if (
+            not valuation_evidence_roles
+            or any(
+                not isinstance(role, str)
+                or not _VALUATION_EVIDENCE_ROLE_RE.fullmatch(role)
+                for role in valuation_evidence_roles
+            )
+            or len(valuation_evidence_roles) != len(set(valuation_evidence_roles))
+        ):
+            return {"verified": False, "error": "valuation_evidence_roles_invalid"}
+        observation["valuation_evidence_roles"] = sorted(valuation_evidence_roles)
+    if valuation_exclusion_destinations is not None:
+        if (
+            not valuation_exclusion_destinations
+            or any(
+                destination not in _VALUATION_EXCLUSION_DESTINATIONS
+                for destination in valuation_exclusion_destinations
+            )
+            or len(valuation_exclusion_destinations)
+            != len(set(valuation_exclusion_destinations))
+        ):
+            return {"verified": False, "error": "valuation_exclusion_destinations_invalid"}
+        observation["valuation_exclusion_destinations"] = sorted(
+            valuation_exclusion_destinations
+        )
     if not observation["fact_name"] or not observation["domain"] or not observation["unit"] or not observation["basis"]:
         return {"verified": False, "error": "required_identity_field_missing"}
     observation["observation_id"] = make_observation_id(observation)

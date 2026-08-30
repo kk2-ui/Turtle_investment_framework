@@ -14,6 +14,7 @@ from scripts.replacement_value_model import (
     project_replacement_value_reader_conclusions,
     validate_replacement_value_model,
 )
+from scripts.valuation_archetypes import resolve_valuation_archetype
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -46,6 +47,23 @@ def _uncertainty() -> dict:
     }
 
 
+def _role_bindings(component_type: str, source_fact_id: str | None = None) -> list[dict]:
+    card = resolve_valuation_archetype("property_service", "v1")
+    spec = next(
+        item for item in card["required_component_specs"]
+        if item["component_type"] == component_type
+    )
+    return [
+        {
+            "role": role,
+            "source_fact_ids": [
+                source_fact_id or f"OBS:{component_type}:{role}"
+            ],
+        }
+        for role in spec["required_evidence_roles"]
+    ]
+
+
 def _base_model() -> dict:
     unit = "RMB_m"
     return {
@@ -54,6 +72,8 @@ def _base_model() -> dict:
         "company_id": "TEST-PROPERTY-SERVICE",
         "model_context": {
             "purpose": "COMPANY_ANALYSIS",
+            "valuation_archetype_id": "property_service",
+            "valuation_archetype_version": "v1",
             "parameter_transfer_policy": "COMPANY_SPECIFIC_EVIDENCE_ONLY",
         },
         "basis": {
@@ -82,6 +102,7 @@ def _base_model() -> dict:
                     "method": "FULL",
                     "reason": "Verified acquisition and retention evidence bounds the rebuild cost.",
                 },
+                "evidence_role_bindings": _role_bindings("CUSTOMER_RELATIONSHIP"),
             },
             {
                 "component_id": "regional-organization",
@@ -129,7 +150,12 @@ def _base_model() -> dict:
                     "fraction_low": 0.50,
                     "fraction_high": 0.75,
                     "reason": "Only the evidenced qualification benefit is recognized.",
+                    "source_fact_ids": [
+                        "OBS:delivery-record-recognition-low",
+                        "OBS:delivery-record-recognition-high",
+                    ],
                 },
+                "evidence_role_bindings": _role_bindings("FULFILLMENT_OR_PROJECT_TRACK_RECORD"),
             },
             {
                 "component_id": "startup-working-capital",
@@ -145,6 +171,11 @@ def _base_model() -> dict:
                     "status": "EXCLUDED",
                     "method": "NOT_APPLICABLE",
                     "reason": "The submitted amount is already represented in balance-sheet working capital.",
+                },
+                "exclusion_treatment": {
+                    "destination": "BALANCE_SHEET_WORKING_CAPITAL",
+                    "source_fact_ids": ["OBS:STARTUP-WORKING-CAPITAL:DESTINATION"],
+                    "reason": "Verified stock-flow evidence places the same launch funding in balance-sheet working capital.",
                 },
                 "double_count_treatment": {
                     "balance_sheet_working_capital": "ALREADY_INCLUDED_EXCLUDED",
@@ -170,6 +201,7 @@ def _base_model() -> dict:
                     "method": "FULL",
                     "reason": "The inputs cover distinct functional assets.",
                 },
+                "evidence_role_bindings": _role_bindings("OTHER_FUNCTIONAL_ASSET"),
             },
         ],
         "claims_bridge": {
@@ -179,6 +211,14 @@ def _base_model() -> dict:
             "other_priority_claims": {"range_low": 0, "range_high": 5},
             "other_adjustments": {"range_low": -5, "range_high": 0},
             "shares_outstanding": 100,
+            "source_fact_ids": [
+                "OBS:claims-bridge-non-operating-assets",
+                "OBS:claims-bridge-debt",
+                "OBS:claims-bridge-minority-interest",
+                "OBS:claims-bridge-other-priority-claims",
+                "OBS:claims-bridge-other-adjustments",
+                "OBS:claims-bridge-shares",
+            ],
         },
         "liquidation_floor_reference": {
             "status": "AVAILABLE",
@@ -189,6 +229,10 @@ def _base_model() -> dict:
             "per_share_low": 0.30,
             "per_share_high": 0.50,
             "use": LIQUIDATION_USE,
+            "source_fact_ids": [
+                "OBS:liquidation-floor-low",
+                "OBS:liquidation-floor-high",
+            ],
         },
         "epv_cross_check": {
             "status": "COMPARABLE",
@@ -206,6 +250,13 @@ def _base_model() -> dict:
             "per_share_low": 0.80,
             "per_share_high": 1.60,
             "synthesis_rule": SYNTHESIS_RULE,
+            "source_fact_ids": [
+                "CALC:epv-equity-low",
+                "CALC:epv-equity-high",
+                "OBS:claims-bridge-shares",
+                "CALC:epv-per-share-low",
+                "CALC:epv-per-share-high",
+            ],
         },
     }
 
@@ -225,6 +276,7 @@ def _complete_model() -> dict:
             "method": "FULL",
             "reason": "Verified hiring and ramp evidence bounds the regional rebuild cost.",
         },
+        "evidence_role_bindings": _role_bindings("REGIONAL_OPERATING_ORGANIZATION"),
     })
     regional.pop("uncertainty_treatment", None)
     channel = payload["components"][2]
@@ -234,6 +286,7 @@ def _complete_model() -> dict:
         "method": "FULL",
         "reason": "Verified channel rebuild evidence bounds the range.",
     }
+    channel["evidence_role_bindings"] = _role_bindings("CUSTOMER_ACQUISITION_CHANNEL")
     channel.pop("uncertainty_treatment", None)
     startup = payload["components"][4]
     startup["recognition"] = {
@@ -241,6 +294,8 @@ def _complete_model() -> dict:
         "method": "FULL",
         "reason": "The startup capital is not present in another value destination.",
     }
+    startup["evidence_role_bindings"] = _role_bindings("PROJECT_STARTUP_WORKING_CAPITAL")
+    startup.pop("exclusion_treatment", None)
     startup["double_count_treatment"] = {
         "balance_sheet_working_capital": "NOT_INCLUDED",
         "epv_maintenance_need": "NOT_INCLUDED",
@@ -315,6 +370,7 @@ def _magna_method_fixture() -> dict:
             "other_priority_claims": {"range_low": 0, "range_high": 0},
             "other_adjustments": {"range_low": 0, "range_high": 0},
             "shares_outstanding": 100,
+            "source_fact_ids": ["METHOD:MAGNA:CLAIMS"],
         },
         "liquidation_floor_reference": {
             "status": "UNAVAILABLE",
@@ -329,10 +385,54 @@ def _magna_method_fixture() -> dict:
     }
 
 
-def test_schema_exposes_exact_six_component_classes() -> None:
+def test_schema_defers_component_classes_to_the_versioned_valuation_archetype() -> None:
     schema = json.loads((ROOT / "schemas/replacement_value_model.schema.json").read_text())
-    assert set(schema["$defs"]["component"]["properties"]["component_type"]["enum"]) == COMPONENT_TYPES
+    assert schema["$defs"]["component"]["properties"]["component_type"] == {
+        "type": "string",
+        "pattern": "^[A-Z][A-Z0-9_]*$",
+    }
+    assert COMPONENT_TYPES == {
+        "CUSTOMER_RELATIONSHIP",
+        "REGIONAL_OPERATING_ORGANIZATION",
+        "CUSTOMER_ACQUISITION_CHANNEL",
+        "FULFILLMENT_OR_PROJECT_TRACK_RECORD",
+        "PROJECT_STARTUP_WORKING_CAPITAL",
+        "OTHER_FUNCTIONAL_ASSET",
+    }
     assert schema["additionalProperties"] is False
+
+
+def test_company_model_consumes_component_types_from_its_resolved_card(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    payload = _base_model()
+    payload["model_context"].update(
+        {
+            "valuation_archetype_id": "industrial_service",
+            "valuation_archetype_version": "v1",
+        }
+    )
+    payload["components"][0]["component_type"] = "PROCESS_QUALIFICATION"
+
+    alternative = resolve_valuation_archetype("property_service", "v1")
+    alternative.update(
+        {
+            "card_id": "VALUATION_ARCHETYPE:industrial_service:v1",
+            "archetype_id": "industrial_service",
+            "version": "v1",
+        }
+    )
+    alternative["required_component_specs"][0]["component_type"] = (
+        "PROCESS_QUALIFICATION"
+    )
+
+    def _resolve(archetype_id: str, version: str | None = None) -> dict:
+        assert (archetype_id, version) == ("industrial_service", "v1")
+        return deepcopy(alternative)
+
+    monkeypatch.setattr("scripts.valuation_archetypes.resolve_valuation_archetype", _resolve)
+
+    assert validate_replacement_value_model(payload)["state"] == "REVIEWABLE"
 
 
 def test_partial_model_preserves_component_anchors_without_fake_per_share_range() -> None:
@@ -347,9 +447,35 @@ def test_partial_model_preserves_component_anchors_without_fake_per_share_range(
     assert result["epv_cross_check"]["status"] == "COMPARABLE"
     assert result["epv_cross_check"]["relationship"] == "REPLACEMENT_SCOPE_INCOMPLETE"
     assert result["epv_cross_check"]["synthesis_rule"] == SYNTHESIS_RULE
+    delivery_record = next(
+        item for item in result["component_results"] if item["component_id"] == "delivery-record"
+    )
+    assert delivery_record["recognition_source_fact_ids"] == [
+        "OBS:delivery-record-recognition-low",
+        "OBS:delivery-record-recognition-high",
+    ]
+    assert result["claims_bridge"]["source_fact_ids"] == [
+        "OBS:claims-bridge-non-operating-assets",
+        "OBS:claims-bridge-debt",
+        "OBS:claims-bridge-minority-interest",
+        "OBS:claims-bridge-other-priority-claims",
+        "OBS:claims-bridge-other-adjustments",
+        "OBS:claims-bridge-shares",
+    ]
+    assert result["epv_cross_check"]["source_fact_ids"] == [
+        "CALC:epv-equity-low",
+        "CALC:epv-equity-high",
+        "OBS:claims-bridge-shares",
+        "CALC:epv-per-share-low",
+        "CALC:epv-per-share-high",
+    ]
     assert result["economic_conclusion"] == {
         "replacement_value_role": "GOING_CONCERN_REPLACEMENT_RANGE",
-        "recognized_scope": "PARTIAL_RECOGNIZED_COMPONENTS",
+            "recognized_scope": "PARTIAL_RECOGNIZED_REQUIRED_COMPONENTS",
+        "unresolved_required_component_ids": [
+            "regional-organization",
+            "acquisition-channel",
+        ],
         "replacement_range_status": "INCOMPLETE",
         "claims_bridge_status": "NOT_APPLIED_TO_INCOMPLETE_REPLACEMENT_SCOPE",
         "epv_comparability": "COMPARABLE",
@@ -386,6 +512,12 @@ def test_resolved_already_included_component_is_zero_increment_not_unknown_scope
         "status": "EXCLUDED",
         "method": "NOT_APPLICABLE",
         "reason": "The startup capital is already represented in balance-sheet working capital.",
+    }
+    startup.pop("evidence_role_bindings", None)
+    startup["exclusion_treatment"] = {
+        "destination": "BALANCE_SHEET_WORKING_CAPITAL",
+        "source_fact_ids": ["OBS:STARTUP-WORKING-CAPITAL:DESTINATION"],
+        "reason": "Verified stock-flow evidence puts the same cash sequence in balance-sheet working capital.",
     }
     startup["double_count_treatment"] = {
         "balance_sheet_working_capital": "ALREADY_INCLUDED_EXCLUDED",
@@ -441,6 +573,110 @@ def test_project_startup_working_capital_requires_explicit_nonduplicative_treatm
     assert "startup-working-capital:already_included_working_capital_must_be_excluded" in findings
 
 
+def test_recognized_component_requires_each_card_evidence_role_with_current_sources() -> None:
+    missing_role = _complete_model()
+    customer = missing_role["components"][0]
+    customer["evidence_role_bindings"] = customer["evidence_role_bindings"][1:]
+
+    findings = validate_replacement_value_model(missing_role)["findings"]
+
+    assert (
+        "customer-relationships:evidence_role_binding_missing_required_role:"
+        "CONTRACT_POPULATION_OR_CUSTOMER_BOOK"
+    ) in findings
+
+    stale_source = _complete_model()
+    stale_source["components"][0]["evidence_role_bindings"][0]["source_fact_ids"] = [
+        "METHOD:NOT-A-CURRENT-FACT"
+    ]
+    findings = validate_replacement_value_model(stale_source)["findings"]
+
+    assert (
+        "customer-relationships:evidence_role_bindings[0]:"
+        "source_fact_ids_require_current_observation_or_calculation"
+    ) in findings
+
+
+def test_required_excluded_component_needs_card_permitted_source_bound_destination() -> None:
+    unproved = _complete_model()
+    channel = unproved["components"][2]
+    channel["recognition"] = {
+        "status": "EXCLUDED",
+        "method": "NOT_APPLICABLE",
+        "reason": "The channel is already represented by the customer book.",
+    }
+    channel.pop("evidence_role_bindings", None)
+    channel["exclusion_treatment"] = {
+        "destination": "OTHER_REPLACEMENT_COMPONENT",
+        "destination_component_type": "CUSTOMER_RELATIONSHIP",
+        "reason": "The customer-book component owns the same capability.",
+    }
+    findings = validate_replacement_value_model(unproved)["findings"]
+    assert "acquisition-channel:exclusion:source_fact_ids_missing" in findings
+
+    unrecognized_destination = _complete_model()
+    channel = unrecognized_destination["components"][2]
+    channel["recognition"] = {
+        "status": "EXCLUDED",
+        "method": "NOT_APPLICABLE",
+        "reason": "The channel is already represented by the customer book.",
+    }
+    channel.pop("evidence_role_bindings", None)
+    channel["exclusion_treatment"] = {
+        "destination": "OTHER_REPLACEMENT_COMPONENT",
+        "destination_component_type": "CUSTOMER_RELATIONSHIP",
+        "source_fact_ids": ["OBS:CHANNEL:DESTINATION"],
+        "reason": "A source-bound destination is named.",
+    }
+    customer_destination = unrecognized_destination["components"][0]
+    customer_destination["recognition"] = {
+        "status": "UNKNOWN",
+        "method": "NOT_APPLICABLE",
+        "reason": "The customer-book range can no longer be recognized.",
+    }
+    findings = validate_replacement_value_model(unrecognized_destination)["findings"]
+    assert (
+        "acquisition-channel:exclusion_destination_component_type_must_be_recognized"
+    ) in findings
+
+    unpermitted = _complete_model()
+    customer = unpermitted["components"][0]
+    customer["recognition"] = {
+        "status": "EXCLUDED",
+        "method": "NOT_APPLICABLE",
+        "reason": "Incorrectly remove the customer book from the replacement scope.",
+    }
+    customer.pop("evidence_role_bindings", None)
+    customer["exclusion_treatment"] = {
+        "destination": "OTHER_REPLACEMENT_COMPONENT",
+        "destination_component_type": "OTHER_FUNCTIONAL_ASSET",
+        "source_fact_ids": ["OBS:CUSTOMER-BOOK:DESTINATION"],
+        "reason": "An unsupported exclusion destination is claimed.",
+    }
+    findings = validate_replacement_value_model(unpermitted)["findings"]
+    assert "customer-relationships:exclusion_destination_not_allowed_by_valuation_archetype" in findings
+
+    unresolved_destination = _complete_model()
+    startup = unresolved_destination["components"][4]
+    startup["recognition"] = {
+        "status": "EXCLUDED",
+        "method": "NOT_APPLICABLE",
+        "reason": "The startup capital is asserted to be in working capital.",
+    }
+    startup.pop("evidence_role_bindings", None)
+    startup["exclusion_treatment"] = {
+        "destination": "BALANCE_SHEET_WORKING_CAPITAL",
+        "source_fact_ids": ["OBS:STARTUP-WORKING-CAPITAL:DESTINATION"],
+        "reason": "A destination is named but the double-count treatment does not affirm it.",
+    }
+    startup["double_count_treatment"]["balance_sheet_working_capital"] = "NOT_INCLUDED"
+    findings = validate_replacement_value_model(unresolved_destination)["findings"]
+    assert (
+        "startup-working-capital:exclusion_destination_not_affirmed_by_double_count_treatment:"
+        "BALANCE_SHEET_WORKING_CAPITAL"
+    ) in findings
+
+
 def test_liquidation_floor_is_a_separate_reference_and_never_changes_replacement_value() -> None:
     baseline = compute_replacement_value_model(_base_model())
     stressed = _base_model()
@@ -468,6 +704,28 @@ def test_epv_requires_same_scope_and_forbids_addition_or_average() -> None:
     smuggled["epv_cross_check"]["combined_value"] = 2.0
     findings = validate_replacement_value_model(smuggled)["findings"]
     assert "epv_cross_check:unknown_field:combined_value" in findings
+
+
+def test_fraction_claims_and_comparable_epv_require_declared_source_identities() -> None:
+    fraction_missing = _base_model()
+    del fraction_missing["components"][3]["recognition"]["source_fact_ids"]
+    findings = validate_replacement_value_model(fraction_missing)["findings"]
+    assert "delivery-record:recognition:source_fact_ids_missing" in findings
+
+    claims_missing = _base_model()
+    del claims_missing["claims_bridge"]["source_fact_ids"]
+    findings = validate_replacement_value_model(claims_missing)["findings"]
+    assert "claims_bridge:source_fact_ids_missing" in findings
+
+    liquidation_missing = _base_model()
+    del liquidation_missing["liquidation_floor_reference"]["source_fact_ids"]
+    findings = validate_replacement_value_model(liquidation_missing)["findings"]
+    assert "liquidation_floor_reference:source_fact_ids_missing" in findings
+
+    epv_missing = _base_model()
+    del epv_missing["epv_cross_check"]["source_fact_ids"]
+    findings = validate_replacement_value_model(epv_missing)["findings"]
+    assert "epv_cross_check:source_fact_ids_missing" in findings
 
 
 def test_reader_projection_uses_plain_economic_conclusions_and_preserves_boundaries() -> None:
