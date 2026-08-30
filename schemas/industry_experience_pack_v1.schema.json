@@ -136,7 +136,7 @@
         "shock": {"$ref": "#/$defs/nonempty"},
         "company_ids": {
           "type": "array",
-          "minItems": 2,
+          "minItems": 4,
           "uniqueItems": true,
           "items": {"$ref": "#/$defs/nonempty"}
         },

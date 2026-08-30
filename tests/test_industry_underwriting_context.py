@@ -4,6 +4,10 @@ import json
 from pathlib import Path
 
 import scripts.industry_underwriting_context as context
+from scripts.industry_context_acquisition import (
+    CATALOG_SCHEMA_VERSION,
+    materialize_official_context_package,
+)
 from scripts.industry_underwriting_context import (
     compile_industry_underwriting_context,
     validate_industry_underwriting_context,
@@ -42,6 +46,96 @@ def test_real_cement_block_compiles_peers_near_misses_epochs_and_evidence() -> N
     assert payload["candidate_main_paths"]
     assert payload["company_verification_fields"]
     assert payload["evidence_refs"]
+
+
+def test_cutoff_safe_official_observations_complete_cement_supply_regulation_and_profit_pool(
+    tmp_path: Path,
+) -> None:
+    source_url = "https://www.gov.cn/test/cement-policy.html"
+    source_package = materialize_official_context_package({
+        "schema_version": CATALOG_SCHEMA_VERSION,
+        "industry_id": "INDUSTRY:CN:CEMENT_LISTED",
+        "cutoff_at": "2018-04-30T23:59:59+08:00",
+        "sources": [{
+            "source_id": "INDDOC:GOV:CEMENT:POLICY",
+            "source_version": "2016-05-18-original-html",
+            "source_type": "OFFICIAL_INDUSTRY_CONTEXT",
+            "official": True,
+            "title": "Official cement supply policy",
+            "source_url": source_url,
+            "official_host": "www.gov.cn",
+            "published_at": "2016-05-18T00:00:00+08:00",
+            "data_as_of": "2016-05-18T00:00:00+08:00",
+            "content_representation": "ORIGINAL_HTML",
+            "package_path": "raw/official.html",
+            "use_policy": "CONTEXT_ONLY",
+            "coverage_ids": ["INDOBS:CN:CEMENT:SUPPLY", "INDOBS:CN:CEMENT:REGULATION"],
+            "permitted_inference": "Industry supply context.",
+            "prohibited_inference": ["Target-company benefit"],
+        }],
+    }, tmp_path, downloader=lambda url: (b"official cement context", url))
+    package_path = tmp_path / "source_package.json"
+    package_path.write_text(json.dumps(source_package), encoding="utf-8")
+    ledger_path = tmp_path / "official_observations.json"
+    observations = []
+    for suffix, driver, statement, effect in (
+        ("SUPPLY", "supply", "Policy constrained new clinker capacity and promoted peak shifting.", "SUPPLY_DISCIPLINE_SUPPORTED"),
+        ("REGULATION", "regulation", "Official policy required capacity reduction, consolidation, and peak shifting.", "POLICY_SUPPORTS_EFFECTIVE_SUPPLY_RESTRAINT"),
+    ):
+        observations.append({
+            "observation_id": f"INDOBS:CN:CEMENT:{suffix}",
+            "use_policy": "CONTEXT_ONLY",
+            "driver_type": driver,
+            "metric_definition": "Official cement supply policy",
+            "period": {"as_of": "2016-05-18"},
+            "value": {"status": "PUBLISHED"},
+            "statement": statement,
+            "economic_interpretation": "Supply discipline could lift price and profit without a demand boom.",
+            "profit_pool_effect": effect,
+            "source_locators": [{"source_id": "INDDOC:GOV:CEMENT:POLICY", "locator": "policy paragraph"}],
+            "permitted_inference": "Industry supply context.",
+            "prohibited_inference": ["Target-company benefit"],
+        })
+    ledger_path.write_text(json.dumps({
+        "schema_version": "official-industry-context-observation-ledger.v1",
+        "ledger_id": "INDOBS:CN:CEMENT:V1",
+        "industry_id": "INDUSTRY:CN:CEMENT_LISTED",
+        "cutoff_at": "2018-04-30T23:59:59+08:00",
+        "source_package_ref": "source_package.json",
+        "use_policy": "CONTEXT_ONLY",
+        "observations": observations,
+    }), encoding="utf-8")
+
+    payload = compile_industry_underwriting_context(
+        company={
+            "company_id": "CN:600585",
+            "company_name": "Anhui Conch Cement",
+            "industry_id": "INDUSTRY:CN:CEMENT_LISTED",
+            "cutoff_at": "2018-04-30T23:59:59+08:00",
+        },
+        industry_learning_blocks=[CEMENT_BLOCK],
+        official_industry_observations=[ledger_path],
+        competitive_arena=_read(CEMENT_ARENA),
+    )
+
+    assert payload["context_status"] == "READY"
+    assert payload["industry_drivers"]["supply"]
+    assert payload["industry_drivers"]["regulation"]
+    assert payload["profit_pool_outlook"]["direction"] != "UNRESOLVED"
+    assert any(
+        item["knowledge_status"] == "OFFICIAL_CONTEXT_OBSERVATION"
+        for item in payload["evidence_refs"]
+    )
+    assert any(
+        item["kind"] == "OFFICIAL_INDUSTRY_OBSERVATION"
+        and item["use_status"] == "INCLUDED"
+        for item in payload["source_objects"]
+    )
+    official_path = next(
+        item for item in payload["candidate_main_paths"]
+        if item["path_id"].endswith(":OFFICIAL_CONTEXT")
+    )
+    assert official_path["industry_regime"].startswith("Official cutoff context:")
 
 
 def test_v2_express_block_yields_value_chain_drivers_and_company_exposure() -> None:

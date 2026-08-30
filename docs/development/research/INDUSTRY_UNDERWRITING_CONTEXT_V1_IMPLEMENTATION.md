@@ -7,14 +7,16 @@ before company underwriting and Golden Report synthesis. It answers the
 practical context problem without putting whole IndustryLearningBlock files,
 the mechanism library, and every peer filing into one model prompt.
 
-It projects three existing sources:
+It projects four existing sources:
 
 1. `IndustryLearningBlock v1/v2`: epochs, mechanism arenas, archetypes,
    heterogeneous company conditions, peers, near misses, unresolved questions,
    and source pointers;
-2. `scripts/industry_knowledge.py`: matched mechanism cards and the company
+2. locator-backed official industry observation ledgers that have passed
+   `industry_context_acquisition.py` against an archived raw source package;
+3. `scripts/industry_knowledge.py`: matched mechanism cards and the company
    fields needed to test them, read through the existing public API;
-3. the company's competitive arena: customer task, product scope, overlap
+4. the company's competitive arena: customer task, product scope, overlap
    dimensions, exposure, and any explicitly recorded members.
 
 The projection does not write a new database, copy mechanism cards, create a
@@ -42,6 +44,10 @@ payload = compile_industry_underwriting_context(
         "docs/development/research/industry_learning_blocks/"
         "CN_CEMENT_2014_2018/04_industry_learning_block.json"
     ],
+    official_industry_observations=[
+        "docs/development/research/industry_learning_blocks/"
+        "CN_CEMENT_2014_2018/60_official_industry_context_observations_v1.json"
+    ],
     competitive_arena=arena_payload,
 )
 
@@ -55,6 +61,7 @@ compile_industry_underwriting_context(
     *,
     company: Mapping[str, Any],
     industry_learning_blocks: Iterable[Mapping[str, Any] | str | Path] = (),
+    official_industry_observations: Iterable[Mapping[str, Any] | str | Path] = (),
     competitive_arena: Mapping[str, Any] | None = None,
     industry_keys: Iterable[str] = (),
     mechanism_keys: Iterable[str] = (),
@@ -102,11 +109,13 @@ recorded arena overlap remains a `near_miss`; it is not discarded and is not
 misrepresented as a comparator.
 
 Driver grouping uses explicit categories when supplied and otherwise indexes
-the source text into demand, supply, competition, and regulation buckets. It
-does not infer a profit-pool direction. `profit_pool_outlook.direction` remains
-`UNRESOLVED` unless an input object makes a directional statement. The Golden
-Report synthesizer must form its own bounded industry judgment from current
-evidence rather than treating this read model as a conclusion.
+the source text into demand, supply, competition, and regulation buckets.
+Validated official observations contribute their declared, reviewable
+`profit_pool_effect` and economic interpretation; the compiler combines those
+bounded effects into the Context direction and adds an official-evidence
+candidate path. This is still a reference-class projection: the Golden Report
+synthesizer must form its own company-specific exposure and adaptation judgment
+from target-company evidence.
 
 ## 4. Sparse Context Is Non-Blocking
 
@@ -128,6 +137,7 @@ the company report.
   --company-name "Anhui Conch Cement" \
   --cutoff-at 2018-04-30T23:59:59+08:00 \
   --industry-block docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/04_industry_learning_block.json \
+  --official-industry-observation docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/60_official_industry_context_observations_v1.json \
   --competitive-arena docs/development/research/cohorts/COHORT_CN_CEMENT_LISTED_20180430_h1_static_package.json \
   --output industry_underwriting_context.json
 ```

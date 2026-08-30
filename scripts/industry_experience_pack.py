@@ -11,15 +11,19 @@ target-company judgment.
 from __future__ import annotations
 
 import argparse
-from datetime import datetime, timezone
+from datetime import date, datetime, timezone
 import json
 from pathlib import Path
 from typing import Any, Mapping
 
 try:
     from scripts.industry_underwriting_context import validate_industry_underwriting_context
+    from scripts.industry_context_acquisition import (
+        validate_official_context_observation_ledger,
+    )
 except ModuleNotFoundError:  # Direct ``python scripts/...`` execution.
     from industry_underwriting_context import validate_industry_underwriting_context
+    from industry_context_acquisition import validate_official_context_observation_ledger
 
 
 SCHEMA_VERSION = "industry-experience-pack.v1"
@@ -159,13 +163,75 @@ def _read_json(path: Path) -> dict[str, Any]:
     return _mapping(value)
 
 
+def _nested_ref_path(reference: Any, *, root: Path, source_path: Path) -> Path | None:
+    candidate = _path(reference, root=root)
+    if candidate is None or candidate.is_file() or Path(_text(reference)).is_absolute():
+        return candidate
+    return source_path.parent / Path(_text(reference).split("#", 1)[0]).expanduser()
+
+
+def _worked_case_company_ids(
+    payload: dict[str, Any], *, cutoff: datetime | None,
+) -> tuple[set[str], list[str]]:
+    """Admit company responses only from a cutoff-safe multi-company case."""
+    findings: list[str] = []
+    if payload.get("schema_version") != "turtle-pit-company-forecast-submission.v1":
+        findings.append("worked_case_schema_invalid")
+    case_cutoff = _instant(payload.get("cutoff_at"))
+    if case_cutoff is None:
+        findings.append("worked_case_cutoff_invalid")
+    elif cutoff is not None and case_cutoff > cutoff:
+        findings.append("worked_case_after_pack_cutoff")
+    companies = [_mapping(item) for item in _items(payload.get("companies"))]
+    if not companies:
+        findings.append("worked_case_companies_missing")
+    company_ids: set[str] = set()
+    cutoff_date = cutoff.date() if cutoff is not None else None
+    for index, company in enumerate(companies):
+        company_id = _text(company.get("company_id"))
+        prefix = f"worked_case_companies[{index}]"
+        if not company_id or company_id in company_ids:
+            findings.append(prefix + ".company_id_missing_or_duplicate")
+        else:
+            company_ids.add(company_id)
+        states = [_mapping(item) for item in _items(company.get("verified_cutoff_state"))]
+        if not states:
+            findings.append(prefix + ".verified_cutoff_state_missing")
+            continue
+        for state_index, state in enumerate(states):
+            state_prefix = f"{prefix}.verified_cutoff_state[{state_index}]"
+            if not _text(state.get("statement")):
+                findings.append(state_prefix + ".statement_missing")
+            evidence = [_mapping(item) for item in _items(state.get("evidence"))]
+            if not evidence:
+                findings.append(state_prefix + ".evidence_missing")
+                continue
+            for evidence_index, item in enumerate(evidence):
+                evidence_prefix = f"{state_prefix}.evidence[{evidence_index}]"
+                if not _text(item.get("source_id")):
+                    findings.append(evidence_prefix + ".source_id_missing")
+                if not (_text(item.get("pdf_page_ref")) or _text(item.get("field_ref"))):
+                    findings.append(evidence_prefix + ".locator_missing")
+                published = _text(item.get("publication_date"))
+                try:
+                    published_date = date.fromisoformat(published)
+                except ValueError:
+                    findings.append(evidence_prefix + ".publication_date_invalid")
+                else:
+                    if cutoff_date is not None and published_date > cutoff_date:
+                        findings.append(evidence_prefix + ".published_after_pack_cutoff")
+    return company_ids, findings
+
+
 def _source_validation(
     sources: list[Any], *, root: Path, industry_id: str, cutoff: datetime | None,
     findings: list[str], gaps: list[str],
-) -> tuple[set[str], set[str]]:
+) -> tuple[set[str], set[str], dict[str, str], dict[str, set[str]]]:
     object_ids: set[str] = set()
     kinds: set[str] = set()
     refs: set[str] = set()
+    admitted_source_kinds: dict[str, str] = {}
+    admitted_source_company_ids: dict[str, set[str]] = {}
     for index, raw in enumerate(sources):
         path = f"source_objects[{index}]"
         item = _closed(raw, SOURCE_FIELDS, path, findings)
@@ -193,47 +259,120 @@ def _source_validation(
                 findings.append(path + ".cutoff_safe_source_available_after_pack_cutoff")
         elif item.get("use_status") != "BOUNDARY_ONLY":
             findings.append(path + ".non_cutoff_source_must_be_boundary_only")
-        if (
+        maturity_candidate = (
             kind in SOURCE_KINDS
             and knowledge_role in {"CUTOFF_SAFE_EVIDENCE", "CUTOFF_SAFE_PROJECTION"}
             and item.get("use_status") == "INCLUDED"
-        ):
-            kinds.add(str(kind))
+            and available is not None
+            and (cutoff is None or available <= cutoff)
+        )
         if item.get("use_status") not in {"INCLUDED", "BOUNDARY_ONLY", "SUPERSEDED"}:
             findings.append(path + ".use_status_invalid")
         source_path = _path(ref, root=root)
         if source_path is None or not source_path.is_file():
             findings.append(path + ".ref_not_resolvable")
             continue
-        if kind not in {"INDUSTRY_LEARNING_BLOCK", "INDUSTRY_UNDERWRITING_CONTEXT"}:
-            continue
-        payload = _read_json(source_path)
-        if not payload:
-            findings.append(path + ".json_source_invalid")
-            continue
+        payload: dict[str, Any] = {}
+        company_ids_for_source: set[str] = set()
+        if kind in {
+            "INDUSTRY_LEARNING_BLOCK",
+            "INDUSTRY_UNDERWRITING_CONTEXT",
+            "OFFICIAL_INDUSTRY_OBSERVATION",
+        } or (kind == "WORKED_CASE" and maturity_candidate):
+            payload = _read_json(source_path)
+            if not payload:
+                findings.append(path + ".json_source_invalid")
+                maturity_candidate = False
         if kind == "INDUSTRY_LEARNING_BLOCK":
             if payload.get("schema_version") not in {
                 "industry-learning-block.v1", "industry-learning-block.v2",
             }:
                 findings.append(path + ".learning_block_schema_invalid")
+                maturity_candidate = False
             if payload.get("industry_id") != industry_id:
                 findings.append(path + ".learning_block_industry_mismatch")
+                maturity_candidate = False
             block_cutoffs = [_instant(item) for item in _items(payload.get("cutoffs"))]
             if cutoff is not None and any(item and item > cutoff for item in block_cutoffs):
                 findings.append(path + ".learning_block_after_pack_cutoff")
+                maturity_candidate = False
         elif kind == "INDUSTRY_UNDERWRITING_CONTEXT":
             result = validate_industry_underwriting_context(payload)
             if result["state"] != "REVIEWABLE":
                 findings.append(path + ".industry_context_invalid")
+                maturity_candidate = False
             context_cutoff = _instant(_mapping(payload.get("knowledge_time")).get("cutoff_at"))
             if cutoff is not None and context_cutoff is not None and context_cutoff > cutoff:
                 findings.append(path + ".industry_context_after_pack_cutoff")
+                maturity_candidate = False
             if payload.get("context_status") == "BOUNDED":
                 gaps.append("industry_context_is_bounded")
-    return kinds, refs
+        elif kind == "OFFICIAL_INDUSTRY_OBSERVATION":
+            if payload.get("industry_id") != industry_id:
+                findings.append(path + ".official_observation_industry_mismatch")
+                maturity_candidate = False
+            ledger_cutoff = _instant(payload.get("cutoff_at"))
+            if ledger_cutoff is None:
+                findings.append(path + ".official_observation_cutoff_invalid")
+                maturity_candidate = False
+            elif cutoff is not None and ledger_cutoff > cutoff:
+                findings.append(path + ".official_observation_after_pack_cutoff")
+                maturity_candidate = False
+            package_path = _nested_ref_path(
+                payload.get("source_package_ref"), root=root, source_path=source_path,
+            )
+            if package_path is None or not package_path.is_file():
+                findings.append(path + ".official_source_package_not_resolvable")
+                maturity_candidate = False
+            else:
+                package = _read_json(package_path)
+                result = validate_official_context_observation_ledger(
+                    payload,
+                    package,
+                    package_root=package_path.parent,
+                )
+                if result["state"] != "REVIEWABLE_CONTEXT_ONLY":
+                    findings.append(
+                        path
+                        + ".official_observation_invalid:"
+                        + ",".join([
+                            *result["invalid_findings"],
+                            *result["incomplete_findings"],
+                        ])
+                    )
+                    maturity_candidate = False
+        elif kind == "WORKED_CASE" and maturity_candidate:
+            company_ids_for_source, worked_findings = _worked_case_company_ids(
+                payload,
+                cutoff=cutoff,
+            )
+            if worked_findings:
+                findings.extend(path + "." + item for item in worked_findings)
+                maturity_candidate = False
+        if maturity_candidate:
+            kinds.add(str(kind))
+            admitted_source_kinds[ref] = str(kind)
+            if kind == "INDUSTRY_LEARNING_BLOCK":
+                company_records = [
+                    *_items(payload.get("company_archetype_map")),
+                    *_items(payload.get("members")),
+                ]
+                admitted_source_company_ids[ref] = {
+                    _text(_mapping(record).get("company_id") or _mapping(record).get("issuer_id"))
+                    for record in company_records
+                    if _text(_mapping(record).get("company_id") or _mapping(record).get("issuer_id"))
+                }
+            elif kind == "WORKED_CASE":
+                admitted_source_company_ids[ref] = company_ids_for_source
+    return kinds, refs, admitted_source_kinds, admitted_source_company_ids
 
 
-def _training_ready_gaps(value: dict[str, Any], kinds: set[str]) -> list[str]:
+def _training_ready_gaps(
+    value: dict[str, Any],
+    kinds: set[str],
+    admitted_source_kinds: Mapping[str, str],
+    admitted_source_company_ids: Mapping[str, set[str]],
+) -> list[str]:
     gaps: list[str] = []
     if "INDUSTRY_LEARNING_BLOCK" not in kinds:
         gaps.append("learning_block_missing")
@@ -266,8 +405,32 @@ def _training_ready_gaps(value: dict[str, Any], kinds: set[str]) -> list[str]:
     epochs = [_mapping(item) for item in _items(coverage.get("structural_epochs"))]
     if len({_text(item.get("epoch_id")) for item in epochs if _text(item.get("epoch_id"))}) < 2:
         gaps.append("two_structural_epochs_required")
-    if not _items(coverage.get("shared_shock_comparisons")):
+    shared_shocks = [_mapping(item) for item in _items(coverage.get("shared_shock_comparisons"))]
+    if not shared_shocks:
         gaps.append("shared_shock_comparison_missing")
+    else:
+        eligible_shared_shock = False
+        for item in shared_shocks:
+            shock_company_ids = set(_strings(item.get("company_ids")))
+            shock_refs = _strings(item.get("source_refs"))
+            shock_kinds = {admitted_source_kinds.get(ref) for ref in shock_refs}
+            worked_case_company_ids = {
+                company_id
+                for ref in shock_refs
+                if admitted_source_kinds.get(ref) == "WORKED_CASE"
+                for company_id in admitted_source_company_ids.get(ref, set())
+            }
+            company_evidence_bound = shock_company_ids <= worked_case_company_ids
+            if (
+                len(shock_company_ids) >= 4
+                and shock_company_ids <= company_ids
+                and "OFFICIAL_INDUSTRY_OBSERVATION" in shock_kinds
+                and company_evidence_bound
+            ):
+                eligible_shared_shock = True
+                break
+        if not eligible_shared_shock:
+            gaps.append("shared_shock_evidence_bundle_incomplete")
 
     settlement = _mapping(value.get("settlement_plan"))
     if not _items(settlement.get("industry_claims")):
@@ -335,7 +498,7 @@ def validate_industry_experience_pack(payload: Any, *, root: str | Path | None =
     sources = _items(value.get("source_objects"))
     if not sources:
         findings.append("pack.source_objects_missing")
-    kinds, source_refs = _source_validation(
+    kinds, source_refs, admitted_source_kinds, admitted_source_company_ids = _source_validation(
         sources,
         root=source_root,
         industry_id=_text(value.get("industry_id")),
@@ -363,6 +526,11 @@ def validate_industry_experience_pack(payload: Any, *, root: str | Path | None =
             findings.append("current_synthesis.source_ref_not_bound:" + ref)
 
     coverage = _closed(value.get("role_coverage"), ROLE_COVERAGE_FIELDS, "role_coverage", findings)
+    covered_company_ids = {
+        _text(_mapping(item).get("company_id"))
+        for item in _items(coverage.get("company_paths"))
+        if _text(_mapping(item).get("company_id"))
+    }
     for index, raw in enumerate(_items(coverage.get("company_paths"))):
         item = _closed(raw, COMPANY_PATH_FIELDS, f"role_coverage.company_paths[{index}]", findings)
         if not _text(item.get("company_id")) or not _text(item.get("archetype_id")):
@@ -391,8 +559,11 @@ def validate_industry_experience_pack(payload: Any, *, root: str | Path | None =
             raw, SHARED_SHOCK_FIELDS,
             f"role_coverage.shared_shock_comparisons[{index}]", findings,
         )
-        if len(set(_strings(item.get("company_ids")))) < 2:
-            findings.append(f"role_coverage.shared_shock_comparisons[{index}].requires_two_companies")
+        shared_company_ids = set(_strings(item.get("company_ids")))
+        if len(shared_company_ids) < 4:
+            findings.append(f"role_coverage.shared_shock_comparisons[{index}].requires_four_companies")
+        if not shared_company_ids <= covered_company_ids:
+            findings.append(f"role_coverage.shared_shock_comparisons[{index}].company_not_in_company_paths")
         if not _text(item.get("shock")) or not _text(item.get("discriminator")):
             findings.append(f"role_coverage.shared_shock_comparisons[{index}].judgment_missing")
         shock_refs = _strings(item.get("source_refs"))
@@ -460,7 +631,15 @@ def validate_industry_experience_pack(payload: Any, *, root: str | Path | None =
     if _mapping(value.get("boundary")) != BOUNDARY:
         findings.append("pack.boundary_must_preserve_non_authoritative_manifest_role")
 
-    training_gaps = list(dict.fromkeys([*gaps, *_training_ready_gaps(value, kinds)]))
+    training_gaps = list(dict.fromkeys([
+        *gaps,
+        *_training_ready_gaps(
+            value,
+            kinds,
+            admitted_source_kinds,
+            admitted_source_company_ids,
+        ),
+    ]))
     derived_state = _derived_state(value, training_gaps)
     if declared_state in MATURITY_ORDER and MATURITY_ORDER.index(declared_state) > MATURITY_ORDER.index(derived_state):
         findings.append("pack.declared_state_exceeds_evidence:" + derived_state)

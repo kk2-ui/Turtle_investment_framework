@@ -1,6 +1,6 @@
 # Goal: 企业承保课程二期 - 行业经验准备与独立 A/B 效用验证
 
-> 状态：`COURSE_2A_READY / COURSE_2B_WAITING_FOR_TRAINING_READY_PACK / METHOD_NOT_VALIDATED`
+> 状态：`COURSE_2A_COMPLETE / CEMENT_PACK_TRAINING_READY / COURSE_2B_READY_NOT_STARTED / METHOD_NOT_VALIDATED`
 >
 > 前置结论：[课程一期完成审计](ENTERPRISE_UNDERWRITING_COURSE_1_20260829/14_COURSE_1_COMPLETION_AUDIT.md)
 >
@@ -32,13 +32,15 @@ Pack 不复制事实，只引用现有 block、官方行业 observation、机制
 .venv/bin/python scripts/industry_experience_pack.py <pack.json>
 ```
 
-并由验证器派生为 `TRAINING_READY`，不得手工填写状态绕过缺口。水泥离线回放目前是合法 `DRAFT`：它证明多公司边界和 archetype 已存在，但缺少同 cutoff 的官方供需、价格、利用率和共同冲击下公司分化，不能直接启动 Course 2B。
+并由验证器派生为 `TRAINING_READY`，不得手工填写状态绕过缺口。水泥 V1 离线回放继续保留为合法 `DRAFT`；Course 2A 已在 V2 补入 cutoff-safe 工信部量价利润与过剩观察、国务院供给政策，以及五家公司共同冲击分化和责任边界。V2 Context 由编译器生成 `READY`，V2 Pack 由验证器派生为 `TRAINING_READY`。准备度审阅见 `../industry_learning_blocks/CN_CEMENT_2014_2018/64_industry_experience_training_ready_review.md`。
+
+本次只完成 Course 2A，不自动启动 Course 2B。后续必须另行激活未见公司/未见时期的认知隔离实验；`TRAINING_READY` 不能被表述为方法或 Agent 行业判断能力已验证。
 
 Course 2A 的进度不是公司或文件数量。每轮新增样本必须说明它要区分行业主路径与哪个反方、结果 A/B 分别如何改变 Pack，以及哪些判断不受影响。只增加同行、文字或字段而不改变判断和下一样本，不算完成。
 
 ## 3. Course 2B：实验对象与角色
 
-只有一个 Pack 达到 `TRAINING_READY` 后，Coordinator 才选择一家**未参与该 Pack 形成、未参加课程一期**、且与顺丰具有不同经济机制的公司和一个历史 cutoff。另预留一个 Pack 冻结后的未见时期。优先选择能同时呈现行业利润池、公司位置、资本/现金责任与竞争或客户响应的案例；不得为了容易结算而只选择单一财务字段。
+水泥 V2 已满足 Pack 准备门，但 Course 2B 尚未启动。后续 Goal 激活后，Coordinator 才选择一家**未参与该 Pack 形成、未参加课程一期**、且与顺丰具有不同经济机制的公司和一个历史 cutoff。另预留一个 Pack 冻结后的未见时期。优先选择能同时呈现行业利润池、公司位置、资本/现金责任与竞争或客户响应的案例；不得为了容易结算而只选择单一财务字段。
 
 Coordinator 向两臂提供同一份 cutoff-before 行业与公司一手资料包，并在两份 Episode 都冻结前封存行业结果和公司结果。资料包可以有局部缺口；缺口只限制相应主张，不取消全公司承保。Baseline 直接使用这些原始资料；Enhanced 额外读取由同一资料和冻结 Pack 编译出的 `IndustryUnderwritingContext`。Context 是待检验的方法输出，不是额外事实。
 

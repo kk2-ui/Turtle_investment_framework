@@ -72,6 +72,7 @@ G0 多黄金路线激活（COMPLETE）
   ↓
 G1 七个候选内容成熟与逐案接纳（IN_PROGRESS）
   └─ G1-J 复用已有案例资产并接入前瞻判断契约（当前内部前置门）
+  └─ G1-U Course 2A 水泥行业经验 Pack（TRAINING_READY / 2B NOT STARTED）
   ↓
 G1.5 格力行业经验工厂与双向层级试验（PLANNED）
   ↓
@@ -86,7 +87,7 @@ G5 公司轴 + 时间轴双holdout
 G6 Phase 08收口
 ```
 
-当前唯一阶段级 `IN_PROGRESS` 里程碑是G1；其当前内部前置门为G1-J。G1-J不重建已有书籍方法案例卡或基准率候选，而是把它们接入中心路径、可证伪判断和结果结算契约。G1.5虽已批准进入路线，但在G1完成、同行/时期预注册和PIT围栏具备之前不得启动24份报告生产。详细执行以 `GOLDEN_REPORT_BIDIRECTIONAL_RESEARCH_ROADMAP.md` 为准。
+当前唯一阶段级 `IN_PROGRESS` 里程碑是G1；其当前内部前置门为G1-J。G1-J不重建已有书籍方法案例卡或基准率候选，而是把它们接入中心路径、可证伪判断和结果结算契约。G1-U 的 Course 2A 已形成水泥 `TRAINING_READY` Pack，只完成行业经验上游资产；未见公司/未见时期 Course 2B、方法效用和能力结论均未启动。G1.5虽已批准进入路线，但在G1完成、同行/时期预注册和PIT围栏具备之前不得启动24份报告生产。详细执行以 `GOLDEN_REPORT_BIDIRECTIONAL_RESEARCH_ROADMAP.md` 为准。
 
 ## 5. Phase 09与年糕边界
 

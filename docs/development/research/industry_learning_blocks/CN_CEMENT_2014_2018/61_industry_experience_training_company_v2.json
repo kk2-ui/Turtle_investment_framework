@@ -1,0 +1,17 @@
+{
+  "company_id": "CN:600585",
+  "company_name": "Anhui Conch Cement",
+  "cutoff_at": "2018-04-30T23:59:59+08:00",
+  "knowledge_cutoff_at": "2018-04-30T23:59:59+08:00",
+  "industry_id": "INDUSTRY:CN:CEMENT_LISTED",
+  "industry_ids": ["INDUSTRY:CN:CEMENT_LISTED"],
+  "industry_keys": ["cement"],
+  "industry_horizon": "2018-2021 demand, effective supply, price discipline, and profit-pool durability",
+  "industry_profit_pool_direction": "PRICE_LED_EXPANSION_WITH_DURABILITY_CONSTRAINED_BY_OVERCAPACITY",
+  "industry_profit_pool_thesis": "截至 cutoff，需求量近乎横盘而价格、收入、利润和利润率同步恢复，新增熟料约束、错峰和重组提供有效供给纪律候选机制；但未解决过剩使恢复的跨周期耐久性仍需结算。",
+  "industry_thesis_confidence": "MEDIUM_HIGH_ON_RECOVERY_MEDIUM_LOW_ON_DURABILITY",
+  "industry_permanent_loss_implication": "若错峰退出、闲置产能复产或区域纪律失效，正常盈利会被重新压缩，新增或并购资本也可能成为低回报沉淀资产。",
+  "pit_mode": true,
+  "knowledge_mode": "PIT_EVIDENCE_ONLY",
+  "context_id": "IUC:CN:CEMENT_LISTED:CN600585:20180430:TRAINING:V2"
+}

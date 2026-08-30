@@ -1,10 +1,10 @@
 # Turtle 行业经验层 V1 设计
 
-> 状态：`IMPLEMENTED / MANIFEST_AND_VALIDATOR_AVAILABLE / CEMENT_REPLAY_DRAFT`
+> 状态：`IMPLEMENTED / CEMENT_PACK_TRAINING_READY / COURSE_2A_COMPLETE / COURSE_2B_NOT_STARTED`
 >
 > 目的：先把多公司、多时期的行业经验建成可迭代上游资产，再让公司训练样本调用、检验并反向修订它。
 >
-> 当前实现只增加版本化 manifest、验证器和离线回放；没有新增事实库，也没有把 Pack 接入正式训练 runtime。
+> 当前实现包含版本化 manifest、官方行业原始来源包、观察 ledger、Context 编译器和验证器；没有新增事实库，也没有把 Pack 接入正式训练 runtime。
 
 ## 1. 核心决定
 
@@ -110,7 +110,7 @@ Pack 只保存引用、综合、边界和版本变化，不复制底层事实全
 - 至少一条行业中心路径；
 - 至少一条不同经济结构的公司路径；
 - 至少一条失败、退出、困境或明确 near miss 路径；
-- 至少一组同一外部冲击下不同公司响应；
+- 至少一组同一外部冲击下不少于四家公司的不同响应或责任边界，并同时绑定官方行业观察与公司证据；
 - 至少两个结构时期或一个可结算的未来窗口；
 - 主判断、最强反方、break conditions 和结果测量来源均已冻结。
 
@@ -230,20 +230,25 @@ IE6  REPLICATE
 
 1. 五层职责与 Pack 成熟状态已经冻结在本文；
 2. `schemas/industry_experience_pack_v1.schema.json` 与 `scripts/industry_experience_pack.py` 已实现；
-3. 水泥离线回放已经验证引用、时间角色、版本边界和反馈方向；
-4. Course 2A 先修行业资料与共同冲击样本，使某一 Pack 达到 `TRAINING_READY`；
-5. 再把冻结 Pack/Context 接入正式训练合同；
-6. 最后运行新的公司轴和时间轴认知隔离 A/B。
+3. 水泥 V1 离线回放已经验证引用、时间角色、版本边界和反馈方向，并保留为 `DRAFT`；
+4. Course 2A 已通过可复用官方行业 acquisition、五家公司共同冲击比较和机械 Context 编译形成水泥 V2 `TRAINING_READY` Pack；
+5. 后续另行激活 Course 2B 时，再把冻结 Pack/Context 接入未见公司和未见时期的认知隔离合同；
+6. 只有双轴出现材料性效用，才讨论 `TRANSFER_CANDIDATE / RELEASED` 或能力形成。
 
 在 Pack 达到 `TRAINING_READY` 前，不修改正式训练 runtime，也不启动 Course 2B。
 
-## 11. 当前水泥回放裁决
+## 11. 当前水泥裁决
 
-水泥 `IEP:CN:CEMENT_LISTED:2014_2018:REPLAY:V1` 已通过结构验证，声明和派生状态均为 `DRAFT`。当前四项缺口为：
+水泥 V1 `IEP:CN:CEMENT_LISTED:2014_2018:REPLAY:V1` 继续保留为声明和派生状态均为 `DRAFT` 的历史判断。它准确记录了当时的四项缺口，不因后续证据而被覆盖。
 
-- `industry_context_is_bounded`；
-- `official_industry_observation_missing`；
-- `company_roles_missing:SHARED_SHOCK_DIVERGENCE`；
-- `shared_shock_comparison_missing`。
+水泥 V2 `IEP:CN:CEMENT_LISTED:2014_2018:TRAINING:V2` 已补入：
 
-这说明水泥资产已经建立多公司、时期、archetype 和 near miss 基础，但仍偏重责任边界与测量纪律，不能回答供需、竞争、价格、利用率和利润池未来。完整经济影响与修复条件见 `CN_CEMENT_2014_2018/57_industry_experience_replay_review.md`。
+- 工信部 2017 年上半年水泥产量、均价、收入、利润、利润率和过剩状态；
+- 国务院新增熟料约束、错峰、联合重组和集中度政策机制；
+- 海螺、天山、福建水泥的销量—利润—现金分化；
+- 华新并购和冀东重组的责任边界断点；
+- 重新编译的 `READY` Context、中心路径、最强反方、双层结算和下一样本决策。
+
+验证器对 V2 派生 `TRAINING_READY` 且缺口为空。当前最可信方向是需求量近乎横盘下的价格/供给纪律驱动利润池恢复，最强反方是低基数、阶段性错峰和未解决过剩令恢复不可持续。详细证据、公司分化和权限边界见 `CN_CEMENT_2014_2018/64_industry_experience_training_ready_review.md`。
+
+这完成的是 Course 2A 上游资产，不是 Agent 能力验证。Course 2B、公司轴效用、时间轴效用、`TRANSFER_CANDIDATE` 与 `RELEASED` 均未启动。

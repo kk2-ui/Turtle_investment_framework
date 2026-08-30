@@ -10,6 +10,7 @@ from scripts.industry_context_acquisition import (
     materialize_official_context_package,
     validate_official_context_catalog,
     validate_official_context_observation_ledger,
+    validate_official_context_source_package,
 )
 
 
@@ -34,7 +35,7 @@ def _catalog(**source_updates: object) -> dict:
     source.update(source_updates)
     return {
         "schema_version": CATALOG_SCHEMA_VERSION,
-        "company_code": "000651.SZ",
+        "industry_id": "INDUSTRY:CN:TEST",
         "cutoff_at": "2026-08-03T18:00:00+08:00",
         "sources": [source],
     }
@@ -53,6 +54,19 @@ def test_materialize_preserves_raw_response_and_context_only_boundary(tmp_path) 
     assert payload["use_policy"] == "CONTEXT_ONLY"
     assert payload["sources"][0]["materialization_status"] == "MATERIALIZED"
     assert (tmp_path / "nbs/test-2025.html").read_bytes() == b"<html>official original</html>"
+    assert validate_official_context_source_package(payload)["state"] == "REVIEWABLE"
+
+
+def test_source_package_rechecks_catalog_cutoff_identity(tmp_path) -> None:
+    package = materialize_official_context_package(
+        _catalog(), tmp_path, downloader=lambda url: (b"official original", url),
+    )
+    package["sources"][0]["published_at"] = "2026-09-01T10:00:00+08:00"
+
+    result = validate_official_context_source_package(package)
+
+    assert result["state"] == "INVALID"
+    assert "source_package:INDDOC:NBS:TEST:2025:published_after_cutoff" in result["invalid_findings"]
 
 
 def test_rejects_same_day_date_only_publication_at_cutoff() -> None:
@@ -97,19 +111,74 @@ def test_observation_ledger_requires_materialized_locator_and_context_only(tmp_p
     )
     ledger = {
         "schema_version": OBSERVATION_SCHEMA_VERSION,
+        "ledger_id": "INDOBS:CN:TEST:V1",
+        "industry_id": "INDUSTRY:CN:TEST",
+        "cutoff_at": "2026-08-03T18:00:00+08:00",
+        "source_package_ref": "source-package.json",
         "use_policy": "CONTEXT_ONLY",
         "observations": [{
             "observation_id": "INDCTX:NBS:TEST",
             "use_policy": "CONTEXT_ONLY",
+            "driver_type": "demand",
             "metric_definition": "全国行业环境指标。",
             "period": {"end": "2025-12-31"},
             "value": {"yoy_pct": 1.0},
+            "statement": "全国行业环境指标同比增长 1%。",
+            "economic_interpretation": "需求小幅增长。",
+            "profit_pool_effect": "DEMAND_SLIGHTLY_EXPANDS",
             "source_locators": [{"source_id": "INDDOC:NBS:TEST:2025", "locator": "HTML paragraph test"}],
             "permitted_inference": "背景。",
             "prohibited_inference": ["格力份额"],
         }],
     }
-    assert validate_official_context_observation_ledger(ledger, source_package)["state"] == "REVIEWABLE_CONTEXT_ONLY"
+    assert validate_official_context_observation_ledger(
+        ledger,
+        source_package,
+        package_root=tmp_path,
+    )["state"] == "REVIEWABLE_CONTEXT_ONLY"
     invalid = deepcopy(ledger)
     invalid["observations"][0]["source_locators"][0]["source_id"] = "MISSING"
-    assert "INDCTX:NBS:TEST:source_not_materialized" in validate_official_context_observation_ledger(invalid, source_package)["invalid_findings"]
+    assert "INDCTX:NBS:TEST:source_not_materialized" in validate_official_context_observation_ledger(
+        invalid,
+        source_package,
+        package_root=tmp_path,
+    )["invalid_findings"]
+
+
+def test_observation_ledger_rejects_missing_raw_file_and_industry_mismatch(tmp_path) -> None:
+    catalog = _catalog()
+    source_package = materialize_official_context_package(
+        catalog, tmp_path, downloader=lambda url: (b"official original", url),
+    )
+    raw_path = tmp_path / "nbs/test-2025.html"
+    raw_path.unlink()
+    ledger = {
+        "schema_version": OBSERVATION_SCHEMA_VERSION,
+        "ledger_id": "INDOBS:CN:TEST:V1",
+        "industry_id": "INDUSTRY:CN:OTHER",
+        "cutoff_at": "2026-08-03T18:00:00+08:00",
+        "source_package_ref": "source-package.json",
+        "use_policy": "CONTEXT_ONLY",
+        "observations": [{
+            "observation_id": "INDCTX:NBS:TEST",
+            "use_policy": "CONTEXT_ONLY",
+            "driver_type": "demand",
+            "metric_definition": "全国行业环境指标。",
+            "period": {"end": "2025-12-31"},
+            "value": {"yoy_pct": 1.0},
+            "statement": "全国行业环境指标同比增长 1%。",
+            "economic_interpretation": "需求小幅增长。",
+            "profit_pool_effect": "DEMAND_SLIGHTLY_EXPANDS",
+            "source_locators": [{"source_id": "INDDOC:NBS:TEST:2025", "locator": "HTML paragraph test"}],
+            "permitted_inference": "背景。",
+            "prohibited_inference": ["公司份额"],
+        }],
+    }
+    result = validate_official_context_observation_ledger(
+        ledger,
+        source_package,
+        package_root=tmp_path,
+    )
+    assert result["state"] == "INVALID"
+    assert "source_package_industry_mismatch" in result["invalid_findings"]
+    assert "INDDOC:NBS:TEST:2025:raw_source_file_missing" in result["invalid_findings"]

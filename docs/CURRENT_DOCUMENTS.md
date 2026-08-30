@@ -10,7 +10,7 @@
 
 当前企业判断、训练、估值与黄金报告的最高层对象改为[企业投资承保系统 V1](development/research/TURTLE_ENTERPRISE_UNDERWRITING_SYSTEM_V1.md)中的 `EnterpriseUnderwritingEpisode`。它把宏观/行业处境、周期与结构、公司位置和适应、生存、正常化、owner cash、永久损失、价值路线及价格处理连接成一条连续投资主张。
 
-现有八维 `EnterpriseJudgmentEpisode`、E0--E3、J0--J4、Forecast、Comparative 和各类 receipt 继续作为底层证据、局部反馈和兼容投影，不能再作为投资者可见的主流程或顶层进度。[企业投资承保纵向切片 V1 Goal](development/research/TURTLE_ENTERPRISE_UNDERWRITING_VERTICAL_SLICE_GOAL.md) 的 U1 与 kernel 接线已实现：Episode v2 内置 `IndustryFutureThesis`；唯一训练入口只认可完整 Episode；同一价格前主张可穿过 current-company CJO、Frozen CJO report handoff、valuation runtime 和现有经验 registry。海螺仍是 `RESULT_KNOWN_TEACHING_ONLY / WORKED_CASE`。课程一期已完成 12 个 worked case、4 个完整 Blind Replay 和一轮公平 A/B；其唯一认知隔离 A/B 为 `ENHANCED_WORSE`，故课程没有授予方法迁移、当前估值、BuyBand 或投资权限。当前下一步是由 fresh Agent 对新的异质公司执行公平 A/B，而不是扩展字段、receipt、当前 Agent self replay 或案例数量。完整状态以[课程完成审计](development/research/training_campaigns/ENTERPRISE_UNDERWRITING_COURSE_1_20260829/14_COURSE_1_COMPLETION_AUDIT.md)为准。
+现有八维 `EnterpriseJudgmentEpisode`、E0--E3、J0--J4、Forecast、Comparative 和各类 receipt 继续作为底层证据、局部反馈和兼容投影，不能再作为投资者可见的主流程或顶层进度。[企业投资承保纵向切片 V1 Goal](development/research/TURTLE_ENTERPRISE_UNDERWRITING_VERTICAL_SLICE_GOAL.md) 的 U1 与 kernel 接线已实现：Episode v2 内置 `IndustryFutureThesis`；唯一训练入口只认可完整 Episode；同一价格前主张可穿过 current-company CJO、Frozen CJO report handoff、valuation runtime 和现有经验 registry。海螺仍是 `RESULT_KNOWN_TEACHING_ONLY / WORKED_CASE`。课程一期已完成 12 个 worked case、4 个完整 Blind Replay 和一轮公平 A/B；其唯一认知隔离 A/B 为 `ENHANCED_WORSE`，故课程没有授予方法迁移、当前估值、BuyBand 或投资权限。Course 2A 的水泥行业经验资产现已达到 `TRAINING_READY`；Course 2B 具备上游前提但尚未启动，必须由后续独立 Goal 激活 fresh Agent 与 fresh reviewer。完整课程一期状态以[课程完成审计](development/research/training_campaigns/ENTERPRISE_UNDERWRITING_COURSE_1_20260829/14_COURSE_1_COMPLETION_AUDIT.md)为准。
 
 ## 2026-08-29 唯一训练集成基线
 
@@ -20,7 +20,7 @@
 
 行业前景训练改为明确的上游闭环：`IndustryLearningBlock -> Industry Experience Pack -> IndustryUnderwritingContext -> EnterpriseUnderwritingEpisode.IndustryFutureThesis`。Pack 是引用现有行业 block、官方 observation、机制、案例、反例和反馈的版本化 manifest，不是新事实库；公司结果只结算公司传导，行业方向必须由官方行业资料和多家公司共同结果结算。
 
-manifest schema 与机械验证器已经实现。水泥离线回放 Pack 为合法 `DRAFT`：已有五家公司、六个 cutoff、异质 archetype 和 near miss，但 Context 仍为 `BOUNDED`，缺少同 cutoff 官方行业 observation 及共同冲击下公司分化，因此不能进入能力 A/B。课程二期已拆为 Course 2A 行业经验准备和 Course 2B 未见公司/未见时期认知隔离验证；只有验证器派生为 `TRAINING_READY` 后才能启动 2B。当前状态以[行业经验层设计](development/research/TURTLE_INDUSTRY_EXPERIENCE_LAYER_V1_DESIGN.md)、[课程二期 Goal](development/research/training_campaigns/ENTERPRISE_UNDERWRITING_COURSE_2_INDEPENDENT_AB_GOAL.md)和[水泥回放审阅](development/research/industry_learning_blocks/CN_CEMENT_2014_2018/57_industry_experience_replay_review.md)为准。
+manifest schema、机械验证器和官方行业 acquisition 已经实现。水泥 V1 离线回放继续保留为合法 `DRAFT`；V2 已物化工信部 2017H1 量价利润与过剩页面、国务院新增产能/错峰/重组政策页面，并形成 locator-backed observation ledger。新的 Context 由编译器生成 `READY`；V2 Pack 把海螺、天山、福建水泥的经营分化和华新、冀东的责任边界绑定到同一行业冲击，验证器派生 `TRAINING_READY` 且缺口为空。中心路径是需求量近乎横盘下的价格/供给纪律驱动利润池恢复，最强反方是低基数、阶段性错峰和未解决过剩令恢复不可持续。Course 2A 已完成；Course 2B、公司轴/时间轴效用和 Agent 行业判断能力均未启动或验证。当前状态以[行业经验层设计](development/research/TURTLE_INDUSTRY_EXPERIENCE_LAYER_V1_DESIGN.md)、[课程二期 Goal](development/research/training_campaigns/ENTERPRISE_UNDERWRITING_COURSE_2_INDEPENDENT_AB_GOAL.md)和[水泥 V2 准备度审阅](development/research/industry_learning_blocks/CN_CEMENT_2014_2018/64_industry_experience_training_ready_review.md)为准。
 
 ## 2026-08-29 企业判断经验调用设计
 
@@ -111,6 +111,10 @@ V2 兼容状态是 `G1_CANDIDATE_MATURATION + G1-T_ENTERPRISE_JUDGMENT_V2 / REAL
 | `docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_COURSE_2_INDEPENDENT_AB_GOAL.md` | 课程二期唯一执行顺序：2A 先形成 TRAINING_READY 行业经验包，2B 再以未见公司和未见时期做同资料认知隔离 A/B |
 | `scripts/industry_experience_pack.py` | 验证 Pack 引用、时间角色、角色覆盖、行业/公司分层结算和公司轴/时间轴成熟状态；不采集或复制事实 |
 | `docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/56_industry_experience_pack_replay_v1.json` | 首个行业经验层离线回放；状态为 DRAFT，只验证工作流，不计能力 |
+| `docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/60_official_industry_context_observations_v1.json` | cutoff-safe 工信部/国务院行业观察 ledger；绑定已物化 raw package、经济解释和禁止外推边界 |
+| `docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/62_industry_underwriting_context_training_v2.json` | 由官方观察、多公司 block 和竞争 arena 编译的 `READY` 水泥 Context |
+| `docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/63_industry_experience_pack_training_v2.json` | Course 2A 水泥 V2 Pack；声明和派生均为 `TRAINING_READY`，不代表能力验证 |
+| `docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/64_industry_experience_training_ready_review.md` | 水泥 V2 行业方向、最强反方、五家公司异质响应、修复裁决和 Course 2B 停止点 |
 | `docs/development/research/TURTLE_TRAINING_SYSTEM_TOP_LEVEL_ARCHITECTURE.md` | V2 组件与 V3 映射：八维、IndustryLearningBlock、多维 EnterpriseJudgmentEpisode、局部证据/因果权限和 Investment Overlay 边界 |
 | `docs/development/research/TURTLE_ENTERPRISE_JUDGMENT_V2_REAL_TRAINING_GOAL.md` | J0/J1/J1A/J2 与 Rounds 5-8 真实反馈记录；八维已采用，Round 8 因责任边界和 mixed-clock 问题保持 architecture revision required |
 | `docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/08_investor_readout.md` | 首个真实水泥 V2 block 的投资者可读读出、feedback 与权限边界；底层 JSON 是该读出的可验证工件 |

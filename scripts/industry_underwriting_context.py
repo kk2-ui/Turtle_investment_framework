@@ -20,8 +20,12 @@ from typing import Any, Iterable, Mapping
 
 try:
     from scripts.industry_knowledge import read_industry_knowledge_context
+    from scripts.industry_context_acquisition import (
+        validate_official_context_observation_ledger,
+    )
 except ModuleNotFoundError:  # pragma: no cover - direct script execution
     from industry_knowledge import read_industry_knowledge_context
+    from industry_context_acquisition import validate_official_context_observation_ledger
 
 
 SCHEMA_VERSION = "industry-underwriting-context.v1"
@@ -133,6 +137,60 @@ def _load_input(
         "boundary": "Referenced source object remains canonical; this context is only a projection.",
     }
     return payload, source
+
+
+def _load_official_observation_input(
+    value: Mapping[str, Any] | str | Path,
+    *,
+    index: int,
+    warnings: list[str],
+) -> tuple[dict[str, Any], dict[str, Any]]:
+    ledger_path: Path | None = None
+    if isinstance(value, Mapping):
+        ledger = deepcopy(dict(value))
+        ledger_ref = _text(ledger.get("source_object_ref")) or f"INLINE:OFFICIAL_INDUSTRY_OBSERVATION:{index}"
+    else:
+        ledger_path = Path(value).expanduser()
+        if not ledger_path.is_absolute():
+            ledger_path = PROJECT_ROOT / ledger_path
+        ledger = _read_json(ledger_path)
+        ledger_ref = _relative_ref(ledger_path)
+    source = {
+        "kind": "OFFICIAL_INDUSTRY_OBSERVATION",
+        "ref": ledger_ref,
+        "schema_version": _text(ledger.get("schema_version")) or "UNSPECIFIED",
+        "use_status": "UNREADABLE",
+        "boundary": "Official observations supply cutoff-safe industry context only; they do not establish a target-company fact.",
+    }
+    if not ledger:
+        warnings.append(f"official_industry_observation_unreadable:{ledger_ref}")
+        return {}, source
+    package_ref = _text(ledger.get("source_package_ref"))
+    package_path = Path(package_ref).expanduser()
+    if not package_path.is_absolute():
+        project_candidate = PROJECT_ROOT / package_path
+        ledger_candidate = ledger_path.parent / package_path if ledger_path is not None else project_candidate
+        package_path = project_candidate if project_candidate.is_file() else ledger_candidate
+    source_package = _read_json(package_path)
+    validation = validate_official_context_observation_ledger(
+        ledger,
+        source_package,
+        package_root=package_path.parent,
+    )
+    if validation["state"] != "REVIEWABLE_CONTEXT_ONLY":
+        source["use_status"] = "EXCLUDED_INVALID"
+        warnings.append(
+            "official_industry_observation_invalid:"
+            + ledger_ref
+            + ":"
+            + ",".join([
+                *validation["invalid_findings"],
+                *validation["incomplete_findings"],
+            ])
+        )
+        return {}, source
+    source["use_status"] = "INCLUDED"
+    return ledger, source
 
 
 def _block_cutoff(block: Mapping[str, Any]) -> str:
@@ -492,6 +550,7 @@ def compile_industry_underwriting_context(
     *,
     company: Mapping[str, Any],
     industry_learning_blocks: Iterable[Mapping[str, Any] | str | Path] = (),
+    official_industry_observations: Iterable[Mapping[str, Any] | str | Path] = (),
     competitive_arena: Mapping[str, Any] | None = None,
     industry_keys: Iterable[str] = (),
     mechanism_keys: Iterable[str] = (),
@@ -511,6 +570,32 @@ def compile_industry_underwriting_context(
     excluded_future_refs: list[str] = []
     included_times: list[datetime] = []
     undated_source_refs: list[str] = []
+
+    official_ledgers: list[tuple[dict[str, Any], str]] = []
+    expected_industry_id = _text(company_value.get("industry_id"))
+    for index, source in enumerate(official_industry_observations):
+        ledger, source_object = _load_official_observation_input(
+            source,
+            index=index,
+            warnings=warnings,
+        )
+        ledger_time = _text(ledger.get("cutoff_at"))
+        if ledger and _is_future(ledger_time, knowledge_cutoff_time):
+            source_object["use_status"] = "EXCLUDED_FUTURE"
+            source_object["boundary"] = "The official observation ledger is later than the requested knowledge cutoff."
+            excluded_future_refs.append(source_object["ref"])
+        elif ledger and expected_industry_id and ledger.get("industry_id") != expected_industry_id:
+            source_object["use_status"] = "EXCLUDED_INDUSTRY_MISMATCH"
+            source_object["boundary"] = "The official observation ledger belongs to a different industry identity."
+            warnings.append("official_industry_observation_industry_mismatch:" + source_object["ref"])
+        elif ledger:
+            official_ledgers.append((ledger, source_object["ref"]))
+            parsed = _instant(ledger_time)
+            if parsed:
+                included_times.append(parsed)
+            else:
+                undated_source_refs.append(source_object["ref"])
+        source_objects.append(source_object)
 
     blocks: list[tuple[dict[str, Any], str]] = []
     for index, source in enumerate(industry_learning_blocks):
@@ -559,6 +644,65 @@ def compile_industry_underwriting_context(
     all_members: list[tuple[dict[str, Any], str, list[str]]] = []
     counter_candidates: list[tuple[str, str, list[str]]] = []
     industry_ids: list[str] = []
+    official_profit_pool_effects: list[str] = []
+    official_profit_pool_refs: list[str] = []
+    official_thesis_parts: list[str] = []
+    official_statements: list[str] = []
+    official_epoch_conditions: list[str] = []
+
+    for ledger, source_ref in official_ledgers:
+        industry_ids.extend(_strings([ledger.get("industry_id")]))
+        epoch_statements: list[str] = []
+        epoch_refs: list[str] = []
+        ledger_thesis_parts: list[str] = []
+        for observation in _items(ledger.get("observations")):
+            item = _mapping(observation)
+            observation_id = _text(item.get("observation_id"))
+            evidence_ref = _evidence_ref(
+                evidence_catalog,
+                observation_id,
+                source_object_ref=source_ref,
+                supports="OFFICIAL_INDUSTRY_" + _text(item.get("driver_type")).upper(),
+                knowledge_status="OFFICIAL_CONTEXT_OBSERVATION",
+            )
+            refs = [evidence_ref] if evidence_ref else []
+            statement = _text(item.get("statement") or item.get("metric_definition"))
+            interpretation = _text(item.get("economic_interpretation"))
+            effect = _text(item.get("profit_pool_effect")) or "TO_BE_UNDERWRITTEN"
+            if statement:
+                epoch_statements.append(statement)
+                official_statements.append(statement)
+                _add_driver(
+                    drivers,
+                    statement=statement,
+                    source_object_ref=source_ref,
+                    evidence_refs=refs,
+                    profit_pool_effect=effect,
+                    explicit_category=_text(item.get("driver_type")),
+                )
+            if interpretation:
+                ledger_thesis_parts.append(interpretation)
+                official_thesis_parts.append(interpretation)
+            if effect:
+                official_profit_pool_effects.append(effect)
+            official_profit_pool_refs.extend(refs)
+            epoch_refs.extend(refs)
+            rival = _text(item.get("rival_explanation"))
+            if rival:
+                counter_candidates.append((rival, source_ref, refs))
+        if epoch_statements:
+            epoch_condition = "Official cutoff context: " + "; ".join(
+                _unique(ledger_thesis_parts or epoch_statements)
+            )
+            official_epoch_conditions.append(epoch_condition)
+            structural_epochs.append({
+                "epoch_id": _text(ledger.get("epoch_id")) or f"EPOCH:OFFICIAL:{len(structural_epochs) + 1}",
+                "as_of": _text(ledger.get("cutoff_at")) or "UNSPECIFIED",
+                "condition": epoch_condition,
+                "observations": _unique(epoch_statements),
+                "evidence_refs": _unique(epoch_refs),
+                "source_object_ref": source_ref,
+            })
 
     for block, source_ref in blocks:
         industry_ids.extend(_strings([block.get("industry_id")]))
@@ -806,7 +950,7 @@ def compile_industry_underwriting_context(
     structural_epochs.sort(key=lambda item: _instant(item["as_of"]) or datetime.min.replace(tzinfo=timezone.utc))
     latest_epoch = structural_epochs[-1] if structural_epochs else {}
 
-    explicit_profit_pool = next(
+    explicit_profit_pool = _text(company_value.get("industry_profit_pool_direction")) or next(
         (
             _text(arena.get("profit_pool_direction") or arena.get("profit_pool_effect"))
             for arena in company_arenas
@@ -816,16 +960,21 @@ def compile_industry_underwriting_context(
     )
     if not explicit_profit_pool:
         explicit_profit_pool = next((stage["profit_pool_direction"] for stage in stages if stage["profit_pool_direction"] != "UNRESOLVED"), "")
-    profit_pool_direction = explicit_profit_pool or "UNRESOLVED"
+    official_direction = " | ".join(_unique(official_profit_pool_effects))
+    profit_pool_direction = explicit_profit_pool or official_direction or "UNRESOLVED"
     profit_pool_outlook = {
         "direction": profit_pool_direction,
         "horizon": _text(company_value.get("industry_horizon")) or "NOT_SPECIFIED",
         "thesis": (
             _text(company_value.get("industry_profit_pool_thesis"))
+            or ("Official cutoff observations support: " + "; ".join(_unique(official_thesis_parts)) if official_thesis_parts else "")
             or ("The available context identifies the relevant mechanisms but does not yet settle a directional profit-pool call." if profit_pool_direction == "UNRESOLVED" else explicit_profit_pool)
         ),
         "confidence": "BOUNDED" if profit_pool_direction == "UNRESOLVED" else _text(company_value.get("industry_thesis_confidence")) or "QUALITATIVE",
-        "evidence_refs": _unique(ref for stage in stages for ref in stage["evidence_refs"]),
+        "evidence_refs": _unique([
+            *(ref for stage in stages for ref in stage["evidence_refs"]),
+            *official_profit_pool_refs,
+        ]),
     }
 
     company_exposure_text = _text(
@@ -838,13 +987,27 @@ def compile_industry_underwriting_context(
         or company_value.get("adaptation_hypothesis")
     ) or "Requires company-specific evidence on resources, execution, and adaptation."
     candidate_paths: list[dict[str, Any]] = []
+    if official_thesis_parts:
+        candidate_paths.append({
+            "path_id": f"IUP:{company_id}:OFFICIAL_CONTEXT",
+            "status": "CANDIDATE_TO_VERIFY",
+            "industry_regime": official_epoch_conditions[-1] if official_epoch_conditions else _UNKNOWN,
+            "industry_force": "; ".join(_unique(official_statements)) or _UNKNOWN,
+            "profit_pool_effect": profit_pool_direction,
+            "company_exposure": company_exposure_text,
+            "adaptation_hypothesis": adaptation_text,
+            "economics_implication": "Verify whether the observed industry drivers transmit through the target company's customer demand, realized price or mix, unit economics, capital needs, and cash conversion.",
+            "permanent_loss_implication": _text(company_value.get("industry_permanent_loss_implication")) or "If the supporting industry mechanism reverses, normalized earnings can compress and previously committed capital can become stranded.",
+            "reversal_observations": [item["field"] for item in verification_fields[:8]] or ["Company-specific demand, realized-price, unit-economics, capital-absorption, and owner-cash evidence."],
+            "evidence_refs": _unique(official_profit_pool_refs),
+        })
     for index, stage in enumerate(stages):
         candidate_paths.append({
             "path_id": f"IUP:{company_id}:{index + 1}",
             "status": "CANDIDATE_TO_VERIFY",
             "industry_regime": _text(latest_epoch.get("condition")) or _UNKNOWN,
             "industry_force": stage["mechanism"],
-            "profit_pool_effect": stage["profit_pool_direction"] if stage["profit_pool_direction"] != "UNRESOLVED" else "Requires a directional judgment from current industry evidence.",
+            "profit_pool_effect": stage["profit_pool_direction"] if stage["profit_pool_direction"] != "UNRESOLVED" else profit_pool_direction,
             "company_exposure": company_exposure_text,
             "adaptation_hypothesis": adaptation_text,
             "economics_implication": (
@@ -986,6 +1149,7 @@ def main() -> int:
     parser.add_argument("--cutoff-at", default="")
     parser.add_argument("--knowledge-cutoff-at", default="")
     parser.add_argument("--industry-block", action="append", default=[])
+    parser.add_argument("--official-industry-observation", action="append", default=[])
     parser.add_argument("--competitive-arena", default="")
     parser.add_argument("--industry-knowledge-context", default="")
     parser.add_argument("--industry-key", action="append", default=[])
@@ -1008,6 +1172,7 @@ def main() -> int:
     payload = compile_industry_underwriting_context(
         company=company,
         industry_learning_blocks=args.industry_block,
+        official_industry_observations=args.official_industry_observation,
         competitive_arena=arena,
         industry_keys=args.industry_key,
         mechanism_keys=args.mechanism_key,

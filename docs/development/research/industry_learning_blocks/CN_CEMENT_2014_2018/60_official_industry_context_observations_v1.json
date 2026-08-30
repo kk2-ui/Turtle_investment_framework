@@ -1,0 +1,214 @@
+{
+  "schema_version": "official-industry-context-observation-ledger.v1",
+  "ledger_id": "INDOBS:CN:CEMENT_LISTED:20180430:V1",
+  "industry_id": "INDUSTRY:CN:CEMENT_LISTED",
+  "cutoff_at": "2018-04-30T23:59:59+08:00",
+  "epoch_id": "EPOCH:CEMENT:PRICE_LED_RECOVERY_WITH_UNRESOLVED_OVERCAPACITY:2017H1",
+  "source_package_ref": "docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/59_official_industry_context_source_package_v1.json",
+  "use_policy": "CONTEXT_ONLY",
+  "observations": [
+    {
+      "observation_id": "INDOBS:CN:CEMENT:2017H1:OUTPUT",
+      "use_policy": "CONTEXT_ONLY",
+      "driver_type": "demand",
+      "metric_definition": "全国水泥产量及同比增速。",
+      "period": {
+        "start": "2017-01-01",
+        "end": "2017-06-30"
+      },
+      "value": {
+        "quantity_100m_tonnes": 11.1,
+        "yoy_pct": 0.4
+      },
+      "statement": "2017 年上半年全国水泥产量为 11.1 亿吨，同比增长 0.4%。",
+      "economic_interpretation": "行业销量近乎横盘，需求繁荣不是同期价格和利润大幅恢复的首要解释。",
+      "profit_pool_effect": "DEMAND_VOLUME_NEAR_FLAT",
+      "source_locators": [
+        {
+          "source_id": "INDDOC:MIIT:CEMENT:2017H1:RUNNING",
+          "locator": "HTML 正文第 2 段：‘全国水泥产量11.1亿吨，同比增长0.4%’"
+        }
+      ],
+      "permitted_inference": "用于判断全国水泥需求量在 2017 年上半年近乎横盘。",
+      "prohibited_inference": [
+        "代表任一区域市场的实际需求",
+        "建立任一公司的销量或市场份额",
+        "单独证明需求已经结构性见顶"
+      ]
+    },
+    {
+      "observation_id": "INDOBS:CN:CEMENT:2017H1:PRICE",
+      "use_policy": "CONTEXT_ONLY",
+      "driver_type": "competition",
+      "metric_definition": "全国水泥出厂均价及同比增速。",
+      "period": {
+        "as_of": "2017-06-30"
+      },
+      "value": {
+        "rmb_per_tonne": 321,
+        "yoy_pct": 25.5
+      },
+      "statement": "2017 年 6 月全国水泥出厂均价为 321 元/吨，同比上涨 25.5%。",
+      "economic_interpretation": "在行业销量近乎横盘时，显著提价是同期名义收入和利润池恢复的主要候选传导。",
+      "profit_pool_effect": "PRICE_LED_PROFIT_POOL_EXPANSION",
+      "rival_explanation": "价格恢复可能来自低基数、区域性供给扰动或阶段性错峰，而不是可持续的全国竞争纪律。",
+      "source_locators": [
+        {
+          "source_id": "INDDOC:MIIT:CEMENT:2017H1:RUNNING",
+          "locator": "HTML 正文第 3 段：‘6月份全国水泥出厂均价321元/吨，同比上涨25.5%’"
+        }
+      ],
+      "permitted_inference": "用于判断全国平均出厂价格相对上年同期显著恢复。",
+      "prohibited_inference": [
+        "把全国均价当作任一区域 delivered price",
+        "把价格上涨全部归因于行业集中度或政策",
+        "外推为长期价格中枢"
+      ]
+    },
+    {
+      "observation_id": "INDOBS:CN:CEMENT:2017H1:PROFIT_POOL",
+      "use_policy": "CONTEXT_ONLY",
+      "driver_type": "competition",
+      "metric_definition": "水泥行业主营业务收入、利润和销售利润率。",
+      "period": {
+        "start": "2017-01-01",
+        "end": "2017-06-30"
+      },
+      "value": {
+        "revenue_100m_rmb": 4598,
+        "revenue_yoy_pct": 21.0,
+        "profit_100m_rmb": 333.6,
+        "profit_yoy_pct": 248.0,
+        "sales_margin_pct": 7.3,
+        "sales_margin_change_pct_points": 4.8
+      },
+      "statement": "2017 年上半年水泥行业营收 4598 亿元，同比增长 21%；利润 333.6 亿元，同比增长 248%；销售利润率 7.3%，同比提高 4.8 个百分点。",
+      "economic_interpretation": "价格恢复已经传导为行业收入、利润和利润率的同步扩张，利润池改善是真实观察，而不是只见价格未见盈利。",
+      "profit_pool_effect": "REPORTED_PROFIT_POOL_EXPANDED",
+      "rival_explanation": "利润同比高增可能放大了上年低基数，不能单独证明恢复具有跨周期耐久性。",
+      "source_locators": [
+        {
+          "source_id": "INDDOC:MIIT:CEMENT:2017H1:RUNNING",
+          "locator": "HTML 正文第 5 段：水泥行业营收、利润、销售利润率及同比变化"
+        }
+      ],
+      "permitted_inference": "用于确认 2017 年上半年全国水泥行业利润池和利润率相对上年同期显著恢复。",
+      "prohibited_inference": [
+        "把行业利润直接分配给任一上市公司",
+        "把同比利润增速当作正常盈利增长率",
+        "忽略低基数、区域组合和成本差异"
+      ]
+    },
+    {
+      "observation_id": "INDOBS:CN:CEMENT:2017H1:OVERCAPACITY",
+      "use_policy": "CONTEXT_ONLY",
+      "driver_type": "supply",
+      "metric_definition": "工信部对水泥产能过剩状态的同期定性判断。",
+      "period": {
+        "as_of": "2017-06-30"
+      },
+      "value": {
+        "status": "OVERCAPACITY_NOT_FUNDAMENTALLY_RESOLVED"
+      },
+      "statement": "工信部同期判断水泥产能过剩矛盾尚未根本解决，行业平稳运行基础尚不稳固。",
+      "economic_interpretation": "利润池虽已恢复，但剩余过剩产能限制了把一次恢复外推为结构性高利润时代的可信度。",
+      "profit_pool_effect": "DURABILITY_CONSTRAINED_BY_OVERCAPACITY",
+      "rival_explanation": "供给约束若只带来阶段性停窑和低基数修复，剩余产能可能在价格改善后重新进入并压低利润。",
+      "source_locators": [
+        {
+          "source_id": "INDDOC:MIIT:CEMENT:2017H1:RUNNING",
+          "locator": "HTML 正文第 1 段：‘水泥产能过剩矛盾尚未根本解决’"
+        }
+      ],
+      "permitted_inference": "用于约束利润恢复的结构性耐久判断。",
+      "prohibited_inference": [
+        "推断所有区域均处于相同过剩程度",
+        "推断价格恢复必然逆转",
+        "推断任一公司的产能必然低效"
+      ]
+    },
+    {
+      "observation_id": "INDOBS:CN:CEMENT:2016:NEW_CAPACITY_RESTRAINT",
+      "use_policy": "CONTEXT_ONLY",
+      "driver_type": "regulation",
+      "metric_definition": "国务院办公厅对水泥熟料新增产能的全国政策约束。",
+      "period": {
+        "published_at": "2016-05-18",
+        "policy_horizon_end": "2020-12-31"
+      },
+      "value": {
+        "new_capacity_policy": "PROHIBITED_THROUGH_2020"
+      },
+      "statement": "国办发〔2016〕34 号明确 2020 年底前严禁备案和新建扩大产能的水泥熟料项目，并要求依法依规压减过剩产能。",
+      "economic_interpretation": "cutoff 前已经存在限制名义新增熟料能力的制度路径，为价格恢复提供供给纪律候选机制，但政策存在不等于执行已经兑现。",
+      "profit_pool_effect": "POLICY_SUPPORTS_SUPPLY_DISCIPLINE",
+      "source_locators": [
+        {
+          "source_id": "INDDOC:GOVCN:CEMENT:SUPPLY_POLICY:20160518",
+          "locator": "HTML 正文‘二、压减过剩产能’之‘（四）严禁新增产能’"
+        }
+      ],
+      "permitted_inference": "用于确认 cutoff 前全国层面的新增熟料产能约束机制。",
+      "prohibited_inference": [
+        "假设违规新增已经完全消失",
+        "假设政策在所有区域执行强度相同",
+        "用政策文本替代实际产能、产量或利用率结果"
+      ]
+    },
+    {
+      "observation_id": "INDOBS:CN:CEMENT:2016:PEAK_SHIFTING",
+      "use_policy": "CONTEXT_ONLY",
+      "driver_type": "supply",
+      "metric_definition": "国务院办公厅对水泥熟料错峰生产的政策安排。",
+      "period": {
+        "published_at": "2016-05-18"
+      },
+      "value": {
+        "mechanism": "SEASONAL_PEAK_SHIFTING"
+      },
+      "statement": "国办发〔2016〕34 号要求采暖地区采暖期全面试行水泥熟料错峰生产，并倡导其他地区在春节和酷暑伏天错峰。",
+      "economic_interpretation": "错峰通过缩短熟料装置运转时间收缩阶段性有效供给，能够在需求平淡时改善价格纪律，但不等于永久退出名义产能。",
+      "profit_pool_effect": "EFFECTIVE_SUPPLY_SEASONALLY_RESTRAINED",
+      "source_locators": [
+        {
+          "source_id": "INDDOC:GOVCN:CEMENT:SUPPLY_POLICY:20160518",
+          "locator": "HTML 正文‘二、压减过剩产能’之‘（七）推行错峰生产’"
+        }
+      ],
+      "permitted_inference": "用于建立错峰生产影响阶段性有效供给的政策机制。",
+      "prohibited_inference": [
+        "把错峰等同于永久去产能",
+        "推断所有地区执行同一停窑天数",
+        "直接归因任一公司的售价或利润"
+      ]
+    },
+    {
+      "observation_id": "INDOBS:CN:CEMENT:2016:CONSOLIDATION_TARGET",
+      "use_policy": "CONTEXT_ONLY",
+      "driver_type": "competition",
+      "metric_definition": "国务院办公厅对水泥熟料行业集中度和联合重组的政策目标。",
+      "period": {
+        "published_at": "2016-05-18",
+        "target_year": 2020
+      },
+      "value": {
+        "top10_production_concentration_target_pct": 60
+      },
+      "statement": "国办发〔2016〕34 号提出到 2020 年水泥熟料产量前十家企业生产集中度达到约 60%，并支持联合重组和主动压减竞争乏力产能。",
+      "economic_interpretation": "联合重组可能改善行业组织和区域价格纪律，但 60% 是政策目标，不是 cutoff 时已经实现的集中度事实。",
+      "profit_pool_effect": "CONSOLIDATION_COULD_IMPROVE_DISCIPLINE",
+      "source_locators": [
+        {
+          "source_id": "INDDOC:GOVCN:CEMENT:SUPPLY_POLICY:20160518",
+          "locator": "HTML 正文‘（三）目标任务’与‘（六）推进联合重组’"
+        }
+      ],
+      "permitted_inference": "用于建立联合重组和集中度提升的政策方向。",
+      "prohibited_inference": [
+        "把 60% 目标写成 cutoff 时实际集中度",
+        "把全国集中度自动映射为区域竞争强度",
+        "推断并购一定创造普通股 owner cash"
+      ]
+    }
+  ]
+}

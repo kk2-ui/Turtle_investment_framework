@@ -2,7 +2,7 @@
 
 > 状态日期：2026-08-30
 > 当前目标：`GOLDEN_SET_V1`
-> 当前阶段：`G1_CANDIDATE_MATURATION + G1-U_ENTERPRISE_UNDERWRITING_KERNEL / COURSE_1_COMPLETED + METHOD_NOT_VALIDATED + COURSE_2A_INDUSTRY_EXPERIENCE + CEMENT_PACK_DRAFT`
+> 当前阶段：`G1_CANDIDATE_MATURATION + G1-U_ENTERPRISE_UNDERWRITING_KERNEL / COURSE_1_COMPLETED + METHOD_NOT_VALIDATED + COURSE_2A_COMPLETE + CEMENT_PACK_TRAINING_READY + COURSE_2B_NOT_STARTED`
 > 长期领域路线图：`docs/development/LONG_TERM_ROADMAP.md`
 > 双向层级研究路线：`docs/development/GOLDEN_REPORT_BIDIRECTIONAL_RESEARCH_ROADMAP.md`
 
@@ -144,7 +144,7 @@ HTML 只负责渲染，不得另造投资事实、模型数值或结论。正文
 | G1 候选内容成熟与逐案接纳 | 七个指定案例完成材料性修复和独立接纳 | **IN_PROGRESS** |
 | G1-J 判断契约与已有案例资产接线 | 复用书籍方法案例卡和基准率候选，补齐中心路径、前瞻判断与历史结算硬门 | **IN_PROGRESS / G1内部前置门** |
 | G1-T 历史判断训练与留出 | 已完成首个真实 `IndustryLearningBlock + EnterpriseJudgmentEpisode` 的 E0/E1 多维重建与独立 feedback；Comparative 仅为局部 E3 支线，有效方法冻结后再揭盲 R-61 | **IN_PROGRESS / REAL_SAMPLE_CREATED + REAL_FEEDBACK_TURN_COMPLETED / TRANSFER_NOT_VALIDATED** |
-| G1-U 企业投资承保纵向切片 | 用一个完整对象连接处境、生存、正常化、永久损失、价值路线、CJO、估值和黄金报告 | **KERNEL_IMPLEMENTED / COURSE_1_COMPLETED / FAIR_A_B_ENHANCED_WORSE / INDUSTRY_EXPERIENCE_LAYER_IMPLEMENTED / CEMENT_PACK_DRAFT / COURSE_2A_IN_PROGRESS / COURSE_2B_WAITING_FOR_TRAINING_READY_PACK** |
+| G1-U 企业投资承保纵向切片 | 用一个完整对象连接处境、生存、正常化、永久损失、价值路线、CJO、估值和黄金报告 | **KERNEL_IMPLEMENTED / COURSE_1_COMPLETED / FAIR_A_B_ENHANCED_WORSE / INDUSTRY_EXPERIENCE_LAYER_IMPLEMENTED / CEMENT_PACK_TRAINING_READY / COURSE_2A_COMPLETE / COURSE_2B_READY_NOT_STARTED / METHOD_NOT_VALIDATED** |
 | G1.5 格力行业经验工厂试验 | 24 份黄金级产物验证公司→行业→宏观传导→公司的双向研究架构 | PLANNED |
 | G2 跨报告裁决与路线规范 | 统一共同规则，裁决公司、行业、基准率和宏观层的权限与路线差异 | PLANNED |
 | G3 Golden Set v1 与行业经验包冻结 | 多份内容黄金报告、完整案例包及 `Industry Experience Pack v1` 形成版本化集合 | PLANNED |
@@ -316,7 +316,7 @@ U1 worked slice 与随后 kernel 接线已经实现：
 
 G1-U kernel 和课程一期完成后不继续扩字段、receipt 或当前 Agent self replay。课程二期先执行 Course 2A：将多公司、多时期 `IndustryLearningBlock`、官方行业 observation、机制、案例、反例和反馈组织为不复制事实的版本化 `Industry Experience Pack`。只有 validator 派生为 `TRAINING_READY` 后，才由认知隔离 Agent 在未参与 Pack 形成的公司和 Pack 冻结后的未见时期执行 Course 2B 公平 A/B。结果后必须分别裁决行业路径和公司传导；单家公司结果不能结算行业主张。只有公司轴与时间轴均出现独立材料性效用，才讨论 Pack release；一份真实黄金候选消费同一 Frozen Episode 仍是独立的产品接线验证，不得替代训练效用证明。
 
-2026-08-30 的行业经验层最小实现已提供 manifest schema、机械 validator、水泥离线 Context/Pack 和课程二期 2A/2B 合同。水泥 Pack 当前声明与派生状态均为 `DRAFT`：五家公司、六个 cutoff、archetype 与 near miss 已存在，但缺少 cutoff-safe 官方行业 observation 和共同冲击下异质公司分化，不能启动 Course 2B。下一合法动作是修复可复用行业采集与样本覆盖，不是手工升级状态或再做单家公司 replay。
+2026-08-30 的 Course 2A 已完成水泥行业经验资产准备。V1 Pack 继续保留为当时合法的 `DRAFT`；V2 新增 cutoff-safe 工信部量价利润与过剩观察、国务院新增产能/错峰/重组政策、海螺/天山/福建水泥的经营分化，以及华新并购和冀东重组的责任边界。官方 ledger 必须回读已物化 raw package，Context 由编译器生成 `READY`，Pack 由 validator 派生为 `TRAINING_READY` 且缺口为空。中心路径是需求量近乎横盘下的价格/供给纪律驱动恢复，最强反方是低基数、阶段性错峰和未解决过剩令恢复不可持续。该状态只完成上游资产；Course 2B、未见公司/未见时期效用、`TRANSFER_CANDIDATE`、`RELEASED` 和 Agent 行业判断能力均未启动或验证。
 
 ## 7A. G1.5：格力行业经验工厂与双向层级试验
 
@@ -564,4 +564,4 @@ Phase 08 只有同时具备以下结果才能完成：
 | 2026-08-29 | 采用 `EnterpriseUnderwritingEpisode` 作为企业判断、训练、估值和黄金报告的顶层主对象 | 多轮 `NO_MATERIAL_UTILITY` 表明增加字段和维度不能自动形成投资价值；系统必须围绕麦格纳式的处境、生存、正常化、永久损失、价值路线和价格处理训练完整任务。 |
 | 2026-08-30 | 估值知识按“通用确定性内核 + 版本化行业重建能力卡 + 公司当期重新取证计算”复用 | 现金、WCM 与 EPV 的经济恒等式可跨公司复用；重置成本的能力拓扑可按行业积累，但金额和实际成本归属必须逐公司重算。训练当前只学习方法失败与适用边界，不取得估值权限。 |
 | 2026-08-30 | 审阅返回只向 reader writer 投影结构化投资结论 | 取消自由 `reader_guidance`；修复工单保留在控制面，writer 只看到结论、依据、投资含义和来源。精确估值合同从通用写作 prompt 移到结构化估值环节按需读取。 |
-| 2026-08-30 | 行业经验必须先形成版本化 Pack，再进入公司训练 | 单家公司不能结算行业前景；Course 2A 先用多公司、多时期、官方行业 observation、反例和双层结算形成 TRAINING_READY Pack，Course 2B 再检验未见公司和未见时期。水泥回放当前为 DRAFT，不以边界纪律冒充行业方向。 |
+| 2026-08-30 | 行业经验必须先形成版本化 Pack，再进入公司训练 | 单家公司不能结算行业前景；Course 2A 先用多公司、多时期、官方行业 observation、反例和双层结算形成 TRAINING_READY Pack，Course 2B 再检验未见公司和未见时期。水泥 V1 回放保留为 DRAFT；V2 已达 TRAINING_READY，但不代表行业判断能力已验证。 |
