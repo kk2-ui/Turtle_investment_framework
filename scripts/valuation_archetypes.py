@@ -350,14 +350,25 @@ def validate_valuation_archetype(payload: Any) -> dict[str, Any]:
         findings.append("components:missing")
     seen: set[str] = set()
     required_roles: set[str] = set()
+    role_owners: dict[str, list[str]] = {}
     for index, component in enumerate(components):
         _validate_component(component, index=index, seen=seen, findings=findings)
         if isinstance(component, dict):
-            required_roles.update(
-                str(role) for role in component.get("required_evidence_roles") or []
-                if _text(role)
-            )
+            component_type = str(component.get("component_type") or "")
+            for raw_role in component.get("required_evidence_roles") or []:
+                if not _text(raw_role):
+                    continue
+                role = str(raw_role)
+                required_roles.add(role)
+                role_owners.setdefault(role, []).append(component_type)
     if "evidence_role_guidance" in card:
+        for role, owners in sorted(role_owners.items()):
+            distinct_owners = list(dict.fromkeys(owners))
+            if len(distinct_owners) > 1:
+                findings.append(
+                    "components:evidence_role_reused_across_components:"
+                    + role + ":" + ",".join(distinct_owners)
+                )
         _validate_evidence_role_guidance(
             card.get("evidence_role_guidance"),
             required_roles=required_roles,

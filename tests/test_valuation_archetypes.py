@@ -106,6 +106,24 @@ def test_historical_v1_remains_resolvable_without_new_guidance() -> None:
     assert resolved["evidence_role_guidance"] == []
 
 
+def test_guided_card_rejects_one_evidence_role_owned_by_two_components() -> None:
+    card = deepcopy(_card())
+    customer_time = "CUSTOMER_RELATIONSHIP_TIME_TO_RECREATE_EVIDENCE"
+    channel = next(
+        item for item in card["components"]
+        if item["component_type"] == "CUSTOMER_ACQUISITION_CHANNEL"
+    )
+    channel["required_evidence_roles"][-1] = customer_time
+
+    findings = validate_valuation_archetype(card)["findings"]
+
+    assert (
+        "components:evidence_role_reused_across_components:"
+        "CUSTOMER_RELATIONSHIP_TIME_TO_RECREATE_EVIDENCE:"
+        "CUSTOMER_RELATIONSHIP,CUSTOMER_ACQUISITION_CHANNEL"
+    ) in findings
+
+
 def test_component_types_are_generic_to_the_card_not_hardcoded_to_property_services() -> None:
     card = _card()
     card["archetype_id"] = "mature_manufacturing"

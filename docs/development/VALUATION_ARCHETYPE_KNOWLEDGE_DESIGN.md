@@ -47,8 +47,11 @@ valuation_route.json（精确卡版本）
 检索收据可记录官方来源、工具、查询与 `PUBLIC_INFO_UNAVAILABLE`，但不能把
 `MISSING / INELIGIBLE` 升级为可用事实。每条缺口同时保留局部 `UNKNOWN`、下一步
 官方来源与模块提示、有界停止规则，以及被阻断的公司级重置区间、每股重置价值或
-重置价值—EPV 共同保护结论。路线自身为 `INCOMPLETE / INVALID` 时，计划的模型
-readiness 固定为 `BLOCKED`，即使碰巧收齐了全部角色事实也不能静默启用模型。
+重置价值—EPV 共同保护结论。路线自身为 `INCOMPLETE / INVALID` 时，计划的
+`evidence_role_readiness` 固定为 `BLOCKED`，即使碰巧收齐了全部角色事实也不能
+静默启用模型。全部角色为 `AVAILABLE` 时也只得到 `ROLE_INPUTS_READY`；计划的
+`model_completion` 仍为 `NOT_EVALUATED`，公司级、每股及共同保护结论继续阻断，
+直到确定性 replacement 模型及其模型门完成计算与验证。
 
 `ValuationArchetype` 只可要求补取证据、限制计算方法、指明经济成本的唯一
 归属和不完整边界。它不可以选择估值路线，不可以填写公司金额、比例、倍数、
@@ -65,6 +68,9 @@ observation，并由该 observation 自己声明该角色；模型不能把同�
 卡片的 `evidence_role_guidance` 是可复用知识的一部分，只能保存“可能在哪类官方
 来源、用哪个采集模块和什么查询词找到该角色，以及查到什么边界可以停止”。它不能
 保存目标公司的检索结果；实际 observation 与 attempt receipt 始终留在公司输出目录。
+新卡中的角色必须由一个组件独占；即使两个组件都需要“重建时间”，客户关系时间与
+渠道时间也必须是两个角色。一个 observation 只能按自己声明的组件专属角色供给计划，
+不能因为文字相似而跨组件补齐。旧卡不追溯改写，仍按其原版本精确解析与复现。
 
 ## 新行业怎样积累知识
 

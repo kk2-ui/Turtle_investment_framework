@@ -213,7 +213,8 @@ def _not_required_plan(route: dict[str, Any]) -> dict[str, Any]:
         "report_id": route.get("report_id"),
         "route_id": route.get("route_id"),
         "state": "NOT_REQUIRED",
-        "model_readiness": "NOT_REQUIRED",
+        "evidence_role_readiness": "NOT_REQUIRED",
+        "model_completion": "NOT_APPLICABLE",
         "route_validation_state": _mapping(route.get("validation")).get("state"),
         "valuation_model": None,
         "valuation_archetype": None,
@@ -226,6 +227,8 @@ def _not_required_plan(route: dict[str, Any]) -> dict[str, Any]:
             "company_values_exposed": False,
             "default_haircuts_allowed": False,
             "attempt_receipt_grants_evidence": False,
+            "role_inputs_ready_authority": "DETERMINISTIC_REPLACEMENT_MODEL_ONLY",
+            "valuation_claim_release_owner": "REPLACEMENT_MODEL_GATE",
         },
     }
 
@@ -273,11 +276,11 @@ def compile_valuation_evidence_plan(
         plan["route_validation_state"] = route_validation["state"]
         if route_validation["state"] == "INVALID":
             plan["state"] = "INVALID"
-            plan["model_readiness"] = "BLOCKED"
+            plan["evidence_role_readiness"] = "BLOCKED"
             plan["findings"] = list(route_validation["invalid_findings"])
         elif route_validation["state"] == "INCOMPLETE":
             plan["state"] = "INCOMPLETE"
-            plan["model_readiness"] = "BLOCKED"
+            plan["evidence_role_readiness"] = "BLOCKED"
             plan["findings"] = list(route_validation["incomplete_findings"])
         return plan
 
@@ -300,7 +303,8 @@ def compile_valuation_evidence_plan(
             "report_id": route.get("report_id"),
             "route_id": route.get("route_id"),
             "state": "INVALID",
-            "model_readiness": "BLOCKED",
+            "evidence_role_readiness": "BLOCKED",
+            "model_completion": "NOT_EVALUATED",
             "route_validation_state": route_validation["state"],
             "valuation_model": _route_model_projection(route_model),
             "valuation_archetype": None,
@@ -317,6 +321,8 @@ def compile_valuation_evidence_plan(
                 "company_values_exposed": False,
                 "default_haircuts_allowed": False,
                 "attempt_receipt_grants_evidence": False,
+                "role_inputs_ready_authority": "DETERMINISTIC_REPLACEMENT_MODEL_ONLY",
+                "valuation_claim_release_owner": "REPLACEMENT_MODEL_GATE",
             },
         }
     if not card.get("evidence_role_guidance"):
@@ -327,7 +333,8 @@ def compile_valuation_evidence_plan(
             "report_id": route.get("report_id"),
             "route_id": route.get("route_id"),
             "state": "INVALID",
-            "model_readiness": "BLOCKED",
+            "evidence_role_readiness": "BLOCKED",
+            "model_completion": "NOT_EVALUATED",
             "route_validation_state": route_validation["state"],
             "valuation_model": _route_model_projection(route_model),
             "valuation_archetype": {
@@ -350,6 +357,8 @@ def compile_valuation_evidence_plan(
                 "company_values_exposed": False,
                 "default_haircuts_allowed": False,
                 "attempt_receipt_grants_evidence": False,
+                "role_inputs_ready_authority": "DETERMINISTIC_REPLACEMENT_MODEL_ONLY",
+                "valuation_claim_release_owner": "REPLACEMENT_MODEL_GATE",
             },
         }
 
@@ -477,16 +486,26 @@ def compile_valuation_evidence_plan(
         })
 
     if applicability_state != "ROUTE_BOUND":
-        model_readiness = "BLOCKED"
+        evidence_role_readiness = "BLOCKED"
         blocked_claims.update({
             "COMPANY_LEVEL_REPLACEMENT_RANGE",
             "PER_SHARE_REPLACEMENT_VALUE",
             "JOINT_REPLACEMENT_EPV_PROTECTION_PRICE",
         })
     elif all(state == "AVAILABLE" for state in required_role_states):
-        model_readiness = "EVIDENCE_READY"
+        evidence_role_readiness = "ROLE_INPUTS_READY"
     else:
-        model_readiness = "EVIDENCE_INCOMPLETE"
+        evidence_role_readiness = "ROLE_INPUTS_INCOMPLETE"
+
+    # The plan can authorize entry into the deterministic model, but it never
+    # evaluates component ranges, ordinary-equity scope, per-share arithmetic,
+    # or the EPV comparison.  Those conclusions remain blocked until the
+    # replacement-model gate validates its own canonical result.
+    blocked_claims.update({
+        "COMPANY_LEVEL_REPLACEMENT_RANGE",
+        "PER_SHARE_REPLACEMENT_VALUE",
+        "JOINT_REPLACEMENT_EPV_PROTECTION_PRICE",
+    })
 
     state = (
         "INVALID"
@@ -501,7 +520,8 @@ def compile_valuation_evidence_plan(
         "report_id": route.get("report_id"),
         "route_id": route.get("route_id"),
         "state": state,
-        "model_readiness": model_readiness,
+        "evidence_role_readiness": evidence_role_readiness,
+        "model_completion": "NOT_EVALUATED",
         "route_validation_state": route_state,
         "valuation_model": _route_model_projection(route_model),
         "valuation_archetype": {
@@ -536,6 +556,8 @@ def compile_valuation_evidence_plan(
             "company_values_exposed": False,
             "default_haircuts_allowed": False,
             "attempt_receipt_grants_evidence": False,
+            "role_inputs_ready_authority": "DETERMINISTIC_REPLACEMENT_MODEL_ONLY",
+            "valuation_claim_release_owner": "REPLACEMENT_MODEL_GATE",
         },
     }
 

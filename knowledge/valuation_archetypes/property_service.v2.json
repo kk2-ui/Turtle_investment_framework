@@ -29,7 +29,7 @@
         "CONTRACT_POPULATION_OR_CUSTOMER_BOOK",
         "RETENTION_OR_CHURN_COHORT_EVIDENCE",
         "WIN_OR_REBUILD_COST_EVIDENCE",
-        "TIME_TO_RECREATE_EVIDENCE"
+        "CUSTOMER_RELATIONSHIP_TIME_TO_RECREATE_EVIDENCE"
       ],
       "allowed_exclusion_destinations": [],
       "double_count_owner": "OWN_REPLACEMENT_COMPONENT",
@@ -63,7 +63,7 @@
         "CHANNEL_OR_TENDER_ACCESS_EVIDENCE",
         "WIN_CONVERSION_OR_REPEATABILITY_EVIDENCE",
         "CHANNEL_REBUILD_COST_EVIDENCE",
-        "TIME_TO_RECREATE_EVIDENCE"
+        "CUSTOMER_ACQUISITION_CHANNEL_TIME_TO_RECREATE_EVIDENCE"
       ],
       "allowed_exclusion_destinations": ["OTHER_REPLACEMENT_COMPONENT"],
       "double_count_owner": "CUSTOMER_RELATIONSHIP_COMPONENT",
@@ -80,7 +80,7 @@
         "CUSTOMER_QUALIFICATION_OR_BID_ELIGIBILITY_REQUIREMENT",
         "PERFORMANCE_RECORD_OR_REFERENCE_REQUIREMENT",
         "TIME_TO_REBUILD_EVIDENCE",
-        "REBUILD_COST_OR_CAPABILITY_EVIDENCE"
+        "FULFILLMENT_RECORD_REBUILD_COST_OR_CAPABILITY_EVIDENCE"
       ],
       "allowed_exclusion_destinations": [],
       "double_count_owner": "OWN_REPLACEMENT_COMPONENT",
@@ -116,7 +116,7 @@
       "required_evidence_roles": [
         "FUNCTIONAL_ASSET_IDENTITY",
         "OPERATING_NECESSITY_EVIDENCE",
-        "REBUILD_COST_OR_CAPABILITY_EVIDENCE",
+        "OTHER_FUNCTIONAL_ASSET_REBUILD_COST_OR_CAPABILITY_EVIDENCE",
         "OVERLAP_CHECK"
       ],
       "allowed_exclusion_destinations": [],
@@ -149,11 +149,11 @@
       "bounded_stopping_rule": "Inspect current filings and official tender material for a company-specific rebuild-cost carrier; if only aggregate selling expense is available and cannot be attributed, record the attempt and leave the role missing."
     },
     {
-      "role": "TIME_TO_RECREATE_EVIDENCE",
-      "likely_official_sources": ["Official contract histories, qualification rules, tender records, and exchange-filed descriptions of buildout or ramp periods."],
+      "role": "CUSTOMER_RELATIONSHIP_TIME_TO_RECREATE_EVIDENCE",
+      "likely_official_sources": ["Official customer-contract histories and exchange-filed descriptions of relationship development, renewal, transfer, or customer-book ramp periods."],
       "likely_acquisition_modules": ["search_report", "read_section", "verify_official_fact"],
-      "query_hints": ["time to qualify ramp contract history tender eligibility", "培育期 爬坡期 资质年限 投标资格"],
-      "bounded_stopping_rule": "Check official qualification and company filing sources for an observable recreation clock; if timing remains unstated, record PUBLIC_INFO_UNAVAILABLE and do not insert an industry-default duration."
+      "query_hints": ["customer relationship development renewal history customer book ramp", "客户关系 培育期 续约历史 客户账簿 重建周期"],
+      "bounded_stopping_rule": "Check official customer-contract histories and company filings for a relationship-specific recreation clock; tender qualification time alone cannot satisfy this role, and an unstated clock remains missing without an industry-default duration."
     },
     {
       "role": "REGIONAL_COVERAGE_AND_OPERATING_PERIMETER",
@@ -205,6 +205,13 @@
       "bounded_stopping_rule": "Inspect official cost notes for an attributable channel-rebuild carrier; if costs overlap the customer-relationship component or remain aggregated, keep the role unresolved and identify the overlap."
     },
     {
+      "role": "CUSTOMER_ACQUISITION_CHANNEL_TIME_TO_RECREATE_EVIDENCE",
+      "likely_official_sources": ["Official tender qualification rules, procurement-platform access histories, and exchange-filed descriptions of sales-channel buildout or ramp periods."],
+      "likely_acquisition_modules": ["search_report", "read_section", "verify_official_fact"],
+      "query_hints": ["tender access history sales channel buildout qualification period", "招投标准入历史 渠道建设周期 资格培育期"],
+      "bounded_stopping_rule": "Check official tender, procurement-platform, and company channel histories for a channel-specific recreation clock; customer retention history cannot satisfy this role, and an unstated clock remains missing without a default duration."
+    },
+    {
       "role": "CUSTOMER_QUALIFICATION_OR_BID_ELIGIBILITY_REQUIREMENT",
       "likely_official_sources": ["Official tender rules, procurement notices, licences, certifications, and company-filed qualification disclosures."],
       "likely_acquisition_modules": ["search_report", "read_section", "verify_official_fact"],
@@ -226,11 +233,11 @@
       "bounded_stopping_rule": "Check official qualification clocks and company history; if no observable rebuild clock exists, keep timing UNKNOWN and prohibit a default ramp period."
     },
     {
-      "role": "REBUILD_COST_OR_CAPABILITY_EVIDENCE",
-      "likely_official_sources": ["Audited cost notes, capital expenditure disclosures, licences, system descriptions, and official capability buildout records."],
+      "role": "FULFILLMENT_RECORD_REBUILD_COST_OR_CAPABILITY_EVIDENCE",
+      "likely_official_sources": ["Audited delivery-cost notes, licences, service certifications, and official records of qualification or project-performance capability buildout."],
       "likely_acquisition_modules": ["search_report", "read_section", "verify_official_fact"],
-      "query_hints": ["capability build cost licence system investment qualification", "能力建设成本 系统投入 资质投入"],
-      "bounded_stopping_rule": "Inspect official cost and capability disclosures for a company-specific carrier; if capability is observable but cost is not bounded, retain the capability fact while leaving replacement cost UNKNOWN."
+      "query_hints": ["delivery capability build cost licence service qualification project record", "履约能力建设成本 服务资质 项目业绩投入"],
+      "bounded_stopping_rule": "Inspect official delivery, licence, qualification, and project-performance records for a fulfilment-specific cost carrier; another functional asset's cost cannot satisfy this role, and an unbounded cost remains UNKNOWN."
     },
     {
       "role": "PROJECT_LAUNCH_CASH_SEQUENCE",
@@ -273,6 +280,13 @@
       "likely_acquisition_modules": ["search_report", "read_section", "verify_official_fact"],
       "query_hints": ["required for operations licence condition service delivery dependency", "持续经营必需 许可条件 服务依赖"],
       "bounded_stopping_rule": "Check official operating and regulatory sources for necessity; usefulness alone is insufficient, so leave the item outside the required replacement scope when necessity is not established."
+    },
+    {
+      "role": "OTHER_FUNCTIONAL_ASSET_REBUILD_COST_OR_CAPABILITY_EVIDENCE",
+      "likely_official_sources": ["Audited cost notes, capital expenditure disclosures, licences, system descriptions, and official buildout records for the separately identified functional asset."],
+      "likely_acquisition_modules": ["search_report", "read_section", "verify_official_fact"],
+      "query_hints": ["identified functional asset capability build cost licence system investment", "特定功能资产 能力建设成本 系统投入 资质投入"],
+      "bounded_stopping_rule": "Inspect official cost and capability disclosures for the same separately identified functional asset; fulfilment-record cost cannot satisfy this role, and observable capability without a bounded cost remains UNKNOWN."
     },
     {
       "role": "OVERLAP_CHECK",

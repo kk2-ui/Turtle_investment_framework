@@ -250,7 +250,8 @@ def read_valuation_route(output_dir: str = ".") -> dict[str, Any]:
         evidence_plan = {
             "schema_version": "valuation-evidence-plan.v1",
             "state": "INVALID",
-            "model_readiness": "BLOCKED",
+            "evidence_role_readiness": "BLOCKED",
+            "model_completion": "NOT_EVALUATED",
             "findings": ["valuation_evidence_plan_compile_failed:" + str(exc)],
         }
     return {
@@ -260,8 +261,9 @@ def read_valuation_route(output_dir: str = ".") -> dict[str, Any]:
         "valuation_evidence_plan": evidence_plan,
         "instruction": (
             "估值账本必须服从route_id、模型角色和口径；禁用模型要显式拒绝，多模型分歧不得无依据加权平均。"
-            "若valuation_evidence_plan为INCOMPLETE/INVALID或model_readiness不是EVIDENCE_READY，"
-            "不得把重置价值写成可用公司级区间或与EPV共同保护价；按角色执行有界取证，"
+            "若valuation_evidence_plan为INCOMPLETE/INVALID或evidence_role_readiness不是ROLE_INPUTS_READY，"
+            "不得进入确定性重置价值模型；即使角色输入已就绪，model_completion仍为NOT_EVALUATED，"
+            "公司级区间、每股价值及与EPV共同保护价只能由replacement模型门解除阻断。按角色执行有界取证，"
             "检索收据只能关闭尝试，不能把MISSING/INELIGIBLE升级为AVAILABLE。"
         ),
     }

@@ -11,7 +11,8 @@
     "report_id",
     "route_id",
     "state",
-    "model_readiness",
+    "evidence_role_readiness",
+    "model_completion",
     "route_validation_state",
     "valuation_model",
     "valuation_archetype",
@@ -28,7 +29,8 @@
     "report_id": {"type": ["string", "null"]},
     "route_id": {"type": ["string", "null"]},
     "state": {"enum": ["PLAN_READY", "NOT_REQUIRED", "INCOMPLETE", "INVALID"]},
-    "model_readiness": {"enum": ["EVIDENCE_READY", "EVIDENCE_INCOMPLETE", "NOT_REQUIRED", "BLOCKED"]},
+    "evidence_role_readiness": {"enum": ["ROLE_INPUTS_READY", "ROLE_INPUTS_INCOMPLETE", "NOT_REQUIRED", "BLOCKED"]},
+    "model_completion": {"enum": ["NOT_EVALUATED", "NOT_APPLICABLE"]},
     "route_validation_state": {"enum": ["REVIEWABLE", "INCOMPLETE", "INVALID", null]},
     "valuation_model": {
       "oneOf": [
@@ -299,11 +301,19 @@
     "policy": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["company_values_exposed", "default_haircuts_allowed", "attempt_receipt_grants_evidence"],
+      "required": [
+        "company_values_exposed",
+        "default_haircuts_allowed",
+        "attempt_receipt_grants_evidence",
+        "role_inputs_ready_authority",
+        "valuation_claim_release_owner"
+      ],
       "properties": {
         "company_values_exposed": {"const": false},
         "default_haircuts_allowed": {"const": false},
-        "attempt_receipt_grants_evidence": {"const": false}
+        "attempt_receipt_grants_evidence": {"const": false},
+        "role_inputs_ready_authority": {"const": "DETERMINISTIC_REPLACEMENT_MODEL_ONLY"},
+        "valuation_claim_release_owner": {"const": "REPLACEMENT_MODEL_GATE"}
       }
     }
   }

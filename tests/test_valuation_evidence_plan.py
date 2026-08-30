@@ -95,11 +95,14 @@ def test_route_and_active_card_compile_role_level_evidence_work(tmp_path: Path) 
     assert plan["state"] == "PLAN_READY"
     assert plan["route_id"] == route["route_id"]
     assert plan["applicability"]["state"] == "ROUTE_BOUND"
-    assert plan["model_readiness"] == "EVIDENCE_INCOMPLETE"
+    assert plan["evidence_role_readiness"] == "ROLE_INPUTS_INCOMPLETE"
+    assert plan["model_completion"] == "NOT_EVALUATED"
     assert plan["policy"] == {
         "company_values_exposed": False,
         "default_haircuts_allowed": False,
         "attempt_receipt_grants_evidence": False,
+        "role_inputs_ready_authority": "DETERMINISTIC_REPLACEMENT_MODEL_ONLY",
+        "valuation_claim_release_owner": "REPLACEMENT_MODEL_GATE",
     }
     available = _role(
         plan,
@@ -182,7 +185,8 @@ def test_attempt_receipt_never_promotes_missing_role(tmp_path: Path) -> None:
     )
     assert role["evidence_state"] == "MISSING"
     assert role["attempt_receipt"]["state"] == "RECORDED"
-    assert plan["model_readiness"] == "EVIDENCE_INCOMPLETE"
+    assert plan["evidence_role_readiness"] == "ROLE_INPUTS_INCOMPLETE"
+    assert plan["model_completion"] == "NOT_EVALUATED"
 
 
 def test_attempt_receipt_with_company_value_is_rejected_from_plan(tmp_path: Path) -> None:
@@ -209,7 +213,7 @@ def test_attempt_receipt_with_company_value_is_rejected_from_plan(tmp_path: Path
     assert any("contains_value_or_parameter" in item for item in plan["findings"])
 
 
-def test_all_exact_verified_roles_make_evidence_ready(tmp_path: Path) -> None:
+def test_all_exact_verified_roles_only_authorize_model_inputs(tmp_path: Path) -> None:
     archetype, route = _route_fixture(tmp_path)
     card = resolve_valuation_archetype("property_service", "v2")
     roles = sorted({
@@ -235,10 +239,54 @@ def test_all_exact_verified_roles_make_evidence_ready(tmp_path: Path) -> None:
     )
 
     assert plan["state"] == "PLAN_READY"
-    assert plan["model_readiness"] == "EVIDENCE_READY"
+    assert plan["evidence_role_readiness"] == "ROLE_INPUTS_READY"
+    assert plan["model_completion"] == "NOT_EVALUATED"
     assert plan["evidence_summary"]["MISSING"] == 0
     assert plan["evidence_summary"]["INELIGIBLE"] == 0
-    assert plan["blocked_valuation_claims"] == []
+    assert plan["blocked_valuation_claims"] == [
+        "COMPANY_LEVEL_REPLACEMENT_RANGE",
+        "JOINT_REPLACEMENT_EPV_PROTECTION_PRICE",
+        "PER_SHARE_REPLACEMENT_VALUE",
+    ]
+
+
+def test_customer_relationship_time_cannot_fill_channel_time_role(tmp_path: Path) -> None:
+    archetype, route = _route_fixture(tmp_path)
+    card = resolve_valuation_archetype("property_service", "v2")
+    customer_time = "CUSTOMER_RELATIONSHIP_TIME_TO_RECREATE_EVIDENCE"
+    channel_time = "CUSTOMER_ACQUISITION_CHANNEL_TIME_TO_RECREATE_EVIDENCE"
+    roles = sorted({
+        role
+        for component in card["required_component_specs"]
+        for role in component["required_evidence_roles"]
+        if role != channel_time
+    })
+    observations = {
+        "observations": [
+            {
+                "observation_id": "OBS:VEP:" + role,
+                "status": "VERIFIED",
+                "valuation_evidence_roles": [role],
+            }
+            for role in roles
+        ]
+    }
+
+    plan = compile_valuation_evidence_plan(
+        route=route,
+        company_archetype=archetype,
+        fact_observations=observations,
+    )
+
+    assert _role(
+        plan, "CUSTOMER_RELATIONSHIP", customer_time,
+    )["evidence_state"] == "AVAILABLE"
+    assert _role(
+        plan, "CUSTOMER_ACQUISITION_CHANNEL", channel_time,
+    )["evidence_state"] == "MISSING"
+    assert plan["evidence_role_readiness"] == "ROLE_INPUTS_INCOMPLETE"
+    assert plan["model_completion"] == "NOT_EVALUATED"
+    assert "COMPANY_LEVEL_REPLACEMENT_RANGE" in plan["blocked_valuation_claims"]
 
 
 def test_incomplete_route_applicability_cannot_become_usable(tmp_path: Path) -> None:
@@ -273,7 +321,8 @@ def test_incomplete_route_applicability_cannot_become_usable(tmp_path: Path) -> 
 
     assert plan["state"] == "INCOMPLETE"
     assert plan["applicability"]["state"] == "INCOMPLETE"
-    assert plan["model_readiness"] == "BLOCKED"
+    assert plan["evidence_role_readiness"] == "BLOCKED"
+    assert plan["model_completion"] == "NOT_EVALUATED"
     assert "REPLACEMENT_VALUE:fragility_or_conditions_missing" in plan["findings"]
     assert "COMPANY_LEVEL_REPLACEMENT_RANGE" in plan["blocked_valuation_claims"]
 
@@ -296,7 +345,8 @@ def test_historical_card_without_acquisition_guidance_is_explicitly_blocked(
     )
 
     assert plan["state"] == "INVALID"
-    assert plan["model_readiness"] == "BLOCKED"
+    assert plan["evidence_role_readiness"] == "BLOCKED"
+    assert plan["model_completion"] == "NOT_EVALUATED"
     assert plan["valuation_archetype"]["version"] == "v1"
     assert plan["findings"] == [
         "valuation_archetype_evidence_role_guidance_missing:"
@@ -314,7 +364,8 @@ def test_route_without_versioned_replacement_card_is_not_required(tmp_path: Path
     )
 
     assert plan["state"] == "NOT_REQUIRED"
-    assert plan["model_readiness"] == "NOT_REQUIRED"
+    assert plan["evidence_role_readiness"] == "NOT_REQUIRED"
+    assert plan["model_completion"] == "NOT_APPLICABLE"
     assert plan["components"] == []
 
 
@@ -325,5 +376,6 @@ def test_read_valuation_route_exposes_plan_before_valuation(tmp_path: Path) -> N
 
     assert result["ok"] is True
     assert result["valuation_evidence_plan"]["state"] == "PLAN_READY"
-    assert result["valuation_evidence_plan"]["model_readiness"] == "EVIDENCE_INCOMPLETE"
+    assert result["valuation_evidence_plan"]["evidence_role_readiness"] == "ROLE_INPUTS_INCOMPLETE"
+    assert result["valuation_evidence_plan"]["model_completion"] == "NOT_EVALUATED"
     assert "检索收据" in result["instruction"]
