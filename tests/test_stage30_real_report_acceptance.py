@@ -3,6 +3,8 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
+import pytest
+
 from scripts.real_report_acceptance import (
     CJO_REQUIRED_MACHINE_GATES,
     REQUIRED_MACHINE_GATES,
@@ -220,9 +222,54 @@ def test_validated_draft_identity_survives_later_rule_upgrade_block(tmp_path: Pa
     _write_json(output / "completion_report.json", {"status": "INVALID"})
     _write_json(output / "run_manifest.json", {
         "status": "COMPLETED",
-        "publication": {"status": "VALIDATED_NOT_PUBLISHED", "validation_only": True},
+        "publication": {
+            "status": "NOT_PUBLISHED",
+            "artifact_class": "DRAFT",
+            "validation_only": True,
+        },
     })
     assert find_report(output) == draft
+
+
+@pytest.mark.parametrize("artifact_class", ["DRY_RUN", "PROMPT_PACKAGE"])
+def test_non_report_artifact_class_does_not_resurrect_legacy_complete_draft(
+    tmp_path: Path,
+    artifact_class: str,
+) -> None:
+    output = tmp_path / "candidate"
+    draft = output / "reports" / "drafts" / "000001_分析报告_v13_draft.md"
+    draft.parent.mkdir(parents=True, exist_ok=True)
+    draft.write_text("# 旧验证候选", encoding="utf-8")
+    _write_json(output / "completion_report.json", {"status": "COMPLETE"})
+    _write_json(output / "run_manifest.json", {
+        "status": "COMPLETED",
+        "publication": {
+            "status": "NOT_PUBLISHED",
+            "artifact_class": artifact_class,
+            "validation_only": False,
+        },
+    })
+
+    assert find_report(output) is None
+
+
+def test_published_report_identity_ignores_newer_draft(tmp_path: Path) -> None:
+    output = tmp_path / "candidate"
+    formal = _report(output)
+    draft = output / "reports" / "drafts" / "000001_分析报告_v13_draft.md"
+    draft.parent.mkdir(parents=True, exist_ok=True)
+    draft.write_text("# 未发布验证候选", encoding="utf-8")
+    _write_json(output / "completion_report.json", {"status": "COMPLETE"})
+    _write_json(output / "run_manifest.json", {
+        "status": "COMPLETED",
+        "publication": {
+            "status": "PUBLISHED",
+            "artifact_class": "REPORT",
+            "validation_only": False,
+        },
+    })
+
+    assert find_report(output) == formal
 
 
 def test_legacy_report_without_current_ledgers_is_technically_blocked(tmp_path: Path) -> None:

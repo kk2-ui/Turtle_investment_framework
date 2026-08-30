@@ -190,6 +190,24 @@ def find_report(output: Path) -> Path | None:
     completion = _load(output / "completion_report.json")
     run_manifest = _load(output / "run_manifest.json")
     publication = run_manifest.get("publication") if isinstance(run_manifest.get("publication"), dict) else {}
+    if "artifact_class" in publication:
+        if (
+            publication.get("artifact_class") == "DRAFT"
+            and run_manifest.get("status") == "COMPLETED"
+            and publication.get("validation_only") is True
+            and publication.get("status") == "NOT_PUBLISHED"
+        ):
+            return latest_draft
+        if (
+            publication.get("artifact_class") == "REPORT"
+            and publication.get("status") == "PUBLISHED"
+        ):
+            return latest_formal
+        return None
+
+    # Compatibility is intentionally limited to manifests written before
+    # artifact_class existed. A current non-report run must never resurrect a
+    # draft merely because a stale completion report says COMPLETE.
     validated_not_published = (
         run_manifest.get("status") == "COMPLETED"
         and publication.get("validation_only") is True

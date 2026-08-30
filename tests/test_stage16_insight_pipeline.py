@@ -290,11 +290,18 @@ def test_unified_assembly_publishes_memo_and_separate_technical_report(tmp_path:
     monkeypatch.setattr(completion_module, "evaluate_report_completion", lambda *a, **k: fake_completion)
     monkeypatch.setattr(write_tools, "_run_quality_checks", lambda *a, **k: {"passed": True, "issues": [], "warnings": []})
     monkeypatch.setattr(write_tools, "_render_report_html", lambda *a, **k: None)
-    monkeypatch.setattr(calibration_module, "create_publication_snapshot", lambda *a, **k: {"written": True})
+    snapshot_called = {"value": False}
+
+    def snapshot(*args, **kwargs):
+        snapshot_called["value"] = True
+        return {"written": True}
+
+    monkeypatch.setattr(calibration_module, "create_publication_snapshot", snapshot)
     result = write_tools.assemble_report(str(tmp_path), "测试公司", "000001.SZ")
     memo = Path(result["path"]).read_text(encoding="utf-8")
     technical = Path(result["technical_report_path"]).read_text(encoding="utf-8")
     assert result["published"] is True
+    assert snapshot_called["value"] is True
     assert result["memo_preservation"]["status"] == "PASS"
     assert (tmp_path / "memo_preservation_report.json").exists()
     assert "首要决定性问题" in memo and "## Ch0 技术底稿" not in memo
@@ -325,7 +332,13 @@ def test_validation_only_materializes_matching_memo_and_technical_drafts(
     )
     monkeypatch.setattr(completion_module, "evaluate_report_completion", lambda *a, **k: fake_completion)
     monkeypatch.setattr(write_tools, "_run_quality_checks", lambda *a, **k: {"passed": True, "issues": [], "warnings": []})
-    monkeypatch.setattr(calibration_module, "create_publication_snapshot", lambda *a, **k: {"written": True})
+    snapshot_called = {"value": False}
+
+    def snapshot(*args, **kwargs):
+        snapshot_called["value"] = True
+        return {"written": True}
+
+    monkeypatch.setattr(calibration_module, "create_publication_snapshot", snapshot)
 
     result = write_tools.assemble_report(
         str(tmp_path), "测试公司", "000001.SZ", validation_only=True,
@@ -333,6 +346,14 @@ def test_validation_only_materializes_matching_memo_and_technical_drafts(
     memo_path = Path(result["path"])
     technical_path = Path(result["technical_report_path"])
     assert result["published"] is False and result["validated"] is True
+    assert result["publication_snapshot"] == {
+        "written": False,
+        "skipped": True,
+        "status": "NOT_PUBLISHED",
+        "artifact_class": "DRAFT",
+    }
+    assert snapshot_called["value"] is False
+    assert not (tmp_path / "publication_snapshot.json").exists()
     assert memo_path.parent.name == "drafts"
     assert technical_path.parent == memo_path.parent
     assert technical_path.name.endswith("_technical_draft.md")
