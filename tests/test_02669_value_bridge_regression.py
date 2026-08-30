@@ -115,6 +115,17 @@ def test_02669_working_capital_history_stays_observed_while_persistence_stays_un
         "FY2025": pytest.approx(275.426),
     }
     for period in periods:
+        assert period["disclosure_mode"] == "NET_MOVEMENT_ONLY"
+        assert period["cohort_results"] == []
+        assert period["stock_flow_reconciliation"][
+            "cash_capital_attribution_status"
+        ] == "UNKNOWN"
+        assert all(
+            value is None
+            for value in period["stock_flow_reconciliation"][
+                "charge_by_cohort_role"
+            ].values()
+        )
         assert period["normalization_status"] == "UNKNOWN"
         assert period["recurring_steady_state_charge_range"] is None
         assert period["adopted_recurring_charge"] is None
@@ -129,6 +140,22 @@ def test_02669_working_capital_history_stays_observed_while_persistence_stays_un
         }
         for claim in compiled["numeric_claims"]
     )
+    observed_claims = {
+        claim["claim_id"]: claim
+        for claim in compiled["numeric_claims"]
+        if claim["metric"] == "observed_working_capital_cash_capital_charge"
+    }
+    assert observed_claims[
+        "working_capital.observed_cash_capital_charge.FY2025"
+    ]["selected_value"] == pytest.approx(275.426)
+    slot = next(
+        item
+        for item in compiled["reader_slots"]
+        if item["slot_id"] == "working_capital_normalization_summary"
+    )
+    assert "净占用RMB275.43百万元" in slot["sentence"]
+    assert "增长启动占用与稳态经常性负担" in slot["sentence"]
+    assert "两者保持未知" in slot["sentence"]
 
 
 def test_02669_replacement_anchors_do_not_masquerade_as_a_complete_company_range() -> None:

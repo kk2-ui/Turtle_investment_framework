@@ -153,6 +153,7 @@
             "period_id": "FY2022",
             "period_start": "2022-01-01",
             "period_end": "2022-12-31",
+            "disclosure_mode": "NET_MOVEMENT_ONLY",
             "owner_cash_input": {
               "basis": "REPORTED_OCF",
               "metric": "reported_operating_cash_flow_wc_bridge_only",
@@ -163,33 +164,18 @@
               "permanent_loss_application": "INCLUDED_IN_STOCK_FLOW_CHARGE",
               "evidence_ids": ["OBS:02669:FY2022-OCF"]
             },
-            "cohorts": [
-              {
-                "cohort_id": "aggregate-observed-working-capital-flow",
-                "role": "UNATTRIBUTED",
-                "opening_net_stock": 0.0,
-                "growth_launch_additions": 0.0,
-                "steady_rollover_additions": 154.516,
-                "cash_collections_and_settlements": 0.0,
-                "permanent_losses": 0.0,
-                "noncash_scope_change": 0.0,
-                "closing_net_stock": 154.516,
-                "loss_treatment": "NO_LOSS",
-                "normalization": {
-                  "method": "UNKNOWN",
-                  "adopted_endpoint": "UNKNOWN",
-                  "adopted_value": null,
-                  "rationale": "The filing reports the aggregate cash movement but not its growth-launch, steady rolling and settlement cohorts.",
-                  "evidence_ids": ["OBS:02669:FY2022-WC-CASH-CHANGE"]
-                },
-                "evidence_ids": ["OBS:02669:FY2022-WC-CASH-CHANGE"]
-              }
-            ]
+            "net_movement_observation": {
+              "opening_net_stock": 0.0,
+              "closing_net_stock": 154.516,
+              "observed_cash_capital_charge": 154.516,
+              "evidence_ids": ["OBS:02669:FY2022-WC-CASH-CHANGE"]
+            }
           },
           {
             "period_id": "FY2023",
             "period_start": "2023-01-01",
             "period_end": "2023-12-31",
+            "disclosure_mode": "NET_MOVEMENT_ONLY",
             "owner_cash_input": {
               "basis": "REPORTED_OCF",
               "metric": "reported_operating_cash_flow_wc_bridge_only",
@@ -200,33 +186,18 @@
               "permanent_loss_application": "INCLUDED_IN_STOCK_FLOW_CHARGE",
               "evidence_ids": ["OBS:02669:FY2023-OCF"]
             },
-            "cohorts": [
-              {
-                "cohort_id": "aggregate-observed-working-capital-flow",
-                "role": "UNATTRIBUTED",
-                "opening_net_stock": 154.516,
-                "growth_launch_additions": 0.0,
-                "steady_rollover_additions": 0.0,
-                "cash_collections_and_settlements": 38.978,
-                "permanent_losses": 0.0,
-                "noncash_scope_change": 0.0,
-                "closing_net_stock": 115.538,
-                "loss_treatment": "NO_LOSS",
-                "normalization": {
-                  "method": "UNKNOWN",
-                  "adopted_endpoint": "UNKNOWN",
-                  "adopted_value": null,
-                  "rationale": "The filing reports an aggregate release but does not identify whether it is repeatable collection or cohort runoff.",
-                  "evidence_ids": ["OBS:02669:FY2023-WC-CASH-CHANGE"]
-                },
-                "evidence_ids": ["OBS:02669:FY2023-WC-CASH-CHANGE"]
-              }
-            ]
+            "net_movement_observation": {
+              "opening_net_stock": 154.516,
+              "closing_net_stock": 115.538,
+              "observed_cash_capital_charge": -38.978,
+              "evidence_ids": ["OBS:02669:FY2023-WC-CASH-CHANGE"]
+            }
           },
           {
             "period_id": "FY2024",
             "period_start": "2024-01-01",
             "period_end": "2024-12-31",
+            "disclosure_mode": "NET_MOVEMENT_ONLY",
             "owner_cash_input": {
               "basis": "REPORTED_OCF",
               "metric": "reported_operating_cash_flow_wc_bridge_only",
@@ -237,33 +208,18 @@
               "permanent_loss_application": "INCLUDED_IN_STOCK_FLOW_CHARGE",
               "evidence_ids": ["OBS:02669:FY2024-OCF-RESTATED"]
             },
-            "cohorts": [
-              {
-                "cohort_id": "aggregate-observed-working-capital-flow",
-                "role": "UNATTRIBUTED",
-                "opening_net_stock": 115.538,
-                "growth_launch_additions": 0.0,
-                "steady_rollover_additions": 305.708,
-                "cash_collections_and_settlements": 0.0,
-                "permanent_losses": 0.0,
-                "noncash_scope_change": 0.0,
-                "closing_net_stock": 421.246,
-                "loss_treatment": "NO_LOSS",
-                "normalization": {
-                  "method": "UNKNOWN",
-                  "adopted_endpoint": "UNKNOWN",
-                  "adopted_value": null,
-                  "rationale": "The restated aggregate cash movement is observed, but its launch and steady-state attribution is not disclosed.",
-                  "evidence_ids": ["OBS:02669:FY2024-WC-CASH-CHANGE-RESTATED"]
-                },
-                "evidence_ids": ["OBS:02669:FY2024-WC-CASH-CHANGE-RESTATED"]
-              }
-            ]
+            "net_movement_observation": {
+              "opening_net_stock": 115.538,
+              "closing_net_stock": 421.246,
+              "observed_cash_capital_charge": 305.708,
+              "evidence_ids": ["OBS:02669:FY2024-WC-CASH-CHANGE-RESTATED"]
+            }
           },
           {
             "period_id": "FY2025",
             "period_start": "2025-01-01",
             "period_end": "2025-12-31",
+            "disclosure_mode": "NET_MOVEMENT_ONLY",
             "owner_cash_input": {
               "basis": "REPORTED_OCF",
               "metric": "reported_operating_cash_flow_wc_bridge_only",
@@ -274,28 +230,12 @@
               "permanent_loss_application": "INCLUDED_IN_STOCK_FLOW_CHARGE",
               "evidence_ids": ["OBS:02669:FY2025-OCF"]
             },
-            "cohorts": [
-              {
-                "cohort_id": "aggregate-observed-working-capital-flow",
-                "role": "UNATTRIBUTED",
-                "opening_net_stock": 421.246,
-                "growth_launch_additions": 0.0,
-                "steady_rollover_additions": 275.426,
-                "cash_collections_and_settlements": 0.0,
-                "permanent_losses": 0.0,
-                "noncash_scope_change": 0.0,
-                "closing_net_stock": 696.672,
-                "loss_treatment": "NO_LOSS",
-                "normalization": {
-                  "method": "UNKNOWN",
-                  "adopted_endpoint": "UNKNOWN",
-                  "adopted_value": null,
-                  "rationale": "Project-batch collections and launch-capital cohorts are not disclosed, so the observed year cannot be split into a repeatable burden.",
-                  "evidence_ids": ["OBS:02669:FY2025-WC-CASH-CHANGE"]
-                },
-                "evidence_ids": ["OBS:02669:FY2025-WC-CASH-CHANGE"]
-              }
-            ]
+            "net_movement_observation": {
+              "opening_net_stock": 421.246,
+              "closing_net_stock": 696.672,
+              "observed_cash_capital_charge": 275.426,
+              "evidence_ids": ["OBS:02669:FY2025-WC-CASH-CHANGE"]
+            }
           }
         ],
         "valuation_treatment": {

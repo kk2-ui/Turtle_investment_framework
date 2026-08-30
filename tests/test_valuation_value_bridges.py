@@ -668,6 +668,51 @@ def test_working_capital_unknown_stays_null_without_midpoint_zero_or_numeric_cla
     assert validate_valuation_value_bridges(compiled)["state"] == "VALID"
 
 
+def test_net_movement_working_capital_projects_observation_without_valuation_attribution() -> None:
+    payload = _bridge_input(cash=False, replacement=False, working_capital=True)
+    model_input = payload["working_capital"]["model_input"]
+    period = model_input["periods"][0]
+    period["disclosure_mode"] = "NET_MOVEMENT_ONLY"
+    period.pop("cohorts")
+    period["net_movement_observation"] = {
+        "opening_net_stock": 20,
+        "closing_net_stock": 30,
+        "observed_cash_capital_charge": 10,
+        "evidence_ids": ["OBS:WC:FY2025:NET-MOVEMENT"],
+    }
+
+    compiled = compile_valuation_value_bridges(payload)
+    result = compiled["result"]["working_capital"]["reference_period_result"]
+    treatment = compiled["valuation_projection"]["working_capital"][
+        "owner_earnings_valuation_treatment"
+    ]
+    claims = {claim["metric"]: claim for claim in compiled["numeric_claims"]}
+    slot = next(
+        item
+        for item in compiled["reader_slots"]
+        if item["slot_id"] == "working_capital_normalization_summary"
+    )
+
+    assert result["stock_flow_reconciliation"]["actual_cash_capital_charge"] == 10
+    assert treatment["normalization_status"] == "UNKNOWN"
+    assert treatment["recurring_steady_state_charge_range"] is None
+    assert treatment["adopted_recurring_charge"] is None
+    assert treatment["normalized_owner_cash_range"] is None
+    assert treatment["adopted_normalized_owner_cash"] is None
+    assert claims["observed_working_capital_cash_capital_charge"]["selected_value"] == 10
+    assert "recurring_working_capital_owner_earnings_charge" not in claims
+    assert "normalized_owner_cash_for_valuation" not in claims
+    assert slot["display_variants"] == {
+        "reference_period": "FY2025",
+        "observed_cash_capital_movement": "RMB10百万元",
+        "movement_direction": "净占用",
+    }
+    assert "增长启动占用与稳态经常性负担" in slot["sentence"]
+    assert "两者保持未知" in slot["sentence"]
+    assert "不形成可进入EPV或持续经营终值的点值" in slot["sentence"]
+    assert validate_valuation_value_bridges(compiled)["state"] == "VALID"
+
+
 def test_working_capital_runoff_never_emits_continuing_valuation_claim_or_language() -> None:
     payload = _bridge_input(cash=False, replacement=False, working_capital=True)
     model_input = payload["working_capital"]["model_input"]

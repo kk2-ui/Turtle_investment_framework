@@ -12,8 +12,11 @@ Two starting points are supported:
 * ``ACCRUAL_EARNINGS`` does not, so the reconciled movement must be deducted.
 
 In either case normalized owner cash is obtained by replacing the actual
-period charge with the bounded steady-state charge.  Unknown attribution stays
-unknown; the model never invents a midpoint.
+period charge with the bounded steady-state charge.  A period may provide
+either full cohort gross flows or only an observed net movement.  Net-only
+disclosure closes the observed period cash-capital identity, but it never
+manufactures growth, steady-state or runoff attribution.  Unknown attribution
+stays unknown; the model never invents a midpoint.
 """
 
 from __future__ import annotations
@@ -29,6 +32,7 @@ VALIDATION_SCHEMA_VERSION = "working-capital-model-validation.v1"
 RESULT_SCHEMA_VERSION = "working-capital-model-result.v1"
 
 OWNER_CASH_BASES = {"REPORTED_OCF", "ACCRUAL_EARNINGS"}
+DISCLOSURE_MODES = {"FULL_GROSS_FLOW", "NET_MOVEMENT_ONLY"}
 WORKING_CAPITAL_APPLICATIONS = {
     "ALREADY_REFLECTED_IN_BASE",
     "DEDUCT_STOCK_FLOW_CHARGE",
@@ -90,8 +94,10 @@ _PERIOD_FIELDS = {
     "period_id",
     "period_start",
     "period_end",
+    "disclosure_mode",
     "owner_cash_input",
     "cohorts",
+    "net_movement_observation",
 }
 _OWNER_CASH_FIELDS = {
     "basis",
@@ -115,6 +121,12 @@ _COHORT_FIELDS = {
     "closing_net_stock",
     "loss_treatment",
     "normalization",
+    "evidence_ids",
+}
+_NET_MOVEMENT_FIELDS = {
+    "opening_net_stock",
+    "closing_net_stock",
+    "observed_cash_capital_charge",
     "evidence_ids",
 }
 _NORMALIZATION_FIELDS = {
@@ -508,6 +520,36 @@ def _validate_owner_cash_input(
     return basis
 
 
+def _validate_net_movement_observation(
+    value: Any, *, period_id: str, findings: list[str]
+) -> tuple[float, float, float] | None:
+    """Validate one aggregate movement without inventing its gross composition."""
+    item = _mapping(value)
+    prefix = period_id + ":net_movement_observation"
+    _reject_unknown_fields(item, _NET_MOVEMENT_FIELDS, prefix, findings)
+    opening = _number(item.get("opening_net_stock"))
+    closing = _number(item.get("closing_net_stock"))
+    observed_charge = _number(item.get("observed_cash_capital_charge"))
+    for field, number in (
+        ("opening_net_stock", opening),
+        ("closing_net_stock", closing),
+        ("observed_cash_capital_charge", observed_charge),
+    ):
+        if number is None:
+            findings.append(prefix + ":" + field + "_invalid")
+    _validate_text_list(
+        item.get("evidence_ids"),
+        prefix=prefix + ":evidence_ids",
+        findings=findings,
+    )
+    if opening is None or closing is None or observed_charge is None:
+        return None
+    delta = _clean(closing - opening)
+    if not _same(observed_charge, delta):
+        findings.append(prefix + ":net_movement_identity_not_closed")
+    return opening, closing, observed_charge
+
+
 def _validate_valuation_treatment(
     value: Any,
     *,
@@ -600,6 +642,7 @@ def validate_working_capital_model(payload: Any) -> dict[str, Any]:
     seen_period_ids: set[str] = set()
     period_roles: dict[str, dict[str, str]] = {}
     prior_cohort_closing: dict[str, tuple[str, float]] = {}
+    prior_net_closing: tuple[str, float] | None = None
     prior_period_end: str | None = None
     for index, raw_period in enumerate(periods):
         period = _mapping(raw_period)
@@ -621,32 +664,67 @@ def validate_working_capital_model(payload: Any) -> dict[str, Any]:
             prior_period_end = str(end)
         if _valid_date(end) and _valid_date(basis.get("as_of")) and str(end) > str(basis["as_of"]):
             findings.append(prefix + ":period_end_after_as_of")
-        _validate_owner_cash_input(period.get("owner_cash_input"), period_id=period_id, findings=findings)
-        cohorts = _items(period.get("cohorts"))
-        if not cohorts:
-            findings.append(prefix + ":cohorts_missing")
-        seen_cohort_ids: set[str] = set()
+        _validate_owner_cash_input(
+            period.get("owner_cash_input"),
+            period_id=period_id,
+            findings=findings,
+        )
+        disclosure_mode = str(period.get("disclosure_mode") or "FULL_GROSS_FLOW")
+        if disclosure_mode not in DISCLOSURE_MODES:
+            findings.append(prefix + ":disclosure_mode_invalid")
         roles: dict[str, str] = {}
-        for cohort_index, raw_cohort in enumerate(cohorts):
-            cohort = _mapping(raw_cohort)
-            cohort_id, _ = _validate_cohort(
-                cohort,
+        if disclosure_mode == "NET_MOVEMENT_ONLY":
+            prior_cohort_closing.clear()
+            if "cohorts" in period:
+                findings.append(prefix + ":net_movement_mode_cohorts_forbidden")
+            movement = _validate_net_movement_observation(
+                period.get("net_movement_observation"),
                 period_id=period_id,
-                index=cohort_index,
-                seen_ids=seen_cohort_ids,
                 findings=findings,
             )
-            roles[cohort_id] = str(cohort.get("role") or "")
-            opening = _number(cohort.get("opening_net_stock"))
-            if cohort_id in prior_cohort_closing and opening is not None:
-                prior_period_id, prior_closing = prior_cohort_closing[cohort_id]
-                if not _same(opening, prior_closing):
-                    findings.append(
-                        period_id + ":" + cohort_id + ":opening_not_prior_closing:" + prior_period_id
-                    )
-            closing = _number(cohort.get("closing_net_stock"))
-            if cohort_id and closing is not None:
-                prior_cohort_closing[cohort_id] = (period_id, closing)
+            if movement is not None:
+                opening, closing, _ = movement
+                if prior_net_closing is not None:
+                    prior_period_id, previous_closing = prior_net_closing
+                    if not _same(opening, previous_closing):
+                        findings.append(
+                            period_id
+                            + ":net_movement_observation:opening_not_prior_closing:"
+                            + prior_period_id
+                        )
+                prior_net_closing = (period_id, closing)
+        else:
+            prior_net_closing = None
+            if "net_movement_observation" in period:
+                findings.append(prefix + ":full_gross_flow_net_movement_forbidden")
+            cohorts = _items(period.get("cohorts"))
+            if not cohorts:
+                findings.append(prefix + ":cohorts_missing")
+            seen_cohort_ids: set[str] = set()
+            for cohort_index, raw_cohort in enumerate(cohorts):
+                cohort = _mapping(raw_cohort)
+                cohort_id, _ = _validate_cohort(
+                    cohort,
+                    period_id=period_id,
+                    index=cohort_index,
+                    seen_ids=seen_cohort_ids,
+                    findings=findings,
+                )
+                roles[cohort_id] = str(cohort.get("role") or "")
+                opening = _number(cohort.get("opening_net_stock"))
+                if cohort_id in prior_cohort_closing and opening is not None:
+                    prior_period_id, prior_closing = prior_cohort_closing[cohort_id]
+                    if not _same(opening, prior_closing):
+                        findings.append(
+                            period_id
+                            + ":"
+                            + cohort_id
+                            + ":opening_not_prior_closing:"
+                            + prior_period_id
+                        )
+                closing = _number(cohort.get("closing_net_stock"))
+                if cohort_id and closing is not None:
+                    prior_cohort_closing[cohort_id] = (period_id, closing)
         period_roles[period_id] = roles
     _validate_valuation_treatment(
         value.get("valuation_treatment"), period_roles=period_roles, findings=findings
@@ -716,10 +794,57 @@ def _cohort_result(cohort: dict[str, Any]) -> dict[str, Any]:
 
 
 def _period_result(period: dict[str, Any]) -> dict[str, Any]:
-    cohort_results = [_cohort_result(cohort) for cohort in period["cohorts"]]
-    actual_charge = _clean(
-        sum(item["stock_flow_reconciliation"]["actual_cash_capital_charge"] for item in cohort_results)
-    )
+    disclosure_mode = str(period.get("disclosure_mode") or "FULL_GROSS_FLOW")
+    if disclosure_mode == "NET_MOVEMENT_ONLY":
+        movement = period["net_movement_observation"]
+        opening = float(movement["opening_net_stock"])
+        closing = float(movement["closing_net_stock"])
+        actual_charge = _clean(float(movement["observed_cash_capital_charge"]))
+        delta = _clean(closing - opening)
+        cohort_results: list[dict[str, Any]] = []
+        role_totals: dict[str, float | None] = {
+            role: None for role in sorted(COHORT_ROLES)
+        }
+        stock_flow_reconciliation = {
+            "opening_net_stock": opening,
+            "closing_net_stock": closing,
+            "delta_net_stock": delta,
+            "observed_cash_capital_movement": actual_charge,
+            "actual_cash_capital_charge": actual_charge,
+            "identity_charge_from_net_stock": delta,
+            "identity_closed": True,
+            "charge_by_cohort_role": role_totals,
+            "cash_capital_attribution_status": "UNKNOWN",
+            "evidence_ids": deepcopy(movement["evidence_ids"]),
+        }
+        recurring_known = False
+    else:
+        cohort_results = [_cohort_result(cohort) for cohort in period["cohorts"]]
+        actual_charge = _clean(
+            sum(
+                item["stock_flow_reconciliation"]["actual_cash_capital_charge"]
+                for item in cohort_results
+            )
+        )
+        role_totals = {
+            role: _clean(
+                sum(
+                    item["stock_flow_reconciliation"]["actual_cash_capital_charge"]
+                    for item in cohort_results
+                    if item["role"] == role
+                )
+            )
+            for role in sorted(COHORT_ROLES)
+        }
+        stock_flow_reconciliation = {
+            "actual_cash_capital_charge": actual_charge,
+            "charge_by_cohort_role": role_totals,
+            "cash_capital_attribution_status": "ATTRIBUTED_BY_COHORT",
+        }
+        recurring_known = all(
+            item["recurring_steady_state_charge_range"] is not None
+            for item in cohort_results
+        )
     base = period["owner_cash_input"]
     current = (
         float(base["base_metric_amount"])
@@ -729,9 +854,6 @@ def _period_result(period: dict[str, Any]) -> dict[str, Any]:
     if base["basis"] == "ACCRUAL_EARNINGS":
         current -= actual_charge
     current = _clean(current)
-    recurring_known = all(
-        item["recurring_steady_state_charge_range"] is not None for item in cohort_results
-    )
     recurring_range: dict[str, float] | None = None
     adopted_recurring: float | None = None
     adopted_endpoint = "UNKNOWN"
@@ -761,26 +883,14 @@ def _period_result(period: dict[str, Any]) -> dict[str, Any]:
             "range_high": _clean(current + actual_charge - recurring_low),
         }
         adopted_normalized = _clean(current + actual_charge - adopted_recurring)
-    role_totals = {
-        role: _clean(
-            sum(
-                item["stock_flow_reconciliation"]["actual_cash_capital_charge"]
-                for item in cohort_results
-                if item["role"] == role
-            )
-        )
-        for role in sorted(COHORT_ROLES)
-    }
     return {
         "period_id": period["period_id"],
         "period_start": period["period_start"],
         "period_end": period["period_end"],
+        "disclosure_mode": disclosure_mode,
         "owner_cash_basis": base["basis"],
         "cohort_results": cohort_results,
-        "stock_flow_reconciliation": {
-            "actual_cash_capital_charge": actual_charge,
-            "charge_by_cohort_role": role_totals,
-        },
+        "stock_flow_reconciliation": stock_flow_reconciliation,
         "current_owner_cash": current,
         "recurring_steady_state_charge_range": recurring_range,
         "adopted_recurring_charge": adopted_recurring,
@@ -802,13 +912,35 @@ def compute_working_capital_model(payload: Any) -> dict[str, Any]:
     valuation = deepcopy(value["valuation_treatment"])
     reference = by_period[valuation["reference_period_id"]]
     unknown = reference["normalization_status"] == "UNKNOWN"
+    net_movement_only = reference["disclosure_mode"] == "NET_MOVEMENT_ONLY"
     terminal_route = valuation["terminal_route"]
     economic_conclusion = {
         "normal_owner_cash_status": "UNKNOWN" if unknown else "BOUNDED",
         "owner_cash_basis": reference["owner_cash_basis"],
-        "normalization_scope": "STEADY_ROLLING_ONLY",
-        "growth_launch_treatment": "EXCLUDE_FROM_RECURRING_CHARGE",
-        "runoff_or_settlement_treatment": "EXCLUDE_FROM_RECURRING_CHARGE",
+        "observed_cash_capital_status": "OBSERVED",
+        "cash_capital_attribution_status": (
+            "UNKNOWN" if net_movement_only else "ATTRIBUTED_BY_COHORT"
+        ),
+        "normalization_scope": (
+            "UNATTRIBUTED_NET_MOVEMENT_ONLY"
+            if net_movement_only
+            else "STEADY_ROLLING_ONLY"
+        ),
+        "growth_launch_treatment": (
+            "UNKNOWN_NOT_INFERRED_FROM_NET_MOVEMENT"
+            if net_movement_only
+            else "EXCLUDE_FROM_RECURRING_CHARGE"
+        ),
+        "steady_rolling_treatment": (
+            "UNKNOWN_NOT_INFERRED_FROM_NET_MOVEMENT"
+            if net_movement_only
+            else "NORMALIZE_FROM_COHORT_EVIDENCE"
+        ),
+        "runoff_or_settlement_treatment": (
+            "UNKNOWN_NOT_INFERRED_FROM_NET_MOVEMENT"
+            if net_movement_only
+            else "EXCLUDE_FROM_RECURRING_CHARGE"
+        ),
         "loss_treatment": "RECURRING_EXPECTED_ONLY; ONE_OFF_EXCLUDED; UNKNOWN_LOCALIZED",
         "epv_treatment": (
             "NORMALIZED_OWNER_CASH_WITH_STEADY_RECURRING_CHARGE_ONLY"
@@ -821,9 +953,19 @@ def compute_working_capital_model(payload: Any) -> dict[str, Any]:
             "NOT_USED": "NOT_USED",
         }[terminal_route],
         "investor_use": (
-            "Replace the period working-capital cash movement with the bounded steady-state charge; "
-            "do not perpetuate launch absorption or settlement release, and do not capitalize and "
-            "release the same stock."
+            (
+                "Treat the net movement as an observed period cash-capital charge only. "
+                "Growth-launch "
+                "and steady-state attribution remain unknown, so the movement must not become a "
+                "recurring charge, EPV input or terminal burden without cohort evidence."
+            )
+            if net_movement_only
+            else (
+                "Replace the period working-capital cash movement with the bounded "
+                "steady-state charge; do not perpetuate launch absorption or settlement release, "
+                "and do not capitalize and "
+                "release the same stock."
+            )
         ),
     }
     return {
@@ -846,6 +988,7 @@ def compute_working_capital_model(payload: Any) -> dict[str, Any]:
 __all__ = [
     "ADOPTED_ENDPOINTS",
     "COHORT_ROLES",
+    "DISCLOSURE_MODES",
     "LOSS_TREATMENTS",
     "OWNER_CASH_BASES",
     "RESULT_SCHEMA_VERSION",

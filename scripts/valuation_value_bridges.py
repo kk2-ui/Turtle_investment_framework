@@ -604,6 +604,14 @@ def _working_capital_projection(
     reference = _mapping(result.get("reference_period_result"))
     reference_range = reference.get("normalized_owner_cash_range")
     reference_adopted = reference.get("adopted_normalized_owner_cash")
+    reference_disclosure_mode = str(
+        reference.get("disclosure_mode") or "FULL_GROSS_FLOW"
+    )
+    reference_actual_charge = _number(
+        _mapping(reference.get("stock_flow_reconciliation")).get(
+            "actual_cash_capital_charge"
+        )
+    )
     owner_earnings_treatment = {
         "reference_period_id": reference.get("period_id"),
         "owner_cash_basis": reference.get("owner_cash_basis"),
@@ -633,8 +641,59 @@ def _working_capital_projection(
         valuation_treatment.get("epv_use") == "NORMALIZED_OWNER_CASH"
         or valuation_treatment.get("terminal_route") == "CONTINUING"
     )
+    observed_claim_id: str | None = None
+    observed_display: str | None = None
+    movement_direction: str | None = None
+    if (
+        reference_disclosure_mode == "NET_MOVEMENT_ONLY"
+        and reference_actual_charge is not None
+    ):
+        observed_claim_id = "working_capital.observed_cash_capital_charge." + reference_id
+        claims.append(
+            {
+                "claim_id": observed_claim_id,
+                "source_model_id": result["model_id"],
+                "metric": "observed_working_capital_cash_capital_charge",
+                "range_low": reference_actual_charge,
+                "range_high": reference_actual_charge,
+                "selected_value": reference_actual_charge,
+                "currency": basis.get("currency", ""),
+                "unit": basis.get("unit", ""),
+                "as_of": basis.get("as_of", ""),
+                "scope": basis.get("ordinary_share_claim_scope", ""),
+            }
+        )
+        observed_display = _reader_amount(
+            str(basis.get("currency", "")),
+            str(basis.get("unit", "")),
+            abs(reference_actual_charge),
+        )
+        movement_direction = (
+            "净占用"
+            if reference_actual_charge > 0
+            else "净释放" if reference_actual_charge < 0 else "无净变动"
+        )
     if reference_range is None or reference_adopted is None:
-        if uses_normalized_owner_cash_for_continuing_value:
+        if reference_disclosure_mode == "NET_MOVEMENT_ONLY" and observed_display is not None:
+            observed_phrase = (
+                "本期观察到营运资本" + movement_direction + observed_display
+                if movement_direction != "无净变动"
+                else "本期观察到营运资本无净变动"
+            )
+            if uses_normalized_owner_cash_for_continuing_value:
+                slot_sentence = (
+                    observed_phrase
+                    + "；经常性营运资本占用仍无法可靠定界，因为现有汇总披露不能区分"
+                    + "增长启动占用与稳态经常性负担。两者保持未知，且不形成可进入EPV或"
+                    + "持续经营终值的点值。"
+                )
+            else:
+                slot_sentence = (
+                    observed_phrase
+                    + "；现有汇总披露不能区分增长启动占用、稳态负担与项目回收，"
+                    + "这些归因保持未知，不将净变动直接资本化或视为可回收存量。"
+                )
+        elif uses_normalized_owner_cash_for_continuing_value:
             slot_sentence = (
                 "经常性营运资本占用仍无法可靠定界，因此当前不形成可进入"
                 "EPV或持续经营终值的点值；未知部分保持空值。"
@@ -698,12 +757,22 @@ def _working_capital_projection(
         claim["claim_id"] for claim in claims
         if claim["claim_id"].startswith("working_capital.normalized_owner_cash.")
     ]
+    if observed_claim_id is not None:
+        reference_claim_ids.append(observed_claim_id)
+    display_variants = {"reference_period": reference_id}
+    if observed_display is not None and movement_direction is not None:
+        display_variants.update(
+            {
+                "observed_cash_capital_movement": observed_display,
+                "movement_direction": movement_direction,
+            }
+        )
     slot = {
         "slot_id": "working_capital_normalization_summary",
         "claim_ids": reference_claim_ids,
         "metric": "WORKING_CAPITAL_NORMALIZATION_SUMMARY",
         "target_chapter": 12,
-        "display_variants": {"reference_period": reference_id},
+        "display_variants": display_variants,
         "sentence": slot_sentence,
     }
     return projection, reader, claims, [slot]

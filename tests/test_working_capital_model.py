@@ -8,6 +8,7 @@ import pytest
 
 from scripts.working_capital_model import (
     COHORT_ROLES,
+    DISCLOSURE_MODES,
     RESULT_SCHEMA_VERSION,
     compute_working_capital_model,
     validate_working_capital_model,
@@ -132,6 +133,28 @@ def _period(
     }
 
 
+def _net_movement_period(
+    *,
+    opening: float = 20.0,
+    closing: float = 30.0,
+    observed_charge: float = 10.0,
+    owner_cash_input: dict | None = None,
+) -> dict:
+    return {
+        "period_id": "FY2025",
+        "period_start": "2025-01-01",
+        "period_end": "2025-12-31",
+        "disclosure_mode": "NET_MOVEMENT_ONLY",
+        "owner_cash_input": owner_cash_input or _owner_cash_input(),
+        "net_movement_observation": {
+            "opening_net_stock": opening,
+            "closing_net_stock": closing,
+            "observed_cash_capital_charge": observed_charge,
+            "evidence_ids": ["OBS:WC:FY2025:NET-MOVEMENT"],
+        },
+    }
+
+
 def _base_model() -> dict:
     return {
         "schema_version": "working-capital-model.v1",
@@ -196,6 +219,107 @@ def test_schema_is_strict_and_exposes_economic_cohort_roles() -> None:
     assert set(schema["$defs"]["cohort"]["properties"]["role"]["enum"]) == COHORT_ROLES
     owner_basis = schema["$defs"]["owner_cash_input"]["properties"]["basis"]["enum"]
     assert set(owner_basis) == {"REPORTED_OCF", "ACCRUAL_EARNINGS"}
+    disclosure_modes = schema["$defs"]["period"]["properties"]["disclosure_mode"]["enum"]
+    assert set(disclosure_modes) == DISCLOSURE_MODES
+
+
+def test_net_movement_only_closes_observed_charge_without_fabricated_attribution() -> None:
+    payload = _base_model()
+    payload["periods"] = [_net_movement_period()]
+
+    assert validate_working_capital_model(payload)["state"] == "REVIEWABLE"
+
+    result = compute_working_capital_model(payload)
+    period = result["reference_period_result"]
+    reconciliation = period["stock_flow_reconciliation"]
+
+    assert period["disclosure_mode"] == "NET_MOVEMENT_ONLY"
+    assert period["cohort_results"] == []
+    assert reconciliation["opening_net_stock"] == 20
+    assert reconciliation["closing_net_stock"] == 30
+    assert reconciliation["delta_net_stock"] == 10
+    assert reconciliation["observed_cash_capital_movement"] == 10
+    assert reconciliation["actual_cash_capital_charge"] == 10
+    assert reconciliation["identity_charge_from_net_stock"] == 10
+    assert reconciliation["cash_capital_attribution_status"] == "UNKNOWN"
+    assert set(reconciliation["charge_by_cohort_role"]) == COHORT_ROLES
+    assert all(value is None for value in reconciliation["charge_by_cohort_role"].values())
+    assert period["current_owner_cash"] == 90
+    assert period["recurring_steady_state_charge_range"] is None
+    assert period["adopted_recurring_charge"] is None
+    assert period["normalized_owner_cash_range"] is None
+    assert period["adopted_normalized_owner_cash"] is None
+    assert period["normalization_status"] == "UNKNOWN"
+    assert result["economic_conclusion"]["cash_capital_attribution_status"] == "UNKNOWN"
+    assert result["economic_conclusion"]["steady_rolling_treatment"] == (
+        "UNKNOWN_NOT_INFERRED_FROM_NET_MOVEMENT"
+    )
+
+
+def test_net_movement_only_rejects_broken_identity_and_fabricated_attribution() -> None:
+    broken = _base_model()
+    broken["periods"] = [_net_movement_period(observed_charge=5)]
+    findings = validate_working_capital_model(broken)["findings"]
+    assert "FY2025:net_movement_observation:net_movement_identity_not_closed" in findings
+
+    fabricated = _base_model()
+    fabricated["periods"] = [_net_movement_period()]
+    fabricated["periods"][0]["net_movement_observation"]["growth_launch_charge"] = 6
+    findings = validate_working_capital_model(fabricated)["findings"]
+    assert (
+        "FY2025:net_movement_observation:unknown_field:growth_launch_charge" in findings
+    )
+    schema = json.loads((ROOT / "schemas/working_capital_model.schema.json").read_text())
+    assert schema["$defs"]["net_movement_observation"]["additionalProperties"] is False
+    net_condition = schema["$defs"]["period"]["allOf"][0]
+    assert net_condition["then"]["required"] == ["net_movement_observation"]
+    assert net_condition["then"]["not"]["required"] == ["cohorts"]
+    assert net_condition["else"]["required"] == ["cohorts"]
+
+    parallel_cohort = _base_model()
+    parallel_cohort["periods"] = [_net_movement_period()]
+    parallel_cohort["periods"][0]["cohorts"] = [_growth_cohort()]
+    findings = validate_working_capital_model(parallel_cohort)["findings"]
+    assert "FY2025:net_movement_mode_cohorts_forbidden" in findings
+
+
+def test_net_movement_only_supports_negative_net_working_capital_stock() -> None:
+    payload = _base_model()
+    payload["periods"] = [
+        _net_movement_period(opening=-12, closing=-20, observed_charge=-8)
+    ]
+
+    assert validate_working_capital_model(payload)["state"] == "REVIEWABLE"
+    result = compute_working_capital_model(payload)["reference_period_result"]
+    reconciliation = result["stock_flow_reconciliation"]
+    assert reconciliation["opening_net_stock"] == -12
+    assert reconciliation["closing_net_stock"] == -20
+    assert reconciliation["actual_cash_capital_charge"] == -8
+    assert reconciliation["cash_capital_attribution_status"] == "UNKNOWN"
+    assert result["adopted_recurring_charge"] is None
+    schema = json.loads((ROOT / "schemas/working_capital_model.schema.json").read_text())
+    observation_properties = schema["$defs"]["net_movement_observation"]["properties"]
+    assert "minimum" not in observation_properties["opening_net_stock"]
+    assert "minimum" not in observation_properties["closing_net_stock"]
+
+
+def test_net_movement_only_can_upgrade_to_full_cohort_evidence() -> None:
+    net_only = _base_model()
+    net_only["periods"] = [_net_movement_period()]
+    net_result = compute_working_capital_model(net_only)["reference_period_result"]
+    assert net_result["normalization_status"] == "UNKNOWN"
+
+    upgraded = deepcopy(net_only)
+    period = upgraded["periods"][0]
+    period["disclosure_mode"] = "FULL_GROSS_FLOW"
+    period.pop("net_movement_observation")
+    period["cohorts"] = [_cohort()]
+
+    upgraded_result = compute_working_capital_model(upgraded)["reference_period_result"]
+    assert upgraded_result["disclosure_mode"] == "FULL_GROSS_FLOW"
+    assert upgraded_result["normalization_status"] == "BOUNDED"
+    assert upgraded_result["adopted_recurring_charge"] == 10
+    assert upgraded_result["adopted_normalized_owner_cash"] == 90
 
 
 def test_stock_flow_identity_and_reported_ocf_owner_cash_are_machine_readable() -> None:
