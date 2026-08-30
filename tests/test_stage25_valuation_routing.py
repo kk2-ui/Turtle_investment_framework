@@ -140,7 +140,7 @@ def test_route_has_role_based_models_rejections_and_exact_basis(tmp_path: Path) 
         if model["route_model_id"] == "REPLACEMENT_VALUE"
     )
     assert replacement["valuation_archetype_id"] == "property_service"
-    assert replacement["valuation_archetype_version"] == "v1"
+    assert replacement["valuation_archetype_version"] == "v2"
 
 
 def test_underwriting_thesis_overrides_archetype_default_route_without_adding_value(tmp_path: Path) -> None:

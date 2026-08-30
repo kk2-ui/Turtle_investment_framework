@@ -52,6 +52,7 @@ TOP_LEVEL_FIELDS = {
     "valuation_family",
     "applicability",
     "components",
+    "evidence_role_guidance",
     "completion_rule",
     "limits",
     "training_boundary",
@@ -85,6 +86,13 @@ LIMIT_FIELDS = {
     "prohibited_content",
 }
 TRAINING_BOUNDARY_FIELDS = {"may_update", "may_not_supply"}
+EVIDENCE_ROLE_GUIDANCE_FIELDS = {
+    "role",
+    "likely_official_sources",
+    "likely_acquisition_modules",
+    "query_hints",
+    "bounded_stopping_rule",
+}
 FORBIDDEN_PARAMETER_FIELD_TOKENS = {
     "amount",
     "currency",
@@ -101,6 +109,11 @@ FORBIDDEN_PARAMETER_FIELD_TOKENS = {
     "company_name",
 }
 PARAMETER_TEXT_RE = re.compile(r"(?:\d+(?:\.\d+)?\s*(?:%|x|倍))", re.IGNORECASE)
+CURRENCY_AMOUNT_TEXT_RE = re.compile(
+    r"(?:RMB|CNY|HKD|USD|人民币|港元|美元)\s*[\d,.]+"
+    r"|\d+(?:\.\d+)?\s*(?:million|billion|mn|bn|百万元|千万元|万元|亿元)",
+    re.IGNORECASE,
+)
 
 
 def _mapping(value: Any) -> dict[str, Any]:
@@ -166,6 +179,8 @@ def _numeric_or_parameter_findings(value: Any, *, path: str = "$") -> list[str]:
     if isinstance(value, str):
         if PARAMETER_TEXT_RE.search(value):
             findings.append(path + ":percentage_or_multiple_text_forbidden")
+        if CURRENCY_AMOUNT_TEXT_RE.search(value):
+            findings.append(path + ":currency_amount_text_forbidden")
         return findings
     if isinstance(value, list):
         for index, item in enumerate(value):
@@ -238,6 +253,42 @@ def _validate_completion_rule(value: Any, findings: list[str]) -> None:
         _required_text(item.get(field), prefix="completion_rule." + field, findings=findings)
 
 
+def _validate_evidence_role_guidance(
+    value: Any, *, required_roles: set[str], findings: list[str]
+) -> None:
+    items = _items(value)
+    if not items:
+        findings.append("evidence_role_guidance:missing")
+        return
+    seen: set[str] = set()
+    for index, raw_item in enumerate(items):
+        item = _mapping(raw_item)
+        prefix = f"evidence_role_guidance[{index}]"
+        _reject_unknown_fields(item, EVIDENCE_ROLE_GUIDANCE_FIELDS, prefix, findings)
+        role = str(item.get("role") or "")
+        if not re.fullmatch(r"[A-Z][A-Z0-9_]*", role):
+            findings.append(prefix + ":role_invalid")
+        elif role in seen:
+            findings.append(prefix + ":role_duplicate")
+        else:
+            seen.add(role)
+        for field in (
+            "likely_official_sources",
+            "likely_acquisition_modules",
+            "query_hints",
+        ):
+            _text_list(item.get(field), prefix=prefix + "." + field, findings=findings)
+        _required_text(
+            item.get("bounded_stopping_rule"),
+            prefix=prefix + ".bounded_stopping_rule",
+            findings=findings,
+        )
+    missing = sorted(required_roles - seen)
+    extra = sorted(seen - required_roles)
+    findings.extend("evidence_role_guidance:missing_role:" + role for role in missing)
+    findings.extend("evidence_role_guidance:unknown_role:" + role for role in extra)
+
+
 def _validate_limits(value: Any, findings: list[str]) -> None:
     item = _mapping(value)
     _reject_unknown_fields(item, LIMIT_FIELDS, "limits", findings)
@@ -298,8 +349,31 @@ def validate_valuation_archetype(payload: Any) -> dict[str, Any]:
     if not components:
         findings.append("components:missing")
     seen: set[str] = set()
+    required_roles: set[str] = set()
+    role_owners: dict[str, list[str]] = {}
     for index, component in enumerate(components):
         _validate_component(component, index=index, seen=seen, findings=findings)
+        if isinstance(component, dict):
+            component_type = str(component.get("component_type") or "")
+            for raw_role in component.get("required_evidence_roles") or []:
+                if not _text(raw_role):
+                    continue
+                role = str(raw_role)
+                required_roles.add(role)
+                role_owners.setdefault(role, []).append(component_type)
+    if "evidence_role_guidance" in card:
+        for role, owners in sorted(role_owners.items()):
+            distinct_owners = list(dict.fromkeys(owners))
+            if len(distinct_owners) > 1:
+                findings.append(
+                    "components:evidence_role_reused_across_components:"
+                    + role + ":" + ",".join(distinct_owners)
+                )
+        _validate_evidence_role_guidance(
+            card.get("evidence_role_guidance"),
+            required_roles=required_roles,
+            findings=findings,
+        )
     _validate_completion_rule(card.get("completion_rule"), findings)
     _validate_limits(card.get("limits"), findings)
     _validate_training_boundary(card.get("training_boundary"), findings)
@@ -427,6 +501,8 @@ def resolve_valuation_archetype(
         "status": card["status"],
         "valuation_family": card["valuation_family"],
         "required_component_specs": deepcopy(card["components"]),
+        "evidence_role_guidance": deepcopy(card.get("evidence_role_guidance") or []),
+        "applicability": deepcopy(card["applicability"]),
         "completion_rule": deepcopy(card["completion_rule"]),
         "limits": deepcopy(card["limits"]),
         "training_boundary": deepcopy(card["training_boundary"]),

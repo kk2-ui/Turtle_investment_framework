@@ -1,0 +1,320 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://turtle.local/schemas/valuation_evidence_plan.schema.json",
+  "title": "Turtle Valuation Evidence Plan",
+  "description": "A deterministic route/card projection of company evidence work. It contains no company values or default valuation parameters.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "plan_id",
+    "report_id",
+    "route_id",
+    "state",
+    "evidence_role_readiness",
+    "model_completion",
+    "route_validation_state",
+    "valuation_model",
+    "valuation_archetype",
+    "applicability",
+    "components",
+    "evidence_summary",
+    "blocked_valuation_claims",
+    "findings",
+    "policy"
+  ],
+  "properties": {
+    "schema_version": {"const": "valuation-evidence-plan.v1"},
+    "plan_id": {"type": "string", "pattern": "^VEP:"},
+    "report_id": {"type": ["string", "null"]},
+    "route_id": {"type": ["string", "null"]},
+    "state": {"enum": ["PLAN_READY", "NOT_REQUIRED", "INCOMPLETE", "INVALID"]},
+    "evidence_role_readiness": {"enum": ["ROLE_INPUTS_READY", "ROLE_INPUTS_INCOMPLETE", "NOT_REQUIRED", "BLOCKED"]},
+    "model_completion": {"enum": ["NOT_EVALUATED", "NOT_APPLICABLE"]},
+    "route_validation_state": {"enum": ["REVIEWABLE", "INCOMPLETE", "INVALID", null]},
+    "valuation_model": {
+      "oneOf": [
+        {"type": "null"},
+        {"$ref": "#/$defs/valuationModel"}
+      ]
+    },
+    "valuation_archetype": {
+      "oneOf": [
+        {"type": "null"},
+        {"$ref": "#/$defs/valuationArchetype"}
+      ]
+    },
+    "applicability": {
+      "oneOf": [
+        {"type": "null"},
+        {"$ref": "#/$defs/applicability"},
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["state", "findings"],
+          "properties": {
+            "state": {"const": "INVALID"},
+            "findings": {"$ref": "#/$defs/textList"}
+          }
+        }
+      ]
+    },
+    "components": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/component"}
+    },
+    "evidence_summary": {"$ref": "#/$defs/evidenceSummary"},
+    "blocked_valuation_claims": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {"$ref": "#/$defs/valuationClaim"}
+    },
+    "findings": {"type": "array", "uniqueItems": true, "items": {"type": "string"}},
+    "policy": {"$ref": "#/$defs/policy"}
+  },
+  "$defs": {
+    "textList": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {"type": "string", "minLength": 1}
+    },
+    "valuationClaim": {
+      "enum": [
+        "COMPANY_LEVEL_REPLACEMENT_RANGE",
+        "PER_SHARE_REPLACEMENT_VALUE",
+        "JOINT_REPLACEMENT_EPV_PROTECTION_PRICE",
+        "COMPONENT_RECOGNITION"
+      ]
+    },
+    "valuationModel": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "route_model_id",
+        "model_type",
+        "role",
+        "value_scope",
+        "cash_flow_scope",
+        "valuation_archetype_id",
+        "valuation_archetype_version"
+      ],
+      "properties": {
+        "route_model_id": {"const": "REPLACEMENT_VALUE"},
+        "model_type": {"type": "string"},
+        "role": {"enum": ["primary", "corroborative", "stress"]},
+        "value_scope": {"type": "string"},
+        "cash_flow_scope": {"type": "string"},
+        "valuation_archetype_id": {"type": "string", "minLength": 1},
+        "valuation_archetype_version": {"type": "string", "pattern": "^v[0-9]+$"}
+      }
+    },
+    "valuationArchetype": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["card_id", "archetype_id", "version", "status", "valuation_family"],
+      "properties": {
+        "card_id": {"type": "string", "pattern": "^VALUATION_ARCHETYPE:"},
+        "archetype_id": {"type": "string"},
+        "version": {"type": "string", "pattern": "^v[0-9]+$"},
+        "status": {"const": "ACTIVE"},
+        "valuation_family": {"const": "GOING_CONCERN_REPLACEMENT"}
+      }
+    },
+    "applicability": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "state",
+        "required_operating_characteristics",
+        "required_company_conditions",
+        "non_applicability_conditions",
+        "rule"
+      ],
+      "properties": {
+        "state": {"enum": ["ROUTE_BOUND", "INCOMPLETE", "INVALID"]},
+        "required_operating_characteristics": {"$ref": "#/$defs/textList"},
+        "required_company_conditions": {"$ref": "#/$defs/textList"},
+        "non_applicability_conditions": {"$ref": "#/$defs/textList"},
+        "rule": {"type": "string", "minLength": 1}
+      }
+    },
+    "component": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "component_type",
+        "requiredness",
+        "materiality",
+        "allowed_calculation_methods",
+        "double_count_owner",
+        "allowed_exclusion_destinations",
+        "blocked_conclusion",
+        "affected_valuation_claims",
+        "evidence_roles"
+      ],
+      "properties": {
+        "component_type": {"type": "string", "pattern": "^[A-Z][A-Z0-9_]*$"},
+        "requiredness": {"enum": ["REQUIRED", "OPTIONAL"]},
+        "materiality": {"enum": ["MATERIAL_TO_COMPLETE_REPLACEMENT_RANGE", "OPTIONAL_COMPONENT"]},
+        "allowed_calculation_methods": {"$ref": "#/$defs/textList"},
+        "double_count_owner": {"type": "string", "pattern": "^[A-Z][A-Z0-9_]*$"},
+        "allowed_exclusion_destinations": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {"type": "string"}
+        },
+        "blocked_conclusion": {"type": "string", "minLength": 1},
+        "affected_valuation_claims": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {"$ref": "#/$defs/valuationClaim"}
+        },
+        "evidence_roles": {
+          "type": "array",
+          "minItems": 1,
+          "items": {"$ref": "#/$defs/evidenceRole"}
+        }
+      }
+    },
+    "evidenceRole": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "evidence_role",
+        "requiredness",
+        "materiality",
+        "evidence_state",
+        "eligible_observation_ids",
+        "ineligible_observation_ids",
+        "likely_official_sources",
+        "likely_acquisition_modules",
+        "query_hints",
+        "bounded_stopping_rule",
+        "blocked_conclusion",
+        "affected_valuation_claims",
+        "unknown_treatment",
+        "attempt_receipt"
+      ],
+      "properties": {
+        "evidence_role": {"type": "string", "pattern": "^[A-Z][A-Z0-9_]*$"},
+        "requiredness": {"const": "REQUIRED_FOR_COMPONENT"},
+        "materiality": {"enum": ["BLOCKS_COMPLETE_COMPANY_RANGE", "LOCAL_COMPONENT_ONLY"]},
+        "evidence_state": {"enum": ["AVAILABLE", "MISSING", "INELIGIBLE"]},
+        "eligible_observation_ids": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {"type": "string", "pattern": "^OBS:"}
+        },
+        "ineligible_observation_ids": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {"type": "string", "pattern": "^OBS:"}
+        },
+        "likely_official_sources": {"$ref": "#/$defs/textList"},
+        "likely_acquisition_modules": {"$ref": "#/$defs/textList"},
+        "query_hints": {"$ref": "#/$defs/textList"},
+        "bounded_stopping_rule": {"type": "string", "minLength": 1},
+        "blocked_conclusion": {"type": "string", "minLength": 1},
+        "affected_valuation_claims": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {"$ref": "#/$defs/valuationClaim"}
+        },
+        "unknown_treatment": {"enum": ["NOT_UNKNOWN", "PRESERVE_LOCAL_UNKNOWN"]},
+        "attempt_receipt": {"$ref": "#/$defs/attemptProjection"}
+      }
+    },
+    "attemptProjection": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["state", "write_target", "role_identity", "required_fields", "receipt", "rule"],
+      "properties": {
+        "state": {"enum": ["NOT_REQUIRED", "RECORDED", "NOT_RECORDED", "RECEIPT_REGISTRY_INVALID"]},
+        "write_target": {"const": "valuation_evidence_attempt_receipts.json"},
+        "role_identity": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["component_type", "evidence_role"],
+          "properties": {
+            "component_type": {"type": "string", "pattern": "^[A-Z][A-Z0-9_]*$"},
+            "evidence_role": {"type": "string", "pattern": "^[A-Z][A-Z0-9_]*$"}
+          }
+        },
+        "required_fields": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {"type": "string"}
+        },
+        "receipt": {
+          "oneOf": [
+            {"type": "null"},
+            {"$ref": "#/$defs/attemptReceipt"}
+          ]
+        },
+        "rule": {"type": "string", "minLength": 1}
+      }
+    },
+    "attemptReceipt": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "receipt_id",
+        "component_type",
+        "evidence_role",
+        "attempted_official_sources",
+        "attempted_modules",
+        "query_hints_used",
+        "outcome",
+        "evidence_ids",
+        "completed_at"
+      ],
+      "properties": {
+        "receipt_id": {"type": "string", "pattern": "^VEA:"},
+        "component_type": {"type": "string", "pattern": "^[A-Z][A-Z0-9_]*$"},
+        "evidence_role": {"type": "string", "pattern": "^[A-Z][A-Z0-9_]*$"},
+        "attempted_official_sources": {"$ref": "#/$defs/textList"},
+        "attempted_modules": {"$ref": "#/$defs/textList"},
+        "query_hints_used": {"$ref": "#/$defs/textList"},
+        "outcome": {"enum": ["EVIDENCE_FOUND", "PUBLIC_INFO_UNAVAILABLE", "INELIGIBLE_ONLY"]},
+        "evidence_ids": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {"type": "string", "pattern": "^OBS:"}
+        },
+        "completed_at": {"type": "string", "minLength": 1}
+      }
+    },
+    "evidenceSummary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["AVAILABLE", "MISSING", "INELIGIBLE"],
+      "properties": {
+        "AVAILABLE": {"type": "integer", "minimum": 0},
+        "MISSING": {"type": "integer", "minimum": 0},
+        "INELIGIBLE": {"type": "integer", "minimum": 0}
+      }
+    },
+    "policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "company_values_exposed",
+        "default_haircuts_allowed",
+        "attempt_receipt_grants_evidence",
+        "role_inputs_ready_authority",
+        "valuation_claim_release_owner"
+      ],
+      "properties": {
+        "company_values_exposed": {"const": false},
+        "default_haircuts_allowed": {"const": false},
+        "attempt_receipt_grants_evidence": {"const": false},
+        "role_inputs_ready_authority": {"const": "DETERMINISTIC_REPLACEMENT_MODEL_ONLY"},
+        "valuation_claim_release_owner": {"const": "REPLACEMENT_MODEL_GATE"}
+      }
+    }
+  }
+}
