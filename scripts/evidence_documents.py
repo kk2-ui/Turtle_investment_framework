@@ -27,6 +27,42 @@ _FILING_RE = re.compile(
     re.IGNORECASE,
 )
 
+_REGISTERED_DOC_TYPES = {
+    "quarterly_report",
+    "company_announcement",
+    "company_circular",
+    "exchange_announcement",
+    "official_statistics",
+    "other_official",
+    "licensed_industry_data",
+}
+_REGISTERED_AUTHORITIES_BY_DOC_TYPE = {
+    "quarterly_report": "company_filing",
+    "company_announcement": "company_filing",
+    "company_circular": "company_filing",
+    "exchange_announcement": "company_filing",
+    "official_statistics": "official_statistics",
+    "other_official": "other_official",
+    "licensed_industry_data": "industry_data",
+}
+_REGISTERED_VERIFICATION_MODES_BY_DOC_TYPE = {
+    "quarterly_report": {"PAGE_QUOTE"},
+    "company_announcement": {"PAGE_QUOTE"},
+    "company_circular": {"PAGE_QUOTE"},
+    "exchange_announcement": {"PAGE_QUOTE"},
+    "official_statistics": {"PAGE_QUOTE", "STRUCTURED_DATA"},
+    "other_official": {"PAGE_QUOTE"},
+    "licensed_industry_data": {"PAGE_QUOTE", "STRUCTURED_DATA"},
+}
+_MIME_TYPES = {
+    ".pdf": "application/pdf",
+    ".md": "text/markdown",
+    ".json": "application/json",
+    ".csv": "text/csv",
+    ".html": "text/html",
+    ".htm": "text/html",
+}
+
 
 def _now() -> str:
     return datetime.now(timezone.utc).replace(microsecond=0).isoformat()
@@ -98,6 +134,99 @@ def _filing_parts(path: Path) -> dict[str, Any] | None:
     }
 
 
+def _valid_iso_date(value: str) -> bool:
+    try:
+        return bool(re.fullmatch(r"\d{4}-\d{2}-\d{2}", value)) and bool(
+            datetime.fromisoformat(value).date()
+        )
+    except ValueError:
+        return False
+
+
+def _valid_iso_date_or_datetime(value: str) -> bool:
+    try:
+        return bool(re.fullmatch(r"\d{4}-\d{2}-\d{2}(?:T[^ ]+)?", value)) and bool(
+            datetime.fromisoformat(value.replace("Z", "+00:00"))
+        )
+    except ValueError:
+        return False
+
+
+def _valid_source_url(value: Any) -> bool:
+    return isinstance(value, str) and bool(re.fullmatch(r"https?://\S+", value.strip()))
+
+
+def _registered_identity_findings(document: dict[str, Any]) -> list[str]:
+    doc_type = document.get("doc_type")
+    if doc_type not in _REGISTERED_DOC_TYPES:
+        return []
+    findings: list[str] = []
+    if document.get("authority") != _REGISTERED_AUTHORITIES_BY_DOC_TYPE[doc_type]:
+        findings.append("authority_incompatible_with_registered_doc_type")
+    if not _valid_iso_date_or_datetime(str(document.get("published_at") or "")):
+        findings.append("published_at_invalid")
+    if not _valid_iso_date(str(document.get("period_end") or "")):
+        findings.append("period_end_invalid")
+    if not _valid_source_url(document.get("source_url")):
+        findings.append("source_url_invalid")
+    verification_mode = document.get("verification_mode")
+    if verification_mode not in _REGISTERED_VERIFICATION_MODES_BY_DOC_TYPE[doc_type]:
+        findings.append("verification_mode_incompatible_with_registered_doc_type")
+    return findings
+
+
+def _registered_document_parts(path: Path, source_record: dict[str, Any]) -> dict[str, Any] | None:
+    """Read an explicitly registered non-annual official document.
+
+    Generic files are never inferred from their filename.  Their sidecar must
+    state the economic document identity needed by PIT evidence: document
+    type, authority, covered period, and publication date.  This lets an
+    announcement, circular, regulatory instrument, tender record, or official
+    dataset enter the same evidence manifest without pretending it is an
+    annual report.
+    """
+    doc_type = source_record.get("doc_type")
+    if doc_type is None:
+        return None
+    if doc_type not in _REGISTERED_DOC_TYPES:
+        raise ValueError(f"registered_document_type_invalid:{path.name}:{doc_type}")
+    authority = source_record.get("authority")
+    if authority != _REGISTERED_AUTHORITIES_BY_DOC_TYPE[doc_type]:
+        raise ValueError(f"registered_document_authority_invalid:{path.name}:{authority}")
+    fiscal_period = str(source_record.get("fiscal_period") or "").strip()
+    period_end = str(source_record.get("period_end") or "").strip()
+    published_at = str(source_record.get("published_at") or "").strip()
+    verification_mode = str(source_record.get("verification_mode") or "").strip()
+    if not fiscal_period:
+        raise ValueError(f"registered_document_fiscal_period_missing:{path.name}")
+    if not _valid_iso_date(period_end):
+        raise ValueError(f"registered_document_period_end_invalid:{path.name}")
+    if not _valid_iso_date_or_datetime(published_at):
+        raise ValueError(f"registered_document_published_at_invalid:{path.name}")
+    if verification_mode not in _REGISTERED_VERIFICATION_MODES_BY_DOC_TYPE[doc_type]:
+        raise ValueError(f"registered_document_verification_mode_invalid:{path.name}")
+    mime_type = str(source_record.get("mime_type") or _MIME_TYPES.get(path.suffix.lower()) or "").strip()
+    if not mime_type:
+        raise ValueError(f"registered_document_mime_type_missing:{path.name}")
+    return {
+        "doc_type": doc_type,
+        "fiscal_period": fiscal_period,
+        "period_end": period_end,
+        "published_at": published_at,
+        "authority": authority,
+        "mime_type": mime_type,
+        "language": str(source_record.get("language") or "zh").strip(),
+        "derived_text_path": source_record.get("derived_text_path"),
+        "verification_mode": verification_mode,
+    }
+
+
+def _copy_optional_source_fields(document: dict[str, Any], source_record: dict[str, Any]) -> None:
+    for field in ("source_id", "source_version", "revision_policy", "source_role_provenance"):
+        if source_record.get(field) not in (None, "", {}):
+            document[field] = deepcopy(source_record[field])
+
+
 def _manifest_core(payload: dict[str, Any]) -> dict[str, Any]:
     core = deepcopy(payload)
     core.pop("generated_at", None)
@@ -112,11 +241,55 @@ def validate_document_manifest(payload: dict[str, Any], output_dir: str | Path |
     warnings: list[str] = []
     if payload.get("schema_version") != SCHEMA_VERSION:
         invalid.append("schema_version_invalid")
+    for field in ("report_id", "issuer", "code", "market"):
+        if not isinstance(payload.get(field), str) or not str(payload[field]).strip():
+            invalid.append(field + "_missing")
     documents = payload.get("documents")
     if not isinstance(documents, list):
         invalid.append("documents_not_array")
         documents = []
     seen: set[str] = set()
+    registered_sidecar_paths_seen: set[str] = set()
+    output = Path(output_dir) if output_dir is not None else None
+    try:
+        source_registry = json.loads(
+            (output / "document_sources.json").read_text(encoding="utf-8")
+        ) if output is not None else {}
+    except (OSError, json.JSONDecodeError):
+        source_registry = {}
+    source_records = (
+        source_registry.get("documents")
+        if isinstance(source_registry, dict)
+        and isinstance(source_registry.get("documents"), dict)
+        else {}
+    )
+
+    if output is not None:
+        context_code, context_market, context_issuer = normalize_security_identity(
+            "", output
+        )
+        if context_market != "UNKNOWN":
+            expected_top_identity = {
+                "code": context_code,
+                "market": context_market,
+                "issuer": context_issuer,
+            }
+            for field, expected in expected_top_identity.items():
+                if payload.get(field) != expected:
+                    invalid.append(field + "_output_context_identity_mismatch")
+            filing_periods = [
+                str(parts["period_end"])
+                for path in output.iterdir()
+                if path.is_file()
+                and path.suffix.lower() == ".pdf"
+                and (parts := _filing_parts(path)) is not None
+            ]
+            if filing_periods:
+                expected_report_id = (
+                    f"REPORT:{context_market}:{context_code}:{max(filing_periods)}"
+                )
+                if payload.get("report_id") != expected_report_id:
+                    invalid.append("report_id_output_context_identity_mismatch")
     latest_annual = False
     for index, doc in enumerate(documents):
         prefix = f"documents[{index}]"
@@ -141,11 +314,82 @@ def validate_document_manifest(payload: dict[str, Any], output_dir: str | Path |
                 invalid.append(f"{doc_id or prefix}:content_hash_mismatch")
         if doc.get("doc_type") == "annual_report" and doc.get("authority") == "audited_filing":
             latest_annual = True
-        if not doc.get("source_url"):
+        registered_findings = _registered_identity_findings(doc)
+        invalid.extend(
+            f"{doc_id or prefix}:{finding}" for finding in registered_findings
+        )
+        source_record = (
+            source_records.get(local_path)
+            if isinstance(source_records.get(local_path), dict)
+            else {}
+        )
+        registered_from_sidecar = source_record.get("doc_type") in _REGISTERED_DOC_TYPES
+        if registered_from_sidecar:
+            registered_sidecar_paths_seen.add(local_path)
+            try:
+                registered_parts = _registered_document_parts(
+                    (output / local_path) if output is not None else Path(local_path),
+                    source_record,
+                )
+            except ValueError as exc:
+                invalid.append(f"{doc_id or prefix}:registered_source_identity_invalid:{exc}")
+                registered_parts = None
+            if registered_parts is not None:
+                expected_fields = {
+                    "doc_type": registered_parts["doc_type"],
+                    "fiscal_period": registered_parts["fiscal_period"],
+                    "period_end": registered_parts["period_end"],
+                    "published_at": registered_parts["published_at"],
+                    "authority": registered_parts["authority"],
+                    "mime_type": registered_parts["mime_type"],
+                    "language": registered_parts["language"],
+                    "derived_text_path": registered_parts["derived_text_path"],
+                    "verification_mode": registered_parts["verification_mode"],
+                }
+                if source_record.get("source_url"):
+                    expected_fields["source_url"] = source_record["source_url"]
+                for field, expected in expected_fields.items():
+                    if doc.get(field) != expected:
+                        invalid.append(
+                            f"{doc_id or prefix}:{field}_registered_source_mismatch"
+                        )
+            for field in ("report_id", "issuer", "code", "market"):
+                if doc.get(field) != payload.get(field):
+                    invalid.append(
+                        f"{doc_id or prefix}:{field}_manifest_identity_mismatch"
+                    )
+            expected_doc_id = (
+                f"DOC:{payload.get('market')}:{payload.get('code')}:"
+                f"{source_record.get('doc_type')}:{source_record.get('period_end')}:{digest[:12]}"
+            )
+            if doc_id != expected_doc_id:
+                invalid.append(f"{doc_id or prefix}:registered_doc_id_identity_mismatch")
+        if doc.get("doc_type") in _REGISTERED_DOC_TYPES:
+            verification_mode = doc.get("verification_mode")
+            derived = doc.get("derived_text_path")
+            if verification_mode == "PAGE_QUOTE":
+                if not derived:
+                    incomplete.append(f"{doc_id or prefix}:page_marked_derivative_missing")
+                elif output_dir is not None:
+                    derived_path = Path(output_dir) / str(derived)
+                    try:
+                        derived_text = derived_path.read_text(encoding="utf-8")
+                    except OSError:
+                        derived_text = ""
+                    if not re.search(r"^##\s+第\s*\d+\s*页\s*$", derived_text, re.MULTILINE):
+                        incomplete.append(f"{doc_id or prefix}:page_markers_missing")
+        elif not doc.get("source_url"):
             warnings.append(f"{doc_id or prefix}:source_url_unrecorded")
         derived = doc.get("derived_text_path")
         if derived and output_dir is not None and not (Path(output_dir) / str(derived)).is_file():
             warnings.append(f"{doc_id or prefix}:derived_text_missing:{derived}")
+    expected_registered_paths = {
+        str(filename)
+        for filename, record in source_records.items()
+        if isinstance(record, dict) and record.get("doc_type") in _REGISTERED_DOC_TYPES
+    }
+    for missing_path in sorted(expected_registered_paths - registered_sidecar_paths_seen):
+        invalid.append("registered_source_document_missing_from_manifest:" + missing_path)
     expected_hash = _payload_hash(_manifest_core(payload))
     if payload.get("manifest_hash") != expected_hash:
         invalid.append("manifest_hash_mismatch")
@@ -204,7 +448,7 @@ def build_document_manifest(
         doc_id = f"DOC:{market}:{canonical_code}:{parts['doc_type']}:{parts['period_end']}:{digest[:12]}"
         derivative = markdown_by_key.get(key)
         source_record = source_records.get(path.name) if isinstance(source_records.get(path.name), dict) else {}
-        documents.append({
+        document = {
             "doc_id": doc_id,
             "report_id": report_id,
             "issuer": issuer,
@@ -222,7 +466,9 @@ def build_document_manifest(
             "mime_type": "application/pdf",
             "language": "zh",
             "acquisition_status": "DOWNLOADED" if source_record else "CACHED",
-        })
+        }
+        _copy_optional_source_fields(document, source_record)
+        documents.append(document)
     for key, path in sorted(markdown_by_key.items()):
         if key in original_keys:
             continue
@@ -250,6 +496,49 @@ def build_document_manifest(
             "language": "zh",
             "acquisition_status": "DERIVED_ONLY",
         })
+
+    filing_names = {path.name for path, _ in pdfs}.union(path.name for path in markdown_by_key.values())
+    for filename, raw_record in sorted(source_records.items()):
+        if filename in filing_names or not isinstance(raw_record, dict):
+            continue
+        path = output / filename
+        if raw_record.get("doc_type") is None:
+            continue
+        if not path.is_file():
+            raise ValueError(f"registered_document_file_missing:{filename}")
+        parts = _registered_document_parts(path, raw_record)
+        assert parts is not None
+        source_url = urls.get(filename) or raw_record.get("source_url")
+        if not _valid_source_url(source_url):
+            raise ValueError(f"registered_document_source_url_missing:{filename}")
+        derivative = parts.get("derived_text_path")
+        digest = _sha256_bytes(path)
+        doc_id = (
+            f"DOC:{market}:{canonical_code}:{parts['doc_type']}:"
+            f"{parts['period_end']}:{digest[:12]}"
+        )
+        document = {
+            "doc_id": doc_id,
+            "report_id": report_id,
+            "issuer": issuer,
+            "code": canonical_code,
+            "market": market,
+            "doc_type": parts["doc_type"],
+            "fiscal_period": parts["fiscal_period"],
+            "period_end": parts["period_end"],
+            "published_at": parts["published_at"],
+            "authority": parts["authority"],
+            "source_url": source_url,
+            "local_path": filename,
+            "derived_text_path": derivative,
+            "sha256": digest,
+            "mime_type": parts["mime_type"],
+            "language": parts["language"],
+            "acquisition_status": "DOWNLOADED",
+            "verification_mode": parts["verification_mode"],
+        }
+        _copy_optional_source_fields(document, raw_record)
+        documents.append(document)
     documents.sort(key=lambda item: (item["period_end"], item["doc_type"], item["doc_id"]))
     payload: dict[str, Any] = {
         "schema_version": SCHEMA_VERSION,

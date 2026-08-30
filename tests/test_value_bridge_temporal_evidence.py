@@ -13,6 +13,7 @@ from scripts.evidence_facts import (
     validate_fact_observations,
     verify_fact_from_quote,
 )
+from scripts.evidence_documents import build_document_manifest
 from scripts.valuation_model_gate import (
     _bridge_numeric_leaves,
     _bridge_operand_context,
@@ -346,32 +347,46 @@ def test_event_fact_requires_its_own_observation_clock_and_document_publication(
 def test_exact_quote_event_uses_event_clock_instead_of_document_period_end(
     tmp_path: Path,
 ) -> None:
+    annual = tmp_path / "TEST_2025_年报.pdf"
+    annual.write_bytes(b"%PDF-1.4\nfixture audited annual report\n")
+    announcement = tmp_path / "TEST_2026-06-01_collection_announcement.pdf"
+    announcement.write_bytes(b"%PDF-1.4\nfixture exchange announcement\n")
     source = tmp_path / "announcement.pages.md"
     source.write_text(
-        "## 第 1 页\n\n期末后已收回关联方款项人民币20百万元。\n",
+        "## 第 1 页\n\n2026年5月28日期末后已收回关联方款项人民币20百万元。\n",
         encoding="utf-8",
     )
-    manifest = {
-        "schema_version": "document-manifest.v1",
-        "report_id": "REPORT:TEST",
-        "manifest_hash": "b" * 64,
-        "documents": [
+    (tmp_path / "document_sources.json").write_text(
+        json.dumps(
             {
-                "doc_id": "DOC:EVENT",
-                "period_end": POSITION_DATE,
-                "published_at": EVENT_OBSERVED_AT,
-                "authority": "company_filing",
-                "derived_text_path": source.name,
+                "schema_version": "document-sources.v1",
+                "documents": {
+                    announcement.name: {
+                        "source_url": "https://www1.hkexnews.hk/fixture-event.pdf",
+                        "published_at": EVENT_OBSERVED_AT,
+                        "doc_type": "exchange_announcement",
+                        "authority": "company_filing",
+                        "fiscal_period": "POST-FY2025",
+                        "period_end": POSITION_DATE,
+                        "derived_text_path": source.name,
+                        "verification_mode": "PAGE_QUOTE",
+                    }
+                },
             }
-        ],
-    }
-    (tmp_path / "document_manifest.json").write_text(
-        json.dumps(manifest), encoding="utf-8"
+        ),
+        encoding="utf-8",
     )
+    manifest = build_document_manifest(tmp_path, "TEST.HK", persist=True)
+    event_document = next(
+        item
+        for item in manifest["documents"]
+        if item["doc_type"] == "exchange_announcement"
+    )
+    assert manifest["validation"]["state"] == "REVIEWABLE"
 
     result = verify_fact_from_quote(
         tmp_path,
-        doc_id="DOC:EVENT",
+        doc_id=event_document["doc_id"],
         page=1,
         fact_name="related_party_collection_after_position",
         domain="financial",
@@ -379,7 +394,7 @@ def test_exact_quote_event_uses_event_clock_instead_of_document_period_end(
         normalized_value=20,
         unit="RMB_m",
         basis="cash_received_after_balance_sheet_date",
-        quote="期末后已收回关联方款项人民币20百万元。",
+        quote="2026年5月28日期末后已收回关联方款项人民币20百万元。",
         currency="RMB",
         temporal_role="EVENT",
         event_date=EVENT_DATE,
@@ -389,7 +404,7 @@ def test_exact_quote_event_uses_event_clock_instead_of_document_period_end(
     assert result["verified"] is True
     observation = result["observation"]
     assert observation["as_of"] == observation["event_date"] == EVENT_DATE
-    assert observation["as_of"] != manifest["documents"][0]["period_end"]
+    assert observation["as_of"] != event_document["period_end"]
 
 
 def test_three_historical_annual_periods_and_one_post_position_event_share_one_cash_model(

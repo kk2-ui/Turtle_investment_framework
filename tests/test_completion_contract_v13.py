@@ -82,6 +82,34 @@ def test_company_judgment_completion_skips_investment_manifest_and_gg_contract(t
     assert not any(item.startswith(("Decision:", "Valuation route:", "Decision ledger:")) for item in result.blocking_findings)
 
 
+def test_completion_uses_reader_projection_only_for_reader_coverage(
+    tmp_path: Path, monkeypatch,
+) -> None:
+    import scripts.reader_coverage as reader_coverage_module
+
+    captured: dict[str, str] = {}
+
+    def fake_reader_coverage(report_text, output_dir, **kwargs):
+        captured["report_text"] = report_text
+        captured["output_dir"] = str(output_dir)
+        return {"status": "SKIP", "blocking_findings": []}
+
+    monkeypatch.setattr(
+        reader_coverage_module, "evaluate_reader_coverage", fake_reader_coverage,
+    )
+
+    evaluate_report_completion(
+        "technical narrative [insight: insight.core]",
+        str(tmp_path),
+        reader_report_text="reader-facing company narrative",
+    )
+
+    assert captured == {
+        "report_text": "reader-facing company narrative",
+        "output_dir": str(tmp_path),
+    }
+
+
 def test_quality_gate_detects_v13_structure() -> None:
     text = "## 投资要点概览\n" + "\n".join(f"## Ch{i} 标题" for i in range(1, 15)) + "\n## 来源清单\n" + ("有效分析内容123。" * 3000)
     result = check(text)

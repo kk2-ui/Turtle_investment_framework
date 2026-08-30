@@ -615,7 +615,8 @@ def _scan_free_critical_values(
     return invalid
 
 
-def _reader_numeric_slot_metrics(valuation: dict[str, Any]) -> set[str]:
+def reader_numeric_slot_metrics(valuation: dict[str, Any]) -> set[str]:
+    """Return only metrics that own a compiler-generated reader sentence."""
     bridges = valuation.get("value_bridge_models")
     if not isinstance(bridges, dict):
         return set()
@@ -624,6 +625,32 @@ def _reader_numeric_slot_metrics(valuation: dict[str, Any]) -> set[str]:
         for item in bridges.get("reader_slots") or []
         if isinstance(item, dict) and str(item.get("metric") or "")
     }
+
+
+def scan_free_reader_slot_values_text(
+    text: str,
+    metrics: set[str],
+    *,
+    location: str,
+) -> list[str]:
+    """Find metric-specific currency amounts in an arbitrary rendered surface.
+
+    This intentionally shares the narrow semantic patterns used by the chapter
+    compiler.  Markdown emphasis is presentation, so it cannot make a copied
+    model amount invisible to the final-artifact gate.
+    """
+    findings: list[str] = []
+    for line_number, raw_line in enumerate(str(text or "").splitlines(), 1):
+        line = re.sub(r"[`*_~]", "", raw_line)
+        if not _READER_SLOT_CURRENCY_AMOUNT_RE.search(line):
+            continue
+        for metric in sorted(metrics):
+            pattern = _READER_SLOT_METRIC_PATTERNS.get(metric)
+            if pattern is not None and pattern.search(line):
+                findings.append(
+                    f"free_reader_numeric_slot:{location}:L{line_number}:{metric}"
+                )
+    return list(dict.fromkeys(findings))
 
 
 def _scan_free_reader_slot_values(
@@ -636,7 +663,7 @@ def _scan_free_reader_slot_values(
     only when the canonical valuation ledger exposes a reader slot whose
     economic label has a registered narrow pattern.
     """
-    metrics = _reader_numeric_slot_metrics(_load(output / "valuation_model.json"))
+    metrics = reader_numeric_slot_metrics(_load(output / "valuation_model.json"))
     if not metrics:
         return []
     findings: list[str] = []
@@ -647,15 +674,13 @@ def _scan_free_reader_slot_values(
             continue
         text = _VALUE_BRIDGE_BLOCK_RE.sub("", path.read_text(encoding="utf-8"))
         text = _BLOCK_RE.sub("", text)
-        for line_number, line in enumerate(text.splitlines(), 1):
-            if not _READER_SLOT_CURRENCY_AMOUNT_RE.search(line):
-                continue
-            for metric in sorted(metrics):
-                pattern = _READER_SLOT_METRIC_PATTERNS.get(metric)
-                if pattern is not None and pattern.search(line):
-                    findings.append(
-                        f"free_reader_numeric_slot:Ch{chapter}:L{line_number}:{metric}"
-                    )
+        findings.extend(
+            scan_free_reader_slot_values_text(
+                text,
+                metrics,
+                location=f"Ch{chapter}",
+            )
+        )
     return list(dict.fromkeys(findings))
 
 

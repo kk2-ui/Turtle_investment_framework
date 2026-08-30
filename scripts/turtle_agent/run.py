@@ -1389,9 +1389,15 @@ def _refresh_completion_after_incomplete_source_pass(output_dir: str) -> dict[st
     )
     try:
         from scripts.report_completion import evaluate_report_completion
+        from scripts.reader_report_surface import compile_reader_report_surface
     except ModuleNotFoundError:
         from report_completion import evaluate_report_completion
-    return evaluate_report_completion(report_text, output_dir).to_dict()
+        from reader_report_surface import compile_reader_report_surface
+    return evaluate_report_completion(
+        report_text,
+        output_dir,
+        reader_report_text=compile_reader_report_surface(report_text, output_dir),
+    ).to_dict()
 
 
 def _repair_iteration_budget(repair_targets: tuple[int, ...], configured_cap: int) -> int:
