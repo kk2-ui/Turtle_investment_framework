@@ -16,6 +16,7 @@ from datetime import datetime, timezone
 import json
 import os
 from pathlib import Path
+import sys
 from typing import Any, Callable
 
 try:
@@ -26,7 +27,8 @@ try:
         validate_underwriting_projection_bundle,
     )
 except ModuleNotFoundError:  # Direct ``python scripts/...`` execution.
-    from enterprise_underwriting_episode import (
+    sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+    from scripts.enterprise_underwriting_episode import (
         EPISODE_SCHEMA,
         compile_underwriting_projections,
         validate_enterprise_underwriting_episode,
@@ -39,6 +41,7 @@ CONTRACT_VALIDATION_SCHEMA = "enterprise-underwriting-training-contract-validati
 EPISODE_VALIDATION_SCHEMA = "enterprise-underwriting-training-episode-validation.v1"
 DOWNSTREAM_BUNDLE_SCHEMA = "enterprise-underwriting-training-downstream-bundle.v1"
 RUN_RECEIPT_SCHEMA = "enterprise-underwriting-training-run-receipt.v1"
+SUBAGENT_TASK_SCHEMA = "enterprise-underwriting-fresh-subagent-task.v1"
 
 TRACK_BINDINGS = {
     "WORKED_CASE": {
@@ -579,13 +582,15 @@ def run_training_agent(
     output_dir: str | Path,
     episode_generator: Callable[[list[dict[str, str]]], Any],
     source_materials: list[dict[str, str]] | None = None,
+    execution_mode: str = "IN_PROCESS_AGENT_CALLBACK",
 ) -> dict[str, Any]:
     """Generate, validate, and persist the sole training product.
 
-    A caller cannot complete this function by handing in a prewritten Episode;
-    it must supply an Agent/runtime generator, which is invoked after the source
-    contract has been validated.  Local artifacts are written only after the
-    returned complete Episode passes the same binding validator used by replay.
+    ``episode_generator`` may be an in-process model callback or the response
+    returned by a coordinator-spawned fresh Codex sub-agent.  It is invoked only
+    after the source contract has validated.  Local artifacts are written only
+    after the returned complete Episode passes the same binding validator used
+    by replay.  Merely running ``validate-episode`` never completes training.
     """
     contract_value = _mapping(contract)
     contract_validation = validate_training_contract(contract_value)
@@ -629,9 +634,77 @@ def run_training_agent(
         "underwriting_thesis_id": _mapping(episode.get("underwriting_thesis")).get("thesis_id"),
         "episode_path": str(episode_path),
         "downstream_bundle_path": str(bundle_path),
-        "completion_basis": "AGENT_GENERATED_COMPLETE_EPISODE_VALIDATED",
+        "execution_mode": execution_mode,
+        "completion_basis": (
+            "FRESH_CODEX_SUBAGENT_GENERATED_COMPLETE_EPISODE_VALIDATED"
+            if execution_mode == "CODEX_FRESH_SUBAGENT"
+            else "AGENT_GENERATED_COMPLETE_EPISODE_VALIDATED"
+        ),
         "authority": TRAINING_AUTHORITY,
     }
+
+
+def build_fresh_subagent_task(contract: Any) -> dict[str, Any]:
+    """Render the exact task for a ``fork_turns=none`` Codex sub-agent.
+
+    This is an ephemeral orchestration packet, not a training product or a
+    second evidence store.  The coordinator should place it outside the repo,
+    give only this packet to one fresh sub-agent, then pass that Agent's JSON
+    response to ``run --agent-response``.
+    """
+
+    contract_value = _mapping(contract)
+    validation = validate_training_contract(contract_value)
+    if validation["state"] != "REVIEWABLE":
+        raise ValueError(
+            "training_contract_invalid:" + ",".join(validation["findings"])
+        )
+    messages = build_training_agent_messages(
+        contract_value,
+        source_materials=_source_materials(contract_value),
+    )
+    return {
+        "schema_version": SUBAGENT_TASK_SCHEMA,
+        "state": "FRESH_SUBAGENT_TASK_READY",
+        "contract_id": contract_value.get("contract_id"),
+        "execution_mode": "CODEX_FRESH_SUBAGENT",
+        "required_context": "fork_turns=none",
+        "messages": messages,
+        "response_contract": {
+            "format": "ONE_ENTERPRISE_UNDERWRITING_EPISODE_JSON_OBJECT",
+            "must_not_read": [
+                "parent_conversation",
+                "sibling_arm",
+                "sources_outside_task_packet",
+                "sealed_outcome",
+                "price_or_return",
+            ],
+        },
+    }
+
+
+def run_fresh_subagent_response(
+    contract: Any,
+    *,
+    agent_response: Any,
+    output_dir: str | Path,
+) -> dict[str, Any]:
+    """Finalize one response produced by the active Codex fresh sub-agent.
+
+    Freshness and sibling isolation are orchestration responsibilities of the
+    coordinator that owns ``spawn_agent``.  This function deliberately avoids
+    signatures, hashes, or provider credentials; it binds the returned Episode
+    to the contract, validates it, and persists the same canonical products as
+    the in-process callback path.
+    """
+
+    response = deepcopy(agent_response)
+    return run_training_agent(
+        contract,
+        output_dir=output_dir,
+        episode_generator=lambda _messages: response,
+        execution_mode="CODEX_FRESH_SUBAGENT",
+    )
 
 
 def _runtime_episode_generator(
@@ -671,12 +744,17 @@ def _parser() -> argparse.ArgumentParser:
         command = sub.add_parser(name)
         command.add_argument("contract", type=Path)
         command.add_argument("episode", type=Path)
+    render = sub.add_parser("render-subagent-task")
+    render.add_argument("contract", type=Path)
+    render.add_argument("--output", type=Path, required=True)
     run = sub.add_parser("run")
     run.add_argument("contract", type=Path)
     run.add_argument("--output-dir", type=Path, required=True)
-    run.add_argument(
+    mode = run.add_mutually_exclusive_group(required=True)
+    mode.add_argument("--agent-response", type=Path)
+    mode.add_argument(
         "--provider", choices=["anthropic", "openai", "deepseek", "deepseek_oa"],
-        default="anthropic",
+        help="Explicit opt-in to an external API provider; never the default.",
     )
     run.add_argument("--model", default="")
     return parser
@@ -688,15 +766,35 @@ def main(argv: list[str] | None = None) -> int:
         contract = _read_json(args.contract)
         if args.command == "validate-contract":
             result = validate_training_contract(contract)
+        elif args.command == "render-subagent-task":
+            task = build_fresh_subagent_task(contract)
+            _atomic_json(args.output.expanduser().resolve(), task)
+            result = {
+                "schema_version": SUBAGENT_TASK_SCHEMA,
+                "state": "FRESH_SUBAGENT_TASK_READY",
+                "contract_id": contract.get("contract_id"),
+                "task_path": str(args.output.expanduser().resolve()),
+                "execution_mode": "CODEX_FRESH_SUBAGENT",
+            }
         elif args.command == "run":
-            result = run_training_agent(
-                contract,
-                output_dir=args.output_dir,
-                episode_generator=_runtime_episode_generator(
-                    provider=args.provider,
-                    model=args.model,
-                ),
-            )
+            if args.agent_response is not None:
+                if args.model:
+                    raise ValueError("--model requires explicit --provider")
+                result = run_fresh_subagent_response(
+                    contract,
+                    agent_response=_read_json(args.agent_response),
+                    output_dir=args.output_dir,
+                )
+            else:
+                result = run_training_agent(
+                    contract,
+                    output_dir=args.output_dir,
+                    episode_generator=_runtime_episode_generator(
+                        provider=args.provider,
+                        model=args.model,
+                    ),
+                    execution_mode="EXPLICIT_EXTERNAL_API",
+                )
         else:
             episode = _read_json(args.episode)
             result = (

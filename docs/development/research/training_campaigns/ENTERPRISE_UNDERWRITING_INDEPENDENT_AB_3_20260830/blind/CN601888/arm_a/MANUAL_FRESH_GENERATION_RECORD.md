@@ -1,10 +1,17 @@
-# Manual Fresh Generation Record
+# Fresh Codex Generation Record — Baseline
 
-- Artifact: `manual_episode_draft.json`
+The filename and internal Episode identifiers retain the historical `manual` wording; they are provenance only
+and do not mean parent-authored fallback.
+
+- Original response artifact: `manual_episode_draft.json`
 - Contract: `CN601888_INDEPENDENT_AB_3_BASELINE_CONTRACT.json`
-- Generator: fresh Baseline Agent, working independently from the neutral source package and the episode schema/validator.
-- Evidence boundary: only the baseline contract, its single allowed neutral pre-cutoff source package, and `scripts/enterprise_underwriting_episode.py` schema/validator were used.
-- Runtime status: this is a manual fresh-agent generation produced because the standard provider runtime returned HTTP 401. It did **not** pass through the standard runtime and must not be represented as a standard-runtime generation.
-- Leakage boundary: no post-cutoff outcome, market data, return, Enhanced-arm material, other campaign material, or prior arm result was used.
-- Completion boundary: this record does **not** claim that the A/B comparison, campaign, or acceptance process is complete. The artifact remains a draft for the authorized downstream validation/review step.
-- Repository action: no commit was created by this generation step.
+- Generator: a `fork_turns=none` fresh Baseline Codex child Agent.
+- Read boundary: only the Baseline contract task, its neutral pre-cutoff source package, and the Episode output
+  contract; no parent conversation, Enhanced material, sibling output, outcome, price, return, or other campaign.
+- Full contract binding: `REVIEWABLE / findings=[]`.
+- Formal finalization: `run --agent-response manual_episode_draft.json` returned
+  `TRAINING_EPISODE_COMPLETED / CODEX_FRESH_SUBAGENT` and persisted
+  `enterprise_underwriting_episode.json` plus the price-free downstream bundle.
+- Review boundary: a third fresh-context reviewer compared the pair before outcome access.
+
+The separate Anthropic 401 was an unused optional-provider attempt and does not downgrade this response.

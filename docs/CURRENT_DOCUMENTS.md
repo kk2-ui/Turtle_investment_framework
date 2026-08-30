@@ -105,7 +105,7 @@ V2 兼容状态是 `G1_CANDIDATE_MATURATION + G1-T_ENTERPRISE_JUDGMENT_V2 / REAL
 | `docs/development/research/TURTLE_SYSTEM_OVERVIEW_AND_INVESTMENT_PHILOSOPHY.md` | Turtle 面向投资者的总体架构、中心目标、训练分层、估值边界和 Turtle/年糕职责导航；不覆盖动态项目状态 |
 | `docs/development/research/TURTLE_ENTERPRISE_UNDERWRITING_SYSTEM_V1.md` | 企业投资承保顶层真源：处境、生存、正常化、owner cash、永久损失、价值路线与价格处理的统一对象 |
 | `docs/development/research/TURTLE_ENTERPRISE_UNDERWRITING_VERTICAL_SLICE_GOAL.md` | 从当前 main 实现 Magna + CN600585 完整承保读模型及 CJO/valuation/report 同源投影 |
-| `scripts/enterprise_underwriting_training.py` | 完整 Episode 的唯一正式训练编排入口；`run` 从合同绑定来源调用模型，只有模型生成的完整 Episode 通过绑定校验并原子落盘后才完成；单独 validator、旧课程轨道和局部 inventory 不能完成训练 |
+| `scripts/enterprise_underwriting_training.py` | 完整 Episode 的唯一正式训练编排入口；默认由当前 Codex 用 `render-subagent-task` 编译合同绑定任务、启动 `fork_turns=none` fresh 子 Agent，再由 `run --agent-response` 完成绑定校验与原子落盘；外部 provider 只有用户明确指定时才启用。单独 validator、旧课程轨道和局部 inventory 不能完成训练 |
 | `docs/development/research/enterprise_underwriting_episodes/CN600585_20240501_TRAINING_CONTRACT_V1.json` | 首个 checked-in WORKED_CASE 训练合同；只证明完整 Episode 入口可运行，不构成 Blind 或能力成绩 |
 | `docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_COURSE_1_20260829/14_COURSE_1_COMPLETION_AUDIT.md` | 已完成企业承保课程一期的投资者读出：12 个 worked case、4 个 Blind Replay、顺丰公平 A/B 的 `ENHANCED_WORSE` 与下一轮认知隔离 A/B 要求 |
 | `docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_COURSE_2_INDEPENDENT_AB_GOAL.md` | 课程二期唯一执行顺序：2A 先形成 TRAINING_READY 行业经验包，2B 再以未见公司和未见时期做同资料认知隔离 A/B |

@@ -439,14 +439,26 @@ E0--E3、J0--J4、八维和现有 schema 在迁移期继续可用，避免重写
 
 `UnderwritingThesis` 同时冻结 `normal_earnings / owner_cash / permanent_loss` 三条经济方向。Episode 存在时，CJO 的对应方向由它确定性派生，不能保留另一套相反叙事；价值路线也只能由同一投影进入估值。每家公司只需明确适用的 primary 估值模型，corroborative 与 stress 模型在不适用时可以为空，避免为了形式完整污染判断。
 
-正式训练使用：
+正式训练默认使用当前 Codex 会话编排的 fresh 子 Agent，不依赖仓库 API key：
 
 ```bash
+.venv/bin/python scripts/enterprise_underwriting_training.py render-subagent-task \
+  <training-contract.json> --output <temporary-task.json>
+
+# 主 Agent 用 fork_turns=none 启动 fresh 子 Agent；它只读取 task packet，
+# 并返回一个完整 Episode JSON 到 <agent-response.json>。
+
 .venv/bin/python scripts/enterprise_underwriting_training.py run \
-  <training-contract.json> --output-dir <fresh-output-dir>
+  <training-contract.json> --agent-response <agent-response.json> \
+  --output-dir <fresh-output-dir>
 ```
 
-该入口从合同允许的 source-package 工件调用训练模型，模型必须一次产出完整 Episode；只有绑定校验通过后才写入 Episode 和价格前下游 bundle。`validate-episode` 仍可用于诊断，但不能把预写 JSON 或旧 lane receipt 变成一次已完成训练。
+`render-subagent-task` 把合同允许的 source-package 编译成一次性的精确任务包；主 Agent 负责用
+`fork_turns=none` 建立认知隔离，子 Agent 必须一次产出完整 Episode。`run --agent-response` 只在
+绑定校验通过后写入 Episode 和价格前下游 bundle。A/B 使用两个互不读取的 fresh 子 Agent，并由
+第三个 fresh reviewer 比较材料性差异。外部 provider 仅在用户明确要求后通过显式 `--provider`
+启用；认证失败不得阻断默认 Codex 子 Agent 路径，也不得把有效子 Agent 产物叫作 manual fallback。
+`validate-episode` 仍只用于诊断，不能把任意预写 JSON 或旧 lane receipt 变成一次已完成训练。
 
 ## 10. 黄金报告怎样改变
 

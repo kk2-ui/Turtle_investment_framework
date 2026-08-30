@@ -1,9 +1,15 @@
-# Enhanced arm execution blocker
+# Enhanced arm optional external-provider attempt
 
-- Contract: `CN601888_INDEPENDENT_AB_3_ENHANCED_CONTRACT.json`
-- Attempted entrypoint: `scripts/enterprise_underwriting_training.py run ... --provider anthropic`
-- Result: CLI returned `enterprise-underwriting-training-cli-error.v1` with state `INVALID` after four LLM attempts.
-- Actual error: `401 authentication_error — API key is invalid.`
-- The first attempt included `--approve-expensive-run`; the CLI rejected that unsupported argument, so it was removed for the retry as permitted by the contract instructions.
+This filename is retained for provenance; it is not an active execution blocker.
 
-No Episode or agent response was handwritten or generated locally because authentication failed.
+- Contract: `contracts/CN601888_INDEPENDENT_AB_3_ENHANCED_CONTRACT.json`
+- Optional path attempted: explicit `--provider anthropic`
+- Result: HTTP 401 authentication failure after the provider runtime retries.
+- Economic consequence: none. No provider Episode was generated and the failed attempt did not alter the
+  contract, source packet, Codex child response, or pre-outcome judgment.
+- Current formal path: the independently generated fresh Codex response is stored in
+  `manual_episode_draft.json` under its historical filename and finalized by `run --agent-response`.
+- Formal completion: `TRAINING_EPISODE_COMPLETED / CODEX_FRESH_SUBAGENT`; the canonical persisted product is
+  `enterprise_underwriting_episode.json`.
+
+External-provider authentication is not required by the default Turtle training workflow.

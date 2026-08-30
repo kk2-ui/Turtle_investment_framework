@@ -3,6 +3,8 @@ from __future__ import annotations
 from copy import deepcopy
 import json
 from pathlib import Path
+import subprocess
+import sys
 
 import pytest
 
@@ -10,11 +12,14 @@ from scripts.enterprise_underwriting_episode import compile_underwriting_project
 from scripts.enterprise_underwriting_training import (
     DOWNSTREAM_BUNDLE_SCHEMA,
     PRIMARY_PRODUCT,
+    SUBAGENT_TASK_SCHEMA,
+    build_fresh_subagent_task,
     build_training_agent_messages,
     build_training_contract,
     compile_price_free_downstream_bundle,
     run_training_agent,
     main,
+    run_fresh_subagent_response,
     validate_training_contract,
     validate_training_episode,
 )
@@ -326,6 +331,103 @@ def test_formal_training_run_invokes_agent_and_only_then_persists_complete_episo
     persisted = json.loads((tmp_path / "enterprise_underwriting_episode.json").read_text(encoding="utf-8"))
     assert persisted == episode
     assert (tmp_path / "enterprise_underwriting_downstream_bundle.json").is_file()
+
+
+def test_fresh_codex_subagent_is_the_default_formal_orchestration_path(
+    tmp_path: Path, capsys: pytest.CaptureFixture[str],
+) -> None:
+    episode = _episode()
+    contract = _worked_contract(episode)
+    contract_path = tmp_path / "contract.json"
+    task_path = tmp_path / "fresh-task.json"
+    response_path = tmp_path / "fresh-response.json"
+    output_dir = tmp_path / "completed"
+    contract_path.write_text(json.dumps(contract, ensure_ascii=False), encoding="utf-8")
+    response_path.write_text(json.dumps(episode, ensure_ascii=False), encoding="utf-8")
+
+    task = build_fresh_subagent_task(contract)
+    assert task["schema_version"] == SUBAGENT_TASK_SCHEMA
+    assert task["required_context"] == "fork_turns=none"
+    assert task["execution_mode"] == "CODEX_FRESH_SUBAGENT"
+    assert "only product is one complete EnterpriseUnderwritingEpisode" in task["messages"][0]["content"]
+
+    assert main([
+        "render-subagent-task", str(contract_path), "--output", str(task_path),
+    ]) == 0
+    render_receipt = json.loads(capsys.readouterr().out)
+    assert render_receipt["state"] == "FRESH_SUBAGENT_TASK_READY"
+    assert json.loads(task_path.read_text(encoding="utf-8"))["messages"] == task["messages"]
+
+    assert main([
+        "run", str(contract_path), "--agent-response", str(response_path),
+        "--output-dir", str(output_dir),
+    ]) == 0
+    receipt = json.loads(capsys.readouterr().out)
+    assert receipt["state"] == "TRAINING_EPISODE_COMPLETED"
+    assert receipt["execution_mode"] == "CODEX_FRESH_SUBAGENT"
+    assert receipt["completion_basis"] == (
+        "FRESH_CODEX_SUBAGENT_GENERATED_COMPLETE_EPISODE_VALIDATED"
+    )
+    assert json.loads(
+        (output_dir / "enterprise_underwriting_episode.json").read_text(encoding="utf-8")
+    ) == episode
+
+
+def test_subagent_finalizer_rejects_partial_or_unbound_response(tmp_path: Path) -> None:
+    contract = _worked_contract()
+    with pytest.raises(ValueError, match="training_agent_episode_invalid"):
+        run_fresh_subagent_response(
+            contract,
+            agent_response={"schema_version": "legacy-training-lane.v1"},
+            output_dir=tmp_path,
+        )
+
+    assert not (tmp_path / "enterprise_underwriting_episode.json").exists()
+
+
+def test_external_provider_is_explicit_not_default(
+    tmp_path: Path, capsys: pytest.CaptureFixture[str],
+) -> None:
+    parser = __import__(
+        "scripts.enterprise_underwriting_training", fromlist=["_parser"]
+    )._parser()
+    with pytest.raises(SystemExit):
+        parser.parse_args(["run", "contract.json", "--output-dir", "out"])
+
+    parsed = parser.parse_args([
+        "run", "contract.json", "--output-dir", "out", "--provider", "anthropic",
+    ])
+    assert parsed.provider == "anthropic"
+    assert parsed.agent_response is None
+
+    with pytest.raises(SystemExit):
+        parser.parse_args([
+            "run", "contract.json", "--output-dir", "out",
+            "--agent-response", "response.json", "--provider", "anthropic",
+        ])
+
+    contract_path = tmp_path / "contract.json"
+    contract_path.write_text(
+        json.dumps(_worked_contract(), ensure_ascii=False), encoding="utf-8"
+    )
+    assert main([
+        "run", str(contract_path), "--output-dir", str(tmp_path / "out"),
+        "--agent-response", str(tmp_path / "response.json"), "--model", "named-model",
+    ]) == 1
+    error = json.loads(capsys.readouterr().out)
+    assert error["findings"] == ["--model requires explicit --provider"]
+
+
+def test_documented_direct_script_entrypoint_can_start_without_pythonpath() -> None:
+    completed = subprocess.run(
+        [sys.executable, "scripts/enterprise_underwriting_training.py", "--help"],
+        cwd=ROOT,
+        capture_output=True,
+        check=False,
+        text=True,
+    )
+    assert completed.returncode == 0
+    assert "render-subagent-task" in completed.stdout
 
 
 def test_partial_legacy_artifact_cannot_complete_formal_training_run(tmp_path: Path) -> None:

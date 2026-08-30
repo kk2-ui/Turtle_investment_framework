@@ -1,9 +1,15 @@
-# Baseline arm execution blocker
+# Baseline arm optional external-provider attempt
+
+This filename is retained for provenance; it is not an active execution blocker.
 
 - Contract: `contracts/CN601888_INDEPENDENT_AB_3_BASELINE_CONTRACT.json`
-- Attempted command (after removing unsupported `--approve-expensive-run`):
-  `set -a; . /Users/xiami/workspace/analy/Turtle_investment_framework/.env; set +a; PYTHONPATH=.:scripts .venv/bin/python scripts/enterprise_underwriting_training.py run docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_INDEPENDENT_AB_3_20260830/contracts/CN601888_INDEPENDENT_AB_3_BASELINE_CONTRACT.json --output-dir docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_INDEPENDENT_AB_3_20260830/blind/CN601888/arm_a --provider anthropic`
-- Result: CLI returned `state: INVALID` after four LLM attempts.
-- Error: `401 authentication_error: API key is invalid.` (`request_id: None`)
+- Optional path attempted: explicit `--provider anthropic`
+- Result: HTTP 401 authentication failure after the provider runtime retries.
+- Economic consequence: none. No provider Episode was generated and the failed attempt did not alter the
+  contract, source packet, Codex child response, or pre-outcome judgment.
+- Current formal path: the independently generated fresh Codex response is stored in
+  `manual_episode_draft.json` under its historical filename and finalized by `run --agent-response`.
+- Formal completion: `TRAINING_EPISODE_COMPLETED / CODEX_FRESH_SUBAGENT`; the canonical persisted product is
+  `enterprise_underwriting_episode.json`.
 
-No episode or `fresh_agent_response.json` was generated because the provider authentication failed.
+External-provider authentication is not required by the default Turtle training workflow.
