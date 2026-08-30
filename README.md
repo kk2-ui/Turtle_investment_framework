@@ -355,9 +355,9 @@ Turtle_investment_framework/
 ├── shared/                        # 共享模块（v2.0）
 │   └── qualitative/               # 通用定性分析模块
 │       ├── coordinator.md          #   v1 入口（Agent Team）
-│       ├── coordinator_v2.md       #   v2 入口（PDF-first 单 Agent）
+│       ├── coordinator.md          #   v2 入口（PDF-first 单 Agent）
 │       ├── qualitative_assessment.md #   v1 6维度分析 prompt
-│       ├── qualitative_assessment_v2.md # v2 PDF-first prompt
+│       ├── qualitative_assessment.md # v2 PDF-first prompt
 │       ├── data_collection.md      #   轻量级 WebSearch 指令
 │       ├── agents/                 #   Agent Team prompts（v1 保留）
 │       │   ├── agent_a_d1d2.md     #     D1(商业模式)+D2(护城河)

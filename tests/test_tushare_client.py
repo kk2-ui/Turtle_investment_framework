@@ -1106,12 +1106,19 @@ class TestRiskFreeRate:
 # --- Feature #85: Share repurchase ---
 
 class TestRepurchase:
+    # Freeze "now" so the 3-year ann_date window never ages the fixture out.
+    # Fixture ann_dates span 20230201-20250815; with real time the earliest 完成
+    # record fell out of the window on 2026-06-15 and broke the dedup expectations.
+    FROZEN_NOW = "tushare_modules.other_data._now"
+    FROZEN_TS = pd.Timestamp("2026-01-15")
+
     def test_repurchase_output(self):
         """Verify repurchase section output."""
         client = _make_client()
         mock_df = _load_mock("repurchase.json")
 
-        with patch("tushare_collector.time.sleep"):
+        with patch("tushare_collector.time.sleep"), \
+                patch(self.FROZEN_NOW, return_value=self.FROZEN_TS):
             client._safe_call = MagicMock(return_value=mock_df)
             result = client.get_repurchase("600887.SH")
 
@@ -1129,7 +1136,8 @@ class TestRepurchase:
         mock_df = _load_mock("repurchase.json")
         assert len(mock_df) == 8, "fixture should have 8 rows including duplicates"
 
-        with patch("tushare_collector.time.sleep"):
+        with patch("tushare_collector.time.sleep"), \
+                patch(self.FROZEN_NOW, return_value=self.FROZEN_TS):
             client._safe_call = MagicMock(return_value=mock_df)
             result = client.get_repurchase("600887.SH")
 
@@ -1144,7 +1152,8 @@ class TestRepurchase:
         client = _make_client()
         mock_df = _load_mock("repurchase.json")
 
-        with patch("tushare_collector.time.sleep"):
+        with patch("tushare_collector.time.sleep"), \
+                patch(self.FROZEN_NOW, return_value=self.FROZEN_TS):
             client._safe_call = MagicMock(return_value=mock_df)
             result = client.get_repurchase("600887.SH")
 
@@ -1163,7 +1172,8 @@ class TestRepurchase:
              "amount": 800000000.0, "vol": 25000000.0, "high_limit": 28.0, "low_limit": 18.0},
         ])
 
-        with patch("tushare_collector.time.sleep"):
+        with patch("tushare_collector.time.sleep"), \
+                patch(self.FROZEN_NOW, return_value=self.FROZEN_TS):
             client._safe_call = MagicMock(return_value=mock_df)
             result = client.get_repurchase("600887.SH")
 
@@ -1175,7 +1185,8 @@ class TestRepurchase:
         client = _make_client()
         mock_df = _load_mock("repurchase.json")
 
-        with patch("tushare_collector.time.sleep"):
+        with patch("tushare_collector.time.sleep"), \
+                patch(self.FROZEN_NOW, return_value=self.FROZEN_TS):
             client._safe_call = MagicMock(return_value=mock_df)
             result = client.get_repurchase("600887.SH")
 
@@ -1190,7 +1201,8 @@ class TestRepurchase:
         # Two 完成 records with same (amount=1050M, high_limit=32) on different dates
         mock_df = _load_mock("repurchase.json")
 
-        with patch("tushare_collector.time.sleep"):
+        with patch("tushare_collector.time.sleep"), \
+                patch(self.FROZEN_NOW, return_value=self.FROZEN_TS):
             client._safe_call = MagicMock(return_value=mock_df)
             client.get_repurchase("600887.SH")
 
@@ -1208,7 +1220,8 @@ class TestRepurchase:
         # and a 完成 record (high_limit=33, amount=1200M) for the same plan
         mock_df = _load_mock("repurchase.json")
 
-        with patch("tushare_collector.time.sleep"):
+        with patch("tushare_collector.time.sleep"), \
+                patch(self.FROZEN_NOW, return_value=self.FROZEN_TS):
             client._safe_call = MagicMock(return_value=mock_df)
             client.get_repurchase("600887.SH")
 
@@ -1223,7 +1236,8 @@ class TestRepurchase:
         client = _make_client()
         mock_df = _load_mock("repurchase.json")
 
-        with patch("tushare_collector.time.sleep"):
+        with patch("tushare_collector.time.sleep"), \
+                patch(self.FROZEN_NOW, return_value=self.FROZEN_TS):
             client._safe_call = MagicMock(return_value=mock_df)
             result = client.get_repurchase("600887.SH")
 
