@@ -6,7 +6,7 @@ from pathlib import Path
 
 from scripts.valuation_model_gate import _validate_value_bridge_fact_bindings
 from scripts.valuation_value_bridges import compile_valuation_value_bridges
-from tests.test_valuation_value_bridges import _replacement_input
+from tests.test_valuation_value_bridges import _epv_input, _replacement_input
 
 
 def _ordinary_input() -> dict:
@@ -85,6 +85,122 @@ def _validate(output: Path, bridge_input: dict) -> tuple[list[str], list[str]]:
     return invalid, incomplete
 
 
+def _epv_input_with_current_fact_bindings() -> dict:
+    model = _epv_input()
+    model["basis"].update({
+        "value_scope": "equity",
+        "earnings_claim_scope": "ORDINARY_COMMON_EQUITY",
+    })
+    model["claims_bridge"].update({
+        "bridge_mode": "DIRECT_ORDINARY_COMMON",
+        "non_operating_components": [],
+    })
+    for field in ("debt", "preferred_claims", "minority_interest"):
+        model["claims_bridge"].pop(field)
+    model["capitalization"]["source_fact_ids"] = ["CALC:EPV:CAP-RATE"]
+    model["claims_bridge"]["other_adjustments"]["source_fact_ids"] = [
+        "CALC:EPV:OTHER-ADJUSTMENTS"
+    ]
+    bindings = [
+        {
+            "path": f"epv.model_input.period_facts[{index}].amount",
+            "evidence_id": f"OBS:EPV:FY{year}",
+        }
+        for index, year in enumerate((2024, 2025))
+    ]
+    bindings.extend([
+        {"path": "epv.model_input.capitalization.rate_low", "evidence_id": "CALC:EPV:CAP-RATE"},
+        {"path": "epv.model_input.capitalization.rate_high", "evidence_id": "CALC:EPV:CAP-RATE"},
+        {"path": "epv.model_input.claims_bridge.other_adjustments.range_low", "evidence_id": "CALC:EPV:OTHER-ADJUSTMENTS"},
+        {"path": "epv.model_input.claims_bridge.other_adjustments.range_high", "evidence_id": "CALC:EPV:OTHER-ADJUSTMENTS"},
+        {"path": "epv.model_input.claims_bridge.shares.value", "evidence_id": "OBS:EPV:SHARES"},
+    ])
+    return {
+        "schema_version": "valuation-value-bridges-input.v1",
+        "canonical_fact_bindings": bindings,
+        "epv": {"model_input": model},
+    }
+
+
+def _write_epv_current_registry(output: Path) -> None:
+    context = {
+        "economic_entity": "Listed consolidated operating group",
+        "operating_perimeter": "Continuing property-service operations",
+    }
+    observations = []
+    for year, value in ((2024, 10.0), (2025, 12.0)):
+        observations.append({
+            "observation_id": f"OBS:EPV:FY{year}",
+            "normalized_value": value,
+            "unit": "RMB_m",
+            "currency": "RMB",
+            "as_of": f"{year}-12-31",
+            "temporal_role": "HISTORICAL_PERIOD",
+            "doc_id": "DOC:EPV:ANNUAL",
+            "measurement_context": {
+                **context,
+                "period_start": f"{year}-01-01",
+                "period_end": f"{year}-12-31",
+            },
+            "status": "VERIFIED",
+        })
+    observations.append({
+        "observation_id": "OBS:EPV:SHARES",
+        "normalized_value": 100.0,
+        "unit": "million_shares",
+        "currency": None,
+        "as_of": "2025-12-31",
+        "measurement_context": context,
+        "status": "VERIFIED",
+    })
+    (output / "fact_observations.json").write_text(
+        json.dumps({"observations": observations}), encoding="utf-8"
+    )
+    (output / "calculation_observations.json").write_text(
+        json.dumps({
+            "calculations": [
+                {
+                    "calculation_id": "CALC:EPV:CAP-RATE",
+                    "value": 0.10,
+                    "unit": "ratio",
+                    "status": "VERIFIED",
+                },
+                {
+                    "calculation_id": "CALC:EPV:OTHER-ADJUSTMENTS",
+                    "value": 0.0,
+                    "unit": "RMB_m",
+                    "status": "VERIFIED",
+                },
+            ]
+        }),
+        encoding="utf-8",
+    )
+    (output / "document_manifest.json").write_text(
+        json.dumps({
+            "documents": [
+                {"doc_id": "DOC:EPV:ANNUAL", "published_at": "2025-12-31"}
+            ]
+        }),
+        encoding="utf-8",
+    )
+
+
+def test_epv_source_operands_resolve_before_the_owner_computes_results(
+    tmp_path: Path,
+) -> None:
+    bridge_input = _epv_input_with_current_fact_bindings()
+    _write_epv_current_registry(tmp_path)
+
+    invalid, incomplete = _validate(tmp_path, bridge_input)
+
+    assert invalid == []
+    assert incomplete == []
+
+    bridge_input["epv"]["model_input"]["period_facts"][1]["amount"] = 13.0
+    invalid, _ = _validate(tmp_path, bridge_input)
+    assert any("numeric_value_mismatch:epv.model_input.period_facts[1].amount" in item for item in invalid)
+
+
 def _replacement_input_with_current_fact_bindings() -> tuple[
     dict,
     list[tuple[str, float, str, list[str], list[str]]],
@@ -97,6 +213,11 @@ def _replacement_input_with_current_fact_bindings() -> tuple[
     ownership gaps in the first replacement model contract.
     """
     model = deepcopy(_replacement_input())
+    model["epv_cross_check"] = {
+        "status": "NOT_COMPARABLE",
+        "reason": "This fixture isolates replacement evidence binding; canonical EPV is tested separately.",
+        "synthesis_rule": "CROSS_CHECK_ONLY_NEVER_ADD_OR_AVERAGE",
+    }
     customer = model["components"][0]
     customer["calculation"]["inputs"][0]["evidence_ids"] = [
         "OBS:CUSTOMER-COST:LOW",
@@ -142,10 +263,6 @@ def _replacement_input_with_current_fact_bindings() -> tuple[
         ("CALC:REPLACEMENT:RECOGNITION:HIGH", 0.75, "ratio"),
         ("CALC:NAV:FLOOR:LOW", 0.3, "RMB_per_share"),
         ("CALC:NAV:FLOOR:HIGH", 0.4, "RMB_per_share"),
-        ("CALC:EPV:EQUITY:LOW", 90.0, "RMB_m"),
-        ("CALC:EPV:EQUITY:HIGH", 110.0, "RMB_m"),
-        ("CALC:EPV:PER_SHARE:LOW", 0.9, "RMB_per_share"),
-        ("CALC:EPV:PER_SHARE:HIGH", 1.1, "RMB_per_share"),
     ]
 
     bindings: list[dict[str, str]] = []
@@ -180,15 +297,6 @@ def _replacement_input_with_current_fact_bindings() -> tuple[
         bind(path + ".range_low", evidence_id)
         bind(path + ".range_high", evidence_id)
     bind(base + ".claims_bridge.shares_outstanding", "OBS:CLAIMS:SHARES")
-    for field, evidence_id in (
-        ("equity_value_low", "CALC:EPV:EQUITY:LOW"),
-        ("equity_value_high", "CALC:EPV:EQUITY:HIGH"),
-        ("shares_outstanding", "OBS:CLAIMS:SHARES"),
-        ("per_share_low", "CALC:EPV:PER_SHARE:LOW"),
-        ("per_share_high", "CALC:EPV:PER_SHARE:HIGH"),
-    ):
-        bind(base + ".epv_cross_check." + field, evidence_id)
-
     return {
         "schema_version": "valuation-value-bridges-input.v1",
         "canonical_fact_bindings": bindings,
@@ -265,7 +373,7 @@ def test_every_distribution_operand_is_resolved_to_current_verified_observation(
     assert incomplete == []
 
 
-def test_replacement_fraction_claims_and_epv_operands_resolve_to_current_registry(
+def test_replacement_fraction_and_claims_operands_resolve_to_current_registry(
     tmp_path: Path,
 ) -> None:
     bridge_input, observations, calculations = _replacement_input_with_current_fact_bindings()

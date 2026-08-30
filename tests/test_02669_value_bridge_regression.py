@@ -218,10 +218,24 @@ def test_02669_replacement_anchors_do_not_masquerade_as_a_complete_company_range
 
 def test_02669_has_no_joint_protection_price_until_replacement_and_epv_are_comparable() -> None:
     _, compiled = _compiled()
+    epv = compiled["result"]["epv"]
     ceiling = compiled["valuation_projection"]["replacement_value"][
         "joint_protection_price_ceiling"
     ]
 
+    assert epv["status"] == "NOT_COMPARABLE"
+    assert epv["critical_unknowns"] == [
+        "maintenance_capex",
+        "maintenance_working_capital",
+        "capitalization_rate",
+        "claims_bridge",
+    ]
+    assert epv["sustainable_owner_earnings_range"] is None
+    assert epv["ordinary_common_equity_range"] is None
+    assert epv["per_share_range"] is None
+    assert compiled["result"]["replacement_value"]["epv_cross_check"][
+        "status"
+    ] == "NOT_COMPARABLE"
     assert ceiling["value"] is None
     assert ceiling["reason"] == "REPLACEMENT_SCOPE_INCOMPLETE"
     assert not any(

@@ -273,7 +273,77 @@
         }
       }
     },
+    "epv": {
+      "model_input": {
+        "schema_version": "epv-model-input.v1",
+        "model_id": "EPV:02669:NORMALIZED",
+        "company_id": "02669.HK",
+        "cutoff_at": "2026-08-11",
+        "basis": {
+          "value_scope": "enterprise",
+          "earnings_claim_scope": "ENTERPRISE_OPERATING",
+          "economic_entity": "Consolidated China Overseas Property Holdings group",
+          "operating_perimeter": "Property management, resident and non-resident value-added services and car-parking trading",
+          "ordinary_share_claim_scope": "Listed ordinary common shares",
+          "currency": "RMB",
+          "unit": "RMB_m",
+          "as_of": "2025-12-31",
+          "operating_cash_treatment": "REQUIRED_OPERATING_CASH_INCLUDED_NON_OPERATING_CASH_EXCLUDED",
+          "operating_cash_component_ids": []
+        },
+        "earnings_evidence_status": "AVAILABLE",
+        "period_facts": [
+          {
+            "period_id": "FY2024",
+            "period_start": "2024-01-01",
+            "period_end": "2024-12-31",
+            "metric": "reported_operating_cash_flow",
+            "basis_kind": "REPORTED_OCF_AFTER_TAX",
+            "tax_basis": "AFTER_TAX",
+            "amount": 1338.145,
+            "working_capital_application": "CURRENT_MOVEMENT_REFLECTED",
+            "observed_working_capital_charge": 305.708,
+            "source_fact_ids": ["OBS:02669:FY2024-OCF-RESTATED", "OBS:02669:FY2024-WC-CASH-CHANGE-RESTATED"],
+            "normalization_adjustments": []
+          },
+          {
+            "period_id": "FY2025",
+            "period_start": "2025-01-01",
+            "period_end": "2025-12-31",
+            "metric": "reported_operating_cash_flow",
+            "basis_kind": "REPORTED_OCF_AFTER_TAX",
+            "tax_basis": "AFTER_TAX",
+            "amount": 1153.458,
+            "working_capital_application": "CURRENT_MOVEMENT_REFLECTED",
+            "observed_working_capital_charge": 275.426,
+            "source_fact_ids": ["OBS:02669:FY2025-OCF", "OBS:02669:FY2025-WC-CASH-CHANGE"],
+            "normalization_adjustments": []
+          }
+        ],
+        "maintenance_capex": {
+          "status": "UNKNOWN",
+          "reason": "Public evidence does not yet separate maintenance capital expenditure from growth and platform investment."
+        },
+        "maintenance_working_capital": {
+          "status": "UNKNOWN",
+          "reason": "Aggregate working-capital movements do not separate growth launch funding from steady recurring absorption."
+        },
+        "tax": {
+          "status": "ALREADY_REFLECTED",
+          "reason": "Reported operating cash flow is after tax."
+        },
+        "capitalization": {
+          "status": "UNKNOWN",
+          "reason": "No same-scope evidence-backed capitalization range is admitted in this fixture."
+        },
+        "claims_bridge": {
+          "status": "UNKNOWN",
+          "reason": "The EPV operating-to-ordinary-common claims bridge is not closed on one canonical scope."
+        }
+      }
+    },
     "replacement_value": {
+      "epv_model_id": "EPV:02669:NORMALIZED",
       "model_input": {
         "schema_version": "replacement-value-model.v1",
         "model_id": "RVM:02669:2025",
@@ -486,11 +556,6 @@
           "source_fact_ids": [
             "CALC:02669:LIQUIDATION-STRESS-PER-SHARE"
           ]
-        },
-        "epv_cross_check": {
-          "status": "NOT_COMPARABLE",
-          "reason": "The current artifacts contain incompatible EPV identities and no single EPV is yet bound to the same entity, perimeter, claims, currency, date and shares.",
-          "synthesis_rule": "CROSS_CHECK_ONLY_NEVER_ADD_OR_AVERAGE"
         }
       }
     }

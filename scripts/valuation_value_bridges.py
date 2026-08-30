@@ -23,6 +23,7 @@ from scripts.ordinary_distribution_model import (
     compute_ordinary_distribution_model,
     validate_ordinary_distribution_input,
 )
+from scripts.epv_model import compute_epv_model, validate_epv_model_input
 from scripts.replacement_value_model import (
     compute_replacement_value_model,
     project_replacement_value_reader_conclusions,
@@ -37,6 +38,7 @@ VALIDATION_SCHEMA_VERSION = "valuation-value-bridges-validation.v1"
 
 MODEL_KEYS = {
     "cash_accessibility",
+    "epv",
     "ordinary_distribution",
     "replacement_value",
     "working_capital",
@@ -53,6 +55,7 @@ _OUTPUT_FIELDS = {
 }
 _CASH_WRAPPER_FIELDS = {"model_input", "valuation_context"}
 _MODEL_WRAPPER_FIELDS = {"model_input"}
+_REPLACEMENT_WRAPPER_FIELDS = {"model_input", "epv_model_id"}
 _VALUATION_CONTEXT_FIELDS = {
     "company_id",
     "operating_model_id",
@@ -105,6 +108,59 @@ def _working_capital_api() -> tuple[Any, Any]:
     )
 
     return validate_working_capital_model, compute_working_capital_model
+
+
+def _canonical_epv_cross_check(result: dict[str, Any]) -> dict[str, Any]:
+    """Project the deterministic EPV owner into replacement's comparison shape."""
+    if result.get("status") != "COMPARABLE":
+        return {
+            "status": "NOT_COMPARABLE",
+            "reason": str(
+                _mapping(result.get("economic_conclusion")).get("reason")
+                or "The canonical EPV owner has unresolved material operands."
+            ),
+            "synthesis_rule": "CROSS_CHECK_ONLY_NEVER_ADD_OR_AVERAGE",
+        }
+    basis = _mapping(result.get("basis"))
+    equity = _mapping(result.get("ordinary_common_equity_range"))
+    per_share = _mapping(result.get("per_share_range"))
+    bridge = _mapping(result.get("equity_bridge"))
+    model_id = str(result.get("model_id") or "")
+    calc_prefix = "CALC:" + model_id + ":"
+    return {
+        "status": "COMPARABLE",
+        "model_id": model_id,
+        "economic_entity": basis["economic_entity"],
+        "operating_perimeter": basis["operating_perimeter"],
+        "ordinary_share_claim_scope": basis["ordinary_share_claim_scope"],
+        "value_scope": "ordinary_common_equity",
+        "currency": basis["currency"],
+        "unit": basis["unit"],
+        "as_of": basis["as_of"],
+        "equity_value_low": equity["range_low"],
+        "equity_value_high": equity["range_high"],
+        "shares_outstanding": bridge["shares"],
+        "per_share_low": per_share["range_low"],
+        "per_share_high": per_share["range_high"],
+        "synthesis_rule": "CROSS_CHECK_ONLY_NEVER_ADD_OR_AVERAGE",
+        "source_fact_ids": [
+            calc_prefix + "EQUITY:LOW",
+            calc_prefix + "EQUITY:HIGH",
+            calc_prefix + "PER-SHARE:LOW",
+            calc_prefix + "PER-SHARE:HIGH",
+        ],
+    }
+
+
+def _effective_replacement_input(
+    payload: dict[str, Any], epv_result: dict[str, Any] | None,
+) -> dict[str, Any]:
+    wrapper = _mapping(payload.get("replacement_value"))
+    model_input = deepcopy(_mapping(wrapper.get("model_input")))
+    epv_model_id = str(wrapper.get("epv_model_id") or "")
+    if epv_model_id and epv_result is not None:
+        model_input["epv_cross_check"] = _canonical_epv_cross_check(epv_result)
+    return model_input
 
 
 def validate_valuation_value_bridge_input(payload: Any) -> dict[str, Any]:
@@ -170,14 +226,51 @@ def validate_valuation_value_bridge_input(payload: Any) -> dict[str, Any]:
         ):
             findings.append("cash_accessibility:source_fact_ids_invalid")
 
+    epv_result_for_replacement: dict[str, Any] | None = None
+    if "epv" in value:
+        wrapper = _mapping(value.get("epv"))
+        _unknown_fields(wrapper, _MODEL_WRAPPER_FIELDS, "epv", findings)
+        model_input = wrapper.get("model_input")
+        if not isinstance(model_input, dict):
+            findings.append("epv:model_input_missing")
+        else:
+            epv_validation = validate_epv_model_input(model_input)
+            if epv_validation.get("state") != "VALID":
+                findings.extend(_model_findings("epv:model_input", epv_validation))
+            else:
+                epv_result_for_replacement = compute_epv_model(model_input)
+
     if "replacement_value" in value:
         wrapper = _mapping(value.get("replacement_value"))
-        _unknown_fields(wrapper, _MODEL_WRAPPER_FIELDS, "replacement_value", findings)
+        _unknown_fields(
+            wrapper, _REPLACEMENT_WRAPPER_FIELDS, "replacement_value", findings
+        )
         model_input = wrapper.get("model_input")
         if not isinstance(model_input, dict):
             findings.append("replacement_value:model_input_missing")
         else:
-            replacement_validation = validate_replacement_value_model(model_input)
+            epv_model_id = str(wrapper.get("epv_model_id") or "")
+            submitted_epv = model_input.get("epv_cross_check")
+            if epv_model_id:
+                if submitted_epv is not None:
+                    findings.append(
+                        "replacement_value:hand_filled_epv_cross_check_forbidden"
+                    )
+                epv_input = _mapping(_mapping(value.get("epv")).get("model_input"))
+                if not epv_input:
+                    findings.append("replacement_value:canonical_epv_model_missing")
+                elif epv_input.get("model_id") != epv_model_id:
+                    findings.append("replacement_value:canonical_epv_model_id_mismatch")
+                effective = _effective_replacement_input(
+                    value, epv_result_for_replacement
+                )
+            else:
+                effective = model_input
+                if _mapping(submitted_epv).get("status") == "COMPARABLE":
+                    findings.append(
+                        "replacement_value:comparable_epv_requires_canonical_model"
+                    )
+            replacement_validation = validate_replacement_value_model(effective)
             if replacement_validation.get("state") != "REVIEWABLE":
                 findings.extend(_model_findings("replacement_value:model_input", replacement_validation))
             if _mapping(model_input.get("model_context")).get("purpose") != "COMPANY_ANALYSIS":
@@ -581,6 +674,44 @@ def _replacement_projection(
     return projection, reader, claims, [slot]
 
 
+def _epv_projection(
+    result: dict[str, Any],
+) -> tuple[dict[str, Any], list[str], list[dict[str, Any]], list[dict[str, Any]]]:
+    basis = _mapping(result.get("basis"))
+    projection = {
+        "source_model_id": result["model_id"],
+        "company_id": result["company_id"],
+        "status": result["status"],
+        "basis": deepcopy(basis),
+        "sustainable_owner_earnings_range": deepcopy(
+            result.get("sustainable_owner_earnings_range")
+        ),
+        "operating_value_range": deepcopy(result.get("operating_value_range")),
+        "ordinary_common_equity_range": deepcopy(
+            result.get("ordinary_common_equity_range")
+        ),
+        "per_share_range": deepcopy(result.get("per_share_range")),
+        "critical_unknowns": deepcopy(result.get("critical_unknowns") or []),
+        "economic_conclusion": deepcopy(result.get("economic_conclusion")),
+    }
+    claims: list[dict[str, Any]] = []
+    per_share = result.get("per_share_range")
+    if isinstance(per_share, dict):
+        claims.append({
+            "claim_id": "epv.ordinary_common_equity_per_share",
+            "source_model_id": result["model_id"],
+            "metric": "earnings_power_value_per_share",
+            "range_low": per_share["range_low"],
+            "range_high": per_share["range_high"],
+            "selected_value": None,
+            "currency": basis["currency"],
+            "unit": "per_share",
+            "as_of": basis["as_of"],
+            "scope": basis["ordinary_share_claim_scope"],
+        })
+    return projection, [], claims, []
+
+
 def _working_capital_projection(
     result: dict[str, Any],
 ) -> tuple[dict[str, Any], list[str], list[dict[str, Any]], list[dict[str, Any]]]:
@@ -898,9 +1029,21 @@ def _compile_unchecked(payload: dict[str, Any]) -> dict[str, Any]:
         claims.extend(numeric_claims)
         reader_slots.extend(slots)
 
+    epv_result: dict[str, Any] | None = None
+    if "epv" in payload:
+        epv_result = compute_epv_model(payload["epv"]["model_input"])
+        projection, conclusions, numeric_claims, slots = _epv_projection(epv_result)
+        results["epv"] = epv_result
+        projections["epv"] = projection
+        reader.extend(conclusions)
+        claims.extend(numeric_claims)
+        reader_slots.extend(slots)
+
     if "replacement_value" in payload:
         wrapper = payload["replacement_value"]
-        result = compute_replacement_value_model(wrapper["model_input"])
+        result = compute_replacement_value_model(
+            _effective_replacement_input(payload, epv_result)
+        )
         projection, conclusions, numeric_claims, slots = _replacement_projection(result)
         results["replacement_value"] = result
         projections["replacement_value"] = projection
