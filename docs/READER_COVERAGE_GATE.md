@@ -26,8 +26,9 @@ topic. When a fact is unavailable, `UNKNOWN`/`未披露` is valid only when the
 report explains the economic consequence of that unknown.
 
 The reader body also rejects review-return panels, workflow statuses, internal
-object IDs, `insight_id / claim_id / evidence_id / decision_entry_id / model_id`,
-structured anchors such as `[insight: ...]`, binding lists, and model identities
+object IDs such as `insight_id`, `claim_id`, `evidence_id`, `observation_id`,
+`calculation_id`, `decision_entry_id`, and `model_id`; canonical `OBS:` / `CALC:`
+identities, structured anchors such as `[insight: ...]`, binding lists, and model identities
 such as `PRIMARY_ROUTE_UNKNOWN`, `P_LONG`, or `P_XIRR_*`. Those identities remain
 available in the deterministic model and technical artifact. Reader prose must
 translate them into the route, terminal value, horizon, currency, tax, and
@@ -38,15 +39,20 @@ allow NAV, EPV, owner cash, audited facts, and ordinary-language uncertainty.
 
 - The formal reader report is the complete company narrative assembled from
   the accepted chapters. A deterministic projection removes only generated
-  control bindings and preserves every narrative section.
+  control bindings and preserves every narrative section. A pure binding line
+  disappears; when a binding and economic explanation share a line, only the
+  label and private identity disappear and the explanation remains.
 - The technical report retains the original chapter bytes, compiler anchors,
   binding lists, model derivations, and technical appendix for reproduction.
 - The investment memo is an optional separate executive artifact. It contains
   no machine identities and links to both the full reader report and the
   technical report; it can never be written to the formal report path.
 
-Compiler-owned numeric reader slots remain in the formal reader report exactly
-once. The projection removes their control comments, not their sentence.
+Compiler-owned numeric reader slots remain exactly once in both the formal
+reader report and technical report, and zero times in the executive memo. This
+three-artifact cardinality is a hard publication gate, so neither a technical
+appendix duplicate nor an arbitrary memo-field copy can pass. The projection
+removes slot control comments, not the canonical sentence.
 
 ## Archetype Routing
 

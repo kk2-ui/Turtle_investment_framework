@@ -10,6 +10,8 @@
     "blocking_findings",
     "technical_heading_count",
     "reader_heading_count",
+    "canonical_reader_slot_count",
+    "reader_slot_cardinality",
     "policy"
   ],
   "properties": {
@@ -22,6 +24,28 @@
     },
     "technical_heading_count": {"type": "integer", "minimum": 0},
     "reader_heading_count": {"type": "integer", "minimum": 0},
+    "canonical_reader_slot_count": {"type": "integer", "minimum": 0},
+    "reader_slot_cardinality": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "slot_id",
+          "reader_count",
+          "technical_count",
+          "executive_count",
+          "status"
+        ],
+        "properties": {
+          "slot_id": {"type": "string", "minLength": 1},
+          "reader_count": {"type": "integer", "minimum": 0},
+          "technical_count": {"type": "integer", "minimum": 0},
+          "executive_count": {"type": "integer", "minimum": 0},
+          "status": {"enum": ["PASS", "BLOCKED"]}
+        }
+      }
+    },
     "policy": {
       "const": "full_narrative_projection; control_bindings_technical_only; no_summary_substitution"
     }

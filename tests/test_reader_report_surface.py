@@ -7,8 +7,11 @@ import pytest
 
 from scripts.reader_report_surface import (
     compile_reader_report_surface,
+    known_control_ids,
     validate_reader_report_surface,
 )
+
+SLOT = "税费和收取摩擦后的普通股分配为RMB278.417百万元，即约RMB2.784亿元。"
 
 
 def _write(path: Path, value: dict) -> None:
@@ -33,13 +36,33 @@ def _ledgers(output: Path) -> None:
     _write(output / "valuation_model.json", {
         "models": [{"model_id": "reverse.dcf"}],
     })
+    _write(output / "fact_observations.json", {
+        "observations": [{
+            "observation_id": "OBS:cash.balance",
+            "source_fact_ids": ["OBS:cash.source", "annual_report_2025.pdf"],
+        }],
+    })
+    _write(output / "calculation_observations.json", {
+        "calculations": [{"calculation_id": "CALC:cash.bridge"}],
+    })
+
+
+def _register_slot(output: Path) -> None:
+    valuation = json.loads((output / "valuation_model.json").read_text(encoding="utf-8"))
+    valuation["value_bridge_models"] = {
+        "reader_slots": [{
+            "slot_id": "after_tax_common_distribution",
+            "sentence": SLOT,
+        }],
+    }
+    _write(output / "valuation_model.json", valuation)
 
 
 def test_projection_keeps_full_narrative_and_numeric_slot_but_not_bindings(
     tmp_path: Path,
 ) -> None:
     _ledgers(tmp_path)
-    slot = "税费和收取摩擦后的普通股分配为RMB278.417百万元，即约RMB2.784亿元。"
+    slot = SLOT
     technical = f"""# 测试公司完整报告
 
 ## Ch0 投资主线
@@ -60,7 +83,7 @@ def test_projection_keeps_full_narrative_and_numeric_slot_but_not_bindings(
 当前处理来自完整公司叙事。[decision: decision.value] [claim: claim.core] [valuation: reverse.dcf]
 """
 
-    reader = compile_reader_report_surface(technical)
+    reader = compile_reader_report_surface(technical, tmp_path)
     validation = validate_reader_report_surface(reader, technical, tmp_path)
 
     assert validation["status"] == "PASS"
@@ -84,7 +107,7 @@ def test_projection_keeps_full_narrative_and_numeric_slot_but_not_bindings(
 def test_surface_validator_blocks_a_free_control_id_in_narrative(tmp_path: Path) -> None:
     _ledgers(tmp_path)
     technical = "## 公司主线\n\n这段解释包含自由重抄的 claim.core，不能自动删词。"
-    reader = compile_reader_report_surface(technical)
+    reader = compile_reader_report_surface(technical, tmp_path)
 
     validation = validate_reader_report_surface(reader, technical, tmp_path)
 
@@ -104,11 +127,117 @@ def test_surface_validator_rejects_executive_memo_as_formal_report(tmp_path: Pat
     assert "reader_surface_heading_missing:公司主线" in validation["blocking_findings"]
 
 
+def test_projection_drops_pure_binding_lines_but_keeps_mixed_line_explanation(
+    tmp_path: Path,
+) -> None:
+    _ledgers(tmp_path)
+    technical = """## 公司主线
+
+- 证据绑定：OBS:cash.balance
+- 证据绑定：stale.binding
+- 证据绑定：OBS:cash.balance；该证据显示回款改善尚未转化为可分配现金。
+- 证据绑定：annual_report_2025.pdf；来源文件披露了余额口径。
+"""
+
+    reader = compile_reader_report_surface(technical, tmp_path)
+
+    assert "证据绑定" not in reader
+    assert "OBS:cash.balance" not in reader
+    assert "stale.binding" not in reader
+    assert "该证据显示回款改善尚未转化为可分配现金。" in reader
+    assert "来源文件披露了余额口径。" in reader
+    assert reader.count("该证据显示") == 1
+
+
+def test_known_control_ids_include_fact_and_calculation_registries_without_public_labels(
+    tmp_path: Path,
+) -> None:
+    _ledgers(tmp_path)
+
+    identities = known_control_ids(tmp_path)
+
+    assert {"OBS:cash.balance", "OBS:cash.source", "CALC:cash.bridge"} <= identities
+    assert "NAV" not in identities and "EPV" not in identities
+    assert "annual_report_2025.pdf" not in identities
+
+
+@pytest.mark.parametrize("leak", ["OBS:cash.balance", "CALC:cash.bridge"])
+def test_surface_validator_blocks_canonical_fact_identity_in_free_reader_prose(
+    tmp_path: Path, leak: str,
+) -> None:
+    _ledgers(tmp_path)
+    technical = f"## 公司主线\n\n自由正文重抄了 {leak}。"
+
+    validation = validate_reader_report_surface(technical, technical, tmp_path)
+
+    assert validation["status"] == "BLOCKED"
+    assert "reader_surface_canonical_fact_identity_present" in validation["blocking_findings"]
+
+
+def test_reader_slot_cardinality_is_a_three_artifact_hard_gate(tmp_path: Path) -> None:
+    _ledgers(tmp_path)
+    _register_slot(tmp_path)
+    narrative = f"## 价值结论\n\n{SLOT}"
+
+    valid = validate_reader_report_surface(
+        narrative,
+        narrative,
+        tmp_path,
+        technical_artifact_text=narrative,
+        executive_text="## 执行摘要\n\n只解释经济结论，不复制模型数值。",
+    )
+    duplicated_technical = validate_reader_report_surface(
+        narrative,
+        narrative,
+        tmp_path,
+        technical_artifact_text=narrative + "\n\n## 技术附录\n\n" + SLOT,
+        executive_text="## 执行摘要\n\n只解释经济结论。",
+    )
+    leaked_executive = validate_reader_report_surface(
+        narrative,
+        narrative,
+        tmp_path,
+        technical_artifact_text=narrative,
+        executive_text="## 执行摘要\n\n" + SLOT,
+    )
+
+    assert valid["status"] == "PASS"
+    assert valid["reader_slot_cardinality"] == [{
+        "slot_id": "after_tax_common_distribution",
+        "reader_count": 1,
+        "technical_count": 1,
+        "executive_count": 0,
+        "status": "PASS",
+    }]
+    assert duplicated_technical["status"] == "BLOCKED"
+    assert any(
+        "technical=2" in finding
+        for finding in duplicated_technical["blocking_findings"]
+    )
+    assert leaked_executive["status"] == "BLOCKED"
+    assert any(
+        "executive=1" in finding
+        for finding in leaked_executive["blocking_findings"]
+    )
+
+
+def test_public_model_labels_and_source_footnotes_are_reader_safe(tmp_path: Path) -> None:
+    _ledgers(tmp_path)
+    text = (
+        "## 价值结论\n\nNAV与EPV用于交叉核验。[^1]\n\n"
+        "[^1]: `annual_report_2025.pdf` 与 `ev.sales.pdf` — audited balance sheet"
+    )
+
+    validation = validate_reader_report_surface(text, text, tmp_path)
+
+    assert validation["status"] == "PASS"
+
+
 def test_reader_surface_validation_matches_schema(tmp_path: Path) -> None:
     jsonschema = pytest.importorskip("jsonschema")
     _ledgers(tmp_path)
     technical = "## 公司主线\n\n完整公司事实、机制与结论。"
-    reader = compile_reader_report_surface(technical)
+    reader = compile_reader_report_surface(technical, tmp_path)
     validation = validate_reader_report_surface(reader, technical, tmp_path)
     schema = json.loads(
         (

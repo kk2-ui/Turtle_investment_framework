@@ -75,7 +75,15 @@ _INTERNAL_CONTROL_TOKEN_PATTERNS: tuple[tuple[str, re.Pattern[str]], ...] = (
         "control_field_name",
         re.compile(
             r"(?<![A-Za-z0-9_])(?:insight_id|claim_id|evidence_id|"
-            r"decision_entry_id|model_id)s?(?![A-Za-z0-9_])",
+            r"observation_id|calculation_id|decision_entry_id|model_id|"
+            r"source_fact_id)s?(?![A-Za-z0-9_])",
+            re.I,
+        ),
+    ),
+    (
+        "canonical_fact_identity",
+        re.compile(
+            r"(?<![A-Za-z0-9_])(?:OBS|CALC):[A-Za-z0-9_.:@/-]+",
             re.I,
         ),
     ),

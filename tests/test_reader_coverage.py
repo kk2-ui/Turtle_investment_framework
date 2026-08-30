@@ -258,7 +258,12 @@ def test_reader_coverage_rejects_report_binding_syntax_and_field_names(
         "[decision: decision.value]": "structured_binding",
         "claim_id=claim.core": "control_field_name",
         "evidence_ids=ev.sales": "control_field_name",
+        "observation_id=OBS:cash.balance": "control_field_name",
+        "calculation_ids=CALC:cash.bridge": "control_field_name",
+        "source_fact_ids=OBS:cash.source": "control_field_name",
         "model_id=reverse.dcf": "control_field_name",
+        "内部事实 OBS:cash.balance": "canonical_fact_identity",
+        "内部计算 CALC:cash.bridge": "canonical_fact_identity",
         "完整证据见15章审计底稿": "internal_product_language",
         "以下是绑定清单": "internal_product_language",
     }
@@ -301,6 +306,7 @@ def test_reader_coverage_allows_plain_language_and_does_not_scan_technical_appen
     text = _paragraphs() + (
         "\n\n当前经营状态仍有不确定性，因此这项判断只说明渠道机制需要继续验证，"
         "不能提高报告结论的置信度。NAV、EPV与owner cash仍是允许向读者解释的经济概念。"
+        "[^1]\n\n[^1]: `annual_report_2025.pdf` — 经审计年报。"
     )
 
     result = evaluate_reader_coverage(text, tmp_path)

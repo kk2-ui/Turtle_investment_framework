@@ -1396,7 +1396,7 @@ def _refresh_completion_after_incomplete_source_pass(output_dir: str) -> dict[st
     return evaluate_report_completion(
         report_text,
         output_dir,
-        reader_report_text=compile_reader_report_surface(report_text),
+        reader_report_text=compile_reader_report_surface(report_text, output_dir),
     ).to_dict()
 
 

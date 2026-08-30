@@ -2820,7 +2820,8 @@ def assemble_report(
         except ModuleNotFoundError:
             from reader_report_surface import compile_reader_report_surface
         reader_candidate_text = compile_reader_report_surface(
-            reader_projection_source_text
+            reader_projection_source_text,
+            output_dir,
         )
     else:
         reader_candidate_text = report_text
@@ -2953,8 +2954,16 @@ def assemble_report(
         except (OSError, json.JSONDecodeError):
             insight_payload = {}
         report_text = _extract_sources(reader_candidate_text, output_dir)
+        executive_memo_text = render_investment_memo(
+            insight_payload, company_name, ts_code,
+            technical_filename, reader_filename,
+        )
         reader_surface_validation = validate_reader_report_surface(
-            report_text, reader_projection_source_text, output_dir,
+            report_text,
+            reader_projection_source_text,
+            output_dir,
+            technical_artifact_text=technical_report_text,
+            executive_text=executive_memo_text,
         )
         Path(output_dir, "reader_surface_validation.json").write_text(
             json.dumps(reader_surface_validation, ensure_ascii=False, indent=2),
@@ -2967,10 +2976,6 @@ def assemble_report(
                 "Reader surface: " + str(item)
                 for item in reader_surface_validation.get("blocking_findings") or []
             )
-        executive_memo_text = render_investment_memo(
-            insight_payload, company_name, ts_code,
-            technical_filename, reader_filename,
-        )
         memo_preservation = validate_rendered_memo(
             insight_payload, executive_memo_text,
             technical_filename, reader_filename,

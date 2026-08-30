@@ -342,32 +342,59 @@ def _normalised_content(value: Any) -> str:
 def _memo_private_identities(value: Any, *, key: str = "") -> set[str]:
     identity_keys = {
         "insight_id", "claim_id", "evidence_id", "decision_entry_id",
-        "model_id", "entry_id",
+        "model_id", "entry_id", "observation_id", "calculation_id", "fact_id",
     }
     identity_list_keys = {
         "insight_ids", "claim_ids", "evidence_ids", "decision_entry_ids",
         "valuation_model_ids", "model_ids", "entry_ids", "forward_judgment_ids",
+        "observation_ids", "calculation_ids", "source_fact_ids",
+        "verified_fact_ids", "input_observation_ids", "input_calculation_ids",
+        "evidence_observation_ids", "evidence_calculation_ids",
     }
     result: set[str] = set()
     if isinstance(value, dict):
         for child_key, child in value.items():
             child_key = str(child_key)
-            if child_key in identity_keys and isinstance(child, str) and child.strip():
+            singular_identity = (
+                child_key in identity_keys
+                or child_key.endswith("_observation_id")
+                or child_key.endswith("_calculation_id")
+            )
+            list_identity = (
+                child_key in identity_list_keys
+                or child_key.endswith("_observation_ids")
+                or child_key.endswith("_calculation_ids")
+            )
+            if singular_identity and isinstance(child, str) and child.strip():
                 result.add(child.strip())
-            elif child_key in identity_list_keys and isinstance(child, list):
+            elif list_identity and isinstance(child, list):
                 result.update(str(item).strip() for item in child if str(item).strip())
             result.update(_memo_private_identities(child, key=child_key))
     elif isinstance(value, list):
         for child in value:
             result.update(_memo_private_identities(child, key=key))
-    return result
+    return {
+        identity for identity in result
+        if not re.search(
+            r"(?:^|[/\\])[^/\\]+\.(?:pdf|json|md|html?|xlsx?|csv|txt)$",
+            identity,
+            re.I,
+        )
+    }
 
 
 def _reader_safe_memo_text(value: Any, payload: dict[str, Any]) -> str:
     """Remove exact control identities from a copied economic sentence."""
     text = value if isinstance(value, str) else _text(value)
     for identity in sorted(_memo_private_identities(payload), key=len, reverse=True):
-        text = text.replace(identity, "")
+        text = re.sub(
+            r"(?<![A-Za-z0-9_])"
+            + re.escape(identity)
+            + r"(?![A-Za-z0-9_]|\.(?:pdf|json|md|html?|xlsx?|csv|txt)\b)",
+            "",
+            text,
+            flags=re.I,
+        )
     text = re.sub(
         r"\[(?:insight|decision|valuation|claim|threshold|thesis-test|probability)\s*:[^\]]+\]",
         "",
@@ -463,7 +490,13 @@ def validate_rendered_memo(
     leaks.extend(
         "memo_private_identity:" + identity
         for identity in sorted(_memo_private_identities(payload))
-        if identity and identity in memo_text
+        if identity and re.search(
+            r"(?<![A-Za-z0-9_])"
+            + re.escape(identity)
+            + r"(?![A-Za-z0-9_]|\.(?:pdf|json|md|html?|xlsx?|csv|txt)\b)",
+            memo_text,
+            re.I,
+        )
     )
     leaks = list(dict.fromkeys(leaks))
     missing = list(dict.fromkeys(missing))
