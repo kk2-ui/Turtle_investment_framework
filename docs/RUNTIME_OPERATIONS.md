@@ -70,7 +70,7 @@ manifest 记录代码、配置、prompt和输入指纹，以及步骤、模型�
   --repair-only --review-return <review-return.json> --validation-only
 ```
 
-入口会写出 `golden_report_feedback_routing.json`，且强制 `--validation-only`，只生成待复核候选，不发布。存在开放的采集、推理或模型问题时，运行以 upstream blocked 结束且不调用 reader writer，先按其中 owner 修复公共模块并取得验收证据；纯写作问题或上游已验收后的 `reader_guidance` 只触发一次限域读者修订。`--review-return` 不得与 `--repair-chapters` 联用，防止人工章节参数绕过责任分流。设 `--repair-passes 0` 时只生成并检查路由，不调用模型。
+入口会写出 `golden_report_feedback_routing.json`，且强制 `--validation-only`，只生成待复核候选，不发布。存在开放的采集、推理或模型问题时，运行以 upstream blocked 结束且不调用 reader writer，先按其中 owner 修复公共模块并取得验收证据；纯写作问题或上游已验收后，只有结构化 `reader_conclusion`（投资结论、成立依据、投资含义和已接纳来源）可触发一次限域读者修订。自由修复指令不再是接口字段。`--review-return` 不得与 `--repair-chapters` 联用。设 `--repair-passes 0` 时只生成并检查路由，不调用模型。
 
 ## 6. 缓存纪律
 

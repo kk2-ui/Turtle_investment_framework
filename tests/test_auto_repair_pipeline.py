@@ -40,9 +40,15 @@ class _FailingLlm:
         raise RuntimeError("provider connection failed")
 
 
-def _review_return(*, root_cause: str, guidance: str = "") -> dict:
+def _review_return(*, root_cause: str, with_reader_conclusion: bool = False) -> dict:
+    reader_conclusion = {
+        "statement": "Cash accessibility narrows the value range.",
+        "basis": "The accepted model separates legal access from realized distribution.",
+        "investor_consequence": "Use the lower established value line for the buy decision.",
+        "source_refs": ["accepted/cash_accessibility.json"],
+    }
     return {
-        "schema_version": "golden-report-review-return.v1",
+        "schema_version": "golden-report-review-return.v2",
         "review_id": "REVIEW-1",
         "report_id": "REPORT-1",
         "candidate_ref": "reports/candidate.md",
@@ -61,7 +67,7 @@ def _review_return(*, root_cause: str, guidance: str = "") -> dict:
             "affected_chapters": [12],
             "remediation_status": "OPEN",
             "acceptance_evidence_refs": [],
-            "reader_guidance": guidance,
+            **({"reader_conclusion": reader_conclusion} if with_reader_conclusion else {}),
         }],
     }
 
@@ -139,7 +145,7 @@ def test_pure_writing_review_return_routes_only_declared_reader_chapter() -> Non
     completion = {
         "golden_report_review_return": _review_return(
             root_cause="WRITING",
-            guidance="Explain the cash-access range once in investor language.",
+            with_reader_conclusion=True,
         ),
     }
 
@@ -153,7 +159,7 @@ def test_review_return_file_enters_the_same_routing_path_used_by_repair_only(
     review_path.write_text(
         json.dumps(_review_return(
             root_cause="WRITING",
-            guidance="State the accepted cash-access consequence once.",
+            with_reader_conclusion=True,
         )),
         encoding="utf-8",
     )
@@ -183,10 +189,10 @@ def test_repair_prompt_uses_clean_reader_brief_not_raw_completion_findings(tmp_p
             repair_targets=(12,),
             reader_repair_brief=[
                 {
-                    "instruction": "说明现金可达性不确定时，内在价值区间和行动门槛如何变化。",
-                },
-                {
-                    "instruction": "保留已有估值结论，删除重复的内部过程说明。",
+                    "statement": "现金可达性不确定时，证据只支持一个保守价值区间。",
+                    "basis": "法律上限、存量现金实现与未来普通分配已经分开计算。",
+                    "investor_consequence": "买入门槛采用已成立价值线的低端。",
+                    "source_refs": ["accepted/cash_accessibility.json"],
                 },
             ],
         ),
@@ -195,7 +201,8 @@ def test_repair_prompt_uses_clean_reader_brief_not_raw_completion_findings(tmp_p
     prompt = agent._build_resume_hint()
 
     assert "现金可达性不确定" in prompt
-    assert "删除重复的内部过程说明" in prompt
+    assert "买入门槛采用已成立价值线的低端" in prompt
+    assert "审阅经过" in prompt
     assert "DATA_COVERAGE" not in prompt
     assert "P_LONG" not in prompt
     assert "PRIMARY_ROUTE_UNKNOWN" not in prompt
@@ -218,7 +225,10 @@ def test_reader_repair_tool_surface_cannot_mutate_models_or_research(tmp_path: P
             output_dir=str(tmp_path),
             repair_targets=(0, 12, 14),
             reader_repair_brief=[{
-                "instruction": "Explain the accepted value range in investor language.",
+                "statement": "The accepted value range is economically supported.",
+                "basis": "The asset and earnings routes use the same claim scope.",
+                "investor_consequence": "Buy only below the lower independent value line.",
+                "source_refs": ["accepted/value.json"],
             }],
         ),
     )
@@ -232,6 +242,28 @@ def test_reader_repair_tool_surface_cannot_mutate_models_or_research(tmp_path: P
         "list_documents", "read_report_contract_pack", "read_chapter",
         "audit_chapter", "write_chapter",
     }
+
+
+def test_general_writer_prompt_keeps_model_contract_out_of_reader_context(
+    tmp_path: Path,
+) -> None:
+    agent = TurtleAgent(
+        _DummyLlm(),  # type: ignore[arg-type]
+        ToolRegistry(),
+        AgentConfig(output_dir=str(tmp_path)),
+    )
+
+    prompt = agent._build_system_prompt()
+    valuation_contract = read_structured_ledger_contract(
+        output_dir=str(tmp_path), ledger="valuation",
+    )
+    serialized_contract = json.dumps(valuation_contract, ensure_ascii=False)
+
+    assert "读者正文只回答三件事" in prompt
+    assert "canonical_fact_bindings" not in prompt
+    assert "30%/50%/75%" not in prompt
+    assert "canonical_fact_bindings" in serialized_contract
+    assert "30/50/75%" in serialized_contract
 
 
 def test_decision_ledger_failure_routes_only_decision_chapters() -> None:

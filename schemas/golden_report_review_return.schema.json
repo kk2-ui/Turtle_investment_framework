@@ -6,7 +6,7 @@
   "additionalProperties": false,
   "required": ["schema_version", "review_id", "report_id", "candidate_ref", "reviewer_id", "reviewed_at", "findings"],
   "properties": {
-    "schema_version": {"const": "golden-report-review-return.v1"},
+    "schema_version": {"const": "golden-report-review-return.v2"},
     "review_id": {"type": "string", "minLength": 1},
     "report_id": {"type": "string", "minLength": 1},
     "candidate_ref": {"type": "string", "minLength": 1},
@@ -40,7 +40,22 @@
           "acceptance_criteria": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}},
           "remediation_status": {"enum": ["OPEN", "ACCEPTED", "CLOSED_NON_MATERIAL"]},
           "acceptance_evidence_refs": {"type": "array", "items": {"type": "string", "minLength": 1}},
-          "reader_guidance": {"type": "string", "minLength": 1}
+          "reader_conclusion": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["statement", "basis", "investor_consequence", "source_refs"],
+            "properties": {
+              "statement": {"type": "string", "minLength": 1},
+              "basis": {"type": "string", "minLength": 1},
+              "investor_consequence": {"type": "string", "minLength": 1},
+              "source_refs": {
+                "type": "array",
+                "minItems": 1,
+                "uniqueItems": true,
+                "items": {"type": "string", "minLength": 1}
+              }
+            }
+          }
         }
       }
     }

@@ -4,8 +4,8 @@
 The review return is a control-plane object: it explains why a candidate is
 below standard and what must change.  The reader writer consumes a different,
 strictly smaller object containing only accepted economic conclusions and
-plain-language writing instructions.  Keeping those two payloads separate is
-the core boundary enforced here.
+accepted investor conclusions.  Keeping those two payloads separate is the
+core boundary enforced here.
 """
 
 from __future__ import annotations
@@ -14,8 +14,8 @@ import re
 from typing import Any
 
 
-REVIEW_SCHEMA_VERSION = "golden-report-review-return.v1"
-ROUTING_SCHEMA_VERSION = "golden-report-feedback-routing.v1"
+REVIEW_SCHEMA_VERSION = "golden-report-review-return.v2"
+ROUTING_SCHEMA_VERSION = "golden-report-feedback-routing.v2"
 
 ROOT_CAUSE_CLASSES = {
     "DATA_COVERAGE",
@@ -87,10 +87,37 @@ def _unique_texts(value: Any) -> bool:
     return bool(items) and all(_text(item) for item in items) and len(set(items)) == len(items)
 
 
+def _validate_reader_conclusion(value: Any, prefix: str) -> list[str]:
+    """Validate the investor thesis that may cross into the reader writer."""
+    item = _mapping(value)
+    required = {"statement", "basis", "investor_consequence", "source_refs"}
+    findings: list[str] = []
+    if set(item) != required:
+        return [prefix + ".fields_invalid"]
+    for field in required - {"source_refs"}:
+        if not _text(item.get(field)):
+            findings.append(prefix + "." + field + "_missing")
+    source_refs = _items(item.get("source_refs"))
+    if (
+        not source_refs
+        or any(not _text(ref) for ref in source_refs)
+        or len(set(source_refs)) != len(source_refs)
+    ):
+        findings.append(prefix + ".source_refs_invalid")
+    findings.extend(_reader_control_findings(item, prefix))
+    return findings
+
+
 def validate_golden_report_review_return(review: Any) -> dict[str, Any]:
     """Validate the material review-return contract used by the dispatcher."""
     value = _mapping(review)
     findings: list[str] = []
+    expected_fields = {
+        "schema_version", "review_id", "report_id", "candidate_ref",
+        "reviewer_id", "reviewed_at", "findings",
+    }
+    if set(value) != expected_fields:
+        findings.append("review_fields_invalid")
     if value.get("schema_version") != REVIEW_SCHEMA_VERSION:
         findings.append("schema_version_invalid")
     for field in (
@@ -114,6 +141,16 @@ def validate_golden_report_review_return(review: Any) -> dict[str, Any]:
     for index, raw in enumerate(review_findings):
         item = _mapping(raw)
         prefix = f"findings[{index}]"
+        expected_finding_fields = {
+            "finding_id", "root_cause_classes", "materiality", "affected_claims",
+            "affected_chapters", "economic_impact", "missing_facts",
+            "prohibited_assumptions", "executable_remediation", "acceptance_criteria",
+            "remediation_status", "acceptance_evidence_refs",
+        }
+        if "reader_conclusion" in item:
+            expected_finding_fields.add("reader_conclusion")
+        if set(item) != expected_finding_fields:
+            findings.append(prefix + ".fields_invalid")
         finding_id = item.get("finding_id")
         if not _text(finding_id) or finding_id in seen_ids:
             findings.append(prefix + ".finding_id_missing_or_duplicate")
@@ -151,11 +188,13 @@ def validate_golden_report_review_return(review: Any) -> dict[str, Any]:
             findings.append(prefix + ".accepted_without_evidence")
         if state == "CLOSED_NON_MATERIAL" and item.get("materiality") != "NON_MATERIAL":
             findings.append(prefix + ".material_finding_closed_as_non_material")
-        guidance = item.get("reader_guidance")
-        if guidance not in (None, "") and not _text(guidance):
-            findings.append(prefix + ".reader_guidance_invalid")
+        conclusion = item.get("reader_conclusion")
+        if conclusion is not None:
+            findings.extend(
+                _validate_reader_conclusion(conclusion, prefix + ".reader_conclusion")
+            )
     return {
-        "schema_version": "golden-report-review-return-validation.v1",
+        "schema_version": "golden-report-review-return-validation.v2",
         "state": "REVIEWABLE" if not findings else "INVALID",
         "findings": list(dict.fromkeys(findings)),
     }
@@ -193,7 +232,7 @@ def compile_golden_report_feedback_route(review: Any) -> dict[str, Any]:
 
     An open upstream finding can never produce a chapter target.  A pure
     writing finding may do so immediately when it supplies a plain reader
-    instruction.  After upstream acceptance, the accepted reader instruction
+    conclusion.  After upstream acceptance, the accepted investor conclusion
     may flow to the writer, but the original finding body still may not.
     """
     validation = validate_golden_report_review_return(review)
@@ -219,17 +258,19 @@ def compile_golden_report_feedback_route(review: Any) -> dict[str, Any]:
         has_upstream = bool(classes & UPSTREAM_CLASSES)
         if state == "OPEN" and has_upstream and item["materiality"] == "MATERIAL":
             upstream_open.append(finding_id)
-        guidance = str(item.get("reader_guidance") or "").strip()
+        reader_conclusion = _mapping(item.get("reader_conclusion"))
         direct_writing = classes == {"WRITING"} and state == "OPEN"
         accepted_upstream = has_upstream and state == "ACCEPTED"
-        if guidance and (direct_writing or accepted_upstream):
-            clean_findings = _reader_control_findings(guidance)
-            if clean_findings:
-                raise ValueError("reader_guidance_contains_control_language:" + ",".join(clean_findings))
+        if reader_conclusion and (direct_writing or accepted_upstream):
             reader_ready.append({
                 "finding_id": finding_id,
                 "affected_chapters": list(item["affected_chapters"]),
-                "instruction": guidance,
+                "conclusion": {
+                    key: reader_conclusion[key]
+                    for key in (
+                        "statement", "basis", "investor_consequence", "source_refs",
+                    )
+                },
             })
         elif state == "OPEN" and ("WRITING" in classes or has_upstream):
             reader_deferred.append(finding_id)
@@ -270,7 +311,7 @@ def compile_golden_report_feedback_route(review: Any) -> dict[str, Any]:
         },
         "policy": (
             "Upstream findings repair acquisition, underwriting or deterministic model ownership first. "
-            "Only plain accepted conclusions or pure writing instructions enter the reader writer."
+            "Only structured investor conclusions enter the reader writer."
         ),
     }
 
@@ -299,7 +340,7 @@ def route_golden_report_feedback(completion: Any) -> dict[str, Any]:
             for item in _items(reader.get("instructions"))
         ],
         "reader_repair_brief": [
-            {"instruction": str(item.get("instruction") or "")}
+            dict(_mapping(item.get("conclusion")))
             for item in _items(reader.get("instructions"))
         ],
     }

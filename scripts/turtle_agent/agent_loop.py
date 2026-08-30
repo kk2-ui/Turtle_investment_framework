@@ -1283,11 +1283,25 @@ pit_read_source，且只可按 allowlist 路径调用 pit_read_framework。禁�
         if self._config.repair_targets:
             target_text = ", ".join(f"Ch{i}" for i in self._config.repair_targets)
             brief = self._config.reader_repair_brief
-            brief_items = [
-                str(item.get("instruction") or "").strip()
-                for item in brief
-                if isinstance(item, dict) and str(item.get("instruction") or "").strip()
-            ]
+            brief_items: list[str] = []
+            for item in brief:
+                if not isinstance(item, dict):
+                    continue
+                statement = str(item.get("statement") or "").strip()
+                basis = str(item.get("basis") or "").strip()
+                consequence = str(item.get("investor_consequence") or "").strip()
+                source_refs = [
+                    str(ref).strip() for ref in item.get("source_refs") or []
+                    if str(ref).strip()
+                ]
+                if not (statement and basis and consequence and source_refs):
+                    continue
+                brief_items.append(
+                    "投资结论：" + statement
+                    + "\n    成立依据：" + basis
+                    + "\n    投资含义：" + consequence
+                    + "\n    可引用来源：" + "；".join(source_refs)
+                )
             brief_text = "\n".join(f"  - {item}" for item in brief_items)
             if not brief_text:
                 brief_text = "  - 保留原有投资判断，只修正目标章节中影响读者理解的表达与证据呈现。"
@@ -1295,9 +1309,9 @@ pit_read_source，且只可按 allowlist 路径调用 pit_read_framework。禁�
 - 🔧 **读者修订轮 {self._config.pass_name}**：只允许修改 {target_text}；其余章节已冻结。
 - 本轮面向投资者的修订重点：
 {brief_text}
-- 每个目标章先 read_chapter，再按上述经济含义做最小充分修订；禁止从空白重写或压缩原有内容。
+- 每个目标章先 read_chapter，再把上述结论放回原有投资论证；不要写审阅经过、修复动作或表格对账过程。
 - write_chapter 必须传 force_rewrite=true。单章本轮最多尝试 {self._config.max_chapter_attempts_per_pass} 次；预算耗尽立即转下一目标章。
-- 只把投资事实、经济影响、不确定性及其对估值或行动的含义写入正文；不要复制缺陷标签、验收字段、内部对象名或工作流状态。
+- 正文只保留公司经济、估值保护和行动含义；原始审阅工单不会提供给本轮。
 """
         import os as _os
         output_dir = self._config.output_dir
@@ -2087,7 +2101,7 @@ Part C 的 Ch14 综合决策使用 5 状态合成矩阵。写 Ch14 前必须检�
 7. **固化决策身份**: 调用 write_decision_manifest，将定性/定量判断、展示标签和仓位写入唯一真源
    - **账本分阶段提交纪律**：写 claim/valuation/financial_driver/thesis/decisive/insight/judgment 中任一结构化产物前，必须先调用 `read_structured_ledger_contract(ledger=...)` 读取精确嵌套类型与当前可用 ID。若对应 ledger 尚不存在，先以 `freeze=false` 提交完整结构，允许框架返回 INCOMPLETE 和精确缺口；据此补正文锚点/证据后，再以同一结构 `freeze=true` 冻结。经营驱动桥、decisive findings 和 judgment review 没有 freeze 参数，但仍须先读各自精确契约。禁止第一次就用空对象或残缺对象冻结；也禁止因一次冻结失败而跳过后续产物。
 8. **固化参数账本**: 调用 write_decision_ledger，覆盖 market price、三种GG、II、V_final、λ、r*、衰减、双安全边际、仓位和买入/减仓/退出触发器。同一指标有多情景时用`canonical=true`显式指定唯一最终口径；其他值必须明确scenario/date/basis或deprecated。正文解释若出现关键值仍须用`[decision: entry_id]`绑定。Ch0、Ch9、Ch12、Ch13、Ch14的最终数字与动作由assemble前的决策编译器生成受保护区块；不得自行生成、删除或改写`TURTLE:DECISION_BLOCK`，禁止复制第二套自由参数
-9. **固化估值与决策可靠性账本**: 严格按read_valuation_route结果调用 write_valuation_model_ledger，正文用 `[valuation: model_id]` 绑定模型。company_profile必须写入archetype_id、valuation_route_id和registry_version；每个模型必须引用route_model_id，角色、价值范围、现金流范围不得漂移；route禁用模型必须以status=rejected和理由入账。FCFF 必须配 enterprise value+WACC+EV→股权桥，FCFE/DDM 必须配 equity value+cost of equity。明确名义/实际、税前/税后、币种和日期；永续模型必须报告 r-g、终值占比及折现率+1pct、g-1pct、组合压力三组敏感性动作。至少两个真正独立的假设组；共享假设不能伪装成多模型交叉验证。另须提交value_bridge_inputs、parameter_calibrations、model_comparisons、joint_stress_tests和action_policy：每一个价值桥数值operand（含零、股数、汇率、区间端点）都须以`canonical_fact_bindings[{{path,evidence_id}}]`绑定当前VERIFIED OBS:/CALC:，并与数值、单位、日期及实体/期间/cohort口径闭合；模型内部自称VERIFIED不构成证据。现金必须由法律可达上限、存量现金非常规实现记录、未来留存现金普通分配记录及关联应收回收分别建模；营运资本必须用多期或项目批次stock-flow/cohort桥区分启动投入、滚动占用、结算、损失和范围变化；EPV只能向`value_bridge_inputs.epv.model_input`提交来源化期间事实、分类调整、维护性资本开支/营运资本、税、资本化率及索取权操作数，禁止手填normalization_bridge、result、equity_bridge；框架确定性计算税后owner earnings、经营价值、股权桥和每股区间。物业服务的REPLACEMENT_VALUE必须覆盖客户关系、区域组织、获客渠道、履约记录和项目启动营运资本；可比时仅用epv_model_id消费canonical EPV projection，禁止在replacement内重抄EPV。需要展示税费后普通股分配时，只向ordinary_distribution提交正常化收益、分配率、税费/收取摩擦率和固定成本，结果、精度及百万元/亿元换算由框架拥有。禁止自由填写30%/50%/75%现金折价或把单年营运资本吸收乘任意比例；重置价值、清算底与EPV不得相加或机械平均。框架会把模型金额确定性编译到Ch12的受保护价值桥区块；正文只解释其经济含义，不得另抄一套金额或改写该区块。市场价格不得反向校准内在价值参数，联合压力必须同时覆盖盈利、派息和现金可达性。最终 chosen value、仓位和 action 必须与 decision ledger/manifest 一致。
+9. **固化估值与决策可靠性账本**: 先调用 `read_valuation_route` 和 `read_structured_ledger_contract(ledger=valuation)`，再按该精确合同调用 `write_valuation_model_ledger`；模型层负责公司原型、现金可达性、营运资本正常化、EPV、持续经营重置价值、口径桥、敏感性和事实绑定，正文不承担这些内部校验。读者正文只回答三件事：哪些价值线已经成立，哪些关键事实仍会改变它们，以及这对安全边际和当前行动意味着什么。模型金额由框架单向编译进 Ch12 的价值桥区块，正文不另抄数字，也不叙述模型过门、审阅修复或内部状态。最终价值、仓位和行动必须与冻结的 decision ledger/manifest 一致。
 10. **固化公司经营驱动桥**: 在前瞻判断前调用 `read_structured_ledger_contract(ledger=financial_driver)` 再调用 `write_financial_driver_bridge`。必须分别覆盖竞争/需求、单位经济、现金转换、资本配置四层；每个OBSERVED项只能引用VERIFIED observation，并明确如何进入已有估值模型输入和决策条目。UNKNOWN必须保留并采用保守处理。金融产品滚动、受限资金释放、在建工程减值等不能被一个标签吞没：分别给出分类依据、实现/结算窗口和行动含义。价格只能进入入场和条件回报，不得作为经营驱动证据或中心路径选择依据。
 
 11. **固化重大主张证据链**: 调用 write_claim_evidence_ledger。重大主张正文用 `[claim: claim_id]`；`chapters` 第一章是该主张的 canonical home，必须原样包含 ledger 的 claim 文本，其他章可只引用 ID。每条链必须包含原始事实、推理、竞争解释、适用条件、置信度及决策影响，并绑定至少一个 decision entry。新统一运行的每条直接支持必须填写VERIFIED `observation_id`，`source_id`必须是该observation对应的`DOC:`身份；CANDIDATE、搜索摘要和报告内部引用都不得作为直接支持。来源同时记录 authority × claim_distance、发布日期/数据截止日、利益冲突、口径匹配和同源组。Markdown 表格可在紧邻位置用 `[table-source: X]` 一次映射整表。
@@ -2160,7 +2174,7 @@ Zone B 提取结果写入 audit.json / governance.json。写作 Agent 在相关�
 - 数据来源: `governance.json` → `parent_cash_upstream_barrier`
 - 写入章节: Ch6 财务表现（资产负债表安全性小节）或 Ch7 股东回报
 - 判断要点:
-  - upstream_barrier_pct 只能定位现金所在法律实体和潜在上划范围，不能映射为30%/50%/75%固定折价
+  - 现金所在实体和潜在上划范围只回答法律可达性；普通股能获得多少价值，必须由实际分配记录、当前机制延续和资本需求共同回答
   - 用连续同口径期间的特别股息、注销式净回购、减资或明确由存量盈余供资的上划记录校准存量现金实现；普通股息只证明普通分配通道
   - 若无母公司报表数据→标注"年报未附母公司报表，无法评估现金上游障碍"
   - 结合关联交易（P4）和集团财务公司存款一起判断

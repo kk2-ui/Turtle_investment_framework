@@ -31,7 +31,7 @@ Phase 08 不再采用“先把 02669 做成唯一黄金样本，再用 01502 做
 
 2026-08-29，用户把中心目标进一步明确为麦格纳式企业承保：宏观/行业处境必须通过公司暴露传导到生存、适应、正常盈利、owner cash、永久损失、价值路线和价格处理。`EnterpriseUnderwritingEpisode` 成为企业判断、训练、CJO、估值与黄金报告的顶层主对象；八维、E/J、Forecast、Comparative 和 receipt 降为局部工具。当前先完成 G1-U 纵向切片，再建立跨路线 worked cases 和完整 Blind Replay；不得继续用字段结算、严格 Comparative 准入或防御性 `UNKNOWN` 代替企业判断。
 
-2026-08-29，用户进一步裁定黄金报告的反馈必须修生成链路而不是逐篇打补丁。已新增 `golden-report-review-return.v1` 与确定性责任分流：开放的 `DATA_COVERAGE / ACQUISITION_MODULE / REASONING / MODEL` 只进入对应采集、承保或模型责任层，不能直接生成章节改写目标；只有纯 `WRITING` 或上游已验收后的普通投资结论才可进入 reader writer。`golden-report-reader-brief.v1` 将 Episode、已接纳经济结论和读者语言修订指令与原始审阅工单隔离，reader coverage 门继续拒绝审阅面板、状态码、对象 ID 和内部价格身份，同时保留 NAV、EPV、owner cash 及自然语言 `UNKNOWN`。该接线仍属于 G1/U4 产品验证，不改变 G1、G1-U 或 G1.5 的阶段状态，也不把 02669 候选提升为 Golden。
+2026-08-29，用户进一步裁定黄金报告的反馈必须修生成链路而不是逐篇打补丁。`golden-report-review-return.v2` 已取消可被原样抄入正文的自由 `reader_guidance`：开放的 `DATA_COVERAGE / ACQUISITION_MODULE / REASONING / MODEL` 只进入对应采集、承保或模型责任层；纯 `WRITING` 或上游已验收后，也只能向 reader writer 投影结构化的投资结论、成立依据、投资含义和已接纳来源。原始缺陷、修复动作、表格对账和验收面板不再成为写作提纲。通用写作 prompt 只要求解释已成立价值线、翻转事实和安全边际；现金、WCM、EPV、重置价值及事实绑定的精确合同只在结构化估值环节按需读取。`golden-report-reader-brief.v1` 继续承载 Episode 和已接纳经济结论。该接线仍属于 G1/U4 产品验证，不改变 G1、G1-U 或 G1.5 的阶段状态，也不把 02669 候选提升为 Golden。
 
 2026-08-30，企业承保课程一期已完成并合入主线：12 个跨行业 worked case、4 个完整 Blind Replay 和一轮公平 A/B 均已形成结果后诊断。课程证明 Agent 可以在局部未知下继续完成行业、公司位置、生存、正常化、owner cash、永久损失和价值路线的判断；但唯一认知隔离的公平 A/B（顺丰）为 `ENHANCED_WORSE`，原因是 Enhanced 将“增长资本回报未证明”误写成“维护后 owner cash 接近零或为负”。这是一项 `REASONING` 失败，不是资料不足。后续不得继续堆当前 Agent 的 self replay，也不得把课程规模、文字增量或更保守处理叙述为能力提升。下一项训练验证必须由认知隔离 Agent 在新的公司、同 cutoff、同证据、相近预算下执行公平 A/B。
 
@@ -561,3 +561,4 @@ Phase 08 只有同时具备以下结果才能完成：
 | 2026-08-29 | 训练、学习读模型、家电真实结算与经验调用设计收口为唯一集成基线 | 后续 Agent 只从统一 `main` 建立 worktree；旧分支按已继承、已替代或未提交在途增量处理，不再形成并行“当前基线”。 |
 | 2026-08-29 | 采用 `EnterpriseUnderwritingEpisode` 作为企业判断、训练、估值和黄金报告的顶层主对象 | 多轮 `NO_MATERIAL_UTILITY` 表明增加字段和维度不能自动形成投资价值；系统必须围绕麦格纳式的处境、生存、正常化、永久损失、价值路线和价格处理训练完整任务。 |
 | 2026-08-30 | 估值知识按“通用确定性内核 + 版本化行业重建能力卡 + 公司当期重新取证计算”复用 | 现金、WCM 与 EPV 的经济恒等式可跨公司复用；重置成本的能力拓扑可按行业积累，但金额和实际成本归属必须逐公司重算。训练当前只学习方法失败与适用边界，不取得估值权限。 |
+| 2026-08-30 | 审阅返回只向 reader writer 投影结构化投资结论 | 取消自由 `reader_guidance`；修复工单保留在控制面，writer 只看到结论、依据、投资含义和来源。精确估值合同从通用写作 prompt 移到结构化估值环节按需读取。 |

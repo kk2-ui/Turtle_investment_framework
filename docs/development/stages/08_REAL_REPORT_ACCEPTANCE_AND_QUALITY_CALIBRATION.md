@@ -77,9 +77,9 @@ G1.5双向层级研究已规划但未激活；当前不得启动其24份报告�
 
 数据量、期间或字段不足时先修公共采集模块、schema或validator，再交给模型和写作层。公开证据确实不可得时使用保守区间、降级主张或保留UNKNOWN；只有仍可能翻转结论时才阻断。
 
-审阅返回使用独立的 `golden-report-review-return.v1`，不得把独立盲评对象或读者报告当作修复工作单。开放问题按责任层确定性分流：`DATA_COVERAGE` 进入公共采集/schema，`ACQUISITION_MODULE` 进入采集实现，`REASONING` 回到 `UnderwritingThesis`，`MODEL` 回到确定性模型，只有 `WRITING` 可以直接进入 reader writer。任一材料性上游问题尚未验收时，不生成章节改写目标；公开数据不可得时以上述保守范围或 `UNKNOWN` 关闭，不以文案填补。
+审阅返回使用独立的 `golden-report-review-return.v2`，不得把独立盲评对象或读者报告当作修复工作单。开放问题按责任层确定性分流：`DATA_COVERAGE` 进入公共采集/schema，`ACQUISITION_MODULE` 进入采集实现，`REASONING` 回到 `UnderwritingThesis`，`MODEL` 回到确定性模型，只有 `WRITING` 可以直接进入 reader writer。任一材料性上游问题尚未验收时，不生成章节改写目标；公开数据不可得时以上述保守范围或 `UNKNOWN` 关闭，不以文案填补。
 
-reader writer 只接收同一 Episode、已接纳的确定性结论和普通投资语言的修订指令。原始根因标签、缺失事实清单、验收标准、状态码、对象 ID 和内部价格身份不得进入 writer payload；它们只留在修复工单、模型或技术附录。读者覆盖门必须拒绝明显的审阅面板与内部身份，同时允许 NAV、EPV、owner cash 和自然语言不确定性。
+reader writer 只接收同一 Episode、已接纳的确定性结论，以及结构化的投资结论、成立依据、投资含义和来源。自由 `reader_guidance` 已被移除；原始根因标签、缺失事实清单、修复动作、验收标准、状态码、对象 ID 和内部价格身份不进入 writer payload。读者覆盖门继续允许 NAV、EPV、owner cash 和自然语言不确定性。
 
 ## 6. 当前阶段路线
 
