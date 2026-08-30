@@ -1,6 +1,6 @@
 {
   "schema_version": "archetype-valuation-registry.v1",
-  "registry_version": "2026.08.02.1",
+  "registry_version": "2026.08.29.1",
   "model_policy": {
     "no_unjustified_weighted_average": true,
     "relative_valuation_cannot_be_sole_primary": true,
@@ -15,6 +15,7 @@
     "EPV": {"model_type": "EPV", "value_scope": "equity", "cash_flow_scope": "normalized_owner_earnings", "discount_rate_kind": "cost_of_equity", "independence_group": "normalized_earnings", "fragilities": ["normalization_window", "maintenance_capex", "cyclicality"]},
     "NAV": {"model_type": "NAV", "value_scope": "equity", "cash_flow_scope": "asset_net_value", "discount_rate_kind": "not_applicable", "independence_group": "asset_value", "fragilities": ["asset_ownership", "liability_completeness", "realization_discount"]},
     "ASSET_VALUE": {"model_type": "ASSET_VALUE", "value_scope": "equity", "cash_flow_scope": "adjusted_asset_value", "discount_rate_kind": "not_applicable", "independence_group": "asset_value", "fragilities": ["asset_ownership", "liquidation_cost", "realization_timing"]},
+    "REPLACEMENT_VALUE": {"model_type": "ASSET_VALUE", "value_scope": "equity", "cash_flow_scope": "going_concern_replacement_cost", "discount_rate_kind": "not_applicable", "independence_group": "replacement_value", "fragilities": ["customer_relationship_rebuild", "regional_organization_rebuild", "acquisition_channel_rebuild", "fulfillment_record_rebuild", "project_start_working_capital", "double_counting"]},
     "SOTP": {"model_type": "SOTP", "value_scope": "equity", "cash_flow_scope": "segment_specific", "discount_rate_kind": "mixed", "independence_group": "segment_value", "fragilities": ["segment_data", "holding_discount", "double_counting"]},
     "RETURN_DECOMPOSITION": {"model_type": "RETURN_DECOMPOSITION", "value_scope": "equity", "cash_flow_scope": "owner_return", "discount_rate_kind": "required_return", "independence_group": "owner_return", "fragilities": ["cash_accessibility", "normalization", "reinvestment_return"]},
     "RESIDUAL_INCOME": {"model_type": "RESIDUAL_INCOME", "value_scope": "equity", "cash_flow_scope": "book_value_and_residual_income", "discount_rate_kind": "cost_of_equity", "independence_group": "book_value", "fragilities": ["book_value_quality", "credit_losses", "capital_requirements"]},
@@ -43,9 +44,9 @@
       "industry_patterns": ["物业服务", "物业管理"],
       "counter_patterns": ["房地产开发", "商业地产开发"],
       "required_input_paths": ["analysis_contract.industry_classification.l2", "compute_bundle.factor3.gg.base"],
-      "research_requirements": ["关联方收入与应收账款", "上市主体现金控制权与受限情况", "第三方拓展的量价与现金质量"],
+      "research_requirements": ["关联方收入与应收账款", "上市主体现金控制权与受限情况", "第三方拓展的量价与现金质量", "客户关系、区域组织、获客渠道、履约记录及项目启动营运资本的持续经营重建成本", "多期或项目批次营运资本启动、回款、结算、损失与范围变化"],
       "primary_models": ["RETURN_DECOMPOSITION", "EPV"],
-      "corroborative_models": ["DCF_FCFE", "DDM"],
+      "corroborative_models": ["DCF_FCFE", "DDM", "REPLACEMENT_VALUE"],
       "stress_models": ["NAV"],
       "rejected_models": ["DCF_FCFF"],
       "rejection_reasons": {"DCF_FCFF": "轻资产物业服务不应以企业价值重资产模型掩盖现金控制权和少数股东口径"}

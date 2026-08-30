@@ -1,0 +1,521 @@
+{
+  "fixture_schema_version": "02669-value-bridge-regression.v1",
+  "case_identity": {
+    "company_id": "02669.HK",
+    "company_name": "China Overseas Property Holdings Limited",
+    "information_cutoff": "2026-08-11",
+    "financial_position_date": "2025-12-31",
+    "currency": "RMB",
+    "unit": "RMB_m"
+  },
+  "accepted_observations": {
+    "cash_and_bank_balances": 6270.725,
+    "restricted_bank_deposits": 12.827,
+    "one_year_operating_cash_floor": 1153.458,
+    "related_party_receivables": 805.644,
+    "shares_outstanding_million": 3283.96046,
+    "working_capital_cash_changes": {
+      "FY2022": 154.516,
+      "FY2023": -38.978,
+      "FY2024": 305.708,
+      "FY2025": 275.426
+    },
+    "ordinary_distribution_inputs": {
+      "normalized_ordinary_share_operating_earnings": 896.9796304399521,
+      "ordinary_distribution_rate": 0.35,
+      "distribution_tax_and_collection_friction_rate": 0.1027,
+      "fixed_collection_cost": 3.28396046
+    }
+  },
+  "value_bridge_input": {
+    "schema_version": "valuation-value-bridges-input.v1",
+    "ordinary_distribution": {
+      "model_input": {
+        "schema_version": "ordinary-distribution-input.v1",
+        "model_id": "DIST:02669:2025",
+        "company_id": "02669.HK",
+        "cutoff_at": "2026-08-11",
+        "position_as_of": "2025-12-31",
+        "currency": "RMB",
+        "unit": "RMB_m",
+        "verified_facts": [
+          {"fact_id": "OBS:02669:NORMALIZED-EARNINGS", "status": "VERIFIED"},
+          {"fact_id": "OBS:02669:DISTRIBUTION-RATE", "status": "VERIFIED"},
+          {"fact_id": "OBS:02669:DISTRIBUTION-FRICTION", "status": "VERIFIED"}
+        ],
+        "input_fact_ids": [
+          "OBS:02669:NORMALIZED-EARNINGS",
+          "OBS:02669:DISTRIBUTION-RATE",
+          "OBS:02669:DISTRIBUTION-FRICTION"
+        ],
+        "normalized_ordinary_share_operating_earnings": 896.9796304399521,
+        "ordinary_distribution_rate": 0.35,
+        "distribution_tax_and_collection_friction_rate": 0.1027,
+        "fixed_collection_cost": 3.28396046
+      }
+    },
+    "cash_accessibility": {
+      "model_input": {
+        "schema_version": "cash-accessibility-input.v1",
+        "model_id": "CASH:02669:2025",
+        "company_id": "02669.HK",
+        "cutoff_at": "2026-08-11",
+        "position_as_of": "2025-12-31",
+        "currency": "RMB",
+        "unit": "RMB_m",
+        "identity_source_fact_ids": [
+          "OBS:02669:IDENTITY"
+        ],
+        "verified_facts": [
+          {"fact_id": "OBS:02669:IDENTITY", "status": "VERIFIED"},
+          {"fact_id": "OBS:02669:CASH-BALANCE", "status": "VERIFIED"},
+          {"fact_id": "OBS:02669:FUTURE-CASH-NOT-PROJECTED", "status": "VERIFIED"},
+          {"fact_id": "OBS:02669:RELATED-PARTY-RECEIVABLES", "status": "VERIFIED"}
+        ],
+        "entity_cash_rows": [
+          {
+            "entity_id": "consolidated-group-diagnostic",
+            "entity_kind": "other",
+            "gross_cash": 6270.725,
+            "restricted_or_regulatory_cash": 12.827,
+            "operating_liquidity_requirement": 1153.458,
+            "ordinary_share_economic_interest": 1.0,
+            "transfer_tax_friction_rate": 0.0,
+            "source_fact_ids": [
+              "OBS:02669:CASH-BALANCE"
+            ]
+          }
+        ],
+        "realization_periods": [],
+        "future_retained_cash": {
+          "projected_amount": 0.0,
+          "legal_upper_bound_rate": 1.0,
+          "source_fact_ids": [
+            "OBS:02669:FUTURE-CASH-NOT-PROJECTED"
+          ]
+        },
+        "related_party_receivables": [
+          {
+            "receivable_id": "fellow-and-other-related-companies",
+            "gross_amount": 805.644,
+            "ecl_allowance": 0.0,
+            "post_cutoff_collections": 0.0,
+            "aging_bucket": "unknown",
+            "source_fact_ids": [
+              "OBS:02669:RELATED-PARTY-RECEIVABLES"
+            ]
+          }
+        ],
+        "valuation_destinations": [
+          {
+            "component_id": "legal_cash_accessibility",
+            "valuation_destination": "legal_accessibility_ceiling_only"
+          },
+          {
+            "component_id": "existing_excess_cash_realization",
+            "valuation_destination": "equity_value_existing_excess_cash"
+          },
+          {
+            "component_id": "future_retained_cash_realization",
+            "valuation_destination": "operating_value_future_retained_cash"
+          },
+          {
+            "component_id": "related_party_receivable_realization",
+            "valuation_destination": "equity_value_related_party_receivable"
+          }
+        ]
+      },
+      "valuation_context": {
+        "company_id": "02669.HK",
+        "operating_model_id": "EPV:02669:NORMALIZED",
+        "position_as_of": "2025-12-31",
+        "ordinary_share_claim_scope": "Listed ordinary common shares",
+        "valuation_currency": "RMB",
+        "fx_source_per_valuation_currency": 1.0,
+        "shares": 3283.96046
+      }
+    },
+    "working_capital": {
+      "model_input": {
+        "schema_version": "working-capital-model.v1",
+        "model_id": "WCM:02669:2022-2025",
+        "company_id": "02669.HK",
+        "basis": {
+          "economic_entity": "Consolidated China Overseas Property Holdings group",
+          "operating_perimeter": "Continuing property-management and value-added-service operations",
+          "ordinary_share_claim_scope": "Listed ordinary common shares",
+          "currency": "RMB",
+          "unit": "RMB_m",
+          "as_of": "2025-12-31"
+        },
+        "periods": [
+          {
+            "period_id": "FY2022",
+            "period_start": "2022-01-01",
+            "period_end": "2022-12-31",
+            "owner_cash_input": {
+              "basis": "REPORTED_OCF",
+              "metric": "reported_operating_cash_flow_wc_bridge_only",
+              "base_metric_amount": 1045.071,
+              "maintenance_capex": 0.0,
+              "other_owner_adjustments": 0.0,
+              "working_capital_application": "ALREADY_REFLECTED_IN_BASE",
+              "permanent_loss_application": "INCLUDED_IN_STOCK_FLOW_CHARGE",
+              "evidence_ids": ["OBS:02669:FY2022-OCF"]
+            },
+            "cohorts": [
+              {
+                "cohort_id": "aggregate-observed-working-capital-flow",
+                "role": "UNATTRIBUTED",
+                "opening_net_stock": 0.0,
+                "growth_launch_additions": 0.0,
+                "steady_rollover_additions": 154.516,
+                "cash_collections_and_settlements": 0.0,
+                "permanent_losses": 0.0,
+                "noncash_scope_change": 0.0,
+                "closing_net_stock": 154.516,
+                "loss_treatment": "NO_LOSS",
+                "normalization": {
+                  "method": "UNKNOWN",
+                  "adopted_endpoint": "UNKNOWN",
+                  "adopted_value": null,
+                  "rationale": "The filing reports the aggregate cash movement but not its growth-launch, steady rolling and settlement cohorts.",
+                  "evidence_ids": ["OBS:02669:FY2022-WC-CASH-CHANGE"]
+                },
+                "evidence_ids": ["OBS:02669:FY2022-WC-CASH-CHANGE"]
+              }
+            ]
+          },
+          {
+            "period_id": "FY2023",
+            "period_start": "2023-01-01",
+            "period_end": "2023-12-31",
+            "owner_cash_input": {
+              "basis": "REPORTED_OCF",
+              "metric": "reported_operating_cash_flow_wc_bridge_only",
+              "base_metric_amount": 1504.676,
+              "maintenance_capex": 0.0,
+              "other_owner_adjustments": 0.0,
+              "working_capital_application": "ALREADY_REFLECTED_IN_BASE",
+              "permanent_loss_application": "INCLUDED_IN_STOCK_FLOW_CHARGE",
+              "evidence_ids": ["OBS:02669:FY2023-OCF"]
+            },
+            "cohorts": [
+              {
+                "cohort_id": "aggregate-observed-working-capital-flow",
+                "role": "UNATTRIBUTED",
+                "opening_net_stock": 154.516,
+                "growth_launch_additions": 0.0,
+                "steady_rollover_additions": 0.0,
+                "cash_collections_and_settlements": 38.978,
+                "permanent_losses": 0.0,
+                "noncash_scope_change": 0.0,
+                "closing_net_stock": 115.538,
+                "loss_treatment": "NO_LOSS",
+                "normalization": {
+                  "method": "UNKNOWN",
+                  "adopted_endpoint": "UNKNOWN",
+                  "adopted_value": null,
+                  "rationale": "The filing reports an aggregate release but does not identify whether it is repeatable collection or cohort runoff.",
+                  "evidence_ids": ["OBS:02669:FY2023-WC-CASH-CHANGE"]
+                },
+                "evidence_ids": ["OBS:02669:FY2023-WC-CASH-CHANGE"]
+              }
+            ]
+          },
+          {
+            "period_id": "FY2024",
+            "period_start": "2024-01-01",
+            "period_end": "2024-12-31",
+            "owner_cash_input": {
+              "basis": "REPORTED_OCF",
+              "metric": "reported_operating_cash_flow_wc_bridge_only",
+              "base_metric_amount": 1338.145,
+              "maintenance_capex": 0.0,
+              "other_owner_adjustments": 0.0,
+              "working_capital_application": "ALREADY_REFLECTED_IN_BASE",
+              "permanent_loss_application": "INCLUDED_IN_STOCK_FLOW_CHARGE",
+              "evidence_ids": ["OBS:02669:FY2024-OCF-RESTATED"]
+            },
+            "cohorts": [
+              {
+                "cohort_id": "aggregate-observed-working-capital-flow",
+                "role": "UNATTRIBUTED",
+                "opening_net_stock": 115.538,
+                "growth_launch_additions": 0.0,
+                "steady_rollover_additions": 305.708,
+                "cash_collections_and_settlements": 0.0,
+                "permanent_losses": 0.0,
+                "noncash_scope_change": 0.0,
+                "closing_net_stock": 421.246,
+                "loss_treatment": "NO_LOSS",
+                "normalization": {
+                  "method": "UNKNOWN",
+                  "adopted_endpoint": "UNKNOWN",
+                  "adopted_value": null,
+                  "rationale": "The restated aggregate cash movement is observed, but its launch and steady-state attribution is not disclosed.",
+                  "evidence_ids": ["OBS:02669:FY2024-WC-CASH-CHANGE-RESTATED"]
+                },
+                "evidence_ids": ["OBS:02669:FY2024-WC-CASH-CHANGE-RESTATED"]
+              }
+            ]
+          },
+          {
+            "period_id": "FY2025",
+            "period_start": "2025-01-01",
+            "period_end": "2025-12-31",
+            "owner_cash_input": {
+              "basis": "REPORTED_OCF",
+              "metric": "reported_operating_cash_flow_wc_bridge_only",
+              "base_metric_amount": 1153.458,
+              "maintenance_capex": 0.0,
+              "other_owner_adjustments": 0.0,
+              "working_capital_application": "ALREADY_REFLECTED_IN_BASE",
+              "permanent_loss_application": "INCLUDED_IN_STOCK_FLOW_CHARGE",
+              "evidence_ids": ["OBS:02669:FY2025-OCF"]
+            },
+            "cohorts": [
+              {
+                "cohort_id": "aggregate-observed-working-capital-flow",
+                "role": "UNATTRIBUTED",
+                "opening_net_stock": 421.246,
+                "growth_launch_additions": 0.0,
+                "steady_rollover_additions": 275.426,
+                "cash_collections_and_settlements": 0.0,
+                "permanent_losses": 0.0,
+                "noncash_scope_change": 0.0,
+                "closing_net_stock": 696.672,
+                "loss_treatment": "NO_LOSS",
+                "normalization": {
+                  "method": "UNKNOWN",
+                  "adopted_endpoint": "UNKNOWN",
+                  "adopted_value": null,
+                  "rationale": "Project-batch collections and launch-capital cohorts are not disclosed, so the observed year cannot be split into a repeatable burden.",
+                  "evidence_ids": ["OBS:02669:FY2025-WC-CASH-CHANGE"]
+                },
+                "evidence_ids": ["OBS:02669:FY2025-WC-CASH-CHANGE"]
+              }
+            ]
+          }
+        ],
+        "valuation_treatment": {
+          "reference_period_id": "FY2025",
+          "epv_use": "NORMALIZED_OWNER_CASH",
+          "epv_working_capital_treatment": "STEADY_RECURRING_ONLY",
+          "terminal_route": "CONTINUING",
+          "terminal_owner_cash_source": "NORMALIZED_OWNER_CASH",
+          "terminal_working_capital_treatment": "STEADY_RECURRING_AND_TERMINAL_GROWTH_ONLY",
+          "stock_release_cohort_ids": []
+        }
+      }
+    },
+    "replacement_value": {
+      "model_input": {
+        "schema_version": "replacement-value-model.v1",
+        "model_id": "RVM:02669:2025",
+        "company_id": "02669.HK",
+        "model_context": {
+          "purpose": "COMPANY_ANALYSIS",
+          "parameter_transfer_policy": "COMPANY_SPECIFIC_EVIDENCE_ONLY"
+        },
+        "basis": {
+          "valuation_basis": "GOING_CONCERN_REPLACEMENT",
+          "value_scope": "enterprise",
+          "economic_entity": "Consolidated China Overseas Property Holdings group",
+          "operating_perimeter": "Property management, resident and non-resident value-added services and car-parking trading",
+          "ordinary_share_claim_scope": "Listed ordinary common shares",
+          "currency": "RMB",
+          "unit": "RMB_m",
+          "as_of": "2025-12-31"
+        },
+        "components": [
+          {
+            "component_id": "customer-relationships",
+            "component_type": "CUSTOMER_RELATIONSHIP",
+            "economic_function": "Rebuild the retained customer and contract base across the service portfolio.",
+            "estimate_status": "UNKNOWN",
+            "calculation": {"method": "UNAVAILABLE", "output_unit": "RMB_m", "inputs": []},
+            "recognition": {
+              "status": "UNKNOWN",
+              "method": "NOT_APPLICABLE",
+              "reason": "Contract sums and project counts do not disclose renewal economics or customer-level acquisition and collection cost."
+            },
+            "uncertainty_treatment": {
+              "boundary": "Renewal retention, same-project pricing, termination cohorts and customer-level profit and collection are not disclosed.",
+              "investor_consequence": "No customer-relationship amount enters recognized replacement value.",
+              "promotion_evidence": "Verified renewal, loss, pricing and customer acquisition-cost cohorts."
+            }
+          },
+          {
+            "component_id": "regional-operating-organization",
+            "component_type": "REGIONAL_OPERATING_ORGANIZATION",
+            "economic_function": "Recruit, train and ramp a 164-city service organization.",
+            "estimate_status": "UNKNOWN",
+            "calculation": {"method": "UNAVAILABLE", "output_unit": "RMB_m", "inputs": []},
+            "recognition": {
+              "status": "UNKNOWN",
+              "method": "NOT_APPLICABLE",
+              "reason": "Annual staff expense is delivery cost and cannot be capitalized as organization reconstruction cost."
+            },
+            "uncertainty_treatment": {
+              "boundary": "Role-level hiring, training, ramp time and duplicated delivery expense are not disclosed.",
+              "investor_consequence": "No regional-organization amount enters recognized replacement value.",
+              "promotion_evidence": "Verified role cohorts, recruiting cost, training cost and ramp-time evidence."
+            }
+          },
+          {
+            "component_id": "customer-acquisition-channel-platform-anchor",
+            "component_type": "CUSTOMER_ACQUISITION_CHANNEL",
+            "economic_function": "Re-establish tender access and acquired regional customer platforms.",
+            "estimate_status": "SCENARIO_ONLY",
+            "calculation": {
+              "method": "DIRECT_RANGE",
+              "output_unit": "RMB_m",
+              "inputs": [
+                {
+                  "input_id": "observed-platform-capital",
+                  "metric": "historical_platform_capital_observation",
+                  "range_low": 309.731794,
+                  "range_high": 309.731794,
+                  "unit": "RMB_m",
+                  "basis": "Observed historical platform capital is a shared access anchor, not current channel value.",
+                  "evidence_ids": ["OBS:02669:PLATFORM-CAPITAL"],
+                  "parameter_scope": "COMPANY_SPECIFIC"
+                }
+              ]
+            },
+            "recognition": {
+              "status": "SCENARIO_ONLY",
+              "method": "NOT_APPLICABLE",
+              "reason": "The observation overlaps customer relationships, organization, track record, net assets and working capital."
+            },
+            "uncertainty_treatment": {
+              "boundary": "No allocation identifies how much of historical platform capital represents the current acquisition channel.",
+              "investor_consequence": "The anchor is shown once as a scenario and is not added to other replacement components.",
+              "promotion_evidence": "A purchase-price allocation or company-specific current rebuild-cost study."
+            }
+          },
+          {
+            "component_id": "fulfillment-and-project-track-record",
+            "component_type": "FULFILLMENT_OR_PROJECT_TRACK_RECORD",
+            "economic_function": "Recreate qualifications and delivery evidence needed to win and renew work.",
+            "estimate_status": "UNKNOWN",
+            "calculation": {"method": "UNAVAILABLE", "output_unit": "RMB_m", "inputs": []},
+            "recognition": {
+              "status": "UNKNOWN",
+              "method": "NOT_APPLICABLE",
+              "reason": "Years operated, awards, project counts and managed area cannot be converted into money without rebuild-cost evidence."
+            },
+            "uncertainty_treatment": {
+              "boundary": "Performance scores, penalties, renewals, bid win rates, failed projects and record-building cost are not disclosed.",
+              "investor_consequence": "No fulfillment-record amount enters recognized replacement value.",
+              "promotion_evidence": "Verified bid, renewal, penalty, failure and qualification-cost histories."
+            }
+          },
+          {
+            "component_id": "project-startup-working-capital-anchor",
+            "component_type": "PROJECT_STARTUP_WORKING_CAPITAL",
+            "economic_function": "Fund project payments before owners, subcontractors and staff settle.",
+            "estimate_status": "SCENARIO_ONLY",
+            "calculation": {
+              "method": "DIRECT_RANGE",
+              "output_unit": "RMB_m",
+              "inputs": [
+                {
+                  "input_id": "observable-project-advance-exposure",
+                  "metric": "source_bounded_project_advance_exposure",
+                  "range_low": 0.0,
+                  "range_high": 413.387,
+                  "unit": "RMB_m",
+                  "basis": "The gross project exposure is observed but the startup-attributable portion is not disclosed.",
+                  "evidence_ids": ["OBS:02669:PROJECT-ADVANCES"],
+                  "parameter_scope": "COMPANY_SPECIFIC"
+                }
+              ]
+            },
+            "recognition": {
+              "status": "SCENARIO_ONLY",
+              "method": "NOT_APPLICABLE",
+              "reason": "The startup-attributable portion and its overlap with balance-sheet working capital and continuing EPV are unresolved."
+            },
+            "uncertainty_treatment": {
+              "boundary": "Public disclosure does not separate project launch cash from steady rolling advances.",
+              "investor_consequence": "The source-bounded exposure stays a scenario and cannot be deducted or capitalized twice.",
+              "promotion_evidence": "Project-batch opening cash, collections and settlement cohorts."
+            },
+            "double_count_treatment": {
+              "balance_sheet_working_capital": "UNKNOWN_SCENARIO_ONLY",
+              "epv_maintenance_need": "UNKNOWN_SCENARIO_ONLY",
+              "explanation": "Project advances already sit in working capital, and recurring absorption cannot also be deducted in EPV or terminal value."
+            }
+          },
+          {
+            "component_id": "other-functional-assets-cost-anchor",
+            "component_type": "OTHER_FUNCTIONAL_ASSET",
+            "economic_function": "Rebuild separately observable physical equipment and software systems.",
+            "estimate_status": "SCENARIO_ONLY",
+            "calculation": {
+              "method": "SUM_OF_INPUT_RANGES",
+              "output_unit": "RMB_m",
+              "inputs": [
+                {
+                  "input_id": "property-plant-equipment-cost-anchor",
+                  "metric": "ppe_net_carrying_amount_to_historical_cost",
+                  "range_low": 140.488,
+                  "range_high": 373.841,
+                  "unit": "RMB_m",
+                  "basis": "Accounting cost bounds are not a proven current replacement quotation.",
+                  "evidence_ids": ["OBS:02669:PPE-COST-ANCHOR"],
+                  "parameter_scope": "COMPANY_SPECIFIC"
+                },
+                {
+                  "input_id": "software-systems-cost-anchor",
+                  "metric": "software_net_carrying_amount_to_historical_cost",
+                  "range_low": 287.998,
+                  "range_high": 362.065,
+                  "unit": "RMB_m",
+                  "basis": "Accounting cost bounds are not a proven current replacement quotation.",
+                  "evidence_ids": ["OBS:02669:SOFTWARE-COST-ANCHOR"],
+                  "parameter_scope": "COMPANY_SPECIFIC"
+                }
+              ]
+            },
+            "recognition": {
+              "status": "SCENARIO_ONLY",
+              "method": "NOT_APPLICABLE",
+              "reason": "The accounting-cost anchor does not establish current replacement price or economic obsolescence."
+            },
+            "uncertainty_treatment": {
+              "boundary": "Current replacement prices, useful capacity and obsolescence are not disclosed.",
+              "investor_consequence": "The accounting-cost anchor remains a scenario and is not added to annual asset purchases.",
+              "promotion_evidence": "Current vendor quotations and a functional-capacity reconciliation."
+            }
+          }
+        ],
+        "claims_bridge": {
+          "non_operating_assets": {"range_low": 0.0, "range_high": 0.0},
+          "debt": {"range_low": 0.0, "range_high": 0.0},
+          "minority_interest": {"range_low": 0.0, "range_high": 0.0},
+          "other_priority_claims": {"range_low": 0.0, "range_high": 0.0},
+          "other_adjustments": {"range_low": 0.0, "range_high": 0.0},
+          "shares_outstanding": 3283.96046
+        },
+        "liquidation_floor_reference": {
+          "status": "AVAILABLE",
+          "model_id": "NAV:02669:LIQUIDATION-STRESS",
+          "value_scope": "ordinary_common_equity_per_share",
+          "currency": "RMB",
+          "as_of": "2025-12-31",
+          "per_share_low": 0.83,
+          "per_share_high": 0.83,
+          "use": "SEPARATE_STRESS_REFERENCE_NEVER_ADD"
+        },
+        "epv_cross_check": {
+          "status": "NOT_COMPARABLE",
+          "reason": "The current artifacts contain incompatible EPV identities and no single EPV is yet bound to the same entity, perimeter, claims, currency, date and shares.",
+          "synthesis_rule": "CROSS_CHECK_ONLY_NEVER_ADD_OR_AVERAGE"
+        }
+      }
+    }
+  }
+}

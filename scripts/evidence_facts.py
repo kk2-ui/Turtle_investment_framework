@@ -49,6 +49,7 @@ def make_observation_id(observation: dict[str, Any]) -> str:
         "locator": observation.get("locator"),
         "fact_name": observation.get("fact_name"),
         "normalized_value": _normalized_identity_value(observation.get("normalized_value")),
+        "measurement_context": observation.get("measurement_context"),
     }
     return "OBS:" + _payload_hash(identity)[:20]
 
@@ -298,6 +299,24 @@ _PATTERN_RULES = (
     PatternRule(
         "accounts_receivable_rmb_m", "financial",
         re.compile(r"^应收账款" + _BALANCE_SHEET_NOTE + _BALANCE_SHEET_COMPARATIVE_VALUES, re.MULTILINE),
+        "RMB_m", "consolidated_balance_sheet", currency="RMB", transform=lambda value: _parse_number(value) / 1_000_000,
+        required_page_pattern=_CONSOLIDATED_BALANCE_SHEET_PAGE,
+    ),
+    PatternRule(
+        "contract_assets_rmb_m", "financial",
+        re.compile(r"^合同资产" + _BALANCE_SHEET_NOTE + _BALANCE_SHEET_COMPARATIVE_VALUES, re.MULTILINE),
+        "RMB_m", "consolidated_balance_sheet", currency="RMB", transform=lambda value: _parse_number(value) / 1_000_000,
+        required_page_pattern=_CONSOLIDATED_BALANCE_SHEET_PAGE,
+    ),
+    PatternRule(
+        "prepayments_rmb_m", "financial",
+        re.compile(r"^预付款项" + _BALANCE_SHEET_NOTE + _BALANCE_SHEET_COMPARATIVE_VALUES, re.MULTILINE),
+        "RMB_m", "consolidated_balance_sheet", currency="RMB", transform=lambda value: _parse_number(value) / 1_000_000,
+        required_page_pattern=_CONSOLIDATED_BALANCE_SHEET_PAGE,
+    ),
+    PatternRule(
+        "other_receivables_rmb_m", "financial",
+        re.compile(r"^其他应收款" + _BALANCE_SHEET_NOTE + _BALANCE_SHEET_COMPARATIVE_VALUES, re.MULTILINE),
         "RMB_m", "consolidated_balance_sheet", currency="RMB", transform=lambda value: _parse_number(value) / 1_000_000,
         required_page_pattern=_CONSOLIDATED_BALANCE_SHEET_PAGE,
     ),
@@ -726,6 +745,34 @@ def validate_fact_observations(
         counts[status] += 1
         if status not in STATUSES:
             invalid.append(f"{observation_id or prefix}:status_invalid")
+        measurement_context = item.get("measurement_context")
+        if measurement_context is not None:
+            if not isinstance(measurement_context, dict):
+                invalid.append(f"{observation_id or prefix}:measurement_context_invalid")
+            else:
+                allowed_context_fields = {
+                    "period_start", "period_end", "economic_entity", "operating_perimeter",
+                    "cohort_id", "project_id", "customer_scope", "batch_id",
+                    "stock_flow_role", "settlement_status", "loss_treatment",
+                }
+                if set(measurement_context) - allowed_context_fields:
+                    invalid.append(
+                        f"{observation_id or prefix}:measurement_context_unknown_fields"
+                    )
+                start = measurement_context.get("period_start")
+                end = measurement_context.get("period_end")
+                try:
+                    start_date = datetime.fromisoformat(start).date() if start else None
+                    end_date = datetime.fromisoformat(end).date() if end else None
+                except (TypeError, ValueError):
+                    invalid.append(
+                        f"{observation_id or prefix}:measurement_period_invalid"
+                    )
+                    start_date = end_date = None
+                if start_date and end_date and start_date > end_date:
+                    invalid.append(
+                        f"{observation_id or prefix}:measurement_period_reversed"
+                    )
         doc_id = str(item.get("doc_id") or "")
         doc = documents.get(doc_id)
         if doc is None:
@@ -831,6 +878,7 @@ def verify_fact_from_quote(
     basis: str,
     quote: str,
     currency: str | None = None,
+    measurement_context: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     """Programmatically promote an exact page quote to VERIFIED evidence."""
     output = Path(output_dir)
@@ -870,6 +918,31 @@ def verify_fact_from_quote(
         "confidence": 0.98,
         "conflict_ids": [],
     }
+    if measurement_context is not None:
+        allowed_context_fields = {
+            "period_start", "period_end", "economic_entity", "operating_perimeter",
+            "cohort_id", "project_id", "customer_scope", "batch_id",
+            "stock_flow_role", "settlement_status", "loss_treatment",
+        }
+        unknown_context_fields = set(measurement_context) - allowed_context_fields
+        if unknown_context_fields:
+            return {
+                "verified": False,
+                "error": "measurement_context_unknown_fields:" + "|".join(
+                    sorted(unknown_context_fields)
+                ),
+            }
+        if measurement_context.get("stock_flow_role") not in {
+            None, "OPENING_STOCK", "CLOSING_STOCK", "GROWTH_LAUNCH_ADDITION",
+            "STEADY_ROLLOVER_ADDITION", "COLLECTION_OR_SETTLEMENT",
+            "PERMANENT_LOSS", "NONCASH_SCOPE_CHANGE",
+        }:
+            return {"verified": False, "error": "measurement_context_stock_flow_role_invalid"}
+        if measurement_context.get("loss_treatment") not in {
+            None, "RECURRING_EXPECTED", "ONE_OFF_PERMANENT", "NO_LOSS", "UNKNOWN",
+        }:
+            return {"verified": False, "error": "measurement_context_loss_treatment_invalid"}
+        observation["measurement_context"] = deepcopy(measurement_context)
     if not observation["fact_name"] or not observation["domain"] or not observation["unit"] or not observation["basis"]:
         return {"verified": False, "error": "required_identity_field_missing"}
     observation["observation_id"] = make_observation_id(observation)

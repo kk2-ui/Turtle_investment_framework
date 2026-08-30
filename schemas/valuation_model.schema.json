@@ -22,6 +22,56 @@
     },
     "models": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/model"}},
     "synthesis": {"type": "object"},
+    "value_bridge_models": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version", "model_input", "result", "valuation_projection",
+        "reader_conclusions", "numeric_claims", "reader_slots"
+      ],
+      "properties": {
+        "schema_version": {"const": "valuation-value-bridges.v1"},
+        "model_input": {"type": "object"},
+        "result": {"type": "object"},
+        "valuation_projection": {"type": "object"},
+        "reader_conclusions": {
+          "type": "array",
+          "items": {"type": "string", "minLength": 1}
+        },
+        "numeric_claims": {
+          "type": "array",
+          "items": {"type": "object"}
+        },
+        "reader_slots": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "slot_id", "metric", "target_chapter",
+              "display_variants", "sentence"
+            ],
+            "properties": {
+              "slot_id": {"type": "string", "minLength": 1},
+              "claim_id": {"type": "string", "minLength": 1},
+              "claim_ids": {
+                "type": "array",
+                "items": {"type": "string", "minLength": 1},
+                "uniqueItems": true
+              },
+              "metric": {"type": "string", "minLength": 1},
+              "target_chapter": {"type": "integer", "minimum": 0, "maximum": 14},
+              "display_variants": {"type": "object"},
+              "sentence": {"type": "string", "minLength": 1}
+            },
+            "anyOf": [
+              {"required": ["claim_id"]},
+              {"required": ["claim_ids"]}
+            ]
+          }
+        }
+      }
+    },
     "freeze": {"type": "object", "required": ["frozen", "fingerprint", "frozen_at"]},
     "generated_at": {"type": "string"}
   },
@@ -42,6 +92,15 @@
         "assumptions": {"type": "object"},
         "result": {"type": "object"},
         "equity_bridge": {"type": "object"},
+        "cross_check_context": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "economic_entity": {"type": "string", "minLength": 1},
+            "operating_perimeter": {"type": "string", "minLength": 1},
+            "ordinary_share_claim_scope": {"type": "string", "minLength": 1}
+          }
+        },
         "terminal_value": {"type": "object"},
         "sensitivity_tests": {"type": "array", "items": {"type": "object"}},
         "source_ids": {"type": "array", "items": {"type": "string"}},

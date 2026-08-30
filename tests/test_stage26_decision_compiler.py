@@ -18,6 +18,9 @@ from scripts.decision_compiler import (
 )
 from scripts.decision_ledger import CANONICAL_METRIC_IDS, build_decision_ledger, ledger_fingerprint
 from scripts.turtle_agent.tools.write_tools import assemble_report, write_chapter, write_decision_manifest
+from scripts.valuation_model_gate import bind_valuation_references
+from scripts.valuation_value_bridges import compile_valuation_value_bridges
+from tests.test_valuation_value_bridges import _ordinary_distribution_input
 
 
 VALUES = {
@@ -91,6 +94,27 @@ def _fixture(output: Path, *, action: str = "hold", entries: list[dict] | None =
     )
     assert manifest["quantitative_decision"] == action
     return values
+
+
+def _register_after_tax_distribution_reader_slot(output: Path) -> None:
+    valuation = json.loads((output / "valuation_model.json").read_text(encoding="utf-8"))
+    valuation["value_bridge_models"] = {
+        "reader_slots": [{
+            "slot_id": "after_tax_common_distribution",
+            "claim_id": "distribution.after_tax_common",
+            "metric": "AFTER_TAX_COMMON_DISTRIBUTION",
+            "target_chapter": 12,
+            "display_variants": {
+                "million_3dp": "RMB278.417百万元",
+                "hundred_million_3dp_approx": "约RMB2.784亿元",
+            },
+            "sentence": (
+                "税费和收取摩擦后的普通股分配为RMB278.417百万元，"
+                "即约RMB2.784亿元。"
+            ),
+        }],
+    }
+    _write_json(output / "valuation_model.json", valuation)
 
 
 def test_compiles_five_byte_stable_protected_blocks(tmp_path: Path) -> None:
@@ -213,6 +237,99 @@ def test_chapter_binding_rejects_decision_id_attached_to_wrong_value(tmp_path: P
     )
 
 
+def test_reader_slot_rejects_wrong_or_correct_free_copied_model_amount(tmp_path: Path) -> None:
+    for amount in ("RMB3.758亿元", "RMB2.784亿元"):
+        output = tmp_path / amount.replace(".", "_")
+        _fixture(output)
+        _register_after_tax_distribution_reader_slot(output)
+        path = output / "chapters" / "_ch12.md"
+        path.write_text(
+            path.read_text(encoding="utf-8")
+            + f"\n税费后普通股分配为{amount}。\n",
+            encoding="utf-8",
+        )
+
+        result = compile_decision_sections(output)
+
+        assert result["state"] == "INVALID"
+        assert any(
+            finding.endswith(":AFTER_TAX_COMMON_DISTRIBUTION")
+            and finding.startswith("free_reader_numeric_slot:Ch12")
+            for finding in result["invalid_findings"]
+        )
+
+
+def test_reader_slot_rejects_a_paraphrased_distribution_copy(tmp_path: Path) -> None:
+    _fixture(tmp_path)
+    _register_after_tax_distribution_reader_slot(tmp_path)
+    path = tmp_path / "chapters" / "_ch12.md"
+    path.write_text(
+        path.read_text(encoding="utf-8")
+        + "\n扣除税费和收款成本后，普通股东预计可收到人民币3.758亿元。\n",
+        encoding="utf-8",
+    )
+
+    result = compile_decision_sections(tmp_path)
+
+    assert result["state"] == "INVALID"
+    assert any(
+        finding.endswith(":AFTER_TAX_COMMON_DISTRIBUTION")
+        and finding.startswith("free_reader_numeric_slot:Ch12")
+        for finding in result["invalid_findings"]
+    )
+
+
+def test_reader_slot_rejects_a_free_cash_bridge_per_share_amount(tmp_path: Path) -> None:
+    _fixture(tmp_path)
+    valuation = json.loads((tmp_path / "valuation_model.json").read_text(encoding="utf-8"))
+    valuation["value_bridge_models"] = {
+        "reader_slots": [{
+            "slot_id": "cash_value_bridge_summary",
+            "metric": "CASH_VALUE_BRIDGE_SUMMARY",
+            "target_chapter": 12,
+            "display_variants": {},
+            "sentence": "现金价值桥由框架确定性生成。",
+        }],
+    }
+    _write_json(tmp_path / "valuation_model.json", valuation)
+    path = tmp_path / "chapters" / "_ch12.md"
+    path.write_text(
+        path.read_text(encoding="utf-8") + "\n存量超额现金每股RMB9.99。\n",
+        encoding="utf-8",
+    )
+
+    result = compile_decision_sections(tmp_path)
+
+    assert result["state"] == "INVALID"
+    assert any(
+        finding.endswith(":CASH_VALUE_BRIDGE_SUMMARY")
+        and finding.startswith("free_reader_numeric_slot:Ch12")
+        for finding in result["invalid_findings"]
+    )
+
+
+def test_reader_slot_gate_does_not_capture_source_bound_cash_or_actual_dividend_facts(
+    tmp_path: Path,
+) -> None:
+    _fixture(tmp_path)
+    _register_after_tax_distribution_reader_slot(tmp_path)
+    path = tmp_path / "chapters" / "_ch06.md"
+    path.write_text(
+        path.read_text(encoding="utf-8")
+        + "\n2025年现金及银行存款为RMB6,270.725百万元 [source: annual-report]。"
+        + "\n2024年实际派息为RMB550百万元 [source: dividend-announcement]。\n",
+        encoding="utf-8",
+    )
+
+    result = compile_decision_sections(tmp_path)
+
+    assert result["written"] is True
+    assert not any(
+        finding.startswith("free_reader_numeric_slot:")
+        for finding in result["validation"]["invalid_findings"]
+    )
+
+
 def test_combined_required_return_plus_decay_is_not_second_decay_identity(tmp_path: Path) -> None:
     _fixture(tmp_path)
     compile_decision_sections(tmp_path)
@@ -332,6 +449,39 @@ def test_assembly_automatically_invokes_compiler(tmp_path: Path) -> None:
         tmp_path / "chapters" / "_ch14.md"
     ).read_text(encoding="utf-8")
     assert result["decision_compiler"]["written"] is True
+
+
+def test_assembly_rebinds_a_tampered_reader_slot_before_reading_chapters(
+    tmp_path: Path,
+) -> None:
+    _fixture(tmp_path)
+    valuation = json.loads(
+        (tmp_path / "valuation_model.json").read_text(encoding="utf-8")
+    )
+    valuation["value_bridge_models"] = compile_valuation_value_bridges({
+        "schema_version": "valuation-value-bridges-input.v1",
+        "ordinary_distribution": {"model_input": _ordinary_distribution_input()},
+    })
+    _write_json(tmp_path / "valuation_model.json", valuation)
+    bind_valuation_references(tmp_path, valuation)
+    chapter_12 = tmp_path / "chapters" / "_ch12.md"
+    canonical = chapter_12.read_text(encoding="utf-8")
+    chapter_12.write_text(
+        canonical.replace("约RMB2.784亿元", "约RMB3.758亿元"),
+        encoding="utf-8",
+    )
+
+    assemble_report(
+        output_dir=str(tmp_path),
+        company_name="数值槽位测试公司",
+        ts_code="TEST.SZ",
+        validation_only=True,
+    )
+
+    rebound = chapter_12.read_text(encoding="utf-8")
+    assert rebound.count("RMB278.417百万元") == 1
+    assert rebound.count("约RMB2.784亿元") == 1
+    assert "RMB3.758亿元" not in rebound
 
 
 def test_action_changing_diff_requires_approval(tmp_path: Path) -> None:

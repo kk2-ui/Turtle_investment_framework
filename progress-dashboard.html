@@ -31,7 +31,7 @@
   <header><div><div class="muted">LONG-RUNNING PROJECT</div><h1>Turtle Investment Framework</h1></div><div class="stamp">更新：2026-08-30</div></header>
   <div class="goal"><strong>当前 Goal · Golden Set v1 / G1 + G1-U（IN PROGRESS）</strong><br>完整企业承保 kernel 已接通，课程一期也已完成：12 个 worked case 与 4 个 Blind Replay 让 Agent 练习从行业处境到 owner cash、永久损失和价值路线的连续判断。唯一公平 A/B 的 Enhanced arm 在顺丰上因 owner-cash 伪精确被判为更差，故训练方法尚未验证。下一步不是继续堆案例，而是由认知隔离 Agent 在新公司上做同证据、同预算的公平 A/B。</div>
   <div class="grid">
-    <section><h2>已完成</h2><ul><li>单一02669黄金路线已正式废止</li><li>七案例覆盖矩阵与共同内容契约已形成</li><li>水泥真实 block、perimeter-first 窄迁移和下一 canonical pre-outcome 机制对象已冻结</li><li>海螺完整 worked case、IndustryFuture、唯一训练入口及 CJO/valuation/report/experience kernel 已接通</li><li>企业承保课程一期：12 个 worked case、4 个 Blind Replay；顺丰公平 A/B 诚实判为 Enhanced 更差</li></ul></section>
+    <section><h2>已完成</h2><ul><li>单一02669黄金路线已正式废止</li><li>七案例覆盖矩阵与共同内容契约已形成</li><li>现金、营运资本、持续经营重置价值及普通股分配已接入可复用确定性价值桥；读者数值由 compiler slot 单向生成</li><li>水泥真实 block、perimeter-first 窄迁移和下一 canonical pre-outcome 机制对象已冻结</li><li>海螺完整 worked case、IndustryFuture、唯一训练入口及 CJO/valuation/report/experience kernel 已接通</li><li>企业承保课程一期：12 个 worked case、4 个 Blind Replay；顺丰公平 A/B 诚实判为 Enhanced 更差</li></ul></section>
     <section><h2>下一步</h2><ul><li>由认知隔离 Agent 在新的异质公司上运行同 cutoff、同证据、相近预算的公平 A/B</li><li>让 fresh reviewer 在结果后裁决 Enhanced 是否材料性改善正常盈利、owner cash、永久损失或价值路线</li><li>让一份真实黄金候选消费同一 Frozen Episode；只有 A/B 失败暴露缺口时才补充新 worked case</li></ul></section>
     <section><h2>当前阻断</h2><ul><li>00882、01522、900936仍有会改变估值或回报的模型阻断</li><li>训练方法尚未验证：顺丰 Enhanced 把增长回报未知误作维护资本过高，当前不授予迁移、估值或投资权限</li></ul></section>
   </div>
@@ -49,8 +49,8 @@
     <div class="milestone"><strong>G5</strong><span>公司轴与时间轴双 holdout</span><span class="state">PLANNED</span></div>
     <div class="milestone"><strong>G6</strong><span>Phase 08 收口</span><span class="state">PLANNED</span></div>
   </section>
-  <section style="margin-top:16px"><h2>候选快照</h2><ul><li><code>87001</code> 已通过案例深度复审，等待跨案例裁决</li><li><code>000651</code> 为 <code>PRE_FREEZE / NO_PRIMARY / NOT_FROZEN</code>；<code>02669</code> 当前 revision 等待模型、报告与HTML接纳</li><li><code>00882 / 01522 / 900936</code> 按最新 RETURN 做限域修复，不重开已通过章节</li><li><code>600585</code> 已完成重资产周期承保 worked case；新增国内资产仍不进入基准，普通股 owner cash 仅作局部范围处理</li></ul></section>
-  <section style="margin-top:16px"><h2>最近决策</h2><ul><li>顺丰公平 A/B 的负结果归因为推理错误：增长资本回报未知不能被写成维护后 owner cash 为负</li><li>课程一期的 self replay 只证明当前 Agent 的研究顺序被反馈改变，不证明方法优越性</li><li>下一轮必须以 fresh Agent + fresh reviewer 的认知隔离 A/B 验证训练是否真能改善企业处理</li><li>审阅反馈先按采集、推理、模型、写作责任分流；开放的上游问题不得直接改读者正文</li><li>历史训练是主生产线；历史留出只评价；真实前瞻是成熟后的部署校准</li><li>G1后新增G1.5：格力+5家同行×3时期，并形成行业、宏观传导和格力V2，共24份黄金级产物</li></ul></section>
+  <section style="margin-top:16px"><h2>候选快照</h2><ul><li><code>87001</code> 已通过案例深度复审，等待跨案例裁决</li><li><code>000651</code> 为 <code>PRE_FREEZE / NO_PRIMARY / NOT_FROZEN</code>；<code>02669</code> 的模型回归已关闭任意50%参数与读者数字传播错误，但当前报告和HTML仍等待接纳，不是Golden</li><li><code>00882 / 01522 / 900936</code> 按最新 RETURN 做限域修复，不重开已通过章节</li><li><code>600585</code> 已完成重资产周期承保 worked case；新增国内资产仍不进入基准，普通股 owner cash 仅作局部范围处理</li></ul></section>
+  <section style="margin-top:16px"><h2>最近决策</h2><ul><li>顺丰公平 A/B 的负结果归因为推理错误：增长资本回报未知不能被写成维护后 owner cash 为负</li><li>课程一期的 self replay 只证明当前 Agent 的研究顺序被反馈改变，不证明方法优越性</li><li>下一轮必须以 fresh Agent + fresh reviewer 的认知隔离 A/B 验证训练是否真能改善企业处理</li><li>审阅反馈先按采集、推理、模型、写作责任分流；开放的上游问题不得直接改读者正文</li><li>重置价值与EPV只做同口径交叉核验；任一独立下限不完整时共同保护价保持空值，禁止相加或平均</li><li>模型金额按canonical result、numeric claim、display variant、reader slot单向进入受保护区块；writer不得自由重抄</li><li>reader writer 只接收已接纳经济结论和普通投资语言，内部状态与价格身份留在技术层</li><li>历史训练是主生产线；历史留出只评价；真实前瞻是成熟后的部署校准</li><li>G1后新增G1.5：格力+5家同行×3时期，并形成行业、宏观传导和格力V2，共24份黄金级产物</li></ul></section>
   <p class="muted">协调真源：GOALS.md ｜ 当前文档清单：docs/CURRENT_DOCUMENTS.md ｜ 领域真源：docs/development/LONG_TERM_ROADMAP.md ｜ docs/History仅供追溯。</p>
 </main>
 </body>

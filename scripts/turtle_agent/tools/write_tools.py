@@ -275,6 +275,7 @@ def verify_official_fact(
     basis: str = "",
     quote: str = "",
     currency: str | None = None,
+    measurement_context: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     """Verify an exact annual-report quote and persist its observation identity."""
     try:
@@ -295,6 +296,7 @@ def verify_official_fact(
         basis=basis,
         quote=quote,
         currency=currency,
+        measurement_context=measurement_context,
     )
     if not result.get("verified"):
         return result
@@ -577,6 +579,7 @@ def write_valuation_model_ledger(
     model_comparisons: list[dict[str, Any]] | None = None,
     joint_stress_tests: list[dict[str, Any]] | None = None,
     action_policy: dict[str, Any] | None = None,
+    value_bridge_inputs: dict[str, Any] | None = None,
     semantic_resolutions: list[dict[str, Any]] | None = None,
     resume_best_rejected: bool = False,
     resume_last_rejected: bool = False,
@@ -600,6 +603,7 @@ def write_valuation_model_ledger(
     effective_model_comparisons = list(model_comparisons or [])
     effective_joint_stress_tests = list(joint_stress_tests or [])
     effective_action_policy = dict(action_policy or {})
+    effective_value_bridge_inputs = dict(value_bridge_inputs or {})
     effective_resolutions = list(semantic_resolutions or [])
     if resume_best_rejected and resume_last_rejected:
         return {
@@ -677,6 +681,12 @@ def write_valuation_model_ledger(
         effective_action_policy = dict(
             (rejected.get("action_policy") if action_policy is None else action_policy) or {}
         )
+        effective_value_bridge_inputs = dict(
+            (
+                ((rejected.get("value_bridge_models") or {}).get("model_input") or {})
+                if value_bridge_inputs is None else value_bridge_inputs
+            ) or {}
+        )
     if resume_best_rejected:
         best_path = Path(output_dir, "valuation_semantic_resolution_best_rejected.json")
         try:
@@ -735,6 +745,9 @@ def write_valuation_model_ledger(
         effective_model_comparisons = list(best_candidate.get("model_comparisons") or [])
         effective_joint_stress_tests = list(best_candidate.get("joint_stress_tests") or [])
         effective_action_policy = dict(best_candidate.get("action_policy") or {})
+        effective_value_bridge_inputs = dict(
+            ((best_candidate.get("value_bridge_models") or {}).get("model_input") or {})
+        )
         effective_resolutions = [merged[key] for key in sorted(frontier_keys)]
 
     payload = build_valuation_model_ledger(
@@ -745,6 +758,7 @@ def write_valuation_model_ledger(
         model_comparisons=effective_model_comparisons,
         joint_stress_tests=effective_joint_stress_tests,
         action_policy=effective_action_policy,
+        value_bridge_inputs=effective_value_bridge_inputs,
     )
     chapter_dir = Path(output_dir) / CHAPTERS_SUBDIR
     if not chapter_dir.is_dir(): chapter_dir = Path(output_dir)
@@ -2543,6 +2557,24 @@ def assemble_report(
                 + ", ".join(str(item) for item in investment_receipt.get("findings") or [])
             )
 
+    # Rebind compiler-owned valuation conclusions immediately before the
+    # decision compiler or report assembly reads chapter bytes.  A writer or
+    # repair pass may have run after the valuation ledger was persisted; the
+    # final product must therefore be regenerated from the current canonical
+    # ledger, not trust an earlier chapter copy.
+    valuation_binding: dict[str, Any] = {"value_bridge_conclusions_bound": False}
+    valuation_path = Path(output_dir) / "valuation_model.json"
+    if valuation_path.is_file() and not company_judgment_only:
+        try:
+            valuation_payload = json.loads(valuation_path.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError) as exc:
+            raise RuntimeError("Report assembly cannot read valuation_model.json") from exc
+        try:
+            from scripts.valuation_model_gate import bind_valuation_references
+        except ModuleNotFoundError:
+            from valuation_model_gate import bind_valuation_references
+        valuation_binding = bind_valuation_references(output_dir, valuation_payload)
+
     # Phase 04: canonical values/actions are compiled immediately before any
     # chapter bytes are read.  Legacy directories without an enforcement
     # policy remain unchanged; new unified runs cannot publish free-form
@@ -3806,7 +3838,16 @@ verify_official_fact._tool_meta = {
         "unit": {"type": "string"},
         "basis": {"type": "string"},
         "quote": {"type": "string", "description": "指定页逐字原文，不得概括"},
-        "currency": {"type": "string", "optional": True}
+        "currency": {"type": "string", "optional": True},
+        "measurement_context": {"type": "object", "description": "营运资本/回款事实可选的精确测量范围；只填披露能支持的字段，不得猜测cohort。", "properties": {
+            "period_start": {"type": "string"}, "period_end": {"type": "string"},
+            "economic_entity": {"type": "string"}, "operating_perimeter": {"type": "string"},
+            "cohort_id": {"type": "string"}, "project_id": {"type": "string"},
+            "customer_scope": {"type": "string"}, "batch_id": {"type": "string"},
+            "stock_flow_role": {"type": "string", "enum": ["OPENING_STOCK", "CLOSING_STOCK", "GROWTH_LAUNCH_ADDITION", "STEADY_ROLLOVER_ADDITION", "COLLECTION_OR_SETTLEMENT", "PERMANENT_LOSS", "NONCASH_SCOPE_CHANGE"]},
+            "settlement_status": {"type": "string"},
+            "loss_treatment": {"type": "string", "enum": ["RECURRING_EXPECTED", "ONE_OFF_PERMANENT", "NO_LOSS", "UNKNOWN"]}
+        }, "optional": True}
     }
 }  # type: ignore[attr-defined]
 write_decision_manifest._tool_meta = {"name": "write_decision_manifest", "description": "提交结构化最终决策；必须在 assemble_report 前调用，Ch0/Ch14/数据库以此为准", "parameters": {"output_dir": {"type": "string", "description": "股票输出目录"}, "qualitative_decision": {"type": "string", "enum": ["continue", "pause", "abandon"]}, "quantitative_decision": {"type": "string", "enum": ["buy", "hold", "avoid", "unresolved"]}, "position_pct": {"type": "number", "description": "建议仓位百分比；quantitative_decision=unresolved 时省略", "optional": True}, "qualitative_rationale": {"type": "string", "optional": True}, "quantitative_rationale": {"type": "string", "optional": True}, "monitor_triggers": {"type": "array", "items": {"type": "string"}, "optional": True}, "exit_conditions": {"type": "array", "items": {"type": "string"}, "optional": True}}}  # type: ignore[attr-defined]
@@ -3952,8 +3993,16 @@ write_valuation_model_ledger._tool_meta = {
             "sensitivity_tests": {"type": "array", "items": {"type": "object", "properties": {"case_id": {"type": "string", "enum": ["discount_rate_up_1pp", "growth_down_1pp", "combined_stress"]}, "value_per_share": {"type": "number"}, "action": {"type": "string", "enum": ["buy", "hold", "avoid"]}}}},
             "fragility_mitigation": {"type": "string"}, "source_ids": {"type": "array", "items": {"type": "string"}}, "decision_entry_ids": {"type": "array", "items": {"type": "string"}}
         }, "required": ["model_id", "route_model_id", "model_type", "role", "status"]}},
-        "synthesis": {"type": "object", "properties": {"action": {"type": "string", "enum": ["buy", "hold", "avoid", "unresolved"]}, "position_pct": {"type": "number", "optional": True}, "range_low": {"type": "number", "optional": True}, "range_base": {"type": "number", "optional": True}, "range_high": {"type": "number", "optional": True}, "chosen_value_per_share": {"type": "number", "optional": True}, "decision_rule": {"type": "string"}, "divergence_explanation": {"type": "string"}, "decision_entry_id": {"type": "string", "optional": True}}, "required": ["action", "decision_rule", "divergence_explanation"]},
-        "cash_access_bridge": {"type": "object", "description": "现金法律实体/受限性/母公司可分配储备桥；未验证现金在主估值中必须100%折价", "properties": {
+        "synthesis": {"type": "object", "properties": {"action": {"type": "string", "enum": ["buy", "hold", "avoid", "unresolved"]}, "position_pct": {"type": "number", "optional": True}, "range_low": {"type": "number", "optional": True}, "range_base": {"type": "number", "optional": True}, "range_high": {"type": "number", "optional": True}, "chosen_value_per_share": {"type": "number", "optional": True}, "joint_protection_price_ceiling": {"type": "number", "description": "仅可等于同口径重置价值与EPV各自保守下限的较低者；不可比或重置组件未完整定界时省略", "optional": True}, "decision_rule": {"type": "string"}, "divergence_explanation": {"type": "string"}, "decision_entry_id": {"type": "string", "optional": True}}, "required": ["action", "decision_rule", "divergence_explanation"]},
+        "value_bridge_inputs": {"type": "object", "description": "新报告的canonical价值桥输入；schema_version=valuation-value-bridges-input.v1。每一个数值operand（包括0、股数、汇率和区间端点）必须在canonical_fact_bindings中按精确path绑定当前VERIFIED OBS:/CALC:；模型自称verified或自由OBS字符串不构成证据。cash_accessibility、working_capital、replacement_value分别使用其canonical模型；需要在读者报告展示税费后普通股分配时，ordinary_distribution只提交正常化收益、分配率、税费/收取摩擦率和固定收取成本，禁止提交计算结果。框架确定性生成numeric claim、每股值、单位换算和reader slot，禁止手算或重抄结果。", "properties": {
+            "canonical_fact_bindings": {"type": "array", "items": {"type": "object", "properties": {"path": {"type": "string", "description": "例如ordinary_distribution.model_input.fixed_collection_cost"}, "evidence_id": {"type": "string", "description": "当前VERIFIED OBS:或CALC:；须位于该operand自身或祖先对象声明的证据引用中"}}, "required": ["path", "evidence_id"]}},
+            "schema_version": {"type": "string"},
+            "cash_accessibility": {"type": "object", "properties": {"model_input": {"type": "object"}, "valuation_context": {"type": "object", "properties": {"company_id": {"type": "string"}, "operating_model_id": {"type": "string"}, "position_as_of": {"type": "string"}, "ordinary_share_claim_scope": {"type": "string"}, "valuation_currency": {"type": "string"}, "fx_source_per_valuation_currency": {"type": "number"}, "shares": {"type": "number"}, "source_fact_ids": {"type": "array", "items": {"type": "string"}, "description": "股数与汇率的当前VERIFIED OBS:/CALC:来源；启用事实绑定时必填"}}, "required": ["company_id", "operating_model_id", "position_as_of", "ordinary_share_claim_scope", "valuation_currency", "fx_source_per_valuation_currency", "shares"]}}, "required": ["model_input", "valuation_context"]},
+            "ordinary_distribution": {"type": "object", "description": "model_input须为ordinary-distribution-input.v1；只能提交named operands与已验证事实引用，不能提交after_tax_common_distribution或任何reader数字。", "properties": {"model_input": {"type": "object"}}, "required": ["model_input"]},
+            "working_capital": {"type": "object", "properties": {"model_input": {"type": "object"}}, "required": ["model_input"]},
+            "replacement_value": {"type": "object", "properties": {"model_input": {"type": "object"}}, "required": ["model_input"]}
+        }, "required": ["schema_version"]},
+        "cash_access_bridge": {"type": "object", "description": "旧账本迁移兼容字段；新报告必须改用value_bridge_inputs.cash_accessibility，禁止再用自由haircut_pct形成价值", "properties": {
             "as_of": {"type": "string"}, "unit": {"type": "string"}, "gross_cash_amount": {"type": "number"}, "conservative_accessible_cash_amount": {"type": "number", "description": "若母公司可分派储备不是VERIFIED，必须为0；合并银行存款存在不等于外部股东法律可分配"},
             "components": {"type": "array", "items": {"type": "object", "properties": {
                 "component_id": {"type": "string"}, "amount": {"type": "number"}, "access_status": {"type": "string", "enum": ["VERIFIED_ACCESSIBLE", "CONDITIONAL", "RESTRICTED", "RELATED_PARTY", "UNVERIFIED"]}, "legal_distributability": {"type": "string", "enum": ["VERIFIED", "CONDITIONAL", "NOT_VERIFIED"], "description": "母公司储备未披露时，合并现金应为NOT_VERIFIED且haircut_pct=100"}, "legal_owner_scope": {"type": "string"}, "haircut_pct": {"type": "number"}, "source_ids": {"type": "array", "items": {"type": "string", "description": "只允许当前VERIFIED OBS:/CALC:/EVD:身份，禁止DOC或自由文本"}}, "notes": {"type": "string"}
@@ -3966,7 +4015,7 @@ write_valuation_model_ledger._tool_meta = {
             "model_id": {"type": "string"}, "parameter": {"type": "string", "enum": ["retained_value_realization", "moat_decay_pct"]}, "value": {"type": "number"}, "method": {"type": "string", "enum": ["empirical", "historical_base_rate", "conservative_bound", "working_assumption"]}, "range_low": {"type": "number"}, "range_high": {"type": "number"}, "basis": {"type": "string"}, "source_ids": {"type": "array", "items": {"type": "string"}}, "decision_use": {"type": "string", "enum": ["primary", "corroborative", "diagnostic"]}, "market_price_inputs": {"type": "array", "items": {"type": "string"}}, "sensitivity": {"type": "object", "properties": {"action_at_low": {"type": "string"}, "action_at_high": {"type": "string"}}, "required": ["action_at_low", "action_at_high"]}
         }, "required": ["model_id", "parameter", "value", "method", "range_low", "range_high", "basis", "source_ids", "decision_use", "sensitivity"]}},
         "model_comparisons": {"type": "array", "description": "每个非主模型必须以model_id对against_model_id主模型比较", "items": {"type": "object", "properties": {
-            "model_id": {"type": "string"}, "against_model_id": {"type": "string"}, "comparable": {"type": "boolean"}, "discount_rate_difference_pp": {"type": "number", "description": "仅双方都有适用折现率时填写；NAV等kind=not_applicable时必须省略，禁止0或-1哨兵"}, "allowed_use": {"type": "string", "enum": ["corroboration", "distribution_floor", "upper_bound", "stress", "diagnostic"]}, "basis_differences": {"type": "string"}
+            "model_id": {"type": "string"}, "against_model_id": {"type": "string"}, "comparable": {"type": "boolean"}, "discount_rate_difference_pp": {"type": "number", "description": "仅双方都有适用折现率时填写；NAV等kind=not_applicable时必须省略，禁止0或-1哨兵"}, "allowed_use": {"type": "string", "enum": ["corroboration", "cross_check_only", "distribution_floor", "upper_bound", "stress", "diagnostic"]}, "basis_differences": {"type": "string"}
         }, "required": ["model_id", "against_model_id", "comparable", "allowed_use", "basis_differences"]}},
         "joint_stress_tests": {"type": "array", "description": "simultaneous_inputs必须含盈利、payout_ratio及cash_access_pct/retained_value_realization/accessible_cash_amount之一", "items": {"type": "object", "properties": {
             "case_id": {"type": "string"}, "description": {"type": "string"}, "simultaneous_inputs": {"type": "object", "properties": {"normalized_earnings": {"type": "number"}, "normalized_profit": {"type": "number"}, "owner_earnings": {"type": "number"}, "payout_ratio": {"type": "number"}, "cash_access_pct": {"type": "number"}, "retained_value_realization": {"type": "number"}, "accessible_cash_amount": {"type": "number"}}, "required": ["payout_ratio"]}, "output": {"type": "object", "properties": {"value_per_share": {"type": "number"}, "currency": {"type": "string"}, "action": {"type": "string", "enum": ["buy", "hold", "avoid"]}}, "required": ["value_per_share", "action"]}, "decision_implication": {"type": "string"}

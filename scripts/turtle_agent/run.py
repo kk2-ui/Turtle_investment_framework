@@ -1987,7 +1987,15 @@ def _initialize_pit_production_output(
         initialize_base_rate_policy(output_dir, run_id=run_id, enforced=True)
         initialize_decision_ledger_policy(output_dir, run_id=run_id, enforced=True)
         initialize_decision_compiler_policy(output_dir, run_id=run_id, enforced=True)
-        initialize_valuation_model_policy(output_dir, run_id=run_id, enforced=True)
+        initialize_valuation_model_policy(
+            output_dir,
+            run_id=run_id,
+            enforced=True,
+            require_normalization_bridge=True,
+            require_owner_earnings_normalization=True,
+            require_value_bridge_models=True,
+            require_value_bridge_fact_bindings=True,
+        )
         initialize_decision_reliability_policy(output_dir, run_id=run_id, enforced=True)
 
 
@@ -2981,6 +2989,14 @@ def run_full_pipeline(
                 ),
                 require_holding_period_return_bridge=bool(
                     prior_valuation_policy.get("require_holding_period_return_bridge")
+                ),
+                require_value_bridge_models=bool(
+                    prior_valuation_policy.get("require_value_bridge_models", True)
+                ),
+                require_value_bridge_fact_bindings=bool(
+                    prior_valuation_policy.get(
+                        "require_value_bridge_fact_bindings", True
+                    )
                 ),
             )
             try:

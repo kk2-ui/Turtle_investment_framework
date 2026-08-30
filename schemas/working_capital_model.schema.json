@@ -1,0 +1,363 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://turtle.local/schemas/working_capital_model.schema.json",
+  "title": "Turtle Working Capital Stock-Flow and Owner Cash Model",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "model_id",
+    "company_id",
+    "basis",
+    "periods",
+    "valuation_treatment"
+  ],
+  "properties": {
+    "schema_version": {"const": "working-capital-model.v1"},
+    "model_id": {"$ref": "#/$defs/nonempty"},
+    "company_id": {"$ref": "#/$defs/nonempty"},
+    "basis": {"$ref": "#/$defs/basis"},
+    "periods": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"$ref": "#/$defs/period"}
+    },
+    "valuation_treatment": {"$ref": "#/$defs/valuation_treatment"}
+  },
+  "$defs": {
+    "nonempty": {"type": "string", "minLength": 1},
+    "evidence_ids": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {"$ref": "#/$defs/nonempty"}
+    },
+    "range": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["range_low", "range_high"],
+      "properties": {
+        "range_low": {"type": "number"},
+        "range_high": {"type": "number"}
+      }
+    },
+    "bounded_observation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "observation_id", "basis", "period_or_cohort", "amount", "evidence_ids"
+      ],
+      "properties": {
+        "observation_id": {"$ref": "#/$defs/nonempty"},
+        "basis": {
+          "enum": [
+            "PROJECT_COHORT_CASH_CHARGE",
+            "COMPARABLE_PERIOD_CASH_CHARGE",
+            "CONTRACT_BATCH_CASH_CHARGE"
+          ]
+        },
+        "period_or_cohort": {"$ref": "#/$defs/nonempty"},
+        "amount": {"type": "number"},
+        "evidence_ids": {"$ref": "#/$defs/evidence_ids"}
+      }
+    },
+    "basis": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "economic_entity",
+        "operating_perimeter",
+        "ordinary_share_claim_scope",
+        "currency",
+        "unit",
+        "as_of"
+      ],
+      "properties": {
+        "economic_entity": {"$ref": "#/$defs/nonempty"},
+        "operating_perimeter": {"$ref": "#/$defs/nonempty"},
+        "ordinary_share_claim_scope": {"$ref": "#/$defs/nonempty"},
+        "currency": {"$ref": "#/$defs/nonempty"},
+        "unit": {"$ref": "#/$defs/nonempty"},
+        "as_of": {"type": "string", "format": "date"}
+      }
+    },
+    "owner_cash_input": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "basis",
+        "metric",
+        "base_metric_amount",
+        "maintenance_capex",
+        "other_owner_adjustments",
+        "working_capital_application",
+        "permanent_loss_application",
+        "evidence_ids"
+      ],
+      "properties": {
+        "basis": {"enum": ["REPORTED_OCF", "ACCRUAL_EARNINGS"]},
+        "metric": {"$ref": "#/$defs/nonempty"},
+        "base_metric_amount": {"type": "number"},
+        "maintenance_capex": {"type": "number", "minimum": 0},
+        "other_owner_adjustments": {"type": "number", "minimum": 0},
+        "working_capital_application": {
+          "enum": ["ALREADY_REFLECTED_IN_BASE", "DEDUCT_STOCK_FLOW_CHARGE"]
+        },
+        "permanent_loss_application": {
+          "enum": ["INCLUDED_IN_STOCK_FLOW_CHARGE", "DEDUCT_AGAIN"]
+        },
+        "evidence_ids": {"$ref": "#/$defs/evidence_ids"}
+      },
+      "allOf": [
+        {
+          "if": {"properties": {"basis": {"const": "REPORTED_OCF"}}},
+          "then": {
+            "properties": {
+              "working_capital_application": {"const": "ALREADY_REFLECTED_IN_BASE"},
+              "permanent_loss_application": {"const": "INCLUDED_IN_STOCK_FLOW_CHARGE"}
+            }
+          }
+        },
+        {
+          "if": {"properties": {"basis": {"const": "ACCRUAL_EARNINGS"}}},
+          "then": {
+            "properties": {
+              "working_capital_application": {"const": "DEDUCT_STOCK_FLOW_CHARGE"},
+              "permanent_loss_application": {"const": "INCLUDED_IN_STOCK_FLOW_CHARGE"}
+            }
+          }
+        }
+      ]
+    },
+    "normalization": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "method",
+        "adopted_endpoint",
+        "adopted_value",
+        "rationale",
+        "evidence_ids"
+      ],
+      "properties": {
+        "method": {
+          "enum": [
+            "NOT_APPLICABLE",
+            "OBSERVED_STEADY_CHARGE",
+            "EVIDENCE_BOUNDED",
+            "UNKNOWN"
+          ]
+        },
+        "recurring_charge_range": {
+          "oneOf": [
+            {"$ref": "#/$defs/range"},
+            {"type": "null"}
+          ]
+        },
+        "bounded_observations": {
+          "type": "array",
+          "minItems": 2,
+          "items": {"$ref": "#/$defs/bounded_observation"}
+        },
+        "adopted_endpoint": {"enum": ["LOW", "HIGH", "EXACT", "UNKNOWN"]},
+        "adopted_value": {"type": ["number", "null"]},
+        "rationale": {"$ref": "#/$defs/nonempty"},
+        "evidence_ids": {"$ref": "#/$defs/evidence_ids"}
+      },
+      "allOf": [
+        {
+          "if": {"properties": {"method": {"const": "UNKNOWN"}}},
+          "then": {
+            "properties": {
+              "recurring_charge_range": {"type": "null"},
+              "adopted_endpoint": {"const": "UNKNOWN"},
+              "adopted_value": {"type": "null"}
+            }
+          }
+        },
+        {
+          "if": {"properties": {"method": {"const": "EVIDENCE_BOUNDED"}}},
+          "then": {
+            "required": ["bounded_observations"],
+            "properties": {
+              "recurring_charge_range": {"type": "null"},
+              "adopted_endpoint": {"enum": ["LOW", "HIGH"]},
+              "adopted_value": {"type": "null"}
+            }
+          }
+        }
+      ]
+    },
+    "cohort": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "cohort_id",
+        "role",
+        "opening_net_stock",
+        "growth_launch_additions",
+        "steady_rollover_additions",
+        "cash_collections_and_settlements",
+        "permanent_losses",
+        "noncash_scope_change",
+        "closing_net_stock",
+        "loss_treatment",
+        "normalization",
+        "evidence_ids"
+      ],
+      "properties": {
+        "cohort_id": {"$ref": "#/$defs/nonempty"},
+        "role": {
+          "enum": [
+            "GROWTH_LAUNCH",
+            "STEADY_ROLLING",
+            "RUNOFF_OR_SETTLEMENT",
+            "UNATTRIBUTED"
+          ]
+        },
+        "opening_net_stock": {"type": "number", "minimum": 0},
+        "growth_launch_additions": {"type": "number", "minimum": 0},
+        "steady_rollover_additions": {"type": "number", "minimum": 0},
+        "cash_collections_and_settlements": {"type": "number", "minimum": 0},
+        "permanent_losses": {"type": "number", "minimum": 0},
+        "noncash_scope_change": {"type": "number"},
+        "closing_net_stock": {"type": "number", "minimum": 0},
+        "loss_treatment": {
+          "enum": ["RECURRING_EXPECTED", "ONE_OFF_PERMANENT", "NO_LOSS", "UNKNOWN"]
+        },
+        "normalization": {"$ref": "#/$defs/normalization"},
+        "evidence_ids": {"$ref": "#/$defs/evidence_ids"}
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "role": {"enum": ["GROWTH_LAUNCH", "RUNOFF_OR_SETTLEMENT"]}
+            }
+          },
+          "then": {
+            "properties": {
+              "normalization": {
+                "allOf": [
+                  {"$ref": "#/$defs/normalization"},
+                  {
+                    "properties": {
+                      "method": {"const": "NOT_APPLICABLE"},
+                      "adopted_endpoint": {"const": "EXACT"},
+                      "adopted_value": {"const": 0}
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        },
+        {
+          "if": {"properties": {"role": {"const": "UNATTRIBUTED"}}},
+          "then": {
+            "properties": {
+              "normalization": {
+                "allOf": [
+                  {"$ref": "#/$defs/normalization"},
+                  {"properties": {"method": {"enum": ["EVIDENCE_BOUNDED", "UNKNOWN"]}}},
+                  {
+                    "if": {"properties": {"method": {"const": "EVIDENCE_BOUNDED"}}},
+                    "then": {
+                      "properties": {
+                        "adopted_endpoint": {"enum": ["LOW", "HIGH"]}
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "period": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "period_id",
+        "period_start",
+        "period_end",
+        "owner_cash_input",
+        "cohorts"
+      ],
+      "properties": {
+        "period_id": {"$ref": "#/$defs/nonempty"},
+        "period_start": {"type": "string", "format": "date"},
+        "period_end": {"type": "string", "format": "date"},
+        "owner_cash_input": {"$ref": "#/$defs/owner_cash_input"},
+        "cohorts": {
+          "type": "array",
+          "minItems": 1,
+          "items": {"$ref": "#/$defs/cohort"}
+        }
+      }
+    },
+    "valuation_treatment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "reference_period_id",
+        "epv_use",
+        "epv_working_capital_treatment",
+        "terminal_route",
+        "terminal_owner_cash_source",
+        "terminal_working_capital_treatment",
+        "stock_release_cohort_ids"
+      ],
+      "properties": {
+        "reference_period_id": {"$ref": "#/$defs/nonempty"},
+        "epv_use": {"enum": ["NORMALIZED_OWNER_CASH", "NOT_USED"]},
+        "epv_working_capital_treatment": {
+          "enum": ["STEADY_RECURRING_ONLY", "NOT_APPLICABLE"]
+        },
+        "terminal_route": {"enum": ["CONTINUING", "RUNOFF_OR_LIQUIDATION", "NOT_USED"]},
+        "terminal_owner_cash_source": {
+          "enum": ["NORMALIZED_OWNER_CASH", "STOCK_RELEASE_ONLY", "NOT_APPLICABLE"]
+        },
+        "terminal_working_capital_treatment": {
+          "enum": [
+            "STEADY_RECURRING_AND_TERMINAL_GROWTH_ONLY",
+            "STOCK_RELEASE_ONLY",
+            "NOT_APPLICABLE"
+          ]
+        },
+        "stock_release_cohort_ids": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {"$ref": "#/$defs/nonempty"}
+        }
+      },
+      "allOf": [
+        {
+          "if": {"properties": {"terminal_route": {"const": "CONTINUING"}}},
+          "then": {
+            "properties": {
+              "terminal_owner_cash_source": {"const": "NORMALIZED_OWNER_CASH"},
+              "terminal_working_capital_treatment": {
+                "const": "STEADY_RECURRING_AND_TERMINAL_GROWTH_ONLY"
+              },
+              "stock_release_cohort_ids": {"maxItems": 0}
+            }
+          }
+        },
+        {
+          "if": {"properties": {"terminal_route": {"const": "RUNOFF_OR_LIQUIDATION"}}},
+          "then": {
+            "properties": {
+              "epv_use": {"const": "NOT_USED"},
+              "epv_working_capital_treatment": {"const": "NOT_APPLICABLE"},
+              "terminal_owner_cash_source": {"const": "STOCK_RELEASE_ONLY"},
+              "terminal_working_capital_treatment": {"const": "STOCK_RELEASE_ONLY"},
+              "stock_release_cohort_ids": {"minItems": 1}
+            }
+          }
+        }
+      ]
+    }
+  }
+}

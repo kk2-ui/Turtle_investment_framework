@@ -1,0 +1,207 @@
+from __future__ import annotations
+
+import json
+from pathlib import Path
+
+import pytest
+
+from scripts.valuation_value_bridges import (
+    compile_valuation_value_bridges,
+    validate_valuation_value_bridge_input,
+    validate_valuation_value_bridges,
+)
+
+
+ROOT = Path(__file__).resolve().parents[1]
+FIXTURE = ROOT / "tests/fixtures/02669_value_bridge_regression.json"
+
+
+def _fixture() -> dict:
+    return json.loads(FIXTURE.read_text(encoding="utf-8"))
+
+
+def _compiled() -> tuple[dict, dict]:
+    fixture = _fixture()
+    model_input = fixture["value_bridge_input"]
+    assert validate_valuation_value_bridge_input(model_input)["state"] == "VALID"
+    compiled = compile_valuation_value_bridges(model_input)
+    assert validate_valuation_value_bridges(compiled)["state"] == "VALID"
+    return fixture, compiled
+
+
+def test_02669_fixture_preserves_the_accepted_observations_needed_by_all_three_models() -> None:
+    observations = _fixture()["accepted_observations"]
+
+    assert observations["cash_and_bank_balances"] == pytest.approx(6270.725)
+    assert observations["restricted_bank_deposits"] == pytest.approx(12.827)
+    assert observations["one_year_operating_cash_floor"] == pytest.approx(1153.458)
+    assert observations["related_party_receivables"] == pytest.approx(805.644)
+    assert observations["shares_outstanding_million"] == pytest.approx(3283.960460)
+    assert observations["working_capital_cash_changes"] == {
+        "FY2022": pytest.approx(154.516),
+        "FY2023": pytest.approx(-38.978),
+        "FY2024": pytest.approx(305.708),
+        "FY2025": pytest.approx(275.426),
+    }
+
+
+def test_02669_cash_is_evidence_bounded_without_an_arbitrary_half_haircut() -> None:
+    _, compiled = _compiled()
+    cash = compiled["result"]["cash_accessibility"]
+    existing = cash["existing_excess_cash_realization"]
+
+    assert cash["legal_cash_accessibility"]["adopted_value"] == pytest.approx(5104.440)
+    assert existing["amount_range"] == {
+        "low": pytest.approx(0.0),
+        "base": pytest.approx(0.0),
+        "high": pytest.approx(5104.440),
+    }
+    assert existing["adopted_realization_rate"] == pytest.approx(0.0)
+    assert existing["adopted_value"] == pytest.approx(0.0)
+    assert existing["adoption_policy"] == "low_end_until_three_comparable_periods"
+    assert existing["adopted_realization_rate"] != pytest.approx(0.5)
+    assert cash["related_party_receivable_realization"]["gross_receivables"] == pytest.approx(
+        805.644
+    )
+
+
+def test_02669_after_tax_distribution_has_a_deterministic_reader_slot() -> None:
+    _, compiled = _compiled()
+
+    assert compiled["result"]["ordinary_distribution"][
+        "after_tax_common_distribution"
+    ] == 278.41697737781914
+    claim = next(
+        claim
+        for claim in compiled["numeric_claims"]
+        if claim["claim_id"] == "distribution.after_tax_common"
+    )
+    assert claim["selected_value"] == 278.41697737781914
+    slot = next(
+        item for item in compiled["reader_slots"]
+        if item["slot_id"] == "after_tax_common_distribution"
+    )
+    assert slot == {
+        "slot_id": "after_tax_common_distribution",
+        "claim_id": "distribution.after_tax_common",
+        "metric": "AFTER_TAX_COMMON_DISTRIBUTION",
+        "target_chapter": 12,
+        "display_variants": {
+            "million_3dp": "RMB278.417百万元",
+            "hundred_million_3dp_approx": "约RMB2.784亿元",
+        },
+        "sentence": (
+            "税费和收取摩擦后的普通股分配为RMB278.417百万元，"
+            "即约RMB2.784亿元。"
+        ),
+    }
+    assert "3.758" not in str(compiled)
+
+
+def test_02669_working_capital_history_stays_observed_while_persistence_stays_unknown() -> None:
+    _, compiled = _compiled()
+    working_capital = compiled["result"]["working_capital"]
+    periods = working_capital["period_results"]
+
+    assert {
+        period["period_id"]: period["stock_flow_reconciliation"][
+            "actual_cash_capital_charge"
+        ]
+        for period in periods
+    } == {
+        "FY2022": pytest.approx(154.516),
+        "FY2023": pytest.approx(-38.978),
+        "FY2024": pytest.approx(305.708),
+        "FY2025": pytest.approx(275.426),
+    }
+    for period in periods:
+        assert period["normalization_status"] == "UNKNOWN"
+        assert period["recurring_steady_state_charge_range"] is None
+        assert period["adopted_recurring_charge"] is None
+        assert period["normalized_owner_cash_range"] is None
+        assert period["adopted_normalized_owner_cash"] is None
+
+    assert not any(
+        claim["metric"]
+        in {
+            "recurring_working_capital_owner_earnings_charge",
+            "normalized_owner_cash_for_valuation",
+        }
+        for claim in compiled["numeric_claims"]
+    )
+
+
+def test_02669_replacement_anchors_do_not_masquerade_as_a_complete_company_range() -> None:
+    _, compiled = _compiled()
+    replacement = compiled["result"]["replacement_value"]
+    components = {item["component_id"]: item for item in replacement["component_results"]}
+
+    assert replacement["unknown_component_ids"] == [
+        "customer-relationships",
+        "regional-operating-organization",
+        "fulfillment-and-project-track-record",
+    ]
+    assert replacement["scenario_only_component_ids"] == [
+        "customer-acquisition-channel-platform-anchor",
+        "project-startup-working-capital-anchor",
+        "other-functional-assets-cost-anchor",
+    ]
+    assert components["customer-acquisition-channel-platform-anchor"]["estimated_range"] == {
+        "range_low": pytest.approx(309.731794),
+        "range_high": pytest.approx(309.731794),
+    }
+    assert components["project-startup-working-capital-anchor"]["estimated_range"] == {
+        "range_low": pytest.approx(0.0),
+        "range_high": pytest.approx(413.387),
+    }
+    assert components["other-functional-assets-cost-anchor"]["estimated_range"] == {
+        "range_low": pytest.approx(428.486),
+        "range_high": pytest.approx(735.906),
+    }
+    assert replacement["ordinary_common_equity_range"] is None
+    assert replacement["per_share_range"] is None
+    assert replacement["economic_conclusion"]["replacement_range_status"] == "INCOMPLETE"
+    assert replacement["economic_conclusion"]["claims_bridge_status"] == (
+        "NOT_APPLIED_TO_INCOMPLETE_REPLACEMENT_SCOPE"
+    )
+    assert replacement["epv_cross_check"]["status"] == "NOT_COMPARABLE"
+    assert not any(
+        claim["metric"] == "going_concern_replacement_value_per_share"
+        for claim in compiled["numeric_claims"]
+    )
+
+
+def test_02669_has_no_joint_protection_price_until_replacement_and_epv_are_comparable() -> None:
+    _, compiled = _compiled()
+    ceiling = compiled["valuation_projection"]["replacement_value"][
+        "joint_protection_price_ceiling"
+    ]
+
+    assert ceiling["value"] is None
+    assert ceiling["reason"] == "REPLACEMENT_SCOPE_INCOMPLETE"
+    assert not any(
+        claim["metric"] == "joint_protection_price_ceiling"
+        for claim in compiled["numeric_claims"]
+    )
+
+
+def test_02669_reader_conclusion_states_the_open_boundary_in_investor_language() -> None:
+    _, compiled = _compiled()
+    text = "\n".join(slot["sentence"] for slot in compiled["reader_slots"])
+
+    assert "持续经营重置价值仍有材料性要素未定界" in text
+    assert "当前不能形成两条独立下限同时覆盖的最高价格" in text
+    assert "经常性营运资本占用仍无法可靠定界" in text
+    assert "不以相加或平均补齐" in text
+    for internal_term in (
+        "CUSTOMER_ACQUISITION_CHANNEL",
+        "PROJECT_STARTUP_WORKING_CAPITAL",
+        "OTHER_FUNCTIONAL_ASSET",
+        "P_LONG",
+        "PRIMARY_ROUTE_UNKNOWN",
+        "DATA_COVERAGE",
+        "SCENARIO_ONLY",
+        "RECOGNIZED",
+        "CROSS_CHECK_ONLY",
+    ):
+        assert internal_term not in text

@@ -1,0 +1,463 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://turtle.local/schemas/valuation_value_bridges.schema.json",
+  "title": "Turtle deterministic valuation value bridges",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "model_input",
+    "result",
+    "valuation_projection",
+    "reader_conclusions",
+    "numeric_claims",
+    "reader_slots"
+  ],
+  "properties": {
+    "schema_version": {"const": "valuation-value-bridges.v1"},
+    "model_input": {"$ref": "#/$defs/bridgeInput"},
+    "result": {"$ref": "#/$defs/modelMap"},
+    "valuation_projection": {"$ref": "#/$defs/projectionMap"},
+    "reader_conclusions": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/nonempty"}
+    },
+    "numeric_claims": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/numericClaim"}
+    },
+    "reader_slots": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/readerSlot"}
+    }
+  },
+  "$defs": {
+    "nonempty": {"type": "string", "minLength": 1},
+    "modelObject": {"type": "object"},
+    "valuationContext": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "company_id", "operating_model_id", "position_as_of",
+        "ordinary_share_claim_scope", "valuation_currency",
+        "fx_source_per_valuation_currency", "shares"
+      ],
+      "properties": {
+        "company_id": {"$ref": "#/$defs/nonempty"},
+        "operating_model_id": {"$ref": "#/$defs/nonempty"},
+        "position_as_of": {"$ref": "#/$defs/nonempty"},
+        "ordinary_share_claim_scope": {"$ref": "#/$defs/nonempty"},
+        "valuation_currency": {"$ref": "#/$defs/nonempty"},
+        "fx_source_per_valuation_currency": {"type": "number", "exclusiveMinimum": 0},
+        "shares": {"type": "number", "exclusiveMinimum": 0},
+        "source_fact_ids": {
+          "type": "array",
+          "minItems": 1,
+          "items": {"type": "string", "pattern": "^(OBS|CALC):"}
+        }
+      }
+    },
+    "cashWrapper": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["model_input", "valuation_context"],
+      "properties": {
+        "model_input": {"$ref": "#/$defs/modelObject"},
+        "valuation_context": {"$ref": "#/$defs/valuationContext"}
+      }
+    },
+    "modelWrapper": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["model_input"],
+      "properties": {"model_input": {"$ref": "#/$defs/modelObject"}}
+    },
+    "bridgeInput": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schema_version"],
+      "properties": {
+        "schema_version": {"const": "valuation-value-bridges-input.v1"},
+        "canonical_fact_bindings": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["path", "evidence_id"],
+            "properties": {
+              "path": {"$ref": "#/$defs/nonempty"},
+              "evidence_id": {"type": "string", "pattern": "^(OBS|CALC):"}
+            }
+          }
+        },
+        "cash_accessibility": {"$ref": "#/$defs/cashWrapper"},
+        "ordinary_distribution": {"$ref": "#/$defs/modelWrapper"},
+        "replacement_value": {"$ref": "#/$defs/modelWrapper"},
+        "working_capital": {"$ref": "#/$defs/modelWrapper"}
+      },
+      "anyOf": [
+        {"required": ["cash_accessibility"]},
+        {"required": ["ordinary_distribution"]},
+        {"required": ["replacement_value"]},
+        {"required": ["working_capital"]}
+      ]
+    },
+    "modelMap": {
+      "type": "object",
+      "additionalProperties": false,
+      "minProperties": 1,
+      "properties": {
+        "cash_accessibility": {"$ref": "#/$defs/modelObject"},
+        "ordinary_distribution": {"$ref": "#/$defs/modelObject"},
+        "replacement_value": {"$ref": "#/$defs/modelObject"},
+        "working_capital": {"$ref": "#/$defs/modelObject"}
+      }
+    },
+    "threePointRange": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["low", "base", "high"],
+      "properties": {
+        "low": {"type": "number"},
+        "base": {"type": "number"},
+        "high": {"type": "number"}
+      }
+    },
+    "twoPointRange": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["range_low", "range_high"],
+      "properties": {
+        "range_low": {"type": "number"},
+        "range_high": {"type": "number"}
+      }
+    },
+    "cashComponentProjection": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "amount_range_source_currency",
+        "adopted_amount_source_currency",
+        "per_share_range",
+        "adopted_per_share",
+        "valuation_destination"
+      ],
+      "properties": {
+        "amount_range_source_currency": {"$ref": "#/$defs/threePointRange"},
+        "adopted_amount_source_currency": {"type": "number"},
+        "per_share_range": {"$ref": "#/$defs/threePointRange"},
+        "adopted_per_share": {"type": "number"},
+        "valuation_destination": {"$ref": "#/$defs/nonempty"}
+      }
+    },
+    "cashProjection": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "source_model_id",
+        "company_id",
+        "operating_model_id",
+        "position_as_of",
+        "ordinary_share_claim_scope",
+        "source_currency",
+        "source_unit",
+        "valuation_currency",
+        "fx_source_per_valuation_currency",
+        "shares",
+        "existing_excess_cash",
+        "related_party_receivables",
+        "future_retained_cash"
+      ],
+      "properties": {
+        "source_model_id": {"$ref": "#/$defs/nonempty"},
+        "company_id": {"$ref": "#/$defs/nonempty"},
+        "operating_model_id": {"$ref": "#/$defs/nonempty"},
+        "position_as_of": {"$ref": "#/$defs/nonempty"},
+        "ordinary_share_claim_scope": {"$ref": "#/$defs/nonempty"},
+        "source_currency": {"$ref": "#/$defs/nonempty"},
+        "source_unit": {"$ref": "#/$defs/nonempty"},
+        "valuation_currency": {"$ref": "#/$defs/nonempty"},
+        "fx_source_per_valuation_currency": {"type": "number", "exclusiveMinimum": 0},
+        "shares": {"type": "number", "exclusiveMinimum": 0},
+        "existing_excess_cash": {"$ref": "#/$defs/cashComponentProjection"},
+        "related_party_receivables": {"$ref": "#/$defs/cashComponentProjection"},
+        "future_retained_cash": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["realization_rate_range", "adopted_realization_rate", "valuation_destination"],
+          "properties": {
+            "realization_rate_range": {"$ref": "#/$defs/threePointRange"},
+            "adopted_realization_rate": {"type": "number", "minimum": 0, "maximum": 1},
+            "valuation_destination": {"$ref": "#/$defs/nonempty"}
+          }
+        }
+      }
+    },
+    "replacementProjection": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "source_model_id",
+        "basis",
+        "ordinary_common_equity_range",
+        "per_share_range",
+        "epv_cross_check",
+        "joint_protection_price_ceiling",
+        "economic_conclusion"
+      ],
+      "properties": {
+        "source_model_id": {"$ref": "#/$defs/nonempty"},
+        "basis": {"type": "object"},
+        "ordinary_common_equity_range": {
+          "oneOf": [
+            {"$ref": "#/$defs/twoPointRange"},
+            {"type": "null"}
+          ]
+        },
+        "per_share_range": {
+          "oneOf": [
+            {"$ref": "#/$defs/twoPointRange"},
+            {"type": "null"}
+          ]
+        },
+        "epv_cross_check": {"type": "object"},
+        "joint_protection_price_ceiling": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["value", "currency", "scope", "as_of", "meaning", "reason"],
+          "properties": {
+            "value": {"type": ["number", "null"]},
+            "currency": {"$ref": "#/$defs/nonempty"},
+            "scope": {"$ref": "#/$defs/nonempty"},
+            "as_of": {"$ref": "#/$defs/nonempty"},
+            "meaning": {"const": "highest_price_covered_by_both_independent_lower_bounds"},
+            "reason": {"type": "string"}
+          }
+        },
+        "economic_conclusion": {"type": "object"}
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "economic_conclusion": {
+                "required": ["replacement_range_status"],
+                "properties": {"replacement_range_status": {"const": "AVAILABLE"}}
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "ordinary_common_equity_range": {"$ref": "#/$defs/twoPointRange"},
+              "per_share_range": {"$ref": "#/$defs/twoPointRange"}
+            }
+          },
+          "else": {
+            "properties": {
+              "ordinary_common_equity_range": {"type": "null"},
+              "per_share_range": {"type": "null"}
+            }
+          }
+        }
+      ]
+    },
+    "workingPeriodProjection": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "period_id",
+        "actual_cash_capital_charge",
+        "current_owner_cash",
+        "normalized_owner_cash_range",
+        "adopted_normalized_owner_cash",
+        "recurring_steady_state_charge_range",
+        "adopted_recurring_charge",
+        "adopted_recurring_endpoint",
+        "normalization_status"
+      ],
+      "properties": {
+        "period_id": {"$ref": "#/$defs/nonempty"},
+        "actual_cash_capital_charge": {"type": ["number", "null"]},
+        "current_owner_cash": {"type": ["number", "null"]},
+        "normalized_owner_cash_range": {"type": ["object", "null"]},
+        "adopted_normalized_owner_cash": {"type": ["number", "null"]},
+        "recurring_steady_state_charge_range": {"type": ["object", "null"]},
+        "adopted_recurring_charge": {"type": ["number", "null"]},
+        "adopted_recurring_endpoint": {
+          "enum": ["LOW", "HIGH", "EXACT", "UNKNOWN", "COMPONENT_ENDPOINTS"]
+        },
+        "normalization_status": {"enum": ["BOUNDED", "UNKNOWN"]}
+      }
+    },
+    "ownerEarningsValuationTreatment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "reference_period_id",
+        "owner_cash_basis",
+        "current_owner_cash",
+        "recurring_steady_state_charge_range",
+        "adopted_recurring_charge",
+        "adopted_recurring_endpoint",
+        "normalized_owner_cash_range",
+        "adopted_normalized_owner_cash",
+        "normalization_status",
+        "epv_use",
+        "epv_working_capital_treatment",
+        "terminal_route",
+        "terminal_owner_cash_source",
+        "terminal_working_capital_treatment"
+      ],
+      "properties": {
+        "reference_period_id": {"$ref": "#/$defs/nonempty"},
+        "owner_cash_basis": {"enum": ["REPORTED_OCF", "ACCRUAL_EARNINGS"]},
+        "current_owner_cash": {"type": "number"},
+        "recurring_steady_state_charge_range": {"type": ["object", "null"]},
+        "adopted_recurring_charge": {"type": ["number", "null"]},
+        "adopted_recurring_endpoint": {
+          "enum": ["LOW", "HIGH", "EXACT", "UNKNOWN", "COMPONENT_ENDPOINTS"]
+        },
+        "normalized_owner_cash_range": {"type": ["object", "null"]},
+        "adopted_normalized_owner_cash": {"type": ["number", "null"]},
+        "normalization_status": {"enum": ["BOUNDED", "UNKNOWN"]},
+        "epv_use": {"enum": ["NORMALIZED_OWNER_CASH", "NOT_USED"]},
+        "epv_working_capital_treatment": {
+          "enum": ["STEADY_RECURRING_ONLY", "NOT_APPLICABLE"]
+        },
+        "terminal_route": {"enum": ["CONTINUING", "RUNOFF_OR_LIQUIDATION", "NOT_USED"]},
+        "terminal_owner_cash_source": {
+          "enum": ["NORMALIZED_OWNER_CASH", "STOCK_RELEASE_ONLY", "NOT_APPLICABLE"]
+        },
+        "terminal_working_capital_treatment": {
+          "enum": [
+            "STEADY_RECURRING_AND_TERMINAL_GROWTH_ONLY",
+            "STOCK_RELEASE_ONLY",
+            "NOT_APPLICABLE"
+          ]
+        }
+      }
+    },
+    "workingProjection": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "source_model_id",
+        "basis",
+        "periods",
+        "owner_earnings_valuation_treatment",
+        "valuation_treatment",
+        "double_count_flags",
+        "economic_conclusion"
+      ],
+      "properties": {
+        "source_model_id": {"$ref": "#/$defs/nonempty"},
+        "basis": {"type": "object"},
+        "periods": {"type": "array", "items": {"$ref": "#/$defs/workingPeriodProjection"}},
+        "owner_earnings_valuation_treatment": {
+          "$ref": "#/$defs/ownerEarningsValuationTreatment"
+        },
+        "valuation_treatment": {},
+        "double_count_flags": {},
+        "economic_conclusion": {}
+      }
+    },
+    "ordinaryDistributionProjection": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "source_model_id", "company_id", "as_of", "currency", "unit",
+        "normalized_ordinary_share_operating_earnings",
+        "ordinary_distribution_rate",
+        "distribution_tax_and_collection_friction_rate",
+        "fixed_collection_cost", "after_tax_common_distribution",
+        "valuation_destination"
+      ],
+      "properties": {
+        "source_model_id": {"$ref": "#/$defs/nonempty"},
+        "company_id": {"$ref": "#/$defs/nonempty"},
+        "as_of": {"$ref": "#/$defs/nonempty"},
+        "currency": {"$ref": "#/$defs/nonempty"},
+        "unit": {"$ref": "#/$defs/nonempty"},
+        "normalized_ordinary_share_operating_earnings": {"type": "number", "minimum": 0},
+        "ordinary_distribution_rate": {"type": "number", "minimum": 0, "maximum": 1},
+        "distribution_tax_and_collection_friction_rate": {"type": "number", "minimum": 0, "maximum": 1},
+        "fixed_collection_cost": {"type": "number", "minimum": 0},
+        "after_tax_common_distribution": {"type": "number", "minimum": 0},
+        "valuation_destination": {"const": "ordinary_share_distribution_return"}
+      }
+    },
+    "projectionMap": {
+      "type": "object",
+      "additionalProperties": false,
+      "minProperties": 1,
+      "properties": {
+        "cash_accessibility": {"$ref": "#/$defs/cashProjection"},
+        "ordinary_distribution": {"$ref": "#/$defs/ordinaryDistributionProjection"},
+        "replacement_value": {"$ref": "#/$defs/replacementProjection"},
+        "working_capital": {"$ref": "#/$defs/workingProjection"}
+      }
+    },
+    "numericClaim": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "claim_id",
+        "source_model_id",
+        "metric",
+        "range_low",
+        "range_high",
+        "selected_value",
+        "currency",
+        "unit",
+        "as_of",
+        "scope"
+      ],
+      "properties": {
+        "claim_id": {"$ref": "#/$defs/nonempty"},
+        "source_model_id": {"$ref": "#/$defs/nonempty"},
+        "metric": {"$ref": "#/$defs/nonempty"},
+        "range_low": {"type": "number"},
+        "range_high": {"type": "number"},
+        "selected_value": {"type": ["number", "null"]},
+        "currency": {"$ref": "#/$defs/nonempty"},
+        "unit": {"$ref": "#/$defs/nonempty"},
+        "as_of": {"$ref": "#/$defs/nonempty"},
+        "scope": {"$ref": "#/$defs/nonempty"}
+      }
+    },
+    "readerSlot": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "slot_id", "metric", "target_chapter",
+        "display_variants", "sentence"
+      ],
+      "properties": {
+        "slot_id": {"$ref": "#/$defs/nonempty"},
+        "claim_id": {"$ref": "#/$defs/nonempty"},
+        "claim_ids": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/nonempty"},
+          "uniqueItems": true
+        },
+        "metric": {
+          "enum": [
+            "AFTER_TAX_COMMON_DISTRIBUTION",
+            "CASH_VALUE_BRIDGE_SUMMARY",
+            "WORKING_CAPITAL_NORMALIZATION_SUMMARY",
+            "REPLACEMENT_EPV_CROSS_CHECK"
+          ]
+        },
+        "target_chapter": {"const": 12},
+        "display_variants": {
+          "type": "object"
+        },
+        "sentence": {"$ref": "#/$defs/nonempty"}
+      },
+      "anyOf": [
+        {"required": ["claim_id"]},
+        {"required": ["claim_ids"]}
+      ]
+    }
+  }
+}

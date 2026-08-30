@@ -112,6 +112,12 @@ _INTERNAL_CONTROL_TOKEN_PATTERNS: tuple[tuple[str, re.Pattern[str]], ...] = (
         ),
     ),
 )
+
+
+def _mapping(value: Any) -> dict[str, Any]:
+    return value if isinstance(value, dict) else {}
+
+
 _INTERNAL_CONTROL_PANEL_RE = re.compile(
     r"^\s*(?:[-*]\s*)?"
     r"(?:[a-z][a-z0-9_.-]*_)?(?:ledger|gate|status|validator|validation)"
@@ -194,6 +200,7 @@ def _topic_specs(
     archetype: str,
     *,
     analysis_purpose: str = "INVESTMENT_DECISION",
+    require_replacement_value: bool = False,
 ) -> dict[str, dict[str, Any]]:
     # Each cue group expresses a different part of the economic question.  A
     # paragraph must connect multiple groups; a keyword list by itself is not
@@ -381,6 +388,36 @@ def _topic_specs(
             ],
             "minimum_groups": 2,
             "required_any_groups": ["signal", "settle"],
+        }
+    elif archetype == "property_service" and require_replacement_value:
+        specs["going_concern_replacement_value"] = {
+            "label": "持续经营重置价值与盈利能力交叉核验",
+            "groups": [
+                (
+                    "functional_assets",
+                    (
+                        "客户关系", "区域组织", "获客渠道", "履约记录",
+                        "项目启动", "重置成本", "重建成本", "replacement",
+                    ),
+                ),
+                (
+                    "bounded_value",
+                    ("区间", "下限", "上限", "未知", "未定界", "每股", "range"),
+                ),
+                (
+                    "epv_cross_check",
+                    (
+                        "epv", "盈利能力价值", "交叉核验", "不相加", "不平均",
+                        "cross-check",
+                    ),
+                ),
+                (
+                    "investor_consequence",
+                    ("保护", "安全边际", "价格", "买入", "不认可", "价值"),
+                ),
+            ],
+            "minimum_groups": 3,
+            "required_groups": ["functional_assets", "bounded_value", "epv_cross_check"],
         }
     return specs
 
@@ -596,10 +633,23 @@ def evaluate_reader_coverage(
     source_count = len(_SOURCE_ANCHOR_RE.findall(report_text)) + len(_FOOTNOTE_RE.findall(report_text))
     binding_count = len(_EVIDENCE_BINDING_RE.findall(report_text))
     source_available = bool(source_count or binding_count)
+    value_bridges = _mapping(
+        _load(Path(output_dir) / "valuation_model.json").get("value_bridge_models")
+        if output_dir is not None else {}
+    )
+    reader_slots = [
+        item for item in value_bridges.get("reader_slots") or []
+        if isinstance(item, dict)
+    ]
+    require_replacement_value = isinstance(
+        _mapping(value_bridges.get("result")).get("replacement_value"), dict
+    )
     topics = {
         name: _topic_result(report_text, spec, paragraphs, source_available=source_available)
         for name, spec in _topic_specs(
-            archetype_id, analysis_purpose=purpose
+            archetype_id,
+            analysis_purpose=purpose,
+            require_replacement_value=require_replacement_value,
         ).items()
     }
     blocking = [
@@ -609,6 +659,14 @@ def evaluate_reader_coverage(
         blocking.append("reader_source_anchor_missing")
     if purpose == "INVESTMENT_DECISION":
         blocking.extend(_identity_findings(report_text, output_dir))
+        for slot in reader_slots:
+            slot_id = str(slot.get("slot_id") or "unknown")
+            sentence = str(slot.get("sentence") or "")
+            occurrences = report_text.count(sentence) if sentence else 0
+            if occurrences == 0:
+                blocking.append("reader_numeric_slot_missing:" + slot_id)
+            elif occurrences > 1:
+                blocking.append("reader_numeric_slot_duplicated:" + slot_id)
     blocking.extend(reader_boundary_findings(report_text))
     result = {
         "schema_version": SCHEMA_VERSION,

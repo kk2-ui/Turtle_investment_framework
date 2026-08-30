@@ -16,6 +16,10 @@ from scripts.enterprise_underwriting_episode import (
     validate_price_free_underwriting_thesis_projection,
     validate_underwriting_projection_bundle,
 )
+from scripts.valuation_value_bridges import (
+    compile_valuation_value_bridges,
+    validate_valuation_value_bridges,
+)
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -258,3 +262,88 @@ def test_reader_brief_rejects_unaccepted_or_untranslated_model_results() -> None
             conch,
             {"accepted": True, "reader_conclusions": ["P_LONG为3.20港元。"]},
         )
+
+
+def _ordinary_distribution_bridge() -> dict:
+    fact_ids = ["OBS:EARNINGS", "OBS:DISTRIBUTION", "OBS:FRICTION"]
+    return compile_valuation_value_bridges(
+        {
+            "schema_version": "valuation-value-bridges-input.v1",
+            "ordinary_distribution": {
+                "model_input": {
+                    "schema_version": "ordinary-distribution-input.v1",
+                    "model_id": "DIST:02669:must-not-reach-writer",
+                    "company_id": "02669.HK",
+                    "cutoff_at": "2026-08-11",
+                    "position_as_of": "2025-12-31",
+                    "currency": "RMB",
+                    "unit": "RMB_m",
+                    "verified_facts": [
+                        {"fact_id": fact_id, "status": "VERIFIED"}
+                        for fact_id in fact_ids
+                    ],
+                    "input_fact_ids": fact_ids,
+                    "normalized_ordinary_share_operating_earnings": 896.979630439952,
+                    "ordinary_distribution_rate": 0.35,
+                    "distribution_tax_and_collection_friction_rate": 0.1027,
+                    "fixed_collection_cost": 3.28396046,
+                }
+            },
+        }
+    )
+
+
+def test_value_bridge_reader_brief_exposes_only_safe_slot_surface() -> None:
+    conch = _episode("CN600585_20240501_WORKED_CASE_V1.json")
+    sentence = "税费和收取摩擦后的普通股分配为RMB278.417百万元，即约RMB2.784亿元。"
+    bridge = _ordinary_distribution_bridge()
+
+    brief = compile_golden_report_reader_brief(conch, bridge)
+    serialized = json.dumps(brief, ensure_ascii=False)
+
+    assert brief["deterministic_conclusions"] == [
+        {"target_chapter": 12, "sentence": sentence}
+    ]
+    assert validate_golden_report_reader_brief(brief)["state"] == "REVIEWABLE"
+    for private_value in (
+        "DIST:02669:must-not-reach-writer",
+        "distribution.after_tax_common",
+        "AFTER_TAX_COMMON_DISTRIBUTION",
+        "after_tax_common_distribution",
+        "selected_value",
+        "display_variants",
+        "source_model_id",
+    ):
+        assert private_value not in serialized
+
+    rendered = render_underwriting_readout(conch, bridge)
+    assert rendered.count(sentence) == 1
+    assert "target_chapter" not in rendered
+    assert "AFTER_TAX_COMMON_DISTRIBUTION" not in rendered
+
+
+@pytest.mark.parametrize(
+    "mutate",
+    [
+        lambda value: value.__setitem__("reader_slots", []),
+        lambda value: value["reader_slots"][0].__setitem__(
+            "sentence",
+            "税费和收取摩擦后的普通股分配为RMB278.417百万元，即约RMB2.785亿元。",
+        ),
+    ],
+)
+def test_value_bridge_reader_brief_rejects_missing_or_tampered_slot(mutate) -> None:
+    conch = _episode("CN600585_20240501_WORKED_CASE_V1.json")
+    bridge = _ordinary_distribution_bridge()
+    mutate(bridge)
+
+    validation = validate_valuation_value_bridges(bridge)
+
+    assert validation["state"] == "INVALID"
+    assert "reader_slots_not_deterministic_projection" in validation["findings"]
+
+    with pytest.raises(
+        ValueError,
+        match="deterministic_value_bridges_invalid:reader_slots_not_deterministic_projection",
+    ):
+        compile_golden_report_reader_brief(conch, bridge)

@@ -27,7 +27,15 @@
     },
     "component_judgments": {"type": "array", "items": {"type": "string", "minLength": 1}},
     "reversal_observations": {"type": "array", "items": {"type": "string", "minLength": 1}},
-    "deterministic_conclusions": {"type": "array", "items": {"type": "string", "minLength": 1}},
+    "deterministic_conclusions": {
+      "type": "array",
+      "items": {
+        "oneOf": [
+          {"type": "string", "minLength": 1},
+          {"$ref": "#/$defs/readerSlotSentence"}
+        ]
+      }
+    },
     "accepted_conclusions": {
       "type": "array",
       "items": {
@@ -40,6 +48,17 @@
           "investor_consequence": {"type": "string", "minLength": 1},
           "source_refs": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}}
         }
+      }
+    }
+  },
+  "$defs": {
+    "readerSlotSentence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["target_chapter", "sentence"],
+      "properties": {
+        "target_chapter": {"type": "integer", "minimum": 1},
+        "sentence": {"type": "string", "minLength": 1}
       }
     }
   }

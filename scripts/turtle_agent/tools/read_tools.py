@@ -1713,6 +1713,9 @@ def read_structured_ledger_contract(
             common["rejected_reliability_resume"] = {
                 "candidate_synthesis": rejected_valuation.get("synthesis") or {},
                 "candidate_cash_access_bridge": rejected_valuation.get("cash_access_bridge") or {},
+                "candidate_value_bridge_inputs": (
+                    (rejected_valuation.get("value_bridge_models") or {}).get("model_input") or {}
+                ),
                 "candidate_parameter_calibrations": rejected_valuation.get("parameter_calibrations") or [],
                 "candidate_model_comparisons": rejected_valuation.get("model_comparisons") or [],
                 "candidate_joint_stress_tests": rejected_valuation.get("joint_stress_tests") or [],
@@ -1737,21 +1740,37 @@ def read_structured_ledger_contract(
                     "named by reliability_validation findings; omitted model/synthesis/sections are "
                     "preserved and the merged candidate is fully revalidated. Never use this route to "
                     "silently force a changed synthesis through the frozen decision ledger. When patching "
-                    "models, preserve the exact complete model_id set. A verified parent distributable "
-                    "reserve is not parent cash-location evidence: absent a parent-only cash observation, "
-                    "all cash components must be 100% haircutted and conservative_accessible_cash_amount=0; "
-                    "verified actual_distribution_flow may still support ordinary distributions. For NAV "
+                    "models, preserve the exact complete model_id set. Rebuild value_bridge_inputs from "
+                    "canonical facts: a verified parent distributable reserve is only a legal ceiling; "
+                    "ordinary dividends calibrate future retained-cash distribution, while existing cash "
+                    "requires separately sourced extraordinary realization events. Do not repair with a "
+                    "free haircut_pct. For NAV "
                     "or any kind=not_applicable rate, omit discount_rate_difference_pp; never use a sentinel."
                 ),
             }
         common["decision_reliability_contract"] = {
+            "value_bridge_inputs": (
+                "Use valuation-value-bridges-input.v1 and its canonical model schemas. Cash must "
+                "separate the legal ceiling, extraordinary realization of existing excess cash, ordinary "
+                "distribution of future retained cash, and related-party receivable recovery; 30/50/75% "
+                "free haircuts are forbidden. Working capital must reconcile opening stock, launch and "
+                "steady additions, collections/settlements, permanent loss and noncash scope change by "
+                "period or cohort; an evidence range adopts only a named conservative endpoint, never a "
+                "midpoint. Property-service replacement value separately bounds customer relationships, "
+                "regional organization, acquisition channels, fulfillment record, startup working capital "
+                "and other functional assets. If the reader report presents an after-tax ordinary-share "
+                "distribution amount, submit ordinary_distribution named operands and fact references; the "
+                "deterministic owner model and reader slot compiler own the result, rounding and unit conversion. "
+                "EPV and replacement value may set a joint lower price ceiling "
+                "only by min(their independent lower bounds), never by adding or averaging them. The "
+                "compiler owns per-share conversion and reader numbers. Every submitted numeric operand, "
+                "including zeroes, shares, FX and range endpoints, must have one canonical_fact_bindings "
+                "row that names its exact path and a current VERIFIED OBS:/CALC: identity; that identity "
+                "must already be declared by the operand or its owning model section."
+            ),
             "cash_access_bridge": (
-                "Reconcile gross cash to legal-owner components. Each component needs component_id, "
-                "amount, access_status, legal_distributability, legal_owner_scope, haircut_pct and "
-                "source_ids. Any unverified/restricted/related-party cash receives a 100% haircut in "
-                "primary value. A parent distributable-reserve observation is a legal ceiling, never proof "
-                "that cash sits at the parent. ordinary_distribution_capacity must distinguish "
-                "actual_distribution_flow from legal_reserve_ceiling. Include unresolved and conclusion."
+                "Legacy migration input only. New enforced reports must use value_bridge_inputs.cash_accessibility; "
+                "do not create new haircut_pct rows."
             ),
             "parameter_calibrations": (
                 "One row for every retained_value_realization and moat_decay_pct assumption: model_id, "

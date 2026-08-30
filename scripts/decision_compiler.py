@@ -44,6 +44,10 @@ _BLOCK_RE = re.compile(
     r"(?P<body>.*?)\n<!-- TURTLE:DECISION_BLOCK:Ch(?P=chapter):END -->",
     re.S,
 )
+_VALUE_BRIDGE_BLOCK_RE = re.compile(
+    r"<!-- TURTLE:VALUE_BRIDGE_BLOCK:BEGIN -->[\s\S]*?"
+    r"<!-- TURTLE:VALUE_BRIDGE_BLOCK:END -->"
+)
 _ACTION_SIGNAL = re.compile(r"\d|[<>≤≥=]|买入|减仓|退出|清仓|仓位")
 _REVALUATION_SUBJECTS = (
     "大股东减持", "控股股东减持", "非主业收购", "关联方存款",
@@ -63,6 +67,28 @@ _SEMANTIC_SYMBOLS = {
     "balance_sheet.net_cash_broad": re.compile(r"net[_\s]*cash[_\s]*broad", re.I),
     "balance_sheet.cash_and_bank_balances": re.compile(r"cash[_\s]*and[_\s]*bank[_\s]*balances", re.I),
 }
+_READER_SLOT_METRIC_PATTERNS: dict[str, re.Pattern[str]] = {
+    "AFTER_TAX_COMMON_DISTRIBUTION": re.compile(
+        r"税费后(?:普通股)?分配|税费和收取摩擦后的普通股分配|"
+        r"(?:扣除)?税费.{0,14}(?:普通股(?:东)?(?:分配|预计可收到)|分配)|"
+        r"普通股(?:东)?.{0,14}(?:税费|收款成本|收取摩擦)"
+    ),
+    "CASH_VALUE_BRIDGE_SUMMARY": re.compile(
+        r"现金价值桥|存量超额现金|关联方应收.{0,10}(?:认可|计值)|未来留存现金实现率"
+    ),
+    "WORKING_CAPITAL_NORMALIZATION_SUMMARY": re.compile(
+        r"经常性营运资本(?:占用|现金负担)|正常化所有者现金"
+    ),
+    "REPLACEMENT_EPV_CROSS_CHECK": re.compile(
+        r"持续经营重置价值|共同保护(?:的最高)?价格|重置价值.{0,12}EPV|EPV.{0,12}重置价值"
+    ),
+}
+_READER_SLOT_CURRENCY_AMOUNT_RE = re.compile(
+    r"(?:RMB|人民币)\s*[0-9][0-9,]*(?:\.[0-9]+)?\s*(?:百万元|亿元)|"
+    r"每股\s*(?:RMB|人民币)\s*[0-9][0-9,]*(?:\.[0-9]+)?|"
+    r"(?:实现率|认可率)\s*(?:为|=|：|:)?\s*[0-9][0-9,]*(?:\.[0-9]+)?%",
+    re.I,
+)
 
 
 def _now() -> str:
@@ -589,6 +615,50 @@ def _scan_free_critical_values(
     return invalid
 
 
+def _reader_numeric_slot_metrics(valuation: dict[str, Any]) -> set[str]:
+    bridges = valuation.get("value_bridge_models")
+    if not isinstance(bridges, dict):
+        return set()
+    return {
+        str(item.get("metric") or "")
+        for item in bridges.get("reader_slots") or []
+        if isinstance(item, dict) and str(item.get("metric") or "")
+    }
+
+
+def _scan_free_reader_slot_values(
+    output: Path, *, chapters: tuple[int, ...] | None = None,
+) -> list[str]:
+    """Reject copied model amounts outside compiler-owned value-bridge prose.
+
+    The gate is deliberately metric-specific.  It does not scan ordinary
+    financial facts, arbitrary numbers or every numeric claim; it activates
+    only when the canonical valuation ledger exposes a reader slot whose
+    economic label has a registered narrow pattern.
+    """
+    metrics = _reader_numeric_slot_metrics(_load(output / "valuation_model.json"))
+    if not metrics:
+        return []
+    findings: list[str] = []
+    chapter_dir = _chapter_dir(output)
+    for chapter in chapters if chapters is not None else tuple(range(15)):
+        path = chapter_dir / f"_ch{chapter:02d}.md"
+        if not path.is_file():
+            continue
+        text = _VALUE_BRIDGE_BLOCK_RE.sub("", path.read_text(encoding="utf-8"))
+        text = _BLOCK_RE.sub("", text)
+        for line_number, line in enumerate(text.splitlines(), 1):
+            if not _READER_SLOT_CURRENCY_AMOUNT_RE.search(line):
+                continue
+            for metric in sorted(metrics):
+                pattern = _READER_SLOT_METRIC_PATTERNS.get(metric)
+                if pattern is not None and pattern.search(line):
+                    findings.append(
+                        f"free_reader_numeric_slot:Ch{chapter}:L{line_number}:{metric}"
+                    )
+    return list(dict.fromkeys(findings))
+
+
 def _scan_noncanonical_action_prices(
     output: Path, selected: dict[str, dict[str, Any]], *, chapters: tuple[int, ...] | None = None,
 ) -> list[str]:
@@ -649,6 +719,9 @@ def validate_chapter_decision_bindings(
                 output, selected, chapters=(int(chapter),)
             )
         )
+    invalid.extend(
+        _scan_free_reader_slot_values(output, chapters=(int(chapter),))
+    )
     chapter_path = _chapter_dir(output) / f"_ch{int(chapter):02d}.md"
     if chapter_path.is_file():
         try:
@@ -917,6 +990,7 @@ def validate_compilation(output_dir: str | Path, payload: dict[str, Any] | None 
             if _hash_bytes(matches[0].group(0).encode("utf-8")) != expected_hash:
                 invalid.append(f"protected_block_hash_mismatch:Ch{chapter}")
         invalid.extend(_scan_free_critical_values(output, selected, ledger))
+        invalid.extend(_scan_free_reader_slot_values(output))
         invalid.extend(_scan_noncanonical_action_prices(output, selected))
         invalid.extend(_scan_manifest_action_conflicts(output, manifest))
         invalid.extend(_scan_metric_identity_conflicts(output))
@@ -954,6 +1028,7 @@ def compile_decision_sections(output_dir: str | Path, *, persist: bool = True) -
     action_findings = _market_freshness(selected, policy)
     action_findings.extend(_action_consistency(selected, manifest))
     action_findings.extend(_scan_free_critical_values(output, selected, ledger))
+    action_findings.extend(_scan_free_reader_slot_values(output))
     action_findings.extend(_scan_noncanonical_action_prices(output, selected))
     action_findings.extend(_scan_manifest_action_conflicts(output, manifest))
     action_findings.extend(_scan_metric_identity_conflicts(output))

@@ -35,6 +35,8 @@ HIGH_TERMINAL_SHARE_PCT = 70.0
 _PERPETUITY_MODELS = {"DCF", "DDM", "EPV", "RNPV"}
 _VALUATION_REF_RE = re.compile(r"\[valuation:\s*([A-Za-z0-9_.:@/-]+)\s*\]", re.IGNORECASE)
 _CHAPTER_RE = re.compile(r"^##\s+Ch(\d+)\b", re.MULTILINE)
+_VALUE_BRIDGE_BEGIN = "<!-- TURTLE:VALUE_BRIDGE_BLOCK:BEGIN -->"
+_VALUE_BRIDGE_END = "<!-- TURTLE:VALUE_BRIDGE_BLOCK:END -->"
 
 
 def _now() -> str:
@@ -46,6 +48,10 @@ def _read_json(path: Path) -> dict[str, Any]:
         value = json.loads(path.read_text(encoding="utf-8"))
     except (OSError, json.JSONDecodeError):
         return {}
+    return value if isinstance(value, dict) else {}
+
+
+def _mapping(value: Any) -> dict[str, Any]:
     return value if isinstance(value, dict) else {}
 
 
@@ -65,6 +71,18 @@ def bind_valuation_references(output_dir: str | Path, payload: dict[str, Any]) -
     """Append compiler-owned model anchors without rewriting analytical prose."""
     output = Path(output_dir); chapter_dir = output / "chapters"
     if not chapter_dir.is_dir(): chapter_dir = output
+    compiled_bridges = payload.get("value_bridge_models")
+    if isinstance(compiled_bridges, dict):
+        try:
+            from scripts.valuation_value_bridges import validate_valuation_value_bridges
+        except ModuleNotFoundError:
+            from valuation_value_bridges import validate_valuation_value_bridges
+        bridge_validation = validate_valuation_value_bridges(compiled_bridges)
+        if bridge_validation.get("state") != "VALID":
+            raise ValueError(
+                "value_bridge_reader_binding_invalid:"
+                + ",".join(bridge_validation.get("findings") or [])
+            )
     additions: dict[int, list[str]] = {}
     for model in payload.get("models") or []:
         if not isinstance(model, dict) or model.get("status", "active") != "active": continue
@@ -82,7 +100,67 @@ def bind_valuation_references(output_dir: str | Path, payload: dict[str, Any]) -
         path = chapter_dir / f"_ch{chapter:02d}.md"; text = path.read_text(encoding="utf-8")
         block = "\n\n### Canonical valuation bindings\n\n" + "\n".join(rows) + "\n"
         path.write_text(text.rstrip() + block, encoding="utf-8"); changed.append(chapter)
-    return {"changed_chapters": sorted(changed), "anchors_inserted": sum(map(len, additions.values()))}
+    bridge_surface = _mapping(payload.get("value_bridge_models"))
+    conclusions = bridge_surface.get("reader_conclusions")
+    slots = bridge_surface.get("reader_slots")
+    value_bridge_bound = False
+    reader_rows_by_chapter: dict[int, list[str]] = {}
+    if isinstance(conclusions, list) and conclusions:
+        if not all(isinstance(item, str) and item.strip() for item in conclusions):
+            raise ValueError("value_bridge_reader_binding_invalid:reader_conclusions_invalid")
+        reader_rows_by_chapter[12] = [item.strip() for item in conclusions]
+    if isinstance(slots, list):
+        for index, raw_slot in enumerate(slots):
+            slot = _mapping(raw_slot)
+            chapter = slot.get("target_chapter")
+            sentence = slot.get("sentence")
+            if (
+                not isinstance(chapter, int)
+                or isinstance(chapter, bool)
+                or not isinstance(sentence, str)
+                or not sentence.strip()
+            ):
+                raise ValueError(
+                    f"value_bridge_reader_binding_invalid:reader_slots[{index}]_invalid"
+                )
+            reader_rows_by_chapter.setdefault(chapter, []).append(sentence.strip())
+
+    for chapter, raw_rows in sorted(reader_rows_by_chapter.items()):
+        value_path = chapter_dir / f"_ch{chapter:02d}.md"
+        if not value_path.is_file():
+            raise ValueError(
+                f"value_bridge_reader_binding_invalid:target_chapter_missing:{chapter}"
+            )
+        rows = list(dict.fromkeys(raw_rows))
+        body = "\n".join("- " + item for item in rows)
+        protected = (
+            _VALUE_BRIDGE_BEGIN
+            + "\n### 价值桥的确定性结论\n\n"
+            + body
+            + "\n"
+            + _VALUE_BRIDGE_END
+        )
+        text = value_path.read_text(encoding="utf-8")
+        pattern = re.compile(
+            re.escape(_VALUE_BRIDGE_BEGIN)
+            + r"[\s\S]*?"
+            + re.escape(_VALUE_BRIDGE_END)
+        )
+        rebound = (
+            pattern.sub(protected, text)
+            if pattern.search(text)
+            else text.rstrip() + "\n\n" + protected + "\n"
+        )
+        if rebound != text:
+            value_path.write_text(rebound, encoding="utf-8")
+            changed.append(chapter)
+        value_bridge_bound = True
+    return {
+        "changed_chapters": sorted(set(changed)),
+        "anchors_inserted": sum(map(len, additions.values())),
+        "value_bridge_conclusions_bound": value_bridge_bound,
+        "reader_slots_bound": len(slots) if isinstance(slots, list) else 0,
+    }
 
 
 def promote_reviewable_valuation_model(output_dir: str | Path, *, report_text: str) -> dict[str, Any]:
@@ -128,6 +206,8 @@ def initialize_valuation_model_policy(
     require_decay_treatment: bool = False,
     require_owner_earnings_normalization: bool = False,
     require_holding_period_return_bridge: bool = False,
+    require_value_bridge_models: bool = False,
+    require_value_bridge_fact_bindings: bool = False,
 ) -> dict[str, Any]:
     payload = {
         "schema_version": POLICY_VERSION,
@@ -140,6 +220,8 @@ def initialize_valuation_model_policy(
         "require_decay_treatment": bool(require_decay_treatment),
         "require_owner_earnings_normalization": bool(require_owner_earnings_normalization),
         "require_holding_period_return_bridge": bool(require_holding_period_return_bridge),
+        "require_value_bridge_models": bool(require_value_bridge_models),
+        "require_value_bridge_fact_bindings": bool(require_value_bridge_fact_bindings),
         "created_at": _now(),
     }
     path = Path(output_dir) / "valuation_model_policy.json"
@@ -160,6 +242,7 @@ def build_valuation_model_ledger(
     model_comparisons: list[dict[str, Any]] | None = None,
     joint_stress_tests: list[dict[str, Any]] | None = None,
     action_policy: dict[str, Any] | None = None,
+    value_bridge_inputs: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     output = Path(output_dir)
     contract = _read_json(output / "analysis_contract.json")
@@ -179,6 +262,14 @@ def build_valuation_model_ledger(
         "action_policy": deepcopy(action_policy),
         "generated_at": _now(),
     }
+    if value_bridge_inputs:
+        try:
+            from scripts.valuation_value_bridges import compile_valuation_value_bridges
+        except ModuleNotFoundError:
+            from valuation_value_bridges import compile_valuation_value_bridges
+        payload["value_bridge_models"] = compile_valuation_value_bridges(
+            value_bridge_inputs
+        )
     payload["freeze"] = {
         "frozen": bool(freeze),
         "fingerprint": valuation_fingerprint(payload) if freeze else "",
@@ -414,6 +505,691 @@ def _route_allows(business_type: str, model_type: str) -> bool:
     return model_type in allowed.get(business_type, MODEL_TYPES)
 
 
+def _validate_cash_component_contract(
+    *,
+    payload: dict[str, Any],
+    cash_result: dict[str, Any],
+    cash_projection: dict[str, Any],
+    active_models: list[dict[str, Any]],
+    invalid: list[str],
+    incomplete: list[str],
+) -> None:
+    """Prove that canonical cash enters ordinary-share value exactly once."""
+    component_specs = (
+        (
+            "existing_excess_cash",
+            "cash.existing_excess_cash_per_share",
+        ),
+        (
+            "related_party_receivables",
+            "cash.related_party_receivable_per_share",
+        ),
+    )
+    component_amounts = {
+        claim_id: _num(_mapping(cash_projection.get(projection_key)).get("adopted_per_share"))
+        for projection_key, claim_id in component_specs
+    }
+    expected_ids = sorted(
+        claim_id for claim_id, amount in component_amounts.items()
+        if amount is not None and amount > 0
+    )
+    recognized = sum(component_amounts[claim_id] or 0.0 for claim_id in expected_ids)
+    if recognized <= 0:
+        return
+
+    synthesis = _mapping(payload.get("synthesis"))
+    contract = synthesis.get("cash_component_contract")
+    if not isinstance(contract, dict):
+        incomplete.append("cash_component_contract_missing")
+        return
+    allowed_fields = {
+        "cash_model_id", "company_id", "operating_model_id", "position_as_of",
+        "ordinary_share_claim_scope", "valuation_currency",
+        "fx_source_per_valuation_currency", "shares", "component_claim_ids",
+        "inclusion_location", "canonical_adopted_per_share",
+        "primary_equity_bridge_cash_component_per_share",
+        "separate_component_per_share",
+    }
+    if set(contract) - allowed_fields:
+        invalid.append("cash_component_contract_unknown_fields")
+
+    operating_model_id = str(contract.get("operating_model_id") or "")
+    operating_model = next(
+        (
+            model for model in active_models
+            if str(model.get("model_id") or "") == operating_model_id
+        ),
+        None,
+    )
+    if operating_model is None:
+        invalid.append("cash_component_contract_operating_model_not_active")
+        return
+    basis = _mapping(operating_model.get("basis"))
+    equity_bridge = _mapping(operating_model.get("equity_bridge"))
+    submitted_ids = contract.get("component_claim_ids")
+    if not isinstance(submitted_ids, list) or sorted(submitted_ids) != expected_ids:
+        invalid.append("cash_component_contract_claim_ids_mismatch")
+    identity_checks = {
+        "cash_model_id": cash_result.get("model_id"),
+        "company_id": cash_projection.get("company_id"),
+        "operating_model_id": cash_projection.get("operating_model_id"),
+        "position_as_of": cash_projection.get("position_as_of"),
+        "ordinary_share_claim_scope": cash_projection.get("ordinary_share_claim_scope"),
+        "valuation_currency": cash_projection.get("valuation_currency"),
+    }
+    for field, expected in identity_checks.items():
+        if contract.get(field) != expected:
+            invalid.append("cash_component_contract_" + field + "_mismatch")
+    if not _same(
+        contract.get("fx_source_per_valuation_currency"),
+        cash_projection.get("fx_source_per_valuation_currency"),
+    ):
+        invalid.append("cash_component_contract_fx_mismatch")
+    if not _same(contract.get("shares"), cash_projection.get("shares")):
+        invalid.append("cash_component_contract_shares_mismatch")
+    if basis.get("currency") != cash_projection.get("valuation_currency"):
+        invalid.append("cash_component_contract_operating_currency_mismatch")
+    if basis.get("as_of") != cash_projection.get("position_as_of"):
+        invalid.append("cash_component_contract_operating_as_of_mismatch")
+    if equity_bridge.get("currency") != cash_projection.get("valuation_currency"):
+        invalid.append("cash_component_contract_equity_bridge_currency_mismatch")
+    if equity_bridge.get("ordinary_share_claim_scope") != cash_projection.get(
+        "ordinary_share_claim_scope"
+    ):
+        invalid.append("cash_component_contract_equity_scope_mismatch")
+    if not _same(equity_bridge.get("shares"), cash_projection.get("shares")):
+        invalid.append("cash_component_contract_equity_shares_mismatch")
+    if not _same(contract.get("canonical_adopted_per_share"), recognized):
+        invalid.append("cash_component_contract_canonical_amount_mismatch")
+
+    primary_amount = _num(
+        contract.get("primary_equity_bridge_cash_component_per_share")
+    )
+    separate_amount = _num(contract.get("separate_component_per_share"))
+    equity_cash_amount = _num(equity_bridge.get("cash_component_per_share"))
+    equity_cash_ids = equity_bridge.get("cash_component_claim_ids")
+    location = str(contract.get("inclusion_location") or "")
+    if None in {primary_amount, separate_amount, equity_cash_amount}:
+        invalid.append("cash_component_contract_amounts_invalid")
+        return
+    if not _same(primary_amount + separate_amount, recognized):
+        invalid.append("cash_component_contract_single_inclusion_mismatch")
+
+    # A declared scalar cannot prove that cash actually enters (or stays out
+    # of) the equity bridge.  Reconcile the bridge's non-operating-assets line
+    # to named components, so a cash claim cannot be asserted beside an
+    # unrelated aggregate total.
+    non_operating_assets = _num(equity_bridge.get("non_operating_assets"))
+    asset_components = equity_bridge.get("non_operating_asset_components")
+    if non_operating_assets is None or not isinstance(asset_components, list):
+        incomplete.append("cash_component_contract_non_operating_asset_components_missing")
+        return
+    component_total = 0.0
+    cash_component_total = 0.0
+    cash_component_ids: list[str] = []
+    component_valid = True
+    for index, raw_component in enumerate(asset_components):
+        component = _mapping(raw_component)
+        if set(component) - {"component_id", "kind", "amount", "claim_ids"}:
+            invalid.append(
+                "cash_component_contract_non_operating_asset_component_unknown_fields"
+            )
+            component_valid = False
+            continue
+        amount = _num(component.get("amount"))
+        kind = str(component.get("kind") or "")
+        claim_ids = component.get("claim_ids")
+        if (
+            not str(component.get("component_id") or "").strip()
+            or amount is None
+            or kind not in {"cash", "other"}
+            or not isinstance(claim_ids, list)
+            or not all(isinstance(item, str) and item.strip() for item in claim_ids)
+        ):
+            invalid.append(
+                "cash_component_contract_non_operating_asset_component_invalid:"
+                + str(index)
+            )
+            component_valid = False
+            continue
+        component_total += amount
+        if kind == "cash":
+            cash_component_total += amount
+            cash_component_ids.extend(claim_ids)
+    if component_valid and not _same(component_total, non_operating_assets):
+        invalid.append("cash_component_contract_non_operating_assets_not_component_reconciled")
+
+    if location == "PRIMARY_MODEL_EQUITY_BRIDGE":
+        if (
+            not _same(primary_amount, recognized)
+            or not _same(separate_amount, 0)
+            or not _same(equity_cash_amount, recognized)
+            or not isinstance(equity_cash_ids, list)
+            or sorted(equity_cash_ids) != expected_ids
+        ):
+            invalid.append("cash_component_contract_primary_inclusion_mismatch")
+        if component_valid and (
+            not _same(cash_component_total / float(cash_projection["shares"]), recognized)
+            or sorted(cash_component_ids) != expected_ids
+        ):
+            invalid.append("cash_component_contract_primary_component_amount_mismatch")
+    elif location == "SEPARATE_COMPONENT":
+        if (
+            not _same(primary_amount, 0)
+            or not _same(separate_amount, recognized)
+            or not _same(equity_cash_amount, 0)
+            or equity_cash_ids not in ([], None)
+        ):
+            invalid.append("cash_component_contract_separate_inclusion_mismatch")
+        if component_valid and (not _same(cash_component_total, 0) or cash_component_ids):
+            invalid.append("cash_component_contract_separate_primary_cash_not_zero")
+        bridge = _mapping(synthesis.get("value_realization_bridge"))
+        bridge_amount = _num(bridge.get("cash_component_per_share"))
+        bridge_ids = bridge.get("cash_component_claim_ids")
+        if (
+            bridge.get("method") != "separate_value_components"
+            or not _same(bridge_amount, recognized)
+            or not isinstance(bridge_ids, list)
+            or sorted(bridge_ids) != expected_ids
+        ):
+            invalid.append("cash_component_contract_separate_component_not_claim_bound")
+    else:
+        invalid.append("cash_component_contract_inclusion_location_invalid")
+
+
+def _active_epv_cross_check_values(
+    model: dict[str, Any],
+) -> tuple[dict[str, Any], list[str]]:
+    """Return the only EPV range a replacement cross-check may cite.
+
+    The replacement model may describe an EPV range for comparison, but it
+    does not own that range.  It must be an exact projection of the active
+    EPV model's equity bridge/result rather than a second hand-entered EPV.
+    """
+    findings: list[str] = []
+    result = _mapping(model.get("result"))
+    bridge = _mapping(model.get("equity_bridge"))
+    shares = _num(bridge.get("shares"))
+    low = _num(result.get("range_low"))
+    high = _num(result.get("range_high"))
+    if low is None or high is None:
+        point = _num(result.get("value_per_share"))
+        if point is None:
+            point = _num(bridge.get("per_share_value"))
+        low = point if low is None else low
+        high = point if high is None else high
+    if shares is None or shares <= 0:
+        findings.append("shares_invalid")
+    if low is None or high is None or low > high:
+        findings.append("per_share_range_invalid")
+    if findings:
+        return {}, findings
+    assert shares is not None and low is not None and high is not None
+    return {
+        "shares": shares,
+        "per_share_low": low,
+        "per_share_high": high,
+        "equity_value_low": low * shares,
+        "equity_value_high": high * shares,
+    }, findings
+
+
+_BRIDGE_BINDING_SKIP_KEYS = {"canonical_fact_bindings"}
+_BRIDGE_BINDING_SOURCE_KEYS = {
+    "source_fact_ids",
+    "input_fact_ids",
+    "identity_source_fact_ids",
+    "evidence_ids",
+}
+_BRIDGE_PATH_PART_RE = re.compile(r"([^.\[\]]+)|\[(\d+)\]")
+
+
+def _bridge_numeric_leaves(value: Any, prefix: str = "") -> dict[str, float]:
+    """Return every submitted numeric operand, including explicit zeroes."""
+    leaves: dict[str, float] = {}
+    if isinstance(value, dict):
+        for key, item in value.items():
+            if key in _BRIDGE_BINDING_SKIP_KEYS:
+                continue
+            path = f"{prefix}.{key}" if prefix else str(key)
+            leaves.update(_bridge_numeric_leaves(item, path))
+    elif isinstance(value, list):
+        for index, item in enumerate(value):
+            leaves.update(_bridge_numeric_leaves(item, f"{prefix}[{index}]"))
+    elif isinstance(value, (int, float)) and not isinstance(value, bool):
+        number = _num(value)
+        if number is not None:
+            leaves[prefix] = number
+    return leaves
+
+
+def _bridge_path_nodes(value: Any, path: str) -> list[dict[str, Any]]:
+    """Return mapping ancestors for a submitted bridge operand path."""
+    current: Any = value
+    nodes: list[dict[str, Any]] = [current] if isinstance(current, dict) else []
+    for key, index in _BRIDGE_PATH_PART_RE.findall(path):
+        if key:
+            if not isinstance(current, dict) or key not in current:
+                return []
+            current = current[key]
+        else:
+            if not isinstance(current, list):
+                return []
+            position = int(index)
+            if position >= len(current):
+                return []
+            current = current[position]
+        if isinstance(current, dict):
+            nodes.append(current)
+    return nodes
+
+
+def _bridge_declared_evidence_ids(value: dict[str, Any], path: str) -> set[str]:
+    ids: set[str] = set()
+    for node in _bridge_path_nodes(value, path):
+        for key in _BRIDGE_BINDING_SOURCE_KEYS:
+            ids.update(
+                str(item) for item in node.get(key) or []
+                if isinstance(item, str) and item.strip()
+            )
+        for item in node.get("verified_facts") or []:
+            if isinstance(item, dict) and str(item.get("status") or "").upper() == "VERIFIED":
+                fact_id = str(item.get("fact_id") or "").strip()
+                if fact_id:
+                    ids.add(fact_id)
+    return ids
+
+
+def _bridge_operand_context(
+    bridge_input: dict[str, Any], path: str,
+) -> dict[str, str]:
+    """Derive unit/date/context from the operand's owning specialist model."""
+    parts = [key or index for key, index in _BRIDGE_PATH_PART_RE.findall(path)]
+    if not parts:
+        return {}
+    wrapper_key = parts[0]
+    wrapper = _mapping(bridge_input.get(wrapper_key))
+    model = _mapping(wrapper.get("model_input"))
+    basis = _mapping(model.get("basis"))
+    leaf = str(parts[-1])
+    currency = str(model.get("currency") or basis.get("currency") or "")
+    unit = str(model.get("unit") or basis.get("unit") or "")
+    as_of = str(model.get("position_as_of") or basis.get("as_of") or "")
+    context: dict[str, str] = {
+        "currency": currency,
+        "unit": unit,
+        "as_of": as_of,
+        "economic_entity": str(basis.get("economic_entity") or ""),
+        "operating_perimeter": str(basis.get("operating_perimeter") or ""),
+    }
+    if (
+        leaf.endswith("rate")
+        or leaf == "ordinary_share_economic_interest"
+        or leaf == "fx_source_per_valuation_currency"
+    ):
+        context["unit"] = "ratio"
+        context["currency"] = ""
+    if leaf == "shares":
+        context["unit"] = "million_shares"
+        context["currency"] = ""
+    # Working-capital observations must be period-specific, not copied from
+    # the model's latest balance-sheet date.
+    match = re.match(r"working_capital\.model_input\.periods\[(\d+)\]", path)
+    if match:
+        periods = model.get("periods") or []
+        period = periods[int(match.group(1))] if int(match.group(1)) < len(periods) else {}
+        if isinstance(period, dict):
+            context["period_start"] = str(period.get("period_start") or "")
+            context["period_end"] = str(period.get("period_end") or "")
+            context["as_of"] = context["period_end"] or as_of
+        cohort_match = re.search(r"\.cohorts\[(\d+)\]", path)
+        if cohort_match and isinstance(period, dict):
+            cohorts = period.get("cohorts") or []
+            cohort = cohorts[int(cohort_match.group(1))] if int(cohort_match.group(1)) < len(cohorts) else {}
+            if isinstance(cohort, dict):
+                context["cohort_id"] = str(cohort.get("cohort_id") or "")
+    return context
+
+
+def _validate_value_bridge_fact_bindings(
+    payload: dict[str, Any], output: Path | None,
+    *, required: bool, invalid: list[str], incomplete: list[str],
+) -> None:
+    """Bind every value-bridge numeric operand to current VERIFIED evidence.
+
+    A model's own ``verified_facts`` field is useful provenance, but is not a
+    registry.  This gate resolves the exact operand paths against the current
+    official fact/calculation registries, so a self-declared OBS id or a
+    hand-altered value cannot acquire canonical status.
+    """
+    if not required:
+        return
+    compiled = _mapping(payload.get("value_bridge_models"))
+    model_input = _mapping(compiled.get("model_input"))
+    if not model_input:
+        incomplete.append("value_bridge_fact_bindings_model_input_missing")
+        return
+    bindings = model_input.get("canonical_fact_bindings")
+    if not isinstance(bindings, list):
+        incomplete.append("value_bridge_fact_bindings_missing")
+        return
+    if output is None:
+        incomplete.append("value_bridge_fact_bindings_output_registry_unavailable")
+        return
+    facts = _read_json(output / "fact_observations.json")
+    calculations = _read_json(output / "calculation_observations.json")
+    fact_report_id = str(facts.get("report_id") or "").strip()
+    ledger_report_id = str(payload.get("report_id") or "").strip()
+    if fact_report_id and ledger_report_id and fact_report_id != ledger_report_id:
+        invalid.append("value_bridge_fact_bindings_fact_registry_report_id_mismatch")
+    observations = {
+        str(item.get("observation_id")): item
+        for item in facts.get("observations") or []
+        if isinstance(item, dict) and str(item.get("status") or "").upper() == "VERIFIED"
+    }
+    calculations_by_id = {
+        str(item.get("calculation_id")): item
+        for item in calculations.get("calculations") or []
+        if isinstance(item, dict) and str(item.get("status") or "").upper() == "VERIFIED"
+    }
+    if not observations and not calculations_by_id:
+        incomplete.append("value_bridge_fact_bindings_verified_registry_empty")
+        return
+    operands = _bridge_numeric_leaves(model_input)
+    submitted: dict[str, str] = {}
+    for index, raw in enumerate(bindings):
+        prefix = f"value_bridge_fact_bindings[{index}]"
+        binding = _mapping(raw)
+        if set(binding) - {"path", "evidence_id"}:
+            invalid.append(prefix + ":unknown_fields")
+            continue
+        path = str(binding.get("path") or "")
+        evidence_id = str(binding.get("evidence_id") or "")
+        if not path or not evidence_id:
+            invalid.append(prefix + ":path_or_evidence_id_missing")
+            continue
+        if path in submitted:
+            invalid.append(prefix + ":duplicate_operand_path:" + path)
+            continue
+        submitted[path] = evidence_id
+        if path not in operands:
+            invalid.append(prefix + ":unknown_operand_path:" + path)
+            continue
+        declared = _bridge_declared_evidence_ids(model_input, path)
+        if evidence_id not in declared:
+            invalid.append(prefix + ":evidence_not_declared_at_operand:" + path)
+        source = observations.get(evidence_id) or calculations_by_id.get(evidence_id)
+        if source is None:
+            invalid.append(prefix + ":unknown_or_unverified_evidence:" + evidence_id)
+            continue
+        source_value = _num(
+            source.get("normalized_value")
+            if evidence_id in observations else source.get("value")
+        )
+        if source_value is None or not _same(source_value, operands[path], tolerance=1e-9):
+            invalid.append(prefix + ":numeric_value_mismatch:" + path)
+            continue
+        context = _bridge_operand_context(model_input, path)
+        source_unit = str(source.get("unit") or "")
+        if context.get("unit") and source_unit != context["unit"]:
+            invalid.append(prefix + ":unit_mismatch:" + path)
+        if evidence_id in observations:
+            if context.get("currency") and source.get("currency") != context["currency"]:
+                invalid.append(prefix + ":currency_mismatch:" + path)
+            if context.get("as_of") and source.get("as_of") != context["as_of"]:
+                invalid.append(prefix + ":as_of_mismatch:" + path)
+            measurement = _mapping(source.get("measurement_context"))
+            for field in (
+                "economic_entity", "operating_perimeter", "period_start", "period_end", "cohort_id",
+            ):
+                expected = context.get(field)
+                if expected and measurement.get(field) != expected:
+                    invalid.append(prefix + ":measurement_context_mismatch:" + field)
+    missing = sorted(set(operands) - set(submitted))
+    invalid.extend("value_bridge_fact_bindings_operand_unbound:" + path for path in missing)
+
+
+def _validate_value_bridge_models(
+    payload: dict[str, Any],
+    active_models: list[dict[str, Any]],
+    *,
+    required: bool,
+    route_models: dict[str, dict[str, Any]],
+    invalid: list[str],
+    incomplete: list[str],
+    warnings: list[str],
+) -> None:
+    """Bind fact-derived value bridges to the models that consume them.
+
+    The bridge compiler recomputes all three specialist models.  This gate
+    then checks their economic destinations: cash may enter value only at its
+    calibrated realization, working capital may normalize owner cash once,
+    and replacement value may only cross-check EPV.
+    """
+    compiled = payload.get("value_bridge_models")
+    synthesis = _mapping(payload.get("synthesis"))
+    needs_cash = any(
+        model.get("model_type") == "RETURN_DECOMPOSITION"
+        or "retained_value_realization" in _mapping(model.get("assumptions"))
+        for model in active_models
+    ) or isinstance(synthesis.get("value_realization_bridge"), dict)
+    needs_working_capital = any(
+        model.get("model_type") == "EPV" for model in active_models
+    )
+    compiled_results = _mapping(_mapping(compiled).get("result"))
+    needs_replacement = "REPLACEMENT_VALUE" in route_models or any(
+        model.get("route_model_id") == "REPLACEMENT_VALUE"
+        for model in active_models
+    ) or isinstance(compiled_results.get("replacement_value"), dict) or (
+        _num(synthesis.get("joint_protection_price_ceiling")) is not None
+    )
+    required_keys = {
+        key
+        for key, needed in (
+            ("cash_accessibility", needs_cash),
+            ("working_capital", needs_working_capital),
+            ("replacement_value", needs_replacement),
+        )
+        if required and needed
+    }
+    if not isinstance(compiled, dict):
+        for key in sorted(required_keys):
+            incomplete.append("value_bridge_models_missing:" + key)
+        return
+    bridge_method = str(
+        _mapping(synthesis.get("value_realization_bridge")).get("method") or ""
+    )
+    results = _mapping(compiled.get("result"))
+    if "replacement_value" in results and bridge_method in {
+        "weighted_average", "additive", "sum", "combined"
+    }:
+        invalid.append("replacement_value_epv_cannot_be_weighted_or_added")
+    try:
+        from scripts.valuation_value_bridges import validate_valuation_value_bridges
+    except ModuleNotFoundError:
+        from valuation_value_bridges import validate_valuation_value_bridges
+    validation = validate_valuation_value_bridges(compiled)
+    if validation.get("state") != "VALID":
+        invalid.extend(
+            "value_bridge_models:" + str(finding)
+            for finding in validation.get("findings") or []
+        )
+        return
+    projections = _mapping(compiled.get("valuation_projection"))
+    for key in sorted(required_keys - set(results)):
+        incomplete.append("value_bridge_models_missing:" + key)
+
+    cash = results.get("cash_accessibility")
+    if isinstance(cash, dict):
+        if isinstance(payload.get("cash_access_bridge"), dict):
+            invalid.append("canonical_and_legacy_cash_bridges_mutually_exclusive")
+        adopted_rate = _num(
+            _mapping(cash.get("future_retained_cash_realization")).get(
+                "adopted_realization_rate"
+            )
+        )
+        for model in active_models:
+            assumptions = _mapping(model.get("assumptions"))
+            if model.get("model_type") != "RETURN_DECOMPOSITION" and (
+                "retained_value_realization" not in assumptions
+            ):
+                continue
+            model_id = str(model.get("model_id") or "unknown")
+            submitted = _num(assumptions.get("retained_value_realization"))
+            if submitted is None:
+                incomplete.append(model_id + ":retained_value_realization_missing")
+            elif adopted_rate is None or not _same(submitted, adopted_rate):
+                invalid.append(
+                    model_id + ":retained_value_realization_not_cash_model_derived"
+                )
+        _validate_cash_component_contract(
+            payload=payload,
+            cash_result=cash,
+            cash_projection=_mapping(projections.get("cash_accessibility")),
+            active_models=active_models,
+            invalid=invalid,
+            incomplete=incomplete,
+        )
+
+    working = results.get("working_capital")
+    if isinstance(working, dict):
+        reference = _mapping(working.get("reference_period_result"))
+        adopted_owner_cash = _num(reference.get("adopted_normalized_owner_cash"))
+        reference_period_id = str(reference.get("period_id") or "")
+        working_model_id = str(working.get("model_id") or "")
+        if adopted_owner_cash is None and needs_working_capital:
+            incomplete.append("working_capital_normalized_owner_cash_unknown")
+        for model in active_models:
+            if model.get("model_type") != "EPV":
+                continue
+            model_id = str(model.get("model_id") or "unknown")
+            bridge = _mapping(model.get("normalization_bridge"))
+            if bridge.get("working_capital_model_id") != working_model_id:
+                incomplete.append(model_id + ":working_capital_model_binding_missing")
+            if bridge.get("working_capital_reference_period_id") != reference_period_id:
+                incomplete.append(model_id + ":working_capital_reference_period_mismatch")
+            normalized = _num(bridge.get("normalized_earnings_model_currency"))
+            if (
+                adopted_owner_cash is not None
+                and normalized is not None
+                and not _same(normalized, adopted_owner_cash, tolerance=5e-3)
+            ):
+                invalid.append(model_id + ":normalized_earnings_not_working_capital_derived")
+
+    replacement = results.get("replacement_value")
+    if isinstance(replacement, dict):
+        projection = _mapping(projections.get("replacement_value"))
+        per_share = _mapping(replacement.get("per_share_range"))
+        low = _num(per_share.get("range_low"))
+        high = _num(per_share.get("range_high"))
+        replacement_basis = _mapping(replacement.get("basis"))
+        replacement_models = [
+            model for model in active_models
+            if model.get("route_model_id") == "REPLACEMENT_VALUE"
+        ]
+        if needs_replacement and not replacement_models:
+            incomplete.append("replacement_value_routed_model_missing")
+        for model in replacement_models:
+            model_id = str(model.get("model_id") or "unknown")
+            result = _mapping(model.get("result"))
+            basis = _mapping(model.get("basis"))
+            if model.get("role") != "corroborative":
+                invalid.append(model_id + ":replacement_value_must_be_corroborative")
+            if basis.get("currency") != replacement_basis.get("currency"):
+                invalid.append(model_id + ":replacement_value_currency_mismatch")
+            if basis.get("as_of") != replacement_basis.get("as_of"):
+                invalid.append(model_id + ":replacement_value_as_of_mismatch")
+            if low is None or high is None:
+                if any(
+                    _num(result.get(field)) is not None
+                    for field in ("range_low", "range_high", "value_per_share")
+                ):
+                    invalid.append(
+                        model_id + ":replacement_value_numeric_claim_for_incomplete_scope"
+                    )
+            else:
+                if not _same(result.get("range_low"), low) or not _same(
+                    result.get("range_high"), high
+                ):
+                    invalid.append(model_id + ":replacement_value_range_mismatch")
+                if not _same(result.get("value_per_share"), low):
+                    invalid.append(model_id + ":replacement_value_scalar_must_use_low_endpoint")
+        epv_result = _mapping(replacement.get("epv_cross_check"))
+        replacement_input = _mapping(
+            _mapping(_mapping(compiled).get("model_input")).get("replacement_value")
+        )
+        epv_check = _mapping(_mapping(replacement_input.get("model_input")).get("epv_cross_check"))
+        if epv_result.get("status") == "COMPARABLE":
+            epv_id = str(epv_check.get("model_id") or "")
+            epv_model = next(
+                (
+                    model for model in active_models
+                    if str(model.get("model_id") or "") == epv_id
+                    and model.get("model_type") == "EPV"
+                ),
+                None,
+            )
+            if epv_model is None:
+                invalid.append("replacement_value_epv_cross_check_model_not_active")
+            else:
+                epv_basis = _mapping(epv_model.get("basis"))
+                if (
+                    epv_basis.get("currency") != replacement_basis.get("currency")
+                    or epv_basis.get("as_of") != replacement_basis.get("as_of")
+                ):
+                    invalid.append("replacement_value_epv_cross_check_basis_mismatch")
+                context = _mapping(epv_model.get("cross_check_context"))
+                for field in (
+                    "economic_entity",
+                    "operating_perimeter",
+                    "ordinary_share_claim_scope",
+                ):
+                    if not str(context.get(field) or "").strip():
+                        invalid.append(
+                            "replacement_value_epv_cross_check_context_missing:" + field
+                        )
+                    elif context.get(field) != epv_check.get(field):
+                        invalid.append(
+                            "replacement_value_epv_cross_check_context_mismatch:" + field
+                        )
+                active_values, active_findings = _active_epv_cross_check_values(epv_model)
+                if active_findings:
+                    invalid.extend(
+                        "replacement_value_epv_cross_check_active_epv_" + finding
+                        for finding in active_findings
+                    )
+                else:
+                    for field in (
+                        "shares_outstanding",
+                        "per_share_low",
+                        "per_share_high",
+                        "equity_value_low",
+                        "equity_value_high",
+                    ):
+                        expected_field = {
+                            "shares_outstanding": "shares",
+                        }.get(field, field)
+                        if not _same(epv_check.get(field), active_values[expected_field]):
+                            invalid.append(
+                                "replacement_value_epv_cross_check_not_active_epv_"
+                                + field
+                            )
+        joint_ceiling = _num(
+            _mapping(projection.get("joint_protection_price_ceiling")).get("value")
+        )
+        synthesis_ceiling = _num(
+            _mapping(payload.get("synthesis")).get("joint_protection_price_ceiling")
+        )
+        if joint_ceiling is None:
+            if synthesis_ceiling is not None:
+                invalid.append("synthesis_joint_protection_price_not_supported")
+            warnings.append("replacement_value_joint_protection_price_unresolved")
+        elif synthesis_ceiling is None:
+            incomplete.append("synthesis_joint_protection_price_ceiling_missing")
+        elif not _same(joint_ceiling, synthesis_ceiling):
+            invalid.append("synthesis_joint_protection_price_ceiling_mismatch")
+
+
 def validate_valuation_model_ledger(
     payload: dict[str, Any], *, output_dir: str | Path | None = None, report_text: str = "",
     enforced: bool = False, min_independent_groups: int = 2,
@@ -422,6 +1198,8 @@ def validate_valuation_model_ledger(
     require_decay_treatment: bool | None = None,
     require_owner_earnings_normalization: bool | None = None,
     require_holding_period_return_bridge: bool | None = None,
+    require_value_bridge_models: bool | None = None,
+    require_value_bridge_fact_bindings: bool | None = None,
 ) -> dict[str, Any]:
     invalid: list[str] = []
     incomplete: list[str] = []
@@ -463,6 +1241,12 @@ def validate_valuation_model_ledger(
         require_owner_earnings_normalization = bool(model_policy.get("require_owner_earnings_normalization"))
     if require_holding_period_return_bridge is None:
         require_holding_period_return_bridge = bool(model_policy.get("require_holding_period_return_bridge"))
+    if require_value_bridge_models is None:
+        require_value_bridge_models = bool(model_policy.get("require_value_bridge_models"))
+    if require_value_bridge_fact_bindings is None:
+        require_value_bridge_fact_bindings = bool(
+            model_policy.get("require_value_bridge_fact_bindings")
+        )
     route_policy = _read_json(output / "valuation_route_policy.json") if output is not None else {}
     route = _read_json(output / "valuation_route.json") if output is not None else {}
     route_enforced = bool(route_policy.get("enforced"))
@@ -616,7 +1400,22 @@ def validate_valuation_model_ledger(
         result = model.get("result")
         if not isinstance(result, dict): invalid.append(f"{mid}:result_invalid"); result = {}
         value = _num(result.get("value_per_share"))
-        if value is None or value <= 0: invalid.append(f"{mid}:value_per_share_invalid")
+        canonical_replacement = _mapping(
+            _mapping(_mapping(payload.get("value_bridge_models")).get("result")).get(
+                "replacement_value"
+            )
+        )
+        replacement_scope_incomplete = (
+            route_model_id == "REPLACEMENT_VALUE"
+            and role == "corroborative"
+            and _mapping(canonical_replacement.get("economic_conclusion")).get(
+                "replacement_range_status"
+            ) != "AVAILABLE"
+            and canonical_replacement.get("per_share_range") is None
+        )
+        if value is None or value <= 0:
+            if not replacement_scope_incomplete:
+                invalid.append(f"{mid}:value_per_share_invalid")
         if role == "primary" and mtype == "EPV" and require_normalization_bridge:
             invalid.extend(_validate_normalization_bridge(mid, model, basis, result))
         if role == "primary" and mtype == "EPV" and require_owner_earnings_normalization:
@@ -695,6 +1494,23 @@ def validate_valuation_model_ledger(
         for ref in refs or []:
             if output is not None and str(ref) not in decisions: invalid.append(f"{mid}:unknown_decision_entry:{ref}")
 
+    _validate_value_bridge_models(
+        payload,
+        active,
+        required=bool(require_value_bridge_models) and not valuation_unresolved,
+        route_models=route_models,
+        invalid=invalid,
+        incomplete=incomplete,
+        warnings=warnings,
+    )
+    _validate_value_bridge_fact_bindings(
+        payload,
+        output,
+        required=bool(require_value_bridge_fact_bindings) and not valuation_unresolved,
+        invalid=invalid,
+        incomplete=incomplete,
+    )
+
     primary = [m for m in active if m.get("role") == "primary"]
     if route_enforced:
         submitted_rejected = {
@@ -746,6 +1562,15 @@ def validate_valuation_model_ledger(
         str(m.get("model_id")): _num((m.get("result") or {}).get("value_per_share"))
         for m in active
     }
+    cash_projection = _mapping(
+        _mapping(
+            _mapping(payload.get("value_bridge_models")).get("valuation_projection")
+        ).get("cash_accessibility")
+    )
+    recognized_cash_per_share = sum(
+        _num(_mapping(cash_projection.get(component)).get("adopted_per_share")) or 0.0
+        for component in ("existing_excess_cash", "related_party_receivables")
+    )
     if chosen is not None and not any(_same(chosen, value) for value in primary_values.values()):
         synthesis_bridge = synthesis.get("value_realization_bridge")
         if not isinstance(synthesis_bridge, dict):
@@ -786,21 +1611,39 @@ def validate_valuation_model_ledger(
                 # EPV is the value of the existing earning machine.  Missing
                 # proof of high-return retention can eliminate only the
                 # incremental growth component; it must not make the whole
-                # operating value dividend-only.  Cash remains zero here until
-                # it is reconciled separately to the audited cash bridge.
+                # operating value dividend-only.  Existing cash and related
+                # receivables enter exactly once at their canonical adopted
+                # per-share amounts, or remain inside the primary equity bridge.
                 model_id = str(synthesis_bridge.get("operating_model_id") or "")
                 operating = _num(synthesis_bridge.get("operating_value_per_share"))
                 retained_growth = _num(synthesis_bridge.get("retained_growth_per_share"))
                 realization = _num(synthesis_bridge.get("retained_growth_realization"))
                 accessible_cash = _num(synthesis_bridge.get("accessible_cash_per_share"))
+                cash_location = str(synthesis_bridge.get("cash_inclusion_location") or "")
+                cash_contract = _mapping(synthesis.get("cash_component_contract"))
+                contract_location = str(cash_contract.get("inclusion_location") or "")
+                expected_separate_cash = 0.0
+                cash_location_valid = True
+                if recognized_cash_per_share > 0:
+                    expected_separate_cash = (
+                        _num(cash_contract.get("separate_component_per_share")) or 0.0
+                    )
+                    if cash_location != contract_location:
+                        cash_location_valid = False
+                elif cash_location not in {"", "NONE", "SEPARATE_COMPONENT"}:
+                    cash_location_valid = False
                 if (
                     primary_values.get(model_id) is None
                     or not _same(operating, primary_values.get(model_id))
                     or None in {operating, retained_growth, realization, accessible_cash}
                     or retained_growth < 0
                     or not 0 <= realization <= 1
-                    or not _same(accessible_cash, 0.0)
-                    or not _same(operating + retained_growth * realization, chosen)
+                    or not cash_location_valid
+                    or not _same(accessible_cash, expected_separate_cash)
+                    or not _same(
+                        operating + retained_growth * realization + accessible_cash,
+                        chosen,
+                    )
                 ):
                     invalid.append("synthesis_separate_components_bridge_arithmetic_mismatch")
                 elif retained_growth > 0 and not (
@@ -857,6 +1700,7 @@ def record_rejected_valuation_candidate(
         section_count = sum(bool(candidate.get(key)) for key in (
             "company_profile", "models", "synthesis", "cash_access_bridge",
             "parameter_calibrations", "model_comparisons", "joint_stress_tests", "action_policy",
+            "value_bridge_models",
         )) if isinstance(candidate, dict) else 0
         structural_invalid = list(structural.get("invalid_findings") or [])
         structural_incomplete = list(structural.get("incomplete_findings") or [])
@@ -877,7 +1721,7 @@ def record_rejected_valuation_candidate(
             "schema_version": "valuation-rejected-candidate.v1", "candidate": candidate,
             "structural_validation": structural, "reliability_validation": reliability,
             "score": [
-                0 if model_count else 1, 8 - section_count, substantive_count,
+                0 if model_count else 1, 9 - section_count, substantive_count,
                 len(reliability_invalid) + len(reliability_incomplete),
                 sum(item in decision_revision for item in structural_invalid),
                 len(structural_invalid) + len(structural_incomplete),

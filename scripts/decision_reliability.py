@@ -23,7 +23,10 @@ VALIDATION_VERSION = "decision-reliability-validation.v1"
 ACCESS_STATES = {"VERIFIED_ACCESSIBLE", "CONDITIONAL", "RESTRICTED", "RELATED_PARTY", "UNVERIFIED"}
 DISTRIBUTABILITY_STATES = {"VERIFIED", "CONDITIONAL", "NOT_VERIFIED"}
 CALIBRATION_METHODS = {"empirical", "historical_base_rate", "conservative_bound", "working_assumption"}
-ALLOWED_MODEL_USES = {"corroboration", "distribution_floor", "upper_bound", "stress", "diagnostic"}
+ALLOWED_MODEL_USES = {
+    "corroboration", "cross_check_only", "distribution_floor", "upper_bound",
+    "stress", "diagnostic",
+}
 ACTIONS = {"buy", "hold", "avoid"}
 
 
@@ -36,6 +39,10 @@ def _load(path: Path) -> dict[str, Any]:
         value = json.loads(path.read_text(encoding="utf-8"))
     except (OSError, json.JSONDecodeError):
         return {}
+    return value if isinstance(value, dict) else {}
+
+
+def _mapping(value: Any) -> dict[str, Any]:
     return value if isinstance(value, dict) else {}
 
 
@@ -78,7 +85,10 @@ def _cash_question_selected(output: Path, valuation: dict[str, Any]) -> bool:
         return True
     return any(
         isinstance(model, dict)
-        and "retained_value_realization" in (model.get("assumptions") or {})
+        and (
+            model.get("model_type") == "RETURN_DECOMPOSITION"
+            or "retained_value_realization" in _mapping(model.get("assumptions"))
+        )
         for model in valuation.get("models") or []
     )
 
@@ -134,6 +144,47 @@ def _validate_cash_bridge(
     verified_ids: set[str], verified_fact_names: dict[str, str],
     invalid: list[str], incomplete: list[str], warnings: list[str],
 ) -> None:
+    canonical = _mapping(
+        _mapping(_mapping(valuation.get("value_bridge_models")).get("result")).get(
+            "cash_accessibility"
+        )
+    )
+    if canonical:
+        fact_ids = canonical.get("input_fact_ids") or []
+        unknown = [str(item) for item in fact_ids if str(item) not in verified_ids]
+        if unknown:
+            invalid.append(
+                "cash_accessibility_model:source_ids_unverified:" + "|".join(unknown)
+            )
+        future = _mapping(canonical.get("future_retained_cash_realization"))
+        adopted_rate = _num(future.get("adopted_realization_rate"))
+        for model in valuation.get("models") or []:
+            if not isinstance(model, dict) or model.get("status", "active") != "active":
+                continue
+            assumptions = _mapping(model.get("assumptions"))
+            if (
+                model.get("model_type") != "RETURN_DECOMPOSITION"
+                and "retained_value_realization" not in assumptions
+            ):
+                continue
+            submitted = _num(assumptions.get("retained_value_realization"))
+            if submitted is None:
+                incomplete.append(
+                    f"cash_accessibility_model:{model.get('model_id')}:retained_value_realization_missing"
+                )
+            elif adopted_rate is None or not _same(submitted, adopted_rate):
+                invalid.append(
+                    f"cash_accessibility_model:{model.get('model_id')}:retained_value_realization_mismatch"
+                )
+        if _num(
+            _mapping(canonical.get("existing_excess_cash_realization")).get(
+                "adopted_value"
+            )
+        ) == 0:
+            warnings.append(
+                "cash_accessibility_model:no_existing_cash_admitted_to_primary_value"
+            )
+        return
     bridge = valuation.get("cash_access_bridge")
     if not isinstance(bridge, dict):
         if required:
@@ -351,6 +402,30 @@ def _validate_calibrations(
                 invalid.append(prefix + ":not_set_to_conservative_bound")
         if method == "working_assumption" and row.get("decision_use") == "primary":
             invalid.append(prefix + ":uncalibrated_working_assumption_cannot_drive_primary")
+        if parameter == "retained_value_realization":
+            canonical_cash = _mapping(
+                _mapping(_mapping(valuation.get("value_bridge_models")).get("result")).get(
+                    "cash_accessibility"
+                )
+            )
+            canonical_future = _mapping(
+                canonical_cash.get("future_retained_cash_realization")
+            )
+            canonical_range = _mapping(canonical_future.get("realization_rate_range"))
+            canonical_low = _num(canonical_range.get("low"))
+            canonical_high = _num(canonical_range.get("high"))
+            canonical_value = _num(canonical_future.get("adopted_realization_rate"))
+            if canonical_cash and (
+                canonical_value is None
+                or canonical_low is None
+                or canonical_high is None
+                or not _same(value, canonical_value)
+                or not _same(low, canonical_low)
+                or not _same(high, canonical_high)
+            ):
+                invalid.append(prefix + ":not_cash_accessibility_model_derived")
+            if canonical_cash and method == "working_assumption":
+                invalid.append(prefix + ":cash_model_cannot_be_working_assumption")
         sensitivity = row.get("sensitivity")
         if not isinstance(sensitivity, dict) or not sensitivity.get("action_at_low") or not sensitivity.get("action_at_high"):
             incomplete.append(prefix + ":two_sided_action_sensitivity_missing")
@@ -379,7 +454,14 @@ def _validate_model_comparability(
     for mid, model in models.items():
         if mid in primary_ids:
             continue
-        against = next((pid for pid in primary_ids if (mid, pid) in pairs), "")
+        if str(model.get("route_model_id") or "") == "REPLACEMENT_VALUE":
+            epv_primary_ids = [
+                pid for pid in primary_ids
+                if str((models.get(pid) or {}).get("model_type") or "") == "EPV"
+            ]
+            against = next((pid for pid in epv_primary_ids if (mid, pid) in pairs), "")
+        else:
+            against = next((pid for pid in primary_ids if (mid, pid) in pairs), "")
         prefix = f"model_comparison:{mid}"
         if not against:
             incomplete.append(prefix + ":primary_comparison_missing")
@@ -391,6 +473,26 @@ def _validate_model_comparability(
         if not str(row.get("basis_differences") or "").strip():
             incomplete.append(prefix + ":basis_differences_missing")
         primary = models[against]
+        replacement_epv_pair = (
+            str(model.get("route_model_id") or "") == "REPLACEMENT_VALUE"
+            and str(primary.get("model_type") or "") == "EPV"
+        )
+        if replacement_epv_pair and use != "cross_check_only":
+            invalid.append(prefix + ":replacement_epv_must_be_cross_check_only")
+        if use == "cross_check_only" and not replacement_epv_pair:
+            invalid.append(prefix + ":cross_check_only_reserved_for_replacement_epv")
+        if replacement_epv_pair:
+            replacement_result = _mapping(
+                _mapping(_mapping(valuation.get("value_bridge_models")).get("result")).get(
+                    "replacement_value"
+                )
+            )
+            comparable = (
+                _mapping(replacement_result.get("epv_cross_check")).get("status")
+                == "COMPARABLE"
+            )
+            if bool(row.get("comparable")) != comparable:
+                invalid.append(prefix + ":replacement_epv_comparability_mismatch")
         rate_contract = (model.get("assumptions") or {}).get("discount_rate") or {}
         primary_rate_contract = (primary.get("assumptions") or {}).get("discount_rate") or {}
         rate = _num(rate_contract.get("value_pct"))
@@ -731,6 +833,18 @@ def validate_decision_reliability(
         verified_ids = _verified_source_ids(output)
         verified_fact_names = _verified_fact_names(output)
         cash_required = _cash_question_selected(output, valuation)
+        bridge_policy = _load(output / "valuation_model_policy.json")
+        canonical_cash = _mapping(
+            _mapping(_mapping(valuation.get("value_bridge_models")).get("result")).get(
+                "cash_accessibility"
+            )
+        )
+        if (
+            cash_required
+            and bridge_policy.get("require_value_bridge_models") is True
+            and not canonical_cash
+        ):
+            incomplete.append("cash_accessibility_model_missing")
         _validate_cash_bridge(
             valuation, required=cash_required,
             verified_ids=verified_ids, verified_fact_names=verified_fact_names,

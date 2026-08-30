@@ -29,6 +29,7 @@
         "currency": {"type": ["string", "null"]},
         "basis": {"type": "string", "minLength": 1},
         "as_of": {"type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}$"},
+        "measurement_context": {"$ref": "#/$defs/measurement_context"},
         "doc_id": {"type": "string", "pattern": "^DOC:"},
         "locator": {
           "type": "object",
@@ -51,6 +52,31 @@
         "status": {"enum": ["CANDIDATE", "VERIFIED", "REJECTED", "CONFLICT"]},
         "confidence": {"type": "number", "minimum": 0, "maximum": 1},
         "conflict_ids": {"type": "array", "items": {"type": "string", "pattern": "^OBS:"}}
+      }
+    },
+    "measurement_context": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "period_start": {"type": ["string", "null"], "pattern": "^\\d{4}-\\d{2}-\\d{2}$"},
+        "period_end": {"type": ["string", "null"], "pattern": "^\\d{4}-\\d{2}-\\d{2}$"},
+        "economic_entity": {"type": ["string", "null"]},
+        "operating_perimeter": {"type": ["string", "null"]},
+        "cohort_id": {"type": ["string", "null"]},
+        "project_id": {"type": ["string", "null"]},
+        "customer_scope": {"type": ["string", "null"]},
+        "batch_id": {"type": ["string", "null"]},
+        "stock_flow_role": {
+          "enum": [
+            "OPENING_STOCK", "CLOSING_STOCK", "GROWTH_LAUNCH_ADDITION",
+            "STEADY_ROLLOVER_ADDITION", "COLLECTION_OR_SETTLEMENT",
+            "PERMANENT_LOSS", "NONCASH_SCOPE_CHANGE", null
+          ]
+        },
+        "settlement_status": {"type": ["string", "null"]},
+        "loss_treatment": {
+          "enum": ["RECURRING_EXPECTED", "ONE_OFF_PERMANENT", "NO_LOSS", "UNKNOWN", null]
+        }
       }
     },
     "validation": {

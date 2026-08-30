@@ -46,6 +46,42 @@ def test_reader_coverage_accepts_unknown_with_economic_boundary(tmp_path: Path) 
     assert any(item["unknown_closure"] for item in boundary["evidence"])
 
 
+def test_reader_coverage_requires_each_compiler_owned_numeric_sentence_once(
+    tmp_path: Path,
+) -> None:
+    sentence = (
+        "税费和收取摩擦后的普通股分配为RMB278.417百万元，"
+        "即约RMB2.784亿元。"
+    )
+    (tmp_path / "valuation_model.json").write_text(
+        json.dumps({
+            "value_bridge_models": {
+                "reader_slots": [{
+                    "slot_id": "after_tax_common_distribution",
+                    "metric": "AFTER_TAX_COMMON_DISTRIBUTION",
+                    "sentence": sentence,
+                }],
+            },
+        }, ensure_ascii=False),
+        encoding="utf-8",
+    )
+
+    missing = evaluate_reader_coverage(_paragraphs(), tmp_path)
+    present = evaluate_reader_coverage(_paragraphs() + "\n\n" + sentence, tmp_path)
+    duplicated = evaluate_reader_coverage(
+        _paragraphs() + "\n\n" + sentence + "\n\n" + sentence,
+        tmp_path,
+    )
+
+    assert "reader_numeric_slot_missing:after_tax_common_distribution" in (
+        missing["blocking_findings"]
+    )
+    assert present["status"] == "PASS"
+    assert "reader_numeric_slot_duplicated:after_tax_common_distribution" in (
+        duplicated["blocking_findings"]
+    )
+
+
 def test_industry_future_requires_a_directional_company_transmission(
     tmp_path: Path,
 ) -> None:

@@ -1,0 +1,277 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://turtle.local/schemas/replacement_value_model.schema.json",
+  "title": "Turtle Going-Concern Replacement Value Model",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "model_id",
+    "company_id",
+    "model_context",
+    "basis",
+    "components",
+    "claims_bridge",
+    "liquidation_floor_reference",
+    "epv_cross_check"
+  ],
+  "properties": {
+    "schema_version": {"const": "replacement-value-model.v1"},
+    "model_id": {"type": "string", "minLength": 1},
+    "company_id": {"type": "string", "minLength": 1},
+    "model_context": {"$ref": "#/$defs/model_context"},
+    "basis": {"$ref": "#/$defs/replacement_basis"},
+    "components": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"$ref": "#/$defs/component"}
+    },
+    "claims_bridge": {"$ref": "#/$defs/claims_bridge"},
+    "liquidation_floor_reference": {"$ref": "#/$defs/liquidation_floor_reference"},
+    "epv_cross_check": {"$ref": "#/$defs/epv_cross_check"}
+  },
+  "$defs": {
+    "nonempty": {"type": "string", "minLength": 1},
+    "nullable_number": {"type": ["number", "null"]},
+    "range": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["range_low", "range_high"],
+      "properties": {
+        "range_low": {"type": "number"},
+        "range_high": {"type": "number"}
+      }
+    },
+    "model_context": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["purpose", "parameter_transfer_policy"],
+      "properties": {
+        "purpose": {"enum": ["COMPANY_ANALYSIS", "METHOD_FIXTURE"]},
+        "method_fixture_id": {"type": "string"},
+        "parameter_transfer_policy": {
+          "enum": [
+            "COMPANY_SPECIFIC_EVIDENCE_ONLY",
+            "METHOD_FIXTURE_PARAMETERS_NON_TRANSFERABLE"
+          ]
+        }
+      },
+      "allOf": [
+        {
+          "if": {"properties": {"purpose": {"const": "METHOD_FIXTURE"}}},
+          "then": {
+            "required": ["method_fixture_id"],
+            "properties": {
+              "method_fixture_id": {"minLength": 1},
+              "parameter_transfer_policy": {"const": "METHOD_FIXTURE_PARAMETERS_NON_TRANSFERABLE"}
+            }
+          },
+          "else": {
+            "properties": {
+              "parameter_transfer_policy": {"const": "COMPANY_SPECIFIC_EVIDENCE_ONLY"}
+            }
+          }
+        }
+      ]
+    },
+    "replacement_basis": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "valuation_basis",
+        "value_scope",
+        "economic_entity",
+        "operating_perimeter",
+        "ordinary_share_claim_scope",
+        "currency",
+        "unit",
+        "as_of"
+      ],
+      "properties": {
+        "valuation_basis": {"const": "GOING_CONCERN_REPLACEMENT"},
+        "value_scope": {"const": "enterprise"},
+        "economic_entity": {"$ref": "#/$defs/nonempty"},
+        "operating_perimeter": {"$ref": "#/$defs/nonempty"},
+        "ordinary_share_claim_scope": {"$ref": "#/$defs/nonempty"},
+        "currency": {"$ref": "#/$defs/nonempty"},
+        "unit": {"$ref": "#/$defs/nonempty"},
+        "as_of": {"$ref": "#/$defs/nonempty"}
+      }
+    },
+    "component_input": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "input_id",
+        "metric",
+        "range_low",
+        "range_high",
+        "unit",
+        "basis",
+        "evidence_ids",
+        "parameter_scope"
+      ],
+      "properties": {
+        "input_id": {"$ref": "#/$defs/nonempty"},
+        "metric": {"$ref": "#/$defs/nonempty"},
+        "range_low": {"type": "number", "minimum": 0},
+        "range_high": {"type": "number", "minimum": 0},
+        "unit": {"$ref": "#/$defs/nonempty"},
+        "basis": {"$ref": "#/$defs/nonempty"},
+        "evidence_ids": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {"$ref": "#/$defs/nonempty"}
+        },
+        "parameter_scope": {"enum": ["COMPANY_SPECIFIC", "METHOD_FIXTURE_ONLY"]}
+      }
+    },
+    "calculation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["method", "output_unit", "inputs"],
+      "properties": {
+        "method": {
+          "enum": [
+            "DIRECT_RANGE",
+            "SUM_OF_INPUT_RANGES",
+            "PRODUCT_OF_INPUT_RANGES",
+            "UNAVAILABLE"
+          ]
+        },
+        "output_unit": {"$ref": "#/$defs/nonempty"},
+        "inputs": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/component_input"}
+        }
+      }
+    },
+    "recognition": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "method", "reason"],
+      "properties": {
+        "status": {"enum": ["RECOGNIZED", "SCENARIO_ONLY", "EXCLUDED", "UNKNOWN"]},
+        "method": {"enum": ["FULL", "FRACTION_OF_ESTIMATED_RANGE", "NOT_APPLICABLE"]},
+        "fraction_low": {"type": "number", "minimum": 0, "maximum": 1},
+        "fraction_high": {"type": "number", "minimum": 0, "maximum": 1},
+        "reason": {"$ref": "#/$defs/nonempty"}
+      }
+    },
+    "uncertainty_treatment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["boundary", "investor_consequence", "promotion_evidence"],
+      "properties": {
+        "boundary": {"$ref": "#/$defs/nonempty"},
+        "investor_consequence": {"$ref": "#/$defs/nonempty"},
+        "promotion_evidence": {"$ref": "#/$defs/nonempty"}
+      }
+    },
+    "double_count_treatment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["balance_sheet_working_capital", "epv_maintenance_need", "explanation"],
+      "properties": {
+        "balance_sheet_working_capital": {
+          "enum": ["NOT_INCLUDED", "NETTED", "ALREADY_INCLUDED_EXCLUDED", "UNKNOWN_SCENARIO_ONLY"]
+        },
+        "epv_maintenance_need": {
+          "enum": ["NOT_INCLUDED", "NETTED", "ALREADY_INCLUDED_EXCLUDED", "UNKNOWN_SCENARIO_ONLY"]
+        },
+        "explanation": {"$ref": "#/$defs/nonempty"}
+      }
+    },
+    "component": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "component_id",
+        "component_type",
+        "economic_function",
+        "estimate_status",
+        "calculation",
+        "recognition"
+      ],
+      "properties": {
+        "component_id": {"$ref": "#/$defs/nonempty"},
+        "component_type": {
+          "enum": [
+            "CUSTOMER_RELATIONSHIP",
+            "REGIONAL_OPERATING_ORGANIZATION",
+            "CUSTOMER_ACQUISITION_CHANNEL",
+            "FULFILLMENT_OR_PROJECT_TRACK_RECORD",
+            "PROJECT_STARTUP_WORKING_CAPITAL",
+            "OTHER_FUNCTIONAL_ASSET"
+          ]
+        },
+        "economic_function": {"$ref": "#/$defs/nonempty"},
+        "estimate_status": {"enum": ["BOUNDED", "SCENARIO_ONLY", "UNKNOWN"]},
+        "calculation": {"$ref": "#/$defs/calculation"},
+        "recognition": {"$ref": "#/$defs/recognition"},
+        "uncertainty_treatment": {"$ref": "#/$defs/uncertainty_treatment"},
+        "double_count_treatment": {"$ref": "#/$defs/double_count_treatment"}
+      }
+    },
+    "claims_bridge": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "non_operating_assets",
+        "debt",
+        "minority_interest",
+        "other_priority_claims",
+        "other_adjustments",
+        "shares_outstanding"
+      ],
+      "properties": {
+        "non_operating_assets": {"$ref": "#/$defs/range"},
+        "debt": {"$ref": "#/$defs/range"},
+        "minority_interest": {"$ref": "#/$defs/range"},
+        "other_priority_claims": {"$ref": "#/$defs/range"},
+        "other_adjustments": {"$ref": "#/$defs/range"},
+        "shares_outstanding": {"type": "number", "exclusiveMinimum": 0}
+      }
+    },
+    "liquidation_floor_reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "use"],
+      "properties": {
+        "status": {"enum": ["AVAILABLE", "UNAVAILABLE"]},
+        "model_id": {"type": "string"},
+        "value_scope": {"const": "ordinary_common_equity_per_share"},
+        "currency": {"type": "string"},
+        "as_of": {"type": "string"},
+        "per_share_low": {"type": "number"},
+        "per_share_high": {"type": "number"},
+        "reason": {"type": "string"},
+        "use": {"const": "SEPARATE_STRESS_REFERENCE_NEVER_ADD"}
+      }
+    },
+    "epv_cross_check": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "synthesis_rule"],
+      "properties": {
+        "status": {"enum": ["COMPARABLE", "NOT_COMPARABLE", "UNAVAILABLE"]},
+        "model_id": {"type": "string"},
+        "economic_entity": {"type": "string"},
+        "operating_perimeter": {"type": "string"},
+        "ordinary_share_claim_scope": {"type": "string"},
+        "value_scope": {"const": "ordinary_common_equity"},
+        "currency": {"type": "string"},
+        "unit": {"type": "string"},
+        "as_of": {"type": "string"},
+        "equity_value_low": {"type": "number"},
+        "equity_value_high": {"type": "number"},
+        "shares_outstanding": {"type": "number", "exclusiveMinimum": 0},
+        "per_share_low": {"type": "number"},
+        "per_share_high": {"type": "number"},
+        "reason": {"type": "string"},
+        "synthesis_rule": {"const": "CROSS_CHECK_ONLY_NEVER_ADD_OR_AVERAGE"}
+      }
+    }
+  }
+}

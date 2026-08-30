@@ -195,6 +195,8 @@ G1-J 退出要求：上述对象成为 G1 接纳工件和独立内容审阅的�
 
 2026-08-23 报告生成接线：新增报告级派生 read model `judgment-generation-handoff.v1`，以 `RESEARCH_AGENDA / JUDGMENT_SYNTHESIS / INVESTMENT_ENRICHMENT` 三个受控视图，把官方证据范围、待验证行业问题、正式反馈谱系准入的候选方法提示、冻结前公司判断内核及同 cutoff CJO 前置物接入普通合同包和 PIT 工具面。历史 PIT 在没有可逐条证明 cutoff-safe 的正式快照前，不读取当前全局行业机制或基准率结果；writer 组装和 publication completion 都复核当前 refresh generation 的 handoff 读取收据。`company-judgment-predecessor.v2` 仍按 G1-J policy/validator 复核。2026-08-29 的 kernel 修复已把旧 adapter 的全局 `SELECTION_ADMITTED -> INVESTMENT_READY` 关系收窄：source-bound、独立复核的完整 Episode 可以进入 current-company CJO admission、运行时 valuation route 和 `JUDGMENT_SYNTHESIS`；只有确实依赖选择/相对因果方法的 claim 才额外要求 `SELECTION_ADMITTED`。该接线不授予数值估值、价格、BuyBand、报告发布或投资权限。当前格力仍为 `PRE_FREEZE / NO_PRIMARY / NOT_FROZEN`，G1 与 G1-U 继续 `IN_PROGRESS`，G1.5 继续 `PLANNED`。
 
+2026-08-29 价值桥与读者数字接线：新增可复用的现金可达性、营运资本 stock-flow/cohort、持续经营重置价值和普通股税费后分配确定性模型。存量现金、未来留存现金和关联应收分别校准，禁止自由采用 30%/50%/75% 折价；未归因营运资本不再退化为伪 `EXACT` 点值；物业服务重置价值覆盖客户关系、区域组织、获客渠道、履约记录、项目启动营运资本及其他功能资产，组件不完整时公司级重置范围和与 EPV 的共同保护价保持空值，完整时也只取两条独立下限的较低者，禁止相加或平均。模型数字按 `canonical result -> numeric claim -> code-owned display variants -> reader slot -> Ch12 protected block/reader brief` 单向传播，writer 只解释经济含义；最终 assembly 会重新绑定受保护区块，正文自由重抄正确或错误金额均被拒绝。02669 回归现只证明这条通用链能保留 `UNKNOWN`、不采用任意 50% 参数，并把税费后普通股分配稳定投影为 `RMB278.417百万元 / 约RMB2.784亿元`；它没有补造重置价值或 EPV 共同保护价，也不代表 02669 已成为 Golden、报告与 HTML 已接纳，G1/G1-U/G1.5 状态均不改变。
+
 ### 7.1 并行工作通道
 
 **通道 A：接近复审**

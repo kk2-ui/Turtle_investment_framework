@@ -485,8 +485,32 @@ def validate_golden_report_reader_brief(brief: Any) -> dict[str, Any]:
         items = value.get(field)
         if not isinstance(items, list):
             findings.append("reader_brief." + field + "_invalid")
-        elif field != "accepted_conclusions" and any(not _text(item) for item in items):
+        elif field not in {"deterministic_conclusions", "accepted_conclusions"} and any(
+            not _text(item) for item in items
+        ):
             findings.append("reader_brief." + field + "_invalid")
+    for index, raw in enumerate(_items(value.get("deterministic_conclusions"))):
+        if _text(raw):
+            continue
+        item = _mapping(raw)
+        if set(item) != {"target_chapter", "sentence"}:
+            findings.append(
+                f"reader_brief.deterministic_conclusions[{index}].fields_invalid"
+            )
+            continue
+        target_chapter = item.get("target_chapter")
+        if (
+            not isinstance(target_chapter, int)
+            or isinstance(target_chapter, bool)
+            or target_chapter < 1
+        ):
+            findings.append(
+                f"reader_brief.deterministic_conclusions[{index}].target_chapter_invalid"
+            )
+        if not _text(item.get("sentence")):
+            findings.append(
+                f"reader_brief.deterministic_conclusions[{index}].sentence_invalid"
+            )
     for index, raw in enumerate(_items(value.get("accepted_conclusions"))):
         item = _mapping(raw)
         required = {"statement", "basis", "investor_consequence", "source_refs"}
@@ -517,10 +541,12 @@ def compile_golden_report_reader_brief(
 
     The structured Episode and its projections retain IDs, authority and
     machine treatments for deterministic consumers.  This compiler copies
-    only accepted economic conclusions.  Optional deterministic results must
-    be explicitly accepted upstream and expose a small list of already
-    translated ``reader_conclusions``; raw models, validations and review
-    findings are never copied into the brief.
+    only accepted economic conclusions.  A validated value-bridge result is
+    reduced to the reader-safe surface of each compiler-owned slot: target
+    chapter and final sentence.  Raw numeric claims, display machinery, model
+    identities, validations and review findings are never copied into the
+    brief.  The older accepted ``reader_conclusions`` contract remains
+    supported for deterministic producers that have not migrated to slots.
     """
     value = _assert_reviewable(episode)
     thesis = _mapping(value["underwriting_thesis"])
@@ -529,12 +555,45 @@ def compile_golden_report_reader_brief(
     deterministic_conclusions: list[str] = []
     if deterministic_results is not None:
         results = _mapping(deterministic_results)
-        conclusions = results.get("reader_conclusions")
-        if results.get("accepted") is not True:
-            raise ValueError("deterministic_results_not_accepted")
-        if not isinstance(conclusions, list) or any(not _text(item) for item in conclusions):
-            raise ValueError("deterministic_reader_conclusions_invalid")
-        deterministic_conclusions = list(conclusions)
+        if results.get("schema_version") == "valuation-value-bridges.v1":
+            try:
+                from scripts.valuation_value_bridges import validate_valuation_value_bridges
+            except ModuleNotFoundError:
+                from valuation_value_bridges import validate_valuation_value_bridges
+            deterministic_validation = validate_valuation_value_bridges(results)
+            if deterministic_validation.get("state") != "VALID":
+                raise ValueError(
+                    "deterministic_value_bridges_invalid:"
+                    + ",".join(deterministic_validation.get("findings") or [])
+                )
+            slots = results.get("reader_slots")
+            if not isinstance(slots, list):
+                raise ValueError("deterministic_reader_slots_invalid")
+            safe_slots: list[dict[str, Any]] = []
+            for index, raw_slot in enumerate(slots):
+                slot = _mapping(raw_slot)
+                target_chapter = slot.get("target_chapter")
+                if (
+                    not isinstance(target_chapter, int)
+                    or isinstance(target_chapter, bool)
+                    or target_chapter < 1
+                    or not _text(slot.get("sentence"))
+                ):
+                    raise ValueError(f"deterministic_reader_slots[{index}]_invalid")
+                safe_slots.append(
+                    {
+                        "target_chapter": target_chapter,
+                        "sentence": slot["sentence"],
+                    }
+                )
+            deterministic_conclusions = safe_slots
+        else:
+            conclusions = results.get("reader_conclusions")
+            if results.get("accepted") is not True:
+                raise ValueError("deterministic_results_not_accepted")
+            if not isinstance(conclusions, list) or any(not _text(item) for item in conclusions):
+                raise ValueError("deterministic_reader_conclusions_invalid")
+            deterministic_conclusions = list(conclusions)
 
     clean_conclusions: list[dict[str, Any]] = []
     for index, raw in enumerate(accepted_conclusions or []):
@@ -617,9 +676,18 @@ def compile_golden_report_reader_brief(
     return brief
 
 
-def render_underwriting_readout(episode: Any) -> str:
+def render_underwriting_readout(
+    episode: Any,
+    deterministic_results: Any = None,
+    *,
+    accepted_conclusions: list[dict[str, Any]] | None = None,
+) -> str:
     """Render the same underwriting thesis in investor order without gate prose."""
-    brief = compile_golden_report_reader_brief(episode)
+    brief = compile_golden_report_reader_brief(
+        episode,
+        deterministic_results,
+        accepted_conclusions=accepted_conclusions,
+    )
     sections = "\n\n".join(
         f"## {section['heading']}\n\n" + "\n\n".join(section["paragraphs"])
         for section in brief["sections"]
@@ -634,6 +702,14 @@ def render_underwriting_readout(episode: Any) -> str:
         "## 已接纳的估值与投资结论\n\n" + conclusions
         if conclusions else ""
     )
+    deterministic = "\n".join(
+        f"- {item['sentence'] if isinstance(item, dict) else item}"
+        for item in brief["deterministic_conclusions"]
+    )
+    deterministic_block = (
+        "## 模型确定的价值结论\n\n" + deterministic
+        if deterministic else ""
+    )
     return f"""# {brief['company_name']}：企业承保读本
 
 {brief['central_judgment']}
@@ -643,6 +719,8 @@ def render_underwriting_readout(episode: Any) -> str:
 ## 各项判断的投资含义
 
 {components}
+
+{deterministic_block}
 
 {conclusions_block}
 
