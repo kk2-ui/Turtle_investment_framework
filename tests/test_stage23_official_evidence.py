@@ -19,6 +19,8 @@ from scripts.computation_evidence import (
     _unit_for, build_calculation_observations, validate_calculation_observations,
 )
 from scripts.evidence_documents import (
+    _manifest_core,
+    _payload_hash,
     build_document_manifest,
     initialize_official_evidence_policy,
     validate_document_manifest,
@@ -161,6 +163,7 @@ def test_manifest_ingests_registered_announcement_with_temporal_identity(tmp_pat
                 "derived_text_path": announcement_text,
                 "source_id": "HKEX:01502:20260328:CASH_UPSTREAM",
                 "source_version": "ORIGINAL",
+                "verification_mode": "PAGE_QUOTE",
             },
         },
     }), encoding="utf-8")
@@ -206,6 +209,7 @@ def test_registered_non_filing_document_requires_publication_date(tmp_path: Path
                 "authority": "other_official",
                 "fiscal_period": "EVENT-2025",
                 "period_end": "2025-11-01",
+                "verification_mode": "PAGE_QUOTE",
             }
         },
     }), encoding="utf-8")
@@ -229,6 +233,7 @@ def test_registered_document_authority_must_match_document_type(tmp_path: Path) 
                 "authority": "company_filing",
                 "fiscal_period": "2025-M10",
                 "period_end": "2025-10-31",
+                "verification_mode": "STRUCTURED_DATA",
             }
         },
     }), encoding="utf-8")
@@ -236,6 +241,129 @@ def test_registered_document_authority_must_match_document_type(tmp_path: Path) 
     import pytest
     with pytest.raises(ValueError, match="registered_document_authority_invalid"):
         build_document_manifest(output, "01502.HK", persist=False)
+
+
+def _registered_announcement_manifest(tmp_path: Path) -> tuple[Path, dict]:
+    output = _filing_dir(tmp_path)
+    filename = "01502_2026-03-28_announcement.pdf"
+    derivative = "01502_2026-03-28_announcement.md"
+    (output / filename).write_bytes(b"%PDF-1.4\nfixture announcement\n")
+    (output / derivative).write_text(
+        "# 公告\n\n## 第 1 页\n\n本公告披露一项已完成事项。\n",
+        encoding="utf-8",
+    )
+    (output / "document_sources.json").write_text(json.dumps({
+        "schema_version": "document-sources.v1",
+        "documents": {
+            filename: {
+                "source_url": "https://www1.hkexnews.hk/announcement.pdf",
+                "published_at": "2026-03-28",
+                "doc_type": "exchange_announcement",
+                "authority": "company_filing",
+                "fiscal_period": "POST-FY2025",
+                "period_end": "2025-12-31",
+                "derived_text_path": derivative,
+                "verification_mode": "PAGE_QUOTE",
+            }
+        },
+    }), encoding="utf-8")
+    return output, build_document_manifest(output, "01502.HK", persist=False)
+
+
+def test_manifest_validator_rechecks_registered_identity_after_tampering(tmp_path: Path) -> None:
+    output, manifest = _registered_announcement_manifest(tmp_path)
+    announcement = next(
+        item for item in manifest["documents"]
+        if item["doc_type"] == "exchange_announcement"
+    )
+
+    for field, bad_value, finding in (
+        ("authority", "other_official", "authority_incompatible_with_registered_doc_type"),
+        ("published_at", None, "published_at_invalid"),
+        ("source_url", None, "source_url_invalid"),
+    ):
+        tampered = deepcopy(manifest)
+        target = next(item for item in tampered["documents"] if item["doc_id"] == announcement["doc_id"])
+        target[field] = bad_value
+        tampered["manifest_hash"] = _payload_hash(_manifest_core(tampered))
+        validation = validate_document_manifest(tampered, output)
+        assert validation["state"] == "INVALID"
+        assert any(finding in item for item in validation["invalid_findings"])
+
+
+def test_registered_page_quote_document_without_page_marked_text_is_incomplete(tmp_path: Path) -> None:
+    output, manifest = _registered_announcement_manifest(tmp_path)
+    announcement = next(
+        item for item in manifest["documents"]
+        if item["doc_type"] == "exchange_announcement"
+    )
+    (output / announcement["derived_text_path"]).write_text(
+        "# 公告\n\n没有页码定位。\n", encoding="utf-8"
+    )
+    validation = validate_document_manifest(manifest, output)
+
+    assert validation["state"] == "INCOMPLETE"
+    assert any("page_markers_missing" in item for item in validation["incomplete_findings"])
+
+    no_derivative = deepcopy(manifest)
+    target = next(item for item in no_derivative["documents"] if item["doc_id"] == announcement["doc_id"])
+    target["derived_text_path"] = None
+    no_derivative["manifest_hash"] = _payload_hash(_manifest_core(no_derivative))
+    validation = validate_document_manifest(no_derivative, output)
+    assert validation["state"] == "INCOMPLETE"
+    assert any("page_marked_derivative_missing" in item for item in validation["incomplete_findings"])
+
+
+def test_quote_verifier_rejects_nonreviewable_manifest_and_structured_data(tmp_path: Path) -> None:
+    output, manifest = _registered_announcement_manifest(tmp_path)
+    announcement = next(
+        item for item in manifest["documents"]
+        if item["doc_type"] == "exchange_announcement"
+    )
+    tampered = deepcopy(manifest)
+    target = next(item for item in tampered["documents"] if item["doc_id"] == announcement["doc_id"])
+    target["authority"] = "other_official"
+    tampered["manifest_hash"] = _payload_hash(_manifest_core(tampered))
+    (output / "document_manifest.json").write_text(
+        json.dumps(tampered, ensure_ascii=False, indent=2), encoding="utf-8"
+    )
+    rejected = verify_fact_from_quote(
+        output, doc_id=announcement["doc_id"], page=1, fact_name="event",
+        domain="cash_accessibility", raw_value="完成", normalized_value="完成",
+        unit="text", basis="event", quote="本公告披露一项已完成事项。",
+    )
+    assert rejected == {"verified": False, "error": "document_manifest_not_reviewable"}
+
+    data_file = "01502_official_statistics.json"
+    (output / data_file).write_text('{"value": 12}', encoding="utf-8")
+    (output / "document_sources.json").write_text(json.dumps({
+        "schema_version": "document-sources.v1",
+        "documents": {
+            data_file: {
+                "source_url": "https://official.example/statistics.json",
+                "published_at": "2026-03-20",
+                "doc_type": "official_statistics",
+                "authority": "official_statistics",
+                "fiscal_period": "FY2025",
+                "period_end": "2025-12-31",
+                "verification_mode": "STRUCTURED_DATA",
+            }
+        },
+    }), encoding="utf-8")
+    structured_manifest = build_document_manifest(output, "01502.HK", persist=True)
+    structured = next(
+        item for item in structured_manifest["documents"]
+        if item["doc_type"] == "official_statistics"
+    )
+    rejected = verify_fact_from_quote(
+        output, doc_id=structured["doc_id"], page=1, fact_name="statistic",
+        domain="industry", raw_value=12, normalized_value=12,
+        unit="count", basis="official_statistics", quote='{"value": 12}',
+    )
+    assert rejected == {
+        "verified": False,
+        "error": "structured_document_requires_deterministic_data_verifier",
+    }
 
 
 def test_only_page_located_source_facts_are_verified(tmp_path: Path) -> None:

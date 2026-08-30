@@ -927,12 +927,20 @@ def verify_fact_from_quote(
     """Programmatically promote an exact page quote to VERIFIED evidence."""
     output = Path(output_dir)
     manifest = json.loads((output / "document_manifest.json").read_text(encoding="utf-8"))
+    try:
+        from scripts.evidence_documents import validate_document_manifest
+    except ModuleNotFoundError:
+        from evidence_documents import validate_document_manifest
+    if validate_document_manifest(manifest, output).get("state") != "REVIEWABLE":
+        return {"verified": False, "error": "document_manifest_not_reviewable"}
     documents = {str(doc.get("doc_id")): doc for doc in manifest.get("documents") or []}
     document = documents.get(str(doc_id))
     if not document:
         return {"verified": False, "error": "unknown_doc_id"}
     if document.get("authority") not in OFFICIAL_DOCUMENT_AUTHORITIES:
         return {"verified": False, "error": "non_official_source_cannot_verify"}
+    if document.get("verification_mode") == "STRUCTURED_DATA":
+        return {"verified": False, "error": "structured_document_requires_deterministic_data_verifier"}
     _, text = _document_text(output, document)
     block = next((item for item in _page_blocks(text) if item["page"] == int(page)), None)
     exact_quote = str(quote or "").strip()
