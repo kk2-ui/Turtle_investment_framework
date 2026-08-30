@@ -1,0 +1,11 @@
+{
+  "company_id": "CN:600585",
+  "company_name": "Anhui Conch Cement",
+  "cutoff_at": "2018-04-30T23:59:59+08:00",
+  "knowledge_cutoff_at": "2018-04-30T23:59:59+08:00",
+  "industry_ids": ["INDUSTRY:CN:CEMENT_LISTED"],
+  "industry_keys": ["cement"],
+  "pit_mode": true,
+  "knowledge_mode": "PIT_EVIDENCE_ONLY",
+  "context_id": "IUC:CN:CEMENT_LISTED:CN600585:20180430:REPLAY:V1"
+}

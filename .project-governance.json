@@ -16,7 +16,7 @@
       [".venv/bin/python", "-m", "pytest", "-q", "tests/test_config.py", "tests/test_derived_metrics.py", "tests/test_tushare_client.py"]
     ],
     "full": [
-      [".venv/bin/python", "-m", "pytest", "-q", "tests/test_stage*.py", "tests/test_completion_contract_v13.py", "tests/test_auto_repair_pipeline.py", "tests/test_golden_report_feedback.py", "tests/test_reader_coverage.py", "tests/test_enterprise_underwriting_episode.py", "tests/test_project_guard_baseline.py"]
+      [".venv/bin/python", "-m", "pytest", "-q", "tests/test_stage*.py", "tests/test_completion_contract_v13.py", "tests/test_auto_repair_pipeline.py", "tests/test_golden_report_feedback.py", "tests/test_reader_coverage.py", "tests/test_enterprise_underwriting_episode.py", "tests/test_industry_experience_pack.py", "tests/test_project_guard_baseline.py"]
     ]
   }
 }

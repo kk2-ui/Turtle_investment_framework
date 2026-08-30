@@ -1,10 +1,10 @@
 # Turtle 行业经验层 V1 设计
 
-> 状态：`DESIGN_PROPOSAL / NOT_IMPLEMENTATION_AUTHORITY`
+> 状态：`IMPLEMENTED / MANIFEST_AND_VALIDATOR_AVAILABLE / CEMENT_REPLAY_DRAFT`
 >
 > 目的：先把多公司、多时期的行业经验建成可迭代上游资产，再让公司训练样本调用、检验并反向修订它。
 >
-> 本文只确定对象职责、信息流和验收口径；在设计审阅完成前，不修改训练入口、schema、数据库或现行课程状态。
+> 当前实现只增加版本化 manifest、验证器和离线回放；没有新增事实库，也没有把 Pack 接入正式训练 runtime。
 
 ## 1. 核心决定
 
@@ -226,13 +226,24 @@ IE6  REPLICATE
 
 若 Enhanced 只复述 Pack、忽略目标公司反证或更加防御性，判为 `ENHANCED_WORSE`。若 Pack 只增加解释而不改变材料性判断，判为 `NO_MATERIAL_UTILITY`。
 
-## 10. 设计审阅后才实施的顺序
+## 10. 实施顺序
 
-1. 确认本文的五层职责与 Pack 成熟状态；
-2. 决定课程二期试点行业及公司轴、时间轴留出方式；
-3. 只增加一个 Pack manifest，不新增事实库；
-4. 用现有水泥或家电工件做离线回放，验证引用、版本和反馈方向；
+1. 五层职责与 Pack 成熟状态已经冻结在本文；
+2. `schemas/industry_experience_pack_v1.schema.json` 与 `scripts/industry_experience_pack.py` 已实现；
+3. 水泥离线回放已经验证引用、时间角色、版本边界和反馈方向；
+4. Course 2A 先修行业资料与共同冲击样本，使某一 Pack 达到 `TRAINING_READY`；
 5. 再把冻结 Pack/Context 接入正式训练合同；
-6. 最后运行新的认知隔离 A/B。
+6. 最后运行新的公司轴和时间轴认知隔离 A/B。
 
-在第 1--2 步完成前，不修改训练 runtime，也不启动真实训练。
+在 Pack 达到 `TRAINING_READY` 前，不修改正式训练 runtime，也不启动 Course 2B。
+
+## 11. 当前水泥回放裁决
+
+水泥 `IEP:CN:CEMENT_LISTED:2014_2018:REPLAY:V1` 已通过结构验证，声明和派生状态均为 `DRAFT`。当前四项缺口为：
+
+- `industry_context_is_bounded`；
+- `official_industry_observation_missing`；
+- `company_roles_missing:SHARED_SHOCK_DIVERGENCE`；
+- `shared_shock_comparison_missing`。
+
+这说明水泥资产已经建立多公司、时期、archetype 和 near miss 基础，但仍偏重责任边界与测量纪律，不能回答供需、竞争、价格、利用率和利润池未来。完整经济影响与修复条件见 `CN_CEMENT_2014_2018/57_industry_experience_replay_review.md`。

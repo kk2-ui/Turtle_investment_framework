@@ -16,6 +16,12 @@
 
 当前唯一集成入口是任务开始时干净的本地 `main`；精确 commit 只记录该任务的冻结起点，不能成为第二条长期基线。后续 Agent 只从当前本地 `main` 开工。已合入功能分支与历史 worktree 只用于追溯，不能覆盖当前状态；未合入旧分支必须先保留已提交增量，再迁移到新的当前 main worktree。下方日期更早的段落用于解释演进；与本节冲突时以本节和当前本地 main 为准。
 
+## 2026-08-30 行业经验层与课程二期
+
+行业前景训练改为明确的上游闭环：`IndustryLearningBlock -> Industry Experience Pack -> IndustryUnderwritingContext -> EnterpriseUnderwritingEpisode.IndustryFutureThesis`。Pack 是引用现有行业 block、官方 observation、机制、案例、反例和反馈的版本化 manifest，不是新事实库；公司结果只结算公司传导，行业方向必须由官方行业资料和多家公司共同结果结算。
+
+manifest schema 与机械验证器已经实现。水泥离线回放 Pack 为合法 `DRAFT`：已有五家公司、六个 cutoff、异质 archetype 和 near miss，但 Context 仍为 `BOUNDED`，缺少同 cutoff 官方行业 observation 及共同冲击下公司分化，因此不能进入能力 A/B。课程二期已拆为 Course 2A 行业经验准备和 Course 2B 未见公司/未见时期认知隔离验证；只有验证器派生为 `TRAINING_READY` 后才能启动 2B。当前状态以[行业经验层设计](development/research/TURTLE_INDUSTRY_EXPERIENCE_LAYER_V1_DESIGN.md)、[课程二期 Goal](development/research/training_campaigns/ENTERPRISE_UNDERWRITING_COURSE_2_INDEPENDENT_AB_GOAL.md)和[水泥回放审阅](development/research/industry_learning_blocks/CN_CEMENT_2014_2018/57_industry_experience_replay_review.md)为准。
+
 ## 2026-08-29 企业判断经验调用设计
 
 企业判断经验调用闭环最初由[企业判断经验调用闭环 V1](development/research/TURTLE_JUDGMENT_EXPERIENCE_MEMORY_V1.md)设计，现已在 `main` 实现 source-side 经验登记、结构检索、结果前调用收据与结果后边界更新。福莱特 `CN601865@2024-04-01` 已完成一次 outcome-sealed 经验调用：隆基经验改变了问题顺序、反方和新增产能的保守 owner-cash 处理；FY2024 结果仍密封，因此没有反馈、迁移或方法验证。
@@ -54,6 +60,7 @@ V2 企业训练采用八维问题骨架：初始条件、已实施管理行动�
 |---|---|
 | `GOALS.md` | 当前协调状态、G1/G1-U 顺序、案例范围和完成出口 |
 | `docs/development/research/TURTLE_ENTERPRISE_UNDERWRITING_SYSTEM_V1.md` | 企业判断、训练、CJO、估值和黄金报告的当前最高层对象、反馈与 U0--U5 路线 |
+| `docs/development/research/TURTLE_INDUSTRY_EXPERIENCE_LAYER_V1_DESIGN.md` | 行业经验上游闭环、Pack 成熟状态、样本选择、双层结算和课程二期 2A/2B 顺序 |
 | `docs/development/research/TURTLE_ENTERPRISE_UNDERWRITING_VERTICAL_SLICE_GOAL.md` | 当前 G1-U 实施范围、Magna/CN600585 纵向切片与验收出口 |
 | `docs/development/LONG_TERM_ROADMAP.md` | 长期阶段、依赖、Turtle/年糕边界和Phase 10限制 |
 | `docs/development/GOLDEN_REPORT_BIDIRECTIONAL_RESEARCH_ROADMAP.md` | G1.5及后续双向层级研究的正式路线 |
@@ -101,7 +108,9 @@ V2 兼容状态是 `G1_CANDIDATE_MATURATION + G1-T_ENTERPRISE_JUDGMENT_V2 / REAL
 | `scripts/enterprise_underwriting_training.py` | 完整 Episode 的唯一正式训练编排入口；`run` 从合同绑定来源调用模型，只有模型生成的完整 Episode 通过绑定校验并原子落盘后才完成；单独 validator、旧课程轨道和局部 inventory 不能完成训练 |
 | `docs/development/research/enterprise_underwriting_episodes/CN600585_20240501_TRAINING_CONTRACT_V1.json` | 首个 checked-in WORKED_CASE 训练合同；只证明完整 Episode 入口可运行，不构成 Blind 或能力成绩 |
 | `docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_COURSE_1_20260829/14_COURSE_1_COMPLETION_AUDIT.md` | 已完成企业承保课程一期的投资者读出：12 个 worked case、4 个 Blind Replay、顺丰公平 A/B 的 `ENHANCED_WORSE` 与下一轮认知隔离 A/B 要求 |
-| `docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_COURSE_2_INDEPENDENT_AB_GOAL.md` | 课程二期的唯一可执行任务：在新公司上由独立 Baseline/Enhanced Agent 完成同资料 A/B，结果后由独立 reviewer 裁决实际投资处理是否改善 |
+| `docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_COURSE_2_INDEPENDENT_AB_GOAL.md` | 课程二期唯一执行顺序：2A 先形成 TRAINING_READY 行业经验包，2B 再以未见公司和未见时期做同资料认知隔离 A/B |
+| `scripts/industry_experience_pack.py` | 验证 Pack 引用、时间角色、角色覆盖、行业/公司分层结算和公司轴/时间轴成熟状态；不采集或复制事实 |
+| `docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/56_industry_experience_pack_replay_v1.json` | 首个行业经验层离线回放；状态为 DRAFT，只验证工作流，不计能力 |
 | `docs/development/research/TURTLE_TRAINING_SYSTEM_TOP_LEVEL_ARCHITECTURE.md` | V2 组件与 V3 映射：八维、IndustryLearningBlock、多维 EnterpriseJudgmentEpisode、局部证据/因果权限和 Investment Overlay 边界 |
 | `docs/development/research/TURTLE_ENTERPRISE_JUDGMENT_V2_REAL_TRAINING_GOAL.md` | J0/J1/J1A/J2 与 Rounds 5-8 真实反馈记录；八维已采用，Round 8 因责任边界和 mixed-clock 问题保持 architecture revision required |
 | `docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/08_investor_readout.md` | 首个真实水泥 V2 block 的投资者可读读出、feedback 与权限边界；底层 JSON 是该读出的可验证工件 |
