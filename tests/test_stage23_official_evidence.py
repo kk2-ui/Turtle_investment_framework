@@ -141,7 +141,7 @@ def test_manifest_ingests_registered_announcement_with_temporal_identity(tmp_pat
     announcement_text = "01502_2026-03-28_cash_upstream_announcement.md"
     (output / announcement_name).write_bytes(b"%PDF-1.4\nfixture exchange announcement\n")
     (output / announcement_text).write_text(
-        "# 公告\n\n## 第 2 页\n\n附属公司已向母公司上游现金人民币278.417百万元。\n",
+        "# 公告\n\n## 第 2 页\n\n附属公司已于2026年3月15日向母公司上游现金人民币278.417百万元。\n",
         encoding="utf-8",
     )
     (output / "document_sources.json").write_text(json.dumps({
@@ -159,7 +159,7 @@ def test_manifest_ingests_registered_announcement_with_temporal_identity(tmp_pat
                 "doc_type": "exchange_announcement",
                 "authority": "company_filing",
                 "fiscal_period": "POST-FY2025",
-                "period_end": "2026-03-28",
+                "period_end": "2025-12-31",
                 "derived_text_path": announcement_text,
                 "source_id": "HKEX:01502:20260328:CASH_UPSTREAM",
                 "source_version": "ORIGINAL",
@@ -175,7 +175,7 @@ def test_manifest_ingests_registered_announcement_with_temporal_identity(tmp_pat
     )
 
     assert manifest["validation"]["state"] == "REVIEWABLE"
-    assert announcement["period_end"] == "2026-03-28"
+    assert announcement["period_end"] == "2025-12-31"
     assert announcement["published_at"] == "2026-03-28"
     assert announcement["derived_text_path"] == announcement_text
     assert announcement["source_id"] == "HKEX:01502:20260328:CASH_UPSTREAM"
@@ -190,10 +190,33 @@ def test_manifest_ingests_registered_announcement_with_temporal_identity(tmp_pat
         unit="RMB_m",
         currency="RMB",
         basis="parent_company_receipt",
-        quote="附属公司已向母公司上游现金人民币278.417百万元。",
+        quote="附属公司已于2026年3月15日向母公司上游现金人民币278.417百万元。",
+        temporal_role="EVENT",
+        event_date="2026-03-15",
+        observed_at="2026-03-28",
     )
     assert verified["verified"] is True
-    assert verified["observation"]["as_of"] == "2026-03-28"
+    assert verified["observation"]["as_of"] == "2026-03-15"
+    assert verified["observation"]["event_date"] == "2026-03-15"
+    assert verified["observation"]["observed_at"] == "2026-03-28"
+
+    missing_clock = verify_fact_from_quote(
+        output,
+        doc_id=announcement["doc_id"],
+        page=2,
+        fact_name="subsidiary_cash_upstream_rmb_m",
+        domain="cash_accessibility",
+        raw_value=278.417,
+        normalized_value=278.417,
+        unit="RMB_m",
+        currency="RMB",
+        basis="parent_company_receipt",
+        quote="附属公司已于2026年3月15日向母公司上游现金人民币278.417百万元。",
+    )
+    assert missing_clock == {
+        "verified": False,
+        "error": "registered_event_document_temporal_role_required",
+    }
 
 
 def test_registered_non_filing_document_requires_publication_date(tmp_path: Path) -> None:

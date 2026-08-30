@@ -26,6 +26,9 @@ TEMPORAL_ROLES = {"POSITION_AS_OF", "HISTORICAL_PERIOD", "EVENT"}
 OFFICIAL_DOCUMENT_AUTHORITIES = {
     "issuer", "audited_filing", "company_filing", "official_statistics", "other_official",
 }
+_REGISTERED_EVENT_DOCUMENT_TYPES = {
+    "company_announcement", "company_circular", "exchange_announcement",
+}
 _VALUATION_EVIDENCE_ROLE_RE = re.compile(r"[A-Z][A-Z0-9_]*")
 _VALUATION_EXCLUSION_DESTINATIONS = {
     "OTHER_REPLACEMENT_COMPONENT",
@@ -1029,6 +1032,8 @@ def verify_fact_from_quote(
         return {"verified": False, "error": "non_official_source_cannot_verify"}
     if document.get("verification_mode") == "STRUCTURED_DATA":
         return {"verified": False, "error": "structured_document_requires_deterministic_data_verifier"}
+    if document.get("doc_type") in _REGISTERED_EVENT_DOCUMENT_TYPES and temporal_role is None:
+        return {"verified": False, "error": "registered_event_document_temporal_role_required"}
     _, text = _document_text(output, document)
     block = next((item for item in _page_blocks(text) if item["page"] == int(page)), None)
     exact_quote = str(quote or "").strip()
@@ -1038,6 +1043,18 @@ def verify_fact_from_quote(
         numeric_tokens = [_parse_number(item) for item in re.findall(r"[-+]?\d[\d,，]*(?:\.\d+)?", exact_quote)]
         if not any(abs(float(raw_value) - token) <= max(1e-9, abs(float(raw_value)) * 1e-9) for token in numeric_tokens):
             return {"verified": False, "error": "raw_value_not_in_quote"}
+    if document.get("doc_type") in _REGISTERED_EVENT_DOCUMENT_TYPES and temporal_role == "EVENT":
+        try:
+            event_day = datetime.fromisoformat(str(event_date or "")).date()
+        except ValueError:
+            return {"verified": False, "error": "event_date_invalid"}
+        event_date_tokens = {
+            event_day.isoformat(),
+            f"{event_day.year}年{event_day.month}月{event_day.day}日",
+            f"{event_day.year}年{event_day.month:02d}月{event_day.day:02d}日",
+        }
+        if not any(token in exact_quote for token in event_date_tokens):
+            return {"verified": False, "error": "event_date_not_in_quote"}
     quote_start = str(block["text"]).index(exact_quote)
     absolute_start = int(block["start"]) + quote_start
     explicit_as_of = str(as_of or "").strip()
