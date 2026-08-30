@@ -101,13 +101,14 @@ def _event_date_appears_in_quote(event_date: Any, quote: Any) -> bool:
         return False
     text = re.sub(r"\s+", " ", str(quote or "")).strip()
     compact = re.sub(r"\s+", "", text)
-    if event_day.isoformat() in compact:
+    if re.search(
+        rf"(?<!\d){re.escape(event_day.isoformat())}(?!\d)", compact
+    ):
         return True
-    chinese = f"{event_day.year}年{event_day.month}月{event_day.day}日"
-    chinese_padded = (
-        f"{event_day.year}年{event_day.month:02d}月{event_day.day:02d}日"
+    chinese_pattern = re.compile(
+        rf"(?<!\d){event_day.year}年0?{event_day.month}月0?{event_day.day}日(?!\d)"
     )
-    if chinese in compact or chinese_padded in compact:
+    if chinese_pattern.search(compact):
         return True
     month = _ENGLISH_MONTHS[event_day.month - 1]
     month_pattern = rf"(?:{month}|{month[:3]}\.?)"

@@ -273,6 +273,7 @@ def test_manifest_ingests_registered_announcement_with_temporal_identity(tmp_pat
 
     for field, changed in (
         ("doc_type", "quarterly_report"),
+        ("doc_type", "annual_report"),
         ("period_end", "2025-12-30"),
         ("code", "09999"),
         ("market", "CN-SH"),
@@ -290,6 +291,21 @@ def test_manifest_ingests_registered_announcement_with_temporal_identity(tmp_pat
         )
         validation = validate_document_manifest(tampered_manifest, output)
         assert validation["state"] == "INVALID", field
+
+    for field, changed in (
+        ("report_id", "REPORT:FAKE"),
+        ("code", "09999"),
+        ("market", "CN-SH"),
+    ):
+        tampered_manifest = deepcopy(manifest)
+        tampered_manifest[field] = changed
+        for document in tampered_manifest["documents"]:
+            document[field] = changed
+        tampered_manifest["manifest_hash"] = _payload_hash(
+            _manifest_core(tampered_manifest)
+        )
+        validation = validate_document_manifest(tampered_manifest, output)
+        assert validation["state"] == "INVALID", "top-level:" + field
 
     type_tampered = deepcopy(manifest)
     next(
@@ -327,7 +343,9 @@ def test_registered_event_dates_accept_english_and_spaced_chinese_quotes(
     (output / derivative).write_text(
         "# Announcement\n\n## 第 1 页\n\n"
         "The subsidiary collected RMB20 million on 15 March 2026.\n"
-        "本公司已于 2026 年 3 月 16 日收回人民币10百万元。\n",
+        "本公司已于 2026 年 3 月 16 日收回人民币10百万元。\n"
+        "The subsidiary collected RMB30 million on 2026-03-150.\n"
+        "The subsidiary collected RMB40 million on 12026-03-15.\n",
         encoding="utf-8",
     )
     (output / "document_sources.json").write_text(
@@ -393,6 +411,53 @@ def test_registered_event_dates_accept_english_and_spaced_chinese_quotes(
 
     assert english["verified"] is True
     assert spaced_chinese["verified"] is True
+
+    for raw_value, quote in (
+        (30, "The subsidiary collected RMB30 million on 2026-03-150."),
+        (40, "The subsidiary collected RMB40 million on 12026-03-15."),
+    ):
+        rejected = verify_fact_from_quote(
+            output,
+            doc_id=announcement["doc_id"],
+            page=1,
+            fact_name=f"invalid_iso_collection_{raw_value}",
+            domain="cash_accessibility",
+            raw_value=raw_value,
+            normalized_value=raw_value,
+            unit="RMB_m",
+            currency="RMB",
+            basis="cash_received",
+            quote=quote,
+            temporal_role="EVENT",
+            event_date="2026-03-15",
+            observed_at="2026-03-28",
+        )
+        assert rejected == {
+            "verified": False,
+            "error": "event_date_not_in_quote",
+        }
+
+    persisted = json.loads(
+        (output / "fact_observations.json").read_text(encoding="utf-8")
+    )
+    invalid_persisted = deepcopy(english["observation"])
+    invalid_persisted.update(
+        {
+            "fact_name": "persisted_invalid_iso_collection",
+            "raw_value": 30,
+            "normalized_value": 30,
+            "raw_text": "The subsidiary collected RMB30 million on 2026-03-150.",
+        }
+    )
+    invalid_persisted["observation_id"] = make_observation_id(invalid_persisted)
+    persisted["observations"].append(invalid_persisted)
+    persisted["observation_hash"] = _fact_payload_hash(_observation_core(persisted))
+    validation = validate_fact_observations(persisted, manifest, output)
+    assert validation["state"] == "INVALID"
+    assert any(
+        "event_date_not_in_quote" in finding
+        for finding in validation["invalid_findings"]
+    )
 
 
 def test_registered_non_filing_document_requires_publication_date(tmp_path: Path) -> None:
@@ -509,8 +574,27 @@ def test_registered_page_quote_document_without_page_marked_text_is_incomplete(t
     target["derived_text_path"] = None
     no_derivative["manifest_hash"] = _payload_hash(_manifest_core(no_derivative))
     validation = validate_document_manifest(no_derivative, output)
-    assert validation["state"] == "INCOMPLETE"
-    assert any("page_marked_derivative_missing" in item for item in validation["incomplete_findings"])
+    assert validation["state"] == "INVALID"
+    assert any(
+        "derived_text_path_registered_source_mismatch" in item
+        for item in validation["invalid_findings"]
+    )
+
+    source_registry = json.loads(
+        (output / "document_sources.json").read_text(encoding="utf-8")
+    )
+    source_registry["documents"][announcement["local_path"]][
+        "derived_text_path"
+    ] = None
+    (output / "document_sources.json").write_text(
+        json.dumps(source_registry), encoding="utf-8"
+    )
+    legitimately_missing = build_document_manifest(output, "01502.HK", persist=False)
+    assert legitimately_missing["validation"]["state"] == "INCOMPLETE"
+    assert any(
+        "page_marked_derivative_missing" in item
+        for item in legitimately_missing["validation"]["incomplete_findings"]
+    )
 
 
 def test_quote_verifier_rejects_nonreviewable_manifest_and_structured_data(tmp_path: Path) -> None:

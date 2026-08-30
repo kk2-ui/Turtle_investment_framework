@@ -249,6 +249,47 @@ def validate_document_manifest(payload: dict[str, Any], output_dir: str | Path |
         invalid.append("documents_not_array")
         documents = []
     seen: set[str] = set()
+    registered_sidecar_paths_seen: set[str] = set()
+    output = Path(output_dir) if output_dir is not None else None
+    try:
+        source_registry = json.loads(
+            (output / "document_sources.json").read_text(encoding="utf-8")
+        ) if output is not None else {}
+    except (OSError, json.JSONDecodeError):
+        source_registry = {}
+    source_records = (
+        source_registry.get("documents")
+        if isinstance(source_registry, dict)
+        and isinstance(source_registry.get("documents"), dict)
+        else {}
+    )
+
+    if output is not None:
+        context_code, context_market, context_issuer = normalize_security_identity(
+            "", output
+        )
+        if context_market != "UNKNOWN":
+            expected_top_identity = {
+                "code": context_code,
+                "market": context_market,
+                "issuer": context_issuer,
+            }
+            for field, expected in expected_top_identity.items():
+                if payload.get(field) != expected:
+                    invalid.append(field + "_output_context_identity_mismatch")
+            filing_periods = [
+                str(parts["period_end"])
+                for path in output.iterdir()
+                if path.is_file()
+                and path.suffix.lower() == ".pdf"
+                and (parts := _filing_parts(path)) is not None
+            ]
+            if filing_periods:
+                expected_report_id = (
+                    f"REPORT:{context_market}:{context_code}:{max(filing_periods)}"
+                )
+                if payload.get("report_id") != expected_report_id:
+                    invalid.append("report_id_output_context_identity_mismatch")
     latest_annual = False
     for index, doc in enumerate(documents):
         prefix = f"documents[{index}]"
@@ -277,7 +318,41 @@ def validate_document_manifest(payload: dict[str, Any], output_dir: str | Path |
         invalid.extend(
             f"{doc_id or prefix}:{finding}" for finding in registered_findings
         )
-        if doc.get("doc_type") in _REGISTERED_DOC_TYPES:
+        source_record = (
+            source_records.get(local_path)
+            if isinstance(source_records.get(local_path), dict)
+            else {}
+        )
+        registered_from_sidecar = source_record.get("doc_type") in _REGISTERED_DOC_TYPES
+        if registered_from_sidecar:
+            registered_sidecar_paths_seen.add(local_path)
+            try:
+                registered_parts = _registered_document_parts(
+                    (output / local_path) if output is not None else Path(local_path),
+                    source_record,
+                )
+            except ValueError as exc:
+                invalid.append(f"{doc_id or prefix}:registered_source_identity_invalid:{exc}")
+                registered_parts = None
+            if registered_parts is not None:
+                expected_fields = {
+                    "doc_type": registered_parts["doc_type"],
+                    "fiscal_period": registered_parts["fiscal_period"],
+                    "period_end": registered_parts["period_end"],
+                    "published_at": registered_parts["published_at"],
+                    "authority": registered_parts["authority"],
+                    "mime_type": registered_parts["mime_type"],
+                    "language": registered_parts["language"],
+                    "derived_text_path": registered_parts["derived_text_path"],
+                    "verification_mode": registered_parts["verification_mode"],
+                }
+                if source_record.get("source_url"):
+                    expected_fields["source_url"] = source_record["source_url"]
+                for field, expected in expected_fields.items():
+                    if doc.get(field) != expected:
+                        invalid.append(
+                            f"{doc_id or prefix}:{field}_registered_source_mismatch"
+                        )
             for field in ("report_id", "issuer", "code", "market"):
                 if doc.get(field) != payload.get(field):
                     invalid.append(
@@ -285,10 +360,11 @@ def validate_document_manifest(payload: dict[str, Any], output_dir: str | Path |
                     )
             expected_doc_id = (
                 f"DOC:{payload.get('market')}:{payload.get('code')}:"
-                f"{doc.get('doc_type')}:{doc.get('period_end')}:{digest[:12]}"
+                f"{source_record.get('doc_type')}:{source_record.get('period_end')}:{digest[:12]}"
             )
             if doc_id != expected_doc_id:
                 invalid.append(f"{doc_id or prefix}:registered_doc_id_identity_mismatch")
+        if doc.get("doc_type") in _REGISTERED_DOC_TYPES:
             verification_mode = doc.get("verification_mode")
             derived = doc.get("derived_text_path")
             if verification_mode == "PAGE_QUOTE":
@@ -307,6 +383,13 @@ def validate_document_manifest(payload: dict[str, Any], output_dir: str | Path |
         derived = doc.get("derived_text_path")
         if derived and output_dir is not None and not (Path(output_dir) / str(derived)).is_file():
             warnings.append(f"{doc_id or prefix}:derived_text_missing:{derived}")
+    expected_registered_paths = {
+        str(filename)
+        for filename, record in source_records.items()
+        if isinstance(record, dict) and record.get("doc_type") in _REGISTERED_DOC_TYPES
+    }
+    for missing_path in sorted(expected_registered_paths - registered_sidecar_paths_seen):
+        invalid.append("registered_source_document_missing_from_manifest:" + missing_path)
     expected_hash = _payload_hash(_manifest_core(payload))
     if payload.get("manifest_hash") != expected_hash:
         invalid.append("manifest_hash_mismatch")
