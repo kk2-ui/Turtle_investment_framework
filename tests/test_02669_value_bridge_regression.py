@@ -61,15 +61,26 @@ def test_02669_cash_is_evidence_bounded_without_an_arbitrary_half_haircut() -> N
     assert existing["amount_range"] == {
         "low": pytest.approx(0.0),
         "base": pytest.approx(0.0),
-        "high": pytest.approx(5104.440),
+        "high": pytest.approx(0.0),
     }
-    assert existing["adopted_realization_rate"] == pytest.approx(0.0)
+    assert existing["legal_upper_bound"] == pytest.approx(5104.440)
+    assert existing["historical_observed_rate_range"] is None
+    assert existing["realization_rate_range"] is None
+    assert existing["adopted_realization_rate"] is None
     assert existing["adopted_value"] == pytest.approx(0.0)
-    assert existing["adoption_policy"] == "low_end_until_three_comparable_periods"
-    assert existing["adopted_realization_rate"] != pytest.approx(0.5)
-    assert cash["related_party_receivable_realization"]["gross_receivables"] == pytest.approx(
-        805.644
+    assert existing["adoption_policy"] == (
+        "zero_recognized_until_history_and_continuity_are_evidence_backed"
     )
+    receivable = cash["related_party_receivable_realization"]
+    assert receivable["gross_receivables"] == pytest.approx(805.644)
+    assert receivable["amount_range"] == {
+        "low": pytest.approx(0.0),
+        "base": pytest.approx(0.0),
+        "high": pytest.approx(0.0),
+    }
+    assert receivable["adopted_value"] == pytest.approx(0.0)
+    assert receivable["unrecognized_net_exposure"] == pytest.approx(805.644)
+    assert receivable["rows"][0]["uncollected_recovery_rate_range"] is None
 
 
 def test_02669_after_tax_distribution_has_a_deterministic_reader_slot() -> None:
@@ -161,8 +172,8 @@ def test_02669_working_capital_history_stays_observed_while_persistence_stays_un
         if item["slot_id"] == "working_capital_normalization_summary"
     )
     assert "净占用RMB275.43百万元" in slot["sentence"]
-    assert "增长启动占用与稳态经常性负担" in slot["sentence"]
-    assert "两者保持未知" in slot["sentence"]
+    assert "新项目启动投入与稳态负担" in slot["sentence"]
+    assert "不能据此把其中固定比例永久扣减" in slot["sentence"]
 
 
 def test_02669_replacement_anchors_do_not_masquerade_as_a_complete_company_range() -> None:
@@ -223,10 +234,13 @@ def test_02669_reader_conclusion_states_the_open_boundary_in_investor_language()
     _, compiled = _compiled()
     text = "\n".join(slot["sentence"] for slot in compiled["reader_slots"])
 
-    assert "持续经营重置价值仍有材料性要素未定界" in text
-    assert "当前不能形成两条独立下限同时覆盖的最高价格" in text
-    assert "经常性营运资本占用仍无法可靠定界" in text
-    assert "不以相加或平均补齐" in text
+    assert "持续经营重置价值还没有覆盖全部关键能力和启动资本" in text
+    assert "不能声称资产与盈利共同提供价格底" in text
+    assert "主估值不采用50%之类的预设" in text
+    assert "不能相加抬高价值" in text
+    assert "存量超额现金只保留法律可达上限，主估值不预先计入" in text
+    assert "未收部分视作回收选择权" in text
+    assert "保持空值" not in text
     for internal_term in (
         "CUSTOMER_ACQUISITION_CHANNEL",
         "PROJECT_STARTUP_WORKING_CAPITAL",

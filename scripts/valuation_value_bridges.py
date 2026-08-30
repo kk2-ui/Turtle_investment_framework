@@ -344,18 +344,6 @@ def _cash_projection(
             "as_of": as_of,
             "scope": "ordinary_common_equity_related_party_receivable",
         },
-        {
-            "claim_id": "cash.future_retained_cash_realization_rate",
-            "source_model_id": result["model_id"],
-            "metric": "future_retained_cash_realization_rate",
-            "range_low": future["realization_rate_range"]["low"],
-            "range_high": future["realization_rate_range"]["high"],
-            "selected_value": future["adopted_realization_rate"],
-            "currency": "NOT_APPLICABLE",
-            "unit": "ratio",
-            "as_of": as_of,
-            "scope": "future_retained_cash_operating_value_adjustment",
-        },
     ]
     existing_selected = (
         f"每股{valuation_currency}{_fmt(existing_projection['adopted_per_share'])}"
@@ -371,13 +359,64 @@ def _cash_projection(
         f"每股{valuation_currency}{_fmt(receivable_projection['per_share_range']['low'])}–"
         f"{_fmt(receivable_projection['per_share_range']['high'])}"
     )
-    future_selected = _fmt(float(future["adopted_realization_rate"]) * 100, 2) + "%"
-    future_range = (
-        _fmt(float(future["realization_rate_range"]["low"]) * 100, 2)
-        + "%–"
-        + _fmt(float(future["realization_rate_range"]["high"]) * 100, 2)
-        + "%"
-    )
+    future_rate_range = future.get("realization_rate_range")
+    if isinstance(future_rate_range, dict):
+        future_selected = (
+            _fmt(float(future["adopted_realization_rate"]) * 100, 2) + "%"
+        )
+        future_range = (
+            _fmt(float(future_rate_range["low"]) * 100, 2)
+            + "%–"
+            + _fmt(float(future_rate_range["high"]) * 100, 2)
+            + "%"
+        )
+        future_phrase = (
+            "；未来留存现金实现率为"
+            + future_selected
+            + "（范围"
+            + future_range
+            + "）"
+        )
+        claims.append({
+            "claim_id": "cash.future_retained_cash_realization_rate",
+            "source_model_id": result["model_id"],
+            "metric": "future_retained_cash_realization_rate",
+            "range_low": future_rate_range["low"],
+            "range_high": future_rate_range["high"],
+            "selected_value": future["adopted_realization_rate"],
+            "currency": "NOT_APPLICABLE",
+            "unit": "ratio",
+            "as_of": as_of,
+            "scope": "future_retained_cash_operating_value_adjustment",
+        })
+    else:
+        future_selected = "尚无可前推依据"
+        future_range = "未形成"
+        future_phrase = "；未来留存现金也不预设实现率"
+    if existing.get("realization_rate_range") is None:
+        existing_phrase = "存量超额现金只保留法律可达上限，主估值不预先计入"
+    else:
+        existing_phrase = (
+            "按可重复回流记录，存量超额现金计入"
+            + existing_selected
+            + "（范围"
+            + existing_range
+            + "）"
+        )
+    if receivable.get("recovery_status") in {"EVIDENCE_BACKED", "PARTIAL_EVIDENCE"}:
+        receivable_phrase = (
+            "关联方应收按已收款和同机制成熟批次计入"
+            + receivable_selected
+            + "（范围"
+            + receivable_range
+            + "）"
+        )
+    else:
+        receivable_phrase = (
+            "关联方应收只计已收回金额"
+            + receivable_selected
+            + "，未收部分视作回收选择权"
+        )
     slot = {
         "slot_id": "cash_value_bridge_summary",
         "claim_id": "cash.existing_excess_cash_per_share",
@@ -393,19 +432,11 @@ def _cash_projection(
             "future_realization_range": future_range,
         },
         "sentence": (
-            "现金价值桥将存量超额现金认可为"
-            + existing_selected
-            + "（范围"
-            + existing_range
-            + "），关联方应收另认可为"
-            + receivable_selected
-            + "（范围"
-            + receivable_range
-            + "）；未来留存现金实现率为"
-            + future_selected
-            + "（范围"
-            + future_range
-            + "），三者不重复计值。"
+            existing_phrase
+            + "；"
+            + receivable_phrase
+            + future_phrase
+            + "。三者不重复计值，也不能替经营价值证明当前价格。"
         ),
     }
     return projection, reader, claims, [slot]
@@ -531,10 +562,10 @@ def _replacement_projection(
         }
     else:
         reason_text = {
-            "REPLACEMENT_SCOPE_INCOMPLETE": "持续经营重置价值仍有材料性要素未定界",
-            "EPV_NOT_COMPARABLE": "EPV与重置价值尚不可同口径比较",
-            "NON_POSITIVE_LOWER_BOUND": "至少一条独立价值下限不为正",
-        }.get(joint_reason, "两条独立价值下限尚未同时成立")
+            "REPLACEMENT_SCOPE_INCOMPLETE": "持续经营重置价值还没有覆盖全部关键能力和启动资本",
+            "EPV_NOT_COMPARABLE": "EPV与重置价值还没有形成同口径的独立下限",
+            "NON_POSITIVE_LOWER_BOUND": "至少一条独立价值线没有正的下限",
+        }.get(joint_reason, "两条独立价值线还没有同时成立")
         slot = {
             "slot_id": "replacement_epv_cross_check",
             "claim_ids": [claim["claim_id"] for claim in claims],
@@ -542,9 +573,9 @@ def _replacement_projection(
             "target_chapter": 12,
             "display_variants": {"reason": reason_text},
             "sentence": (
-                "当前不能形成两条独立下限同时覆盖的最高价格，因为"
-                + reason_text
-                + "；该价格保持空值，不以相加或平均补齐。"
+                reason_text
+                + "，因此现在不能声称资产与盈利共同提供价格底；买入价必须由已经单独成立的价值线支撑，"
+                + "待两条都完整后再取较低者，不能相加抬高价值。"
             ),
         }
     return projection, reader, claims, [slot]
@@ -683,26 +714,24 @@ def _working_capital_projection(
             if uses_normalized_owner_cash_for_continuing_value:
                 slot_sentence = (
                     observed_phrase
-                    + "；经常性营运资本占用仍无法可靠定界，因为现有汇总披露不能区分"
-                    + "增长启动占用与稳态经常性负担。两者保持未知，且不形成可进入EPV或"
-                    + "持续经营终值的点值。"
+                    + "，但现有汇总披露不能区分新项目启动投入与稳态负担，不能据此把其中固定比例永久扣减。"
+                    + "主估值不采用50%之类的预设；在项目批次回款和稳态周转证据补齐前，"
+                    + "盈利兑现质量需要单独折价观察。"
                 )
             else:
                 slot_sentence = (
                     observed_phrase
-                    + "；现有汇总披露不能区分增长启动占用、稳态负担与项目回收，"
-                    + "这些归因保持未知，不将净变动直接资本化或视为可回收存量。"
+                    + "，但它不能直接被当成可回收资产或永久负担；当前回收路径只计入有证据的实际回收。"
                 )
         elif uses_normalized_owner_cash_for_continuing_value:
             slot_sentence = (
-                "经常性营运资本占用仍无法可靠定界，因此当前不形成可进入"
-                "EPV或持续经营终值的点值；未知部分保持空值。"
+                "现有披露不能把新项目启动投入与稳态营运资本负担分开，主估值因此不采用固定比例永久扣减；"
+                "在项目批次回款和稳态周转证据补齐前，盈利兑现质量需要单独折价观察。"
             )
         else:
             slot_sentence = (
-                "经常性营运资本占用仍无法可靠定界，未知部分保持空值；"
-                "当前采用回收或清算路径，只识别指定营运资本存量的回收，不将其资本化为"
-                "持续经营价值。"
+                "现有披露不能把新项目启动投入、稳态负担和回收分开；当前回收或清算路径只计入"
+                "有证据的实际回收，不把当期净变动直接资本化。"
             )
     else:
         normalized_low, normalized_high = _two_point_range(reference_range)

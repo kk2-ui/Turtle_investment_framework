@@ -428,12 +428,12 @@ def test_three_historical_annual_periods_and_one_post_position_event_share_one_c
     assert model["existing_excess_cash_realization"]["realization_rate_range"] == {
         "low": pytest.approx(0.1),
         "base": pytest.approx(0.2),
-        "high": pytest.approx(1.0),
+        "high": pytest.approx(0.3),
     }
     assert model["future_retained_cash_realization"]["realization_rate_range"] == {
         "low": pytest.approx(0.2),
         "base": pytest.approx(0.4),
-        "high": pytest.approx(0.8),
+        "high": pytest.approx(0.6),
     }
     assert model["existing_excess_cash_realization"]["adopted_value"] == pytest.approx(14)
     assert model["future_retained_cash_realization"]["adopted_value"] == pytest.approx(32)

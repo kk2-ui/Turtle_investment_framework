@@ -88,6 +88,21 @@
           }
         ],
         "realization_periods": [],
+        "realization_applicability": {
+          "existing_excess_cash": {
+            "cash_control_continuity": null,
+            "upstream_mechanism_continuity": null,
+            "extraordinary_distribution_policy_continuity": null,
+            "capital_need_continuity": null,
+            "source_fact_ids": []
+          },
+          "future_retained_cash": {
+            "cash_control_continuity": null,
+            "ordinary_distribution_policy_continuity": null,
+            "capital_need_continuity": null,
+            "source_fact_ids": []
+          }
+        },
         "future_retained_cash": {
           "projected_amount": 0.0,
           "legal_upper_bound_rate": 1.0,
@@ -102,6 +117,14 @@
             "ecl_allowance": 0.0,
             "post_position_collections": 0.0,
             "aging_bucket": "unknown",
+            "recovery_mechanism_id": "UNKNOWN",
+            "recovery_cohorts": [],
+            "prospective_applicability": {
+              "same_recovery_mechanism": null,
+              "same_counterparty_control": null,
+              "same_settlement_terms": null,
+              "source_fact_ids": []
+            },
             "source_fact_ids": [
               "OBS:02669:RELATED-PARTY-RECEIVABLES"
             ]

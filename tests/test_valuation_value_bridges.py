@@ -34,7 +34,7 @@ def _role_bindings(component_type: str, source_fact_id: str) -> list[dict[str, o
 
 
 def _cash_input() -> dict:
-    fact_ids = ["F:ID", "F:CASH", "F:P1", "F:P2", "F:P3", "F:E1", "F:E2", "F:E3", "F:FUTURE", "F:AR"]
+    fact_ids = ["F:ID", "F:CASH", "F:P1", "F:P2", "F:P3", "F:E1", "F:E2", "F:E3", "F:FUTURE", "F:AR", "F:CONTINUITY"]
     periods = []
     for year, special, dividend, period_fact, event_fact in (
         ("2023", 7, 10, "F:P1", "F:E1"),
@@ -87,6 +87,21 @@ def _cash_input() -> dict:
             }
         ],
         "realization_periods": periods,
+        "realization_applicability": {
+            "existing_excess_cash": {
+                "cash_control_continuity": True,
+                "upstream_mechanism_continuity": True,
+                "extraordinary_distribution_policy_continuity": True,
+                "capital_need_continuity": True,
+                "source_fact_ids": ["F:CONTINUITY"],
+            },
+            "future_retained_cash": {
+                "cash_control_continuity": True,
+                "ordinary_distribution_policy_continuity": True,
+                "capital_need_continuity": True,
+                "source_fact_ids": ["F:CONTINUITY"],
+            },
+        },
         "future_retained_cash": {
             "projected_amount": 80,
             "legal_upper_bound_rate": 0.8,
@@ -99,6 +114,14 @@ def _cash_input() -> dict:
                 "ecl_allowance": 10,
                 "post_position_collections": 20,
                 "aging_bucket": "current",
+                "recovery_mechanism_id": "AR:STANDARD",
+                "recovery_cohorts": [],
+                "prospective_applicability": {
+                    "same_recovery_mechanism": None,
+                    "same_counterparty_control": None,
+                    "same_settlement_terms": None,
+                    "source_fact_ids": [],
+                },
                 "source_fact_ids": ["F:AR"],
             }
         ],
@@ -402,14 +425,14 @@ def test_cash_bridge_computes_per_share_recognition_and_future_retention_rate() 
     assert cash["existing_excess_cash"]["per_share_range"] == {
         "low": pytest.approx(0.35),
         "base": pytest.approx(0.70),
-        "high": pytest.approx(3.50),
+        "high": pytest.approx(1.05),
     }
     assert cash["existing_excess_cash"]["adopted_per_share"] == pytest.approx(0.70)
     assert cash["related_party_receivables"]["adopted_per_share"] == pytest.approx(1.0)
     assert cash["future_retained_cash"]["realization_rate_range"] == {
         "low": 0.2,
         "base": 0.4,
-        "high": 0.8,
+        "high": 0.6,
     }
     assert cash["future_retained_cash"]["adopted_realization_rate"] == 0.4
     assert validate_valuation_value_bridges(compiled)["state"] == "VALID"
@@ -488,8 +511,8 @@ def test_combined_reader_and_numeric_outputs_are_model_derived_not_audit_languag
     text = "\n".join(slot["sentence"] for slot in compiled["reader_slots"])
     metrics = {claim["metric"] for claim in compiled["numeric_claims"]}
 
-    assert "存量超额现金认可为每股HKD0.7" in text
-    assert "关联方应收另认可" in text
+    assert "存量超额现金计入每股HKD0.7" in text
+    assert "关联方应收只计已收回金额" in text
     assert "不相加也不平均" in text
     assert "共同保护的最高价格为每股RMB0.8" in text
     assert "DATA_COVERAGE" not in text
@@ -667,7 +690,7 @@ def test_working_capital_unknown_stays_null_without_midpoint_zero_or_numeric_cla
         }
         for claim in compiled["numeric_claims"]
     )
-    assert "未知部分保持空值" in "\n".join(
+    assert "不采用固定比例永久扣减" in "\n".join(
         slot["sentence"] for slot in compiled["reader_slots"]
     )
     assert validate_valuation_value_bridges(compiled)["state"] == "VALID"
@@ -712,9 +735,9 @@ def test_net_movement_working_capital_projects_observation_without_valuation_att
         "observed_cash_capital_movement": "RMB10百万元",
         "movement_direction": "净占用",
     }
-    assert "增长启动占用与稳态经常性负担" in slot["sentence"]
-    assert "两者保持未知" in slot["sentence"]
-    assert "不形成可进入EPV或持续经营终值的点值" in slot["sentence"]
+    assert "新项目启动投入与稳态负担" in slot["sentence"]
+    assert "不能据此把其中固定比例永久扣减" in slot["sentence"]
+    assert "主估值不采用50%之类的预设" in slot["sentence"]
     assert validate_valuation_value_bridges(compiled)["state"] == "VALID"
 
 

@@ -40,6 +40,27 @@ def _event(
     }
 
 
+def _recovery_cohort(
+    cohort_id: str,
+    recovered: float,
+    fact_id: str,
+    year: int,
+) -> dict:
+    return {
+        "cohort_id": cohort_id,
+        "recovery_mechanism_id": "RP:STANDARD_SETTLEMENT",
+        "period_start": f"{year}-01-01",
+        "period_end": f"{year}-12-31",
+        "maturity_status": "MATURED",
+        "opening_gross_exposure": 100,
+        "opening_ecl_allowance": 0,
+        "cash_collections": recovered,
+        "noncash_settlements": 0,
+        "writeoffs": 100 - recovered,
+        "source_fact_ids": [fact_id],
+    }
+
+
 def _payload() -> dict:
     fact_ids = [
         "F:IDENTITY",
@@ -53,6 +74,10 @@ def _payload() -> dict:
         "F:BUYBACK",
         "F:FUTURE",
         "F:RECEIVABLE",
+        "F:CONTINUITY",
+        "F:RP:C1",
+        "F:RP:C2",
+        "F:RP:C3",
     ]
     return {
         "schema_version": "cash-accessibility-input.v1",
@@ -144,6 +169,21 @@ def _payload() -> dict:
                 "source_fact_ids": ["F:P3"],
             },
         ],
+        "realization_applicability": {
+            "existing_excess_cash": {
+                "cash_control_continuity": True,
+                "upstream_mechanism_continuity": True,
+                "extraordinary_distribution_policy_continuity": True,
+                "capital_need_continuity": True,
+                "source_fact_ids": ["F:CONTINUITY"],
+            },
+            "future_retained_cash": {
+                "cash_control_continuity": True,
+                "ordinary_distribution_policy_continuity": True,
+                "capital_need_continuity": True,
+                "source_fact_ids": ["F:CONTINUITY"],
+            },
+        },
         "future_retained_cash": {
             "projected_amount": 80,
             "legal_upper_bound_rate": 0.80,
@@ -156,6 +196,18 @@ def _payload() -> dict:
                 "ecl_allowance": 10,
                 "post_position_collections": 20,
                 "aging_bucket": "current",
+                "recovery_mechanism_id": "RP:STANDARD_SETTLEMENT",
+                "recovery_cohorts": [
+                    _recovery_cohort("RP:C1", 80, "F:RP:C1", 2023),
+                    _recovery_cohort("RP:C2", 90, "F:RP:C2", 2024),
+                    _recovery_cohort("RP:C3", 100, "F:RP:C3", 2025),
+                ],
+                "prospective_applicability": {
+                    "same_recovery_mechanism": True,
+                    "same_counterparty_control": True,
+                    "same_settlement_terms": True,
+                    "source_fact_ids": ["F:CONTINUITY"],
+                },
                 "source_fact_ids": ["F:RECEIVABLE"],
             }
         ],
@@ -223,15 +275,17 @@ def test_balance_sheet_position_date_can_precede_evidence_cutoff_without_losing_
     assert validate_cash_accessibility_model(model)["state"] == "VALID"
 
 
-def test_missing_extraordinary_history_uses_zero_to_legal_ceiling_and_adopts_zero() -> None:
+def test_missing_extraordinary_history_keeps_legal_ceiling_separate_and_adopts_zero() -> None:
     payload = _payload()
     payload["realization_periods"] = []
     model = compute_cash_accessibility_model(payload)
     existing = model["existing_excess_cash_realization"]
 
     assert existing["qualifying_period_count"] == 0
-    assert existing["realization_rate_range"] == {"low": 0, "base": 0, "high": 1}
-    assert existing["amount_range"] == {"low": 0, "base": 0, "high": 142.6}
+    assert existing["historical_observed_rate_range"] is None
+    assert existing["realization_rate_range"] is None
+    assert existing["amount_range"] == {"low": 0, "base": 0, "high": 0}
+    assert existing["legal_upper_bound"] == 142.6
     assert existing["adopted_value"] == 0
 
 
@@ -241,14 +295,40 @@ def test_three_comparable_periods_use_median_and_include_zero_event_period() -> 
 
     assert [row["existing_cash_realization_rate"] for row in existing["history"]] == [0.1, 0, 0.3]
     assert existing["qualifying_period_count"] == 3
-    assert existing["realization_rate_range"] == {"low": 0, "base": 0.1, "high": 1}
+    assert existing["historical_observed_rate_range"] == {"low": 0, "base": 0.1, "high": 0.3}
+    assert existing["realization_rate_range"] == {"low": 0, "base": 0.1, "high": 0.3}
     assert existing["adopted_realization_rate"] == 0.1
 
     without_zero = _payload()
     without_zero["realization_periods"].pop(1)
     unqualified = compute_cash_accessibility_model(without_zero)["existing_excess_cash_realization"]
     assert unqualified["qualifying_period_count"] == 2
+    assert unqualified["realization_rate_range"] is None
     assert unqualified["adopted_value"] == 0
+
+
+def test_three_historical_periods_do_not_become_a_forecast_without_continuity() -> None:
+    payload = _payload()
+    payload["realization_applicability"]["existing_excess_cash"] = {
+        "cash_control_continuity": None,
+        "upstream_mechanism_continuity": None,
+        "extraordinary_distribution_policy_continuity": None,
+        "capital_need_continuity": None,
+        "source_fact_ids": [],
+    }
+    existing = compute_cash_accessibility_model(payload)[
+        "existing_excess_cash_realization"
+    ]
+
+    assert existing["historical_observed_rate_range"] == {
+        "low": 0,
+        "base": 0.1,
+        "high": 0.3,
+    }
+    assert existing["prospective_applicability"]["status"] == "UNKNOWN"
+    assert existing["realization_rate_range"] is None
+    assert existing["adopted_realization_rate"] is None
+    assert existing["adopted_value"] == 0
 
 
 def test_ordinary_dividends_change_future_retention_but_not_existing_cash() -> None:
@@ -317,12 +397,22 @@ def test_future_retained_cash_has_a_distinct_destination_and_calibration() -> No
     assert changed["related_party_receivable_realization"] == baseline["related_party_receivable_realization"]
 
 
-def test_related_receivable_is_not_cash_and_only_collections_are_adopted() -> None:
+def test_related_receivable_uses_only_same_mechanism_mature_cohorts() -> None:
     baseline = compute_cash_accessibility_model(_payload())
     receivable = baseline["related_party_receivable_realization"]
-    assert receivable["amount_range"] == {"low": 20, "base": 83, "high": 90}
-    assert receivable["adopted_value"] == 20
+    assert receivable["amount_range"] == {"low": 76, "base": 83, "high": 90}
+    assert receivable["adopted_value"] == 83
+    assert receivable["rows"][0]["historical_observed_recovery_rate_range"] == {
+        "low": 0.8,
+        "base": 0.9,
+        "high": 1,
+    }
     assert baseline["legal_cash_accessibility"]["adopted_value"] == 142.6
+
+    aging_only = _payload()
+    aging_only["related_party_receivables"][0]["aging_bucket"] = "over_three_years"
+    aging_model = compute_cash_accessibility_model(aging_only)
+    assert aging_model["related_party_receivable_realization"]["amount_range"] == receivable["amount_range"]
 
     older_payload = _payload()
     older_payload["related_party_receivables"][0].update({
@@ -331,8 +421,8 @@ def test_related_receivable_is_not_cash_and_only_collections_are_adopted() -> No
     })
     older = compute_cash_accessibility_model(older_payload)
     assert older["related_party_receivable_realization"]["amount_range"] == {
-        "low": 20,
-        "base": 27.5,
+        "low": 60,
+        "base": 65,
         "high": 70,
     }
     for component in (
@@ -341,6 +431,28 @@ def test_related_receivable_is_not_cash_and_only_collections_are_adopted() -> No
         "future_retained_cash_realization",
     ):
         assert older[component] == baseline[component]
+
+
+def test_related_receivable_without_mature_cohorts_keeps_uncollected_exposure_unknown() -> None:
+    payload = _payload()
+    receivable_input = payload["related_party_receivables"][0]
+    receivable_input["recovery_cohorts"] = []
+    receivable_input["prospective_applicability"] = {
+        "same_recovery_mechanism": None,
+        "same_counterparty_control": None,
+        "same_settlement_terms": None,
+        "source_fact_ids": [],
+    }
+
+    receivable = compute_cash_accessibility_model(payload)[
+        "related_party_receivable_realization"
+    ]
+
+    assert receivable["recovery_status"] == "UNKNOWN"
+    assert receivable["amount_range"] == {"low": 20, "base": 20, "high": 20}
+    assert receivable["adopted_value"] == 20
+    assert receivable["unrecognized_net_exposure"] == 70
+    assert receivable["rows"][0]["uncollected_recovery_rate_range"] is None
 
 
 def test_perturbations_change_only_the_economically_connected_outputs() -> None:
@@ -361,7 +473,7 @@ def test_perturbations_change_only_the_economically_connected_outputs() -> None:
     collected_payload = _payload()
     collected_payload["related_party_receivables"][0]["post_position_collections"] = 40
     collected = compute_cash_accessibility_model(collected_payload)
-    assert collected["related_party_receivable_realization"]["adopted_value"] == 40
+    assert collected["related_party_receivable_realization"]["adopted_value"] == 85
     for component in (
         "legal_cash_accessibility",
         "existing_excess_cash_realization",

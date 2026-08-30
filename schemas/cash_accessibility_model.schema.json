@@ -91,6 +91,33 @@
         "high": {"$ref": "#/$defs/rate"}
       }
     },
+    "nullableRateRange": {
+      "oneOf": [
+        {"$ref": "#/$defs/rateRange"},
+        {"type": "null"}
+      ]
+    },
+    "optionalFactIds": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {"$ref": "#/$defs/nonemptyString"}
+    },
+    "applicability": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "conditions", "source_fact_ids"],
+      "properties": {
+        "status": {
+          "enum": ["EVIDENCE_BACKED", "UNKNOWN", "DISCONTINUITY_IDENTIFIED"]
+        },
+        "conditions": {
+          "type": "object",
+          "additionalProperties": {"type": ["boolean", "null"]},
+          "minProperties": 3
+        },
+        "source_fact_ids": {"$ref": "#/$defs/optionalFactIds"}
+      }
+    },
     "legalCashRow": {
       "type": "object",
       "additionalProperties": false,
@@ -232,6 +259,8 @@
         "qualifying_period_count",
         "required_period_count",
         "calibration_method",
+        "historical_observed_rate_range",
+        "prospective_applicability",
         "realization_rate_range",
         "amount_range",
         "adopted_realization_rate",
@@ -245,16 +274,20 @@
         "qualifying_period_count": {"type": "integer", "minimum": 0},
         "required_period_count": {"const": 3},
         "calibration_method": {
-          "enum": ["unqualified_evidence_conservative_bound", "median_of_comparable_periods"]
+          "enum": ["insufficient_comparable_history", "observed_min_median_max"]
         },
-        "realization_rate_range": {"$ref": "#/$defs/rateRange"},
+        "historical_observed_rate_range": {"$ref": "#/$defs/nullableRateRange"},
+        "prospective_applicability": {"$ref": "#/$defs/applicability"},
+        "realization_rate_range": {"$ref": "#/$defs/nullableRateRange"},
         "amount_range": {"$ref": "#/$defs/amountRange"},
-        "adopted_realization_rate": {"$ref": "#/$defs/rate"},
+        "adopted_realization_rate": {
+          "oneOf": [{"$ref": "#/$defs/rate"}, {"type": "null"}]
+        },
         "adopted_value": {"$ref": "#/$defs/nonnegativeNumber"},
         "adoption_policy": {
           "enum": [
-            "low_end_until_three_comparable_periods",
-            "base_median_after_three_comparable_periods"
+            "zero_recognized_until_history_and_continuity_are_evidence_backed",
+            "evidence_backed_historical_rate_range"
           ]
         },
         "valuation_destination": {"const": "equity_value_existing_excess_cash"},
@@ -273,6 +306,8 @@
         "qualifying_period_count",
         "required_period_count",
         "calibration_method",
+        "historical_observed_rate_range",
+        "prospective_applicability",
         "realization_rate_range",
         "amount_range",
         "adopted_realization_rate",
@@ -287,19 +322,59 @@
         "qualifying_period_count": {"type": "integer", "minimum": 0},
         "required_period_count": {"const": 3},
         "calibration_method": {
-          "enum": ["unqualified_evidence_conservative_bound", "median_of_comparable_periods"]
+          "enum": ["insufficient_comparable_history", "observed_min_median_max"]
         },
-        "realization_rate_range": {"$ref": "#/$defs/rateRange"},
+        "historical_observed_rate_range": {"$ref": "#/$defs/nullableRateRange"},
+        "prospective_applicability": {"$ref": "#/$defs/applicability"},
+        "realization_rate_range": {"$ref": "#/$defs/nullableRateRange"},
         "amount_range": {"$ref": "#/$defs/amountRange"},
-        "adopted_realization_rate": {"$ref": "#/$defs/rate"},
+        "adopted_realization_rate": {
+          "oneOf": [{"$ref": "#/$defs/rate"}, {"type": "null"}]
+        },
         "adopted_value": {"$ref": "#/$defs/nonnegativeNumber"},
         "adoption_policy": {
           "enum": [
-            "low_end_until_three_comparable_periods",
-            "base_median_after_three_comparable_periods"
+            "zero_recognized_until_history_and_continuity_are_evidence_backed",
+            "evidence_backed_historical_rate_range"
           ]
         },
         "valuation_destination": {"const": "operating_value_future_retained_cash"},
+        "source_fact_ids": {"$ref": "#/$defs/factIds"}
+      }
+    },
+    "recoveryCohort": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "cohort_id",
+        "recovery_mechanism_id",
+        "period_start",
+        "period_end",
+        "maturity_status",
+        "opening_gross_exposure",
+        "opening_ecl_allowance",
+        "opening_net_exposure",
+        "cash_collections",
+        "noncash_settlements",
+        "writeoffs",
+        "realized_recovery_rate",
+        "source_fact_ids"
+      ],
+      "properties": {
+        "cohort_id": {"$ref": "#/$defs/nonemptyString"},
+        "recovery_mechanism_id": {"$ref": "#/$defs/nonemptyString"},
+        "period_start": {"type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}$"},
+        "period_end": {"type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}$"},
+        "maturity_status": {"enum": ["MATURED", "OPEN"]},
+        "opening_gross_exposure": {"$ref": "#/$defs/nonnegativeNumber"},
+        "opening_ecl_allowance": {"$ref": "#/$defs/nonnegativeNumber"},
+        "opening_net_exposure": {"$ref": "#/$defs/nonnegativeNumber"},
+        "cash_collections": {"$ref": "#/$defs/nonnegativeNumber"},
+        "noncash_settlements": {"$ref": "#/$defs/nonnegativeNumber"},
+        "writeoffs": {"$ref": "#/$defs/nonnegativeNumber"},
+        "realized_recovery_rate": {
+          "oneOf": [{"$ref": "#/$defs/rate"}, {"type": "null"}]
+        },
         "source_fact_ids": {"$ref": "#/$defs/factIds"}
       }
     },
@@ -312,7 +387,16 @@
         "ecl_allowance",
         "post_position_collections",
         "aging_bucket",
-        "uncollected_recovery_factor",
+        "recovery_mechanism_id",
+        "uncollected_net_exposure",
+        "unrecognized_net_exposure",
+        "mature_cohort_count",
+        "required_mature_cohort_count",
+        "historical_observed_recovery_rate_range",
+        "prospective_applicability",
+        "uncollected_recovery_rate_range",
+        "recovery_status",
+        "recovery_cohorts",
         "amount_range",
         "adopted_value",
         "source_fact_ids"
@@ -332,7 +416,21 @@
             "unknown"
           ]
         },
-        "uncollected_recovery_factor": {"$ref": "#/$defs/rate"},
+        "recovery_mechanism_id": {"$ref": "#/$defs/nonemptyString"},
+        "uncollected_net_exposure": {"$ref": "#/$defs/nonnegativeNumber"},
+        "unrecognized_net_exposure": {"$ref": "#/$defs/nonnegativeNumber"},
+        "mature_cohort_count": {"type": "integer", "minimum": 0},
+        "required_mature_cohort_count": {"const": 3},
+        "historical_observed_recovery_rate_range": {"$ref": "#/$defs/nullableRateRange"},
+        "prospective_applicability": {"$ref": "#/$defs/applicability"},
+        "uncollected_recovery_rate_range": {"$ref": "#/$defs/nullableRateRange"},
+        "recovery_status": {
+          "enum": ["EVIDENCE_BACKED", "UNKNOWN", "FULLY_COLLECTED_OR_ALLOWED"]
+        },
+        "recovery_cohorts": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/recoveryCohort"}
+        },
         "amount_range": {"$ref": "#/$defs/amountRange"},
         "adopted_value": {"$ref": "#/$defs/nonnegativeNumber"},
         "source_fact_ids": {"$ref": "#/$defs/factIds"}
@@ -346,6 +444,9 @@
         "gross_receivables",
         "ecl_allowance",
         "post_position_collections",
+        "uncollected_net_exposure",
+        "unrecognized_net_exposure",
+        "recovery_status",
         "amount_range",
         "adopted_value",
         "adoption_policy",
@@ -359,9 +460,21 @@
         "gross_receivables": {"$ref": "#/$defs/nonnegativeNumber"},
         "ecl_allowance": {"$ref": "#/$defs/nonnegativeNumber"},
         "post_position_collections": {"$ref": "#/$defs/nonnegativeNumber"},
+        "uncollected_net_exposure": {"$ref": "#/$defs/nonnegativeNumber"},
+        "unrecognized_net_exposure": {"$ref": "#/$defs/nonnegativeNumber"},
+        "recovery_status": {
+          "enum": [
+            "EVIDENCE_BACKED",
+            "PARTIAL_EVIDENCE",
+            "UNKNOWN",
+            "FULLY_COLLECTED_OR_ALLOWED"
+          ]
+        },
         "amount_range": {"$ref": "#/$defs/amountRange"},
         "adopted_value": {"$ref": "#/$defs/nonnegativeNumber"},
-        "adoption_policy": {"const": "collections_only_until_cash_is_received"},
+        "adoption_policy": {
+          "const": "collections_plus_evidence_backed_same_mechanism_mature_cohorts_only"
+        },
         "valuation_destination": {"const": "equity_value_related_party_receivable"}
       }
     },
