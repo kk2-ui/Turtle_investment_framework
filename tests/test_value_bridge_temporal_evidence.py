@@ -504,6 +504,64 @@ def test_fake_calculation_cannot_bind_a_cash_temporal_operand(tmp_path: Path) ->
     )
 
 
+def test_renamed_non_calc_registry_row_cannot_bind_cash_temporal_operand(
+    tmp_path: Path,
+) -> None:
+    bridge_input, facts, manifest = _temporal_cash_fixture()
+    path = next(
+        item["path"] for item in bridge_input["canonical_fact_bindings"]
+        if item["path"].endswith(".opening_existing_excess_cash")
+    )
+    calculation_id = "DERIVED:CASH:RENAMED"
+    value = _replace_cash_binding(
+        bridge_input, path=path, evidence_id=calculation_id
+    )
+    _write_registries(tmp_path, facts, manifest)
+    (tmp_path / "calculation_observations.json").write_text(
+        json.dumps(
+            {
+                "calculations": [{
+                    "calculation_id": calculation_id,
+                    "tool": "compute_gg",
+                    "metric_path": "synthetic.renamed_cash",
+                    "value": value,
+                    "unit": "million",
+                    "status": "VERIFIED",
+                }]
+            }
+        ),
+        encoding="utf-8",
+    )
+
+    invalid, _ = _validate(tmp_path, bridge_input)
+
+    assert any(
+        "cash_temporal_operand_calculation_evidence_forbidden" in finding
+        for finding in invalid
+    )
+
+
+def test_non_observation_identifier_cannot_bind_cash_temporal_operand(
+    tmp_path: Path,
+) -> None:
+    bridge_input, facts, manifest = _temporal_cash_fixture()
+    path = next(
+        item["path"] for item in bridge_input["canonical_fact_bindings"]
+        if item["path"].endswith(".retained_cash_generated")
+    )
+    _replace_cash_binding(
+        bridge_input, path=path, evidence_id="DERIVED:CASH:UNREGISTERED"
+    )
+    _write_registries(tmp_path, facts, manifest)
+
+    invalid, _ = _validate(tmp_path, bridge_input)
+
+    assert any(
+        "cash_temporal_operand_calculation_evidence_forbidden" in finding
+        for finding in invalid
+    )
+
+
 def test_verified_calculation_without_temporal_lineage_cannot_bind_cash_operand(
     tmp_path: Path,
 ) -> None:

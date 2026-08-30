@@ -1082,7 +1082,9 @@ def _validate_value_bridge_fact_bindings(
         if evidence_id not in declared:
             invalid.append(prefix + ":evidence_not_declared_at_operand:" + path)
         context = _bridge_operand_context(model_input, path)
-        if context.get("temporal_role") and evidence_id.startswith("CALC:"):
+        if context.get("temporal_role") and (
+            evidence_id in calculations_by_id or evidence_id not in observations
+        ):
             invalid.append(
                 prefix + ":cash_temporal_operand_calculation_evidence_forbidden:" + path
             )
