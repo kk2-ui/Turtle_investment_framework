@@ -136,9 +136,25 @@ def test_component_types_are_generic_to_the_card_not_hardcoded_to_property_servi
         if item["role"] in retained_roles
     ]
     card["components"][0]["component_type"] = "PROCESS_QUALIFICATION"
-    card["components"][0]["double_count_owner"] = "CUSTOMER_CERTIFICATION_COMPONENT"
+    card["components"][0]["double_count_owner"] = "OWN_REPLACEMENT_COMPONENT"
 
     assert validate_valuation_archetype(card)["state"] == "VALID"
+
+
+def test_cross_component_cost_owner_must_name_a_component_in_the_same_card() -> None:
+    card = deepcopy(_card())
+    channel = next(
+        item for item in card["components"]
+        if item["component_type"] == "CUSTOMER_ACQUISITION_CHANNEL"
+    )
+    channel["double_count_owner"] = "NONEXISTENT_CAPABILITY_COMPONENT"
+
+    findings = validate_valuation_archetype(card)["findings"]
+
+    assert (
+        "components[2]:double_count_owner_component_missing:NONEXISTENT_CAPABILITY"
+        in findings
+    )
 
 
 @pytest.mark.parametrize(

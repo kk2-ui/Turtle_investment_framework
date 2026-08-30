@@ -50,6 +50,11 @@ DOUBLE_COUNT_TREATMENTS = {
     "ALREADY_INCLUDED_EXCLUDED",
     "UNKNOWN_SCENARIO_ONLY",
 }
+REPLACEMENT_COMPONENT_OVERLAP_TREATMENTS = {
+    "SEPARATE_COST_BASE",
+    "NETTED_TO_OWNER",
+    "UNKNOWN_SCENARIO_ONLY",
+}
 SYNTHESIS_RULE = "CROSS_CHECK_ONLY_NEVER_ADD_OR_AVERAGE"
 LIQUIDATION_USE = "SEPARATE_STRESS_REFERENCE_NEVER_ADD"
 
@@ -94,7 +99,9 @@ _EXCLUSION_TREATMENT_FIELDS = {
 }
 _UNCERTAINTY_FIELDS = {"boundary", "investor_consequence", "promotion_evidence"}
 _DOUBLE_COUNT_FIELDS = {
-    "balance_sheet_working_capital", "epv_maintenance_need", "explanation",
+    "balance_sheet_working_capital", "epv_maintenance_need",
+    "replacement_component_owner", "replacement_component_overlap",
+    "source_fact_ids", "explanation",
 }
 _CLAIMS_FIELDS = {
     "non_operating_assets", "debt", "minority_interest", "other_priority_claims",
@@ -208,6 +215,17 @@ def _component_recognized_range(
             return None
         return estimated[0] * fraction_low, estimated[1] * fraction_high
     return None
+
+
+def _replacement_component_owner(component_spec: dict[str, Any] | None) -> str | None:
+    owner = str(_mapping(component_spec).get("double_count_owner") or "")
+    if owner in {
+        "",
+        "OWN_REPLACEMENT_COMPONENT",
+        "BALANCE_SHEET_WORKING_CAPITAL_OR_EPV_MAINTENANCE_NEED",
+    }:
+        return None
+    return owner.removesuffix("_COMPONENT") or None
 
 
 def _validate_model_context(value: Any, findings: list[str]) -> str:
@@ -449,6 +467,12 @@ def _validate_exclusion_treatment(
             findings.append(prefix + ":exclusion_destination_component_type_missing_or_invalid")
         elif target == component_type:
             findings.append(prefix + ":exclusion_destination_component_type_must_be_distinct")
+        declared_owner = _replacement_component_owner(component_spec)
+        if declared_owner is not None and target != declared_owner:
+            findings.append(
+                prefix + ":exclusion_destination_must_match_card_cost_owner:"
+                + declared_owner
+            )
     elif destination_component_type not in {None, ""}:
         findings.append(prefix + ":exclusion_destination_component_type_only_for_other_replacement_component")
     if not _text(treatment.get("reason")):
@@ -716,6 +740,41 @@ def _validate_component(
             "UNKNOWN",
         }:
             findings.append(prefix + ":unknown_working_capital_overlap_cannot_be_recognized")
+
+    replacement_owner = _replacement_component_owner(component_spec)
+    recognized_high = recognized[1] if recognized is not None else 0.0
+    if replacement_owner is not None and recognition_status == "RECOGNIZED" and recognized_high > 0:
+        _reject_unknown_fields(
+            double_count, _DOUBLE_COUNT_FIELDS, prefix + ":double_count", findings
+        )
+        if double_count.get("replacement_component_owner") != replacement_owner:
+            findings.append(
+                prefix + ":replacement_component_overlap_owner_mismatch:"
+                + replacement_owner
+            )
+        overlap = double_count.get("replacement_component_overlap")
+        if overlap not in REPLACEMENT_COMPONENT_OVERLAP_TREATMENTS:
+            findings.append(prefix + ":replacement_component_overlap_unresolved")
+        elif overlap == "UNKNOWN_SCENARIO_ONLY":
+            findings.append(
+                prefix + ":unresolved_replacement_component_overlap_cannot_be_recognized"
+            )
+        _validate_source_fact_ids(
+            double_count.get("source_fact_ids"),
+            prefix=prefix + ":replacement_component_overlap",
+            purpose=purpose,
+            required=True,
+            findings=findings,
+        )
+        if any(
+            not str(source_id).startswith("OBS:")
+            for source_id in _items(double_count.get("source_fact_ids"))
+        ):
+            findings.append(
+                prefix + ":replacement_component_overlap_requires_direct_verified_observation"
+            )
+        if not _text(double_count.get("explanation")):
+            findings.append(prefix + ":double_count_explanation_missing")
 
 
 def _validate_claims_bridge(

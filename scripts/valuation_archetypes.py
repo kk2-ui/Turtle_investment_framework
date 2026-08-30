@@ -35,6 +35,8 @@ EXCLUSION_DESTINATIONS = {
     "BALANCE_SHEET_WORKING_CAPITAL",
     "EPV_MAINTENANCE_NEED",
 }
+OWN_REPLACEMENT_COMPONENT = "OWN_REPLACEMENT_COMPONENT"
+EXTERNAL_DOUBLE_COUNT_OWNER = "BALANCE_SHEET_WORKING_CAPITAL_OR_EPV_MAINTENANCE_NEED"
 REQUIRED_PROHIBITED_CONTENT = {
     "CURRENCY_AMOUNT",
     "PERCENTAGE_OR_MULTIPLE",
@@ -246,6 +248,33 @@ def _validate_component(value: Any, *, index: int, seen: set[str], findings: lis
         _required_text(item.get(field), prefix=prefix + "." + field, findings=findings)
 
 
+def _replacement_component_owner(owner: str) -> str | None:
+    """Resolve a card's cross-component cost owner to a component type."""
+    if owner in {OWN_REPLACEMENT_COMPONENT, EXTERNAL_DOUBLE_COUNT_OWNER}:
+        return None
+    return owner.removesuffix("_COMPONENT") or None
+
+
+def _validate_double_count_topology(
+    components: list[Any], *, component_types: set[str], findings: list[str]
+) -> None:
+    """Require a cross-component cost owner to exist in the same blueprint."""
+    for index, raw_component in enumerate(components):
+        component = _mapping(raw_component)
+        component_type = str(component.get("component_type") or "")
+        resolved_owner = _replacement_component_owner(
+            str(component.get("double_count_owner") or "")
+        )
+        if resolved_owner is None:
+            continue
+        if resolved_owner == component_type:
+            findings.append(f"components[{index}]:double_count_owner_must_be_distinct")
+        elif resolved_owner not in component_types:
+            findings.append(
+                f"components[{index}]:double_count_owner_component_missing:{resolved_owner}"
+            )
+
+
 def _validate_completion_rule(value: Any, findings: list[str]) -> None:
     item = _mapping(value)
     _reject_unknown_fields(item, COMPLETION_RULE_FIELDS, "completion_rule", findings)
@@ -361,6 +390,9 @@ def validate_valuation_archetype(payload: Any) -> dict[str, Any]:
                 role = str(raw_role)
                 required_roles.add(role)
                 role_owners.setdefault(role, []).append(component_type)
+    _validate_double_count_topology(
+        components, component_types=seen, findings=findings
+    )
     if "evidence_role_guidance" in card:
         for role, owners in sorted(role_owners.items()):
             distinct_owners = list(dict.fromkeys(owners))
