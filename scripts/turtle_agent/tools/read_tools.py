@@ -235,16 +235,37 @@ def read_industry_knowledge_context(output_dir: str = ".") -> dict[str, Any]:
 
 
 def read_valuation_route(output_dir: str = ".") -> dict[str, Any]:
-    """Read the canonical archetype and model route before valuation work."""
+    """Read the canonical route and its role-level evidence work plan."""
     archetype = _read_json(os.path.join(output_dir, "company_archetype.json")) or {}
     route = _read_json(os.path.join(output_dir, "valuation_route.json")) or {}
     if not archetype or not route:
         return {"ok": False, "error": "company_archetype.json或valuation_route.json不存在"}
+    try:
+        from scripts.valuation_evidence_plan import build_valuation_evidence_plan
+    except ModuleNotFoundError:
+        from valuation_evidence_plan import build_valuation_evidence_plan
+    try:
+        evidence_plan = build_valuation_evidence_plan(output_dir, persist=False)
+    except Exception as exc:
+        evidence_plan = {
+            "schema_version": "valuation-evidence-plan.v1",
+            "state": "INVALID",
+            "evidence_role_readiness": "BLOCKED",
+            "model_completion": "NOT_EVALUATED",
+            "findings": ["valuation_evidence_plan_compile_failed:" + str(exc)],
+        }
     return {
         "ok": True,
         "archetype": archetype,
         "valuation_route": route,
-        "instruction": "估值账本必须服从route_id、模型角色和口径；禁用模型要显式拒绝，多模型分歧不得无依据加权平均。",
+        "valuation_evidence_plan": evidence_plan,
+        "instruction": (
+            "估值账本必须服从route_id、模型角色和口径；禁用模型要显式拒绝，多模型分歧不得无依据加权平均。"
+            "若valuation_evidence_plan为INCOMPLETE/INVALID或evidence_role_readiness不是ROLE_INPUTS_READY，"
+            "不得进入确定性重置价值模型；即使角色输入已就绪，model_completion仍为NOT_EVALUATED，"
+            "公司级区间、每股价值及与EPV共同保护价只能由replacement模型门解除阻断。按角色执行有界取证，"
+            "检索收据只能关闭尝试，不能把MISSING/INELIGIBLE升级为AVAILABLE。"
+        ),
     }
 
 
@@ -499,7 +520,7 @@ read_industry_knowledge_context._tool_meta = {
 }
 read_valuation_route._tool_meta = {
     "name": "read_valuation_route",
-    "description": "读取框架写作前确定的公司主/次原型、适用/压力/禁用估值模型、口径和脆弱性规则。",
+    "description": "读取框架写作前确定的公司主/次原型、适用/压力/禁用估值模型，以及版本化行业卡编译的逐角色证据计划、官方来源提示、停止规则和被阻断估值结论。",
     "parameters": {"output_dir": {"type": "string", "description": "股票输出目录"}},
 }
 read_judgment_generation_handoff._tool_meta = {

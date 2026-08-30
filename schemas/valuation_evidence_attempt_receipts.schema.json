@@ -1,0 +1,63 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://turtle.local/schemas/valuation_evidence_attempt_receipts.schema.json",
+  "title": "Turtle Valuation Evidence Attempt Receipts",
+  "description": "Search-attempt receipts for route/card evidence roles. Receipts never grant evidence eligibility.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "report_id", "route_id", "card_id", "receipts"],
+  "properties": {
+    "schema_version": {"const": "valuation-evidence-attempt-receipts.v1"},
+    "report_id": {"type": "string", "minLength": 1},
+    "route_id": {"type": "string", "pattern": "^VR:"},
+    "card_id": {"type": "string", "pattern": "^VALUATION_ARCHETYPE:"},
+    "receipts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "receipt_id",
+          "component_type",
+          "evidence_role",
+          "attempted_official_sources",
+          "attempted_modules",
+          "query_hints_used",
+          "outcome",
+          "evidence_ids",
+          "completed_at"
+        ],
+        "properties": {
+          "receipt_id": {"type": "string", "pattern": "^VEA:"},
+          "component_type": {"type": "string", "pattern": "^[A-Z][A-Z0-9_]*$"},
+          "evidence_role": {"type": "string", "pattern": "^[A-Z][A-Z0-9_]*$"},
+          "attempted_official_sources": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {"type": "string", "minLength": 1}
+          },
+          "attempted_modules": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {"type": "string", "minLength": 1}
+          },
+          "query_hints_used": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {"type": "string", "minLength": 1}
+          },
+          "outcome": {"enum": ["EVIDENCE_FOUND", "PUBLIC_INFO_UNAVAILABLE", "INELIGIBLE_ONLY"]},
+          "evidence_ids": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": {"type": "string", "pattern": "^OBS:"}
+          },
+          "completed_at": {"type": "string", "minLength": 1}
+        }
+      }
+    }
+  }
+}

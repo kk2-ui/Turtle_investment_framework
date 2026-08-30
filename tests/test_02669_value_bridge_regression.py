@@ -46,10 +46,17 @@ def test_02669_fixture_preserves_the_accepted_observations_needed_by_all_three_m
 
 
 def test_02669_cash_is_evidence_bounded_without_an_arbitrary_half_haircut() -> None:
-    _, compiled = _compiled()
+    fixture, compiled = _compiled()
     cash = compiled["result"]["cash_accessibility"]
     existing = cash["existing_excess_cash_realization"]
 
+    assert fixture["case_identity"]["cash_temporal_evidence_status"] == (
+        "NO_REALIZATION_PERIOD_OR_POST_POSITION_EVENT_EVIDENCE_ADMITTED"
+    )
+    assert existing["history"] == []
+    assert cash["related_party_receivable_realization"][
+        "post_position_collections"
+    ] == pytest.approx(0.0)
     assert cash["legal_cash_accessibility"]["adopted_value"] == pytest.approx(5104.440)
     assert existing["amount_range"] == {
         "low": pytest.approx(0.0),

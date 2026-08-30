@@ -160,6 +160,8 @@
       "additionalProperties": false,
       "required": [
         "event_type",
+        "event_date",
+        "observed_at",
         "amount",
         "funding_source_identity",
         "eligible_for_existing_excess_cash_calibration",
@@ -167,6 +169,8 @@
       ],
       "properties": {
         "event_type": {"enum": ["special_dividend", "cancellative_net_buyback"]},
+        "event_date": {"type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}$"},
+        "observed_at": {"type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}$"},
         "amount": {"$ref": "#/$defs/nonnegativeNumber"},
         "funding_source_identity": {
           "enum": ["existing_excess_cash", "future_retained_cash", "debt_funded", "unknown"]
@@ -180,6 +184,9 @@
       "additionalProperties": false,
       "required": [
         "period_id",
+        "period_start",
+        "period_end",
+        "opening_position_as_of",
         "comparable",
         "opening_existing_excess_cash",
         "retained_cash_generated",
@@ -194,6 +201,9 @@
       ],
       "properties": {
         "period_id": {"$ref": "#/$defs/nonemptyString"},
+        "period_start": {"type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}$"},
+        "period_end": {"type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}$"},
+        "opening_position_as_of": {"type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}$"},
         "comparable": {"type": "boolean"},
         "opening_existing_excess_cash": {"$ref": "#/$defs/nonnegativeNumber"},
         "retained_cash_generated": {"$ref": "#/$defs/nonnegativeNumber"},
@@ -300,7 +310,7 @@
         "receivable_id",
         "gross_amount",
         "ecl_allowance",
-        "post_cutoff_collections",
+        "post_position_collections",
         "aging_bucket",
         "uncollected_recovery_factor",
         "amount_range",
@@ -311,7 +321,7 @@
         "receivable_id": {"$ref": "#/$defs/nonemptyString"},
         "gross_amount": {"$ref": "#/$defs/nonnegativeNumber"},
         "ecl_allowance": {"$ref": "#/$defs/nonnegativeNumber"},
-        "post_cutoff_collections": {"$ref": "#/$defs/nonnegativeNumber"},
+        "post_position_collections": {"$ref": "#/$defs/nonnegativeNumber"},
         "aging_bucket": {
           "enum": [
             "current",
@@ -335,7 +345,7 @@
         "rows",
         "gross_receivables",
         "ecl_allowance",
-        "post_cutoff_collections",
+        "post_position_collections",
         "amount_range",
         "adopted_value",
         "adoption_policy",
@@ -348,7 +358,7 @@
         },
         "gross_receivables": {"$ref": "#/$defs/nonnegativeNumber"},
         "ecl_allowance": {"$ref": "#/$defs/nonnegativeNumber"},
-        "post_cutoff_collections": {"$ref": "#/$defs/nonnegativeNumber"},
+        "post_position_collections": {"$ref": "#/$defs/nonnegativeNumber"},
         "amount_range": {"$ref": "#/$defs/amountRange"},
         "adopted_value": {"$ref": "#/$defs/nonnegativeNumber"},
         "adoption_policy": {"const": "collections_only_until_cash_is_received"},

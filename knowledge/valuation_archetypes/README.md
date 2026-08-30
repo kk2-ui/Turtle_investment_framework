@@ -8,7 +8,8 @@
 
 ```text
 valuation archetype card
-  -> 要求本公司补取字段、限制可用计算方法、定义 UNKNOWN/完成边界
+  -> 要求本公司补取字段、给出官方来源/模块/查询提示和有界停止规则
+  -> ValuationEvidencePlan 按当前 VERIFIED observation 编译逐角色 AVAILABLE/MISSING/INELIGIBLE
   -> 公司当期 VERIFIED OBS/CALC 输入确定性模型
   -> 公司估值与报告
 ```
@@ -17,9 +18,21 @@ valuation archetype card
 
 `config/archetype_valuation_registry.v1.json` 只把已经选择的估值路线连接到一张特定版本的卡；卡片本身不选择路线。重置价值内核只接受与路线一致、且已解析的卡片版本。
 
+生产读取入口 `read_valuation_route` 会同时返回 `valuation_evidence_plan`。缺失角色会
+给出官方来源、`search_report / read_section / verify_official_fact` 等采集模块提示、
+查询词、停止规则和受影响估值主张。可选的
+`valuation_evidence_attempt_receipts.json` 只记录已经执行的有界检索；它不具事实
+资格，也不能解除 `UNKNOWN`。需要单独生成持久工件时可运行：
+
+```bash
+.venv/bin/python scripts/valuation_evidence_plan.py output/<company-dir>
+```
+
 ## 首张卡与扩展
 
-`property_service.v1.json` 是物业服务的首张实施蓝图。它要求客户关系、区域组织、获客渠道、履约记录、项目启动营运资本和其他功能资产都被显式处理；未定界或仅情景化的必需组件不得形成公司级重置范围或共同保护价。
+`property_service.v1.json` 保留首张模型边界蓝图；`property_service.v2.json` 新增逐角色采集与停止知识，并由当前路线显式引用。两版都要求客户关系、区域组织、获客渠道、履约记录、项目启动营运资本和其他功能资产被显式处理；未定界或仅情景化的必需组件不得形成公司级重置范围或共同保护价。历史模型仍按原卡版本复现，不能原地改写旧卡。
+
+`v2` 是非数值生产取证蓝图的版本发布，不是训练晋升、跨公司验证或估值结论。
 
 新行业应新增一张独立卡，而不是修改物业卡或复用其组件名称。例如制造业可以定义客户认证、工艺资格、模具/产线爬坡等自身组件。新增卡至少需要：独立公司重跑、明确反例或不适用边界，以及独立审阅。
 

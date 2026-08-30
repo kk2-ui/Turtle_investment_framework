@@ -1,0 +1,48 @@
+{
+  "fact_observations": {
+    "observations": [
+      {
+        "observation_id": "OBS:VEP:CONTRACT-BOOK",
+        "normalized_value": 314.159,
+        "status": "VERIFIED",
+        "valuation_evidence_roles": ["CONTRACT_POPULATION_OR_CUSTOMER_BOOK"]
+      },
+      {
+        "observation_id": "OBS:VEP:RETENTION-CANDIDATE",
+        "normalized_value": 271.828,
+        "status": "CANDIDATE",
+        "valuation_evidence_roles": ["RETENTION_OR_CHURN_COHORT_EVIDENCE"]
+      }
+    ]
+  },
+  "attempt_receipts": {
+    "schema_version": "valuation-evidence-attempt-receipts.v1",
+    "report_id": "09999.HK",
+    "route_id": "VR:property_service:2026.08.30.1",
+    "card_id": "VALUATION_ARCHETYPE:property_service:v2",
+    "receipts": [
+      {
+        "receipt_id": "VEA:CUSTOMER-RETENTION",
+        "component_type": "CUSTOMER_RELATIONSHIP",
+        "evidence_role": "RETENTION_OR_CHURN_COHORT_EVIDENCE",
+        "attempted_official_sources": ["Audited annual report operating review"],
+        "attempted_modules": ["search_report", "read_section"],
+        "query_hints_used": ["renewal retention churn"],
+        "outcome": "INELIGIBLE_ONLY",
+        "evidence_ids": ["OBS:VEP:RETENTION-CANDIDATE"],
+        "completed_at": "2026-08-30T00:00:00+00:00"
+      },
+      {
+        "receipt_id": "VEA:CUSTOMER-WIN-COST",
+        "component_type": "CUSTOMER_RELATIONSHIP",
+        "evidence_role": "WIN_OR_REBUILD_COST_EVIDENCE",
+        "attempted_official_sources": ["Audited annual report selling-expense note"],
+        "attempted_modules": ["search_report", "read_section"],
+        "query_hints_used": ["tender selling expense acquisition cost"],
+        "outcome": "PUBLIC_INFO_UNAVAILABLE",
+        "evidence_ids": [],
+        "completed_at": "2026-08-30T00:00:00+00:00"
+      }
+    ]
+  }
+}

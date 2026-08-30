@@ -1,6 +1,6 @@
 {
   "schema_version": "archetype-valuation-registry.v1",
-  "registry_version": "2026.08.29.1",
+  "registry_version": "2026.08.30.1",
   "model_policy": {
     "no_unjustified_weighted_average": true,
     "relative_valuation_cannot_be_sole_primary": true,
@@ -42,7 +42,7 @@
       "legacy_business_type": "general_operating",
       "asset_intensity": "asset_light",
       "replacement_archetype_id": "property_service",
-      "replacement_archetype_version": "v1",
+      "replacement_archetype_version": "v2",
       "industry_patterns": ["物业服务", "物业管理"],
       "counter_patterns": ["房地产开发", "商业地产开发"],
       "required_input_paths": ["analysis_contract.industry_classification.l2", "compute_bundle.factor3.gg.base"],
