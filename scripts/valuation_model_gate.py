@@ -819,6 +819,8 @@ def _bridge_operand_context(
         "currency": currency,
         "unit": unit,
         "as_of": as_of,
+        "cutoff_at": str(model.get("cutoff_at") or ""),
+        "position_as_of": str(model.get("position_as_of") or basis.get("as_of") or ""),
         "economic_entity": str(basis.get("economic_entity") or ""),
         "operating_perimeter": str(basis.get("operating_perimeter") or ""),
     }
@@ -843,6 +845,30 @@ def _bridge_operand_context(
         )
     ):
         context["unit"] = f"{currency}_per_share" if currency else "per_share"
+    if wrapper_key == "cash_accessibility":
+        if ".model_input.realization_periods[" in path:
+            period_match = re.match(
+                r"cash_accessibility\.model_input\.realization_periods\[(\d+)\]",
+                path,
+            )
+            periods = model.get("realization_periods") or []
+            period = (
+                periods[int(period_match.group(1))]
+                if period_match and int(period_match.group(1)) < len(periods)
+                else {}
+            )
+            context["temporal_role"] = "HISTORICAL_PERIOD"
+            if isinstance(period, dict):
+                context["period_start"] = str(period.get("period_start") or "")
+                context["period_end"] = str(period.get("period_end") or "")
+                context["as_of"] = context["period_end"]
+        elif ".model_input.related_party_receivables[" in path and path.endswith(
+            ".post_position_collections"
+        ):
+            context["temporal_role"] = "EVENT"
+            context["as_of"] = ""
+        else:
+            context["temporal_role"] = "POSITION_AS_OF"
     # Working-capital observations must be period-specific, not copied from
     # the model's latest balance-sheet date.
     match = re.match(r"working_capital\.model_input\.periods\[(\d+)\]", path)
@@ -860,6 +886,79 @@ def _bridge_operand_context(
             if isinstance(cohort, dict):
                 context["cohort_id"] = str(cohort.get("cohort_id") or "")
     return context
+
+
+def _bridge_date(value: Any) -> Any:
+    text = str(value or "").strip()
+    if not text:
+        return None
+    try:
+        return datetime.fromisoformat(text.replace("Z", "+00:00")).date()
+    except ValueError:
+        return None
+
+
+def _validate_bridge_observation_temporal_contract(
+    *,
+    prefix: str,
+    path: str,
+    source: dict[str, Any],
+    context: dict[str, str],
+    documents: dict[str, dict[str, Any]],
+    invalid: list[str],
+) -> None:
+    """Keep balance, historical-period and post-position event clocks apart."""
+    expected_role = context.get("temporal_role")
+    if not expected_role:
+        return
+    if source.get("temporal_role") != expected_role:
+        invalid.append(prefix + ":temporal_role_mismatch:" + path)
+        return
+
+    cutoff = _bridge_date(context.get("cutoff_at"))
+    if cutoff is None:
+        invalid.append(prefix + ":cutoff_at_invalid:" + path)
+        return
+
+    doc_id = str(source.get("doc_id") or "")
+    document = documents.get(doc_id)
+    published_at = None
+    if document is None:
+        invalid.append(prefix + ":source_document_missing:" + path)
+    else:
+        published_at = _bridge_date(document.get("published_at"))
+        if published_at is None:
+            invalid.append(prefix + ":published_at_missing_or_invalid:" + path)
+        elif published_at > cutoff:
+            invalid.append(prefix + ":published_at_after_cutoff:" + path)
+
+    if expected_role == "HISTORICAL_PERIOD":
+        if not context.get("period_start") or not context.get("period_end"):
+            invalid.append(prefix + ":model_period_bounds_missing:" + path)
+        return
+    if expected_role != "EVENT":
+        return
+
+    event_date = _bridge_date(source.get("event_date"))
+    observed_at = _bridge_date(source.get("observed_at"))
+    # ``position_as_of`` remains the specialist balance-sheet clock even
+    # though an event operand deliberately carries its own later event date.
+    model_position = _bridge_date(context.get("position_as_of"))
+    if event_date is None or observed_at is None:
+        invalid.append(prefix + ":event_clock_missing_or_invalid:" + path)
+        return
+    if _bridge_date(source.get("as_of")) != event_date:
+        invalid.append(prefix + ":event_as_of_mismatch:" + path)
+    if observed_at < event_date:
+        invalid.append(prefix + ":event_observed_before_event_date:" + path)
+    if published_at is not None and observed_at < published_at:
+        invalid.append(prefix + ":event_observed_before_document_publication:" + path)
+    if model_position is not None and event_date <= model_position:
+        invalid.append(prefix + ":event_not_after_position_as_of:" + path)
+    if event_date > cutoff:
+        invalid.append(prefix + ":event_date_after_cutoff:" + path)
+    if observed_at > cutoff:
+        invalid.append(prefix + ":observed_at_after_cutoff:" + path)
 
 
 def _validate_value_bridge_fact_bindings(
@@ -889,6 +988,12 @@ def _validate_value_bridge_fact_bindings(
         return
     facts = _read_json(output / "fact_observations.json")
     calculations = _read_json(output / "calculation_observations.json")
+    manifest = _read_json(output / "document_manifest.json")
+    documents = {
+        str(item.get("doc_id")): item
+        for item in manifest.get("documents") or []
+        if isinstance(item, dict)
+    }
     fact_report_id = str(facts.get("report_id") or "").strip()
     ledger_report_id = str(payload.get("report_id") or "").strip()
     if fact_report_id and ledger_report_id and fact_report_id != ledger_report_id:
@@ -912,6 +1017,16 @@ def _validate_value_bridge_fact_bindings(
         calculations_by_id=calculations_by_id,
         invalid=invalid,
     )
+    cash_input = _mapping(
+        _mapping(model_input.get("cash_accessibility")).get("model_input")
+    )
+    for period_index, raw_period in enumerate(cash_input.get("realization_periods") or []):
+        period = _mapping(raw_period)
+        if not period.get("period_start") or not period.get("period_end"):
+            invalid.append(
+                "value_bridge_cash_realization_period_bounds_missing:"
+                + str(period_index)
+            )
     operands = _bridge_numeric_leaves(model_input)
     submitted: dict[str, str] = {}
     for index, raw in enumerate(bindings):
@@ -962,6 +1077,14 @@ def _validate_value_bridge_fact_bindings(
                 expected = context.get(field)
                 if expected and measurement.get(field) != expected:
                     invalid.append(prefix + ":measurement_context_mismatch:" + field)
+            _validate_bridge_observation_temporal_contract(
+                prefix=prefix,
+                path=path,
+                source=source,
+                context=context,
+                documents=documents,
+                invalid=invalid,
+            )
     missing = sorted(set(operands) - set(submitted))
     invalid.extend("value_bridge_fact_bindings_operand_unbound:" + path for path in missing)
 

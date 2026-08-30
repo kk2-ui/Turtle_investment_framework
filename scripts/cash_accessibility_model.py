@@ -95,6 +95,8 @@ _ENTITY_FIELDS = {
 }
 _PERIOD_FIELDS = {
     "period_id",
+    "period_start",
+    "period_end",
     "comparable",
     "opening_existing_excess_cash",
     "retained_cash_generated",
@@ -110,7 +112,7 @@ _RECEIVABLE_FIELDS = {
     "receivable_id",
     "gross_amount",
     "ecl_allowance",
-    "post_cutoff_collections",
+    "post_position_collections",
     "aging_bucket",
     "source_fact_ids",
 }
@@ -221,6 +223,7 @@ def validate_cash_accessibility_input(payload: Any) -> dict[str, Any]:
     for field in sorted(_IDENTITY_FIELDS):
         if not _text(value.get(field)):
             findings.append(field + "_missing")
+    cutoff_at: date | None = None
     try:
         cutoff_at = date.fromisoformat(str(value.get("cutoff_at") or ""))
         position_as_of = date.fromisoformat(str(value.get("position_as_of") or ""))
@@ -293,6 +296,20 @@ def validate_cash_accessibility_input(payload: Any) -> dict[str, Any]:
                 findings.append(path + ".period_id_missing_or_duplicate")
             else:
                 period_ids.add(period_id)
+            period_start = period.get("period_start")
+            period_end = period.get("period_end")
+            if (period_start is None) != (period_end is None):
+                findings.append(path + ".period_bounds_must_be_provided_together")
+            elif period_start is not None:
+                try:
+                    start_date = date.fromisoformat(str(period_start))
+                    end_date = date.fromisoformat(str(period_end))
+                    if start_date > end_date:
+                        findings.append(path + ".period_bounds_reversed")
+                    if cutoff_at is not None and end_date > cutoff_at:
+                        findings.append(path + ".period_end_after_evidence_cutoff")
+                except (TypeError, ValueError):
+                    findings.append(path + ".period_bounds_invalid")
             if not isinstance(period.get("comparable"), bool):
                 findings.append(path + ".comparable_must_be_boolean")
             for field in (
@@ -337,14 +354,14 @@ def validate_cash_accessibility_input(payload: Any) -> dict[str, Any]:
                 findings.append(path + ".receivable_id_missing_or_duplicate")
             else:
                 receivable_ids.add(receivable_id)
-            for field in ("gross_amount", "ecl_allowance", "post_cutoff_collections"):
+            for field in ("gross_amount", "ecl_allowance", "post_position_collections"):
                 _validate_nonnegative(row.get(field), path + "." + field, findings)
             if _is_number(row.get("gross_amount")) and _is_number(row.get("ecl_allowance")):
                 if _decimal(row["ecl_allowance"]) > _decimal(row["gross_amount"]):
                     findings.append(path + ".ecl_allowance_exceeds_gross_amount")
-            if _is_number(row.get("gross_amount")) and _is_number(row.get("post_cutoff_collections")):
-                if _decimal(row["post_cutoff_collections"]) > _decimal(row["gross_amount"]):
-                    findings.append(path + ".post_cutoff_collections_exceed_gross_amount")
+            if _is_number(row.get("gross_amount")) and _is_number(row.get("post_position_collections")):
+                if _decimal(row["post_position_collections"]) > _decimal(row["gross_amount"]):
+                    findings.append(path + ".post_position_collections_exceed_gross_amount")
             if row.get("aging_bucket") not in AGING_BUCKETS:
                 findings.append(path + ".aging_bucket_invalid")
             _validate_refs(row.get("source_fact_ids"), verified_ids, path + ".source_fact_ids", findings)
@@ -500,7 +517,7 @@ def compute_cash_accessibility_model(payload: Any) -> dict[str, Any]:
             unresolved.append(
                 f"Period {period['period_id']} has extraordinary realization with unresolved funding identity."
             )
-        history.append({
+        history_row = {
             "period_id": period["period_id"],
             "comparable": period["comparable"],
             "opening_existing_excess_cash": _out(opening),
@@ -513,7 +530,11 @@ def compute_cash_accessibility_model(payload: Any) -> dict[str, Any]:
             "ordinary_distribution_rate": None if ordinary_rate is None else _out(ordinary_rate),
             "extraordinary_events": events,
             "source_fact_ids": sorted(period["source_fact_ids"]),
-        })
+        }
+        if period.get("period_start") is not None:
+            history_row["period_start"] = period["period_start"]
+            history_row["period_end"] = period["period_end"]
+        history.append(history_row)
 
     existing_rate_range, existing_adopted_rate, existing_method, existing_policy = _calibration_range(
         existing_rates, Decimal("1")
@@ -578,7 +599,7 @@ def compute_cash_accessibility_model(payload: Any) -> dict[str, Any]:
     for row in sorted(value["related_party_receivables"], key=lambda item: item["receivable_id"]):
         gross = _decimal(row["gross_amount"])
         ecl = _decimal(row["ecl_allowance"])
-        collections = _decimal(row["post_cutoff_collections"])
+        collections = _decimal(row["post_position_collections"])
         residual_after_ecl_and_collection = max(Decimal("0"), gross - ecl - collections)
         age_factor = AGING_BUCKETS[row["aging_bucket"]]
         low = collections
@@ -598,7 +619,7 @@ def compute_cash_accessibility_model(payload: Any) -> dict[str, Any]:
             "receivable_id": row["receivable_id"],
             "gross_amount": _out(gross),
             "ecl_allowance": _out(ecl),
-            "post_cutoff_collections": _out(collections),
+            "post_position_collections": _out(collections),
             "aging_bucket": row["aging_bucket"],
             "uncollected_recovery_factor": _out(age_factor),
             "amount_range": _range(low, base, high),
@@ -609,7 +630,7 @@ def compute_cash_accessibility_model(payload: Any) -> dict[str, Any]:
         "rows": receivable_rows,
         "gross_receivables": _out(receivable_gross),
         "ecl_allowance": _out(receivable_ecl),
-        "post_cutoff_collections": _out(receivable_collections),
+        "post_position_collections": _out(receivable_collections),
         "amount_range": _range(receivable_low, receivable_base, receivable_high),
         "adopted_value": _out(receivable_collections),
         "adoption_policy": "collections_only_until_cash_is_received",
@@ -962,13 +983,13 @@ def validate_cash_accessibility_model(model: Any) -> dict[str, Any]:
         row = _mapping(raw_row)
         if any(
             not _is_number(row.get(field))
-            for field in ("gross_amount", "ecl_allowance", "post_cutoff_collections", "uncollected_recovery_factor")
+            for field in ("gross_amount", "ecl_allowance", "post_position_collections", "uncollected_recovery_factor")
         ) or row.get("aging_bucket") not in AGING_BUCKETS:
             findings.append(f"related_party_receivable_realization.rows[{index}].fields_invalid")
             continue
         gross = _decimal(row["gross_amount"])
         ecl = _decimal(row["ecl_allowance"])
-        collections = _decimal(row["post_cutoff_collections"])
+        collections = _decimal(row["post_position_collections"])
         factor = AGING_BUCKETS[row["aging_bucket"]]
         residual = max(Decimal("0"), gross - ecl - collections)
         expected_range = {
@@ -984,7 +1005,7 @@ def validate_cash_accessibility_model(model: Any) -> dict[str, Any]:
                 findings.append(f"related_party_receivable_realization.rows[{index}].{key}_identity_mismatch")
         if not _numbers_equal(row.get("adopted_value"), collections):
             findings.append(f"related_party_receivable_realization.rows[{index}].adoption_must_equal_collections")
-    for field in ("gross_receivables", "ecl_allowance", "post_cutoff_collections"):
+    for field in ("gross_receivables", "ecl_allowance", "post_position_collections"):
         row_field = "gross_amount" if field == "gross_receivables" else field
         expected = sum((_decimal(_mapping(row).get(row_field, 0)) for row in receivable_rows), Decimal("0"))
         if not _numbers_equal(receivable.get(field), expected):
@@ -996,8 +1017,8 @@ def validate_cash_accessibility_model(model: Any) -> dict[str, Any]:
         )
         if not _numbers_equal(_mapping(receivable.get("amount_range")).get(key), expected):
             findings.append(f"related_party_receivable_realization.{key}_sum_mismatch")
-    if _is_number(receivable.get("adopted_value")) and _is_number(receivable.get("post_cutoff_collections")):
-        if not _numbers_equal(receivable["adopted_value"], _decimal(receivable["post_cutoff_collections"])):
+    if _is_number(receivable.get("adopted_value")) and _is_number(receivable.get("post_position_collections")):
+        if not _numbers_equal(receivable["adopted_value"], _decimal(receivable["post_position_collections"])):
             findings.append("related_party_receivable_realization.adoption_must_equal_collections")
 
     ledger = value.get("valuation_destination_ledger")
@@ -1107,7 +1128,7 @@ def _reader_conclusions_unchecked(model: dict[str, Any]) -> list[str]:
             "未来留存现金的普通分配记录仍不足，当前不认可额外价值，并与已经积累的现金保持分开。"
         )
     conclusions.append(
-        f"关联方应收款继续作为非现金回收资产单列；只有已经收回的 {currency} {_fmt(receivable.get('post_cutoff_collections', 0))} {unit} 进入当前认可值，未收部分仍受账龄和减值约束。"
+        f"关联方应收款继续作为非现金回收资产单列；只有期末后且证据截止日前已经收回的 {currency} {_fmt(receivable.get('post_position_collections', 0))} {unit} 进入当前认可值，未收部分仍受账龄和减值约束。"
     )
     return conclusions
 

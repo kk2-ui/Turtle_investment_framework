@@ -92,7 +92,7 @@ def _cash_input() -> dict:
                 "receivable_id": "AR:1",
                 "gross_amount": 100,
                 "ecl_allowance": 10,
-                "post_cutoff_collections": 20,
+                "post_position_collections": 20,
                 "aging_bucket": "current",
                 "source_fact_ids": ["F:AR"],
             }

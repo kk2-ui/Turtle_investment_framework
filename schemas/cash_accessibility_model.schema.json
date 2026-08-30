@@ -194,6 +194,8 @@
       ],
       "properties": {
         "period_id": {"$ref": "#/$defs/nonemptyString"},
+        "period_start": {"type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}$"},
+        "period_end": {"type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}$"},
         "comparable": {"type": "boolean"},
         "opening_existing_excess_cash": {"$ref": "#/$defs/nonnegativeNumber"},
         "retained_cash_generated": {"$ref": "#/$defs/nonnegativeNumber"},
@@ -212,6 +214,10 @@
           "items": {"$ref": "#/$defs/extraordinaryEvent"}
         },
         "source_fact_ids": {"$ref": "#/$defs/factIds"}
+      },
+      "dependentRequired": {
+        "period_start": ["period_end"],
+        "period_end": ["period_start"]
       }
     },
     "existingExcessCashRealization": {
@@ -300,7 +306,7 @@
         "receivable_id",
         "gross_amount",
         "ecl_allowance",
-        "post_cutoff_collections",
+        "post_position_collections",
         "aging_bucket",
         "uncollected_recovery_factor",
         "amount_range",
@@ -311,7 +317,7 @@
         "receivable_id": {"$ref": "#/$defs/nonemptyString"},
         "gross_amount": {"$ref": "#/$defs/nonnegativeNumber"},
         "ecl_allowance": {"$ref": "#/$defs/nonnegativeNumber"},
-        "post_cutoff_collections": {"$ref": "#/$defs/nonnegativeNumber"},
+        "post_position_collections": {"$ref": "#/$defs/nonnegativeNumber"},
         "aging_bucket": {
           "enum": [
             "current",
@@ -335,7 +341,7 @@
         "rows",
         "gross_receivables",
         "ecl_allowance",
-        "post_cutoff_collections",
+        "post_position_collections",
         "amount_range",
         "adopted_value",
         "adoption_policy",
@@ -348,7 +354,7 @@
         },
         "gross_receivables": {"$ref": "#/$defs/nonnegativeNumber"},
         "ecl_allowance": {"$ref": "#/$defs/nonnegativeNumber"},
-        "post_cutoff_collections": {"$ref": "#/$defs/nonnegativeNumber"},
+        "post_position_collections": {"$ref": "#/$defs/nonnegativeNumber"},
         "amount_range": {"$ref": "#/$defs/amountRange"},
         "adopted_value": {"$ref": "#/$defs/nonnegativeNumber"},
         "adoption_policy": {"const": "collections_only_until_cash_is_received"},

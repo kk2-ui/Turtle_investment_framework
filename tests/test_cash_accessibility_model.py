@@ -135,7 +135,7 @@ def _payload() -> dict:
                 "receivable_id": "RP:1",
                 "gross_amount": 100,
                 "ecl_allowance": 10,
-                "post_cutoff_collections": 20,
+                "post_position_collections": 20,
                 "aging_bucket": "current",
                 "source_fact_ids": ["F:RECEIVABLE"],
             }
@@ -322,7 +322,7 @@ def test_perturbations_change_only_the_economically_connected_outputs() -> None:
         assert changed["related_party_receivable_realization"] == baseline["related_party_receivable_realization"]
 
     collected_payload = _payload()
-    collected_payload["related_party_receivables"][0]["post_cutoff_collections"] = 40
+    collected_payload["related_party_receivables"][0]["post_position_collections"] = 40
     collected = compute_cash_accessibility_model(collected_payload)
     assert collected["related_party_receivable_realization"]["adopted_value"] == 40
     for component in (

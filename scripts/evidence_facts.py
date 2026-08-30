@@ -22,6 +22,7 @@ except ModuleNotFoundError:
 
 SCHEMA_VERSION = "fact-observations.v1"
 STATUSES = {"CANDIDATE", "VERIFIED", "REJECTED", "CONFLICT"}
+TEMPORAL_ROLES = {"POSITION_AS_OF", "HISTORICAL_PERIOD", "EVENT"}
 OFFICIAL_DOCUMENT_AUTHORITIES = {
     "issuer", "audited_filing", "company_filing", "official_statistics", "other_official",
 }
@@ -56,6 +57,9 @@ def make_observation_id(observation: dict[str, Any]) -> str:
         "fact_name": observation.get("fact_name"),
         "normalized_value": _normalized_identity_value(observation.get("normalized_value")),
         "measurement_context": observation.get("measurement_context"),
+        "temporal_role": observation.get("temporal_role"),
+        "event_date": observation.get("event_date"),
+        "observed_at": observation.get("observed_at"),
         "valuation_evidence_roles": sorted(
             str(item) for item in observation.get("valuation_evidence_roles") or []
         ),
@@ -65,6 +69,82 @@ def make_observation_id(observation: dict[str, Any]) -> str:
         ),
     }
     return "OBS:" + _payload_hash(identity)[:20]
+
+
+def _parse_temporal_date(value: Any) -> Any:
+    """Return the calendar date carried by a date or ISO date-time string."""
+    text = str(value or "").strip()
+    if not text:
+        return None
+    try:
+        return datetime.fromisoformat(text.replace("Z", "+00:00")).date()
+    except ValueError:
+        return None
+
+
+def _temporal_contract_findings(
+    observation: dict[str, Any], document: dict[str, Any]
+) -> list[str]:
+    """Validate an explicit fact clock without changing legacy ``as_of`` facts.
+
+    Old observations remain document-period observations.  A specialist fact
+    opts into one of three explicit roles so a balance, a historical flow and
+    a later realized event cannot be silently relabelled as one another.
+    """
+    role = observation.get("temporal_role")
+    as_of = _parse_temporal_date(observation.get("as_of"))
+    document_period_end = _parse_temporal_date(document.get("period_end"))
+    measurement = (
+        observation.get("measurement_context")
+        if isinstance(observation.get("measurement_context"), dict)
+        else {}
+    )
+    findings: list[str] = []
+    if role is None:
+        if observation.get("as_of") != document.get("period_end"):
+            findings.append("period_document_mismatch")
+        return findings
+    if role not in TEMPORAL_ROLES:
+        return ["temporal_role_invalid"]
+    if as_of is None:
+        findings.append("as_of_invalid")
+
+    event_date = _parse_temporal_date(observation.get("event_date"))
+    observed_at = _parse_temporal_date(observation.get("observed_at"))
+    period_start = _parse_temporal_date(measurement.get("period_start"))
+    period_end = _parse_temporal_date(measurement.get("period_end"))
+
+    if role == "POSITION_AS_OF":
+        if document_period_end is None or as_of != document_period_end:
+            findings.append("position_document_period_mismatch")
+        if observation.get("event_date") is not None:
+            findings.append("position_event_date_forbidden")
+    elif role == "HISTORICAL_PERIOD":
+        if period_start is None or period_end is None:
+            findings.append("historical_period_bounds_missing_or_invalid")
+        elif period_start > period_end:
+            findings.append("historical_period_reversed")
+        if as_of is not None and period_end is not None and as_of != period_end:
+            findings.append("historical_as_of_must_equal_period_end")
+        if observation.get("event_date") is not None:
+            findings.append("historical_period_event_date_forbidden")
+    else:
+        if event_date is None:
+            findings.append("event_date_missing_or_invalid")
+        if observed_at is None:
+            findings.append("event_observed_at_missing_or_invalid")
+        if as_of is not None and event_date is not None and as_of != event_date:
+            findings.append("event_as_of_must_equal_event_date")
+        if event_date is not None and observed_at is not None and event_date > observed_at:
+            findings.append("event_observed_before_event_date")
+        if period_start is not None or period_end is not None:
+            findings.append("event_period_bounds_forbidden")
+        published_at = _parse_temporal_date(document.get("published_at"))
+        if published_at is None:
+            findings.append("event_document_published_at_missing_or_invalid")
+        elif observed_at is not None and observed_at < published_at:
+            findings.append("event_observed_before_document_publication")
+    return findings
 
 
 def _observation_core(payload: dict[str, Any]) -> dict[str, Any]:
@@ -820,8 +900,10 @@ def validate_fact_observations(
         if doc is None:
             invalid.append(f"{observation_id or prefix}:unknown_doc_id:{doc_id}")
             continue
-        if item.get("as_of") != doc.get("period_end"):
-            invalid.append(f"{observation_id or prefix}:period_document_mismatch")
+        invalid.extend(
+            f"{observation_id or prefix}:{finding}"
+            for finding in _temporal_contract_findings(item, doc)
+        )
         if status == "VERIFIED":
             locator = item.get("locator") if isinstance(item.get("locator"), dict) else {}
             quote = str(item.get("raw_text") or "")
@@ -920,6 +1002,10 @@ def verify_fact_from_quote(
     basis: str,
     quote: str,
     currency: str | None = None,
+    as_of: str | None = None,
+    temporal_role: str | None = None,
+    event_date: str | None = None,
+    observed_at: str | None = None,
     measurement_context: dict[str, Any] | None = None,
     valuation_evidence_roles: list[str] | None = None,
     valuation_exclusion_destinations: list[str] | None = None,
@@ -944,6 +1030,15 @@ def verify_fact_from_quote(
             return {"verified": False, "error": "raw_value_not_in_quote"}
     quote_start = str(block["text"]).index(exact_quote)
     absolute_start = int(block["start"]) + quote_start
+    explicit_as_of = str(as_of or "").strip()
+    if temporal_role == "HISTORICAL_PERIOD" and not explicit_as_of:
+        explicit_as_of = str(
+            (measurement_context.get("period_end") or "")
+            if isinstance(measurement_context, dict)
+            else ""
+        )
+    if temporal_role == "EVENT" and not explicit_as_of:
+        explicit_as_of = str(event_date or "")
     observation: dict[str, Any] = {
         "observation_id": "",
         "fact_name": str(fact_name).strip(),
@@ -953,7 +1048,7 @@ def verify_fact_from_quote(
         "unit": str(unit).strip(),
         "currency": currency,
         "basis": str(basis).strip(),
-        "as_of": document["period_end"],
+        "as_of": explicit_as_of or document["period_end"],
         "doc_id": document["doc_id"],
         "locator": {"page": int(page), "section": str(domain), "table": None, "row": None, "column": None, "char": {"start": absolute_start, "end": absolute_start + len(exact_quote)}},
         "raw_text": exact_quote,
@@ -962,6 +1057,14 @@ def verify_fact_from_quote(
         "confidence": 0.98,
         "conflict_ids": [],
     }
+    if temporal_role is not None:
+        if temporal_role not in TEMPORAL_ROLES:
+            return {"verified": False, "error": "temporal_role_invalid"}
+        observation["temporal_role"] = temporal_role
+    if event_date is not None:
+        observation["event_date"] = str(event_date)
+    if observed_at is not None:
+        observation["observed_at"] = str(observed_at)
     if measurement_context is not None:
         allowed_context_fields = {
             "period_start", "period_end", "economic_entity", "operating_perimeter",
@@ -987,6 +1090,12 @@ def verify_fact_from_quote(
         }:
             return {"verified": False, "error": "measurement_context_loss_treatment_invalid"}
         observation["measurement_context"] = deepcopy(measurement_context)
+    temporal_findings = _temporal_contract_findings(observation, document)
+    if temporal_findings:
+        return {
+            "verified": False,
+            "error": "temporal_contract_invalid:" + "|".join(temporal_findings),
+        }
     if valuation_evidence_roles is not None:
         if (
             not valuation_evidence_roles

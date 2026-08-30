@@ -99,7 +99,7 @@
             "receivable_id": "fellow-and-other-related-companies",
             "gross_amount": 805.644,
             "ecl_allowance": 0.0,
-            "post_cutoff_collections": 0.0,
+            "post_position_collections": 0.0,
             "aging_bucket": "unknown",
             "source_fact_ids": [
               "OBS:02669:RELATED-PARTY-RECEIVABLES"
