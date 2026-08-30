@@ -1,0 +1,248 @@
+{
+  "adaptation_case": "公司面对行业价格恢复和区域竞争，采取的可见适应是降低熟料外销比例、增加水泥就地转化，并建设或租用粉磨、码头、仓储和熟料库，同时推进采购、能耗和技改降耗。FY2016—FY2017 销量、华东毛利与经营现金改善以及 2018Q1 销量大致稳定而售价上升，与该路径一致。证据支持执行已经发生和总体传导可能有效，但不能从项目投产直接推导每项资本的长期回报；新疆与吉尔吉斯须作为独立 cohort 观察。",
+  "business_position": "上峰在高运输成本的水泥市场中不是一个全国同质化暴露，而是以华东沿江为主的区域生产与交付网络。石灰石资源、熟料能力、粉磨、码头、仓储及水运条件使其能够把熟料更多转成区域客户需要的水泥并降低交付摩擦；FY2017 华东收入占比超过九成，说明这一核心位置决定总体经济。该位置具有现实传导优势，但缺少同口径吨售价、吨成本、利用率和各区域现金，故不能升级为已证明的跨周期护城河。",
+  "company_id": "CN:000672",
+  "company_name": "Gansu Shangfeng Cement Co., Ltd.",
+  "component_treatments": [
+    {
+      "component_id": "INDUSTRY_PROFIT_POOL",
+      "evidence_ids": [
+        "EV-INDUSTRY-REGIME"
+      ],
+      "investment_consequence": "把价格主导的行业利润池恢复作为正常化起点，但不把当前高利润直接持久化。",
+      "promotion_or_resolution_condition": "后续全国需求、有效供给、行业利润及华东区域纪律在不同季节和周期状态下保持一致。",
+      "reason": "全国需求量近乎横盘而价格、收入、利润和利润率同步恢复，供给约束与错峰提供候选机制，但过剩产能尚未根本解决。",
+      "treatment": "CONDITIONALLY_UNDERWRITE"
+    },
+    {
+      "component_id": "EAST_CHINA_MATURE_CORE",
+      "evidence_ids": [
+        "EV-COMPANY-ARENA",
+        "EV-PRODUCT-TRANSMISSION",
+        "EV-Q1-SIGNAL"
+      ],
+      "investment_consequence": "成熟核心可进入正常盈利主路线，竞争优势强度保留条件。",
+      "promotion_or_resolution_condition": "同口径华东量价、单位成本、利用率和产品结构证明相对全国行情存在可重复的区域传导。",
+      "reason": "资源、沿江物流和熟料到水泥的转化与 FY2016—FY2017 销量、毛利及现金改善同向，但单位经济和利用率未完整披露。",
+      "treatment": "CONDITIONALLY_UNDERWRITE"
+    },
+    {
+      "component_id": "SURVIVAL_AND_FINANCING",
+      "evidence_ids": [
+        "EV-CYCLE-BOUNDARY",
+        "EV-CASH-CAPITAL-DEBT"
+      ],
+      "investment_consequence": "公司可被视为具备周期生存能力，但债务覆盖和现金可用性必须作为持续约束。",
+      "promotion_or_resolution_condition": "可用现金、受限现金、债务到期与经营现金覆盖在利润回落情景下仍保持稳健。",
+      "reason": "低谷仍有正经营结果且恢复期经营现金强，但受限货币资金、短债和票据池责任使普通股流动性缓冲弱于账面现金。",
+      "treatment": "CONDITIONALLY_UNDERWRITE"
+    },
+    {
+      "component_id": "NORMAL_EARNINGS",
+      "evidence_ids": [
+        "EV-CYCLE-BOUNDARY",
+        "EV-PRODUCT-TRANSMISSION",
+        "EV-Q1-SIGNAL"
+      ],
+      "investment_consequence": "以成熟华东核心的中周期盈利区间作为研究输入，房地产与未证明的增长项目不抬高该区间。",
+      "promotion_or_resolution_condition": "获得跨周期同口径的区域销量、实现售价、单位成本、利用率、产品结构及房地产分部桥接。",
+      "reason": "同口径历史显示强周期性，恢复期的量、产品结构和毛利改善真实存在，但单年高点不能代表跨周期正常状态。",
+      "treatment": "CONDITIONALLY_UNDERWRITE"
+    },
+    {
+      "component_id": "NORMAL_OWNER_CASH",
+      "evidence_ids": [
+        "EV-CASH-CAPITAL-DEBT"
+      ],
+      "investment_consequence": "保留成熟核心具有正现金转化能力的方向性判断，正常 owner cash 的量只能条件化，不用缺失拆分把它改写为零或负值。",
+      "promotion_or_resolution_condition": "按成熟核心责任边界披露经济维护资本、营运资本常态、全部长期投入及其与增长项目的明确桥接。",
+      "reason": "经营现金改善且 OCF 减全部长期资产投入的机械差额近期为正，但经济维护资本与增长资本没有拆分，不能形成正常 owner cash 点估计。",
+      "treatment": "CANNOT_BOUND"
+    },
+    {
+      "component_id": "CURRENT_CAPITAL_ALLOCATION_PRESSURE",
+      "evidence_ids": [
+        "EV-CASH-CAPITAL-DEBT",
+        "EV-EXPANSION-COHORTS"
+      ],
+      "investment_consequence": "用全部长期投入后的现金观察当前资本配置和融资压力，不把该差额冒充正常 owner cash。",
+      "promotion_or_resolution_condition": "形成覆盖购建资产、投资支付、其他长期承诺、受限现金与债务变化的同责任边界现金桥。",
+      "reason": "OCF 减购建长期资产支付的机械差额近期为正，但另有投资支付和其他投资现金流出，且受限现金与债务承担融资责任。",
+      "treatment": "CONDITIONALLY_UNDERWRITE"
+    },
+    {
+      "component_id": "GROWTH_CAPITAL_RETURN",
+      "evidence_ids": [
+        "EV-PRODUCT-TRANSMISSION",
+        "EV-EXPANSION-COHORTS"
+      ],
+      "investment_consequence": "增长 cohort 在产生可归属客户、利润和现金前不进入成熟核心的基础价值输入。",
+      "promotion_or_resolution_condition": "各 cohort 提供独立投入、利用率、客户、利润、现金和追加融资需求，并显示可重复的资本回报。",
+      "reason": "粉磨、码头、新疆及境外项目的投产或在建状态不能单独证明增量资本回报，吉尔吉斯项目还有进展缓慢与资本沉淀风险。",
+      "treatment": "EXCLUDE_FROM_BASE"
+    },
+    {
+      "component_id": "REAL_ESTATE_BOUNDARY",
+      "evidence_ids": [
+        "EV-CYCLE-BOUNDARY",
+        "EV-EXPANSION-COHORTS"
+      ],
+      "investment_consequence": "房地产不进入水泥正常盈利和 owner cash 的基础叙事，仅在独立责任边界内处理。",
+      "promotion_or_resolution_condition": "提供房地产分部的同口径资产、利润、现金、资本承诺及与集团融资之间的桥接。",
+      "reason": "同一控制合并改变了历史比较口径，房地产与水泥成熟核心的客户任务和资本责任不同。",
+      "treatment": "EXCLUDE_FROM_BASE"
+    },
+    {
+      "component_id": "PERMANENT_LOSS_PATH",
+      "evidence_ids": [
+        "EV-INDUSTRY-REGIME",
+        "EV-CASH-CAPITAL-DEBT",
+        "EV-EXPANSION-COHORTS"
+      ],
+      "investment_consequence": "将该组合路径用于资本责任压力情景，不把单次利润回落本身判作永久损失。",
+      "promotion_or_resolution_condition": "债务覆盖恶化与成熟核心现金下降同时出现，且增长 cohort 继续需要资本或发生不可回收迹象。",
+      "reason": "周期回落、成本不能传导、受限现金与债务、增长资本沉淀需要共同作用才会把盈利波动升级为普通股永久损失。",
+      "treatment": "SCENARIO_ONLY"
+    }
+  ],
+  "cutoff_at": "2018-04-30T23:59:59+08:00",
+  "decision_frame": "在截止日可见资料内，对上峰水泥作不含证券报价与数值估值的企业承保：先判断行业利润池如何传到华东沿江成熟核心，再分别检验生存、正常盈利、三类资本责任、永久损失和价值路线；新疆、境外及房地产不与成熟核心混算。",
+  "episode_id": "UWE:CN000672:20180430:COURSE2B:ENHANCED:V1",
+  "evidence_trace": [
+    {
+      "evidence_id": "EV-INDUSTRY-REGIME",
+      "locator": "需求、价格与利润池；新增产能、错峰与重组政策；截止时最需要区分的两种解释",
+      "scope": "2017H1 全国水泥产量、价格、利润池以及 cutoff 前供给约束、错峰和整合政策；不能代替华东区域或目标公司事实。",
+      "source_ref": "docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_COURSE_2B_CN000672_20180430/sources/00_COMMON_CEMENT_PRE_CUTOFF_SOURCE_PACKAGE.md",
+      "used_for": "行业最可能路径、利润池传导候选机制、耐久性边界和最强反方。"
+    },
+    {
+      "evidence_id": "EV-COMPANY-ARENA",
+      "locator": "公司、客户任务与竞争 arena",
+      "scope": "公司业务、华东沿江核心、资源与物流条件、产能及地域收入结构。",
+      "source_ref": "docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_COURSE_2B_CN000672_20180430/sources/01_CN000672_PRE_CUTOFF_SOURCE_PACKAGE.md",
+      "used_for": "责任边界、区域竞争位置、客户交付任务和成熟核心识别。"
+    },
+    {
+      "evidence_id": "EV-CYCLE-BOUNDARY",
+      "locator": "同口径历史与会计边界",
+      "scope": "FY2014 原始口径、FY2015—FY2017 后来可比口径、FY2015 周期低谷及同一控制合并边界。",
+      "source_ref": "docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_COURSE_2B_CN000672_20180430/sources/01_CN000672_PRE_CUTOFF_SOURCE_PACKAGE.md",
+      "used_for": "周期生存、正常盈利区间和房地产责任分离。"
+    },
+    {
+      "evidence_id": "EV-PRODUCT-TRANSMISSION",
+      "locator": "FY2016—FY2017 的量、价、成本与产品结构",
+      "scope": "销量、华东与产品毛利、熟料外销下降、粉磨码头仓储节点及成本风险；缺少完整吨售价、吨成本和利用率。",
+      "source_ref": "docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_COURSE_2B_CN000672_20180430/sources/01_CN000672_PRE_CUTOFF_SOURCE_PACKAGE.md",
+      "used_for": "公司适应、产品转化、成熟核心正常经济和增长资本待验证边界。"
+    },
+    {
+      "evidence_id": "EV-CASH-CAPITAL-DEBT",
+      "locator": "现金、资本与融资责任",
+      "scope": "FY2016、FY2017 与 2018Q1 经营现金、购建长期资产支付、机械差额、投资现金流、受限现金、借款和票据池责任。",
+      "source_ref": "docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_COURSE_2B_CN000672_20180430/sources/01_CN000672_PRE_CUTOFF_SOURCE_PACKAGE.md",
+      "used_for": "三笔资本账、生存与融资、正常 owner cash 局部未知及永久损失压力。"
+    },
+    {
+      "evidence_id": "EV-EXPANSION-COHORTS",
+      "locator": "扩张与永久损失候选",
+      "scope": "华东成熟核心、新疆粉磨、吉尔吉斯在建项目、房地产边界及资本沉淀风险。",
+      "source_ref": "docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_COURSE_2B_CN000672_20180430/sources/01_CN000672_PRE_CUTOFF_SOURCE_PACKAGE.md",
+      "used_for": "增长 cohort 排除、增长资本回报条件和永久损失组合路径。"
+    },
+    {
+      "evidence_id": "EV-Q1-SIGNAL",
+      "locator": "截止日附近观察",
+      "scope": "2018Q1 收入、盈利、经营现金及销量大致稳定、售价上升和成本费用变化的早期信号；一个季度不证明跨周期常态。",
+      "source_ref": "docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_COURSE_2B_CN000672_20180430/sources/01_CN000672_PRE_CUTOFF_SOURCE_PACKAGE.md",
+      "used_for": "截止日附近公司传导、适应与正常化条件。"
+    }
+  ],
+  "existing_object_refs": [
+    {
+      "kind": "OFFICIAL_INDUSTRY_PRE_CUTOFF_SOURCE_PACKAGE",
+      "ref": "docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_COURSE_2B_CN000672_20180430/sources/00_COMMON_CEMENT_PRE_CUTOFF_SOURCE_PACKAGE.md",
+      "role": "截止日前全国需求、价格、利润池和供给政策的官方背景；不建立目标公司事实。"
+    },
+    {
+      "kind": "COMPANY_PRE_CUTOFF_SOURCE_PACKAGE",
+      "ref": "docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_COURSE_2B_CN000672_20180430/sources/01_CN000672_PRE_CUTOFF_SOURCE_PACKAGE.md",
+      "role": "截止日前目标公司的业务、历史、量价成本、现金资本债务、扩张与早期季度证据。"
+    }
+  ],
+  "investment_treatment": "仅形成截止日企业承保研究输入：华东成熟核心进入条件化正常经济与价值路线；正常 owner cash 保留局部未知；新疆、吉尔吉斯、房地产及其他未证明回报的增长责任保持独立并不进入基础处理。",
+  "normalization_case": "正常盈利不能取 FY2014 高点、FY2015 低点或 FY2017 恢复年中的单一年份，也不能把 FY2014 原始口径与 FY2015—FY2017 重述口径机械拼接。最佳当前判断是，华东成熟核心在供给纪律较 FY2015 改善、产品转化提升的环境下，正常盈利能力较低谷改善，但 FY2017 毛利不能全额持久化；需要用同责任边界的区域量价、单位成本、利用率和产品结构跨周期校准。房地产应从水泥正常经济中拆开，增长项目在证明独立回报前不提高成熟核心正常盈利。",
+  "permanent_loss_map": "第一条路径是未退出产能复产或区域协调减弱，使华东实现售价与毛利回落；第二条是煤炭、电力、环保、安全及用工成本无法传导；第三条是受限现金和短债在经营现金下行时形成融资挤压；第四条是成熟核心产生的周期现金持续投向新疆、吉尔吉斯、房地产或其他低回报项目，导致资本沉淀并可能追加融资。前两条单独发生主要压低正常盈利，后三条与周期逆转叠加时才最可能把波动转化为普通股永久损失。",
+  "reversal_observations": [
+    "华东同口径销量保持而实现售价或毛利在全国行情转弱后仍能覆盖成本传导，表明区域位置与产品转化具有跨周期作用；反之若销量、毛利同步快速回落，则把 FY2017 改判为阶段性周期收益。",
+    "连续披露的吨售价、吨成本、利用率和产品结构若显示粉磨、码头及仓储提高就地转化且成本可传导，则提升成熟核心判断；若只是全国行情共振，则降低判断。",
+    "OCF、经济维护资本、全部长期资产投入和增长资本回报若可拆分，并显示成熟核心在中周期后仍有正 owner cash、同时总投入不依赖新增债务，则提升现金判断；否则下调。",
+    "受限现金占比、短期和长期借款及票据池责任若下降或由可重复经营现金覆盖，生存边界改善；若较高债务叠加利润回落，永久损失路径增强。",
+    "新疆粉磨、吉尔吉斯及房地产等 cohort 若在独立责任边界内产生客户、利润与现金则可晋级；若继续占用资本、停滞或需要追加融资，则维持排除并强化反方。"
+  ],
+  "sample_identity": "BLIND_REPLAY",
+  "schema_version": "enterprise-underwriting-episode.v2",
+  "situation_model": {
+    "industry_future_thesis": {
+      "adaptation": "FY2016—FY2017 降低熟料直销、提高水泥就地转化并投用粉磨、码头、熟料库等节点，与销量、毛利和现金改善同向，构成有经济逻辑的适应证据；但各项目利用率、增量回报以及煤炭和环保成本能否传导仍未被充分拆分。",
+      "company_exposure": "公司绝大部分收入集中于华东，成熟核心是安徽、浙江的矿山—熟料—粉磨—码头/仓储体系；北疆粉磨、吉尔吉斯项目和房地产具有不同客户、资本回报与融资责任，不能用华东核心的改善替它们背书。",
+      "horizon": "2018—2021 年，覆盖早期行业与公司传导、正常化及现金验证，并延伸到增长资本和永久损失观察。",
+      "most_likely_regime": "需求量不提供强劲增长、有效供给纪律支撑价格主导的利润池恢复，但未退出的过剩产能、区域差异和成本上涨使高利润具有周期性，不能视为结构性恒常状态。",
+      "normal_economics": "成熟核心的正常盈利应位于 FY2015 低谷与 FY2017 恢复年之间，并以同口径区域销量、实现售价、单位成本、利用率和产品结构校准。正常 owner cash 是 OCF 减经济维护资本；现有资料只证明经营现金及 OCF 减全部长期资产投入的机械差额在近期为正，不能据此给出正常 owner cash 点估计，增长资本回报另行等待验证。",
+      "permanent_loss": "单次周期回落本身更像可逆波动；真正的永久损失路径是区域价格纪律逆转和成本压力压缩成熟核心现金时，受限现金与较高短债削弱普通股缓冲，同时新疆、吉尔吉斯、房地产或其他扩张继续吸收资本并形成不可回收资产。",
+      "profit_pool_transmission": "全国利润池先由有效供给收缩和价格纪律扩张，再经华东区域实现售价、销量与煤炭电力环保成本差额传到公司；上峰降低熟料直销、增加就地粉磨与水泥转化并使用沿江码头仓储，有机会保留更多区域利润，但全国均价本身不能证明该传导可持续。",
+      "reversal_observations": [
+        "华东同口径销量保持而实现售价或毛利在全国行情转弱后仍能覆盖成本传导，表明区域位置与产品转化具有跨周期作用；反之若销量、毛利同步快速回落，则把 FY2017 改判为阶段性周期收益。",
+        "连续披露的吨售价、吨成本、利用率和产品结构若显示粉磨、码头及仓储提高就地转化且成本可传导，则提升成熟核心判断；若只是全国行情共振，则降低判断。",
+        "OCF、经济维护资本、全部长期资产投入和增长资本回报若可拆分，并显示成熟核心在中周期后仍有正 owner cash、同时总投入不依赖新增债务，则提升现金判断；否则下调。",
+        "受限现金占比、短期和长期借款及票据池责任若下降或由可重复经营现金覆盖，生存边界改善；若较高债务叠加利润回落，永久损失路径增强。",
+        "新疆粉磨、吉尔吉斯及房地产等 cohort 若在独立责任边界内产生客户、利润与现金则可晋级；若继续占用资本、停滞或需要追加融资，则维持排除并强化反方。"
+      ],
+      "strongest_rival": "FY2017 的高利润与现金主要是低基数、阶段性错峰及华东区域售价恢复的周期结果；名义过剩产能并未退出，若纪律松动且煤炭/环保成本上升，成熟核心盈利会回落，而受限现金、短债及新疆、吉尔吉斯和房地产资本责任会把可逆周期波动放大为普通股永久损失。",
+      "valuation_treatment": "以华东成熟核心的跨周期正常盈利和条件化 owner cash 为主路线；FY2017 单年峰值、未拆分资本支出的机械现金差额以及尚未证明回报的增长 cohort 均不得直接进入基础价值输入，后两者分别作为融资压力与分部资本回报问题处理。"
+    },
+    "summary": "截止日的最好解释是，全国水泥需求量近乎横盘，价格、行业收入和利润率却显著恢复，新增熟料约束、错峰及行业整合构成有效供给纪律的候选机制，但名义过剩产能尚未根本退出。上峰的判断不能停在全国序列：FY2016—FY2017 的销量、产品转化、华东毛利与经营现金改善以及 2018Q1 的售价信号，支持利润池已经传到公司；其跨周期耐久性仍取决于华东区域纪律、成本传导和资本去向。"
+  },
+  "strongest_rival": "FY2017 的高利润与现金主要是低基数、阶段性错峰及华东区域售价恢复的周期结果；名义过剩产能并未退出，若纪律松动且煤炭/环保成本上升，成熟核心盈利会回落，而受限现金、短债及新疆、吉尔吉斯和房地产资本责任会把可逆周期波动放大为普通股永久损失。",
+  "survival_case": "FY2015 价格和销量承压时，公司仍保持正盈利与正经营现金，随后 FY2016—FY2017 经营现金明显恢复，且近期 OCF 减购建长期资产支付的机械差额为正，说明成熟业务具备低谷生存和内部融资能力。反面是 FY2017 末及 2018Q1 短债较高，账面货币资金大部分受保证金等限制；票据池和信用证解释了部分短借，却不消除现金可用性与再融资责任。因此当前结论是能够生存但缓冲受条件约束，而不是把受限现金当可分配现金或把短借全部视作经营失败。",
+  "underwriting_route": "先承保需求、有效供给与行业利润池，再核验华东区域 delivered market、资源物流位置和产品转化是否把利润池留在公司；随后以成熟核心为责任边界结算生存与正常经济，把正常 owner cash、全部长期投入后的融资压力及增长资本回报分成三笔账，最后将债务和资本不可回收路径连接到永久损失与价值路线。",
+  "underwriting_thesis": {
+    "central_path": "截至 2018-04-30，行业利润池最可能由供给纪律而非需求增长驱动，并已通过华东区域售价、销量与产品转化传到上峰的成熟核心；公司具备周期低谷生存和改善现金转化的证据，但 FY2017 不能直接代表正常盈利。成熟核心可条件承保，正常 owner cash 的方向优于低谷但数额因维护资本未拆分而不能界定；全部长期投入后的现金只衡量当前资本配置压力，增长资本在证明独立回报前不进入基础路线。最需防范的是行业纪律和成本传导逆转时，受限现金、短债与新疆、吉尔吉斯、房地产资本沉淀共同把周期回落转成永久损失。",
+    "economic_directions": {
+      "normal_earnings": "IMPROVES",
+      "owner_cash": "MIXED",
+      "permanent_loss": "MIXED"
+    },
+    "monitoring": "按三层顺序观察：先看全国与华东的需求、有效供给和区域量价，再看成熟核心单位成本、产品转化、利用率与经营现金，最后分别核对经济维护资本、全部长期投入、受限现金和债务，以及新疆、吉尔吉斯、房地产 cohort 的独立资本回报。",
+    "normal_earnings_treatment": "以 FY2015—FY2017 同口径序列和 2018Q1 早期信号识别华东成熟核心较低谷改善的方向，但将 FY2017 毛利折回跨周期区间；等待区域量价、单位成本、利用率及产品结构后再收窄正常盈利。",
+    "owner_cash_treatment": "分别处理三笔账：正常 owner cash 是 OCF 减经济维护资本，因维护与增长未拆分而不作点估计；OCF 减全部长期资产投入的近期正机械差额只说明当前资本配置和融资压力并非失控；新疆、境外及其他增长资本的后续回报未证实，先排除且不据此把第一笔账改判为零或负。",
+    "permanent_loss_treatment": "把区域价格纪律松动或成本上升视为盈利压力，把受限现金和债务视为放大器，把区域外、境外及房地产低回报资本沉淀视为不可回收机制；只有这些路径叠加并侵蚀成熟核心融资能力时，才将可逆周期波动升级为普通股永久损失。",
+    "strongest_rival": "FY2017 的高利润与现金主要是低基数、阶段性错峰及华东区域售价恢复的周期结果；名义过剩产能并未退出，若纪律松动且煤炭/环保成本上升，成熟核心盈利会回落，而受限现金、短债及新疆、吉尔吉斯和房地产资本责任会把可逆周期波动放大为普通股永久损失。",
+    "thesis_id": "UWT:CN000672:20180430:COURSE2B:ENHANCED:V1",
+    "value_route_treatment": "主路线只承接华东成熟核心的周期正常盈利与条件化 owner cash；用资产利用和重置经济作交叉检验，用债务、受限现金和增长资本沉淀作压力处理。峰值单年外推、机械现金差额以及未证明增长回报均不进入基础输入。"
+  },
+  "value_route": {
+    "excluded_routes": [
+      "以 FY2017 单年盈利直接外推的峰值路线",
+      "把 OCF 减全部长期资产投入的机械差额直接当作正常 owner cash 的路线",
+      "把新疆、吉尔吉斯与房地产尚未证明的回报计入成熟核心的路线"
+    ],
+    "primary_routes": [
+      "华东成熟核心的跨周期正常盈利与条件化正常 owner cash 路线",
+      "将成熟核心、增长 cohort 与融资责任分离后的分部资本回报路线"
+    ],
+    "route_reasoning": "核心业务已有周期低谷与恢复期证据，适合先规范化区域量价、成本、产品结构和资本利用，再以正常 owner cash 检验盈利质量。由于经济维护资本未拆分，owner cash 只能条件化；全部长期投入后的差额只回答当前资本配置和融资压力，增长资本必须以其后续独立回报决定是否晋级。",
+    "valuation_model_roles": {
+      "corroborative": [
+        "成熟矿山—熟料—粉磨—物流资产的利用率与重置经济交叉检验"
+      ],
+      "primary": [
+        "华东成熟核心的周期正常盈利与 owner cash 资本化框架"
+      ],
+      "stress": [
+        "债务覆盖、受限现金及境外和区域外资本沉淀的永久损失压力测试"
+      ]
+    }
+  }
+}

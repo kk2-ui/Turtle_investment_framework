@@ -29,7 +29,7 @@
     }
   },
   "normal_earnings_treatment": "国内核心仅按量价、利用率和成本共同恢复的中周期范围承保；新增国内资产排除在基准之外，海外区域利润只作条件性上行情景。",
-  "owner_cash_treatment": "集团FY2024经营现金覆盖披露资本支出显示承受力，但维护/增长资本和普通股可得现金未闭合；owner cash 只能以范围和资产/EPV交叉约束，而不是单点OCF减资本支出。",
+  "owner_cash_treatment": "组件账的普通股现金权限为 UNRESOLVED，未授权形成基准或条件性 owner-cash 范围；叙事不得把现金代理升级为已承保范围。",
   "permanent_loss_treatment": "核心风险是区域需求和价格长期疲弱使新旧资产低利用率、低回报并持续消耗维护或防御性资本，而非即时融资崩溃。",
   "strongest_rival": "海外毛利改善、成本下降、现金缓冲和多元布局会使整体盈利先于国内周期恢复，新增布局最终成为有效组合缓冲。",
   "monitoring": "国内量价利用率和吨毛利；新增项目的同边界客户/经济/现金桥；海外存量与新项目拆分；经济维护资本和普通股现金可达性。",
@@ -91,5 +91,200 @@
     }
   ],
   "existing_cjo_adapter": "scripts/enterprise_judgment_core.py:compile_cjo_candidate",
-  "boundary": "A projection for the existing CJO compiler; it is not a Frozen CJO and cannot authorize value, price, BuyBand, report publication, or investment action."
+  "boundary": "A projection for the existing CJO compiler; it is not a Frozen CJO and cannot authorize value, price, BuyBand, report publication, or investment action.",
+  "component_decisions": [
+    {
+      "component_id": "CONSOLIDATED_SURVIVAL_AND_FINANCING",
+      "economic_scope": "SURVIVAL_FINANCING",
+      "normal_earnings_use": "NOT_APPLICABLE",
+      "owner_cash_use": "NOT_APPLICABLE",
+      "financing_pressure_effect": "REDUCES",
+      "permanent_loss_use": "BASE_PATH",
+      "valuation_use": "CORROBORATIVE_INPUT",
+      "valuation_route_bindings": [
+        {
+          "route_id": "ASSET_VALUE",
+          "use": "CORROBORATIVE_INPUT"
+        },
+        {
+          "route_id": "NAV",
+          "use": "STRESS_ONLY"
+        }
+      ],
+      "promotion_test": "Liquidity, refinancing access, and debt maturity coverage remain adequate through the cycle.",
+      "invalidation_test": "A material loss of accessible liquidity or refinancing capacity makes near-term survival a primary loss path."
+    },
+    {
+      "component_id": "DOMESTIC_CORE_NORMAL_EARNINGS",
+      "economic_scope": "MATURE_CORE_NORMAL_EARNINGS",
+      "normal_earnings_use": "CONDITIONAL_RANGE",
+      "owner_cash_use": "UNRESOLVED",
+      "financing_pressure_effect": "NEUTRAL",
+      "permanent_loss_use": "CONDITIONAL_PATH",
+      "valuation_use": "CONDITIONAL_PRIMARY_INPUT",
+      "valuation_route_bindings": [
+        {
+          "route_id": "ASSET_VALUE",
+          "use": "CONDITIONAL_PRIMARY_INPUT"
+        },
+        {
+          "route_id": "EARNINGS_POWER_VALUE",
+          "use": "CONDITIONAL_PRIMARY_INPUT"
+        },
+        {
+          "route_id": "EPV",
+          "use": "CONDITIONAL_PRIMARY_INPUT"
+        },
+        {
+          "route_id": "RETURN_DECOMPOSITION",
+          "use": "CORROBORATIVE_INPUT"
+        }
+      ],
+      "promotion_test": "Comparable regional volume, price, utilization, and unit margin jointly support a mid-cycle range.",
+      "invalidation_test": "Sustained regional price and utilization deterioration below the underwritten range removes the core earnings input."
+    },
+    {
+      "component_id": "DOMESTIC_INCREMENTAL_ASSET_RETURN",
+      "economic_scope": "GROWTH_CAPITAL_RETURN",
+      "normal_earnings_use": "EXCLUDED",
+      "owner_cash_use": "EXCLUDED",
+      "financing_pressure_effect": "INCREASES",
+      "permanent_loss_use": "BASE_PATH",
+      "valuation_use": "EXCLUDED",
+      "valuation_route_bindings": [
+        {
+          "route_id": "CAPACITY_GROWTH_VALUE_AS_PRIMARY",
+          "use": "EXCLUDED"
+        },
+        {
+          "route_id": "RETURN_DECOMPOSITION",
+          "use": "EXCLUDED"
+        }
+      ],
+      "promotion_test": "The same responsibility unit discloses customer absorption, unit economics, maintenance and growth capital, and cumulative cash recovery.",
+      "invalidation_test": "Continuing commitments without customer absorption or cash recovery strengthen the capital-stranding loss path."
+    },
+    {
+      "component_id": "OVERSEAS_AND_INDUSTRIAL_CHAIN_OPTION",
+      "economic_scope": "NONCORE_OR_OPTIONAL_ASSET",
+      "normal_earnings_use": "SCENARIO_ONLY",
+      "owner_cash_use": "UNRESOLVED",
+      "financing_pressure_effect": "CONDITIONAL",
+      "permanent_loss_use": "CONDITIONAL_PATH",
+      "valuation_use": "SCENARIO_ONLY",
+      "valuation_route_bindings": [
+        {
+          "route_id": "OVERSEAS_AND_INDUSTRIAL_CHAIN_OPTION_VALUE",
+          "use": "SCENARIO_ONLY"
+        }
+      ],
+      "promotion_test": "Separate regional or project profit, cash, and invested-capital evidence shows repeatable customer absorption and returns.",
+      "invalidation_test": "Mixed perimeter data or rising commitments without separable cash recovery keep the option outside the base case."
+    },
+    {
+      "component_id": "ORDINARY_SHARE_OWNER_CASH",
+      "economic_scope": "ORDINARY_SHARE_OWNER_CASH",
+      "normal_earnings_use": "NOT_APPLICABLE",
+      "owner_cash_use": "UNRESOLVED",
+      "financing_pressure_effect": "UNRESOLVED",
+      "permanent_loss_use": "CONDITIONAL_PATH",
+      "valuation_use": "UNRESOLVED",
+      "valuation_route_bindings": [
+        {
+          "route_id": "ONE_PERIOD_OCF_MINUS_CAPEX_AS_OWNER_CASH",
+          "use": "EXCLUDED"
+        },
+        {
+          "route_id": "ORDINARY_SHARE_OWNER_CASH_VALUE",
+          "use": "UNRESOLVED"
+        }
+      ],
+      "promotion_test": "A same-boundary bridge separates economic maintenance, growth capital, working capital, debt, NCI, and cash accessible to ordinary shareholders.",
+      "invalidation_test": "A mechanical OCF-minus-capex residual or inaccessible consolidated cash cannot establish ordinary-share owner cash."
+    }
+  ],
+  "normal_earnings_component_route": {
+    "range_authority": "CONDITIONAL_RANGE",
+    "components_by_use": {
+      "BASE_RANGE": [],
+      "CONDITIONAL_RANGE": [
+        "DOMESTIC_CORE_NORMAL_EARNINGS"
+      ],
+      "SCENARIO_ONLY": [
+        "OVERSEAS_AND_INDUSTRIAL_CHAIN_OPTION"
+      ],
+      "EXCLUDED": [
+        "DOMESTIC_INCREMENTAL_ASSET_RETURN"
+      ],
+      "UNRESOLVED": [],
+      "NOT_APPLICABLE": [
+        "CONSOLIDATED_SURVIVAL_AND_FINANCING",
+        "ORDINARY_SHARE_OWNER_CASH"
+      ]
+    }
+  },
+  "owner_cash_component_route": {
+    "range_authority": "UNRESOLVED",
+    "components_by_use": {
+      "BASE_RANGE": [],
+      "CONDITIONAL_RANGE": [],
+      "SCENARIO_ONLY": [],
+      "EXCLUDED": [
+        "DOMESTIC_INCREMENTAL_ASSET_RETURN"
+      ],
+      "UNRESOLVED": [
+        "DOMESTIC_CORE_NORMAL_EARNINGS",
+        "OVERSEAS_AND_INDUSTRIAL_CHAIN_OPTION",
+        "ORDINARY_SHARE_OWNER_CASH"
+      ],
+      "NOT_APPLICABLE": [
+        "CONSOLIDATED_SURVIVAL_AND_FINANCING"
+      ]
+    }
+  },
+  "financing_pressure_component_route": {
+    "active_effects": [
+      "REDUCES",
+      "NEUTRAL",
+      "INCREASES",
+      "CONDITIONAL",
+      "UNRESOLVED"
+    ],
+    "components_by_effect": {
+      "REDUCES": [
+        "CONSOLIDATED_SURVIVAL_AND_FINANCING"
+      ],
+      "NEUTRAL": [
+        "DOMESTIC_CORE_NORMAL_EARNINGS"
+      ],
+      "INCREASES": [
+        "DOMESTIC_INCREMENTAL_ASSET_RETURN"
+      ],
+      "CONDITIONAL": [
+        "OVERSEAS_AND_INDUSTRIAL_CHAIN_OPTION"
+      ],
+      "UNRESOLVED": [
+        "ORDINARY_SHARE_OWNER_CASH"
+      ],
+      "NOT_APPLICABLE": []
+    }
+  },
+  "permanent_loss_component_route": {
+    "path_authority": "BASE_PATH",
+    "components_by_use": {
+      "BASE_PATH": [
+        "CONSOLIDATED_SURVIVAL_AND_FINANCING",
+        "DOMESTIC_INCREMENTAL_ASSET_RETURN"
+      ],
+      "CONDITIONAL_PATH": [
+        "DOMESTIC_CORE_NORMAL_EARNINGS",
+        "OVERSEAS_AND_INDUSTRIAL_CHAIN_OPTION",
+        "ORDINARY_SHARE_OWNER_CASH"
+      ],
+      "STRESS_ONLY": [],
+      "EXCLUDED": [],
+      "UNRESOLVED": [],
+      "NOT_APPLICABLE": []
+    }
+  }
 }

@@ -1,0 +1,62 @@
+{
+  "schema_version": "course-2b-fair-ab-preregistration.v1",
+  "experiment_id": "COURSE2B:CN000672:20180430:CEMENT_UNSEEN_COMPANY_AB:V1",
+  "state": "FROZEN_BEFORE_ARM_EXECUTION",
+  "company_id": "CN:000672",
+  "company_name": "Gansu Shangfeng Cement Co., Ltd.",
+  "cutoff_at": "2018-04-30T23:59:59+08:00",
+  "sample_identity": "BLIND_REPLAY",
+  "selection_reason": "A previously unseen regional heavy-asset cement producer can test whether a multi-company industry Pack improves the transmission from national supply discipline to regional price, cost, capital intensity and ordinary-common cash.",
+  "unseen_checks": {
+    "repository_company_research_hits_before_experiment": 0,
+    "included_in_cement_pack": false,
+    "included_in_course_1": false,
+    "same_mechanism_as_sf_express_ab": false
+  },
+  "excluded_pack_companies": [
+    "CN:600585",
+    "CN:600425",
+    "CN:600802",
+    "CN:600801",
+    "CN:000401"
+  ],
+  "shared_sources": [
+    "docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_COURSE_2B_CN000672_20180430/sources/00_COMMON_CEMENT_PRE_CUTOFF_SOURCE_PACKAGE.md",
+    "docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_COURSE_2B_CN000672_20180430/sources/01_CN000672_PRE_CUTOFF_SOURCE_PACKAGE.md"
+  ],
+  "enhanced_only_sources": [
+    "docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_COURSE_2B_CN000672_20180430/context/02_CN000672_INDUSTRY_UNDERWRITING_CONTEXT.json",
+    "docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_COURSE_2B_CN000672_20180430/02_ENHANCED_TRAINING_MEMORY.md"
+  ],
+  "forbidden_to_both_arms": [
+    "industry_experience_pack_full_text",
+    "course_1_company_conclusions",
+    "other_arm_output",
+    "fy2018_fy2020_outcomes",
+    "market_price_or_return",
+    "valuation_or_investment_action"
+  ],
+  "execution_equality": {
+    "runner": "scripts/enterprise_underwriting_training.py render-subagent-task + run --agent-response",
+    "provider": "ACTIVE_CODEX_FRESH_SUBAGENT_NO_EXTERNAL_API",
+    "model": "INHERITED_CURRENT_CODEX_SAME_FOR_BOTH",
+    "reasoning_configuration": "INHERITED_SAME_FOR_BOTH",
+    "temperature": "PLATFORM_DEFAULT_NOT_OVERRIDDEN",
+    "max_tokens_each": "SAME_INHERITED_PLATFORM_LIMIT",
+    "calls_per_arm": 1,
+    "conversation_context": "fork_turns=none",
+    "network_or_tools": "TASK_PACKET_PLUS_SHARED_EPISODE_SCHEMA_AND_VALIDATOR_NO_MODEL_TOOLS"
+  },
+  "outcome_layers": [
+    "INDUSTRY_PATH",
+    "COMPANY_TRANSMISSION"
+  ],
+  "verdict_set": [
+    "ENHANCED_MATERIALLY_BETTER",
+    "NO_MATERIAL_UTILITY",
+    "ENHANCED_WORSE",
+    "INCONCLUSIVE_DATA"
+  ],
+  "maximum_positive_promotion": "TRANSFER_CANDIDATE",
+  "authority": "RESEARCH_TRAINING_ONLY_NO_PRICE_VALUATION_REPORT_RELEASE_OR_INVESTMENT_AUTHORITY"
+}

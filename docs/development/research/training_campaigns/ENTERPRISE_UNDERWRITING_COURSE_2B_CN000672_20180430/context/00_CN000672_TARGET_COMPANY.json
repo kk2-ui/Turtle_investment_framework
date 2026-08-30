@@ -1,0 +1,23 @@
+{
+  "company_id": "CN:000672",
+  "company_name": "Gansu Shangfeng Cement Co., Ltd.",
+  "cutoff_at": "2018-04-30T23:59:59+08:00",
+  "knowledge_cutoff_at": "2018-04-30T23:59:59+08:00",
+  "industry_id": "INDUSTRY:CN:CEMENT_LISTED",
+  "industry_ids": [
+    "INDUSTRY:CN:CEMENT_LISTED"
+  ],
+  "industry_keys": [
+    "cement"
+  ],
+  "industry_horizon": "2018-2021 demand, effective supply, regional price discipline, cost transmission and profit-pool durability",
+  "industry_profit_pool_direction": "PRICE_LED_EXPANSION_WITH_DURABILITY_CONSTRAINED_BY_OVERCAPACITY",
+  "industry_profit_pool_thesis": "截至 cutoff，全国需求量近乎横盘而价格、收入、利润和利润率同步恢复，新增熟料约束、错峰和重组提供有效供给纪律候选机制；但未解决过剩、区域差异和成本传导使恢复的跨周期耐久性仍需结算。",
+  "industry_thesis_confidence": "MEDIUM_HIGH_ON_RECOVERY_MEDIUM_LOW_ON_DURABILITY",
+  "industry_permanent_loss_implication": "若错峰退出、闲置产能复产、华东区域纪律失效或燃料环保成本不能传价，上峰的正常盈利会压缩；债务及新疆、境外和其他扩张资本可能同时成为低回报沉淀资产。",
+  "company_exposure": "公司主要暴露于华东沿江区域 delivered market，并通过安徽浙江熟料、水泥、粉磨、码头、矿山和仓储体系传导全国供给纪律；新疆、境外与房地产具有不同责任边界。",
+  "adaptation_hypothesis": "降低熟料外销、提高水泥和骨料等就地转化、利用沿江物流及成本控制，可能使公司比单一熟料出售者更能保留区域利润池；债务、受限现金和扩张资本回报必须由目标公司证据验证。",
+  "pit_mode": true,
+  "knowledge_mode": "PIT_EVIDENCE_ONLY",
+  "context_id": "IUC:CN:CEMENT_LISTED:CN000672:20180430:COURSE2B:V1"
+}

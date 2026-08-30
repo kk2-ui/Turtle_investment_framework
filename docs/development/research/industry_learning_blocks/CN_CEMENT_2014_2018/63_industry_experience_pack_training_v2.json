@@ -191,7 +191,15 @@
       }
     ]
   },
-  "transfer_reviews": [],
+  "transfer_reviews": [
+    {
+      "review_id": "REVIEW:COURSE2B:CN000672:COMPANY_HOLDOUT:V1",
+      "axis": "COMPANY_HOLDOUT",
+      "verdict": "NO_MATERIAL_UTILITY",
+      "independent": true,
+      "ref": "docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_COURSE_2B_CN000672_20180430/13_FRESH_REVIEW_FINAL_MAPPING_ADJUDICATION.md"
+    }
+  ],
   "next_sampling_decision": {
     "question": "价格恢复在 2018 年后能否在需求不繁荣和过剩未根治的条件下转化为持续利润率与 owner cash，而不是一次低基数修复？",
     "discriminator": "选择新的区域/成本 archetype 或后续时期，同时观察官方行业量价利润、有效供给，以及公司同边界利用率、单位经济和现金吸收。",

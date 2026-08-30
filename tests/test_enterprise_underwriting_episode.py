@@ -9,6 +9,7 @@ import pytest
 from scripts.enterprise_underwriting_episode import (
     compile_golden_report_reader_brief,
     compile_underwriting_projections,
+    derive_component_decision_summary,
     project_price_free_underwriting_thesis,
     render_underwriting_readout,
     validate_enterprise_underwriting_episode,
@@ -75,6 +76,207 @@ def test_schema_makes_industry_future_thesis_part_of_situation_model() -> None:
     assert set(industry_future["required"]) == INDUSTRY_FUTURE_FIELDS
     assert "economic_directions" in schema["properties"]["underwriting_thesis"]["required"]
     assert schema["$defs"]["value_route"]["properties"]["valuation_model_roles"]["required"] == ["primary"]
+    assert "component_decisions" in schema["properties"]
+    assert "component_decisions" not in schema["required"]
+    assert schema["dependentRequired"]["component_decisions"] == [
+        "component_decision_summary"
+    ]
+    assert "valuation_route_bindings" in schema["$defs"][
+        "component_decision"
+    ]["required"]
+    assert "route_component_bindings" in schema["$defs"][
+        "valuation_component_route"
+    ]["required"]
+    assert "route_component_requirements" in schema["$defs"][
+        "value_route"
+    ]["properties"]
+
+
+def test_explicit_component_decisions_are_validated_and_drive_base_exclusions() -> None:
+    episode = _episode("CN600585_20240501_WORKED_CASE_V1.json")
+
+    assert validate_enterprise_underwriting_episode(episode)["state"] == "REVIEWABLE"
+    bundle = compile_underwriting_projections(episode)
+    valuation = bundle["valuation_route_request"]
+    assert valuation["component_decisions"] == episode["component_decisions"]
+    assert valuation["inputs_excluded_from_base"] == [
+        "CONSOLIDATED_SURVIVAL_AND_FINANCING",
+        "DOMESTIC_INCREMENTAL_ASSET_RETURN",
+        "OVERSEAS_AND_INDUSTRIAL_CHAIN_OPTION",
+        "ORDINARY_SHARE_OWNER_CASH",
+    ]
+    assert bundle["cjo_candidate_projection"]["component_decisions"] == episode["component_decisions"]
+    assert bundle["golden_report_underwriting_handoff"]["component_decisions"] == episode["component_decisions"]
+    assert episode["component_decision_summary"] == derive_component_decision_summary(
+        episode["component_decisions"]
+    )
+    assert valuation["valuation_component_route"] == episode[
+        "component_decision_summary"
+    ]["valuation"]
+    assert bundle["golden_report_underwriting_handoff"][
+        "component_economic_routes"
+    ] == episode["component_decision_summary"]
+    reader_brief = compile_golden_report_reader_brief(episode)
+    assert all("权威经济去向" in item for item in reader_brief["component_judgments"])
+    assert valuation["owner_cash_input_treatment"] != episode[
+        "underwriting_thesis"
+    ]["owner_cash_treatment"]
+    assert "未授权形成基准或条件性 owner-cash 范围" in valuation[
+        "owner_cash_input_treatment"
+    ]
+
+
+@pytest.mark.parametrize(
+    ("component_id", "field", "replacement", "projection", "route_field"),
+    [
+        (
+            "OVERSEAS_AND_INDUSTRIAL_CHAIN_OPTION",
+            "normal_earnings_use",
+            "EXCLUDED",
+            "cjo_candidate_projection",
+            "normal_earnings_component_route",
+        ),
+        (
+            "ORDINARY_SHARE_OWNER_CASH",
+            "owner_cash_use",
+            "SCENARIO_ONLY",
+            "cjo_candidate_projection",
+            "owner_cash_component_route",
+        ),
+        (
+            "DOMESTIC_CORE_NORMAL_EARNINGS",
+            "financing_pressure_effect",
+            "REDUCES",
+            "cjo_candidate_projection",
+            "financing_pressure_component_route",
+        ),
+        (
+            "ORDINARY_SHARE_OWNER_CASH",
+            "permanent_loss_use",
+            "STRESS_ONLY",
+            "cjo_candidate_projection",
+            "permanent_loss_component_route",
+        ),
+        (
+            "CONSOLIDATED_SURVIVAL_AND_FINANCING",
+            "valuation_use",
+            "STRESS_ONLY",
+            "valuation_route_request",
+            "valuation_component_route",
+        ),
+    ],
+)
+def test_each_component_decision_dimension_changes_its_downstream_route(
+    component_id: str,
+    field: str,
+    replacement: str,
+    projection: str,
+    route_field: str,
+) -> None:
+    original = _episode("CN600585_20240501_WORKED_CASE_V1.json")
+    mutated = deepcopy(original)
+    decision = next(
+        item for item in mutated["component_decisions"]
+        if item["component_id"] == component_id
+    )
+    decision[field] = replacement
+    if field == "valuation_use":
+        for binding in decision["valuation_route_bindings"]:
+            binding["use"] = replacement
+    mutated["component_decision_summary"] = derive_component_decision_summary(
+        mutated["component_decisions"]
+    )
+
+    assert validate_enterprise_underwriting_episode(mutated)["state"] == "REVIEWABLE"
+    before = compile_underwriting_projections(original)[projection][route_field]
+    after = compile_underwriting_projections(mutated)[projection][route_field]
+    assert after != before
+
+
+def test_unrelated_primary_component_cannot_mask_an_excluded_epv_component() -> None:
+    episode = _episode("CN600585_20240501_WORKED_CASE_V1.json")
+    core = next(
+        item for item in episode["component_decisions"]
+        if item["component_id"] == "DOMESTIC_CORE_NORMAL_EARNINGS"
+    )
+    for binding in core["valuation_route_bindings"]:
+        if binding["route_id"] in {"EARNINGS_POWER_VALUE", "EPV"}:
+            binding["use"] = "EXCLUDED"
+    survival = next(
+        item for item in episode["component_decisions"]
+        if item["component_id"] == "CONSOLIDATED_SURVIVAL_AND_FINANCING"
+    )
+    survival["valuation_use"] = "PRIMARY_INPUT"
+    survival["valuation_route_bindings"].extend([
+        {"route_id": "EARNINGS_POWER_VALUE", "use": "PRIMARY_INPUT"},
+        {"route_id": "EPV", "use": "PRIMARY_INPUT"},
+    ])
+    episode["component_decision_summary"] = derive_component_decision_summary(
+        episode["component_decisions"]
+    )
+
+    findings = validate_enterprise_underwriting_episode(episode)["findings"]
+
+    assert "EPV" in episode["value_route"]["valuation_model_roles"]["primary"]
+    assert (
+        "value_route.primary_route_required_component_ineligible:"
+        "EARNINGS_POWER_VALUE:DOMESTIC_CORE_NORMAL_EARNINGS"
+        in findings
+    )
+    assert (
+        "value_route.primary_route_required_component_ineligible:"
+        "EPV:DOMESTIC_CORE_NORMAL_EARNINGS"
+        in findings
+    )
+    assert (
+        "value_route.route_binding_component_not_eligible:"
+        "EPV:CONSOLIDATED_SURVIVAL_AND_FINANCING"
+        in findings
+    )
+
+
+def test_optional_excluded_component_does_not_invalidate_a_required_route() -> None:
+    episode = _episode("CN600585_20240501_WORKED_CASE_V1.json")
+    requirements = {
+        item["route_id"]: item
+        for item in episode["value_route"]["route_component_requirements"]
+    }
+    return_route = requirements["RETURN_DECOMPOSITION"]
+
+    assert return_route["required_component_ids"] == [
+        "DOMESTIC_CORE_NORMAL_EARNINGS"
+    ]
+    assert return_route["optional_component_ids"] == [
+        "DOMESTIC_INCREMENTAL_ASSET_RETURN"
+    ]
+    assert validate_enterprise_underwriting_episode(episode)["state"] == "REVIEWABLE"
+
+
+def test_component_label_cannot_silently_promote_an_excluded_input_to_base() -> None:
+    episode = _episode("CN600585_20240501_WORKED_CASE_V1.json")
+    decision = next(
+        item for item in episode["component_decisions"]
+        if item["component_id"] == "DOMESTIC_INCREMENTAL_ASSET_RETURN"
+    )
+    decision["normal_earnings_use"] = "BASE_RANGE"
+
+    findings = validate_enterprise_underwriting_episode(episode)["findings"]
+
+    assert any("base_use_conflicts_with_component_treatment" in item for item in findings)
+
+
+def test_present_component_decision_ledger_cannot_be_empty_or_partial() -> None:
+    episode = _episode("CN600585_20240501_WORKED_CASE_V1.json")
+    episode["component_decisions"] = []
+    assert "component_decisions.must_be_non_empty_list" in validate_enterprise_underwriting_episode(
+        episode
+    )["findings"]
+
+    partial = _episode("CN600585_20240501_WORKED_CASE_V1.json")
+    partial["component_decisions"] = partial["component_decisions"][:-1]
+    assert "component_decisions.must_cover_each_component_treatment_once" in (
+        validate_enterprise_underwriting_episode(partial)["findings"]
+    )
 
 
 def test_only_primary_valuation_model_is_required() -> None:
@@ -197,7 +399,12 @@ def test_local_owner_cash_limit_does_not_erase_survival_or_value_route() -> None
     assert treatments["ORDINARY_SHARE_OWNER_CASH"] == "CANNOT_BOUND"
     assert treatments["CONSOLIDATED_SURVIVAL_AND_FINANCING"] == "UNDERWRITE"
     assert treatments["DOMESTIC_INCREMENTAL_ASSET_RETURN"] == "EXCLUDE_FROM_BASE"
-    assert conch["value_route"]["primary_routes"] == ["ASSET_VALUE", "EARNINGS_POWER_VALUE", "CAPITAL_RETURN_CROSS_CHECK"]
+    assert conch["value_route"]["primary_routes"] == [
+        "ASSET_VALUE", "EARNINGS_POWER_VALUE",
+    ]
+    assert conch["value_route"]["valuation_model_roles"]["corroborative"] == [
+        "RETURN_DECOMPOSITION"
+    ]
 
 
 def test_readout_is_investor_facing_and_preserves_the_strongest_rival() -> None:

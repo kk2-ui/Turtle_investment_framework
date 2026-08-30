@@ -8,9 +8,15 @@ import sys
 
 import pytest
 
-from scripts.enterprise_underwriting_episode import compile_underwriting_projections
+from scripts.enterprise_underwriting_episode import (
+    compile_underwriting_projections,
+    render_underwriting_readout,
+)
 from scripts.enterprise_underwriting_training import (
+    COMPONENT_DECISION_INTERFACE,
+    CONTRACT_SCHEMA,
     DOWNSTREAM_BUNDLE_SCHEMA,
+    LEGACY_FROZEN_CONTRACT_REFS,
     PRIMARY_PRODUCT,
     SUBAGENT_TASK_SCHEMA,
     build_fresh_subagent_task,
@@ -43,6 +49,11 @@ COURSE_ROOT = (
 )
 COURSE_BLIND_CONTRACT_PATH = COURSE_ROOT / "contracts/CN002352_BLIND_CONTRACT.json"
 COURSE_BLIND_EPISODE_PATH = COURSE_ROOT / "blind/03_CN002352/enterprise_underwriting_episode.json"
+COURSE2B_ROOT = (
+    ROOT
+    / "docs/development/research/training_campaigns"
+    / "ENTERPRISE_UNDERWRITING_COURSE_2B_CN000672_20180430"
+)
 
 
 def _episode() -> dict:
@@ -148,7 +159,84 @@ def test_tracks_only_bind_episode_identity_and_outcome_access(
     assert contract["sample_identity"] == sample_identity
     assert contract["outcome_access"] == outcome_access
     assert contract["primary_training_product"] == PRIMARY_PRODUCT
+    assert contract["schema_version"] == CONTRACT_SCHEMA
+    assert contract["component_decision_interface"] == COMPONENT_DECISION_INTERFACE
     assert validate_training_contract(contract)["state"] == "REVIEWABLE"
+
+
+def test_current_contract_requires_component_decisions_and_only_frozen_legacy_replays() -> None:
+    episode = _episode()
+    contract = _worked_contract(episode)
+    without_decisions = deepcopy(episode)
+    del without_decisions["component_decisions"]
+    del without_decisions["component_decision_summary"]
+
+    findings = validate_training_episode(contract, without_decisions)["findings"]
+
+    assert "binding.component_decisions_required_by_contract" in findings
+    legacy = deepcopy(contract)
+    legacy["schema_version"] = "enterprise-underwriting-training-contract.v1"
+    del legacy["component_decision_interface"]
+    fake_findings = validate_training_contract(legacy)["findings"]
+    assert "contract.legacy_v1_payload_differs_from_frozen_contract" in fake_findings
+
+    frozen_legacy = json.loads(CONTRACT_PATH.read_text(encoding="utf-8"))
+    assert validate_training_contract(frozen_legacy)["state"] == "REVIEWABLE"
+    assert validate_training_episode(frozen_legacy, without_decisions)["state"] == "REVIEWABLE"
+    compile_price_free_downstream_bundle(frozen_legacy, without_decisions)
+    with pytest.raises(ValueError, match="legacy_v1_replay_only"):
+        build_fresh_subagent_task(frozen_legacy)
+    with pytest.raises(ValueError, match="legacy_v1_replay_only"):
+        run_training_agent(
+            frozen_legacy,
+            output_dir=ROOT / "unused-legacy-run",
+            episode_generator=lambda _messages: without_decisions,
+            source_materials=[],
+        )
+
+    unregistered = deepcopy(frozen_legacy)
+    unregistered["contract_id"] = "UWTRAIN:UNREGISTERED:LEGACY:V1"
+    assert "contract.legacy_v1_not_registered_for_frozen_replay" in (
+        validate_training_contract(unregistered)["findings"]
+    )
+
+
+def test_legacy_replay_registry_names_only_exact_contract_objects() -> None:
+    assert LEGACY_FROZEN_CONTRACT_REFS
+    assert all("/contracts/" in ref or ref.endswith("_TRAINING_CONTRACT_V1.json") for ref in LEGACY_FROZEN_CONTRACT_REFS.values())
+    for contract_id, reference in LEGACY_FROZEN_CONTRACT_REFS.items():
+        payload = json.loads((ROOT / reference).read_text(encoding="utf-8"))
+        assert payload["contract_id"] == contract_id
+        assert payload["schema_version"] == "enterprise-underwriting-training-contract.v1"
+        assert validate_training_contract(payload)["state"] == "REVIEWABLE"
+
+
+@pytest.mark.parametrize("arm", ["baseline", "enhanced"])
+def test_frozen_course2b_v1_replay_remains_identical_to_stored_products(
+    arm: str,
+) -> None:
+    label = arm.upper()
+    contract = json.loads(
+        (COURSE2B_ROOT / f"contracts/CN000672_COURSE2B_{label}_CONTRACT.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    episode = json.loads(
+        (COURSE2B_ROOT / f"arms/{arm}/enterprise_underwriting_episode.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    stored_bundle = json.loads(
+        (COURSE2B_ROOT / f"arms/{arm}/enterprise_underwriting_downstream_bundle.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    stored_readout = (
+        COURSE2B_ROOT / f"arms/{arm}/investor_readout.md"
+    ).read_text(encoding="utf-8")
+
+    assert compile_price_free_downstream_bundle(contract, episode) == stored_bundle
+    assert render_underwriting_readout(episode) == stored_readout
 
 
 def test_blind_contract_requires_sealed_cutoff_safe_sources() -> None:
@@ -171,6 +259,8 @@ def test_blind_contract_requires_sealed_cutoff_safe_sources() -> None:
 
 def test_blind_training_memory_changes_questions_but_cannot_be_target_evidence() -> None:
     contract = json.loads(COURSE_BLIND_CONTRACT_PATH.read_text(encoding="utf-8"))
+    contract["schema_version"] = CONTRACT_SCHEMA
+    contract["component_decision_interface"] = deepcopy(COMPONENT_DECISION_INTERFACE)
     contract["allowed_sources"].append({
         "source_id": "SOURCE:TRAINING_MEMORY",
         "source_ref": "AGENTS.md",
@@ -199,6 +289,29 @@ def test_blind_training_memory_changes_questions_but_cannot_be_target_evidence()
     assert "three distinct economic questions" in messages[0]["content"]
     assert "must never be renamed as maintenance capital" in messages[0]["content"]
     assert "cash-light merely because capex is low" in messages[0]["content"]
+
+
+def test_current_training_prompt_makes_downstream_component_semantics_the_decision() -> None:
+    contract = _worked_contract()
+    materials = [
+        {
+            "source_id": item["source_id"],
+            "source_ref": item["source_ref"],
+            "content": "Source material.",
+        }
+        for item in contract["allowed_sources"]
+    ]
+
+    prompt = build_training_agent_messages(contract, source_materials=materials)[0]["content"]
+
+    assert "exactly one entry for every" in prompt
+    assert "whether it forms an owner-cash" in prompt
+    assert "range, how it changes financing pressure" in prompt
+    assert "label cannot substitute for them" in prompt
+    assert "valuation_route_bindings" in prompt
+    assert "one unrelated primary" in prompt
+    assert "route_component_requirements" in prompt
+    assert "optional component may remain excluded" in prompt
 
 
 def test_contract_requires_real_multi_clock_feedback_not_duplicate_labels() -> None:
@@ -303,6 +416,8 @@ def test_formal_training_run_invokes_agent_and_only_then_persists_complete_episo
     tmp_path: Path,
 ) -> None:
     episode = _episode()
+    raw_agent_episode = deepcopy(episode)
+    del raw_agent_episode["component_decision_summary"]
     contract = _worked_contract(episode)
     seen: list[list[dict[str, str]]] = []
     materials = [
@@ -316,7 +431,7 @@ def test_formal_training_run_invokes_agent_and_only_then_persists_complete_episo
 
     def generator(messages: list[dict[str, str]]) -> dict:
         seen.append(messages)
-        return deepcopy(episode)
+        return deepcopy(raw_agent_episode)
 
     receipt = run_training_agent(
         contract,

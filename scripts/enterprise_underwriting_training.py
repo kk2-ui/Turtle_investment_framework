@@ -23,6 +23,7 @@ try:
     from scripts.enterprise_underwriting_episode import (
         EPISODE_SCHEMA,
         compile_underwriting_projections,
+        derive_component_decision_summary,
         validate_enterprise_underwriting_episode,
         validate_underwriting_projection_bundle,
     )
@@ -31,12 +32,14 @@ except ModuleNotFoundError:  # Direct ``python scripts/...`` execution.
     from scripts.enterprise_underwriting_episode import (
         EPISODE_SCHEMA,
         compile_underwriting_projections,
+        derive_component_decision_summary,
         validate_enterprise_underwriting_episode,
         validate_underwriting_projection_bundle,
     )
 
 
-CONTRACT_SCHEMA = "enterprise-underwriting-training-contract.v1"
+CONTRACT_SCHEMA = "enterprise-underwriting-training-contract.v2"
+LEGACY_CONTRACT_SCHEMA = "enterprise-underwriting-training-contract.v1"
 CONTRACT_VALIDATION_SCHEMA = "enterprise-underwriting-training-contract-validation.v1"
 EPISODE_VALIDATION_SCHEMA = "enterprise-underwriting-training-episode-validation.v1"
 DOWNSTREAM_BUNDLE_SCHEMA = "enterprise-underwriting-training-downstream-bundle.v1"
@@ -93,6 +96,7 @@ ROOT_FIELDS = {
     "allowed_sources",
     "feedback_clocks",
     "primary_training_product",
+    "component_decision_interface",
     "authority",
 }
 SOURCE_FIELDS = {"source_id", "source_ref", "available_at", "time_role"}
@@ -109,9 +113,43 @@ PRIMARY_PRODUCT = {
     "schema_version": EPISODE_SCHEMA,
     "completion_basis": "COMPLETE_EPISODE_VALIDATION_ONLY",
 }
+COMPONENT_DECISION_INTERFACE = {
+    "schema_version": "enterprise-underwriting-component-decision-interface.v1",
+    "completion_basis": "EXPLICIT_EFFECT_FOR_EACH_COMPONENT",
+}
 TRAINING_AUTHORITY = "RESEARCH_TRAINING_ONLY_NO_PRICE_VALUATION_OR_INVESTMENT_AUTHORITY"
 
 _ROOT = Path(__file__).resolve().parents[1]
+LEGACY_FROZEN_CONTRACT_REFS = {
+    "UWTRAIN:CN600585:20240501:WORKED:V1": "docs/development/research/enterprise_underwriting_episodes/CN600585_20240501_TRAINING_CONTRACT_V1.json",
+    "UWTRAIN:CN000100TTE:20040827:WORKED:C1": "docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_COURSE_1_20260829/contracts/CN000100_TTE_WORKED_CONTRACT.json",
+    "UWTRAIN:CN000651:20200501:WORKED:C1": "docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_COURSE_1_20260829/contracts/CN000651_WORKED_CONTRACT.json",
+    "UWTRAIN:CN000877:20200501:BLIND:C1": "docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_COURSE_1_20260829/contracts/CN000877_BLIND_CONTRACT.json",
+    "UWTRAIN:CN001914:20210501:WORKED:C1": "docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_COURSE_1_20260829/contracts/CN001914_WORKED_CONTRACT.json",
+    "UWTRAIN:CN002120:20190501:WORKED:C1": "docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_COURSE_1_20260829/contracts/CN002120_WORKED_CONTRACT.json",
+    "UWTRAIN:CN002242:20190501:BLIND:C1": "docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_COURSE_1_20260829/contracts/CN002242_BLIND_CONTRACT.json",
+    "UWTRAIN:CN002352:20190501:BLIND:C1": "docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_COURSE_1_20260829/contracts/CN002352_BLIND_CONTRACT.json",
+    "UWTRAIN:CN002468:20190501:WORKED:C1": "docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_COURSE_1_20260829/contracts/CN002468_WORKED_CONTRACT.json",
+    "UWTRAIN:CN600233:20190501:WORKED:C1": "docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_COURSE_1_20260829/contracts/CN600233_WORKED_CONTRACT.json",
+    "UWTRAIN:CN600315:20190501:CURRENT_AGENT_SELF_REPLAY:V1": "docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_COURSE_1_20260829/contracts/CN600315_CURRENT_AGENT_SELF_REPLAY_CONTRACT.json",
+    "UWTRAIN:CN600690:20230501:WORKED:C1": "docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_COURSE_1_20260829/contracts/CN600690_WORKED_CONTRACT.json",
+    "UWTRAIN:CN600801:20170412:WORKED:C1": "docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_COURSE_1_20260829/contracts/CN600801_WORKED_CONTRACT.json",
+    "UWTRAIN:CN600802:20150415:WORKED:C1": "docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_COURSE_1_20260829/contracts/CN600802_WORKED_CONTRACT.json",
+    "UWTRAIN:CN601966:20190501:CURRENT_AGENT_SELF_REPLAY:V1": "docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_COURSE_1_20260829/contracts/CN601966_CURRENT_AGENT_SELF_REPLAY_CONTRACT.json",
+    "UWTRAIN:CN603043:20190501:SECOND_AB:BASELINE:V1": "docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_COURSE_1_20260829/contracts/CN603043_SECOND_A_B_BASELINE_CONTRACT.json",
+    "UWTRAIN:CN603043:20190501:SECOND_AB:ENHANCED:V1": "docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_COURSE_1_20260829/contracts/CN603043_SECOND_A_B_ENHANCED_CONTRACT.json",
+    "UWTRAIN:CN603555:20190501:CURRENT_AGENT_SELF_REPLAY:V1": "docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_COURSE_1_20260829/contracts/CN603555_CURRENT_AGENT_SELF_REPLAY_CONTRACT.json",
+    "UWTRAIN:CN603866:20190501:BLIND:C1": "docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_COURSE_1_20260829/contracts/CN603866_BLIND_CONTRACT.json",
+    "UWTRAIN:CN603885:20190501:CURRENT_AGENT_SELF_REPLAY:V1": "docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_COURSE_1_20260829/contracts/CN603885_CURRENT_AGENT_SELF_REPLAY_CONTRACT.json",
+    "UWTRAIN:CN603899:20190501:CURRENT_AGENT_SELF_REPLAY:V1": "docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_COURSE_1_20260829/contracts/CN603899_CURRENT_AGENT_SELF_REPLAY_CONTRACT.json",
+    "UWTRAIN:HK01502:20230501:WORKED:C1": "docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_COURSE_1_20260829/contracts/HK01502_WORKED_CONTRACT.json",
+    "UWTRAIN:HK02669:20221231:WORKED:C1": "docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_COURSE_1_20260829/contracts/HK02669_WORKED_CONTRACT.json",
+    "UWTRAIN:MAGNA:200903:WORKED:V1": "docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_COURSE_1_20260829/contracts/MAGNA_200903_WORKED_CONTRACT.json",
+    "UWTRAIN:CN000672:20180430:COURSE2B:BASELINE:V1": "docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_COURSE_2B_CN000672_20180430/contracts/CN000672_COURSE2B_BASELINE_CONTRACT.json",
+    "UWTRAIN:CN000672:20180430:COURSE2B:ENHANCED:V1": "docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_COURSE_2B_CN000672_20180430/contracts/CN000672_COURSE2B_ENHANCED_CONTRACT.json",
+    "UWTRAIN:CN601888:20190501:INDEPENDENT_AB_3:BASELINE:V1": "docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_INDEPENDENT_AB_3_20260830/contracts/CN601888_INDEPENDENT_AB_3_BASELINE_CONTRACT.json",
+    "UWTRAIN:CN601888:20190501:INDEPENDENT_AB_3:ENHANCED:V1": "docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_INDEPENDENT_AB_3_20260830/contracts/CN601888_INDEPENDENT_AB_3_ENHANCED_CONTRACT.json",
+}
 _PRICE_RESULT_KEYS = {
     "price",
     "market_price",
@@ -182,6 +220,33 @@ def _source_ref_resolvable(value: Any) -> bool:
     )
 
 
+def _legacy_frozen_contract_findings(value: dict[str, Any]) -> list[str]:
+    """Allow v1 only as exact replay of an explicitly named frozen contract."""
+
+    contract_id = value.get("contract_id")
+    reference = LEGACY_FROZEN_CONTRACT_REFS.get(str(contract_id or ""))
+    if reference is None:
+        return ["contract.legacy_v1_not_registered_for_frozen_replay"]
+    path = _ROOT / reference
+    try:
+        canonical = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, UnicodeDecodeError, json.JSONDecodeError):
+        return ["contract.legacy_v1_frozen_reference_unavailable"]
+    if value != canonical:
+        return ["contract.legacy_v1_payload_differs_from_frozen_contract"]
+    return []
+
+
+def _require_current_contract_for_new_execution(
+    value: dict[str, Any], operation: str,
+) -> None:
+    if value.get("schema_version") != CONTRACT_SCHEMA:
+        raise ValueError(
+            f"legacy_v1_replay_only:{operation}; use validate-episode or "
+            "compile-bundle with the exact frozen contract"
+        )
+
+
 def _result(schema_version: str, findings: list[str]) -> dict[str, Any]:
     unique = list(dict.fromkeys(findings))
     return {
@@ -232,6 +297,7 @@ def build_training_contract(
         "allowed_sources": deepcopy(allowed_sources),
         "feedback_clocks": deepcopy(feedback_clocks),
         "primary_training_product": deepcopy(PRIMARY_PRODUCT),
+        "component_decision_interface": deepcopy(COMPONENT_DECISION_INTERFACE),
         "authority": TRAINING_AUTHORITY,
     }
 
@@ -243,11 +309,19 @@ def validate_training_contract(contract: Any) -> dict[str, Any]:
     value = _mapping(contract)
     if not value:
         return _result(CONTRACT_VALIDATION_SCHEMA, ["contract.must_be_object"])
-    unexpected = sorted(set(value) - ROOT_FIELDS)
+    contract_schema = value.get("schema_version")
+    allowed_fields = (
+        ROOT_FIELDS - {"component_decision_interface"}
+        if contract_schema == LEGACY_CONTRACT_SCHEMA
+        else ROOT_FIELDS
+    )
+    unexpected = sorted(set(value) - allowed_fields)
     if unexpected:
         findings.append("contract.unexpected_fields:" + ",".join(unexpected))
-    if value.get("schema_version") != CONTRACT_SCHEMA:
+    if contract_schema not in {CONTRACT_SCHEMA, LEGACY_CONTRACT_SCHEMA}:
         findings.append("contract.schema_version_invalid")
+    elif contract_schema == LEGACY_CONTRACT_SCHEMA:
+        findings.extend(_legacy_frozen_contract_findings(value))
     for field in ("contract_id", "company_id", "company_name"):
         if not _text(value.get(field)):
             findings.append(f"contract.{field}_missing")
@@ -355,6 +429,12 @@ def validate_training_contract(contract: Any) -> dict[str, Any]:
     product = _mapping(value.get("primary_training_product"))
     if set(product) != PRODUCT_FIELDS or product != PRIMARY_PRODUCT:
         findings.append("contract.primary_training_product_must_be_complete_episode_only")
+    if (
+        contract_schema == CONTRACT_SCHEMA
+        and _mapping(value.get("component_decision_interface"))
+        != COMPONENT_DECISION_INTERFACE
+    ):
+        findings.append("contract.component_decision_interface_invalid")
     if value.get("authority") != TRAINING_AUTHORITY:
         findings.append("contract.authority_invalid")
     return _result(CONTRACT_VALIDATION_SCHEMA, findings)
@@ -413,6 +493,11 @@ def validate_training_episode(contract: Any, episode: Any) -> dict[str, Any]:
                 "episode.preoutcome_result_forbidden:" + path
                 for path in _forbidden_paths(episode_value, _BLIND_RESULT_KEYS)
             )
+        if (
+            contract_value.get("schema_version") == CONTRACT_SCHEMA
+            and not _items(episode_value.get("component_decisions"))
+        ):
+            findings.append("binding.component_decisions_required_by_contract")
     return _result(EPISODE_VALIDATION_SCHEMA, findings)
 
 
@@ -489,6 +574,7 @@ def build_training_agent_messages(
     if validation["state"] != "REVIEWABLE":
         raise ValueError("training_contract_invalid:" + ",".join(validation["findings"]))
     value = _mapping(contract)
+    _require_current_contract_for_new_execution(value, "build-agent-messages")
     source_blocks = []
     source_roles = {
         _canonical_ref(item.get("source_ref")): str(item.get("time_role") or "")
@@ -507,6 +593,25 @@ def build_training_agent_messages(
                 "</source>",
             ])
         )
+    component_decision_requirement = ""
+    if value.get("schema_version") == CONTRACT_SCHEMA:
+        component_decision_requirement = """
+The Episode must also contain component_decisions with exactly one entry for every
+component_treatments component_id. For each component, state its comparable economic_scope,
+whether it enters base or conditional normal earnings, whether it forms an owner-cash
+range, how it changes financing pressure, how it enters permanent-loss analysis and the
+value route, plus separate promotion and invalidation tests. valuation_route_bindings
+must name every exact primary, corroborative, stress, excluded, scenario, or unresolved
+route_id that the component can feed, with that route-specific use; one unrelated primary
+component cannot authorize another component's EPV, owner-cash, or capital-return route.
+value_route.route_component_requirements must name the required and optional component_ids
+for every route. Every required component must retain a role-compatible route binding;
+an optional component may remain excluded without invalidating the route.
+These downstream uses are
+the decision; the UNDERWRITE/CONDITIONALLY_UNDERWRITE/SCENARIO_ONLY/EXCLUDE_FROM_BASE/
+CANNOT_BOUND label cannot substitute for them. A component excluded, scenario-only, or
+unbounded at the component level cannot silently become a base-range or primary value
+input."""
     system = """You are Turtle's enterprise-underwriting training synthesizer.
 Your only product is one complete EnterpriseUnderwritingEpisode JSON object.
 Connect industry future and profit-pool transmission, company position and adaptation,
@@ -534,7 +639,7 @@ IMPROVES, DETERIORATES, MIXED, UNKNOWN, or NONE. Only primary valuation model ro
 mandatory; corroborative and stress roles may be empty or omitted when economically
 inapplicable. A source labelled TRAINING_MEMORY is prior curriculum guidance only: use it
 to change questions, evidence order, rival checks, or conditional treatment, but never
-as a target-company fact and never cite it in evidence_trace or existing_object_refs."""
+as a target-company fact and never cite it in evidence_trace or existing_object_refs.""" + component_decision_requirement
     user = "\n".join([
         "Create the complete pre-outcome Episode for this frozen training contract:",
         json.dumps(value, ensure_ascii=False, indent=2, sort_keys=True),
@@ -598,6 +703,7 @@ def run_training_agent(
         raise ValueError(
             "training_contract_invalid:" + ",".join(contract_validation["findings"])
         )
+    _require_current_contract_for_new_execution(contract_value, "run")
     materials = source_materials if source_materials is not None else _source_materials(contract_value)
     allowed_refs = {
         _canonical_ref(item.get("source_ref"))
@@ -615,6 +721,14 @@ def run_training_agent(
         source_materials=materials,
     )
     episode = _parse_agent_episode(episode_generator(messages))
+    if _items(episode.get("component_decisions")):
+        # This is a compiler-owned read model, not a second Agent judgment.
+        # Persist it with the Episode so all downstream consumers bind to the
+        # same five economic routes and mutation cannot leave stale prose-only
+        # authority in place.
+        episode["component_decision_summary"] = derive_component_decision_summary(
+            episode["component_decisions"]
+        )
     episode_validation = validate_training_episode(contract_value, episode)
     if episode_validation["state"] != "REVIEWABLE":
         raise ValueError(
@@ -659,6 +773,9 @@ def build_fresh_subagent_task(contract: Any) -> dict[str, Any]:
         raise ValueError(
             "training_contract_invalid:" + ",".join(validation["findings"])
         )
+    _require_current_contract_for_new_execution(
+        contract_value, "render-subagent-task"
+    )
     messages = build_training_agent_messages(
         contract_value,
         source_materials=_source_materials(contract_value),

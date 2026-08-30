@@ -1,6 +1,6 @@
 # Turtle 行业经验层 V1 设计
 
-> 状态：`IMPLEMENTED / CEMENT_PACK_TRAINING_READY / COURSE_2A_COMPLETE / COURSE_2B_NOT_STARTED`
+> 状态：`IMPLEMENTED / CEMENT_PACK_TRAINING_READY / COURSE_2A_COMPLETE / COURSE_2B_COMPANY_HOLDOUT_NO_MATERIAL_UTILITY / TIME_AXIS_NOT_STARTED / AGENT_CAPABILITY_NOT_VALIDATED`
 >
 > 目的：先把多公司、多时期的行业经验建成可迭代上游资产，再让公司训练样本调用、检验并反向修订它。
 >
@@ -232,7 +232,7 @@ IE6  REPLICATE
 2. `schemas/industry_experience_pack_v1.schema.json` 与 `scripts/industry_experience_pack.py` 已实现；
 3. 水泥 V1 离线回放已经验证引用、时间角色、版本边界和反馈方向，并保留为 `DRAFT`；
 4. Course 2A 已通过可复用官方行业 acquisition、五家公司共同冲击比较和机械 Context 编译形成水泥 V2 `TRAINING_READY` Pack；
-5. 后续另行激活 Course 2B 时，再把冻结 Pack/Context 接入未见公司和未见时期的认知隔离合同；
+5. Course 2B 已把冻结 Pack/Context 接入上峰水泥未见公司轴的认知隔离合同；结果为 `NO_MATERIAL_UTILITY`，时间轴未启动；
 6. 只有双轴出现材料性效用，才讨论 `TRANSFER_CANDIDATE / RELEASED` 或能力形成。
 
 在 Pack 达到 `TRAINING_READY` 前，不修改正式训练 runtime，也不启动 Course 2B。
@@ -251,4 +251,6 @@ IE6  REPLICATE
 
 验证器对 V2 派生 `TRAINING_READY` 且缺口为空。当前最可信方向是需求量近乎横盘下的价格/供给纪律驱动利润池恢复，最强反方是低基数、阶段性错峰和未解决过剩令恢复不可持续。详细证据、公司分化和权限边界见 `CN_CEMENT_2014_2018/64_industry_experience_training_ready_review.md`。
 
-这完成的是 Course 2A 上游资产，不是 Agent 能力验证。Course 2B、公司轴效用、时间轴效用、`TRANSFER_CANDIDATE` 与 `RELEASED` 均未启动。
+这完成的是 Course 2A 上游资产，不是 Agent 能力验证。Course 2B 的上峰水泥公司轴已经完成，但 Enhanced 与 Baseline 对行业路径和公司传导均无材料差异；Pack 追加独立 `COMPANY_HOLDOUT / NO_MATERIAL_UTILITY` review 后仍派生为 `TRAINING_READY`。时间轴、`TRANSFER_CANDIDATE`、`RELEASED` 与 Agent 行业判断能力均未验证。
+
+本次负结果的 `MODEL` 修订只面向未来训练合同：Episode 组件必须显式说明是否进入基础/条件正常盈利与 owner-cash 范围、融资压力、永久损失和价值路线，并冻结晋级与撤销测试。`DATA_COVERAGE` 的维护资本、规范化营运资本、房地产 OCF、增长 cohort 和区域量价/利用率缺口留待未来重新预注册前先修可复用 acquisition；本轮不追加样本或时间轴。

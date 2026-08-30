@@ -2,7 +2,7 @@
 
 > 状态：`ACTIVE`
 >
-> 最近更新：2026-08-20
+> 最近更新：2026-08-30
 >
 > 当前主阶段：Phase 08 `VALIDATING`
 >
@@ -72,7 +72,7 @@ G0 多黄金路线激活（COMPLETE）
   ↓
 G1 七个候选内容成熟与逐案接纳（IN_PROGRESS）
   └─ G1-J 复用已有案例资产并接入前瞻判断契约（当前内部前置门）
-  └─ G1-U Course 2A 水泥行业经验 Pack（TRAINING_READY / 2B NOT STARTED）
+  └─ G1-U 水泥行业经验 Pack（TRAINING_READY / 2B COMPANY AXIS NO MATERIAL UTILITY）
   ↓
 G1.5 格力行业经验工厂与双向层级试验（PLANNED）
   ↓
@@ -87,7 +87,7 @@ G5 公司轴 + 时间轴双holdout
 G6 Phase 08收口
 ```
 
-当前唯一阶段级 `IN_PROGRESS` 里程碑是G1；其当前内部前置门为G1-J。G1-J不重建已有书籍方法案例卡或基准率候选，而是把它们接入中心路径、可证伪判断和结果结算契约。G1-U 的 Course 2A 已形成水泥 `TRAINING_READY` Pack，只完成行业经验上游资产；未见公司/未见时期 Course 2B、方法效用和能力结论均未启动。G1.5虽已批准进入路线，但在G1完成、同行/时期预注册和PIT围栏具备之前不得启动24份报告生产。详细执行以 `GOLDEN_REPORT_BIDIRECTIONAL_RESEARCH_ROADMAP.md` 为准。
+当前唯一阶段级 `IN_PROGRESS` 里程碑是G1；其当前内部前置门为G1-J。G1-J不重建已有书籍方法案例卡或基准率候选，而是把它们接入中心路径、可证伪判断和结果结算契约。G1-U 的 Course 2A 已形成水泥 `TRAINING_READY` Pack；Course 2B 随后完成上峰水泥未见公司轴，但 Enhanced 没有相对 Baseline 改变材料性投资处理，裁决为 `NO_MATERIAL_UTILITY`。Pack 维持 `TRAINING_READY`，时间轴不启动，方法效用与 Agent 行业判断能力仍未验证；未来新实验须先验证显式组件决策接口并补足可复用资本/区域 acquisition。G1.5虽已批准进入路线，但在G1完成、同行/时期预注册和PIT围栏具备之前不得启动24份报告生产。详细执行以 `GOLDEN_REPORT_BIDIRECTIONAL_RESEARCH_ROADMAP.md` 为准。
 
 ## 5. Phase 09与年糕边界
 

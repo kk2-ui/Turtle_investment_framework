@@ -48,6 +48,14 @@
         }
       }
     },
+    "component_decisions": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"$ref": "#/$defs/component_decision"}
+    },
+    "component_decision_summary": {
+      "$ref": "#/$defs/component_decision_summary"
+    },
     "underwriting_thesis": {
       "type": "object",
       "required": [
@@ -136,6 +144,11 @@
           "minItems": 1,
           "items": {"$ref": "#/$defs/non_empty_string"}
         },
+        "route_component_requirements": {
+          "type": "array",
+          "minItems": 1,
+          "items": {"$ref": "#/$defs/route_component_requirement"}
+        },
         "route_reasoning": {"$ref": "#/$defs/non_empty_string"},
         "valuation_model_roles": {
           "type": "object",
@@ -159,9 +172,191 @@
         }
       }
     },
+    "route_component_requirement": {
+      "type": "object",
+      "required": ["route_id", "required_component_ids", "optional_component_ids"],
+      "properties": {
+        "route_id": {"$ref": "#/$defs/non_empty_string"},
+        "required_component_ids": {
+          "type": "array",
+          "minItems": 1,
+          "items": {"$ref": "#/$defs/non_empty_string"}
+        },
+        "optional_component_ids": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/non_empty_string"}
+        }
+      },
+      "additionalProperties": false
+    },
     "economic_direction": {
       "enum": ["IMPROVES", "DETERIORATES", "MIXED", "UNKNOWN", "NONE"]
+    },
+    "component_decision": {
+      "type": "object",
+      "required": [
+        "component_id",
+        "economic_scope",
+        "normal_earnings_use",
+        "owner_cash_use",
+        "financing_pressure_effect",
+        "permanent_loss_use",
+        "valuation_use",
+        "valuation_route_bindings",
+        "promotion_test",
+        "invalidation_test"
+      ],
+      "properties": {
+        "component_id": {"$ref": "#/$defs/non_empty_string"},
+        "economic_scope": {
+          "enum": [
+            "SURVIVAL_FINANCING",
+            "MATURE_CORE_NORMAL_EARNINGS",
+            "ORDINARY_SHARE_OWNER_CASH",
+            "GROWTH_CAPITAL_RETURN",
+            "NONCORE_OR_OPTIONAL_ASSET",
+            "OTHER_MATERIAL_COMPONENT"
+          ]
+        },
+        "normal_earnings_use": {"$ref": "#/$defs/earnings_and_cash_use"},
+        "owner_cash_use": {"$ref": "#/$defs/earnings_and_cash_use"},
+        "financing_pressure_effect": {
+          "enum": ["REDUCES", "NEUTRAL", "INCREASES", "CONDITIONAL", "UNRESOLVED", "NOT_APPLICABLE"]
+        },
+        "permanent_loss_use": {
+          "enum": ["BASE_PATH", "CONDITIONAL_PATH", "STRESS_ONLY", "EXCLUDED", "UNRESOLVED", "NOT_APPLICABLE"]
+        },
+        "valuation_use": {
+          "enum": ["PRIMARY_INPUT", "CONDITIONAL_PRIMARY_INPUT", "CORROBORATIVE_INPUT", "SCENARIO_ONLY", "STRESS_ONLY", "EXCLUDED", "UNRESOLVED", "NOT_APPLICABLE"]
+        },
+        "valuation_route_bindings": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/valuation_route_binding"}
+        },
+        "promotion_test": {"$ref": "#/$defs/non_empty_string"},
+        "invalidation_test": {"$ref": "#/$defs/non_empty_string"}
+      },
+      "additionalProperties": false
+    },
+    "component_decision_summary": {
+      "type": "object",
+      "required": [
+        "schema_version",
+        "normal_earnings",
+        "owner_cash",
+        "financing_pressure",
+        "permanent_loss",
+        "valuation"
+      ],
+      "properties": {
+        "schema_version": {
+          "const": "enterprise-underwriting-component-decision-summary.v1"
+        },
+        "normal_earnings": {"$ref": "#/$defs/range_component_route"},
+        "owner_cash": {"$ref": "#/$defs/range_component_route"},
+        "financing_pressure": {"$ref": "#/$defs/financing_component_route"},
+        "permanent_loss": {"$ref": "#/$defs/permanent_loss_component_route"},
+        "valuation": {"$ref": "#/$defs/valuation_component_route"}
+      },
+      "additionalProperties": false
+    },
+    "component_id_list": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/non_empty_string"}
+    },
+    "range_component_route": {
+      "type": "object",
+      "required": ["range_authority", "components_by_use"],
+      "properties": {
+        "range_authority": {"$ref": "#/$defs/earnings_and_cash_use"},
+        "components_by_use": {
+          "type": "object",
+          "required": ["BASE_RANGE", "CONDITIONAL_RANGE", "SCENARIO_ONLY", "EXCLUDED", "UNRESOLVED", "NOT_APPLICABLE"],
+          "additionalProperties": {"$ref": "#/$defs/component_id_list"}
+        }
+      },
+      "additionalProperties": false
+    },
+    "financing_component_route": {
+      "type": "object",
+      "required": ["active_effects", "components_by_effect"],
+      "properties": {
+        "active_effects": {
+          "type": "array",
+          "items": {"enum": ["REDUCES", "NEUTRAL", "INCREASES", "CONDITIONAL", "UNRESOLVED", "NOT_APPLICABLE"]}
+        },
+        "components_by_effect": {
+          "type": "object",
+          "required": ["REDUCES", "NEUTRAL", "INCREASES", "CONDITIONAL", "UNRESOLVED", "NOT_APPLICABLE"],
+          "additionalProperties": {"$ref": "#/$defs/component_id_list"}
+        }
+      },
+      "additionalProperties": false
+    },
+    "permanent_loss_component_route": {
+      "type": "object",
+      "required": ["path_authority", "components_by_use"],
+      "properties": {
+        "path_authority": {
+          "enum": ["BASE_PATH", "CONDITIONAL_PATH", "STRESS_ONLY", "EXCLUDED", "UNRESOLVED", "NOT_APPLICABLE"]
+        },
+        "components_by_use": {
+          "type": "object",
+          "required": ["BASE_PATH", "CONDITIONAL_PATH", "STRESS_ONLY", "EXCLUDED", "UNRESOLVED", "NOT_APPLICABLE"],
+          "additionalProperties": {"$ref": "#/$defs/component_id_list"}
+        }
+      },
+      "additionalProperties": false
+    },
+    "valuation_component_route": {
+      "type": "object",
+      "required": ["route_authority", "components_by_use", "route_component_bindings"],
+      "properties": {
+        "route_authority": {
+          "enum": ["PRIMARY_INPUT", "CONDITIONAL_PRIMARY_INPUT", "CORROBORATIVE_INPUT", "SCENARIO_ONLY", "STRESS_ONLY", "EXCLUDED", "UNRESOLVED", "NOT_APPLICABLE"]
+        },
+        "components_by_use": {
+          "type": "object",
+          "required": ["PRIMARY_INPUT", "CONDITIONAL_PRIMARY_INPUT", "CORROBORATIVE_INPUT", "SCENARIO_ONLY", "STRESS_ONLY", "EXCLUDED", "UNRESOLVED", "NOT_APPLICABLE"],
+          "additionalProperties": {"$ref": "#/$defs/component_id_list"}
+        },
+        "route_component_bindings": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/derived_valuation_route_binding"}
+        }
+      },
+      "additionalProperties": false
+    },
+    "valuation_route_binding": {
+      "type": "object",
+      "required": ["route_id", "use"],
+      "properties": {
+        "route_id": {"$ref": "#/$defs/non_empty_string"},
+        "use": {
+          "enum": ["PRIMARY_INPUT", "CONDITIONAL_PRIMARY_INPUT", "CORROBORATIVE_INPUT", "SCENARIO_ONLY", "STRESS_ONLY", "EXCLUDED", "UNRESOLVED", "NOT_APPLICABLE"]
+        }
+      },
+      "additionalProperties": false
+    },
+    "derived_valuation_route_binding": {
+      "type": "object",
+      "required": ["route_id", "components_by_use"],
+      "properties": {
+        "route_id": {"$ref": "#/$defs/non_empty_string"},
+        "components_by_use": {
+          "type": "object",
+          "required": ["PRIMARY_INPUT", "CONDITIONAL_PRIMARY_INPUT", "CORROBORATIVE_INPUT", "SCENARIO_ONLY", "STRESS_ONLY", "EXCLUDED", "UNRESOLVED", "NOT_APPLICABLE"],
+          "additionalProperties": {"$ref": "#/$defs/component_id_list"}
+        }
+      },
+      "additionalProperties": false
+    },
+    "earnings_and_cash_use": {
+      "enum": ["BASE_RANGE", "CONDITIONAL_RANGE", "SCENARIO_ONLY", "EXCLUDED", "UNRESOLVED", "NOT_APPLICABLE"]
     }
+  },
+  "dependentRequired": {
+    "component_decisions": ["component_decision_summary"]
   },
   "additionalProperties": true
 }

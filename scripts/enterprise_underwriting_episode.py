@@ -22,6 +22,7 @@ THESIS_PROJECTION_SCHEMA = "enterprise-underwriting-thesis-projection.v1"
 CJO_PROJECTION_SCHEMA = "enterprise-underwriting-cjo-candidate-projection.v2"
 VALUATION_REQUEST_SCHEMA = "enterprise-underwriting-valuation-route-request.v2"
 REPORT_HANDOFF_SCHEMA = "enterprise-underwriting-golden-report-handoff.v2"
+COMPONENT_DECISION_SUMMARY_SCHEMA = "enterprise-underwriting-component-decision-summary.v1"
 
 SAMPLE_IDENTITIES = {"WORKED_CASE", "BLIND_REPLAY", "PROSPECTIVE_EPISODE"}
 TREATMENTS = {
@@ -32,6 +33,81 @@ TREATMENTS = {
     "CANNOT_BOUND",
 }
 ECONOMIC_DIRECTIONS = {"IMPROVES", "DETERIORATES", "MIXED", "UNKNOWN", "NONE"}
+COMPONENT_DECISION_SCOPES = {
+    "SURVIVAL_FINANCING",
+    "MATURE_CORE_NORMAL_EARNINGS",
+    "ORDINARY_SHARE_OWNER_CASH",
+    "GROWTH_CAPITAL_RETURN",
+    "NONCORE_OR_OPTIONAL_ASSET",
+    "OTHER_MATERIAL_COMPONENT",
+}
+EARNINGS_AND_CASH_USE_ORDER = (
+    "BASE_RANGE",
+    "CONDITIONAL_RANGE",
+    "SCENARIO_ONLY",
+    "EXCLUDED",
+    "UNRESOLVED",
+    "NOT_APPLICABLE",
+)
+EARNINGS_AND_CASH_USES = set(EARNINGS_AND_CASH_USE_ORDER)
+FINANCING_PRESSURE_EFFECT_ORDER = (
+    "REDUCES",
+    "NEUTRAL",
+    "INCREASES",
+    "CONDITIONAL",
+    "UNRESOLVED",
+    "NOT_APPLICABLE",
+)
+FINANCING_PRESSURE_EFFECTS = set(FINANCING_PRESSURE_EFFECT_ORDER)
+PERMANENT_LOSS_USE_ORDER = (
+    "BASE_PATH",
+    "CONDITIONAL_PATH",
+    "STRESS_ONLY",
+    "EXCLUDED",
+    "UNRESOLVED",
+    "NOT_APPLICABLE",
+)
+PERMANENT_LOSS_USES = set(PERMANENT_LOSS_USE_ORDER)
+VALUATION_USE_ORDER = (
+    "PRIMARY_INPUT",
+    "CONDITIONAL_PRIMARY_INPUT",
+    "CORROBORATIVE_INPUT",
+    "SCENARIO_ONLY",
+    "STRESS_ONLY",
+    "EXCLUDED",
+    "UNRESOLVED",
+    "NOT_APPLICABLE",
+)
+VALUATION_USES = set(VALUATION_USE_ORDER)
+VALUATION_USE_AUTHORITY_PRIORITY = (
+    "PRIMARY_INPUT",
+    "CONDITIONAL_PRIMARY_INPUT",
+    "CORROBORATIVE_INPUT",
+    "SCENARIO_ONLY",
+    "STRESS_ONLY",
+    "UNRESOLVED",
+    "EXCLUDED",
+    "NOT_APPLICABLE",
+)
+
+_COMPONENT_DECISION_READER_LABELS = {
+    "BASE_RANGE": "进入基准范围",
+    "CONDITIONAL_RANGE": "只进入条件范围",
+    "SCENARIO_ONLY": "只进入情景",
+    "EXCLUDED": "排除",
+    "UNRESOLVED": "尚未形成可承保范围",
+    "NOT_APPLICABLE": "不适用",
+    "REDUCES": "降低融资压力",
+    "NEUTRAL": "不改变融资压力",
+    "INCREASES": "增加融资压力",
+    "CONDITIONAL": "对融资压力的影响取决于条件",
+    "BASE_PATH": "进入基准永久损失路径",
+    "CONDITIONAL_PATH": "进入条件性永久损失路径",
+    "STRESS_ONLY": "只进入压力情景",
+    "PRIMARY_INPUT": "作为主要估值输入",
+    "CONDITIONAL_PRIMARY_INPUT": "只作为条件性主要估值输入",
+    "CORROBORATIVE_INPUT": "只作估值交叉验证",
+}
 
 _ROOT = Path(__file__).resolve().parents[1]
 _THESIS_FORBIDDEN_KEYS = {
@@ -98,6 +174,457 @@ def _reference_exists(reference: Any) -> bool:
 def _industry_future_thesis(episode: dict[str, Any]) -> dict[str, Any]:
     situation_model = _mapping(episode.get("situation_model"))
     return _mapping(situation_model.get("industry_future_thesis"))
+
+
+def _component_use_buckets(
+    component_decisions: list[Any], field: str, ordered_values: tuple[str, ...],
+) -> dict[str, list[str]]:
+    """Group component identities by one explicit downstream economic use."""
+
+    buckets = {value: [] for value in ordered_values}
+    for raw in component_decisions:
+        item = _mapping(raw)
+        component_id = item.get("component_id")
+        use = item.get(field)
+        if _text(component_id) and use in buckets:
+            buckets[use].append(str(component_id))
+    return buckets
+
+
+def _first_populated_use(
+    buckets: dict[str, list[str]], priority: tuple[str, ...],
+) -> str:
+    for use in priority:
+        if buckets.get(use):
+            return use
+    return "NOT_APPLICABLE"
+
+
+def _valuation_route_component_bindings(
+    component_decisions: list[Any],
+) -> list[dict[str, Any]]:
+    route_index: dict[str, dict[str, list[str]]] = {}
+    for raw in component_decisions:
+        decision = _mapping(raw)
+        component_id = decision.get("component_id")
+        if not _text(component_id):
+            continue
+        for raw_binding in _items(decision.get("valuation_route_bindings")):
+            binding = _mapping(raw_binding)
+            route_id = binding.get("route_id")
+            use = binding.get("use")
+            if not _text(route_id) or use not in VALUATION_USES:
+                continue
+            buckets = route_index.setdefault(
+                str(route_id), {value: [] for value in VALUATION_USE_ORDER}
+            )
+            buckets[str(use)].append(str(component_id))
+    return [
+        {"route_id": route_id, "components_by_use": route_index[route_id]}
+        for route_id in sorted(route_index)
+    ]
+
+
+def derive_component_decision_summary(component_decisions: Any) -> dict[str, Any]:
+    """Compile the decision ledger into five authoritative downstream routes.
+
+    The prose thesis remains useful explanation.  These buckets are the
+    machine-consumed authority for whether a component can enter normal
+    earnings, owner cash, financing pressure, permanent-loss analysis, or a
+    valuation route.  They are deliberately derived rather than independently
+    authored so changing one component decision must propagate everywhere.
+    """
+
+    decisions = _items(component_decisions)
+    normal = _component_use_buckets(
+        decisions, "normal_earnings_use", EARNINGS_AND_CASH_USE_ORDER
+    )
+    owner_cash = _component_use_buckets(
+        decisions, "owner_cash_use", EARNINGS_AND_CASH_USE_ORDER
+    )
+    financing = _component_use_buckets(
+        decisions, "financing_pressure_effect", FINANCING_PRESSURE_EFFECT_ORDER
+    )
+    permanent_loss = _component_use_buckets(
+        decisions, "permanent_loss_use", PERMANENT_LOSS_USE_ORDER
+    )
+    valuation = _component_use_buckets(
+        decisions, "valuation_use", VALUATION_USE_ORDER
+    )
+    return {
+        "schema_version": COMPONENT_DECISION_SUMMARY_SCHEMA,
+        "normal_earnings": {
+            "range_authority": _first_populated_use(
+                normal,
+                (
+                    "BASE_RANGE", "CONDITIONAL_RANGE", "SCENARIO_ONLY",
+                    "UNRESOLVED", "EXCLUDED", "NOT_APPLICABLE",
+                ),
+            ),
+            "components_by_use": normal,
+        },
+        "owner_cash": {
+            "range_authority": _first_populated_use(
+                owner_cash,
+                (
+                    "BASE_RANGE", "CONDITIONAL_RANGE", "SCENARIO_ONLY",
+                    "UNRESOLVED", "EXCLUDED", "NOT_APPLICABLE",
+                ),
+            ),
+            "components_by_use": owner_cash,
+        },
+        "financing_pressure": {
+            "active_effects": [
+                effect for effect in FINANCING_PRESSURE_EFFECT_ORDER
+                if financing[effect]
+            ],
+            "components_by_effect": financing,
+        },
+        "permanent_loss": {
+            "path_authority": _first_populated_use(
+                permanent_loss,
+                (
+                    "BASE_PATH", "CONDITIONAL_PATH", "STRESS_ONLY",
+                    "UNRESOLVED", "EXCLUDED", "NOT_APPLICABLE",
+                ),
+            ),
+            "components_by_use": permanent_loss,
+        },
+        "valuation": {
+            "route_authority": _first_populated_use(
+                valuation,
+                VALUATION_USE_AUTHORITY_PRIORITY,
+            ),
+            "components_by_use": valuation,
+            "route_component_bindings": _valuation_route_component_bindings(
+                decisions
+            ),
+        },
+    }
+
+
+def _authoritative_thesis_treatments(
+    thesis: dict[str, Any], component_decision_summary: dict[str, Any],
+) -> dict[str, str]:
+    """Prevent a prose treatment from outranking the component ledger."""
+
+    if not component_decision_summary:
+        return {
+            "normal_earnings_treatment": str(thesis.get("normal_earnings_treatment") or ""),
+            "owner_cash_treatment": str(thesis.get("owner_cash_treatment") or ""),
+            "permanent_loss_treatment": str(thesis.get("permanent_loss_treatment") or ""),
+        }
+    normal_authority = component_decision_summary["normal_earnings"][
+        "range_authority"
+    ]
+    owner_cash_authority = component_decision_summary["owner_cash"][
+        "range_authority"
+    ]
+    permanent_loss_authority = component_decision_summary["permanent_loss"][
+        "path_authority"
+    ]
+    normal = str(thesis.get("normal_earnings_treatment") or "")
+    owner_cash = str(thesis.get("owner_cash_treatment") or "")
+    permanent_loss = str(thesis.get("permanent_loss_treatment") or "")
+    if normal_authority not in {"BASE_RANGE", "CONDITIONAL_RANGE"}:
+        normal = (
+            f"组件账的正常盈利权限为 {normal_authority}，未授权形成基准或条件性"
+            "正常盈利范围；叙事不得将其升级为已承保盈利。"
+        )
+    if owner_cash_authority not in {"BASE_RANGE", "CONDITIONAL_RANGE"}:
+        owner_cash = (
+            f"组件账的普通股现金权限为 {owner_cash_authority}，未授权形成基准或"
+            "条件性 owner-cash 范围；叙事不得把现金代理升级为已承保范围。"
+        )
+    if permanent_loss_authority not in {"BASE_PATH", "CONDITIONAL_PATH"}:
+        permanent_loss = (
+            f"组件账的永久损失权限为 {permanent_loss_authority}，未授权形成基准或"
+            "条件性损失路径；仅可按该权限进入压力、未决或排除处理。"
+        )
+    return {
+        "normal_earnings_treatment": normal,
+        "owner_cash_treatment": owner_cash,
+        "permanent_loss_treatment": permanent_loss,
+    }
+
+
+def _component_decision_findings(
+    component_treatments: list[Any], component_decisions: Any,
+) -> list[str]:
+    """Validate explicit component-to-investment semantics when supplied.
+
+    Historical Episodes remain readable without this additive ledger.  New
+    training contracts can require it so a component label cannot masquerade
+    as a different base-earnings, owner-cash, financing, loss, or value use.
+    """
+
+    if component_decisions is None:
+        return []
+    if not isinstance(component_decisions, list) or not component_decisions:
+        return ["component_decisions.must_be_non_empty_list"]
+    decisions = component_decisions
+    findings: list[str] = []
+    treatments = {
+        _mapping(item).get("component_id"): _mapping(item).get("treatment")
+        for item in component_treatments
+        if _text(_mapping(item).get("component_id"))
+    }
+    decision_ids: set[str] = set()
+    required_fields = {
+        "component_id",
+        "economic_scope",
+        "normal_earnings_use",
+        "owner_cash_use",
+        "financing_pressure_effect",
+        "permanent_loss_use",
+        "valuation_use",
+        "valuation_route_bindings",
+        "promotion_test",
+        "invalidation_test",
+    }
+    for index, raw in enumerate(decisions):
+        path = f"component_decisions[{index}]"
+        item = _mapping(raw)
+        if set(item) != required_fields:
+            findings.append(path + ".fields_invalid")
+        component_id = item.get("component_id")
+        if not _text(component_id) or component_id in decision_ids:
+            findings.append(path + ".component_id_missing_or_duplicate")
+        else:
+            decision_ids.add(component_id)
+        if item.get("economic_scope") not in COMPONENT_DECISION_SCOPES:
+            findings.append(path + ".economic_scope_invalid")
+        if item.get("normal_earnings_use") not in EARNINGS_AND_CASH_USES:
+            findings.append(path + ".normal_earnings_use_invalid")
+        if item.get("owner_cash_use") not in EARNINGS_AND_CASH_USES:
+            findings.append(path + ".owner_cash_use_invalid")
+        if item.get("financing_pressure_effect") not in FINANCING_PRESSURE_EFFECTS:
+            findings.append(path + ".financing_pressure_effect_invalid")
+        if item.get("permanent_loss_use") not in PERMANENT_LOSS_USES:
+            findings.append(path + ".permanent_loss_use_invalid")
+        if item.get("valuation_use") not in VALUATION_USES:
+            findings.append(path + ".valuation_use_invalid")
+        route_bindings = item.get("valuation_route_bindings")
+        if not isinstance(route_bindings, list):
+            findings.append(path + ".valuation_route_bindings_invalid")
+            route_bindings = []
+        if not route_bindings and item.get("valuation_use") != "NOT_APPLICABLE":
+            findings.append(path + ".valuation_route_bindings_required_for_valuation_use")
+        binding_ids: set[str] = set()
+        binding_uses: set[str] = set()
+        for binding_index, raw_binding in enumerate(route_bindings):
+            binding_path = f"{path}.valuation_route_bindings[{binding_index}]"
+            binding = _mapping(raw_binding)
+            if set(binding) != {"route_id", "use"}:
+                findings.append(binding_path + ".fields_invalid")
+            route_id = binding.get("route_id")
+            if not _text(route_id) or route_id in binding_ids:
+                findings.append(binding_path + ".route_id_missing_or_duplicate")
+            else:
+                binding_ids.add(str(route_id))
+            if binding.get("use") not in VALUATION_USES:
+                findings.append(binding_path + ".use_invalid")
+            else:
+                binding_uses.add(str(binding["use"]))
+        if binding_uses:
+            aggregate_use = next(
+                use for use in VALUATION_USE_AUTHORITY_PRIORITY
+                if use in binding_uses
+            )
+            if item.get("valuation_use") != aggregate_use:
+                findings.append(path + ".valuation_use_not_derived_from_route_bindings")
+        for field in ("promotion_test", "invalidation_test"):
+            if not _text(item.get(field)):
+                findings.append(path + "." + field + "_missing")
+
+        treatment = treatments.get(component_id)
+        base_use = (
+            item.get("normal_earnings_use") == "BASE_RANGE"
+            or item.get("owner_cash_use") == "BASE_RANGE"
+            or item.get("valuation_use") == "PRIMARY_INPUT"
+        )
+        if treatment in {"SCENARIO_ONLY", "EXCLUDE_FROM_BASE", "CANNOT_BOUND"} and base_use:
+            findings.append(path + ".base_use_conflicts_with_component_treatment")
+        if treatment == "CANNOT_BOUND" and "UNRESOLVED" not in {
+            item.get("normal_earnings_use"),
+            item.get("owner_cash_use"),
+            item.get("financing_pressure_effect"),
+            item.get("permanent_loss_use"),
+            item.get("valuation_use"),
+        }:
+            findings.append(path + ".cannot_bound_requires_unresolved_downstream_use")
+        if treatment == "CONDITIONALLY_UNDERWRITE" and not (
+            item.get("normal_earnings_use") == "CONDITIONAL_RANGE"
+            or item.get("owner_cash_use") == "CONDITIONAL_RANGE"
+            or item.get("financing_pressure_effect") == "CONDITIONAL"
+            or item.get("permanent_loss_use") == "CONDITIONAL_PATH"
+            or item.get("valuation_use") == "CONDITIONAL_PRIMARY_INPUT"
+        ):
+            findings.append(path + ".conditional_treatment_requires_conditional_downstream_use")
+
+    if decision_ids != set(treatments):
+        findings.append("component_decisions.must_cover_each_component_treatment_once")
+    return findings
+
+
+def _component_decision_summary_findings(
+    component_decisions: Any,
+    component_decision_summary: Any,
+    value_route: Any,
+) -> list[str]:
+    """Bind the stored summary and primary value route to the component ledger."""
+
+    if component_decisions is None:
+        return (
+            ["component_decision_summary.not_allowed_without_component_decisions"]
+            if component_decision_summary is not None
+            else []
+        )
+    if not isinstance(component_decisions, list) or not component_decisions:
+        return []
+    expected = derive_component_decision_summary(component_decisions)
+    findings: list[str] = []
+    if not isinstance(component_decision_summary, dict):
+        findings.append(
+            "component_decision_summary.required_when_component_decisions_present"
+        )
+    elif component_decision_summary != expected:
+        findings.append(
+            "component_decision_summary.not_exact_deterministic_derivation"
+        )
+
+    route = _mapping(value_route)
+    decision_ids = {
+        str(_mapping(item).get("component_id"))
+        for item in component_decisions
+        if _text(_mapping(item).get("component_id"))
+    }
+    raw_requirements = route.get("route_component_requirements")
+    requirements_by_route: dict[str, dict[str, list[str]]] = {}
+    if not isinstance(raw_requirements, list) or not raw_requirements:
+        findings.append("value_route.route_component_requirements_missing")
+        raw_requirements = []
+    for index, raw_requirement in enumerate(raw_requirements):
+        path = f"value_route.route_component_requirements[{index}]"
+        requirement = _mapping(raw_requirement)
+        if set(requirement) != {
+            "route_id", "required_component_ids", "optional_component_ids",
+        }:
+            findings.append(path + ".fields_invalid")
+        route_id = requirement.get("route_id")
+        if not _text(route_id) or route_id in requirements_by_route:
+            findings.append(path + ".route_id_missing_or_duplicate")
+            continue
+        required = requirement.get("required_component_ids")
+        optional = requirement.get("optional_component_ids")
+        if (
+            not isinstance(required, list)
+            or not required
+            or any(not _text(item) for item in required)
+            or len(required) != len(set(required))
+        ):
+            findings.append(path + ".required_component_ids_invalid")
+            required = []
+        if (
+            not isinstance(optional, list)
+            or any(not _text(item) for item in optional)
+            or len(optional) != len(set(optional))
+        ):
+            findings.append(path + ".optional_component_ids_invalid")
+            optional = []
+        if set(required) & set(optional):
+            findings.append(path + ".required_and_optional_components_overlap")
+        unknown = (set(required) | set(optional)) - decision_ids
+        if unknown:
+            findings.append(path + ".component_id_not_in_decision_ledger")
+        requirements_by_route[str(route_id)] = {
+            "required_component_ids": [str(item) for item in required],
+            "optional_component_ids": [str(item) for item in optional],
+        }
+
+    route_components = {
+        item["route_id"]: item["components_by_use"]
+        for item in expected["valuation"]["route_component_bindings"]
+    }
+    for route_id, components_by_use in route_components.items():
+        requirement = requirements_by_route.get(route_id)
+        if requirement is None:
+            findings.append(
+                f"value_route.bound_route_missing_component_requirement:{route_id}"
+            )
+            continue
+        eligible = set(requirement["required_component_ids"]) | set(
+            requirement["optional_component_ids"]
+        )
+        bound_components = {
+            component_id
+            for use in VALUATION_USE_ORDER
+            for component_id in _items(components_by_use.get(use))
+        }
+        for component_id in sorted(bound_components - eligible):
+            findings.append(
+                "value_route.route_binding_component_not_eligible:"
+                f"{route_id}:{component_id}"
+            )
+    roles = _mapping(route.get("valuation_model_roles"))
+    route_groups = {
+        "primary": list(dict.fromkeys(
+            _items(route.get("primary_routes")) + _items(roles.get("primary"))
+        )),
+        "corroborative": _items(roles.get("corroborative")),
+        "stress": _items(roles.get("stress")),
+        "excluded": _items(route.get("excluded_routes")),
+    }
+    allowed_uses = {
+        "primary": {"PRIMARY_INPUT", "CONDITIONAL_PRIMARY_INPUT"},
+        "corroborative": {
+            "PRIMARY_INPUT", "CONDITIONAL_PRIMARY_INPUT", "CORROBORATIVE_INPUT",
+        },
+        "stress": {
+            "PRIMARY_INPUT", "CONDITIONAL_PRIMARY_INPUT", "CORROBORATIVE_INPUT",
+            "STRESS_ONLY",
+        },
+        "excluded": {
+            "SCENARIO_ONLY", "EXCLUDED", "UNRESOLVED", "NOT_APPLICABLE",
+        },
+    }
+    active_route_groups: dict[str, set[str]] = {}
+    for group, route_ids in route_groups.items():
+        for raw_route_id in route_ids:
+            route_id = str(raw_route_id or "")
+            if not route_id:
+                continue
+            active_route_groups.setdefault(route_id, set()).add(group)
+            components_by_use = route_components.get(route_id, {})
+            requirement = requirements_by_route.get(route_id)
+            if requirement is None:
+                findings.append(
+                    f"value_route.{group}_route_missing_component_requirement:{route_id}"
+                )
+                continue
+            if not any(
+                _items(components_by_use.get(use)) for use in allowed_uses[group]
+            ):
+                findings.append(
+                    f"value_route.{group}_route_unbound_or_ineligible:{route_id}"
+                )
+            eligible_components = {
+                component_id
+                for use in allowed_uses[group]
+                for component_id in _items(components_by_use.get(use))
+            }
+            for component_id in requirement["required_component_ids"]:
+                if component_id not in eligible_components:
+                    findings.append(
+                        f"value_route.{group}_route_required_component_ineligible:"
+                        f"{route_id}:{component_id}"
+                    )
+    for route_id, groups in active_route_groups.items():
+        if "excluded" in groups and len(groups) > 1:
+            findings.append(
+                f"value_route.route_cannot_be_active_and_excluded:{route_id}"
+            )
+    return findings
 
 
 def validate_enterprise_underwriting_episode(episode: Any) -> dict[str, Any]:
@@ -179,6 +706,18 @@ def validate_enterprise_underwriting_episode(episode: Any) -> dict[str, Any]:
         refs = _items(component.get("evidence_ids"))
         if not refs or any(ref not in evidence_ids for ref in refs):
             findings.append(f"component_treatments[{index}].evidence_ids_invalid")
+    findings.extend(
+        _component_decision_findings(
+            _items(value.get("component_treatments")), value.get("component_decisions")
+        )
+    )
+    findings.extend(
+        _component_decision_summary_findings(
+            value.get("component_decisions"),
+            value.get("component_decision_summary"),
+            value.get("value_route"),
+        )
+    )
 
     thesis = _mapping(value.get("underwriting_thesis"))
     for field in (
@@ -263,6 +802,11 @@ def project_price_free_underwriting_thesis(episode: Any) -> dict[str, Any]:
         "evidence_trace": deepcopy(value["evidence_trace"]),
         "underwriting_thesis": deepcopy(thesis),
     }
+    if _items(value.get("component_decisions")):
+        projection["component_decisions"] = deepcopy(value["component_decisions"])
+        projection["component_decision_summary"] = deepcopy(
+            value["component_decision_summary"]
+        )
     forbidden = _forbidden_paths(projection)
     if forbidden:
         raise ValueError("price_free_underwriting_thesis_invalid:" + ",".join(forbidden))
@@ -286,6 +830,11 @@ def validate_price_free_underwriting_thesis_projection(projection: Any) -> dict[
     for field in ("reversal_observations", "component_treatments", "evidence_trace"):
         if not _items(value.get(field)):
             findings.append(field + "_missing")
+    findings.extend(
+        _component_decision_findings(
+            _items(value.get("component_treatments")), value.get("component_decisions")
+        )
+    )
     situation = _mapping(value.get("situation_model"))
     if not _text(situation.get("summary")):
         findings.append("situation_model.summary_missing")
@@ -319,6 +868,13 @@ def validate_price_free_underwriting_thesis_projection(projection: Any) -> dict[
     if thesis.get("strongest_rival") != value.get("strongest_rival"):
         findings.append("strongest_rival_mismatch")
     route = _mapping(value.get("value_route"))
+    findings.extend(
+        _component_decision_summary_findings(
+            value.get("component_decisions"),
+            value.get("component_decision_summary"),
+            route,
+        )
+    )
     if not _items(route.get("primary_routes")) or not _items(route.get("excluded_routes")):
         findings.append("value_route.routes_missing")
     if not _text(route.get("route_reasoning")):
@@ -340,6 +896,15 @@ def compile_underwriting_projections(episode: Any) -> dict[str, dict[str, Any]]:
     thesis = deepcopy(_mapping(price_free["underwriting_thesis"]))
     situation_model = deepcopy(_mapping(price_free["situation_model"]))
     industry_future = deepcopy(_mapping(situation_model["industry_future_thesis"]))
+    component_decisions = deepcopy(_items(value.get("component_decisions")))
+    component_decision_summary = (
+        derive_component_decision_summary(component_decisions)
+        if component_decisions
+        else {}
+    )
+    authoritative_treatments = _authoritative_thesis_treatments(
+        thesis, component_decision_summary
+    )
     identity = {
         "episode_id": value["episode_id"],
         "company_id": value["company_id"],
@@ -354,15 +919,33 @@ def compile_underwriting_projections(episode: Any) -> dict[str, dict[str, Any]]:
         "authority": "TEACHING_CANDIDATE_ONLY",
         "central_path": thesis["central_path"],
         "situation_model": deepcopy(situation_model),
-        "normal_earnings_treatment": thesis["normal_earnings_treatment"],
-        "owner_cash_treatment": thesis["owner_cash_treatment"],
-        "permanent_loss_treatment": thesis["permanent_loss_treatment"],
+        "normal_earnings_treatment": authoritative_treatments[
+            "normal_earnings_treatment"
+        ],
+        "owner_cash_treatment": authoritative_treatments["owner_cash_treatment"],
+        "permanent_loss_treatment": authoritative_treatments[
+            "permanent_loss_treatment"
+        ],
         "strongest_rival": industry_future["strongest_rival"],
         "monitoring": thesis["monitoring"],
         "component_treatments": deepcopy(value["component_treatments"]),
         "existing_cjo_adapter": "scripts/enterprise_judgment_core.py:compile_cjo_candidate",
         "boundary": "A projection for the existing CJO compiler; it is not a Frozen CJO and cannot authorize value, price, BuyBand, report publication, or investment action.",
     }
+    if component_decisions:
+        cjo_candidate["component_decisions"] = deepcopy(component_decisions)
+        cjo_candidate["normal_earnings_component_route"] = deepcopy(
+            component_decision_summary["normal_earnings"]
+        )
+        cjo_candidate["owner_cash_component_route"] = deepcopy(
+            component_decision_summary["owner_cash"]
+        )
+        cjo_candidate["financing_pressure_component_route"] = deepcopy(
+            component_decision_summary["financing_pressure"]
+        )
+        cjo_candidate["permanent_loss_component_route"] = deepcopy(
+            component_decision_summary["permanent_loss"]
+        )
     valuation_request = {
         "schema_version": VALUATION_REQUEST_SCHEMA,
         "request_id": "UW-VR:" + value["episode_id"],
@@ -373,17 +956,42 @@ def compile_underwriting_projections(episode: Any) -> dict[str, dict[str, Any]]:
         "excluded_routes": deepcopy(value["value_route"]["excluded_routes"]),
         "route_reasoning": value["value_route"]["route_reasoning"],
         "valuation_model_roles": deepcopy(value["value_route"]["valuation_model_roles"]),
-        "normal_earnings_input_treatment": thesis["normal_earnings_treatment"],
-        "owner_cash_input_treatment": thesis["owner_cash_treatment"],
-        "permanent_loss_input_treatment": thesis["permanent_loss_treatment"],
-        "inputs_excluded_from_base": [
-            item["component_id"] for item in value["component_treatments"]
-            if item["treatment"] in {"EXCLUDE_FROM_BASE", "SCENARIO_ONLY", "CANNOT_BOUND"}
+        "normal_earnings_input_treatment": authoritative_treatments[
+            "normal_earnings_treatment"
         ],
+        "owner_cash_input_treatment": authoritative_treatments[
+            "owner_cash_treatment"
+        ],
+        "permanent_loss_input_treatment": authoritative_treatments[
+            "permanent_loss_treatment"
+        ],
+        "inputs_excluded_from_base": (
+            [
+                item["component_id"] for item in component_decisions
+                if item["valuation_use"] not in {
+                    "PRIMARY_INPUT", "CONDITIONAL_PRIMARY_INPUT"
+                }
+            ]
+            if component_decisions
+            else [
+                item["component_id"] for item in value["component_treatments"]
+                if item["treatment"] in {
+                    "EXCLUDE_FROM_BASE", "SCENARIO_ONLY", "CANNOT_BOUND"
+                }
+            ]
+        ),
         "existing_valuation_adapter": "scripts/valuation_routing.py:build_valuation_route",
         "compatibility_resolution": "Current-company underwriting may enter CJO and valuation routing through a source-bound, independently reviewed complete Episode; SELECTION_ADMITTED remains local to claims that actually depend on comparative selection or causal authority.",
         "boundary": "No current value, price, expected return, BuyBand, or investment action is generated.",
     }
+    if component_decisions:
+        valuation_request["component_decisions"] = deepcopy(component_decisions)
+        valuation_request["valuation_component_route"] = deepcopy(
+            component_decision_summary["valuation"]
+        )
+        valuation_request["route_component_requirements"] = deepcopy(
+            value["value_route"]["route_component_requirements"]
+        )
     report_handoff = {
         "schema_version": REPORT_HANDOFF_SCHEMA,
         "handoff_id": "UW-GR:" + value["episode_id"],
@@ -405,7 +1013,7 @@ def compile_underwriting_projections(episode: Any) -> dict[str, dict[str, Any]]:
         "survival_case": value["survival_case"],
         "adaptation_case": value["adaptation_case"],
         "normalization_case": value["normalization_case"],
-        "owner_cash_treatment": thesis["owner_cash_treatment"],
+        "owner_cash_treatment": authoritative_treatments["owner_cash_treatment"],
         "permanent_loss_map": value["permanent_loss_map"],
         "value_route": deepcopy(value["value_route"]),
         "strongest_rival": industry_future["strongest_rival"],
@@ -413,6 +1021,17 @@ def compile_underwriting_projections(episode: Any) -> dict[str, dict[str, Any]]:
         "existing_report_adapter": "scripts/judgment_generation_handoff.py:build_judgment_generation_handoff",
         "boundary": "The Golden Report writer consumes this thesis and may not replace it with a different company story. This is a teaching handoff, not report-publication authority.",
     }
+    if component_decisions:
+        report_handoff["component_decisions"] = deepcopy(component_decisions)
+        report_handoff["normal_earnings_treatment"] = authoritative_treatments[
+            "normal_earnings_treatment"
+        ]
+        report_handoff["permanent_loss_treatment"] = authoritative_treatments[
+            "permanent_loss_treatment"
+        ]
+        report_handoff["component_economic_routes"] = deepcopy(
+            component_decision_summary
+        )
     return {
         "cjo_candidate_projection": cjo_candidate,
         "valuation_route_request": valuation_request,
@@ -550,6 +1169,14 @@ def compile_golden_report_reader_brief(
     """
     value = _assert_reviewable(episode)
     thesis = _mapping(value["underwriting_thesis"])
+    component_decision_summary = (
+        derive_component_decision_summary(value.get("component_decisions"))
+        if _items(value.get("component_decisions"))
+        else {}
+    )
+    authoritative_treatments = _authoritative_thesis_treatments(
+        thesis, component_decision_summary
+    )
     situation_model = _mapping(value["situation_model"])
     industry_future = _industry_future_thesis(value)
     deterministic_conclusions: list[str] = []
@@ -608,13 +1235,33 @@ def compile_golden_report_reader_brief(
             raise ValueError(f"accepted_conclusions[{index}]_source_refs_invalid")
         clean_conclusions.append({field: deepcopy(item[field]) for field in required})
 
-    component_judgments = [
-        (
+    decisions_by_component = {
+        item["component_id"]: item
+        for item in _items(value.get("component_decisions"))
+        if _text(_mapping(item).get("component_id"))
+    }
+    component_judgments: list[str] = []
+    for item in value["component_treatments"]:
+        judgment = (
             f"{item['reason']} 因此，{item['investment_consequence']} "
             f"需要重估这一处理的条件是：{item['promotion_or_resolution_condition']}"
         )
-        for item in value["component_treatments"]
-    ]
+        decision = decisions_by_component.get(item["component_id"])
+        if decision:
+            label = lambda field: _COMPONENT_DECISION_READER_LABELS.get(
+                str(decision[field]), str(decision[field])
+            )
+            judgment += (
+                " 该组件的权威经济去向为："
+                f"正常盈利{label('normal_earnings_use')}；"
+                f"普通股现金{label('owner_cash_use')}；"
+                f"{label('financing_pressure_effect')}；"
+                f"永久损失{label('permanent_loss_use')}；"
+                f"估值{label('valuation_use')}。"
+                f"晋级检验：{decision['promotion_test']} "
+                f"失效检验：{decision['invalidation_test']}"
+            )
+        component_judgments.append(judgment)
     brief = {
         "company_name": value["company_name"],
         "central_judgment": thesis["central_path"],
@@ -646,14 +1293,18 @@ def compile_golden_report_reader_brief(
                 "paragraphs": [
                     value["survival_case"],
                     value["normalization_case"],
-                    thesis["normal_earnings_treatment"],
-                    thesis["owner_cash_treatment"],
+                    authoritative_treatments["normal_earnings_treatment"],
+                    authoritative_treatments["owner_cash_treatment"],
                 ],
             },
             {
                 "heading": "永久损失与最强反方",
                 "paragraphs": [
-                    value["permanent_loss_map"],
+                    (
+                        authoritative_treatments["permanent_loss_treatment"]
+                        if component_decision_summary
+                        else value["permanent_loss_map"]
+                    ),
                     thesis["strongest_rival"],
                 ],
             },
