@@ -478,7 +478,12 @@ def _evaluate_bound_frozen_cjo_completion(
     return result
 
 
-def evaluate_report_completion(report_text: str, output_dir: str) -> CompletionResult:
+def evaluate_report_completion(
+    report_text: str,
+    output_dir: str,
+    *,
+    reader_report_text: str | None = None,
+) -> CompletionResult:
     ledger = _load_audit_ledger(output_dir)
     analysis_purpose = _analysis_purpose(output_dir)
     company_judgment_only = analysis_purpose == "COMPANY_JUDGMENT_ONLY"
@@ -560,7 +565,7 @@ def evaluate_report_completion(report_text: str, output_dir: str) -> CompletionR
         os.path.join(output_dir, 'company_archetype.json')
     )
     reader_coverage = evaluate_reader_coverage(
-        report_text,
+        reader_report_text if reader_report_text is not None else report_text,
         output_dir,
         enforced=reader_enforced,
         persist=reader_enforced,

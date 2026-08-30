@@ -72,6 +72,26 @@ _REVERSE_BRANCH_RE = re.compile(
 # internal control-plane panel rather than an investor-facing explanation.
 _INTERNAL_CONTROL_TOKEN_PATTERNS: tuple[tuple[str, re.Pattern[str]], ...] = (
     (
+        "control_field_name",
+        re.compile(
+            r"(?<![A-Za-z0-9_])(?:insight_id|claim_id|evidence_id|"
+            r"decision_entry_id|model_id)s?(?![A-Za-z0-9_])",
+            re.I,
+        ),
+    ),
+    (
+        "structured_binding",
+        re.compile(
+            r"\[(?:insight|decision|valuation|claim|threshold|"
+            r"thesis-test|probability)\s*:[^\]]+\]",
+            re.I,
+        ),
+    ),
+    (
+        "internal_product_language",
+        re.compile(r"15\s*章审计底稿|绑定清单", re.I),
+    ),
+    (
         "review_taxonomy",
         re.compile(
             r"(?<![A-Za-z0-9_])(?:DATA_COVERAGE|ACQUISITION_MODULE|"

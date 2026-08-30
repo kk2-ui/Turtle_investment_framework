@@ -2702,7 +2702,7 @@ def assemble_report(
         (
             f"> Turtle 公司机制与前瞻判断研究 | {len(chapter_files)} 章"
             if company_judgment_only else
-            f"> 由 TurtleAgent V12 单 Agent 工具循环生成 | Dayu定性+Turtle定量 | {len(chapter_files)} 章"
+            f"> 基于公开披露的公司研究 | {len(chapter_files)} 章"
         ),
         f"> 分析日期: {__import__('datetime').datetime.now().strftime('%Y-%m-%d')}",
         "",
@@ -2793,19 +2793,48 @@ def assemble_report(
         _render_company_judgment_summary(output_dir, company_name, ts_code)
         if company_judgment_only else ""
     )
-    report_parts = ["\n".join(header_parts), company_judgment_summary, body_text]
+    narrative_parts = ["\n".join(header_parts), company_judgment_summary, body_text]
+    report_parts = list(narrative_parts)
     if technical_appendix:
         report_parts.append(technical_appendix)
     if source_section:
         report_parts.append(source_section)
     report_text = "\n\n---\n\n".join(part for part in report_parts if part and part.strip())
 
+    insight_policy_path = Path(output_dir) / "insight_policy.json"
+    try:
+        insight_policy = json.loads(insight_policy_path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        insight_policy = {}
+    # The dual-layer route keeps the complete chapter/appendix bytes as the
+    # technical artifact.  Its formal reader report is a deterministic
+    # projection of the full chapter narrative, never the compact memo.
+    dual_layer = bool(insight_policy.get("enforced")) and not company_judgment_only
+    reader_projection_source_text = "\n\n---\n\n".join(
+        part for part in [*narrative_parts, source_section]
+        if part and part.strip()
+    )
+    if dual_layer:
+        try:
+            from scripts.reader_report_surface import compile_reader_report_surface
+        except ModuleNotFoundError:
+            from reader_report_surface import compile_reader_report_surface
+        reader_candidate_text = compile_reader_report_surface(
+            reader_projection_source_text
+        )
+    else:
+        reader_candidate_text = report_text
+
     try:
         from scripts.report_completion import evaluate_report_completion
     except ModuleNotFoundError:
         from report_completion import evaluate_report_completion
 
-    completion = evaluate_report_completion(report_text, output_dir)
+    completion = evaluate_report_completion(
+        report_text,
+        output_dir,
+        reader_report_text=reader_candidate_text,
+    )
     reports_d = os.path.join(output_dir, REPORTS_SUBDIR)
     os.makedirs(reports_d, exist_ok=True)
     code_short = ts_code.replace(".HK", "").replace(".SH", "").replace(".SZ", "")
@@ -2891,32 +2920,61 @@ def assemble_report(
         }
 
     validation_report_text = report_text
-    insight_policy_path = Path(output_dir) / "insight_policy.json"
-    try:
-        insight_policy = json.loads(insight_policy_path.read_text(encoding="utf-8"))
-    except (OSError, json.JSONDecodeError):
-        insight_policy = {}
-    # CJO has its own company-judgment summary above.  The investment memo
-    # serializes valuation and action fields and must never become its reader
-    # layer, even if an old insight policy happens to be present.
-    dual_layer = bool(insight_policy.get("enforced")) and not company_judgment_only
+    reader_filename = (
+        f"{code_short}_分析报告_{REPORT_VERSION}_draft.md"
+        if validation_only else f"{code_short}_分析报告_{REPORT_VERSION}.md"
+    )
     technical_filename = (
         f"{code_short}_分析报告_{REPORT_VERSION}_technical_draft.md"
         if validation_only else f"{code_short}_分析报告_{REPORT_VERSION}_technical.md"
     )
-    technical_report_text = _extract_sources(report_text, output_dir, "_technical_sources.json") if dual_layer else ""
+    executive_filename = (
+        f"{code_short}_投资备忘录_{REPORT_VERSION}_executive_draft.md"
+        if validation_only else f"{code_short}_投资备忘录_{REPORT_VERSION}_executive.md"
+    )
+    technical_report_text = (
+        _extract_sources(report_text, output_dir, "_technical_sources.json")
+        if dual_layer else ""
+    )
+    executive_memo_text = ""
     memo_preservation = None
+    reader_surface_validation = None
     if dual_layer:
         try:
             from scripts.insight_ledger import render_investment_memo, validate_rendered_memo
         except ModuleNotFoundError:
             from insight_ledger import render_investment_memo, validate_rendered_memo
         try:
+            from scripts.reader_report_surface import validate_reader_report_surface
+        except ModuleNotFoundError:
+            from reader_report_surface import validate_reader_report_surface
+        try:
             insight_payload = json.loads((Path(output_dir) / "insight_ledger.json").read_text(encoding="utf-8"))
         except (OSError, json.JSONDecodeError):
             insight_payload = {}
-        memo_text = render_investment_memo(insight_payload, company_name, ts_code, technical_filename)
-        memo_preservation = validate_rendered_memo(insight_payload, memo_text, technical_filename)
+        report_text = _extract_sources(reader_candidate_text, output_dir)
+        reader_surface_validation = validate_reader_report_surface(
+            report_text, reader_projection_source_text, output_dir,
+        )
+        Path(output_dir, "reader_surface_validation.json").write_text(
+            json.dumps(reader_surface_validation, ensure_ascii=False, indent=2),
+            encoding="utf-8",
+        )
+        completion_dict["validators"]["reader_surface"] = reader_surface_validation
+        if reader_surface_validation.get("status") != "PASS":
+            completion_dict["status"] = "BLOCKED"
+            completion_dict["blocking_findings"].extend(
+                "Reader surface: " + str(item)
+                for item in reader_surface_validation.get("blocking_findings") or []
+            )
+        executive_memo_text = render_investment_memo(
+            insight_payload, company_name, ts_code,
+            technical_filename, reader_filename,
+        )
+        memo_preservation = validate_rendered_memo(
+            insight_payload, executive_memo_text,
+            technical_filename, reader_filename,
+        )
         Path(output_dir, "memo_preservation_report.json").write_text(
             json.dumps(memo_preservation, ensure_ascii=False, indent=2), encoding="utf-8"
         )
@@ -2926,30 +2984,40 @@ def assemble_report(
             completion_dict["blocking_findings"].extend(
                 f"Memo preservation: {item}" for item in memo_preservation.get("missing_fields", [])
             )
+            completion_dict["blocking_findings"].extend(
+                f"Memo control plane: {item}"
+                for item in memo_preservation.get("control_plane_leaks", [])
+            )
+        if (
+            reader_surface_validation.get("status") != "PASS"
+            or memo_preservation.get("status") != "PASS"
+        ):
             Path(output_dir, "completion_report.json").write_text(
                 json.dumps(completion_dict, ensure_ascii=False, indent=2), encoding="utf-8"
             )
             drafts_d = os.path.join(reports_d, "drafts")
             os.makedirs(drafts_d, exist_ok=True)
-            report_path = os.path.join(drafts_d, f"{code_short}_分析报告_{REPORT_VERSION}_draft.md")
-            Path(report_path).write_text(memo_text, encoding="utf-8")
+            report_path = os.path.join(drafts_d, reader_filename)
+            Path(report_path).write_text(report_text, encoding="utf-8")
+            technical_report_path = os.path.join(drafts_d, technical_filename)
+            Path(technical_report_path).write_text(technical_report_text, encoding="utf-8")
             return {
                 "path": report_path, "tool_name": "assemble_report",
-                "chapter_count": len(chapter_files), "char_count": len(memo_text),
+                "technical_report_path": technical_report_path,
+                "executive_memo_path": None,
+                "chapter_count": len(chapter_files), "char_count": len(report_text),
                 "quality": quality_result, "completion": completion_dict,
                 "memo_preservation": memo_preservation,
+                "reader_surface": reader_surface_validation,
                 "cjo_report_output": cjo_report_output, "published": False,
-                "error": "精简报告丢失决策内容，已阻断发布",
+                "error": "读者、执行摘要与技术控制面未正确分离，已阻断发布",
             }
-        disclaimer = "\n\n**风险警示与免责声明**：本文由AI基于公开披露辅助生成，仅供研究；投资者必须核对原始文件并独立判断。\n"
-        report_text = _extract_sources(memo_text + disclaimer, output_dir)
     else:
         report_text = _extract_sources(report_text, output_dir)
 
-    # Re-run the semantic reader contract on the actual publication text.  In
-    # the dual-layer path this is the compact memo, not the full technical
-    # appendix; checking only the pre-memo chapters would allow a short memo to
-    # displace the reader-facing explanation while every numeric gate passed.
+    # Re-run the semantic reader contract on the actual formal reader report.
+    # The compact memo is a separate executive artifact and never substitutes
+    # for this company narrative.
     try:
         from scripts.reader_coverage import evaluate_reader_coverage
     except ModuleNotFoundError:
@@ -2974,11 +3042,20 @@ def assemble_report(
         drafts_d = os.path.join(reports_d, "drafts")
         os.makedirs(drafts_d, exist_ok=True)
         report_path = os.path.join(
-            drafts_d, f"{code_short}_分析报告_{REPORT_VERSION}_draft.md"
+            drafts_d, reader_filename
         )
         Path(report_path).write_text(report_text, encoding="utf-8")
+        technical_report_path = None
+        executive_memo_path = None
+        if dual_layer:
+            technical_report_path = os.path.join(drafts_d, technical_filename)
+            Path(technical_report_path).write_text(technical_report_text, encoding="utf-8")
+            executive_memo_path = os.path.join(drafts_d, executive_filename)
+            Path(executive_memo_path).write_text(executive_memo_text, encoding="utf-8")
         return {
             "path": report_path,
+            "technical_report_path": technical_report_path,
+            "executive_memo_path": executive_memo_path,
             "tool_name": "assemble_report",
             "chapter_count": len(chapter_files),
             "char_count": len(report_text),
@@ -2986,6 +3063,7 @@ def assemble_report(
             "completion": completion_dict,
             "decision_compiler": compiler_result,
             "memo_preservation": memo_preservation,
+            "reader_surface": reader_surface_validation,
             "reader_coverage": reader_coverage,
             "cjo_report_output": cjo_report_output,
             "published": False,
@@ -3033,14 +3111,25 @@ def assemble_report(
         )
         drafts_d = os.path.join(reports_d, 'drafts')
         os.makedirs(drafts_d, exist_ok=True)
-        report_path = os.path.join(drafts_d, f"{code_short}_分析报告_{REPORT_VERSION}_draft.md")
+        report_path = os.path.join(drafts_d, reader_filename)
         with open(report_path, "w", encoding="utf-8") as f:
             f.write(report_text)
+        technical_report_path = None
+        executive_memo_path = None
+        if dual_layer:
+            technical_report_path = os.path.join(drafts_d, technical_filename)
+            Path(technical_report_path).write_text(technical_report_text, encoding="utf-8")
+            executive_memo_path = os.path.join(drafts_d, executive_filename)
+            Path(executive_memo_path).write_text(executive_memo_text, encoding="utf-8")
         return {
             "path": report_path, "tool_name": "assemble_report",
+            "technical_report_path": technical_report_path,
+            "executive_memo_path": executive_memo_path,
             "chapter_count": len(chapter_files), "char_count": len(report_text),
             "quality": quality_result, "completion": completion_dict,
             "publication_snapshot": publication_snapshot,
+            "memo_preservation": memo_preservation,
+            "reader_surface": reader_surface_validation,
             "cjo_report_output": cjo_report_output, "published": False,
             "error": "发布快照创建失败，已保留 draft，禁止覆盖正式报告",
         }
@@ -3051,36 +3140,46 @@ def assemble_report(
     if validation_only:
         drafts_d = os.path.join(reports_d, "drafts")
         os.makedirs(drafts_d, exist_ok=True)
-        report_path = os.path.join(drafts_d, f"{code_short}_分析报告_{REPORT_VERSION}_draft.md")
+        report_path = os.path.join(drafts_d, reader_filename)
         with open(report_path, "w", encoding="utf-8") as f:
             f.write(report_text)
         technical_report_path = None
+        executive_memo_path = None
         if dual_layer:
             technical_report_path = os.path.join(drafts_d, technical_filename)
             with open(technical_report_path, "w", encoding="utf-8") as f:
                 f.write(technical_report_text)
+            executive_memo_path = os.path.join(drafts_d, executive_filename)
+            with open(executive_memo_path, "w", encoding="utf-8") as f:
+                f.write(executive_memo_text)
         return {
             "path": report_path,
             "technical_report_path": technical_report_path,
+            "executive_memo_path": executive_memo_path,
             "tool_name": "assemble_report",
             "chapter_count": len(chapter_files),
             "char_count": len(report_text),
             "quality": quality_result,
             "completion": completion_dict,
             "memo_preservation": memo_preservation,
+            "reader_surface": reader_surface_validation,
             "publication_snapshot": publication_snapshot,
             "cjo_report_output": cjo_report_output,
             "published": False,
             "validated": True,
         }
-    report_path = os.path.join(reports_d, f"{code_short}_分析报告_{REPORT_VERSION}.md")
+    report_path = os.path.join(reports_d, reader_filename)
     with open(report_path, "w", encoding="utf-8") as f:
         f.write(report_text)
     technical_report_path = None
+    executive_memo_path = None
     if dual_layer:
         technical_report_path = os.path.join(reports_d, technical_filename)
         with open(technical_report_path, "w", encoding="utf-8") as f:
             f.write(technical_report_text)
+        executive_memo_path = os.path.join(reports_d, executive_filename)
+        with open(executive_memo_path, "w", encoding="utf-8") as f:
+            f.write(executive_memo_text)
 
     # 同步生成 HTML（供仪表盘/web app 渲染）。失败不阻断组装——md 是真相源。
     html_path = _render_report_html(report_path)
@@ -3090,12 +3189,14 @@ def assemble_report(
         "tool_name": "assemble_report",
         "html_path": html_path,
         "technical_report_path": technical_report_path,
+        "executive_memo_path": executive_memo_path,
         "chapter_count": len(chapter_files),
         "char_count": len(report_text),
         "quality": quality_result,
         "completion": completion_dict,
         "decision_compiler": compiler_result,
         "memo_preservation": memo_preservation,
+        "reader_surface": reader_surface_validation,
         "publication_snapshot": publication_snapshot,
         "cjo_report_output": cjo_report_output,
         "published": True,
