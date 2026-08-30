@@ -1,0 +1,344 @@
+{
+  "authority": "PRICE_FREE_RESEARCH_CANDIDATES_ONLY",
+  "boundary": {
+    "contains_outcome_results": false,
+    "contains_price_or_valuation_results": false,
+    "grants_investment_authority": false
+  },
+  "company_id": "CN:601888",
+  "contract_id": "UWTRAIN:CN601888:20190501:INDEPENDENT_AB_3:ENHANCED:V1",
+  "cutoff_at": "2019-05-01T00:00:00+08:00",
+  "primary_training_product": {
+    "episode_id": "UWTRAIN:CN601888:20190501:INDEPENDENT_AB_3:ENHANCED:MANUAL_FRESH",
+    "object_type": "EnterpriseUnderwritingEpisode",
+    "underwriting_thesis_id": "THESIS:CN601888:20190501:CHANNEL_CONTRACT_CASH_ENHANCED"
+  },
+  "projections": {
+    "cjo_candidate_projection": {
+      "authority": "TEACHING_CANDIDATE_ONLY",
+      "boundary": "A projection for the existing CJO compiler; it is not a Frozen CJO and cannot authorize value, price, BuyBand, report publication, or investment action.",
+      "central_path": "公司可凭成熟机场与离岛渠道、采购整合和政策执行能力保持生存并分享免税利润池，但经营权期限、租金、库存和扩张资本使新增收入只有在渠道现金责任闭合后才可转化为正常化普通股现金。",
+      "company_id": "CN:601888",
+      "component_treatments": [
+        {
+          "component_id": "industry_future",
+          "evidence_ids": [
+            "E01",
+            "E02"
+          ],
+          "investment_consequence": "保留增长方向判断，同时把续约和租金条件置于基准边界之外。",
+          "promotion_or_resolution_condition": "连续期渠道数据和合同结果证明利润池在租金责任后可重复。",
+          "reason": "行业利润池受客流和政策支持但经营权有期限、租金可变且存在招标竞争，不能视为永久增长。",
+          "treatment": "CONDITIONALLY_UNDERWRITE"
+        },
+        {
+          "component_id": "mature_existing_channels",
+          "evidence_ids": [
+            "E04",
+            "E05",
+            "E06"
+          ],
+          "investment_consequence": "允许进入有界基准，但不把缺失的租金和单位经济假设成已知。",
+          "promotion_or_resolution_condition": "补齐跨期转化、毛利、租金、库存和维护资本数据。",
+          "reason": "三亚及既有机场渠道已有规模、客流和购物人数等经营观察，可作为成熟存量的方向性基础。",
+          "treatment": "UNDERWRITE"
+        },
+        {
+          "component_id": "newly_consolidated_channels",
+          "evidence_ids": [
+            "E04",
+            "E06",
+            "E08"
+          ],
+          "investment_consequence": "只在情景中计入增量，避免把并购收入年化为成熟现金。",
+          "promotion_or_resolution_condition": "首次全年经营后，渠道层面现金覆盖租金、库存和整合投入。",
+          "reason": "日上上海并表及机场新经营权带来收入增量，但尚未有完整年度承接与合同责任证据。",
+          "treatment": "CONDITIONALLY_UNDERWRITE"
+        },
+        {
+          "component_id": "construction_and_bid_expansion",
+          "evidence_ids": [
+            "E08",
+            "E09"
+          ],
+          "investment_consequence": "不进入成熟基准，单独测试资本回收和失标风险。",
+          "promotion_or_resolution_condition": "项目开业并有跨期单位经济及合同责任数据。",
+          "reason": "土地、在建工程、改扩建和竞标项目仍需资本投入，收益和期限尚未承接。",
+          "treatment": "SCENARIO_ONLY"
+        },
+        {
+          "component_id": "normal_earnings",
+          "evidence_ids": [
+            "E02",
+            "E03",
+            "E04",
+            "E06"
+          ],
+          "investment_consequence": "对FY2018结果作结构性而非线性外推。",
+          "promotion_or_resolution_condition": "同渠道跨期销售、转化、毛利和费用证明普通经营水平。",
+          "reason": "商品销售和免税毛利率提升部分来自并购、离岛优化和机场增量，正常化需拆分成熟与新渠道。",
+          "treatment": "CONDITIONALLY_UNDERWRITE"
+        },
+        {
+          "component_id": "owner_cash",
+          "evidence_ids": [
+            "E07",
+            "E08",
+            "E09",
+            "E10"
+          ],
+          "investment_consequence": "不得将27.222亿元集团经营现金流直接称为普通股可分配现金。",
+          "promotion_or_resolution_condition": "建立逐渠道现金桥并纳入租金、库存、税费、维护资本、债务和少数股东。",
+          "reason": "披露未按维护、扩张、收购、整合和金融投资拆分现金，也未完整量化租金、少数股东和债务责任。",
+          "treatment": "CANNOT_BOUND"
+        },
+        {
+          "component_id": "survival_and_financing",
+          "evidence_ids": [
+            "E02",
+            "E08",
+            "E09"
+          ],
+          "investment_consequence": "生存判断与现金可分配判断分离。",
+          "promotion_or_resolution_condition": "观察经营现金在责任边界内持续覆盖到期负债和必要投入。",
+          "reason": "账面现金、盈利和多渠道经营提供生存缓冲，但负投资现金流与多层索取权限制可分配性。",
+          "treatment": "UNDERWRITE"
+        },
+        {
+          "component_id": "permanent_loss",
+          "evidence_ids": [
+            "E07",
+            "E08",
+            "E10"
+          ],
+          "investment_consequence": "保留明确损失路径并用压力情景而非单点预测表达。",
+          "promotion_or_resolution_condition": "续约、租金、库存周转和资产组现金回收长期验证。",
+          "reason": "经营权、租金、客流政策、库存减值、商誉和资本回收均可造成永久性普通股损失，但幅度未知。",
+          "treatment": "CONDITIONALLY_UNDERWRITE"
+        },
+        {
+          "component_id": "value_route",
+          "evidence_ids": [
+            "E08",
+            "E09",
+            "E10"
+          ],
+          "investment_consequence": "形成价格无关的价值路线和待补证据清单。",
+          "promotion_or_resolution_condition": "渠道合同、现金桥和压力分支均可由可审计数据支持。",
+          "reason": "可沿成熟渠道剩余期限和责任边界建模，新增经营权与在建项目需情景化。",
+          "treatment": "CONDITIONALLY_UNDERWRITE"
+        }
+      ],
+      "cutoff_at": "2019-05-01T00:00:00+08:00",
+      "episode_id": "UWTRAIN:CN601888:20190501:INDEPENDENT_AB_3:ENHANCED:MANUAL_FRESH",
+      "existing_cjo_adapter": "scripts/enterprise_judgment_core.py:compile_cjo_candidate",
+      "monitoring": "按反馈时钟检查FY2019早期信号、FY2021正常化与现金、FY2023长期永久损失：分别核验既有与新并表渠道客流/转化/毛利/租金/库存，经营权续约与招标，库存减值，整合和资本回收；若任一关键条件恶化，降低基准并扩大压力场景。",
+      "normal_earnings_treatment": "混合：成熟存量渠道进入有界基准，日上上海及新机场经营权待完整年度承接验证，建设/竞标项目排除出基准。",
+      "owner_cash_treatment": "不可完整界定：集团经营现金流、存货变化、收购和建设支出尚未按普通股责任边界拆分；仅能建立方向性现金桥和条件范围。",
+      "permanent_loss_treatment": "条件性承保：不续约/租金跃升、客流政策冲击、库存减值、并购整合和资本回收不足均可造成永久损失，当前不量化幅度。",
+      "projection_id": "UW-CJO:UWTRAIN:CN601888:20190501:INDEPENDENT_AB_3:ENHANCED:MANUAL_FRESH",
+      "sample_identity": "BLIND_REPLAY",
+      "schema_version": "enterprise-underwriting-cjo-candidate-projection.v2",
+      "situation_model": {
+        "industry_future_thesis": {
+          "adaptation": "管理层已整合日上中国/日上上海商品人员流程，调整商品结构并与阿里开展线上线下及数据合作，也为离岛政策调整进行采购、培训和提货准备；这些动作提升适应可能性，但尚未证明每个新渠道的持续单位经济。",
+          "company_exposure": "公司同时暴露于机场、离岛及其他免税渠道，既有成熟存量，也有2018年新并表和新取得经营权项目；商品销售占比提升、日上上海并表和机场业务使其对渠道条件与库存责任更敏感。",
+          "horizon": "未来约三至五年，观察客流与免税政策、经营权期限/续约、租金责任和竞争招标如何共同决定渠道利润池。",
+          "most_likely_regime": "行业保持增长但不是永久特许的单向扩张：旅游恢复和政策可扩大可服务客流，经营权到期、租金重谈和竞争性招标使利润池具有周期性与再取得风险。",
+          "normal_economics": "正常化应以成熟渠道跨期客流、转化、毛利和租金后的现金为基准；新并表渠道需经过完整年度承接，建设和竞标项目只能作为条件场景，直到合同与单位经济证据补齐。",
+          "permanent_loss": "永久损失主要来自经营权不续或租金跃升导致渠道现金断崖、客流/政策变化造成库存减值、并购整合或商誉减值，以及建设和收购资本无法由普通股现金回收；损失风险在责任边界不清时会从单一渠道扩散至集团。",
+          "profit_pool_transmission": "利润先由授权渠道带来的客流和购物转化形成销售，再经商品组合、采购毛利、租金、人工、库存和维护投入传导至普通股；总收入或集团毛利率不能替代这一逐渠道传导。",
+          "reversal_observations": [
+            "既有机场与离岛渠道连续年度客流、购物转化、毛利、租金和库存均稳定或改善，并能与新并表渠道分开核验。",
+            "新取得或并表渠道完成首次全年承接后，商品库存、租金和营销投入仍对应可重复的普通股现金。",
+            "经营权续约、租金重谈或竞争性招标结果显示渠道期限风险没有系统性侵蚀成熟渠道现金。",
+            "库存周转和期后销售支持无需大额减值，收购整合及商誉未形成新的资本缺口。"
+          ],
+          "strongest_rival": "最强反方是机场与离岛流量、品牌和政策红利继续扩大，采购整合及数字化提高转化和毛利，使新渠道快速达到成熟渠道的现金回报并覆盖库存、租金和扩张投入。",
+          "valuation_treatment": "仅把有跨期吸收和责任边界证据的成熟渠道纳入有界基准；新经营权、在建项目和未拆分的收购/扩张现金作为条件或压力场景，不把集团经营现金流直接当作普通股可分配现金。"
+        },
+        "summary": "免税零售利润池由旅游客流、政策授权和机场/离岛等有期限经营权共同传导。公司在2018年通过日上上海并表、机场招投标和离岛优化迅速扩大商品销售，但库存、租金、建设和收购现金责任同步上升。成熟渠道已有经营数据，刚并表和建设/竞标渠道的跨期承接尚未被截止日证据充分证明，因此总体判断为有生存基础、扩张需条件化、普通股现金需重建责任边界。"
+      },
+      "strongest_rival": "最强反方是机场与离岛流量、品牌和政策红利继续扩大，采购整合及数字化提高转化和毛利，使新渠道快速达到成熟渠道的现金回报并覆盖库存、租金和扩张投入。",
+      "underwriting_thesis_id": "THESIS:CN601888:20190501:CHANNEL_CONTRACT_CASH_ENHANCED"
+    },
+    "golden_report_underwriting_handoff": {
+      "adaptation_case": {
+        "actions_observed": "完成日上中国/日上上海商品、人员、流程对接，推进采购整合，开展线上线下及数据中台合作，并针对离岛政策调整进行系统、采购、培训和提货准备。",
+        "call": "有适应选项但需证据兑现",
+        "economic_test": "适应只有在客流到购物转化、商品组合和采购毛利改善，同时租金、营销和库存责任可控时才转化为普通股现金；管理动作本身不构成承接事实。",
+        "failure_mode": "若新渠道客流未转化、租金上升或库存积压，扩张会放大费用和资本占用而非提高正常化现金。"
+      },
+      "authority": "UNDERWRITING_HANDOFF_ONLY",
+      "boundary": "The Golden Report writer consumes this thesis and may not replace it with a different company story. This is a teaching handoff, not report-publication authority.",
+      "business_position": {
+        "construction_and_bid_channels": "海南总部、商业综合体、海口土地及其他改扩建/筹备项目仍包含建设、竞标和资本占用，截止日不将其当作已成熟利润池。",
+        "mature_existing_channels": "三亚海棠湾离岛项目和既有机场渠道已有截止日前经营规模与顾客数据，可作为方向性成熟存量观察对象；但年报未给出逐渠道租金率、同店销售、复购或每客毛利，不能直接外推完整普通股现金。",
+        "newly_consolidated_or_awarded_channels": "日上上海于2018年完成51%收购并纳入报表，浦东/虹桥、首都机场、北京大兴及澳门等经营权或合作项目带来增量收入；这些渠道的首次完整年度承接、合同剩余期限和租金责任仍是关键条件。",
+        "position_call": "公司具备全国渠道、采购整合和政策执行能力，生存位置较强；但竞争优势受经营权和机场议价条件约束，属于可适应但非永久锁定的渠道组合。"
+      },
+      "central_path": "公司可凭成熟机场与离岛渠道、采购整合和政策执行能力保持生存并分享免税利润池，但经营权期限、租金、库存和扩张资本使新增收入只有在渠道现金责任闭合后才可转化为正常化普通股现金。",
+      "company_id": "CN:601888",
+      "cutoff_at": "2019-05-01T00:00:00+08:00",
+      "episode_id": "UWTRAIN:CN601888:20190501:INDEPENDENT_AB_3:ENHANCED:MANUAL_FRESH",
+      "existing_report_adapter": "scripts/judgment_generation_handoff.py:build_judgment_generation_handoff",
+      "handoff_id": "UW-GR:UWTRAIN:CN601888:20190501:INDEPENDENT_AB_3:ENHANCED:MANUAL_FRESH",
+      "normalization_case": {
+        "cash_bridge": "正常化现金须扣除维持性库存、租金、人员、税费、必要资本开支、债务/少数股东责任，并区分收购整合和新建项目现金；现有披露尚不能完成逐渠道桥接。",
+        "earnings_bridge": "FY2018商品销售收入343.35亿元、免税商品收入332.27亿元及免税毛利率53.09%显示规模和结构变化，但其中增量主要来自并购、离岛优化和机场业务，需用跨期同渠道数据验证可重复性。",
+        "open_evidence": "合同期限与续约、租金保底/浮动条款、客流转化、库存周转及维护资本开支是决定正常化范围的未决事实。",
+        "treatment": "成熟渠道进入有界基准；刚并表渠道条件性纳入；在建/竞标及未拆分扩张投入排除出基准。"
+      },
+      "owner_cash_treatment": "不可完整界定：集团经营现金流、存货变化、收购和建设支出尚未按普通股责任边界拆分；仅能建立方向性现金桥和条件范围。",
+      "permanent_loss_map": {
+        "boundary_call": "上述风险目前支持可识别的永久损失路径，但不足以量化损失幅度；保持分项UNKNOWN并以续约、库存和资产组现金证据更新。",
+        "channel_expiry_or_rent": "经营权到期不续、竞争性招标失标或租金跃升可令成熟渠道现金快速下降；无合同期限和租金率披露时仅作压力路径。",
+        "demand_policy": "机场客流、离岛政策或汇率变化削弱购物吸收，可能压低毛利并触发促销和库存减值。",
+        "integration_and_capital": "日上上海商誉约8.225亿元及收购、土地、在建工程和改扩建投入若未形成相应现金回报，可能出现商誉减值、资产减值或资本永久占用。",
+        "inventory": "期末存货59.431亿元、占总资产22.14%，增长与并表及备货相关；若销售不及预期，跌价准备和现金回收损失会先于利润表显现。"
+      },
+      "reader_order": [
+        "central_path",
+        "industry_future_transmission",
+        "situation_and_route",
+        "survival_and_adaptation",
+        "normalization_and_owner_cash",
+        "permanent_loss_and_rival",
+        "value_route_and_research_treatment",
+        "reversal_observations"
+      ],
+      "reversal_observations": [
+        "既有机场与离岛渠道连续年度客流、购物转化、毛利、租金和库存均稳定或改善，并能与新并表渠道分开核验。",
+        "新取得或并表渠道完成首次全年承接后，商品库存、租金和营销投入仍对应可重复的普通股现金。",
+        "经营权续约、租金重谈或竞争性招标结果显示渠道期限风险没有系统性侵蚀成熟渠道现金。",
+        "库存周转和期后销售支持无需大额减值，收购整合及商誉未形成新的资本缺口。"
+      ],
+      "sample_identity": "BLIND_REPLAY",
+      "schema_version": "enterprise-underwriting-golden-report-handoff.v2",
+      "situation_model": {
+        "industry_future_thesis": {
+          "adaptation": "管理层已整合日上中国/日上上海商品人员流程，调整商品结构并与阿里开展线上线下及数据合作，也为离岛政策调整进行采购、培训和提货准备；这些动作提升适应可能性，但尚未证明每个新渠道的持续单位经济。",
+          "company_exposure": "公司同时暴露于机场、离岛及其他免税渠道，既有成熟存量，也有2018年新并表和新取得经营权项目；商品销售占比提升、日上上海并表和机场业务使其对渠道条件与库存责任更敏感。",
+          "horizon": "未来约三至五年，观察客流与免税政策、经营权期限/续约、租金责任和竞争招标如何共同决定渠道利润池。",
+          "most_likely_regime": "行业保持增长但不是永久特许的单向扩张：旅游恢复和政策可扩大可服务客流，经营权到期、租金重谈和竞争性招标使利润池具有周期性与再取得风险。",
+          "normal_economics": "正常化应以成熟渠道跨期客流、转化、毛利和租金后的现金为基准；新并表渠道需经过完整年度承接，建设和竞标项目只能作为条件场景，直到合同与单位经济证据补齐。",
+          "permanent_loss": "永久损失主要来自经营权不续或租金跃升导致渠道现金断崖、客流/政策变化造成库存减值、并购整合或商誉减值，以及建设和收购资本无法由普通股现金回收；损失风险在责任边界不清时会从单一渠道扩散至集团。",
+          "profit_pool_transmission": "利润先由授权渠道带来的客流和购物转化形成销售，再经商品组合、采购毛利、租金、人工、库存和维护投入传导至普通股；总收入或集团毛利率不能替代这一逐渠道传导。",
+          "reversal_observations": [
+            "既有机场与离岛渠道连续年度客流、购物转化、毛利、租金和库存均稳定或改善，并能与新并表渠道分开核验。",
+            "新取得或并表渠道完成首次全年承接后，商品库存、租金和营销投入仍对应可重复的普通股现金。",
+            "经营权续约、租金重谈或竞争性招标结果显示渠道期限风险没有系统性侵蚀成熟渠道现金。",
+            "库存周转和期后销售支持无需大额减值，收购整合及商誉未形成新的资本缺口。"
+          ],
+          "strongest_rival": "最强反方是机场与离岛流量、品牌和政策红利继续扩大，采购整合及数字化提高转化和毛利，使新渠道快速达到成熟渠道的现金回报并覆盖库存、租金和扩张投入。",
+          "valuation_treatment": "仅把有跨期吸收和责任边界证据的成熟渠道纳入有界基准；新经营权、在建项目和未拆分的收购/扩张现金作为条件或压力场景，不把集团经营现金流直接当作普通股可分配现金。"
+        },
+        "summary": "免税零售利润池由旅游客流、政策授权和机场/离岛等有期限经营权共同传导。公司在2018年通过日上上海并表、机场招投标和离岛优化迅速扩大商品销售，但库存、租金、建设和收购现金责任同步上升。成熟渠道已有经营数据，刚并表和建设/竞标渠道的跨期承接尚未被截止日证据充分证明，因此总体判断为有生存基础、扩张需条件化、普通股现金需重建责任边界。"
+      },
+      "strongest_rival": "最强反方是机场与离岛流量、品牌和政策红利继续扩大，采购整合及数字化提高转化和毛利，使新渠道快速达到成熟渠道的现金回报并覆盖库存、租金和扩张投入。",
+      "survival_case": {
+        "basis": "FY2018归母净利润30.95亿元、经营活动现金流27.22亿元、期末货币资金约111.35亿元，且已有多类机场与离岛渠道及并购整合能力。",
+        "call": "可生存",
+        "constraints": "短期借款、长期借款与债券、应付租金、供应商和少数股东等索取权必须与经营现金分层；负投资现金流、库存备货和建设支出使账面现金不能等同可自由分配现金。",
+        "financing_test": "后续应验证成熟渠道现金是否覆盖租金、维护投入、库存补充、债务与少数股东责任；若不能覆盖，生存仍可能依赖收缩扩张或外部融资。"
+      },
+      "underwriting_thesis_id": "THESIS:CN601888:20190501:CHANNEL_CONTRACT_CASH_ENHANCED",
+      "value_route": {
+        "excluded_routes": [
+          "以集团经营活动现金流直接替代owner cash",
+          "把新取得经营权或在建项目当作永久增长",
+          "仅凭总收入、总毛利率或商誉推导价值"
+        ],
+        "primary_routes": [
+          "成熟渠道剩余经营期现金流的有界承保",
+          "按渠道责任边界重建普通股可得现金",
+          "将续约、租金和库存压力作为情景分支"
+        ],
+        "route_reasoning": "价值路线取决于经营权期限、消费者吸收和租金/库存/资本责任能否在同一渠道边界闭合；截止日资料足以形成方向和条件，但不足以形成数值估值。",
+        "valuation_model_roles": {
+          "corroborative": [
+            "跨年度同店单位经济",
+            "合同续约与租金敏感性"
+          ],
+          "primary": [
+            "成熟渠道分期现金流",
+            "责任边界下的普通股现金桥"
+          ],
+          "stress": [
+            "渠道到期/失标",
+            "客流下滑与库存减值",
+            "扩张资本回收不足"
+          ]
+        }
+      }
+    },
+    "valuation_route_request": {
+      "authority": "ROUTE_REQUEST_ONLY",
+      "boundary": "No current value, price, expected return, BuyBand, or investment action is generated.",
+      "company_id": "CN:601888",
+      "compatibility_resolution": "Current-company underwriting may enter CJO and valuation routing through a source-bound, independently reviewed complete Episode; SELECTION_ADMITTED remains local to claims that actually depend on comparative selection or causal authority.",
+      "cutoff_at": "2019-05-01T00:00:00+08:00",
+      "episode_id": "UWTRAIN:CN601888:20190501:INDEPENDENT_AB_3:ENHANCED:MANUAL_FRESH",
+      "excluded_routes": [
+        "以集团经营活动现金流直接替代owner cash",
+        "把新取得经营权或在建项目当作永久增长",
+        "仅凭总收入、总毛利率或商誉推导价值"
+      ],
+      "existing_valuation_adapter": "scripts/valuation_routing.py:build_valuation_route",
+      "inputs_excluded_from_base": [
+        "construction_and_bid_expansion",
+        "owner_cash"
+      ],
+      "normal_earnings_input_treatment": "混合：成熟存量渠道进入有界基准，日上上海及新机场经营权待完整年度承接验证，建设/竞标项目排除出基准。",
+      "owner_cash_input_treatment": "不可完整界定：集团经营现金流、存货变化、收购和建设支出尚未按普通股责任边界拆分；仅能建立方向性现金桥和条件范围。",
+      "permanent_loss_input_treatment": "条件性承保：不续约/租金跃升、客流政策冲击、库存减值、并购整合和资本回收不足均可造成永久损失，当前不量化幅度。",
+      "primary_routes": [
+        "成熟渠道剩余经营期现金流的有界承保",
+        "按渠道责任边界重建普通股可得现金",
+        "将续约、租金和库存压力作为情景分支"
+      ],
+      "request_id": "UW-VR:UWTRAIN:CN601888:20190501:INDEPENDENT_AB_3:ENHANCED:MANUAL_FRESH",
+      "route_reasoning": "价值路线取决于经营权期限、消费者吸收和租金/库存/资本责任能否在同一渠道边界闭合；截止日资料足以形成方向和条件，但不足以形成数值估值。",
+      "sample_identity": "BLIND_REPLAY",
+      "schema_version": "enterprise-underwriting-valuation-route-request.v2",
+      "situation_model": {
+        "industry_future_thesis": {
+          "adaptation": "管理层已整合日上中国/日上上海商品人员流程，调整商品结构并与阿里开展线上线下及数据合作，也为离岛政策调整进行采购、培训和提货准备；这些动作提升适应可能性，但尚未证明每个新渠道的持续单位经济。",
+          "company_exposure": "公司同时暴露于机场、离岛及其他免税渠道，既有成熟存量，也有2018年新并表和新取得经营权项目；商品销售占比提升、日上上海并表和机场业务使其对渠道条件与库存责任更敏感。",
+          "horizon": "未来约三至五年，观察客流与免税政策、经营权期限/续约、租金责任和竞争招标如何共同决定渠道利润池。",
+          "most_likely_regime": "行业保持增长但不是永久特许的单向扩张：旅游恢复和政策可扩大可服务客流，经营权到期、租金重谈和竞争性招标使利润池具有周期性与再取得风险。",
+          "normal_economics": "正常化应以成熟渠道跨期客流、转化、毛利和租金后的现金为基准；新并表渠道需经过完整年度承接，建设和竞标项目只能作为条件场景，直到合同与单位经济证据补齐。",
+          "permanent_loss": "永久损失主要来自经营权不续或租金跃升导致渠道现金断崖、客流/政策变化造成库存减值、并购整合或商誉减值，以及建设和收购资本无法由普通股现金回收；损失风险在责任边界不清时会从单一渠道扩散至集团。",
+          "profit_pool_transmission": "利润先由授权渠道带来的客流和购物转化形成销售，再经商品组合、采购毛利、租金、人工、库存和维护投入传导至普通股；总收入或集团毛利率不能替代这一逐渠道传导。",
+          "reversal_observations": [
+            "既有机场与离岛渠道连续年度客流、购物转化、毛利、租金和库存均稳定或改善，并能与新并表渠道分开核验。",
+            "新取得或并表渠道完成首次全年承接后，商品库存、租金和营销投入仍对应可重复的普通股现金。",
+            "经营权续约、租金重谈或竞争性招标结果显示渠道期限风险没有系统性侵蚀成熟渠道现金。",
+            "库存周转和期后销售支持无需大额减值，收购整合及商誉未形成新的资本缺口。"
+          ],
+          "strongest_rival": "最强反方是机场与离岛流量、品牌和政策红利继续扩大，采购整合及数字化提高转化和毛利，使新渠道快速达到成熟渠道的现金回报并覆盖库存、租金和扩张投入。",
+          "valuation_treatment": "仅把有跨期吸收和责任边界证据的成熟渠道纳入有界基准；新经营权、在建项目和未拆分的收购/扩张现金作为条件或压力场景，不把集团经营现金流直接当作普通股可分配现金。"
+        },
+        "summary": "免税零售利润池由旅游客流、政策授权和机场/离岛等有期限经营权共同传导。公司在2018年通过日上上海并表、机场招投标和离岛优化迅速扩大商品销售，但库存、租金、建设和收购现金责任同步上升。成熟渠道已有经营数据，刚并表和建设/竞标渠道的跨期承接尚未被截止日证据充分证明，因此总体判断为有生存基础、扩张需条件化、普通股现金需重建责任边界。"
+      },
+      "underwriting_thesis_id": "THESIS:CN601888:20190501:CHANNEL_CONTRACT_CASH_ENHANCED",
+      "valuation_model_roles": {
+        "corroborative": [
+          "跨年度同店单位经济",
+          "合同续约与租金敏感性"
+        ],
+        "primary": [
+          "成熟渠道分期现金流",
+          "责任边界下的普通股现金桥"
+        ],
+        "stress": [
+          "渠道到期/失标",
+          "客流下滑与库存减值",
+          "扩张资本回收不足"
+        ]
+      }
+    }
+  },
+  "sample_identity": "BLIND_REPLAY",
+  "schema_version": "enterprise-underwriting-training-downstream-bundle.v1"
+}
