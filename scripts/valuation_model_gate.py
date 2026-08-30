@@ -270,6 +270,43 @@ def build_valuation_model_ledger(
         payload["value_bridge_models"] = compile_valuation_value_bridges(
             value_bridge_inputs
         )
+        canonical_epv = _mapping(
+            _mapping(payload["value_bridge_models"].get("result")).get("epv")
+        )
+        if canonical_epv:
+            surfaces = _canonical_epv_route_surfaces(canonical_epv)
+            for model in payload["models"]:
+                if (
+                    isinstance(model, dict)
+                    and model.get("status", "active") == "active"
+                    and model.get("model_type") == "EPV"
+                    and model.get("model_id") == canonical_epv.get("model_id")
+                ):
+                    epv_basis = _mapping(canonical_epv.get("basis"))
+                    model_basis = _mapping(model.get("basis"))
+                    model_basis.update({
+                        "value_scope": epv_basis.get("value_scope"),
+                        "currency": epv_basis.get("currency"),
+                        "as_of": epv_basis.get("as_of"),
+                    })
+                    model["basis"] = model_basis
+                    model["cross_check_context"] = {
+                        field: epv_basis.get(field)
+                        for field in (
+                            "economic_entity", "operating_perimeter",
+                            "ordinary_share_claim_scope",
+                        )
+                    }
+                    model["normalization_bridge"] = deepcopy(
+                        canonical_epv["normalization_bridge"]
+                    )
+                    model["result"] = deepcopy(surfaces["result"])
+                    if surfaces["equity_bridge"] is None:
+                        model.pop("equity_bridge", None)
+                    else:
+                        model["equity_bridge"] = deepcopy(
+                            surfaces["equity_bridge"]
+                        )
     payload["freeze"] = {
         "frozen": bool(freeze),
         "fingerprint": valuation_fingerprint(payload) if freeze else "",
@@ -291,6 +328,90 @@ def _same(left: Any, right: Any, tolerance: float = 1e-4) -> bool:
         return True
     lval, rval = _num(left), _num(right)
     return lval is not None and rval is not None and math.isclose(lval, rval, rel_tol=tolerance, abs_tol=tolerance)
+
+
+def _canonical_epv_route_surfaces(epv: dict[str, Any]) -> dict[str, Any]:
+    """Project canonical EPV into legacy route-model fields owned by code.
+
+    Route models remain useful applicability descriptors.  Their numeric
+    result, normalization and equity bridge are projections, not a second
+    caller-owned EPV calculation.
+    """
+    basis = _mapping(epv.get("basis"))
+    per_share = _mapping(epv.get("per_share_range"))
+    result = {
+        "value_per_share": per_share.get("range_low"),
+        "range_low": per_share.get("range_low"),
+        "range_high": per_share.get("range_high"),
+        "currency": basis.get("currency"),
+        "status": epv.get("status"),
+        "endpoint_policy": "CONSERVATIVE_LOW",
+    }
+    if epv.get("status") != "COMPARABLE":
+        return {"result": result, "equity_bridge": None}
+
+    canonical_bridge = _mapping(epv.get("equity_bridge"))
+    claims_components = canonical_bridge.get("non_operating_components") or []
+    nonoperating_rows: list[dict[str, Any]] = []
+    nonoperating_assets = 0.0
+    cash_amount = 0.0
+    cash_claim_ids: list[str] = []
+    for raw_component in claims_components:
+        component = _mapping(raw_component)
+        amount = float(component["range_low"])
+        is_cash = component.get("kind") == "NON_OPERATING_CASH"
+        claim_ids = [str(item) for item in component.get("claim_ids") or []]
+        nonoperating_assets += amount
+        if is_cash:
+            cash_amount += amount
+            cash_claim_ids.extend(claim_ids)
+        nonoperating_rows.append({
+            "component_id": component["component_id"],
+            "kind": "cash" if is_cash else "other",
+            "amount": amount,
+            "claim_ids": claim_ids,
+        })
+    shares = float(canonical_bridge["shares"])
+    operating_low = float(
+        _mapping(epv.get("operating_value_range"))["range_low"]
+    )
+    ordinary_low = float(
+        _mapping(epv.get("ordinary_common_equity_range"))["range_low"]
+    )
+    if basis.get("value_scope") == "enterprise":
+        debt = float(_mapping(canonical_bridge.get("debt"))["range_high"])
+        minority = float(
+            _mapping(canonical_bridge.get("minority_interest"))["range_high"]
+        )
+        preferred = float(
+            _mapping(canonical_bridge.get("preferred_claims"))["range_high"]
+        )
+    else:
+        debt = minority = preferred = 0.0
+    other_adjustments = float(
+        _mapping(canonical_bridge.get("other_adjustments"))["range_low"]
+    ) - preferred
+    return {
+        "result": result,
+        "equity_bridge": {
+            "enterprise_value": operating_low,
+            "non_operating_assets": nonoperating_assets,
+            "debt": debt,
+            "minority_interest": minority,
+            "other_adjustments": other_adjustments,
+            "equity_value": ordinary_low,
+            "shares": shares,
+            "per_share_value": ordinary_low / shares,
+            "currency": basis.get("currency"),
+            "ordinary_share_claim_scope": basis.get(
+                "ordinary_share_claim_scope"
+            ),
+            "cash_component_per_share": cash_amount / shares,
+            "cash_component_claim_ids": sorted(set(cash_claim_ids)),
+            "non_operating_asset_components": nonoperating_rows,
+            "endpoint_policy": "CONSERVATIVE_LOW",
+        },
+    }
 
 
 def _validate_normalization_bridge(
@@ -697,43 +818,6 @@ def _validate_cash_component_contract(
         invalid.append("cash_component_contract_inclusion_location_invalid")
 
 
-def _active_epv_cross_check_values(
-    model: dict[str, Any],
-) -> tuple[dict[str, Any], list[str]]:
-    """Return the only EPV range a replacement cross-check may cite.
-
-    The replacement model may describe an EPV range for comparison, but it
-    does not own that range.  It must be an exact projection of the active
-    EPV model's equity bridge/result rather than a second hand-entered EPV.
-    """
-    findings: list[str] = []
-    result = _mapping(model.get("result"))
-    bridge = _mapping(model.get("equity_bridge"))
-    shares = _num(bridge.get("shares"))
-    low = _num(result.get("range_low"))
-    high = _num(result.get("range_high"))
-    if low is None or high is None:
-        point = _num(result.get("value_per_share"))
-        if point is None:
-            point = _num(bridge.get("per_share_value"))
-        low = point if low is None else low
-        high = point if high is None else high
-    if shares is None or shares <= 0:
-        findings.append("shares_invalid")
-    if low is None or high is None or low > high:
-        findings.append("per_share_range_invalid")
-    if findings:
-        return {}, findings
-    assert shares is not None and low is not None and high is not None
-    return {
-        "shares": shares,
-        "per_share_low": low,
-        "per_share_high": high,
-        "equity_value_low": low * shares,
-        "equity_value_high": high * shares,
-    }, findings
-
-
 _BRIDGE_BINDING_SKIP_KEYS = {"canonical_fact_bindings"}
 _BRIDGE_BINDING_SOURCE_KEYS = {
     "source_fact_ids",
@@ -837,6 +921,14 @@ def _bridge_operand_context(
     if leaf in {"fraction_low", "fraction_high"}:
         context["unit"] = "ratio"
         context["currency"] = ""
+    if wrapper_key == "epv" and (
+        ".tax.rate_" in path or ".capitalization.rate_" in path
+    ):
+        context["unit"] = "ratio"
+        context["currency"] = ""
+    if wrapper_key == "epv" and ".claims_bridge.shares.value" in path:
+        context["unit"] = "million_shares"
+        context["currency"] = ""
     if (
         wrapper_key == "replacement_value"
         and (
@@ -906,6 +998,17 @@ def _bridge_operand_context(
             cohort = cohorts[int(cohort_match.group(1))] if int(cohort_match.group(1)) < len(cohorts) else {}
             if isinstance(cohort, dict):
                 context["cohort_id"] = str(cohort.get("cohort_id") or "")
+    epv_period_match = re.match(r"epv\.model_input\.period_facts\[(\d+)\]", path)
+    if epv_period_match:
+        periods = model.get("period_facts") or []
+        period_index = int(epv_period_match.group(1))
+        period = periods[period_index] if period_index < len(periods) else {}
+        if isinstance(period, dict):
+            context["period_start"] = str(period.get("period_start") or "")
+            context["period_end"] = str(period.get("period_end") or "")
+            context["as_of"] = context["period_end"] or as_of
+            if ".normalization_adjustments[" not in path:
+                context["temporal_role"] = "HISTORICAL_PERIOD"
     return context
 
 
@@ -1222,7 +1325,7 @@ def _validate_value_bridge_models(
 ) -> None:
     """Bind fact-derived value bridges to the models that consume them.
 
-    The bridge compiler recomputes all three specialist models.  This gate
+    The bridge compiler recomputes the specialist models.  This gate
     then checks their economic destinations: cash may enter value only at its
     calibrated realization, working capital may normalize owner cash once,
     and replacement value may only cross-check EPV.
@@ -1244,10 +1347,14 @@ def _validate_value_bridge_models(
     ) or isinstance(compiled_results.get("replacement_value"), dict) or (
         _num(synthesis.get("joint_protection_price_ceiling")) is not None
     )
+    needs_epv = any(
+        model.get("model_type") == "EPV" for model in active_models
+    ) or needs_replacement
     required_keys = {
         key
         for key, needed in (
             ("cash_accessibility", needs_cash),
+            ("epv", needs_epv),
             ("working_capital", needs_working_capital),
             ("replacement_value", needs_replacement),
         )
@@ -1312,30 +1419,135 @@ def _validate_value_bridge_models(
             incomplete=incomplete,
         )
 
+    epv = results.get("epv")
+    epv_model_input = _mapping(
+        _mapping(_mapping(compiled).get("model_input")).get("epv")
+    ).get("model_input")
+    if isinstance(epv, dict):
+        epv_id = str(epv.get("model_id") or "")
+        active_epv = [
+            model for model in active_models
+            if model.get("model_type") == "EPV"
+        ]
+        matching_epv = [
+            model for model in active_epv
+            if str(model.get("model_id") or "") == epv_id
+        ]
+        if needs_epv and not matching_epv:
+            incomplete.append("canonical_epv_active_model_binding_missing")
+        epv_basis = _mapping(epv.get("basis"))
+        epv_bridge = _mapping(epv.get("equity_bridge"))
+        for model in matching_epv:
+            model_id = str(model.get("model_id") or "unknown")
+            basis = _mapping(model.get("basis"))
+            if basis.get("currency") != epv_basis.get("currency"):
+                invalid.append(model_id + ":canonical_epv_currency_mismatch")
+            if basis.get("as_of") != epv_basis.get("as_of"):
+                invalid.append(model_id + ":canonical_epv_as_of_mismatch")
+            if basis.get("value_scope") != epv_basis.get("value_scope"):
+                invalid.append(model_id + ":canonical_epv_value_scope_mismatch")
+            context = _mapping(model.get("cross_check_context"))
+            for field in (
+                "economic_entity", "operating_perimeter",
+                "ordinary_share_claim_scope",
+            ):
+                if context.get(field) != epv_basis.get(field):
+                    invalid.append(model_id + ":canonical_epv_context_mismatch:" + field)
+            legacy_equity_bridge = _mapping(model.get("equity_bridge"))
+            if epv_bridge and not _same(
+                legacy_equity_bridge.get("shares"), epv_bridge.get("shares")
+            ):
+                invalid.append(model_id + ":canonical_epv_shares_mismatch")
+        if epv.get("status") != "COMPARABLE" and any(
+            model.get("role") == "primary" for model in matching_epv
+        ):
+            incomplete.append("canonical_epv_primary_not_comparable")
+        canonical_epv_input = _mapping(epv_model_input)
+        claims_input = _mapping(canonical_epv_input.get("claims_bridge"))
+        epv_cash_components = [
+            _mapping(item)
+            for item in claims_input.get("non_operating_components") or []
+            if _mapping(item).get("kind") == "NON_OPERATING_CASH"
+        ]
+        cash_result = _mapping(results.get("cash_accessibility"))
+        if cash_result:
+            expected_claim_ids = sorted([
+                "cash.existing_excess_cash_per_share",
+                "cash.related_party_receivable_per_share",
+            ])
+            recognized_cash = sum(
+                _num(
+                    _mapping(cash_result.get(component)).get("adopted_value")
+                ) or 0.0
+                for component in (
+                    "existing_excess_cash_realization",
+                    "related_party_receivable_realization",
+                )
+            )
+            contract = _mapping(synthesis.get("cash_component_contract"))
+            location = str(contract.get("inclusion_location") or "")
+            epv_claim_ids = sorted({
+                str(claim_id)
+                for component in epv_cash_components
+                for claim_id in component.get("claim_ids") or []
+            })
+            low = sum(_num(item.get("range_low")) or 0.0 for item in epv_cash_components)
+            high = sum(_num(item.get("range_high")) or 0.0 for item in epv_cash_components)
+            if location == "PRIMARY_MODEL_EQUITY_BRIDGE":
+                if recognized_cash > 0 and (
+                    epv_claim_ids != expected_claim_ids
+                    or not _same(low, recognized_cash)
+                    or not _same(high, recognized_cash)
+                ):
+                    invalid.append("canonical_epv_cash_component_not_cash_model_derived")
+                if recognized_cash <= 0 and epv_cash_components:
+                    invalid.append("canonical_epv_unrecognized_cash_component_forbidden")
+            elif location == "SEPARATE_COMPONENT":
+                if epv_cash_components:
+                    invalid.append("canonical_epv_separate_cash_double_count")
+            elif recognized_cash > 0:
+                incomplete.append("canonical_epv_cash_inclusion_location_missing")
+
     working = results.get("working_capital")
     if isinstance(working, dict):
         reference = _mapping(working.get("reference_period_result"))
         adopted_owner_cash = _num(reference.get("adopted_normalized_owner_cash"))
         reference_period_id = str(reference.get("period_id") or "")
         working_model_id = str(working.get("model_id") or "")
-        if adopted_owner_cash is None and needs_working_capital:
-            incomplete.append("working_capital_normalized_owner_cash_unknown")
-        for model in active_models:
-            if model.get("model_type") != "EPV":
-                continue
-            model_id = str(model.get("model_id") or "unknown")
-            bridge = _mapping(model.get("normalization_bridge"))
-            if bridge.get("working_capital_model_id") != working_model_id:
-                incomplete.append(model_id + ":working_capital_model_binding_missing")
-            if bridge.get("working_capital_reference_period_id") != reference_period_id:
-                incomplete.append(model_id + ":working_capital_reference_period_mismatch")
-            normalized = _num(bridge.get("normalized_earnings_model_currency"))
-            if (
-                adopted_owner_cash is not None
-                and normalized is not None
-                and not _same(normalized, adopted_owner_cash, tolerance=5e-3)
-            ):
-                invalid.append(model_id + ":normalized_earnings_not_working_capital_derived")
+        canonical_epv_input = _mapping(epv_model_input)
+        canonical_wc = _mapping(
+            canonical_epv_input.get("maintenance_working_capital")
+        )
+        if canonical_epv_input:
+            source_model_id = str(canonical_wc.get("source_model_id") or "")
+            if canonical_wc.get("status") == "ALREADY_REFLECTED":
+                if source_model_id != working_model_id:
+                    invalid.append("canonical_epv_working_capital_model_mismatch")
+                if adopted_owner_cash is None:
+                    invalid.append(
+                        "canonical_epv_claims_normalized_working_capital_without_bounded_model"
+                    )
+            elif adopted_owner_cash is None and _mapping(epv).get("status") == "COMPARABLE":
+                invalid.append("canonical_epv_ignores_unknown_working_capital")
+        else:
+            if adopted_owner_cash is None and needs_working_capital:
+                incomplete.append("working_capital_normalized_owner_cash_unknown")
+            for model in active_models:
+                if model.get("model_type") != "EPV":
+                    continue
+                model_id = str(model.get("model_id") or "unknown")
+                bridge = _mapping(model.get("normalization_bridge"))
+                if bridge.get("working_capital_model_id") != working_model_id:
+                    incomplete.append(model_id + ":working_capital_model_binding_missing")
+                if bridge.get("working_capital_reference_period_id") != reference_period_id:
+                    incomplete.append(model_id + ":working_capital_reference_period_mismatch")
+                normalized = _num(bridge.get("normalized_earnings_model_currency"))
+                if (
+                    adopted_owner_cash is not None
+                    and normalized is not None
+                    and not _same(normalized, adopted_owner_cash, tolerance=5e-3)
+                ):
+                    invalid.append(model_id + ":normalized_earnings_not_working_capital_derived")
 
     replacement = results.get("replacement_value")
     if isinstance(replacement, dict):
@@ -1404,9 +1616,10 @@ def _validate_value_bridge_models(
                 if not _same(result.get("value_per_share"), low):
                     invalid.append(model_id + ":replacement_value_scalar_must_use_low_endpoint")
         epv_result = _mapping(replacement.get("epv_cross_check"))
-        epv_check = _mapping(replacement_model_input.get("epv_cross_check"))
+        canonical_epv = _mapping(results.get("epv"))
+        epv_check = _mapping(canonical_epv)
         if epv_result.get("status") == "COMPARABLE":
-            epv_id = str(epv_check.get("model_id") or "")
+            epv_id = str(epv_result.get("model_id") or "")
             epv_model = next(
                 (
                     model for model in active_models
@@ -1418,48 +1631,62 @@ def _validate_value_bridge_models(
             if epv_model is None:
                 invalid.append("replacement_value_epv_cross_check_model_not_active")
             else:
-                epv_basis = _mapping(epv_model.get("basis"))
+                epv_basis = _mapping(canonical_epv.get("basis"))
                 if (
                     epv_basis.get("currency") != replacement_basis.get("currency")
+                    or epv_basis.get("unit") != replacement_basis.get("unit")
                     or epv_basis.get("as_of") != replacement_basis.get("as_of")
                 ):
                     invalid.append("replacement_value_epv_cross_check_basis_mismatch")
-                context = _mapping(epv_model.get("cross_check_context"))
                 for field in (
                     "economic_entity",
                     "operating_perimeter",
                     "ordinary_share_claim_scope",
                 ):
-                    if not str(context.get(field) or "").strip():
-                        invalid.append(
-                            "replacement_value_epv_cross_check_context_missing:" + field
-                        )
-                    elif context.get(field) != epv_check.get(field):
+                    if epv_basis.get(field) != replacement_basis.get(field):
                         invalid.append(
                             "replacement_value_epv_cross_check_context_mismatch:" + field
                         )
-                active_values, active_findings = _active_epv_cross_check_values(epv_model)
-                if active_findings:
-                    invalid.extend(
-                        "replacement_value_epv_cross_check_active_epv_" + finding
-                        for finding in active_findings
+                canonical_equity = _mapping(
+                    canonical_epv.get("ordinary_common_equity_range")
+                )
+                canonical_per_share = _mapping(canonical_epv.get("per_share_range"))
+                canonical_bridge = _mapping(canonical_epv.get("equity_bridge"))
+                expected_values = {
+                    "equity_value_low": canonical_equity.get("range_low"),
+                    "equity_value_high": canonical_equity.get("range_high"),
+                    "per_share_low": canonical_per_share.get("range_low"),
+                    "per_share_high": canonical_per_share.get("range_high"),
+                }
+                observed_values = {
+                    "equity_value_low": _mapping(
+                        epv_result.get("epv_equity_range")
+                    ).get("range_low"),
+                    "equity_value_high": _mapping(
+                        epv_result.get("epv_equity_range")
+                    ).get("range_high"),
+                    "per_share_low": _mapping(
+                        epv_result.get("epv_per_share_range")
+                    ).get("range_low"),
+                    "per_share_high": _mapping(
+                        epv_result.get("epv_per_share_range")
+                    ).get("range_high"),
+                }
+                for field, expected in expected_values.items():
+                    if not _same(observed_values[field], expected):
+                        invalid.append(
+                            "replacement_value_epv_cross_check_not_canonical_epv_"
+                            + field
+                        )
+                if not _same(
+                    canonical_bridge.get("shares"),
+                    _mapping(replacement.get("claims_bridge")).get(
+                        "shares_outstanding"
+                    ),
+                ):
+                    invalid.append(
+                        "replacement_value_epv_cross_check_shares_mismatch"
                     )
-                else:
-                    for field in (
-                        "shares_outstanding",
-                        "per_share_low",
-                        "per_share_high",
-                        "equity_value_low",
-                        "equity_value_high",
-                    ):
-                        expected_field = {
-                            "shares_outstanding": "shares",
-                        }.get(field, field)
-                        if not _same(epv_check.get(field), active_values[expected_field]):
-                            invalid.append(
-                                "replacement_value_epv_cross_check_not_active_epv_"
-                                + field
-                            )
         joint_ceiling = _num(
             _mapping(projection.get("joint_protection_price_ceiling")).get("value")
         )
@@ -1564,6 +1791,16 @@ def validate_valuation_model_ledger(
     if output is not None and output.is_dir(): registry.register_from_output_dir(str(output))
     group_assumptions: dict[str, set[str]] = {}
     chapter_texts = _chapter_texts(report_text)
+    canonical_epv_result = _mapping(
+        _mapping(_mapping(payload.get("value_bridge_models")).get("result")).get(
+            "epv"
+        )
+    )
+    canonical_epv_model_id = str(canonical_epv_result.get("model_id") or "")
+    canonical_epv_surfaces = (
+        _canonical_epv_route_surfaces(canonical_epv_result)
+        if canonical_epv_result else {}
+    )
     for idx, model in enumerate(models):
         prefix = f"models[{idx}]"
         if not isinstance(model, dict): invalid.append(prefix + ":not_object"); continue
@@ -1571,6 +1808,10 @@ def validate_valuation_model_ledger(
         mtype = str(model.get("model_type") or "").strip()
         role = str(model.get("role") or "").strip()
         status = str(model.get("status") or "active")
+        canonical_epv_owned = (
+            mtype == "EPV" and bool(canonical_epv_model_id)
+            and mid == canonical_epv_model_id
+        )
         route_model_id = str(model.get("route_model_id") or "").strip()
         if not mid: invalid.append(prefix + ":model_id_missing")
         elif mid in seen: invalid.append("duplicate_model_id:" + mid)
@@ -1685,6 +1926,19 @@ def validate_valuation_model_ledger(
 
         result = model.get("result")
         if not isinstance(result, dict): invalid.append(f"{mid}:result_invalid"); result = {}
+        if canonical_epv_owned:
+            if result != canonical_epv_surfaces.get("result"):
+                invalid.append(f"{mid}:canonical_epv_result_not_projection")
+            if model.get("normalization_bridge") != canonical_epv_result.get(
+                "normalization_bridge"
+            ):
+                invalid.append(
+                    f"{mid}:canonical_epv_normalization_not_projection"
+                )
+            if model.get("equity_bridge") != canonical_epv_surfaces.get(
+                "equity_bridge"
+            ):
+                invalid.append(f"{mid}:canonical_epv_equity_bridge_not_projection")
         value = _num(result.get("value_per_share"))
         canonical_replacement = _mapping(
             _mapping(_mapping(payload.get("value_bridge_models")).get("result")).get(
@@ -1700,11 +1954,21 @@ def validate_valuation_model_ledger(
             and canonical_replacement.get("per_share_range") is None
         )
         if value is None or value <= 0:
-            if not replacement_scope_incomplete:
+            canonical_epv_unavailable = (
+                canonical_epv_owned
+                and canonical_epv_result.get("status") == "NOT_COMPARABLE"
+            )
+            if not replacement_scope_incomplete and not canonical_epv_unavailable:
                 invalid.append(f"{mid}:value_per_share_invalid")
-        if role == "primary" and mtype == "EPV" and require_normalization_bridge:
+        if (
+            role == "primary" and mtype == "EPV"
+            and require_normalization_bridge and not canonical_epv_owned
+        ):
             invalid.extend(_validate_normalization_bridge(mid, model, basis, result))
-        if role == "primary" and mtype == "EPV" and require_owner_earnings_normalization:
+        if (
+            role == "primary" and mtype == "EPV"
+            and require_owner_earnings_normalization and not canonical_epv_owned
+        ):
             invalid.extend(_validate_owner_earnings_normalization(mid, model))
         if role == "primary" and mtype == "RETURN_DECOMPOSITION" and require_decay_treatment:
             invalid.extend(_validate_decay_treatment(mid, model, result))
@@ -1712,7 +1976,11 @@ def validate_valuation_model_ledger(
             invalid.extend(_validate_holding_period_return_bridge(mid, model))
         bridge = model.get("equity_bridge")
         if basis.get("value_scope") == "enterprise":
-            if not isinstance(bridge, dict): invalid.append(f"{mid}:enterprise_equity_bridge_missing")
+            if not isinstance(bridge, dict) and not (
+                canonical_epv_owned
+                and canonical_epv_result.get("status") == "NOT_COMPARABLE"
+            ):
+                invalid.append(f"{mid}:enterprise_equity_bridge_missing")
         if isinstance(bridge, dict):
             required = ["enterprise_value", "non_operating_assets", "debt", "minority_interest", "other_adjustments", "equity_value", "shares", "per_share_value"]
             if any(_num(bridge.get(key)) is None for key in required): invalid.append(f"{mid}:equity_bridge_fields_invalid")

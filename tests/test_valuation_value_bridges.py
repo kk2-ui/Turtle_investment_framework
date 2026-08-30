@@ -275,6 +275,8 @@ def _working_capital_input(*, unknown: bool = False) -> dict:
         ),
         "evidence_ids": ["OBS:WC:NORMALIZATION"],
     }
+
+
     return {
         "schema_version": "working-capital-model.v1",
         "model_id": "WCM:BRIDGE-TEST",
@@ -334,6 +336,104 @@ def _working_capital_input(*, unknown: bool = False) -> dict:
     }
 
 
+def _epv_input(*, unknown: bool = False) -> dict:
+    def source(name: str) -> list[str]:
+        return ["OBS:EPV:" + name]
+
+    def claims_range(low: float, high: float, name: str) -> dict:
+        return {
+            "range_low": low,
+            "range_high": high,
+            "source_fact_ids": source(name),
+        }
+
+    return {
+        "schema_version": "epv-model-input.v1",
+        "model_id": "EPV:NORMALIZED",
+        "company_id": "TEST.HK",
+        "cutoff_at": "2025-12-31",
+        "basis": {
+            "value_scope": "enterprise",
+            "earnings_claim_scope": "ENTERPRISE_OPERATING",
+            "economic_entity": "Listed consolidated operating group",
+            "operating_perimeter": "Continuing property-service operations",
+            "ordinary_share_claim_scope": "Listed ordinary common shares",
+            "currency": "RMB",
+            "unit": "RMB_m",
+            "as_of": "2025-12-31",
+            "operating_cash_treatment": (
+                "REQUIRED_OPERATING_CASH_INCLUDED_NON_OPERATING_CASH_EXCLUDED"
+            ),
+            "operating_cash_component_ids": [],
+        },
+        "earnings_evidence_status": "AVAILABLE",
+        "period_facts": [
+            {
+                "period_id": "FY2024",
+                "period_start": "2024-01-01",
+                "period_end": "2024-12-31",
+                "metric": "canonical_normalized_owner_cash",
+                "basis_kind": "CANONICAL_NORMALIZED_OWNER_CASH_AFTER_TAX",
+                "tax_basis": "AFTER_TAX",
+                "amount": 10,
+                "working_capital_application": "ALREADY_NORMALIZED",
+                "source_fact_ids": source("FY2024"),
+                "normalization_adjustments": [],
+            },
+            {
+                "period_id": "FY2025",
+                "period_start": "2025-01-01",
+                "period_end": "2025-12-31",
+                "metric": "canonical_normalized_owner_cash",
+                "basis_kind": "CANONICAL_NORMALIZED_OWNER_CASH_AFTER_TAX",
+                "tax_basis": "AFTER_TAX",
+                "amount": 12,
+                "working_capital_application": "ALREADY_NORMALIZED",
+                "source_fact_ids": source("FY2025"),
+                "normalization_adjustments": [],
+            },
+        ],
+        "maintenance_capex": {
+            "status": "ALREADY_REFLECTED",
+            "reason": "The canonical owner-cash facts are after maintenance capex.",
+            "source_fact_ids": ["CALC:EPV:OWNER-CASH-AFTER-MAINTENANCE-CAPEX"],
+        },
+        "maintenance_working_capital": (
+            {
+                "status": "UNKNOWN",
+                "reason": "Steady working-capital absorption is unresolved.",
+            }
+            if unknown
+            else {
+                "status": "ALREADY_REFLECTED",
+                "reason": "The canonical owner-cash facts are already working-capital normalized.",
+                "source_model_id": "WCM:BRIDGE-TEST",
+                "source_fact_ids": ["CALC:EPV:OWNER-CASH-AFTER-MAINTENANCE-WC"],
+            }
+        ),
+        "tax": {
+            "status": "ALREADY_REFLECTED",
+            "reason": "The canonical owner-cash facts are after tax.",
+        },
+        "capitalization": {
+            "status": "BOUNDED",
+            "rate_low": 0.10,
+            "rate_high": 0.10,
+            "source_fact_ids": source("CAPITALIZATION"),
+        },
+        "claims_bridge": {
+            "status": "COMPLETE",
+            "bridge_mode": "ENTERPRISE_TO_ORDINARY_COMMON",
+            "non_operating_components": [],
+            "debt": claims_range(10, 10, "DEBT"),
+            "preferred_claims": claims_range(0, 0, "PREFERRED"),
+            "minority_interest": claims_range(0, 0, "MINORITY"),
+            "other_adjustments": claims_range(0, 0, "OTHER"),
+            "shares": {"value": 100, "source_fact_ids": source("SHARES")},
+        },
+    }
+
+
 def _ordinary_distribution_input() -> dict:
     fact_ids = ["OBS:EARNINGS", "OBS:DISTRIBUTION", "OBS:FRICTION"]
     return {
@@ -377,7 +477,13 @@ def _bridge_input(
             },
         }
     if replacement:
-        payload["replacement_value"] = {"model_input": _replacement_input()}
+        replacement_input = _replacement_input()
+        replacement_input.pop("epv_cross_check")
+        payload["epv"] = {"model_input": _epv_input()}
+        payload["replacement_value"] = {
+            "model_input": replacement_input,
+            "epv_model_id": "EPV:NORMALIZED",
+        }
     if working_capital:
         payload["working_capital"] = {"model_input": _working_capital_input()}
     if ordinary_distribution:
@@ -585,13 +691,22 @@ def test_models_from_different_company_or_position_cannot_share_one_bridge() -> 
 
 def test_joint_protection_ceiling_is_null_when_epv_is_not_comparable() -> None:
     payload = _bridge_input(cash=False)
-    epv = payload["replacement_value"]["model_input"]["epv_cross_check"]
-    epv.clear()
-    epv.update({
-        "status": "NOT_COMPARABLE",
-        "reason": "Ordinary-share claim scopes differ.",
-        "synthesis_rule": "CROSS_CHECK_ONLY_NEVER_ADD_OR_AVERAGE",
-    })
+    epv_input = payload["epv"]["model_input"]
+    for period in epv_input["period_facts"]:
+        period["basis_kind"] = "REPORTED_OCF_AFTER_TAX"
+        period["working_capital_application"] = "CURRENT_MOVEMENT_REFLECTED"
+        period["observed_working_capital_charge"] = 1.0
+    epv_input["maintenance_capex"] = {
+        "status": "BOUNDED",
+        "range_low": 1.0,
+        "range_high": 2.0,
+        "tax_basis": "AFTER_TAX",
+        "source_fact_ids": ["OBS:EPV:MAINTENANCE-CAPEX"],
+    }
+    epv_input["maintenance_working_capital"] = {
+        "status": "UNKNOWN",
+        "reason": "Steady working-capital absorption is unresolved.",
+    }
 
     compiled = compile_valuation_value_bridges(payload)
     ceiling = compiled["valuation_projection"]["replacement_value"]["joint_protection_price_ceiling"]
@@ -602,6 +717,36 @@ def test_joint_protection_ceiling_is_null_when_epv_is_not_comparable() -> None:
         claim["metric"] == "joint_protection_price_ceiling"
         for claim in compiled["numeric_claims"]
     )
+
+
+@pytest.mark.parametrize(
+    ("field", "changed", "expected"),
+    [
+        ("economic_entity", "Different legal group", "basis_mismatch:economic_entity"),
+        ("operating_perimeter", "Different operations", "basis_mismatch:operating_perimeter"),
+        ("ordinary_share_claim_scope", "Different shares", "basis_mismatch:ordinary_share_claim_scope"),
+        ("currency", "HKD", "basis_mismatch:currency"),
+        ("as_of", "2024-12-31", "basis_mismatch:as_of"),
+    ],
+)
+def test_replacement_can_only_consume_same_identity_canonical_epv(
+    field: str, changed: str, expected: str,
+) -> None:
+    payload = _bridge_input(cash=False)
+    payload["epv"]["model_input"]["basis"][field] = changed
+
+    findings = validate_valuation_value_bridge_input(payload)["findings"]
+
+    assert any(expected in finding for finding in findings)
+
+
+def test_replacement_and_canonical_epv_shares_must_close() -> None:
+    payload = _bridge_input(cash=False)
+    payload["epv"]["model_input"]["claims_bridge"]["shares"]["value"] = 99
+
+    findings = validate_valuation_value_bridge_input(payload)["findings"]
+
+    assert any("epv_cross_check:shares_outstanding_mismatch" in item for item in findings)
 
 
 def test_working_capital_bridge_projects_reference_owner_earnings_treatment() -> None:
@@ -773,7 +918,7 @@ def test_working_capital_runoff_never_emits_continuing_valuation_claim_or_langua
     assert validate_valuation_value_bridges(compiled)["state"] == "VALID"
 
 
-def test_internal_control_tokens_cannot_enter_reader_projection() -> None:
+def test_hand_filled_replacement_epv_cannot_enter_reader_projection() -> None:
     payload = _bridge_input(cash=False, replacement=True, working_capital=False)
     payload["replacement_value"]["model_input"]["epv_cross_check"] = {
         "status": "NOT_COMPARABLE",
@@ -781,8 +926,10 @@ def test_internal_control_tokens_cannot_enter_reader_projection() -> None:
         "synthesis_rule": "CROSS_CHECK_ONLY_NEVER_ADD_OR_AVERAGE",
     }
 
-    compiled = compile_valuation_value_bridges(payload)
-    reader_text = "\n".join(slot["sentence"] for slot in compiled["reader_slots"])
-    assert "PRIMARY_ROUTE_UNKNOWN" not in reader_text
-    assert "DATA_COVERAGE" not in reader_text
-    assert "P_LONG" not in reader_text
+    validation = validate_valuation_value_bridge_input(payload)
+
+    assert validation["state"] == "INVALID"
+    assert (
+        "replacement_value:hand_filled_epv_cross_check_forbidden"
+        in validation["findings"]
+    )

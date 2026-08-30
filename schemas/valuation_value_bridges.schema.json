@@ -72,6 +72,15 @@
       "required": ["model_input"],
       "properties": {"model_input": {"$ref": "#/$defs/modelObject"}}
     },
+    "replacementWrapper": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["model_input"],
+      "properties": {
+        "model_input": {"$ref": "#/$defs/modelObject"},
+        "epv_model_id": {"$ref": "#/$defs/nonempty"}
+      }
+    },
     "bridgeInput": {
       "type": "object",
       "additionalProperties": false,
@@ -91,12 +100,14 @@
           }
         },
         "cash_accessibility": {"$ref": "#/$defs/cashWrapper"},
+        "epv": {"$ref": "#/$defs/modelWrapper"},
         "ordinary_distribution": {"$ref": "#/$defs/modelWrapper"},
-        "replacement_value": {"$ref": "#/$defs/modelWrapper"},
+        "replacement_value": {"$ref": "#/$defs/replacementWrapper"},
         "working_capital": {"$ref": "#/$defs/modelWrapper"}
       },
       "anyOf": [
         {"required": ["cash_accessibility"]},
+        {"required": ["epv"]},
         {"required": ["ordinary_distribution"]},
         {"required": ["replacement_value"]},
         {"required": ["working_capital"]}
@@ -108,6 +119,7 @@
       "minProperties": 1,
       "properties": {
         "cash_accessibility": {"$ref": "#/$defs/modelObject"},
+        "epv": {"$ref": "#/$defs/modelObject"},
         "ordinary_distribution": {"$ref": "#/$defs/modelObject"},
         "replacement_value": {"$ref": "#/$defs/modelObject"},
         "working_capital": {"$ref": "#/$defs/modelObject"}
@@ -261,6 +273,31 @@
         }
       ]
     },
+    "epvProjection": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "source_model_id", "company_id", "status", "basis",
+        "sustainable_owner_earnings_range", "operating_value_range",
+        "ordinary_common_equity_range", "per_share_range", "critical_unknowns",
+        "economic_conclusion"
+      ],
+      "properties": {
+        "source_model_id": {"$ref": "#/$defs/nonempty"},
+        "company_id": {"$ref": "#/$defs/nonempty"},
+        "status": {"enum": ["COMPARABLE", "NOT_COMPARABLE"]},
+        "basis": {"type": "object"},
+        "sustainable_owner_earnings_range": {"type": ["object", "null"]},
+        "operating_value_range": {"type": ["object", "null"]},
+        "ordinary_common_equity_range": {"type": ["object", "null"]},
+        "per_share_range": {"type": ["object", "null"]},
+        "critical_unknowns": {
+          "type": "array", "uniqueItems": true,
+          "items": {"$ref": "#/$defs/nonempty"}
+        },
+        "economic_conclusion": {"type": "object"}
+      }
+    },
     "workingPeriodProjection": {
       "type": "object",
       "additionalProperties": false,
@@ -392,6 +429,7 @@
       "minProperties": 1,
       "properties": {
         "cash_accessibility": {"$ref": "#/$defs/cashProjection"},
+        "epv": {"$ref": "#/$defs/epvProjection"},
         "ordinary_distribution": {"$ref": "#/$defs/ordinaryDistributionProjection"},
         "replacement_value": {"$ref": "#/$defs/replacementProjection"},
         "working_capital": {"$ref": "#/$defs/workingProjection"}

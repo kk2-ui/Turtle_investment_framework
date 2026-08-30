@@ -64,7 +64,8 @@ def _integrated_ledger(
 ) -> dict:
     seed = _payload(output, freeze=False)
     epv = _as_epv(seed)
-    epv["basis"]["as_of"] = "2025-12-31"
+    epv["basis"].update({"as_of": "2025-12-31", "value_scope": "enterprise"})
+    epv["assumptions"]["discount_rate"]["kind"] = "WACC"
     epv["assumptions"]["retained_value_realization"] = 0.4
     epv["normalization_bridge"].update(
         {
@@ -137,20 +138,48 @@ def _integrated_ledger(
     }
     working_input = bridge_inputs["working_capital"]["model_input"]
     working_input["periods"][0]["owner_cash_input"]["base_metric_amount"] = 60
+    canonical_epv_input = bridge_inputs["epv"]["model_input"]
+    canonical_epv_input["model_id"] = epv["model_id"]
+    canonical_epv_input["period_facts"][0]["amount"] = 50.0
+    canonical_epv_input["period_facts"][1]["amount"] = 60.0
+    canonical_epv_input["claims_bridge"]["debt"].update({
+        "range_low": 80.0,
+        "range_high": 80.0,
+    })
+    canonical_epv_input["claims_bridge"]["minority_interest"].update({
+        "range_low": 10.0,
+        "range_high": 10.0,
+    })
+    canonical_epv_input["claims_bridge"]["other_adjustments"].update({
+        "range_low": -10.0,
+        "range_high": -10.0,
+    })
+    canonical_epv_input["claims_bridge"]["shares"]["value"] = 10.0
+    canonical_epv_input["claims_bridge"]["non_operating_components"] = [
+        {
+            "component_id": "recognized-accessible-cash",
+            "kind": "NON_OPERATING_CASH",
+            "range_low": 34.0,
+            "range_high": 34.0,
+            "claim_ids": [
+                "cash.existing_excess_cash_per_share",
+                "cash.related_party_receivable_per_share",
+            ],
+            "source_fact_ids": ["CALC:CASH:BRIDGE-TEST:RECOGNIZED"],
+        },
+        {
+            "component_id": "other-non-operating-assets",
+            "kind": "OTHER_NON_OPERATING_ASSET",
+            "range_low": 66.0,
+            "range_high": 66.0,
+            "source_fact_ids": ["OBS:OTHER-NON-OPERATING-ASSETS"],
+        }
+    ]
+    bridge_inputs["replacement_value"]["epv_model_id"] = epv["model_id"]
     replacement_input = bridge_inputs["replacement_value"]["model_input"]
     replacement_input["claims_bridge"]["shares_outstanding"] = 10.0
-    replacement_input["epv_cross_check"].update(
-        {
-            "model_id": epv["model_id"],
-            "equity_value_low": 500.0,
-            "equity_value_high": 500.0,
-            "per_share_low": 50.0,
-            "per_share_high": 50.0,
-            "shares_outstanding": 10.0,
-        }
-    )
     epv["cross_check_context"] = {
-        key: replacement_input["epv_cross_check"][key]
+        key: canonical_epv_input["basis"][key]
         for key in (
             "economic_entity",
             "operating_perimeter",
@@ -194,16 +223,34 @@ def _integrated_ledger(
     if epv_comparable and replacement_scope_complete:
         seed["synthesis"]["joint_protection_price_ceiling"] = 8.0
     elif not epv_comparable:
-        replacement_input["epv_cross_check"] = {
-            "status": "NOT_COMPARABLE",
-            "reason": "The ordinary-share claim scope cannot yet be bounded on the same basis.",
-            "synthesis_rule": "CROSS_CHECK_ONLY_NEVER_ADD_OR_AVERAGE",
+        for period in canonical_epv_input["period_facts"]:
+            period["basis_kind"] = "REPORTED_OCF_AFTER_TAX"
+            period["working_capital_application"] = "CURRENT_MOVEMENT_REFLECTED"
+            period["observed_working_capital_charge"] = 1.0
+        canonical_epv_input["maintenance_capex"] = {
+            "status": "BOUNDED",
+            "range_low": 1.0,
+            "range_high": 2.0,
+            "tax_basis": "AFTER_TAX",
+            "source_fact_ids": ["OBS:EPV:MAINTENANCE-CAPEX"],
+        }
+        canonical_epv_input["maintenance_working_capital"] = {
+            "status": "UNKNOWN",
+            "reason": "Steady working-capital absorption is unresolved.",
         }
         seed["synthesis"].pop("joint_protection_price_ceiling", None)
     else:
         seed["synthesis"].pop("joint_protection_price_ceiling", None)
     if missing_bridge is not None:
         bridge_inputs.pop(missing_bridge)
+        if missing_bridge == "epv":
+            replacement_input["epv_cross_check"] = {
+                "status": "NOT_COMPARABLE",
+                "reason": "No canonical EPV owner is available.",
+                "synthesis_rule": "CROSS_CHECK_ONLY_NEVER_ADD_OR_AVERAGE",
+            }
+            bridge_inputs["replacement_value"].pop("epv_model_id", None)
+            seed["synthesis"].pop("joint_protection_price_ceiling", None)
 
     ledger = build_valuation_model_ledger(
         output,
@@ -225,7 +272,7 @@ def _integrated_ledger(
 
 @pytest.mark.parametrize(
     "missing_bridge",
-    ["cash_accessibility", "working_capital", "replacement_value"],
+    ["cash_accessibility", "epv", "working_capital", "replacement_value"],
 )
 def test_value_bridge_policy_requires_each_economically_consumed_model(
     tmp_path: Path,
@@ -263,6 +310,32 @@ def test_enforced_value_bridge_policy_requires_current_fact_bindings(
     ]
 
 
+def test_canonical_epv_owner_projects_and_protects_the_route_model_normalization(
+    tmp_path: Path,
+) -> None:
+    ledger = _integrated_ledger(tmp_path)
+    assert ledger["models"][0]["normalization_bridge"] == ledger[
+        "value_bridge_models"
+    ]["result"]["epv"]["normalization_bridge"]
+    ledger["models"][0].pop("normalization_bridge", None)
+    initialize_valuation_model_policy(
+        tmp_path,
+        run_id="canonical-epv-owner",
+        enforced=False,
+        require_value_bridge_models=True,
+        require_normalization_bridge=True,
+        require_owner_earnings_normalization=True,
+    )
+
+    validation = _validate(tmp_path, ledger, enforced=False)
+
+    assert validation["state"] == "INVALID"
+    assert (
+        "dcf.fcff.base:canonical_epv_normalization_not_projection"
+        in validation["invalid_findings"]
+    )
+
+
 def test_arbitrary_half_cash_and_half_single_year_working_capital_are_rejected(
     tmp_path: Path,
 ) -> None:
@@ -270,25 +343,29 @@ def test_arbitrary_half_cash_and_half_single_year_working_capital_are_rejected(
     epv = ledger["models"][0]
     epv["assumptions"]["retained_value_realization"] = 0.5
 
-    working_result = ledger["value_bridge_models"]["result"]["working_capital"]
-    reference = working_result["reference_period_result"]
-    actual_charge = reference["stock_flow_reconciliation"][
-        "actual_cash_capital_charge"
-    ]
-    arbitrary_half_charge_owner_cash = (
-        reference["current_owner_cash"] + actual_charge - actual_charge * 0.5
-    )
-    epv["normalization_bridge"][
-        "normalized_earnings_model_currency"
-    ] = arbitrary_half_charge_owner_cash
-
-    validation = _validate(tmp_path, ledger, enforced=False)
+    cash_validation = _validate(tmp_path, ledger, enforced=False)
 
     assert "dcf.fcff.base:retained_value_realization_not_cash_model_derived" in (
-        validation["invalid_findings"]
+        cash_validation["invalid_findings"]
     )
-    assert "dcf.fcff.base:normalized_earnings_not_working_capital_derived" in (
-        validation["invalid_findings"]
+
+    ledger = _integrated_ledger(tmp_path / "working-capital")
+    ledger["value_bridge_models"]["model_input"]["epv"]["model_input"][
+        "maintenance_working_capital"
+    ] = {
+        "status": "BOUNDED",
+        "range_low": 5.0,
+        "range_high": 5.0,
+        "tax_basis": "AFTER_TAX",
+        "source_fact_ids": ["OBS:ARBITRARY-HALF-WC"],
+    }
+
+    validation = _validate(tmp_path / "working-capital", ledger, enforced=False)
+
+    assert any(
+        "maintenance_working_capital:canonical_basis_requires_already_reflected"
+        in finding
+        for finding in validation["invalid_findings"]
     )
     assert validation["state"] == "INVALID"
 
@@ -459,9 +536,10 @@ def test_joint_protection_ceiling_is_bound_when_comparable_and_null_when_unresol
     assert unresolved_projection["value"] is None
     assert unresolved_projection["reason"] == "EPV_NOT_COMPARABLE"
     assert "joint_protection_price_ceiling" not in unresolved["synthesis"]
-    assert unresolved_validation["state"] == "REVIEWABLE"
-    assert unresolved_validation["invalid_findings"] == []
-    assert unresolved_validation["incomplete_findings"] == []
+    assert unresolved_validation["state"] == "INVALID"
+    assert unresolved_validation["incomplete_findings"] == [
+        "canonical_epv_primary_not_comparable"
+    ]
     assert unresolved_validation["warnings"] == [
         "replacement_value_joint_protection_price_unresolved"
     ]
@@ -555,30 +633,20 @@ def test_replacement_gate_rejects_a_route_card_mismatch(tmp_path: Path) -> None:
     )
 
 
-def test_replacement_epv_cross_check_must_project_the_active_epv_result(
+def test_replacement_epv_cross_check_must_project_the_canonical_epv_result(
     tmp_path: Path,
 ) -> None:
     ledger = _integrated_ledger(tmp_path)
-    inputs = deepcopy(ledger["value_bridge_models"]["model_input"])
-    cross_check = inputs["replacement_value"]["model_input"]["epv_cross_check"]
-    cross_check.update(
-        {
-            "equity_value_low": 9.0,
-            "equity_value_high": 11.0,
-            "per_share_low": 0.9,
-            "per_share_high": 1.1,
-        }
-    )
-    ledger["value_bridge_models"] = compile_valuation_value_bridges(inputs)
+    ledger["value_bridge_models"]["result"]["replacement_value"][
+        "epv_cross_check"
+    ]["epv_per_share_range"]["range_low"] = 0.9
 
     validation = _validate(tmp_path, ledger, enforced=False)
 
     assert validation["state"] == "INVALID"
-    assert "replacement_value_epv_cross_check_not_active_epv_per_share_low" in (
-        validation["invalid_findings"]
-    )
-    assert "replacement_value_epv_cross_check_not_active_epv_equity_value_high" in (
-        validation["invalid_findings"]
+    assert (
+        "value_bridge_models:result_not_deterministic_projection"
+        in validation["invalid_findings"]
     )
 
 
@@ -696,25 +764,52 @@ def test_canonical_and_legacy_cash_bridges_cannot_coexist(tmp_path: Path) -> Non
 
 def test_cash_can_be_included_once_as_a_separate_component(tmp_path: Path) -> None:
     ledger = _integrated_ledger(tmp_path)
+    inputs = deepcopy(ledger["value_bridge_models"]["model_input"])
+    inputs["epv"]["model_input"]["claims_bridge"][
+        "non_operating_components"
+    ] = [
+        item
+        for item in inputs["epv"]["model_input"]["claims_bridge"][
+            "non_operating_components"
+        ]
+        if item["kind"] != "NON_OPERATING_CASH"
+    ]
+    ledger["value_bridge_models"] = compile_valuation_value_bridges(inputs)
     epv = ledger["models"][0]
-    epv["equity_bridge"].update(
-        {
-                "non_operating_assets": 66,
-                "enterprise_value": 534,
-                "equity_value": 500,
-                "per_share_value": 50.0,
-            "cash_component_per_share": 0,
-            "cash_component_claim_ids": [],
-            "non_operating_asset_components": [
-                {
-                    "component_id": "other-non-operating-assets",
-                    "kind": "other",
-                    "amount": 66.0,
-                    "claim_ids": [],
-                }
-            ],
-        }
+    epv["normalization_bridge"] = deepcopy(
+        ledger["value_bridge_models"]["result"]["epv"]["normalization_bridge"]
     )
+    epv["result"] = {
+        "value_per_share": 46.6,
+        "range_low": 46.6,
+        "range_high": 56.6,
+        "currency": "RMB",
+        "status": "COMPARABLE",
+        "endpoint_policy": "CONSERVATIVE_LOW",
+    }
+    epv["equity_bridge"] = {
+        "enterprise_value": 500.0,
+        "non_operating_assets": 66.0,
+        "debt": 80.0,
+        "minority_interest": 10.0,
+        "other_adjustments": -10.0,
+        "equity_value": 466.0,
+        "shares": 10.0,
+        "per_share_value": 46.6,
+        "currency": "RMB",
+        "ordinary_share_claim_scope": "Listed ordinary common shares",
+        "cash_component_per_share": 0,
+        "cash_component_claim_ids": [],
+        "non_operating_asset_components": [
+            {
+                "component_id": "other-non-operating-assets",
+                "kind": "other",
+                "amount": 66.0,
+                "claim_ids": [],
+            }
+        ],
+        "endpoint_policy": "CONSERVATIVE_LOW",
+    }
     contract = ledger["synthesis"]["cash_component_contract"]
     contract.update(
         {

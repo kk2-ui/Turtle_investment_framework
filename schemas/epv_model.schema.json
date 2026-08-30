@@ -1,0 +1,66 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://turtle.local/schemas/epv_model.schema.json",
+  "title": "Turtle deterministic EPV envelope",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "model_input", "result"],
+  "properties": {
+    "schema_version": {"const": "epv-model-envelope.v1"},
+    "model_input": {"$ref": "epv_model_input.schema.json"},
+    "result": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version", "model_id", "company_id", "cutoff_at", "basis",
+        "status", "normalization_bridge", "sustainable_owner_earnings_range",
+        "capitalization", "operating_value_range", "equity_bridge",
+        "ordinary_common_equity_range", "per_share_range", "critical_unknowns",
+        "economic_conclusion"
+      ],
+      "properties": {
+        "schema_version": {"const": "epv-model.v1"},
+        "model_id": {"type": "string", "minLength": 1},
+        "company_id": {"type": "string", "minLength": 1},
+        "cutoff_at": {"type": "string", "format": "date"},
+        "basis": {"type": "object"},
+        "status": {"enum": ["COMPARABLE", "NOT_COMPARABLE"]},
+        "normalization_bridge": {"type": "object"},
+        "sustainable_owner_earnings_range": {"type": ["object", "null"]},
+        "capitalization": {"type": "object"},
+        "operating_value_range": {"type": ["object", "null"]},
+        "equity_bridge": {"type": ["object", "null"]},
+        "ordinary_common_equity_range": {"type": ["object", "null"]},
+        "per_share_range": {"type": ["object", "null"]},
+        "critical_unknowns": {
+          "type": "array", "uniqueItems": true,
+          "items": {"type": "string", "minLength": 1}
+        },
+        "economic_conclusion": {"type": "object"}
+      },
+      "allOf": [
+        {
+          "if": {"properties": {"status": {"const": "COMPARABLE"}}},
+          "then": {
+            "properties": {
+              "sustainable_owner_earnings_range": {"type": "object"},
+              "operating_value_range": {"type": "object"},
+              "equity_bridge": {"type": "object"},
+              "ordinary_common_equity_range": {"type": "object"},
+              "per_share_range": {"type": "object"}
+            }
+          },
+          "else": {
+            "properties": {
+              "sustainable_owner_earnings_range": {"type": "null"},
+              "operating_value_range": {"type": "null"},
+              "equity_bridge": {"type": "null"},
+              "ordinary_common_equity_range": {"type": "null"},
+              "per_share_range": {"type": "null"}
+            }
+          }
+        }
+      ]
+    }
+  }
+}
