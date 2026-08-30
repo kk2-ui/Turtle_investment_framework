@@ -27,9 +27,13 @@ def _event(
     amount: float,
     funding: str,
     fact_id: str,
+    event_date: str = "2024-06-30",
+    observed_at: str = "2024-12-31",
 ) -> dict:
     return {
         "event_type": event_type,
+        "event_date": event_date,
+        "observed_at": observed_at,
         "amount": amount,
         "funding_source_identity": funding,
         "source_fact_ids": [fact_id],
@@ -95,17 +99,26 @@ def _payload() -> dict:
         "realization_periods": [
             {
                 "period_id": "2023",
+                "period_start": "2023-01-01",
+                "period_end": "2023-12-31",
+                "opening_position_as_of": "2023-01-01",
                 "comparable": True,
                 "opening_existing_excess_cash": 100,
                 "retained_cash_generated": 50,
                 "ordinary_dividend": 20,
                 "extraordinary_events": [
-                    _event("special_dividend", 10, "existing_excess_cash", "F:SPECIAL")
+                    _event(
+                        "special_dividend", 10, "existing_excess_cash", "F:SPECIAL",
+                        "2023-06-30", "2023-12-31",
+                    )
                 ],
                 "source_fact_ids": ["F:P1"],
             },
             {
                 "period_id": "2024",
+                "period_start": "2024-01-01",
+                "period_end": "2024-12-31",
+                "opening_position_as_of": "2024-01-01",
                 "comparable": True,
                 "opening_existing_excess_cash": 100,
                 "retained_cash_generated": 50,
@@ -115,12 +128,18 @@ def _payload() -> dict:
             },
             {
                 "period_id": "2025",
+                "period_start": "2025-01-01",
+                "period_end": "2025-12-31",
+                "opening_position_as_of": "2025-01-01",
                 "comparable": True,
                 "opening_existing_excess_cash": 100,
                 "retained_cash_generated": 50,
                 "ordinary_dividend": 30,
                 "extraordinary_events": [
-                    _event("cancellative_net_buyback", 30, "existing_excess_cash", "F:BUYBACK")
+                    _event(
+                        "cancellative_net_buyback", 30, "existing_excess_cash", "F:BUYBACK",
+                        "2025-06-30", "2025-12-31",
+                    )
                 ],
                 "source_fact_ids": ["F:P3"],
             },
@@ -171,6 +190,24 @@ def test_entity_cash_math_separates_restrictions_nci_and_upstream_friction() -> 
     assert model["legal_cash_accessibility"]["adopted_value"] == 142.6
     assert model["existing_excess_cash_realization"]["adopted_value"] == 14.26
     assert validate_cash_accessibility_model(model)["state"] == "VALID"
+
+
+def test_realization_history_requires_an_independent_opening_position_clock() -> None:
+    payload = _payload()
+    payload["realization_periods"][0].pop("opening_position_as_of")
+
+    findings = validate_cash_accessibility_input(payload)["findings"]
+
+    assert "realization_periods[0].opening_position_as_of_invalid" in findings
+
+
+def test_extraordinary_realization_requires_event_and_observation_clocks() -> None:
+    payload = _payload()
+    payload["realization_periods"][0]["extraordinary_events"][0].pop("event_date")
+
+    findings = validate_cash_accessibility_input(payload)["findings"]
+
+    assert "realization_periods[0].extraordinary_events[0].event_clock_invalid" in findings
 
 
 def test_balance_sheet_position_date_can_precede_evidence_cutoff_without_losing_identity() -> None:

@@ -115,8 +115,10 @@ def _temporal_contract_findings(
     period_end = _parse_temporal_date(measurement.get("period_end"))
 
     if role == "POSITION_AS_OF":
-        if document_period_end is None or as_of != document_period_end:
-            findings.append("position_document_period_mismatch")
+        # An explicitly dated stock may be an opening balance disclosed in a
+        # later annual report.  Its economic clock is the quoted position date,
+        # not the reporting document's period end.  Legacy observations that do
+        # not opt into a temporal role retain the old document-period rule above.
         if observation.get("event_date") is not None:
             findings.append("position_event_date_forbidden")
     elif role == "HISTORICAL_PERIOD":

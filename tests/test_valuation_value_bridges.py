@@ -44,6 +44,9 @@ def _cash_input() -> dict:
         periods.append(
             {
                 "period_id": year,
+                "period_start": f"{year}-01-01",
+                "period_end": f"{year}-12-31",
+                "opening_position_as_of": f"{year}-01-01",
                 "comparable": True,
                 "opening_existing_excess_cash": 70,
                 "retained_cash_generated": 50,
@@ -51,6 +54,8 @@ def _cash_input() -> dict:
                 "extraordinary_events": [
                     {
                         "event_type": "special_dividend",
+                        "event_date": f"{year}-06-30",
+                        "observed_at": f"{year}-12-31",
                         "amount": special,
                         "funding_source_identity": "existing_excess_cash",
                         "source_fact_ids": [event_fact],

@@ -4,6 +4,8 @@ from copy import deepcopy
 import json
 from pathlib import Path
 
+import pytest
+
 from scripts.evidence_facts import (
     _observation_core,
     _payload_hash,
@@ -44,6 +46,9 @@ def _temporal_cash_fixture() -> tuple[dict, dict, dict]:
         year = period["period_id"]
         period["period_start"] = f"{year}-01-01"
         period["period_end"] = f"{year}-12-31"
+        period["opening_position_as_of"] = f"{year}-01-01"
+        for event in period["extraordinary_events"]:
+            event["observed_at"] = f"{int(year) + 1}-03-31"
 
     bridge_input = {
         "schema_version": "valuation-value-bridges-input.v1",
@@ -95,16 +100,27 @@ def _temporal_cash_fixture() -> tuple[dict, dict, dict]:
             }
             temporal_fields = {}
         elif role == "EVENT":
-            as_of = EVENT_DATE
-            doc_id = "DOC:EVENT"
+            as_of = context.get("event_date") or EVENT_DATE
+            observed_at = context.get("observed_at") or EVENT_OBSERVED_AT
+            doc_id = (
+                "DOC:FY" + as_of[:4]
+                if context.get("event_date")
+                else "DOC:EVENT"
+            )
             measurement_context = {}
             temporal_fields = {
-                "event_date": EVENT_DATE,
-                "observed_at": EVENT_OBSERVED_AT,
+                "event_date": as_of,
+                "observed_at": observed_at,
             }
         else:
-            as_of = POSITION_DATE
-            doc_id = "DOC:FY2025"
+            as_of = context["as_of"]
+            if ".realization_periods[" in path:
+                period_index = int(
+                    path.split("realization_periods[", 1)[1].split("]", 1)[0]
+                )
+                doc_id = "DOC:FY" + cash["realization_periods"][period_index]["period_id"]
+            else:
+                doc_id = "DOC:FY2025"
             measurement_context = {}
             temporal_fields = {}
         observations.append(
@@ -156,6 +172,24 @@ def _write_registries(output: Path, facts: dict, manifest: dict) -> None:
     (output / "calculation_observations.json").write_text(
         json.dumps({"calculations": []}), encoding="utf-8"
     )
+
+
+def _replace_cash_binding(
+    bridge_input: dict, *, path: str, evidence_id: str
+) -> float:
+    binding = next(
+        item for item in bridge_input["canonical_fact_bindings"]
+        if item["path"] == path
+    )
+    binding["evidence_id"] = evidence_id
+    owner = next(
+        node for node in reversed(_bridge_path_nodes(bridge_input, path))
+        if isinstance(node.get("source_fact_ids"), list)
+    )
+    owner["source_fact_ids"].append(evidence_id)
+    cash = bridge_input["cash_accessibility"]["model_input"]
+    cash["verified_facts"].append({"fact_id": evidence_id, "status": "VERIFIED"})
+    return _bridge_numeric_leaves(bridge_input)[path]
 
 
 def _complete_observation(
@@ -231,6 +265,12 @@ def _fact_temporal_payload() -> tuple[dict, dict]:
             doc_id="DOC:ANNUAL",
         ),
         _complete_observation(
+            fact_name="opening_position_disclosed_later",
+            as_of="2025-01-01",
+            doc_id="DOC:ANNUAL",
+            temporal_role="POSITION_AS_OF",
+        ),
+        _complete_observation(
             fact_name="historical_distribution",
             as_of="2024-12-31",
             doc_id="DOC:ANNUAL",
@@ -264,6 +304,11 @@ def test_fact_validator_accepts_legacy_period_and_explicit_event_clocks() -> Non
     payload["validation"] = validate_fact_observations(payload, manifest)
 
     assert payload["validation"]["state"] == "REVIEWABLE"
+    opening = next(
+        item for item in payload["observations"]
+        if item["fact_name"] == "opening_position_disclosed_later"
+    )
+    assert opening["as_of"] != manifest["documents"][0]["period_end"]
 
 
 def test_fact_schema_accepts_legacy_period_and_explicit_event_clocks() -> None:
@@ -361,7 +406,8 @@ def test_three_historical_annual_periods_and_one_post_position_event_share_one_c
         item for item in manifest["documents"] if item["doc_id"] == "DOC:EVENT"
     )
     event_observation = next(
-        item for item in facts["observations"] if item["temporal_role"] == "EVENT"
+        item for item in facts["observations"]
+        if item["fact_name"].endswith(".post_position_collections")
     )
     assert announcement["period_end"] == POSITION_DATE
     assert POSITION_DATE < announcement["published_at"] <= CUTOFF_DATE
@@ -379,6 +425,159 @@ def test_three_historical_annual_periods_and_one_post_position_event_share_one_c
     assert model["related_party_receivable_realization"][
         "post_position_collections"
     ] == 20
+    assert model["existing_excess_cash_realization"]["realization_rate_range"] == {
+        "low": pytest.approx(0.1),
+        "base": pytest.approx(0.2),
+        "high": pytest.approx(1.0),
+    }
+    assert model["future_retained_cash_realization"]["realization_rate_range"] == {
+        "low": pytest.approx(0.2),
+        "base": pytest.approx(0.4),
+        "high": pytest.approx(0.8),
+    }
+    assert model["existing_excess_cash_realization"]["adopted_value"] == pytest.approx(14)
+    assert model["future_retained_cash_realization"]["adopted_value"] == pytest.approx(32)
+
+
+def test_cash_model_schema_exposes_each_realization_clock() -> None:
+    schema = json.loads(
+        (ROOT / "schemas/cash_accessibility_model.schema.json").read_text(
+            encoding="utf-8"
+        )
+    )
+
+    period = schema["$defs"]["realizationPeriod"]
+    event = schema["$defs"]["extraordinaryEvent"]
+    assert {
+        "period_start", "period_end", "opening_position_as_of"
+    }.issubset(period["required"])
+    assert {"event_date", "observed_at"}.issubset(event["required"])
+
+
+@pytest.mark.parametrize(
+    ("path_fragment", "expected_role", "wrong_role"),
+    [
+        (".opening_existing_excess_cash", "POSITION_AS_OF", "HISTORICAL_PERIOD"),
+        (".retained_cash_generated", "HISTORICAL_PERIOD", "POSITION_AS_OF"),
+        (".ordinary_dividend", "HISTORICAL_PERIOD", "POSITION_AS_OF"),
+        (".extraordinary_events[0].amount", "EVENT", "HISTORICAL_PERIOD"),
+    ],
+)
+def test_cash_realization_fact_roles_cannot_be_swapped(
+    tmp_path: Path,
+    path_fragment: str,
+    expected_role: str,
+    wrong_role: str,
+) -> None:
+    bridge_input, facts, manifest = _temporal_cash_fixture()
+    binding = next(
+        item for item in bridge_input["canonical_fact_bindings"]
+        if path_fragment in item["path"]
+    )
+    observation = next(
+        item for item in facts["observations"]
+        if item["observation_id"] == binding["evidence_id"]
+    )
+    assert observation["temporal_role"] == expected_role
+    observation["temporal_role"] = wrong_role
+    _write_registries(tmp_path, facts, manifest)
+
+    invalid, _ = _validate(tmp_path, bridge_input)
+
+    assert any("temporal_role_mismatch" in finding for finding in invalid)
+
+
+def test_fake_calculation_cannot_bind_a_cash_temporal_operand(tmp_path: Path) -> None:
+    bridge_input, facts, manifest = _temporal_cash_fixture()
+    path = next(
+        item["path"] for item in bridge_input["canonical_fact_bindings"]
+        if item["path"].endswith(".opening_existing_excess_cash")
+    )
+    _replace_cash_binding(bridge_input, path=path, evidence_id="CALC:FAKE:CASH")
+    _write_registries(tmp_path, facts, manifest)
+
+    invalid, _ = _validate(tmp_path, bridge_input)
+
+    assert any(
+        "cash_temporal_operand_calculation_evidence_forbidden" in finding
+        for finding in invalid
+    )
+
+
+def test_verified_calculation_without_temporal_lineage_cannot_bind_cash_operand(
+    tmp_path: Path,
+) -> None:
+    bridge_input, facts, manifest = _temporal_cash_fixture()
+    path = next(
+        item["path"] for item in bridge_input["canonical_fact_bindings"]
+        if item["path"].endswith(".retained_cash_generated")
+    )
+    calculation_id = "CALC:VERIFIED:NO-TEMPORAL-LINEAGE"
+    value = _replace_cash_binding(
+        bridge_input, path=path, evidence_id=calculation_id
+    )
+    _write_registries(tmp_path, facts, manifest)
+    (tmp_path / "calculation_observations.json").write_text(
+        json.dumps(
+            {
+                "calculations": [{
+                    "calculation_id": calculation_id,
+                    "tool": "compute_gg",
+                    "metric_path": "synthetic.cash",
+                    "value": value,
+                    "unit": "million",
+                    "status": "VERIFIED",
+                }]
+            }
+        ),
+        encoding="utf-8",
+    )
+
+    invalid, _ = _validate(tmp_path, bridge_input)
+
+    assert any(
+        "cash_temporal_operand_calculation_evidence_forbidden" in finding
+        for finding in invalid
+    )
+
+
+def test_old_observation_derived_calculation_cannot_relabel_cash_time(
+    tmp_path: Path,
+) -> None:
+    bridge_input, facts, manifest = _temporal_cash_fixture()
+    path = next(
+        item["path"] for item in bridge_input["canonical_fact_bindings"]
+        if ".extraordinary_events[0].amount" in item["path"]
+    )
+    calculation_id = "CALC:DERIVED:OLD-OBSERVATION"
+    value = _replace_cash_binding(
+        bridge_input, path=path, evidence_id=calculation_id
+    )
+    _write_registries(tmp_path, facts, manifest)
+    (tmp_path / "calculation_observations.json").write_text(
+        json.dumps(
+            {
+                "calculations": [{
+                    "calculation_id": calculation_id,
+                    "tool": "compute_gg",
+                    "metric_path": "synthetic.cash_from_old_observation",
+                    "value": value,
+                    "unit": "million",
+                    "status": "VERIFIED",
+                    "input_observation_ids": ["OBS:OLD:2022"],
+                    "input_temporal_context": {"as_of": "2022-12-31"},
+                }]
+            }
+        ),
+        encoding="utf-8",
+    )
+
+    invalid, _ = _validate(tmp_path, bridge_input)
+
+    assert any(
+        "cash_temporal_operand_calculation_evidence_forbidden" in finding
+        for finding in invalid
+    )
 
 
 def test_cash_realization_history_cannot_omit_its_model_period_bounds(
@@ -392,9 +591,8 @@ def test_cash_realization_history_cannot_omit_its_model_period_bounds(
     first_period.pop("period_end")
     _write_registries(tmp_path, facts, manifest)
 
-    invalid, _ = _validate(tmp_path, bridge_input)
-
-    assert "value_bridge_cash_realization_period_bounds_missing:0" in invalid
+    with pytest.raises(ValueError, match="period_bounds_missing"):
+        compile_valuation_value_bridges(bridge_input)
 
 
 def test_same_post_position_announcement_moved_after_cutoff_is_blocked(
@@ -406,7 +604,8 @@ def test_same_post_position_announcement_moved_after_cutoff_is_blocked(
     )
     event_document["published_at"] = "2026-08-12"
     event_observation = next(
-        item for item in facts["observations"] if item["temporal_role"] == "EVENT"
+        item for item in facts["observations"]
+        if item["fact_name"].endswith(".post_position_collections")
     )
     event_observation["observed_at"] = "2026-08-12"
     _write_registries(tmp_path, facts, manifest)
@@ -441,7 +640,8 @@ def test_post_position_collection_cannot_masquerade_as_a_balance_sheet_stock(
 ) -> None:
     bridge_input, facts, manifest = _temporal_cash_fixture()
     event = next(
-        item for item in facts["observations"] if item["temporal_role"] == "EVENT"
+        item for item in facts["observations"]
+        if item["fact_name"].endswith(".post_position_collections")
     )
     event["temporal_role"] = "POSITION_AS_OF"
     event["as_of"] = POSITION_DATE

@@ -857,16 +857,37 @@ def _bridge_operand_context(
                 if period_match and int(period_match.group(1)) < len(periods)
                 else {}
             )
-            context["temporal_role"] = "HISTORICAL_PERIOD"
             if isinstance(period, dict):
-                context["period_start"] = str(period.get("period_start") or "")
-                context["period_end"] = str(period.get("period_end") or "")
-                context["as_of"] = context["period_end"]
+                if ".extraordinary_events[" in path:
+                    event_match = re.search(r"\.extraordinary_events\[(\d+)\]", path)
+                    events = period.get("extraordinary_events") or []
+                    event = (
+                        events[int(event_match.group(1))]
+                        if event_match and int(event_match.group(1)) < len(events)
+                        else {}
+                    )
+                    context["temporal_role"] = "EVENT"
+                    if isinstance(event, dict):
+                        context["event_date"] = str(event.get("event_date") or "")
+                        context["observed_at"] = str(event.get("observed_at") or "")
+                        context["as_of"] = context["event_date"]
+                    context["post_position_event_required"] = "false"
+                elif leaf == "opening_existing_excess_cash":
+                    context["temporal_role"] = "POSITION_AS_OF"
+                    context["as_of"] = str(
+                        period.get("opening_position_as_of") or ""
+                    )
+                else:
+                    context["temporal_role"] = "HISTORICAL_PERIOD"
+                    context["period_start"] = str(period.get("period_start") or "")
+                    context["period_end"] = str(period.get("period_end") or "")
+                    context["as_of"] = context["period_end"]
         elif ".model_input.related_party_receivables[" in path and path.endswith(
             ".post_position_collections"
         ):
             context["temporal_role"] = "EVENT"
             context["as_of"] = ""
+            context["post_position_event_required"] = "true"
         else:
             context["temporal_role"] = "POSITION_AS_OF"
     # Working-capital observations must be period-specific, not copied from
@@ -949,11 +970,21 @@ def _validate_bridge_observation_temporal_contract(
         return
     if _bridge_date(source.get("as_of")) != event_date:
         invalid.append(prefix + ":event_as_of_mismatch:" + path)
+    expected_event_date = _bridge_date(context.get("event_date"))
+    expected_observed_at = _bridge_date(context.get("observed_at"))
+    if context.get("event_date") and event_date != expected_event_date:
+        invalid.append(prefix + ":event_date_mismatch:" + path)
+    if context.get("observed_at") and observed_at != expected_observed_at:
+        invalid.append(prefix + ":event_observed_at_mismatch:" + path)
     if observed_at < event_date:
         invalid.append(prefix + ":event_observed_before_event_date:" + path)
     if published_at is not None and observed_at < published_at:
         invalid.append(prefix + ":event_observed_before_document_publication:" + path)
-    if model_position is not None and event_date <= model_position:
+    if (
+        context.get("post_position_event_required") == "true"
+        and model_position is not None
+        and event_date <= model_position
+    ):
         invalid.append(prefix + ":event_not_after_position_as_of:" + path)
     if event_date > cutoff:
         invalid.append(prefix + ":event_date_after_cutoff:" + path)
@@ -1050,6 +1081,12 @@ def _validate_value_bridge_fact_bindings(
         declared = _bridge_declared_evidence_ids(model_input, path)
         if evidence_id not in declared:
             invalid.append(prefix + ":evidence_not_declared_at_operand:" + path)
+        context = _bridge_operand_context(model_input, path)
+        if context.get("temporal_role") and evidence_id.startswith("CALC:"):
+            invalid.append(
+                prefix + ":cash_temporal_operand_calculation_evidence_forbidden:" + path
+            )
+            continue
         source = observations.get(evidence_id) or calculations_by_id.get(evidence_id)
         if source is None:
             invalid.append(prefix + ":unknown_or_unverified_evidence:" + evidence_id)
@@ -1061,7 +1098,6 @@ def _validate_value_bridge_fact_bindings(
         if source_value is None or not _same(source_value, operands[path], tolerance=1e-9):
             invalid.append(prefix + ":numeric_value_mismatch:" + path)
             continue
-        context = _bridge_operand_context(model_input, path)
         source_unit = str(source.get("unit") or "")
         if context.get("unit") and source_unit != context["unit"]:
             invalid.append(prefix + ":unit_mismatch:" + path)

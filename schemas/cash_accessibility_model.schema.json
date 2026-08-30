@@ -160,6 +160,8 @@
       "additionalProperties": false,
       "required": [
         "event_type",
+        "event_date",
+        "observed_at",
         "amount",
         "funding_source_identity",
         "eligible_for_existing_excess_cash_calibration",
@@ -167,6 +169,8 @@
       ],
       "properties": {
         "event_type": {"enum": ["special_dividend", "cancellative_net_buyback"]},
+        "event_date": {"type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}$"},
+        "observed_at": {"type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}$"},
         "amount": {"$ref": "#/$defs/nonnegativeNumber"},
         "funding_source_identity": {
           "enum": ["existing_excess_cash", "future_retained_cash", "debt_funded", "unknown"]
@@ -180,6 +184,9 @@
       "additionalProperties": false,
       "required": [
         "period_id",
+        "period_start",
+        "period_end",
+        "opening_position_as_of",
         "comparable",
         "opening_existing_excess_cash",
         "retained_cash_generated",
@@ -196,6 +203,7 @@
         "period_id": {"$ref": "#/$defs/nonemptyString"},
         "period_start": {"type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}$"},
         "period_end": {"type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}$"},
+        "opening_position_as_of": {"type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}$"},
         "comparable": {"type": "boolean"},
         "opening_existing_excess_cash": {"$ref": "#/$defs/nonnegativeNumber"},
         "retained_cash_generated": {"$ref": "#/$defs/nonnegativeNumber"},
@@ -214,10 +222,6 @@
           "items": {"$ref": "#/$defs/extraordinaryEvent"}
         },
         "source_fact_ids": {"$ref": "#/$defs/factIds"}
-      },
-      "dependentRequired": {
-        "period_start": ["period_end"],
-        "period_end": ["period_start"]
       }
     },
     "existingExcessCashRealization": {
