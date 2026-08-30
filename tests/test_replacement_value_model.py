@@ -287,6 +287,12 @@ def _complete_model() -> dict:
         "reason": "Verified channel rebuild evidence bounds the range.",
     }
     channel["evidence_role_bindings"] = _role_bindings("CUSTOMER_ACQUISITION_CHANNEL")
+    channel["double_count_treatment"] = {
+        "replacement_component_owner": "CUSTOMER_RELATIONSHIP",
+        "replacement_component_overlap": "SEPARATE_COST_BASE",
+        "source_fact_ids": ["OBS:CHANNEL:COST-BASE-SEPARATE"],
+        "explanation": "Verified cost attribution separates the channel rebuild from the customer book.",
+    }
     channel.pop("uncertainty_treatment", None)
     startup = payload["components"][4]
     startup["recognition"] = {
@@ -503,6 +509,44 @@ def test_complete_model_computes_company_equity_and_per_share_ranges() -> None:
     assert result["per_share_range"] == {"range_low": 1.85, "range_high": 3.4}
     assert result["epv_cross_check"]["relationship"] == "REPLACEMENT_ABOVE_EPV"
     assert result["economic_conclusion"]["replacement_range_status"] == "AVAILABLE"
+
+
+def test_cross_component_cost_owner_changes_which_rebuild_cost_can_enter_value() -> None:
+    unresolved = _complete_model()
+    channel = unresolved["components"][2]
+    channel.pop("double_count_treatment")
+
+    findings = validate_replacement_value_model(unresolved)["findings"]
+
+    assert "acquisition-channel:replacement_component_overlap_unresolved" in findings
+
+    included = compute_replacement_value_model(_complete_model())
+    already_owned = _complete_model()
+    channel = already_owned["components"][2]
+    channel["recognition"] = {
+        "status": "EXCLUDED",
+        "method": "NOT_APPLICABLE",
+        "reason": "The customer relationship component already owns the same rebuild cost.",
+    }
+    channel.pop("evidence_role_bindings")
+    channel.pop("double_count_treatment")
+    channel["exclusion_treatment"] = {
+        "destination": "OTHER_REPLACEMENT_COMPONENT",
+        "destination_component_type": "CUSTOMER_RELATIONSHIP",
+        "source_fact_ids": ["OBS:CHANNEL:CUSTOMER-BOOK-OVERLAP"],
+        "reason": "Verified cost attribution places the shared spend in the customer book.",
+    }
+    excluded = compute_replacement_value_model(already_owned)
+
+    assert included["gross_recognized_replacement_range"] == {
+        "range_low": 235.0,
+        "range_high": 355.0,
+    }
+    assert excluded["gross_recognized_replacement_range"] == {
+        "range_low": 215.0,
+        "range_high": 315.0,
+    }
+    assert excluded["economic_conclusion"]["replacement_range_status"] == "AVAILABLE"
 
 
 def test_resolved_already_included_component_is_zero_increment_not_unknown_scope() -> None:

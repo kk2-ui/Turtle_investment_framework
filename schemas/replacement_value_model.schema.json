@@ -227,7 +227,7 @@
     "double_count_treatment": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["balance_sheet_working_capital", "epv_maintenance_need", "explanation"],
+      "required": ["explanation"],
       "properties": {
         "balance_sheet_working_capital": {
           "enum": ["NOT_INCLUDED", "NETTED", "ALREADY_INCLUDED_EXCLUDED", "UNKNOWN_SCENARIO_ONLY"]
@@ -235,6 +235,14 @@
         "epv_maintenance_need": {
           "enum": ["NOT_INCLUDED", "NETTED", "ALREADY_INCLUDED_EXCLUDED", "UNKNOWN_SCENARIO_ONLY"]
         },
+        "replacement_component_owner": {
+          "type": "string",
+          "pattern": "^[A-Z][A-Z0-9_]*$"
+        },
+        "replacement_component_overlap": {
+          "enum": ["SEPARATE_COST_BASE", "NETTED_TO_OWNER", "UNKNOWN_SCENARIO_ONLY"]
+        },
+        "source_fact_ids": {"$ref": "#/$defs/source_fact_ids"},
         "explanation": {"$ref": "#/$defs/nonempty"}
       }
     },

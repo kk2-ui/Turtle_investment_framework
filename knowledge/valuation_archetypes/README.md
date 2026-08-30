@@ -16,6 +16,11 @@ valuation archetype card
 
 卡片不得携带公司事实、金额、比例、倍数、默认折价、默认完成率或自动估值路线。它不能直接给目标公司填入任何数值，也不能把历史案例参数传给新公司。被卡片要求的能力证据必须由当前、已核验的官方原始 observation 显式声明对应的 `valuation_evidence_roles`；一个成本或余额事实不能在模型内被重新贴标为客户留存、合同簿或重建时间。组件排除同样只能引用明确声明 `valuation_exclusion_destinations` 的原始 observation。
 
+`double_count_owner` 不是说明文字。它若指向另一项重建能力，必须能解析到同一张卡的组件。
+目标公司要同时认可 owner 和从属组件的非零金额，必须以本公司证据说明成本池彼此独立，
+或说明共享成本已从从属组件净除；已由 owner 承担的成本只能作为已解决的零增量排除。
+这使行业卡积累“哪些能力容易共享同一成本”的知识，同时仍要求每家公司重新判断实际归属。
+
 `config/archetype_valuation_registry.v1.json` 只把已经选择的估值路线连接到一张特定版本的卡；卡片本身不选择路线。重置价值内核只接受与路线一致、且已解析的卡片版本。
 
 生产读取入口 `read_valuation_route` 会同时返回 `valuation_evidence_plan`。缺失角色会
