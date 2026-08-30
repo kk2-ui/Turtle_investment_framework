@@ -1,0 +1,151 @@
+{
+  "schema_version": "enterprise-underwriting-episode.v2",
+  "episode_id": "UWEP:CN000100TTE:20040827:WORKED:C1:R09",
+  "company_id": "CN:000100:TTE",
+  "company_name": "TCL-Thomson / TTE",
+  "cutoff_at": "2004-08-27T00:00:00+08:00",
+  "sample_identity": "WORKED_CASE",
+  "decision_frame": "判断直接承接 Thomson 亏损欧美电视业务、品牌和网络后，TTE 能否把法律与资产控制转化为端到端经营控制、经常利润和可持续普通股现金；同时区分行业技术转换、价格竞争与管理执行各自能够承担的解释范围。",
+  "underwriting_route": "困境跨境整合路线：先检验经营边界和控制移交，再检验客户吸收与责任匹配利润，最后用现金质量、重组和退出记录判断资本回收与永久损失。",
+  "situation_model": {
+    "summary": "TTE 在亏损的欧美电视业务、CRT 向平板和数字产品迁移、价格竞争以及关键商业职能分期移交的条件下起步。TCL 获得了资产、品牌和渠道入口，却同时接下技术、组织与资本负担；核心不是有没有规模，而是能否让产品、销售、营销和供应链在同一控制边界内形成可重复盈利。",
+    "industry_future_thesis": {
+      "horizon": "从 2004 年 8 月开始运营至 FY2006 重组与关停结果窗口，重点观察完整商业控制形成后的两年经营和现金传导。",
+      "most_likely_regime": "欧美电视利润池在 CRT 向平板和数字产品转换及激烈价格竞争中重新分配，旧产品制造规模和既有渠道不会自然转成利润；只有能及时更新产品、协调商业控制并控制成本的经营者才能保住利润池。",
+      "profit_pool_transmission": "技术转换和价格下压先削弱旧产品毛利，销售营销仍在过渡又延迟产品、渠道与成本协同；即使销量和收入存在，利润池仍可从被收购经营边界流向掌握新产品、定价或更低成本的竞争者，并最终表现为经营亏损、重组和退出。",
+      "company_exposure": "TTE 直接暴露于 Thomson 原有欧美亏损业务、品牌渠道和整合义务；TCL 的制造与供应链能力提供潜在适应资源，但 2005 年销售和营销控制尚未完整移交，使资产控制领先于真正的经营控制。",
+      "adaptation": "公司完成业务并入并推进销售营销移交，获得真实销量和收入，但 FY2005 区域亏损、FY2006 持续经营亏损扩大及欧洲重组关线说明原整合路径没有在观察期内适应技术、价格和控制转换。重组是止损反应，不是原路径经济成功。",
+      "normal_economics": "FY2005 欧美约 144.8 亿港元收入和 613 万台销量仍对应约 7.79 亿港元经营亏损，FY2006 持续经营税前亏损约 24.11 亿港元；因此不能用规模推定正常盈利。2006 年正经营现金流与存货、应收释放和应付变化并存，只能视为流动性改善，不能资本化为持续 owner cash。",
+      "permanent_loss": "持续亏损、重组和关停已经把整合风险转化为经营路径层面的资本损失载体；但交易逐项资本用途、残余资产与最终回收未闭合，故能确认原未来现金预期被重置，不能声称整笔交易或 TCL 全公司的最终损失已经结算。",
+      "valuation_treatment": "价值判断应以重组后同一经营边界能否恢复经常利润和非营运资本释放主导的现金为核心，并以资产回收和继续退出作压力路径；品牌、销量、合并收入以及单年正 OCF 不单独进入可持续价值基础。",
+      "strongest_rival": "最强相反解释是关键销售营销职能直到 2006 年才完成移交，叠加行业技术转换与价格竞争，因此早期亏损并不能逐元归因于管理层或交易本身；这一解释限制因果归责，却不能推翻原整合路径在完整观察窗口内没有展示自立盈利和健康现金循环的事实。",
+      "reversal_observations": [
+        "在销售、营销与其他关键商业职能完整归入同一责任边界后，产品和地区组合连续形成经常利润，而非依赖关线或会计重分类。",
+        "经营现金连续由经常利润和客户收款支持，且不再主要依赖存货、应收释放、应付变化或退出处置。",
+        "后续处置、残余资产和现金回收证明原承接资本的大部分可回收，从而显著收窄已观察重组所指向的永久损失。"
+      ]
+    }
+  },
+  "business_position": "TTE 拥有 TCL 制造供应链与 Thomson 品牌、渠道和欧美业务的组合入口，规模和客户交易是真实的；但它继承的是亏损业务，且关键商业控制晚于资产并入，因而位置优势只是一个尚待经济吸收的选择，不能视为已经形成的护城河。",
+  "survival_case": "观察期内问题首先是资本消耗和经营路径存续，而非已证明的即时集团偿付危机。FY2006 巨额持续经营亏损迫使欧洲重组与关线，说明原业务边界不能按原样自立；在融资用途和最终回收不清时，应把继续亏损与退出成本作为生存压力，但不把局部经营失败外推成 TCL 全公司必然失去融资能力。",
+  "adaptation_case": "管理层实施了 TTE 合并并逐步取得销售营销控制，随后在亏损扩大时重组关线。前者只结算组织实施，后者说明能够止损应对；二者都没有证明端到端经济执行。真正缺失的是在新技术和价格环境中把客户交易转换为产品组合利润与健康现金的能力。",
+  "normalization_case": "正常盈利不能锚定合并收入、销量或 2006 年 OCF，而应从重组后、控制完整且剔除退出扰动的同边界经常利润重建。现有两年结果支持把原整合计划下的正常盈利下调至尚未成立；owner cash 则只能在利润恢复并剔除营运资本释放和处置影响后条件性承保。",
+  "permanent_loss_map": "第一条损失路径是旧产品和价格竞争侵蚀毛利，规模越大反而扩大亏损；第二条是商业控制分裂使协同延迟并增加组织成本；第三条是持续亏损触发关线、重组和资产退出，令原投入无法从未来现金流回收。相反路径是完整控制后产品组合与经常利润恢复，并以健康现金证明资本仍可回收。",
+  "value_route": {
+    "primary_routes": [
+      "重组后持续经营正常盈利路线",
+      "资产回收与退出现金压力路线"
+    ],
+    "excluded_routes": [
+      "按电视销量或合并收入直接资本化的规模路线",
+      "把品牌渠道与制造协同作为已实现价值的故事路线"
+    ],
+    "route_reasoning": "亏损整合体的价值取决于重组后是否出现可重复利润和现金，及无法恢复时残余资产能够回收多少；观察期的规模、品牌和正 OCF 均没有穿过这一传导链。",
+    "valuation_model_roles": {
+      "primary": [
+        "情景化正常盈利能力",
+        "可回收资产与退出现金压力测试"
+      ],
+      "corroborative": [
+        "责任边界一致的经营现金转换"
+      ],
+      "stress": [
+        "持续亏损与追加重组资本消耗"
+      ]
+    }
+  },
+  "strongest_rival": "最强相反解释是关键销售营销职能直到 2006 年才完成移交，叠加行业技术转换与价格竞争，因此早期亏损并不能逐元归因于管理层或交易本身；这一解释限制因果归责，却不能推翻原整合路径在完整观察窗口内没有展示自立盈利和健康现金循环的事实。",
+  "reversal_observations": [
+    "在销售、营销与其他关键商业职能完整归入同一责任边界后，产品和地区组合连续形成经常利润，而非依赖关线或会计重分类。",
+    "经营现金连续由经常利润和客户收款支持，且不再主要依赖存货、应收释放、应付变化或退出处置。",
+    "后续处置、残余资产和现金回收证明原承接资本的大部分可回收，从而显著收窄已观察重组所指向的永久损失。"
+  ],
+  "component_treatments": [
+    {
+      "component_id": "TTE:CONTROL_AND_ADAPTATION",
+      "treatment": "CONDITIONALLY_UNDERWRITE",
+      "reason": "资产和业务并入已经实施，但销售营销控制分期转移，FY2005–FY2006 的规模没有转成盈利。",
+      "investment_consequence": "只承认市场进入和组织实施，不把品牌、销量或法律控制写成经济执行能力。",
+      "promotion_or_resolution_condition": "完整商业控制后，同一边界连续出现客户与产品组合改善、经常利润和健康现金。",
+      "evidence_ids": [
+        "E:TTE:STATE_ACTION",
+        "E:TTE:OPERATING_RESULT"
+      ]
+    },
+    {
+      "component_id": "TTE:NORMAL_EARNINGS_AND_CASH",
+      "treatment": "EXCLUDE_FROM_BASE",
+      "reason": "区域及持续经营亏损扩大，2006 年正 OCF 又与大额营运资本释放和重组同时发生。",
+      "investment_consequence": "原整合路径下的正常盈利和 owner cash 尚不能成立，现金改善只保留为流动性信号。",
+      "promotion_or_resolution_condition": "重组后责任匹配利润转正并连续转为不由营运资本释放主导的经营现金。",
+      "evidence_ids": [
+        "E:TTE:OPERATING_RESULT",
+        "E:TTE:CASH_LOSS"
+      ]
+    },
+    {
+      "component_id": "TTE:PERMANENT_LOSS",
+      "treatment": "CONDITIONALLY_UNDERWRITE",
+      "reason": "持续亏损、欧洲重组和关线已证明经营路径的未来现金预期重置，但最终交易回收仍未闭合。",
+      "investment_consequence": "承认路径层面的材料损失风险，同时用回收区间约束而非武断判定整笔交易归零。",
+      "promotion_or_resolution_condition": "取得后续处置、残余资产、追加投入和现金回收的完整记录。",
+      "evidence_ids": [
+        "E:TTE:CASH_LOSS",
+        "E:TTE:BOUNDARIES"
+      ]
+    }
+  ],
+  "evidence_trace": [
+    {
+      "evidence_id": "E:TTE:STATE_ACTION",
+      "source_ref": "docs/development/research/training_curricula/teaching_cases/TC_CN000100_TCL_THOMSON_TTE_CONTROL_AND_CASH_V1.md",
+      "locator": "当时状态、实际选择与真实 no-action；经营重建第 1 节",
+      "scope": "2004 年决策状态、TTE 运营、控制安排和销售营销移交时钟",
+      "used_for": "行业处境、公司暴露、管理选择与资产控制不等于经营控制的判断"
+    },
+    {
+      "evidence_id": "E:TTE:OPERATING_RESULT",
+      "source_ref": "docs/development/research/training_curricula/teaching_cases/TC_CN000100_TCL_THOMSON_TTE_CONTROL_AND_CASH_V1.md",
+      "locator": "经营重建第 2 节；当前最重要的教学判断第 2 项",
+      "scope": "FY2005–FY2006 欧美收入、销量、经营亏损、持续经营亏损及重组",
+      "used_for": "客户交易、适应、正常盈利与规模不能替代经济成功的判断"
+    },
+    {
+      "evidence_id": "E:TTE:CASH_LOSS",
+      "source_ref": "docs/development/research/training_curricula/teaching_cases/TC_CN000100_TCL_THOMSON_TTE_CONTROL_AND_CASH_V1.md",
+      "locator": "经营重建第 3 节；管理层、情景与投资者处理",
+      "scope": "FY2005–FY2006 经营现金、营运资本变化、关线重组与损失载体",
+      "used_for": "owner cash、资本回收、生存压力和永久损失路径"
+    },
+    {
+      "evidence_id": "E:TTE:BOUNDARIES",
+      "source_ref": "docs/development/research/training_curricula/teaching_cases/TC_CN000100_TCL_THOMSON_TTE_CONTROL_AND_CASH_V1.md",
+      "locator": "教学身份与边界；局部未知与可迁移问题",
+      "scope": "交易 IRR、单位经济和因果归责的证据边界",
+      "used_for": "限制整笔交易损失和管理责任归因，同时保留完整企业判断"
+    }
+  ],
+  "existing_object_refs": [
+    {
+      "kind": "RESULT_KNOWN_TEACHING_CASE",
+      "ref": "docs/development/research/training_curricula/teaching_cases/TC_CN000100_TCL_THOMSON_TTE_CONTROL_AND_CASH_V1.md",
+      "role": "本 Episode 唯一允许的公司状态、经营结果、现金质量与教学边界来源"
+    }
+  ],
+  "underwriting_thesis": {
+    "thesis_id": "UWTHESIS:CN000100TTE:20040827:C1:R09",
+    "central_path": "TTE 的资产、品牌和渠道合并带来了真实欧美销量，却没有在技术转换、价格竞争和商业控制分期移交中形成自立盈利；FY2005–FY2006 亏损扩大并进入重组，2006 年正 OCF 又主要无法与营运资本释放分开，因此最合理的承保是把原整合路径的正常盈利与 owner cash 视为尚未成立，并把路径层面的永久损失上调，同时保留最终资本回收尚未结算的边界。",
+    "normal_earnings_treatment": "不以合并收入、销量或协同目标估计正常盈利；只有重组后同一责任边界持续出现产品组合改善与经常利润，才重新建立正常盈利基础。",
+    "owner_cash_treatment": "2006 年正 OCF 保留为真实流动性释放，但在巨额亏损和营运资本大幅变动下不视为可持续 owner cash；需以后续经常利润和非释放型现金转换升级。",
+    "permanent_loss_treatment": "重组、关线和持续亏损已证明经营路径层面的材料永久损失风险；整笔交易净损失以最终处置和回收为条件，不作归零假设。",
+    "value_route_treatment": "优先使用重组后正常盈利与资产回收双路线，排除销量、收入或品牌协同的直接资本化，并用继续亏损和追加重组作为压力路径。",
+    "economic_directions": {
+      "normal_earnings": "DETERIORATES",
+      "owner_cash": "DETERIORATES",
+      "permanent_loss": "DETERIORATES"
+    },
+    "strongest_rival": "最强相反解释是关键销售营销职能直到 2006 年才完成移交，叠加行业技术转换与价格竞争，因此早期亏损并不能逐元归因于管理层或交易本身；这一解释限制因果归责，却不能推翻原整合路径在完整观察窗口内没有展示自立盈利和健康现金循环的事实。",
+    "monitoring": "按完整商业控制后的产品与地区经常利润、客户吸收、经营现金的营运资本桥、追加重组投入及资产处置回收顺序复验；任一实施或现金项目都不得跨越中间机制单独升级结论。"
+  },
+  "investment_treatment": "本教学 Episode 只形成价格前承保：原整合路径不进入可持续正常盈利或 owner cash，真实销量与品牌入口保留为有条件经营资产，价值研究转向重组后利润恢复和资产回收；不生成价格、估值结果或投资动作。"
+}

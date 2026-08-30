@@ -1,0 +1,184 @@
+{
+  "schema_version": "enterprise-underwriting-episode.v2",
+  "episode_id": "EUE:HK01502:20230501:WORKED:C1",
+  "company_id": "HK:01502",
+  "company_name": "Financial Street Property",
+  "cutoff_at": "2023-05-01T00:00:00+08:00",
+  "sample_identity": "WORKED_CASE",
+  "decision_frame": "在包干制为主、第三方与非住宅项目增加且不同物业类型利润率显著分化的状态下，判断管理层采用有机外拓、合资和收购置佳的组合，能否把客户覆盖转成续约、全成本项目利润、可上划 owner cash，并使收购资本得到回收。",
+  "underwriting_route": "NONRESIDENTIAL_SERVICE_EARNINGS_WITH_PROJECT_COHORT_CASH_AND_ACQUISITION_RETURN_CROSS_CHECK",
+  "situation_model": {
+    "summary": "物业服务公司可以通过第三方竞标、合资和收购迅速扩张非住宅与异地组合，但在包干制下，新增面积必须同时承担项目成本、应收和服务质量。金融街物业的结果表明覆盖面和第三方占比增长真实发生，置佳也产生了收入与利润；然而续约、来源别收缴和项目全成本未闭合，置佳未完成业绩承诺并确认了真实商誉减值。",
+    "industry_future_thesis": {
+      "horizon": "2023至2026年的结果观察窗及其后一个非住宅合同与收购整合周期",
+      "most_likely_regime": "物业管理行业仍会以竞标、合资和收购拓展非住宅及第三方项目，但利润池会因项目类型、合同模式、定价和收缴高度分化；能保持续约与项目现金、并严守收购对价的公司才会把规模转成股东价值。",
+      "profit_pool_transmission": "新增项目或被收购平台先带来面积与合并收入，随后必须穿过续约、调价、人工与分包全成本、应收回收和子公司现金上划；收购还要扣除对价、整合投入、补偿可实现性和减值，才能形成资本回报。",
+      "company_exposure": "公司2023年包干制面积占91.09%，第三方来源面积已过半，且商务与非商务物业毛利率差距很大，因此对低毛利组合迁移、客户付款和收购整合特别敏感。",
+      "adaptation": "管理层选择市场化竞标、合资和收购并行。到2025年总面积与第三方面积继续扩大，说明组合调整落地；置佳收入接近承诺但利润未达标，补偿权和后续减值说明资本纪律只得到部分保护。",
+      "normal_economics": "可以承认合并服务覆盖和收入池扩大，但不能用第三方面积、非住宅占比或商务与非商务毛利率互相代替。置佳的累计收入与利润为收购子事件提供经营锚，整个第三方与非住宅池的成熟单位经济仍需条件化。",
+      "permanent_loss": "近端流动性风险不高，主要永久损失来自低毛利包干项目占用营运资本、应收无法收回，以及收购溢价对应的未来现金低于预期。置佳两年合计人民币28.081百万元商誉减值已把后一条从理论风险变成实际资本后果。",
+      "valuation_treatment": "基础价值路线采用可持续物业服务利润并由项目现金和母公司可访问现金校验；不以面积、合并现金或账面商誉独立计值，置佳剩余商誉和未闭合项目池进入资本回收压力处理。",
+      "strongest_rival": "置佳累计收入接近承诺，卖方补偿可抵销未付对价，集团仍有正经营现金和充足现金余额，因此商誉减值更可能只是谨慎重估；管理层的外拓与收购总体已经创造了足够的经营和现金价值。",
+      "reversal_observations": [
+        "若一个可追踪的第三方非住宅 cohort 连续披露续约、全成本利润、实收和应收，并且置佳补偿完成结算、剩余商誉不再减值且累计现金覆盖投入，则应上调外拓和资本配置判断。",
+        "若面积和收入继续增加而非商务毛利率、收缴或经营现金恶化，置佳继续减值或补偿无法实现，或新增收购再次未覆盖资本成本，则应下调正常盈利并提高永久损失判断。"
+      ]
+    }
+  },
+  "business_position": "公司2023年管理40.556百万平方米、290个项目，第三方来源面积21.100百万平方米、占52.03%，非住宅业态占比超过一半；到2025年总面积增至50.618百万平方米、第三方来源面积29.820百万平方米。公司已取得外部项目和非住宅覆盖，但不同分类分母不一致，不能由此推导特定项目池的毛利或续约。",
+  "survival_case": "2025年集团经营现金净额人民币156.336百万元、现金及银行结余人民币1.695十亿元，本公司可供分配储备人民币299.19百万元，支持近端融资生存有缓冲。集团现金、储备和子公司上划不是同一概念，因此普通股可持续 owner cash 的结论仍取决于受限现金、最低营运资本和上划桥。",
+  "adaptation_case": "管理层没有只守住既有组合，而是以竞标、五家合资公司和收购置佳70%股权调整业务。面积和第三方占比增长证明执行与市场承接；置佳四年累计收入599.312百万港元、累计扣非税后利润60.314百万港元，低于承诺，显示被购业务仍在经营但收购预期未完全兑现。",
+  "normalization_case": "正常化应从持续物业服务利润出发，并区分商务与非商务、包干与酬金、第三方与关联方。2025年商务和非商务毛利率分别为22.60%和8.08%，说明组合结构会显著改变盈利；缺少交叉表和 cohort 现金时，只能对合并服务盈利作条件性承保。置佳承诺未达标和减值不应被简单剔除，因为它们反映收购资本的真实经济偏差。",
+  "permanent_loss_map": "损失路径包括低毛利项目的人工与分包成本、应收和营运资本占用、收购对价无法由累计现金覆盖，以及商誉和其他收购资产减值。置佳2024和2025年分别减值人民币9.253百万元和18.828百万元，合计28.081百万元，是已确认的收购溢价损失；卖方补偿是缓冲，未完成结算前不能改写为现金回收。",
+  "value_route": {
+    "primary_routes": [
+      "NORMALIZED_PROPERTY_SERVICE_EARNINGS",
+      "PROJECT_AND_PARENT_ACCESSIBLE_OWNER_CASH_CROSS_CHECK"
+    ],
+    "excluded_routes": [
+      "MANAGED_AREA_MULTIPLE",
+      "GROUP_CASH_AS_IMMEDIATE_PARENT_OWNER_CASH",
+      "GOODWILL_BOOK_VALUE"
+    ],
+    "route_reasoning": "经常性物业服务可以用正常利润承保，但必须按组合毛利、收缴和维护投入校验；收购部分要从对价、累计经营现金、补偿与减值单独判断。面积、现金余额和商誉账面值都不能替代这两条经济桥。",
+    "valuation_model_roles": {
+      "primary": [
+        "NORMALIZED_SERVICE_EARNINGS_BY_ECONOMIC_POOL"
+      ],
+      "corroborative": [
+        "PROJECT_CASH_AND_PARENT_DISTRIBUTION_CAPACITY"
+      ],
+      "stress": [
+        "RECEIVABLE_WORKING_CAPITAL_AND_ACQUISITION_IMPAIRMENT_STRESS"
+      ]
+    }
+  },
+  "strongest_rival": "置佳累计收入接近承诺，卖方补偿可抵销未付对价，集团仍有正经营现金和充足现金余额，因此商誉减值更可能只是谨慎重估；管理层的外拓与收购总体已经创造了足够的经营和现金价值。",
+  "reversal_observations": [
+    "若一个可追踪的第三方非住宅 cohort 连续披露续约、全成本利润、实收和应收，并且置佳补偿完成结算、剩余商誉不再减值且累计现金覆盖投入，则应上调外拓和资本配置判断。",
+    "若面积和收入继续增加而非商务毛利率、收缴或经营现金恶化，置佳继续减值或补偿无法实现，或新增收购再次未覆盖资本成本，则应下调正常盈利并提高永久损失判断。"
+  ],
+  "component_treatments": [
+    {
+      "component_id": "THIRD_PARTY_AND_NONRESIDENTIAL_FOOTPRINT",
+      "treatment": "UNDERWRITE",
+      "reason": "2023至2025年总在管面积和第三方来源面积均增长，证明外拓及组合调整真实发生。",
+      "investment_consequence": "承认公司已扩大外部客户和非住宅经营入口，不再把增长视为只有关联方输送；不由面积直接升级利润和现金。",
+      "promotion_or_resolution_condition": "规模事实无需重复证明；经济信用升级需要同一项目 cohort 的续约、利润和实收。",
+      "evidence_ids": [
+        "HK01502:E1",
+        "HK01502:E3"
+      ]
+    },
+    {
+      "component_id": "CUSTOMER_RENEWAL_AND_PROJECT_UNIT_ECONOMICS",
+      "treatment": "SCENARIO_ONLY",
+      "reason": "公开资料没有把客户来源、物业类型、续约、全成本、收缴和应收连接到同一 cohort。",
+      "investment_consequence": "持续客户吸收和项目级 owner cash 不进入基础承保，但保留为有条件上行情景；缺口不否定已观察的面积和合并收入。",
+      "promotion_or_resolution_condition": "取得到期面积、续约或流失、项目收入与全成本、实收、应收和核销的同边界序列。",
+      "evidence_ids": [
+        "HK01502:E1",
+        "HK01502:E4"
+      ]
+    },
+    {
+      "component_id": "ZHIJIA_OPERATING_ABSORPTION",
+      "treatment": "CONDITIONALLY_UNDERWRITE",
+      "reason": "置佳在承诺期产生接近目标的收入和正利润，说明被购业务并非空壳；利润与收入都未完全达标，且缺项目续约和现金。",
+      "investment_consequence": "承认收购带来持续经营活动，对其正常盈利贡献保留折扣，不把合并收入等同于资本回报。",
+      "promotion_or_resolution_condition": "观察置佳后续续约、项目现金、补偿结算以及累计可分配现金相对投入。",
+      "evidence_ids": [
+        "HK01502:E2",
+        "HK01502:E3"
+      ]
+    },
+    {
+      "component_id": "ZHIJIA_ACQUISITION_CAPITAL_LOSS",
+      "treatment": "UNDERWRITE",
+      "reason": "置佳未完成业绩承诺，并在2024至2025年确认合计人民币28.081百万元商誉减值，收购预期下调已经形成真实资本后果。",
+      "investment_consequence": "资本配置记录维持混合并要求更高安全边际；减值局部归于置佳，不外推为全部第三方项目失败。",
+      "promotion_or_resolution_condition": "该历史减值不撤销；只有补偿完成和累计现金回收可降低剩余资本风险。",
+      "evidence_ids": [
+        "HK01502:E2",
+        "HK01502:E5"
+      ]
+    },
+    {
+      "component_id": "GROUP_LIQUIDITY_AND_PARENT_OWNER_CASH",
+      "treatment": "CONDITIONALLY_UNDERWRITE",
+      "reason": "集团经营现金、现金余额和母公司可分配储备提供流动性证据，但未披露子公司上划、受限现金和维护营运资本桥。",
+      "investment_consequence": "生存判断保持有缓冲；普通股 owner cash 仅条件性承认，不把全部集团现金视为立即可分配。",
+      "promotion_or_resolution_condition": "取得公司单体现金、子公司分红与上划、受限资金、最低营运资本和实际普通股现金转移。",
+      "evidence_ids": [
+        "HK01502:E4"
+      ]
+    }
+  ],
+  "evidence_trace": [
+    {
+      "evidence_id": "HK01502:E1",
+      "source_ref": "docs/development/research/training_curricula/teaching_cases/TC_HK01502_NONRESIDENTIAL_RENEWAL_COLLECTION_OWNER_CASH_V1.md",
+      "locator": "Sections 1-2",
+      "scope": "FY2023 contract model, portfolio, margin and management alternatives",
+      "used_for": "Establish the opening constraint and actual expansion plus acquisition choice"
+    },
+    {
+      "evidence_id": "HK01502:E2",
+      "source_ref": "docs/development/research/training_curricula/teaching_cases/TC_HK01502_NONRESIDENTIAL_RENEWAL_COLLECTION_OWNER_CASH_V1.md",
+      "locator": "Section 2, ZhiJia transaction facts",
+      "scope": "Acquisition consideration, performance undertaking and cash boundary",
+      "used_for": "Bind the acquisition decision to observable capital at risk"
+    },
+    {
+      "evidence_id": "HK01502:E3",
+      "source_ref": "docs/development/research/training_curricula/teaching_cases/TC_HK01502_NONRESIDENTIAL_RENEWAL_COLLECTION_OWNER_CASH_V1.md",
+      "locator": "Section 3",
+      "scope": "FY2025 portfolio growth and ZhiJia audited cumulative operating outcome",
+      "used_for": "Judge customer footprint, operating absorption and commitment shortfall"
+    },
+    {
+      "evidence_id": "HK01502:E4",
+      "source_ref": "docs/development/research/training_curricula/teaching_cases/TC_HK01502_NONRESIDENTIAL_RENEWAL_COLLECTION_OWNER_CASH_V1.md",
+      "locator": "Section 4.1",
+      "scope": "Receivables, working capital, group cash and parent distribution capacity",
+      "used_for": "Separate group liquidity from project collection and parent owner cash"
+    },
+    {
+      "evidence_id": "HK01502:E5",
+      "source_ref": "docs/development/research/training_curricula/teaching_cases/TC_HK01502_NONRESIDENTIAL_RENEWAL_COLLECTION_OWNER_CASH_V1.md",
+      "locator": "Section 4.2",
+      "scope": "ZhiJia goodwill, impairments and seller compensation boundary",
+      "used_for": "Identify realized acquisition capital impairment and remaining recovery conditions"
+    },
+    {
+      "evidence_id": "HK01502:E6",
+      "source_ref": "docs/development/research/training_curricula/teaching_cases/TC_HK01502_NONRESIDENTIAL_RENEWAL_COLLECTION_OWNER_CASH_V1.md",
+      "locator": "Sections 5-9",
+      "scope": "Mechanism conclusion, strongest rival, local unknowns and investor handling",
+      "used_for": "Form the bounded whole-company treatment without turning missing cohort data into refusal"
+    }
+  ],
+  "existing_object_refs": [
+    {
+      "kind": "RESULT_KNOWN_TEACHING_CASE",
+      "ref": "docs/development/research/training_curricula/teaching_cases/TC_HK01502_NONRESIDENTIAL_RENEWAL_COLLECTION_OWNER_CASH_V1.md",
+      "role": "Sole contract-allowed evidence package for the worked Episode"
+    }
+  ],
+  "underwriting_thesis": {
+    "thesis_id": "UWT:HK01502:20230501:WORKED:C1",
+    "central_path": "金融街物业已经把外拓和收购选择转成更大的第三方与非住宅经营组合，置佳也产生了持续收入和利润；但行业利润池最终由续约、全成本、收缴和资本回收决定，置佳承诺未达标及人民币28.081百万元商誉减值说明收购溢价已经发生局部永久损失，因此应承认经营扩张、条件化正常盈利与集团流动性，同时限制项目 owner cash 和资本配置信用。",
+    "normal_earnings_treatment": "以持续物业服务利润为基础，保留商务与非商务、包干与酬金的组合差异；置佳的正利润可进入合并经营锚，但承诺缺口和减值不得被机械剔除，整个第三方非住宅池在 cohort 全成本缺失时只条件性承保。",
+    "owner_cash_treatment": "集团正经营现金和现金余额支持流动性，不等于项目收缴或母公司可分配现金。置佳补偿抵销未付对价是合同缓冲，在实际结算和项目累计现金桥未闭合前不视为 owner cash 回收。",
+    "permanent_loss_treatment": "把置佳已确认商誉减值作为局部已发生资本损失，剩余商誉、补偿实现和低毛利项目营运资本作为后续风险；不把单项收购损失扩展成整家公司或全部第三方业务失败。",
+    "value_route_treatment": "使用分经济池的正常服务利润并以项目现金和母公司现金访问交叉验证；排除面积倍数、集团现金直接归母和商誉账面值，收购资本回收进入压力处理。",
+    "strongest_rival": "置佳累计收入接近承诺，卖方补偿可抵销未付对价，集团仍有正经营现金和充足现金余额，因此商誉减值更可能只是谨慎重估；管理层的外拓与收购总体已经创造了足够的经营和现金价值。",
+    "monitoring": "跟踪第三方非住宅项目的合同到期、续约或流失、全成本毛利、实收与应收；并单独跟踪置佳补偿结算、剩余商誉、累计现金回收和子公司至母公司的现金上划。",
+    "economic_directions": {
+      "normal_earnings": "MIXED",
+      "owner_cash": "UNKNOWN",
+      "permanent_loss": "DETERIORATES"
+    }
+  },
+  "investment_treatment": "研究训练处理：承认外拓与组合调整已经扩大经营覆盖，并把置佳作为经营部分吸收但资本回报受损的独立子事件；不把面积、合并收入或集团现金直接升级为项目 owner cash。本 Episode 不生成市场价值、买入区间或投资动作。"
+}

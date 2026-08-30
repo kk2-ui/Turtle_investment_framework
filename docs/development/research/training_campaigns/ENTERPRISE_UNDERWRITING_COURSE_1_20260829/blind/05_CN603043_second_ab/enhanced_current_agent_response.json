@@ -1,0 +1,208 @@
+{
+  "schema_version": "enterprise-underwriting-episode.v2",
+  "episode_id": "UWEP:CN603043:20190501:SECOND_AB:ENHANCED:CURRENT_AGENT:V1",
+  "company_id": "CN:603043",
+  "company_name": "Guangzhou Restaurant Group",
+  "cutoff_at": "2019-05-01T00:00:00+08:00",
+  "sample_identity": "BLIND_REPLAY",
+  "decision_frame": "在 2019-05-01 的三至五年承保时域内，判断广州酒家是否能把已证实的餐饮与月饼经济，经过速冻食品、异地渠道和新基地转化为新增普通股现金；明确把成熟业务维护现金、当期全部资本支出后的现金，以及增长资本的后续回报作为三个不同问题。",
+  "underwriting_route": "先从产品和渠道而非合并增速区分成熟高毛利业务与常态食品扩张，再分别审查维护资本、全部资本支出后现金和增长资本的客户吸收/回报，最后决定哪些经济能力可以进入基准、哪些只保留情景。",
+  "situation_model": {
+    "summary": "截至截止日，广州酒家的品牌、月饼和餐饮已形成高毛利成熟经济，速冻、经销、省外和新基地是对另一套较低毛利、不同渠道与制造责任的扩张试验。品牌可能帮助食品获客，但不能替代异地客户密度、基地利用率和资本回报的证明。",
+    "industry_future_thesis": {
+      "horizon": "自 2019-05-01 起三至五年；下一完整年度先看客户与渠道，FY2021 左右再判断新基地与常态食品的经济吸收。",
+      "most_likely_regime": "质量信誉将继续给成熟品牌留下利润池，但食品行业的增长会在月饼、餐饮和速冻/异地渠道之间呈现不同经济性。最可能路径是成熟业务保持现金生成，速冻和省外增长却需要通过更低毛利、渠道效率和制造利用率的独立验证；增长本身不自动提高合并正常现金。",
+      "profit_pool_transmission": "品牌与质量先支持产品被选择和售价；速冻与省外收入只有在渠道费用、库存、制造利用率和必要资本后仍留下现金，才把利润池从消费者和渠道伙伴传给公司。若高毛利核心的现金只是支付新工厂、促销和低效率配送，合并收入增长会掩盖普通股经济回报下降。",
+      "company_exposure": "FY2018 月饼约 10.38 亿元、63.22% 毛利率，餐饮约 6.01 亿元、62.71% 毛利率，是成熟经济的主要可见载体；速冻约 4.10 亿元、36.92% 毛利率，且广东仍占主营收入 84.55%。公司既拥有品牌与本地渠道优势，也承担把较低毛利食品和异地基地做成可复制经济的责任。",
+      "adaptation": "公司正通过梅州、湘潭等基地、经销/网络销售及速冻食品扩大非季节性收入。2019 年一季度速冻、省外与经销收入均增长，说明市场接触在增加；经销收入增长同时经销商净减少，最有价值的下一步不是把该数当好或坏，而是区分单个经销商效率提高、渠道集中，还是新增业务需要更高支持成本。",
+      "normal_economics": "不能把约 2.7–3.7 亿元历史合并净利润直接当作一项同质的正常盈利能力。基准先承保成熟月饼、餐饮及其已证明食品品牌经济的方向；速冻和省外业务在同口径收入、毛利、库存/利用率、渠道费用与现金闭环前只作为具名情景。源包不足以将产品分部净利精确量化，因此不以更低的伪精确数字替代合并历史锚。",
+      "permanent_loss": "永久损失的主路径是管理层把成熟业务的现金与品牌声誉视为对所有食品扩张的充分证明，继续把资本投向未被客户和单位经济吸收的基地/渠道；这会同时稀释正常利润质量和成长资本回报。食品安全或品牌问题是会冲击成熟与扩张业务的共同压力路径。",
+      "valuation_treatment": "价值路线以成熟高毛利产品和已证实品牌经济的分层盈利能力为主；速冻/异地业务只有在取得经济闭环后再加入。经营现金被拆成维护后现金、全部资本支出后现金和增长资本回报三条证据线：没有一条可替代另一条。",
+      "strongest_rival": "广州酒家的餐饮品牌、产品技术和质量信誉可以跨产品降低获客、研发和渠道摩擦；速冻、经销和省外收入的早期高增长说明公司正在形成更大的非季节性食品平台，当前较低毛利和资本投入只是规模形成前的过渡。",
+      "reversal_observations": [
+        "若速冻和省外业务持续增加客户收入，同时其同口径毛利、库存/利用率、渠道支持成本和经营现金改善，并且新基地不再需要持续追加资本，则将相应 cohort 从情景提升为可承保的正常盈利来源。",
+        "若经销增长只来自更高的单渠道支持或库存推送、速冻毛利/现金不能改善，且新基地资本继续扩大，则确认成熟经济在补贴低回报扩张并下调扩张价值。",
+        "若公司将成熟业务维护资本与扩张资本可靠拆分，并显示维护后现金稳定、增长资本随后形成独立回报，则上调 owner-cash 与扩张处理；若只有经营现金或全部资本支出数字而无责任拆分，则维持条件处理而不制造点估计。"
+      ]
+    }
+  },
+  "business_position": "公司的可承保优势是品牌、月饼、餐饮和广东食品渠道已经形成的产品信誉与高毛利经济；其未证明部分是将这些优势复制到速冻、非季节性食品、异地经销与新生产基地。季度速冻和省外增长说明有真实市场进入，而速冻较低毛利、广东集中及渠道结构变化说明不能用同一“品牌成功”叙述覆盖两类业务。",
+  "survival_case": "FY2018 经营现金约 4.76 亿元、全部长期资产支出约 2.99 亿元，当年全资本支出后的机械现金差额约正 1.78 亿元。这是公司在当年能够承受既定投入的事实，不是维护后 owner cash，也不是增长资本已获回报。源包没有完整融资与到期债务资料，故近期生存可作有限、条件性承保；真正要监测的是成熟现金是否被不可收缩的扩张责任持续占用。",
+  "adaptation_case": "管理层的适应选择是用成熟品牌/技术推动速冻、经销、省外和基地扩张。改进后的判断不把“收入增长”和“项目已实施”当作成功：它要求一个产品—渠道—基地 cohort 同时显示客户吸收、同口径单位经济和资本后现金。2019 年一季度经销商净减少而经销收入增长，是优先研究单经销商效率、渠道集中和支持成本的原因，而不是预设正面或负面结论。",
+  "normalization_case": "合并 FY2016–FY2018 约 2.67–3.84 亿元归母利润仍是公司整体历史锚，但不再把其中每一元都当成同质的可复制能力。基准只承保成熟高毛利月饼、餐饮及已经证明食品品牌经济的方向；速冻和省外业务维持具名情景，直到产品/区域 cohort 显示毛利、库存或利用率、渠道成本与现金能够共同支撑。没有产品分部净利与维护资本时，不用武断下调合并历史盈利，也不给扩张溢价。",
+  "permanent_loss_map": "第一路径是成熟高毛利现金补贴速冻、新基地和异地渠道，但客户密度、利用率与单位经济没有形成，导致成长资本回报长期偏低；第二路径是把同年全部资本支出后的正现金差额误当维护后现金，从而忽视增长项目持续占用的资源；第三路径是食品安全或品牌受损同时削弱成熟业务与扩张入口。前两条是资本配置型永久损失，不需要先假设短期融资危机。",
+  "value_route": {
+    "primary_routes": [
+      "成熟月饼、餐饮与已证实品牌食品经济的分层盈利能力路线",
+      "维护后现金、全部资本支出后现金与增长资本回报的三线条件交叉检验"
+    ],
+    "excluded_routes": [
+      "把合并利润、速冻增速或省外收入视为同质全国食品能力的单一成长路线",
+      "将全部长期资产支出直接等同维护资本，或将当年正机械现金差额等同 owner cash 的路线"
+    ],
+    "route_reasoning": "月饼与餐饮的高毛利、品牌和历史现金可支持成熟经济的方向性价值路线；速冻和异地扩张已有客户信号但毛利、渠道与资本责任不同，只能在 cohort 级经济闭环后进入。三条现金线分别回答成熟可分配能力、当期扩张占用和新增资本是否获得回报，避免用其中任意一条替代另两条。",
+    "valuation_model_roles": {
+      "primary": [
+        "成熟月饼、餐饮与已证实品牌食品经济的分层盈利能力"
+      ],
+      "corroborative": [
+        "维护后现金与全部资本支出后现金的责任分开检验",
+        "速冻/异地 cohort 的单位经济和增长资本回报检验"
+      ],
+      "stress": [
+        "成熟高毛利现金持续补贴低回报基地和渠道的资本错配压力",
+        "食品安全或品牌受损同时冲击核心与扩张业务的压力"
+      ]
+    }
+  },
+  "strongest_rival": "广州酒家的餐饮品牌、产品技术和质量信誉可以跨产品降低获客、研发和渠道摩擦；速冻、经销和省外收入的早期高增长说明公司正在形成更大的非季节性食品平台，当前较低毛利和资本投入只是规模形成前的过渡。",
+  "reversal_observations": [
+    "若速冻和省外业务持续增加客户收入，同时其同口径毛利、库存/利用率、渠道支持成本和经营现金改善，并且新基地不再需要持续追加资本，则将相应 cohort 从情景提升为可承保的正常盈利来源。",
+    "若经销增长只来自更高的单渠道支持或库存推送、速冻毛利/现金不能改善，且新基地资本继续扩大，则确认成熟经济在补贴低回报扩张并下调扩张价值。",
+    "若公司将成熟业务维护资本与扩张资本可靠拆分，并显示维护后现金稳定、增长资本随后形成独立回报，则上调 owner-cash 与扩张处理；若只有经营现金或全部资本支出数字而无责任拆分，则维持条件处理而不制造点估计。"
+  ],
+  "component_treatments": [
+    {
+      "component_id": "MATURE_BRAND_ECONOMICS",
+      "treatment": "CONDITIONALLY_UNDERWRITE",
+      "reason": "月饼、餐饮和食品制造已有收入、较高毛利、三年盈利和经营现金，支持成熟品牌经济真实存在；源包不能把月饼、餐饮和其他食品的完整净利与维护资本分开。",
+      "investment_consequence": "将成熟品牌经济作为价值主锚的方向性基础，但不把全体合并历史利润无差别归给可复制的成熟业务。",
+      "promotion_or_resolution_condition": "按产品和渠道取得成熟业务净利、维护资本和现金，确认其在不同季节与地区的持续性。",
+      "evidence_ids": [
+        "EV-GZ-2016-2018",
+        "EV-GZ-PRODUCT-ECONOMICS"
+      ]
+    },
+    {
+      "component_id": "FROZEN_FOOD_AND_CHANNEL_COHORTS",
+      "treatment": "SCENARIO_ONLY",
+      "reason": "速冻和省外/经销收入增长显示早期客户进入，但速冻毛利率低于月饼和餐饮，广东集中度高，且经销收入增长与经销商数量净减少尚无法解释为渠道效率或成本改善。",
+      "investment_consequence": "速冻与异地扩张保留为明确上行情景，而非用合并增长给其预先授予正常盈利或 owner-cash 信用。",
+      "promotion_or_resolution_condition": "对同一产品—渠道—基地 cohort 取得销量/复购、毛利、库存或利用率、渠道费用和资本后现金的连续改善。",
+      "evidence_ids": [
+        "EV-GZ-PRODUCT-ECONOMICS",
+        "EV-GZ-Q1-2019"
+      ]
+    },
+    {
+      "component_id": "MAINTENANCE_CASH",
+      "treatment": "CANNOT_BOUND",
+      "reason": "源包没有把维持成熟月饼、餐饮和食品品牌经济的必要资本与扩张基地/渠道资本分开。",
+      "investment_consequence": "维护后 owner cash 只保持条件判断；未知不被偷换为零或负值，也不使整个企业判断停滞。",
+      "promotion_or_resolution_condition": "按成熟生产、门店、配送和品牌维护取得资本支出、营运资本及更新改造拆分。",
+      "evidence_ids": [
+        "EV-GZ-CAPITAL-AND-CASH"
+      ]
+    },
+    {
+      "component_id": "TOTAL_CAPITAL_SPEND_CASH",
+      "treatment": "UNDERWRITE",
+      "reason": "FY2018 经营现金约 4.76 亿元减全部长期资产支出约 2.99 亿元约为正 1.78 亿元。",
+      "investment_consequence": "可确认当年集团在承担全部已披露长期资产投入后未出现机械现金缺口；该事实用于判断当前扩张占用与流动性，不等同 owner cash。",
+      "promotion_or_resolution_condition": "连续观察全部长期资产支出后的现金、库存和融资变化，确认该缓冲不是一次性或以新增外部资金维持。",
+      "evidence_ids": [
+        "EV-GZ-CAPITAL-AND-CASH"
+      ]
+    },
+    {
+      "component_id": "GROWTH_CAPITAL_RETURN",
+      "treatment": "SCENARIO_ONLY",
+      "reason": "梅州、湘潭、车间改造与渠道投入已经实施，速冻和省外增长是需求早期信号；缺少新基地利用率、产品/区域利润与资本后现金，尚不能判断新增资本回报。",
+      "investment_consequence": "不把增长资本未证明误写为维护资本，也不把项目完成或收入增长直接计入正常 owner cash。",
+      "promotion_or_resolution_condition": "新基地和渠道 cohort 在客户吸收、单位经济和资本后现金上显示随时间改善。",
+      "evidence_ids": [
+        "EV-GZ-CAPITAL-AND-CASH",
+        "EV-GZ-Q1-2019"
+      ]
+    },
+    {
+      "component_id": "NORMAL_EARNINGS",
+      "treatment": "CONDITIONALLY_UNDERWRITE",
+      "reason": "合并三年盈利说明基础能力存在，但成熟高毛利业务和增长中低毛利业务经济不同，缺少产品净利不能精确分账。",
+      "investment_consequence": "保留合并历史盈利锚，但价值主线只依赖成熟经济方向；扩张的任何贡献需由 cohort 闭环升级。",
+      "promotion_or_resolution_condition": "产品与区域的利润、毛利、库存/利用率和渠道支持成本能够区分成熟与扩张贡献。",
+      "evidence_ids": [
+        "EV-GZ-2016-2018",
+        "EV-GZ-PRODUCT-ECONOMICS"
+      ]
+    },
+    {
+      "component_id": "PERMANENT_LOSS_PATH",
+      "treatment": "CONDITIONALLY_UNDERWRITE",
+      "reason": "成熟现金、高毛利核心与扩建低毛利食品/异地渠道并存，构成可检验的资本错配路径；目前没有结果可确认它已发生。",
+      "investment_consequence": "长期风险重点从短期融资转向成长资本是否被客户、单位经济和现金真正吸收。",
+      "promotion_or_resolution_condition": "成长项目在不持续吞噬成熟现金的情况下形成资本后现金，或反向显示低利用率、渠道支持成本和追加资本长期上升。",
+      "evidence_ids": [
+        "EV-GZ-CAPITAL-AND-CASH",
+        "EV-GZ-STRATEGIC-TENSION"
+      ]
+    }
+  ],
+  "evidence_trace": [
+    {
+      "evidence_id": "EV-GZ-IDENTITY",
+      "source_ref": "docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_COURSE_1_20260829/sources/CN603043_20190501_PRE_CUTOFF_SOURCE_PACKAGE.md",
+      "locator": "行业、业务与公司位置",
+      "scope": "餐饮品牌、食品制造品类、基地、渠道、食品质量监管和品牌分化边界。",
+      "used_for": "区分品牌信誉、制造资本和渠道效率的不同经济责任。"
+    },
+    {
+      "evidence_id": "EV-GZ-2016-2018",
+      "source_ref": "docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_COURSE_1_20260829/sources/CN603043_20190501_PRE_CUTOFF_SOURCE_PACKAGE.md",
+      "locator": "FY2016–FY2018 财务与产品经济，表格",
+      "scope": "FY2016–FY2018 收入、归母净利润、扣非净利润和经营现金流。",
+      "used_for": "建立合并历史盈利锚与成熟现金生成方向。"
+    },
+    {
+      "evidence_id": "EV-GZ-PRODUCT-ECONOMICS",
+      "source_ref": "docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_COURSE_1_20260829/sources/CN603043_20190501_PRE_CUTOFF_SOURCE_PACKAGE.md",
+      "locator": "FY2016–FY2018 财务与产品经济，第 2 段",
+      "scope": "FY2018 食品、餐饮、月饼和速冻的收入、毛利率、销量、广东收入占比及省外增长。",
+      "used_for": "建立成熟产品、常态食品和异地区域的不同经济参照。"
+    },
+    {
+      "evidence_id": "EV-GZ-CAPITAL-AND-CASH",
+      "source_ref": "docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_COURSE_1_20260829/sources/CN603043_20190501_PRE_CUTOFF_SOURCE_PACKAGE.md",
+      "locator": "资本、现金与管理选择",
+      "scope": "FY2018 经营现金、全部长期资产支出、固定资产/在建工程/无形资产变动与新基地投入；维护与增长资本未拆分。",
+      "used_for": "把维护后现金、全资本支出后现金和成长资本回报分成三条不替代的证据线。"
+    },
+    {
+      "evidence_id": "EV-GZ-Q1-2019",
+      "source_ref": "docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_COURSE_1_20260829/sources/CN603043_20190501_PRE_CUTOFF_SOURCE_PACKAGE.md",
+      "locator": "截止日附近的客户与渠道观察",
+      "scope": "FY2019 一季度速冻、餐饮、省外和经销收入增长，以及经销商数量净减少。",
+      "used_for": "把客户进入与渠道效率、支持成本和现金回报的后续检验分开。"
+    },
+    {
+      "evidence_id": "EV-GZ-STRATEGIC-TENSION",
+      "source_ref": "docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_COURSE_1_20260829/sources/CN603043_20190501_PRE_CUTOFF_SOURCE_PACKAGE.md",
+      "locator": "需要承保的矛盾",
+      "scope": "品牌与月饼高毛利是否可穿过食品制造扩张形成普通股现金的正反机制和区分证据。",
+      "used_for": "构建条件化扩张、最强反方和永久损失机制。"
+    }
+  ],
+  "existing_object_refs": [
+    {
+      "kind": "CONTRACT_ALLOWED_SOURCE_PACKAGE",
+      "ref": "docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_COURSE_1_20260829/sources/CN603043_20190501_PRE_CUTOFF_SOURCE_PACKAGE.md",
+      "role": "本 Episode 唯一的截止日前公司、行业、经营、现金和管理选择证据；课程经验未作为公司事实引用。"
+    }
+  ],
+  "underwriting_thesis": {
+    "thesis_id": "UWTHESIS:CN603043:20190501:SECOND_AB:ENHANCED:CURRENT_AGENT:V1",
+    "central_path": "广州酒家已证明成熟品牌、月饼、餐饮和食品组合能产生盈利与经营现金，但速冻、异地渠道与新基地不是同一项已证明经济能力。最可能路径是成熟高毛利业务保持现金，扩张业务取得客户增长却在较低毛利、渠道和制造资本之间较慢形成回报。故基准只依赖成熟经济方向，增长扩张作为具名 cohort 情景；把维护后现金、全资本支出后现金和增长资本回报分开，避免将未证明增长直接误写为维护负担或 owner cash。置信度中等。",
+    "normal_earnings_treatment": "保留 FY2016–FY2018 约 2.67–3.84 亿元合并盈利作为历史锚，但价值主线只承保成熟月饼、餐饮和已证实品牌食品经济的方向，不能将速冻/省外增长归入同质正常盈利；因没有产品净利，不给人为压低或抬高的点估计。",
+    "owner_cash_treatment": "FY2018 约 4.76 亿元经营现金与约 2.99 亿元全部长期资产支出后的约正 1.78 亿元，回答的是当期承担全部已披露长期资产投入后是否有机械现金缺口；维护后 owner cash 仍因维护/增长资本未拆分而不可精确界定。增长资本的后续回报是第三个问题，不能由前两项替代。",
+    "permanent_loss_treatment": "主要风险是把成熟高毛利现金投入未获客户、单位经济和资本后现金验证的速冻/异地基地与渠道，形成长期低回报资产；该风险不是融资危机的代名词。食品安全或品牌损害是共同压力路径。",
+    "value_route_treatment": "以成熟月饼、餐饮和已证实品牌食品经济的分层盈利能力为主；以三条不互换的现金/资本证据线交叉检验。速冻、异地与新基地只有完成客户—单位经济—资本后现金闭环后才提高价值处理。",
+    "economic_directions": {
+      "normal_earnings": "MIXED",
+      "owner_cash": "MIXED",
+      "permanent_loss": "DETERIORATES"
+    },
+    "strongest_rival": "广州酒家的餐饮品牌、产品技术和质量信誉可以跨产品降低获客、研发和渠道摩擦；速冻、经销和省外收入的早期高增长说明公司正在形成更大的非季节性食品平台，当前较低毛利和资本投入只是规模形成前的过渡。",
+    "monitoring": "优先按速冻/异地产品—渠道—基地 cohort 检查客户收入、毛利、库存或利用率、渠道支持成本和资本后现金；同时单列成熟维护资本、全部资本支出后现金与增长资本回报。经销收入与经销商数的相反变化是需解释的渠道效率问题，而不是可直接使用的结论。"
+  },
+  "investment_treatment": "结果封存训练处理：承保成熟品牌经济的方向性基础；速冻、异地渠道与新基地只有在 cohort 级客户、单位经济和资本后现金闭环后才进入基准。维护资本未知局部限制精度，但不允许把未证实增长资本偷换为维护资本，也不允许用当期机械现金差额替代 owner cash。"
+}

@@ -1,0 +1,17 @@
+{
+  "schema_version": "enterprise-underwriting-training-contract.v1",
+  "contract_id": "UWTRAIN:CN002468:20190501:WORKED:C1",
+  "training_track": "WORKED_CASE",
+  "company_id": "CN:002468",
+  "company_name": "STO Express",
+  "cutoff_at": "2019-05-01T00:00:00+08:00",
+  "sample_identity": "WORKED_CASE",
+  "outcome_access": "RESULT_KNOWN",
+  "allowed_sources": [{"source_id": "SOURCE:CN002468:RESULT-KNOWN", "source_ref": "docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_COURSE_1_20260829/sources/CN002468_STO_FY2018_FY2019_RESULT_KNOWN.md", "available_at": "2026-08-29T00:00:00+08:00", "time_role": "RESULT_KNOWN"}],
+  "feedback_clocks": [
+    {"clock_id": "CLOCK:CN002468:EARLY", "horizon": "OPERATING_ADAPTATION", "opens_at": "2020-04-30T00:00:00+08:00", "episode_claims": ["INDUSTRY_AND_SITUATION", "BUSINESS_POSITION_AND_ADAPTATION", "SURVIVAL_AND_FINANCING"], "discriminating_observation": "枢纽直营化和自动化是否穿过服务与份额形成真实网络控制。"},
+    {"clock_id": "CLOCK:CN002468:LONG", "horizon": "NORMALIZATION_AND_CASH", "opens_at": "2022-04-30T00:00:00+08:00", "episode_claims": ["NORMAL_EARNINGS", "OWNER_CASH", "PERMANENT_LOSS", "VALUE_ROUTE"], "discriminating_observation": "单票利润、现金资本覆盖、借款和加盟商稳定是否支持恢复价值。"}
+  ],
+  "primary_training_product": {"object_type": "EnterpriseUnderwritingEpisode", "schema_version": "enterprise-underwriting-episode.v2", "completion_basis": "COMPLETE_EPISODE_VALIDATION_ONLY"},
+  "authority": "RESEARCH_TRAINING_ONLY_NO_PRICE_VALUATION_OR_INVESTMENT_AUTHORITY"
+}

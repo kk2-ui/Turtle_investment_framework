@@ -1,0 +1,162 @@
+{
+  "schema_version": "enterprise-underwriting-episode.v2",
+  "episode_id": "UWEP:CN002468:20190501:WORKED:C1:R12",
+  "company_id": "CN:002468",
+  "company_name": "STO Express",
+  "cutoff_at": "2019-05-01T00:00:00+08:00",
+  "sample_identity": "WORKED_CASE",
+  "decision_frame": "判断申通收购核心转运中心、提高直营控制并投入自动化后，FY2019 的服务和份额改善是否已经转化为单位经济、现金资本覆盖与加盟网络韧性，还是仍处于资本先投入而经济吸收不足的阶段。",
+  "underwriting_route": "控制权回收与资本吸收路线：把转运中心收购、直营率和自动化视为实施，再依次用服务、份额、单票与分部利润、总部现金资本覆盖和加盟商稳定检验完整经济执行。",
+  "situation_model": {
+    "summary": "申通在电商快递扩量、行业集中和价格竞争中，以中转直营、末端加盟为基础收购核心转运中心并提升自动化。FY2019 直营控制、服务、件量和份额都改善，但利润、毛利和现金资本覆盖恶化，说明实施与客户吸收真实存在，却尚未形成资本回报。",
+    "industry_future_thesis": {
+      "horizon": "以 2019-05-01 为承保锚点观察 FY2019 的控制回收与经营吸收，并延伸至后续利用率、单位利润、现金资本覆盖和加盟商稳定可验证的恢复窗口。",
+      "most_likely_regime": "加盟快递仍会受电商需求推动扩量，但行业集中和价格竞争迫使企业投资枢纽、车辆和自动化；利润池不会按件量均分，而会流向能以高利用率消化固定资本、保持末端加盟稳定并把服务转成单位利润的网络。",
+      "profit_pool_transmission": "转运中心直营化和自动化先提高路由控制与处理能力，服务改善可带来件量和份额；折旧、场地、运力和价格让利同时压低单位经济。只有利用率提升后单票利润恢复、总部现金覆盖资本开支且加盟商稳定，新增利润池才归属于普通股。",
+      "company_exposure": "申通通过收购核心转运中心增加总部控制，末端仍依靠加盟网点，因而同时暴露于较高固定资本、整合爬坡、价格竞争和加盟商经济。其位置优势是可改善的网络控制，不是已经兑现的低资本护城河。",
+      "adaptation": "FY2019 直营率约 89.71%、自动化设备和自营车辆增加，结算了实施；件量增长 44.19%、份额升至 11.60%，全链路时效和每百万件服务指标改善，结算了客户与运营吸收。但这些结果不能把全部因果信用给枢纽收购，也未证明经济执行。",
+      "normal_economics": "收入增长 35.71% 的同时归母和扣非利润分别下降 31.27% 和 21.96%，快递毛利率下降 5.41 个百分点，中转毛利率为 -9.06%，显示规模尚未穿过单位经济。OCF 19.76 亿元低于长期资产现金支出 19.87 亿元，机械 post-capex 接近零且还未扣收购和加盟商资本，因此 owner cash 尚未成立。",
+      "permanent_loss": "年末货币资金约 32.11 亿元而短借约 10.65 亿元，近端仍可融资；但固定资产、在建工程和借款随控制回收上升，若利用率与单票利润不能恢复，先投入资本将成为持续折旧、债务和加盟商承压的永久损失载体。",
+      "valuation_treatment": "价值基础应采用保守正常盈利和资本恢复路线，把服务与份额作为需求吸收旁证，把直营资产、自动化和件量视为需由单位利润与现金回收证明的投入；不为实施数量或收入增长单独赋予持续价值。",
+      "strongest_rival": "最强相反解释是直营化仍在爬坡，新增折旧、场地、运力和激烈价格竞争先压低 FY2019 利润，而服务和份额改善会在后续通过利用率和议价能力释放收益；该恢复路径具有经济可能性，但在观察窗口内还没有通过同口径单位利润、现金资本覆盖和加盟商稳定得到结算。",
+      "reversal_observations": [
+        "收购转运中心完成爬坡后，中转毛利率、快递单票利润和整体正常利润连续恢复，而服务与份额不倒退。",
+        "经营现金持续覆盖维持转运中心、车辆和自动化所需资本，并在扣除收购影响后形成普通股可分配余量。",
+        "加盟商现金、退出和服务稳定证据显示末端能够承受价格与资本压力，或相反出现网络收缩并反噬份额。",
+        "借款和固定资本增速降至经营现金能够覆盖的水平，或继续上升并证明恢复期延长。"
+      ]
+    }
+  },
+  "business_position": "申通以较高自营转运中心比例提升了中枢控制，FY2019 时效、服务和份额改善说明网络并非没有客户吸收；但中转亏损、整体毛利下降和现金资本覆盖不足表明这种位置改善仍是资本密集型恢复选项，尚不是已验证的经济优势。",
+  "survival_case": "货币资金高于短期借款且公司仍能投入固定资产，现有结果不支持近端偿付危机。真正的生存与融资问题是恢复期若延长，接近零的机械 post-capex 现金无法为新增固定资本、收购和加盟网络共同提供缓冲，借款与持续资本需求会逐步压缩普通股韧性。",
+  "adaptation_case": "管理层收购转运中心、提高直营率并部署自动化，实施已经发生；时效、服务、件量和份额改善说明运营与客户层也产生吸收。但利润和现金方向相反，故管理层可获得控制回收与服务改善信用，不能获得资本配置成功或 owner-cash 执行信用。",
+  "normalization_case": "FY2019 利润和毛利恶化可能包含爬坡期成本，不能机械视为永续水平；同样不能把未来利用率改善提前写入基准。正常盈利应从后续中转与单票利润恢复程度构建保守情景，owner cash 则必须在 OCF 覆盖维持资本、收购现金和加盟商责任后才成立。",
+  "permanent_loss_map": "第一条路径是价格竞争与新增折旧令单票利润持续下滑；第二条是枢纽、车辆和自动化利用率不足，资本开支无法回收；第三条是总部借款增加而加盟商经济恶化，导致末端服务与份额反转。相反路径是服务份额保持、利用率上升、单位利润与 post-capex 现金同步恢复。",
+  "value_route": {
+    "primary_routes": [
+      "保守正常经营盈利路线",
+      "资本恢复与 owner-cash 压力路线"
+    ],
+    "excluded_routes": [
+      "业务量、市场份额或收入增长倍数路线",
+      "直营率、转运中心和自动化数量直接资本化路线"
+    ],
+    "route_reasoning": "申通的控制回收和客户吸收已经可见，但单位经济和现金反向恶化；价值只能来自后续利润恢复及维持资本后现金，而非把实施里程碑当作收益。",
+    "valuation_model_roles": {
+      "primary": [
+        "保守正常盈利能力",
+        "资本恢复后的 owner-cash 区间"
+      ],
+      "corroborative": [
+        "服务、时效与份额的吸收趋势"
+      ],
+      "stress": [
+        "中转持续亏损、资本开支不回收与借款上升"
+      ]
+    }
+  },
+  "strongest_rival": "最强相反解释是直营化仍在爬坡，新增折旧、场地、运力和激烈价格竞争先压低 FY2019 利润，而服务和份额改善会在后续通过利用率和议价能力释放收益；该恢复路径具有经济可能性，但在观察窗口内还没有通过同口径单位利润、现金资本覆盖和加盟商稳定得到结算。",
+  "reversal_observations": [
+    "收购转运中心完成爬坡后，中转毛利率、快递单票利润和整体正常利润连续恢复，而服务与份额不倒退。",
+    "经营现金持续覆盖维持转运中心、车辆和自动化所需资本，并在扣除收购影响后形成普通股可分配余量。",
+    "加盟商现金、退出和服务稳定证据显示末端能够承受价格与资本压力，或相反出现网络收缩并反噬份额。",
+    "借款和固定资本增速降至经营现金能够覆盖的水平，或继续上升并证明恢复期延长。"
+  ],
+  "component_treatments": [
+    {
+      "component_id": "STO:CONTROL_IMPLEMENTATION",
+      "treatment": "UNDERWRITE",
+      "reason": "核心转运中心收购、自营比例提高、自动化设备和自营车辆增加，证明控制回收和网络升级已经实施。",
+      "investment_consequence": "给予管理层明确实施信用，但该信用不跨越客户、利润与现金结算为经济成功。",
+      "promotion_or_resolution_condition": "实施后的枢纽利用率、服务、单位利润和现金回收在同一责任边界连续改善。",
+      "evidence_ids": [
+        "E:STO:STATE_ACTION",
+        "E:STO:IMPLEMENTATION"
+      ]
+    },
+    {
+      "component_id": "STO:CUSTOMER_AND_SERVICE_ABSORPTION",
+      "treatment": "UNDERWRITE",
+      "reason": "件量和份额显著增长，时效缩短且每百万件服务指标改善，证明网络升级获得了真实经营吸收。",
+      "investment_consequence": "承认公司位置和运营效果改善，但不把全部变化归因于枢纽收购或解释为定价权。",
+      "promotion_or_resolution_condition": "后续服务和份额保持，同时同口径单票利润改善并排除主要依赖价格让利。",
+      "evidence_ids": [
+        "E:STO:IMPLEMENTATION"
+      ]
+    },
+    {
+      "component_id": "STO:NORMAL_EARNINGS",
+      "treatment": "CONDITIONALLY_UNDERWRITE",
+      "reason": "利润下降、快递毛利率显著下滑且中转毛利为负，FY2019 规模没有转成单位经济；爬坡恢复仍是可检验反方。",
+      "investment_consequence": "使用保守恢复情景而非永续化 FY2019 低点，也不提前计入未来利用率收益。",
+      "promotion_or_resolution_condition": "中转和单票利润连续恢复，且收入增长能够转为正常经营利润。",
+      "evidence_ids": [
+        "E:STO:ECONOMICS_CASH"
+      ]
+    },
+    {
+      "component_id": "STO:OWNER_CASH_AND_PERMANENT_LOSS",
+      "treatment": "EXCLUDE_FROM_BASE",
+      "reason": "OCF 低于长期资产现金支出，机械 post-capex 接近零且尚未扣收购与加盟商资本；固定资产、在建工程和借款又同步增加。",
+      "investment_consequence": "当前不承保已形成 owner cash，把资本不回收与恢复期延长列为主要永久损失路径。",
+      "promotion_or_resolution_condition": "经营现金持续覆盖维持资本与收购影响，并在加盟商稳定下形成可分配现金余量。",
+      "evidence_ids": [
+        "E:STO:ECONOMICS_CASH",
+        "E:STO:SURVIVAL_CAPITAL"
+      ]
+    }
+  ],
+  "evidence_trace": [
+    {
+      "evidence_id": "E:STO:STATE_ACTION",
+      "source_ref": "docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_COURSE_1_20260829/sources/CN002468_STO_FY2018_FY2019_RESULT_KNOWN.md",
+      "locator": "截止日前状态（FY2018）",
+      "scope": "中转直营、末端加盟、核心转运中心收购和首要承保问题",
+      "used_for": "公司起点、管理选择、资本责任和适应机制"
+    },
+    {
+      "evidence_id": "E:STO:IMPLEMENTATION",
+      "source_ref": "docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_COURSE_1_20260829/sources/CN002468_STO_FY2018_FY2019_RESULT_KNOWN.md",
+      "locator": "FY2019 已知结果，第 1–3 项",
+      "scope": "转运中心、直营率、自动化、件量、份额、时效和服务指标",
+      "used_for": "实施、运营适应、客户吸收及因果边界"
+    },
+    {
+      "evidence_id": "E:STO:ECONOMICS_CASH",
+      "source_ref": "docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_COURSE_1_20260829/sources/CN002468_STO_FY2018_FY2019_RESULT_KNOWN.md",
+      "locator": "FY2019 已知结果，第 4–6 项",
+      "scope": "收入利润、快递和中转毛利、OCF、长期资产支出与机械 post-capex",
+      "used_for": "单位经济、正常盈利、owner cash 与资本吸收判断"
+    },
+    {
+      "evidence_id": "E:STO:SURVIVAL_CAPITAL",
+      "source_ref": "docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_COURSE_1_20260829/sources/CN002468_STO_FY2018_FY2019_RESULT_KNOWN.md",
+      "locator": "FY2019 已知结果，第 7 项；最强相反解释与投资处理",
+      "scope": "货币资金、短借、固定资产、在建工程、爬坡反方和加盟商边界",
+      "used_for": "生存、融资、永久损失、恢复情景与价值路线"
+    }
+  ],
+  "existing_object_refs": [
+    {
+      "kind": "RESULT_KNOWN_SOURCE_PACKAGE",
+      "ref": "docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_COURSE_1_20260829/sources/CN002468_STO_FY2018_FY2019_RESULT_KNOWN.md",
+      "role": "本 Episode 唯一允许的申通 FY2018 状态、FY2019 实施、经营、现金和资本结果来源"
+    }
+  ],
+  "underwriting_thesis": {
+    "thesis_id": "UWTHESIS:CN002468:20190501:C1:R12",
+    "central_path": "申通通过转运中心收购和自动化提高了中枢控制，FY2019 的时效、服务、件量与份额改善证明实施获得客户吸收；但利润、快递及中转毛利和资本开支后现金明显恶化，说明经济吸收尚未完成，因此当前只给予控制与运营信用，正常盈利按恢复情景条件性承保，owner cash 不进入基础判断，永久损失取决于利用率和现金回收能否在借款上升前兑现。",
+    "normal_earnings_treatment": "FY2019 利润低点可能含爬坡成本，但没有证据把未来利用率收益提前纳入；以中转和单票利润恢复的保守情景建立正常盈利，未恢复部分不进入基础。",
+    "owner_cash_treatment": "OCF 尚未覆盖长期资产现金支出且未计收购和加盟商资本，因此当前不认定 owner cash；只在维持资本后连续产生现金余量时升级。",
+    "permanent_loss_treatment": "近端流动性尚可，但固定资本、借款和加盟网络责任使恢复失败具有材料永久损失路径；把利用率不足和持续负 post-capex 作为核心压力，而非把 FY2019 直接判成必然失败。",
+    "value_route_treatment": "以保守正常盈利恢复和资本回收为双主线，服务份额仅作客户吸收旁证，排除直营率、设备数量、件量和收入的直接资本化。",
+    "economic_directions": {
+      "normal_earnings": "DETERIORATES",
+      "owner_cash": "DETERIORATES",
+      "permanent_loss": "DETERIORATES"
+    },
+    "strongest_rival": "最强相反解释是直营化仍在爬坡，新增折旧、场地、运力和激烈价格竞争先压低 FY2019 利润，而服务和份额改善会在后续通过利用率和议价能力释放收益；该恢复路径具有经济可能性，但在观察窗口内还没有通过同口径单位利润、现金资本覆盖和加盟商稳定得到结算。",
+    "monitoring": "依次观察中转利用率和毛利、快递单票利润、服务份额、维持资本后现金、借款以及加盟商稳定；恢复情景只有在利润与现金同时改善时才升级，不能由又一次投产或份额增长替代。"
+  },
+  "investment_treatment": "本教学 Episode 的价格前处理是：认可申通的控制回收、服务和客户吸收，但不承认其已形成经济执行或 owner cash；价值研究聚焦正常盈利恢复和资本回收压力，不生成估值结果或投资动作。"
+}

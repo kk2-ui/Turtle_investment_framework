@@ -1,0 +1,47 @@
+{
+  "schema_version": "enterprise-underwriting-training-contract.v1",
+  "contract_id": "UWTRAIN:CN000877:20200501:BLIND:C1",
+  "training_track": "BLIND_REPLAY",
+  "company_id": "CN:000877",
+  "company_name": "Tianshan Cement",
+  "cutoff_at": "2020-05-01T00:00:00+08:00",
+  "sample_identity": "BLIND_REPLAY",
+  "outcome_access": "SEALED",
+  "allowed_sources": [
+    {
+      "source_id": "SOURCE:CN000877:20200501:PRE_CUTOFF",
+      "source_ref": "docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_COURSE_1_20260829/sources/CN000877_20200501_PRE_CUTOFF_SOURCE_PACKAGE.md",
+      "available_at": "2020-03-21T23:59:59+08:00",
+      "time_role": "PRE_CUTOFF"
+    }
+  ],
+  "feedback_clocks": [
+    {
+      "clock_id": "CLOCK:CN000877:FY2020",
+      "horizon": "EARLY_SIGNAL",
+      "opens_at": "2021-04-30T00:00:00+08:00",
+      "episode_claims": ["INDUSTRY_AND_SITUATION", "BUSINESS_POSITION_AND_ADAPTATION", "SURVIVAL_AND_FINANCING"],
+      "discriminating_observation": "区域量价、销量、成本与融资是否显示 FY2019 景气可延续，还是公司只处于行业高点。"
+    },
+    {
+      "clock_id": "CLOCK:CN000877:FY2021",
+      "horizon": "NORMALIZATION_AND_CASH",
+      "opens_at": "2022-04-30T00:00:00+08:00",
+      "episode_claims": ["BUSINESS_POSITION_AND_ADAPTATION", "NORMAL_EARNINGS", "OWNER_CASH"],
+      "discriminating_observation": "在区域与公司边界变化后，正常盈利、经济维护资本和普通股现金是否保持。"
+    },
+    {
+      "clock_id": "CLOCK:CN000877:FY2023",
+      "horizon": "LONG_TERM_PERMANENT_LOSS",
+      "opens_at": "2024-04-30T00:00:00+08:00",
+      "episode_claims": ["SURVIVAL_AND_FINANCING", "NORMAL_EARNINGS", "OWNER_CASH", "PERMANENT_LOSS", "VALUE_ROUTE"],
+      "discriminating_observation": "需求与供给格局变化最终是被成本和区域位置吸收，还是通过低利用率、融资或资本投入形成永久损失。"
+    }
+  ],
+  "primary_training_product": {
+    "object_type": "EnterpriseUnderwritingEpisode",
+    "schema_version": "enterprise-underwriting-episode.v2",
+    "completion_basis": "COMPLETE_EPISODE_VALIDATION_ONLY"
+  },
+  "authority": "RESEARCH_TRAINING_ONLY_NO_PRICE_VALUATION_OR_INVESTMENT_AUTHORITY"
+}

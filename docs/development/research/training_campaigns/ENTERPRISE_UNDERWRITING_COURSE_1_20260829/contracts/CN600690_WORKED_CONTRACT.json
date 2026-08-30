@@ -1,0 +1,17 @@
+{
+  "schema_version": "enterprise-underwriting-training-contract.v1",
+  "contract_id": "UWTRAIN:CN600690:20230501:WORKED:C1",
+  "training_track": "WORKED_CASE",
+  "company_id": "CN:600690",
+  "company_name": "Haier Smart Home",
+  "cutoff_at": "2023-05-01T00:00:00+08:00",
+  "sample_identity": "WORKED_CASE",
+  "outcome_access": "RESULT_KNOWN",
+  "allowed_sources": [{"source_id": "SOURCE:CN600690:TEACHING", "source_ref": "docs/development/research/training_curricula/teaching_cases/TC_HAIER_GLOBAL_INTEGRATION_SCENE_AND_CASH_V1.md", "available_at": "2026-08-29T00:00:00+08:00", "time_role": "RESULT_KNOWN"}],
+  "feedback_clocks": [
+    {"clock_id": "CLOCK:CN600690:EARLY", "horizon": "OPERATING_ADAPTATION", "opens_at": "2024-05-01T00:00:00+08:00", "episode_claims": ["INDUSTRY_AND_SITUATION", "BUSINESS_POSITION_AND_ADAPTATION", "SURVIVAL_AND_FINANCING"], "discriminating_observation": "海外品牌和三翼鸟是否通过份额、结构、利用率和客户成套购买形成吸收。"},
+    {"clock_id": "CLOCK:CN600690:LONG", "horizon": "NORMALIZATION_AND_CASH", "opens_at": "2026-05-01T00:00:00+08:00", "episode_claims": ["NORMAL_EARNINGS", "OWNER_CASH", "PERMANENT_LOSS", "VALUE_ROUTE"], "discriminating_observation": "全球集团现金扣除维护、并购和子公司留存后是否支持资产级回报。"}
+  ],
+  "primary_training_product": {"object_type": "EnterpriseUnderwritingEpisode", "schema_version": "enterprise-underwriting-episode.v2", "completion_basis": "COMPLETE_EPISODE_VALIDATION_ONLY"},
+  "authority": "RESEARCH_TRAINING_ONLY_NO_PRICE_VALUATION_OR_INVESTMENT_AUTHORITY"
+}

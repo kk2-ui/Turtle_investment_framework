@@ -1,0 +1,163 @@
+{
+  "schema_version": "enterprise-underwriting-episode.v2",
+  "episode_id": "UWEP:CN600233:20190501:WORKED:C1:R11",
+  "company_id": "CN:600233",
+  "company_name": "YTO Express",
+  "cutoff_at": "2019-05-01T00:00:00+08:00",
+  "sample_identity": "WORKED_CASE",
+  "decision_frame": "判断圆通以自营枢纽、加盟末端、航空与国际延伸构成的复杂网络，能否把 FY2019 份额和服务改善转成正常盈利与可持续 owner cash，并识别国际商誉、资本开支和融资责任对永久损失的影响。",
+  "underwriting_route": "重资产加盟网络路线：从客户吸收与服务出发，穿过价格和平台反方，再以正常化利润、总部 post-capex 现金、加盟商责任及历史资本配置损失决定价值基础。",
+  "situation_model": {
+    "summary": "圆通在电商快递扩量和行业集中中，以自营枢纽、加盟末端、航空及国际业务争取时效与路由控制。FY2019 份额和申诉指标改善证明网络获得客户吸收，但报告利润下降、资本开支接近 OCF 且国际商誉减值，显示经营规模与资本回报发生分化。",
+    "industry_future_thesis": {
+      "horizon": "以 2019-05-01 为承保锚点，观察 FY2019 网络吸收，并延伸至 2022 年前后资本开支、国际业务和加盟商经济能够检验的正常化窗口。",
+      "most_likely_regime": "加盟快递在需求扩张和集中度提高中仍会增长，但价格让利、平台流量、服务竞争与自动化资本投入压缩利润；利润池更可能流向能把网络密度转成单位成本优势、又不过度承担低回报航空和国际资本的企业。",
+      "profit_pool_transmission": "行业需求和平台分配推动件量，枢纽、航空和服务投入改善时效并可带来份额；但价格竞争、固定资本、债券融资和国际业务减值会截留现金。只有服务吸收进一步带来正常利润、资本开支后现金和加盟网络稳定，利润池才真正留给普通股。",
+      "company_exposure": "圆通 67 个自营枢纽、3,604 家加盟商、29,991 个网点及 12 架自有飞机提供全国路由和服务控制，也使总部承担枢纽、航空、国际资产与融资复杂度，而加盟商末端现金仍不在合并报表中闭合。",
+      "adaptation": "FY2019 件量增长 36.78%、份额提升 1.21 个百分点，平均有效申诉率显著下降，支持网络和服务的真实客户吸收。由于价格、平台和加盟商补贴贡献未识别，这只能证明适应结果，不能证明航空、国际扩张或某项行动的相对因果优势。",
+      "normal_economics": "报告归母与扣非利润下降，但剔除 3.42 亿元国际商誉减值后的归母利润约 20.10 亿元、同比增约 5.55%，说明核心经营盈利可能温和改善；减值不能从资本回报记录删除。OCF 37.99 亿元对长期资产现金支出 33.59 亿元只留下约 4.40 亿元机械余量，且未扣并购、加盟商资本及维持增长资本拆分，因此 owner cash 偏薄且只能区间承保。",
+      "permanent_loss": "近端货币资金远高于短借，短期生存风险低；但约 30.17 亿元应付债券、航空枢纽固定资本和国际商誉减值证明资本回报风险真实存在。若核心网络不能产生高于维持资本的现金，融资和扩张损失会把份额优势转成普通股永久损失。",
+      "valuation_treatment": "价值应以剔除一次性减值但保留资本配置惩罚后的正常经营盈利，以及保守 post-capex 现金区间为主；资产负债表、债券和商誉作压力交叉检查，业务量、飞机数量或国际故事不单独资本化。",
+      "strongest_rival": "最强相反解释是行业集中、电商需求、价格让利和平台分配共同推动 FY2019 件量及份额，申诉下降也不等于客户愿意支付更高价格；因此客户吸收可能真实而经济质量并未提高，尤其加盟商末端现金与航空国际资本回报仍未闭合。",
+      "reversal_observations": [
+        "同口径单票利润或核心网络正常利润连续改善，且服务和份额保持而不依赖更激进价格让利。",
+        "经营现金扣除维持枢纽、航空和自动化所需资本后形成持续、可分配余量，并能覆盖债券责任。",
+        "国际业务后续不再发生材料减值且产生可验证现金回收，或相反继续减值、追加资本并证明扩张损失扩大。",
+        "加盟商现金、退出和服务稳定资料证明末端能够自我融资，或显示总部之外的资本脆弱性反噬网络。"
+      ]
+    }
+  },
+  "business_position": "圆通的枢纽、航空和加盟网络让公司同时获得路由控制、全国覆盖与末端弹性，FY2019 的份额和服务改善证明这套网络有经营效用；但相对轻资产同行更高的固定资本和国际复杂度，使优势必须以单位经济和资本回收而非规模展示来承保。",
+  "survival_case": "FY2019 年末约 35.70 亿元货币资金、0.54 亿元短借表明近端流动性充足；约 30.17 亿元应付债券及持续资本开支则把风险推向中长期资本回报。最合理判断是生存能力尚可，但一旦经营现金不能覆盖网络维持与融资责任，普通股会先承担低回报扩张，而不是立即表现为偿付失败。",
+  "adaptation_case": "件量和份额增长叠加申诉显著下降，说明网络在服务和市场吸收上适应了 FY2019 行业环境。这个信用属于已观察结果，不应跨越价格、平台和加盟商反方给管理层全部因果信用；航空和国际投入还必须分别用单位经济、现金回收与减值记录评估。",
+  "normalization_case": "一次性国际商誉减值应从当期核心经营正常化中剔除，但不能从资本配置评价中消失。剔除后利润仅温和增长，而 OCF 几乎被长期资产支出吸收，故正常盈利可以条件性承保，owner cash 只能使用明显低于 OCF 的保守范围，并要求区分维持与增长资本。",
+  "permanent_loss_map": "第一条路径是价格竞争令件量增长不转成单票利润；第二条是枢纽、航空和国际业务消耗大量资本，使 OCF 无法形成普通股余量；第三条是国际收购继续减值、债券责任上升；第四条是加盟商末端经济恶化反噬服务。相反路径是核心网络利润和 post-capex 现金持续改善、国际资本停止毁损。",
+  "value_route": {
+    "primary_routes": [
+      "核心网络正常经营盈利路线",
+      "保守 owner-cash 区间路线"
+    ],
+    "excluded_routes": [
+      "业务量或市场份额倍数路线",
+      "飞机、国际网络和商誉故事单独资本化路线"
+    ],
+    "route_reasoning": "圆通的客户吸收与服务改善已成立，但资本密集度和国际减值使利润与现金必须分别承保；价值基础应奖励核心网络经常利润，扣住维持资本和历史扩张损失。",
+    "valuation_model_roles": {
+      "primary": [
+        "核心网络正常盈利能力",
+        "维持资本后的 owner-cash 区间"
+      ],
+      "corroborative": [
+        "资产负债表与服务份额趋势"
+      ],
+      "stress": [
+        "国际资产继续减值、债券融资与高固定资本压力"
+      ]
+    }
+  },
+  "strongest_rival": "最强相反解释是行业集中、电商需求、价格让利和平台分配共同推动 FY2019 件量及份额，申诉下降也不等于客户愿意支付更高价格；因此客户吸收可能真实而经济质量并未提高，尤其加盟商末端现金与航空国际资本回报仍未闭合。",
+  "reversal_observations": [
+    "同口径单票利润或核心网络正常利润连续改善，且服务和份额保持而不依赖更激进价格让利。",
+    "经营现金扣除维持枢纽、航空和自动化所需资本后形成持续、可分配余量，并能覆盖债券责任。",
+    "国际业务后续不再发生材料减值且产生可验证现金回收，或相反继续减值、追加资本并证明扩张损失扩大。",
+    "加盟商现金、退出和服务稳定资料证明末端能够自我融资，或显示总部之外的资本脆弱性反噬网络。"
+  ],
+  "component_treatments": [
+    {
+      "component_id": "YTO:CUSTOMER_AND_SERVICE_ABSORPTION",
+      "treatment": "UNDERWRITE",
+      "reason": "FY2019 件量与份额增长，同时平均有效申诉率显著下降，证明网络获得了真实客户吸收并改善服务。",
+      "investment_consequence": "承认公司位置和运营适应改善，但不把结果全部归因于单项管理行动或解释为定价权。",
+      "promotion_or_resolution_condition": "服务和份额在同口径单位经济改善时仍保持，且能排除主要依靠价格让利的解释。",
+      "evidence_ids": [
+        "E:YTO:NETWORK_STATE",
+        "E:YTO:OPERATING_ABSORPTION"
+      ]
+    },
+    {
+      "component_id": "YTO:NORMAL_EARNINGS",
+      "treatment": "CONDITIONALLY_UNDERWRITE",
+      "reason": "报告利润受国际商誉减值拖累，剔除后核心利润温和增长，但减值记录了真实历史资本配置损失。",
+      "investment_consequence": "核心正常盈利可以按剔除减值后的保守水平研究，同时必须在永久损失与资本回报中保留减值。",
+      "promotion_or_resolution_condition": "核心网络同口径利润连续改善，国际业务不再依赖减值调整或追加资本维持。",
+      "evidence_ids": [
+        "E:YTO:EARNINGS_CASH",
+        "E:YTO:CAPITAL_LOSS"
+      ]
+    },
+    {
+      "component_id": "YTO:OWNER_CASH",
+      "treatment": "CONDITIONALLY_UNDERWRITE",
+      "reason": "OCF 37.99 亿元大部分被 33.59 亿元长期资产现金支出吸收，机械余量又未扣并购、加盟商资本和维持增长资本拆分。",
+      "investment_consequence": "不把 OCF 增长直接当作 owner cash，使用低于 OCF 的保守现金范围并把资本效率置于份额之前。",
+      "promotion_or_resolution_condition": "连续披露并形成维持资本后现金余量，且总部和加盟网络均无需新增高成本资本维持服务。",
+      "evidence_ids": [
+        "E:YTO:EARNINGS_CASH",
+        "E:YTO:CAPITAL_LOSS"
+      ]
+    },
+    {
+      "component_id": "YTO:PERMANENT_LOSS_AND_SURVIVAL",
+      "treatment": "CONDITIONALLY_UNDERWRITE",
+      "reason": "近端货币资金与低短借支持生存，但债券、固定资本和 3.42 亿元国际商誉减值已构成资本回报压力。",
+      "investment_consequence": "把圆通视为近端可持续经营但资本配置风险高于流动性风险的企业，并对国际扩张继续毁损设置压力路径。",
+      "promotion_or_resolution_condition": "债券责任由核心网络自由现金覆盖，国际资产停止减值并产生可验证回收。",
+      "evidence_ids": [
+        "E:YTO:CAPITAL_LOSS"
+      ]
+    }
+  ],
+  "evidence_trace": [
+    {
+      "evidence_id": "E:YTO:NETWORK_STATE",
+      "source_ref": "docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_COURSE_1_20260829/sources/CN600233_YTO_FY2018_FY2019_RESULT_KNOWN.md",
+      "locator": "截止日前状态（FY2018）",
+      "scope": "圆通枢纽、加盟商、网点、航空和行业位置",
+      "used_for": "行业处境、公司位置、资本复杂度与适应能力起点"
+    },
+    {
+      "evidence_id": "E:YTO:OPERATING_ABSORPTION",
+      "source_ref": "docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_COURSE_1_20260829/sources/CN600233_YTO_FY2018_FY2019_RESULT_KNOWN.md",
+      "locator": "FY2019 已知结果，第 1–2 项",
+      "scope": "FY2019 件量、份额和平均有效申诉率",
+      "used_for": "客户吸收、服务改善、公司适应及其因果边界"
+    },
+    {
+      "evidence_id": "E:YTO:EARNINGS_CASH",
+      "source_ref": "docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_COURSE_1_20260829/sources/CN600233_YTO_FY2018_FY2019_RESULT_KNOWN.md",
+      "locator": "FY2019 已知结果，第 3–4 项",
+      "scope": "报告与调整后利润、OCF、长期资产现金支出和机械 post-capex 代理",
+      "used_for": "正常盈利、owner cash 与资本吸收判断"
+    },
+    {
+      "evidence_id": "E:YTO:CAPITAL_LOSS",
+      "source_ref": "docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_COURSE_1_20260829/sources/CN600233_YTO_FY2018_FY2019_RESULT_KNOWN.md",
+      "locator": "FY2019 已知结果，第 5–6 项；最强相反解释与投资处理",
+      "scope": "国际商誉减值、货币资金、短借、债券与加盟商资本边界",
+      "used_for": "生存、资本配置、永久损失、最强反方与价值路线"
+    }
+  ],
+  "existing_object_refs": [
+    {
+      "kind": "RESULT_KNOWN_SOURCE_PACKAGE",
+      "ref": "docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_COURSE_1_20260829/sources/CN600233_YTO_FY2018_FY2019_RESULT_KNOWN.md",
+      "role": "本 Episode 唯一允许的圆通 FY2018 状态、FY2019 经营结果、现金和资本配置来源"
+    }
+  ],
+  "underwriting_thesis": {
+    "thesis_id": "UWTHESIS:CN600233:20190501:C1:R11",
+    "central_path": "圆通 FY2019 的份额和服务同时改善，证明重资产加盟网络具有真实客户吸收与运营适应；但报告利润下降、OCF 几乎被长期资产支出吸收，国际商誉减值又确认历史资本配置损失，因此核心正常盈利可在剔除减值后条件性承保，owner cash 只能保守估计，永久损失重心在航空、国际扩张和融资责任而非近端生存。",
+    "normal_earnings_treatment": "以剔除一次性国际减值后的核心经营利润作为正常化起点，但仅承认温和改善；国际减值继续留在资本配置记录，不用于美化整体经济质量。",
+    "owner_cash_treatment": "OCF 先扣除网络维持所需资本，并对并购、加盟商资本和维持增长拆分缺口作保守调整；FY2019 机械 post-capex 余量只是上限附近代理，不是已验证可分配现金。",
+    "permanent_loss_treatment": "近端生存风险较低，但国际商誉减值、债券和高固定资本构成已观察资本回报风险；若核心现金不能覆盖维持资本和融资责任，损失会继续向普通股传导。",
+    "value_route_treatment": "核心网络正常盈利与维持资本后现金为主路线，服务份额只作吸收旁证，资产负债表、国际减值和加盟商经济作为压力约束。",
+    "economic_directions": {
+      "normal_earnings": "IMPROVES",
+      "owner_cash": "MIXED",
+      "permanent_loss": "DETERIORATES"
+    },
+    "strongest_rival": "最强相反解释是行业集中、电商需求、价格让利和平台分配共同推动 FY2019 件量及份额，申诉下降也不等于客户愿意支付更高价格；因此客户吸收可能真实而经济质量并未提高，尤其加盟商末端现金与航空国际资本回报仍未闭合。",
+    "monitoring": "按同口径核心网络利润、服务与份额、维持资本后现金、债券覆盖、国际资产回收及加盟商稳定顺序观察；份额和服务不能跳过单位经济与资本回报直接升级价值判断。"
+  },
+  "investment_treatment": "本教学 Episode 的价格前处理是：承认圆通的网络吸收与服务适应，条件性承保核心正常盈利，显著折减 OCF 到 owner cash 的传导，并将国际资本配置与高固定资本置于永久损失中心；不生成估值结果或投资动作。"
+}

@@ -1,0 +1,47 @@
+{
+  "schema_version": "enterprise-underwriting-training-contract.v1",
+  "contract_id": "UWTRAIN:CN002352:20190501:BLIND:C1",
+  "training_track": "BLIND_REPLAY",
+  "company_id": "CN:002352",
+  "company_name": "SF Holding",
+  "cutoff_at": "2019-05-01T00:00:00+08:00",
+  "sample_identity": "BLIND_REPLAY",
+  "outcome_access": "SEALED",
+  "allowed_sources": [
+    {
+      "source_id": "SOURCE:CN002352:20190501:PRE_CUTOFF",
+      "source_ref": "docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_COURSE_1_20260829/sources/CN002352_20190501_PRE_CUTOFF_SOURCE_PACKAGE.md",
+      "available_at": "2019-04-30T23:59:59+08:00",
+      "time_role": "PRE_CUTOFF"
+    }
+  ],
+  "feedback_clocks": [
+    {
+      "clock_id": "CLOCK:CN002352:FY2019",
+      "horizon": "EARLY_SIGNAL",
+      "opens_at": "2020-04-30T00:00:00+08:00",
+      "episode_claims": ["INDUSTRY_AND_SITUATION", "BUSINESS_POSITION_AND_ADAPTATION", "SURVIVAL_AND_FINANCING"],
+      "discriminating_observation": "直营服务与产品扩张是否继续获得客户吸收，并开始缓解成本和资本压力。"
+    },
+    {
+      "clock_id": "CLOCK:CN002352:FY2021",
+      "horizon": "NORMALIZATION_AND_CASH",
+      "opens_at": "2022-04-30T00:00:00+08:00",
+      "episode_claims": ["BUSINESS_POSITION_AND_ADAPTATION", "NORMAL_EARNINGS", "OWNER_CASH"],
+      "discriminating_observation": "核心网络和新业务的利用率、利润及维护增长资本能否形成可重复 owner cash。"
+    },
+    {
+      "clock_id": "CLOCK:CN002352:FY2023",
+      "horizon": "LONG_TERM_PERMANENT_LOSS",
+      "opens_at": "2024-04-30T00:00:00+08:00",
+      "episode_claims": ["SURVIVAL_AND_FINANCING", "NORMAL_EARNINGS", "OWNER_CASH", "PERMANENT_LOSS", "VALUE_ROUTE"],
+      "discriminating_observation": "直营网的服务溢价和综合物流协同最终是否覆盖网络、债务与新增业务资本，或形成低回报永久损失。"
+    }
+  ],
+  "primary_training_product": {
+    "object_type": "EnterpriseUnderwritingEpisode",
+    "schema_version": "enterprise-underwriting-episode.v2",
+    "completion_basis": "COMPLETE_EPISODE_VALIDATION_ONLY"
+  },
+  "authority": "RESEARCH_TRAINING_ONLY_NO_PRICE_VALUATION_OR_INVESTMENT_AUTHORITY"
+}

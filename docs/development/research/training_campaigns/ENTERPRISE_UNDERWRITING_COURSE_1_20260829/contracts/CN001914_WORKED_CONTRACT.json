@@ -1,0 +1,17 @@
+{
+  "schema_version": "enterprise-underwriting-training-contract.v1",
+  "contract_id": "UWTRAIN:CN001914:20210501:WORKED:C1",
+  "training_track": "WORKED_CASE",
+  "company_id": "CN:001914",
+  "company_name": "China Merchants Property Operation & Service",
+  "cutoff_at": "2021-05-01T00:00:00+08:00",
+  "sample_identity": "WORKED_CASE",
+  "outcome_access": "RESULT_KNOWN",
+  "allowed_sources": [{"source_id": "SOURCE:CN001914:TEACHING", "source_ref": "docs/development/research/training_curricula/teaching_cases/TC_CN001914_SCALE_MARGIN_AND_COLLECTION_V1.md", "available_at": "2026-08-29T00:00:00+08:00", "time_role": "RESULT_KNOWN"}],
+  "feedback_clocks": [
+    {"clock_id": "CLOCK:CN001914:EARLY", "horizon": "OPERATING_ADAPTATION", "opens_at": "2022-05-01T00:00:00+08:00", "episode_claims": ["INDUSTRY_AND_SITUATION", "BUSINESS_POSITION_AND_ADAPTATION", "SURVIVAL_AND_FINANCING"], "discriminating_observation": "重组后的合同和管理规模是否转成同边界收入、毛利和客户吸收。"},
+    {"clock_id": "CLOCK:CN001914:LONG", "horizon": "LONG_TERM_PERMANENT_LOSS", "opens_at": "2025-05-01T00:00:00+08:00", "episode_claims": ["NORMAL_EARNINGS", "OWNER_CASH", "PERMANENT_LOSS", "VALUE_ROUTE"], "discriminating_observation": "物业现金、并购回报和遗留地产损失是否改变普通股价值路线。"}
+  ],
+  "primary_training_product": {"object_type": "EnterpriseUnderwritingEpisode", "schema_version": "enterprise-underwriting-episode.v2", "completion_basis": "COMPLETE_EPISODE_VALIDATION_ONLY"},
+  "authority": "RESEARCH_TRAINING_ONLY_NO_PRICE_VALUATION_OR_INVESTMENT_AUTHORITY"
+}

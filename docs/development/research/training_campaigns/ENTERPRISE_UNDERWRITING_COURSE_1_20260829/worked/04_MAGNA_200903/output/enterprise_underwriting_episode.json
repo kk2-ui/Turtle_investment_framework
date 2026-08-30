@@ -1,0 +1,131 @@
+{
+  "adaptation_case": "可承保的适应不是扩张，而是企业在客户危机后仍保有客户关系、生产能力和恢复正常经营的能力；本 worked case 不把它外推为其他周期企业的管理层能力结论。",
+  "business_position": "麦格纳拥有支持约 240 亿美元销售额的客户关系和制造组织，但没有被视为拥有可持续竞争特许权；这使其恢复后价值主要来自现有资产与正常盈利，而非高回报成长。",
+  "company_id": "CASE:MAGNA_INTERNATIONAL",
+  "company_name": "麦格纳国际",
+  "component_treatments": [
+    {
+      "component_id": "SURVIVAL_THROUGH_CUSTOMER_CRISIS",
+      "evidence_ids": [
+        "MAGNA-E1"
+      ],
+      "investment_consequence": "允许继续评估可生存企业的资产价值与正常盈利，而不是把危机等同于清算。",
+      "promotion_or_resolution_condition": "若客户或融资链出现永久损害，立即重开该前提。",
+      "reason": "案例已先确认即时破产风险低且长期经济前景未被根本破坏。",
+      "treatment": "UNDERWRITE"
+    },
+    {
+      "component_id": "NORMALIZED_OPERATING_MARGIN",
+      "evidence_ids": [
+        "MAGNA-E1"
+      ],
+      "investment_consequence": "可作为 EPV 的条件输入，但不能以危机期利润替代或为成长付费。",
+      "promotion_or_resolution_condition": "恢复后的订单和利润率支持正常化水平。",
+      "reason": "约 5% 的正常利润率以持续经营和行业恢复为条件。",
+      "treatment": "CONDITIONALLY_UNDERWRITE"
+    },
+    {
+      "component_id": "GROWTH_VALUE",
+      "evidence_ids": [
+        "MAGNA-E1"
+      ],
+      "investment_consequence": "价值锚保持在资产价值和 EPV，避免用反弹叙事抬高基准价值。",
+      "promotion_or_resolution_condition": "只有发现可持续竞争优势和高回报再投资证据才可重新纳入。",
+      "reason": "案例明确将无持续竞争优势企业的成长价值视为很小。",
+      "treatment": "EXCLUDE_FROM_BASE"
+    }
+  ],
+  "cutoff_at": "2009-03-01T00:00:00-05:00",
+  "decision_frame": "在汽车业和核心客户的危机中，先判断这是一家可生存但无特许权的周期企业，还是会被客户破产和行业收缩永久摧毁；仅在前者成立时才用资产价值与 EPV 而非成长叙事处理价值。",
+  "episode_id": "EUE:MAGNA:200903:WORKED:V1",
+  "evidence_trace": [
+    {
+      "evidence_id": "MAGNA-E1",
+      "locator": "麦格纳案例：约 2700--2760 行",
+      "scope": "结果已知的书籍案例；只作困境周期型推理示范",
+      "source_ref": "docs/value_investing_from_graham_to_buffett_notes.md",
+      "used_for": "生存优先、5%正常利润、资产价值与EPV双锚、成长价值排除"
+    }
+  ],
+  "existing_object_refs": [
+    {
+      "kind": "VALUE_INVESTING_WORKED_CASE_NOTE",
+      "ref": "docs/value_investing_from_graham_to_buffett_notes.md",
+      "role": "Magna 方法与结果已知案例来源"
+    },
+    {
+      "kind": "CN600585_TEACHING_CASE",
+      "ref": "docs/development/research/training_curricula/teaching_cases/TC_CN600585_CYCLE_CAPITAL_CASH_V1.md",
+      "role": "重资产周期近失效案例；不能复制 Magna 的恢复结论"
+    }
+  ],
+  "investment_treatment": "这是结果已知 worked case。它只训练先判断生存、再正常化、最后选资产/EPV价值路线的顺序，不形成当前市场处理。",
+  "normalization_case": "若持续经营前提成立，营业利润率可向案例采用的约 5% 正常化；这是一项有条件的 EPV 输入，不是对短期利润的线性外推。",
+  "permanent_loss_map": "核心客户破产、行业长期需求损坏或融资链断裂会使周期损失变成永久损失；若这些风险被排除，短期低利润本身不是永久毁灭。",
+  "reversal_observations": [
+    "出现无法承受的流动性或融资缺口。",
+    "客户破产或行业收缩永久损害订单和生产资产的经济用途。",
+    "恢复后利润率不能接近可持续经营所需的正常水平。"
+  ],
+  "sample_identity": "WORKED_CASE",
+  "schema_version": "enterprise-underwriting-episode.v2",
+  "situation_model": {
+    "industry_future_thesis": {
+      "adaptation": "现实可承保的适应是保住流动性、客户关系、交付能力并随订单调整成本和产能，使现有资产能参与行业恢复；本案例不把扩张或收购叙事当作恢复前提。",
+      "company_exposure": "麦格纳对核心OEM订单和整车产量高度暴露，约240亿美元销售能力在低利用率下会放大经营压力；其客户关系、制造组织和资产基础提供恢复载体，但缺少可据以持续提价或高回报扩张的特许权。",
+      "horizon": "未来3至5年，以2009-03-01为观察起点。",
+      "most_likely_regime": "北美汽车业先经历销量塌陷、OEM重组和供应链去产能，随后在仍存续的整车需求上恢复到低于危机前扩张叙事的正常水平；基准路径是严重周期收缩后的行业整合，而不是汽车制造永久消失。",
+      "normal_economics": "若客户和融资链存续，订单与利用率恢复可支持约5%的正常营业利润率并进入零成长EPV；危机期利润不是常态，案例也不足以形成普通股owner cash的独立结论。",
+      "permanent_loss": "若核心客户破产导致订单基础永久损坏、融资链断裂或生产资产失去经济用途，周期低谷会转成不可逆损失，约5%正常利润率和持续经营前提同时失效。",
+      "profit_pool_transmission": "OEM减产和融资压力先压低零部件订单、产能利用率与议价空间，亏损和退出再把剩余利润池集中到能维持客户关系、流动性和制造交付的供应商；恢复价值来自存量资产重新利用和利润率正常化，而不是危机期扩张。",
+      "reversal_observations": [
+        "出现无法承受的流动性或融资缺口。",
+        "客户破产或行业收缩永久损害订单和生产资产的经济用途。",
+        "恢复后利润率不能接近可持续经营所需的正常水平。"
+      ],
+      "strongest_rival": "核心客户的破产压力可能不仅是周期低谷，而是会破坏订单、供应链和资本结构，从而使正常化盈利假设无效。",
+      "valuation_treatment": "价值以可生存资产和零成长EPV交叉约束，不为行业反弹本身支付成长价值；只有另有持续竞争优势与高回报再投资证据，成长才可进入基准。"
+    },
+    "summary": "2009 年 3 月汽车业和核心客户承受破产压力，冲击通过 OEM 订单、产量和供应链传至零部件商。该 Episode 的关键不是预测下一季销量，而是区分暂时周期塌陷与长期经济基础被永久破坏。"
+  },
+  "strongest_rival": "核心客户的破产压力可能不仅是周期低谷，而是会破坏订单、供应链和资本结构，从而使正常化盈利假设无效。",
+  "survival_case": "书中案例的前置判断是即时破产风险低、长期经济前景未被根本破坏。生存判断必须先于估值，并且不能由低股价或资产价值反推。",
+  "underwriting_route": "DISTRESSED_CYCLICAL",
+  "underwriting_thesis": {
+    "central_path": "在先排除即时破产和长期经济基础毁灭后，麦格纳应按可生存但无特许权的周期企业处理：以资产价值和正常化 EPV 约束价值，不为成长付费。",
+    "economic_directions": {
+      "normal_earnings": "IMPROVES",
+      "owner_cash": "UNKNOWN",
+      "permanent_loss": "MIXED"
+    },
+    "monitoring": "客户生存、融资可得性、订单恢复和正常化利润率。",
+    "normal_earnings_treatment": "以持续经营为前提的约5%营业利润率进入零成长 EPV；危机期利润不作为常态。",
+    "owner_cash_treatment": "本书籍案例只示范 EPV/资产价值路线，未把它扩写成可迁移的现金流结论。",
+    "permanent_loss_treatment": "客户破产、融资失败或订单基础永久损坏会使本路径失效；这些是先于估值的关键观察。",
+    "strongest_rival": "核心客户的破产压力可能不仅是周期低谷，而是会破坏订单、供应链和资本结构，从而使正常化盈利假设无效。",
+    "thesis_id": "UWT:MAGNA:200903:V1",
+    "value_route_treatment": "资产价值与 EPV 相互检验；成长价值排除在基准之外。"
+  },
+  "value_route": {
+    "excluded_routes": [
+      "GROWTH_VALUE_AS_PRIMARY"
+    ],
+    "primary_routes": [
+      "ASSET_VALUE",
+      "EARNINGS_POWER_VALUE"
+    ],
+    "route_reasoning": "无持续特许权的可生存周期企业应以资产价值与零成长 EPV 交叉约束；成长只在另有高回报再投资证据时才可进入。",
+    "valuation_model_roles": {
+      "corroborative": [
+        "RETURN_DECOMPOSITION"
+      ],
+      "primary": [
+        "ASSET_VALUE",
+        "EPV"
+      ],
+      "stress": [
+        "NAV"
+      ]
+    }
+  }
+}

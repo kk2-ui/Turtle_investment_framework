@@ -1,0 +1,228 @@
+{
+  "schema_version": "enterprise-underwriting-episode.v2",
+  "episode_id": "UWEP:CN000877:20200501:BLIND:C1",
+  "company_id": "CN:000877",
+  "company_name": "Tianshan Cement",
+  "cutoff_at": "2020-05-01T00:00:00+08:00",
+  "sample_identity": "BLIND_REPLAY",
+  "decision_frame": "在截点时判断 FY2019 的区域景气改善能有多少穿越周期并成为普通股可获得的正常盈利与 owner cash，同时识别新疆和江苏区域集中、重资产利用率及融资结构怎样形成永久损失。",
+  "underwriting_route": "先把区域需求与供给约束带来的行业上行同公司的区域网络、资源条件和存量经营动作分开，再从生存缓冲、低谷单位经济、经济维护资本和融资责任回到普通股现金；价值路线只采用区域中周期盈利能力并以资产承载能力作交叉约束。",
+  "situation_model": {
+    "summary": "水泥是运输半径约 200–300 公里的区域性重资产生意。公司同时暴露于新疆较短的有效产销期和江苏的梅雨及区域竞争；FY2019 量、毛利和现金显著改善，但公司增量与新疆及全国水泥产量上行同时发生，因此当年表现首先是行业景气与公司位置的共同产物，而不是已经证明的跨周期单位经济。",
+    "industry_future_thesis": {
+      "horizon": "自 2020-05-01 起的三至五年区域中周期",
+      "most_likely_regime": "需求由快速增长转为平台和结构调整，区域产能过剩继续存在；错峰、环保、矿山合规和落后产能退出阶段性约束供给，但不能永久消除区域量价波动。最可能的不是持续复制 FY2019，而是不同区域在供给纪律、施工季节和需求变化下出现盈利波动。",
+      "profit_pool_transmission": "当区域需求稳定且供给纪律有效时，水泥销售单价和产能利用率共同扩张吨毛利；当需求走弱或供给纪律松动时，运输半径限制跨区调剂，高固定成本使销量和单价回落更快传入利润与现金。环保和矿山要求一方面约束低效供给，另一方面也要求持续维护与合规投入。",
+      "company_exposure": "公司在新疆 12 个地州以及江苏苏锡常布局，具备区域网络、特种水泥和自有石灰石矿山，但两地的季节和竞争条件不同。该布局提供客户触达和资源保障，却没有可用证据证明公司相对成本、区域份额或单吨经济在低谷仍领先。",
+      "adaptation": "公司没有在建新增水泥产能，并把动作放在错峰、精细管理、采购和成本优化、资产清理、配送及电商平台渗透上。这一组合降低继续押注新增产能的资本暴露，并可能改善存量资产周转；但在区域低谷中的销量、单位成本和现金尚未观察到，因此只给予条件信用。",
+      "normal_economics": "正常盈利应明显低于 FY2019 高景气水平，以 FY2017–FY2018 已观察经营区间作宽幅的压力至中周期锚，并在区域销售单价或利用率转弱时偏向区间下部。owner cash 方向可条件性承保为正，但必须从中周期经营现金扣除维持 2,799.6 万吨熟料、3,866 万吨水泥及商混网络所需的经济维护资本和营运资本，不能把 FY2019 的会计集团 post-capex 差额当作精确答案。",
+      "permanent_loss": "最现实的损失路径不是短期停业，而是区域需求平台或收缩叠加供给纪律失效，使利用率和吨经济长期下降；若维持矿山、环保、窑线和配送网络所需投入仍然刚性，经营现金会被维护与融资吸收。没有新增水泥产能和 FY2019 较强经营现金降低近期被迫融资风险，但不能消除重资产长期低回报。",
+      "valuation_treatment": "采用区域中周期盈利能力作为主路线，并用现有产能在压力利用率下的资产承载和融资能力作交叉约束；FY2019 单年利润、未验证的管理改善以及会计集团 post-capex 差额均不得单独资本化。",
+      "strongest_rival": "FY2019 的利润和现金改善主要是区域供给约束与行业销售单价上行的周期产物；公司销量增量也与新疆及全国水泥产量上升同向，现有材料没有证明其成本或客户位置足以在行业回落时保住相近单位经济，因此所谓区域优势可能只是在高点放大盈利。",
+      "reversal_observations": [
+        "最早的翻转信号是截点后首个完整产销期内，区域销售单价或需求转弱时，公司水泥销量、吨毛利和经营现金仍能明显稳定于区域景气；这会把公司位置从条件信用上调为可跨周期承保。",
+        "若区域供给纪律仍在但公司销量、毛利率和经营现金同步显著下滑，说明区域网络和成本动作没有形成相对韧性，应下调正常盈利并提高永久损失权重。",
+        "若持续的长期资产投入显著高于 FY2019 披露水平，且在中周期经营现金中占比刚性，则应收窄 owner cash、把经济维护资本上调，并更依赖资产压力路线。",
+        "若短期融资重新上升、长期融资不能平滑到期责任，或经营现金不再覆盖维护和利息需要，则生存优势判断翻转为融资放大周期风险。"
+      ]
+    }
+  },
+  "business_position": "公司拥有覆盖新疆 12 个地州的区域网络、江苏苏锡常布局、特种水泥和自有石灰石矿山，FY2019 水泥销量增长 7.84%、熟料销量增长 20.35%，说明存量资产在当期获得了真实市场吸收。可是新疆水泥产量和全国水泥产量同期也分别增长 8.3% 和 6.1%，且水泥毛利率提高主要归因于销售单价上升；因此只能承保区域参与能力和资源基础，不能据此承保低谷相对成本领先或 FY2019 盈利持续性，判断信心为中等。",
+  "survival_case": "FY2019 经营现金约 26.76 亿元，期末货币资金约 6.89 亿元，短期借款约 9.23 亿元、长期借款约 13.54 亿元；短借较 FY2018 大幅下降而长借上升，且应收、存货规模相对当年经营现金不大。结合没有在建新增水泥产能，当前材料支持公司能够承受一般的区域周期回落，信心中等。限制在于这些覆盖关系建立在高景气现金上，现金本身低于短期借款，长期借款增加的期限与成本未知；若低谷经营现金和经济维护资本不匹配，融资仍会放大损失。",
+  "adaptation_case": "公司的适应路线是守住存量产能而非扩产：执行错峰，推动精细管理、采购和成本优化、资产清理、配送与电商平台渗透。这些动作与需求平台期的处境匹配，也避免用新增产能扩大行业过剩；但目前只观察到动作和 FY2019 集团表现，没有区域同口径成本、客户留存或低谷现金证据。因而适应方向可条件性承保，经济效果不能独立于行业景气归因。",
+  "normalization_case": "FY2017–FY2019 收入由约 70.80 亿元升至 96.88 亿元，归母净利润由约 2.65 亿元升至 16.36 亿元，经营现金由约 11.67 亿元升至 26.76 亿元；FY2019 水泥毛利率 42.80%，提高主要来自销售单价。三年跨度展示了显著周期弹性，却不足以识别完整中周期。保守处理是把 FY2019 排除为单点基准，以 FY2017–FY2018 的已观察盈利表现形成宽幅压力至中周期锚，并在需求平台、区域利用率和供给纪律尚未验证时偏向较低端。FY2019 经营现金减购建长期资产现金支出显示当期会计集团现金富余，但 1.74 亿元披露支出无法代表庞大熟料、水泥和商混资产的跨周期维护责任；因此 owner cash 只承保条件性为正，不给精确数额。",
+  "permanent_loss_map": "第一条路径是新疆或江苏需求持续走弱，运输半径限制产能跨区消化，低利用率把高固定成本转成长期低吨经济；第二条路径是错峰或淘汰落后产能的供给约束失效，区域销售单价下降快于成本调整；第三条路径是经济维护、环保和矿山合规投入高于当前披露资本支出，使表面 post-capex 现金消失；第四条路径是高景气经营现金回落后，短期和长期融资责任挤压普通股现金。缓释因素是无在建新增水泥产能、当期现金覆盖强、区域网络和自有矿山，但它们更能买时间，尚不能证明重资产回报跨周期保持。",
+  "value_route": {
+    "primary_routes": [
+      "区域中周期盈利能力路线",
+      "现有经营资产承载路线"
+    ],
+    "excluded_routes": [
+      "FY2019 单年高景气盈利外推",
+      "未验证的存量管理动作增量",
+      "会计集团 post-capex 差额直接资本化",
+      "无新增产能支撑的成长路线"
+    ],
+    "route_reasoning": "水泥是区域性、周期性且资本密集的业务，单年利润容易被供给纪律和销售单价放大，因此主路线必须以跨区域、跨周期的盈利能力为核心，并让现有产能在压力利用率下的经济承载能力限制乐观外推。资产规模提供生产能力而非自动提供回报，只有在维护投入和融资后仍有普通股现金时才支持持续经营价值。",
+    "valuation_model_roles": {
+      "primary": [
+        "区域中周期盈利能力"
+      ],
+      "corroborative": [
+        "现有产能资产承载能力"
+      ],
+      "stress": [
+        "区域低利用率下的盈利与融资覆盖",
+        "较高经济维护资本下的普通股现金"
+      ]
+    }
+  },
+  "strongest_rival": "FY2019 的利润和现金改善主要是区域供给约束与行业销售单价上行的周期产物；公司销量增量也与新疆及全国水泥产量上升同向，现有材料没有证明其成本或客户位置足以在行业回落时保住相近单位经济，因此所谓区域优势可能只是在高点放大盈利。",
+  "reversal_observations": [
+    "最早的翻转信号是截点后首个完整产销期内，区域销售单价或需求转弱时，公司水泥销量、吨毛利和经营现金仍能明显稳定于区域景气；这会把公司位置从条件信用上调为可跨周期承保。",
+    "若区域供给纪律仍在但公司销量、毛利率和经营现金同步显著下滑，说明区域网络和成本动作没有形成相对韧性，应下调正常盈利并提高永久损失权重。",
+    "若持续的长期资产投入显著高于 FY2019 披露水平，且在中周期经营现金中占比刚性，则应收窄 owner cash、把经济维护资本上调，并更依赖资产压力路线。",
+    "若短期融资重新上升、长期融资不能平滑到期责任，或经营现金不再覆盖维护和利息需要，则生存优势判断翻转为融资放大周期风险。"
+  ],
+  "component_treatments": [
+    {
+      "component_id": "INDUSTRY_AND_SITUATION",
+      "treatment": "UNDERWRITE",
+      "reason": "行业已进入需求平台、结构调整和绿色发展阶段，产能过剩仍在，区域运输半径以及错峰、环保和矿山合规共同决定供需。",
+      "investment_consequence": "正常盈利必须按区域中周期而非全国总量或单一景气年处理。",
+      "promotion_or_resolution_condition": "持续观察新疆与江苏各自的需求、供给纪律、销售单价和利用率如何传入公司吨经济。",
+      "evidence_ids": [
+        "EVID:CN000877:INDUSTRY",
+        "EVID:CN000877:FOOTPRINT"
+      ]
+    },
+    {
+      "component_id": "BUSINESS_POSITION",
+      "treatment": "CONDITIONALLY_UNDERWRITE",
+      "reason": "区域网络、特种水泥和自有石灰石矿山是真实资源，但 FY2019 销量增长与区域及全国增产同向，缺少低谷相对成本和份额证据。",
+      "investment_consequence": "给予区域参与和存量经营信用，不把公司直接视为已证明的跨周期成本领先者。",
+      "promotion_or_resolution_condition": "区域转弱时公司销量、吨毛利和现金相对区域仍稳定，且无需显著增加资本投入。",
+      "evidence_ids": [
+        "EVID:CN000877:FOOTPRINT",
+        "EVID:CN000877:OPERATING"
+      ]
+    },
+    {
+      "component_id": "ADAPTATION",
+      "treatment": "CONDITIONALLY_UNDERWRITE",
+      "reason": "不新增水泥产能而优化成本、采购、配送和资产的方向适合需求平台期，但目前观察到的是动作与同期集团改善，尚无低谷经济闭环。",
+      "investment_consequence": "把适应动作视为下行缓释，不提前计入独立的正常盈利增量。",
+      "promotion_or_resolution_condition": "在行业量价转弱时观察同口径单位成本、客户吸收、资产利用率与现金是否优于区域变化。",
+      "evidence_ids": [
+        "EVID:CN000877:FOOTPRINT",
+        "EVID:CN000877:MANAGEMENT"
+      ]
+    },
+    {
+      "component_id": "SURVIVAL_AND_FINANCING",
+      "treatment": "CONDITIONALLY_UNDERWRITE",
+      "reason": "FY2019 经营现金较强、短借下降且无在建新增水泥产能，支持一般回落下的生存缓冲；但现金低于短借，长期借款增加且覆盖关系来自高景气期。",
+      "investment_consequence": "近期被迫退出风险较低，但不能把融资缓冲当作长期资本回报证明。",
+      "promotion_or_resolution_condition": "低谷经营现金覆盖经济维护、利息和到期融资，并且不依赖持续提高借款。",
+      "evidence_ids": [
+        "EVID:CN000877:CASH_AND_FINANCING",
+        "EVID:CN000877:FOOTPRINT"
+      ]
+    },
+    {
+      "component_id": "NORMAL_EARNINGS",
+      "treatment": "CONDITIONALLY_UNDERWRITE",
+      "reason": "三年收入、利润和现金改善真实，但 FY2019 水泥毛利率上升主要由销售单价驱动，尚未覆盖完整中周期。",
+      "investment_consequence": "以 FY2017–FY2018 形成宽幅压力至中周期锚并偏向保守端，排除 FY2019 单点外推。",
+      "promotion_or_resolution_condition": "取得区域量价回落期的销量、吨成本、毛利和产能利用率，以缩窄正常盈利范围。",
+      "evidence_ids": [
+        "EVID:CN000877:OPERATING"
+      ]
+    },
+    {
+      "component_id": "OWNER_CASH_DIRECTION",
+      "treatment": "CONDITIONALLY_UNDERWRITE",
+      "reason": "FY2017–FY2019 经营现金连续为正且 FY2019 会计集团 post-capex 代理较强，但当期销售单价景气和经济维护资本缺口限制归因。",
+      "investment_consequence": "只承保中周期 owner cash 条件性为正，不承保 FY2019 代理数额可以持续。",
+      "promotion_or_resolution_condition": "在区域中周期中，经营现金持续覆盖营运资本、经济维护资本、利息和必要融资偿还。",
+      "evidence_ids": [
+        "EVID:CN000877:OPERATING",
+        "EVID:CN000877:CASH_AND_FINANCING"
+      ]
+    },
+    {
+      "component_id": "ECONOMIC_MAINTENANCE_CAPITAL",
+      "treatment": "CANNOT_BOUND",
+      "reason": "FY2019 购建长期资产现金支出约 1.74 亿元，但源包明确其不足以代表跨周期维护资本，且没有窑线、矿山、环保、商混和配送网络的维护拆分。",
+      "investment_consequence": "维护资本的不确定性仅限制 owner cash 数额；先以高于当期披露支出的保守方向压力处理，不抹去经营现金和生存判断。",
+      "promotion_or_resolution_condition": "取得数年维持现有产能与合规所需的检修、更新、矿山、环保及配送投入，并与扩张投入分开。",
+      "evidence_ids": [
+        "EVID:CN000877:CASH_AND_FINANCING",
+        "EVID:CN000877:FOOTPRINT"
+      ]
+    },
+    {
+      "component_id": "PERMANENT_LOSS",
+      "treatment": "CONDITIONALLY_UNDERWRITE",
+      "reason": "无新增水泥产能和较强当期现金缓释近期融资风险，但区域集中、重资产固定成本、潜在刚性维护及现有借款可在长期低利用率下形成损失。",
+      "investment_consequence": "永久损失风险低于立即受迫情形，却仍对区域需求和供给纪律高度敏感，应在压力路线中保留。",
+      "promotion_or_resolution_condition": "观察区域低谷的利用率、单位经济、维护投入与融资覆盖是否仍允许普通股现金为正。",
+      "evidence_ids": [
+        "EVID:CN000877:INDUSTRY",
+        "EVID:CN000877:CASH_AND_FINANCING"
+      ]
+    },
+    {
+      "component_id": "VALUE_ROUTE",
+      "treatment": "UNDERWRITE",
+      "reason": "区域周期和重资产责任使单年盈利外推失真，中周期盈利与现有资产在压力利用率下的承载能力能够相互约束。",
+      "investment_consequence": "研究只沿区域中周期盈利主路线推进，并以资产和融资压力校验，不给未验证增长与单年高景气信用。",
+      "promotion_or_resolution_condition": "只有跨周期单位经济和经济维护资本被观察后，才可收窄输入区间或提高持续经营权重。",
+      "evidence_ids": [
+        "EVID:CN000877:INDUSTRY",
+        "EVID:CN000877:OPERATING",
+        "EVID:CN000877:CASH_AND_FINANCING"
+      ]
+    }
+  ],
+  "evidence_trace": [
+    {
+      "evidence_id": "EVID:CN000877:INDUSTRY",
+      "source_ref": "docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_COURSE_1_20260829/sources/CN000877_20200501_PRE_CUTOFF_SOURCE_PACKAGE.md",
+      "locator": "行业与公司状态，第 1 段",
+      "scope": "水泥运输半径、行业阶段、产能过剩及错峰环保矿山约束",
+      "used_for": "行业未来、利润池传导和永久损失路径"
+    },
+    {
+      "evidence_id": "EVID:CN000877:FOOTPRINT",
+      "source_ref": "docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_COURSE_1_20260829/sources/CN000877_20200501_PRE_CUTOFF_SOURCE_PACKAGE.md",
+      "locator": "行业与公司状态，第 2–3 段",
+      "scope": "新疆及江苏布局、产能、无在建新增水泥产能、区域网络和资源条件",
+      "used_for": "公司位置、适应路线、生存缓冲和资产责任"
+    },
+    {
+      "evidence_id": "EVID:CN000877:OPERATING",
+      "source_ref": "docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_COURSE_1_20260829/sources/CN000877_20200501_PRE_CUTOFF_SOURCE_PACKAGE.md",
+      "locator": "FY2017–FY2019 经营与现金，第 1–3 项",
+      "scope": "三年收入利润现金、水泥与熟料销量毛利及区域全国产量",
+      "used_for": "市场吸收、行业归因、正常盈利和 owner cash 方向"
+    },
+    {
+      "evidence_id": "EVID:CN000877:CASH_AND_FINANCING",
+      "source_ref": "docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_COURSE_1_20260829/sources/CN000877_20200501_PRE_CUTOFF_SOURCE_PACKAGE.md",
+      "locator": "FY2017–FY2019 经营与现金，第 4–5 项",
+      "scope": "经营现金、购建长期资产现金支出、货币资金、借款、应收存货及在建工程",
+      "used_for": "生存、融资、维护资本不确定性、owner cash 和永久损失"
+    },
+    {
+      "evidence_id": "EVID:CN000877:MANAGEMENT",
+      "source_ref": "docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_COURSE_1_20260829/sources/CN000877_20200501_PRE_CUTOFF_SOURCE_PACKAGE.md",
+      "locator": "管理选择与待判断问题",
+      "scope": "错峰、管理与采购优化、资产清理、配送、电商和存量产能选择",
+      "used_for": "适应方向及其条件性经济信用"
+    }
+  ],
+  "existing_object_refs": [
+    {
+      "kind": "PRE_CUTOFF_SOURCE_PACKAGE",
+      "ref": "docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_COURSE_1_20260829/sources/CN000877_20200501_PRE_CUTOFF_SOURCE_PACKAGE.md",
+      "role": "唯一合同允许的天山事实来源"
+    }
+  ],
+  "underwriting_thesis": {
+    "thesis_id": "UWTHESIS:CN000877:20200501:BLIND:C1",
+    "central_path": "天山股份最可能是一家具备区域网络与近期生存缓冲、但 FY2019 盈利和现金被行业量价上行显著放大的区域水泥经营者。需求平台和区域供给纪律决定利润池，公司以存量优化而非扩产应对是正确方向，却尚未证明低谷单位经济。正常盈利应低于 FY2019 并按 FY2017–FY2018 的宽幅压力至中周期表现保守处理；owner cash 条件性为正但需扣除尚未可量化、方向上应高于 FY2019 披露支出的经济维护资本。永久损失的核心不是近期停业，而是区域低利用率、刚性维护和融资共同把可生存企业变成长久低回报资产。",
+    "normal_earnings_treatment": "排除 FY2019 单年高景气外推，以 FY2017–FY2018 已观察盈利表现形成宽幅压力至中周期锚；在没有区域低谷吨经济前偏向保守端，不制造单点精度。",
+    "owner_cash_treatment": "经营现金的连续为正支持方向性信用，但 FY2019 会计集团 post-capex 差额不是跨周期 owner cash。先从中周期经营现金扣除营运资本、利息和高于当期披露支出的保守经济维护责任；金额保持局部不可界定，方向只条件性为正。",
+    "permanent_loss_treatment": "近期生存缓冲较强，但将区域需求收缩、供给纪律失效、长期低利用率、维护与合规投入以及借款覆盖联合压力纳入核心风险；不能用现金或无扩产单独消除重资产长期低回报。",
+    "value_route_treatment": "只提供区域中周期盈利主路线和现有资产承载交叉约束；FY2019 单年盈利、未验证管理增量及会计集团 post-capex 差额不进入可持续基准。",
+    "economic_directions": {
+      "normal_earnings": "DETERIORATES",
+      "owner_cash": "DETERIORATES",
+      "permanent_loss": "MIXED"
+    },
+    "strongest_rival": "FY2019 的利润和现金改善主要是区域供给约束与行业销售单价上行的周期产物；公司销量增量也与新疆及全国水泥产量上升同向，现有材料没有证明其成本或客户位置足以在行业回落时保住相近单位经济，因此所谓区域优势可能只是在高点放大盈利。",
+    "monitoring": "最先看区域转弱时公司的销量、吨毛利和经营现金相对区域是否稳定；随后看全年长期资产投入与存量产能、矿山和环保责任是否匹配，再看中周期现金能否覆盖维护、利息与融资到期。"
+  },
+  "investment_treatment": "RESEARCH_ONLY：保持企业承保研究状态；先验证区域低谷相对单位经济和经济维护资本，再收窄正常盈利、owner cash 与永久损失处理。"
+}

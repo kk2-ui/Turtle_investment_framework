@@ -1,0 +1,192 @@
+{
+  "schema_version": "enterprise-underwriting-episode.v2",
+  "episode_id": "EUE:CN001914:20210501:WORKED:C1",
+  "company_id": "CN:001914",
+  "company_name": "China Merchants Property Operation & Service",
+  "cutoff_at": "2021-05-01T00:00:00+08:00",
+  "sample_identity": "WORKED_CASE",
+  "decision_frame": "在招商物业完成重组并表、2020年收入跃升不能代表有机创造的边界上，判断新平台能否在2021年后把可比合同和在管规模转成第三方客户吸收、同边界利润、物业回款与普通股现金，并妥善处置遗留地产和新增并购资本。",
+  "underwriting_route": "POST_REORGANIZATION_SERVICE_PLATFORM_WITH_COMPARABLE_EARNINGS_OWNER_CASH_AND_CAPITAL_LOSS_CROSS_CHECK",
+  "situation_model": {
+    "summary": "物业管理平台可通过重组、关联方渠道和并购迅速扩大合并范围，但只有重组后可比规模继续转成收入、利润和现金，才是经营能力。招商积余在2021至2025年实现合同、面积、物业收入和绝对毛利增长，第三方客户成为主要新增来源，集团现金与资本结构改善；同时单位毛利未提高、物业回款与并购回报未闭合，遗留地产确认了真实损失。",
+    "industry_future_thesis": {
+      "horizon": "2021至2025年的结果观察窗及其后一个物业续约和并购回收周期",
+      "most_likely_regime": "物业服务行业仍会通过集团资源、市场化第三方合同和并购扩大平台，但利润池将从单纯合并规模转向可复制客户获取、稳定约百分之十或更好的服务毛利、收缴纪律和低资本强度现金；地产尾部和低回报并购会分流股东价值。",
+      "profit_pool_transmission": "重组先改变合并范围，随后可比合同必须进场并续约，转成同边界物业收入、绝对毛利和营业利润，再扣应收占用、维护与增长投入、并购和少数股东索取后，才成为普通股现金。关联方渠道只有在最终客户续约、利润和回款成立时才是分销优势。",
+      "company_exposure": "公司同时暴露于招商局体系项目、股东协同取得的第三方项目和完全外部项目，并保留重组前地产尾部。大平台和低资本密度提供现金优势，约百分之十的物业毛利率、来源边界和并购资本回收决定利润池能否真正归属普通股东。",
+      "adaptation": "管理层在重组后持续扩大合同和管理规模，第三方合同与面积成为主导新增，物业收入和绝对毛利增长，证明平台完成了经营吸收；毛利率没有提升、物业分部现金缺失和遗留地产损失使执行信用保持条件性。",
+      "normal_economics": "以2023至2025年经营结果和剔除已处置遗留地产一次性损失后的约人民币8亿至9亿元归母正常盈利作为方向性锚，同时用物业毛利率和集团现金交叉验证；不把合同额、面积或全部集团现金机械转成正常盈利。",
+      "permanent_loss": "低债务、现金积累和经常性物业合同降低近端生存风险；主要损失载体是低毛利扩张、应收与合同资产恶化、并购投入回报不足，以及遗留地产和其他资产减值。衡阳中航的处置降低未来尾部，但人民币2.56亿元归母影响不能改写为成功。",
+      "valuation_treatment": "价值路线以正常归母盈利和维护、增长、并购投入后的可访问 owner cash 为主；第三方规模和股东渠道不单独提高价值，遗留地产历史损失进入资本配置记录，并购价值只在累计现金覆盖投入后升级。",
+      "strongest_rival": "物业服务本就是低毛利、低资本密度业务；只要绝对毛利、集团现金、分红和第三方规模持续增长，约百分之十的毛利率与大股东协同都是可接受的商业特征，物业分部现金和并购项目回报缺失不会改变平台已经高质量吸收重组的结论。",
+      "reversal_observations": [
+        "若连续两个可比期间第三方 cohort 兑现为收入、毛利和回款，物业毛利率不低于10.5%，维护、增长和并购投入拆分后母公司可访问现金稳定为正，且累计并购现金覆盖投入，则应上调单位经济、owner cash 与资本配置信用。",
+        "若合同和面积仍增长但物业绝对毛利停滞或毛利率跌破9.5%，应收与合同资产连续快于收入并产生实际损失，集团维护后现金低于正常盈利，或再次出现材料减值与退出损失，则应下调平台质量和价值路线。"
+      ]
+    }
+  },
+  "business_position": "重组后的平台已经越过单纯并表：2021至2025年在管面积由2.81亿平方米增至3.77亿平方米，新签年度合同额由人民币30.50亿元增至44.80亿元，物业管理收入由99.08亿元增至186.03亿元；2024至2025年第三方在管面积约占64%，证明外部客户基础真实存在。",
+  "survival_case": "2021至2025年集团经营现金净额持续为正，2025年货币资金人民币56.23亿元、短期借款降至零、长期借款降至3.17亿元，并持续分红，表明近端融资和持续经营风险较低。该结论不把集团现金全额归为物业或母公司 owner cash；分部维护、收并购、少数股东和上划仍需扣除。",
+  "adaptation_case": "管理层把重组平台继续推向第三方和专业服务，并把可比规模转成物业收入与绝对毛利，因此重组整合和市场拓展应获条件性正面信用。大股东仍直接提供项目并协同第三方获客，来源别续约、毛利和回款未拆分；客户标签不能替代独立可复制经济。",
+  "normalization_case": "物业绝对毛利约由2021年的人民币11.33亿元增至2025年的18.62亿元，但毛利率由11.43%降至10.01%，专业增值服务2025年收入增长而毛利率下降，说明规模被吸收但单位经济没有同步提升。正常归母盈利可用约人民币8亿至9亿元作方向性锚，局部排除已处置衡阳中航损失，同时保留物业回款与资本配置折扣。",
+  "permanent_loss_map": "主要载体包括低毛利合同在进场和续约中占用现金、应收和合同资产实际信用损失、来源依赖导致的客户资产折价、并购投入未被累计现金覆盖，以及遗留地产减值。衡阳中航2025年使归母利润减少人民币2.56亿元并被低价退出，证明地产尾部损失真实发生；退出减少未来风险但不撤销历史资本损失。",
+  "value_route": {
+    "primary_routes": [
+      "NORMALIZED_PARENT_EARNINGS",
+      "MAINTENANCE_GROWTH_AND_ACQUISITION_ADJUSTED_OWNER_CASH"
+    ],
+    "excluded_routes": [
+      "MANAGED_AREA_OR_CONTRACT_MULTIPLE",
+      "GROUP_POST_CAPEX_PROXY_AS_FULL_PARENT_OWNER_CASH",
+      "UNVERIFIED_ACQUISITION_SYNERGY"
+    ],
+    "route_reasoning": "公司已形成可观察的经常性服务利润和强集团现金，适合用正常盈利为主、可访问 owner cash 为校验。合同、面积、大股东协同和管理层并购表述只提供研究方向；在来源别利润、物业分部回款与投入后回报闭合前，不直接进入基础价值。",
+    "valuation_model_roles": {
+      "primary": [
+        "NORMALIZED_PARENT_EARNINGS_WITH_PROPERTY_MARGIN_DISCIPLINE"
+      ],
+      "corroborative": [
+        "GROUP_CASH_DIVIDEND_AND_DELEVERAGING_CROSS_CHECK"
+      ],
+      "stress": [
+        "LOW_MARGIN_RECEIVABLE_ACQUISITION_AND_LEGACY_ASSET_STRESS"
+      ]
+    }
+  },
+  "strongest_rival": "物业服务本就是低毛利、低资本密度业务；只要绝对毛利、集团现金、分红和第三方规模持续增长，约百分之十的毛利率与大股东协同都是可接受的商业特征，物业分部现金和并购项目回报缺失不会改变平台已经高质量吸收重组的结论。",
+  "reversal_observations": [
+    "若连续两个可比期间第三方 cohort 兑现为收入、毛利和回款，物业毛利率不低于10.5%，维护、增长和并购投入拆分后母公司可访问现金稳定为正，且累计并购现金覆盖投入，则应上调单位经济、owner cash 与资本配置信用。",
+    "若合同和面积仍增长但物业绝对毛利停滞或毛利率跌破9.5%，应收与合同资产连续快于收入并产生实际损失，集团维护后现金低于正常盈利，或再次出现材料减值与退出损失，则应下调平台质量和价值路线。"
+  ],
+  "component_treatments": [
+    {
+      "component_id": "POST_REORGANIZATION_COMPARABLE_SCALE_ABSORPTION",
+      "treatment": "UNDERWRITE",
+      "reason": "2021至2025年可比期间的合同、面积、物业收入和绝对毛利共同增长，已超过2019重组改变合并范围的一次性效果。",
+      "investment_consequence": "承认重组平台形成持续经营吸收和更大的正常盈利池，不把2020年并表跳升冒充管理创造。",
+      "promotion_or_resolution_condition": "规模与利润吸收的历史事实无需重做；进一步升级取决于单位经济、回款和资本回报。",
+      "evidence_ids": [
+        "CN001914:E1",
+        "CN001914:E2"
+      ]
+    },
+    {
+      "component_id": "THIRD_PARTY_CUSTOMER_ASSET",
+      "treatment": "CONDITIONALLY_UNDERWRITE",
+      "reason": "第三方新签合同与在管面积成为主要新增来源，外部客户吸收成立；大股东协同第三方项目与完全独立获客没有拆分。",
+      "investment_consequence": "上调外部客户基础判断，但不自动给予完全独立获客、同等毛利或更高复制性的信用。",
+      "promotion_or_resolution_condition": "披露直接关联、股东协同第三方和完全独立项目各自的续约、毛利、回款及获客成本。",
+      "evidence_ids": [
+        "CN001914:E3"
+      ]
+    },
+    {
+      "component_id": "PROPERTY_UNIT_ECONOMICS",
+      "treatment": "CONDITIONALLY_UNDERWRITE",
+      "reason": "物业绝对毛利增长但毛利率由11.43%降至约10%，证明规模有利润吸收而单位经济未改善。",
+      "investment_consequence": "正常盈利方向保持正面，但不为合同或收入增长单独提高质量处理，专业服务组合下沉进入基准约束。",
+      "promotion_or_resolution_condition": "连续可比期间物业毛利率不低于10.5%、营业利润率改善，并证明不是低毛利组合或一次性成本造成。",
+      "evidence_ids": [
+        "CN001914:E2"
+      ]
+    },
+    {
+      "component_id": "GROUP_CASH_AND_PARENT_OWNER_ACCESS",
+      "treatment": "CONDITIONALLY_UNDERWRITE",
+      "reason": "集团经营现金、现金积累、去杠杆和普通股分红均为正面事实；物业分部回款、维护与增长投入、并购和母公司上划未完整拆分。",
+      "investment_consequence": "承认低资本密度和集团现金缓冲，owner cash 只条件性计入，不把机械 post-capex 代理全额归母或归因给物业客户。",
+      "promotion_or_resolution_condition": "取得物业分部营运资本与现金、维护和增长投入、收并购现金、少数股东索取及母公司实际可访问现金桥。",
+      "evidence_ids": [
+        "CN001914:E4"
+      ]
+    },
+    {
+      "component_id": "LEGACY_REAL_ESTATE_PERMANENT_LOSS",
+      "treatment": "UNDERWRITE",
+      "reason": "衡阳中航2025年造成人民币2.56亿元归母损失并被处置，资本损失已经发生；其重组前身份只限定责任归因，不撤销经济后果。",
+      "investment_consequence": "把损失排除出持续物业正常盈利，但保留在资本配置历史和安全边际中；退出降低未来地产尾部。",
+      "promotion_or_resolution_condition": "历史损失不可撤回；后续观察其他遗留资产是否继续减值或地产风险是否真正终止。",
+      "evidence_ids": [
+        "CN001914:E5"
+      ]
+    },
+    {
+      "component_id": "PROPERTY_ACQUISITION_RETURN",
+      "treatment": "SCENARIO_ONLY",
+      "reason": "物业并购后合同和收入支持经营吸收，但购买成本、累计分红、退出价值和项目级投入后回报没有同边界闭合。",
+      "investment_consequence": "并购协同与额外资本回报不进入基础价值，只作为可验证上行情景；缺口不撤回已观察的经营吸收。",
+      "promotion_or_resolution_condition": "按项目披露购买与追加投入、累计经营现金、分红和退出价值，并显示累计现金覆盖投入。",
+      "evidence_ids": [
+        "CN001914:E5",
+        "CN001914:E6"
+      ]
+    }
+  ],
+  "evidence_trace": [
+    {
+      "evidence_id": "CN001914:E1",
+      "source_ref": "docs/development/research/training_curricula/teaching_cases/TC_CN001914_SCALE_MARGIN_AND_COLLECTION_V1.md",
+      "locator": "教学身份; 当前最重要的三项企业判断 section 1, paragraphs 1-2",
+      "scope": "Reorganization boundary and 2021-2025 comparable scale",
+      "used_for": "Separate consolidation effects from post-reorganization operating absorption"
+    },
+    {
+      "evidence_id": "CN001914:E2",
+      "source_ref": "docs/development/research/training_curricula/teaching_cases/TC_CN001914_SCALE_MARGIN_AND_COLLECTION_V1.md",
+      "locator": "当前最重要的三项企业判断 section 1, paragraphs 2-4",
+      "scope": "Property revenue, absolute gross profit, margin and operating profit",
+      "used_for": "Judge normal earnings and unit-economics direction"
+    },
+    {
+      "evidence_id": "CN001914:E3",
+      "source_ref": "docs/development/research/training_curricula/teaching_cases/TC_CN001914_SCALE_MARGIN_AND_COLLECTION_V1.md",
+      "locator": "当前最重要的三项企业判断 section 2",
+      "scope": "Third-party contracts, managed area and shareholder-assisted acquisition boundary",
+      "used_for": "Distinguish external customer absorption from fully independent acquisition"
+    },
+    {
+      "evidence_id": "CN001914:E4",
+      "source_ref": "docs/development/research/training_curricula/teaching_cases/TC_CN001914_SCALE_MARGIN_AND_COLLECTION_V1.md",
+      "locator": "当前最重要的三项企业判断 section 3, paragraphs 1-3",
+      "scope": "Group operating cash, capital expenditure, receivables, liquidity, debt and distributions",
+      "used_for": "Judge survival, group cash strength and parent owner-cash boundary"
+    },
+    {
+      "evidence_id": "CN001914:E5",
+      "source_ref": "docs/development/research/training_curricula/teaching_cases/TC_CN001914_SCALE_MARGIN_AND_COLLECTION_V1.md",
+      "locator": "当前最重要的三项企业判断 section 3, paragraphs 4-6",
+      "scope": "Property acquisitions, unclosed return and Hengyang legacy loss",
+      "used_for": "Separate operating absorption from capital allocation and permanent loss"
+    },
+    {
+      "evidence_id": "CN001914:E6",
+      "source_ref": "docs/development/research/training_curricula/teaching_cases/TC_CN001914_SCALE_MARGIN_AND_COLLECTION_V1.md",
+      "locator": "Normal earnings、owner cash 与永久损失; 估值方向; 翻转事实",
+      "scope": "Normalized earnings, owner cash treatment, value route and reversals",
+      "used_for": "Complete the whole-company underwriting and falsification conditions"
+    }
+  ],
+  "existing_object_refs": [
+    {
+      "kind": "RESULT_KNOWN_TEACHING_CASE",
+      "ref": "docs/development/research/training_curricula/teaching_cases/TC_CN001914_SCALE_MARGIN_AND_COLLECTION_V1.md",
+      "role": "Sole contract-allowed evidence package for the worked Episode"
+    }
+  ],
+  "underwriting_thesis": {
+    "thesis_id": "UWT:CN001914:20210501:WORKED:C1",
+    "central_path": "招商积余已经证明重组后的平台能把可比合同和在管规模转成第三方客户、物业收入、绝对毛利和强集团现金，且低杠杆降低近端生存风险；但最可能的行业路径会以稳定单位经济、同边界回款和投入后资本回报分配利润池，公司毛利率未提高、物业 owner cash 与并购回报未闭合，衡阳中航又确认了真实损失，因此平台经营质量应获条件性正面判断而不是无条件高质量信用。",
+    "normal_earnings_treatment": "以约人民币8亿至9亿元归母正常盈利作方向性锚，依据2023至2025年扣非利润、物业绝对毛利和已处置遗留地产影响综合判断；不采用合同额或面积推算，不用公司调整口径替代物业毛利、营业利润和回款。",
+    "owner_cash_treatment": "集团经营现金减现金资本支出仅作集团代理；连续分红、现金积累和去杠杆证明部分现金可访问，但在物业分部回款、维护与增长投入、并购、少数股东和母公司上划未闭合时只条件性计入。",
+    "permanent_loss_treatment": "整体为低至中等条件性风险：低杠杆和经常性合同提供保护；低毛利扩张、应收、并购回报和遗留资产是主要载体。衡阳中航损失进入历史资本损失，处置只减少未来尾部。",
+    "value_route_treatment": "以正常归母盈利为主、维护增长及并购调整后的可访问 owner cash 为校验；不使用面积或合同倍数，不把全部集团代理现金归母，并购协同只在累计现金覆盖投入后升级。",
+    "strongest_rival": "物业服务本就是低毛利、低资本密度业务；只要绝对毛利、集团现金、分红和第三方规模持续增长，约百分之十的毛利率与大股东协同都是可接受的商业特征，物业分部现金和并购项目回报缺失不会改变平台已经高质量吸收重组的结论。",
+    "monitoring": "按来源追踪合同进场、续约、物业毛利和回款；拆分物业维护与增长投入、集团至母公司现金、收并购累计回报；同时监控应收与合同资产、其他遗留资产和新增减值。",
+    "economic_directions": {
+      "normal_earnings": "IMPROVES",
+      "owner_cash": "IMPROVES",
+      "permanent_loss": "MIXED"
+    }
+  },
+  "investment_treatment": "研究训练处理：承认重组后的规模、利润和集团现金吸收，正常盈利方向上调并保持 owner cash 条件性；不为面积、合同额或未闭合并购协同单独增加价值，遗留地产损失保留在资本配置记录。本 Episode 不生成市场价值、买入区间或投资动作。"
+}

@@ -1,0 +1,220 @@
+{
+  "schema_version": "enterprise-underwriting-episode.v2",
+  "episode_id": "UWEP:CN002352:20190501:BLIND:C1:BASELINE",
+  "company_id": "CN:002352",
+  "company_name": "SF Holding",
+  "cutoff_at": "2019-05-01T00:00:00+08:00",
+  "sample_identity": "BLIND_REPLAY",
+  "contract_binding": {
+    "schema_version": "enterprise-underwriting-training-contract.v1",
+    "contract_id": "UWTRAIN:CN002352:20190501:BLIND:C1",
+    "training_track": "BLIND_REPLAY",
+    "company_id": "CN:002352",
+    "company_name": "SF Holding",
+    "cutoff_at": "2019-05-01T00:00:00+08:00",
+    "sample_identity": "BLIND_REPLAY",
+    "outcome_access": "SEALED",
+    "primary_training_product": {
+      "object_type": "EnterpriseUnderwritingEpisode",
+      "schema_version": "enterprise-underwriting-episode.v2",
+      "completion_basis": "COMPLETE_EPISODE_VALIDATION_ONLY"
+    },
+    "authority": "RESEARCH_TRAINING_ONLY_NO_PRICE_VALUATION_OR_INVESTMENT_AUTHORITY"
+  },
+  "source_binding": {
+    "source_id": "SOURCE:CN002352:20190501:PRE_CUTOFF",
+    "source_ref": "docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_COURSE_1_20260829/sources/CN002352_20190501_PRE_CUTOFF_SOURCE_PACKAGE.md",
+    "available_at": "2019-04-30T23:59:59+08:00",
+    "time_role": "PRE_CUTOFF"
+  },
+  "decision_frame": "在三至五年企业承保时域内，判断顺丰的直营服务溢价和综合物流扩张能否在承担全部网络资本、人工、场地与融资责任后形成可重复的正常盈利和 owner cash；结果保持 SEALED，本 Episode 只形成企业判断与价值路线。",
+  "underwriting_route": "从行业需求增长与直营/加盟责任边界出发，先承保核心时效网络的客户价值和生存能力，再把新业务密度协同、维护资本及长期投入分别作条件或情景处理，最后以 owner cash 和永久损失路径约束价值路线。",
+  "situation_model": {
+    "summary": "截至截点，快递行业仍处在高件量增长期，FY2018 全国业务量增长 26.6%；但增长并不自动等于上市公司利润池增长。加盟网络把更多末端资本和人力交给加盟商，顺丰则用总部控制的收派、中转、干支线、航空、车辆和员工换取时效、稳定性与中高端体验，因此更可能保有服务差异，也必须自行吸收固定成本、资本开支和利用率波动。",
+    "industry_future_thesis": {
+      "horizon": "自 2019-05-01 起三至五年，以一个完整年度作为最早辨别窗口。",
+      "most_likely_regime": "最可能是件量继续增长、网络供给和产品扩张同时加快，而利润池向能够维持服务溢价并提高既有网络密度的经营者集中；单纯追求件量的经营者会被人工、运输、场地和资本负担抵消。该判断为有边界的定性基准，不假定 FY2018 的 26.6% 行业增速永久延续。",
+      "profit_pool_transmission": "需求增长先带来件量和收入，只有单票收入或客户组合保持、成本增速回落且新增业务共享既有网络时，增量收入才转化为利润和 owner cash；若竞争压低服务溢价，直营网的人工、场地、航空与干支线责任会使利润池从公司流向客户、员工、资产供应方和债权人。",
+      "company_exposure": "顺丰以 23.18 元的基本稳定票均收入、38.69 亿票件量、50 架自有投产飞机和约 533.6 亿元时效业务收入体现现实服务能力；同时，总部保留完整网络责任，使其对利用率不足、成本刚性和长期资产投入的暴露高于轻资产加盟模式。",
+      "adaptation": "核心适应路线是用时效网络、品牌与科技投入延伸快运、冷运、同城、国际、仓储和供应链，以共享客户和网络提高密度。FY2018 新业务收入增长 75.93%并占收入 18.90%，证明客户吸收已有规模但尚未证明共享密度足以覆盖新增运输、人工、场地和资本。",
+      "normal_economics": "基准判断是核心时效网络可以维持正的会计盈利基础，但不承保收入增速等比例转成正常盈利：FY2018 收入增长 27.60%、件量增长 26.77%，归母净利润却下降 4.57%，营业成本增长 31.17%。新业务正常盈利只进入改善情景；合并 owner cash 以 FY2018 经营现金 54.25 亿元与长期资产支出 116.38 亿元之间的维护资本分拆为核心条件。",
+      "permanent_loss": "主要永久损失路径不是短期增速放缓本身，而是服务溢价下降后仍维持直营网固定成本和资本责任，或新业务形成第二套低回报资产并以债务和长期项目持续融资；这会让规模扩大同时压低单位经济、owner cash 和资本回收。",
+      "valuation_treatment": "价值判断应以核心时效网络的保守盈利能力价值为主，以分部路线隔离尚未证明的新业务协同，并用 owner cash/资本强度及债务压力路线约束；不把件量或新业务收入的高增速直接资本化。",
+      "strongest_rival": "2018 年利润与现金压力主要来自可选择、前置的增长投入；核心时效网络仍有强客户价值，新业务已被客户快速吸收，随着共享网络密度提高，成本增速和资本强度会下降并释放可重复 owner cash。",
+      "reversal_observations": [
+        "最早的正向翻转信号是下一完整年度在件量和收入继续增长时，营业成本增速降至不高于收入增速、经营现金回升，并且长期资产投入不再需要债务持续扩张来覆盖；这会把新业务网络密度改善从解释提升为可承保路径。",
+        "最早的负向翻转信号是票均收入或时效业务客户吸收走弱，而人工、运输、场地成本和长期资产投入仍随网络扩张上升；这会表明服务溢价不足以覆盖直营责任，并下调核心网络正常盈利。",
+        "若后续披露能把核心网络维护资本与新业务/长期项目增长资本可靠分开，并显示维护资本长期低于经营现金且增长项目达到可接受利用率，则 owner cash 的保守处理应上调；反之应下调生存余量并加强债务压力路线。"
+      ]
+    }
+  },
+  "business_position": "顺丰当前不是低成本件量网络，而是以完整直营网控制换取时效、稳定性和中高端客户体验的差异化网络。FY2018 件量和收入均约增长 27%、票均收入基本稳定，说明位置仍有客户承接；但成本快于收入、利润下降说明公司尚未证明这套位置在扩张期具有经营杠杆。当前位置可承保为现实服务能力，持续溢价和增量回报只能条件承保。",
+  "survival_case": "截至 FY2018 末，公司有约 161.31 亿元货币资金和 54.25 亿元年度经营现金流，对约 85.85 亿元短期借款、9.98 亿元长期借款和 64.05 亿元应付债券提供一定缓冲，因此没有证据支持近期经营生存危机。但 116.38 亿元长期资产支出显著超过经营现金，债务已承担网络与新业务投入；若这种缺口连续存在且不能由可选择的增长项目缩减，生存余量会被侵蚀。结论是近期生存较强、长期融资安全取决于资本纪律，置信度中等。",
+  "adaptation_case": "扩展到快运、冷运、同城、国际、仓储和供应链在方向上符合利用核心网络与客户关系的适应逻辑，且新业务收入高增长显示并非纯概念。可是快运约 80.5 亿元收入及新业务整体增长尚未提供分部利润、利用率或增量 owner cash，不能判断是在共享网络还是复制低回报网络。基准只承保客户吸收，协同与正常回报进入条件情景。",
+  "normalization_case": "FY2018 约 45.56 亿元归母净利润可作当前会计盈利锚，但不能当作稳定正常盈利，也不能因增长投入压低当期利润就机械上调。基准方向是合并正常会计盈利为正、增速低于收入，核心时效网络承担盈利基础，新业务在证明分部单位经济前不贡献基准改善。owner cash 的机械外边界为经营现金 54.25 亿元至扣除全部 116.38 亿元长期资产支出后的约负 62.13 亿元；上端等于假设零维护资本，不能视为经济估计，下端则把全部增长资本当维护资本。精确维护资本未知，故以维护资本低于、等于或高于 54.25 亿元分别对应正、近零或负的简化 pre-financing owner cash，直到维护/增长资本被可靠分拆。",
+  "permanent_loss_map": "路径一是服务与品牌不足以维持单票收入或客户组合，但直营网人工、航空、车辆、场地和中转成本难以及时下降，导致量增利减；路径二是快运、冷运、同城及长期机场/产业园投入没有共享密度而形成重复资产，经营现金长期覆盖不了维护与增长资本；路径三是以新增债务填补上述缺口，最终将经营波动转化为融资约束。缓冲是现有货币资金、正经营现金、核心时效业务规模和可选择增长投入，但只有资本可缩减性与利用率改善的后续证据才能证明缓冲可持续。",
+  "value_route": {
+    "primary_routes": [
+      "核心时效网络的保守盈利能力价值路线",
+      "核心时效业务与新业务分部路线"
+    ],
+    "excluded_routes": [
+      "把行业件量或新业务收入高增速直接外推的单一高增长现金流路线",
+      "把全部直营网固定资产和在建工程按账面投入等同于可回收价值的资产路线"
+    ],
+    "route_reasoning": "核心时效网络已有规模、票均收入和服务控制证据，适合用可维持盈利能力作为主锚；新业务虽有收入吸收但缺少分部利润、利用率和维护资本证据，应从核心中拆开、只在条件情景赋予改善。债务与长期资产支出必须通过 owner cash 和压力路线进入，而不能因其被称为增长资本就忽略。",
+    "valuation_model_roles": {
+      "primary": [
+        "核心时效网络保守 EPV，正常利润率不高于已经证明的经营能力",
+        "分部加总，核心时效与未证明正常回报的新业务分开处理"
+      ],
+      "corroborative": [
+        "以经营现金减维护资本的条件区间检验盈利能力价值",
+        "以现金、债务和可选择增长资本检验融资余量"
+      ],
+      "stress": [
+        "单票收入承压且营业成本继续快于收入的直营网去杠杆压力",
+        "全部长期资产支出接近经济维护责任且债务继续增加的 owner cash 压力"
+      ]
+    }
+  },
+  "strongest_rival": "2018 年利润与现金压力主要来自可选择、前置的增长投入；核心时效网络仍有强客户价值，新业务已被客户快速吸收，随着共享网络密度提高，成本增速和资本强度会下降并释放可重复 owner cash。",
+  "reversal_observations": [
+    "最早的正向翻转信号是下一完整年度在件量和收入继续增长时，营业成本增速降至不高于收入增速、经营现金回升，并且长期资产投入不再需要债务持续扩张来覆盖；这会把新业务网络密度改善从解释提升为可承保路径。",
+    "最早的负向翻转信号是票均收入或时效业务客户吸收走弱，而人工、运输、场地成本和长期资产投入仍随网络扩张上升；这会表明服务溢价不足以覆盖直营责任，并下调核心网络正常盈利。",
+    "若后续披露能把核心网络维护资本与新业务/长期项目增长资本可靠分开，并显示维护资本长期低于经营现金且增长项目达到可接受利用率，则 owner cash 的保守处理应上调；反之应下调生存余量并加强债务压力路线。"
+  ],
+  "component_treatments": [
+    {
+      "component_id": "CORE_TIME_DEFINITE_NETWORK",
+      "treatment": "CONDITIONALLY_UNDERWRITE",
+      "reason": "时效业务约 533.6 亿元、票均收入基本稳定、直营网和航空能力证明现实客户价值，但成本快于收入且合并利润下降，未证明扩张期经营杠杆。",
+      "investment_consequence": "价值主锚可以放在核心时效网络的保守盈利能力，但不能把当前件量增速或服务声明直接变成利润率扩张。",
+      "promotion_or_resolution_condition": "时效业务客户吸收与票均收入保持，同时成本增速持续不高于收入，并披露足以识别核心网络单位经济的分部或运营证据。",
+      "evidence_ids": [
+        "E-SF-INDUSTRY-POSITION",
+        "E-SF-OPERATING-2018",
+        "E-SF-SERVICE-NETWORK",
+        "E-SF-COST-EXPANSION"
+      ]
+    },
+    {
+      "component_id": "NEW_LOGISTICS_BUSINESSES",
+      "treatment": "SCENARIO_ONLY",
+      "reason": "新业务收入增长 75.93%并占收入 18.90%，证明需求吸收；运输、人工和场地投入压低短期利润，且没有分部利润、利用率或增量现金证据证明网络协同。",
+      "investment_consequence": "保留综合物流协同的上行可能，但基准正常盈利和 owner cash 不依赖新业务改善。",
+      "promotion_or_resolution_condition": "新业务分部毛利或经营利润改善、共享资产利用率上升，且增量经营现金能够覆盖相应维护与增长资本。",
+      "evidence_ids": [
+        "E-SF-INDUSTRY-POSITION",
+        "E-SF-COST-EXPANSION"
+      ]
+    },
+    {
+      "component_id": "EXACT_MAINTENANCE_CAPITAL_AND_OWNER_CASH",
+      "treatment": "CANNOT_BOUND",
+      "reason": "源包只给出 54.25 亿元经营现金和 116.38 亿元购建固定资产等长期资产支出，没有可靠维护/增长拆分。约负 62.13 亿元至正 54.25 亿元只是机械外边界，不是可直接采用的经济区间。",
+      "investment_consequence": "不能把 FY2018 全部长期资产支出都视为维护资本，也不能以 EBITDA、净利润或经营现金替代 owner cash；价值路线必须显示维护资本条件敏感性。",
+      "promotion_or_resolution_condition": "取得按核心网络、新业务及长期项目分拆的资本支出、折旧更新、容量与利用率证据，使维护资本能被保守估计并与经营现金匹配。",
+      "evidence_ids": [
+        "E-SF-CASH-CAPITAL"
+      ]
+    },
+    {
+      "component_id": "SURVIVAL_AND_FINANCING",
+      "treatment": "CONDITIONALLY_UNDERWRITE",
+      "reason": "货币资金和正经营现金提供近期缓冲，但长期资产支出显著超过经营现金，短期借款、长期借款和应付债券共同承担扩张责任。",
+      "investment_consequence": "近期生存不是中心风险，连续资本缺口和债务扩张才是永久损失路线；压力分析必须把增长资本的可缩减性作为条件。",
+      "promotion_or_resolution_condition": "经营现金持续覆盖维护资本与固定融资责任，增长投入可以在回报不足时缩减，且债务不再为持续经营缺口加速增加。",
+      "evidence_ids": [
+        "E-SF-CASH-CAPITAL",
+        "E-SF-BALANCE-SHEET"
+      ]
+    },
+    {
+      "component_id": "SERVICE_PREMIUM_DURABILITY",
+      "treatment": "CONDITIONALLY_UNDERWRITE",
+      "reason": "FY2018 票均收入基本稳定、件量和时效业务均增长，支持当前服务位置；单一年份及源包没有跨周期客户留存或可比价格证据。",
+      "investment_consequence": "服务优势可支持核心网络的现实盈利基础，却不能支撑永久溢价或无条件终值。",
+      "promotion_or_resolution_condition": "跨周期票均收入、客户留存或高价值业务组合保持，并且不是以成本增速持续高于收入为代价。",
+      "evidence_ids": [
+        "E-SF-OPERATING-2018",
+        "E-SF-SERVICE-NETWORK",
+        "E-SF-OPEN-QUESTIONS"
+      ]
+    }
+  ],
+  "evidence_trace": [
+    {
+      "evidence_id": "E-SF-INDUSTRY-POSITION",
+      "source_ref": "docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_COURSE_1_20260829/sources/CN002352_20190501_PRE_CUTOFF_SOURCE_PACKAGE.md",
+      "locator": "行业与公司位置",
+      "scope": "FY2018 行业件量增长、直营与加盟责任边界、新业务范围及收入占比。",
+      "used_for": "行业未来、公司位置、责任暴露与适应路线。"
+    },
+    {
+      "evidence_id": "E-SF-OPERATING-2018",
+      "source_ref": "docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_COURSE_1_20260829/sources/CN002352_20190501_PRE_CUTOFF_SOURCE_PACKAGE.md",
+      "locator": "FY2016–FY2018 经营、服务与资本；第一项",
+      "scope": "FY2018 件量、票均收入、营业收入和归母净利润及同比变化。",
+      "used_for": "客户吸收、服务位置、收入向利润传导和正常盈利方向。"
+    },
+    {
+      "evidence_id": "E-SF-SERVICE-NETWORK",
+      "source_ref": "docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_COURSE_1_20260829/sources/CN002352_20190501_PRE_CUTOFF_SOURCE_PACKAGE.md",
+      "locator": "FY2016–FY2018 经营、服务与资本；第二项",
+      "scope": "时效业务收入、自有投产飞机和航空运输件量及对利用率推断的限制。",
+      "used_for": "核心时效能力与服务溢价的现实性、以及能力不等于回报的边界。"
+    },
+    {
+      "evidence_id": "E-SF-COST-EXPANSION",
+      "source_ref": "docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_COURSE_1_20260829/sources/CN002352_20190501_PRE_CUTOFF_SOURCE_PACKAGE.md",
+      "locator": "FY2016–FY2018 经营、服务与资本；第三项",
+      "scope": "FY2018 营业成本及其增速、新业务运输、人工和场地投入。",
+      "used_for": "增量利润传导、新业务情景处理与量增利减风险。"
+    },
+    {
+      "evidence_id": "E-SF-CASH-CAPITAL",
+      "source_ref": "docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_COURSE_1_20260829/sources/CN002352_20190501_PRE_CUTOFF_SOURCE_PACKAGE.md",
+      "locator": "FY2016–FY2018 经营、服务与资本；第四项",
+      "scope": "FY2018 经营现金、长期资产支出及维护/增长资本不可直接等同的限制。",
+      "used_for": "owner cash 外边界、维护资本条件与融资责任。"
+    },
+    {
+      "evidence_id": "E-SF-BALANCE-SHEET",
+      "source_ref": "docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_COURSE_1_20260829/sources/CN002352_20190501_PRE_CUTOFF_SOURCE_PACKAGE.md",
+      "locator": "FY2016–FY2018 经营、服务与资本；第五项",
+      "scope": "FY2018 末货币资金、应收、固定资产、在建工程和债务项目。",
+      "used_for": "近期生存缓冲、资本责任与债务压力路径。"
+    },
+    {
+      "evidence_id": "E-SF-OPEN-QUESTIONS",
+      "source_ref": "docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_COURSE_1_20260829/sources/CN002352_20190501_PRE_CUTOFF_SOURCE_PACKAGE.md",
+      "locator": "待判断问题",
+      "scope": "服务溢价、维护资本、新业务密度、债务和长期项目的待判机制及正反解释。",
+      "used_for": "最强反方、永久损失路径和翻转观察。"
+    }
+  ],
+  "existing_object_refs": [
+    {
+      "kind": "CONTRACT_ALLOWED_SOURCE_PACKAGE",
+      "ref": "docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_COURSE_1_20260829/sources/CN002352_20190501_PRE_CUTOFF_SOURCE_PACKAGE.md",
+      "role": "本 Episode 唯一的合同允许公司事实与经济推断依据。"
+    }
+  ],
+  "underwriting_thesis": {
+    "thesis_id": "UWTHESIS:CN002352:20190501:BLIND:C1:BASELINE",
+    "central_path": "顺丰在截点前已经证明直营网时效服务的现实客户价值和近期生存能力，但尚未证明高速件量与综合物流扩张能在公司承担完整网络资本责任后转成可重复 owner cash。最可能路径是核心时效网维持正盈利、新业务继续吸收客户但合并利润与现金改善慢于收入；因此核心网络可条件承保，新业务协同只进改善情景，维护资本和连续融资缺口决定永久损失边界。该判断置信度中等。",
+    "normal_earnings_treatment": "以 FY2018 约 45.56 亿元归母净利润为当期会计锚而非稳定估计；基准承保合并正常会计盈利为正但不承保随收入同比增长，核心时效提供盈利基础，新业务只有在成本、利用率和分部利润证明后才提高正常盈利。",
+    "owner_cash_treatment": "FY2018 简化 owner cash 的机械外边界约为负 62.13 亿元至正 54.25 亿元，分别对应将全部长期资产支出视作经济资本责任与假设零维护资本；两端都不是点估计。基准不依赖正 owner cash，采用维护资本低于 54.25 亿元才为正、超过则为负的条件处理，并要求长期项目融资另作压力。",
+    "permanent_loss_treatment": "把服务溢价失效而直营网成本资本不能收缩、以及新业务/长期项目形成低回报重复资产并由债务续接，视作两条相互强化的主要永久损失路径；现金和正经营现金仅提供近期缓冲。",
+    "value_route_treatment": "以核心时效网络保守 EPV 与分部路线为主，用 owner cash 条件区间和债务压力作交叉约束；排除直接资本化行业件量、新业务收入增速或账面投入的路线。",
+    "economic_directions": {
+      "normal_earnings": "MIXED",
+      "owner_cash": "DETERIORATES",
+      "permanent_loss": "DETERIORATES"
+    },
+    "strongest_rival": "2018 年利润与现金压力主要来自可选择、前置的增长投入；核心时效网络仍有强客户价值，新业务已被客户快速吸收，随着共享网络密度提高，成本增速和资本强度会下降并释放可重复 owner cash。",
+    "monitoring": "先看下一完整年度收入增长能否同时带来成本增速回落、经营现金回升和债务资助长期资产投入的需求下降；随后要求核心/新业务利用率、分部利润以及维护/增长资本拆分共同验证，而不是用单一件量或项目完工代替回报证据。"
+  },
+  "investment_treatment": "仅作为 SEALED 盲测中的研究承保输入：继续把核心时效网络作为可条件承保对象，把新业务协同保留在情景中，并在维护资本、利用率与债务路径被辨别前保持价值路线保守；本 Episode 不形成任何市场或组合决策。"
+}

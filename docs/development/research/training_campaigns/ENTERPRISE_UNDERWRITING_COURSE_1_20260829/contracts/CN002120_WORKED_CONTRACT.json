@@ -1,0 +1,17 @@
+{
+  "schema_version": "enterprise-underwriting-training-contract.v1",
+  "contract_id": "UWTRAIN:CN002120:20190501:WORKED:C1",
+  "training_track": "WORKED_CASE",
+  "company_id": "CN:002120",
+  "company_name": "Yunda Holding",
+  "cutoff_at": "2019-05-01T00:00:00+08:00",
+  "sample_identity": "WORKED_CASE",
+  "outcome_access": "RESULT_KNOWN",
+  "allowed_sources": [{"source_id": "SOURCE:CN002120:EXPRESS-READOUT", "source_ref": "docs/development/research/industry_learning_blocks/CN_FRANCHISE_EXPRESS_2018_2019/13_investor_readout.md", "available_at": "2026-08-29T00:00:00+08:00", "time_role": "RESULT_KNOWN"}],
+  "feedback_clocks": [
+    {"clock_id": "CLOCK:CN002120:EARLY", "horizon": "OPERATING_ADAPTATION", "opens_at": "2020-04-30T00:00:00+08:00", "episode_claims": ["INDUSTRY_AND_SITUATION", "BUSINESS_POSITION_AND_ADAPTATION", "SURVIVAL_AND_FINANCING"], "discriminating_observation": "份额、服务、自动化和加盟商网络是否共同改善而非只由需求与价格推动。"},
+    {"clock_id": "CLOCK:CN002120:LONG", "horizon": "NORMALIZATION_AND_CASH", "opens_at": "2022-04-30T00:00:00+08:00", "episode_claims": ["NORMAL_EARNINGS", "OWNER_CASH", "PERMANENT_LOSS", "VALUE_ROUTE"], "discriminating_observation": "同口径单位经济、网络资本和加盟商现金是否支持可持续 owner cash。"}
+  ],
+  "primary_training_product": {"object_type": "EnterpriseUnderwritingEpisode", "schema_version": "enterprise-underwriting-episode.v2", "completion_basis": "COMPLETE_EPISODE_VALIDATION_ONLY"},
+  "authority": "RESEARCH_TRAINING_ONLY_NO_PRICE_VALUATION_OR_INVESTMENT_AUTHORITY"
+}

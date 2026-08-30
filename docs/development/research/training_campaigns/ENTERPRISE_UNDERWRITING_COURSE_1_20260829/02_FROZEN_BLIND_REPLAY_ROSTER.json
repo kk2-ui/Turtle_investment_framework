@@ -1,0 +1,64 @@
+{
+  "schema_version": "enterprise-underwriting-course-roster.v1",
+  "roster_id": "EUCR:COURSE1:BLIND:20260829",
+  "frozen_at": "2026-08-29T18:40:00+08:00",
+  "base_commit": "eadaae9dedbf4cf1c3ac621031bb18fd0f4d49f0",
+  "track": "BLIND_REPLAY",
+  "selection_basis": "UNSEEN_COMPANIES_WITH_THREE_TRAINED_INDUSTRY_HOLDOUTS_AND_ONE_CROSS_INDUSTRY_TRANSFER",
+  "prohibited_selection_inputs": [
+    "POST_CUTOFF_OPERATING_RESULT",
+    "SHARE_PRICE_OR_RETURN",
+    "EXPECTED_MODEL_SUCCESS",
+    "OUTCOME_SOURCE_CONVENIENCE"
+  ],
+  "members": [
+    {
+      "rank": 1,
+      "company_id": "CN:000877",
+      "company_name": "Tianshan Cement",
+      "industry_id": "CN_CEMENT",
+      "cutoff_at": "2020-05-01T00:00:00+08:00",
+      "blind_question": "区域水泥企业在整合前的成本、资产、现金和结构位置是否足以承受下一阶段变化。",
+      "feedback_clocks": ["FY2020", "FY2021", "FY2023"],
+      "pre_cutoff_source_status": "TO_ACQUIRE",
+      "outcome_access": "SEALED"
+    },
+    {
+      "rank": 2,
+      "company_id": "CN:002242",
+      "company_name": "Joyoung",
+      "industry_id": "CN_HOME_APPLIANCE",
+      "cutoff_at": "2019-05-01T00:00:00+08:00",
+      "blind_question": "小家电品类、渠道与创新能否维持正常利润和现金，而不是依赖单品与分销库存。",
+      "feedback_clocks": ["FY2019", "FY2021", "FY2023"],
+      "pre_cutoff_source_status": "TO_ACQUIRE",
+      "outcome_access": "SEALED"
+    },
+    {
+      "rank": 3,
+      "company_id": "CN:002352",
+      "company_name": "SF Holding",
+      "industry_id": "CN_EXPRESS_DIRECT_NETWORK_HOLDOUT",
+      "cutoff_at": "2019-05-01T00:00:00+08:00",
+      "blind_question": "直营时效网络的服务、资本强度、产品组合和现金边界怎样区别于加盟快递参考类。",
+      "feedback_clocks": ["FY2019", "FY2021", "FY2023"],
+      "pre_cutoff_source_status": "TO_ACQUIRE",
+      "outcome_access": "SEALED",
+      "paired_ab_candidate": true
+    },
+    {
+      "rank": 4,
+      "company_id": "CN:603866",
+      "company_name": "Taoli Bread",
+      "industry_id": "CN_SHORT_SHELF_LIFE_FOOD_NETWORK",
+      "cutoff_at": "2019-05-01T00:00:00+08:00",
+      "blind_question": "区域短保食品网络向全国扩产时，客户吸收、配送密度、工厂利用率和现金何时支持复制。",
+      "feedback_clocks": ["FY2019", "FY2021", "FY2023"],
+      "pre_cutoff_source_status": "PARTIAL_OFFICIAL_PACKAGE_ALREADY_ACQUIRED",
+      "outcome_access": "SEALED"
+    }
+  ],
+  "order_policy": "RANK_ASCENDING_IMMUTABLE",
+  "outcome_open_rule": "ONLY_AFTER_COMPLETE_EPISODE_VALIDATES_AND_IS_FROZEN",
+  "authority": "BLIND_REPLAY_RESEARCH_ONLY_NO_CJO_VALUATION_REPORT_OR_INVESTMENT_AUTHORITY"
+}

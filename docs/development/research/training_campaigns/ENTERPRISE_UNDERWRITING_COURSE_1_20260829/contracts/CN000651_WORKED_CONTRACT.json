@@ -1,0 +1,17 @@
+{
+  "schema_version": "enterprise-underwriting-training-contract.v1",
+  "contract_id": "UWTRAIN:CN000651:20200501:WORKED:C1",
+  "training_track": "WORKED_CASE",
+  "company_id": "CN:000651",
+  "company_name": "Gree Electric Appliances",
+  "cutoff_at": "2020-05-01T00:00:00+08:00",
+  "sample_identity": "WORKED_CASE",
+  "outcome_access": "RESULT_KNOWN",
+  "allowed_sources": [{"source_id": "SOURCE:CN000651:TEACHING", "source_ref": "docs/development/research/training_curricula/teaching_cases/TC_CN000651_CHANNEL_PRICING_AND_DIVERSIFICATION_V1.md", "available_at": "2026-08-29T00:00:00+08:00", "time_role": "RESULT_KNOWN"}],
+  "feedback_clocks": [
+    {"clock_id": "CLOCK:CN000651:EARLY", "horizon": "OPERATING_ADAPTATION", "opens_at": "2021-05-01T00:00:00+08:00", "episode_claims": ["INDUSTRY_AND_SITUATION", "BUSINESS_POSITION_AND_ADAPTATION", "SURVIVAL_AND_FINANCING"], "discriminating_observation": "渠道改革、终端动销、价格纪律和核心制造能力是否共同适应。"},
+    {"clock_id": "CLOCK:CN000651:LONG", "horizon": "LONG_TERM_PERMANENT_LOSS", "opens_at": "2025-05-01T00:00:00+08:00", "episode_claims": ["NORMAL_EARNINGS", "OWNER_CASH", "PERMANENT_LOSS", "VALUE_ROUTE"], "discriminating_observation": "核心现金是否穿过渠道营运资本、多元化投入和减值到达普通股。"}
+  ],
+  "primary_training_product": {"object_type": "EnterpriseUnderwritingEpisode", "schema_version": "enterprise-underwriting-episode.v2", "completion_basis": "COMPLETE_EPISODE_VALIDATION_ONLY"},
+  "authority": "RESEARCH_TRAINING_ONLY_NO_PRICE_VALUATION_OR_INVESTMENT_AUTHORITY"
+}
