@@ -94,13 +94,13 @@
             "upstream_mechanism_continuity": null,
             "extraordinary_distribution_policy_continuity": null,
             "capital_need_continuity": null,
-            "source_fact_ids": []
+            "source_fact_bindings": {}
           },
           "future_retained_cash": {
             "cash_control_continuity": null,
             "ordinary_distribution_policy_continuity": null,
             "capital_need_continuity": null,
-            "source_fact_ids": []
+            "source_fact_bindings": {}
           }
         },
         "future_retained_cash": {
@@ -123,7 +123,7 @@
               "same_recovery_mechanism": null,
               "same_counterparty_control": null,
               "same_settlement_terms": null,
-              "source_fact_ids": []
+              "source_fact_bindings": {}
             },
             "source_fact_ids": [
               "OBS:02669:RELATED-PARTY-RECEIVABLES"

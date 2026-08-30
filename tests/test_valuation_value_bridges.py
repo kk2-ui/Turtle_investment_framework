@@ -93,13 +93,22 @@ def _cash_input() -> dict:
                 "upstream_mechanism_continuity": True,
                 "extraordinary_distribution_policy_continuity": True,
                 "capital_need_continuity": True,
-                "source_fact_ids": ["F:CONTINUITY"],
+                "source_fact_bindings": {
+                    "cash_control_continuity": "F:CONTINUITY",
+                    "upstream_mechanism_continuity": "F:CONTINUITY",
+                    "extraordinary_distribution_policy_continuity": "F:CONTINUITY",
+                    "capital_need_continuity": "F:CONTINUITY",
+                },
             },
             "future_retained_cash": {
                 "cash_control_continuity": True,
                 "ordinary_distribution_policy_continuity": True,
                 "capital_need_continuity": True,
-                "source_fact_ids": ["F:CONTINUITY"],
+                "source_fact_bindings": {
+                    "cash_control_continuity": "F:CONTINUITY",
+                    "ordinary_distribution_policy_continuity": "F:CONTINUITY",
+                    "capital_need_continuity": "F:CONTINUITY",
+                },
             },
         },
         "future_retained_cash": {
@@ -120,7 +129,7 @@ def _cash_input() -> dict:
                     "same_recovery_mechanism": None,
                     "same_counterparty_control": None,
                     "same_settlement_terms": None,
-                    "source_fact_ids": [],
+                    "source_fact_bindings": {},
                 },
                 "source_fact_ids": ["F:AR"],
             }
@@ -398,7 +407,7 @@ def _epv_input(*, unknown: bool = False) -> dict:
                 "metric": "canonical_normalized_owner_cash",
                 "basis_kind": "CANONICAL_NORMALIZED_OWNER_CASH_AFTER_TAX",
                 "tax_basis": "AFTER_TAX",
-                "amount": 10,
+                "amount_range": {"range_low": 10, "range_high": 10},
                 "working_capital_application": "ALREADY_NORMALIZED",
                 "source_fact_ids": source("FY2024"),
                 "normalization_adjustments": [],
@@ -410,7 +419,7 @@ def _epv_input(*, unknown: bool = False) -> dict:
                 "metric": "canonical_normalized_owner_cash",
                 "basis_kind": "CANONICAL_NORMALIZED_OWNER_CASH_AFTER_TAX",
                 "tax_basis": "AFTER_TAX",
-                "amount": 12,
+                "amount_range": {"range_low": 12, "range_high": 12},
                 "working_capital_application": "ALREADY_NORMALIZED",
                 "source_fact_ids": source("FY2025"),
                 "normalization_adjustments": [],
@@ -618,7 +627,7 @@ def test_combined_reader_and_numeric_outputs_are_model_derived_not_audit_languag
     metrics = {claim["metric"] for claim in compiled["numeric_claims"]}
 
     assert "存量超额现金计入每股HKD0.7" in text
-    assert "关联方应收只计已收回金额" in text
+    assert "关联方应收仅计已收回金额" in text
     assert "不相加也不平均" in text
     assert "共同保护的最高价格为每股RMB0.8" in text
     assert "DATA_COVERAGE" not in text
@@ -719,6 +728,7 @@ def test_joint_protection_ceiling_is_null_when_epv_is_not_comparable() -> None:
         period["basis_kind"] = "REPORTED_OCF_AFTER_TAX"
         period["working_capital_application"] = "CURRENT_MOVEMENT_REFLECTED"
         period["observed_working_capital_charge"] = 1.0
+        period["amount"] = period.pop("amount_range")["range_low"]
     epv_input["maintenance_capex"] = {
         "status": "BOUNDED",
         "range_low": 1.0,
@@ -835,7 +845,7 @@ def test_working_capital_unknown_stays_null_without_midpoint_zero_or_numeric_cla
         }
         for claim in compiled["numeric_claims"]
     )
-    assert "不采用固定比例永久扣减" in "\n".join(
+    assert "EPV不能作为买入依据" in "\n".join(
         slot["sentence"] for slot in compiled["reader_slots"]
     )
     assert validate_valuation_value_bridges(compiled)["state"] == "VALID"
@@ -880,9 +890,8 @@ def test_net_movement_working_capital_projects_observation_without_valuation_att
         "observed_cash_capital_movement": "RMB10百万元",
         "movement_direction": "净占用",
     }
-    assert "新项目启动投入与稳态负担" in slot["sentence"]
-    assert "不能据此把其中固定比例永久扣减" in slot["sentence"]
-    assert "主估值不采用50%之类的预设" in slot["sentence"]
+    assert "本期利润的可变现性低于报表利润所示" in slot["sentence"]
+    assert "EPV不能作为买入依据" in slot["sentence"]
     assert validate_valuation_value_bridges(compiled)["state"] == "VALID"
 
 

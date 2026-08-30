@@ -175,13 +175,22 @@ def _payload() -> dict:
                 "upstream_mechanism_continuity": True,
                 "extraordinary_distribution_policy_continuity": True,
                 "capital_need_continuity": True,
-                "source_fact_ids": ["F:CONTINUITY"],
+                "source_fact_bindings": {
+                    "cash_control_continuity": "F:CONTINUITY",
+                    "upstream_mechanism_continuity": "F:CONTINUITY",
+                    "extraordinary_distribution_policy_continuity": "F:CONTINUITY",
+                    "capital_need_continuity": "F:CONTINUITY",
+                },
             },
             "future_retained_cash": {
                 "cash_control_continuity": True,
                 "ordinary_distribution_policy_continuity": True,
                 "capital_need_continuity": True,
-                "source_fact_ids": ["F:CONTINUITY"],
+                "source_fact_bindings": {
+                    "cash_control_continuity": "F:CONTINUITY",
+                    "ordinary_distribution_policy_continuity": "F:CONTINUITY",
+                    "capital_need_continuity": "F:CONTINUITY",
+                },
             },
         },
         "future_retained_cash": {
@@ -206,7 +215,11 @@ def _payload() -> dict:
                     "same_recovery_mechanism": True,
                     "same_counterparty_control": True,
                     "same_settlement_terms": True,
-                    "source_fact_ids": ["F:CONTINUITY"],
+                    "source_fact_bindings": {
+                        "same_recovery_mechanism": "F:CONTINUITY",
+                        "same_counterparty_control": "F:CONTINUITY",
+                        "same_settlement_terms": "F:CONTINUITY",
+                    },
                 },
                 "source_fact_ids": ["F:RECEIVABLE"],
             }
@@ -314,7 +327,7 @@ def test_three_historical_periods_do_not_become_a_forecast_without_continuity() 
         "upstream_mechanism_continuity": None,
         "extraordinary_distribution_policy_continuity": None,
         "capital_need_continuity": None,
-        "source_fact_ids": [],
+        "source_fact_bindings": {},
     }
     existing = compute_cash_accessibility_model(payload)[
         "existing_excess_cash_realization"
@@ -441,7 +454,7 @@ def test_related_receivable_without_mature_cohorts_keeps_uncollected_exposure_un
         "same_recovery_mechanism": None,
         "same_counterparty_control": None,
         "same_settlement_terms": None,
-        "source_fact_ids": [],
+        "source_fact_bindings": {},
     }
 
     receivable = compute_cash_accessibility_model(payload)[

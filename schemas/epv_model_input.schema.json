@@ -81,7 +81,7 @@
       "type": "object", "additionalProperties": false,
       "required": [
         "period_id", "period_start", "period_end", "metric", "basis_kind",
-        "tax_basis", "amount", "working_capital_application", "source_fact_ids",
+        "tax_basis", "working_capital_application", "source_fact_ids",
         "normalization_adjustments"
       ],
       "properties": {
@@ -97,6 +97,14 @@
         ]},
         "tax_basis": {"enum": ["PRETAX", "AFTER_TAX"]},
         "amount": {"type": "number"},
+        "amount_range": {
+          "type": "object", "additionalProperties": false,
+          "required": ["range_low", "range_high"],
+          "properties": {
+            "range_low": {"type": "number"},
+            "range_high": {"type": "number"}
+          }
+        },
         "working_capital_application": {"enum": [
           "NOT_REFLECTED", "CURRENT_MOVEMENT_REFLECTED", "ALREADY_NORMALIZED"
         ]},
@@ -105,16 +113,34 @@
         "normalization_adjustments": {
           "type": "array", "items": {"$ref": "#/$defs/adjustment"}
         }
-      }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "basis_kind": {"const": "CANONICAL_NORMALIZED_OWNER_CASH_AFTER_TAX"}
+            }
+          },
+          "then": {
+            "required": ["amount_range"],
+            "not": {"required": ["amount"]}
+          },
+          "else": {
+            "required": ["amount"],
+            "not": {"required": ["amount_range"]}
+          }
+        }
+      ]
     },
     "cost": {
+      "description": "Maintenance owner-cash outflow. A bounded amount is after-tax cash and is deducted only after operating earnings tax.",
       "type": "object", "additionalProperties": false,
       "required": ["status"],
       "properties": {
         "status": {"enum": ["BOUNDED", "UNKNOWN", "ALREADY_REFLECTED"]},
         "range_low": {"type": "number", "minimum": 0},
         "range_high": {"type": "number", "minimum": 0},
-        "tax_basis": {"enum": ["PRETAX", "AFTER_TAX"]},
+        "tax_basis": {"const": "AFTER_TAX"},
         "source_fact_ids": {"$ref": "#/$defs/factIds"},
         "source_model_id": {"$ref": "#/$defs/nonempty"},
         "reason": {"$ref": "#/$defs/nonempty"}

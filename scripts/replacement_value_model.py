@@ -1075,18 +1075,26 @@ def compute_replacement_value_model(payload: Any) -> dict[str, Any]:
             "presence_requirement"
         )
         == "REQUIRED"
-        and _mapping(item.get("recognition")).get("status")
-        in {"UNKNOWN", "SCENARIO_ONLY"}
+        and (
+            _mapping(item.get("recognition")).get("status")
+            in {"UNKNOWN", "SCENARIO_ONLY"}
+            or (
+                _mapping(item.get("recognition")).get("status") == "EXCLUDED"
+                and _mapping(item.get("exclusion_treatment")).get("destination")
+                != "OTHER_REPLACEMENT_COMPONENT"
+            )
+        )
     ]
-    # A component deliberately excluded because its economic cost is already
-    # present elsewhere in the claims bridge is a resolved zero *increment*.
-    # It must not be confused with an unknown or scenario-only component: the
-    # former would wrongly suppress a complete going-concern range forever.
+    # Only another recognized replacement component can own a required rebuild
+    # cost inside this model.  A balance-sheet or EPV destination may explain
+    # overlap, but it does not put the missing cost into replacement arithmetic.
     full_scope = not unresolved_required_ids
     equity_low: float | None = None
     equity_high: float | None = None
+    claim_shortfall_low: float | None = None
+    claim_shortfall_high: float | None = None
     if full_scope:
-        equity_low = (
+        raw_equity_low = (
             gross_low
             + non_operating_assets[0]
             - debt[1]
@@ -1094,7 +1102,7 @@ def compute_replacement_value_model(payload: Any) -> dict[str, Any]:
             - other_priority_claims[1]
             + other_adjustments[0]
         )
-        equity_high = (
+        raw_equity_high = (
             gross_high
             + non_operating_assets[1]
             - debt[0]
@@ -1102,6 +1110,10 @@ def compute_replacement_value_model(payload: Any) -> dict[str, Any]:
             - other_priority_claims[0]
             + other_adjustments[1]
         )
+        equity_low = max(0.0, raw_equity_low)
+        equity_high = max(0.0, raw_equity_high)
+        claim_shortfall_low = max(0.0, -raw_equity_high)
+        claim_shortfall_high = max(0.0, -raw_equity_low)
     shares = float(bridge["shares_outstanding"])
     per_share = (
         (equity_low / shares, equity_high / shares)
@@ -1197,6 +1209,13 @@ def compute_replacement_value_model(payload: Any) -> dict[str, Any]:
             {"range_low": equity_low, "range_high": equity_high}
             if full_scope else None
         ),
+        "ordinary_common_claim_shortfall_range": (
+            {
+                "range_low": claim_shortfall_low,
+                "range_high": claim_shortfall_high,
+            }
+            if full_scope else None
+        ),
         "per_share_range": (
             {"range_low": per_share[0], "range_high": per_share[1]}
             if per_share is not None else None
@@ -1250,6 +1269,12 @@ def project_replacement_value_reader_conclusions(result: Any) -> dict[str, Any]:
                 f"即每股{currency} {_display_range(value['per_share_range'])}。"
             ),
         ]
+        shortfall = _mapping(value.get("ordinary_common_claim_shortfall_range"))
+        if float(shortfall.get("range_high") or 0.0) > 0:
+            conclusions.append(
+                "在重置成本区间的压力端，经营资产与非经营资产对优先索取权的覆盖缺口为"
+                f"{currency} {_display_range(shortfall)} {unit}；普通股因有限责任以零为下限。"
+            )
     else:
         conclusions = [
             (

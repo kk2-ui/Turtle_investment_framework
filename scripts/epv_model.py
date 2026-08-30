@@ -34,10 +34,11 @@ _BASIS_FIELDS = {
 }
 _PERIOD_FIELDS = {
     "period_id", "period_start", "period_end", "metric", "basis_kind",
-    "tax_basis", "amount", "working_capital_application",
+    "tax_basis", "amount", "amount_range", "working_capital_application",
     "observed_working_capital_charge", "source_fact_ids",
     "normalization_adjustments",
 }
+_PERIOD_RANGE_FIELDS = {"range_low", "range_high"}
 _ADJUSTMENT_FIELDS = {
     "adjustment_id", "category", "direction", "amount", "tax_basis",
     "source_fact_ids", "economic_reason",
@@ -89,14 +90,6 @@ def _number(value: Any) -> float | None:
         return None
     result = float(value)
     return result if math.isfinite(result) else None
-
-
-def _same(left: Any, right: Any, *, tolerance: float = 1e-10) -> bool:
-    lval, rval = _number(left), _number(right)
-    return (
-        lval is not None and rval is not None
-        and math.isclose(lval, rval, rel_tol=tolerance, abs_tol=tolerance)
-    )
 
 
 def _unknown_fields(
@@ -282,9 +275,26 @@ def validate_epv_model_input(payload: Any) -> dict[str, Any]:
             findings.append(prefix + ":tax_basis_kind_mismatch")
         if tax_basis:
             tax_bases.add(tax_basis)
-        amount = _number(period.get("amount"))
-        if amount is None:
-            findings.append(prefix + ":amount_invalid")
+        if kind == "CANONICAL_NORMALIZED_OWNER_CASH_AFTER_TAX":
+            amount_range = _mapping(period.get("amount_range"))
+            _unknown_fields(
+                amount_range,
+                _PERIOD_RANGE_FIELDS,
+                prefix + ".amount_range",
+                findings,
+            )
+            amount_low = _number(amount_range.get("range_low"))
+            amount_high = _number(amount_range.get("range_high"))
+            if amount_low is None or amount_high is None or amount_low > amount_high:
+                findings.append(prefix + ":amount_range_invalid")
+            if period.get("amount") is not None:
+                findings.append(prefix + ":canonical_scalar_amount_forbidden")
+        else:
+            amount = _number(period.get("amount"))
+            if amount is None:
+                findings.append(prefix + ":amount_invalid")
+            if period.get("amount_range") is not None:
+                findings.append(prefix + ":amount_range_only_for_canonical_owner_cash")
         _source_ids(period.get("source_fact_ids"), prefix, findings)
         wc_application = str(period.get("working_capital_application") or "")
         allowed_application = {
@@ -308,6 +318,8 @@ def validate_epv_model_input(payload: Any) -> dict[str, Any]:
         if not isinstance(adjustments, list):
             findings.append(prefix + ":normalization_adjustments_invalid")
             adjustments = []
+        if kind == "CANONICAL_NORMALIZED_OWNER_CASH_AFTER_TAX" and adjustments:
+            findings.append(prefix + ":canonical_owner_cash_adjustments_forbidden")
         adjustment_ids: set[str] = set()
         for adjustment_index, raw_adjustment in enumerate(adjustments):
             aprefix = prefix + f".normalization_adjustments[{adjustment_index}]"
@@ -349,14 +361,17 @@ def validate_epv_model_input(payload: Any) -> dict[str, Any]:
     if len(wc_applications) > 1:
         findings.append("period_facts:working_capital_application_mixed")
     period_tax_basis = next(iter(tax_bases), "")
+    # Maintenance capex and working capital are owner-cash outflows.  They do
+    # not receive a second tax shield inside EPV: pretax operating earnings are
+    # taxed first, then these cash investments are deducted.
     capex = _validate_cost(
         value.get("maintenance_capex"), "maintenance_capex", findings,
-        expected_tax_basis=period_tax_basis,
+        expected_tax_basis="AFTER_TAX",
     )
     working_capital = _validate_cost(
         value.get("maintenance_working_capital"),
         "maintenance_working_capital", findings,
-        expected_tax_basis=period_tax_basis,
+        expected_tax_basis="AFTER_TAX",
     )
     capex_status = _mapping(value.get("maintenance_capex")).get("status")
     wc_status = _mapping(value.get("maintenance_working_capital")).get("status")
@@ -537,7 +552,8 @@ def compute_epv_model(payload: Any) -> dict[str, Any]:
     value = _mapping(payload)
     basis = _mapping(value["basis"])
     period_results: list[dict[str, Any]] = []
-    adjusted_period_amounts: list[float] = []
+    adjusted_period_lows: list[float] = []
+    adjusted_period_highs: list[float] = []
     wc_application = ""
     for period in value["period_facts"]:
         adjustments = deepcopy(period["normalization_adjustments"])
@@ -550,20 +566,38 @@ def compute_epv_model(payload: Any) -> dict[str, Any]:
         observed_wc = float(period.get("observed_working_capital_charge") or 0.0)
         wc_application = period["working_capital_application"]
         wc_addback = observed_wc if wc_application == "CURRENT_MOVEMENT_REFLECTED" else 0.0
-        adjusted = float(period["amount"]) + additions - subtractions + wc_addback
-        adjusted_period_amounts.append(adjusted)
-        period_results.append({
-            "period_id": period["period_id"],
-            "reported_amount": period["amount"],
-            "adjustments": adjustments,
-            "adjustment_additions": additions,
-            "adjustment_subtractions": subtractions,
-            "observed_working_capital_charge_addback": wc_addback,
-            "pre_maintenance_normalized_amount": adjusted,
-        })
+        if period["basis_kind"] == "CANONICAL_NORMALIZED_OWNER_CASH_AFTER_TAX":
+            amount_range = _mapping(period["amount_range"])
+            adjusted_low = float(amount_range["range_low"])
+            adjusted_high = float(amount_range["range_high"])
+            period_result = {
+                "period_id": period["period_id"],
+                "reported_amount_range": deepcopy(amount_range),
+                "adjustments": [],
+                "adjustment_additions": 0.0,
+                "adjustment_subtractions": 0.0,
+                "observed_working_capital_charge_addback": 0.0,
+                "pre_maintenance_normalized_range": deepcopy(amount_range),
+            }
+        else:
+            adjusted = float(period["amount"]) + additions - subtractions + wc_addback
+            adjusted_low = adjusted
+            adjusted_high = adjusted
+            period_result = {
+                "period_id": period["period_id"],
+                "reported_amount": period["amount"],
+                "adjustments": adjustments,
+                "adjustment_additions": additions,
+                "adjustment_subtractions": subtractions,
+                "observed_working_capital_charge_addback": wc_addback,
+                "pre_maintenance_normalized_amount": adjusted,
+            }
+        adjusted_period_lows.append(adjusted_low)
+        adjusted_period_highs.append(adjusted_high)
+        period_results.append(period_result)
 
-    historical_low = min(adjusted_period_amounts) if adjusted_period_amounts else None
-    historical_high = max(adjusted_period_amounts) if adjusted_period_amounts else None
+    historical_low = min(adjusted_period_lows) if adjusted_period_lows else None
+    historical_high = max(adjusted_period_highs) if adjusted_period_highs else None
     capex = _mapping(value["maintenance_capex"])
     wc = _mapping(value["maintenance_working_capital"])
     capex_range = (
@@ -575,42 +609,37 @@ def compute_epv_model(payload: Any) -> dict[str, Any]:
         if wc["status"] == "BOUNDED" else (0.0, 0.0)
     )
     unknown = _unknowns(value)
-    pre_tax_or_after_tax_low = (
-        historical_low - capex_range[1] - wc_range[1]
-        if historical_low is not None else 0.0
-    )
-    pre_tax_or_after_tax_high = (
-        historical_high - capex_range[0] - wc_range[0]
-        if historical_high is not None else 0.0
-    )
     tax = _mapping(value["tax"])
     if tax["status"] == "BOUNDED":
-        owner_low = pre_tax_or_after_tax_low * (1.0 - float(tax["rate_high"]))
-        owner_high = pre_tax_or_after_tax_high * (1.0 - float(tax["rate_low"]))
+        after_tax_earnings_low = (
+            historical_low * (1.0 - float(tax["rate_high"]))
+            if historical_low is not None else 0.0
+        )
+        after_tax_earnings_high = (
+            historical_high * (1.0 - float(tax["rate_low"]))
+            if historical_high is not None else 0.0
+        )
     else:
-        owner_low, owner_high = pre_tax_or_after_tax_low, pre_tax_or_after_tax_high
+        after_tax_earnings_low = historical_low if historical_low is not None else 0.0
+        after_tax_earnings_high = historical_high if historical_high is not None else 0.0
+    owner_low = after_tax_earnings_low - capex_range[1] - wc_range[1]
+    owner_high = after_tax_earnings_high - capex_range[0] - wc_range[0]
     if owner_low > owner_high:
         owner_low, owner_high = owner_high, owner_low
 
     capitalization = _mapping(value["capitalization"])
     claims = _mapping(value["claims_bridge"])
     comparable = not unknown
-    if comparable and owner_low <= 0:
-        unknown.append("non_positive_maintenance_owner_earnings")
-        comparable = False
-    if comparable and _same(owner_low, owner_high) and _same(
-        capitalization.get("rate_low"), capitalization.get("rate_high")
-    ):
-        unknown.append("single_point_precision_forbidden")
-        comparable = False
+    capitalizable_owner_low = max(0.0, owner_low)
+    capitalizable_owner_high = max(0.0, owner_high)
 
     operating_range: dict[str, float] | None = None
     equity_range: dict[str, float] | None = None
     per_share_range: dict[str, float] | None = None
     equity_bridge: dict[str, Any] | None = None
     if comparable:
-        operating_low = owner_low / float(capitalization["rate_high"])
-        operating_high = owner_high / float(capitalization["rate_low"])
+        operating_low = capitalizable_owner_low / float(capitalization["rate_high"])
+        operating_high = capitalizable_owner_high / float(capitalization["rate_low"])
         operating_range = {"range_low": operating_low, "range_high": operating_high}
         nonop_low = sum(float(item["range_low"]) for item in claims["non_operating_components"])
         nonop_high = sum(float(item["range_high"]) for item in claims["non_operating_components"])
@@ -633,6 +662,8 @@ def compute_epv_model(payload: Any) -> dict[str, Any]:
             equity_low = operating_low + nonop_low + float(other["range_low"])
             equity_high = operating_high + nonop_high + float(other["range_high"])
         shares = float(_mapping(claims["shares"])["value"])
+        equity_low = max(0.0, equity_low)
+        equity_high = max(0.0, equity_high)
         equity_range = {"range_low": equity_low, "range_high": equity_high}
         per_share_range = {
             "range_low": equity_low / shares,
@@ -668,14 +699,17 @@ def compute_epv_model(payload: Any) -> dict[str, Any]:
             "maintenance_capex": deepcopy(capex),
             "working_capital_application": wc_application,
             "maintenance_working_capital": deepcopy(wc),
-            "pre_tax_or_after_tax_owner_earnings_range": {
-                "range_low": pre_tax_or_after_tax_low,
-                "range_high": pre_tax_or_after_tax_high,
+            "after_tax_earnings_before_maintenance_range": {
+                "range_low": after_tax_earnings_low,
+                "range_high": after_tax_earnings_high,
             } if historical_low is not None else None,
             "tax": deepcopy(tax),
         },
         "sustainable_owner_earnings_range": (
-            {"range_low": owner_low, "range_high": owner_high}
+            {
+                "range_low": capitalizable_owner_low,
+                "range_high": capitalizable_owner_high,
+            }
             if comparable else None
         ),
         "capitalization": deepcopy(capitalization),
@@ -687,7 +721,11 @@ def compute_epv_model(payload: Any) -> dict[str, Any]:
         "economic_conclusion": {
             "epv_status": status,
             "reason": (
-                "All material operands are source-bounded and deterministically recomputed."
+                (
+                    "Source-bounded maintenance earnings do not establish positive EPV."
+                    if comparable and capitalizable_owner_high == 0
+                    else "All material operands are source-bounded and deterministically recomputed."
+                )
                 if comparable
                 else "Company-level EPV remains unavailable until: " + ", ".join(unknown) + "."
             ),

@@ -506,9 +506,9 @@ def _cash_projection(
         )
     else:
         receivable_phrase = (
-            "关联方应收只计已收回金额"
+            "关联方应收仅计已收回金额（当前为"
             + receivable_selected
-            + "，未收部分视作回收选择权"
+            + "），未收部分视作回收选择权"
         )
     slot = {
         "slot_id": "cash_value_bridge_summary",
@@ -843,12 +843,22 @@ def _working_capital_projection(
                 else "本期观察到营运资本无净变动"
             )
             if uses_normalized_owner_cash_for_continuing_value:
-                slot_sentence = (
-                    observed_phrase
-                    + "，但现有汇总披露不能区分新项目启动投入与稳态负担，不能据此把其中固定比例永久扣减。"
-                    + "主估值不采用50%之类的预设；在项目批次回款和稳态周转证据补齐前，"
-                    + "盈利兑现质量需要单独折价观察。"
-                )
+                if reference_actual_charge > 0:
+                    consequence = (
+                        "这意味着本期利润的可变现性低于报表利润所示；在稳态占用分离前，"
+                        "EPV不能作为买入依据。"
+                    )
+                elif reference_actual_charge < 0:
+                    consequence = (
+                        "这意味着本期现金流受营运资本释放抬高，不能直接代表可持续盈利；"
+                        "在稳态占用分离前，EPV不能作为买入依据。"
+                    )
+                else:
+                    consequence = (
+                        "这尚不能证明利润可以稳定转换为现金；在稳态占用分离前，"
+                        "EPV不能作为买入依据。"
+                    )
+                slot_sentence = observed_phrase + "；" + consequence
             else:
                 slot_sentence = (
                     observed_phrase
@@ -856,8 +866,8 @@ def _working_capital_projection(
                 )
         elif uses_normalized_owner_cash_for_continuing_value:
             slot_sentence = (
-                "现有披露不能把新项目启动投入与稳态营运资本负担分开，主估值因此不采用固定比例永久扣减；"
-                "在项目批次回款和稳态周转证据补齐前，盈利兑现质量需要单独折价观察。"
+                "稳态营运资本需求尚未从项目启动垫资中分离，报表利润能转换成多少可持续现金仍不清楚；"
+                "在此之前，EPV不能作为买入依据。"
             )
         else:
             slot_sentence = (

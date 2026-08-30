@@ -140,6 +140,20 @@ def _temporal_cash_fixture() -> tuple[dict, dict, dict]:
             }
         )
         bindings.append({"path": path, "evidence_id": evidence_id})
+    observations.append(
+        {
+            "observation_id": "F:CONTINUITY",
+            "fact_name": "cash_realization_mechanism_continuity",
+            "normalized_value": True,
+            "unit": "boolean",
+            "currency": None,
+            "as_of": POSITION_DATE,
+            "temporal_role": "POSITION_AS_OF",
+            "measurement_context": {},
+            "doc_id": "DOC:FY2025",
+            "status": "VERIFIED",
+        }
+    )
     bridge_input["canonical_fact_bindings"] = bindings
     fact_registry = {
         "report_id": "",

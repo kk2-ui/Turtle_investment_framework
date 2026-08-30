@@ -172,8 +172,8 @@ def test_02669_working_capital_history_stays_observed_while_persistence_stays_un
         if item["slot_id"] == "working_capital_normalization_summary"
     )
     assert "净占用RMB275.43百万元" in slot["sentence"]
-    assert "新项目启动投入与稳态负担" in slot["sentence"]
-    assert "不能据此把其中固定比例永久扣减" in slot["sentence"]
+    assert "本期利润的可变现性低于报表利润所示" in slot["sentence"]
+    assert "EPV不能作为买入依据" in slot["sentence"]
 
 
 def test_02669_replacement_anchors_do_not_masquerade_as_a_complete_company_range() -> None:
@@ -250,7 +250,7 @@ def test_02669_reader_conclusion_states_the_open_boundary_in_investor_language()
 
     assert "持续经营重置价值还没有覆盖全部关键能力和启动资本" in text
     assert "不能声称资产与盈利共同提供价格底" in text
-    assert "主估值不采用50%之类的预设" in text
+    assert "EPV不能作为买入依据" in text
     assert "不能相加抬高价值" in text
     assert "存量超额现金只保留法律可达上限，主估值不预先计入" in text
     assert "未收部分视作回收选择权" in text

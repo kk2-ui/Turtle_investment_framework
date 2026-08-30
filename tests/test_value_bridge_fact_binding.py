@@ -4,9 +4,13 @@ import json
 from copy import deepcopy
 from pathlib import Path
 
-from scripts.valuation_model_gate import _validate_value_bridge_fact_bindings
+from scripts.valuation_model_gate import (
+    _bridge_operand_context,
+    _validate_cash_applicability_fact_refs,
+    _validate_value_bridge_fact_bindings,
+)
 from scripts.valuation_value_bridges import compile_valuation_value_bridges
-from tests.test_valuation_value_bridges import _epv_input, _replacement_input
+from tests.test_valuation_value_bridges import _cash_input, _epv_input, _replacement_input
 
 
 def _ordinary_input() -> dict:
@@ -45,6 +49,53 @@ def _ordinary_input() -> dict:
             }
         },
     }
+
+
+def test_cash_applicability_judgments_resolve_to_current_boolean_evidence() -> None:
+    model_input = {"cash_accessibility": {"model_input": _cash_input()}}
+    observations = {
+        "F:CONTINUITY": {"normalized_value": True, "status": "VERIFIED"}
+    }
+    invalid: list[str] = []
+
+    _validate_cash_applicability_fact_refs(
+        model_input,
+        observations=observations,
+        calculations_by_id={},
+        invalid=invalid,
+    )
+    assert invalid == []
+
+    observations["F:CONTINUITY"]["normalized_value"] = False
+    _validate_cash_applicability_fact_refs(
+        model_input,
+        observations=observations,
+        calculations_by_id={},
+        invalid=invalid,
+    )
+    assert any("cash_applicability_evidence_value_mismatch" in item for item in invalid)
+
+
+def test_receivable_recovery_cohort_uses_its_historical_period_context() -> None:
+    cash = _cash_input()
+    cash["related_party_receivables"][0]["recovery_cohorts"] = [
+        {
+            "cohort_id": "AR:C1",
+            "period_start": "2023-01-01",
+            "period_end": "2023-12-31",
+        }
+    ]
+    bridge = {"cash_accessibility": {"model_input": cash}}
+
+    context = _bridge_operand_context(
+        bridge,
+        "cash_accessibility.model_input.related_party_receivables[0].recovery_cohorts[0].cash_collections",
+    )
+
+    assert context["temporal_role"] == "HISTORICAL_PERIOD"
+    assert context["period_start"] == "2023-01-01"
+    assert context["period_end"] == "2023-12-31"
+    assert context["cohort_id"] == "AR:C1"
 
 
 def _write_verified_observations(output: Path) -> None:
@@ -103,10 +154,13 @@ def _epv_input_with_current_fact_bindings() -> dict:
     ]
     bindings = [
         {
-            "path": f"epv.model_input.period_facts[{index}].amount",
+            "path": (
+                f"epv.model_input.period_facts[{index}].amount_range.{endpoint}"
+            ),
             "evidence_id": f"OBS:EPV:FY{year}",
         }
         for index, year in enumerate((2024, 2025))
+        for endpoint in ("range_low", "range_high")
     ]
     bindings.extend([
         {"path": "epv.model_input.capitalization.rate_low", "evidence_id": "CALC:EPV:CAP-RATE"},
@@ -196,9 +250,15 @@ def test_epv_source_operands_resolve_before_the_owner_computes_results(
     assert invalid == []
     assert incomplete == []
 
-    bridge_input["epv"]["model_input"]["period_facts"][1]["amount"] = 13.0
+    bridge_input["epv"]["model_input"]["period_facts"][1]["amount_range"][
+        "range_high"
+    ] = 13.0
     invalid, _ = _validate(tmp_path, bridge_input)
-    assert any("numeric_value_mismatch:epv.model_input.period_facts[1].amount" in item for item in invalid)
+    assert any(
+        "numeric_value_mismatch:epv.model_input.period_facts[1].amount_range.range_high"
+        in item
+        for item in invalid
+    )
 
 
 def _replacement_input_with_current_fact_bindings() -> tuple[

@@ -478,10 +478,11 @@ def test_partial_model_preserves_component_anchors_without_fake_per_share_range(
     assert result["economic_conclusion"] == {
         "replacement_value_role": "GOING_CONCERN_REPLACEMENT_RANGE",
             "recognized_scope": "PARTIAL_RECOGNIZED_REQUIRED_COMPONENTS",
-        "unresolved_required_component_ids": [
-            "regional-organization",
-            "acquisition-channel",
-        ],
+            "unresolved_required_component_ids": [
+                "regional-organization",
+                "acquisition-channel",
+                "startup-working-capital",
+            ],
         "replacement_range_status": "INCOMPLETE",
         "claims_bridge_status": "NOT_APPLIED_TO_INCOMPLETE_REPLACEMENT_SCOPE",
         "epv_comparability": "COMPARABLE",
@@ -549,7 +550,7 @@ def test_cross_component_cost_owner_changes_which_rebuild_cost_can_enter_value()
     assert excluded["economic_conclusion"]["replacement_range_status"] == "AVAILABLE"
 
 
-def test_resolved_already_included_component_is_zero_increment_not_unknown_scope() -> None:
+def test_external_working_capital_destination_does_not_complete_replacement_scope() -> None:
     payload = _complete_model()
     startup = payload["components"][4]
     startup["recognition"] = {
@@ -572,12 +573,34 @@ def test_resolved_already_included_component_is_zero_increment_not_unknown_scope
     result = compute_replacement_value_model(payload)
 
     assert result["excluded_component_ids"] == ["startup-working-capital"]
-    assert result["economic_conclusion"]["replacement_range_status"] == "AVAILABLE"
+    assert result["economic_conclusion"]["unresolved_required_component_ids"] == [
+        "startup-working-capital"
+    ]
+    assert result["economic_conclusion"]["replacement_range_status"] == "INCOMPLETE"
+    assert result["ordinary_common_equity_range"] is None
+    assert result["per_share_range"] is None
+
+
+def test_ordinary_common_replacement_value_has_limited_liability_floor() -> None:
+    payload = _complete_model()
+    payload["claims_bridge"]["debt"] = {"range_low": 500, "range_high": 500}
+
+    result = compute_replacement_value_model(payload)
+    reader = project_replacement_value_reader_conclusions(result)
+
     assert result["ordinary_common_equity_range"] == {
-        "range_low": 155.0,
-        "range_high": 290.0,
+        "range_low": 0.0,
+        "range_high": 0.0,
     }
-    assert result["per_share_range"] == {"range_low": 1.55, "range_high": 2.9}
+    assert result["per_share_range"] == {"range_low": 0.0, "range_high": 0.0}
+    assert result["ordinary_common_claim_shortfall_range"] == {
+        "range_low": 120.0,
+        "range_high": 265.0,
+    }
+    assert any(
+        "普通股因有限责任以零为下限" in item
+        for item in reader["reader_conclusions"]
+    )
 
 
 def test_unknown_component_is_neither_zero_nor_midpoint_and_does_not_erase_known_range() -> None:

@@ -650,11 +650,20 @@ def _validate_cash_component_contract(
         claim_id: _num(_mapping(cash_projection.get(projection_key)).get("adopted_per_share"))
         for projection_key, claim_id in component_specs
     }
+    component_lows = {
+        claim_id: _num(
+            _mapping(
+                _mapping(cash_projection.get(projection_key)).get("per_share_range")
+            ).get("low")
+        )
+        for projection_key, claim_id in component_specs
+    }
     expected_ids = sorted(
         claim_id for claim_id, amount in component_amounts.items()
         if amount is not None and amount > 0
     )
     recognized = sum(component_amounts[claim_id] or 0.0 for claim_id in expected_ids)
+    recognized_low = sum(component_lows[claim_id] or 0.0 for claim_id in expected_ids)
     if recognized <= 0:
         return
 
@@ -733,7 +742,13 @@ def _validate_cash_component_contract(
     if None in {primary_amount, separate_amount, equity_cash_amount}:
         invalid.append("cash_component_contract_amounts_invalid")
         return
-    if not _same(primary_amount + separate_amount, recognized):
+    primary_endpoint = (
+        recognized_low
+        if str(equity_bridge.get("endpoint_policy") or "") == "CONSERVATIVE_LOW"
+        else recognized
+    )
+    selected_amount = primary_endpoint if location == "PRIMARY_MODEL_EQUITY_BRIDGE" else recognized
+    if not _same(primary_amount + separate_amount, selected_amount):
         invalid.append("cash_component_contract_single_inclusion_mismatch")
 
     # A declared scalar cannot prove that cash actually enters (or stays out
@@ -782,15 +797,18 @@ def _validate_cash_component_contract(
 
     if location == "PRIMARY_MODEL_EQUITY_BRIDGE":
         if (
-            not _same(primary_amount, recognized)
+            not _same(primary_amount, primary_endpoint)
             or not _same(separate_amount, 0)
-            or not _same(equity_cash_amount, recognized)
+            or not _same(equity_cash_amount, primary_endpoint)
             or not isinstance(equity_cash_ids, list)
             or sorted(equity_cash_ids) != expected_ids
         ):
             invalid.append("cash_component_contract_primary_inclusion_mismatch")
         if component_valid and (
-            not _same(cash_component_total / float(cash_projection["shares"]), recognized)
+            not _same(
+                cash_component_total / float(cash_projection["shares"]),
+                primary_endpoint,
+            )
             or sorted(cash_component_ids) != expected_ids
         ):
             invalid.append("cash_component_contract_primary_component_amount_mismatch")
@@ -980,6 +998,37 @@ def _bridge_operand_context(
             context["temporal_role"] = "EVENT"
             context["as_of"] = ""
             context["post_position_event_required"] = "true"
+        elif (
+            ".model_input.related_party_receivables[" in path
+            and ".recovery_cohorts[" in path
+        ):
+            receivable_match = re.search(
+                r"\.related_party_receivables\[(\d+)\]", path
+            )
+            cohort_match = re.search(r"\.recovery_cohorts\[(\d+)\]", path)
+            receivables = model.get("related_party_receivables") or []
+            receivable = (
+                receivables[int(receivable_match.group(1))]
+                if receivable_match
+                and int(receivable_match.group(1)) < len(receivables)
+                else {}
+            )
+            cohorts = (
+                receivable.get("recovery_cohorts") or []
+                if isinstance(receivable, dict)
+                else []
+            )
+            cohort = (
+                cohorts[int(cohort_match.group(1))]
+                if cohort_match and int(cohort_match.group(1)) < len(cohorts)
+                else {}
+            )
+            context["temporal_role"] = "HISTORICAL_PERIOD"
+            if isinstance(cohort, dict):
+                context["period_start"] = str(cohort.get("period_start") or "")
+                context["period_end"] = str(cohort.get("period_end") or "")
+                context["cohort_id"] = str(cohort.get("cohort_id") or "")
+                context["as_of"] = context["period_end"]
         else:
             context["temporal_role"] = "POSITION_AS_OF"
     # Working-capital observations must be period-specific, not copied from
@@ -1145,6 +1194,12 @@ def _validate_value_bridge_fact_bindings(
     if not observations and not calculations_by_id:
         incomplete.append("value_bridge_fact_bindings_verified_registry_empty")
         return
+    _validate_cash_applicability_fact_refs(
+        model_input,
+        observations=observations,
+        calculations_by_id=calculations_by_id,
+        invalid=invalid,
+    )
     _validate_replacement_non_numeric_fact_refs(
         model_input,
         observations=observations,
@@ -1228,6 +1283,60 @@ def _validate_value_bridge_fact_bindings(
             )
     missing = sorted(set(operands) - set(submitted))
     invalid.extend("value_bridge_fact_bindings_operand_unbound:" + path for path in missing)
+
+
+def _validate_cash_applicability_fact_refs(
+    model_input: dict[str, Any],
+    *,
+    observations: dict[str, dict[str, Any]],
+    calculations_by_id: dict[str, dict[str, Any]],
+    invalid: list[str],
+) -> None:
+    """Bind prospective cash judgments to the current canonical registry."""
+    cash = _mapping(_mapping(model_input.get("cash_accessibility")).get("model_input"))
+    if not cash:
+        return
+    applicability_rows: list[tuple[str, dict[str, Any]]] = []
+    realization = _mapping(cash.get("realization_applicability"))
+    for name in ("existing_excess_cash", "future_retained_cash"):
+        applicability_rows.append((
+            "cash_accessibility.model_input.realization_applicability." + name,
+            _mapping(realization.get(name)),
+        ))
+    for index, raw in enumerate(cash.get("related_party_receivables") or []):
+        applicability_rows.append((
+            "cash_accessibility.model_input.related_party_receivables["
+            + str(index)
+            + "].prospective_applicability",
+            _mapping(_mapping(raw).get("prospective_applicability")),
+        ))
+    for prefix, row in applicability_rows:
+        bindings = _mapping(row.get("source_fact_bindings"))
+        for field, expected in row.items():
+            if field == "source_fact_bindings" or not isinstance(expected, bool):
+                continue
+            evidence_id = str(bindings.get(field) or "")
+            source = observations.get(evidence_id) or calculations_by_id.get(evidence_id)
+            if source is None:
+                invalid.append(
+                    "cash_applicability_requires_current_verified_evidence:"
+                    + prefix
+                    + "."
+                    + field
+                )
+                continue
+            observed = (
+                source.get("normalized_value")
+                if evidence_id in observations
+                else source.get("value")
+            )
+            if not isinstance(observed, bool) or observed is not expected:
+                invalid.append(
+                    "cash_applicability_evidence_value_mismatch:"
+                    + prefix
+                    + "."
+                    + field
+                )
 
 
 def _validate_replacement_non_numeric_fact_refs(
@@ -1484,6 +1593,28 @@ def _validate_value_bridge_models(
                     "related_party_receivable_realization",
                 )
             )
+            cash_range_low = sum(
+                _num(
+                    _mapping(
+                        _mapping(cash_result.get(component)).get("amount_range")
+                    ).get("low")
+                ) or 0.0
+                for component in (
+                    "existing_excess_cash_realization",
+                    "related_party_receivable_realization",
+                )
+            )
+            cash_range_high = sum(
+                _num(
+                    _mapping(
+                        _mapping(cash_result.get(component)).get("amount_range")
+                    ).get("high")
+                ) or 0.0
+                for component in (
+                    "existing_excess_cash_realization",
+                    "related_party_receivable_realization",
+                )
+            )
             contract = _mapping(synthesis.get("cash_component_contract"))
             location = str(contract.get("inclusion_location") or "")
             epv_claim_ids = sorted({
@@ -1494,13 +1625,13 @@ def _validate_value_bridge_models(
             low = sum(_num(item.get("range_low")) or 0.0 for item in epv_cash_components)
             high = sum(_num(item.get("range_high")) or 0.0 for item in epv_cash_components)
             if location == "PRIMARY_MODEL_EQUITY_BRIDGE":
-                if recognized_cash > 0 and (
+                if cash_range_high > 0 and (
                     epv_claim_ids != expected_claim_ids
-                    or not _same(low, recognized_cash)
-                    or not _same(high, recognized_cash)
+                    or not _same(low, cash_range_low)
+                    or not _same(high, cash_range_high)
                 ):
                     invalid.append("canonical_epv_cash_component_not_cash_model_derived")
-                if recognized_cash <= 0 and epv_cash_components:
+                if cash_range_high <= 0 and epv_cash_components:
                     invalid.append("canonical_epv_unrecognized_cash_component_forbidden")
             elif location == "SEPARATE_COMPONENT":
                 if epv_cash_components:
@@ -1527,6 +1658,50 @@ def _validate_value_bridge_models(
                     invalid.append(
                         "canonical_epv_claims_normalized_working_capital_without_bounded_model"
                     )
+                working_periods = {
+                    str(_mapping(period).get("period_id") or ""): _mapping(period)
+                    for period in working.get("period_results") or []
+                }
+                for period in canonical_epv_input.get("period_facts") or []:
+                    epv_period = _mapping(period)
+                    if epv_period.get("basis_kind") != (
+                        "CANONICAL_NORMALIZED_OWNER_CASH_AFTER_TAX"
+                    ):
+                        continue
+                    working_period = working_periods.get(
+                        str(epv_period.get("period_id") or "")
+                    )
+                    if not working_period:
+                        invalid.append(
+                            "canonical_epv_owner_cash_period_missing_from_working_capital_model"
+                        )
+                        continue
+                    working_range = _mapping(
+                        working_period.get("normalized_owner_cash_range")
+                    )
+                    epv_range = _mapping(epv_period.get("amount_range"))
+                    if (
+                        not _same(
+                            epv_range.get("range_low"),
+                            working_range.get("range_low"),
+                        )
+                        or not _same(
+                            epv_range.get("range_high"),
+                            working_range.get("range_high"),
+                        )
+                    ):
+                        invalid.append(
+                            "canonical_epv_owner_cash_range_not_working_capital_model_derived"
+                        )
+                    if (
+                        epv_period.get("period_start")
+                        != working_period.get("period_start")
+                        or epv_period.get("period_end")
+                        != working_period.get("period_end")
+                    ):
+                        invalid.append(
+                            "canonical_epv_owner_cash_period_not_working_capital_model_derived"
+                        )
             elif adopted_owner_cash is None and _mapping(epv).get("status") == "COMPARABLE":
                 invalid.append("canonical_epv_ignores_unknown_working_capital")
         else:

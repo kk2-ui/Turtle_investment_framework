@@ -84,14 +84,14 @@ def _input() -> dict:
             "status": "BOUNDED",
             "range_low": 10.0,
             "range_high": 15.0,
-            "tax_basis": "PRETAX",
+            "tax_basis": "AFTER_TAX",
             "source_fact_ids": _facts("MAINTENANCE-CAPEX"),
         },
         "maintenance_working_capital": {
             "status": "BOUNDED",
             "range_low": 5.0,
             "range_high": 10.0,
-            "tax_basis": "PRETAX",
+            "tax_basis": "AFTER_TAX",
             "source_fact_ids": _facts("MAINTENANCE-WC"),
             "source_model_id": "WCM:TEST:2025",
         },
@@ -150,21 +150,64 @@ def test_epv_owner_deterministically_normalizes_taxes_capitalizes_and_bridges() 
         "pre_maintenance_normalized_amount": 105.0,
     }
     assert result["sustainable_owner_earnings_range"] == {
-        "range_low": pytest.approx(60.0),
-        "range_high": pytest.approx(88.0),
+        "range_low": pytest.approx(53.75),
+        "range_high": pytest.approx(85.0),
     }
     assert result["operating_value_range"] == {
-        "range_low": pytest.approx(500.0),
-        "range_high": pytest.approx(880.0),
+        "range_low": pytest.approx(447.9166666667),
+        "range_high": pytest.approx(850.0),
     }
     assert result["ordinary_common_equity_range"] == {
-        "range_low": pytest.approx(484.0),
-        "range_high": pytest.approx(875.0),
+        "range_low": pytest.approx(431.9166666667),
+        "range_high": pytest.approx(845.0),
     }
     assert result["per_share_range"] == {
-        "range_low": pytest.approx(48.4),
-        "range_high": pytest.approx(87.5),
+        "range_low": pytest.approx(43.1916666667),
+        "range_high": pytest.approx(84.5),
     }
+
+
+def test_canonical_owner_cash_range_propagates_through_epv_without_endpoint_choice() -> None:
+    payload = _input()
+    for period, bounds in zip(payload["period_facts"], ((80.0, 100.0), (90.0, 130.0))):
+        period["basis_kind"] = "CANONICAL_NORMALIZED_OWNER_CASH_AFTER_TAX"
+        period["tax_basis"] = "AFTER_TAX"
+        period["working_capital_application"] = "ALREADY_NORMALIZED"
+        period["amount_range"] = {
+            "range_low": bounds[0],
+            "range_high": bounds[1],
+        }
+        period.pop("amount")
+        period["normalization_adjustments"] = []
+    payload["maintenance_capex"] = {
+        "status": "ALREADY_REFLECTED",
+        "reason": "Canonical owner cash is after maintenance capex.",
+        "source_fact_ids": _facts("OWNER-CASH-AFTER-CAPEX"),
+    }
+    payload["maintenance_working_capital"] = {
+        "status": "ALREADY_REFLECTED",
+        "reason": "Canonical owner cash is already normalized by WCM.",
+        "source_model_id": "WCM:TEST:2025",
+        "source_fact_ids": _facts("OWNER-CASH-AFTER-WC"),
+    }
+    payload["tax"] = {
+        "status": "ALREADY_REFLECTED",
+        "reason": "Canonical owner cash is after tax.",
+    }
+
+    result = compute_epv_model(payload)
+
+    assert result["normalization_bridge"]["historical_pre_maintenance_range"] == {
+        "range_low": 80.0,
+        "range_high": 130.0,
+    }
+    assert result["sustainable_owner_earnings_range"] == {
+        "range_low": 80.0,
+        "range_high": 130.0,
+    }
+    assert result["normalization_bridge"]["period_results"][0][
+        "pre_maintenance_normalized_range"
+    ] == {"range_low": 80.0, "range_high": 100.0}
 
 
 def test_epv_envelope_recomputes_and_rejects_any_derived_tamper() -> None:
@@ -232,6 +275,12 @@ def test_pretax_and_after_tax_identities_cannot_be_mixed_or_taxed_twice() -> Non
     assert validate_epv_model_input(after_tax)["state"] == "VALID"
     after_tax["tax"]["rate_low"] = 0.20
     assert "tax:after_tax_rate_would_apply_tax_twice" in validate_epv_model_input(after_tax)["findings"]
+
+    false_tax_shield = _input()
+    false_tax_shield["maintenance_capex"]["tax_basis"] = "PRETAX"
+    assert "maintenance_capex:tax_basis_mismatch" in validate_epv_model_input(
+        false_tax_shield
+    )["findings"]
 
 
 def test_reported_ocf_working_capital_is_replaced_once_not_deducted_twice() -> None:
@@ -352,7 +401,7 @@ def test_missing_maintenance_owner_earnings_is_preserved_without_a_zero_proxy() 
     assert result["per_share_range"] is None
 
 
-def test_degenerate_owner_earnings_and_capitalization_do_not_create_false_point() -> None:
+def test_exact_operating_inputs_produce_an_exact_operating_value_instead_of_unknown() -> None:
     payload = _input()
     payload["period_facts"][1]["amount"] = payload["period_facts"][0]["amount"]
     payload["maintenance_capex"]["range_high"] = payload["maintenance_capex"]["range_low"]
@@ -362,12 +411,15 @@ def test_degenerate_owner_earnings_and_capitalization_do_not_create_false_point(
 
     result = compute_epv_model(payload)
 
-    assert result["status"] == "NOT_COMPARABLE"
-    assert result["critical_unknowns"] == ["single_point_precision_forbidden"]
-    assert result["per_share_range"] is None
+    assert result["status"] == "COMPARABLE"
+    assert result["critical_unknowns"] == []
+    assert result["operating_value_range"] == {
+        "range_low": pytest.approx(690.0),
+        "range_high": pytest.approx(690.0),
+    }
 
 
-def test_non_positive_maintenance_owner_earnings_is_not_capitalized() -> None:
+def test_non_positive_maintenance_owner_earnings_yields_zero_epv_not_unknown() -> None:
     payload = _input()
     for period in payload["period_facts"]:
         period["amount"] = 5.0
@@ -375,11 +427,15 @@ def test_non_positive_maintenance_owner_earnings_is_not_capitalized() -> None:
 
     result = compute_epv_model(payload)
 
-    assert result["status"] == "NOT_COMPARABLE"
-    assert result["critical_unknowns"] == [
-        "non_positive_maintenance_owner_earnings"
-    ]
-    assert result["operating_value_range"] is None
+    assert result["status"] == "COMPARABLE"
+    assert result["critical_unknowns"] == []
+    assert result["sustainable_owner_earnings_range"] == {
+        "range_low": 0.0,
+        "range_high": 0.0,
+    }
+    assert result["operating_value_range"] == {"range_low": 0.0, "range_high": 0.0}
+    assert result["per_share_range"] == {"range_low": 0.0, "range_high": 0.0}
+    assert "do not establish positive EPV" in result["economic_conclusion"]["reason"]
 
 
 def test_epv_schemas_are_closed_at_the_caller_boundary() -> None:

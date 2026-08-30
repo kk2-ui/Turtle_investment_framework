@@ -147,7 +147,7 @@ _APPLICABILITY_FIELDS = {
     *APPLICABILITY_CONDITIONS["existing_excess_cash"],
     *APPLICABILITY_CONDITIONS["future_retained_cash"],
     *APPLICABILITY_CONDITIONS["related_party_receivable"],
-    "source_fact_ids",
+    "source_fact_bindings",
 }
 _RECOVERY_COHORT_FIELDS = {
     "cohort_id",
@@ -259,25 +259,6 @@ def _validate_refs(
             findings.append(path + f"_not_verified:{fact_id}")
 
 
-def _validate_optional_refs(
-    refs: Any,
-    verified_ids: set[str],
-    path: str,
-    findings: list[str],
-) -> None:
-    if not isinstance(refs, list):
-        findings.append(path + "_must_be_array")
-        return
-    if any(not _text(item) for item in refs):
-        findings.append(path + "_invalid")
-        return
-    if len(set(refs)) != len(refs):
-        findings.append(path + "_duplicate")
-    for fact_id in refs:
-        if fact_id not in verified_ids:
-            findings.append(path + f"_not_verified:{fact_id}")
-
-
 def _validate_applicability_input(
     raw: Any,
     *,
@@ -287,19 +268,30 @@ def _validate_applicability_input(
     findings: list[str],
 ) -> None:
     value = _mapping(raw)
-    expected = set(APPLICABILITY_CONDITIONS[kind]) | {"source_fact_ids"}
+    expected = set(APPLICABILITY_CONDITIONS[kind]) | {"source_fact_bindings"}
     _unexpected_keys(value, expected, path, findings)
     conditions = APPLICABILITY_CONDITIONS[kind]
-    observed = []
+    bindings = value.get("source_fact_bindings")
+    if not isinstance(bindings, dict):
+        findings.append(path + ".source_fact_bindings_must_be_object")
+        bindings = {}
+    else:
+        for field in sorted(set(bindings) - set(conditions)):
+            findings.append(path + ".source_fact_bindings_unknown_field:" + field)
     for field in conditions:
         item = value.get(field)
         if item is not None and not isinstance(item, bool):
             findings.append(f"{path}.{field}_must_be_boolean_or_null")
-        observed.append(item)
-    refs = value.get("source_fact_ids")
-    _validate_optional_refs(refs, verified_ids, path + ".source_fact_ids", findings)
-    if any(item is not None for item in observed) and not refs:
-        findings.append(path + ".source_fact_ids_missing_for_observed_continuity")
+        fact_id = bindings.get(field)
+        if isinstance(item, bool):
+            if not _text(fact_id):
+                findings.append(path + ".source_fact_binding_missing:" + field)
+            elif fact_id not in verified_ids:
+                findings.append(
+                    path + ".source_fact_binding_not_verified:" + field + ":" + str(fact_id)
+                )
+        elif fact_id is not None:
+            findings.append(path + ".source_fact_binding_without_judgment:" + field)
 
 
 def _applicability_projection(raw: Any, *, kind: str) -> dict[str, Any]:
@@ -316,7 +308,9 @@ def _applicability_projection(raw: Any, *, kind: str) -> dict[str, Any]:
     return {
         "status": status,
         "conditions": conditions,
-        "source_fact_ids": sorted(value.get("source_fact_ids") or []),
+        "source_fact_ids": sorted(
+            set(_mapping(value.get("source_fact_bindings")).values())
+        ),
     }
 
 

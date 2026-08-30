@@ -65,6 +65,14 @@ def _integrated_ledger(
     seed = _payload(output, freeze=False)
     epv = _as_epv(seed)
     epv["basis"].update({"as_of": "2025-12-31", "value_scope": "enterprise"})
+    epv["result"].update(
+        {
+            "value_per_share": 49.3,
+            "range_low": 49.3,
+            "range_high": 50.7,
+            "endpoint_policy": "CONSERVATIVE_LOW",
+        }
+    )
     epv["assumptions"]["discount_rate"]["kind"] = "WACC"
     epv["assumptions"]["retained_value_realization"] = 0.4
     epv["normalization_bridge"].update(
@@ -94,7 +102,10 @@ def _integrated_ledger(
         {
             "currency": "RMB",
             "ordinary_share_claim_scope": "Listed ordinary common shares",
-            "cash_component_per_share": 3.4,
+            "non_operating_assets": 93.0,
+            "equity_value": 493.0,
+            "per_share_value": 49.3,
+            "cash_component_per_share": 2.7,
             "cash_component_claim_ids": [
                 "cash.existing_excess_cash_per_share",
                 "cash.related_party_receivable_per_share",
@@ -103,7 +114,7 @@ def _integrated_ledger(
                 {
                     "component_id": "recognized-accessible-cash",
                     "kind": "cash",
-                    "amount": 34.0,
+                    "amount": 27.0,
                     "claim_ids": [
                         "cash.existing_excess_cash_per_share",
                         "cash.related_party_receivable_per_share",
@@ -116,6 +127,7 @@ def _integrated_ledger(
                     "claim_ids": [],
                 },
             ],
+            "endpoint_policy": "CONSERVATIVE_LOW",
         }
     )
     seed["synthesis"]["cash_component_contract"] = {
@@ -133,15 +145,18 @@ def _integrated_ledger(
         ],
         "inclusion_location": "PRIMARY_MODEL_EQUITY_BRIDGE",
         "canonical_adopted_per_share": 3.4,
-        "primary_equity_bridge_cash_component_per_share": 3.4,
+        "primary_equity_bridge_cash_component_per_share": 2.7,
         "separate_component_per_share": 0,
     }
     working_input = bridge_inputs["working_capital"]["model_input"]
     working_input["periods"][0]["owner_cash_input"]["base_metric_amount"] = 60
     canonical_epv_input = bridge_inputs["epv"]["model_input"]
     canonical_epv_input["model_id"] = epv["model_id"]
-    canonical_epv_input["period_facts"][0]["amount"] = 50.0
-    canonical_epv_input["period_facts"][1]["amount"] = 60.0
+    canonical_epv_input["period_facts"] = [canonical_epv_input["period_facts"][1]]
+    canonical_epv_input["period_facts"][0]["amount_range"] = {
+        "range_low": 50.0,
+        "range_high": 50.0,
+    }
     canonical_epv_input["claims_bridge"]["debt"].update({
         "range_low": 80.0,
         "range_high": 80.0,
@@ -159,8 +174,8 @@ def _integrated_ledger(
         {
             "component_id": "recognized-accessible-cash",
             "kind": "NON_OPERATING_CASH",
-            "range_low": 34.0,
-            "range_high": 34.0,
+            "range_low": 27.0,
+            "range_high": 41.0,
             "claim_ids": [
                 "cash.existing_excess_cash_per_share",
                 "cash.related_party_receivable_per_share",
@@ -227,6 +242,7 @@ def _integrated_ledger(
             period["basis_kind"] = "REPORTED_OCF_AFTER_TAX"
             period["working_capital_application"] = "CURRENT_MOVEMENT_REFLECTED"
             period["observed_working_capital_charge"] = 1.0
+            period["amount"] = period.pop("amount_range")["range_low"]
         canonical_epv_input["maintenance_capex"] = {
             "status": "BOUNDED",
             "range_low": 1.0,
@@ -241,6 +257,10 @@ def _integrated_ledger(
         seed["synthesis"].pop("joint_protection_price_ceiling", None)
     else:
         seed["synthesis"].pop("joint_protection_price_ceiling", None)
+    seed["synthesis"]["chosen_value_per_share"] = 49.3
+    decision = json.loads((output / "decision_ledger.json").read_text())
+    decision["entries"][0]["value"] = 49.3
+    (output / "decision_ledger.json").write_text(json.dumps(decision))
     if missing_bridge is not None:
         bridge_inputs.pop(missing_bridge)
         if missing_bridge == "epv":
@@ -368,6 +388,66 @@ def test_arbitrary_half_cash_and_half_single_year_working_capital_are_rejected(
         for finding in validation["invalid_findings"]
     )
     assert validation["state"] == "INVALID"
+
+
+def test_epv_cash_range_must_preserve_the_canonical_cash_range(tmp_path: Path) -> None:
+    ledger = _integrated_ledger(tmp_path)
+    inputs = deepcopy(ledger["value_bridge_models"]["model_input"])
+    cash_component = inputs["epv"]["model_input"]["claims_bridge"][
+        "non_operating_components"
+    ][0]
+    cash_component["range_low"] = 34.0
+    cash_component["range_high"] = 34.0
+    ledger["value_bridge_models"] = compile_valuation_value_bridges(inputs)
+
+    validation = _validate(tmp_path, ledger, enforced=False)
+
+    assert "canonical_epv_cash_component_not_cash_model_derived" in (
+        validation["invalid_findings"]
+    )
+
+
+def test_epv_owner_cash_range_must_equal_the_working_capital_model_output(
+    tmp_path: Path,
+) -> None:
+    ledger = _integrated_ledger(tmp_path)
+    inputs = deepcopy(ledger["value_bridge_models"]["model_input"])
+    reference_period = next(
+        period
+        for period in inputs["epv"]["model_input"]["period_facts"]
+        if period["period_id"] == "FY2025"
+    )
+    reference_period["amount_range"]["range_high"] = 60.0
+    ledger["value_bridge_models"] = compile_valuation_value_bridges(inputs)
+
+    validation = _validate(tmp_path, ledger, enforced=False)
+
+    assert "canonical_epv_owner_cash_range_not_working_capital_model_derived" in (
+        validation["invalid_findings"]
+    )
+
+
+def test_every_canonical_epv_period_must_exist_in_the_working_capital_model(
+    tmp_path: Path,
+) -> None:
+    ledger = _integrated_ledger(tmp_path)
+    inputs = deepcopy(ledger["value_bridge_models"]["model_input"])
+    prior_period = deepcopy(inputs["epv"]["model_input"]["period_facts"][0])
+    prior_period.update(
+        {
+            "period_id": "FY2024",
+            "period_start": "2024-01-01",
+            "period_end": "2024-12-31",
+        }
+    )
+    inputs["epv"]["model_input"]["period_facts"].insert(0, prior_period)
+    ledger["value_bridge_models"] = compile_valuation_value_bridges(inputs)
+
+    validation = _validate(tmp_path, ledger, enforced=False)
+
+    assert "canonical_epv_owner_cash_period_missing_from_working_capital_model" in (
+        validation["invalid_findings"]
+    )
 
 
 @pytest.mark.parametrize("method", ["weighted_average", "additive"])
@@ -782,7 +862,7 @@ def test_cash_can_be_included_once_as_a_separate_component(tmp_path: Path) -> No
     epv["result"] = {
         "value_per_share": 46.6,
         "range_low": 46.6,
-        "range_high": 56.6,
+        "range_high": 46.6,
         "currency": "RMB",
         "status": "COMPARABLE",
         "endpoint_policy": "CONSERVATIVE_LOW",
@@ -833,6 +913,10 @@ def test_cash_can_be_included_once_as_a_separate_component(tmp_path: Path) -> No
         "cash_inclusion_location": "SEPARATE_COMPONENT",
         "output_value_per_share": 50,
     }
+    ledger["synthesis"]["chosen_value_per_share"] = 50
+    decision = json.loads((tmp_path / "decision_ledger.json").read_text())
+    decision["entries"][0]["value"] = 50
+    (tmp_path / "decision_ledger.json").write_text(json.dumps(decision))
 
     validation = _validate(tmp_path, ledger, enforced=False)
 
