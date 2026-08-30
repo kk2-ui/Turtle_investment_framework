@@ -31,6 +31,11 @@
       "minItems": 1,
       "items": {"$ref": "#/$defs/component"}
     },
+    "evidence_role_guidance": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"$ref": "#/$defs/evidenceRoleGuidance"}
+    },
     "completion_rule": {"$ref": "#/$defs/completionRule"},
     "limits": {"$ref": "#/$defs/limits"},
     "training_boundary": {"$ref": "#/$defs/trainingBoundary"}
@@ -111,6 +116,24 @@
         "unknown_semantics": {"$ref": "#/$defs/text"},
         "recognition_semantics": {"$ref": "#/$defs/text"},
         "completion_semantics": {"$ref": "#/$defs/text"}
+      }
+    },
+    "evidenceRoleGuidance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "role",
+        "likely_official_sources",
+        "likely_acquisition_modules",
+        "query_hints",
+        "bounded_stopping_rule"
+      ],
+      "properties": {
+        "role": {"type": "string", "pattern": "^[A-Z][A-Z0-9_]*$"},
+        "likely_official_sources": {"$ref": "#/$defs/textList"},
+        "likely_acquisition_modules": {"$ref": "#/$defs/textList"},
+        "query_hints": {"$ref": "#/$defs/textList"},
+        "bounded_stopping_rule": {"$ref": "#/$defs/text"}
       }
     },
     "completionRule": {
