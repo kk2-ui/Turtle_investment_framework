@@ -1025,6 +1025,20 @@ def test_pit_production_freeze_uses_one_run_id_and_only_publishes_after_ready_ac
     assert isinstance(runtime, FakeRuntime)
     assert runtime.manifest.artifacts[0] == (report_path, "pit_production_report")
     assert runtime.manifest.finalized == (
-        ("COMPLETED", {"status": "PUBLISHED", "validation_only": False})
-        if should_publish else ("BLOCKED", {"status": "NOT_PUBLISHED", "validation_only": False})
+        (
+            "COMPLETED",
+            {
+                "status": "PUBLISHED",
+                "artifact_class": "REPORT",
+                "validation_only": False,
+            },
+        )
+        if should_publish else (
+            "BLOCKED",
+            {
+                "status": "NOT_PUBLISHED",
+                "artifact_class": "REPORT",
+                "validation_only": False,
+            },
+        )
     )

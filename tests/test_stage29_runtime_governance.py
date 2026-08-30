@@ -194,17 +194,93 @@ def test_retention_is_preview_first_and_moves_only_confirmed_candidates(tmp_path
     assert Path(applied["trash"]).joinpath(".runtime_cache/aa/old.json").exists()
 
 
-def test_dry_run_pipeline_writes_completed_replay_manifest(tmp_path: Path) -> None:
+def test_dry_run_pipeline_cannot_overwrite_formal_outputs_or_publish(tmp_path: Path) -> None:
     from scripts.turtle_agent.run import run_full_pipeline
+
+    reports = tmp_path / "reports"
+    reports.mkdir()
+    latest = reports / "最新_分析报告_v13.md"
+    snapshot = tmp_path / "publication_snapshot.json"
+    latest.write_text("existing formal report", encoding="utf-8")
+    snapshot.write_text('{"snapshot": "existing"}', encoding="utf-8")
 
     report = run_full_pipeline(
         "01502.HK", output_dir=str(tmp_path), skip_prepare=True, dry_run=True,
-        unified=True, validation_only=True,
+        unified=True,
     )
     manifest = json.loads((tmp_path / "run_manifest.json").read_text(encoding="utf-8"))
     assert Path(report).is_file()
+    assert Path(report).name == "01502.HK_V12_DRY_RUN.md"
+    assert latest.read_text(encoding="utf-8") == "existing formal report"
+    assert snapshot.read_text(encoding="utf-8") == '{"snapshot": "existing"}'
+    assert not (reports / "2025_年报_分析报告_v13.md").exists()
     assert manifest["status"] == "COMPLETED"
-    assert manifest["publication"]["status"] == "VALIDATED_NOT_PUBLISHED"
+    assert manifest["publication"] == {
+        "status": "NOT_PUBLISHED",
+        "artifact_class": "DRY_RUN",
+        "validation_only": False,
+    }
     assert (tmp_path / "run_manifests" / f"{manifest['run_id']}.json").is_file()
     assert validate_run_manifest(manifest)["status"] == "PASS"
     assert recovery_advice(tmp_path)["action"] == "no_resume_needed"
+
+
+def test_prompt_only_pipeline_cannot_overwrite_formal_outputs_or_publish(
+    tmp_path: Path, monkeypatch,
+) -> None:
+    from scripts.turtle_agent.run import run_full_pipeline
+
+    monkeypatch.delenv("DEEPSEEK_API_KEY", raising=False)
+    monkeypatch.delenv("ANTHROPIC_API_KEY", raising=False)
+    reports = tmp_path / "reports"
+    reports.mkdir()
+    latest = reports / "最新_分析报告_v13.md"
+    snapshot = tmp_path / "publication_snapshot.json"
+    latest.write_text("existing formal report", encoding="utf-8")
+    snapshot.write_text('{"snapshot": "existing"}', encoding="utf-8")
+    (tmp_path / "analysis_contract.json").write_text(
+        json.dumps({"ts_code": "01502.HK", "company_name": "测试公司"}),
+        encoding="utf-8",
+    )
+    (tmp_path / "compute_bundle.json").write_text("{}", encoding="utf-8")
+
+    artifact = run_full_pipeline(
+        "01502.HK", output_dir=str(tmp_path), skip_prepare=True,
+    )
+
+    manifest = json.loads((tmp_path / "run_manifest.json").read_text(encoding="utf-8"))
+    assert Path(artifact).name == "_v11_system_prompt.md"
+    assert latest.read_text(encoding="utf-8") == "existing formal report"
+    assert snapshot.read_text(encoding="utf-8") == '{"snapshot": "existing"}'
+    assert not (tmp_path / "analysis_contract.latest.json").exists()
+    assert not (tmp_path / "compute_bundle.latest.json").exists()
+    assert sorted(path.name for path in reports.iterdir()) == [latest.name]
+    assert manifest["status"] == "COMPLETED"
+    assert manifest["publication"] == {
+        "status": "NOT_PUBLISHED",
+        "artifact_class": "PROMPT_PACKAGE",
+        "validation_only": False,
+    }
+
+
+def test_validation_only_is_a_draft_and_only_report_class_can_publish() -> None:
+    from scripts.turtle_agent.run import (
+        ArtifactClass,
+        _publication_manifest,
+        _resolve_artifact_class,
+    )
+
+    artifact_class = _resolve_artifact_class(
+        dry_run=False, validation_only=True, llm_available=True,
+    )
+    assert artifact_class is ArtifactClass.DRAFT
+    assert _publication_manifest(
+        artifact_class, runtime_status="COMPLETED", validation_only=True,
+    ) == {
+        "status": "NOT_PUBLISHED",
+        "artifact_class": "DRAFT",
+        "validation_only": True,
+    }
+    assert _publication_manifest(
+        ArtifactClass.REPORT, runtime_status="COMPLETED", validation_only=False,
+    )["status"] == "PUBLISHED"

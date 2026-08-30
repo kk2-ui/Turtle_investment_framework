@@ -193,7 +193,13 @@ def find_report(output: Path) -> Path | None:
     validated_not_published = (
         run_manifest.get("status") == "COMPLETED"
         and publication.get("validation_only") is True
-        and publication.get("status") == "VALIDATED_NOT_PUBLISHED"
+        and (
+            (
+                publication.get("artifact_class") == "DRAFT"
+                and publication.get("status") == "NOT_PUBLISHED"
+            )
+            or publication.get("status") == "VALIDATED_NOT_PUBLISHED"
+        )
     )
     if (
         latest_draft is not None

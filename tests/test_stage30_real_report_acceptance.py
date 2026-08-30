@@ -220,7 +220,11 @@ def test_validated_draft_identity_survives_later_rule_upgrade_block(tmp_path: Pa
     _write_json(output / "completion_report.json", {"status": "INVALID"})
     _write_json(output / "run_manifest.json", {
         "status": "COMPLETED",
-        "publication": {"status": "VALIDATED_NOT_PUBLISHED", "validation_only": True},
+        "publication": {
+            "status": "NOT_PUBLISHED",
+            "artifact_class": "DRAFT",
+            "validation_only": True,
+        },
     })
     assert find_report(output) == draft
 

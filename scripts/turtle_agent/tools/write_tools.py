@@ -2992,13 +2992,6 @@ def assemble_report(
             "error": "读者层语义覆盖不足，已保留 draft，禁止发布正式报告",
         }
 
-    # The sole formal-publication exit freezes the report, structured ledgers,
-    # predictions, triggers and all resolvable source files visible at release.
-    # A later changed report/ledger cannot silently overwrite this snapshot.
-    try:
-        from scripts.research_calibration import create_publication_snapshot
-    except ModuleNotFoundError:
-        from research_calibration import create_publication_snapshot
     synthesis_receipt = validate_judgment_handoff_read_receipt(output_dir)
     if synthesis_receipt.get("state") == "BLOCKED":
         raise RuntimeError(
@@ -3006,15 +2999,31 @@ def assemble_report(
             + ", ".join(str(item) for item in synthesis_receipt.get("findings") or [])
         )
     completion_dict["validators"]["judgment_handoff_read_receipt"] = synthesis_receipt
-    publication_snapshot = create_publication_snapshot(
-        output_dir,
-        report_text,
-        validation_report_text=validation_report_text,
-        completion=completion_dict,
-        dry_run=validation_only,
-    )
+    if validation_only:
+        # A validated draft is an acceptance candidate, not a publication.
+        # Do not even invoke the publication snapshot builder: it owns the
+        # immutable release identity and belongs exclusively to formal REPORTs.
+        publication_snapshot = {
+            "written": False,
+            "skipped": True,
+            "status": "NOT_PUBLISHED",
+            "artifact_class": "DRAFT",
+        }
+    else:
+        # The sole formal-publication exit freezes the report, structured
+        # ledgers, predictions, triggers and resolvable sources at release.
+        try:
+            from scripts.research_calibration import create_publication_snapshot
+        except ModuleNotFoundError:
+            from research_calibration import create_publication_snapshot
+        publication_snapshot = create_publication_snapshot(
+            output_dir,
+            report_text,
+            validation_report_text=validation_report_text,
+            completion=completion_dict,
+        )
     completion_dict['validators']['publication_snapshot'] = publication_snapshot
-    if not publication_snapshot.get('written', False):
+    if not validation_only and not publication_snapshot.get('written', False):
         completion_dict['status'] = 'BLOCKED'
         completion_dict['blocking_findings'].append(
             'Publication snapshot: ' + str(publication_snapshot.get('error') or 'snapshot_failed')

@@ -9,6 +9,7 @@ if str(SCRIPTS_DIR) not in sys.path:
     sys.path.insert(0, str(SCRIPTS_DIR))
 
 from turtle_agent.run import (  # noqa: E402
+    ArtifactClass,
     _extract_tracking_meta_from_report,
     _materialize_tracking_outputs,
 )
@@ -100,7 +101,7 @@ def test_validation_only_never_materializes_tracking_or_latest_aliases(tmp_path:
     diagnostics: dict = {}
 
     result = _materialize_tracking_outputs(
-        str(output), str(draft), diagnostics, validation_only=True,
+        str(output), str(draft), diagnostics, artifact_class=ArtifactClass.DRAFT,
     )
 
     assert result == str(draft)
@@ -108,3 +109,4 @@ def test_validation_only_never_materializes_tracking_or_latest_aliases(tmp_path:
     assert not (reports / "2025_年报_分析报告_v13.md").exists()
     assert not (output / "analysis_contract.latest.json").exists()
     assert diagnostics["tracking"]["formal_outputs_unchanged"] is True
+    assert diagnostics["tracking"]["artifact_class"] == "DRAFT"

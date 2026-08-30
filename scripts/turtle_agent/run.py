@@ -28,6 +28,7 @@ import re
 import shutil
 import sys
 import time
+from enum import Enum
 from pathlib import Path
 from typing import Any
 from datetime import datetime, timezone
@@ -61,6 +62,46 @@ _REPORT_TYPE_LABELS = {
     "h1": "中报",
     "q3": "三季报",
 }
+
+
+class ArtifactClass(str, Enum):
+    """Identity of the primary artifact produced by one pipeline run.
+
+    Publication is an attribute of the artifact, not merely the absence of a
+    validation flag.  In particular, dry runs and prompt packages may complete
+    successfully while remaining outside the report publication boundary.
+    """
+
+    REPORT = "REPORT"
+    DRAFT = "DRAFT"
+    DRY_RUN = "DRY_RUN"
+    PROMPT_PACKAGE = "PROMPT_PACKAGE"
+
+
+def _resolve_artifact_class(
+    *, dry_run: bool, validation_only: bool, llm_available: bool,
+) -> ArtifactClass:
+    if dry_run:
+        return ArtifactClass.DRY_RUN
+    if not llm_available:
+        return ArtifactClass.PROMPT_PACKAGE
+    if validation_only:
+        return ArtifactClass.DRAFT
+    return ArtifactClass.REPORT
+
+
+def _publication_manifest(
+    artifact_class: ArtifactClass, *, runtime_status: str, validation_only: bool,
+) -> dict[str, Any]:
+    return {
+        "status": (
+            "PUBLISHED"
+            if runtime_status == "COMPLETED" and artifact_class is ArtifactClass.REPORT
+            else "NOT_PUBLISHED"
+        ),
+        "artifact_class": artifact_class.value,
+        "validation_only": bool(validation_only),
+    }
 
 
 def _load_json_file(path: str) -> dict[str, Any]:
@@ -1098,11 +1139,11 @@ def _extract_field(text: str, patterns: list[str]) -> str | None:
 
 def _materialize_tracking_outputs(
     output_dir: str, report_path: str, diagnostics: dict[str, Any],
-    *, validation_only: bool = False,
+    *, artifact_class: ArtifactClass,
 ) -> str:
-    if validation_only:
+    if artifact_class is not ArtifactClass.REPORT:
         diagnostics['tracking'] = {
-            'validation_only': True,
+            'artifact_class': artifact_class.value,
             'candidate_report_path': report_path,
             'formal_outputs_unchanged': True,
         }
@@ -2347,6 +2388,19 @@ def run_full_pipeline(
     if is_v12 and template_path == "templates/report_template_v10.md":
         template_path = "templates/report_template_v12.md"
 
+    deepseek_api_key = os.environ.get("DEEPSEEK_API_KEY", "").strip()
+    anthropic_api_key = os.environ.get("ANTHROPIC_API_KEY", "").strip()
+    if pit_production_freeze:
+        artifact_class = ArtifactClass.REPORT
+    elif pit_mode:
+        artifact_class = ArtifactClass.DRAFT
+    else:
+        artifact_class = _resolve_artifact_class(
+            dry_run=dry_run,
+            validation_only=validation_only,
+            llm_available=bool(deepseek_api_key or anthropic_api_key),
+        )
+
     start_time = time.time()
     run_id = f"{code}_{int(start_time * 1000)}_{os.getpid()}"
     source_deepening = bool(unified) if source_deepening is None else bool(source_deepening)
@@ -2367,6 +2421,7 @@ def run_full_pipeline(
         "fiscal_year": _safe_int(fiscal_year),
         "period_end": str(period_end or "").strip()[:10] or None,
         "validation_only": bool(validation_only),
+        "artifact_class": artifact_class.value,
         "approve_expensive_run": bool(approve_expensive_run),
         "repair_passes_requested": max(0, int(repair_passes)),
         "repair_max_iterations": max(1, int(repair_max_iterations)),
@@ -2520,7 +2575,14 @@ def run_full_pipeline(
                     + (acceptance_status or "MISSING")
                 )
             _write_diagnostics(output_dir, diagnostics)
-            runtime.manifest.finalize("COMPLETED", publication={"status": "PUBLISHED", "validation_only": False})
+            runtime.manifest.finalize(
+                "COMPLETED",
+                publication=_publication_manifest(
+                    ArtifactClass.REPORT,
+                    runtime_status="COMPLETED",
+                    validation_only=False,
+                ),
+            )
             return report_path
         except Exception as exc:
             diagnostics["status"] = "blocked"
@@ -2529,7 +2591,14 @@ def run_full_pipeline(
             try:
                 runtime.manifest.add_error("pit_production_freeze", str(exc))
                 runtime.manifest.add_artifact(diagnostics_path, "diagnostics")
-                runtime.manifest.finalize("BLOCKED", publication={"status": "NOT_PUBLISHED", "validation_only": False})
+                runtime.manifest.finalize(
+                    "BLOCKED",
+                    publication=_publication_manifest(
+                        ArtifactClass.REPORT,
+                        runtime_status="BLOCKED",
+                        validation_only=False,
+                    ),
+                )
             except Exception:
                 pass
             raise
@@ -2602,8 +2671,6 @@ def run_full_pipeline(
     
         # LlmClient 提前初始化（Phase 2.3-2.4 + Agent Loop 共用）
         # analyze.sh 会注入 DEEPSEEK_API_KEY；这里优先用它，避免被失效的 ANTHROPIC_API_KEY 抢占。
-        deepseek_api_key = os.environ.get("DEEPSEEK_API_KEY", "").strip()
-        anthropic_api_key = os.environ.get("ANTHROPIC_API_KEY", "").strip()
         llm = None
         if deepseek_api_key or anthropic_api_key:
             from turtle_agent.llm_client import LlmClient as _LlmClient
@@ -2830,7 +2897,7 @@ def run_full_pipeline(
             with open(report_path, "w", encoding="utf-8") as f:
                 f.write(f"# {code} {'V12' if is_v12 else 'V11'} 干跑报告\n\nPhase 0-2 数据准备已完成。\n跳过 LLM 分析。\n")
             report_path = _materialize_tracking_outputs(
-                output_dir, report_path, diagnostics, validation_only=validation_only
+                output_dir, report_path, diagnostics, artifact_class=artifact_class
             )
             diagnostics['status'] = 'completed'
             diagnostics['report_path'] = report_path
@@ -3618,7 +3685,7 @@ def run_full_pipeline(
                             and not feedback_route.get("reader_repair_brief")
                         ),
                         binding_only=binding_only,
-                        publish_downstream=not validation_only,
+                        publish_downstream=artifact_class is ArtifactClass.REPORT,
                         run_id=run_id,
                         synthesis_only=(
                             False
@@ -3729,7 +3796,7 @@ def run_full_pipeline(
                     raise RuntimeError(f'分析未通过完成契约: {status}')
                 _extract_tracking_meta_from_report(output_dir, report_path)
                 report_path = _materialize_tracking_outputs(
-                    output_dir, report_path, diagnostics, validation_only=validation_only
+                    output_dir, report_path, diagnostics, artifact_class=artifact_class
                 )
                 diagnostics['status'] = 'completed'
                 diagnostics['report_path'] = report_path
@@ -3781,7 +3848,7 @@ def run_full_pipeline(
             print(f"  🔧 Tool Schemas  → {tool_path} ({len(tools)} tools)")
     
             report_path = _materialize_tracking_outputs(
-                output_dir, prompt_path, diagnostics, validation_only=validation_only
+                output_dir, prompt_path, diagnostics, artifact_class=artifact_class
             )
             diagnostics['status'] = 'completed'
             diagnostics['report_path'] = report_path
@@ -3813,11 +3880,11 @@ def run_full_pipeline(
                 runtime_status = "INCOMPLETE"
             runtime.manifest.finalize(
                 runtime_status,
-                publication={
-                    "status": "PUBLISHED" if runtime_status == "COMPLETED" and not validation_only else
-                    "VALIDATED_NOT_PUBLISHED" if runtime_status == "COMPLETED" else "NOT_PUBLISHED",
-                    "validation_only": bool(validation_only),
-                },
+                publication=_publication_manifest(
+                    artifact_class,
+                    runtime_status=runtime_status,
+                    validation_only=validation_only,
+                ),
             )
         except Exception as manifest_exc:
             print(f"  ⚠️ runtime manifest 收口失败: {manifest_exc}")
