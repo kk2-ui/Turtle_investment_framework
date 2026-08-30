@@ -29,6 +29,10 @@ OFFICIAL_DOCUMENT_AUTHORITIES = {
 _REGISTERED_EVENT_DOCUMENT_TYPES = {
     "company_announcement", "company_circular", "exchange_announcement",
 }
+_ENGLISH_MONTHS = (
+    "January", "February", "March", "April", "May", "June",
+    "July", "August", "September", "October", "November", "December",
+)
 _VALUATION_EVIDENCE_ROLE_RE = re.compile(r"[A-Z][A-Z0-9_]*")
 _VALUATION_EXCLUSION_DESTINATIONS = {
     "OTHER_REPLACEMENT_COMPONENT",
@@ -83,6 +87,39 @@ def _parse_temporal_date(value: Any) -> Any:
         return datetime.fromisoformat(text.replace("Z", "+00:00")).date()
     except ValueError:
         return None
+
+
+def _event_date_appears_in_quote(event_date: Any, quote: Any) -> bool:
+    """Match an explicit calendar date without inferring an ambiguous date.
+
+    Official Hong Kong disclosures commonly use ISO, Chinese YMD, English
+    DMY, or English MDY month-name forms.  Whitespace introduced by PDF/OCR
+    extraction is ignored, but numeric slash dates are deliberately excluded.
+    """
+    event_day = _parse_temporal_date(event_date)
+    if event_day is None:
+        return False
+    text = re.sub(r"\s+", " ", str(quote or "")).strip()
+    compact = re.sub(r"\s+", "", text)
+    if event_day.isoformat() in compact:
+        return True
+    chinese = f"{event_day.year}年{event_day.month}月{event_day.day}日"
+    chinese_padded = (
+        f"{event_day.year}年{event_day.month:02d}月{event_day.day:02d}日"
+    )
+    if chinese in compact or chinese_padded in compact:
+        return True
+    month = _ENGLISH_MONTHS[event_day.month - 1]
+    month_pattern = rf"(?:{month}|{month[:3]}\.?)"
+    dmy = re.compile(
+        rf"(?<!\w)0?{event_day.day}\s+{month_pattern}\s+{event_day.year}(?!\w)",
+        re.IGNORECASE,
+    )
+    mdy = re.compile(
+        rf"(?<!\w){month_pattern}\s+0?{event_day.day}(?:,)?\s+{event_day.year}(?!\w)",
+        re.IGNORECASE,
+    )
+    return bool(dmy.search(text) or mdy.search(text))
 
 
 def _temporal_contract_findings(
@@ -916,6 +953,12 @@ def validate_fact_observations(
                 invalid.append(f"{observation_id or prefix}:verified_locator_missing")
             if doc.get("authority") not in OFFICIAL_DOCUMENT_AUTHORITIES:
                 invalid.append(f"{observation_id or prefix}:non_official_source_cannot_verify")
+            if (
+                doc.get("doc_type") in _REGISTERED_EVENT_DOCUMENT_TYPES
+                and item.get("temporal_role") == "EVENT"
+                and not _event_date_appears_in_quote(item.get("event_date"), quote)
+            ):
+                invalid.append(f"{observation_id or prefix}:event_date_not_in_quote")
             if output is not None and quote:
                 relative = doc.get("derived_text_path")
                 if not relative:
@@ -1044,16 +1087,9 @@ def verify_fact_from_quote(
         if not any(abs(float(raw_value) - token) <= max(1e-9, abs(float(raw_value)) * 1e-9) for token in numeric_tokens):
             return {"verified": False, "error": "raw_value_not_in_quote"}
     if document.get("doc_type") in _REGISTERED_EVENT_DOCUMENT_TYPES and temporal_role == "EVENT":
-        try:
-            event_day = datetime.fromisoformat(str(event_date or "")).date()
-        except ValueError:
+        if _parse_temporal_date(event_date) is None:
             return {"verified": False, "error": "event_date_invalid"}
-        event_date_tokens = {
-            event_day.isoformat(),
-            f"{event_day.year}年{event_day.month}月{event_day.day}日",
-            f"{event_day.year}年{event_day.month:02d}月{event_day.day:02d}日",
-        }
-        if not any(token in exact_quote for token in event_date_tokens):
+        if not _event_date_appears_in_quote(event_date, exact_quote):
             return {"verified": False, "error": "event_date_not_in_quote"}
     quote_start = str(block["text"]).index(exact_quote)
     absolute_start = int(block["start"]) + quote_start

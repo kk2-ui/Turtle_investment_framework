@@ -26,6 +26,8 @@ from scripts.evidence_documents import (
     validate_document_manifest,
 )
 from scripts.evidence_facts import (
+    _observation_core,
+    _payload_hash as _fact_payload_hash,
     build_fact_observations,
     make_observation_id,
     validate_fact_observations,
@@ -217,6 +219,180 @@ def test_manifest_ingests_registered_announcement_with_temporal_identity(tmp_pat
         "verified": False,
         "error": "registered_event_document_temporal_role_required",
     }
+
+    fact_registry = json.loads((output / "fact_observations.json").read_text(encoding="utf-8"))
+    tampered_facts = deepcopy(fact_registry)
+    tampered_event = next(
+        item
+        for item in tampered_facts["observations"]
+        if item.get("fact_name") == "subsidiary_cash_upstream_rmb_m"
+    )
+    tampered_event["event_date"] = tampered_event["as_of"] = "2026-03-16"
+    tampered_event["observation_id"] = make_observation_id(tampered_event)
+    tampered_facts["observation_hash"] = _fact_payload_hash(
+        _observation_core(tampered_facts)
+    )
+    tampered_validation = validate_fact_observations(
+        tampered_facts, manifest, output
+    )
+    assert tampered_validation["state"] == "INVALID"
+    assert any(
+        "event_date_not_in_quote" in finding
+        for finding in tampered_validation["invalid_findings"]
+    )
+    (output / "fact_observations.json").write_text(
+        json.dumps(tampered_facts), encoding="utf-8"
+    )
+    rebuilt = build_fact_observations(output, manifest, persist=False)
+    assert rebuilt["validation"]["state"] == "INVALID"
+    assert any(
+        "event_date_not_in_quote" in finding
+        for finding in rebuilt["validation"]["invalid_findings"]
+    )
+
+    missing_quote_date = verify_fact_from_quote(
+        output,
+        doc_id=announcement["doc_id"],
+        page=2,
+        fact_name="subsidiary_cash_upstream_without_date_in_quote",
+        domain="cash_accessibility",
+        raw_value=278.417,
+        normalized_value=278.417,
+        unit="RMB_m",
+        currency="RMB",
+        basis="parent_company_receipt",
+        quote="向母公司上游现金人民币278.417百万元。",
+        temporal_role="EVENT",
+        event_date="2026-03-15",
+        observed_at="2026-03-28",
+    )
+    assert missing_quote_date == {
+        "verified": False,
+        "error": "event_date_not_in_quote",
+    }
+
+    for field, changed in (
+        ("doc_type", "quarterly_report"),
+        ("period_end", "2025-12-30"),
+        ("code", "09999"),
+        ("market", "CN-SH"),
+        ("report_id", "REPORT:FAKE"),
+    ):
+        tampered_manifest = deepcopy(manifest)
+        tampered_document = next(
+            item
+            for item in tampered_manifest["documents"]
+            if item["doc_id"] == announcement["doc_id"]
+        )
+        tampered_document[field] = changed
+        tampered_manifest["manifest_hash"] = _payload_hash(
+            _manifest_core(tampered_manifest)
+        )
+        validation = validate_document_manifest(tampered_manifest, output)
+        assert validation["state"] == "INVALID", field
+
+    type_tampered = deepcopy(manifest)
+    next(
+        item
+        for item in type_tampered["documents"]
+        if item["doc_id"] == announcement["doc_id"]
+    )["doc_type"] = "quarterly_report"
+    type_tampered["manifest_hash"] = _payload_hash(_manifest_core(type_tampered))
+    (output / "document_manifest.json").write_text(
+        json.dumps(type_tampered), encoding="utf-8"
+    )
+    blocked = verify_fact_from_quote(
+        output,
+        doc_id=announcement["doc_id"],
+        page=2,
+        fact_name="bypassed_event_clock",
+        domain="cash_accessibility",
+        raw_value=278.417,
+        normalized_value=278.417,
+        unit="RMB_m",
+        currency="RMB",
+        basis="parent_company_receipt",
+        quote="附属公司已于2026年3月15日向母公司上游现金人民币278.417百万元。",
+    )
+    assert blocked == {"verified": False, "error": "document_manifest_not_reviewable"}
+
+
+def test_registered_event_dates_accept_english_and_spaced_chinese_quotes(
+    tmp_path: Path,
+) -> None:
+    output = _filing_dir(tmp_path)
+    filename = "01502_2026-03-28_bilingual_announcement.pdf"
+    derivative = "01502_2026-03-28_bilingual_announcement.md"
+    (output / filename).write_bytes(b"%PDF-1.4\nfixture bilingual announcement\n")
+    (output / derivative).write_text(
+        "# Announcement\n\n## 第 1 页\n\n"
+        "The subsidiary collected RMB20 million on 15 March 2026.\n"
+        "本公司已于 2026 年 3 月 16 日收回人民币10百万元。\n",
+        encoding="utf-8",
+    )
+    (output / "document_sources.json").write_text(
+        json.dumps(
+            {
+                "schema_version": "document-sources.v1",
+                "documents": {
+                    filename: {
+                        "source_url": "https://www1.hkexnews.hk/bilingual.pdf",
+                        "published_at": "2026-03-28",
+                        "doc_type": "exchange_announcement",
+                        "authority": "company_filing",
+                        "fiscal_period": "POST-FY2025",
+                        "period_end": "2025-12-31",
+                        "derived_text_path": derivative,
+                        "verification_mode": "PAGE_QUOTE",
+                        "language": "en",
+                    }
+                },
+            }
+        ),
+        encoding="utf-8",
+    )
+    manifest = build_document_manifest(output, "01502.HK", persist=True)
+    announcement = next(
+        item
+        for item in manifest["documents"]
+        if item["doc_type"] == "exchange_announcement"
+    )
+
+    english = verify_fact_from_quote(
+        output,
+        doc_id=announcement["doc_id"],
+        page=1,
+        fact_name="english_collection",
+        domain="cash_accessibility",
+        raw_value=20,
+        normalized_value=20,
+        unit="RMB_m",
+        currency="RMB",
+        basis="cash_received",
+        quote="The subsidiary collected RMB20 million on 15 March 2026.",
+        temporal_role="EVENT",
+        event_date="2026-03-15",
+        observed_at="2026-03-28",
+    )
+    spaced_chinese = verify_fact_from_quote(
+        output,
+        doc_id=announcement["doc_id"],
+        page=1,
+        fact_name="spaced_chinese_collection",
+        domain="cash_accessibility",
+        raw_value=10,
+        normalized_value=10,
+        unit="RMB_m",
+        currency="RMB",
+        basis="cash_received",
+        quote="本公司已于 2026 年 3 月 16 日收回人民币10百万元。",
+        temporal_role="EVENT",
+        event_date="2026-03-16",
+        observed_at="2026-03-28",
+    )
+
+    assert english["verified"] is True
+    assert spaced_chinese["verified"] is True
 
 
 def test_registered_non_filing_document_requires_publication_date(tmp_path: Path) -> None:

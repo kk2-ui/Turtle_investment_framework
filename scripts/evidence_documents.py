@@ -241,6 +241,9 @@ def validate_document_manifest(payload: dict[str, Any], output_dir: str | Path |
     warnings: list[str] = []
     if payload.get("schema_version") != SCHEMA_VERSION:
         invalid.append("schema_version_invalid")
+    for field in ("report_id", "issuer", "code", "market"):
+        if not isinstance(payload.get(field), str) or not str(payload[field]).strip():
+            invalid.append(field + "_missing")
     documents = payload.get("documents")
     if not isinstance(documents, list):
         invalid.append("documents_not_array")
@@ -275,6 +278,17 @@ def validate_document_manifest(payload: dict[str, Any], output_dir: str | Path |
             f"{doc_id or prefix}:{finding}" for finding in registered_findings
         )
         if doc.get("doc_type") in _REGISTERED_DOC_TYPES:
+            for field in ("report_id", "issuer", "code", "market"):
+                if doc.get(field) != payload.get(field):
+                    invalid.append(
+                        f"{doc_id or prefix}:{field}_manifest_identity_mismatch"
+                    )
+            expected_doc_id = (
+                f"DOC:{payload.get('market')}:{payload.get('code')}:"
+                f"{doc.get('doc_type')}:{doc.get('period_end')}:{digest[:12]}"
+            )
+            if doc_id != expected_doc_id:
+                invalid.append(f"{doc_id or prefix}:registered_doc_id_identity_mismatch")
             verification_mode = doc.get("verification_mode")
             derived = doc.get("derived_text_path")
             if verification_mode == "PAGE_QUOTE":
