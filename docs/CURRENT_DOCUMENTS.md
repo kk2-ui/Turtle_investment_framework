@@ -2,7 +2,7 @@
 
 > 状态：`CURRENT / AUTHORITATIVE_NAVIGATION`
 >
-> 更新：2026-08-29
+> 更新：2026-08-30
 
 本文件只解决一件事：告诉后续 Agent 哪些文档可以决定当前状态、执行顺序和产品标准。`docs/History/` 中的文件只用于追溯，不能成为恢复入口、当前状态或实施授权。
 
@@ -10,15 +10,11 @@
 
 当前企业判断、训练、估值与黄金报告的最高层对象改为[企业投资承保系统 V1](development/research/TURTLE_ENTERPRISE_UNDERWRITING_SYSTEM_V1.md)中的 `EnterpriseUnderwritingEpisode`。它把宏观/行业处境、周期与结构、公司位置和适应、生存、正常化、owner cash、永久损失、价值路线及价格处理连接成一条连续投资主张。
 
-现有八维 `EnterpriseJudgmentEpisode`、E0--E3、J0--J4、Forecast、Comparative 和各类 receipt 继续作为底层证据、局部反馈和兼容投影，不能再作为投资者可见的主流程或顶层进度。[企业投资承保纵向切片 V1 Goal](development/research/TURTLE_ENTERPRISE_UNDERWRITING_VERTICAL_SLICE_GOAL.md) 的 U1 与 kernel 接线已实现：Episode v2 内置 `IndustryFutureThesis`；唯一训练入口只认可完整 Episode；同一价格前主张可穿过 current-company CJO、Frozen CJO report handoff、valuation runtime 和现有经验 registry。海螺仍是 `RESULT_KNOWN_TEACHING_ONLY / WORKED_CASE`；该切片不授予方法迁移、当前估值、BuyBand 或投资权限。下一步先运行完整 Blind Replay 和一份真实同源黄金候选，再扩大 worked-case 课程，不再扩展字段、receipt 或准入控制。
+现有八维 `EnterpriseJudgmentEpisode`、E0--E3、J0--J4、Forecast、Comparative 和各类 receipt 继续作为底层证据、局部反馈和兼容投影，不能再作为投资者可见的主流程或顶层进度。[企业投资承保纵向切片 V1 Goal](development/research/TURTLE_ENTERPRISE_UNDERWRITING_VERTICAL_SLICE_GOAL.md) 的 U1 与 kernel 接线已实现：Episode v2 内置 `IndustryFutureThesis`；唯一训练入口只认可完整 Episode；同一价格前主张可穿过 current-company CJO、Frozen CJO report handoff、valuation runtime 和现有经验 registry。海螺仍是 `RESULT_KNOWN_TEACHING_ONLY / WORKED_CASE`。课程一期已完成 12 个 worked case、4 个完整 Blind Replay 和一轮公平 A/B；其唯一认知隔离 A/B 为 `ENHANCED_WORSE`，故课程没有授予方法迁移、当前估值、BuyBand 或投资权限。当前下一步是由 fresh Agent 对新的异质公司执行公平 A/B，而不是扩展字段、receipt、当前 Agent self replay 或案例数量。完整状态以[课程完成审计](development/research/training_campaigns/ENTERPRISE_UNDERWRITING_COURSE_1_20260829/14_COURSE_1_COMPLETION_AUDIT.md)为准。
 
 ## 2026-08-29 唯一训练集成基线
 
-当前唯一集成入口是 `main@5d64b91b354d`。其整合历史记录见[训练系统统一基线](development/research/TURTLE_CONSOLIDATED_TRAINING_BASELINE_20260829.md)。
-它以 `08c8620` 为能力底座，已吸收投资者判断学习 read model、家电 Minimal 真实结算、家电
-四阶段训练和企业判断经验调用设计；该统一基线已通过验收，后续 Agent 只从 `main` 开工。旧功能
-分支只用于追溯，不能再覆盖当前状态。下方日期更早的段落用于解释演进；与本节冲突时以本节
-和统一基线清单为准。
+当前唯一集成入口是任务开始时干净的本地 `main`；精确 commit 只记录该任务的冻结起点，不能成为第二条长期基线。后续 Agent 只从当前本地 `main` 开工。已合入功能分支与历史 worktree 只用于追溯，不能覆盖当前状态；未合入旧分支必须先保留已提交增量，再迁移到新的当前 main worktree。下方日期更早的段落用于解释演进；与本节冲突时以本节和当前本地 main 为准。
 
 ## 2026-08-29 企业判断经验调用设计
 
@@ -82,7 +78,7 @@ retrofit 或发起新 custody flow。
 
 V2 兼容状态是 `G1_CANDIDATE_MATURATION + G1-T_ENTERPRISE_JUDGMENT_V2 / REAL_SAMPLE_CREATED + REAL_FEEDBACK_TURN_COMPLETED / TRANSFER_VALIDATED_PERIMETER_FIRST_ONLY / ROUND4_CONTRACT_INVALID_POST_OUTCOME_TEACHING_ONLY / ROUND5_CANONICAL_PREOUTCOME_FROZEN / ROUND5_ENTERPRISE_V3_PUBLIC_ADAPTER_PREFLIGHT / FORECAST_EPOCH_IMPLEMENTED / MINIMAL_HISTORICAL_EPISODE_ONE_INDEPENDENT_MECHANICAL_SETTLEMENT / MINIMAL_LANE_BOUNDED_CLOSED / CN600802_CN600425_CN002003_CN002404_PROTECTIVE_MEASUREMENT_MISMATCH / COMPARATIVE_E3_PARALLEL_ONLY / FORECAST_LEARNING_CONTROL_IMPLEMENTED / DECISION_CONTRACT_GATE_IMPLEMENTED / CJO_TEACHING_MIRROR_VALIDATED / CJO_VALUATION_SETTLEMENT_VALIDATED / DECISION_UTILITY_CONTROL_IMPLEMENTED / REGISTRY_AWARE_ADMISSION_IMPLEMENTED / CEMENT_H2_NO_PRIMARY_ACTION_SCOPE`。V2 的综合训练单位为多维 `EnterpriseJudgmentEpisode`，外层以 `IndustryLearningBlock` 编排行业时期、公司 archetype、生命周期、多个 cutoff 和条件化机制综合；它们现在是 `EnterpriseUnderwritingEpisode` 的支持视图，固定公司数量只约束特定 Comparative topology。水泥 H1 已完成首个真实 block：五家公司和六个 cutoff 均保留在 E0 风险集；四个真实 E0/E1 episode、一个 J2 state-transmission teaching probe、20 条冻结公司-cutoff roster，以及两条独立 feedback settlement 位于 `docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/`。首条华新反馈是保留的 `MEASUREMENT_MISMATCH`，已按冻结顺序继续到海螺的审计合并经营现金 observation；两者都只改变局部研究议程。perimeter-first 已取得窄范围 `TRANSFER_VALIDATED / PERIMETER_FIRST_MEASUREMENT_METHOD_ONLY`，不代表企业判断或管理行动学习已验证。福建水泥 `2014-04-16 → 2015-04-15` 的机制结算因 outcome 已读、J1 未进 canonical 生产链、复合 measurement cells 不可机械唯一结算且选择使用自报 completed companies，已由 superseding adjudication 永久降为 `CONTRACT_INVALID_POST_OUTCOME_TEACHING_ONLY`；其原始官方数值只可进入 `POST_OUTCOME_TEACHING / DATA_COVERAGE / RESEARCH_AGENDA`。非追溯修复后，五份正式 receipts 均经完整 production validator 与 immutable roster 绑定，并机械选择 rank 18 `CN:600802 / 2015-04-15 → 2016-04-27`。`26/27` 仅为被 `28` supersede 的历史对象；活动链为 `29/30/31/32`。14 个原子 outcome cell、31 个 raw inputs、完整责任边界和 sibling-local mismatch 规则已冻结，完整 J1 已登记 canonical registry，J2/J3 仅由 Frozen J1 identity 经公共 API 投影；既有 public acquisition/submission/settlement adapter 已通过 synthetic 14-cell preflight，不需要 Forecast 伪对象。该 preflight 不是企业反馈：真实 FY2015 outcome 的 authorized、content_read、custodian_started、settlement_created 仍全部为 false，尚无企业学习或投资结论。H2 的 `NO_PRIMARY_ACTION_SCOPE` 只终止水泥 action-first Comparative 候选，不阻断 E0-E2。当前 R-62/R-69 均为 `NO_PRIMARY / NOT_FROZEN` 的结果前筛查，不能登记为 selection learning；R-61 仍是 outcome-sealed 预留留出。R-102 只保留 `MEASUREMENT_BOUNDARY`，R-104 的 D3/D4 `MIXED` 只保留无权利边界。CN:600585 的 Forecast/Minimal 历史对象只证明各自受限管线；CN:600802、CN:600425、CN:002003 与 CN:002404 的 Minimal mismatch 不是企业表现结论。只有明确提出相对因果 estimand 时才启动 E3 Comparative；该支线失败不得阻断 G1-T。当前仍无真实 `SELECTION_METHOD_ELIGIBLE` 样本、无企业判断方法 release、无 `MECHANISM_READY`、CJO、估值、报告或投资授权实例；格力仍为 `PRE_FREEZE / NO_PRIMARY / NOT_FROZEN`，G1.5 仍为 `PLANNED`。
 
-截至 2026-08-29，G1-J 的结构化契约、运行时验证、黄金机器门和独立盲评维度已经接通；报告生成具备 `RESEARCH_AGENDA / JUDGMENT_SYNTHESIS / INVESTMENT_ENRICHMENT` 三个派生只读视图。若分析合同声明 canonical CJO/Overlay，它是生产读取、read receipt 与报告装配的唯一引用。Kernel 已让 source-bound、独立复核的完整 Episode 取得 current-company `PRIMARY_ADMITTED`，不再要求整家公司先有 `SELECTION_ADMITTED`；Comparative 只约束真正依赖选择/相对因果方法的局部 claim。Frozen CJO 的完整投影会进入 `JUDGMENT_SYNTHESIS`，valuation runtime 会自动消费其路线和现金/损失处理。真实数值估值和 BuyBand 仍须通过当前公司 CJO、估值与价格合同。该工程接线不等于内容或训练效果通过：当前格力仍是 `PRE_FREEZE / NO_PRIMARY / NOT_FROZEN`，仓库仍无完整承保 Blind Replay、真实同源黄金候选、真实 BuyBand 或能力优势结论。服务定位与三视图边界以[企业投资承保系统 V1](development/research/TURTLE_ENTERPRISE_UNDERWRITING_SYSTEM_V1.md)、[训练反馈到黄金报告的服务定位设计](development/research/TURTLE_GOLDEN_REPORT_SERVICE_DESIGN.md)、[current-company CJO admission v1](development/research/TURTLE_CURRENT_COMPANY_CJO_ADMISSION_V1_IMPLEMENTATION.md)和[canonical CJO report binding v1](development/research/TURTLE_CANONICAL_CJO_REPORT_BINDING_V1_IMPLEMENTATION.md)为准。
+截至 2026-08-30，G1-J 的结构化契约、运行时验证、黄金机器门和独立盲评维度已经接通；报告生成具备 `RESEARCH_AGENDA / JUDGMENT_SYNTHESIS / INVESTMENT_ENRICHMENT` 三个派生只读视图。若分析合同声明 canonical CJO/Overlay，它是生产读取、read receipt 与报告装配的唯一引用。Kernel 已让 source-bound、独立复核的完整 Episode 取得 current-company `PRIMARY_ADMITTED`，不再要求整家公司先有 `SELECTION_ADMITTED`；Comparative 只约束真正依赖选择/相对因果方法的局部 claim。Frozen CJO 的完整投影会进入 `JUDGMENT_SYNTHESIS`，valuation runtime 会自动消费其路线和现金/损失处理。课程一期已经提供完整承保 Blind feedback，但没有能力优势结论：唯一公平 A/B 的 Enhanced arm 过度悲观，方法仍待新的认知隔离 A/B 验证。真实数值估值和 BuyBand 仍须通过当前公司 CJO、估值与价格合同。服务定位与三视图边界以[企业投资承保系统 V1](development/research/TURTLE_ENTERPRISE_UNDERWRITING_SYSTEM_V1.md)、[训练反馈到黄金报告的服务定位设计](development/research/TURTLE_GOLDEN_REPORT_SERVICE_DESIGN.md)、[current-company CJO admission v1](development/research/TURTLE_CURRENT_COMPANY_CJO_ADMISSION_V1_IMPLEMENTATION.md)和[canonical CJO report binding v1](development/research/TURTLE_CANONICAL_CJO_REPORT_BINDING_V1_IMPLEMENTATION.md)为准。
 
 ## 3. 当前产品与研究规范
 
@@ -104,6 +100,7 @@ V2 兼容状态是 `G1_CANDIDATE_MATURATION + G1-T_ENTERPRISE_JUDGMENT_V2 / REAL
 | `docs/development/research/TURTLE_ENTERPRISE_UNDERWRITING_VERTICAL_SLICE_GOAL.md` | 从当前 main 实现 Magna + CN600585 完整承保读模型及 CJO/valuation/report 同源投影 |
 | `scripts/enterprise_underwriting_training.py` | 完整 Episode 的唯一正式训练编排入口；`run` 从合同绑定来源调用模型，只有模型生成的完整 Episode 通过绑定校验并原子落盘后才完成；单独 validator、旧课程轨道和局部 inventory 不能完成训练 |
 | `docs/development/research/enterprise_underwriting_episodes/CN600585_20240501_TRAINING_CONTRACT_V1.json` | 首个 checked-in WORKED_CASE 训练合同；只证明完整 Episode 入口可运行，不构成 Blind 或能力成绩 |
+| `docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_COURSE_1_20260829/14_COURSE_1_COMPLETION_AUDIT.md` | 已完成企业承保课程一期的投资者读出：12 个 worked case、4 个 Blind Replay、顺丰公平 A/B 的 `ENHANCED_WORSE` 与下一轮认知隔离 A/B 要求 |
 | `docs/development/research/TURTLE_TRAINING_SYSTEM_TOP_LEVEL_ARCHITECTURE.md` | V2 组件与 V3 映射：八维、IndustryLearningBlock、多维 EnterpriseJudgmentEpisode、局部证据/因果权限和 Investment Overlay 边界 |
 | `docs/development/research/TURTLE_ENTERPRISE_JUDGMENT_V2_REAL_TRAINING_GOAL.md` | J0/J1/J1A/J2 与 Rounds 5-8 真实反馈记录；八维已采用，Round 8 因责任边界和 mixed-clock 问题保持 architecture revision required |
 | `docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/08_investor_readout.md` | 首个真实水泥 V2 block 的投资者可读读出、feedback 与权限边界；底层 JSON 是该读出的可验证工件 |

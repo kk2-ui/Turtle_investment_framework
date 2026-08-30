@@ -1,8 +1,8 @@
 # Turtle 当前协调目标：Phase 08 多黄金报告集合 v1
 
-> 状态日期：2026-08-29
+> 状态日期：2026-08-30
 > 当前目标：`GOLDEN_SET_V1`
-> 当前阶段：`G1_CANDIDATE_MATURATION + G1-U_ENTERPRISE_UNDERWRITING_KERNEL / KERNEL_IMPLEMENTED_WORKED_CASE_ONLY_U3_PENDING`
+> 当前阶段：`G1_CANDIDATE_MATURATION + G1-U_ENTERPRISE_UNDERWRITING_KERNEL / COURSE_1_COMPLETED + METHOD_NOT_VALIDATED + INDEPENDENT_A_B_PENDING`
 > 长期领域路线图：`docs/development/LONG_TERM_ROADMAP.md`
 > 双向层级研究路线：`docs/development/GOLDEN_REPORT_BIDIRECTIONAL_RESEARCH_ROADMAP.md`
 
@@ -32,6 +32,8 @@ Phase 08 不再采用“先把 02669 做成唯一黄金样本，再用 01502 做
 2026-08-29，用户把中心目标进一步明确为麦格纳式企业承保：宏观/行业处境必须通过公司暴露传导到生存、适应、正常盈利、owner cash、永久损失、价值路线和价格处理。`EnterpriseUnderwritingEpisode` 成为企业判断、训练、CJO、估值与黄金报告的顶层主对象；八维、E/J、Forecast、Comparative 和 receipt 降为局部工具。当前先完成 G1-U 纵向切片，再建立跨路线 worked cases 和完整 Blind Replay；不得继续用字段结算、严格 Comparative 准入或防御性 `UNKNOWN` 代替企业判断。
 
 2026-08-29，用户进一步裁定黄金报告的反馈必须修生成链路而不是逐篇打补丁。已新增 `golden-report-review-return.v1` 与确定性责任分流：开放的 `DATA_COVERAGE / ACQUISITION_MODULE / REASONING / MODEL` 只进入对应采集、承保或模型责任层，不能直接生成章节改写目标；只有纯 `WRITING` 或上游已验收后的普通投资结论才可进入 reader writer。`golden-report-reader-brief.v1` 将 Episode、已接纳经济结论和读者语言修订指令与原始审阅工单隔离，reader coverage 门继续拒绝审阅面板、状态码、对象 ID 和内部价格身份，同时保留 NAV、EPV、owner cash 及自然语言 `UNKNOWN`。该接线仍属于 G1/U4 产品验证，不改变 G1、G1-U 或 G1.5 的阶段状态，也不把 02669 候选提升为 Golden。
+
+2026-08-30，企业承保课程一期已完成并合入主线：12 个跨行业 worked case、4 个完整 Blind Replay 和一轮公平 A/B 均已形成结果后诊断。课程证明 Agent 可以在局部未知下继续完成行业、公司位置、生存、正常化、owner cash、永久损失和价值路线的判断；但唯一认知隔离的公平 A/B（顺丰）为 `ENHANCED_WORSE`，原因是 Enhanced 将“增长资本回报未证明”误写成“维护后 owner cash 接近零或为负”。这是一项 `REASONING` 失败，不是资料不足。后续不得继续堆当前 Agent 的 self replay，也不得把课程规模、文字增量或更保守处理叙述为能力提升。下一项训练验证必须由认知隔离 Agent 在新的公司、同 cutoff、同证据、相近预算下执行公平 A/B。
 
 旧的 01502/02669 黄金身份、旧 Q1 单样本顺序、旧 dashboard 状态、旧黄金预览或旧评审票，均不得自动沿用为当前结论。历史工件仍可作为研究资料和回归输入，但不能覆盖本文件。
 
@@ -142,7 +144,7 @@ HTML 只负责渲染，不得另造投资事实、模型数值或结论。正文
 | G1 候选内容成熟与逐案接纳 | 七个指定案例完成材料性修复和独立接纳 | **IN_PROGRESS** |
 | G1-J 判断契约与已有案例资产接线 | 复用书籍方法案例卡和基准率候选，补齐中心路径、前瞻判断与历史结算硬门 | **IN_PROGRESS / G1内部前置门** |
 | G1-T 历史判断训练与留出 | 已完成首个真实 `IndustryLearningBlock + EnterpriseJudgmentEpisode` 的 E0/E1 多维重建与独立 feedback；Comparative 仅为局部 E3 支线，有效方法冻结后再揭盲 R-61 | **IN_PROGRESS / REAL_SAMPLE_CREATED + REAL_FEEDBACK_TURN_COMPLETED / TRANSFER_NOT_VALIDATED** |
-| G1-U 企业投资承保纵向切片 | 用一个完整对象连接处境、生存、正常化、永久损失、价值路线、CJO、估值和黄金报告 | **KERNEL_IMPLEMENTED / WORKED_CASE_ONLY / U3_PENDING** |
+| G1-U 企业投资承保纵向切片 | 用一个完整对象连接处境、生存、正常化、永久损失、价值路线、CJO、估值和黄金报告 | **KERNEL_IMPLEMENTED / COURSE_1_COMPLETED / FAIR_A_B_ENHANCED_WORSE / INDEPENDENT_A_B_PENDING** |
 | G1.5 格力行业经验工厂试验 | 24 份黄金级产物验证公司→行业→宏观传导→公司的双向研究架构 | PLANNED |
 | G2 跨报告裁决与路线规范 | 统一共同规则，裁决公司、行业、基准率和宏观层的权限与路线差异 | PLANNED |
 | G3 Golden Set v1 与行业经验包冻结 | 多份内容黄金报告、完整案例包及 `Industry Experience Pack v1` 形成版本化集合 | PLANNED |
@@ -299,6 +301,8 @@ U1 worked slice 与随后 kernel 接线已经实现：
 
 海螺仍是 `RESULT_KNOWN_TEACHING_ONLY / WORKED_CASE`。本完成只证明完整承保对象和同源消费能运行，不证明盲测、迁移、当前估值、BuyBand 或投资结论。
 
+课程一期现已把该 kernel 用于 12 个 worked case、4 个完整 Blind Replay 和一轮公平 A/B。它完成了训练闭环，但没有验证方法优越性：顺丰的 Enhanced arm 因 owner-cash 伪精确被裁决为 `ENHANCED_WORSE`。课程的可复用修正是把经济维护资本、全部资本开支和增长资本回报拆开；这只能作为下一轮 Enhanced arm 的问题与推理顺序，不能成为目标公司的事实或结论。
+
 ### 7U.3 完成定义
 
 - 投资者能复述公司的处境、生存、正常化、owner cash、永久损失和价值路线；
@@ -308,7 +312,7 @@ U1 worked slice 与随后 kernel 接线已经实现：
 - worked slice 明确不冒充 Blind learning、当前估值、BuyBand 或投资建议；
 - 产品审阅、定向测试、`project_guard verify full` 和 `merge-check` 通过。
 
-完成 G1-U kernel 后不继续扩基础设施。下一步先运行一个完整 Blind Replay，再让一份真实黄金候选消费同一 Frozen Episode；跨路线 worked-case 课程随后用于扩大机制覆盖，不得先以数量替代闭环。
+G1-U kernel 和课程一期完成后不继续扩基础设施或当前 Agent self replay。下一步由认知隔离 Agent 对新的异质公司执行公平 A/B，并让 fresh reviewer 在结果后判断 Enhanced 是否材料性改善了正常盈利、owner cash、永久损失或价值路线。只有该验证成立，才讨论方法迁移；一份真实黄金候选消费同一 Frozen Episode 仍是独立的产品接线验证，不得替代训练效用证明。
 
 ## 7A. G1.5：格力行业经验工厂与双向层级试验
 
@@ -525,9 +529,9 @@ Phase 08 只有同时具备以下结果才能完成：
 当前执行分为训练主线与黄金候选线，互不以等待状态阻断：
 
 1. **集成 G1-U kernel，不再重开字段底座。** 以 Episode v2、唯一训练入口、CJO/valuation/report/experience 同源接线作为当前实现基线；继续停止扩展 receipt 和准入控制。
-2. **首个新盲测练完整承保。** 选择一个未参与 U1/U2 规则形成的公司/cutoff，冻结行业未来、处境、生存、正常化、owner cash、永久损失和价值路线，再按多时钟揭示结果；不得退回单字段 Minimal 作为中心样本。
+2. **认知隔离的公平 A/B 验证。** 选择一间未参与课程一期、与顺丰不同机制的公司/cutoff；由 fresh Agent 在同 cutoff、同证据、相近预算下分别完成 Baseline 与仅含资本三账/责任边界训练记忆的 Enhanced，结果后由另一 fresh reviewer 比较正常盈利、owner cash、永久损失或价值路线是否出现有证据的材料改善。不得继续用当前 Agent self replay、更多案例数量或更长正文覆盖顺丰的 `ENHANCED_WORSE`。
 3. **真实黄金候选消费同一 Frozen Episode。** 让一份合法 current-company CJO、估值路线和报告 handoff 读取同一对象，检验报告本地 thesis 不会另写公司故事；仍不自动生成 BuyBand 或投资动作。
-4. **随后扩大完整案例课程。** 建立 12--20 个跨承保路线 worked cases，包含成功、失败、消失企业和 near miss；它们训练推理，不计命中或方法成绩。
+4. **课程不再以数量为目标。** 课程一期的 12 个跨路线 worked case 已完成。只有新的 A/B 暴露出某类缺失机制或 reference class 时，才补充针对性的 worked case；它们仍只训练推理，不计命中或方法成绩。
 5. **经验层继续自然反馈。** 福莱特 FY2024 outcome 到期后按既有合同结算；此前不提前读取，也不因等待而阻断 U3。
 6. **旧训练控制保持兼容。** E/J、Forecast 和 Comparative 只在对应局部主张需要时使用；其等待、mismatch 或 `NO_PRIMARY` 不能再定义整个训练系统的进度。
 7. **G1.5 与 G2 仍保持原依赖。** 七案内容接纳和 G1-U/U4 产品验证后再决定格力 24 份矩阵是否仍是最高信息价值的行业扩展，不因旧路线图自动启动。
