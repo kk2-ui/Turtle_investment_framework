@@ -26,6 +26,13 @@ from scripts.turtle_agent.tool_registry import ToolRegistry
 SLOT_SENTENCE = (
     "税费和收取摩擦后的普通股分配为RMB278.417百万元，即约RMB2.784亿元。"
 )
+WRONG_SLOT_SENTENCE = (
+    "税费和收取摩擦后的普通股分配为RMB375.800百万元，即约RMB3.758亿元。"
+)
+MARKDOWN_SLOT_SENTENCE = (
+    "税费和收取摩擦后的普通股分配为 **RMB 278.417 百万元**，"
+    "即约 **RMB 2.784 亿元**。"
+)
 
 
 def _write_json(path: Path, value: dict) -> None:
@@ -430,6 +437,74 @@ def test_assembly_blocks_reader_slot_copy_outside_its_owned_artifact_position(
     else:
         assert cardinality["technical_count"] == 1
         assert cardinality["executive_count"] == 1
+    assert "未正确分离" in result["error"]
+
+
+@pytest.mark.parametrize(
+    ("leak_surface", "copied_amount"),
+    [
+        ("executive_memo", WRONG_SLOT_SENTENCE),
+        ("executive_memo", MARKDOWN_SLOT_SENTENCE),
+        ("technical_appendix", MARKDOWN_SLOT_SENTENCE),
+    ],
+)
+def test_assembly_blocks_semantic_reader_slot_amount_variants_before_publication(
+    tmp_path: Path,
+    monkeypatch,
+    leak_surface: str,
+    copied_amount: str,
+) -> None:
+    import scripts.report_completion as completion_module
+    import scripts.research_calibration as calibration_module
+    import scripts.turtle_agent.tools.write_tools as write_tools
+
+    _dual_layer_dependencies(tmp_path)
+    if leak_surface == "technical_appendix":
+        (tmp_path / "_technical_appendix.md").write_text(
+            "## 技术附录\n\n" + copied_amount,
+            encoding="utf-8",
+        )
+    else:
+        insight = json.loads(
+            (tmp_path / "insight_ledger.json").read_text(encoding="utf-8")
+        )
+        insight["memo"]["valuation_action"] = copied_amount
+        _write_json(tmp_path / "insight_ledger.json", insight)
+    fake_completion = SimpleNamespace(
+        status="COMPLETE",
+        to_dict=lambda: {
+            "status": "COMPLETE", "blocking_findings": [],
+            "warning_findings": [], "validators": {},
+        },
+    )
+    monkeypatch.setattr(
+        completion_module, "evaluate_report_completion", lambda *a, **k: fake_completion,
+    )
+    monkeypatch.setattr(
+        write_tools, "_run_quality_checks",
+        lambda *a, **k: {"passed": True, "issues": [], "warnings": []},
+    )
+    snapshot_called = {"value": False}
+
+    def snapshot(*args, **kwargs):
+        snapshot_called["value"] = True
+        return {"written": True}
+
+    monkeypatch.setattr(calibration_module, "create_publication_snapshot", snapshot)
+
+    result = write_tools.assemble_report(str(tmp_path), "测试公司", "000001.SZ")
+
+    assert result["published"] is False
+    assert snapshot_called["value"] is False
+    assert result["reader_surface"]["status"] == "BLOCKED"
+    expected_surface = (
+        "technical_artifact" if leak_surface == "technical_appendix"
+        else "executive_artifact"
+    )
+    assert any(
+        finding.startswith(f"free_reader_numeric_slot:{expected_surface}:")
+        for finding in result["reader_surface"]["blocking_findings"]
+    )
     assert "未正确分离" in result["error"]
 
 

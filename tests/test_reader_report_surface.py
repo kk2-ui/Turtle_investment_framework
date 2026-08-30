@@ -52,6 +52,7 @@ def _register_slot(output: Path) -> None:
     valuation["value_bridge_models"] = {
         "reader_slots": [{
             "slot_id": "after_tax_common_distribution",
+            "metric": "AFTER_TAX_COMMON_DISTRIBUTION",
             "sentence": SLOT,
         }],
     }
@@ -219,6 +220,74 @@ def test_reader_slot_cardinality_is_a_three_artifact_hard_gate(tmp_path: Path) -
         "executive=1" in finding
         for finding in leaked_executive["blocking_findings"]
     )
+
+
+@pytest.mark.parametrize(
+    ("surface", "copied_amount"),
+    [
+        (
+            "executive",
+            "税费和收取摩擦后的普通股分配为RMB375.800百万元，即约RMB3.758亿元。",
+        ),
+        (
+            "executive",
+            "税费和收取摩擦后的普通股分配为 **RMB 278.417 百万元**，"
+            "即约 **RMB 2.784 亿元**。",
+        ),
+        (
+            "technical",
+            "税费和收取摩擦后的普通股分配为 **RMB 278.417 百万元**，"
+            "即约 **RMB 2.784 亿元**。",
+        ),
+    ],
+)
+def test_reader_slot_semantic_gate_rejects_wrong_or_reformatted_artifact_copy(
+    tmp_path: Path,
+    surface: str,
+    copied_amount: str,
+) -> None:
+    _ledgers(tmp_path)
+    _register_slot(tmp_path)
+    narrative = f"## 价值结论\n\n{SLOT}"
+
+    validation = validate_reader_report_surface(
+        narrative,
+        narrative,
+        tmp_path,
+        technical_artifact_text=(
+            narrative + "\n\n## 技术附录\n\n" + copied_amount
+            if surface == "technical" else narrative
+        ),
+        executive_text=copied_amount if surface == "executive" else "只解释经济结论。",
+    )
+
+    assert validation["status"] == "BLOCKED"
+    assert any(
+        finding.startswith(f"free_reader_numeric_slot:{surface}_artifact:")
+        for finding in validation["blocking_findings"]
+    )
+
+
+def test_reader_slot_semantic_gate_allows_actual_dividend_and_cash_balance(
+    tmp_path: Path,
+) -> None:
+    _ledgers(tmp_path)
+    _register_slot(tmp_path)
+    narrative = f"## 价值结论\n\n{SLOT}"
+    source_facts = (
+        "2025年实际派息为RMB278.417百万元；"
+        "期末普通现金余额为人民币3.758亿元。"
+    )
+
+    validation = validate_reader_report_surface(
+        narrative + "\n\n" + source_facts,
+        narrative,
+        tmp_path,
+        technical_artifact_text=narrative + "\n\n" + source_facts,
+        executive_text="历史实际派息与普通现金余额仅用于解释资金背景。",
+    )
+
+    assert validation["status"] == "PASS"
 
 
 def test_public_model_labels_and_source_footnotes_are_reader_safe(tmp_path: Path) -> None:

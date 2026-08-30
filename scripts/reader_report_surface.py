@@ -15,6 +15,17 @@ import re
 from pathlib import Path
 from typing import Any
 
+try:
+    from scripts.decision_compiler import (
+        reader_numeric_slot_metrics,
+        scan_free_reader_slot_values_text,
+    )
+except ModuleNotFoundError:
+    from decision_compiler import (
+        reader_numeric_slot_metrics,
+        scan_free_reader_slot_values_text,
+    )
+
 
 SCHEMA_VERSION = "reader-report-surface-validation.v1"
 
@@ -250,7 +261,10 @@ def validate_reader_report_surface(
     value_bridges = value_bridges if isinstance(value_bridges, dict) else {}
     raw_slots = value_bridges.get("reader_slots")
     slots = raw_slots if isinstance(raw_slots, list) else []
+    slot_metrics = reader_numeric_slot_metrics(valuation)
     slot_cardinality: list[dict[str, Any]] = []
+    reader_without_owned_slots = reader
+    technical_without_owned_slots = technical_artifact
     for index, raw_slot in enumerate(slots):
         slot = raw_slot if isinstance(raw_slot, dict) else {}
         slot_id = str(slot.get("slot_id") or f"reader_slots[{index}]")
@@ -283,6 +297,38 @@ def validate_reader_report_surface(
                 + f":technical={counts['technical_count']}"
                 + f":executive={counts['executive_count']}"
             )
+        if sentence:
+            # Exact cardinality proves the compiler-owned sentence is present in
+            # its two allowed artifacts.  Remove one owned occurrence before the
+            # semantic scan so any other rendering or amount remains visible.
+            reader_without_owned_slots = reader_without_owned_slots.replace(
+                sentence, "", 1,
+            )
+            technical_without_owned_slots = technical_without_owned_slots.replace(
+                sentence, "", 1,
+            )
+
+    findings.extend(
+        scan_free_reader_slot_values_text(
+            reader_without_owned_slots,
+            slot_metrics,
+            location="reader_artifact",
+        )
+    )
+    findings.extend(
+        scan_free_reader_slot_values_text(
+            technical_without_owned_slots,
+            slot_metrics,
+            location="technical_artifact",
+        )
+    )
+    findings.extend(
+        scan_free_reader_slot_values_text(
+            executive,
+            slot_metrics,
+            location="executive_artifact",
+        )
+    )
 
     return {
         "schema_version": SCHEMA_VERSION,
