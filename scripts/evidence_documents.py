@@ -27,6 +27,33 @@ _FILING_RE = re.compile(
     re.IGNORECASE,
 )
 
+_REGISTERED_DOC_TYPES = {
+    "quarterly_report",
+    "company_announcement",
+    "company_circular",
+    "exchange_announcement",
+    "official_statistics",
+    "other_official",
+    "licensed_industry_data",
+}
+_REGISTERED_AUTHORITIES_BY_DOC_TYPE = {
+    "quarterly_report": "company_filing",
+    "company_announcement": "company_filing",
+    "company_circular": "company_filing",
+    "exchange_announcement": "company_filing",
+    "official_statistics": "official_statistics",
+    "other_official": "other_official",
+    "licensed_industry_data": "industry_data",
+}
+_MIME_TYPES = {
+    ".pdf": "application/pdf",
+    ".md": "text/markdown",
+    ".json": "application/json",
+    ".csv": "text/csv",
+    ".html": "text/html",
+    ".htm": "text/html",
+}
+
 
 def _now() -> str:
     return datetime.now(timezone.utc).replace(microsecond=0).isoformat()
@@ -96,6 +123,62 @@ def _filing_parts(path: Path) -> dict[str, Any] | None:
         "authority": "audited_filing" if annual else "company_filing",
         "mime_type": "application/pdf" if path.suffix.lower() == ".pdf" else "text/markdown",
     }
+
+
+def _registered_document_parts(path: Path, source_record: dict[str, Any]) -> dict[str, Any] | None:
+    """Read an explicitly registered non-annual official document.
+
+    Generic files are never inferred from their filename.  Their sidecar must
+    state the economic document identity needed by PIT evidence: document
+    type, authority, covered period, and publication date.  This lets an
+    announcement, circular, regulatory instrument, tender record, or official
+    dataset enter the same evidence manifest without pretending it is an
+    annual report.
+    """
+    doc_type = source_record.get("doc_type")
+    if doc_type is None:
+        return None
+    if doc_type not in _REGISTERED_DOC_TYPES:
+        raise ValueError(f"registered_document_type_invalid:{path.name}:{doc_type}")
+    authority = source_record.get("authority")
+    if authority != _REGISTERED_AUTHORITIES_BY_DOC_TYPE[doc_type]:
+        raise ValueError(f"registered_document_authority_invalid:{path.name}:{authority}")
+    fiscal_period = str(source_record.get("fiscal_period") or "").strip()
+    period_end = str(source_record.get("period_end") or "").strip()
+    published_at = str(source_record.get("published_at") or "").strip()
+    if not fiscal_period:
+        raise ValueError(f"registered_document_fiscal_period_missing:{path.name}")
+    try:
+        if not re.fullmatch(r"\d{4}-\d{2}-\d{2}", period_end):
+            raise ValueError
+        datetime.fromisoformat(period_end).date()
+    except ValueError:
+        raise ValueError(f"registered_document_period_end_invalid:{path.name}")
+    try:
+        if not re.fullmatch(r"\d{4}-\d{2}-\d{2}(?:T[^ ]+)?", published_at):
+            raise ValueError
+        datetime.fromisoformat(published_at.replace("Z", "+00:00"))
+    except ValueError:
+        raise ValueError(f"registered_document_published_at_invalid:{path.name}")
+    mime_type = str(source_record.get("mime_type") or _MIME_TYPES.get(path.suffix.lower()) or "").strip()
+    if not mime_type:
+        raise ValueError(f"registered_document_mime_type_missing:{path.name}")
+    return {
+        "doc_type": doc_type,
+        "fiscal_period": fiscal_period,
+        "period_end": period_end,
+        "published_at": published_at,
+        "authority": authority,
+        "mime_type": mime_type,
+        "language": str(source_record.get("language") or "zh").strip(),
+        "derived_text_path": source_record.get("derived_text_path"),
+    }
+
+
+def _copy_optional_source_fields(document: dict[str, Any], source_record: dict[str, Any]) -> None:
+    for field in ("source_id", "source_version", "revision_policy", "source_role_provenance"):
+        if source_record.get(field) not in (None, "", {}):
+            document[field] = deepcopy(source_record[field])
 
 
 def _manifest_core(payload: dict[str, Any]) -> dict[str, Any]:
@@ -204,7 +287,7 @@ def build_document_manifest(
         doc_id = f"DOC:{market}:{canonical_code}:{parts['doc_type']}:{parts['period_end']}:{digest[:12]}"
         derivative = markdown_by_key.get(key)
         source_record = source_records.get(path.name) if isinstance(source_records.get(path.name), dict) else {}
-        documents.append({
+        document = {
             "doc_id": doc_id,
             "report_id": report_id,
             "issuer": issuer,
@@ -222,7 +305,9 @@ def build_document_manifest(
             "mime_type": "application/pdf",
             "language": "zh",
             "acquisition_status": "DOWNLOADED" if source_record else "CACHED",
-        })
+        }
+        _copy_optional_source_fields(document, source_record)
+        documents.append(document)
     for key, path in sorted(markdown_by_key.items()):
         if key in original_keys:
             continue
@@ -250,6 +335,50 @@ def build_document_manifest(
             "language": "zh",
             "acquisition_status": "DERIVED_ONLY",
         })
+
+    filing_names = {path.name for path, _ in pdfs}.union(path.name for path in markdown_by_key.values())
+    for filename, raw_record in sorted(source_records.items()):
+        if filename in filing_names or not isinstance(raw_record, dict):
+            continue
+        path = output / filename
+        if raw_record.get("doc_type") is None:
+            continue
+        if not path.is_file():
+            raise ValueError(f"registered_document_file_missing:{filename}")
+        parts = _registered_document_parts(path, raw_record)
+        assert parts is not None
+        source_url = urls.get(filename) or raw_record.get("source_url")
+        if not str(source_url or "").strip():
+            raise ValueError(f"registered_document_source_url_missing:{filename}")
+        derivative = parts.get("derived_text_path")
+        if derivative is not None and not (output / str(derivative)).is_file():
+            raise ValueError(f"registered_document_derived_text_missing:{filename}:{derivative}")
+        digest = _sha256_bytes(path)
+        doc_id = (
+            f"DOC:{market}:{canonical_code}:{parts['doc_type']}:"
+            f"{parts['period_end']}:{digest[:12]}"
+        )
+        document = {
+            "doc_id": doc_id,
+            "report_id": report_id,
+            "issuer": issuer,
+            "code": canonical_code,
+            "market": market,
+            "doc_type": parts["doc_type"],
+            "fiscal_period": parts["fiscal_period"],
+            "period_end": parts["period_end"],
+            "published_at": parts["published_at"],
+            "authority": parts["authority"],
+            "source_url": source_url,
+            "local_path": filename,
+            "derived_text_path": derivative,
+            "sha256": digest,
+            "mime_type": parts["mime_type"],
+            "language": parts["language"],
+            "acquisition_status": "DOWNLOADED",
+        }
+        _copy_optional_source_fields(document, raw_record)
+        documents.append(document)
     documents.sort(key=lambda item: (item["period_end"], item["doc_type"], item["doc_id"]))
     payload: dict[str, Any] = {
         "schema_version": SCHEMA_VERSION,

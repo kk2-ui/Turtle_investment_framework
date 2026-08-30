@@ -133,6 +133,111 @@ def test_manifest_consumes_download_provenance_sidecar(tmp_path: Path) -> None:
     assert not manifest["validation"]["warnings"]
 
 
+def test_manifest_ingests_registered_announcement_with_temporal_identity(tmp_path: Path) -> None:
+    output = _filing_dir(tmp_path)
+    announcement_name = "01502_2026-03-28_cash_upstream_announcement.pdf"
+    announcement_text = "01502_2026-03-28_cash_upstream_announcement.md"
+    (output / announcement_name).write_bytes(b"%PDF-1.4\nfixture exchange announcement\n")
+    (output / announcement_text).write_text(
+        "# 公告\n\n## 第 2 页\n\n附属公司已向母公司上游现金人民币278.417百万元。\n",
+        encoding="utf-8",
+    )
+    (output / "document_sources.json").write_text(json.dumps({
+        "schema_version": "document-sources.v1",
+        "documents": {
+            "01502_2025_年报.pdf": {
+                "source_url": "https://www1.hkexnews.hk/annual.pdf",
+                "published_at": "2026-03-20",
+                "provider": "hkexnews",
+            },
+            announcement_name: {
+                "source_url": "https://www1.hkexnews.hk/cash-upstream.pdf",
+                "published_at": "2026-03-28",
+                "provider": "hkexnews",
+                "doc_type": "exchange_announcement",
+                "authority": "company_filing",
+                "fiscal_period": "POST-FY2025",
+                "period_end": "2026-03-28",
+                "derived_text_path": announcement_text,
+                "source_id": "HKEX:01502:20260328:CASH_UPSTREAM",
+                "source_version": "ORIGINAL",
+            },
+        },
+    }), encoding="utf-8")
+
+    manifest = build_document_manifest(output, "01502.HK", persist=True)
+    announcement = next(
+        item for item in manifest["documents"]
+        if item["doc_type"] == "exchange_announcement"
+    )
+
+    assert manifest["validation"]["state"] == "REVIEWABLE"
+    assert announcement["period_end"] == "2026-03-28"
+    assert announcement["published_at"] == "2026-03-28"
+    assert announcement["derived_text_path"] == announcement_text
+    assert announcement["source_id"] == "HKEX:01502:20260328:CASH_UPSTREAM"
+    verified = verify_fact_from_quote(
+        output,
+        doc_id=announcement["doc_id"],
+        page=2,
+        fact_name="subsidiary_cash_upstream_rmb_m",
+        domain="cash_accessibility",
+        raw_value=278.417,
+        normalized_value=278.417,
+        unit="RMB_m",
+        currency="RMB",
+        basis="parent_company_receipt",
+        quote="附属公司已向母公司上游现金人民币278.417百万元。",
+    )
+    assert verified["verified"] is True
+    assert verified["observation"]["as_of"] == "2026-03-28"
+
+
+def test_registered_non_filing_document_requires_publication_date(tmp_path: Path) -> None:
+    output = _filing_dir(tmp_path)
+    filename = "01502_tender_record.pdf"
+    (output / filename).write_bytes(b"%PDF-1.4\nfixture tender record\n")
+    (output / "document_sources.json").write_text(json.dumps({
+        "schema_version": "document-sources.v1",
+        "documents": {
+            filename: {
+                "source_url": "https://official.example/tender.pdf",
+                "doc_type": "other_official",
+                "authority": "other_official",
+                "fiscal_period": "EVENT-2025",
+                "period_end": "2025-11-01",
+            }
+        },
+    }), encoding="utf-8")
+
+    import pytest
+    with pytest.raises(ValueError, match="registered_document_published_at_invalid"):
+        build_document_manifest(output, "01502.HK", persist=False)
+
+
+def test_registered_document_authority_must_match_document_type(tmp_path: Path) -> None:
+    output = _filing_dir(tmp_path)
+    filename = "01502_official_statistics.json"
+    (output / filename).write_text('{"series": []}', encoding="utf-8")
+    (output / "document_sources.json").write_text(json.dumps({
+        "schema_version": "document-sources.v1",
+        "documents": {
+            filename: {
+                "source_url": "https://official.example/statistics.json",
+                "published_at": "2025-11-02",
+                "doc_type": "official_statistics",
+                "authority": "company_filing",
+                "fiscal_period": "2025-M10",
+                "period_end": "2025-10-31",
+            }
+        },
+    }), encoding="utf-8")
+
+    import pytest
+    with pytest.raises(ValueError, match="registered_document_authority_invalid"):
+        build_document_manifest(output, "01502.HK", persist=False)
+
+
 def test_only_page_located_source_facts_are_verified(tmp_path: Path) -> None:
     output = _filing_dir(tmp_path)
     manifest = build_document_manifest(output, "01502.HK", persist=False)
