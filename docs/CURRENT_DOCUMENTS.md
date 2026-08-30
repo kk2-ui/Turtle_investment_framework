@@ -101,6 +101,7 @@ V2 兼容状态是 `G1_CANDIDATE_MATURATION + G1-T_ENTERPRISE_JUDGMENT_V2 / REAL
 | `scripts/enterprise_underwriting_training.py` | 完整 Episode 的唯一正式训练编排入口；`run` 从合同绑定来源调用模型，只有模型生成的完整 Episode 通过绑定校验并原子落盘后才完成；单独 validator、旧课程轨道和局部 inventory 不能完成训练 |
 | `docs/development/research/enterprise_underwriting_episodes/CN600585_20240501_TRAINING_CONTRACT_V1.json` | 首个 checked-in WORKED_CASE 训练合同；只证明完整 Episode 入口可运行，不构成 Blind 或能力成绩 |
 | `docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_COURSE_1_20260829/14_COURSE_1_COMPLETION_AUDIT.md` | 已完成企业承保课程一期的投资者读出：12 个 worked case、4 个 Blind Replay、顺丰公平 A/B 的 `ENHANCED_WORSE` 与下一轮认知隔离 A/B 要求 |
+| `docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_COURSE_2_INDEPENDENT_AB_GOAL.md` | 课程二期的唯一可执行任务：在新公司上由独立 Baseline/Enhanced Agent 完成同资料 A/B，结果后由独立 reviewer 裁决实际投资处理是否改善 |
 | `docs/development/research/TURTLE_TRAINING_SYSTEM_TOP_LEVEL_ARCHITECTURE.md` | V2 组件与 V3 映射：八维、IndustryLearningBlock、多维 EnterpriseJudgmentEpisode、局部证据/因果权限和 Investment Overlay 边界 |
 | `docs/development/research/TURTLE_ENTERPRISE_JUDGMENT_V2_REAL_TRAINING_GOAL.md` | J0/J1/J1A/J2 与 Rounds 5-8 真实反馈记录；八维已采用，Round 8 因责任边界和 mixed-clock 问题保持 architecture revision required |
 | `docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/08_investor_readout.md` | 首个真实水泥 V2 block 的投资者可读读出、feedback 与权限边界；底层 JSON 是该读出的可验证工件 |
