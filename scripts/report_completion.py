@@ -269,11 +269,15 @@ def _episode_bound_investment_refs(output_dir: str) -> dict[str, Any]:
         return {}
     frozen_ref = str(refs.get("frozen_cjo_ref") or "").strip()
     admission_ref = str(refs.get("current_company_cjo_admission_ref") or "").strip()
-    if not frozen_ref and not admission_ref:
+    component_bridge_ref = str(
+        refs.get("enterprise_underwriting_component_reader_bridge_ref") or ""
+    ).strip()
+    if not frozen_ref and not admission_ref and not component_bridge_ref:
         return {}
     return {
         "frozen_cjo_ref": frozen_ref,
         "current_company_cjo_admission_ref": admission_ref,
+        "enterprise_underwriting_component_reader_bridge_ref": component_bridge_ref,
         "company_id": str(
             contract.get("company_id")
             or contract.get("ts_code")
@@ -285,6 +289,194 @@ def _episode_bound_investment_refs(output_dir: str) -> dict[str, Any]:
             or contract.get("analysis_date")
             or ""
         ),
+    }
+
+
+def _evaluate_component_reader_bridge(
+    *, output_dir: str, refs: dict[str, Any], technical_text: str, reader_text: str,
+) -> dict[str, Any]:
+    """Validate a bound Episode bridge without creating a second report renderer."""
+    bridge_ref = str(refs.get("enterprise_underwriting_component_reader_bridge_ref") or "").strip()
+    if not bridge_ref:
+        return {"state": "SKIP", "status": "SKIP", "findings": [], "reason": "no_component_bridge_bound"}
+    output = Path(output_dir)
+
+    def resolve(ref: str) -> Path:
+        path = Path(ref).expanduser()
+        return path.resolve() if path.is_absolute() else (output / path).resolve()
+
+    bridge_path = resolve(bridge_ref)
+    try:
+        bridge = json.loads(bridge_path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return {
+            "state": "INVALID", "status": "FAIL",
+            "findings": ["component_reader_bridge_unreadable"],
+        }
+    episode_ref = str(bridge.get("episode_ref") or "").strip() if isinstance(bridge, dict) else ""
+    episode_path = resolve(episode_ref) if episode_ref else None
+    try:
+        episode = json.loads(episode_path.read_text(encoding="utf-8")) if episode_path else {}
+    except (OSError, json.JSONDecodeError):
+        episode = {}
+    try:
+        from scripts.report_autonomy_bridge import (
+            validate_component_reader_anchors,
+            validate_component_reader_bridge,
+            validate_component_reader_bridge_cjo_binding,
+        )
+    except ModuleNotFoundError:
+        from report_autonomy_bridge import (  # type: ignore[no-redef]
+            validate_component_reader_anchors,
+            validate_component_reader_bridge,
+            validate_component_reader_bridge_cjo_binding,
+        )
+    derivation = validate_component_reader_bridge(
+        bridge, episode, episode_ref=episode_ref,
+    )
+    findings = [
+        "component_reader_bridge_invalid:" + str(item)
+        for item in derivation.get("findings") or []
+    ]
+    if not findings:
+        identity = bridge.get("identity") if isinstance(bridge.get("identity"), dict) else {}
+        if not _completion_company_identity_matches(identity.get("company_id"), refs.get("company_id")):
+            findings.append("component_reader_bridge_company_id_mismatch")
+        if str(identity.get("cutoff_at") or "")[:10] != str(refs.get("cutoff_at") or "")[:10]:
+            findings.append("component_reader_bridge_cutoff_mismatch")
+    frozen_ref = str(refs.get("frozen_cjo_ref") or "").strip()
+    admission_ref = str(refs.get("current_company_cjo_admission_ref") or "").strip()
+    if frozen_ref or admission_ref:
+        if not frozen_ref or not admission_ref:
+            findings.append("component_reader_bridge_cjo_authority_incomplete")
+        else:
+            try:
+                frozen = json.loads(resolve(frozen_ref).read_text(encoding="utf-8"))
+                admission = json.loads(resolve(admission_ref).read_text(encoding="utf-8"))
+            except (OSError, json.JSONDecodeError):
+                findings.append("component_reader_bridge_cjo_or_admission_unreadable")
+            else:
+                authority = validate_component_reader_bridge_cjo_binding(
+                    bridge,
+                    frozen_cjo=frozen,
+                    current_company_admission=admission,
+                )
+                findings.extend(
+                    "component_reader_bridge_cjo_binding:" + str(item)
+                    for item in authority.get("findings") or []
+                )
+    anchors = validate_component_reader_anchors(
+        bridge if isinstance(bridge, dict) else {},
+        technical_text=technical_text,
+        reader_text=reader_text,
+    ) if not findings else {"state": "SKIP", "blocking_findings": []}
+    findings.extend(str(item) for item in anchors.get("blocking_findings") or [])
+    return {
+        "state": "DECISION_READY" if not findings else "INVALID",
+        "status": "PASS" if not findings else "FAIL",
+        "findings": list(dict.fromkeys(findings)),
+        "derivation": derivation,
+        "anchor_coverage": anchors,
+    }
+
+
+def _evaluate_report_industry_evidence_admission(
+    *, output_dir: str, technical_text: str,
+) -> dict[str, Any]:
+    """Check technical IEA references through their claim-ledger declarations."""
+    try:
+        from scripts.industry_evidence_report_admission import (
+            DEFAULT_ADMISSION_OUTPUT_NAME,
+            report_industry_evidence_ids,
+            validate_industry_evidence_report_admission,
+            validate_report_industry_evidence_uses,
+        )
+        from scripts.industry_evidence_source_binding import DEFAULT_BINDING_OUTPUT_NAME
+        from scripts.industry_experience_acquisition import (
+            DEFAULT_PLAN_OUTPUT_NAME,
+            DEFAULT_RECEIPT_OUTPUT_NAME,
+        )
+    except ModuleNotFoundError:
+        from industry_evidence_report_admission import (  # type: ignore[no-redef]
+            DEFAULT_ADMISSION_OUTPUT_NAME,
+            report_industry_evidence_ids,
+            validate_industry_evidence_report_admission,
+            validate_report_industry_evidence_uses,
+        )
+        from industry_evidence_source_binding import DEFAULT_BINDING_OUTPUT_NAME  # type: ignore[no-redef]
+        from industry_experience_acquisition import (  # type: ignore[no-redef]
+            DEFAULT_PLAN_OUTPUT_NAME,
+            DEFAULT_RECEIPT_OUTPUT_NAME,
+        )
+    uses = report_industry_evidence_ids(technical_text)
+    output = Path(output_dir)
+    claim_ledger_path = output / "claim_evidence.json"
+    try:
+        claim_ledger = json.loads(claim_ledger_path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        if uses:
+            return {
+                "state": "INVALID", "status": "FAIL",
+                "findings": ["external_industry_evidence_requires_readable_claim_ledger"],
+                "technical_evidence_ids": uses,
+            }
+        claim_ledger = {}
+    declared = any(
+        isinstance(fact, dict) and str(fact.get("industry_evidence_id") or "").strip()
+        for claim in (claim_ledger.get("claims") or [])
+        if isinstance(claim, dict)
+        for fact in (claim.get("raw_facts") or [])
+    ) if isinstance(claim_ledger, dict) else False
+    if not uses and not declared:
+        return {
+            "state": "SKIP", "status": "SKIP", "findings": [],
+            "technical_evidence_ids": [], "reason": "no_external_industry_evidence_used",
+        }
+    try:
+        admission = json.loads(
+            (output / DEFAULT_ADMISSION_OUTPUT_NAME).read_text(encoding="utf-8")
+        )
+        binding = json.loads(
+            (output / DEFAULT_BINDING_OUTPUT_NAME).read_text(encoding="utf-8")
+        )
+        plan = json.loads(
+            (output / DEFAULT_PLAN_OUTPUT_NAME).read_text(encoding="utf-8")
+        )
+        receipt = json.loads(
+            (output / DEFAULT_RECEIPT_OUTPUT_NAME).read_text(encoding="utf-8")
+        )
+        episode_ref = str(admission.get("episode_ref") or "").strip()
+        episode_path = Path(episode_ref).expanduser()
+        episode_path = episode_path if episode_path.is_absolute() else output / episode_path
+        episode = json.loads(episode_path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return {
+            "state": "INVALID", "status": "FAIL",
+            "findings": ["external_industry_evidence_requires_readable_report_admission"],
+            "technical_evidence_ids": uses,
+        }
+    admission_validation = validate_industry_evidence_report_admission(
+        admission, binding, plan, receipt, episode, artifact_root=output,
+    )
+    if admission_validation.get("state") != "REVIEWABLE":
+        return {
+            "state": "INVALID", "status": "FAIL",
+            "findings": [
+                "external_industry_evidence_admission_invalid:" + str(item)
+                for item in admission_validation.get("findings") or []
+            ],
+            "technical_evidence_ids": uses,
+        }
+    use_validation = validate_report_industry_evidence_uses(
+        admission, technical_text=technical_text, claim_ledger=claim_ledger,
+    )
+    findings = list(use_validation.get("blocking_findings") or [])
+    return {
+        "state": "DECISION_READY" if not findings else "INVALID",
+        "status": "PASS" if not findings else "FAIL",
+        "findings": findings,
+        "technical_evidence_ids": uses,
+        "admission": admission_validation,
     }
 
 
@@ -488,7 +680,10 @@ def evaluate_report_completion(
     analysis_purpose = _analysis_purpose(output_dir)
     company_judgment_only = analysis_purpose == "COMPANY_JUDGMENT_ONLY"
     episode_investment_refs = _episode_bound_investment_refs(output_dir)
-    episode_bound_investment = bool(episode_investment_refs)
+    episode_bound_investment = bool(
+        episode_investment_refs.get("frozen_cjo_ref")
+        or episode_investment_refs.get("current_company_cjo_admission_ref")
+    )
     episode_predecessor = (
         _evaluate_episode_bound_investment_predecessor(
             output_dir, episode_investment_refs,
@@ -497,6 +692,16 @@ def evaluate_report_completion(
             "state": "SKIP", "status": "SKIP",
             "findings": [], "reason": "legacy_predecessor_path",
         }
+    )
+    component_reader_bridge = _evaluate_component_reader_bridge(
+        output_dir=output_dir,
+        refs=episode_investment_refs,
+        technical_text=report_text,
+        reader_text=reader_report_text if reader_report_text is not None else report_text,
+    )
+    industry_evidence_admission = _evaluate_report_industry_evidence_admission(
+        output_dir=output_dir,
+        technical_text=report_text,
     )
     frozen_ref = _bound_frozen_cjo_ref(output_dir) if company_judgment_only else ""
     if frozen_ref:
@@ -511,6 +716,18 @@ def evaluate_report_completion(
         blocking.append(
             "Enterprise underwriting predecessor: INVALID: "
             + " | ".join(str(item) for item in episode_predecessor.get("findings") or [])
+        )
+    if component_reader_bridge.get("state") == "INVALID":
+        blocking.append(
+            "Enterprise underwriting component reader bridge: INVALID: "
+            + " | ".join(str(item) for item in component_reader_bridge.get("findings") or [])
+        )
+    if industry_evidence_admission.get("state") == "INVALID":
+        blocking.append(
+            "External industry evidence admission: INVALID: "
+            + " | ".join(
+                str(item) for item in industry_evidence_admission.get("findings") or []
+            )
         )
     chapters = ledger.get('chapters', {}) if isinstance(ledger, dict) else {}
     data_rich = detect_data_richness(output_dir)
@@ -1105,6 +1322,8 @@ def evaluate_report_completion(
         'audit': {'status': 'PASS' if not any('audit_' in b or 'missing_audit_record' in b for b in blocking) else 'FAIL'},
         'analysis_purpose': {'state': analysis_purpose},
         'enterprise_underwriting_predecessor': episode_predecessor,
+        'enterprise_underwriting_component_reader_bridge': component_reader_bridge,
+        'external_industry_evidence_admission': industry_evidence_admission,
         'gg_derivation': {
             'status': 'SKIP',
             'reason': 'structured_valuation_model_and_decision_reliability_own_derivation',

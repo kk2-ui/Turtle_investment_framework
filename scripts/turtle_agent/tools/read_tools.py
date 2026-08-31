@@ -457,6 +457,17 @@ def read_report_contract_pack(
     indexes = [int(item) for item in (chapter_indexes or sorted(_CHAPTER_TEMPLATE_TITLES))]
     analysis_contract = _read_json(os.path.join(output_dir, "analysis_contract.json")) or {}
     analysis_purpose = str(analysis_contract.get("analysis_purpose") or "INVESTMENT_DECISION")
+    canonical_judgment_refs = (
+        analysis_contract.get("canonical_judgment_refs")
+        if isinstance(analysis_contract.get("canonical_judgment_refs"), dict) else {}
+    )
+    episode_bound_investment = bool(
+        canonical_judgment_refs.get("frozen_cjo_ref")
+        or canonical_judgment_refs.get("current_company_cjo_admission_ref")
+        or canonical_judgment_refs.get(
+            "enterprise_underwriting_component_reader_bridge_ref"
+        )
+    )
     research_agenda_handoff = read_judgment_generation_handoff(
         output_dir, "RESEARCH_AGENDA",
     )
@@ -586,7 +597,35 @@ def read_report_contract_pack(
             "必须按 findings 修复，不能用估值或正文绕过。"
         ),
     }
-    if predecessor:
+    if episode_bound_investment:
+        synthesis = read_judgment_generation_handoff(
+            output_dir, "JUDGMENT_SYNTHESIS",
+        )
+        enrichment = read_judgment_generation_handoff(
+            output_dir, "INVESTMENT_ENRICHMENT",
+        )
+        synthesis_projection = (
+            synthesis.get("projection") if isinstance(synthesis.get("projection"), dict) else {}
+        )
+        generation_handoff["judgment_synthesis"] = synthesis
+        generation_handoff["investment_enrichment"] = enrichment
+        generation_handoff["writer_underwriting_handoff"] = {
+            "enterprise_underwriting_component_reader_bridge": (
+                synthesis_projection.get("enterprise_underwriting_component_reader_bridge") or {}
+            ),
+            "report_admitted_industry_evidence": (
+                synthesis_projection.get("report_admitted_industry_evidence") or {}
+            ),
+            "instruction": (
+                "The component bridge is a fixed writer constraint: retain every supplied reader-safe "
+                "anchor exactly once without promoting conditional, excluded, scenario-only, or unresolved "
+                "treatment. External industry evidence may be used only from the report-admitted list; "
+                "every technical IEA reference must also be declared in its claim_evidence raw_fact with "
+                "industry_evidence_id, industry_task_id, and transmission_requirement_id copied exactly "
+                "from the report-admitted list. The reader surface may remain marker-free."
+            ),
+        }
+    elif predecessor:
         generation_handoff["investment_enrichment"] = read_judgment_generation_handoff(
             output_dir, "INVESTMENT_ENRICHMENT",
         )

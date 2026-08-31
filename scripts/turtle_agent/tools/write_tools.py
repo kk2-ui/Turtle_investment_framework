@@ -457,6 +457,102 @@ def write_industry_evidence_report_admission(
     }
 
 
+def write_enterprise_underwriting_component_reader_bridge(
+    output_dir: str = ".", episode_ref: str = "",
+) -> dict[str, Any]:
+    """Bind the report writer to a read-only component-economics Episode projection.
+
+    This compiles no new judgment.  It only records, in the current report
+    contract, the one local bridge that completion must require from the
+    existing writer and its reader surface.
+    """
+    try:
+        from scripts.report_autonomy_bridge import (
+            DEFAULT_OUTPUT_NAME,
+            compile_component_reader_bridge,
+            validate_component_reader_bridge_cjo_binding,
+        )
+    except ModuleNotFoundError:  # pragma: no cover - direct import fallback
+        from report_autonomy_bridge import (  # type: ignore[no-redef]
+            DEFAULT_OUTPUT_NAME,
+            compile_component_reader_bridge,
+            validate_component_reader_bridge_cjo_binding,
+        )
+    root = Path(output_dir).expanduser().resolve()
+    episode_path = Path(episode_ref).expanduser()
+    episode_path = episode_path if episode_path.is_absolute() else root / episode_path
+    try:
+        episode = json.loads(episode_path.read_text(encoding="utf-8"))
+        contract = json.loads((root / "analysis_contract.json").read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return {"ok": False, "error": "episode_or_analysis_contract_missing_or_invalid"}
+    if not isinstance(episode, dict) or not isinstance(contract, dict):
+        return {"ok": False, "error": "episode_or_analysis_contract_not_object"}
+    contract_company = str(
+        contract.get("company_id") or contract.get("ts_code") or contract.get("code") or ""
+    ).strip()
+    episode_company = str(episode.get("company_id") or "").strip()
+    contract_digits = "".join(item for item in contract_company if item.isdigit())
+    episode_digits = "".join(item for item in episode_company if item.isdigit())
+    if not contract_company or not episode_company or not (
+        contract_company == episode_company
+        or (len(contract_digits) >= 5 and contract_digits[-6:] == episode_digits[-6:])
+    ):
+        return {"ok": False, "error": "component_reader_bridge_company_identity_mismatch"}
+    contract_cutoff = str(
+        contract.get("data_as_of") or contract.get("analysis_date") or contract.get("cutoff_at") or ""
+    )[:10]
+    if contract_cutoff and contract_cutoff != str(episode.get("cutoff_at") or "")[:10]:
+        return {"ok": False, "error": "component_reader_bridge_cutoff_identity_mismatch"}
+    try:
+        payload = compile_component_reader_bridge(episode, episode_ref=str(episode_path))
+    except ValueError as exc:
+        return {"ok": False, "error": str(exc)}
+    refs = contract.get("canonical_judgment_refs")
+    refs = dict(refs) if isinstance(refs, dict) else {}
+    frozen_ref = str(refs.get("frozen_cjo_ref") or "").strip()
+    admission_ref = str(refs.get("current_company_cjo_admission_ref") or "").strip()
+    if bool(frozen_ref) != bool(admission_ref):
+        return {
+            "ok": False,
+            "error": "component_reader_bridge_requires_frozen_cjo_and_current_company_admission_pair",
+        }
+    if frozen_ref:
+        def resolve(ref: str) -> Path:
+            path = Path(ref).expanduser()
+            return path.resolve() if path.is_absolute() else (root / path).resolve()
+        try:
+            frozen = json.loads(resolve(frozen_ref).read_text(encoding="utf-8"))
+            admission = json.loads(resolve(admission_ref).read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError):
+            return {"ok": False, "error": "component_reader_bridge_cjo_or_admission_unreadable"}
+        authority = validate_component_reader_bridge_cjo_binding(
+            payload,
+            frozen_cjo=frozen,
+            current_company_admission=admission,
+        )
+        if authority.get("state") != "REVIEWABLE":
+            return {
+                "ok": False,
+                "error": "component_reader_bridge_cjo_binding_invalid:"
+                + ",".join(str(item) for item in authority.get("findings") or []),
+            }
+    destination = root / DEFAULT_OUTPUT_NAME
+    destination.write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    refs["enterprise_underwriting_component_reader_bridge_ref"] = DEFAULT_OUTPUT_NAME
+    contract["canonical_judgment_refs"] = refs
+    (root / "analysis_contract.json").write_text(
+        json.dumps(contract, ensure_ascii=False, indent=2) + "\n", encoding="utf-8",
+    )
+    return {
+        "ok": True,
+        "artifact_ref": DEFAULT_OUTPUT_NAME,
+        "bridge_id": payload["bridge_id"],
+        "bound_episode_id": payload["identity"]["episode_id"],
+        "report_use": "The existing writer and reader completion gate must retain every component-economics anchor once.",
+    }
+
+
 def _cjo_forbidden_report_findings(text: str) -> list[str]:
     """Return concrete CJO output-boundary breaches without blocking product price."""
     findings: list[str] = []
@@ -4197,6 +4293,14 @@ write_industry_evidence_report_admission._tool_meta = {
         "paired_observations": {"type": "array", "items": {"type": "object"}, "description": "每条行业观察与 Episode 中独立公司一手证据的配对"},
     },
 }  # type: ignore[attr-defined]
+write_enterprise_underwriting_component_reader_bridge._tool_meta = {
+    "name": "write_enterprise_underwriting_component_reader_bridge",
+    "description": "把一个已审阅 Enterprise Underwriting Episode 的组件经济去向、正常盈利桥和敏感性锚点绑定到当前报告合同；它不生成新事实、估值、价格或行动，但正式读者报告必须保留这些锚点。",
+    "parameters": {
+        "output_dir": {"type": "string", "description": "当前报告输出目录"},
+        "episode_ref": {"type": "string", "description": "同公司、同 cutoff、已审阅 Episode 文件"},
+    },
+}  # type: ignore[attr-defined]
 verify_official_fact._tool_meta = {
     "name": "verify_official_fact",
     "description": "把read_section精确回读的原文事实程序化验证为VERIFIED observation。quote必须逐字存在于指定doc_id/page，数值raw_value也必须出现在quote；失败不得自行升级。",
@@ -4288,6 +4392,9 @@ write_claim_evidence_ledger._tool_meta = {
                                 "evidence_id": {"type": "string"},
                                 "observation_id": {"type": "string", "description": "官方原始事实直接支持引用VERIFIED observation_id"},
                                 "calculation_id": {"type": "string", "description": "派生计算直接支持引用CALC identity；不得与observation_id同时使用"},
+                                "industry_evidence_id": {"type": "string", "description": "若技术主张使用外部行业观察，填写报告准入清单中的IEA: identity；必须同时填写industry_task_id和transmission_requirement_id，且三者精确匹配准入记录。"},
+                                "industry_task_id": {"type": "string", "description": "industry_evidence_id对应的已准入IEAT: task_id"},
+                                "transmission_requirement_id": {"type": "string", "description": "industry_evidence_id对应的已准入IETR: transmission requirement"},
                                 "source_id": {"type": "string"},
                                 "source_group_id": {"type": "string"},
                                 "fact": {"type": "string", "description": "一个原子事实；其中每个实质数字必须出现在observation原文/值中，不能借用同文档无关OBS，复合数字拆成多条evidence"},

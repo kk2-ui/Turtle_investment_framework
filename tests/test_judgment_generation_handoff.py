@@ -11,6 +11,8 @@ from scripts.judgment_learning import (
     build_judgment_learning_note,
     build_method_feedback_review,
 )
+from scripts.report_autonomy_bridge import compile_component_reader_bridge
+from tests.test_enterprise_underwriting_episode import _episode_with_derivation
 from judgment_generation_handoff import (
     build_judgment_generation_handoff,
     validate_judgment_generation_handoff,
@@ -813,6 +815,57 @@ def test_judgment_synthesis_projects_kernel_without_outcomes_prices_or_actions(t
     assert handoff["projection"]["thesis"]["forward_judgments"][0]["settlement_contract"]
     assert not _contains_forbidden_key(handoff["projection"])
     assert validate_judgment_generation_handoff(handoff, output_dir=tmp_path)["state"] == "READY"
+
+
+def test_judgment_synthesis_exposes_only_an_explicitly_bound_component_reader_bridge(tmp_path):
+    _contract(tmp_path)
+    _ledger(tmp_path, "claim_evidence.json", "claim_evidence_validation.json", {
+        "report_id": "000651.SZ", "analysis_purpose": "COMPANY_JUDGMENT_ONLY", "claims": [],
+    })
+    _ledger(tmp_path, "financial_driver_bridge.json", "financial_driver_bridge_validation.json", {
+        "report_id": "000651.SZ", "analysis_purpose": "COMPANY_JUDGMENT_ONLY",
+        "drivers": [], "allocation_events": [],
+    })
+    _ledger(tmp_path, "thesis_test.json", "thesis_test_validation.json", {
+        "report_id": "000651.SZ", "analysis_purpose": "COMPANY_JUDGMENT_ONLY",
+        "lifecycle": "reviewable", "central_path": {}, "forward_judgments": [],
+        "mechanism_chains": [], "rival_hypothesis_pairs": [], "analogy_transfer_cards": [],
+    })
+    _ledger(tmp_path, "insight_ledger.json", "insight_validation.json", {
+        "report_id": "000651.SZ", "analysis_purpose": "COMPANY_JUDGMENT_ONLY",
+        "insights": [], "adversarial_review": {},
+    })
+    episode = _episode_with_derivation()
+    episode["company_id"] = "CN:000651"
+    episode["cutoff_at"] = "2026-06-30T23:59:59+08:00"
+    episode["episode_id"] = "EUE:CN000651:20260630:V1"
+    episode["underwriting_thesis"]["thesis_id"] = "UWT:CN000651:20260630:V1"
+    episode_path = tmp_path / "episode.json"
+    _write(episode_path, episode)
+    bridge = compile_component_reader_bridge(episode, episode_ref=str(episode_path))
+    bridge_path = tmp_path / "enterprise_underwriting_component_reader_bridge.json"
+    _write(bridge_path, bridge)
+    contract = json.loads((tmp_path / "analysis_contract.json").read_text(encoding="utf-8"))
+    contract["canonical_judgment_refs"] = {
+        "enterprise_underwriting_component_reader_bridge_ref": str(bridge_path),
+    }
+    _write(tmp_path / "analysis_contract.json", contract)
+
+    handoff = build_judgment_generation_handoff(tmp_path, "JUDGMENT_SYNTHESIS")
+
+    assert handoff["readiness"]["state"] == "READY"
+    projected = handoff["projection"]["enterprise_underwriting_component_reader_bridge"]
+    assert projected["state"] == "READY"
+    assert projected["bridge"]["identity"]["episode_id"] == episode["episode_id"]
+
+    bridge["identity"]["company_id"] = "CN:OTHER"
+    _write(bridge_path, bridge)
+    rejected = build_judgment_generation_handoff(tmp_path, "JUDGMENT_SYNTHESIS")
+    assert rejected["readiness"]["state"] == "BLOCKED"
+    assert any(
+        "component_reader_bridge_invalid:not_exact_episode_derivation" == finding
+        for finding in rejected["readiness"]["invalid_findings"]
+    )
 
 
 def test_investment_enrichment_inherits_same_cutoff_cjo_without_price_or_action(tmp_path):
