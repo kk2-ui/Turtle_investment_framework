@@ -2,7 +2,7 @@
 
 > 状态：`CURRENT / AUTHORITATIVE_NAVIGATION`
 >
-> 更新：2026-08-30
+> 更新：2026-08-31
 
 本文件只解决一件事：告诉后续 Agent 哪些文档可以决定当前状态、执行顺序和产品标准。`docs/History/` 中的文件只用于追溯，不能成为恢复入口、当前状态或实施授权。
 
@@ -10,7 +10,7 @@
 
 当前企业判断、训练、估值与黄金报告的最高层对象改为[企业投资承保系统 V1](development/research/TURTLE_ENTERPRISE_UNDERWRITING_SYSTEM_V1.md)中的 `EnterpriseUnderwritingEpisode`。它把宏观/行业处境、周期与结构、公司位置和适应、生存、正常化、owner cash、永久损失、价值路线及价格处理连接成一条连续投资主张。
 
-现有八维 `EnterpriseJudgmentEpisode`、E0--E3、J0--J4、Forecast、Comparative 和各类 receipt 继续作为底层证据、局部反馈和兼容投影，不能再作为投资者可见的主流程或顶层进度。[企业投资承保纵向切片 V1 Goal](development/research/TURTLE_ENTERPRISE_UNDERWRITING_VERTICAL_SLICE_GOAL.md) 的 U1 与 kernel 接线已实现：Episode v2 内置 `IndustryFutureThesis`；唯一训练入口只认可完整 Episode；同一价格前主张可穿过 current-company CJO、Frozen CJO report handoff、valuation runtime 和现有经验 registry。海螺仍是 `RESULT_KNOWN_TEACHING_ONLY / WORKED_CASE`。课程一期已完成 12 个 worked case、4 个完整 Blind Replay 和一轮公平 A/B；其唯一认知隔离 A/B 为 `ENHANCED_WORSE`。Course 2A 的水泥行业经验资产达到 `TRAINING_READY`；Course 2B 随后以 fresh Agent + fresh reviewer 完成上峰水泥未见公司轴，但结果为 `NO_MATERIAL_UTILITY`，所以方法迁移、当前估值、BuyBand、时间轴和投资权限仍未取得。完整课程一期状态以[课程完成审计](development/research/training_campaigns/ENTERPRISE_UNDERWRITING_COURSE_1_20260829/14_COURSE_1_COMPLETION_AUDIT.md)为准，课程二期以[最终映射裁决](development/research/training_campaigns/ENTERPRISE_UNDERWRITING_COURSE_2B_CN000672_20180430/13_FRESH_REVIEW_FINAL_MAPPING_ADJUDICATION.md)为准。
+现有八维 `EnterpriseJudgmentEpisode`、E0--E3、J0--J4、Forecast、Comparative 和各类 receipt 继续作为底层证据、局部反馈和兼容投影，不能再作为投资者可见的主流程或顶层进度。[企业投资承保纵向切片 V1 Goal](development/research/TURTLE_ENTERPRISE_UNDERWRITING_VERTICAL_SLICE_GOAL.md) 的 U1 与 kernel 接线已实现：Episode v2 内置 `IndustryFutureThesis`；唯一训练入口只认可完整 Episode；同一价格前主张可穿过 current-company CJO、Frozen CJO report handoff、valuation runtime 和现有经验 registry。海螺仍是 `RESULT_KNOWN_TEACHING_ONLY / WORKED_CASE`。课程一期已完成 12 个 worked case、4 个完整 Blind Replay 和一轮公平 A/B；其唯一认知隔离 A/B 为 `ENHANCED_WORSE`。Course 2A 的水泥行业经验资产达到 `TRAINING_READY`；Course 2B 的上峰水泥公司轴为 `NO_MATERIAL_UTILITY`。随后 Course 2C 以 fresh Codex、独立 custodian 与独立 reviewer 在祁连山完成未见公司检验：行业路径仍为 `NO_MATERIAL_DIFFERENCE`，但公司传导与整体效用为 `ENHANCED_MATERIALLY_BETTER`，方法最高进入 `TRANSFER_CANDIDATE`。这不授予行业预测能力、方法 release、估值、BuyBand、时间轴或投资权限。完整课程状态和历史训练资产的当前处置以[训练基线对齐](development/research/TURTLE_TRAINING_BASELINE_ALIGNMENT_20260831.md)为准。
 
 ## 2026-08-29 唯一训练集成基线
 
@@ -20,13 +20,13 @@
 
 行业前景训练改为明确的上游闭环：`IndustryLearningBlock -> Industry Experience Pack -> IndustryUnderwritingContext -> EnterpriseUnderwritingEpisode.IndustryFutureThesis`。Pack 是引用现有行业 block、官方 observation、机制、案例、反例和反馈的版本化 manifest，不是新事实库；公司结果只结算公司传导，行业方向必须由官方行业资料和多家公司共同结果结算。
 
-manifest schema、机械验证器和官方行业 acquisition 已经实现。水泥 V1 离线回放继续保留为合法 `DRAFT`；V2 已物化工信部 2017H1 量价利润与过剩页面、国务院新增产能/错峰/重组政策页面，并形成 locator-backed observation ledger。新的 Context 由编译器生成 `READY`；V2 Pack 把海螺、天山、福建水泥的经营分化和华新、冀东的责任边界绑定到同一行业冲击，验证器派生 `TRAINING_READY` 且缺口为空。中心路径是需求量近乎横盘下的价格/供给纪律驱动利润池恢复，最强反方是低基数、阶段性错峰和未解决过剩令恢复不可持续。Course 2A 已完成；Course 2B 上峰水泥公司轴也已完成，但行业路径与公司传导均无材料差异，Pack 追加 `COMPANY_HOLDOUT / NO_MATERIAL_UTILITY` 后仍为 `TRAINING_READY`。训练 runtime 已为未来 v2 合同增加显式组件决策接口；冻结 Episode 不回填，时间轴和 Agent 行业判断能力仍未验证。当前状态以[行业经验层设计](development/research/TURTLE_INDUSTRY_EXPERIENCE_LAYER_V1_DESIGN.md)、[课程二期 Goal](development/research/training_campaigns/ENTERPRISE_UNDERWRITING_COURSE_2_INDEPENDENT_AB_GOAL.md)和[Course 2B 学习说明](development/research/training_campaigns/ENTERPRISE_UNDERWRITING_COURSE_2B_CN000672_20180430/14_COURSE_2B_LEARNING_NOTE.md)为准。
+manifest schema、机械验证器和官方行业 acquisition 已经实现。水泥 V1 离线回放继续保留为合法 `DRAFT`；V3 以独立 issuer catalog 修正 `CN:600425` 的青松建化身份，并保持 Pack 为 `TRAINING_READY`。中心路径仍是需求量近乎横盘下的价格/供给纪律驱动利润池恢复，最强反方是低基数、阶段性错峰和未解决过剩令恢复不可持续。Course 2B 上峰水泥的行业路径与公司传导均无材料差异；Course 2C 祁连山的行业路径仍无材料差异，但结果期区分了成熟核心、会计控制边界、生命周期 cohort 与资本责任的公司传导，整体为 `ENHANCED_MATERIALLY_BETTER / TRANSFER_CANDIDATE`。训练 runtime 已为 v2 合同增加显式组件决策接口；冻结 Episode 不回填，时间轴和 Agent 行业前景判断能力仍未验证。当前状态以[Course 2C 最终效用裁决](development/research/training_campaigns/ENTERPRISE_UNDERWRITING_COURSE_2C_CN600720_20180430/10_COURSE2C_FINAL_UTILITY_REVIEW.md)与[训练基线对齐](development/research/TURTLE_TRAINING_BASELINE_ALIGNMENT_20260831.md)为准。
 
 ## 2026-08-29 企业判断经验调用设计
 
-企业判断经验调用闭环最初由[企业判断经验调用闭环 V1](development/research/TURTLE_JUDGMENT_EXPERIENCE_MEMORY_V1.md)设计，现已在 `main` 实现 source-side 经验登记、结构检索、结果前调用收据与结果后边界更新。福莱特 `CN601865@2024-04-01` 已完成一次 outcome-sealed 经验调用：隆基经验改变了问题顺序、反方和新增产能的保守 owner-cash 处理；FY2024 结果仍密封，因此没有反馈、迁移或方法验证。
+企业判断经验调用闭环最初由[企业判断经验调用闭环 V1](development/research/TURTLE_JUDGMENT_EXPERIENCE_MEMORY_V1.md)设计，现已在 `main` 实现 source-side 经验登记、结构检索、结果前调用收据与结果后边界更新。福莱特 `CN601865@2024-04-01` 已完成一次 outcome-sealed 经验调用及 FY2024 独立结果复审：正向现金资本开支屏幕改变了“新增产能必然吞噬现金”的基准，但客户吸收、利用率、价差、维护/增长资本和可回收性仍未结算，故裁决为 `NOT_DIAGNOSTIC`，不产生迁移或方法验证。
 
-该实现继续复用 Teaching mechanism card、Blind feedback、LearningNote、`analogy_transfer_cards` 和 CJO；没有第二套事实或 target card。当前实现状态以 `main@5d64b91b354d`、`scripts/judgment_experience_memory.py` 和 `docs/development/research/experience_applications/CN601865_20240401/` 为准。
+该实现继续复用 Teaching mechanism card、Blind feedback、LearningNote、`analogy_transfer_cards` 和 CJO；没有第二套事实或 target card。当前实现状态以本地 `main`、`scripts/judgment_experience_memory.py`、`docs/development/research/experience_applications/CN601865_20240401/` 与[训练基线对齐](development/research/TURTLE_TRAINING_BASELINE_ALIGNMENT_20260831.md)为准。
 
 ## 2026-08-27 V2 训练裁决（兼容历史）
 
@@ -112,6 +112,8 @@ V2 兼容状态是 `G1_CANDIDATE_MATURATION + G1-T_ENTERPRISE_JUDGMENT_V2 / REAL
 | `docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_COURSE_2B_CN000672_20180430/13_FRESH_REVIEW_FINAL_MAPPING_ADJUDICATION.md` | fresh Reviewer 的冻结映射与双层结果裁决；Arm A=Enhanced、Arm B=Baseline，整体 NO_MATERIAL_UTILITY |
 | `docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_COURSE_2B_CN000672_20180430/14_COURSE_2B_LEARNING_NOTE.md` | 负结果的材料性 MODEL 修订、DATA_COVERAGE 前提及不得扩样/回填的边界 |
 | `docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_COURSE_2B_CN000672_20180430/15_COURSE_2B_COMPLETION_AUDIT.md` | Course 2B 的最终收口：冻结裁决、Pack 状态、route required/optional 组件修订、legacy 回放边界、测试与 fresh 独立代码复审 |
+| `docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_COURSE_2C_CN600720_20180430/10_COURSE2C_FINAL_UTILITY_REVIEW.md` | Course 2C 的正式双层裁决：行业路径无材料差异，公司传导与整体效用为 Enhanced materially better，方法仅为 transfer candidate |
+| `docs/development/research/TURTLE_TRAINING_BASELINE_ALIGNMENT_20260831.md` | 当前训练基线总索引：统一 main、Course 1/2B/2C、经验调用反馈，以及历史课程结论的保留与非合并边界 |
 | `scripts/industry_experience_pack.py` | 验证 Pack 引用、时间角色、角色覆盖、行业/公司分层结算和公司轴/时间轴成熟状态；不采集或复制事实 |
 | `docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/56_industry_experience_pack_replay_v1.json` | 首个行业经验层离线回放；状态为 DRAFT，只验证工作流，不计能力 |
 | `docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/60_official_industry_context_observations_v1.json` | cutoff-safe 工信部/国务院行业观察 ledger；绑定已物化 raw package、经济解释和禁止外推边界 |

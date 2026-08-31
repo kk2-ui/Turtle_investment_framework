@@ -8,6 +8,8 @@
 
 > 当前集成提交：`main@5d64b91b354d`；该提交已在本基线之后实现并合入 Judgment Experience Invocation Loop。企业判断的最新上位设计另见 `TURTLE_ENTERPRISE_UNDERWRITING_SYSTEM_V1.md`。
 
+> 2026-08-31 对齐说明：本文件保留 2026-08-29 的统一基线裁决与当时来源，不能再单独描述当前训练状态。当前运行基线、Course 2C 结果及历史课程的迁入处置见 [训练基线对齐](TURTLE_TRAINING_BASELINE_ALIGNMENT_20260831.md)。
+
 ## 1. 唯一基线裁决
 
 本文件所在的验收提交快进 `main` 后，`main` 是训练、企业判断、结果结算、学习读模型和经验调用

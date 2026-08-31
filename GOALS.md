@@ -1,8 +1,8 @@
 # Turtle 当前协调目标：Phase 08 多黄金报告集合 v1
 
-> 状态日期：2026-08-30
+> 状态日期：2026-08-31
 > 当前目标：`GOLDEN_SET_V1`
-> 当前阶段：`G1_CANDIDATE_MATURATION + G1-U_ENTERPRISE_UNDERWRITING_KERNEL / COURSE_1_COMPLETED + COURSE_2A_COMPLETE + CEMENT_PACK_TRAINING_READY + COURSE_2B_COMPANY_HOLDOUT_NO_MATERIAL_UTILITY + MODEL_INTERFACE_REVISED + TIME_AXIS_NOT_STARTED + METHOD_NOT_VALIDATED`
+> 当前阶段：`G1_CANDIDATE_MATURATION + G1-U_ENTERPRISE_UNDERWRITING_KERNEL / COURSE_1_COMPLETED + COURSE_2A_COMPLETE + CEMENT_PACK_TRAINING_READY + COURSE_2B_NO_MATERIAL_UTILITY + COURSE_2C_COMPANY_TRANSMISSION_TRANSFER_CANDIDATE + MODEL_INTERFACE_REVISED + TIME_AXIS_NOT_STARTED + METHOD_NOT_VALIDATED`
 > 长期领域路线图：`docs/development/LONG_TERM_ROADMAP.md`
 > 双向层级研究路线：`docs/development/GOLDEN_REPORT_BIDIRECTIONAL_RESEARCH_ROADMAP.md`
 
@@ -36,6 +36,8 @@ Phase 08 不再采用“先把 02669 做成唯一黄金样本，再用 01502 做
 2026-08-30，企业承保课程一期已完成并合入主线：12 个跨行业 worked case、4 个完整 Blind Replay 和一轮公平 A/B 均已形成结果后诊断。课程证明 Agent 可以在局部未知下继续完成行业、公司位置、生存、正常化、owner cash、永久损失和价值路线的判断；但唯一认知隔离的公平 A/B（顺丰）为 `ENHANCED_WORSE`，原因是 Enhanced 将“增长资本回报未证明”误写成“维护后 owner cash 接近零或为负”。这是一项 `REASONING` 失败，不是资料不足。后续不得继续堆当前 Agent 的 self replay，也不得把课程规模、文字增量或更保守处理叙述为能力提升。下一项训练验证必须由认知隔离 Agent 在新的公司、同 cutoff、同证据、相近预算下执行公平 A/B。
 
 2026-08-30，Course 2B 已按该要求用上峰水泥 `CN:000672 @ 2018-04-30` 完成 fresh Codex 未见公司公平 A/B。结果前匿名审阅窄幅偏好 Enhanced，但 FY2018--FY2020 行业与公司双层结果显示两臂最终都正确作出相同经济处理；独立裁决为 `NO_MATERIAL_UTILITY / MODEL + DATA_COVERAGE`。水泥 Pack 保持 `TRAINING_READY`，不升 `TRANSFER_CANDIDATE`，时间轴停止在未启动，Agent 行业前景判断能力仍未验证。冻结实验不补样、不改答案；未来训练合同已增加组件到正常盈利、owner cash、融资压力、永久损失和价值路线的显式决策接口，并为每条估值路线声明必需/可选组件；该修订经 fresh 代码复审通过，但其方法效用仍需新的认知隔离实验验证。最终收口见 `15_COURSE_2B_COMPLETION_AUDIT.md`。
+
+2026-08-31，Course 2C 以祁连山 `CN:600720 @ 2018-04-30` 完成新的、预注册的 fresh Codex 公司 holdout。两臂的行业路径仍为 `NO_MATERIAL_DIFFERENCE`；但在持续经营经济与会计并表边界、已投产/未投产/终止 cohort、普通股现金归属及新增资本责任的组件化处理上，结果支持 Enhanced 的公司传导，整体裁决为 `ENHANCED_MATERIALLY_BETTER / TRANSFER_CANDIDATE`。这只允许在另一未见公司或时间 holdout 上复验同一公司传导方法；不等于行业前景判断能力、方法 release、估值、BuyBand 或投资权限。完整证据见 `ENTERPRISE_UNDERWRITING_COURSE_2C_CN600720_20180430/10_COURSE2C_FINAL_UTILITY_REVIEW.md`。
 
 旧的 01502/02669 黄金身份、旧 Q1 单样本顺序、旧 dashboard 状态、旧黄金预览或旧评审票，均不得自动沿用为当前结论。历史工件仍可作为研究资料和回归输入，但不能覆盖本文件。
 
@@ -146,7 +148,7 @@ HTML 只负责渲染，不得另造投资事实、模型数值或结论。正文
 | G1 候选内容成熟与逐案接纳 | 七个指定案例完成材料性修复和独立接纳 | **IN_PROGRESS** |
 | G1-J 判断契约与已有案例资产接线 | 复用书籍方法案例卡和基准率候选，补齐中心路径、前瞻判断与历史结算硬门 | **IN_PROGRESS / G1内部前置门** |
 | G1-T 历史判断训练与留出 | 已完成首个真实 `IndustryLearningBlock + EnterpriseJudgmentEpisode` 的 E0/E1 多维重建与独立 feedback；Comparative 仅为局部 E3 支线，有效方法冻结后再揭盲 R-61 | **IN_PROGRESS / REAL_SAMPLE_CREATED + REAL_FEEDBACK_TURN_COMPLETED / TRANSFER_NOT_VALIDATED** |
-| G1-U 企业投资承保纵向切片 | 用一个完整对象连接处境、生存、正常化、永久损失、价值路线、CJO、估值和黄金报告 | **KERNEL_IMPLEMENTED / COURSE_1_COMPLETED / COURSE_2A_COMPLETE / CEMENT_PACK_TRAINING_READY / COURSE_2B_COMPANY_HOLDOUT_NO_MATERIAL_UTILITY / MODEL_INTERFACE_REVISED / TIME_AXIS_NOT_STARTED / METHOD_NOT_VALIDATED** |
+| G1-U 企业投资承保纵向切片 | 用一个完整对象连接处境、生存、正常化、永久损失、价值路线、CJO、估值和黄金报告 | **KERNEL_IMPLEMENTED / COURSE_1_COMPLETED / COURSE_2A_COMPLETE / CEMENT_PACK_TRAINING_READY / COURSE_2B_NO_MATERIAL_UTILITY / COURSE_2C_COMPANY_TRANSMISSION_TRANSFER_CANDIDATE / MODEL_INTERFACE_REVISED / TIME_AXIS_NOT_STARTED / METHOD_NOT_VALIDATED** |
 | G1.5 格力行业经验工厂试验 | 24 份黄金级产物验证公司→行业→宏观传导→公司的双向研究架构 | PLANNED |
 | G2 跨报告裁决与路线规范 | 统一共同规则，裁决公司、行业、基准率和宏观层的权限与路线差异 | PLANNED |
 | G3 Golden Set v1 与行业经验包冻结 | 多份内容黄金报告、完整案例包及 `Industry Experience Pack v1` 形成版本化集合 | PLANNED |
@@ -320,7 +322,7 @@ G1-U kernel 和课程一期完成后不继续扩字段、receipt 或当前 Agent
 
 2026-08-30 的 Course 2A 已完成水泥行业经验资产准备。V1 Pack 继续保留为当时合法的 `DRAFT`；V2 新增 cutoff-safe 工信部量价利润与过剩观察、国务院新增产能/错峰/重组政策、海螺/天山/福建水泥的经营分化，以及华新并购和冀东重组的责任边界。官方 ledger 必须回读已物化 raw package，Context 由编译器生成 `READY`，Pack 由 validator 派生为 `TRAINING_READY` 且缺口为空。中心路径是需求量近乎横盘下的价格/供给纪律驱动恢复，最强反方是低基数、阶段性错峰和未解决过剩令恢复不可持续。Course 2A 完成时只取得上游资产；后续 Course 2B 状态由下一段更新。
 
-同日启动的 Course 2B 公司轴现已完成。上峰水泥两臂均识别 2018--2019 价格主导改善、2020 周期折返、华东成熟核心与低价西部增量分离、三笔资本账及房地产 OCF 边界；Enhanced 的额外结构没有改变最终投资处理，因此公司轴为 `NO_MATERIAL_UTILITY`。Pack 只追加独立负结果 review 并维持 `TRAINING_READY`；冻结 Episode 和三阶段审阅不改写。按停止条件不扩样、不启动时间轴，先把未来合同的组件标签固定为显式下游决策语义；维护资本、规范化营运资本、房地产 OCF、逐 cohort 回报和区域量价/利用率则作为未来重新预注册前的 acquisition 前提。
+同日启动的 Course 2B 公司轴现已完成。上峰水泥两臂均识别 2018--2019 价格主导改善、2020 周期折返、华东成熟核心与低价西部增量分离、三笔资本账及房地产 OCF 边界；Enhanced 的额外结构没有改变最终投资处理，因此公司轴为 `NO_MATERIAL_UTILITY`。Pack 只追加独立负结果 review 并维持 `TRAINING_READY`；冻结 Episode 和三阶段审阅不改写。该轮的停止条件是不为覆盖负结果而扩样或启动时间轴；组件标签、维护资本、规范化营运资本、房地产 OCF、逐 cohort 回报和区域量价/利用率则成为下一次**独立预注册**的 acquisition 前提。Course 2C 随后以不同公司、V3 identity 修正和 multi-source acquisition 修复完成，结果及其窄 `TRANSFER_CANDIDATE` 边界以第 1 节和第 15 节为准。
 
 ## 7A. G1.5：格力行业经验工厂与双向层级试验
 
@@ -537,10 +539,10 @@ Phase 08 只有同时具备以下结果才能完成：
 当前执行分为训练主线与黄金候选线，互不以等待状态阻断：
 
 1. **集成 G1-U kernel，不再重开字段底座。** 以 Episode v2、唯一训练入口、CJO/valuation/report/experience 同源接线作为当前实现基线；继续停止扩展 receipt 和准入控制。
-2. **Course 2B 负结果已收口，停止扩样。** 上峰水泥 fresh A/B 已完成并裁决 `NO_MATERIAL_UTILITY`；不启动时间轴或新公司。未来若另行预注册，先证明新合同的组件决策接口和可复用资本/区域 acquisition 已足以制造可结算的经济差异，不能用更多文字覆盖本轮结果。
+2. **Course 2B 负结果已收口；Course 2C 只准按候选方法复验。** 上峰水泥 fresh A/B 的 `NO_MATERIAL_UTILITY` 不得用补样或更多文字覆盖。祁连山 Course 2C 的正结果只限公司传导：下一次必须以另一未见公司或时间 holdout、相同证据预算和独立结果前/后审阅复验成熟核心、会计边界、生命周期 cohort 与资本责任的组件化处理；不得把它改写为行业预测能力或方法 release。
 3. **真实黄金候选消费同一 Frozen Episode。** 让一份合法 current-company CJO、估值路线和报告 handoff 读取同一对象，检验报告本地 thesis 不会另写公司故事；仍不自动生成 BuyBand 或投资动作。
 4. **课程不再以数量为目标。** 课程一期的 12 个跨路线 worked case 已完成。只有新的 A/B 暴露出某类缺失机制或 reference class 时，才补充针对性的 worked case；它们仍只训练推理，不计命中或方法成绩。
-5. **经验层继续自然反馈。** 福莱特 FY2024 outcome 到期后按既有合同结算；此前不提前读取，也不因等待而阻断 U3。
+5. **经验层继续自然反馈。** 福莱特 FY2024 已完成独立结果复审，结论为现金屏幕可更新、其余桥接腿仍待当前公司证据；该 `NOT_DIAGNOSTIC` 结果不升级迁移或方法。后续只按同样的结果前合同与边界更新流程运行。
 6. **旧训练控制保持兼容。** E/J、Forecast 和 Comparative 只在对应局部主张需要时使用；其等待、mismatch 或 `NO_PRIMARY` 不能再定义整个训练系统的进度。
 7. **G1.5 与 G2 仍保持原依赖。** 七案内容接纳和 G1-U/U4 产品验证后再决定格力 24 份矩阵是否仍是最高信息价值的行业扩展，不因旧路线图自动启动。
 
@@ -570,3 +572,4 @@ Phase 08 只有同时具备以下结果才能完成：
 | 2026-08-30 | 审阅返回只向 reader writer 投影结构化投资结论 | 取消自由 `reader_guidance`；修复工单保留在控制面，writer 只看到结论、依据、投资含义和来源。精确估值合同从通用写作 prompt 移到结构化估值环节按需读取。 |
 | 2026-08-30 | 行业经验必须先形成版本化 Pack，再进入公司训练 | 单家公司不能结算行业前景；Course 2A 先用多公司、多时期、官方行业 observation、反例和双层结算形成 TRAINING_READY Pack，Course 2B 再检验未见公司和未见时期。水泥 V1 回放保留为 DRAFT；V2 已达 TRAINING_READY，但不代表行业判断能力已验证。 |
 | 2026-08-30 | Course 2B 上峰水泥公司轴为 `NO_MATERIAL_UTILITY`，停止扩样并先修 MODEL | 两臂都正确到达相同经济处理；Enhanced 的组件结构没有固定成不同的下游决策。Pack 维持 TRAINING_READY，时间轴不启动；未来合同增加显式 component decisions，数据缺口必须先从可复用 acquisition/责任边界桥解决。 |
+| 2026-08-31 | Course 2C 在祁连山取得公司传导 `TRANSFER_CANDIDATE`，但行业路径无材料差异 | Enhanced 在价格前将持续经营经济、会计边界、生命周期 cohort 与资本责任分开，并在结果后获得公司层区分；单一正样本只支持该窄方法在另一个未见公司或时间 holdout 上复验，不验证行业判断能力或方法 release。 |
