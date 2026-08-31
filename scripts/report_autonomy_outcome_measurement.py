@@ -891,12 +891,16 @@ def validate_outcome_field_receipts(receipts: Any, *, contract: Any) -> dict[str
 
 def build_anonymous_outcome_assessment(
     manifest: Any, *, contract: Any, field_receipts: Any, claim_binding_receipt: Any,
+    manifest_episode_pairs: list[tuple[Any, Any]],
 ) -> dict[str, Any]:
     manifest_value = _mapping(manifest)
     contract_value = _mapping(contract)
     receipt_value = _mapping(field_receipts)
     binding = _mapping(claim_binding_receipt)
-    if binding.get("schema_version") != CLAIM_BINDING_RECEIPT_SCHEMA_VERSION or binding.get("state") != "ANONYMOUS_CASE_CLAIM_BINDINGS_FROZEN":
+    binding_validation = validate_anonymous_case_claim_binding_receipt(
+        binding, contract=contract_value, manifest_episode_pairs=manifest_episode_pairs,
+    )
+    if binding_validation["state"] != "REVIEWABLE":
         raise ValueError("claim_binding_receipt_invalid")
     matching_bindings = [
         _mapping(item) for item in _items(binding.get("claim_bindings"))
@@ -921,6 +925,7 @@ def build_anonymous_outcome_assessment(
 
 def validate_anonymous_outcome_assessment(
     assessment: Any, *, manifest: Any, contract: Any, field_receipts: Any, claim_binding_receipt: Any,
+    manifest_episode_pairs: list[tuple[Any, Any]],
 ) -> dict[str, Any]:
     findings: list[str] = []
     value = _closed(assessment, {
@@ -937,7 +942,10 @@ def validate_anonymous_outcome_assessment(
         if value.get(field) != expected:
             findings.append("assessment." + field + "_mismatch")
     try:
-        expected = build_anonymous_outcome_assessment(manifest_value, contract=contract_value, field_receipts=receipt_value, claim_binding_receipt=claim_binding_receipt)
+        expected = build_anonymous_outcome_assessment(
+            manifest_value, contract=contract_value, field_receipts=receipt_value,
+            claim_binding_receipt=claim_binding_receipt, manifest_episode_pairs=manifest_episode_pairs,
+        )
     except ValueError as exc:
         findings.append("assessment.inputs_invalid:" + str(exc))
     else:

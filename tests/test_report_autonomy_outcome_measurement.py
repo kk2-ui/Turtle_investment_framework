@@ -165,9 +165,10 @@ def test_anonymous_claim_manifest_and_assessment_are_exactly_contract_bound() ->
         )
         for label in ("ANON_BCDFGHJKLMPQ", "ANON_BCDFGHJKLMQR", "ANON_BCDFGHJKLMQS")
     ]
+    pairs = [(manifest, episode)] + [(item, episode) for item in additional_manifests]
     binding = build_anonymous_case_claim_binding_receipt(
         contract,
-        manifest_episode_pairs=[(manifest, episode)] + [(item, episode) for item in additional_manifests],
+        manifest_episode_pairs=pairs,
     )
     receipts = _observed_receipts(contract)
 
@@ -178,13 +179,15 @@ def test_anonymous_claim_manifest_and_assessment_are_exactly_contract_bound() ->
     assert validate_anonymous_case_claim_binding_receipt(
         binding,
         contract=contract,
-        manifest_episode_pairs=[(manifest, episode)] + [(item, episode) for item in additional_manifests],
+        manifest_episode_pairs=pairs,
     )["state"] == "REVIEWABLE"
     assessment = build_anonymous_outcome_assessment(
         manifest, contract=contract, field_receipts=receipts, claim_binding_receipt=binding,
+        manifest_episode_pairs=pairs,
     )
     assert validate_anonymous_outcome_assessment(
         assessment, manifest=manifest, contract=contract, field_receipts=receipts, claim_binding_receipt=binding,
+        manifest_episode_pairs=pairs,
     )["state"] == "REVIEWABLE"
     statuses = {item["claim_id"]: item["assessment_status"] for item in assessment["assessments"]}
     assert statuses["CLAIM:NORMAL_EARNINGS"] == "SUPPORTED"
@@ -208,9 +211,10 @@ def test_manifest_or_assessor_cannot_change_direction_or_predicate_result() -> N
         )
         for label in ("ANON_BCDFGHJKLMQP", "ANON_BCDFGHJKLMQR", "ANON_BCDFGHJKLMQS")
     ]
+    pairs = [(manifest, episode)] + [(item, episode) for item in additional_manifests]
     binding = build_anonymous_case_claim_binding_receipt(
         contract,
-        manifest_episode_pairs=[(manifest, episode)] + [(item, episode) for item in additional_manifests],
+        manifest_episode_pairs=pairs,
     )
     invalid_manifest = deepcopy(manifest)
     invalid_manifest["claims"][1]["expected_direction"] = "DETERIORATES"
@@ -220,14 +224,26 @@ def test_manifest_or_assessor_cannot_change_direction_or_predicate_result() -> N
 
     assessment = build_anonymous_outcome_assessment(
         manifest, contract=contract, field_receipts=receipts, claim_binding_receipt=binding,
+        manifest_episode_pairs=pairs,
     )
     invalid_assessment = deepcopy(assessment)
     invalid_assessment["assessments"][1]["assessment_status"] = "WEAKENED_OR_FALSIFIED"
     assert validate_anonymous_outcome_assessment(
         invalid_assessment, manifest=manifest, contract=contract, field_receipts=receipts, claim_binding_receipt=binding,
+        manifest_episode_pairs=pairs,
     )["state"] == "INVALID"
 
-    with pytest.raises(ValueError, match="manifest_not_exact_frozen_claim_binding"):
+    with pytest.raises(ValueError, match="claim_binding_receipt_invalid"):
         build_anonymous_outcome_assessment(
             invalid_manifest, contract=contract, field_receipts=receipts, claim_binding_receipt=binding,
+            manifest_episode_pairs=[(invalid_manifest, episode)] + [(item, episode) for item in additional_manifests],
+        )
+
+    coordinated_binding = deepcopy(binding)
+    coordinated_binding["claim_bindings"][0]["claims"][1]["expected_direction"] = "DETERIORATES"
+    with pytest.raises(ValueError, match="claim_binding_receipt_invalid"):
+        build_anonymous_outcome_assessment(
+            invalid_manifest, contract=contract, field_receipts=receipts,
+            claim_binding_receipt=coordinated_binding,
+            manifest_episode_pairs=[(invalid_manifest, episode)] + [(item, episode) for item in additional_manifests],
         )
