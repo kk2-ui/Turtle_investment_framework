@@ -1,0 +1,683 @@
+{
+  "schema_version": "enterprise-underwriting-episode.v2",
+  "episode_id": "UWEP:CN000016:20181231:A00",
+  "company_id": "CN:000016",
+  "company_name": "康佳集团股份有限公司",
+  "cutoff_at": "2018-12-31T23:59:59+08:00",
+  "sample_identity": "BLIND_REPLAY",
+  "decision_frame": "CUTOFF_ONLY pre-outcome enterprise underwriting from the supplied FY2015--FY2017 official-report package; price, return, outcome, and action are outside this Episode.",
+  "underwriting_route": "Conditional enterprise underwriting: recurring consolidated observations establish questions, while unavailable component cash, capital, and financing allocation prevents a base operating conclusion.",
+  "situation_model": {
+    "summary": "The supplied package establishes a mixed electronics, supply-chain, white-goods, and mobile business perimeter, but supplies no forward industry regime, named competitor, or component-level cash and return evidence. The company judgment therefore remains conditional and centered on recurring profitability, working-capital cash conversion, and financing pressure.",
+    "industry_future_thesis": {
+      "horizon": "Post-cutoff horizon is not evidenced in the supplied package.",
+      "most_likely_regime": "UNKNOWN: the supplied reports contain no forward industry-regime evidence from which to select a most-likely regime.",
+      "profit_pool_transmission": "UNKNOWN: the supplied package identifies product and supply-chain activities but provides no forward profit-pool, pricing, or component-margin transmission evidence.",
+      "company_exposure": "The company is exposed through multimedia/display, supply-chain management, white goods, and mobile activities; the supplied reports do not quantify their respective earnings, cash, or financing exposures.",
+      "adaptation": "FY2017 disclosed a multimedia reorganization around television and display products and company-form operation, but the supplied package does not establish the economic effect of that adaptation.",
+      "normal_economics": "Consolidated recurring attributable profit remained negative in each supplied year, while component economics cannot be separated; no positive normalized earnings conclusion is supported.",
+      "permanent_loss": "Permanent-loss risk is conditional on recurring losses, working-capital absorption, and debt reliance continuing without demonstrable component economics or project returns.",
+      "valuation_treatment": "Only a conditional recurring-earnings route is retained for research treatment; one-off disposal proceeds and unallocated components are excluded or unresolved.",
+      "strongest_rival": "UNKNOWN: no strongest rival is identified in the supplied source package.",
+      "reversal_observations": [
+        "Official post-cutoff disclosures showing sustained component-level recurring profitability, cash conversion, and returns on committed growth capital would reverse the present conditional treatment.",
+        "Official post-cutoff disclosures showing further recurring losses, working-capital absorption, or financing dependence would confirm the adverse permanent-loss path."
+      ]
+    }
+  },
+  "business_position": "The FY2017 report identifies multimedia/display, supply-chain management, white goods, and mobile operations. It does not supply source-supported component profitability, customer economics, working-capital balances, or financing allocation, so relative business position cannot be established beyond this stated perimeter.",
+  "survival_case": "Consolidated operating cash flow was negative in FY2016 and FY2017, receivables, inventories, and short-term borrowings rose over the supplied period, and the FY2017 report disclosed substantial gross borrowing and repayment flows. This establishes conditional financing pressure, not a component-level solvency conclusion.",
+  "adaptation_case": "The FY2017 multimedia reorganization is an observable adaptation step, but the supplied evidence does not show whether it improved unit economics, cash conversion, or capital returns.",
+  "normalization_case": "FY2017 attributable profit was dominated by a disclosed non-sustainable gain on the Kangqiao Jiasheng property-investment disposal; recurring attributable profit was negative in FY2015--FY2017. The consolidated recurring observation is retained only conditionally because component allocation and forward operating evidence are absent.",
+  "permanent_loss_map": "The central adverse path is recurring operating weakness combined with receivable and inventory cash absorption and reliance on borrowing; project commitments may add financing pressure without supplied return evidence. The favorable reversal requires official evidence of sustainable component earnings, cash conversion, and growth-capital returns.",
+  "value_route": {
+    "primary_routes": [
+      "ROUTE:CONDITIONAL_RECURRING_EARNINGS"
+    ],
+    "excluded_routes": [
+      "ROUTE:ONE_OFF_DISPOSAL_EXCLUDED",
+      "ROUTE:UNRESOLVED_COMPONENTS"
+    ],
+    "route_reasoning": "The only retained research route uses consolidated recurring earnings as a conditional input. The FY2017 disposal gain is excluded as disclosed non-sustainable, while multimedia/display, supply-chain, white-goods/mobile, and project components remain unresolved because the supplied reports do not allocate earnings, owner cash, capital spending, or financing to them.",
+    "valuation_model_roles": {
+      "primary": [
+        "ROUTE:CONDITIONAL_RECURRING_EARNINGS"
+      ],
+      "corroborative": [],
+      "stress": []
+    },
+    "route_component_requirements": [
+      {
+        "route_id": "ROUTE:CONDITIONAL_RECURRING_EARNINGS",
+        "required_component_ids": [
+          "COMP:CONSOLIDATED_RECURRING_OPERATIONS"
+        ],
+        "optional_component_ids": []
+      },
+      {
+        "route_id": "ROUTE:ONE_OFF_DISPOSAL_EXCLUDED",
+        "required_component_ids": [
+          "COMP:ONE_OFF_PROPERTY_DISPOSAL"
+        ],
+        "optional_component_ids": []
+      },
+      {
+        "route_id": "ROUTE:UNRESOLVED_COMPONENTS",
+        "required_component_ids": [
+          "COMP:MULTIMEDIA_DISPLAY",
+          "COMP:SUPPLY_CHAIN_MANAGEMENT",
+          "COMP:WHITE_GOODS_AND_MOBILE",
+          "COMP:CAPITAL_PROJECTS"
+        ],
+        "optional_component_ids": []
+      }
+    ]
+  },
+  "strongest_rival": "UNKNOWN: no strongest rival is identified in the supplied source package.",
+  "reversal_observations": [
+    "Official post-cutoff disclosures showing sustained component-level recurring profitability, cash conversion, and returns on committed growth capital would reverse the present conditional treatment.",
+    "Official post-cutoff disclosures showing further recurring losses, working-capital absorption, or financing dependence would confirm the adverse permanent-loss path."
+  ],
+  "component_treatments": [
+    {
+      "component_id": "COMP:CONSOLIDATED_RECURRING_OPERATIONS",
+      "treatment": "CONDITIONALLY_UNDERWRITE",
+      "reason": "FY2015--FY2017 recurring attributable profit was negative in every supplied year, and the FY2017 reported-profit result was distorted by an identified non-sustainable disposal gain. The consolidated recurring series is observable, but neither component allocation nor forward persistence is evidenced.",
+      "investment_consequence": "Retain only as a conditional research input; it cannot support an unconditional normal-earnings, owner-cash, or primary-route conclusion.",
+      "promotion_or_resolution_condition": "Official disclosures must show sustained post-cutoff recurring profitability together with component allocation sufficient to test persistence and cash conversion.",
+      "evidence_ids": [
+        "E:RECURRING_ATTRIBUTABLE_PROFIT",
+        "E:ONE_OFF_DISPOSAL_GAIN",
+        "E:COMPONENT_ALLOCATION_UNKNOWN"
+      ]
+    },
+    {
+      "component_id": "COMP:MULTIMEDIA_DISPLAY",
+      "treatment": "CANNOT_BOUND",
+      "reason": "The reports identify domestic and export television/display and internet activities and a FY2017 reorganization, but explicitly do not provide component operating cash flow, long-lived-asset spending, receivables, inventories, borrowings, customer concentration, or customer-pricing evidence.",
+      "investment_consequence": "Exclude this component from a base normal-earnings, owner-cash, and primary-route input pending separable economics.",
+      "promotion_or_resolution_condition": "Obtain official component revenue, recurring profitability, operating cash, working-capital, capital-commitment, and financing evidence over a comparable period.",
+      "evidence_ids": [
+        "E:BUSINESS_PERIMETER_AND_REORGANIZATION",
+        "E:COMPONENT_ALLOCATION_UNKNOWN"
+      ]
+    },
+    {
+      "component_id": "COMP:SUPPLY_CHAIN_MANAGEMENT",
+      "treatment": "CANNOT_BOUND",
+      "reason": "FY2017 reports supply-chain-management revenue and traded product categories, but do not allocate profitability, operating cash, working capital, long-lived spending, or debt to the component.",
+      "investment_consequence": "Treat component contribution to owner cash, financing pressure, and the primary route as unresolved rather than inferring it from consolidated revenue.",
+      "promotion_or_resolution_condition": "Obtain official component gross-profit, cash-conversion, receivable/inventory, capital-commitment, and financing disclosures.",
+      "evidence_ids": [
+        "E:SUPPLY_CHAIN_REVENUE_AND_SCOPE",
+        "E:COMPONENT_ALLOCATION_UNKNOWN"
+      ]
+    },
+    {
+      "component_id": "COMP:WHITE_GOODS_AND_MOBILE",
+      "treatment": "CANNOT_BOUND",
+      "reason": "White goods and mobile are identified in the FY2017 business list, but the supplied package contains no component economics, cash, capital, customer, or financing allocation.",
+      "investment_consequence": "Keep this component out of base earnings, owner-cash, and primary-route treatment.",
+      "promotion_or_resolution_condition": "Obtain official component reporting that permits testing recurring earnings, cash conversion, capital commitments, and financing needs.",
+      "evidence_ids": [
+        "E:BUSINESS_PERIMETER_AND_REORGANIZATION",
+        "E:COMPONENT_ALLOCATION_UNKNOWN"
+      ]
+    },
+    {
+      "component_id": "COMP:CAPITAL_PROJECTS",
+      "treatment": "CANNOT_BOUND",
+      "reason": "The report names project investments and industrial-park plans, but does not allocate project cash spending, financing balances, operating cash, or subsequent returns to television/display or other components.",
+      "investment_consequence": "Do not label reported long-lived spending as maintenance capital or infer a growth-capital return; retain financing and permanent-loss effects as unresolved.",
+      "promotion_or_resolution_condition": "Obtain official project-level committed spending, financing source, economic maintenance needs, and subsequent operating-return evidence.",
+      "evidence_ids": [
+        "E:PROJECTS_AND_LAND_PREPARATION",
+        "E:COMPONENT_ALLOCATION_UNKNOWN"
+      ]
+    },
+    {
+      "component_id": "COMP:ONE_OFF_PROPERTY_DISPOSAL",
+      "treatment": "EXCLUDE_FROM_BASE",
+      "reason": "FY2017 disclosed 6.5878 billion CNY investment income from transferring a 70% interest in Kangqiao Jiasheng and identified the item as non-sustainable; the report also identifies it as the main source of FY2017 non-recurring profit.",
+      "investment_consequence": "Exclude the disposal gain and associated cash realization from normal earnings, normal owner cash, and the active route.",
+      "promotion_or_resolution_condition": "No promotion to recurring treatment is available; any future disposition must be separately evidenced and treated outside recurring operations.",
+      "evidence_ids": [
+        "E:ONE_OFF_DISPOSAL_GAIN",
+        "E:DISPOSAL_CASH_RECEIPT"
+      ]
+    }
+  ],
+  "component_decisions": [
+    {
+      "component_id": "COMP:CONSOLIDATED_RECURRING_OPERATIONS",
+      "economic_scope": "MATURE_CORE_NORMAL_EARNINGS",
+      "normal_earnings_use": "CONDITIONAL_RANGE",
+      "owner_cash_use": "CONDITIONAL_RANGE",
+      "financing_pressure_effect": "CONDITIONAL",
+      "permanent_loss_use": "CONDITIONAL_PATH",
+      "valuation_use": "CONDITIONAL_PRIMARY_INPUT",
+      "valuation_route_bindings": [
+        {
+          "route_id": "ROUTE:CONDITIONAL_RECURRING_EARNINGS",
+          "use": "CONDITIONAL_PRIMARY_INPUT"
+        }
+      ],
+      "promotion_test": "Official post-cutoff disclosures demonstrate sustained recurring profitability, operating-cash conversion, and separable component economics.",
+      "invalidation_test": "Official post-cutoff disclosures show continued recurring losses or negative operating cash alongside rising financing needs."
+    },
+    {
+      "component_id": "COMP:MULTIMEDIA_DISPLAY",
+      "economic_scope": "MATURE_CORE_NORMAL_EARNINGS",
+      "normal_earnings_use": "UNRESOLVED",
+      "owner_cash_use": "UNRESOLVED",
+      "financing_pressure_effect": "UNRESOLVED",
+      "permanent_loss_use": "UNRESOLVED",
+      "valuation_use": "UNRESOLVED",
+      "valuation_route_bindings": [
+        {
+          "route_id": "ROUTE:UNRESOLVED_COMPONENTS",
+          "use": "UNRESOLVED"
+        }
+      ],
+      "promotion_test": "Official component reporting supplies recurring profit, cash conversion, working-capital, capital-spending, and financing evidence.",
+      "invalidation_test": "Official reporting demonstrates that component losses or cash requirements remain unallocated or worsen."
+    },
+    {
+      "component_id": "COMP:SUPPLY_CHAIN_MANAGEMENT",
+      "economic_scope": "ORDINARY_SHARE_OWNER_CASH",
+      "normal_earnings_use": "UNRESOLVED",
+      "owner_cash_use": "UNRESOLVED",
+      "financing_pressure_effect": "UNRESOLVED",
+      "permanent_loss_use": "UNRESOLVED",
+      "valuation_use": "UNRESOLVED",
+      "valuation_route_bindings": [
+        {
+          "route_id": "ROUTE:UNRESOLVED_COMPONENTS",
+          "use": "UNRESOLVED"
+        }
+      ],
+      "promotion_test": "Official disclosures identify component margins, operating cash, receivable and inventory requirements, and financing needs.",
+      "invalidation_test": "Official reporting shows persistent working-capital absorption or financing needs without corresponding component economics."
+    },
+    {
+      "component_id": "COMP:WHITE_GOODS_AND_MOBILE",
+      "economic_scope": "OTHER_MATERIAL_COMPONENT",
+      "normal_earnings_use": "UNRESOLVED",
+      "owner_cash_use": "UNRESOLVED",
+      "financing_pressure_effect": "UNRESOLVED",
+      "permanent_loss_use": "UNRESOLVED",
+      "valuation_use": "UNRESOLVED",
+      "valuation_route_bindings": [
+        {
+          "route_id": "ROUTE:UNRESOLVED_COMPONENTS",
+          "use": "UNRESOLVED"
+        }
+      ],
+      "promotion_test": "Official component information supports a separate recurring-earnings, cash, capital, and financing assessment.",
+      "invalidation_test": "Official reporting continues to omit component economics or identifies sustained component losses and cash demands."
+    },
+    {
+      "component_id": "COMP:CAPITAL_PROJECTS",
+      "economic_scope": "GROWTH_CAPITAL_RETURN",
+      "normal_earnings_use": "UNRESOLVED",
+      "owner_cash_use": "UNRESOLVED",
+      "financing_pressure_effect": "UNRESOLVED",
+      "permanent_loss_use": "UNRESOLVED",
+      "valuation_use": "UNRESOLVED",
+      "valuation_route_bindings": [
+        {
+          "route_id": "ROUTE:UNRESOLVED_COMPONENTS",
+          "use": "UNRESOLVED"
+        }
+      ],
+      "promotion_test": "Official project-level evidence establishes committed capital, financing, maintenance needs, and subsequent operating returns.",
+      "invalidation_test": "Official reporting demonstrates project capital commitments without proven returns or with incremental financing strain."
+    },
+    {
+      "component_id": "COMP:ONE_OFF_PROPERTY_DISPOSAL",
+      "economic_scope": "NONCORE_OR_OPTIONAL_ASSET",
+      "normal_earnings_use": "EXCLUDED",
+      "owner_cash_use": "EXCLUDED",
+      "financing_pressure_effect": "CONDITIONAL",
+      "permanent_loss_use": "EXCLUDED",
+      "valuation_use": "EXCLUDED",
+      "valuation_route_bindings": [
+        {
+          "route_id": "ROUTE:ONE_OFF_DISPOSAL_EXCLUDED",
+          "use": "EXCLUDED"
+        }
+      ],
+      "promotion_test": "No promotion: a disclosed non-sustainable disposal cannot become recurring operating evidence.",
+      "invalidation_test": "The active route is invalidated if it includes the disposal gain or cash receipt as recurring earnings or owner cash."
+    }
+  ],
+  "economic_derivation": {
+    "schema_version": "enterprise-underwriting-economic-derivation.v1",
+    "normal_earnings_bridge": {
+      "basis": {
+        "metric": "consolidated recurring attributable earnings",
+        "currency": "CNY",
+        "unit": "CNY",
+        "tax_basis": "AFTER_TAX",
+        "earnings_claim_scope": "ORDINARY_COMMON_EQUITY",
+        "operating_perimeter": "Consolidated group recurring earnings only; component allocation is not supplied.",
+        "as_of": "2018-03-31"
+      },
+      "rows": [
+        {
+          "row_id": "NEB:REFERENCE_CONSOLIDATED_RECURRING",
+          "component_id": "COMP:CONSOLIDATED_RECURRING_OPERATIONS",
+          "row_role": "REFERENCE_EARNINGS",
+          "direction": "ADD",
+          "quantification": {
+            "status": "UNKNOWN",
+            "reason": "The disclosed recurring attributable results were negative in each supplied year, while the schema's bounded range is non-negative and no component allocation or forward persistence evidence permits a conditional normalized amount.",
+            "conservative_treatment": "Retain no numeric normal-earnings point estimate or base range; treat the consolidated recurring series only as a conditional observation."
+          },
+          "evidence_ids": [
+            "E:RECURRING_ATTRIBUTABLE_PROFIT",
+            "E:COMPONENT_ALLOCATION_UNKNOWN"
+          ],
+          "economic_reason": "Recurring attributable profit is the disclosed consolidated reference after recognizing that it does not establish component-normal earnings or persistence."
+        },
+        {
+          "row_id": "NEB:ADJ_MULTIMEDIA_UNRESOLVED",
+          "component_id": "COMP:MULTIMEDIA_DISPLAY",
+          "row_role": "NORMALIZATION_ADJUSTMENT",
+          "direction": "ADD",
+          "quantification": {
+            "status": "UNKNOWN",
+            "reason": "No multimedia/display component profitability, operating cash, working-capital, capital-spending, or financing allocation is supplied.",
+            "conservative_treatment": "Do not add a multimedia/display normal-earnings contribution."
+          },
+          "evidence_ids": [
+            "E:BUSINESS_PERIMETER_AND_REORGANIZATION",
+            "E:COMPONENT_ALLOCATION_UNKNOWN"
+          ],
+          "economic_reason": "The identified television/display perimeter cannot be normalized separately from consolidated results."
+        },
+        {
+          "row_id": "NEB:ADJ_SUPPLY_CHAIN_UNRESOLVED",
+          "component_id": "COMP:SUPPLY_CHAIN_MANAGEMENT",
+          "row_role": "NORMALIZATION_ADJUSTMENT",
+          "direction": "ADD",
+          "quantification": {
+            "status": "UNKNOWN",
+            "reason": "Revenue is disclosed, but no component profit, operating cash, working capital, capital spending, or debt allocation is supplied.",
+            "conservative_treatment": "Do not infer a supply-chain normal-earnings contribution from revenue."
+          },
+          "evidence_ids": [
+            "E:SUPPLY_CHAIN_REVENUE_AND_SCOPE",
+            "E:COMPONENT_ALLOCATION_UNKNOWN"
+          ],
+          "economic_reason": "Supply-chain revenue alone does not establish economic margin or recurring earnings."
+        },
+        {
+          "row_id": "NEB:ADJ_WHITE_GOODS_MOBILE_UNRESOLVED",
+          "component_id": "COMP:WHITE_GOODS_AND_MOBILE",
+          "row_role": "NORMALIZATION_ADJUSTMENT",
+          "direction": "ADD",
+          "quantification": {
+            "status": "UNKNOWN",
+            "reason": "The supplied package names white goods and mobile but provides no separable component economics.",
+            "conservative_treatment": "Do not add a white-goods or mobile contribution."
+          },
+          "evidence_ids": [
+            "E:BUSINESS_PERIMETER_AND_REORGANIZATION",
+            "E:COMPONENT_ALLOCATION_UNKNOWN"
+          ],
+          "economic_reason": "Named business presence is insufficient to determine normal earnings."
+        },
+        {
+          "row_id": "NEB:ADJ_CAPITAL_PROJECTS_UNRESOLVED",
+          "component_id": "COMP:CAPITAL_PROJECTS",
+          "row_role": "NORMALIZATION_ADJUSTMENT",
+          "direction": "SUBTRACT",
+          "quantification": {
+            "status": "UNKNOWN",
+            "reason": "Project-level expenditure, financing, maintenance needs, and subsequent operating returns are not allocated in the supplied package.",
+            "conservative_treatment": "Do not convert reported project information into a maintenance-capital deduction or a return on growth capital."
+          },
+          "evidence_ids": [
+            "E:PROJECTS_AND_LAND_PREPARATION",
+            "E:COMPONENT_ALLOCATION_UNKNOWN"
+          ],
+          "economic_reason": "Growth-project commitments could affect normal economics but cannot be measured or assigned from the supplied disclosures."
+        },
+        {
+          "row_id": "NEB:ADJ_ONE_OFF_PROPERTY_DISPOSAL",
+          "component_id": "COMP:ONE_OFF_PROPERTY_DISPOSAL",
+          "row_role": "NORMALIZATION_ADJUSTMENT",
+          "direction": "SUBTRACT",
+          "quantification": {
+            "status": "BOUNDED",
+            "range_low": 6587800000,
+            "range_high": 6587800000
+          },
+          "evidence_ids": [
+            "E:ONE_OFF_DISPOSAL_GAIN"
+          ],
+          "economic_reason": "FY2017 disclosed investment income from the property-investment disposal and labelled it non-sustainable, so it is excluded from recurring earnings."
+        }
+      ]
+    },
+    "driver_sensitivity_specs": [
+      {
+        "sensitivity_id": "SENS:RECURRING_ATTRIBUTABLE_EARNINGS",
+        "component_ids": [
+          "COMP:CONSOLIDATED_RECURRING_OPERATIONS"
+        ],
+        "driver_binding": {
+          "financial_driver_id": "FD:RECURRING_ATTRIBUTABLE_PROFIT"
+        },
+        "metric": "recurring attributable profit",
+        "unit": "CNY",
+        "horizon": "FY2015--FY2017",
+        "input_cases": {
+          "mode": "LOW_BASE_HIGH",
+          "low": {
+            "value_or_range": {
+              "value": -1129999645.94
+            },
+            "basis": "FY2015 disclosed attributable profit after non-recurring items.",
+            "evidence_ids": [
+              "E:RECURRING_ATTRIBUTABLE_PROFIT"
+            ]
+          },
+          "base": {
+            "value_or_range": {
+              "value": -283460349.24
+            },
+            "basis": "FY2016 disclosed attributable profit after non-recurring items.",
+            "evidence_ids": [
+              "E:RECURRING_ATTRIBUTABLE_PROFIT"
+            ]
+          },
+          "high": {
+            "value_or_range": {
+              "value": -97284945.83
+            },
+            "basis": "FY2017 disclosed attributable profit after non-recurring items.",
+            "evidence_ids": [
+              "E:RECURRING_ATTRIBUTABLE_PROFIT"
+            ]
+          }
+        },
+        "transmission": {
+          "normal_earnings": {
+            "status": "UNKNOWN",
+            "basis": "The observed consolidated recurring series has no supplied component allocation or forward persistence evidence.",
+            "delta": {
+              "status": "UNKNOWN",
+              "reason": "The supplied three-year results do not establish a normalized recurring-earnings delta or a component-level source of change.",
+              "conservative_treatment": "Keep the normal-earnings transmission conditional and unquantified."
+            }
+          },
+          "owner_cash": {
+            "status": "UNKNOWN",
+            "basis": "No component operating-cash, maintenance-capital, or working-capital allocation accompanies the recurring-profit series.",
+            "delta": {
+              "status": "UNKNOWN",
+              "reason": "Profit observations cannot be converted into owner-cash deltas from the supplied information.",
+              "conservative_treatment": "Do not infer owner cash from recurring profit."
+            }
+          },
+          "valuation_route_ids": [
+            "ROUTE:CONDITIONAL_RECURRING_EARNINGS"
+          ]
+        },
+        "reversal_observation_refs": [
+          "#/reversal_observations/0",
+          "#/reversal_observations/1"
+        ]
+      },
+      {
+        "sensitivity_id": "SENS:OPERATING_CASH_FLOW",
+        "component_ids": [
+          "COMP:CONSOLIDATED_RECURRING_OPERATIONS"
+        ],
+        "driver_binding": {
+          "financial_driver_id": "FD:CONSOLIDATED_OPERATING_CASH_FLOW"
+        },
+        "metric": "consolidated operating cash flow",
+        "unit": "CNY",
+        "horizon": "FY2015--FY2017",
+        "input_cases": {
+          "mode": "LOW_BASE_HIGH",
+          "low": {
+            "value_or_range": {
+              "value": -4314257622.47
+            },
+            "basis": "FY2017 disclosed operating cash flow.",
+            "evidence_ids": [
+              "E:CONSOLIDATED_CASH_FLOW_AND_CAPEX"
+            ]
+          },
+          "base": {
+            "value_or_range": {
+              "value": -972135787.43
+            },
+            "basis": "FY2016 disclosed operating cash flow.",
+            "evidence_ids": [
+              "E:CONSOLIDATED_CASH_FLOW_AND_CAPEX"
+            ]
+          },
+          "high": {
+            "value_or_range": {
+              "value": 1289600482.66
+            },
+            "basis": "FY2015 disclosed operating cash flow.",
+            "evidence_ids": [
+              "E:CONSOLIDATED_CASH_FLOW_AND_CAPEX"
+            ]
+          }
+        },
+        "transmission": {
+          "normal_earnings": {
+            "status": "UNKNOWN",
+            "basis": "The report explains FY2017 negative operating cash by increased receivables and unexpired notes, but does not allocate cash conversion to operating components.",
+            "delta": {
+              "status": "UNKNOWN",
+              "reason": "No supplied evidence isolates the recurring normal-earnings effect of consolidated operating-cash variation.",
+              "conservative_treatment": "Do not quantify a normal-earnings delta from operating cash flow."
+            }
+          },
+          "owner_cash": {
+            "status": "UNKNOWN",
+            "basis": "Only consolidated operating cash and total long-lived-asset spending are supplied; economic maintenance capital and component commitments are not supplied.",
+            "delta": {
+              "status": "UNKNOWN",
+              "reason": "The data cannot distinguish ordinary owner cash from growth capital, working-capital movements, or component financing needs.",
+              "conservative_treatment": "Do not state a numeric owner-cash delta or negative owner-cash point estimate."
+            }
+          },
+          "valuation_route_ids": [
+            "ROUTE:CONDITIONAL_RECURRING_EARNINGS"
+          ]
+        },
+        "reversal_observation_refs": [
+          "#/reversal_observations/0",
+          "#/reversal_observations/1"
+        ]
+      },
+      {
+        "sensitivity_id": "SENS:WORKING_CAPITAL_AND_SHORT_TERM_DEBT",
+        "component_ids": [
+          "COMP:CONSOLIDATED_RECURRING_OPERATIONS"
+        ],
+        "driver_binding": {
+          "financial_driver_id": "FD:CONSOLIDATED_RECEIVABLES_INVENTORY_AND_SHORT_TERM_BORROWINGS"
+        },
+        "metric": "year-end receivables, inventories, and short-term borrowings",
+        "unit": "CNY",
+        "horizon": "FY2015--FY2017",
+        "input_cases": {
+          "mode": "LOW_BASE_HIGH",
+          "low": {
+            "value_or_range": {
+              "value": 9082102548.38
+            },
+            "basis": "FY2015 disclosed receivables plus inventories plus short-term borrowings.",
+            "evidence_ids": [
+              "E:WORKING_CAPITAL_AND_DEBT_BALANCES"
+            ]
+          },
+          "base": {
+            "value_or_range": {
+              "value": 13158213719.35
+            },
+            "basis": "FY2016 disclosed receivables plus inventories plus short-term borrowings.",
+            "evidence_ids": [
+              "E:WORKING_CAPITAL_AND_DEBT_BALANCES"
+            ]
+          },
+          "high": {
+            "value_or_range": {
+              "value": 15060899550.14
+            },
+            "basis": "FY2017 disclosed receivables plus inventories plus short-term borrowings.",
+            "evidence_ids": [
+              "E:WORKING_CAPITAL_AND_DEBT_BALANCES"
+            ]
+          }
+        },
+        "transmission": {
+          "normal_earnings": {
+            "status": "UNKNOWN",
+            "basis": "The supplied package reports consolidated balances, not component margins, credit terms, ageing, or loss experience.",
+            "delta": {
+              "status": "UNKNOWN",
+              "reason": "No supported conversion maps the consolidated balance changes to a normal-earnings delta.",
+              "conservative_treatment": "Retain the normal-earnings effect as unknown."
+            }
+          },
+          "owner_cash": {
+            "status": "UNKNOWN",
+            "basis": "The observed rise in receivables, inventory, and short-term borrowing is consolidated and cannot be assigned to component owner cash or matched to maintenance versus growth capital.",
+            "delta": {
+              "status": "UNKNOWN",
+              "reason": "The supplied data do not yield a durable owner-cash delta after working-capital and financing interactions.",
+              "conservative_treatment": "Use the evidence as conditional financing-pressure monitoring only, without a numeric owner-cash estimate."
+            }
+          },
+          "valuation_route_ids": [
+            "ROUTE:CONDITIONAL_RECURRING_EARNINGS"
+          ]
+        },
+        "reversal_observation_refs": [
+          "#/reversal_observations/0",
+          "#/reversal_observations/1"
+        ]
+      }
+    ]
+  },
+  "evidence_trace": [
+    {
+      "evidence_id": "E:BUSINESS_PERIMETER_AND_REORGANIZATION",
+      "source_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN000016_PRE_CUTOFF_SOURCE_PACKAGE.md",
+      "locator": "FY2017 annual report PDF pp. 10 and 13, as transcribed in the supplied package",
+      "scope": "FY2017 group business perimeter and multimedia organization",
+      "used_for": "Identifies multimedia/display, supply-chain, white-goods, and mobile activities and the multimedia reorganization."
+    },
+    {
+      "evidence_id": "E:SUPPLY_CHAIN_REVENUE_AND_SCOPE",
+      "source_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN000016_PRE_CUTOFF_SOURCE_PACKAGE.md",
+      "locator": "FY2017 annual report PDF p. 13, as transcribed in the supplied package",
+      "scope": "FY2017 supply-chain management revenue and traded product categories",
+      "used_for": "Establishes the disclosed supply-chain perimeter and revenue without inferring profitability or cash generation."
+    },
+    {
+      "evidence_id": "E:RECURRING_ATTRIBUTABLE_PROFIT",
+      "source_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN000016_PRE_CUTOFF_SOURCE_PACKAGE.md",
+      "locator": "FY2017 annual report PDF p. 7 three-year financial table, as transcribed in the supplied package",
+      "scope": "FY2015--FY2017 consolidated attributable profit after non-recurring items",
+      "used_for": "Provides the observed recurring attributable-profit series used as a conditional consolidated reference and sensitivity input."
+    },
+    {
+      "evidence_id": "E:ONE_OFF_DISPOSAL_GAIN",
+      "source_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN000016_PRE_CUTOFF_SOURCE_PACKAGE.md",
+      "locator": "FY2017 annual report PDF pp. 12 and 20, as transcribed in the supplied package",
+      "scope": "FY2017 transfer of 70% of Kangqiao Jiasheng and its non-sustainable gain",
+      "used_for": "Excludes the disclosed 6.5878 billion CNY investment income from recurring normal earnings."
+    },
+    {
+      "evidence_id": "E:CONSOLIDATED_CASH_FLOW_AND_CAPEX",
+      "source_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN000016_PRE_CUTOFF_SOURCE_PACKAGE.md",
+      "locator": "FY2015 annual report PDF p. 78, FY2016 p. 74, and FY2017 p. 88, as transcribed in the supplied package",
+      "scope": "FY2015--FY2017 consolidated operating cash flow and cash paid for long-lived assets",
+      "used_for": "Provides the operating-cash sensitivity inputs and demonstrates that total long-lived spending is not maintenance-capital evidence."
+    },
+    {
+      "evidence_id": "E:WORKING_CAPITAL_AND_DEBT_BALANCES",
+      "source_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN000016_PRE_CUTOFF_SOURCE_PACKAGE.md",
+      "locator": "FY2015 annual report PDF p. 18, FY2016 p. 19, and FY2017 pp. 20--21, as transcribed in the supplied package",
+      "scope": "FY2015--FY2017 year-end receivables, inventories, short-term borrowings, and long-term borrowings",
+      "used_for": "Supports conditional financing-pressure analysis and the working-capital-and-debt sensitivity inputs."
+    },
+    {
+      "evidence_id": "E:NEGATIVE_OPERATING_CASH_EXPLANATION",
+      "source_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN000016_PRE_CUTOFF_SOURCE_PACKAGE.md",
+      "locator": "FY2017 annual report PDF p. 20, as transcribed in the supplied package",
+      "scope": "FY2017 management explanation of negative operating cash flow",
+      "used_for": "Links the disclosed FY2017 consolidated operating-cash shortfall to increased receivables and unexpired notes without assigning it to a component."
+    },
+    {
+      "evidence_id": "E:PROJECTS_AND_LAND_PREPARATION",
+      "source_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN000016_PRE_CUTOFF_SOURCE_PACKAGE.md",
+      "locator": "FY2017 annual report PDF p. 22, as transcribed in the supplied package",
+      "scope": "FY2017 named projects, reported-period investments, and industrial-park preparation",
+      "used_for": "Establishes project existence while preserving unknown project-level capital, financing, and return economics."
+    },
+    {
+      "evidence_id": "E:DISPOSAL_CASH_RECEIPT",
+      "source_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN000016_PRE_CUTOFF_SOURCE_PACKAGE.md",
+      "locator": "FY2017 annual report PDF p. 188, as transcribed in the supplied package",
+      "scope": "FY2017 cash received from disposals including Kangqiao Jiasheng",
+      "used_for": "Excludes disposition cash realization from ordinary owner cash."
+    },
+    {
+      "evidence_id": "E:COMPONENT_ALLOCATION_UNKNOWN",
+      "source_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN000016_PRE_CUTOFF_SOURCE_PACKAGE.md",
+      "locator": "Explicit UNKNOWN section of the supplied package",
+      "scope": "Absence of component-level operating cash, long-lived spending, working capital, debt, customer economics, and project allocation",
+      "used_for": "Prevents unsupported component normal-earnings, owner-cash, financing, and growth-return estimates."
+    },
+    {
+      "evidence_id": "E:CONSOLIDATED_FINANCING_FLOWS",
+      "source_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN000016_PRE_CUTOFF_SOURCE_PACKAGE.md",
+      "locator": "FY2017 annual report PDF p. 88, as transcribed in the supplied package",
+      "scope": "FY2017 consolidated borrowing proceeds and debt repayments",
+      "used_for": "Supports the survival-case observation that financing evidence is consolidated rather than component-specific."
+    },
+    {
+      "evidence_id": "E:CONSOLIDATION_BOUNDARY",
+      "source_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN000016_PRE_CUTOFF_SOURCE_PACKAGE.md",
+      "locator": "FY2017 annual report PDF pp. 104 and 198, as transcribed in the supplied package",
+      "scope": "FY2017 consolidated-reporting boundary",
+      "used_for": "Defines that disclosed financial observations are on a controlled-subsidiary consolidated basis."
+    }
+  ],
+  "existing_object_refs": [
+    {
+      "kind": "PRE_CUTOFF_SOURCE_PACKAGE",
+      "ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN000016_PRE_CUTOFF_SOURCE_PACKAGE.md",
+      "role": "Only allowed evidence packet for this blind replay Episode."
+    }
+  ],
+  "underwriting_thesis": {
+    "thesis_id": "THESIS:CN000016:CONDITIONAL_RECURRING_ECONOMICS",
+    "central_path": "The supplied evidence supports neither a sustainable component-economic recovery nor an immediate enterprise failure conclusion. The current judgment is conditional because recurring consolidated profit was negative, operating cash weakened, working-capital and short-term debt balances rose, and the component allocation necessary to distinguish core economics, ordinary owner cash, and growth-capital returns is absent.",
+    "normal_earnings_treatment": "Use disclosed recurring attributable losses as a conditional reference only; exclude the disclosed non-sustainable disposal gain and do not create a base normalized earnings range.",
+    "owner_cash_treatment": "Operating cash less all disclosed long-lived-asset spending is observable at the consolidated level, but economic maintenance capital, project allocation, and component cash conversion are unknown; do not rename total spending as maintenance capital or state a numeric owner-cash point estimate.",
+    "permanent_loss_treatment": "Treat the combination of recurring losses, consolidated working-capital absorption, and financing dependence as a conditional permanent-loss path, with project-return uncertainty unresolved rather than assumed adverse or favorable.",
+    "value_route_treatment": "Keep only the conditional consolidated recurring-earnings research route. Exclude the one-off property-disposal route and retain unallocated operating and project components as unresolved.",
+    "economic_directions": {
+      "normal_earnings": "MIXED",
+      "owner_cash": "DETERIORATES",
+      "permanent_loss": "DETERIORATES"
+    },
+    "strongest_rival": "UNKNOWN: no strongest rival is identified in the supplied source package.",
+    "monitoring": "Monitor official post-cutoff component recurring profitability, operating-cash conversion, receivable and inventory discipline, debt reliance, project commitments, and realized returns; these observations determine promotion or invalidation of the conditional treatment."
+  },
+  "investment_treatment": "This training Episode records a conditional evidence treatment only. It contains no market price, valuation result, return result, or investment action."
+}

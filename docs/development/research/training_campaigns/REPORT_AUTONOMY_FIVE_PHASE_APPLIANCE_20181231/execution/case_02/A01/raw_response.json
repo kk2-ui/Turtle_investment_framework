@@ -1,0 +1,403 @@
+{
+  "schema_version": "enterprise-underwriting-episode.v2",
+  "episode_id": "UWEP:CN:000404:20181231:A01",
+  "company_id": "CN:000404",
+  "company_name": "华意压缩机股份有限公司",
+  "cutoff_at": "2018-12-31T23:59:59+08:00",
+  "sample_identity": "BLIND_REPLAY",
+  "decision_frame": "Pre-outcome enterprise underwriting of the consolidated group, separating the compressor core from noncompressor additions and from group-level cash and financing evidence.",
+  "underwriting_route": "Conditionally examine the mature compressor core through a historical earnings reference while keeping owner cash, maintenance capital, and growth-capital return unresolved at the disclosed consolidated boundary.",
+  "situation_model": {
+    "summary": "The disclosed business is a design, production, and sales enterprise for refrigerator and commercial compressors. Revenue grew across FY2015-FY2017, but FY2017 disclosed raw-material pressure, a sharp decline in attributable earnings, negative operating cash flow, higher inventory, and higher short-term borrowing.",
+    "industry_future_thesis": {
+      "horizon": "FY2018 forward operating-cycle hypothesis anchored only in FY2015-FY2017 disclosures.",
+      "most_likely_regime": "A mixed compressor operating regime in which revenue and customer reach can expand while raw-material cost, inventory commitment, and short-term financing needs can dominate profit and cash conversion.",
+      "profit_pool_transmission": "For the compressor core, customer demand and product mix transmit through compressor volumes and cost absorption; the supplied record shows that raw-material price increases coincided with lower subsidiary profits, but does not provide a matched price, volume, or segment-margin bridge.",
+      "company_exposure": "The company disclosed refrigerator and commercial compressor production and sales, supply to globally known refrigerator enterprises, and the HUAYI, JIAXIPERA, and CUBIGEL compressor brands. It also disclosed increased inventory and group borrowing in FY2017.",
+      "adaptation": "The company must demonstrate, at a matched component boundary, that customer/channel expansion and its compressor brands translate into price, mix, cost recovery, cash collection, and economic maintenance-capital outcomes rather than only consolidated revenue growth.",
+      "normal_economics": "Historical ordinary attributable earnings excluding non-recurring items range widely across FY2015-FY2017, and FY2017 raw-material pressure reduced subsidiary profits. The source does not isolate normalized earnings for refrigerator versus commercial compressors or newer businesses.",
+      "permanent_loss": "A persistent inability to recover input cost, convert inventory and receivables into operating cash, or refinance working-capital needs would impair the core's economic durability; acquisitions and new businesses add a separate attribution risk because their component cash and spending are not disclosed.",
+      "valuation_treatment": "Only a conditional normal-earnings route for the compressor core is retained. Owner-cash and growth-capital-return routes remain unresolved, and noncompressor additions are excluded from the base route.",
+      "strongest_rival": "UNIDENTIFIED: the supplied disclosures name no competitor; the strongest rival is therefore the undisclosed compressor supplier competing for the same globally known refrigerator manufacturers.",
+      "reversal_observations": [
+        "Matched-period company disclosures show that compressor price, mix, or unit margins improve despite raw-material input pressure.",
+        "A same-boundary cash bridge shows that the FY2017 operating-cash decline is not a recurring compressor working-capital or supplier-payment burden.",
+        "Component reporting shows that acquired or new noncompressor businesses are material enough to alter the consolidated historical earnings reference or financing burden.",
+        "A named rival or customer concentration disclosure demonstrates that the assumed competitive arena is incomplete or different from the disclosed compressor customer base."
+      ]
+    }
+  },
+  "business_position": "The disclosed position is an established compressor producer with three compressor brands and global refrigerator-company customers, but the source does not quantify customer concentration, component-level margins, or a named competitor comparison.",
+  "survival_case": "FY2017 consolidated short-term borrowing was CNY 2.021 billion, operating cash flow was negative, and inventory rose; the group also had restricted cash, pledged notes, financial-product restrictions, and asset collateral. These facts indicate financing pressure, while the supplied record does not allocate the burden among components or establish a refinancing outcome.",
+  "adaptation_case": "Expansion toward European, American, Southeast Asian, and domestic customers and investment in efficiency and commercial-compressor capacity are disclosed, but adaptation is conditional until matched evidence shows compressor-level cost recovery, cash conversion, and returns on the funded projects.",
+  "normalization_case": "Use the FY2015-FY2017 ordinary attributable-profit observations only as a conditional consolidated historical reference. Do not convert the FY2017 raw-material shock, investment income, foreign-exchange fair-value movement, impairment, or unallocated acquisitions into a normalized component point estimate.",
+  "permanent_loss_map": "The central permanent-loss paths are sustained raw-material-cost pressure without recovery, working-capital and supplier-payment cash absorption requiring more short-term debt, and unbounded acquisition/new-business spending or losses. The disclosed core remains conditionally relevant, but those paths prevent an owner-cash or capital-return assertion.",
+  "value_route": {
+    "primary_routes": [
+      "ROUTE:CORE_CONDITIONAL_NORMAL_EARNINGS"
+    ],
+    "excluded_routes": [
+      "ROUTE:NONCOMPRESSOR_EXCLUDED"
+    ],
+    "route_component_requirements": [
+      {
+        "route_id": "ROUTE:CORE_CONDITIONAL_NORMAL_EARNINGS",
+        "required_component_ids": [
+          "COMP:COMPRESSOR_CORE"
+        ],
+        "optional_component_ids": []
+      },
+      {
+        "route_id": "ROUTE:GROUP_FINANCING_UNRESOLVED",
+        "required_component_ids": [
+          "COMP:GROUP_WORKING_CAPITAL_AND_FINANCING"
+        ],
+        "optional_component_ids": []
+      },
+      {
+        "route_id": "ROUTE:NONCOMPRESSOR_EXCLUDED",
+        "required_component_ids": [
+          "COMP:NONCOMPRESSOR_NEW_BUSINESSES"
+        ],
+        "optional_component_ids": []
+      }
+    ],
+    "route_reasoning": "The only primary model role is conditionally tied to the disclosed compressor core and historical ordinary earnings reference. Group cash/debt evidence cannot be allocated into an owner-cash or capital-return route, and noncompressor additions are excluded pending component disclosure.",
+    "valuation_model_roles": {
+      "primary": [
+        "ROUTE:CORE_CONDITIONAL_NORMAL_EARNINGS"
+      ],
+      "corroborative": [],
+      "stress": []
+    }
+  },
+  "strongest_rival": "UNIDENTIFIED: the supplied disclosures name no competitor; the strongest rival is therefore the undisclosed compressor supplier competing for the same globally known refrigerator manufacturers.",
+  "reversal_observations": [
+    "Matched-period company disclosures show that compressor price, mix, or unit margins improve despite raw-material input pressure.",
+    "A same-boundary cash bridge shows that the FY2017 operating-cash decline is not a recurring compressor working-capital or supplier-payment burden.",
+    "Component reporting shows that acquired or new noncompressor businesses are material enough to alter the consolidated historical earnings reference or financing burden.",
+    "A named rival or customer concentration disclosure demonstrates that the assumed competitive arena is incomplete or different from the disclosed compressor customer base."
+  ],
+  "component_treatments": [
+    {
+      "component_id": "COMP:COMPRESSOR_CORE",
+      "treatment": "CONDITIONALLY_UNDERWRITE",
+      "reason": "Refrigerator and commercial compressors are the disclosed principal business and the company identifies Jiaxipera as its major profit source, but the source lacks a compressor-only earnings, cash-flow, maintenance-capital, and growth-return bridge.",
+      "investment_consequence": "The core may inform only a conditional normal-earnings route; it cannot authorize an owner-cash or growth-capital-return route.",
+      "promotion_or_resolution_condition": "Provide matched-period refrigerator and commercial-compressor revenue, price/mix, unit-cost or gross-margin, working-capital, operating-cash, maintenance-capital, and growth-return evidence.",
+      "evidence_ids": [
+        "EV:CORE_PRODUCTS_AND_CUSTOMERS",
+        "EV:CORE_PROFIT_SOURCE",
+        "EV:HISTORICAL_EARNINGS",
+        "EV:RAW_MATERIAL_PROFIT_PRESSURE"
+      ]
+    },
+    {
+      "component_id": "COMP:GROUP_WORKING_CAPITAL_AND_FINANCING",
+      "treatment": "CANNOT_BOUND",
+      "reason": "The group disclosed negative FY2017 operating cash flow, long-lived-asset cash spending, higher inventory, sharply higher short-term borrowing, and restricted or pledged assets, but did not allocate operating cash, spending, working capital, or borrowings to components or distinguish maintenance from growth capital.",
+      "investment_consequence": "The evidence establishes financing pressure and an unresolved owner-cash boundary, not a negative maintenance-owner-cash point estimate or a component capital-return conclusion.",
+      "promotion_or_resolution_condition": "Provide component-level operating cash, maintenance versus growth commitments, working-capital balances and turns, debt allocation and maturity/refinancing terms, and returns on funded growth projects.",
+      "evidence_ids": [
+        "EV:GROUP_CASH_AND_LONG_LIVED_SPENDING",
+        "EV:WORKING_CAPITAL_AND_DEBT",
+        "EV:RESTRICTED_AND_PLEDGED_ASSETS",
+        "EV:COMPONENT_CASH_UNKNOWN"
+      ]
+    },
+    {
+      "component_id": "COMP:NONCOMPRESSOR_NEW_BUSINESSES",
+      "treatment": "EXCLUDE_FROM_BASE",
+      "reason": "Trade, technical services, automobile air-conditioning compressors, and cleaning robots are disclosed as additional businesses; the source says certain newer businesses had a small current-period consolidated revenue/profit share, while acquisitions and component cash, spending, and financing attribution are not disclosed.",
+      "investment_consequence": "These additions are excluded from the core normal-earnings route and cannot supply base owner-cash, financing, or capital-return evidence.",
+      "promotion_or_resolution_condition": "Provide component financial statements and a matched acquisition, integration, operating-cash, capital-commitment, and return bridge for each material new business.",
+      "evidence_ids": [
+        "EV:NONCOMPRESSOR_SCOPE",
+        "EV:ACQUISITIONS_AND_FUNDED_PROJECTS",
+        "EV:COMPONENT_CASH_UNKNOWN"
+      ]
+    }
+  ],
+  "component_decisions": [
+    {
+      "component_id": "COMP:COMPRESSOR_CORE",
+      "economic_scope": "MATURE_CORE_NORMAL_EARNINGS",
+      "normal_earnings_use": "CONDITIONAL_RANGE",
+      "owner_cash_use": "UNRESOLVED",
+      "financing_pressure_effect": "CONDITIONAL",
+      "permanent_loss_use": "CONDITIONAL_PATH",
+      "valuation_use": "CONDITIONAL_PRIMARY_INPUT",
+      "valuation_route_bindings": [
+        {
+          "route_id": "ROUTE:CORE_CONDITIONAL_NORMAL_EARNINGS",
+          "use": "CONDITIONAL_PRIMARY_INPUT"
+        }
+      ],
+      "promotion_test": "Promote only after matched compressor-component reporting establishes cost recovery, stable normal earnings, operating cash, economic maintenance capital, and the return on separately identified growth capital.",
+      "invalidation_test": "Invalidate the conditional core route if matched disclosures show sustained margin or cash deterioration, customer absorption failure, or cost pressure that the core cannot recover."
+    },
+    {
+      "component_id": "COMP:GROUP_WORKING_CAPITAL_AND_FINANCING",
+      "economic_scope": "SURVIVAL_FINANCING",
+      "normal_earnings_use": "NOT_APPLICABLE",
+      "owner_cash_use": "UNRESOLVED",
+      "financing_pressure_effect": "INCREASES",
+      "permanent_loss_use": "CONDITIONAL_PATH",
+      "valuation_use": "UNRESOLVED",
+      "valuation_route_bindings": [
+        {
+          "route_id": "ROUTE:GROUP_FINANCING_UNRESOLVED",
+          "use": "UNRESOLVED"
+        }
+      ],
+      "promotion_test": "Resolve only with component-level cash conversion, maintenance-versus-growth capital, debt allocation, maturity, collateral, and refinancing evidence.",
+      "invalidation_test": "Invalidate the financing-pressure interpretation if a same-boundary bridge demonstrates that the FY2017 cash and borrowing movements were nonrecurring and did not represent continuing working-capital or funding needs."
+    },
+    {
+      "component_id": "COMP:NONCOMPRESSOR_NEW_BUSINESSES",
+      "economic_scope": "NONCORE_OR_OPTIONAL_ASSET",
+      "normal_earnings_use": "EXCLUDED",
+      "owner_cash_use": "EXCLUDED",
+      "financing_pressure_effect": "CONDITIONAL",
+      "permanent_loss_use": "EXCLUDED",
+      "valuation_use": "EXCLUDED",
+      "valuation_route_bindings": [
+        {
+          "route_id": "ROUTE:NONCOMPRESSOR_EXCLUDED",
+          "use": "EXCLUDED"
+        }
+      ],
+      "promotion_test": "Promote only after separate financial, cash, commitment, integration, and growth-return evidence is provided for each material acquired or new business.",
+      "invalidation_test": "Keep excluded if reporting remains consolidated or if a component bridge shows losses, commitments, or financing burdens without a demonstrated economic return."
+    }
+  ],
+  "economic_derivation": {
+    "schema_version": "enterprise-underwriting-economic-derivation.v1",
+    "normal_earnings_bridge": {
+      "basis": {
+        "metric": "Attributable net profit excluding non-recurring gains, historical reference",
+        "currency": "CNY",
+        "unit": "CNY",
+        "tax_basis": "AFTER_TAX",
+        "earnings_claim_scope": "ORDINARY_COMMON_EQUITY",
+        "operating_perimeter": "Consolidated group historical reference; compressor and noncompressor allocation remains unresolved.",
+        "as_of": "2018-12-31"
+      },
+      "rows": [
+        {
+          "row_id": "NEB:REFERENCE_CORE_HISTORICAL_2015_2017",
+          "component_id": "COMP:COMPRESSOR_CORE",
+          "row_role": "REFERENCE_EARNINGS",
+          "direction": "ADD",
+          "quantification": {
+            "status": "BOUNDED",
+            "range_low": 60290327.88,
+            "range_high": 203176268.25
+          },
+          "evidence_ids": [
+            "EV:HISTORICAL_EARNINGS"
+          ],
+          "economic_reason": "This is a conditional three-year consolidated ordinary-earnings reference, not a compressor-only normalized point estimate; the compressor core is the disclosed principal business and Jiaxipera is described as the major profit source."
+        },
+        {
+          "row_id": "NEB:CORE_RAW_MATERIAL_NORMALIZATION_UNKNOWN",
+          "component_id": "COMP:COMPRESSOR_CORE",
+          "row_role": "NORMALIZATION_ADJUSTMENT",
+          "direction": "SUBTRACT",
+          "quantification": {
+            "status": "UNKNOWN",
+            "reason": "The source identifies raw-material price increases as lowering subsidiary profits but supplies no matched compressor cost, price recovery, volume, or margin bridge.",
+            "conservative_treatment": "Retain the historical reference only as conditional and do not create a normalized adjustment."
+          },
+          "evidence_ids": [
+            "EV:RAW_MATERIAL_PROFIT_PRESSURE"
+          ],
+          "economic_reason": "Input-cost pressure is economically relevant to the core, but its normal earnings effect cannot be quantified from the disclosed consolidated facts."
+        },
+        {
+          "row_id": "NEB:NONCOMPRESSOR_EXCLUDED_UNKNOWN",
+          "component_id": "COMP:NONCOMPRESSOR_NEW_BUSINESSES",
+          "row_role": "NORMALIZATION_ADJUSTMENT",
+          "direction": "SUBTRACT",
+          "quantification": {
+            "status": "UNKNOWN",
+            "reason": "New business and acquisition disclosures do not supply component earnings, cash spending, financing, or integration attribution.",
+            "conservative_treatment": "Exclude the component from the core route rather than assigning it a zero or estimated contribution."
+          },
+          "evidence_ids": [
+            "EV:NONCOMPRESSOR_SCOPE",
+            "EV:ACQUISITIONS_AND_FUNDED_PROJECTS",
+            "EV:COMPONENT_CASH_UNKNOWN"
+          ],
+          "economic_reason": "The newer noncompressor businesses are not interchangeable with the compressor core and cannot be normalized within its route on this record."
+        }
+      ]
+    },
+    "driver_sensitivity_specs": [
+      {
+        "sensitivity_id": "SENS:CONSOLIDATED_INVENTORY_COMMITMENT",
+        "component_ids": [
+          "COMP:COMPRESSOR_CORE"
+        ],
+        "driver_binding": {
+          "enterprise_variable_id": "DRV:CONSOLIDATED_YEAR_END_INVENTORY"
+        },
+        "metric": "Consolidated year-end inventory balance",
+        "unit": "CNY",
+        "horizon": "FY2015-FY2017 historical observation",
+        "input_cases": {
+          "mode": "LOW_BASE_HIGH",
+          "low": {
+            "value_or_range": {
+              "value": 748246035.67
+            },
+            "basis": "FY2015 consolidated year-end inventory balance.",
+            "evidence_ids": [
+              "EV:WORKING_CAPITAL_AND_DEBT"
+            ]
+          },
+          "base": {
+            "value_or_range": {
+              "value": 865125854.11
+            },
+            "basis": "FY2016 consolidated year-end inventory balance.",
+            "evidence_ids": [
+              "EV:WORKING_CAPITAL_AND_DEBT"
+            ]
+          },
+          "high": {
+            "value_or_range": {
+              "value": 1378854500.61
+            },
+            "basis": "FY2017 consolidated year-end inventory balance; the source attributes the increase to raw-material prices and stocking for revenue growth.",
+            "evidence_ids": [
+              "EV:WORKING_CAPITAL_AND_DEBT"
+            ]
+          }
+        },
+        "transmission": {
+          "normal_earnings": {
+            "status": "UNKNOWN",
+            "basis": "No disclosed compressor-specific inventory allocation or matched price, volume, and margin bridge permits the consolidated inventory range to be translated into a core normal-earnings delta.",
+            "delta": {
+              "status": "UNKNOWN",
+              "reason": "The observed consolidated inventory movement may reflect raw-material valuation, revenue-related stocking, or components outside the core.",
+              "conservative_treatment": "Do not assign an earnings delta; retain the core route as conditional."
+            }
+          },
+          "owner_cash": {
+            "status": "UNKNOWN",
+            "basis": "The record discloses group operating cash and long-lived-asset spending but does not allocate cash conversion or distinguish maintenance from growth capital for the core.",
+            "delta": {
+              "status": "UNKNOWN",
+              "reason": "Inventory cannot be converted into a compressor owner-cash delta without component operating cash, receivable collection, payable, maintenance-capital, and growth-spending evidence.",
+              "conservative_treatment": "Do not infer a negative owner-cash point estimate from the FY2017 consolidated cash deficit."
+            }
+          },
+          "valuation_route_ids": [
+            "ROUTE:CORE_CONDITIONAL_NORMAL_EARNINGS"
+          ]
+        },
+        "reversal_observation_refs": [
+          "#/reversal_observations/0",
+          "#/reversal_observations/1"
+        ]
+      }
+    ]
+  },
+  "evidence_trace": [
+    {
+      "evidence_id": "EV:CORE_PRODUCTS_AND_CUSTOMERS",
+      "source_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN000404_PRE_CUTOFF_SOURCE_PACKAGE.md",
+      "locator": "业务组件、客户和渠道的原始披露; FY2017 年报 PDF p. 9 and p. 11",
+      "scope": "Consolidated business description, compressor products, brands, and customer/geographic coverage.",
+      "used_for": "Defines the disclosed compressor core and the limits of the customer and competitor evidence."
+    },
+    {
+      "evidence_id": "EV:CORE_PROFIT_SOURCE",
+      "source_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN000404_PRE_CUTOFF_SOURCE_PACKAGE.md",
+      "locator": "跨期经营与利润资料（仅事实）; FY2017 年报 PDF p. 9",
+      "scope": "FY2017 statement that Jiaxipera was the company's major profit source.",
+      "used_for": "Supports conditional association of the historical earnings reference with the disclosed compressor core."
+    },
+    {
+      "evidence_id": "EV:HISTORICAL_EARNINGS",
+      "source_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN000404_PRE_CUTOFF_SOURCE_PACKAGE.md",
+      "locator": "跨期经营与利润资料（仅事实） table; FY2017 年报 PDF p. 6-7",
+      "scope": "FY2015-FY2017 consolidated revenue, attributable net profit, and attributable net profit excluding non-recurring gains.",
+      "used_for": "Supplies the bounded historical ordinary-earnings reference."
+    },
+    {
+      "evidence_id": "EV:RAW_MATERIAL_PROFIT_PRESSURE",
+      "source_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN000404_PRE_CUTOFF_SOURCE_PACKAGE.md",
+      "locator": "跨期经营与利润资料（仅事实）; FY2017 年报 PDF p. 9",
+      "scope": "FY2017 disclosure that major raw-material price increases reduced company and subsidiary profits.",
+      "used_for": "Establishes an unquantified cost-pressure normalization question and a conditional permanent-loss path."
+    },
+    {
+      "evidence_id": "EV:GROUP_CASH_AND_LONG_LIVED_SPENDING",
+      "source_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN000404_PRE_CUTOFF_SOURCE_PACKAGE.md",
+      "locator": "现金、营运资本、债务与受限资产的原始事实 table; FY2015 p. 84, FY2016 p. 91, FY2017 p. 94",
+      "scope": "Consolidated FY2015-FY2017 operating cash flow and cash paid for fixed, intangible, and other long-lived assets.",
+      "used_for": "Separates observed all-long-lived-asset spending from unknown economic maintenance capital and establishes the owner-cash boundary."
+    },
+    {
+      "evidence_id": "EV:WORKING_CAPITAL_AND_DEBT",
+      "source_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN000404_PRE_CUTOFF_SOURCE_PACKAGE.md",
+      "locator": "现金、营运资本、债务与受限资产的原始事实 table and FY2017 explanatory text; FY2016 p. 24-25, FY2017 p. 19-20",
+      "scope": "Consolidated receivables, inventory, short-term borrowing, and disclosed reasons for FY2017 cash-flow and inventory changes.",
+      "used_for": "Provides historical inventory sensitivity cases and supports the group financing-pressure treatment."
+    },
+    {
+      "evidence_id": "EV:RESTRICTED_AND_PLEDGED_ASSETS",
+      "source_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN000404_PRE_CUTOFF_SOURCE_PACKAGE.md",
+      "locator": "现金、营运资本、债务与受限资产的原始事实; FY2017 年报 PDF p. 21",
+      "scope": "FY2017 restricted cash, pledged notes, restricted financial products, and fixed/intangible asset collateral.",
+      "used_for": "Supports the financing-pressure and survival boundary."
+    },
+    {
+      "evidence_id": "EV:NONCOMPRESSOR_SCOPE",
+      "source_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN000404_PRE_CUTOFF_SOURCE_PACKAGE.md",
+      "locator": "业务组件、客户和渠道的原始披露; FY2017 年报 PDF p. 9",
+      "scope": "Trade, technical services, automobile air-conditioning compressors, and cleaning robots disclosed as additional businesses; specified newer businesses had small current-period consolidated revenue/profit share.",
+      "used_for": "Defines the noncompressor component and prevents its silent inclusion in the refrigerator/commercial compressor route."
+    },
+    {
+      "evidence_id": "EV:ACQUISITIONS_AND_FUNDED_PROJECTS",
+      "source_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN000404_PRE_CUTOFF_SOURCE_PACKAGE.md",
+      "locator": "具名项目、收购/处置与融资边界; FY2017 年报 PDF p. 6 and p. 22",
+      "scope": "Shanghai Weile and GlenDambo acquisitions, disclosed investment amounts, funded compressor projects, and FY2017 rights issue.",
+      "used_for": "Supports exclusion of unallocated new-business economics and the unresolved growth-capital and financing boundary."
+    },
+    {
+      "evidence_id": "EV:COMPONENT_CASH_UNKNOWN",
+      "source_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN000404_PRE_CUTOFF_SOURCE_PACKAGE.md",
+      "locator": "明确 UNKNOWN",
+      "scope": "Absence of component-level operating cash, long-lived-asset spending, working capital, debt balances, customer contract and aging data, and project-level cash or financing allocation.",
+      "used_for": "Prevents component owner-cash, maintenance-capital, financing-allocation, and capital-return point estimates."
+    }
+  ],
+  "existing_object_refs": [
+    {
+      "kind": "pre_cutoff_source_package",
+      "ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN000404_PRE_CUTOFF_SOURCE_PACKAGE.md",
+      "role": "PRIMARY_FACT_RECORD"
+    }
+  ],
+  "underwriting_thesis": {
+    "thesis_id": "THESIS:CN000404:PRE_CUTOFF_CONDITIONAL_CORE",
+    "central_path": "The disclosed compressor core can be followed through a conditional historical ordinary-earnings reference, but raw-material pressure, group working-capital/financing needs, and unallocated newer businesses prevent conversion to a normal owner-cash or growth-return judgment.",
+    "normal_earnings_treatment": "CONDITIONAL_RANGE: retain the FY2015-FY2017 ordinary attributable-profit range solely as a consolidated historical reference, with an explicit unknown adjustment for raw-material cost recovery and excluded noncompressor additions.",
+    "owner_cash_treatment": "UNRESOLVED: distinguish observed operating cash less all disclosed long-lived-asset spending from economic maintenance capital; neither maintenance capital nor component cash conversion is disclosed.",
+    "permanent_loss_treatment": "CONDITIONAL_PATH: monitor sustained unrecovered input-cost pressure, inventory and supplier-payment cash absorption, short-term debt dependence, and acquisition/new-business commitments.",
+    "value_route_treatment": "Only ROUTE:CORE_CONDITIONAL_NORMAL_EARNINGS has a primary model role; group financing is unresolved and noncompressor additions are excluded from the base route.",
+    "economic_directions": {
+      "normal_earnings": "MIXED",
+      "owner_cash": "DETERIORATES",
+      "permanent_loss": "MIXED"
+    },
+    "strongest_rival": "UNIDENTIFIED: the supplied disclosures name no competitor; the strongest rival is therefore the undisclosed compressor supplier competing for the same globally known refrigerator manufacturers.",
+    "monitoring": "Obtain a matched component bridge for compressor price/mix, unit cost, margin, inventory, receivables, payables, operating cash, maintenance versus growth capital, debt/refinancing, and return on funded projects; also identify competitor and customer concentration facts."
+  },
+  "investment_treatment": "Research-training-only Episode. It states no price, valuation result, return, buy band, or investment action."
+}

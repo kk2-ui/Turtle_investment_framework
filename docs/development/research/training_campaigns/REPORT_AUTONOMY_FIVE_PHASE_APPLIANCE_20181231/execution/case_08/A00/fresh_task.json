@@ -1,0 +1,1430 @@
+{
+  "contract_id": "UWTRAIN:APPLIANCE:603355:20181231:STAGE5:A00:V2",
+  "execution_mode": "CODEX_FRESH_SUBAGENT",
+  "messages": [
+    {
+      "content": "You are Turtle's enterprise-underwriting training synthesizer.\nYour only product is one complete EnterpriseUnderwritingEpisode JSON object.\nConnect industry future and profit-pool transmission, company position and adaptation,\nsurvival and financing, normalized economics, owner cash, permanent-loss paths, value\nroute, strongest rival, and reversal observations into one best-current judgment.\nEvidence discipline is a constraint, not the product: localize an unknown and continue\nthe rest of the company. Do not emit axes, outcome cells, receipts, gates, scores,\nmarket price, valuation results, expected return, BuyBand, or investment action.\nWhen capital spending matters, keep three distinct economic questions: operating cash\nless economic maintenance capital (normal owner cash), operating cash less all\nlong-lived-asset spending (current capital-allocation and financing pressure), and the\nsubsequent return on growth capital. Missing growth-return evidence or total spending\nmust never be renamed as maintenance capital or used to invent a negative owner-cash\npoint estimate; give a conditional treatment and continue the company judgment.\nCapital intensity is economic, not a fixed-asset label: for a channel, service, retail,\nor acquisition-led company, identify material working-capital, lease, logistics, people,\nintegration, or customer-acquisition commitments alongside long-lived assets. Do not call\na company cash-light merely because capex is low, and do not force a capital-spending\nproblem where those commitments are immaterial.\nUse only the supplied sources. Every evidence_trace.source_ref and existing_object_ref.ref\nmust exactly match a supplied source_ref. Return JSON only, with schema_version\nenterprise-underwriting-episode.v2. The underwriting_thesis must include\neconomic_directions.normal_earnings, owner_cash, and permanent_loss, each chosen from\nIMPROVES, DETERIORATES, MIXED, UNKNOWN, or NONE. Only primary valuation model roles are\nmandatory; corroborative and stress roles may be empty or omitted when economically\ninapplicable. A source labelled TRAINING_MEMORY is prior curriculum guidance only: use it\nto change questions, evidence order, rival checks, or conditional treatment, but never\nas a target-company fact and never cite it in evidence_trace or existing_object_refs.\nThe Episode must also contain component_decisions with exactly one entry for every\ncomponent_treatments component_id. For each component, state its comparable economic_scope,\nwhether it enters base or conditional normal earnings, whether it forms an owner-cash\nrange, how it changes financing pressure, how it enters permanent-loss analysis and the\nvalue route, plus separate promotion and invalidation tests. valuation_route_bindings\nmust name every exact primary, corroborative, stress, excluded, scenario, or unresolved\nroute_id that the component can feed, with that route-specific use; one unrelated primary\ncomponent cannot authorize another component's EPV, owner-cash, or capital-return route.\nvalue_route.route_component_requirements must name the required and optional component_ids\nfor every route. Every required component must retain a role-compatible route binding;\nan optional component may remain excluded without invalidating the route.\nThese downstream uses are\nthe decision; the UNDERWRITE/CONDITIONALLY_UNDERWRITE/SCENARIO_ONLY/EXCLUDE_FROM_BASE/\nCANNOT_BOUND label cannot substitute for them. A component excluded, scenario-only, or\nunbounded at the component level cannot silently become a base-range or primary value\ninput.\nThe Episode must also contain economic_derivation. Its normal_earnings_bridge rows\nidentify component_id, sign, evidence, economic reason, and either a bounded range or\nan explicit UNKNOWN with reason and conservative treatment. The bridge must contain\nexactly one REFERENCE_EARNINGS baseline and at most one row for each component_id and\nrow_role pair; changing row_id never makes a duplicated contribution distinct. If any\nBASE_RANGE row exists, the reference baseline itself must have BASE_RANGE authority;\notherwise, if a CONDITIONAL_RANGE row exists, the reference must have CONDITIONAL_RANGE\nauthority. Adjustments cannot create an authorized earnings range without that baseline.\nDo not author a row-level\nnormal_earnings_use: the compiler derives BASE_RANGE, CONDITIONAL_RANGE, SCENARIO_ONLY,\nor EXCLUDED solely from component_decisions. UNKNOWN is not zero and must not be turned\ninto a point estimate. driver_sensitivity_specs must give each key operating driver a\nLOW_BASE_HIGH set or BOUNDED_RANGE, trace its transmission to normal earnings and owner\ncash with either a signed BOUNDED delta range that includes zero or an explicit UNKNOWN,\nname only routes whose exact component binding use matches the route role, and cite valid\nreversal observations. EXCLUDED, SCENARIO_ONLY, or UNRESOLVED component authority cannot\nbe upgraded to DIRECT normal-earnings or owner-cash transmission. Every non-PRESERVED\nBOUNDED normal-earnings or owner-cash delta needs its own structured magnitude_evidence:\none or more evidence ids not reused from the driver input cases, the exact sensitivity\ncomponent_ids and responsibility_boundary, matching driver metric/unit/horizon, matching\naffected axis and delta unit, and a non-empty calculation_binding whose input evidence\nids are the same magnitude evidence ids. Each cited evidence_trace item must itself\ncarry a sensitivity_magnitude_observation with those exact component, responsibility,\ndriver metric/unit, horizon, affected-axis, delta-unit, and calculation-input fields;\nthose canonical trace fields, not repeated labels inside magnitude_evidence, authorize\nthe magnitude. Do not use the transmission basis text or a component's existing\nauthority as a magnitude substitute. PRESERVED [0,0] may remain without magnitude\nevidence. UNKNOWN deltas have no numeric attribution. Keep\nthis interface price-free: do not provide value, return, or action results.\nThe enclosing fresh-task packet includes the complete frozen Episode JSON Schema at\nresponse_contract.episode_json_schema. Treat that schema as the authoritative response\nshape: include every field required at the applicable schema location; use only values\nallowed by enum or const; and wherever additionalProperties is false, do not add or\nrename fields. Do not invent a parallel structure when the schema already defines one.\n\nThe following cross-field rules are also part of the response contract because JSON\nSchema alone cannot express them:\n- Copy company_id, company_name, cutoff_at, and sample_identity verbatim from the\n  frozen contract.\n- Copy situation_model.industry_future_thesis.strongest_rival verbatim into both the\n  top-level strongest_rival and underwriting_thesis.strongest_rival. Copy its entire\n  reversal_observations array verbatim into the top-level reversal_observations.\n- Every evidence_trace item must have evidence_id, source_ref, locator, scope, and\n  used_for. Evidence ids must be unique. Every cited source_ref/ref must exactly equal\n  an allowed non-TRAINING_MEMORY source_ref. Every existing_object_refs item must have\n  kind, ref, and role.\n- component_decisions must cover every component_treatments component_id exactly once.\n  valuation_use is the highest-authority use in that component's route bindings, in\n  this order: PRIMARY_INPUT, CONDITIONAL_PRIMARY_INPUT, CORROBORATIVE_INPUT,\n  SCENARIO_ONLY, STRESS_ONLY, UNRESOLVED, EXCLUDED, NOT_APPLICABLE. Every\n  non-NOT_APPLICABLE valuation use needs a binding. Excluded/scenario/unbounded\n  treatments cannot become base or primary inputs; CANNOT_BOUND retains an UNRESOLVED\n  downstream use and CONDITIONALLY_UNDERWRITE retains a conditional downstream use.\n- Give every bound or named primary, corroborative, stress, or excluded value route one\n  route_component_requirements entry. Required and optional component ids must be known,\n  unique and disjoint. Each route must have a role-compatible bound component; every\n  required component must itself have a role-compatible binding. One route cannot be\n  both active and excluded.\n- normal_earnings_bridge must contain exactly one REFERENCE_EARNINGS row, no duplicate\n  component_id/row_role pair, and at least one row for every component whose\n  normal_earnings_use is not NOT_APPLICABLE. A BASE_RANGE or CONDITIONAL_RANGE row needs\n  a reference row with the same authority. Every row and sensitivity evidence_id must\n  exist in evidence_trace, as must every component_treatments evidence_id.\n- In each driver sensitivity, named components and valuation routes must exist. Each\n  route must be bound to every named component and the binding use must be compatible\n  with the route's primary/corroborative/stress role. DIRECT transmission requires base\n  or conditional component authority. UNKNOWN transmission requires an UNKNOWN delta;\n  a BOUNDED delta is signed and includes zero; PRESERVED requires a zero delta. Every\n  non-PRESERVED BOUNDED delta needs separate structured magnitude evidence with matching\n  component ids, responsibility boundary, driver metric/unit/horizon, affected axis and\n  delta unit, plus a calculation binding. Those evidence ids must not be driver-case\n  evidence; each must resolve to an evidence_trace sensitivity_magnitude_observation\n  whose canonical component, responsibility, driver metric/unit, horizon, affected\n  axis, delta unit, and calculation inputs match the delta. Repeated labels in the delta\n  do not substitute. Neither prose basis nor existing component authority substitutes.\n  Every reversal_observation_ref must resolve to the top-level copied array.\n- The runner makes only three narrow deterministic materializations before validation:\n  it derives component_decision_summary and economic_derivation_summary; when a\n  sensitivity delta.status is UNKNOWN it changes that matching transmission status to\n  UNKNOWN; and it registers an otherwise unregistered EXCLUDED, UNRESOLVED,\n  SCENARIO_ONLY, or NOT_APPLICABLE component-bound route in excluded_routes. These\n  are not substitutes for your economics. You must still supply every material\n  component, route requirement, evidence reference, economic reason, sensitivity\n  case, treatment, boundary, and reversal condition yourself. Do not rely on the\n  runner to repair an invalid or conflicting judgment.\nKeep the whole Episode price-, return-, outcome-, and action-free.",
+      "role": "system"
+    },
+    {
+      "content": "Create the complete pre-outcome Episode for this frozen training contract:\n{\n  \"allowed_sources\": [\n    {\n      \"available_at\": \"2018-04-26T23:59:59+08:00\",\n      \"source_id\": \"SRC:PRE_CUTOFF_PACKAGE:CN603355\",\n      \"source_ref\": \"docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN603355_PRE_CUTOFF_SOURCE_PACKAGE.md\",\n      \"time_role\": \"PRE_CUTOFF\"\n    }\n  ],\n  \"authority\": \"RESEARCH_TRAINING_ONLY_NO_PRICE_VALUATION_OR_INVESTMENT_AUTHORITY\",\n  \"company_id\": \"CN:603355\",\n  \"company_name\": \"莱克电气股份有限公司\",\n  \"component_decision_interface\": {\n    \"completion_basis\": \"EXPLICIT_EFFECT_FOR_EACH_COMPONENT\",\n    \"schema_version\": \"enterprise-underwriting-component-decision-interface.v1\"\n  },\n  \"contract_id\": \"UWTRAIN:APPLIANCE:603355:20181231:STAGE5:A00:V2\",\n  \"cutoff_at\": \"2018-12-31T23:59:59+08:00\",\n  \"economic_derivation_interface\": {\n    \"completion_basis\": \"PRICE_FREE_COMPONENT_BRIDGE_AND_EVIDENCED_DRIVER_SENSITIVITY\",\n    \"schema_version\": \"enterprise-underwriting-economic-derivation-interface.v2\"\n  },\n  \"feedback_clocks\": [\n    {\n      \"clock_id\": \"CLOCK:EARLY_SIGNAL\",\n      \"discriminating_observation\": \"Post-cutoff official annual-report observation after the gate opens.\",\n      \"episode_claims\": [\n        \"INDUSTRY_AND_SITUATION\"\n      ],\n      \"horizon\": \"EARLY_SIGNAL\",\n      \"opens_at\": \"2019-12-31T23:59:59+08:00\"\n    },\n    {\n      \"clock_id\": \"CLOCK:NORMALIZATION_AND_CASH\",\n      \"discriminating_observation\": \"Later post-cutoff official annual-report observation after the gate opens.\",\n      \"episode_claims\": [\n        \"NORMAL_EARNINGS\",\n        \"OWNER_CASH\"\n      ],\n      \"horizon\": \"NORMALIZATION_AND_CASH\",\n      \"opens_at\": \"2020-12-31T23:59:59+08:00\"\n    }\n  ],\n  \"outcome_access\": \"SEALED\",\n  \"primary_training_product\": {\n    \"completion_basis\": \"COMPLETE_EPISODE_VALIDATION_ONLY\",\n    \"object_type\": \"EnterpriseUnderwritingEpisode\",\n    \"schema_version\": \"enterprise-underwriting-episode.v2\"\n  },\n  \"sample_identity\": \"BLIND_REPLAY\",\n  \"schema_version\": \"enterprise-underwriting-training-contract.v2\",\n  \"training_track\": \"BLIND_REPLAY\"\n}\n\nAllowed source material:\n<source>\nsource_id=SRC:PRE_CUTOFF_PACKAGE:CN603355\nsource_ref=docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN603355_PRE_CUTOFF_SOURCE_PACKAGE.md\ntime_role=PRE_CUTOFF\n# CN:603355 莱克电气股份有限公司 — cutoff 原始来源包\n\n截止日：2018-12-31。本文只使用巨潮资讯网（CNINFO）在截止日前披露的 FY2015、FY2016、FY2017 完整年度报告静态 PDF。金额单位除另注外为人民币元；页码为所链接 PDF 的页码。\n\n## 正式身份与合并边界\n\n- 三期年报封面主体均为“莱克电气股份有限公司”。本包以 CN:603355 和该披露主体识别公司。[FY2015 p.1](https://static.cninfo.com.cn/finalpage/2016-04-26/1202243180.PDF)；[FY2016 p.1](https://static.cninfo.com.cn/finalpage/2017-04-25/1203379379.PDF)；[FY2017 p.1](https://static.cninfo.com.cn/finalpage/2018-04-26/1204791498.PDF)\n- 本包采用合并口径。三期财务报告均在“在子公司中的权益”列出子公司名称、经营/注册地、业务性质、持股比例及取得方式。[FY2015 pp.107-108](https://static.cninfo.com.cn/finalpage/2016-04-26/1202243180.PDF)；[FY2016 pp.120-121](https://static.cninfo.com.cn/finalpage/2017-04-25/1203379379.PDF)；[FY2017 pp.126-127](https://static.cninfo.com.cn/finalpage/2018-04-26/1204791498.PDF)\n- 合并范围的原始变动：FY2015 新设莱克电气信息科技（苏州）有限公司、持股 70%；FY2016 新设 KINGCLEAN ELECTRIC (ROMANIA) SRL，由天然控股和莱克绿能间接 100% 持有；FY2017 新设苏州莱克米标云商销售有限公司、持股 60%，报告称其当期尚未开展经营活动。[FY2015 p.107](https://static.cninfo.com.cn/finalpage/2016-04-26/1202243180.PDF)；[FY2016 pp.120-121](https://static.cninfo.com.cn/finalpage/2017-04-25/1203379379.PDF)；[FY2017 pp.126-127](https://static.cninfo.com.cn/finalpage/2018-04-26/1204791498.PDF)\n\n## 三期原始来源\n\n| 财年 | CNINFO 公告 ID | 披露日 | 完整年报静态 PDF |\n| --- | --- | --- | --- |\n| FY2015 | 1202243180 | 2016-04-26 | [2015 年年度报告](https://static.cninfo.com.cn/finalpage/2016-04-26/1202243180.PDF) |\n| FY2016 | 1203379379 | 2017-04-25 | [2016 年年度报告](https://static.cninfo.com.cn/finalpage/2017-04-25/1203379379.PDF) |\n| FY2017 | 1204791498 | 2018-04-26 | [2017 年年度报告](https://static.cninfo.com.cn/finalpage/2018-04-26/1204791498.PDF) |\n\n## 业务组件、客户与渠道：原始事实\n\n- FY2015 年报称以高速整流子电机为核心技术，围绕吸尘器发展家居清洁、空气净化、水净化等高端清洁电器和园林工具；经营模式为自主品牌与 ODM 结合，国内发展 LEXY 莱克等品牌和线上业务，海外为 ODM 自主研发制造贴牌销售。[FY2015 p.8](https://static.cninfo.com.cn/finalpage/2016-04-26/1202243180.PDF)\n- FY2016 年报称国内通过经销商、直营分公司和线上渠道；列出 LEXY 莱克、Bewinch 碧云泉、Jimmy 吉米三个品牌。FY2017 年报同样描述国内“代理+直营”、线上线下共同发展，海外为 ODM 自主研发制造贴牌销售。[FY2016 p.9](https://static.cninfo.com.cn/finalpage/2017-04-25/1203379379.PDF)；[FY2017 p.9](https://static.cninfo.com.cn/finalpage/2018-04-26/1204791498.PDF)\n- FY2017 年报将主营产品表述为吸尘器、空气净化器、净水机等绿色小家电和园林工具；并称核心客户为国际知名家电制造商、品牌运营商及区域性领袖企业，产品销售覆盖欧洲、北美、大洋洲、日本以及南美、亚洲、东欧等市场。[FY2017 pp.9-12](https://static.cninfo.com.cn/finalpage/2018-04-26/1204791498.PDF)\n- 前五名客户合计销售额及占营业收入：FY2015 1,931,478,000 / 48.25%，FY2016 1,933,537,400 / 44.18%，FY2017 2,272,596,100 / 39.81%。年报以“客户 1…客户 5”列示，并未在这些表中披露名称。[FY2015 p.11](https://static.cninfo.com.cn/finalpage/2016-04-26/1202243180.PDF)；[FY2016 p.14](https://static.cninfo.com.cn/finalpage/2017-04-25/1203379379.PDF)；[FY2017 p.16](https://static.cninfo.com.cn/finalpage/2018-04-26/1204791498.PDF)\n\n## 跨期利润与现金流：原始观察\n\n| 年度 | 营业收入 | 归母净利润 | 归母扣除非经常性损益后净利润 | 经营活动产生的现金流量净额 | 定期来源 |\n| --- | ---: | ---: | ---: | ---: | --- |\n| FY2015 | 4,002,744,130.02 | 363,800,264.68 | 345,756,094.34 | 495,736,937.79 | [FY2015 p.5](https://static.cninfo.com.cn/finalpage/2016-04-26/1202243180.PDF) |\n| FY2016 | 4,376,663,717.62 | 501,443,883.47 | 465,753,815.72 | 428,887,782.79 | [FY2016 p.5](https://static.cninfo.com.cn/finalpage/2017-04-25/1203379379.PDF) |\n| FY2017 | 5,709,587,581.22 | 365,528,338.84 | 341,024,566.26 | 214,168,010.55 | [FY2017 p.6](https://static.cninfo.com.cn/finalpage/2018-04-26/1204791498.PDF) |\n\n- FY2015 年报说营业收入下降 5.39%、净利润增长 5.75%，并把当年经营环境、汇率和产品结构列入管理层讨论；FY2016 年报把归母净利润增长与销售增长、自主品牌销售、产品高端化和平均售价上升联系起来。[FY2015 pp.9-11](https://static.cninfo.com.cn/finalpage/2016-04-26/1202243180.PDF)；[FY2016 pp.11-14](https://static.cninfo.com.cn/finalpage/2017-04-25/1203379379.PDF)\n- FY2017 年报称经营现金流同比减少与原材料货款及员工薪酬支付增加有关；同期报告称营业收入增长、归母净利润下降，列出原材料价格上涨和汇兑影响等事实。[FY2017 pp.16,20](https://static.cninfo.com.cn/finalpage/2018-04-26/1204791498.PDF)\n\n## 现金、长期资产支付、营运资本、债务与受限现金\n\n| 年度 | 购建固定资产、无形资产和其他长期资产支付的现金 | 期末现金及现金等价物 | 来源 |\n| --- | ---: | ---: | --- |\n| FY2015 | 78,777,189.65 | 1,273,218,504.61 | [FY2015 pp.57-59](https://static.cninfo.com.cn/finalpage/2016-04-26/1202243180.PDF) |\n| FY2016 | 66,402,380.24 | 2,057,278,846.80 | [FY2016 pp.68-70](https://static.cninfo.com.cn/finalpage/2017-04-25/1203379379.PDF) |\n| FY2017 | 223,523,443.95 | 1,952,177,224.96 | [FY2017 pp.73-75](https://static.cninfo.com.cn/finalpage/2018-04-26/1204791498.PDF) |\n\n| 年末合并余额 | 应收账款 | 存货 | 应付账款 | 短期借款 | 一年内到期的长期借款 | 长期借款 |\n| --- | ---: | ---: | ---: | ---: | ---: | ---: |\n| FY2015 | 639,386,689.54 | 358,549,126.41 | 519,435,429.20 | 129,872,000.00 | 未单列 | 未单列 |\n| FY2016 | 847,146,476.00 | 492,145,123.63 | 731,350,414.82 | 680,000,000.00 | 未单列 | 未单列 |\n| FY2017 | 1,079,368,129.84 | 729,341,883.43 | 932,503,031.31 | 未列余额 | 300,000,000.00 | 未单列 |\n\n上述余额见 [FY2015 pp.51-52](https://static.cninfo.com.cn/finalpage/2016-04-26/1202243180.PDF)、[FY2016 pp.62-63](https://static.cninfo.com.cn/finalpage/2017-04-25/1203379379.PDF)、[FY2017 pp.66-67](https://static.cninfo.com.cn/finalpage/2018-04-26/1204791498.PDF)。FY2017 短期借款附注明细的期末栏为空、期初为 680,000,000；另一附注列示一年内到期长期借款 300,000,000。该“未列余额”不等同于零。[FY2017 pp.108,111-112](https://static.cninfo.com.cn/finalpage/2018-04-26/1204791498.PDF)\n\n- FY2015、FY2016、FY2017 年报的“所有权或使用权受到限制的资产”均勾选“不适用”，现金及现金等价物构成表的“母公司或集团内子公司使用受限制的现金和现金等价物”未列金额。[FY2015 p.105](https://static.cninfo.com.cn/finalpage/2016-04-26/1202243180.PDF)；[FY2016 pp.118-119](https://static.cninfo.com.cn/finalpage/2017-04-25/1203379379.PDF)；[FY2017 p.124](https://static.cninfo.com.cn/finalpage/2018-04-26/1204791498.PDF)\n\n## 具名项目、并购与融资边界：原始事实\n\n- FY2015 年报披露首次公开发行 4,100 万股，募集资金总额 782,280,000，扣除发行费用后募集资金净额 752,004,273.94；年报还称可在不影响募投项目建设和使用的前提下，以不超过 300,000,000 的闲置募集资金购买理财产品。[FY2015 pp.8,31-32](https://static.cninfo.com.cn/finalpage/2016-04-26/1202243180.PDF)\n- FY2015 新设莱克信息科技、FY2016 设立罗马尼亚子公司、FY2017 设立莱克米标公司；三期“非同一控制下企业合并”“同一控制下企业合并”栏均勾选不适用，且三期现金流量表“取得子公司及其他营业单位支付的现金净额”均为不适用/未列金额。[FY2015 p.107](https://static.cninfo.com.cn/finalpage/2016-04-26/1202243180.PDF)；[FY2016 p.120](https://static.cninfo.com.cn/finalpage/2017-04-25/1203379379.PDF)；[FY2017 p.126](https://static.cninfo.com.cn/finalpage/2018-04-26/1204791498.PDF)\n- FY2016 年末短期借款由 129,872,000 增至 680,000,000；报告的管理层说明为“本期银行贷款增加”。FY2017 年报称筹资活动现金流减少与银行贷款减少和偿还银行贷款有关。[FY2016 pp.5,18,103](https://static.cninfo.com.cn/finalpage/2017-04-25/1203379379.PDF)；[FY2017 p.20](https://static.cninfo.com.cn/finalpage/2018-04-26/1204791498.PDF)\n\n## 非经常项目与口径断点：原始事实\n\n- 三期归母扣除非经常性损益后净利润分别为 345,756,094.34、465,753,815.72、341,024,566.26，均与同页归母净利润一并披露。[FY2015 p.5](https://static.cninfo.com.cn/finalpage/2016-04-26/1202243180.PDF)；[FY2016 p.5](https://static.cninfo.com.cn/finalpage/2017-04-25/1203379379.PDF)；[FY2017 p.6](https://static.cninfo.com.cn/finalpage/2018-04-26/1204791498.PDF)\n- FY2015 与 FY2016 年报在重要会计政策/估计变更处均勾选不适用；FY2017 年报披露财务报表列报变更，涉及“持续经营净利润”“终止经营净利润”“资产处置收益”等项目，采用追溯调整法并列明受影响表项目。[FY2015 p.77](https://static.cninfo.com.cn/finalpage/2016-04-26/1202243180.PDF)；[FY2016 p.89](https://static.cninfo.com.cn/finalpage/2017-04-25/1203379379.PDF)；[FY2017 pp.92-93](https://static.cninfo.com.cn/finalpage/2018-04-26/1204791498.PDF)\n\n## 明确 UNKNOWN\n\n- 三期年报在本包引用的前五大客户表未披露客户名称；客户身份为 `UNKNOWN`。\n- 三期年报没有按自主品牌、ODM、产品类别或客户列出经营现金流、利润和应收账款回收；这些字段为 `UNKNOWN`。\n- 本包未读取 FY2018 年报或 2019 年及以后材料，故没有截至 2018-12-31 的 FY2018 审计数据。\n\n</source>\n\nReturn the JSON object now.",
+      "role": "user"
+    }
+  ],
+  "required_context": "fork_turns=none",
+  "response_contract": {
+    "episode_json_schema": {
+      "$defs": {
+        "component_decision": {
+          "additionalProperties": false,
+          "properties": {
+            "component_id": {
+              "$ref": "#/$defs/non_empty_string"
+            },
+            "economic_scope": {
+              "enum": [
+                "SURVIVAL_FINANCING",
+                "MATURE_CORE_NORMAL_EARNINGS",
+                "ORDINARY_SHARE_OWNER_CASH",
+                "GROWTH_CAPITAL_RETURN",
+                "NONCORE_OR_OPTIONAL_ASSET",
+                "OTHER_MATERIAL_COMPONENT"
+              ]
+            },
+            "financing_pressure_effect": {
+              "enum": [
+                "REDUCES",
+                "NEUTRAL",
+                "INCREASES",
+                "CONDITIONAL",
+                "UNRESOLVED",
+                "NOT_APPLICABLE"
+              ]
+            },
+            "invalidation_test": {
+              "$ref": "#/$defs/non_empty_string"
+            },
+            "normal_earnings_use": {
+              "$ref": "#/$defs/earnings_and_cash_use"
+            },
+            "owner_cash_use": {
+              "$ref": "#/$defs/earnings_and_cash_use"
+            },
+            "permanent_loss_use": {
+              "enum": [
+                "BASE_PATH",
+                "CONDITIONAL_PATH",
+                "STRESS_ONLY",
+                "EXCLUDED",
+                "UNRESOLVED",
+                "NOT_APPLICABLE"
+              ]
+            },
+            "promotion_test": {
+              "$ref": "#/$defs/non_empty_string"
+            },
+            "valuation_route_bindings": {
+              "items": {
+                "$ref": "#/$defs/valuation_route_binding"
+              },
+              "type": "array"
+            },
+            "valuation_use": {
+              "enum": [
+                "PRIMARY_INPUT",
+                "CONDITIONAL_PRIMARY_INPUT",
+                "CORROBORATIVE_INPUT",
+                "SCENARIO_ONLY",
+                "STRESS_ONLY",
+                "EXCLUDED",
+                "UNRESOLVED",
+                "NOT_APPLICABLE"
+              ]
+            }
+          },
+          "required": [
+            "component_id",
+            "economic_scope",
+            "normal_earnings_use",
+            "owner_cash_use",
+            "financing_pressure_effect",
+            "permanent_loss_use",
+            "valuation_use",
+            "valuation_route_bindings",
+            "promotion_test",
+            "invalidation_test"
+          ],
+          "type": "object"
+        },
+        "component_decision_summary": {
+          "additionalProperties": false,
+          "properties": {
+            "financing_pressure": {
+              "$ref": "#/$defs/financing_component_route"
+            },
+            "normal_earnings": {
+              "$ref": "#/$defs/range_component_route"
+            },
+            "owner_cash": {
+              "$ref": "#/$defs/range_component_route"
+            },
+            "permanent_loss": {
+              "$ref": "#/$defs/permanent_loss_component_route"
+            },
+            "schema_version": {
+              "const": "enterprise-underwriting-component-decision-summary.v1"
+            },
+            "valuation": {
+              "$ref": "#/$defs/valuation_component_route"
+            }
+          },
+          "required": [
+            "schema_version",
+            "normal_earnings",
+            "owner_cash",
+            "financing_pressure",
+            "permanent_loss",
+            "valuation"
+          ],
+          "type": "object"
+        },
+        "component_id_list": {
+          "items": {
+            "$ref": "#/$defs/non_empty_string"
+          },
+          "type": "array"
+        },
+        "component_treatment": {
+          "additionalProperties": false,
+          "properties": {
+            "component_id": {
+              "$ref": "#/$defs/non_empty_string"
+            },
+            "evidence_ids": {
+              "$ref": "#/$defs/non_empty_unique_string_list"
+            },
+            "investment_consequence": {
+              "$ref": "#/$defs/non_empty_string"
+            },
+            "promotion_or_resolution_condition": {
+              "$ref": "#/$defs/non_empty_string"
+            },
+            "reason": {
+              "$ref": "#/$defs/non_empty_string"
+            },
+            "treatment": {
+              "enum": [
+                "UNDERWRITE",
+                "CONDITIONALLY_UNDERWRITE",
+                "SCENARIO_ONLY",
+                "EXCLUDE_FROM_BASE",
+                "CANNOT_BOUND"
+              ]
+            }
+          },
+          "required": [
+            "component_id",
+            "treatment",
+            "reason",
+            "investment_consequence",
+            "promotion_or_resolution_condition",
+            "evidence_ids"
+          ],
+          "type": "object"
+        },
+        "derivation_quantification": {
+          "oneOf": [
+            {
+              "additionalProperties": false,
+              "properties": {
+                "range_high": {
+                  "minimum": 0,
+                  "type": "number"
+                },
+                "range_low": {
+                  "minimum": 0,
+                  "type": "number"
+                },
+                "status": {
+                  "const": "BOUNDED"
+                }
+              },
+              "required": [
+                "status",
+                "range_low",
+                "range_high"
+              ],
+              "type": "object"
+            },
+            {
+              "additionalProperties": false,
+              "properties": {
+                "conservative_treatment": {
+                  "$ref": "#/$defs/non_empty_string"
+                },
+                "reason": {
+                  "$ref": "#/$defs/non_empty_string"
+                },
+                "status": {
+                  "const": "UNKNOWN"
+                }
+              },
+              "required": [
+                "status",
+                "reason",
+                "conservative_treatment"
+              ],
+              "type": "object"
+            }
+          ]
+        },
+        "derived_valuation_route_binding": {
+          "additionalProperties": false,
+          "properties": {
+            "components_by_use": {
+              "additionalProperties": {
+                "$ref": "#/$defs/component_id_list"
+              },
+              "required": [
+                "PRIMARY_INPUT",
+                "CONDITIONAL_PRIMARY_INPUT",
+                "CORROBORATIVE_INPUT",
+                "SCENARIO_ONLY",
+                "STRESS_ONLY",
+                "EXCLUDED",
+                "UNRESOLVED",
+                "NOT_APPLICABLE"
+              ],
+              "type": "object"
+            },
+            "route_id": {
+              "$ref": "#/$defs/non_empty_string"
+            }
+          },
+          "required": [
+            "route_id",
+            "components_by_use"
+          ],
+          "type": "object"
+        },
+        "driver_sensitivity_spec": {
+          "additionalProperties": false,
+          "properties": {
+            "component_ids": {
+              "items": {
+                "$ref": "#/$defs/non_empty_string"
+              },
+              "minItems": 1,
+              "type": "array",
+              "uniqueItems": true
+            },
+            "driver_binding": {
+              "additionalProperties": false,
+              "minProperties": 1,
+              "properties": {
+                "enterprise_variable_id": {
+                  "$ref": "#/$defs/non_empty_string"
+                },
+                "financial_driver_id": {
+                  "$ref": "#/$defs/non_empty_string"
+                }
+              },
+              "type": "object"
+            },
+            "horizon": {
+              "$ref": "#/$defs/non_empty_string"
+            },
+            "input_cases": {
+              "$ref": "#/$defs/sensitivity_input_cases"
+            },
+            "metric": {
+              "$ref": "#/$defs/non_empty_string"
+            },
+            "responsibility_boundary": {
+              "$ref": "#/$defs/non_empty_string"
+            },
+            "reversal_observation_refs": {
+              "items": {
+                "pattern": "^#/reversal_observations/[0-9]+$",
+                "type": "string"
+              },
+              "minItems": 1,
+              "type": "array",
+              "uniqueItems": true
+            },
+            "sensitivity_id": {
+              "$ref": "#/$defs/non_empty_string"
+            },
+            "transmission": {
+              "$ref": "#/$defs/sensitivity_transmission"
+            },
+            "unit": {
+              "$ref": "#/$defs/non_empty_string"
+            }
+          },
+          "required": [
+            "sensitivity_id",
+            "component_ids",
+            "metric",
+            "unit",
+            "horizon",
+            "input_cases",
+            "transmission",
+            "reversal_observation_refs"
+          ],
+          "type": "object"
+        },
+        "earnings_and_cash_use": {
+          "enum": [
+            "BASE_RANGE",
+            "CONDITIONAL_RANGE",
+            "SCENARIO_ONLY",
+            "EXCLUDED",
+            "UNRESOLVED",
+            "NOT_APPLICABLE"
+          ]
+        },
+        "economic_derivation": {
+          "additionalProperties": false,
+          "properties": {
+            "driver_sensitivity_specs": {
+              "items": {
+                "$ref": "#/$defs/driver_sensitivity_spec"
+              },
+              "minItems": 1,
+              "type": "array"
+            },
+            "normal_earnings_bridge": {
+              "additionalProperties": false,
+              "properties": {
+                "basis": {
+                  "$ref": "#/$defs/normal_earnings_bridge_basis"
+                },
+                "rows": {
+                  "items": {
+                    "$ref": "#/$defs/normal_earnings_bridge_row"
+                  },
+                  "minItems": 1,
+                  "type": "array"
+                }
+              },
+              "required": [
+                "basis",
+                "rows"
+              ],
+              "type": "object"
+            },
+            "schema_version": {
+              "const": "enterprise-underwriting-economic-derivation.v1"
+            }
+          },
+          "required": [
+            "schema_version",
+            "normal_earnings_bridge",
+            "driver_sensitivity_specs"
+          ],
+          "type": "object"
+        },
+        "economic_derivation_summary": {
+          "additionalProperties": false,
+          "properties": {
+            "driver_sensitivities": {
+              "items": {
+                "type": "object"
+              },
+              "type": "array"
+            },
+            "normal_earnings_bridge": {
+              "type": "object"
+            },
+            "schema_version": {
+              "const": "enterprise-underwriting-economic-derivation-summary.v1"
+            }
+          },
+          "required": [
+            "schema_version",
+            "normal_earnings_bridge",
+            "driver_sensitivities"
+          ],
+          "type": "object"
+        },
+        "economic_direction": {
+          "enum": [
+            "IMPROVES",
+            "DETERIORATES",
+            "MIXED",
+            "UNKNOWN",
+            "NONE"
+          ]
+        },
+        "economic_directions": {
+          "additionalProperties": false,
+          "properties": {
+            "normal_earnings": {
+              "$ref": "#/$defs/economic_direction"
+            },
+            "owner_cash": {
+              "$ref": "#/$defs/economic_direction"
+            },
+            "permanent_loss": {
+              "$ref": "#/$defs/economic_direction"
+            }
+          },
+          "required": [
+            "normal_earnings",
+            "owner_cash",
+            "permanent_loss"
+          ],
+          "type": "object"
+        },
+        "evidence_trace_item": {
+          "additionalProperties": false,
+          "properties": {
+            "evidence_id": {
+              "$ref": "#/$defs/non_empty_string"
+            },
+            "locator": {
+              "$ref": "#/$defs/non_empty_string"
+            },
+            "scope": {
+              "$ref": "#/$defs/non_empty_string"
+            },
+            "sensitivity_magnitude_observation": {
+              "$ref": "#/$defs/sensitivity_magnitude_observation"
+            },
+            "source_ref": {
+              "$ref": "#/$defs/non_empty_string"
+            },
+            "used_for": {
+              "$ref": "#/$defs/non_empty_string"
+            }
+          },
+          "required": [
+            "evidence_id",
+            "source_ref",
+            "locator",
+            "scope",
+            "used_for"
+          ],
+          "type": "object"
+        },
+        "existing_object_ref": {
+          "additionalProperties": false,
+          "properties": {
+            "kind": {
+              "$ref": "#/$defs/non_empty_string"
+            },
+            "ref": {
+              "$ref": "#/$defs/non_empty_string"
+            },
+            "role": {
+              "$ref": "#/$defs/non_empty_string"
+            }
+          },
+          "required": [
+            "kind",
+            "ref",
+            "role"
+          ],
+          "type": "object"
+        },
+        "financing_component_route": {
+          "additionalProperties": false,
+          "properties": {
+            "active_effects": {
+              "items": {
+                "enum": [
+                  "REDUCES",
+                  "NEUTRAL",
+                  "INCREASES",
+                  "CONDITIONAL",
+                  "UNRESOLVED",
+                  "NOT_APPLICABLE"
+                ]
+              },
+              "type": "array"
+            },
+            "components_by_effect": {
+              "additionalProperties": {
+                "$ref": "#/$defs/component_id_list"
+              },
+              "required": [
+                "REDUCES",
+                "NEUTRAL",
+                "INCREASES",
+                "CONDITIONAL",
+                "UNRESOLVED",
+                "NOT_APPLICABLE"
+              ],
+              "type": "object"
+            }
+          },
+          "required": [
+            "active_effects",
+            "components_by_effect"
+          ],
+          "type": "object"
+        },
+        "industry_future_thesis": {
+          "additionalProperties": false,
+          "properties": {
+            "adaptation": {
+              "$ref": "#/$defs/non_empty_string"
+            },
+            "company_exposure": {
+              "$ref": "#/$defs/non_empty_string"
+            },
+            "horizon": {
+              "$ref": "#/$defs/non_empty_string"
+            },
+            "most_likely_regime": {
+              "$ref": "#/$defs/non_empty_string"
+            },
+            "normal_economics": {
+              "$ref": "#/$defs/non_empty_string"
+            },
+            "permanent_loss": {
+              "$ref": "#/$defs/non_empty_string"
+            },
+            "profit_pool_transmission": {
+              "$ref": "#/$defs/non_empty_string"
+            },
+            "reversal_observations": {
+              "items": {
+                "$ref": "#/$defs/non_empty_string"
+              },
+              "minItems": 1,
+              "type": "array"
+            },
+            "strongest_rival": {
+              "$ref": "#/$defs/non_empty_string"
+            },
+            "valuation_treatment": {
+              "$ref": "#/$defs/non_empty_string"
+            }
+          },
+          "required": [
+            "horizon",
+            "most_likely_regime",
+            "profit_pool_transmission",
+            "company_exposure",
+            "adaptation",
+            "normal_economics",
+            "permanent_loss",
+            "valuation_treatment",
+            "strongest_rival",
+            "reversal_observations"
+          ],
+          "type": "object"
+        },
+        "non_empty_string": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "non_empty_unique_string_list": {
+          "items": {
+            "$ref": "#/$defs/non_empty_string"
+          },
+          "minItems": 1,
+          "type": "array",
+          "uniqueItems": true
+        },
+        "normal_earnings_bridge_basis": {
+          "additionalProperties": false,
+          "properties": {
+            "as_of": {
+              "format": "date",
+              "type": "string"
+            },
+            "currency": {
+              "$ref": "#/$defs/non_empty_string"
+            },
+            "earnings_claim_scope": {
+              "enum": [
+                "ENTERPRISE_OPERATING",
+                "ORDINARY_COMMON_EQUITY"
+              ]
+            },
+            "metric": {
+              "$ref": "#/$defs/non_empty_string"
+            },
+            "operating_perimeter": {
+              "$ref": "#/$defs/non_empty_string"
+            },
+            "tax_basis": {
+              "enum": [
+                "PRETAX",
+                "AFTER_TAX"
+              ]
+            },
+            "unit": {
+              "$ref": "#/$defs/non_empty_string"
+            }
+          },
+          "required": [
+            "metric",
+            "currency",
+            "unit",
+            "tax_basis",
+            "earnings_claim_scope",
+            "operating_perimeter",
+            "as_of"
+          ],
+          "type": "object"
+        },
+        "normal_earnings_bridge_row": {
+          "additionalProperties": false,
+          "properties": {
+            "component_id": {
+              "$ref": "#/$defs/non_empty_string"
+            },
+            "direction": {
+              "enum": [
+                "ADD",
+                "SUBTRACT"
+              ]
+            },
+            "economic_reason": {
+              "$ref": "#/$defs/non_empty_string"
+            },
+            "evidence_ids": {
+              "items": {
+                "$ref": "#/$defs/non_empty_string"
+              },
+              "minItems": 1,
+              "type": "array",
+              "uniqueItems": true
+            },
+            "quantification": {
+              "$ref": "#/$defs/derivation_quantification"
+            },
+            "row_id": {
+              "$ref": "#/$defs/non_empty_string"
+            },
+            "row_role": {
+              "enum": [
+                "REFERENCE_EARNINGS",
+                "NORMALIZATION_ADJUSTMENT"
+              ]
+            }
+          },
+          "required": [
+            "row_id",
+            "component_id",
+            "row_role",
+            "direction",
+            "quantification",
+            "evidence_ids",
+            "economic_reason"
+          ],
+          "type": "object"
+        },
+        "permanent_loss_component_route": {
+          "additionalProperties": false,
+          "properties": {
+            "components_by_use": {
+              "additionalProperties": {
+                "$ref": "#/$defs/component_id_list"
+              },
+              "required": [
+                "BASE_PATH",
+                "CONDITIONAL_PATH",
+                "STRESS_ONLY",
+                "EXCLUDED",
+                "UNRESOLVED",
+                "NOT_APPLICABLE"
+              ],
+              "type": "object"
+            },
+            "path_authority": {
+              "enum": [
+                "BASE_PATH",
+                "CONDITIONAL_PATH",
+                "STRESS_ONLY",
+                "EXCLUDED",
+                "UNRESOLVED",
+                "NOT_APPLICABLE"
+              ]
+            }
+          },
+          "required": [
+            "path_authority",
+            "components_by_use"
+          ],
+          "type": "object"
+        },
+        "range_component_route": {
+          "additionalProperties": false,
+          "properties": {
+            "components_by_use": {
+              "additionalProperties": {
+                "$ref": "#/$defs/component_id_list"
+              },
+              "required": [
+                "BASE_RANGE",
+                "CONDITIONAL_RANGE",
+                "SCENARIO_ONLY",
+                "EXCLUDED",
+                "UNRESOLVED",
+                "NOT_APPLICABLE"
+              ],
+              "type": "object"
+            },
+            "range_authority": {
+              "$ref": "#/$defs/earnings_and_cash_use"
+            }
+          },
+          "required": [
+            "range_authority",
+            "components_by_use"
+          ],
+          "type": "object"
+        },
+        "route_component_requirement": {
+          "additionalProperties": false,
+          "properties": {
+            "optional_component_ids": {
+              "items": {
+                "$ref": "#/$defs/non_empty_string"
+              },
+              "type": "array"
+            },
+            "required_component_ids": {
+              "items": {
+                "$ref": "#/$defs/non_empty_string"
+              },
+              "minItems": 1,
+              "type": "array"
+            },
+            "route_id": {
+              "$ref": "#/$defs/non_empty_string"
+            }
+          },
+          "required": [
+            "route_id",
+            "required_component_ids",
+            "optional_component_ids"
+          ],
+          "type": "object"
+        },
+        "sensitivity_axis_transmission": {
+          "additionalProperties": false,
+          "properties": {
+            "basis": {
+              "$ref": "#/$defs/non_empty_string"
+            },
+            "delta": {
+              "$ref": "#/$defs/sensitivity_delta_attribution"
+            },
+            "status": {
+              "enum": [
+                "DIRECT",
+                "PRESERVED",
+                "UNKNOWN"
+              ]
+            }
+          },
+          "required": [
+            "status",
+            "basis",
+            "delta"
+          ],
+          "type": "object"
+        },
+        "sensitivity_delta_attribution": {
+          "oneOf": [
+            {
+              "additionalProperties": false,
+              "properties": {
+                "magnitude_evidence": {
+                  "$ref": "#/$defs/sensitivity_delta_magnitude_evidence"
+                },
+                "range_high": {
+                  "minimum": 0,
+                  "type": "number"
+                },
+                "range_low": {
+                  "maximum": 0,
+                  "type": "number"
+                },
+                "status": {
+                  "const": "BOUNDED"
+                },
+                "unit": {
+                  "$ref": "#/$defs/non_empty_string"
+                }
+              },
+              "required": [
+                "status",
+                "range_low",
+                "range_high",
+                "unit"
+              ],
+              "type": "object"
+            },
+            {
+              "additionalProperties": false,
+              "properties": {
+                "conservative_treatment": {
+                  "$ref": "#/$defs/non_empty_string"
+                },
+                "reason": {
+                  "$ref": "#/$defs/non_empty_string"
+                },
+                "status": {
+                  "const": "UNKNOWN"
+                }
+              },
+              "required": [
+                "status",
+                "reason",
+                "conservative_treatment"
+              ],
+              "type": "object"
+            }
+          ]
+        },
+        "sensitivity_delta_magnitude_evidence": {
+          "additionalProperties": false,
+          "properties": {
+            "affected_axis": {
+              "enum": [
+                "normal_earnings",
+                "owner_cash"
+              ]
+            },
+            "calculation_binding": {
+              "additionalProperties": false,
+              "properties": {
+                "calculation_id": {
+                  "$ref": "#/$defs/non_empty_string"
+                },
+                "expression": {
+                  "$ref": "#/$defs/non_empty_string"
+                },
+                "input_evidence_ids": {
+                  "$ref": "#/$defs/non_empty_unique_string_list"
+                }
+              },
+              "required": [
+                "calculation_id",
+                "expression",
+                "input_evidence_ids"
+              ],
+              "type": "object"
+            },
+            "component_ids": {
+              "$ref": "#/$defs/non_empty_unique_string_list"
+            },
+            "delta_unit": {
+              "$ref": "#/$defs/non_empty_string"
+            },
+            "driver_metric": {
+              "$ref": "#/$defs/non_empty_string"
+            },
+            "driver_unit": {
+              "$ref": "#/$defs/non_empty_string"
+            },
+            "evidence_ids": {
+              "$ref": "#/$defs/non_empty_unique_string_list"
+            },
+            "horizon": {
+              "$ref": "#/$defs/non_empty_string"
+            },
+            "responsibility_boundary": {
+              "$ref": "#/$defs/non_empty_string"
+            }
+          },
+          "required": [
+            "evidence_ids",
+            "component_ids",
+            "responsibility_boundary",
+            "driver_metric",
+            "driver_unit",
+            "horizon",
+            "affected_axis",
+            "delta_unit",
+            "calculation_binding"
+          ],
+          "type": "object"
+        },
+        "sensitivity_input_case": {
+          "additionalProperties": false,
+          "properties": {
+            "basis": {
+              "$ref": "#/$defs/non_empty_string"
+            },
+            "evidence_ids": {
+              "items": {
+                "$ref": "#/$defs/non_empty_string"
+              },
+              "minItems": 1,
+              "type": "array",
+              "uniqueItems": true
+            },
+            "value_or_range": {
+              "oneOf": [
+                {
+                  "additionalProperties": false,
+                  "properties": {
+                    "value": {
+                      "type": "number"
+                    }
+                  },
+                  "required": [
+                    "value"
+                  ],
+                  "type": "object"
+                },
+                {
+                  "additionalProperties": false,
+                  "properties": {
+                    "range_high": {
+                      "type": "number"
+                    },
+                    "range_low": {
+                      "type": "number"
+                    }
+                  },
+                  "required": [
+                    "range_low",
+                    "range_high"
+                  ],
+                  "type": "object"
+                }
+              ]
+            }
+          },
+          "required": [
+            "value_or_range",
+            "basis",
+            "evidence_ids"
+          ],
+          "type": "object"
+        },
+        "sensitivity_input_cases": {
+          "oneOf": [
+            {
+              "additionalProperties": false,
+              "properties": {
+                "base": {
+                  "$ref": "#/$defs/sensitivity_input_case"
+                },
+                "high": {
+                  "$ref": "#/$defs/sensitivity_input_case"
+                },
+                "low": {
+                  "$ref": "#/$defs/sensitivity_input_case"
+                },
+                "mode": {
+                  "const": "LOW_BASE_HIGH"
+                }
+              },
+              "required": [
+                "mode",
+                "low",
+                "base",
+                "high"
+              ],
+              "type": "object"
+            },
+            {
+              "additionalProperties": false,
+              "properties": {
+                "mode": {
+                  "const": "BOUNDED_RANGE"
+                },
+                "range": {
+                  "$ref": "#/$defs/sensitivity_input_case"
+                }
+              },
+              "required": [
+                "mode",
+                "range"
+              ],
+              "type": "object"
+            }
+          ]
+        },
+        "sensitivity_magnitude_observation": {
+          "additionalProperties": false,
+          "properties": {
+            "affected_axes": {
+              "items": {
+                "enum": [
+                  "normal_earnings",
+                  "owner_cash"
+                ]
+              },
+              "minItems": 1,
+              "type": "array",
+              "uniqueItems": true
+            },
+            "calculation_inputs": {
+              "$ref": "#/$defs/non_empty_unique_string_list"
+            },
+            "component_ids": {
+              "$ref": "#/$defs/non_empty_unique_string_list"
+            },
+            "delta_unit": {
+              "$ref": "#/$defs/non_empty_string"
+            },
+            "driver_metric": {
+              "$ref": "#/$defs/non_empty_string"
+            },
+            "driver_unit": {
+              "$ref": "#/$defs/non_empty_string"
+            },
+            "horizon": {
+              "$ref": "#/$defs/non_empty_string"
+            },
+            "responsibility_boundary": {
+              "$ref": "#/$defs/non_empty_string"
+            }
+          },
+          "required": [
+            "component_ids",
+            "responsibility_boundary",
+            "driver_metric",
+            "driver_unit",
+            "horizon",
+            "affected_axes",
+            "delta_unit",
+            "calculation_inputs"
+          ],
+          "type": "object"
+        },
+        "sensitivity_transmission": {
+          "additionalProperties": false,
+          "properties": {
+            "normal_earnings": {
+              "$ref": "#/$defs/sensitivity_axis_transmission"
+            },
+            "owner_cash": {
+              "$ref": "#/$defs/sensitivity_axis_transmission"
+            },
+            "valuation_route_ids": {
+              "items": {
+                "$ref": "#/$defs/non_empty_string"
+              },
+              "minItems": 1,
+              "type": "array",
+              "uniqueItems": true
+            }
+          },
+          "required": [
+            "normal_earnings",
+            "owner_cash",
+            "valuation_route_ids"
+          ],
+          "type": "object"
+        },
+        "situation_model": {
+          "additionalProperties": false,
+          "properties": {
+            "industry_future_thesis": {
+              "$ref": "#/$defs/industry_future_thesis"
+            },
+            "summary": {
+              "$ref": "#/$defs/non_empty_string"
+            }
+          },
+          "required": [
+            "summary",
+            "industry_future_thesis"
+          ],
+          "type": "object"
+        },
+        "underwriting_thesis": {
+          "additionalProperties": false,
+          "properties": {
+            "central_path": {
+              "$ref": "#/$defs/non_empty_string"
+            },
+            "economic_directions": {
+              "$ref": "#/$defs/economic_directions"
+            },
+            "monitoring": {
+              "$ref": "#/$defs/non_empty_string"
+            },
+            "normal_earnings_treatment": {
+              "$ref": "#/$defs/non_empty_string"
+            },
+            "owner_cash_treatment": {
+              "$ref": "#/$defs/non_empty_string"
+            },
+            "permanent_loss_treatment": {
+              "$ref": "#/$defs/non_empty_string"
+            },
+            "strongest_rival": {
+              "$ref": "#/$defs/non_empty_string"
+            },
+            "thesis_id": {
+              "$ref": "#/$defs/non_empty_string"
+            },
+            "value_route_treatment": {
+              "$ref": "#/$defs/non_empty_string"
+            }
+          },
+          "required": [
+            "thesis_id",
+            "central_path",
+            "normal_earnings_treatment",
+            "owner_cash_treatment",
+            "permanent_loss_treatment",
+            "value_route_treatment",
+            "economic_directions",
+            "strongest_rival",
+            "monitoring"
+          ],
+          "type": "object"
+        },
+        "valuation_component_route": {
+          "additionalProperties": false,
+          "properties": {
+            "components_by_use": {
+              "additionalProperties": {
+                "$ref": "#/$defs/component_id_list"
+              },
+              "required": [
+                "PRIMARY_INPUT",
+                "CONDITIONAL_PRIMARY_INPUT",
+                "CORROBORATIVE_INPUT",
+                "SCENARIO_ONLY",
+                "STRESS_ONLY",
+                "EXCLUDED",
+                "UNRESOLVED",
+                "NOT_APPLICABLE"
+              ],
+              "type": "object"
+            },
+            "route_authority": {
+              "enum": [
+                "PRIMARY_INPUT",
+                "CONDITIONAL_PRIMARY_INPUT",
+                "CORROBORATIVE_INPUT",
+                "SCENARIO_ONLY",
+                "STRESS_ONLY",
+                "EXCLUDED",
+                "UNRESOLVED",
+                "NOT_APPLICABLE"
+              ]
+            },
+            "route_component_bindings": {
+              "items": {
+                "$ref": "#/$defs/derived_valuation_route_binding"
+              },
+              "type": "array"
+            }
+          },
+          "required": [
+            "route_authority",
+            "components_by_use",
+            "route_component_bindings"
+          ],
+          "type": "object"
+        },
+        "valuation_route_binding": {
+          "additionalProperties": false,
+          "properties": {
+            "route_id": {
+              "$ref": "#/$defs/non_empty_string"
+            },
+            "use": {
+              "enum": [
+                "PRIMARY_INPUT",
+                "CONDITIONAL_PRIMARY_INPUT",
+                "CORROBORATIVE_INPUT",
+                "SCENARIO_ONLY",
+                "STRESS_ONLY",
+                "EXCLUDED",
+                "UNRESOLVED",
+                "NOT_APPLICABLE"
+              ]
+            }
+          },
+          "required": [
+            "route_id",
+            "use"
+          ],
+          "type": "object"
+        },
+        "value_route": {
+          "additionalProperties": false,
+          "properties": {
+            "excluded_routes": {
+              "items": {
+                "$ref": "#/$defs/non_empty_string"
+              },
+              "minItems": 1,
+              "type": "array",
+              "uniqueItems": true
+            },
+            "primary_routes": {
+              "items": {
+                "$ref": "#/$defs/non_empty_string"
+              },
+              "minItems": 1,
+              "type": "array",
+              "uniqueItems": true
+            },
+            "route_component_requirements": {
+              "items": {
+                "$ref": "#/$defs/route_component_requirement"
+              },
+              "minItems": 1,
+              "type": "array"
+            },
+            "route_reasoning": {
+              "$ref": "#/$defs/non_empty_string"
+            },
+            "valuation_model_roles": {
+              "additionalProperties": false,
+              "properties": {
+                "corroborative": {
+                  "items": {
+                    "$ref": "#/$defs/non_empty_string"
+                  },
+                  "type": "array",
+                  "uniqueItems": true
+                },
+                "primary": {
+                  "items": {
+                    "$ref": "#/$defs/non_empty_string"
+                  },
+                  "minItems": 1,
+                  "type": "array",
+                  "uniqueItems": true
+                },
+                "stress": {
+                  "items": {
+                    "$ref": "#/$defs/non_empty_string"
+                  },
+                  "type": "array",
+                  "uniqueItems": true
+                }
+              },
+              "required": [
+                "primary"
+              ],
+              "type": "object"
+            }
+          },
+          "required": [
+            "primary_routes",
+            "excluded_routes",
+            "route_reasoning",
+            "valuation_model_roles"
+          ],
+          "type": "object"
+        }
+      },
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "additionalProperties": false,
+      "dependentRequired": {
+        "economic_derivation": [
+          "component_decisions"
+        ]
+      },
+      "properties": {
+        "adaptation_case": {
+          "$ref": "#/$defs/non_empty_string"
+        },
+        "business_position": {
+          "$ref": "#/$defs/non_empty_string"
+        },
+        "company_id": {
+          "$ref": "#/$defs/non_empty_string"
+        },
+        "company_name": {
+          "$ref": "#/$defs/non_empty_string"
+        },
+        "component_decision_summary": {
+          "$ref": "#/$defs/component_decision_summary"
+        },
+        "component_decisions": {
+          "items": {
+            "$ref": "#/$defs/component_decision"
+          },
+          "minItems": 1,
+          "type": "array"
+        },
+        "component_treatments": {
+          "items": {
+            "$ref": "#/$defs/component_treatment"
+          },
+          "minItems": 1,
+          "type": "array"
+        },
+        "cutoff_at": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "decision_frame": {
+          "$ref": "#/$defs/non_empty_string"
+        },
+        "economic_derivation": {
+          "$ref": "#/$defs/economic_derivation"
+        },
+        "economic_derivation_summary": {
+          "$ref": "#/$defs/economic_derivation_summary"
+        },
+        "episode_id": {
+          "$ref": "#/$defs/non_empty_string"
+        },
+        "evidence_trace": {
+          "items": {
+            "$ref": "#/$defs/evidence_trace_item"
+          },
+          "minItems": 1,
+          "type": "array"
+        },
+        "existing_object_refs": {
+          "items": {
+            "$ref": "#/$defs/existing_object_ref"
+          },
+          "minItems": 1,
+          "type": "array"
+        },
+        "investment_treatment": {
+          "$ref": "#/$defs/non_empty_string"
+        },
+        "normalization_case": {
+          "$ref": "#/$defs/non_empty_string"
+        },
+        "permanent_loss_map": {
+          "$ref": "#/$defs/non_empty_string"
+        },
+        "reversal_observations": {
+          "items": {
+            "$ref": "#/$defs/non_empty_string"
+          },
+          "minItems": 1,
+          "type": "array"
+        },
+        "sample_identity": {
+          "enum": [
+            "WORKED_CASE",
+            "BLIND_REPLAY",
+            "PROSPECTIVE_EPISODE"
+          ]
+        },
+        "schema_version": {
+          "const": "enterprise-underwriting-episode.v2"
+        },
+        "situation_model": {
+          "$ref": "#/$defs/situation_model"
+        },
+        "strongest_rival": {
+          "$ref": "#/$defs/non_empty_string"
+        },
+        "survival_case": {
+          "$ref": "#/$defs/non_empty_string"
+        },
+        "underwriting_route": {
+          "$ref": "#/$defs/non_empty_string"
+        },
+        "underwriting_thesis": {
+          "$ref": "#/$defs/underwriting_thesis"
+        },
+        "value_route": {
+          "$ref": "#/$defs/value_route"
+        }
+      },
+      "required": [
+        "schema_version",
+        "episode_id",
+        "company_id",
+        "company_name",
+        "cutoff_at",
+        "sample_identity",
+        "decision_frame",
+        "underwriting_route",
+        "situation_model",
+        "business_position",
+        "survival_case",
+        "adaptation_case",
+        "normalization_case",
+        "permanent_loss_map",
+        "value_route",
+        "strongest_rival",
+        "reversal_observations",
+        "component_treatments",
+        "evidence_trace",
+        "existing_object_refs",
+        "underwriting_thesis",
+        "investment_treatment"
+      ],
+      "title": "EnterpriseUnderwritingEpisode v2",
+      "type": "object"
+    },
+    "format": "ONE_ENTERPRISE_UNDERWRITING_EPISODE_JSON_OBJECT",
+    "must_not_read": [
+      "parent_conversation",
+      "sibling_arm",
+      "sources_outside_task_packet",
+      "sealed_outcome",
+      "price_or_return"
+    ],
+    "schema_authority": "FROZEN_COMPLETE_EPISODE_JSON_SCHEMA",
+    "schema_requirements": [
+      "Honor every applicable required field in episode_json_schema.",
+      "Honor every enum and const value in episode_json_schema.",
+      "Where additionalProperties is false, emit no undeclared fields.",
+      "Use the schema's field names and nesting; do not invent a substitute structure."
+    ],
+    "semantic_requirements": [
+      "Copy company_id, company_name, cutoff_at, and sample_identity verbatim from the frozen contract.",
+      "Copy industry_future_thesis.strongest_rival verbatim to both top-level strongest_rival and underwriting_thesis.strongest_rival, and copy its reversal_observations array verbatim to the top level.",
+      "Evidence ids are unique; every evidence item has source_ref, locator, scope, and used_for; every existing-object reference has kind, ref, and role; citations exactly match an allowed non-TRAINING_MEMORY source.",
+      "component_decisions cover component_treatments exactly once; valuation_use is derived from route bindings in the specified authority order; base, conditional, excluded, scenario, and unresolved uses remain compatible with the component treatment; all treatment evidence ids resolve.",
+      "Every bound or named primary, corroborative, stress, or excluded route has one component requirement and at least one role-compatible binding; required and optional component ids are known, unique, disjoint, and role-compatible.",
+      "The normal-earnings bridge has exactly one authority-compatible reference row and covers every component whose normal_earnings_use is not NOT_APPLICABLE.",
+      "Sensitivity components, evidence, reversal refs, and routes resolve; route binding uses match route roles; DIRECT has range authority, UNKNOWN uses an UNKNOWN delta, bounded deltas include zero, and PRESERVED has zero delta. Every non-PRESERVED bounded delta has separate calculation-bound magnitude evidence with matching component, responsibility boundary, driver metric/unit/horizon, affected axis, and delta unit. Each evidence id resolves to canonical evidence_trace sensitivity_magnitude_observation metadata with matching calculation inputs; repeated delta labels, driver-case evidence, basis prose, and component authority cannot substitute.",
+      "The runner only derives component_decision_summary and economic_derivation_summary, propagates an explicitly UNKNOWN delta to its matching transmission, and registers otherwise passive excluded component-bound routes. It does not supply economics, evidence, route requirements, or resolve conflicts.",
+      "Keep the Episode price-, return-, outcome-, and action-free."
+    ]
+  },
+  "schema_version": "enterprise-underwriting-fresh-subagent-task.v1",
+  "state": "FRESH_SUBAGENT_TASK_READY"
+}
