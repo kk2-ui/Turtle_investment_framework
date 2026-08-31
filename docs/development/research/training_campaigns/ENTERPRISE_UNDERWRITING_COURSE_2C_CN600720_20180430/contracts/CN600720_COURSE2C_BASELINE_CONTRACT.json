@@ -1,0 +1,64 @@
+{
+  "schema_version": "enterprise-underwriting-training-contract.v2",
+  "contract_id": "UWTRAIN:CN600720:20180430:COURSE2C:BASELINE:V1",
+  "training_track": "BLIND_REPLAY",
+  "company_id": "CN:600720",
+  "company_name": "Gansu Qilianshan Cement Group Co., Ltd.",
+  "cutoff_at": "2018-04-30T23:59:59+08:00",
+  "sample_identity": "BLIND_REPLAY",
+  "outcome_access": "SEALED",
+  "allowed_sources": [
+    {
+      "source_id": "SOURCE:CN:CEMENT:20180430:COMMON_OFFICIAL_CONTEXT",
+      "source_ref": "docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_COURSE_2C_CN600720_20180430/sources/00_COMMON_CEMENT_PRE_CUTOFF_SOURCE_PACKAGE.md",
+      "available_at": "2017-08-04T15:25:00+08:00",
+      "time_role": "PRE_CUTOFF"
+    },
+    {
+      "source_id": "SOURCE:CN600720:20180430:PRE_CUTOFF",
+      "source_ref": "docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_COURSE_2C_CN600720_20180430/sources/01_CN600720_PRE_CUTOFF_SOURCE_PACKAGE.md",
+      "available_at": "2018-03-22T23:59:59+08:00",
+      "time_role": "PRE_CUTOFF"
+    }
+  ],
+  "feedback_clocks": [
+    {
+      "clock_id": "CLOCK:CN600720:FY2018",
+      "horizon": "EARLY_SIGNAL",
+      "opens_at": "2019-05-01T00:00:00+08:00",
+      "episode_claims": ["INDUSTRY_AND_SITUATION", "BUSINESS_POSITION_AND_ADAPTATION", "SURVIVAL_AND_FINANCING"],
+      "discriminating_observation": "全国量价利润池的恢复是否延续，以及公司区域收入/毛利、销量承载、现金和债务是否呈现同向或背离。"
+    },
+    {
+      "clock_id": "CLOCK:CN600720:FY2019",
+      "horizon": "OPERATING_ADAPTATION",
+      "opens_at": "2020-05-01T00:00:00+08:00",
+      "episode_claims": ["BUSINESS_POSITION_AND_ADAPTATION", "NORMAL_EARNINGS", "OWNER_CASH"],
+      "discriminating_observation": "价格/成本周期、区域经营和营运资本能否形成可重复的核心经济，而不是一次会计边界或低基数改善。"
+    },
+    {
+      "clock_id": "CLOCK:CN600720:FY2020",
+      "horizon": "NORMALIZATION_AND_CASH",
+      "opens_at": "2021-05-01T00:00:00+08:00",
+      "episode_claims": ["NORMAL_EARNINGS", "OWNER_CASH", "PERMANENT_LOSS"],
+      "discriminating_observation": "成熟核心在变化的需求/供给环境中是否仍产生资本后现金，或债务和资本吸收是否侵蚀其韧性。"
+    },
+    {
+      "clock_id": "CLOCK:CN600720:FY2022",
+      "horizon": "LONG_TERM_PERMANENT_LOSS",
+      "opens_at": "2023-05-01T00:00:00+08:00",
+      "episode_claims": ["INDUSTRY_AND_SITUATION", "OWNER_CASH", "PERMANENT_LOSS", "VALUE_ROUTE"],
+      "discriminating_observation": "具名 cohort 的后续运营、项目状态和可见现金/资本证据是否支持或否定其 conditional/excluded 处理，并是否改变长期价值路线。"
+    }
+  ],
+  "primary_training_product": {
+    "object_type": "EnterpriseUnderwritingEpisode",
+    "schema_version": "enterprise-underwriting-episode.v2",
+    "completion_basis": "COMPLETE_EPISODE_VALIDATION_ONLY"
+  },
+  "component_decision_interface": {
+    "schema_version": "enterprise-underwriting-component-decision-interface.v1",
+    "completion_basis": "EXPLICIT_EFFECT_FOR_EACH_COMPONENT"
+  },
+  "authority": "RESEARCH_TRAINING_ONLY_NO_PRICE_VALUATION_OR_INVESTMENT_AUTHORITY"
+}

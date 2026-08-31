@@ -1,0 +1,68 @@
+{
+  "schema_version": "issuer-identity-catalog.v1",
+  "catalog_id": "ISSUER_IDENTITY:CN:CEMENT:20180430:V1",
+  "industry_id": "INDUSTRY:CN:CEMENT_LISTED",
+  "cutoff_at": "2018-04-30T23:59:59+08:00",
+  "entries": [
+    {
+      "company_id": "CN:600585",
+      "security_code": "600585",
+      "issuer_legal_name": "安徽海螺水泥股份有限公司",
+      "exact_name_quote": "安徽海螺水泥股份有限公司",
+      "aliases": ["海螺水泥", "海螺"],
+      "source_id": "CNINFO:600585:ANN:20180323:1204507132",
+      "publication_date": "2018-03-23",
+      "pdf_page_ref": "PDF p1"
+    },
+    {
+      "company_id": "CN:600425",
+      "security_code": "600425",
+      "issuer_legal_name": "新疆青松建材化工(集团)股份有限公司",
+      "exact_name_quote": "新疆青松建材化工(集团)股份有限公司",
+      "aliases": ["青松建化", "*ST 青松", "*ST青松"],
+      "source_id": "CNINFO:600425:ANN:20180421:1204677754",
+      "publication_date": "2018-04-21",
+      "pdf_page_ref": "PDF p1"
+    },
+    {
+      "company_id": "CN:600802",
+      "security_code": "600802",
+      "issuer_legal_name": "福建水泥股份有限公司",
+      "exact_name_quote": "福建水泥股份有限公司",
+      "aliases": ["福建水泥"],
+      "source_id": "CNINFO:600802:ANN:20180417:1204639756",
+      "publication_date": "2018-04-17",
+      "pdf_page_ref": "PDF p1"
+    },
+    {
+      "company_id": "CN:600801",
+      "security_code": "600801",
+      "issuer_legal_name": "华新水泥股份有限公司",
+      "exact_name_quote": "华新水泥股份有限公司",
+      "aliases": ["华新水泥", "华新"],
+      "source_id": "CNINFO:600801:ANN:20170324:1203190337",
+      "publication_date": "2017-03-24",
+      "pdf_page_ref": "PDF p1"
+    },
+    {
+      "company_id": "CN:000401",
+      "security_code": "000401",
+      "issuer_legal_name": "唐山冀东水泥股份有限公司",
+      "exact_name_quote": "唐山冀东水泥股份有限公司",
+      "aliases": ["冀东水泥", "冀东"],
+      "source_id": "CNINFO:000401:ANN:20180323:1204506085",
+      "publication_date": "2018-03-23",
+      "pdf_page_ref": "PDF p1"
+    },
+    {
+      "company_id": "CN:000877",
+      "security_code": "000877",
+      "issuer_legal_name": "新疆天山水泥股份有限公司",
+      "exact_name_quote": "新疆天山水泥股份有限公司",
+      "aliases": ["天山股份", "天山水泥", "新疆天山水泥"],
+      "source_id": "CNINFO:000877:ANN:20180323:1204507441",
+      "publication_date": "2018-03-23",
+      "pdf_page_ref": "PDF p1"
+    }
+  ]
+}

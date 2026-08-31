@@ -21,6 +21,8 @@ PACK_PATH = PILOT_ROOT / "56_industry_experience_pack_replay_v1.json"
 CONTEXT_PATH = PILOT_ROOT / "55_industry_underwriting_context_replay_v1.json"
 TRAINING_PACK_PATH = PILOT_ROOT / "63_industry_experience_pack_training_v2.json"
 TRAINING_CONTEXT_PATH = PILOT_ROOT / "62_industry_underwriting_context_training_v2.json"
+TRAINING_PACK_V3_PATH = PILOT_ROOT / "67_industry_experience_pack_training_v3.json"
+SHARED_SHOCK_V2_PATH = PILOT_ROOT / "66_cement_shared_shock_company_projection_v2.json"
 
 
 def _pack() -> dict:
@@ -56,6 +58,102 @@ def test_checked_in_cement_v2_is_mechanically_training_ready() -> None:
     assert {
         "CN:600585", "CN:600425", "CN:600802", "CN:600801", "CN:000401"
     } == set(shared["company_ids"])
+
+
+def test_checked_in_cement_v3_corrects_cn600425_and_remains_training_ready() -> None:
+    pack = json.loads(TRAINING_PACK_V3_PATH.read_text(encoding="utf-8"))
+    projection = json.loads(SHARED_SHOCK_V2_PATH.read_text(encoding="utf-8"))
+
+    result = validate_industry_experience_pack(pack)
+
+    assert result["state"] == "REVIEWABLE"
+    assert result["declared_state"] == result["derived_state"] == "TRAINING_READY"
+    assert result["training_readiness_gaps"] == []
+    qingsong = next(
+        item for item in projection["companies"] if item["company_id"] == "CN:600425"
+    )
+    assert qingsong["issuer_identity"] == {
+        "company_id": "CN:600425",
+        "security_code": "600425",
+        "issuer_legal_name": "新疆青松建材化工(集团)股份有限公司",
+        "exact_name_quote": "新疆青松建材化工(集团)股份有限公司",
+        "source_id": "CNINFO:600425:ANN:20180421:1204677754",
+        "publication_date": "2018-04-21",
+        "pdf_page_ref": "PDF p1",
+    }
+    active_training_text = json.dumps(
+        {
+            "current_synthesis": pack["current_synthesis"],
+            "role_coverage": pack["role_coverage"],
+            "settlement_plan": pack["settlement_plan"],
+            "next_sampling_decision": pack["next_sampling_decision"],
+        },
+        ensure_ascii=False,
+    )
+    assert "天山股份" not in active_training_text
+    assert "Xinjiang Tianshan Cement" not in json.dumps(projection, ensure_ascii=False)
+
+
+def test_v3_rejects_an_issuer_name_quote_mismatch(tmp_path: Path) -> None:
+    pack = json.loads(TRAINING_PACK_V3_PATH.read_text(encoding="utf-8"))
+    projection = json.loads(SHARED_SHOCK_V2_PATH.read_text(encoding="utf-8"))
+    qingsong = next(
+        item for item in projection["companies"] if item["company_id"] == "CN:600425"
+    )
+    qingsong["issuer_identity"]["issuer_legal_name"] = "新疆天山水泥股份有限公司"
+    projection_path = tmp_path / "shared_shock_projection.json"
+    projection_path.write_text(json.dumps(projection, ensure_ascii=False), encoding="utf-8")
+    old_ref = (
+        "docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/"
+        "66_cement_shared_shock_company_projection_v2.json"
+    )
+    pack = json.loads(
+        json.dumps(pack, ensure_ascii=False).replace(old_ref, str(projection_path))
+    )
+
+    result = validate_industry_experience_pack(pack)
+
+    assert result["state"] == "INVALID"
+    assert any("exact_name_quote_mismatch" in item for item in result["findings"])
+
+
+def test_v3_rejects_self_consistent_wrong_names_against_independent_catalog(
+    tmp_path: Path,
+) -> None:
+    for company_id in ("CN:600585", "CN:600425", "CN:600802", "CN:600801", "CN:000401"):
+        pack = json.loads(TRAINING_PACK_V3_PATH.read_text(encoding="utf-8"))
+        projection = json.loads(SHARED_SHOCK_V2_PATH.read_text(encoding="utf-8"))
+        company = next(item for item in projection["companies"] if item["company_id"] == company_id)
+        company["issuer_identity"]["issuer_legal_name"] = "错误但自洽的发行人名称"
+        company["issuer_identity"]["exact_name_quote"] = "错误但自洽的发行人名称"
+        projection_path = tmp_path / (company_id.replace(":", "_") + ".json")
+        projection_path.write_text(json.dumps(projection, ensure_ascii=False), encoding="utf-8")
+        old_ref = (
+            "docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/"
+            "66_cement_shared_shock_company_projection_v2.json"
+        )
+        mutated_pack = json.loads(
+            json.dumps(pack, ensure_ascii=False).replace(old_ref, str(projection_path))
+        )
+
+        result = validate_industry_experience_pack(mutated_pack)
+
+        assert result["state"] == "INVALID"
+        assert any("issuer_identity.catalog_mismatch" in item for item in result["findings"])
+
+
+def test_v3_rejects_an_active_name_bound_to_the_wrong_company_id() -> None:
+    pack = json.loads(TRAINING_PACK_V3_PATH.read_text(encoding="utf-8"))
+    pack["role_coverage"]["shared_shock_comparisons"][0]["discriminator"] = (
+        pack["role_coverage"]["shared_shock_comparisons"][0]["discriminator"].replace(
+            "[[CN:600425|青松建化]]", "[[CN:600425|天山股份]]"
+        )
+    )
+
+    result = validate_industry_experience_pack(pack)
+
+    assert result["state"] == "INVALID"
+    assert any("issuer_identity_token_mismatch:CN:600425" in item for item in result["findings"])
 
 
 def test_manifest_cannot_claim_training_ready_from_company_boundary_work_alone() -> None:

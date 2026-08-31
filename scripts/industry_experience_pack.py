@@ -14,6 +14,7 @@ import argparse
 from datetime import date, datetime, timezone
 import json
 from pathlib import Path
+import re
 from typing import Any, Mapping
 
 try:
@@ -28,6 +29,8 @@ except ModuleNotFoundError:  # Direct ``python scripts/...`` execution.
 
 SCHEMA_VERSION = "industry-experience-pack.v1"
 VALIDATION_SCHEMA_VERSION = "industry-experience-pack-validation.v1"
+SHARED_SHOCK_PROJECTION_SCHEMA_VERSION = "industry-shared-shock-company-projection.v1"
+ISSUER_IDENTITY_CATALOG_SCHEMA_VERSION = "issuer-identity-catalog.v1"
 MATURITY_ORDER = ("DRAFT", "TRAINING_READY", "TRANSFER_CANDIDATE", "RELEASED")
 SOURCE_KINDS = {
     "INDUSTRY_LEARNING_BLOCK",
@@ -37,6 +40,7 @@ SOURCE_KINDS = {
     "WORKED_CASE",
     "NEAR_MISS_OR_FAILURE",
     "FEEDBACK_OR_REVIEW",
+    "ISSUER_IDENTITY_CATALOG",
 }
 COMPANY_ROLES = {
     "CENTRAL",
@@ -99,6 +103,20 @@ BOUNDARY = {
     "grants_valuation_or_investment_authority": False,
     "replay_proves_agent_capability": False,
 }
+ISSUER_IDENTITY_FIELDS = {
+    "company_id",
+    "security_code",
+    "issuer_legal_name",
+    "exact_name_quote",
+    "source_id",
+    "publication_date",
+    "pdf_page_ref",
+}
+ISSUER_IDENTITY_CATALOG_FIELDS = {
+    "schema_version", "catalog_id", "industry_id", "cutoff_at", "entries",
+}
+ISSUER_IDENTITY_CATALOG_ENTRY_FIELDS = ISSUER_IDENTITY_FIELDS | {"aliases"}
+_IDENTITY_TOKEN = re.compile(r"\[\[(CN:\d{6})\|([^\[\]|]+)\]\]")
 _ROOT = Path(__file__).resolve().parents[1]
 
 
@@ -170,12 +188,74 @@ def _nested_ref_path(reference: Any, *, root: Path, source_path: Path) -> Path |
     return source_path.parent / Path(_text(reference).split("#", 1)[0]).expanduser()
 
 
+def _validate_issuer_identity_catalog(
+    payload: dict[str, Any], *, industry_id: str, cutoff: datetime | None,
+) -> tuple[dict[str, dict[str, Any]], list[str]]:
+    """Bind issuer names to a separately materialized official-cover catalog."""
+    findings: list[str] = []
+    item = _closed(payload, ISSUER_IDENTITY_CATALOG_FIELDS, "issuer_identity_catalog", findings)
+    if item.get("schema_version") != ISSUER_IDENTITY_CATALOG_SCHEMA_VERSION:
+        findings.append("issuer_identity_catalog.schema_version_invalid")
+    if not _text(item.get("catalog_id")):
+        findings.append("issuer_identity_catalog.catalog_id_missing")
+    if item.get("industry_id") != industry_id:
+        findings.append("issuer_identity_catalog.industry_id_mismatch")
+    catalog_cutoff = _instant(item.get("cutoff_at"))
+    if catalog_cutoff is None:
+        findings.append("issuer_identity_catalog.cutoff_invalid")
+    elif cutoff is not None and catalog_cutoff > cutoff:
+        findings.append("issuer_identity_catalog.after_pack_cutoff")
+    bindings: dict[str, dict[str, Any]] = {}
+    for index, raw in enumerate(_items(item.get("entries"))):
+        path = f"issuer_identity_catalog.entries[{index}]"
+        entry = _closed(raw, ISSUER_IDENTITY_CATALOG_ENTRY_FIELDS, path, findings)
+        company_id = _text(entry.get("company_id"))
+        security_code = _text(entry.get("security_code"))
+        expected_code = company_id.removeprefix("CN:") if company_id.startswith("CN:") else ""
+        source_id = _text(entry.get("source_id"))
+        source_parts = source_id.split(":")
+        source_code = source_parts[1] if len(source_parts) >= 2 and source_parts[0] == "CNINFO" else ""
+        if not company_id or company_id in bindings:
+            findings.append(path + ".company_id_missing_or_duplicate")
+        if not expected_code or security_code != expected_code:
+            findings.append(path + ".security_code_mismatch")
+        if not source_code or source_code != security_code:
+            findings.append(path + ".source_code_mismatch")
+        legal_name = _text(entry.get("issuer_legal_name"))
+        if not legal_name or _text(entry.get("exact_name_quote")) != legal_name:
+            findings.append(path + ".legal_name_quote_mismatch")
+        aliases = _strings(entry.get("aliases"))
+        if not aliases or len(aliases) != len(set(aliases)):
+            findings.append(path + ".aliases_missing_or_duplicate")
+        if any(alias == legal_name for alias in aliases):
+            findings.append(path + ".aliases_must_be_short_names")
+        if not _text(entry.get("pdf_page_ref")):
+            findings.append(path + ".pdf_page_ref_missing")
+        published = _text(entry.get("publication_date"))
+        try:
+            published_date = date.fromisoformat(published)
+        except ValueError:
+            findings.append(path + ".publication_date_invalid")
+        else:
+            if cutoff is not None and published_date > cutoff.date():
+                findings.append(path + ".published_after_pack_cutoff")
+        if company_id and company_id not in bindings:
+            bindings[company_id] = entry
+    if not bindings:
+        findings.append("issuer_identity_catalog.entries_missing")
+    return bindings, findings
+
+
 def _worked_case_company_ids(
-    payload: dict[str, Any], *, cutoff: datetime | None,
+    payload: dict[str, Any], *, cutoff: datetime | None, require_issuer_identity: bool = False,
+    issuer_identity_catalog: Mapping[str, dict[str, Any]] | None = None,
 ) -> tuple[set[str], list[str]]:
     """Admit company responses only from a cutoff-safe multi-company case."""
     findings: list[str] = []
-    if payload.get("schema_version") != "turtle-pit-company-forecast-submission.v1":
+    if payload.get("schema_version") not in {
+        "turtle-pit-company-forecast-submission.v1",
+        SHARED_SHOCK_PROJECTION_SCHEMA_VERSION,
+    }:
         findings.append("worked_case_schema_invalid")
     case_cutoff = _instant(payload.get("cutoff_at"))
     if case_cutoff is None:
@@ -198,6 +278,7 @@ def _worked_case_company_ids(
         if not states:
             findings.append(prefix + ".verified_cutoff_state_missing")
             continue
+        evidence_source_ids: set[str] = set()
         for state_index, state in enumerate(states):
             state_prefix = f"{prefix}.verified_cutoff_state[{state_index}]"
             if not _text(state.get("statement")):
@@ -210,6 +291,8 @@ def _worked_case_company_ids(
                 evidence_prefix = f"{state_prefix}.evidence[{evidence_index}]"
                 if not _text(item.get("source_id")):
                     findings.append(evidence_prefix + ".source_id_missing")
+                else:
+                    evidence_source_ids.add(_text(item.get("source_id")))
                 if not (_text(item.get("pdf_page_ref")) or _text(item.get("field_ref"))):
                     findings.append(evidence_prefix + ".locator_missing")
                 published = _text(item.get("publication_date"))
@@ -220,18 +303,80 @@ def _worked_case_company_ids(
                 else:
                     if cutoff_date is not None and published_date > cutoff_date:
                         findings.append(evidence_prefix + ".published_after_pack_cutoff")
+        identity = _mapping(company.get("issuer_identity"))
+        if require_issuer_identity and not identity:
+            findings.append(prefix + ".issuer_identity_missing")
+            continue
+        if identity:
+            _closed(identity, ISSUER_IDENTITY_FIELDS, prefix + ".issuer_identity", findings)
+            security_code = _text(identity.get("security_code"))
+            expected_code = company_id.removeprefix("CN:") if company_id.startswith("CN:") else ""
+            identity_source_id = _text(identity.get("source_id"))
+            source_parts = identity_source_id.split(":")
+            source_code = source_parts[1] if len(source_parts) >= 2 and source_parts[0] == "CNINFO" else ""
+            if identity.get("company_id") != company_id:
+                findings.append(prefix + ".issuer_identity.company_id_mismatch")
+            if not expected_code or security_code != expected_code:
+                findings.append(prefix + ".issuer_identity.security_code_mismatch")
+            if not source_code or source_code != security_code:
+                findings.append(prefix + ".issuer_identity.source_code_mismatch")
+            if identity_source_id not in evidence_source_ids:
+                findings.append(prefix + ".issuer_identity.source_not_in_verified_state")
+            issuer_legal_name = _text(identity.get("issuer_legal_name"))
+            if not issuer_legal_name:
+                findings.append(prefix + ".issuer_identity.issuer_legal_name_missing")
+            if _text(identity.get("exact_name_quote")) != issuer_legal_name:
+                findings.append(prefix + ".issuer_identity.exact_name_quote_mismatch")
+            if not _text(identity.get("pdf_page_ref")):
+                findings.append(prefix + ".issuer_identity.pdf_page_ref_missing")
+            identity_published = _text(identity.get("publication_date"))
+            try:
+                identity_published_date = date.fromisoformat(identity_published)
+            except ValueError:
+                findings.append(prefix + ".issuer_identity.publication_date_invalid")
+            else:
+                if cutoff_date is not None and identity_published_date > cutoff_date:
+                    findings.append(prefix + ".issuer_identity.published_after_pack_cutoff")
+            catalog_identity = (issuer_identity_catalog or {}).get(company_id)
+            if require_issuer_identity and not catalog_identity:
+                findings.append(prefix + ".issuer_identity.catalog_binding_missing")
+            elif catalog_identity:
+                for field in ISSUER_IDENTITY_FIELDS:
+                    if identity.get(field) != catalog_identity.get(field):
+                        findings.append(prefix + ".issuer_identity.catalog_mismatch:" + field)
     return company_ids, findings
 
 
 def _source_validation(
     sources: list[Any], *, root: Path, industry_id: str, cutoff: datetime | None,
-    findings: list[str], gaps: list[str],
-) -> tuple[set[str], set[str], dict[str, str], dict[str, set[str]]]:
+    findings: list[str], gaps: list[str], require_issuer_identity: bool = False,
+) -> tuple[
+    set[str], set[str], dict[str, str], dict[str, set[str]], dict[str, dict[str, Any]],
+]:
     object_ids: set[str] = set()
     kinds: set[str] = set()
     refs: set[str] = set()
     admitted_source_kinds: dict[str, str] = {}
     admitted_source_company_ids: dict[str, set[str]] = {}
+    catalog_results: dict[str, tuple[dict[str, dict[str, Any]], list[str]]] = {}
+    issuer_identity_catalog: dict[str, dict[str, Any]] = {}
+    for raw in sources:
+        item = _mapping(raw)
+        if item.get("kind") != "ISSUER_IDENTITY_CATALOG":
+            continue
+        ref = _text(item.get("ref"))
+        source_path = _path(ref, root=root)
+        if not ref or source_path is None or not source_path.is_file():
+            continue
+        bindings, catalog_findings = _validate_issuer_identity_catalog(
+            _read_json(source_path), industry_id=industry_id, cutoff=cutoff,
+        )
+        catalog_results[ref] = (bindings, catalog_findings)
+        for company_id, binding in bindings.items():
+            if company_id in issuer_identity_catalog and issuer_identity_catalog[company_id] != binding:
+                catalog_findings.append("issuer_identity_catalog.conflicting_company_binding:" + company_id)
+            else:
+                issuer_identity_catalog[company_id] = binding
     for index, raw in enumerate(sources):
         path = f"source_objects[{index}]"
         item = _closed(raw, SOURCE_FIELDS, path, findings)
@@ -345,10 +490,18 @@ def _source_validation(
             company_ids_for_source, worked_findings = _worked_case_company_ids(
                 payload,
                 cutoff=cutoff,
+                require_issuer_identity=require_issuer_identity,
+                issuer_identity_catalog=issuer_identity_catalog,
             )
             if worked_findings:
                 findings.extend(path + "." + item for item in worked_findings)
                 maturity_candidate = False
+        elif kind == "ISSUER_IDENTITY_CATALOG":
+            bindings, catalog_findings = catalog_results.get(ref, ({}, ["catalog_not_prevalidated"]))
+            if catalog_findings:
+                findings.extend(path + "." + item for item in catalog_findings)
+                maturity_candidate = False
+            company_ids_for_source = set(bindings)
         if maturity_candidate:
             kinds.add(str(kind))
             admitted_source_kinds[ref] = str(kind)
@@ -364,7 +517,12 @@ def _source_validation(
                 }
             elif kind == "WORKED_CASE":
                 admitted_source_company_ids[ref] = company_ids_for_source
-    return kinds, refs, admitted_source_kinds, admitted_source_company_ids
+    if require_issuer_identity and not issuer_identity_catalog:
+        findings.append("pack.issuer_identity_catalog_required")
+    return (
+        kinds, refs, admitted_source_kinds, admitted_source_company_ids,
+        issuer_identity_catalog,
+    )
 
 
 def _training_ready_gaps(
@@ -449,6 +607,71 @@ def _training_ready_gaps(
     return gaps
 
 
+def _iter_text(value: Any, path: str = "") -> list[tuple[str, str]]:
+    texts: list[tuple[str, str]] = []
+    if isinstance(value, str):
+        texts.append((path, value))
+    elif isinstance(value, list):
+        for index, item in enumerate(value):
+            texts.extend(_iter_text(item, f"{path}[{index}]"))
+    elif isinstance(value, Mapping):
+        for key, item in value.items():
+            texts.extend(_iter_text(item, f"{path}.{key}" if path else str(key)))
+    return texts
+
+
+def _validate_active_issuer_mentions(
+    value: dict[str, Any],
+    catalog: Mapping[str, dict[str, Any]],
+    findings: list[str],
+) -> None:
+    """Require active issuer prose to use catalog-bound ``[[id|name]]`` tokens."""
+    active = {
+        "current_synthesis": value.get("current_synthesis"),
+        "shared_shock_comparisons": _mapping(value.get("role_coverage")).get(
+            "shared_shock_comparisons"
+        ),
+        "settlement_plan": value.get("settlement_plan"),
+        "next_sampling_decision": value.get("next_sampling_decision"),
+    }
+    labels: list[tuple[str, str]] = []
+    for company_id, identity in catalog.items():
+        legal_name = _text(identity.get("issuer_legal_name"))
+        if legal_name:
+            labels.append((legal_name, company_id))
+        labels.extend((alias, company_id) for alias in _strings(identity.get("aliases")))
+    labels.sort(key=lambda item: len(item[0]), reverse=True)
+    for path, text in _iter_text(active):
+        tokens = list(_IDENTITY_TOKEN.finditer(text))
+        for match in tokens:
+            company_id, display_name = match.groups()
+            identity = catalog.get(company_id)
+            permitted_names = {
+                _text(_mapping(identity).get("issuer_legal_name")),
+                *_strings(_mapping(identity).get("aliases")),
+            }
+            permitted_names.discard("")
+            if not identity or display_name not in permitted_names:
+                findings.append(path + ".issuer_identity_token_mismatch:" + company_id)
+        unbound_text = _IDENTITY_TOKEN.sub("", text)
+        for label, company_id in labels:
+            if label and label in unbound_text:
+                findings.append(path + ".unbound_issuer_name:" + company_id + ":" + label)
+    for index, shock in enumerate(
+        _items(_mapping(value.get("role_coverage")).get("shared_shock_comparisons"))
+    ):
+        item = _mapping(shock)
+        token_ids = {
+            match.group(1) for match in _IDENTITY_TOKEN.finditer(_text(item.get("discriminator")))
+        }
+        company_ids = set(_strings(item.get("company_ids")))
+        if token_ids != company_ids:
+            findings.append(
+                f"role_coverage.shared_shock_comparisons[{index}]."
+                "discriminator_identity_tokens_must_match_company_ids"
+            )
+
+
 def _derived_state(value: dict[str, Any], training_gaps: list[str]) -> str:
     if training_gaps:
         return "DRAFT"
@@ -498,14 +721,20 @@ def validate_industry_experience_pack(payload: Any, *, root: str | Path | None =
     sources = _items(value.get("source_objects"))
     if not sources:
         findings.append("pack.source_objects_missing")
-    kinds, source_refs, admitted_source_kinds, admitted_source_company_ids = _source_validation(
+    (
+        kinds, source_refs, admitted_source_kinds, admitted_source_company_ids,
+        issuer_identity_catalog,
+    ) = _source_validation(
         sources,
         root=source_root,
         industry_id=_text(value.get("industry_id")),
         cutoff=cutoff,
         findings=findings,
         gaps=gaps,
+        require_issuer_identity=isinstance(value.get("version"), int) and value["version"] >= 3,
     )
+    if isinstance(value.get("version"), int) and value["version"] >= 3:
+        _validate_active_issuer_mentions(value, issuer_identity_catalog, findings)
 
     synthesis = _closed(value.get("current_synthesis"), SYNTHESIS_FIELDS, "current_synthesis", findings)
     for field in ("central_industry_path", "strongest_rival", "profit_pool_transmission"):

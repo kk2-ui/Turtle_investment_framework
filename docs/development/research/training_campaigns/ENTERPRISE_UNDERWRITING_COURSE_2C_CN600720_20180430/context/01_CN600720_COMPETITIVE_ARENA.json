@@ -1,0 +1,71 @@
+{
+  "schema_version": "company-competitive-arena.v1",
+  "source_object_ref": "docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_COURSE_2C_CN600720_20180430/sources/01_CN600720_PRE_CUTOFF_SOURCE_PACKAGE.md",
+  "competitive_arenas": [
+    {
+      "arena_id": "ARENA:CN:CEMENT:NORTHWEST_DELIVERED_MARKET",
+      "product_or_service_scope": "Cement, clinker and commercial concrete supplied through Northwest regional production and delivered-market assets.",
+      "customer_task": "Construction, infrastructure and property customers require reliable building materials inside an economical transport radius.",
+      "economic_scope": "Gansu, Qinghai and adjacent Northwest delivered markets; national price and supply observations remain industry context rather than the issuer's realized price.",
+      "value_driver": "Regional realized price and volume relative to fuel, power, environmental, logistics and asset-utilization costs, then translated through working capital and maintenance needs into cash.",
+      "failure_mode": "National supply discipline or price recovery may not persist locally; volume, regional competition, fuel cost, operating leverage or a consolidation-boundary change may prevent accounting profit from becoming repeatable owner cash.",
+      "profit_pool_direction": "TARGET_COMPANY_TRANSMISSION_TO_VERIFY",
+      "evidence_refs": [
+        "QLS:FY2013-FY2017:PRODUCT_VOLUME_CAPACITY",
+        "QLS:FY2013-FY2017:REGIONAL_REVENUE_MARGIN",
+        "QLS:FY2013-FY2017:OCF_WORKING_CAPITAL_DEBT"
+      ],
+      "required_overlap_dimensions": [
+        {
+          "dimension": "regional_price_cost_and_volume_transmission",
+          "relation": "TARGET_COMPANY_VERIFICATION_REQUIRED",
+          "rationale": "The group's nominal capacity was broadly stable while unit gross profit fell and then recovered; national price cannot establish the company's own realized price, cost or normal margin.",
+          "target_evidence_source_ids": [
+            "QLS:FY2013-FY2017:PRODUCT_VOLUME_CAPACITY",
+            "QLS:FY2013-FY2017:REGIONAL_REVENUE_MARGIN"
+          ]
+        },
+        {
+          "dimension": "cash_conversion_and_financing_resilience",
+          "relation": "TARGET_COMPANY_VERIFICATION_REQUIRED",
+          "rationale": "Operating cash, operating working-capital absorption, restricted cash and debt must determine whether a recovered profit pool reaches the common shareholder economy.",
+          "target_evidence_source_ids": [
+            "QLS:FY2013-FY2017:OCF_WORKING_CAPITAL_DEBT"
+          ]
+        }
+      ]
+    },
+    {
+      "arena_id": "ARENA:CN600720:MATURE_CORE_AND_NAMED_CAPITAL_COHORTS",
+      "product_or_service_scope": "A mature consolidated cement/concrete network alongside named acquisitions, already-commissioned lines, unfinished projects and accounting-perimeter changes.",
+      "customer_task": "The mature operating network must keep serving regional construction demand; each named capital action must separately prove customer absorption and cash return before it changes the base case.",
+      "economic_scope": "Group consolidated reporting, with Lōngnán acquisition and named production-line cohorts kept distinct from unfinished projects and from the Jiuquan Hongda consolidation-boundary change.",
+      "value_driver": "Mature network cash conversion; separately observed responsibility-unit economics, capital commitments, utilization and maintenance needs for a named cohort.",
+      "failure_mode": "Treating subsidiary profit as incremental project return, treating an accounting consolidation as a new investment, or treating unfinished/terminated construction as normal earning capacity.",
+      "profit_pool_direction": "COMPONENT_RESPONSIBILITY_SEPARATION_REQUIRED",
+      "evidence_refs": [
+        "QLS:FY2013-FY2017:NAMED_CAPITAL_AND_RESPONSIBILITY_UNITS",
+        "QLS:FY2013-FY2017:CONSOLIDATION_BOUNDARIES",
+        "QLS:FY2013-FY2017:OCF_WORKING_CAPITAL_DEBT"
+      ],
+      "required_overlap_dimensions": [
+        {
+          "dimension": "mature_core_vs_conditional_growth_cohorts",
+          "relation": "SEPARATE_RESPONSIBILITY_BOUNDARIES",
+          "rationale": "Lōngnán and the commissioned lines have responsibility-unit profit proxies but no project-level volume, OCF, maintenance capital or independent invested capital; unfinished or terminated projects cannot enter base economics.",
+          "target_evidence_source_ids": [
+            "QLS:FY2013-FY2017:NAMED_CAPITAL_AND_RESPONSIBILITY_UNITS"
+          ]
+        },
+        {
+          "dimension": "consolidation_perimeter_continuity",
+          "relation": "PERIMETER_BRIDGE_REQUIRED",
+          "rationale": "Jiuquan Hongda's FY2015 consolidation followed an existing governance arrangement and cannot be narrated as a same-year capital deployment or operating improvement without a responsibility-matched bridge.",
+          "target_evidence_source_ids": [
+            "QLS:FY2013-FY2017:CONSOLIDATION_BOUNDARIES"
+          ]
+        }
+      ]
+    }
+  ]
+}

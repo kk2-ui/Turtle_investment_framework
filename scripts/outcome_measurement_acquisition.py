@@ -52,6 +52,44 @@ _STATIC_HOSTS = {"static.cninfo.com.cn", "static.sse.com.cn"}
 
 PageReader = Callable[[Path], list[str]]
 
+_V4_ROLE_FIELD_MAP = {
+    "OPERATING_REVENUE": "operating_revenue_rmb",
+    "OPERATING_COST": "operating_cost_rmb",
+    "TAXES_AND_SURCHARGES": "taxes_and_surcharges_rmb",
+    "SELLING_EXPENSE": "selling_expense_rmb",
+    "ADMINISTRATIVE_EXPENSE": "administrative_expense_rmb",
+    "OPERATING_CASH_FLOW": "operating_cash_flow_rmb",
+    "CASH_LONG_LIVED_ASSET_ACQUISITION": "cash_paid_to_acquire_fixed_intangible_and_other_long_term_assets_rmb",
+    "OPENING_ACCOUNTS_RECEIVABLE": "opening_accounts_receivable_rmb",
+    "OPENING_PREPAYMENTS": "opening_prepayments_rmb",
+    "OPENING_INVENTORY": "opening_inventory_rmb",
+    "OPENING_ACCOUNTS_PAYABLE": "opening_accounts_payable_rmb",
+    "OPENING_CUSTOMER_ADVANCES": "opening_customer_advances_rmb",
+    "ENDING_ACCOUNTS_RECEIVABLE": "ending_accounts_receivable_rmb",
+    "ENDING_PREPAYMENTS": "ending_prepayments_rmb",
+    "ENDING_INVENTORY": "ending_inventory_rmb",
+    "ENDING_ACCOUNTS_PAYABLE": "ending_accounts_payable_rmb",
+    "ENDING_CUSTOMER_ADVANCES": "ending_customer_advances_rmb",
+}
+_WORKING_CAPITAL_OPENING_ROLES = (
+    "OPENING_ACCOUNTS_RECEIVABLE", "OPENING_PREPAYMENTS", "OPENING_INVENTORY",
+    "OPENING_ACCOUNTS_PAYABLE", "OPENING_CUSTOMER_ADVANCES",
+)
+_WORKING_CAPITAL_ENDING_ROLES = (
+    "ENDING_ACCOUNTS_RECEIVABLE", "ENDING_PREPAYMENTS", "ENDING_INVENTORY",
+    "ENDING_ACCOUNTS_PAYABLE", "ENDING_CUSTOMER_ADVANCES",
+)
+_CASH_NORMALIZATION_ROLES = {
+    "OPERATING_CASH_FLOW", "MAINTENANCE_CAPEX", "OCF_RECONCILIATION_ADJUSTMENT",
+    "OWNER_CASH_ADJUSTMENT", *_WORKING_CAPITAL_OPENING_ROLES, *_WORKING_CAPITAL_ENDING_ROLES,
+}
+_CAPITAL_ALLOCATION_ROLES = {
+    "CAPEX_CLASS", "PROJECT_COMMITMENT", "PROJECT_REMAINING_COMMITMENT",
+    "GROWTH_CAPEX", "CAPACITY", "PRODUCTION", "SALES_VOLUME", "CUSTOMER_ABSORPTION",
+    "UNIT_ECONOMICS", "CASH_COLLECTIONS", "DEBT", "CASH_RETURN_NUMERATOR",
+    "INVESTED_CAPITAL_DENOMINATOR",
+}
+
 
 class OutcomeMeasurementAcquisitionError(ValueError):
     """The frozen input is not a legal local-PDF acquisition request."""
@@ -96,6 +134,31 @@ def _enterprise_report_period(contract: dict[str, Any]) -> str | None:
     window = _mapping(contract.get("outcome_window"))
     period_end = window.get("period_end")
     return period_end[:10] if isinstance(period_end, str) and len(period_end) >= 10 else None
+
+
+def _enterprise_source_accesses(contract: dict[str, Any]) -> list[dict[str, Any]]:
+    """Return the frozen Enterprise source set while preserving legacy V3."""
+    if isinstance(contract.get("source_accesses"), list):
+        return [deepcopy(item) for item in contract["source_accesses"] if isinstance(item, dict)]
+    source = contract.get("source_access")
+    return [deepcopy(source)] if isinstance(source, dict) else []
+
+
+def _enterprise_source_access_by_id(contract: dict[str, Any]) -> dict[str, dict[str, Any]]:
+    return {
+        str(source.get("source_id")): source
+        for source in _enterprise_source_accesses(contract)
+        if _text(source.get("source_id"))
+    }
+
+
+def _enterprise_authorization_receipt_id(contract: dict[str, Any]) -> str | None:
+    receipt_ids = {
+        str(source.get("authorization_receipt_id"))
+        for source in _enterprise_source_accesses(contract)
+        if _text(source.get("authorization_receipt_id"))
+    }
+    return next(iter(receipt_ids)) if len(receipt_ids) == 1 else None
 
 
 def _canonical_source_type(value: Any) -> str | None:
@@ -265,16 +328,17 @@ def _validate_enterprise_authorization(
     authorization: Any, *, contract: dict[str, Any], require_authorized: bool,
 ) -> dict[str, Any]:
     item = _mapping(authorization)
+    multi_source = isinstance(contract.get("source_accesses"), list)
     required = {
         "schema_version", "authorization_receipt_id", "measurement_contract_ref", "company_id",
-        "custodian_id", "source_id", "authorized", "content_read",
+        "custodian_id", "source_ids" if multi_source else "source_id", "authorized", "content_read",
     }
     findings: list[str] = []
     if set(item) != required:
         findings.append("enterprise_authorization_shape_invalid")
     if item.get("schema_version") != ENTERPRISE_AUTHORIZATION_SCHEMA_VERSION:
         findings.append("enterprise_authorization_schema_invalid")
-    if item.get("authorization_receipt_id") != _mapping(contract.get("source_access")).get("authorization_receipt_id"):
+    if item.get("authorization_receipt_id") != _enterprise_authorization_receipt_id(contract):
         findings.append("enterprise_authorization_receipt_mismatch")
     if item.get("measurement_contract_ref") != _reference(contract):
         findings.append("enterprise_authorization_contract_ref_mismatch")
@@ -282,7 +346,13 @@ def _validate_enterprise_authorization(
         findings.append("enterprise_authorization_company_mismatch")
     if not _text(item.get("custodian_id")):
         findings.append("enterprise_authorization_custodian_required")
-    if item.get("source_id") != _mapping(contract.get("source_access")).get("source_id"):
+    if multi_source:
+        expected_source_ids = [
+            str(source.get("source_id")) for source in _enterprise_source_accesses(contract)
+        ]
+        if item.get("source_ids") != expected_source_ids or len(expected_source_ids) != len(set(expected_source_ids)):
+            findings.append("enterprise_authorization_source_set_mismatch")
+    elif item.get("source_id") != _mapping(contract.get("source_access")).get("source_id"):
         findings.append("enterprise_authorization_source_mismatch")
     if require_authorized and item.get("authorized") is not True:
         findings.append("enterprise_outcome_access_not_authorized")
@@ -373,6 +443,11 @@ def validate_registered_local_pdf_inventory(
     documents: list[dict[str, Any]] = []
     cutoff = _enterprise_cutoff(contract) if contract_kind == ENTERPRISE_CONTRACT_KIND else None
     expected_report_period = _enterprise_report_period(contract) if contract_kind == ENTERPRISE_CONTRACT_KIND else None
+    enterprise_sources = (
+        _enterprise_source_access_by_id(contract)
+        if contract_kind == ENTERPRISE_CONTRACT_KIND else {}
+    )
+    multi_source_enterprise = isinstance(contract.get("source_accesses"), list)
     expected_source_type = _canonical_source_type(_mapping(contract.get("source_access")).get("source_type"))
     for index, raw in enumerate(_items(item.get("documents"))):
         document = _mapping(raw)
@@ -428,18 +503,32 @@ def validate_registered_local_pdf_inventory(
             findings.append(f"{path}_availability_precision_must_be_timestamp_or_date_only")
         if cutoff is not None:
             findings.extend(_availability_after_cutoff(document, cutoff=cutoff, path=path))
-        if expected_report_period is not None and document.get("report_period_end") != expected_report_period:
+        if not multi_source_enterprise and expected_report_period is not None and document.get("report_period_end") != expected_report_period:
             findings.append(f"{path}_report_period_must_match_enterprise_outcome_source")
-        if contract_kind == ENTERPRISE_CONTRACT_KIND and _canonical_source_type(document.get("official_source_type")) != expected_source_type:
-            findings.append(f"{path}_official_source_type_must_match_enterprise_contract")
         if contract_kind == ENTERPRISE_CONTRACT_KIND and authorization is not None:
-            if document.get("source_id") != authorization.get("source_id"):
+            frozen_source = enterprise_sources.get(str(document.get("source_id")))
+            if frozen_source is None:
                 findings.append(f"{path}_source_id_must_match_enterprise_authorization")
-            if document.get("source_url") != _mapping(contract.get("source_access")).get("official_url"):
-                findings.append(f"{path}_source_url_must_match_enterprise_contract")
+            else:
+                for source_field in ("source_url", "issuer_id", "report_period_end"):
+                    if document.get(source_field) != frozen_source.get(
+                        "official_url" if source_field == "source_url" else source_field
+                    ):
+                        findings.append(f"{path}_{source_field}_must_match_enterprise_contract")
+                if _canonical_source_type(document.get("official_source_type")) != _canonical_source_type(frozen_source.get("source_type")):
+                    findings.append(f"{path}_official_source_type_must_match_enterprise_contract")
+            if multi_source_enterprise:
+                if document.get("source_id") not in _items(authorization.get("source_ids")):
+                    findings.append(f"{path}_source_id_must_match_enterprise_authorization")
+            elif document.get("source_id") != authorization.get("source_id"):
+                findings.append(f"{path}_source_id_must_match_enterprise_authorization")
+        elif contract_kind == ENTERPRISE_CONTRACT_KIND and _canonical_source_type(document.get("official_source_type")) != expected_source_type:
+            findings.append(f"{path}_official_source_type_must_match_enterprise_contract")
         documents.append(deepcopy(document))
     if not documents:
         findings.append("inventory_documents_must_be_nonempty")
+    if multi_source_enterprise and source_ids != set(enterprise_sources):
+        findings.append("inventory_documents_must_exactly_cover_frozen_enterprise_source_set")
     return {"valid": not findings, "findings": findings, "inventory": deepcopy(item) if not findings else None}
 
 
@@ -865,13 +954,18 @@ def _enterprise_raw_observation(
         "responsibility_boundary": deepcopy(cell["responsibility_boundary"]),
         "unit": raw_field["unit"],
     }
-    if not documents:
+    frozen_source_id = _text(raw_field.get("source_id"))
+    candidates = [
+        document for document in documents
+        if frozen_source_id is None or document.get("source_id") == frozen_source_id
+    ]
+    if not candidates:
         return {
             **base, "status": "UNKNOWN", "reason": "NO_AUTHORIZED_ANNUAL_REPORT_FOR_ENTERPRISE_CONTRACT",
             "sources_considered": [],
         }
     rows: list[tuple[dict[str, Any], int, str, str]] = []
-    for document in documents:
+    for document in candidates:
         try:
             pages = page_reader(Path(document["local_pdf_path"]))
         except (OSError, subprocess.SubprocessError):
@@ -884,7 +978,7 @@ def _enterprise_raw_observation(
     if not rows:
         return {
             **base, "status": "UNKNOWN", "reason": "FROZEN_RAW_FIELD_NOT_FOUND_IN_AUTHORIZED_SOURCE",
-            "sources_considered": [_source_identity(document) for document in documents],
+            "sources_considered": [_source_identity(document) for document in candidates],
         }
     if len(rows) != 1:
         document, page_number, *_ = rows[0]
@@ -1002,10 +1096,16 @@ def _validate_enterprise_field_record(
 
     source = _mapping(item.get("source"))
     if status in {"OBSERVED", "MEASUREMENT_MISMATCH"}:
-        if not documents:
+        frozen_source_id = _text(raw_field.get("source_id"))
+        source_id = _text(source.get("source_id"))
+        candidates = [
+            document for document in documents
+            if document.get("source_id") == (frozen_source_id or source_id)
+        ]
+        if not candidates:
             findings.append("field_record_source_document_missing")
         else:
-            document = documents[0]
+            document = candidates[0]
             source_identity = _source_identity(document)
             for key in ("source_id", "source_url", "issuer_id", "report_period_end", "availability_precision"):
                 if source.get(key) != source_identity.get(key):
@@ -1025,7 +1125,12 @@ def _validate_enterprise_field_record(
                 if source.get(key) != locator.get(key):
                     findings.append(f"field_record_source_{key}_locator_mismatch")
             actual_locator = _mapping(source.get("custodian_locator"))
-            if set(actual_locator) != {"table_or_note", "line_item", "period_column"} or any(
+            if isinstance(contract.get("source_accesses"), list):
+                if actual_locator != locator:
+                    findings.append(
+                        "field_record_source_custodian_locator_must_match_frozen_locator"
+                    )
+            elif set(actual_locator) != {"table_or_note", "line_item", "period_column"} or any(
                 not _text(actual_locator.get(key))
                 for key in ("table_or_note", "line_item", "period_column")
             ):
@@ -1172,6 +1277,573 @@ def acquire_outcome_measurements(
     return result
 
 
+def _convert_enterprise_raw_value(
+    frozen_raw: dict[str, Any], observation: dict[str, Any], conversion: dict[str, Any],
+    *, consumer_amount: bool, positive_magnitude: bool = False,
+) -> tuple[Decimal | bool, str]:
+    """Apply one frozen conversion without inventing a missing raw amount.
+
+    Multi-source contracts separate a positive unit-conversion magnitude from
+    the formula coefficient.  Legacy V3 conversions may still carry their
+    historical signed scale; consumer facts continue to receive only its
+    magnitude so existing downstream role semantics remain unchanged.
+    """
+    if conversion.get("field_id") != frozen_raw.get("field_id"):
+        raise OutcomeMeasurementAcquisitionError("enterprise_formula_unit_conversion_identity_invalid")
+    if (
+        conversion.get("from_unit") != frozen_raw.get("unit")
+        or conversion.get("from_unit") != observation.get("unit")
+    ):
+        raise OutcomeMeasurementAcquisitionError("enterprise_formula_source_unit_mismatch")
+    converted_unit = _text(conversion.get("to_unit"))
+    if converted_unit is None:
+        raise OutcomeMeasurementAcquisitionError("enterprise_formula_destination_unit_invalid")
+    try:
+        scale = Decimal(str(conversion.get("scale")))
+    except InvalidOperation as exc:
+        raise OutcomeMeasurementAcquisitionError("enterprise_formula_unit_scale_invalid") from exc
+    if not scale.is_finite() or scale == 0 or (positive_magnitude and scale < 0):
+        raise OutcomeMeasurementAcquisitionError("enterprise_formula_unit_scale_invalid")
+    value = observation.get("raw_value")
+    if isinstance(value, bool):
+        if frozen_raw.get("role") != "EVENT" or abs(scale) != 1:
+            raise OutcomeMeasurementAcquisitionError("enterprise_event_unit_conversion_invalid")
+        return value, converted_unit
+    if not isinstance(value, (int, float)) or not math.isfinite(float(value)):
+        raise OutcomeMeasurementAcquisitionError("enterprise_formula_raw_value_invalid")
+    multiplier = scale if positive_magnitude else (abs(scale) if consumer_amount else scale)
+    return Decimal(str(value)) * multiplier, converted_unit
+
+
+def execute_enterprise_deterministic_formula(
+    cell: dict[str, Any], raw_field_observations: list[dict[str, Any]],
+) -> bool | float:
+    """Execute a frozen Enterprise formula without substituting missing fields.
+
+    This construction helper intentionally lives beside acquisition.  It
+    supports the legacy V3 operators plus the reusable company/capital bridge
+    operators; settlement authority remains outside this module.
+    """
+    frozen_raws = _items(cell.get("raw_input_fields"))
+    by_id = {
+        str(item.get("field_id")): item for item in raw_field_observations
+        if isinstance(item, dict) and _text(item.get("field_id"))
+    }
+    input_ids = _items(_mapping(cell.get("formula")).get("input_field_ids"))
+    if input_ids != [raw.get("field_id") for raw in frozen_raws] or set(by_id) != set(input_ids):
+        raise OutcomeMeasurementAcquisitionError("enterprise_formula_raw_input_coverage_invalid")
+    if any(by_id[str(field_id)].get("status") != "OBSERVED" for field_id in input_ids):
+        raise OutcomeMeasurementAcquisitionError("enterprise_formula_requires_observed_raw_inputs")
+    formula = _mapping(cell.get("formula"))
+    conversions = _items(formula.get("unit_conversions"))
+    if [item.get("field_id") for item in conversions if isinstance(item, dict)] != input_ids:
+        raise OutcomeMeasurementAcquisitionError("enterprise_formula_unit_conversion_order_invalid")
+
+    coefficient_bindings = _items(formula.get("input_coefficients"))
+    explicit_coefficients = "input_coefficients" in formula
+    converted = [
+        _convert_enterprise_raw_value(
+            frozen_raw, by_id[str(frozen_raw["field_id"])], conversion,
+            consumer_amount=False,
+            positive_magnitude=explicit_coefficients,
+        )[0]
+        for frozen_raw, conversion in zip(frozen_raws, conversions, strict=True)
+    ]
+
+    operator = formula.get("operator")
+    coefficients: list[Decimal] | None = None
+    if explicit_coefficients:
+        if [
+            item.get("field_id") for item in coefficient_bindings if isinstance(item, dict)
+        ] != input_ids:
+            raise OutcomeMeasurementAcquisitionError(
+                "enterprise_formula_coefficient_coverage_invalid"
+            )
+        coefficients = []
+        for coefficient_binding in coefficient_bindings:
+            try:
+                coefficient = Decimal(str(coefficient_binding.get("coefficient")))
+            except InvalidOperation as exc:
+                raise OutcomeMeasurementAcquisitionError(
+                    "enterprise_formula_coefficient_invalid"
+                ) from exc
+            if not coefficient.is_finite() or coefficient not in {Decimal("-1"), Decimal("1")}:
+                raise OutcomeMeasurementAcquisitionError("enterprise_formula_coefficient_invalid")
+            coefficients.append(coefficient)
+        if operator != "SUM" and any(coefficient != 1 for coefficient in coefficients):
+            raise OutcomeMeasurementAcquisitionError(
+                "enterprise_intrinsically_signed_formula_coefficient_invalid"
+            )
+    if operator == "EVENT_BOOLEAN":
+        if len(converted) != 1 or not isinstance(converted[0], bool):
+            raise OutcomeMeasurementAcquisitionError("enterprise_event_formula_requires_one_boolean")
+        return converted[0]
+    if any(isinstance(value, bool) for value in converted):
+        raise OutcomeMeasurementAcquisitionError("enterprise_numeric_formula_cannot_use_boolean")
+    numeric = [value for value in converted if isinstance(value, Decimal)]
+    if operator == "RAW_VALUE":
+        if len(numeric) != 1:
+            raise OutcomeMeasurementAcquisitionError("enterprise_raw_value_formula_requires_one_input")
+        result = numeric[0]
+    elif operator == "SUM":
+        result = (
+            sum(
+                (value * coefficient for value, coefficient in zip(numeric, coefficients, strict=True)),
+                Decimal("0"),
+            )
+            if coefficients is not None
+            else sum(numeric, Decimal("0"))
+        )
+    elif operator == "SIGNED_STOCK_DELTA":
+        if len(numeric) != 2:
+            raise OutcomeMeasurementAcquisitionError("enterprise_signed_stock_delta_input_count_invalid")
+        result = numeric[1] - numeric[0]
+    elif operator == "COMPONENT_TO_TOTAL_RECONCILIATION":
+        if len(numeric) < 2:
+            raise OutcomeMeasurementAcquisitionError("enterprise_component_reconciliation_input_count_invalid")
+        result = sum(numeric[:-1], Decimal("0")) - numeric[-1]
+    elif operator == "OWNER_CASH":
+        if len(numeric) < 2:
+            raise OutcomeMeasurementAcquisitionError("enterprise_owner_cash_input_count_invalid")
+        result = numeric[0] - numeric[1] + sum(numeric[2:], Decimal("0"))
+    elif operator == "INVESTED_CAPITAL_RETURN":
+        if len(numeric) != 2 or numeric[1] == 0:
+            raise OutcomeMeasurementAcquisitionError("enterprise_invested_capital_return_zero_or_invalid_denominator")
+        result = numeric[0] / numeric[1]
+    elif operator == "PERCENT_CHANGE":
+        if len(numeric) != 2 or numeric[0] == 0:
+            raise OutcomeMeasurementAcquisitionError("enterprise_percent_change_zero_or_invalid_baseline")
+        result = (numeric[1] - numeric[0]) / abs(numeric[0])
+    elif operator == "RATIO_CHANGE":
+        if len(numeric) != 4 or numeric[1] == 0 or numeric[3] == 0:
+            raise OutcomeMeasurementAcquisitionError("enterprise_ratio_change_zero_or_invalid_denominator")
+        baseline_ratio = numeric[0] / numeric[1]
+        if baseline_ratio == 0:
+            raise OutcomeMeasurementAcquisitionError("enterprise_ratio_change_zero_baseline_ratio")
+        result = ((numeric[2] / numeric[3]) - baseline_ratio) / abs(baseline_ratio)
+    elif operator == "DIFFERENCE":
+        if len(numeric) == 2:
+            result = numeric[1] - numeric[0]
+        elif len(numeric) == 4:
+            if numeric[0] == 0 or numeric[2] == 0:
+                raise OutcomeMeasurementAcquisitionError("enterprise_difference_zero_revenue_denominator")
+            result = ((numeric[2] - numeric[3]) / numeric[2]) - ((numeric[0] - numeric[1]) / numeric[0])
+        else:
+            raise OutcomeMeasurementAcquisitionError("enterprise_difference_input_count_invalid")
+    else:
+        raise OutcomeMeasurementAcquisitionError("enterprise_formula_operator_unsupported")
+    if not result.is_finite():
+        raise OutcomeMeasurementAcquisitionError("enterprise_formula_result_not_finite")
+    return float(result)
+
+
+def _enterprise_evidence_id(
+    contract: dict[str, Any], *, source_id: Any, component_id: Any, field_id: Any,
+) -> str:
+    """Return a stable evidence identity when one fact supports several cells."""
+    return (
+        f"ENTERPRISE_RAW:{contract.get('contract_set_id')}:{source_id}:"
+        f"{component_id}:{field_id}"
+    )
+
+
+def _frozen_identity(value: Any) -> Any:
+    if isinstance(value, dict):
+        return tuple(sorted((key, _frozen_identity(item)) for key, item in value.items()))
+    if isinstance(value, list):
+        return tuple(_frozen_identity(item) for item in value)
+    return value
+
+
+def _deduplicate_enterprise_raw_records(
+    records: list[dict[str, Any]],
+) -> tuple[list[dict[str, Any]], set[str]]:
+    """Collapse exact cross-cell fact reuse and surface contradictory reuse."""
+    grouped: dict[tuple[Any, ...], list[dict[str, Any]]] = {}
+    for record in records:
+        identity = (
+            record.get("component_role"),
+            record.get("component_id"),
+            record.get("responsibility_unit_id"),
+            record.get("perimeter_id"),
+            record.get("raw_field_role"),
+            record.get("field_id"),
+            _frozen_identity(record.get("measurement_clock")),
+        )
+        grouped.setdefault(identity, []).append(record)
+
+    deduplicated: list[dict[str, Any]] = []
+    conflicting_cells: set[str] = set()
+    comparison_keys = {
+        "status", "unit", "value", "source", "reason", "period_end", "locator",
+    }
+    for occurrences in grouped.values():
+        first = occurrences[0]
+        first_payload = {
+            key: _frozen_identity(first.get(key)) for key in comparison_keys
+        }
+        if all(
+            {key: _frozen_identity(item.get(key)) for key in comparison_keys} == first_payload
+            for item in occurrences[1:]
+        ):
+            deduplicated.append(first)
+            continue
+        conflicting_cells.update(str(item.get("cell_id")) for item in occurrences)
+        mismatch = deepcopy(first)
+        mismatch.update(
+            status="MEASUREMENT_MISMATCH",
+            reason="CONFLICTING_DUPLICATE_SOURCE_BOUND_RAW_FACT",
+        )
+        for key in ("value", "source", "observation_id"):
+            mismatch.pop(key, None)
+        deduplicated.append(mismatch)
+    return deduplicated, conflicting_cells
+
+
+def project_enterprise_acquisition_consumers(
+    measurement_contract: Any,
+    acquisition_result: Any,
+    *,
+    outcome_access_authorization: Any,
+    v4_formula_ids: dict[str, str] | None = None,
+) -> dict[str, Any]:
+    """Project observed Enterprise fields to existing consumer input boundaries.
+
+    The projection is deliberately partial: it emits source-bearing model
+    inputs, not a normalized working-capital model, V4 candidate, or financial
+    driver judgment.  Missing and mismatched raw fields remain local and are
+    never converted to zero.
+    """
+    contract_kind, contract, cells = _contract_context(measurement_contract)
+    if contract_kind != ENTERPRISE_CONTRACT_KIND:
+        raise OutcomeMeasurementAcquisitionError("consumer_projection_requires_enterprise_v3_contract")
+    validation = _validate_enterprise_acquisition_result(
+        acquisition_result,
+        measurement_contract=contract,
+        outcome_access_authorization=outcome_access_authorization,
+    )
+    if not validation["valid"]:
+        raise OutcomeMeasurementAcquisitionError(
+            "enterprise_acquisition_result_invalid: " + "; ".join(validation["findings"])
+        )
+    result = validation["result"]
+    by_cell = {item["measurement_id"]: item for item in result["observations"]}
+    source_accesses = _enterprise_source_access_by_id(contract)
+    enhanced = isinstance(contract.get("source_accesses"), list)
+
+    constructed_cells: list[dict[str, Any]] = []
+    raw_records: list[dict[str, Any]] = []
+    for cell in cells:
+        observation = by_cell[cell["cell_id"]]
+        boundary = _mapping(cell.get("responsibility_boundary"))
+        formula = _mapping(cell.get("formula"))
+        cell_status = observation["status"]
+        construction: dict[str, Any] = {
+            "cell_id": cell["cell_id"],
+            "status": cell_status,
+            "component_role": boundary.get("component_role"),
+            "component_id": boundary.get("component_id"),
+            "formula_operator": formula.get("operator"),
+            "mismatch_propagation": "LOCAL_ONLY",
+        }
+        if cell_status == "OBSERVED":
+            try:
+                construction["computed_value"] = execute_enterprise_deterministic_formula(
+                    cell, observation["raw_field_observations"],
+                )
+            except OutcomeMeasurementAcquisitionError as exc:
+                construction.update(status="MEASUREMENT_MISMATCH", reason=str(exc))
+        else:
+            construction["reason"] = observation.get("reason")
+        constructed_cells.append(construction)
+
+        acquired_by_id = {
+            item["field_id"]: item for item in observation["raw_field_observations"]
+        }
+        conversions_by_id = {
+            item.get("field_id"): item
+            for item in _items(formula.get("unit_conversions"))
+            if isinstance(item, dict)
+        }
+        for frozen_raw in cell["raw_input_fields"]:
+            acquired = acquired_by_id[frozen_raw["field_id"]]
+            source = _mapping(acquired.get("source"))
+            source_id = _text(frozen_raw.get("source_id")) or _text(source.get("source_id"))
+            frozen_source = source_accesses.get(str(source_id), {})
+            period_end = (
+                source.get("report_period_end")
+                or frozen_source.get("report_period_end")
+                or _enterprise_report_period(contract)
+            )
+            record: dict[str, Any] = {
+                "cell_id": cell["cell_id"],
+                "field_id": frozen_raw["field_id"],
+                "raw_field_role": frozen_raw.get("role"),
+                "status": acquired["status"],
+                "component_role": boundary.get("component_role"),
+                "component_id": boundary.get("component_id"),
+                "responsibility_unit_id": boundary.get("responsibility_unit_id"),
+                "perimeter_id": boundary.get("perimeter_id"),
+                "measurement_clock": deepcopy(frozen_raw.get("measurement_clock")),
+                "locator": deepcopy(frozen_raw.get("locator")),
+                "period_start": _mapping(cell.get("outcome_period")).get("period_start", "")[:10],
+                "period_end": period_end,
+                "unit": frozen_raw["unit"],
+            }
+            if acquired["status"] == "OBSERVED":
+                try:
+                    converted_value, converted_unit = _convert_enterprise_raw_value(
+                        frozen_raw,
+                        acquired,
+                        _mapping(conversions_by_id.get(frozen_raw["field_id"])),
+                        consumer_amount=True,
+                        positive_magnitude="input_coefficients" in formula,
+                    )
+                    if frozen_raw.get("role") in _V4_ROLE_FIELD_MAP and converted_unit != "RMB":
+                        raise OutcomeMeasurementAcquisitionError(
+                            "enterprise_consumer_destination_unit_must_be_rmb"
+                        )
+                    record.update(
+                        value=(
+                            converted_value
+                            if isinstance(converted_value, bool)
+                            else float(converted_value)
+                        ),
+                        unit=converted_unit,
+                        source=deepcopy(source),
+                        observation_id=_enterprise_evidence_id(
+                            contract,
+                            source_id=source_id,
+                            component_id=boundary.get("component_id"),
+                            field_id=frozen_raw["field_id"],
+                        ),
+                    )
+                except OutcomeMeasurementAcquisitionError as exc:
+                    record.update(status="MEASUREMENT_MISMATCH", reason=str(exc))
+                    construction.update(status="MEASUREMENT_MISMATCH", reason=str(exc))
+                    construction.pop("computed_value", None)
+            else:
+                record["reason"] = acquired.get("reason")
+            raw_records.append(record)
+
+    raw_records, conflicting_cell_ids = _deduplicate_enterprise_raw_records(raw_records)
+    observation_ids = [
+        str(record["observation_id"])
+        for record in raw_records
+        if record.get("status") == "OBSERVED" and record.get("observation_id") is not None
+    ]
+    if len(observation_ids) != len(set(observation_ids)):
+        raise OutcomeMeasurementAcquisitionError(
+            "enterprise_consumer_projection_observation_ids_must_be_unique"
+        )
+    for construction in constructed_cells:
+        if construction["cell_id"] in conflicting_cell_ids:
+            construction.update(
+                status="MEASUREMENT_MISMATCH",
+                reason="CONFLICTING_DUPLICATE_SOURCE_BOUND_RAW_FACT",
+            )
+            construction.pop("computed_value", None)
+
+    grouped: dict[tuple[str, str, str], list[dict[str, Any]]] = {}
+    for record in raw_records:
+        key = (
+            str(record.get("component_role") or ""),
+            str(record.get("component_id") or ""),
+            str(record.get("period_end") or ""),
+        )
+        grouped.setdefault(key, []).append(record)
+
+    working_capital_inputs: list[dict[str, Any]] = []
+    working_capital_unresolved: list[dict[str, Any]] = []
+    v4_inputs: list[dict[str, Any]] = []
+    v4_unresolved: list[dict[str, Any]] = []
+    cash_groups: list[dict[str, Any]] = []
+    allocation_groups: list[dict[str, Any]] = []
+    formula_binding = v4_formula_ids if isinstance(v4_formula_ids, dict) else {}
+    for (component_role, component_id, period_end), records in sorted(grouped.items()):
+        by_role: dict[str, list[dict[str, Any]]] = {}
+        for record in records:
+            by_role.setdefault(str(record.get("raw_field_role")), []).append(record)
+
+        wc_roles = set(_WORKING_CAPITAL_OPENING_ROLES + _WORKING_CAPITAL_ENDING_ROLES)
+        if wc_roles.intersection(by_role):
+            unresolved_roles = [
+                role for role in sorted(wc_roles)
+                if len(by_role.get(role, [])) != 1 or by_role[role][0]["status"] != "OBSERVED"
+            ]
+            if unresolved_roles:
+                working_capital_unresolved.append({
+                    "component_role": component_role,
+                    "component_id": component_id,
+                    "period_end": period_end,
+                    "status": "MEASUREMENT_MISMATCH" if any(
+                        any(item["status"] == "MEASUREMENT_MISMATCH" for item in by_role.get(role, []))
+                        for role in unresolved_roles
+                    ) else "UNKNOWN",
+                    "unresolved_roles": unresolved_roles,
+                })
+            else:
+                value = lambda role: float(by_role[role][0]["value"])
+                opening = sum(value(role) for role in _WORKING_CAPITAL_OPENING_ROLES[:3]) - sum(
+                    value(role) for role in _WORKING_CAPITAL_OPENING_ROLES[3:]
+                )
+                closing = sum(value(role) for role in _WORKING_CAPITAL_ENDING_ROLES[:3]) - sum(
+                    value(role) for role in _WORKING_CAPITAL_ENDING_ROLES[3:]
+                )
+                evidence_ids = [
+                    by_role[role][0]["observation_id"]
+                    for role in _WORKING_CAPITAL_OPENING_ROLES + _WORKING_CAPITAL_ENDING_ROLES
+                ]
+                period_start = next((str(item.get("period_start")) for item in records if item.get("period_start")), "")
+                working_capital_inputs.append({
+                    "component_role": component_role,
+                    "component_id": component_id,
+                    "period": {
+                        "period_id": f"{component_id}:{period_end}",
+                        "period_start": period_start,
+                        "period_end": period_end,
+                        "disclosure_mode": "NET_MOVEMENT_ONLY",
+                        "net_movement_observation": {
+                            "opening_net_stock": opening,
+                            "closing_net_stock": closing,
+                            "observed_cash_capital_charge": closing - opening,
+                            "evidence_ids": evidence_ids,
+                        },
+                    },
+                })
+
+        required_v4_roles = set(_V4_ROLE_FIELD_MAP)
+        if required_v4_roles.intersection(by_role):
+            unresolved_roles = [
+                role for role in sorted(required_v4_roles)
+                if len(by_role.get(role, [])) != 1 or by_role[role][0]["status"] != "OBSERVED"
+            ]
+            formula_ids_valid = all(_text(formula_binding.get(key)) for key in ("d3_formula_id", "d4_formula_id"))
+            if unresolved_roles or not formula_ids_valid:
+                v4_unresolved.append({
+                    "component_role": component_role,
+                    "component_id": component_id,
+                    "period_end": period_end,
+                    "status": "UNKNOWN" if not unresolved_roles or not any(
+                        any(item["status"] == "MEASUREMENT_MISMATCH" for item in by_role.get(role, []))
+                        for role in unresolved_roles
+                    ) else "MEASUREMENT_MISMATCH",
+                    "unresolved_roles": unresolved_roles,
+                    "reason": None if formula_ids_valid else "V4_FORMULA_BINDING_REQUIRED",
+                })
+            else:
+                def v4_field(role: str) -> dict[str, Any]:
+                    record = by_role[role][0]
+                    source = record["source"]
+                    return {
+                        "source_id": source["source_id"],
+                        "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+                        "issuer_id": source["issuer_id"],
+                        "perimeter_id": record["perimeter_id"],
+                        "published_at": source.get("source_available_at") or source.get("source_available_date"),
+                        "field_ref": source["field_ref"],
+                        "period_end": period_end,
+                        "unit": record["unit"],
+                        "value": record["value"],
+                    }
+                v4_inputs.append({
+                    "component_role": component_role,
+                    "component_id": component_id,
+                    "observation": {
+                        "period_end": period_end,
+                        "reporting_frequency": "ANNUAL",
+                        "d3_formula_id": formula_binding["d3_formula_id"],
+                        "d4_formula_id": formula_binding["d4_formula_id"],
+                        "d3_raw_fields": {
+                            field_name: v4_field(role)
+                            for role, field_name in _V4_ROLE_FIELD_MAP.items()
+                            if field_name in {
+                                "operating_revenue_rmb", "operating_cost_rmb", "taxes_and_surcharges_rmb",
+                                "selling_expense_rmb", "administrative_expense_rmb",
+                            }
+                        },
+                        "d4_raw_fields": {
+                            field_name: v4_field(role)
+                            for role, field_name in _V4_ROLE_FIELD_MAP.items()
+                            if field_name not in {
+                                "operating_revenue_rmb", "operating_cost_rmb", "taxes_and_surcharges_rmb",
+                                "selling_expense_rmb", "administrative_expense_rmb",
+                            }
+                        },
+                    },
+                })
+
+        cash_ids = {
+            role: [item["observation_id"] for item in items if item["status"] == "OBSERVED"]
+            for role, items in by_role.items() if role in _CASH_NORMALIZATION_ROLES
+        }
+        if cash_ids:
+            cash_groups.append({
+                "component_role": component_role, "component_id": component_id,
+                "period_end": period_end, "observation_ids_by_role": cash_ids,
+            })
+        allocation_ids = {
+            role: [item["observation_id"] for item in items if item["status"] == "OBSERVED"]
+            for role, items in by_role.items() if role in _CAPITAL_ALLOCATION_ROLES
+        }
+        if allocation_ids:
+            allocation_groups.append({
+                "component_role": component_role, "component_id": component_id,
+                "period_end": period_end, "observation_ids_by_role": allocation_ids,
+            })
+
+    verified_observations = [
+        {
+            "observation_id": record["observation_id"],
+            "status": "VERIFIED",
+            "component_role": record["component_role"],
+            "component_id": record["component_id"],
+            "raw_field_role": record["raw_field_role"],
+            "period_end": record["period_end"],
+            "unit": record["unit"],
+            "value": record["value"],
+            "source": deepcopy(record["source"]),
+        }
+        for record in raw_records if record["status"] == "OBSERVED"
+    ]
+    unresolved_raw_fields = [
+        {key: deepcopy(record.get(key)) for key in (
+            "cell_id", "field_id", "raw_field_role", "status", "component_role",
+            "component_id", "period_end", "reason",
+        )}
+        for record in raw_records if record["status"] != "OBSERVED"
+    ]
+    return {
+        "schema_version": "enterprise-acquisition-consumer-projection.v1",
+        "measurement_contract_ref": _reference(contract),
+        "company_id": contract.get("company_id"),
+        "multi_source_contract": enhanced,
+        "constructed_cells": constructed_cells,
+        "working_capital_model_inputs": {
+            "period_fragments": working_capital_inputs,
+            "unresolved_periods": working_capital_unresolved,
+        },
+        "v4_inputs": {
+            "annual_d3_d4_raw_observations": v4_inputs,
+            "unresolved_periods": v4_unresolved,
+        },
+        "financial_driver_inputs": {
+            "verified_observations": verified_observations,
+            "cash_normalization_observation_groups": cash_groups,
+            "capital_allocation_observation_groups": allocation_groups,
+            "unresolved_raw_fields": unresolved_raw_fields,
+        },
+        "rights": {
+            "working_capital_model_completion": "NOT_AUTHORIZED",
+            "v4_candidate_admission": "NOT_AUTHORIZED",
+            "financial_driver_judgment": "NOT_AUTHORIZED",
+            "valuation": "NOT_AUTHORIZED",
+            "investment": "NOT_AUTHORIZED",
+        },
+        "allowed_outputs": ["CONSUMER_INPUTS_ONLY", "RESEARCH_AGENDA"],
+    }
+
+
 def _validate_enterprise_acquisition_result(
     result: Any, *, measurement_contract: Any, outcome_access_authorization: Any,
 ) -> dict[str, Any]:
@@ -1219,7 +1891,7 @@ def _validate_enterprise_acquisition_result(
     expected_cell_ids = [cell["cell_id"] for cell in cells]
     if set(by_cell) != set(expected_cell_ids) or len(observations) != len(expected_cell_ids):
         findings.append("enterprise_acquisition_must_cover_each_frozen_cell_once")
-    source_access = _mapping(contract.get("source_access"))
+    source_accesses = _enterprise_source_access_by_id(contract)
     for cell_index, cell in enumerate(cells):
         observation = _mapping(by_cell.get(cell["cell_id"]))
         path = f"enterprise_acquisition.cells[{cell_index}]"
@@ -1279,13 +1951,15 @@ def _validate_enterprise_acquisition_result(
                 elif raw_status == "OBSERVED" and (not isinstance(value, (int, float)) or isinstance(value, bool) or not math.isfinite(float(value))):
                     findings.append(raw_path + ".numeric_raw_value_must_be_finite")
                 source = _mapping(raw_item.get("source"))
+                frozen_source_id = _text(frozen_raw.get("source_id")) or _text(source.get("source_id"))
+                source_access = source_accesses.get(str(frozen_source_id), {})
                 if source.get("source_id") != source_access.get("source_id") or source.get("source_url") != source_access.get("official_url"):
                     findings.append(raw_path + ".source_must_match_authorized_identity")
                 if not _is_static_official_pdf(source.get("source_url")):
                     findings.append(raw_path + ".source_url_must_be_static_official_pdf")
                 if source.get("issuer_id") != "ISSUER:" + str(contract.get("company_id")):
                     findings.append(raw_path + ".source_issuer_must_match_contract_company")
-                if source.get("report_period_end") != _enterprise_report_period(contract):
+                if source.get("report_period_end") != source_access.get("report_period_end"):
                     findings.append(raw_path + ".source_report_period_must_match_contract")
                 if _canonical_source_type(source.get("official_source_type")) != _canonical_source_type(source_access.get("source_type")):
                     findings.append(raw_path + ".source_official_source_type_must_match_contract")
@@ -1311,7 +1985,12 @@ def _validate_enterprise_acquisition_result(
                     if source.get(locator_key) != locator.get(locator_key):
                         findings.append(raw_path + f".source_{locator_key}_locator_must_match_frozen_raw_input")
                 actual_locator = _mapping(source.get("custodian_locator"))
-                if set(actual_locator) != {"table_or_note", "line_item", "period_column"} or any(
+                if isinstance(contract.get("source_accesses"), list):
+                    if actual_locator != locator:
+                        findings.append(
+                            raw_path + ".source_custodian_locator_must_match_frozen_raw_input"
+                        )
+                elif set(actual_locator) != {"table_or_note", "line_item", "period_column"} or any(
                     not _text(actual_locator.get(locator_key))
                     for locator_key in ("table_or_note", "line_item", "period_column")
                 ):

@@ -1,0 +1,154 @@
+{
+  "schema_version": "industry-shared-shock-company-projection.v1",
+  "projection_id": "CEMENT:SHARED_SHOCK:COMPANY_PROJECTION:20180430:V2",
+  "cutoff_at": "2018-04-30T23:59:59+08:00",
+  "revision": {
+    "prior_ref": "docs/development/research/cohorts/PILOT_CN_CEMENT_20180430_ISOLATED_FORECAST_SUBMISSION.json",
+    "correction_ref": "docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/65_CEMENT_COMPANY_IDENTITY_CORRECTION.md",
+    "change": "Corrects the issuer name bound to CN:600425 without changing its reported FY2017 measurements."
+  },
+  "companies": [
+    {
+      "company_id": "CN:600585",
+      "issuer_identity": {
+        "company_id": "CN:600585",
+        "security_code": "600585",
+        "issuer_legal_name": "安徽海螺水泥股份有限公司",
+        "exact_name_quote": "安徽海螺水泥股份有限公司",
+        "source_id": "CNINFO:600585:ANN:20180323:1204507132",
+        "publication_date": "2018-03-23",
+        "pdf_page_ref": "PDF p1"
+      },
+      "verified_cutoff_state": [
+        {
+          "statement": "FY2017 group cement-and-clinker sales were 295.0 million tonnes, up 6.6%; combined gross margin was 35.59%, up 2.74 percentage points; consolidated operating cash flow was RMB17.36bn.",
+          "evidence": [
+            {
+              "source_id": "CNINFO:600585:ANN:20180323:1204507132",
+              "publication_date": "2018-03-23",
+              "pdf_page_ref": "PDF p1; PDF p22; PDF p84",
+              "field_ref": "FY2017 CN:600585 official annual report cover, cement-and-clinker sales discussion and consolidated cash-flow statement."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "company_id": "CN:600425",
+      "issuer_identity": {
+        "company_id": "CN:600425",
+        "security_code": "600425",
+        "issuer_legal_name": "新疆青松建材化工(集团)股份有限公司",
+        "exact_name_quote": "新疆青松建材化工(集团)股份有限公司",
+        "source_id": "CNINFO:600425:ANN:20180421:1204677754",
+        "publication_date": "2018-04-21",
+        "pdf_page_ref": "PDF p1"
+      },
+      "verified_cutoff_state": [
+        {
+          "statement": "FY2017 cement revenue was RMB1.912bn with a 16.78% gross margin, up 3.96 percentage points; cement sales were 6.8746m tonnes, up 7.61%.",
+          "evidence": [
+            {
+              "source_id": "CNINFO:600425:ANN:20180421:1204677754",
+              "publication_date": "2018-04-21",
+              "pdf_page_ref": "PDF p1; PDF p10; PDF p12",
+              "field_ref": "FY2017 CN:600425 official annual report cover, regional cement discussion and cement production/sales/inventory table."
+            }
+          ]
+        },
+        {
+          "statement": "The report describes continuing Xinjiang cement overcapacity, higher cement prices and raw-fuel costs, regional scale above 18m tonnes, and a stopped chemical subsidiary; these are issuer-specific boundaries, not facts about CN:000877.",
+          "evidence": [
+            {
+              "source_id": "CNINFO:600425:ANN:20180421:1204677754",
+              "publication_date": "2018-04-21",
+              "pdf_page_ref": "PDF p10",
+              "field_ref": "FY2017 CN:600425 official annual report regional scale, competition and business-boundary discussion."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "company_id": "CN:600802",
+      "issuer_identity": {
+        "company_id": "CN:600802",
+        "security_code": "600802",
+        "issuer_legal_name": "福建水泥股份有限公司",
+        "exact_name_quote": "福建水泥股份有限公司",
+        "source_id": "CNINFO:600802:ANN:20180417:1204639756",
+        "publication_date": "2018-04-17",
+        "pdf_page_ref": "PDF p1"
+      },
+      "verified_cutoff_state": [
+        {
+          "statement": "FY2017 cement sales were 7.542m tonnes, up 16.55%, and revenue was RMB1.834bn, up 38.61%; the issuer still reported an attributable net loss and declining operating cash flow.",
+          "evidence": [
+            {
+              "source_id": "CNINFO:600802:ANN:20180417:1204639756",
+              "publication_date": "2018-04-17",
+              "pdf_page_ref": "PDF p1; PDF p11; PDF p59",
+              "field_ref": "FY2017 CN:600802 official annual report cover, cement sales discussion and consolidated cash-flow statement."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "company_id": "CN:600801",
+      "issuer_identity": {
+        "company_id": "CN:600801",
+        "security_code": "600801",
+        "issuer_legal_name": "华新水泥股份有限公司",
+        "exact_name_quote": "华新水泥股份有限公司",
+        "source_id": "CNINFO:600801:ANN:20170324:1203190337",
+        "publication_date": "2017-03-24",
+        "pdf_page_ref": "PDF p1"
+      },
+      "verified_cutoff_state": [
+        {
+          "statement": "The FY2016 report disclosed approval to acquire 15 LafargeHolcim cement plants, creating a material consolidation-perimeter break.",
+          "evidence": [
+            {
+              "source_id": "CNINFO:600801:ANN:20170324:1203190337",
+              "publication_date": "2017-03-24",
+              "pdf_page_ref": "PDF p1; PDF p9",
+              "field_ref": "FY2016 CN:600801 official annual report cover and acquisition-perimeter discussion."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "company_id": "CN:000401",
+      "issuer_identity": {
+        "company_id": "CN:000401",
+        "security_code": "000401",
+        "issuer_legal_name": "唐山冀东水泥股份有限公司",
+        "exact_name_quote": "唐山冀东水泥股份有限公司",
+        "source_id": "CNINFO:000401:ANN:20180323:1204506085",
+        "publication_date": "2018-03-23",
+        "pdf_page_ref": "PDF p1"
+      },
+      "verified_cutoff_state": [
+        {
+          "statement": "The FY2017 report describes ongoing major asset restructuring and joint-venture formation with Jinyu Group, creating a material perimeter/lifecycle boundary.",
+          "evidence": [
+            {
+              "source_id": "CNINFO:000401:ANN:20180323:1204506085",
+              "publication_date": "2018-03-23",
+              "pdf_page_ref": "PDF p1; PDF p9",
+              "field_ref": "FY2017 CN:000401 official annual report cover and restructuring/perimeter discussion."
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "boundary": {
+    "purpose": "CUTOFF_SAFE_SHARED_SHOCK_EVIDENCE",
+    "creates_target_company_fact_store": false,
+    "grants_valuation_or_investment_authority": false,
+    "proves_agent_capability": false
+  }
+}

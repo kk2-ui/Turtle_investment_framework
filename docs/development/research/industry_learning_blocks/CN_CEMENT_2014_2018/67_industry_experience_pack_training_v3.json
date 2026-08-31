@@ -1,0 +1,246 @@
+{
+  "schema_version": "industry-experience-pack.v1",
+  "pack_id": "IEP:CN:CEMENT_LISTED:2014_2018:TRAINING:V3",
+  "industry_id": "INDUSTRY:CN:CEMENT_LISTED",
+  "version": 3,
+  "state": "TRAINING_READY",
+  "knowledge_cutoff_at": "2018-04-30T23:59:59+08:00",
+  "source_objects": [
+    {
+      "kind": "INDUSTRY_LEARNING_BLOCK",
+      "object_id": "ILB:CN:CEMENT_LISTED:2014_2018:V1",
+      "ref": "docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/04_industry_learning_block.json",
+      "available_at": "2018-04-30T23:59:59+08:00",
+      "knowledge_role": "CUTOFF_SAFE_PROJECTION",
+      "use_status": "INCLUDED"
+    },
+    {
+      "kind": "INDUSTRY_UNDERWRITING_CONTEXT",
+      "object_id": "IUC:CN:CEMENT_LISTED:CN600585:20180430:TRAINING:V2",
+      "ref": "docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/62_industry_underwriting_context_training_v2.json",
+      "available_at": "2018-04-30T23:59:59+08:00",
+      "knowledge_role": "CUTOFF_SAFE_PROJECTION",
+      "use_status": "INCLUDED"
+    },
+    {
+      "kind": "OFFICIAL_INDUSTRY_OBSERVATION",
+      "object_id": "INDOBS:CN:CEMENT_LISTED:20180430:V1",
+      "ref": "docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/60_official_industry_context_observations_v1.json",
+      "available_at": "2018-04-30T23:59:59+08:00",
+      "knowledge_role": "CUTOFF_SAFE_EVIDENCE",
+      "use_status": "INCLUDED"
+    },
+    {
+      "kind": "ISSUER_IDENTITY_CATALOG",
+      "object_id": "ISSUER_IDENTITY:CN:CEMENT:20180430:V1",
+      "ref": "docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/65a_cement_issuer_identity_catalog_v1.json",
+      "available_at": "2018-04-30T23:59:59+08:00",
+      "knowledge_role": "CUTOFF_SAFE_EVIDENCE",
+      "use_status": "INCLUDED"
+    },
+    {
+      "kind": "WORKED_CASE",
+      "object_id": "CEMENT:SHARED_SHOCK:COMPANY_PROJECTION:20180430:V2",
+      "ref": "docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/66_cement_shared_shock_company_projection_v2.json",
+      "available_at": "2018-04-30T23:59:59+08:00",
+      "knowledge_role": "CUTOFF_SAFE_PROJECTION",
+      "use_status": "INCLUDED"
+    },
+    {
+      "kind": "WORKED_CASE",
+      "object_id": "EUE:CN600585:20240501:WORKED:V1",
+      "ref": "docs/development/research/enterprise_underwriting_episodes/CN600585_20240501_WORKED_CASE_V1.json",
+      "available_at": "2026-08-29T00:00:00+08:00",
+      "knowledge_role": "REPLAY_AUDIT_ONLY",
+      "use_status": "BOUNDARY_ONLY"
+    },
+    {
+      "kind": "NEAR_MISS_OR_FAILURE",
+      "object_id": "CEMENT:PERIMETER_AND_MEASUREMENT_NEAR_MISSES:V1",
+      "ref": "docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/08_investor_readout.md",
+      "available_at": "2026-08-26T00:00:00+08:00",
+      "knowledge_role": "REPLAY_AUDIT_ONLY",
+      "use_status": "BOUNDARY_ONLY"
+    },
+    {
+      "kind": "FEEDBACK_OR_REVIEW",
+      "object_id": "REVIEW:CN:CEMENT:ROUND5:POSTOUTCOME:V1",
+      "ref": "docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/35_round5_independent_postoutcome_review.json",
+      "available_at": "2026-08-26T00:00:00+08:00",
+      "knowledge_role": "REPLAY_AUDIT_ONLY",
+      "use_status": "BOUNDARY_ONLY"
+    },
+    {
+      "kind": "NEAR_MISS_OR_FAILURE",
+      "object_id": "CEMENT:CN600425:ISSUER_IDENTITY_CORRECTION:V1",
+      "ref": "docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/65_CEMENT_COMPANY_IDENTITY_CORRECTION.md",
+      "available_at": "2026-08-31T00:00:00+08:00",
+      "knowledge_role": "REPLAY_AUDIT_ONLY",
+      "use_status": "BOUNDARY_ONLY"
+    }
+  ],
+  "current_synthesis": {
+    "central_industry_path": "截至 2018-04-30，水泥行业最可能处于价格与供给纪律驱动的利润池恢复，而不是需求繁荣：2017 年上半年全国水泥产量仅同比增长 0.4%，但 6 月均价同比上涨 25.5%，同期收入增长 21%、利润增长 248%、销售利润率提高 4.8 个百分点；新增熟料约束、错峰和重组政策提供了有效供给收缩机制。",
+    "strongest_rival": "价格和利润恢复可能主要来自低基数、区域性供给扰动和阶段性错峰；工信部同期仍判断产能过剩未根本解决，因此不能把 2017 年恢复外推为结构性高利润时代。",
+    "profit_pool_transmission": "全国需求量近乎横盘而价格上行，先扩大行业名义收入和利润率；政策约束新增熟料、错峰和重组通过有效供给影响价格纪律。公司层面再由区域 delivered market、成本位置、产能利用、资本强度和责任边界决定恢复能否进入正常盈利与 owner cash。",
+    "scope_conditions": [
+      "全国行业观察只建立方向和候选机制，区域 delivered market 必须用公司及区域证据再次验证。",
+      "[[CN:600585|海螺水泥]]、[[CN:600425|青松建化]]和[[CN:600802|福建水泥]]的销量、利润率与现金路径按各自披露责任边界比较，不把公司均值写成行业事实。",
+      "[[CN:600801|华新水泥]]并购和[[CN:000401|冀东水泥]]重组保留为共同冲击下的责任边界响应，不为追求可比而删除。",
+      "政策文本证明机制在 cutoff 前存在，不证明各区域执行强度或政策目标已经兑现。"
+    ],
+    "break_conditions": [
+      "后续官方行业量价显示价格恢复主要由需求繁荣而非供给纪律解释。",
+      "错峰结束、违规新增或闲置产能复产后价格和利润率迅速回落，支持阶段性反方。",
+      "区域 delivered price、利用率和单位成本与全国方向长期背离，说明全国序列不适用于该公司。",
+      "公司并购、重组、会计或责任边界变化使量、利润和现金序列不可连续。"
+    ],
+    "source_refs": [
+      "docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/04_industry_learning_block.json",
+      "docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/60_official_industry_context_observations_v1.json",
+      "docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/62_industry_underwriting_context_training_v2.json",
+      "docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/66_cement_shared_shock_company_projection_v2.json"
+    ],
+    "evidence_ceiling": "TRAINING_CONTEXT"
+  },
+  "role_coverage": {
+    "company_paths": [
+      {
+        "company_id": "CN:600585",
+        "archetype_id": "ARCHETYPE:CONSOLIDATED_OPERATING_AND_CASH_TRACK",
+        "roles": ["CENTRAL", "SHARED_SHOCK_DIVERGENCE"],
+        "source_refs": [
+          "docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/04_industry_learning_block.json",
+          "docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/66_cement_shared_shock_company_projection_v2.json"
+        ]
+      },
+      {
+        "company_id": "CN:600425",
+        "archetype_id": "ARCHETYPE:REGIONAL_OVERCAPACITY_CONTEXT",
+        "roles": ["HETEROGENEOUS", "SHARED_SHOCK_DIVERGENCE"],
+        "source_refs": [
+          "docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/04_industry_learning_block.json",
+          "docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/66_cement_shared_shock_company_projection_v2.json"
+        ]
+      },
+      {
+        "company_id": "CN:600802",
+        "archetype_id": "ARCHETYPE:REGIONAL_MANUFACTURING_CONTEXT",
+        "roles": ["HETEROGENEOUS", "SHARED_SHOCK_DIVERGENCE"],
+        "source_refs": [
+          "docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/04_industry_learning_block.json",
+          "docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/66_cement_shared_shock_company_projection_v2.json"
+        ]
+      },
+      {
+        "company_id": "CN:600801",
+        "archetype_id": "ARCHETYPE:ACQUISITION_PERIMETER_CONTINUITY",
+        "roles": ["FAILURE_OR_NEAR_MISS", "SHARED_SHOCK_DIVERGENCE"],
+        "source_refs": [
+          "docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/04_industry_learning_block.json",
+          "docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/66_cement_shared_shock_company_projection_v2.json"
+        ]
+      },
+      {
+        "company_id": "CN:000401",
+        "archetype_id": "ARCHETYPE:RESTRUCTURING_AND_JV_PERIMETER",
+        "roles": ["FAILURE_OR_NEAR_MISS", "SHARED_SHOCK_DIVERGENCE"],
+        "source_refs": [
+          "docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/04_industry_learning_block.json",
+          "docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/66_cement_shared_shock_company_projection_v2.json"
+        ]
+      }
+    ],
+    "structural_epochs": [
+      {
+        "epoch_id": "EPOCH:CEMENT:OVERCAPACITY_AND_POLICY_RESTRAINT:2014_2016",
+        "cutoff_at": "2016-05-18T00:00:00+08:00",
+        "source_refs": [
+          "docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/04_industry_learning_block.json",
+          "docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/60_official_industry_context_observations_v1.json"
+        ]
+      },
+      {
+        "epoch_id": "EPOCH:CEMENT:PRICE_LED_RECOVERY_WITH_UNRESOLVED_OVERCAPACITY:2017_2018",
+        "cutoff_at": "2018-04-30T23:59:59+08:00",
+        "source_refs": [
+          "docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/60_official_industry_context_observations_v1.json",
+          "docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/66_cement_shared_shock_company_projection_v2.json"
+        ]
+      }
+    ],
+    "shared_shock_comparisons": [
+      {
+        "shock": "共同环境为 2017 年全国水泥需求量近乎横盘、价格和行业利润显著恢复，同时新增产能约束、错峰、重组与未解决过剩并存。",
+        "company_ids": ["CN:600585", "CN:600425", "CN:600802", "CN:600801", "CN:000401"],
+        "discriminator": "[[CN:600585|海螺水泥]]销量增长 6.6%、综合毛利率升至 35.59%且经营现金流 173.6 亿元；[[CN:600425|青松建化]]销量增长 7.61%、水泥毛利率升至 16.78%；[[CN:600802|福建水泥]]销量增长 16.55%、收入增长 38.61%却仍归母亏损且经营现金流下降。销量同增没有产生相同利润和现金结果；[[CN:600801|华新水泥]]15 家工厂并购与[[CN:000401|冀东水泥]]重大重组则构成责任边界断点，不能把合并总量变化写成经营响应。",
+        "source_refs": [
+          "docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/60_official_industry_context_observations_v1.json",
+          "docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/66_cement_shared_shock_company_projection_v2.json",
+          "docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/04_industry_learning_block.json"
+        ]
+      }
+    ]
+  },
+  "settlement_plan": {
+    "industry_claims": [
+      {
+        "claim_id": "IEP:CEMENT:PRICE_LED_RECOVERY_DURABILITY",
+        "claim": "2017 年利润池恢复主要由供给纪律和价格驱动，并能否在未解决过剩下延续。",
+        "measurement_sources": [
+          "后续工信部或国家统计局全国水泥产量、价格、收入、利润和销售利润率",
+          "后续官方熟料产能置换、错峰执行、淘汰退出与集中度资料",
+          "区域价格、利用率和复产结果只在来源及口径可复查时用于收窄全国路径"
+        ],
+        "unresolved_treatment": "若只有价格或单家公司恢复而缺少全国量、利润和有效供给结果，保持‘真实恢复但耐久性未结算’，不升级为结构性高利润。"
+      }
+    ],
+    "company_transmission_claims": [
+      {
+        "claim_id": "IEP:CEMENT:COMPANY_RESPONSE_DIVERGENCE",
+        "claim": "区域组合、成本位置、利用率、资本强度与责任边界使公司在共同价格恢复下产生不同正常盈利和 owner-cash 路径。",
+        "measurement_sources": [
+          "[[CN:600585|海螺水泥]]、[[CN:600425|青松建化]]、[[CN:600802|福建水泥]]后续同责任边界销量、实现价格、单位成本或毛利率、经营现金和资本开支",
+          "[[CN:600801|华新水泥]]并购与[[CN:000401|冀东水泥]]重组的官方 perimeter bridge 及同口径 pro forma 或连续字段"
+        ],
+        "unresolved_treatment": "逐公司结算暴露和适应；缺 perimeter bridge 的公司保持边界案例，不用可比公司的结果填充。"
+      }
+    ]
+  },
+  "transfer_reviews": [
+    {
+      "review_id": "REVIEW:COURSE2B:CN000672:COMPANY_HOLDOUT:V1",
+      "axis": "COMPANY_HOLDOUT",
+      "verdict": "NO_MATERIAL_UTILITY",
+      "independent": true,
+      "ref": "docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_COURSE_2B_CN000672_20180430/13_FRESH_REVIEW_FINAL_MAPPING_ADJUDICATION.md"
+    }
+  ],
+  "next_sampling_decision": {
+    "question": "价格恢复在 2018 年后能否在需求不繁荣和过剩未根治的条件下转化为持续利润率与 owner cash，而不是一次低基数修复？",
+    "discriminator": "选择新的区域/成本 archetype，同时观察官方行业量价利润、有效供给，以及公司同边界区域量价、利用率、单位经济、资本吸收与 owner cash。",
+    "if_central_supported": "若需求仍弱但价格、行业利润率和多类公司现金持续改善，保留价格/供给纪律主路径，并检查未见公司是否因区域成本和资本吸收得到不同投资处理。",
+    "if_rival_supported": "若复产或错峰退出后价格和利润率回落，或改善只集中于少数区域/龙头，则将主路径收窄为阶段性、区域性恢复并新增受损 archetype。",
+    "unaffected_claims": [
+      "单家公司不能结算全国行业路径。",
+      "目标公司的暴露、适应和 owner cash 必须由本公司证据建立。",
+      "并购重组责任边界必须在跨期比较前结算。"
+    ],
+    "candidate_company_or_epoch_refs": [
+      "CN:600720@2018-04-30",
+      "CN:CEMENT:UNSEEN_REGIONAL_ARCHETYPE@2018-04-30",
+      "INDUSTRY:CN:CEMENT_LISTED@POST_2018_TIME_HOLDOUT"
+    ]
+  },
+  "revision": {
+    "prior_pack_ref": "docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/63_industry_experience_pack_training_v2.json",
+    "revision_class": "NARROW",
+    "change_summary": "纠正 CN:600425 的发行人名称：官方证券代码、公告、控制人及 FY2017 数字属于青松建化，不属于天山股份；中心行业路径和共同冲击分化方向不变，V3 新增逐公司官方封面身份绑定并保留 Course 2B 的 NO_MATERIAL_UTILITY 历史裁决。"
+  },
+  "boundary": {
+    "creates_fact_store": false,
+    "establishes_target_company_facts": false,
+    "grants_valuation_or_investment_authority": false,
+    "replay_proves_agent_capability": false
+  }
+}

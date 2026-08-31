@@ -6,6 +6,7 @@ from __future__ import annotations
 import argparse
 from copy import deepcopy
 from datetime import datetime
+from decimal import Decimal, InvalidOperation
 import json
 from pathlib import Path
 import re
@@ -79,13 +80,94 @@ _EVENT_KEYS = {"event_start", "event_end", "window_name"}
 _V3_RAW_LOCATOR_KEYS = {"table_or_note", "line_item", "period_column"}
 _V3_CELL_KEYS = _CELL_KEYS | {"measurement_clock", "raw_input_fields"}
 _V3_RAW_INPUT_KEYS = {"field_id", "role", "unit", "measurement_clock", "locator"}
+_V3_MULTI_SOURCE_RAW_INPUT_KEYS = _V3_RAW_INPUT_KEYS | {"source_id"}
 _V3_FORMULA_KEYS = {"operator", "input_field_ids", "expression", "unit_conversions", "zero_baseline_rule"}
+_V3_MULTI_SOURCE_FORMULA_KEYS = _V3_FORMULA_KEYS | {"input_coefficients"}
 _V3_UNIT_CONVERSION_KEYS = {"field_id", "from_unit", "to_unit", "scale"}
+_V3_INPUT_COEFFICIENT_KEYS = {"field_id", "coefficient"}
 _V3_CONTRACT_KEYS = _CONTRACT_KEYS | {"freeze_state", "contract_frozen_at", "clock_policy"}
+_V3_MULTI_SOURCE_CONTRACT_KEYS = (
+    _V3_CONTRACT_KEYS - {"source_access"}
+) | {"source_accesses"}
 _V3_SOURCE_ACCESS_KEYS = _SOURCE_ACCESS_KEYS | {
     "authorization_receipt_id", "issuer_id", "report_period_end",
     "availability_precision", "source_available_at", "source_available_date",
 }
+_V3_COMPONENT_BOUNDARY_KEYS = _BOUNDARY_KEYS | {"component_role", "component_id"}
+ENTERPRISE_COMPONENT_ROLES = {
+    "MATURE_CORE",
+    "NON_CORE_REAL_ESTATE",
+    "NAMED_GROWTH_COHORT",
+}
+ENTERPRISE_RAW_FIELD_ROLES = {
+    # Legacy V3 roles remain valid for every already-frozen contract.
+    "OUTCOME", "BASELINE", "NUMERATOR", "DENOMINATOR", "EVENT",
+    # Source-bearing company/capital responsibility fields.
+    "CAPEX_CLASS", "PROJECT_COMMITMENT", "PROJECT_REMAINING_COMMITMENT",
+    "OPERATING_CASH_FLOW", "MAINTENANCE_CAPEX", "GROWTH_CAPEX",
+    "OCF_RECONCILIATION_ADJUSTMENT", "OWNER_CASH_ADJUSTMENT",
+    "CAPACITY", "PRODUCTION", "SALES_VOLUME", "CUSTOMER_ABSORPTION",
+    "UNIT_ECONOMICS", "CASH_COLLECTIONS", "DEBT",
+    "CASH_RETURN_NUMERATOR", "INVESTED_CAPITAL_DENOMINATOR",
+    # Operating-NWC and deterministic reconciliation roles.
+    "OPENING_STOCK", "CLOSING_STOCK",
+    "OPENING_ACCOUNTS_RECEIVABLE", "OPENING_PREPAYMENTS", "OPENING_INVENTORY",
+    "OPENING_ACCOUNTS_PAYABLE", "OPENING_CUSTOMER_ADVANCES",
+    "ENDING_ACCOUNTS_RECEIVABLE", "ENDING_PREPAYMENTS", "ENDING_INVENTORY",
+    "ENDING_ACCOUNTS_PAYABLE", "ENDING_CUSTOMER_ADVANCES",
+    "OPERATING_REVENUE", "OPERATING_COST", "TAXES_AND_SURCHARGES",
+    "SELLING_EXPENSE", "ADMINISTRATIVE_EXPENSE",
+    "CASH_LONG_LIVED_ASSET_ACQUISITION",
+    "RECONCILIATION_COMPONENT", "RECONCILIATION_TOTAL",
+}
+ENTERPRISE_DETERMINISTIC_FORMULAS = {
+    "RAW_VALUE", "EVENT_BOOLEAN", "RATIO_CHANGE", "DIFFERENCE", "PERCENT_CHANGE",
+    "SUM", "SIGNED_STOCK_DELTA", "COMPONENT_TO_TOTAL_RECONCILIATION",
+    "OWNER_CASH", "INVESTED_CAPITAL_RETURN",
+}
+_V3_BALANCE_RAW_FIELD_ROLES = {
+    "OPENING_STOCK", "CLOSING_STOCK",
+    "OPENING_ACCOUNTS_RECEIVABLE", "OPENING_PREPAYMENTS", "OPENING_INVENTORY",
+    "OPENING_ACCOUNTS_PAYABLE", "OPENING_CUSTOMER_ADVANCES",
+    "ENDING_ACCOUNTS_RECEIVABLE", "ENDING_PREPAYMENTS", "ENDING_INVENTORY",
+    "ENDING_ACCOUNTS_PAYABLE", "ENDING_CUSTOMER_ADVANCES",
+    "DEBT", "INVESTED_CAPITAL_DENOMINATOR",
+}
+_V3_SIGNED_SUM_NEGATIVE_ROLES = {
+    "PROJECT_REMAINING_COMMITMENT",
+    "OPERATING_COST",
+    "TAXES_AND_SURCHARGES",
+    "SELLING_EXPENSE",
+    "ADMINISTRATIVE_EXPENSE",
+    "OPENING_ACCOUNTS_PAYABLE",
+    "OPENING_CUSTOMER_ADVANCES",
+    "ENDING_ACCOUNTS_PAYABLE",
+    "ENDING_CUSTOMER_ADVANCES",
+}
+_V3_SIGNED_SUM_ROLE_PATTERNS = (
+    (
+        "OPERATING_REVENUE",
+        "OPERATING_COST",
+        "TAXES_AND_SURCHARGES",
+        "SELLING_EXPENSE",
+        "ADMINISTRATIVE_EXPENSE",
+    ),
+    ("PROJECT_COMMITMENT", "PROJECT_REMAINING_COMMITMENT"),
+    (
+        "OPENING_ACCOUNTS_RECEIVABLE",
+        "OPENING_PREPAYMENTS",
+        "OPENING_INVENTORY",
+        "OPENING_ACCOUNTS_PAYABLE",
+        "OPENING_CUSTOMER_ADVANCES",
+    ),
+    (
+        "ENDING_ACCOUNTS_RECEIVABLE",
+        "ENDING_PREPAYMENTS",
+        "ENDING_INVENTORY",
+        "ENDING_ACCOUNTS_PAYABLE",
+        "ENDING_CUSTOMER_ADVANCES",
+    ),
+)
 _COMBINATION_KEYS = {
     "rule_id", "thread_id", "input_cell_ids", "evaluation_order", "rule",
     "conflict_rule", "authorization",
@@ -568,6 +650,172 @@ def _event_start(clock: dict[str, Any]) -> str | None:
     return value[:10] if isinstance(value, str) and len(value) >= 10 else None
 
 
+def _clock_period_end(clock: dict[str, Any]) -> str | None:
+    """Return the frozen report-period boundary carried by a raw clock."""
+    kind = clock.get("clock_kind")
+    if kind == "FLOW_PERIOD":
+        value = _mapping(clock.get("flow_period")).get("period_end")
+    elif kind == "BALANCE_AS_OF":
+        value = _mapping(clock.get("balance_as_of")).get("as_of")
+    elif kind == "EVENT_WINDOW":
+        value = _mapping(clock.get("event_window")).get("event_end")
+    else:
+        value = None
+    return value[:10] if isinstance(value, str) and len(value) >= 10 else None
+
+
+def _validate_v3_source_access(
+    source_access: Any,
+    *,
+    path: str,
+    company_id: Any,
+    cutoff: datetime | None,
+    findings: list[str],
+    expected_report_period: str | None = None,
+    strict_availability: bool = True,
+) -> dict[str, Any]:
+    """Validate one frozen official report identity without selecting a source."""
+    source = _closed(source_access, _V3_SOURCE_ACCESS_KEYS, path, findings)
+    if not _text(source.get("authorization_receipt_id")):
+        findings.append(path + ".authorization_receipt_id_required")
+    if source.get("access_state") != "SEALED_UNTIL_PREOUTCOME_COMMIT":
+        findings.append(path + ".outcome_source_must_be_sealed")
+    if source.get("published_after_cutoff") is not True or source.get("custodian_access") != "OUTCOME_ONLY":
+        findings.append(path + ".outcome_source_access_invalid")
+    source_url = _text(source.get("official_url"))
+    parsed_url = urlparse(source_url or "")
+    if (
+        parsed_url.scheme != "https"
+        or parsed_url.netloc.casefold() not in {"static.cninfo.com.cn", "static.sse.com.cn"}
+        or not parsed_url.path.casefold().endswith(".pdf")
+    ):
+        findings.append(path + ".official_url_must_be_static_official_pdf")
+    if source.get("source_type") != "OFFICIAL_AUDITED_ANNUAL_REPORT":
+        findings.append(path + ".source_type_invalid")
+    if source.get("issuer_id") != "ISSUER:" + str(company_id):
+        findings.append(path + ".issuer_id_must_match_company")
+    report_period = _text(source.get("report_period_end"))
+    try:
+        datetime.fromisoformat(report_period).date()
+    except (TypeError, ValueError):
+        findings.append(path + ".report_period_end_invalid")
+    if expected_report_period is not None and report_period != expected_report_period:
+        findings.append(path + ".report_period_must_match_outcome_window")
+    if strict_availability:
+        precision = source.get("availability_precision")
+        if precision == "TIMESTAMP":
+            available = _instant(source.get("source_available_at"), path + ".source_available_at", findings)
+            if source.get("source_available_date") is not None:
+                findings.append(path + ".timestamp_cannot_include_date")
+            if cutoff and available and available <= cutoff:
+                findings.append(path + ".availability_must_follow_cutoff")
+        elif precision == "DATE_ONLY":
+            available_day: Any = None
+            try:
+                available_day = datetime.fromisoformat(str(source.get("source_available_date"))).date()
+            except (TypeError, ValueError):
+                findings.append(path + ".source_available_date_invalid")
+            if source.get("source_available_at") is not None:
+                findings.append(path + ".date_only_cannot_include_timestamp")
+            if cutoff and available_day and available_day <= cutoff.date():
+                findings.append(path + ".availability_must_follow_cutoff")
+        else:
+            findings.append(path + ".availability_precision_invalid")
+    return source
+
+
+def _validate_v3_enhanced_formula_roles(
+    operator: Any,
+    raw_inputs: list[dict[str, Any]],
+    conversions: list[dict[str, Any]],
+    coefficients: list[dict[str, Any]],
+    *,
+    output_unit: Any,
+    path: str,
+    findings: list[str],
+) -> None:
+    """Freeze input order, unit magnitude, and explicit arithmetic signs."""
+    roles = [raw.get("role") for raw in raw_inputs]
+    if operator == "RAW_VALUE":
+        if len(roles) != 1 or roles == ["EVENT"]:
+            findings.append(path + ".raw_value_requires_one_numeric_input")
+    elif operator == "EVENT_BOOLEAN":
+        if roles != ["EVENT"]:
+            findings.append(path + ".event_boolean_requires_one_event_input")
+    elif operator == "SUM":
+        if not roles or "EVENT" in roles:
+            findings.append(path + ".sum_requires_numeric_inputs")
+    elif operator == "SIGNED_STOCK_DELTA":
+        if roles != ["OPENING_STOCK", "CLOSING_STOCK"]:
+            findings.append(path + ".signed_stock_delta_requires_opening_then_closing")
+    elif operator == "COMPONENT_TO_TOTAL_RECONCILIATION":
+        if len(roles) < 2 or roles[-1] != "RECONCILIATION_TOTAL" or any(
+            role != "RECONCILIATION_COMPONENT" for role in roles[:-1]
+        ):
+            findings.append(path + ".component_reconciliation_requires_components_then_total")
+    elif operator == "OWNER_CASH":
+        if len(roles) < 2 or roles[:2] != ["OPERATING_CASH_FLOW", "MAINTENANCE_CAPEX"] or any(
+            role not in {"OCF_RECONCILIATION_ADJUSTMENT", "OWNER_CASH_ADJUSTMENT"}
+            for role in roles[2:]
+        ):
+            findings.append(path + ".owner_cash_requires_ocf_maintenance_capex_then_signed_adjustments")
+    elif operator == "INVESTED_CAPITAL_RETURN":
+        if roles != ["CASH_RETURN_NUMERATOR", "INVESTED_CAPITAL_DENOMINATOR"]:
+            findings.append(path + ".invested_capital_return_requires_numerator_then_denominator")
+    elif operator == "PERCENT_CHANGE":
+        if len(roles) != 2 or "EVENT" in roles:
+            findings.append(path + ".percent_change_requires_two_numeric_inputs")
+    elif operator == "RATIO_CHANGE":
+        if len(roles) != 4 or "EVENT" in roles:
+            findings.append(path + ".ratio_change_requires_four_numeric_inputs")
+    elif operator == "DIFFERENCE":
+        if len(roles) not in {2, 4} or "EVENT" in roles:
+            findings.append(path + ".difference_requires_two_or_four_numeric_inputs")
+
+    parsed_coefficients: list[Decimal] = []
+    for index, (raw_input, conversion) in enumerate(
+        zip(raw_inputs, conversions, strict=False)
+    ):
+        conversion_path = f"{path}.unit_conversions[{index}]"
+        if conversion.get("from_unit") != raw_input.get("unit"):
+            findings.append(conversion_path + ".from_unit_must_match_raw_input")
+        if conversion.get("to_unit") != output_unit:
+            findings.append(conversion_path + ".to_unit_must_match_cell_unit")
+        try:
+            magnitude = Decimal(str(conversion.get("scale")))
+        except InvalidOperation:
+            magnitude = Decimal("NaN")
+        if not magnitude.is_finite() or magnitude <= 0:
+            findings.append(conversion_path + ".scale_must_be_positive_finite")
+        elif operator == "EVENT_BOOLEAN" and magnitude != 1:
+            findings.append(conversion_path + ".event_scale_must_equal_one")
+    for index, coefficient_binding in enumerate(coefficients):
+        coefficient_path = f"{path}.input_coefficients[{index}]"
+        try:
+            coefficient = Decimal(str(coefficient_binding.get("coefficient")))
+        except InvalidOperation:
+            coefficient = Decimal("NaN")
+        parsed_coefficients.append(coefficient)
+        if not coefficient.is_finite() or coefficient not in {Decimal("-1"), Decimal("1")}:
+            findings.append(coefficient_path + ".coefficient_must_be_plus_or_minus_one")
+    if operator == "SUM" and len(parsed_coefficients) == len(roles):
+        signed_families = [
+            pattern
+            for pattern in _V3_SIGNED_SUM_ROLE_PATTERNS
+            if set(pattern).intersection(roles)
+        ]
+        if signed_families and not any(tuple(roles) == pattern for pattern in signed_families):
+            findings.append(path + ".signed_sum_raw_role_pattern_invalid")
+        for index, (role, coefficient) in enumerate(zip(roles, parsed_coefficients, strict=True)):
+            expected = Decimal("-1") if role in _V3_SIGNED_SUM_NEGATIVE_ROLES else Decimal("1")
+            if coefficient != expected:
+                findings.append(
+                    f"{path}.input_coefficients[{index}].coefficient_must_match_raw_role"
+                )
+    elif operator != "SUM" and any(coefficient != 1 for coefficient in parsed_coefficients):
+        findings.append(path + ".intrinsically_signed_operator_requires_positive_coefficients")
+
+
 def validate_outcome_measurement_contract_v3(contract: Any) -> dict[str, Any]:
     """Validate the v3 atomic contract with independent measurement clocks.
 
@@ -576,7 +824,10 @@ def validate_outcome_measurement_contract_v3(contract: Any) -> dict[str, Any]:
     margin with a convenient year-over-year number.
     """
     findings: list[str] = []
-    item = _closed(contract, _V3_CONTRACT_KEYS, "measurement_contract", findings)
+    contract_value = _mapping(contract)
+    multi_source = "source_accesses" in contract_value
+    root_keys = _V3_MULTI_SOURCE_CONTRACT_KEYS if multi_source else _V3_CONTRACT_KEYS
+    item = _closed(contract, root_keys, "measurement_contract", findings)
     if item.get("schema_version") != CONTRACT_SCHEMA_VERSION_V3:
         findings.append("measurement_contract.schema_version_invalid")
     if item.get("freeze_state") != "PRE_OUTCOME_FROZEN":
@@ -600,13 +851,50 @@ def validate_outcome_measurement_contract_v3(contract: Any) -> dict[str, Any]:
         findings.append("measurement_contract.outcome_window_order_invalid")
     if period_end and due_at and due_at <= period_end:
         findings.append("measurement_contract.settlement_due_must_follow_period_end")
-    source_access = _closed(item.get("source_access"), _V3_SOURCE_ACCESS_KEYS, "measurement_contract.source_access", findings)
-    if not _text(source_access.get("authorization_receipt_id")):
-        findings.append("measurement_contract.source_access.authorization_receipt_id_required")
-    if source_access.get("access_state") != "SEALED_UNTIL_PREOUTCOME_COMMIT":
-        findings.append("measurement_contract.outcome_source_must_be_sealed")
-    if source_access.get("published_after_cutoff") is not True or source_access.get("custodian_access") != "OUTCOME_ONLY":
-        findings.append("measurement_contract.outcome_source_access_invalid")
+    source_accesses: list[dict[str, Any]] = []
+    if multi_source:
+        raw_accesses = _items(item.get("source_accesses"))
+        if not raw_accesses:
+            findings.append("measurement_contract.source_accesses_required")
+        for source_index, raw_source in enumerate(raw_accesses):
+            source_accesses.append(_validate_v3_source_access(
+                raw_source,
+                path=f"measurement_contract.source_accesses[{source_index}]",
+                company_id=item.get("company_id"),
+                cutoff=cutoff,
+                findings=findings,
+            ))
+        source_ids = [_text(source.get("source_id")) for source in source_accesses]
+        if "" in source_ids or len(source_ids) != len(set(source_ids)):
+            findings.append("measurement_contract.source_access_ids_must_be_unique")
+        authorization_receipts = {
+            _text(source.get("authorization_receipt_id")) for source in source_accesses
+        }
+        if "" in authorization_receipts or len(authorization_receipts) != 1:
+            findings.append("measurement_contract.source_accesses_require_one_set_authorization_receipt")
+        window_start = period_start.date().isoformat() if period_start else None
+        window_end = period_end.date().isoformat() if period_end else None
+        for source_index, source in enumerate(source_accesses):
+            report_period = _text(source.get("report_period_end"))
+            if window_start and window_end and not (window_start <= report_period <= window_end):
+                findings.append(
+                    f"measurement_contract.source_accesses[{source_index}].report_period_outside_outcome_window"
+                )
+    else:
+        expected_period = period_end.date().isoformat() if period_end else None
+        source_accesses = [_validate_v3_source_access(
+            item.get("source_access"),
+            path="measurement_contract.source_access",
+            company_id=item.get("company_id"),
+            cutoff=cutoff,
+            findings=findings,
+            expected_report_period=expected_period,
+            strict_availability=False,
+        )]
+    source_access_by_id = {
+        _text(source.get("source_id")): source for source in source_accesses
+        if _text(source.get("source_id"))
+    }
 
     cells = [_closed(raw, _V3_CELL_KEYS, f"measurement_contract.atomic_cells[{index}]", findings)
              for index, raw in enumerate(_items(item.get("atomic_cells")))]
@@ -614,6 +902,8 @@ def validate_outcome_measurement_contract_v3(contract: Any) -> dict[str, Any]:
     if not cells or "" in cell_ids or len(cell_ids) != len(set(cell_ids)):
         findings.append("measurement_contract.atomic_cell_ids_must_be_unique")
     outcome_field_ids: list[str] = []
+    component_bindings: dict[str, tuple[Any, Any, Any]] = {}
+    raw_field_bindings: dict[str, dict[str, Any]] = {}
     for index, cell in enumerate(cells):
         path = f"measurement_contract.atomic_cells[{index}]"
         if cell.get("layer") not in _LAYERS:
@@ -624,9 +914,25 @@ def validate_outcome_measurement_contract_v3(contract: Any) -> dict[str, Any]:
         if not all(_text(cell_period.get(key)) for key in _WINDOW_KEYS - {"settlement_due_at"}):
             findings.append(f"{path}.outcome_period_incomplete")
         _validate_v3_clock(cell.get("measurement_clock"), path=path + ".measurement_clock", findings=findings)
-        boundary = _closed(cell.get("responsibility_boundary"), _BOUNDARY_KEYS, path + ".responsibility_boundary", findings)
-        if not all(_text(boundary.get(key)) for key in _BOUNDARY_KEYS):
+        boundary_keys = _V3_COMPONENT_BOUNDARY_KEYS if multi_source else _BOUNDARY_KEYS
+        boundary = _closed(cell.get("responsibility_boundary"), boundary_keys, path + ".responsibility_boundary", findings)
+        if not all(_text(boundary.get(key)) for key in boundary_keys):
             findings.append(f"{path}.responsibility_boundary_incomplete")
+        if multi_source and boundary.get("component_role") not in ENTERPRISE_COMPONENT_ROLES:
+            findings.append(f"{path}.responsibility_boundary.component_role_invalid")
+        if multi_source:
+            component_id = _text(boundary.get("component_id"))
+            component_binding = (
+                boundary.get("component_role"),
+                boundary.get("responsibility_unit_id"),
+                boundary.get("perimeter_id"),
+            )
+            if component_id:
+                frozen_binding = component_bindings.setdefault(component_id, component_binding)
+                if frozen_binding != component_binding:
+                    findings.append(
+                        f"{path}.responsibility_boundary.component_id_identity_conflict"
+                    )
         field = _closed(cell.get("field_identity"), _FIELD_KEYS, path + ".field_identity", findings)
         outcome_field_id = _text(field.get("outcome_field_id"))
         outcome_field_ids.append(outcome_field_id)
@@ -635,15 +941,18 @@ def validate_outcome_measurement_contract_v3(contract: Any) -> dict[str, Any]:
         unit = _closed(cell.get("unit"), _UNIT_KEYS, path + ".unit", findings)
         if not all(_text(unit.get(key)) for key in _UNIT_KEYS):
             findings.append(f"{path}.unit_incomplete")
-        raw_inputs = [_closed(raw, _V3_RAW_INPUT_KEYS, f"{path}.raw_input_fields[{raw_index}]", findings)
+        raw_keys = _V3_MULTI_SOURCE_RAW_INPUT_KEYS if multi_source else _V3_RAW_INPUT_KEYS
+        raw_inputs = [_closed(raw, raw_keys, f"{path}.raw_input_fields[{raw_index}]", findings)
                       for raw_index, raw in enumerate(_items(cell.get("raw_input_fields")))]
         raw_ids = [_text(raw.get("field_id")) for raw in raw_inputs]
         if not raw_inputs or "" in raw_ids or len(raw_ids) != len(set(raw_ids)):
             findings.append(f"{path}.raw_input_fields_must_be_unique")
         for raw_index, raw in enumerate(raw_inputs):
             raw_path = f"{path}.raw_input_fields[{raw_index}]"
-            if raw.get("role") not in {"OUTCOME", "BASELINE", "NUMERATOR", "DENOMINATOR", "EVENT"}:
+            if raw.get("role") not in ENTERPRISE_RAW_FIELD_ROLES:
                 findings.append(f"{raw_path}.role_invalid")
+            if multi_source and raw.get("source_id") not in source_access_by_id:
+                findings.append(f"{raw_path}.source_id_must_match_frozen_source_access")
             if not _text(raw.get("unit")):
                 findings.append(f"{raw_path}.unit_required")
             locator = _closed(raw.get("locator"), _V3_RAW_LOCATOR_KEYS, raw_path + ".locator", findings)
@@ -652,6 +961,18 @@ def validate_outcome_measurement_contract_v3(contract: Any) -> dict[str, Any]:
             _validate_v3_clock(raw.get("measurement_clock"), path=raw_path + ".measurement_clock", findings=findings)
             raw_clock = _mapping(raw.get("measurement_clock"))
             raw_field_id = _text(raw.get("field_id"))
+            if multi_source and raw_field_id:
+                semantic_binding = {
+                    "source_id": raw.get("source_id"),
+                    "measurement_clock": deepcopy(raw.get("measurement_clock")),
+                    "locator": deepcopy(raw.get("locator")),
+                    "unit": raw.get("unit"),
+                    "raw_field_role": raw.get("role"),
+                    "responsibility_boundary": deepcopy(boundary),
+                }
+                frozen_binding = raw_field_bindings.setdefault(raw_field_id, semantic_binding)
+                if frozen_binding != semantic_binding:
+                    findings.append(raw_path + ".raw_field_id_semantic_binding_conflict")
             fiscal_match = re.search(r":FY(\d{4}):", raw_field_id)
             fiscal_year = fiscal_match.group(1) if fiscal_match else None
             if raw.get("role") == "EVENT":
@@ -662,7 +983,12 @@ def validate_outcome_measurement_contract_v3(contract: Any) -> dict[str, Any]:
                 if start is None or end is None or (cutoff and start <= cutoff.date().isoformat()) or (period_end and end > period_end.date().isoformat()):
                     findings.append(raw_path + ".event_window_must_follow_cutoff_and_end_in_outcome_window")
             else:
-                expected_kind = "BALANCE_AS_OF" if cell.get("layer") in {"WORKING_CAPITAL", "FINANCING"} else "FLOW_PERIOD"
+                expected_kind = (
+                    "BALANCE_AS_OF"
+                    if raw.get("role") in _V3_BALANCE_RAW_FIELD_ROLES
+                    or (not multi_source and cell.get("layer") in {"WORKING_CAPITAL", "FINANCING"})
+                    else "FLOW_PERIOD"
+                )
                 if raw_clock.get("clock_kind") != expected_kind:
                     findings.append(raw_path + ".raw_role_clock_kind_mismatch")
                 if fiscal_year:
@@ -677,14 +1003,21 @@ def validate_outcome_measurement_contract_v3(contract: Any) -> dict[str, Any]:
                 or _mapping(raw_clock.get("balance_as_of")).get("as_of")
             )
             field_identity = _mapping(cell.get("field_identity"))
-            if locator.get("table_or_note") != field_identity.get("table_or_note"):
+            if not multi_source and locator.get("table_or_note") != field_identity.get("table_or_note"):
                 findings.append(raw_path + ".locator.table_or_note_must_match_frozen_field_identity")
-            if locator.get("line_item") != field_identity.get("line_item"):
+            if not multi_source and locator.get("line_item") != field_identity.get("line_item"):
                 findings.append(raw_path + ".locator.line_item_must_match_frozen_field_identity")
             if locator.get("period_column") != expected_period_column:
                 findings.append(raw_path + ".locator.period_column_must_match_measurement_clock")
-        formula = _closed(cell.get("formula"), _V3_FORMULA_KEYS, path + ".formula", findings)
-        if formula.get("operator") not in {"RAW_VALUE", "EVENT_BOOLEAN", "RATIO_CHANGE", "DIFFERENCE", "PERCENT_CHANGE"}:
+            if multi_source and raw.get("role") != "EVENT":
+                source = source_access_by_id.get(_text(raw.get("source_id")), {})
+                raw_period_end = _clock_period_end(raw_clock)
+                source_period_end = source.get("report_period_end")
+                if raw_period_end is None or not isinstance(source_period_end, str) or raw_period_end > source_period_end:
+                    findings.append(raw_path + ".clock_period_cannot_follow_frozen_source_report")
+        formula_keys = _V3_MULTI_SOURCE_FORMULA_KEYS if multi_source else _V3_FORMULA_KEYS
+        formula = _closed(cell.get("formula"), formula_keys, path + ".formula", findings)
+        if formula.get("operator") not in ENTERPRISE_DETERMINISTIC_FORMULAS:
             findings.append(f"{path}.formula.operator_invalid")
         input_ids = [_text(value) for value in _items(formula.get("input_field_ids"))]
         if input_ids != raw_ids or not _text(formula.get("expression")) or not _text(formula.get("zero_baseline_rule")):
@@ -696,6 +1029,36 @@ def validate_outcome_measurement_contract_v3(contract: Any) -> dict[str, Any]:
         for conversion in conversions:
             if not all(_text(conversion.get(key)) for key in ("field_id", "from_unit", "to_unit", "scale")):
                 findings.append(f"{path}.formula.unit_conversion_incomplete")
+        if multi_source:
+            coefficients = [
+                _closed(
+                    raw,
+                    _V3_INPUT_COEFFICIENT_KEYS,
+                    f"{path}.formula.input_coefficients[{coefficient_index}]",
+                    findings,
+                )
+                for coefficient_index, raw in enumerate(
+                    _items(formula.get("input_coefficients"))
+                )
+            ]
+            if [coefficient.get("field_id") for coefficient in coefficients] != raw_ids:
+                findings.append(
+                    f"{path}.formula.input_coefficients_must_cover_raw_inputs_in_order"
+                )
+            for coefficient in coefficients:
+                if not all(
+                    _text(coefficient.get(key)) for key in ("field_id", "coefficient")
+                ):
+                    findings.append(f"{path}.formula.input_coefficient_incomplete")
+            _validate_v3_enhanced_formula_roles(
+                formula.get("operator"),
+                raw_inputs,
+                conversions,
+                coefficients,
+                output_unit=unit.get("kind"),
+                path=path + ".formula",
+                findings=findings,
+            )
         labels = _closed(cell.get("label_rule"), _LABEL_KEYS, path + ".label_rule", findings)
         label_type = labels.get("type")
         if label_type not in _LABEL_SEQUENCES or labels.get("ordered_labels") != _LABEL_SEQUENCES.get(label_type):
