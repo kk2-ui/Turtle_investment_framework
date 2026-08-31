@@ -234,6 +234,48 @@ def read_industry_knowledge_context(output_dir: str = ".") -> dict[str, Any]:
     }
 
 
+def read_industry_evidence_acquisition(output_dir: str = ".") -> dict[str, Any]:
+    """Read the report-local role-bound external industry evidence agenda."""
+    try:
+        from scripts.industry_experience_acquisition import (
+            DEFAULT_PLAN_OUTPUT_NAME,
+            DEFAULT_RECEIPT_OUTPUT_NAME,
+            project_industry_evidence_acquisition_for_handoff,
+            validate_industry_evidence_acquisition_plan,
+            validate_industry_evidence_acquisition_receipt,
+        )
+    except ModuleNotFoundError:
+        from industry_experience_acquisition import (  # type: ignore[no-redef]
+            DEFAULT_PLAN_OUTPUT_NAME,
+            DEFAULT_RECEIPT_OUTPUT_NAME,
+            project_industry_evidence_acquisition_for_handoff,
+            validate_industry_evidence_acquisition_plan,
+            validate_industry_evidence_acquisition_receipt,
+        )
+    plan = _read_json(os.path.join(output_dir, DEFAULT_PLAN_OUTPUT_NAME)) or {}
+    if validate_industry_evidence_acquisition_plan(plan).get("state") != "REVIEWABLE":
+        return {
+            "ok": False,
+            "error": "industry_evidence_acquisition_plan_not_available_or_invalid",
+            "instruction": "先从 IndustryUnderwritingContext 编译角色绑定的取证计划；不得用行业常识替代目标公司的官方证据。",
+        }
+    receipt = _read_json(os.path.join(output_dir, DEFAULT_RECEIPT_OUTPUT_NAME)) or {}
+    if receipt and validate_industry_evidence_acquisition_receipt(receipt, plan).get("state") != "REVIEWABLE":
+        return {
+            "ok": False,
+            "error": "industry_evidence_acquisition_receipt_invalid",
+            "instruction": "无效回执不得进入 Episode 或报告；修正来源时间、角色、口径边界或公司传导后重试。",
+        }
+    return {
+        "ok": True,
+        **project_industry_evidence_acquisition_for_handoff(
+            plan,
+            receipt or None,
+            receipt_ref=str(Path(output_dir).expanduser().resolve() / DEFAULT_RECEIPT_OUTPUT_NAME),
+        ),
+    }
+
+
 def read_valuation_route(output_dir: str = ".") -> dict[str, Any]:
     """Read the canonical route and its role-level evidence work plan."""
     archetype = _read_json(os.path.join(output_dir, "company_archetype.json")) or {}
@@ -516,6 +558,11 @@ read_decisive_question_plan._tool_meta = {
 read_industry_knowledge_context._tool_meta = {
     "name": "read_industry_knowledge_context",
     "description": "读取行业机制匹配及本公司必须验证字段。它只提供研究问题和反例，不能替代公司官方证据或直接支持估值、价格和动作。",
+    "parameters": {"output_dir": {"type": "string", "description": "股票输出目录"}},
+}
+read_industry_evidence_acquisition._tool_meta = {
+    "name": "read_industry_evidence_acquisition",
+    "description": "读取行业经验生成的外部取证任务及已接纳回执。它只指引行业来源和公司传导测试；任何行业观察仍须配合本公司一手证据，不能直接成为公司事实、现金、估值、价格或行动。",
     "parameters": {"output_dir": {"type": "string", "description": "股票输出目录"}},
 }
 read_valuation_route._tool_meta = {

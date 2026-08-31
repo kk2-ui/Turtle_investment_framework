@@ -20,11 +20,13 @@ try:
     from scripts import enterprise_judgment_core as enterprise_core
     from scripts import cjo_quantitative_investment_overlay as quantitative_overlay
     from scripts import current_company_cjo_admission as current_cjo_admission
+    from scripts import industry_experience_acquisition as industry_acquisition
     from scripts import industry_underwriting_context as industry_underwriting
 except ImportError:  # pragma: no cover - direct script import fallback
     import enterprise_judgment_core as enterprise_core
     import cjo_quantitative_investment_overlay as quantitative_overlay
     import current_company_cjo_admission as current_cjo_admission
+    import industry_experience_acquisition as industry_acquisition
     import industry_underwriting_context as industry_underwriting
 
 
@@ -45,6 +47,7 @@ _VIEW_PROJECTION_KEYS = {
     "RESEARCH_AGENDA": {
         "agenda_mode", "official_evidence", "decisive_questions", "industry_priors",
         "learning_prompts", "industry_snapshot", "industry_underwriting_context",
+        "industry_evidence_acquisition",
     },
     "JUDGMENT_SYNTHESIS": {
         "ledger_states", "claims", "financial_drivers", "allocation_events", "thesis",
@@ -266,6 +269,94 @@ def _project_industry_underwriting_context(
     return _safe_projection(payload), status
 
 
+def _project_industry_evidence_acquisition(
+    output: Path,
+    identity: dict[str, str],
+    warnings: list[str],
+    sources: list[dict[str, Any]],
+) -> tuple[dict[str, Any], str]:
+    """Load an optional role-bound external-industry research agenda.
+
+    This is deliberately a RESEARCH_AGENDA-only projection.  A valid plan or
+    receipt cannot promote an industry observation to a target-company fact;
+    it only makes the acquisition sequence available before an Episode or
+    report writer selects and cites primary company evidence.
+    """
+    plan_path = output / industry_acquisition.DEFAULT_PLAN_OUTPUT_NAME
+    if not plan_path.is_file():
+        return {}, "NOT_COMPILED"
+    plan = _read_json(plan_path)
+    plan_validation = industry_acquisition.validate_industry_evidence_acquisition_plan(plan)
+    if plan_validation.get("state") != "REVIEWABLE":
+        warnings.extend(
+            "industry_evidence_acquisition_excluded_invalid:" + str(item)
+            for item in plan_validation.get("findings") or []
+        )
+        return {}, "EXCLUDED_INVALID"
+    company = plan.get("company_identity") if isinstance(plan.get("company_identity"), dict) else {}
+    if not _same_company(company.get("company_id"), identity["company_id"]):
+        warnings.append("industry_evidence_acquisition_excluded_company_mismatch")
+        return {}, "EXCLUDED_IDENTITY_MISMATCH"
+    report_cutoff = _instant(identity["information_cutoff"], allow_date_cutoff=True)
+    plan_cutoff = _instant(company.get("cutoff_at"), allow_date_cutoff=True)
+    if report_cutoff is None or plan_cutoff is None or plan_cutoff > report_cutoff:
+        warnings.append("industry_evidence_acquisition_excluded_cutoff_mismatch")
+        return {}, "EXCLUDED_CUTOFF_MISMATCH"
+    if not _is_report_local_artifact_ref(
+        output,
+        plan.get("source_context_ref"),
+        industry_underwriting.DEFAULT_OUTPUT_NAME,
+    ):
+        warnings.append("industry_evidence_acquisition_excluded_context_ref_mismatch")
+        return {}, "EXCLUDED_CONTEXT_MISMATCH"
+    source_context = _read_json(output / industry_underwriting.DEFAULT_OUTPUT_NAME)
+    source_context_validation = industry_underwriting.validate_industry_underwriting_context(source_context)
+    source_context_identity = (
+        source_context.get("company_identity")
+        if isinstance(source_context.get("company_identity"), dict) else {}
+    )
+    if (
+        source_context_validation.get("state") != "REVIEWABLE"
+        or not _same_company(source_context_identity.get("company_id"), company.get("company_id"))
+        or str(source_context.get("context_id") or "") != str(plan.get("context_id") or "")
+    ):
+        warnings.append("industry_evidence_acquisition_excluded_context_identity_mismatch")
+        return {}, "EXCLUDED_CONTEXT_MISMATCH"
+
+    receipt_path = output / industry_acquisition.DEFAULT_RECEIPT_OUTPUT_NAME
+    receipt = _read_json(receipt_path) if receipt_path.is_file() else {}
+    receipt_for_projection: dict[str, Any] | None = None
+    state = "PLAN_READY_NO_RECEIPT"
+    if receipt:
+        receipt_validation = industry_acquisition.validate_industry_evidence_acquisition_receipt(receipt, plan)
+        if receipt_validation.get("state") == "REVIEWABLE":
+            receipt_for_projection = receipt
+            state = "RECEIPT_" + str(receipt.get("completion_state") or "PARTIAL")
+            sources.append(_source_ref(
+                "INDUSTRY_EVIDENCE_ACQUISITION",
+                industry_acquisition.DEFAULT_RECEIPT_OUTPUT_NAME,
+                "",
+                "Audited external industry observations and their remaining target-company transmission tests only.",
+            ))
+        else:
+            warnings.extend(
+                "industry_evidence_acquisition_receipt_excluded_invalid:" + str(item)
+                for item in receipt_validation.get("findings") or []
+            )
+            state = "PLAN_READY_RECEIPT_EXCLUDED"
+    sources.append(_source_ref(
+        "INDUSTRY_EVIDENCE_ACQUISITION",
+        industry_acquisition.DEFAULT_PLAN_OUTPUT_NAME,
+        "",
+        "Role-bound external industry research tasks only; neither the plan nor its context establishes a target-company fact, valuation input, price, or action.",
+    ))
+    return _safe_projection(industry_acquisition.project_industry_evidence_acquisition_for_handoff(
+        plan,
+        receipt_for_projection,
+        receipt_ref=str(receipt_path.resolve()),
+    )), state
+
+
 def _fallback_industry_context(output: Path, warnings: list[str]) -> dict[str, Any]:
     try:
         from decisive_question import build_industry_knowledge_context
@@ -286,6 +377,16 @@ def _fallback_industry_context(output: Path, warnings: list[str]) -> dict[str, A
 def _resolve_explicit_ref(output: Path, reference: str | Path) -> Path:
     path = Path(reference).expanduser()
     return path.resolve() if path.is_absolute() else (output / path).resolve()
+
+
+def _is_report_local_artifact_ref(output: Path, reference: Any, artifact_name: str) -> bool:
+    value = str(reference or "").strip()
+    if not value:
+        return False
+    expected = (output / artifact_name).resolve()
+    path = Path(value).expanduser()
+    resolved = path.resolve() if path.is_absolute() else (output / path).resolve()
+    return resolved == expected
 
 
 def _canonical_judgment_refs(contract: dict[str, Any], invalid: list[str]) -> dict[str, str]:
@@ -544,6 +645,9 @@ def _build_research_agenda(
     underwriting_context, underwriting_state = _project_industry_underwriting_context(
         output, identity, warnings, sources,
     )
+    industry_evidence_acquisition, acquisition_state = _project_industry_evidence_acquisition(
+        output, identity, warnings, sources,
+    )
 
     learning_prompts: list[dict[str, Any]] = []
     cutoff = _instant(identity["information_cutoff"], allow_date_cutoff=True)
@@ -597,6 +701,7 @@ def _build_research_agenda(
         ),
         "learning_prompts": "AVAILABLE" if learning_prompts else "NO_EXPLICIT_LEARNING_REFS",
         "industry_underwriting_context": underwriting_state,
+        "industry_evidence_acquisition": acquisition_state,
     }
     return {
         "agenda_mode": (
@@ -615,6 +720,7 @@ def _build_research_agenda(
         "decisive_questions": [_project_question(item) for item in selected],
         "industry_priors": priors,
         "industry_underwriting_context": underwriting_context,
+        "industry_evidence_acquisition": industry_evidence_acquisition,
         "industry_snapshot": {
             "mode": str(industry_availability.get("mode") or "CURRENT_LIBRARY"),
             "knowledge_snapshot_at": str(industry_availability.get("knowledge_snapshot_at") or ""),
@@ -1217,6 +1323,7 @@ def _shape_findings(handoff: Any) -> tuple[list[str], list[str]]:
             and projection.get("decisive_questions") == []
             and projection.get("industry_priors") == []
             and projection.get("industry_underwriting_context") == {}
+            and projection.get("industry_evidence_acquisition") == {}
         ):
             invalid.append("ready_with_no_prior_state_inconsistent")
     return list(dict.fromkeys(invalid)), list(dict.fromkeys(incomplete))
@@ -1382,6 +1489,10 @@ def build_judgment_generation_handoff(
         and empty_states.get("industry_underwriting_context") in {
             "NOT_COMPILED", "EXCLUDED_INVALID", "EXCLUDED_IDENTITY_MISMATCH",
             "EXCLUDED_CUTOFF_MISMATCH",
+        }
+        and empty_states.get("industry_evidence_acquisition") in {
+            "NOT_COMPILED", "EXCLUDED_INVALID", "EXCLUDED_IDENTITY_MISMATCH",
+            "EXCLUDED_CUTOFF_MISMATCH", "EXCLUDED_CONTEXT_MISMATCH",
         }
     ):
         state = "READY_WITH_NO_PRIOR"

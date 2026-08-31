@@ -43,6 +43,8 @@
               "OFFICIAL_EVIDENCE",
               "DECISIVE_QUESTIONS",
               "INDUSTRY_PRIOR",
+              "INDUSTRY_UNDERWRITING_CONTEXT",
+              "INDUSTRY_EVIDENCE_ACQUISITION",
               "METHOD_PROMPT",
               "CLAIM_EVIDENCE",
               "FINANCIAL_DRIVER_BRIDGE",
@@ -97,7 +99,15 @@
         "empty_states": {
           "type": "object",
           "additionalProperties": {
-            "enum": ["AVAILABLE", "PIT_EVIDENCE_ONLY", "NO_DECISIVE_PLAN_EVIDENCE_ONLY", "NO_MATCHING_MECHANISM_READY", "NO_EXPLICIT_LEARNING_REFS", "NOT_APPLICABLE_TO_VIEW"]
+            "enum": [
+              "AVAILABLE", "PIT_EVIDENCE_ONLY", "NO_DECISIVE_PLAN_EVIDENCE_ONLY",
+              "NO_MATCHING_MECHANISM_READY", "NO_EXPLICIT_LEARNING_REFS", "NOT_APPLICABLE_TO_VIEW",
+              "NOT_COMPILED", "EXCLUDED_INVALID", "EXCLUDED_IDENTITY_MISMATCH",
+              "EXCLUDED_CUTOFF_MISMATCH", "EXCLUDED_CONTEXT_MISMATCH", "BOUNDED",
+              "READY",
+              "PLAN_READY_NO_RECEIPT", "PLAN_READY_RECEIPT_EXCLUDED",
+              "RECEIPT_PARTIAL", "RECEIPT_REVIEWABLE"
+            ]
           }
         }
       }
@@ -111,13 +121,20 @@
           "projection": {
             "type": "object",
             "additionalProperties": false,
-            "required": ["agenda_mode", "official_evidence", "decisive_questions", "industry_priors", "learning_prompts"],
+            "required": [
+              "agenda_mode", "official_evidence", "decisive_questions", "industry_priors",
+              "learning_prompts", "industry_snapshot", "industry_underwriting_context",
+              "industry_evidence_acquisition"
+            ],
             "properties": {
-              "agenda_mode": {"enum": ["DECISIVE_PLAN", "INDUSTRY_PRIOR_ONLY", "EVIDENCE_ONLY"]},
+              "agenda_mode": {"enum": ["DECISIVE_PLAN", "INDUSTRY_UNDERWRITING", "INDUSTRY_PRIOR_ONLY", "EVIDENCE_ONLY"]},
               "official_evidence": {"type": "object"},
               "decisive_questions": {"type": "array", "maxItems": 3, "items": {"type": "object"}},
               "industry_priors": {"type": "array", "items": {"type": "object"}},
-              "learning_prompts": {"type": "array", "items": {"type": "object"}}
+              "learning_prompts": {"type": "array", "items": {"type": "object"}},
+              "industry_snapshot": {"type": "object"},
+              "industry_underwriting_context": {"type": "object"},
+              "industry_evidence_acquisition": {"type": "object"}
             }
           }
         }

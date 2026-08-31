@@ -911,6 +911,49 @@ def _compile_report_industry_underwriting_context(
     }
 
 
+def _compile_report_industry_evidence_acquisition_plan(
+    *, output_dir: str,
+) -> dict[str, Any]:
+    """Compile a non-blocking external-industry research agenda after context."""
+    try:
+        from scripts.industry_experience_acquisition import (
+            DEFAULT_PLAN_OUTPUT_NAME,
+            compile_industry_evidence_acquisition_plan,
+        )
+        from scripts.industry_underwriting_context import DEFAULT_OUTPUT_NAME as context_name
+    except ModuleNotFoundError:
+        try:
+            from industry_experience_acquisition import (  # type: ignore[no-redef]
+                DEFAULT_PLAN_OUTPUT_NAME,
+                compile_industry_evidence_acquisition_plan,
+            )
+            from industry_underwriting_context import DEFAULT_OUTPUT_NAME as context_name
+        except ModuleNotFoundError:
+            return {"status": "UNAVAILABLE", "warning": "industry_evidence_acquisition_compiler_missing"}
+    context_path = os.path.join(output_dir, context_name)
+    try:
+        with open(context_path, encoding="utf-8") as handle:
+            context = json.load(handle)
+    except (OSError, json.JSONDecodeError):
+        return {"status": "UNAVAILABLE", "warning": "industry_underwriting_context_missing_or_invalid"}
+    if not isinstance(context, dict):
+        return {"status": "UNAVAILABLE", "warning": "industry_underwriting_context_not_object"}
+    try:
+        payload = compile_industry_evidence_acquisition_plan(context, context_ref=context_name)
+    except ValueError as exc:
+        return {"status": "UNAVAILABLE", "warning": str(exc)}
+    destination = os.path.join(output_dir, DEFAULT_PLAN_OUTPUT_NAME)
+    with open(destination, "w", encoding="utf-8") as handle:
+        json.dump(payload, handle, indent=2, ensure_ascii=False)
+        handle.write("\n")
+    return {
+        "status": payload["plan_status"],
+        "path": destination,
+        "task_count": len(payload["tasks"]),
+        "non_blocking": True,
+    }
+
+
 def build_industry_context(
     code: str = "",
     output_dir: str = "",
@@ -933,9 +976,11 @@ def build_industry_context(
         underwriting = _compile_report_industry_underwriting_context(
             code=code, output_dir=output_dir, discovery_context=stub,
         )
+        acquisition = _compile_report_industry_evidence_acquisition_plan(output_dir=output_dir)
         return {
             "ok": True, "path": out_path, "comparable_peers": [], "note": "stub",
             "industry_underwriting_context": underwriting,
+            "industry_evidence_acquisition": acquisition,
         }
 
     args = [py, script, "--code", code, "--output", output_dir]
@@ -947,11 +992,13 @@ def build_industry_context(
             underwriting = _compile_report_industry_underwriting_context(
                 code=code, output_dir=output_dir, discovery_context=data,
             )
+            acquisition = _compile_report_industry_evidence_acquisition_plan(output_dir=output_dir)
             return {
                 "ok": True,
                 "path": out_path,
                 "comparable_peers": len(data.get("comparable_peers", [])),
                 "industry_underwriting_context": underwriting,
+                "industry_evidence_acquisition": acquisition,
             }
         # 脚本失败 → 生成 stub
         error_msg = (result.stderr + result.stdout).strip()[-200:]
@@ -968,12 +1015,14 @@ def build_industry_context(
     underwriting = _compile_report_industry_underwriting_context(
         code=code, output_dir=output_dir, discovery_context=stub,
     )
+    acquisition = _compile_report_industry_evidence_acquisition_plan(output_dir=output_dir)
     return {
         "ok": True,
         "path": out_path,
         "comparable_peers": 0,
         "note": "stub (script failed)",
         "industry_underwriting_context": underwriting,
+        "industry_evidence_acquisition": acquisition,
     }
 
 

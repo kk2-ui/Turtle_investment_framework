@@ -236,6 +236,106 @@ def write_industry_underwriting_context(
     }
 
 
+def write_industry_evidence_acquisition_plan(output_dir: str = ".") -> dict[str, Any]:
+    """Compile role-bound external industry research tasks from report-local context.
+
+    The resulting plan is intentionally non-blocking: it changes the order of
+    external evidence acquisition, but cannot itself create a company fact or
+    alter owner cash, valuation, price, or action.
+    """
+    try:
+        from scripts.industry_experience_acquisition import (
+            DEFAULT_PLAN_OUTPUT_NAME,
+            compile_industry_evidence_acquisition_plan,
+            validate_industry_evidence_acquisition_plan,
+        )
+        from scripts.industry_underwriting_context import DEFAULT_OUTPUT_NAME as context_name
+    except ModuleNotFoundError:  # pragma: no cover - direct import fallback
+        from industry_experience_acquisition import (  # type: ignore[no-redef]
+            DEFAULT_PLAN_OUTPUT_NAME,
+            compile_industry_evidence_acquisition_plan,
+            validate_industry_evidence_acquisition_plan,
+        )
+        from industry_underwriting_context import DEFAULT_OUTPUT_NAME as context_name
+    root = Path(output_dir).expanduser().resolve()
+    context_path = root / context_name
+    try:
+        context = json.loads(context_path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return {"ok": False, "error": "industry_underwriting_context_missing_or_invalid"}
+    if not isinstance(context, dict):
+        return {"ok": False, "error": "industry_underwriting_context_not_object"}
+    try:
+        payload = compile_industry_evidence_acquisition_plan(context, context_ref=context_name)
+    except ValueError as exc:
+        return {"ok": False, "error": str(exc)}
+    validation = validate_industry_evidence_acquisition_plan(payload)
+    if validation.get("state") != "REVIEWABLE":
+        return {"ok": False, "error": "industry_evidence_acquisition_plan_invalid", "validation": validation}
+    destination = root / DEFAULT_PLAN_OUTPUT_NAME
+    destination.write_text(
+        json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8",
+    )
+    return {
+        "ok": True,
+        "artifact_ref": DEFAULT_PLAN_OUTPUT_NAME,
+        "plan_id": payload["plan_id"],
+        "plan_status": payload["plan_status"],
+        "task_count": len(payload["tasks"]),
+        "non_blocking": True,
+    }
+
+
+def write_industry_evidence_acquisition_receipt(
+    output_dir: str = ".",
+    task_receipts: list[dict[str, Any]] | None = None,
+) -> dict[str, Any]:
+    """Record completed external-industry evidence attempts against the fixed plan."""
+    try:
+        from scripts.industry_experience_acquisition import (
+            DEFAULT_PLAN_OUTPUT_NAME,
+            DEFAULT_RECEIPT_OUTPUT_NAME,
+            build_industry_evidence_acquisition_receipt,
+            validate_industry_evidence_acquisition_receipt,
+        )
+    except ModuleNotFoundError:  # pragma: no cover - direct import fallback
+        from industry_experience_acquisition import (  # type: ignore[no-redef]
+            DEFAULT_PLAN_OUTPUT_NAME,
+            DEFAULT_RECEIPT_OUTPUT_NAME,
+            build_industry_evidence_acquisition_receipt,
+            validate_industry_evidence_acquisition_receipt,
+        )
+    root = Path(output_dir).expanduser().resolve()
+    plan_path = root / DEFAULT_PLAN_OUTPUT_NAME
+    try:
+        plan = json.loads(plan_path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return {"ok": False, "error": "industry_evidence_acquisition_plan_missing_or_invalid"}
+    if not isinstance(plan, dict):
+        return {"ok": False, "error": "industry_evidence_acquisition_plan_not_object"}
+    try:
+        payload = build_industry_evidence_acquisition_receipt(
+            plan, list(task_receipts or []), source_plan_ref=DEFAULT_PLAN_OUTPUT_NAME,
+        )
+    except ValueError as exc:
+        return {"ok": False, "error": str(exc)}
+    validation = validate_industry_evidence_acquisition_receipt(payload, plan)
+    if validation.get("state") != "REVIEWABLE":
+        return {"ok": False, "error": "industry_evidence_acquisition_receipt_invalid", "validation": validation}
+    destination = root / DEFAULT_RECEIPT_OUTPUT_NAME
+    destination.write_text(
+        json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8",
+    )
+    return {
+        "ok": True,
+        "artifact_ref": DEFAULT_RECEIPT_OUTPUT_NAME,
+        "receipt_id": payload["receipt_id"],
+        "completion_state": payload["completion_state"],
+        "completed_task_count": len(payload["task_receipts"]),
+        "non_blocking": True,
+    }
+
+
 def _cjo_forbidden_report_findings(text: str) -> list[str]:
     """Return concrete CJO output-boundary breaches without blocking product price."""
     findings: list[str] = []
@@ -3941,6 +4041,21 @@ write_industry_underwriting_context._tool_meta = {
         "industry_keys": {"type": "array", "items": {"type": "string"}, "optional": True},
         "mechanism_keys": {"type": "array", "items": {"type": "string"}, "optional": True},
         "industry_knowledge_context_ref": {"type": "string", "optional": True},
+    },
+}  # type: ignore[attr-defined]
+write_industry_evidence_acquisition_plan._tool_meta = {
+    "name": "write_industry_evidence_acquisition_plan",
+    "description": "把行业经验编译为按需求、供给竞争、量价成本、客户渠道、监管和公司传导分组的外部取证任务；只改变取证顺序，不生成公司事实、现金、估值、价格或行动。",
+    "parameters": {
+        "output_dir": {"type": "string", "description": "股票输出目录"},
+    },
+}  # type: ignore[attr-defined]
+write_industry_evidence_acquisition_receipt._tool_meta = {
+    "name": "write_industry_evidence_acquisition_receipt",
+    "description": "按固定行业取证计划记录已验证、反证、未知或公开资料不可得的外部来源回执；每条观察必须有来源时间、定位、口径边界和待验证的公司传导。",
+    "parameters": {
+        "output_dir": {"type": "string", "description": "股票输出目录"},
+        "task_receipts": {"type": "array", "items": {"type": "object"}, "description": "每项计划任务的取证结果；UNKNOWN/PUBLIC_INFO_UNAVAILABLE 是合法结论，不能用来推正面结论。"},
     },
 }  # type: ignore[attr-defined]
 verify_official_fact._tool_meta = {
