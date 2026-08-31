@@ -64,6 +64,17 @@ def test_materializer_writes_only_exact_frozen_contracts_and_tasks_once(tmp_path
         materialize_fresh_tasks(preregistration_path)
 
 
+def test_materializer_requires_the_resolved_value_free_outcome_plane(tmp_path: Path) -> None:
+    preregistration_path, preregistration = _isolated_preregistration(tmp_path)
+    preregistration["outcome_measurements"][0]["measurement_contract_ref"] = "missing/CASE_01.json"
+    preregistration_path.write_text(
+        json.dumps(preregistration, ensure_ascii=False), encoding="utf-8",
+    )
+
+    with pytest.raises(ValueError, match="outcome_measurement_plane_invalid"):
+        materialize_fresh_tasks(preregistration_path)
+
+
 def test_invalid_episode_attempt_is_frozen_and_cannot_be_retried(tmp_path: Path) -> None:
     preregistration_path, preregistration = _isolated_preregistration(tmp_path)
     materialize_fresh_tasks(preregistration_path)

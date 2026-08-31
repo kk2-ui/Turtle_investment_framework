@@ -27,6 +27,9 @@ try:
         ARMS,
         validate_multicompany_preregistration,
     )
+    from scripts.report_autonomy_outcome_measurement import (
+        validate_outcome_measurement_plane,
+    )
 except ModuleNotFoundError:  # pragma: no cover - direct script execution.
     sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
     from scripts.enterprise_underwriting_episode import render_underwriting_readout
@@ -35,6 +38,9 @@ except ModuleNotFoundError:  # pragma: no cover - direct script execution.
     from scripts.report_autonomy_multicompany_prereg import (
         ARMS,
         validate_multicompany_preregistration,
+    )
+    from scripts.report_autonomy_outcome_measurement import (
+        validate_outcome_measurement_plane,
     )
 
 
@@ -173,6 +179,9 @@ def materialize_fresh_tasks(preregistration_path: str | Path) -> dict[str, Any]:
 
     path = Path(preregistration_path).expanduser().resolve()
     preregistration = _validated_preregistration(path)
+    outcome_plane = validate_outcome_measurement_plane(preregistration, project_root=_ROOT)
+    if outcome_plane["state"] != "REVIEWABLE":
+        raise ValueError("outcome_measurement_plane_invalid:" + ",".join(outcome_plane["findings"]))
     cells = _items(_mapping(preregistration.get("execution")).get("cells"))
     _assert_artifact_paths_unique(cells)
     to_write: list[tuple[Path, dict[str, Any]]] = []
