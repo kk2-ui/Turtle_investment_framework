@@ -344,17 +344,112 @@ def _project_industry_evidence_acquisition(
                 for item in receipt_validation.get("findings") or []
             )
             state = "PLAN_READY_RECEIPT_EXCLUDED"
+    source_binding_summary = {
+        "state": "NOT_RECORDED",
+        "artifact_ref": "",
+        "report_use": "Industry observations remain outside the report until their static source package is bound and target-company primary evidence is paired in an Episode.",
+    }
+    source_binding: dict[str, Any] = {}
+    report_admission_summary = {
+        "state": "NOT_RECORDED",
+        "artifact_ref": "",
+        "report_admitted_observations": [],
+        "instruction": "Only observations with a validated company-primary transmission pair may be given to a report writer.",
+    }
+    if receipt_for_projection is not None:
+        try:
+            from scripts.industry_evidence_source_binding import (
+                DEFAULT_BINDING_OUTPUT_NAME,
+                validate_industry_evidence_source_binding,
+            )
+        except ModuleNotFoundError:  # pragma: no cover - CLI execution from scripts/
+            from industry_evidence_source_binding import (  # type: ignore[no-redef]
+                DEFAULT_BINDING_OUTPUT_NAME,
+                validate_industry_evidence_source_binding,
+            )
+        binding_path = output / DEFAULT_BINDING_OUTPUT_NAME
+        if binding_path.is_file():
+            source_binding = _read_json(binding_path)
+            source_binding_validation = validate_industry_evidence_source_binding(
+                source_binding, plan, receipt_for_projection, artifact_root=output,
+            )
+            if source_binding_validation.get("state") == "REVIEWABLE":
+                source_binding_summary.update({
+                    "state": "READY_FOR_COMPANY_TRANSMISSION_PAIR",
+                    "artifact_ref": DEFAULT_BINDING_OUTPUT_NAME,
+                })
+                state += "_SOURCE_BOUND"
+                sources.append(_source_ref(
+                    "INDUSTRY_EVIDENCE_SOURCE_BINDING",
+                    DEFAULT_BINDING_OUTPUT_NAME,
+                    "",
+                    "Every accepted external industry observation is bound to a materialized static source package; target-company transmission remains separately required.",
+                ))
+            else:
+                source_binding_summary["state"] = "INVALID"
+                warnings.extend(
+                    "industry_evidence_source_binding_excluded_invalid:" + str(item)
+                    for item in source_binding_validation.get("findings") or []
+                )
+    if source_binding_summary["state"] == "READY_FOR_COMPANY_TRANSMISSION_PAIR":
+        try:
+            from scripts.industry_evidence_report_admission import (
+                DEFAULT_ADMISSION_OUTPUT_NAME,
+                project_report_admitted_industry_observations,
+                validate_industry_evidence_report_admission,
+            )
+        except ModuleNotFoundError:  # pragma: no cover - CLI execution from scripts/
+            from industry_evidence_report_admission import (  # type: ignore[no-redef]
+                DEFAULT_ADMISSION_OUTPUT_NAME,
+                project_report_admitted_industry_observations,
+                validate_industry_evidence_report_admission,
+            )
+        admission_path = output / DEFAULT_ADMISSION_OUTPUT_NAME
+        if admission_path.is_file():
+            admission = _read_json(admission_path)
+            raw_episode_ref = str(admission.get("episode_ref") or "")
+            episode_path = Path(raw_episode_ref).expanduser()
+            episode_path = episode_path if episode_path.is_absolute() else output / episode_path
+            episode = _read_json(episode_path) if episode_path.is_file() else {}
+            admission_validation = validate_industry_evidence_report_admission(
+                admission, source_binding, plan, receipt_for_projection, episode,
+                artifact_root=output,
+            )
+            if admission_validation.get("state") == "REVIEWABLE":
+                report_admission_summary.update({
+                    "state": "READY",
+                    "artifact_ref": DEFAULT_ADMISSION_OUTPUT_NAME,
+                    "report_admitted_observations": project_report_admitted_industry_observations(
+                        admission, receipt_for_projection,
+                    ),
+                })
+                state += "_REPORT_ADMITTED"
+                sources.append(_source_ref(
+                    "INDUSTRY_EVIDENCE_REPORT_ADMISSION",
+                    DEFAULT_ADMISSION_OUTPUT_NAME,
+                    "",
+                    "Each report-admitted industry observation has an independent target-company primary evidence trace in the named Episode.",
+                ))
+            else:
+                report_admission_summary["state"] = "INVALID"
+                warnings.extend(
+                    "industry_evidence_report_admission_excluded_invalid:" + str(item)
+                    for item in admission_validation.get("findings") or []
+                )
     sources.append(_source_ref(
         "INDUSTRY_EVIDENCE_ACQUISITION",
         industry_acquisition.DEFAULT_PLAN_OUTPUT_NAME,
         "",
         "Role-bound external industry research tasks only; neither the plan nor its context establishes a target-company fact, valuation input, price, or action.",
     ))
-    return _safe_projection(industry_acquisition.project_industry_evidence_acquisition_for_handoff(
+    projection = _safe_projection(industry_acquisition.project_industry_evidence_acquisition_for_handoff(
         plan,
         receipt_for_projection,
         receipt_ref=str(receipt_path.resolve()),
-    )), state
+    ))
+    projection["source_binding"] = source_binding_summary
+    projection["report_admission"] = report_admission_summary
+    return projection, state
 
 
 def _fallback_industry_context(output: Path, warnings: list[str]) -> dict[str, Any]:
