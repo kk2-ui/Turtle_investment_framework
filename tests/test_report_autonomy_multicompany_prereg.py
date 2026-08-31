@@ -13,6 +13,8 @@ from scripts.enterprise_underwriting_training import (
 from scripts.report_autonomy_multicompany_prereg import (
     ARMS,
     _expected_episode_order,
+    CUSTODIAN_MAPPING_SCHEMA_VERSION,
+    validate_custodian_arm_mapping,
     validate_multicompany_preregistration,
 )
 
@@ -53,6 +55,17 @@ def _memory(source_id: str, source_ref: str, kind: str) -> dict[str, object]:
         "target_company_evidence_allowed": False,
         "exposure_register_ref": "docs/exposure-register.json",
     }
+
+
+def _anonymous_label(index: int) -> str:
+    alphabet = "BCDFGHJKLMNPQRSTVWXYZ"
+    offset = index % len(alphabet)
+    if index < len(alphabet):
+        token = alphabet[offset:] + alphabet[:offset]
+    else:
+        reverse = alphabet[::-1]
+        token = reverse[offset:] + reverse[:offset]
+    return "ANON_" + token[:12]
 
 
 def _cell(
@@ -119,6 +132,9 @@ def preregistration(tmp_path_factory: pytest.TempPathFactory) -> dict[str, objec
             "cutoff_at": "2018-04-30T23:59:59+08:00",
             "stratum_id": "STRATUM:ONE",
             "rank_in_stratum": number,
+            "candidate_evidence_ref": str(source_path),
+            "common_source_package_ref": str(source_path),
+            "source_available_at": "2018-04-30T12:00:00+08:00",
             "eligibility": "ELIGIBLE",
             "exclusion_reason": "NOT_APPLICABLE",
         }
@@ -152,7 +168,7 @@ def preregistration(tmp_path_factory: pytest.TempPathFactory) -> dict[str, objec
         {
             "case_id": cell["case_id"],
             "arm_id": cell["arm_id"],
-            "anonymous_label": f"ANON_{index:02d}",
+            "anonymous_label": _anonymous_label(index),
             "source_package_ref": cell["source_package_ref"],
         }
         for index, cell in enumerate(cells, start=1)
@@ -213,7 +229,6 @@ def preregistration(tmp_path_factory: pytest.TempPathFactory) -> dict[str, objec
             "cells": cells,
         },
         "anonymous_review_custody": {
-            "mapping": mapping,
             "reviewer_manifest": manifest,
         },
         "outcome_measurements": [{
@@ -236,6 +251,37 @@ def preregistration(tmp_path_factory: pytest.TempPathFactory) -> dict[str, objec
     }
 
 
+@pytest.fixture(scope="module")
+def custodian_mapping(preregistration: dict[str, object]) -> dict[str, object]:
+    mappings: list[dict[str, object]] = []
+    for case in preregistration["cases"]:
+        case_id = case["case_id"]
+        case_cells = [
+            cell for cell in preregistration["execution"]["cells"]
+            if cell["case_id"] == case_id
+        ]
+        case_manifest = [
+            item for item in preregistration["anonymous_review_custody"]["reviewer_manifest"]
+            if item["case_id"] == case_id
+        ]
+        for cell, item in zip(case_cells, case_manifest, strict=True):
+            mappings.append({
+                "case_id": case_id,
+                "arm_id": cell["arm_id"],
+                "anonymous_label": item["anonymous_label"],
+                "source_package_ref": item["source_package_ref"],
+                "source_episode_ref": cell["artifact_paths"]["episode_ref"],
+                "source_reader_bridge_ref": cell["artifact_paths"]["reader_bridge_ref"],
+                "source_first_reader_report_ref": cell["artifact_paths"]["first_reader_report_ref"],
+            })
+    return {
+        "schema_version": CUSTODIAN_MAPPING_SCHEMA_VERSION,
+        "preregistration_id": preregistration["preregistration_id"],
+        "visibility": "CUSTODIAN_ONLY",
+        "mappings": mappings,
+    }
+
+
 def _validate(bundle: dict[str, object]) -> list[str]:
     result = validate_multicompany_preregistration(bundle)
     return result["findings"]
@@ -248,6 +294,12 @@ def test_preregistration_accepts_a_balanced_8x4_preoutcome_cohort(
     assert result["state"] == "REVIEWABLE"
     assert result["case_count"] == 8
     assert result["expected_cell_count"] == 32
+
+
+def test_custodian_mapping_completes_the_hidden_case_arm_bijection(
+    preregistration: dict[str, object], custodian_mapping: dict[str, object],
+) -> None:
+    assert validate_custodian_arm_mapping(preregistration, custodian_mapping)["state"] == "REVIEWABLE"
 
 
 def test_preregistration_rejects_duplicate_company_and_postfreeze_replacement(
@@ -290,11 +342,13 @@ def test_preregistration_rejects_anonymity_leak_and_early_outcome_access(
     preregistration: dict[str, object],
 ) -> None:
     bundle = deepcopy(preregistration)
-    bundle["anonymous_review_custody"]["mapping"][1]["anonymous_label"] = "ANON_01"
+    bundle["anonymous_review_custody"]["mapping"] = []
+    bundle["anonymous_review_custody"]["reviewer_manifest"][1]["anonymous_label"] = "ANON_01"
     bundle["anonymous_review_custody"]["reviewer_manifest"][0]["episode_ref"] = "episodes/A00.json"
     bundle["outcome_access_gate"]["outcome_access_authorized"] = True
     findings = _validate(bundle)
-    assert "anonymous_review_custody.mapping[1].anonymous_label_missing_or_duplicate" in findings
+    assert "anonymous_review_custody.unexpected_fields:mapping" in findings
+    assert "anonymous_review_custody.reviewer_manifest[1].anonymous_label_must_be_opaque" in findings
     assert "anonymous_review_custody.reviewer_manifest_contains_arm_identifier" in findings
     assert "outcome_access_gate.must_be_unauthorized_preoutcome" in findings
 

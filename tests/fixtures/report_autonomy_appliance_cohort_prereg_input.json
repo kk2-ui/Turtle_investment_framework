@@ -1,0 +1,188 @@
+{
+  "schema_version": "report-autonomy-appliance-cohort-prereg-input.v1",
+  "preregistration_id": "REPORT_AUTONOMY:APPLIANCE:20181231:STAGE5",
+  "cutoff_at": "2018-12-31T23:59:59+08:00",
+  "stratum_id": "CN_APPLIANCE_LISTED:20181231",
+  "candidate_universe": [
+    {
+      "candidate_id": "CANDIDATE:CN000016",
+      "company_id": "CN:000016",
+      "company_name": "康佳集团股份有限公司",
+      "rank_in_stratum": 1,
+      "candidate_evidence_ref": "docs/development/research/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_TEST_COHORT_SOURCES_B_AUDIT.md",
+      "common_source_package_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN000016_PRE_CUTOFF_SOURCE_PACKAGE.md",
+      "source_available_at": "2018-03-31T23:59:59+08:00",
+      "eligibility": "ELIGIBLE",
+      "exclusion_reason": "NOT_APPLICABLE"
+    },
+    {
+      "candidate_id": "CANDIDATE:CN000404",
+      "company_id": "CN:000404",
+      "company_name": "华意压缩机股份有限公司",
+      "rank_in_stratum": 2,
+      "candidate_evidence_ref": "docs/development/research/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_TEST_COHORT_SOURCES_C_AUDIT.md",
+      "common_source_package_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN000404_PRE_CUTOFF_SOURCE_PACKAGE.md",
+      "source_available_at": "2018-03-31T23:59:59+08:00",
+      "eligibility": "ELIGIBLE",
+      "exclusion_reason": "NOT_APPLICABLE"
+    },
+    {
+      "candidate_id": "CANDIDATE:CN000521",
+      "company_id": "CN:000521",
+      "company_name": "合肥美菱股份有限公司",
+      "rank_in_stratum": 3,
+      "candidate_evidence_ref": "docs/development/research/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_TEST_COHORT_SOURCES_C_AUDIT.md",
+      "common_source_package_ref": "NOT_APPLICABLE",
+      "source_available_at": "NOT_APPLICABLE",
+      "eligibility": "EXCLUDED",
+      "exclusion_reason": "ISSUER_WIDE_A_B_SECURITY_MAPPING_UNRESOLVED"
+    },
+    {
+      "candidate_id": "CANDIDATE:CN002035",
+      "company_id": "CN:002035",
+      "company_name": "华帝股份有限公司",
+      "rank_in_stratum": 4,
+      "candidate_evidence_ref": "docs/development/research/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_TEST_COHORT_SOURCES_A_AUDIT.md",
+      "common_source_package_ref": "NOT_APPLICABLE",
+      "source_available_at": "NOT_APPLICABLE",
+      "eligibility": "EXCLUDED",
+      "exclusion_reason": "PRIOR_ROUND10_CAMPAIGN_EXPOSURE"
+    },
+    {
+      "candidate_id": "CANDIDATE:CN002403",
+      "company_id": "CN:002403",
+      "company_name": "浙江爱仕达电器股份有限公司",
+      "rank_in_stratum": 5,
+      "candidate_evidence_ref": "docs/development/research/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_TEST_COHORT_SOURCES_C_AUDIT.md",
+      "common_source_package_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN002403_PRE_CUTOFF_SOURCE_PACKAGE.md",
+      "source_available_at": "2018-04-25T23:59:59+08:00",
+      "eligibility": "ELIGIBLE",
+      "exclusion_reason": "NOT_APPLICABLE"
+    },
+    {
+      "candidate_id": "CANDIDATE:CN002508",
+      "company_id": "CN:002508",
+      "company_name": "杭州老板电器股份有限公司",
+      "rank_in_stratum": 6,
+      "candidate_evidence_ref": "docs/development/research/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_TEST_COHORT_SOURCES_A_AUDIT.md",
+      "common_source_package_ref": "NOT_APPLICABLE",
+      "source_available_at": "NOT_APPLICABLE",
+      "eligibility": "EXCLUDED",
+      "exclusion_reason": "PRIOR_ROUND10_CAMPAIGN_EXPOSURE"
+    },
+    {
+      "candidate_id": "CANDIDATE:CN002543",
+      "company_id": "CN:002543",
+      "company_name": "广东万和新电气股份有限公司",
+      "rank_in_stratum": 7,
+      "candidate_evidence_ref": "docs/development/research/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_TEST_COHORT_SOURCES_A_AUDIT.md",
+      "common_source_package_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN002543_PRE_CUTOFF_SOURCE_PACKAGE.md",
+      "source_available_at": "2018-04-18T23:59:59+08:00",
+      "eligibility": "ELIGIBLE",
+      "exclusion_reason": "NOT_APPLICABLE"
+    },
+    {
+      "candidate_id": "CANDIDATE:CN002614",
+      "company_id": "CN:002614",
+      "company_name": "奥佳华智能健康科技集团股份有限公司",
+      "rank_in_stratum": 8,
+      "candidate_evidence_ref": "docs/development/research/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_TEST_COHORT_SOURCES_B_AUDIT.md",
+      "common_source_package_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN002614_PRE_CUTOFF_SOURCE_PACKAGE.md",
+      "source_available_at": "2018-04-26T23:59:59+08:00",
+      "eligibility": "ELIGIBLE",
+      "exclusion_reason": "NOT_APPLICABLE"
+    },
+    {
+      "candidate_id": "CANDIDATE:CN002676",
+      "company_id": "CN:002676",
+      "company_name": "广东顺威精密塑料股份有限公司",
+      "rank_in_stratum": 9,
+      "candidate_evidence_ref": "docs/development/research/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_TEST_COHORT_SOURCES_C_AUDIT.md",
+      "common_source_package_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN002676_PRE_CUTOFF_SOURCE_PACKAGE.md",
+      "source_available_at": "2018-04-24T23:59:59+08:00",
+      "eligibility": "ELIGIBLE",
+      "exclusion_reason": "NOT_APPLICABLE"
+    },
+    {
+      "candidate_id": "CANDIDATE:CN002705",
+      "company_id": "CN:002705",
+      "company_name": "广东新宝电器股份有限公司",
+      "rank_in_stratum": 10,
+      "candidate_evidence_ref": "docs/development/research/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_TEST_COHORT_SOURCES_A_AUDIT.md",
+      "common_source_package_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN002705_PRE_CUTOFF_SOURCE_PACKAGE.md",
+      "source_available_at": "2018-04-27T23:59:59+08:00",
+      "eligibility": "ELIGIBLE",
+      "exclusion_reason": "NOT_APPLICABLE"
+    },
+    {
+      "candidate_id": "CANDIDATE:CN603355",
+      "company_id": "CN:603355",
+      "company_name": "莱克电气股份有限公司",
+      "rank_in_stratum": 11,
+      "candidate_evidence_ref": "docs/development/research/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_TEST_COHORT_SOURCES_B_AUDIT.md",
+      "common_source_package_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN603355_PRE_CUTOFF_SOURCE_PACKAGE.md",
+      "source_available_at": "2018-04-26T23:59:59+08:00",
+      "eligibility": "ELIGIBLE",
+      "exclusion_reason": "NOT_APPLICABLE"
+    },
+    {
+      "candidate_id": "CANDIDATE:CN603515",
+      "company_id": "CN:603515",
+      "company_name": "欧普照明股份有限公司",
+      "rank_in_stratum": 12,
+      "candidate_evidence_ref": "docs/development/research/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_TEST_COHORT_SOURCES_B_AUDIT.md",
+      "common_source_package_ref": "NOT_APPLICABLE",
+      "source_available_at": "NOT_APPLICABLE",
+      "eligibility": "EXCLUDED",
+      "exclusion_reason": "FY2015_REPORT_MISSING_AND_CUTOFF_METADATA_FIREWALL_BREACH"
+    },
+    {
+      "candidate_id": "CANDIDATE:CN603868",
+      "company_id": "CN:603868",
+      "company_name": "上海飞科电器股份有限公司",
+      "rank_in_stratum": 13,
+      "candidate_evidence_ref": "docs/development/research/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_TEST_COHORT_SOURCES_B_AUDIT.md",
+      "common_source_package_ref": "NOT_APPLICABLE",
+      "source_available_at": "NOT_APPLICABLE",
+      "eligibility": "EXCLUDED",
+      "exclusion_reason": "FY2015_REPORT_MISSING"
+    }
+  ],
+  "reviewer_labels_by_selection_rank": [
+    {
+      "selection_rank": 1,
+      "anonymous_labels": ["ANON_BCDFGHJKLMNP", "ANON_CDFGHJKLMNPQ", "ANON_DFGHJKLMNPQR", "ANON_FGHJKLMNPQRS"]
+    },
+    {
+      "selection_rank": 2,
+      "anonymous_labels": ["ANON_GHJKLMNPQRST", "ANON_HJKLMNPQRSTV", "ANON_JKLMNPQRSTVW", "ANON_KLMNPQRSTVWX"]
+    },
+    {
+      "selection_rank": 3,
+      "anonymous_labels": ["ANON_LMNPQRSTVWXY", "ANON_MNPQRSTVWXYZ", "ANON_NPQRSTVWXYZB", "ANON_PQRSTVWXYZBC"]
+    },
+    {
+      "selection_rank": 4,
+      "anonymous_labels": ["ANON_QRSTVWXYZBCD", "ANON_RSTVWXYZBCDF", "ANON_STVWXYZBCDFG", "ANON_TVWXYZBCDFGH"]
+    },
+    {
+      "selection_rank": 5,
+      "anonymous_labels": ["ANON_VWXYZBCDFGHJ", "ANON_WXYZBCDFGHJK", "ANON_XYZBCDFGHJKL", "ANON_YZBCDFGHJKLM"]
+    },
+    {
+      "selection_rank": 6,
+      "anonymous_labels": ["ANON_ZBCDFGHJKLMN", "ANON_ZYXWVTSRQPNM", "ANON_YXWVTSRQPNML", "ANON_XWVTSRQPNMLK"]
+    },
+    {
+      "selection_rank": 7,
+      "anonymous_labels": ["ANON_WVTSRQPNMLKJ", "ANON_VTSRQPNMLKJH", "ANON_TSRQPNMLKJHG", "ANON_SRQPNMLKJHGF"]
+    },
+    {
+      "selection_rank": 8,
+      "anonymous_labels": ["ANON_RQPNMLKJHGFD", "ANON_QPNMLKJHGFDC", "ANON_PNMLKJHGFDCB", "ANON_NMLKJHGFDCBZ"]
+    }
+  ],
+  "industry_memory_ref": "docs/development/research/industry_learning_blocks/CN_APPLIANCE_2017_2018/09_compact_industry_decision_memory_v1.md",
+  "expert_correction_memory_ref": "docs/development/research/training_campaigns/EXPERT_CORRECTION_CN02669_20260831/02_COMPILED_TRAINING_MEMORY.md",
+  "exposure_ledger_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_CANDIDATE_ONLY_20181231/00_PRE_SELECTION_COHORT_EXPOSURE_LEDGER.json"
+}

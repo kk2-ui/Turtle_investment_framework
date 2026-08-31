@@ -14,6 +14,7 @@ import argparse
 from copy import deepcopy
 import json
 from pathlib import Path
+import re
 import sys
 from typing import Any
 
@@ -36,6 +37,10 @@ except ModuleNotFoundError:  # pragma: no cover - direct script execution
 
 SCHEMA_VERSION = "report-autonomy-multicompany-preregistration.v1"
 VALIDATION_SCHEMA_VERSION = "report-autonomy-multicompany-preregistration-validation.v1"
+CUSTODIAN_MAPPING_SCHEMA_VERSION = "report-autonomy-custodian-arm-mapping.v1"
+CUSTODIAN_MAPPING_VALIDATION_SCHEMA_VERSION = (
+    "report-autonomy-custodian-arm-mapping-validation.v1"
+)
 ARMS = ("A00", "A01", "A10", "A11")
 CASE_COUNT = 8
 CELL_COUNT = CASE_COUNT * len(ARMS)
@@ -66,6 +71,9 @@ _CANDIDATE_FIELDS = {
     "cutoff_at",
     "stratum_id",
     "rank_in_stratum",
+    "candidate_evidence_ref",
+    "common_source_package_ref",
+    "source_available_at",
     "eligibility",
     "exclusion_reason",
 }
@@ -127,8 +135,7 @@ _ARTIFACT_PATH_FIELDS = {
     "first_reader_report_ref",
     "freeze_receipt_ref",
 }
-_CUSTODY_FIELDS = {"mapping", "reviewer_manifest"}
-_MAPPING_FIELDS = {"case_id", "arm_id", "anonymous_label", "source_package_ref"}
+_CUSTODY_FIELDS = {"reviewer_manifest"}
 _MANIFEST_FIELDS = {
     "case_id",
     "anonymous_label",
@@ -136,6 +143,18 @@ _MANIFEST_FIELDS = {
     "episode_ref",
     "reader_bridge_ref",
     "first_reader_report_ref",
+}
+_CUSTODIAN_MAPPING_ROOT_FIELDS = {
+    "schema_version", "preregistration_id", "visibility", "mappings",
+}
+_CUSTODIAN_MAPPING_FIELDS = {
+    "case_id",
+    "arm_id",
+    "anonymous_label",
+    "source_package_ref",
+    "source_episode_ref",
+    "source_reader_bridge_ref",
+    "source_first_reader_report_ref",
 }
 _MEASUREMENT_FIELDS = {
     "case_id",
@@ -271,7 +290,10 @@ def _validate_candidates(
     ]
     candidate_ids = _unique_texts(candidates, "candidate_id", "cohort.candidate_universe", findings)
     for index, candidate in enumerate(candidates):
-        for field in ("company_id", "company_name", "cutoff_at", "stratum_id"):
+        for field in (
+            "company_id", "company_name", "cutoff_at", "stratum_id",
+            "candidate_evidence_ref",
+        ):
             if not _text(candidate.get(field)):
                 _add(findings, f"cohort.candidate_universe[{index}].{field}_required")
         if candidate.get("stratum_id") not in stratum_ids:
@@ -283,10 +305,18 @@ def _validate_candidates(
         reason = _text(candidate.get("exclusion_reason"))
         if eligibility not in {"ELIGIBLE", "EXCLUDED"}:
             _add(findings, f"cohort.candidate_universe[{index}].eligibility_invalid")
-        elif eligibility == "ELIGIBLE" and reason != "NOT_APPLICABLE":
-            _add(findings, f"cohort.candidate_universe[{index}].eligible_requires_not_applicable_exclusion_reason")
-        elif eligibility == "EXCLUDED" and not reason:
-            _add(findings, f"cohort.candidate_universe[{index}].excluded_requires_reason")
+        elif eligibility == "ELIGIBLE":
+            if reason != "NOT_APPLICABLE":
+                _add(findings, f"cohort.candidate_universe[{index}].eligible_requires_not_applicable_exclusion_reason")
+            for field in ("common_source_package_ref", "source_available_at"):
+                if not _text(candidate.get(field)) or candidate.get(field) == "NOT_APPLICABLE":
+                    _add(findings, f"cohort.candidate_universe[{index}].eligible_{field}_required")
+        else:
+            if not reason or reason == "NOT_APPLICABLE":
+                _add(findings, f"cohort.candidate_universe[{index}].excluded_requires_reason")
+            for field in ("common_source_package_ref", "source_available_at"):
+                if candidate.get(field) != "NOT_APPLICABLE":
+                    _add(findings, f"cohort.candidate_universe[{index}].excluded_{field}_must_be_not_applicable")
 
     candidate_by_id = {
         _text(candidate.get("candidate_id")): candidate
@@ -304,6 +334,8 @@ def _validate_candidates(
         for field in ("company_id", "company_name", "cutoff_at", "stratum_id"):
             if case.get(field) != candidate.get(field):
                 _add(findings, f"cases[{index}].candidate_{field}_mismatch")
+        if case.get("common_source_package_ref") != candidate.get("common_source_package_ref"):
+            _add(findings, f"cases[{index}].candidate_common_source_package_ref_mismatch")
         selected_by_stratum.setdefault(str(case.get("stratum_id")), []).append(candidate)
 
     for stratum_id, quota in quotas.items():
@@ -558,41 +590,31 @@ def _contains_arm_identifier(value: Any) -> bool:
     return isinstance(value, str) and any(arm in value for arm in ARMS)
 
 
+def _is_opaque_anonymous_label(value: Any) -> bool:
+    """Accept labels that carry no arm number or arm-like position cue."""
+
+    return (
+        isinstance(value, str)
+        and re.fullmatch(r"ANON_[BCDFGHJKLMNPQRSTVWXYZ]{12}", value) is not None
+    )
+
+
 def _validate_anonymous_custody(
     bundle: dict[str, Any], cases: dict[str, dict[str, Any]], findings: list[str],
 ) -> None:
     custody = _closed(bundle.get("anonymous_review_custody"), _CUSTODY_FIELDS, "anonymous_review_custody", findings)
-    mapping = [
-        _closed(item, _MAPPING_FIELDS, f"anonymous_review_custody.mapping[{index}]", findings)
-        for index, item in enumerate(_items(custody.get("mapping")))
-    ]
-    if len(mapping) != CELL_COUNT:
-        _add(findings, "anonymous_review_custody.mapping_must_contain_exactly_thirty_two")
-    labels = _unique_texts(mapping, "anonymous_label", "anonymous_review_custody.mapping", findings)
-    pairs = {(item.get("case_id"), item.get("arm_id")) for item in mapping}
-    expected_pairs = {(case_id, arm) for case_id in cases for arm in ARMS}
-    if pairs != expected_pairs:
-        _add(findings, "anonymous_review_custody.mapping_must_be_exact_case_arm_bijection")
-    for index, item in enumerate(mapping):
-        case = cases.get(_text(item.get("case_id")))
-        if case is not None and item.get("source_package_ref") != case.get("common_source_package_ref"):
-            _add(findings, f"anonymous_review_custody.mapping[{index}].source_package_ref_mismatch")
-        label = _text(item.get("anonymous_label"))
-        if not label.startswith("ANON_") or _contains_arm_identifier(label):
-            _add(findings, f"anonymous_review_custody.mapping[{index}].anonymous_label_invalid")
-
     manifest = [
         _closed(item, _MANIFEST_FIELDS, f"anonymous_review_custody.reviewer_manifest[{index}]", findings)
         for index, item in enumerate(_items(custody.get("reviewer_manifest")))
     ]
     if len(manifest) != CELL_COUNT:
         _add(findings, "anonymous_review_custody.reviewer_manifest_must_contain_exactly_thirty_two")
-    manifest_pairs = {(item.get("case_id"), item.get("anonymous_label")) for item in manifest}
-    expected_manifest_pairs = {(item.get("case_id"), item.get("anonymous_label")) for item in mapping}
-    if manifest_pairs != expected_manifest_pairs or len(manifest_pairs) != len(manifest):
-        _add(findings, "anonymous_review_custody.reviewer_manifest_must_match_mapping_exactly")
+    labels = _unique_texts(
+        manifest, "anonymous_label", "anonymous_review_custody.reviewer_manifest", findings,
+    )
     if _contains_arm_identifier(manifest):
         _add(findings, "anonymous_review_custody.reviewer_manifest_contains_arm_identifier")
+    by_case: dict[str, list[dict[str, Any]]] = {}
     for index, item in enumerate(manifest):
         case = cases.get(_text(item.get("case_id")))
         if case is not None and item.get("source_package_ref") != case.get("common_source_package_ref"):
@@ -600,7 +622,16 @@ def _validate_anonymous_custody(
         for field in _MANIFEST_FIELDS:
             if not _text(item.get(field)):
                 _add(findings, f"anonymous_review_custody.reviewer_manifest[{index}].{field}_required")
-    if len(labels) != len(mapping):
+        label = _text(item.get("anonymous_label"))
+        if not _is_opaque_anonymous_label(label):
+            _add(findings, f"anonymous_review_custody.reviewer_manifest[{index}].anonymous_label_must_be_opaque")
+        case_id = _text(item.get("case_id"))
+        if case_id:
+            by_case.setdefault(case_id, []).append(item)
+    for case_id in cases:
+        if len(by_case.get(case_id, [])) != len(ARMS):
+            _add(findings, "anonymous_review_custody.reviewer_manifest_must_have_four_items_per_case:" + case_id)
+    if len(labels) != len(manifest):
         return
 
 
@@ -639,6 +670,108 @@ def _validate_outcome_gate(
     receipts = gate.get("required_reviewer_freeze_receipts")
     if not isinstance(receipts, list) or receipts != sorted(cases):
         _add(findings, "outcome_access_gate.must_require_every_case_reviewer_freeze")
+
+
+def validate_custodian_arm_mapping(
+    preregistration: Any, custodian_mapping: Any,
+) -> dict[str, Any]:
+    """Validate a custodian-only arm mapping without exposing it to reviewers.
+
+    The public preregistration deliberately contains only the opaque reviewer
+    manifest.  This separate check lets the custodian prove a complete
+    case×arm bijection and the source-artifact bridge while leaving the arm
+    labels absent from reviewer-visible material.
+    """
+
+    findings: list[str] = []
+    public_result = validate_multicompany_preregistration(preregistration)
+    if public_result["state"] != "REVIEWABLE":
+        findings.extend("preregistration:" + item for item in public_result["findings"])
+    prereg = _mapping(preregistration)
+    value = _closed(
+        custodian_mapping,
+        _CUSTODIAN_MAPPING_ROOT_FIELDS,
+        "custodian_mapping",
+        findings,
+    )
+    if value.get("schema_version") != CUSTODIAN_MAPPING_SCHEMA_VERSION:
+        _add(findings, "custodian_mapping.schema_version_invalid")
+    if value.get("preregistration_id") != prereg.get("preregistration_id"):
+        _add(findings, "custodian_mapping.preregistration_id_mismatch")
+    if value.get("visibility") != "CUSTODIAN_ONLY":
+        _add(findings, "custodian_mapping.visibility_must_be_custodian_only")
+
+    cases = {
+        _text(item.get("case_id")): _mapping(item)
+        for item in _items(prereg.get("cases"))
+        if _text(_mapping(item).get("case_id"))
+    }
+    cells = {
+        (_text(item.get("case_id")), _text(item.get("arm_id"))): _mapping(item)
+        for item in _items(_mapping(prereg.get("execution")).get("cells"))
+        if _text(_mapping(item).get("case_id")) and _text(_mapping(item).get("arm_id"))
+    }
+    manifest = {
+        (_text(item.get("case_id")), _text(item.get("anonymous_label"))): _mapping(item)
+        for item in _items(_mapping(prereg.get("anonymous_review_custody")).get("reviewer_manifest"))
+        if _text(_mapping(item).get("case_id")) and _text(_mapping(item).get("anonymous_label"))
+    }
+    mappings = [
+        _closed(item, _CUSTODIAN_MAPPING_FIELDS, f"custodian_mapping.mappings[{index}]", findings)
+        for index, item in enumerate(_items(value.get("mappings")))
+    ]
+    if len(mappings) != CELL_COUNT:
+        _add(findings, "custodian_mapping.mappings_must_contain_exactly_thirty_two")
+    pairs: set[tuple[str, str]] = set()
+    labels: set[tuple[str, str]] = set()
+    for index, item in enumerate(mappings):
+        case_id = _text(item.get("case_id"))
+        arm_id = _text(item.get("arm_id"))
+        pair = (case_id, arm_id)
+        label_pair = (case_id, _text(item.get("anonymous_label")))
+        if not case_id or arm_id not in ARMS or pair in pairs:
+            _add(findings, f"custodian_mapping.mappings[{index}].case_arm_missing_invalid_or_duplicate")
+        else:
+            pairs.add(pair)
+        if not _is_opaque_anonymous_label(label_pair[1]) or label_pair in labels:
+            _add(findings, f"custodian_mapping.mappings[{index}].anonymous_label_missing_invalid_or_duplicate")
+        else:
+            labels.add(label_pair)
+        case = cases.get(case_id)
+        cell = cells.get(pair)
+        reviewer_item = manifest.get(label_pair)
+        if case is None:
+            _add(findings, f"custodian_mapping.mappings[{index}].case_not_registered")
+            continue
+        if item.get("source_package_ref") != case.get("common_source_package_ref"):
+            _add(findings, f"custodian_mapping.mappings[{index}].source_package_ref_mismatch")
+        if cell is None:
+            _add(findings, f"custodian_mapping.mappings[{index}].cell_not_registered")
+        else:
+            artifacts = _mapping(cell.get("artifact_paths"))
+            expected_refs = {
+                "source_episode_ref": artifacts.get("episode_ref"),
+                "source_reader_bridge_ref": artifacts.get("reader_bridge_ref"),
+                "source_first_reader_report_ref": artifacts.get("first_reader_report_ref"),
+            }
+            for field, expected in expected_refs.items():
+                if item.get(field) != expected:
+                    _add(findings, f"custodian_mapping.mappings[{index}].{field}_mismatch")
+        if reviewer_item is None:
+            _add(findings, f"custodian_mapping.mappings[{index}].reviewer_manifest_entry_missing")
+        elif reviewer_item.get("source_package_ref") != item.get("source_package_ref"):
+            _add(findings, f"custodian_mapping.mappings[{index}].reviewer_manifest_source_package_ref_mismatch")
+    expected_pairs = {(case_id, arm) for case_id in cases for arm in ARMS}
+    if pairs != expected_pairs:
+        _add(findings, "custodian_mapping.must_be_exact_case_arm_bijection")
+    if labels != set(manifest):
+        _add(findings, "custodian_mapping.must_match_public_reviewer_manifest_exactly")
+    return {
+        "schema_version": CUSTODIAN_MAPPING_VALIDATION_SCHEMA_VERSION,
+        "state": "REVIEWABLE" if not findings else "INVALID",
+        "findings": findings,
+        "authority": "CUSTODIAN_ONLY_ARM_MAPPING_NO_OUTCOME_ACCESS",
+    }
 
 
 def validate_multicompany_preregistration(bundle: Any) -> dict[str, Any]:

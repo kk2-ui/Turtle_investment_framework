@@ -12,6 +12,7 @@ from __future__ import annotations
 import argparse
 import json
 from pathlib import Path
+import re
 from typing import Any
 
 
@@ -26,6 +27,7 @@ ARM_IDENTIFIERS = (
     "A01",
     "A11",
 )
+_OPAQUE_LABEL_PATTERN = re.compile(r"ANON_[BCDFGHJKLMNPQRSTVWXYZ]{12}")
 
 
 def _read_json(path: Path) -> dict[str, Any]:
@@ -63,7 +65,9 @@ def build_packet(
     if len(anonymous_arms) != 4:
         raise ValueError("anonymous_packet_requires_exactly_four_arms")
     labels = [label for label, _, _ in anonymous_arms]
-    if len(set(labels)) != 4 or any(not label.startswith("ANON_") for label in labels):
+    if len(set(labels)) != 4 or any(
+        _OPAQUE_LABEL_PATTERN.fullmatch(label) is None for label in labels
+    ):
         raise ValueError("anonymous_packet_labels_invalid")
     if any(
         identifier in label for label in labels for identifier in ARM_IDENTIFIERS
