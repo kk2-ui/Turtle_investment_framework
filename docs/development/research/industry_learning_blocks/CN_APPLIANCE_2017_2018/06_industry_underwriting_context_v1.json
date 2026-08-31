@@ -1,0 +1,671 @@
+{
+  "schema_version": "industry-underwriting-context.v1",
+  "context_id": "IUC:CN:APPLIANCE:PACK:2018-12-31:V1",
+  "company_identity": {
+    "company_id": "CN:000333",
+    "company_name": "美的集团",
+    "cutoff_at": "2018-12-31T23:59:59+08:00",
+    "industry_ids": [
+      "CN_APPLIANCE_CONSUMER_DURABLES"
+    ]
+  },
+  "context_status": "READY",
+  "report_use": {
+    "mode": "REPORT_PREPARATION_READ_MODEL",
+    "non_blocking": true,
+    "can_support": [
+      "INDUSTRY_RESEARCH_AGENDA",
+      "CANDIDATE_INDUSTRY_FUTURE_THESIS",
+      "PEER_AND_NEAR_MISS_SELECTION"
+    ],
+    "cannot_establish": [
+      "COMPANY_FACT_WITHOUT_COMPANY_EVIDENCE",
+      "VALUATION_PARAMETER",
+      "INVESTMENT_ACTION"
+    ],
+    "boundary": "A BOUNDED context remains usable. The report must make and source its own best-current industry and company judgment."
+  },
+  "industry_value_chain": {
+    "stages": [
+      {
+        "arena_id": "ARENA:CN:APPLIANCE:ROOM_AIR_CONDITIONING",
+        "mechanism": "Seasonal room-air-conditioner demand reaches manufacturers through product mix, manufacturing, channel and installation interfaces.",
+        "economic_scope": "NATIONAL_CATEGORY_WITH_CHANNEL_AND_REGIONAL_VARIATION",
+        "customer_job_or_choice": "Household cooling and replacement demand served through distributors, retail and installation systems.",
+        "value_driver": "Product/category exposure, channel absorption, realised price/mix, unit cost and working-capital conversion.",
+        "failure_mode": "Industry production or broad retail growth can diverge from company sell-out, inventory, price capture and cash conversion.",
+        "profit_pool_direction": "REQUIRES_COMPANY_TRANSMISSION_VERIFICATION",
+        "evidence_refs": [
+          "CNINFO:000651:ANN:20170427:1203403930",
+          "CNINFO:000921:ANN:20170330:1203223381"
+        ],
+        "source_object_ref": "docs/development/research/industry_learning_blocks/CN_APPLIANCE_2017_2018/05_industry_learning_block_v1.json"
+      },
+      {
+        "arena_id": "ARENA:CN:APPLIANCE:REFRIGERATION_AND_WASHING",
+        "mechanism": "Replacement-oriented refrigeration and washing demand is mediated by product freshness, channel/service execution, manufacturing cost and broader portfolio perimeter.",
+        "economic_scope": "NATIONAL_WHITE_GOODS_WITH_PRODUCT_AND_CHANNEL_HETEROGENEITY",
+        "customer_job_or_choice": "Household storage and laundry needs served by product, distribution, delivery and after-sales systems.",
+        "value_driver": "Category mix, product-cycle fit, service/logistics performance, cost and reinvestment requirements.",
+        "failure_mode": "A consolidated issuer's reported movement may reflect multi-business scope or acquisition/perimeter changes rather than a common white-goods mechanism.",
+        "profit_pool_direction": "REQUIRES_COMPANY_TRANSMISSION_VERIFICATION",
+        "evidence_refs": [
+          "CNINFO:000333:ANN:20180330:1204557296",
+          "CNINFO:600690:ANN:20180426:1204797433",
+          "CNINFO:000921:ANN:20180330:1204544098"
+        ],
+        "source_object_ref": "docs/development/research/industry_learning_blocks/CN_APPLIANCE_2017_2018/05_industry_learning_block_v1.json"
+      },
+      {
+        "arena_id": "ARENA:CN:APPLIANCE:MULTI_CATEGORY_AND_PERIMETER",
+        "mechanism": "Multi-category product, channel, service and consolidation boundaries can alter consolidated profit and cash independently of any single appliance category.",
+        "economic_scope": "LISTED_CONSOLIDATED_ISSUER_WITH_PRODUCT_BOUNDARY_REQUIRED",
+        "customer_job_or_choice": "Not a homogeneous product-market claim; it records why issuer-level results need product and perimeter bridges.",
+        "value_driver": "Comparable responsibility boundary before inferring normal earnings, capital needs or owner-cash transmission.",
+        "failure_mode": "Group cash, revenue or margin can be misattributed to a white-goods category without a product/perimeter bridge.",
+        "profit_pool_direction": "BOUNDARY_QUALIFIED",
+        "evidence_refs": [
+          "CNINFO:000333:ANN:20180330:1204557296",
+          "CNINFO:600690:ANN:20180426:1204797433"
+        ],
+        "source_object_ref": "docs/development/research/industry_learning_blocks/CN_APPLIANCE_2017_2018/05_industry_learning_block_v1.json"
+      },
+      {
+        "arena_id": "ARENA:CN:APPLIANCE:WHITE_GOODS_AND_CHANNEL_SYSTEM",
+        "mechanism": "Broad retail, category production and aggregate profitability enter companies through different product portfolios, channels, service systems, cost/inventory positions and responsibility boundaries.",
+        "economic_scope": "Official context records broad retail growth, differing category production growth and aggregate industry profit-pool expansion before the Pack cutoff.",
+        "customer_job_or_choice": "UNRESOLVED_FROM_AVAILABLE_CONTEXT",
+        "value_driver": "A source-backed research agenda for company-specific demand, price/mix, cost, working-capital, capital and owner-cash verification.",
+        "failure_mode": "A same-period, same-product and same-responsibility-boundary company bridge establishes the required transmission.",
+        "profit_pool_direction": "UNRESOLVED",
+        "evidence_refs": [
+          "INDCTXOBS:CN:APPLIANCE:2018_1_9_PRODUCTION",
+          "INDCTXOBS:CN:APPLIANCE:2018_1_9_SALES_RATE_AND_PROFIT_POOL",
+          "INDCTXOBS:CN:APPLIANCE:2018_1_11_RETAIL_AND_ONLINE"
+        ],
+        "source_object_ref": "docs/development/research/industry_learning_blocks/CN_APPLIANCE_2017_2018/05_industry_learning_block_v1.json"
+      }
+    ],
+    "customer_jobs": [
+      "Household cooling and replacement demand served through distributors, retail and installation systems.",
+      "Household storage and laundry needs served by product, distribution, delivery and after-sales systems.",
+      "Not a homogeneous product-market claim; it records why issuer-level results need product and perimeter bridges."
+    ]
+  },
+  "structural_epochs": [
+    {
+      "epoch_id": "EPOCH:CN:APPLIANCE:FY2016_DISCLOSURE:C1",
+      "as_of": "2017-04-30T23:59:59+08:00",
+      "condition": "The initial cutoff-safe panel contains four listed-consolidated issuers with recorded FY2016 statutory reports spanning room air conditioning, refrigeration/washing and multi-category appliance systems; this is a source-coverage state, not a peer-performance ranking.",
+      "observations": [],
+      "evidence_refs": [
+        "CNINFO:000651:ANN:20170427:1203403930",
+        "CNINFO:000333:ANN:20170330:1203240657",
+        "CNINFO:600690:ANN:20170429:1203428901",
+        "CNINFO:000921:ANN:20170330:1203223381"
+      ],
+      "source_object_ref": "docs/development/research/industry_learning_blocks/CN_APPLIANCE_2017_2018/05_industry_learning_block_v1.json"
+    },
+    {
+      "epoch_id": "EPOCH:CN:APPLIANCE:FY2017_DISCLOSURE:C2",
+      "as_of": "2018-09-30T23:59:59+08:00",
+      "condition": "At the later cutoff, FY2017 statutory reports remain available for the diversified appliance, refrigeration/washing and dual white-goods issuer boundaries; cross-company comparison still requires product, customer, channel and accounting-boundary matching.",
+      "observations": [],
+      "evidence_refs": [
+        "CNINFO:000333:ANN:20180330:1204557296",
+        "CNINFO:600690:ANN:20180426:1204797433",
+        "CNINFO:000921:ANN:20180330:1204544098"
+      ],
+      "source_object_ref": "docs/development/research/industry_learning_blocks/CN_APPLIANCE_2017_2018/05_industry_learning_block_v1.json"
+    },
+    {
+      "epoch_id": "EPOCH:OFFICIAL:1",
+      "as_of": "2018-12-31T23:59:59+08:00",
+      "condition": "Official cutoff context: The common environment was not a uniform white-goods volume path: category mix and capacity/utilisation exposure could differ before any company-specific conclusion is drawn.; A growing aggregate profit pool can coexist with absorption/friction risk; the future industry thesis must distinguish aggregate accounting growth from company-level sell-through, inventory and cash conversion.; The demand/channel backdrop was supportive in aggregate but channel migration could distribute its benefit unequally across companies and categories.; The category-specific label regime can affect the product/mix and channel questions that must be verified at company level, but the published catalogue alone does not measure a company's costs, product mix or customer response.",
+      "observations": [
+        "The industry entered late 2018 with materially faster room-air-conditioner production than refrigerator and washing-machine production.",
+        "Aggregate appliance revenue and profit grew while the production-sales rate was below the prior-year level.",
+        "Broad appliance retail was growing and online physical-goods retail expanded faster in the same period.",
+        "The Pack's principal household-appliance categories were within a common energy-efficiency-label product regime before the Pack cutoff."
+      ],
+      "evidence_refs": [
+        "INDCTXOBS:CN:APPLIANCE:2018_1_9_PRODUCTION",
+        "INDCTXOBS:CN:APPLIANCE:2018_1_9_SALES_RATE_AND_PROFIT_POOL",
+        "INDCTXOBS:CN:APPLIANCE:2018_1_11_RETAIL_AND_ONLINE",
+        "INDCTXOBS:CN:APPLIANCE:ENERGY_LABEL_REGIME"
+      ],
+      "source_object_ref": "docs/development/research/industry_learning_blocks/CN_APPLIANCE_2017_2018/03_official_industry_context_observations_v1.json"
+    }
+  ],
+  "industry_drivers": {
+    "demand": [
+      {
+        "driver": "Broad appliance retail was growing and online physical-goods retail expanded faster in the same period.",
+        "profit_pool_effect": "Broad retail growth does not settle product demand, company sell-out or price capture; it makes company-specific channel and category transmission a discriminating research question.",
+        "evidence_refs": [
+          "INDCTXOBS:CN:APPLIANCE:2018_1_11_RETAIL_AND_ONLINE"
+        ],
+        "source_object_ref": "docs/development/research/industry_learning_blocks/CN_APPLIANCE_2017_2018/03_official_industry_context_observations_v1.json"
+      },
+      {
+        "driver": "At the later cutoff, FY2017 statutory reports remain available for the diversified appliance, refrigeration/washing and dual white-goods issuer boundaries; cross-company comparison still requires product, customer, channel and accounting-boundary matching.",
+        "profit_pool_effect": "TO_BE_UNDERWRITTEN",
+        "evidence_refs": [
+          "CNINFO:000333:ANN:20180330:1204557296",
+          "CNINFO:600690:ANN:20180426:1204797433",
+          "CNINFO:000921:ANN:20180330:1204544098"
+        ],
+        "source_object_ref": "docs/development/research/industry_learning_blocks/CN_APPLIANCE_2017_2018/05_industry_learning_block_v1.json"
+      },
+      {
+        "driver": "Seasonal room-air-conditioner demand reaches manufacturers through product mix, manufacturing, channel and installation interfaces. Product/category exposure, channel absorption, realised price/mix, unit cost and working-capital conversion. Industry production or broad retail growth can diverge from company sell-out, inventory, price capture and cash conversion.",
+        "profit_pool_effect": "REQUIRES_COMPANY_TRANSMISSION_VERIFICATION",
+        "evidence_refs": [
+          "CNINFO:000651:ANN:20170427:1203403930",
+          "CNINFO:000921:ANN:20170330:1203223381"
+        ],
+        "source_object_ref": "docs/development/research/industry_learning_blocks/CN_APPLIANCE_2017_2018/05_industry_learning_block_v1.json"
+      },
+      {
+        "driver": "Replacement-oriented refrigeration and washing demand is mediated by product freshness, channel/service execution, manufacturing cost and broader portfolio perimeter. Category mix, product-cycle fit, service/logistics performance, cost and reinvestment requirements. A consolidated issuer's reported movement may reflect multi-business scope or acquisition/perimeter changes rather than a common white-goods mechanism.",
+        "profit_pool_effect": "REQUIRES_COMPANY_TRANSMISSION_VERIFICATION",
+        "evidence_refs": [
+          "CNINFO:000333:ANN:20180330:1204557296",
+          "CNINFO:600690:ANN:20180426:1204797433",
+          "CNINFO:000921:ANN:20180330:1204544098"
+        ],
+        "source_object_ref": "docs/development/research/industry_learning_blocks/CN_APPLIANCE_2017_2018/05_industry_learning_block_v1.json"
+      }
+    ],
+    "supply": [
+      {
+        "driver": "The industry entered late 2018 with materially faster room-air-conditioner production than refrigerator and washing-machine production.",
+        "profit_pool_effect": "Higher room-air-conditioner production can support system throughput, but it does not by itself establish domestic sell-out, pricing power or issuer margin capture.",
+        "evidence_refs": [
+          "INDCTXOBS:CN:APPLIANCE:2018_1_9_PRODUCTION"
+        ],
+        "source_object_ref": "docs/development/research/industry_learning_blocks/CN_APPLIANCE_2017_2018/03_official_industry_context_observations_v1.json"
+      },
+      {
+        "driver": "Seasonal room-air-conditioner demand reaches manufacturers through product mix, manufacturing, channel and installation interfaces. Product/category exposure, channel absorption, realised price/mix, unit cost and working-capital conversion. Industry production or broad retail growth can diverge from company sell-out, inventory, price capture and cash conversion.",
+        "profit_pool_effect": "REQUIRES_COMPANY_TRANSMISSION_VERIFICATION",
+        "evidence_refs": [
+          "CNINFO:000651:ANN:20170427:1203403930",
+          "CNINFO:000921:ANN:20170330:1203223381"
+        ],
+        "source_object_ref": "docs/development/research/industry_learning_blocks/CN_APPLIANCE_2017_2018/05_industry_learning_block_v1.json"
+      }
+    ],
+    "competition": [
+      {
+        "driver": "Aggregate appliance revenue and profit grew while the production-sales rate was below the prior-year level.",
+        "profit_pool_effect": "Aggregate profitability was supportive, but a weaker production-sales rate preserves a rival explanation of uneven channel absorption or category/company divergence.",
+        "evidence_refs": [
+          "INDCTXOBS:CN:APPLIANCE:2018_1_9_SALES_RATE_AND_PROFIT_POOL"
+        ],
+        "source_object_ref": "docs/development/research/industry_learning_blocks/CN_APPLIANCE_2017_2018/03_official_industry_context_observations_v1.json"
+      },
+      {
+        "driver": "At the later cutoff, FY2017 statutory reports remain available for the diversified appliance, refrigeration/washing and dual white-goods issuer boundaries; cross-company comparison still requires product, customer, channel and accounting-boundary matching.",
+        "profit_pool_effect": "TO_BE_UNDERWRITTEN",
+        "evidence_refs": [
+          "CNINFO:000333:ANN:20180330:1204557296",
+          "CNINFO:600690:ANN:20180426:1204797433",
+          "CNINFO:000921:ANN:20180330:1204544098"
+        ],
+        "source_object_ref": "docs/development/research/industry_learning_blocks/CN_APPLIANCE_2017_2018/05_industry_learning_block_v1.json"
+      },
+      {
+        "driver": "Seasonal room-air-conditioner demand reaches manufacturers through product mix, manufacturing, channel and installation interfaces. Product/category exposure, channel absorption, realised price/mix, unit cost and working-capital conversion. Industry production or broad retail growth can diverge from company sell-out, inventory, price capture and cash conversion.",
+        "profit_pool_effect": "REQUIRES_COMPANY_TRANSMISSION_VERIFICATION",
+        "evidence_refs": [
+          "CNINFO:000651:ANN:20170427:1203403930",
+          "CNINFO:000921:ANN:20170330:1203223381"
+        ],
+        "source_object_ref": "docs/development/research/industry_learning_blocks/CN_APPLIANCE_2017_2018/05_industry_learning_block_v1.json"
+      },
+      {
+        "driver": "Replacement-oriented refrigeration and washing demand is mediated by product freshness, channel/service execution, manufacturing cost and broader portfolio perimeter. Category mix, product-cycle fit, service/logistics performance, cost and reinvestment requirements. A consolidated issuer's reported movement may reflect multi-business scope or acquisition/perimeter changes rather than a common white-goods mechanism.",
+        "profit_pool_effect": "REQUIRES_COMPANY_TRANSMISSION_VERIFICATION",
+        "evidence_refs": [
+          "CNINFO:000333:ANN:20180330:1204557296",
+          "CNINFO:600690:ANN:20180426:1204797433",
+          "CNINFO:000921:ANN:20180330:1204544098"
+        ],
+        "source_object_ref": "docs/development/research/industry_learning_blocks/CN_APPLIANCE_2017_2018/05_industry_learning_block_v1.json"
+      },
+      {
+        "driver": "Multi-category product, channel, service and consolidation boundaries can alter consolidated profit and cash independently of any single appliance category. Comparable responsibility boundary before inferring normal earnings, capital needs or owner-cash transmission. Group cash, revenue or margin can be misattributed to a white-goods category without a product/perimeter bridge.",
+        "profit_pool_effect": "BOUNDARY_QUALIFIED",
+        "evidence_refs": [
+          "CNINFO:000333:ANN:20180330:1204557296",
+          "CNINFO:600690:ANN:20180426:1204797433"
+        ],
+        "source_object_ref": "docs/development/research/industry_learning_blocks/CN_APPLIANCE_2017_2018/05_industry_learning_block_v1.json"
+      }
+    ],
+    "regulation": [
+      {
+        "driver": "The Pack's principal household-appliance categories were within a common energy-efficiency-label product regime before the Pack cutoff.",
+        "profit_pool_effect": "The regulation is a common product constraint and a source of possible differentiation, not evidence that any issuer captured a margin or demand advantage.",
+        "evidence_refs": [
+          "INDCTXOBS:CN:APPLIANCE:ENERGY_LABEL_REGIME"
+        ],
+        "source_object_ref": "docs/development/research/industry_learning_blocks/CN_APPLIANCE_2017_2018/03_official_industry_context_observations_v1.json"
+      }
+    ]
+  },
+  "profit_pool_outlook": {
+    "direction": "REQUIRES_COMPANY_TRANSMISSION_VERIFICATION",
+    "horizon": "NOT_SPECIFIED",
+    "thesis": "Official cutoff observations support: The common environment was not a uniform white-goods volume path: category mix and capacity/utilisation exposure could differ before any company-specific conclusion is drawn.; A growing aggregate profit pool can coexist with absorption/friction risk; the future industry thesis must distinguish aggregate accounting growth from company-level sell-through, inventory and cash conversion.; The demand/channel backdrop was supportive in aggregate but channel migration could distribute its benefit unequally across companies and categories.; The category-specific label regime can affect the product/mix and channel questions that must be verified at company level, but the published catalogue alone does not measure a company's costs, product mix or customer response.",
+    "confidence": "QUALITATIVE",
+    "evidence_refs": [
+      "CNINFO:000651:ANN:20170427:1203403930",
+      "CNINFO:000921:ANN:20170330:1203223381",
+      "CNINFO:000333:ANN:20180330:1204557296",
+      "CNINFO:600690:ANN:20180426:1204797433",
+      "CNINFO:000921:ANN:20180330:1204544098",
+      "INDCTXOBS:CN:APPLIANCE:2018_1_9_PRODUCTION",
+      "INDCTXOBS:CN:APPLIANCE:2018_1_9_SALES_RATE_AND_PROFIT_POOL",
+      "INDCTXOBS:CN:APPLIANCE:2018_1_11_RETAIL_AND_ONLINE",
+      "INDCTXOBS:CN:APPLIANCE:ENERGY_LABEL_REGIME"
+    ]
+  },
+  "company_archetype_exposure": {
+    "archetype": "ARCHETYPE:MULTI_CATEGORY_CHANNEL_AND_SUPPLY_CHAIN_SYSTEM",
+    "responsibility_boundary": "The registered FY2016–FY2017 issuer packets identify room air conditioning, refrigeration/washing and a multi-category channel/supply-chain boundary; acquisition and group-perimeter effects remain a required competing explanation.",
+    "arena_ids": [
+      "ARENA:CN:APPLIANCE:WHITE_GOODS_AND_CHANNEL_SYSTEM"
+    ],
+    "exposures": [
+      {
+        "dimension": "ARENA_MEMBERSHIP",
+        "relation": "RECORDED_CONTEXT",
+        "rationale": "The registered FY2016–FY2017 issuer packets identify room air conditioning, refrigeration/washing and a multi-category channel/supply-chain boundary; acquisition and group-perimeter effects remain a required competing explanation.",
+        "evidence_refs": [
+          "CNINFO:000333:ANN:20170330:1203240657",
+          "CNINFO:000333:ANN:20180330:1204557296"
+        ]
+      }
+    ],
+    "current_state": "The registered FY2016–FY2017 issuer packets identify room air conditioning, refrigeration/washing and a multi-category channel/supply-chain boundary; acquisition and group-perimeter effects remain a required competing explanation.",
+    "adaptation_hypothesis": "Broad retail growth does not settle category or channel capture at a multi-business issuer.",
+    "evidence_refs": [
+      "CNINFO:000333:ANN:20170330:1203240657",
+      "CNINFO:000333:ANN:20180330:1204557296"
+    ],
+    "source_object_ref": "docs/development/research/industry_learning_blocks/CN_APPLIANCE_2017_2018/05_industry_learning_block_v1.json"
+  },
+  "representative_peers": [
+    {
+      "company_id": "CN:000651",
+      "company_name": "格力电器",
+      "archetype": "ARCHETYPE:ROOM_AC_CHANNEL_COMPONENT_MANUFACTURING_SYSTEM",
+      "common_arena_ids": [
+        "ARENA:CN:APPLIANCE:WHITE_GOODS_AND_CHANNEL_SYSTEM"
+      ],
+      "comparison_role": "MECHANISM_PEER_CANDIDATE",
+      "why_representative": "A national room-air-conditioner supply expansion is common context, not evidence of company sell-out or cash conversion.",
+      "evidence_refs": [
+        "CNINFO:000651:ANN:20170427:1203403930"
+      ],
+      "source_object_ref": "docs/development/research/industry_learning_blocks/CN_APPLIANCE_2017_2018/05_industry_learning_block_v1.json"
+    },
+    {
+      "company_id": "CN:600690",
+      "company_name": "青岛海尔",
+      "archetype": "ARCHETYPE:REFRIGERATION_WASHING_SERVICE_AND_LOGISTICS_SYSTEM",
+      "common_arena_ids": [
+        "ARENA:CN:APPLIANCE:WHITE_GOODS_AND_CHANNEL_SYSTEM"
+      ],
+      "comparison_role": "MECHANISM_PEER_CANDIDATE",
+      "why_representative": "Industry profit-pool growth may reach service/logistics systems differently from manufacturing-only exposure.",
+      "evidence_refs": [
+        "CNINFO:600690:ANN:20170429:1203428901",
+        "CNINFO:600690:ANN:20180426:1204797433"
+      ],
+      "source_object_ref": "docs/development/research/industry_learning_blocks/CN_APPLIANCE_2017_2018/05_industry_learning_block_v1.json"
+    },
+    {
+      "company_id": "CN:000921",
+      "company_name": "海信科龙",
+      "archetype": "ARCHETYPE:DUAL_WHITE_GOODS_PRODUCT_COST_AND_INVENTORY_SYSTEM",
+      "common_arena_ids": [
+        "ARENA:CN:APPLIANCE:WHITE_GOODS_AND_CHANNEL_SYSTEM"
+      ],
+      "comparison_role": "MECHANISM_PEER_CANDIDATE",
+      "why_representative": "A common supply/retail environment can create category exposure without a common cash or permanent-loss path.",
+      "evidence_refs": [
+        "CNINFO:000921:ANN:20170330:1203223381",
+        "CNINFO:000921:ANN:20180330:1204544098"
+      ],
+      "source_object_ref": "docs/development/research/industry_learning_blocks/CN_APPLIANCE_2017_2018/05_industry_learning_block_v1.json"
+    }
+  ],
+  "near_misses": [],
+  "candidate_main_paths": [
+    {
+      "path_id": "IUP:CN:000333:OFFICIAL_CONTEXT",
+      "status": "CANDIDATE_TO_VERIFY",
+      "industry_regime": "Official cutoff context: The common environment was not a uniform white-goods volume path: category mix and capacity/utilisation exposure could differ before any company-specific conclusion is drawn.; A growing aggregate profit pool can coexist with absorption/friction risk; the future industry thesis must distinguish aggregate accounting growth from company-level sell-through, inventory and cash conversion.; The demand/channel backdrop was supportive in aggregate but channel migration could distribute its benefit unequally across companies and categories.; The category-specific label regime can affect the product/mix and channel questions that must be verified at company level, but the published catalogue alone does not measure a company's costs, product mix or customer response.",
+      "industry_force": "The industry entered late 2018 with materially faster room-air-conditioner production than refrigerator and washing-machine production.; Aggregate appliance revenue and profit grew while the production-sales rate was below the prior-year level.; Broad appliance retail was growing and online physical-goods retail expanded faster in the same period.; The Pack's principal household-appliance categories were within a common energy-efficiency-label product regime before the Pack cutoff.",
+      "profit_pool_effect": "REQUIRES_COMPANY_TRANSMISSION_VERIFICATION",
+      "company_exposure": "The registered FY2016–FY2017 issuer packets identify room air conditioning, refrigeration/washing and a multi-category channel/supply-chain boundary; acquisition and group-perimeter effects remain a required competing explanation.",
+      "adaptation_hypothesis": "Broad retail growth does not settle category or channel capture at a multi-business issuer.",
+      "economics_implication": "Verify whether the observed industry drivers transmit through the target company's customer demand, realized price or mix, unit economics, capital needs, and cash conversion.",
+      "permanent_loss_implication": "If the supporting industry mechanism reverses, normalized earnings can compress and previously committed capital can become stranded.",
+      "reversal_observations": [
+        "Which product/category, channel, realised-price or mix, unit-cost and working-capital fields show whether the official common environment enters this issuer's normal earnings and owner-cash path?",
+        "Can the company product arena and responsibility boundary be held constant across the relevant period, especially for diversified or globally consolidated issuers?"
+      ],
+      "evidence_refs": [
+        "INDCTXOBS:CN:APPLIANCE:2018_1_9_PRODUCTION",
+        "INDCTXOBS:CN:APPLIANCE:2018_1_9_SALES_RATE_AND_PROFIT_POOL",
+        "INDCTXOBS:CN:APPLIANCE:2018_1_11_RETAIL_AND_ONLINE",
+        "INDCTXOBS:CN:APPLIANCE:ENERGY_LABEL_REGIME"
+      ]
+    },
+    {
+      "path_id": "IUP:CN:000333:1",
+      "status": "CANDIDATE_TO_VERIFY",
+      "industry_regime": "Official cutoff context: The common environment was not a uniform white-goods volume path: category mix and capacity/utilisation exposure could differ before any company-specific conclusion is drawn.; A growing aggregate profit pool can coexist with absorption/friction risk; the future industry thesis must distinguish aggregate accounting growth from company-level sell-through, inventory and cash conversion.; The demand/channel backdrop was supportive in aggregate but channel migration could distribute its benefit unequally across companies and categories.; The category-specific label regime can affect the product/mix and channel questions that must be verified at company level, but the published catalogue alone does not measure a company's costs, product mix or customer response.",
+      "industry_force": "Seasonal room-air-conditioner demand reaches manufacturers through product mix, manufacturing, channel and installation interfaces.",
+      "profit_pool_effect": "REQUIRES_COMPANY_TRANSMISSION_VERIFICATION",
+      "company_exposure": "The registered FY2016–FY2017 issuer packets identify room air conditioning, refrigeration/washing and a multi-category channel/supply-chain boundary; acquisition and group-perimeter effects remain a required competing explanation.",
+      "adaptation_hypothesis": "Broad retail growth does not settle category or channel capture at a multi-business issuer.",
+      "economics_implication": "Verify whether Product/category exposure, channel absorption, realised price/mix, unit cost and working-capital conversion. changes normalized earnings, capital needs, and owner-cash conversion at the company's responsibility boundary.",
+      "permanent_loss_implication": "Industry production or broad retail growth can diverge from company sell-out, inventory, price capture and cash conversion.",
+      "reversal_observations": [
+        "Which product/category, channel, realised-price or mix, unit-cost and working-capital fields show whether the official common environment enters this issuer's normal earnings and owner-cash path?",
+        "Can the company product arena and responsibility boundary be held constant across the relevant period, especially for diversified or globally consolidated issuers?"
+      ],
+      "evidence_refs": [
+        "CNINFO:000651:ANN:20170427:1203403930",
+        "CNINFO:000921:ANN:20170330:1203223381"
+      ]
+    },
+    {
+      "path_id": "IUP:CN:000333:2",
+      "status": "CANDIDATE_TO_VERIFY",
+      "industry_regime": "Official cutoff context: The common environment was not a uniform white-goods volume path: category mix and capacity/utilisation exposure could differ before any company-specific conclusion is drawn.; A growing aggregate profit pool can coexist with absorption/friction risk; the future industry thesis must distinguish aggregate accounting growth from company-level sell-through, inventory and cash conversion.; The demand/channel backdrop was supportive in aggregate but channel migration could distribute its benefit unequally across companies and categories.; The category-specific label regime can affect the product/mix and channel questions that must be verified at company level, but the published catalogue alone does not measure a company's costs, product mix or customer response.",
+      "industry_force": "Replacement-oriented refrigeration and washing demand is mediated by product freshness, channel/service execution, manufacturing cost and broader portfolio perimeter.",
+      "profit_pool_effect": "REQUIRES_COMPANY_TRANSMISSION_VERIFICATION",
+      "company_exposure": "The registered FY2016–FY2017 issuer packets identify room air conditioning, refrigeration/washing and a multi-category channel/supply-chain boundary; acquisition and group-perimeter effects remain a required competing explanation.",
+      "adaptation_hypothesis": "Broad retail growth does not settle category or channel capture at a multi-business issuer.",
+      "economics_implication": "Verify whether Category mix, product-cycle fit, service/logistics performance, cost and reinvestment requirements. changes normalized earnings, capital needs, and owner-cash conversion at the company's responsibility boundary.",
+      "permanent_loss_implication": "A consolidated issuer's reported movement may reflect multi-business scope or acquisition/perimeter changes rather than a common white-goods mechanism.",
+      "reversal_observations": [
+        "Which product/category, channel, realised-price or mix, unit-cost and working-capital fields show whether the official common environment enters this issuer's normal earnings and owner-cash path?",
+        "Can the company product arena and responsibility boundary be held constant across the relevant period, especially for diversified or globally consolidated issuers?"
+      ],
+      "evidence_refs": [
+        "CNINFO:000333:ANN:20180330:1204557296",
+        "CNINFO:600690:ANN:20180426:1204797433",
+        "CNINFO:000921:ANN:20180330:1204544098"
+      ]
+    },
+    {
+      "path_id": "IUP:CN:000333:3",
+      "status": "CANDIDATE_TO_VERIFY",
+      "industry_regime": "Official cutoff context: The common environment was not a uniform white-goods volume path: category mix and capacity/utilisation exposure could differ before any company-specific conclusion is drawn.; A growing aggregate profit pool can coexist with absorption/friction risk; the future industry thesis must distinguish aggregate accounting growth from company-level sell-through, inventory and cash conversion.; The demand/channel backdrop was supportive in aggregate but channel migration could distribute its benefit unequally across companies and categories.; The category-specific label regime can affect the product/mix and channel questions that must be verified at company level, but the published catalogue alone does not measure a company's costs, product mix or customer response.",
+      "industry_force": "Multi-category product, channel, service and consolidation boundaries can alter consolidated profit and cash independently of any single appliance category.",
+      "profit_pool_effect": "BOUNDARY_QUALIFIED",
+      "company_exposure": "The registered FY2016–FY2017 issuer packets identify room air conditioning, refrigeration/washing and a multi-category channel/supply-chain boundary; acquisition and group-perimeter effects remain a required competing explanation.",
+      "adaptation_hypothesis": "Broad retail growth does not settle category or channel capture at a multi-business issuer.",
+      "economics_implication": "Verify whether Comparable responsibility boundary before inferring normal earnings, capital needs or owner-cash transmission. changes normalized earnings, capital needs, and owner-cash conversion at the company's responsibility boundary.",
+      "permanent_loss_implication": "Group cash, revenue or margin can be misattributed to a white-goods category without a product/perimeter bridge.",
+      "reversal_observations": [
+        "Which product/category, channel, realised-price or mix, unit-cost and working-capital fields show whether the official common environment enters this issuer's normal earnings and owner-cash path?",
+        "Can the company product arena and responsibility boundary be held constant across the relevant period, especially for diversified or globally consolidated issuers?"
+      ],
+      "evidence_refs": [
+        "CNINFO:000333:ANN:20180330:1204557296",
+        "CNINFO:600690:ANN:20180426:1204797433"
+      ]
+    },
+    {
+      "path_id": "IUP:CN:000333:4",
+      "status": "CANDIDATE_TO_VERIFY",
+      "industry_regime": "Official cutoff context: The common environment was not a uniform white-goods volume path: category mix and capacity/utilisation exposure could differ before any company-specific conclusion is drawn.; A growing aggregate profit pool can coexist with absorption/friction risk; the future industry thesis must distinguish aggregate accounting growth from company-level sell-through, inventory and cash conversion.; The demand/channel backdrop was supportive in aggregate but channel migration could distribute its benefit unequally across companies and categories.; The category-specific label regime can affect the product/mix and channel questions that must be verified at company level, but the published catalogue alone does not measure a company's costs, product mix or customer response.",
+      "industry_force": "Broad retail, category production and aggregate profitability enter companies through different product portfolios, channels, service systems, cost/inventory positions and responsibility boundaries.",
+      "profit_pool_effect": "REQUIRES_COMPANY_TRANSMISSION_VERIFICATION",
+      "company_exposure": "The registered FY2016–FY2017 issuer packets identify room air conditioning, refrigeration/washing and a multi-category channel/supply-chain boundary; acquisition and group-perimeter effects remain a required competing explanation.",
+      "adaptation_hypothesis": "Broad retail growth does not settle category or channel capture at a multi-business issuer.",
+      "economics_implication": "Verify whether A source-backed research agenda for company-specific demand, price/mix, cost, working-capital, capital and owner-cash verification. changes normalized earnings, capital needs, and owner-cash conversion at the company's responsibility boundary.",
+      "permanent_loss_implication": "A same-period, same-product and same-responsibility-boundary company bridge establishes the required transmission.",
+      "reversal_observations": [
+        "Which product/category, channel, realised-price or mix, unit-cost and working-capital fields show whether the official common environment enters this issuer's normal earnings and owner-cash path?",
+        "Can the company product arena and responsibility boundary be held constant across the relevant period, especially for diversified or globally consolidated issuers?"
+      ],
+      "evidence_refs": [
+        "INDCTXOBS:CN:APPLIANCE:2018_1_9_PRODUCTION",
+        "INDCTXOBS:CN:APPLIANCE:2018_1_9_SALES_RATE_AND_PROFIT_POOL",
+        "INDCTXOBS:CN:APPLIANCE:2018_1_11_RETAIL_AND_ONLINE"
+      ]
+    }
+  ],
+  "strongest_counter_thesis": {
+    "statement": "Industry production, retail, revenue or profit growth may coexist with weak company sell-through, channel absorption, cash conversion or product-boundary comparability.",
+    "why_plausible": "This competing explanation is explicitly preserved by an input block, mechanism card, or arena failure mode; it is not dismissed by peer count.",
+    "discriminating_observations": [
+      "Which product/category, channel, realised-price or mix, unit-cost and working-capital fields show whether the official common environment enters this issuer's normal earnings and owner-cash path?",
+      "Can the company product arena and responsibility boundary be held constant across the relevant period, especially for diversified or globally consolidated issuers?"
+    ],
+    "evidence_refs": [
+      "INDCTXOBS:CN:APPLIANCE:2018_1_9_PRODUCTION",
+      "INDCTXOBS:CN:APPLIANCE:2018_1_9_SALES_RATE_AND_PROFIT_POOL",
+      "INDCTXOBS:CN:APPLIANCE:2018_1_11_RETAIL_AND_ONLINE"
+    ],
+    "source_object_ref": "docs/development/research/industry_learning_blocks/CN_APPLIANCE_2017_2018/05_industry_learning_block_v1.json"
+  },
+  "company_verification_fields": [
+    {
+      "field": "Which product/category, channel, realised-price or mix, unit-cost and working-capital fields show whether the official common environment enters this issuer's normal earnings and owner-cash path?",
+      "kind": "QUESTION",
+      "why_it_matters": "Without a same-boundary bridge, industry context cannot change normal earnings, owner cash, permanent-loss or valuation treatment.",
+      "evidence_refs": [
+        "INDCTXOBS:CN:APPLIANCE:2018_1_9_SALES_RATE_AND_PROFIT_POOL"
+      ],
+      "source_object_ref": "docs/development/research/industry_learning_blocks/CN_APPLIANCE_2017_2018/05_industry_learning_block_v1.json"
+    },
+    {
+      "field": "Can the company product arena and responsibility boundary be held constant across the relevant period, especially for diversified or globally consolidated issuers?",
+      "kind": "QUESTION",
+      "why_it_matters": "A scope break can turn group movement into a false company or industry transmission signal.",
+      "evidence_refs": [
+        "CNINFO:000333:ANN:20180330:1204557296",
+        "CNINFO:600690:ANN:20180426:1204797433"
+      ],
+      "source_object_ref": "docs/development/research/industry_learning_blocks/CN_APPLIANCE_2017_2018/05_industry_learning_block_v1.json"
+    }
+  ],
+  "evidence_refs": [
+    {
+      "evidence_ref": "INDCTXOBS:CN:APPLIANCE:2018_1_9_PRODUCTION",
+      "source_object_refs": [
+        "docs/development/research/industry_learning_blocks/CN_APPLIANCE_2017_2018/03_official_industry_context_observations_v1.json",
+        "docs/development/research/industry_learning_blocks/CN_APPLIANCE_2017_2018/05_industry_learning_block_v1.json"
+      ],
+      "supports": [
+        "OFFICIAL_INDUSTRY_SUPPLY",
+        "CONDITIONAL_MECHANISM"
+      ],
+      "knowledge_status": "OFFICIAL_CONTEXT_OBSERVATION"
+    },
+    {
+      "evidence_ref": "INDCTXOBS:CN:APPLIANCE:2018_1_9_SALES_RATE_AND_PROFIT_POOL",
+      "source_object_refs": [
+        "docs/development/research/industry_learning_blocks/CN_APPLIANCE_2017_2018/03_official_industry_context_observations_v1.json",
+        "docs/development/research/industry_learning_blocks/CN_APPLIANCE_2017_2018/05_industry_learning_block_v1.json"
+      ],
+      "supports": [
+        "OFFICIAL_INDUSTRY_COMPETITION",
+        "CONDITIONAL_MECHANISM"
+      ],
+      "knowledge_status": "OFFICIAL_CONTEXT_OBSERVATION"
+    },
+    {
+      "evidence_ref": "INDCTXOBS:CN:APPLIANCE:2018_1_11_RETAIL_AND_ONLINE",
+      "source_object_refs": [
+        "docs/development/research/industry_learning_blocks/CN_APPLIANCE_2017_2018/03_official_industry_context_observations_v1.json",
+        "docs/development/research/industry_learning_blocks/CN_APPLIANCE_2017_2018/05_industry_learning_block_v1.json"
+      ],
+      "supports": [
+        "OFFICIAL_INDUSTRY_DEMAND",
+        "CONDITIONAL_MECHANISM"
+      ],
+      "knowledge_status": "OFFICIAL_CONTEXT_OBSERVATION"
+    },
+    {
+      "evidence_ref": "INDCTXOBS:CN:APPLIANCE:ENERGY_LABEL_REGIME",
+      "source_object_refs": [
+        "docs/development/research/industry_learning_blocks/CN_APPLIANCE_2017_2018/03_official_industry_context_observations_v1.json"
+      ],
+      "supports": [
+        "OFFICIAL_INDUSTRY_REGULATION"
+      ],
+      "knowledge_status": "OFFICIAL_CONTEXT_OBSERVATION"
+    },
+    {
+      "evidence_ref": "CNINFO:000651:ANN:20170427:1203403930",
+      "source_object_refs": [
+        "docs/development/research/industry_learning_blocks/CN_APPLIANCE_2017_2018/05_industry_learning_block_v1.json"
+      ],
+      "supports": [
+        "STRUCTURAL_EPOCH",
+        "INDUSTRY_VALUE_CHAIN",
+        "COMPANY_ARCHETYPE_OR_PEER"
+      ],
+      "knowledge_status": "SOURCE_POINTER"
+    },
+    {
+      "evidence_ref": "CNINFO:000333:ANN:20170330:1203240657",
+      "source_object_refs": [
+        "docs/development/research/industry_learning_blocks/CN_APPLIANCE_2017_2018/05_industry_learning_block_v1.json"
+      ],
+      "supports": [
+        "STRUCTURAL_EPOCH",
+        "COMPANY_ARCHETYPE_OR_PEER"
+      ],
+      "knowledge_status": "SOURCE_POINTER"
+    },
+    {
+      "evidence_ref": "CNINFO:600690:ANN:20170429:1203428901",
+      "source_object_refs": [
+        "docs/development/research/industry_learning_blocks/CN_APPLIANCE_2017_2018/05_industry_learning_block_v1.json"
+      ],
+      "supports": [
+        "STRUCTURAL_EPOCH",
+        "COMPANY_ARCHETYPE_OR_PEER"
+      ],
+      "knowledge_status": "SOURCE_POINTER"
+    },
+    {
+      "evidence_ref": "CNINFO:000921:ANN:20170330:1203223381",
+      "source_object_refs": [
+        "docs/development/research/industry_learning_blocks/CN_APPLIANCE_2017_2018/05_industry_learning_block_v1.json"
+      ],
+      "supports": [
+        "STRUCTURAL_EPOCH",
+        "INDUSTRY_VALUE_CHAIN",
+        "COMPANY_ARCHETYPE_OR_PEER"
+      ],
+      "knowledge_status": "SOURCE_POINTER"
+    },
+    {
+      "evidence_ref": "CNINFO:000333:ANN:20180330:1204557296",
+      "source_object_refs": [
+        "docs/development/research/industry_learning_blocks/CN_APPLIANCE_2017_2018/05_industry_learning_block_v1.json"
+      ],
+      "supports": [
+        "STRUCTURAL_EPOCH",
+        "INDUSTRY_VALUE_CHAIN",
+        "COMPANY_ARCHETYPE_OR_PEER"
+      ],
+      "knowledge_status": "SOURCE_POINTER"
+    },
+    {
+      "evidence_ref": "CNINFO:600690:ANN:20180426:1204797433",
+      "source_object_refs": [
+        "docs/development/research/industry_learning_blocks/CN_APPLIANCE_2017_2018/05_industry_learning_block_v1.json"
+      ],
+      "supports": [
+        "STRUCTURAL_EPOCH",
+        "INDUSTRY_VALUE_CHAIN",
+        "COMPANY_ARCHETYPE_OR_PEER"
+      ],
+      "knowledge_status": "SOURCE_POINTER"
+    },
+    {
+      "evidence_ref": "CNINFO:000921:ANN:20180330:1204544098",
+      "source_object_refs": [
+        "docs/development/research/industry_learning_blocks/CN_APPLIANCE_2017_2018/05_industry_learning_block_v1.json"
+      ],
+      "supports": [
+        "STRUCTURAL_EPOCH",
+        "INDUSTRY_VALUE_CHAIN",
+        "COMPANY_ARCHETYPE_OR_PEER"
+      ],
+      "knowledge_status": "SOURCE_POINTER"
+    }
+  ],
+  "knowledge_time": {
+    "cutoff_at": "2018-12-31T23:59:59+08:00",
+    "latest_included_at": "2018-12-31T15:59:59+00:00",
+    "excluded_future_source_refs": [],
+    "undated_source_refs": []
+  },
+  "source_objects": [
+    {
+      "kind": "OFFICIAL_INDUSTRY_OBSERVATION",
+      "ref": "docs/development/research/industry_learning_blocks/CN_APPLIANCE_2017_2018/03_official_industry_context_observations_v1.json",
+      "schema_version": "official-industry-context-observation-ledger.v1",
+      "use_status": "INCLUDED",
+      "boundary": "Official observations supply cutoff-safe industry context only; they do not establish a target-company fact."
+    },
+    {
+      "kind": "INDUSTRY_LEARNING_BLOCK",
+      "ref": "docs/development/research/industry_learning_blocks/CN_APPLIANCE_2017_2018/05_industry_learning_block_v1.json",
+      "schema_version": "industry-learning-block.v1",
+      "use_status": "INCLUDED",
+      "boundary": "Referenced source object remains canonical; this context is only a projection."
+    },
+    {
+      "kind": "COMPANY_COMPETITIVE_ARENA",
+      "ref": "INLINE:COMPANY_COMPETITIVE_ARENA",
+      "schema_version": "UNSPECIFIED",
+      "use_status": "NOT_SUPPLIED",
+      "boundary": "Company arena supplies exposure and comparison scope; it is not an industry fact store."
+    },
+    {
+      "kind": "INDUSTRY_KNOWLEDGE_CONTEXT",
+      "ref": "scripts/industry_knowledge.py:read_industry_knowledge_context",
+      "schema_version": "industry-knowledge-context.v1",
+      "use_status": "EXCLUDED_BY_PIT_BOUNDARY",
+      "boundary": "Historical use requires an explicitly supplied object-level admitted context."
+    }
+  ],
+  "coverage": {
+    "available": [
+      "industry_value_chain",
+      "customer_jobs",
+      "structural_epochs",
+      "demand_drivers",
+      "supply_drivers",
+      "competition_drivers",
+      "regulation_drivers",
+      "profit_pool_direction",
+      "company_archetype_exposure",
+      "representative_peers",
+      "candidate_main_paths",
+      "strongest_counter_thesis",
+      "company_verification_fields",
+      "evidence_references"
+    ],
+    "bounded": []
+  },
+  "warnings": [
+    "current_industry_knowledge_not_loaded_in_pit_mode"
+  ]
+}

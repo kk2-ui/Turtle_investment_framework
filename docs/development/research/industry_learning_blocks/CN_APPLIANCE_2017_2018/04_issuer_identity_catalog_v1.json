@@ -1,0 +1,48 @@
+{
+  "schema_version": "issuer-identity-catalog.v1",
+  "catalog_id": "ISSUER_IDENTITY:CN:APPLIANCE:2018-12-31:V1",
+  "industry_id": "CN_APPLIANCE_CONSUMER_DURABLES",
+  "cutoff_at": "2018-12-31T23:59:59+08:00",
+  "entries": [
+    {
+      "company_id": "CN:000333",
+      "security_code": "000333",
+      "issuer_legal_name": "美的集团股份有限公司",
+      "exact_name_quote": "美的集团股份有限公司",
+      "source_id": "CNINFO:000333:ANN:20160326:1202084987",
+      "publication_date": "2016-03-26",
+      "pdf_page_ref": "PDF p.1 cover; PDF p.8 securities information",
+      "aliases": ["美的集团", "MIDEA GROUP CO.,LTD."]
+    },
+    {
+      "company_id": "CN:000651",
+      "security_code": "000651",
+      "issuer_legal_name": "珠海格力电器股份有限公司",
+      "exact_name_quote": "珠海格力电器股份有限公司",
+      "source_id": "CNINFO:000651:ANN:20170427:1203403930",
+      "publication_date": "2017-04-27",
+      "pdf_page_ref": "PDF p.1 cover; PDF p.5 securities information",
+      "aliases": ["格力电器", "GREE ELECTRIC APPLIANCES, INC. OF ZHUHAI", "GREE"]
+    },
+    {
+      "company_id": "CN:600690",
+      "security_code": "600690",
+      "issuer_legal_name": "青岛海尔股份有限公司",
+      "exact_name_quote": "青岛海尔股份有限公司",
+      "source_id": "CNINFO:600690:ANN:20180426:1204797433",
+      "publication_date": "2018-04-26",
+      "pdf_page_ref": "PDF p.1 cover/header; PDF p.6 securities information",
+      "aliases": ["青岛海尔", "QINGDAO HAIER CO.,LTD.", "HAIER"]
+    },
+    {
+      "company_id": "CN:000921",
+      "security_code": "000921",
+      "issuer_legal_name": "海信科龙电器股份有限公司",
+      "exact_name_quote": "海信科龙电器股份有限公司",
+      "source_id": "CNINFO:000921:ANN:20170330:1203223381",
+      "publication_date": "2017-03-30",
+      "pdf_page_ref": "PDF p.1 cover; PDF p.5 securities information",
+      "aliases": ["海信科龙", "Hisense Kelon Electrical Holdings Co.,Ltd", "Hisense Kelon"]
+    }
+  ]
+}

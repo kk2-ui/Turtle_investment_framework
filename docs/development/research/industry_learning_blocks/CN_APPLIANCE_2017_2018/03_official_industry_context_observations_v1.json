@@ -1,0 +1,102 @@
+{
+  "schema_version": "official-industry-context-observation-ledger.v1",
+  "ledger_id": "INDCTXLEDGER:CN:APPLIANCE:2018-12-31:V1",
+  "industry_id": "CN_APPLIANCE_CONSUMER_DURABLES",
+  "cutoff_at": "2018-12-31T23:59:59+08:00",
+  "source_package_ref": "02_official_industry_context_source_package_v1.json",
+  "use_policy": "CONTEXT_ONLY",
+  "observations": [
+    {
+      "observation_id": "INDCTXOBS:CN:APPLIANCE:2018_1_9_PRODUCTION",
+      "use_policy": "CONTEXT_ONLY",
+      "driver_type": "supply",
+      "metric_definition": "National cumulative production of room air conditioners, refrigerators and washing machines for January–September 2018, as reported by MIIT from National Bureau of Statistics data.",
+      "period": "2018-01-01 to 2018-09-30",
+      "value": "Room air conditioners 160.114 million units (+12.9% YoY); refrigerators 60.167 million (+2.1%); washing machines 51.471 million (+0.7%).",
+      "statement": "The industry entered late 2018 with materially faster room-air-conditioner production than refrigerator and washing-machine production.",
+      "economic_interpretation": "The common environment was not a uniform white-goods volume path: category mix and capacity/utilisation exposure could differ before any company-specific conclusion is drawn.",
+      "profit_pool_effect": "Higher room-air-conditioner production can support system throughput, but it does not by itself establish domestic sell-out, pricing power or issuer margin capture.",
+      "permitted_inference": "Use only to test whether a company's product/category exposure plausibly differed from the aggregate white-goods production backdrop.",
+      "prohibited_inference": ["company_shipments", "company_sell_out", "company_inventory", "company_market_share", "company_price_realization", "company_owner_cash"],
+      "source_locators": [
+        {
+          "source_id": "INDCTX:MIIT:2018_1_9_APPLIANCE_OPERATION",
+          "locator": "raw/miit_2018_1_9_appliance_operation.html:83"
+        }
+      ]
+    },
+    {
+      "observation_id": "INDCTXOBS:CN:APPLIANCE:2018_1_9_SALES_RATE_AND_PROFIT_POOL",
+      "use_policy": "CONTEXT_ONLY",
+      "driver_type": "competition",
+      "metric_definition": "Aggregate home-appliance industry production-sales rate, export delivery value, operating revenue and profit for January–September 2018.",
+      "period": "2018-01-01 to 2018-09-30",
+      "value": "Production-sales rate 96.6% (-1.5 percentage points YoY); export delivery RMB295.92bn (+5.9%); industry revenue RMB1,110.82bn (+11.9%) and profit RMB87.95bn (+20.3%).",
+      "statement": "Aggregate appliance revenue and profit grew while the production-sales rate was below the prior-year level.",
+      "economic_interpretation": "A growing aggregate profit pool can coexist with absorption/friction risk; the future industry thesis must distinguish aggregate accounting growth from company-level sell-through, inventory and cash conversion.",
+      "profit_pool_effect": "Aggregate profitability was supportive, but a weaker production-sales rate preserves a rival explanation of uneven channel absorption or category/company divergence.",
+      "permitted_inference": "Use to require company-level evidence on how aggregate profit-pool conditions passed through product mix, channels, working capital and cash.",
+      "prohibited_inference": ["company_margin_causality", "company_inventory_change", "company_domestic_demand", "company_cash_conversion", "company_valuation"],
+      "source_locators": [
+        {
+          "source_id": "INDCTX:MIIT:2018_1_9_APPLIANCE_OPERATION",
+          "locator": "raw/miit_2018_1_9_appliance_operation.html:92,101"
+        }
+      ]
+    },
+    {
+      "observation_id": "INDCTXOBS:CN:APPLIANCE:2018_1_11_RETAIL_AND_ONLINE",
+      "use_policy": "CONTEXT_ONLY",
+      "driver_type": "demand",
+      "metric_definition": "Retail sales of household appliances and audio-visual equipment at above-designated-size units, and physical-goods online retail, January–November 2018.",
+      "period": "2018-01-01 to 2018-11-30",
+      "value": "Household appliances and audio-visual equipment retail RMB796.5bn (+8.3% YoY); physical-goods online retail RMB6,271.0bn (+25.4%), 18.2% of total retail sales.",
+      "quantity_provenance": [
+        {
+          "native_value": 7965,
+          "native_unit": "RMB_100M",
+          "normalized_value": 796.5,
+          "normalized_unit": "RMB_BN",
+          "native_locator": "raw/nbs_2018_11_retail.html: table '2018年11月份社会消费品零售总额主要数据', 家用电器和音像器材类累计值 7,965 亿元"
+        },
+        {
+          "native_value": 62710,
+          "native_unit": "RMB_100M",
+          "normalized_value": 6271.0,
+          "normalized_unit": "RMB_BN",
+          "native_locator": "raw/nbs_2018_11_retail.html:正文, 实物商品网上零售额 62,710 亿元"
+        }
+      ],
+      "statement": "Broad appliance retail was growing and online physical-goods retail expanded faster in the same period.",
+      "economic_interpretation": "The demand/channel backdrop was supportive in aggregate but channel migration could distribute its benefit unequally across companies and categories.",
+      "profit_pool_effect": "Broad retail growth does not settle product demand, company sell-out or price capture; it makes company-specific channel and category transmission a discriminating research question.",
+      "permitted_inference": "Use to compare a company's disclosed channel and category exposure against broad retail and online-channel context, not as company demand evidence.",
+      "prohibited_inference": ["appliance_unit_demand", "company_sell_out", "company_market_share", "company_price_realization", "company_profitability", "company_owner_cash"],
+      "source_locators": [
+        {
+          "source_id": "INDCTX:NBS:2018_11_RETAIL",
+          "locator": "raw/nbs_2018_11_retail.html:275/table '2018年11月份社会消费品零售总额主要数据'"
+        }
+      ]
+    },
+    {
+      "observation_id": "INDCTXOBS:CN:APPLIANCE:ENERGY_LABEL_REGIME",
+      "use_policy": "CONTEXT_ONLY",
+      "driver_type": "regulation",
+      "metric_definition": "The 2016 national energy-efficiency-label product catalogue and implementation rules covering named household-appliance categories.",
+      "period": "2016 catalogue announced on 2016-06-24; the announcement states the listed refrigerator, room-air-conditioner and washing-machine rules take effect on 2016-10-01.",
+      "value": "The 2016 product catalogue and implementation rules include household refrigerators, room air conditioners and electric washing machines, among other categories.",
+      "statement": "The Pack's principal household-appliance categories were within a common energy-efficiency-label product regime before the Pack cutoff.",
+      "economic_interpretation": "The category-specific label regime can affect the product/mix and channel questions that must be verified at company level, but the published catalogue alone does not measure a company's costs, product mix or customer response.",
+      "profit_pool_effect": "The regulation is a common product constraint and a source of possible differentiation, not evidence that any issuer captured a margin or demand advantage.",
+      "permitted_inference": "Require target-company verification of the relevant product scope, compliance, mix and economics when a company thesis relies on efficiency positioning.",
+      "prohibited_inference": ["company_compliance", "company_product_mix", "company_price_realization", "company_margin_causality", "company_market_share", "company_owner_cash"],
+      "source_locators": [
+        {
+          "source_id": "INDCTX:NDRC:2016_ENERGY_EFFICIENCY_LABEL_CATALOG",
+          "locator": "raw/ndrc_2016_energy_efficiency_label_catalog.html: announcement body and attachments 3–5; 2016-10-01 implementation paragraph"
+        }
+      ]
+    }
+  ]
+}

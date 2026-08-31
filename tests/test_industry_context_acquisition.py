@@ -182,3 +182,48 @@ def test_observation_ledger_rejects_missing_raw_file_and_industry_mismatch(tmp_p
     assert result["state"] == "INVALID"
     assert "source_package_industry_mismatch" in result["invalid_findings"]
     assert "INDDOC:NBS:TEST:2025:raw_source_file_missing" in result["invalid_findings"]
+
+
+def test_observation_ledger_rejects_wrong_yi_yuan_to_rmb_bn_conversion(tmp_path) -> None:
+    catalog = _catalog()
+    source_package = materialize_official_context_package(
+        catalog, tmp_path, downloader=lambda url: (b"official original", url),
+    )
+    ledger = {
+        "schema_version": OBSERVATION_SCHEMA_VERSION,
+        "ledger_id": "INDOBS:CN:TEST:UNIT:V1",
+        "industry_id": "INDUSTRY:CN:TEST",
+        "cutoff_at": "2026-08-03T18:00:00+08:00",
+        "source_package_ref": "source-package.json",
+        "use_policy": "CONTEXT_ONLY",
+        "observations": [{
+            "observation_id": "INDCTX:NBS:TEST:UNIT",
+            "use_policy": "CONTEXT_ONLY",
+            "driver_type": "demand",
+            "metric_definition": "Official retail observation.",
+            "period": {"end": "2025-12-31"},
+            "value": "RMB796.5bn",
+            "quantity_provenance": [{
+                "native_value": 7965,
+                "native_unit": "RMB_100M",
+                "normalized_value": 796.5,
+                "normalized_unit": "RMB_BN",
+                "native_locator": "Official table row",
+            }],
+            "statement": "Official retail observation.",
+            "economic_interpretation": "Demand context only.",
+            "profit_pool_effect": "CONTEXT_ONLY",
+            "source_locators": [{"source_id": "INDDOC:NBS:TEST:2025", "locator": "Official table row"}],
+            "permitted_inference": "Context only.",
+            "prohibited_inference": ["Company demand"],
+        }],
+    }
+    assert validate_official_context_observation_ledger(
+        ledger, source_package, package_root=tmp_path,
+    )["state"] == "REVIEWABLE_CONTEXT_ONLY"
+    ledger["observations"][0]["quantity_provenance"][0]["normalized_value"] = 79.65
+    result = validate_official_context_observation_ledger(
+        ledger, source_package, package_root=tmp_path,
+    )
+    assert result["state"] == "INVALID"
+    assert "INDCTX:NBS:TEST:UNIT:quantity_provenance[0]_conversion_mismatch" in result["invalid_findings"]

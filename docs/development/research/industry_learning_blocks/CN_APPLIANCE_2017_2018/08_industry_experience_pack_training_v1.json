@@ -1,0 +1,205 @@
+{
+  "schema_version": "industry-experience-pack.v1",
+  "pack_id": "IEP:CN:APPLIANCE_CONSUMER_DURABLES:2017_2018:TRAINING:V1",
+  "industry_id": "CN_APPLIANCE_CONSUMER_DURABLES",
+  "version": 3,
+  "state": "TRAINING_READY",
+  "knowledge_cutoff_at": "2018-12-31T23:59:59+08:00",
+  "source_objects": [
+    {
+      "kind": "INDUSTRY_LEARNING_BLOCK",
+      "object_id": "ILB:CN:APPLIANCE_CONSUMER_DURABLES:2017_2018:V1",
+      "ref": "docs/development/research/industry_learning_blocks/CN_APPLIANCE_2017_2018/05_industry_learning_block_v1.json",
+      "available_at": "2018-09-30T23:59:59+08:00",
+      "knowledge_role": "CUTOFF_SAFE_PROJECTION",
+      "use_status": "INCLUDED"
+    },
+    {
+      "kind": "INDUSTRY_UNDERWRITING_CONTEXT",
+      "object_id": "IUC:CN:APPLIANCE:PACK:2018-12-31:V1",
+      "ref": "docs/development/research/industry_learning_blocks/CN_APPLIANCE_2017_2018/06_industry_underwriting_context_v1.json",
+      "available_at": "2018-12-31T23:59:59+08:00",
+      "knowledge_role": "CUTOFF_SAFE_PROJECTION",
+      "use_status": "INCLUDED"
+    },
+    {
+      "kind": "OFFICIAL_INDUSTRY_OBSERVATION",
+      "object_id": "INDCTXLEDGER:CN:APPLIANCE:2018-12-31:V1",
+      "ref": "docs/development/research/industry_learning_blocks/CN_APPLIANCE_2017_2018/03_official_industry_context_observations_v1.json",
+      "available_at": "2018-12-14T10:00:00+08:00",
+      "knowledge_role": "CUTOFF_SAFE_EVIDENCE",
+      "use_status": "INCLUDED"
+    },
+    {
+      "kind": "ISSUER_IDENTITY_CATALOG",
+      "object_id": "ISSUER_IDENTITY:CN:APPLIANCE:2018-12-31:V1",
+      "ref": "docs/development/research/industry_learning_blocks/CN_APPLIANCE_2017_2018/04_issuer_identity_catalog_v1.json",
+      "available_at": "2018-04-26T00:00:00+08:00",
+      "knowledge_role": "CUTOFF_SAFE_EVIDENCE",
+      "use_status": "INCLUDED"
+    },
+    {
+      "kind": "WORKED_CASE",
+      "object_id": "APPLIANCE:SHARED_CONTEXT:COMPANY_PROJECTION:2018-12-31:V1",
+      "ref": "docs/development/research/industry_learning_blocks/CN_APPLIANCE_2017_2018/07_shared_shock_company_projection_v1.json",
+      "available_at": "2018-12-31T23:59:59+08:00",
+      "knowledge_role": "CUTOFF_SAFE_PROJECTION",
+      "use_status": "INCLUDED"
+    },
+    {
+      "kind": "NEAR_MISS_OR_FAILURE",
+      "object_id": "APPLIANCE:SOURCE_COVERAGE_AND_COMPARABILITY_NEAR_MISS:V1",
+      "ref": "docs/development/research/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_PACK_SEED_SOURCE_AUDIT.md",
+      "available_at": "2026-09-01T00:00:00+08:00",
+      "knowledge_role": "REPLAY_AUDIT_ONLY",
+      "use_status": "BOUNDARY_ONLY"
+    }
+  ],
+  "current_synthesis": {
+    "central_industry_path": "截至 2018-12-31，官方共同环境记录到：家电广义零售与实物网上零售增长、房间空调产量增速高于冰箱和洗衣机、行业收入和利润增长但产销率低于上年。它只支持‘类别、渠道与吸收存在分化可能’的研究主路径，不能支持任何单家公司已经实现销量、价格、现金或竞争优势的结论。",
+    "strongest_rival": "共同环境的表观增长可能主要反映合计口径、出口、类别组合或渠道迁移，而不代表任何一家公司在国内卖出、实现价格、库存质量、资本效率或 owner cash 的改善。",
+    "profit_pool_transmission": "广义需求、类别供给、行业产销率、合计利润池和能效标签约束，先通过不同的产品组合、渠道/安装/服务系统、成本与库存位置以及合并责任边界进入公司。只有同产品、同期间、同责任边界的销量、价格/组合、成本、营运资本和资本桥，才能把它们升级为正常盈利、owner cash 或永久损失判断。",
+    "scope_conditions": [
+      "[[CN:000651|格力电器]]仅作为房间空调—渠道—部件—制造系统的研究边界；共同产量数据不是该公司的 sell-out、库存或现金事实。",
+      "[[CN:000333|美的集团]]的多类别和并购/集团边界、[[CN:600690|青岛海尔]]的全球并购/融资边界、[[CN:000921|海信科龙]]的产品—成本—库存边界，必须各自建立同责任口径，不能横向替代。",
+      "能效标签目录是共同产品约束，只要求对相关产品范围、合规、成本和渠道执行复核，不推定任何公司的合规成本或溢价。"
+    ],
+    "break_conditions": [
+      "公司同口径披露显示类别或渠道暴露与官方共同环境不一致，或全国聚合口径无法进入其目标产品市场。",
+      "产销率变化由出口、季节性、会计口径或库存挪移解释，不能作为公司需求或现金传导证据。",
+      "并购、合并范围、融资或产品边界使跨期盈利、营运资本和资本开支不可比。",
+      "公司验证发现实现价格、单位成本、客户吸收或现金回收与候选主路径相反。"
+    ],
+    "source_refs": [
+      "docs/development/research/industry_learning_blocks/CN_APPLIANCE_2017_2018/03_official_industry_context_observations_v1.json",
+      "docs/development/research/industry_learning_blocks/CN_APPLIANCE_2017_2018/05_industry_learning_block_v1.json",
+      "docs/development/research/industry_learning_blocks/CN_APPLIANCE_2017_2018/06_industry_underwriting_context_v1.json",
+      "docs/development/research/industry_learning_blocks/CN_APPLIANCE_2017_2018/07_shared_shock_company_projection_v1.json"
+    ],
+    "evidence_ceiling": "TRAINING_CONTEXT"
+  },
+  "role_coverage": {
+    "company_paths": [
+      {
+        "company_id": "CN:000651",
+        "archetype_id": "ARCHETYPE:ROOM_AC_CHANNEL_COMPONENT_MANUFACTURING_SYSTEM",
+        "roles": ["CENTRAL", "SHARED_SHOCK_DIVERGENCE"],
+        "source_refs": [
+          "docs/development/research/industry_learning_blocks/CN_APPLIANCE_2017_2018/05_industry_learning_block_v1.json",
+          "docs/development/research/industry_learning_blocks/CN_APPLIANCE_2017_2018/07_shared_shock_company_projection_v1.json"
+        ]
+      },
+      {
+        "company_id": "CN:000333",
+        "archetype_id": "ARCHETYPE:MULTI_CATEGORY_CHANNEL_AND_SUPPLY_CHAIN_SYSTEM",
+        "roles": ["HETEROGENEOUS", "SHARED_SHOCK_DIVERGENCE"],
+        "source_refs": [
+          "docs/development/research/industry_learning_blocks/CN_APPLIANCE_2017_2018/05_industry_learning_block_v1.json",
+          "docs/development/research/industry_learning_blocks/CN_APPLIANCE_2017_2018/07_shared_shock_company_projection_v1.json"
+        ]
+      },
+      {
+        "company_id": "CN:600690",
+        "archetype_id": "ARCHETYPE:REFRIGERATION_WASHING_SERVICE_AND_LOGISTICS_SYSTEM",
+        "roles": ["HETEROGENEOUS", "SHARED_SHOCK_DIVERGENCE"],
+        "source_refs": [
+          "docs/development/research/industry_learning_blocks/CN_APPLIANCE_2017_2018/05_industry_learning_block_v1.json",
+          "docs/development/research/industry_learning_blocks/CN_APPLIANCE_2017_2018/07_shared_shock_company_projection_v1.json"
+        ]
+      },
+      {
+        "company_id": "CN:000921",
+        "archetype_id": "ARCHETYPE:DUAL_WHITE_GOODS_PRODUCT_COST_AND_INVENTORY_SYSTEM",
+        "roles": ["FAILURE_OR_NEAR_MISS", "SHARED_SHOCK_DIVERGENCE"],
+        "source_refs": [
+          "docs/development/research/industry_learning_blocks/CN_APPLIANCE_2017_2018/05_industry_learning_block_v1.json",
+          "docs/development/research/industry_learning_blocks/CN_APPLIANCE_2017_2018/07_shared_shock_company_projection_v1.json"
+        ]
+      }
+    ],
+    "structural_epochs": [
+      {
+        "epoch_id": "EPOCH:CN:APPLIANCE:FY2016_DISCLOSURE:C1",
+        "cutoff_at": "2017-04-30T23:59:59+08:00",
+        "source_refs": [
+          "docs/development/research/industry_learning_blocks/CN_APPLIANCE_2017_2018/05_industry_learning_block_v1.json",
+          "docs/development/research/industry_learning_blocks/CN_APPLIANCE_2017_2018/07_shared_shock_company_projection_v1.json"
+        ]
+      },
+      {
+        "epoch_id": "EPOCH:CN:APPLIANCE:FY2017_DISCLOSURE:C2",
+        "cutoff_at": "2018-09-30T23:59:59+08:00",
+        "source_refs": [
+          "docs/development/research/industry_learning_blocks/CN_APPLIANCE_2017_2018/03_official_industry_context_observations_v1.json",
+          "docs/development/research/industry_learning_blocks/CN_APPLIANCE_2017_2018/07_shared_shock_company_projection_v1.json"
+        ]
+      }
+    ],
+    "shared_shock_comparisons": [
+      {
+        "shock": "共同环境为 2018 年前三季度房间空调产量增速高于冰箱和洗衣机、行业合计收入与利润增长而产销率低于上年，以及截至 11 月的广义家电零售和实物网上零售增长；能效标签目录构成共同产品约束。",
+        "company_ids": ["CN:000651", "CN:000333", "CN:600690", "CN:000921"],
+        "discriminator": "[[CN:000651|格力电器]]需要以房间空调、渠道、部件、制造和现金桥判断共同供给环境；[[CN:000333|美的集团]]需要拆除多类别、渠道/供应链及并购 perimeter；[[CN:600690|青岛海尔]]需要拆除制冷/洗护、服务物流以及全球收购融资 boundary；[[CN:000921|海信科龙]]保留产品、成本、库存与未验证融资传导的近失配。相同环境因此产生不同的必验问题，而不是可互相填充的公司结果。",
+        "source_refs": [
+          "docs/development/research/industry_learning_blocks/CN_APPLIANCE_2017_2018/03_official_industry_context_observations_v1.json",
+          "docs/development/research/industry_learning_blocks/CN_APPLIANCE_2017_2018/05_industry_learning_block_v1.json",
+          "docs/development/research/industry_learning_blocks/CN_APPLIANCE_2017_2018/07_shared_shock_company_projection_v1.json"
+        ]
+      }
+    ]
+  },
+  "settlement_plan": {
+    "industry_claims": [
+      {
+        "claim_id": "IEP:APPLIANCE:COMMON_ENVIRONMENT_TRANSMISSION",
+        "claim": "截至 cutoff 的共同宏观、类别供给、行业产销率/利润池与标签环境，是否在后续仍能解释类别和渠道差异，而不是只是聚合统计或一次渠道迁移。",
+        "measurement_sources": [
+          "后续工信部、国家统计局或同等官方的类别产量、产销率、行业收入/利润与广义零售统计",
+          "官方能效标签产品目录或实施规则的更新",
+          "独立来源可复查的类别、区域和渠道边界变化"
+        ],
+        "unresolved_treatment": "若行业数据只能确认总量、不能区分类别/渠道传导，保留为共同环境而不升级为公司正常盈利、owner cash 或价值主张。"
+      }
+    ],
+    "company_transmission_claims": [
+      {
+        "claim_id": "IEP:APPLIANCE:COMPANY_BOUNDARY_DIVERGENCE",
+        "claim": "产品组合、渠道/服务系统、成本与库存位置、资本/融资和合并责任边界会使公司对同一行业环境出现不同的正常盈利、普通股现金与永久损失路径。",
+        "measurement_sources": [
+          "每一目标公司的同产品、同期间、同责任边界的销量/订单或 sell-out、实现价格或组合、单位成本、库存与应收应付字段",
+          "同边界的经营现金、维护/增长资本、受限现金、债务和股东可达现金桥",
+          "并购、合并范围、控制权和融资的 official perimeter bridge"
+        ],
+        "unresolved_treatment": "逐公司结算；缺同责任边界或现金/资本证据时保持条件性研究议程，绝不以任何 Pack 公司或行业平均数回填目标公司。"
+      }
+    ]
+  },
+  "transfer_reviews": [],
+  "next_sampling_decision": {
+    "question": "在一个未见、可复取证的家电公司，行业上下文能否在不增加公司事实或字数配额的情况下，让首稿更早提出正确的产品、渠道、现金、资本和责任边界必验问题，并改善最终的正常盈利、owner cash、永久损失和价值路线判断？",
+    "discriminator": "对同一 cutoff-safe 公司包，基础臂与行业经验臂只比较其取证计划、事实账本、首稿和裁决；行业经验臂必须把每个新增问题绑定到共同环境及目标公司的后续证据，不能把 [[CN:000651|格力电器]]、[[CN:000333|美的集团]]、[[CN:600690|青岛海尔]]或[[CN:000921|海信科龙]]的事实写入目标公司。",
+    "if_central_supported": "若行业经验臂在盲审中更早锁定并闭合可验证的公司传导/边界问题，且不以更多无关事实或更保守的默认结论取得优势，则把该增益登记为待复现的公司 holdout 证据。",
+    "if_rival_supported": "若额外上下文只增加泛泛行业段落、错配事实、保守偏置或未改善账本与行动判断，则保留共同环境为取证提示，不升级其训练权重。",
+    "unaffected_claims": [
+      "行业上下文不建立目标公司事实。",
+      "所有正常盈利、owner cash、永久损失和价值路线仍须由目标公司同责任边界证据和模型桥建立。",
+      "单次 replay、单家公司或事后结果不能证明自主报告能力。"
+    ],
+    "candidate_company_or_epoch_refs": [
+      "CN:APPLIANCE:UNSEEN_ISSUER@2018-12-31",
+      "REPORT_AUTONOMY_FIVE_PHASE:COMPANY_HOLDOUT:PRE_REGISTER_BEFORE_ARM_RUN",
+      "INDUSTRY:CN_APPLIANCE_CONSUMER_DURABLES@POST_2018_TIME_HOLDOUT"
+    ]
+  },
+  "revision": {
+    "prior_pack_ref": "NONE:INITIAL_APPLIANCE_PACK",
+    "revision_class": "INITIAL",
+    "change_summary": "Creates a cutoff-safe four-issuer appliance industry context pack from official common-environment observations and independently bound issuer identities. Its mechanical training readiness is not a transfer, report-quality, investment or valuation conclusion."
+  },
+  "boundary": {
+    "creates_fact_store": false,
+    "establishes_target_company_facts": false,
+    "grants_valuation_or_investment_authority": false,
+    "replay_proves_agent_capability": false
+  }
+}
