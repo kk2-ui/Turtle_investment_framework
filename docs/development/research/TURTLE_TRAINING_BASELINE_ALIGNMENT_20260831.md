@@ -21,6 +21,7 @@ Turtle 的唯一训练开发基线仍是干净的本地 `main`，不是若干课
 | Course 1 | `ENTERPRISE_UNDERWRITING_COURSE_1_20260829/14_COURSE_1_COMPLETION_AUDIT.md` | Worked case、blind replay 和完整 Episode 链可运行；局部未知不应中止公司承保 | 唯一认知隔离 A/B 为 `ENHANCED_WORSE`，不能称方法有效 |
 | Course 2B | `ENTERPRISE_UNDERWRITING_COURSE_2B_CN000672_20180430/15_COURSE_2B_COMPLETION_AUDIT.md` | 水泥 Pack 和未见公司公平 A/B 的负结果可约束后续合同：组件必须明确接入正常盈利、owner cash、融资、永久损失和价值路线 | `NO_MATERIAL_UTILITY`，不验证行业判断或迁移 |
 | Course 2C | `ENTERPRISE_UNDERWRITING_COURSE_2C_CN600720_20180430/10_COURSE2C_FINAL_UTILITY_REVIEW.md` | 在祁连山未见公司上，成熟核心、会计控制边界、生命周期 cohort 与资本责任的组件化传导改善了公司层处理 | 行业路径没有材料差异；单一正样本仅为 `TRANSFER_CANDIDATE`，不构成 method release、估值或投资权限 |
+| 精简行业决策记忆 V1 | `scripts/industry_experience_pack.py`、`CN_CEMENT_2014_2018/69_compact_industry_decision_memory_v1.md` | 将 TRAINING_READY Pack 与目标 cutoff Context 压缩为主路径、最强反方、公司分化、目标验证问题和反转观察，且不携带目标/同行公司身份、事实或证据引用 | 只证明输入结构与泄漏边界；尚无未见公司/时期 A/B，不能声称行业判断更好 |
 | 专家纠偏蒸馏 V1 | `TURTLE_EXPERT_CORRECTION_DISTILLATION_V1.md`、`EXPERT_CORRECTION_CN02669_20260831/` | 能把被接受的人工纠偏和条件化投资原则编译成不含教师公司事实、价格或估值数值的 `TRAINING_MEMORY`，并复用现有 v2 Episode、fresh A/B 与 cutoff 反馈链 | 首个教师包仅为 `TRAINING_READY`；尚无未见报告效用、cutoff 结算、跨公司应用或报告自治证明 |
 
 ## 从历史训练分支迁入的结论
@@ -47,6 +48,7 @@ Turtle 的唯一训练开发基线仍是干净的本地 `main`，不是若干课
 3. 正负历史结果都要约束下一轮：历史的 `NO_MATERIAL_UTILITY` 防止把更多结构、篇幅或悲观误作能力；Course 2C 的正结果只允许在另一未见公司或时间 holdout 上复验同一公司传导机制。
 4. 不删除历史 worktree 或 branch。本页完成的是当前真源对齐，而不是清除审计出处。
 5. 高质量人工终稿不能整篇作为目标公司证据。先按 `ExpertCorrectionTeacherPackage` 提取材料纠偏、适用条件和反向条件；未见公司 Enhanced 只读取编译后的 company-free `TRAINING_MEMORY`。
+6. 行业训练同样不再默认把完整目标 Context 直接交给 Enhanced。先编译五段精简行业决策记忆；它只提出行业先验和研究问题，目标公司组件证据负责决定是否适用并接入正常盈利、owner cash、永久损失和价值路线。
 
 ## 投资者读出
 

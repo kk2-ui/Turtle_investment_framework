@@ -4,8 +4,9 @@
 The Pack is a release manifest over existing IndustryLearningBlock,
 IndustryUnderwritingContext, mechanism, case, and feedback artifacts.  This
 module validates references and derives the maximum maturity supported by the
-manifest.  It does not acquire evidence, rewrite source objects, or form a
-target-company judgment.
+manifest.  It can also compile a compact, company-fact-free training memory
+from a TRAINING_READY Pack and a target-cutoff Context.  It does not acquire
+evidence, rewrite source objects, or form a target-company judgment.
 """
 
 from __future__ import annotations
@@ -31,6 +32,7 @@ SCHEMA_VERSION = "industry-experience-pack.v1"
 VALIDATION_SCHEMA_VERSION = "industry-experience-pack-validation.v1"
 SHARED_SHOCK_PROJECTION_SCHEMA_VERSION = "industry-shared-shock-company-projection.v1"
 ISSUER_IDENTITY_CATALOG_SCHEMA_VERSION = "issuer-identity-catalog.v1"
+COMPACT_MEMORY_VERSION = "compact-industry-decision-memory.v1"
 MATURITY_ORDER = ("DRAFT", "TRAINING_READY", "TRANSFER_CANDIDATE", "RELEASED")
 SOURCE_KINDS = {
     "INDUSTRY_LEARNING_BLOCK",
@@ -117,7 +119,34 @@ ISSUER_IDENTITY_CATALOG_FIELDS = {
 }
 ISSUER_IDENTITY_CATALOG_ENTRY_FIELDS = ISSUER_IDENTITY_FIELDS | {"aliases"}
 _IDENTITY_TOKEN = re.compile(r"\[\[(CN:\d{6})\|([^\[\]|]+)\]\]")
+_SAFE_VERIFICATION_FIELD = re.compile(r"^[A-Za-z0-9_:\-]+$")
 _ROOT = Path(__file__).resolve().parents[1]
+
+_VERIFICATION_QUESTION_TEMPLATES = {
+    "regional_price_cost_and_volume_transmission": (
+        "目标公司所在 delivered market 的实现价格、销量、单位成本与利用率，"
+        "是否支持行业主路径，而不是只跟随全国均值？"
+    ),
+    "cash_conversion_and_financing_resilience": (
+        "行业利润池改善能否穿过营运资本、维护资本、受限现金与债务责任，"
+        "转化为普通股股东可得的 owner cash？"
+    ),
+    "mature_core_vs_conditional_growth_cohorts": (
+        "成熟核心、已投产 cohort、在建或终止项目是否按责任边界分开，"
+        "且只有经过客户吸收、利用率、单位经济和现金回收验证的部分进入基础经济？"
+    ),
+    "consolidation_perimeter_continuity": (
+        "并购、重组、控制权或会计口径变化是否已经建立同责任边界的 perimeter bridge，"
+        "避免把合并范围变化写成经营改善？"
+    ),
+}
+
+_FALLBACK_VERIFICATION_QUESTIONS = [
+    "目标公司的客户、区域 delivered market 和竞争位置，是否真的暴露于行业主路径？",
+    "哪些责任匹配的价格、数量、成本、份额或资本机制把行业利润池传导至正常盈利？",
+    "再投资、营运资本或监管资本、融资与分配责任是否允许盈利转化为 owner cash？",
+    "哪个责任单元承担下行，使行业反转能够进入永久损失和价值路线？",
+]
 
 
 def _mapping(value: Any) -> dict[str, Any]:
@@ -883,20 +912,251 @@ def validate_industry_experience_pack(payload: Any, *, root: str | Path | None =
     }
 
 
+def _display_token(value: Any, *, prefix: str = "") -> str:
+    token = _text(value)
+    if prefix and token.startswith(prefix):
+        token = token[len(prefix):]
+    return token.replace("_", " ").strip().lower()
+
+
+def _verification_question(field: str) -> str:
+    if field in _VERIFICATION_QUESTION_TEMPLATES:
+        return _VERIFICATION_QUESTION_TEMPLATES[field]
+    label = _display_token(field)
+    return (
+        f"目标公司能否用自身证据结算“{label}”，并说明它如何传导至正常盈利、"
+        "owner cash、永久损失与价值路线？"
+    )
+
+
+def _company_identity_literals(pack: Mapping[str, Any], context: Mapping[str, Any]) -> set[str]:
+    identity = _mapping(context.get("company_identity"))
+    literals = {
+        _text(identity.get("company_id")),
+        _text(identity.get("company_name")),
+    }
+    pack_text = json.dumps(pack, ensure_ascii=False)
+    for company_id, company_name in _IDENTITY_TOKEN.findall(pack_text):
+        literals.add(company_id)
+        literals.add(company_name.strip())
+    for item in _items(_mapping(pack.get("role_coverage")).get("company_paths")):
+        literals.add(_text(_mapping(item).get("company_id")))
+    return {item for item in literals if item}
+
+
+def build_compact_industry_decision_memory(
+    pack: Mapping[str, Any],
+    context: Mapping[str, Any],
+    *,
+    root: str | Path = _ROOT,
+) -> dict[str, Any]:
+    """Build a concise training prior without copying target-company facts.
+
+    The full Context remains an internal compilation input. Only generic
+    verification field identifiers are projected; target identity, facts,
+    evidence references, peer identities, valuation parameters, and actions
+    are deliberately absent from the returned memory.
+    """
+    pack_value = _mapping(pack)
+    context_value = _mapping(context)
+    pack_validation = validate_industry_experience_pack(pack_value, root=root)
+    if pack_validation["state"] != "REVIEWABLE":
+        raise ValueError(
+            "industry_experience_pack_invalid:"
+            + ",".join(pack_validation["findings"])
+        )
+    derived_state = _text(pack_validation.get("derived_state"))
+    if derived_state not in MATURITY_ORDER or (
+        MATURITY_ORDER.index(derived_state) < MATURITY_ORDER.index("TRAINING_READY")
+    ):
+        raise ValueError("industry_experience_pack_not_training_ready:" + derived_state)
+
+    context_validation = validate_industry_underwriting_context(context_value)
+    if context_validation["state"] != "REVIEWABLE":
+        raise ValueError(
+            "industry_underwriting_context_invalid:"
+            + ",".join(context_validation["findings"])
+        )
+
+    industry_id = _text(pack_value.get("industry_id"))
+    identity = _mapping(context_value.get("company_identity"))
+    context_industry_ids = set(_strings(identity.get("industry_ids")))
+    if not context_industry_ids:
+        raise ValueError("context_industry_identity_missing")
+    if industry_id not in context_industry_ids:
+        raise ValueError("pack_context_industry_mismatch")
+
+    pack_cutoff = _instant(pack_value.get("knowledge_cutoff_at"))
+    context_cutoff = _instant(identity.get("cutoff_at"))
+    if pack_cutoff is None or context_cutoff is None:
+        raise ValueError("pack_or_context_cutoff_invalid")
+    if pack_cutoff > context_cutoff:
+        raise ValueError("pack_cutoff_after_target_context")
+
+    synthesis = _mapping(pack_value.get("current_synthesis"))
+    role_coverage = _mapping(pack_value.get("role_coverage"))
+    archetype_roles: dict[str, set[str]] = {}
+    for raw in _items(role_coverage.get("company_paths")):
+        company_path = _mapping(raw)
+        archetype = _text(company_path.get("archetype_id"))
+        if not archetype:
+            continue
+        archetype_roles.setdefault(archetype, set()).update(
+            _strings(company_path.get("roles"))
+        )
+    reference_classes = [
+        {
+            "archetype": _display_token(archetype, prefix="ARCHETYPE:"),
+            "roles": [_display_token(role) for role in sorted(roles)],
+        }
+        for archetype, roles in sorted(archetype_roles.items())
+    ]
+
+    verification_fields: list[str] = []
+    for raw in _items(context_value.get("company_verification_fields")):
+        item = _mapping(raw)
+        field = _text(item.get("field"))
+        if item.get("kind") == "FIELD" and _SAFE_VERIFICATION_FIELD.fullmatch(field):
+            verification_fields.append(field)
+    exposure = _mapping(context_value.get("company_archetype_exposure"))
+    for raw in _items(exposure.get("exposures")):
+        field = _text(_mapping(raw).get("dimension"))
+        if _SAFE_VERIFICATION_FIELD.fullmatch(field):
+            verification_fields.append(field)
+    verification_questions = [
+        _verification_question(field)
+        for field in dict.fromkeys(verification_fields)
+    ] or list(_FALLBACK_VERIFICATION_QUESTIONS)
+
+    memory = {
+        "version": COMPACT_MEMORY_VERSION,
+        "use_status": "TRAINING_MEMORY",
+        "capability_status": "HYPOTHESIS_AND_RESEARCH_QUESTION_ONLY",
+        "industry_id": industry_id,
+        "knowledge_cutoff_at": _text(pack_value.get("knowledge_cutoff_at")),
+        "main_industry_path": _text(synthesis.get("central_industry_path")),
+        "strongest_rival": _text(synthesis.get("strongest_rival")),
+        "company_divergence": {
+            "mechanism": _text(synthesis.get("profit_pool_transmission")),
+            "reference_classes": reference_classes,
+        },
+        "target_company_verification_questions": verification_questions,
+        "reversal_observations": _strings(synthesis.get("break_conditions")),
+        "boundary": (
+            "This memory supplies an industry prior, rival explanation, reference classes, "
+            "research questions, and reversal tests only. Target-company evidence must establish "
+            "exposure and economics; the memory grants no valuation or investment authority."
+        ),
+    }
+    rendered = json.dumps(memory, ensure_ascii=False)
+    leaked = sorted(
+        literal
+        for literal in _company_identity_literals(pack_value, context_value)
+        if literal in rendered
+    )
+    if leaked:
+        raise ValueError("compact_memory_contains_company_identity:" + ",".join(leaked))
+    return memory
+
+
+def render_compact_industry_decision_memory(memory: Mapping[str, Any]) -> str:
+    divergence = _mapping(memory.get("company_divergence"))
+    reference_classes = _items(divergence.get("reference_classes"))
+    class_lines = [
+        "- " + _text(_mapping(item).get("archetype"))
+        + "（" + "、".join(_strings(_mapping(item).get("roles"))) + "）"
+        for item in reference_classes
+    ]
+    question_lines = [
+        "- " + item for item in _strings(memory.get("target_company_verification_questions"))
+    ]
+    reversal_lines = ["- " + item for item in _strings(memory.get("reversal_observations"))]
+    return "\n".join([
+        "# 精简行业决策记忆",
+        "",
+        f"> 版本：`{_text(memory.get('version'))}`  ",
+        f"> 用途：`{_text(memory.get('use_status'))}`  ",
+        f"> 能力状态：`{_text(memory.get('capability_status'))}`  ",
+        f"> 行业：`{_text(memory.get('industry_id'))}`  ",
+        f"> 知识截止：`{_text(memory.get('knowledge_cutoff_at'))}`  ",
+        "> 边界：只提供行业先验、竞争解释、参考类别、研究问题与反转测试；"
+        "目标公司证据负责结算暴露和经济传导，不提供估值或投资权限。",
+        "",
+        "## 1. 当前行业主路径",
+        "",
+        _text(memory.get("main_industry_path")),
+        "",
+        "## 2. 最强竞争解释",
+        "",
+        _text(memory.get("strongest_rival")),
+        "",
+        "## 3. 为什么公司会分化",
+        "",
+        _text(divergence.get("mechanism")),
+        "",
+        *class_lines,
+        "",
+        "## 4. 目标公司必须独立验证",
+        "",
+        *question_lines,
+        "",
+        "## 5. 反转观察",
+        "",
+        *reversal_lines,
+        "",
+    ])
+
+
 def _parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description="Validate a versioned Industry Experience Pack")
     parser.add_argument("pack", help="Industry Experience Pack JSON file")
     parser.add_argument("--root", default=str(_ROOT), help="Repository root for resolving refs")
+    parser.add_argument(
+        "--context",
+        default="",
+        help="Optional IndustryUnderwritingContext used to compile compact training memory",
+    )
+    parser.add_argument(
+        "--decision-memory-output",
+        default="",
+        help="Markdown output path; requires --context",
+    )
     return parser
 
 
 def main(argv: list[str] | None = None) -> int:
-    args = _parser().parse_args(argv)
+    parser = _parser()
+    args = parser.parse_args(argv)
     path = Path(args.pack).expanduser()
     payload = _read_json(path)
     result = validate_industry_experience_pack(payload, root=args.root)
+    if bool(args.context) != bool(args.decision_memory_output):
+        parser.error("--context and --decision-memory-output must be supplied together")
+    if args.context:
+        if result["state"] != "REVIEWABLE":
+            print(json.dumps(result, ensure_ascii=False, indent=2, sort_keys=True))
+            return 1
+        context = _read_json(Path(args.context).expanduser())
+        memory = build_compact_industry_decision_memory(
+            payload,
+            context,
+            root=args.root,
+        )
+        output_path = Path(args.decision_memory_output).expanduser()
+        output_path.parent.mkdir(parents=True, exist_ok=True)
+        output_path.write_text(
+            render_compact_industry_decision_memory(memory),
+            encoding="utf-8",
+        )
+        result = {
+            "pack_validation": result,
+            "decision_memory_output": str(output_path),
+            "decision_memory_version": memory["version"],
+            "capability_status": memory["capability_status"],
+        }
     print(json.dumps(result, ensure_ascii=False, indent=2, sort_keys=True))
-    return 0 if result["state"] == "REVIEWABLE" else 1
+    pack_result = result.get("pack_validation", result)
+    return 0 if pack_result["state"] == "REVIEWABLE" else 1
 
 
 if __name__ == "__main__":

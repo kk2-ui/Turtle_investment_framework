@@ -26,7 +26,7 @@
 
 行业前景训练改为明确的上游闭环：`IndustryLearningBlock -> Industry Experience Pack -> IndustryUnderwritingContext -> EnterpriseUnderwritingEpisode.IndustryFutureThesis`。Pack 是引用现有行业 block、官方 observation、机制、案例、反例和反馈的版本化 manifest，不是新事实库；公司结果只结算公司传导，行业方向必须由官方行业资料和多家公司共同结果结算。
 
-manifest schema、机械验证器和官方行业 acquisition 已经实现。水泥 V1 离线回放继续保留为合法 `DRAFT`；V3 以独立 issuer catalog 修正 `CN:600425` 的青松建化身份，并保持 Pack 为 `TRAINING_READY`。中心路径仍是需求量近乎横盘下的价格/供给纪律驱动利润池恢复，最强反方是低基数、阶段性错峰和未解决过剩令恢复不可持续。Course 2B 上峰水泥的行业路径与公司传导均无材料差异；Course 2C 祁连山的行业路径仍无材料差异，但结果期区分了成熟核心、会计控制边界、生命周期 cohort 与资本责任的公司传导，整体为 `ENHANCED_MATERIALLY_BETTER / TRANSFER_CANDIDATE`。训练 runtime 已为 v2 合同增加显式组件决策接口；冻结 Episode 不回填，时间轴和 Agent 行业前景判断能力仍未验证。当前状态以[Course 2C 最终效用裁决](development/research/training_campaigns/ENTERPRISE_UNDERWRITING_COURSE_2C_CN600720_20180430/10_COURSE2C_FINAL_UTILITY_REVIEW.md)与[训练基线对齐](development/research/TURTLE_TRAINING_BASELINE_ALIGNMENT_20260831.md)为准。
+manifest schema、机械验证器和官方行业 acquisition 已经实现。水泥 V1 离线回放继续保留为合法 `DRAFT`；V3 以独立 issuer catalog 修正 `CN:600425` 的青松建化身份，并保持 Pack 为 `TRAINING_READY`。中心路径仍是需求量近乎横盘下的价格/供给纪律驱动利润池恢复，最强反方是低基数、阶段性错峰和未解决过剩令恢复不可持续。Course 2B 上峰水泥的行业路径与公司传导均无材料差异；Course 2C 祁连山的行业路径仍无材料差异，但结果期区分了成熟核心、会计控制边界、生命周期 cohort 与资本责任的公司传导，整体为 `ENHANCED_MATERIALLY_BETTER / TRANSFER_CANDIDATE`。训练 runtime 已为 v2 合同增加显式组件决策接口；行业 Enhanced arm 现在默认读取由 Pack 与目标 cutoff Context 编译的五段 company-fact-free 精简记忆，而不是整份目标 Context。该改动只收窄输入、强化目标证据边界；尚未验证时间轴或 Agent 行业前景判断能力。当前状态以[行业经验层设计](development/research/TURTLE_INDUSTRY_EXPERIENCE_LAYER_V1_DESIGN.md)、[Course 2C 最终效用裁决](development/research/training_campaigns/ENTERPRISE_UNDERWRITING_COURSE_2C_CN600720_20180430/10_COURSE2C_FINAL_UTILITY_REVIEW.md)与[训练基线对齐](development/research/TURTLE_TRAINING_BASELINE_ALIGNMENT_20260831.md)为准。
 
 ## 2026-08-29 企业判断经验调用设计
 
@@ -123,12 +123,13 @@ V2 兼容状态是 `G1_CANDIDATE_MATURATION + G1-T_ENTERPRISE_JUDGMENT_V2 / REAL
 | `docs/development/research/TURTLE_EXPERT_CORRECTION_DISTILLATION_V1.md` | 把被接受的人工报告纠偏与条件化投资原则编译成 company-free TRAINING_MEMORY，并以未见公司/时间 A/B、cutoff feedback 和首次成稿材料审阅检验报告自治；首包 training-ready，方法未验证 |
 | `docs/development/research/training_campaigns/EXPERT_CORRECTION_CN02669_20260831/00_README.md` | 中海物业首个结果已知教师包、来源快照、使用边界和验证入口；只有编译记忆可进入 Enhanced arm |
 | `scripts/expert_correction_training.py` | 验证 ExpertCorrectionTeacherPackage 并编译不含教师公司身份、价格、事实和来源的 TRAINING_MEMORY；不生成公司判断、结算或投资权限 |
-| `scripts/industry_experience_pack.py` | 验证 Pack 引用、时间角色、角色覆盖、行业/公司分层结算和公司轴/时间轴成熟状态；不采集或复制事实 |
+| `scripts/industry_experience_pack.py` | 验证 Pack 引用、时间角色、角色覆盖、行业/公司分层结算和成熟状态；并将 TRAINING_READY Pack + 目标 cutoff Context 编译为五段 company-fact-free 精简行业决策记忆 |
 | `docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/56_industry_experience_pack_replay_v1.json` | 首个行业经验层离线回放；状态为 DRAFT，只验证工作流，不计能力 |
 | `docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/60_official_industry_context_observations_v1.json` | cutoff-safe 工信部/国务院行业观察 ledger；绑定已物化 raw package、经济解释和禁止外推边界 |
 | `docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/62_industry_underwriting_context_training_v2.json` | 由官方观察、多公司 block 和竞争 arena 编译的 `READY` 水泥 Context |
 | `docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/63_industry_experience_pack_training_v2.json` | 水泥 V2 Pack；已追加公司轴 NO_MATERIAL_UTILITY review，声明和派生仍为 `TRAINING_READY`，不代表能力验证 |
 | `docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/64_industry_experience_training_ready_review.md` | 水泥 V2 行业方向、最强反方、五家公司异质响应、修复裁决和 Course 2B 停止点 |
+| `docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/69_compact_industry_decision_memory_v1.md` | 精简行业决策记忆受控样例：只保留主路径、反方、分化机制、目标验证问题与反转观察，不含目标或同行公司身份和事实；能力状态仍为 hypothesis/question only |
 | `docs/development/research/TURTLE_TRAINING_SYSTEM_TOP_LEVEL_ARCHITECTURE.md` | V2 组件与 V3 映射：八维、IndustryLearningBlock、多维 EnterpriseJudgmentEpisode、局部证据/因果权限和 Investment Overlay 边界 |
 | `docs/development/research/TURTLE_ENTERPRISE_JUDGMENT_V2_REAL_TRAINING_GOAL.md` | J0/J1/J1A/J2 与 Rounds 5-8 真实反馈记录；八维已采用，Round 8 因责任边界和 mixed-clock 问题保持 architecture revision required |
 | `docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/08_investor_readout.md` | 首个真实水泥 V2 block 的投资者可读读出、feedback 与权限边界；底层 JSON 是该读出的可验证工件 |

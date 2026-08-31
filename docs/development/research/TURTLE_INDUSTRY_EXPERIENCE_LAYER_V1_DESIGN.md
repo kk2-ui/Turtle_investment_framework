@@ -1,6 +1,6 @@
 # Turtle 行业经验层 V1 设计
 
-> 状态：`IMPLEMENTED / CEMENT_PACK_TRAINING_READY / COURSE_2A_COMPLETE / COURSE_2B_COMPANY_HOLDOUT_NO_MATERIAL_UTILITY / TIME_AXIS_NOT_STARTED / AGENT_CAPABILITY_NOT_VALIDATED`
+> 状态：`IMPLEMENTED / CEMENT_PACK_TRAINING_READY / COURSE_2B_NO_MATERIAL_UTILITY / COURSE_2C_COMPANY_TRANSMISSION_MATERIALLY_BETTER / COMPACT_DECISION_MEMORY_IMPLEMENTED / TIME_AXIS_NOT_STARTED / INDUSTRY_PATH_CAPABILITY_NOT_VALIDATED`
 >
 > 目的：先把多公司、多时期的行业经验建成可迭代上游资产，再让公司训练样本调用、检验并反向修订它。
 >
@@ -81,9 +81,11 @@ Pack 只保存引用、综合、边界和版本变化，不复制底层事实全
 
 它是只读上下文，不是目标公司结论。`BOUNDED` 可以继续公司研究，但不能冒充行业能力已经验证。
 
+完整 Context 保留给编译器和研究者，不再默认整份交给 Enhanced Agent。训练输入先经 `scripts/industry_experience_pack.py` 压缩为 company-fact-free 的五段 `TRAINING_MEMORY`：行业主路径、最强反方、公司分化机制与参考类别、目标公司独立验证问题、反转观察。这样保留行业经验的决策价值，同时避免把目标公司事实、证据引用和重复候选路径当成“学习”。
+
 ### L4：IndustryFutureThesis——公司承保中的方向性判断
 
-`EnterpriseUnderwritingEpisode` 读取冻结的 Context，再用目标公司一手证据选择最可能的行业 regime，并完成：
+`EnterpriseUnderwritingEpisode` 在行业训练 arm 读取由冻结 Context 编译的精简记忆，再用目标公司一手证据选择最可能的行业 regime，并完成：
 
 ```text
 行业利润池变化
@@ -220,7 +222,7 @@ IE6  REPLICATE
 选择未参与 Pack 形成的目标公司和后续时期：
 
 - Baseline 使用相同原始 cutoff-before 行业与公司证据；
-- Enhanced 额外读取冻结 Pack 生成的 Context；
+- Enhanced 额外读取由冻结 Pack 与目标 cutoff Context 编译的精简行业决策记忆；完整 Context 只作编译输入；
 - 两臂使用相同模型、工具、预算和 Episode 输出；
 - 结果后分别裁决行业路径和公司传导，再裁决投资处理是否材料性改善。
 
@@ -232,8 +234,10 @@ IE6  REPLICATE
 2. `schemas/industry_experience_pack_v1.schema.json` 与 `scripts/industry_experience_pack.py` 已实现；
 3. 水泥 V1 离线回放已经验证引用、时间角色、版本边界和反馈方向，并保留为 `DRAFT`；
 4. Course 2A 已通过可复用官方行业 acquisition、五家公司共同冲击比较和机械 Context 编译形成水泥 V2 `TRAINING_READY` Pack；
-5. Course 2B 已把冻结 Pack/Context 接入上峰水泥未见公司轴的认知隔离合同；结果为 `NO_MATERIAL_UTILITY`，时间轴未启动；
-6. 只有双轴出现材料性效用，才讨论 `TRANSFER_CANDIDATE / RELEASED` 或能力形成。
+5. Course 2B 已把冻结 Pack/Context 接入上峰水泥未见公司轴的认知隔离合同；结果为 `NO_MATERIAL_UTILITY`；
+6. Course 2C 在祁连山得到公司传导 `ENHANCED_MATERIALLY_BETTER`，但行业路径仍为 `NO_MATERIAL_DIFFERENCE`，因此只构成公司组件方法的单样本 `TRANSFER_CANDIDATE`；
+7. 已实现精简行业决策记忆编译器；它是下一轮公平 A/B 的受控输入，不回写 2B/2C 历史合同；
+8. 只有行业路径在未见公司或未见时期出现材料性改善并完成复制，才讨论行业能力形成。
 
 在 Pack 达到 `TRAINING_READY` 前，不修改正式训练 runtime，也不启动 Course 2B。
 
@@ -251,6 +255,22 @@ IE6  REPLICATE
 
 验证器对 V2 派生 `TRAINING_READY` 且缺口为空。当前最可信方向是需求量近乎横盘下的价格/供给纪律驱动利润池恢复，最强反方是低基数、阶段性错峰和未解决过剩令恢复不可持续。详细证据、公司分化和权限边界见 `CN_CEMENT_2014_2018/64_industry_experience_training_ready_review.md`。
 
-这完成的是 Course 2A 上游资产，不是 Agent 能力验证。Course 2B 的上峰水泥公司轴已经完成，但 Enhanced 与 Baseline 对行业路径和公司传导均无材料差异；Pack 追加独立 `COMPANY_HOLDOUT / NO_MATERIAL_UTILITY` review 后仍派生为 `TRAINING_READY`。时间轴、`TRANSFER_CANDIDATE`、`RELEASED` 与 Agent 行业判断能力均未验证。
+这完成的是 Course 2A 上游资产，不是 Agent 能力验证。Course 2B 的上峰水泥公司轴已经完成，但 Enhanced 与 Baseline 对行业路径和公司传导均无材料差异；Pack 追加独立 `COMPANY_HOLDOUT / NO_MATERIAL_UTILITY` review 后仍派生为 `TRAINING_READY`。行业路径的公司轴正结果、时间轴、`RELEASED` 与 Agent 行业判断能力均未验证。
+
+Course 2C 的祁连山留出进一步表明：Enhanced 对成熟核心、会计控制边界、生命周期 cohort 与资本责任的公司传导显著更好，但两臂的行业主路径仍无材料差异。因此当前有效信号属于公司组件化承保，不等于行业前景判断能力。精简行业决策记忆正是针对这个分层结果：行业层只提供高密度先验和可证伪问题，目标公司层必须用组件证据穿透至正常盈利、owner cash、永久损失和价值路线。
 
 本次负结果的 `MODEL` 修订只面向未来训练合同：Episode 组件必须显式说明是否进入基础/条件正常盈利与 owner-cash 范围、融资压力、永久损失和价值路线，并冻结晋级与撤销测试。`DATA_COVERAGE` 的维护资本、规范化营运资本、房地产 OCF、增长 cohort 和区域量价/利用率缺口留待未来重新预注册前先修可复用 acquisition；本轮不追加样本或时间轴。
+
+## 12. 精简行业决策记忆 V1
+
+编译命令：
+
+```bash
+.venv/bin/python scripts/industry_experience_pack.py PACK.json \
+  --context TARGET_CUTOFF_CONTEXT.json \
+  --decision-memory-output COMPACT_MEMORY.md
+```
+
+编译器只接受机械验证为 `TRAINING_READY` 或更高状态的 Pack，并要求 Pack 行业身份与 Context 一致、Pack 知识截止不晚于目标 cutoff。输出不包含目标公司身份、公司事实、同行身份、证据引用、估值参数或投资动作；`BOUNDED` Context 仍可编译，因为缺少可选同行不应阻断公司判断。
+
+V1 解决的是输入结构和泄漏边界，不是效用证明。下一轮必须预注册一个未见公司或未见时期，让 Baseline 与 Enhanced 使用相同原始证据和预算；Enhanced 只额外读取这份精简记忆。只有它使行业主路径、最强反方、公司暴露或下游投资处理出现可复核的材料改善，才计为学习。
