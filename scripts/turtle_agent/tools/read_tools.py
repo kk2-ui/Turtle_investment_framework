@@ -234,6 +234,122 @@ def read_industry_knowledge_context(output_dir: str = ".") -> dict[str, Any]:
     }
 
 
+def read_industry_evidence_acquisition(output_dir: str = ".") -> dict[str, Any]:
+    """Read the report-local role-bound external industry evidence agenda."""
+    try:
+        from scripts.industry_experience_acquisition import (
+            DEFAULT_PLAN_OUTPUT_NAME,
+            DEFAULT_RECEIPT_OUTPUT_NAME,
+            project_industry_evidence_acquisition_for_handoff,
+            validate_industry_evidence_acquisition_plan,
+            validate_industry_evidence_acquisition_receipt,
+        )
+    except ModuleNotFoundError:
+        from industry_experience_acquisition import (  # type: ignore[no-redef]
+            DEFAULT_PLAN_OUTPUT_NAME,
+            DEFAULT_RECEIPT_OUTPUT_NAME,
+            project_industry_evidence_acquisition_for_handoff,
+            validate_industry_evidence_acquisition_plan,
+            validate_industry_evidence_acquisition_receipt,
+        )
+    plan = _read_json(os.path.join(output_dir, DEFAULT_PLAN_OUTPUT_NAME)) or {}
+    if validate_industry_evidence_acquisition_plan(plan).get("state") != "REVIEWABLE":
+        return {
+            "ok": False,
+            "error": "industry_evidence_acquisition_plan_not_available_or_invalid",
+            "instruction": "先从 IndustryUnderwritingContext 编译角色绑定的取证计划；不得用行业常识替代目标公司的官方证据。",
+        }
+    receipt = _read_json(os.path.join(output_dir, DEFAULT_RECEIPT_OUTPUT_NAME)) or {}
+    if receipt and validate_industry_evidence_acquisition_receipt(receipt, plan).get("state") != "REVIEWABLE":
+        return {
+            "ok": False,
+            "error": "industry_evidence_acquisition_receipt_invalid",
+            "instruction": "无效回执不得进入 Episode 或报告；修正来源时间、角色、口径边界或公司传导后重试。",
+        }
+    projection = project_industry_evidence_acquisition_for_handoff(
+        plan,
+        receipt or None,
+        receipt_ref=str(Path(output_dir).expanduser().resolve() / DEFAULT_RECEIPT_OUTPUT_NAME),
+    )
+    root = Path(output_dir).expanduser().resolve()
+    source_binding_state = "NOT_RECORDED"
+    source_binding_ref = ""
+    source_binding: dict[str, Any] = {}
+    if receipt:
+        try:
+            from scripts.industry_evidence_source_binding import (
+                DEFAULT_BINDING_OUTPUT_NAME,
+                validate_industry_evidence_source_binding,
+            )
+        except ModuleNotFoundError:
+            from industry_evidence_source_binding import (  # type: ignore[no-redef]
+                DEFAULT_BINDING_OUTPUT_NAME,
+                validate_industry_evidence_source_binding,
+            )
+        candidate = root / DEFAULT_BINDING_OUTPUT_NAME
+        if candidate.is_file():
+            source_binding = _read_json(str(candidate)) or {}
+            source_validation = validate_industry_evidence_source_binding(
+                source_binding, plan, receipt, artifact_root=root,
+            )
+            if source_validation.get("state") == "REVIEWABLE":
+                source_binding_state = "READY_FOR_COMPANY_TRANSMISSION_PAIR"
+                source_binding_ref = DEFAULT_BINDING_OUTPUT_NAME
+            else:
+                source_binding_state = "INVALID"
+    projection["source_binding"] = {
+        "state": source_binding_state,
+        "artifact_ref": source_binding_ref,
+        "report_use": (
+            "No industry observation may enter a report until this state is "
+            "READY_FOR_COMPANY_TRANSMISSION_PAIR and it is paired with target-company primary evidence in an Episode."
+        ),
+    }
+    report_admission_state = "NOT_RECORDED"
+    report_admission_ref = ""
+    report_admitted_observations: list[dict[str, Any]] = []
+    if source_binding_state == "READY_FOR_COMPANY_TRANSMISSION_PAIR":
+        try:
+            from scripts.industry_evidence_report_admission import (
+                DEFAULT_ADMISSION_OUTPUT_NAME,
+                project_report_admitted_industry_observations,
+                validate_industry_evidence_report_admission,
+            )
+        except ModuleNotFoundError:
+            from industry_evidence_report_admission import (  # type: ignore[no-redef]
+                DEFAULT_ADMISSION_OUTPUT_NAME,
+                project_report_admitted_industry_observations,
+                validate_industry_evidence_report_admission,
+            )
+        candidate = root / DEFAULT_ADMISSION_OUTPUT_NAME
+        if candidate.is_file():
+            admission = _read_json(str(candidate)) or {}
+            episode_ref = Path(str(admission.get("episode_ref") or "")).expanduser()
+            episode_path = episode_ref if episode_ref.is_absolute() else root / episode_ref
+            episode = _read_json(str(episode_path)) or {}
+            admission_validation = validate_industry_evidence_report_admission(
+                admission, source_binding, plan, receipt, episode, artifact_root=root,
+            )
+            if admission_validation.get("state") == "REVIEWABLE":
+                report_admission_state = "READY"
+                report_admission_ref = DEFAULT_ADMISSION_OUTPUT_NAME
+                report_admitted_observations = project_report_admitted_industry_observations(
+                    admission, receipt,
+                )
+            else:
+                report_admission_state = "INVALID"
+    projection["report_admission"] = {
+        "state": report_admission_state,
+        "artifact_ref": report_admission_ref,
+        "report_admitted_observations": report_admitted_observations,
+        "instruction": "Only report_admitted_observations may be used as industry evidence in report writing; all other industry material remains a research agenda or an unpaired source receipt.",
+    }
+    return {
+        "ok": True,
+        **projection,
+    }
+
+
 def read_valuation_route(output_dir: str = ".") -> dict[str, Any]:
     """Read the canonical route and its role-level evidence work plan."""
     archetype = _read_json(os.path.join(output_dir, "company_archetype.json")) or {}
@@ -516,6 +632,11 @@ read_decisive_question_plan._tool_meta = {
 read_industry_knowledge_context._tool_meta = {
     "name": "read_industry_knowledge_context",
     "description": "读取行业机制匹配及本公司必须验证字段。它只提供研究问题和反例，不能替代公司官方证据或直接支持估值、价格和动作。",
+    "parameters": {"output_dir": {"type": "string", "description": "股票输出目录"}},
+}
+read_industry_evidence_acquisition._tool_meta = {
+    "name": "read_industry_evidence_acquisition",
+    "description": "读取行业经验生成的外部取证任务及已接纳回执，并显示来源包绑定状态。只有已冻结来源绑定且与本公司一手传导证据配对的观察才能进入报告；它不能直接成为公司事实、现金、估值、价格或行动。",
     "parameters": {"output_dir": {"type": "string", "description": "股票输出目录"}},
 }
 read_valuation_route._tool_meta = {

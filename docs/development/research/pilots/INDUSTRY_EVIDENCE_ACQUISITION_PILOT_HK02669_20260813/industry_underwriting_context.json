@@ -1,0 +1,1043 @@
+{
+  "schema_version": "industry-underwriting-context.v1",
+  "context_id": "IUC:HK:02669:2026-08-13T23:59:59+08:00",
+  "company_identity": {
+    "company_id": "HK:02669",
+    "company_name": "China Overseas Property Holdings",
+    "cutoff_at": "2026-08-13T23:59:59+08:00",
+    "industry_ids": [
+      "INDUSTRY:CN:PROPERTY_SERVICES"
+    ]
+  },
+  "context_status": "READY",
+  "report_use": {
+    "mode": "REPORT_PREPARATION_READ_MODEL",
+    "non_blocking": true,
+    "can_support": [
+      "INDUSTRY_RESEARCH_AGENDA",
+      "CANDIDATE_INDUSTRY_FUTURE_THESIS",
+      "PEER_AND_NEAR_MISS_SELECTION"
+    ],
+    "cannot_establish": [
+      "COMPANY_FACT_WITHOUT_COMPANY_EVIDENCE",
+      "VALUATION_PARAMETER",
+      "INVESTMENT_ACTION"
+    ],
+    "boundary": "A BOUNDED context remains usable. The report must make and source its own best-current industry and company judgment."
+  },
+  "industry_value_chain": {
+    "stages": [
+      {
+        "arena_id": "ARENA:CN:PROPERTY_SERVICES:MATURE_RESIDENTIAL",
+        "mechanism": "Mature residential operations convert resident continuity, collection, labor organization, procurement and local route density into recurring service earnings after the new-development handoff.",
+        "economic_scope": "LOCAL_PROJECT_DELIVERY_WITH_PORTFOLIO_DENSITY_AND_NATIONAL_BRAND_SUPPORT",
+        "customer_job_or_choice": "Keep residential communities safe, clean, functional and governable over repeated annual service periods at a fee residents and owners will continue to pay.",
+        "value_driver": "Contract renewal, collection rate, same-project fee and service mix, labor and subcontractor productivity, project density and disciplined exit from loss-making mandates.",
+        "failure_mode": "Stable managed area or revenue can conceal fee rigidity, weaker collection, rising labor or subcontractor cost, service deterioration and retention of uneconomic projects.",
+        "profit_pool_direction": "MIGRATING_FROM_NEW_BUILD_FEEDER_TO_STOCK_OPERATIONS_AND_CONDITIONAL_ADJACENCIES",
+        "evidence_refs": [
+          "SRC:NBS:CN_REAL_ESTATE:FY2025",
+          "SRC:NBS:CN_REAL_ESTATE:2026M5",
+          "SRC:NBS:URBANIZATION:FY2025",
+          "SRC:CN:OLD_COMMUNITY_RENOVATION:14FYP",
+          "SRC:MOJ:PROPERTY_FEE_BOUNDARY:2023",
+          "SRC:BEIJING:OLD_COMMUNITY_SERVICE:2025",
+          "SRC:NBS:SERVICE_WAGES:FY2025"
+        ],
+        "source_object_ref": "docs/development/research/industry_learning_blocks/CN_PROPERTY_SERVICES_2025/01_industry_learning_block.json"
+      },
+      {
+        "arena_id": "ARENA:CN:PROPERTY_SERVICES:PUBLIC_INSTITUTIONAL",
+        "mechanism": "Institutional property and city public services match hospitals, schools, government, venues and public-space customers with labor, vehicles, subcontracting and operating coordination through regulated procurement and performance settlement.",
+        "economic_scope": "PROJECT_AND_CITY_CLUSTER_WITH_PUBLIC_OR_INSTITUTIONAL_BUYERS",
+        "customer_job_or_choice": "Maintain continuous, auditable operation of public facilities and spaces under staffing, service-level, safety and performance requirements.",
+        "value_driver": "Bid discipline, mobilization cost, staffing productivity, shared equipment, local density, performance scores, renewal, payment timing and receivable collection.",
+        "failure_mode": "Contract value and revenue growth can overstate economics when low-price competition, annual renewal, performance deductions, guarantees, subcontracting, wage funding and delayed public payment absorb profit and capital.",
+        "profit_pool_direction": "CONDITIONAL_GROWTH_WITH_WORKING_CAPITAL_AND_RENEWAL_RISK",
+        "evidence_refs": [
+          "SRC:MOF:CN_FISCAL:FY2025",
+          "SRC:PROCUREMENT:QINGDAO_CHENGYANG:2025",
+          "SRC:PROCUREMENT:CENTRAL_SOUTH_UNIVERSITY:2025",
+          "SRC:PROCUREMENT:PEKING_UNION_MEDICAL:2024",
+          "SRC:PROCUREMENT:CHENGDU_PANDA_BASE:2023",
+          "SRC:PROCUREMENT:SHENSHAN_HOSPITAL:2026",
+          "SRC:SZSE:001914:FY2025",
+          "SRC:SZSE:300917:FY2025",
+          "SRC:HKEX:06049:FY2025"
+        ],
+        "source_object_ref": "docs/development/research/industry_learning_blocks/CN_PROPERTY_SERVICES_2025/01_industry_learning_block.json"
+      },
+      {
+        "arena_id": "ARENA:CN:PROPERTY_SERVICES:SMART_ENGINEERING",
+        "mechanism": "Smart engineering and digital projects combine software, hardware, customization, installation and acceptance before billed revenue or contract assets can become collected cash.",
+        "economic_scope": "PROJECT_BASED_ENGINEERING_AND_DIGITAL_ENABLEMENT_ACROSS_PROPERTY_PORTFOLIOS",
+        "customer_job_or_choice": "Improve building operations, security, energy use or service productivity through functioning and accepted digital or engineering systems.",
+        "value_driver": "Reusable product content, deployment efficiency, acceptance cycle, warranty burden, receivable quality and conversion of contract assets into cash.",
+        "failure_mode": "Revenue, gross profit or signed projects can rise while customization, hardware, delayed acceptance, contract assets and receivables consume owner cash.",
+        "profit_pool_direction": "OPTIONALITY_SUBJECT_TO_ACCEPTANCE_AND_CASH_CONVERSION",
+        "evidence_refs": [
+          "SRC:HKEX:02669:FY2025"
+        ],
+        "source_object_ref": "docs/development/research/industry_learning_blocks/CN_PROPERTY_SERVICES_2025/01_industry_learning_block.json"
+      },
+      {
+        "arena_id": "ARENA:CN:PROPERTY_SERVICES:DEVELOPER_FEEDER",
+        "mechanism": "A developer ecosystem can lower customer-acquisition cost and seed residential mandates, but land purchase, construction, delivery and actual appointment are separated by time and contract decisions.",
+        "economic_scope": "DEVELOPER_PIPELINE_TO_FUTURE_PROPERTY_MANAGEMENT_HANDOFF",
+        "customer_job_or_choice": "Provide a reliable transition from delivered property into recurring community operation without assuming every parent project becomes an issuer mandate.",
+        "value_driver": "Parent project quality, delivery timing, appointment probability, third-party win rate and the economics of the resulting managed portfolio.",
+        "failure_mode": "Parent land purchases or sales can be mistaken for current property-service revenue, guaranteed appointment, or proof of attractive project economics.",
+        "profit_pool_direction": "SHRINKING_INDUSTRY_FEEDER_WITH_COMPANY_SPECIFIC_CORE_CITY_BUFFER",
+        "evidence_refs": [
+          "SRC:HKEX:00688:FY2025",
+          "SRC:HKEX:00688:2026M6_UPDATE",
+          "SRC:COLI:2026M7_UPDATE",
+          "SRC:HKEX:02669:FY2025"
+        ],
+        "source_object_ref": "docs/development/research/industry_learning_blocks/CN_PROPERTY_SERVICES_2025/01_industry_learning_block.json"
+      }
+    ],
+    "customer_jobs": [
+      "Keep residential communities safe, clean, functional and governable over repeated annual service periods at a fee residents and owners will continue to pay.",
+      "Maintain continuous, auditable operation of public facilities and spaces under staffing, service-level, safety and performance requirements.",
+      "Improve building operations, security, energy use or service productivity through functioning and accepted digital or engineering systems.",
+      "Provide a reliable transition from delivered property into recurring community operation without assuming every parent project becomes an issuer mandate."
+    ]
+  },
+  "structural_epochs": [
+    {
+      "epoch_id": "EPOCH:CN:PROPERTY_SERVICES:STOCK_OPERATION",
+      "as_of": "2026-01-19T23:59:59+08:00",
+      "condition": "The demand base is migrating toward stock operation: urban population still expanded and more than 240,000 old communities were renovated during the Fourteenth Five-Year Plan, but regulated or negotiated fees and continuing labor input prevent recurring demand from guaranteeing margin recovery.",
+      "observations": [
+        "Urban population increased by 10.30 million in 2025 and urbanization reached 67.89%; old-community renovation covered more than 240,000 communities and 40 million households during the Fourteenth Five-Year Plan.",
+        "Recurring residential service demand is structurally more durable than developer delivery, while monetization remains constrained by fee adjustment and collection economics.",
+        "Low-return operators can remain in the market without a heavy-asset capacity exit, so supply does not mechanically contract when returns weaken."
+      ],
+      "evidence_refs": [
+        "SRC:NBS:URBANIZATION:FY2025",
+        "SRC:CN:OLD_COMMUNITY_RENOVATION:14FYP",
+        "SRC:MOJ:PROPERTY_FEE_BOUNDARY:2023",
+        "SRC:BEIJING:OLD_COMMUNITY_SERVICE:2025",
+        "SRC:NBS:SERVICE_WAGES:FY2025"
+      ],
+      "source_object_ref": "docs/development/research/industry_learning_blocks/CN_PROPERTY_SERVICES_2025/01_industry_learning_block.json"
+    },
+    {
+      "epoch_id": "EPOCH:CN:PROPERTY_SERVICES:NEW_BUILD_CONTRACTION",
+      "as_of": "2026-06-16T23:59:59+08:00",
+      "condition": "China property services moved out of a developer-delivery-led expansion epoch: 2025 residential starts and completions fell 19.8% and 20.2%, and the contraction continued in the first five months of 2026, reducing the flow of low-acquisition-cost new residential mandates and development-chain services.",
+      "observations": [
+        "Residential starts fell 19.8% and completions fell 20.2% in 2025; January-May 2026 starts and completions fell 23.4% and 25.0% year on year.",
+        "The evidence establishes a shrinking new-project feeder, not the disappearance of recurring property-service demand.",
+        "No concentration conclusion is asserted from the admitted sources."
+      ],
+      "evidence_refs": [
+        "SRC:NBS:CN_REAL_ESTATE:FY2025",
+        "SRC:NBS:CN_REAL_ESTATE:2026M5"
+      ],
+      "source_object_ref": "docs/development/research/industry_learning_blocks/CN_PROPERTY_SERVICES_2025/01_industry_learning_block.json"
+    },
+    {
+      "epoch_id": "EPOCH:CN:PROPERTY_SERVICES:CONDITIONAL_ADJACENCIES",
+      "as_of": "2026-08-13T23:59:59+08:00",
+      "condition": "Growth is increasingly sought in institutional property, city public services and smart engineering, where demand may be resilient but competition, procurement regulation, annual performance tests, working-capital funding, project acceptance and collection determine whether revenue becomes owner cash.",
+      "observations": [
+        "Official procurement examples show continuing demand from hospitals, universities, scenic areas and city-space contracts.",
+        "Mechanism-matched public and institutional service disclosures support a broad mature gross-margin reference range, but they do not establish Zhonghai Property project profitability.",
+        "Public contracts remain contestable through tendering and recurring performance or renewal decisions; disclosed eligible bids can be tightly grouped."
+      ],
+      "evidence_refs": [
+        "SRC:MOF:CN_FISCAL:FY2025",
+        "SRC:PROCUREMENT:QINGDAO_CHENGYANG:2025",
+        "SRC:PROCUREMENT:CENTRAL_SOUTH_UNIVERSITY:2025",
+        "SRC:PROCUREMENT:PEKING_UNION_MEDICAL:2024",
+        "SRC:PROCUREMENT:CHENGDU_PANDA_BASE:2023",
+        "SRC:PROCUREMENT:SHENSHAN_HOSPITAL:2026",
+        "SRC:HKEX:02669:FY2025"
+      ],
+      "source_object_ref": "docs/development/research/industry_learning_blocks/CN_PROPERTY_SERVICES_2025/01_industry_learning_block.json"
+    }
+  ],
+  "industry_drivers": {
+    "demand": [
+      {
+        "driver": "China property services moved out of a developer-delivery-led expansion epoch: 2025 residential starts and completions fell 19.8% and 20.2%, and the contraction continued in the first five months of 2026, reducing the flow of low-acquisition-cost new residential mandates and development-chain services.",
+        "profit_pool_effect": "TO_BE_UNDERWRITTEN",
+        "evidence_refs": [
+          "SRC:NBS:CN_REAL_ESTATE:FY2025",
+          "SRC:NBS:CN_REAL_ESTATE:2026M5"
+        ],
+        "source_object_ref": "docs/development/research/industry_learning_blocks/CN_PROPERTY_SERVICES_2025/01_industry_learning_block.json"
+      },
+      {
+        "driver": "Residential starts fell 19.8% and completions fell 20.2% in 2025; January-May 2026 starts and completions fell 23.4% and 25.0% year on year.",
+        "profit_pool_effect": "TO_BE_UNDERWRITTEN",
+        "evidence_refs": [
+          "SRC:NBS:CN_REAL_ESTATE:FY2025",
+          "SRC:NBS:CN_REAL_ESTATE:2026M5"
+        ],
+        "source_object_ref": "docs/development/research/industry_learning_blocks/CN_PROPERTY_SERVICES_2025/01_industry_learning_block.json"
+      },
+      {
+        "driver": "The evidence establishes a shrinking new-project feeder, not the disappearance of recurring property-service demand.",
+        "profit_pool_effect": "TO_BE_UNDERWRITTEN",
+        "evidence_refs": [
+          "SRC:NBS:CN_REAL_ESTATE:FY2025",
+          "SRC:NBS:CN_REAL_ESTATE:2026M5"
+        ],
+        "source_object_ref": "docs/development/research/industry_learning_blocks/CN_PROPERTY_SERVICES_2025/01_industry_learning_block.json"
+      },
+      {
+        "driver": "The demand base is migrating toward stock operation: urban population still expanded and more than 240,000 old communities were renovated during the Fourteenth Five-Year Plan, but regulated or negotiated fees and continuing labor input prevent recurring demand from guaranteeing margin recovery.",
+        "profit_pool_effect": "TO_BE_UNDERWRITTEN",
+        "evidence_refs": [
+          "SRC:NBS:URBANIZATION:FY2025",
+          "SRC:CN:OLD_COMMUNITY_RENOVATION:14FYP",
+          "SRC:MOJ:PROPERTY_FEE_BOUNDARY:2023",
+          "SRC:BEIJING:OLD_COMMUNITY_SERVICE:2025",
+          "SRC:NBS:SERVICE_WAGES:FY2025"
+        ],
+        "source_object_ref": "docs/development/research/industry_learning_blocks/CN_PROPERTY_SERVICES_2025/01_industry_learning_block.json"
+      },
+      {
+        "driver": "Recurring residential service demand is structurally more durable than developer delivery, while monetization remains constrained by fee adjustment and collection economics.",
+        "profit_pool_effect": "TO_BE_UNDERWRITTEN",
+        "evidence_refs": [
+          "SRC:NBS:URBANIZATION:FY2025",
+          "SRC:CN:OLD_COMMUNITY_RENOVATION:14FYP",
+          "SRC:MOJ:PROPERTY_FEE_BOUNDARY:2023",
+          "SRC:BEIJING:OLD_COMMUNITY_SERVICE:2025",
+          "SRC:NBS:SERVICE_WAGES:FY2025"
+        ],
+        "source_object_ref": "docs/development/research/industry_learning_blocks/CN_PROPERTY_SERVICES_2025/01_industry_learning_block.json"
+      },
+      {
+        "driver": "Low-return operators can remain in the market without a heavy-asset capacity exit, so supply does not mechanically contract when returns weaken.",
+        "profit_pool_effect": "TO_BE_UNDERWRITTEN",
+        "evidence_refs": [
+          "SRC:NBS:URBANIZATION:FY2025",
+          "SRC:CN:OLD_COMMUNITY_RENOVATION:14FYP",
+          "SRC:MOJ:PROPERTY_FEE_BOUNDARY:2023",
+          "SRC:BEIJING:OLD_COMMUNITY_SERVICE:2025",
+          "SRC:NBS:SERVICE_WAGES:FY2025"
+        ],
+        "source_object_ref": "docs/development/research/industry_learning_blocks/CN_PROPERTY_SERVICES_2025/01_industry_learning_block.json"
+      },
+      {
+        "driver": "Growth is increasingly sought in institutional property, city public services and smart engineering, where demand may be resilient but competition, procurement regulation, annual performance tests, working-capital funding, project acceptance and collection determine whether revenue becomes owner cash.",
+        "profit_pool_effect": "TO_BE_UNDERWRITTEN",
+        "evidence_refs": [
+          "SRC:MOF:CN_FISCAL:FY2025",
+          "SRC:PROCUREMENT:QINGDAO_CHENGYANG:2025",
+          "SRC:PROCUREMENT:CENTRAL_SOUTH_UNIVERSITY:2025",
+          "SRC:PROCUREMENT:PEKING_UNION_MEDICAL:2024",
+          "SRC:PROCUREMENT:CHENGDU_PANDA_BASE:2023",
+          "SRC:PROCUREMENT:SHENSHAN_HOSPITAL:2026",
+          "SRC:HKEX:02669:FY2025"
+        ],
+        "source_object_ref": "docs/development/research/industry_learning_blocks/CN_PROPERTY_SERVICES_2025/01_industry_learning_block.json"
+      },
+      {
+        "driver": "Official procurement examples show continuing demand from hospitals, universities, scenic areas and city-space contracts.",
+        "profit_pool_effect": "TO_BE_UNDERWRITTEN",
+        "evidence_refs": [
+          "SRC:MOF:CN_FISCAL:FY2025",
+          "SRC:PROCUREMENT:QINGDAO_CHENGYANG:2025",
+          "SRC:PROCUREMENT:CENTRAL_SOUTH_UNIVERSITY:2025",
+          "SRC:PROCUREMENT:PEKING_UNION_MEDICAL:2024",
+          "SRC:PROCUREMENT:CHENGDU_PANDA_BASE:2023",
+          "SRC:PROCUREMENT:SHENSHAN_HOSPITAL:2026",
+          "SRC:HKEX:02669:FY2025"
+        ],
+        "source_object_ref": "docs/development/research/industry_learning_blocks/CN_PROPERTY_SERVICES_2025/01_industry_learning_block.json"
+      },
+      {
+        "driver": "Mechanism-matched public and institutional service disclosures support a broad mature gross-margin reference range, but they do not establish Zhonghai Property project profitability.",
+        "profit_pool_effect": "TO_BE_UNDERWRITTEN",
+        "evidence_refs": [
+          "SRC:MOF:CN_FISCAL:FY2025",
+          "SRC:PROCUREMENT:QINGDAO_CHENGYANG:2025",
+          "SRC:PROCUREMENT:CENTRAL_SOUTH_UNIVERSITY:2025",
+          "SRC:PROCUREMENT:PEKING_UNION_MEDICAL:2024",
+          "SRC:PROCUREMENT:CHENGDU_PANDA_BASE:2023",
+          "SRC:PROCUREMENT:SHENSHAN_HOSPITAL:2026",
+          "SRC:HKEX:02669:FY2025"
+        ],
+        "source_object_ref": "docs/development/research/industry_learning_blocks/CN_PROPERTY_SERVICES_2025/01_industry_learning_block.json"
+      },
+      {
+        "driver": "Public contracts remain contestable through tendering and recurring performance or renewal decisions; disclosed eligible bids can be tightly grouped.",
+        "profit_pool_effect": "TO_BE_UNDERWRITTEN",
+        "evidence_refs": [
+          "SRC:MOF:CN_FISCAL:FY2025",
+          "SRC:PROCUREMENT:QINGDAO_CHENGYANG:2025",
+          "SRC:PROCUREMENT:CENTRAL_SOUTH_UNIVERSITY:2025",
+          "SRC:PROCUREMENT:PEKING_UNION_MEDICAL:2024",
+          "SRC:PROCUREMENT:CHENGDU_PANDA_BASE:2023",
+          "SRC:PROCUREMENT:SHENSHAN_HOSPITAL:2026",
+          "SRC:HKEX:02669:FY2025"
+        ],
+        "source_object_ref": "docs/development/research/industry_learning_blocks/CN_PROPERTY_SERVICES_2025/01_industry_learning_block.json"
+      },
+      {
+        "driver": "Institutional property and city public services match hospitals, schools, government, venues and public-space customers with labor, vehicles, subcontracting and operating coordination through regulated procurement and performance settlement. Bid discipline, mobilization cost, staffing productivity, shared equipment, local density, performance scores, renewal, payment timing and receivable collection. Contract value and revenue growth can overstate economics when low-price competition, annual renewal, performance deductions, guarantees, subcontracting, wage funding and delayed public payment absorb profit and capital.",
+        "profit_pool_effect": "CONDITIONAL_GROWTH_WITH_WORKING_CAPITAL_AND_RENEWAL_RISK",
+        "evidence_refs": [
+          "SRC:MOF:CN_FISCAL:FY2025",
+          "SRC:PROCUREMENT:QINGDAO_CHENGYANG:2025",
+          "SRC:PROCUREMENT:CENTRAL_SOUTH_UNIVERSITY:2025",
+          "SRC:PROCUREMENT:PEKING_UNION_MEDICAL:2024",
+          "SRC:PROCUREMENT:CHENGDU_PANDA_BASE:2023",
+          "SRC:PROCUREMENT:SHENSHAN_HOSPITAL:2026",
+          "SRC:SZSE:001914:FY2025",
+          "SRC:SZSE:300917:FY2025",
+          "SRC:HKEX:06049:FY2025"
+        ],
+        "source_object_ref": "docs/development/research/industry_learning_blocks/CN_PROPERTY_SERVICES_2025/01_industry_learning_block.json"
+      },
+      {
+        "driver": "A developer ecosystem can lower customer-acquisition cost and seed residential mandates, but land purchase, construction, delivery and actual appointment are separated by time and contract decisions. Parent project quality, delivery timing, appointment probability, third-party win rate and the economics of the resulting managed portfolio. Parent land purchases or sales can be mistaken for current property-service revenue, guaranteed appointment, or proof of attractive project economics.",
+        "profit_pool_effect": "SHRINKING_INDUSTRY_FEEDER_WITH_COMPANY_SPECIFIC_CORE_CITY_BUFFER",
+        "evidence_refs": [
+          "SRC:HKEX:00688:FY2025",
+          "SRC:HKEX:00688:2026M6_UPDATE",
+          "SRC:COLI:2026M7_UPDATE",
+          "SRC:HKEX:02669:FY2025"
+        ],
+        "source_object_ref": "docs/development/research/industry_learning_blocks/CN_PROPERTY_SERVICES_2025/01_industry_learning_block.json"
+      }
+    ],
+    "supply": [
+      {
+        "driver": "Mature residential operations convert resident continuity, collection, labor organization, procurement and local route density into recurring service earnings after the new-development handoff. Contract renewal, collection rate, same-project fee and service mix, labor and subcontractor productivity, project density and disciplined exit from loss-making mandates. Stable managed area or revenue can conceal fee rigidity, weaker collection, rising labor or subcontractor cost, service deterioration and retention of uneconomic projects.",
+        "profit_pool_effect": "MIGRATING_FROM_NEW_BUILD_FEEDER_TO_STOCK_OPERATIONS_AND_CONDITIONAL_ADJACENCIES",
+        "evidence_refs": [
+          "SRC:NBS:CN_REAL_ESTATE:FY2025",
+          "SRC:NBS:CN_REAL_ESTATE:2026M5",
+          "SRC:NBS:URBANIZATION:FY2025",
+          "SRC:CN:OLD_COMMUNITY_RENOVATION:14FYP",
+          "SRC:MOJ:PROPERTY_FEE_BOUNDARY:2023",
+          "SRC:BEIJING:OLD_COMMUNITY_SERVICE:2025",
+          "SRC:NBS:SERVICE_WAGES:FY2025"
+        ],
+        "source_object_ref": "docs/development/research/industry_learning_blocks/CN_PROPERTY_SERVICES_2025/01_industry_learning_block.json"
+      }
+    ],
+    "competition": [
+      {
+        "driver": "China property services moved out of a developer-delivery-led expansion epoch: 2025 residential starts and completions fell 19.8% and 20.2%, and the contraction continued in the first five months of 2026, reducing the flow of low-acquisition-cost new residential mandates and development-chain services.",
+        "profit_pool_effect": "TO_BE_UNDERWRITTEN",
+        "evidence_refs": [
+          "SRC:NBS:CN_REAL_ESTATE:FY2025",
+          "SRC:NBS:CN_REAL_ESTATE:2026M5"
+        ],
+        "source_object_ref": "docs/development/research/industry_learning_blocks/CN_PROPERTY_SERVICES_2025/01_industry_learning_block.json"
+      },
+      {
+        "driver": "No concentration conclusion is asserted from the admitted sources.",
+        "profit_pool_effect": "TO_BE_UNDERWRITTEN",
+        "evidence_refs": [
+          "SRC:NBS:CN_REAL_ESTATE:FY2025",
+          "SRC:NBS:CN_REAL_ESTATE:2026M5"
+        ],
+        "source_object_ref": "docs/development/research/industry_learning_blocks/CN_PROPERTY_SERVICES_2025/01_industry_learning_block.json"
+      },
+      {
+        "driver": "Urban population increased by 10.30 million in 2025 and urbanization reached 67.89%; old-community renovation covered more than 240,000 communities and 40 million households during the Fourteenth Five-Year Plan.",
+        "profit_pool_effect": "TO_BE_UNDERWRITTEN",
+        "evidence_refs": [
+          "SRC:NBS:URBANIZATION:FY2025",
+          "SRC:CN:OLD_COMMUNITY_RENOVATION:14FYP",
+          "SRC:MOJ:PROPERTY_FEE_BOUNDARY:2023",
+          "SRC:BEIJING:OLD_COMMUNITY_SERVICE:2025",
+          "SRC:NBS:SERVICE_WAGES:FY2025"
+        ],
+        "source_object_ref": "docs/development/research/industry_learning_blocks/CN_PROPERTY_SERVICES_2025/01_industry_learning_block.json"
+      },
+      {
+        "driver": "Growth is increasingly sought in institutional property, city public services and smart engineering, where demand may be resilient but competition, procurement regulation, annual performance tests, working-capital funding, project acceptance and collection determine whether revenue becomes owner cash.",
+        "profit_pool_effect": "TO_BE_UNDERWRITTEN",
+        "evidence_refs": [
+          "SRC:MOF:CN_FISCAL:FY2025",
+          "SRC:PROCUREMENT:QINGDAO_CHENGYANG:2025",
+          "SRC:PROCUREMENT:CENTRAL_SOUTH_UNIVERSITY:2025",
+          "SRC:PROCUREMENT:PEKING_UNION_MEDICAL:2024",
+          "SRC:PROCUREMENT:CHENGDU_PANDA_BASE:2023",
+          "SRC:PROCUREMENT:SHENSHAN_HOSPITAL:2026",
+          "SRC:HKEX:02669:FY2025"
+        ],
+        "source_object_ref": "docs/development/research/industry_learning_blocks/CN_PROPERTY_SERVICES_2025/01_industry_learning_block.json"
+      },
+      {
+        "driver": "Mature residential operations convert resident continuity, collection, labor organization, procurement and local route density into recurring service earnings after the new-development handoff. Contract renewal, collection rate, same-project fee and service mix, labor and subcontractor productivity, project density and disciplined exit from loss-making mandates. Stable managed area or revenue can conceal fee rigidity, weaker collection, rising labor or subcontractor cost, service deterioration and retention of uneconomic projects.",
+        "profit_pool_effect": "MIGRATING_FROM_NEW_BUILD_FEEDER_TO_STOCK_OPERATIONS_AND_CONDITIONAL_ADJACENCIES",
+        "evidence_refs": [
+          "SRC:NBS:CN_REAL_ESTATE:FY2025",
+          "SRC:NBS:CN_REAL_ESTATE:2026M5",
+          "SRC:NBS:URBANIZATION:FY2025",
+          "SRC:CN:OLD_COMMUNITY_RENOVATION:14FYP",
+          "SRC:MOJ:PROPERTY_FEE_BOUNDARY:2023",
+          "SRC:BEIJING:OLD_COMMUNITY_SERVICE:2025",
+          "SRC:NBS:SERVICE_WAGES:FY2025"
+        ],
+        "source_object_ref": "docs/development/research/industry_learning_blocks/CN_PROPERTY_SERVICES_2025/01_industry_learning_block.json"
+      },
+      {
+        "driver": "Institutional property and city public services match hospitals, schools, government, venues and public-space customers with labor, vehicles, subcontracting and operating coordination through regulated procurement and performance settlement. Bid discipline, mobilization cost, staffing productivity, shared equipment, local density, performance scores, renewal, payment timing and receivable collection. Contract value and revenue growth can overstate economics when low-price competition, annual renewal, performance deductions, guarantees, subcontracting, wage funding and delayed public payment absorb profit and capital.",
+        "profit_pool_effect": "CONDITIONAL_GROWTH_WITH_WORKING_CAPITAL_AND_RENEWAL_RISK",
+        "evidence_refs": [
+          "SRC:MOF:CN_FISCAL:FY2025",
+          "SRC:PROCUREMENT:QINGDAO_CHENGYANG:2025",
+          "SRC:PROCUREMENT:CENTRAL_SOUTH_UNIVERSITY:2025",
+          "SRC:PROCUREMENT:PEKING_UNION_MEDICAL:2024",
+          "SRC:PROCUREMENT:CHENGDU_PANDA_BASE:2023",
+          "SRC:PROCUREMENT:SHENSHAN_HOSPITAL:2026",
+          "SRC:SZSE:001914:FY2025",
+          "SRC:SZSE:300917:FY2025",
+          "SRC:HKEX:06049:FY2025"
+        ],
+        "source_object_ref": "docs/development/research/industry_learning_blocks/CN_PROPERTY_SERVICES_2025/01_industry_learning_block.json"
+      },
+      {
+        "driver": "A developer ecosystem can lower customer-acquisition cost and seed residential mandates, but land purchase, construction, delivery and actual appointment are separated by time and contract decisions. Parent project quality, delivery timing, appointment probability, third-party win rate and the economics of the resulting managed portfolio. Parent land purchases or sales can be mistaken for current property-service revenue, guaranteed appointment, or proof of attractive project economics.",
+        "profit_pool_effect": "SHRINKING_INDUSTRY_FEEDER_WITH_COMPANY_SPECIFIC_CORE_CITY_BUFFER",
+        "evidence_refs": [
+          "SRC:HKEX:00688:FY2025",
+          "SRC:HKEX:00688:2026M6_UPDATE",
+          "SRC:COLI:2026M7_UPDATE",
+          "SRC:HKEX:02669:FY2025"
+        ],
+        "source_object_ref": "docs/development/research/industry_learning_blocks/CN_PROPERTY_SERVICES_2025/01_industry_learning_block.json"
+      }
+    ],
+    "regulation": [
+      {
+        "driver": "Growth is increasingly sought in institutional property, city public services and smart engineering, where demand may be resilient but competition, procurement regulation, annual performance tests, working-capital funding, project acceptance and collection determine whether revenue becomes owner cash.",
+        "profit_pool_effect": "TO_BE_UNDERWRITTEN",
+        "evidence_refs": [
+          "SRC:MOF:CN_FISCAL:FY2025",
+          "SRC:PROCUREMENT:QINGDAO_CHENGYANG:2025",
+          "SRC:PROCUREMENT:CENTRAL_SOUTH_UNIVERSITY:2025",
+          "SRC:PROCUREMENT:PEKING_UNION_MEDICAL:2024",
+          "SRC:PROCUREMENT:CHENGDU_PANDA_BASE:2023",
+          "SRC:PROCUREMENT:SHENSHAN_HOSPITAL:2026",
+          "SRC:HKEX:02669:FY2025"
+        ],
+        "source_object_ref": "docs/development/research/industry_learning_blocks/CN_PROPERTY_SERVICES_2025/01_industry_learning_block.json"
+      }
+    ]
+  },
+  "profit_pool_outlook": {
+    "direction": "MIGRATING_FROM_NEW_BUILD_FEEDER_TO_STOCK_OPERATIONS_AND_CONDITIONAL_ADJACENCIES",
+    "horizon": "NOT_SPECIFIED",
+    "thesis": "MIGRATING_FROM_NEW_BUILD_FEEDER_TO_STOCK_OPERATIONS_AND_CONDITIONAL_ADJACENCIES",
+    "confidence": "QUALITATIVE",
+    "evidence_refs": [
+      "SRC:NBS:CN_REAL_ESTATE:FY2025",
+      "SRC:NBS:CN_REAL_ESTATE:2026M5",
+      "SRC:NBS:URBANIZATION:FY2025",
+      "SRC:CN:OLD_COMMUNITY_RENOVATION:14FYP",
+      "SRC:MOJ:PROPERTY_FEE_BOUNDARY:2023",
+      "SRC:BEIJING:OLD_COMMUNITY_SERVICE:2025",
+      "SRC:NBS:SERVICE_WAGES:FY2025",
+      "SRC:MOF:CN_FISCAL:FY2025",
+      "SRC:PROCUREMENT:QINGDAO_CHENGYANG:2025",
+      "SRC:PROCUREMENT:CENTRAL_SOUTH_UNIVERSITY:2025",
+      "SRC:PROCUREMENT:PEKING_UNION_MEDICAL:2024",
+      "SRC:PROCUREMENT:CHENGDU_PANDA_BASE:2023",
+      "SRC:PROCUREMENT:SHENSHAN_HOSPITAL:2026",
+      "SRC:SZSE:001914:FY2025",
+      "SRC:SZSE:300917:FY2025",
+      "SRC:HKEX:06049:FY2025",
+      "SRC:HKEX:02669:FY2025",
+      "SRC:HKEX:00688:FY2025",
+      "SRC:HKEX:00688:2026M6_UPDATE",
+      "SRC:COLI:2026M7_UPDATE"
+    ]
+  },
+  "company_archetype_exposure": {
+    "archetype": "DEVELOPER_ECOSYSTEM_PROPERTY_OPERATOR_WITH_RESIDENTIAL_BASE_PUBLIC_SERVICE_GROWTH_AND_SMART_ENGINEERING_EXPOSURE",
+    "responsibility_boundary": "HK02669_CONSOLIDATED; project-level public-service margin, invested capital, working capital, cash recovery and smart-engineering acceptance economics are not separately established.",
+    "arena_ids": [
+      "ARENA:CN:PROPERTY_SERVICES:MATURE_RESIDENTIAL",
+      "ARENA:CN:PROPERTY_SERVICES:PUBLIC_INSTITUTIONAL",
+      "ARENA:CN:PROPERTY_SERVICES:SMART_ENGINEERING",
+      "ARENA:CN:PROPERTY_SERVICES:DEVELOPER_FEEDER"
+    ],
+    "exposures": [
+      {
+        "dimension": "ARENA_MEMBERSHIP",
+        "relation": "RECORDED_CONTEXT",
+        "rationale": "The admitted evidence supports three distinct exposures: a mature residential earnings base, conditional public-service growth, and smart-engineering collection risk. It does not establish the target's project-level margin, incremental ROIC, cumulative cash recovery or independent action effect.",
+        "evidence_refs": [
+          "SRC:HKEX:02669:FY2025",
+          "SRC:PROCUREMENT:QINGDAO_CHENGYANG:2025",
+          "SRC:PROCUREMENT:CENTRAL_SOUTH_UNIVERSITY:2025",
+          "SRC:PROCUREMENT:PEKING_UNION_MEDICAL:2024",
+          "SRC:PROCUREMENT:CHENGDU_PANDA_BASE:2023",
+          "SRC:PROCUREMENT:SHENSHAN_HOSPITAL:2026",
+          "SRC:HKEX:00688:FY2025",
+          "SRC:HKEX:00688:2026M6_UPDATE",
+          "SRC:COLI:2026M7_UPDATE"
+        ]
+      }
+    ],
+    "current_state": "The admitted evidence supports three distinct exposures: a mature residential earnings base, conditional public-service growth, and smart-engineering collection risk. It does not establish the target's project-level margin, incremental ROIC, cumulative cash recovery or independent action effect.",
+    "adaptation_hypothesis": "Candidate adaptation is to protect mature residential economics, select and cluster public projects, exit low-return mandates, and turn engineering acceptance into cash; execution and project economics require target-specific verification.",
+    "evidence_refs": [
+      "SRC:HKEX:02669:FY2025",
+      "SRC:PROCUREMENT:QINGDAO_CHENGYANG:2025",
+      "SRC:PROCUREMENT:CENTRAL_SOUTH_UNIVERSITY:2025",
+      "SRC:PROCUREMENT:PEKING_UNION_MEDICAL:2024",
+      "SRC:PROCUREMENT:CHENGDU_PANDA_BASE:2023",
+      "SRC:PROCUREMENT:SHENSHAN_HOSPITAL:2026",
+      "SRC:HKEX:00688:FY2025",
+      "SRC:HKEX:00688:2026M6_UPDATE",
+      "SRC:COLI:2026M7_UPDATE"
+    ],
+    "source_object_ref": "docs/development/research/industry_learning_blocks/CN_PROPERTY_SERVICES_2025/01_industry_learning_block.json"
+  },
+  "representative_peers": [
+    {
+      "company_id": "CN:001914",
+      "company_name": "China Merchants Property Operation & Service",
+      "archetype": "SOE_INSTITUTIONAL_AND_NON_RESIDENTIAL_PROPERTY_OPERATOR",
+      "common_arena_ids": [
+        "ARENA:CN:PROPERTY_SERVICES:PUBLIC_INSTITUTIONAL"
+      ],
+      "comparison_role": "MECHANISM_PEER_INSTITUTIONAL_PROPERTY_MARGIN",
+      "why_representative": "Broader institutional portfolio and operating density differ from Zhonghai's disclosed city-project mix; use as a mechanism benchmark, not a copied margin.",
+      "evidence_refs": [
+        "SRC:SZSE:001914:FY2025"
+      ],
+      "source_object_ref": "docs/development/research/industry_learning_blocks/CN_PROPERTY_SERVICES_2025/01_industry_learning_block.json"
+    },
+    {
+      "company_id": "CN:300917",
+      "company_name": "Shenzhen SDG Service",
+      "archetype": "LOCAL_SOE_GOVERNMENT_INSTITUTIONAL_AND_FACILITY_SERVICE_OPERATOR",
+      "common_arena_ids": [
+        "ARENA:CN:PROPERTY_SERVICES:PUBLIC_INSTITUTIONAL"
+      ],
+      "comparison_role": "MECHANISM_PEER_PUBLIC_SERVICE_RECEIVABLES",
+      "why_representative": "A local-government shareholder and higher facility-service exposure alter customer concentration and economics; retain both margin and receivable evidence.",
+      "evidence_refs": [
+        "SRC:SZSE:300917:FY2025"
+      ],
+      "source_object_ref": "docs/development/research/industry_learning_blocks/CN_PROPERTY_SERVICES_2025/01_industry_learning_block.json"
+    },
+    {
+      "company_id": "HK:06049",
+      "company_name": "Poly Property Services",
+      "archetype": "CENTRAL_SOE_DEVELOPER_ECOSYSTEM_PROPERTY_AND_PUBLIC_SERVICE_OPERATOR",
+      "common_arena_ids": [
+        "ARENA:CN:PROPERTY_SERVICES:DEVELOPER_FEEDER",
+        "ARENA:CN:PROPERTY_SERVICES:MATURE_RESIDENTIAL",
+        "ARENA:CN:PROPERTY_SERVICES:PUBLIC_INSTITUTIONAL"
+      ],
+      "comparison_role": "MECHANISM_PEER_DEVELOPER_ECOSYSTEM_AND_PUBLIC_SCALE",
+      "why_representative": "Its aggregate property margin cannot be used as Zhonghai's public-service margin; use it to test scale, mix and payment exposure.",
+      "evidence_refs": [
+        "SRC:HKEX:06049:FY2025"
+      ],
+      "source_object_ref": "docs/development/research/industry_learning_blocks/CN_PROPERTY_SERVICES_2025/01_industry_learning_block.json"
+    }
+  ],
+  "near_misses": [
+    {
+      "company_id": "HK:01209",
+      "company_name": "China Resources Mixc Lifestyle Services",
+      "archetype": "COMMERCIAL_MANAGEMENT_AND_PROPERTY_SERVICE_PLATFORM",
+      "common_arena_ids": [
+        "ARENA:CN:PROPERTY_SERVICES:PUBLIC_INSTITUTIONAL"
+      ],
+      "comparison_role": "NEAR_MISS_COMMERCIAL_ECOSYSTEM",
+      "why_representative": "Commercial brand, tenant traffic and community-commerce capabilities can change density, acquisition cost and margin independently of public-service execution.",
+      "evidence_refs": [
+        "SRC:HKEX:01209:FY2025"
+      ],
+      "source_object_ref": "docs/development/research/industry_learning_blocks/CN_PROPERTY_SERVICES_2025/01_industry_learning_block.json",
+      "near_miss_reason": "Material scope, control, or measurement boundary differs."
+    }
+  ],
+  "candidate_main_paths": [
+    {
+      "path_id": "IUP:HK:02669:1",
+      "status": "CANDIDATE_TO_VERIFY",
+      "industry_regime": "Growth is increasingly sought in institutional property, city public services and smart engineering, where demand may be resilient but competition, procurement regulation, annual performance tests, working-capital funding, project acceptance and collection determine whether revenue becomes owner cash.",
+      "industry_force": "Mature residential operations convert resident continuity, collection, labor organization, procurement and local route density into recurring service earnings after the new-development handoff.",
+      "profit_pool_effect": "MIGRATING_FROM_NEW_BUILD_FEEDER_TO_STOCK_OPERATIONS_AND_CONDITIONAL_ADJACENCIES",
+      "company_exposure": "The admitted evidence supports three distinct exposures: a mature residential earnings base, conditional public-service growth, and smart-engineering collection risk. It does not establish the target's project-level margin, incremental ROIC, cumulative cash recovery or independent action effect.",
+      "adaptation_hypothesis": "Candidate adaptation is to protect mature residential economics, select and cluster public projects, exit low-return mandates, and turn engineering acceptance into cash; execution and project economics require target-specific verification.",
+      "economics_implication": "Verify whether Contract renewal, collection rate, same-project fee and service mix, labor and subcontractor productivity, project density and disciplined exit from loss-making mandates. changes normalized earnings, capital needs, and owner-cash conversion at the company's responsibility boundary.",
+      "permanent_loss_implication": "Stable managed area or revenue can conceal fee rigidity, weaker collection, rising labor or subcontractor cost, service deterioration and retention of uneconomic projects.",
+      "reversal_observations": [
+        "For same-scope mature residential cohorts, what happened to fee, collection, renewal, labor and subcontractor cost after excluding newly delivered and exited projects?",
+        "For Zhonghai public and institutional projects, what are mobilization capital, staffing, subcontracting, guarantees, mature margin, receivables and cumulative cash recovery by project cohort?",
+        "Did large public projects renew without sustained price cuts or performance deductions, and did payment arrive within contractual terms?",
+        "What share of smart-engineering contract assets and receivables completed acceptance and converted to cash within 12 to 18 months, net of hardware, customization and warranty cash costs?",
+        "Which parent developments were delivered, appointed to Zhonghai and converted into fee-paying managed projects, and with what lag and economics?",
+        "How is incremental capital divided among mature property operations, public-service mobilization, smart engineering and platform acquisitions, and what cash return does each use produce?"
+      ],
+      "evidence_refs": [
+        "SRC:NBS:CN_REAL_ESTATE:FY2025",
+        "SRC:NBS:CN_REAL_ESTATE:2026M5",
+        "SRC:NBS:URBANIZATION:FY2025",
+        "SRC:CN:OLD_COMMUNITY_RENOVATION:14FYP",
+        "SRC:MOJ:PROPERTY_FEE_BOUNDARY:2023",
+        "SRC:BEIJING:OLD_COMMUNITY_SERVICE:2025",
+        "SRC:NBS:SERVICE_WAGES:FY2025"
+      ]
+    },
+    {
+      "path_id": "IUP:HK:02669:2",
+      "status": "CANDIDATE_TO_VERIFY",
+      "industry_regime": "Growth is increasingly sought in institutional property, city public services and smart engineering, where demand may be resilient but competition, procurement regulation, annual performance tests, working-capital funding, project acceptance and collection determine whether revenue becomes owner cash.",
+      "industry_force": "Institutional property and city public services match hospitals, schools, government, venues and public-space customers with labor, vehicles, subcontracting and operating coordination through regulated procurement and performance settlement.",
+      "profit_pool_effect": "CONDITIONAL_GROWTH_WITH_WORKING_CAPITAL_AND_RENEWAL_RISK",
+      "company_exposure": "The admitted evidence supports three distinct exposures: a mature residential earnings base, conditional public-service growth, and smart-engineering collection risk. It does not establish the target's project-level margin, incremental ROIC, cumulative cash recovery or independent action effect.",
+      "adaptation_hypothesis": "Candidate adaptation is to protect mature residential economics, select and cluster public projects, exit low-return mandates, and turn engineering acceptance into cash; execution and project economics require target-specific verification.",
+      "economics_implication": "Verify whether Bid discipline, mobilization cost, staffing productivity, shared equipment, local density, performance scores, renewal, payment timing and receivable collection. changes normalized earnings, capital needs, and owner-cash conversion at the company's responsibility boundary.",
+      "permanent_loss_implication": "Contract value and revenue growth can overstate economics when low-price competition, annual renewal, performance deductions, guarantees, subcontracting, wage funding and delayed public payment absorb profit and capital.",
+      "reversal_observations": [
+        "For same-scope mature residential cohorts, what happened to fee, collection, renewal, labor and subcontractor cost after excluding newly delivered and exited projects?",
+        "For Zhonghai public and institutional projects, what are mobilization capital, staffing, subcontracting, guarantees, mature margin, receivables and cumulative cash recovery by project cohort?",
+        "Did large public projects renew without sustained price cuts or performance deductions, and did payment arrive within contractual terms?",
+        "What share of smart-engineering contract assets and receivables completed acceptance and converted to cash within 12 to 18 months, net of hardware, customization and warranty cash costs?",
+        "Which parent developments were delivered, appointed to Zhonghai and converted into fee-paying managed projects, and with what lag and economics?",
+        "How is incremental capital divided among mature property operations, public-service mobilization, smart engineering and platform acquisitions, and what cash return does each use produce?"
+      ],
+      "evidence_refs": [
+        "SRC:MOF:CN_FISCAL:FY2025",
+        "SRC:PROCUREMENT:QINGDAO_CHENGYANG:2025",
+        "SRC:PROCUREMENT:CENTRAL_SOUTH_UNIVERSITY:2025",
+        "SRC:PROCUREMENT:PEKING_UNION_MEDICAL:2024",
+        "SRC:PROCUREMENT:CHENGDU_PANDA_BASE:2023",
+        "SRC:PROCUREMENT:SHENSHAN_HOSPITAL:2026",
+        "SRC:SZSE:001914:FY2025",
+        "SRC:SZSE:300917:FY2025",
+        "SRC:HKEX:06049:FY2025"
+      ]
+    },
+    {
+      "path_id": "IUP:HK:02669:3",
+      "status": "CANDIDATE_TO_VERIFY",
+      "industry_regime": "Growth is increasingly sought in institutional property, city public services and smart engineering, where demand may be resilient but competition, procurement regulation, annual performance tests, working-capital funding, project acceptance and collection determine whether revenue becomes owner cash.",
+      "industry_force": "Smart engineering and digital projects combine software, hardware, customization, installation and acceptance before billed revenue or contract assets can become collected cash.",
+      "profit_pool_effect": "OPTIONALITY_SUBJECT_TO_ACCEPTANCE_AND_CASH_CONVERSION",
+      "company_exposure": "The admitted evidence supports three distinct exposures: a mature residential earnings base, conditional public-service growth, and smart-engineering collection risk. It does not establish the target's project-level margin, incremental ROIC, cumulative cash recovery or independent action effect.",
+      "adaptation_hypothesis": "Candidate adaptation is to protect mature residential economics, select and cluster public projects, exit low-return mandates, and turn engineering acceptance into cash; execution and project economics require target-specific verification.",
+      "economics_implication": "Verify whether Reusable product content, deployment efficiency, acceptance cycle, warranty burden, receivable quality and conversion of contract assets into cash. changes normalized earnings, capital needs, and owner-cash conversion at the company's responsibility boundary.",
+      "permanent_loss_implication": "Revenue, gross profit or signed projects can rise while customization, hardware, delayed acceptance, contract assets and receivables consume owner cash.",
+      "reversal_observations": [
+        "For same-scope mature residential cohorts, what happened to fee, collection, renewal, labor and subcontractor cost after excluding newly delivered and exited projects?",
+        "For Zhonghai public and institutional projects, what are mobilization capital, staffing, subcontracting, guarantees, mature margin, receivables and cumulative cash recovery by project cohort?",
+        "Did large public projects renew without sustained price cuts or performance deductions, and did payment arrive within contractual terms?",
+        "What share of smart-engineering contract assets and receivables completed acceptance and converted to cash within 12 to 18 months, net of hardware, customization and warranty cash costs?",
+        "Which parent developments were delivered, appointed to Zhonghai and converted into fee-paying managed projects, and with what lag and economics?",
+        "How is incremental capital divided among mature property operations, public-service mobilization, smart engineering and platform acquisitions, and what cash return does each use produce?"
+      ],
+      "evidence_refs": [
+        "SRC:HKEX:02669:FY2025"
+      ]
+    },
+    {
+      "path_id": "IUP:HK:02669:4",
+      "status": "CANDIDATE_TO_VERIFY",
+      "industry_regime": "Growth is increasingly sought in institutional property, city public services and smart engineering, where demand may be resilient but competition, procurement regulation, annual performance tests, working-capital funding, project acceptance and collection determine whether revenue becomes owner cash.",
+      "industry_force": "A developer ecosystem can lower customer-acquisition cost and seed residential mandates, but land purchase, construction, delivery and actual appointment are separated by time and contract decisions.",
+      "profit_pool_effect": "SHRINKING_INDUSTRY_FEEDER_WITH_COMPANY_SPECIFIC_CORE_CITY_BUFFER",
+      "company_exposure": "The admitted evidence supports three distinct exposures: a mature residential earnings base, conditional public-service growth, and smart-engineering collection risk. It does not establish the target's project-level margin, incremental ROIC, cumulative cash recovery or independent action effect.",
+      "adaptation_hypothesis": "Candidate adaptation is to protect mature residential economics, select and cluster public projects, exit low-return mandates, and turn engineering acceptance into cash; execution and project economics require target-specific verification.",
+      "economics_implication": "Verify whether Parent project quality, delivery timing, appointment probability, third-party win rate and the economics of the resulting managed portfolio. changes normalized earnings, capital needs, and owner-cash conversion at the company's responsibility boundary.",
+      "permanent_loss_implication": "Parent land purchases or sales can be mistaken for current property-service revenue, guaranteed appointment, or proof of attractive project economics.",
+      "reversal_observations": [
+        "For same-scope mature residential cohorts, what happened to fee, collection, renewal, labor and subcontractor cost after excluding newly delivered and exited projects?",
+        "For Zhonghai public and institutional projects, what are mobilization capital, staffing, subcontracting, guarantees, mature margin, receivables and cumulative cash recovery by project cohort?",
+        "Did large public projects renew without sustained price cuts or performance deductions, and did payment arrive within contractual terms?",
+        "What share of smart-engineering contract assets and receivables completed acceptance and converted to cash within 12 to 18 months, net of hardware, customization and warranty cash costs?",
+        "Which parent developments were delivered, appointed to Zhonghai and converted into fee-paying managed projects, and with what lag and economics?",
+        "How is incremental capital divided among mature property operations, public-service mobilization, smart engineering and platform acquisitions, and what cash return does each use produce?"
+      ],
+      "evidence_refs": [
+        "SRC:HKEX:00688:FY2025",
+        "SRC:HKEX:00688:2026M6_UPDATE",
+        "SRC:COLI:2026M7_UPDATE",
+        "SRC:HKEX:02669:FY2025"
+      ]
+    }
+  ],
+  "strongest_counter_thesis": {
+    "statement": "Zhonghai's public-service and smart-engineering revenue growth may diversify reported revenue without improving ordinary-share owner cash because mobilization, guarantees, receivables, contract assets, acceptance delays and renewal risk can absorb the incremental earnings.",
+    "why_plausible": "This competing explanation is explicitly preserved by an input block, mechanism card, or arena failure mode; it is not dismissed by peer count.",
+    "discriminating_observations": [
+      "For same-scope mature residential cohorts, what happened to fee, collection, renewal, labor and subcontractor cost after excluding newly delivered and exited projects?",
+      "For Zhonghai public and institutional projects, what are mobilization capital, staffing, subcontracting, guarantees, mature margin, receivables and cumulative cash recovery by project cohort?",
+      "Did large public projects renew without sustained price cuts or performance deductions, and did payment arrive within contractual terms?",
+      "What share of smart-engineering contract assets and receivables completed acceptance and converted to cash within 12 to 18 months, net of hardware, customization and warranty cash costs?",
+      "Which parent developments were delivered, appointed to Zhonghai and converted into fee-paying managed projects, and with what lag and economics?",
+      "How is incremental capital divided among mature property operations, public-service mobilization, smart engineering and platform acquisitions, and what cash return does each use produce?"
+    ],
+    "evidence_refs": [],
+    "source_object_ref": "docs/development/research/industry_learning_blocks/CN_PROPERTY_SERVICES_2025/01_industry_learning_block.json"
+  },
+  "company_verification_fields": [
+    {
+      "field": "For same-scope mature residential cohorts, what happened to fee, collection, renewal, labor and subcontractor cost after excluding newly delivered and exited projects?",
+      "kind": "QUESTION",
+      "why_it_matters": "Distinguishes a durable earnings base from revenue stability with hidden margin decay.",
+      "evidence_refs": [
+        "SRC:HKEX:02669:FY2025",
+        "SRC:MOJ:PROPERTY_FEE_BOUNDARY:2023",
+        "SRC:NBS:SERVICE_WAGES:FY2025"
+      ],
+      "source_object_ref": "docs/development/research/industry_learning_blocks/CN_PROPERTY_SERVICES_2025/01_industry_learning_block.json"
+    },
+    {
+      "field": "For Zhonghai public and institutional projects, what are mobilization capital, staffing, subcontracting, guarantees, mature margin, receivables and cumulative cash recovery by project cohort?",
+      "kind": "QUESTION",
+      "why_it_matters": "Determines whether public-service growth earns the cost of capital instead of only adding contract value and revenue.",
+      "evidence_refs": [
+        "SRC:HKEX:02669:FY2025",
+        "SRC:PROCUREMENT:QINGDAO_CHENGYANG:2025",
+        "SRC:PROCUREMENT:CENTRAL_SOUTH_UNIVERSITY:2025",
+        "SRC:PROCUREMENT:PEKING_UNION_MEDICAL:2024",
+        "SRC:PROCUREMENT:CHENGDU_PANDA_BASE:2023",
+        "SRC:PROCUREMENT:SHENSHAN_HOSPITAL:2026"
+      ],
+      "source_object_ref": "docs/development/research/industry_learning_blocks/CN_PROPERTY_SERVICES_2025/01_industry_learning_block.json"
+    },
+    {
+      "field": "Did large public projects renew without sustained price cuts or performance deductions, and did payment arrive within contractual terms?",
+      "kind": "QUESTION",
+      "why_it_matters": "Separates demand visibility from economically durable demand and collected cash.",
+      "evidence_refs": [
+        "SRC:PROCUREMENT:QINGDAO_CHENGYANG:2025",
+        "SRC:PROCUREMENT:CENTRAL_SOUTH_UNIVERSITY:2025",
+        "SRC:PROCUREMENT:CHENGDU_PANDA_BASE:2023"
+      ],
+      "source_object_ref": "docs/development/research/industry_learning_blocks/CN_PROPERTY_SERVICES_2025/01_industry_learning_block.json"
+    },
+    {
+      "field": "What share of smart-engineering contract assets and receivables completed acceptance and converted to cash within 12 to 18 months, net of hardware, customization and warranty cash costs?",
+      "kind": "QUESTION",
+      "why_it_matters": "Distinguishes genuine productized optionality from project revenue that consumes owner cash.",
+      "evidence_refs": [
+        "SRC:HKEX:02669:FY2025"
+      ],
+      "source_object_ref": "docs/development/research/industry_learning_blocks/CN_PROPERTY_SERVICES_2025/01_industry_learning_block.json"
+    },
+    {
+      "field": "Which parent developments were delivered, appointed to Zhonghai and converted into fee-paying managed projects, and with what lag and economics?",
+      "kind": "QUESTION",
+      "why_it_matters": "Prevents parent land purchase or sales from being treated as guaranteed current property-service growth.",
+      "evidence_refs": [
+        "SRC:HKEX:00688:FY2025",
+        "SRC:HKEX:00688:2026M6_UPDATE",
+        "SRC:COLI:2026M7_UPDATE",
+        "SRC:HKEX:02669:FY2025"
+      ],
+      "source_object_ref": "docs/development/research/industry_learning_blocks/CN_PROPERTY_SERVICES_2025/01_industry_learning_block.json"
+    },
+    {
+      "field": "How is incremental capital divided among mature property operations, public-service mobilization, smart engineering and platform acquisitions, and what cash return does each use produce?",
+      "kind": "QUESTION",
+      "why_it_matters": "Links business-mix migration to ordinary-share owner cash and permanent-loss risk.",
+      "evidence_refs": [
+        "SRC:HKEX:02669:FY2025",
+        "SRC:HKEX:02669:ZHONGJIAN_PROPERTY_CAPITAL_INCREASE:2025"
+      ],
+      "source_object_ref": "docs/development/research/industry_learning_blocks/CN_PROPERTY_SERVICES_2025/01_industry_learning_block.json"
+    }
+  ],
+  "evidence_refs": [
+    {
+      "evidence_ref": "SRC:NBS:CN_REAL_ESTATE:FY2025",
+      "source_object_refs": [
+        "docs/development/research/industry_learning_blocks/CN_PROPERTY_SERVICES_2025/01_industry_learning_block.json"
+      ],
+      "supports": [
+        "STRUCTURAL_EPOCH",
+        "INDUSTRY_VALUE_CHAIN"
+      ],
+      "knowledge_status": "SOURCE_POINTER"
+    },
+    {
+      "evidence_ref": "SRC:NBS:CN_REAL_ESTATE:2026M5",
+      "source_object_refs": [
+        "docs/development/research/industry_learning_blocks/CN_PROPERTY_SERVICES_2025/01_industry_learning_block.json"
+      ],
+      "supports": [
+        "STRUCTURAL_EPOCH",
+        "INDUSTRY_VALUE_CHAIN"
+      ],
+      "knowledge_status": "SOURCE_POINTER"
+    },
+    {
+      "evidence_ref": "SRC:NBS:URBANIZATION:FY2025",
+      "source_object_refs": [
+        "docs/development/research/industry_learning_blocks/CN_PROPERTY_SERVICES_2025/01_industry_learning_block.json"
+      ],
+      "supports": [
+        "STRUCTURAL_EPOCH",
+        "INDUSTRY_VALUE_CHAIN"
+      ],
+      "knowledge_status": "SOURCE_POINTER"
+    },
+    {
+      "evidence_ref": "SRC:CN:OLD_COMMUNITY_RENOVATION:14FYP",
+      "source_object_refs": [
+        "docs/development/research/industry_learning_blocks/CN_PROPERTY_SERVICES_2025/01_industry_learning_block.json"
+      ],
+      "supports": [
+        "STRUCTURAL_EPOCH",
+        "INDUSTRY_VALUE_CHAIN"
+      ],
+      "knowledge_status": "SOURCE_POINTER"
+    },
+    {
+      "evidence_ref": "SRC:MOJ:PROPERTY_FEE_BOUNDARY:2023",
+      "source_object_refs": [
+        "docs/development/research/industry_learning_blocks/CN_PROPERTY_SERVICES_2025/01_industry_learning_block.json"
+      ],
+      "supports": [
+        "STRUCTURAL_EPOCH",
+        "INDUSTRY_VALUE_CHAIN"
+      ],
+      "knowledge_status": "SOURCE_POINTER"
+    },
+    {
+      "evidence_ref": "SRC:BEIJING:OLD_COMMUNITY_SERVICE:2025",
+      "source_object_refs": [
+        "docs/development/research/industry_learning_blocks/CN_PROPERTY_SERVICES_2025/01_industry_learning_block.json"
+      ],
+      "supports": [
+        "STRUCTURAL_EPOCH",
+        "INDUSTRY_VALUE_CHAIN"
+      ],
+      "knowledge_status": "SOURCE_POINTER"
+    },
+    {
+      "evidence_ref": "SRC:NBS:SERVICE_WAGES:FY2025",
+      "source_object_refs": [
+        "docs/development/research/industry_learning_blocks/CN_PROPERTY_SERVICES_2025/01_industry_learning_block.json"
+      ],
+      "supports": [
+        "STRUCTURAL_EPOCH",
+        "INDUSTRY_VALUE_CHAIN"
+      ],
+      "knowledge_status": "SOURCE_POINTER"
+    },
+    {
+      "evidence_ref": "SRC:MOF:CN_FISCAL:FY2025",
+      "source_object_refs": [
+        "docs/development/research/industry_learning_blocks/CN_PROPERTY_SERVICES_2025/01_industry_learning_block.json"
+      ],
+      "supports": [
+        "STRUCTURAL_EPOCH",
+        "INDUSTRY_VALUE_CHAIN"
+      ],
+      "knowledge_status": "SOURCE_POINTER"
+    },
+    {
+      "evidence_ref": "SRC:PROCUREMENT:QINGDAO_CHENGYANG:2025",
+      "source_object_refs": [
+        "docs/development/research/industry_learning_blocks/CN_PROPERTY_SERVICES_2025/01_industry_learning_block.json"
+      ],
+      "supports": [
+        "STRUCTURAL_EPOCH",
+        "INDUSTRY_VALUE_CHAIN",
+        "COMPANY_ARCHETYPE_OR_PEER"
+      ],
+      "knowledge_status": "SOURCE_POINTER"
+    },
+    {
+      "evidence_ref": "SRC:PROCUREMENT:CENTRAL_SOUTH_UNIVERSITY:2025",
+      "source_object_refs": [
+        "docs/development/research/industry_learning_blocks/CN_PROPERTY_SERVICES_2025/01_industry_learning_block.json"
+      ],
+      "supports": [
+        "STRUCTURAL_EPOCH",
+        "INDUSTRY_VALUE_CHAIN",
+        "COMPANY_ARCHETYPE_OR_PEER"
+      ],
+      "knowledge_status": "SOURCE_POINTER"
+    },
+    {
+      "evidence_ref": "SRC:PROCUREMENT:PEKING_UNION_MEDICAL:2024",
+      "source_object_refs": [
+        "docs/development/research/industry_learning_blocks/CN_PROPERTY_SERVICES_2025/01_industry_learning_block.json"
+      ],
+      "supports": [
+        "STRUCTURAL_EPOCH",
+        "INDUSTRY_VALUE_CHAIN",
+        "COMPANY_ARCHETYPE_OR_PEER"
+      ],
+      "knowledge_status": "SOURCE_POINTER"
+    },
+    {
+      "evidence_ref": "SRC:PROCUREMENT:CHENGDU_PANDA_BASE:2023",
+      "source_object_refs": [
+        "docs/development/research/industry_learning_blocks/CN_PROPERTY_SERVICES_2025/01_industry_learning_block.json"
+      ],
+      "supports": [
+        "STRUCTURAL_EPOCH",
+        "INDUSTRY_VALUE_CHAIN",
+        "COMPANY_ARCHETYPE_OR_PEER"
+      ],
+      "knowledge_status": "SOURCE_POINTER"
+    },
+    {
+      "evidence_ref": "SRC:PROCUREMENT:SHENSHAN_HOSPITAL:2026",
+      "source_object_refs": [
+        "docs/development/research/industry_learning_blocks/CN_PROPERTY_SERVICES_2025/01_industry_learning_block.json"
+      ],
+      "supports": [
+        "STRUCTURAL_EPOCH",
+        "INDUSTRY_VALUE_CHAIN",
+        "COMPANY_ARCHETYPE_OR_PEER"
+      ],
+      "knowledge_status": "SOURCE_POINTER"
+    },
+    {
+      "evidence_ref": "SRC:HKEX:02669:FY2025",
+      "source_object_refs": [
+        "docs/development/research/industry_learning_blocks/CN_PROPERTY_SERVICES_2025/01_industry_learning_block.json"
+      ],
+      "supports": [
+        "STRUCTURAL_EPOCH",
+        "INDUSTRY_VALUE_CHAIN",
+        "COMPANY_ARCHETYPE_OR_PEER"
+      ],
+      "knowledge_status": "SOURCE_POINTER"
+    },
+    {
+      "evidence_ref": "SRC:SZSE:001914:FY2025",
+      "source_object_refs": [
+        "docs/development/research/industry_learning_blocks/CN_PROPERTY_SERVICES_2025/01_industry_learning_block.json"
+      ],
+      "supports": [
+        "INDUSTRY_VALUE_CHAIN",
+        "COMPANY_ARCHETYPE_OR_PEER"
+      ],
+      "knowledge_status": "SOURCE_POINTER"
+    },
+    {
+      "evidence_ref": "SRC:SZSE:300917:FY2025",
+      "source_object_refs": [
+        "docs/development/research/industry_learning_blocks/CN_PROPERTY_SERVICES_2025/01_industry_learning_block.json"
+      ],
+      "supports": [
+        "INDUSTRY_VALUE_CHAIN",
+        "COMPANY_ARCHETYPE_OR_PEER"
+      ],
+      "knowledge_status": "SOURCE_POINTER"
+    },
+    {
+      "evidence_ref": "SRC:HKEX:06049:FY2025",
+      "source_object_refs": [
+        "docs/development/research/industry_learning_blocks/CN_PROPERTY_SERVICES_2025/01_industry_learning_block.json"
+      ],
+      "supports": [
+        "INDUSTRY_VALUE_CHAIN",
+        "COMPANY_ARCHETYPE_OR_PEER"
+      ],
+      "knowledge_status": "SOURCE_POINTER"
+    },
+    {
+      "evidence_ref": "SRC:HKEX:00688:FY2025",
+      "source_object_refs": [
+        "docs/development/research/industry_learning_blocks/CN_PROPERTY_SERVICES_2025/01_industry_learning_block.json"
+      ],
+      "supports": [
+        "INDUSTRY_VALUE_CHAIN",
+        "COMPANY_ARCHETYPE_OR_PEER"
+      ],
+      "knowledge_status": "SOURCE_POINTER"
+    },
+    {
+      "evidence_ref": "SRC:HKEX:00688:2026M6_UPDATE",
+      "source_object_refs": [
+        "docs/development/research/industry_learning_blocks/CN_PROPERTY_SERVICES_2025/01_industry_learning_block.json"
+      ],
+      "supports": [
+        "INDUSTRY_VALUE_CHAIN",
+        "COMPANY_ARCHETYPE_OR_PEER"
+      ],
+      "knowledge_status": "SOURCE_POINTER"
+    },
+    {
+      "evidence_ref": "SRC:COLI:2026M7_UPDATE",
+      "source_object_refs": [
+        "docs/development/research/industry_learning_blocks/CN_PROPERTY_SERVICES_2025/01_industry_learning_block.json"
+      ],
+      "supports": [
+        "INDUSTRY_VALUE_CHAIN",
+        "COMPANY_ARCHETYPE_OR_PEER"
+      ],
+      "knowledge_status": "SOURCE_POINTER"
+    },
+    {
+      "evidence_ref": "SRC:HKEX:01209:FY2025",
+      "source_object_refs": [
+        "docs/development/research/industry_learning_blocks/CN_PROPERTY_SERVICES_2025/01_industry_learning_block.json"
+      ],
+      "supports": [
+        "COMPANY_ARCHETYPE_OR_PEER"
+      ],
+      "knowledge_status": "SOURCE_POINTER"
+    }
+  ],
+  "knowledge_time": {
+    "cutoff_at": "2026-08-13T23:59:59+08:00",
+    "latest_included_at": "2026-08-13T15:59:59+00:00",
+    "excluded_future_source_refs": [],
+    "undated_source_refs": []
+  },
+  "source_objects": [
+    {
+      "kind": "INDUSTRY_LEARNING_BLOCK",
+      "ref": "docs/development/research/industry_learning_blocks/CN_PROPERTY_SERVICES_2025/01_industry_learning_block.json",
+      "schema_version": "industry-learning-block.v2",
+      "use_status": "INCLUDED",
+      "boundary": "Referenced source object remains canonical; this context is only a projection."
+    },
+    {
+      "kind": "COMPANY_COMPETITIVE_ARENA",
+      "ref": "INLINE:COMPANY_COMPETITIVE_ARENA",
+      "schema_version": "UNSPECIFIED",
+      "use_status": "NOT_SUPPLIED",
+      "boundary": "Company arena supplies exposure and comparison scope; it is not an industry fact store."
+    },
+    {
+      "kind": "INDUSTRY_KNOWLEDGE_CONTEXT",
+      "ref": "scripts/industry_knowledge.py:read_industry_knowledge_context",
+      "schema_version": "industry-knowledge-context.v1",
+      "use_status": "NO_QUERY_KEYS",
+      "boundary": "No mechanism-library query was attempted without industry or mechanism keys."
+    }
+  ],
+  "coverage": {
+    "available": [
+      "industry_value_chain",
+      "customer_jobs",
+      "structural_epochs",
+      "demand_drivers",
+      "supply_drivers",
+      "competition_drivers",
+      "regulation_drivers",
+      "profit_pool_direction",
+      "company_archetype_exposure",
+      "representative_peers",
+      "candidate_main_paths",
+      "strongest_counter_thesis",
+      "company_verification_fields",
+      "evidence_references"
+    ],
+    "bounded": []
+  },
+  "warnings": [
+    "industry_knowledge_keys_not_supplied"
+  ]
+}

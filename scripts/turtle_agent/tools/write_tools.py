@@ -236,6 +236,227 @@ def write_industry_underwriting_context(
     }
 
 
+def write_industry_evidence_acquisition_plan(output_dir: str = ".") -> dict[str, Any]:
+    """Compile role-bound external industry research tasks from report-local context.
+
+    The resulting plan is intentionally non-blocking: it changes the order of
+    external evidence acquisition, but cannot itself create a company fact or
+    alter owner cash, valuation, price, or action.
+    """
+    try:
+        from scripts.industry_experience_acquisition import (
+            DEFAULT_PLAN_OUTPUT_NAME,
+            compile_industry_evidence_acquisition_plan,
+            validate_industry_evidence_acquisition_plan,
+        )
+        from scripts.industry_underwriting_context import DEFAULT_OUTPUT_NAME as context_name
+    except ModuleNotFoundError:  # pragma: no cover - direct import fallback
+        from industry_experience_acquisition import (  # type: ignore[no-redef]
+            DEFAULT_PLAN_OUTPUT_NAME,
+            compile_industry_evidence_acquisition_plan,
+            validate_industry_evidence_acquisition_plan,
+        )
+        from industry_underwriting_context import DEFAULT_OUTPUT_NAME as context_name
+    root = Path(output_dir).expanduser().resolve()
+    context_path = root / context_name
+    try:
+        context = json.loads(context_path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return {"ok": False, "error": "industry_underwriting_context_missing_or_invalid"}
+    if not isinstance(context, dict):
+        return {"ok": False, "error": "industry_underwriting_context_not_object"}
+    try:
+        payload = compile_industry_evidence_acquisition_plan(context, context_ref=context_name)
+    except ValueError as exc:
+        return {"ok": False, "error": str(exc)}
+    validation = validate_industry_evidence_acquisition_plan(payload)
+    if validation.get("state") != "REVIEWABLE":
+        return {"ok": False, "error": "industry_evidence_acquisition_plan_invalid", "validation": validation}
+    destination = root / DEFAULT_PLAN_OUTPUT_NAME
+    destination.write_text(
+        json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8",
+    )
+    return {
+        "ok": True,
+        "artifact_ref": DEFAULT_PLAN_OUTPUT_NAME,
+        "plan_id": payload["plan_id"],
+        "plan_status": payload["plan_status"],
+        "task_count": len(payload["tasks"]),
+        "non_blocking": True,
+    }
+
+
+def write_industry_evidence_acquisition_receipt(
+    output_dir: str = ".",
+    task_receipts: list[dict[str, Any]] | None = None,
+) -> dict[str, Any]:
+    """Record completed external-industry evidence attempts against the fixed plan."""
+    try:
+        from scripts.industry_experience_acquisition import (
+            DEFAULT_PLAN_OUTPUT_NAME,
+            DEFAULT_RECEIPT_OUTPUT_NAME,
+            build_industry_evidence_acquisition_receipt,
+            validate_industry_evidence_acquisition_receipt,
+        )
+    except ModuleNotFoundError:  # pragma: no cover - direct import fallback
+        from industry_experience_acquisition import (  # type: ignore[no-redef]
+            DEFAULT_PLAN_OUTPUT_NAME,
+            DEFAULT_RECEIPT_OUTPUT_NAME,
+            build_industry_evidence_acquisition_receipt,
+            validate_industry_evidence_acquisition_receipt,
+        )
+    root = Path(output_dir).expanduser().resolve()
+    plan_path = root / DEFAULT_PLAN_OUTPUT_NAME
+    try:
+        plan = json.loads(plan_path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return {"ok": False, "error": "industry_evidence_acquisition_plan_missing_or_invalid"}
+    if not isinstance(plan, dict):
+        return {"ok": False, "error": "industry_evidence_acquisition_plan_not_object"}
+    try:
+        payload = build_industry_evidence_acquisition_receipt(
+            plan, list(task_receipts or []), source_plan_ref=DEFAULT_PLAN_OUTPUT_NAME,
+        )
+    except ValueError as exc:
+        return {"ok": False, "error": str(exc)}
+    validation = validate_industry_evidence_acquisition_receipt(payload, plan)
+    if validation.get("state") != "REVIEWABLE":
+        return {"ok": False, "error": "industry_evidence_acquisition_receipt_invalid", "validation": validation}
+    destination = root / DEFAULT_RECEIPT_OUTPUT_NAME
+    destination.write_text(
+        json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8",
+    )
+    return {
+        "ok": True,
+        "artifact_ref": DEFAULT_RECEIPT_OUTPUT_NAME,
+        "receipt_id": payload["receipt_id"],
+        "completion_state": payload["completion_state"],
+        "completed_task_count": len(payload["task_receipts"]),
+        "non_blocking": True,
+    }
+
+
+def write_industry_evidence_source_binding(
+    output_dir: str = ".",
+    source_packages: list[dict[str, Any]] | None = None,
+    observation_source_bindings: list[dict[str, Any]] | None = None,
+) -> dict[str, Any]:
+    """Bind accepted industry observations to already frozen local source packages.
+
+    This function does not download a source and cannot replace an unavailable
+    historical page.  The supplied package descriptors must point at existing
+    Turtle official-context or Phase10 materializations under ``output_dir``.
+    """
+    try:
+        from scripts.industry_evidence_source_binding import (
+            DEFAULT_BINDING_OUTPUT_NAME,
+            build_industry_evidence_source_binding,
+        )
+        from scripts.industry_experience_acquisition import (
+            DEFAULT_PLAN_OUTPUT_NAME,
+            DEFAULT_RECEIPT_OUTPUT_NAME,
+        )
+    except ModuleNotFoundError:  # pragma: no cover - direct import fallback
+        from industry_evidence_source_binding import (  # type: ignore[no-redef]
+            DEFAULT_BINDING_OUTPUT_NAME,
+            build_industry_evidence_source_binding,
+        )
+        from industry_experience_acquisition import (  # type: ignore[no-redef]
+            DEFAULT_PLAN_OUTPUT_NAME,
+            DEFAULT_RECEIPT_OUTPUT_NAME,
+        )
+    root = Path(output_dir).expanduser().resolve()
+    try:
+        plan = json.loads((root / DEFAULT_PLAN_OUTPUT_NAME).read_text(encoding="utf-8"))
+        receipt = json.loads((root / DEFAULT_RECEIPT_OUTPUT_NAME).read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return {"ok": False, "error": "industry_evidence_plan_or_receipt_missing_or_invalid"}
+    if not isinstance(plan, dict) or not isinstance(receipt, dict):
+        return {"ok": False, "error": "industry_evidence_plan_or_receipt_not_object"}
+    try:
+        payload = build_industry_evidence_source_binding(
+            plan,
+            receipt,
+            plan_ref=DEFAULT_PLAN_OUTPUT_NAME,
+            receipt_ref=DEFAULT_RECEIPT_OUTPUT_NAME,
+            source_packages=list(source_packages or []),
+            observation_source_bindings=list(observation_source_bindings or []),
+            artifact_root=root,
+        )
+    except ValueError as exc:
+        return {"ok": False, "error": str(exc)}
+    destination = root / DEFAULT_BINDING_OUTPUT_NAME
+    destination.write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    return {
+        "ok": True,
+        "artifact_ref": DEFAULT_BINDING_OUTPUT_NAME,
+        "binding_id": payload["binding_id"],
+        "bound_observation_count": len(payload["observation_source_bindings"]),
+        "report_use": "Still requires target-company primary evidence paired in an Episode.",
+    }
+
+
+def write_industry_evidence_report_admission(
+    output_dir: str = ".",
+    episode_ref: str = "",
+    paired_observations: list[dict[str, Any]] | None = None,
+) -> dict[str, Any]:
+    """Admit source-bound industry observations only after an Episode pairs company proof."""
+    try:
+        from scripts.industry_evidence_report_admission import (
+            DEFAULT_ADMISSION_OUTPUT_NAME,
+            build_industry_evidence_report_admission,
+        )
+        from scripts.industry_evidence_source_binding import DEFAULT_BINDING_OUTPUT_NAME
+        from scripts.industry_experience_acquisition import (
+            DEFAULT_PLAN_OUTPUT_NAME,
+            DEFAULT_RECEIPT_OUTPUT_NAME,
+        )
+    except ModuleNotFoundError:  # pragma: no cover - direct import fallback
+        from industry_evidence_report_admission import (  # type: ignore[no-redef]
+            DEFAULT_ADMISSION_OUTPUT_NAME,
+            build_industry_evidence_report_admission,
+        )
+        from industry_evidence_source_binding import DEFAULT_BINDING_OUTPUT_NAME  # type: ignore[no-redef]
+        from industry_experience_acquisition import (  # type: ignore[no-redef]
+            DEFAULT_PLAN_OUTPUT_NAME,
+            DEFAULT_RECEIPT_OUTPUT_NAME,
+        )
+    root = Path(output_dir).expanduser().resolve()
+    episode_path = Path(episode_ref).expanduser()
+    episode_path = episode_path if episode_path.is_absolute() else root / episode_path
+    try:
+        plan = json.loads((root / DEFAULT_PLAN_OUTPUT_NAME).read_text(encoding="utf-8"))
+        receipt = json.loads((root / DEFAULT_RECEIPT_OUTPUT_NAME).read_text(encoding="utf-8"))
+        binding = json.loads((root / DEFAULT_BINDING_OUTPUT_NAME).read_text(encoding="utf-8"))
+        episode = json.loads(episode_path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return {"ok": False, "error": "industry_evidence_binding_or_episode_missing_or_invalid"}
+    if not all(isinstance(value, dict) for value in (plan, receipt, binding, episode)):
+        return {"ok": False, "error": "industry_evidence_binding_or_episode_not_object"}
+    try:
+        payload = build_industry_evidence_report_admission(
+            binding,
+            plan,
+            receipt,
+            episode,
+            binding_ref=DEFAULT_BINDING_OUTPUT_NAME,
+            episode_ref=str(episode_ref),
+            paired_observations=list(paired_observations or []),
+            artifact_root=root,
+        )
+    except ValueError as exc:
+        return {"ok": False, "error": str(exc)}
+    destination = root / DEFAULT_ADMISSION_OUTPUT_NAME
+    destination.write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    return {
+        "ok": True,
+        "artifact_ref": DEFAULT_ADMISSION_OUTPUT_NAME,
+        "admission_id": payload["admission_id"],
+        "report_admitted_observation_count": len(payload["paired_observations"]),
+    }
+
+
 def _cjo_forbidden_report_findings(text: str) -> list[str]:
     """Return concrete CJO output-boundary breaches without blocking product price."""
     findings: list[str] = []
@@ -3941,6 +4162,39 @@ write_industry_underwriting_context._tool_meta = {
         "industry_keys": {"type": "array", "items": {"type": "string"}, "optional": True},
         "mechanism_keys": {"type": "array", "items": {"type": "string"}, "optional": True},
         "industry_knowledge_context_ref": {"type": "string", "optional": True},
+    },
+}  # type: ignore[attr-defined]
+write_industry_evidence_acquisition_plan._tool_meta = {
+    "name": "write_industry_evidence_acquisition_plan",
+    "description": "把行业经验编译为按需求、供给竞争、量价成本、客户渠道、监管和公司传导分组的外部取证任务；只改变取证顺序，不生成公司事实、现金、估值、价格或行动。",
+    "parameters": {
+        "output_dir": {"type": "string", "description": "股票输出目录"},
+    },
+}  # type: ignore[attr-defined]
+write_industry_evidence_acquisition_receipt._tool_meta = {
+    "name": "write_industry_evidence_acquisition_receipt",
+    "description": "按固定行业取证计划记录已验证、反证、未知或公开资料不可得的外部来源回执；每条观察必须有来源时间、定位、口径边界和待验证的公司传导。",
+    "parameters": {
+        "output_dir": {"type": "string", "description": "股票输出目录"},
+        "task_receipts": {"type": "array", "items": {"type": "object"}, "description": "每项计划任务的取证结果；UNKNOWN/PUBLIC_INFO_UNAVAILABLE 是合法结论，不能用来推正面结论。"},
+    },
+}  # type: ignore[attr-defined]
+write_industry_evidence_source_binding._tool_meta = {
+    "name": "write_industry_evidence_source_binding",
+    "description": "把行业取证回执逐条绑定到已冻结、可复读的政府 context 或 Phase10 来源包。它不下载网页，也不能替代目标公司一手传导证据。",
+    "parameters": {
+        "output_dir": {"type": "string", "description": "股票输出目录"},
+        "source_packages": {"type": "array", "items": {"type": "object"}, "description": "已冻结来源包描述（package_id、kind、package_ref、package_root_ref）"},
+        "observation_source_bindings": {"type": "array", "items": {"type": "object"}, "description": "观察至来源包中 source_id 的逐条绑定"},
+    },
+}  # type: ignore[attr-defined]
+write_industry_evidence_report_admission._tool_meta = {
+    "name": "write_industry_evidence_report_admission",
+    "description": "只有已绑定静态行业来源、且 Episode 内有独立目标公司一手传导证据时，才让行业观察进入报告。不能借此生成 owner cash、估值参数或行动。",
+    "parameters": {
+        "output_dir": {"type": "string", "description": "股票输出目录"},
+        "episode_ref": {"type": "string", "description": "包含行业 trace 与公司一手 trace 的 Episode 文件"},
+        "paired_observations": {"type": "array", "items": {"type": "object"}, "description": "每条行业观察与 Episode 中独立公司一手证据的配对"},
     },
 }  # type: ignore[attr-defined]
 verify_official_fact._tool_meta = {

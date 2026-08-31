@@ -1192,7 +1192,7 @@ def normalize_official_web_release_record(record: dict[str, Any], *, company_cod
     format_value = str(record.get("content_format") or "HTML").strip().upper()
     if format_value not in {"HTML", "PDF"}:
         raise OfficialWebReleaseError("official web release content_format must be HTML or PDF")
-    return {
+    result = {
         "source_id": f"IR:{company_code}:{release_id}",
         "source_version": str(record.get("source_version") or f"official-ir-release:{release_id}"),
         "source_type": OFFICIAL_WEB_RELEASE_SOURCE_TYPE,
@@ -1213,6 +1213,13 @@ def normalize_official_web_release_record(record: dict[str, Any], *, company_cod
         "official_publisher_domain": domain,
         "language": str(record.get("language") or "en"),
     }
+    # A first-party customer, supplier, competitor or regulator release may
+    # be an external-industry observation.  Preserve its explicit, source-id
+    # bound role contract so downstream consumers can verify the declared
+    # relationship rather than reclassifying it from a domain or title.
+    if "source_role_provenance" in record:
+        result["source_role_provenance"] = deepcopy(record["source_role_provenance"])
+    return result
 
 
 def enumerate_official_web_releases(

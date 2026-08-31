@@ -1,0 +1,158 @@
+{
+  "schema_version": "industry-evidence-acquisition-receipt.v1",
+  "receipt_id": "IEAR:IEAP:HK:02669:2026-08-13T23:59:59+08:00",
+  "plan_id": "IEAP:HK:02669:2026-08-13T23:59:59+08:00",
+  "source_plan_ref": "docs/development/research/pilots/INDUSTRY_EVIDENCE_ACQUISITION_PILOT_HK02669_20260813/industry_evidence_acquisition_plan.json",
+  "company_identity": {
+    "company_id": "HK:02669",
+    "company_name": "China Overseas Property Holdings",
+    "cutoff_at": "2026-08-13T23:59:59+08:00",
+    "industry_ids": [
+      "INDUSTRY:CN:PROPERTY_SERVICES"
+    ]
+  },
+  "completion_state": "REVIEWABLE",
+  "task_receipts": [
+    {
+      "task_id": "IEAT:HK:02669:DEMAND:1",
+      "outcome": "VERIFIED",
+      "research_summary": "官方统计确认新增住宅开发和交付的全国性 feeder 在 FY2025 收缩；该观察只进入行业路径，不能替代中海物业自身的项目接管证据。",
+      "attempted_source_roles": [
+        "OFFICIAL_STATISTICS"
+      ],
+      "stop_reason": "COMPLETED",
+      "observations": [
+        {
+          "observation_id": "IEAO:HK02669:DEMAND:FY2025_REAL_ESTATE",
+          "source_role": "OFFICIAL_STATISTICS",
+          "source_kind": "GOVERNMENT_STATISTIC",
+          "source_ref": "SRC:NBS:CN_REAL_ESTATE:FY2025",
+          "source_url": "https://www.stats.gov.cn/sj/zxfbhjd/202601/t20260119_1962324.html",
+          "publisher": "国家统计局",
+          "published_at": "2026-01-19T10:00:00+08:00",
+          "available_at": "2026-01-19T10:00:00+08:00",
+          "period": "FY2025",
+          "locator": "“房屋新开工面积、房屋竣工面积”段及表 1",
+          "metric": "Residential housing starts and completions year-on-year change",
+          "unit": "percent",
+          "responsibility_boundary": "中国全国住宅开发活动；不代表中海物业项目管线、在管面积或收入。",
+          "statement": "2025 年住宅新开工面积同比下降 19.8%，住宅竣工面积同比下降 20.2%。",
+          "company_transmission": "需要中海物业自己的项目来源、接管时点和同口径在管面积披露，才能判断全国交付收缩如何进入公司业务量。",
+          "relation": "SUPPORTS",
+          "evidence_use": "INDUSTRY_FUTURE_THESIS"
+        }
+      ]
+    },
+    {
+      "task_id": "IEAT:HK:02669:SUPPLY_COMPETITION:2",
+      "outcome": "VERIFIED",
+      "research_summary": "同行一手披露确认公共及机构物业是存在的竞争 arena，但同行经营定位不能复制为中海物业的份额、成本或现金结论。",
+      "attempted_source_roles": [
+        "COMPETITOR_DISCLOSURE"
+      ],
+      "stop_reason": "COMPLETED",
+      "observations": [
+        {
+          "observation_id": "IEAO:HK02669:SUPPLY:PEER_PUBLIC_ARENA",
+          "source_role": "COMPETITOR_DISCLOSURE",
+          "source_kind": "COMPETITOR_FILING",
+          "source_ref": "SRC:HKEX:06049:FY2025",
+          "source_url": "https://www1.hkexnews.hk/listedco/listconews/sehk/2026/0430/2026043001632.pdf",
+          "publisher": "Poly Property Services Co., Ltd.",
+          "published_at": "2026-04-30T23:59:59+08:00",
+          "available_at": "2026-04-30T23:59:59+08:00",
+          "period": "FY2025",
+          "locator": "Management Discussion and Analysis: public and other properties; industry competitive landscape",
+          "metric": "Public and institutional property-service competitive arena",
+          "unit": "narrative disclosure",
+          "responsibility_boundary": "保利物业 FY2025 的公共及其他物业披露；不是中海物业业务结构，也不是全行业市场份额。",
+          "statement": "保利物业披露公共及其他物业服务覆盖景区、高校、医院、政府办公和城市公共设施，并将行业竞争差异化列为经营环境的一部分。",
+          "company_transmission": "需要中海物业按客户类型、项目城市、续约、项目毛利和现金回收的自身披露，才能判断其是否受同一 arena 的竞争约束。",
+          "relation": "SUPPORTS",
+          "evidence_use": "COMPANY_TRANSMISSION_TEST"
+        }
+      ]
+    },
+    {
+      "task_id": "IEAT:HK:02669:PRICE_COST:3",
+      "outcome": "VERIFIED",
+      "research_summary": "官方工资统计提供劳动密集型服务成本的外部条件，但没有替代公司对员工、分包、项目启动成本和收费的拆分。",
+      "attempted_source_roles": [
+        "OFFICIAL_STATISTICS"
+      ],
+      "stop_reason": "COMPLETED",
+      "observations": [
+        {
+          "observation_id": "IEAO:HK02669:PRICE_COST:FY2025_SERVICE_WAGE",
+          "source_role": "OFFICIAL_STATISTICS",
+          "source_kind": "GOVERNMENT_STATISTIC",
+          "source_ref": "SRC:NBS:SERVICE_WAGES:FY2025",
+          "source_url": "https://www.stats.gov.cn/sj/zxfbhjd/202605/t20260515_1963707.html",
+          "publisher": "国家统计局",
+          "published_at": "2026-05-15T16:00:00+08:00",
+          "available_at": "2026-05-15T16:00:00+08:00",
+          "period": "FY2025",
+          "locator": "“规模以上企业就业人员年平均工资情况”中的社会生产服务和生活服务人员",
+          "metric": "Average annual wage of social production and life-service positions",
+          "unit": "RMB per person per year",
+          "responsibility_boundary": "中国规模以上企业的岗位平均工资；不等同于中海物业员工成本、分包成本或单项目毛利。",
+          "statement": "2025 年社会生产服务和生活服务人员年平均工资为 RMB79,857，同比增长 2.9%。",
+          "company_transmission": "需要中海物业按业务线的员工、分包、收费与同口径毛利资料，才能判断工资条件是否压缩公司经济性。",
+          "relation": "SUPPORTS",
+          "evidence_use": "NORMALIZATION_CONDITION"
+        }
+      ]
+    },
+    {
+      "task_id": "IEAT:HK:02669:CUSTOMER_CHANNEL:4",
+      "outcome": "PUBLIC_INFO_UNAVAILABLE",
+      "research_summary": "计划指定的官方公共采购公告在本轮重新读取时返回 403，且没有本地静态来源包可供复读；因此不接纳旧研究中的客户合同细节。",
+      "attempted_source_roles": [
+        "SUPPLIER_OR_CUSTOMER_DISCLOSURE"
+      ],
+      "stop_reason": "PUBLIC_INFO_UNAVAILABLE",
+      "observations": []
+    },
+    {
+      "task_id": "IEAT:HK:02669:REGULATION:5",
+      "outcome": "PUBLIC_INFO_UNAVAILABLE",
+      "research_summary": "计划指定的司法部公开入口在本轮重新读取时发生连续跳转，未取得可复读正文；不把历史说明升级为可适用于中海物业的监管事实。",
+      "attempted_source_roles": [
+        "REGULATORY_DISCLOSURE"
+      ],
+      "stop_reason": "PUBLIC_INFO_UNAVAILABLE",
+      "observations": []
+    },
+    {
+      "task_id": "IEAT:HK:02669:COMPANY_TRANSMISSION:6",
+      "outcome": "VERIFIED",
+      "research_summary": "中海物业一手年报证实它同时暴露于开发商生态和独立第三方来源，足以否定把全国住宅开工直接等同为公司业务量的捷径；但项目层面的利润和现金传导仍未披露。",
+      "attempted_source_roles": [
+        "TARGET_COMPANY_DISCLOSURE"
+      ],
+      "stop_reason": "COMPLETED",
+      "observations": [
+        {
+          "observation_id": "IEAO:HK02669:TRANSMISSION:PROJECT_SOURCE_MIX",
+          "source_role": "TARGET_COMPANY_DISCLOSURE",
+          "source_kind": "TARGET_COMPANY_FILING",
+          "source_ref": "SRC:HKEX:02669:FY2025",
+          "source_url": "https://www1.hkexnews.hk/listedco/listconews/sehk/2026/0429/2026042900389.pdf",
+          "publisher": "China Overseas Property Holdings Limited",
+          "published_at": "2026-04-29T23:59:59+08:00",
+          "available_at": "2026-04-29T23:59:59+08:00",
+          "period": "FY2025",
+          "locator": "Annual Report 2025, Business Review pp. 34–35 (new orders) and pp. 39–40 (GFA by source)",
+          "metric": "New orders and GFA under management by project source",
+          "unit": "million sq.m.; percent",
+          "responsibility_boundary": "中海物业合并口径 FY2025 项目来源；不披露各业务线项目 cohort 的利润、投入资本或累计现金回收。",
+          "statement": "FY2025 新签在管面积 90.9m 平方米中，85.1% 来自独立第三方；期末在管面积 477.6m 平方米中，中国建筑及中海体系来源为 273.5m 平方米或 57.3%。",
+          "company_transmission": "公司同时有开发商生态和独立第三方来源；全国住宅开工/竣工只能约束 developer feeder，不能直接外推为全公司业务量、正常盈利或现金。",
+          "relation": "SUPPORTS",
+          "evidence_use": "COMPANY_TRANSMISSION_TEST"
+        }
+      ]
+    }
+  ],
+  "warnings": []
+}
