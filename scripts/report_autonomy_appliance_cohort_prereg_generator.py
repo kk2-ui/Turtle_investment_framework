@@ -309,8 +309,10 @@ def _feedback_clocks(cutoff_at: str) -> list[dict[str, Any]]:
     ]
 
 
-def _artifact_paths(case_number: int, arm_id: str) -> dict[str, str]:
-    root = f"{_ARTIFACT_ROOT}/case_{case_number:02d}/{arm_id}"
+def _artifact_paths(
+    case_number: int, arm_id: str, *, artifact_root: str,
+) -> dict[str, str]:
+    root = f"{artifact_root}/case_{case_number:02d}/{arm_id}"
     return {
         "contract_ref": root + "/training_contract.json",
         "rendered_task_ref": root + "/fresh_task.json",
@@ -323,9 +325,9 @@ def _artifact_paths(case_number: int, arm_id: str) -> dict[str, str]:
 
 
 def _anonymous_manifest_entry(
-    case_id: str, anonymous_label: str, source_package_ref: str,
+    case_id: str, anonymous_label: str, source_package_ref: str, *, artifact_root: str,
 ) -> dict[str, str]:
-    root = f"{_ARTIFACT_ROOT}/anonymous/{anonymous_label.lower()}"
+    root = f"{artifact_root}/anonymous/{anonymous_label.lower()}"
     return {
         "case_id": case_id,
         "anonymous_label": anonymous_label,
@@ -336,12 +338,17 @@ def _anonymous_manifest_entry(
     }
 
 
-def build_appliance_cohort_preregistration(config: Any) -> dict[str, Any]:
+def build_appliance_cohort_preregistration(
+    config: Any, *, artifact_root: str = _ARTIFACT_ROOT,
+) -> dict[str, Any]:
     """Build all 32 unexecuted cells from the declared Appliance input only."""
 
     findings = validate_appliance_cohort_input(config)
     if findings:
         raise ValueError("appliance_cohort_input_invalid:" + ",".join(findings))
+    artifact_root = _text(artifact_root).rstrip("/")
+    if not artifact_root:
+        raise ValueError("artifact_root_required")
     value = _mapping(config)
     cutoff_at = _text(value["cutoff_at"])
     stratum_id = _text(value["stratum_id"])
@@ -454,7 +461,9 @@ def build_appliance_cohort_preregistration(config: Any) -> dict[str, Any]:
                 "rendered_task": build_fresh_subagent_task(contract),
                 "state": "NOT_STARTED",
                 "attempts": {"episode": 0, "reader_report": 0},
-                "artifact_paths": _artifact_paths(case_number, arm_id),
+                "artifact_paths": _artifact_paths(
+                    case_number, arm_id, artifact_root=artifact_root,
+                ),
             })
     manifest = sorted(
         (
@@ -462,6 +471,7 @@ def build_appliance_cohort_preregistration(config: Any) -> dict[str, Any]:
                 case["case_id"],
                 anonymous_label,
                 case["common_source_package_ref"],
+                artifact_root=artifact_root,
             )
             for case in cases
             for anonymous_label in reviewer_labels_by_selection_rank[
@@ -518,7 +528,7 @@ def build_appliance_cohort_preregistration(config: Any) -> dict[str, Any]:
             "company_id": case["company_id"],
             "cutoff_at": cutoff_at,
             "measurement_contract_ref": (
-                f"{_ARTIFACT_ROOT}/measurements/{case['case_id'].replace(':', '_')}.json"
+                f"{artifact_root}/measurements/{case['case_id'].replace(':', '_')}.json"
             ),
             "outcome_window": "POST_CUTOFF_OFFICIAL_ANNUAL_REPORTS_ONLY",
             "official_source_category": "OFFICIAL_AUDITED_ANNUAL_REPORT",
@@ -557,10 +567,11 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("input_config", type=Path)
     parser.add_argument("output_path", type=Path)
+    parser.add_argument("--artifact-root", default=_ARTIFACT_ROOT)
     args = parser.parse_args(argv)
     try:
         preregistration = build_appliance_cohort_preregistration(
-            _read_json(args.input_config)
+            _read_json(args.input_config), artifact_root=args.artifact_root,
         )
         args.output_path.parent.mkdir(parents=True, exist_ok=True)
         args.output_path.write_text(

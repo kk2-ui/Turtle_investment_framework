@@ -1027,6 +1027,18 @@ def build_fresh_subagent_task(contract: Any) -> dict[str, Any]:
         contract_value,
         source_materials=_source_materials(contract_value),
     )
+    execution_schema = json.loads(
+        _EPISODE_JSON_SCHEMA_PATH.read_text(encoding="utf-8")
+    )
+    if (
+        contract_value.get("economic_derivation_interface")
+        == ECONOMIC_DERIVATION_INTERFACE_V2
+    ):
+        sensitivity_required = execution_schema["$defs"][
+            "driver_sensitivity_spec"
+        ]["required"]
+        if "responsibility_boundary" not in sensitivity_required:
+            sensitivity_required.append("responsibility_boundary")
     messages[0]["content"] += """
 The enclosing fresh-task packet includes the complete frozen Episode JSON Schema at
 response_contract.episode_json_schema. Treat that schema as the authoritative response
@@ -1075,6 +1087,8 @@ Schema alone cannot express them:
   axis, delta unit, and calculation inputs match the delta. Repeated labels in the delta
   do not substitute. Neither prose basis nor existing component authority substitutes.
   Every reversal_observation_ref must resolve to the top-level copied array.
+  Every driver sensitivity itself must include a non-empty responsibility_boundary,
+  including a sensitivity whose transmission is UNKNOWN or PRESERVED.
 - The runner makes only three narrow deterministic materializations before validation:
   it derives component_decision_summary and economic_derivation_summary; when a
   sensitivity delta.status is UNKNOWN it changes that matching transmission status to
@@ -1094,7 +1108,12 @@ Keep the whole Episode price-, return-, outcome-, and action-free."""
         "messages": messages,
         "response_contract": {
             "format": "ONE_ENTERPRISE_UNDERWRITING_EPISODE_JSON_OBJECT",
-            "schema_authority": "FROZEN_COMPLETE_EPISODE_JSON_SCHEMA",
+            "schema_authority": (
+                "CONTRACT_BOUND_EXECUTION_EPISODE_JSON_SCHEMA"
+                if contract_value.get("economic_derivation_interface")
+                == ECONOMIC_DERIVATION_INTERFACE_V2
+                else "FROZEN_COMPLETE_EPISODE_JSON_SCHEMA"
+            ),
             "schema_requirements": [
                 "Honor every applicable required field in episode_json_schema.",
                 "Honor every enum and const value in episode_json_schema.",
@@ -1151,9 +1170,7 @@ Keep the whole Episode price-, return-, outcome-, and action-free."""
                 ),
                 "Keep the Episode price-, return-, outcome-, and action-free.",
             ],
-            "episode_json_schema": json.loads(
-                _EPISODE_JSON_SCHEMA_PATH.read_text(encoding="utf-8")
-            ),
+            "episode_json_schema": execution_schema,
             "must_not_read": [
                 "parent_conversation",
                 "sibling_arm",

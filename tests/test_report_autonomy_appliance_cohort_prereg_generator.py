@@ -145,6 +145,29 @@ def test_cli_writes_the_same_deterministic_inline_register(
     assert result["state"] == "REVIEWABLE"
 
 
+def test_replacement_register_can_isolate_all_execution_artifacts() -> None:
+    artifact_root = (
+        "docs/development/research/training_campaigns/"
+        "REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231_INTERFACE_V2/execution"
+    )
+    preregistration = build_appliance_cohort_preregistration(
+        _actual_input(), artifact_root=artifact_root,
+    )
+
+    assert all(
+        cell["artifact_paths"]["rendered_task_ref"].startswith(artifact_root + "/")
+        for cell in preregistration["execution"]["cells"]
+    )
+    assert all(
+        item["episode_ref"].startswith(artifact_root + "/anonymous/")
+        for item in preregistration["anonymous_review_custody"]["reviewer_manifest"]
+    )
+    assert all(
+        item["measurement_contract_ref"].startswith(artifact_root + "/measurements/")
+        for item in preregistration["outcome_measurements"]
+    )
+
+
 def test_generator_rejects_a_non_declared_company_before_contract_generation() -> None:
     config = _actual_input()
     config["candidate_universe"][0]["company_id"] = "CN:999999"
