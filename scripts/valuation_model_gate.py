@@ -836,7 +836,12 @@ def _validate_cash_component_contract(
         invalid.append("cash_component_contract_inclusion_location_invalid")
 
 
-_BRIDGE_BINDING_SKIP_KEYS = {"canonical_fact_bindings"}
+_BRIDGE_BINDING_SKIP_KEYS = {
+    "canonical_fact_bindings",
+    # This is an evidence registry, not a submitted valuation operand.  The
+    # cash model consumes it directly before the bridge binds those operands.
+    "official_fact_register",
+}
 _BRIDGE_BINDING_SOURCE_KEYS = {
     "source_fact_ids",
     "input_fact_ids",

@@ -1,0 +1,13 @@
+{
+  "schema_version": "enterprise-underwriting-anonymous-label-custody.v1",
+  "experiment_id": "REPORT_AUTONOMY_2X2:CN000935:20180430:V1",
+  "state": "SEALED_FROM_PREOUTCOME_REVIEWER",
+  "mapping": {
+    "ANON_BETA": "A10_EXPERT_ONLY",
+    "ANON_DELTA": "A11_COMBINED",
+    "ANON_KAPPA": "A00_BASELINE",
+    "ANON_SIGMA": "A01_INDUSTRY_ONLY"
+  },
+  "reviewer_access": "WITHHELD_UNTIL_PREOUTCOME_REVIEW_AND_FIELD_LEVEL_OUTCOME_SETTLEMENT_ARE_COMPLETE",
+  "coordinator_use": "COPY_FROZEN_OUTPUTS_TO_ANONYMOUS_REVIEW_PACKET_WITHOUT_TREATMENT_PATHS_OR_ARM_IDS"
+}

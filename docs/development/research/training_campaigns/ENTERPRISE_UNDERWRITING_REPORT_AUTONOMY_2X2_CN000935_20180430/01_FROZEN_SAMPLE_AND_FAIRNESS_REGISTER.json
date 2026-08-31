@@ -1,0 +1,144 @@
+{
+  "schema_version": "enterprise-underwriting-report-autonomy-2x2-register.v1",
+  "experiment_id": "REPORT_AUTONOMY_2X2:CN000935:20180430:V1",
+  "state": "FROZEN_BEFORE_ARM_EXECUTION_OUTCOME_SEALED",
+  "company_id": "CN:000935",
+  "company_name": "四川双马水泥股份有限公司",
+  "cutoff_at": "2018-04-30T23:59:59+08:00",
+  "selection_rule": "CSRC_2017Q4_INDUSTRY_30_SHENZHEN_A_SHARES; RETAIN_CUTOFF_VISIBLE_CLINKER_OR_CEMENT_PRIMARY_BUSINESS; EXCLUDE_ANY_ISSUER_ALREADY_IN_CEMENT_PACK_COURSE_EPISODE_OR_OUTCOME; EXCLUDE_CANCELLED_OR_UPDATED_ANNUAL_REPORT_VERSION_CONFLICT; REQUIRE_FY2015_FY2016_FY2017_OFFICIAL_ANNUAL_REPORTS_AVAILABLE_IN_ONE_UNAMBIGUOUS_VERSION_BEFORE_CUTOFF; THEN_SECURITY_CODE_ASCENDING",
+  "selection_basis": {
+    "watermark": "CUTOFF_ONLY",
+    "first_eligible_after_exclusions": true,
+    "selected_issuer": "CN:000935",
+    "excluded_issuers": [
+      {"company_id": "CN:000401", "reason": "ALREADY_USED_IN_CEMENT_PACK_OR_ITS_SOURCE_PROJECTIONS"},
+      {"company_id": "CN:000546", "reason": "FY2017_ANNUAL_REPORT_CANCELLED_20180417_AND_REPLACED_BY_UPDATED_VERSION_20180427"},
+      {"company_id": "CN:000672", "reason": "ALREADY_USED_AS_COURSE_2B_HOLDOUT"},
+      {"company_id": "CN:000789", "reason": "FY2015_FY2017_ANNUAL_REPORT_WITHDRAWAL_OR_UPDATE_VERSION_CONFLICT_ALREADY_DOCUMENTED_IN_COURSE_2B_PREREGISTRATION"},
+      {"company_id": "CN:000877", "reason": "ALREADY_BOUND_IN_CEMENT_IDENTITY_CATALOG_AND_PACK_PROJECTION"},
+      {"company_id": "CN:600425", "reason": "ALREADY_USED_IN_CEMENT_PACK_AND_IDENTITY_CORRECTION"},
+      {"company_id": "CN:600585", "reason": "ALREADY_USED_IN_CEMENT_PACK"},
+      {"company_id": "CN:600720", "reason": "ALREADY_CURATED_AS_COURSE_2C_HOLDOUT_CANDIDATE"},
+      {"company_id": "CN:600801", "reason": "ALREADY_USED_IN_CEMENT_PACK"},
+      {"company_id": "CN:600802", "reason": "ALREADY_USED_IN_CEMENT_PACK"}
+    ],
+    "selection_evidence_paths": [
+      "docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_COURSE_2B_CN000672_20180430/00_EXPERIMENT_PREREGISTRATION.md",
+      "docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/65a_cement_issuer_identity_catalog_v1.json",
+      "docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/67_industry_experience_pack_training_v3.json",
+      "docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_REPORT_AUTONOMY_2X2_CN000935_20180430/04_CUTOFF_ONLY_CANDIDATE_LEDGER.json"
+    ],
+    "prohibited_inputs": [
+      "POST_CUTOFF_OPERATING_RESULT",
+      "OUTCOME_OR_SETTLEMENT_ARTIFACT",
+      "MARKET_PRICE_OR_RETURN",
+      "VALUATION_OR_INVESTMENT_ACTION",
+      "EXPECTED_ARM_SUCCESS"
+    ]
+  },
+  "shared_sources": [
+    {
+      "source_id": "SOURCE:CN:CEMENT:20180430:COMMON_OFFICIAL_CONTEXT",
+      "path": "docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_COURSE_2C_CN600720_20180430/sources/00_COMMON_CEMENT_PRE_CUTOFF_SOURCE_PACKAGE.md",
+      "version": "CUTOFF_20180430_V1"
+    },
+    {
+      "source_id": "SOURCE:CN000935:20180430:PRE_CUTOFF",
+      "path": "docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_REPORT_AUTONOMY_2X2_CN000935_20180430/sources/01_CN000935_PRE_CUTOFF_SOURCE_PACKAGE.md",
+      "version": "CUTOFF_PACKAGE_V1"
+    }
+  ],
+  "treatment_sources": {
+    "E": {
+      "source_id": "TRAINING_MEMORY:EXPERT_CORRECTION:CN02669:V1",
+      "path": "docs/development/research/training_campaigns/EXPERT_CORRECTION_CN02669_20260831/02_COMPILED_TRAINING_MEMORY.md",
+      "version": "V1",
+      "permitted_arms": ["A10_EXPERT_ONLY", "A11_COMBINED"]
+    },
+    "I": {
+      "source_id": "TRAINING_MEMORY:CN:CEMENT:COMPACT_DECISION:V1",
+      "path": "docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/69_compact_industry_decision_memory_v1.md",
+      "version": "V1",
+      "permitted_arms": ["A01_INDUSTRY_ONLY", "A11_COMBINED"]
+    }
+  },
+  "arms": [
+    {
+      "arm_id": "A00_BASELINE",
+      "contract_path": "docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_REPORT_AUTONOMY_2X2_CN000935_20180430/contracts/CN000935_A00_BASELINE_CONTRACT.json",
+      "expert_correction_memory": false,
+      "compact_industry_decision_memory": false
+    },
+    {
+      "arm_id": "A10_EXPERT_ONLY",
+      "contract_path": "docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_REPORT_AUTONOMY_2X2_CN000935_20180430/contracts/CN000935_A10_EXPERT_ONLY_CONTRACT.json",
+      "expert_correction_memory": true,
+      "compact_industry_decision_memory": false
+    },
+    {
+      "arm_id": "A01_INDUSTRY_ONLY",
+      "contract_path": "docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_REPORT_AUTONOMY_2X2_CN000935_20180430/contracts/CN000935_A01_INDUSTRY_ONLY_CONTRACT.json",
+      "expert_correction_memory": false,
+      "compact_industry_decision_memory": true
+    },
+    {
+      "arm_id": "A11_COMBINED",
+      "contract_path": "docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_REPORT_AUTONOMY_2X2_CN000935_20180430/contracts/CN000935_A11_COMBINED_CONTRACT.json",
+      "expert_correction_memory": true,
+      "compact_industry_decision_memory": true
+    }
+  ],
+  "anonymous_review_custody": {
+    "mapping_path_withheld_from_preoutcome_reviewer": "docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_REPORT_AUTONOMY_2X2_CN000935_20180430/02_ANONYMOUS_LABEL_CUSTODY.json",
+    "reviewer_receives_only": ["ANON_BETA", "ANON_DELTA", "ANON_KAPPA", "ANON_SIGMA"],
+    "mapping_reveal": "AFTER_PREOUTCOME_REVIEW_AND_FIELD_LEVEL_OUTCOME_SETTLEMENT"
+  },
+  "execution_equality": {
+    "model_selection": "INHERITED_FROM_CURRENT_CODEX_ACCOUNT_WITH_NO_MODEL_OVERRIDE_FOR_ALL_ARMS",
+    "reasoning_selection": "INHERITED_FROM_CURRENT_THREAD_WITH_NO_REASONING_OVERRIDE_FOR_ALL_ARMS",
+    "model_or_reasoning_override_permitted": false,
+    "fresh_context": "FORK_TURNS_NONE_PER_ARM",
+    "tool_access": "NO_NETWORK_NO_REPOSITORY_BROWSING_NO_TOOLS_BEYOND_THE_RENDERED_TASK_PACKET",
+    "calls_per_arm": {
+      "episode": 1,
+      "first_reader_report_followup_to_same_arm": 1,
+      "retry_or_rewrite": 0
+    },
+    "orchestration_timeout_seconds_per_call": 900,
+    "episode_response_max_unicode_characters": 60000,
+    "first_reader_report_max_cjk_characters": 14000,
+    "token_budget": "CODEX_COLLABORATION_RUNTIME_DOES_NOT_EXPOSE_A_NUMERIC_TOKEN_CAP; ALL_ARMS_USE_THE_SAME_UNOVERRIDDEN_PLATFORM_DEFAULT_AND_IDENTICAL_CALL_COUNTS",
+    "source_delivery": "EXACT_RENDERED_CONTRACT_TASK_PACKET_WITH_BYTE_IDENTICAL_SHARED_SOURCE_TEXT; ONLY_E_AND_I_SOURCE_TEXT_DIFFER_AS_PREDECLARED",
+    "required_outputs_per_arm": [
+      "FULL_ENTERPRISE_UNDERWRITING_EPISODE",
+      "FIRST_READER_REPORT"
+    ],
+    "claim_limit": "ONE_FROZEN_REALIZATION_PER_CELL_SUPPORTS_ONLY_CASE_LOCAL_COMPARISON_NOT_GENERAL_MODEL_OR_TREATMENT_UTILITY"
+  },
+  "estimands": {
+    "expert_main_effect_without_industry": "A10_EXPERT_ONLY_MINUS_A00_BASELINE",
+    "industry_main_effect_without_expert": "A01_INDUSTRY_ONLY_MINUS_A00_BASELINE",
+    "expert_effect_conditional_on_industry": "A11_COMBINED_MINUS_A01_INDUSTRY_ONLY",
+    "industry_effect_conditional_on_expert": "A11_COMBINED_MINUS_A10_EXPERT_ONLY",
+    "interaction": "QUALITATIVE_COMPARISON_OF_(A11_MINUS_A01)_VS_(A10_MINUS_A00)_AND_(A11_MINUS_A10)_VS_(A01_MINUS_A00); NO_NUMERIC_SCORE"
+  },
+  "enhanced_input_boundary": {
+    "expert_correction_memory": "GENERAL_METHOD_ONLY_NO_TARGET_COMPANY_FACTS_OR_OUTCOMES",
+    "compact_industry_decision_memory": "CUTOFF_SAFE_TRAINING_MEMORY_ONLY_NOT_TARGET_COMPANY_EVIDENCE",
+    "forbidden_in_evidence_trace": [
+      "expert_correction_memory",
+      "compact_industry_decision_memory"
+    ]
+  },
+  "forbidden_to_all_arms": [
+    "FY2018_OR_LATER_DISCLOSURES",
+    "OUTCOME_SOURCES_OR_SETTLEMENTS",
+    "MARKET_PRICE_OR_RETURN",
+    "VALUATION_OR_BUYBAND",
+    "PREVIOUS_CN000935_RESEARCH_OUTPUT",
+    "OTHER_ARM_OUTPUT",
+    "REVIEWER_IDENTITY_OR_ARM_MAPPING"
+  ],
+  "outcome_open_rule": "ONLY_AFTER_ALL_FOUR_EPISODES_AND_FIRST_READER_REPORTS_ARE_FROZEN_AND_ANONYMOUS_PREOUTCOME_REVIEW_IS_COMPLETE",
+  "authority": "RESEARCH_TRAINING_ONLY_NO_CJO_VALUATION_BUYBAND_RELEASE_OR_INVESTMENT_AUTHORITY"
+}

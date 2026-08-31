@@ -40,7 +40,7 @@
       "required": [
         "company_id", "operating_model_id", "position_as_of",
         "ordinary_share_claim_scope", "valuation_currency",
-        "fx_source_per_valuation_currency", "shares"
+        "fx_source_per_valuation_currency", "shares", "source_fact_ids"
       ],
       "properties": {
         "company_id": {"$ref": "#/$defs/nonempty"},
@@ -135,6 +135,33 @@
         "high": {"type": "number"}
       }
     },
+    "nullableThreePointRange": {
+      "oneOf": [
+        {"$ref": "#/$defs/threePointRange"},
+        {"type": "null"}
+      ]
+    },
+    "evidenceState": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "supporting_fact_ids", "invalidating_fact_ids", "unresolved_conditions"
+      ],
+      "properties": {
+        "supporting_fact_ids": {
+          "type": "array", "uniqueItems": true,
+          "items": {"$ref": "#/$defs/nonempty"}
+        },
+        "invalidating_fact_ids": {
+          "type": "array", "uniqueItems": true,
+          "items": {"$ref": "#/$defs/nonempty"}
+        },
+        "unresolved_conditions": {
+          "type": "array", "uniqueItems": true,
+          "items": {"$ref": "#/$defs/nonempty"}
+        }
+      }
+    },
     "twoPointRange": {
       "type": "object",
       "additionalProperties": false,
@@ -150,16 +177,54 @@
       "required": [
         "amount_range_source_currency",
         "adopted_amount_source_currency",
+        "evidenced_lower_bound_source_currency",
+        "conditional_amount_range_source_currency",
+        "unrecognized_remainder_source_currency",
         "per_share_range",
         "adopted_per_share",
+        "evidenced_lower_bound_per_share",
+        "conditional_per_share_range",
+        "unrecognized_remainder_per_share",
+        "evidence_state",
         "valuation_destination"
       ],
       "properties": {
         "amount_range_source_currency": {"$ref": "#/$defs/threePointRange"},
         "adopted_amount_source_currency": {"type": "number"},
+        "evidenced_lower_bound_source_currency": {"type": "number", "minimum": 0},
+        "conditional_amount_range_source_currency": {"$ref": "#/$defs/nullableThreePointRange"},
+        "unrecognized_remainder_source_currency": {"type": "number", "minimum": 0},
         "per_share_range": {"$ref": "#/$defs/threePointRange"},
         "adopted_per_share": {"type": "number"},
+        "evidenced_lower_bound_per_share": {"type": "number", "minimum": 0},
+        "conditional_per_share_range": {"$ref": "#/$defs/nullableThreePointRange"},
+        "unrecognized_remainder_per_share": {"type": "number", "minimum": 0},
+        "evidence_state": {"$ref": "#/$defs/evidenceState"},
         "valuation_destination": {"$ref": "#/$defs/nonempty"}
+      }
+    },
+    "legalCashProjection": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "evidenced_additive_leaf_total_source_currency",
+        "diagnostic_unrecognized_ceiling_source_currency",
+        "conditional_upper_bound_source_currency",
+        "adopted_amount_source_currency",
+        "evidenced_additive_leaf_total_per_share",
+        "diagnostic_unrecognized_ceiling_per_share",
+        "conditional_upper_bound_per_share",
+        "adopted_per_share"
+      ],
+      "properties": {
+        "evidenced_additive_leaf_total_source_currency": {"type": "number", "minimum": 0},
+        "diagnostic_unrecognized_ceiling_source_currency": {"type": "number", "minimum": 0},
+        "conditional_upper_bound_source_currency": {"type": "number", "minimum": 0},
+        "adopted_amount_source_currency": {"type": "number", "minimum": 0},
+        "evidenced_additive_leaf_total_per_share": {"type": "number", "minimum": 0},
+        "diagnostic_unrecognized_ceiling_per_share": {"type": "number", "minimum": 0},
+        "conditional_upper_bound_per_share": {"type": "number", "minimum": 0},
+        "adopted_per_share": {"type": "number", "minimum": 0}
       }
     },
     "cashProjection": {
@@ -176,6 +241,7 @@
         "valuation_currency",
         "fx_source_per_valuation_currency",
         "shares",
+        "legal_cash_accessibility",
         "existing_excess_cash",
         "related_party_receivables",
         "future_retained_cash"
@@ -191,15 +257,28 @@
         "valuation_currency": {"$ref": "#/$defs/nonempty"},
         "fx_source_per_valuation_currency": {"type": "number", "exclusiveMinimum": 0},
         "shares": {"type": "number", "exclusiveMinimum": 0},
+        "legal_cash_accessibility": {"$ref": "#/$defs/legalCashProjection"},
         "existing_excess_cash": {"$ref": "#/$defs/cashComponentProjection"},
         "related_party_receivables": {"$ref": "#/$defs/cashComponentProjection"},
         "future_retained_cash": {
           "type": "object",
           "additionalProperties": false,
-          "required": ["realization_rate_range", "adopted_realization_rate", "valuation_destination"],
+          "required": [
+            "realization_rate_range", "adopted_realization_rate",
+            "evidenced_lower_bound_source_currency",
+            "conditional_amount_range_source_currency",
+            "unrecognized_remainder_source_currency", "evidence_state",
+            "valuation_destination"
+          ],
           "properties": {
-            "realization_rate_range": {"$ref": "#/$defs/threePointRange"},
-            "adopted_realization_rate": {"type": "number", "minimum": 0, "maximum": 1},
+            "realization_rate_range": {"$ref": "#/$defs/nullableThreePointRange"},
+            "adopted_realization_rate": {
+              "type": ["number", "null"], "minimum": 0, "maximum": 1
+            },
+            "evidenced_lower_bound_source_currency": {"type": "number", "minimum": 0},
+            "conditional_amount_range_source_currency": {"$ref": "#/$defs/nullableThreePointRange"},
+            "unrecognized_remainder_source_currency": {"type": "number", "minimum": 0},
+            "evidence_state": {"$ref": "#/$defs/evidenceState"},
             "valuation_destination": {"$ref": "#/$defs/nonempty"}
           }
         }

@@ -11,6 +11,7 @@ from __future__ import annotations
 
 from copy import deepcopy
 import json
+import math
 from pathlib import Path
 from typing import Any
 
@@ -23,6 +24,10 @@ CJO_PROJECTION_SCHEMA = "enterprise-underwriting-cjo-candidate-projection.v2"
 VALUATION_REQUEST_SCHEMA = "enterprise-underwriting-valuation-route-request.v2"
 REPORT_HANDOFF_SCHEMA = "enterprise-underwriting-golden-report-handoff.v2"
 COMPONENT_DECISION_SUMMARY_SCHEMA = "enterprise-underwriting-component-decision-summary.v1"
+ECONOMIC_DERIVATION_SCHEMA = "enterprise-underwriting-economic-derivation.v1"
+ECONOMIC_DERIVATION_SUMMARY_SCHEMA = (
+    "enterprise-underwriting-economic-derivation-summary.v1"
+)
 
 SAMPLE_IDENTITIES = {"WORKED_CASE", "BLIND_REPLAY", "PROSPECTIVE_EPISODE"}
 TREATMENTS = {
@@ -121,6 +126,11 @@ _THESIS_FORBIDDEN_KEYS = {
     "valuation_result",
     "expected_return",
 }
+_DERIVATION_FORBIDDEN_KEYS = _THESIS_FORBIDDEN_KEYS | {
+    "value_per_share",
+    "return_pct",
+    "action",
+}
 
 
 def _mapping(value: Any) -> dict[str, Any]:
@@ -143,18 +153,32 @@ def _findings(findings: list[str]) -> dict[str, Any]:
     }
 
 
-def _forbidden_paths(value: Any, path: str = "$") -> list[str]:
+def _forbidden_paths(
+    value: Any,
+    path: str = "$",
+    *,
+    forbidden_keys: set[str] | None = None,
+) -> list[str]:
     findings: list[str] = []
+    forbidden = forbidden_keys or _THESIS_FORBIDDEN_KEYS
     if isinstance(value, dict):
         for key, item in value.items():
             child = f"{path}.{key}"
-            if str(key).lower() in _THESIS_FORBIDDEN_KEYS:
+            if str(key).lower() in forbidden:
                 findings.append(child)
             else:
-                findings.extend(_forbidden_paths(item, child))
+                findings.extend(
+                    _forbidden_paths(
+                        item, child, forbidden_keys=forbidden,
+                    )
+                )
     elif isinstance(value, list):
         for index, item in enumerate(value):
-            findings.extend(_forbidden_paths(item, f"{path}[{index}]"))
+            findings.extend(
+                _forbidden_paths(
+                    item, f"{path}[{index}]", forbidden_keys=forbidden,
+                )
+            )
     return findings
 
 
@@ -300,6 +324,253 @@ def derive_component_decision_summary(component_decisions: Any) -> dict[str, Any
                 decisions
             ),
         },
+    }
+
+
+def _finite_number(value: Any) -> float | None:
+    if isinstance(value, bool) or not isinstance(value, (int, float)):
+        return None
+    number = float(value)
+    return number if math.isfinite(number) else None
+
+
+def _signed_derivation_range(row: dict[str, Any]) -> tuple[float, float] | None:
+    quantification = _mapping(row.get("quantification"))
+    if quantification.get("status") != "BOUNDED":
+        return None
+    low = _finite_number(quantification.get("range_low"))
+    high = _finite_number(quantification.get("range_high"))
+    if low is None or high is None or low < 0 or low > high:
+        return None
+    if row.get("direction") == "ADD":
+        return low, high
+    if row.get("direction") == "SUBTRACT":
+        return -high, -low
+    return None
+
+
+def _summarize_derivation_rows(rows: list[dict[str, Any]]) -> dict[str, Any] | None:
+    if not rows:
+        return None
+    unknown_ids = [
+        str(row.get("row_id") or "")
+        for row in rows
+        if _mapping(row.get("quantification")).get("status") != "BOUNDED"
+        or _signed_derivation_range(row) is None
+    ]
+    if unknown_ids:
+        return {"status": "UNKNOWN", "unknown_row_ids": unknown_ids}
+    ranges = [_signed_derivation_range(row) for row in rows]
+    bounded = [item for item in ranges if item is not None]
+    return {
+        "status": "BOUNDED",
+        "range_low": sum(item[0] for item in bounded),
+        "range_high": sum(item[1] for item in bounded),
+    }
+
+
+def _reversal_index(reference: Any) -> int | None:
+    prefix = "#/reversal_observations/"
+    text = str(reference or "")
+    if not text.startswith(prefix):
+        return None
+    try:
+        index = int(text[len(prefix):])
+    except ValueError:
+        return None
+    return index if index >= 0 else None
+
+
+def _valuation_route_roles(episode: dict[str, Any]) -> dict[str, set[str]]:
+    route = _mapping(episode.get("value_route"))
+    model_roles = _mapping(route.get("valuation_model_roles"))
+    groups = {
+        "PRIMARY": list(dict.fromkeys(
+            _items(route.get("primary_routes")) + _items(model_roles.get("primary"))
+        )),
+        "CORROBORATIVE": _items(model_roles.get("corroborative")),
+        "STRESS": _items(model_roles.get("stress")),
+        "EXCLUDED": _items(route.get("excluded_routes")),
+    }
+    roles: dict[str, set[str]] = {}
+    for role, route_ids in groups.items():
+        for route_id in route_ids:
+            if _text(route_id):
+                roles.setdefault(str(route_id), set()).add(role)
+    return roles
+
+
+def _route_role_for_use(use: str) -> str:
+    if use in {"PRIMARY_INPUT", "CONDITIONAL_PRIMARY_INPUT"}:
+        return "PRIMARY"
+    if use == "CORROBORATIVE_INPUT":
+        return "CORROBORATIVE"
+    if use == "STRESS_ONLY":
+        return "STRESS"
+    if use in {"SCENARIO_ONLY", "EXCLUDED", "UNRESOLVED", "NOT_APPLICABLE"}:
+        return "EXCLUDED"
+    return "UNRESOLVED"
+
+
+def derive_economic_derivation_summary(episode: Any) -> dict[str, Any]:
+    """Join price-free derivation operands to the existing component authority.
+
+    The Agent never authors BASE/CONDITIONAL/EXCLUDED on a bridge row.  Those
+    uses are copied from ``component_decisions`` here, and numeric UNKNOWNs
+    remain UNKNOWN rather than becoming zero.  This object is a read model, not
+    a second underwriting or valuation decision.
+    """
+
+    value = _mapping(episode)
+    derivation = _mapping(value.get("economic_derivation"))
+    bridge = _mapping(derivation.get("normal_earnings_bridge"))
+    decisions = {
+        str(_mapping(item).get("component_id")): _mapping(item)
+        for item in _items(value.get("component_decisions"))
+        if _text(_mapping(item).get("component_id"))
+    }
+    enriched_rows: list[dict[str, Any]] = []
+    for raw in _items(bridge.get("rows")):
+        row = deepcopy(_mapping(raw))
+        component_id = str(row.get("component_id") or "")
+        row["normal_earnings_use"] = str(
+            decisions.get(component_id, {}).get("normal_earnings_use")
+            or "UNRESOLVED"
+        )
+        signed = _signed_derivation_range(row)
+        row["signed_range"] = (
+            {"range_low": signed[0], "range_high": signed[1]}
+            if signed is not None else None
+        )
+        enriched_rows.append(row)
+
+    rows_by_use = {
+        use: [row for row in enriched_rows if row["normal_earnings_use"] == use]
+        for use in EARNINGS_AND_CASH_USE_ORDER
+    }
+    totals_by_use = {
+        use: _summarize_derivation_rows(rows_by_use[use])
+        for use in EARNINGS_AND_CASH_USE_ORDER
+    }
+    base_rows = rows_by_use["BASE_RANGE"]
+    conditional_only_rows = rows_by_use["CONDITIONAL_RANGE"]
+    conditional_rows = base_rows + conditional_only_rows
+    reference_rows = [
+        row for row in enriched_rows if row.get("row_role") == "REFERENCE_EARNINGS"
+    ]
+    reference_use = (
+        str(reference_rows[0].get("normal_earnings_use"))
+        if len(reference_rows) == 1 else "UNRESOLVED"
+    )
+    if base_rows:
+        base_range = (
+            _summarize_derivation_rows(base_rows)
+            if reference_use == "BASE_RANGE"
+            else {
+                "status": "UNKNOWN",
+                "reason": "REFERENCE_EARNINGS_NOT_AUTHORIZED_FOR_BASE_RANGE",
+            }
+        )
+        conditional_range = (
+            _summarize_derivation_rows(conditional_rows)
+            if reference_use == "BASE_RANGE"
+            else {
+                "status": "UNKNOWN",
+                "reason": "REFERENCE_EARNINGS_NOT_AUTHORIZED_FOR_BASE_RANGE",
+            }
+        )
+    elif conditional_only_rows:
+        base_range = None
+        conditional_range = (
+            _summarize_derivation_rows(conditional_only_rows)
+            if reference_use == "CONDITIONAL_RANGE"
+            else {
+                "status": "UNKNOWN",
+                "reason": "REFERENCE_EARNINGS_NOT_AUTHORIZED_FOR_CONDITIONAL_RANGE",
+            }
+        )
+    else:
+        base_range = None
+        conditional_range = None
+
+    reversals = _items(value.get("reversal_observations"))
+    route_roles = _valuation_route_roles(value)
+    sensitivity_summaries: list[dict[str, Any]] = []
+    for raw in _items(derivation.get("driver_sensitivity_specs")):
+        spec = _mapping(raw)
+        component_ids = [str(item) for item in _items(spec.get("component_ids"))]
+        resolved_reversals: list[str] = []
+        for reference in _items(spec.get("reversal_observation_refs")):
+            index = _reversal_index(reference)
+            if index is not None and index < len(reversals) and _text(reversals[index]):
+                resolved_reversals.append(str(reversals[index]))
+        transmission = _mapping(spec.get("transmission"))
+        route_attributions: list[dict[str, Any]] = []
+        for route_id in _items(transmission.get("valuation_route_ids")):
+            component_uses: dict[str, str] = {}
+            for component_id in component_ids:
+                bindings = {
+                    str(_mapping(item).get("route_id")): str(
+                        _mapping(item).get("use") or "UNRESOLVED"
+                    )
+                    for item in _items(decisions.get(component_id, {}).get(
+                        "valuation_route_bindings"
+                    ))
+                    if _text(_mapping(item).get("route_id"))
+                }
+                component_uses[component_id] = bindings.get(
+                    str(route_id), "UNRESOLVED"
+                )
+            expected_roles = {
+                _route_role_for_use(use) for use in component_uses.values()
+            }
+            role = (
+                next(iter(expected_roles))
+                if len(expected_roles) == 1
+                else "UNRESOLVED"
+            )
+            if role not in route_roles.get(str(route_id), set()):
+                role = "UNRESOLVED"
+            route_attributions.append({
+                "route_id": route_id,
+                "route_role": role,
+                "component_valuation_uses": component_uses,
+            })
+        sensitivity_summaries.append({
+            "sensitivity_id": spec.get("sensitivity_id"),
+            "component_ids": component_ids,
+            "normal_earnings_uses": {
+                component_id: str(
+                    decisions.get(component_id, {}).get("normal_earnings_use")
+                    or "UNRESOLVED"
+                )
+                for component_id in component_ids
+            },
+            "owner_cash_uses": {
+                component_id: str(
+                    decisions.get(component_id, {}).get("owner_cash_use")
+                    or "UNRESOLVED"
+                )
+                for component_id in component_ids
+            },
+            "metric": spec.get("metric"),
+            "unit": spec.get("unit"),
+            "horizon": spec.get("horizon"),
+            "input_cases": deepcopy(spec.get("input_cases")),
+            "transmission": deepcopy(transmission),
+            "valuation_route_attributions": route_attributions,
+            "reversal_observations": resolved_reversals,
+        })
+    return {
+        "schema_version": ECONOMIC_DERIVATION_SUMMARY_SCHEMA,
+        "normal_earnings_bridge": {
+            "basis": deepcopy(bridge.get("basis")),
+            "rows": enriched_rows,
+            "totals_by_use": totals_by_use,
+            "base_range": base_range,
+            "conditional_range": conditional_range,
+        },
+        "driver_sensitivities": sensitivity_summaries,
     }
 
 
@@ -627,7 +898,643 @@ def _component_decision_summary_findings(
     return findings
 
 
-def validate_enterprise_underwriting_episode(episode: Any) -> dict[str, Any]:
+def _validate_sensitivity_case(
+    value: Any,
+    *,
+    path: str,
+    evidence_ids: set[str],
+    require_range: bool = False,
+) -> list[str]:
+    item = _mapping(value)
+    findings: list[str] = []
+    if set(item) != {"value_or_range", "basis", "evidence_ids"}:
+        findings.append(path + ".fields_invalid")
+    if not _text(item.get("basis")):
+        findings.append(path + ".basis_missing")
+    refs = _items(item.get("evidence_ids"))
+    if (
+        not refs or len(refs) != len(set(refs))
+        or any(ref not in evidence_ids for ref in refs)
+    ):
+        findings.append(path + ".evidence_ids_invalid")
+    operand = _mapping(item.get("value_or_range"))
+    if set(operand) == {"value"} and not require_range:
+        if _finite_number(operand.get("value")) is None:
+            findings.append(path + ".value_invalid")
+    elif set(operand) == {"range_low", "range_high"}:
+        low = _finite_number(operand.get("range_low"))
+        high = _finite_number(operand.get("range_high"))
+        if low is None or high is None or low > high:
+            findings.append(path + ".range_invalid")
+    else:
+        findings.append(path + ".value_or_range_invalid")
+    return findings
+
+
+def _validate_sensitivity_delta(
+    value: Any,
+    *,
+    path: str,
+    transmission_status: Any,
+    sensitivity_component_ids: list[str],
+    responsibility_boundary: Any,
+    driver_metric: Any,
+    driver_unit: Any,
+    horizon: Any,
+    driver_case_evidence_ids: set[str],
+    evidence_ids: set[str],
+    evidence_trace_by_id: dict[str, dict[str, Any]],
+    axis: str,
+    require_magnitude_evidence: bool,
+) -> list[str]:
+    delta = _mapping(value)
+    findings: list[str] = []
+    status = delta.get("status")
+    if status == "BOUNDED":
+        allowed_fields = {
+            "status", "range_low", "range_high", "unit", "magnitude_evidence",
+        }
+        if (
+            not {"status", "range_low", "range_high", "unit"} <= set(delta)
+            or set(delta) - allowed_fields
+        ):
+            findings.append(path + ".fields_invalid")
+        low = _finite_number(delta.get("range_low"))
+        high = _finite_number(delta.get("range_high"))
+        if low is None or high is None or low > 0 or high < 0 or low > high:
+            findings.append(path + ".range_must_be_signed_and_include_zero")
+        if not _text(delta.get("unit")):
+            findings.append(path + ".unit_missing")
+        if transmission_status == "UNKNOWN":
+            findings.append(path + ".bounded_conflicts_with_unknown_transmission")
+        if transmission_status == "PRESERVED" and (low != 0 or high != 0):
+            findings.append(path + ".preserved_requires_zero_delta")
+        if (
+            (require_magnitude_evidence and transmission_status != "PRESERVED")
+            or "magnitude_evidence" in delta
+        ):
+            findings.extend(_validate_sensitivity_delta_magnitude_evidence(
+                delta.get("magnitude_evidence"),
+                path=path + ".magnitude_evidence",
+                sensitivity_component_ids=sensitivity_component_ids,
+                responsibility_boundary=responsibility_boundary,
+                driver_metric=driver_metric,
+                driver_unit=driver_unit,
+                horizon=horizon,
+                delta_unit=delta.get("unit"),
+                axis=axis,
+                driver_case_evidence_ids=driver_case_evidence_ids,
+                evidence_ids=evidence_ids,
+                evidence_trace_by_id=evidence_trace_by_id,
+                require_trace_metadata=require_magnitude_evidence,
+            ))
+    elif status == "UNKNOWN":
+        if set(delta) != {"status", "reason", "conservative_treatment"}:
+            findings.append(path + ".fields_invalid")
+        for field in ("reason", "conservative_treatment"):
+            if not _text(delta.get(field)):
+                findings.append(path + "." + field + "_missing")
+        if transmission_status != "UNKNOWN":
+            findings.append(path + ".unknown_requires_unknown_transmission")
+    else:
+        findings.append(path + ".status_invalid")
+    return findings
+
+
+def _validate_sensitivity_delta_magnitude_evidence(
+    value: Any,
+    *,
+    path: str,
+    sensitivity_component_ids: list[str],
+    responsibility_boundary: Any,
+    driver_metric: Any,
+    driver_unit: Any,
+    horizon: Any,
+    delta_unit: Any,
+    axis: str,
+    driver_case_evidence_ids: set[str],
+    evidence_ids: set[str],
+    evidence_trace_by_id: dict[str, dict[str, Any]],
+    require_trace_metadata: bool,
+) -> list[str]:
+    """Require a calculation-bound magnitude source for a non-preserved delta.
+
+    The qualitative driver case and an already-authorized component answer different
+    questions from the size of an earnings or owner-cash effect.  A bounded output
+    therefore needs its own structured calculation binding, kept in the same
+    component, responsibility boundary, driver metric/unit, and horizon as the
+    sensitivity it supports.
+    """
+
+    magnitude = _mapping(value)
+    findings: list[str] = []
+    required_fields = {
+        "evidence_ids", "component_ids", "responsibility_boundary",
+        "driver_metric", "driver_unit", "horizon", "affected_axis",
+        "delta_unit", "calculation_binding",
+    }
+    if not magnitude:
+        return [path + ".required_for_bounded_delta"]
+    if set(magnitude) != required_fields:
+        findings.append(path + ".fields_invalid")
+
+    magnitude_refs = _items(magnitude.get("evidence_ids"))
+    if (
+        not magnitude_refs
+        or len(magnitude_refs) != len(set(magnitude_refs))
+        or any(ref not in evidence_ids for ref in magnitude_refs)
+    ):
+        findings.append(path + ".evidence_ids_invalid")
+    elif set(magnitude_refs) & driver_case_evidence_ids:
+        findings.append(path + ".cannot_reuse_driver_case_evidence")
+
+    magnitude_components = _items(magnitude.get("component_ids"))
+    if (
+        not magnitude_components
+        or len(magnitude_components) != len(set(magnitude_components))
+        or set(magnitude_components) != set(sensitivity_component_ids)
+    ):
+        findings.append(path + ".component_ids_must_match_sensitivity")
+    if magnitude.get("responsibility_boundary") != responsibility_boundary:
+        findings.append(path + ".responsibility_boundary_incompatible")
+    if magnitude.get("driver_metric") != driver_metric:
+        findings.append(path + ".driver_metric_incompatible")
+    if magnitude.get("driver_unit") != driver_unit:
+        findings.append(path + ".driver_unit_incompatible")
+    if magnitude.get("horizon") != horizon:
+        findings.append(path + ".horizon_incompatible")
+    if magnitude.get("affected_axis") != axis:
+        findings.append(path + ".affected_axis_incompatible")
+    if magnitude.get("delta_unit") != delta_unit:
+        findings.append(path + ".delta_unit_incompatible")
+
+    calculation = _mapping(magnitude.get("calculation_binding"))
+    calculation_fields = {"calculation_id", "expression", "input_evidence_ids"}
+    if set(calculation) != calculation_fields:
+        findings.append(path + ".calculation_binding.fields_invalid")
+    if not _text(calculation.get("calculation_id")):
+        findings.append(path + ".calculation_binding.calculation_id_missing")
+    if not _text(calculation.get("expression")):
+        findings.append(path + ".calculation_binding.expression_missing")
+    calculation_refs = _items(calculation.get("input_evidence_ids"))
+    if (
+        not calculation_refs
+        or len(calculation_refs) != len(set(calculation_refs))
+        or any(ref not in evidence_ids for ref in calculation_refs)
+    ):
+        findings.append(path + ".calculation_binding.input_evidence_ids_invalid")
+    elif set(calculation_refs) != set(magnitude_refs):
+        findings.append(path + ".calculation_binding.input_evidence_ids_must_match")
+    if require_trace_metadata:
+        findings.extend(_validate_sensitivity_magnitude_trace_metadata(
+            magnitude_refs,
+            path=path + ".trace_metadata",
+            evidence_trace_by_id=evidence_trace_by_id,
+            sensitivity_component_ids=sensitivity_component_ids,
+            responsibility_boundary=responsibility_boundary,
+            driver_metric=driver_metric,
+            driver_unit=driver_unit,
+            horizon=horizon,
+            axis=axis,
+            delta_unit=delta_unit,
+            calculation_refs=calculation_refs,
+        ))
+    return findings
+
+
+def _validate_sensitivity_magnitude_trace_metadata(
+    evidence_refs: list[Any],
+    *,
+    path: str,
+    evidence_trace_by_id: dict[str, dict[str, Any]],
+    sensitivity_component_ids: list[str],
+    responsibility_boundary: Any,
+    driver_metric: Any,
+    driver_unit: Any,
+    horizon: Any,
+    axis: str,
+    delta_unit: Any,
+    calculation_refs: list[Any],
+) -> list[str]:
+    """Bind v2 sensitivity magnitude to canonical evidence-trace metadata.
+
+    ``magnitude_evidence`` is a claim about which facts support a calculation;
+    its repeated labels are not that fact.  Each cited trace entry therefore has
+    to carry the component, responsibility, driver, horizon, output axis/unit,
+    and input identities used by the calculation itself.
+    """
+
+    findings: list[str] = []
+    required_fields = {
+        "component_ids", "responsibility_boundary", "driver_metric",
+        "driver_unit", "horizon", "affected_axes", "delta_unit",
+        "calculation_inputs",
+    }
+    for evidence_id in evidence_refs:
+        trace = evidence_trace_by_id.get(str(evidence_id))
+        metadata = _mapping(
+            trace.get("sensitivity_magnitude_observation") if trace else None
+        )
+        item_path = path + f"[{evidence_id}]"
+        if not metadata:
+            findings.append(item_path + ".required")
+            continue
+        if set(metadata) != required_fields:
+            findings.append(item_path + ".fields_invalid")
+        component_ids = _items(metadata.get("component_ids"))
+        if (
+            not component_ids
+            or len(component_ids) != len(set(component_ids))
+            or set(component_ids) != set(sensitivity_component_ids)
+        ):
+            findings.append(item_path + ".component_ids_incompatible")
+        if metadata.get("responsibility_boundary") != responsibility_boundary:
+            findings.append(item_path + ".responsibility_boundary_incompatible")
+        if metadata.get("driver_metric") != driver_metric:
+            findings.append(item_path + ".driver_metric_incompatible")
+        if metadata.get("driver_unit") != driver_unit:
+            findings.append(item_path + ".driver_unit_incompatible")
+        if metadata.get("horizon") != horizon:
+            findings.append(item_path + ".horizon_incompatible")
+        affected_axes = _items(metadata.get("affected_axes"))
+        if (
+            not affected_axes
+            or len(affected_axes) != len(set(affected_axes))
+            or axis not in affected_axes
+            or any(item not in {"normal_earnings", "owner_cash"} for item in affected_axes)
+        ):
+            findings.append(item_path + ".affected_axes_incompatible")
+        if metadata.get("delta_unit") != delta_unit:
+            findings.append(item_path + ".delta_unit_incompatible")
+        trace_inputs = _items(metadata.get("calculation_inputs"))
+        if (
+            not trace_inputs
+            or len(trace_inputs) != len(set(trace_inputs))
+            or set(trace_inputs) != set(calculation_refs)
+        ):
+            findings.append(item_path + ".calculation_inputs_incompatible")
+    return findings
+
+
+def _economic_derivation_findings(
+    episode: dict[str, Any],
+    derivation: Any,
+    stored_summary: Any,
+    *,
+    require_bounded_sensitivity_magnitude_evidence: bool = False,
+) -> list[str]:
+    if derivation is None:
+        return (
+            ["economic_derivation_summary.not_allowed_without_economic_derivation"]
+            if stored_summary is not None else []
+        )
+    value = _mapping(derivation)
+    findings: list[str] = []
+    if set(value) != {
+        "schema_version", "normal_earnings_bridge", "driver_sensitivity_specs",
+    }:
+        findings.append("economic_derivation.fields_invalid")
+    if value.get("schema_version") != ECONOMIC_DERIVATION_SCHEMA:
+        findings.append("economic_derivation.schema_version_invalid")
+    if not _items(episode.get("component_decisions")):
+        findings.append("economic_derivation.component_decisions_required")
+
+    evidence_ids = {
+        str(_mapping(item).get("evidence_id"))
+        for item in _items(episode.get("evidence_trace"))
+        if _text(_mapping(item).get("evidence_id"))
+    }
+    evidence_trace_by_id = {
+        str(_mapping(item).get("evidence_id")): _mapping(item)
+        for item in _items(episode.get("evidence_trace"))
+        if _text(_mapping(item).get("evidence_id"))
+    }
+    decisions = {
+        str(_mapping(item).get("component_id")): _mapping(item)
+        for item in _items(episode.get("component_decisions"))
+        if _text(_mapping(item).get("component_id"))
+    }
+    bridge = _mapping(value.get("normal_earnings_bridge"))
+    if set(bridge) != {"basis", "rows"}:
+        findings.append("economic_derivation.normal_earnings_bridge.fields_invalid")
+    basis = _mapping(bridge.get("basis"))
+    basis_fields = {
+        "metric", "currency", "unit", "tax_basis", "earnings_claim_scope",
+        "operating_perimeter", "as_of",
+    }
+    if set(basis) != basis_fields:
+        findings.append("economic_derivation.normal_earnings_bridge.basis.fields_invalid")
+    for field in basis_fields - {"tax_basis", "earnings_claim_scope"}:
+        if not _text(basis.get(field)):
+            findings.append(
+                "economic_derivation.normal_earnings_bridge.basis."
+                + field + "_missing"
+            )
+    if basis.get("tax_basis") not in {"PRETAX", "AFTER_TAX"}:
+        findings.append("economic_derivation.normal_earnings_bridge.basis.tax_basis_invalid")
+    if basis.get("earnings_claim_scope") not in {
+        "ENTERPRISE_OPERATING", "ORDINARY_COMMON_EQUITY",
+    }:
+        findings.append(
+            "economic_derivation.normal_earnings_bridge.basis.earnings_claim_scope_invalid"
+        )
+
+    rows = bridge.get("rows")
+    if not isinstance(rows, list) or not rows:
+        findings.append("economic_derivation.normal_earnings_bridge.rows_missing")
+        rows = []
+    row_ids: set[str] = set()
+    component_roles: set[tuple[str, str]] = set()
+    reference_earnings_count = 0
+    reference_component_ids: list[str] = []
+    covered_components: set[str] = set()
+    row_fields = {
+        "row_id", "component_id", "row_role", "direction", "quantification",
+        "evidence_ids", "economic_reason",
+    }
+    for index, raw in enumerate(rows):
+        path = f"economic_derivation.normal_earnings_bridge.rows[{index}]"
+        row = _mapping(raw)
+        if set(row) != row_fields:
+            findings.append(path + ".fields_invalid")
+        row_id = row.get("row_id")
+        if not _text(row_id) or row_id in row_ids:
+            findings.append(path + ".row_id_missing_or_duplicate")
+        else:
+            row_ids.add(str(row_id))
+        component_id = str(row.get("component_id") or "")
+        decision = decisions.get(component_id)
+        if decision is None:
+            findings.append(path + ".component_id_unknown")
+        elif decision.get("normal_earnings_use") == "NOT_APPLICABLE":
+            findings.append(path + ".component_not_applicable_to_normal_earnings")
+        else:
+            covered_components.add(component_id)
+        if row.get("row_role") not in {
+            "REFERENCE_EARNINGS", "NORMALIZATION_ADJUSTMENT",
+        }:
+            findings.append(path + ".row_role_invalid")
+        else:
+            row_role = str(row["row_role"])
+            if row_role == "REFERENCE_EARNINGS":
+                reference_earnings_count += 1
+                reference_component_ids.append(component_id)
+            component_role = (component_id, row_role)
+            if component_role in component_roles:
+                findings.append(path + ".component_role_duplicate")
+            else:
+                component_roles.add(component_role)
+        if row.get("direction") not in {"ADD", "SUBTRACT"}:
+            findings.append(path + ".direction_invalid")
+        refs = _items(row.get("evidence_ids"))
+        if (
+            not refs or len(refs) != len(set(refs))
+            or any(ref not in evidence_ids for ref in refs)
+        ):
+            findings.append(path + ".evidence_ids_invalid")
+        if not _text(row.get("economic_reason")):
+            findings.append(path + ".economic_reason_missing")
+        quantification = _mapping(row.get("quantification"))
+        status = quantification.get("status")
+        if status == "BOUNDED":
+            if set(quantification) != {"status", "range_low", "range_high"}:
+                findings.append(path + ".quantification.fields_invalid")
+            low = _finite_number(quantification.get("range_low"))
+            high = _finite_number(quantification.get("range_high"))
+            if low is None or high is None or low < 0 or low > high:
+                findings.append(path + ".quantification.range_invalid")
+        elif status == "UNKNOWN":
+            if set(quantification) != {
+                "status", "reason", "conservative_treatment",
+            }:
+                findings.append(path + ".quantification.fields_invalid")
+            for field in ("reason", "conservative_treatment"):
+                if not _text(quantification.get(field)):
+                    findings.append(path + f".quantification.{field}_missing")
+        else:
+            findings.append(path + ".quantification.status_invalid")
+
+    if reference_earnings_count != 1:
+        findings.append(
+            "economic_derivation.normal_earnings_bridge."
+            "requires_exactly_one_reference_earnings_row"
+        )
+    reference_use = (
+        decisions.get(reference_component_ids[0], {}).get("normal_earnings_use")
+        if len(reference_component_ids) == 1 else None
+    )
+    row_uses = [
+        decisions.get(str(_mapping(row).get("component_id")), {}).get(
+            "normal_earnings_use"
+        )
+        for row in rows
+    ]
+    if "BASE_RANGE" in row_uses and reference_use != "BASE_RANGE":
+        findings.append(
+            "economic_derivation.normal_earnings_bridge."
+            "base_range_requires_base_reference_earnings"
+        )
+    elif (
+        "CONDITIONAL_RANGE" in row_uses
+        and reference_use != "CONDITIONAL_RANGE"
+    ):
+        findings.append(
+            "economic_derivation.normal_earnings_bridge."
+            "conditional_range_requires_conditional_reference_earnings"
+        )
+
+    expected_components = {
+        component_id for component_id, decision in decisions.items()
+        if decision.get("normal_earnings_use") != "NOT_APPLICABLE"
+    }
+    if covered_components != expected_components:
+        findings.append(
+            "economic_derivation.normal_earnings_bridge.must_cover_each_"
+            "normal_earnings_component"
+        )
+
+    route_roles = _valuation_route_roles(episode)
+    reversals = _items(episode.get("reversal_observations"))
+    specs = value.get("driver_sensitivity_specs")
+    if not isinstance(specs, list) or not specs:
+        findings.append("economic_derivation.driver_sensitivity_specs_missing")
+        specs = []
+    sensitivity_ids: set[str] = set()
+    allowed_spec_fields = {
+        "sensitivity_id", "component_ids", "responsibility_boundary",
+        "driver_binding", "metric", "unit", "horizon", "input_cases",
+        "transmission", "reversal_observation_refs",
+    }
+    required_spec_fields = allowed_spec_fields - {
+        "driver_binding", "responsibility_boundary",
+    }
+    for index, raw in enumerate(specs):
+        path = f"economic_derivation.driver_sensitivity_specs[{index}]"
+        spec = _mapping(raw)
+        if not required_spec_fields <= set(spec) or set(spec) - allowed_spec_fields:
+            findings.append(path + ".fields_invalid")
+        sensitivity_id = spec.get("sensitivity_id")
+        if not _text(sensitivity_id) or sensitivity_id in sensitivity_ids:
+            findings.append(path + ".sensitivity_id_missing_or_duplicate")
+        else:
+            sensitivity_ids.add(str(sensitivity_id))
+        component_ids = _items(spec.get("component_ids"))
+        if (
+            not component_ids or len(component_ids) != len(set(component_ids))
+            or any(component_id not in decisions for component_id in component_ids)
+        ):
+            findings.append(path + ".component_ids_invalid")
+        for field in ("metric", "unit", "horizon"):
+            if not _text(spec.get(field)):
+                findings.append(path + "." + field + "_missing")
+        if (
+            require_bounded_sensitivity_magnitude_evidence
+            and not _text(spec.get("responsibility_boundary"))
+        ):
+            findings.append(path + ".responsibility_boundary_required_by_interface_v2")
+        binding = spec.get("driver_binding")
+        if binding is not None:
+            binding_value = _mapping(binding)
+            if (
+                not binding_value
+                or set(binding_value) - {
+                    "enterprise_variable_id", "financial_driver_id",
+                }
+                or any(not _text(item) for item in binding_value.values())
+            ):
+                findings.append(path + ".driver_binding_invalid")
+
+        input_cases = _mapping(spec.get("input_cases"))
+        mode = input_cases.get("mode")
+        driver_case_evidence_ids: set[str] = set()
+        if mode == "LOW_BASE_HIGH":
+            if set(input_cases) != {"mode", "low", "base", "high"}:
+                findings.append(path + ".input_cases.fields_invalid")
+            for role in ("low", "base", "high"):
+                driver_case_evidence_ids.update(
+                    str(ref) for ref in _items(
+                        _mapping(input_cases.get(role)).get("evidence_ids")
+                    )
+                )
+                findings.extend(_validate_sensitivity_case(
+                    input_cases.get(role), path=path + ".input_cases." + role,
+                    evidence_ids=evidence_ids,
+                ))
+        elif mode == "BOUNDED_RANGE":
+            if set(input_cases) != {"mode", "range"}:
+                findings.append(path + ".input_cases.fields_invalid")
+            findings.extend(_validate_sensitivity_case(
+                input_cases.get("range"), path=path + ".input_cases.range",
+                evidence_ids=evidence_ids, require_range=True,
+            ))
+            driver_case_evidence_ids.update(
+                str(ref) for ref in _items(
+                    _mapping(input_cases.get("range")).get("evidence_ids")
+                )
+            )
+        else:
+            findings.append(path + ".input_cases.mode_invalid")
+
+        transmission = _mapping(spec.get("transmission"))
+        if set(transmission) != {
+            "normal_earnings", "owner_cash", "valuation_route_ids",
+        }:
+            findings.append(path + ".transmission.fields_invalid")
+        for axis in ("normal_earnings", "owner_cash"):
+            treatment = _mapping(transmission.get(axis))
+            if set(treatment) != {"status", "basis", "delta"}:
+                findings.append(path + f".transmission.{axis}.fields_invalid")
+            if treatment.get("status") not in {"DIRECT", "PRESERVED", "UNKNOWN"}:
+                findings.append(path + f".transmission.{axis}.status_invalid")
+            if not _text(treatment.get("basis")):
+                findings.append(path + f".transmission.{axis}.basis_missing")
+            findings.extend(_validate_sensitivity_delta(
+                treatment.get("delta"),
+                path=path + f".transmission.{axis}.delta",
+                transmission_status=treatment.get("status"),
+                sensitivity_component_ids=[str(item) for item in component_ids],
+                responsibility_boundary=spec.get("responsibility_boundary"),
+                driver_metric=spec.get("metric"),
+                driver_unit=spec.get("unit"),
+                horizon=spec.get("horizon"),
+                driver_case_evidence_ids=driver_case_evidence_ids,
+                evidence_ids=evidence_ids,
+                evidence_trace_by_id=evidence_trace_by_id,
+                axis=axis,
+                require_magnitude_evidence=(
+                    require_bounded_sensitivity_magnitude_evidence
+                ),
+            ))
+            authority_field = (
+                "normal_earnings_use" if axis == "normal_earnings"
+                else "owner_cash_use"
+            )
+            if treatment.get("status") == "DIRECT" and any(
+                decisions.get(str(component_id), {}).get(authority_field)
+                not in {"BASE_RANGE", "CONDITIONAL_RANGE"}
+                for component_id in component_ids
+            ):
+                findings.append(
+                    path + f".transmission.{axis}.direct_not_authorized_by_component_decisions"
+                )
+        sensitivity_routes = _items(transmission.get("valuation_route_ids"))
+        if (
+            not sensitivity_routes or len(sensitivity_routes) != len(set(sensitivity_routes))
+            or any(route_id not in route_roles for route_id in sensitivity_routes)
+        ):
+            findings.append(path + ".transmission.valuation_route_id_unknown")
+        for component_id in component_ids:
+            bindings = {
+                str(_mapping(item).get("route_id")): str(
+                    _mapping(item).get("use") or ""
+                )
+                for item in _items(decisions.get(str(component_id), {}).get(
+                    "valuation_route_bindings"
+                ))
+                if _text(_mapping(item).get("route_id"))
+            }
+            for route_id in sensitivity_routes:
+                if route_id not in bindings:
+                    findings.append(path + ".transmission.route_not_bound_to_component")
+                    continue
+                required_role = _route_role_for_use(bindings[route_id])
+                if required_role not in route_roles.get(str(route_id), set()):
+                    findings.append(
+                        path + ".transmission.route_binding_use_incompatible_with_route_role"
+                    )
+
+        reversal_refs = _items(spec.get("reversal_observation_refs"))
+        if not reversal_refs or len(reversal_refs) != len(set(reversal_refs)):
+            findings.append(path + ".reversal_observation_refs_invalid")
+        for reference in reversal_refs:
+            reversal_index = _reversal_index(reference)
+            if (
+                reversal_index is None or reversal_index >= len(reversals)
+                or not _text(reversals[reversal_index])
+            ):
+                findings.append(path + ".reversal_observation_ref_invalid")
+
+    findings.extend(
+        "economic_derivation.price_boundary:" + path
+        for path in _forbidden_paths(
+            value, forbidden_keys=_DERIVATION_FORBIDDEN_KEYS,
+        )
+    )
+    expected_summary = derive_economic_derivation_summary(episode)
+    if not isinstance(stored_summary, dict):
+        findings.append("economic_derivation_summary.required_when_derivation_present")
+    elif stored_summary != expected_summary:
+        findings.append(
+            "economic_derivation_summary.not_exact_deterministic_derivation"
+        )
+    return findings
+
+
+def validate_enterprise_underwriting_episode(
+    episode: Any,
+    *,
+    require_bounded_sensitivity_magnitude_evidence: bool = False,
+) -> dict[str, Any]:
     """Check the economic continuity and the one-way price boundary.
 
     The validator deliberately does not require every possible input.  An
@@ -716,6 +1623,16 @@ def validate_enterprise_underwriting_episode(episode: Any) -> dict[str, Any]:
             value.get("component_decisions"),
             value.get("component_decision_summary"),
             value.get("value_route"),
+        )
+    )
+    findings.extend(
+        _economic_derivation_findings(
+            value,
+            value.get("economic_derivation"),
+            value.get("economic_derivation_summary"),
+            require_bounded_sensitivity_magnitude_evidence=(
+                require_bounded_sensitivity_magnitude_evidence
+            ),
         )
     )
 
@@ -807,6 +1724,11 @@ def project_price_free_underwriting_thesis(episode: Any) -> dict[str, Any]:
         projection["component_decision_summary"] = deepcopy(
             value["component_decision_summary"]
         )
+    if _mapping(value.get("economic_derivation")):
+        projection["economic_derivation"] = deepcopy(value["economic_derivation"])
+        projection["economic_derivation_summary"] = deepcopy(
+            value["economic_derivation_summary"]
+        )
     forbidden = _forbidden_paths(projection)
     if forbidden:
         raise ValueError("price_free_underwriting_thesis_invalid:" + ",".join(forbidden))
@@ -833,6 +1755,13 @@ def validate_price_free_underwriting_thesis_projection(projection: Any) -> dict[
     findings.extend(
         _component_decision_findings(
             _items(value.get("component_treatments")), value.get("component_decisions")
+        )
+    )
+    findings.extend(
+        _economic_derivation_findings(
+            value,
+            value.get("economic_derivation"),
+            value.get("economic_derivation_summary"),
         )
     )
     situation = _mapping(value.get("situation_model"))
@@ -992,6 +1921,13 @@ def compile_underwriting_projections(episode: Any) -> dict[str, dict[str, Any]]:
         valuation_request["route_component_requirements"] = deepcopy(
             value["value_route"]["route_component_requirements"]
         )
+    if _mapping(value.get("economic_derivation")):
+        valuation_request["economic_derivation"] = deepcopy(
+            value["economic_derivation"]
+        )
+        valuation_request["economic_derivation_summary"] = deepcopy(
+            value["economic_derivation_summary"]
+        )
     report_handoff = {
         "schema_version": REPORT_HANDOFF_SCHEMA,
         "handoff_id": "UW-GR:" + value["episode_id"],
@@ -1031,6 +1967,13 @@ def compile_underwriting_projections(episode: Any) -> dict[str, dict[str, Any]]:
         ]
         report_handoff["component_economic_routes"] = deepcopy(
             component_decision_summary
+        )
+    if _mapping(value.get("economic_derivation")):
+        report_handoff["economic_derivation"] = deepcopy(
+            value["economic_derivation"]
+        )
+        report_handoff["economic_derivation_summary"] = deepcopy(
+            value["economic_derivation_summary"]
         )
     return {
         "cjo_candidate_projection": cjo_candidate,
@@ -1150,6 +2093,210 @@ def validate_golden_report_reader_brief(brief: Any) -> dict[str, Any]:
     }
 
 
+def _reader_number(value: Any) -> str:
+    number = _finite_number(value)
+    if number is None:
+        return "未知"
+    return str(int(number)) if number.is_integer() else format(number, "g")
+
+
+def _reader_value_or_range(value: Any) -> str:
+    item = _mapping(value)
+    if set(item) == {"value"}:
+        return _reader_number(item.get("value"))
+    if set(item) == {"range_low", "range_high"}:
+        return (
+            _reader_number(item.get("range_low"))
+            + "–"
+            + _reader_number(item.get("range_high"))
+        )
+    return "未知"
+
+
+def _reader_sensitivity_delta(value: Any) -> str:
+    delta = _mapping(value)
+    if delta.get("status") == "BOUNDED":
+        return (
+            "影响范围 "
+            + _reader_number(delta.get("range_low"))
+            + "–"
+            + _reader_number(delta.get("range_high"))
+            + " "
+            + str(delta.get("unit") or "同口径单位")
+        )
+    return (
+        f"影响未知：{delta.get('reason')}；保守处理："
+        f"{delta.get('conservative_treatment')}"
+    )
+
+
+def _reader_sensitivity_transmission(value: Any) -> str:
+    """Render only an evidenced sensitivity transmission as a direct effect.
+
+    An UNKNOWN delta means the causal direction may remain a useful question, but
+    its magnitude is not an investor-facing attribution.  In particular, do not
+    repeat a free-text basis that calls it "direct" when the structured delta
+    declined to quantify it.
+    """
+
+    treatment = _mapping(value)
+    delta = _mapping(treatment.get("delta"))
+    if treatment.get("status") == "UNKNOWN" or delta.get("status") == "UNKNOWN":
+        return _reader_sensitivity_delta(delta)
+    return (
+        f"{treatment.get('basis')}；"
+        f"{_reader_sensitivity_delta(delta)}"
+    )
+
+
+def _reader_component_authority(uses: Any) -> str:
+    labels = list(dict.fromkeys(
+        _COMPONENT_DECISION_READER_LABELS.get(str(use), str(use))
+        for use in _mapping(uses).values()
+    ))
+    return "、".join(labels) if labels else "尚未形成权限"
+
+
+def _reader_safe_authority_text(value: Any) -> str:
+    text = str(value or "")
+    for internal, label in _COMPONENT_DECISION_READER_LABELS.items():
+        text = text.replace(internal, label)
+    return text
+
+
+def _reader_route_authority(attributions: Any) -> str:
+    uses: list[str] = []
+    for attribution in _items(attributions):
+        uses.extend(
+            str(use)
+            for use in _mapping(_mapping(attribution).get(
+                "component_valuation_uses"
+            )).values()
+        )
+    phrases = {
+        "PRIMARY_INPUT": "进入基准价值路线",
+        "CONDITIONAL_PRIMARY_INPUT": "只进入条件性价值路线",
+        "CORROBORATIVE_INPUT": "只进入价值交叉验证",
+        "STRESS_ONLY": "只进入压力价值路线",
+        "SCENARIO_ONLY": "只保留情景价值路线，不进入基准价值",
+        "EXCLUDED": "相关价值路线被排除",
+        "UNRESOLVED": "价值路线影响未决",
+        "NOT_APPLICABLE": "不适用价值路线",
+    }
+    rendered = list(dict.fromkeys(phrases.get(use, "价值路线影响未决") for use in uses))
+    return "、".join(rendered) if rendered else "价值路线影响未决"
+
+
+def _economic_derivation_reader_sections(value: dict[str, Any]) -> list[dict[str, Any]]:
+    """Reduce the deterministic derivation to challengeable prose without IDs."""
+
+    summary = _mapping(value.get("economic_derivation_summary"))
+    if not summary:
+        return []
+    bridge = _mapping(summary.get("normal_earnings_bridge"))
+    basis = _mapping(bridge.get("basis"))
+    unit = str(basis.get("unit") or basis.get("currency") or "同口径单位")
+    bridge_paragraphs = [
+        (
+            f"口径：{basis.get('metric')}；{basis.get('operating_perimeter')}；"
+            f"截至 {basis.get('as_of')}；单位 {unit}。"
+        )
+    ]
+    for raw in _items(bridge.get("rows")):
+        row = _mapping(raw)
+        use = _COMPONENT_DECISION_READER_LABELS.get(
+            str(row.get("normal_earnings_use")), str(row.get("normal_earnings_use"))
+        )
+        quantification = _mapping(row.get("quantification"))
+        if row.get("normal_earnings_use") not in {
+            "BASE_RANGE", "CONDITIONAL_RANGE"
+        }:
+            bridge_paragraphs.append(
+                f"该组件未获授权进入读者正常盈利数值桥；组件权限：{use}。"
+            )
+            continue
+        if quantification.get("status") == "BOUNDED":
+            signed = _mapping(row.get("signed_range"))
+            amount = (
+                _reader_number(signed.get("range_low"))
+                + "–"
+                + _reader_number(signed.get("range_high"))
+            )
+            detail = f"带符号范围 {amount} {unit}"
+        else:
+            detail = (
+                f"数值未知：{quantification.get('reason')}；保守处理："
+                f"{quantification.get('conservative_treatment')}"
+            )
+        bridge_paragraphs.append(
+            f"{row.get('economic_reason')}；{detail}；组件权限：{use}。"
+        )
+    for label, field in (("基准范围", "base_range"), ("含条件项范围", "conditional_range")):
+        total = _mapping(bridge.get(field))
+        if total.get("status") == "BOUNDED":
+            bridge_paragraphs.append(
+                f"{label}勾稽为 {_reader_number(total.get('range_low'))}–"
+                f"{_reader_number(total.get('range_high'))} {unit}。"
+            )
+        elif total.get("status") == "UNKNOWN":
+            bridge_paragraphs.append(
+                f"{label}仍为未知，因为至少一个纳入项尚不能界定；不得按零补齐。"
+            )
+        else:
+            bridge_paragraphs.append(f"{label}没有获授权的组件。")
+
+    sensitivity_paragraphs: list[str] = []
+    for raw in _items(summary.get("driver_sensitivities")):
+        sensitivity = _mapping(raw)
+        cases = _mapping(sensitivity.get("input_cases"))
+        case_texts: list[str] = []
+        if cases.get("mode") == "LOW_BASE_HIGH":
+            for label, field in (("低", "low"), ("基准", "base"), ("高", "high")):
+                case = _mapping(cases.get(field))
+                case_texts.append(
+                    f"{label} {_reader_value_or_range(case.get('value_or_range'))}"
+                    f"（{case.get('basis')}）"
+                )
+        elif cases.get("mode") == "BOUNDED_RANGE":
+            case = _mapping(cases.get("range"))
+            case_texts.append(
+                f"范围 {_reader_value_or_range(case.get('value_or_range'))}"
+                f"（{case.get('basis')}）"
+            )
+        transmission = _mapping(sensitivity.get("transmission"))
+        normal = _mapping(transmission.get("normal_earnings"))
+        owner_cash = _mapping(transmission.get("owner_cash"))
+        normal_authority = _reader_component_authority(
+            sensitivity.get("normal_earnings_uses")
+        )
+        owner_cash_authority = _reader_component_authority(
+            sensitivity.get("owner_cash_uses")
+        )
+        route_effect = _reader_route_authority(
+            sensitivity.get("valuation_route_attributions")
+        )
+        reversals = "；".join(
+            str(item) for item in _items(sensitivity.get("reversal_observations"))
+        )
+        sensitivity_paragraphs.append(
+            f"驱动：{sensitivity.get('metric')}（{sensitivity.get('horizon')}，"
+            f"单位 {sensitivity.get('unit')}）；" + "，".join(case_texts) + "。"
+            f"正常盈利传导（权限：{normal_authority}）："
+            f"{_reader_sensitivity_transmission(normal)}。"
+            f"普通股现金传导（权限：{owner_cash_authority}）："
+            f"{_reader_sensitivity_transmission(owner_cash)}。"
+            f"价值路线权限：{route_effect}；不在此生成价值、回报或行动数值。"
+            f"翻转证据：{reversals}"
+        )
+    return [
+        {"heading": "正常盈利组件桥", "paragraphs": bridge_paragraphs},
+        {
+            "heading": "关键敏感性与翻转条件",
+            "paragraphs": sensitivity_paragraphs or ["当前没有已界定的关键驱动敏感性。"],
+        },
+    ]
+
+
 def compile_golden_report_reader_brief(
     episode: Any,
     deterministic_results: Any = None,
@@ -1177,6 +2324,10 @@ def compile_golden_report_reader_brief(
     authoritative_treatments = _authoritative_thesis_treatments(
         thesis, component_decision_summary
     )
+    reader_treatments = {
+        field: _reader_safe_authority_text(text)
+        for field, text in authoritative_treatments.items()
+    }
     situation_model = _mapping(value["situation_model"])
     industry_future = _industry_future_thesis(value)
     deterministic_conclusions: list[str] = []
@@ -1262,60 +2413,62 @@ def compile_golden_report_reader_brief(
                 f"失效检验：{decision['invalidation_test']}"
             )
         component_judgments.append(judgment)
+    sections = [
+        {
+            "heading": "行业未来与公司传导",
+            "paragraphs": [
+                f"观察时域：{industry_future['horizon']}",
+                f"最可能的行业路径：{industry_future['most_likely_regime']}",
+                f"利润池传导：{industry_future['profit_pool_transmission']}",
+                f"公司暴露：{industry_future['company_exposure']}",
+                f"适应能力：{industry_future['adaptation']}",
+                f"正常经济与普通股现金：{industry_future['normal_economics']}",
+                f"永久损失路径：{industry_future['permanent_loss']}",
+                f"价值处理：{industry_future['valuation_treatment']}",
+                f"最强竞争解释：{industry_future['strongest_rival']}",
+            ],
+        },
+        {
+            "heading": "行业处境、公司位置与适应",
+            "paragraphs": [
+                situation_model["summary"],
+                value["business_position"],
+                value["adaptation_case"],
+            ],
+        },
+        {
+            "heading": "生存、正常盈利与普通股现金",
+            "paragraphs": [
+                value["survival_case"],
+                value["normalization_case"],
+                reader_treatments["normal_earnings_treatment"],
+                reader_treatments["owner_cash_treatment"],
+            ],
+        },
+        {
+            "heading": "永久损失与最强反方",
+            "paragraphs": [
+                (
+                    reader_treatments["permanent_loss_treatment"]
+                    if component_decision_summary
+                    else value["permanent_loss_map"]
+                ),
+                thesis["strongest_rival"],
+            ],
+        },
+        {
+            "heading": "价值路线与当前处理",
+            "paragraphs": [
+                value["value_route"]["route_reasoning"],
+                thesis["value_route_treatment"],
+            ],
+        },
+    ]
+    sections.extend(_economic_derivation_reader_sections(value))
     brief = {
         "company_name": value["company_name"],
         "central_judgment": thesis["central_path"],
-        "sections": [
-            {
-                "heading": "行业未来与公司传导",
-                "paragraphs": [
-                    f"观察时域：{industry_future['horizon']}",
-                    f"最可能的行业路径：{industry_future['most_likely_regime']}",
-                    f"利润池传导：{industry_future['profit_pool_transmission']}",
-                    f"公司暴露：{industry_future['company_exposure']}",
-                    f"适应能力：{industry_future['adaptation']}",
-                    f"正常经济与普通股现金：{industry_future['normal_economics']}",
-                    f"永久损失路径：{industry_future['permanent_loss']}",
-                    f"价值处理：{industry_future['valuation_treatment']}",
-                    f"最强竞争解释：{industry_future['strongest_rival']}",
-                ],
-            },
-            {
-                "heading": "行业处境、公司位置与适应",
-                "paragraphs": [
-                    situation_model["summary"],
-                    value["business_position"],
-                    value["adaptation_case"],
-                ],
-            },
-            {
-                "heading": "生存、正常盈利与普通股现金",
-                "paragraphs": [
-                    value["survival_case"],
-                    value["normalization_case"],
-                    authoritative_treatments["normal_earnings_treatment"],
-                    authoritative_treatments["owner_cash_treatment"],
-                ],
-            },
-            {
-                "heading": "永久损失与最强反方",
-                "paragraphs": [
-                    (
-                        authoritative_treatments["permanent_loss_treatment"]
-                        if component_decision_summary
-                        else value["permanent_loss_map"]
-                    ),
-                    thesis["strongest_rival"],
-                ],
-            },
-            {
-                "heading": "价值路线与当前处理",
-                "paragraphs": [
-                    value["value_route"]["route_reasoning"],
-                    thesis["value_route_treatment"],
-                ],
-            },
-        ],
+        "sections": sections,
         "component_judgments": component_judgments,
         "reversal_observations": deepcopy(value["reversal_observations"]),
         "deterministic_conclusions": deterministic_conclusions,

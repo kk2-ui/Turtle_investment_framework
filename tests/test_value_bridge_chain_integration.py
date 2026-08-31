@@ -74,7 +74,9 @@ def _integrated_ledger(
         }
     )
     epv["assumptions"]["discount_rate"]["kind"] = "WACC"
-    epv["assumptions"]["retained_value_realization"] = 0.4
+    # The canonical cash model adopts the evidenced lower bound.  The
+    # historical midpoint remains visible only in the conditional range.
+    epv["assumptions"]["retained_value_realization"] = 0.2
     epv["normalization_bridge"].update(
         {
             "working_capital_model_id": "WCM:BRIDGE-TEST",
@@ -144,7 +146,7 @@ def _integrated_ledger(
             "cash.related_party_receivable_per_share",
         ],
         "inclusion_location": "PRIMARY_MODEL_EQUITY_BRIDGE",
-        "canonical_adopted_per_share": 3.4,
+        "canonical_adopted_per_share": 2.7,
         "primary_equity_bridge_cash_component_per_share": 2.7,
         "separate_component_per_share": 0,
     }
@@ -326,7 +328,7 @@ def test_enforced_value_bridge_policy_requires_current_fact_bindings(
     assert validation["state"] == "INCOMPLETE"
     assert validation["invalid_findings"] == []
     assert validation["incomplete_findings"] == [
-        "value_bridge_fact_bindings_missing"
+        "value_bridge_fact_bindings_verified_registry_empty"
     ]
 
 
@@ -895,7 +897,7 @@ def test_cash_can_be_included_once_as_a_separate_component(tmp_path: Path) -> No
         {
             "inclusion_location": "SEPARATE_COMPONENT",
             "primary_equity_bridge_cash_component_per_share": 0,
-            "separate_component_per_share": 3.4,
+            "separate_component_per_share": 2.7,
         }
     )
     ledger["synthesis"]["value_realization_bridge"] = {
@@ -904,18 +906,18 @@ def test_cash_can_be_included_once_as_a_separate_component(tmp_path: Path) -> No
         "operating_value_per_share": 46.6,
         "retained_growth_per_share": 0,
         "retained_growth_realization": 0,
-        "accessible_cash_per_share": 3.4,
-        "cash_component_per_share": 3.4,
+        "accessible_cash_per_share": 2.7,
+        "cash_component_per_share": 2.7,
         "cash_component_claim_ids": [
             "cash.existing_excess_cash_per_share",
             "cash.related_party_receivable_per_share",
         ],
         "cash_inclusion_location": "SEPARATE_COMPONENT",
-        "output_value_per_share": 50,
+        "output_value_per_share": 49.3,
     }
-    ledger["synthesis"]["chosen_value_per_share"] = 50
+    ledger["synthesis"]["chosen_value_per_share"] = 49.3
     decision = json.loads((tmp_path / "decision_ledger.json").read_text())
-    decision["entries"][0]["value"] = 50
+    decision["entries"][0]["value"] = 49.3
     (tmp_path / "decision_ledger.json").write_text(json.dumps(decision))
 
     validation = _validate(tmp_path, ledger, enforced=False)
