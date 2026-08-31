@@ -59,3 +59,23 @@ block this control-plane implementation.
 ### Targeted verification
 
 `.venv/bin/python -m pytest -q tests/test_report_autonomy_multicompany_prereg.py` completed successfully: **6 passed**.
+
+## Stage 5 pre-selection cohort exposure-ledger re-review
+
+### Verdict: PASS
+
+Scope remained limited to the local exposure ledger and its focused regressions;
+no outcome, source content, external API, or model was read or called. The two
+previous `MODEL` defects are remediated without expanding the ledger's authority:
+
+- `exposures` must now be an array. A mapping-shaped value is `INVALID`, never
+  silently treated as no exposure.
+- Security identifiers accept only canonical `MARKET:SECURITY` form, normalize
+  case and whitespace around `:`, and reject other formats. Case/separator
+  variants therefore collide before an issuer can appear on both sides.
+- Each of `PACK`, `TEACHER`, `HOLDOUT`, `TARGET`, and `CAMPAIGN` now has an
+  explicit TEST-side blocking regression. None is `REVIEWABLE`.
+
+### Targeted verification
+
+`.venv/bin/python -m pytest -q tests/test_report_autonomy_cohort_exposure_ledger.py` completed successfully: **8 passed**. Independent direct checks returned `INVALID` for a mapping-shaped history and for every one of the five prior-exposure roles.
