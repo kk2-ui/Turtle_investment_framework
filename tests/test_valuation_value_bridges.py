@@ -12,6 +12,8 @@ from scripts.valuation_value_bridges import (
     validate_valuation_value_bridges,
 )
 from scripts.valuation_archetypes import resolve_valuation_archetype
+from scripts.cash_accessibility_model import _cash_factual_operands
+from tests.test_cash_accessibility_model import _bind_to_canonical_official_facts
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -64,7 +66,7 @@ def _cash_input() -> dict:
                 "source_fact_ids": [period_fact],
             }
         )
-    return {
+    payload = {
         "schema_version": "cash-accessibility-input.v1",
         "model_id": "CASH:BRIDGE-TEST",
         "company_id": "TEST.HK",
@@ -141,6 +143,63 @@ def _cash_input() -> dict:
             {"component_id": "related_party_receivable_realization", "valuation_destination": "equity_value_related_party_receivable"},
         ],
     }
+    return _bind_to_canonical_official_facts(payload)
+
+
+def _cash_bridge_context_bindings(cash: dict, context: dict) -> list[dict[str, str]]:
+    """Add the official share/FX facts that turn cash into per-share value."""
+    observations = cash["official_fact_register"]["observations"]
+    share_fact_id = "OFFICIAL:CASH:CONTEXT:SHARES"
+    fx_fact_id = "OFFICIAL:CASH:CONTEXT:FX"
+    observations.extend([
+        {
+            "fact_id": share_fact_id,
+            "source_id": "TEST-OFFICIAL-CASH",
+            "pdf_page": 8,
+            "table_or_section": "Issued share capital",
+            "field": "ordinary_shares_outstanding",
+            "period": "FY2025",
+            "responsibility_boundary": context["ordinary_share_claim_scope"],
+            "unit": "million_shares",
+            "value": context["shares"],
+        },
+        {
+            "fact_id": fx_fact_id,
+            "source_id": "TEST-OFFICIAL-CASH",
+            "pdf_page": 9,
+            "table_or_section": "Official exchange-rate source",
+            "field": "source_currency_per_valuation_currency",
+            "period": "FY2025",
+            "responsibility_boundary": "currency conversion",
+            "unit": "ratio",
+            "value": context["fx_source_per_valuation_currency"],
+        },
+    ])
+    cash["verified_facts"].extend([
+        {"fact_id": share_fact_id, "status": "VERIFIED"},
+        {"fact_id": fx_fact_id, "status": "VERIFIED"},
+    ])
+    context["source_fact_ids"] = [share_fact_id, fx_fact_id]
+    outer = [
+        {
+            "path": "cash_accessibility.model_input." + item["path"],
+            "evidence_id": item["fact_id"],
+        }
+        for item in cash["canonical_fact_bindings"]
+        if isinstance(_cash_factual_operands(cash).get(item["path"]), (int, float))
+        and not isinstance(_cash_factual_operands(cash).get(item["path"]), bool)
+    ]
+    outer.extend([
+        {
+            "path": "cash_accessibility.valuation_context.shares",
+            "evidence_id": share_fact_id,
+        },
+        {
+            "path": "cash_accessibility.valuation_context.fx_source_per_valuation_currency",
+            "evidence_id": fx_fact_id,
+        },
+    ])
+    return outer
 
 
 def _replacement_input() -> dict:
@@ -496,18 +555,23 @@ def _bridge_input(
 ) -> dict:
     payload: dict = {"schema_version": "valuation-value-bridges-input.v1"}
     if cash:
-        payload["cash_accessibility"] = {
-            "model_input": _cash_input(),
-            "valuation_context": {
-                "company_id": "TEST.HK",
-                "operating_model_id": "dcf.fcff.base",
-                "position_as_of": "2025-12-31",
-                "ordinary_share_claim_scope": "Listed ordinary common shares",
-                "valuation_currency": "HKD",
-                "fx_source_per_valuation_currency": 2,
-                "shares": 10,
-            },
+        cash_input = _cash_input()
+        valuation_context = {
+            "company_id": "TEST.HK",
+            "operating_model_id": "dcf.fcff.base",
+            "position_as_of": "2025-12-31",
+            "ordinary_share_claim_scope": "Listed ordinary common shares",
+            "valuation_currency": "HKD",
+            "fx_source_per_valuation_currency": 2,
+            "shares": 10,
         }
+        payload["cash_accessibility"] = {
+            "model_input": cash_input,
+            "valuation_context": valuation_context,
+        }
+        payload["canonical_fact_bindings"] = _cash_bridge_context_bindings(
+            cash_input, valuation_context
+        )
     if replacement:
         replacement_input = _replacement_input()
         replacement_input.pop("epv_cross_check")
@@ -531,25 +595,63 @@ def test_schema_closes_input_output_and_numeric_claims() -> None:
     assert schema["$defs"]["bridgeInput"]["additionalProperties"] is False
     assert schema["$defs"]["numericClaim"]["additionalProperties"] is False
     assert schema["$defs"]["readerSlot"]["additionalProperties"] is False
+    cash_component = schema["$defs"]["cashComponentProjection"]
+    assert {
+        "evidenced_lower_bound_source_currency",
+        "conditional_amount_range_source_currency",
+        "unrecognized_remainder_source_currency",
+        "evidence_state",
+    } <= set(cash_component["required"])
+    future = schema["$defs"]["cashProjection"]["properties"][
+        "future_retained_cash"
+    ]["properties"]
+    assert future["realization_rate_range"] == {
+        "$ref": "#/$defs/nullableThreePointRange"
+    }
+    assert future["adopted_realization_rate"]["type"] == ["number", "null"]
+    assert schema["$defs"]["cashProjection"]["properties"][
+        "legal_cash_accessibility"
+    ] == {"$ref": "#/$defs/legalCashProjection"}
 
 
 def test_cash_bridge_computes_per_share_recognition_and_future_retention_rate() -> None:
     compiled = compile_valuation_value_bridges(_bridge_input(replacement=False))
     cash = compiled["valuation_projection"]["cash_accessibility"]
 
+    assert cash["legal_cash_accessibility"] == {
+        "evidenced_additive_leaf_total_source_currency": pytest.approx(70),
+        "diagnostic_unrecognized_ceiling_source_currency": pytest.approx(0),
+        "conditional_upper_bound_source_currency": pytest.approx(70),
+        "adopted_amount_source_currency": pytest.approx(70),
+        "evidenced_additive_leaf_total_per_share": pytest.approx(3.5),
+        "diagnostic_unrecognized_ceiling_per_share": pytest.approx(0),
+        "conditional_upper_bound_per_share": pytest.approx(3.5),
+        "adopted_per_share": pytest.approx(3.5),
+    }
     assert cash["existing_excess_cash"]["per_share_range"] == {
         "low": pytest.approx(0.35),
         "base": pytest.approx(0.70),
         "high": pytest.approx(1.05),
     }
-    assert cash["existing_excess_cash"]["adopted_per_share"] == pytest.approx(0.70)
+    assert cash["existing_excess_cash"]["adopted_per_share"] == pytest.approx(0.35)
+    assert cash["existing_excess_cash"][
+        "evidenced_lower_bound_per_share"
+    ] == pytest.approx(0.35)
+    assert cash["existing_excess_cash"]["conditional_per_share_range"] == {
+        "low": pytest.approx(0.35),
+        "base": pytest.approx(0.70),
+        "high": pytest.approx(1.05),
+    }
+    assert cash["existing_excess_cash"][
+        "unrecognized_remainder_per_share"
+    ] == pytest.approx(2.45)
     assert cash["related_party_receivables"]["adopted_per_share"] == pytest.approx(1.0)
     assert cash["future_retained_cash"]["realization_rate_range"] == {
         "low": 0.2,
         "base": 0.4,
         "high": 0.6,
     }
-    assert cash["future_retained_cash"]["adopted_realization_rate"] == 0.4
+    assert cash["future_retained_cash"]["adopted_realization_rate"] == 0.2
     assert validate_valuation_value_bridges(compiled)["state"] == "VALID"
 
 
@@ -626,8 +728,14 @@ def test_combined_reader_and_numeric_outputs_are_model_derived_not_audit_languag
     text = "\n".join(slot["sentence"] for slot in compiled["reader_slots"])
     metrics = {claim["metric"] for claim in compiled["numeric_claims"]}
 
-    assert "存量超额现金计入每股HKD0.7" in text
-    assert "关联方应收仅计已收回金额" in text
+    assert "存量超额现金已证下限为每股HKD0.35" in text
+    assert "条件范围每股HKD0.35–1.05" in text
+    assert "未认可余量为每股HKD2.45" in text
+    assert "关联方应收已证下限仅为已收回金额" in text
+    assert "未来留存现金已证实现率下限为20%" in text
+    assert "对应已证下限为RMB16 million" in text
+    assert "条件范围RMB16 million–RMB48 million" in text
+    assert "未认可余量为RMB16 million" in text
     assert "不相加也不平均" in text
     assert "共同保护的最高价格为每股RMB0.8" in text
     assert "DATA_COVERAGE" not in text

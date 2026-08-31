@@ -16,6 +16,7 @@ import math
 from typing import Any
 
 from scripts.cash_accessibility_model import (
+    _cash_factual_operands,
     compute_cash_accessibility_model,
     validate_cash_accessibility_input,
 )
@@ -99,6 +100,130 @@ def _unknown_fields(
 
 def _model_findings(prefix: str, validation: dict[str, Any]) -> list[str]:
     return [prefix + ":" + str(finding) for finding in _items(validation.get("findings"))]
+
+
+def _cash_register_observations(cash_input: dict[str, Any]) -> dict[str, dict[str, Any]]:
+    """Return the cash model's already-validated official fact map."""
+    register = _mapping(cash_input.get("official_fact_register"))
+    return {
+        str(item.get("fact_id")): item
+        for item in _items(register.get("observations"))
+        if isinstance(item, dict) and _text(item.get("fact_id"))
+    }
+
+
+def _validate_cash_value_bridge_canonical_bindings(
+    payload: dict[str, Any],
+    *,
+    wrapper: dict[str, Any],
+    context: dict[str, Any],
+    findings: list[str],
+) -> None:
+    """Make the valuation bridge consume—not merely carry—cash official facts.
+
+    The standalone cash model validates every amount/rate/judgment against its
+    cutoff official register.  This bridge additionally requires its global
+    operand binding ledger to name the exact same fact for every numeric cash
+    operand and for the share count that converts the recognized amount into
+    ordinary-equity per-share value.
+    """
+    cash_input = _mapping(wrapper.get("model_input"))
+    outer = payload.get("canonical_fact_bindings")
+    if not isinstance(outer, list):
+        findings.append("cash_accessibility:canonical_fact_bindings_missing")
+        return
+    outer_by_path: dict[str, str] = {}
+    for index, raw in enumerate(outer):
+        binding = _mapping(raw)
+        path = str(binding.get("path") or "")
+        fact_id = str(binding.get("evidence_id") or "")
+        if not path or not fact_id:
+            findings.append(
+                "cash_accessibility:canonical_fact_bindings["
+                + str(index) + "]:path_or_evidence_id_missing"
+            )
+            continue
+        if path in outer_by_path:
+            findings.append(
+                "cash_accessibility:canonical_fact_bindings_duplicate_path:" + path
+            )
+            continue
+        outer_by_path[path] = fact_id
+    observations = _cash_register_observations(cash_input)
+    local_bindings = _items(cash_input.get("canonical_fact_bindings"))
+    cash_operands = _cash_factual_operands(cash_input)
+    for raw in local_bindings:
+        local = _mapping(raw)
+        local_path = str(local.get("path") or "")
+        local_fact_id = str(local.get("fact_id") or "")
+        if (
+            local_path not in cash_operands
+            or isinstance(cash_operands[local_path], bool)
+            or not isinstance(cash_operands[local_path], (int, float))
+        ):
+            # Boolean/text cash admission judgments are consumed by the cash
+            # model itself; the value bridge's numeric ledger does not invent
+            # an arithmetic operand for them.
+            continue
+        outer_path = "cash_accessibility.model_input." + local_path
+        if outer_by_path.get(outer_path) != local_fact_id:
+            findings.append(
+                "cash_accessibility:canonical_fact_binding_missing_or_mismatch:"
+                + outer_path
+            )
+
+    source_fact_ids = context.get("source_fact_ids")
+    if not isinstance(source_fact_ids, list) or not source_fact_ids or not all(
+        _text(item) for item in source_fact_ids
+    ):
+        findings.append("cash_accessibility:valuation_context_source_fact_ids_missing")
+        return
+    declared_context_facts = set(source_fact_ids)
+
+    def validate_context_operand(path: str, value: Any, unit: str, *, required: bool) -> None:
+        evidence_id = outer_by_path.get(path)
+        if not evidence_id:
+            if required:
+                findings.append("cash_accessibility:canonical_fact_binding_missing:" + path)
+            return
+        if evidence_id not in declared_context_facts:
+            findings.append("cash_accessibility:context_fact_not_declared:" + path)
+            return
+        observation = observations.get(evidence_id)
+        if observation is None:
+            findings.append("cash_accessibility:context_fact_not_canonical_official_observation:" + path)
+            return
+        if observation.get("unit") != unit:
+            findings.append("cash_accessibility:context_fact_unit_mismatch:" + path)
+        observed_number = _number(observation.get("value"))
+        submitted_number = _number(value)
+        if (
+            observed_number is None
+            or submitted_number is None
+            or not math.isclose(
+                observed_number, submitted_number, rel_tol=1e-12, abs_tol=1e-12,
+            )
+        ):
+            findings.append("cash_accessibility:context_fact_value_mismatch:" + path)
+        if path.endswith(".shares") and observation.get("responsibility_boundary") != context.get(
+            "ordinary_share_claim_scope"
+        ):
+            findings.append("cash_accessibility:context_fact_responsibility_boundary_mismatch:" + path)
+
+    validate_context_operand(
+        "cash_accessibility.valuation_context.shares",
+        context.get("shares"),
+        "million_shares",
+        required=True,
+    )
+    same_currency = cash_input.get("currency") == context.get("valuation_currency")
+    if not same_currency:
+        validate_context_operand(
+            "cash_accessibility.valuation_context.fx_source_per_valuation_currency",
+            context.get("fx_source_per_valuation_currency"),
+            "ratio",
+            required=True,
+        )
 
 
 def _working_capital_api() -> tuple[Any, Any]:
@@ -225,6 +350,16 @@ def validate_valuation_value_bridge_input(payload: Any) -> dict[str, Any]:
             or not all(_text(item) for item in source_fact_ids)
         ):
             findings.append("cash_accessibility:source_fact_ids_invalid")
+        if (
+            isinstance(wrapper.get("model_input"), dict)
+            and cash_validation.get("state") == "VALID"
+        ):
+            _validate_cash_value_bridge_canonical_bindings(
+                value,
+                wrapper=wrapper,
+                context=context,
+                findings=findings,
+            )
 
     epv_result_for_replacement: dict[str, Any] | None = None
     if "epv" in value:
@@ -370,15 +505,26 @@ def _cash_projection(
     fx = float(context["fx_source_per_valuation_currency"])
     shares = float(context["shares"])
     valuation_currency = str(context["valuation_currency"])
+    legal = result["legal_cash_accessibility"]
     existing = result["existing_excess_cash_realization"]
     receivable = result["related_party_receivable_realization"]
     future = result["future_retained_cash_realization"]
 
     def component_projection(component: dict[str, Any]) -> dict[str, Any]:
         amount_range = component["amount_range"]
+        conditional_amount_range = component.get("conditional_amount_range")
         return {
             "amount_range_source_currency": deepcopy(amount_range),
             "adopted_amount_source_currency": component["adopted_value"],
+            "evidenced_lower_bound_source_currency": component[
+                "evidenced_lower_bound"
+            ],
+            "conditional_amount_range_source_currency": deepcopy(
+                conditional_amount_range
+            ),
+            "unrecognized_remainder_source_currency": component[
+                "unrecognized_remainder"
+            ],
             "per_share_range": {
                 key: _cash_per_share(amount_range[key], fx=fx, shares=shares)
                 for key in ("low", "base", "high")
@@ -386,11 +532,50 @@ def _cash_projection(
             "adopted_per_share": _cash_per_share(
                 component["adopted_value"], fx=fx, shares=shares
             ),
+            "evidenced_lower_bound_per_share": _cash_per_share(
+                component["evidenced_lower_bound"], fx=fx, shares=shares
+            ),
+            "conditional_per_share_range": (
+                None
+                if conditional_amount_range is None
+                else {
+                    key: _cash_per_share(
+                        conditional_amount_range[key], fx=fx, shares=shares
+                    )
+                    for key in ("low", "base", "high")
+                }
+            ),
+            "unrecognized_remainder_per_share": _cash_per_share(
+                component["unrecognized_remainder"], fx=fx, shares=shares
+            ),
+            "evidence_state": deepcopy(component["evidence_state"]),
             "valuation_destination": component["valuation_destination"],
         }
 
     existing_projection = component_projection(existing)
     receivable_projection = component_projection(receivable)
+    legal_projection = {
+        "evidenced_additive_leaf_total_source_currency": legal[
+            "additive_leaf_total"
+        ],
+        "diagnostic_unrecognized_ceiling_source_currency": legal[
+            "diagnostic_total_ceiling"
+        ],
+        "conditional_upper_bound_source_currency": legal["amount_range"]["high"],
+        "adopted_amount_source_currency": legal["adopted_value"],
+        "evidenced_additive_leaf_total_per_share": _cash_per_share(
+            legal["additive_leaf_total"], fx=fx, shares=shares
+        ),
+        "diagnostic_unrecognized_ceiling_per_share": _cash_per_share(
+            legal["diagnostic_total_ceiling"], fx=fx, shares=shares
+        ),
+        "conditional_upper_bound_per_share": _cash_per_share(
+            legal["amount_range"]["high"], fx=fx, shares=shares
+        ),
+        "adopted_per_share": _cash_per_share(
+            legal["adopted_value"], fx=fx, shares=shares
+        ),
+    }
     projection = {
         "source_model_id": result["model_id"],
         "company_id": result["company_id"],
@@ -402,11 +587,22 @@ def _cash_projection(
         "valuation_currency": valuation_currency,
         "fx_source_per_valuation_currency": fx,
         "shares": shares,
+        "legal_cash_accessibility": legal_projection,
         "existing_excess_cash": existing_projection,
         "related_party_receivables": receivable_projection,
         "future_retained_cash": {
             "realization_rate_range": deepcopy(future["realization_rate_range"]),
             "adopted_realization_rate": future["adopted_realization_rate"],
+            "evidenced_lower_bound_source_currency": future[
+                "evidenced_lower_bound"
+            ],
+            "conditional_amount_range_source_currency": deepcopy(
+                future["conditional_amount_range"]
+            ),
+            "unrecognized_remainder_source_currency": future[
+                "unrecognized_remainder"
+            ],
+            "evidence_state": deepcopy(future["evidence_state"]),
             "valuation_destination": future["valuation_destination"],
         },
     }
@@ -439,14 +635,14 @@ def _cash_projection(
         },
     ]
     existing_selected = (
-        f"每股{valuation_currency}{_fmt(existing_projection['adopted_per_share'])}"
+        f"每股{valuation_currency}{_fmt(existing_projection['evidenced_lower_bound_per_share'])}"
     )
     existing_range = (
         f"每股{valuation_currency}{_fmt(existing_projection['per_share_range']['low'])}–"
         f"{_fmt(existing_projection['per_share_range']['high'])}"
     )
     receivable_selected = (
-        f"每股{valuation_currency}{_fmt(receivable_projection['adopted_per_share'])}"
+        f"每股{valuation_currency}{_fmt(receivable_projection['evidenced_lower_bound_per_share'])}"
     )
     receivable_range = (
         f"每股{valuation_currency}{_fmt(receivable_projection['per_share_range']['low'])}–"
@@ -454,6 +650,7 @@ def _cash_projection(
     )
     future_rate_range = future.get("realization_rate_range")
     if isinstance(future_rate_range, dict):
+        future_conditional = future["conditional_amount_range"]
         future_selected = (
             _fmt(float(future["adopted_realization_rate"]) * 100, 2) + "%"
         )
@@ -464,11 +661,34 @@ def _cash_projection(
             + "%"
         )
         future_phrase = (
-            "；未来留存现金实现率为"
+            "；未来留存现金已证实现率下限为"
             + future_selected
             + "（范围"
             + future_range
-            + "）"
+            + "），对应已证下限为"
+            + _reader_amount(
+                str(result["currency"]),
+                str(result["unit"]),
+                future["evidenced_lower_bound"],
+            )
+            + "（条件范围"
+            + _reader_amount(
+                str(result["currency"]),
+                str(result["unit"]),
+                future_conditional["low"],
+            )
+            + "–"
+            + _reader_amount(
+                str(result["currency"]),
+                str(result["unit"]),
+                future_conditional["high"],
+            )
+            + "），未认可余量为"
+            + _reader_amount(
+                str(result["currency"]),
+                str(result["unit"]),
+                future["unrecognized_remainder"],
+            )
         )
         claims.append({
             "claim_id": "cash.future_retained_cash_realization_rate",
@@ -485,30 +705,70 @@ def _cash_projection(
     else:
         future_selected = "尚无可前推依据"
         future_range = "未形成"
-        future_phrase = "；未来留存现金也不预设实现率"
+        future_phrase = (
+            "；未来留存现金不预设实现率，已证下限为"
+            + _reader_amount(
+                str(result["currency"]),
+                str(result["unit"]),
+                future["evidenced_lower_bound"],
+            )
+            + "，未形成条件区间，未认可余量为"
+            + _reader_amount(
+                str(result["currency"]),
+                str(result["unit"]),
+                future["unrecognized_remainder"],
+            )
+        )
     if existing.get("realization_rate_range") is None:
-        existing_phrase = "存量超额现金只保留法律可达上限，主估值不预先计入"
+        existing_phrase = (
+            "存量超额现金已证下限为"
+            + existing_selected
+            + "，未形成条件区间，未认可余量为每股"
+            + valuation_currency
+            + _fmt(existing_projection["unrecognized_remainder_per_share"])
+        )
     else:
         existing_phrase = (
-            "按可重复回流记录，存量超额现金计入"
+            "按可重复回流记录，存量超额现金已证下限为"
             + existing_selected
-            + "（范围"
+            + "（条件范围"
             + existing_range
-            + "）"
+            + "），未认可余量为每股"
+            + valuation_currency
+            + _fmt(existing_projection["unrecognized_remainder_per_share"])
+        )
+    legal_phrase = ""
+    if legal_projection["diagnostic_unrecognized_ceiling_per_share"] > 0:
+        legal_phrase = (
+            "普通股现金已证可达金额为每股"
+            + valuation_currency
+            + _fmt(legal_projection["adopted_per_share"])
+            + "；合并诊断条件上限为每股"
+            + valuation_currency
+            + _fmt(
+                legal_projection[
+                    "diagnostic_unrecognized_ceiling_per_share"
+                ]
+            )
+            + "，仍未认可；"
         )
     if receivable.get("recovery_status") in {"EVIDENCE_BACKED", "PARTIAL_EVIDENCE"}:
         receivable_phrase = (
-            "关联方应收按已收款和同机制成熟批次计入"
+            "关联方应收按已收款和同机制成熟批次形成已证下限"
             + receivable_selected
-            + "（范围"
+            + "（条件范围"
             + receivable_range
-            + "）"
+            + "），未认可余量为每股"
+            + valuation_currency
+            + _fmt(receivable_projection["unrecognized_remainder_per_share"])
         )
     else:
         receivable_phrase = (
-            "关联方应收仅计已收回金额（当前为"
+            "关联方应收已证下限仅为已收回金额（当前为"
             + receivable_selected
-            + "），未收部分视作回收选择权"
+            + "），未形成条件区间，未认可余量为每股"
+            + valuation_currency
+            + _fmt(receivable_projection["unrecognized_remainder_per_share"])
         )
     slot = {
         "slot_id": "cash_value_bridge_summary",
@@ -519,13 +779,26 @@ def _cash_projection(
         "display_variants": {
             "existing_selected": existing_selected,
             "existing_range": existing_range,
+            "existing_unrecognized_remainder": _fmt(
+                existing_projection["unrecognized_remainder_per_share"]
+            ),
             "receivable_selected": receivable_selected,
             "receivable_range": receivable_range,
+            "receivable_unrecognized_remainder": _fmt(
+                receivable_projection["unrecognized_remainder_per_share"]
+            ),
             "future_realization_selected": future_selected,
             "future_realization_range": future_range,
+            "future_evidenced_lower_bound": _fmt(
+                future["evidenced_lower_bound"]
+            ),
+            "future_unrecognized_remainder": _fmt(
+                future["unrecognized_remainder"]
+            ),
         },
         "sentence": (
-            existing_phrase
+            legal_phrase
+            + existing_phrase
             + "；"
             + receivable_phrase
             + future_phrase

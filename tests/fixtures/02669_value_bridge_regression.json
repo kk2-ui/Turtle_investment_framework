@@ -30,6 +30,19 @@
   },
   "value_bridge_input": {
     "schema_version": "valuation-value-bridges-input.v1",
+    "canonical_fact_bindings": [
+      {"path":"cash_accessibility.model_input.entity_cash_rows[0].gross_cash","evidence_id":"OBS:02669:CASH-BALANCE"},
+      {"path":"cash_accessibility.model_input.entity_cash_rows[0].restricted_or_regulatory_cash","evidence_id":"OBS:02669:RESTRICTED-BANK-DEPOSITS"},
+      {"path":"cash_accessibility.model_input.entity_cash_rows[0].operating_liquidity_requirement","evidence_id":"OBS:02669:OPERATING-CASH-FLOOR"},
+      {"path":"cash_accessibility.model_input.entity_cash_rows[0].ordinary_share_economic_interest","evidence_id":"OBS:02669:ORDINARY-INTEREST"},
+      {"path":"cash_accessibility.model_input.entity_cash_rows[0].transfer_tax_friction_rate","evidence_id":"OBS:02669:TRANSFER-FRICTION"},
+      {"path":"cash_accessibility.model_input.future_retained_cash.projected_amount","evidence_id":"OBS:02669:FUTURE-CASH-NOT-PROJECTED"},
+      {"path":"cash_accessibility.model_input.future_retained_cash.legal_upper_bound_rate","evidence_id":"OBS:02669:FUTURE-LEGAL-UPPER-BOUND"},
+      {"path":"cash_accessibility.model_input.related_party_receivables[0].gross_amount","evidence_id":"OBS:02669:RELATED-PARTY-RECEIVABLES"},
+      {"path":"cash_accessibility.model_input.related_party_receivables[0].ecl_allowance","evidence_id":"OBS:02669:RELATED-PARTY-RECEIVABLES-ECL"},
+      {"path":"cash_accessibility.model_input.related_party_receivables[0].post_position_collections","evidence_id":"OBS:02669:RELATED-PARTY-POST-POSITION-COLLECTIONS"},
+      {"path":"cash_accessibility.valuation_context.shares","evidence_id":"OBS:02669:SHARES-OUTSTANDING"}
+    ],
     "ordinary_distribution": {
       "model_input": {
         "schema_version": "ordinary-distribution-input.v1",
@@ -70,8 +83,49 @@
         "verified_facts": [
           {"fact_id": "OBS:02669:IDENTITY", "status": "VERIFIED"},
           {"fact_id": "OBS:02669:CASH-BALANCE", "status": "VERIFIED"},
+          {"fact_id": "OBS:02669:RESTRICTED-BANK-DEPOSITS", "status": "VERIFIED"},
+          {"fact_id": "OBS:02669:OPERATING-CASH-FLOOR", "status": "VERIFIED"},
+          {"fact_id": "OBS:02669:ORDINARY-INTEREST", "status": "VERIFIED"},
+          {"fact_id": "OBS:02669:TRANSFER-FRICTION", "status": "VERIFIED"},
           {"fact_id": "OBS:02669:FUTURE-CASH-NOT-PROJECTED", "status": "VERIFIED"},
-          {"fact_id": "OBS:02669:RELATED-PARTY-RECEIVABLES", "status": "VERIFIED"}
+          {"fact_id": "OBS:02669:FUTURE-LEGAL-UPPER-BOUND", "status": "VERIFIED"},
+          {"fact_id": "OBS:02669:RELATED-PARTY-RECEIVABLES", "status": "VERIFIED"},
+          {"fact_id": "OBS:02669:RELATED-PARTY-RECEIVABLES-ECL", "status": "VERIFIED"},
+          {"fact_id": "OBS:02669:RELATED-PARTY-POST-POSITION-COLLECTIONS", "status": "VERIFIED"},
+          {"fact_id": "OBS:02669:SHARES-OUTSTANDING", "status": "VERIFIED"}
+        ],
+        "official_fact_register": {
+          "schema_version": "turtle-cutoff-official-fact-register.v2",
+          "cutoff_at": "2026-08-11",
+          "sources": [
+            {"source_id":"HKEX:02669:AR2025","static_url":"https://www1.hkexnews.hk/listedco/listconews/sehk/2026/0429/2026042900389.pdf","available_at":"2026-04-29","declared_pages":250}
+          ],
+          "observations": [
+            {"fact_id":"OBS:02669:IDENTITY","source_id":"HKEX:02669:AR2025","pdf_page":1,"table_or_section":"cover","field":"issuer_identity","period":"FY2025","responsibility_boundary":"listed issuer","unit":"text","value":"China Overseas Property Holdings Limited"},
+            {"fact_id":"OBS:02669:CASH-BALANCE","source_id":"HKEX:02669:AR2025","pdf_page":128,"table_or_section":"consolidated statement of financial position","field":"cash_and_bank_balances","period":"FY2025","responsibility_boundary":"listed consolidated issuer","unit":"RMB_m","value":6270.725},
+            {"fact_id":"OBS:02669:RESTRICTED-BANK-DEPOSITS","source_id":"HKEX:02669:AR2025","pdf_page":128,"table_or_section":"bank deposits note","field":"restricted_bank_deposits","period":"FY2025","responsibility_boundary":"listed consolidated issuer","unit":"RMB_m","value":12.827},
+            {"fact_id":"OBS:02669:OPERATING-CASH-FLOOR","source_id":"HKEX:02669:AR2025","pdf_page":132,"table_or_section":"consolidated cash flow statement","field":"one_year_operating_cash_floor","period":"FY2025","responsibility_boundary":"listed consolidated issuer","unit":"RMB_m","value":1153.458},
+            {"fact_id":"OBS:02669:ORDINARY-INTEREST","source_id":"HKEX:02669:AR2025","pdf_page":230,"table_or_section":"company statement of financial position","field":"ordinary_share_economic_interest","period":"FY2025","responsibility_boundary":"listed consolidated issuer","unit":"ratio","value":1.0},
+            {"fact_id":"OBS:02669:TRANSFER-FRICTION","source_id":"HKEX:02669:AR2025","pdf_page":210,"table_or_section":"undistributed profits and tax note","field":"currently_quantified_cash_transfer_friction","period":"FY2025","responsibility_boundary":"listed consolidated issuer","unit":"ratio","value":0.0},
+            {"fact_id":"OBS:02669:FUTURE-CASH-NOT-PROJECTED","source_id":"HKEX:02669:AR2025","pdf_page":210,"table_or_section":"undistributed profits and tax note","field":"current_future_cash_projection_admitted","period":"FY2025","responsibility_boundary":"listed ordinary common shares","unit":"RMB_m","value":0.0},
+            {"fact_id":"OBS:02669:FUTURE-LEGAL-UPPER-BOUND","source_id":"HKEX:02669:AR2025","pdf_page":210,"table_or_section":"undistributed profits and tax note","field":"legal_upper_bound_rate","period":"FY2025","responsibility_boundary":"listed ordinary common shares","unit":"ratio","value":1.0},
+            {"fact_id":"OBS:02669:RELATED-PARTY-RECEIVABLES","source_id":"HKEX:02669:AR2025","pdf_page":204,"table_or_section":"related-party receivables note","field":"related_party_receivables","period":"FY2025","responsibility_boundary":"listed consolidated issuer","unit":"RMB_m","value":805.644},
+            {"fact_id":"OBS:02669:RELATED-PARTY-RECEIVABLES-ECL","source_id":"HKEX:02669:AR2025","pdf_page":204,"table_or_section":"related-party receivables note","field":"related_party_receivable_ecl_admitted","period":"FY2025","responsibility_boundary":"listed consolidated issuer","unit":"RMB_m","value":0.0},
+            {"fact_id":"OBS:02669:RELATED-PARTY-POST-POSITION-COLLECTIONS","source_id":"HKEX:02669:AR2025","pdf_page":204,"table_or_section":"related-party receivables note","field":"post_position_collections_admitted","period":"FY2025","responsibility_boundary":"listed consolidated issuer","unit":"RMB_m","value":0.0},
+            {"fact_id":"OBS:02669:SHARES-OUTSTANDING","source_id":"HKEX:02669:AR2025","pdf_page":230,"table_or_section":"issued share capital","field":"ordinary_shares_outstanding","period":"FY2025","responsibility_boundary":"Listed ordinary common shares","unit":"million_shares","value":3283.96046}
+          ]
+        },
+        "canonical_fact_bindings": [
+          {"path":"entity_cash_rows[0].gross_cash","fact_id":"OBS:02669:CASH-BALANCE","unit":"RMB_m","responsibility_boundary":"listed consolidated issuer"},
+          {"path":"entity_cash_rows[0].restricted_or_regulatory_cash","fact_id":"OBS:02669:RESTRICTED-BANK-DEPOSITS","unit":"RMB_m","responsibility_boundary":"listed consolidated issuer"},
+          {"path":"entity_cash_rows[0].operating_liquidity_requirement","fact_id":"OBS:02669:OPERATING-CASH-FLOOR","unit":"RMB_m","responsibility_boundary":"listed consolidated issuer"},
+          {"path":"entity_cash_rows[0].ordinary_share_economic_interest","fact_id":"OBS:02669:ORDINARY-INTEREST","unit":"ratio","responsibility_boundary":"listed consolidated issuer"},
+          {"path":"entity_cash_rows[0].transfer_tax_friction_rate","fact_id":"OBS:02669:TRANSFER-FRICTION","unit":"ratio","responsibility_boundary":"listed consolidated issuer"},
+          {"path":"future_retained_cash.projected_amount","fact_id":"OBS:02669:FUTURE-CASH-NOT-PROJECTED","unit":"RMB_m","responsibility_boundary":"listed ordinary common shares"},
+          {"path":"future_retained_cash.legal_upper_bound_rate","fact_id":"OBS:02669:FUTURE-LEGAL-UPPER-BOUND","unit":"ratio","responsibility_boundary":"listed ordinary common shares"},
+          {"path":"related_party_receivables[0].gross_amount","fact_id":"OBS:02669:RELATED-PARTY-RECEIVABLES","unit":"RMB_m","responsibility_boundary":"listed consolidated issuer"},
+          {"path":"related_party_receivables[0].ecl_allowance","fact_id":"OBS:02669:RELATED-PARTY-RECEIVABLES-ECL","unit":"RMB_m","responsibility_boundary":"listed consolidated issuer"},
+          {"path":"related_party_receivables[0].post_position_collections","fact_id":"OBS:02669:RELATED-PARTY-POST-POSITION-COLLECTIONS","unit":"RMB_m","responsibility_boundary":"listed consolidated issuer"}
         ],
         "entity_cash_rows": [
           {
@@ -82,8 +136,14 @@
             "operating_liquidity_requirement": 1153.458,
             "ordinary_share_economic_interest": 1.0,
             "transfer_tax_friction_rate": 0.0,
+            "aggregation_role": "DIAGNOSTIC_TOTAL",
+            "cash_perimeter_id": "consolidated-group",
             "source_fact_ids": [
-              "OBS:02669:CASH-BALANCE"
+              "OBS:02669:CASH-BALANCE",
+              "OBS:02669:RESTRICTED-BANK-DEPOSITS",
+              "OBS:02669:OPERATING-CASH-FLOOR",
+              "OBS:02669:ORDINARY-INTEREST",
+              "OBS:02669:TRANSFER-FRICTION"
             ]
           }
         ],
@@ -106,8 +166,9 @@
         "future_retained_cash": {
           "projected_amount": 0.0,
           "legal_upper_bound_rate": 1.0,
-          "source_fact_ids": [
-            "OBS:02669:FUTURE-CASH-NOT-PROJECTED"
+            "source_fact_ids": [
+            "OBS:02669:FUTURE-CASH-NOT-PROJECTED",
+            "OBS:02669:FUTURE-LEGAL-UPPER-BOUND"
           ]
         },
         "related_party_receivables": [
@@ -126,7 +187,9 @@
               "source_fact_bindings": {}
             },
             "source_fact_ids": [
-              "OBS:02669:RELATED-PARTY-RECEIVABLES"
+              "OBS:02669:RELATED-PARTY-RECEIVABLES",
+              "OBS:02669:RELATED-PARTY-RECEIVABLES-ECL",
+              "OBS:02669:RELATED-PARTY-POST-POSITION-COLLECTIONS"
             ]
           }
         ],
@@ -156,7 +219,8 @@
         "ordinary_share_claim_scope": "Listed ordinary common shares",
         "valuation_currency": "RMB",
         "fx_source_per_valuation_currency": 1.0,
-        "shares": 3283.96046
+        "shares": 3283.96046,
+        "source_fact_ids": ["OBS:02669:SHARES-OUTSTANDING"]
       }
     },
     "working_capital": {

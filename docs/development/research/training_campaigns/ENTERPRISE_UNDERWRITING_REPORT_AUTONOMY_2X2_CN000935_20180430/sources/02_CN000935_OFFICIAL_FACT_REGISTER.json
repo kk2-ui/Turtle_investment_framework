@@ -1,0 +1,73 @@
+{
+  "schema_version": "turtle-cutoff-official-fact-register.v1",
+  "cutoff_at": "2018-04-30T23:59:59+08:00",
+  "sources": [
+    {
+      "source_id": "CNINFO:000935:FY2015",
+      "static_url": "https://static.cninfo.com.cn/finalpage/2016-04-28/1202256798.PDF",
+      "available_at": "2016-04-28T00:00:00+08:00",
+      "declared_pages": 181
+    },
+    {
+      "source_id": "CNINFO:000935:FY2016",
+      "static_url": "https://static.cninfo.com.cn/finalpage/2017-03-10/1203145455.PDF",
+      "available_at": "2017-03-10T00:00:00+08:00",
+      "declared_pages": 203
+    },
+    {
+      "source_id": "CNINFO:000935:FY2017",
+      "static_url": "https://static.cninfo.com.cn/finalpage/2018-04-10/1204593933.PDF",
+      "available_at": "2018-04-10T00:00:00+08:00",
+      "declared_pages": 207
+    }
+  ],
+  "observations": [
+    {"source_id":"CNINFO:000935:FY2015","pdf_page":5,"table_or_section":"cover","field":"issuer_identity","period":"FY2015","responsibility_boundary":"listed issuer","unit":"text"},
+    {"source_id":"CNINFO:000935:FY2016","pdf_page":5,"table_or_section":"cover","field":"issuer_identity","period":"FY2016","responsibility_boundary":"listed issuer","unit":"text"},
+    {"source_id":"CNINFO:000935:FY2017","pdf_page":5,"table_or_section":"cover","field":"issuer_identity","period":"FY2017","responsibility_boundary":"listed issuer","unit":"text"},
+
+    {"source_id":"CNINFO:000935:FY2015","pdf_page":14,"table_or_section":"revenue composition","field":"cement_segment_revenue","period":"FY2015","responsibility_boundary":"consolidated cement segment","unit":"CNY"},
+    {"source_id":"CNINFO:000935:FY2016","pdf_page":14,"table_or_section":"revenue composition","field":"cement_segment_revenue","period":"FY2016","responsibility_boundary":"consolidated cement segment","unit":"CNY"},
+    {"source_id":"CNINFO:000935:FY2017","pdf_page":14,"table_or_section":"revenue composition","field":"cement_segment_revenue","period":"FY2017","responsibility_boundary":"consolidated cement segment","unit":"CNY"},
+    {"source_id":"CNINFO:000935:FY2015","pdf_page":15,"table_or_section":"segment margin and production-sales-inventory","field":"cement_cost_margin_volume","period":"FY2015","responsibility_boundary":"consolidated cement segment","unit":"mixed disclosed units"},
+    {"source_id":"CNINFO:000935:FY2016","pdf_page":15,"table_or_section":"segment margin and production-sales-inventory","field":"cement_cost_margin_volume","period":"FY2016","responsibility_boundary":"consolidated cement segment","unit":"mixed disclosed units"},
+    {"source_id":"CNINFO:000935:FY2017","pdf_page":16,"table_or_section":"production-sales-inventory and cost composition","field":"cement_cost_margin_volume","period":"FY2017","responsibility_boundary":"consolidated cement segment","unit":"mixed disclosed units"},
+    {"source_id":"CNINFO:000935:FY2015","pdf_page":7,"table_or_section":"key accounting data","field":"attributable_and_adjusted_profit","period":"FY2015","responsibility_boundary":"ordinary shareholders of listed issuer","unit":"CNY"},
+    {"source_id":"CNINFO:000935:FY2016","pdf_page":7,"table_or_section":"key accounting data","field":"attributable_and_adjusted_profit","period":"FY2016","responsibility_boundary":"ordinary shareholders of listed issuer","unit":"CNY"},
+    {"source_id":"CNINFO:000935:FY2017","pdf_page":7,"table_or_section":"key accounting data","field":"attributable_and_adjusted_profit","period":"FY2017","responsibility_boundary":"ordinary shareholders of listed issuer","unit":"CNY"},
+
+    {"source_id":"CNINFO:000935:FY2015","pdf_page":9,"table_or_section":"company business overview - sales model","field":"sales_channel_model","period":"FY2015","responsibility_boundary":"consolidated cement business","unit":"text"},
+    {"source_id":"CNINFO:000935:FY2016","pdf_page":9,"table_or_section":"company business overview - sales model","field":"sales_channel_model","period":"FY2016","responsibility_boundary":"consolidated cement business","unit":"text"},
+    {"source_id":"CNINFO:000935:FY2017","pdf_page":9,"table_or_section":"company business overview - sales model","field":"sales_channel_model","period":"FY2017","responsibility_boundary":"consolidated cement business","unit":"text"},
+    {"source_id":"CNINFO:000935:FY2015","pdf_page":16,"table_or_section":"top five customers","field":"top_five_customer_share","period":"FY2015","responsibility_boundary":"listed consolidated issuer","unit":"percent"},
+    {"source_id":"CNINFO:000935:FY2016","pdf_page":16,"table_or_section":"top five customers","field":"top_five_customer_share","period":"FY2016","responsibility_boundary":"listed consolidated issuer","unit":"percent"},
+    {"source_id":"CNINFO:000935:FY2017","pdf_page":17,"table_or_section":"top five customers","field":"top_five_customer_share","period":"FY2017","responsibility_boundary":"listed consolidated issuer","unit":"percent"},
+
+    {"source_id":"CNINFO:000935:FY2015","pdf_page":73,"table_or_section":"consolidated balance sheet - assets","field":"cash_receivables_inventory_fixed_assets_cip","period":"FY2015","responsibility_boundary":"listed consolidated issuer","unit":"CNY"},
+    {"source_id":"CNINFO:000935:FY2016","pdf_page":93,"table_or_section":"consolidated balance sheet - assets","field":"cash_receivables_inventory_fixed_assets_cip","period":"FY2016","responsibility_boundary":"listed consolidated issuer","unit":"CNY"},
+    {"source_id":"CNINFO:000935:FY2017","pdf_page":87,"table_or_section":"consolidated balance sheet - assets","field":"cash_receivables_inventory_fixed_assets_cip","period":"FY2017","responsibility_boundary":"listed consolidated issuer","unit":"CNY"},
+    {"source_id":"CNINFO:000935:FY2015","pdf_page":74,"table_or_section":"consolidated balance sheet - current liabilities","field":"short_term_borrowings","period":"FY2015","responsibility_boundary":"listed consolidated issuer","unit":"CNY"},
+    {"source_id":"CNINFO:000935:FY2016","pdf_page":94,"table_or_section":"consolidated balance sheet - current liabilities","field":"short_term_borrowings","period":"FY2016","responsibility_boundary":"listed consolidated issuer","unit":"CNY"},
+    {"source_id":"CNINFO:000935:FY2017","pdf_page":88,"table_or_section":"consolidated balance sheet - current liabilities","field":"short_term_borrowings","period":"FY2017","responsibility_boundary":"listed consolidated issuer","unit":"CNY"},
+    {"source_id":"CNINFO:000935:FY2015","pdf_page":75,"table_or_section":"consolidated balance sheet - noncurrent liabilities","field":"current_portion_and_long_term_borrowings","period":"FY2015","responsibility_boundary":"listed consolidated issuer","unit":"CNY"},
+    {"source_id":"CNINFO:000935:FY2016","pdf_page":95,"table_or_section":"consolidated balance sheet - noncurrent liabilities","field":"current_portion_and_long_term_borrowings","period":"FY2016","responsibility_boundary":"listed consolidated issuer","unit":"CNY"},
+    {"source_id":"CNINFO:000935:FY2017","pdf_page":89,"table_or_section":"consolidated balance sheet - noncurrent liabilities","field":"current_portion_and_long_term_borrowings","period":"FY2017","responsibility_boundary":"listed consolidated issuer","unit":"CNY"},
+    {"source_id":"CNINFO:000935:FY2015","pdf_page":83,"table_or_section":"consolidated cash flow statement","field":"ocf_long_lived_asset_spend_acquisition_and_investment_cash","period":"FY2015","responsibility_boundary":"listed consolidated issuer","unit":"CNY"},
+    {"source_id":"CNINFO:000935:FY2016","pdf_page":103,"table_or_section":"consolidated cash flow statement","field":"ocf_long_lived_asset_spend_acquisition_and_investment_cash","period":"FY2016","responsibility_boundary":"listed consolidated issuer","unit":"CNY"},
+    {"source_id":"CNINFO:000935:FY2017","pdf_page":97,"table_or_section":"consolidated cash flow statement","field":"ocf_long_lived_asset_spend_acquisition_and_investment_cash","period":"FY2017","responsibility_boundary":"listed consolidated issuer","unit":"CNY"},
+
+    {"source_id":"CNINFO:000935:FY2017","pdf_page":22,"table_or_section":"major subsidiaries and investees","field":"five_responsibility_unit_assets_equity_revenue_operating_profit_net_profit","period":"FY2017","responsibility_boundary":"named subsidiary or investee","unit":"CNY"},
+    {"source_id":"CNINFO:000935:FY2017","pdf_page":22,"table_or_section":"consolidation scope change","field":"sports_control_and_consolidation_period","period":"FY2017","responsibility_boundary":"Beijing Guoao Yueye subsidiary","unit":"date and text"},
+    {"source_id":"CNINFO:000935:FY2017","pdf_page":59,"table_or_section":"material asset disposal","field":"cement_subsidiary_sale_price_and_cash_release","period":"2017-12-29 to 2018-02-11","responsibility_boundary":"listed issuer and disposed subsidiaries","unit":"CNY and date"}
+  ],
+  "required_series": [
+    {"series_id":"cement_revenue_2015_2017","fields":["cement_segment_revenue"],"periods":["FY2015","FY2016","FY2017"],"responsibility_boundary":"consolidated cement segment","unit":"CNY"},
+    {"series_id":"cement_cost_margin_volume_2015_2017","fields":["cement_cost_margin_volume"],"periods":["FY2015","FY2016","FY2017"],"responsibility_boundary":"consolidated cement segment","unit":"mixed disclosed units"},
+    {"series_id":"ordinary_shareholder_profit_2015_2017","fields":["attributable_and_adjusted_profit"],"periods":["FY2015","FY2016","FY2017"],"responsibility_boundary":"ordinary shareholders of listed issuer","unit":"CNY"},
+    {"series_id":"channel_model_2015_2017","fields":["sales_channel_model"],"periods":["FY2015","FY2016","FY2017"],"responsibility_boundary":"consolidated cement business","unit":"text"},
+    {"series_id":"customer_concentration_2015_2017","fields":["top_five_customer_share"],"periods":["FY2015","FY2016","FY2017"],"responsibility_boundary":"listed consolidated issuer","unit":"percent"},
+    {"series_id":"asset_balance_2015_2017","fields":["cash_receivables_inventory_fixed_assets_cip"],"periods":["FY2015","FY2016","FY2017"],"responsibility_boundary":"listed consolidated issuer","unit":"CNY"},
+    {"series_id":"debt_balance_2015_2017","fields":["short_term_borrowings","current_portion_and_long_term_borrowings"],"periods":["FY2015","FY2016","FY2017"],"responsibility_boundary":"listed consolidated issuer","unit":"CNY"},
+    {"series_id":"cash_flow_2015_2017","fields":["ocf_long_lived_asset_spend_acquisition_and_investment_cash"],"periods":["FY2015","FY2016","FY2017"],"responsibility_boundary":"listed consolidated issuer","unit":"CNY"}
+  ]
+}

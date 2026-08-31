@@ -57,17 +57,29 @@ def test_02669_cash_is_evidence_bounded_without_an_arbitrary_half_haircut() -> N
     assert cash["related_party_receivable_realization"][
         "post_position_collections"
     ] == pytest.approx(0.0)
-    assert cash["legal_cash_accessibility"]["adopted_value"] == pytest.approx(5104.440)
+    assert cash["legal_cash_accessibility"]["adopted_value"] == pytest.approx(0.0)
+    assert cash["legal_cash_accessibility"]["additive_leaf_total"] == 0
+    assert cash["legal_cash_accessibility"][
+        "diagnostic_total_ceiling"
+    ] == pytest.approx(5104.440)
+    assert cash["legal_cash_accessibility"]["amount_range"] == {
+        "low": pytest.approx(0.0),
+        "base": pytest.approx(0.0),
+        "high": pytest.approx(5104.440),
+    }
     assert existing["amount_range"] == {
         "low": pytest.approx(0.0),
         "base": pytest.approx(0.0),
         "high": pytest.approx(0.0),
     }
-    assert existing["legal_upper_bound"] == pytest.approx(5104.440)
+    assert existing["legal_upper_bound"] == pytest.approx(0.0)
     assert existing["historical_observed_rate_range"] is None
     assert existing["realization_rate_range"] is None
     assert existing["adopted_realization_rate"] is None
     assert existing["adopted_value"] == pytest.approx(0.0)
+    assert existing["evidenced_lower_bound"] == pytest.approx(0.0)
+    assert existing["conditional_amount_range"] is None
+    assert existing["unrecognized_remainder"] == pytest.approx(5104.440)
     assert existing["adoption_policy"] == (
         "zero_recognized_until_history_and_continuity_are_evidence_backed"
     )
@@ -81,6 +93,13 @@ def test_02669_cash_is_evidence_bounded_without_an_arbitrary_half_haircut() -> N
     assert receivable["adopted_value"] == pytest.approx(0.0)
     assert receivable["unrecognized_net_exposure"] == pytest.approx(805.644)
     assert receivable["rows"][0]["uncollected_recovery_rate_range"] is None
+    legal_projection = compiled["valuation_projection"]["cash_accessibility"][
+        "legal_cash_accessibility"
+    ]
+    assert legal_projection["adopted_per_share"] == pytest.approx(0.0)
+    assert legal_projection[
+        "diagnostic_unrecognized_ceiling_per_share"
+    ] == pytest.approx(1.5544, abs=1e-4)
 
 
 def test_02669_after_tax_distribution_has_a_deterministic_reader_slot() -> None:
@@ -252,8 +271,14 @@ def test_02669_reader_conclusion_states_the_open_boundary_in_investor_language()
     assert "不能声称资产与盈利共同提供价格底" in text
     assert "EPV不能作为买入依据" in text
     assert "不能相加抬高价值" in text
-    assert "存量超额现金只保留法律可达上限，主估值不预先计入" in text
-    assert "未收部分视作回收选择权" in text
+    assert "普通股现金已证可达金额为每股RMB0" in text
+    assert "合并诊断条件上限为每股RMB1.5544，仍未认可" in text
+    assert "存量超额现金已证下限为每股RMB0" in text
+    assert "未认可余量为每股RMB1.5544" in text
+    assert "关联方应收已证下限仅为已收回金额" in text
+    assert "未认可余量为每股RMB0.2453" in text
+    assert "未来留存现金不预设实现率，已证下限为RMB0百万元" in text
+    assert "未形成条件区间，未认可余量为RMB0百万元" in text
     assert "保持空值" not in text
     for internal_term in (
         "CUSTOMER_ACQUISITION_CHANNEL",

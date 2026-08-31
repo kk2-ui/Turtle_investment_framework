@@ -22,8 +22,10 @@ from typing import Any, Callable
 try:
     from scripts.enterprise_underwriting_episode import (
         EPISODE_SCHEMA,
+        compile_golden_report_reader_brief,
         compile_underwriting_projections,
         derive_component_decision_summary,
+        derive_economic_derivation_summary,
         validate_enterprise_underwriting_episode,
         validate_underwriting_projection_bundle,
     )
@@ -31,8 +33,10 @@ except ModuleNotFoundError:  # Direct ``python scripts/...`` execution.
     sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
     from scripts.enterprise_underwriting_episode import (
         EPISODE_SCHEMA,
+        compile_golden_report_reader_brief,
         compile_underwriting_projections,
         derive_component_decision_summary,
+        derive_economic_derivation_summary,
         validate_enterprise_underwriting_episode,
         validate_underwriting_projection_bundle,
     )
@@ -97,6 +101,7 @@ ROOT_FIELDS = {
     "feedback_clocks",
     "primary_training_product",
     "component_decision_interface",
+    "economic_derivation_interface",
     "authority",
 }
 SOURCE_FIELDS = {"source_id", "source_ref", "available_at", "time_role"}
@@ -117,9 +122,37 @@ COMPONENT_DECISION_INTERFACE = {
     "schema_version": "enterprise-underwriting-component-decision-interface.v1",
     "completion_basis": "EXPLICIT_EFFECT_FOR_EACH_COMPONENT",
 }
+ECONOMIC_DERIVATION_INTERFACE_V1 = {
+    "schema_version": "enterprise-underwriting-economic-derivation-interface.v1",
+    "completion_basis": "PRICE_FREE_COMPONENT_BRIDGE_AND_DRIVER_SENSITIVITY",
+}
+ECONOMIC_DERIVATION_INTERFACE_V2 = {
+    "schema_version": "enterprise-underwriting-economic-derivation-interface.v2",
+    "completion_basis": (
+        "PRICE_FREE_COMPONENT_BRIDGE_AND_EVIDENCED_DRIVER_SENSITIVITY"
+    ),
+}
+# New contracts must opt into v2.  Keep this public alias for current callers.
+ECONOMIC_DERIVATION_INTERFACE = ECONOMIC_DERIVATION_INTERFACE_V2
+_ECONOMIC_DERIVATION_INTERFACES = {
+    interface["schema_version"]: interface
+    for interface in (
+        ECONOMIC_DERIVATION_INTERFACE_V1,
+        ECONOMIC_DERIVATION_INTERFACE_V2,
+    )
+}
 TRAINING_AUTHORITY = "RESEARCH_TRAINING_ONLY_NO_PRICE_VALUATION_OR_INVESTMENT_AUTHORITY"
+_AUTO_EXCLUDED_ROUTE_BINDING_USES = {
+    "EXCLUDED",
+    "UNRESOLVED",
+    "SCENARIO_ONLY",
+    "NOT_APPLICABLE",
+}
 
 _ROOT = Path(__file__).resolve().parents[1]
+_EPISODE_JSON_SCHEMA_PATH = (
+    _ROOT / "schemas/enterprise_underwriting_episode_v1.schema.json"
+)
 LEGACY_FROZEN_CONTRACT_REFS = {
     "UWTRAIN:CN600585:20240501:WORKED:V1": "docs/development/research/enterprise_underwriting_episodes/CN600585_20240501_TRAINING_CONTRACT_V1.json",
     "UWTRAIN:CN000100TTE:20040827:WORKED:C1": "docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_COURSE_1_20260829/contracts/CN000100_TTE_WORKED_CONTRACT.json",
@@ -149,6 +182,24 @@ LEGACY_FROZEN_CONTRACT_REFS = {
     "UWTRAIN:CN000672:20180430:COURSE2B:ENHANCED:V1": "docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_COURSE_2B_CN000672_20180430/contracts/CN000672_COURSE2B_ENHANCED_CONTRACT.json",
     "UWTRAIN:CN601888:20190501:INDEPENDENT_AB_3:BASELINE:V1": "docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_INDEPENDENT_AB_3_20260830/contracts/CN601888_INDEPENDENT_AB_3_BASELINE_CONTRACT.json",
     "UWTRAIN:CN601888:20190501:INDEPENDENT_AB_3:ENHANCED:V1": "docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_INDEPENDENT_AB_3_20260830/contracts/CN601888_INDEPENDENT_AB_3_ENHANCED_CONTRACT.json",
+}
+_REPORT_AUTONOMY_2X2_ROOT = (
+    "docs/development/research/training_campaigns/"
+    "ENTERPRISE_UNDERWRITING_REPORT_AUTONOMY_2X2_CN000935_20180430"
+)
+FROZEN_DERIVATION_V1_CONTRACT_REFS = {
+    f"UWTRAIN:CN000935:20180430:REPORT_AUTONOMY_2X2:{arm}:V{version}": (
+        f"{_REPORT_AUTONOMY_2X2_ROOT}/"
+        f"{'contracts' if version == 1 else f'contracts_v{version}'}/"
+        f"CN000935_{label}_CONTRACT.json"
+    )
+    for version in (1, 2, 3, 4)
+    for arm, label in (
+        ("A00", "A00_BASELINE"),
+        ("A01", "A01_INDUSTRY_ONLY"),
+        ("A10", "A10_EXPERT_ONLY"),
+        ("A11", "A11_COMBINED"),
+    )
 }
 _PRICE_RESULT_KEYS = {
     "price",
@@ -237,6 +288,25 @@ def _legacy_frozen_contract_findings(value: dict[str, Any]) -> list[str]:
     return []
 
 
+def _frozen_derivation_v1_contract_findings(value: dict[str, Any]) -> list[str]:
+    """Admit the old derivation policy only as an exact frozen replay."""
+
+    contract_id = value.get("contract_id")
+    reference = FROZEN_DERIVATION_V1_CONTRACT_REFS.get(
+        str(contract_id or "")
+    )
+    if reference is None:
+        return ["contract.derivation_interface_v1_not_registered_for_frozen_replay"]
+    path = _ROOT / reference
+    try:
+        canonical = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, UnicodeDecodeError, json.JSONDecodeError):
+        return ["contract.derivation_interface_v1_frozen_reference_unavailable"]
+    if value != canonical:
+        return ["contract.derivation_interface_v1_payload_differs_from_frozen_contract"]
+    return []
+
+
 def _require_current_contract_for_new_execution(
     value: dict[str, Any], operation: str,
 ) -> None:
@@ -244,6 +314,12 @@ def _require_current_contract_for_new_execution(
         raise ValueError(
             f"legacy_v1_replay_only:{operation}; use validate-episode or "
             "compile-bundle with the exact frozen contract"
+        )
+    if value.get("economic_derivation_interface") == ECONOMIC_DERIVATION_INTERFACE_V1:
+        raise ValueError(
+            f"derivation_interface_v1_replay_only:{operation}; use "
+            "validate-episode, validate-fresh-response, or compile-bundle with "
+            "the exact frozen contract"
         )
 
 
@@ -280,12 +356,13 @@ def build_training_contract(
     cutoff_at: str,
     allowed_sources: list[dict[str, Any]],
     feedback_clocks: list[dict[str, Any]],
+    economic_derivation_interface: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     """Build the minimal task envelope without adding another training object."""
 
     track = str(training_track or "").upper()
     binding = TRACK_BINDINGS.get(track, {})
-    return {
+    contract = {
         "schema_version": CONTRACT_SCHEMA,
         "contract_id": contract_id,
         "training_track": track,
@@ -300,6 +377,11 @@ def build_training_contract(
         "component_decision_interface": deepcopy(COMPONENT_DECISION_INTERFACE),
         "authority": TRAINING_AUTHORITY,
     }
+    if economic_derivation_interface is not None:
+        contract["economic_derivation_interface"] = deepcopy(
+            economic_derivation_interface
+        )
+    return contract
 
 
 def validate_training_contract(contract: Any) -> dict[str, Any]:
@@ -311,7 +393,10 @@ def validate_training_contract(contract: Any) -> dict[str, Any]:
         return _result(CONTRACT_VALIDATION_SCHEMA, ["contract.must_be_object"])
     contract_schema = value.get("schema_version")
     allowed_fields = (
-        ROOT_FIELDS - {"component_decision_interface"}
+        ROOT_FIELDS - {
+            "component_decision_interface",
+            "economic_derivation_interface",
+        }
         if contract_schema == LEGACY_CONTRACT_SCHEMA
         else ROOT_FIELDS
     )
@@ -435,6 +520,15 @@ def validate_training_contract(contract: Any) -> dict[str, Any]:
         != COMPONENT_DECISION_INTERFACE
     ):
         findings.append("contract.component_decision_interface_invalid")
+    derivation_interface = _mapping(value.get("economic_derivation_interface"))
+    if "economic_derivation_interface" in value:
+        expected_interface = _ECONOMIC_DERIVATION_INTERFACES.get(
+            derivation_interface.get("schema_version")
+        )
+        if derivation_interface != expected_interface:
+            findings.append("contract.economic_derivation_interface_invalid")
+        elif derivation_interface == ECONOMIC_DERIVATION_INTERFACE_V1:
+            findings.extend(_frozen_derivation_v1_contract_findings(value))
     if value.get("authority") != TRAINING_AUTHORITY:
         findings.append("contract.authority_invalid")
     return _result(CONTRACT_VALIDATION_SCHEMA, findings)
@@ -449,7 +543,16 @@ def validate_training_episode(contract: Any, episode: Any) -> dict[str, Any]:
     contract_value = _mapping(contract)
     episode_value = _mapping(episode)
 
-    episode_result = validate_enterprise_underwriting_episode(episode_value)
+    requires_v2_magnitude_evidence = (
+        contract_value.get("economic_derivation_interface")
+        == ECONOMIC_DERIVATION_INTERFACE_V2
+    )
+    episode_result = validate_enterprise_underwriting_episode(
+        episode_value,
+        require_bounded_sensitivity_magnitude_evidence=(
+            requires_v2_magnitude_evidence
+        ),
+    )
     findings.extend("episode:" + item for item in episode_result["findings"])
     if episode_value:
         for field in ("company_id", "company_name", "cutoff_at", "sample_identity"):
@@ -498,6 +601,15 @@ def validate_training_episode(contract: Any, episode: Any) -> dict[str, Any]:
             and not _items(episode_value.get("component_decisions"))
         ):
             findings.append("binding.component_decisions_required_by_contract")
+        if (
+            contract_value.get("economic_derivation_interface")
+            in (
+                ECONOMIC_DERIVATION_INTERFACE_V1,
+                ECONOMIC_DERIVATION_INTERFACE_V2,
+            )
+            and not _mapping(episode_value.get("economic_derivation"))
+        ):
+            findings.append("binding.economic_derivation_required_by_contract")
     return _result(EPISODE_VALIDATION_SCHEMA, findings)
 
 
@@ -612,6 +724,38 @@ the decision; the UNDERWRITE/CONDITIONALLY_UNDERWRITE/SCENARIO_ONLY/EXCLUDE_FROM
 CANNOT_BOUND label cannot substitute for them. A component excluded, scenario-only, or
 unbounded at the component level cannot silently become a base-range or primary value
 input."""
+    economic_derivation_requirement = ""
+    if value.get("economic_derivation_interface") == ECONOMIC_DERIVATION_INTERFACE:
+        economic_derivation_requirement = """
+The Episode must also contain economic_derivation. Its normal_earnings_bridge rows
+identify component_id, sign, evidence, economic reason, and either a bounded range or
+an explicit UNKNOWN with reason and conservative treatment. The bridge must contain
+exactly one REFERENCE_EARNINGS baseline and at most one row for each component_id and
+row_role pair; changing row_id never makes a duplicated contribution distinct. If any
+BASE_RANGE row exists, the reference baseline itself must have BASE_RANGE authority;
+otherwise, if a CONDITIONAL_RANGE row exists, the reference must have CONDITIONAL_RANGE
+authority. Adjustments cannot create an authorized earnings range without that baseline.
+Do not author a row-level
+normal_earnings_use: the compiler derives BASE_RANGE, CONDITIONAL_RANGE, SCENARIO_ONLY,
+or EXCLUDED solely from component_decisions. UNKNOWN is not zero and must not be turned
+into a point estimate. driver_sensitivity_specs must give each key operating driver a
+LOW_BASE_HIGH set or BOUNDED_RANGE, trace its transmission to normal earnings and owner
+cash with either a signed BOUNDED delta range that includes zero or an explicit UNKNOWN,
+name only routes whose exact component binding use matches the route role, and cite valid
+reversal observations. EXCLUDED, SCENARIO_ONLY, or UNRESOLVED component authority cannot
+be upgraded to DIRECT normal-earnings or owner-cash transmission. Every non-PRESERVED
+BOUNDED normal-earnings or owner-cash delta needs its own structured magnitude_evidence:
+one or more evidence ids not reused from the driver input cases, the exact sensitivity
+component_ids and responsibility_boundary, matching driver metric/unit/horizon, matching
+affected axis and delta unit, and a non-empty calculation_binding whose input evidence
+ids are the same magnitude evidence ids. Each cited evidence_trace item must itself
+carry a sensitivity_magnitude_observation with those exact component, responsibility,
+driver metric/unit, horizon, affected-axis, delta-unit, and calculation-input fields;
+those canonical trace fields, not repeated labels inside magnitude_evidence, authorize
+the magnitude. Do not use the transmission basis text or a component's existing
+authority as a magnitude substitute. PRESERVED [0,0] may remain without magnitude
+evidence. UNKNOWN deltas have no numeric attribution. Keep
+this interface price-free: do not provide value, return, or action results."""
     system = """You are Turtle's enterprise-underwriting training synthesizer.
 Your only product is one complete EnterpriseUnderwritingEpisode JSON object.
 Connect industry future and profit-pool transmission, company position and adaptation,
@@ -639,7 +783,7 @@ IMPROVES, DETERIORATES, MIXED, UNKNOWN, or NONE. Only primary valuation model ro
 mandatory; corroborative and stress roles may be empty or omitted when economically
 inapplicable. A source labelled TRAINING_MEMORY is prior curriculum guidance only: use it
 to change questions, evidence order, rival checks, or conditional treatment, but never
-as a target-company fact and never cite it in evidence_trace or existing_object_refs.""" + component_decision_requirement
+as a target-company fact and never cite it in evidence_trace or existing_object_refs.""" + component_decision_requirement + economic_derivation_requirement
     user = "\n".join([
         "Create the complete pre-outcome Episode for this frozen training contract:",
         json.dumps(value, ensure_ascii=False, indent=2, sort_keys=True),
@@ -669,6 +813,117 @@ def _parse_agent_episode(raw: Any) -> dict[str, Any]:
     if not isinstance(payload, dict):
         raise ValueError("training Agent Episode must be a JSON object")
     return payload
+
+
+def _materialize_unknown_sensitivity_transmissions(episode: dict[str, Any]) -> None:
+    """Canonicalize the one self-contradictory sensitivity representation.
+
+    A response which explicitly says a delta is ``UNKNOWN`` cannot at the same
+    time claim a DIRECT or PRESERVED transmission.  The delta is the more
+    specific economic assertion, so the runner carries that uncertainty to the
+    matching transmission status.  It never changes any other delta or fills a
+    missing sensitivity case, basis, component, route, or evidence reference.
+    """
+
+    derivation = _mapping(episode.get("economic_derivation"))
+    for raw_spec in _items(derivation.get("driver_sensitivity_specs")):
+        transmission = _mapping(_mapping(raw_spec).get("transmission"))
+        for axis in ("normal_earnings", "owner_cash"):
+            treatment = _mapping(transmission.get(axis))
+            if _mapping(treatment.get("delta")).get("status") == "UNKNOWN":
+                treatment["status"] = "UNKNOWN"
+
+
+def _materialize_excluded_value_routes(episode: dict[str, Any]) -> None:
+    """Register passive component-bound routes without resolving role conflicts.
+
+    Component ledgers can name a route solely to say that it is excluded,
+    unresolved, scenario-only, or not applicable.  Those passive routes belong
+    in ``value_route.excluded_routes`` unless the Agent already registered the
+    same route as an active model role.  The runner only appends missing route
+    ids; it never removes an active/excluded conflict or manufactures a route
+    requirement, component binding, or economic treatment.
+    """
+
+    value_route = _mapping(episode.get("value_route"))
+    if not value_route:
+        return
+    existing_excluded = value_route.get("excluded_routes")
+    if existing_excluded is not None and not isinstance(existing_excluded, list):
+        return
+
+    active_route_ids = {
+        str(route_id)
+        for route_id in _items(value_route.get("primary_routes"))
+        if _text(route_id)
+    }
+    model_roles = _mapping(value_route.get("valuation_model_roles"))
+    for role in ("primary", "corroborative", "stress"):
+        active_route_ids.update(
+            str(route_id)
+            for route_id in _items(model_roles.get(role))
+            if _text(route_id)
+        )
+
+    excluded_routes = list(existing_excluded or [])
+    registered_excluded = {
+        str(route_id) for route_id in excluded_routes if _text(route_id)
+    }
+    for raw_decision in _items(episode.get("component_decisions")):
+        for raw_binding in _items(
+            _mapping(raw_decision).get("valuation_route_bindings")
+        ):
+            binding = _mapping(raw_binding)
+            route_id = binding.get("route_id")
+            if (
+                not _text(route_id)
+                or binding.get("use") not in _AUTO_EXCLUDED_ROUTE_BINDING_USES
+            ):
+                continue
+            route_id = str(route_id)
+            if route_id in active_route_ids or route_id in registered_excluded:
+                continue
+            excluded_routes.append(route_id)
+            registered_excluded.add(route_id)
+    value_route["excluded_routes"] = excluded_routes
+
+
+def materialize_fresh_subagent_episode(agent_response: Any) -> dict[str, Any]:
+    """Return the sole canonical Episode representation of a fresh response.
+
+    The fresh Agent remains responsible for every economic claim and every
+    validator-facing ledger.  This narrow compiler step only derives two
+    summaries, propagates an already-declared UNKNOWN sensitivity delta, and
+    registers otherwise passive component-bound routes as excluded.  It is
+    intentionally applied before every fresh-response validation and run, so
+    an omitted compiler-owned field cannot produce different verdicts by path.
+    """
+
+    episode = _parse_agent_episode(agent_response)
+    _materialize_unknown_sensitivity_transmissions(episode)
+    _materialize_excluded_value_routes(episode)
+
+    if isinstance(episode.get("component_decisions"), list):
+        episode["component_decision_summary"] = derive_component_decision_summary(
+            episode["component_decisions"]
+        )
+    else:
+        episode.pop("component_decision_summary", None)
+    if isinstance(episode.get("economic_derivation"), dict):
+        episode["economic_derivation_summary"] = derive_economic_derivation_summary(
+            episode
+        )
+    else:
+        episode.pop("economic_derivation_summary", None)
+    return episode
+
+
+def validate_fresh_subagent_response(contract: Any, agent_response: Any) -> dict[str, Any]:
+    """Validate a fresh response through the same canonicalization as ``run``."""
+
+    return validate_training_episode(
+        contract, materialize_fresh_subagent_episode(agent_response)
+    )
 
 
 def _atomic_json(path: Path, payload: dict[str, Any]) -> None:
@@ -720,15 +975,7 @@ def run_training_agent(
         contract_value,
         source_materials=materials,
     )
-    episode = _parse_agent_episode(episode_generator(messages))
-    if _items(episode.get("component_decisions")):
-        # This is a compiler-owned read model, not a second Agent judgment.
-        # Persist it with the Episode so all downstream consumers bind to the
-        # same five economic routes and mutation cannot leave stale prose-only
-        # authority in place.
-        episode["component_decision_summary"] = derive_component_decision_summary(
-            episode["component_decisions"]
-        )
+    episode = materialize_fresh_subagent_episode(episode_generator(messages))
     episode_validation = validate_training_episode(contract_value, episode)
     if episode_validation["state"] != "REVIEWABLE":
         raise ValueError(
@@ -780,6 +1027,64 @@ def build_fresh_subagent_task(contract: Any) -> dict[str, Any]:
         contract_value,
         source_materials=_source_materials(contract_value),
     )
+    messages[0]["content"] += """
+The enclosing fresh-task packet includes the complete frozen Episode JSON Schema at
+response_contract.episode_json_schema. Treat that schema as the authoritative response
+shape: include every field required at the applicable schema location; use only values
+allowed by enum or const; and wherever additionalProperties is false, do not add or
+rename fields. Do not invent a parallel structure when the schema already defines one.
+
+The following cross-field rules are also part of the response contract because JSON
+Schema alone cannot express them:
+- Copy company_id, company_name, cutoff_at, and sample_identity verbatim from the
+  frozen contract.
+- Copy situation_model.industry_future_thesis.strongest_rival verbatim into both the
+  top-level strongest_rival and underwriting_thesis.strongest_rival. Copy its entire
+  reversal_observations array verbatim into the top-level reversal_observations.
+- Every evidence_trace item must have evidence_id, source_ref, locator, scope, and
+  used_for. Evidence ids must be unique. Every cited source_ref/ref must exactly equal
+  an allowed non-TRAINING_MEMORY source_ref. Every existing_object_refs item must have
+  kind, ref, and role.
+- component_decisions must cover every component_treatments component_id exactly once.
+  valuation_use is the highest-authority use in that component's route bindings, in
+  this order: PRIMARY_INPUT, CONDITIONAL_PRIMARY_INPUT, CORROBORATIVE_INPUT,
+  SCENARIO_ONLY, STRESS_ONLY, UNRESOLVED, EXCLUDED, NOT_APPLICABLE. Every
+  non-NOT_APPLICABLE valuation use needs a binding. Excluded/scenario/unbounded
+  treatments cannot become base or primary inputs; CANNOT_BOUND retains an UNRESOLVED
+  downstream use and CONDITIONALLY_UNDERWRITE retains a conditional downstream use.
+- Give every bound or named primary, corroborative, stress, or excluded value route one
+  route_component_requirements entry. Required and optional component ids must be known,
+  unique and disjoint. Each route must have a role-compatible bound component; every
+  required component must itself have a role-compatible binding. One route cannot be
+  both active and excluded.
+- normal_earnings_bridge must contain exactly one REFERENCE_EARNINGS row, no duplicate
+  component_id/row_role pair, and at least one row for every component whose
+  normal_earnings_use is not NOT_APPLICABLE. A BASE_RANGE or CONDITIONAL_RANGE row needs
+  a reference row with the same authority. Every row and sensitivity evidence_id must
+  exist in evidence_trace, as must every component_treatments evidence_id.
+- In each driver sensitivity, named components and valuation routes must exist. Each
+  route must be bound to every named component and the binding use must be compatible
+  with the route's primary/corroborative/stress role. DIRECT transmission requires base
+  or conditional component authority. UNKNOWN transmission requires an UNKNOWN delta;
+  a BOUNDED delta is signed and includes zero; PRESERVED requires a zero delta. Every
+  non-PRESERVED BOUNDED delta needs separate structured magnitude evidence with matching
+  component ids, responsibility boundary, driver metric/unit/horizon, affected axis and
+  delta unit, plus a calculation binding. Those evidence ids must not be driver-case
+  evidence; each must resolve to an evidence_trace sensitivity_magnitude_observation
+  whose canonical component, responsibility, driver metric/unit, horizon, affected
+  axis, delta unit, and calculation inputs match the delta. Repeated labels in the delta
+  do not substitute. Neither prose basis nor existing component authority substitutes.
+  Every reversal_observation_ref must resolve to the top-level copied array.
+- The runner makes only three narrow deterministic materializations before validation:
+  it derives component_decision_summary and economic_derivation_summary; when a
+  sensitivity delta.status is UNKNOWN it changes that matching transmission status to
+  UNKNOWN; and it registers an otherwise unregistered EXCLUDED, UNRESOLVED,
+  SCENARIO_ONLY, or NOT_APPLICABLE component-bound route in excluded_routes. These
+  are not substitutes for your economics. You must still supply every material
+  component, route requirement, evidence reference, economic reason, sensitivity
+  case, treatment, boundary, and reversal condition yourself. Do not rely on the
+  runner to repair an invalid or conflicting judgment.
+Keep the whole Episode price-, return-, outcome-, and action-free."""
     return {
         "schema_version": SUBAGENT_TASK_SCHEMA,
         "state": "FRESH_SUBAGENT_TASK_READY",
@@ -789,6 +1094,66 @@ def build_fresh_subagent_task(contract: Any) -> dict[str, Any]:
         "messages": messages,
         "response_contract": {
             "format": "ONE_ENTERPRISE_UNDERWRITING_EPISODE_JSON_OBJECT",
+            "schema_authority": "FROZEN_COMPLETE_EPISODE_JSON_SCHEMA",
+            "schema_requirements": [
+                "Honor every applicable required field in episode_json_schema.",
+                "Honor every enum and const value in episode_json_schema.",
+                "Where additionalProperties is false, emit no undeclared fields.",
+                "Use the schema's field names and nesting; do not invent a substitute structure.",
+            ],
+            "semantic_requirements": [
+                (
+                    "Copy company_id, company_name, cutoff_at, and sample_identity "
+                    "verbatim from the frozen contract."
+                ),
+                (
+                    "Copy industry_future_thesis.strongest_rival verbatim to both "
+                    "top-level strongest_rival and underwriting_thesis.strongest_rival, "
+                    "and copy its reversal_observations array verbatim to the top level."
+                ),
+                (
+                    "Evidence ids are unique; every evidence item has source_ref, locator, "
+                    "scope, and used_for; every existing-object reference has kind, ref, "
+                    "and role; citations exactly match an allowed non-TRAINING_MEMORY source."
+                ),
+                (
+                    "component_decisions cover component_treatments exactly once; valuation_use "
+                    "is derived from route bindings in the specified authority order; base, "
+                    "conditional, excluded, scenario, and unresolved uses remain compatible "
+                    "with the component treatment; all treatment evidence ids resolve."
+                ),
+                (
+                    "Every bound or named primary, corroborative, stress, or excluded route has "
+                    "one component requirement and at least one role-compatible binding; required "
+                    "and optional component ids are known, unique, disjoint, and role-compatible."
+                ),
+                (
+                    "The normal-earnings bridge has exactly one authority-compatible reference "
+                    "row and covers every component whose normal_earnings_use is not NOT_APPLICABLE."
+                ),
+                (
+                    "Sensitivity components, evidence, reversal refs, and routes resolve; route "
+                    "binding uses match route roles; DIRECT has range authority, UNKNOWN uses an "
+                    "UNKNOWN delta, bounded deltas include zero, and PRESERVED has zero delta. "
+                    "Every non-PRESERVED bounded delta has separate calculation-bound magnitude "
+                    "evidence with matching component, responsibility boundary, driver metric/unit/"
+                    "horizon, affected axis, and delta unit. Each evidence id resolves to canonical "
+                    "evidence_trace sensitivity_magnitude_observation metadata with matching "
+                    "calculation inputs; repeated delta labels, driver-case evidence, basis prose, and "
+                    "component authority cannot substitute."
+                ),
+                (
+                    "The runner only derives component_decision_summary and "
+                    "economic_derivation_summary, propagates an explicitly UNKNOWN delta "
+                    "to its matching transmission, and registers otherwise passive excluded "
+                    "component-bound routes. It does not supply economics, evidence, route "
+                    "requirements, or resolve conflicts."
+                ),
+                "Keep the Episode price-, return-, outcome-, and action-free.",
+            ],
+            "episode_json_schema": json.loads(
+                _EPISODE_JSON_SCHEMA_PATH.read_text(encoding="utf-8")
+            ),
             "must_not_read": [
                 "parent_conversation",
                 "sibling_arm",
@@ -815,11 +1180,10 @@ def run_fresh_subagent_response(
     the in-process callback path.
     """
 
-    response = deepcopy(agent_response)
     return run_training_agent(
         contract,
         output_dir=output_dir,
-        episode_generator=lambda _messages: response,
+        episode_generator=lambda _messages: agent_response,
         execution_mode="CODEX_FRESH_SUBAGENT",
     )
 
@@ -861,6 +1225,12 @@ def _parser() -> argparse.ArgumentParser:
         command = sub.add_parser(name)
         command.add_argument("contract", type=Path)
         command.add_argument("episode", type=Path)
+    validate_fresh = sub.add_parser("validate-fresh-response")
+    validate_fresh.add_argument("contract", type=Path)
+    validate_fresh.add_argument("agent_response", type=Path)
+    reader_brief = sub.add_parser("compile-reader-brief")
+    reader_brief.add_argument("episode", type=Path)
+    reader_brief.add_argument("--output", type=Path, required=True)
     render = sub.add_parser("render-subagent-task")
     render.add_argument("contract", type=Path)
     render.add_argument("--output", type=Path, required=True)
@@ -880,9 +1250,23 @@ def _parser() -> argparse.ArgumentParser:
 def main(argv: list[str] | None = None) -> int:
     args = _parser().parse_args(argv)
     try:
-        contract = _read_json(args.contract)
-        if args.command == "validate-contract":
+        contract = _read_json(args.contract) if hasattr(args, "contract") else None
+        if args.command == "compile-reader-brief":
+            episode = _read_json(args.episode)
+            brief = compile_golden_report_reader_brief(episode)
+            _atomic_json(args.output.expanduser().resolve(), brief)
+            result = {
+                "schema_version": "enterprise-underwriting-reader-brief-receipt.v1",
+                "state": "READER_BRIEF_COMPILED",
+                "episode_id": episode.get("episode_id"),
+                "brief_path": str(args.output.expanduser().resolve()),
+            }
+        elif args.command == "validate-contract":
             result = validate_training_contract(contract)
+        elif args.command == "validate-fresh-response":
+            result = validate_fresh_subagent_response(
+                contract, _read_json(args.agent_response)
+            )
         elif args.command == "render-subagent-task":
             task = build_fresh_subagent_task(contract)
             _atomic_json(args.output.expanduser().resolve(), task)

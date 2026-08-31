@@ -21,6 +21,7 @@ from scripts.valuation_model_gate import (
     _validate_value_bridge_fact_bindings,
 )
 from scripts.valuation_value_bridges import compile_valuation_value_bridges
+from tests.test_cash_accessibility_model import _bind_to_canonical_official_facts
 from tests.test_valuation_value_bridges import _cash_input
 
 
@@ -50,6 +51,7 @@ def _temporal_cash_fixture() -> tuple[dict, dict, dict]:
         period["opening_position_as_of"] = f"{year}-01-01"
         for event in period["extraordinary_events"]:
             event["observed_at"] = f"{int(year) + 1}-03-31"
+    _bind_to_canonical_official_facts(cash)
 
     bridge_input = {
         "schema_version": "valuation-value-bridges-input.v1",
@@ -154,6 +156,50 @@ def _temporal_cash_fixture() -> tuple[dict, dict, dict]:
             "status": "VERIFIED",
         }
     )
+    outer_by_path = {item["path"]: item["evidence_id"] for item in bindings}
+    cash_register = cash["official_fact_register"]
+    for observation in observations:
+        if not observation["observation_id"].startswith("OBS:TEMPORAL:"):
+            continue
+        path = observation["fact_name"]
+        cash_register["observations"].append({
+            "fact_id": observation["observation_id"],
+            "source_id": "TEST-OFFICIAL-CASH",
+            "pdf_page": 7,
+            "table_or_section": "Temporal cash source table",
+            "field": path,
+            "period": "FY2025",
+            "responsibility_boundary": (
+                "Listed ordinary common shares" if path.endswith(".shares")
+                else "listed consolidated issuer"
+            ),
+            "unit": observation["unit"],
+            "value": observation["normalized_value"],
+        })
+    cash_register["observations"].append({
+        "fact_id": "F:CONTINUITY",
+        "source_id": "TEST-OFFICIAL-CASH",
+        "pdf_page": 7,
+        "table_or_section": "Temporal cash source table",
+        "field": "cash_realization_mechanism_continuity",
+        "period": "FY2025",
+        "responsibility_boundary": "listed consolidated issuer",
+        "unit": "boolean",
+        "value": True,
+    })
+    for binding in cash["canonical_fact_bindings"]:
+        path = binding["path"]
+        if "realization_applicability." in path or ".prospective_applicability." in path:
+            binding["fact_id"] = "F:CONTINUITY"
+            continue
+        outer_path = "cash_accessibility.model_input." + path
+        if outer_path in outer_by_path:
+            binding["fact_id"] = outer_by_path[outer_path]
+    for applicability in cash["realization_applicability"].values():
+        for key, value in applicability["source_fact_bindings"].items():
+            if key in applicability and isinstance(applicability[key], bool):
+                applicability["source_fact_bindings"][key] = "F:CONTINUITY"
+    cash["verified_facts"].append({"fact_id": "F:CONTINUITY", "status": "VERIFIED"})
     bridge_input["canonical_fact_bindings"] = bindings
     fact_registry = {
         "report_id": "",
@@ -464,8 +510,8 @@ def test_three_historical_annual_periods_and_one_post_position_event_share_one_c
         "base": pytest.approx(0.4),
         "high": pytest.approx(0.6),
     }
-    assert model["existing_excess_cash_realization"]["adopted_value"] == pytest.approx(14)
-    assert model["future_retained_cash_realization"]["adopted_value"] == pytest.approx(32)
+    assert model["existing_excess_cash_realization"]["adopted_value"] == pytest.approx(7)
+    assert model["future_retained_cash_realization"]["adopted_value"] == pytest.approx(16)
 
 
 def test_cash_model_schema_exposes_each_realization_clock() -> None:
@@ -525,12 +571,8 @@ def test_fake_calculation_cannot_bind_a_cash_temporal_operand(tmp_path: Path) ->
     _replace_cash_binding(bridge_input, path=path, evidence_id="CALC:FAKE:CASH")
     _write_registries(tmp_path, facts, manifest)
 
-    invalid, _ = _validate(tmp_path, bridge_input)
-
-    assert any(
-        "cash_temporal_operand_calculation_evidence_forbidden" in finding
-        for finding in invalid
-    )
+    with pytest.raises(ValueError, match="fact_id_not_canonical_official_observation"):
+        compile_valuation_value_bridges(bridge_input)
 
 
 def test_renamed_non_calc_registry_row_cannot_bind_cash_temporal_operand(
@@ -562,12 +604,8 @@ def test_renamed_non_calc_registry_row_cannot_bind_cash_temporal_operand(
         encoding="utf-8",
     )
 
-    invalid, _ = _validate(tmp_path, bridge_input)
-
-    assert any(
-        "cash_temporal_operand_calculation_evidence_forbidden" in finding
-        for finding in invalid
-    )
+    with pytest.raises(ValueError, match="fact_id_not_canonical_official_observation"):
+        compile_valuation_value_bridges(bridge_input)
 
 
 def test_non_observation_identifier_cannot_bind_cash_temporal_operand(
@@ -583,12 +621,8 @@ def test_non_observation_identifier_cannot_bind_cash_temporal_operand(
     )
     _write_registries(tmp_path, facts, manifest)
 
-    invalid, _ = _validate(tmp_path, bridge_input)
-
-    assert any(
-        "cash_temporal_operand_calculation_evidence_forbidden" in finding
-        for finding in invalid
-    )
+    with pytest.raises(ValueError, match="fact_id_not_canonical_official_observation"):
+        compile_valuation_value_bridges(bridge_input)
 
 
 def test_verified_calculation_without_temporal_lineage_cannot_bind_cash_operand(
@@ -620,12 +654,8 @@ def test_verified_calculation_without_temporal_lineage_cannot_bind_cash_operand(
         encoding="utf-8",
     )
 
-    invalid, _ = _validate(tmp_path, bridge_input)
-
-    assert any(
-        "cash_temporal_operand_calculation_evidence_forbidden" in finding
-        for finding in invalid
-    )
+    with pytest.raises(ValueError, match="fact_id_not_canonical_official_observation"):
+        compile_valuation_value_bridges(bridge_input)
 
 
 def test_old_observation_derived_calculation_cannot_relabel_cash_time(
@@ -659,12 +689,8 @@ def test_old_observation_derived_calculation_cannot_relabel_cash_time(
         encoding="utf-8",
     )
 
-    invalid, _ = _validate(tmp_path, bridge_input)
-
-    assert any(
-        "cash_temporal_operand_calculation_evidence_forbidden" in finding
-        for finding in invalid
-    )
+    with pytest.raises(ValueError, match="fact_id_not_canonical_official_observation"):
+        compile_valuation_value_bridges(bridge_input)
 
 
 def test_cash_realization_history_cannot_omit_its_model_period_bounds(

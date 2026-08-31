@@ -10,12 +10,15 @@ import pytest
 
 from scripts.enterprise_underwriting_episode import (
     compile_underwriting_projections,
+    derive_component_decision_summary,
+    derive_economic_derivation_summary,
     render_underwriting_readout,
 )
 from scripts.enterprise_underwriting_training import (
     COMPONENT_DECISION_INTERFACE,
     CONTRACT_SCHEMA,
     DOWNSTREAM_BUNDLE_SCHEMA,
+    ECONOMIC_DERIVATION_INTERFACE,
     LEGACY_FROZEN_CONTRACT_REFS,
     PRIMARY_PRODUCT,
     SUBAGENT_TASK_SCHEMA,
@@ -23,11 +26,13 @@ from scripts.enterprise_underwriting_training import (
     build_training_agent_messages,
     build_training_contract,
     compile_price_free_downstream_bundle,
+    materialize_fresh_subagent_episode,
     run_training_agent,
     main,
     run_fresh_subagent_response,
     validate_training_contract,
     validate_training_episode,
+    validate_fresh_subagent_response,
 )
 
 
@@ -53,6 +58,11 @@ COURSE2B_ROOT = (
     ROOT
     / "docs/development/research/training_campaigns"
     / "ENTERPRISE_UNDERWRITING_COURSE_2B_CN000672_20180430"
+)
+REPORT_AUTONOMY_2X2_ROOT = (
+    ROOT
+    / "docs/development/research/training_campaigns"
+    / "ENTERPRISE_UNDERWRITING_REPORT_AUTONOMY_2X2_CN000935_20180430"
 )
 
 
@@ -107,6 +117,142 @@ def _worked_contract(episode: dict | None = None) -> dict:
         allowed_sources=_allowed_episode_sources(value),
         feedback_clocks=_feedback_clocks(),
     )
+
+
+def _economic_derivation() -> dict:
+    return {
+        "schema_version": "enterprise-underwriting-economic-derivation.v1",
+        "normal_earnings_bridge": {
+            "basis": {
+                "metric": "after-tax normalized operating earnings",
+                "currency": "RMB",
+                "unit": "RMB_m",
+                "tax_basis": "AFTER_TAX",
+                "earnings_claim_scope": "ENTERPRISE_OPERATING",
+                "operating_perimeter": "Domestic mature cement operations",
+                "as_of": "2023-12-31",
+            },
+            "rows": [
+                {
+                    "row_id": "NEB:CORE",
+                    "component_id": "DOMESTIC_CORE_NORMAL_EARNINGS",
+                    "row_role": "REFERENCE_EARNINGS",
+                    "direction": "ADD",
+                    "quantification": {
+                        "status": "BOUNDED", "range_low": 8000.0, "range_high": 10000.0,
+                    },
+                    "evidence_ids": ["CONCH-E1", "CONCH-E3"],
+                    "economic_reason": "国内成熟核心按中周期量价与成本形成正常盈利范围",
+                },
+                {
+                    "row_id": "NEB:INCREMENTAL",
+                    "component_id": "DOMESTIC_INCREMENTAL_ASSET_RETURN",
+                    "row_role": "NORMALIZATION_ADJUSTMENT",
+                    "direction": "ADD",
+                    "quantification": {
+                        "status": "UNKNOWN",
+                        "reason": "新增项目没有同责任边界利润与资本回收数据",
+                        "conservative_treatment": "不把新增设计产能当作基准盈利",
+                    },
+                    "evidence_ids": ["CONCH-E4"],
+                    "economic_reason": "新增国内资产盈利尚未被证明",
+                },
+                {
+                    "row_id": "NEB:OVERSEAS",
+                    "component_id": "OVERSEAS_AND_INDUSTRIAL_CHAIN_OPTION",
+                    "row_role": "NORMALIZATION_ADJUSTMENT",
+                    "direction": "ADD",
+                    "quantification": {
+                        "status": "BOUNDED", "range_low": 500.0, "range_high": 900.0,
+                    },
+                    "evidence_ids": ["CONCH-E3"],
+                    "economic_reason": "海外与产业链只作为组合缓冲",
+                },
+            ],
+        },
+        "driver_sensitivity_specs": [
+            {
+                "sensitivity_id": "SENS:REGIONAL_PRICE",
+                "component_ids": ["DOMESTIC_CORE_NORMAL_EARNINGS"],
+                "responsibility_boundary": "Domestic mature cement operations",
+                "metric": "regional cement price index",
+                "unit": "index",
+                "horizon": "FY2026",
+                "input_cases": {
+                    "mode": "BOUNDED_RANGE",
+                    "range": {
+                        "value_or_range": {"range_low": 90.0, "range_high": 105.0},
+                        "basis": "区域价格的可辩护范围",
+                        "evidence_ids": ["CONCH-E1", "CONCH-E3"],
+                    },
+                },
+                "transmission": {
+                    "normal_earnings": {
+                        "status": "DIRECT", "basis": "售价经吨毛利改变正常盈利",
+                        "delta": {
+                            "status": "BOUNDED", "range_low": -2000.0,
+                            "range_high": 2000.0, "unit": "RMB_m",
+                            "magnitude_evidence": {
+                                "evidence_ids": ["CONCH-E2"],
+                                "component_ids": [
+                                    "DOMESTIC_CORE_NORMAL_EARNINGS"
+                                ],
+                                "responsibility_boundary": (
+                                    "Domestic mature cement operations"
+                                ),
+                                "driver_metric": "regional cement price index",
+                                "driver_unit": "index",
+                                "horizon": "FY2026",
+                                "affected_axis": "normal_earnings",
+                                "delta_unit": "RMB_m",
+                                "calculation_binding": {
+                                    "calculation_id": (
+                                        "CALC:REGIONAL_PRICE_TO_DOMESTIC_EARNINGS"
+                                    ),
+                                    "expression": (
+                                        "price-index case delta times responsibility-"
+                                        "matched normalized volume and unit-margin bridge"
+                                    ),
+                                    "input_evidence_ids": ["CONCH-E2"],
+                                },
+                            },
+                        },
+                    },
+                    "owner_cash": {
+                        "status": "UNKNOWN", "basis": "维护资本与现金可达性尚未闭合",
+                        "delta": {
+                            "status": "UNKNOWN",
+                            "reason": "维护资本与现金可达性没有同口径敏感性",
+                            "conservative_treatment": "不把正常盈利变化等同于普通股现金",
+                        },
+                    },
+                    "valuation_route_ids": ["EPV"],
+                },
+                "reversal_observation_refs": ["#/reversal_observations/0"],
+            }
+        ],
+    }
+
+
+def _episode_with_derivation() -> dict:
+    episode = _episode()
+    evidence = next(
+        item for item in episode["evidence_trace"]
+        if item["evidence_id"] == "CONCH-E2"
+    )
+    evidence["sensitivity_magnitude_observation"] = {
+        "component_ids": ["DOMESTIC_CORE_NORMAL_EARNINGS"],
+        "responsibility_boundary": "Domestic mature cement operations",
+        "driver_metric": "regional cement price index",
+        "driver_unit": "index",
+        "horizon": "FY2026",
+        "affected_axes": ["normal_earnings"],
+        "delta_unit": "RMB_m",
+        "calculation_inputs": ["CONCH-E2"],
+    }
+    episode["economic_derivation"] = _economic_derivation()
+    episode["economic_derivation_summary"] = derive_economic_derivation_summary(episode)
+    return episode
 
 
 def _blind_contract() -> dict:
@@ -198,6 +344,148 @@ def test_current_contract_requires_component_decisions_and_only_frozen_legacy_re
     unregistered["contract_id"] = "UWTRAIN:UNREGISTERED:LEGACY:V1"
     assert "contract.legacy_v1_not_registered_for_frozen_replay" in (
         validate_training_contract(unregistered)["findings"]
+    )
+
+
+def test_optional_derivation_interface_is_backward_compatible_and_requires_derivation_only_when_present() -> None:
+    legacy_current = _worked_contract()
+    assert "economic_derivation_interface" not in legacy_current
+    assert validate_training_episode(legacy_current, _episode())["state"] == "REVIEWABLE"
+
+    contract = build_training_contract(
+        contract_id="UWTRAIN:CN600585:20240501:WORKED:DERIVATION",
+        training_track="WORKED_CASE",
+        company_id=_episode()["company_id"],
+        company_name=_episode()["company_name"],
+        cutoff_at=_episode()["cutoff_at"],
+        allowed_sources=_allowed_episode_sources(_episode()),
+        feedback_clocks=_feedback_clocks(),
+        economic_derivation_interface=ECONOMIC_DERIVATION_INTERFACE,
+    )
+    assert contract["economic_derivation_interface"] == ECONOMIC_DERIVATION_INTERFACE
+    assert validate_training_contract(contract)["state"] == "REVIEWABLE"
+    findings = validate_training_episode(contract, _episode())["findings"]
+    assert "binding.economic_derivation_required_by_contract" in findings
+    assert validate_training_episode(contract, _episode_with_derivation())[
+        "state"
+    ] == "REVIEWABLE"
+
+    invalid = deepcopy(contract)
+    invalid["economic_derivation_interface"]["completion_basis"] = "PROSE_ONLY"
+    assert "contract.economic_derivation_interface_invalid" in (
+        validate_training_contract(invalid)["findings"]
+    )
+
+
+def test_derivation_contract_prompt_requires_price_free_bridge_and_sensitivity() -> None:
+    contract = _worked_contract()
+    contract["economic_derivation_interface"] = deepcopy(
+        ECONOMIC_DERIVATION_INTERFACE
+    )
+    messages = build_training_agent_messages(contract, source_materials=[])
+    prompt = messages[0]["content"]
+    assert "economic_derivation" in prompt
+    assert "normal_earnings_bridge" in prompt
+    assert "driver_sensitivity_specs" in prompt
+    assert "exactly one REFERENCE_EARNINGS baseline" in prompt
+    assert "Adjustments cannot create an authorized earnings range" in prompt
+    assert "signed BOUNDED delta range that includes zero" in prompt
+    assert "structured magnitude_evidence" in prompt
+    assert "sensitivity_magnitude_observation" in prompt
+    assert "PRESERVED [0,0] may remain" in prompt
+    assert "cannot\nbe upgraded to DIRECT" in prompt
+    assert "value, return, or action results" in prompt
+
+
+def test_derivation_v2_contract_requires_bounded_delta_magnitude_evidence() -> None:
+    contract = _worked_contract()
+    contract["economic_derivation_interface"] = deepcopy(
+        ECONOMIC_DERIVATION_INTERFACE
+    )
+    episode = _episode_with_derivation()
+
+    assert validate_training_episode(contract, episode)["state"] == "REVIEWABLE"
+
+    missing_magnitude = deepcopy(episode)
+    del missing_magnitude["economic_derivation"]["driver_sensitivity_specs"][0][
+        "transmission"
+    ]["normal_earnings"]["delta"]["magnitude_evidence"]
+    missing_magnitude["economic_derivation_summary"] = (
+        derive_economic_derivation_summary(missing_magnitude)
+    )
+    findings = validate_training_episode(contract, missing_magnitude)["findings"]
+    assert any(
+        item.endswith("delta.magnitude_evidence.required_for_bounded_delta")
+        for item in findings
+    )
+
+
+@pytest.mark.parametrize(
+    ("version", "label"),
+    [
+        ("v3", "A00_BASELINE"),
+        ("v3", "A01_INDUSTRY_ONLY"),
+        ("v3", "A10_EXPERT_ONLY"),
+        ("v4", "A00_BASELINE"),
+        ("v4", "A01_INDUSTRY_ONLY"),
+        ("v4", "A10_EXPERT_ONLY"),
+        ("v4", "A11_COMBINED"),
+    ],
+)
+def test_frozen_derivation_v1_raw_response_remains_read_only_replayable(
+    version: str, label: str,
+) -> None:
+    contract_path = REPORT_AUTONOMY_2X2_ROOT / (
+        f"contracts_{version}/CN000935_{label}_CONTRACT.json"
+    )
+    response_path = REPORT_AUTONOMY_2X2_ROOT / (
+        f"raw_agent_responses_{version}/{label}_EPISODE_RESPONSE.json"
+    )
+    original_text = response_path.read_text(encoding="utf-8")
+    contract = json.loads(contract_path.read_text(encoding="utf-8"))
+    raw = json.loads(original_text)
+
+    assert validate_training_contract(contract)["state"] == "REVIEWABLE"
+    assert validate_training_episode(contract, raw)["state"] == "INVALID"
+    assert validate_fresh_subagent_response(contract, raw)["state"] == "REVIEWABLE"
+    assert response_path.read_text(encoding="utf-8") == original_text
+    with pytest.raises(ValueError, match="derivation_interface_v1_replay_only"):
+        build_fresh_subagent_task(contract)
+
+
+def test_training_run_persists_compiler_owned_derivation_summary(
+    tmp_path: Path,
+) -> None:
+    episode = _episode_with_derivation()
+    raw_agent_episode = deepcopy(episode)
+    del raw_agent_episode["economic_derivation_summary"]
+    contract = _worked_contract(episode)
+    contract["economic_derivation_interface"] = deepcopy(
+        ECONOMIC_DERIVATION_INTERFACE
+    )
+    materials = [
+        {
+            "source_id": item["source_id"],
+            "source_ref": item["source_ref"],
+            "content": "Cutoff-safe source material.",
+        }
+        for item in contract["allowed_sources"]
+    ]
+
+    run_training_agent(
+        contract,
+        output_dir=tmp_path,
+        episode_generator=lambda _messages: raw_agent_episode,
+        source_materials=materials,
+    )
+
+    persisted = json.loads(
+        (tmp_path / "enterprise_underwriting_episode.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    assert persisted["economic_derivation_summary"] == (
+        derive_economic_derivation_summary(persisted)
     )
 
 
@@ -406,6 +694,16 @@ def test_cli_validates_and_compiles_without_writing_another_product(
     assert json.loads(capsys.readouterr().out)["state"] == "REVIEWABLE"
     assert main(["validate-episode", str(contract_path), str(episode_path)]) == 0
     assert json.loads(capsys.readouterr().out)["state"] == "REVIEWABLE"
+    raw_fresh = deepcopy(episode)
+    raw_fresh.pop("component_decision_summary")
+    raw_fresh_path = tmp_path / "fresh-response.json"
+    raw_fresh_path.write_text(
+        json.dumps(raw_fresh, ensure_ascii=False), encoding="utf-8"
+    )
+    assert main([
+        "validate-fresh-response", str(contract_path), str(raw_fresh_path),
+    ]) == 0
+    assert json.loads(capsys.readouterr().out)["state"] == "REVIEWABLE"
     assert main(["compile-bundle", str(contract_path), str(episode_path)]) == 0
     payload = json.loads(capsys.readouterr().out)
     assert payload["schema_version"] == DOWNSTREAM_BUNDLE_SCHEMA
@@ -444,8 +742,125 @@ def test_formal_training_run_invokes_agent_and_only_then_persists_complete_episo
     assert "only product is one complete EnterpriseUnderwritingEpisode" in seen[0][0]["content"]
     assert receipt["state"] == "TRAINING_EPISODE_COMPLETED"
     persisted = json.loads((tmp_path / "enterprise_underwriting_episode.json").read_text(encoding="utf-8"))
-    assert persisted == episode
+    assert persisted == materialize_fresh_subagent_episode(raw_agent_episode)
+    assert persisted["component_decision_summary"] == (
+        derive_component_decision_summary(persisted["component_decisions"])
+    )
+    assert "OVERSEAS_AND_INDUSTRIAL_CHAIN_OPTION_VALUE" in persisted[
+        "value_route"
+    ]["excluded_routes"]
     assert (tmp_path / "enterprise_underwriting_downstream_bundle.json").is_file()
+
+
+def test_fresh_materialization_is_narrow_and_preserves_exact_compiler_summaries() -> None:
+    contract = _worked_contract()
+    contract["economic_derivation_interface"] = deepcopy(
+        ECONOMIC_DERIVATION_INTERFACE
+    )
+    raw = _episode_with_derivation()
+    raw.pop("component_decision_summary")
+    raw.pop("economic_derivation_summary")
+    original = deepcopy(raw)
+
+    materialized = materialize_fresh_subagent_episode(raw)
+
+    assert raw == original
+    assert validate_training_episode(contract, raw)["state"] == "INVALID"
+    assert validate_fresh_subagent_response(contract, raw)["state"] == "REVIEWABLE"
+    assert materialized["component_decision_summary"] == (
+        derive_component_decision_summary(materialized["component_decisions"])
+    )
+    assert materialized["economic_derivation_summary"] == (
+        derive_economic_derivation_summary(materialized)
+    )
+    assert materialized["value_route"]["excluded_routes"] == [
+        "CAPACITY_GROWTH_VALUE_AS_PRIMARY",
+        "ONE_PERIOD_OCF_MINUS_CAPEX_AS_OWNER_CASH",
+        "OVERSEAS_AND_INDUSTRIAL_CHAIN_OPTION_VALUE",
+        "ORDINARY_SHARE_OWNER_CASH_VALUE",
+    ]
+    assert "RETURN_DECOMPOSITION" not in materialized["value_route"][
+        "excluded_routes"
+    ]
+
+
+def test_fresh_materialization_only_canonicalizes_unknown_delta_status() -> None:
+    contract = _worked_contract()
+    contract["economic_derivation_interface"] = deepcopy(
+        ECONOMIC_DERIVATION_INTERFACE
+    )
+    raw = _episode_with_derivation()
+    raw.pop("component_decision_summary")
+    raw.pop("economic_derivation_summary")
+    normal = raw["economic_derivation"]["driver_sensitivity_specs"][0][
+        "transmission"
+    ]["normal_earnings"]
+    normal["delta"] = deepcopy(
+        raw["economic_derivation"]["driver_sensitivity_specs"][0][
+            "transmission"
+        ]["owner_cash"]["delta"]
+    )
+    normal["status"] = "DIRECT"
+
+    assert any(
+        item.endswith("delta.unknown_requires_unknown_transmission")
+        for item in validate_training_episode(contract, raw)["findings"]
+    )
+    materialized = materialize_fresh_subagent_episode(raw)
+    assert materialized["economic_derivation"]["driver_sensitivity_specs"][0][
+        "transmission"
+    ]["normal_earnings"]["status"] == "UNKNOWN"
+    assert validate_fresh_subagent_response(contract, raw)["state"] == "REVIEWABLE"
+
+    malformed = deepcopy(raw)
+    malformed["economic_derivation"]["driver_sensitivity_specs"][0][
+        "transmission"
+    ]["normal_earnings"] = {
+        "status": "UNKNOWN",
+        "basis": "错误的有界输入不得被物化为未知输入",
+        "delta": {
+            "status": "BOUNDED",
+            "range_low": -1.0,
+            "range_high": 1.0,
+            "unit": "RMB_m",
+        },
+    }
+    assert any(
+        item.endswith("delta.bounded_conflicts_with_unknown_transmission")
+        for item in validate_fresh_subagent_response(contract, malformed)["findings"]
+    )
+
+
+def test_fresh_materialization_does_not_resolve_active_excluded_route_conflicts() -> None:
+    contract = _worked_contract()
+    raw = _episode()
+    raw.pop("component_decision_summary")
+    raw["value_route"]["excluded_routes"].append("RETURN_DECOMPOSITION")
+
+    materialized = materialize_fresh_subagent_episode(raw)
+
+    assert materialized["value_route"]["excluded_routes"].count(
+        "RETURN_DECOMPOSITION"
+    ) == 1
+    assert "episode:value_route.route_cannot_be_active_and_excluded:RETURN_DECOMPOSITION" in (
+        validate_fresh_subagent_response(contract, raw)["findings"]
+    )
+
+
+def test_v3_raw_response_is_read_only_regression_input_for_fresh_materialization() -> None:
+    contract_path = REPORT_AUTONOMY_2X2_ROOT / (
+        "contracts_v3/CN000935_A01_INDUSTRY_ONLY_CONTRACT.json"
+    )
+    response_path = REPORT_AUTONOMY_2X2_ROOT / (
+        "raw_agent_responses_v3/A01_INDUSTRY_ONLY_EPISODE_RESPONSE.json"
+    )
+    original_text = response_path.read_text(encoding="utf-8")
+    raw = json.loads(original_text)
+    contract = json.loads(contract_path.read_text(encoding="utf-8"))
+
+    assert validate_training_episode(contract, raw)["state"] == "INVALID"
+    assert validate_fresh_subagent_response(contract, raw)["state"] == "REVIEWABLE"
+    assert response_path.read_text(encoding="utf-8") == original_text
 
 
 def test_fresh_codex_subagent_is_the_default_formal_orchestration_path(
@@ -471,7 +886,7 @@ def test_fresh_codex_subagent_is_the_default_formal_orchestration_path(
     ]) == 0
     render_receipt = json.loads(capsys.readouterr().out)
     assert render_receipt["state"] == "FRESH_SUBAGENT_TASK_READY"
-    assert json.loads(task_path.read_text(encoding="utf-8"))["messages"] == task["messages"]
+    assert json.loads(task_path.read_text(encoding="utf-8")) == task
 
     assert main([
         "run", str(contract_path), "--agent-response", str(response_path),
@@ -485,7 +900,177 @@ def test_fresh_codex_subagent_is_the_default_formal_orchestration_path(
     )
     assert json.loads(
         (output_dir / "enterprise_underwriting_episode.json").read_text(encoding="utf-8")
-    ) == episode
+    ) == materialize_fresh_subagent_episode(episode)
+
+
+def test_compile_reader_brief_is_a_one_way_validated_episode_projection(
+    tmp_path: Path, capsys: pytest.CaptureFixture[str],
+) -> None:
+    episode = _episode()
+    episode_path = tmp_path / "episode.json"
+    brief_path = tmp_path / "reader-brief.json"
+    episode_path.write_text(json.dumps(episode, ensure_ascii=False), encoding="utf-8")
+
+    assert main([
+        "compile-reader-brief", str(episode_path), "--output", str(brief_path),
+    ]) == 0
+    receipt = json.loads(capsys.readouterr().out)
+    assert receipt["state"] == "READER_BRIEF_COMPILED"
+    assert receipt["brief_path"] == str(brief_path.resolve())
+    brief = json.loads(brief_path.read_text(encoding="utf-8"))
+    assert brief["company_name"] == episode["company_name"]
+    assert brief["central_judgment"] == episode["underwriting_thesis"]["central_path"]
+
+
+def test_fresh_task_embeds_one_frozen_episode_schema_for_every_arm() -> None:
+    frozen_schema = json.loads(
+        (ROOT / "schemas/enterprise_underwriting_episode_v1.schema.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    tasks = []
+    for arm in ("A00", "A10", "A01", "A11"):
+        contract = _blind_contract()
+        contract["contract_id"] = f"UWTRAIN:SYNTHETIC:{arm}:V2"
+        if arm in {"A01", "A11"}:
+            contract["economic_derivation_interface"] = deepcopy(
+                ECONOMIC_DERIVATION_INTERFACE
+            )
+        tasks.append(build_fresh_subagent_task(contract))
+
+    delivered_schemas = [
+        task["response_contract"]["episode_json_schema"] for task in tasks
+    ]
+    assert delivered_schemas == [frozen_schema] * 4
+    assert frozen_schema["properties"]["schema_version"]["const"] == (
+        "enterprise-underwriting-episode.v2"
+    )
+    assert frozen_schema["properties"]["component_decisions"]["items"] == {
+        "$ref": "#/$defs/component_decision"
+    }
+    assert frozen_schema["properties"]["economic_derivation"] == {
+        "$ref": "#/$defs/economic_derivation"
+    }
+    assert frozen_schema["$defs"]["economic_derivation"]["required"] == [
+        "schema_version",
+        "normal_earnings_bridge",
+        "driver_sensitivity_specs",
+    ]
+    assert "responsibility_boundary" not in frozen_schema[
+        "$defs"
+    ]["driver_sensitivity_spec"]["required"]
+    assert frozen_schema["$defs"]["driver_sensitivity_spec"]["properties"][
+        "responsibility_boundary"
+    ] == {"$ref": "#/$defs/non_empty_string"}
+    assert frozen_schema["$defs"]["sensitivity_delta_attribution"]["oneOf"][0][
+        "properties"
+    ]["magnitude_evidence"] == {
+        "$ref": "#/$defs/sensitivity_delta_magnitude_evidence"
+    }
+    assert frozen_schema["$defs"]["evidence_trace_item"]["properties"][
+        "sensitivity_magnitude_observation"
+    ] == {"$ref": "#/$defs/sensitivity_magnitude_observation"}
+    assert frozen_schema["$defs"]["sensitivity_magnitude_observation"][
+        "required"
+    ] == [
+        "component_ids", "responsibility_boundary", "driver_metric",
+        "driver_unit", "horizon", "affected_axes", "delta_unit",
+        "calculation_inputs",
+    ]
+    assert frozen_schema["additionalProperties"] is False
+    assert frozen_schema["dependentRequired"]["economic_derivation"] == [
+        "component_decisions",
+    ]
+    assert "component_decision_summary" not in frozen_schema.get(
+        "dependentRequired", {}
+    ).get("component_decisions", [])
+    assert frozen_schema["properties"]["evidence_trace"]["items"] == {
+        "$ref": "#/$defs/evidence_trace_item"
+    }
+    assert frozen_schema["$defs"]["evidence_trace_item"]["required"] == [
+        "evidence_id", "source_ref", "locator", "scope", "used_for",
+    ]
+    assert frozen_schema["$defs"]["evidence_trace_item"][
+        "additionalProperties"
+    ] is False
+    assert frozen_schema["$defs"]["existing_object_ref"]["required"] == [
+        "kind", "ref", "role",
+    ]
+    assert frozen_schema["$defs"]["underwriting_thesis"][
+        "additionalProperties"
+    ] is False
+    assert "monitoring" in frozen_schema["$defs"]["underwriting_thesis"][
+        "required"
+    ]
+
+    response_contract = tasks[0]["response_contract"]
+    requirements = "\n".join(response_contract["schema_requirements"])
+    assert response_contract["schema_authority"] == (
+        "FROZEN_COMPLETE_EPISODE_JSON_SCHEMA"
+    )
+    assert "required" in requirements
+    assert "enum and const" in requirements
+    assert "additionalProperties is false" in requirements
+    semantic_requirements = "\n".join(
+        response_contract["semantic_requirements"]
+    )
+    assert "Copy industry_future_thesis.strongest_rival verbatim" in (
+        semantic_requirements
+    )
+    assert "scope, and used_for" in semantic_requirements
+    assert "kind, ref, and role" in semantic_requirements
+    assert "valuation_use is derived from route bindings" in semantic_requirements
+    assert "primary, corroborative, stress, or excluded route" in semantic_requirements
+    assert "normal_earnings_use is not NOT_APPLICABLE" in semantic_requirements
+    assert "UNKNOWN uses an UNKNOWN delta" in semantic_requirements
+    assert "separate calculation-bound magnitude evidence" in semantic_requirements
+    assert "canonical evidence_trace sensitivity_magnitude_observation" in (
+        semantic_requirements
+    )
+    assert "binding uses match route roles" in semantic_requirements
+    assert "only derives" in semantic_requirements
+    assert "does not supply economics" in semantic_requirements
+    assert "response_contract.episode_json_schema" in tasks[0]["messages"][0][
+        "content"
+    ]
+
+
+def test_schema_conforming_mock_response_passes_existing_fresh_binding(
+    tmp_path: Path,
+) -> None:
+    completed_response = _episode_with_derivation()
+    agent_response = deepcopy(completed_response)
+    agent_response.pop("component_decision_summary")
+    agent_response.pop("economic_derivation_summary")
+    contract = _worked_contract(completed_response)
+    contract["economic_derivation_interface"] = deepcopy(
+        ECONOMIC_DERIVATION_INTERFACE
+    )
+
+    frozen_schema = json.loads(
+        (ROOT / "schemas/enterprise_underwriting_episode_v1.schema.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    try:
+        import jsonschema
+    except ModuleNotFoundError:
+        pass
+    else:
+        jsonschema.Draft202012Validator(frozen_schema).validate(agent_response)
+    receipt = run_fresh_subagent_response(
+        contract,
+        agent_response=agent_response,
+        output_dir=tmp_path,
+    )
+
+    assert receipt["state"] == "TRAINING_EPISODE_COMPLETED"
+    assert receipt["execution_mode"] == "CODEX_FRESH_SUBAGENT"
+    assert json.loads(
+        (tmp_path / "enterprise_underwriting_episode.json").read_text(
+            encoding="utf-8"
+        )
+    ) == materialize_fresh_subagent_episode(agent_response)
 
 
 def test_subagent_finalizer_rejects_partial_or_unbound_response(tmp_path: Path) -> None:

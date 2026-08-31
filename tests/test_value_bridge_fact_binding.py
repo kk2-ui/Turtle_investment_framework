@@ -52,9 +52,16 @@ def _ordinary_input() -> dict:
 
 
 def test_cash_applicability_judgments_resolve_to_current_boolean_evidence() -> None:
-    model_input = {"cash_accessibility": {"model_input": _cash_input()}}
+    cash = _cash_input()
+    model_input = {"cash_accessibility": {"model_input": cash}}
+    fact_ids = {
+        fact_id
+        for row in cash["realization_applicability"].values()
+        for fact_id in row["source_fact_bindings"].values()
+    }
     observations = {
-        "F:CONTINUITY": {"normalized_value": True, "status": "VERIFIED"}
+        fact_id: {"normalized_value": True, "status": "VERIFIED"}
+        for fact_id in fact_ids
     }
     invalid: list[str] = []
 
@@ -66,7 +73,7 @@ def test_cash_applicability_judgments_resolve_to_current_boolean_evidence() -> N
     )
     assert invalid == []
 
-    observations["F:CONTINUITY"]["normalized_value"] = False
+    observations[next(iter(fact_ids))]["normalized_value"] = False
     _validate_cash_applicability_fact_refs(
         model_input,
         observations=observations,

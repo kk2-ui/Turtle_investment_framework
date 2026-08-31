@@ -1,0 +1,14 @@
+{
+  "schema_version": "enterprise-underwriting-anonymous-arm-custody.v1",
+  "experiment_id": "REPORT_AUTONOMY_2X2:CN000935:20180430:V3",
+  "state": "SEALED_UNTIL_PREOUTCOME_REVIEW_COMPLETE",
+  "mapping": {
+    "ANON_MARBLE": "A10_EXPERT_ONLY",
+    "ANON_RIVER": "A00_BASELINE",
+    "ANON_SAFFRON": "A11_COMBINED",
+    "ANON_WILLOW": "A01_INDUSTRY_ONLY"
+  },
+  "reviewer_must_not_read_before_preoutcome_decision": true,
+  "reveal_rule": "AFTER_ANONYMOUS_PREOUTCOME_REVIEW_AND_FIELD_LEVEL_OUTCOME_SETTLEMENT",
+  "authority": "CUSTODY_ONLY_NO_INVESTMENT_AUTHORITY"
+}

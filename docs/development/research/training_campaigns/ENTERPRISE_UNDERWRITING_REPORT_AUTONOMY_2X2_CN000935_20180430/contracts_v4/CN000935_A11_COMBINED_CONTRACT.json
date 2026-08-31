@@ -1,0 +1,80 @@
+{
+  "schema_version": "enterprise-underwriting-training-contract.v2",
+  "contract_id": "UWTRAIN:CN000935:20180430:REPORT_AUTONOMY_2X2:A11:V4",
+  "training_track": "BLIND_REPLAY",
+  "company_id": "CN:000935",
+  "company_name": "四川双马水泥股份有限公司",
+  "cutoff_at": "2018-04-30T23:59:59+08:00",
+  "sample_identity": "BLIND_REPLAY",
+  "outcome_access": "SEALED",
+  "allowed_sources": [
+    {
+      "source_id": "SOURCE:CN:CEMENT:20180430:COMMON_OFFICIAL_CONTEXT",
+      "source_ref": "docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_COURSE_2C_CN600720_20180430/sources/00_COMMON_CEMENT_PRE_CUTOFF_SOURCE_PACKAGE.md",
+      "available_at": "2017-08-04T15:25:00+08:00",
+      "time_role": "PRE_CUTOFF"
+    },
+    {
+      "source_id": "SOURCE:CN000935:20180430:PRE_CUTOFF",
+      "source_ref": "docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_REPORT_AUTONOMY_2X2_CN000935_20180430/sources/01_CN000935_PRE_CUTOFF_SOURCE_PACKAGE.md",
+      "available_at": "2018-04-10T23:59:59+08:00",
+      "time_role": "PRE_CUTOFF"
+    },
+    {
+      "source_id": "TRAINING_MEMORY:EXPERT_CORRECTION:CN02669:V4",
+      "source_ref": "docs/development/research/training_campaigns/EXPERT_CORRECTION_CN02669_20260831/02_COMPILED_TRAINING_MEMORY.md",
+      "available_at": "2026-08-31T00:00:00+08:00",
+      "time_role": "TRAINING_MEMORY"
+    },
+    {
+      "source_id": "TRAINING_MEMORY:CN:CEMENT:COMPACT_DECISION:V4",
+      "source_ref": "docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/69_compact_industry_decision_memory_v1.md",
+      "available_at": "2026-08-31T00:00:00+08:00",
+      "time_role": "TRAINING_MEMORY"
+    }
+  ],
+  "feedback_clocks": [
+    {
+      "clock_id": "CLOCK:CN000935:FY2018",
+      "horizon": "EARLY_SIGNAL",
+      "opens_at": "2019-05-01T00:00:00+08:00",
+      "episode_claims": ["INDUSTRY_AND_SITUATION", "BUSINESS_POSITION_AND_ADAPTATION", "SURVIVAL_AND_FINANCING"],
+      "discriminating_observation": "出售边界完成后，保留水泥责任单元、出售收款、基金投资和债务是否按冻结口径分离，且行业利润池能否穿过保留业务而非历史合并总量。"
+    },
+    {
+      "clock_id": "CLOCK:CN000935:FY2019",
+      "horizon": "OPERATING_ADAPTATION",
+      "opens_at": "2020-05-01T00:00:00+08:00",
+      "episode_claims": ["BUSINESS_POSITION_AND_ADAPTATION", "NORMAL_EARNINGS", "OWNER_CASH"],
+      "discriminating_observation": "保留水泥核心与投资管理等新组件能否形成同责任边界的盈利和现金，出售收款是否被分配、偿债或转入可观察回报的资产。"
+    },
+    {
+      "clock_id": "CLOCK:CN000935:FY2020",
+      "horizon": "NORMALIZATION_AND_CASH",
+      "opens_at": "2021-05-01T00:00:00+08:00",
+      "episode_claims": ["NORMAL_EARNINGS", "OWNER_CASH", "PERMANENT_LOSS"],
+      "discriminating_observation": "持续组件的正常盈利、维护与增长资本、营运资本和普通股现金是否闭合，还是低回报留存和边界变化造成慢性价值损失。"
+    },
+    {
+      "clock_id": "CLOCK:CN000935:FY2022",
+      "horizon": "LONG_TERM_PERMANENT_LOSS",
+      "opens_at": "2023-05-01T00:00:00+08:00",
+      "episode_claims": ["INDUSTRY_AND_SITUATION", "OWNER_CASH", "PERMANENT_LOSS", "VALUE_ROUTE"],
+      "discriminating_observation": "保留业务、基金及出售收款的长期实现是否支持冻结的价值路线和永久损失判断，或证明主要路线应被降级、排除或翻转。"
+    }
+  ],
+  "primary_training_product": {
+    "object_type": "EnterpriseUnderwritingEpisode",
+    "schema_version": "enterprise-underwriting-episode.v2",
+    "completion_basis": "COMPLETE_EPISODE_VALIDATION_ONLY"
+  },
+  "component_decision_interface": {
+    "schema_version": "enterprise-underwriting-component-decision-interface.v1",
+    "completion_basis": "EXPLICIT_EFFECT_FOR_EACH_COMPONENT"
+  },
+  "economic_derivation_interface": {
+    "schema_version": "enterprise-underwriting-economic-derivation-interface.v1",
+    "completion_basis": "PRICE_FREE_COMPONENT_BRIDGE_AND_DRIVER_SENSITIVITY"
+  },
+  "authority": "RESEARCH_TRAINING_ONLY_NO_PRICE_VALUATION_OR_INVESTMENT_AUTHORITY"
+}
