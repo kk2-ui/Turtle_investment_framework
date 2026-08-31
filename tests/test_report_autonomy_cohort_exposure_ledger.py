@@ -131,6 +131,22 @@ def test_every_prior_exposure_role_blocks_a_test_side_issuer() -> None:
         )
 
 
+def test_rejects_test_side_issuer_without_a_confirmed_legal_entity_bridge() -> None:
+    ledger = _ledger()
+    test_identity = next(
+        item for item in ledger["issuer_identities"]
+        if item["issuer_id"] == "ISSUER:SYNTHETIC:TEST"
+    )
+    test_identity["legal_entity_id"] = "LEGAL_ENTITY_UNCONFIRMED:SYNTHETIC:TEST"
+
+    result = validate_cohort_exposure_ledger(ledger)
+
+    assert result["state"] == "INVALID"
+    assert result["findings"] == [
+        "test_acquisition_legal_entity_unconfirmed:ISSUER:SYNTHETIC:TEST"
+    ]
+
+
 def test_rejects_mapping_shaped_exposures_instead_of_treating_them_as_empty() -> None:
     ledger = _ledger()
     ledger["exposures"] = {

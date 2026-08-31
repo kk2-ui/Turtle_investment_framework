@@ -20,6 +20,9 @@ records but exactly one intended side.  The validator rejects a legal-entity,
 security-identifier, or normalized name/alias collision across issuer records,
 and rejects an exposure referring to an unregistered issuer.  This catches a
 renamed or differently coded issuer before it can be placed on both sides.
+An identity using `LEGAL_ENTITY_UNCONFIRMED:` may remain Pack-side, excluded,
+or unassigned during source acquisition, but can never be moved to
+`TEST_ACQUISITION` until a curator has established its legal-entity bridge.
 
 Security identifiers use the single local form `MARKET:SECURITY`. Case and
 whitespace around `:` are canonicalized before collision checks; other forms

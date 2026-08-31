@@ -48,6 +48,7 @@ _LOCAL_ONLY_DATA_POLICY = "LOCAL_ONLY_NO_OUTCOME_OR_PRICE"
 _PRE_SELECTION_STATE = "PRE_SELECTION"
 _NAME_TOKEN = re.compile(r"[^0-9A-Za-z\u4e00-\u9fff]+")
 _SECURITY_IDENTIFIER = re.compile(r"^[A-Z][A-Z0-9_-]*:[A-Z0-9]+$")
+_UNCONFIRMED_LEGAL_ENTITY_PREFIX = "LEGAL_ENTITY_UNCONFIRMED:"
 
 
 def _mapping(value: Any) -> dict[str, Any]:
@@ -268,6 +269,13 @@ def validate_cohort_exposure_ledger(payload: Any) -> dict[str, Any]:
     )
     for issuer_id, identity in identities.items():
         if identity.get("intended_side") == "TEST_ACQUISITION":
+            if _text(identity.get("legal_entity_id")).startswith(
+                _UNCONFIRMED_LEGAL_ENTITY_PREFIX
+            ):
+                _add(
+                    findings,
+                    "test_acquisition_legal_entity_unconfirmed:" + issuer_id,
+                )
             for role in sorted(prior_roles.get(issuer_id, set())):
                 _add(findings, "test_acquisition_prior_exposure:" + issuer_id + ":" + role)
 
