@@ -16,6 +16,12 @@
 
 当前唯一集成入口是任务开始时干净的本地 `main`；精确 commit 只记录该任务的冻结起点，不能成为第二条长期基线。后续 Agent 只从当前本地 `main` 开工。已合入功能分支与历史 worktree 只用于追溯，不能覆盖当前状态；未合入旧分支必须先保留已提交增量，再迁移到新的当前 main worktree。下方日期更早的段落用于解释演进；与本节冲突时以本节和当前本地 main 为准。
 
+## 2026-08-31 专家纠偏蒸馏与报告自治训练
+
+当前训练增加一条窄的 teacher-memory 接口：[专家纠偏蒸馏与报告自治训练 V1](development/research/TURTLE_EXPERT_CORRECTION_DISTILLATION_V1.md)。它不新建 Episode、训练 runtime 或 outcome 控制面，而是把结果已知高质量报告中被接受的人工纠偏拆成经济对象、责任边界、错误机制、投资影响、反向条件和下一证据，再编译为不含教师公司事实、价格和估值数值的 `TRAINING_MEMORY`。后续仍由现有 `enterprise-underwriting-training-contract.v2`、fresh Codex 双臂、独立 reviewer 与 cutoff feedback 链验证。
+
+首个中海物业教师包已达到 `TRAINING_READY`，包含八项材料纠偏和七张格雷厄姆到巴菲特条件化原则。该状态只证明教师材料可迁移输入已就绪；尚无未见公司 A/B、cutoff 结算、跨公司应用或报告自治验证，方法仍为 `METHOD_NOT_VALIDATED`。目标是让人工从主动纠偏者退到最终批准者；验收要求首次报告无 `OPEN / MATERIAL` 的黄金报告审阅 finding，而不是增加篇幅、字段或谨慎措辞。
+
 ## 2026-08-30 行业经验层与课程二期
 
 行业前景训练改为明确的上游闭环：`IndustryLearningBlock -> Industry Experience Pack -> IndustryUnderwritingContext -> EnterpriseUnderwritingEpisode.IndustryFutureThesis`。Pack 是引用现有行业 block、官方 observation、机制、案例、反例和反馈的版本化 manifest，不是新事实库；公司结果只结算公司传导，行业方向必须由官方行业资料和多家公司共同结果结算。
@@ -114,6 +120,9 @@ V2 兼容状态是 `G1_CANDIDATE_MATURATION + G1-T_ENTERPRISE_JUDGMENT_V2 / REAL
 | `docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_COURSE_2B_CN000672_20180430/15_COURSE_2B_COMPLETION_AUDIT.md` | Course 2B 的最终收口：冻结裁决、Pack 状态、route required/optional 组件修订、legacy 回放边界、测试与 fresh 独立代码复审 |
 | `docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_COURSE_2C_CN600720_20180430/10_COURSE2C_FINAL_UTILITY_REVIEW.md` | Course 2C 的正式双层裁决：行业路径无材料差异，公司传导与整体效用为 Enhanced materially better，方法仅为 transfer candidate |
 | `docs/development/research/TURTLE_TRAINING_BASELINE_ALIGNMENT_20260831.md` | 当前训练基线总索引：统一 main、Course 1/2B/2C、经验调用反馈，以及历史课程结论的保留与非合并边界 |
+| `docs/development/research/TURTLE_EXPERT_CORRECTION_DISTILLATION_V1.md` | 把被接受的人工报告纠偏与条件化投资原则编译成 company-free TRAINING_MEMORY，并以未见公司/时间 A/B、cutoff feedback 和首次成稿材料审阅检验报告自治；首包 training-ready，方法未验证 |
+| `docs/development/research/training_campaigns/EXPERT_CORRECTION_CN02669_20260831/00_README.md` | 中海物业首个结果已知教师包、来源快照、使用边界和验证入口；只有编译记忆可进入 Enhanced arm |
+| `scripts/expert_correction_training.py` | 验证 ExpertCorrectionTeacherPackage 并编译不含教师公司身份、价格、事实和来源的 TRAINING_MEMORY；不生成公司判断、结算或投资权限 |
 | `scripts/industry_experience_pack.py` | 验证 Pack 引用、时间角色、角色覆盖、行业/公司分层结算和公司轴/时间轴成熟状态；不采集或复制事实 |
 | `docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/56_industry_experience_pack_replay_v1.json` | 首个行业经验层离线回放；状态为 DRAFT，只验证工作流，不计能力 |
 | `docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/60_official_industry_context_observations_v1.json` | cutoff-safe 工信部/国务院行业观察 ledger；绑定已物化 raw package、经济解释和禁止外推边界 |

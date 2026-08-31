@@ -1,0 +1,274 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://turtle.local/schemas/expert_correction_teacher_package.schema.json",
+  "title": "Expert Correction Teacher Package",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "package_id",
+    "case_identity",
+    "source_artifacts",
+    "correction_events",
+    "conditional_principles",
+    "cutoff_feedback_design",
+    "transfer_acceptance",
+    "authority"
+  ],
+  "properties": {
+    "schema_version": {"const": "expert-correction-teacher-package.v1"},
+    "package_id": {"type": "string", "minLength": 1},
+    "case_identity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["company_id", "company_name", "case_cutoff_at", "teaching_identity", "outcome_access"],
+      "properties": {
+        "company_id": {"type": "string", "minLength": 1},
+        "company_name": {"type": "string", "minLength": 1},
+        "case_cutoff_at": {"type": "string", "format": "date-time"},
+        "teaching_identity": {
+          "enum": ["RESULT_KNOWN_EXPERT_CORRECTED", "RESULT_KNOWN_REVIEW_CORRECTED"]
+        },
+        "outcome_access": {"const": "RESULT_KNOWN"}
+      }
+    },
+    "source_artifacts": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["artifact_id", "ref", "role", "review_state", "teaching_use"],
+        "properties": {
+          "artifact_id": {"type": "string", "minLength": 1},
+          "ref": {"type": "string", "minLength": 1},
+          "role": {
+            "enum": ["TARGET_REPORT", "MATERIAL_REVIEW", "CORRECTION_HANDOFF", "PRINCIPLE_SOURCE"]
+          },
+          "review_state": {
+            "enum": ["ACCEPTED_TEACHING_PROVENANCE", "ACCEPT_WITH_DATA_LIMITED_TEACHING_PROVENANCE"]
+          },
+          "teaching_use": {"type": "string", "minLength": 1}
+        }
+      }
+    },
+    "correction_events": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"$ref": "#/$defs/correction_event"}
+    },
+    "conditional_principles": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"$ref": "#/$defs/conditional_principle"}
+    },
+    "cutoff_feedback_design": {"$ref": "#/$defs/cutoff_feedback_design"},
+    "transfer_acceptance": {"$ref": "#/$defs/transfer_acceptance"},
+    "authority": {"const": "TRAINING_MEMORY_ONLY_NOT_CURRENT_INVESTMENT_EVIDENCE"}
+  },
+  "$defs": {
+    "nonempty_text_array": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {"type": "string", "minLength": 1}
+    },
+    "root_causes": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "enum": ["DATA_COVERAGE", "ACQUISITION_MODULE", "REASONING", "MODEL", "WRITING"]
+      }
+    },
+    "decision_surfaces": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "enum": [
+          "INDUSTRY_FUTURE",
+          "CENTRAL_THESIS",
+          "BUSINESS_ENGINE",
+          "MANAGEMENT_AND_CAPITAL_ALLOCATION",
+          "NORMAL_EARNINGS",
+          "OWNER_CASH",
+          "PERMANENT_LOSS",
+          "VALUE_ROUTE",
+          "PRICE_IDENTITY",
+          "STRONGEST_RIVAL",
+          "REVERSAL_EVIDENCE",
+          "SOURCE_BINDING"
+        ]
+      }
+    },
+    "correction_event": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "event_id",
+        "accepted_source_artifact_ids",
+        "before_error_pattern",
+        "root_cause_classes",
+        "economic_object",
+        "responsibility_boundary",
+        "error_mechanism",
+        "economic_impact",
+        "prohibited_assumptions",
+        "correction",
+        "transfer",
+        "decision_surfaces"
+      ],
+      "properties": {
+        "event_id": {"type": "string", "minLength": 1},
+        "accepted_source_artifact_ids": {"$ref": "#/$defs/nonempty_text_array"},
+        "before_error_pattern": {"type": "string", "minLength": 1},
+        "root_cause_classes": {"$ref": "#/$defs/root_causes"},
+        "economic_object": {"type": "string", "minLength": 1},
+        "responsibility_boundary": {"type": "string", "minLength": 1},
+        "error_mechanism": {"type": "string", "minLength": 1},
+        "economic_impact": {"type": "string", "minLength": 1},
+        "prohibited_assumptions": {"$ref": "#/$defs/nonempty_text_array"},
+        "correction": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "best_current_judgment",
+            "required_company_evidence",
+            "investor_consequence",
+            "uncertainty_treatment",
+            "countercondition",
+            "reversal_observation"
+          ],
+          "properties": {
+            "best_current_judgment": {"type": "string", "minLength": 1},
+            "required_company_evidence": {"$ref": "#/$defs/nonempty_text_array"},
+            "investor_consequence": {"type": "string", "minLength": 1},
+            "uncertainty_treatment": {"type": "string", "minLength": 1},
+            "countercondition": {"type": "string", "minLength": 1},
+            "reversal_observation": {"type": "string", "minLength": 1}
+          }
+        },
+        "transfer": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["portable_rule", "applicable_when", "not_applicable_when", "next_case_probe"],
+          "properties": {
+            "portable_rule": {"type": "string", "minLength": 1},
+            "applicable_when": {"type": "string", "minLength": 1},
+            "not_applicable_when": {"type": "string", "minLength": 1},
+            "next_case_probe": {"type": "string", "minLength": 1}
+          }
+        },
+        "decision_surfaces": {"$ref": "#/$defs/decision_surfaces"}
+      }
+    },
+    "conditional_principle": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "principle_id",
+        "title",
+        "source_artifact_id",
+        "principle_statement",
+        "economic_object",
+        "applicable_when",
+        "mechanism",
+        "target_company_evidence",
+        "common_misuse",
+        "counterconditions",
+        "downstream_use",
+        "disconfirming_observation",
+        "derived_from_event_ids"
+      ],
+      "properties": {
+        "principle_id": {"type": "string", "minLength": 1},
+        "title": {"type": "string", "minLength": 1},
+        "source_artifact_id": {"type": "string", "minLength": 1},
+        "principle_statement": {"type": "string", "minLength": 1},
+        "economic_object": {"type": "string", "minLength": 1},
+        "applicable_when": {"type": "string", "minLength": 1},
+        "mechanism": {"type": "string", "minLength": 1},
+        "target_company_evidence": {"$ref": "#/$defs/nonempty_text_array"},
+        "common_misuse": {"type": "string", "minLength": 1},
+        "counterconditions": {"$ref": "#/$defs/nonempty_text_array"},
+        "downstream_use": {"type": "string", "minLength": 1},
+        "disconfirming_observation": {"type": "string", "minLength": 1},
+        "derived_from_event_ids": {"$ref": "#/$defs/nonempty_text_array"}
+      }
+    },
+    "cutoff_feedback_design": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "target_identity_rule",
+        "outcome_source_policy",
+        "forbidden_outcome_proxies",
+        "feedback_clocks",
+        "settlement_route",
+        "learning_route"
+      ],
+      "properties": {
+        "status": {"const": "PREREGISTERED_NO_OUTCOME_VALUES"},
+        "target_identity_rule": {"type": "string", "minLength": 1},
+        "outcome_source_policy": {"type": "string", "minLength": 1},
+        "forbidden_outcome_proxies": {"$ref": "#/$defs/nonempty_text_array"},
+        "feedback_clocks": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "clock_id",
+              "horizon",
+              "episode_claims",
+              "diagnostic_observation",
+              "supports_rule",
+              "refutes_rule",
+              "mixed_rule"
+            ],
+            "properties": {
+              "clock_id": {"type": "string", "minLength": 1},
+              "horizon": {"type": "string", "minLength": 1},
+              "episode_claims": {"$ref": "#/$defs/nonempty_text_array"},
+              "diagnostic_observation": {"type": "string", "minLength": 1},
+              "supports_rule": {"type": "string", "minLength": 1},
+              "refutes_rule": {"type": "string", "minLength": 1},
+              "mixed_rule": {"type": "string", "minLength": 1}
+            }
+          }
+        },
+        "settlement_route": {"type": "string", "minLength": 1},
+        "learning_route": {"type": "string", "minLength": 1}
+      }
+    },
+    "transfer_acceptance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "baseline_policy",
+        "enhanced_policy",
+        "agent_isolation",
+        "reviewer_blinding",
+        "decisive_surfaces",
+        "pass_rule",
+        "failure_rule",
+        "report_gate",
+        "claim_limit"
+      ],
+      "properties": {
+        "baseline_policy": {"type": "string", "minLength": 1},
+        "enhanced_policy": {"type": "string", "minLength": 1},
+        "agent_isolation": {"type": "string", "minLength": 1},
+        "reviewer_blinding": {"type": "string", "minLength": 1},
+        "decisive_surfaces": {"$ref": "#/$defs/decision_surfaces"},
+        "pass_rule": {"type": "string", "minLength": 1},
+        "failure_rule": {"type": "string", "minLength": 1},
+        "report_gate": {"type": "string", "minLength": 1},
+        "claim_limit": {"type": "string", "minLength": 1}
+      }
+    }
+  }
+}
