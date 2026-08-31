@@ -20,7 +20,7 @@
 
 当前训练增加一条窄的 teacher-memory 接口：[专家纠偏蒸馏与报告自治训练 V1](development/research/TURTLE_EXPERT_CORRECTION_DISTILLATION_V1.md)。它不新建 Episode、训练 runtime 或 outcome 控制面，而是把结果已知高质量报告中被接受的人工纠偏拆成经济对象、责任边界、错误机制、投资影响、反向条件和下一证据，再编译为不含教师公司事实、价格和估值数值的 `TRAINING_MEMORY`。后续仍由现有 `enterprise-underwriting-training-contract.v2`、fresh Codex 双臂、独立 reviewer 与 cutoff feedback 链验证。
 
-首个中海物业教师包已达到 `TRAINING_READY`，包含八项材料纠偏和七张格雷厄姆到巴菲特条件化原则。该状态只证明教师材料可迁移输入已就绪；尚无未见公司 A/B、cutoff 结算、跨公司应用或报告自治验证，方法仍为 `METHOD_NOT_VALIDATED`。目标是让人工从主动纠偏者退到最终批准者；验收要求首次报告无 `OPEN / MATERIAL` 的黄金报告审阅 finding，而不是增加篇幅、字段或谨慎措辞。
+首个中海物业教师包已达到 `TRAINING_READY`，包含九项材料纠偏和七张格雷厄姆到巴菲特条件化原则。旧 Q1 与黄金候选的成对反馈已经修订旧规则：行动价格不能因终值含判断就自动保持全局 `UNKNOWN`，应选择 best-current 路线并暴露反方；但行动层级变清楚也不能牺牲经营利润桥、现金实现时间表和敏感性归因。现金零认可只是当前事实基准下限，后续要由法律实体上游、特别返还资金来源、支付后余额和项目批次回款收窄为不重复计算的可达区间。该状态只证明教师材料可迁移输入已就绪；尚无未见公司 A/B、cutoff 结算、跨公司应用或报告自治验证，方法仍为 `METHOD_NOT_VALIDATED`。
 
 ## 2026-08-30 行业经验层与课程二期
 

@@ -212,6 +212,12 @@ def test_checked_in_teacher_memory_matches_compiler() -> None:
         (campaign / "01_TEACHER_PACKAGE.json").read_text(encoding="utf-8")
     )
     assert validate_teacher_package(package)["state"] == "TRAINING_READY"
+    memory = compile_training_memory(package)
+    assert len(package["correction_events"]) == 9
+    assert "uncertainty does not excuse route paralysis" in memory
+    assert "ECORR:ACTION_HIERARCHY_DOES_NOT_REPLACE_DERIVATION" in memory
+    assert "special-return funding, post-payment balances" in memory
+    assert "without opening model artifacts" in memory
     assert (campaign / "02_COMPILED_TRAINING_MEMORY.md").read_text(
         encoding="utf-8"
-    ) == compile_training_memory(package)
+    ) == memory

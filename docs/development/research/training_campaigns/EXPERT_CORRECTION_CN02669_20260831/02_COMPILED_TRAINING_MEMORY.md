@@ -21,7 +21,7 @@ It is not evidence about the target company, cannot be cited in the target Episo
 - Rule: Balance-sheet cash becomes ordinary-shareholder value only through a responsibility-matched ownership and realization bridge; uncertainty narrows recognition but does not automatically make the cash worthless.
 - Apply when: Material cash sits in subsidiaries, regulated entities, joint structures or groups with related-party balances and distribution frictions.
 - Do not apply when: The cash is held directly by the listed parent, unrestricted, wholly attributable and repeatedly distributed or deployed at observable adequate returns.
-- Next-case probe: Map cash-holding entities, ownership, restrictions, taxes, upstream history and actual shareholder distributions before assigning cash value.
+- Next-case probe: Map cash-holding entities, ownership, restrictions, taxes, upstream history, special-return funding, post-payment balances and project-batch collections; reconcile each source against ordinary distributions before assigning a cash range.
 - Decision surfaces: OWNER_CASH, PERMANENT_LOSS, VALUE_ROUTE
 
 ### ECORR:PARENT_SYSTEM_HAS_SUPPORT_AND_EXTRACTION_CHANNELS
@@ -42,11 +42,19 @@ It is not evidence about the target company, cannot be cited in the target Episo
 
 ### ECORR:ARITHMETIC_PRICE_IS_NOT_ACTION_PRICE
 
-- Rule: Arithmetic can solve a price without proving what economic route will realize it; price identity follows the cash and terminal mechanism, not numerical precision.
+- Rule: Arithmetic does not authorize a price, but uncertainty does not excuse route paralysis: select the best-current economic terminal, bind the research price to that route, and expose rival terminals and reversal evidence separately.
 - Apply when: A valuation depends materially on future market recognition, a chosen terminal multiple, a catalyst or an uncertain distribution route.
-- Do not apply when: The receipt is contractual, liquidation-bound or supported by repeatable owner cash within the same route and horizon.
-- Next-case probe: For every quoted price, name the exact operating cash, shareholder receipt and terminal mechanism, then reject any price that lacks one of those links.
+- Do not apply when: The receipt is contractually fixed or liquidation-bound and needs no competing terminal judgment; if no economically defensible route can be bounded, do not invent one and keep the action price unknown.
+- Next-case probe: For every quoted price, name the operating cash, shareholder receipt, terminal mechanism, required return and strongest rival route; explain why the selected base route is currently better.
 - Decision surfaces: VALUE_ROUTE, PRICE_IDENTITY, REVERSAL_EVIDENCE
+
+### ECORR:ACTION_HIERARCHY_DOES_NOT_REPLACE_DERIVATION
+
+- Rule: An executable action hierarchy and a challengeable economic derivation are both required: keep a concise bridge from business components through normal earnings and accessible cash to value, return and action price.
+- Apply when: A report combines several business engines, normalization adjustments, cash-accessibility judgments, sensitivities or competing value routes.
+- Do not apply when: A compact single-engine bridge already exposes every material operating, cash, terminal and return assumption in the reader-facing report.
+- Next-case probe: Ask a blind investor to reconstruct the material profit and cash bridge, identify the dominant sensitivity contribution, and reconcile the selected terminal to the action price without opening model artifacts.
+- Decision surfaces: BUSINESS_ENGINE, NORMAL_EARNINGS, OWNER_CASH, VALUE_ROUTE, PRICE_IDENTITY, SOURCE_BINDING
 
 ### ECORR:LOCAL_UNKNOWN_DOES_NOT_ERASE_THE_ENTERPRISE
 
@@ -104,7 +112,7 @@ It is not evidence about the target company, cannot be cited in the target Episo
 - Economic object: ordinary-shareholder cash
 - Apply when: Material cash is held across subsidiaries, financial units, joint structures or related-party networks.
 - Mechanism: Legal-entity ownership, reserves, regulation, taxes, non-controlling claims, receivables and capital allocation determine whether consolidated cash becomes ordinary-shareholder value.
-- Required target evidence: cash-holding entities and ownership; restrictions and tax friction; related balances; historical distributions and capital allocation
+- Required target evidence: cash-holding entities and ownership; restrictions and tax friction; related balances; historical distributions and capital allocation; special-return funding and post-payment balances; project-batch collections reconciled to ordinary distributions
 - Common misuse: Counting all consolidated cash at full value, counting parent and consolidated cash twice, or assigning zero because exact upstreamability is missing.
 - Counterconditions: Direct unrestricted parent cash with repeated distribution can justify high recognition.; Regulated or deposit-funded financial cash requires its own capital and liquidity boundary rather than an industrial cash formula.
 - Downstream use: Use a cash-accessibility range in owner cash, permanent loss and value routes without allowing the range to become a legal-entitlement claim.
@@ -119,8 +127,8 @@ It is not evidence about the target company, cannot be cited in the target Episo
 - Required target evidence: route-specific cash flows; timing and terminal mechanism; realization evidence; consistent entry and exit assumptions
 - Common misuse: Averaging route prices, promoting a fixed-terminal reverse calculation to action status, or confusing a stress boundary with a base value.
 - Counterconditions: A contractually fixed receipt can make a reverse price directly executable within its terms.; A liquidation route can supersede operating EPV when the asset-distribution mechanism is actually underway.
-- Downstream use: Keep route-specific prices separate and leave the action price unresolved when no route has sufficient evidence.
-- Disconfirming observation: Independent evidence establishes one dominant route and its receipt mechanism.
+- Downstream use: Keep route-specific prices separate, choose the best-current defensible route for the explicit research price, and leave the action price unresolved only when no route can be economically bounded.
+- Disconfirming observation: New evidence makes a rival route more defensible or shows that no route can support an explicit research price.
 
 ### CPRINCIPLE:PERMANENT_LOSS_IS_NOT_BANKRUPTCY_ONLY — Permanent loss includes slow per-share value destruction
 

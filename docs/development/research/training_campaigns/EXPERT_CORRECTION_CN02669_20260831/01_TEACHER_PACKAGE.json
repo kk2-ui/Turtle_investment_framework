@@ -59,6 +59,13 @@
       "teaching_use": "Before-to-after trace for nearby evidence binding without model mutation."
     },
     {
+      "artifact_id": "CN02669:PAIRED_REPORT_COMPARISON_CORRECTION",
+      "ref": "docs/development/research/training_campaigns/EXPERT_CORRECTION_CN02669_20260831/source_snapshots/08_PAIRED_REPORT_COMPARISON_CORRECTION.md",
+      "role": "CORRECTION_HANDOFF",
+      "review_state": "ACCEPTED_TEACHING_PROVENANCE",
+      "teaching_use": "Accepted user comparison that preserves the newer action hierarchy, restores the older derivation density, and treats zero cash recognition as a lower bound rather than a final estimate."
+    },
+    {
       "artifact_id": "PRINCIPLES:GRAHAM_TO_BUFFETT_NOTES",
       "ref": "docs/value_investing_from_graham_to_buffett_notes.md",
       "role": "PRINCIPLE_SOURCE",
@@ -115,7 +122,8 @@
       "event_id": "ECORR:CONSOLIDATED_CASH_IS_NOT_ORDINARY_SHAREHOLDER_CASH",
       "accepted_source_artifact_ids": [
         "CN02669:SUBSTANTIVE_REVIEW",
-        "CN02669:THESIS_ACCEPTANCE"
+        "CN02669:THESIS_ACCEPTANCE",
+        "CN02669:PAIRED_REPORT_COMPARISON_CORRECTION"
       ],
       "before_error_pattern": "Consolidated cash was at risk of being treated as fully attributable, upstreamable and distributable to ordinary shareholders.",
       "root_cause_classes": ["DATA_COVERAGE", "ACQUISITION_MODULE", "REASONING", "MODEL"],
@@ -129,15 +137,17 @@
         "Missing upstream detail means the cash has zero value."
       ],
       "correction": {
-        "best_current_judgment": "Separate consolidated cash, listed-parent cash, restrictions and ordinary-shareholder realization; recognize only the evidenced portion and preserve the remainder as a conditional option.",
+        "best_current_judgment": "Separate consolidated cash, listed-parent cash, restrictions and ordinary-shareholder realization; use the evidenced accessible amount as the base lower bound and preserve the unresolved remainder as a conditional range rather than either an arbitrary percentage or permanent zero.",
         "required_company_evidence": [
           "cash-holding legal entities and ownership",
           "restricted cash, reserves and tax friction",
           "intercompany receivables and ageing",
-          "historical upstream distributions, dividends and cancellations"
+          "historical upstream distributions, dividends and cancellations",
+          "funding source and post-payment balance for special shareholder returns",
+          "project-batch collections reconciled without double counting ordinary distributions"
         ],
-        "investor_consequence": "Use a cash-accessibility range and do not add parent-only and consolidated cash twice.",
-        "uncertainty_treatment": "Keep exact accessibility unknown while bounding the economic realization range.",
+        "investor_consequence": "Use a cash-accessibility range, identify its evidenced lower bound, and do not add parent-only, consolidated, project-receipt or already-distributed cash twice.",
+        "uncertainty_treatment": "Keep exact accessibility unknown while bounding the economic realization range; zero recognition is a current base lower bound only when no positive accessible amount is evidenced.",
         "countercondition": "A simple wholly owned structure with unrestricted cash and repeated distributions may justify near-full recognition.",
         "reversal_observation": "Entity-level disclosures and repeated distributions demonstrate that ordinary shareholders can realize the cash without material leakage."
       },
@@ -145,7 +155,7 @@
         "portable_rule": "Balance-sheet cash becomes ordinary-shareholder value only through a responsibility-matched ownership and realization bridge; uncertainty narrows recognition but does not automatically make the cash worthless.",
         "applicable_when": "Material cash sits in subsidiaries, regulated entities, joint structures or groups with related-party balances and distribution frictions.",
         "not_applicable_when": "The cash is held directly by the listed parent, unrestricted, wholly attributable and repeatedly distributed or deployed at observable adequate returns.",
-        "next_case_probe": "Map cash-holding entities, ownership, restrictions, taxes, upstream history and actual shareholder distributions before assigning cash value."
+        "next_case_probe": "Map cash-holding entities, ownership, restrictions, taxes, upstream history, special-return funding, post-payment balances and project-batch collections; reconcile each source against ordinary distributions before assigning a cash range."
       },
       "decision_surfaces": ["OWNER_CASH", "PERMANENT_LOSS", "VALUE_ROUTE"]
     },
@@ -232,39 +242,85 @@
       "event_id": "ECORR:ARITHMETIC_PRICE_IS_NOT_ACTION_PRICE",
       "accepted_source_artifact_ids": [
         "CN02669:THESIS_CORRECTION_HANDOFF",
-        "CN02669:THESIS_ACCEPTANCE"
+        "CN02669:THESIS_ACCEPTANCE",
+        "CN02669:PAIRED_REPORT_COMPARISON_CORRECTION"
       ],
-      "before_error_pattern": "A correctly calculated reverse price under a fixed future market terminal was placed in the primary research or action-price position.",
+      "before_error_pattern": "A correctly calculated reverse price under a fixed future market terminal was first treated as self-authorizing, then the correction overreached by leaving the primary action price unknown despite an available best-current business-value route.",
       "root_cause_classes": ["MODEL", "REASONING", "WRITING"],
       "economic_object": "valuation-route and price identity",
       "responsibility_boundary": "operating value and cash receipt versus future market realization",
-      "error_mechanism": "Mathematical solvability was treated as independent evidence that the assumed terminal market price would be realized.",
-      "economic_impact": "An investor could act on an exact number whose decisive return source is an unproved market-confirmation assumption.",
+      "error_mechanism": "The model oscillated between false certainty and route paralysis instead of choosing an explicit best-current economic terminal, exposing its assumptions, and preserving rival routes separately.",
+      "economic_impact": "An investor could either act on an exact number whose decisive return source is unproved or receive no usable research price even though a bounded route judgment is possible.",
       "prohibited_assumptions": [
         "A correct reverse calculation is automatically an action price.",
         "A model-derived terminal is equivalent to a contractual receipt.",
-        "Different route prices can be averaged into a more reliable number."
+        "Different route prices can be averaged into a more reliable number.",
+        "Any unproved terminal assumption requires the primary research price to remain unknown."
       ],
       "correction": {
-        "best_current_judgment": "Retain the reverse price as a route-specific conditional diagnostic and leave the primary action price unknown when no route has sufficient realization evidence.",
+        "best_current_judgment": "Choose the most defensible current economic terminal as the base route, state why it is preferred, publish the route-bound research price, and show pressure and conditional-confirmation rivals without presenting any route as contractual certainty.",
         "required_company_evidence": [
           "route-specific operating cash",
           "shareholder distributions or contractual receipt",
           "independent terminal or catalyst evidence",
           "consistent treatment of entry and exit assumptions"
         ],
-        "investor_consequence": "Do not buy merely because a conditional reverse price is precise; first prove the economic route that gives the number its identity.",
-        "uncertainty_treatment": "Preserve each route separately and do not average them.",
-        "countercondition": "A contractual tender, liquidation distribution or repeatable operating cash route can support an executable price identity.",
-        "reversal_observation": "Independent realization evidence closes the route and survives the same cash, timing and terminal assumptions."
+        "investor_consequence": "Use an explicit research price only inside its named route and required return; do not buy merely because the reverse calculation is precise or hide a supportable action judgment behind a global unknown.",
+        "uncertainty_treatment": "Preserve base, pressure and conditional-confirmation routes separately, disclose the terminal dependency, and do not average them.",
+        "countercondition": "If no economically defensible terminal or owner-cash route exists, the action price may remain unknown; a contractual tender, liquidation distribution or repeatable operating cash route can justify stronger identity.",
+        "reversal_observation": "New operating, distribution, contractual or market-structure evidence makes a rival terminal route more defensible than the selected base route."
       },
       "transfer": {
-        "portable_rule": "Arithmetic can solve a price without proving what economic route will realize it; price identity follows the cash and terminal mechanism, not numerical precision.",
+        "portable_rule": "Arithmetic does not authorize a price, but uncertainty does not excuse route paralysis: select the best-current economic terminal, bind the research price to that route, and expose rival terminals and reversal evidence separately.",
         "applicable_when": "A valuation depends materially on future market recognition, a chosen terminal multiple, a catalyst or an uncertain distribution route.",
-        "not_applicable_when": "The receipt is contractual, liquidation-bound or supported by repeatable owner cash within the same route and horizon.",
-        "next_case_probe": "For every quoted price, name the exact operating cash, shareholder receipt and terminal mechanism, then reject any price that lacks one of those links."
+        "not_applicable_when": "The receipt is contractually fixed or liquidation-bound and needs no competing terminal judgment; if no economically defensible route can be bounded, do not invent one and keep the action price unknown.",
+        "next_case_probe": "For every quoted price, name the operating cash, shareholder receipt, terminal mechanism, required return and strongest rival route; explain why the selected base route is currently better."
       },
       "decision_surfaces": ["VALUE_ROUTE", "PRICE_IDENTITY", "REVERSAL_EVIDENCE"]
+    },
+    {
+      "event_id": "ECORR:ACTION_HIERARCHY_DOES_NOT_REPLACE_DERIVATION",
+      "accepted_source_artifact_ids": [
+        "CN02669:PAIRED_REPORT_COMPARISON_CORRECTION"
+      ],
+      "before_error_pattern": "A clearer value, terminal, return and action-price hierarchy moved the decision forward but compressed the operating-profit bridge, cash-realization logic and sensitivity attribution into model artifacts.",
+      "root_cause_classes": ["MODEL", "WRITING"],
+      "economic_object": "reader-challengeable operating-to-value derivation",
+      "responsibility_boundary": "deterministic model computation versus reader-facing economic explanation",
+      "error_mechanism": "The report preserved conclusions and major facts while removing the component bridges that let an investor challenge normalization, cash and route assumptions.",
+      "economic_impact": "A more executable action could still be weakly understood, making the selected value route appear arbitrary and hiding which operating or cash assumption controls the result.",
+      "prohibited_assumptions": [
+        "A correct model output is self-explanatory.",
+        "A clearer action table can replace the operating-profit and owner-cash bridge.",
+        "Sensitivity without contribution attribution tells the investor what changed the conclusion."
+      ],
+      "correction": {
+        "best_current_judgment": "Keep the explicit value, terminal, return and action hierarchy while restoring a concise component bridge from business engines through normal earnings and accessible cash to value, plus material sensitivity attribution.",
+        "required_company_evidence": [
+          "component-level normal-earnings bridge with responsibility boundaries",
+          "owner-cash accessibility and realization timetable",
+          "material sensitivity contribution and interaction explanation",
+          "reconciliation from operating and cash components to terminal, return and action price"
+        ],
+        "investor_consequence": "The reader can act on the selected route and independently challenge the few business, cash and terminal assumptions capable of changing it.",
+        "uncertainty_treatment": "Keep uncertain components as ranges or conditional bridges and show their maximum route effect; do not hide them in an appendix or fill them with precision.",
+        "countercondition": "A genuinely single-engine company with immaterial cash and component differences may use a compact local bridge if every material assumption and route reconciliation remains visible.",
+        "reversal_observation": "An independent reader can reconstruct the material operating-to-value path and identify which component or interaction changes the action treatment without opening hidden model files."
+      },
+      "transfer": {
+        "portable_rule": "An executable action hierarchy and a challengeable economic derivation are both required: keep a concise bridge from business components through normal earnings and accessible cash to value, return and action price.",
+        "applicable_when": "A report combines several business engines, normalization adjustments, cash-accessibility judgments, sensitivities or competing value routes.",
+        "not_applicable_when": "A compact single-engine bridge already exposes every material operating, cash, terminal and return assumption in the reader-facing report.",
+        "next_case_probe": "Ask a blind investor to reconstruct the material profit and cash bridge, identify the dominant sensitivity contribution, and reconcile the selected terminal to the action price without opening model artifacts."
+      },
+      "decision_surfaces": [
+        "BUSINESS_ENGINE",
+        "NORMAL_EARNINGS",
+        "OWNER_CASH",
+        "VALUE_ROUTE",
+        "PRICE_IDENTITY",
+        "SOURCE_BINDING"
+      ]
     },
     {
       "event_id": "ECORR:LOCAL_UNKNOWN_DOES_NOT_ERASE_THE_ENTERPRISE",
@@ -455,7 +511,9 @@
         "cash-holding entities and ownership",
         "restrictions and tax friction",
         "related balances",
-        "historical distributions and capital allocation"
+        "historical distributions and capital allocation",
+        "special-return funding and post-payment balances",
+        "project-batch collections reconciled to ordinary distributions"
       ],
       "common_misuse": "Counting all consolidated cash at full value, counting parent and consolidated cash twice, or assigning zero because exact upstreamability is missing.",
       "counterconditions": [
@@ -488,8 +546,8 @@
         "A contractually fixed receipt can make a reverse price directly executable within its terms.",
         "A liquidation route can supersede operating EPV when the asset-distribution mechanism is actually underway."
       ],
-      "downstream_use": "Keep route-specific prices separate and leave the action price unresolved when no route has sufficient evidence.",
-      "disconfirming_observation": "Independent evidence establishes one dominant route and its receipt mechanism.",
+      "downstream_use": "Keep route-specific prices separate, choose the best-current defensible route for the explicit research price, and leave the action price unresolved only when no route can be economically bounded.",
+      "disconfirming_observation": "New evidence makes a rival route more defensible or shows that no route can support an explicit research price.",
       "derived_from_event_ids": ["ECORR:ARITHMETIC_PRICE_IS_NOT_ACTION_PRICE"]
     },
     {
@@ -629,8 +687,8 @@
       "SOURCE_BINDING"
     ],
     "pass_rule": "Enhanced must avoid at least one material expert correction or produce a materially better treatment on a decisive surface, with no new material fact, reasoning, model, price-identity or evidence-binding error and no evidence-budget advantage.",
-    "failure_rule": "More prose, more fields, more caveats, more pessimism, an unchanged investment treatment, or a teacher analogy unsupported by target-company evidence is not utility.",
-    "report_gate": "The first-pass report must have no OPEN MATERIAL finding under golden-report-review-return.v2; only non-material writing polish may remain before the human acts as final approver.",
+    "failure_rule": "More prose, more fields, more caveats, more pessimism, an unchanged investment treatment, a clearer action table that hides the material operating-to-value derivation, or a teacher analogy unsupported by target-company evidence is not utility.",
+    "report_gate": "The first-pass report must have no OPEN MATERIAL finding under golden-report-review-return.v2 and must preserve a reader-reconstructable bridge from business components through normal earnings and accessible cash to value, return and action price; only non-material writing polish may remain before the human acts as final approver.",
     "claim_limit": "This teacher package is TRAINING_READY only. One positive unseen result creates a TRANSFER_CANDIDATE; repeated different-company and company-and-time holdouts are required before METHOD_VALIDATED or report autonomy can be claimed."
   },
   "authority": "TRAINING_MEMORY_ONLY_NOT_CURRENT_INVESTMENT_EVIDENCE"
