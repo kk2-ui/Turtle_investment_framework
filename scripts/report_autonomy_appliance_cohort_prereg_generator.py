@@ -315,7 +315,7 @@ def _artifact_paths(case_number: int, arm_id: str) -> dict[str, str]:
         "contract_ref": root + "/training_contract.json",
         "rendered_task_ref": root + "/fresh_task.json",
         "raw_response_ref": root + "/raw_response.json",
-        "episode_ref": root + "/episode.json",
+        "episode_ref": root + "/enterprise_underwriting_episode.json",
         "reader_bridge_ref": root + "/reader_bridge.json",
         "first_reader_report_ref": root + "/first_reader_report.md",
         "freeze_receipt_ref": root + "/freeze_receipt.json",

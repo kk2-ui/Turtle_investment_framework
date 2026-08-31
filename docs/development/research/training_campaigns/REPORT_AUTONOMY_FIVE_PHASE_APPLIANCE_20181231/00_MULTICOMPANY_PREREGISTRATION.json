@@ -761,7 +761,7 @@
         "arm_id": "A00",
         "artifact_paths": {
           "contract_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_01/A00/training_contract.json",
-          "episode_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_01/A00/episode.json",
+          "episode_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_01/A00/enterprise_underwriting_episode.json",
           "first_reader_report_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_01/A00/first_reader_report.md",
           "freeze_receipt_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_01/A00/freeze_receipt.json",
           "raw_response_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_01/A00/raw_response.json",
@@ -2263,7 +2263,7 @@
         "arm_id": "A01",
         "artifact_paths": {
           "contract_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_01/A01/training_contract.json",
-          "episode_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_01/A01/episode.json",
+          "episode_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_01/A01/enterprise_underwriting_episode.json",
           "first_reader_report_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_01/A01/first_reader_report.md",
           "freeze_receipt_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_01/A01/freeze_receipt.json",
           "raw_response_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_01/A01/raw_response.json",
@@ -3771,7 +3771,7 @@
         "arm_id": "A10",
         "artifact_paths": {
           "contract_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_01/A10/training_contract.json",
-          "episode_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_01/A10/episode.json",
+          "episode_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_01/A10/enterprise_underwriting_episode.json",
           "first_reader_report_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_01/A10/first_reader_report.md",
           "freeze_receipt_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_01/A10/freeze_receipt.json",
           "raw_response_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_01/A10/raw_response.json",
@@ -5279,7 +5279,7 @@
         "arm_id": "A11",
         "artifact_paths": {
           "contract_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_01/A11/training_contract.json",
-          "episode_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_01/A11/episode.json",
+          "episode_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_01/A11/enterprise_underwriting_episode.json",
           "first_reader_report_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_01/A11/first_reader_report.md",
           "freeze_receipt_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_01/A11/freeze_receipt.json",
           "raw_response_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_01/A11/raw_response.json",
@@ -6793,7 +6793,7 @@
         "arm_id": "A00",
         "artifact_paths": {
           "contract_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_02/A00/training_contract.json",
-          "episode_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_02/A00/episode.json",
+          "episode_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_02/A00/enterprise_underwriting_episode.json",
           "first_reader_report_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_02/A00/first_reader_report.md",
           "freeze_receipt_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_02/A00/freeze_receipt.json",
           "raw_response_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_02/A00/raw_response.json",
@@ -8295,7 +8295,7 @@
         "arm_id": "A01",
         "artifact_paths": {
           "contract_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_02/A01/training_contract.json",
-          "episode_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_02/A01/episode.json",
+          "episode_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_02/A01/enterprise_underwriting_episode.json",
           "first_reader_report_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_02/A01/first_reader_report.md",
           "freeze_receipt_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_02/A01/freeze_receipt.json",
           "raw_response_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_02/A01/raw_response.json",
@@ -9803,7 +9803,7 @@
         "arm_id": "A10",
         "artifact_paths": {
           "contract_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_02/A10/training_contract.json",
-          "episode_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_02/A10/episode.json",
+          "episode_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_02/A10/enterprise_underwriting_episode.json",
           "first_reader_report_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_02/A10/first_reader_report.md",
           "freeze_receipt_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_02/A10/freeze_receipt.json",
           "raw_response_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_02/A10/raw_response.json",
@@ -11311,7 +11311,7 @@
         "arm_id": "A11",
         "artifact_paths": {
           "contract_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_02/A11/training_contract.json",
-          "episode_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_02/A11/episode.json",
+          "episode_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_02/A11/enterprise_underwriting_episode.json",
           "first_reader_report_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_02/A11/first_reader_report.md",
           "freeze_receipt_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_02/A11/freeze_receipt.json",
           "raw_response_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_02/A11/raw_response.json",
@@ -12825,7 +12825,7 @@
         "arm_id": "A00",
         "artifact_paths": {
           "contract_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_03/A00/training_contract.json",
-          "episode_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_03/A00/episode.json",
+          "episode_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_03/A00/enterprise_underwriting_episode.json",
           "first_reader_report_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_03/A00/first_reader_report.md",
           "freeze_receipt_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_03/A00/freeze_receipt.json",
           "raw_response_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_03/A00/raw_response.json",
@@ -14327,7 +14327,7 @@
         "arm_id": "A01",
         "artifact_paths": {
           "contract_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_03/A01/training_contract.json",
-          "episode_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_03/A01/episode.json",
+          "episode_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_03/A01/enterprise_underwriting_episode.json",
           "first_reader_report_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_03/A01/first_reader_report.md",
           "freeze_receipt_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_03/A01/freeze_receipt.json",
           "raw_response_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_03/A01/raw_response.json",
@@ -15835,7 +15835,7 @@
         "arm_id": "A10",
         "artifact_paths": {
           "contract_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_03/A10/training_contract.json",
-          "episode_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_03/A10/episode.json",
+          "episode_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_03/A10/enterprise_underwriting_episode.json",
           "first_reader_report_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_03/A10/first_reader_report.md",
           "freeze_receipt_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_03/A10/freeze_receipt.json",
           "raw_response_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_03/A10/raw_response.json",
@@ -17343,7 +17343,7 @@
         "arm_id": "A11",
         "artifact_paths": {
           "contract_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_03/A11/training_contract.json",
-          "episode_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_03/A11/episode.json",
+          "episode_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_03/A11/enterprise_underwriting_episode.json",
           "first_reader_report_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_03/A11/first_reader_report.md",
           "freeze_receipt_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_03/A11/freeze_receipt.json",
           "raw_response_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_03/A11/raw_response.json",
@@ -18857,7 +18857,7 @@
         "arm_id": "A00",
         "artifact_paths": {
           "contract_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_04/A00/training_contract.json",
-          "episode_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_04/A00/episode.json",
+          "episode_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_04/A00/enterprise_underwriting_episode.json",
           "first_reader_report_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_04/A00/first_reader_report.md",
           "freeze_receipt_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_04/A00/freeze_receipt.json",
           "raw_response_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_04/A00/raw_response.json",
@@ -20359,7 +20359,7 @@
         "arm_id": "A01",
         "artifact_paths": {
           "contract_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_04/A01/training_contract.json",
-          "episode_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_04/A01/episode.json",
+          "episode_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_04/A01/enterprise_underwriting_episode.json",
           "first_reader_report_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_04/A01/first_reader_report.md",
           "freeze_receipt_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_04/A01/freeze_receipt.json",
           "raw_response_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_04/A01/raw_response.json",
@@ -21867,7 +21867,7 @@
         "arm_id": "A10",
         "artifact_paths": {
           "contract_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_04/A10/training_contract.json",
-          "episode_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_04/A10/episode.json",
+          "episode_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_04/A10/enterprise_underwriting_episode.json",
           "first_reader_report_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_04/A10/first_reader_report.md",
           "freeze_receipt_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_04/A10/freeze_receipt.json",
           "raw_response_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_04/A10/raw_response.json",
@@ -23375,7 +23375,7 @@
         "arm_id": "A11",
         "artifact_paths": {
           "contract_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_04/A11/training_contract.json",
-          "episode_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_04/A11/episode.json",
+          "episode_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_04/A11/enterprise_underwriting_episode.json",
           "first_reader_report_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_04/A11/first_reader_report.md",
           "freeze_receipt_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_04/A11/freeze_receipt.json",
           "raw_response_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_04/A11/raw_response.json",
@@ -24889,7 +24889,7 @@
         "arm_id": "A00",
         "artifact_paths": {
           "contract_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_05/A00/training_contract.json",
-          "episode_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_05/A00/episode.json",
+          "episode_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_05/A00/enterprise_underwriting_episode.json",
           "first_reader_report_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_05/A00/first_reader_report.md",
           "freeze_receipt_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_05/A00/freeze_receipt.json",
           "raw_response_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_05/A00/raw_response.json",
@@ -26391,7 +26391,7 @@
         "arm_id": "A01",
         "artifact_paths": {
           "contract_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_05/A01/training_contract.json",
-          "episode_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_05/A01/episode.json",
+          "episode_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_05/A01/enterprise_underwriting_episode.json",
           "first_reader_report_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_05/A01/first_reader_report.md",
           "freeze_receipt_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_05/A01/freeze_receipt.json",
           "raw_response_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_05/A01/raw_response.json",
@@ -27899,7 +27899,7 @@
         "arm_id": "A10",
         "artifact_paths": {
           "contract_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_05/A10/training_contract.json",
-          "episode_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_05/A10/episode.json",
+          "episode_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_05/A10/enterprise_underwriting_episode.json",
           "first_reader_report_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_05/A10/first_reader_report.md",
           "freeze_receipt_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_05/A10/freeze_receipt.json",
           "raw_response_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_05/A10/raw_response.json",
@@ -29407,7 +29407,7 @@
         "arm_id": "A11",
         "artifact_paths": {
           "contract_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_05/A11/training_contract.json",
-          "episode_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_05/A11/episode.json",
+          "episode_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_05/A11/enterprise_underwriting_episode.json",
           "first_reader_report_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_05/A11/first_reader_report.md",
           "freeze_receipt_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_05/A11/freeze_receipt.json",
           "raw_response_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_05/A11/raw_response.json",
@@ -30921,7 +30921,7 @@
         "arm_id": "A00",
         "artifact_paths": {
           "contract_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_06/A00/training_contract.json",
-          "episode_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_06/A00/episode.json",
+          "episode_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_06/A00/enterprise_underwriting_episode.json",
           "first_reader_report_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_06/A00/first_reader_report.md",
           "freeze_receipt_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_06/A00/freeze_receipt.json",
           "raw_response_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_06/A00/raw_response.json",
@@ -32423,7 +32423,7 @@
         "arm_id": "A01",
         "artifact_paths": {
           "contract_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_06/A01/training_contract.json",
-          "episode_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_06/A01/episode.json",
+          "episode_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_06/A01/enterprise_underwriting_episode.json",
           "first_reader_report_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_06/A01/first_reader_report.md",
           "freeze_receipt_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_06/A01/freeze_receipt.json",
           "raw_response_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_06/A01/raw_response.json",
@@ -33931,7 +33931,7 @@
         "arm_id": "A10",
         "artifact_paths": {
           "contract_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_06/A10/training_contract.json",
-          "episode_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_06/A10/episode.json",
+          "episode_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_06/A10/enterprise_underwriting_episode.json",
           "first_reader_report_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_06/A10/first_reader_report.md",
           "freeze_receipt_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_06/A10/freeze_receipt.json",
           "raw_response_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_06/A10/raw_response.json",
@@ -35439,7 +35439,7 @@
         "arm_id": "A11",
         "artifact_paths": {
           "contract_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_06/A11/training_contract.json",
-          "episode_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_06/A11/episode.json",
+          "episode_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_06/A11/enterprise_underwriting_episode.json",
           "first_reader_report_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_06/A11/first_reader_report.md",
           "freeze_receipt_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_06/A11/freeze_receipt.json",
           "raw_response_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_06/A11/raw_response.json",
@@ -36953,7 +36953,7 @@
         "arm_id": "A00",
         "artifact_paths": {
           "contract_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_07/A00/training_contract.json",
-          "episode_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_07/A00/episode.json",
+          "episode_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_07/A00/enterprise_underwriting_episode.json",
           "first_reader_report_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_07/A00/first_reader_report.md",
           "freeze_receipt_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_07/A00/freeze_receipt.json",
           "raw_response_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_07/A00/raw_response.json",
@@ -38455,7 +38455,7 @@
         "arm_id": "A01",
         "artifact_paths": {
           "contract_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_07/A01/training_contract.json",
-          "episode_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_07/A01/episode.json",
+          "episode_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_07/A01/enterprise_underwriting_episode.json",
           "first_reader_report_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_07/A01/first_reader_report.md",
           "freeze_receipt_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_07/A01/freeze_receipt.json",
           "raw_response_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_07/A01/raw_response.json",
@@ -39963,7 +39963,7 @@
         "arm_id": "A10",
         "artifact_paths": {
           "contract_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_07/A10/training_contract.json",
-          "episode_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_07/A10/episode.json",
+          "episode_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_07/A10/enterprise_underwriting_episode.json",
           "first_reader_report_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_07/A10/first_reader_report.md",
           "freeze_receipt_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_07/A10/freeze_receipt.json",
           "raw_response_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_07/A10/raw_response.json",
@@ -41471,7 +41471,7 @@
         "arm_id": "A11",
         "artifact_paths": {
           "contract_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_07/A11/training_contract.json",
-          "episode_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_07/A11/episode.json",
+          "episode_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_07/A11/enterprise_underwriting_episode.json",
           "first_reader_report_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_07/A11/first_reader_report.md",
           "freeze_receipt_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_07/A11/freeze_receipt.json",
           "raw_response_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_07/A11/raw_response.json",
@@ -42985,7 +42985,7 @@
         "arm_id": "A00",
         "artifact_paths": {
           "contract_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_08/A00/training_contract.json",
-          "episode_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_08/A00/episode.json",
+          "episode_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_08/A00/enterprise_underwriting_episode.json",
           "first_reader_report_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_08/A00/first_reader_report.md",
           "freeze_receipt_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_08/A00/freeze_receipt.json",
           "raw_response_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_08/A00/raw_response.json",
@@ -44487,7 +44487,7 @@
         "arm_id": "A01",
         "artifact_paths": {
           "contract_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_08/A01/training_contract.json",
-          "episode_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_08/A01/episode.json",
+          "episode_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_08/A01/enterprise_underwriting_episode.json",
           "first_reader_report_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_08/A01/first_reader_report.md",
           "freeze_receipt_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_08/A01/freeze_receipt.json",
           "raw_response_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_08/A01/raw_response.json",
@@ -45995,7 +45995,7 @@
         "arm_id": "A10",
         "artifact_paths": {
           "contract_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_08/A10/training_contract.json",
-          "episode_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_08/A10/episode.json",
+          "episode_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_08/A10/enterprise_underwriting_episode.json",
           "first_reader_report_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_08/A10/first_reader_report.md",
           "freeze_receipt_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_08/A10/freeze_receipt.json",
           "raw_response_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_08/A10/raw_response.json",
@@ -47503,7 +47503,7 @@
         "arm_id": "A11",
         "artifact_paths": {
           "contract_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_08/A11/training_contract.json",
-          "episode_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_08/A11/episode.json",
+          "episode_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_08/A11/enterprise_underwriting_episode.json",
           "first_reader_report_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_08/A11/first_reader_report.md",
           "freeze_receipt_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_08/A11/freeze_receipt.json",
           "raw_response_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/execution/case_08/A11/raw_response.json",
