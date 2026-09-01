@@ -1,0 +1,875 @@
+{
+  "schema_version": "enterprise-underwriting-episode.v2",
+  "episode_id": "UWTRAIN:APPLIANCE:000016:20181231:STAGE5:A10:EPISODE",
+  "company_id": "CN:000016",
+  "company_name": "康佳集团股份有限公司",
+  "cutoff_at": "2018-12-31T23:59:59+08:00",
+  "sample_identity": "BLIND_REPLAY",
+  "decision_frame": "Pre-outcome enterprise underwriting at the 2018-12-31 cutoff; establish operating, financing and realization boundaries without using market price, return or action outputs.",
+  "underwriting_route": "Conditional operating-earnings route with explicit cash-conversion and capital-allocation unknowns; noncore property projects remain outside the base.",
+  "situation_model": {
+    "summary": "康佳 is a diversified appliance and trading group. Revenue expanded sharply by 2017, but reported attributable profit was dominated by a nonrecurring property disposal and operating cash flow was deeply negative, so enterprise claims must separate core operations from disposal proceeds and working-capital funding.",
+    "industry_future_thesis": {
+      "horizon": "2018-2022",
+      "most_likely_regime": "Mature television and appliance markets remain competitive and working-capital intensive; trading and project activities can enlarge revenue without proving durable owner economics.",
+      "profit_pool_transmission": "Profit pools accrue to brands, differentiated display products, distribution and supply-chain financing discipline; consolidated revenue does not establish segment margin or cash capture.",
+      "company_exposure": "The company is exposed through domestic and export television, internet products, white goods, mobile phones, supply-chain trading and industrial-park investments.",
+      "adaptation": "2017 multimedia integration into a television/display business group and a new sales company may improve accountability, but no component-level economics or customer terms are disclosed in the supplied cutoff package.",
+      "normal_economics": "Direction is mixed: scale and integration could help, while intense competition, receivable and inventory growth and trading exposure pressure conversion; segment-level normalized earnings remain unbounded.",
+      "permanent_loss": "Slow per-share value destruction is possible through low-return retention, working-capital absorption and noncore project commitments even though the group remains solvent; the magnitude is component-dependent and unresolved.",
+      "valuation_treatment": "Use a conditional core operating route only; exclude property/project disposal and unproven growth economics from base and retain explicit reversal tests.",
+      "strongest_rival": "A rival thesis is that the 2017 property disposal and project/asset realization create a repeatable asset-backed owner-cash route that dominates weak appliance operating economics; this remains unproven because recurrence and ordinary-shareholder realization are not evidenced.",
+      "reversal_observations": [
+        "A post-cutoff annual report separately reports sustainable television/white-goods margins and operating cash conversion for the responsible units.",
+        "Repeated post-cutoff disclosures reconcile subsidiary cash, working-capital funding and distributions to ordinary shareholders without relying on one-off disposals.",
+        "Project investments demonstrate matched incremental owner cash returns and no material financing or integration burden, or alternatively show an orderly asset-distribution route."
+      ]
+    }
+  },
+  "business_position": "康佳 has broad domestic B2B/B2C and overseas B2B television channels, supply-chain trading in components and materials, and additional white-goods and mobile businesses. FY2017 multimedia was reorganized, but the source package does not provide responsibility-unit profitability, customer concentration, receivable ageing or component financing balances; competitive position is therefore conditional rather than established.",
+  "survival_case": "The group had substantial scale and access to borrowing, with FY2017 short-term borrowings of RMB6.927bn and long-term borrowings of RMB0.167bn, while consolidated statements reported no major asset restrictions of the specified types. However, FY2017 operating cash flow was -RMB4.314bn and linked to receivable and bills growth, so survival depends on continued financing and working-capital reversal rather than accounting profit alone.",
+  "adaptation_case": "Multimedia integration and company-level sales organization are credible organizational adaptations. Supply-chain scale and industrial-park preparation may create options, but without unit economics, customer terms, or project-level cash attribution they remain conditional and cannot be promoted to base earning power.",
+  "normalization_case": "FY2015-FY2017 attributable net income moved from -RMB1.257bn to RMB0.096bn to RMB5.057bn, while attributable earnings excluding nonrecurring items were -RMB1.130bn, -RMB0.283bn and -RMB0.097bn. The FY2017 RMB6.588bn investment gain from a 70% property disposal was explicitly non-sustainable. A conservative reference range near breakeven is usable only as a conditional enterprise baseline; segment adjustments remain UNKNOWN.",
+  "permanent_loss_map": "Permanent-loss paths are (1) persistent receivable/inventory absorption requiring debt, (2) retention of capital in projects or new businesses without matched returns, and (3) competitive margin erosion in televisions and appliances. The property disposal provides liquidity but is not recurring earnings; ordinary-shareholder accessibility and per-share realization of subsidiary cash are not fully evidenced.",
+  "value_route": {
+    "primary_routes": [
+      "ROUTE:CONDITIONAL_CORE_EP"
+    ],
+    "excluded_routes": [
+      "ROUTE:PROPERTY_LIQUIDATION"
+    ],
+    "route_reasoning": "The only supportable route is a conditional operating route anchored to normalized, nonrecurring-adjusted earnings and tested for cash conversion. Property disposal and project assets are excluded from the base because recurrence, ownership realization and incremental returns are not demonstrated.",
+    "valuation_model_roles": {
+      "primary": [
+        "ROUTE:CONDITIONAL_CORE_EP"
+      ]
+    },
+    "route_component_requirements": [
+      {
+        "route_id": "ROUTE:CONDITIONAL_CORE_EP",
+        "required_component_ids": [
+          "multimedia_core"
+        ],
+        "optional_component_ids": [
+          "supply_chain"
+        ]
+      },
+      {
+        "route_id": "ROUTE:PROPERTY_LIQUIDATION",
+        "required_component_ids": [
+          "property_projects"
+        ],
+        "optional_component_ids": [
+          "white_goods",
+          "mobile"
+        ]
+      }
+    ]
+  },
+  "strongest_rival": "A rival thesis is that the 2017 property disposal and project/asset realization create a repeatable asset-backed owner-cash route that dominates weak appliance operating economics; this remains unproven because recurrence and ordinary-shareholder realization are not evidenced.",
+  "reversal_observations": [
+    "A post-cutoff annual report separately reports sustainable television/white-goods margins and operating cash conversion for the responsible units.",
+    "Repeated post-cutoff disclosures reconcile subsidiary cash, working-capital funding and distributions to ordinary shareholders without relying on one-off disposals.",
+    "Project investments demonstrate matched incremental owner cash returns and no material financing or integration burden, or alternatively show an orderly asset-distribution route."
+  ],
+  "component_treatments": [
+    {
+      "component_id": "reference_earnings",
+      "treatment": "CONDITIONALLY_UNDERWRITE",
+      "reason": "Nonrecurring-adjusted consolidated earnings provide only a conditional baseline.",
+      "investment_consequence": "Anchor a conditional bridge without asserting segment attribution.",
+      "promotion_or_resolution_condition": "Reconcile baseline to audited segment and cash economics.",
+      "evidence_ids": [
+        "E2_FINANCE"
+      ]
+    },
+    {
+      "component_id": "multimedia_core",
+      "treatment": "CONDITIONALLY_UNDERWRITE",
+      "reason": "Television/display is the identified core, but segment cash, margin and customer economics are not disclosed separately.",
+      "investment_consequence": "Use only as a conditional operating component; do not infer a durable earnings point estimate.",
+      "promotion_or_resolution_condition": "Disclose responsibility-unit margins, customer terms, receivable ageing and operating cash conversion for television/display across subsequent reports.",
+      "evidence_ids": [
+        "E1_BUSINESS"
+      ]
+    },
+    {
+      "component_id": "supply_chain",
+      "treatment": "CONDITIONALLY_UNDERWRITE",
+      "reason": "Supply-chain revenue was RMB136.52bn in FY2017 and is material, yet trading margins, working-capital funding and cash conversion are not separated.",
+      "investment_consequence": "Keep as optional corroborative input to the conditional route and treat financing pressure as conditional.",
+      "promotion_or_resolution_condition": "Provide matched trading gross profit, receivable/inventory turns and cash-flow attribution by responsible unit.",
+      "evidence_ids": [
+        "E1_BUSINESS",
+        "E2_FINANCE"
+      ]
+    },
+    {
+      "component_id": "white_goods",
+      "treatment": "EXCLUDE_FROM_BASE",
+      "reason": "White-goods operations are named but no component-level earnings or cash evidence is supplied.",
+      "investment_consequence": "No base earnings, owner-cash or primary valuation credit; monitor only for material downside or later evidence.",
+      "promotion_or_resolution_condition": "Audited segment disclosure of revenue, margin, capital and cash conversion with a defined responsibility boundary.",
+      "evidence_ids": [
+        "E1_BUSINESS",
+        "E5_UNKNOWN"
+      ]
+    },
+    {
+      "component_id": "mobile",
+      "treatment": "EXCLUDE_FROM_BASE",
+      "reason": "Mobile is listed as a business but its economics and financing needs are not separately observable.",
+      "investment_consequence": "Exclude from base and primary route; any upside remains unbounded.",
+      "promotion_or_resolution_condition": "Subsequent reports provide standalone economics, customer/channel terms and capital absorption.",
+      "evidence_ids": [
+        "E1_BUSINESS",
+        "E5_UNKNOWN"
+      ]
+    },
+    {
+      "component_id": "property_projects",
+      "treatment": "EXCLUDE_FROM_BASE",
+      "reason": "FY2017 property disposal generated a stated non-sustainable investment gain; named projects had reported投入 but no matched returns or ordinary-shareholder realization path.",
+      "investment_consequence": "Exclude disposal gains and project value from operating base; retain only as an asset-realization stress route.",
+      "promotion_or_resolution_condition": "Document legally accessible asset value, taxes, ownership claims and a credible distribution or contracted realization path.",
+      "evidence_ids": [
+        "E3_DISPOSAL",
+        "E4_PROJECTS"
+      ]
+    }
+  ],
+  "evidence_trace": [
+    {
+      "evidence_id": "E1_BUSINESS",
+      "source_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN000016_PRE_CUTOFF_SOURCE_PACKAGE.md",
+      "locator": "FY2017 annual report PDF pp.10,13",
+      "scope": "Business components, channels, multimedia reorganization and supply-chain revenue",
+      "used_for": "Component boundaries, adaptation and competitive exposure"
+    },
+    {
+      "evidence_id": "E2_FINANCE",
+      "source_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN000016_PRE_CUTOFF_SOURCE_PACKAGE.md",
+      "locator": "FY2015-FY2017 annual reports financial tables pp.7,18-21",
+      "scope": "Revenue, attributable earnings, receivables, inventory and borrowings",
+      "used_for": "Normalization and financing pressure"
+    },
+    {
+      "evidence_id": "E3_DISPOSAL",
+      "source_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN000016_PRE_CUTOFF_SOURCE_PACKAGE.md",
+      "locator": "FY2017 annual report pp.12,20,188",
+      "scope": "RMB6.588bn non-sustainable gain and RMB6.9049bn disposal cash receipts",
+      "used_for": "Excluding nonrecurring earnings and testing asset route"
+    },
+    {
+      "evidence_id": "E4_PROJECTS",
+      "source_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN000016_PRE_CUTOFF_SOURCE_PACKAGE.md",
+      "locator": "FY2017 annual report p.22",
+      "scope": "Named major non-equity projects and reported investments",
+      "used_for": "Project capital-allocation and permanent-loss analysis"
+    },
+    {
+      "evidence_id": "E5_UNKNOWN",
+      "source_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN000016_PRE_CUTOFF_SOURCE_PACKAGE.md",
+      "locator": "Source package explicit UNKNOWN section",
+      "scope": "Absence of component-level cash, financing, customer and project attribution",
+      "used_for": "Bounding unresolved components and sensitivity cases"
+    },
+    {
+      "evidence_id": "E6_OCF_DRIVER",
+      "source_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN000016_PRE_CUTOFF_SOURCE_PACKAGE.md",
+      "locator": "FY2015-FY2017 annual reports cash-flow statements pp.74,78,88",
+      "scope": "Operating cash flow and long-lived-asset spending",
+      "used_for": "Sensitivity input for cash conversion"
+    }
+  ],
+  "existing_object_refs": [
+    {
+      "kind": "SOURCE_PACKAGE",
+      "ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN000016_PRE_CUTOFF_SOURCE_PACKAGE.md",
+      "role": "Frozen pre-cutoff primary evidence package"
+    }
+  ],
+  "underwriting_thesis": {
+    "thesis_id": "THESIS:CN000016:A10",
+    "central_path": "康佳 remains a diversified, financing-dependent appliance and trading enterprise whose 2017 accounting profit is not a normal baseline; a conditional core route survives only if operating cash conversion and component economics improve and are independently disclosed.",
+    "normal_earnings_treatment": "Use nonrecurring-adjusted results as a conditional near-breakeven reference; keep component contributions UNKNOWN until responsibility-unit evidence closes.",
+    "owner_cash_treatment": "Operating cash is pressured by receivable and inventory growth; owner cash must be expressed conditionally after economic maintenance needs and subsidiary accessibility are established.",
+    "permanent_loss_treatment": "Treat low-return retention, working-capital financing and competitive erosion as credible slow-loss paths; property disposal liquidity does not erase them.",
+    "value_route_treatment": "Bind analysis to ROUTE:CONDITIONAL_CORE_EP and exclude ROUTE:PROPERTY_LIQUIDATION from base; no price, return or action conclusion is emitted.",
+    "economic_directions": {
+      "normal_earnings": "MIXED",
+      "owner_cash": "DETERIORATES",
+      "permanent_loss": "MIXED"
+    },
+    "strongest_rival": "A rival thesis is that the 2017 property disposal and project/asset realization create a repeatable asset-backed owner-cash route that dominates weak appliance operating economics; this remains unproven because recurrence and ordinary-shareholder realization are not evidenced.",
+    "monitoring": "Monitor post-cutoff segment margins, receivable/inventory turns, operating cash, borrowings, project spending and ordinary-shareholder distributions against the three reversal observations."
+  },
+  "investment_treatment": "Pre-outcome research treatment: conditionally underwrite the core operating route, exclude nonrecurring disposal and unproven project value from base, and require follow-up evidence before any valuation or action decision.",
+  "component_decisions": [
+    {
+      "component_id": "reference_earnings",
+      "economic_scope": "MATURE_CORE_NORMAL_EARNINGS",
+      "normal_earnings_use": "CONDITIONAL_RANGE",
+      "owner_cash_use": "CONDITIONAL_RANGE",
+      "financing_pressure_effect": "UNRESOLVED",
+      "permanent_loss_use": "CONDITIONAL_PATH",
+      "valuation_use": "NOT_APPLICABLE",
+      "valuation_route_bindings": [],
+      "promotion_test": "Reconcile consolidated baseline to responsibility-unit earnings and cash.",
+      "invalidation_test": "Subsequent restatement shows baseline was entirely nonrecurring."
+    },
+    {
+      "component_id": "multimedia_core",
+      "economic_scope": "MATURE_CORE_NORMAL_EARNINGS",
+      "normal_earnings_use": "CONDITIONAL_RANGE",
+      "owner_cash_use": "CONDITIONAL_RANGE",
+      "financing_pressure_effect": "CONDITIONAL",
+      "permanent_loss_use": "CONDITIONAL_PATH",
+      "valuation_use": "CONDITIONAL_PRIMARY_INPUT",
+      "valuation_route_bindings": [
+        {
+          "route_id": "ROUTE:CONDITIONAL_CORE_EP",
+          "use": "CONDITIONAL_PRIMARY_INPUT"
+        }
+      ],
+      "promotion_test": "Standalone television/display margin and cash conversion disclosure across a cycle.",
+      "invalidation_test": "Persistent negative unit cash conversion or margin collapse after working-capital normalization."
+    },
+    {
+      "component_id": "supply_chain",
+      "economic_scope": "OTHER_MATERIAL_COMPONENT",
+      "normal_earnings_use": "CONDITIONAL_RANGE",
+      "owner_cash_use": "CONDITIONAL_RANGE",
+      "financing_pressure_effect": "CONDITIONAL",
+      "permanent_loss_use": "CONDITIONAL_PATH",
+      "valuation_use": "CORROBORATIVE_INPUT",
+      "valuation_route_bindings": [
+        {
+          "route_id": "ROUTE:CONDITIONAL_CORE_EP",
+          "use": "CORROBORATIVE_INPUT"
+        }
+      ],
+      "promotion_test": "Responsible-unit trading margin, turns and cash conversion are reconciled.",
+      "invalidation_test": "Receivable/inventory growth continues to consume cash without margin compensation."
+    },
+    {
+      "component_id": "white_goods",
+      "economic_scope": "MATURE_CORE_NORMAL_EARNINGS",
+      "normal_earnings_use": "EXCLUDED",
+      "owner_cash_use": "EXCLUDED",
+      "financing_pressure_effect": "UNRESOLVED",
+      "permanent_loss_use": "EXCLUDED",
+      "valuation_use": "EXCLUDED",
+      "valuation_route_bindings": [
+        {
+          "route_id": "ROUTE:PROPERTY_LIQUIDATION",
+          "use": "EXCLUDED"
+        }
+      ],
+      "promotion_test": "Standalone audited economics and cash attribution become available.",
+      "invalidation_test": "Evidence shows structurally subscale or cash-consuming operation."
+    },
+    {
+      "component_id": "mobile",
+      "economic_scope": "OTHER_MATERIAL_COMPONENT",
+      "normal_earnings_use": "EXCLUDED",
+      "owner_cash_use": "EXCLUDED",
+      "financing_pressure_effect": "UNRESOLVED",
+      "permanent_loss_use": "EXCLUDED",
+      "valuation_use": "EXCLUDED",
+      "valuation_route_bindings": [
+        {
+          "route_id": "ROUTE:PROPERTY_LIQUIDATION",
+          "use": "EXCLUDED"
+        }
+      ],
+      "promotion_test": "Standalone mobile economics and capital needs are disclosed.",
+      "invalidation_test": "Continued absence of evidence or demonstrated negative cash economics."
+    },
+    {
+      "component_id": "property_projects",
+      "economic_scope": "NONCORE_OR_OPTIONAL_ASSET",
+      "normal_earnings_use": "SCENARIO_ONLY",
+      "owner_cash_use": "SCENARIO_ONLY",
+      "financing_pressure_effect": "INCREASES",
+      "permanent_loss_use": "STRESS_ONLY",
+      "valuation_use": "EXCLUDED",
+      "valuation_route_bindings": [
+        {
+          "route_id": "ROUTE:PROPERTY_LIQUIDATION",
+          "use": "EXCLUDED"
+        }
+      ],
+      "promotion_test": "Legally accessible, tax-adjusted realization and distribution evidence.",
+      "invalidation_test": "Projects absorb financing without realizable proceeds or returns."
+    }
+  ],
+  "economic_derivation": {
+    "schema_version": "enterprise-underwriting-economic-derivation.v1",
+    "normal_earnings_bridge": {
+      "basis": {
+        "metric": "attributable earnings excluding nonrecurring items",
+        "currency": "RMB",
+        "unit": "annual RMB",
+        "tax_basis": "AFTER_TAX",
+        "earnings_claim_scope": "ORDINARY_COMMON_EQUITY",
+        "operating_perimeter": "Consolidated group, with segment attribution unresolved",
+        "as_of": "2017-12-31"
+      },
+      "rows": [
+        {
+          "row_id": "R0_REFERENCE",
+          "component_id": "reference_earnings",
+          "row_role": "REFERENCE_EARNINGS",
+          "direction": "ADD",
+          "quantification": {
+            "status": "BOUNDED",
+            "range_low": 0,
+            "range_high": 100000000
+          },
+          "evidence_ids": [
+            "E2_FINANCE",
+            "E3_DISPOSAL"
+          ],
+          "economic_reason": "FY2016-FY2017 nonrecurring-adjusted attributable earnings were near breakeven; the range is a conservative conditional baseline, not a point estimate."
+        },
+        {
+          "row_id": "R1_MULTIMEDIA",
+          "component_id": "multimedia_core",
+          "row_role": "NORMALIZATION_ADJUSTMENT",
+          "direction": "ADD",
+          "quantification": {
+            "status": "UNKNOWN",
+            "reason": "No television/display segment earnings or cash split is disclosed.",
+            "conservative_treatment": "Do not add a component amount until responsibility-unit evidence is available."
+          },
+          "evidence_ids": [
+            "E1_BUSINESS",
+            "E5_UNKNOWN"
+          ],
+          "economic_reason": "Core status is identified, but its normalized contribution cannot be isolated."
+        },
+        {
+          "row_id": "R2_SUPPLY",
+          "component_id": "supply_chain",
+          "row_role": "NORMALIZATION_ADJUSTMENT",
+          "direction": "ADD",
+          "quantification": {
+            "status": "UNKNOWN",
+            "reason": "Trading margin and working-capital economics are not disclosed separately.",
+            "conservative_treatment": "Use only as conditional corroboration."
+          },
+          "evidence_ids": [
+            "E1_BUSINESS",
+            "E5_UNKNOWN"
+          ],
+          "economic_reason": "Material revenue does not establish sustainable earnings."
+        },
+        {
+          "row_id": "R3_WHITE",
+          "component_id": "white_goods",
+          "row_role": "NORMALIZATION_ADJUSTMENT",
+          "direction": "ADD",
+          "quantification": {
+            "status": "UNKNOWN",
+            "reason": "White-goods component economics are absent.",
+            "conservative_treatment": "Excluded from base."
+          },
+          "evidence_ids": [
+            "E1_BUSINESS",
+            "E5_UNKNOWN"
+          ],
+          "economic_reason": "No responsibility-unit evidence."
+        },
+        {
+          "row_id": "R4_MOBILE",
+          "component_id": "mobile",
+          "row_role": "NORMALIZATION_ADJUSTMENT",
+          "direction": "ADD",
+          "quantification": {
+            "status": "UNKNOWN",
+            "reason": "Mobile component economics are absent.",
+            "conservative_treatment": "Excluded from base."
+          },
+          "evidence_ids": [
+            "E1_BUSINESS",
+            "E5_UNKNOWN"
+          ],
+          "economic_reason": "No responsibility-unit evidence."
+        },
+        {
+          "row_id": "R5_PROPERTY",
+          "component_id": "property_projects",
+          "row_role": "NORMALIZATION_ADJUSTMENT",
+          "direction": "SUBTRACT",
+          "quantification": {
+            "status": "UNKNOWN",
+            "reason": "Disposal gain is nonrecurring and project returns are unproved.",
+            "conservative_treatment": "Remove disposal contribution and exclude project upside."
+          },
+          "evidence_ids": [
+            "E3_DISPOSAL",
+            "E4_PROJECTS"
+          ],
+          "economic_reason": "The disclosed RMB6.588bn gain is explicitly non-sustainable."
+        }
+      ]
+    },
+    "driver_sensitivity_specs": [
+      {
+        "sensitivity_id": "SENS:WORKING_CAPITAL_CONVERSION",
+        "component_ids": [
+          "multimedia_core"
+        ],
+        "metric": "operating cash conversion",
+        "unit": "RMB annual operating cash flow",
+        "horizon": "FY2015-FY2017",
+        "input_cases": {
+          "mode": "LOW_BASE_HIGH",
+          "low": {
+            "value_or_range": {
+              "value": -4314257622.47
+            },
+            "basis": "FY2017 reported operating cash flow",
+            "evidence_ids": [
+              "E6_OCF_DRIVER"
+            ]
+          },
+          "base": {
+            "value_or_range": {
+              "value": -972135787.43
+            },
+            "basis": "FY2016 reported operating cash flow",
+            "evidence_ids": [
+              "E6_OCF_DRIVER"
+            ]
+          },
+          "high": {
+            "value_or_range": {
+              "value": 1289600482.66
+            },
+            "basis": "FY2015 reported operating cash flow",
+            "evidence_ids": [
+              "E6_OCF_DRIVER"
+            ]
+          }
+        },
+        "transmission": {
+          "normal_earnings": {
+            "status": "UNKNOWN",
+            "basis": "Aggregate cash flow cannot be assigned to components or normalized earnings.",
+            "delta": {
+              "status": "UNKNOWN",
+              "reason": "No component-level cash bridge.",
+              "conservative_treatment": "Keep earnings contribution unresolved."
+            }
+          },
+          "owner_cash": {
+            "status": "UNKNOWN",
+            "basis": "Aggregate operating cash is affected by receivables and bills without component attribution.",
+            "delta": {
+              "status": "UNKNOWN",
+              "reason": "No component-level cash bridge.",
+              "conservative_treatment": "Treat owner cash as conditional and financing-dependent."
+            }
+          },
+          "valuation_route_ids": [
+            "ROUTE:CONDITIONAL_CORE_EP"
+          ]
+        },
+        "reversal_observation_refs": [
+          "#/reversal_observations/0"
+        ],
+        "responsibility_boundary": "Consolidated operating cash flow is a proxy only; no allocation is made across multimedia and supply-chain responsibility units."
+      }
+    ]
+  },
+  "component_decision_summary": {
+    "schema_version": "enterprise-underwriting-component-decision-summary.v1",
+    "normal_earnings": {
+      "range_authority": "CONDITIONAL_RANGE",
+      "components_by_use": {
+        "BASE_RANGE": [],
+        "CONDITIONAL_RANGE": [
+          "reference_earnings",
+          "multimedia_core",
+          "supply_chain"
+        ],
+        "SCENARIO_ONLY": [
+          "property_projects"
+        ],
+        "EXCLUDED": [
+          "white_goods",
+          "mobile"
+        ],
+        "UNRESOLVED": [],
+        "NOT_APPLICABLE": []
+      }
+    },
+    "owner_cash": {
+      "range_authority": "CONDITIONAL_RANGE",
+      "components_by_use": {
+        "BASE_RANGE": [],
+        "CONDITIONAL_RANGE": [
+          "reference_earnings",
+          "multimedia_core",
+          "supply_chain"
+        ],
+        "SCENARIO_ONLY": [
+          "property_projects"
+        ],
+        "EXCLUDED": [
+          "white_goods",
+          "mobile"
+        ],
+        "UNRESOLVED": [],
+        "NOT_APPLICABLE": []
+      }
+    },
+    "financing_pressure": {
+      "active_effects": [
+        "INCREASES",
+        "CONDITIONAL",
+        "UNRESOLVED"
+      ],
+      "components_by_effect": {
+        "REDUCES": [],
+        "NEUTRAL": [],
+        "INCREASES": [
+          "property_projects"
+        ],
+        "CONDITIONAL": [
+          "multimedia_core",
+          "supply_chain"
+        ],
+        "UNRESOLVED": [
+          "reference_earnings",
+          "white_goods",
+          "mobile"
+        ],
+        "NOT_APPLICABLE": []
+      }
+    },
+    "permanent_loss": {
+      "path_authority": "CONDITIONAL_PATH",
+      "components_by_use": {
+        "BASE_PATH": [],
+        "CONDITIONAL_PATH": [
+          "reference_earnings",
+          "multimedia_core",
+          "supply_chain"
+        ],
+        "STRESS_ONLY": [
+          "property_projects"
+        ],
+        "EXCLUDED": [
+          "white_goods",
+          "mobile"
+        ],
+        "UNRESOLVED": [],
+        "NOT_APPLICABLE": []
+      }
+    },
+    "valuation": {
+      "route_authority": "CONDITIONAL_PRIMARY_INPUT",
+      "components_by_use": {
+        "PRIMARY_INPUT": [],
+        "CONDITIONAL_PRIMARY_INPUT": [
+          "multimedia_core"
+        ],
+        "CORROBORATIVE_INPUT": [
+          "supply_chain"
+        ],
+        "SCENARIO_ONLY": [],
+        "STRESS_ONLY": [],
+        "EXCLUDED": [
+          "white_goods",
+          "mobile",
+          "property_projects"
+        ],
+        "UNRESOLVED": [],
+        "NOT_APPLICABLE": [
+          "reference_earnings"
+        ]
+      },
+      "route_component_bindings": [
+        {
+          "route_id": "ROUTE:CONDITIONAL_CORE_EP",
+          "components_by_use": {
+            "PRIMARY_INPUT": [],
+            "CONDITIONAL_PRIMARY_INPUT": [
+              "multimedia_core"
+            ],
+            "CORROBORATIVE_INPUT": [
+              "supply_chain"
+            ],
+            "SCENARIO_ONLY": [],
+            "STRESS_ONLY": [],
+            "EXCLUDED": [],
+            "UNRESOLVED": [],
+            "NOT_APPLICABLE": []
+          }
+        },
+        {
+          "route_id": "ROUTE:PROPERTY_LIQUIDATION",
+          "components_by_use": {
+            "PRIMARY_INPUT": [],
+            "CONDITIONAL_PRIMARY_INPUT": [],
+            "CORROBORATIVE_INPUT": [],
+            "SCENARIO_ONLY": [],
+            "STRESS_ONLY": [],
+            "EXCLUDED": [
+              "white_goods",
+              "mobile",
+              "property_projects"
+            ],
+            "UNRESOLVED": [],
+            "NOT_APPLICABLE": []
+          }
+        }
+      ]
+    }
+  },
+  "economic_derivation_summary": {
+    "schema_version": "enterprise-underwriting-economic-derivation-summary.v1",
+    "normal_earnings_bridge": {
+      "basis": {
+        "metric": "attributable earnings excluding nonrecurring items",
+        "currency": "RMB",
+        "unit": "annual RMB",
+        "tax_basis": "AFTER_TAX",
+        "earnings_claim_scope": "ORDINARY_COMMON_EQUITY",
+        "operating_perimeter": "Consolidated group, with segment attribution unresolved",
+        "as_of": "2017-12-31"
+      },
+      "rows": [
+        {
+          "row_id": "R0_REFERENCE",
+          "component_id": "reference_earnings",
+          "row_role": "REFERENCE_EARNINGS",
+          "direction": "ADD",
+          "quantification": {
+            "status": "BOUNDED",
+            "range_low": 0,
+            "range_high": 100000000
+          },
+          "evidence_ids": [
+            "E2_FINANCE",
+            "E3_DISPOSAL"
+          ],
+          "economic_reason": "FY2016-FY2017 nonrecurring-adjusted attributable earnings were near breakeven; the range is a conservative conditional baseline, not a point estimate.",
+          "normal_earnings_use": "CONDITIONAL_RANGE",
+          "signed_range": {
+            "range_low": 0.0,
+            "range_high": 100000000.0
+          }
+        },
+        {
+          "row_id": "R1_MULTIMEDIA",
+          "component_id": "multimedia_core",
+          "row_role": "NORMALIZATION_ADJUSTMENT",
+          "direction": "ADD",
+          "quantification": {
+            "status": "UNKNOWN",
+            "reason": "No television/display segment earnings or cash split is disclosed.",
+            "conservative_treatment": "Do not add a component amount until responsibility-unit evidence is available."
+          },
+          "evidence_ids": [
+            "E1_BUSINESS",
+            "E5_UNKNOWN"
+          ],
+          "economic_reason": "Core status is identified, but its normalized contribution cannot be isolated.",
+          "normal_earnings_use": "CONDITIONAL_RANGE",
+          "signed_range": null
+        },
+        {
+          "row_id": "R2_SUPPLY",
+          "component_id": "supply_chain",
+          "row_role": "NORMALIZATION_ADJUSTMENT",
+          "direction": "ADD",
+          "quantification": {
+            "status": "UNKNOWN",
+            "reason": "Trading margin and working-capital economics are not disclosed separately.",
+            "conservative_treatment": "Use only as conditional corroboration."
+          },
+          "evidence_ids": [
+            "E1_BUSINESS",
+            "E5_UNKNOWN"
+          ],
+          "economic_reason": "Material revenue does not establish sustainable earnings.",
+          "normal_earnings_use": "CONDITIONAL_RANGE",
+          "signed_range": null
+        },
+        {
+          "row_id": "R3_WHITE",
+          "component_id": "white_goods",
+          "row_role": "NORMALIZATION_ADJUSTMENT",
+          "direction": "ADD",
+          "quantification": {
+            "status": "UNKNOWN",
+            "reason": "White-goods component economics are absent.",
+            "conservative_treatment": "Excluded from base."
+          },
+          "evidence_ids": [
+            "E1_BUSINESS",
+            "E5_UNKNOWN"
+          ],
+          "economic_reason": "No responsibility-unit evidence.",
+          "normal_earnings_use": "EXCLUDED",
+          "signed_range": null
+        },
+        {
+          "row_id": "R4_MOBILE",
+          "component_id": "mobile",
+          "row_role": "NORMALIZATION_ADJUSTMENT",
+          "direction": "ADD",
+          "quantification": {
+            "status": "UNKNOWN",
+            "reason": "Mobile component economics are absent.",
+            "conservative_treatment": "Excluded from base."
+          },
+          "evidence_ids": [
+            "E1_BUSINESS",
+            "E5_UNKNOWN"
+          ],
+          "economic_reason": "No responsibility-unit evidence.",
+          "normal_earnings_use": "EXCLUDED",
+          "signed_range": null
+        },
+        {
+          "row_id": "R5_PROPERTY",
+          "component_id": "property_projects",
+          "row_role": "NORMALIZATION_ADJUSTMENT",
+          "direction": "SUBTRACT",
+          "quantification": {
+            "status": "UNKNOWN",
+            "reason": "Disposal gain is nonrecurring and project returns are unproved.",
+            "conservative_treatment": "Remove disposal contribution and exclude project upside."
+          },
+          "evidence_ids": [
+            "E3_DISPOSAL",
+            "E4_PROJECTS"
+          ],
+          "economic_reason": "The disclosed RMB6.588bn gain is explicitly non-sustainable.",
+          "normal_earnings_use": "SCENARIO_ONLY",
+          "signed_range": null
+        }
+      ],
+      "totals_by_use": {
+        "BASE_RANGE": null,
+        "CONDITIONAL_RANGE": {
+          "status": "UNKNOWN",
+          "unknown_row_ids": [
+            "R1_MULTIMEDIA",
+            "R2_SUPPLY"
+          ]
+        },
+        "SCENARIO_ONLY": {
+          "status": "UNKNOWN",
+          "unknown_row_ids": [
+            "R5_PROPERTY"
+          ]
+        },
+        "EXCLUDED": {
+          "status": "UNKNOWN",
+          "unknown_row_ids": [
+            "R3_WHITE",
+            "R4_MOBILE"
+          ]
+        },
+        "UNRESOLVED": null,
+        "NOT_APPLICABLE": null
+      },
+      "base_range": null,
+      "conditional_range": {
+        "status": "UNKNOWN",
+        "unknown_row_ids": [
+          "R1_MULTIMEDIA",
+          "R2_SUPPLY"
+        ]
+      }
+    },
+    "driver_sensitivities": [
+      {
+        "sensitivity_id": "SENS:WORKING_CAPITAL_CONVERSION",
+        "component_ids": [
+          "multimedia_core"
+        ],
+        "normal_earnings_uses": {
+          "multimedia_core": "CONDITIONAL_RANGE"
+        },
+        "owner_cash_uses": {
+          "multimedia_core": "CONDITIONAL_RANGE"
+        },
+        "metric": "operating cash conversion",
+        "unit": "RMB annual operating cash flow",
+        "horizon": "FY2015-FY2017",
+        "input_cases": {
+          "mode": "LOW_BASE_HIGH",
+          "low": {
+            "value_or_range": {
+              "value": -4314257622.47
+            },
+            "basis": "FY2017 reported operating cash flow",
+            "evidence_ids": [
+              "E6_OCF_DRIVER"
+            ]
+          },
+          "base": {
+            "value_or_range": {
+              "value": -972135787.43
+            },
+            "basis": "FY2016 reported operating cash flow",
+            "evidence_ids": [
+              "E6_OCF_DRIVER"
+            ]
+          },
+          "high": {
+            "value_or_range": {
+              "value": 1289600482.66
+            },
+            "basis": "FY2015 reported operating cash flow",
+            "evidence_ids": [
+              "E6_OCF_DRIVER"
+            ]
+          }
+        },
+        "transmission": {
+          "normal_earnings": {
+            "status": "UNKNOWN",
+            "basis": "Aggregate cash flow cannot be assigned to components or normalized earnings.",
+            "delta": {
+              "status": "UNKNOWN",
+              "reason": "No component-level cash bridge.",
+              "conservative_treatment": "Keep earnings contribution unresolved."
+            }
+          },
+          "owner_cash": {
+            "status": "UNKNOWN",
+            "basis": "Aggregate operating cash is affected by receivables and bills without component attribution.",
+            "delta": {
+              "status": "UNKNOWN",
+              "reason": "No component-level cash bridge.",
+              "conservative_treatment": "Treat owner cash as conditional and financing-dependent."
+            }
+          },
+          "valuation_route_ids": [
+            "ROUTE:CONDITIONAL_CORE_EP"
+          ]
+        },
+        "valuation_route_attributions": [
+          {
+            "route_id": "ROUTE:CONDITIONAL_CORE_EP",
+            "route_role": "PRIMARY",
+            "component_valuation_uses": {
+              "multimedia_core": "CONDITIONAL_PRIMARY_INPUT"
+            }
+          }
+        ],
+        "reversal_observations": [
+          "A post-cutoff annual report separately reports sustainable television/white-goods margins and operating cash conversion for the responsible units."
+        ]
+      }
+    ]
+  }
+}

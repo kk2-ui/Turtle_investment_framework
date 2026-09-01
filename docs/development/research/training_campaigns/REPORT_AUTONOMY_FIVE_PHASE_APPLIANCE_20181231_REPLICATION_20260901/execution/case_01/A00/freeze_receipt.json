@@ -1,0 +1,13 @@
+{
+  "arm_id": "A00",
+  "attempts": {
+    "episode": 1,
+    "reader_report": 0
+  },
+  "authority": "PREOUTCOME_EXECUTION_CONTROL_PLANE_ONLY",
+  "case_id": "CASE:01",
+  "failure": "training_agent_episode_invalid:episode:schema_version_invalid,episode:episode_id_missing,episode:company_id_missing,episode:company_name_missing,episode:cutoff_at_missing,episode:sample_identity_missing,episode:decision_frame_missing,episode:underwriting_route_missing,episode:situation_model_missing,episode:business_position_missing,episode:survival_case_missing,episode:adaptation_case_missing,episode:normalization_case_missing,episode:permanent_loss_map_missing,episode:value_route_missing,episode:strongest_rival_missing,episode:reversal_observations_missing,episode:component_treatments_missing,episode:evidence_trace_missing,episode:existing_object_refs_missing,episode:underwriting_thesis_missing,episode:investment_treatment_missing,episode:sample_identity_invalid,episode:situation_model.summary_missing,episode:situation_model.industry_future_thesis.horizon_missing,episode:situation_model.industry_future_thesis.most_likely_regime_missing,episode:situation_model.industry_future_thesis.profit_pool_transmission_missing,episode:situation_model.industry_future_thesis.company_exposure_missing,episode:situation_model.industry_future_thesis.adaptation_missing,episode:situation_model.industry_future_thesis.normal_economics_missing,episode:situation_model.industry_future_thesis.permanent_loss_missing,episode:situation_model.industry_future_thesis.valuation_treatment_missing,episode:situation_model.industry_future_thesis.strongest_rival_missing,episode:situation_model.industry_future_thesis.reversal_observations_invalid,episode:underwriting_thesis.thesis_id_missing,episode:underwriting_thesis.central_path_missing,episode:underwriting_thesis.normal_earnings_treatment_missing,episode:underwriting_thesis.owner_cash_treatment_missing,episode:underwriting_thesis.permanent_loss_treatment_missing,episode:underwriting_thesis.value_route_treatment_missing,episode:underwriting_thesis.strongest_rival_missing,episode:underwriting_thesis.monitoring_missing,episode:underwriting_thesis.economic_directions.normal_earnings_invalid,episode:underwriting_thesis.economic_directions.owner_cash_invalid,episode:underwriting_thesis.economic_directions.permanent_loss_invalid,episode:value_route.primary_routes_missing,episode:value_route.excluded_routes_missing,episode:value_route.route_reasoning_missing,episode:value_route.valuation_model_roles_missing",
+  "retry_policy": "NO_RETRY_OR_REWRITE",
+  "schema_version": "report-autonomy-cohort-execution-receipt.v1",
+  "state": "EPISODE_INVALID"
+}
