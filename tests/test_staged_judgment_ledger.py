@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from copy import deepcopy
+import json
 
 from scripts.staged_judgment_ledger import (
     LEDGER_SCHEMA,
@@ -51,17 +52,11 @@ def _ledger() -> dict:
         "evidence_ids": ["E1"],
     }
     return {
-        "schema_version": LEDGER_SCHEMA,
-        "ledger_id": "CNTEST:20240501:V1",
-        "company_id": "CN:TEST",
-        "company_name": "测试公司",
-        "cutoff_at": "2024-05-01T00:00:00+08:00",
-        "sample_identity": "WORKED_CASE",
-        "status": "FROZEN",
-        "decision_frame": "判断企业能否穿越周期。",
-        "underwriting_route": "CYCLICAL",
-        "claims": claims,
-        "components": [component],
+        "schema_version": LEDGER_SCHEMA, "ledger_id": "CNTEST:20240501:V1",
+        "company_id": "CN:TEST", "company_name": "测试公司",
+        "cutoff_at": "2024-05-01T00:00:00+08:00", "sample_identity": "WORKED_CASE",
+        "status": "FROZEN", "decision_frame": "判断企业能否穿越周期。",
+        "underwriting_route": "CYCLICAL", "claims": claims, "components": [component],
         "industry_future": {
             "horizon": "未来三年", "most_likely_regime": "需求温和收缩",
             "profit_pool_transmission": "价格传导至利润。", "company_exposure": "暴露于国内需求。",
@@ -73,6 +68,26 @@ def _ledger() -> dict:
         "evidence_refs": [{"evidence_id": "E1", "source_ref": "SRC:TEST", "locator": "L1", "scope": "company", "used_for": "all"}],
         "diagnostics": [],
     }
+
+
+def _contract(ledger: dict, *, memory: bool = False, v2: bool = False) -> dict:
+    return build_training_contract(
+        contract_id="C:" + ledger["company_id"], training_track="WORKED_CASE",
+        company_id=ledger["company_id"], company_name=ledger["company_name"],
+        cutoff_at=ledger["cutoff_at"],
+        allowed_sources=[{"source_id": "S1", "source_ref": "SRC:TEST",
+                          "available_at": "2024-05-01T00:00:00+08:00",
+                          "time_role": "TRAINING_MEMORY" if memory else "RESULT_KNOWN"}],
+        feedback_clocks=[
+            {"clock_id": "a", "horizon": "EARLY_SIGNAL", "opens_at": "2025-01-01T00:00:00+08:00", "episode_claims": ["INDUSTRY_AND_SITUATION"], "discriminating_observation": "早期信号"},
+            {"clock_id": "b", "horizon": "LONG_TERM_PERMANENT_LOSS", "opens_at": "2027-01-01T00:00:00+08:00", "episode_claims": ["PERMANENT_LOSS"], "discriminating_observation": "长期回报"},
+        ],
+        economic_derivation_interface=ECONOMIC_DERIVATION_INTERFACE if v2 else None,
+    )
+
+
+def _source_index(*, memory: bool = False) -> dict:
+    return {"E1": {"source_ref": "SRC:TEST", "available_at": "2024-05-01T00:00:00+08:00", "time_role": "TRAINING_MEMORY" if memory else "RESULT_KNOWN"}}
 
 
 def test_minimal_ledger_validates_and_is_deterministic():
@@ -172,3 +187,61 @@ def test_derivation_without_contract_fails_closed_without_exception():
     )
     assert result["diagnostics"]["state"] == "DIAGNOSTIC_ONLY"
     assert result["episode"] is None
+
+
+def test_status_matrix_and_json_diagnostics_roundtrip():
+    for status in ("DRAFT", "COMPILED", "DIAGNOSTIC_ONLY", "REJECTED"):
+        ledger = _ledger(); ledger["status"] = status
+        result = compile_staged_judgment_ledger(ledger, _source_index(), _contract(ledger))
+        assert result["episode"] is None
+        assert result["diagnostics"]["state"] == "DIAGNOSTIC_ONLY"
+        assert json.loads(json.dumps(result["diagnostics"], ensure_ascii=False)) == result["diagnostics"]
+
+
+def test_contract_memory_role_fails_closed_before_episode():
+    ledger = _ledger()
+    result = compile_staged_judgment_ledger(ledger, _source_index(memory=True), _contract(ledger, memory=True))
+    assert result["episode"] is None
+    assert result["diagnostics"]["state"] == "DIAGNOSTIC_ONLY"
+    assert any(item["code"] == "TRAINING_MEMORY_EVIDENCE_FORBIDDEN" for item in result["diagnostics"]["findings"])
+
+
+def test_v2_malformed_derivation_fails_closed():
+    ledger = _ledger()
+    ledger["normal_earnings_bridge"] = {"basis": {}, "rows": []}
+    ledger["driver_sensitivities"] = []
+    result = compile_staged_judgment_ledger(ledger, _source_index(), _contract(ledger, v2=True))
+    assert result["episode"] is None
+    assert result["diagnostics"]["state"] == "DIAGNOSTIC_ONLY"
+
+
+def test_projection_gate_failure_is_fail_closed(monkeypatch):
+    ledger = _ledger()
+    contract = _contract(ledger)
+    import scripts.staged_judgment_ledger as module
+    monkeypatch.setattr(module, "validate_underwriting_projection_bundle", lambda *_args, **_kwargs: {"state": "INVALID", "findings": ["injected"]})
+    result = module.compile_staged_judgment_ledger(ledger, _source_index(), contract)
+    assert result["episode"] is None
+    assert result["diagnostics"]["state"] == "DIAGNOSTIC_ONLY"
+
+
+def test_source_index_mismatch_and_component_evidence_are_explicit():
+    ledger = _ledger()
+    result = compile_staged_judgment_ledger(
+        ledger,
+        {"E1": {"source_ref": "SRC:OTHER", "available_at": "2024-05-01T00:00:00+08:00", "time_role": "RESULT_KNOWN"}},
+        _contract(ledger),
+    )
+    assert result["episode"] is None
+    assert any(item["code"] in {"EVIDENCE_INDEX_MISMATCH", "EVIDENCE_NOT_ALLOWED"} for item in result["diagnostics"]["findings"])
+
+    good = compile_staged_judgment_ledger(ledger, _source_index(), _contract(ledger))
+    assert good["episode"]["component_treatments"][0]["evidence_ids"] == ["E1"]
+
+
+def test_duplicate_surface_blocks_compile():
+    ledger = _ledger()
+    ledger["claims"].append(deepcopy(ledger["claims"][0]))
+    result = compile_staged_judgment_ledger(ledger, _source_index(), _contract(ledger))
+    assert result["episode"] is None
+    assert any(item["code"] == "CLAIM_SURFACE_DUPLICATE" for item in result["diagnostics"]["findings"])
