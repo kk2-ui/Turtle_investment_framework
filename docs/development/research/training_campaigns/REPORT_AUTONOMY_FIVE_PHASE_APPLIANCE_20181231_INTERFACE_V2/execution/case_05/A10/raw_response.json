@@ -1,0 +1,118 @@
+{
+  "schema_version": "enterprise-underwriting-episode.v2",
+  "episode_id": "UWTRAIN:APPLIANCE:002614:20181231:STAGE5:A10:V2:EPISODE",
+  "company_id": "CN:002614",
+  "company_name": "奥佳华智能健康科技集团股份有限公司",
+  "cutoff_at": "2018-12-31T23:59:59+08:00",
+  "sample_identity": "BLIND_REPLAY",
+  "decision_frame": "截至2018-12-31，以合并年报识别成熟经营、并购与新产能的可持续盈利、现金可得性、融资压力和永久损失路径；不使用截止日后结果或价格。",
+  "underwriting_route": "以成熟按摩及健康产品业务的扣非盈利为基线，现金可得性和MEDISANA并购贡献作条件性验证，新基地回报仅作压力情景。",
+  "situation_model": {
+    "summary": "公司从ODM出口扩展到OGAWA、COZZIA、FUJIMEDIC、FUJI、MEDISANA等自主品牌，收入和扣非净利润在2015-2017年增长，但客户、品牌、并购及新基地的责任单元经济未被单独披露。",
+    "industry_future_thesis": {
+      "horizon": "2019-2021",
+      "most_likely_regime": "按摩康复和健康家电维持多渠道竞争，品牌与ODM并存，价格和迭代压力限制利润池扩张；规模和渠道覆盖提供机会但不保证回报。",
+      "profit_pool_transmission": "利润主要通过ODM客户订单、海外自主品牌渠道和按摩椅等产品销售传导；前五大客户占比由35.27%降至24.30%，集中度下降但客户议价与渠道费用仍影响利润留存。",
+      "company_exposure": "公司覆盖中国、东南亚、北美、日本及欧洲渠道，既暴露于全球品牌竞争，也承担跨境库存、应收和并购整合的现金吸收。",
+      "adaptation": "通过多自主品牌、MEDISANA并表及筹划年产100万台智能按摩椅基地扩大覆盖；但截至 cutoff 未披露各品牌、并购或基地的独立利润、现金回收和资本回报。",
+      "normal_economics": "2015-2017营业收入由约28.3亿元增至42.9亿元，扣非归母净利润由1.24亿元增至2.61亿元，经营现金流波动（1.42、1.19、3.03亿元），表明增长伴随营运资本和口径变化，成熟利润需以三期区间而非单年峰值理解。",
+      "permanent_loss": "商誉减值、存货及应收账款增长、受限资金增加和未验证的新基地投入可能造成低回报留存及现金不可得，形成慢性每股价值损失，即使企业仍具偿债能力。",
+      "valuation_treatment": "成熟经营扣非盈利进入主路线；MEDISANA和现金上划仅进入可核验的辅助条件路线；新基地及未拆分品牌回报保留压力处理，不计入基准增长价值。",
+      "strongest_rival": "大型家电及按摩设备品牌凭借更强研发、渠道和价格规模持续迭代，若其在主要区域压低终端价格或提高获客投入，奥佳华ODM及自主品牌的利润池份额和现金转换将先受压。",
+      "reversal_observations": [
+        "后续年报显示核心按摩及ODM业务在责任匹配口径下连续维持或提高扣非利润率，且应收和存货增速不超过收入增速。",
+        "后续披露能按品牌、MEDISANA及新基地给出独立毛利、经营现金和投入资本回报，并证明增量现金可归属于普通股股东。",
+        "公司披露受限现金解除、子公司现金上划及持续普通股分配的可核验路径，现金可得性显著高于当前条件性判断。",
+        "竞争对手未能持续压价，且公司在主要渠道保持份额、费用率和回款优势。"
+      ]
+    }
+  },
+  "business_position": "公司拥有多自主品牌、ODM客户和跨区域渠道，前五大客户占比下降显示分散化；但品牌和客户层面的毛利、回款及投入回报未拆分，规模优势尚未等同于稳固议价权。",
+  "survival_case": "2017年末现金及现金等价物约5.27亿元，短期借款约3.61亿元、长期借款约1.89亿元，经营现金流3.03亿元，短期偿债具缓冲；但约2.33亿元货币资金受限，且应收约5.95亿元、存货约7.49亿元，若增长或整合吸收营运资金，融资压力会重新上升。",
+  "adaptation_case": "并入MEDISANA并扩展健康环境、家用医疗及智能按摩椅基地可扩大产品和渠道覆盖；在缺乏独立责任单元经济前，将其视为条件性适应而非已证实的高回报增长。",
+  "normalization_case": "采用2015-2017扣非归母净利润1.24亿至2.61亿元作为合并经营基线，保留收入增长、并表和减值变化的口径断点；MEDISANA、品牌及基地增量利润为UNKNOWN，不以零或单点数替代。",
+  "permanent_loss_map": "永久损失路径包括核心业务价格和费用竞争导致的利润率侵蚀、应收存货吸收现金、商誉或存货减值、受限现金无法上划，以及新基地和并购留存资本低回报；这些路径独立于是否发生偿债违约。",
+  "value_route": {
+    "primary_routes": ["ROUTE:CORE_OWNER_CASH"],
+    "excluded_routes": ["ROUTE:FIXED_TERMINAL_PRICE"],
+    "route_reasoning": "当前唯一可直接绑定的主路线是成熟核心扣非盈利及其可实现经营现金；MEDISANA和现金可得性仅作辅助条件路线，新基地回报及固定终值算术缺乏责任匹配证据而不进入基准。",
+    "valuation_model_roles": {
+      "primary": ["ROUTE:CORE_OWNER_CASH"],
+      "corroborative": ["ROUTE:MEDISANA_CONDITIONAL", "ROUTE:CASH_ACCESS_RANGE"],
+      "stress": ["ROUTE:SMART_GROWTH_OPTION", "ROUTE:FINANCING_STRESS"]
+    },
+    "route_component_requirements": [
+      {"route_id": "ROUTE:CORE_OWNER_CASH", "required_component_ids": ["CORE_EARNINGS"], "optional_component_ids": []},
+      {"route_id": "ROUTE:MEDISANA_CONDITIONAL", "required_component_ids": ["MEDISANA_ACQUISITION"], "optional_component_ids": []},
+      {"route_id": "ROUTE:CASH_ACCESS_RANGE", "required_component_ids": ["CASH_ACCESS"], "optional_component_ids": []},
+      {"route_id": "ROUTE:SMART_GROWTH_OPTION", "required_component_ids": ["SMART_MASSAGE_BASE"], "optional_component_ids": []},
+      {"route_id": "ROUTE:FINANCING_STRESS", "required_component_ids": ["FINANCING_PRESSURE"], "optional_component_ids": []},
+      {"route_id": "ROUTE:FIXED_TERMINAL_PRICE", "required_component_ids": ["CORE_EARNINGS"], "optional_component_ids": []}
+    ]
+  },
+  "strongest_rival": "大型家电及按摩设备品牌凭借更强研发、渠道和价格规模持续迭代，若其在主要区域压低终端价格或提高获客投入，奥佳华ODM及自主品牌的利润池份额和现金转换将先受压。",
+  "reversal_observations": [
+    "后续年报显示核心按摩及ODM业务在责任匹配口径下连续维持或提高扣非利润率，且应收和存货增速不超过收入增速。",
+    "后续披露能按品牌、MEDISANA及新基地给出独立毛利、经营现金和投入资本回报，并证明增量现金可归属于普通股股东。",
+    "公司披露受限现金解除、子公司现金上划及持续普通股分配的可核验路径，现金可得性显著高于当前条件性判断。",
+    "竞争对手未能持续压价，且公司在主要渠道保持份额、费用率和回款优势。"
+  ],
+  "component_treatments": [
+    {"component_id": "CORE_EARNINGS", "treatment": "UNDERWRITE", "reason": "三期年报连续披露合并收入、扣非归母净利润和经营现金流，可形成成熟经营基线。", "investment_consequence": "核心盈利进入基准正常化与主价值路线，但以区间和竞争压力审视。", "promotion_or_resolution_condition": "连续年度责任匹配口径的利润率和现金转换稳定，且应收存货增速受控。", "evidence_ids": ["E_EARNINGS_TREND", "E_CUSTOMER_MIX"]},
+    {"component_id": "MEDISANA_ACQUISITION", "treatment": "CONDITIONALLY_UNDERWRITE", "reason": "MEDISANA自2016-04-01并表并贡献欧洲渠道，但独立利润、现金和整合回报未拆分。", "investment_consequence": "仅进入辅助条件路线；未验证的并购增量不抬高基准盈利。", "promotion_or_resolution_condition": "披露MEDISANA独立毛利、经营现金、整合成本及投入资本回报并可归属于普通股。", "evidence_ids": ["E_MEDISANA_SCOPE", "E_EARNINGS_TREND"]},
+    {"component_id": "SMART_MASSAGE_BASE", "treatment": "SCENARIO_ONLY", "reason": "年报仅披露筹划年产100万台智能按摩椅基地，缺乏投产进度、利用率、单位经济和现金回收。", "investment_consequence": "新增产能不进入基准增长价值，作为资本吸收和竞争压力情景。", "promotion_or_resolution_condition": "取得投产、利用率、单位毛利、营运资金和累计现金回报的连续责任单元证据。", "evidence_ids": ["E_SMART_BASE"]},
+    {"component_id": "CASH_ACCESS", "treatment": "CONDITIONALLY_UNDERWRITE", "reason": "合并现金约5.27亿元但受限资金约2.33亿元且分布于子公司，普通股可得性和上划路径未完全披露。", "investment_consequence": "现金仅作条件性辅助范围，不能按合并余额全额视为普通股现金。", "promotion_or_resolution_condition": "披露持有实体、限制、税费、非控股权益、历史上划和分配后的余额并完成普通股归属桥接。", "evidence_ids": ["E_CASH_RESTRICTION", "E_SUBSIDIARY_SCOPE"]},
+    {"component_id": "FINANCING_PRESSURE", "treatment": "UNDERWRITE", "reason": "短期借款、长期借款、应收存货及长期资产支付形成可观察的融资和营运资金边界。", "investment_consequence": "当前偿债有经营现金缓冲，但增长、并购或受限现金会提高再融资敏感度。", "promotion_or_resolution_condition": "后续年度显示经营现金持续覆盖到期债务及长期资产投入，且受限现金下降。", "evidence_ids": ["E_DEBT_WORKING_CAPITAL", "E_CASH_RESTRICTION"]}
+  ],
+  "component_decisions": [
+    {"component_id": "CORE_EARNINGS", "economic_scope": "MATURE_CORE_NORMAL_EARNINGS", "normal_earnings_use": "BASE_RANGE", "owner_cash_use": "BASE_RANGE", "financing_pressure_effect": "NEUTRAL", "permanent_loss_use": "BASE_PATH", "valuation_use": "PRIMARY_INPUT", "valuation_route_bindings": [{"route_id": "ROUTE:CORE_OWNER_CASH", "use": "PRIMARY_INPUT"}, {"route_id": "ROUTE:FIXED_TERMINAL_PRICE", "use": "EXCLUDED"}], "promotion_test": "核心业务连续披露责任匹配利润率、回款和资本需求。", "invalidation_test": "核心业务利润率持续下降且应收存货吸收现金无法由价格或效率改善抵消。"},
+    {"component_id": "MEDISANA_ACQUISITION", "economic_scope": "OTHER_MATERIAL_COMPONENT", "normal_earnings_use": "CONDITIONAL_RANGE", "owner_cash_use": "CONDITIONAL_RANGE", "financing_pressure_effect": "CONDITIONAL", "permanent_loss_use": "CONDITIONAL_PATH", "valuation_use": "CORROBORATIVE_INPUT", "valuation_route_bindings": [{"route_id": "ROUTE:MEDISANA_CONDITIONAL", "use": "CORROBORATIVE_INPUT"}], "promotion_test": "获得MEDISANA独立利润、现金及整合回报的连续披露。", "invalidation_test": "持续商誉减值或整合现金流为负且无改善证据。"},
+    {"component_id": "SMART_MASSAGE_BASE", "economic_scope": "GROWTH_CAPITAL_RETURN", "normal_earnings_use": "SCENARIO_ONLY", "owner_cash_use": "SCENARIO_ONLY", "financing_pressure_effect": "INCREASES", "permanent_loss_use": "STRESS_ONLY", "valuation_use": "STRESS_ONLY", "valuation_route_bindings": [{"route_id": "ROUTE:SMART_GROWTH_OPTION", "use": "STRESS_ONLY"}], "promotion_test": "基地投产后披露利用率、单位毛利、营运资金和累计现金回报。", "invalidation_test": "建设延期、低利用率或投入资本回报低于资本成本。"},
+    {"component_id": "CASH_ACCESS", "economic_scope": "ORDINARY_SHARE_OWNER_CASH", "normal_earnings_use": "NOT_APPLICABLE", "owner_cash_use": "CONDITIONAL_RANGE", "financing_pressure_effect": "CONDITIONAL", "permanent_loss_use": "CONDITIONAL_PATH", "valuation_use": "CORROBORATIVE_INPUT", "valuation_route_bindings": [{"route_id": "ROUTE:CASH_ACCESS_RANGE", "use": "CORROBORATIVE_INPUT"}], "promotion_test": "完成现金持有实体、限制、税费、非控股权益及历史分配的归属桥。", "invalidation_test": "受限现金或子公司现金长期无法上划且资本需求持续增加。"},
+    {"component_id": "FINANCING_PRESSURE", "economic_scope": "SURVIVAL_FINANCING", "normal_earnings_use": "NOT_APPLICABLE", "owner_cash_use": "NOT_APPLICABLE", "financing_pressure_effect": "INCREASES", "permanent_loss_use": "STRESS_ONLY", "valuation_use": "STRESS_ONLY", "valuation_route_bindings": [{"route_id": "ROUTE:FINANCING_STRESS", "use": "STRESS_ONLY"}], "promotion_test": "经营现金连续覆盖债务到期、长期资产支付及营运资金增长。", "invalidation_test": "经营现金转弱并叠加短债集中到期或受限现金扩大。"}
+  ],
+  "evidence_trace": [
+    {"evidence_id": "E_EARNINGS_TREND", "source_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN002614_PRE_CUTOFF_SOURCE_PACKAGE.md", "locator": "跨期利润与现金流：FY2015-FY2017表；FY2016 p.16；FY2017 p.22", "scope": "合并收入、扣非归母净利润、经营现金流及并表说明", "used_for": "核心正常化基线与MEDISANA并表边界"},
+    {"evidence_id": "E_CUSTOMER_MIX", "source_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN002614_PRE_CUTOFF_SOURCE_PACKAGE.md", "locator": "业务组件、客户与渠道：FY2015 pp.26-27；FY2016 pp.27-28；FY2017 pp.25-26", "scope": "前五大客户销售额及占比、品牌和ODM渠道", "used_for": "客户集中度与竞争暴露"},
+    {"evidence_id": "E_MEDISANA_SCOPE", "source_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN002614_PRE_CUTOFF_SOURCE_PACKAGE.md", "locator": "具名项目、并购与融资边界；FY2015 pp.14-15；FY2016 p.16", "scope": "MEDISANA收购、2016-04-01并表及欧洲渠道", "used_for": "并购组件条件性处理"},
+    {"evidence_id": "E_SMART_BASE", "source_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN002614_PRE_CUTOFF_SOURCE_PACKAGE.md", "locator": "具名项目、并购与融资边界：FY2017 p.12", "scope": "年产100万台智能按摩椅基地筹划", "used_for": "增长资本回报未知与压力情景"},
+    {"evidence_id": "E_CASH_RESTRICTION", "source_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN002614_PRE_CUTOFF_SOURCE_PACKAGE.md", "locator": "现金、长期资产支付、营运资本、债务与受限现金：FY2015-FY2017现金及受限货币资金", "scope": "现金余额、受限资金、长期资产支付", "used_for": "普通股现金可得性与融资压力"},
+    {"evidence_id": "E_SUBSIDIARY_SCOPE", "source_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN002614_PRE_CUTOFF_SOURCE_PACKAGE.md", "locator": "正式身份与合并边界：FY2017 pp.150-153", "scope": "子公司持股和合并边界", "used_for": "现金归属和非控股权益边界"},
+    {"evidence_id": "E_DEBT_WORKING_CAPITAL", "source_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN002614_PRE_CUTOFF_SOURCE_PACKAGE.md", "locator": "现金、长期资产支付、营运资本、债务与受限现金：FY2015-FY2017余额表", "scope": "应收、存货、应付及短长期借款", "used_for": "营运资金和偿债压力"},
+    {"evidence_id": "E_SENS_MEDISANA", "source_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN002614_PRE_CUTOFF_SOURCE_PACKAGE.md", "locator": "明确 UNKNOWN：MEDISANA、各品牌、ODM利润/现金流不可拆分", "scope": "MEDISANA责任单元经济未知", "used_for": "MEDISANA敏感性输入"},
+    {"evidence_id": "E_SENS_SMART", "source_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN002614_PRE_CUTOFF_SOURCE_PACKAGE.md", "locator": "明确 UNKNOWN：新基地利润/现金流未拆分", "scope": "智能按摩椅基地责任单元经济未知", "used_for": "新基地敏感性输入"},
+    {"evidence_id": "E_SENS_CUSTOMER", "source_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN002614_PRE_CUTOFF_SOURCE_PACKAGE.md", "locator": "明确 UNKNOWN：按客户品牌收入、毛利和回款未给出", "scope": "客户品牌责任单元经济未知", "used_for": "客户集中度敏感性输入"}
+  ],
+  "existing_object_refs": [
+    {"kind": "SOURCE_PACKAGE", "ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN002614_PRE_CUTOFF_SOURCE_PACKAGE.md", "role": "唯一允许的截止日前公司事实来源"}
+  ],
+  "underwriting_thesis": {
+    "thesis_id": "THESIS:CN002614:PRE20181231",
+    "central_path": "成熟按摩及ODM业务提供可观察但竞争敏感的盈利基线；MEDISANA和合并现金的增量价值取决于独立回报及普通股实现，新基地低回报或现金吸收是主要永久损失路径。",
+    "normal_earnings_treatment": "以三期扣非归母净利润区间作核心基线，MEDISANA和新基地不以未经拆分的收入增长推定成熟回报。",
+    "owner_cash_treatment": "经营现金流需扣除经济性维护投入并考虑应收存货吸收；合并现金因受限和子公司归属仅条件性计入。",
+    "permanent_loss_treatment": "将竞争性利润率下降、营运资本吸收、减值、受限现金和低回报留存分别跟踪，生存能力不等同于每股价值安全。",
+    "value_route_treatment": "采用核心经营现金路线为主，MEDISANA及现金可得性为辅助条件，增长基地为压力路线，固定终值算术路线排除。",
+    "economic_directions": {"normal_earnings": "MIXED", "owner_cash": "MIXED", "permanent_loss": "MIXED"},
+    "strongest_rival": "大型家电及按摩设备品牌凭借更强研发、渠道和价格规模持续迭代，若其在主要区域压低终端价格或提高获客投入，奥佳华ODM及自主品牌的利润池份额和现金转换将先受压。",
+    "monitoring": "在CLOCK:EARLY_SIGNAL观察核心利润率、客户集中度和竞争价格；在CLOCK:NORMALIZATION_AND_CASH观察经营现金、应收存货、受限现金上划及MEDISANA/基地责任单元回报。"
+  },
+  "investment_treatment": "仅形成价格和行动无关的企业承保判断：核心业务可承保，MEDISANA与现金可得性条件承保，新基地和固定终值保持压力或排除，等待责任匹配证据。",
+  "economic_derivation": {
+    "schema_version": "enterprise-underwriting-economic-derivation.v1",
+    "normal_earnings_bridge": {
+      "basis": {"metric": "归母扣除非经常性损益后净利润", "currency": "CNY", "unit": "人民币元", "tax_basis": "AFTER_TAX", "earnings_claim_scope": "ORDINARY_COMMON_EQUITY", "operating_perimeter": "FY2015-FY2017合并口径", "as_of": "2017-12-31"},
+      "rows": [
+        {"row_id": "ROW_REFERENCE_EARNINGS", "component_id": "REFERENCE_EARNINGS", "row_role": "REFERENCE_EARNINGS", "direction": "ADD", "quantification": {"status": "BOUNDED", "range_low": 123895897.97, "range_high": 261449264.96}, "evidence_ids": ["E_EARNINGS_TREND"], "economic_reason": "三期年报披露的扣非归母净利润区间作为成熟合并经营参考基线。"},
+        {"row_id": "ROW_CORE_ADJUSTMENT", "component_id": "CORE_EARNINGS", "row_role": "NORMALIZATION_ADJUSTMENT", "direction": "ADD", "quantification": {"status": "BOUNDED", "range_low": 0, "range_high": 0}, "evidence_ids": ["E_EARNINGS_TREND"], "economic_reason": "未识别可独立量化且需剔除的核心经常性项目，保持参考基线。"},
+        {"row_id": "ROW_MEDISANA_ADJUSTMENT", "component_id": "MEDISANA_ACQUISITION", "row_role": "NORMALIZATION_ADJUSTMENT", "direction": "ADD", "quantification": {"status": "UNKNOWN", "reason": "年报未拆分MEDISANA独立利润和整合成本。", "conservative_treatment": "不将并购增量加入核心基准，待责任单元证据后条件性纳入。"}, "evidence_ids": ["E_MEDISANA_SCOPE"], "economic_reason": "并表扩大收入但其成熟盈利和现金归属未知。"},
+        {"row_id": "ROW_SMART_ADJUSTMENT", "component_id": "SMART_MASSAGE_BASE", "row_role": "NORMALIZATION_ADJUSTMENT", "direction": "ADD", "quantification": {"status": "UNKNOWN", "reason": "仅有基地筹划，缺乏投产和单位经济。", "conservative_treatment": "不把新基地预期产能转为正常盈利点估计，仅保留压力情景。"}, "evidence_ids": ["E_SMART_BASE"], "economic_reason": "产能计划不是已实现的成熟回报。"}
+      ]
+    },
+    "driver_sensitivity_specs": [
+      {"sensitivity_id": "SENS_MEDISANA_ECONOMICS", "component_ids": ["MEDISANA_ACQUISITION"], "metric": "MEDISANA独立利润及经营现金贡献", "unit": "人民币元", "horizon": "2019-2021", "input_cases": {"mode": "BOUNDED_RANGE", "range": {"value_or_range": {"value": "UNKNOWN"}, "basis": "来源包明确指出MEDISANA利润和现金流不可拆分。", "evidence_ids": ["E_SENS_MEDISANA"]}}, "transmission": {"normal_earnings": {"status": "UNKNOWN", "basis": "责任单元利润未披露，无法从并表收入推导。", "delta": {"status": "UNKNOWN", "reason": "缺乏独立利润、整合成本和税后归属数据。", "conservative_treatment": "维持核心基线，不计并购增量点估计。"}}, "owner_cash": {"status": "UNKNOWN", "basis": "责任单元经营现金及上划未披露。", "delta": {"status": "UNKNOWN", "reason": "无法将MEDISANA现金贡献归属普通股。", "conservative_treatment": "仅在后续现金归属证据出现时更新条件范围。"}}, "valuation_route_ids": ["ROUTE:MEDISANA_CONDITIONAL"]}, "reversal_observation_refs": ["#/reversal_observations/1"], "responsibility_boundary": "MEDISANA合并子公司责任单元，税后利润与经营现金至普通股归属"},
+      {"sensitivity_id": "SENS_SMART_BASE_RETURN", "component_ids": ["SMART_MASSAGE_BASE"], "metric": "智能按摩椅基地利用率与投入资本回报", "unit": "百分比及人民币元", "horizon": "2019-2021", "input_cases": {"mode": "BOUNDED_RANGE", "range": {"value_or_range": {"value": "UNKNOWN"}, "basis": "年报仅披露筹划产能，未披露投产、利用率和回报。", "evidence_ids": ["E_SENS_SMART"]}}, "transmission": {"normal_earnings": {"status": "UNKNOWN", "basis": "基地尚无已实现责任单元盈利。", "delta": {"status": "UNKNOWN", "reason": "缺乏投产和单位经济数据。", "conservative_treatment": "不纳入正常盈利。"}}, "owner_cash": {"status": "UNKNOWN", "basis": "建设支出及营运资金回收未披露。", "delta": {"status": "UNKNOWN", "reason": "无法计算增长资本现金回报。", "conservative_treatment": "仅保留融资和永久损失压力。"}}, "valuation_route_ids": ["ROUTE:SMART_GROWTH_OPTION"]}, "reversal_observation_refs": ["#/reversal_observations/1"], "responsibility_boundary": "智能按摩椅基地项目，从建设投入、产能利用到累计经营现金"},
+      {"sensitivity_id": "SENS_CUSTOMER_CONCENTRATION", "component_ids": ["CORE_EARNINGS"], "metric": "前五大客户销售占比及价格压力", "unit": "比例", "horizon": "2019-2021", "input_cases": {"mode": "LOW_BASE_HIGH", "low": {"value_or_range": {"value": 0.2}, "basis": "FY2017前五大客户占比24.30%，历史呈下降。", "evidence_ids": ["E_SENS_CUSTOMER"]}, "base": {"value_or_range": {"value": 0.243}, "basis": "FY2017前五大客户销售占比。", "evidence_ids": ["E_SENS_CUSTOMER"]}, "high": {"value_or_range": {"value": 0.35}, "basis": "FY2015前五大客户销售占比35.27%，作为集中度压力参考。", "evidence_ids": ["E_SENS_CUSTOMER"]}}, "transmission": {"normal_earnings": {"status": "UNKNOWN", "basis": "客户占比变化与价格、费用和订单利润的责任匹配关系未披露。", "delta": {"status": "UNKNOWN", "reason": "无法从销售占比单独量化利润影响。", "conservative_treatment": "保留竞争风险方向，不给出利润点估计。"}}, "owner_cash": {"status": "UNKNOWN", "basis": "客户集中度对回款和营运资本的影响未拆分。", "delta": {"status": "UNKNOWN", "reason": "缺乏客户级回款及现金转换数据。", "conservative_treatment": "不改变核心现金区间，持续监测应收。"}}, "valuation_route_ids": ["ROUTE:CORE_OWNER_CASH"]}, "reversal_observation_refs": ["#/reversal_observations/0", "#/reversal_observations/3"], "responsibility_boundary": "核心ODM及自主品牌客户组合，从订单价格和费用到税后利润与经营现金"}
+    ]
+  }
+}

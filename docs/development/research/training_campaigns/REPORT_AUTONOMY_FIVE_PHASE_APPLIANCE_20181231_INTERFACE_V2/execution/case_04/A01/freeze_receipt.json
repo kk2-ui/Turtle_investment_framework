@@ -1,0 +1,13 @@
+{
+  "arm_id": "A01",
+  "attempts": {
+    "episode": 1,
+    "reader_report": 0
+  },
+  "authority": "PREOUTCOME_EXECUTION_CONTROL_PLANE_ONLY",
+  "case_id": "CASE:04",
+  "failure": "training_agent_episode_invalid:episode:value_route.stress_route_unbound_or_ineligible:ROUTE_FINANCING_STRESS,episode:value_route.stress_route_required_component_ineligible:ROUTE_FINANCING_STRESS:FINANCING_RESTRICTED_ASSETS,episode:economic_derivation.normal_earnings_bridge.rows[0].component_id_unknown,episode:economic_derivation.normal_earnings_bridge.base_range_requires_base_reference_earnings,episode:economic_derivation.driver_sensitivity_specs[0].input_cases.low.value_or_range_invalid,episode:economic_derivation.driver_sensitivity_specs[0].input_cases.base.value_or_range_invalid,episode:economic_derivation.driver_sensitivity_specs[0].input_cases.high.value_or_range_invalid,episode:economic_derivation.driver_sensitivity_specs[1].input_cases.range.value_or_range_invalid,episode:economic_derivation.driver_sensitivity_specs[2].input_cases.range.value_or_range_invalid",
+  "retry_policy": "NO_RETRY_OR_REWRITE",
+  "schema_version": "report-autonomy-cohort-execution-receipt.v1",
+  "state": "EPISODE_INVALID"
+}

@@ -1,0 +1,109 @@
+{
+  "schema_version": "enterprise-underwriting-episode.v2",
+  "episode_id": "UWTRAIN-002676-20181231-A11",
+  "company_id": "CN:002676",
+  "company_name": "广东顺威精密塑料股份有限公司",
+  "cutoff_at": "2018-12-31T23:59:59+08:00",
+  "sample_identity": "BLIND_REPLAY",
+  "decision_frame": "截至2018年末，仅依据2015至2017年年报判断空调风叶核心、配套材料及扩张项目对持续经营、正常收益和普通股东现金的可证实贡献。",
+  "underwriting_route": "以成熟风叶及配套产业链的经营现金转化为主线，单独标记融资压力，并把缺乏分部经济数据的新项目留在条件或未定范围。",
+  "situation_model": {
+    "summary": "公司围绕改性塑料、模具和塑料空调风叶形成一体化制造链，客户集中度高；收入增长未能避免2017年亏损，且营运资本、长期资产投入和短期借款同时上升。",
+    "industry_future_thesis": {
+      "horizon": "2018年后3至5年",
+      "most_likely_regime": "空调整机客户仍有规模需求，但成熟风叶供应商面临原料人工成本、客户议价和整机厂自制或替代供应的持续压力。",
+      "profit_pool_transmission": "利润池主要通过整机客户的规格认证、交付可靠性和成本转嫁传导；一体化改性与模具能力可提高黏性，但不能自动抵消集中客户的议价。",
+      "company_exposure": "公司直接服务格力、美的等国内客户及多家海外整机客户，前五大客户约占过半销售；以销定产使订单驱动明显，同时库存和应收规模随业务扩张。",
+      "adaptation": "公司继续建设泰国生产基地并尝试智能卫浴、汽车组件等方向；这些举措显示寻求地域和产品扩展，但年报未给出分部收入、利润或现金回报。",
+      "normal_economics": "核心风叶链有真实客户和多年收入基础，正常收益应以2016年盈利水平为参考并对2017年成本、减值及筹建扰动进行逐项核实；新项目不得在缺证时并入核心基准。",
+      "permanent_loss": "若客户集中、成本上升和低回报扩张持续，利润率和每股现金可能缓慢侵蚀；同时高库存、应收及借款会把经营波动转化为融资和稀释风险。",
+      "valuation_treatment": "仅将核心经营现金路径作为主要研究路线；新项目的增长价值暂不计入基准，待分部回报、资本吸收和普通股东实现路径明确后再作条件情景。",
+      "strongest_rival": "大型空调整机厂商自制风叶或引入低价供应商，凭规模和议价压缩独立风叶供应商的利润池。",
+      "reversal_observations": [
+        "后续年报显示前五大客户占比下降且核心风叶毛利率在原料上涨期仍稳定或改善。",
+        "后续年报能将泰国、智能卫浴或其他新项目的收入、利润、资本投入和经营现金按分部持续披露并证明正向贡献。"
+      ]
+    }
+  },
+  "business_position": "核心产品覆盖贯流、轴流和离心塑料风叶，并由改性塑料与模具能力配套；长期客户和直接销售提供一定认证黏性，但前五大客户集中度约半数、单一客户经济性未披露，议价风险仍高。",
+  "survival_case": "截至2017年末仍有合并现金及持续经营客户基础，但短期借款较前期明显增加、一年内到期长期借款出现，叠加库存、应收和长期资产支付，流动性依赖经营回款与续融资。年报未见受限资产勾选，2015年受限现金金额仍未知。",
+  "adaptation_case": "泰国基地完成建设并计划投产，另布局智能卫浴、汽车组件等；这些是潜在适应路径而非已验证收益。只有分部利润、资本投入、营运资本吸收和回款可核对时，才可提升其经济权重。",
+  "normalization_case": "2015至2017年归母扣非净利润由小幅亏损转为盈利后再次亏损，2017年亏损包含原料人工上涨、存货减值、筹建及重组中介费用、汇兑和纠纷赔偿等项目。核心正常收益可暂以历史盈利区间作条件基线，但对成本、客户议价和营运资本的持续性保持保守，不把未知项目当作零或正贡献。",
+  "permanent_loss_map": "永久损失路径包括：核心客户集中导致价格和毛利下滑；库存与应收增长吸收现金；为扩张而增加借款及长期资产投入却未形成可验证回报；以及新项目失败、减值或持续低回报造成每股价值缓慢下降。逆转需见核心现金转化、资本回报和普通股东可实现现金的连续改善。",
+  "value_route": {
+    "primary_routes": ["ROUTE_CORE_OWNER_CASH"],
+    "excluded_routes": ["ROUTE_GROWTH_OPTIONAL"],
+    "route_reasoning": "核心风叶及其配套链是唯一具有多年合并经营记录的可审阅路线；现金可得性与维护性资本仍需在实体和资本开支层面核实，因此只保留经营现金主路线。泰国、智能卫浴及其他扩张缺乏分部经济和回报证据，增长路线排除出基准。",
+    "valuation_model_roles": {
+      "primary": ["ROUTE_CORE_OWNER_CASH"],
+      "corroborative": [],
+      "stress": []
+    },
+    "route_component_requirements": [
+      {"route_id": "ROUTE_CORE_OWNER_CASH", "required_component_ids": ["CORE_BLADE"], "optional_component_ids": ["ADJACENT_MATERIALS", "FINANCING_LIQUIDITY"]},
+      {"route_id": "ROUTE_GROWTH_OPTIONAL", "required_component_ids": ["NONCORE_PROJECTS"], "optional_component_ids": []}
+    ]
+  },
+  "strongest_rival": "大型空调整机厂商自制风叶或引入低价供应商，凭规模和议价压缩独立风叶供应商的利润池。",
+  "reversal_observations": [
+    "后续年报显示前五大客户占比下降且核心风叶毛利率在原料上涨期仍稳定或改善。",
+    "后续年报能将泰国、智能卫浴或其他新项目的收入、利润、资本投入和经营现金按分部持续披露并证明正向贡献。"
+  ],
+  "component_treatments": [
+    {"component_id": "CORE_BLADE", "treatment": "UNDERWRITE", "reason": "三期年报均确认塑料空调风叶为主营并有长期客户、直接销售和以销定产。", "investment_consequence": "作为持续经营和正常收益的核心，但须承受客户集中与成本波动压力。", "promotion_or_resolution_condition": "连续年报显示核心风叶收入、毛利和经营现金在成本上升期保持稳定。", "evidence_ids": ["E_BUSINESS_CORE", "E_PROFIT_SERIES"]},
+    {"component_id": "ADJACENT_MATERIALS", "treatment": "CONDITIONALLY_UNDERWRITE", "reason": "改性塑料和模具与风叶形成产业链配套，但未按分部披露独立利润和现金。", "investment_consequence": "仅作为核心链的条件性增益，不独立增加基准收益。", "promotion_or_resolution_condition": "取得按业务分部的收入、利润、资本投入和现金转化证据。", "evidence_ids": ["E_BUSINESS_CORE", "E_SEGMENT_UNKNOWN"]},
+    {"component_id": "NONCORE_PROJECTS", "treatment": "CANNOT_BOUND", "reason": "泰国、智能卫浴、汽车组件等项目缺乏可比较的单独收入、利润或现金流。", "investment_consequence": "不纳入基准收益或核心价值，仅保留未定的潜在上行和减值风险。", "promotion_or_resolution_condition": "后续披露提供分部经济、全部资本吸收、回款及普通股东实现路径。", "evidence_ids": ["E_EXPANSION", "E_SEGMENT_UNKNOWN"]},
+    {"component_id": "FINANCING_LIQUIDITY", "treatment": "UNDERWRITE", "reason": "现金、应收、存货、短期借款及长期资产支付均有合并口径披露，2017年借款和营运资本占用上升。", "investment_consequence": "决定核心经营现金能否持续并提高再融资、汇兑和流动性压力；不把全部现金视为可分配现金。", "promotion_or_resolution_condition": "看到债务期限、受限现金、子公司现金可上划性及经营现金覆盖资本支出的连续证据。", "evidence_ids": ["E_CASH_CAPEX", "E_WORKING_CAPITAL_DEBT", "E_RESTRICTED_CASH"]}
+  ],
+  "component_decisions": [
+    {"component_id": "CORE_BLADE", "economic_scope": "MATURE_CORE_NORMAL_EARNINGS", "normal_earnings_use": "BASE_RANGE", "owner_cash_use": "BASE_RANGE", "financing_pressure_effect": "NEUTRAL", "permanent_loss_use": "BASE_PATH", "valuation_use": "PRIMARY_INPUT", "valuation_route_bindings": [{"route_id": "ROUTE_CORE_OWNER_CASH", "use": "PRIMARY_INPUT"}], "promotion_test": "核心风叶毛利、订单和经营现金在多个年度及成本压力期保持可重复。", "invalidation_test": "客户集中加剧并导致核心风叶持续降价、减值或经营现金恶化。"},
+    {"component_id": "ADJACENT_MATERIALS", "economic_scope": "MATURE_CORE_NORMAL_EARNINGS", "normal_earnings_use": "CONDITIONAL_RANGE", "owner_cash_use": "CONDITIONAL_RANGE", "financing_pressure_effect": "CONDITIONAL", "permanent_loss_use": "CONDITIONAL_PATH", "valuation_use": "CONDITIONAL_PRIMARY_INPUT", "valuation_route_bindings": [{"route_id": "ROUTE_CORE_OWNER_CASH", "use": "CONDITIONAL_PRIMARY_INPUT"}], "promotion_test": "分部披露证明配套业务产生独立且可上划的现金回报。", "invalidation_test": "配套业务持续亏损或其投入与核心现金无法区分并形成额外负担。"},
+    {"component_id": "NONCORE_PROJECTS", "economic_scope": "GROWTH_CAPITAL_RETURN", "normal_earnings_use": "SCENARIO_ONLY", "owner_cash_use": "SCENARIO_ONLY", "financing_pressure_effect": "INCREASES", "permanent_loss_use": "STRESS_ONLY", "valuation_use": "UNRESOLVED", "valuation_route_bindings": [{"route_id": "ROUTE_GROWTH_OPTIONAL", "use": "UNRESOLVED"}], "promotion_test": "按项目披露投产、利润、资本投入、营运资本和回款并持续为正。", "invalidation_test": "项目延期、减值、追加融资或无法形成普通股东可实现现金。"},
+    {"component_id": "FINANCING_LIQUIDITY", "economic_scope": "SURVIVAL_FINANCING", "normal_earnings_use": "NOT_APPLICABLE", "owner_cash_use": "BASE_RANGE", "financing_pressure_effect": "INCREASES", "permanent_loss_use": "BASE_PATH", "valuation_use": "CORROBORATIVE_INPUT", "valuation_route_bindings": [{"route_id": "ROUTE_CORE_OWNER_CASH", "use": "CORROBORATIVE_INPUT"}], "promotion_test": "经营现金持续覆盖到期债务、维护性资本和必要营运资本。", "invalidation_test": "短债续借受阻、受限现金扩大或营运资本继续挤压经营现金。"}
+  ],
+  "evidence_trace": [
+    {"evidence_id": "E_BUSINESS_CORE", "source_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN002676_PRE_CUTOFF_SOURCE_PACKAGE.md", "locator": "FY2015 p.9; FY2016 p.8; FY2017 pp.8-9", "scope": "主营产品、产业链、客户与销售方式", "used_for": "核心业务和客户黏性"},
+    {"evidence_id": "E_PROFIT_SERIES", "source_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN002676_PRE_CUTOFF_SOURCE_PACKAGE.md", "locator": "跨期利润与现金流表；FY2017 pp.10-11", "scope": "FY2015-FY2017收入、扣非净利润、经营现金及亏损原因", "used_for": "正常收益基线与扰动"},
+    {"evidence_id": "E_CASH_CAPEX", "source_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN002676_PRE_CUTOFF_SOURCE_PACKAGE.md", "locator": "现金、长期资产支付表；FY2015 pp.61-62; FY2016 pp.65-67; FY2017 pp.64-66", "scope": "现金余额与长期资产支付", "used_for": "所有者现金与资本强度"},
+    {"evidence_id": "E_WORKING_CAPITAL_DEBT", "source_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN002676_PRE_CUTOFF_SOURCE_PACKAGE.md", "locator": "应收、存货、应付及借款年末余额表", "scope": "FY2015-FY2017营运资本和债务", "used_for": "融资压力"},
+    {"evidence_id": "E_RESTRICTED_CASH", "source_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN002676_PRE_CUTOFF_SOURCE_PACKAGE.md", "locator": "FY2016 p.15; FY2017 p.17; FY2015受限现金说明", "scope": "受限资产勾选与2015受限现金未知", "used_for": "现金可得性边界"},
+    {"evidence_id": "E_EXPANSION", "source_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN002676_PRE_CUTOFF_SOURCE_PACKAGE.md", "locator": "FY2015 pp.9-10,18-20; FY2016 pp.16-19; FY2017 pp.9-11", "scope": "募集资金、泰国基地及新业务筹建", "used_for": "扩张项目处理"},
+    {"evidence_id": "E_SEGMENT_UNKNOWN", "source_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN002676_PRE_CUTOFF_SOURCE_PACKAGE.md", "locator": "明确 UNKNOWN：汽车组件、能源电力、智能家居卫浴等无单独收入利润现金流", "scope": "分部经济缺口", "used_for": "条件化与未定处理"},
+    {"evidence_id": "E_S_CUSTOMER_LOW", "source_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN002676_PRE_CUTOFF_SOURCE_PACKAGE.md", "locator": "前五名客户占比 FY2015-FY2017", "scope": "客户集中度驱动敏感性输入", "used_for": "客户集中度情景"},
+    {"evidence_id": "E_S_CUSTOMER_BASE", "source_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN002676_PRE_CUTOFF_SOURCE_PACKAGE.md", "locator": "前五名客户占比 FY2015-FY2017", "scope": "客户集中度驱动敏感性输入", "used_for": "客户集中度情景"},
+    {"evidence_id": "E_S_CUSTOMER_HIGH", "source_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN002676_PRE_CUTOFF_SOURCE_PACKAGE.md", "locator": "前五名客户占比 FY2015-FY2017", "scope": "客户集中度驱动敏感性输入", "used_for": "客户集中度情景"},
+    {"evidence_id": "E_S_DEBT_LOW", "source_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN002676_PRE_CUTOFF_SOURCE_PACKAGE.md", "locator": "借款及现金表 FY2015-FY2017", "scope": "短期借款驱动敏感性输入", "used_for": "债务压力情景"},
+    {"evidence_id": "E_S_DEBT_BASE", "source_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN002676_PRE_CUTOFF_SOURCE_PACKAGE.md", "locator": "借款及现金表 FY2015-FY2017", "scope": "短期借款驱动敏感性输入", "used_for": "债务压力情景"},
+    {"evidence_id": "E_S_DEBT_HIGH", "source_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN002676_PRE_CUTOFF_SOURCE_PACKAGE.md", "locator": "借款及现金表 FY2015-FY2017", "scope": "短期借款驱动敏感性输入", "used_for": "债务压力情景"}
+  ],
+  "existing_object_refs": [
+    {"kind": "SOURCE_PACKAGE", "ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN002676_PRE_CUTOFF_SOURCE_PACKAGE.md", "role": "唯一允许的公司事实来源"}
+  ],
+  "underwriting_thesis": {
+    "thesis_id": "THESIS-002676-CORE-AND-LIQUIDITY",
+    "central_path": "顺威拥有可识别的风叶及配套制造链，但客户集中、成本上升和扩张投入使2017年亏损与融资压力不能视为一次性噪声；核心经营可继续审阅，新项目和现金可分配性必须保持条件化。",
+    "normal_earnings_treatment": "以核心风叶历史盈利作有范围的参考，剔除明确非经常项目但不假定成本和营运资本会回到低位；配套业务仅条件纳入，非核心项目不进基准。",
+    "owner_cash_treatment": "经营现金减经济维护性投入是正常所有者现金问题，减全部长期资产支付则反映当前资本配置和融资压力；受限现金、子公司可上划性及营运资本尚未完全可证，故采用保守边界而非全额现金认领。",
+    "permanent_loss_treatment": "把客户议价侵蚀、现金吸收、短债续借和低回报扩张作为慢性永久损失路径，即使公司不立即资不抵债也可能损害每股价值。",
+    "value_route_treatment": "仅沿ROUTE_CORE_OWNER_CASH研究核心经营现金；ROUTE_GROWTH_OPTIONAL因缺少分部回报证据排除出基准。",
+    "economic_directions": {"normal_earnings": "MIXED", "owner_cash": "DETERIORATES", "permanent_loss": "DETERIORATES"},
+    "strongest_rival": "大型空调整机厂商自制风叶或引入低价供应商，凭规模和议价压缩独立风叶供应商的利润池。",
+    "monitoring": "关注前五大客户占比和核心毛利、原料人工成本、库存与应收周转、经营现金覆盖资本支出和短债、泰国及新业务分部披露，以及受限现金和子公司现金上划。"
+  },
+  "investment_treatment": "研究结论保持价格和行动中性：可继续跟踪核心风叶经营与流动性，但在分部回报、现金可得性和客户议价改善前，不把扩张项目或合并现金转化为确定性股东价值。",
+  "economic_derivation": {
+    "schema_version": "enterprise-underwriting-economic-derivation-interface.v2",
+    "normal_earnings_bridge": {
+      "basis": {"metric": "归母扣除非经常性损益后净利润", "currency": "CNY", "unit": "人民币元", "tax_basis": "AFTER_TAX", "earnings_claim_scope": "ORDINARY_COMMON_EQUITY", "operating_perimeter": "合并口径核心风叶及已披露配套业务", "as_of": "2018-12-31T23:59:59+08:00"},
+      "rows": [
+        {"row_id": "ROW_REFERENCE_CORE", "component_id": "CORE_BLADE", "row_role": "REFERENCE_EARNINGS", "direction": "ADD", "quantification": {"status": "BOUNDED", "range_low": 20000000, "range_high": 40000000}, "evidence_ids": ["E_PROFIT_SERIES"], "economic_reason": "2016年扣非盈利而2015、2017受成本及一次性项目扰动，核心历史盈利只能作为有界参考。"},
+        {"row_id": "ROW_ADJACENT", "component_id": "ADJACENT_MATERIALS", "row_role": "NORMALIZATION_ADJUSTMENT", "direction": "ADD", "quantification": {"status": "UNKNOWN", "reason": "年报未按改性塑料和模具单独披露利润及现金。", "conservative_treatment": "不在基准中增加数值，仅保留条件性上行。"}, "evidence_ids": ["E_SEGMENT_UNKNOWN"], "economic_reason": "配套链可能改善黏性，但缺少独立经济量化。"},
+        {"row_id": "ROW_NONCORE", "component_id": "NONCORE_PROJECTS", "row_role": "NORMALIZATION_ADJUSTMENT", "direction": "ADD", "quantification": {"status": "UNKNOWN", "reason": "泰国、智能卫浴和汽车组件没有可比较的分部利润或现金流。", "conservative_treatment": "从核心正常收益基准排除，等待分部证据。"}, "evidence_ids": ["E_SEGMENT_UNKNOWN"], "economic_reason": "增长资本回报未被披露，不能把收入计划当作收益。"}
+      ]
+    },
+    "driver_sensitivity_specs": [
+      {"sensitivity_id": "SENS_CUSTOMER_CONCENTRATION", "component_ids": ["CORE_BLADE", "ADJACENT_MATERIALS"], "metric": "前五名客户销售占比", "unit": "占年度销售百分比", "horizon": "FY2015-FY2017及后续早期信号", "input_cases": {"mode": "LOW_BASE_HIGH", "low": {"value_or_range": {"value": 49.48}, "basis": "FY2016观察值作为较低集中度端点", "evidence_ids": ["E_S_CUSTOMER_LOW"]}, "base": {"value_or_range": {"value": 52.73}, "basis": "FY2017观察值作为基准端点", "evidence_ids": ["E_S_CUSTOMER_BASE"]}, "high": {"value_or_range": {"value": 53.09}, "basis": "FY2015观察值作为较高集中度端点", "evidence_ids": ["E_S_CUSTOMER_HIGH"]}}, "transmission": {"normal_earnings": {"status": "UNKNOWN", "basis": "客户集中变化对价格、份额和成本转嫁的净影响未被分部毛利数据识别。", "delta": {"status": "UNKNOWN", "reason": "缺乏按客户的价格、毛利和回款序列。", "conservative_treatment": "保持核心收益区间，不作方向性数值调整。"}}, "owner_cash": {"status": "UNKNOWN", "basis": "客户集中变化可能同时影响回款和库存，但单客户信用期未知。", "delta": {"status": "UNKNOWN", "reason": "缺乏客户级回款与营运资本数据。", "conservative_treatment": "将现金转换风险保留在定性边界。"}}, "valuation_route_ids": ["ROUTE_CORE_OWNER_CASH"]}, "reversal_observation_refs": ["#/reversal_observations/0"], "responsibility_boundary": "仅归因于核心风叶及配套业务所服务客户组合，不把非核心项目或宏观空调需求混入。"},
+      {"sensitivity_id": "SENS_DEBT_LIQUIDITY", "component_ids": ["FINANCING_LIQUIDITY"], "metric": "短期借款及一年内到期长期借款", "unit": "人民币元", "horizon": "FY2015-FY2017及后续正常化与现金观察期", "input_cases": {"mode": "LOW_BASE_HIGH", "low": {"value_or_range": {"value": 172388904.12}, "basis": "FY2015短期借款观察值", "evidence_ids": ["E_S_DEBT_LOW"]}, "base": {"value_or_range": {"value": 350518642.19}, "basis": "FY2017短期借款观察值", "evidence_ids": ["E_S_DEBT_BASE"]}, "high": {"value_or_range": {"value": 400518642.19}, "basis": "FY2017短期借款加一年内到期长期借款的压力端", "evidence_ids": ["E_S_DEBT_HIGH"]}}, "transmission": {"normal_earnings": {"status": "UNKNOWN", "basis": "利息、汇兑和经营规模共同决定税后收益，年报未给出可拆分敏感度。", "delta": {"status": "UNKNOWN", "reason": "债务变动与融资成本、汇兑损益缺少责任匹配的序列。", "conservative_treatment": "不把融资压力硬算成核心经营收益调整。"}}, "owner_cash": {"status": "UNKNOWN", "basis": "债务到期和利息会改变可留存现金，但偿付安排和受限现金边界不完整。", "delta": {"status": "UNKNOWN", "reason": "缺少债务契约、利率和实体现金上划资料。", "conservative_treatment": "在所有者现金中保留流动性折价的定性压力。"}}, "valuation_route_ids": ["ROUTE_CORE_OWNER_CASH"]}, "reversal_observation_refs": ["#/reversal_observations/0"], "responsibility_boundary": "仅归因于合并口径债务、利息和现金可得性，不把新项目尚未披露的回报计入。"}
+    ]
+  }
+}

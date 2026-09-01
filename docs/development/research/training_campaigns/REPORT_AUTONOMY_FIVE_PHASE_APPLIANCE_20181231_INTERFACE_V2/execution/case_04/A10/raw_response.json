@@ -1,0 +1,106 @@
+{
+  "schema_version": "enterprise-underwriting-episode.v2",
+  "episode_id": "UWTRAIN:APPLIANCE:002543:20181231:STAGE5:A10:EPISODE",
+  "company_id": "CN:002543",
+  "company_name": "广东万和新电气股份有限公司",
+  "cutoff_at": "2018-12-31T23:59:59+08:00",
+  "sample_identity": "BLIND_REPLAY",
+  "decision_frame": "Pre-outcome underwriting of the consolidated appliance enterprise using only FY2015-FY2017 disclosures; no prices, returns or actions are inferred.",
+  "underwriting_route": "Underwrite mature gas-appliance earnings and survival; conditionally test newer boiler/JV growth and cash accessibility before promotion.",
+  "situation_model": {
+    "summary": "万和以燃气热水器和燃气具为核心，向厨电、净水及热水系统延伸，收入增长伴随存货、受限资产和短期借款上升；分产品盈利与现金归属未披露。",
+    "industry_future_thesis": {
+      "horizon": "2018-2023",
+      "most_likely_regime": "Mature domestic appliance competition with channel migration and selective growth in wall-hung boilers and integrated hot-water systems.",
+      "profit_pool_transmission": "Scale and channel coverage can support volume, but bargaining power, promotional intensity and mix determine whether revenue growth reaches operating profit and cash.",
+      "company_exposure": "万和覆盖专卖店、KA、直供、直营和电商，并有海外合作；其核心仍是燃气具，新增壁挂炉及博世合资热水业务扩大资本和 execution exposure.",
+      "adaptation": "Existing multi-channel and OEM/ODM capabilities provide adaptation options; FY2017 boiler growth and new JV operations are implementation evidence, not yet mature-return evidence.",
+      "normal_economics": "Consolidated earnings were positive and substantial across FY2015-FY2017, but segment margins, customer concentration and growth-cohort cash conversion remain unknown.",
+      "permanent_loss": "Persistent inventory absorption, restricted cash, low-return expansion or structural margin pressure could erode per-share value without threatening near-term solvency.",
+      "valuation_treatment": "Use a mature-core earning-power route as primary; keep boiler/JV growth and inaccessible-cash uplift conditional or excluded until matched returns and realization are disclosed.",
+      "strongest_rival": "大型综合厨电品牌凭借渠道、品牌与规模优势压缩万和燃气具利润池",
+      "reversal_observations": [
+        "Official reports show sustained core-appliance margin and cash conversion despite competitive and channel changes.",
+        "Product-level disclosures reconcile boiler/JV investment, working capital and incremental owner cash at a responsibility-matched boundary.",
+        "Entity-level cash ownership, restrictions and distributions demonstrate ordinary-shareholder accessibility materially different from the conservative case."
+      ]
+    }
+  },
+  "business_position": "The company has national channel breadth, multiple brands and OEM/ODM formats, with gas water heaters as the anchor and overseas cooperation as an option; disclosed data do not establish a durable segment advantage.",
+  "survival_case": "Operating cash flow was RMB679m, RMB884m and RMB873m in FY2015-FY2017. Short-term borrowings rose to RMB201m in FY2017 while long-term borrowings stayed RMB7.8m; liquidity appears serviceable, but RMB265m of cash and notes were restricted and inventory reached RMB1.46bn.",
+  "adaptation_case": "Boiler revenue reached RMB680.0m in FY2017 (165.51% growth) and Bosch joint ventures entered operation. These initiatives broaden the addressable market, yet product-level returns, cumulative investment and working-capital absorption are not disclosed, so adaptation remains conditional.",
+  "normalization_case": "Reference consolidated attributable earnings are bounded at RMB360m-RMB430m, anchored by FY2015-FY2017 attributable and recurring-profit disclosures. No segment adjustment is credited for boiler/JV growth because its incremental economics are unobserved.",
+  "permanent_loss_map": "Permanent-loss paths are slow margin erosion from scale competition, cash absorption in inventory/receivables and restricted balances, and retention of capital in projects or JVs without demonstrated incremental return; survival strength does not remove these per-share risks.",
+  "value_route": {
+    "primary_routes": ["R_CORE_EARNING_POWER"],
+    "excluded_routes": ["R_BOILER_GROWTH_OPTION", "R_EXPORT_COMPONENT", "R_FINANCING_STRESS"],
+    "route_reasoning": "A mature-core earning-power route is the only route with a multi-year consolidated earnings anchor. Boiler/JV growth, export detail and financing stress are retained as conditional or excluded routes because component-level cash and return evidence is missing.",
+    "valuation_model_roles": {
+      "primary": ["R_CORE_EARNING_POWER"],
+      "corroborative": [],
+      "stress": ["R_FINANCING_STRESS"]
+    },
+    "route_component_requirements": [
+      {"route_id": "R_CORE_EARNING_POWER", "required_component_ids": ["C_CORE_GAS_APPLIANCES"], "optional_component_ids": ["C_CASH_ACCESSIBILITY"]},
+      {"route_id": "R_BOILER_GROWTH_OPTION", "required_component_ids": ["C_BOILER_JV_GROWTH"], "optional_component_ids": []},
+      {"route_id": "R_EXPORT_COMPONENT", "required_component_ids": ["C_EXPORT_CHANNELS"], "optional_component_ids": []},
+      {"route_id": "R_FINANCING_STRESS", "required_component_ids": ["C_WORKING_CAPITAL_CAPEX"], "optional_component_ids": ["C_CASH_ACCESSIBILITY"]}
+    ]
+  },
+  "strongest_rival": "大型综合厨电品牌凭借渠道、品牌与规模优势压缩万和燃气具利润池",
+  "reversal_observations": [
+    "Official reports show sustained core-appliance margin and cash conversion despite competitive and channel changes.",
+    "Product-level disclosures reconcile boiler/JV investment, working capital and incremental owner cash at a responsibility-matched boundary.",
+    "Entity-level cash ownership, restrictions and distributions demonstrate ordinary-shareholder accessibility materially different from the conservative case."
+  ],
+  "component_treatments": [
+    {"component_id": "C_CORE_GAS_APPLIANCES", "treatment": "UNDERWRITE", "reason": "Gas appliances are the stated core and consolidated recurring profit is disclosed for three years, although segment margins are unavailable.", "investment_consequence": "Forms the only base earning-power anchor.", "promotion_or_resolution_condition": "Disclose sustained product-level margin and cash conversion through a competitive period.", "evidence_ids": ["E_BUSINESS_CORE", "E_PROFIT_SERIES"]},
+    {"component_id": "C_BOILER_JV_GROWTH", "treatment": "CONDITIONALLY_UNDERWRITE", "reason": "Boiler revenue grew rapidly and Bosch JVs commenced, but no matched incremental profit, cash or total capital is disclosed.", "investment_consequence": "Excluded from base earnings and treated as a conditional growth option.", "promotion_or_resolution_condition": "Provide cohort-level revenue, margin, invested capital, working-capital absorption and owner cash.", "evidence_ids": ["E_BOILER_GROWTH", "E_JV_OPERATIONS"]},
+    {"component_id": "C_EXPORT_CHANNELS", "treatment": "CANNOT_BOUND", "reason": "Export regions and customer cooperation are described without customer concentration, contract terms or component cash data.", "investment_consequence": "No separate export value or earnings uplift is recognized.", "promotion_or_resolution_condition": "Disclose customer concentration, receivable aging and product-level export economics.", "evidence_ids": ["E_CHANNEL_EXPORT"]},
+    {"component_id": "C_WORKING_CAPITAL_CAPEX", "treatment": "UNDERWRITE", "reason": "Inventory, receivables, fixed-asset spending and short-term debt are material at consolidated level, but maintenance versus growth spending is not split.", "investment_consequence": "Raises financing pressure and permanent-loss sensitivity; no invented owner-cash point estimate.", "promotion_or_resolution_condition": "Reconcile maintenance and growth capital, inventory turns and cash release by component.", "evidence_ids": ["E_CASH_CAPITAL", "E_RESTRICTED_ASSETS"]},
+    {"component_id": "C_CASH_ACCESSIBILITY", "treatment": "CONDITIONALLY_UNDERWRITE", "reason": "Consolidated cash and restricted balances are disclosed, but entity ownership, restrictions and upstream distributions are not mapped.", "investment_consequence": "Only a conservative conditional owner-cash contribution is allowed; no full cash add-on.", "promotion_or_resolution_condition": "Map cash-holding entities, restrictions, taxes and ordinary-shareholder distributions.", "evidence_ids": ["E_RESTRICTED_ASSETS", "E_CASH_CAPITAL"]}
+  ],
+  "component_decisions": [
+    {"component_id": "C_CORE_GAS_APPLIANCES", "economic_scope": "MATURE_CORE_NORMAL_EARNINGS", "normal_earnings_use": "BASE_RANGE", "owner_cash_use": "BASE_RANGE", "financing_pressure_effect": "NEUTRAL", "permanent_loss_use": "BASE_PATH", "valuation_use": "PRIMARY_INPUT", "valuation_route_bindings": [{"route_id": "R_CORE_EARNING_POWER", "use": "PRIMARY_INPUT"}], "promotion_test": "Segment margin and cash conversion remain stable across a full cycle.", "invalidation_test": "Core margins or cash conversion deteriorate materially for reasons not offset by mix."},
+    {"component_id": "C_BOILER_JV_GROWTH", "economic_scope": "GROWTH_CAPITAL_RETURN", "normal_earnings_use": "CONDITIONAL_RANGE", "owner_cash_use": "CONDITIONAL_RANGE", "financing_pressure_effect": "CONDITIONAL", "permanent_loss_use": "CONDITIONAL_PATH", "valuation_use": "SCENARIO_ONLY", "valuation_route_bindings": [{"route_id": "R_BOILER_GROWTH_OPTION", "use": "SCENARIO_ONLY"}], "promotion_test": "Matched cohort return and owner cash exceed capital and working-capital absorption.", "invalidation_test": "Growth requires continuing capital with no evidence of adequate incremental return."},
+    {"component_id": "C_EXPORT_CHANNELS", "economic_scope": "OTHER_MATERIAL_COMPONENT", "normal_earnings_use": "NOT_APPLICABLE", "owner_cash_use": "NOT_APPLICABLE", "financing_pressure_effect": "UNRESOLVED", "permanent_loss_use": "UNRESOLVED", "valuation_use": "UNRESOLVED", "valuation_route_bindings": [{"route_id": "R_EXPORT_COMPONENT", "use": "UNRESOLVED"}], "promotion_test": "Customer and receivable data permit a bounded export economics bridge.", "invalidation_test": "Concentration or payment terms reveal material downside not captured in core."},
+    {"component_id": "C_WORKING_CAPITAL_CAPEX", "economic_scope": "SURVIVAL_FINANCING", "normal_earnings_use": "NOT_APPLICABLE", "owner_cash_use": "CONDITIONAL_RANGE", "financing_pressure_effect": "INCREASES", "permanent_loss_use": "BASE_PATH", "valuation_use": "STRESS_ONLY", "valuation_route_bindings": [{"route_id": "R_FINANCING_STRESS", "use": "STRESS_ONLY"}], "promotion_test": "Maintenance and growth spending are separated and inventory normalizes without debt escalation.", "invalidation_test": "Working-capital absorption and debt continue rising faster than operating cash."},
+    {"component_id": "C_CASH_ACCESSIBILITY", "economic_scope": "ORDINARY_SHARE_OWNER_CASH", "normal_earnings_use": "NOT_APPLICABLE", "owner_cash_use": "CONDITIONAL_RANGE", "financing_pressure_effect": "CONDITIONAL", "permanent_loss_use": "CONDITIONAL_PATH", "valuation_use": "CORROBORATIVE_INPUT", "valuation_route_bindings": [{"route_id": "R_CORE_EARNING_POWER", "use": "CORROBORATIVE_INPUT"}, {"route_id": "R_FINANCING_STRESS", "use": "STRESS_ONLY"}], "promotion_test": "Entity-level ownership and repeated distributions establish accessibility.", "invalidation_test": "Restrictions, minority claims or tax friction prevent upstream realization."}
+  ],
+  "evidence_trace": [
+    {"evidence_id": "E_BUSINESS_CORE", "source_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN002543_PRE_CUTOFF_SOURCE_PACKAGE.md", "locator": "FY2017 annual report PDF p.9", "scope": "Core gas-appliance business, product extension and business models.", "used_for": "C_CORE_GAS_APPLIANCES underwriting."},
+    {"evidence_id": "E_PROFIT_SERIES", "source_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN002543_PRE_CUTOFF_SOURCE_PACKAGE.md", "locator": "FY2017 annual report PDF p.6-7", "scope": "FY2015-FY2017 revenue, attributable and recurring profit.", "used_for": "Reference earnings baseline."},
+    {"evidence_id": "E_BOILER_GROWTH", "source_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN002543_PRE_CUTOFF_SOURCE_PACKAGE.md", "locator": "FY2017 annual report PDF p.14", "scope": "Boiler revenue RMB680.0m and 165.51% growth.", "used_for": "Conditional boiler treatment."},
+    {"evidence_id": "E_JV_OPERATIONS", "source_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN002543_PRE_CUTOFF_SOURCE_PACKAGE.md", "locator": "FY2017 annual report PDF p.15", "scope": "Bosch joint ventures entering operation and product scope.", "used_for": "Conditional JV growth treatment."},
+    {"evidence_id": "E_CHANNEL_EXPORT", "source_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN002543_PRE_CUTOFF_SOURCE_PACKAGE.md", "locator": "FY2017 annual report PDF p.9,12,14", "scope": "Export regions, customers and domestic channels.", "used_for": "Export component uncertainty."},
+    {"evidence_id": "E_CASH_CAPITAL", "source_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN002543_PRE_CUTOFF_SOURCE_PACKAGE.md", "locator": "FY2015-FY2017 annual reports cash-flow tables and FY2017 p.23-24", "scope": "Operating cash, capital spending, receivables, inventory and borrowings.", "used_for": "Working-capital and financing pressure."},
+    {"evidence_id": "E_RESTRICTED_ASSETS", "source_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN002543_PRE_CUTOFF_SOURCE_PACKAGE.md", "locator": "FY2017 annual report PDF p.24", "scope": "RMB265.3m restricted monetary funds and pledged notes.", "used_for": "Cash accessibility and permanent-loss path."},
+    {"evidence_id": "E_SENS_DEMAND", "source_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN002543_PRE_CUTOFF_SOURCE_PACKAGE.md", "locator": "FY2017 annual report PDF p.9,12", "scope": "Core demand and channel exposure proxy.", "used_for": "Sensitivity input case; no magnitude asserted."}
+  ],
+  "existing_object_refs": [
+    {"kind": "source_package", "ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN002543_PRE_CUTOFF_SOURCE_PACKAGE.md", "role": "Authoritative pre-cutoff company facts."}
+  ],
+  "underwriting_thesis": {
+    "thesis_id": "THESIS:CORE_EARNINGS_CONDITIONAL_GROWTH",
+    "central_path": "A real mature gas-appliance earnings base supports survival and a primary earning-power route, while growth initiatives and consolidated cash require responsibility-matched proof before they can increase owner economics.",
+    "normal_earnings_treatment": "Use RMB360m-RMB430m consolidated attributable reference range; do not capitalize unproven boiler/JV growth.",
+    "owner_cash_treatment": "Operating cash is positive, but inventory/capex absorption and restricted balances require a conditional accessible-cash range rather than a point estimate.",
+    "permanent_loss_treatment": "Monitor slow per-share erosion from competition, retention and inaccessible cash even with adequate near-term solvency.",
+    "value_route_treatment": "Primary route is mature-core earning power; growth and export routes remain scenario, stress or unresolved until evidence closes.",
+    "economic_directions": {"normal_earnings": "MIXED", "owner_cash": "MIXED", "permanent_loss": "DETERIORATES"},
+    "strongest_rival": "大型综合厨电品牌凭借渠道、品牌与规模优势压缩万和燃气具利润池",
+    "monitoring": "At the early-signal clock, check core margin, channel mix and competitive response; at normalization-and-cash clock, reconcile component returns, inventory, capital spending, debt and distributions."
+  },
+  "investment_treatment": "Research-only pre-outcome treatment: underwrite the mature core, conditionally underwrite growth and cash accessibility, and keep price, return and action conclusions unresolved.",
+  "economic_derivation": {
+    "schema_version": "enterprise-underwriting-economic-derivation-interface.v2",
+    "normal_earnings_bridge": [
+      {"row_id": "ROW_REFERENCE_EARNINGS", "component_id": "REFERENCE_EARNINGS", "row_role": "REFERENCE_EARNINGS", "direction": "ADD", "quantification": {"status": "BOUNDED", "range_low": 360000000, "range_high": 430000000}, "evidence_ids": ["E_PROFIT_SERIES"], "economic_reason": "Three-year consolidated attributable and recurring-profit disclosures anchor a broad pre-cutoff earning range."},
+      {"row_id": "ROW_CORE_ADJUSTMENT", "component_id": "C_CORE_GAS_APPLIANCES", "row_role": "NORMALIZATION_ADJUSTMENT", "direction": "ADD", "quantification": {"status": "UNKNOWN", "reason": "Segment margins and one-off allocation are not disclosed separately from consolidated results.", "conservative_treatment": "Make no additional adjustment; retain the consolidated reference range."}, "evidence_ids": ["E_BUSINESS_CORE"], "economic_reason": "Core business is the anchor, but no defensible segment adjustment can be calculated."},
+      {"row_id": "ROW_BOILER_ADJUSTMENT", "component_id": "C_BOILER_JV_GROWTH", "row_role": "NORMALIZATION_ADJUSTMENT", "direction": "ADD", "quantification": {"status": "UNKNOWN", "reason": "Rapid boiler growth lacks product-level profit and cash conversion disclosure.", "conservative_treatment": "Exclude incremental growth from base earnings; revisit conditionally when matched return data arrive."}, "evidence_ids": ["E_BOILER_GROWTH", "E_JV_OPERATIONS"], "economic_reason": "Revenue growth alone does not establish mature earnings."}
+    ],
+    "driver_sensitivity_specs": [
+      {"sensitivity_id": "SENS_CORE_DEMAND", "component_ids": ["C_CORE_GAS_APPLIANCES"], "metric": "core appliance demand and channel throughput", "unit": "index", "horizon": "2019-2020", "input_cases": {"mode": "LOW_BASE_HIGH", "low": {"value_or_range": "LOW", "basis": "Downside demand case from disclosed channel exposure; magnitude not disclosed.", "evidence_ids": ["E_SENS_DEMAND"]}, "base": {"value_or_range": "BASE", "basis": "Base demand case for mature core.", "evidence_ids": ["E_SENS_DEMAND"]}, "high": {"value_or_range": "HIGH", "basis": "Upside demand case for mature core.", "evidence_ids": ["E_SENS_DEMAND"]}}, "transmission": {"normal_earnings": {"status": "UNKNOWN", "basis": "Segment margin and volume elasticity are not disclosed.", "delta": {"status": "UNKNOWN", "reason": "No responsibility-matched sensitivity magnitude is available.", "conservative_treatment": "Do not assign a numeric earnings delta."}}, "owner_cash": {"status": "UNKNOWN", "basis": "Demand-to-cash conversion is obscured by inventory and receivable changes.", "delta": {"status": "UNKNOWN", "reason": "Working-capital response by core component is not disclosed.", "conservative_treatment": "Do not assign a numeric owner-cash delta."}}, "valuation_route_ids": ["R_CORE_EARNING_POWER"]}, "reversal_observation_refs": ["#/reversal_observations/0"], "responsibility_boundary": "Consolidated mature gas-appliance core; excludes boiler/JV and export components."}
+    ]
+  }
+}

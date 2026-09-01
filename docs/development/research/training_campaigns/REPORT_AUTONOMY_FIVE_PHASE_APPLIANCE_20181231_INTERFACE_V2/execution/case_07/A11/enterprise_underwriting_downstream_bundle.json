@@ -1,0 +1,2013 @@
+{
+  "authority": "PRICE_FREE_RESEARCH_CANDIDATES_ONLY",
+  "boundary": {
+    "contains_outcome_results": false,
+    "contains_price_or_valuation_results": false,
+    "grants_investment_authority": false
+  },
+  "company_id": "CN:002705",
+  "contract_id": "UWTRAIN:APPLIANCE:002705:20181231:STAGE5:A11:V2",
+  "cutoff_at": "2018-12-31T23:59:59+08:00",
+  "primary_training_product": {
+    "episode_id": "EPISODE:CN002705:20181231:A11",
+    "object_type": "EnterpriseUnderwritingEpisode",
+    "underwriting_thesis_id": "THESIS:CN002705:20181231:CORE_WITH_CONDITIONAL_CASH"
+  },
+  "projections": {
+    "cjo_candidate_projection": {
+      "authority": "TEACHING_CANDIDATE_ONLY",
+      "boundary": "A projection for the existing CJO compiler; it is not a Frozen CJO and cannot authorize value, price, BuyBand, report publication, or investment action.",
+      "central_path": "The best current judgment is a viable mature small-appliance core with a disclosed, bounded three-year adjusted-profit history, tempered by raw-material, currency, and customer-bargaining exposure. Owner cash and retained-growth value cannot be collapsed into that core because maintenance capital, cash accessibility, and incremental return are not established.",
+      "company_id": "CN:002705",
+      "component_decisions": [
+        {
+          "component_id": "CORE_APPLIANCE_OPERATIONS",
+          "economic_scope": "MATURE_CORE_NORMAL_EARNINGS",
+          "financing_pressure_effect": "NEUTRAL",
+          "invalidation_test": "Comparable disclosures show that customer, input-cost, or currency pressure causes persistent earnings erosion outside the disclosed historical range.",
+          "normal_earnings_use": "BASE_RANGE",
+          "owner_cash_use": "CONDITIONAL_RANGE",
+          "permanent_loss_use": "BASE_PATH",
+          "promotion_test": "Later official reports sustain comparable adjusted-profit conversion through raw-material and currency pressure.",
+          "valuation_route_bindings": [
+            {
+              "route_id": "CORE_EARNING_POWER_ROUTE",
+              "use": "PRIMARY_INPUT"
+            },
+            {
+              "route_id": "CONDITIONAL_OWNER_CASH_ROUTE",
+              "use": "CONDITIONAL_PRIMARY_INPUT"
+            }
+          ],
+          "valuation_use": "PRIMARY_INPUT"
+        },
+        {
+          "component_id": "CAPITAL_AND_WORKING_CAPITAL_COMMITMENTS",
+          "economic_scope": "ORDINARY_SHARE_OWNER_CASH",
+          "financing_pressure_effect": "CONDITIONAL",
+          "invalidation_test": "Matched disclosures show that recurring capital and working-capital absorption persistently consume operating cash without adequate incremental return.",
+          "normal_earnings_use": "NOT_APPLICABLE",
+          "owner_cash_use": "CONDITIONAL_RANGE",
+          "permanent_loss_use": "CONDITIONAL_PATH",
+          "promotion_test": "Disclosures separate maintenance from growth capital and show working-capital-normalized owner cash.",
+          "valuation_route_bindings": [
+            {
+              "route_id": "CONDITIONAL_OWNER_CASH_ROUTE",
+              "use": "CONDITIONAL_PRIMARY_INPUT"
+            }
+          ],
+          "valuation_use": "CONDITIONAL_PRIMARY_INPUT"
+        },
+        {
+          "component_id": "CASH_ACCESSIBILITY_AND_FINANCING",
+          "economic_scope": "SURVIVAL_FINANCING",
+          "financing_pressure_effect": "REDUCES",
+          "invalidation_test": "Disclosures show cash restrictions, financing dependence, or allocation needs materially greater than the current conditional treatment permits.",
+          "normal_earnings_use": "NOT_APPLICABLE",
+          "owner_cash_use": "CONDITIONAL_RANGE",
+          "permanent_loss_use": "CONDITIONAL_PATH",
+          "promotion_test": "Entity-level ownership, restrictions, allocation, and recurring ordinary-shareholder realization establish an accessible cash boundary.",
+          "valuation_route_bindings": [
+            {
+              "route_id": "CONDITIONAL_OWNER_CASH_ROUTE",
+              "use": "CONDITIONAL_PRIMARY_INPUT"
+            },
+            {
+              "route_id": "FULL_CONSOLIDATED_CASH_AS_ORDINARY_OWNER_ROUTE",
+              "use": "EXCLUDED"
+            }
+          ],
+          "valuation_use": "CONDITIONAL_PRIMARY_INPUT"
+        },
+        {
+          "component_id": "GROWTH_CAPITAL_RETURN",
+          "economic_scope": "GROWTH_CAPITAL_RETURN",
+          "financing_pressure_effect": "CONDITIONAL",
+          "invalidation_test": "Matched capital and later results demonstrate structurally inadequate incremental return or irreversible cash absorption.",
+          "normal_earnings_use": "UNRESOLVED",
+          "owner_cash_use": "UNRESOLVED",
+          "permanent_loss_use": "UNRESOLVED",
+          "promotion_test": "Responsibility-matched evidence establishes incremental return and owner-cash conversion after all capital absorption.",
+          "valuation_route_bindings": [
+            {
+              "route_id": "UNPROVED_GROWTH_CAPITAL_RETURN_ROUTE",
+              "use": "UNRESOLVED"
+            }
+          ],
+          "valuation_use": "UNRESOLVED"
+        }
+      ],
+      "component_treatments": [
+        {
+          "component_id": "CORE_APPLIANCE_OPERATIONS",
+          "evidence_ids": [
+            "E1_FINANCIAL_HISTORY",
+            "E2_BUSINESS_PERIMETER",
+            "E3_SOLUTION_AND_ADAPTATION",
+            "E4_COST_AND_CURRENCY_PRESSURE"
+          ],
+          "investment_consequence": "This component supplies the mature-core normal-earnings reference and the core earning-power route, but it does not establish a forward margin trend or channel-level cash conversion.",
+          "promotion_or_resolution_condition": "Promote confidence in durable economics only if later official disclosures show sustained adjusted-profit conversion under input-cost and currency pressure on a comparable consolidated perimeter.",
+          "reason": "The company’s small-appliance operating perimeter, product/service offer, and three-year consolidated revenue and adjusted-profit observations are directly disclosed; FY2017 cost and currency pressure is also disclosed and belongs inside the bounded historical core rather than being ignored.",
+          "treatment": "UNDERWRITE"
+        },
+        {
+          "component_id": "CAPITAL_AND_WORKING_CAPITAL_COMMITMENTS",
+          "evidence_ids": [
+            "E5_LONG_LIVED_ASSET_SPENDING_AND_CASH",
+            "E6_WORKING_CAPITAL_AND_DEBT"
+          ],
+          "investment_consequence": "All long-lived-asset spending and working-capital commitment inform current financing pressure; ordinary-owner cash is conditional and no negative owner-cash point estimate is inferred from total spending.",
+          "promotion_or_resolution_condition": "Resolve with maintenance-versus-growth capital evidence, project-level or channel-level cash conversion, and matched incremental earnings after working-capital absorption.",
+          "reason": "The reports disclose material long-lived-asset cash payments and receivable, inventory, and payable balances, but do not separate economic maintenance capital from growth capital or attribute cash flow by channel or project.",
+          "treatment": "CONDITIONALLY_UNDERWRITE"
+        },
+        {
+          "component_id": "CASH_ACCESSIBILITY_AND_FINANCING",
+          "evidence_ids": [
+            "E5_LONG_LIVED_ASSET_SPENDING_AND_CASH",
+            "E7_RESTRICTED_MONETARY_FUNDS",
+            "E8_FINANCING_AND_PROJECTS"
+          ],
+          "investment_consequence": "Liquidity mitigates survival pressure, but the owner-cash route remains conditional; treating every consolidated cash unit as an ordinary-shareholder asset is expressly excluded.",
+          "promotion_or_resolution_condition": "Resolve through legal-entity cash ownership, restriction release, allocation, distribution history, and post-distribution balance evidence.",
+          "reason": "Cash and restricted monetary funds are disclosed, as are FY2017 investment cash receipts and project funding balances, but the source package does not establish the allocation, upstreamability, or ordinary-shareholder realization of all consolidated cash.",
+          "treatment": "CONDITIONALLY_UNDERWRITE"
+        },
+        {
+          "component_id": "GROWTH_CAPITAL_RETURN",
+          "evidence_ids": [
+            "E8_FINANCING_AND_PROJECTS",
+            "E9_EXPLICIT_COMPONENT_UNKNOWN"
+          ],
+          "investment_consequence": "No growth return is added to normal earnings, owner cash, or a primary route; the effect remains an unresolved permanent-loss and financing consideration.",
+          "promotion_or_resolution_condition": "Resolve only with responsibility-matched disclosures of capital deployed, incremental earnings, maintenance needs, working-capital absorption, and ordinary-owner cash realization.",
+          "reason": "Technology projects, automation, a non-public offering, and an acquisition are disclosed, but the supplied evidence does not match their capital to subsequent incremental earnings, cash conversion, or returns.",
+          "treatment": "CANNOT_BOUND"
+        }
+      ],
+      "cutoff_at": "2018-12-31T23:59:59+08:00",
+      "episode_id": "EPISODE:CN002705:20181231:A11",
+      "existing_cjo_adapter": "scripts/enterprise_judgment_core.py:compile_cjo_candidate",
+      "financing_pressure_component_route": {
+        "active_effects": [
+          "REDUCES",
+          "NEUTRAL",
+          "CONDITIONAL"
+        ],
+        "components_by_effect": {
+          "CONDITIONAL": [
+            "CAPITAL_AND_WORKING_CAPITAL_COMMITMENTS",
+            "GROWTH_CAPITAL_RETURN"
+          ],
+          "INCREASES": [],
+          "NEUTRAL": [
+            "CORE_APPLIANCE_OPERATIONS"
+          ],
+          "NOT_APPLICABLE": [],
+          "REDUCES": [
+            "CASH_ACCESSIBILITY_AND_FINANCING"
+          ],
+          "UNRESOLVED": []
+        }
+      },
+      "monitoring": "Monitor official annual-report evidence on adjusted-profit conversion under input/currency pressure, matched return and cash conversion on retained capital, and the entity-level accessibility and ordinary-shareholder realization of cash.",
+      "normal_earnings_component_route": {
+        "components_by_use": {
+          "BASE_RANGE": [
+            "CORE_APPLIANCE_OPERATIONS"
+          ],
+          "CONDITIONAL_RANGE": [],
+          "EXCLUDED": [],
+          "NOT_APPLICABLE": [
+            "CAPITAL_AND_WORKING_CAPITAL_COMMITMENTS",
+            "CASH_ACCESSIBILITY_AND_FINANCING"
+          ],
+          "SCENARIO_ONLY": [],
+          "UNRESOLVED": [
+            "GROWTH_CAPITAL_RETURN"
+          ]
+        },
+        "range_authority": "BASE_RANGE"
+      },
+      "normal_earnings_treatment": "Use only the disclosed FY2015–FY2017 adjusted attributable-profit range as the core reference; keep unproved growth return unresolved and do not infer a trend from the FY2016 peak.",
+      "owner_cash_component_route": {
+        "components_by_use": {
+          "BASE_RANGE": [],
+          "CONDITIONAL_RANGE": [
+            "CORE_APPLIANCE_OPERATIONS",
+            "CAPITAL_AND_WORKING_CAPITAL_COMMITMENTS",
+            "CASH_ACCESSIBILITY_AND_FINANCING"
+          ],
+          "EXCLUDED": [],
+          "NOT_APPLICABLE": [],
+          "SCENARIO_ONLY": [],
+          "UNRESOLVED": [
+            "GROWTH_CAPITAL_RETURN"
+          ]
+        },
+        "range_authority": "CONDITIONAL_RANGE"
+      },
+      "owner_cash_treatment": "Treat owner cash as conditional: operating cash, all long-lived-asset spending, working-capital commitments, cash restrictions, and ordinary-shareholder realization answer distinct questions, and the source does not identify economic maintenance capital.",
+      "permanent_loss_component_route": {
+        "components_by_use": {
+          "BASE_PATH": [
+            "CORE_APPLIANCE_OPERATIONS"
+          ],
+          "CONDITIONAL_PATH": [
+            "CAPITAL_AND_WORKING_CAPITAL_COMMITMENTS",
+            "CASH_ACCESSIBILITY_AND_FINANCING"
+          ],
+          "EXCLUDED": [],
+          "NOT_APPLICABLE": [],
+          "STRESS_ONLY": [],
+          "UNRESOLVED": [
+            "GROWTH_CAPITAL_RETURN"
+          ]
+        },
+        "path_authority": "BASE_PATH"
+      },
+      "permanent_loss_treatment": "Include both survival-independent slow erosion from competitive/cost pressure and low-return retention, plus a conditional loss path from inaccessible or absorbed cash; liquidity does not eliminate these paths.",
+      "projection_id": "UW-CJO:EPISODE:CN002705:20181231:A11",
+      "sample_identity": "BLIND_REPLAY",
+      "schema_version": "enterprise-underwriting-cjo-candidate-projection.v2",
+      "situation_model": {
+        "industry_future_thesis": {
+          "adaptation": "The company disclosed a one-stop offering from market strategy and design through molds, certification, testing, and mass-production technology, and attributed FY2016 profit growth partly to wider product lines, innovation products, and automation. These are credible adaptation actions, but their durable unit-economic advantage is not separately measured.",
+          "company_exposure": "Small appliances represented 98.15% of FY2015 revenue and overseas sales 88.06%, making consolidated earnings exposed to export demand, customer purchasing behavior, product mix, input costs, and currency effects. The supplied package does not split later profit or cash by product, customer, ODM, or domestic-brand channel.",
+          "horizon": "Medium-term continuation from the 2018-12-31 cutoff",
+          "most_likely_regime": "A competitive export small-appliance manufacturing regime in which product breadth, design-to-production execution, input costs, currency, and customer bargaining jointly determine retained profit rather than volume growth alone.",
+          "normal_economics": "MIXED: reported revenue expanded from CNY 6.31bn to CNY 8.22bn and adjusted attributable profit remained positive across all three years, but FY2017 adjusted profit fell from FY2016 and disclosed input-cost and currency pressures prevent extrapolating the FY2016 peak.",
+          "permanent_loss": "The principal permanent-loss path is slow erosion: customers or competing suppliers pressure economics while retained capital, working capital, and long-lived-asset spending fail to earn disclosed incremental returns. A second path is that consolidated cash is less available to ordinary shareholders than its headline amount suggests because restricted balances, allocation, and distribution evidence are incomplete.",
+          "profit_pool_transmission": "Higher sales and broader product lines can raise factory utilization and profit, but raw-material inflation and exchange-rate-related finance costs can absorb the gain; concentration in the FY2015 top five customers makes customer terms a material transmission channel, while later concentration is not disclosed in the supplied package.",
+          "reversal_observations": [
+            "A post-cutoff official annual report shows that revenue growth converts into sustained adjusted-profit improvement despite raw-material and currency pressure.",
+            "Post-cutoff disclosures match growth-project and acquisition capital with incremental earnings, cash conversion, and returns after working-capital and long-lived-asset absorption.",
+            "Post-cutoff disclosures establish materially different customer concentration, cash restrictions, or ordinary-shareholder cash realization than the pre-cutoff record permits."
+          ],
+          "strongest_rival": "Global branded customers and competing small-appliance OEM suppliers can shift volume or price; client-specific concentration after FY2015 is unknown.",
+          "valuation_treatment": "Keep a mature-core earning-power route separate from a conditional owner-cash route. Do not recognize a standalone growth-capital-return route and do not treat all consolidated cash as an ordinary-shareholder asset without an accessibility and realization boundary."
+        },
+        "summary": "The disclosed company is an export-oriented small-appliance designer, manufacturer, and seller with a broad product set and an integrated customer solution offer. Revenue grew across FY2015–FY2017, but FY2017 cost growth exceeded revenue growth amid raw-material inflation and financial expense rose with RMB/USD movements; the pre-cutoff record therefore supports a viable core but not a claim of steadily improving economics."
+      },
+      "strongest_rival": "Global branded customers and competing small-appliance OEM suppliers can shift volume or price; client-specific concentration after FY2015 is unknown.",
+      "underwriting_thesis_id": "THESIS:CN002705:20181231:CORE_WITH_CONDITIONAL_CASH"
+    },
+    "golden_report_underwriting_handoff": {
+      "adaptation_case": "Product-line expansion, innovation products, automation, and the end-to-end customer solution are observable company actions. They offset neither the disclosed FY2017 raw-material-cost and currency headwinds nor the absent evidence on channel-specific cash conversion and incremental return.",
+      "authority": "UNDERWRITING_HANDOFF_ONLY",
+      "boundary": "The Golden Report writer consumes this thesis and may not replace it with a different company story. This is a teaching handoff, not report-publication authority.",
+      "business_position": "The company described itself as a Chinese export leader in small appliances and offered a broad product range plus an integrated design-to-mass-production solution. That position supports a meaningful operating perimeter, but disclosed FY2015 top-five-customer sales of 38.21% and absent later customer data leave bargaining-power durability unbounded.",
+      "central_path": "The best current judgment is a viable mature small-appliance core with a disclosed, bounded three-year adjusted-profit history, tempered by raw-material, currency, and customer-bargaining exposure. Owner cash and retained-growth value cannot be collapsed into that core because maintenance capital, cash accessibility, and incremental return are not established.",
+      "company_id": "CN:002705",
+      "component_decisions": [
+        {
+          "component_id": "CORE_APPLIANCE_OPERATIONS",
+          "economic_scope": "MATURE_CORE_NORMAL_EARNINGS",
+          "financing_pressure_effect": "NEUTRAL",
+          "invalidation_test": "Comparable disclosures show that customer, input-cost, or currency pressure causes persistent earnings erosion outside the disclosed historical range.",
+          "normal_earnings_use": "BASE_RANGE",
+          "owner_cash_use": "CONDITIONAL_RANGE",
+          "permanent_loss_use": "BASE_PATH",
+          "promotion_test": "Later official reports sustain comparable adjusted-profit conversion through raw-material and currency pressure.",
+          "valuation_route_bindings": [
+            {
+              "route_id": "CORE_EARNING_POWER_ROUTE",
+              "use": "PRIMARY_INPUT"
+            },
+            {
+              "route_id": "CONDITIONAL_OWNER_CASH_ROUTE",
+              "use": "CONDITIONAL_PRIMARY_INPUT"
+            }
+          ],
+          "valuation_use": "PRIMARY_INPUT"
+        },
+        {
+          "component_id": "CAPITAL_AND_WORKING_CAPITAL_COMMITMENTS",
+          "economic_scope": "ORDINARY_SHARE_OWNER_CASH",
+          "financing_pressure_effect": "CONDITIONAL",
+          "invalidation_test": "Matched disclosures show that recurring capital and working-capital absorption persistently consume operating cash without adequate incremental return.",
+          "normal_earnings_use": "NOT_APPLICABLE",
+          "owner_cash_use": "CONDITIONAL_RANGE",
+          "permanent_loss_use": "CONDITIONAL_PATH",
+          "promotion_test": "Disclosures separate maintenance from growth capital and show working-capital-normalized owner cash.",
+          "valuation_route_bindings": [
+            {
+              "route_id": "CONDITIONAL_OWNER_CASH_ROUTE",
+              "use": "CONDITIONAL_PRIMARY_INPUT"
+            }
+          ],
+          "valuation_use": "CONDITIONAL_PRIMARY_INPUT"
+        },
+        {
+          "component_id": "CASH_ACCESSIBILITY_AND_FINANCING",
+          "economic_scope": "SURVIVAL_FINANCING",
+          "financing_pressure_effect": "REDUCES",
+          "invalidation_test": "Disclosures show cash restrictions, financing dependence, or allocation needs materially greater than the current conditional treatment permits.",
+          "normal_earnings_use": "NOT_APPLICABLE",
+          "owner_cash_use": "CONDITIONAL_RANGE",
+          "permanent_loss_use": "CONDITIONAL_PATH",
+          "promotion_test": "Entity-level ownership, restrictions, allocation, and recurring ordinary-shareholder realization establish an accessible cash boundary.",
+          "valuation_route_bindings": [
+            {
+              "route_id": "CONDITIONAL_OWNER_CASH_ROUTE",
+              "use": "CONDITIONAL_PRIMARY_INPUT"
+            },
+            {
+              "route_id": "FULL_CONSOLIDATED_CASH_AS_ORDINARY_OWNER_ROUTE",
+              "use": "EXCLUDED"
+            }
+          ],
+          "valuation_use": "CONDITIONAL_PRIMARY_INPUT"
+        },
+        {
+          "component_id": "GROWTH_CAPITAL_RETURN",
+          "economic_scope": "GROWTH_CAPITAL_RETURN",
+          "financing_pressure_effect": "CONDITIONAL",
+          "invalidation_test": "Matched capital and later results demonstrate structurally inadequate incremental return or irreversible cash absorption.",
+          "normal_earnings_use": "UNRESOLVED",
+          "owner_cash_use": "UNRESOLVED",
+          "permanent_loss_use": "UNRESOLVED",
+          "promotion_test": "Responsibility-matched evidence establishes incremental return and owner-cash conversion after all capital absorption.",
+          "valuation_route_bindings": [
+            {
+              "route_id": "UNPROVED_GROWTH_CAPITAL_RETURN_ROUTE",
+              "use": "UNRESOLVED"
+            }
+          ],
+          "valuation_use": "UNRESOLVED"
+        }
+      ],
+      "component_economic_routes": {
+        "financing_pressure": {
+          "active_effects": [
+            "REDUCES",
+            "NEUTRAL",
+            "CONDITIONAL"
+          ],
+          "components_by_effect": {
+            "CONDITIONAL": [
+              "CAPITAL_AND_WORKING_CAPITAL_COMMITMENTS",
+              "GROWTH_CAPITAL_RETURN"
+            ],
+            "INCREASES": [],
+            "NEUTRAL": [
+              "CORE_APPLIANCE_OPERATIONS"
+            ],
+            "NOT_APPLICABLE": [],
+            "REDUCES": [
+              "CASH_ACCESSIBILITY_AND_FINANCING"
+            ],
+            "UNRESOLVED": []
+          }
+        },
+        "normal_earnings": {
+          "components_by_use": {
+            "BASE_RANGE": [
+              "CORE_APPLIANCE_OPERATIONS"
+            ],
+            "CONDITIONAL_RANGE": [],
+            "EXCLUDED": [],
+            "NOT_APPLICABLE": [
+              "CAPITAL_AND_WORKING_CAPITAL_COMMITMENTS",
+              "CASH_ACCESSIBILITY_AND_FINANCING"
+            ],
+            "SCENARIO_ONLY": [],
+            "UNRESOLVED": [
+              "GROWTH_CAPITAL_RETURN"
+            ]
+          },
+          "range_authority": "BASE_RANGE"
+        },
+        "owner_cash": {
+          "components_by_use": {
+            "BASE_RANGE": [],
+            "CONDITIONAL_RANGE": [
+              "CORE_APPLIANCE_OPERATIONS",
+              "CAPITAL_AND_WORKING_CAPITAL_COMMITMENTS",
+              "CASH_ACCESSIBILITY_AND_FINANCING"
+            ],
+            "EXCLUDED": [],
+            "NOT_APPLICABLE": [],
+            "SCENARIO_ONLY": [],
+            "UNRESOLVED": [
+              "GROWTH_CAPITAL_RETURN"
+            ]
+          },
+          "range_authority": "CONDITIONAL_RANGE"
+        },
+        "permanent_loss": {
+          "components_by_use": {
+            "BASE_PATH": [
+              "CORE_APPLIANCE_OPERATIONS"
+            ],
+            "CONDITIONAL_PATH": [
+              "CAPITAL_AND_WORKING_CAPITAL_COMMITMENTS",
+              "CASH_ACCESSIBILITY_AND_FINANCING"
+            ],
+            "EXCLUDED": [],
+            "NOT_APPLICABLE": [],
+            "STRESS_ONLY": [],
+            "UNRESOLVED": [
+              "GROWTH_CAPITAL_RETURN"
+            ]
+          },
+          "path_authority": "BASE_PATH"
+        },
+        "schema_version": "enterprise-underwriting-component-decision-summary.v1",
+        "valuation": {
+          "components_by_use": {
+            "CONDITIONAL_PRIMARY_INPUT": [
+              "CAPITAL_AND_WORKING_CAPITAL_COMMITMENTS",
+              "CASH_ACCESSIBILITY_AND_FINANCING"
+            ],
+            "CORROBORATIVE_INPUT": [],
+            "EXCLUDED": [],
+            "NOT_APPLICABLE": [],
+            "PRIMARY_INPUT": [
+              "CORE_APPLIANCE_OPERATIONS"
+            ],
+            "SCENARIO_ONLY": [],
+            "STRESS_ONLY": [],
+            "UNRESOLVED": [
+              "GROWTH_CAPITAL_RETURN"
+            ]
+          },
+          "route_authority": "PRIMARY_INPUT",
+          "route_component_bindings": [
+            {
+              "components_by_use": {
+                "CONDITIONAL_PRIMARY_INPUT": [
+                  "CORE_APPLIANCE_OPERATIONS",
+                  "CAPITAL_AND_WORKING_CAPITAL_COMMITMENTS",
+                  "CASH_ACCESSIBILITY_AND_FINANCING"
+                ],
+                "CORROBORATIVE_INPUT": [],
+                "EXCLUDED": [],
+                "NOT_APPLICABLE": [],
+                "PRIMARY_INPUT": [],
+                "SCENARIO_ONLY": [],
+                "STRESS_ONLY": [],
+                "UNRESOLVED": []
+              },
+              "route_id": "CONDITIONAL_OWNER_CASH_ROUTE"
+            },
+            {
+              "components_by_use": {
+                "CONDITIONAL_PRIMARY_INPUT": [],
+                "CORROBORATIVE_INPUT": [],
+                "EXCLUDED": [],
+                "NOT_APPLICABLE": [],
+                "PRIMARY_INPUT": [
+                  "CORE_APPLIANCE_OPERATIONS"
+                ],
+                "SCENARIO_ONLY": [],
+                "STRESS_ONLY": [],
+                "UNRESOLVED": []
+              },
+              "route_id": "CORE_EARNING_POWER_ROUTE"
+            },
+            {
+              "components_by_use": {
+                "CONDITIONAL_PRIMARY_INPUT": [],
+                "CORROBORATIVE_INPUT": [],
+                "EXCLUDED": [
+                  "CASH_ACCESSIBILITY_AND_FINANCING"
+                ],
+                "NOT_APPLICABLE": [],
+                "PRIMARY_INPUT": [],
+                "SCENARIO_ONLY": [],
+                "STRESS_ONLY": [],
+                "UNRESOLVED": []
+              },
+              "route_id": "FULL_CONSOLIDATED_CASH_AS_ORDINARY_OWNER_ROUTE"
+            },
+            {
+              "components_by_use": {
+                "CONDITIONAL_PRIMARY_INPUT": [],
+                "CORROBORATIVE_INPUT": [],
+                "EXCLUDED": [],
+                "NOT_APPLICABLE": [],
+                "PRIMARY_INPUT": [],
+                "SCENARIO_ONLY": [],
+                "STRESS_ONLY": [],
+                "UNRESOLVED": [
+                  "GROWTH_CAPITAL_RETURN"
+                ]
+              },
+              "route_id": "UNPROVED_GROWTH_CAPITAL_RETURN_ROUTE"
+            }
+          ]
+        }
+      },
+      "cutoff_at": "2018-12-31T23:59:59+08:00",
+      "economic_derivation": {
+        "driver_sensitivity_specs": [
+          {
+            "component_ids": [
+              "CORE_APPLIANCE_OPERATIONS"
+            ],
+            "driver_binding": {
+              "enterprise_variable_id": "CONSOLIDATED_CORE_PROFIT_HISTORY"
+            },
+            "horizon": "FY2015–FY2017 disclosed history",
+            "input_cases": {
+              "base": {
+                "basis": "FY2017 disclosed attributable profit after non-recurring items, the last available audited year before the cutoff.",
+                "evidence_ids": [
+                  "E1_FINANCIAL_HISTORY"
+                ],
+                "value_or_range": {
+                  "value": 382.05468716
+                }
+              },
+              "high": {
+                "basis": "FY2016 disclosed attributable profit after non-recurring items.",
+                "evidence_ids": [
+                  "E1_FINANCIAL_HISTORY"
+                ],
+                "value_or_range": {
+                  "value": 412.36239835
+                }
+              },
+              "low": {
+                "basis": "FY2015 disclosed attributable profit after non-recurring items.",
+                "evidence_ids": [
+                  "E1_FINANCIAL_HISTORY"
+                ],
+                "value_or_range": {
+                  "value": 272.40460783
+                }
+              },
+              "mode": "LOW_BASE_HIGH"
+            },
+            "metric": "Attributable profit after non-recurring items",
+            "responsibility_boundary": "Consolidated company; no product, customer, ODM, domestic-brand, or individual-customer allocation is asserted.",
+            "reversal_observation_refs": [
+              "#/reversal_observations/0"
+            ],
+            "sensitivity_id": "S1_CORE_ADJUSTED_PROFIT_HISTORY",
+            "transmission": {
+              "normal_earnings": {
+                "basis": "The three observations establish a historical reference but do not isolate the forward response of margin to product mix, customers, input costs, or currency.",
+                "delta": {
+                  "conservative_treatment": "Keep the disclosed reference range and do not attribute a numeric driver delta.",
+                  "reason": "No responsibility-matched source separates the driver response from the consolidated historical outcome.",
+                  "status": "UNKNOWN"
+                },
+                "status": "UNKNOWN"
+              },
+              "owner_cash": {
+                "basis": "Operating cash flow is disclosed only at the consolidated level and maintenance capital is not separated from growth capital.",
+                "delta": {
+                  "conservative_treatment": "Do not derive a component owner-cash delta from reported profit.",
+                  "reason": "The supplied package does not attribute cash conversion to the core component after economic maintenance needs.",
+                  "status": "UNKNOWN"
+                },
+                "status": "UNKNOWN"
+              },
+              "valuation_route_ids": [
+                "CORE_EARNING_POWER_ROUTE"
+              ]
+            },
+            "unit": "CNY millions"
+          },
+          {
+            "component_ids": [
+              "CAPITAL_AND_WORKING_CAPITAL_COMMITMENTS"
+            ],
+            "driver_binding": {
+              "financial_driver_id": "LONG_LIVED_ASSET_CASH_SPENDING"
+            },
+            "horizon": "FY2015–FY2017 disclosed history",
+            "input_cases": {
+              "base": {
+                "basis": "FY2016 disclosed long-lived-asset cash payment.",
+                "evidence_ids": [
+                  "E5_LONG_LIVED_ASSET_SPENDING_AND_CASH"
+                ],
+                "value_or_range": {
+                  "value": 415.24052574
+                }
+              },
+              "high": {
+                "basis": "FY2017 disclosed long-lived-asset cash payment.",
+                "evidence_ids": [
+                  "E5_LONG_LIVED_ASSET_SPENDING_AND_CASH"
+                ],
+                "value_or_range": {
+                  "value": 507.81955442
+                }
+              },
+              "low": {
+                "basis": "FY2015 disclosed long-lived-asset cash payment.",
+                "evidence_ids": [
+                  "E5_LONG_LIVED_ASSET_SPENDING_AND_CASH"
+                ],
+                "value_or_range": {
+                  "value": 361.08962229
+                }
+              },
+              "mode": "LOW_BASE_HIGH"
+            },
+            "metric": "Cash paid for purchase and construction of fixed assets, intangible assets and other long-lived assets",
+            "responsibility_boundary": "Consolidated company cash-flow statement and consolidated working-capital balances; no maintenance-versus-growth or channel allocation is asserted.",
+            "reversal_observation_refs": [
+              "#/reversal_observations/1"
+            ],
+            "sensitivity_id": "S2_LONG_LIVED_ASSET_AND_WORKING_CAPITAL_COMMITMENT",
+            "transmission": {
+              "normal_earnings": {
+                "basis": "Total long-lived-asset spending cannot be reclassified as maintenance capital or as a normal-earnings adjustment without a growth/maintenance split and matched return evidence.",
+                "delta": {
+                  "conservative_treatment": "Do not alter the core normal-earnings reference for this spending.",
+                  "reason": "No disclosed matched incremental earnings or maintenance-capital schedule exists in the supplied package.",
+                  "status": "UNKNOWN"
+                },
+                "status": "UNKNOWN"
+              },
+              "owner_cash": {
+                "basis": "Operating cash less all long-lived-asset spending measures current allocation and financing pressure, not normal owner cash, because economic maintenance capital is unknown.",
+                "delta": {
+                  "conservative_treatment": "Retain only a conditional owner-cash route and do not invent a negative owner-cash point estimate.",
+                  "reason": "The source does not distinguish maintenance from growth spending or allocate working-capital needs to components.",
+                  "status": "UNKNOWN"
+                },
+                "status": "UNKNOWN"
+              },
+              "valuation_route_ids": [
+                "CONDITIONAL_OWNER_CASH_ROUTE"
+              ]
+            },
+            "unit": "CNY millions"
+          },
+          {
+            "component_ids": [
+              "CASH_ACCESSIBILITY_AND_FINANCING"
+            ],
+            "driver_binding": {
+              "financial_driver_id": "RESTRICTED_MONETARY_FUNDS"
+            },
+            "horizon": "FY2015–FY2017 disclosed year-end balances",
+            "input_cases": {
+              "base": {
+                "basis": "FY2017 disclosed restricted monetary funds, the last available audited year before the cutoff.",
+                "evidence_ids": [
+                  "E7_RESTRICTED_MONETARY_FUNDS"
+                ],
+                "value_or_range": {
+                  "value": 199.37277743
+                }
+              },
+              "high": {
+                "basis": "Use the disclosed FY2017 balance as the conservative high historical case because it exceeds FY2015 and FY2016.",
+                "evidence_ids": [
+                  "E7_RESTRICTED_MONETARY_FUNDS"
+                ],
+                "value_or_range": {
+                  "value": 199.37277743
+                }
+              },
+              "low": {
+                "basis": "FY2016 disclosed restricted monetary funds.",
+                "evidence_ids": [
+                  "E7_RESTRICTED_MONETARY_FUNDS"
+                ],
+                "value_or_range": {
+                  "value": 141.34912878
+                }
+              },
+              "mode": "LOW_BASE_HIGH"
+            },
+            "metric": "Restricted monetary funds",
+            "responsibility_boundary": "Consolidated monetary-fund restrictions; no legal-entity upstreamability or ordinary-shareholder distribution claim is asserted.",
+            "reversal_observation_refs": [
+              "#/reversal_observations/2"
+            ],
+            "sensitivity_id": "S3_RESTRICTED_CASH_AND_ACCESS",
+            "transmission": {
+              "normal_earnings": {
+                "basis": "Restricted-cash classification does not itself change the disclosed operating-profit reference.",
+                "delta": {
+                  "range_high": 0,
+                  "range_low": 0,
+                  "status": "BOUNDED",
+                  "unit": "CNY millions"
+                },
+                "status": "PRESERVED"
+              },
+              "owner_cash": {
+                "basis": "Restricted balances identify a limitation on cash availability, but the supplied package does not establish the residual unrestricted cash available to ordinary shareholders after allocation and distribution needs.",
+                "delta": {
+                  "conservative_treatment": "Do not treat consolidated cash as full ordinary-owner cash; retain the conditional route.",
+                  "reason": "No entity-level accessibility and realization boundary is disclosed in the supplied package.",
+                  "status": "UNKNOWN"
+                },
+                "status": "UNKNOWN"
+              },
+              "valuation_route_ids": [
+                "CONDITIONAL_OWNER_CASH_ROUTE"
+              ]
+            },
+            "unit": "CNY millions"
+          }
+        ],
+        "normal_earnings_bridge": {
+          "basis": {
+            "as_of": "2018-12-31",
+            "currency": "CNY",
+            "earnings_claim_scope": "ORDINARY_COMMON_EQUITY",
+            "metric": "Attributable profit after non-recurring items",
+            "operating_perimeter": "Consolidated small-appliance operating perimeter disclosed in FY2015–FY2017 annual reports",
+            "tax_basis": "AFTER_TAX",
+            "unit": "CNY millions"
+          },
+          "rows": [
+            {
+              "component_id": "CORE_APPLIANCE_OPERATIONS",
+              "direction": "ADD",
+              "economic_reason": "FY2015–FY2017 disclosed attributable profit after non-recurring items supplies a transparent historic reference range for the mature consolidated core; it does not assert a forecast or a FY2016 peak trend.",
+              "evidence_ids": [
+                "E1_FINANCIAL_HISTORY"
+              ],
+              "quantification": {
+                "range_high": 412.36239835,
+                "range_low": 272.40460783,
+                "status": "BOUNDED"
+              },
+              "row_id": "REF_CORE_DISCLOSED_ADJUSTED_PROFIT",
+              "row_role": "REFERENCE_EARNINGS"
+            },
+            {
+              "component_id": "GROWTH_CAPITAL_RETURN",
+              "direction": "ADD",
+              "economic_reason": "Retained and externally raised capital can add earnings only after its incremental return is observed on a matched responsibility boundary.",
+              "evidence_ids": [
+                "E8_FINANCING_AND_PROJECTS",
+                "E9_EXPLICIT_COMPONENT_UNKNOWN"
+              ],
+              "quantification": {
+                "conservative_treatment": "Do not add a growth-capital-return contribution to the reference range; retain it as unresolved.",
+                "reason": "The source package does not match project, automation, acquisition, or offering capital to incremental post-investment earnings and cash conversion.",
+                "status": "UNKNOWN"
+              },
+              "row_id": "ADJ_UNPROVED_GROWTH_CAPITAL_RETURN",
+              "row_role": "NORMALIZATION_ADJUSTMENT"
+            }
+          ]
+        },
+        "schema_version": "enterprise-underwriting-economic-derivation.v1"
+      },
+      "economic_derivation_summary": {
+        "driver_sensitivities": [
+          {
+            "component_ids": [
+              "CORE_APPLIANCE_OPERATIONS"
+            ],
+            "horizon": "FY2015–FY2017 disclosed history",
+            "input_cases": {
+              "base": {
+                "basis": "FY2017 disclosed attributable profit after non-recurring items, the last available audited year before the cutoff.",
+                "evidence_ids": [
+                  "E1_FINANCIAL_HISTORY"
+                ],
+                "value_or_range": {
+                  "value": 382.05468716
+                }
+              },
+              "high": {
+                "basis": "FY2016 disclosed attributable profit after non-recurring items.",
+                "evidence_ids": [
+                  "E1_FINANCIAL_HISTORY"
+                ],
+                "value_or_range": {
+                  "value": 412.36239835
+                }
+              },
+              "low": {
+                "basis": "FY2015 disclosed attributable profit after non-recurring items.",
+                "evidence_ids": [
+                  "E1_FINANCIAL_HISTORY"
+                ],
+                "value_or_range": {
+                  "value": 272.40460783
+                }
+              },
+              "mode": "LOW_BASE_HIGH"
+            },
+            "metric": "Attributable profit after non-recurring items",
+            "normal_earnings_uses": {
+              "CORE_APPLIANCE_OPERATIONS": "BASE_RANGE"
+            },
+            "owner_cash_uses": {
+              "CORE_APPLIANCE_OPERATIONS": "CONDITIONAL_RANGE"
+            },
+            "reversal_observations": [
+              "A post-cutoff official annual report shows that revenue growth converts into sustained adjusted-profit improvement despite raw-material and currency pressure."
+            ],
+            "sensitivity_id": "S1_CORE_ADJUSTED_PROFIT_HISTORY",
+            "transmission": {
+              "normal_earnings": {
+                "basis": "The three observations establish a historical reference but do not isolate the forward response of margin to product mix, customers, input costs, or currency.",
+                "delta": {
+                  "conservative_treatment": "Keep the disclosed reference range and do not attribute a numeric driver delta.",
+                  "reason": "No responsibility-matched source separates the driver response from the consolidated historical outcome.",
+                  "status": "UNKNOWN"
+                },
+                "status": "UNKNOWN"
+              },
+              "owner_cash": {
+                "basis": "Operating cash flow is disclosed only at the consolidated level and maintenance capital is not separated from growth capital.",
+                "delta": {
+                  "conservative_treatment": "Do not derive a component owner-cash delta from reported profit.",
+                  "reason": "The supplied package does not attribute cash conversion to the core component after economic maintenance needs.",
+                  "status": "UNKNOWN"
+                },
+                "status": "UNKNOWN"
+              },
+              "valuation_route_ids": [
+                "CORE_EARNING_POWER_ROUTE"
+              ]
+            },
+            "unit": "CNY millions",
+            "valuation_route_attributions": [
+              {
+                "component_valuation_uses": {
+                  "CORE_APPLIANCE_OPERATIONS": "PRIMARY_INPUT"
+                },
+                "route_id": "CORE_EARNING_POWER_ROUTE",
+                "route_role": "PRIMARY"
+              }
+            ]
+          },
+          {
+            "component_ids": [
+              "CAPITAL_AND_WORKING_CAPITAL_COMMITMENTS"
+            ],
+            "horizon": "FY2015–FY2017 disclosed history",
+            "input_cases": {
+              "base": {
+                "basis": "FY2016 disclosed long-lived-asset cash payment.",
+                "evidence_ids": [
+                  "E5_LONG_LIVED_ASSET_SPENDING_AND_CASH"
+                ],
+                "value_or_range": {
+                  "value": 415.24052574
+                }
+              },
+              "high": {
+                "basis": "FY2017 disclosed long-lived-asset cash payment.",
+                "evidence_ids": [
+                  "E5_LONG_LIVED_ASSET_SPENDING_AND_CASH"
+                ],
+                "value_or_range": {
+                  "value": 507.81955442
+                }
+              },
+              "low": {
+                "basis": "FY2015 disclosed long-lived-asset cash payment.",
+                "evidence_ids": [
+                  "E5_LONG_LIVED_ASSET_SPENDING_AND_CASH"
+                ],
+                "value_or_range": {
+                  "value": 361.08962229
+                }
+              },
+              "mode": "LOW_BASE_HIGH"
+            },
+            "metric": "Cash paid for purchase and construction of fixed assets, intangible assets and other long-lived assets",
+            "normal_earnings_uses": {
+              "CAPITAL_AND_WORKING_CAPITAL_COMMITMENTS": "NOT_APPLICABLE"
+            },
+            "owner_cash_uses": {
+              "CAPITAL_AND_WORKING_CAPITAL_COMMITMENTS": "CONDITIONAL_RANGE"
+            },
+            "reversal_observations": [
+              "Post-cutoff disclosures match growth-project and acquisition capital with incremental earnings, cash conversion, and returns after working-capital and long-lived-asset absorption."
+            ],
+            "sensitivity_id": "S2_LONG_LIVED_ASSET_AND_WORKING_CAPITAL_COMMITMENT",
+            "transmission": {
+              "normal_earnings": {
+                "basis": "Total long-lived-asset spending cannot be reclassified as maintenance capital or as a normal-earnings adjustment without a growth/maintenance split and matched return evidence.",
+                "delta": {
+                  "conservative_treatment": "Do not alter the core normal-earnings reference for this spending.",
+                  "reason": "No disclosed matched incremental earnings or maintenance-capital schedule exists in the supplied package.",
+                  "status": "UNKNOWN"
+                },
+                "status": "UNKNOWN"
+              },
+              "owner_cash": {
+                "basis": "Operating cash less all long-lived-asset spending measures current allocation and financing pressure, not normal owner cash, because economic maintenance capital is unknown.",
+                "delta": {
+                  "conservative_treatment": "Retain only a conditional owner-cash route and do not invent a negative owner-cash point estimate.",
+                  "reason": "The source does not distinguish maintenance from growth spending or allocate working-capital needs to components.",
+                  "status": "UNKNOWN"
+                },
+                "status": "UNKNOWN"
+              },
+              "valuation_route_ids": [
+                "CONDITIONAL_OWNER_CASH_ROUTE"
+              ]
+            },
+            "unit": "CNY millions",
+            "valuation_route_attributions": [
+              {
+                "component_valuation_uses": {
+                  "CAPITAL_AND_WORKING_CAPITAL_COMMITMENTS": "CONDITIONAL_PRIMARY_INPUT"
+                },
+                "route_id": "CONDITIONAL_OWNER_CASH_ROUTE",
+                "route_role": "PRIMARY"
+              }
+            ]
+          },
+          {
+            "component_ids": [
+              "CASH_ACCESSIBILITY_AND_FINANCING"
+            ],
+            "horizon": "FY2015–FY2017 disclosed year-end balances",
+            "input_cases": {
+              "base": {
+                "basis": "FY2017 disclosed restricted monetary funds, the last available audited year before the cutoff.",
+                "evidence_ids": [
+                  "E7_RESTRICTED_MONETARY_FUNDS"
+                ],
+                "value_or_range": {
+                  "value": 199.37277743
+                }
+              },
+              "high": {
+                "basis": "Use the disclosed FY2017 balance as the conservative high historical case because it exceeds FY2015 and FY2016.",
+                "evidence_ids": [
+                  "E7_RESTRICTED_MONETARY_FUNDS"
+                ],
+                "value_or_range": {
+                  "value": 199.37277743
+                }
+              },
+              "low": {
+                "basis": "FY2016 disclosed restricted monetary funds.",
+                "evidence_ids": [
+                  "E7_RESTRICTED_MONETARY_FUNDS"
+                ],
+                "value_or_range": {
+                  "value": 141.34912878
+                }
+              },
+              "mode": "LOW_BASE_HIGH"
+            },
+            "metric": "Restricted monetary funds",
+            "normal_earnings_uses": {
+              "CASH_ACCESSIBILITY_AND_FINANCING": "NOT_APPLICABLE"
+            },
+            "owner_cash_uses": {
+              "CASH_ACCESSIBILITY_AND_FINANCING": "CONDITIONAL_RANGE"
+            },
+            "reversal_observations": [
+              "Post-cutoff disclosures establish materially different customer concentration, cash restrictions, or ordinary-shareholder cash realization than the pre-cutoff record permits."
+            ],
+            "sensitivity_id": "S3_RESTRICTED_CASH_AND_ACCESS",
+            "transmission": {
+              "normal_earnings": {
+                "basis": "Restricted-cash classification does not itself change the disclosed operating-profit reference.",
+                "delta": {
+                  "range_high": 0,
+                  "range_low": 0,
+                  "status": "BOUNDED",
+                  "unit": "CNY millions"
+                },
+                "status": "PRESERVED"
+              },
+              "owner_cash": {
+                "basis": "Restricted balances identify a limitation on cash availability, but the supplied package does not establish the residual unrestricted cash available to ordinary shareholders after allocation and distribution needs.",
+                "delta": {
+                  "conservative_treatment": "Do not treat consolidated cash as full ordinary-owner cash; retain the conditional route.",
+                  "reason": "No entity-level accessibility and realization boundary is disclosed in the supplied package.",
+                  "status": "UNKNOWN"
+                },
+                "status": "UNKNOWN"
+              },
+              "valuation_route_ids": [
+                "CONDITIONAL_OWNER_CASH_ROUTE"
+              ]
+            },
+            "unit": "CNY millions",
+            "valuation_route_attributions": [
+              {
+                "component_valuation_uses": {
+                  "CASH_ACCESSIBILITY_AND_FINANCING": "CONDITIONAL_PRIMARY_INPUT"
+                },
+                "route_id": "CONDITIONAL_OWNER_CASH_ROUTE",
+                "route_role": "PRIMARY"
+              }
+            ]
+          }
+        ],
+        "normal_earnings_bridge": {
+          "base_range": {
+            "range_high": 412.36239835,
+            "range_low": 272.40460783,
+            "status": "BOUNDED"
+          },
+          "basis": {
+            "as_of": "2018-12-31",
+            "currency": "CNY",
+            "earnings_claim_scope": "ORDINARY_COMMON_EQUITY",
+            "metric": "Attributable profit after non-recurring items",
+            "operating_perimeter": "Consolidated small-appliance operating perimeter disclosed in FY2015–FY2017 annual reports",
+            "tax_basis": "AFTER_TAX",
+            "unit": "CNY millions"
+          },
+          "conditional_range": {
+            "range_high": 412.36239835,
+            "range_low": 272.40460783,
+            "status": "BOUNDED"
+          },
+          "rows": [
+            {
+              "component_id": "CORE_APPLIANCE_OPERATIONS",
+              "direction": "ADD",
+              "economic_reason": "FY2015–FY2017 disclosed attributable profit after non-recurring items supplies a transparent historic reference range for the mature consolidated core; it does not assert a forecast or a FY2016 peak trend.",
+              "evidence_ids": [
+                "E1_FINANCIAL_HISTORY"
+              ],
+              "normal_earnings_use": "BASE_RANGE",
+              "quantification": {
+                "range_high": 412.36239835,
+                "range_low": 272.40460783,
+                "status": "BOUNDED"
+              },
+              "row_id": "REF_CORE_DISCLOSED_ADJUSTED_PROFIT",
+              "row_role": "REFERENCE_EARNINGS",
+              "signed_range": {
+                "range_high": 412.36239835,
+                "range_low": 272.40460783
+              }
+            },
+            {
+              "component_id": "GROWTH_CAPITAL_RETURN",
+              "direction": "ADD",
+              "economic_reason": "Retained and externally raised capital can add earnings only after its incremental return is observed on a matched responsibility boundary.",
+              "evidence_ids": [
+                "E8_FINANCING_AND_PROJECTS",
+                "E9_EXPLICIT_COMPONENT_UNKNOWN"
+              ],
+              "normal_earnings_use": "UNRESOLVED",
+              "quantification": {
+                "conservative_treatment": "Do not add a growth-capital-return contribution to the reference range; retain it as unresolved.",
+                "reason": "The source package does not match project, automation, acquisition, or offering capital to incremental post-investment earnings and cash conversion.",
+                "status": "UNKNOWN"
+              },
+              "row_id": "ADJ_UNPROVED_GROWTH_CAPITAL_RETURN",
+              "row_role": "NORMALIZATION_ADJUSTMENT",
+              "signed_range": null
+            }
+          ],
+          "totals_by_use": {
+            "BASE_RANGE": {
+              "range_high": 412.36239835,
+              "range_low": 272.40460783,
+              "status": "BOUNDED"
+            },
+            "CONDITIONAL_RANGE": null,
+            "EXCLUDED": null,
+            "NOT_APPLICABLE": null,
+            "SCENARIO_ONLY": null,
+            "UNRESOLVED": {
+              "status": "UNKNOWN",
+              "unknown_row_ids": [
+                "ADJ_UNPROVED_GROWTH_CAPITAL_RETURN"
+              ]
+            }
+          }
+        },
+        "schema_version": "enterprise-underwriting-economic-derivation-summary.v1"
+      },
+      "episode_id": "EPISODE:CN002705:20181231:A11",
+      "existing_report_adapter": "scripts/judgment_generation_handoff.py:build_judgment_generation_handoff",
+      "handoff_id": "UW-GR:EPISODE:CN002705:20181231:A11",
+      "normal_earnings_treatment": "Use only the disclosed FY2015–FY2017 adjusted attributable-profit range as the core reference; keep unproved growth return unresolved and do not infer a trend from the FY2016 peak.",
+      "normalization_case": "Use the FY2015–FY2017 adjusted attributable-profit range of CNY 272.4m–412.4m as a disclosed historical reference for the mature consolidated core. Do not promote the FY2016 high to a trend, and do not add unmeasured project or acquisition returns.",
+      "owner_cash_treatment": "Treat owner cash as conditional: operating cash, all long-lived-asset spending, working-capital commitments, cash restrictions, and ordinary-shareholder realization answer distinct questions, and the source does not identify economic maintenance capital.",
+      "permanent_loss_map": "A durable compression of export/OEM economics can reduce earning power even while the enterprise remains liquid. Separately, capital retained for technology projects, automation, working capital, or acquisitions can erode owner value if incremental return and ordinary-shareholder realization remain unproven; neither path requires insolvency.",
+      "permanent_loss_treatment": "Include both survival-independent slow erosion from competitive/cost pressure and low-return retention, plus a conditional loss path from inaccessible or absorbed cash; liquidity does not eliminate these paths.",
+      "reader_order": [
+        "central_path",
+        "industry_future_transmission",
+        "situation_and_route",
+        "survival_and_adaptation",
+        "normalization_and_owner_cash",
+        "permanent_loss_and_rival",
+        "value_route_and_research_treatment",
+        "reversal_observations"
+      ],
+      "reversal_observations": [
+        "A post-cutoff official annual report shows that revenue growth converts into sustained adjusted-profit improvement despite raw-material and currency pressure.",
+        "Post-cutoff disclosures match growth-project and acquisition capital with incremental earnings, cash conversion, and returns after working-capital and long-lived-asset absorption.",
+        "Post-cutoff disclosures establish materially different customer concentration, cash restrictions, or ordinary-shareholder cash realization than the pre-cutoff record permits."
+      ],
+      "sample_identity": "BLIND_REPLAY",
+      "schema_version": "enterprise-underwriting-golden-report-handoff.v2",
+      "situation_model": {
+        "industry_future_thesis": {
+          "adaptation": "The company disclosed a one-stop offering from market strategy and design through molds, certification, testing, and mass-production technology, and attributed FY2016 profit growth partly to wider product lines, innovation products, and automation. These are credible adaptation actions, but their durable unit-economic advantage is not separately measured.",
+          "company_exposure": "Small appliances represented 98.15% of FY2015 revenue and overseas sales 88.06%, making consolidated earnings exposed to export demand, customer purchasing behavior, product mix, input costs, and currency effects. The supplied package does not split later profit or cash by product, customer, ODM, or domestic-brand channel.",
+          "horizon": "Medium-term continuation from the 2018-12-31 cutoff",
+          "most_likely_regime": "A competitive export small-appliance manufacturing regime in which product breadth, design-to-production execution, input costs, currency, and customer bargaining jointly determine retained profit rather than volume growth alone.",
+          "normal_economics": "MIXED: reported revenue expanded from CNY 6.31bn to CNY 8.22bn and adjusted attributable profit remained positive across all three years, but FY2017 adjusted profit fell from FY2016 and disclosed input-cost and currency pressures prevent extrapolating the FY2016 peak.",
+          "permanent_loss": "The principal permanent-loss path is slow erosion: customers or competing suppliers pressure economics while retained capital, working capital, and long-lived-asset spending fail to earn disclosed incremental returns. A second path is that consolidated cash is less available to ordinary shareholders than its headline amount suggests because restricted balances, allocation, and distribution evidence are incomplete.",
+          "profit_pool_transmission": "Higher sales and broader product lines can raise factory utilization and profit, but raw-material inflation and exchange-rate-related finance costs can absorb the gain; concentration in the FY2015 top five customers makes customer terms a material transmission channel, while later concentration is not disclosed in the supplied package.",
+          "reversal_observations": [
+            "A post-cutoff official annual report shows that revenue growth converts into sustained adjusted-profit improvement despite raw-material and currency pressure.",
+            "Post-cutoff disclosures match growth-project and acquisition capital with incremental earnings, cash conversion, and returns after working-capital and long-lived-asset absorption.",
+            "Post-cutoff disclosures establish materially different customer concentration, cash restrictions, or ordinary-shareholder cash realization than the pre-cutoff record permits."
+          ],
+          "strongest_rival": "Global branded customers and competing small-appliance OEM suppliers can shift volume or price; client-specific concentration after FY2015 is unknown.",
+          "valuation_treatment": "Keep a mature-core earning-power route separate from a conditional owner-cash route. Do not recognize a standalone growth-capital-return route and do not treat all consolidated cash as an ordinary-shareholder asset without an accessibility and realization boundary."
+        },
+        "summary": "The disclosed company is an export-oriented small-appliance designer, manufacturer, and seller with a broad product set and an integrated customer solution offer. Revenue grew across FY2015–FY2017, but FY2017 cost growth exceeded revenue growth amid raw-material inflation and financial expense rose with RMB/USD movements; the pre-cutoff record therefore supports a viable core but not a claim of steadily improving economics."
+      },
+      "strongest_rival": "Global branded customers and competing small-appliance OEM suppliers can shift volume or price; client-specific concentration after FY2015 is unknown.",
+      "survival_case": "The FY2017 balance shows CNY 1.917bn of cash and cash equivalents against disclosed restricted monetary funds of CNY 199m; working-capital balances and long-lived-asset spending are material, and FY2017 also received CNY 891m of investment cash. The supplied reports do not provide a complete later debt or ordinary-shareholder cash-accessibility analysis, so liquidity appears supportive but not a full distributability claim.",
+      "underwriting_thesis_id": "THESIS:CN002705:20181231:CORE_WITH_CONDITIONAL_CASH",
+      "value_route": {
+        "excluded_routes": [
+          "FULL_CONSOLIDATED_CASH_AS_ORDINARY_OWNER_ROUTE",
+          "UNPROVED_GROWTH_CAPITAL_RETURN_ROUTE"
+        ],
+        "primary_routes": [
+          "CORE_EARNING_POWER_ROUTE",
+          "CONDITIONAL_OWNER_CASH_ROUTE"
+        ],
+        "route_component_requirements": [
+          {
+            "optional_component_ids": [],
+            "required_component_ids": [
+              "CORE_APPLIANCE_OPERATIONS"
+            ],
+            "route_id": "CORE_EARNING_POWER_ROUTE"
+          },
+          {
+            "optional_component_ids": [],
+            "required_component_ids": [
+              "CORE_APPLIANCE_OPERATIONS",
+              "CAPITAL_AND_WORKING_CAPITAL_COMMITMENTS",
+              "CASH_ACCESSIBILITY_AND_FINANCING"
+            ],
+            "route_id": "CONDITIONAL_OWNER_CASH_ROUTE"
+          },
+          {
+            "optional_component_ids": [],
+            "required_component_ids": [
+              "CASH_ACCESSIBILITY_AND_FINANCING"
+            ],
+            "route_id": "FULL_CONSOLIDATED_CASH_AS_ORDINARY_OWNER_ROUTE"
+          },
+          {
+            "optional_component_ids": [],
+            "required_component_ids": [
+              "GROWTH_CAPITAL_RETURN"
+            ],
+            "route_id": "UNPROVED_GROWTH_CAPITAL_RETURN_ROUTE"
+          }
+        ],
+        "route_reasoning": "The core route relies only on the disclosed consolidated adjusted-profit history. The owner-cash route is conditional on separating maintenance from growth capital and establishing cash accessibility. The full-consolidated-cash route is excluded because restriction, allocation, and ordinary-shareholder realization are not fully evidenced. The unproved growth-capital route remains unresolved rather than being added to core earnings.",
+        "valuation_model_roles": {
+          "primary": [
+            "CORE_EARNING_POWER_ROUTE",
+            "CONDITIONAL_OWNER_CASH_ROUTE"
+          ]
+        }
+      }
+    },
+    "valuation_route_request": {
+      "authority": "ROUTE_REQUEST_ONLY",
+      "boundary": "No current value, price, expected return, BuyBand, or investment action is generated.",
+      "company_id": "CN:002705",
+      "compatibility_resolution": "Current-company underwriting may enter CJO and valuation routing through a source-bound, independently reviewed complete Episode; SELECTION_ADMITTED remains local to claims that actually depend on comparative selection or causal authority.",
+      "component_decisions": [
+        {
+          "component_id": "CORE_APPLIANCE_OPERATIONS",
+          "economic_scope": "MATURE_CORE_NORMAL_EARNINGS",
+          "financing_pressure_effect": "NEUTRAL",
+          "invalidation_test": "Comparable disclosures show that customer, input-cost, or currency pressure causes persistent earnings erosion outside the disclosed historical range.",
+          "normal_earnings_use": "BASE_RANGE",
+          "owner_cash_use": "CONDITIONAL_RANGE",
+          "permanent_loss_use": "BASE_PATH",
+          "promotion_test": "Later official reports sustain comparable adjusted-profit conversion through raw-material and currency pressure.",
+          "valuation_route_bindings": [
+            {
+              "route_id": "CORE_EARNING_POWER_ROUTE",
+              "use": "PRIMARY_INPUT"
+            },
+            {
+              "route_id": "CONDITIONAL_OWNER_CASH_ROUTE",
+              "use": "CONDITIONAL_PRIMARY_INPUT"
+            }
+          ],
+          "valuation_use": "PRIMARY_INPUT"
+        },
+        {
+          "component_id": "CAPITAL_AND_WORKING_CAPITAL_COMMITMENTS",
+          "economic_scope": "ORDINARY_SHARE_OWNER_CASH",
+          "financing_pressure_effect": "CONDITIONAL",
+          "invalidation_test": "Matched disclosures show that recurring capital and working-capital absorption persistently consume operating cash without adequate incremental return.",
+          "normal_earnings_use": "NOT_APPLICABLE",
+          "owner_cash_use": "CONDITIONAL_RANGE",
+          "permanent_loss_use": "CONDITIONAL_PATH",
+          "promotion_test": "Disclosures separate maintenance from growth capital and show working-capital-normalized owner cash.",
+          "valuation_route_bindings": [
+            {
+              "route_id": "CONDITIONAL_OWNER_CASH_ROUTE",
+              "use": "CONDITIONAL_PRIMARY_INPUT"
+            }
+          ],
+          "valuation_use": "CONDITIONAL_PRIMARY_INPUT"
+        },
+        {
+          "component_id": "CASH_ACCESSIBILITY_AND_FINANCING",
+          "economic_scope": "SURVIVAL_FINANCING",
+          "financing_pressure_effect": "REDUCES",
+          "invalidation_test": "Disclosures show cash restrictions, financing dependence, or allocation needs materially greater than the current conditional treatment permits.",
+          "normal_earnings_use": "NOT_APPLICABLE",
+          "owner_cash_use": "CONDITIONAL_RANGE",
+          "permanent_loss_use": "CONDITIONAL_PATH",
+          "promotion_test": "Entity-level ownership, restrictions, allocation, and recurring ordinary-shareholder realization establish an accessible cash boundary.",
+          "valuation_route_bindings": [
+            {
+              "route_id": "CONDITIONAL_OWNER_CASH_ROUTE",
+              "use": "CONDITIONAL_PRIMARY_INPUT"
+            },
+            {
+              "route_id": "FULL_CONSOLIDATED_CASH_AS_ORDINARY_OWNER_ROUTE",
+              "use": "EXCLUDED"
+            }
+          ],
+          "valuation_use": "CONDITIONAL_PRIMARY_INPUT"
+        },
+        {
+          "component_id": "GROWTH_CAPITAL_RETURN",
+          "economic_scope": "GROWTH_CAPITAL_RETURN",
+          "financing_pressure_effect": "CONDITIONAL",
+          "invalidation_test": "Matched capital and later results demonstrate structurally inadequate incremental return or irreversible cash absorption.",
+          "normal_earnings_use": "UNRESOLVED",
+          "owner_cash_use": "UNRESOLVED",
+          "permanent_loss_use": "UNRESOLVED",
+          "promotion_test": "Responsibility-matched evidence establishes incremental return and owner-cash conversion after all capital absorption.",
+          "valuation_route_bindings": [
+            {
+              "route_id": "UNPROVED_GROWTH_CAPITAL_RETURN_ROUTE",
+              "use": "UNRESOLVED"
+            }
+          ],
+          "valuation_use": "UNRESOLVED"
+        }
+      ],
+      "cutoff_at": "2018-12-31T23:59:59+08:00",
+      "economic_derivation": {
+        "driver_sensitivity_specs": [
+          {
+            "component_ids": [
+              "CORE_APPLIANCE_OPERATIONS"
+            ],
+            "driver_binding": {
+              "enterprise_variable_id": "CONSOLIDATED_CORE_PROFIT_HISTORY"
+            },
+            "horizon": "FY2015–FY2017 disclosed history",
+            "input_cases": {
+              "base": {
+                "basis": "FY2017 disclosed attributable profit after non-recurring items, the last available audited year before the cutoff.",
+                "evidence_ids": [
+                  "E1_FINANCIAL_HISTORY"
+                ],
+                "value_or_range": {
+                  "value": 382.05468716
+                }
+              },
+              "high": {
+                "basis": "FY2016 disclosed attributable profit after non-recurring items.",
+                "evidence_ids": [
+                  "E1_FINANCIAL_HISTORY"
+                ],
+                "value_or_range": {
+                  "value": 412.36239835
+                }
+              },
+              "low": {
+                "basis": "FY2015 disclosed attributable profit after non-recurring items.",
+                "evidence_ids": [
+                  "E1_FINANCIAL_HISTORY"
+                ],
+                "value_or_range": {
+                  "value": 272.40460783
+                }
+              },
+              "mode": "LOW_BASE_HIGH"
+            },
+            "metric": "Attributable profit after non-recurring items",
+            "responsibility_boundary": "Consolidated company; no product, customer, ODM, domestic-brand, or individual-customer allocation is asserted.",
+            "reversal_observation_refs": [
+              "#/reversal_observations/0"
+            ],
+            "sensitivity_id": "S1_CORE_ADJUSTED_PROFIT_HISTORY",
+            "transmission": {
+              "normal_earnings": {
+                "basis": "The three observations establish a historical reference but do not isolate the forward response of margin to product mix, customers, input costs, or currency.",
+                "delta": {
+                  "conservative_treatment": "Keep the disclosed reference range and do not attribute a numeric driver delta.",
+                  "reason": "No responsibility-matched source separates the driver response from the consolidated historical outcome.",
+                  "status": "UNKNOWN"
+                },
+                "status": "UNKNOWN"
+              },
+              "owner_cash": {
+                "basis": "Operating cash flow is disclosed only at the consolidated level and maintenance capital is not separated from growth capital.",
+                "delta": {
+                  "conservative_treatment": "Do not derive a component owner-cash delta from reported profit.",
+                  "reason": "The supplied package does not attribute cash conversion to the core component after economic maintenance needs.",
+                  "status": "UNKNOWN"
+                },
+                "status": "UNKNOWN"
+              },
+              "valuation_route_ids": [
+                "CORE_EARNING_POWER_ROUTE"
+              ]
+            },
+            "unit": "CNY millions"
+          },
+          {
+            "component_ids": [
+              "CAPITAL_AND_WORKING_CAPITAL_COMMITMENTS"
+            ],
+            "driver_binding": {
+              "financial_driver_id": "LONG_LIVED_ASSET_CASH_SPENDING"
+            },
+            "horizon": "FY2015–FY2017 disclosed history",
+            "input_cases": {
+              "base": {
+                "basis": "FY2016 disclosed long-lived-asset cash payment.",
+                "evidence_ids": [
+                  "E5_LONG_LIVED_ASSET_SPENDING_AND_CASH"
+                ],
+                "value_or_range": {
+                  "value": 415.24052574
+                }
+              },
+              "high": {
+                "basis": "FY2017 disclosed long-lived-asset cash payment.",
+                "evidence_ids": [
+                  "E5_LONG_LIVED_ASSET_SPENDING_AND_CASH"
+                ],
+                "value_or_range": {
+                  "value": 507.81955442
+                }
+              },
+              "low": {
+                "basis": "FY2015 disclosed long-lived-asset cash payment.",
+                "evidence_ids": [
+                  "E5_LONG_LIVED_ASSET_SPENDING_AND_CASH"
+                ],
+                "value_or_range": {
+                  "value": 361.08962229
+                }
+              },
+              "mode": "LOW_BASE_HIGH"
+            },
+            "metric": "Cash paid for purchase and construction of fixed assets, intangible assets and other long-lived assets",
+            "responsibility_boundary": "Consolidated company cash-flow statement and consolidated working-capital balances; no maintenance-versus-growth or channel allocation is asserted.",
+            "reversal_observation_refs": [
+              "#/reversal_observations/1"
+            ],
+            "sensitivity_id": "S2_LONG_LIVED_ASSET_AND_WORKING_CAPITAL_COMMITMENT",
+            "transmission": {
+              "normal_earnings": {
+                "basis": "Total long-lived-asset spending cannot be reclassified as maintenance capital or as a normal-earnings adjustment without a growth/maintenance split and matched return evidence.",
+                "delta": {
+                  "conservative_treatment": "Do not alter the core normal-earnings reference for this spending.",
+                  "reason": "No disclosed matched incremental earnings or maintenance-capital schedule exists in the supplied package.",
+                  "status": "UNKNOWN"
+                },
+                "status": "UNKNOWN"
+              },
+              "owner_cash": {
+                "basis": "Operating cash less all long-lived-asset spending measures current allocation and financing pressure, not normal owner cash, because economic maintenance capital is unknown.",
+                "delta": {
+                  "conservative_treatment": "Retain only a conditional owner-cash route and do not invent a negative owner-cash point estimate.",
+                  "reason": "The source does not distinguish maintenance from growth spending or allocate working-capital needs to components.",
+                  "status": "UNKNOWN"
+                },
+                "status": "UNKNOWN"
+              },
+              "valuation_route_ids": [
+                "CONDITIONAL_OWNER_CASH_ROUTE"
+              ]
+            },
+            "unit": "CNY millions"
+          },
+          {
+            "component_ids": [
+              "CASH_ACCESSIBILITY_AND_FINANCING"
+            ],
+            "driver_binding": {
+              "financial_driver_id": "RESTRICTED_MONETARY_FUNDS"
+            },
+            "horizon": "FY2015–FY2017 disclosed year-end balances",
+            "input_cases": {
+              "base": {
+                "basis": "FY2017 disclosed restricted monetary funds, the last available audited year before the cutoff.",
+                "evidence_ids": [
+                  "E7_RESTRICTED_MONETARY_FUNDS"
+                ],
+                "value_or_range": {
+                  "value": 199.37277743
+                }
+              },
+              "high": {
+                "basis": "Use the disclosed FY2017 balance as the conservative high historical case because it exceeds FY2015 and FY2016.",
+                "evidence_ids": [
+                  "E7_RESTRICTED_MONETARY_FUNDS"
+                ],
+                "value_or_range": {
+                  "value": 199.37277743
+                }
+              },
+              "low": {
+                "basis": "FY2016 disclosed restricted monetary funds.",
+                "evidence_ids": [
+                  "E7_RESTRICTED_MONETARY_FUNDS"
+                ],
+                "value_or_range": {
+                  "value": 141.34912878
+                }
+              },
+              "mode": "LOW_BASE_HIGH"
+            },
+            "metric": "Restricted monetary funds",
+            "responsibility_boundary": "Consolidated monetary-fund restrictions; no legal-entity upstreamability or ordinary-shareholder distribution claim is asserted.",
+            "reversal_observation_refs": [
+              "#/reversal_observations/2"
+            ],
+            "sensitivity_id": "S3_RESTRICTED_CASH_AND_ACCESS",
+            "transmission": {
+              "normal_earnings": {
+                "basis": "Restricted-cash classification does not itself change the disclosed operating-profit reference.",
+                "delta": {
+                  "range_high": 0,
+                  "range_low": 0,
+                  "status": "BOUNDED",
+                  "unit": "CNY millions"
+                },
+                "status": "PRESERVED"
+              },
+              "owner_cash": {
+                "basis": "Restricted balances identify a limitation on cash availability, but the supplied package does not establish the residual unrestricted cash available to ordinary shareholders after allocation and distribution needs.",
+                "delta": {
+                  "conservative_treatment": "Do not treat consolidated cash as full ordinary-owner cash; retain the conditional route.",
+                  "reason": "No entity-level accessibility and realization boundary is disclosed in the supplied package.",
+                  "status": "UNKNOWN"
+                },
+                "status": "UNKNOWN"
+              },
+              "valuation_route_ids": [
+                "CONDITIONAL_OWNER_CASH_ROUTE"
+              ]
+            },
+            "unit": "CNY millions"
+          }
+        ],
+        "normal_earnings_bridge": {
+          "basis": {
+            "as_of": "2018-12-31",
+            "currency": "CNY",
+            "earnings_claim_scope": "ORDINARY_COMMON_EQUITY",
+            "metric": "Attributable profit after non-recurring items",
+            "operating_perimeter": "Consolidated small-appliance operating perimeter disclosed in FY2015–FY2017 annual reports",
+            "tax_basis": "AFTER_TAX",
+            "unit": "CNY millions"
+          },
+          "rows": [
+            {
+              "component_id": "CORE_APPLIANCE_OPERATIONS",
+              "direction": "ADD",
+              "economic_reason": "FY2015–FY2017 disclosed attributable profit after non-recurring items supplies a transparent historic reference range for the mature consolidated core; it does not assert a forecast or a FY2016 peak trend.",
+              "evidence_ids": [
+                "E1_FINANCIAL_HISTORY"
+              ],
+              "quantification": {
+                "range_high": 412.36239835,
+                "range_low": 272.40460783,
+                "status": "BOUNDED"
+              },
+              "row_id": "REF_CORE_DISCLOSED_ADJUSTED_PROFIT",
+              "row_role": "REFERENCE_EARNINGS"
+            },
+            {
+              "component_id": "GROWTH_CAPITAL_RETURN",
+              "direction": "ADD",
+              "economic_reason": "Retained and externally raised capital can add earnings only after its incremental return is observed on a matched responsibility boundary.",
+              "evidence_ids": [
+                "E8_FINANCING_AND_PROJECTS",
+                "E9_EXPLICIT_COMPONENT_UNKNOWN"
+              ],
+              "quantification": {
+                "conservative_treatment": "Do not add a growth-capital-return contribution to the reference range; retain it as unresolved.",
+                "reason": "The source package does not match project, automation, acquisition, or offering capital to incremental post-investment earnings and cash conversion.",
+                "status": "UNKNOWN"
+              },
+              "row_id": "ADJ_UNPROVED_GROWTH_CAPITAL_RETURN",
+              "row_role": "NORMALIZATION_ADJUSTMENT"
+            }
+          ]
+        },
+        "schema_version": "enterprise-underwriting-economic-derivation.v1"
+      },
+      "economic_derivation_summary": {
+        "driver_sensitivities": [
+          {
+            "component_ids": [
+              "CORE_APPLIANCE_OPERATIONS"
+            ],
+            "horizon": "FY2015–FY2017 disclosed history",
+            "input_cases": {
+              "base": {
+                "basis": "FY2017 disclosed attributable profit after non-recurring items, the last available audited year before the cutoff.",
+                "evidence_ids": [
+                  "E1_FINANCIAL_HISTORY"
+                ],
+                "value_or_range": {
+                  "value": 382.05468716
+                }
+              },
+              "high": {
+                "basis": "FY2016 disclosed attributable profit after non-recurring items.",
+                "evidence_ids": [
+                  "E1_FINANCIAL_HISTORY"
+                ],
+                "value_or_range": {
+                  "value": 412.36239835
+                }
+              },
+              "low": {
+                "basis": "FY2015 disclosed attributable profit after non-recurring items.",
+                "evidence_ids": [
+                  "E1_FINANCIAL_HISTORY"
+                ],
+                "value_or_range": {
+                  "value": 272.40460783
+                }
+              },
+              "mode": "LOW_BASE_HIGH"
+            },
+            "metric": "Attributable profit after non-recurring items",
+            "normal_earnings_uses": {
+              "CORE_APPLIANCE_OPERATIONS": "BASE_RANGE"
+            },
+            "owner_cash_uses": {
+              "CORE_APPLIANCE_OPERATIONS": "CONDITIONAL_RANGE"
+            },
+            "reversal_observations": [
+              "A post-cutoff official annual report shows that revenue growth converts into sustained adjusted-profit improvement despite raw-material and currency pressure."
+            ],
+            "sensitivity_id": "S1_CORE_ADJUSTED_PROFIT_HISTORY",
+            "transmission": {
+              "normal_earnings": {
+                "basis": "The three observations establish a historical reference but do not isolate the forward response of margin to product mix, customers, input costs, or currency.",
+                "delta": {
+                  "conservative_treatment": "Keep the disclosed reference range and do not attribute a numeric driver delta.",
+                  "reason": "No responsibility-matched source separates the driver response from the consolidated historical outcome.",
+                  "status": "UNKNOWN"
+                },
+                "status": "UNKNOWN"
+              },
+              "owner_cash": {
+                "basis": "Operating cash flow is disclosed only at the consolidated level and maintenance capital is not separated from growth capital.",
+                "delta": {
+                  "conservative_treatment": "Do not derive a component owner-cash delta from reported profit.",
+                  "reason": "The supplied package does not attribute cash conversion to the core component after economic maintenance needs.",
+                  "status": "UNKNOWN"
+                },
+                "status": "UNKNOWN"
+              },
+              "valuation_route_ids": [
+                "CORE_EARNING_POWER_ROUTE"
+              ]
+            },
+            "unit": "CNY millions",
+            "valuation_route_attributions": [
+              {
+                "component_valuation_uses": {
+                  "CORE_APPLIANCE_OPERATIONS": "PRIMARY_INPUT"
+                },
+                "route_id": "CORE_EARNING_POWER_ROUTE",
+                "route_role": "PRIMARY"
+              }
+            ]
+          },
+          {
+            "component_ids": [
+              "CAPITAL_AND_WORKING_CAPITAL_COMMITMENTS"
+            ],
+            "horizon": "FY2015–FY2017 disclosed history",
+            "input_cases": {
+              "base": {
+                "basis": "FY2016 disclosed long-lived-asset cash payment.",
+                "evidence_ids": [
+                  "E5_LONG_LIVED_ASSET_SPENDING_AND_CASH"
+                ],
+                "value_or_range": {
+                  "value": 415.24052574
+                }
+              },
+              "high": {
+                "basis": "FY2017 disclosed long-lived-asset cash payment.",
+                "evidence_ids": [
+                  "E5_LONG_LIVED_ASSET_SPENDING_AND_CASH"
+                ],
+                "value_or_range": {
+                  "value": 507.81955442
+                }
+              },
+              "low": {
+                "basis": "FY2015 disclosed long-lived-asset cash payment.",
+                "evidence_ids": [
+                  "E5_LONG_LIVED_ASSET_SPENDING_AND_CASH"
+                ],
+                "value_or_range": {
+                  "value": 361.08962229
+                }
+              },
+              "mode": "LOW_BASE_HIGH"
+            },
+            "metric": "Cash paid for purchase and construction of fixed assets, intangible assets and other long-lived assets",
+            "normal_earnings_uses": {
+              "CAPITAL_AND_WORKING_CAPITAL_COMMITMENTS": "NOT_APPLICABLE"
+            },
+            "owner_cash_uses": {
+              "CAPITAL_AND_WORKING_CAPITAL_COMMITMENTS": "CONDITIONAL_RANGE"
+            },
+            "reversal_observations": [
+              "Post-cutoff disclosures match growth-project and acquisition capital with incremental earnings, cash conversion, and returns after working-capital and long-lived-asset absorption."
+            ],
+            "sensitivity_id": "S2_LONG_LIVED_ASSET_AND_WORKING_CAPITAL_COMMITMENT",
+            "transmission": {
+              "normal_earnings": {
+                "basis": "Total long-lived-asset spending cannot be reclassified as maintenance capital or as a normal-earnings adjustment without a growth/maintenance split and matched return evidence.",
+                "delta": {
+                  "conservative_treatment": "Do not alter the core normal-earnings reference for this spending.",
+                  "reason": "No disclosed matched incremental earnings or maintenance-capital schedule exists in the supplied package.",
+                  "status": "UNKNOWN"
+                },
+                "status": "UNKNOWN"
+              },
+              "owner_cash": {
+                "basis": "Operating cash less all long-lived-asset spending measures current allocation and financing pressure, not normal owner cash, because economic maintenance capital is unknown.",
+                "delta": {
+                  "conservative_treatment": "Retain only a conditional owner-cash route and do not invent a negative owner-cash point estimate.",
+                  "reason": "The source does not distinguish maintenance from growth spending or allocate working-capital needs to components.",
+                  "status": "UNKNOWN"
+                },
+                "status": "UNKNOWN"
+              },
+              "valuation_route_ids": [
+                "CONDITIONAL_OWNER_CASH_ROUTE"
+              ]
+            },
+            "unit": "CNY millions",
+            "valuation_route_attributions": [
+              {
+                "component_valuation_uses": {
+                  "CAPITAL_AND_WORKING_CAPITAL_COMMITMENTS": "CONDITIONAL_PRIMARY_INPUT"
+                },
+                "route_id": "CONDITIONAL_OWNER_CASH_ROUTE",
+                "route_role": "PRIMARY"
+              }
+            ]
+          },
+          {
+            "component_ids": [
+              "CASH_ACCESSIBILITY_AND_FINANCING"
+            ],
+            "horizon": "FY2015–FY2017 disclosed year-end balances",
+            "input_cases": {
+              "base": {
+                "basis": "FY2017 disclosed restricted monetary funds, the last available audited year before the cutoff.",
+                "evidence_ids": [
+                  "E7_RESTRICTED_MONETARY_FUNDS"
+                ],
+                "value_or_range": {
+                  "value": 199.37277743
+                }
+              },
+              "high": {
+                "basis": "Use the disclosed FY2017 balance as the conservative high historical case because it exceeds FY2015 and FY2016.",
+                "evidence_ids": [
+                  "E7_RESTRICTED_MONETARY_FUNDS"
+                ],
+                "value_or_range": {
+                  "value": 199.37277743
+                }
+              },
+              "low": {
+                "basis": "FY2016 disclosed restricted monetary funds.",
+                "evidence_ids": [
+                  "E7_RESTRICTED_MONETARY_FUNDS"
+                ],
+                "value_or_range": {
+                  "value": 141.34912878
+                }
+              },
+              "mode": "LOW_BASE_HIGH"
+            },
+            "metric": "Restricted monetary funds",
+            "normal_earnings_uses": {
+              "CASH_ACCESSIBILITY_AND_FINANCING": "NOT_APPLICABLE"
+            },
+            "owner_cash_uses": {
+              "CASH_ACCESSIBILITY_AND_FINANCING": "CONDITIONAL_RANGE"
+            },
+            "reversal_observations": [
+              "Post-cutoff disclosures establish materially different customer concentration, cash restrictions, or ordinary-shareholder cash realization than the pre-cutoff record permits."
+            ],
+            "sensitivity_id": "S3_RESTRICTED_CASH_AND_ACCESS",
+            "transmission": {
+              "normal_earnings": {
+                "basis": "Restricted-cash classification does not itself change the disclosed operating-profit reference.",
+                "delta": {
+                  "range_high": 0,
+                  "range_low": 0,
+                  "status": "BOUNDED",
+                  "unit": "CNY millions"
+                },
+                "status": "PRESERVED"
+              },
+              "owner_cash": {
+                "basis": "Restricted balances identify a limitation on cash availability, but the supplied package does not establish the residual unrestricted cash available to ordinary shareholders after allocation and distribution needs.",
+                "delta": {
+                  "conservative_treatment": "Do not treat consolidated cash as full ordinary-owner cash; retain the conditional route.",
+                  "reason": "No entity-level accessibility and realization boundary is disclosed in the supplied package.",
+                  "status": "UNKNOWN"
+                },
+                "status": "UNKNOWN"
+              },
+              "valuation_route_ids": [
+                "CONDITIONAL_OWNER_CASH_ROUTE"
+              ]
+            },
+            "unit": "CNY millions",
+            "valuation_route_attributions": [
+              {
+                "component_valuation_uses": {
+                  "CASH_ACCESSIBILITY_AND_FINANCING": "CONDITIONAL_PRIMARY_INPUT"
+                },
+                "route_id": "CONDITIONAL_OWNER_CASH_ROUTE",
+                "route_role": "PRIMARY"
+              }
+            ]
+          }
+        ],
+        "normal_earnings_bridge": {
+          "base_range": {
+            "range_high": 412.36239835,
+            "range_low": 272.40460783,
+            "status": "BOUNDED"
+          },
+          "basis": {
+            "as_of": "2018-12-31",
+            "currency": "CNY",
+            "earnings_claim_scope": "ORDINARY_COMMON_EQUITY",
+            "metric": "Attributable profit after non-recurring items",
+            "operating_perimeter": "Consolidated small-appliance operating perimeter disclosed in FY2015–FY2017 annual reports",
+            "tax_basis": "AFTER_TAX",
+            "unit": "CNY millions"
+          },
+          "conditional_range": {
+            "range_high": 412.36239835,
+            "range_low": 272.40460783,
+            "status": "BOUNDED"
+          },
+          "rows": [
+            {
+              "component_id": "CORE_APPLIANCE_OPERATIONS",
+              "direction": "ADD",
+              "economic_reason": "FY2015–FY2017 disclosed attributable profit after non-recurring items supplies a transparent historic reference range for the mature consolidated core; it does not assert a forecast or a FY2016 peak trend.",
+              "evidence_ids": [
+                "E1_FINANCIAL_HISTORY"
+              ],
+              "normal_earnings_use": "BASE_RANGE",
+              "quantification": {
+                "range_high": 412.36239835,
+                "range_low": 272.40460783,
+                "status": "BOUNDED"
+              },
+              "row_id": "REF_CORE_DISCLOSED_ADJUSTED_PROFIT",
+              "row_role": "REFERENCE_EARNINGS",
+              "signed_range": {
+                "range_high": 412.36239835,
+                "range_low": 272.40460783
+              }
+            },
+            {
+              "component_id": "GROWTH_CAPITAL_RETURN",
+              "direction": "ADD",
+              "economic_reason": "Retained and externally raised capital can add earnings only after its incremental return is observed on a matched responsibility boundary.",
+              "evidence_ids": [
+                "E8_FINANCING_AND_PROJECTS",
+                "E9_EXPLICIT_COMPONENT_UNKNOWN"
+              ],
+              "normal_earnings_use": "UNRESOLVED",
+              "quantification": {
+                "conservative_treatment": "Do not add a growth-capital-return contribution to the reference range; retain it as unresolved.",
+                "reason": "The source package does not match project, automation, acquisition, or offering capital to incremental post-investment earnings and cash conversion.",
+                "status": "UNKNOWN"
+              },
+              "row_id": "ADJ_UNPROVED_GROWTH_CAPITAL_RETURN",
+              "row_role": "NORMALIZATION_ADJUSTMENT",
+              "signed_range": null
+            }
+          ],
+          "totals_by_use": {
+            "BASE_RANGE": {
+              "range_high": 412.36239835,
+              "range_low": 272.40460783,
+              "status": "BOUNDED"
+            },
+            "CONDITIONAL_RANGE": null,
+            "EXCLUDED": null,
+            "NOT_APPLICABLE": null,
+            "SCENARIO_ONLY": null,
+            "UNRESOLVED": {
+              "status": "UNKNOWN",
+              "unknown_row_ids": [
+                "ADJ_UNPROVED_GROWTH_CAPITAL_RETURN"
+              ]
+            }
+          }
+        },
+        "schema_version": "enterprise-underwriting-economic-derivation-summary.v1"
+      },
+      "episode_id": "EPISODE:CN002705:20181231:A11",
+      "excluded_routes": [
+        "FULL_CONSOLIDATED_CASH_AS_ORDINARY_OWNER_ROUTE",
+        "UNPROVED_GROWTH_CAPITAL_RETURN_ROUTE"
+      ],
+      "existing_valuation_adapter": "scripts/valuation_routing.py:build_valuation_route",
+      "inputs_excluded_from_base": [
+        "GROWTH_CAPITAL_RETURN"
+      ],
+      "normal_earnings_input_treatment": "Use only the disclosed FY2015–FY2017 adjusted attributable-profit range as the core reference; keep unproved growth return unresolved and do not infer a trend from the FY2016 peak.",
+      "owner_cash_input_treatment": "Treat owner cash as conditional: operating cash, all long-lived-asset spending, working-capital commitments, cash restrictions, and ordinary-shareholder realization answer distinct questions, and the source does not identify economic maintenance capital.",
+      "permanent_loss_input_treatment": "Include both survival-independent slow erosion from competitive/cost pressure and low-return retention, plus a conditional loss path from inaccessible or absorbed cash; liquidity does not eliminate these paths.",
+      "primary_routes": [
+        "CORE_EARNING_POWER_ROUTE",
+        "CONDITIONAL_OWNER_CASH_ROUTE"
+      ],
+      "request_id": "UW-VR:EPISODE:CN002705:20181231:A11",
+      "route_component_requirements": [
+        {
+          "optional_component_ids": [],
+          "required_component_ids": [
+            "CORE_APPLIANCE_OPERATIONS"
+          ],
+          "route_id": "CORE_EARNING_POWER_ROUTE"
+        },
+        {
+          "optional_component_ids": [],
+          "required_component_ids": [
+            "CORE_APPLIANCE_OPERATIONS",
+            "CAPITAL_AND_WORKING_CAPITAL_COMMITMENTS",
+            "CASH_ACCESSIBILITY_AND_FINANCING"
+          ],
+          "route_id": "CONDITIONAL_OWNER_CASH_ROUTE"
+        },
+        {
+          "optional_component_ids": [],
+          "required_component_ids": [
+            "CASH_ACCESSIBILITY_AND_FINANCING"
+          ],
+          "route_id": "FULL_CONSOLIDATED_CASH_AS_ORDINARY_OWNER_ROUTE"
+        },
+        {
+          "optional_component_ids": [],
+          "required_component_ids": [
+            "GROWTH_CAPITAL_RETURN"
+          ],
+          "route_id": "UNPROVED_GROWTH_CAPITAL_RETURN_ROUTE"
+        }
+      ],
+      "route_reasoning": "The core route relies only on the disclosed consolidated adjusted-profit history. The owner-cash route is conditional on separating maintenance from growth capital and establishing cash accessibility. The full-consolidated-cash route is excluded because restriction, allocation, and ordinary-shareholder realization are not fully evidenced. The unproved growth-capital route remains unresolved rather than being added to core earnings.",
+      "sample_identity": "BLIND_REPLAY",
+      "schema_version": "enterprise-underwriting-valuation-route-request.v2",
+      "situation_model": {
+        "industry_future_thesis": {
+          "adaptation": "The company disclosed a one-stop offering from market strategy and design through molds, certification, testing, and mass-production technology, and attributed FY2016 profit growth partly to wider product lines, innovation products, and automation. These are credible adaptation actions, but their durable unit-economic advantage is not separately measured.",
+          "company_exposure": "Small appliances represented 98.15% of FY2015 revenue and overseas sales 88.06%, making consolidated earnings exposed to export demand, customer purchasing behavior, product mix, input costs, and currency effects. The supplied package does not split later profit or cash by product, customer, ODM, or domestic-brand channel.",
+          "horizon": "Medium-term continuation from the 2018-12-31 cutoff",
+          "most_likely_regime": "A competitive export small-appliance manufacturing regime in which product breadth, design-to-production execution, input costs, currency, and customer bargaining jointly determine retained profit rather than volume growth alone.",
+          "normal_economics": "MIXED: reported revenue expanded from CNY 6.31bn to CNY 8.22bn and adjusted attributable profit remained positive across all three years, but FY2017 adjusted profit fell from FY2016 and disclosed input-cost and currency pressures prevent extrapolating the FY2016 peak.",
+          "permanent_loss": "The principal permanent-loss path is slow erosion: customers or competing suppliers pressure economics while retained capital, working capital, and long-lived-asset spending fail to earn disclosed incremental returns. A second path is that consolidated cash is less available to ordinary shareholders than its headline amount suggests because restricted balances, allocation, and distribution evidence are incomplete.",
+          "profit_pool_transmission": "Higher sales and broader product lines can raise factory utilization and profit, but raw-material inflation and exchange-rate-related finance costs can absorb the gain; concentration in the FY2015 top five customers makes customer terms a material transmission channel, while later concentration is not disclosed in the supplied package.",
+          "reversal_observations": [
+            "A post-cutoff official annual report shows that revenue growth converts into sustained adjusted-profit improvement despite raw-material and currency pressure.",
+            "Post-cutoff disclosures match growth-project and acquisition capital with incremental earnings, cash conversion, and returns after working-capital and long-lived-asset absorption.",
+            "Post-cutoff disclosures establish materially different customer concentration, cash restrictions, or ordinary-shareholder cash realization than the pre-cutoff record permits."
+          ],
+          "strongest_rival": "Global branded customers and competing small-appliance OEM suppliers can shift volume or price; client-specific concentration after FY2015 is unknown.",
+          "valuation_treatment": "Keep a mature-core earning-power route separate from a conditional owner-cash route. Do not recognize a standalone growth-capital-return route and do not treat all consolidated cash as an ordinary-shareholder asset without an accessibility and realization boundary."
+        },
+        "summary": "The disclosed company is an export-oriented small-appliance designer, manufacturer, and seller with a broad product set and an integrated customer solution offer. Revenue grew across FY2015–FY2017, but FY2017 cost growth exceeded revenue growth amid raw-material inflation and financial expense rose with RMB/USD movements; the pre-cutoff record therefore supports a viable core but not a claim of steadily improving economics."
+      },
+      "underwriting_thesis_id": "THESIS:CN002705:20181231:CORE_WITH_CONDITIONAL_CASH",
+      "valuation_component_route": {
+        "components_by_use": {
+          "CONDITIONAL_PRIMARY_INPUT": [
+            "CAPITAL_AND_WORKING_CAPITAL_COMMITMENTS",
+            "CASH_ACCESSIBILITY_AND_FINANCING"
+          ],
+          "CORROBORATIVE_INPUT": [],
+          "EXCLUDED": [],
+          "NOT_APPLICABLE": [],
+          "PRIMARY_INPUT": [
+            "CORE_APPLIANCE_OPERATIONS"
+          ],
+          "SCENARIO_ONLY": [],
+          "STRESS_ONLY": [],
+          "UNRESOLVED": [
+            "GROWTH_CAPITAL_RETURN"
+          ]
+        },
+        "route_authority": "PRIMARY_INPUT",
+        "route_component_bindings": [
+          {
+            "components_by_use": {
+              "CONDITIONAL_PRIMARY_INPUT": [
+                "CORE_APPLIANCE_OPERATIONS",
+                "CAPITAL_AND_WORKING_CAPITAL_COMMITMENTS",
+                "CASH_ACCESSIBILITY_AND_FINANCING"
+              ],
+              "CORROBORATIVE_INPUT": [],
+              "EXCLUDED": [],
+              "NOT_APPLICABLE": [],
+              "PRIMARY_INPUT": [],
+              "SCENARIO_ONLY": [],
+              "STRESS_ONLY": [],
+              "UNRESOLVED": []
+            },
+            "route_id": "CONDITIONAL_OWNER_CASH_ROUTE"
+          },
+          {
+            "components_by_use": {
+              "CONDITIONAL_PRIMARY_INPUT": [],
+              "CORROBORATIVE_INPUT": [],
+              "EXCLUDED": [],
+              "NOT_APPLICABLE": [],
+              "PRIMARY_INPUT": [
+                "CORE_APPLIANCE_OPERATIONS"
+              ],
+              "SCENARIO_ONLY": [],
+              "STRESS_ONLY": [],
+              "UNRESOLVED": []
+            },
+            "route_id": "CORE_EARNING_POWER_ROUTE"
+          },
+          {
+            "components_by_use": {
+              "CONDITIONAL_PRIMARY_INPUT": [],
+              "CORROBORATIVE_INPUT": [],
+              "EXCLUDED": [
+                "CASH_ACCESSIBILITY_AND_FINANCING"
+              ],
+              "NOT_APPLICABLE": [],
+              "PRIMARY_INPUT": [],
+              "SCENARIO_ONLY": [],
+              "STRESS_ONLY": [],
+              "UNRESOLVED": []
+            },
+            "route_id": "FULL_CONSOLIDATED_CASH_AS_ORDINARY_OWNER_ROUTE"
+          },
+          {
+            "components_by_use": {
+              "CONDITIONAL_PRIMARY_INPUT": [],
+              "CORROBORATIVE_INPUT": [],
+              "EXCLUDED": [],
+              "NOT_APPLICABLE": [],
+              "PRIMARY_INPUT": [],
+              "SCENARIO_ONLY": [],
+              "STRESS_ONLY": [],
+              "UNRESOLVED": [
+                "GROWTH_CAPITAL_RETURN"
+              ]
+            },
+            "route_id": "UNPROVED_GROWTH_CAPITAL_RETURN_ROUTE"
+          }
+        ]
+      },
+      "valuation_model_roles": {
+        "primary": [
+          "CORE_EARNING_POWER_ROUTE",
+          "CONDITIONAL_OWNER_CASH_ROUTE"
+        ]
+      }
+    }
+  },
+  "sample_identity": "BLIND_REPLAY",
+  "schema_version": "enterprise-underwriting-training-downstream-bundle.v1"
+}

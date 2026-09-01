@@ -1,0 +1,13 @@
+{
+  "arm_id": "A00",
+  "attempts": {
+    "episode": 1,
+    "reader_report": 0
+  },
+  "authority": "PREOUTCOME_EXECUTION_CONTROL_PLANE_ONLY",
+  "case_id": "CASE:02",
+  "failure": "training_agent_episode_invalid:episode:evidence_trace[0].used_for_missing,episode:evidence_trace[1].used_for_missing,episode:evidence_trace[2].used_for_missing,episode:evidence_trace[3].used_for_missing,episode:evidence_trace[4].used_for_missing,episode:evidence_trace[5].used_for_missing,episode:evidence_trace[6].used_for_missing,episode:evidence_trace[7].used_for_missing,episode:value_route.stress_route_unbound_or_ineligible:ROUTE:LIQUIDITY_STRESS,episode:value_route.stress_route_required_component_ineligible:ROUTE:LIQUIDITY_STRESS:COMP:WORKING_CAPITAL,episode:value_route.stress_route_required_component_ineligible:ROUTE:LIQUIDITY_STRESS:COMP:FINANCING,episode:economic_derivation.schema_version_invalid,episode:economic_derivation.normal_earnings_bridge.rows[0].component_id_unknown,episode:economic_derivation.normal_earnings_bridge.must_cover_each_normal_earnings_component",
+  "retry_policy": "NO_RETRY_OR_REWRITE",
+  "schema_version": "report-autonomy-cohort-execution-receipt.v1",
+  "state": "EPISODE_INVALID"
+}

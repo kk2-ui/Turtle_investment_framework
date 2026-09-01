@@ -1,0 +1,13 @@
+{
+  "arm_id": "A10",
+  "attempts": {
+    "episode": 1,
+    "reader_report": 0
+  },
+  "authority": "PREOUTCOME_EXECUTION_CONTROL_PLANE_ONLY",
+  "case_id": "CASE:06",
+  "failure": "training_agent_episode_invalid:episode:value_route.route_binding_component_not_eligible:ROUTE:CORE_NORMALIZED_EPV:COMP:NONCORE_ASSETS,episode:value_route.route_binding_component_not_eligible:ROUTE:LIQUIDATION_REALIZATION:COMP:GROWTH_PROJECTS,episode:economic_derivation.normal_earnings_bridge.conditional_range_requires_conditional_reference_earnings",
+  "retry_policy": "NO_RETRY_OR_REWRITE",
+  "schema_version": "report-autonomy-cohort-execution-receipt.v1",
+  "state": "EPISODE_INVALID"
+}

@@ -1,0 +1,406 @@
+{
+  "schema_version": "enterprise-underwriting-episode.v2",
+  "episode_id": "UWEP:CN:002705:20181231:A01",
+  "company_id": "CN:002705",
+  "company_name": "广东新宝电器股份有限公司",
+  "cutoff_at": "2018-12-31T23:59:59+08:00",
+  "sample_identity": "BLIND_REPLAY",
+  "decision_frame": "Pre-outcome enterprise underwriting from the supplied FY2015-FY2017 consolidated disclosures only; it separates recurring consolidated earnings evidence, unallocated owner-cash evidence, and financing evidence.",
+  "underwriting_route": "Use the consolidated recurring-profit record as the normal-earnings route, while treating maintenance-versus-growth capital and component cash conversion as unresolved rather than imputing them.",
+  "situation_model": {
+    "summary": "The company is an export-oriented small-appliance designer, producer, and seller with a broad product set and integrated customer solution offering. The supplied record shows revenue expansion through FY2017, but FY2017 also records raw-material cost pressure and currency-related finance-cost pressure; the supplied disclosures do not allocate profits, cash collection, or capital needs by product, channel, or customer.",
+    "industry_future_thesis": {
+      "horizon": "Next normalized reporting cycle after the 2018-12-31 cutoff.",
+      "most_likely_regime": "Small-appliance demand and customer absorption remain differentiated by category and customer/channel exposure; company-level economics must be established from its own consolidated record rather than aggregate conditions.",
+      "profit_pool_transmission": "For this company, customer orders and product mix transmit through its design-to-production solution model into revenue and manufacturing cost; raw-material prices and currency movements can then alter recurring profit and cash conversion before any owner distribution is inferred.",
+      "company_exposure": "FY2015 disclosed 88.06% foreign sales and the company describes itself as a small-appliance export leader. The supplied package does not provide later customer concentration, segment profit, or component cash-flow allocation, so later exposure mix and profit-pool capture remain only partly localized.",
+      "adaptation": "The company reports an integrated offering spanning market strategy, design, product realization, molds, certification testing, and mass-production technology, while FY2016 management attributed profit growth in part to new products and automation. Whether these adaptations offset input-cost and currency pressure is not separately measured.",
+      "normal_economics": "Recurring attributable profit was positive in each supplied year and ranged from CNY 272.4 million to CNY 412.4 million, while FY2017 cost growth exceeded revenue growth according to management. The range supports a consolidated normal-earnings anchor, not a product- or customer-level margin conclusion.",
+      "permanent_loss": "A permanent-loss path would be a sustained loss of customer absorption or cost recovery combined with working-capital and capital-spending needs that cannot be funded by operating cash. FY2015 top-five customer concentration and the absence of later verified customer and cash-flow splits make that path material but not quantifiable at component level.",
+      "valuation_treatment": "Use only the normalized consolidated recurring-earnings route as a primary model pathway. Keep owner-cash-after-maintenance-capital unresolved because maintenance capital, growth capital, and component cash conversion are not separately evidenced.",
+      "strongest_rival": "The strongest rival explanation is that the reported consolidated growth and profit record chiefly reflects export, product/category mix, or channel/customer mix rather than a durable company-level improvement in unit economics or owner cash.",
+      "reversal_observations": [
+        "Company disclosures on a comparable consolidated boundary show that customer/category absorption or foreign-sales exposure differs materially from the assumed export-oriented small-appliance path.",
+        "Comparable disclosures show that realized product mix, raw-material cost recovery, or currency effects move against the recurring-profit range rather than remaining within it.",
+        "Comparable cash-flow disclosures show that operating-cash conversion and all long-lived-asset spending remain persistently adverse, or reveal maintenance capital materially different from the presently unallocated total spending figure.",
+        "A change in consolidation scope, financing, acquisition, or product boundary explains the reported earnings or working-capital movement and prevents the FY2015-FY2017 record from representing a comparable operating perimeter."
+      ]
+    }
+  },
+  "business_position": "The company has disclosed a broad small-appliance product portfolio and a customer solution model extending from market strategy and design through certification and mass production. That position supports an operating role, but the supplied evidence does not establish customer-specific bargaining power, component margins, or a separately measured competitive advantage.",
+  "survival_case": "FY2017 reported CNY 1.917 billion of cash and cash equivalents and CNY 891.175 million of cash received from investment; restricted cash was also present and the supplied package does not provide a complete FY2017 debt balance. Liquidity is supportive but survival and financing capacity remain conditional on the unreported debt and the use of raised capital.",
+  "adaptation_case": "New-product breadth, automation, and the integrated development-to-production offering are plausible adaptation mechanisms supported by management description. Their incremental return and their ability to offset raw-material and currency pressure remain unmeasured in the supplied record.",
+  "normalization_case": "The reference range is the FY2015-FY2017 consolidated attributable profit after non-recurring items, CNY 272.405 million to CNY 412.362 million per year. It removes disclosed non-recurring items but retains the observed operating and currency variability; it is not a forecast or a segmented margin estimate.",
+  "permanent_loss_map": "The base path retains the evidenced consolidated recurring-profit range. Conditional loss paths are customer/category absorption deterioration, raw-material or currency pressure that cannot be recovered, cash conversion deterioration alongside long-lived-asset spending, and non-comparability from scope or financing changes. The supplied material does not quantify their likelihood or terminal severity.",
+  "value_route": {
+    "primary_routes": [
+      "ROUTE:NORMALIZED_CONSOLIDATED_EARNINGS"
+    ],
+    "excluded_routes": [
+      "ROUTE:OWNER_CASH_AFTER_MAINTENANCE_CAPITAL"
+    ],
+    "route_component_requirements": [
+      {
+        "route_id": "ROUTE:NORMALIZED_CONSOLIDATED_EARNINGS",
+        "required_component_ids": [
+          "COMP:CONSOLIDATED_RECURRING_OPERATIONS"
+        ],
+        "optional_component_ids": [
+          "COMP:SURVIVAL_AND_FINANCING"
+        ]
+      },
+      {
+        "route_id": "ROUTE:OWNER_CASH_AFTER_MAINTENANCE_CAPITAL",
+        "required_component_ids": [
+          "COMP:MAINTENANCE_GROWTH_CAPITAL_AND_CASH_CONVERSION"
+        ],
+        "optional_component_ids": []
+      }
+    ],
+    "route_reasoning": "The primary pathway uses only the consolidated recurring-profit record. The owner-cash pathway is excluded from the base because reported operating cash and total long-lived-asset spending do not identify economic maintenance capital, growth capital, or component-level cash conversion.",
+    "valuation_model_roles": {
+      "primary": [
+        "ROUTE:NORMALIZED_CONSOLIDATED_EARNINGS"
+      ]
+    }
+  },
+  "strongest_rival": "The strongest rival explanation is that the reported consolidated growth and profit record chiefly reflects export, product/category mix, or channel/customer mix rather than a durable company-level improvement in unit economics or owner cash.",
+  "reversal_observations": [
+    "Company disclosures on a comparable consolidated boundary show that customer/category absorption or foreign-sales exposure differs materially from the assumed export-oriented small-appliance path.",
+    "Comparable disclosures show that realized product mix, raw-material cost recovery, or currency effects move against the recurring-profit range rather than remaining within it.",
+    "Comparable cash-flow disclosures show that operating-cash conversion and all long-lived-asset spending remain persistently adverse, or reveal maintenance capital materially different from the presently unallocated total spending figure.",
+    "A change in consolidation scope, financing, acquisition, or product boundary explains the reported earnings or working-capital movement and prevents the FY2015-FY2017 record from representing a comparable operating perimeter."
+  ],
+  "component_treatments": [
+    {
+      "component_id": "COMP:CONSOLIDATED_RECURRING_OPERATIONS",
+      "treatment": "UNDERWRITE",
+      "reason": "The supplied three-year consolidated record reports positive attributable profit after non-recurring items in every year, with a disclosed range that can anchor normal consolidated earnings despite variability.",
+      "investment_consequence": "This component supplies the bounded consolidated normal-earnings input, while leaving product, customer, and channel attribution outside the claim.",
+      "promotion_or_resolution_condition": "Promote the breadth of the claim only if comparable disclosures provide product/customer-level revenue, margin, and cash-conversion evidence across a consistent perimeter.",
+      "evidence_ids": [
+        "EV:RECURRING_PROFIT",
+        "EV:COST_AND_CURRENCY_PRESSURE"
+      ]
+    },
+    {
+      "component_id": "COMP:MAINTENANCE_GROWTH_CAPITAL_AND_CASH_CONVERSION",
+      "treatment": "CANNOT_BOUND",
+      "reason": "Operating cash flow and total cash paid for long-lived assets are disclosed, but the package does not separate maintenance from growth capital or allocate cash conversion and spending by product, channel, or customer.",
+      "investment_consequence": "No owner-cash-after-maintenance-capital range is formed; total spending is retained only as current capital-allocation and financing-pressure context.",
+      "promotion_or_resolution_condition": "Resolve with a comparable-period bridge separating maintenance capital, growth capital, working-capital commitments, and associated cash returns.",
+      "evidence_ids": [
+        "EV:OPERATING_CASH_AND_LONG_LIVED_SPENDING",
+        "EV:WORKING_CAPITAL_AND_DEBT"
+      ]
+    },
+    {
+      "component_id": "COMP:SURVIVAL_AND_FINANCING",
+      "treatment": "CONDITIONALLY_UNDERWRITE",
+      "reason": "FY2017 cash and cash equivalents and disclosed investment proceeds are substantial, but restricted cash exists, the package does not state a complete FY2017 debt balance, and the subsequent economic return on raised and project capital is not supplied.",
+      "investment_consequence": "The financing condition is a conditional prerequisite to relying on the consolidated normal-earnings pathway, not a separate owner-cash or capital-return conclusion.",
+      "promotion_or_resolution_condition": "Resolve with a complete comparable debt, restricted-cash, committed-spending, and capital-use bridge showing liquidity after operating and investment needs.",
+      "evidence_ids": [
+        "EV:LIQUIDITY_AND_RESTRICTED_CASH",
+        "EV:FINANCING_AND_PROJECT_CAPITAL"
+      ]
+    }
+  ],
+  "component_decisions": [
+    {
+      "component_id": "COMP:CONSOLIDATED_RECURRING_OPERATIONS",
+      "economic_scope": "MATURE_CORE_NORMAL_EARNINGS",
+      "normal_earnings_use": "BASE_RANGE",
+      "owner_cash_use": "NOT_APPLICABLE",
+      "financing_pressure_effect": "NEUTRAL",
+      "permanent_loss_use": "BASE_PATH",
+      "valuation_use": "PRIMARY_INPUT",
+      "valuation_route_bindings": [
+        {
+          "route_id": "ROUTE:NORMALIZED_CONSOLIDATED_EARNINGS",
+          "use": "PRIMARY_INPUT"
+        }
+      ],
+      "promotion_test": "Comparable disclosures show the recurring-profit range is supported by stable product/customer mix, unit economics, and cash collection on the same consolidation boundary.",
+      "invalidation_test": "Comparable disclosures show that the reported range was chiefly created by non-comparable scope, customer/category mix, or unrecovered raw-material and currency pressure."
+    },
+    {
+      "component_id": "COMP:MAINTENANCE_GROWTH_CAPITAL_AND_CASH_CONVERSION",
+      "economic_scope": "ORDINARY_SHARE_OWNER_CASH",
+      "normal_earnings_use": "NOT_APPLICABLE",
+      "owner_cash_use": "UNRESOLVED",
+      "financing_pressure_effect": "CONDITIONAL",
+      "permanent_loss_use": "UNRESOLVED",
+      "valuation_use": "UNRESOLVED",
+      "valuation_route_bindings": [
+        {
+          "route_id": "ROUTE:OWNER_CASH_AFTER_MAINTENANCE_CAPITAL",
+          "use": "UNRESOLVED"
+        }
+      ],
+      "promotion_test": "A consistent bridge identifies maintenance capital separately from growth capital and connects working-capital needs and cash conversion to the operating perimeter.",
+      "invalidation_test": "New evidence shows that maintenance needs or working-capital commitments are persistently greater than operating cash can support on a comparable basis."
+    },
+    {
+      "component_id": "COMP:SURVIVAL_AND_FINANCING",
+      "economic_scope": "SURVIVAL_FINANCING",
+      "normal_earnings_use": "NOT_APPLICABLE",
+      "owner_cash_use": "NOT_APPLICABLE",
+      "financing_pressure_effect": "CONDITIONAL",
+      "permanent_loss_use": "CONDITIONAL_PATH",
+      "valuation_use": "CONDITIONAL_PRIMARY_INPUT",
+      "valuation_route_bindings": [
+        {
+          "route_id": "ROUTE:NORMALIZED_CONSOLIDATED_EARNINGS",
+          "use": "CONDITIONAL_PRIMARY_INPUT"
+        }
+      ],
+      "promotion_test": "A comparable debt, restricted-cash, committed-spending, and capital-use bridge confirms sufficient liquidity after operational requirements.",
+      "invalidation_test": "The complete financing bridge reveals debt, restrictions, commitments, or capital uses that materially weaken liquidity or require financing on adverse terms."
+    }
+  ],
+  "economic_derivation": {
+    "schema_version": "enterprise-underwriting-economic-derivation.v1",
+    "normal_earnings_bridge": {
+      "basis": {
+        "metric": "Attributable profit after non-recurring items",
+        "currency": "CNY",
+        "unit": "per fiscal year",
+        "tax_basis": "AFTER_TAX",
+        "earnings_claim_scope": "ORDINARY_COMMON_EQUITY",
+        "operating_perimeter": "Consolidated Guangdong Xinbao Electric Co., Ltd. FY2015-FY2017 reporting perimeter; scope changes remain a reversal condition.",
+        "as_of": "2018-12-31T23:59:59+08:00"
+      },
+      "rows": [
+        {
+          "row_id": "ROW:REFERENCE_RECURRING_PROFIT_FY2015_FY2017",
+          "component_id": "COMP:CONSOLIDATED_RECURRING_OPERATIONS",
+          "row_role": "REFERENCE_EARNINGS",
+          "direction": "ADD",
+          "quantification": {
+            "status": "BOUNDED",
+            "range_low": 272404607.83,
+            "range_high": 412362398.35
+          },
+          "evidence_ids": [
+            "EV:RECURRING_PROFIT"
+          ],
+          "economic_reason": "The disclosed FY2015-FY2017 attributable profit after non-recurring items is positive in each year and supplies a directly evidenced consolidated reference range; it does not allocate economics among products, customers, channels, or maintenance and growth capital."
+        }
+      ]
+    },
+    "driver_sensitivity_specs": [
+      {
+        "sensitivity_id": "SENS:ORDER_MIX_AND_INPUT_COST_RECOVERY",
+        "component_ids": [
+          "COMP:CONSOLIDATED_RECURRING_OPERATIONS"
+        ],
+        "metric": "Consolidated customer absorption, product mix, raw-material cost recovery, and currency-cost interaction",
+        "unit": "qualitative low/base/high operating cases",
+        "horizon": "Next normalized reporting cycle after cutoff",
+        "input_cases": {
+          "mode": "LOW_BASE_HIGH",
+          "low": {
+            "value_or_range": "FY2017 management reported revenue-cost divergence linked to raw-material prices and currency-related finance-cost pressure.",
+            "basis": "Observed adverse cost and currency case in the supplied FY2017 management discussion.",
+            "evidence_ids": [
+              "EV:COST_AND_CURRENCY_PRESSURE"
+            ]
+          },
+          "base": {
+            "value_or_range": "FY2015-FY2017 attributable profit after non-recurring items remained positive within the disclosed CNY 272.405 million to CNY 412.362 million range.",
+            "basis": "Observed consolidated recurring-profit reference range.",
+            "evidence_ids": [
+              "EV:RECURRING_PROFIT"
+            ]
+          },
+          "high": {
+            "value_or_range": "FY2016 management attributed profit growth partly to broader product lines, innovative products, and automation.",
+            "basis": "Observed favorable operating explanation, without quantified product-level attribution.",
+            "evidence_ids": [
+              "EV:PRODUCT_AND_AUTOMATION"
+            ]
+          }
+        },
+        "transmission": {
+          "normal_earnings": {
+            "status": "UNKNOWN",
+            "basis": "The supplied record identifies the operating mechanisms but does not provide same-boundary price, volume, mix, input-cost, or product/customer margin data sufficient to attribute a numerical sensitivity.",
+            "delta": {
+              "status": "UNKNOWN",
+              "reason": "No component-level driver-to-profit magnitude is disclosed.",
+              "conservative_treatment": "Retain the observed consolidated reference range and do not assign a numerical incremental sensitivity."
+            }
+          },
+          "owner_cash": {
+            "status": "UNKNOWN",
+            "basis": "Cash flow is not split by product, customer, or channel and maintenance capital is not identified.",
+            "delta": {
+              "status": "UNKNOWN",
+              "reason": "No component-level driver-to-owner-cash magnitude is disclosed.",
+              "conservative_treatment": "Do not translate the operating driver into owner cash."
+            }
+          },
+          "valuation_route_ids": [
+            "ROUTE:NORMALIZED_CONSOLIDATED_EARNINGS"
+          ]
+        },
+        "reversal_observation_refs": [
+          "#/reversal_observations/0",
+          "#/reversal_observations/1"
+        ],
+        "responsibility_boundary": "Consolidated operations only; no attribution to individual products, customers, channels, or foreign versus domestic sales after the FY2015 disclosure."
+      },
+      {
+        "sensitivity_id": "SENS:CASH_CONVERSION_AND_CAPITAL_BURDEN",
+        "component_ids": [
+          "COMP:MAINTENANCE_GROWTH_CAPITAL_AND_CASH_CONVERSION"
+        ],
+        "metric": "Operating cash conversion and all long-lived-asset cash spending",
+        "unit": "CNY per fiscal year",
+        "horizon": "Next normalized reporting cycle after cutoff",
+        "input_cases": {
+          "mode": "LOW_BASE_HIGH",
+          "low": {
+            "value_or_range": "FY2017 operating cash flow was CNY 461,923,168.66 while cash paid for fixed assets, intangible assets, and other long-lived assets was CNY 507,819,554.42.",
+            "basis": "Observed current cash-conversion and total-long-lived-spending condition; it is not maintenance capital.",
+            "evidence_ids": [
+              "EV:OPERATING_CASH_AND_LONG_LIVED_SPENDING"
+            ]
+          },
+          "base": {
+            "value_or_range": "FY2015-FY2017 operating cash flow and total long-lived-asset spending varied materially across the disclosed years.",
+            "basis": "Observed three-year cash-flow and all-long-lived-spending record, without a maintenance/growth classification.",
+            "evidence_ids": [
+              "EV:OPERATING_CASH_AND_LONG_LIVED_SPENDING"
+            ]
+          },
+          "high": {
+            "value_or_range": "FY2017 cash and cash equivalents were CNY 1,916,788,345.49, alongside disclosed investment proceeds and project-capital balances.",
+            "basis": "Observed liquidity and financing context, not a cash-return calculation.",
+            "evidence_ids": [
+              "EV:LIQUIDITY_AND_RESTRICTED_CASH",
+              "EV:FINANCING_AND_PROJECT_CAPITAL"
+            ]
+          }
+        },
+        "transmission": {
+          "normal_earnings": {
+            "status": "UNKNOWN",
+            "basis": "Total long-lived-asset spending cannot be classified as maintenance or growth capital and is not allocated to the earnings component.",
+            "delta": {
+              "status": "UNKNOWN",
+              "reason": "No maintenance-capital or component-cash-flow magnitude is disclosed.",
+              "conservative_treatment": "Do not alter the consolidated normal-earnings reference range from this cash-spending observation."
+            }
+          },
+          "owner_cash": {
+            "status": "UNKNOWN",
+            "basis": "The owner-cash route requires economic maintenance capital and cash-conversion allocation that the supplied package does not provide.",
+            "delta": {
+              "status": "UNKNOWN",
+              "reason": "Maintenance capital, growth capital, and related cash returns are unseparated.",
+              "conservative_treatment": "Keep owner cash unresolved rather than using total long-lived-asset spending as maintenance capital."
+            }
+          },
+          "valuation_route_ids": [
+            "ROUTE:OWNER_CASH_AFTER_MAINTENANCE_CAPITAL"
+          ]
+        },
+        "reversal_observation_refs": [
+          "#/reversal_observations/2",
+          "#/reversal_observations/3"
+        ],
+        "responsibility_boundary": "Consolidated company cash flow and all reported long-lived-asset spending only; no maintenance/growth split, no working-capital decomposition, and no product/customer/channel allocation."
+      }
+    ]
+  },
+  "evidence_trace": [
+    {
+      "evidence_id": "EV:BUSINESS_MODEL_AND_FOREIGN_SALES",
+      "source_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN002705_PRE_CUTOFF_SOURCE_PACKAGE.md",
+      "locator": "Business components, customers and channels; FY2015 pp.9-11 and FY2016 pp.9-10",
+      "scope": "Consolidated business description and FY2015 foreign-sales mix.",
+      "used_for": "Business position, industry exposure, and strongest-rival framing."
+    },
+    {
+      "evidence_id": "EV:RECURRING_PROFIT",
+      "source_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN002705_PRE_CUTOFF_SOURCE_PACKAGE.md",
+      "locator": "Cross-period profit and cash-flow table; FY2015-FY2017 p.6",
+      "scope": "FY2015-FY2017 consolidated attributable profit after non-recurring items.",
+      "used_for": "Normal-earnings reference range and operating-driver base case."
+    },
+    {
+      "evidence_id": "EV:COST_AND_CURRENCY_PRESSURE",
+      "source_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN002705_PRE_CUTOFF_SOURCE_PACKAGE.md",
+      "locator": "Cross-period profit and cash-flow observations; FY2017 p.10",
+      "scope": "Management explanation that FY2017 cost growth exceeded revenue growth due to raw-material prices and finance costs rose with RMB/USD movements.",
+      "used_for": "Operating-driver low case, normal-economics variability, and reversal conditions."
+    },
+    {
+      "evidence_id": "EV:PRODUCT_AND_AUTOMATION",
+      "source_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN002705_PRE_CUTOFF_SOURCE_PACKAGE.md",
+      "locator": "Cross-period profit and cash-flow observations; FY2016 p.10",
+      "scope": "Management explanation that FY2016 profit growth included broader product lines, innovative products, and automation.",
+      "used_for": "Adaptation case and operating-driver high case."
+    },
+    {
+      "evidence_id": "EV:OPERATING_CASH_AND_LONG_LIVED_SPENDING",
+      "source_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN002705_PRE_CUTOFF_SOURCE_PACKAGE.md",
+      "locator": "Cash, long-lived-asset payments table; FY2015 pp.87-89, FY2016 pp.91-93, FY2017 pp.94-96",
+      "scope": "FY2015-FY2017 operating cash flow and cash paid for fixed assets, intangible assets, and other long-lived assets.",
+      "used_for": "Owner-cash limitation, financing-pressure context, and cash-conversion sensitivity cases."
+    },
+    {
+      "evidence_id": "EV:WORKING_CAPITAL_AND_DEBT",
+      "source_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN002705_PRE_CUTOFF_SOURCE_PACKAGE.md",
+      "locator": "Working capital, debt and restricted cash table; FY2015 pp.78-80, FY2016 pp.82-84, FY2017 pp.86-88",
+      "scope": "Consolidated accounts receivable, inventory, accounts payable, and only partially listed debt balances.",
+      "used_for": "Working-capital commitment and incomplete-debt limitation."
+    },
+    {
+      "evidence_id": "EV:LIQUIDITY_AND_RESTRICTED_CASH",
+      "source_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN002705_PRE_CUTOFF_SOURCE_PACKAGE.md",
+      "locator": "Cash and restricted monetary funds sections; FY2017 pp.94-96 and p.125",
+      "scope": "FY2017 cash and cash equivalents of CNY 1,916,788,345.49 and restricted monetary funds of CNY 199,372,777.43.",
+      "used_for": "Conditional survival case and cash-conversion sensitivity high case."
+    },
+    {
+      "evidence_id": "EV:FINANCING_AND_PROJECT_CAPITAL",
+      "source_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN002705_PRE_CUTOFF_SOURCE_PACKAGE.md",
+      "locator": "Named projects, acquisitions and financing; FY2017 pp.21-23 and p.96",
+      "scope": "FY2017 cash received from investment, IPO and private-placement balances, and completion or transfer of project capital.",
+      "used_for": "Conditional financing case and exclusion of an unproven growth-capital return conclusion."
+    },
+    {
+      "evidence_id": "EV:SCOPE_CHANGES",
+      "source_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN002705_PRE_CUTOFF_SOURCE_PACKAGE.md",
+      "locator": "Formal identity and consolidation boundary; FY2015 p.12 and pp.151-154, FY2016 p.13 and pp.159-161, FY2017 p.13 and pp.164-166",
+      "scope": "Changes in consolidation scope, including purchases, new entities, and reduced ownership.",
+      "used_for": "Comparability boundary and reversal condition."
+    }
+  ],
+  "existing_object_refs": [
+    {
+      "kind": "PRE_CUTOFF_SOURCE_PACKAGE",
+      "ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN002705_PRE_CUTOFF_SOURCE_PACKAGE.md",
+      "role": "Sole target-company factual source for this pre-outcome episode."
+    }
+  ],
+  "underwriting_thesis": {
+    "thesis_id": "THESIS:CN002705:PRE_OUTCOME_CONSOLIDATED_EARNINGS",
+    "central_path": "The best-supported current judgment is a positive but variable consolidated small-appliance operation whose recurring-profit record supports a bounded normal-earnings anchor, while mix-driven economics, owner cash, and capital returns remain insufficiently disaggregated.",
+    "normal_earnings_treatment": "Use the FY2015-FY2017 consolidated attributable-profit-after-non-recurring-items range as the reference; do not extend it to product, customer, or channel economics.",
+    "owner_cash_treatment": "Keep owner cash unresolved because all long-lived-asset spending is not maintenance capital and the record lacks a maintenance/growth and cash-conversion allocation.",
+    "permanent_loss_treatment": "Treat cost recovery, customer/category absorption, cash conversion, and perimeter comparability as material conditional loss paths rather than quantified terminal outcomes.",
+    "value_route_treatment": "Retain the normalized consolidated earnings pathway only; exclude the owner-cash-after-maintenance-capital pathway pending a capital and cash bridge.",
+    "economic_directions": {
+      "normal_earnings": "MIXED",
+      "owner_cash": "UNKNOWN",
+      "permanent_loss": "MIXED"
+    },
+    "strongest_rival": "The strongest rival explanation is that the reported consolidated growth and profit record chiefly reflects export, product/category mix, or channel/customer mix rather than a durable company-level improvement in unit economics or owner cash.",
+    "monitoring": "Monitor comparable disclosures for customer/category absorption, realized cost recovery and currency effects, operating cash versus all long-lived spending, maintenance/growth capital separation, full financing needs, and consolidation-boundary changes."
+  },
+  "investment_treatment": "Price-free research treatment: retain the stated evidence boundaries and unresolved owner-cash limitation without producing a market or decision output."
+}

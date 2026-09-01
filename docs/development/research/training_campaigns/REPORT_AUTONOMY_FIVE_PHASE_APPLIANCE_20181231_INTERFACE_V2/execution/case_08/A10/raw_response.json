@@ -1,0 +1,118 @@
+{
+  "schema_version": "enterprise-underwriting-episode.v2",
+  "episode_id": "UWTRAIN:APPLIANCE:603355:20181231:STAGE5:A10:V2",
+  "company_id": "CN:603355",
+  "company_name": "莱克电气股份有限公司",
+  "cutoff_at": "2018-12-31T23:59:59+08:00",
+  "sample_identity": "BLIND_REPLAY",
+  "decision_frame": "Assess the durability of the consolidated appliance and motor enterprise at the 2018-12-31 information cutoff, separating mature earnings, cash conversion, financing pressure and unproved growth.",
+  "underwriting_route": "Pre-outcome enterprise underwriting using FY2015-FY2017 annual-report evidence; no market-price or return conclusion is made.",
+  "situation_model": {
+    "summary": "Revenue rose through FY2017 while adjusted profit and operating cash fell from FY2016; the company combines domestic brands, overseas ODM and several cleaning-appliance categories.",
+    "industry_future_thesis": {
+      "horizon": "2019-2023",
+      "most_likely_regime": "Competitive small-appliance markets remain innovation- and channel-driven, with input-cost and customer bargaining pressure producing mixed margins.",
+      "profit_pool_transmission": "Profit accrues to differentiated branded products and efficient ODM execution; raw-material inflation, FX and working-capital requirements can absorb operating gains.",
+      "company_exposure": "LEXY, Bewinch and Jimmy brands use domestic distributor, direct and online channels, while international sales are primarily ODM private-label supply.",
+      "adaptation": "The disclosed adaptation is continued product/category expansion and mixed brand/ODM channels; segment-level profitability and cash transmission are not disclosed.",
+      "normal_economics": "Mature economics are evidenced at consolidated level only: FY2015-FY2017 adjusted net profit was RMB345.8m, RMB465.8m and RMB341.0m, with operating cash declining to RMB214.2m in FY2017.",
+      "permanent_loss": "Permanent-loss risk is driven by sustained margin pressure, working-capital absorption and retention into unproved categories; solvency appears supported by cash but shareholder accessibility and incremental returns are not fully mapped.",
+      "valuation_treatment": "Use a consolidated mature owner-cash route as primary, keep brand/category growth conditional, and exclude unproved growth-return value from the base.",
+      "strongest_rival": "A scaled appliance competitor with stronger brand pull and channel economics could capture branded profit pools while forcing 莱克电气 to compete on price, compressing margins and cash conversion.",
+      "reversal_observations": [
+        "Post-cutoff reports show adjusted profit and operating cash recovering together without disproportionate working-capital growth.",
+        "Disclosures identify customer concentration, brand/ODM economics and subsidiary cash accessibility sufficiently to reconcile earnings to ordinary-shareholder cash.",
+        "New category or capacity investments report matched incremental earnings and owner cash after total working-capital and long-lived-asset spending."
+      ]
+    }
+  },
+  "business_position": "The company has core motor technology, domestic brands and broad international ODM coverage, but the top five customers still represented 39.81% of FY2017 revenue and customer names and segment economics are undisclosed.",
+  "survival_case": "FY2017 cash and cash equivalents were RMB1.952bn and no restricted cash or pledged assets were reported; however, FY2017 showed RMB300m due within one year and prior borrowing had risen to RMB680m, so liquidity depends on continued operating cash and bank access.",
+  "adaptation_case": "Management broadened green small-appliance categories and maintained agency, direct and online domestic channels alongside ODM exports. This supports strategic optionality, but no source isolates returns by brand, ODM, product or newly formed subsidiary.",
+  "normalization_case": "Use FY2015-FY2017 adjusted net profit as a consolidated reference range, with FY2017 conservatively informative because raw-material and FX pressure coincided with lower profit and cash. Brand/channel uplift remains conditional rather than a base adjustment.",
+  "permanent_loss_map": "Permanent loss can arise slowly through margin erosion, rising receivables and inventory, and retention into categories without demonstrated incremental returns. FY2017 receivables reached RMB1.079bn and inventory RMB729m; inaccessible subsidiary cash and customer concentration remain unresolved local risks.",
+  "value_route": {
+    "primary_routes": ["ROUTE:BASE_OWNER_CASH", "ROUTE:BRAND_OPTION"],
+    "excluded_routes": ["ROUTE:UNPROVED_GROWTH"],
+    "route_reasoning": "A consolidated owner-cash route is the only currently supportable primary identity. A brand/category option route is conditional on segment cash evidence; unproved growth-return value is excluded from base.",
+    "valuation_model_roles": {
+      "primary": ["ROUTE:BASE_OWNER_CASH", "ROUTE:BRAND_OPTION"],
+      "corroborative": [],
+      "stress": ["ROUTE:FINANCING_STRESS"]
+    },
+    "route_component_requirements": [
+      {"route_id": "ROUTE:BASE_OWNER_CASH", "required_component_ids": ["mature_core", "working_capital"], "optional_component_ids": ["consolidated_cash"]},
+      {"route_id": "ROUTE:BRAND_OPTION", "required_component_ids": ["brand_channel"], "optional_component_ids": []},
+      {"route_id": "ROUTE:FINANCING_STRESS", "required_component_ids": ["working_capital", "mature_core"], "optional_component_ids": []},
+      {"route_id": "ROUTE:UNPROVED_GROWTH", "required_component_ids": ["growth_capital"], "optional_component_ids": []}
+    ]
+  },
+  "strongest_rival": "A scaled appliance competitor with stronger brand pull and channel economics could capture branded profit pools while forcing 莱克电气 to compete on price, compressing margins and cash conversion.",
+  "reversal_observations": [
+    "Post-cutoff reports show adjusted profit and operating cash recovering together without disproportionate working-capital growth.",
+    "Disclosures identify customer concentration, brand/ODM economics and subsidiary cash accessibility sufficiently to reconcile earnings to ordinary-shareholder cash.",
+    "New category or capacity investments report matched incremental earnings and owner cash after total working-capital and long-lived-asset spending."
+  ],
+  "component_treatments": [
+    {"component_id": "mature_core", "treatment": "UNDERWRITE", "reason": "Consolidated adjusted earnings and operating cash are directly observed over FY2015-FY2017.", "investment_consequence": "Forms the base earnings and owner-cash anchor, subject to cyclical margin and FX pressure.", "promotion_or_resolution_condition": "Maintain base treatment while consolidated adjusted profit and cash remain observable across normal years.", "evidence_ids": ["EV_PROFIT_SERIES", "EV_CASH_SERIES"]},
+    {"component_id": "brand_channel", "treatment": "CONDITIONALLY_UNDERWRITE", "reason": "Domestic brands and online/direct channels are disclosed, but no brand-level profit or cash data are supplied.", "investment_consequence": "Can support a conditional uplift only after segment economics are reconciled.", "promotion_or_resolution_condition": "Promote when brand-level margins, repeat demand and cash conversion are disclosed for a mature period.", "evidence_ids": ["EV_BRAND_CHANNEL", "EV_CUSTOMER_CONC"]},
+    {"component_id": "working_capital", "treatment": "UNDERWRITE", "reason": "Receivables, inventory and payables are disclosed and materially changed with scale.", "investment_consequence": "Included in owner-cash and financing-pressure analysis rather than treated as costless growth.", "promotion_or_resolution_condition": "Retain when working-capital balances and operating cash are reported consistently.", "evidence_ids": ["EV_WC_BALANCES", "EV_CASH_SERIES"]},
+    {"component_id": "consolidated_cash", "treatment": "CONDITIONALLY_UNDERWRITE", "reason": "Consolidated cash is substantial and unrestricted in the reports, but entity-level accessibility and non-controlling claims are not fully mapped.", "investment_consequence": "Provides a conditional liquidity buffer, not an automatic ordinary-shareholder distribution claim.", "promotion_or_resolution_condition": "Promote when parent/subsidiary ownership, restrictions and distributions reconcile cash to ordinary holders.", "evidence_ids": ["EV_CASH_BALANCE", "EV_SUBSIDIARIES"]},
+    {"component_id": "growth_capital", "treatment": "SCENARIO_ONLY", "reason": "Category expansion and new subsidiaries are described without matched incremental return evidence.", "investment_consequence": "Exclude growth premium from base and test total capital absorption in scenarios.", "promotion_or_resolution_condition": "Promote only with project-level capital, working-capital absorption and incremental owner-cash evidence.", "evidence_ids": ["EV_SUBSIDIARIES", "EV_LONG_ASSET_SPEND"]}
+  ],
+  "component_decisions": [
+    {"component_id": "mature_core", "economic_scope": "MATURE_CORE_NORMAL_EARNINGS", "normal_earnings_use": "BASE_RANGE", "owner_cash_use": "BASE_RANGE", "financing_pressure_effect": "NEUTRAL", "permanent_loss_use": "BASE_PATH", "valuation_use": "PRIMARY_INPUT", "valuation_route_bindings": [{"route_id": "ROUTE:BASE_OWNER_CASH", "use": "PRIMARY_INPUT"}, {"route_id": "ROUTE:FINANCING_STRESS", "use": "STRESS_ONLY"}], "promotion_test": "Consolidated adjusted profit and cash remain stable through a normal input-cost cycle.", "invalidation_test": "Persistent profit and cash decline unrelated to temporary working-capital timing."},
+    {"component_id": "brand_channel", "economic_scope": "MATURE_CORE_NORMAL_EARNINGS", "normal_earnings_use": "CONDITIONAL_RANGE", "owner_cash_use": "CONDITIONAL_RANGE", "financing_pressure_effect": "CONDITIONAL", "permanent_loss_use": "CONDITIONAL_PATH", "valuation_use": "CONDITIONAL_PRIMARY_INPUT", "valuation_route_bindings": [{"route_id": "ROUTE:BRAND_OPTION", "use": "CONDITIONAL_PRIMARY_INPUT"}], "promotion_test": "Brand-level economics and cash conversion are disclosed over a mature period.", "invalidation_test": "Brand growth requires persistent discounting or absorbs cash without margin improvement."},
+    {"component_id": "working_capital", "economic_scope": "ORDINARY_SHARE_OWNER_CASH", "normal_earnings_use": "NOT_APPLICABLE", "owner_cash_use": "BASE_RANGE", "financing_pressure_effect": "INCREASES", "permanent_loss_use": "BASE_PATH", "valuation_use": "PRIMARY_INPUT", "valuation_route_bindings": [{"route_id": "ROUTE:BASE_OWNER_CASH", "use": "PRIMARY_INPUT"}, {"route_id": "ROUTE:FINANCING_STRESS", "use": "STRESS_ONLY"}], "promotion_test": "Cash conversion tracks earnings as receivables and inventory normalize.", "invalidation_test": "Working-capital growth persistently consumes operating cash or requires new debt."},
+    {"component_id": "consolidated_cash", "economic_scope": "ORDINARY_SHARE_OWNER_CASH", "normal_earnings_use": "NOT_APPLICABLE", "owner_cash_use": "CONDITIONAL_RANGE", "financing_pressure_effect": "REDUCES", "permanent_loss_use": "CONDITIONAL_PATH", "valuation_use": "CORROBORATIVE_INPUT", "valuation_route_bindings": [{"route_id": "ROUTE:BASE_OWNER_CASH", "use": "CORROBORATIVE_INPUT"}], "promotion_test": "Entity-level restrictions and distributions establish ordinary-shareholder accessibility.", "invalidation_test": "Cash is trapped, pledged or offset by claims not visible in consolidated balances."},
+    {"component_id": "growth_capital", "economic_scope": "GROWTH_CAPITAL_RETURN", "normal_earnings_use": "NOT_APPLICABLE", "owner_cash_use": "SCENARIO_ONLY", "financing_pressure_effect": "CONDITIONAL", "permanent_loss_use": "STRESS_ONLY", "valuation_use": "EXCLUDED", "valuation_route_bindings": [{"route_id": "ROUTE:UNPROVED_GROWTH", "use": "EXCLUDED"}], "promotion_test": "Matched project returns exceed all capital and working-capital commitments.", "invalidation_test": "Expansion continues without incremental earnings or cash evidence."}
+  ],
+  "evidence_trace": [
+    {"evidence_id": "EV_PROFIT_SERIES", "source_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN603355_PRE_CUTOFF_SOURCE_PACKAGE.md", "locator": "FY2015 p.5; FY2016 p.5; FY2017 p.6", "scope": "Consolidated adjusted and reported net profit", "used_for": "Reference earnings and mature-core direction"},
+    {"evidence_id": "EV_CASH_SERIES", "source_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN603355_PRE_CUTOFF_SOURCE_PACKAGE.md", "locator": "FY2015 p.5; FY2016 p.5; FY2017 p.6", "scope": "Consolidated operating cash flow", "used_for": "Owner-cash conversion and financing"},
+    {"evidence_id": "EV_BRAND_CHANNEL", "source_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN603355_PRE_CUTOFF_SOURCE_PACKAGE.md", "locator": "FY2015 p.8; FY2016 p.9; FY2017 p.9", "scope": "Brands, domestic channels and ODM model", "used_for": "Conditional brand/channel component"},
+    {"evidence_id": "EV_CUSTOMER_CONC", "source_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN603355_PRE_CUTOFF_SOURCE_PACKAGE.md", "locator": "FY2015 p.11; FY2016 p.14; FY2017 p.16", "scope": "Top-five customer revenue concentration", "used_for": "Customer bargaining and sensitivity input"},
+    {"evidence_id": "EV_WC_BALANCES", "source_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN603355_PRE_CUTOFF_SOURCE_PACKAGE.md", "locator": "FY2015 pp.51-52; FY2016 pp.62-63; FY2017 pp.66-67", "scope": "Receivables, inventory and payables", "used_for": "Working-capital owner-cash effect"},
+    {"evidence_id": "EV_CASH_BALANCE", "source_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN603355_PRE_CUTOFF_SOURCE_PACKAGE.md", "locator": "FY2015 pp.57-59; FY2016 pp.68-70; FY2017 pp.73-75", "scope": "Cash, long-lived-asset spending and restrictions", "used_for": "Conditional cash accessibility and financing"},
+    {"evidence_id": "EV_SUBSIDIARIES", "source_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN603355_PRE_CUTOFF_SOURCE_PACKAGE.md", "locator": "FY2015 pp.107-108; FY2016 pp.120-121; FY2017 pp.126-127", "scope": "Subsidiary ownership and new entities", "used_for": "Cash accessibility and growth-capital boundary"},
+    {"evidence_id": "EV_LONG_ASSET_SPEND", "source_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN603355_PRE_CUTOFF_SOURCE_PACKAGE.md", "locator": "FY2015 pp.57-59; FY2016 pp.68-70; FY2017 pp.73-75", "scope": "Long-lived-asset cash spending", "used_for": "Growth and financing pressure"},
+    {"evidence_id": "EV_SENS_INPUT", "source_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN603355_PRE_CUTOFF_SOURCE_PACKAGE.md", "locator": "FY2015 p.11; FY2016 p.14; FY2017 p.16", "scope": "Observed top-five customer shares 48.25%, 44.18%, 39.81%", "used_for": "Sensitivity input cases"}
+  ],
+  "existing_object_refs": [{"kind": "SOURCE_PACKAGE", "ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN603355_PRE_CUTOFF_SOURCE_PACKAGE.md", "role": "Primary pre-cutoff evidence package"}],
+  "underwriting_thesis": {
+    "thesis_id": "THESIS:603355:PRE_OUTCOME",
+    "central_path": "A diversified appliance and motor platform can support a consolidated mature owner-cash base, but declining FY2017 cash conversion, customer concentration and unproved category returns require conditional treatment of brand growth and cash accessibility.",
+    "normal_earnings_treatment": "Underwrite a consolidated FY2015-FY2017 adjusted-profit range; do not add unsupported segment growth.",
+    "owner_cash_treatment": "Anchor on operating cash after considering working-capital absorption; recognize consolidated cash only conditionally pending accessibility evidence.",
+    "permanent_loss_treatment": "Treat slow margin erosion, cash absorption and low-return retention as material permanent-loss paths despite reported liquidity.",
+    "value_route_treatment": "Use ROUTE:BASE_OWNER_CASH as primary, ROUTE:BRAND_OPTION as conditional primary, and exclude ROUTE:UNPROVED_GROWTH from base.",
+    "economic_directions": {"normal_earnings": "MIXED", "owner_cash": "DETERIORATES", "permanent_loss": "MIXED"},
+    "strongest_rival": "A scaled appliance competitor with stronger brand pull and channel economics could capture branded profit pools while forcing 莱克电气 to compete on price, compressing margins and cash conversion.",
+    "monitoring": "Track adjusted profit, operating cash, receivables/inventory intensity, customer concentration, borrowing and disclosed project-level returns at the feedback clocks."
+  },
+  "investment_treatment": "Pre-outcome research treatment: conditionally underwrite the mature consolidated owner-cash engine, keep brand/category growth conditional, and require reversal evidence before promoting excluded growth or cash-accessibility assumptions.",
+  "economic_derivation": {
+    "schema_version": "enterprise-underwriting-economic-derivation.v1",
+    "normal_earnings_bridge": {
+      "basis": {"metric": "归母扣除非经常性损益后净利润", "currency": "RMB", "unit": "yuan", "tax_basis": "AFTER_TAX", "earnings_claim_scope": "ORDINARY_COMMON_EQUITY", "operating_perimeter": "Consolidated 莱克电气 and subsidiaries", "as_of": "2017-12-31"},
+      "rows": [
+        {"row_id": "ROW:REFERENCE", "component_id": "mature_core", "row_role": "REFERENCE_EARNINGS", "direction": "ADD", "quantification": {"status": "BOUNDED", "range_low": 341024566.26, "range_high": 465753815.72}, "evidence_ids": ["EV_PROFIT_SERIES"], "economic_reason": "Observed FY2015-FY2017 adjusted-profit span is the consolidated mature reference."},
+        {"row_id": "ROW:BRAND_CONDITIONAL", "component_id": "brand_channel", "row_role": "NORMALIZATION_ADJUSTMENT", "direction": "ADD", "quantification": {"status": "UNKNOWN", "reason": "No brand-level profit or cash disclosure permits a bounded adjustment.", "conservative_treatment": "Do not add to base earnings; retain as conditional only."}, "evidence_ids": ["EV_BRAND_CHANNEL"], "economic_reason": "Brand and channel adaptation is evidenced qualitatively but not economically quantified."}
+      ]
+    },
+    "driver_sensitivity_specs": [
+      {
+        "sensitivity_id": "SENS:CUSTOMER_CONCENTRATION",
+        "component_ids": ["brand_channel"],
+        "driver_binding": {"enterprise_variable_id": "EV_CUSTOMER_DEPENDENCE", "financial_driver_id": "FD:CUSTOMER_REVENUE_SHARE"},
+        "metric": "Top-five customer revenue share",
+        "unit": "% of revenue",
+        "horizon": "FY2015-FY2017 observed range",
+        "input_cases": {"mode": "LOW_BASE_HIGH", "low": {"value_or_range": {"value": 39.81}, "basis": "FY2017 disclosed share", "evidence_ids": ["EV_SENS_INPUT"]}, "base": {"value_or_range": {"value": 44.18}, "basis": "FY2016 disclosed share", "evidence_ids": ["EV_SENS_INPUT"]}, "high": {"value_or_range": {"value": 48.25}, "basis": "FY2015 disclosed share", "evidence_ids": ["EV_SENS_INPUT"]}},
+        "transmission": {"normal_earnings": {"status": "UNKNOWN", "basis": "Customer names and segment margins are undisclosed, so share changes cannot be mapped to earnings.", "delta": {"status": "UNKNOWN", "reason": "No customer-level margin or pricing data.", "conservative_treatment": "Keep brand-channel earnings conditional and add no numeric sensitivity."}}, "owner_cash": {"status": "UNKNOWN", "basis": "Collection and payment terms by customer are not disclosed.", "delta": {"status": "UNKNOWN", "reason": "No customer-level cash conversion data.", "conservative_treatment": "Do not alter the base owner-cash range."}}, "valuation_route_ids": ["ROUTE:BRAND_OPTION"]},
+        "reversal_observation_refs": ["#/reversal_observations/0", "#/reversal_observations/1"],
+        "responsibility_boundary": "Applies only to brand/channel economics and customer-linked cash conversion; consolidated mature-core observations remain separate."
+      }
+    ]
+  }
+}

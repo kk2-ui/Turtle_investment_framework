@@ -1,0 +1,355 @@
+{
+  "schema_version": "enterprise-underwriting-episode.v2",
+  "episode_id": "EPISODE:CN002705:20181231:A00",
+  "company_id": "CN:002705",
+  "company_name": "广东新宝电器股份有限公司",
+  "cutoff_at": "2018-12-31T23:59:59+08:00",
+  "sample_identity": "BLIND_REPLAY",
+  "decision_frame": "Assess the pre-cutoff durability of the consolidated small-appliance operating model, cash conversion and financing needs without using post-cutoff outcomes or market prices.",
+  "underwriting_route": "Underwrite the established appliance export platform on reported normalized earnings, while treating working-capital and long-lived-asset commitments as cash and financing qualifiers.",
+  "situation_model": {
+    "summary": "The company is a large export-oriented small-appliance designer, manufacturer and seller with a broad product set and an integrated customer solution; growth remained positive through FY2017 but earnings and operating cash conversion became less consistent.",
+    "industry_future_thesis": {
+      "horizon": "2019-2022",
+      "most_likely_regime": "Scale and product innovation can support continued demand, but raw-material, currency and channel working-capital variability make margins and cash conversion uneven.",
+      "profit_pool_transmission": "Profit pools favor suppliers that combine product design, certification, tooling and reliable mass production; excess input costs, foreign-exchange movements and inventory or receivable intensity can divert value from manufacturers.",
+      "company_exposure": "The company derives the large majority of sales from small appliances and approximately 88% of FY2015 sales from overseas markets, exposing results to global demand, currency and customer concentration.",
+      "adaptation": "Its one-stop market-strategy, design, tooling, testing and mass-production capability, broader product lines and automation investments provide an adaptation path, subject to evidence that returns exceed the associated capital and working-capital commitments.",
+      "normal_economics": "Reported earnings are substantial and recurring in operation, but FY2017 margin pressure from raw-material prices and higher finance expense shows that normalized economics should be expressed as a range rather than a point estimate.",
+      "permanent_loss": "Permanent loss would most plausibly arise from a sustained loss of export demand or customer relationships, structurally weaker product economics, or capital and working-capital commitments that cannot be recovered; current evidence does not establish such a break.",
+      "valuation_treatment": "Use a bounded primary earnings route for the established operating platform; keep cash-conversion and growth-capital questions explicit and conditional rather than converting incomplete evidence into a point value.",
+      "strongest_rival": "International small-appliance brands and Chinese manufacturers offering comparable design-to-mass-production capability",
+      "reversal_observations": [
+        "Two consecutive years of weakening operating cash flow relative to earnings together with rising receivable or inventory intensity.",
+        "Sustained raw-material or foreign-exchange pressure that lowers operating profitability despite product and automation initiatives.",
+        "Evidence that major customers or export channels are lost without replacement by new products or customers."
+      ]
+    }
+  },
+  "business_position": "A scaled, export-led small-appliance platform with design, tooling, certification and manufacturing capabilities across kitchen, home-care, baby and personal-care categories; FY2015 overseas sales were 88.06% of revenue.",
+  "survival_case": "The company remains solvent while its diversified product platform and customer programs generate operating cash; survival depends on managing receivables, inventories, supplier terms, currency exposure and ongoing asset spending through demand cycles.",
+  "adaptation_case": "Broader product lines, innovative products and automation can defend the platform and improve productivity, but the return on growth capital and the durability of customer adoption remain conditional evidence questions.",
+  "normalization_case": "Use FY2015-FY2017 recurring consolidated earnings as a bounded reference range, recognizing FY2017 raw-material and currency pressure and excluding non-recurring items from the normalized interpretation.",
+  "permanent_loss_map": "Monitor export demand and customer retention, product-level margins after raw-material and currency changes, and whether working-capital plus asset commitments impair liquidity; absent a sustained break, treat loss paths as conditional rather than base.",
+  "value_route": {
+    "primary_routes": [
+      "ROUTE:CORE_EARNINGS"
+    ],
+    "excluded_routes": [
+      "ROUTE:UNBOUNDED_GROWTH_RETURN"
+    ],
+    "route_reasoning": "A primary route can be supported by the established operating earnings base. Growth-return and detailed owner-cash routes are not promoted because the source package does not provide a complete maintenance-versus-growth spending split or return-on-growth calculation.",
+    "valuation_model_roles": {
+      "primary": [
+        "ROUTE:CORE_EARNINGS"
+      ],
+      "corroborative": [],
+      "stress": []
+    },
+    "route_component_requirements": [
+      {
+        "route_id": "ROUTE:CORE_EARNINGS",
+        "required_component_ids": [
+          "COMP:CORE_OPERATIONS"
+        ],
+        "optional_component_ids": []
+      },
+      {
+        "route_id": "ROUTE:UNBOUNDED_GROWTH_RETURN",
+        "required_component_ids": [
+          "COMP:LONG_LIVED_CAPITAL"
+        ],
+        "optional_component_ids": []
+      }
+    ]
+  },
+  "strongest_rival": "International small-appliance brands and Chinese manufacturers offering comparable design-to-mass-production capability",
+  "reversal_observations": [
+    "Two consecutive years of weakening operating cash flow relative to earnings together with rising receivable or inventory intensity.",
+    "Sustained raw-material or foreign-exchange pressure that lowers operating profitability despite product and automation initiatives.",
+    "Evidence that major customers or export channels are lost without replacement by new products or customers."
+  ],
+  "component_treatments": [
+    {
+      "component_id": "COMP:CORE_OPERATIONS",
+      "treatment": "UNDERWRITE",
+      "reason": "The consolidated appliance design, manufacturing and sales platform generated recurring revenue and positive reported earnings across FY2015-FY2017.",
+      "investment_consequence": "Forms the base operating earnings case, with a range reflecting raw-material and currency variability.",
+      "promotion_or_resolution_condition": "Promote confidence if subsequent reports show stable product demand, margins and customer retention across the core platform.",
+      "evidence_ids": [
+        "E1",
+        "E2",
+        "E3"
+      ]
+    },
+    {
+      "component_id": "COMP:WORKING_CAPITAL",
+      "treatment": "CONDITIONALLY_UNDERWRITE",
+      "reason": "Receivables and inventories are material relative to the operating scale, while customer-level cash terms and cycle attribution are not fully disclosed in the package.",
+      "investment_consequence": "Owner cash and financing pressure depend on whether working-capital growth normalizes with sales or becomes structurally heavier.",
+      "promotion_or_resolution_condition": "Promote to base cash treatment when audited periods demonstrate stable or improving receivable and inventory days through a cycle.",
+      "evidence_ids": [
+        "E6"
+      ]
+    },
+    {
+      "component_id": "COMP:LONG_LIVED_CAPITAL",
+      "treatment": "CONDITIONALLY_UNDERWRITE",
+      "reason": "Long-lived-asset spending increased from FY2015 to FY2017 and included disclosed technology-upgrade projects, but maintenance versus growth allocation and returns are not separated.",
+      "investment_consequence": "All-spending cash and financing pressure are real, while normal owner cash requires a conditional maintenance-capital range and a separate growth-return assessment.",
+      "promotion_or_resolution_condition": "Promote growth spending into a return-bearing route only after project-level completion, useful-life and incremental-return evidence is available.",
+      "evidence_ids": [
+        "E5"
+      ]
+    },
+    {
+      "component_id": "COMP:ACQUISITION_SCOPE",
+      "treatment": "SCENARIO_ONLY",
+      "reason": "The company added or purchased subsidiaries across the three years, but the package does not isolate their contribution to consolidated earnings or cash generation.",
+      "investment_consequence": "Acquisition contribution is excluded from the base earnings bridge and retained only as a scenario and permanent-loss consideration.",
+      "promotion_or_resolution_condition": "Promote when segment or subsidiary disclosures establish recurring incremental earnings and cash returns after integration costs.",
+      "evidence_ids": [
+        "E7"
+      ]
+    }
+  ],
+  "component_decisions": [
+    {
+      "component_id": "COMP:CORE_OPERATIONS",
+      "economic_scope": "MATURE_CORE_NORMAL_EARNINGS",
+      "normal_earnings_use": "BASE_RANGE",
+      "owner_cash_use": "BASE_RANGE",
+      "financing_pressure_effect": "NEUTRAL",
+      "permanent_loss_use": "BASE_PATH",
+      "valuation_use": "PRIMARY_INPUT",
+      "valuation_route_bindings": [
+        {
+          "route_id": "ROUTE:CORE_EARNINGS",
+          "use": "PRIMARY_INPUT"
+        }
+      ],
+      "promotion_test": "Stable demand, margin and customer-retention observations across a subsequent cycle.",
+      "invalidation_test": "Sustained loss of core customers or product economics that reduces recurring earnings capacity."
+    },
+    {
+      "component_id": "COMP:WORKING_CAPITAL",
+      "economic_scope": "ORDINARY_SHARE_OWNER_CASH",
+      "normal_earnings_use": "NOT_APPLICABLE",
+      "owner_cash_use": "CONDITIONAL_RANGE",
+      "financing_pressure_effect": "CONDITIONAL",
+      "permanent_loss_use": "CONDITIONAL_PATH",
+      "valuation_use": "NOT_APPLICABLE",
+      "valuation_route_bindings": [],
+      "promotion_test": "Audited cash-cycle data show working-capital intensity stabilizing or improving with growth.",
+      "invalidation_test": "Receivables or inventories continue to outgrow sales and require recurring external funding."
+    },
+    {
+      "component_id": "COMP:LONG_LIVED_CAPITAL",
+      "economic_scope": "GROWTH_CAPITAL_RETURN",
+      "normal_earnings_use": "NOT_APPLICABLE",
+      "owner_cash_use": "CONDITIONAL_RANGE",
+      "financing_pressure_effect": "INCREASES",
+      "permanent_loss_use": "CONDITIONAL_PATH",
+      "valuation_use": "EXCLUDED",
+      "valuation_route_bindings": [
+        {
+          "route_id": "ROUTE:UNBOUNDED_GROWTH_RETURN",
+          "use": "EXCLUDED"
+        }
+      ],
+      "promotion_test": "Project-level evidence links spending to incremental volume, margin and cash returns.",
+      "invalidation_test": "Asset programs consume cash without demonstrated utilization or incremental returns."
+    },
+    {
+      "component_id": "COMP:ACQUISITION_SCOPE",
+      "economic_scope": "NONCORE_OR_OPTIONAL_ASSET",
+      "normal_earnings_use": "SCENARIO_ONLY",
+      "owner_cash_use": "SCENARIO_ONLY",
+      "financing_pressure_effect": "CONDITIONAL",
+      "permanent_loss_use": "STRESS_ONLY",
+      "valuation_use": "NOT_APPLICABLE",
+      "valuation_route_bindings": [],
+      "promotion_test": "Subsidiary disclosures show recurring post-integration earnings and cash contribution.",
+      "invalidation_test": "Acquired or newly formed entities remain loss-making or consume cash without strategic contribution."
+    }
+  ],
+  "evidence_trace": [
+    {
+      "evidence_id": "E1",
+      "source_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN002705_PRE_CUTOFF_SOURCE_PACKAGE.md",
+      "locator": "FY2015-FY2017 annual reports pp.9-10",
+      "scope": "Business model, product categories and integrated design-to-production services",
+      "used_for": "Core operating platform and adaptation capability"
+    },
+    {
+      "evidence_id": "E2",
+      "source_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN002705_PRE_CUTOFF_SOURCE_PACKAGE.md",
+      "locator": "FY2015 annual report pp.10-11",
+      "scope": "FY2015 product and geographic revenue mix, including 88.06% overseas sales",
+      "used_for": "Export exposure and revenue-scale sensitivity"
+    },
+    {
+      "evidence_id": "E3",
+      "source_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN002705_PRE_CUTOFF_SOURCE_PACKAGE.md",
+      "locator": "FY2015-FY2017 annual reports p.6",
+      "scope": "Revenue, attributable profit, adjusted profit and operating cash flow",
+      "used_for": "Reference earnings and cash-conversion range"
+    },
+    {
+      "evidence_id": "E5",
+      "source_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN002705_PRE_CUTOFF_SOURCE_PACKAGE.md",
+      "locator": "FY2015-FY2017 annual reports pp.87-96 and FY2015 pp.18-20",
+      "scope": "Long-lived-asset cash spending and disclosed technology-upgrade projects",
+      "used_for": "Capital-allocation and financing pressure"
+    },
+    {
+      "evidence_id": "E6",
+      "source_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN002705_PRE_CUTOFF_SOURCE_PACKAGE.md",
+      "locator": "FY2015-FY2017 annual reports pp.78-88",
+      "scope": "Receivables, inventories and payables balances",
+      "used_for": "Working-capital intensity and owner-cash conditionality"
+    },
+    {
+      "evidence_id": "E7",
+      "source_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN002705_PRE_CUTOFF_SOURCE_PACKAGE.md",
+      "locator": "FY2015-FY2017 annual reports pp.12-13, 151-166",
+      "scope": "Subsidiary additions, ownership change and FY2017 acquisition cash payment",
+      "used_for": "Scenario-only acquisition scope"
+    },
+    {
+      "evidence_id": "E8",
+      "source_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN002705_PRE_CUTOFF_SOURCE_PACKAGE.md",
+      "locator": "FY2015-FY2017 annual reports p.8 and p.10",
+      "scope": "Non-recurring items and management explanations of raw-material and currency pressure",
+      "used_for": "Normalization and reversal monitoring"
+    }
+  ],
+  "existing_object_refs": [
+    {
+      "kind": "SOURCE_PACKAGE",
+      "ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN002705_PRE_CUTOFF_SOURCE_PACKAGE.md",
+      "role": "Pre-cutoff consolidated annual-report evidence"
+    }
+  ],
+  "underwriting_thesis": {
+    "thesis_id": "THESIS:CN002705:PRE_CUTOFF",
+    "central_path": "A scaled export manufacturing platform can sustain a recurring earnings base if product breadth and integrated execution offset input-cost, currency and working-capital volatility.",
+    "normal_earnings_treatment": "Use a bounded FY2015-FY2017 recurring earnings reference; treat FY2017 margin pressure as a range risk rather than a terminal break.",
+    "owner_cash_treatment": "Operating cash is positive but owner cash remains conditional on maintenance-capital needs, total asset spending and working-capital intensity.",
+    "permanent_loss_treatment": "Keep permanent-loss paths conditional on sustained export/customer erosion, structurally impaired margins or unrecovered capital commitments.",
+    "value_route_treatment": "Primary route is the established core earnings platform; growth-return and detailed cash routes remain excluded or conditional until missing evidence is disclosed.",
+    "economic_directions": {
+      "normal_earnings": "MIXED",
+      "owner_cash": "MIXED",
+      "permanent_loss": "UNKNOWN"
+    },
+    "strongest_rival": "International small-appliance brands and Chinese manufacturers offering comparable design-to-mass-production capability",
+    "monitoring": "Track export demand and customer retention, raw-material and currency effects on margins, receivable/inventory days, operating cash versus earnings, asset-spending returns and subsidiary contributions."
+  },
+  "investment_treatment": "Pre-outcome underwriting only: maintain a conditional core-platform thesis and require the stated reversal observations before changing the economic judgment.",
+  "economic_derivation": {
+    "schema_version": "enterprise-underwriting-economic-derivation.v1",
+    "normal_earnings_bridge": {
+      "basis": {
+        "metric": "attributable recurring net earnings",
+        "currency": "CNY",
+        "unit": "CNY per fiscal year",
+        "tax_basis": "AFTER_TAX",
+        "earnings_claim_scope": "ORDINARY_COMMON_EQUITY",
+        "operating_perimeter": "Consolidated Guangdong Xinbao Electric Co., Ltd. reporting perimeter",
+        "as_of": "2017-12-31"
+      },
+      "rows": [
+        {
+          "row_id": "ROW:REFERENCE_EARNINGS",
+          "component_id": "COMP:CORE_OPERATIONS",
+          "row_role": "REFERENCE_EARNINGS",
+          "direction": "ADD",
+          "quantification": {
+            "status": "BOUNDED",
+            "range_low": 300000000,
+            "range_high": 430000000
+          },
+          "evidence_ids": [
+            "E3"
+          ],
+          "economic_reason": "FY2015-FY2017 attributable and adjusted earnings establish a recurring operating base while FY2017 raw-material and currency pressure justify a range."
+        }
+      ]
+    },
+    "driver_sensitivity_specs": [
+      {
+        "sensitivity_id": "SENS:EXPORT_SCALE",
+        "component_ids": [
+          "COMP:CORE_OPERATIONS"
+        ],
+        "metric": "overseas revenue scale index",
+        "unit": "index (base=1.0)",
+        "horizon": "1-3 fiscal years",
+        "input_cases": {
+          "mode": "LOW_BASE_HIGH",
+          "low": {
+            "value_or_range": {
+              "value": 0.85
+            },
+            "basis": "Illustrative downside demand case anchored to the documented export concentration.",
+            "evidence_ids": [
+              "E2"
+            ]
+          },
+          "base": {
+            "value_or_range": {
+              "value": 1.0
+            },
+            "basis": "Maintain the latest observed export scale as the base case.",
+            "evidence_ids": [
+              "E2"
+            ]
+          },
+          "high": {
+            "value_or_range": {
+              "value": 1.15
+            },
+            "basis": "Illustrative upside scale case consistent with product breadth and integrated capabilities.",
+            "evidence_ids": [
+              "E1",
+              "E2"
+            ]
+          }
+        },
+        "transmission": {
+          "normal_earnings": {
+            "status": "UNKNOWN",
+            "basis": "The package does not provide product-level margins or customer-specific volume elasticity.",
+            "delta": {
+              "status": "UNKNOWN",
+              "reason": "Revenue mix and margin pass-through are not sufficiently disclosed to quantify earnings sensitivity.",
+              "conservative_treatment": "Do not convert the scale cases into a numeric earnings adjustment; retain the bounded reference range."
+            }
+          },
+          "owner_cash": {
+            "status": "UNKNOWN",
+            "basis": "Working-capital and capital-spending responses to export volume are not separately disclosed.",
+            "delta": {
+              "status": "UNKNOWN",
+              "reason": "Cash conversion elasticity cannot be isolated from receivables, inventories and asset spending in the supplied package.",
+              "conservative_treatment": "Keep owner-cash treatment conditional and avoid a point estimate."
+            }
+          },
+          "valuation_route_ids": [
+            "ROUTE:CORE_EARNINGS"
+          ]
+        },
+        "driver_binding": {
+          "enterprise_variable_id": "EV:EXPORT_DEMAND",
+          "financial_driver_id": "FD:OVERSEAS_REVENUE_SCALE"
+        },
+        "reversal_observation_refs": [
+          "#/reversal_observations/0",
+          "#/reversal_observations/2"
+        ],
+        "responsibility_boundary": "Company operating platform and disclosed consolidated reporting; excludes unobserved customer-level elasticity and post-cutoff events."
+      }
+    ]
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "arm_id": "A01",
+  "attempts": {
+    "episode": 1,
+    "reader_report": 0
+  },
+  "authority": "PREOUTCOME_EXECUTION_CONTROL_PLANE_ONLY",
+  "case_id": "CASE:06",
+  "failure": "training_agent_episode_invalid:episode:value_route.stress_route_unbound_or_ineligible:SCENARIO_GROWTH,episode:value_route.stress_route_required_component_ineligible:SCENARIO_GROWTH:THAILAND_OVERSEAS,episode:value_route.stress_route_required_component_ineligible:SCENARIO_GROWTH:SMART_BATHROOM_NEWBIZ,episode:economic_derivation.normal_earnings_bridge.rows[0].component_id_unknown,episode:economic_derivation.normal_earnings_bridge.base_range_requires_base_reference_earnings,episode:economic_derivation.driver_sensitivity_specs[3].transmission.route_binding_use_incompatible_with_route_role",
+  "retry_policy": "NO_RETRY_OR_REWRITE",
+  "schema_version": "report-autonomy-cohort-execution-receipt.v1",
+  "state": "EPISODE_INVALID"
+}

@@ -1,0 +1,29 @@
+{
+  "arm_id": "A10",
+  "attempts": {
+    "episode": 1,
+    "reader_report": 1
+  },
+  "authority": "PREOUTCOME_EXECUTION_CONTROL_PLANE_ONLY",
+  "case_id": "CASE:02",
+  "episode_run_receipt": {
+    "authority": "RESEARCH_TRAINING_ONLY_NO_PRICE_VALUATION_OR_INVESTMENT_AUTHORITY",
+    "completion_basis": "FRESH_CODEX_SUBAGENT_GENERATED_COMPLETE_EPISODE_VALIDATED",
+    "contract_id": "UWTRAIN:APPLIANCE:000404:20181231:STAGE5:A10:V2",
+    "downstream_bundle_path": "/Users/xiami/workspace/analy/worktrees/Turtle_investment_framework/feat-report-autonomy-five-phase/docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231_INTERFACE_V2/execution/case_02/A10/enterprise_underwriting_downstream_bundle.json",
+    "episode_id": "UWEP:CN000404:20181231:A10",
+    "episode_path": "/Users/xiami/workspace/analy/worktrees/Turtle_investment_framework/feat-report-autonomy-five-phase/docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231_INTERFACE_V2/execution/case_02/A10/enterprise_underwriting_episode.json",
+    "execution_mode": "CODEX_FRESH_SUBAGENT",
+    "schema_version": "enterprise-underwriting-training-run-receipt.v1",
+    "state": "TRAINING_EPISODE_COMPLETED",
+    "underwriting_thesis_id": "THESIS:CN000404:PRE_OUTCOME_MATURE_CORE_WITH_CASH_PRESSURE"
+  },
+  "reader_artifacts": {
+    "episode_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231_INTERFACE_V2/execution/case_02/A10/enterprise_underwriting_episode.json",
+    "first_reader_report_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231_INTERFACE_V2/execution/case_02/A10/first_reader_report.md",
+    "reader_bridge_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231_INTERFACE_V2/execution/case_02/A10/reader_bridge.json"
+  },
+  "retry_policy": "NO_RETRY_OR_REWRITE",
+  "schema_version": "report-autonomy-cohort-execution-receipt.v1",
+  "state": "FROZEN"
+}

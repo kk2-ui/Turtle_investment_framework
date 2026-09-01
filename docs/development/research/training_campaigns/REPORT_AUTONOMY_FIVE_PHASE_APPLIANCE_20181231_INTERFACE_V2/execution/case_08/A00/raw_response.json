@@ -1,0 +1,300 @@
+{
+  "schema_version": "enterprise-underwriting-episode.v2",
+  "episode_id": "UWTRAIN:APPLIANCE:603355:20181231:EPISODE:A00",
+  "company_id": "CN:603355",
+  "company_name": "莱克电气股份有限公司",
+  "cutoff_at": "2018-12-31T23:59:59+08:00",
+  "sample_identity": "BLIND_REPLAY",
+  "decision_frame": "在2018-12-31截止日前资料内，判断清洁电器企业的收入质量、现金转化、融资承受力与永久损失路径；不使用价格、估值或回报结果。",
+  "underwriting_route": "以合并口径三年财务序列为基线，分别检验自主品牌、ODM出口、营运资本、资本开支、客户集中及债务融资的可持续性。",
+  "situation_model": {
+    "summary": "清洁电器行业由技术、品牌和渠道共同驱动，莱克同时经营自主品牌与ODM；2017年收入增长但扣非净利润和经营现金流下降，说明规模扩张尚未稳定转化为利润和现金。",
+    "industry_future_thesis": {
+      "horizon": "2019-2021（截止日后的验证窗口）",
+      "most_likely_regime": "高端清洁电器需求延续但竞争和原材料、汇率波动并存；品牌与渠道效率决定利润池分配。",
+      "profit_pool_transmission": "自主品牌和高端化可保留更多价差，ODM依赖客户议价和订单稳定性；原材料、汇兑及营运资本占用会压缩利润和现金。",
+      "company_exposure": "公司覆盖吸尘器、空气净化器、净水机及园林工具，国内代理/直营与线上并行，海外以ODM为主，客户与区域暴露多元但前五客户集中度仍高。",
+      "adaptation": "通过自主品牌、产品高端化、线上线下渠道及海外研发制造组合提升份额；需以应收、存货和资本开支回收验证适应成效。",
+      "normal_economics": "2015-2017扣非归母净利润分别约3.46亿、4.66亿、3.41亿元，收入增长与利润、经营现金流并不同步，正常盈利应采用区间并区分品牌与ODM。",
+      "permanent_loss": "若客户集中、原材料/汇率压力或资本开支回收不佳持续，可能造成利润池和现金转化能力的结构性下降；现有资料不足以量化概率。",
+      "valuation_treatment": "仅建立无价格的正常盈利、所有者现金和压力路线；未披露的分部利润、维护性资本开支及客户身份保持条件性或未定。",
+      "strongest_rival": "国际知名家电制造商及品牌运营商（客户自有品牌与其他ODM供应商）",
+      "reversal_observations": [
+        "若后续官方年报显示自主品牌收入、毛利和现金回收连续改善并抵消原材料及汇兑压力，则品牌利润池传导判断上修。",
+        "若后续官方年报显示前五客户占比下降、应收和存货增速回落且经营现金流恢复，则客户集中与营运资本的下行路径减弱。",
+        "若后续官方年报显示长期资产投入产生可验证的收入和利润增量，否则资本开支压力路径维持。"
+      ]
+    }
+  },
+  "business_position": "核心技术为高速整流子电机，形成吸尘器及相关绿色小家电、园林工具组合；自主品牌与ODM并行，国内代理/直营和线上渠道、海外贴牌制造共同构成合并业务。",
+  "survival_case": "现金及现金等价物2017年末约19.52亿元，历史经营现金流为正且受限现金未列金额；但短期借款由2015年的约1.30亿元升至2016年的6.80亿元，2017年偿还并出现一年内到期长期借款3亿元，流动性需持续观察。",
+  "adaptation_case": "自主品牌、产品高端化、线上线下渠道及海外ODM研发制造是适应路径；FY2016利润增长与销售、自主品牌、高端化和均价提升相联系，FY2017原材料价格和汇兑影响显示适应仍受成本周期制约。",
+  "normalization_case": "以2015-2017扣非归母净利润作为税后普通股盈利参考区间，保留2017年利润回落和分部未披露造成的归因不确定性；不把未知项目设为零。",
+  "permanent_loss_map": "永久损失主要来自客户集中导致订单或议价恶化、ODM与品牌结构失衡、原材料/汇兑冲击、营运资本持续占用及资本投入回收不足；各路径按基础、条件或压力用途隔离。",
+  "value_route": {
+    "primary_routes": [
+      "ROUTE:BASE_EARNINGS_OWNER_CASH",
+      "ROUTE:CONDITIONAL_ODM"
+    ],
+    "excluded_routes": [
+      "ROUTE:UNRESOLVED_CUSTOMER_CONCENTRATION"
+    ],
+    "route_reasoning": "基础路线使用自主品牌的正常盈利与所有者现金区间；ODM单列条件性主路线；营运资本作现金交叉验证，资本开支和债务进入压力路线，客户集中保持未定路线。",
+    "valuation_model_roles": {
+      "primary": [
+        "ROUTE:BASE_EARNINGS_OWNER_CASH",
+        "ROUTE:CONDITIONAL_ODM"
+      ],
+      "corroborative": [
+        "ROUTE:CORROBORATIVE_WORKING_CAPITAL"
+      ],
+      "stress": [
+        "ROUTE:STRESS_CAPITAL_FINANCING"
+      ]
+    },
+    "route_component_requirements": [
+      {
+        "route_id": "ROUTE:BASE_EARNINGS_OWNER_CASH",
+        "required_component_ids": ["CORE_BRANDED"],
+        "optional_component_ids": []
+      },
+      {
+        "route_id": "ROUTE:CONDITIONAL_ODM",
+        "required_component_ids": ["ODM_EXPORT"],
+        "optional_component_ids": []
+      },
+      {
+        "route_id": "ROUTE:CORROBORATIVE_WORKING_CAPITAL",
+        "required_component_ids": ["WORKING_CAPITAL"],
+        "optional_component_ids": []
+      },
+      {
+        "route_id": "ROUTE:STRESS_CAPITAL_FINANCING",
+        "required_component_ids": ["CAPITAL_SPENDING", "FINANCING_DEBT"],
+        "optional_component_ids": []
+      },
+      {
+        "route_id": "ROUTE:UNRESOLVED_CUSTOMER_CONCENTRATION",
+        "required_component_ids": ["CUSTOMER_CONCENTRATION"],
+        "optional_component_ids": []
+      }
+    ]
+  },
+  "strongest_rival": "国际知名家电制造商及品牌运营商（客户自有品牌与其他ODM供应商）",
+  "reversal_observations": [
+    "若后续官方年报显示自主品牌收入、毛利和现金回收连续改善并抵消原材料及汇兑压力，则品牌利润池传导判断上修。",
+    "若后续官方年报显示前五客户占比下降、应收和存货增速回落且经营现金流恢复，则客户集中与营运资本的下行路径减弱。",
+    "若后续官方年报显示长期资产投入产生可验证的收入和利润增量，否则资本开支压力路径维持。"
+  ],
+  "component_treatments": [
+    {
+      "component_id": "CORE_BRANDED",
+      "treatment": "UNDERWRITE",
+      "reason": "年报明确披露莱克、碧云泉、吉米等自主品牌及国内代理、直营和线上渠道，但未按品牌披露利润和现金。",
+      "investment_consequence": "作为基础盈利和所有者现金的核心业务范围，采用历史扣非盈利区间并保留品牌贡献未分拆的不确定性。",
+      "promotion_or_resolution_condition": "后续年报需连续披露自主品牌收入、毛利及经营现金改善，且不被成本和汇兑冲击抵消。",
+      "evidence_ids": ["E:BUSINESS_MODEL", "E:PROFIT_SERIES"]
+    },
+    {
+      "component_id": "ODM_EXPORT",
+      "treatment": "CONDITIONALLY_UNDERWRITE",
+      "reason": "海外业务以ODM自主研发制造贴牌销售，客户为国际家电制造商、品牌运营商及区域领袖企业；客户层面的利润、现金和回款未披露。",
+      "investment_consequence": "单列条件性盈利、所有者现金及价值路线，不将ODM增长直接等同于稳定利润。",
+      "promotion_or_resolution_condition": "获得按ODM/品牌分部的利润率、订单稳定性、应收回款和客户议价证据后，方可提升为基础范围。",
+      "evidence_ids": ["E:BUSINESS_MODEL", "E:CUSTOMER_PROFILE"]
+    },
+    {
+      "component_id": "CUSTOMER_CONCENTRATION",
+      "treatment": "CANNOT_BOUND",
+      "reason": "前五名客户占收入比例由2015年的48.25%降至2017年的39.81%，但年报仅以客户1至客户5列示，身份和单客户依赖无法界定。",
+      "investment_consequence": "不将客户集中风险纳入基础盈利或现金点估计，保留未定永久损失和单独压力路线。",
+      "promotion_or_resolution_condition": "披露客户名称或集中度、续约、订单和回款趋势，并显示占比持续下降，才能解除未定状态。",
+      "evidence_ids": ["E:CUSTOMER_CONCENTRATION"]
+    },
+    {
+      "component_id": "WORKING_CAPITAL",
+      "treatment": "UNDERWRITE",
+      "reason": "应收账款由2015年约6.39亿元升至2017年约10.79亿元，存货由3.59亿元升至7.29亿元；经营现金流同期由4.96亿元降至2.14亿元。",
+      "investment_consequence": "进入所有者现金的基础交叉验证并增加融资压力，不能因利润为正而忽略营运资本占用。",
+      "promotion_or_resolution_condition": "后续报告需显示应收、存货增速低于收入增速且经营现金流与利润恢复匹配。",
+      "evidence_ids": ["E:WORKING_CAPITAL", "E:OCF_SERIES"]
+    },
+    {
+      "component_id": "CAPITAL_SPENDING",
+      "treatment": "CONDITIONALLY_UNDERWRITE",
+      "reason": "购建固定资产、无形资产和其他长期资产支付现金2017年约2.24亿元，显著高于2015-2016年的0.79亿和0.66亿元；资料未拆分维护与增长用途。",
+      "investment_consequence": "所有者现金仅作条件性范围，资本回报进入压力路线；不把全部长期资产支出武断定义为维护资本。",
+      "promotion_or_resolution_condition": "披露维护/增长拆分及新增产能、收入和利润回收证据后，方可收窄现金范围并验证增长资本回报。",
+      "evidence_ids": ["E:CAPEX_SERIES"]
+    },
+    {
+      "component_id": "FINANCING_DEBT",
+      "treatment": "UNDERWRITE",
+      "reason": "短期借款从2015年约1.30亿元升至2016年6.80亿元，2017年附注未列期末短贷余额且列示一年内到期长期借款3亿元；未列余额不等同于零。",
+      "investment_consequence": "不改变经营盈利基线，但在融资压力和流动性压力路线中保留债务偿付情景。",
+      "promotion_or_resolution_condition": "后续报告需完整披露债务余额、到期结构、利率及经营现金覆盖情况。",
+      "evidence_ids": ["E:DEBT_SERIES", "E:CASH_BALANCE"]
+    }
+  ],
+  "component_decisions": [
+    {
+      "component_id": "CORE_BRANDED",
+      "economic_scope": "MATURE_CORE_NORMAL_EARNINGS",
+      "normal_earnings_use": "BASE_RANGE",
+      "owner_cash_use": "BASE_RANGE",
+      "financing_pressure_effect": "NEUTRAL",
+      "permanent_loss_use": "BASE_PATH",
+      "valuation_use": "PRIMARY_INPUT",
+      "valuation_route_bindings": [{"route_id": "ROUTE:BASE_EARNINGS_OWNER_CASH", "use": "PRIMARY_INPUT"}],
+      "promotion_test": "连续年度自主品牌收入、毛利和现金转化稳定或改善。",
+      "invalidation_test": "自主品牌规模增长伴随持续毛利下滑、现金回收恶化或渠道失效。"
+    },
+    {
+      "component_id": "ODM_EXPORT",
+      "economic_scope": "MATURE_CORE_NORMAL_EARNINGS",
+      "normal_earnings_use": "CONDITIONAL_RANGE",
+      "owner_cash_use": "CONDITIONAL_RANGE",
+      "financing_pressure_effect": "CONDITIONAL",
+      "permanent_loss_use": "CONDITIONAL_PATH",
+      "valuation_use": "CONDITIONAL_PRIMARY_INPUT",
+      "valuation_route_bindings": [{"route_id": "ROUTE:CONDITIONAL_ODM", "use": "CONDITIONAL_PRIMARY_INPUT"}],
+      "promotion_test": "取得分部利润、订单、回款和客户议价的连续披露。",
+      "invalidation_test": "主要客户订单或回款显著恶化且无法由品牌业务补偿。"
+    },
+    {
+      "component_id": "CUSTOMER_CONCENTRATION",
+      "economic_scope": "SURVIVAL_FINANCING",
+      "normal_earnings_use": "UNRESOLVED",
+      "owner_cash_use": "UNRESOLVED",
+      "financing_pressure_effect": "UNRESOLVED",
+      "permanent_loss_use": "UNRESOLVED",
+      "valuation_use": "UNRESOLVED",
+      "valuation_route_bindings": [{"route_id": "ROUTE:UNRESOLVED_CUSTOMER_CONCENTRATION", "use": "UNRESOLVED"}],
+      "promotion_test": "客户身份、续约和集中度趋势可验证并持续分散。",
+      "invalidation_test": "单一客户依赖上升或重大客户流失而缺乏替代订单。"
+    },
+    {
+      "component_id": "WORKING_CAPITAL",
+      "economic_scope": "ORDINARY_SHARE_OWNER_CASH",
+      "normal_earnings_use": "NOT_APPLICABLE",
+      "owner_cash_use": "BASE_RANGE",
+      "financing_pressure_effect": "INCREASES",
+      "permanent_loss_use": "CONDITIONAL_PATH",
+      "valuation_use": "CORROBORATIVE_INPUT",
+      "valuation_route_bindings": [{"route_id": "ROUTE:CORROBORATIVE_WORKING_CAPITAL", "use": "CORROBORATIVE_INPUT"}],
+      "promotion_test": "营运资本周转改善且经营现金流持续覆盖利润。",
+      "invalidation_test": "应收和存货持续快于收入增长并造成现金流脱离利润。"
+    },
+    {
+      "component_id": "CAPITAL_SPENDING",
+      "economic_scope": "GROWTH_CAPITAL_RETURN",
+      "normal_earnings_use": "SCENARIO_ONLY",
+      "owner_cash_use": "CONDITIONAL_RANGE",
+      "financing_pressure_effect": "INCREASES",
+      "permanent_loss_use": "CONDITIONAL_PATH",
+      "valuation_use": "STRESS_ONLY",
+      "valuation_route_bindings": [{"route_id": "ROUTE:STRESS_CAPITAL_FINANCING", "use": "STRESS_ONLY"}],
+      "promotion_test": "维护与增长支出拆分清楚且新增资产产生可验证回报。",
+      "invalidation_test": "高资本支出无法带来收入、利润或现金增量。"
+    },
+    {
+      "component_id": "FINANCING_DEBT",
+      "economic_scope": "SURVIVAL_FINANCING",
+      "normal_earnings_use": "NOT_APPLICABLE",
+      "owner_cash_use": "SCENARIO_ONLY",
+      "financing_pressure_effect": "CONDITIONAL",
+      "permanent_loss_use": "STRESS_ONLY",
+      "valuation_use": "STRESS_ONLY",
+      "valuation_route_bindings": [{"route_id": "ROUTE:STRESS_CAPITAL_FINANCING", "use": "STRESS_ONLY"}],
+      "promotion_test": "债务到期结构和经营现金覆盖在后续报告中保持稳健。",
+      "invalidation_test": "短期再融资依赖上升且经营现金不足以覆盖到期债务。"
+    }
+  ],
+  "evidence_trace": [
+    {"evidence_id": "E:BUSINESS_MODEL", "source_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN603355_PRE_CUTOFF_SOURCE_PACKAGE.md", "locator": "FY2015 p.8; FY2016 p.9; FY2017 p.9", "scope": "业务模式、品牌、渠道与ODM", "used_for": "自主品牌与ODM组件范围"},
+    {"evidence_id": "E:PROFIT_SERIES", "source_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN603355_PRE_CUTOFF_SOURCE_PACKAGE.md", "locator": "FY2015 p.5; FY2016 p.5; FY2017 p.6", "scope": "收入、归母及扣非归母净利润", "used_for": "正常盈利参考基线"},
+    {"evidence_id": "E:CUSTOMER_PROFILE", "source_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN603355_PRE_CUTOFF_SOURCE_PACKAGE.md", "locator": "FY2017 pp.9-12", "scope": "客户类型与全球市场覆盖", "used_for": "ODM客户议价和区域暴露"},
+    {"evidence_id": "E:CUSTOMER_CONCENTRATION", "source_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN603355_PRE_CUTOFF_SOURCE_PACKAGE.md", "locator": "FY2015 p.11; FY2016 p.14; FY2017 p.16", "scope": "前五名客户销售额占比及客户名称缺失", "used_for": "客户集中未定处理"},
+    {"evidence_id": "E:WORKING_CAPITAL", "source_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN603355_PRE_CUTOFF_SOURCE_PACKAGE.md", "locator": "FY2015 pp.51-52; FY2016 pp.62-63; FY2017 pp.66-67", "scope": "应收账款、存货、应付账款余额", "used_for": "营运资本占用"},
+    {"evidence_id": "E:OCF_SERIES", "source_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN603355_PRE_CUTOFF_SOURCE_PACKAGE.md", "locator": "FY2015 p.5; FY2016 p.5; FY2017 p.6", "scope": "经营活动现金流量净额", "used_for": "现金转化趋势"},
+    {"evidence_id": "E:CAPEX_SERIES", "source_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN603355_PRE_CUTOFF_SOURCE_PACKAGE.md", "locator": "FY2015 pp.57-59; FY2016 pp.68-70; FY2017 pp.73-75", "scope": "长期资产购建现金支出", "used_for": "资本开支与增长回报不确定性"},
+    {"evidence_id": "E:DEBT_SERIES", "source_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN603355_PRE_CUTOFF_SOURCE_PACKAGE.md", "locator": "FY2015 pp.51-52; FY2016 pp.62-63,103; FY2017 pp.66-67,108,111-112", "scope": "短期借款和一年内到期长期借款", "used_for": "融资压力与偿债边界"},
+    {"evidence_id": "E:CASH_BALANCE", "source_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN603355_PRE_CUTOFF_SOURCE_PACKAGE.md", "locator": "FY2015 pp.57-59; FY2016 pp.68-70; FY2017 pp.73-75", "scope": "现金及现金等价物、受限现金未列金额", "used_for": "生存流动性背景"},
+    {"evidence_id": "E:BASELINE_BRIDGE", "source_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN603355_PRE_CUTOFF_SOURCE_PACKAGE.md", "locator": "FY2015 p.5; FY2016 p.5; FY2017 p.6", "scope": "扣非归母净利润三年区间", "used_for": "REFERENCE_EARNINGS桥接"},
+    {"evidence_id": "E:SENS_CORE_LOW", "source_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN603355_PRE_CUTOFF_SOURCE_PACKAGE.md", "locator": "FY2015 pp.9-11", "scope": "自主品牌与产品结构历史描述", "used_for": "自主品牌敏感性低情景输入"},
+    {"evidence_id": "E:SENS_CORE_BASE", "source_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN603355_PRE_CUTOFF_SOURCE_PACKAGE.md", "locator": "FY2016 pp.11-14", "scope": "自主品牌、高端化和均价提升描述", "used_for": "自主品牌敏感性基准输入"},
+    {"evidence_id": "E:SENS_CORE_HIGH", "source_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN603355_PRE_CUTOFF_SOURCE_PACKAGE.md", "locator": "FY2017 pp.9-12,20", "scope": "品牌组合、原材料及汇兑影响", "used_for": "自主品牌敏感性高情景输入"},
+    {"evidence_id": "E:SENS_ODM_RANGE", "source_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN603355_PRE_CUTOFF_SOURCE_PACKAGE.md", "locator": "FY2015 p.8; FY2016 p.9; FY2017 pp.9-12", "scope": "海外ODM模式和客户类型", "used_for": "ODM敏感性区间输入"}
+  ],
+  "existing_object_refs": [
+    {"kind": "SOURCE_PACKAGE", "ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN603355_PRE_CUTOFF_SOURCE_PACKAGE.md", "role": "pre_cutoff_primary_source"}
+  ],
+  "underwriting_thesis": {
+    "thesis_id": "THESIS:603355:PRE_CUTOFF",
+    "central_path": "自主品牌提供可承保的核心范围，ODM和客户集中、营运资本及资本开支决定盈利与现金能否从规模增长中兑现；2017年利润和现金回落使结论保持混合与条件性。",
+    "normal_earnings_treatment": "以扣非归母净利润3.41亿至4.66亿元的历史区间作参考，品牌为基础、ODM为条件，客户集中和资本开支不确定性不被零化。",
+    "owner_cash_treatment": "经营现金流三年下降且应收、存货上升；品牌现金作基础范围，营运资本交叉验证，ODM及资本开支作条件性范围。",
+    "permanent_loss_treatment": "客户集中、成本/汇兑、营运资本和未验证资本回报构成条件或压力路径，债务到期结构进入生存压力。",
+    "value_route_treatment": "仅使用无价格的基础、条件、交叉验证和压力路线；未定客户路线不进入基础范围。",
+    "economic_directions": {"normal_earnings": "MIXED", "owner_cash": "DETERIORATES", "permanent_loss": "MIXED"},
+    "strongest_rival": "国际知名家电制造商及品牌运营商（客户自有品牌与其他ODM供应商）",
+    "monitoring": "在EARLY_SIGNAL和NORMALIZATION_AND_CASH时钟开启后，核对品牌/ODM分部、客户集中、营运资本周转、资本开支回收及债务到期披露。"
+  },
+  "investment_treatment": "研究训练对象；不提供价格、估值、预期回报或投资行动结论。",
+  "economic_derivation": {
+    "schema_version": "enterprise-underwriting-economic-derivation.v1",
+    "normal_earnings_bridge": {
+      "basis": {
+        "metric": "扣除非经常性损益后归属于普通股股东的净利润",
+        "currency": "CNY",
+        "unit": "CNY per fiscal year",
+        "tax_basis": "AFTER_TAX",
+        "earnings_claim_scope": "ORDINARY_COMMON_EQUITY",
+        "operating_perimeter": "合并口径莱克电气及子公司",
+        "as_of": "2017-12-31"
+      },
+      "rows": [
+        {"row_id": "ROW:REFERENCE_EARNINGS", "component_id": "REFERENCE_EARNINGS", "row_role": "REFERENCE_EARNINGS", "direction": "ADD", "quantification": {"status": "BOUNDED", "range_low": 341024566.26, "range_high": 465753815.72}, "evidence_ids": ["E:BASELINE_BRIDGE"], "economic_reason": "三期扣非归母净利润提供税后普通股盈利参考区间；不代表已完成分部正常化。"},
+        {"row_id": "ROW:CORE_BRANDED", "component_id": "CORE_BRANDED", "row_role": "NORMALIZATION_ADJUSTMENT", "direction": "ADD", "quantification": {"status": "UNKNOWN", "reason": "年报未按自主品牌披露利润，无法从合并扣非利润中分离品牌正常化调整。", "conservative_treatment": "保留参考基线，不对品牌贡献另加点估计。"}, "evidence_ids": ["E:BUSINESS_MODEL"], "economic_reason": "自主品牌是基础业务范围，但其增量盈利未单独量化。"},
+        {"row_id": "ROW:ODM_EXPORT", "component_id": "ODM_EXPORT", "row_role": "NORMALIZATION_ADJUSTMENT", "direction": "ADD", "quantification": {"status": "UNKNOWN", "reason": "未披露ODM分部利润、订单和回款，无法量化正常化调整。", "conservative_treatment": "仅在条件路线中使用，不改变基础基线。"}, "evidence_ids": ["E:CUSTOMER_PROFILE"], "economic_reason": "ODM销售受客户议价和外部成本影响，需条件性处理。"},
+        {"row_id": "ROW:CUSTOMER_CONCENTRATION", "component_id": "CUSTOMER_CONCENTRATION", "row_role": "NORMALIZATION_ADJUSTMENT", "direction": "SUBTRACT", "quantification": {"status": "UNKNOWN", "reason": "客户名称和单客户暴露缺失，集中风险对利润的幅度无法界定。", "conservative_treatment": "不将未知风险设为零，保持未定并单列压力路线。"}, "evidence_ids": ["E:CUSTOMER_CONCENTRATION"], "economic_reason": "集中度可能影响订单和议价，但证据不足以形成数值扣减。"},
+        {"row_id": "ROW:CAPITAL_SPENDING", "component_id": "CAPITAL_SPENDING", "row_role": "NORMALIZATION_ADJUSTMENT", "direction": "SUBTRACT", "quantification": {"status": "UNKNOWN", "reason": "长期资产支出未拆分维护与增长用途，无法从盈利基线推导正常化扣减。", "conservative_treatment": "不把全部资本支出假定为维护资本，现金影响留在条件/压力路线。"}, "evidence_ids": ["E:CAPEX_SERIES"], "economic_reason": "资本投入影响所有者现金而非直接改变会计盈利，需与资本回报分开。"}
+      ]
+    },
+    "driver_sensitivity_specs": [
+      {
+        "sensitivity_id": "SENS:CORE_BRAND_MIX",
+        "component_ids": ["CORE_BRANDED"],
+        "metric": "自主品牌销售占比",
+        "unit": "% of revenue",
+        "horizon": "2019-2021 early signal",
+        "input_cases": {"mode": "LOW_BASE_HIGH", "low": {"value_or_range": {"value": 0.2}, "basis": "保守品牌占比情景；年报仅确认品牌存在，未披露占比。", "evidence_ids": ["E:SENS_CORE_LOW"]}, "base": {"value_or_range": {"value": 0.3}, "basis": "以FY2016自主品牌增长和高端化描述作中性情景。", "evidence_ids": ["E:SENS_CORE_BASE"]}, "high": {"value_or_range": {"value": 0.4}, "basis": "品牌与均价提升延续的上行情景，非已实现事实。", "evidence_ids": ["E:SENS_CORE_HIGH"]}},
+        "transmission": {"normal_earnings": {"status": "UNKNOWN", "basis": "品牌占比与利润率未分拆，方向可讨论但幅度未知。", "delta": {"status": "UNKNOWN", "reason": "缺少品牌分部利润率和增量毛利证据。", "conservative_treatment": "不量化自主品牌占比变化对正常盈利的数值影响。"}}, "owner_cash": {"status": "UNKNOWN", "basis": "品牌占比变化对回款和渠道投入的现金影响未披露。", "delta": {"status": "UNKNOWN", "reason": "缺少按品牌的经营现金和营运资本数据。", "conservative_treatment": "保留现金影响为未知。"}}, "valuation_route_ids": ["ROUTE:BASE_EARNINGS_OWNER_CASH"]},
+        "reversal_observation_refs": ["#/reversal_observations/0"],
+        "responsibility_boundary": "公司品牌组合、定价和渠道执行；不把原材料及汇率等外生因素归因于管理层。"
+      },
+      {
+        "sensitivity_id": "SENS:ODM_CUSTOMER_ORDERS",
+        "component_ids": ["ODM_EXPORT"],
+        "metric": "海外ODM销售稳定性",
+        "unit": "qualitative index",
+        "horizon": "2019-2021 normalization and cash",
+        "input_cases": {"mode": "BOUNDED_RANGE", "range": {"value_or_range": {"range_low": 0.2, "range_high": 0.8}, "basis": "客户类型和区域覆盖已披露，但订单、续约和回款未披露。", "evidence_ids": ["E:SENS_ODM_RANGE"]}},
+        "transmission": {"normal_earnings": {"status": "UNKNOWN", "basis": "ODM客户订单和分部利润未披露。", "delta": {"status": "UNKNOWN", "reason": "无法将订单稳定性映射为盈利幅度。", "conservative_treatment": "仅保留条件性正常盈利路线。"}}, "owner_cash": {"status": "UNKNOWN", "basis": "ODM应收回款按客户未披露。", "delta": {"status": "UNKNOWN", "reason": "缺少客户级现金回收证据。", "conservative_treatment": "不把ODM销售稳定性变化转成现金点估计。"}}, "valuation_route_ids": ["ROUTE:CONDITIONAL_ODM"]},
+        "reversal_observation_refs": ["#/reversal_observations/1"],
+        "responsibility_boundary": "公司ODM客户管理、订单执行和质量交付；客户需求、汇率及原材料价格属外生边界。"
+      },
+      {
+        "sensitivity_id": "SENS:WORKING_CAPITAL_TURN",
+        "component_ids": ["WORKING_CAPITAL"],
+        "metric": "应收账款与存货占收入比例",
+        "unit": "% of revenue",
+        "horizon": "2019-2021 normalization and cash",
+        "input_cases": {"mode": "BOUNDED_RANGE", "range": {"value_or_range": {"range_low": 0.2, "range_high": 0.4}, "basis": "2015-2017余额和收入可计算区间，未来周转改善幅度仍未知。", "evidence_ids": ["E:SENS_ODM_RANGE"]}},
+        "transmission": {"normal_earnings": {"status": "PRESERVED", "basis": "营运资本主要影响现金时点，不直接调整会计盈利基线。", "delta": {"status": "BOUNDED", "range_low": 0, "range_high": 0, "unit": "CNY per fiscal year"}}, "owner_cash": {"status": "UNKNOWN", "basis": "应收和存货周转变化对现金释放幅度未有管理层量化。", "delta": {"status": "UNKNOWN", "reason": "缺少周转天数、回款和库存跌价敏感度。", "conservative_treatment": "以经营现金流趋势作定性压力，不给现金点估计。"}}, "valuation_route_ids": ["ROUTE:CORROBORATIVE_WORKING_CAPITAL"]},
+        "reversal_observation_refs": ["#/reversal_observations/1"],
+        "responsibility_boundary": "公司信用政策、库存管理和供应链执行；客户付款周期及行业需求为外生边界。"
+      }
+    ]
+  }
+}

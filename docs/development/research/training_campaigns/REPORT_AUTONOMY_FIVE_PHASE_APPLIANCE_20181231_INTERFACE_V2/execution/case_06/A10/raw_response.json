@@ -1,0 +1,109 @@
+{
+  "schema_version": "enterprise-underwriting-episode.v2",
+  "episode_id": "EPISODE:CN002676:20181231:A10",
+  "company_id": "CN:002676",
+  "company_name": "广东顺威精密塑料股份有限公司",
+  "cutoff_at": "2018-12-31T23:59:59+08:00",
+  "sample_identity": "BLIND_REPLAY",
+  "decision_frame": "Pre-cutoff underwriting of operating durability, cash conversion, financing resilience and permanent-loss paths; no post-cutoff outcomes or price claims.",
+  "underwriting_route": "Assess the mature air-conditioner fan-blade chain as the base enterprise, while isolating new projects and cash accessibility as conditional or scenario claims.",
+  "situation_model": {
+    "summary": "The company serves major domestic and international appliance customers through direct, make-to-order sales and an integrated modified-plastic, tooling and fan-blade chain. Revenue grew through FY2017, but earnings and operating cash weakened as costs, inventory, projects and financing needs rose.",
+    "industry_future_thesis": {
+      "horizon": "2018-2022",
+      "most_likely_regime": "Mature appliance-component competition with customer scale bargaining power; design and tooling integration can defend share, but input costs and working-capital demands remain cyclical.",
+      "profit_pool_transmission": "Profit accrues to suppliers that reliably meet customer specifications, tooling and delivery requirements; large OEM customers retain bargaining leverage and can pressure component pricing.",
+      "company_exposure": "The company is concentrated in appliance fan blades and related plastics/tooling, with top-five customers representing about half of sales in FY2015-FY2017.",
+      "adaptation": "Direct contracting, make-to-order production and integrated design-tooling-formula capabilities support retention; Thailand, smart-bathroom and other projects broaden exposure but lack disclosed standalone economics.",
+      "normal_economics": "Core economics are observable only in aggregate. FY2016 profit and cash improved, while FY2017 reported an adjusted loss amid cost increases, inventory impairment and project/transaction expenses, so normalization is conditional.",
+      "permanent_loss": "Persistent margin pressure, inventory and receivables growth, elevated borrowing and unproven expansion could destroy owner value even without immediate insolvency.",
+      "valuation_treatment": "Use a price-free primary route tied to normalized mature-core earning power; keep project growth and liquidation outcomes conditional or excluded until returns and realization are evidenced.",
+      "strongest_rival": "Large air-conditioner OEMs' in-house fan-blade production or alternative qualified suppliers that use customer scale to compress component margins.",
+      "reversal_observations": [
+        "Post-cutoff annual reports show sustained core margin and adjusted-profit recovery while inventory and receivables normalize.",
+        "Project disclosures provide matched capital, mature earnings, cash conversion and ordinary-shareholder realization for Thailand or smart-bathroom investments.",
+        "Debt, working-capital and long-lived-asset spending fall to levels supportable by recurring operating cash without refinancing dependence."
+      ]
+    }
+  },
+  "business_position": "Integrated modified-plastic, tooling and fan-blade capabilities plus direct relationships with major OEMs are a defensible service proposition, but customer concentration and scale bargaining power limit pricing authority.",
+  "survival_case": "FY2017 cash of approximately RMB230.6m and no reported asset restrictions provide liquidity, yet short-term borrowings rose to about RMB350.5m, a RMB50m loan became current, and operating cash was only RMB7.2m; survival therefore depends on working-capital release, financing access and disciplined spending.",
+  "adaptation_case": "Make-to-order direct sales and specification-led design can preserve the core; overseas and smart-bathroom initiatives are treated as conditional because standalone revenue, profit and cash are not disclosed.",
+  "normalization_case": "A mature-core range is anchored to disclosed FY2016 adjusted profit and FY2015-FY2017 volatility. FY2017 cost inflation, inventory impairment and one-off project/transaction items may normalize, but no point estimate is authorized and new-project returns remain unknown.",
+  "permanent_loss_map": "Permanent loss can arise through customer-driven margin erosion, receivable/inventory cash absorption, refinancing burden, and retention of capital in projects without demonstrated incremental owner cash. The unknown project economics are localized rather than propagated to the independently evidenced core.",
+  "value_route": {
+    "primary_routes": ["ROUTE:CORE_NORMALIZED_EPV"],
+    "excluded_routes": ["ROUTE:LIQUIDATION_REALIZATION"],
+    "route_reasoning": "The mature-core normalized-earnings route is the only currently supportable operating route; project growth lacks return evidence and liquidation lacks a disclosed execution path.",
+    "valuation_model_roles": {
+      "primary": ["ROUTE:CORE_NORMALIZED_EPV"],
+      "corroborative": [],
+      "stress": []
+    },
+    "route_component_requirements": [
+      {"route_id": "ROUTE:CORE_NORMALIZED_EPV", "required_component_ids": ["COMP:CORE_FAN_BLADE_CHAIN"], "optional_component_ids": ["COMP:GROWTH_PROJECTS"]},
+      {"route_id": "ROUTE:LIQUIDATION_REALIZATION", "required_component_ids": ["COMP:CORE_FAN_BLADE_CHAIN"], "optional_component_ids": ["COMP:NONCORE_ASSETS"]}
+    ]
+  },
+  "strongest_rival": "Large air-conditioner OEMs' in-house fan-blade production or alternative qualified suppliers that use customer scale to compress component margins.",
+  "reversal_observations": [
+    "Post-cutoff annual reports show sustained core margin and adjusted-profit recovery while inventory and receivables normalize.",
+    "Project disclosures provide matched capital, mature earnings, cash conversion and ordinary-shareholder realization for Thailand or smart-bathroom investments.",
+    "Debt, working-capital and long-lived-asset spending fall to levels supportable by recurring operating cash without refinancing dependence."
+  ],
+  "component_treatments": [
+    {"component_id": "COMP:CORE_FAN_BLADE_CHAIN", "treatment": "UNDERWRITE", "reason": "Integrated plastics, tooling and fan-blade operations with multi-year OEM customer relationships are disclosed across FY2015-FY2017.", "investment_consequence": "Forms the base operating judgment, subject to customer bargaining and cyclical input-cost risk.", "promotion_or_resolution_condition": "Promote confidence if post-cutoff adjusted margins and cash conversion recover while concentration remains manageable.", "evidence_ids": ["E1", "E2", "E3"]},
+    {"component_id": "COMP:GROWTH_PROJECTS", "treatment": "CONDITIONALLY_UNDERWRITE", "reason": "Thailand, smart-bathroom and other expansion activities are disclosed, but standalone revenue, profit, capital and cash returns are unavailable.", "investment_consequence": "No base growth value; include only as a conditional opportunity and financing use.", "promotion_or_resolution_condition": "Require project-level capital, mature earnings, working-capital absorption and ordinary-shareholder cash evidence.", "evidence_ids": ["E4", "E5"]},
+    {"component_id": "COMP:NONCORE_ASSETS", "treatment": "SCENARIO_ONLY", "reason": "Other precision components and minority investment are identified without comparable economics or realization terms.", "investment_consequence": "Excluded from base earnings and owner cash; monitor for downside or optionality only.", "promotion_or_resolution_condition": "Promote only with audited segment economics and a credible realization or distribution path.", "evidence_ids": ["E6"]}
+  ],
+  "component_decisions": [
+    {"component_id": "COMP:CORE_FAN_BLADE_CHAIN", "economic_scope": "MATURE_CORE_NORMAL_EARNINGS", "normal_earnings_use": "BASE_RANGE", "owner_cash_use": "BASE_RANGE", "financing_pressure_effect": "CONDITIONAL", "permanent_loss_use": "BASE_PATH", "valuation_use": "PRIMARY_INPUT", "valuation_route_bindings": [{"route_id": "ROUTE:CORE_NORMALIZED_EPV", "use": "PRIMARY_INPUT"}, {"route_id": "ROUTE:LIQUIDATION_REALIZATION", "use": "EXCLUDED"}], "promotion_test": "Sustained adjusted profitability and operating cash after normalizing inventory and input costs.", "invalidation_test": "Persistent core losses or cash absorption despite normalized demand and customer retention."},
+    {"component_id": "COMP:GROWTH_PROJECTS", "economic_scope": "GROWTH_CAPITAL_RETURN", "normal_earnings_use": "CONDITIONAL_RANGE", "owner_cash_use": "CONDITIONAL_RANGE", "financing_pressure_effect": "INCREASES", "permanent_loss_use": "CONDITIONAL_PATH", "valuation_use": "CONDITIONAL_PRIMARY_INPUT", "valuation_route_bindings": [{"route_id": "ROUTE:CORE_NORMALIZED_EPV", "use": "CONDITIONAL_PRIMARY_INPUT"}, {"route_id": "ROUTE:LIQUIDATION_REALIZATION", "use": "EXCLUDED"}], "promotion_test": "Disclose project-level invested capital, mature returns and cash remittance.", "invalidation_test": "Further spending, impairments or refinancing without matched project cash generation."},
+    {"component_id": "COMP:NONCORE_ASSETS", "economic_scope": "NONCORE_OR_OPTIONAL_ASSET", "normal_earnings_use": "SCENARIO_ONLY", "owner_cash_use": "SCENARIO_ONLY", "financing_pressure_effect": "UNRESOLVED", "permanent_loss_use": "STRESS_ONLY", "valuation_use": "SCENARIO_ONLY", "valuation_route_bindings": [{"route_id": "ROUTE:CORE_NORMALIZED_EPV", "use": "SCENARIO_ONLY"}, {"route_id": "ROUTE:LIQUIDATION_REALIZATION", "use": "EXCLUDED"}], "promotion_test": "Obtain segment-level earnings, ownership and realization evidence.", "invalidation_test": "Evidence of continuing losses, encumbrance or no feasible realization path."}
+  ],
+  "evidence_trace": [
+    {"evidence_id": "E1", "source_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN002676_PRE_CUTOFF_SOURCE_PACKAGE.md", "locator": "FY2015-FY2017 pp.8-9", "scope": "Products, integrated chain, direct sales and named OEM customers.", "used_for": "Core business position and customer exposure."},
+    {"evidence_id": "E2", "source_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN002676_PRE_CUTOFF_SOURCE_PACKAGE.md", "locator": "FY2015-FY2017 p.6-7", "scope": "Revenue, reported and adjusted profit, operating cash.", "used_for": "Normal-earnings direction and cash volatility."},
+    {"evidence_id": "E3", "source_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN002676_PRE_CUTOFF_SOURCE_PACKAGE.md", "locator": "FY2015-FY2017 pp.10-11", "scope": "Cost increases, inventory impairment, project and financing expenses.", "used_for": "Normalization and permanent-loss paths."},
+    {"evidence_id": "E4", "source_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN002676_PRE_CUTOFF_SOURCE_PACKAGE.md", "locator": "FY2015 pp.9-10,17-20", "scope": "Minority investment, fund-raising projects and unused proceeds.", "used_for": "Growth and noncore project boundary."},
+    {"evidence_id": "E5", "source_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN002676_PRE_CUTOFF_SOURCE_PACKAGE.md", "locator": "FY2017 pp.9-11", "scope": "Thailand base, smart-bathroom preparation and related costs.", "used_for": "Conditional growth treatment."},
+    {"evidence_id": "E6", "source_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN002676_PRE_CUTOFF_SOURCE_PACKAGE.md", "locator": "FY2015-FY2017 pp.13-14", "scope": "Subsidiary additions and customer concentration.", "used_for": "Noncore and concentration scenario boundary."},
+    {"evidence_id": "E7", "source_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN002676_PRE_CUTOFF_SOURCE_PACKAGE.md", "locator": "FY2015-FY2017 pp.52-67", "scope": "Cash, receivables, inventory, payables, borrowings and long-lived-asset spending.", "used_for": "Financing pressure and owner-cash bridge."},
+    {"evidence_id": "E8", "source_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN002676_PRE_CUTOFF_SOURCE_PACKAGE.md", "locator": "FY2015-FY2017 pp.6-7", "scope": "Revenue and operating cash series used as driver sensitivity inputs.", "used_for": "Revenue sensitivity input cases."}
+  ],
+  "existing_object_refs": [
+    {"kind": "SOURCE_PACKAGE", "ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN002676_PRE_CUTOFF_SOURCE_PACKAGE.md", "role": "Sole permitted pre-cutoff company evidence."}
+  ],
+  "underwriting_thesis": {
+    "thesis_id": "THESIS:CN002676:CORE_WITH_CONDITIONAL_GROWTH",
+    "central_path": "Integrated fan-blade operations can remain viable, but customer bargaining, cost inflation, working-capital absorption and unproven projects constrain normalized owner economics.",
+    "normal_earnings_treatment": "Underwrite a bounded mature-core range; treat project contributions as conditional and do not convert FY2017 loss or missing returns into a point estimate.",
+    "owner_cash_treatment": "Use operating cash less economic maintenance needs conceptually; total long-lived-asset spending and working-capital expansion increase financing pressure, while exact maintenance split and cash accessibility remain unresolved.",
+    "permanent_loss_treatment": "Base path includes slow margin erosion and cash absorption; conditional path covers low-return project retention and refinancing dependence.",
+    "value_route_treatment": "Keep the mature-core normalized-earnings route primary, projects conditional and liquidation excluded pending a realization mechanism.",
+    "economic_directions": {"normal_earnings": "MIXED", "owner_cash": "DETERIORATES", "permanent_loss": "MIXED"},
+    "strongest_rival": "Large air-conditioner OEMs' in-house fan-blade production or alternative qualified suppliers that use customer scale to compress component margins.",
+    "monitoring": "Track adjusted core margins, inventory/receivable days, operating cash after spending, borrowings and project-level return and remittance disclosures at the specified feedback clocks."
+  },
+  "investment_treatment": "Research-only pre-outcome treatment: conditionally underwrite the mature core, exclude unproven growth from base economics, and require reversal evidence before promotion; no price, return or action is authorized.",
+  "component_decision_summary": {
+    "schema_version": "enterprise-underwriting-component-decision-summary.v1",
+    "normal_earnings": {"range_authority": "BASE_RANGE", "components_by_use": {"BASE_RANGE": ["COMP:CORE_FAN_BLADE_CHAIN"], "CONDITIONAL_RANGE": ["COMP:GROWTH_PROJECTS"], "SCENARIO_ONLY": ["COMP:NONCORE_ASSETS"], "EXCLUDED": [], "UNRESOLVED": [], "NOT_APPLICABLE": []}},
+    "owner_cash": {"range_authority": "BASE_RANGE", "components_by_use": {"BASE_RANGE": ["COMP:CORE_FAN_BLADE_CHAIN"], "CONDITIONAL_RANGE": ["COMP:GROWTH_PROJECTS"], "SCENARIO_ONLY": ["COMP:NONCORE_ASSETS"], "EXCLUDED": [], "UNRESOLVED": [], "NOT_APPLICABLE": []}},
+    "financing_pressure": {"active_effects": ["INCREASES", "CONDITIONAL", "UNRESOLVED"], "components_by_effect": {"REDUCES": [], "NEUTRAL": [], "INCREASES": ["COMP:GROWTH_PROJECTS"], "CONDITIONAL": ["COMP:CORE_FAN_BLADE_CHAIN"], "UNRESOLVED": ["COMP:NONCORE_ASSETS"], "NOT_APPLICABLE": []}},
+    "permanent_loss": {"path_authority": "BASE_PATH", "components_by_use": {"BASE_PATH": ["COMP:CORE_FAN_BLADE_CHAIN"], "CONDITIONAL_PATH": ["COMP:GROWTH_PROJECTS"], "STRESS_ONLY": ["COMP:NONCORE_ASSETS"], "EXCLUDED": [], "UNRESOLVED": [], "NOT_APPLICABLE": []}},
+    "valuation": {"route_authority": "PRIMARY_INPUT", "components_by_use": {"PRIMARY_INPUT": ["COMP:CORE_FAN_BLADE_CHAIN"], "CONDITIONAL_PRIMARY_INPUT": ["COMP:GROWTH_PROJECTS"], "CORROBORATIVE_INPUT": [], "SCENARIO_ONLY": ["COMP:NONCORE_ASSETS"], "STRESS_ONLY": [], "EXCLUDED": [], "UNRESOLVED": [], "NOT_APPLICABLE": []}, "route_component_bindings": [{"route_id": "ROUTE:CORE_NORMALIZED_EPV", "components_by_use": {"PRIMARY_INPUT": ["COMP:CORE_FAN_BLADE_CHAIN"], "CONDITIONAL_PRIMARY_INPUT": ["COMP:GROWTH_PROJECTS"], "CORROBORATIVE_INPUT": [], "SCENARIO_ONLY": ["COMP:NONCORE_ASSETS"], "STRESS_ONLY": [], "EXCLUDED": [], "UNRESOLVED": [], "NOT_APPLICABLE": []}}, {"route_id": "ROUTE:LIQUIDATION_REALIZATION", "components_by_use": {"PRIMARY_INPUT": [], "CONDITIONAL_PRIMARY_INPUT": [], "CORROBORATIVE_INPUT": [], "SCENARIO_ONLY": [], "STRESS_ONLY": [], "EXCLUDED": ["COMP:CORE_FAN_BLADE_CHAIN", "COMP:GROWTH_PROJECTS", "COMP:NONCORE_ASSETS"], "UNRESOLVED": [], "NOT_APPLICABLE": []}}]}
+  },
+  "economic_derivation": {
+    "schema_version": "enterprise-underwriting-economic-derivation.v1",
+    "normal_earnings_bridge": {"basis": {"metric": "Adjusted net profit", "currency": "RMB", "unit": "yuan", "tax_basis": "AFTER_TAX", "earnings_claim_scope": "ORDINARY_COMMON_EQUITY", "operating_perimeter": "Consolidated mature fan-blade, modified-plastic and tooling operations", "as_of": "2017-12-31"}, "rows": [
+      {"row_id": "ROW:REFERENCE", "component_id": "COMP:CORE_FAN_BLADE_CHAIN", "row_role": "REFERENCE_EARNINGS", "direction": "ADD", "quantification": {"status": "BOUNDED", "range_low": 0, "range_high": 30000000}, "evidence_ids": ["E2"], "economic_reason": "FY2016 adjusted profit was positive while FY2015 and FY2017 were near zero or negative; a bounded reference captures observed volatility without a point estimate."},
+      {"row_id": "ROW:GROWTH_ADJ", "component_id": "COMP:GROWTH_PROJECTS", "row_role": "NORMALIZATION_ADJUSTMENT", "direction": "ADD", "quantification": {"status": "UNKNOWN", "reason": "Standalone project earnings and capital returns are not disclosed.", "conservative_treatment": "Exclude from base and retain as conditional only."}, "evidence_ids": ["E4", "E5"], "economic_reason": "Projects may add earnings but their contribution cannot be isolated."},
+      {"row_id": "ROW:NONCORE_ADJ", "component_id": "COMP:NONCORE_ASSETS", "row_role": "NORMALIZATION_ADJUSTMENT", "direction": "ADD", "quantification": {"status": "UNKNOWN", "reason": "Noncore component economics and realization are not disclosed.", "conservative_treatment": "Scenario-only; no base contribution."}, "evidence_ids": ["E6"], "economic_reason": "Other components and minority interests lack comparable standalone data."}
+    ]},
+    "driver_sensitivity_specs": [
+      {"sensitivity_id": "SENS:CORE_REVENUE", "component_ids": ["COMP:CORE_FAN_BLADE_CHAIN"], "metric": "Revenue", "unit": "RMB yuan", "horizon": "FY2015-FY2017 observed range", "input_cases": {"mode": "LOW_BASE_HIGH", "low": {"value_or_range": {"value": 1201514551.12}, "basis": "FY2015 consolidated revenue", "evidence_ids": ["E8"]}, "base": {"value_or_range": {"value": 1299155022.36}, "basis": "FY2016 consolidated revenue", "evidence_ids": ["E8"]}, "high": {"value_or_range": {"value": 1555408216.8}, "basis": "FY2017 consolidated revenue", "evidence_ids": ["E8"]}}, "transmission": {"normal_earnings": {"status": "UNKNOWN", "basis": "Aggregate revenue variation is not reconciled to component margin or customer pricing.", "delta": {"status": "UNKNOWN", "reason": "No disclosed margin bridge by revenue case.", "conservative_treatment": "Do not attribute a numeric earnings delta."}}, "owner_cash": {"status": "UNKNOWN", "basis": "Revenue changes also alter inventory and receivables, whose cash timing is not fixed.", "delta": {"status": "UNKNOWN", "reason": "No disclosed cash conversion by revenue case.", "conservative_treatment": "Do not attribute a numeric owner-cash delta."}}, "valuation_route_ids": ["ROUTE:CORE_NORMALIZED_EPV"]}, "reversal_observation_refs": ["#/reversal_observations/0", "#/reversal_observations/1"], "responsibility_boundary": "Consolidated core operations; excludes project-level returns and noncore asset realization."}
+    ]
+  },
+  "economic_derivation_summary": {"schema_version": "enterprise-underwriting-economic-derivation-summary.v1", "normal_earnings_bridge": {}, "driver_sensitivities": []}
+}
