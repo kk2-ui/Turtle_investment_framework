@@ -1,0 +1,119 @@
+{
+  "schema_version": "staged-judgment-j0.v1",
+  "stage": "J0",
+  "stage_id": "UWTRAIN:APPLIANCE:000541:20181231:STAGE9:A10:J0",
+  "ledger_id": "UWTRAIN:APPLIANCE:000541:20181231:STAGE9:A10",
+  "company_id": "CN:000541",
+  "company_name": "佛山电器照明股份有限公司",
+  "cutoff_at": "2018-12-31T23:59:59+08:00",
+  "sample_identity": "BLIND_REPLAY",
+  "decision_frame": "RESEARCH_TRAINING_ONLY_NO_PRICE_VALUATION_OR_INVESTMENT_AUTHORITY",
+  "underwriting_route": "Separate mature lighting earning power and ordinary-shareholder cash from unproven newer components and nonrecurring investment proceeds; test industry adaptation through responsibility-matched operating, cash and capital evidence.",
+  "industry_company_questions": [
+    "Can LED-led product migration support normal earnings through declining reported margins, weaker export margin and competitive pressure?",
+    "Do distributor, engineering, e-commerce, export and vehicle-lighting channels provide customer absorption and cash-conversion evidence rather than aggregate shipment evidence alone?",
+    "What are the separately attributable cash conversion and capital responsibilities of lighting, electrical products and automotive lighting?"
+  ],
+  "components": [
+    {
+      "component_id": "COMP:MATURE_LIGHTING_CORE",
+      "economic_scope": "MATURE_CORE_NORMAL_EARNINGS",
+      "question": "What normal earnings can the traditional and LED lighting core sustain after the product-mix shift, margin decline and competitive conditions, without treating aggregate volume as proof of customer sell-out or pricing power?",
+      "evidence_ids": [
+        "EV:BUSINESS_AND_INDUSTRY", 
+        "EV:PRODUCT_MIX_AND_MARGIN",
+        "EV:AGGREGATE_OPERATIONS"
+      ]
+    },
+    {
+      "component_id": "COMP:CONSOLIDATED_OPERATING_CASH",
+      "economic_scope": "ORDINARY_SHARE_OWNER_CASH",
+      "question": "How much consolidated operating cash and cash balance can be attributed to ordinary shareholders after matching subsidiaries, minority interests, working capital, long-term spending and distribution restrictions?",
+      "evidence_ids": [
+        "EV:CASH_AND_WORKING_CAPITAL",
+        "EV:CAPITAL_AND_INVESTMENT_CASH",
+        "EV:CONSOLIDATION_BOUNDARY"
+      ]
+    },
+    {
+      "component_id": "COMP:NEWER_BUSINESS_COMPONENTS",
+      "economic_scope": "GROWTH_CAPITAL_RETURN",
+      "question": "Do the electrical-products and automotive-lighting activities have separately observable customer adoption, unit economics, working-capital absorption and capital return sufficient to distinguish growth from the mature lighting core?",
+      "evidence_ids": [
+        "EV:BUSINESS_AND_INDUSTRY",
+        "EV:PRODUCT_MIX_AND_MARGIN",
+        "EV:CONSOLIDATION_BOUNDARY"
+      ]
+    },
+    {
+      "component_id": "COMP:NONCORE_INVESTMENT_AND_DISPOSALS",
+      "economic_scope": "NONCORE_OR_OPTIONAL_ASSET",
+      "question": "How should recurring operating economics be kept distinct from stock sales, investee dividends and disposal proceeds, including the 2017 disposal of Qinghai Foshan Lighting Lithium Energy Development Co., Ltd.?",
+      "evidence_ids": [
+        "EV:NONRECURRING_INVESTMENT_INCOME",
+        "EV:CAPITAL_AND_INVESTMENT_CASH",
+        "EV:CONSOLIDATION_BOUNDARY"
+      ]
+    },
+    {
+      "component_id": "COMP:FINANCING_AND_CONTINUITY",
+      "economic_scope": "SURVIVAL_FINANCING",
+      "question": "What does the consolidated cash, liabilities and capital-spending profile establish about financing continuity, while preserving that it does not provide a segment-level owner-cash bridge?",
+      "evidence_ids": [
+        "EV:CASH_AND_WORKING_CAPITAL",
+        "EV:CAPITAL_AND_INVESTMENT_CASH"
+      ]
+    }
+  ],
+  "evidence_refs": [
+    {
+      "evidence_id": "EV:BUSINESS_AND_INDUSTRY",
+      "source_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_SECOND_UNSEEN_ISSUER_000541_STAGED_V3_20181231/sources/01_CN000541_PRE_CUTOFF_SOURCE_PACKAGE.md",
+      "locator": "业务承载、客户与行业传导载体；FY2015--FY2017 年报 PDF pp.9--10",
+      "scope": "Consolidated issuer business descriptions, channels and issuer-described industry conditions",
+      "used_for": "Mature-core and newer-component question boundaries"
+    },
+    {
+      "evidence_id": "EV:PRODUCT_MIX_AND_MARGIN",
+      "source_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_SECOND_UNSEEN_ISSUER_000541_STAGED_V3_20181231/sources/01_CN000541_PRE_CUTOFF_SOURCE_PACKAGE.md",
+      "locator": "跨期经营事实：产品收入和实物量；FY2016--FY2017 年报 PDF pp.13--15",
+      "scope": "LED, traditional-lighting and electrical-product revenue; aggregate physical volume; reported margins",
+      "used_for": "Product-mix, normal-earnings and growth-capital questions"
+    },
+    {
+      "evidence_id": "EV:AGGREGATE_OPERATIONS",
+      "source_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_SECOND_UNSEEN_ISSUER_000541_STAGED_V3_20181231/sources/01_CN000541_PRE_CUTOFF_SOURCE_PACKAGE.md",
+      "locator": "跨期经营事实；FY2015--FY2017 年报 PDF pp.6--7",
+      "scope": "Consolidated revenue, attributable profit, nonrecurring-adjusted profit and operating cash flow",
+      "used_for": "Mature-core question boundary"
+    },
+    {
+      "evidence_id": "EV:CASH_AND_WORKING_CAPITAL",
+      "source_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_SECOND_UNSEEN_ISSUER_000541_STAGED_V3_20181231/sources/01_CN000541_PRE_CUTOFF_SOURCE_PACKAGE.md",
+      "locator": "现金、营运资本、资本支出与融资事实；各年合并资产负债表 PDF pp.78--81；MD&A PDF pp.17--19",
+      "scope": "Consolidated cash, receivables, inventory, fixed assets, construction in progress, liabilities and operating-cash explanations",
+      "used_for": "Ordinary-share cash and financing-continuity questions"
+    },
+    {
+      "evidence_id": "EV:CAPITAL_AND_INVESTMENT_CASH",
+      "source_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_SECOND_UNSEEN_ISSUER_000541_STAGED_V3_20181231/sources/01_CN000541_PRE_CUTOFF_SOURCE_PACKAGE.md",
+      "locator": "现金、营运资本、资本支出与融资事实；各年现金流量表 PDF pp.87、93、97",
+      "scope": "Consolidated long-term-asset purchases and investment cash payments",
+      "used_for": "Capital-return, owner-cash, noncore and financing-continuity questions"
+    },
+    {
+      "evidence_id": "EV:NONRECURRING_INVESTMENT_INCOME",
+      "source_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_SECOND_UNSEEN_ISSUER_000541_STAGED_V3_20181231/sources/01_CN000541_PRE_CUTOFF_SOURCE_PACKAGE.md",
+      "locator": "跨期经营事实；FY2015--FY2017 年报 PDF pp.17--19",
+      "scope": "Investment income and disclosed stock-sale, disposal and investee-dividend sources",
+      "used_for": "Noncore-investment-and-disposals question boundary"
+    },
+    {
+      "evidence_id": "EV:CONSOLIDATION_BOUNDARY",
+      "source_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_SECOND_UNSEEN_ISSUER_000541_STAGED_V3_20181231/sources/01_CN000541_PRE_CUTOFF_SOURCE_PACKAGE.md",
+      "locator": "合并责任边界与组件拆分；FY2016 年报 PDF p.26；FY2017 年报 PDF pp.28--29",
+      "scope": "Consolidated reporting boundary, electrical subsidiary and absence of component-level cash and capital reconciliation",
+      "used_for": "Owner-cash, growth-capital and noncore-component boundaries"
+    }
+  ]
+}
