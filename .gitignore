@@ -8,6 +8,8 @@ __pycache__/
 *.html
 !progress-dashboard.html
 !docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/official_context_raw/**/*.html
+!docs/development/research/industry_learning_blocks/CN_APPLIANCE_2017_2018/raw/
+!docs/development/research/industry_learning_blocks/CN_APPLIANCE_2017_2018/raw/**/*.html
 .DS_Store
 .vscode/
 *.egg-info/
