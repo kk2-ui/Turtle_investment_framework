@@ -1,0 +1,71 @@
+{
+  "schema_version": "staged-judgment-j0.v1",
+  "stage": "J0",
+  "stage_id": "A00:J0",
+  "ledger_id": "UWTRAIN:APPLIANCE:000541:20181231:STAGE9:A00:V2:J0",
+  "company_id": "CN:000541",
+  "company_name": "佛山电器照明股份有限公司",
+  "cutoff_at": "2018-12-31T23:59:59+08:00",
+  "sample_identity": "BLIND_REPLAY",
+  "decision_frame": "建立截止日前公司、行业传导、现金与资本责任的上下文账本；仅提出可验证问题，不作盈利、估值、价格、行动或结果判断。",
+  "underwriting_route": "从合并责任边界出发，分别追踪照明核心、电工/汽车照明扩展、融资生存能力、普通股现金归属及非核心资产回收，要求每个组件有明确后续效应。",
+  "industry_company_questions": [
+    "传统照明萎缩、LED 渗透增速放缓及竞争加剧下，LED 产品结构迁移能否支撑可持续普通股正常盈利？",
+    "代理商、工程、电商、出口及新增电工、汽车照明渠道的客户吸收、实现价格、库存去化和现金回收证据是否支持公司层面的行业适应判断？",
+    "应收账款和存货上升、毛利率及出口毛利率下滑时，各板块的现金转换、资本责任和融资需求如何分开？",
+    "大额投资收益、股票及股权处置现金与持续经营现金、母公司现金及少数股东责任如何勾稽，避免重复计入普通股 owner cash？"
+  ],
+  "components": [
+    {
+      "component_id": "C1_SURVIVAL_FINANCING",
+      "economic_scope": "SURVIVAL_FINANCING",
+      "question": "合并货币资金、负债、经营现金流及资本支出能否覆盖持续经营和扩产需求；融资或流动性压力是否因应收、存货及在建工程增加而上升？",
+      "evidence_ids": ["E1", "E2", "E3"]
+    },
+    {
+      "component_id": "C2_MATURE_CORE",
+      "economic_scope": "MATURE_CORE_NORMAL_EARNINGS",
+      "question": "LED 与传统照明核心业务在收入迁移、销量、毛利率下滑、出口毛利率下降及竞争压力下，能否形成跨周期的正常盈利？",
+      "evidence_ids": ["E4", "E5", "E6"]
+    },
+    {
+      "component_id": "C3_OWNER_CASH",
+      "economic_scope": "ORDINARY_SHARE_OWNER_CASH",
+      "question": "合并经营现金、投资收益、分红及现金余额中，哪些可持续且可归属于普通股股东；母子公司及少数股东责任如何影响可分配现金？",
+      "evidence_ids": ["E1", "E7", "E8"]
+    },
+    {
+      "component_id": "C4_GROWTH_CAPITAL",
+      "economic_scope": "GROWTH_CAPITAL_RETURN",
+      "question": "在建工程和购建长期资产现金支出增加，以及电工、汽车照明等扩展投入，能否取得可验证的增量收入、利润和现金回报？",
+      "evidence_ids": ["E2", "E9", "E10"]
+    },
+    {
+      "component_id": "C5_NONCORE_ASSETS",
+      "economic_scope": "NONCORE_OR_OPTIONAL_ASSET",
+      "question": "国轩高科股票、锂能源股权及其他投资处置形成的一次性收益和现金回收，应如何与照明经营价值隔离并评估其不可持续性？",
+      "evidence_ids": ["E7", "E11"]
+    },
+    {
+      "component_id": "C6_COMPONENT_BOUNDARY",
+      "economic_scope": "OTHER_MATERIAL_COMPONENT",
+      "question": "合并报表下照明、电工、汽车照明及各子公司的收入、现金、营运资本、借款和资本支出无法逐项勾稽时，后续判断应如何局部化并避免跨组件归因？",
+      "evidence_ids": ["E12", "E13"]
+    }
+  ],
+  "evidence_refs": [
+    {"evidence_id":"E1","source_ref":"docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_SECOND_UNSEEN_ISSUER_000541_STAGED_V3_20181231/sources/01_CN000541_PRE_CUTOFF_SOURCE_PACKAGE.md","locator":"跨期经营事实表；合并资产负债表（PDF pp.6-7, 78-81）","scope":"FY2015-FY2017合并收入、归母净利润、扣非净利润、经营现金流、货币资金、负债","used_for":"生存融资与普通股现金问题"},
+    {"evidence_id":"E2","source_ref":"docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_SECOND_UNSEEN_ISSUER_000541_STAGED_V3_20181231/sources/01_CN000541_PRE_CUTOFF_SOURCE_PACKAGE.md","locator":"现金流量表（PDF pp.87, 93, 97）","scope":"购建长期资产及投资支付现金","used_for":"资本责任与流动性问题"},
+    {"evidence_id":"E3","source_ref":"docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_SECOND_UNSEEN_ISSUER_000541_STAGED_V3_20181231/sources/01_CN000541_PRE_CUTOFF_SOURCE_PACKAGE.md","locator":"合并资产负债表（PDF pp.78-81）","scope":"应收账款、存货、在建工程、负债","used_for":"营运资本和融资压力问题"},
+    {"evidence_id":"E4","source_ref":"docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_SECOND_UNSEEN_ISSUER_000541_STAGED_V3_20181231/sources/01_CN000541_PRE_CUTOFF_SOURCE_PACKAGE.md","locator":"产品收入和实物量表（PDF pp.13-15）","scope":"LED/传统照明收入、销量、产量、库存","used_for":"核心业务迁移与库存问题"},
+    {"evidence_id":"E5","source_ref":"docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_SECOND_UNSEEN_ISSUER_000541_STAGED_V3_20181231/sources/01_CN000541_PRE_CUTOFF_SOURCE_PACKAGE.md","locator":"毛利率披露（FY2016-FY2017 PDF pp.13-15）","scope":"照明及LED毛利率、外销毛利率变化","used_for":"正常盈利质量问题"},
+    {"evidence_id":"E6","source_ref":"docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_SECOND_UNSEEN_ISSUER_000541_STAGED_V3_20181231/sources/01_CN000541_PRE_CUTOFF_SOURCE_PACKAGE.md","locator":"业务承载、客户与行业传导载体（PDF pp.9-10）","scope":"渠道、行业叙述及三大板块","used_for":"行业传导与客户吸收问题"},
+    {"evidence_id":"E7","source_ref":"docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_SECOND_UNSEEN_ISSUER_000541_STAGED_V3_20181231/sources/01_CN000541_PRE_CUTOFF_SOURCE_PACKAGE.md","locator":"投资收益说明（PDF pp.17-19）","scope":"2015-2017投资收益及非持续性标注","used_for":"非核心资产及现金归属问题"},
+    {"evidence_id":"E8","source_ref":"docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_SECOND_UNSEEN_ISSUER_000541_STAGED_V3_20181231/sources/01_CN000541_PRE_CUTOFF_SOURCE_PACKAGE.md","locator":"现金、营运资本、资本支出与融资事实","scope":"合并现金与普通股owner cash勾稽缺口","used_for":"现金归属边界问题"},
+    {"evidence_id":"E9","source_ref":"docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_SECOND_UNSEEN_ISSUER_000541_STAGED_V3_20181231/sources/01_CN000541_PRE_CUTOFF_SOURCE_PACKAGE.md","locator":"产品与业务承载（PDF pp.9-10, 14）","scope":"电工及汽车照明板块、收入披露","used_for":"增长资本回报问题"},
+    {"evidence_id":"E10","source_ref":"docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_SECOND_UNSEEN_ISSUER_000541_STAGED_V3_20181231/sources/01_CN000541_PRE_CUTOFF_SOURCE_PACKAGE.md","locator":"在建工程及长期资产现金支出（PDF pp.78-81, 87, 93, 97）","scope":"在建工程增长与资本支出","used_for":"增长投资责任问题"},
+    {"evidence_id":"E11","source_ref":"docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_SECOND_UNSEEN_ISSUER_000541_STAGED_V3_20181231/sources/01_CN000541_PRE_CUTOFF_SOURCE_PACKAGE.md","locator":"投资收益及青海佛照锂能源处置（PDF pp.7, 19）","scope":"股票及股权处置收益","used_for":"非核心/可选资产隔离"},
+    {"evidence_id":"E12","source_ref":"docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_SECOND_UNSEEN_ISSUER_000541_STAGED_V3_20181231/sources/01_CN000541_PRE_CUTOFF_SOURCE_PACKAGE.md","locator":"合并责任边界与组件拆分","scope":"子公司并表及板块无法逐项勾稽","used_for":"组件边界问题"},
+    {"evidence_id":"E13","source_ref":"docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_SECOND_UNSEEN_ISSUER_000541_STAGED_V3_20181231/sources/01_CN000541_PRE_CUTOFF_SOURCE_PACKAGE.md","locator":"明确未闭合字段","scope":"板块级现金、资本、客户及分配限制缺口","used_for":"后续证据局部化要求"}
+  ]
+}

@@ -1,0 +1,110 @@
+{
+  "schema_version": "staged-judgment-j0.v1",
+  "stage": "J0",
+  "stage_id": "UWTRAIN:APPLIANCE:000541:20181231:STAGE9:A11:J0",
+  "ledger_id": "LEDGER:UWTRAIN:APPLIANCE:000541:20181231:A11:J0",
+  "company_id": "CN:000541",
+  "company_name": "佛山电器照明股份有限公司",
+  "cutoff_at": "2018-12-31T23:59:59+08:00",
+  "sample_identity": "BLIND_REPLAY",
+  "decision_frame": "以2015—2017年截止前合并口径事实建立组件账本；将持续照明经营、合并普通股现金、未闭合增长资本与非主营资产处置分开，未披露的组件级现金和资本责任仅局部限制相应问题。",
+  "underwriting_route": "先识别成熟照明主业的正常盈利，再单列普通股可得现金桥与增长资本回报，最后将非持续性投资及处置项目留在非核心组件，避免与持续经营或普通股现金重复归属。",
+  "industry_company_questions": [
+    "LED产品收入结构迁移能否在FY2017照明器材及灯具、LED及外销毛利率下降的背景下形成可持续正常盈利？",
+    "代理商、工程商照、电商/零售、出口及机动车灯渠道的客户吸收、实现价格、库存去化和现金回收是否能由公司同口径事实结算？",
+    "应收账款上升、存货维持高位和长期资产现金支出上升时，照明、电工和汽车照明各组件的营运资本与资本责任如何分配？",
+    "合并货币资金、经营现金流及投资现金流中，哪些部分可经责任和所有权桥归属于普通股股东而不与一次性投资收益重复计算？"
+  ],
+  "components": [
+    {
+      "component_id": "COMP:MATURE_LIGHTING_CORE",
+      "economic_scope": "MATURE_CORE_NORMAL_EARNINGS",
+      "question": "传统照明收缩与LED收入增长后的成熟照明主业，是否能穿过毛利率和外销毛利率下降而维持可持续正常盈利；现有披露仅有合并及产品收入、销量和毛利率，未提供渠道或组件级价格、成本和现金桥。",
+      "evidence_ids": [
+        "EVID:BUSINESS_CHANNELS", "EVID:PRODUCT_MIX_VOLUME", "EVID:MARGIN_DIRECTION", "EVID:CONSOLIDATED_EARNINGS"
+      ]
+    },
+    {
+      "component_id": "COMP:ORDINARY_SHARE_CASH",
+      "economic_scope": "ORDINARY_SHARE_OWNER_CASH",
+      "question": "合并经营现金流、货币资金和投资现金流能否经母公司、子公司、少数股东、限制及分配路径桥接为普通股owner cash；年报未提供该完整桥，且电工及其他子公司并表责任不可回填至照明组件。",
+      "evidence_ids": [
+        "EVID:CASH_WORKING_CAPITAL", "EVID:CAPEX_INVESTMENT_CASH", "EVID:CONSOLIDATION_BOUNDARY"
+      ]
+    },
+    {
+      "component_id": "COMP:EXPANSION_AND_NEW_BUSINESSES",
+      "economic_scope": "GROWTH_CAPITAL_RETURN",
+      "question": "新增电工、汽车照明及增长性长期资产支出的增量资本回报和现金吸收是否可与成熟照明主业分开验证；现有资料确认三大板块和并表电工子公司，但没有组件级经营现金流、资本开支、应收或库存。",
+      "evidence_ids": [
+        "EVID:BUSINESS_CHANNELS", "EVID:CASH_WORKING_CAPITAL", "EVID:CAPEX_INVESTMENT_CASH", "EVID:CONSOLIDATION_BOUNDARY"
+      ]
+    },
+    {
+      "component_id": "COMP:NONCORE_INVESTMENTS_AND_DISPOSALS",
+      "economic_scope": "NONCORE_OR_OPTIONAL_ASSET",
+      "question": "出售国轩高科股票、处置青海佛照锂能源开发有限公司股权及被投资企业分红形成的投资收益和投资现金流，应如何与持续经营盈利及普通股现金分离；披露明确其主要收益不具有持续性。",
+      "evidence_ids": [
+        "EVID:NONRECURRING_INVESTMENT_INCOME", "EVID:CAPEX_INVESTMENT_CASH", "EVID:CONSOLIDATION_BOUNDARY"
+      ]
+    }
+  ],
+  "evidence_refs": [
+    {
+      "evidence_id": "EVID:BUSINESS_CHANNELS",
+      "source_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_SECOND_UNSEEN_ISSUER_000541_STAGED_V3_20181231/sources/01_CN000541_PRE_CUTOFF_SOURCE_PACKAGE.md",
+      "locator": "业务承载、客户与行业传导载体；FY2015—FY2017年报PDF pp.9—10",
+      "scope": "照明、电工、汽车照明产品与渠道披露",
+      "used_for": "界定成熟主业、增长业务及渠道验证问题"
+    },
+    {
+      "evidence_id": "EVID:CONSOLIDATED_EARNINGS",
+      "source_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_SECOND_UNSEEN_ISSUER_000541_STAGED_V3_20181231/sources/01_CN000541_PRE_CUTOFF_SOURCE_PACKAGE.md",
+      "locator": "跨期经营事实；FY2015—FY2017年报PDF pp.6—7",
+      "scope": "合并营业收入、归母净利润及扣非归母净利润",
+      "used_for": "提出成熟主业正常盈利与非经常项目分离问题"
+    },
+    {
+      "evidence_id": "EVID:PRODUCT_MIX_VOLUME",
+      "source_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_SECOND_UNSEEN_ISSUER_000541_STAGED_V3_20181231/sources/01_CN000541_PRE_CUTOFF_SOURCE_PACKAGE.md",
+      "locator": "产品收入和实物量如下；各年MD&A PDF pp.13—15",
+      "scope": "LED、传统照明及电工收入，合计销售、生产和库存量",
+      "used_for": "提出产品结构迁移、渠道吸收和库存去化问题"
+    },
+    {
+      "evidence_id": "EVID:MARGIN_DIRECTION",
+      "source_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_SECOND_UNSEEN_ISSUER_000541_STAGED_V3_20181231/sources/01_CN000541_PRE_CUTOFF_SOURCE_PACKAGE.md",
+      "locator": "毛利率不能直接当作长期正常利润；FY2016年报PDF pp.13—14，FY2017年报PDF pp.14—15",
+      "scope": "照明器材及灯具、LED及外销毛利率变动",
+      "used_for": "限定成熟主业正常盈利问题"
+    },
+    {
+      "evidence_id": "EVID:NONRECURRING_INVESTMENT_INCOME",
+      "source_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_SECOND_UNSEEN_ISSUER_000541_STAGED_V3_20181231/sources/01_CN000541_PRE_CUTOFF_SOURCE_PACKAGE.md",
+      "locator": "跨期经营事实；FY2015—FY2017年报PDF pp.17—19",
+      "scope": "股票出售、股权处置及分红形成的投资收益及其非持续性说明",
+      "used_for": "界定非核心投资和处置组件"
+    },
+    {
+      "evidence_id": "EVID:CASH_WORKING_CAPITAL",
+      "source_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_SECOND_UNSEEN_ISSUER_000541_STAGED_V3_20181231/sources/01_CN000541_PRE_CUTOFF_SOURCE_PACKAGE.md",
+      "locator": "现金、营运资本、资本支出与融资事实；各年合并资产负债表PDF pp.78—81、现金流量表及MD&A PDF pp.17—19",
+      "scope": "合并货币资金、应收账款、存货、负债及经营现金流",
+      "used_for": "提出普通股现金桥和组件营运资本责任问题"
+    },
+    {
+      "evidence_id": "EVID:CAPEX_INVESTMENT_CASH",
+      "source_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_SECOND_UNSEEN_ISSUER_000541_STAGED_V3_20181231/sources/01_CN000541_PRE_CUTOFF_SOURCE_PACKAGE.md",
+      "locator": "现金、营运资本、资本支出与融资事实；各年现金流量表PDF pp.87、93、97",
+      "scope": "购建长期资产及投资支付现金，且未拆分维护/增长或业务组件",
+      "used_for": "提出增长资本回报、普通股现金和非核心投资分离问题"
+    },
+    {
+      "evidence_id": "EVID:CONSOLIDATION_BOUNDARY",
+      "source_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_SECOND_UNSEEN_ISSUER_000541_STAGED_V3_20181231/sources/01_CN000541_PRE_CUTOFF_SOURCE_PACKAGE.md",
+      "locator": "合并责任边界与组件拆分；FY2016年报PDF p.26，FY2017年报PDF pp.28—29及财务附注",
+      "scope": "合并报表、电工子公司并表及子公司级收入现金资本支出未逐项勾稽",
+      "used_for": "限制普通股现金和增长资本组件的责任边界"
+    }
+  ]
+}

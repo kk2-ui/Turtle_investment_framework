@@ -1,0 +1,115 @@
+{
+  "schema_version": "staged-judgment-j0.v1",
+  "stage": "J0",
+  "stage_id": "A01:J0",
+  "ledger_id": "UWTRAIN:APPLIANCE:000541:20181231:STAGE9:A01:V2:J0",
+  "company_id": "CN:000541",
+  "company_name": "佛山电器照明股份有限公司",
+  "cutoff_at": "2018-12-31T23:59:59+08:00",
+  "sample_identity": "BLIND_REPLAY",
+  "decision_frame": "以2018-12-31截止前合并口径事实建立分组件账本；将持续经营、普通股现金、增长资本回报与非核心资产分开，保留未闭合的责任边界和现金桥问题。",
+  "underwriting_route": "SEGMENTED_COMPONENT_UNDERWRITING",
+  "industry_company_questions": [
+    "LED渗透及产品结构迁移能否在毛利率和出口毛利率下滑、原材料与用工压力下形成可持续正常盈利？",
+    "应收账款、存货及长期资产现金支出上升时，照明、电工和汽车照明各自的现金转换和资本责任如何传导？",
+    "投资收益、理财及股票处置现金如何与持续经营现金、母公司现金和少数股东责任分开，避免重复计入普通股现金？",
+    "代理商、工程、电商、出口及新增板块的客户吸收、实现价格、库存去化和资本回报证据是否支持公司层面的适应判断？"
+  ],
+  "components": [
+    {
+      "component_id": "C_SURVIVAL_FINANCING",
+      "economic_scope": "SURVIVAL_FINANCING",
+      "question": "合并货币资金、负债、应收、存货及经营现金能否覆盖持续经营与融资约束；母子公司及少数股东责任是否存在未闭合的流动性缺口？",
+      "evidence_ids": ["E_BALANCE_CASH_LIABILITIES", "E_OCF_WORKING_CAPITAL"]
+    },
+    {
+      "component_id": "C_MATURE_CORE",
+      "economic_scope": "MATURE_CORE_NORMAL_EARNINGS",
+      "question": "传统照明与LED核心产品在收入结构迁移、销量、毛利率下滑及成本压力下的可持续正常盈利为何，且电工和汽车照明能否与其区分？",
+      "evidence_ids": ["E_CORE_REVENUE_MIX", "E_CORE_MARGIN_VOLUME", "E_BUSINESS_SCOPE"]
+    },
+    {
+      "component_id": "C_OWNER_CASH",
+      "economic_scope": "ORDINARY_SHARE_OWNER_CASH",
+      "question": "经营现金、资本支出、投资现金流、分红及合并责任如何勾稽到普通股股东可得现金；当前资料缺少分板块和上游分红桥。",
+      "evidence_ids": ["E_OCF_CAPEX_INVESTING", "E_OWNER_CASH_GAP", "E_BALANCE_CASH_LIABILITIES"]
+    },
+    {
+      "component_id": "C_GROWTH_CAPITAL",
+      "economic_scope": "GROWTH_CAPITAL_RETURN",
+      "question": "FY2017长期资产支出及电工、汽车照明扩展等增长资本是否产生可验证的增量收入、现金回报和资本效率，还是仅为合并口径投入？",
+      "evidence_ids": ["E_CAPEX_GROWTH", "E_BUSINESS_SCOPE", "E_OWNER_CASH_GAP"]
+    },
+    {
+      "component_id": "C_NONCORE_ASSETS",
+      "economic_scope": "NONCORE_OR_OPTIONAL_ASSET",
+      "question": "国轩高科股票处置、青海佛照锂能源股权处置及被投资企业分红等非主营收益和投资现金应如何隔离，避免替代持续经营盈利或普通股现金。",
+      "evidence_ids": ["E_NONCORE_INVESTMENT_RETURNS"]
+    }
+  ],
+  "evidence_refs": [
+    {
+      "evidence_id": "E_BALANCE_CASH_LIABILITIES",
+      "source_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_SECOND_UNSEEN_ISSUER_000541_STAGED_V3_20181231/sources/01_CN000541_PRE_CUTOFF_SOURCE_PACKAGE.md",
+      "locator": "现金、营运资本、资本支出与融资事实；合并资产负债表（FY2015-FY2017）",
+      "scope": "PRE_CUTOFF",
+      "used_for": "survival financing and owner-cash responsibility boundary"
+    },
+    {
+      "evidence_id": "E_OCF_WORKING_CAPITAL",
+      "source_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_SECOND_UNSEEN_ISSUER_000541_STAGED_V3_20181231/sources/01_CN000541_PRE_CUTOFF_SOURCE_PACKAGE.md",
+      "locator": "跨期经营事实；应收账款、存货及经营活动现金流表（FY2015-FY2017）",
+      "scope": "PRE_CUTOFF",
+      "used_for": "working-capital conversion and operating cash questions"
+    },
+    {
+      "evidence_id": "E_CORE_REVENUE_MIX",
+      "source_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_SECOND_UNSEEN_ISSUER_000541_STAGED_V3_20181231/sources/01_CN000541_PRE_CUTOFF_SOURCE_PACKAGE.md",
+      "locator": "产品收入和实物量；LED、传统照明及电工产品收入（FY2015-FY2017）",
+      "scope": "PRE_CUTOFF",
+      "used_for": "mature-core product mix and segment migration"
+    },
+    {
+      "evidence_id": "E_CORE_MARGIN_VOLUME",
+      "source_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_SECOND_UNSEEN_ISSUER_000541_STAGED_V3_20181231/sources/01_CN000541_PRE_CUTOFF_SOURCE_PACKAGE.md",
+      "locator": "毛利率与销售量/生产量/库存量；FY2016-FY2017分行业及LED毛利率",
+      "scope": "PRE_CUTOFF",
+      "used_for": "normal-earnings quality and inventory/price pressure"
+    },
+    {
+      "evidence_id": "E_BUSINESS_SCOPE",
+      "source_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_SECOND_UNSEEN_ISSUER_000541_STAGED_V3_20181231/sources/01_CN000541_PRE_CUTOFF_SOURCE_PACKAGE.md",
+      "locator": "业务承载、客户与行业传导载体；FY2015-FY2017业务概要",
+      "scope": "PRE_CUTOFF",
+      "used_for": "company arena, channel and component boundary"
+    },
+    {
+      "evidence_id": "E_OCF_CAPEX_INVESTING",
+      "source_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_SECOND_UNSEEN_ISSUER_000541_STAGED_V3_20181231/sources/01_CN000541_PRE_CUTOFF_SOURCE_PACKAGE.md",
+      "locator": "现金流量表；购建长期资产、投资支付现金及经营现金流（FY2015-FY2017）",
+      "scope": "PRE_CUTOFF",
+      "used_for": "owner-cash and capital-allocation bridge"
+    },
+    {
+      "evidence_id": "E_OWNER_CASH_GAP",
+      "source_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_SECOND_UNSEEN_ISSUER_000541_STAGED_V3_20181231/sources/01_CN000541_PRE_CUTOFF_SOURCE_PACKAGE.md",
+      "locator": "明确未闭合字段；分板块现金、资本支出、少数股东及上游分红路径未披露",
+      "scope": "PRE_CUTOFF",
+      "used_for": "localize unresolved owner-cash and capital responsibility"
+    },
+    {
+      "evidence_id": "E_CAPEX_GROWTH",
+      "source_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_SECOND_UNSEEN_ISSUER_000541_STAGED_V3_20181231/sources/01_CN000541_PRE_CUTOFF_SOURCE_PACKAGE.md",
+      "locator": "固定资产、在建工程及长期资产现金支出（FY2015-FY2017）",
+      "scope": "PRE_CUTOFF",
+      "used_for": "growth-capital deployment and return question"
+    },
+    {
+      "evidence_id": "E_NONCORE_INVESTMENT_RETURNS",
+      "source_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_SECOND_UNSEEN_ISSUER_000541_STAGED_V3_20181231/sources/01_CN000541_PRE_CUTOFF_SOURCE_PACKAGE.md",
+      "locator": "投资收益及非经常性项目；国轩高科股票、青海佛照锂能源股权处置及分红（FY2015-FY2017）",
+      "scope": "PRE_CUTOFF",
+      "used_for": "separate noncore/optional asset effects"
+    }
+  ]
+}
