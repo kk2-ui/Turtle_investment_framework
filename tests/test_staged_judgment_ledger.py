@@ -8,6 +8,8 @@ from scripts.staged_judgment_ledger import (
     validate_staged_judgment_ledger,
 )
 from scripts.enterprise_underwriting_training import build_training_contract
+from scripts.enterprise_underwriting_training import ECONOMIC_DERIVATION_INTERFACE
+from scripts.enterprise_underwriting_episode import derive_economic_derivation_summary
 
 
 def _ledger() -> dict:
@@ -121,3 +123,40 @@ def test_negative_contract_memory_duplicate_and_not_frozen():
     ledger = _ledger()
     ledger["evidence_refs"][0]["provenance"] = "TRAINING_MEMORY"
     assert any(d["code"] == "TRAINING_MEMORY_EVIDENCE_FORBIDDEN" for d in validate_staged_judgment_ledger(ledger)["findings"])
+
+
+def test_v2_derivation_is_preserved_and_training_bound():
+    ledger = _ledger()
+    ledger["normal_earnings_bridge"] = {
+        "basis": {"metric": "normalized earnings", "currency": "RMB", "unit": "RMB_m",
+                  "tax_basis": "AFTER_TAX", "earnings_claim_scope": "ENTERPRISE_OPERATING",
+                  "operating_perimeter": "测试核心业务", "as_of": "2024-04-30"},
+        "rows": [{"row_id": "NEB:CORE", "component_id": "CORE", "row_role": "REFERENCE_EARNINGS",
+                  "direction": "ADD", "quantification": {"status": "UNKNOWN", "reason": "缺少闭合序列",
+                  "conservative_treatment": "保留未知"}, "evidence_ids": ["E1"],
+                  "economic_reason": "核心业务正常盈利待确认"}],
+    }
+    ledger["driver_sensitivities"] = [{
+        "sensitivity_id": "SENS:CORE", "component_ids": ["CORE"],
+        "responsibility_boundary": "测试核心业务", "metric": "销量", "unit": "index", "horizon": "FY2025",
+        "input_cases": {"mode": "BOUNDED_RANGE", "range": {"value_or_range": {"range_low": 90, "range_high": 110}, "basis": "历史区间", "evidence_ids": ["E1"]}},
+        "transmission": {"normal_earnings": {"status": "UNKNOWN", "basis": "影响待测", "delta": {"status": "UNKNOWN", "reason": "无量化桥", "conservative_treatment": "不改变基准"}},
+                          "owner_cash": {"status": "UNKNOWN", "basis": "现金可达性待测", "delta": {"status": "UNKNOWN", "reason": "无量化桥", "conservative_treatment": "不改变现金"}},
+                          "valuation_route_ids": ["EPV"]},
+        "reversal_observation_refs": ["#/reversal_observations/0"],
+    }]
+    contract = build_training_contract(
+        contract_id="C:V2", training_track="WORKED_CASE", company_id=ledger["company_id"],
+        company_name=ledger["company_name"], cutoff_at=ledger["cutoff_at"],
+        allowed_sources=[{"source_id": "S1", "source_ref": "SRC:TEST", "available_at": "2024-05-01T00:00:00+08:00", "time_role": "RESULT_KNOWN"}],
+        feedback_clocks=[{"clock_id": "a", "horizon": "EARLY_SIGNAL", "opens_at": "2025-01-01T00:00:00+08:00", "episode_claims": ["INDUSTRY_AND_SITUATION"], "discriminating_observation": "早期信号"},
+                         {"clock_id": "b", "horizon": "LONG_TERM_PERMANENT_LOSS", "opens_at": "2027-01-01T00:00:00+08:00", "episode_claims": ["PERMANENT_LOSS"], "discriminating_observation": "长期回报"}],
+        economic_derivation_interface=ECONOMIC_DERIVATION_INTERFACE,
+    )
+    source_index = {"E1": {"source_ref": "SRC:TEST", "available_at": "2024-05-01T00:00:00+08:00", "time_role": "RESULT_KNOWN"}}
+    result = compile_staged_judgment_ledger(ledger, source_index, contract)
+    assert result["diagnostics"]["state"] == "COMPILED"
+    assert result["episode"] is not None
+    assert result["episode"]["economic_derivation"]["normal_earnings_bridge"] == ledger["normal_earnings_bridge"]
+    assert result["episode"]["economic_derivation_summary"] == derive_economic_derivation_summary(result["episode"])
+    assert result["training_episode_validation"]["state"] == "REVIEWABLE"

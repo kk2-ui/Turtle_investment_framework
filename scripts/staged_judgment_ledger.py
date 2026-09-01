@@ -366,6 +366,8 @@ def compile_staged_judgment_ledger(ledger: Any, source_index: Any | None = None,
             "normal_earnings_bridge": deepcopy(value.get("normal_earnings_bridge") or {}),
             "driver_sensitivity_specs": deepcopy(value.get("driver_sensitivities") or []),
         }
+        from scripts.enterprise_underwriting_episode import derive_economic_derivation_summary
+        episode["economic_derivation_summary"] = derive_economic_derivation_summary(episode)
     ev = validate_enterprise_underwriting_episode(episode)
     training_ev = None
     if isinstance(contract, dict):
