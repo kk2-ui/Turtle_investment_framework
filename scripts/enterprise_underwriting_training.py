@@ -460,16 +460,15 @@ def validate_training_contract(contract: Any) -> dict[str, Any]:
         time_role = source.get("time_role")
         if time_role not in SOURCE_TIME_ROLES:
             findings.append(path + ".time_role_invalid")
-        if track in {"BLIND_REPLAY", "PROSPECTIVE"}:
-            if time_role == "RESULT_KNOWN":
-                findings.append(path + ".result_known_source_forbidden")
-            if (
-                time_role == "PRE_CUTOFF"
-                and cutoff is not None
-                and available is not None
-                and available > cutoff
-            ):
-                findings.append(path + ".available_after_cutoff")
+        if track in {"BLIND_REPLAY", "PROSPECTIVE"} and time_role == "RESULT_KNOWN":
+            findings.append(path + ".result_known_source_forbidden")
+        if (
+            time_role == "PRE_CUTOFF"
+            and cutoff is not None
+            and available is not None
+            and available > cutoff
+        ):
+            findings.append(path + ".available_after_cutoff")
 
     clocks = value.get("feedback_clocks")
     if not isinstance(clocks, list) or len(clocks) < 2:
