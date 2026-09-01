@@ -7,6 +7,7 @@ from scripts.staged_judgment_training import (
     J2_SCHEMA,
     compile_stages,
     render_stage_task,
+    _stage_system,
     validate_stage,
 )
 
@@ -197,3 +198,15 @@ def test_later_stage_requires_accepted_prior_stage():
         assert "prior_stage_not_accepted:J1" in str(exc)
     else:
         raise AssertionError("J2 task rendered from an unaccepted J1")
+
+
+def test_j1_task_makes_array_and_excluded_route_contract_executable():
+    contract = _contract()
+    j0, _, _ = _stages()
+    # Read the generated system contract directly; this synthetic fixture has
+    # no local source artifact, so rendering a full packet is intentionally
+    # outside this prompt-contract test.
+    system = _stage_system("J1")
+    assert "reversal_observations 必须是非空字符串数组" in system
+    assert "至少一项必须明确写出 EXCLUDED、SCENARIO_ONLY、UNRESOLVED 或 NOT_APPLICABLE" in system
+    assert '["若后续披露显示量价和现金转换改善' in system
