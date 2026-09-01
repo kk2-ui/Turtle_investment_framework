@@ -1146,6 +1146,15 @@ Keep the whole Episode price-, return-, outcome-, and action-free."""
                     "and optional component ids are known, unique, disjoint, and role-compatible."
                 ),
                 (
+                    "Route-role preflight: PRIMARY_INPUT and CONDITIONAL_PRIMARY_INPUT bind only "
+                    "routes listed under value_route.primary_routes or valuation_model_roles.primary; "
+                    "CORROBORATIVE_INPUT binds only corroborative routes; STRESS_ONLY binds only "
+                    "stress routes; SCENARIO_ONLY, EXCLUDED, UNRESOLVED, and NOT_APPLICABLE bind "
+                    "excluded routes. Before writing component_decisions, enumerate each route id, "
+                    "its declared role, and the compatible use so a schema-valid but economically "
+                    "incompatible binding is not produced."
+                ),
+                (
                     "The normal-earnings bridge has exactly one authority-compatible reference "
                     "row and covers every component whose normal_earnings_use is not NOT_APPLICABLE."
                 ),

@@ -56,6 +56,7 @@ _RUNTIME_ARTIFACT_FIELDS = (
 )
 _NATIVE_EPISODE_FILENAME = "enterprise_underwriting_episode.json"
 _NATIVE_BUNDLE_FILENAME = "enterprise_underwriting_downstream_bundle.json"
+_FRESH_DECLARATION_SCHEMA = "report-autonomy-fresh-start-declaration.v1"
 
 
 def _mapping(value: Any) -> dict[str, Any]:
@@ -92,6 +93,91 @@ def _atomic_text(path: Path, text: str) -> None:
     temporary = path.with_name(path.name + ".tmp")
     temporary.write_text(text, encoding="utf-8")
     os.replace(temporary, path)
+
+
+def _seal_file(path: Path) -> None:
+    """Make a completed raw response read-only for the supported local path.
+
+    The cohort contract is one attempt, not merely one successful finalize
+    call.  Sealing the response closes the practical write path after a cell
+    reaches a terminal state; a later attempt must create a new cohort rather
+    than mutate this evidence.
+    """
+
+    try:
+        path.chmod(0o444)
+    except OSError as exc:
+        raise ValueError("raw_response_seal_failed:" + str(path)) from exc
+
+
+def _fresh_declaration_path(raw_response_path: Path) -> Path:
+    return raw_response_path.with_name("fresh_start_declaration.json")
+
+
+def _validate_fresh_declaration(value: Any) -> dict[str, Any]:
+    declaration = _mapping(value)
+    expected = {
+        "schema_version": _FRESH_DECLARATION_SCHEMA,
+        "fresh_context": True,
+        "prior_cohort_read": False,
+        "parent_context_read": False,
+        "sibling_output_read": False,
+        "outcome_read": False,
+        "external_provider_used": False,
+    }
+    if declaration != expected:
+        raise ValueError("fresh_start_declaration_invalid")
+    return declaration
+
+
+def persist_fresh_agent_response(
+    preregistration_path: str | Path,
+    *,
+    case_id: str,
+    arm_id: str,
+    agent_response: Any,
+    declaration: Any,
+) -> dict[str, Any]:
+    """Persist one fresh response through the only supported raw-write path.
+
+    Direct filesystem writes remain readable for historical artifact recovery,
+    but new execution code should use this function.  It refuses a terminal
+    cell or an existing declaration/response, records the explicit freshness
+    declaration beside the response, and leaves finalization to
+    :func:`finalize_fresh_cell`.
+    """
+
+    path = Path(preregistration_path).expanduser().resolve()
+    preregistration = _validated_preregistration(path)
+    _assert_artifact_paths_unique(
+        _items(_mapping(preregistration.get("execution")).get("cells"))
+    )
+    cell = _cell(preregistration, case_id=case_id, arm_id=arm_id)
+    if cell.get("state") != "NOT_STARTED" or cell.get("attempts") != {
+        "episode": 0, "reader_report": 0,
+    }:
+        raise ValueError("cell_not_unstarted_no_retry:" + case_id + ":" + arm_id)
+    declaration_value = _validate_fresh_declaration(declaration)
+    artifacts = _mapping(cell.get("artifact_paths"))
+    raw_response_path = _path(artifacts.get("raw_response_ref"))
+    declaration_path = _fresh_declaration_path(raw_response_path)
+    _assert_absent(
+        [raw_response_path, declaration_path],
+        reason="raw_response_write_refuses_existing_artifact",
+    )
+    if not isinstance(agent_response, dict):
+        raise ValueError("raw_response_requires_json_object")
+    _atomic_json(declaration_path, declaration_value)
+    _atomic_json(raw_response_path, deepcopy(agent_response))
+    return {
+        "schema_version": SCHEMA_VERSION,
+        "state": "RAW_RESPONSE_RECORDED",
+        "case_id": case_id,
+        "arm_id": arm_id,
+        "raw_response_ref": artifacts.get("raw_response_ref"),
+        "fresh_start_declaration_ref": str(declaration_path),
+        "authority": "PREOUTCOME_EXECUTION_CONTROL_PLANE_ONLY",
+    }
 
 
 def _path(ref: Any) -> Path:
@@ -265,6 +351,7 @@ def finalize_fresh_cell(
             output_dir=episode_path.parent,
         )
     except (OSError, ValueError, json.JSONDecodeError) as exc:
+        _seal_file(raw_response_path)
         cell["state"] = "EPISODE_INVALID"
         cell["attempts"] = {"episode": 1, "reader_report": 0}
         receipt = {
@@ -274,6 +361,7 @@ def finalize_fresh_cell(
             "arm_id": arm_id,
             "attempts": deepcopy(cell["attempts"]),
             "failure": str(exc),
+            "raw_response_sealed": True,
             "retry_policy": "NO_RETRY_OR_REWRITE",
             "authority": "PREOUTCOME_EXECUTION_CONTROL_PLANE_ONLY",
         }
@@ -291,6 +379,7 @@ def finalize_fresh_cell(
         _atomic_json(bridge_path, bridge)
         _atomic_text(report_path, render_underwriting_readout(episode))
     except (OSError, ValueError, json.JSONDecodeError) as exc:
+        _seal_file(raw_response_path)
         cell["state"] = "PAIRED_TEST_INVALID"
         cell["attempts"] = {"episode": 1, "reader_report": 1}
         receipt = {
@@ -301,6 +390,7 @@ def finalize_fresh_cell(
             "attempts": deepcopy(cell["attempts"]),
             "episode_run_receipt": run_receipt,
             "failure": str(exc),
+            "raw_response_sealed": True,
             "retry_policy": "NO_RETRY_OR_REWRITE",
             "authority": "PREOUTCOME_EXECUTION_CONTROL_PLANE_ONLY",
         }
@@ -308,6 +398,7 @@ def finalize_fresh_cell(
         _write_preregistration(path, preregistration)
         return receipt
 
+    _seal_file(raw_response_path)
     cell["state"] = "FROZEN"
     cell["attempts"] = {"episode": 1, "reader_report": 1}
     receipt = {
@@ -322,6 +413,7 @@ def finalize_fresh_cell(
             "reader_bridge_ref": artifacts.get("reader_bridge_ref"),
             "first_reader_report_ref": artifacts.get("first_reader_report_ref"),
         },
+        "raw_response_sealed": True,
         "retry_policy": "NO_RETRY_OR_REWRITE",
         "authority": "PREOUTCOME_EXECUTION_CONTROL_PLANE_ONLY",
     }
@@ -339,6 +431,12 @@ def _parser() -> argparse.ArgumentParser:
     finalize.add_argument("preregistration", type=Path)
     finalize.add_argument("case_id")
     finalize.add_argument("arm_id", choices=ARMS)
+    record = sub.add_parser("record-raw-response")
+    record.add_argument("preregistration", type=Path)
+    record.add_argument("case_id")
+    record.add_argument("arm_id", choices=ARMS)
+    record.add_argument("response", type=Path)
+    record.add_argument("declaration", type=Path)
     return parser
 
 
@@ -347,14 +445,25 @@ def main(argv: list[str] | None = None) -> int:
     try:
         if args.command == "materialize":
             result = materialize_fresh_tasks(args.preregistration)
-        else:
+        elif args.command == "finalize":
             result = finalize_fresh_cell(
                 args.preregistration, case_id=args.case_id, arm_id=args.arm_id,
+            )
+        else:
+            result = persist_fresh_agent_response(
+                args.preregistration,
+                case_id=args.case_id,
+                arm_id=args.arm_id,
+                agent_response=_read_json(args.response),
+                declaration=_read_json(args.declaration),
             )
     except (OSError, ValueError, json.JSONDecodeError) as exc:
         result = {"schema_version": SCHEMA_VERSION, "state": "INVALID", "findings": [str(exc)]}
     print(json.dumps(result, ensure_ascii=False, sort_keys=True))
-    return 0 if result.get("state") in {MATERIALIZATION_STATE, "FROZEN", "EPISODE_INVALID", "PAIRED_TEST_INVALID"} else 2
+    return 0 if result.get("state") in {
+        MATERIALIZATION_STATE, "RAW_RESPONSE_RECORDED", "FROZEN",
+        "EPISODE_INVALID", "PAIRED_TEST_INVALID",
+    } else 2
 
 
 if __name__ == "__main__":  # pragma: no cover

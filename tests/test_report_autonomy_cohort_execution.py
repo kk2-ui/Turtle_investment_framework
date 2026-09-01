@@ -13,6 +13,7 @@ from scripts.report_autonomy_cohort_execution import (
     MATERIALIZATION_STATE,
     finalize_fresh_cell,
     materialize_fresh_tasks,
+    persist_fresh_agent_response,
 )
 from scripts.report_autonomy_multicompany_prereg import (
     validate_multicompany_preregistration,
@@ -236,3 +237,52 @@ def test_validated_episode_gets_exact_component_bridge_and_reader_readout(
     updated = json.loads(preregistration_path.read_text(encoding="utf-8"))
     assert updated["execution"]["cells"][0]["state"] == "FROZEN"
     assert validate_multicompany_preregistration(updated)["state"] == "REVIEWABLE"
+
+
+def test_supported_raw_writer_requires_fresh_declaration_and_refuses_after_freeze(
+    tmp_path: Path,
+) -> None:
+    preregistration_path, preregistration = _isolated_preregistration(tmp_path)
+    materialize_fresh_tasks(preregistration_path)
+    cell = preregistration["execution"]["cells"][0]
+    declaration = {
+        "schema_version": "report-autonomy-fresh-start-declaration.v1",
+        "fresh_context": True,
+        "prior_cohort_read": False,
+        "parent_context_read": False,
+        "sibling_output_read": False,
+        "outcome_read": False,
+        "external_provider_used": False,
+    }
+    with pytest.raises(ValueError, match="fresh_start_declaration_invalid"):
+        persist_fresh_agent_response(
+            preregistration_path,
+            case_id=cell["case_id"],
+            arm_id=cell["arm_id"],
+            agent_response={},
+            declaration={"fresh_context": True},
+        )
+
+    raw_response = {"not": "an episode"}
+    persist_fresh_agent_response(
+        preregistration_path,
+        case_id=cell["case_id"],
+        arm_id=cell["arm_id"],
+        agent_response=raw_response,
+        declaration=declaration,
+    )
+    assert json.loads(Path(cell["artifact_paths"]["raw_response_ref"]).read_text()) == raw_response
+    receipt = finalize_fresh_cell(
+        preregistration_path, case_id=cell["case_id"], arm_id=cell["arm_id"],
+    )
+    assert receipt["state"] == "EPISODE_INVALID"
+    raw_path = Path(cell["artifact_paths"]["raw_response_ref"])
+    assert raw_path.stat().st_mode & 0o222 == 0
+    with pytest.raises(ValueError, match="cell_not_unstarted_no_retry"):
+        persist_fresh_agent_response(
+            preregistration_path,
+            case_id=cell["case_id"],
+            arm_id=cell["arm_id"],
+            agent_response={},
+            declaration=declaration,
+        )
