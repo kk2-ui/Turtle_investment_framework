@@ -54,6 +54,8 @@ J1_SURFACES = {"SURVIVAL", "BUSINESS_POSITION", "ADAPTATION", "NORMALIZATION", "
 J2_SURFACES = {"INDUSTRY_FUTURE", "INVESTMENT_TREATMENT"}
 CLAIM_KEYS = {"claim_id", "surface", "statement", "direction", "mechanism", "treatment", "evidence_ids", "strongest_rival", "reversal_observations", "unknown"}
 J0_COMPONENT_KEYS = {"component_id", "economic_scope", "question", "evidence_ids"}
+J0_EVIDENCE_KEYS = {"evidence_id", "source_ref", "locator", "scope", "used_for"}
+J2_INDUSTRY_KEYS = {"horizon", "most_likely_regime", "profit_pool_transmission", "company_exposure", "adaptation", "normal_economics", "permanent_loss", "valuation_treatment", "strongest_rival"}
 
 
 def _instant(value: Any) -> datetime | None:
@@ -70,7 +72,7 @@ def _instant(value: Any) -> datetime | None:
 
 
 def _forbidden(value: Any, path: str = "$") -> list[str]:
-    keys = {"price", "market_price", "share_price", "entry_price", "buyband", "buy_band", "expected_return", "realized_return", "outcome", "settlement", "investment_action", "position"}
+    keys = {"price", "market_price", "share_price", "entry_price", "buyband", "buy_band", "expected_return", "realized_return", "outcome", "settlement", "investment_action", "portfolio_action", "action", "decision", "valuation_result", "position"}
     found: list[str] = []
     if isinstance(value, dict):
         for key, child in value.items():
@@ -118,6 +120,8 @@ def _evidence_findings(refs: Any, contract: dict[str, Any], *, require_source_re
         return ["evidence_refs_missing"]
     for index, raw in enumerate(refs):
         item = _mapping(raw)
+        if set(item) != J0_EVIDENCE_KEYS:
+            findings.append(f"evidence[{index}]_fields_invalid")
         eid = item.get("evidence_id")
         source_ref = _canonical_ref(item.get("source_ref"))
         if not _text(eid) or eid in seen:
@@ -131,7 +135,7 @@ def _evidence_findings(refs: Any, contract: dict[str, Any], *, require_source_re
         available = _instant(source.get("available_at"))
         if cutoff and available and available > cutoff:
             findings.append(f"evidence[{index}]_available_after_cutoff")
-        for field in ("locator", "scope"):
+        for field in ("source_ref", "locator", "scope", "used_for"):
             if not _text(item.get(field)):
                 findings.append(f"evidence[{index}]_{field}_missing")
     return findings
@@ -226,14 +230,23 @@ def validate_stage(stage: str, payload: Any, contract: Any) -> dict[str, Any]:
                 )
         if not has_excluded_route:
             findings.append("j1_excluded_route_missing")
-        claims = _items(value.get("claims")); surfaces: set[str] = set()
+        claims = _items(value.get("claims")); surfaces: set[str] = set(); claim_ids: set[str] = set()
+        if len(claims) != len(J1_SURFACES):
+            findings.append("j1_claims_cardinality_invalid")
         if not claims:
             findings.append("j1_claims_missing")
         for index, claim in enumerate(claims):
             item = _mapping(claim)
             if set(item) != CLAIM_KEYS:
                 findings.append(f"j1_claim[{index}]_fields_invalid")
-            surface = str(item.get("surface")); surfaces.add(surface)
+            claim_id = str(item.get("claim_id"));
+            if not _text(item.get("claim_id")) or claim_id in claim_ids:
+                findings.append(f"j1_claim[{index}]_id_missing_or_duplicate")
+            claim_ids.add(claim_id)
+            surface = str(item.get("surface"));
+            if surface in surfaces:
+                findings.append(f"j1_claim[{index}]_surface_duplicate")
+            surfaces.add(surface)
             if surface not in J1_SURFACES:
                 findings.append(f"j1_claim[{index}]_surface_invalid")
             for field in ("claim_id", "statement", "mechanism", "strongest_rival"):
@@ -253,6 +266,8 @@ def validate_stage(stage: str, payload: Any, contract: Any) -> dict[str, Any]:
         if set(value) != expected:
             findings.append("j2_fields_invalid")
         industry = _mapping(value.get("industry_future"))
+        if set(industry) != J2_INDUSTRY_KEYS:
+            findings.append("j2_industry_fields_invalid")
         for field in ("horizon", "most_likely_regime", "profit_pool_transmission", "company_exposure", "adaptation", "normal_economics", "permanent_loss", "valuation_treatment", "strongest_rival"):
             if not _text(industry.get(field)):
                 findings.append(f"j2_industry_{field}_missing")
@@ -261,11 +276,19 @@ def validate_stage(stage: str, payload: Any, contract: Any) -> dict[str, Any]:
         reversals = value.get("reversal_observations")
         if not isinstance(reversals, list) or not reversals or any(not _text(x) for x in reversals):
             findings.append("j2_reversal_missing")
-        claims = _items(value.get("claims")); surfaces: set[str] = set()
+        claims = _items(value.get("claims")); surfaces: set[str] = set(); claim_ids: set[str] = set()
+        if len(claims) != len(J2_SURFACES):
+            findings.append("j2_claims_cardinality_invalid")
         # J2 may only cite the evidence IDs established by J0.
         # The prior ledger is supplied by the caller during validation.
         for index, claim in enumerate(claims):
-            item = _mapping(claim); surface = str(item.get("surface")); surfaces.add(surface)
+            item = _mapping(claim); claim_id = str(item.get("claim_id")); surface = str(item.get("surface"))
+            if not _text(item.get("claim_id")) or claim_id in claim_ids:
+                findings.append(f"j2_claim[{index}]_id_missing_or_duplicate")
+            claim_ids.add(claim_id)
+            if surface in surfaces:
+                findings.append(f"j2_claim[{index}]_surface_duplicate")
+            surfaces.add(surface)
             if set(item) != CLAIM_KEYS or surface not in J2_SURFACES:
                 findings.append(f"j2_claim[{index}]_invalid")
             for field in ("claim_id", "statement", "mechanism", "strongest_rival"):
@@ -275,6 +298,10 @@ def validate_stage(stage: str, payload: Any, contract: Any) -> dict[str, Any]:
                 findings.append(f"j2_claim[{index}]_evidence_ids_missing")
             if not isinstance(item.get("reversal_observations"), list) or not item.get("reversal_observations"):
                 findings.append(f"j2_claim[{index}]_reversal_missing")
+            if item.get("direction") not in {"IMPROVES", "DETERIORATES", "MIXED", "UNKNOWN", "NONE"}:
+                findings.append(f"j2_claim[{index}]_direction_invalid")
+            if item.get("treatment") not in CLAIM_TREATMENTS:
+                findings.append(f"j2_claim[{index}]_treatment_invalid")
         findings.extend(f"j2_claim_surface_missing:{surface}" for surface in sorted(J2_SURFACES - surfaces))
     return {"schema_version": TASK_SCHEMA, "stage": stage, "state": "REVIEWABLE" if not findings else "INVALID", "findings": list(dict.fromkeys(findings))}
 
@@ -335,8 +362,12 @@ def compile_stages(contract: Any, j0: Any, j1: Any, j2: Any) -> dict[str, Any]:
     a, b, d = _mapping(j0), _mapping(j1), _mapping(j2)
     j0_ids = {str(_mapping(item).get("component_id")) for item in _items(a.get("components"))}
     j1_ids = {str(_mapping(item).get("component_id")) for item in _items(b.get("components"))}
+    j0_scopes = {str(_mapping(item).get("component_id")): _mapping(item).get("economic_scope") for item in _items(a.get("components"))}
+    j1_scopes = {str(_mapping(item).get("component_id")): _mapping(item).get("economic_scope") for item in _items(b.get("components"))}
     if j0_ids != j1_ids:
         return {"state": "DIAGNOSTIC_ONLY", "stage_validations": stage_validations, "diagnostics": {"root_cause": "MODEL", "message": "J1 component IDs do not exactly match J0"}, "episode": None}
+    if j0_scopes != j1_scopes:
+        return {"state": "DIAGNOSTIC_ONLY", "stage_validations": stage_validations, "diagnostics": {"root_cause": "MODEL", "message": "J1 component economic_scope does not exactly match J0"}, "episode": None}
     evidence_ids = {str(_mapping(item).get("evidence_id")) for item in _items(a.get("evidence_refs"))}
     referenced_ids = {
         str(eid)

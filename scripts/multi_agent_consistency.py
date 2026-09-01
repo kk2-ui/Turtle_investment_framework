@@ -27,6 +27,7 @@ PROTOCOL_SCHEMA = "multi-agent-consistency-protocol.v1"
 PROPOSAL_SCHEMA = "multi-agent-judgment-proposal.v1"
 FREEZE_SCHEMA = "multi-agent-canonical-freeze.v1"
 MANIFEST_SCHEMA = "multi-agent-consistency-manifest.v1"
+THREE_LAYER_ACCEPTANCE_SCHEMA = "three-layer-method-acceptance.v1"
 
 ROLES = {
     "evidence_owner",
@@ -37,6 +38,7 @@ ROLES = {
     "canonical_owner",
 }
 MODES = {"PRODUCTION_SINGLE_OWNER", "FOUR_ARM_INDEPENDENT"}
+SOURCE_TIME_ROLES = {"PRE_CUTOFF", "RESULT_KNOWN", "TRAINING_MEMORY"}
 DISPOSITIONS = {"ACCEPT", "REJECT", "CONDITIONAL", "UNRESOLVED"}
 _PROPOSAL_KEYS = {
     "schema_version", "proposal_id", "role", "target", "proposed_value",
@@ -50,8 +52,23 @@ _DECISION_KEYS = {
 _FORBIDDEN_KEYS = {
     "price", "market_price", "share_price", "entry_price", "buyband",
     "buy_band", "expected_return", "realized_return", "outcome", "settlement",
-    "investment_action", "position",
+    "investment_action", "portfolio_action", "action", "decision", "valuation_result", "return", "position",
 }
+_IMMUTABLE_COMPONENT_FIELDS = {"component_id", "economic_scope", "evidence_ids"}
+_IMMUTABLE_TARGETS = {
+    ("components", field) for field in _IMMUTABLE_COMPONENT_FIELDS
+} | {
+    ("claims", field) for field in {"claim_id", "surface", "evidence_ids"}
+} | {
+    ("evidence_refs", field) for field in {"evidence_id", "source_ref"}
+}
+_ECONOMIC_COMPONENT_FIELDS = {
+    "treatment", "normal_earnings_use", "owner_cash_use", "financing_pressure_effect",
+    "permanent_loss_use", "valuation_use", "valuation_route_bindings", "reason",
+    "promotion_test", "invalidation_test",
+}
+_EVIDENCE_FIELDS = {"source_ref", "locator", "scope", "used_for"}
+_CLAIM_FIELDS = {"statement", "direction", "mechanism", "treatment", "evidence_ids", "strongest_rival", "reversal_observations", "unknown"}
 
 
 def _obj(value: Any) -> dict[str, Any]:
@@ -106,27 +123,27 @@ def _target_allowed_for_role(role: str, parts: list[str]) -> bool:
         return True
     root = parts[0]
     if role == "evidence_owner":
-        return root == "evidence_refs"
+        return root == "evidence_refs" and len(parts) >= 3 and parts[2] in _EVIDENCE_FIELDS
     if role == "industry_analyst":
-        return root == "industry_future" or (
-            root == "claims" and len(parts) >= 2 and parts[1] == "INDUSTRY_FUTURE"
+        return (root == "industry_future" and len(parts) >= 2) or (
+            root == "claims" and len(parts) >= 3 and parts[1] == "INDUSTRY_FUTURE" and parts[2] in _CLAIM_FIELDS
         )
     if role == "company_economist":
-        return root == "components" or (
-            root == "claims" and len(parts) >= 2 and parts[1] in {
+        return (root == "components" and len(parts) >= 3 and parts[2] in _ECONOMIC_COMPONENT_FIELDS) or (
+            root == "claims" and len(parts) >= 3 and parts[1] in {
                 "SURVIVAL", "BUSINESS_POSITION", "ADAPTATION", "NORMALIZATION",
                 "PERMANENT_LOSS", "VALUE_ROUTE",
-            }
+            } and parts[2] in _CLAIM_FIELDS
         )
     if role == "challenger":
         return len(parts) >= 3 and root == "claims" and parts[2] in {
             "strongest_rival", "reversal_observations", "unknown",
         }
     if role == "thesis_synthesizer":
-        return root == "industry_future" or (
-            root == "claims" and len(parts) >= 2 and parts[1] in {
+        return (root == "industry_future" and len(parts) >= 2) or (
+            root == "claims" and len(parts) >= 3 and parts[1] in {
                 "INDUSTRY_FUTURE", "INVESTMENT_TREATMENT",
-            }
+            } and parts[2] in _CLAIM_FIELDS
         )
     return False
 
@@ -190,6 +207,8 @@ def validate_proposal(
         if isinstance(item, dict)
     }
     cutoff = _instant(c.get("cutoff_at"))
+    if cutoff is None:
+        findings.append("contract_cutoff_invalid")
     for evidence_id in evidence_ids:
         entry = _obj(index.get(evidence_id))
         if not entry:
@@ -199,11 +218,15 @@ def validate_proposal(
         for field in ("source_ref", "available_at", "time_role"):
             if not _text(entry.get(field)):
                 findings.append("evidence_index_incomplete:" + evidence_id + ":" + field)
+        if entry.get("time_role") not in SOURCE_TIME_ROLES:
+            findings.append("evidence_time_role_invalid:" + evidence_id)
         if source_ref not in allowed_sources:
             findings.append("evidence_source_not_allowed:" + evidence_id)
         if entry.get("time_role") == "TRAINING_MEMORY":
             findings.append("training_memory_cannot_support_proposal:" + evidence_id)
         available = _instant(entry.get("available_at"))
+        if available is None:
+            findings.append("evidence_index_time_invalid:" + evidence_id)
         if cutoff and available and available > cutoff:
             findings.append("evidence_after_cutoff:" + evidence_id)
     findings.extend("price_firewall:" + path for path in _forbidden_paths(value))
@@ -328,6 +351,10 @@ def freeze_canonical_ledger(
         if disposition == "REJECT":
             rejected.append(proposal_id)
             continue
+        target_parts = _target_parts(str(proposal.get("target")))
+        if len(target_parts) >= 3 and (target_parts[0], target_parts[2]) in _IMMUTABLE_TARGETS:
+            findings.append("immutable_target_forbidden:" + str(proposal.get("target")))
+            continue
         if not _set_target(value, str(proposal.get("target")), decision.get("final_value")):
             findings.append("target_not_resolvable:" + str(proposal.get("target")))
             continue
@@ -379,18 +406,46 @@ def validate_consistency_manifest(manifest: Any) -> dict[str, Any]:
     required = {"schema_version", "manifest_id", "mode", "company_id", "cutoff_at", "sample_identity", "common_source_refs", "component_vocabulary", "compiler", "budget", "outcome_access"}
     if value.get("schema_version") != MANIFEST_SCHEMA:
         findings.append("schema_version_invalid")
-    if set(value) != required:
-        findings.append("fields_invalid")
     if value.get("mode") not in MODES:
         findings.append("mode_invalid")
+    if value.get("mode") == "FOUR_ARM_INDEPENDENT":
+        required.add("arms")
+        if "arms" not in value:
+            findings.append("four_arm_registry_missing")
+        else:
+            arms = value.get("arms")
+            if not isinstance(arms, list) or len(arms) != 4:
+                findings.append("four_arm_registry_invalid")
+            else:
+                arm_ids = []
+                for index, arm in enumerate(arms):
+                    item = _obj(arm); arm_id = item.get("arm_id")
+                    if set(item) != {"arm_id", "j0_task", "j1_task", "j2_task"}:
+                        findings.append(f"four_arm[{index}]_fields_invalid")
+                    if not _text(arm_id):
+                        findings.append(f"four_arm[{index}]_id_missing")
+                    arm_ids.append(str(arm_id))
+                    for task in ("j0_task", "j1_task", "j2_task"):
+                        if not _text(item.get(task)):
+                            findings.append(f"four_arm[{index}]_{task}_missing")
+                if len(arm_ids) != len(set(arm_ids)):
+                    findings.append("four_arm_ids_duplicate")
+    if set(value) != required:
+        findings.append("fields_invalid")
     if not _text(value.get("manifest_id")) or not _text(value.get("company_id")):
         findings.append("identity_missing")
     if _instant(value.get("cutoff_at")) is None:
         findings.append("cutoff_at_invalid")
-    if not isinstance(value.get("common_source_refs"), list) or not value.get("common_source_refs"):
+    refs = value.get("common_source_refs")
+    if not isinstance(refs, list) or not refs:
         findings.append("common_sources_missing")
-    if not isinstance(value.get("component_vocabulary"), list) or not value.get("component_vocabulary"):
+    elif any(not _text(item) for item in refs) or len(refs) != len(set(refs)):
+        findings.append("common_sources_invalid")
+    vocabulary = value.get("component_vocabulary")
+    if not isinstance(vocabulary, list) or not vocabulary:
         findings.append("component_vocabulary_missing")
+    elif any(not _text(item) for item in vocabulary) or len(vocabulary) != len(set(vocabulary)):
+        findings.append("component_vocabulary_invalid")
     if not isinstance(value.get("compiler"), dict) or not _text(_obj(value.get("compiler")).get("name")):
         findings.append("compiler_missing")
     if not isinstance(value.get("budget"), dict) or not _text(_obj(value.get("budget")).get("policy")):
@@ -404,11 +459,17 @@ def validate_consistency_manifest(manifest: Any) -> dict[str, Any]:
     }
 
 
-def validate_freeze_record(record: Any, *, ledger: Any) -> dict[str, Any]:
+def validate_freeze_record(record: Any, *, ledger: Any, contract: Any | None = None,
+                           source_index: Any | None = None) -> dict[str, Any]:
     value = _obj(record)
     findings: list[str] = []
+    expected = {"schema_version", "protocol_schema", "owner_id", "mode", "ledger_id", "company_id", "cutoff_at", "proposal_ids", "decisions", "applied_proposal_ids", "rejected_proposal_ids", "diagnostics", "state"}
+    if set(value) != expected:
+        findings.append("freeze_record_fields_invalid")
     if value.get("schema_version") != FREEZE_SCHEMA:
         findings.append("schema_version_invalid")
+    if value.get("protocol_schema") != PROTOCOL_SCHEMA:
+        findings.append("protocol_schema_invalid")
     if value.get("state") != "FROZEN":
         findings.append("freeze_state_invalid")
     if not _text(value.get("owner_id")):
@@ -417,10 +478,108 @@ def validate_freeze_record(record: Any, *, ledger: Any) -> dict[str, Any]:
         findings.append("ledger_id_mismatch")
     if value.get("company_id") != _obj(ledger).get("company_id"):
         findings.append("company_id_mismatch")
-    if not isinstance(value.get("decisions"), list):
+    if not _text(_obj(ledger).get("company_name")):
+        findings.append("ledger_company_name_missing")
+    if _obj(ledger).get("status") != "FROZEN":
+        findings.append("ledger_not_frozen")
+    if value.get("cutoff_at") != _obj(ledger).get("cutoff_at") or _instant(value.get("cutoff_at")) is None:
+        findings.append("cutoff_at_mismatch_or_invalid")
+    if value.get("mode") not in MODES:
+        findings.append("mode_invalid")
+    if isinstance(contract, dict):
+        for field in ("company_id", "cutoff_at"):
+            if value.get(field) != contract.get(field):
+                findings.append("contract_" + field + "_mismatch")
+        if _obj(ledger).get("company_name") != contract.get("company_name"):
+            findings.append("contract_company_name_mismatch")
+    if not isinstance(value.get("proposal_ids"), list) or not value.get("proposal_ids"):
+        findings.append("proposal_ids_missing")
+    elif len(value["proposal_ids"]) != len(set(value["proposal_ids"])):
+        findings.append("proposal_ids_duplicate")
+    if not isinstance(value.get("decisions"), list) or not value.get("decisions"):
         findings.append("decisions_missing")
+    else:
+        decision_ids = []
+        for decision in value["decisions"]:
+            findings.extend("decision:" + item for item in _decision_fields(_obj(decision)))
+            decision_ids.append(str(_obj(decision).get("proposal_id") or ""))
+        if len(decision_ids) != len(set(decision_ids)):
+            findings.append("decision_proposal_ids_duplicate")
+        proposal_ids = [str(item) for item in _list(value.get("proposal_ids"))]
+        if set(decision_ids) != set(proposal_ids):
+            findings.append("decisions_do_not_cover_proposals")
+        dispositions = {str(_obj(d).get("proposal_id")): _obj(d).get("disposition") for d in value["decisions"]}
+        if set(str(x) for x in _list(value.get("rejected_proposal_ids"))) != {pid for pid, disp in dispositions.items() if disp == "REJECT"}:
+            findings.append("rejected_partition_disposition_mismatch")
+        if set(str(x) for x in _list(value.get("applied_proposal_ids"))) != {pid for pid, disp in dispositions.items() if disp != "REJECT"}:
+            findings.append("applied_partition_disposition_mismatch")
+    applied = value.get("applied_proposal_ids"); rejected = value.get("rejected_proposal_ids")
+    if not isinstance(applied, list) or not isinstance(rejected, list):
+        findings.append("freeze_partitions_missing")
+    else:
+        proposal_ids = {str(item) for item in _list(value.get("proposal_ids"))}
+        if len(applied) != len(set(applied)) or len(rejected) != len(set(rejected)):
+            findings.append("freeze_partition_duplicate")
+        if set(applied) & set(rejected):
+            findings.append("freeze_partition_overlap")
+        if set(applied) | set(rejected) != proposal_ids:
+            findings.append("freeze_partition_incomplete")
+    if not isinstance(value.get("diagnostics"), list):
+        findings.append("diagnostics_missing")
+    ledger_validation = validate_staged_judgment_ledger(ledger, source_index, contract)
+    if ledger_validation.get("state") != "VALID":
+        findings.append("ledger_invalid")
     return {
         "schema_version": "multi-agent-canonical-freeze-validation.v1",
+        "state": "REVIEWABLE" if not findings else "INVALID",
+        "findings": list(dict.fromkeys(findings)),
+    }
+
+
+def validate_three_layer_acceptance(acceptance: Any) -> dict[str, Any]:
+    """Gate method release on independent judgment, review, outcome and holdout.
+
+    Layer 1 proves a legal/reproducible ledger, layer 2 an anonymous review,
+    and layer 3 a settled outcome.  A second unseen company or time holdout is
+    required before ``LIMITED_METHOD_RELEASE``; compilation and sealed outcome
+    access are deliberately insufficient.
+    """
+    value = _obj(acceptance)
+    required = {"schema_version", "layer1", "layer2", "layer3", "holdout", "outcome_settled", "release_state"}
+    findings: list[str] = []
+    if set(value) != required:
+        findings.append("acceptance_fields_invalid")
+    if value.get("schema_version") != THREE_LAYER_ACCEPTANCE_SCHEMA:
+        findings.append("acceptance_schema_invalid")
+
+    def status(name: str) -> str:
+        item = value.get(name)
+        if isinstance(item, str):
+            return item.upper()
+        if isinstance(item, dict):
+            return str(item.get("state") or item.get("status") or "").upper()
+        return ""
+
+    pass_states = {"PASS", "PASSED", "REVIEWABLE", "COMPLETED"}
+    allowed_states = pass_states | {"PENDING", "SEALED", "NOT_STARTED", "FAIL", "FAILED"}
+
+    for layer in ("layer1", "layer2", "layer3", "holdout"):
+        if status(layer) not in allowed_states:
+            findings.append(layer + "_state_invalid")
+    if not isinstance(value.get("outcome_settled"), bool):
+        findings.append("outcome_settled_invalid")
+    elif not value["outcome_settled"] and value.get("release_state") == "LIMITED_METHOD_RELEASE":
+        findings.append("outcome_not_settled")
+    release = value.get("release_state")
+    if release not in {"NO_RELEASE", "LIMITED_METHOD_RELEASE"}:
+        findings.append("release_state_invalid")
+    elif release == "LIMITED_METHOD_RELEASE" and not (
+        all(status(layer) in pass_states for layer in ("layer1", "layer2", "layer3", "holdout"))
+        and value.get("outcome_settled") is True
+    ):
+        findings.append("limited_release_gate_not_met")
+    return {
+        "schema_version": "three-layer-method-acceptance-validation.v1",
         "state": "REVIEWABLE" if not findings else "INVALID",
         "findings": list(dict.fromkeys(findings)),
     }
@@ -429,7 +588,7 @@ def validate_freeze_record(record: Any, *, ledger: Any) -> dict[str, Any]:
 __all__ = [
     "PROTOCOL_SCHEMA", "PROPOSAL_SCHEMA", "FREEZE_SCHEMA", "MANIFEST_SCHEMA",
     "validate_proposal", "freeze_canonical_ledger", "validate_consistency_manifest",
-    "validate_freeze_record",
+    "validate_freeze_record", "validate_three_layer_acceptance", "THREE_LAYER_ACCEPTANCE_SCHEMA",
 ]
 
 
@@ -449,6 +608,7 @@ def main(argv: list[str] | None = None) -> int:
     proposal.add_argument("proposal"); proposal.add_argument("contract"); proposal.add_argument("source_index")
     proposal.add_argument("--mode", choices=sorted(MODES), default="PRODUCTION_SINGLE_OWNER")
     manifest = sub.add_parser("validate-manifest"); manifest.add_argument("manifest")
+    acceptance = sub.add_parser("validate-acceptance"); acceptance.add_argument("acceptance")
     freeze = sub.add_parser("freeze")
     freeze.add_argument("ledger"); freeze.add_argument("proposals"); freeze.add_argument("decisions")
     freeze.add_argument("contract"); freeze.add_argument("source_index"); freeze.add_argument("--owner-id", required=True)
@@ -460,6 +620,9 @@ def main(argv: list[str] | None = None) -> int:
         print(json.dumps(result, ensure_ascii=False, indent=2)); return 0 if result["state"] == "REVIEWABLE" else 1
     if args.command == "validate-manifest":
         result = validate_consistency_manifest(_load_json(args.manifest))
+        print(json.dumps(result, ensure_ascii=False, indent=2)); return 0 if result["state"] == "REVIEWABLE" else 1
+    if args.command == "validate-acceptance":
+        result = validate_three_layer_acceptance(_load_json(args.acceptance))
         print(json.dumps(result, ensure_ascii=False, indent=2)); return 0 if result["state"] == "REVIEWABLE" else 1
     result = freeze_canonical_ledger(
         _load_json(args.ledger), _load_json(args.proposals), _load_json(args.decisions),

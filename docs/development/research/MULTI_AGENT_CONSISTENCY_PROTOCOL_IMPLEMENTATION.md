@@ -8,16 +8,20 @@
 
 ## 生产协作路径
 
-`scripts/multi_agent_consistency.py` 提供四个窄接口：
+`scripts/multi_agent_consistency.py` 提供窄接口：
 
 1. `validate_proposal`：校验角色允许的 target、共同合同、source index、cutoff 和
    `TRAINING_MEMORY` 隔离；拒绝价格、收益、结果和动作字段。
 2. `freeze_canonical_ledger`：由唯一 `canonical owner` 对每个 proposal 明确
    `ACCEPT / REJECT / CONDITIONAL / UNRESOLVED`，把 `final_value` 应用到复制的
    ledger，并把提案与裁决留在旁路 freeze record；不投票、不自动选值、不补证据。
-3. `validate_freeze_record`：确认 owner、ledger identity 和裁决记录完整。
+3. `validate_freeze_record`：确认 owner、ledger identity、冻结状态、裁决覆盖、
+   分区互斥，并重新运行 staged ledger validator，防止旁路篡改。
 4. `validate_consistency_manifest`：区分生产的一主多辅与四臂独立模式，并强制
    common source、component vocabulary、compiler、同预算和封存 outcome。
+5. `validate_three_layer_acceptance`：记录第一层账本、第二层匿名审阅、第三层
+   outcome 结算和第二个未见公司/时间 holdout；只有全部通过且 outcome 已结算才
+   能标记 `LIMITED_METHOD_RELEASE`。`COMPILED` 或 `SEALED` 不会自动放行。
 
 CLI 示例：
 
@@ -28,6 +32,9 @@ CLI 示例：
 .venv/bin/python scripts/multi_agent_consistency.py freeze \
   draft_ledger.json proposals.json decisions.json contract.json source_index.json \
   --owner-id owner:primary --output-dir out/canonical
+
+.venv/bin/python scripts/multi_agent_consistency.py validate-acceptance \
+  three_layer_acceptance.json
 ```
 
 ## 四臂训练路径

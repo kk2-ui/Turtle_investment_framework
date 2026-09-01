@@ -8,6 +8,8 @@ from scripts.multi_agent_consistency import (
     validate_consistency_manifest,
     validate_freeze_record,
     validate_proposal,
+    THREE_LAYER_ACCEPTANCE_SCHEMA,
+    validate_three_layer_acceptance,
 )
 from tests.test_staged_judgment_ledger import _contract, _ledger, _source_index
 
@@ -52,6 +54,19 @@ def test_narrow_proposal_is_role_and_source_bound_without_mutation():
         contract=contract,
         source_index=_source_index(),
     )["state"] == "INVALID"
+    assert validate_proposal(
+        _proposal(target="components.CORE.component_id"),
+        contract=contract,
+        source_index=_source_index(),
+    )["state"] == "INVALID"
+
+    malformed = _proposal()
+    bad_contract = deepcopy(contract)
+    bad_contract["cutoff_at"] = "not-a-time"
+    assert validate_proposal(malformed, contract=bad_contract, source_index=_source_index())["state"] == "INVALID"
+    bad_index = _source_index()
+    bad_index["E1"]["available_at"] = "not-a-time"
+    assert validate_proposal(malformed, contract=contract, source_index=bad_index)["state"] == "INVALID"
 
 
 def test_canonical_owner_freezes_one_decision_and_preserves_rejected_sidecar():
@@ -95,6 +110,7 @@ def test_manifest_distinguishes_production_and_four_arm_without_opening_outcome(
         "sample_identity": "BLIND_REPLAY",
         "common_source_refs": ["SRC:TEST"],
         "component_vocabulary": ["CORE"],
+        "arms": [{"arm_id": f"A{i}", "j0_task": f"A{i}/J0", "j1_task": f"A{i}/J1", "j2_task": f"A{i}/J2"} for i in range(4)],
         "compiler": {"name": "staged_judgment_ledger", "version": "v1"},
         "budget": {"policy": "same cutoff and one attempt per stage"},
         "outcome_access": "SEALED",
@@ -103,3 +119,23 @@ def test_manifest_distinguishes_production_and_four_arm_without_opening_outcome(
     opened = deepcopy(manifest)
     opened["outcome_access"] = "OPEN"
     assert validate_consistency_manifest(opened)["state"] == "INVALID"
+    nested = deepcopy(manifest)
+    nested["common_source_refs"] = [{"outcome": "OPEN"}]
+    assert validate_consistency_manifest(nested)["state"] == "INVALID"
+
+
+def test_freeze_record_rejects_tampering_and_acceptance_gate_is_explicit():
+    ledger = _ledger(); contract = _contract(ledger); proposal = _proposal()
+    result = freeze_canonical_ledger(ledger, [proposal], [_decision()], owner_id="owner:primary", contract=contract, source_index=_source_index())
+    assert validate_freeze_record(result["freeze_record"], ledger=result["ledger"], contract=contract, source_index=_source_index())["state"] == "REVIEWABLE"
+    tampered = deepcopy(result["freeze_record"]); tampered["decisions"] = []
+    assert validate_freeze_record(tampered, ledger=result["ledger"], contract=contract, source_index=_source_index())["state"] == "INVALID"
+    tampered_ledger = deepcopy(result["ledger"]); tampered_ledger["company_name"] = "篡改"
+    assert validate_freeze_record(result["freeze_record"], ledger=tampered_ledger, contract=contract, source_index=_source_index())["state"] == "INVALID"
+
+    base = {"schema_version": THREE_LAYER_ACCEPTANCE_SCHEMA, "layer1": "PASS", "layer2": "PASS", "layer3": "PASS", "holdout": "PASS", "outcome_settled": True, "release_state": "LIMITED_METHOD_RELEASE"}
+    assert validate_three_layer_acceptance(base)["state"] == "REVIEWABLE"
+    blocked = deepcopy(base); blocked["outcome_settled"] = False
+    assert validate_three_layer_acceptance(blocked)["state"] == "INVALID"
+    pre = deepcopy(base); pre.update({"layer3": "PENDING", "holdout": "PENDING", "outcome_settled": False, "release_state": "NO_RELEASE"})
+    assert validate_three_layer_acceptance(pre)["state"] == "REVIEWABLE"

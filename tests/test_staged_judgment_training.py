@@ -162,6 +162,22 @@ def test_stage_price_or_bad_source_is_rejected_without_compilation():
     assert compile_stages(contract, bad, j1, j2)["episode"] is None
 
 
+def test_compile_rejects_j1_scope_change_and_stage_cardinality_or_enum_errors():
+    contract = _contract(); j0, j1, j2 = _stages()
+    changed = deepcopy(j1)
+    changed["components"][0]["economic_scope"] = "SURVIVAL_FINANCING"
+    assert compile_stages(contract, j0, changed, j2)["state"] == "DIAGNOSTIC_ONLY"
+    bad_j1 = deepcopy(j1)
+    bad_j1["claims"].append(deepcopy(bad_j1["claims"][0]))
+    assert validate_stage("J1", bad_j1, contract)["state"] == "INVALID"
+    bad_j2 = deepcopy(j2)
+    bad_j2["claims"][0]["direction"] = "INVALID"
+    assert validate_stage("J2", bad_j2, contract)["state"] == "INVALID"
+    bad_j2 = deepcopy(j2)
+    bad_j2["industry_future"]["action"] = "BUY"
+    assert validate_stage("J2", bad_j2, contract)["state"] == "INVALID"
+
+
 def test_later_stage_requires_accepted_prior_stage():
     contract = _contract()
     j0, j1, _ = _stages()
