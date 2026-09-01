@@ -1,0 +1,13 @@
+{
+  "arm_id": "A11",
+  "attempts": {
+    "episode": 1,
+    "reader_report": 0
+  },
+  "authority": "PREOUTCOME_EXECUTION_CONTROL_PLANE_ONLY",
+  "case_id": "CASE:01",
+  "failure": "training_agent_episode_invalid:episode:economic_derivation.driver_sensitivity_specs[0].transmission.route_binding_use_incompatible_with_route_role",
+  "retry_policy": "NO_RETRY_OR_REWRITE",
+  "schema_version": "report-autonomy-cohort-execution-receipt.v1",
+  "state": "EPISODE_INVALID"
+}

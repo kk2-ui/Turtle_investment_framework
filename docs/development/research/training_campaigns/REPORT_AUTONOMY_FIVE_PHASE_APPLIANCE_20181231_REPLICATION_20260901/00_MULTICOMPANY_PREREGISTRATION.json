@@ -769,7 +769,7 @@
           "rendered_task_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231_REPLICATION_20260901/execution/case_01/A00/fresh_task.json"
         },
         "attempts": {
-          "episode": 0,
+          "episode": 1,
           "reader_report": 0
         },
         "case_id": "CASE:01",
@@ -2205,7 +2205,7 @@
           "state": "FRESH_SUBAGENT_TASK_READY"
         },
         "source_package_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN000016_PRE_CUTOFF_SOURCE_PACKAGE.md",
-        "state": "NOT_STARTED",
+        "state": "EPISODE_INVALID",
         "training_contract": {
           "allowed_sources": [
             {
@@ -2272,7 +2272,7 @@
           "rendered_task_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231_REPLICATION_20260901/execution/case_01/A01/fresh_task.json"
         },
         "attempts": {
-          "episode": 0,
+          "episode": 1,
           "reader_report": 0
         },
         "case_id": "CASE:01",
@@ -3708,7 +3708,7 @@
           "state": "FRESH_SUBAGENT_TASK_READY"
         },
         "source_package_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN000016_PRE_CUTOFF_SOURCE_PACKAGE.md",
-        "state": "NOT_STARTED",
+        "state": "EPISODE_INVALID",
         "training_contract": {
           "allowed_sources": [
             {
@@ -3781,8 +3781,8 @@
           "rendered_task_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231_REPLICATION_20260901/execution/case_01/A10/fresh_task.json"
         },
         "attempts": {
-          "episode": 0,
-          "reader_report": 0
+          "episode": 1,
+          "reader_report": 1
         },
         "case_id": "CASE:01",
         "rendered_task": {
@@ -5217,7 +5217,7 @@
           "state": "FRESH_SUBAGENT_TASK_READY"
         },
         "source_package_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN000016_PRE_CUTOFF_SOURCE_PACKAGE.md",
-        "state": "NOT_STARTED",
+        "state": "FROZEN",
         "training_contract": {
           "allowed_sources": [
             {
@@ -5290,7 +5290,7 @@
           "rendered_task_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231_REPLICATION_20260901/execution/case_01/A11/fresh_task.json"
         },
         "attempts": {
-          "episode": 0,
+          "episode": 1,
           "reader_report": 0
         },
         "case_id": "CASE:01",
@@ -6726,7 +6726,7 @@
           "state": "FRESH_SUBAGENT_TASK_READY"
         },
         "source_package_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN000016_PRE_CUTOFF_SOURCE_PACKAGE.md",
-        "state": "NOT_STARTED",
+        "state": "EPISODE_INVALID",
         "training_contract": {
           "allowed_sources": [
             {
