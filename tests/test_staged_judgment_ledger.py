@@ -160,3 +160,15 @@ def test_v2_derivation_is_preserved_and_training_bound():
     assert result["episode"]["economic_derivation"]["normal_earnings_bridge"] == ledger["normal_earnings_bridge"]
     assert result["episode"]["economic_derivation_summary"] == derive_economic_derivation_summary(result["episode"])
     assert result["training_episode_validation"]["state"] == "REVIEWABLE"
+
+
+def test_derivation_without_contract_fails_closed_without_exception():
+    ledger = _ledger()
+    ledger["normal_earnings_bridge"] = {"rows": []}
+    result = compile_staged_judgment_ledger(
+        ledger,
+        {"E1": {"source_ref": "SRC:TEST", "available_at": "2024-05-01T00:00:00+08:00", "time_role": "RESULT_KNOWN"}},
+        None,
+    )
+    assert result["diagnostics"]["state"] == "DIAGNOSTIC_ONLY"
+    assert result["episode"] is None

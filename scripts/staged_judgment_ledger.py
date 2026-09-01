@@ -265,6 +265,9 @@ def validate_staged_judgment_ledger(ledger: Any, source_index: Any | None = None
                 for field in ("available_at", "time_role"):
                     if str(canonical.get(field)) != str(allowed_match.get(field)):
                         findings.append(_diag("EVIDENCE_CONTRACT_METADATA_MISMATCH", f"evidence_refs[{i}].{field}", root_cause="ACQUISITION_MODULE"))
+        has_derivation = isinstance(value.get("normal_earnings_bridge"), dict) or isinstance(value.get("driver_sensitivities"), list)
+        if has_derivation and (not isinstance(contract, dict) or not contract.get("economic_derivation_interface")):
+            findings.append(_diag("DERIVATION_NOT_AUTHORIZED", "economic_derivation", root_cause="MODEL", economic_impact="未获合同授权的盈利桥/敏感性不得进入训练 Episode"))
         if (str(item.get("provenance", "")).upper() == "TRAINING_MEMORY"
                 or str(_obj(idx.get(eid)).get("provenance", "")).upper() == "TRAINING_MEMORY"
                 or (isinstance(contract, dict) and any(
