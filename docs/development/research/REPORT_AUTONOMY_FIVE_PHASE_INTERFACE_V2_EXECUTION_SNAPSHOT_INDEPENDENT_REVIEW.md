@@ -62,9 +62,11 @@ The valid (`FROZEN`) arms by case are:
 | `CASE:08` | none | 4 | No |
 | **Total** | **9** | **23** | **0 cases** |
 
-Thus no company has a self-contained anonymous four-arm packet. The snapshot's
-valid-arm distribution and its statement that the registered treatment effect
-is unidentifiable are correct on the reviewed records.
+The preregistered eight cases map one-to-one to eight distinct company IDs, so
+the case-level result is also a company-level result: no company has a
+self-contained anonymous four-arm packet. The snapshot's valid-arm
+distribution and its statement that the registered treatment effect is
+unidentifiable are correct on the reviewed records.
 
 ### Anonymous-review and outcome gate
 
@@ -85,4 +87,3 @@ remediation is required for acceptance of this snapshot review. The cohort
 should remain immutable and non-comparable as stated; any follow-up compiler or
 staged-judgment design is a separate experiment and must not reinterpret these
 23 terminal failures or unlock this cohort's outcome plane.
-
